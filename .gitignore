@@ -22,3 +22,6 @@ $RECYCLE.BIN/
 .vscode/tasks.json
 *.code-workspace
 run.bat
+
+3-assembled-output/compile.txt
+2-build-files/py8dis/compile.txt
