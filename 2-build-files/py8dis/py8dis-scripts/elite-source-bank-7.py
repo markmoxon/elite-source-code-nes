@@ -182,6 +182,7 @@ label(0x9620, "tnpr")
 label(0xB1CA, "MAS4")
 
 label(0xB8F7, "PAS1_BANK0")
+label(0xB738, "HALL1_BANK1")
 
 exec(open('py8dis-scripts/common-variables.py').read())
 

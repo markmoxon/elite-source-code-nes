@@ -12022,7 +12022,7 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: HALL
+\       Name: HALL_BANK1
 \       Type: Subroutine
 \   Category: Ship hangar
 \    Summary: Draw the ships in the ship hangar, then draw the hangar
@@ -12037,7 +12037,7 @@ ENDMACRO
 \
 \ ******************************************************************************
 
-.HALL
+.HALL_BANK1
 
  LDA #0                 \ Clear the top part of the screen, draw a white border,
  JSR TT66               \ and set the current view type in QQ11 to 0 (space
@@ -13253,8 +13253,6 @@ ENDMACRO
  EQUW &C000             \ Reset handler
 
  EQUW &C007             \ IRQ/BRK handler
-
-.pydis_end
 
 \ ******************************************************************************
 \

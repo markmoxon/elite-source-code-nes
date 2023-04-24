@@ -528,7 +528,7 @@ LB4F5       = &B4F5
 LB635       = &B635
 LB63D       = &B63D
 LB673       = &B673
-LB738       = &B738
+HALL1_BANK1 = &B738
 LB85C       = &B85C
 LB882       = &B882
 LB88C       = &B88C
@@ -6889,7 +6889,7 @@ LDFFF = sub_CDFFE+1
     PHA                                           ; F1BF: 48          H
     LDA #1                                        ; F1C0: A9 01       ..
     JSR SETBANK                                   ; F1C2: 20 AE C0     ..
-    JSR LB738                                     ; F1C5: 20 38 B7     8.
+    JSR HALL1_BANK1                               ; F1C5: 20 38 B7     8.
     JMP RESETBANK                                 ; F1C8: 4C AD C0    L..
 
     STA L00B7                                     ; F1CB: 85 B7       ..
