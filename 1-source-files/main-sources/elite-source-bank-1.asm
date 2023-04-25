@@ -854,7 +854,7 @@ COPS = 16
 SH3 = 17
 KRA = 19
 
-NI% = 38
+NI% = 42
 
 \ ******************************************************************************
 \
@@ -12206,8 +12206,9 @@ ENDMACRO
 
  SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
 
- LDY #NI%-1             \ There are NI% bytes in the INWK workspace, so set a
-                        \ counter in Y so we can loop through them
+ LDY #NI%-4-1           \ There are NI% bytes in the INWK workspace, so set a
+                        \ counter in Y so we can loop through them all except
+                        \ the last four
 
  LDA #0                 \ Set A to 0 so we can zero-fill the workspace
 
