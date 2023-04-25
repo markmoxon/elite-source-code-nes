@@ -213,7 +213,10 @@ SUNX = &003E
 
 .XX19
 
- SKIP 0
+ SKIP 0                 \ Instead of pointing XX19 to the ship heap address in
+                        \ INWK(34 33), like the other versions of Elite, the NES
+                        \ version points XX19 to the ship blueprint address in
+                        \ INF(1 0)
 
 .INF
 
@@ -426,6 +429,10 @@ SUNX = &003E
                         \ of characters to print, and as the edge counter in the
                         \ main ship-drawing routine
 
+.W
+
+ SKIP 1                 \ Temporary storage, used in a number of places
+
 .QQ11
 
  SKIP 1                 \ The number of the current view:
@@ -436,8 +443,6 @@ SUNX = &003E
                         \         In-system jump just arrived ("J")
                         \
                         \ This value is typically set by calling routine TT66
-
- SKIP 1
 
 .ZZ
 
@@ -12711,7 +12716,7 @@ ENDMACRO
 
 .F2A8_BANK1
 
- LDA QQ11               \ B975, called via F2A8 in 7.asm
+ LDA W                  \ B975, called via F2A8 in 7.asm
  BNE CB974              \ (e.g. called from bank 0)
  LDX TYPE
  BMI CB974
@@ -12927,7 +12932,7 @@ ENDMACRO
  ASL A
  ASL A
  TAX
- LDA QQ11
+ LDA W
  BNE CBB1F
  LDA #&F0
  STA L022C,X

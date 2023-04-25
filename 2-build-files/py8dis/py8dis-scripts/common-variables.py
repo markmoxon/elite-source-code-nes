@@ -1,7 +1,8 @@
-# NI% = 0x26 = 38
+# NI% = 38
+# NI% = 42 for most uses of it, 38 more rarely
 
 # NOSH = 8    		\ As UNIV contains 9 addresses, 0 to NOSH
-# NI% = &2A = 42    \ Same source - different to above?
+#					\ UNIV stores 42 bytes per ship, though
 
 # VE = &57
 # LL = 29
@@ -17,6 +18,9 @@
 # WRM = 23
 # THG = 29
 # TGL = 30
+
+# CYL = 11
+# CYL2 = &18
 
 # solaun = 9
 
@@ -173,11 +177,13 @@ label(0x009B, "XSAV")
 label(0x009C, "YSAV")
 label(0x009D, "XX17")
 label(0x009E, "W")
+label(0x009F, "QQ11")
 label(0x00A0, "ZZ")
 label(0x00A1, "XX13")
 label(0x00A2, "MCNT")
 label(0x00A3, "TYPE")
 label(0x00A4, "ALPHA")
+label(0x00A5, "QQ12")
 label(0x00A6, "TGT")
 label(0x00A7, "FLAG")
 label(0x00A8, "CNT")
@@ -199,19 +205,28 @@ label(0x00F9, "XX3m3")
 label(0x0100, "XX3")
 label(0x0101, "XX3_1")
 
+label(0x036A, "FRIN")
 label(0x038A, "MJ")
 label(0x038E, "VIEW")
+label(0x0392, "EV")
+label(0x039E, "TP")
 label(0x039F, "QQ0")
 label(0x03A0, "QQ1")
 label(0x03A1, "CASH")
+label(0x03A5, "QQ14")
 label(0x03A7, "GCNT")
 label(0x03AC, "CRGO")
 label(0x03AD, "QQ20")
 label(0x03BF, "BST")
+label(0x03C0, "BOMB")
 label(0x03C3, "GHYP")
+label(0x03C6, "ESCP")
+label(0x03C8, "NOMSL")
 label(0x03C9, "FIST")
 label(0x03CA, "AVL")
 label(0x03DB, "QQ26")
+label(0x03DC, "TALLY")
+label(0x03DD, "TALLY_1")
 label(0x03DF, "QQ21")
 label(0x03E5, "NOSTM")
 label(0x03F3, "DTW6")
@@ -221,6 +236,7 @@ label(0x03F6, "DTW4")
 label(0x03F7, "DTW5")
 label(0x03F8, "DTW1")
 label(0x03F9, "DTW8")
+label(0x0401, "MSTG")
 label(0x044D, "QQ19")
 label(0x044E, "QQ19_1")
 label(0x0450, "QQ19_3")
@@ -235,6 +251,12 @@ label(0x0487, "QQ24")
 label(0x0488, "QQ25")
 label(0x0489, "QQ28")
 label(0x048A, "QQ29")
+label(0x048C, "gov")
+label(0x048D, "tek")
+label(0x048E, "QQ2")
+label(0x0494, "QQ3")
+label(0x0495, "QQ4")
+label(0x0496, "QQ5")
 label(0x049B, "QQ8")
 label(0x049D, "QQ9")
 label(0x049E, "QQ10")
@@ -288,6 +310,7 @@ label(0xCE7E, "UNIV_1")
 
 subroutine(0xC0AD, "RESETBANK")     # My addition, switch bank to stack value
 subroutine(0xC0AE, "SETBANK")       # My addition, switch bank to A
+subroutine(0xCE90, "GINF")
 subroutine(0xCED5, "NMI")           # My addition, NMI handler
 subroutine(0xD06D, "NAMETABLE0")    # My addition, switches PPU to namespace 0
 subroutine(0xDC0F, "LOIN")     # Could also be LSPUT
@@ -295,9 +318,11 @@ subroutine(0xE4F0, "PIXEL")
 subroutine(0xE596, "ECBLB2")
 subroutine(0xEBA2, "DELAY")
 subroutine(0xEBAD, "EXNO3")
+subroutine(0xEBE5, "BOOP")
 subroutine(0xEBF2, "NOISE")
 subroutine(0xEDEA, "TIDY")
 subroutine(0xEF7A, "PAS1")
+subroutine(0xEFF7, "LL164")
 subroutine(0xF082, "DETOK")
 subroutine(0xF09D, "DTS")
 subroutine(0xF1A2, "MVS5")
@@ -308,6 +333,7 @@ subroutine(0xF237, "TT27_control_codes")    # My addition, it's the control code
 subroutine(0xF26E, "TT66")
 subroutine(0xF2A8, "SCAN")
 subroutine(0xF2DE, "CLYNS")
+subroutine(0xF42E, "Ze")
 subroutine(0xF473, "NLIN4")
 subroutine(0xF4AC, "DORND2")
 subroutine(0xF4AD, "DORND")
