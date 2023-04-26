@@ -33,6 +33,70 @@
 CODE% = &8000
 LOAD% = &8000
 
+Y = 72
+
+OIL = 5
+COPS = 16
+SH3 = 17
+KRA = 19
+
+NI% = 42
+
+\ NES PPU registers
+
+PPUCTRL             = &2000
+PPUMASK             = &2001
+PPUSTATUS           = &2002
+OAMADDR             = &2003
+OAMDATA             = &2004
+PPUSCROLL           = &2005
+PPUADDR             = &2006
+PPUDATA             = &2007
+OAMDMA              = &4014
+
+\ Shared code from 7.asm
+
+SNE                 = &C500
+ACT                 = &C520
+XX21                = &C540
+NAMETABLE0          = &D06D
+LD9F7               = &D9F7
+LDA18               = &DA18
+LDAF8               = &DAF8
+LOIN                = &DC0F
+LE04A               = &E04A
+LE0BA               = &E0BA
+PIXEL               = &E4F0
+MVS5                = &F1A2
+TT66                = &F26E
+LF2CE               = &F2CE
+DORND2              = &F4AC
+DORND               = &F4AD
+PROJ                = &F4C1
+MLS2                = &F6BA
+MLS1                = &F6C2
+MULTS               = &F6C6
+SQUA2               = &F70E
+MLU1                = &F718
+MLU2                = &F71D
+MULTU               = &F721
+FMLTU2              = &F766
+FMLTU               = &F770
+MUT2                = &F7D2
+MUT1                = &F7D6
+MULT1               = &F7DA
+MULT12              = &F83C
+MAD                 = &F86F
+ADD                 = &F872
+TIS1                = &F8AE
+DV42                = &F8D1
+DV41                = &F8D4
+LF8D8               = &F8D8
+DVID3B2             = &F962
+LL5                 = &FA55
+LL28                = &FA91
+NORM                = &FAF8
+
 \ ******************************************************************************
 \
 \       Name: ZP
@@ -642,7 +706,7 @@ SUNX = &003E
  SKIP 0                 \ Temporary storage, typically used for storing tables
                         \ of values such as screen coordinates or ship data
 
-\ Workspace
+\ Workspace &0200
 
 L0200               = &0200
 L0202               = &0202
@@ -756,105 +820,13 @@ L05F1               = &05F1
 
  SKIP 0                 \ Ship data blocks and ship line heap
 
-\ NES PPU registers
-
-PPUCTRL             = &2000
-PPUMASK             = &2001
-PPUSTATUS           = &2002
-OAMADDR             = &2003
-OAMDATA             = &2004
-PPUSCROLL           = &2005
-PPUADDR             = &2006
-PPUDATA             = &2007
-OAMDMA              = &4014
-
-\ Shared code from 7.asm
-
-LC006               = &C006
-LC007               = &C007
-RESETBANK           = &C0AD
-SETBANK             = &C0AE
-log                 = &C100
-logL                = &C200
-antilog             = &C300
-antilogODD          = &C400
-SNE                 = &C500
-ACT                 = &C520
-LC53F               = &C53F
-XX21                = &C540
-NMI                 = &CED5
-NAMETABLE0          = &D06D
-LD9F7               = &D9F7
-LDA18               = &DA18
-LDAF8               = &DAF8
-LOIN                = &DC0F
-LE04A               = &E04A
-LE0BA               = &E0BA
-PIXEL               = &E4F0
-DELAY               = &EBA2
-MESS                = &EBF2
-PAS1                = &EF7A
-DETOK               = &F082
-DTS                 = &F09D
-MVS5                = &F1A2
-DASC                = &F1E6
-TT27                = &F201
-TT27_control_codes  = &F237
-TT66                = &F26E
-LF2CE               = &F2CE
-CLYNS               = &F2DE
-NLIN4               = &F473
-DORND2              = &F4AC
-DORND               = &F4AD
-PROJ                = &F4C1
-MU5                 = &F65A
-MULT3               = &F664
-MLS2                = &F6BA
-MLS1                = &F6C2
-MULTSm2             = &F6C4
-MULTS               = &F6C6
-MU6                 = &F707
-SQUA                = &F70C
-SQUA2               = &F70E
-MU1                 = &F713
-MLU1                = &F718
-MLU2                = &F71D
-MULTU               = &F721
-MU11                = &F725
-FMLTU2              = &F766
-FMLTU               = &F770
-MLTU2               = &F7AD
-MUT2                = &F7D2
-MUT1                = &F7D6
-MULT1               = &F7DA
-MULT12              = &F83C
-MAD                 = &F86F
-ADD                 = &F872
-TIS1                = &F8AE
-DV42                = &F8D1
-DV41                = &F8D4
-LF8D8               = &F8D8
-DVID3B2             = &F962
-LL5                 = &FA55
-LL28                = &FA91
-NORM                = &FAF8
-
  ORG CODE%
 
  SEI
- INC LC006
- JMP LC007
+ INC &C006
+ JMP &C007
 
  EQUS "@ 5.0"
-
-Y = 72
-
-OIL = 5
-COPS = 16
-SH3 = 17
-KRA = 19
-
-NI% = 42
 
 \ ******************************************************************************
 \

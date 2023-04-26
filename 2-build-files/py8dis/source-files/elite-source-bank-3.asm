@@ -327,13 +327,14 @@ QQ3               = &0494
 QQ4               = &0495
 QQ5               = &0496
 QQ8               = &049B
+QQ8_1             = &049C
 QQ9               = &049D
 QQ10              = &049E
 QQ18LO            = &04A4
 QQ18HI            = &04A5
 TOKENLO           = &04A6
 TOKENHI           = &04A7
-L04A8             = &04A8
+LANG              = &04A8
 SX                = &04C8
 SY                = &04DD
 SZ                = &04F2
@@ -3614,7 +3615,7 @@ NORM              = &FAF8
 .LB9DE
  EQUB &B9, &B9, &B9, &B9                          ; B9DE: B9 B9 B9... ...
 
- LDX L04A8                                        ; B9E2: AE A8 04    ...
+ LDX LANG                                         ; B9E2: AE A8 04    ...
  LDA LB9DA,X                                      ; B9E5: BD DA B9    ...
  STA V                                            ; B9E8: 85 63       .c
  LDA LB9DE,X                                      ; B9EA: BD DE B9    ...

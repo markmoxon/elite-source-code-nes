@@ -350,7 +350,7 @@ L0497             = &0497
 L0499             = &0499
 L049A             = &049A
 QQ8               = &049B
-L049C             = &049C
+QQ8_1             = &049C
 QQ9               = &049D
 QQ10              = &049E
 L049F             = &049F
@@ -361,7 +361,7 @@ QQ18LO            = &04A4
 QQ18HI            = &04A5
 TOKENLO           = &04A6
 TOKENHI           = &04A7
-L04A8             = &04A8
+LANG              = &04A8
 L04A9             = &04A9
 L04AA             = &04AA
 L04AC             = &04AC
@@ -1857,7 +1857,7 @@ NORM              = &FAF8
  BCC C88BB                                        ; 8903: 90 B6       ..
  LDA #&18                                         ; 8905: A9 18       ..
  STA XC                                           ; 8907: 85 32       .2
- LDX L04A8                                        ; 8909: AE A8 04    ...
+ LDX LANG                                         ; 8909: AE A8 04    ...
  LDA C897C,X                                      ; 890C: BD 7C 89    .|.
  STA YC                                           ; 890F: 85 3B       .;
  JSR LEEA7                                        ; 8911: 20 A7 EE     ..
@@ -1946,7 +1946,7 @@ NORM              = &FAF8
  JSR TT27                                         ; 89A5: 20 01 F2     ..
 .sub_C89A8
  JSR TT67                                         ; 89A8: 20 A6 96     ..
- LDX L04A8                                        ; 89AB: AE A8 04    ...
+ LDX LANG                                         ; 89AB: AE A8 04    ...
  LDA L89B4,X                                      ; 89AE: BD B4 89    ...
  STA XC                                           ; 89B1: 85 32       .2
  RTS                                              ; 89B3: 60          `
@@ -3802,7 +3802,7 @@ M32_1 = M32+1
 ; ******************************************************************************
 .TT146
  LDA QQ8                                          ; 967A: AD 9B 04    ...
- ORA L049C                                        ; 967D: 0D 9C 04    ...
+ ORA QQ8_1                                        ; 967D: 0D 9C 04    ...
  BNE C968C                                        ; 9680: D0 0A       ..
  LDA MJ                                           ; 9682: AD 8A 03    ...
  BNE C968C                                        ; 9685: D0 05       ..
@@ -3814,7 +3814,7 @@ M32_1 = M32+1
  LDA #&BF                                         ; 968C: A9 BF       ..
  JSR TT68                                         ; 968E: 20 CE A8     ..
  LDX QQ8                                          ; 9691: AE 9B 04    ...
- LDY L049C                                        ; 9694: AC 9C 04    ...
+ LDY QQ8_1                                        ; 9694: AC 9C 04    ...
  SEC                                              ; 9697: 38          8
  JSR pr5                                          ; 9698: 20 D4 9E     ..
  LDA #&C3                                         ; 969B: A9 C3       ..
@@ -3870,7 +3870,7 @@ M32_1 = M32+1
  LDA #&96                                         ; 96DC: A9 96       ..
  JSR sub_C9645                                    ; 96DE: 20 45 96     E.
  JSR TT111                                        ; 96E1: 20 6B 9D     k.
- LDX L04A8                                        ; 96E4: AE A8 04    ...
+ LDX LANG                                         ; 96E4: AE A8 04    ...
  LDA L96C1,X                                      ; 96E7: BD C1 96    ...
  STA XC                                           ; 96EA: 85 32       .2
  LDA #&A3                                         ; 96EC: A9 A3       ..
@@ -4562,7 +4562,7 @@ M32_1 = M32+1
  STA Yx2M1                                        ; 9C07: 85 B3       ..
  LDA #&9C                                         ; 9C09: A9 9C       ..
  JSR sub_CBEB5                                    ; 9C0B: 20 B5 BE     ..
- LDX L04A8                                        ; 9C0E: AE A8 04    ...
+ LDX LANG                                         ; 9C0E: AE A8 04    ...
  LDA L9BFC,X                                      ; 9C11: BD FC 9B    ...
  STA XC                                           ; 9C14: 85 32       .2
  LDA #&BE                                         ; 9C16: A9 BE       ..
@@ -4728,7 +4728,7 @@ M32_1 = M32+1
  JSR TT146                                        ; 9D2F: 20 7A 96     z.
  JSR LD951                                        ; 9D32: 20 51 D9     Q.
 .C9D35
- LDA L049C                                        ; 9D35: AD 9C 04    ...
+ LDA QQ8_1                                        ; 9D35: AD 9C 04    ...
  BNE C9D51                                        ; 9D38: D0 17       ..
  LDA QQ8                                          ; 9D3A: AD 9B 04    ...
  BNE C9D46                                        ; 9D3D: D0 07       ..
@@ -4870,10 +4870,10 @@ M32_1 = M32+1
  LDA Q                                            ; 9E27: A5 97       ..
  ASL A                                            ; 9E29: 0A          .
  LDX #0                                           ; 9E2A: A2 00       ..
- STX L049C                                        ; 9E2C: 8E 9C 04    ...
- ROL L049C                                        ; 9E2F: 2E 9C 04    ...
+ STX QQ8_1                                        ; 9E2C: 8E 9C 04    ...
+ ROL QQ8_1                                        ; 9E2F: 2E 9C 04    ...
  ASL A                                            ; 9E32: 0A          .
- ROL L049C                                        ; 9E33: 2E 9C 04    ...
+ ROL QQ8_1                                        ; 9E33: 2E 9C 04    ...
  STA QQ8                                          ; 9E36: 8D 9B 04    ...
  JMP LEF35                                        ; 9E39: 4C 35 EF    L5.
 
@@ -4952,7 +4952,7 @@ M32_1 = M32+1
  BPL loop_C9EB1                                   ; 9EB7: 10 F8       ..
  LDX #0                                           ; 9EB9: A2 00       ..
  STX QQ8                                          ; 9EBB: 8E 9B 04    ...
- STX L049C                                        ; 9EBE: 8E 9C 04    ...
+ STX QQ8_1                                        ; 9EBE: 8E 9C 04    ...
  LDY #&16                                         ; 9EC1: A0 16       ..
  JSR NOISE                                        ; 9EC3: 20 F2 EB     ..
 ; ******************************************************************************
@@ -5135,7 +5135,7 @@ M32_1 = M32+1
  LDA #2                                           ; 9FF2: A9 02       ..
  STA YC                                           ; 9FF4: 85 3B       .;
  JSR TT163                                        ; 9FF6: 20 B3 9F     ..
- LDX L04A8                                        ; 9FF9: AE A8 04    ...
+ LDX LANG                                         ; 9FF9: AE A8 04    ...
  LDA L9FD9,X                                      ; 9FFC: BD D9 9F    ...
  STA YC                                           ; 9FFF: 85 3B       .;
  LDA #0                                           ; A001: A9 00       ..
@@ -5287,7 +5287,7 @@ M32_1 = M32+1
  LDX #2                                           ; A131: A2 02       ..
  STX L0037                                        ; A133: 86 37       .7
  CLC                                              ; A135: 18          .
- LDX L04A8                                        ; A136: AE A8 04    ...
+ LDX LANG                                         ; A136: AE A8 04    ...
  ADC L9FD9,X                                      ; A139: 7D D9 9F    }..
  STA YC                                           ; A13C: 85 3B       .;
  TYA                                              ; A13E: 98          .
@@ -5299,7 +5299,7 @@ M32_1 = M32+1
 .sub_CA147
  TAY                                              ; A147: A8          .
  CLC                                              ; A148: 18          .
- LDX L04A8                                        ; A149: AE A8 04    ...
+ LDX LANG                                         ; A149: AE A8 04    ...
  ADC L9FD9,X                                      ; A14C: 7D D9 9F    }..
  STA YC                                           ; A14F: 85 3B       .;
  TYA                                              ; A151: 98          .
@@ -5308,7 +5308,7 @@ M32_1 = M32+1
 .sub_CA155
  LDA #&80                                         ; A155: A9 80       ..
  STA QQ17                                         ; A157: 85 3C       .<
- LDX L04A8                                        ; A159: AE A8 04    ...
+ LDX LANG                                         ; A159: AE A8 04    ...
  LDA LA16D,X                                      ; A15C: BD 6D A1    .m.
  STA YC                                           ; A15F: 85 3B       .;
  LDA LA169,X                                      ; A161: BD 69 A1    .i.
@@ -5751,7 +5751,7 @@ M32_1 = M32+1
 .CA48D
  LDA #&B9                                         ; A48D: A9 B9       ..
  JSR sub_C9645                                    ; A48F: 20 45 96     E.
- LDX L04A8                                        ; A492: AE A8 04    ...
+ LDX LANG                                         ; A492: AE A8 04    ...
  LDA LA48A,X                                      ; A495: BD 8A A4    ...
  STA XC                                           ; A498: 85 32       .2
  LDA #&CF                                         ; A49A: A9 CF       ..
@@ -6067,7 +6067,7 @@ M32_1 = M32+1
 .loop_CA6C8
  JSR TT162                                        ; A6C8: 20 9C 9F     ..
  LDA XC                                           ; A6CB: A5 32       .2
- LDX L04A8                                        ; A6CD: AE A8 04    ...
+ LDX LANG                                         ; A6CD: AE A8 04    ...
  CMP LA6D8,X                                      ; A6D0: DD D8 A6    ...
  BNE loop_CA6C8                                   ; A6D3: D0 F3       ..
  PLA                                              ; A6D5: 68          h
@@ -6116,7 +6116,7 @@ M32_1 = M32+1
  LDA #7                                           ; A71D: A9 07       ..
  STA YC                                           ; A71F: 85 3B       .;
  STA K_3                                          ; A721: 85 80       ..
- LDX L04A8                                        ; A723: AE A8 04    ...
+ LDX LANG                                         ; A723: AE A8 04    ...
  LDA LA6F2,X                                      ; A726: BD F2 A6    ...
  STA K                                            ; A729: 85 7D       .}
  LDA #6                                           ; A72B: A9 06       ..
@@ -9585,14 +9585,14 @@ LAFB4 = sub_CAFB3+1
  BEQ CBFA1                                        ; BF9F: F0 00       ..
 .CBFA1
  JSR LCD62                                        ; BFA1: 20 62 CD     b.
- LDX L04A8                                        ; BFA4: AE A8 04    ...
+ LDX LANG                                         ; BFA4: AE A8 04    ...
  LDA W                                            ; BFA7: A5 9E       ..
  BEQ CBFBF                                        ; BFA9: F0 14       ..
  CMP #1                                           ; BFAB: C9 01       ..
  BNE CBFD8                                        ; BFAD: D0 29       .)
  LDA #0                                           ; BFAF: A9 00       ..
  STA YC                                           ; BFB1: 85 3B       .;
- LDX L04A8                                        ; BFB3: AE A8 04    ...
+ LDX LANG                                         ; BFB3: AE A8 04    ...
  LDA LC0DF,X                                      ; BFB6: BD DF C0    ...
  STA XC                                           ; BFB9: 85 32       .2
  LDA #&1E                                         ; BFBB: A9 1E       ..

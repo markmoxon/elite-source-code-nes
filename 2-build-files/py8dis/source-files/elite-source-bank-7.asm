@@ -347,13 +347,14 @@ QQ3        = &0494
 QQ4        = &0495
 QQ5        = &0496
 QQ8        = &049B
+QQ8_1      = &049C
 QQ9        = &049D
 QQ10       = &049E
 QQ18LO     = &04A4
 QQ18HI     = &04A5
 TOKENLO    = &04A6
 TOKENHI    = &04A7
-L04A8      = &04A8
+LANG       = &04A8
 L04AA      = &04AA
 L04AC      = &04AC
 L04AE      = &04AE
@@ -7197,7 +7198,7 @@ LDFFF = sub_CDFFE+1
  LSR L0475                                        ; F3FA: 4E 75 04    Nu.
  JSR sub_CED6B                                    ; F3FD: 20 6B ED     k.
  JSR sub_CEDAB                                    ; F400: 20 AB ED     ..
- LDA L04A8                                        ; F403: AD A8 04    ...
+ LDA LANG                                         ; F403: AD A8 04    ...
  STA Kpercent                                     ; F406: 8D 00 06    ...
  LDA #5                                           ; F409: A9 05       ..
  STA L0601                                        ; F40B: 8D 01 06    ...
