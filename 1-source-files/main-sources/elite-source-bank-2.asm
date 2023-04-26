@@ -282,10 +282,10 @@ QQ8_1             = &049C
 QQ9               = &049D
 QQ10              = &049E
 L049F             = &049F
-QQ18LO            = &04A4
-QQ18HI            = &04A5
-TOKENLO           = &04A6
-TOKENHI           = &04A7
+QQ18_LO            = &04A4
+QQ18_HI            = &04A5
+TKN1_LO           = &04A6
+TKN1_HI           = &04A7
 LANG              = &04A8
 L04B2             = &04B2
 L04B4             = &04B4
@@ -349,7 +349,7 @@ TIDY              = &EDEA
 PAS1              = &EF7A
 LL164             = &EFF7
 DETOK             = &F082
-DTS               = &F09D
+DTS_BANK7               = &F09D
 LF186             = &F186
 MVS5              = &F1A2
 HALL              = &F1BD
@@ -14910,219 +14910,505 @@ ENDMACRO
  EQUB 0, 0, 0, 0
  EQUB 0, 0, 0
 
+\ ******************************************************************************
+\
+\       Name: RUTOK_LO
+\       Type: Variable
+\   Category: Text
+\    Summary: Address lookup table for the RUTOK text token table in three
+\             different languages (low byte)
+\
+\ ******************************************************************************
+
 .RUTOK_LO
 
- EQUB LO(RUTOK)
- EQUB LO(RUTOK_DE)
- EQUB LO(RUTOK_FR)
- EQUB &72
+ EQUB LO(RUTOK)         \ English
+
+ EQUB LO(RUTOK_DE)      \ German
+
+ EQUB LO(RUTOK_FR)      \ French
+
+ EQUB &72               \ There is no fourth language, so this byte is ignored
+
+\ ******************************************************************************
+\
+\       Name: RUTOK_HI
+\       Type: Variable
+\   Category: Text
+\    Summary: Address lookup table for the RUTOK text token table in three
+\             different languages (high byte)
+\
+\ ******************************************************************************
 
 .RUTOK_HI
 
- EQUB HI(RUTOK)
- EQUB HI(RUTOK_DE)
- EQUB HI(RUTOK_FR)
- EQUB &AB
+ EQUB HI(RUTOK)         \ English
 
-; ******************************************************************************
+ EQUB HI(RUTOK_DE)      \ German
+
+ EQUB HI(RUTOK_FR)      \ French
+
+ EQUB &AB               \ There is no fourth language, so this byte is ignored
+
+\ ******************************************************************************
+\
+\       Name: SET_NAMETABLE_0
+\       Type: Macro
+\   Category: NES graphics
+\    Summary: Switch the base nametable address to nametable 0 (&2000) when
+\             conditions are met
+\
+\ ******************************************************************************
+
+MACRO SET_NAMETABLE_0
+
+ LDA L00E9              \ If bit 7 of L00E9 and bit 6 of PPUSTATUS are set, then
+ BPL skip               \ call LD06D to:
+ LDA PPUSTATUS          \
+ ASL A                  \   * Zero L00E9 to disable calls to NAMETABLE0 until
+ BPL skip               \     both conditions are met once again
+ JSR NAMETABLE0         \
+                        \   * Clear bits 0 and 4 of L00F5 and PPUCTRL, to set
+                        \     the base nametable address to &2000 (nametable 0)
+                        \     or &2800 (which is a mirror of &2000)
+                        \
+                        \   * Clear the C flag
+ 
+.skip
+
+ENDMACRO
+
+\ ******************************************************************************
+\
+\       Name: DETOK3
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Print an extended recursive token from the RUTOK token table
+\  Deep dive: Extended system descriptions
+\             Extended text tokens
+\
+\ ------------------------------------------------------------------------------
+\
+\ Arguments:
+\
+\   A                   The recursive token to be printed, in the range 0-255
+\
+\ Returns:
+\
+\   A                   A is preserved
+\
+\   Y                   Y is preserved
+\
+\   V(1 0)              V(1 0) is preserved
+\
+\ ******************************************************************************
+
 .DETOK3
- PHA                                              ; B0D6: 48          H
- TAX                                              ; B0D7: AA          .
- TYA                                              ; B0D8: 98          .
- PHA                                              ; B0D9: 48          H
- LDA V                                            ; B0DA: A5 63       .c
- PHA                                              ; B0DC: 48          H
- LDA V_1                                          ; B0DD: A5 64       .d
- PHA                                              ; B0DF: 48          H
- LDY LANG                                         ; B0E0: AC A8 04    ...
- LDA RUTOK_LO,Y                                   ; B0E3: B9 CE B0    ...
- STA V                                            ; B0E6: 85 63       .c
- LDA RUTOK_HI,Y                                   ; B0E8: B9 D2 B0    ...
- STA V_1                                          ; B0EB: 85 64       .d
- BNE CB111                                        ; B0ED: D0 22       ."
-; ******************************************************************************
+
+ PHA                    \ Store A on the stack, so we can retrieve it later
+
+ TAX                    \ Copy the token number from A into X
+
+ TYA                    \ Store Y on the stack
+ PHA
+
+ LDA V                  \ Store V(1 0) on the stack
+ PHA
+ LDA V+1
+ PHA
+
+ LDY LANG               \ Set Y to the chosen language
+
+ LDA RUTOK_LO,Y         \ Set V(1 0) to the address of the RUTOK table for ths
+ STA V                  \ chosen language
+ LDA RUTOK_HI,Y
+ STA V+1
+
+ BNE DTEN               \ Call DTEN to print token number X from the RUTOK
+                        \ table and restore the values of A, Y and V(1 0) from
+                        \ the stack, returning from the subroutine using a tail
+                        \ call (this BNE is effectively a JMP as A is never
+                        \ zero)
+
+\ ******************************************************************************
+\
+\       Name: DETOK_BANK2
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Print an extended recursive token from the TKN1 token table
+\  Deep dive: Extended text tokens
+\
+\ ------------------------------------------------------------------------------
+\
+\ Arguments:
+\
+\   A                   The recursive token to be printed, in the range 1-255
+\
+\ Returns:
+\
+\   A                   A is preserved
+\
+\   Y                   Y is preserved
+\
+\   V(1 0)              V(1 0) is preserved
+\
+\ Other entry points:
+\
+\   DTEN                Print recursive token number X from the token table
+\                       pointed to by (A V), used to print tokens from the RUTOK
+\                       table via calls to DETOK3
+\
+\ ******************************************************************************
+
 .DETOK_BANK2
- TAX                                              ; B0EF: AA          .
- LDA L00E9                                        ; B0F0: A5 E9       ..
- BPL CB0FD                                        ; B0F2: 10 09       ..
- LDA PPUSTATUS                                    ; B0F4: AD 02 20    ..
- ASL A                                            ; B0F7: 0A          .
- BPL CB0FD                                        ; B0F8: 10 03       ..
- JSR NAMETABLE0                                   ; B0FA: 20 6D D0     m.
-.CB0FD
- TXA                                              ; B0FD: 8A          .
- PHA                                              ; B0FE: 48          H
- TYA                                              ; B0FF: 98          .
- PHA                                              ; B100: 48          H
- LDA V                                            ; B101: A5 63       .c
- PHA                                              ; B103: 48          H
- LDA V_1                                          ; B104: A5 64       .d
- PHA                                              ; B106: 48          H
- LDA TOKENLO                                      ; B107: AD A6 04    ...
- STA V                                            ; B10A: 85 63       .c
- LDA TOKENHI                                      ; B10C: AD A7 04    ...
- STA V_1                                          ; B10F: 85 64       .d
-.CB111
- LDY #0                                           ; B111: A0 00       ..
-.CB113
- LDA L00E9                                        ; B113: A5 E9       ..
- BPL CB120                                        ; B115: 10 09       ..
- LDA PPUSTATUS                                    ; B117: AD 02 20    ..
- ASL A                                            ; B11A: 0A          .
- BPL CB120                                        ; B11B: 10 03       ..
- JSR NAMETABLE0                                   ; B11D: 20 6D D0     m.
-.CB120
- LDA (V),Y                                        ; B120: B1 63       .c
- EOR #&57 ; 'W'                                   ; B122: 49 57       IW
- BNE CB129                                        ; B124: D0 03       ..
- DEX                                              ; B126: CA          .
- BEQ CB130                                        ; B127: F0 07       ..
-.CB129
- INY                                              ; B129: C8          .
- BNE CB113                                        ; B12A: D0 E7       ..
- INC V_1                                          ; B12C: E6 64       .d
- BNE CB113                                        ; B12E: D0 E3       ..
-.CB130
- INY                                              ; B130: C8          .
- BNE CB135                                        ; B131: D0 02       ..
- INC V_1                                          ; B133: E6 64       .d
-.CB135
- LDA (V),Y                                        ; B135: B1 63       .c
- EOR #&57 ; 'W'                                   ; B137: 49 57       IW
- BEQ CB141                                        ; B139: F0 06       ..
- JSR DETOK2                                       ; B13B: 20 4B B1     K.
- JMP CB130                                        ; B13E: 4C 30 B1    L0.
 
-.CB141
- PLA                                              ; B141: 68          h
- STA V_1                                          ; B142: 85 64       .d
- PLA                                              ; B144: 68          h
- STA V                                            ; B145: 85 63       .c
- PLA                                              ; B147: 68          h
- TAY                                              ; B148: A8          .
- PLA                                              ; B149: 68          h
- RTS                                              ; B14A: 60          `
+ TAX                    \ Copy the token number from A into X
 
-; ******************************************************************************
+ SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+
+ TXA                    \ Copy the token number from X into A
+
+ PHA                    \ Store A on the stack, so we can retrieve it later
+
+ TYA                    \ Store Y on the stack
+ PHA
+
+ LDA V                  \ Store V(1 0) on the stack
+ PHA
+ LDA V+1
+ PHA
+
+ LDA TKN1_LO            \ Set V(1 0) to the address of the TKN1 table for ths
+ STA V                  \ chosen language
+ LDA TKN1_HI
+ STA V+1
+
+.DTEN
+
+ LDY #0                 \ First, we need to work our way through the table until
+                        \ we get to the token that we want to print. Tokens are
+                        \ delimited by #VE, and VE EOR VE = 0, so we work our
+                        \ way through the table in, counting #VE delimiters
+                        \ until we have passed X of them, at which point we jump
+                        \ down to DTL2 to do the actual printing. So first, we
+                        \ set a counter Y to point to the character offset as we
+                        \ scan through the table
+
+.DTL1
+
+ SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+
+ LDA (V),Y              \ Load the character at offset Y in the token table,
+                        \ which is the next character from the token table
+
+ EOR #VE                \ Tokens are stored in memory having been EOR'd with
+                        \ #VE, so we repeat the EOR to get the actual character
+                        \ in this token
+
+ BNE DT1                \ If the result is non-zero, then this is a character
+                        \ in a token rather than the delimiter (which is #VE),
+                        \ so jump to DT1
+
+ DEX                    \ We have just scanned the end of a token, so decrement
+                        \ X, which contains the token number we are looking for
+
+ BEQ DTL2               \ If X has now reached zero then we have found the token
+                        \ we are looking for, so jump down to DTL2 to print it
+
+.DT1
+
+ INY                    \ Otherwise this isn't the token we are looking for, so
+                        \ increment the character pointer
+
+ BNE DTL1               \ If Y hasn't just wrapped around to 0, loop back to
+                        \ DTL1 to process the next character
+
+ INC V+1                \ We have just crossed into a new page, so increment
+                        \ V+1 so that V points to the start of the new page
+
+ BNE DTL1               \ Jump back to DTL1 to process the next character (this
+                        \ BNE is effectively a JMP as V+1 won't reach zero
+                        \ before we reach the end of the token table)
+
+.DTL2
+
+ INY                    \ We just detected the delimiter byte before the token
+                        \ that we want to print, so increment the character
+                        \ pointer to point to the first character of the token,
+                        \ rather than the delimiter
+
+ BNE P%+4               \ If Y hasn't just wrapped around to 0, skip the next
+                        \ instruction
+
+ INC V+1                \ We have just crossed into a new page, so increment
+                        \ V+1 so that V points to the start of the new page
+
+ LDA (V),Y              \ Load the character at offset Y in the token table,
+                        \ which is the next character from the token we want to
+                        \ print
+
+ EOR #VE                \ Tokens are stored in memory having been EOR'd with
+                        \ #VE, so we repeat the EOR to get the actual character
+                        \ in this token
+
+ BEQ DTEX               \ If the result is zero, then this is the delimiter at
+                        \ the end of the token to print (which is #VE), so jump
+                        \ to DTEX to return from the subroutine, as we are done
+                        \ printing
+
+ JSR DETOK2             \ Otherwise call DETOK2 to print this part of the token
+
+ JMP DTL2               \ Jump back to DTL2 to process the next character
+
+.DTEX
+
+ PLA                    \ Restore V(1 0) from the stack, so it is preserved
+ STA V+1                \ through calls to this routine
+ PLA
+ STA V
+
+ PLA                    \ Restore Y from the stack, so it is preserved through
+ TAY                    \ calls to this routine
+
+ PLA                    \ Restore A from the stack, so it is preserved through
+                        \ calls to this routine
+
+ RTS                    \ Return from the subroutine
+
+\ ******************************************************************************
+\
+\       Name: DETOK2
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Print an extended text token (1-255)
+\  Deep dive: Extended text tokens
+\
+\ ------------------------------------------------------------------------------
+\
+\ Arguments:
+\
+\   A                   The token to be printed (1-255)
+\
+\ Returns:
+\
+\   A                   A is preserved
+\
+\   Y                   Y is preserved
+\
+\   V(1 0)              V(1 0) is preserved
+\
+\ Other entry points:
+\
+\   DTS                 Print a single letter in the correct case
+\
+\ ******************************************************************************
+
 .DETOK2
- CMP #&20 ; ' '                                   ; B14B: C9 20       .
- BCC DT3                                          ; B14D: 90 5A       .Z
- BIT DTW3                                         ; B14F: 2C F5 03    ,..
- BPL CB164                                        ; B152: 10 10       ..
- TAX                                              ; B154: AA          .
- TYA                                              ; B155: 98          .
- PHA                                              ; B156: 48          H
- LDA V                                            ; B157: A5 63       .c
- PHA                                              ; B159: 48          H
- LDA V_1                                          ; B15A: A5 64       .d
- PHA                                              ; B15C: 48          H
- TXA                                              ; B15D: 8A          .
- JSR TT27_BANK2                                   ; B15E: 20 4F B4     O.
- JMP CB1C4                                        ; B161: 4C C4 B1    L..
 
-.CB164
- CMP XX3m3                                        ; B164: C5 F9       ..
- BCC CB187                                        ; B166: 90 1F       ..
- CMP #&81                                         ; B168: C9 81       ..
- BCC CB1D0                                        ; B16A: 90 64       .d
- CMP #&D7                                         ; B16C: C9 D7       ..
- BCS CB173                                        ; B16E: B0 03       ..
- JMP DETOK_BANK2                                  ; B170: 4C EF B0    L..
+ CMP #32                \ If A < 32 then this is a jump token, so skip to DT3 to
+ BCC DT3                \ process it
 
-.CB173
- SBC #&D7                                         ; B173: E9 D7       ..
- ASL A                                            ; B175: 0A          .
- PHA                                              ; B176: 48          H
- TAX                                              ; B177: AA          .
- LDA TKN2,X                                       ; B178: BD 19 B3    ...
- JSR CB187                                        ; B17B: 20 87 B1     ..
- PLA                                              ; B17E: 68          h
- TAX                                              ; B17F: AA          .
- LDA TKN2_1,X                                     ; B180: BD 1A B3    ...
- CMP #&3F ; '?'                                   ; B183: C9 3F       .?
- BEQ CB1CC                                        ; B185: F0 45       .E
-.CB187
- BIT DTW1                                         ; B187: 2C F8 03    ,..
- BPL CB1A6                                        ; B18A: 10 1A       ..
- BIT DTW6                                         ; B18C: 2C F3 03    ,..
- BMI CB196                                        ; B18F: 30 05       0.
- BIT DTW2                                         ; B191: 2C F4 03    ,..
- BMI CB1A6                                        ; B194: 30 10       0.
-.CB196
+ BIT DTW3               \ If bit 7 of DTW3 is clear, then extended tokens are
+ BPL DT8                \ enabled, so jump to DT8 to process them
+
+                        \ If we get there then this is not a jump token and
+                        \ extended tokens are not enabled, so we can call the
+                        \ standard text token routine at TT27 to print the token
+
+ TAX                    \ Copy the token number from A into X
+
+ TYA                    \ Store Y on the stack
+ PHA
+
+ LDA V                  \ Store V(1 0) on the stack
+ PHA
+ LDA V+1
+ PHA
+
+ TXA                    \ Copy the token number from X back into A
+
+ JSR TT27_BANK2         \ Call TT27 to print the text token
+
+ JMP DT7                \ Jump to DT7 to restore V(1 0) and Y from the stack and
+                        \ return from the subroutine
+
+.DT8
+
+                        \ If we get here then this is not a jump token and
+                        \ extended tokens are enabled
+
+ CMP &00F9              \ ???
+ BCC DTS
+
+ CMP #129               \ If A < 129, so A is in the range 91-128, jump down to
+ BCC DT6                \ DT6 to print a randomised token from the MTIN table
+
+ CMP #215               \ If A < 215, so A is in the range 129-214, jump to
+ BCS P%+5               \ DETOK as this is a recursive token, returning from the
+ JMP DETOK_BANK2        \ subroutine using a tail call
+
+                        \ If we get here then A >= 215, so this is a two-letter
+                        \ token from the extended TKN2/QQ16 table
+
+ SBC #215               \ Subtract 215 to get a token number in the range 0-12
+                        \ (the C flag is set as we passed through the BCC above,
+                        \ so this subtraction is correct)
+
+ ASL A                  \ Set A = A * 2, so it can be used as a pointer into the
+                        \ two-letter token tables at TKN2 and QQ16
+
+ PHA                    \ Store A on the stack, so we can restore it for the
+                        \ second letter below
+
+ TAX                    \ Fetch the first letter of the two-letter token from
+ LDA TKN2,X             \ TKN2, which is at TKN2 + X
+
+ JSR DTS                \ Call DTS to print it
+
+ PLA                    \ Restore A from the stack and transfer it into X
+ TAX
+
+ LDA TKN2+1,X           \ Fetch the second letter of the two-letter token from
+                        \ TKN2, which is at TKN2 + X + 1, and fall through into
+                        \ DTS to print it
+
+ CMP #&3F               \ ???
+ BEQ DTM-1
+
+.DTS
+
+ BIT DTW1               \ ???
+ BPL DT5
+
+ BIT DTW6               \ If bit 7 of DTW6 is set, then lower case has been
+ BMI DT10               \ enabled by jump token 13, {lower case}, so jump to
+                        \ DT10 to apply the lower case and single cap masks
+
+ BIT DTW2               \ If bit 7 of DTW2 is set, then we are not currently
+ BMI DT5                \ printing a word, so jump to DT5 so we skip the setting
+                        \ of lower case in Sentence Case (which we only want to
+                        \ do when we are already printing a word)
+
+.DT10
+
  BIT DTW8                                         ; B196: 2C F9 03    ,..
- BPL CB1A6                                        ; B199: 10 0B       ..
+ BPL DT5                                        ; B199: 10 0B       ..
  STX SC                                           ; B19B: 86 07       ..
  TAX                                              ; B19D: AA          .
- LDA LB8B4,X                                      ; B19E: BD B4 B8    ...
+ LDA &B8B4,X                                      ; B19E: BD B4 B8    ...
  LDX SC                                           ; B1A1: A6 07       ..
  AND DTW8                                         ; B1A3: 2D F9 03    -..
-.CB1A6
- JMP DASC_BANK2                                   ; B1A6: 4C F5 B4    L..
+
+.DT5
+
+.DT9
+
+ JMP DASC_BANK2         \ Jump to DASC to print the ASCII character in A,
+                        \ returning from the routine using a tail call
 
 .DT3
- TAX                                              ; B1A9: AA          .
- TYA                                              ; B1AA: 98          .
- PHA                                              ; B1AB: 48          H
- LDA V                                            ; B1AC: A5 63       .c
- PHA                                              ; B1AE: 48          H
- LDA V_1                                          ; B1AF: A5 64       .d
- PHA                                              ; B1B1: 48          H
- TXA                                              ; B1B2: 8A          .
- ASL A                                            ; B1B3: 0A          .
- TAX                                              ; B1B4: AA          .
- LDA JMTBm2,X                                     ; B1B5: BD 04 B2    ...
- STA V                                            ; B1B8: 85 63       .c
- LDA JMTBm1,X                                     ; B1BA: BD 05 B2    ...
- STA V_1                                          ; B1BD: 85 64       .d
- TXA                                              ; B1BF: 8A          .
- LSR A                                            ; B1C0: 4A          J
- JSR sub_CB1CD                                    ; B1C1: 20 CD B1     ..
-.CB1C4
- PLA                                              ; B1C4: 68          h
- STA V_1                                          ; B1C5: 85 64       .d
- PLA                                              ; B1C7: 68          h
- STA V                                            ; B1C8: 85 63       .c
- PLA                                              ; B1CA: 68          h
- TAY                                              ; B1CB: A8          .
-.CB1CC
- RTS                                              ; B1CC: 60          `
 
-.sub_CB1CD
- JMP (V)                                          ; B1CD: 6C 63 00    lc.
+                        \ If we get here then the token number in A is in the
+                        \ range 1 to 32, so this is a jump token that should
+                        \ call the corresponding address in the jump table at
+                        \ JMTB
 
-.CB1D0
- STA SC                                           ; B1D0: 85 07       ..
- LDA L00E9                                        ; B1D2: A5 E9       ..
- BPL CB1DF                                        ; B1D4: 10 09       ..
- LDA PPUSTATUS                                    ; B1D6: AD 02 20    ..
- ASL A                                            ; B1D9: 0A          .
- BPL CB1DF                                        ; B1DA: 10 03       ..
- JSR NAMETABLE0                                   ; B1DC: 20 6D D0     m.
-.CB1DF
- TYA                                              ; B1DF: 98          .
- PHA                                              ; B1E0: 48          H
- LDA V                                            ; B1E1: A5 63       .c
- PHA                                              ; B1E3: 48          H
- LDA V_1                                          ; B1E4: A5 64       .d
- PHA                                              ; B1E6: 48          H
- JSR DORND                                        ; B1E7: 20 AD F4     ..
- TAX                                              ; B1EA: AA          .
-.CB1EB
- LDA #0                                           ; B1EB: A9 00       ..
- CPX #&33 ; '3'                                   ; B1ED: E0 33       .3
- ADC #0                                           ; B1EF: 69 00       i.
- CPX #&66 ; 'f'                                   ; B1F1: E0 66       .f
- ADC #0                                           ; B1F3: 69 00       i.
- CPX #&99                                         ; B1F5: E0 99       ..
- ADC #0                                           ; B1F7: 69 00       i.
- CPX #&CC                                         ; B1F9: E0 CC       ..
- LDX SC                                           ; B1FB: A6 07       ..
- ADC CB1EB,X                                      ; B1FD: 7D EB B1    }..
- JSR DETOK_BANK2                                  ; B200: 20 EF B0     ..
-.sub_CB203
-JMTBm2 = sub_CB203+1
-JMTBm1 = sub_CB203+2
- JMP CB1C4                                        ; B203: 4C C4 B1    L..
+ TAX                    \ Copy the token number from A into X
+
+ TYA                    \ Store Y on the stack
+ PHA
+
+ LDA V                  \ Store V(1 0) on the stack
+ PHA
+ LDA V+1
+ PHA
+
+ TXA                    \ Copy the token number from X back into A
+
+ ASL A                  \ Set A = A * 2, so it can be used as a pointer into the
+                        \ jump table at JMTB, though because the original range
+                        \ of values is 1-32, so the doubled range is 2-64, we
+                        \ need to take the offset into the jump table from
+                        \ JMTB-2 rather than JMTB
+
+ TAX                    \ Copy the doubled token number from A into X
+
+ LDA JMTB-2,X           \ Set V(1 0) to the X-th address from the table at
+ STA V                  \ JTM-2, so the JMP (V) instruction at label DTM below
+ LDA JMTB-1,X           \ calls the subroutine at the relevant address from the
+ STA V+1                \ JMTB table
+
+ TXA                    \ Copy the doubled token number from X back into A
+
+ LSR A                  \ Halve A to get the original token number
+
+ JSR DTM                \ Call DTM to call the relevant JMTB subroutine in
+                        \ V(1 0)
+
+.DT7
+
+ PLA                    \ Restore V(1 0) from the stack, so it is preserved
+ STA V+1                \ through calls to this routine
+ PLA
+ STA V
+
+ PLA                    \ Restore Y from the stack, so it is preserved through
+ TAY                    \ calls to this routine
+
+ RTS                    \ Return from the subroutine
+
+.DTM
+
+ JMP (V)                \ Call the relevant JMTB subroutine, as V(1 0) points
+                        \ to the relevant address
+
+.DT6
+
+                        \ If we get here then the token number in A is in the
+                        \ range 91-128, which means we print a randomly picked
+                        \ token from the token range given in the corresponding
+                        \ entry in the MTIN table
+
+ STA SC                 \ Store the token number in SC
+
+ SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+
+ TYA                    \ Store Y on the stack
+ PHA
+
+ LDA V                  \ Store V(1 0) on the stack
+ PHA
+ LDA V+1
+ PHA
+
+ JSR DORND              \ Set X to a random number
+ TAX
+
+ LDA #0                 \ Set A to 0, so we can build a random number from 0 to
+                        \ 4 in A plus the C flag, with each number being equally
+                        \ likely
+
+ CPX #51                \ Add 1 to A if X >= 51
+ ADC #0
+
+ CPX #102               \ Add 1 to A if X >= 102
+ ADC #0
+
+ CPX #153               \ Add 1 to A if X >= 153
+ ADC #0
+
+ CPX #204               \ Set the C flag if X >= 204
+
+ LDX SC                 \ Fetch the token number from SC into X, so X is now in
+                        \ the range 91-128
+
+ ADC MTIN-91,X          \ Set A = MTIN-91 + token number (91-128) + random (0-4)
+                        \       = MTIN + token number (0-37) + random (0-4)
+
+ JSR DETOK_BANK2        \ Call DETOK to print the extended recursive token in A
+
+ JMP DT7                \ Jump to DT7 to restore V(1 0) and Y from the stack and
+                        \ return from the subroutine using a tail call
 
 .JMTB
  EQUB &79, &B2, &7C, &B2, &4F, &B4, &4F, &B4, &A2 ; B206: 79 B2 7C... y.|
@@ -15244,11 +15530,11 @@ JMTBm1 = sub_CB203+2
  AND #&3E ; '>'                                   ; B2DF: 29 3E       )>
  TAX                                              ; B2E1: AA          .
  LDA TKN2_2,X                                     ; B2E2: BD 1B B3    ...
- JSR DTS                                          ; B2E5: 20 9D F0     ..
+ JSR DTS_BANK7                                          ; B2E5: 20 9D F0     ..
  LDA TKN2_3,X                                     ; B2E8: BD 1C B3    ...
  CMP #&3F ; '?'                                   ; B2EB: C9 3F       .?
  BEQ CB2F2                                        ; B2ED: F0 03       ..
- JSR DTS                                          ; B2EF: 20 9D F0     ..
+ JSR DTS_BANK7                                          ; B2EF: 20 9D F0     ..
 .CB2F2
  DEY                                              ; B2F2: 88          .
  BPL loop_CB2DC                                   ; B2F3: 10 E7       ..
@@ -15511,9 +15797,9 @@ JMTBm1 = sub_CB203+2
 ; ******************************************************************************
 .ex
  TAX                                              ; B4AA: AA          .
- LDA QQ18LO                                       ; B4AB: AD A4 04    ...
+ LDA QQ18_LO                                       ; B4AB: AD A4 04    ...
  STA V                                            ; B4AE: 85 63       .c
- LDA QQ18HI                                       ; B4B0: AD A5 04    ...
+ LDA QQ18_HI                                       ; B4B0: AD A5 04    ...
  STA V_1                                          ; B4B3: 85 64       .d
  LDY #0                                           ; B4B5: A0 00       ..
  TXA                                              ; B4B7: 8A          .

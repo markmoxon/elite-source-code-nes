@@ -245,10 +245,10 @@ QQ8_1             = &049C
 QQ9               = &049D
 QQ10              = &049E
 L049F             = &049F
-QQ18LO            = &04A4
-QQ18HI            = &04A5
-TOKENLO           = &04A6
-TOKENHI           = &04A7
+QQ18_LO           = &04A4
+QQ18_HI           = &04A5
+TKN1_LO           = &04A6
+TKN1_HI           = &04A7
 LANG              = &04A8
 L04B2             = &04B2
 L04B4             = &04B4
@@ -1817,9 +1817,9 @@ NORM              = &FAF8
  PHA                                              ; B103: 48          H
  LDA V_1                                          ; B104: A5 64       .d
  PHA                                              ; B106: 48          H
- LDA TOKENLO                                      ; B107: AD A6 04    ...
+ LDA TKN1_LO                                      ; B107: AD A6 04    ...
  STA V                                            ; B10A: 85 63       .c
- LDA TOKENHI                                      ; B10C: AD A7 04    ...
+ LDA TKN1_HI                                      ; B10C: AD A7 04    ...
  STA V_1                                          ; B10F: 85 64       .d
 .CB111
  LDY #0                                           ; B111: A0 00       ..
@@ -2350,9 +2350,9 @@ JMTBm1 = sub_CB203+2
 ; ******************************************************************************
 .ex
  TAX                                              ; B4AA: AA          .
- LDA QQ18LO                                       ; B4AB: AD A4 04    ...
+ LDA QQ18_LO                                      ; B4AB: AD A4 04    ...
  STA V                                            ; B4AE: 85 63       .c
- LDA QQ18HI                                       ; B4B0: AD A5 04    ...
+ LDA QQ18_HI                                      ; B4B0: AD A5 04    ...
  STA V_1                                          ; B4B3: 85 64       .d
  LDY #0                                           ; B4B5: A0 00       ..
  TXA                                              ; B4B7: 8A          .
