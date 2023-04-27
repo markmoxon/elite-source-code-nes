@@ -335,17 +335,17 @@ EXNO3             = &EBAD
 BOOP              = &EBE5
 NOISE             = &EBF2
 TIDY              = &EDEA
-PAS1              = &EF7A
+PAS1_BANK7        = &EF7A
 LL164             = &EFF7
-DETOK             = &F082
+DETOK_BANK7       = &F082
 DTS               = &F09D
-MVS5              = &F1A2
+MVS5_BANK7        = &F1A2
 HALL              = &F1BD
-DASC              = &F1E6
-TT27              = &F201
+DASC_BANK7        = &F1E6
+TT27_BANK7        = &F201
 TT27_control_codes = &F237
 TT66              = &F26E
-SCAN              = &F2A8
+SCAN_BANK7        = &F2A8
 LF2CE             = &F2CE
 CLYNS             = &F2DE
 Ze                = &F42E
@@ -5265,13 +5265,13 @@ LB5CF = sub_CB5CE+1
 .loop_CB7F8
  LDX #&15                                         ; B7F8: A2 15       ..
  LDY #9                                           ; B7FA: A0 09       ..
- JSR MVS5                                         ; B7FC: 20 A2 F1     ..
+ JSR MVS5_BANK7                                   ; B7FC: 20 A2 F1     ..
  LDX #&17                                         ; B7FF: A2 17       ..
  LDY #&0B                                         ; B801: A0 0B       ..
- JSR MVS5                                         ; B803: 20 A2 F1     ..
+ JSR MVS5_BANK7                                   ; B803: 20 A2 F1     ..
  LDX #&19                                         ; B806: A2 19       ..
  LDY #&0D                                         ; B808: A0 0D       ..
- JSR MVS5                                         ; B80A: 20 A2 F1     ..
+ JSR MVS5_BANK7                                   ; B80A: 20 A2 F1     ..
  DEC XSAV                                         ; B80D: C6 9B       ..
  BNE loop_CB7F8                                   ; B80F: D0 E7       ..
  LDY X2                                           ; B811: A4 73       .s

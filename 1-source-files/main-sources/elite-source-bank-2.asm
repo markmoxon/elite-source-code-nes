@@ -348,16 +348,16 @@ LEC7D             = &EC7D
 TIDY              = &EDEA
 PAS1              = &EF7A
 LL164             = &EFF7
-DETOK             = &F082
-DTS_BANK7               = &F09D
+DETOK_BANK7       = &F082
+DTS_BANK7         = &F09D
 LF186             = &F186
-MVS5              = &F1A2
+MVS5_BANK7        = &F1A2
 HALL              = &F1BD
-DASC              = &F1E6
-TT27              = &F201
+DASC_BANK7        = &F1E6
+TT27_BANK7        = &F201
 TT27_control_codes = &F237
 TT66              = &F26E
-SCAN              = &F2A8
+SCAN_BANK7        = &F2A8
 LF2BD             = &F2BD
 CLYNS             = &F2DE
 Ze                = &F42E
@@ -15032,7 +15032,7 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: DETOK_BANK2
+\       Name: DETOK
 \       Type: Subroutine
 \   Category: Text
 \    Summary: Print an extended recursive token from the TKN1 token table
@@ -15060,7 +15060,7 @@ ENDMACRO
 \
 \ ******************************************************************************
 
-.DETOK_BANK2
+.DETOK
 
  TAX                    \ Copy the token number from A into X
 
@@ -15227,7 +15227,7 @@ ENDMACRO
 
  TXA                    \ Copy the token number from X back into A
 
- JSR TT27_BANK2         \ Call TT27 to print the text token
+ JSR TT27               \ Call TT27 to print the text token
 
  JMP DT7                \ Jump to DT7 to restore V(1 0) and Y from the stack and
                         \ return from the subroutine
@@ -15245,7 +15245,7 @@ ENDMACRO
 
  CMP #215               \ If A < 215, so A is in the range 129-214, jump to
  BCS P%+5               \ DETOK as this is a recursive token, returning from the
- JMP DETOK_BANK2        \ subroutine using a tail call
+ JMP DETOK              \ subroutine using a tail call
 
                         \ If we get here then A >= 215, so this is a two-letter
                         \ token from the extended TKN2/QQ16 table
@@ -15303,7 +15303,7 @@ ENDMACRO
 
 .DT9
 
- JMP DASC_BANK2         \ Jump to DASC to print the ASCII character in A,
+ JMP DASC               \ Jump to DASC to print the ASCII character in A,
                         \ returning from the routine using a tail call
 
 .DT3
@@ -15405,7 +15405,7 @@ ENDMACRO
  ADC MTIN-91,X          \ Set A = MTIN-91 + token number (91-128) + random (0-4)
                         \       = MTIN + token number (0-37) + random (0-4)
 
- JSR DETOK_BANK2        \ Call DETOK to print the extended recursive token in A
+ JSR DETOK              \ Call DETOK to print the extended recursive token in A
 
  JMP DT7                \ Jump to DT7 to restore V(1 0) and Y from the stack and
                         \ return from the subroutine using a tail call
@@ -15438,7 +15438,7 @@ ENDMACRO
 .CB272
  CLC                                              ; B272: 18          .
  ADC GCNT                                         ; B273: 6D A7 03    m..
- JMP DETOK                                        ; B276: 4C 82 F0    L..
+ JMP DETOK_BANK7                                        ; B276: 4C 82 F0    L..
 
 ; ******************************************************************************
 .MT1
@@ -15509,7 +15509,7 @@ ENDMACRO
  AND #&BF                                         ; B2B7: 29 BF       ).
  STA QQ17                                         ; B2B9: 85 3C       .<
  LDA #3                                           ; B2BB: A9 03       ..
- JSR TT27_BANK2                                   ; B2BD: 20 4F B4     O.
+ JSR TT27                                   ; B2BD: 20 4F B4     O.
  LDX DTW5                                         ; B2C0: AE F7 03    ...
  LDA BUFm1,X                                      ; B2C3: BD 06 05    ...
  JSR VOWEL                                        ; B2C6: 20 01 B3     ..
@@ -15517,7 +15517,7 @@ ENDMACRO
  DEC DTW5                                         ; B2CB: CE F7 03    ...
 .CB2CE
  LDA #&99                                         ; B2CE: A9 99       ..
- JMP DETOK                                        ; B2D0: 4C 82 F0    L..
+ JMP DETOK_BANK7                                        ; B2D0: 4C 82 F0    L..
 
 ; ******************************************************************************
 .MT18
@@ -15543,7 +15543,7 @@ ENDMACRO
 ; ******************************************************************************
 .MT26
  LDA #&20 ; ' '                                   ; B2F6: A9 20       .
- JSR DASC_BANK2                                   ; B2F8: 20 F5 B4     ..
+ JSR DASC                                   ; B2F8: 20 F5 B4     ..
 ; ******************************************************************************
 .MT19
  LDA #0                                           ; B2FB: A9 00       ..
@@ -15584,7 +15584,7 @@ ENDMACRO
 ; ******************************************************************************
 .BRIS
  LDA #&D8                                         ; B373: A9 D8       ..
- JSR DETOK_BANK2                                  ; B375: 20 EF B0     ..
+ JSR DETOK                                        ; B375: 20 EF B0     ..
  JSR LF2BD                                        ; B378: 20 BD F2     ..
  LDY #&64 ; 'd'                                   ; B37B: A0 64       .d
  JMP DELAY                                        ; B37D: 4C A2 EB    L..
@@ -15727,13 +15727,13 @@ ENDMACRO
  BPL loop_CB440                                   ; B445: 10 F9       ..
  LDA #5                                           ; B447: A9 05       ..
 .CB449
- JMP DETOK_BANK2                                  ; B449: 4C EF B0    L..
+ JMP DETOK                                  ; B449: 4C EF B0    L..
 
 .loop_CB44C
  JMP TT27_control_codes                           ; B44C: 4C 37 F2    L7.
 
 ; ******************************************************************************
-.TT27_BANK2
+.TT27
  PHA                                              ; B44F: 48          H
  LDA L00E9                                        ; B450: A5 E9       ..
  BPL CB45D                                        ; B452: 10 09       ..
@@ -15763,12 +15763,12 @@ ENDMACRO
  TAX                                              ; B47B: AA          .
  LDA LB8B4,X                                      ; B47C: BD B4 B8    ...
 .CB47F
- JMP DASC_BANK2                                   ; B47F: 4C F5 B4    L..
+ JMP DASC                                   ; B47F: 4C F5 B4    L..
 
 .CB482
  BIT QQ17                                         ; B482: 24 3C       $<
  BVS CB48D                                        ; B484: 70 07       p.
- JMP DASC_BANK2                                   ; B486: 4C F5 B4    L..
+ JMP DASC                                   ; B486: 4C F5 B4    L..
 
 .qw
  ADC #&72 ; 'r'                                   ; B489: 69 72       ir
@@ -15786,10 +15786,10 @@ ENDMACRO
  ASL A                                            ; B498: 0A          .
  TAY                                              ; B499: A8          .
  LDA QQ16,Y                                       ; B49A: B9 33 B3    .3.
- JSR TT27_BANK2                                   ; B49D: 20 4F B4     O.
+ JSR TT27                                   ; B49D: 20 4F B4     O.
  LDA QQ16_1,Y                                     ; B4A0: B9 34 B3    .4.
  CMP #&3F ; '?'                                   ; B4A3: C9 3F       .?
- BNE TT27_BANK2                                   ; B4A5: D0 A8       ..
+ BNE TT27                                   ; B4A5: D0 A8       ..
  RTS                                              ; B4A7: 60          `
 
 .CB4A8
@@ -15832,7 +15832,7 @@ ENDMACRO
  PHA                                              ; B4DE: 48          H
  LDA (V),Y                                        ; B4DF: B1 63       .c
  EOR #&3E ; '>'                                   ; B4E1: 49 3E       I>
- JSR TT27_BANK2                                   ; B4E3: 20 4F B4     O.
+ JSR TT27                                   ; B4E3: 20 4F B4     O.
  PLA                                              ; B4E6: 68          h
  STA V_1                                          ; B4E7: 85 64       .d
  PLA                                              ; B4E9: 68          h
@@ -15846,7 +15846,7 @@ ENDMACRO
  RTS                                              ; B4F4: 60          `
 
 ; ******************************************************************************
-.DASC_BANK2
+.DASC
  STA SC_1                                         ; B4F5: 85 08       ..
  LDA L00E9                                        ; B4F7: A5 E9       ..
  BPL CB504                                        ; B4F9: 10 09       ..

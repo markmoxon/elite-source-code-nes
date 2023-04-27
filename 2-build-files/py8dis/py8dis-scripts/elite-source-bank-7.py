@@ -182,14 +182,14 @@ label(0x81B6, "slvy2")
 label(0x9620, "tnpr")
 label(0xB1CA, "MAS4")
 
-label(0x8A14, "MVS5_BANK0")
-label(0xA8D9, "TT27_BANK0")
-label(0xB8F7, "PAS1_BANK0")
+label(0x8A14, "MVS5")
+label(0xA8D9, "TT27")
+label(0xB8F7, "PAS1")
 
-label(0xB738, "HALL1_BANK1")
-label(0xB975, "F2A8_BANK1")
+label(0xB738, "HALL1")
+label(0xB975, "SCAN")
 
-label(0xB0EF, "DETOK_BANK2")
+label(0xB0EF, "DETOK")
 
 
 subroutine(0xC007, "Spercent")
