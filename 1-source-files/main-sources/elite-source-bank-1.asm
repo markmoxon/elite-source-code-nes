@@ -199,7 +199,13 @@ NORM                = &FAF8
                         \ clashes with columns 0 and 32, text is only shown
                         \ in columns 1-31
 
- SKIP 8
+ SKIP 4
+
+.L0037
+
+ SKIP 1
+
+ SKIP 3
 
 .YC
 
@@ -546,7 +552,13 @@ SUNX = &003E
                         \ The sign bit is also stored in ALP2, while the
                         \ opposite sign is stored in ALP2+1
 
- SKIP 1
+.QQ12
+
+ SKIP 1                 \ Our "docked" status
+                        \
+                        \   * 0 = we are not docked
+                        \
+                        \   * &FF = we are docked
 
 .TGT
 
@@ -638,7 +650,11 @@ SUNX = &003E
  SKIP 1                 \ This is used by the STARS2 routine for storing the
                         \ stardust particle's delta_x value
 
- SKIP 2
+ SKIP 1
+
+.L00B8
+
+ SKIP 1
 
 .L00B9
 
@@ -652,6 +668,12 @@ SUNX = &003E
 
  SKIP 1
 
+ ORG &CC
+
+.L00CC
+
+ SKIP 1
+
  ORG &D2
 
 .L00D2
@@ -661,6 +683,10 @@ SUNX = &003E
  ORG &D8
 
 .L00D8
+
+ SKIP 1
+
+.L00D9
 
  SKIP 1
 

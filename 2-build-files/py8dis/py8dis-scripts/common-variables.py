@@ -325,6 +325,8 @@ subroutine(0xEF7A, "PAS1_BANK7")
 subroutine(0xEFF7, "LL164")
 subroutine(0xF082, "DETOK_BANK7")
 subroutine(0xF09D, "DTS")
+subroutine(0xEC7D, "NAMETABLE0_BANK7")	# BANK7 version of SET_NAMETABLE_0
+subroutine(0xF186, "F186_BANK7")
 subroutine(0xF1A2, "MVS5_BANK7")
 subroutine(0xF1BD, "HALL")
 subroutine(0xF1E6, "DASC_BANK7")

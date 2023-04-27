@@ -497,7 +497,7 @@ BOOP              = &EBE5
 LEBE9             = &EBE9
 LEBED             = &EBED
 NOISE             = &EBF2
-LEC7D             = &EC7D
+NAMETABLE0_BANK7  = &EC7D
 LEC8D             = &EC8D
 LECA0             = &ECA0
 LECAE             = &ECAE
@@ -547,6 +547,7 @@ LF12B             = &F12B
 LF139             = &F139
 LF13F             = &F13F
 LF171             = &F171
+F186_BANK7        = &F186
 LF194             = &F194
 MVS5_BANK7        = &F1A2
 HALL              = &F1BD
@@ -1534,7 +1535,7 @@ NORM              = &FAF8
  DEC L0389                                        ; 869D: CE 89 03    ...
  JSR ECBLB2                                       ; 86A0: 20 96 E5     ..
 .C86A3
- JSR LEC7D                                        ; 86A3: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; 86A3: 20 7D EC     }.
  LDA #0                                           ; 86A6: A9 00       ..
  STA L0400                                        ; 86A8: 8D 00 04    ...
  STA DELT4                                        ; 86AB: 85 94       ..
@@ -1594,7 +1595,7 @@ NORM              = &FAF8
  JSR sub_C834A                                    ; 8709: 20 4A 83     J.
  LDA W                                            ; 870C: A5 9E       ..
  BNE C874C                                        ; 870E: D0 3C       .<
- JSR LEC7D                                        ; 8710: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; 8710: 20 7D EC     }.
  LDA L00C0                                        ; 8713: A5 C0       ..
  BNE C872A                                        ; 8715: D0 13       ..
  LDA L046D                                        ; 8717: AD 6D 04    .m.
@@ -1932,7 +1933,7 @@ NORM              = &FAF8
  STA L00D8                                        ; 8989: 85 D8       ..
  LDA #&25 ; '%'                                   ; 898B: A9 25       .%
  STA L00D2                                        ; 898D: 85 D2       ..
- JSR LEC7D                                        ; 898F: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; 898F: 20 7D EC     }.
  JSR LCD6F                                        ; 8992: 20 6F CD     o.
  JSR LCD34                                        ; 8995: 20 34 CD     4.
  LDA #&C4                                         ; 8998: A9 C4       ..
@@ -3335,7 +3336,7 @@ M32_1 = M32+1
  PLA                                              ; 92F8: 68          h
  STA XX19                                         ; 92F9: 85 61       .a
  PHP                                              ; 92FB: 08          .
- JSR LEC7D                                        ; 92FC: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; 92FC: 20 7D EC     }.
  PLP                                              ; 92FF: 28          (
  LDX #&25 ; '%'                                   ; 9300: A2 25       .%
 .loop_C9302
@@ -4999,7 +5000,7 @@ M32_1 = M32+1
  ASL A                                            ; 9EFA: 0A          .
  ASL A                                            ; 9EFB: 0A          .
  STA QQ19                                         ; 9EFC: 8D 4D 04    .M.
- JSR LEC7D                                        ; 9EFF: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; 9EFF: 20 7D EC     }.
  LDA MJ                                           ; 9F02: AD 8A 03    ...
  BNE loop_C9EF4                                   ; 9F05: D0 ED       ..
  LDA #1                                           ; 9F07: A9 01       ..
@@ -5141,7 +5142,7 @@ M32_1 = M32+1
  LDA #0                                           ; A001: A9 00       ..
  STA QQ29                                         ; A003: 8D 8A 04    ...
 .loop_CA006
- JSR LEC7D                                        ; A006: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; A006: 20 7D EC     }.
  JSR TT151                                        ; A009: 20 F6 9E     ..
  INC YC                                           ; A00C: E6 3B       .;
  INC QQ29                                         ; A00E: EE 8A 04    ...
@@ -5165,7 +5166,7 @@ M32_1 = M32+1
  JSR sub_CA155                                    ; A030: 20 55 A1     U.
  JSR sub_CA01C                                    ; A033: 20 1C A0     ..
 .CA036
- JSR LEC7D                                        ; A036: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; A036: 20 7D EC     }.
  LDA L04B4                                        ; A039: AD B4 04    ...
  BMI CA06E                                        ; A03C: 30 30       00
  LDA L04AC                                        ; A03E: AD AC 04    ...
@@ -5652,7 +5653,7 @@ M32_1 = M32+1
 .sub_CA3D3
  LDX XX13                                         ; A3D3: A6 A1       ..
 .sub_CA3D5
- JSR LEC7D                                        ; A3D5: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; A3D5: 20 7D EC     }.
  STX XX13                                         ; A3D8: 86 A1       ..
  TXA                                              ; A3DA: 8A          .
  CLC                                              ; A3DB: 18          .
@@ -6095,7 +6096,7 @@ M32_1 = M32+1
  EQUB &0A, &0A, &0B, &0A                          ; A6F2: 0A 0A 0B... ...
 
 .CA6F6
- JSR LEC7D                                        ; A6F6: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; A6F6: 20 7D EC     }.
  LDA L04BA                                        ; A6F9: AD BA 04    ...
  ORA L04BB                                        ; A6FC: 0D BB 04    ...
  ORA L04B2                                        ; A6FF: 0D B2 04    ...
@@ -6125,7 +6126,7 @@ M32_1 = M32+1
  JSR C8980                                        ; A732: 20 80 89     ..
  LDY #0                                           ; A735: A0 00       ..
 .CA737
- JSR LEC7D                                        ; A737: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; A737: 20 7D EC     }.
  LDA L04AC                                        ; A73A: AD AC 04    ...
  BPL CA74A                                        ; A73D: 10 0B       ..
  JSR sub_CA6A8                                    ; A73F: 20 A8 A6     ..
@@ -6857,7 +6858,7 @@ M32_1 = M32+1
  STA (SC),Y                                       ; AC15: 91 07       ..
  BEQ CABD7                                        ; AC17: F0 BE       ..
 .sub_CAC19
- JSR LEC7D                                        ; AC19: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; AC19: 20 7D EC     }.
  LDY #&25 ; '%'                                   ; AC1C: A0 25       .%
 .loop_CAC1E
  LDA (XX19),Y                                     ; AC1E: B1 61       .a
@@ -7897,7 +7898,7 @@ LAFB4 = sub_CAFB3+1
  JMP CB073                                        ; B367: 4C 73 B0    Ls.
 
 .sub_CB36A
- JSR LEC7D                                        ; B36A: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; B36A: 20 7D EC     }.
  JSR LF03D                                        ; B36D: 20 3D F0     =.
  JSR LED6B                                        ; B370: 20 6B ED     k.
  JSR ping                                         ; B373: 20 16 95     ..
@@ -7939,7 +7940,7 @@ LAFB4 = sub_CAFB3+1
  STX TYPE                                         ; B3BF: 86 A3       ..
  JSR sub_CAD6B                                    ; B3C1: 20 6B AD     k.
  JSR sub_CB484                                    ; B3C4: 20 84 B4     ..
- JSR LEC7D                                        ; B3C7: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; B3C7: 20 7D EC     }.
  LDA #&60 ; '`'                                   ; B3CA: A9 60       .`
  STA INWK_14                                      ; B3CC: 85 17       ..
  LDA #&37 ; '7'                                   ; B3CE: A9 37       .7
@@ -8032,7 +8033,7 @@ LAFB4 = sub_CAFB3+1
  RTS                                              ; B46A: 60          `
 
 .sub_CB46B
- JSR LEC7D                                        ; B46B: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; B46B: 20 7D EC     }.
  LDX #&2B ; '+'                                   ; B46E: A2 2B       .+
  LDA #0                                           ; B470: A9 00       ..
 .loop_CB472
@@ -8044,7 +8045,7 @@ LAFB4 = sub_CAFB3+1
  STA MANY,X                                       ; B47A: 9D 62 05    .b.
  DEX                                              ; B47D: CA          .
  BPL loop_CB47A                                   ; B47E: 10 FA       ..
- JSR LEC7D                                        ; B480: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; B480: 20 7D EC     }.
  RTS                                              ; B483: 60          `
 
 .sub_CB484

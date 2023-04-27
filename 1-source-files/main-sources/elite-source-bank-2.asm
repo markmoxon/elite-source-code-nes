@@ -34,195 +34,643 @@ CODE% = &8000
 LOAD% = &8000
 
 VE = &57
+LL = 29
 
-; Memory locations
-ZP                = &0000
-RAND              = &0002
-RAND_1            = &0002
-RAND_2            = &0003
-RAND_3            = &0004
-T1                = &0006
-SC                = &0007
-SC_1              = &0008
-INWK              = &0009
-XX1               = &0009
-INWK_1            = &000A
-INWK_2            = &000B
-INWK_3            = &000C
-INWK_4            = &000D
-INWK_5            = &000E
-INWK_6            = &000F
-INWK_7            = &0010
-INWK_8            = &0011
-INWK_9            = &0012
-INWK_10           = &0013
-INWK_11           = &0014
-INWK_12           = &0015
-INWK_13           = &0016
-INWK_14           = &0017
-INWK_15           = &0018
-INWK_16           = &0019
-INWK_17           = &001A
-INWK_18           = &001B
-INWK_19           = &001C
-INWK_20           = &001D
-INWK_21           = &001E
-INWK_22           = &001F
-INWK_23           = &0020
-INWK_24           = &0021
-INWK_25           = &0022
-INWK_26           = &0023
-INWK_27           = &0024
-INWK_28           = &0025
-INWK_29           = &0026
-INWK_30           = &0027
-INWK_31           = &0028
-INWK_32           = &0029
-INWK_33           = &002A
-INWK_34           = &002B
-INWK_35           = &002C
-NEWB              = &002D
-P                 = &002F
-P_1               = &0030
-P_2               = &0031
-XC                = &0032
-L0037             = &0037
-YC                = &003B
-QQ17              = &003C
-K3                = &003D
-XX2               = &003D
-XX2_1             = &003E
-XX2_2             = &003F
-XX2_3             = &0040
-XX2_4             = &0041
-XX2_5             = &0042
-XX2_6             = &0043
-XX2_7             = &0044
-XX2_8             = &0045
-XX2_9             = &0046
-XX2_10            = &0047
-XX2_11            = &0048
-XX2_12            = &0049
-XX2_13            = &004A
-K4                = &004B
-K4_1              = &004C
-XX16              = &004D
-XX16_1            = &004E
-XX16_2            = &004F
-XX16_3            = &0050
-XX16_4            = &0051
-XX16_5            = &0052
-XX16_6            = &0053
-XX16_7            = &0054
-XX16_8            = &0055
-XX16_9            = &0056
-XX16_10           = &0057
-XX16_11           = &0058
-XX16_12           = &0059
-XX16_13           = &005A
-XX16_14           = &005B
-XX16_15           = &005C
-XX16_16           = &005D
-XX16_17           = &005E
-XX0               = &005F
-XX0_1             = &0060
-INF               = &0061
-XX19              = &0061
-INF_1             = &0062
-V                 = &0063
-V_1               = &0064
-XX                = &0065
-XX_1              = &0066
-YY                = &0067
-YY_1              = &0068
-BETA              = &0069
-BET1              = &006A
-ECMA              = &006D
-ALP1              = &006E
-ALP2              = &006F
-ALP2_1            = &0070
-X1                = &0071
-XX15              = &0071
-Y1                = &0072
-X2                = &0073
-Y2                = &0074
-XX15_4            = &0075
-XX15_5            = &0076
-XX12              = &0077
-XX12_1            = &0078
-XX12_2            = &0079
-XX12_3            = &007A
-XX12_4            = &007B
-XX12_5            = &007C
-K                 = &007D
-K_1               = &007E
-K_2               = &007F
-K_3               = &0080
-QQ15              = &0082
-QQ15_1            = &0083
-QQ15_2            = &0084
-QQ15_3            = &0085
-QQ15_4            = &0086
-QQ15_5            = &0087
-K5                = &0088
-XX18              = &0088
-XX18_1            = &0089
-XX18_2            = &008A
-XX18_3            = &008B
-K6                = &008C
-K6_1              = &008D
-K6_2              = &008E
-K6_3              = &008F
-K6_4              = &0090
-BET2              = &0091
-BET2_1            = &0092
-DELTA             = &0093
-DELT4             = &0094
-DELT4_1           = &0095
-U                 = &0096
-Q                 = &0097
-R                 = &0098
-S                 = &0099
-T                 = &009A
-XSAV              = &009B
-YSAV              = &009C
-XX17              = &009D
-W                 = &009E
-QQ11              = &009F
-ZZ                = &00A0
-XX13              = &00A1
-MCNT              = &00A2
-TYPE              = &00A3
-ALPHA             = &00A4
-QQ12              = &00A5
-TGT               = &00A6
-FLAG              = &00A7
-CNT               = &00A8
-CNT2              = &00A9
-STP               = &00AA
-XX4               = &00AB
-XX20              = &00AC
-RAT               = &00AE
-RAT2              = &00AF
-widget            = &00B0
-Yx1M2             = &00B1
-Yx2M2             = &00B2
-Yx2M1             = &00B3
-newzp             = &00B6
-L00B8             = &00B8
-L00B9             = &00B9
-L00BA             = &00BA
-L00BB             = &00BB
-L00CC             = &00CC
-L00D2             = &00D2
-L00D8             = &00D8
-L00D9             = &00D9
-L00E6             = &00E6
-L00E9             = &00E9
-BANK              = &00F7
-XX3m3             = &00F9
-XX3               = &0100
-XX3_1             = &0101
+\ ******************************************************************************
+\
+\       Name: ZP
+\       Type: Workspace
+\    Address: &0000 to &00B0
+\   Category: Workspaces
+\    Summary: Lots of important variables are stored in the zero page workspace
+\             as it is quicker and more space-efficient to access memory here
+\
+\ ******************************************************************************
+
+ ORG &0000
+
+.ZP
+
+ SKIP 0                 \ The start of the zero page workspace
+
+ SKIP 2                 \ These bytes appear to be unused
+
+.RAND
+
+ SKIP 4                 \ Four 8-bit seeds for the random number generation
+                        \ system implemented in the DORND routine
+
+.T1
+
+ SKIP 1                 \ Temporary storage, used in a number of places
+
+.SC
+
+ SKIP 1                 \ Screen address (low byte)
+                        \
+                        \ Elite draws on-screen by poking bytes directly into
+                        \ screen memory, and SC(1 0) is typically set to the
+                        \ address of the character block containing the pixel
+
+.SCH
+
+ SKIP 1                 \ Screen address (high byte)
+
+.XX1
+
+ SKIP 0                 \ This is an alias for INWK that is used in the main
+                        \ ship-drawing routine at LL9
+
+.INWK
+
+ SKIP 33                \ The zero-page internal workspace for the current ship
+                        \ data block
+                        \
+                        \ As operations on zero page locations are faster and
+                        \ have smaller opcodes than operations on the rest of
+                        \ the addressable memory, Elite tends to store oft-used
+                        \ data here. A lot of the routines in Elite need to
+                        \ access and manipulate ship data, so to make this an
+                        \ efficient exercise, the ship data is first copied from
+                        \ the ship data blocks at K% into INWK (or, when new
+                        \ ships are spawned, from the blueprints at XX21). See
+                        \ the deep dive on "Ship data blocks" for details of
+                        \ what each of the bytes in the INWK data block
+                        \ represents
+
+.L002A
+
+ SKIP 1
+
+.L002B
+
+ SKIP 1
+
+ SKIP 1
+
+.NEWB
+
+ SKIP 1                 \ The ship's "new byte flags" (or NEWB flags)
+                        \
+                        \ Contains details about the ship's type and associated
+                        \ behaviour, such as whether they are a trader, a bounty
+                        \ hunter, a pirate, currently hostile, in the process of
+                        \ docking, inside the hold having been scooped, and so
+                        \ on. The default values for each ship type are taken
+                        \ from the table at E%, and you can find out more detail
+                        \ in the deep dive on "Advanced tactics with the NEWB
+                        \ flags"
+
+ SKIP 1
+
+.P
+
+ SKIP 3                 \ Temporary storage, used in a number of places
+
+.XC
+
+ SKIP 1                 \ The x-coordinate of the text cursor (i.e. the text
+                        \ column), which can be from 0 to 32
+                        \
+                        \ A value of 0 denotes the leftmost column and 32 the
+                        \ rightmost column, but because the top part of the
+                        \ screen (the space view) has a white border that
+                        \ clashes with columns 0 and 32, text is only shown
+                        \ in columns 1-31
+
+ SKIP 4
+
+.L0037
+
+ SKIP 1
+
+ SKIP 3
+
+.YC
+
+ SKIP 1                 \ The y-coordinate of the text cursor (i.e. the text
+                        \ row), which can be from 0 to 23
+                        \
+                        \ The screen actually has 31 character rows if you
+                        \ include the dashboard, but the text printing routines
+                        \ only work on the top part (the space view), so the
+                        \ text cursor only goes up to a maximum of 23, the row
+                        \ just before the screen splits
+                        \
+                        \ A value of 0 denotes the top row, but because the
+                        \ top part of the screen has a white border that clashes
+                        \ with row 0, text is always shown at row 1 or greater
+
+.QQ17
+
+ SKIP 1                 \ Contains a number of flags that affect how text tokens
+                        \ are printed, particularly capitalisation:
+                        \
+                        \   * If all bits are set (255) then text printing is
+                        \     disabled
+                        \
+                        \   * Bit 7: 0 = ALL CAPS
+                        \            1 = Sentence Case, bit 6 determines the
+                        \                case of the next letter to print
+                        \
+                        \   * Bit 6: 0 = print the next letter in upper case
+                        \            1 = print the next letter in lower case
+                        \
+                        \   * Bits 0-5: If any of bits 0-5 are set, print in
+                        \               lower case
+                        \
+                        \ So:
+                        \
+                        \   * QQ17 = 0 means case is set to ALL CAPS
+                        \
+                        \   * QQ17 = %10000000 means Sentence Case, currently
+                        \            printing upper case
+                        \
+                        \   * QQ17 = %11000000 means Sentence Case, currently
+                        \            printing lower case
+                        \
+                        \   * QQ17 = %11111111 means printing is disabled
+
+.K3
+
+ SKIP 0                 \ Temporary storage, used in a number of places
+
+.XX2
+
+ SKIP 14                \ Temporary storage, used to store the visibility of the
+                        \ ship's faces during the ship-drawing routine at LL9
+
+.K4
+
+ SKIP 2                 \ Temporary storage, used in a number of places
+
+.XX16
+
+ SKIP 18                \ Temporary storage for a block of values, used in a
+                        \ number of places
+
+SUNX = &003E
+
+.XX0
+
+ SKIP 2                 \ Temporary storage, used to store the address of a ship
+                        \ blueprint. For example, it is used when we add a new
+                        \ ship to the local bubble in routine NWSHP, and it
+                        \ contains the address of the current ship's blueprint
+                        \ as we loop through all the nearby ships in the main
+                        \ flight loop
+
+.XX19
+
+ SKIP 0                 \ Instead of pointing XX19 to the ship heap address in
+                        \ INWK(34 33), like the other versions of Elite, the NES
+                        \ version points XX19 to the ship blueprint address in
+                        \ INF(1 0)
+
+.INF
+
+ SKIP 2                 \ Temporary storage, typically used for storing the
+                        \ address of a ship's data block, so it can be copied
+                        \ to and from the internal workspace at INWK
+
+.V
+
+ SKIP 2                 \ Temporary storage, typically used for storing an
+                        \ address pointer
+
+.XX
+
+ SKIP 2                 \ Temporary storage, typically used for storing a 16-bit
+                        \ x-coordinate
+
+.YY
+
+ SKIP 2                 \ Temporary storage, typically used for storing a 16-bit
+                        \ y-coordinate
+
+.BETA
+
+ SKIP 1                 \ The current pitch angle beta, which is reduced from
+                        \ JSTY to a sign-magnitude value between -8 and +8
+                        \
+                        \ This describes how fast we are pitching our ship, and
+                        \ determines how fast the universe pitches around us
+                        \
+                        \ The sign bit is also stored in BET2, while the
+                        \ opposite sign is stored in BET2+1
+
+.BET1
+
+ SKIP 1                 \ The magnitude of the pitch angle beta, i.e. |beta|,
+                        \ which is a positive value between 0 and 8
+
+.QQ22
+
+ SKIP 2                 \ The two hyperspace countdown counters
+                        \
+                        \ Before a hyperspace jump, both QQ22 and QQ22+1 are
+                        \ set to 15
+                        \
+                        \ QQ22 is an internal counter that counts down by 1
+                        \ each time TT102 is called, which happens every
+                        \ iteration of the main game loop. When it reaches
+                        \ zero, the on-screen counter in QQ22+1 gets
+                        \ decremented, and QQ22 gets set to 5 and the countdown
+                        \ continues (so the first tick of the hyperspace counter
+                        \ takes 15 iterations to happen, but subsequent ticks
+                        \ take 5 iterations each)
+                        \
+                        \ QQ22+1 contains the number that's shown on-screen
+                        \ during the countdown. It counts down from 15 to 1, and
+                        \ when it hits 0, the hyperspace engines kick in
+
+.ECMA
+
+ SKIP 1                 \ The E.C.M. countdown timer, which determines whether
+                        \ an E.C.M. system is currently operating:
+                        \
+                        \   * 0 = E.C.M. is off
+                        \
+                        \   * Non-zero = E.C.M. is on and is counting down
+                        \
+                        \ The counter starts at 32 when an E.C.M. is activated,
+                        \ either by us or by an opponent, and it decreases by 1
+                        \ in each iteration of the main flight loop until it
+                        \ reaches zero, at which point the E.C.M. switches off.
+                        \ Only one E.C.M. can be active at any one time, so
+                        \ there is only one counter
+
+.ALP1
+
+ SKIP 1                 \ Magnitude of the roll angle alpha, i.e. |alpha|,
+                        \ which is a positive value between 0 and 31
+
+.ALP2
+
+ SKIP 2                 \ Bit 7 of ALP2 = sign of the roll angle in ALPHA
+                        \
+                        \ Bit 7 of ALP2+1 = opposite sign to ALP2 and ALPHA
+
+.XX15
+
+ SKIP 0                 \ Temporary storage, typically used for storing screen
+                        \ coordinates in line-drawing routines
+                        \
+                        \ There are six bytes of storage, from XX15 TO XX15+5.
+                        \ The first four bytes have the following aliases:
+                        \
+                        \   X1 = XX15
+                        \   Y1 = XX15+1
+                        \   X2 = XX15+2
+                        \   Y2 = XX15+3
+                        \
+                        \ These are typically used for describing lines in terms
+                        \ of screen coordinates, i.e. (X1, Y1) to (X2, Y2)
+                        \
+                        \ The last two bytes of XX15 do not have aliases
+
+.X1
+
+ SKIP 1                 \ Temporary storage, typically used for x-coordinates in
+                        \ line-drawing routines
+
+.Y1
+
+ SKIP 1                 \ Temporary storage, typically used for y-coordinates in
+                        \ line-drawing routines
+
+.X2
+
+ SKIP 1                 \ Temporary storage, typically used for x-coordinates in
+                        \ line-drawing routines
+
+.Y2
+
+ SKIP 1                 \ Temporary storage, typically used for y-coordinates in
+                        \ line-drawing routines
+
+ SKIP 2                 \ The last two bytes of the XX15 block
+
+.XX12
+
+ SKIP 6                 \ Temporary storage for a block of values, used in a
+                        \ number of places
+
+.K
+
+ SKIP 4                 \ Temporary storage, used in a number of places
+
+ SKIP 1
+
+.QQ15
+
+ SKIP 6                 \ The three 16-bit seeds for the selected system, i.e.
+                        \ the one in the crosshairs in the Short-range Chart
+                        \
+                        \ See the deep dives on "Galaxy and system seeds" and
+                        \ "Twisting the system seeds" for more details
+
+.K5
+
+ SKIP 0                 \ Temporary storage used to store segment coordinates
+                        \ across successive calls to BLINE, the ball line
+                        \ routine
+
+.XX18
+
+ SKIP 4
+
+.K6
+
+ SKIP 5                 \ Temporary storage, typically used for storing
+                        \ coordinates during vector calculations
+
+.BET2
+
+ SKIP 2                 \ Bit 7 of BET2 = sign of the pitch angle in BETA
+                        \
+                        \ Bit 7 of BET2+1 = opposite sign to BET2 and BETA
+
+.DELTA
+
+ SKIP 1                 \ Our current speed, in the range 1-40
+
+.DELT4
+
+ SKIP 2                 \ Our current speed * 64 as a 16-bit value
+                        \
+                        \ This is stored as DELT4(1 0), so the high byte in
+                        \ DELT4+1 therefore contains our current speed / 4
+
+.U
+
+ SKIP 1                 \ Temporary storage, used in a number of places
+
+.Q
+
+ SKIP 1                 \ Temporary storage, used in a number of places
+
+.R
+
+ SKIP 1                 \ Temporary storage, used in a number of places
+
+.S
+
+ SKIP 1                 \ Temporary storage, used in a number of places
+
+.T
+
+ SKIP 1                 \ Temporary storage, used in a number of places
+
+.XSAV
+
+ SKIP 1                 \ Temporary storage for saving the value of the X
+                        \ register, used in a number of places
+
+.YSAV
+
+ SKIP 1                 \ Temporary storage for saving the value of the Y
+                        \ register, used in a number of places
+
+.XX17
+
+ SKIP 1                 \ Temporary storage, used in BPRNT to store the number
+                        \ of characters to print, and as the edge counter in the
+                        \ main ship-drawing routine
+
+.W
+
+ SKIP 1                 \ Temporary storage, used in a number of places
+
+.QQ11
+
+ SKIP 1                 \ The number of the current view:
+                        \
+                        \   0   = Space view
+                        \   1   = Title screen
+                        \         Get commander name ("@", save/load commander)
+                        \         In-system jump just arrived ("J")
+                        \
+                        \ This value is typically set by calling routine TT66
+
+.ZZ
+
+ SKIP 1                 \ Temporary storage, typically used for distance values
+
+.XX13
+
+ SKIP 1                 \ Temporary storage, typically used in the line-drawing
+                        \ routines
+
+.MCNT
+
+ SKIP 1                 \ The main loop counter
+                        \
+                        \ This counter determines how often certain actions are
+                        \ performed within the main loop. See the deep dive on
+                        \ "Scheduling tasks with the main loop counter" for more
+                        \ details
+
+.TYPE
+
+ SKIP 1                 \ The current ship type
+                        \
+                        \ This is where we store the current ship type for when
+                        \ we are iterating through the ships in the local bubble
+                        \ as part of the main flight loop. See the table at XX21
+                        \ for information about ship types
+
+.ALPHA
+
+ SKIP 1                 \ The current roll angle alpha, which is reduced from
+                        \ JSTX to a sign-magnitude value between -31 and +31
+                        \
+                        \ This describes how fast we are rolling our ship, and
+                        \ determines how fast the universe rolls around us
+                        \
+                        \ The sign bit is also stored in ALP2, while the
+                        \ opposite sign is stored in ALP2+1
+
+.QQ12
+
+ SKIP 1                 \ Our "docked" status
+                        \
+                        \   * 0 = we are not docked
+                        \
+                        \   * &FF = we are docked
+
+.TGT
+
+ SKIP 1                 \ Temporary storage, typically used as a target value
+                        \ for counters when drawing explosion clouds and partial
+                        \ circles
+
+.FLAG
+
+ SKIP 1                 \ A flag that's used to define whether this is the first
+                        \ call to the ball line routine in BLINE, so it knows
+                        \ whether to wait for the second call before storing
+                        \ segment data in the ball line heap
+
+.CNT
+
+ SKIP 1                 \ Temporary storage, typically used for storing the
+                        \ number of iterations required when looping
+
+.CNT2
+
+ SKIP 1                 \ Temporary storage, used in the planet-drawing routine
+                        \ to store the segment number where the arc of a partial
+                        \ circle should start
+
+.STP
+
+ SKIP 1                 \ The step size for drawing circles
+                        \
+                        \ Circles in Elite are split up into 64 points, and the
+                        \ step size determines how many points to skip with each
+                        \ straight-line segment, so the smaller the step size,
+                        \ the smoother the circle. The values used are:
+                        \
+                        \   * 2 for big planets and the circles on the charts
+                        \   * 4 for medium planets and the launch tunnel
+                        \   * 8 for small planets and the hyperspace tunnel
+                        \
+                        \ As the step size increases we move from smoother
+                        \ circles at the top to more polygonal at the bottom.
+                        \ See the CIRCLE2 routine for more details
+
+.XX4
+
+ SKIP 1                 \ Temporary storage, used in a number of places
+
+.XX20
+
+ SKIP 1                 \ Temporary storage, used in a number of places
+
+.XX14
+
+ SKIP 1                 \ This byte appears to be unused
+
+.RAT
+
+ SKIP 1                 \ Used to store different signs depending on the current
+                        \ space view, for use in calculating stardust movement
+
+.RAT2
+
+ SKIP 1                 \ Temporary storage, used to store the pitch and roll
+                        \ signs when moving objects and stardust
+
+.widget
+
+ SKIP 1                 \ Temporary storage, used to store the original argument
+                        \ in A in the logarithmic FMLTU and LL28 routines
+
+.Yx1M2
+
+ SKIP 1
+
+.Yx2M2
+
+ SKIP 1
+
+.Yx2M1
+
+ SKIP 1                 \ This is used to store the number of pixel rows in the
+                        \ space view, which is also the y-coordinate of the
+                        \ bottom pixel row of the space view (it is set to 191
+                        \ in the RES2 routine)
+
+ SKIP 2
+
+.newzp
+
+ SKIP 1                 \ This is used by the STARS2 routine for storing the
+                        \ stardust particle's delta_x value
+
+ SKIP 1
+
+.L00B8
+
+ SKIP 1
+
+.L00B9
+
+ SKIP 1
+
+.L00BA
+
+ SKIP 1
+
+.L00BB
+
+ SKIP 1
+
+ ORG &CC
+
+.L00CC
+
+ SKIP 1
+
+ ORG &D2
+
+.L00D2
+
+ SKIP 1
+
+ ORG &D8
+
+.L00D8
+
+ SKIP 1
+
+.L00D9
+
+ SKIP 1
+
+ ORG &E6
+
+.L00E6
+
+ SKIP 1
+
+ ORG &E9
+
+.L00E9
+
+ SKIP 1
+
+ ORG &F7
+
+.BANK
+
+ SKIP 1
+
+ PRINT "Zero page variables from ", ~ZP, " to ", ~P%
+
+\ ******************************************************************************
+\
+\       Name: XX3
+\       Type: Workspace
+\    Address: &0100 to the top of the descending stack
+\   Category: Workspaces
+\    Summary: Temporary storage space for complex calculations
+\
+\ ------------------------------------------------------------------------------
+\
+\ Used as heap space for storing temporary data during calculations. Shared with
+\ the descending 6502 stack, which works down from &01FF.
+\
+\ ******************************************************************************
+
+ ORG &0100
+
+.XX3
+
+ SKIP 0                 \ Temporary storage, typically used for storing tables
+                        \ of values such as screen coordinates or ship data
+
 FRIN              = &036A
 MJ                = &038A
 VIEW              = &038E
@@ -344,13 +792,13 @@ DELAY             = &EBA2
 EXNO3             = &EBAD
 BOOP              = &EBE5
 NOISE             = &EBF2
-LEC7D             = &EC7D
+NAMETABLE0_BANK7  = &EC7D
 TIDY              = &EDEA
 PAS1              = &EF7A
 LL164             = &EFF7
 DETOK_BANK7       = &F082
 DTS_BANK7         = &F09D
-LF186             = &F186
+F186_BANK7        = &F186
 MVS5_BANK7        = &F1A2
 HALL              = &F1BD
 DASC_BANK7        = &F1E6
@@ -15410,622 +15858,1943 @@ ENDMACRO
  JMP DT7                \ Jump to DT7 to restore V(1 0) and Y from the stack and
                         \ return from the subroutine using a tail call
 
+\ ******************************************************************************
+\
+\       Name: JMTB
+\       Type: Variable
+\   Category: Text
+\    Summary: The extended token table for jump tokens 1-32 (DETOK)
+\  Deep dive: Extended text tokens
+\
+\ ******************************************************************************
+
 .JMTB
- EQUB &79, &B2, &7C, &B2, &4F, &B4, &4F, &B4, &A2 ; B206: 79 B2 7C... y.|
- EQUB &B2, &9B, &B2, &F5, &B4, &87, &B2, &92, &B2 ; B20F: B2 9B B2... ...
- EQUB &F5, &B4, &73, &F4, &F5, &B4, &B8, &B3, &A8 ; B218: F5 B4 73... ..s
- EQUB &B2, &AB, &B2, &91, &B2, &B5, &B2, &D3, &B2 ; B221: B2 AB B2... ...
- EQUB &FB, &B2, &F5, &B4, &DE, &F2, &80, &B3, &B1 ; B22A: FB B2 F5... ...
- EQUB &B3, &C1, &B3, &73, &B3, &F6, &B2, &6C, &B2 ; B233: B3 C1 B3... ...
- EQUB &70, &B2, &B4, &B3, &91, &B2, &91, &B2, &F5 ; B23C: 70 B2 B4... p..
- EQUB &B4                                         ; B245: B4          .
+
+ EQUW MT1               \ Token  1: Switch to ALL CAPS
+ EQUW MT2               \ Token  2: Switch to Sentence Case
+ EQUW TT27              \ Token  3: Print the selected system name
+ EQUW TT27              \ Token  4: Print the commander's name
+ EQUW MT5               \ Token  5: Switch to extended tokens
+ EQUW MT6               \ Token  6: Switch to standard tokens, in Sentence Case
+ EQUW DASC              \ Token  7: Beep
+ EQUW MT8               \ Token  8: Tab to column 6
+ EQUW MT9               \ Token  9: Clear screen, tab to column 1, view type = 1
+ EQUW DASC              \ Token 10: Line feed
+ EQUW NLIN4             \ Token 11: Draw box around title (line at pixel row 19)
+ EQUW DASC              \ Token 12: Carriage return
+ EQUW MT13              \ Token 13: Switch to lower case
+ EQUW MT14              \ Token 14: Switch to justified text
+ EQUW MT15              \ Token 15: Switch to left-aligned text
+ EQUW MT16              \ Token 16: Print the character in DTW7 (drive number)
+ EQUW MT17              \ Token 17: Print system name adjective in Sentence Case
+ EQUW MT18              \ Token 18: Randomly print 1 to 4 two-letter tokens
+ EQUW MT19              \ Token 19: Capitalise first letter of next word only
+ EQUW DASC              \ Token 20: Unused
+ EQUW CLYNS             \ Token 21: Clear the bottom few lines of the space view
+ EQUW PAUSE             \ Token 22: Display ship and wait for key press
+ EQUW MT23              \ Token 23: Move to row 10, white text, set lower case
+ EQUW PAUSE2            \ Token 24: Wait for a key press
+ EQUW BRIS              \ Token 25: Show incoming message screen, wait 2 seconds
+ EQUW MT26              \ Token 26: Print a space and capitalise the next letter
+ EQUW MT27              \ Token 27: Print mission captain's name (217-219)
+ EQUW MT28              \ Token 28: Print mission 1 location hint (220-221)
+ EQUW MT29              \ Token 29: Column 6, white text, lower case in words
+ EQUW FILEPR            \ Token 30: Display currently selected media (disc/tape)
+ EQUW OTHERFILEPR       \ Token 31: Display the non-selected media (disc/tape)
+ EQUW DASC              \ Token 32: Unused
+
+\ ******************************************************************************
+\
+\       Name: MTIN
+\       Type: Variable
+\   Category: Text
+\    Summary: Lookup table for random tokens in the extended token table (0-37)
+\  Deep dive: Extended text tokens
+\
+\ ------------------------------------------------------------------------------
+\
+\ The ERND token type, which is part of the extended token system, takes an
+\ argument between 0 and 37, and returns a randomly chosen token in the range
+\ specified in this table. This is used to generate the extended description of
+\ each system.
+\
+\ For example, the entry at position 13 in this table (counting from 0) is 66,
+\ so ERND 14 will expand into a random token in the range 66-70, i.e. one of
+\ "JUICE", "BRANDY", "WATER", "BREW" and "GARGLE BLASTERS".
+\
+\ ******************************************************************************
+
 .MTIN
- EQUB &10, &15, &1A, &1F, &9B, &A0, &2E, &A5      ; B246: 10 15 1A... ...
- EQUS "$)=38"                                     ; B24E: 24 29 3D... $)=
- EQUB &AA                                         ; B253: AA          .
- EQUS "BGLQV"                                     ; B254: 42 47 4C... BGL
- EQUB &8C, &60, &65, &87, &82, &5B, &6A, &B4, &B9 ; B259: 8C 60 65... .`e
- EQUB &BE, &E1, &E6, &EB, &F0, &F5, &FA           ; B262: BE E1 E6... ...
- EQUS "sx}"                                       ; B269: 73 78 7D    sx}
 
-; ******************************************************************************
+ EQUB 16                \ Token  0: a random extended token between 16 and 20
+ EQUB 21                \ Token  1: a random extended token between 21 and 25
+ EQUB 26                \ Token  2: a random extended token between 26 and 30
+ EQUB 31                \ Token  3: a random extended token between 31 and 35
+ EQUB 155               \ Token  4: a random extended token between 155 and 159
+ EQUB 160               \ Token  5: a random extended token between 160 and 164
+ EQUB 46                \ Token  6: a random extended token between 46 and 50
+ EQUB 165               \ Token  7: a random extended token between 165 and 169
+ EQUB 36                \ Token  8: a random extended token between 36 and 40
+ EQUB 41                \ Token  9: a random extended token between 41 and 45
+ EQUB 61                \ Token 10: a random extended token between 61 and 65
+ EQUB 51                \ Token 11: a random extended token between 51 and 55
+ EQUB 56                \ Token 12: a random extended token between 56 and 60
+ EQUB 170               \ Token 13: a random extended token between 170 and 174
+ EQUB 66                \ Token 14: a random extended token between 66 and 70
+ EQUB 71                \ Token 15: a random extended token between 71 and 75
+ EQUB 76                \ Token 16: a random extended token between 76 and 80
+ EQUB 81                \ Token 17: a random extended token between 81 and 85
+ EQUB 86                \ Token 18: a random extended token between 86 and 90
+ EQUB 140               \ Token 19: a random extended token between 140 and 144
+ EQUB 96                \ Token 20: a random extended token between 96 and 100
+ EQUB 101               \ Token 21: a random extended token between 101 and 105
+ EQUB 135               \ Token 22: a random extended token between 135 and 139
+ EQUB 130               \ Token 23: a random extended token between 130 and 134
+ EQUB 91                \ Token 24: a random extended token between 91 and 95
+ EQUB 106               \ Token 25: a random extended token between 106 and 110
+ EQUB 180               \ Token 26: a random extended token between 180 and 184
+ EQUB 185               \ Token 27: a random extended token between 185 and 189
+ EQUB 190               \ Token 28: a random extended token between 190 and 194
+ EQUB 225               \ Token 29: a random extended token between 225 and 229
+ EQUB 230               \ Token 30: a random extended token between 230 and 234
+ EQUB 235               \ Token 31: a random extended token between 235 and 239
+ EQUB 240               \ Token 32: a random extended token between 240 and 244
+ EQUB 245               \ Token 33: a random extended token between 245 and 249
+ EQUB 250               \ Token 34: a random extended token between 250 and 254
+ EQUB 115               \ Token 35: a random extended token between 115 and 119
+ EQUB 120               \ Token 36: a random extended token between 120 and 124
+ EQUB 125               \ Token 37: a random extended token between 125 and 129
+
+\ ******************************************************************************
+\
+\       Name: MT27
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Print the captain's name during mission briefings
+\  Deep dive: Extended text tokens
+\
+\ ------------------------------------------------------------------------------
+\
+\ This routine prints the following tokens, depending on the galaxy number:
+\
+\   * Token 217 ("CURRUTHERS") in galaxy 0
+\
+\   * Token 218 ("FOSDYKE SMYTHE") in galaxy 1
+\
+\   * Token 219 ("FORTESQUE") in galaxy 2
+\
+\ This is used when printing extended token 213 as part of the mission
+\ briefings, which looks like this when printed:
+\
+\   Commander {commander name}, I am Captain {mission captain's name} of Her
+\   Majesty's Space Navy
+\
+\ where {mission captain's name} is replaced by one of the names above.
+\
+\ ******************************************************************************
+
 .MT27
- LDA #&D9                                         ; B26C: A9 D9       ..
- BNE CB272                                        ; B26E: D0 02       ..
-; ******************************************************************************
+
+ LDA #217               \ Set A = 217, so when we fall through into MT28, the
+                        \ 217 gets added to the current galaxy number, so the
+                        \ extended token that is printed is 217-219 (as this is
+                        \ only called in galaxies 0 through 2)
+
+ BNE P%+4               \ Skip the next instruction
+
+\ ******************************************************************************
+\
+\       Name: MT28
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Print the location hint during the mission 1 briefing
+\  Deep dive: Extended text tokens
+\
+\ ------------------------------------------------------------------------------
+\
+\ This routine prints the following tokens, depending on the galaxy number:
+\
+\   * Token 220 ("WAS LAST SEEN AT {single cap}REESDICE") in galaxy 0
+\
+\   * Token 221 ("IS BELIEVED TO HAVE JUMPED TO THIS GALAXY") in galaxy 1
+\
+\ This is used when printing extended token 10 as part of the mission 1
+\ briefing, which looks like this when printed:
+\
+\   It went missing from our ship yard on Xeer five months ago and {mission 1
+\   location hint}
+\
+\ where {mission 1 location hint} is replaced by one of the names above.
+\
+\ ******************************************************************************
+
 .MT28
- LDA #&DC                                         ; B270: A9 DC       ..
-.CB272
- CLC                                              ; B272: 18          .
- ADC GCNT                                         ; B273: 6D A7 03    m..
- JMP DETOK_BANK7                                        ; B276: 4C 82 F0    L..
 
-; ******************************************************************************
+ LDA #220               \ Set A = galaxy number in GCNT + 220, which is in the
+ CLC                    \ range 220-221, as this is only called in galaxies 0
+ ADC GCNT               \ and 1
+
+ JMP DETOK_BANK7        \ Jump to DETOK to print extended token 220-221,
+                        \ returning from the subroutine using a tail call (this
+                        \ BNE is effectively a JMP as A is never zero)
+
+\ ******************************************************************************
+\
+\       Name: MT1
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Switch to ALL CAPS when printing extended tokens
+\  Deep dive: Extended text tokens
+\
+\ ------------------------------------------------------------------------------
+\
+\ This routine sets the following:
+\
+\   * DTW1 = %00000000 (do not change case to lower case)
+\
+\   * DTW6 = %00000000 (lower case is not enabled)
+\
+\ ******************************************************************************
+
 .MT1
- LDA #0                                           ; B279: A9 00       ..
-; overlapping:  L80A9                             ; B27B: 2C A9 80    ,..
- EQUB &2C                                         ; B27B: 2C          ,
 
-; ******************************************************************************
+ LDA #%00000000         \ Set A = %00000000, so when we fall through into MT2,
+                        \ both DTW1 and DTW6 get set to %00000000
+
+ EQUB &2C               \ Skip the next instruction by turning it into
+                        \ &2C &A9 &20, or BIT &20A9, which does nothing apart
+                        \ from affect the flags
+
+\ ******************************************************************************
+\
+\       Name: MT2
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Switch to Sentence Case when printing extended tokens
+\  Deep dive: Extended text tokens
+\
+\ ------------------------------------------------------------------------------
+\
+\ This routine sets the following:
+\
+\   * DTW1 = %10000000 (apply ???)
+\
+\   * DTW6 = %00000000 (lower case is not enabled)
+\
+\ ******************************************************************************
+
 .MT2
- LDA #&80                                         ; B27C: A9 80       ..
- STA DTW1                                         ; B27E: 8D F8 03    ...
- LDA #0                                           ; B281: A9 00       ..
- STA DTW6                                         ; B283: 8D F3 03    ...
- RTS                                              ; B286: 60          `
 
-; ******************************************************************************
+ LDA #%10000000         \ Set DTW1 = %10000000 ???
+ STA DTW1
+
+ LDA #00000000          \ Set DTW6 = %00000000
+ STA DTW6
+
+ RTS                    \ Return from the subroutine
+
+\ ******************************************************************************
+\
+\       Name: MT8
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Tab to column 6 and start a new word when printing extended tokens
+\  Deep dive: Extended text tokens
+\
+\ ------------------------------------------------------------------------------
+\
+\ This routine sets the following:
+\
+\   * XC = 6 (tab to column 6)
+\
+\   * DTW2 = %11111111 (we are not currently printing a word)
+\
+\ ******************************************************************************
+
 .MT8
- LDA #6                                           ; B287: A9 06       ..
- STA XC                                           ; B289: 85 32       .2
- LDA #&FF                                         ; B28B: A9 FF       ..
- STA DTW2                                         ; B28D: 8D F4 03    ...
- RTS                                              ; B290: 60          `
 
-; ******************************************************************************
-.FILEPR
+ LDA #6                 \ Move the text cursor to column 6
+ STA XC
+
+ LDA #%11111111         \ Set all the bits in DTW2
+ STA DTW2
+
+ RTS                    \ Return from the subroutine
+
+\ ******************************************************************************
+\
+\       Name: MT16
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Print the character in variable DTW7
+\  Deep dive: Extended text tokens
+\
+\ ******************************************************************************
+
 .MT16
+
+                        \ Fall through into FILEPR to return from the
+                        \ subroutine, as MT16 does nothing in the NES version
+
+\ ******************************************************************************
+\
+\       Name: FILEPR
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Display the currently selected media (disc or tape)
+\  Deep dive: Extended text tokens
+\
+\ ******************************************************************************
+
+.FILEPR
+
+                        \ Fall through into OTHERFILEPR to return from the
+                        \ subroutine, as FILEPR does nothing in the NES version
+
+\ ******************************************************************************
+\
+\       Name: OTHERFILEPR
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Display the non-selected media (disc or tape)
+\  Deep dive: Extended text tokens
+\
+\ ******************************************************************************
+
 .OTHERFILEPR
- RTS                                              ; B291: 60          `
 
-; ******************************************************************************
+ RTS                    \ Return from the subroutine, as OTHERFILEPR does
+                        \ nothing in the NES version
+
+\ ******************************************************************************
+\
+\       Name: MT9
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Clear the screen and set the current view type to 1
+\  Deep dive: Extended text tokens
+\
+\ ------------------------------------------------------------------------------
+\
+\ This routine sets the following:
+\
+\   * XC = 1 (tab to column 1)
+\
+\ before calling TT66 to clear the screen and set the view type to 1.
+\
+\ ******************************************************************************
+
 .MT9
- LDA #1                                           ; B292: A9 01       ..
- STA XC                                           ; B294: 85 32       .2
- LDA #&95                                         ; B296: A9 95       ..
- JMP TT66                                         ; B298: 4C 6E F2    Ln.
 
-; ******************************************************************************
+ LDA #1                 \ Move the text cursor to column 1
+ STA XC
+
+ LDA #&95               \ ???
+
+ JMP TT66               \ Jump to TT66 to clear the screen and set the current
+                        \ view type to 1, returning from the subroutine using a
+                        \ tail call
+
+\ ******************************************************************************
+\
+\       Name: MT6
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Switch to standard tokens in Sentence Case
+\  Deep dive: Extended text tokens
+\
+\ ------------------------------------------------------------------------------
+\
+\ This routine sets the following:
+\
+\   * QQ17 = %10000000 (set Sentence Case for standard tokens)
+\
+\   * DTW3 = %11111111 (print standard tokens)
+\
+\ ******************************************************************************
+
 .MT6
- LDA #&80                                         ; B29B: A9 80       ..
- STA QQ17                                         ; B29D: 85 3C       .<
- LDA #&FF                                         ; B29F: A9 FF       ..
-; overlapping: B &2C, <(CNT2), >(CNT2) ; BIT+2 CNT2; B2A1: 2C A9 00    ,..
- EQUB &2C                                         ; B2A1: 2C          ,
 
-; ******************************************************************************
+ LDA #%10000000         \ Set bit 7 of QQ17 to switch standard tokens to
+ STA QQ17               \ Sentence Case
+
+ LDA #%11111111         \ Set A = %11111111, so when we fall through into MT5,
+                        \ DTW3 gets set to %11111111 and calls to DETOK print
+                        \ standard tokens
+
+ EQUB &2C               \ Skip the next instruction by turning it into
+                        \ &2C &A9 &00, or BIT &00A9, which does nothing apart
+                        \ from affect the flags
+
+\ ******************************************************************************
+\
+\       Name: MT5
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Switch to extended tokens
+\  Deep dive: Extended text tokens
+\
+\ ------------------------------------------------------------------------------
+\
+\ This routine sets the following:
+\
+\   * DTW3 = %00000000 (print extended tokens)
+\
+\ ******************************************************************************
+
 .MT5
- LDA #0                                           ; B2A2: A9 00       ..
- STA DTW3                                         ; B2A4: 8D F5 03    ...
- RTS                                              ; B2A7: 60          `
 
-; ******************************************************************************
+ LDA #%00000000         \ Set DTW3 = %00000000, so that calls to DETOK print
+ STA DTW3               \ extended tokens
+
+ RTS                    \ Return from the subroutine
+
+\ ******************************************************************************
+\
+\       Name: MT14
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Switch to justified text when printing extended tokens
+\  Deep dive: Extended text tokens
+\
+\ ------------------------------------------------------------------------------
+\
+\ This routine sets the following:
+\
+\   * DTW4 = %10000000 (justify text, print buffer on carriage return)
+\
+\   * DTW5 = 0 (reset line buffer size)
+\
+\ ******************************************************************************
+
 .MT14
- LDA #&80                                         ; B2A8: A9 80       ..
-; overlapping: B &2C, <(CNT2), >(CNT2) ; BIT+2 CNT2; B2AA: 2C A9 00    ,..
- EQUB &2C                                         ; B2AA: 2C          ,
 
-; ******************************************************************************
+ LDA #%10000000         \ Set A = %10000000, so when we fall through into MT15,
+                        \ DTW4 gets set to %10000000
+
+ EQUB &2C               \ Skip the next instruction by turning it into
+                        \ &2C &A9 &00, or BIT &00A9, which does nothing apart
+                        \ from affect the flags
+
+\ ******************************************************************************
+\
+\       Name: MT15
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Switch to left-aligned text when printing extended tokens
+\  Deep dive: Extended text tokens
+\
+\ ------------------------------------------------------------------------------
+\
+\ This routine sets the following:
+\
+\   * DTW4 = %00000000 (do not justify text, print buffer on carriage return)
+\
+\   * DTW5 = 0 (reset line buffer size)
+\
+\ ******************************************************************************
+
 .MT15
- LDA #0                                           ; B2AB: A9 00       ..
- STA DTW4                                         ; B2AD: 8D F6 03    ...
- ASL A                                            ; B2B0: 0A          .
- STA DTW5                                         ; B2B1: 8D F7 03    ...
- RTS                                              ; B2B4: 60          `
 
-; ******************************************************************************
+ LDA #0                 \ Set DTW4 = %00000000
+ STA DTW4
+
+ ASL A                  \ Set DTW5 = 0 (even when we fall through from MT14 with
+ STA DTW5               \ A set to %10000000)
+
+ RTS                    \ Return from the subroutine
+
+\ ******************************************************************************
+\
+\       Name: MT17
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Print the selected system's adjective, e.g. Lavian for Lave
+\  Deep dive: Extended text tokens
+\
+\ ------------------------------------------------------------------------------
+\
+\ The adjective for the current system is generated by taking the system name,
+\ removing the last character if it is a vowel, and adding "-ian" to the end,
+\ so:
+\
+\   * Lave gives Lavian (as in "Lavian tree grub")
+\
+\   * Leesti gives Leestian (as in "Leestian Evil Juice")
+\
+\ This routine is called by jump token 17, {system name adjective}, and it can
+\ only be used when justified text is being printed - i.e. following jump token
+\ 14, {justify} - because the routine needs to use the line buffer to work.
+\
+\ ******************************************************************************
+
 .MT17
- LDA QQ17                                         ; B2B5: A5 3C       .<
- AND #&BF                                         ; B2B7: 29 BF       ).
- STA QQ17                                         ; B2B9: 85 3C       .<
- LDA #3                                           ; B2BB: A9 03       ..
- JSR TT27                                   ; B2BD: 20 4F B4     O.
- LDX DTW5                                         ; B2C0: AE F7 03    ...
- LDA BUFm1,X                                      ; B2C3: BD 06 05    ...
- JSR VOWEL                                        ; B2C6: 20 01 B3     ..
- BCC CB2CE                                        ; B2C9: 90 03       ..
- DEC DTW5                                         ; B2CB: CE F7 03    ...
-.CB2CE
- LDA #&99                                         ; B2CE: A9 99       ..
- JMP DETOK_BANK7                                        ; B2D0: 4C 82 F0    L..
 
-; ******************************************************************************
+ LDA QQ17               \ Set QQ17 = %10111111 to switch to Sentence Case
+ AND #%10111111
+ STA QQ17
+
+ LDA #3                 \ Print control code 3 (selected system name) into the
+ JSR TT27               \ line buffer
+
+ LDX DTW5               \ Load the last character of the line buffer BUF into A
+ LDA BUF-1,X            \ (as DTW5 contains the buffer size, so character DTW5-1
+                        \ is the last character in the buffer BUF)
+
+ JSR VOWEL              \ Test whether the character is a vowel, in which case
+                        \ this will set the C flag
+
+ BCC MT171              \ If the character is not a vowel, skip the following
+                        \ instruction
+
+ DEC DTW5               \ The character is a vowel, so decrement DTW5, which
+                        \ removes the last character from the line buffer (i.e.
+                        \ it removes the trailing vowel from the system name)
+
+.MT171
+
+ LDA #153               \ Print extended token 153 ("IAN"), returning from the
+ JMP DETOK_BANK7        \ subroutine using a tail call
+
+\ ******************************************************************************
+\
+\       Name: MT18
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Print a random 1-8 letter word in Sentence Case
+\  Deep dive: Extended text tokens
+\
+\ ******************************************************************************
+
 .MT18
- JSR MT19                                         ; B2D3: 20 FB B2     ..
- JSR DORND                                        ; B2D6: 20 AD F4     ..
- AND #3                                           ; B2D9: 29 03       ).
- TAY                                              ; B2DB: A8          .
-.loop_CB2DC
- JSR DORND                                        ; B2DC: 20 AD F4     ..
- AND #&3E ; '>'                                   ; B2DF: 29 3E       )>
- TAX                                              ; B2E1: AA          .
- LDA TKN2_2,X                                     ; B2E2: BD 1B B3    ...
- JSR DTS_BANK7                                          ; B2E5: 20 9D F0     ..
- LDA TKN2_3,X                                     ; B2E8: BD 1C B3    ...
- CMP #&3F ; '?'                                   ; B2EB: C9 3F       .?
- BEQ CB2F2                                        ; B2ED: F0 03       ..
- JSR DTS_BANK7                                          ; B2EF: 20 9D F0     ..
-.CB2F2
- DEY                                              ; B2F2: 88          .
- BPL loop_CB2DC                                   ; B2F3: 10 E7       ..
- RTS                                              ; B2F5: 60          `
 
-; ******************************************************************************
+ JSR MT19               \ Call MT19 to capitalise the next letter (i.e. set
+                        \ Sentence Case for this word only)
+
+ JSR DORND              \ Set A and X to random numbers and reduce A to a
+ AND #3                 \ random number in the range 0-3
+
+ TAY                    \ Copy the random number into Y, so we can use Y as a
+                        \ loop counter to print 1-4 words (i.e. Y+1 words)
+
+.MT18L
+
+ JSR DORND              \ Set A and X to random numbers and reduce A to an even
+ AND #62                \ random number in the range 0-62 (as bit 0 of 62 is 0)
+
+ TAX                    \ Copy the random number into X, so X contains the table
+                        \ offset of a random extended two-letter token from 0-31
+                        \ which we can now use to pick a token from the combined
+                        \ tables at TKN2+2 and QQ16 (we intentionally exclude
+                        \ the first token in TKN2, which contains a newline)
+
+ LDA TKN2+2,X           \ Print the first letter of the token at TKN2+2 + X
+ JSR DTS_BANK7
+
+ LDA TKN2+3,X           \ Fetch the second letter of the token from TKN2+2 + X
+
+ CMP #'?'               \ If the second letter is a question mark, skip the
+ BEQ P%+5               \ following instruction (as ? indicates a single-letter
+                        \ token)
+
+ JSR DTS_BANK7          \ Print the second letter of the token at TKN2+2 + X
+
+ DEY                    \ Decrement the loop counter
+
+ BPL MT18L              \ Loop back to MT18L to print another two-letter token
+                        \ until we have printed Y+1 of them
+
+ RTS                    \ Return from the subroutine
+
+\ ******************************************************************************
+\
+\       Name: MT26
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Print a space and capitalise the next letter
+\  Deep dive: Extended text tokens
+\
+\ ------------------------------------------------------------------------------
+\
+\ ******************************************************************************
+
 .MT26
- LDA #&20 ; ' '                                   ; B2F6: A9 20       .
- JSR DASC                                   ; B2F8: 20 F5 B4     ..
-; ******************************************************************************
-.MT19
- LDA #0                                           ; B2FB: A9 00       ..
- STA DTW8                                         ; B2FD: 8D F9 03    ...
- RTS                                              ; B300: 60          `
 
-; ******************************************************************************
+ LDA #' '               \ Print a space
+ JSR DASC
+
+                        \ Fall through into MT19 to capitalise the next letter
+
+\ ******************************************************************************
+\
+\       Name: MT19
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Capitalise the next letter
+\  Deep dive: Extended text tokens
+\
+\ ------------------------------------------------------------------------------
+\
+\ This routine sets the following:
+\
+\   * DTW8 = %00000000 (capitalise the next letter)
+\
+\ ******************************************************************************
+
+.MT19
+
+ LDA #%00000000         \ Set DTW8 = %00000000
+ STA DTW8
+
+ RTS                    \ Return from the subroutine
+
+\ ******************************************************************************
+\
+\       Name: VOWEL
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Test whether a character is a vowel
+\
+\ ------------------------------------------------------------------------------
+\
+\ Arguments:
+\
+\   A                   The character to be tested
+\
+\ Returns:
+\
+\   C flag              The C flag is set if the character is a vowel, otherwise
+\                       it is clear
+\
+\ ******************************************************************************
+
 .VOWEL
- ORA #&20 ; ' '                                   ; B301: 09 20       .
- CMP #&61 ; 'a'                                   ; B303: C9 61       .a
- BEQ CB318                                        ; B305: F0 11       ..
- CMP #&65 ; 'e'                                   ; B307: C9 65       .e
- BEQ CB318                                        ; B309: F0 0D       ..
- CMP #&69 ; 'i'                                   ; B30B: C9 69       .i
- BEQ CB318                                        ; B30D: F0 09       ..
- CMP #&6F ; 'o'                                   ; B30F: C9 6F       .o
- BEQ CB318                                        ; B311: F0 05       ..
- CMP #&75 ; 'u'                                   ; B313: C9 75       .u
- BEQ CB318                                        ; B315: F0 01       ..
- CLC                                              ; B317: 18          .
-.CB318
- RTS                                              ; B318: 60          `
+
+ ORA #%00100000         \ Set bit 5 of the character to make it lower case
+
+ CMP #'a'               \ If the letter is a vowel, jump to VRTS to return from
+ BEQ VRTS               \ the subroutine with the C flag set (as the CMP will
+ CMP #'e'               \ set the C flag if the comparison is equal)
+ BEQ VRTS
+ CMP #'i'
+ BEQ VRTS
+ CMP #'o'
+ BEQ VRTS
+ CMP #'u'
+ BEQ VRTS
+
+ CLC                    \ The character is not a vowel, so clear the C flag
+
+.VRTS
+
+ RTS                    \ Return from the subroutine
+
+\ ******************************************************************************
+\
+\       Name: TKN2
+\       Type: Variable
+\   Category: Text
+\    Summary: The extended two-letter token lookup table
+\  Deep dive: Extended text tokens
+\
+\ ------------------------------------------------------------------------------
+\
+\ Two-letter token lookup table for extended tokens 215-227.
+\
+\ ******************************************************************************
 
 .TKN2
- EQUB &0C                                         ; B319: 0C          .
-.TKN2_1
- EQUB &0A                                         ; B31A: 0A          .
-.TKN2_2
- EQUB &41                                         ; B31B: 41          A
-.TKN2_3
- EQUS "BOUSEITILETSTONLONUTHNO"                   ; B31C: 42 4F 55... BOU
+
+ EQUB 12, 10            \ Token 215 = {crlf}
+ EQUS "AB"              \ Token 216
+ EQUS "OU"              \ Token 217
+ EQUS "SE"              \ Token 218
+ EQUS "IT"              \ Token 219
+ EQUS "IL"              \ Token 220
+ EQUS "ET"              \ Token 221
+ EQUS "ST"              \ Token 222
+ EQUS "ON"              \ Token 223
+ EQUS "LO"              \ Token 224
+ EQUS "NU"              \ Token 225
+ EQUS "TH"              \ Token 226
+ EQUS "NO"              \ Token 227
+
+\ ******************************************************************************
+\
+\       Name: QQ16
+\       Type: Variable
+\   Category: Text
+\    Summary: The two-letter token lookup table
+\  Deep dive: Printing text tokens
+\
+\ ------------------------------------------------------------------------------
+\
+\ Two-letter token lookup table for tokens 128-159. See the deep dive on
+\ "Printing text tokens" for details of how the two-letter token system works.
+\
+\ ******************************************************************************
+
 .QQ16
- EQUB &41                                         ; B333: 41          A
-.QQ16_1
- EQUS "LLEXEGEZACEBISOUSESARMAINDIREA?ERATENBE"   ; B334: 4C 4C 45... LLE
- EQUS "RALAVETIEDORQUANTEISRION"                  ; B35B: 52 41 4C... RAL
 
-; ******************************************************************************
+ EQUS "AL"              \ Token 128
+ EQUS "LE"              \ Token 129
+ EQUS "XE"              \ Token 130
+ EQUS "GE"              \ Token 131
+ EQUS "ZA"              \ Token 132
+ EQUS "CE"              \ Token 133
+ EQUS "BI"              \ Token 134
+ EQUS "SO"              \ Token 135
+ EQUS "US"              \ Token 136
+ EQUS "ES"              \ Token 137
+ EQUS "AR"              \ Token 138
+ EQUS "MA"              \ Token 139
+ EQUS "IN"              \ Token 140
+ EQUS "DI"              \ Token 141
+ EQUS "RE"              \ Token 142
+ EQUS "A?"              \ Token 143
+ EQUS "ER"              \ Token 144
+ EQUS "AT"              \ Token 145
+ EQUS "EN"              \ Token 146
+ EQUS "BE"              \ Token 147
+ EQUS "RA"              \ Token 148
+ EQUS "LA"              \ Token 149
+ EQUS "VE"              \ Token 150
+ EQUS "TI"              \ Token 151
+ EQUS "ED"              \ Token 152
+ EQUS "OR"              \ Token 153
+ EQUS "QU"              \ Token 154
+ EQUS "AN"              \ Token 155
+ EQUS "TE"              \ Token 156
+ EQUS "IS"              \ Token 157
+ EQUS "RI"              \ Token 158
+ EQUS "ON"              \ Token 159
+
+\ ******************************************************************************
+\
+\       Name: BRIS
+\       Type: Subroutine
+\   Category: Missions
+\    Summary: Clear the screen, display "INCOMING MESSAGE" and wait for 2
+\             seconds
+\
+\ ******************************************************************************
+
 .BRIS
- LDA #&D8                                         ; B373: A9 D8       ..
- JSR DETOK                                        ; B375: 20 EF B0     ..
- JSR LF2BD                                        ; B378: 20 BD F2     ..
- LDY #&64 ; 'd'                                   ; B37B: A0 64       .d
- JMP DELAY                                        ; B37D: 4C A2 EB    L..
 
-; ******************************************************************************
+ LDA #216               \ Print extended token 216 ("{clear screen}{tab 6}{move
+ JSR DETOK              \ to row 10, white, lower case}{white}{all caps}INCOMING
+                        \ MESSAGE"
+
+ JSR LF2BD              \ ???
+
+ LDY #100               \ Delay for 100 vertical syncs (100/50 = 2 seconds) and
+ JMP DELAY              \ return from the subroutine using a tail call
+
+\ ******************************************************************************
+\
+\       Name: PAUSE
+\       Type: Subroutine
+\   Category: Keyboard
+\    Summary: Display a rotating ship, waiting until a key is pressed, then
+\             remove the ship from the screen
+\
+\ ******************************************************************************
+
 .PAUSE
- JSR LF186                                        ; B380: 20 86 F1     ..
- JSR LD8C5                                        ; B383: 20 C5 D8     ..
- LDA L00B8                                        ; B386: A5 B8       ..
- STA L00D2                                        ; B388: 85 D2       ..
- LDA #&28 ; '('                                   ; B38A: A9 28       .(
- STA L00D8                                        ; B38C: 85 D8       ..
- LDX #8                                           ; B38E: A2 08       ..
- STX L00CC                                        ; B390: 86 CC       ..
+
+ JSR F186_BANK7         \ ???
+ JSR LD8C5
+ LDA L00B8
+ STA L00D2
+ LDA #&28
+ STA L00D8
+ LDX #8
+ STX L00CC
+
 .loop_CB392
- JSR PAS1                                         ; B392: 20 7A EF     z.
- LDA L04B2                                        ; B395: AD B2 04    ...
- ORA L04B4                                        ; B398: 0D B4 04    ...
- BPL loop_CB392                                   ; B39B: 10 F5       ..
+
+ JSR PAS1
+ LDA L04B2
+ ORA L04B4
+ BPL loop_CB392
+
 .loop_CB39D
- JSR PAS1                                         ; B39D: 20 7A EF     z.
- LDA L04B2                                        ; B3A0: AD B2 04    ...
- ORA L04B4                                        ; B3A3: 0D B4 04    ...
- BMI loop_CB39D                                   ; B3A6: 30 F5       0.
- LDA #0                                           ; B3A8: A9 00       ..
- STA INWK_31                                      ; B3AA: 85 28       .(
- LDA #&93                                         ; B3AC: A9 93       ..
- JSR TT66                                         ; B3AE: 20 6E F2     n.
-; ******************************************************************************
+
+ JSR PAS1
+ LDA L04B2
+ ORA L04B4
+ BMI loop_CB39D
+
+ LDA #0                 \ Set the ship's AI flag to 0 (no AI) so it doesn't get
+ STA INWK+31            \ any ideas of its own
+
+ LDA #&93               \ Clear the top part of the screen, draw a white border,
+ JSR TT66               \ and set the current view type in QQ11 to ???
+
+                        \ Fall through into MT23 to move to row 10, switch to
+                        \ white text, and switch to lower case when printing
+                        \ extended tokens
+
+\ ******************************************************************************
+\
+\       Name: MT23
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Move to row 9, switch to white text, and switch to lower case
+\             when printing extended tokens
+\  Deep dive: Extended text tokens
+\
+\ ******************************************************************************
+
 .MT23
- LDA #9                                           ; B3B1: A9 09       ..
-; overlapping:  L07A9                             ; B3B3: 2C A9 07    ,..
- EQUB &2C                                         ; B3B3: 2C          ,
 
-; ******************************************************************************
+ LDA #9                 \ Set A = 9, so when we fall through into MT29, the
+                        \ text cursor gets moved to row 9
+
+ EQUB &2C               \ Skip the next instruction by turning it into
+                        \ &2C &A9 &06, or BIT &06A9, which does nothing apart
+                        \ from affect the flags
+
+                        \ Fall through into MT29 to move to the row in A, switch
+                        \ to white text, and switch to lower case
+
+\ ******************************************************************************
+\
+\       Name: MT29
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Move to row 7, switch to white text, and switch to lower case when
+\             printing extended tokens
+\  Deep dive: Extended text tokens
+\
+\ ******************************************************************************
+
 .MT29
- LDA #7                                           ; B3B4: A9 07       ..
- STA YC                                           ; B3B6: 85 3B       .;
-; ******************************************************************************
-.MT13
- LDA #&80                                         ; B3B8: A9 80       ..
- STA DTW1                                         ; B3BA: 8D F8 03    ...
- STA DTW6                                         ; B3BD: 8D F3 03    ...
- RTS                                              ; B3C0: 60          `
 
-; ******************************************************************************
+ LDA #7                 \ Move the text cursor to row 7
+ STA YC
+
+                        \ Fall through into MT13 to set bit 7 of DTW6 and bit 5
+                        \ of DTW1
+
+\ ******************************************************************************
+\
+\       Name: MT13
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Switch to lower case when printing extended tokens
+\  Deep dive: Extended text tokens
+\
+\ ------------------------------------------------------------------------------
+\
+\ This routine sets the following:
+\
+\   * DTW1 = %10000000 (???)
+\
+\   * DTW6 = %10000000 (lower case is enabled)
+\
+\ ******************************************************************************
+
+.MT13
+
+ LDA #%10000000         \ Set DTW1 = %10000000
+ STA DTW1
+
+ STA DTW6               \ Set DTW6 = %10000000
+
+ RTS                    \ Return from the subroutine
+
+\ ******************************************************************************
+\
+\       Name: PAUSE2
+\       Type: Subroutine
+\   Category: Keyboard
+\    Summary: Wait until a key is pressed, ignoring any existing key press
+\
+\ ------------------------------------------------------------------------------
+\
+\ Returns:
+\
+\
+\ ******************************************************************************
+
 .PAUSE2
- JSR LF186                                        ; B3C1: 20 86 F1     ..
+
+ JSR F186_BANK7         \ ???
+
 .loop_CB3C4
- JSR LEC7D                                        ; B3C4: 20 7D EC     }.
- LDA L04B2                                        ; B3C7: AD B2 04    ...
- ORA L04B4                                        ; B3CA: 0D B4 04    ...
- AND #&C0                                         ; B3CD: 29 C0       ).
- CMP #&40 ; '@'                                   ; B3CF: C9 40       .@
- BNE loop_CB3C4                                   ; B3D1: D0 F1       ..
- RTS                                              ; B3D3: 60          `
+
+ JSR NAMETABLE0_BANK7   \ ???
+ LDA L04B2
+ ORA L04B4
+ AND #&C0
+ CMP #&40
+ BNE loop_CB3C4
+
+ RTS                    \ Return from the subroutine
+
+\ ******************************************************************************
+\
+\       Name: RUPLA_LO
+\       Type: Variable
+\   Category: Text
+\    Summary: Address lookup table for the RUPLA text token table in three
+\             different languages (low byte)
+\
+\ ******************************************************************************
 
 .RUPLA_LO
 
- EQUB LO(RUPLA - 1)
- EQUB LO(RUPLA_DE - 1)
- EQUB LO(RUPLA_FR - 1)
- EQUB &43
+ EQUB LO(RUPLA - 1)     \ English
+
+ EQUB LO(RUPLA_DE - 1)  \ German
+
+ EQUB LO(RUPLA_FR - 1)  \ French
+
+ EQUB &43               \ There is no fourth language, so this byte is ignored
+
+\ ******************************************************************************
+\
+\       Name: RUPLA_HI
+\       Type: Variable
+\   Category: Text
+\    Summary: Address lookup table for the RUPLA text token table in three
+\             different languages (high byte)
+\
+\ ******************************************************************************
 
 .RUPLA_HI
 
- EQUB HI(RUPLA - 1)
- EQUB HI(RUPLA_DE - 1)
- EQUB HI(RUPLA_FR - 1)
- EQUB &AB
+ EQUB HI(RUPLA - 1)     \ English
+
+ EQUB HI(RUPLA_DE - 1)  \ German
+
+ EQUB HI(RUPLA_FR - 1)  \ French
+
+ EQUB &AB               \ There is no fourth language, so this byte is ignored
+
+\ ******************************************************************************
+\
+\       Name: RUGAL_LO
+\       Type: Variable
+\   Category: Text
+\    Summary: Address lookup table for the RUGAL text token table in three
+\             different languages (low byte)
+\
+\ ******************************************************************************
 
 .RUGAL_LO
 
- EQUB LO(RUGAL - 1)
- EQUB LO(RUGAL_DE - 1)
- EQUB LO(RUGAL_FR - 1)
- EQUB &5A
+ EQUB LO(RUGAL - 1)     \ English
+
+ EQUB LO(RUGAL_DE - 1)  \ German
+
+ EQUB LO(RUGAL_FR - 1)  \ French
+
+ EQUB &5A               \ There is no fourth language, so this byte is ignored
+
+\ ******************************************************************************
+\
+\       Name: RUGAL_HI
+\       Type: Variable
+\   Category: Text
+\    Summary: Address lookup table for the RUGAL text token table in three
+\             different languages (high byte)
+\
+\ ******************************************************************************
 
 .RUGAL_HI
- EQUB HI(RUGAL - 1)
- EQUB HI(RUGAL_DE - 1)
- EQUB HI(RUGAL_FR - 1)
- EQUB &AB
+
+ EQUB HI(RUGAL - 1)     \ English
+
+ EQUB HI(RUGAL_DE - 1)  \ German
+
+ EQUB HI(RUGAL_FR - 1)  \ French
+
+ EQUB &AB               \ There is no fourth language, so this byte is ignored
+
+\ ******************************************************************************
+\
+\       Name: NRU
+\       Type: Variable
+\   Category: Text
+\    Summary: The number of planetary systems with extended system description
+\             overrides in the RUTOK table (NRU%) in three different languages
+\
+\ ******************************************************************************
 
 .NRU
 
- EQUB &17, &17, &17, &17                          ; B3E4: 17 17 17... ...
+ EQUB 23                \ English
 
-; ******************************************************************************
+ EQUB 23                \ German
+
+ EQUB 23                \ French
+
+ EQUB 23                \ There is no fourth language, so this byte is ignored
+
+\ ******************************************************************************
+\
+\       Name: PDESC
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Print the system's extended description or a mission 1 directive
+\  Deep dive: Extended system descriptions
+\             Extended text tokens
+\
+\ ------------------------------------------------------------------------------
+\
+\ This prints a specific system's extended description. This is called the "pink
+\ volcanoes string" in a comment in the original source, and the "goat soup"
+\ recipe by Ian Bell on his website (where he also refers to the species string
+\ as the "pink felines" string).
+\
+\ For some special systems, when you are docked at them, the procedurally
+\ generated extended description is overridden and a text token from the RUTOK
+\ table is shown instead. If mission 1 is in progress, then a number of systems
+\ along the route of that mission's story will show custom mission-related
+\ directives in place of that system's normal "goat soup" phrase.
+\
+\ Arguments:
+\
+\   ZZ                  The system number (0-255)
+\
+\ ******************************************************************************
+
 .PDESC
- LDA QQ8                                          ; B3E8: AD 9B 04    ...
- ORA QQ8_1                                        ; B3EB: 0D 9C 04    ...
- BNE CB43E                                        ; B3EE: D0 4E       .N
- LDA QQ12                                         ; B3F0: A5 A5       ..
- BPL CB43E                                        ; B3F2: 10 4A       .J
- LDX LANG                                         ; B3F4: AE A8 04    ...
- LDA RUPLA_LO,X                                   ; B3F7: BD D4 B3    ...
- STA SC                                           ; B3FA: 85 07       ..
- LDA RUPLA_HI,X                                   ; B3FC: BD D8 B3    ...
- STA SC_1                                         ; B3FF: 85 08       ..
- LDA RUGAL_LO,X                                   ; B401: BD DC B3    ...
- STA L00BA                                        ; B404: 85 BA       ..
- LDA RUGAL_HI,X                                   ; B406: BD E0 B3    ...
- STA L00BB                                        ; B409: 85 BB       ..
- LDY NRU,X                                        ; B40B: BC E4 B3    ...
-.CB40E
- LDA (SC),Y                                       ; B40E: B1 07       ..
- CMP L049F                                        ; B410: CD 9F 04    ...
- BNE CB43B                                        ; B413: D0 26       .&
- LDA (L00BA),Y                                    ; B415: B1 BA       ..
- AND #&7F                                         ; B417: 29 7F       ).
- CMP GCNT                                         ; B419: CD A7 03    ...
- BNE CB43B                                        ; B41C: D0 1D       ..
- LDA (L00BA),Y                                    ; B41E: B1 BA       ..
- BMI CB42E                                        ; B420: 30 0C       0.
- LDA TP                                           ; B422: AD 9E 03    ...
- LSR A                                            ; B425: 4A          J
- BCC CB43E                                        ; B426: 90 16       ..
- JSR MT14                                         ; B428: 20 A8 B2     ..
- LDA #1                                           ; B42B: A9 01       ..
-; overlapping:  LB0A9                             ; B42D: 2C A9 B0    ,..
- EQUB &2C                                         ; B42D: 2C          ,
 
-.CB42E
- LDA #&B0                                         ; B42E: A9 B0       ..
- JSR DETOK2                                       ; B430: 20 4B B1     K.
- TYA                                              ; B433: 98          .
- JSR DETOK3                                       ; B434: 20 D6 B0     ..
- LDA #&B1                                         ; B437: A9 B1       ..
- BNE CB449                                        ; B439: D0 0E       ..
-.CB43B
- DEY                                              ; B43B: 88          .
- BNE CB40E                                        ; B43C: D0 D0       ..
-.CB43E
- LDX #3                                           ; B43E: A2 03       ..
-.loop_CB440
- LDA QQ15_2,X                                     ; B440: B5 84       ..
- STA RAND,X                                       ; B442: 95 02       ..
- DEX                                              ; B444: CA          .
- BPL loop_CB440                                   ; B445: 10 F9       ..
- LDA #5                                           ; B447: A9 05       ..
-.CB449
- JMP DETOK                                  ; B449: 4C EF B0    L..
+ LDA QQ8                \ If either byte in QQ18(1 0) is non-zero, meaning that
+ ORA QQ8+1              \ the distance from the current system to the selected
+ BNE PD1                \ is non-zero, jump to PD1 to show the standard "goat
+                        \ soup" description
 
-.loop_CB44C
- JMP TT27_control_codes                           ; B44C: 4C 37 F2    L7.
+ LDA QQ12               \ If QQ12 does not have bit 7 set, which means we are
+ BPL PD1                \ not docked, jump to PD1 to show the standard "goat
+                        \ soup" description
 
-; ******************************************************************************
+ LDX LANG               \ ???
+ LDA RUPLA_LO,X
+ STA SC
+ LDA RUPLA_HI,X
+ STA SC+1
+ LDA RUGAL_LO,X
+ STA L00BA
+ LDA RUGAL_HI,X
+ STA L00BB
+
+ LDY NRU,X
+
+.PDL1
+
+ LDA (SC),Y
+ CMP L049F
+ BNE PD2
+ LDA (L00BA),Y
+
+ AND #%01111111         \ Extract bits 0-6 of A
+
+ CMP GCNT               \ If the result does not equal the current galaxy
+ BNE PD2                \ number, jump to PD2 to keep looping through the system
+                        \ numbers in RUPLA
+
+ LDA (L00BA),Y          \ ???
+ BMI PD3
+
+ LDA TP                 \ Fetch bit 0 of TP into the C flag, and skip to PD1 if
+ LSR A                  \ it is clear (i.e. if mission 1 is not in progress) to
+ BCC PD1                \ print the "goat soup" extended description
+
+                        \ If we get here then mission 1 is in progress, so we
+                        \ print out the corresponding token from RUTOK
+
+ JSR MT14               \ Call MT14 to switch to justified text
+
+ LDA #1                 \ Set A = 1 so that extended token 1 (an empty string)
+                        \ gets printed below instead of token 176, followed by
+                        \ the Y-th token in RUTOK
+
+ EQUB &2C               \ Skip the next instruction by turning it into
+                        \ &2C &A9 &B0, or BIT &B0A9, which does nothing apart
+                        \ from affect the flags
+
+.PD3
+
+ LDA #176               \ Print extended token 176 ("{lower case}{justify}
+ JSR DETOK2             \ {single cap}")
+
+ TYA                    \ Print the extended token in Y from the second table
+ JSR DETOK3             \ in RUTOK
+
+ LDA #177               \ Set A = 177 so when we jump to PD4 in the next
+                        \ instruction, we print token 177 (".{cr}{left align}")
+
+ BNE PD4                \ Jump to PD4 to print the extended token in A and
+                        \ return from the subroutine using a tail call
+
+.PD2
+
+ DEY                    \ Decrement the byte counter in Y
+
+ BNE PDL1               \ Loop back to check the next byte in RUPLA until we
+                        \ either find a match for the system in ZZ, or we fall
+                        \ through into the "goat soup" extended description
+                        \ routine
+
+.PD1
+
+                        \ We now print the "goat soup" extended description
+
+ LDX #3                 \ We now want to seed the random number generator with
+                        \ the s1 and s2 16-bit seeds from the current system, so
+                        \ we get the same extended description for each system
+                        \ every time we call PDESC, so set a counter in X for
+                        \ copying 4 bytes
+
+{
+.PDL1                   \ This label is a duplicate of the label above (which is
+                        \ why we need to surround it with braces, as BeebAsm
+                        \ doesn't allow us to redefine labels, unlike BBC BASIC)
+
+ LDA QQ15+2,X           \ Copy QQ15+2 to QQ15+5 (s1 and s2) to RAND to RAND+3
+ STA RAND,X
+
+ DEX                    \ Decrement the loop counter
+
+ BPL PDL1               \ Loop back to PDL1 until we have copied all
+
+ LDA #5                 \ Set A = 5, so we print extended token 5 in the next
+                        \ instruction ("{lower case}{justify}{single cap}[86-90]
+                        \ IS [140-144].{cr}{left align}"
+}
+
+.PD4
+
+ JMP DETOK              \ Print the extended token given in A, and return from
+                        \ the subroutine using a tail call
+
+\ ******************************************************************************
+\
+\       Name: TT27
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Print a text token
+\  Deep dive: Printing text tokens
+\
+\ ------------------------------------------------------------------------------
+\
+\ Print a text token (i.e. a character, control code, two-letter token or
+\ recursive token). See variable QQ18 for a discussion of the token system
+\ used in Elite.
+\
+\ Arguments:
+\
+\   A                   The text token to be printed
+\
+\ ******************************************************************************
+
+ JMP TT27_control_codes
+
 .TT27
- PHA                                              ; B44F: 48          H
- LDA L00E9                                        ; B450: A5 E9       ..
- BPL CB45D                                        ; B452: 10 09       ..
- LDA PPUSTATUS                                    ; B454: AD 02 20    ..
- ASL A                                            ; B457: 0A          .
- BPL CB45D                                        ; B458: 10 03       ..
- JSR NAMETABLE0                                   ; B45A: 20 6D D0     m.
-.CB45D
- PLA                                              ; B45D: 68          h
- TAX                                              ; B45E: AA          .
- BMI TT43                                         ; B45F: 30 31       01
- CMP #&0A                                         ; B461: C9 0A       ..
- BCC loop_CB44C                                   ; B463: 90 E7       ..
- CMP #&60 ; '`'                                   ; B465: C9 60       .`
- BCS ex                                           ; B467: B0 41       .A
- CMP #&0E                                         ; B469: C9 0E       ..
- BCC CB471                                        ; B46B: 90 04       ..
- CMP #&20 ; ' '                                   ; B46D: C9 20       .
- BCC qw                                           ; B46F: 90 18       ..
-.CB471
- LDX QQ17                                         ; B471: A6 3C       .<
- BEQ CB47F                                        ; B473: F0 0A       ..
- BMI CB482                                        ; B475: 30 0B       0.
- BIT QQ17                                         ; B477: 24 3C       $<
- BVS CB47F                                        ; B479: 70 04       p.
-.loop_CB47B
- TAX                                              ; B47B: AA          .
- LDA LB8B4,X                                      ; B47C: BD B4 B8    ...
-.CB47F
- JMP DASC                                   ; B47F: 4C F5 B4    L..
 
-.CB482
- BIT QQ17                                         ; B482: 24 3C       $<
- BVS CB48D                                        ; B484: 70 07       p.
- JMP DASC                                   ; B486: 4C F5 B4    L..
+ PHA                    \ Store A on the stack, so we can retrieve it below
+
+ SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+
+ PLA                    \ Restore A from the stack
+
+ TAX                    \ Copy the token number from A to X. We can then keep
+                        \ decrementing X and testing it against zero, while
+                        \ keeping the original token number intact in A; this
+                        \ effectively implements a switch statement on the
+                        \ value of the token
+
+ BMI TT43               \ If token > 127, this is either a two-letter token
+                        \ (128-159) or a recursive token (160-255), so jump
+                        \ to TT43 to process tokens
+
+ CMP #&0A
+ BCC TT27-3
+
+ CMP #96                \ By this point, token is either 7, or in 10-127.
+ BCS ex                 \ Check token number in A and if token >= 96, then the
+                        \ token is in 96-127, which is a recursive token, so
+                        \ jump to ex, which prints recursive tokens in this
+                        \ range (i.e. where the recursive token number is
+                        \ correct and doesn't need correcting)
+
+ CMP #14                \ If token < 14, skip the following two instructions
+ BCC P%+6
+
+ CMP #32                \ If token < 32, then this means token is in 14-31, so
+ BCC qw                 \ this is a recursive token that needs 114 adding to it
+                        \ to get the recursive token number, so jump to qw
+                        \ which will do this
+
+                        \ By this point, token is either 7 (beep) or in 10-13
+                        \ (line feeds and carriage returns), or in 32-95
+                        \ (ASCII letters, numbers and punctuation)
+
+ LDX QQ17               \ Fetch QQ17, which controls letter case, into X
+
+ BEQ TT44               \ If QQ17 = 0, then ALL CAPS is set, so jump to TT44
+                        \ to print this character as is (i.e. as a capital)
+
+ BMI TT41               \ If QQ17 has bit 7 set, then we are using Sentence
+                        \ Case, so jump to TT41, which will print the
+                        \ character in upper or lower case, depending on
+                        \ whether this is the first letter in a word
+
+ BIT QQ17               \ If we get here, QQ17 is not 0 and bit 7 is clear, so
+ BVS TT44               \ either it is bit 6 that is set, or some other flag in
+                        \ QQ17 is set (bits 0-5). So check whether bit 6 is set.
+                        \ If it is, then ALL CAPS has been set (as bit 7 is
+                        \ clear) but bit 6 is still indicating that the next
+                        \ character should be printed in lower case, so we need
+                        \ to fix this. We do this with a jump to TT44, which
+                        \ will print this character in upper case and clear bit
+                        \ 6, so the flags are consistent with ALL CAPS going
+                        \ forward ???
+
+                        \ If we get here, some other flag is set in QQ17 (one
+                        \ of bits 0-5 is set), which shouldn't happen in this
+                        \ version of Elite. If this were the case, then we
+                        \ would fall through into TT42 to print in lower case,
+                        \ which is how printing all words in lower case could
+                        \ be supported (by setting QQ17 to 1, say)
+
+\ ******************************************************************************
+\
+\       Name: TT42
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Print a letter in lower case
+\
+\ ------------------------------------------------------------------------------
+\
+\ Arguments:
+\
+\   A                   The character to be printed. Can be one of the
+\                       following:
+\
+\                         * 7 (beep)
+\
+\                         * 10-13 (line feeds and carriage returns)
+\
+\                         * 32-95 (ASCII capital letters, numbers and
+\                           punctuation)
+\
+\ Other entry points:
+\
+\   TT44                Jumps to TT26 to print the character in A (used to
+\                       enable us to use a branch instruction to jump to TT26)
+\
+\ ******************************************************************************
+
+.TT42
+
+ TAX                    \ ???
+ LDA CHARTABLE,X
+
+.TT44
+
+ JMP TT26               \ Print the character in A
+
+\ ******************************************************************************
+\
+\       Name: TT41
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Print a letter according to Sentence Case
+\
+\ ------------------------------------------------------------------------------
+\
+\ The rules for printing in Sentence Case are as follows:
+\
+\   * If QQ17 bit 6 is set, print lower case (via TT45)
+\
+\   * If QQ17 bit 6 clear, then:
+\
+\       * If character is punctuation, just print it
+\
+\       * If character is a letter, set QQ17 bit 6 and print letter as a capital
+\
+\ Arguments:
+\
+\   A                   The character to be printed. Can be one of the
+\                       following:
+\
+\                         * 7 (beep)
+\
+\                         * 10-13 (line feeds and carriage returns)
+\
+\                         * 32-95 (ASCII capital letters, numbers and
+\                           punctuation)
+\
+\   X                   Contains the current value of QQ17
+\
+\   QQ17                Bit 7 is set
+\
+\ ******************************************************************************
+
+.TT41
+
+                        \ If we get here, then QQ17 has bit 7 set, so we are in
+                        \ Sentence Case
+
+ BIT QQ17               \ If QQ17 also has bit 6 set, jump to TT45 to print
+ BVS TT45               \ this character in lower case
+
+                        \ If we get here, then QQ17 has bit 6 clear and bit 7
+                        \ set, so we are in Sentence Case and we need to print
+                        \ the next letter in upper case
+
+ JMP DASC               \ Jump to DASC to print the character in A
+
+\ ******************************************************************************
+\
+\       Name: qw
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Print a recursive token in the range 128-145
+\
+\ ------------------------------------------------------------------------------
+\
+\ Print a recursive token where the token number is in 128-145 (so the value
+\ passed to TT27 is in the range 14-31).
+\
+\ Arguments:
+\
+\   A                   A value from 128-145, which refers to a recursive token
+\                       in the range 14-31
+\
+\ ******************************************************************************
 
 .qw
- ADC #&72 ; 'r'                                   ; B489: 69 72       ir
- BNE ex                                           ; B48B: D0 1D       ..
-.CB48D
- CPX #&FF                                         ; B48D: E0 FF       ..
- BNE loop_CB47B                                   ; B48F: D0 EA       ..
- RTS                                              ; B491: 60          `
 
-; ******************************************************************************
+ ADC #114               \ This is a recursive token in the range 0-95, so add
+ BNE ex                 \ 114 to the argument to get the token number 128-145
+                        \ and jump to ex to print it
+
+\ ******************************************************************************
+\
+\       Name: TT45
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Print a letter in lower case
+\
+\ ------------------------------------------------------------------------------
+\
+\ This routine prints a letter in lower case. Specifically:
+\
+\   * If QQ17 = 255, abort printing this character as printing is disabled
+\
+\   * If this is a letter then print in lower case
+\
+\   * Otherwise this is punctuation, so clear bit 6 in QQ17 and print
+\
+\ Arguments:
+\
+\   A                   The character to be printed. Can be one of the
+\                       following:
+\
+\                         * 7 (beep)
+\
+\                         * 10-13 (line feeds and carriage returns)
+\
+\                         * 32-95 (ASCII capital letters, numbers and
+\                           punctuation)
+\
+\   X                   Contains the current value of QQ17
+\
+\   QQ17                Bits 6 and 7 are set
+\
+\ ******************************************************************************
+
+.TT45
+
+                        \ If we get here, then QQ17 has bit 6 and 7 set, so we
+                        \ are in Sentence Case and we need to print the next
+                        \ letter in lower case
+
+ CPX #255               \ If QQ17 = 255 then printing is disabled, so if it
+ BNE TT42               \ isn't disabled, jump to TT42 to print the character
+
+ RTS                    \ Printing is disables, so return from the subroutine
+
+\ ******************************************************************************
+\
+\       Name: TT43
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Print a two-letter token or recursive token 0-95
+\
+\ ------------------------------------------------------------------------------
+\
+\ Print a two-letter token, or a recursive token where the token number is in
+\ 0-95 (so the value passed to TT27 is in the range 160-255).
+\
+\ Arguments:
+\
+\   A                   One of the following:
+\
+\                         * 128-159 (two-letter token)
+\
+\                         * 160-255 (the argument to TT27 that refers to a
+\                           recursive token in the range 0-95)
+\
+\ ******************************************************************************
+
 .TT43
- CMP #&A0                                         ; B492: C9 A0       ..
- BCS CB4A8                                        ; B494: B0 12       ..
- AND #&7F                                         ; B496: 29 7F       ).
- ASL A                                            ; B498: 0A          .
- TAY                                              ; B499: A8          .
- LDA QQ16,Y                                       ; B49A: B9 33 B3    .3.
- JSR TT27                                   ; B49D: 20 4F B4     O.
- LDA QQ16_1,Y                                     ; B4A0: B9 34 B3    .4.
- CMP #&3F ; '?'                                   ; B4A3: C9 3F       .?
- BNE TT27                                   ; B4A5: D0 A8       ..
- RTS                                              ; B4A7: 60          `
 
-.CB4A8
- SBC #&A0                                         ; B4A8: E9 A0       ..
-; ******************************************************************************
+ CMP #160               \ If token >= 160, then this is a recursive token, so
+ BCS TT47               \ jump to TT47 below to process it
+
+ AND #127               \ This is a two-letter token with number 128-159. The
+ ASL A                  \ set of two-letter tokens is stored in a lookup table
+                        \ at QQ16, with each token taking up two bytes, so to
+                        \ convert this into the token's position in the table,
+                        \ we subtract 128 (or just clear bit 7) and multiply
+                        \ by 2 (or shift left)
+
+ TAY                    \ Transfer the token's position into Y so we can look
+                        \ up the token using absolute indexed mode
+
+ LDA QQ16,Y             \ Get the first letter of the token and print it
+ JSR TT27
+
+ LDA QQ16+1,Y           \ Get the second letter of the token
+
+ CMP #'?'               \ If the second letter of the token is a question mark
+ BNE TT27               \ then this is a one-letter token, so if it isn't a
+                        \ question mark, jump to TT27 to print the second letter
+
+ RTS                    \ The second letter is a question mark, so return from
+                        \ the subroutine without printing it
+
+.TT47
+
+ SBC #160               \ This is a recursive token in the range 160-255, so
+                        \ subtract 160 from the argument to get the token
+                        \ number 0-95 and fall through into ex to print it
+
+\ ******************************************************************************
+\
+\       Name: ex
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Print a recursive token
+\
+\ ------------------------------------------------------------------------------
+\
+\ This routine works its way through the recursive tokens that are stored in
+\ tokenised form in memory at &0400 to &06FF, and when it finds token number A,
+\ it prints it. Tokens are null-terminated in memory and fill three pages,
+\ but there is no lookup table as that would consume too much memory, so the
+\ only way to find the correct token is to start at the beginning and look
+\ through the table byte by byte, counting tokens as we go until we are in the
+\ right place. This approach might not be terribly speed efficient, but it is
+\ certainly memory-efficient.
+\
+\ For details of the tokenisation system, see variable QQ18.
+\
+\ Arguments:
+\
+\   A                   The recursive token to be printed, in the range 0-148
+\
+\ Other entry points:
+\
+\   TT48                Contains an RTS
+\
+\ ******************************************************************************
+
 .ex
- TAX                                              ; B4AA: AA          .
- LDA QQ18_LO                                       ; B4AB: AD A4 04    ...
- STA V                                            ; B4AE: 85 63       .c
- LDA QQ18_HI                                       ; B4B0: AD A5 04    ...
- STA V_1                                          ; B4B3: 85 64       .d
- LDY #0                                           ; B4B5: A0 00       ..
- TXA                                              ; B4B7: 8A          .
- BEQ CB4DA                                        ; B4B8: F0 20       .
-.CB4BA
- LDA (V),Y                                        ; B4BA: B1 63       .c
- BEQ CB4C5                                        ; B4BC: F0 07       ..
- INY                                              ; B4BE: C8          .
- BNE CB4BA                                        ; B4BF: D0 F9       ..
- INC V_1                                          ; B4C1: E6 64       .d
- BNE CB4BA                                        ; B4C3: D0 F5       ..
-.CB4C5
- LDA L00E9                                        ; B4C5: A5 E9       ..
- BPL CB4D2                                        ; B4C7: 10 09       ..
- LDA PPUSTATUS                                    ; B4C9: AD 02 20    ..
- ASL A                                            ; B4CC: 0A          .
- BPL CB4D2                                        ; B4CD: 10 03       ..
- JSR NAMETABLE0                                   ; B4CF: 20 6D D0     m.
-.CB4D2
- INY                                              ; B4D2: C8          .
- BNE CB4D7                                        ; B4D3: D0 02       ..
- INC V_1                                          ; B4D5: E6 64       .d
-.CB4D7
- DEX                                              ; B4D7: CA          .
- BNE CB4BA                                        ; B4D8: D0 E0       ..
-.CB4DA
- TYA                                              ; B4DA: 98          .
- PHA                                              ; B4DB: 48          H
- LDA V_1                                          ; B4DC: A5 64       .d
- PHA                                              ; B4DE: 48          H
- LDA (V),Y                                        ; B4DF: B1 63       .c
- EOR #&3E ; '>'                                   ; B4E1: 49 3E       I>
- JSR TT27                                   ; B4E3: 20 4F B4     O.
- PLA                                              ; B4E6: 68          h
- STA V_1                                          ; B4E7: 85 64       .d
- PLA                                              ; B4E9: 68          h
- TAY                                              ; B4EA: A8          .
- INY                                              ; B4EB: C8          .
- BNE CB4F0                                        ; B4EC: D0 02       ..
- INC V_1                                          ; B4EE: E6 64       .d
-.CB4F0
- LDA (V),Y                                        ; B4F0: B1 63       .c
- BNE CB4DA                                        ; B4F2: D0 E6       ..
- RTS                                              ; B4F4: 60          `
 
-; ******************************************************************************
+ TAX                    \ Copy the token number into X
+
+ LDA QQ18_LO            \ Set V(1 0) to point to the recursive token table at
+ STA V                  \ location QQ18
+ LDA QQ18_HI
+ STA V+1
+
+ LDY #0                 \ Set a counter Y to point to the character offset
+                        \ as we scan through the table
+
+ TXA                    \ Copy the token number back into A, so both A and X
+                        \ now contain the token number we want to print
+
+ BEQ TT50               \ If the token number we want is 0, then we have
+                        \ already found the token we are looking for, so jump
+                        \ to TT50, otherwise start working our way through the
+                        \ null-terminated token table until we find the X-th
+                        \ token
+
+.TT51
+
+ LDA (V),Y              \ Fetch the Y-th character from the token table page
+                        \ we are currently scanning
+
+ BEQ TT49               \ If the character is null, we've reached the end of
+                        \ this token, so jump to TT49
+
+ INY                    \ Increment character pointer and loop back round for
+ BNE TT51               \ the next character in this token, assuming Y hasn't
+                        \ yet wrapped around to 0
+
+ INC V+1                \ If it has wrapped round to 0, we have just crossed
+ BNE TT51               \ into a new page, so increment V+1 so that V points
+                        \ to the start of the new page
+
+.TT49
+
+ SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+
+ INY                    \ Increment the character pointer
+
+ BNE TT59               \ If Y hasn't just wrapped around to 0, skip the next
+                        \ instruction
+
+ INC V+1                \ We have just crossed into a new page, so increment
+                        \ V+1 so that V points to the start of the new page
+
+.TT59
+
+ DEX                    \ We have just reached a new token, so decrement the
+                        \ token number we are looking for
+
+ BNE TT51               \ Assuming we haven't yet reached the token number in
+                        \ X, look back up to keep fetching characters
+
+.TT50
+
+                        \ We have now reached the correct token in the token
+                        \ table, with Y pointing to the start of the token as
+                        \ an offset within the page pointed to by V, so let's
+                        \ print the recursive token. Because recursive tokens
+                        \ can contain other recursive tokens, we need to store
+                        \ our current state on the stack, so we can retrieve
+                        \ it after printing each character in this token
+
+ TYA                    \ Store the offset in Y on the stack
+ PHA
+
+ LDA V+1                \ Store the high byte of V (the page containing the
+ PHA                    \ token we have found) on the stack, so the stack now
+                        \ contains the address of the start of this token
+
+ LDA (V),Y              \ Load the character at offset Y in the token table,
+                        \ which is the next character of this token that we
+                        \ want to print
+
+ EOR #62                \ Tokens are stored in memory having been EOR'd with 62
+                        \ (see variable QQ18 for details), so we repeat the
+                        \ EOR to get the actual character to print
+
+ JSR TT27               \ Print the text token in A, which could be a letter,
+                        \ number, control code, two-letter token or another
+                        \ recursive token
+
+ PLA                    \ Restore the high byte of V (the page containing the
+ STA V+1                \ token we have found) into V+1
+
+ PLA                    \ Restore the offset into Y
+ TAY
+
+ INY                    \ Increment Y to point to the next character in the
+                        \ token we are printing
+
+ BNE P%+4               \ If Y is zero then we have just crossed into a new
+ INC V+1                \ page, so increment V+1 so that V points to the start
+                        \ of the new page
+
+ LDA (V),Y              \ Load the next character we want to print into A
+
+ BNE TT50               \ If this is not the null character at the end of the
+                        \ token, jump back up to TT50 to print the next
+                        \ character, otherwise we are done printing
+
+.TT48
+
+ RTS                    \ Return from the subroutine
+
+\ ******************************************************************************
+\
+\       Name: TT26
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Print a character at the text cursor, with support for verified
+\             text in extended tokens
+\  Deep dive: Extended text tokens
+\
+\ ------------------------------------------------------------------------------
+\
+\ Arguments:
+\
+\   A                   The character to print
+\
+\ Returns:
+\
+\   X                   X is preserved
+\
+\   C flag              The C flag is cleared
+\
+\ Other entry points:
+\
+\   DASC                DASC does exactly the same as TT26 and prints a
+\                       character at the text cursor, with support for verified
+\                       text in extended tokens
+\
+\ ******************************************************************************
+
 .DASC
- STA SC_1                                         ; B4F5: 85 08       ..
- LDA L00E9                                        ; B4F7: A5 E9       ..
- BPL CB504                                        ; B4F9: 10 09       ..
- LDA PPUSTATUS                                    ; B4FB: AD 02 20    ..
- ASL A                                            ; B4FE: 0A          .
- BPL CB504                                        ; B4FF: 10 03       ..
- JSR NAMETABLE0                                   ; B501: 20 6D D0     m.
-.CB504
- LDA SC_1                                         ; B504: A5 08       ..
- STX SC                                           ; B506: 86 07       ..
- LDX #&FF                                         ; B508: A2 FF       ..
- STX DTW8                                         ; B50A: 8E F9 03    ...
- CMP #&20 ; ' '                                   ; B50D: C9 20       .
- BEQ CB536                                        ; B50F: F0 25       .%
- CMP #&2E ; '.'                                   ; B511: C9 2E       ..
- BEQ CB536                                        ; B513: F0 21       .!
- CMP #&3A ; ':'                                   ; B515: C9 3A       .:
- BEQ CB536                                        ; B517: F0 1D       ..
- CMP #&27 ; '''                                   ; B519: C9 27       .'
- BEQ CB536                                        ; B51B: F0 19       ..
- CMP #&28 ; '('                                   ; B51D: C9 28       .(
- BEQ CB536                                        ; B51F: F0 15       ..
- CMP #&0A                                         ; B521: C9 0A       ..
- BEQ CB536                                        ; B523: F0 11       ..
- CMP #&0C                                         ; B525: C9 0C       ..
- BEQ CB536                                        ; B527: F0 0D       ..
- CMP #&2D ; '-'                                   ; B529: C9 2D       .-
- BEQ CB536                                        ; B52B: F0 09       ..
- LDA QQ17                                         ; B52D: A5 3C       .<
- ORA #&40 ; '@'                                   ; B52F: 09 40       .@
- STA QQ17                                         ; B531: 85 3C       .<
- INX                                              ; B533: E8          .
- BEQ CB53C                                        ; B534: F0 06       ..
-.CB536
- LDA QQ17                                         ; B536: A5 3C       .<
- AND #&BF                                         ; B538: 29 BF       ).
- STA QQ17                                         ; B53A: 85 3C       .<
+
+.TT26
+
+ STA SC+1               \ Store A in SC+1, so we can retrieve it later
+
+ SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+
+ LDA SC+1               \ Restore A from SC+1
+
+ STX SC                 \ Store X in SC, so we can retrieve it below
+
+ LDX #%11111111         \ Set DTW8 = %11111111, to disable the effect of {19} if
+ STX DTW8               \ it was set (as {19} capitalises one character only)
+
+ CMP #' '               \ If the character in A is one of the following:
+ BEQ DA8                \
+ CMP #'.'               \   * Space
+ BEQ DA8                \   * Full stop
+ CMP #':'               \   * Colon
+ BEQ DA8                \   * Apostrophe (ASCII 39)
+ CMP #39                \   * Open bracket
+ BEQ DA8                \   * Line feed
+ CMP #'('               \   * Carriage return
+ BEQ DA8                \   * Hyphen
+ CMP #10                \
+ BEQ DA8                \ then skip the following instructions
+ CMP #12
+ BEQ DA8
+ CMP #'-'
+ BEQ DA8
+
+ LDA QQ17               \ ???
+ ORA #&40
+ STA QQ17
+
+ INX                    \ Increment X to 0, so DTW2 gets set to %00000000 below
+
+ BEQ CB53C
+
+.DA8
+
+ LDA QQ17               \ ???
+ AND #&BF
+ STA QQ17
+
 .CB53C
- STX DTW2                                         ; B53C: 8E F4 03    ...
- LDX SC                                           ; B53F: A6 07       ..
- LDA SC_1                                         ; B541: A5 08       ..
- BIT DTW4                                         ; B543: 2C F6 03    ,..
- BMI CB54B                                        ; B546: 30 03       0.
- JMP CHPR                                         ; B548: 4C 35 B6    L5.
 
-.CB54B
- BIT DTW4                                         ; B54B: 2C F6 03    ,..
- BVS CB554                                        ; B54E: 70 04       p.
- CMP #&0C                                         ; B550: C9 0C       ..
- BEQ DA1                                          ; B552: F0 20       .
-.CB554
- LDX DTW5                                         ; B554: AE F7 03    ...
- STA BUF,X                                        ; B557: 9D 07 05    ...
- LDX SC                                           ; B55A: A6 07       ..
- INC DTW5                                         ; B55C: EE F7 03    ...
- LDA L00E9                                        ; B55F: A5 E9       ..
- BPL CB56C                                        ; B561: 10 09       ..
- LDA PPUSTATUS                                    ; B563: AD 02 20    ..
- ASL A                                            ; B566: 0A          .
- BPL CB56C                                        ; B567: 10 03       ..
- JSR NAMETABLE0                                   ; B569: 20 6D D0     m.
-.CB56C
- CLC                                              ; B56C: 18          .
- RTS                                              ; B56D: 60          `
+ STX DTW2               \ Store X in DTW2, so DTW2 is now:
+                        \
+                        \   * %00000000 if this character is a word terminator
+                        \
+                        \   * %11111111 if it isn't
+                        \
+                        \ so DTW2 indicates whether or not we are currently
+                        \ printing a word
 
-.loop_CB56E
- JMP CB615                                        ; B56E: 4C 15 B6    L..
+ LDX SC                 \ Retrieve the original value of X from SC
 
-.loop_CB571
- JMP CB612                                        ; B571: 4C 12 B6    L..
+ LDA SC+1               \ Retrieve the original value of A from SC+1 (i.e. the
+                        \ character to print)
+
+ BIT DTW4               \ If bit 7 of DTW4 is set then we are currently printing
+ BMI P%+5               \ justified text, so skip the next instruction
+
+ JMP CHPR               \ Bit 7 of DTW4 is clear, so jump down to CHPR to print
+                        \ this character, as we are not printing justified text
+
+                        \ If we get here then we are printing justified text, so
+                        \ we need to buffer the text until we reach the end of
+                        \ the paragraph, so we can then pad it out with spaces
+
+ BIT DTW4               \ If bit 6 of DTW4 is set, then this is an in-flight
+ BVS P%+6               \ message and we should buffer the carriage return
+                        \ character {12}, so skip the following two instructions
+
+ CMP #12                \ If the character in A is a carriage return, then we
+ BEQ DA1                \ have reached the end of the paragraph, so jump down to
+                        \ DA1 to print out the contents of the buffer,
+                        \ justifying it as we go
+
+                        \ If we get here then we need to buffer this character
+                        \ in the line buffer at BUF
+
+ LDX DTW5               \ DTW5 contains the current size of the buffer, so this
+ STA BUF,X              \ stores the character in A at BUF + DTW5, the next free
+                        \ space in the buffer
+
+ LDX SC                 \ Retrieve the original value of X from SC so we can
+                        \ preserve it through this subroutine call
+
+ INC DTW5               \ Increment the size of the BUF buffer that is stored in
+                        \ DTW5
+
+ SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+
+ CLC                    \ Clear the C flag
+
+ RTS                    \ Return from the subroutine
+
+.DA63S
+
+ JMP DA6+3              \ Jump down to DA6+3 (this is used by the branch
+                        \ instruction below as it's too far to branch directly)
+
+.DA6S
+
+ JMP DA6                \ Jump down to DA6 (this is used by the branch
+                        \ instruction below as it's too far to branch directly)
 
 .DA1
- TXA                                              ; B574: 8A          .
- PHA                                              ; B575: 48          H
- TYA                                              ; B576: 98          .
- PHA                                              ; B577: 48          H
-.CB578
- LDX DTW5                                         ; B578: AE F7 03    ...
- BEQ loop_CB56E                                   ; B57B: F0 F1       ..
- CPX #&1E                                         ; B57D: E0 1E       ..
- BCC loop_CB571                                   ; B57F: 90 F0       ..
- LSR SC_1                                         ; B581: 46 08       F.
-.CB583
- LDA SC_1                                         ; B583: A5 08       ..
- BMI CB58B                                        ; B585: 30 04       0.
- LDA #&40 ; '@'                                   ; B587: A9 40       .@
- STA SC_1                                         ; B589: 85 08       ..
-.CB58B
- LDY #&1C                                         ; B58B: A0 1C       ..
-.CB58D
- LDA L0524                                        ; B58D: AD 24 05    .$.
- CMP #&20 ; ' '                                   ; B590: C9 20       .
- BEQ CB5DD                                        ; B592: F0 49       .I
-.CB594
- LDA L00E9                                        ; B594: A5 E9       ..
- BPL CB5A1                                        ; B596: 10 09       ..
- LDA PPUSTATUS                                    ; B598: AD 02 20    ..
- ASL A                                            ; B59B: 0A          .
- BPL CB5A1                                        ; B59C: 10 03       ..
- JSR NAMETABLE0                                   ; B59E: 20 6D D0     m.
-.CB5A1
- DEY                                              ; B5A1: 88          .
- BMI CB583                                        ; B5A2: 30 DF       0.
- BEQ CB583                                        ; B5A4: F0 DD       ..
- LDA BUF,Y                                        ; B5A6: B9 07 05    ...
- CMP #&20 ; ' '                                   ; B5A9: C9 20       .
- BNE CB594                                        ; B5AB: D0 E7       ..
- ASL SC_1                                         ; B5AD: 06 08       ..
- BMI CB594                                        ; B5AF: 30 E3       0.
- STY SC                                           ; B5B1: 84 07       ..
- LDY DTW5                                         ; B5B3: AC F7 03    ...
-.loop_CB5B6
- LDA L00E9                                        ; B5B6: A5 E9       ..
- BPL CB5C3                                        ; B5B8: 10 09       ..
- LDA PPUSTATUS                                    ; B5BA: AD 02 20    ..
- ASL A                                            ; B5BD: 0A          .
- BPL CB5C3                                        ; B5BE: 10 03       ..
- JSR NAMETABLE0                                   ; B5C0: 20 6D D0     m.
-.CB5C3
- LDA BUF,Y                                        ; B5C3: B9 07 05    ...
- STA BUF_1,Y                                      ; B5C6: 99 08 05    ...
- DEY                                              ; B5C9: 88          .
- CPY SC                                           ; B5CA: C4 07       ..
- BCS loop_CB5B6                                   ; B5CC: B0 E8       ..
- INC DTW5                                         ; B5CE: EE F7 03    ...
- LDA #&20 ; ' '                                   ; B5D1: A9 20       .
-.loop_CB5D3
- CMP BUF,Y                                        ; B5D3: D9 07 05    ...
- BNE CB58D                                        ; B5D6: D0 B5       ..
- DEY                                              ; B5D8: 88          .
- BPL loop_CB5D3                                   ; B5D9: 10 F8       ..
- BMI CB583                                        ; B5DB: 30 A6       0.
-.CB5DD
- LDX #&1D                                         ; B5DD: A2 1D       ..
- JSR DAS1                                         ; B5DF: 20 05 B6     ..
- LDA #&0C                                         ; B5E2: A9 0C       ..
- JSR CHPR                                         ; B5E4: 20 35 B6     5.
- LDA DTW5                                         ; B5E7: AD F7 03    ...
- SBC #&1D                                         ; B5EA: E9 1D       ..
- STA DTW5                                         ; B5EC: 8D F7 03    ...
- TAX                                              ; B5EF: AA          .
- BEQ CB615                                        ; B5F0: F0 23       .#
- LDY #0                                           ; B5F2: A0 00       ..
- INX                                              ; B5F4: E8          .
- JSR LEC7D                                        ; B5F5: 20 7D EC     }.
-.loop_CB5F8
- LDA L0525,Y                                      ; B5F8: B9 25 05    .%.
- STA BUF,Y                                        ; B5FB: 99 07 05    ...
- INY                                              ; B5FE: C8          .
- DEX                                              ; B5FF: CA          .
- BNE loop_CB5F8                                   ; B600: D0 F6       ..
- JMP CB578                                        ; B602: 4C 78 B5    Lx.
+
+                        \ If we get here then we are justifying text and we have
+                        \ reached the end of the paragraph, so we need to print
+                        \ out the contents of the buffer, justifying it as we go
+
+ TXA                    \ Store X and Y on the stack
+ PHA
+ TYA
+ PHA
+
+.DA5
+
+ LDX DTW5               \ Set X = DTW5, which contains the size of the buffer
+
+ BEQ DA63S              \ If X = 0 then the buffer is empty, so jump down to
+                        \ DA6+3 via DA63S to print a newline
+
+ CPX #(LL+1)            \ If X < LL+1, i.e. X <= LL, then the buffer contains
+ BCC DA6S               \ fewer than LL characters, which is less then a line
+                        \ length, so jump down to DA6 via DA6S to print the
+                        \ contents of BUF followed by a newline, as we don't
+                        \ justify the last line of the paragraph
+
+                        \ Otherwise X > LL, so the buffer does not fit into one
+                        \ line, and we therefore need to justify the text, which
+                        \ we do one line at a time
+
+ LSR SC+1               \ Shift SC+1 to the right, which clears bit 7 of SC+1,
+                        \ so we pass through the following comparison on the
+                        \ first iteration of the loop and set SC+1 to %01000000
+
+.DA11
+
+ LDA SC+1               \ If bit 7 of SC+1 is set, skip the following two
+ BMI P%+6               \ instructions
+
+ LDA #%01000000         \ Set SC+1 = %01000000
+ STA SC+1
+
+ LDY #(LL-1)            \ Set Y = line length, so we can loop backwards from the
+                        \ end of the first line in the buffer using Y as the
+                        \ loop counter
+
+.DAL1
+
+ LDA BUF+LL             \ If the LL-th byte in BUF is a space, jump down to DA2
+ CMP #' '               \ to print out the first line from the buffer, as it
+ BEQ DA2                \ fits the line width exactly (i.e. it's justified)
+
+                        \ We now want to find the last space character in the
+                        \ first line in the buffer, so we loop through the line
+                        \ using Y as a counter
+
+.DAL2
+
+ SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+
+ DEY                    \ Decrement the loop counter in Y
+
+ BMI DA11               \ If Y <= 0, loop back to DA11, as we have now looped
+ BEQ DA11               \ through the whole line
+
+ LDA BUF,Y              \ If the Y-th byte in BUF is not a space, loop back up
+ CMP #' '               \ to DAL2 to check the next character
+ BNE DAL2
+
+                        \ Y now points to a space character in the line buffer
+
+ ASL SC+1               \ Shift SC+1 to the left
+
+ BMI DAL2               \ If bit 7 of SC+1 is set, jump to DAL2 to find the next
+                        \ space character
+
+                        \ We now want to insert a space into the line buffer at
+                        \ position Y, which we do by shifting every character
+                        \ after position Y along by 1, and then inserting the
+                        \ space
+
+ STY SC                 \ Store Y in SC, so we want to insert the space at
+                        \ position SC
+
+ LDY DTW5               \ Fetch the buffer size from DTW5 into Y, to act as a
+                        \ loop counter for moving the line buffer along by 1
+
+.DAL6
+
+ SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+
+ LDA BUF,Y              \ Copy the Y-th character from BUF into the Y+1-th
+ STA BUF+1,Y            \ position
+
+ DEY                    \ Decrement the loop counter in Y
+
+ CPY SC                 \ Loop back to shift the next character along, until we
+ BCS DAL6               \ have moved the SC-th character (i.e. Y < SC)
+
+ INC DTW5               \ Increment the buffer size in DTW5
+
+ LDA #' '               \ ???
+
+                        \ We've now shifted the line to the right by 1 from
+                        \ position SC onwards, so SC and SC+1 both contain
+                        \ spaces, and Y is now SC-1 as we did a DEY just before
+                        \ the end of the loop - in other words, we have inserted
+                        \ a space at position SC, and Y points to the character
+                        \ before the newly inserted space
+
+                        \ We now want to move the pointer Y left to find the
+                        \ next space in the line buffer, before looping back to
+                        \ check whether we are done, and if not, insert another
+                        \ space
+
+.DAL3
+
+ CMP BUF,Y              \ If the character at position Y is not a space, jump to
+ BNE DAL1               \ DAL1 to see whether we have now justified the line
+
+ DEY                    \ Decrement the loop counter in Y
+
+ BPL DAL3               \ Loop back to check the next character to the left,
+                        \ until we have found a space
+
+ BMI DA11               \ Jump back to DA11 (this BMI is effectively a JMP as
+                        \ we already passed through a BPL to get here)
+
+.DA2
+
+                        \ This subroutine prints out a full line of characters
+                        \ from the start of the line buffer in BUF, followed by
+                        \ a newline. It then removes that line from the buffer,
+                        \ shuffling the rest of the buffer contents down
+
+ LDX #LL                \ Call DAS1 to print out the first LL characters from
+ JSR DAS1               \ the line buffer in BUF
+
+ LDA #12                \ Print a newline
+ JSR CHPR
+
+ LDA DTW5               \ Subtract #LL from the end-of-buffer pointer in DTW5
+ SBC #LL                \
+ STA DTW5               \ The subtraction works as CHPR clears the C flag
+
+ TAX                    \ Copy the new value of DTW5 into X
+
+ BEQ DA6+3              \ If DTW5 = 0 then jump down to DA6+3 to print a newline
+                        \ as the buffer is now empty
+
+                        \ If we get here then we have printed our line but there
+                        \ is more in the buffer, so we now want to remove the
+                        \ line we just printed from the start of BUF
+
+ LDY #0                 \ Set Y = 0 to count through the characters in BUF
+
+ INX                    \ Increment X, so it now contains the number of
+                        \ characters in the buffer (as DTW5 is a zero-based
+                        \ pointer and is therefore equal to the number of
+                        \ characters minus 1)
+
+ JSR NAMETABLE0_BANK7   \ ???
+
+.DAL4
+
+ LDA BUF+LL+1,Y         \ Copy the Y-th character from BUF+LL to BUF
+ STA BUF,Y
+
+ INY                    \ Increment the character pointer
+
+ DEX                    \ Decrement the character count
+
+ BNE DAL4               \ Loop back to copy the next character until we have
+                        \ shuffled down the whole buffer
+
+ JMP DA5                \ Jump back to DA5
 
 .DAS1
- LDY #0                                           ; B605: A0 00       ..
-.loop_CB607
- LDA BUF,Y                                        ; B607: B9 07 05    ...
- JSR CHPR                                         ; B60A: 20 35 B6     5.
- INY                                              ; B60D: C8          .
- DEX                                              ; B60E: CA          .
- BNE loop_CB607                                   ; B60F: D0 F6       ..
- RTS                                              ; B611: 60          `
 
-.CB612
- JSR DAS1                                         ; B612: 20 05 B6     ..
-.CB615
- STX DTW5                                         ; B615: 8E F7 03    ...
- PLA                                              ; B618: 68          h
- TAY                                              ; B619: A8          .
- PLA                                              ; B61A: 68          h
- TAX                                              ; B61B: AA          .
- LDA #&0C                                         ; B61C: A9 0C       ..
-; overlapping:  L07A9                             ; B61E: 2C A9 07    ,..
- EQUB &2C                                         ; B61E: 2C          ,
+                        \ This subroutine prints out X characters from BUF,
+                        \ returning with X = 0
 
-; ******************************************************************************
+ LDY #0                 \ Set Y = 0 to point to the first character in BUF
+
+.DAL5
+
+ LDA BUF,Y              \ Print the Y-th character in BUF using CHPR, which also
+ JSR CHPR               \ clears the C flag for when we return from the
+                        \ subroutine below
+
+ INY                    \ Increment Y to point to the next character
+
+ DEX                    \ Decrement the loop counter
+
+ BNE DAL5               \ Loop back for the next character until we have printed
+                        \ X characters from BUF
+
+ RTS                    \ Return from the subroutine
+
+.DA6
+
+ JSR DAS1               \ Call DAS1 to print X characters from BUF, returning
+                        \ with X = 0
+
+ STX DTW5               \ Set the buffer size in DTW5 to 0, as the buffer is now
+                        \ empty
+
+ PLA                    \ Restore Y and X from the stack
+ TAY
+ PLA
+ TAX
+
+ LDA #12                \ Set A = 12, so when we skip BELL and fall through into
+                        \ CHPR, we print character 12, which is a newline
+
+.DA7
+
+ EQUB &2C               \ Skip the next instruction by turning it into
+                        \ &2C &A9 &07, or BIT &07A9, which does nothing apart
+                        \ from affect the flags
+
+                        \ Fall through into CHPR (skipping BELL) to print the
+                        \ character and return with the C flag cleared
+
+\ ******************************************************************************
+\
+\       Name: BELL
+\       Type: Subroutine
+\   Category: Sound
+\    Summary: Make a standard system beep
+\
+\ ------------------------------------------------------------------------------
+\
+\ This is the standard system beep as made by the VDU 7 statement in BBC BASIC.
+\
+\ ******************************************************************************
+
 .BELL
- LDA #7                                           ; B61F: A9 07       ..
- JMP CHPR                                         ; B621: 4C 35 B6    L5.
+
+ LDA #7                 \ Control code 7 makes a beep, so load this into A
+
+ JMP CHPR               \ Call the CHPR print routine to actually make the sound
 
 .CB624
  JMP CB75B                                        ; B624: 4C 5B B7    L[.
@@ -16039,9 +17808,29 @@ ENDMACRO
 .CB630
  JMP CB75B                                        ; B630: 4C 5B B7    L[.
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: TT67X
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Print a newline
+\
+\ ******************************************************************************
+
 .TT67X
- LDA #&0C                                         ; B633: A9 0C       ..
+
+                        \ This does the same as the existing TT67 routine, which
+                        \ is also present in this source, so it isn't clear why
+                        \ this duplicate exists
+                        \
+                        \ In the original source, this version also has the name
+                        \ TT67, but because BeebAsm doesn't allow us to redefine
+                        \ labels, this one has been renamed TT67X
+
+ LDA #12                \ Set A to a carriage return character
+
+                        \ Fall through into CHPR to print the newline
+
 ; ******************************************************************************
 .CHPR
  STA K3                                           ; B635: 85 3D       .=
@@ -16122,20 +17911,20 @@ ENDMACRO
  CLC                                              ; B6B3: 18          .
  ADC #&FD                                         ; B6B4: 69 FD       i.
  LDX #0                                           ; B6B6: A2 00       ..
- STX P_2                                          ; B6B8: 86 31       .1
+ STX P+2                                          ; B6B8: 86 31       .1
  ASL A                                            ; B6BA: 0A          .
- ROL P_2                                          ; B6BB: 26 31       &1
+ ROL P+2                                          ; B6BB: 26 31       &1
  ASL A                                            ; B6BD: 0A          .
- ROL P_2                                          ; B6BE: 26 31       &1
+ ROL P+2                                          ; B6BE: 26 31       &1
  ASL A                                            ; B6C0: 0A          .
- ROL P_2                                          ; B6C1: 26 31       &1
+ ROL P+2                                          ; B6C1: 26 31       &1
  ADC #0                                           ; B6C3: 69 00       i.
- STA P_1                                          ; B6C5: 85 30       .0
- LDA P_2                                          ; B6C7: A5 31       .1
+ STA P+1                                          ; B6C5: 85 30       .0
+ LDA P+2                                          ; B6C7: A5 31       .1
  ADC #&FC                                         ; B6C9: 69 FC       i.
- STA P_2                                          ; B6CB: 85 31       .1
+ STA P+2                                          ; B6CB: 85 31       .1
  LDA #0                                           ; B6CD: A9 00       ..
- STA SC_1                                         ; B6CF: 85 08       ..
+ STA SC+1                                         ; B6CF: 85 08       ..
  LDA YC                                           ; B6D1: A5 3B       .;
  BNE CB6D8                                        ; B6D3: D0 03       ..
  JMP CB8A6                                        ; B6D5: 4C A6 B8    L..
@@ -16179,44 +17968,44 @@ ENDMACRO
  STA L00BA                                        ; B710: 85 BA       ..
  TYA                                              ; B712: 98          .
  LDX #&0D                                         ; B713: A2 0D       ..
- STX SC_1                                         ; B715: 86 08       ..
+ STX SC+1                                         ; B715: 86 08       ..
  ASL A                                            ; B717: 0A          .
- ROL SC_1                                         ; B718: 26 08       &.
+ ROL SC+1                                         ; B718: 26 08       &.
  ASL A                                            ; B71A: 0A          .
- ROL SC_1                                         ; B71B: 26 08       &.
+ ROL SC+1                                         ; B71B: 26 08       &.
  ASL A                                            ; B71D: 0A          .
- ROL SC_1                                         ; B71E: 26 08       &.
+ ROL SC+1                                         ; B71E: 26 08       &.
  STA SC                                           ; B720: 85 07       ..
  LDY #0                                           ; B722: A0 00       ..
- LDA (P_1),Y                                      ; B724: B1 30       .0
+ LDA (P+1),Y                                      ; B724: B1 30       .0
  STA (SC),Y                                       ; B726: 91 07       ..
  STA (L00BA),Y                                    ; B728: 91 BA       ..
  INY                                              ; B72A: C8          .
- LDA (P_1),Y                                      ; B72B: B1 30       .0
+ LDA (P+1),Y                                      ; B72B: B1 30       .0
  STA (SC),Y                                       ; B72D: 91 07       ..
  STA (L00BA),Y                                    ; B72F: 91 BA       ..
  INY                                              ; B731: C8          .
- LDA (P_1),Y                                      ; B732: B1 30       .0
+ LDA (P+1),Y                                      ; B732: B1 30       .0
  STA (SC),Y                                       ; B734: 91 07       ..
  STA (L00BA),Y                                    ; B736: 91 BA       ..
  INY                                              ; B738: C8          .
- LDA (P_1),Y                                      ; B739: B1 30       .0
+ LDA (P+1),Y                                      ; B739: B1 30       .0
  STA (SC),Y                                       ; B73B: 91 07       ..
  STA (L00BA),Y                                    ; B73D: 91 BA       ..
  INY                                              ; B73F: C8          .
- LDA (P_1),Y                                      ; B740: B1 30       .0
+ LDA (P+1),Y                                      ; B740: B1 30       .0
  STA (SC),Y                                       ; B742: 91 07       ..
  STA (L00BA),Y                                    ; B744: 91 BA       ..
  INY                                              ; B746: C8          .
- LDA (P_1),Y                                      ; B747: B1 30       .0
+ LDA (P+1),Y                                      ; B747: B1 30       .0
  STA (SC),Y                                       ; B749: 91 07       ..
  STA (L00BA),Y                                    ; B74B: 91 BA       ..
  INY                                              ; B74D: C8          .
- LDA (P_1),Y                                      ; B74E: B1 30       .0
+ LDA (P+1),Y                                      ; B74E: B1 30       .0
  STA (SC),Y                                       ; B750: 91 07       ..
  STA (L00BA),Y                                    ; B752: 91 BA       ..
  INY                                              ; B754: C8          .
- LDA (P_1),Y                                      ; B755: B1 30       .0
+ LDA (P+1),Y                                      ; B755: B1 30       .0
  STA (L00BA),Y                                    ; B757: 91 BA       ..
  STA (SC),Y                                       ; B759: 91 07       ..
 .CB75B
@@ -16235,50 +18024,50 @@ ENDMACRO
 
 .CB772
  LDX #&0C                                         ; B772: A2 0C       ..
- STX SC_1                                         ; B774: 86 08       ..
+ STX SC+1                                         ; B774: 86 08       ..
  ASL A                                            ; B776: 0A          .
- ROL SC_1                                         ; B777: 26 08       &.
+ ROL SC+1                                         ; B777: 26 08       &.
  ASL A                                            ; B779: 0A          .
- ROL SC_1                                         ; B77A: 26 08       &.
+ ROL SC+1                                         ; B77A: 26 08       &.
  ASL A                                            ; B77C: 0A          .
- ROL SC_1                                         ; B77D: 26 08       &.
+ ROL SC+1                                         ; B77D: 26 08       &.
  STA SC                                           ; B77F: 85 07       ..
  JMP CB793                                        ; B781: 4C 93 B7    L..
 
 .CB784
  LDX #&0D                                         ; B784: A2 0D       ..
- STX SC_1                                         ; B786: 86 08       ..
+ STX SC+1                                         ; B786: 86 08       ..
  ASL A                                            ; B788: 0A          .
- ROL SC_1                                         ; B789: 26 08       &.
+ ROL SC+1                                         ; B789: 26 08       &.
  ASL A                                            ; B78B: 0A          .
- ROL SC_1                                         ; B78C: 26 08       &.
+ ROL SC+1                                         ; B78C: 26 08       &.
  ASL A                                            ; B78E: 0A          .
- ROL SC_1                                         ; B78F: 26 08       &.
+ ROL SC+1                                         ; B78F: 26 08       &.
  STA SC                                           ; B791: 85 07       ..
 .CB793
  LDY #0                                           ; B793: A0 00       ..
- LDA (P_1),Y                                      ; B795: B1 30       .0
+ LDA (P+1),Y                                      ; B795: B1 30       .0
  STA (SC),Y                                       ; B797: 91 07       ..
  INY                                              ; B799: C8          .
- LDA (P_1),Y                                      ; B79A: B1 30       .0
+ LDA (P+1),Y                                      ; B79A: B1 30       .0
  STA (SC),Y                                       ; B79C: 91 07       ..
  INY                                              ; B79E: C8          .
- LDA (P_1),Y                                      ; B79F: B1 30       .0
+ LDA (P+1),Y                                      ; B79F: B1 30       .0
  STA (SC),Y                                       ; B7A1: 91 07       ..
  INY                                              ; B7A3: C8          .
- LDA (P_1),Y                                      ; B7A4: B1 30       .0
+ LDA (P+1),Y                                      ; B7A4: B1 30       .0
  STA (SC),Y                                       ; B7A6: 91 07       ..
  INY                                              ; B7A8: C8          .
- LDA (P_1),Y                                      ; B7A9: B1 30       .0
+ LDA (P+1),Y                                      ; B7A9: B1 30       .0
  STA (SC),Y                                       ; B7AB: 91 07       ..
  INY                                              ; B7AD: C8          .
- LDA (P_1),Y                                      ; B7AE: B1 30       .0
+ LDA (P+1),Y                                      ; B7AE: B1 30       .0
  STA (SC),Y                                       ; B7B0: 91 07       ..
  INY                                              ; B7B2: C8          .
- LDA (P_1),Y                                      ; B7B3: B1 30       .0
+ LDA (P+1),Y                                      ; B7B3: B1 30       .0
  STA (SC),Y                                       ; B7B5: 91 07       ..
  INY                                              ; B7B7: C8          .
- LDA (P_1),Y                                      ; B7B8: B1 30       .0
+ LDA (P+1),Y                                      ; B7B8: B1 30       .0
  STA (SC),Y                                       ; B7BA: 91 07       ..
  JMP CB75B                                        ; B7BC: 4C 5B B7    L[.
 
@@ -16318,51 +18107,51 @@ ENDMACRO
  BEQ loop_CB7DB                                   ; B7F1: F0 E8       ..
 .CB7F3
  LDX L00B9                                        ; B7F3: A6 B9       ..
- STX SC_1                                         ; B7F5: 86 08       ..
+ STX SC+1                                         ; B7F5: 86 08       ..
  ASL A                                            ; B7F7: 0A          .
- ROL SC_1                                         ; B7F8: 26 08       &.
+ ROL SC+1                                         ; B7F8: 26 08       &.
  ASL A                                            ; B7FA: 0A          .
- ROL SC_1                                         ; B7FB: 26 08       &.
+ ROL SC+1                                         ; B7FB: 26 08       &.
  ASL A                                            ; B7FD: 0A          .
- ROL SC_1                                         ; B7FE: 26 08       &.
+ ROL SC+1                                         ; B7FE: 26 08       &.
  STA SC                                           ; B800: 85 07       ..
  LDY #0                                           ; B802: A0 00       ..
- LDA (P_1),Y                                      ; B804: B1 30       .0
+ LDA (P+1),Y                                      ; B804: B1 30       .0
  ORA (SC),Y                                       ; B806: 11 07       ..
  STA (SC),Y                                       ; B808: 91 07       ..
  INY                                              ; B80A: C8          .
- LDA (P_1),Y                                      ; B80B: B1 30       .0
+ LDA (P+1),Y                                      ; B80B: B1 30       .0
  ORA (SC),Y                                       ; B80D: 11 07       ..
  STA (SC),Y                                       ; B80F: 91 07       ..
  INY                                              ; B811: C8          .
- LDA (P_1),Y                                      ; B812: B1 30       .0
+ LDA (P+1),Y                                      ; B812: B1 30       .0
  ORA (SC),Y                                       ; B814: 11 07       ..
  STA (SC),Y                                       ; B816: 91 07       ..
  INY                                              ; B818: C8          .
- LDA (P_1),Y                                      ; B819: B1 30       .0
+ LDA (P+1),Y                                      ; B819: B1 30       .0
  ORA (SC),Y                                       ; B81B: 11 07       ..
  STA (SC),Y                                       ; B81D: 91 07       ..
  INY                                              ; B81F: C8          .
- LDA (P_1),Y                                      ; B820: B1 30       .0
+ LDA (P+1),Y                                      ; B820: B1 30       .0
  ORA (SC),Y                                       ; B822: 11 07       ..
  STA (SC),Y                                       ; B824: 91 07       ..
  INY                                              ; B826: C8          .
- LDA (P_1),Y                                      ; B827: B1 30       .0
+ LDA (P+1),Y                                      ; B827: B1 30       .0
  ORA (SC),Y                                       ; B829: 11 07       ..
  STA (SC),Y                                       ; B82B: 91 07       ..
  INY                                              ; B82D: C8          .
- LDA (P_1),Y                                      ; B82E: B1 30       .0
+ LDA (P+1),Y                                      ; B82E: B1 30       .0
  ORA (SC),Y                                       ; B830: 11 07       ..
  STA (SC),Y                                       ; B832: 91 07       ..
  INY                                              ; B834: C8          .
- LDA (P_1),Y                                      ; B835: B1 30       .0
+ LDA (P+1),Y                                      ; B835: B1 30       .0
  ORA (SC),Y                                       ; B837: 11 07       ..
  STA (SC),Y                                       ; B839: 91 07       ..
  JMP CB75B                                        ; B83B: 4C 5B B7    L[.
 
 .CB83E
  LDA #0                                           ; B83E: A9 00       ..
- STA SC_1                                         ; B840: 85 08       ..
+ STA SC+1                                         ; B840: 85 08       ..
  LDA YC                                           ; B842: A5 3B       .;
  BNE CB848                                        ; B844: D0 02       ..
  LDA #&FF                                         ; B846: A9 FF       ..
@@ -16373,14 +18162,14 @@ ENDMACRO
  ASL A                                            ; B84C: 0A          .
  ASL A                                            ; B84D: 0A          .
  ASL A                                            ; B84E: 0A          .
- ROL SC_1                                         ; B84F: 26 08       &.
+ ROL SC+1                                         ; B84F: 26 08       &.
  SEC                                              ; B851: 38          8
  ROL A                                            ; B852: 2A          *
  STA SC                                           ; B853: 85 07       ..
- LDA SC_1                                         ; B855: A5 08       ..
+ LDA SC+1                                         ; B855: A5 08       ..
  ROL A                                            ; B857: 2A          *
  ADC L00E6                                        ; B858: 65 E6       e.
- STA SC_1                                         ; B85A: 85 08       ..
+ STA SC+1                                         ; B85A: 85 08       ..
  LDY XC                                           ; B85C: A4 32       .2
  DEY                                              ; B85E: 88          .
  LDA (SC),Y                                       ; B85F: B1 07       ..
@@ -16390,37 +18179,37 @@ ENDMACRO
  STA (SC),Y                                       ; B867: 91 07       ..
  INC L00B8                                        ; B869: E6 B8       ..
  LDX L00B9                                        ; B86B: A6 B9       ..
- STX SC_1                                         ; B86D: 86 08       ..
+ STX SC+1                                         ; B86D: 86 08       ..
  ASL A                                            ; B86F: 0A          .
- ROL SC_1                                         ; B870: 26 08       &.
+ ROL SC+1                                         ; B870: 26 08       &.
  ASL A                                            ; B872: 0A          .
- ROL SC_1                                         ; B873: 26 08       &.
+ ROL SC+1                                         ; B873: 26 08       &.
  ASL A                                            ; B875: 0A          .
- ROL SC_1                                         ; B876: 26 08       &.
+ ROL SC+1                                         ; B876: 26 08       &.
  STA SC                                           ; B878: 85 07       ..
  LDY #0                                           ; B87A: A0 00       ..
- LDA (P_1),Y                                      ; B87C: B1 30       .0
+ LDA (P+1),Y                                      ; B87C: B1 30       .0
  STA (SC),Y                                       ; B87E: 91 07       ..
  INY                                              ; B880: C8          .
- LDA (P_1),Y                                      ; B881: B1 30       .0
+ LDA (P+1),Y                                      ; B881: B1 30       .0
  STA (SC),Y                                       ; B883: 91 07       ..
  INY                                              ; B885: C8          .
- LDA (P_1),Y                                      ; B886: B1 30       .0
+ LDA (P+1),Y                                      ; B886: B1 30       .0
  STA (SC),Y                                       ; B888: 91 07       ..
  INY                                              ; B88A: C8          .
- LDA (P_1),Y                                      ; B88B: B1 30       .0
+ LDA (P+1),Y                                      ; B88B: B1 30       .0
  STA (SC),Y                                       ; B88D: 91 07       ..
  INY                                              ; B88F: C8          .
- LDA (P_1),Y                                      ; B890: B1 30       .0
+ LDA (P+1),Y                                      ; B890: B1 30       .0
  STA (SC),Y                                       ; B892: 91 07       ..
  INY                                              ; B894: C8          .
- LDA (P_1),Y                                      ; B895: B1 30       .0
+ LDA (P+1),Y                                      ; B895: B1 30       .0
  STA (SC),Y                                       ; B897: 91 07       ..
  INY                                              ; B899: C8          .
- LDA (P_1),Y                                      ; B89A: B1 30       .0
+ LDA (P+1),Y                                      ; B89A: B1 30       .0
  STA (SC),Y                                       ; B89C: 91 07       ..
  INY                                              ; B89E: C8          .
- LDA (P_1),Y                                      ; B89F: B1 30       .0
+ LDA (P+1),Y                                      ; B89F: B1 30       .0
  STA (SC),Y                                       ; B8A1: 91 07       ..
 .CB8A3
  JMP CB75B                                        ; B8A3: 4C 5B B7    L[.
@@ -16429,12 +18218,13 @@ ENDMACRO
  LDA #&21 ; '!'                                   ; B8A6: A9 21       .!
  STA SC                                           ; B8A8: 85 07       ..
  LDA L00E6                                        ; B8AA: A5 E6       ..
- STA SC_1                                         ; B8AC: 85 08       ..
+ STA SC+1                                         ; B8AC: 85 08       ..
  LDY XC                                           ; B8AE: A4 32       .2
  DEY                                              ; B8B0: 88          .
  JMP CB6E9                                        ; B8B1: 4C E9 B6    L..
 
-.LB8B4
+.CHARTABLE
+
  EQUB   0,   1,   2,   3,   4,   5,   6,   7,   8 ; B8B4: 00 01 02... ...
  EQUB   9, &0A, &0B, &0C, &0D, &0E, &0F, &10, &11 ; B8BD: 09 0A 0B... ...
  EQUB &12, &13, &14, &15, &16, &17, &18, &19, &1A ; B8C6: 12 13 14... ...
@@ -16444,201 +18234,17 @@ ENDMACRO
  EQUS "nopqrstuvwxyz{|}~"                         ; B922: 6E 6F 70... nop
  EQUB &7F
 
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; B933: 7F FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; B93C: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; B945: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; B94E: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; B957: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; B960: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; B969: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; B972: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; B97B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; B984: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; B98D: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; B996: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; B99F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; B9A8: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; B9B1: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; B9BA: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; B9C3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; B9CC: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; B9D5: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; B9DE: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; B9E7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; B9F0: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; B9F9: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BA02: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BA0B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BA14: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BA1D: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BA26: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BA2F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BA38: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BA41: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BA4A: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BA53: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BA5C: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BA65: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BA6E: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BA77: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BA80: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BA89: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BA92: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BA9B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BAA4: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BAAD: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BAB6: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BABF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BAC8: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BAD1: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BADA: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BAE3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BAEC: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BAF5: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BAFE: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BB07: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BB10: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BB19: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BB22: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BB2B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BB34: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BB3D: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BB46: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BB4F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BB58: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BB61: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BB6A: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BB73: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BB7C: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BB85: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BB8E: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BB97: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BBA0: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BBA9: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BBB2: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BBBB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BBC4: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BBCD: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BBD6: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BBDF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BBE8: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BBF1: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BBFA: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BC03: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BC0C: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BC15: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BC1E: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BC27: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BC30: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BC39: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BC42: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BC4B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BC54: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BC5D: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BC66: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BC6F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BC78: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BC81: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BC8A: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BC93: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BC9C: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BCA5: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BCAE: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BCB7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BCC0: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BCC9: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BCD2: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BCDB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BCE4: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BCED: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BCF6: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BCFF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BD08: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BD11: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BD1A: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BD23: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BD2C: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BD35: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BD3E: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BD47: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BD50: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BD59: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BD62: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BD6B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BD74: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BD7D: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BD86: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BD8F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BD98: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BDA1: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BDAA: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BDB3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BDBC: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BDC5: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BDCE: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BDD7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BDE0: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BDE9: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BDF2: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BDFB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BE04: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BE0D: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BE16: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BE1F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BE28: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BE31: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BE3A: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BE43: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BE4C: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BE55: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BE5E: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BE67: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BE70: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BE79: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BE82: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BE8B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BE94: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BE9D: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BEA6: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BEAF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BEB8: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BEC1: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BECA: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BED3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BEDC: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BEE5: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BEEE: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BEF7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BF00: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BF09: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BF12: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BF1B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BF24: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BF2D: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BF36: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BF3F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BF48: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BF51: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BF5A: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BF63: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BF6C: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BF75: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BF7E: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BF87: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BF90: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BF99: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BFA2: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BFAB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BFB4: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BFBD: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BFC6: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BFCF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BFD8: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BFE1: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF ; BFEA: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF,   7, &C0 ; BFF3: FF FF FF... ...
- EQUB   0, &C0,   7, &C0                          ; BFFC: 00 C0 07... ...
-.pydis_end
+ FOR I%, &B934, &BFF9
+
+  EQUB &FF
+
+ NEXT
+
+ EQUW &C007             \ NMI handler
+
+ EQUW &C000             \ Reset handler
+
+ EQUW &C007             \ IRQ/BRK handler
 
 \ ******************************************************************************
 \

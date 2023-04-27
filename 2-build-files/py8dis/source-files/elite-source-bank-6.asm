@@ -564,7 +564,7 @@ DELAY             = &EBA2
 EXNO3             = &EBAD
 BOOP              = &EBE5
 NOISE             = &EBF2
-LEC7D             = &EC7D
+NAMETABLE0_BANK7  = &EC7D
 LECE7             = &ECE7
 LED24             = &ED24
 LED73             = &ED73
@@ -588,7 +588,7 @@ DETOK_BANK7       = &F082
 DTS               = &F09D
 LF0E1             = &F0E1
 LF171             = &F171
-LF186             = &F186
+F186_BANK7        = &F186
 MVS5_BANK7        = &F1A2
 HALL              = &F1BD
 DASC_BANK7        = &F1E6
@@ -4832,7 +4832,7 @@ L88BD = L88BC+1
  JSR LF2C0                                        ; B4F1: 20 C0 F2     ..
  LDA #9                                           ; B4F4: A9 09       ..
 .CB4F6
- JSR LEC7D                                        ; B4F6: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; B4F6: 20 7D EC     }.
  LDX L04BA                                        ; B4F9: AE BA 04    ...
  BPL CB50F                                        ; B4FC: 10 11       ..
  JSR sub_CB659                                    ; B4FE: 20 59 B6     Y.
@@ -4901,7 +4901,7 @@ L88BD = L88BC+1
 .sub_CB55B
  PHA                                              ; B55B: 48          H
 .loop_CB55C
- JSR LEC7D                                        ; B55C: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; B55C: 20 7D EC     }.
  LDA L04BA                                        ; B55F: AD BA 04    ...
  ORA L04BB                                        ; B562: 0D BB 04    ...
  BMI loop_CB55C                                   ; B565: 30 F5       0.
@@ -4920,7 +4920,7 @@ L88BD = L88BC+1
  JSR sub_CB6C7                                    ; B57A: 20 C7 B6     ..
  JSR sub_CB55B                                    ; B57D: 20 5B B5     [.
 .CB580
- JSR LEC7D                                        ; B580: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; B580: 20 7D EC     }.
  LDX L04AC                                        ; B583: AE AC 04    ...
  BPL CB598                                        ; B586: 10 10       ..
  CMP #0                                           ; B588: C9 00       ..
@@ -4963,7 +4963,7 @@ L88BD = L88BC+1
  JSR sub_CB6C7                                    ; B5CE: 20 C7 B6     ..
  JSR sub_CB55B                                    ; B5D1: 20 5B B5     [.
 .CB5D4
- JSR LEC7D                                        ; B5D4: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; B5D4: 20 7D EC     }.
  LDX L04AC                                        ; B5D7: AE AC 04    ...
  BPL CB5EC                                        ; B5DA: 10 10       ..
  CMP #0                                           ; B5DC: C9 00       ..
@@ -5107,7 +5107,7 @@ L88BD = L88BC+1
 
 .sub_CB6C7
  PHA                                              ; B6C7: 48          H
- JSR LF186                                        ; B6C8: 20 86 F1     ..
+ JSR F186_BANK7                                   ; B6C8: 20 86 F1     ..
  JSR LD8C5                                        ; B6CB: 20 C5 D8     ..
  PLA                                              ; B6CE: 68          h
  RTS                                              ; B6CF: 60          `
@@ -5197,7 +5197,7 @@ L88BD = L88BC+1
 
 .sub_CB786
  PHA                                              ; B786: 48          H
- JSR LEC7D                                        ; B787: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; B787: 20 7D EC     }.
  CMP #9                                           ; B78A: C9 09       ..
  BEQ CB7E7                                        ; B78C: F0 59       .Y
  CMP #8                                           ; B78E: C9 08       ..

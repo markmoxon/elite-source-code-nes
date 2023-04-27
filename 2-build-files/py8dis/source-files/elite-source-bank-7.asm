@@ -2000,7 +2000,7 @@ LC006 = sub_CC004+2
  STA L7600,Y                                      ; CD47: 99 00 76    ..v
  LDA L7300,Y                                      ; CD4A: B9 00 73    ..s
  STA L7700,Y                                      ; CD4D: 99 00 77    ..w
- JSR sub_CEC7D                                    ; CD50: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; CD50: 20 7D EC     }.
  DEX                                              ; CD53: CA          .
  BNE CCD58                                        ; CD54: D0 02       ..
  LDX #&10                                         ; CD56: A2 10       ..
@@ -6142,7 +6142,8 @@ LDFFF = sub_CDFFE+1
  EQUS "33 "                                       ; EC71: 33 33 20    33
  EQUB &C0, &18, &10, &10, &10, &10, &10, &60, &60 ; EC74: C0 18 10... ...
 
-.sub_CEC7D
+; ******************************************************************************
+.NAMETABLE0_BANK7
  PHA                                              ; EC7D: 48          H
  LDA L00E9                                        ; EC7E: A5 E9       ..
  BPL CEC8B                                        ; EC80: 10 09       ..
@@ -6849,6 +6850,8 @@ LDFFF = sub_CDFFE+1
 .CF183
  JMP LAC5C                                        ; F183: 4C 5C AC    L\.
 
+; ******************************************************************************
+.F186_BANK7
  LDA BANK                                         ; F186: A5 F7       ..
  PHA                                              ; F188: 48          H
  LDA #0                                           ; F189: A9 00       ..
@@ -7074,7 +7077,7 @@ LDFFF = sub_CDFFE+1
  STA L00BA                                        ; F30D: 85 BA       ..
  LDX #2                                           ; F30F: A2 02       ..
 .loop_CF311
- JSR sub_CEC7D                                    ; F311: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; F311: 20 7D EC     }.
  LDY #2                                           ; F314: A0 02       ..
  LDA #0                                           ; F316: A9 00       ..
 .loop_CF318
@@ -7265,7 +7268,7 @@ LDFFF = sub_CDFFE+1
  STA YC                                           ; F479: 85 3B       .;
  LDA #4                                           ; F47B: A9 04       ..
 .CF47D
- JSR sub_CEC7D                                    ; F47D: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; F47D: 20 7D EC     }.
  LDY #1                                           ; F480: A0 01       ..
  LDA #3                                           ; F482: A9 03       ..
 .loop_CF484

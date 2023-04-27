@@ -393,7 +393,7 @@ DELAY             = &EBA2
 EXNO3             = &EBAD
 BOOP              = &EBE5
 NOISE             = &EBF2
-LEC7D             = &EC7D
+NAMETABLE0_BANK7  = &EC7D
 LECF9             = &ECF9
 TIDY              = &EDEA
 LEE54             = &EE54
@@ -407,6 +407,7 @@ LEFB2             = &EFB2
 LL164             = &EFF7
 DETOK_BANK7       = &F082
 DTS               = &F09D
+F186_BANK7        = &F186
 MVS5_BANK7        = &F1A2
 HALL              = &F1BD
 DASC_BANK7        = &F1E6
@@ -3040,7 +3041,7 @@ NORM              = &FAF8
  JMP CB276                                        ; B260: 4C 76 B2    Lv.
 
 .CB263
- JSR LEC7D                                        ; B263: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; B263: 20 7D EC     }.
  LDA #1                                           ; B266: A9 01       ..
  LDY #0                                           ; B268: A0 00       ..
  STA (SC),Y                                       ; B26A: 91 07       ..
@@ -3106,7 +3107,7 @@ NORM              = &FAF8
  JMP CB2E3                                        ; B2CE: 4C E3 B2    L..
 
 .CB2D1
- JSR LEC7D                                        ; B2D1: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; B2D1: 20 7D EC     }.
  LDA SC                                           ; B2D4: A5 07       ..
  CLC                                              ; B2D6: 18          .
  ADC #&20 ; ' '                                   ; B2D7: 69 20       i

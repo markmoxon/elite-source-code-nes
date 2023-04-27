@@ -307,13 +307,13 @@ DELAY             = &EBA2
 EXNO3             = &EBAD
 BOOP              = &EBE5
 NOISE             = &EBF2
-LEC7D             = &EC7D
+NAMETABLE0_BANK7  = &EC7D
 TIDY              = &EDEA
 PAS1_BANK7        = &EF7A
 LL164             = &EFF7
 DETOK_BANK7       = &F082
 DTS               = &F09D
-LF186             = &F186
+F186_BANK7        = &F186
 MVS5_BANK7        = &F1A2
 HALL              = &F1BD
 DASC_BANK7        = &F1E6
@@ -2164,7 +2164,7 @@ JMTBm1 = sub_CB203+2
 
 ; ******************************************************************************
 .PAUSE
- JSR LF186                                        ; B380: 20 86 F1     ..
+ JSR F186_BANK7                                   ; B380: 20 86 F1     ..
  JSR LD8C5                                        ; B383: 20 C5 D8     ..
  LDA L00B8                                        ; B386: A5 B8       ..
  STA L00D2                                        ; B388: 85 D2       ..
@@ -2205,9 +2205,9 @@ JMTBm1 = sub_CB203+2
 
 ; ******************************************************************************
 .PAUSE2
- JSR LF186                                        ; B3C1: 20 86 F1     ..
+ JSR F186_BANK7                                   ; B3C1: 20 86 F1     ..
 .loop_CB3C4
- JSR LEC7D                                        ; B3C4: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; B3C4: 20 7D EC     }.
  LDA L04B2                                        ; B3C7: AD B2 04    ...
  ORA L04B4                                        ; B3CA: 0D B4 04    ...
  AND #&C0                                         ; B3CD: 29 C0       ).
@@ -2544,7 +2544,7 @@ JMTBm1 = sub_CB203+2
  BEQ CB615                                        ; B5F0: F0 23       .#
  LDY #0                                           ; B5F2: A0 00       ..
  INX                                              ; B5F4: E8          .
- JSR LEC7D                                        ; B5F5: 20 7D EC     }.
+ JSR NAMETABLE0_BANK7                             ; B5F5: 20 7D EC     }.
 .loop_CB5F8
  LDA L0525,Y                                      ; B5F8: B9 25 05    .%.
  STA BUF,Y                                        ; B5FB: 99 07 05    ...
