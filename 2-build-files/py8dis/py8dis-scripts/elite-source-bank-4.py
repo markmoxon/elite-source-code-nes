@@ -16,6 +16,15 @@ config.set_indent_string(" ")
 entry(0x8000)
 string(0x8007, 5)
 
+byte(0x800C, 0xB8F9 - 0x800C)
+hexadecimal(0x800C, 0xB8F9 - 0x800C)
+
+entry(0xB8F9)
+entry(0xB93C)
+entry(0xB96B)
+entry(0xB9F9)
+entry(0xB9F9)
+
 exec(open('py8dis-scripts/common-variables.py').read())
 
 go()
