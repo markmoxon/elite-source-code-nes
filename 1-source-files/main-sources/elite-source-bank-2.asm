@@ -1135,6 +1135,16 @@ MACRO TOKN n
 
 ENDMACRO
 
+\ ******************************************************************************
+\
+\       Name: TKN1
+\       Type: Variable
+\   Category: Text
+\    Summary: The first extended token table for recursive tokens 0-255 (DETOK)
+\  Deep dive: Extended text tokens
+\
+\ ******************************************************************************
+
 .TKN1
 
  EQUB VE                \ Token 0:      ""
@@ -11596,6 +11606,15 @@ MACRO RTOK n
  EQUB t EOR 62
 
 ENDMACRO
+
+\ ******************************************************************************
+\
+\       Name: QQ18
+\       Type: Variable
+\   Category: Text
+\    Summary: The recursive token table for tokens 0-148
+\
+\ ******************************************************************************
 
 .QQ18
 
