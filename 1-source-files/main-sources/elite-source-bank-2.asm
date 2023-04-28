@@ -30,11 +30,192 @@
  _NTSC                  = (_VARIANT = 1)
  _PAL                   = (_VARIANT = 2)
 
-CODE% = &8000
-LOAD% = &8000
+FRIN              = &036A
+MJ                = &038A
+VIEW              = &038E
+EV                = &0392
+TP                = &039E
+QQ0               = &039F
+QQ1               = &03A0
+CASH              = &03A1
+QQ14              = &03A5
+GCNT              = &03A7
+CRGO              = &03AC
+QQ20              = &03AD
+BST               = &03BF
+BOMB              = &03C0
+GHYP              = &03C3
+ESCP              = &03C6
+NOMSL             = &03C8
+FIST              = &03C9
+AVL               = &03CA
+QQ26              = &03DB
+TALLY             = &03DC
+TALLY_1           = &03DD
+QQ21              = &03DF
+NOSTM             = &03E5
+DTW6              = &03F3
+DTW2              = &03F4
+DTW3              = &03F5
+DTW4              = &03F6
+DTW5              = &03F7
+DTW1              = &03F8
+DTW8              = &03F9
+MSTG              = &0401
+QQ19              = &044D
+QQ19_1            = &044E
+QQ19_3            = &0450
+QQ19_4            = &0450
+K2                = &0459
+K2_1              = &045A
+K2_2              = &045B
+K2_3              = &045C
+QQ19_2            = &045F
+SWAP              = &047F
+XSAV2             = &0481
+YSAV2             = &0482
+QQ24              = &0487
+QQ25              = &0488
+QQ28              = &0489
+QQ29              = &048A
+gov               = &048C
+tek               = &048D
+QQ2               = &048E
+QQ3               = &0494
+QQ4               = &0495
+QQ5               = &0496
+QQ8               = &049B
+QQ8_1             = &049C
+QQ9               = &049D
+QQ10              = &049E
+L049F             = &049F
+QQ18_LO            = &04A4
+QQ18_HI            = &04A5
+TKN1_LO           = &04A6
+TKN1_HI           = &04A7
+LANG              = &04A8
+L04B2             = &04B2
+L04B4             = &04B4
+SX                = &04C8
+SY                = &04DD
+SZ                = &04F2
+BUFm1             = &0506
+BUF               = &0507
+BUF_1             = &0508
+L0524             = &0524
+L0525             = &0525
+HANGFLAG          = &0561
+MANY              = &0562
+SSPR              = &0564
+SXL               = &05A5
+SYL               = &05BA
+SZL               = &05CF
+safehouse         = &05E4
+Kpercent          = &0600
+L07A9             = &07A9
+PPU_CTRL          = &2000
+PPU_MASK          = &2001
+PPU_STATUS        = &2002
+OAM_ADDR          = &2003
+OAM_DATA          = &2004
+PPU_SCROLL        = &2005
+PPU_ADDR          = &2006
+PPU_DATA          = &2007
+OAM_DMA           = &4014
+L80A9             = &80A9
+LB0A9             = &B0A9
+LC006             = &C006
+LC007             = &C007
+RESETBANK         = &C0AD
+SETBANK           = &C0AE
+log               = &C100
+logL              = &C200
+antilog           = &C300
+antilogODD        = &C400
+SNE               = &C500
+ACT               = &C520
+XX21m2            = &C53E
+XX21m1            = &C53F
+XX21              = &C540
+UNIV              = &CE7E
+UNIV_1            = &CE7E
+GINF              = &CE90
+NMI               = &CED5
+NAMETABLE0        = &D06D
+LD8C5             = &D8C5
+LDBD8             = &DBD8
+LOIN              = &DC0F
+PIXEL             = &E4F0
+ECBLB2            = &E596
+DELAY             = &EBA2
+EXNO3             = &EBAD
+BOOP              = &EBE5
+NOISE             = &EBF2
+NAMETABLE0_BANK7  = &EC7D
+TIDY              = &EDEA
+PAS1              = &EF7A
+LL164             = &EFF7
+DETOK_BANK7       = &F082
+DTS_BANK7         = &F09D
+F186_BANK7        = &F186
+MVS5_BANK7        = &F1A2
+HALL              = &F1BD
+DASC_BANK7        = &F1E6
+TT27_BANK7        = &F201
+TT27_control_codes = &F237
+TT66              = &F26E
+SCAN_BANK7        = &F2A8
+LF2BD             = &F2BD
+CLYNS             = &F2DE
+Ze                = &F42E
+NLIN4             = &F473
+DORND2            = &F4AC
+DORND             = &F4AD
+PROJ              = &F4C1
+MU5               = &F65A
+MULT3             = &F664
+MLS2              = &F6BA
+MLS1              = &F6C2
+MULTSm2           = &F6C4
+MULTS             = &F6C6
+MU6               = &F707
+SQUA              = &F70C
+SQUA2             = &F70E
+MU1               = &F713
+MLU1              = &F718
+MLU2              = &F71D
+MULTU             = &F721
+MU11              = &F725
+FMLTU2            = &F766
+FMLTU             = &F770
+MLTU2m2           = &F7AB
+MLTU2             = &F7AD
+MUT2              = &F7D2
+MUT1              = &F7D6
+MULT1             = &F7DA
+MULT12            = &F83C
+TAS3              = &F853
+MAD               = &F86F
+ADD               = &F872
+TIS1              = &F8AE
+DV42              = &F8D1
+DV41              = &F8D4
+DVID3B2           = &F962
+LL5               = &FA55
+LL28              = &FA91
+NORM              = &FAF8
 
-VE = &57
-LL = 29
+\ ******************************************************************************
+\
+\ Configuration variables
+\
+\ ******************************************************************************
+
+ VE = &57               \ The obfuscation byte used to hide the extended tokens
+                        \ table from crackers viewing the binary code
+
+ LL = 29                \ The length of lines (in characters) of justified text
+                        \ in the extended tokens system
 
 \ ******************************************************************************
 \
@@ -671,186 +852,40 @@ SUNX = &003E
  SKIP 0                 \ Temporary storage, typically used for storing tables
                         \ of values such as screen coordinates or ship data
 
-FRIN              = &036A
-MJ                = &038A
-VIEW              = &038E
-EV                = &0392
-TP                = &039E
-QQ0               = &039F
-QQ1               = &03A0
-CASH              = &03A1
-QQ14              = &03A5
-GCNT              = &03A7
-CRGO              = &03AC
-QQ20              = &03AD
-BST               = &03BF
-BOMB              = &03C0
-GHYP              = &03C3
-ESCP              = &03C6
-NOMSL             = &03C8
-FIST              = &03C9
-AVL               = &03CA
-QQ26              = &03DB
-TALLY             = &03DC
-TALLY_1           = &03DD
-QQ21              = &03DF
-NOSTM             = &03E5
-DTW6              = &03F3
-DTW2              = &03F4
-DTW3              = &03F5
-DTW4              = &03F6
-DTW5              = &03F7
-DTW1              = &03F8
-DTW8              = &03F9
-MSTG              = &0401
-QQ19              = &044D
-QQ19_1            = &044E
-QQ19_3            = &0450
-QQ19_4            = &0450
-K2                = &0459
-K2_1              = &045A
-K2_2              = &045B
-K2_3              = &045C
-QQ19_2            = &045F
-SWAP              = &047F
-L0481             = &0481
-L0482             = &0482
-QQ24              = &0487
-QQ25              = &0488
-QQ28              = &0489
-QQ29              = &048A
-gov               = &048C
-tek               = &048D
-QQ2               = &048E
-QQ3               = &0494
-QQ4               = &0495
-QQ5               = &0496
-QQ8               = &049B
-QQ8_1             = &049C
-QQ9               = &049D
-QQ10              = &049E
-L049F             = &049F
-QQ18_LO            = &04A4
-QQ18_HI            = &04A5
-TKN1_LO           = &04A6
-TKN1_HI           = &04A7
-LANG              = &04A8
-L04B2             = &04B2
-L04B4             = &04B4
-SX                = &04C8
-SY                = &04DD
-SZ                = &04F2
-BUFm1             = &0506
-BUF               = &0507
-BUF_1             = &0508
-L0524             = &0524
-L0525             = &0525
-HANGFLAG          = &0561
-MANY              = &0562
-SSPR              = &0564
-SXL               = &05A5
-SYL               = &05BA
-SZL               = &05CF
-safehouse         = &05E4
-Kpercent          = &0600
-L07A9             = &07A9
-PPUCTRL           = &2000
-PPUMASK           = &2001
-PPUSTATUS         = &2002
-OAMADDR           = &2003
-OAMDATA           = &2004
-PPUSCROLL         = &2005
-PPUADDR           = &2006
-PPUDATA           = &2007
-OAMDMA            = &4014
-L80A9             = &80A9
-LB0A9             = &B0A9
-LC006             = &C006
-LC007             = &C007
-RESETBANK         = &C0AD
-SETBANK           = &C0AE
-log               = &C100
-logL              = &C200
-antilog           = &C300
-antilogODD        = &C400
-SNE               = &C500
-ACT               = &C520
-XX21m2            = &C53E
-XX21m1            = &C53F
-XX21              = &C540
-UNIV              = &CE7E
-UNIV_1            = &CE7E
-GINF              = &CE90
-NMI               = &CED5
-NAMETABLE0        = &D06D
-LD8C5             = &D8C5
-LDBD8             = &DBD8
-LOIN              = &DC0F
-PIXEL             = &E4F0
-ECBLB2            = &E596
-DELAY             = &EBA2
-EXNO3             = &EBAD
-BOOP              = &EBE5
-NOISE             = &EBF2
-NAMETABLE0_BANK7  = &EC7D
-TIDY              = &EDEA
-PAS1              = &EF7A
-LL164             = &EFF7
-DETOK_BANK7       = &F082
-DTS_BANK7         = &F09D
-F186_BANK7        = &F186
-MVS5_BANK7        = &F1A2
-HALL              = &F1BD
-DASC_BANK7        = &F1E6
-TT27_BANK7        = &F201
-TT27_control_codes = &F237
-TT66              = &F26E
-SCAN_BANK7        = &F2A8
-LF2BD             = &F2BD
-CLYNS             = &F2DE
-Ze                = &F42E
-NLIN4             = &F473
-DORND2            = &F4AC
-DORND             = &F4AD
-PROJ              = &F4C1
-MU5               = &F65A
-MULT3             = &F664
-MLS2              = &F6BA
-MLS1              = &F6C2
-MULTSm2           = &F6C4
-MULTS             = &F6C6
-MU6               = &F707
-SQUA              = &F70C
-SQUA2             = &F70E
-MU1               = &F713
-MLU1              = &F718
-MLU2              = &F71D
-MULTU             = &F721
-MU11              = &F725
-FMLTU2            = &F766
-FMLTU             = &F770
-MLTU2m2           = &F7AB
-MLTU2             = &F7AD
-MUT2              = &F7D2
-MUT1              = &F7D6
-MULT1             = &F7DA
-MULT12            = &F83C
-TAS3              = &F853
-MAD               = &F86F
-ADD               = &F872
-TIS1              = &F8AE
-DV42              = &F8D1
-DV41              = &F8D4
-DVID3B2           = &F962
-LL5               = &FA55
-LL28              = &FA91
-NORM              = &FAF8
+\ ******************************************************************************
+\
+\ ELITE BANK 2
+\
+\ Produces the binary file bank2.bin.
+\
+\ ******************************************************************************
 
- ORG &8000
+CODE% = &8000
+LOAD% = &8000
+
+\ ******************************************************************************
+\
+\       Name: RESET
+\       Type: Variable
+\   Category: Start and end
+\    Summary: The reset routine at the start of the ROM bank
+\
+\ ******************************************************************************
+
+ ORG CODE%
 
  SEI
  INC &C006
  JMP &C007
+
+\ ******************************************************************************
+\
+\       Name: Version number
+\       Type: Variable
+\   Category: Text
+\    Summary: The game's version number
+\
+\ ******************************************************************************
 
  EQUS "@ 5.0"
 
@@ -15410,13 +15445,13 @@ ENDMACRO
 
 MACRO SET_NAMETABLE_0
 
- LDA L00E9              \ If bit 7 of L00E9 and bit 6 of PPUSTATUS are set, then
- BPL skip               \ call LD06D to:
- LDA PPUSTATUS          \
+ LDA L00E9              \ If bit 7 of L00E9 and bit 6 of PPU_STATUS are set,
+ BPL skip               \ then call NAMETABLE0 to:
+ LDA PPU_STATUS         \
  ASL A                  \   * Zero L00E9 to disable calls to NAMETABLE0 until
  BPL skip               \     both conditions are met once again
  JSR NAMETABLE0         \
-                        \   * Clear bits 0 and 4 of L00F5 and PPUCTRL, to set
+                        \   * Clear bits 0 and 4 of L00F5 and PPU_CTRL, to set
                         \     the base nametable address to &2000 (nametable 0)
                         \     or &2800 (which is a mirror of &2000)
                         \
@@ -17796,7 +17831,50 @@ ENDMACRO
 
  JMP CHPR               \ Call the CHPR print routine to actually make the sound
 
-.CB624
+\ ******************************************************************************
+\
+\       Name: CHPR
+\       Type: Subroutine
+\   Category: Text
+\    Summary: Print a character at the text cursor by poking into screen memory
+\
+\ ------------------------------------------------------------------------------
+\
+\ Print a character at the text cursor (XC, YC), do a beep, print a newline,
+\ or delete left (backspace).
+\
+\ Arguments:
+\
+\   A                   The character to be printed. Can be one of the
+\                       following:
+\
+\                         * 7 (beep)
+\
+\                         * 10-13 (line feeds and carriage returns)
+\
+\                         * 32-95 (ASCII capital letters, numbers and
+\                           punctuation)
+\
+\                         * 127 (delete the character to the left of the text
+\                           cursor and move the cursor to the left)
+\
+\   XC                  Contains the text column to print at (the x-coordinate)
+\
+\   YC                  Contains the line number to print on (the y-coordinate)
+\
+\ Returns:
+\
+\   A                   A is preserved
+\
+\   X                   X is preserved
+\
+\   Y                   Y is preserved
+\
+\   C flag              The C flag is cleared
+\
+\ ******************************************************************************
+
+.R5
  JMP CB75B                                        ; B624: 4C 5B B7    L[.
 
 .CB627
@@ -17805,81 +17883,94 @@ ENDMACRO
  LDA K3                                           ; B62B: A5 3D       .=
  JMP CB652                                        ; B62D: 4C 52 B6    LR.
 
-.CB630
+.RR4S
  JMP CB75B                                        ; B630: 4C 5B B7    L[.
 
-\ ******************************************************************************
-\
-\       Name: TT67X
-\       Type: Subroutine
-\   Category: Text
-\    Summary: Print a newline
-\
-\ ******************************************************************************
-
 .TT67X
-
-                        \ This does the same as the existing TT67 routine, which
-                        \ is also present in this source, so it isn't clear why
-                        \ this duplicate exists
-                        \
-                        \ In the original source, this version also has the name
-                        \ TT67, but because BeebAsm doesn't allow us to redefine
-                        \ labels, this one has been renamed TT67X
 
  LDA #12                \ Set A to a carriage return character
 
                         \ Fall through into CHPR to print the newline
 
-; ******************************************************************************
 .CHPR
- STA K3                                           ; B635: 85 3D       .=
- LDA L00E9                                        ; B637: A5 E9       ..
- BPL CB644                                        ; B639: 10 09       ..
- LDA PPUSTATUS                                    ; B63B: AD 02 20    ..
- ASL A                                            ; B63E: 0A          .
- BPL CB644                                        ; B63F: 10 03       ..
- JSR NAMETABLE0                                   ; B641: 20 6D D0     m.
-.CB644
- LDA K3                                           ; B644: A5 3D       .=
- STY L0482                                        ; B646: 8C 82 04    ...
- STX L0481                                        ; B649: 8E 81 04    ...
- LDY QQ17                                         ; B64C: A4 3C       .<
- CPY #&FF                                         ; B64E: C0 FF       ..
- BEQ CB630                                        ; B650: F0 DE       ..
+
+ STA K3                 \ Store the A register in K3 so we can retrieve it below
+
+ SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+
+ LDA K3                 \ Store the A, X and Y registers, so we can restore
+ STY YSAV2              \ them at the end (so they don't get changed by this
+ STX XSAV2              \ routine)
+
+ LDY QQ17               \ Load the QQ17 flag, which contains the text printing
+                        \ flags
+
+ CPY #255               \ If QQ17 = 255 then printing is disabled, so jump to
+ BEQ RR4S               \ RR4S (via the JMP in RR4S) to restore the registers
+                        \ and return from the subroutine using a tail call
+
 .CB652
- CMP #7                                           ; B652: C9 07       ..
- BEQ CB624                                        ; B654: F0 CE       ..
- CMP #&20 ; ' '                                   ; B656: C9 20       .
- BCS RR1                                          ; B658: B0 10       ..
- CMP #&0A                                         ; B65A: C9 0A       ..
- BEQ CB662                                        ; B65C: F0 04       ..
- LDX #1                                           ; B65E: A2 01       ..
- STX XC                                           ; B660: 86 32       .2
-.CB662
- CMP #&0D                                         ; B662: C9 0D       ..
- BEQ CB630                                        ; B664: F0 CA       ..
- INC YC                                           ; B666: E6 3B       .;
- BNE CB630                                        ; B668: D0 C6       ..
+
+ CMP #7                 \ If this is a beep character (A = 7), jump to R5,
+ BEQ R5                 \ which will emit the beep, restore the registers and
+                        \ return from the subroutine
+
+ CMP #32                \ If this is an ASCII character (A >= 32), jump to RR1
+ BCS RR1                \ below, which will print the character, restore the
+                        \ registers and return from the subroutine
+
+ CMP #10                \ If this is control code 10 (line feed) then jump to
+ BEQ RRX1               \ RRX1, which will move down a line, restore the
+                        \ registers and return from the subroutine
+
+ LDX #1                 \ If we get here, then this is control code 11-13, of
+ STX XC                 \ which only 13 is used. This code prints a newline,
+                        \ which we can achieve by moving the text cursor
+                        \ to the start of the line (carriage return) and down
+                        \ one line (line feed). These two lines do the first
+                        \ bit by setting XC = 1, and we then fall through into
+                        \ the line feed routine that's used by control code 10
+
+.RRX1
+
+ CMP #13                \ If this is control code 13 (carriage return) then jump
+ BEQ RR4S               \ to RR4 (via the JMP in RR4S) to restore the registers
+                        \ and return from the subroutine using a tail call
+
+ INC YC                 \ Increment the text cursor y-coordinate to move it
+                        \ down one row
+
+ BNE RR4S               \ Jump to RR4 to restore the registers and return from
+                        \ the subroutine using a tail call (this BNE is effectively a JMP as Y
+                        \ will never be zero)
+
 .RR1
+
+                        \ If we get here, then the character to print is an
+                        \ ASCII character in the range 32-95
+
  LDX XC                                           ; B66A: A6 32       .2
  CPX #&1F                                         ; B66C: E0 1F       ..
  BCC CB676                                        ; B66E: 90 06       ..
  LDX #1                                           ; B670: A2 01       ..
  STX XC                                           ; B672: 86 32       .2
  INC YC                                           ; B674: E6 3B       .;
+
 .CB676
+
  LDX YC                                           ; B676: A6 3B       .;
  CPX #&1B                                         ; B678: E0 1B       ..
  BCC CB67F                                        ; B67A: 90 03       ..
  JMP CB627                                        ; B67C: 4C 27 B6    L'.
 
 .CB67F
+
  CMP #&7F                                         ; B67F: C9 7F       ..
  BNE CB686                                        ; B681: D0 03       ..
  JMP CB7BF                                        ; B683: 4C BF B7    L..
 
 .CB686
+
  INC XC                                           ; B686: E6 32       .2
  LDA W                                            ; B688: A5 9E       ..
  AND #&30 ; '0'                                   ; B68A: 29 30       )0
@@ -17897,16 +17988,19 @@ ENDMACRO
  JMP CB7CF                                        ; B6A1: 4C CF B7    L..
 
 .CB6A4
+
  LDA K3                                           ; B6A4: A5 3D       .=
  JMP CB7CF                                        ; B6A6: 4C CF B7    L..
 
 .CB6A9
+
  LDA K3                                           ; B6A9: A5 3D       .=
  CMP #&20 ; ' '                                   ; B6AB: C9 20       .
  BNE CB6B2                                        ; B6AD: D0 03       ..
  JMP CB75B                                        ; B6AF: 4C 5B B7    L[.
 
 .CB6B2
+
  TAY                                              ; B6B2: A8          .
  CLC                                              ; B6B3: 18          .
  ADC #&FD                                         ; B6B4: 69 FD       i.
@@ -17930,17 +18024,21 @@ ENDMACRO
  JMP CB8A6                                        ; B6D5: 4C A6 B8    L..
 
 .CB6D8
+
  LDA W                                            ; B6D8: A5 9E       ..
  BNE CB6DF                                        ; B6DA: D0 03       ..
  JMP CB83E                                        ; B6DC: 4C 3E B8    L>.
 
 .CB6DF
+
  JSR LDBD8                                        ; B6DF: 20 D8 DB     ..
  LDY XC                                           ; B6E2: A4 32       .2
  DEY                                              ; B6E4: 88          .
  LDA (SC),Y                                       ; B6E5: B1 07       ..
  BEQ CB6E9                                        ; B6E7: F0 00       ..
+
 .CB6E9
+
  LDA L00B8                                        ; B6E9: A5 B8       ..
  BEQ CB75B                                        ; B6EB: F0 6E       .n
  CMP #&FF                                         ; B6ED: C9 FF       ..
@@ -17956,6 +18054,7 @@ ENDMACRO
  JMP CB784                                        ; B6FF: 4C 84 B7    L..
 
 .CB702
+
  TAY                                              ; B702: A8          .
  LDX #&0C                                         ; B703: A2 0C       ..
  STX L00BB                                        ; B705: 86 BB       ..
@@ -18008,21 +18107,26 @@ ENDMACRO
  LDA (P+1),Y                                      ; B755: B1 30       .0
  STA (L00BA),Y                                    ; B757: 91 BA       ..
  STA (SC),Y                                       ; B759: 91 07       ..
+
 .CB75B
- LDY L0482                                        ; B75B: AC 82 04    ...
- LDX L0481                                        ; B75E: AE 81 04    ...
+
+ LDY YSAV2                                        ; B75B: AC 82 04    ...
+ LDX XSAV2                                        ; B75E: AE 81 04    ...
  LDA L00E9                                        ; B761: A5 E9       ..
  BPL CB76E                                        ; B763: 10 09       ..
- LDA PPUSTATUS                                    ; B765: AD 02 20    ..
+ LDA PPU_STATUS                                   ; B765: AD 02 20    ..
  ASL A                                            ; B768: 0A          .
  BPL CB76E                                        ; B769: 10 03       ..
  JSR NAMETABLE0                                   ; B76B: 20 6D D0     m.
+
 .CB76E
+
  LDA K3                                           ; B76E: A5 3D       .=
  CLC                                              ; B770: 18          .
  RTS                                              ; B771: 60          `
 
 .CB772
+
  LDX #&0C                                         ; B772: A2 0C       ..
  STX SC+1                                         ; B774: 86 08       ..
  ASL A                                            ; B776: 0A          .
@@ -18035,6 +18139,7 @@ ENDMACRO
  JMP CB793                                        ; B781: 4C 93 B7    L..
 
 .CB784
+
  LDX #&0D                                         ; B784: A2 0D       ..
  STX SC+1                                         ; B786: 86 08       ..
  ASL A                                            ; B788: 0A          .
@@ -18044,7 +18149,9 @@ ENDMACRO
  ASL A                                            ; B78E: 0A          .
  ROL SC+1                                         ; B78F: 26 08       &.
  STA SC                                           ; B791: 85 07       ..
+
 .CB793
+
  LDY #0                                           ; B793: A0 00       ..
  LDA (P+1),Y                                      ; B795: B1 30       .0
  STA (SC),Y                                       ; B797: 91 07       ..
@@ -18072,6 +18179,7 @@ ENDMACRO
  JMP CB75B                                        ; B7BC: 4C 5B B7    L[.
 
 .CB7BF
+
  JSR LDBD8                                        ; B7BF: 20 D8 DB     ..
  LDY XC                                           ; B7C2: A4 32       .2
  DEC XC                                           ; B7C4: C6 32       .2
@@ -18081,15 +18189,20 @@ ENDMACRO
  JMP CB75B                                        ; B7CC: 4C 5B B7    L[.
 
 .CB7CF
+
  PHA                                              ; B7CF: 48          H
  JSR LDBD8                                        ; B7D0: 20 D8 DB     ..
  PLA                                              ; B7D3: 68          h
  CMP #&20 ; ' '                                   ; B7D4: C9 20       .
  BEQ CB7E5                                        ; B7D6: F0 0D       ..
+
 .loop_CB7D8
+
  CLC                                              ; B7D8: 18          .
  ADC L00D9                                        ; B7D9: 65 D9       e.
+
 .loop_CB7DB
+
  LDY XC                                           ; B7DB: A4 32       .2
  DEY                                              ; B7DD: 88          .
  STA (SC),Y                                       ; B7DE: 91 07       ..
@@ -18097,15 +18210,20 @@ ENDMACRO
  JMP CB75B                                        ; B7E2: 4C 5B B7    L[.
 
 .CB7E5
+
  LDY W                                            ; B7E5: A4 9E       ..
  CPY #&9D                                         ; B7E7: C0 9D       ..
  BEQ CB7EF                                        ; B7E9: F0 04       ..
  CPY #&DF                                         ; B7EB: C0 DF       ..
  BNE loop_CB7D8                                   ; B7ED: D0 E9       ..
+
 .CB7EF
+
  LDA #0                                           ; B7EF: A9 00       ..
  BEQ loop_CB7DB                                   ; B7F1: F0 E8       ..
+
 .CB7F3
+
  LDX L00B9                                        ; B7F3: A6 B9       ..
  STX SC+1                                         ; B7F5: 86 08       ..
  ASL A                                            ; B7F7: 0A          .
@@ -18150,12 +18268,15 @@ ENDMACRO
  JMP CB75B                                        ; B83B: 4C 5B B7    L[.
 
 .CB83E
+
  LDA #0                                           ; B83E: A9 00       ..
  STA SC+1                                         ; B840: 85 08       ..
  LDA YC                                           ; B842: A5 3B       .;
  BNE CB848                                        ; B844: D0 02       ..
  LDA #&FF                                         ; B846: A9 FF       ..
+
 .CB848
+
  CLC                                              ; B848: 18          .
  ADC #1                                           ; B849: 69 01       i.
  ASL A                                            ; B84B: 0A          .
@@ -18211,10 +18332,13 @@ ENDMACRO
  INY                                              ; B89E: C8          .
  LDA (P+1),Y                                      ; B89F: B1 30       .0
  STA (SC),Y                                       ; B8A1: 91 07       ..
+
 .CB8A3
+
  JMP CB75B                                        ; B8A3: 4C 5B B7    L[.
 
 .CB8A6
+
  LDA #&21 ; '!'                                   ; B8A6: A9 21       .!
  STA SC                                           ; B8A8: 85 07       ..
  LDA L00E6                                        ; B8AA: A5 E6       ..
@@ -18223,28 +18347,49 @@ ENDMACRO
  DEY                                              ; B8B0: 88          .
  JMP CB6E9                                        ; B8B1: 4C E9 B6    L..
 
+\ ******************************************************************************
+\
+\       Name: CHARTABLE
+\       Type: Variable
+\   Category: Text
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .CHARTABLE
 
- EQUB   0,   1,   2,   3,   4,   5,   6,   7,   8 ; B8B4: 00 01 02... ...
- EQUB   9, &0A, &0B, &0C, &0D, &0E, &0F, &10, &11 ; B8BD: 09 0A 0B... ...
- EQUB &12, &13, &14, &15, &16, &17, &18, &19, &1A ; B8C6: 12 13 14... ...
- EQUB &1B, &1C, &1D, &1E, &1F                     ; B8CF: 1B 1C 1D... ...
- EQUS " !$/$%&'()*+,-./0123456789:;%*>?`abcdef"   ; B8D4: 20 21 24...  !$
- EQUS "ghijklmnopqrstuvwxyz{|};+`abcdefghijklm"   ; B8FB: 67 68 69... ghi
- EQUS "nopqrstuvwxyz{|}~"                         ; B922: 6E 6F 70... nop
- EQUB &7F
+ FOR I%, 0, 31
 
- FOR I%, &B934, &BFF9
-
-  EQUB &FF
+  EQUB I%
 
  NEXT
 
- EQUW &C007             \ NMI handler
+ EQUS " !$/$%&'()*+,-./0123456789:;%*>?`abcdef"
+ EQUS "ghijklmnopqrstuvwxyz{|};+`abcdefghijklm"
+ EQUS "nopqrstuvwxyz{|}~"
 
- EQUW &C000             \ Reset handler
+ EQUB 127
 
- EQUW &C007             \ IRQ/BRK handler
+\ ******************************************************************************
+\
+\       Name: Vectors
+\       Type: Variable
+\   Category: Text
+\    Summary: Vectors at the end of the ROM bank
+\
+\ ******************************************************************************
+
+ FOR I%, &B934, &BFF9
+
+  EQUB &FF              \ Pad out the empty part at the end of the ROM with &FF
+
+ NEXT
+
+ EQUW &C007             \ Vector to NMI handler
+
+ EQUW &C000             \ Vector to Reset handler
+
+ EQUW &C007             \ Vector to IRQ/BRK handler
 
 \ ******************************************************************************
 \

@@ -228,8 +228,8 @@ K2_2              = &045B
 K2_3              = &045C
 QQ19_2            = &045F
 SWAP              = &047F
-L0481             = &0481
-L0482             = &0482
+XSAV2             = &0481
+YSAV2             = &0482
 QQ24              = &0487
 QQ25              = &0488
 QQ28              = &0489
@@ -269,15 +269,32 @@ SZL               = &05CF
 safehouse         = &05E4
 Kpercent          = &0600
 L07A9             = &07A9
-PPUCTRL           = &2000
-PPUMASK           = &2001
-PPUSTATUS         = &2002
-OAMADDR           = &2003
-OAMDATA           = &2004
-PPUSCROLL         = &2005
-PPUADDR           = &2006
-PPUDATA           = &2007
-OAMDMA            = &4014
+PPU_CTRL          = &2000
+PPU_MASK          = &2001
+PPU_STATUS        = &2002
+OAM_ADDR          = &2003
+OAM_DATA          = &2004
+PPU_SCROLL        = &2005
+PPU_ADDR          = &2006
+PPU_DATA          = &2007
+SQ1_ENV           = &4000
+SQ1_SWEEP         = &4001
+SQ1_LO            = &4002
+SQ1_HI            = &4003
+SQ2_ENV           = &4004
+SQ2_SWEEP         = &4005
+SQ2_LO            = &4006
+SQ2_HI            = &4007
+TRI_CTRL          = &4008
+TRI_LO            = &400A
+TRI_HI            = &400B
+NOI_ENV           = &400C
+NOI_RAND          = &400E
+NOI_LEN           = &400F
+OAM_DMA           = &4014
+APU_FLAGS         = &4015
+CONTROLLER_1      = &4016
+CONTROLLER_2      = &4017
 L80A9             = &80A9
 LB0A9             = &B0A9
 LC006             = &C006
@@ -1804,7 +1821,7 @@ NORM              = &FAF8
  TAX                                              ; B0EF: AA          .
  LDA L00E9                                        ; B0F0: A5 E9       ..
  BPL CB0FD                                        ; B0F2: 10 09       ..
- LDA PPUSTATUS                                    ; B0F4: AD 02 20    ..
+ LDA PPU_STATUS                                   ; B0F4: AD 02 20    ..
  ASL A                                            ; B0F7: 0A          .
  BPL CB0FD                                        ; B0F8: 10 03       ..
  JSR NAMETABLE0                                   ; B0FA: 20 6D D0     m.
@@ -1826,7 +1843,7 @@ NORM              = &FAF8
 .CB113
  LDA L00E9                                        ; B113: A5 E9       ..
  BPL CB120                                        ; B115: 10 09       ..
- LDA PPUSTATUS                                    ; B117: AD 02 20    ..
+ LDA PPU_STATUS                                   ; B117: AD 02 20    ..
  ASL A                                            ; B11A: 0A          .
  BPL CB120                                        ; B11B: 10 03       ..
  JSR NAMETABLE0                                   ; B11D: 20 6D D0     m.
@@ -1953,7 +1970,7 @@ NORM              = &FAF8
  STA SC                                           ; B1D0: 85 07       ..
  LDA L00E9                                        ; B1D2: A5 E9       ..
  BPL CB1DF                                        ; B1D4: 10 09       ..
- LDA PPUSTATUS                                    ; B1D6: AD 02 20    ..
+ LDA PPU_STATUS                                   ; B1D6: AD 02 20    ..
  ASL A                                            ; B1D9: 0A          .
  BPL CB1DF                                        ; B1DA: 10 03       ..
  JSR NAMETABLE0                                   ; B1DC: 20 6D D0     m.
@@ -2290,7 +2307,7 @@ JMTBm1 = sub_CB203+2
  PHA                                              ; B44F: 48          H
  LDA L00E9                                        ; B450: A5 E9       ..
  BPL CB45D                                        ; B452: 10 09       ..
- LDA PPUSTATUS                                    ; B454: AD 02 20    ..
+ LDA PPU_STATUS                                   ; B454: AD 02 20    ..
  ASL A                                            ; B457: 0A          .
  BPL CB45D                                        ; B458: 10 03       ..
  JSR NAMETABLE0                                   ; B45A: 20 6D D0     m.
@@ -2367,7 +2384,7 @@ JMTBm1 = sub_CB203+2
 .CB4C5
  LDA L00E9                                        ; B4C5: A5 E9       ..
  BPL CB4D2                                        ; B4C7: 10 09       ..
- LDA PPUSTATUS                                    ; B4C9: AD 02 20    ..
+ LDA PPU_STATUS                                   ; B4C9: AD 02 20    ..
  ASL A                                            ; B4CC: 0A          .
  BPL CB4D2                                        ; B4CD: 10 03       ..
  JSR NAMETABLE0                                   ; B4CF: 20 6D D0     m.
@@ -2403,7 +2420,7 @@ JMTBm1 = sub_CB203+2
  STA SC_1                                         ; B4F5: 85 08       ..
  LDA L00E9                                        ; B4F7: A5 E9       ..
  BPL CB504                                        ; B4F9: 10 09       ..
- LDA PPUSTATUS                                    ; B4FB: AD 02 20    ..
+ LDA PPU_STATUS                                   ; B4FB: AD 02 20    ..
  ASL A                                            ; B4FE: 0A          .
  BPL CB504                                        ; B4FF: 10 03       ..
  JSR NAMETABLE0                                   ; B501: 20 6D D0     m.
@@ -2457,7 +2474,7 @@ JMTBm1 = sub_CB203+2
  INC DTW5                                         ; B55C: EE F7 03    ...
  LDA L00E9                                        ; B55F: A5 E9       ..
  BPL CB56C                                        ; B561: 10 09       ..
- LDA PPUSTATUS                                    ; B563: AD 02 20    ..
+ LDA PPU_STATUS                                   ; B563: AD 02 20    ..
  ASL A                                            ; B566: 0A          .
  BPL CB56C                                        ; B567: 10 03       ..
  JSR NAMETABLE0                                   ; B569: 20 6D D0     m.
@@ -2496,7 +2513,7 @@ JMTBm1 = sub_CB203+2
 .CB594
  LDA L00E9                                        ; B594: A5 E9       ..
  BPL CB5A1                                        ; B596: 10 09       ..
- LDA PPUSTATUS                                    ; B598: AD 02 20    ..
+ LDA PPU_STATUS                                   ; B598: AD 02 20    ..
  ASL A                                            ; B59B: 0A          .
  BPL CB5A1                                        ; B59C: 10 03       ..
  JSR NAMETABLE0                                   ; B59E: 20 6D D0     m.
@@ -2514,7 +2531,7 @@ JMTBm1 = sub_CB203+2
 .loop_CB5B6
  LDA L00E9                                        ; B5B6: A5 E9       ..
  BPL CB5C3                                        ; B5B8: 10 09       ..
- LDA PPUSTATUS                                    ; B5BA: AD 02 20    ..
+ LDA PPU_STATUS                                   ; B5BA: AD 02 20    ..
  ASL A                                            ; B5BD: 0A          .
  BPL CB5C3                                        ; B5BE: 10 03       ..
  JSR NAMETABLE0                                   ; B5C0: 20 6D D0     m.
@@ -2600,14 +2617,14 @@ JMTBm1 = sub_CB203+2
  STA K3                                           ; B635: 85 3D       .=
  LDA L00E9                                        ; B637: A5 E9       ..
  BPL CB644                                        ; B639: 10 09       ..
- LDA PPUSTATUS                                    ; B63B: AD 02 20    ..
+ LDA PPU_STATUS                                   ; B63B: AD 02 20    ..
  ASL A                                            ; B63E: 0A          .
  BPL CB644                                        ; B63F: 10 03       ..
  JSR NAMETABLE0                                   ; B641: 20 6D D0     m.
 .CB644
  LDA K3                                           ; B644: A5 3D       .=
- STY L0482                                        ; B646: 8C 82 04    ...
- STX L0481                                        ; B649: 8E 81 04    ...
+ STY YSAV2                                        ; B646: 8C 82 04    ...
+ STX XSAV2                                        ; B649: 8E 81 04    ...
  LDY QQ17                                         ; B64C: A4 3C       .<
  CPY #&FF                                         ; B64E: C0 FF       ..
  BEQ CB630                                        ; B650: F0 DE       ..
@@ -2773,11 +2790,11 @@ JMTBm1 = sub_CB203+2
  STA (L00BA),Y                                    ; B757: 91 BA       ..
  STA (SC),Y                                       ; B759: 91 07       ..
 .CB75B
- LDY L0482                                        ; B75B: AC 82 04    ...
- LDX L0481                                        ; B75E: AE 81 04    ...
+ LDY YSAV2                                        ; B75B: AC 82 04    ...
+ LDX XSAV2                                        ; B75E: AE 81 04    ...
  LDA L00E9                                        ; B761: A5 E9       ..
  BPL CB76E                                        ; B763: 10 09       ..
- LDA PPUSTATUS                                    ; B765: AD 02 20    ..
+ LDA PPU_STATUS                                   ; B765: AD 02 20    ..
  ASL A                                            ; B768: 0A          .
  BPL CB76E                                        ; B769: 10 03       ..
  JSR NAMETABLE0                                   ; B76B: 20 6D D0     m.

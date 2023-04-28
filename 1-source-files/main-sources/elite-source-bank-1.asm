@@ -30,29 +30,103 @@
  _NTSC                  = (_VARIANT = 1)
  _PAL                   = (_VARIANT = 2)
 
-CODE% = &8000
-LOAD% = &8000
+\ Workspace &0200
 
-Y = 72
+L0200               = &0200
+L0202               = &0202
+L0203               = &0203
+L0204               = &0204
+L0206               = &0206
+L0207               = &0207
+L0208               = &0208
+L0209               = &0209
+L020A               = &020A
+L020B               = &020B
+L022C               = &022C
+L0230               = &0230
+L0234               = &0234
+L0294               = &0294
+L0295               = &0295
+L0297               = &0297
+L02E8               = &02E8
+L02E9               = &02E9
+L02EA               = &02EA
+L02EB               = &02EB
 
-OIL = 5
-COPS = 16
-SH3 = 17
-KRA = 19
+\ WP workspace
 
-NI% = 42
+L0374               = &0374
+L037E               = &037E
+MJ                  = &038A
+VIEW                = &038E
+QQ0                 = &039F
+QQ1                 = &03A0
+CASH                = &03A1
+GCNT                = &03A7
+CRGO                = &03AC
+QQ20                = &03AD
+BST                 = &03BF
+GHYP                = &03C3
+FIST                = &03C9
+AVL                 = &03CA
+QQ26                = &03DB
+L03DD               = &03DD
+QQ21                = &03DF
+NOSTM               = &03E5
+L03E6               = &03E6
+L03F1               = &03F1
+DTW6                = &03F3
+DTW2                = &03F4
+DTW3                = &03F5
+DTW4                = &03F6
+DTW5                = &03F7
+DTW1                = &03F8
+DTW8                = &03F9
+L040A               = &040A
+QQ19                = &044D
+K2                  = &0459
+SWAP                = &047F
+QQ24                = &0487
+QQ25                = &0488
+QQ28                = &0489
+QQ29                = &048A
+QQ8                 = &049B
+QQ9                 = &049D
+QQ10                = &049E
+QQ18_LO              = &04A4
+QQ18_HI              = &04A5
+TKN1_LO             = &04A6
+TKN1_HI             = &04A7
+SX                  = &04C8
+SY                  = &04DD
+SZ                  = &04F2
+BUFm1               = &0506
+BUF                 = &0507
+HANGFLAG            = &0561
+SXL                 = &05A5
+SYL                 = &05BA
+SZL                 = &05CF
+safehouse           = &05E4
+L05EA               = &05EA
+L05EB               = &05EB
+L05EC               = &05EC
+L05ED               = &05ED
+L05EE               = &05EE
+L05EF               = &05EF
+L05F0               = &05F0
+L05F1               = &05F1
 
 \ NES PPU registers
 
-PPUCTRL             = &2000
-PPUMASK             = &2001
-PPUSTATUS           = &2002
-OAMADDR             = &2003
-OAMDATA             = &2004
-PPUSCROLL           = &2005
-PPUADDR             = &2006
-PPUDATA             = &2007
-OAMDMA              = &4014
+PPU_CTRL            = &2000
+PPU_MASK            = &2001
+PPU_STATUS          = &2002
+OAM_ADDR            = &2003
+OAM_DATA            = &2004
+PPU_SCROLL          = &2005
+PPU_ADDR            = &2006
+PPU_DATA            = &2007
+OAM_DMA             = &4014
 
 \ Shared code from 7.asm
 
@@ -96,6 +170,22 @@ DVID3B2             = &F962
 LL5                 = &FA55
 LL28                = &FA91
 NORM                = &FAF8
+
+\ ******************************************************************************
+\
+\ Configuration variables
+\
+\ ******************************************************************************
+
+ Y = 72                 \ The centre y-coordinate of the space view
+
+ OIL = 5                \ Ship type for a cargo canister
+ COPS = 16              \ Ship type for a Viper
+ SH3 = 17               \ Ship type for a Sidewinder
+ KRA = 19               \ Ship type for a Krait
+
+ NI% = 42               \ The number of bytes in each ship's data block (as
+                        \ stored in INWK and K%)
 
 \ ******************************************************************************
 \
@@ -732,92 +822,6 @@ SUNX = &003E
  SKIP 0                 \ Temporary storage, typically used for storing tables
                         \ of values such as screen coordinates or ship data
 
-\ Workspace &0200
-
-L0200               = &0200
-L0202               = &0202
-L0203               = &0203
-L0204               = &0204
-L0206               = &0206
-L0207               = &0207
-L0208               = &0208
-L0209               = &0209
-L020A               = &020A
-L020B               = &020B
-L022C               = &022C
-L0230               = &0230
-L0234               = &0234
-L0294               = &0294
-L0295               = &0295
-L0297               = &0297
-L02E8               = &02E8
-L02E9               = &02E9
-L02EA               = &02EA
-L02EB               = &02EB
-
-\ WP workspace
-
-L0374               = &0374
-L037E               = &037E
-MJ                  = &038A
-VIEW                = &038E
-QQ0                 = &039F
-QQ1                 = &03A0
-CASH                = &03A1
-GCNT                = &03A7
-CRGO                = &03AC
-QQ20                = &03AD
-BST                 = &03BF
-GHYP                = &03C3
-FIST                = &03C9
-AVL                 = &03CA
-QQ26                = &03DB
-L03DD               = &03DD
-QQ21                = &03DF
-NOSTM               = &03E5
-L03E6               = &03E6
-L03F1               = &03F1
-DTW6                = &03F3
-DTW2                = &03F4
-DTW3                = &03F5
-DTW4                = &03F6
-DTW5                = &03F7
-DTW1                = &03F8
-DTW8                = &03F9
-L040A               = &040A
-QQ19                = &044D
-K2                  = &0459
-SWAP                = &047F
-QQ24                = &0487
-QQ25                = &0488
-QQ28                = &0489
-QQ29                = &048A
-QQ8                 = &049B
-QQ9                 = &049D
-QQ10                = &049E
-QQ18_LO              = &04A4
-QQ18_HI              = &04A5
-TKN1_LO             = &04A6
-TKN1_HI             = &04A7
-SX                  = &04C8
-SY                  = &04DD
-SZ                  = &04F2
-BUFm1               = &0506
-BUF                 = &0507
-HANGFLAG            = &0561
-SXL                 = &05A5
-SYL                 = &05BA
-SZL                 = &05CF
-safehouse           = &05E4
-L05EA               = &05EA
-L05EB               = &05EB
-L05EC               = &05EC
-L05ED               = &05ED
-L05EE               = &05EE
-L05EF               = &05EF
-L05F0               = &05F0
-L05F1               = &05F1
-
 \ ******************************************************************************
 \
 \       Name: K%
@@ -846,11 +850,40 @@ L05F1               = &05F1
 
  SKIP 0                 \ Ship data blocks and ship line heap
 
+\ ******************************************************************************
+\
+\ ELITE BANK 1
+\
+\ Produces the binary file bank2.bin.
+\
+\ ******************************************************************************
+
+CODE% = &8000
+LOAD% = &8000
+
+\ ******************************************************************************
+\
+\       Name: RESET
+\       Type: Variable
+\   Category: Start and end
+\    Summary: The reset routine at the start of the ROM bank
+\
+\ ******************************************************************************
+
  ORG CODE%
 
  SEI
  INC &C006
  JMP &C007
+
+\ ******************************************************************************
+\
+\       Name: Version number
+\       Type: Variable
+\   Category: Text
+\    Summary: The game's version number
+\
+\ ******************************************************************************
 
  EQUS "@ 5.0"
 
@@ -866,13 +899,13 @@ L05F1               = &05F1
 
 MACRO SET_NAMETABLE_0
 
- LDA L00E9              \ If bit 7 of L00E9 and bit 6 of PPUSTATUS are set, then
- BPL skip               \ call LD06D to:
- LDA PPUSTATUS          \
+ LDA L00E9              \ If bit 7 of L00E9 and bit 6 of PPU_STATUS are set,
+ BPL skip               \ then call NAMETABLE0 to:
+ LDA PPU_STATUS         \
  ASL A                  \   * Zero L00E9 to disable calls to NAMETABLE0 until
  BPL skip               \     both conditions are met once again
  JSR NAMETABLE0         \
-                        \   * Clear bits 0 and 4 of L00F5 and PPUCTRL, to set
+                        \   * Clear bits 0 and 4 of L00F5 and PPU_CTRL, to set
                         \     the base nametable address to &2000 (nametable 0)
                         \     or &2800 (which is a mirror of &2000)
                         \
@@ -882,33 +915,43 @@ MACRO SET_NAMETABLE_0
 
 ENDMACRO
 
- EQUW SHIP_ASTEROID     \ AST  =  7 = Asteroid
- EQUW SHIP_SPLINTER     \ SPL  =  8 = Splinter
- EQUW SHIP_SHUTTLE      \ SHU  =  9 = Shuttle
- EQUW SHIP_TRANSPORTER  \        10 = Transporter
- EQUW SHIP_COBRA_MK_3   \ CYL  = 11 = Cobra Mk III
- EQUW SHIP_PYTHON       \        12 = Python
- EQUW SHIP_BOA          \        13 = Boa
- EQUW SHIP_ANACONDA     \ ANA  = 14 = Anaconda
- EQUW SHIP_ROCK_HERMIT  \ HER  = 15 = Rock hermit (asteroid)
- EQUW SHIP_VIPER        \ COPS = 16 = Viper
- EQUW SHIP_SIDEWINDER   \ SH3  = 17 = Sidewinder
- EQUW SHIP_MAMBA        \        18 = Mamba
- EQUW SHIP_KRAIT        \ KRA  = 19 = Krait
- EQUW SHIP_ADDER        \ ADA  = 20 = Adder
- EQUW SHIP_GECKO        \        21 = Gecko
- EQUW SHIP_COBRA_MK_1   \        22 = Cobra Mk I
- EQUW SHIP_WORM         \ WRM  = 23 = Worm
- EQUW SHIP_COBRA_MK_3_P \ CYL2 = 24 = Cobra Mk III (pirate)
- EQUW SHIP_ASP_MK_2     \ ASP  = 25 = Asp Mk II
- EQUW SHIP_PYTHON_P     \        26 = Python (pirate)
- EQUW SHIP_FER_DE_LANCE \        27 = Fer-de-lance
- EQUW SHIP_MORAY        \        28 = Moray
- EQUW SHIP_THARGOID     \ THG  = 29 = Thargoid
- EQUW SHIP_THARGON      \ TGL  = 30 = Thargon
- EQUW SHIP_CONSTRICTOR  \ CON  = 31 = Constrictor
- EQUW SHIP_COUGAR       \ COU  = 32 = Cougar
- EQUW SHIP_DODO         \ DOD  = 33 = Dodecahedron ("Dodo") space station
+\ ******************************************************************************
+\
+\       Name: Unused copy of XX21
+\       Type: Variable
+\   Category: Drawing ships
+\    Summary: Remnants of an unused copy of the XX21 ship blueprints lookup
+\             table
+\
+\ ******************************************************************************
+
+ EQUB &9D, &84          \ These bytes appear to be unused
+ EQUB &73, &85          \
+ EQUB &AF, &85          \ This is a truncated version of XX21, the table of ship
+ EQUB &E1, &86          \ blueprint addresses. This version only contains the
+ EQUB &C3, &88          \ asteroid onwards, and it is not used anywhere, so it
+ EQUB &4B, &8A          \ looks like this is all that remains of a copy of XX21
+ EQUB &3D, &8B          \ that was assembled at address &8000, and then ignored
+ EQUB &33, &8C
+ EQUB &35, &8D
+ EQUB &0B, &8E
+ EQUB &E5, &8E
+ EQUB &8D, &8F
+ EQUB &BB, &90
+ EQUB &A1, &91
+ EQUB &D1, &92
+ EQUB &95, &93
+ EQUB &5B, &94
+ EQUB &0B, &95
+ EQUB &93, &96
+ EQUB &BD, &97
+ EQUB &AF, &98
+ EQUB &C9, &99
+ EQUB &A1, &9A
+ EQUB &BD, &9B
+ EQUB &29, &9C
+ EQUB &2B, &9D
+ EQUB &2D, &9E
 
 \ ******************************************************************************
 \
@@ -7195,7 +7238,8 @@ ENDMACRO
                         \ points to the end of the heap, and therefore contains
                         \ the heap size
 
- RTS                    \ Return from the subroutine ???
+ RTS                    \ Return from the subroutine (parts 12 of LL9 is not
+                        \ included in the NES version)
 
 \ ******************************************************************************
 \
@@ -9371,7 +9415,7 @@ ENDMACRO
 .sub_CAEE8
  LDA L00E9
  BPL CAEF5
- LDA PPUSTATUS
+ LDA PPU_STATUS
  ASL A
  BPL CAEF5
  JSR NAMETABLE0
@@ -12705,6 +12749,8 @@ ENDMACRO
 
  RTS                    \ Return from the subroutine
 
+\ SCAN
+
 .CB969
  LDA #&F0
  STA L0200,Y
@@ -12715,7 +12761,7 @@ ENDMACRO
 
 .SCAN
 
- LDA W
+ LDA W                  \ ???
  BNE CB974
  LDX TYPE
  BMI CB974
@@ -13246,17 +13292,26 @@ ENDMACRO
  LDY T1
  RTS
 
+\ ******************************************************************************
+\
+\       Name: Vectors
+\       Type: Variable
+\   Category: Start and end
+\    Summary: Vectors at the end of the ROM bank
+\
+\ ******************************************************************************
+
  FOR I%, &BC51, &BFF9
 
-  EQUB &FF
+  EQUB &FF              \ Pad out the empty part at the end of the ROM with &FF
 
  NEXT
 
- EQUW &C007             \ NMI handler
+ EQUW &C007             \ Vector to NMI handler
 
- EQUW &C000             \ Reset handler
+ EQUW &C000             \ Vector to Reset handler
 
- EQUW &C007             \ IRQ/BRK handler
+ EQUW &C007             \ Vector to IRQ/BRK handler
 
 \ ******************************************************************************
 \

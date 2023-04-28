@@ -447,7 +447,8 @@ L046C             = &046C
 L0475             = &0475
 L047E             = &047E
 SWAP              = &047F
-L0482             = &0482
+XSAV2             = &0481
+YSAV2             = &0482
 L0484             = &0484
 L0485             = &0485
 L0486             = &0486
@@ -505,31 +506,33 @@ L06B6             = &06B6
 L06D6             = &06D6
 L06F6             = &06F6
 L0707             = &0707
-PPUCTRL           = &2000
-PPUMASK           = &2001
-PPUSTATUS         = &2002
-OAMADDR           = &2003
-OAMDATA           = &2004
-PPUSCROLL         = &2005
-PPUADDR           = &2006
-PPUDATA           = &2007
-L4000             = &4000
-L4001             = &4001
-L4002             = &4002
-L4003             = &4003
-L4004             = &4004
-L4005             = &4005
-L4006             = &4006
-L4007             = &4007
-L4008             = &4008
-L400A             = &400A
-L400B             = &400B
-L400C             = &400C
+PPU_CTRL          = &2000
+PPU_MASK          = &2001
+PPU_STATUS        = &2002
+OAM_ADDR          = &2003
+OAM_DATA          = &2004
+PPU_SCROLL        = &2005
+PPU_ADDR          = &2006
+PPU_DATA          = &2007
+SQ1_ENV           = &4000
+SQ1_SWEEP         = &4001
+SQ1_LO            = &4002
+SQ1_HI            = &4003
+SQ2_ENV           = &4004
+SQ2_SWEEP         = &4005
+SQ2_LO            = &4006
+SQ2_HI            = &4007
+TRI_CTRL          = &4008
+TRI_LO            = &400A
+TRI_HI            = &400B
+NOI_ENV           = &400C
 L400D             = &400D
-L400E             = &400E
-L400F             = &400F
-OAMDMA            = &4014
-L4015             = &4015
+NOI_RAND          = &400E
+NOI_LEN           = &400F
+OAM_DMA           = &4014
+APU_FLAGS         = &4015
+CONTROLLER_1      = &4016
+CONTROLLER_2      = &4017
 L72C0             = &72C0
 L7800             = &7800
 LC006             = &C006
@@ -773,13 +776,13 @@ NORM              = &FAF8
  INX                                              ; 8105: E8          .
  CPX #&10                                         ; 8106: E0 10       ..
  BNE loop_C8102                                   ; 8108: D0 F8       ..
- STA L4008                                        ; 810A: 8D 08 40    ..@
+ STA TRI_CTRL                                     ; 810A: 8D 08 40    ..@
  LDA #&30 ; '0'                                   ; 810D: A9 30       .0
- STA L4000                                        ; 810F: 8D 00 40    ..@
- STA L4004                                        ; 8112: 8D 04 40    ..@
- STA L400C                                        ; 8115: 8D 0C 40    ..@
+ STA SQ1_ENV                                      ; 810F: 8D 00 40    ..@
+ STA SQ2_ENV                                      ; 8112: 8D 04 40    ..@
+ STA NOI_ENV                                      ; 8115: 8D 0C 40    ..@
  LDA #&0F                                         ; 8118: A9 0F       ..
- STA L4015                                        ; 811A: 8D 15 40    ..@
+ STA APU_FLAGS                                    ; 811A: 8D 15 40    ..@
  RTS                                              ; 811D: 60          `
 
 .C811E
@@ -790,29 +793,29 @@ NORM              = &FAF8
  LDA L0302                                        ; 8129: AD 02 03    ...
  BNE C813F                                        ; 812C: D0 11       ..
  LDA L035A                                        ; 812E: AD 5A 03    .Z.
- STA L4000                                        ; 8131: 8D 00 40    ..@
+ STA SQ1_ENV                                      ; 8131: 8D 00 40    ..@
  LDA L0318                                        ; 8134: AD 18 03    ...
  BNE C813F                                        ; 8137: D0 06       ..
  LDA L035C                                        ; 8139: AD 5C 03    .\.
- STA L4002                                        ; 813C: 8D 02 40    ..@
+ STA SQ1_LO                                       ; 813C: 8D 02 40    ..@
 .C813F
  LDA L0303                                        ; 813F: AD 03 03    ...
  BNE C8155                                        ; 8142: D0 11       ..
  LDA L035E                                        ; 8144: AD 5E 03    .^.
- STA L4004                                        ; 8147: 8D 04 40    ..@
+ STA SQ2_ENV                                      ; 8147: 8D 04 40    ..@
  LDA L032B                                        ; 814A: AD 2B 03    .+.
  BNE C8155                                        ; 814D: D0 06       ..
  LDA L0360                                        ; 814F: AD 60 03    .`.
- STA L4006                                        ; 8152: 8D 06 40    ..@
+ STA SQ2_LO                                       ; 8152: 8D 06 40    ..@
 .C8155
  LDA L0364                                        ; 8155: AD 64 03    .d.
- STA L400A                                        ; 8158: 8D 0A 40    ..@
+ STA TRI_LO                                       ; 8158: 8D 0A 40    ..@
  LDA L0304                                        ; 815B: AD 04 03    ...
  BNE C816C                                        ; 815E: D0 0C       ..
  LDA L0366                                        ; 8160: AD 66 03    .f.
- STA L400C                                        ; 8163: 8D 0C 40    ..@
+ STA NOI_ENV                                      ; 8163: 8D 0C 40    ..@
  LDA L0368                                        ; 8166: AD 68 03    .h.
- STA L400E                                        ; 8169: 8D 0E 40    ..@
+ STA NOI_RAND                                     ; 8169: 8D 0E 40    ..@
 .C816C
  RTS                                              ; 816C: 60          `
 
@@ -881,10 +884,10 @@ NORM              = &FAF8
  LDX L0302                                        ; 81E2: AE 02 03    ...
  BNE C81F6                                        ; 81E5: D0 0F       ..
  LDX L0318                                        ; 81E7: AE 18 03    ...
- STX L4001                                        ; 81EA: 8E 01 40    ..@
+ STX SQ1_SWEEP                                    ; 81EA: 8E 01 40    ..@
  LDX L035C                                        ; 81ED: AE 5C 03    .\.
- STX L4002                                        ; 81F0: 8E 02 40    ..@
- STA L4003                                        ; 81F3: 8D 03 40    ..@
+ STX SQ1_LO                                       ; 81F0: 8E 02 40    ..@
+ STA SQ1_HI                                       ; 81F3: 8D 03 40    ..@
 .C81F6
  LDA #1                                           ; 81F6: A9 01       ..
  STA L031C                                        ; 81F8: 8D 1C 03    ...
@@ -1151,10 +1154,10 @@ NORM              = &FAF8
  LDX L0303                                        ; 83DD: AE 03 03    ...
  BNE C83F1                                        ; 83E0: D0 0F       ..
  LDX L032B                                        ; 83E2: AE 2B 03    .+.
- STX L4005                                        ; 83E5: 8E 05 40    ..@
+ STX SQ2_SWEEP                                    ; 83E5: 8E 05 40    ..@
  LDX L0360                                        ; 83E8: AE 60 03    .`.
- STX L4006                                        ; 83EB: 8E 06 40    ..@
- STA L4007                                        ; 83EE: 8D 07 40    ..@
+ STX SQ2_LO                                       ; 83EB: 8E 06 40    ..@
+ STA SQ2_HI                                       ; 83EE: 8D 07 40    ..@
 .C83F1
  LDA #1                                           ; 83F1: A9 01       ..
  STA L032F                                        ; 83F3: 8D 2F 03    ./.
@@ -1415,13 +1418,13 @@ NORM              = &FAF8
  STA L0364                                        ; 85C7: 8D 64 03    .d.
  LDA L88BD,Y                                      ; 85CA: B9 BD 88    ...
  LDX L0364                                        ; 85CD: AE 64 03    .d.
- STX L400A                                        ; 85D0: 8E 0A 40    ..@
- STA L400B                                        ; 85D3: 8D 0B 40    ..@
+ STX TRI_LO                                       ; 85D0: 8E 0A 40    ..@
+ STA TRI_HI                                       ; 85D3: 8D 0B 40    ..@
  STA L0365                                        ; 85D6: 8D 65 03    .e.
  LDA L0345                                        ; 85D9: AD 45 03    .E.
  STA L0342                                        ; 85DC: 8D 42 03    .B.
  LDA #&81                                         ; 85DF: A9 81       ..
- STA L4008                                        ; 85E1: 8D 08 40    ..@
+ STA TRI_CTRL                                     ; 85E1: 8D 08 40    ..@
 .C85E4
  LDA L00FE                                        ; 85E4: A5 FE       ..
  STA L0334                                        ; 85E6: 8D 34 03    .4.
@@ -1577,7 +1580,7 @@ NORM              = &FAF8
  DEC L0342                                        ; 86F3: CE 42 03    .B.
  BNE C86FD                                        ; 86F6: D0 05       ..
  LDA #0                                           ; 86F8: A9 00       ..
- STA L4008                                        ; 86FA: 8D 08 40    ..@
+ STA TRI_CTRL                                     ; 86FA: 8D 08 40    ..@
 .C86FD
  LDX L0340                                        ; 86FD: AE 40 03    .@.
  LDA L9119,X                                      ; 8700: BD 19 91    ...
@@ -1632,8 +1635,8 @@ NORM              = &FAF8
  LDY #0                                           ; 875A: A0 00       ..
  LDX L0304                                        ; 875C: AE 04 03    ...
  BNE C8767                                        ; 875F: D0 06       ..
- STA L400E                                        ; 8761: 8D 0E 40    ..@
- STY L400F                                        ; 8764: 8C 0F 40    ..@
+ STA NOI_RAND                                     ; 8761: 8D 0E 40    ..@
+ STY NOI_LEN                                      ; 8764: 8C 0F 40    ..@
 .C8767
  LDA #1                                           ; 8767: A9 01       ..
  STA L0355                                        ; 8769: 8D 55 03    .U.
@@ -1850,7 +1853,7 @@ L88BD = L88BC+1
  BPL loop_C896D                                   ; 8973: 10 F8       ..
  LDA L00E9                                        ; 8975: A5 E9       ..
  BPL C8982                                        ; 8977: 10 09       ..
- LDA PPUSTATUS                                    ; 8979: AD 02 20    ..
+ LDA PPU_STATUS                                   ; 8979: AD 02 20    ..
  ASL A                                            ; 897C: 0A          .
  BPL C8982                                        ; 897D: 10 03       ..
  JSR NAMETABLE0                                   ; 897F: 20 6D D0     m.
@@ -1874,15 +1877,15 @@ L88BD = L88BC+1
  STY L041D                                        ; 89AB: 8C 1D 04    ...
  LDA (L00FE),Y                                    ; 89AE: B1 FE       ..
  ORA L0411                                        ; 89B0: 0D 11 04    ...
- STA L4000                                        ; 89B3: 8D 00 40    ..@
+ STA SQ1_ENV                                      ; 89B3: 8D 00 40    ..@
  LDA #0                                           ; 89B6: A9 00       ..
- STA L4001                                        ; 89B8: 8D 01 40    ..@
+ STA SQ1_SWEEP                                    ; 89B8: 8D 01 40    ..@
  LDA L040D                                        ; 89BB: AD 0D 04    ...
  STA L0419                                        ; 89BE: 8D 19 04    ...
- STA L4002                                        ; 89C1: 8D 02 40    ..@
+ STA SQ1_LO                                       ; 89C1: 8D 02 40    ..@
  LDA L040E                                        ; 89C4: AD 0E 04    ...
  STA L041A                                        ; 89C7: 8D 1A 04    ...
- STA L4003                                        ; 89CA: 8D 03 40    ..@
+ STA SQ1_HI                                       ; 89CA: 8D 03 40    ..@
  INC L0302                                        ; 89CD: EE 02 03    ...
  RTS                                              ; 89D0: 60          `
 
@@ -1911,7 +1914,7 @@ L88BD = L88BC+1
  BPL loop_C89EF                                   ; 89F5: 10 F8       ..
  LDA L00E9                                        ; 89F7: A5 E9       ..
  BPL C8A04                                        ; 89F9: 10 09       ..
- LDA PPUSTATUS                                    ; 89FB: AD 02 20    ..
+ LDA PPU_STATUS                                   ; 89FB: AD 02 20    ..
  ASL A                                            ; 89FE: 0A          .
  BPL C8A04                                        ; 89FF: 10 03       ..
  JSR NAMETABLE0                                   ; 8A01: 20 6D D0     m.
@@ -1935,15 +1938,15 @@ L88BD = L88BC+1
  STY L0431                                        ; 8A2D: 8C 31 04    .1.
  LDA (L00FE),Y                                    ; 8A30: B1 FE       ..
  ORA L0425                                        ; 8A32: 0D 25 04    .%.
- STA L4004                                        ; 8A35: 8D 04 40    ..@
+ STA SQ2_ENV                                      ; 8A35: 8D 04 40    ..@
  LDA #0                                           ; 8A38: A9 00       ..
- STA L4005                                        ; 8A3A: 8D 05 40    ..@
+ STA SQ2_SWEEP                                    ; 8A3A: 8D 05 40    ..@
  LDA L0421                                        ; 8A3D: AD 21 04    .!.
  STA L042D                                        ; 8A40: 8D 2D 04    .-.
- STA L4006                                        ; 8A43: 8D 06 40    ..@
+ STA SQ2_LO                                       ; 8A43: 8D 06 40    ..@
  LDA L0422                                        ; 8A46: AD 22 04    .".
  STA L042E                                        ; 8A49: 8D 2E 04    ...
- STA L4007                                        ; 8A4C: 8D 07 40    ..@
+ STA SQ2_HI                                       ; 8A4C: 8D 07 40    ..@
  INC L0303                                        ; 8A4F: EE 03 03    ...
  RTS                                              ; 8A52: 60          `
 
@@ -1964,7 +1967,7 @@ L88BD = L88BC+1
  BPL loop_C8A66                                   ; 8A6C: 10 F8       ..
  LDA L00E9                                        ; 8A6E: A5 E9       ..
  BPL C8A7B                                        ; 8A70: 10 09       ..
- LDA PPUSTATUS                                    ; 8A72: AD 02 20    ..
+ LDA PPU_STATUS                                   ; 8A72: AD 02 20    ..
  ASL A                                            ; 8A75: 0A          .
  BPL C8A7B                                        ; 8A76: 10 03       ..
  JSR NAMETABLE0                                   ; 8A78: 20 6D D0     m.
@@ -1988,15 +1991,15 @@ L88BD = L88BC+1
  STY L0445                                        ; 8AA4: 8C 45 04    .E.
  LDA (L00FE),Y                                    ; 8AA7: B1 FE       ..
  ORA L0439                                        ; 8AA9: 0D 39 04    .9.
- STA L400C                                        ; 8AAC: 8D 0C 40    ..@
+ STA NOI_ENV                                      ; 8AAC: 8D 0C 40    ..@
  LDA #0                                           ; 8AAF: A9 00       ..
  STA L400D                                        ; 8AB1: 8D 0D 40    ..@
  LDA L0435                                        ; 8AB4: AD 35 04    .5.
  AND #&0F                                         ; 8AB7: 29 0F       ).
  STA L0441                                        ; 8AB9: 8D 41 04    .A.
- STA L400E                                        ; 8ABC: 8D 0E 40    ..@
+ STA NOI_RAND                                     ; 8ABC: 8D 0E 40    ..@
  LDA #0                                           ; 8ABF: A9 00       ..
- STA L400F                                        ; 8AC1: 8D 0F 40    ..@
+ STA NOI_LEN                                      ; 8AC1: 8D 0F 40    ..@
  INC L0304                                        ; 8AC4: EE 04 03    ...
  RTS                                              ; 8AC7: 60          `
 
@@ -2019,17 +2022,17 @@ L88BD = L88BC+1
  LDA L0301                                        ; 8AE4: AD 01 03    ...
  BEQ C8AFF                                        ; 8AE7: F0 16       ..
  LDA L035A                                        ; 8AE9: AD 5A 03    .Z.
- STA L4000                                        ; 8AEC: 8D 00 40    ..@
+ STA SQ1_ENV                                      ; 8AEC: 8D 00 40    ..@
  LDA L035C                                        ; 8AEF: AD 5C 03    .\.
- STA L4002                                        ; 8AF2: 8D 02 40    ..@
+ STA SQ1_LO                                       ; 8AF2: 8D 02 40    ..@
  LDA L035D                                        ; 8AF5: AD 5D 03    .].
- STA L4003                                        ; 8AF8: 8D 03 40    ..@
+ STA SQ1_HI                                       ; 8AF8: 8D 03 40    ..@
  STX L0302                                        ; 8AFB: 8E 02 03    ...
  RTS                                              ; 8AFE: 60          `
 
 .C8AFF
  LDA #&30 ; '0'                                   ; 8AFF: A9 30       .0
- STA L4000                                        ; 8B01: 8D 00 40    ..@
+ STA SQ1_ENV                                      ; 8B01: 8D 00 40    ..@
  STX L0302                                        ; 8B04: 8E 02 03    ...
  RTS                                              ; 8B07: 60          `
 
@@ -2052,7 +2055,7 @@ L88BD = L88BC+1
  LDA (L00FE),Y                                    ; 8B2D: B1 FE       ..
 .C8B2F
  ORA L0411                                        ; 8B2F: 0D 11 04    ...
- STA L4000                                        ; 8B32: 8D 00 40    ..@
+ STA SQ1_ENV                                      ; 8B32: 8D 00 40    ..@
  INY                                              ; 8B35: C8          .
  STY L041D                                        ; 8B36: 8C 1D 04    ...
 .C8B39
@@ -2074,10 +2077,10 @@ L88BD = L88BC+1
  ADC L0307                                        ; 8B5A: 6D 07 03    m..
 .C8B5D
  STA L0419                                        ; 8B5D: 8D 19 04    ...
- STA L4002                                        ; 8B60: 8D 02 40    ..@
+ STA SQ1_LO                                       ; 8B60: 8D 02 40    ..@
  LDA L040E                                        ; 8B63: AD 0E 04    ...
  STA L041A                                        ; 8B66: 8D 1A 04    ...
- STA L4003                                        ; 8B69: 8D 03 40    ..@
+ STA SQ1_HI                                       ; 8B69: 8D 03 40    ..@
 .C8B6C
  DEC L041B                                        ; 8B6C: CE 1B 04    ...
  LDA L0418                                        ; 8B6F: AD 18 04    ...
@@ -2093,12 +2096,12 @@ L88BD = L88BC+1
  SEC                                              ; 8B86: 38          8
  SBC L040F                                        ; 8B87: ED 0F 04    ...
  STA L0419                                        ; 8B8A: 8D 19 04    ...
- STA L4002                                        ; 8B8D: 8D 02 40    ..@
+ STA SQ1_LO                                       ; 8B8D: 8D 02 40    ..@
  LDA L041A                                        ; 8B90: AD 1A 04    ...
  SBC L0410                                        ; 8B93: ED 10 04    ...
  AND #3                                           ; 8B96: 29 03       ).
  STA L041A                                        ; 8B98: 8D 1A 04    ...
- STA L4003                                        ; 8B9B: 8D 03 40    ..@
+ STA SQ1_HI                                       ; 8B9B: 8D 03 40    ..@
  RTS                                              ; 8B9E: 60          `
 
 .C8B9F
@@ -2106,12 +2109,12 @@ L88BD = L88BC+1
  CLC                                              ; 8BA2: 18          .
  ADC L040F                                        ; 8BA3: 6D 0F 04    m..
  STA L0419                                        ; 8BA6: 8D 19 04    ...
- STA L4002                                        ; 8BA9: 8D 02 40    ..@
+ STA SQ1_LO                                       ; 8BA9: 8D 02 40    ..@
  LDA L041A                                        ; 8BAC: AD 1A 04    ...
  ADC L0410                                        ; 8BAF: 6D 10 04    m..
  AND #3                                           ; 8BB2: 29 03       ).
  STA L041A                                        ; 8BB4: 8D 1A 04    ...
- STA L4003                                        ; 8BB7: 8D 03 40    ..@
+ STA SQ1_HI                                       ; 8BB7: 8D 03 40    ..@
 .C8BBA
  RTS                                              ; 8BBA: 60          `
 
@@ -2128,17 +2131,17 @@ L88BD = L88BC+1
  LDA L0301                                        ; 8BCB: AD 01 03    ...
  BEQ C8BE6                                        ; 8BCE: F0 16       ..
  LDA L035E                                        ; 8BD0: AD 5E 03    .^.
- STA L4004                                        ; 8BD3: 8D 04 40    ..@
+ STA SQ2_ENV                                      ; 8BD3: 8D 04 40    ..@
  LDA L0360                                        ; 8BD6: AD 60 03    .`.
- STA L4006                                        ; 8BD9: 8D 06 40    ..@
+ STA SQ2_LO                                       ; 8BD9: 8D 06 40    ..@
  LDA L0361                                        ; 8BDC: AD 61 03    .a.
- STA L4007                                        ; 8BDF: 8D 07 40    ..@
+ STA SQ2_HI                                       ; 8BDF: 8D 07 40    ..@
  STX L0303                                        ; 8BE2: 8E 03 03    ...
  RTS                                              ; 8BE5: 60          `
 
 .C8BE6
  LDA #&30 ; '0'                                   ; 8BE6: A9 30       .0
- STA L4004                                        ; 8BE8: 8D 04 40    ..@
+ STA SQ2_ENV                                      ; 8BE8: 8D 04 40    ..@
  STX L0303                                        ; 8BEB: 8E 03 03    ...
  RTS                                              ; 8BEE: 60          `
 
@@ -2161,7 +2164,7 @@ L88BD = L88BC+1
  LDA (L00FE),Y                                    ; 8C14: B1 FE       ..
 .C8C16
  ORA L0425                                        ; 8C16: 0D 25 04    .%.
- STA L4004                                        ; 8C19: 8D 04 40    ..@
+ STA SQ2_ENV                                      ; 8C19: 8D 04 40    ..@
  INY                                              ; 8C1C: C8          .
  STY L0431                                        ; 8C1D: 8C 31 04    .1.
 .C8C20
@@ -2183,10 +2186,10 @@ L88BD = L88BC+1
  ADC L0307                                        ; 8C41: 6D 07 03    m..
 .C8C44
  STA L042D                                        ; 8C44: 8D 2D 04    .-.
- STA L4006                                        ; 8C47: 8D 06 40    ..@
+ STA SQ2_LO                                       ; 8C47: 8D 06 40    ..@
  LDA L0422                                        ; 8C4A: AD 22 04    .".
  STA L042E                                        ; 8C4D: 8D 2E 04    ...
- STA L4007                                        ; 8C50: 8D 07 40    ..@
+ STA SQ2_HI                                       ; 8C50: 8D 07 40    ..@
 .C8C53
  DEC L042F                                        ; 8C53: CE 2F 04    ./.
  LDA L042C                                        ; 8C56: AD 2C 04    .,.
@@ -2202,12 +2205,12 @@ L88BD = L88BC+1
  SEC                                              ; 8C6D: 38          8
  SBC L0423                                        ; 8C6E: ED 23 04    .#.
  STA L042D                                        ; 8C71: 8D 2D 04    .-.
- STA L4006                                        ; 8C74: 8D 06 40    ..@
+ STA SQ2_LO                                       ; 8C74: 8D 06 40    ..@
  LDA L042E                                        ; 8C77: AD 2E 04    ...
  SBC L0424                                        ; 8C7A: ED 24 04    .$.
  AND #3                                           ; 8C7D: 29 03       ).
  STA L042E                                        ; 8C7F: 8D 2E 04    ...
- STA L4007                                        ; 8C82: 8D 07 40    ..@
+ STA SQ2_HI                                       ; 8C82: 8D 07 40    ..@
  RTS                                              ; 8C85: 60          `
 
 .C8C86
@@ -2215,12 +2218,12 @@ L88BD = L88BC+1
  CLC                                              ; 8C89: 18          .
  ADC L0423                                        ; 8C8A: 6D 23 04    m#.
  STA L042D                                        ; 8C8D: 8D 2D 04    .-.
- STA L4006                                        ; 8C90: 8D 06 40    ..@
+ STA SQ2_LO                                       ; 8C90: 8D 06 40    ..@
  LDA L042E                                        ; 8C93: AD 2E 04    ...
  ADC L0424                                        ; 8C96: 6D 24 04    m$.
  AND #3                                           ; 8C99: 29 03       ).
  STA L042E                                        ; 8C9B: 8D 2E 04    ...
- STA L4007                                        ; 8C9E: 8D 07 40    ..@
+ STA SQ2_HI                                       ; 8C9E: 8D 07 40    ..@
 .C8CA1
  RTS                                              ; 8CA1: 60          `
 
@@ -2237,15 +2240,15 @@ L88BD = L88BC+1
  LDA L0301                                        ; 8CB2: AD 01 03    ...
  BEQ C8CC7                                        ; 8CB5: F0 10       ..
  LDA L0366                                        ; 8CB7: AD 66 03    .f.
- STA L400C                                        ; 8CBA: 8D 0C 40    ..@
+ STA NOI_ENV                                      ; 8CBA: 8D 0C 40    ..@
  LDA L0368                                        ; 8CBD: AD 68 03    .h.
- STA L400E                                        ; 8CC0: 8D 0E 40    ..@
+ STA NOI_RAND                                     ; 8CC0: 8D 0E 40    ..@
  STX L0304                                        ; 8CC3: 8E 04 03    ...
  RTS                                              ; 8CC6: 60          `
 
 .C8CC7
  LDA #&30 ; '0'                                   ; 8CC7: A9 30       .0
- STA L400C                                        ; 8CC9: 8D 0C 40    ..@
+ STA NOI_ENV                                      ; 8CC9: 8D 0C 40    ..@
  STX L0304                                        ; 8CCC: 8E 04 03    ...
  RTS                                              ; 8CCF: 60          `
 
@@ -2268,7 +2271,7 @@ L88BD = L88BC+1
  LDA (L00FE),Y                                    ; 8CF5: B1 FE       ..
 .C8CF7
  ORA L0439                                        ; 8CF7: 0D 39 04    .9.
- STA L400C                                        ; 8CFA: 8D 0C 40    ..@
+ STA NOI_ENV                                      ; 8CFA: 8D 0C 40    ..@
  INY                                              ; 8CFD: C8          .
  STY L0445                                        ; 8CFE: 8C 45 04    .E.
 .C8D01
@@ -2291,7 +2294,7 @@ L88BD = L88BC+1
  AND #&0F                                         ; 8D25: 29 0F       ).
 .C8D27
  STA L0441                                        ; 8D27: 8D 41 04    .A.
- STA L400E                                        ; 8D2A: 8D 0E 40    ..@
+ STA NOI_RAND                                     ; 8D2A: 8D 0E 40    ..@
 .C8D2D
  DEC L0443                                        ; 8D2D: CE 43 04    .C.
  LDA L0440                                        ; 8D30: AD 40 04    .@.
@@ -2308,7 +2311,7 @@ L88BD = L88BC+1
  SBC L0437                                        ; 8D48: ED 37 04    .7.
  AND #&0F                                         ; 8D4B: 29 0F       ).
  STA L0441                                        ; 8D4D: 8D 41 04    .A.
- STA L400E                                        ; 8D50: 8D 0E 40    ..@
+ STA NOI_RAND                                     ; 8D50: 8D 0E 40    ..@
  RTS                                              ; 8D53: 60          `
 
 .C8D54
@@ -2317,7 +2320,7 @@ L88BD = L88BC+1
  ADC L0437                                        ; 8D58: 6D 37 04    m7.
  AND #&0F                                         ; 8D5B: 29 0F       ).
  STA L0441                                        ; 8D5D: 8D 41 04    .A.
- STA L400E                                        ; 8D60: 8D 0E 40    ..@
+ STA NOI_RAND                                     ; 8D60: 8D 0E 40    ..@
 .C8D63
  RTS                                              ; 8D63: 60          `
 
@@ -3161,7 +3164,7 @@ L88BD = L88BC+1
 .CA123
  LDA L00E9                                        ; A123: A5 E9       ..
  BPL CA130                                        ; A125: 10 09       ..
- LDA PPUSTATUS                                    ; A127: AD 02 20    ..
+ LDA PPU_STATUS                                   ; A127: AD 02 20    ..
  ASL A                                            ; A12A: 0A          .
  BPL CA130                                        ; A12B: 10 03       ..
  JSR NAMETABLE0                                   ; A12D: 20 6D D0     m.
@@ -3357,7 +3360,7 @@ L88BD = L88BC+1
 .CA266
  LDA L00E9                                        ; A266: A5 E9       ..
  BPL CA273                                        ; A268: 10 09       ..
- LDA PPUSTATUS                                    ; A26A: AD 02 20    ..
+ LDA PPU_STATUS                                   ; A26A: AD 02 20    ..
  ASL A                                            ; A26D: 0A          .
  BPL CA273                                        ; A26E: 10 03       ..
  JSR NAMETABLE0                                   ; A270: 20 6D D0     m.
@@ -3412,7 +3415,7 @@ L88BD = L88BC+1
 .CA2B5
  LDA L00E9                                        ; A2B5: A5 E9       ..
  BPL CA2C2                                        ; A2B7: 10 09       ..
- LDA PPUSTATUS                                    ; A2B9: AD 02 20    ..
+ LDA PPU_STATUS                                   ; A2B9: AD 02 20    ..
  ASL A                                            ; A2BC: 0A          .
  BPL CA2C2                                        ; A2BD: 10 03       ..
  JSR NAMETABLE0                                   ; A2BF: 20 6D D0     m.
@@ -3757,7 +3760,7 @@ L88BD = L88BC+1
 .CA5C5
  LDA L00E9                                        ; A5C5: A5 E9       ..
  BPL CA5D2                                        ; A5C7: 10 09       ..
- LDA PPUSTATUS                                    ; A5C9: AD 02 20    ..
+ LDA PPU_STATUS                                   ; A5C9: AD 02 20    ..
  ASL A                                            ; A5CC: 0A          .
  BPL CA5D2                                        ; A5CD: 10 03       ..
  JSR NAMETABLE0                                   ; A5CF: 20 6D D0     m.
@@ -3777,7 +3780,7 @@ L88BD = L88BC+1
 .CA5EF
  LDA L00E9                                        ; A5EF: A5 E9       ..
  BPL CA5FC                                        ; A5F1: 10 09       ..
- LDA PPUSTATUS                                    ; A5F3: AD 02 20    ..
+ LDA PPU_STATUS                                   ; A5F3: AD 02 20    ..
  ASL A                                            ; A5F6: 0A          .
  BPL CA5FC                                        ; A5F7: 10 03       ..
  JSR NAMETABLE0                                   ; A5F9: 20 6D D0     m.
@@ -3862,7 +3865,7 @@ L88BD = L88BC+1
 .CA689
  LDA L00E9                                        ; A689: A5 E9       ..
  BPL CA696                                        ; A68B: 10 09       ..
- LDA PPUSTATUS                                    ; A68D: AD 02 20    ..
+ LDA PPU_STATUS                                   ; A68D: AD 02 20    ..
  ASL A                                            ; A690: 0A          .
  BPL CA696                                        ; A691: 10 03       ..
  JSR NAMETABLE0                                   ; A693: 20 6D D0     m.
@@ -3986,7 +3989,7 @@ L88BD = L88BC+1
 .sub_CA776
  LDA L00E9                                        ; A776: A5 E9       ..
  BPL CA783                                        ; A778: 10 09       ..
- LDA PPUSTATUS                                    ; A77A: AD 02 20    ..
+ LDA PPU_STATUS                                   ; A77A: AD 02 20    ..
  ASL A                                            ; A77D: 0A          .
  BPL CA783                                        ; A77E: 10 03       ..
  JSR NAMETABLE0                                   ; A780: 20 6D D0     m.
@@ -4058,7 +4061,7 @@ L88BD = L88BC+1
  STY P                                            ; A806: 84 2F       ./
  LDA L00E9                                        ; A808: A5 E9       ..
  BPL CA815                                        ; A80A: 10 09       ..
- LDA PPUSTATUS                                    ; A80C: AD 02 20    ..
+ LDA PPU_STATUS                                   ; A80C: AD 02 20    ..
  ASL A                                            ; A80F: 0A          .
  BPL CA815                                        ; A810: 10 03       ..
  JSR NAMETABLE0                                   ; A812: 20 6D D0     m.
@@ -4104,7 +4107,7 @@ L88BD = L88BC+1
 .CA85E
  LDA L00E9                                        ; A85E: A5 E9       ..
  BPL CA86B                                        ; A860: 10 09       ..
- LDA PPUSTATUS                                    ; A862: AD 02 20    ..
+ LDA PPU_STATUS                                   ; A862: AD 02 20    ..
  ASL A                                            ; A865: 0A          .
  BPL CA86B                                        ; A866: 10 03       ..
  JSR NAMETABLE0                                   ; A868: 20 6D D0     m.
@@ -4116,7 +4119,7 @@ L88BD = L88BC+1
  STY INF_1                                        ; A86E: 84 62       .b
  LDA L00E9                                        ; A870: A5 E9       ..
  BPL CA87D                                        ; A872: 10 09       ..
- LDA PPUSTATUS                                    ; A874: AD 02 20    ..
+ LDA PPU_STATUS                                   ; A874: AD 02 20    ..
  ASL A                                            ; A877: 0A          .
  BPL CA87D                                        ; A878: 10 03       ..
  JSR NAMETABLE0                                   ; A87A: 20 6D D0     m.
@@ -4150,7 +4153,7 @@ L88BD = L88BC+1
 .CA8AE
  LDA L00E9                                        ; A8AE: A5 E9       ..
  BPL CA8BB                                        ; A8B0: 10 09       ..
- LDA PPUSTATUS                                    ; A8B2: AD 02 20    ..
+ LDA PPU_STATUS                                   ; A8B2: AD 02 20    ..
  ASL A                                            ; A8B5: 0A          .
  BPL CA8BB                                        ; A8B6: 10 03       ..
  JSR NAMETABLE0                                   ; A8B8: 20 6D D0     m.
@@ -4280,7 +4283,7 @@ L88BD = L88BC+1
 .sub_CA9A2
  LDA L00E9                                        ; A9A2: A5 E9       ..
  BPL CA9AF                                        ; A9A4: 10 09       ..
- LDA PPUSTATUS                                    ; A9A6: AD 02 20    ..
+ LDA PPU_STATUS                                   ; A9A6: AD 02 20    ..
  ASL A                                            ; A9A9: 0A          .
  BPL CA9AF                                        ; A9AA: 10 03       ..
  JSR NAMETABLE0                                   ; A9AC: 20 6D D0     m.
@@ -4301,7 +4304,7 @@ L88BD = L88BC+1
  BNE loop_CA9B1                                   ; A9C2: D0 ED       ..
  LDA L00E9                                        ; A9C4: A5 E9       ..
  BPL CA9D1                                        ; A9C6: 10 09       ..
- LDA PPUSTATUS                                    ; A9C8: AD 02 20    ..
+ LDA PPU_STATUS                                   ; A9C8: AD 02 20    ..
  ASL A                                            ; A9CB: 0A          .
  BPL CA9D1                                        ; A9CC: 10 03       ..
  JSR NAMETABLE0                                   ; A9CE: 20 6D D0     m.
@@ -4322,7 +4325,7 @@ L88BD = L88BC+1
  BNE loop_CA9D3                                   ; A9E4: D0 ED       ..
  LDA L00E9                                        ; A9E6: A5 E9       ..
  BPL CA9F3                                        ; A9E8: 10 09       ..
- LDA PPUSTATUS                                    ; A9EA: AD 02 20    ..
+ LDA PPU_STATUS                                   ; A9EA: AD 02 20    ..
  ASL A                                            ; A9ED: 0A          .
  BPL CA9F3                                        ; A9EE: 10 03       ..
  JSR NAMETABLE0                                   ; A9F0: 20 6D D0     m.
@@ -4343,7 +4346,7 @@ L88BD = L88BC+1
  BNE loop_CA9F5                                   ; AA06: D0 ED       ..
  LDA L00E9                                        ; AA08: A5 E9       ..
  BPL CAA15                                        ; AA0A: 10 09       ..
- LDA PPUSTATUS                                    ; AA0C: AD 02 20    ..
+ LDA PPU_STATUS                                   ; AA0C: AD 02 20    ..
  ASL A                                            ; AA0F: 0A          .
  BPL CAA15                                        ; AA10: 10 03       ..
  JSR NAMETABLE0                                   ; AA12: 20 6D D0     m.
@@ -4364,7 +4367,7 @@ L88BD = L88BC+1
  BNE loop_CAA17                                   ; AA28: D0 ED       ..
  LDA L00E9                                        ; AA2A: A5 E9       ..
  BPL CAA37                                        ; AA2C: 10 09       ..
- LDA PPUSTATUS                                    ; AA2E: AD 02 20    ..
+ LDA PPU_STATUS                                   ; AA2E: AD 02 20    ..
  ASL A                                            ; AA31: 0A          .
  BPL CAA37                                        ; AA32: 10 03       ..
  JSR NAMETABLE0                                   ; AA34: 20 6D D0     m.
@@ -4385,7 +4388,7 @@ L88BD = L88BC+1
  BNE loop_CAA39                                   ; AA4A: D0 ED       ..
  LDA L00E9                                        ; AA4C: A5 E9       ..
  BPL CAA59                                        ; AA4E: 10 09       ..
- LDA PPUSTATUS                                    ; AA50: AD 02 20    ..
+ LDA PPU_STATUS                                   ; AA50: AD 02 20    ..
  ASL A                                            ; AA53: 0A          .
  BPL CAA59                                        ; AA54: 10 03       ..
  JSR NAMETABLE0                                   ; AA56: 20 6D D0     m.
@@ -4406,7 +4409,7 @@ L88BD = L88BC+1
  BNE loop_CAA5B                                   ; AA6C: D0 ED       ..
  LDA L00E9                                        ; AA6E: A5 E9       ..
  BPL CAA7B                                        ; AA70: 10 09       ..
- LDA PPUSTATUS                                    ; AA72: AD 02 20    ..
+ LDA PPU_STATUS                                   ; AA72: AD 02 20    ..
  ASL A                                            ; AA75: 0A          .
  BPL CAA7B                                        ; AA76: 10 03       ..
  JSR NAMETABLE0                                   ; AA78: 20 6D D0     m.
@@ -4427,7 +4430,7 @@ L88BD = L88BC+1
  BNE loop_CAA7D                                   ; AA8E: D0 ED       ..
  LDA L00E9                                        ; AA90: A5 E9       ..
  BPL CAA9D                                        ; AA92: 10 09       ..
- LDA PPUSTATUS                                    ; AA94: AD 02 20    ..
+ LDA PPU_STATUS                                   ; AA94: AD 02 20    ..
  ASL A                                            ; AA97: 0A          .
  BPL CAA9D                                        ; AA98: 10 03       ..
  JSR NAMETABLE0                                   ; AA9A: 20 6D D0     m.
@@ -4448,7 +4451,7 @@ L88BD = L88BC+1
  BNE loop_CAA9F                                   ; AAB0: D0 ED       ..
  LDA L00E9                                        ; AAB2: A5 E9       ..
  BPL CAABF                                        ; AAB4: 10 09       ..
- LDA PPUSTATUS                                    ; AAB6: AD 02 20    ..
+ LDA PPU_STATUS                                   ; AAB6: AD 02 20    ..
  ASL A                                            ; AAB9: 0A          .
  BPL CAABF                                        ; AABA: 10 03       ..
  JSR NAMETABLE0                                   ; AABC: 20 6D D0     m.
@@ -4487,7 +4490,7 @@ L88BD = L88BC+1
 .CAAEA
  LDA L00E9                                        ; AAEA: A5 E9       ..
  BPL CAAF7                                        ; AAEC: 10 09       ..
- LDA PPUSTATUS                                    ; AAEE: AD 02 20    ..
+ LDA PPU_STATUS                                   ; AAEE: AD 02 20    ..
  ASL A                                            ; AAF1: 0A          .
  BPL CAAF7                                        ; AAF2: 10 03       ..
  JSR NAMETABLE0                                   ; AAF4: 20 6D D0     m.
@@ -4540,7 +4543,7 @@ L88BD = L88BC+1
  STA Q                                            ; AB4D: 85 97       ..
  LDA L00E9                                        ; AB4F: A5 E9       ..
  BPL CAB5C                                        ; AB51: 10 09       ..
- LDA PPUSTATUS                                    ; AB53: AD 02 20    ..
+ LDA PPU_STATUS                                   ; AB53: AD 02 20    ..
  ASL A                                            ; AB56: 0A          .
  BPL CAB5C                                        ; AB57: 10 03       ..
  JSR NAMETABLE0                                   ; AB59: 20 6D D0     m.
@@ -5007,7 +5010,7 @@ L88BD = L88BC+1
  RTS                                              ; B62B: 60          `
 
 .sub_CB62C
- STY L0482                                        ; B62C: 8C 82 04    ...
+ STY YSAV2                                        ; B62C: 8C 82 04    ...
  LDY CNT                                          ; B62F: A4 A8       ..
  LDA #&6D ; 'm'                                   ; B631: A9 6D       .m
  STA L0201,Y                                      ; B633: 99 01 02    ...
@@ -5029,7 +5032,7 @@ L88BD = L88BC+1
  CLC                                              ; B650: 18          .
  ADC #4                                           ; B651: 69 04       i.
  STA CNT                                          ; B653: 85 A8       ..
- LDY L0482                                        ; B655: AC 82 04    ...
+ LDY YSAV2                                        ; B655: AC 82 04    ...
  RTS                                              ; B658: 60          `
 
 .sub_CB659
@@ -5207,7 +5210,7 @@ L88BD = L88BC+1
 .CB797
  LDA L00E9                                        ; B797: A5 E9       ..
  BPL CB7A4                                        ; B799: 10 09       ..
- LDA PPUSTATUS                                    ; B79B: AD 02 20    ..
+ LDA PPU_STATUS                                   ; B79B: AD 02 20    ..
  ASL A                                            ; B79E: 0A          .
  BPL CB7A4                                        ; B79F: 10 03       ..
  JSR NAMETABLE0                                   ; B7A1: 20 6D D0     m.

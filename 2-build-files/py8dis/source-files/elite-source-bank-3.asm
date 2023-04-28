@@ -315,6 +315,8 @@ L046C             = &046C
 L0473             = &0473
 L0475             = &0475
 SWAP              = &047F
+XSAV2             = &0481
+YSAV2             = &0482
 QQ24              = &0487
 QQ25              = &0488
 QQ28              = &0489
@@ -349,15 +351,32 @@ SYL               = &05BA
 SZL               = &05CF
 safehouse         = &05E4
 Kpercent          = &0600
-PPUCTRL           = &2000
-PPUMASK           = &2001
-PPUSTATUS         = &2002
-OAMADDR           = &2003
-OAMDATA           = &2004
-PPUSCROLL         = &2005
-PPUADDR           = &2006
-PPUDATA           = &2007
-OAMDMA            = &4014
+PPU_CTRL          = &2000
+PPU_MASK          = &2001
+PPU_STATUS        = &2002
+OAM_ADDR          = &2003
+OAM_DATA          = &2004
+PPU_SCROLL        = &2005
+PPU_ADDR          = &2006
+PPU_DATA          = &2007
+SQ1_ENV           = &4000
+SQ1_SWEEP         = &4001
+SQ1_LO            = &4002
+SQ1_HI            = &4003
+SQ2_ENV           = &4004
+SQ2_SWEEP         = &4005
+SQ2_LO            = &4006
+SQ2_HI            = &4007
+TRI_CTRL          = &4008
+TRI_LO            = &400A
+TRI_HI            = &400B
+NOI_ENV           = &400C
+NOI_RAND          = &400E
+NOI_LEN           = &400F
+OAM_DMA           = &4014
+APU_FLAGS         = &4015
+CONTROLLER_1      = &4016
+CONTROLLER_2      = &4017
 LC006             = &C006
 LC007             = &C007
 RESETBANK         = &C0AD
@@ -1596,10 +1615,10 @@ NORM              = &FAF8
  PHA                                              ; A7BC: 48          H
  LDA #0                                           ; A7BD: A9 00       ..
  STA L00F5                                        ; A7BF: 85 F5       ..
- STA PPUCTRL                                      ; A7C1: 8D 00 20    ..
+ STA PPU_CTRL                                     ; A7C1: 8D 00 20    ..
  STA L00E9                                        ; A7C4: 85 E9       ..
  LDA #0                                           ; A7C6: A9 00       ..
- STA PPUMASK                                      ; A7C8: 8D 01 20    ..
+ STA PPU_MASK                                     ; A7C8: 8D 01 20    ..
  LDA W                                            ; A7CB: A5 9E       ..
  CMP #&B9                                         ; A7CD: C9 B9       ..
  BNE CA7D4                                        ; A7CF: D0 03       ..
@@ -1625,9 +1644,9 @@ NORM              = &FAF8
  CMP #&BA                                         ; A7F0: C9 BA       ..
  BNE CA810                                        ; A7F2: D0 1C       ..
  LDA #4                                           ; A7F4: A9 04       ..
- STA PPUADDR                                      ; A7F6: 8D 06 20    ..
+ STA PPU_ADDR                                     ; A7F6: 8D 06 20    ..
  LDA #&50 ; 'P'                                   ; A7F9: A9 50       .P
- STA PPUADDR                                      ; A7FB: 8D 06 20    ..
+ STA PPU_ADDR                                     ; A7FB: 8D 06 20    ..
  LDA #&A4                                         ; A7FE: A9 A4       ..
  STA SC_1                                         ; A800: 85 08       ..
  LDA #&93                                         ; A802: A9 93       ..
@@ -1641,9 +1660,9 @@ NORM              = &FAF8
  CMP #&BB                                         ; A810: C9 BB       ..
  BNE CA82A                                        ; A812: D0 16       ..
  LDA #4                                           ; A814: A9 04       ..
- STA PPUADDR                                      ; A816: 8D 06 20    ..
+ STA PPU_ADDR                                     ; A816: 8D 06 20    ..
  LDA #&50 ; 'P'                                   ; A819: A9 50       .P
- STA PPUADDR                                      ; A81B: 8D 06 20    ..
+ STA PPU_ADDR                                     ; A81B: 8D 06 20    ..
  LDA #&A4                                         ; A81E: A9 A4       ..
  STA V_1                                          ; A820: 85 64       .d
  LDA #&D3                                         ; A822: A9 D3       ..
@@ -1666,9 +1685,9 @@ NORM              = &FAF8
  BEQ CA8A2                                        ; A843: F0 5D       .]
  STA L048B                                        ; A845: 8D 8B 04    ...
  LDA #4                                           ; A848: A9 04       ..
- STA PPUADDR                                      ; A84A: 8D 06 20    ..
+ STA PPU_ADDR                                     ; A84A: 8D 06 20    ..
  LDA #&40 ; '@'                                   ; A84D: A9 40       .@
- STA PPUADDR                                      ; A84F: 8D 06 20    ..
+ STA PPU_ADDR                                     ; A84F: 8D 06 20    ..
  LDX #&5F ; '_'                                   ; A852: A2 5F       ._
  LDA #&FC                                         ; A854: A9 FC       ..
  STA SC_1                                         ; A856: 85 08       ..
@@ -1679,9 +1698,9 @@ NORM              = &FAF8
  CMP #&DF                                         ; A861: C9 DF       ..
  BNE CA8A2                                        ; A863: D0 3D       .=
  LDA #&0E                                         ; A865: A9 0E       ..
- STA PPUADDR                                      ; A867: 8D 06 20    ..
+ STA PPU_ADDR                                     ; A867: 8D 06 20    ..
  LDA #&30 ; '0'                                   ; A86A: A9 30       .0
- STA PPUADDR                                      ; A86C: 8D 06 20    ..
+ STA PPU_ADDR                                     ; A86C: 8D 06 20    ..
  LDA #&A7                                         ; A86F: A9 A7       ..
  STA V_1                                          ; A871: 85 64       .d
  LDA #&1B                                         ; A873: A9 1B       ..
@@ -1691,9 +1710,9 @@ NORM              = &FAF8
 
 .CA87D
  LDA #4                                           ; A87D: A9 04       ..
- STA PPUADDR                                      ; A87F: 8D 06 20    ..
+ STA PPU_ADDR                                     ; A87F: 8D 06 20    ..
  LDA #&50 ; 'P'                                   ; A882: A9 50       .P
- STA PPUADDR                                      ; A884: 8D 06 20    ..
+ STA PPU_ADDR                                     ; A884: 8D 06 20    ..
  LDA #&9F                                         ; A887: A9 9F       ..
  STA V_1                                          ; A889: 85 64       .d
  LDA #&A1                                         ; A88B: A9 A1       ..
@@ -1711,25 +1730,25 @@ NORM              = &FAF8
 .CA8A2
  JSR sub_CAC86                                    ; A8A2: 20 86 AC     ..
  LDA #&10                                         ; A8A5: A9 10       ..
- STA PPUADDR                                      ; A8A7: 8D 06 20    ..
+ STA PPU_ADDR                                     ; A8A7: 8D 06 20    ..
  LDA #0                                           ; A8AA: A9 00       ..
- STA PPUADDR                                      ; A8AC: 8D 06 20    ..
+ STA PPU_ADDR                                     ; A8AC: 8D 06 20    ..
  LDY #0                                           ; A8AF: A0 00       ..
  LDX #&50 ; 'P'                                   ; A8B1: A2 50       .P
 .loop_CA8B3
  LDA LAA6C,Y                                      ; A8B3: B9 6C AA    .l.
- STA PPUDATA                                      ; A8B6: 8D 07 20    ..
+ STA PPU_DATA                                     ; A8B6: 8D 07 20    ..
  INY                                              ; A8B9: C8          .
  DEX                                              ; A8BA: CA          .
  BNE loop_CA8B3                                   ; A8BB: D0 F6       ..
  LDA #&1F                                         ; A8BD: A9 1F       ..
- STA PPUADDR                                      ; A8BF: 8D 06 20    ..
+ STA PPU_ADDR                                     ; A8BF: 8D 06 20    ..
  LDA #&F0                                         ; A8C2: A9 F0       ..
- STA PPUADDR                                      ; A8C4: 8D 06 20    ..
+ STA PPU_ADDR                                     ; A8C4: 8D 06 20    ..
  LDA #0                                           ; A8C7: A9 00       ..
  LDX #&10                                         ; A8C9: A2 10       ..
 .loop_CA8CB
- STA PPUDATA                                      ; A8CB: 8D 07 20    ..
+ STA PPU_DATA                                     ; A8CB: 8D 07 20    ..
  DEX                                              ; A8CE: CA          .
  BNE loop_CA8CB                                   ; A8CF: D0 FA       ..
  JSR LD946                                        ; A8D1: 20 46 D9     F.
@@ -1757,57 +1776,57 @@ NORM              = &FAF8
  STA L00EA                                        ; A8FE: 85 EA       ..
  PLA                                              ; A900: 68          h
  STA L00F5                                        ; A901: 85 F5       ..
- STA PPUCTRL                                      ; A903: 8D 00 20    ..
+ STA PPU_CTRL                                     ; A903: 8D 00 20    ..
  JMP LEEE8                                        ; A906: 4C E8 EE    L..
 
 .sub_CA909
  LDY #0                                           ; A909: A0 00       ..
 .CA90B
  LDA (SC),Y                                       ; A90B: B1 07       ..
- STA PPUDATA                                      ; A90D: 8D 07 20    ..
+ STA PPU_DATA                                     ; A90D: 8D 07 20    ..
  INY                                              ; A910: C8          .
  LDA (SC),Y                                       ; A911: B1 07       ..
- STA PPUDATA                                      ; A913: 8D 07 20    ..
+ STA PPU_DATA                                     ; A913: 8D 07 20    ..
  INY                                              ; A916: C8          .
  LDA (SC),Y                                       ; A917: B1 07       ..
- STA PPUDATA                                      ; A919: 8D 07 20    ..
+ STA PPU_DATA                                     ; A919: 8D 07 20    ..
  INY                                              ; A91C: C8          .
  LDA (SC),Y                                       ; A91D: B1 07       ..
- STA PPUDATA                                      ; A91F: 8D 07 20    ..
+ STA PPU_DATA                                     ; A91F: 8D 07 20    ..
  INY                                              ; A922: C8          .
  LDA (SC),Y                                       ; A923: B1 07       ..
- STA PPUDATA                                      ; A925: 8D 07 20    ..
+ STA PPU_DATA                                     ; A925: 8D 07 20    ..
  INY                                              ; A928: C8          .
  LDA (SC),Y                                       ; A929: B1 07       ..
- STA PPUDATA                                      ; A92B: 8D 07 20    ..
+ STA PPU_DATA                                     ; A92B: 8D 07 20    ..
  INY                                              ; A92E: C8          .
  LDA (SC),Y                                       ; A92F: B1 07       ..
- STA PPUDATA                                      ; A931: 8D 07 20    ..
+ STA PPU_DATA                                     ; A931: 8D 07 20    ..
  INY                                              ; A934: C8          .
  LDA (SC),Y                                       ; A935: B1 07       ..
- STA PPUDATA                                      ; A937: 8D 07 20    ..
+ STA PPU_DATA                                     ; A937: 8D 07 20    ..
  INY                                              ; A93A: C8          .
  BNE CA93F                                        ; A93B: D0 02       ..
  INC SC_1                                         ; A93D: E6 08       ..
 .CA93F
  LDA #0                                           ; A93F: A9 00       ..
- STA PPUDATA                                      ; A941: 8D 07 20    ..
- STA PPUDATA                                      ; A944: 8D 07 20    ..
- STA PPUDATA                                      ; A947: 8D 07 20    ..
- STA PPUDATA                                      ; A94A: 8D 07 20    ..
- STA PPUDATA                                      ; A94D: 8D 07 20    ..
- STA PPUDATA                                      ; A950: 8D 07 20    ..
- STA PPUDATA                                      ; A953: 8D 07 20    ..
- STA PPUDATA                                      ; A956: 8D 07 20    ..
+ STA PPU_DATA                                     ; A941: 8D 07 20    ..
+ STA PPU_DATA                                     ; A944: 8D 07 20    ..
+ STA PPU_DATA                                     ; A947: 8D 07 20    ..
+ STA PPU_DATA                                     ; A94A: 8D 07 20    ..
+ STA PPU_DATA                                     ; A94D: 8D 07 20    ..
+ STA PPU_DATA                                     ; A950: 8D 07 20    ..
+ STA PPU_DATA                                     ; A953: 8D 07 20    ..
+ STA PPU_DATA                                     ; A956: 8D 07 20    ..
  DEX                                              ; A959: CA          .
  BNE CA90B                                        ; A95A: D0 AF       ..
  RTS                                              ; A95C: 60          `
 
 .sub_CA95D
  LDA #4                                           ; A95D: A9 04       ..
- STA PPUADDR                                      ; A95F: 8D 06 20    ..
+ STA PPU_ADDR                                     ; A95F: 8D 06 20    ..
  LDA #&50 ; 'P'                                   ; A962: A9 50       .P
- STA PPUADDR                                      ; A964: 8D 06 20    ..
+ STA PPU_ADDR                                     ; A964: 8D 06 20    ..
  LDA #&97                                         ; A967: A9 97       ..
  STA V_1                                          ; A969: 85 64       .d
  LDA #&60 ; '`'                                   ; A96B: A9 60       .`
@@ -1962,24 +1981,24 @@ NORM              = &FAF8
  LDA #&80                                         ; AAC3: A9 80       ..
  STA L00D4                                        ; AAC5: 85 D4       ..
  LDA #&3F ; '?'                                   ; AAC7: A9 3F       .?
- STA PPUADDR                                      ; AAC9: 8D 06 20    ..
+ STA PPU_ADDR                                     ; AAC9: 8D 06 20    ..
  LDA #0                                           ; AACC: A9 00       ..
- STA PPUADDR                                      ; AACE: 8D 06 20    ..
+ STA PPU_ADDR                                     ; AACE: 8D 06 20    ..
  LDA #&0F                                         ; AAD1: A9 0F       ..
  LDX #&1F                                         ; AAD3: A2 1F       ..
 .loop_CAAD5
- STA PPUDATA                                      ; AAD5: 8D 07 20    ..
+ STA PPU_DATA                                     ; AAD5: 8D 07 20    ..
  DEX                                              ; AAD8: CA          .
  BPL loop_CAAD5                                   ; AAD9: 10 FA       ..
  LDA #&20 ; ' '                                   ; AADB: A9 20       .
- STA PPUADDR                                      ; AADD: 8D 06 20    ..
+ STA PPU_ADDR                                     ; AADD: 8D 06 20    ..
  LDA #0                                           ; AAE0: A9 00       ..
- STA PPUADDR                                      ; AAE2: 8D 06 20    ..
+ STA PPU_ADDR                                     ; AAE2: 8D 06 20    ..
  LDA #0                                           ; AAE5: A9 00       ..
  LDX #8                                           ; AAE7: A2 08       ..
  LDY #0                                           ; AAE9: A0 00       ..
 .CAAEB
- STA PPUDATA                                      ; AAEB: 8D 07 20    ..
+ STA PPU_DATA                                     ; AAEB: 8D 07 20    ..
  DEY                                              ; AAEE: 88          .
  BNE CAAEB                                        ; AAEF: D0 FA       ..
  JSR LD933                                        ; AAF1: 20 33 D9     3.
@@ -1990,26 +2009,26 @@ NORM              = &FAF8
  STA L03F2                                        ; AAFB: 8D F2 03    ...
  STA L048B                                        ; AAFE: 8D 8B 04    ...
  LDA #0                                           ; AB01: A9 00       ..
- STA PPUADDR                                      ; AB03: 8D 06 20    ..
+ STA PPU_ADDR                                     ; AB03: 8D 06 20    ..
  LDA #0                                           ; AB06: A9 00       ..
- STA PPUADDR                                      ; AB08: 8D 06 20    ..
+ STA PPU_ADDR                                     ; AB08: 8D 06 20    ..
  LDY #0                                           ; AB0B: A0 00       ..
  LDX #&50 ; 'P'                                   ; AB0D: A2 50       .P
 .loop_CAB0F
  LDA LAA6C,Y                                      ; AB0F: B9 6C AA    .l.
- STA PPUDATA                                      ; AB12: 8D 07 20    ..
+ STA PPU_DATA                                     ; AB12: 8D 07 20    ..
  INY                                              ; AB15: C8          .
  DEX                                              ; AB16: CA          .
  BNE loop_CAB0F                                   ; AB17: D0 F6       ..
  LDA #&10                                         ; AB19: A9 10       ..
- STA PPUADDR                                      ; AB1B: 8D 06 20    ..
+ STA PPU_ADDR                                     ; AB1B: 8D 06 20    ..
  LDA #0                                           ; AB1E: A9 00       ..
- STA PPUADDR                                      ; AB20: 8D 06 20    ..
+ STA PPU_ADDR                                     ; AB20: 8D 06 20    ..
  LDY #0                                           ; AB23: A0 00       ..
  LDX #&50 ; 'P'                                   ; AB25: A2 50       .P
 .loop_CAB27
  LDA LAA6C,Y                                      ; AB27: B9 6C AA    .l.
- STA PPUDATA                                      ; AB2A: 8D 07 20    ..
+ STA PPU_DATA                                     ; AB2A: 8D 07 20    ..
  INY                                              ; AB2D: C8          .
  DEX                                              ; AB2E: CA          .
  BNE loop_CAB27                                   ; AB2F: D0 F6       ..
@@ -2053,9 +2072,9 @@ NORM              = &FAF8
  STA L0212                                        ; AB85: 8D 12 02    ...
  JSR LD933                                        ; AB88: 20 33 D9     3.
  LDA #0                                           ; AB8B: A9 00       ..
- STA OAMADDR                                      ; AB8D: 8D 03 20    ..
+ STA OAM_ADDR                                     ; AB8D: 8D 03 20    ..
  LDA #2                                           ; AB90: A9 02       ..
- STA OAMDMA                                       ; AB92: 8D 14 40    ..@
+ STA OAM_DMA                                      ; AB92: 8D 14 40    ..@
  LDA #0                                           ; AB95: A9 00       ..
  STA L00F4                                        ; AB97: 85 F4       ..
  STA L00C0                                        ; AB99: 85 C0       ..
@@ -2093,7 +2112,7 @@ NORM              = &FAF8
  JSR LD933                                        ; ABDC: 20 33 D9     3.
  LDA #&90                                         ; ABDF: A9 90       ..
  STA L00F5                                        ; ABE1: 85 F5       ..
- STA PPUCTRL                                      ; ABE3: 8D 00 20    ..
+ STA PPU_CTRL                                     ; ABE3: 8D 00 20    ..
  RTS                                              ; ABE6: 60          `
 
 .sub_CABE7
@@ -2153,7 +2172,7 @@ NORM              = &FAF8
 .loop_CAC4B
  LDA L00E9                                        ; AC4B: A5 E9       ..
  BPL CAC58                                        ; AC4D: 10 09       ..
- LDA PPUSTATUS                                    ; AC4F: AD 02 20    ..
+ LDA PPU_STATUS                                   ; AC4F: AD 02 20    ..
  ASL A                                            ; AC52: 0A          .
  BPL CAC58                                        ; AC53: 10 03       ..
  JSR NAMETABLE0                                   ; AC55: 20 6D D0     m.
@@ -2173,7 +2192,7 @@ NORM              = &FAF8
 .loop_CAC72
  LDA L00E9                                        ; AC72: A5 E9       ..
  BPL CAC7F                                        ; AC74: 10 09       ..
- LDA PPUSTATUS                                    ; AC76: AD 02 20    ..
+ LDA PPU_STATUS                                   ; AC76: AD 02 20    ..
  ASL A                                            ; AC79: 0A          .
  BPL CAC7F                                        ; AC7A: 10 03       ..
  JSR NAMETABLE0                                   ; AC7C: 20 6D D0     m.
@@ -2187,7 +2206,7 @@ NORM              = &FAF8
 .sub_CAC86
  LDA L00E9                                        ; AC86: A5 E9       ..
  BPL CAC93                                        ; AC88: 10 09       ..
- LDA PPUSTATUS                                    ; AC8A: AD 02 20    ..
+ LDA PPU_STATUS                                   ; AC8A: AD 02 20    ..
  ASL A                                            ; AC8D: 0A          .
  BPL CAC93                                        ; AC8E: 10 03       ..
  JSR NAMETABLE0                                   ; AC90: 20 6D D0     m.
@@ -2314,7 +2333,7 @@ NORM              = &FAF8
  STA L00BA                                        ; AD68: 85 BA       ..
  LDA L00E9                                        ; AD6A: A5 E9       ..
  BPL CAD77                                        ; AD6C: 10 09       ..
- LDA PPUSTATUS                                    ; AD6E: AD 02 20    ..
+ LDA PPU_STATUS                                   ; AD6E: AD 02 20    ..
  ASL A                                            ; AD71: 0A          .
  BPL CAD77                                        ; AD72: 10 03       ..
  JSR NAMETABLE0                                   ; AD74: 20 6D D0     m.
@@ -2329,7 +2348,7 @@ NORM              = &FAF8
  BNE loop_CAD79                                   ; AD82: D0 F5       ..
  LDA L00E9                                        ; AD84: A5 E9       ..
  BPL CAD91                                        ; AD86: 10 09       ..
- LDA PPUSTATUS                                    ; AD88: AD 02 20    ..
+ LDA PPU_STATUS                                   ; AD88: AD 02 20    ..
  ASL A                                            ; AD8B: 0A          .
  BPL CAD91                                        ; AD8C: 10 03       ..
  JSR NAMETABLE0                                   ; AD8E: 20 6D D0     m.
@@ -2341,7 +2360,7 @@ NORM              = &FAF8
  BNE CAD91                                        ; AD98: D0 F7       ..
  LDA L00E9                                        ; AD9A: A5 E9       ..
  BPL CADA7                                        ; AD9C: 10 09       ..
- LDA PPUSTATUS                                    ; AD9E: AD 02 20    ..
+ LDA PPU_STATUS                                   ; AD9E: AD 02 20    ..
  ASL A                                            ; ADA1: 0A          .
  BPL CADA7                                        ; ADA2: 10 03       ..
  JSR NAMETABLE0                                   ; ADA4: 20 6D D0     m.
@@ -2416,7 +2435,7 @@ NORM              = &FAF8
  STA L0464                                        ; AE1B: 8D 64 04    .d.
  LDA L00E9                                        ; AE1E: A5 E9       ..
  BPL CAE2B                                        ; AE20: 10 09       ..
- LDA PPUSTATUS                                    ; AE22: AD 02 20    ..
+ LDA PPU_STATUS                                   ; AE22: AD 02 20    ..
  ASL A                                            ; AE25: 0A          .
  BPL CAE2B                                        ; AE26: 10 03       ..
  JSR NAMETABLE0                                   ; AE28: 20 6D D0     m.
@@ -2507,7 +2526,7 @@ NORM              = &FAF8
 .CAEC6
  LDA L00E9                                        ; AEC6: A5 E9       ..
  BPL CAED3                                        ; AEC8: 10 09       ..
- LDA PPUSTATUS                                    ; AECA: AD 02 20    ..
+ LDA PPU_STATUS                                   ; AECA: AD 02 20    ..
  ASL A                                            ; AECD: 0A          .
  BPL CAED3                                        ; AECE: 10 03       ..
  JSR NAMETABLE0                                   ; AED0: 20 6D D0     m.
@@ -2567,7 +2586,7 @@ NORM              = &FAF8
 .CAF2E
  LDA L00E9                                        ; AF2E: A5 E9       ..
  BPL CAF3B                                        ; AF30: 10 09       ..
- LDA PPUSTATUS                                    ; AF32: AD 02 20    ..
+ LDA PPU_STATUS                                   ; AF32: AD 02 20    ..
  ASL A                                            ; AF35: 0A          .
  BPL CAF3B                                        ; AF36: 10 03       ..
  JSR NAMETABLE0                                   ; AF38: 20 6D D0     m.
@@ -2595,7 +2614,7 @@ NORM              = &FAF8
 .sub_CAF5B
  LDA L00E9                                        ; AF5B: A5 E9       ..
  BPL CAF68                                        ; AF5D: 10 09       ..
- LDA PPUSTATUS                                    ; AF5F: AD 02 20    ..
+ LDA PPU_STATUS                                   ; AF5F: AD 02 20    ..
  ASL A                                            ; AF62: 0A          .
  BPL CAF68                                        ; AF63: 10 03       ..
  JSR NAMETABLE0                                   ; AF65: 20 6D D0     m.
@@ -2634,7 +2653,7 @@ NORM              = &FAF8
 .sub_CAF9A
  LDA L00E9                                        ; AF9A: A5 E9       ..
  BPL CAFA7                                        ; AF9C: 10 09       ..
- LDA PPUSTATUS                                    ; AF9E: AD 02 20    ..
+ LDA PPU_STATUS                                   ; AF9E: AD 02 20    ..
  ASL A                                            ; AFA1: 0A          .
  BPL CAFA7                                        ; AFA2: 10 03       ..
  JSR NAMETABLE0                                   ; AFA4: 20 6D D0     m.
@@ -2694,7 +2713,7 @@ NORM              = &FAF8
 .CAFFD
  LDA L00E9                                        ; AFFD: A5 E9       ..
  BPL CB00A                                        ; AFFF: 10 09       ..
- LDA PPUSTATUS                                    ; B001: AD 02 20    ..
+ LDA PPU_STATUS                                   ; B001: AD 02 20    ..
  ASL A                                            ; B004: 0A          .
  BPL CB00A                                        ; B005: 10 03       ..
  JSR NAMETABLE0                                   ; B007: 20 6D D0     m.
@@ -2742,7 +2761,7 @@ NORM              = &FAF8
 .CB04F
  LDA L00E9                                        ; B04F: A5 E9       ..
  BPL CB05C                                        ; B051: 10 09       ..
- LDA PPUSTATUS                                    ; B053: AD 02 20    ..
+ LDA PPU_STATUS                                   ; B053: AD 02 20    ..
  ASL A                                            ; B056: 0A          .
  BPL CB05C                                        ; B057: 10 03       ..
  JSR NAMETABLE0                                   ; B059: 20 6D D0     m.
@@ -2800,7 +2819,7 @@ NORM              = &FAF8
 .CB0B4
  LDA L00E9                                        ; B0B4: A5 E9       ..
  BPL CB0C1                                        ; B0B6: 10 09       ..
- LDA PPUSTATUS                                    ; B0B8: AD 02 20    ..
+ LDA PPU_STATUS                                   ; B0B8: AD 02 20    ..
  ASL A                                            ; B0BB: 0A          .
  BPL CB0C1                                        ; B0BC: 10 03       ..
  JSR NAMETABLE0                                   ; B0BE: 20 6D D0     m.
@@ -2819,7 +2838,7 @@ NORM              = &FAF8
  BNE loop_CB0C5                                   ; B0D1: D0 F2       ..
  LDA L00E9                                        ; B0D3: A5 E9       ..
  BPL CB0E0                                        ; B0D5: 10 09       ..
- LDA PPUSTATUS                                    ; B0D7: AD 02 20    ..
+ LDA PPU_STATUS                                   ; B0D7: AD 02 20    ..
  ASL A                                            ; B0DA: 0A          .
  BPL CB0E0                                        ; B0DB: 10 03       ..
  JSR NAMETABLE0                                   ; B0DD: 20 6D D0     m.
@@ -2863,7 +2882,7 @@ NORM              = &FAF8
 .CB11D
  LDA L00E9                                        ; B11D: A5 E9       ..
  BPL CB12A                                        ; B11F: 10 09       ..
- LDA PPUSTATUS                                    ; B121: AD 02 20    ..
+ LDA PPU_STATUS                                   ; B121: AD 02 20    ..
  ASL A                                            ; B124: 0A          .
  BPL CB12A                                        ; B125: 10 03       ..
  JSR NAMETABLE0                                   ; B127: 20 6D D0     m.
@@ -2951,7 +2970,7 @@ NORM              = &FAF8
 .CB1B8
  LDA L00E9                                        ; B1B8: A5 E9       ..
  BPL CB1C5                                        ; B1BA: 10 09       ..
- LDA PPUSTATUS                                    ; B1BC: AD 02 20    ..
+ LDA PPU_STATUS                                   ; B1BC: AD 02 20    ..
  ASL A                                            ; B1BF: 0A          .
  BPL CB1C5                                        ; B1C0: 10 03       ..
  JSR NAMETABLE0                                   ; B1C2: 20 6D D0     m.
@@ -3144,7 +3163,7 @@ NORM              = &FAF8
 .CB30F
  LDA L00E9                                        ; B30F: A5 E9       ..
  BPL CB31C                                        ; B311: 10 09       ..
- LDA PPUSTATUS                                    ; B313: AD 02 20    ..
+ LDA PPU_STATUS                                   ; B313: AD 02 20    ..
  ASL A                                            ; B316: 0A          .
  BPL CB31C                                        ; B317: 10 03       ..
  JSR NAMETABLE0                                   ; B319: 20 6D D0     m.
@@ -3224,7 +3243,7 @@ NORM              = &FAF8
 .CB394
  LDA L00E9                                        ; B394: A5 E9       ..
  BPL CB3A1                                        ; B396: 10 09       ..
- LDA PPUSTATUS                                    ; B398: AD 02 20    ..
+ LDA PPU_STATUS                                   ; B398: AD 02 20    ..
  ASL A                                            ; B39B: 0A          .
  BPL CB3A1                                        ; B39C: 10 03       ..
  JSR NAMETABLE0                                   ; B39E: 20 6D D0     m.
@@ -3249,7 +3268,7 @@ NORM              = &FAF8
  BPL loop_CB3B8                                   ; B3BD: 10 F9       ..
  LDA L00E9                                        ; B3BF: A5 E9       ..
  BPL CB3CC                                        ; B3C1: 10 09       ..
- LDA PPUSTATUS                                    ; B3C3: AD 02 20    ..
+ LDA PPU_STATUS                                   ; B3C3: AD 02 20    ..
  ASL A                                            ; B3C6: 0A          .
  BPL CB3CC                                        ; B3C7: 10 03       ..
  JSR NAMETABLE0                                   ; B3C9: 20 6D D0     m.

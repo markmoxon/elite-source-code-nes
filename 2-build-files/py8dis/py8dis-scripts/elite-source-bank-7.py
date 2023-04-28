@@ -193,6 +193,7 @@ label(0xB0EF, "DETOK")
 
 
 subroutine(0xC007, "Spercent")
+subroutine(0xD0F8, "CONTROLLERS")	# Mine
 
 exec(open('py8dis-scripts/common-variables.py').read())
 
