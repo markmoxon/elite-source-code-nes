@@ -103,7 +103,8 @@ YY                = &0067
 YY_1              = &0068
 BETA              = &0069
 BET1              = &006A
-L006C             = &006C
+QQ22              = &006B
+QQ22_1            = &006C
 ECMA              = &006D
 ALP1              = &006E
 ALP2              = &006F
@@ -175,6 +176,7 @@ widget            = &00B0
 Yx1M2             = &00B1
 Yx2M2             = &00B2
 Yx2M1             = &00B3
+messXC            = &00B4
 newzp             = &00B6
 L00B8             = &00B8
 L00BA             = &00BA
@@ -215,7 +217,6 @@ L00F3             = &00F3
 L00F4             = &00F4
 L00F5             = &00F5
 BANK              = &00F7
-XX3m3             = &00F9
 XX3               = &0100
 XX3_1             = &0101
 L0102             = &0102
@@ -224,10 +225,10 @@ L0114             = &0114
 L0115             = &0115
 L0116             = &0116
 L0117             = &0117
-L0200             = &0200
-L0201             = &0201
-L0202             = &0202
-L0203             = &0203
+SPR_Y             = &0200
+SPR_TILE          = &0201
+SPR_ATTR          = &0202
+SPR_X             = &0203
 L0205             = &0205
 L0206             = &0206
 L0209             = &0209
@@ -299,6 +300,8 @@ DTW4              = &03F6
 DTW5              = &03F7
 DTW1              = &03F8
 DTW8              = &03F9
+XP                = &03FA
+YP                = &03FB
 MSTG              = &0401
 QQ19              = &044D
 QQ19_1            = &044E
@@ -378,7 +381,7 @@ APU_FLAGS         = &4015
 CONTROLLER_1      = &4016
 CONTROLLER_2      = &4017
 LC006             = &C006
-LC007             = &C007
+Spercent          = &C007
 RESETBANK         = &C0AD
 SETBANK           = &C0AE
 log               = &C100
@@ -396,6 +399,7 @@ UNIV_1            = &CE7E
 GINF              = &CE90
 NMI               = &CED5
 NAMETABLE0        = &D06D
+CONTROLLERS       = &D0F8
 LD164             = &D164
 LD167             = &D167
 LD8C5             = &D8C5
@@ -413,6 +417,8 @@ EXNO3             = &EBAD
 BOOP              = &EBE5
 NOISE             = &EBF2
 NAMETABLE0_BANK7  = &EC7D
+LDA_XX0_Y         = &EC8D
+LDA_EPC_Y         = &ECA0
 LECF9             = &ECF9
 TIDY              = &EDEA
 LEE54             = &EE54
@@ -480,7 +486,7 @@ NORM              = &FAF8
 .pydis_start
  SEI                                              ; 8000: 78          x
  INC LC006                                        ; 8001: EE 06 C0    ...
- JMP LC007                                        ; 8004: 4C 07 C0    L..
+ JMP Spercent                                     ; 8004: 4C 07 C0    L..
 
  EQUS "@ 5.0"                                     ; 8007: 40 20 35... @ 5
  EQUS "  NES ELITE IMAGE 5.2  -   24 APR 1992 "   ; 800C: 20 20 4E...   N
@@ -2035,27 +2041,27 @@ NORM              = &FAF8
  LDY #0                                           ; AB31: A0 00       ..
 .loop_CAB33
  LDA #&F0                                         ; AB33: A9 F0       ..
- STA L0200,Y                                      ; AB35: 99 00 02    ...
+ STA SPR_Y,Y                                      ; AB35: 99 00 02    ...
  INY                                              ; AB38: C8          .
  LDA #&FE                                         ; AB39: A9 FE       ..
- STA L0200,Y                                      ; AB3B: 99 00 02    ...
+ STA SPR_Y,Y                                      ; AB3B: 99 00 02    ...
  INY                                              ; AB3E: C8          .
  LDA #3                                           ; AB3F: A9 03       ..
- STA L0200,Y                                      ; AB41: 99 00 02    ...
+ STA SPR_Y,Y                                      ; AB41: 99 00 02    ...
  INY                                              ; AB44: C8          .
  LDA #0                                           ; AB45: A9 00       ..
- STA L0200,Y                                      ; AB47: 99 00 02    ...
+ STA SPR_Y,Y                                      ; AB47: 99 00 02    ...
  INY                                              ; AB4A: C8          .
  BNE loop_CAB33                                   ; AB4B: D0 E6       ..
  JSR sub_CA95D                                    ; AB4D: 20 5D A9     ].
  LDA #&9D                                         ; AB50: A9 9D       ..
- STA L0200                                        ; AB52: 8D 00 02    ...
+ STA SPR_Y                                        ; AB52: 8D 00 02    ...
  LDA #&FE                                         ; AB55: A9 FE       ..
- STA L0201                                        ; AB57: 8D 01 02    ...
+ STA SPR_TILE                                     ; AB57: 8D 01 02    ...
  LDA #&F8                                         ; AB5A: A9 F8       ..
- STA L0203                                        ; AB5C: 8D 03 02    ...
+ STA SPR_X                                        ; AB5C: 8D 03 02    ...
  LDA #&23 ; '#'                                   ; AB5F: A9 23       .#
- STA L0202                                        ; AB61: 8D 02 02    ...
+ STA SPR_ATTR                                     ; AB61: 8D 02 02    ...
  LDA #&FB                                         ; AB64: A9 FB       ..
  STA L0205                                        ; AB66: 8D 05 02    ...
  STA L0209                                        ; AB69: 8D 09 02    ...
@@ -2212,7 +2218,7 @@ NORM              = &FAF8
  JSR NAMETABLE0                                   ; AC90: 20 6D D0     m.
 .CAC93
  LDA #&F8                                         ; AC93: A9 F8       ..
- STA L0203                                        ; AC95: 8D 03 02    ...
+ STA SPR_X                                        ; AC95: 8D 03 02    ...
  LDY #&12                                         ; AC98: A0 12       ..
  LDX #&9D                                         ; AC9A: A2 9D       ..
  LDA W                                            ; AC9C: A5 9E       ..
@@ -2228,7 +2234,7 @@ NORM              = &FAF8
  BNE CACB7                                        ; ACAE: D0 07       ..
  LDX #&96                                         ; ACB0: A2 96       ..
  LDA #&F8                                         ; ACB2: A9 F8       ..
- STA L0203                                        ; ACB4: 8D 03 02    ...
+ STA SPR_X                                        ; ACB4: 8D 03 02    ...
 .CACB7
  LDA W                                            ; ACB7: A5 9E       ..
  AND #&0F                                         ; ACB9: 29 0F       ).
@@ -2240,9 +2246,9 @@ NORM              = &FAF8
  BNE CACCC                                        ; ACC3: D0 07       ..
  LDX #&AD                                         ; ACC5: A2 AD       ..
  LDA #&F8                                         ; ACC7: A9 F8       ..
- STA L0203                                        ; ACC9: 8D 03 02    ...
+ STA SPR_X                                        ; ACC9: 8D 03 02    ...
 .CACCC
- STX L0200                                        ; ACCC: 8E 00 02    ...
+ STX SPR_Y                                        ; ACCC: 8E 00 02    ...
  TYA                                              ; ACCF: 98          .
  SEC                                              ; ACD0: 38          8
  ROL A                                            ; ACD1: 2A          *
@@ -2462,7 +2468,7 @@ NORM              = &FAF8
  LDY #&11                                         ; AE51: A0 11       ..
  JSR CAF2E                                        ; AE53: 20 2E AF     ..
 .CAE56
- LDA L006C                                        ; AE56: A5 6C       .l
+ LDA QQ22_1                                       ; AE56: A5 6C       .l
  BNE CAE60                                        ; AE58: D0 06       ..
  LDA L0395                                        ; AE5A: AD 95 03    ...
  ASL A                                            ; AE5D: 0A          .
@@ -2555,7 +2561,7 @@ NORM              = &FAF8
 .CAEF6
  LDY #2                                           ; AEF6: A0 02       ..
  JSR CAF2E                                        ; AEF8: 20 2E AF     ..
- LDA L006C                                        ; AEFB: A5 6C       .l
+ LDA QQ22_1                                       ; AEFB: A5 6C       .l
  BEQ CAF0C                                        ; AEFD: F0 0D       ..
  LDY #&0E                                         ; AEFF: A0 0E       ..
  JSR sub_CAF5B                                    ; AF01: 20 5B AF     [.

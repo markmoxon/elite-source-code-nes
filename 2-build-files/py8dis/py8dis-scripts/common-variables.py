@@ -124,6 +124,8 @@ label(0x0067, "YY")
 label(0x0068, "YY_1")
 label(0x0069, "BETA")
 label(0x006A, "BET1")
+label(0x006B, "QQ22")
+label(0x006C, "QQ22_1")
 label(0x006D, "ECMA")
 label(0x006E, "ALP1")
 label(0x006F, "ALP2")
@@ -195,13 +197,18 @@ label(0x00B0, "widget")
 label(0x00B1, "Yx1M2")		# My addition = height of screen for text screens?
 label(0x00B2, "Yx2M2")		# My addition = 2 x Yx1M2
 label(0x00B3, "Yx2M1")
+label(0x00B4, "messXC")
 label(0x00B6, "newzp")
 
 label(0x00F7, "BANK")        # My addition, contains lower bank number
 
-label(0x00F9, "XX3m3")
 label(0x0100, "XX3")
 label(0x0101, "XX3_1")
+
+label(0x0200, "SPR_Y")
+label(0x0201, "SPR_TILE")
+label(0x0202, "SPR_ATTR")
+label(0x0203, "SPR_X")
 
 label(0x036A, "FRIN")
 label(0x038A, "MJ")
@@ -234,6 +241,8 @@ label(0x03F6, "DTW4")
 label(0x03F7, "DTW5")
 label(0x03F8, "DTW1")
 label(0x03F9, "DTW8")
+label(0x03FA, "XP")
+label(0x03FB, "YP")
 label(0x0401, "MSTG")
 label(0x044D, "QQ19")
 label(0x044E, "QQ19_1")
@@ -281,6 +290,7 @@ label(0x05A5, "SXL")
 label(0x05BA, "SYL")
 label(0x05CF, "SZL")
 label(0x05E4, "safehouse")
+
 label(0x0600, "Kpercent")
 
 # NES registers
@@ -315,7 +325,6 @@ label(0x4017, "CONTROLLER_2")
 
 # Permanently loaded labels in 7.asm ($C000-$FFFF)
 
-
 label(0xC100, "log")
 label(0xC200, "logL")
 label(0xC300, "antilog")
@@ -328,10 +337,12 @@ label(0xC540, "XX21")
 label(0xCE7E, "UNIV")
 label(0xCE7E, "UNIV_1")
 
+subroutine(0xC007, "Spercent")
 subroutine(0xC0AD, "RESETBANK")     # My addition, switch bank to stack value
 subroutine(0xC0AE, "SETBANK")       # My addition, switch bank to A
 subroutine(0xCE90, "GINF")
 subroutine(0xCED5, "NMI")           # My addition, NMI handler
+subroutine(0xD0F8, "CONTROLLERS")	# My addition
 subroutine(0xD06D, "NAMETABLE0")    # My addition, switches PPU to namespace 0
 subroutine(0xDC0F, "LOIN")     # Could also be LSPUT
 subroutine(0xE4F0, "PIXEL")
@@ -340,6 +351,8 @@ subroutine(0xEBA2, "DELAY")
 subroutine(0xEBAD, "EXNO3")
 subroutine(0xEBE5, "BOOP")
 subroutine(0xEBF2, "NOISE")
+subroutine(0xEC8D, "LDA_XX0_Y")
+subroutine(0xECA0, "LDA_EPC_Y")
 subroutine(0xEDEA, "TIDY")
 subroutine(0xEF7A, "PAS1_BANK7")
 subroutine(0xEFF7, "LL164")

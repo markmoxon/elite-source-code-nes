@@ -30,30 +30,15 @@
  _NTSC                  = (_VARIANT = 1)
  _PAL                   = (_VARIANT = 2)
 
+\ WP workspace
+
 FRIN              = &036A
-MJ                = &038A
 VIEW              = &038E
 EV                = &0392
 TP                = &039E
-QQ0               = &039F
 QQ1               = &03A0
-CASH              = &03A1
-QQ14              = &03A5
 GCNT              = &03A7
-CRGO              = &03AC
-QQ20              = &03AD
-BST               = &03BF
-BOMB              = &03C0
-GHYP              = &03C3
-ESCP              = &03C6
-NOMSL             = &03C8
-FIST              = &03C9
-AVL               = &03CA
-QQ26              = &03DB
 TALLY             = &03DC
-TALLY_1           = &03DD
-QQ21              = &03DF
-NOSTM             = &03E5
 DTW6              = &03F3
 DTW2              = &03F4
 DTW3              = &03F5
@@ -61,33 +46,12 @@ DTW4              = &03F6
 DTW5              = &03F7
 DTW1              = &03F8
 DTW8              = &03F9
-MSTG              = &0401
 QQ19              = &044D
-QQ19_1            = &044E
-QQ19_3            = &0450
-QQ19_4            = &0450
 K2                = &0459
-K2_1              = &045A
-K2_2              = &045B
-K2_3              = &045C
-QQ19_2            = &045F
-SWAP              = &047F
 XSAV2             = &0481
 YSAV2             = &0482
-QQ24              = &0487
-QQ25              = &0488
-QQ28              = &0489
-QQ29              = &048A
-gov               = &048C
-tek               = &048D
 QQ2               = &048E
-QQ3               = &0494
-QQ4               = &0495
-QQ5               = &0496
 QQ8               = &049B
-QQ8_1             = &049C
-QQ9               = &049D
-QQ10              = &049E
 L049F             = &049F
 QQ18_LO            = &04A4
 QQ18_HI            = &04A5
@@ -99,20 +63,11 @@ L04B4             = &04B4
 SX                = &04C8
 SY                = &04DD
 SZ                = &04F2
-BUFm1             = &0506
 BUF               = &0507
-BUF_1             = &0508
-L0524             = &0524
-L0525             = &0525
-HANGFLAG          = &0561
 MANY              = &0562
-SSPR              = &0564
-SXL               = &05A5
-SYL               = &05BA
-SZL               = &05CF
-safehouse         = &05E4
-Kpercent          = &0600
-L07A9             = &07A9
+
+\ NES PPU registers
+
 PPU_CTRL          = &2000
 PPU_MASK          = &2001
 PPU_STATUS        = &2002
@@ -122,10 +77,9 @@ PPU_SCROLL        = &2005
 PPU_ADDR          = &2006
 PPU_DATA          = &2007
 OAM_DMA           = &4014
-L80A9             = &80A9
-LB0A9             = &B0A9
-LC006             = &C006
-LC007             = &C007
+
+\ Shared code from 7.asm
+
 RESETBANK         = &C0AD
 SETBANK           = &C0AE
 log               = &C100
@@ -217,6 +171,8 @@ NORM              = &FAF8
  LL = 29                \ The length of lines (in characters) of justified text
                         \ in the extended tokens system
 
+ S% = &C007             \ The game's main entry point in bank 7
+
 \ ******************************************************************************
 \
 \       Name: ZP
@@ -281,13 +237,15 @@ NORM              = &FAF8
 
 .L002A
 
- SKIP 1
+ SKIP 1                 \ ???
 
 .L002B
 
- SKIP 1
+ SKIP 1                 \ ???
 
- SKIP 1
+.L002C
+
+ SKIP 1                 \ ???
 
 .NEWB
 
@@ -302,7 +260,9 @@ NORM              = &FAF8
                         \ in the deep dive on "Advanced tactics with the NEWB
                         \ flags"
 
- SKIP 1
+.L002E
+
+ SKIP 1                 \ ???
 
 .P
 
@@ -319,13 +279,37 @@ NORM              = &FAF8
                         \ clashes with columns 0 and 32, text is only shown
                         \ in columns 1-31
 
- SKIP 4
+.L0033
+
+ SKIP 1                 \ ???
+
+.L0034
+
+ SKIP 1                 \ ???
+
+.L0035
+
+ SKIP 1                 \ ???
+
+.L0036
+
+ SKIP 1                 \ ???
 
 .L0037
 
- SKIP 1
+ SKIP 1                 \ ???
 
- SKIP 3
+.L0038
+
+ SKIP 1                 \ ???
+
+.L0039
+
+ SKIP 1                 \ ???
+
+.L003A
+
+ SKIP 1                 \ ???
 
 .YC
 
@@ -541,7 +525,9 @@ SUNX = &003E
 
  SKIP 4                 \ Temporary storage, used in a number of places
 
- SKIP 1
+.L0081
+
+ SKIP 1                 \ ???
 
 .QQ15
 
@@ -559,7 +545,7 @@ SUNX = &003E
 
 .XX18
 
- SKIP 4
+ SKIP 4                 \ ???
 
 .K6
 
@@ -750,11 +736,11 @@ SUNX = &003E
 
 .Yx1M2
 
- SKIP 1
+ SKIP 1                 \ ???
 
 .Yx2M2
 
- SKIP 1
+ SKIP 1                 \ ???
 
 .Yx2M1
 
@@ -763,70 +749,264 @@ SUNX = &003E
                         \ bottom pixel row of the space view (it is set to 191
                         \ in the RES2 routine)
 
- SKIP 2
+.L00B4
+
+ SKIP 1                 \ ???
+
+.L00B5
+
+ SKIP 1                 \ ???
 
 .newzp
 
  SKIP 1                 \ This is used by the STARS2 routine for storing the
                         \ stardust particle's delta_x value
 
- SKIP 1
+.L00B7
+
+ SKIP 1                 \ ???
 
 .L00B8
 
- SKIP 1
+ SKIP 1                 \ ???
 
 .L00B9
 
- SKIP 1
+ SKIP 1                 \ ???
 
 .L00BA
 
- SKIP 1
+ SKIP 1                 \ ???
 
 .L00BB
 
- SKIP 1
+ SKIP 1                 \ ???
 
- ORG &CC
+.L00BC
+
+ SKIP 1                 \ ???
+
+.L00BD
+
+ SKIP 1                 \ ???
+
+.L00BE
+
+ SKIP 1                 \ ???
+
+.L00BF
+
+ SKIP 1                 \ ???
+
+.L00C0
+
+ SKIP 1                 \ ???
+
+.L00C1
+
+ SKIP 1                 \ ???
+
+.L00C2
+
+ SKIP 1                 \ ???
+
+.L00C3
+
+ SKIP 1                 \ ???
+
+.L00C4
+
+ SKIP 1                 \ ???
+
+.L00C5
+
+ SKIP 1                 \ ???
+
+.L00C6
+
+ SKIP 1                 \ ???
+
+.L00C7
+
+ SKIP 1                 \ ???
+
+.L00C8
+
+ SKIP 1                 \ ???
+
+.L00C9
+
+ SKIP 1                 \ ???
+
+.L00CA
+
+ SKIP 1                 \ ???
+
+.L00CB
+
+ SKIP 1                 \ ???
 
 .L00CC
 
- SKIP 1
+ SKIP 1                 \ ???
 
- ORG &D2
+.L00CD
+
+ SKIP 1                 \ ???
+
+.L00CE
+
+ SKIP 1                 \ ???
+
+.L00CF
+
+ SKIP 1                 \ ???
+
+.L00D0
+
+ SKIP 1                 \ ???
+
+.L00D1
+
+ SKIP 1                 \ ???
 
 .L00D2
 
- SKIP 1
+ SKIP 1                 \ ???
 
- ORG &D8
+.L00D3
+
+ SKIP 1                 \ ???
+
+.L00D4
+
+ SKIP 1                 \ ???
+
+.L00D5
+
+ SKIP 1                 \ ???
+
+.L00D6
+
+ SKIP 1                 \ ???
+
+.L00D7
+
+ SKIP 1                 \ ???
 
 .L00D8
 
- SKIP 1
+ SKIP 1                 \ ???
 
 .L00D9
 
- SKIP 1
+ SKIP 1                 \ ???
 
- ORG &E6
+.L00DA
+
+ SKIP 1                 \ ???
+
+.L00DB
+
+ SKIP 11                \ ???
 
 .L00E6
 
- SKIP 1
+ SKIP 1                 \ ???
 
  ORG &E9
 
 .L00E9
 
- SKIP 1
+ SKIP 1                 \ ???
 
- ORG &F7
+.L00EA
+
+ SKIP 1                 \ ???
+
+.L00EB
+
+ SKIP 1                 \ ???
+
+.L00EC
+
+ SKIP 1                 \ ???
+
+.L00ED
+
+ SKIP 1                 \ ???
+
+.L00EE
+
+ SKIP 1                 \ ???
+
+.L00EF
+
+ SKIP 1                 \ ???
+
+.L00F0
+
+ SKIP 1                 \ ???
+
+.L00F1
+
+ SKIP 1                 \ ???
+
+.L00F2
+
+ SKIP 1                 \ ???
+
+.L00F3
+
+ SKIP 1                 \ ???
+
+.L00F4
+
+ SKIP 1                 \ ???
+
+.L00F5
+
+ SKIP 1                 \ ???
+
+.L00F6
+
+ SKIP 1                 \ ???
 
 .BANK
 
- SKIP 1
+ SKIP 1                 \ ???
+
+.L00F8
+
+ SKIP 1                 \ ???
+
+.L00F9
+
+ SKIP 1                 \ ???
+
+.L00FA
+
+ SKIP 1                 \ ???
+
+.L00FB
+
+ SKIP 1                 \ ???
+
+.L00FC
+
+ SKIP 1                 \ ???
+
+.L00FD
+
+ SKIP 1                 \ ???
+
+.L00FE
+
+ SKIP 1                 \ ???
+
+.L00FF
+
+ SKIP 1                 \ ???
 
  PRINT "Zero page variables from ", ~ZP, " to ", ~P%
 
@@ -854,6 +1034,33 @@ SUNX = &003E
 
 \ ******************************************************************************
 \
+\       Name: K%
+\       Type: Workspace
+\    Address: &0600 to &0800 ???
+\   Category: Workspaces
+\    Summary: Ship data blocks
+\  Deep dive: Ship data blocks
+\             The local bubble of universe
+\
+\ ------------------------------------------------------------------------------
+\
+\ Contains ship data for all the ships, planets, suns and space stations in our
+\ local bubble of universe.
+\
+\ See the deep dive on "Ship data blocks" for details on ship data blocks, and
+\ the deep dive on "The local bubble of universe" for details of how Elite
+\ stores the local universe in K%, FRIN and UNIV.
+\
+\ ******************************************************************************
+
+ ORG &0600
+
+.K%
+
+ SKIP 0                 \ Ship data blocks and ship line heap
+
+\ ******************************************************************************
+\
 \ ELITE BANK 2
 \
 \ Produces the binary file bank2.bin.
@@ -863,20 +1070,62 @@ SUNX = &003E
 CODE% = &8000
 LOAD% = &8000
 
-\ ******************************************************************************
+ORG CODE%
+
 \
-\       Name: RESET
+\       Name: RESET_MMC1
 \       Type: Variable
 \   Category: Start and end
-\    Summary: The reset routine at the start of the ROM bank
+\    Summary: The MMC1 mapper reset routine at the start of the ROM bank
+\
+\ ------------------------------------------------------------------------------
+\
+\ When the NES is switched on, it is hardwired to perform a JMP (&FFFC). At this
+\ point, there is no guarantee as to which ROM banks are mapped to &8000 and
+\ &C000, so to ensure that the game starts up correctly, we put the same code
+\ in each ROM at the following locations:
+\
+\   * We put &C000 in address &FFFC in every ROM bank, so the NES always jumps
+\     to &C000 when it starts up via the JMP (&FFFC), irrespective of which
+\     ROM bank is mapped to &C000.
+\
+\   * We put the same RESET routine at the start of every ROM bank, so the same
+\     routine gets run, whichever ROM bank is mapped to &C000.
+\
+\ This RESET routine is therefore called when the NES starts up, whatever the
+\ bank configuration ends up being. It then switches ROM bank 7 to &C000 and
+\ jumps into bank 7 at the game's entry point S%, which starts the game.
 \
 \ ******************************************************************************
 
- ORG CODE%
+.RESET_MMC1
 
- SEI
- INC &C006
- JMP &C007
+ SEI                    \ Disable interrupts
+
+ INC &C006              \ Reset the MMC1 mapper, which we can do by writing a
+                        \ value with bit 7 set into any address in ROM space
+                        \ (i.e. any address from &8000 to &FFFF)
+                        \
+                        \ The INC instruction does this in a more efficient
+                        \ manner than an LDA/STA pair, as it:
+                        \
+                        \   * Fetches the contents of address &C006, which
+                        \     contains the high byte of the JMP destination
+                        \     below, i.e. the high byte of S%, which is &C0
+                        \
+                        \   * Adds 1, to give &C1
+                        \
+                        \   * Writes the value &C1 back to address &C006
+                        \
+                        \ &C006 is in the ROM space and &C1 has bit 7 set, so
+                        \ the INC does all that is required to reset the mapper,
+                        \ in fewer cycles and bytes than an LDA/STA pair
+                        \
+                        \ Resetting MMC1 maps bank 7 to &C000 and enables the
+                        \ bank at &8000 to be switched, so this instruction
+                        \ ensures that bank 7 is present
+
+ JMP S%                 \ Jump to S% in bank 7 to start the game
 
 \ ******************************************************************************
 \
@@ -16468,8 +16717,6 @@ ENDMACRO
 \    Summary: Print a space and capitalise the next letter
 \  Deep dive: Extended text tokens
 \
-\ ------------------------------------------------------------------------------
-\
 \ ******************************************************************************
 
 .MT26
@@ -18394,19 +18641,19 @@ ENDMACRO
 \       Name: Vectors
 \       Type: Variable
 \   Category: Text
-\    Summary: Vectors at the end of the ROM bank
+\    Summary: Vectors and padding at the end of the ROM bank
 \
 \ ******************************************************************************
 
- FOR I%, &B934, &BFF9
+ FOR I%, P%, &BFF9
 
-  EQUB &FF              \ Pad out the empty part at the end of the ROM with &FF
+  EQUB &FF              \ Pad out the rest of the ROM bank with &FF
 
  NEXT
 
  EQUW &C007             \ Vector to NMI handler
 
- EQUW &C000             \ Vector to Reset handler
+ EQUW &C000             \ Vector to RESET handler
 
  EQUW &C007             \ Vector to IRQ/BRK handler
 

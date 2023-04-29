@@ -107,6 +107,8 @@ YY          = &0067
 YY_1        = &0068
 BETA        = &0069
 BET1        = &006A
+QQ22        = &006B
+QQ22_1      = &006C
 ECMA        = &006D
 ALP1        = &006E
 ALP2        = &006F
@@ -178,6 +180,7 @@ widget      = &00B0
 Yx1M2       = &00B1
 Yx2M2       = &00B2
 Yx2M1       = &00B3
+messXC      = &00B4
 newzp       = &00B6
 L00B7       = &00B7
 L00B8       = &00B8
@@ -237,12 +240,14 @@ L00F5       = &00F5
 L00F6       = &00F6
 BANK        = &00F7
 L00F8       = &00F8
-XX3m3       = &00F9
 L00FA       = &00FA
 L00FB       = &00FB
 XX3         = &0100
 XX3_1       = &0101
-L0200       = &0200
+SPR_Y       = &0200
+SPR_TILE    = &0201
+SPR_ATTR    = &0202
+SPR_X       = &0203
 L0204       = &0204
 L0205       = &0205
 L0207       = &0207
@@ -304,6 +309,8 @@ DTW4        = &03F6
 DTW5        = &03F7
 DTW1        = &03F8
 DTW8        = &03F9
+XP          = &03FA
+YP          = &03FB
 L03FC       = &03FC
 MSTG        = &0401
 QQ19        = &044D
@@ -2179,7 +2186,7 @@ LC006 = sub_CC004+2
 .CCEC0
  LDA #&F0                                         ; CEC0: A9 F0       ..
 .loop_CCEC2
- STA L0200,Y                                      ; CEC2: 99 00 02    ...
+ STA SPR_Y,Y                                      ; CEC2: 99 00 02    ...
  INY                                              ; CEC5: C8          .
  INY                                              ; CEC6: C8          .
  INY                                              ; CEC7: C8          .
@@ -6029,7 +6036,7 @@ LDFFF = sub_CDFFE+1
 .CEB79
  LDA #&F0                                         ; EB79: A9 F0       ..
 .loop_CEB7B
- STA L0200,Y                                      ; EB7B: 99 00 02    ...
+ STA SPR_Y,Y                                      ; EB7B: 99 00 02    ...
  INY                                              ; EB7E: C8          .
  INY                                              ; EB7F: C8          .
  INY                                              ; EB80: C8          .
@@ -6172,6 +6179,8 @@ LDFFF = sub_CDFFE+1
  PLA                                              ; EC8B: 68          h
  RTS                                              ; EC8C: 60          `
 
+; ******************************************************************************
+.LDA_XX0_Y
  LDA BANK                                         ; EC8D: A5 F7       ..
  PHA                                              ; EC8F: 48          H
  LDA #1                                           ; EC90: A9 01       ..
@@ -6184,6 +6193,8 @@ LDFFF = sub_CDFFE+1
  LDA L00B7                                        ; EC9D: A5 B7       ..
  RTS                                              ; EC9F: 60          `
 
+; ******************************************************************************
+.LDA_EPC_Y
  LDA BANK                                         ; ECA0: A5 F7       ..
  PHA                                              ; ECA2: 48          H
  LDA #1                                           ; ECA3: A9 01       ..

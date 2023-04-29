@@ -99,6 +99,8 @@ YY                = &0067
 YY_1              = &0068
 BETA              = &0069
 BET1              = &006A
+QQ22              = &006B
+QQ22_1            = &006C
 ECMA              = &006D
 ALP1              = &006E
 ALP2              = &006F
@@ -170,19 +172,19 @@ widget            = &00B0
 Yx1M2             = &00B1
 Yx2M2             = &00B2
 Yx2M1             = &00B3
+messXC            = &00B4
 newzp             = &00B6
 L00B8             = &00B8
 L00BA             = &00BA
 L00BB             = &00BB
 L00E9             = &00E9
 BANK              = &00F7
-XX3m3             = &00F9
 XX3               = &0100
 XX3_1             = &0101
-L0200             = &0200
-L0201             = &0201
-L0202             = &0202
-L0203             = &0203
+SPR_Y             = &0200
+SPR_TILE          = &0201
+SPR_ATTR          = &0202
+SPR_X             = &0203
 FRIN              = &036A
 MJ                = &038A
 VIEW              = &038E
@@ -214,6 +216,8 @@ DTW4              = &03F6
 DTW5              = &03F7
 DTW1              = &03F8
 DTW8              = &03F9
+XP                = &03FA
+YP                = &03FB
 MSTG              = &0401
 QQ19              = &044D
 QQ19_1            = &044E
@@ -289,7 +293,7 @@ APU_FLAGS         = &4015
 CONTROLLER_1      = &4016
 CONTROLLER_2      = &4017
 LC006             = &C006
-LC007             = &C007
+Spercent          = &C007
 RESETBANK         = &C0AD
 SETBANK           = &C0AE
 log               = &C100
@@ -306,6 +310,7 @@ UNIV_1            = &CE7E
 GINF              = &CE90
 NMI               = &CED5
 NAMETABLE0        = &D06D
+CONTROLLERS       = &D0F8
 LDBD8             = &DBD8
 LOIN              = &DC0F
 PIXEL             = &E4F0
@@ -315,6 +320,8 @@ EXNO3             = &EBAD
 BOOP              = &EBE5
 NOISE             = &EBF2
 NAMETABLE0_BANK7  = &EC7D
+LDA_XX0_Y         = &EC8D
+LDA_EPC_Y         = &ECA0
 TIDY              = &EDEA
 PAS1_BANK7        = &EF7A
 LL164             = &EFF7
@@ -374,7 +381,7 @@ NORM              = &FAF8
 .pydis_start
  SEI                                              ; 8000: 78          x
  INC LC006                                        ; 8001: EE 06 C0    ...
- JMP LC007                                        ; 8004: 4C 07 C0    L..
+ JMP Spercent                                     ; 8004: 4C 07 C0    L..
 
  EQUS "@ 5.0"                                     ; 8007: 40 20 35... @ 5
 .L800C
@@ -2212,13 +2219,13 @@ L951D = L800C+5393
  CMP #0                                           ; BA63: C9 00       ..
  BEQ CBA82                                        ; BA65: F0 1B       ..
  ADC K_2                                          ; BA67: 65 7F       e.
- STA L0201,X                                      ; BA69: 9D 01 02    ...
+ STA SPR_TILE,X                                   ; BA69: 9D 01 02    ...
  LDA S                                            ; BA6C: A5 99       ..
- STA L0202,X                                      ; BA6E: 9D 02 02    ...
+ STA SPR_ATTR,X                                   ; BA6E: 9D 02 02    ...
  LDA L00BA                                        ; BA71: A5 BA       ..
- STA L0203,X                                      ; BA73: 9D 03 02    ...
+ STA SPR_X,X                                      ; BA73: 9D 03 02    ...
  LDA SC_1                                         ; BA76: A5 08       ..
- STA L0200,X                                      ; BA78: 9D 00 02    ...
+ STA SPR_Y,X                                      ; BA78: 9D 00 02    ...
  TXA                                              ; BA7B: 8A          .
  CLC                                              ; BA7C: 18          .
  ADC #4                                           ; BA7D: 69 04       i.

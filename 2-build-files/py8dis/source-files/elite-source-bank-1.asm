@@ -100,6 +100,8 @@ YY                = &0067
 YY_1              = &0068
 BETA              = &0069
 BET1              = &006A
+QQ22              = &006B
+QQ22_1            = &006C
 ECMA              = &006D
 ALP1              = &006E
 ALP2              = &006F
@@ -171,6 +173,7 @@ widget            = &00B0
 Yx1M2             = &00B1
 Yx2M2             = &00B2
 Yx2M1             = &00B3
+messXC            = &00B4
 newzp             = &00B6
 L00B9             = &00B9
 L00BA             = &00BA
@@ -180,14 +183,15 @@ L00D8             = &00D8
 L00E6             = &00E6
 L00E9             = &00E9
 BANK              = &00F7
-XX3m3             = &00F9
+L00F9             = &00F9
 XX3               = &0100
 XX3_1             = &0101
 L0102             = &0102
 L0103             = &0103
-L0200             = &0200
-L0202             = &0202
-L0203             = &0203
+SPR_Y             = &0200
+SPR_TILE          = &0201
+SPR_ATTR          = &0202
+SPR_X             = &0203
 L0204             = &0204
 L0206             = &0206
 L0207             = &0207
@@ -240,6 +244,8 @@ DTW4              = &03F6
 DTW5              = &03F7
 DTW1              = &03F8
 DTW8              = &03F9
+XP                = &03FA
+YP                = &03FB
 MSTG              = &0401
 L040A             = &040A
 QQ19              = &044D
@@ -323,7 +329,7 @@ APU_FLAGS         = &4015
 CONTROLLER_1      = &4016
 CONTROLLER_2      = &4017
 LC006             = &C006
-LC007             = &C007
+Spercent          = &C007
 RESETBANK         = &C0AD
 SETBANK           = &C0AE
 log               = &C100
@@ -341,6 +347,7 @@ GINF              = &CE90
 LCE9E             = &CE9E
 NMI               = &CED5
 NAMETABLE0        = &D06D
+CONTROLLERS       = &D0F8
 LD9F7             = &D9F7
 LDA18             = &DA18
 LDAF8             = &DAF8
@@ -354,6 +361,8 @@ EXNO3             = &EBAD
 BOOP              = &EBE5
 NOISE             = &EBF2
 NAMETABLE0_BANK7  = &EC7D
+LDA_XX0_Y         = &EC8D
+LDA_EPC_Y         = &ECA0
 TIDY              = &EDEA
 PAS1_BANK7        = &EF7A
 LL164             = &EFF7
@@ -413,7 +422,7 @@ NORM              = &FAF8
 .pydis_start
  SEI                                              ; 8000: 78          x
  INC LC006                                        ; 8001: EE 06 C0    ...
- JMP LC007                                        ; 8004: 4C 07 C0    L..
+ JMP Spercent                                     ; 8004: 4C 07 C0    L..
 
  EQUS "@ 5.0"                                     ; 8007: 40 20 35... @ 5
 .XX21_NOISE
@@ -3209,7 +3218,7 @@ NORM              = &FAF8
  LDX #3                                           ; A988: A2 03       ..
 .loop_CA98A
  INY                                              ; A98A: C8          .
- LDA XX3m3,Y                                      ; A98B: B9 F9 00    ...
+ LDA L00F9,Y                                      ; A98B: B9 F9 00    ...
  STA K3,X                                         ; A98E: 95 3D       .=
  DEX                                              ; A990: CA          .
  BPL loop_CA98A                                   ; A991: 10 F7       ..
@@ -5487,7 +5496,7 @@ LB5CF = sub_CB5CE+1
 
 .CB969
  LDA #&F0                                         ; B969: A9 F0       ..
- STA L0200,Y                                      ; B96B: 99 00 02    ...
+ STA SPR_Y,Y                                      ; B96B: 99 00 02    ...
  STA L0204,Y                                      ; B96E: 99 04 02    ...
  STA L0208,Y                                      ; B971: 99 08 02    ...
 .CB974
@@ -5507,7 +5516,7 @@ LB5CF = sub_CB5CE+1
  ADC #&2C ; ','                                   ; B987: 69 2C       i,
  TAY                                              ; B989: A8          .
  LDA L037E,X                                      ; B98A: BD 7E 03    .~.
- STA L0202,Y                                      ; B98D: 99 02 02    ...
+ STA SPR_ATTR,Y                                   ; B98D: 99 02 02    ...
  LDA INWK_1                                       ; B990: A5 0A       ..
  CMP INWK_4                                       ; B992: C5 0D       ..
  BCS CB998                                        ; B994: B0 02       ..
@@ -5577,16 +5586,16 @@ LB5CF = sub_CB5CE+1
  CMP #&10                                         ; B9FA: C9 10       ..
  BCC CBA24                                        ; B9FC: 90 26       .&
  LDA L00BA                                        ; B9FE: A5 BA       ..
- STA L0203,Y                                      ; BA00: 99 03 02    ...
+ STA SPR_X,Y                                      ; BA00: 99 03 02    ...
  STA L0207,Y                                      ; BA03: 99 07 02    ...
  LDA L00BB                                        ; BA06: A5 BB       ..
- STA L0200,Y                                      ; BA08: 99 00 02    ...
+ STA SPR_Y,Y                                      ; BA08: 99 00 02    ...
  SEC                                              ; BA0B: 38          8
  SBC #8                                           ; BA0C: E9 08       ..
  STA L0204,Y                                      ; BA0E: 99 04 02    ...
- LDA L0202,Y                                      ; BA11: B9 02 02    ...
+ LDA SPR_ATTR,Y                                   ; BA11: B9 02 02    ...
  AND #3                                           ; BA14: 29 03       ).
- STA L0202,Y                                      ; BA16: 99 02 02    ...
+ STA SPR_ATTR,Y                                   ; BA16: 99 02 02    ...
  STA L0206,Y                                      ; BA19: 99 06 02    ...
  LDA L00BB                                        ; BA1C: A5 BB       ..
  SBC #&10                                         ; BA1E: E9 10       ..
@@ -5596,12 +5605,12 @@ LB5CF = sub_CB5CE+1
  CMP #8                                           ; BA24: C9 08       ..
  BCC CBA47                                        ; BA26: 90 1F       ..
  LDA #&F0                                         ; BA28: A9 F0       ..
- STA L0200,Y                                      ; BA2A: 99 00 02    ...
+ STA SPR_Y,Y                                      ; BA2A: 99 00 02    ...
  LDA L00BA                                        ; BA2D: A5 BA       ..
  STA L0207,Y                                      ; BA2F: 99 07 02    ...
  LDA L00BB                                        ; BA32: A5 BB       ..
  STA L0204,Y                                      ; BA34: 99 04 02    ...
- LDA L0202,Y                                      ; BA37: B9 02 02    ...
+ LDA SPR_ATTR,Y                                   ; BA37: B9 02 02    ...
  AND #3                                           ; BA3A: 29 03       ).
  STA L0206,Y                                      ; BA3C: 99 06 02    ...
  LDA L00BB                                        ; BA3F: A5 BB       ..
@@ -5610,7 +5619,7 @@ LB5CF = sub_CB5CE+1
  BNE CBA4F                                        ; BA45: D0 08       ..
 .CBA47
  LDA #&F0                                         ; BA47: A9 F0       ..
- STA L0200,Y                                      ; BA49: 99 00 02    ...
+ STA SPR_Y,Y                                      ; BA49: 99 00 02    ...
  STA L0204,Y                                      ; BA4C: 99 04 02    ...
 .CBA4F
  LDA Y1                                           ; BA4F: A5 72       .r
@@ -5618,7 +5627,7 @@ LB5CF = sub_CB5CE+1
  CLC                                              ; BA53: 18          .
  ADC #&DB                                         ; BA54: 69 DB       i.
  STA L0209,Y                                      ; BA56: 99 09 02    ...
- LDA L0202,Y                                      ; BA59: B9 02 02    ...
+ LDA SPR_ATTR,Y                                   ; BA59: B9 02 02    ...
  AND #3                                           ; BA5C: 29 03       ).
  STA L020A,Y                                      ; BA5E: 99 0A 02    ...
  LDA L00BA                                        ; BA61: A5 BA       ..
@@ -5640,16 +5649,16 @@ LB5CF = sub_CB5CE+1
  CMP #&10                                         ; BA7A: C9 10       ..
  BCC CBAA5                                        ; BA7C: 90 27       .'
  LDA L00BA                                        ; BA7E: A5 BA       ..
- STA L0203,Y                                      ; BA80: 99 03 02    ...
+ STA SPR_X,Y                                      ; BA80: 99 03 02    ...
  STA L0207,Y                                      ; BA83: 99 07 02    ...
  LDA L00BB                                        ; BA86: A5 BB       ..
- STA L0200,Y                                      ; BA88: 99 00 02    ...
+ STA SPR_Y,Y                                      ; BA88: 99 00 02    ...
  CLC                                              ; BA8B: 18          .
  ADC #8                                           ; BA8C: 69 08       i.
  STA L0204,Y                                      ; BA8E: 99 04 02    ...
- LDA L0202,Y                                      ; BA91: B9 02 02    ...
+ LDA SPR_ATTR,Y                                   ; BA91: B9 02 02    ...
  ORA #&20 ; ' '                                   ; BA94: 09 20       .
- STA L0202,Y                                      ; BA96: 99 02 02    ...
+ STA SPR_ATTR,Y                                   ; BA96: 99 02 02    ...
  STA L0206,Y                                      ; BA99: 99 06 02    ...
  LDA L00BB                                        ; BA9C: A5 BB       ..
  CLC                                              ; BA9E: 18          .
@@ -5660,12 +5669,12 @@ LB5CF = sub_CB5CE+1
  CMP #8                                           ; BAA5: C9 08       ..
  BCC CBAC8                                        ; BAA7: 90 1F       ..
  LDA #&F0                                         ; BAA9: A9 F0       ..
- STA L0200,Y                                      ; BAAB: 99 00 02    ...
+ STA SPR_Y,Y                                      ; BAAB: 99 00 02    ...
  LDA L00BA                                        ; BAAE: A5 BA       ..
  STA L0207,Y                                      ; BAB0: 99 07 02    ...
  LDA L00BB                                        ; BAB3: A5 BB       ..
  STA L0204,Y                                      ; BAB5: 99 04 02    ...
- LDA L0202,Y                                      ; BAB8: B9 02 02    ...
+ LDA SPR_ATTR,Y                                   ; BAB8: B9 02 02    ...
  ORA #&20 ; ' '                                   ; BABB: 09 20       .
  STA L0206,Y                                      ; BABD: 99 06 02    ...
  LDA L00BB                                        ; BAC0: A5 BB       ..
@@ -5674,7 +5683,7 @@ LB5CF = sub_CB5CE+1
  BNE CBAD0                                        ; BAC6: D0 08       ..
 .CBAC8
  LDA #&F0                                         ; BAC8: A9 F0       ..
- STA L0200,Y                                      ; BACA: 99 00 02    ...
+ STA SPR_Y,Y                                      ; BACA: 99 00 02    ...
  STA L0204,Y                                      ; BACD: 99 04 02    ...
 .CBAD0
  LDA Y1                                           ; BAD0: A5 72       .r
@@ -5682,7 +5691,7 @@ LB5CF = sub_CB5CE+1
  CLC                                              ; BAD4: 18          .
  ADC #&DB                                         ; BAD5: 69 DB       i.
  STA L0209,Y                                      ; BAD7: 99 09 02    ...
- LDA L0202,Y                                      ; BADA: B9 02 02    ...
+ LDA SPR_ATTR,Y                                   ; BADA: B9 02 02    ...
  ORA #&E0                                         ; BADD: 09 E0       ..
  STA L020A,Y                                      ; BADF: 99 0A 02    ...
  LDA L00BA                                        ; BAE2: A5 BA       ..
@@ -5749,7 +5758,7 @@ LB5CF = sub_CB5CE+1
  LDX #3                                           ; BB47: A2 03       ..
 .loop_CBB49
  INY                                              ; BB49: C8          .
- LDA XX3m3,Y                                      ; BB4A: B9 F9 00    ...
+ LDA L00F9,Y                                      ; BB4A: B9 F9 00    ...
  STA K3,X                                         ; BB4D: 95 3D       .=
  DEX                                              ; BB4F: CA          .
  BPL loop_CBB49                                   ; BB50: 10 F7       ..
