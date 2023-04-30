@@ -205,10 +205,11 @@ label(0x00F7, "BANK")        # My addition, contains lower bank number
 label(0x0100, "XX3")
 label(0x0101, "XX3_1")
 
-label(0x0200, "SPR_Y")
-label(0x0201, "SPR_TILE")
-label(0x0202, "SPR_ATTR")
-label(0x0203, "SPR_X")
+for i in range(0, 64):
+    label(0x0200 + i * 4, "SPR_" + str(i).zfill(2) + "_Y")
+    label(0x0201 + i * 4, "SPR_" + str(i).zfill(2) + "_TILE")
+    label(0x0202 + i * 4, "SPR_" + str(i).zfill(2) + "_ATTR")
+    label(0x0203 + i * 4, "SPR_" + str(i).zfill(2) + "_X")
 
 label(0x036A, "FRIN")
 label(0x038A, "MJ")

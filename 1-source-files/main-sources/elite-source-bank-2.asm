@@ -30,42 +30,6 @@
  _NTSC                  = (_VARIANT = 1)
  _PAL                   = (_VARIANT = 2)
 
-\ WP workspace
-
-FRIN              = &036A
-VIEW              = &038E
-EV                = &0392
-TP                = &039E
-QQ1               = &03A0
-GCNT              = &03A7
-TALLY             = &03DC
-DTW6              = &03F3
-DTW2              = &03F4
-DTW3              = &03F5
-DTW4              = &03F6
-DTW5              = &03F7
-DTW1              = &03F8
-DTW8              = &03F9
-QQ19              = &044D
-K2                = &0459
-XSAV2             = &0481
-YSAV2             = &0482
-QQ2               = &048E
-QQ8               = &049B
-L049F             = &049F
-QQ18_LO           = &04A4
-QQ18_HI           = &04A5
-TKN1_LO           = &04A6
-TKN1_HI           = &04A7
-LANG              = &04A8
-L04B2             = &04B2
-L04B4             = &04B4
-SX                = &04C8
-SY                = &04DD
-SZ                = &04F2
-BUF               = &0507
-MANY              = &0562
-
 \ ******************************************************************************
 \
 \ Configuration variables
@@ -1031,6 +995,50 @@ MANY              = &0562
 
  SKIP 0                 \ Temporary storage, typically used for storing tables
                         \ of values such as screen coordinates or ship data
+
+\ ******************************************************************************
+\
+\       Name: WP
+\       Type: Workspace
+\    Address: &0300 to &05FF
+\   Category: Workspaces
+\    Summary: Ship slots, variables
+\
+\ ******************************************************************************
+
+FRIN              = &036A
+VIEW              = &038E
+EV                = &0392
+TP                = &039E
+QQ1               = &03A0
+GCNT              = &03A7
+TALLY             = &03DC
+DTW6              = &03F3
+DTW2              = &03F4
+DTW3              = &03F5
+DTW4              = &03F6
+DTW5              = &03F7
+DTW1              = &03F8
+DTW8              = &03F9
+QQ19              = &044D
+K2                = &0459
+XSAV2             = &0481
+YSAV2             = &0482
+QQ2               = &048E
+QQ8               = &049B
+L049F             = &049F
+QQ18_LO           = &04A4
+QQ18_HI           = &04A5
+TKN1_LO           = &04A6
+TKN1_HI           = &04A7
+LANG              = &04A8
+L04B2             = &04B2
+L04B4             = &04B4
+SX                = &04C8
+SY                = &04DD
+SZ                = &04F2
+BUF               = &0507
+MANY              = &0562
 
 \ ******************************************************************************
 \

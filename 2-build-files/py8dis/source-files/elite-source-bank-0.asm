@@ -196,20 +196,262 @@ L00F6             = &00F6
 BANK              = &00F7
 XX3               = &0100
 XX3_1             = &0101
-SPR_Y             = &0200
-SPR_TILE          = &0201
-SPR_ATTR          = &0202
-SPR_X             = &0203
-L0234             = &0234
-L0235             = &0235
-L0237             = &0237
-L023C             = &023C
-L023D             = &023D
-L023E             = &023E
-L0298             = &0298
-L0299             = &0299
-L029A             = &029A
-L029B             = &029B
+SPR_00_Y          = &0200
+SPR_00_TILE       = &0201
+SPR_00_ATTR       = &0202
+SPR_00_X          = &0203
+SPR_01_Y          = &0204
+SPR_01_TILE       = &0205
+SPR_01_ATTR       = &0206
+SPR_01_X          = &0207
+SPR_02_Y          = &0208
+SPR_02_TILE       = &0209
+SPR_02_ATTR       = &020A
+SPR_02_X          = &020B
+SPR_03_Y          = &020C
+SPR_03_TILE       = &020D
+SPR_03_ATTR       = &020E
+SPR_03_X          = &020F
+SPR_04_Y          = &0210
+SPR_04_TILE       = &0211
+SPR_04_ATTR       = &0212
+SPR_04_X          = &0213
+SPR_05_Y          = &0214
+SPR_05_TILE       = &0215
+SPR_05_ATTR       = &0216
+SPR_05_X          = &0217
+SPR_06_Y          = &0218
+SPR_06_TILE       = &0219
+SPR_06_ATTR       = &021A
+SPR_06_X          = &021B
+SPR_07_Y          = &021C
+SPR_07_TILE       = &021D
+SPR_07_ATTR       = &021E
+SPR_07_X          = &021F
+SPR_08_Y          = &0220
+SPR_08_TILE       = &0221
+SPR_08_ATTR       = &0222
+SPR_08_X          = &0223
+SPR_09_Y          = &0224
+SPR_09_TILE       = &0225
+SPR_09_ATTR       = &0226
+SPR_09_X          = &0227
+SPR_10_Y          = &0228
+SPR_10_TILE       = &0229
+SPR_10_ATTR       = &022A
+SPR_10_X          = &022B
+SPR_11_Y          = &022C
+SPR_11_TILE       = &022D
+SPR_11_ATTR       = &022E
+SPR_11_X          = &022F
+SPR_12_Y          = &0230
+SPR_12_TILE       = &0231
+SPR_12_ATTR       = &0232
+SPR_12_X          = &0233
+SPR_13_Y          = &0234
+SPR_13_TILE       = &0235
+SPR_13_ATTR       = &0236
+SPR_13_X          = &0237
+SPR_14_Y          = &0238
+SPR_14_TILE       = &0239
+SPR_14_ATTR       = &023A
+SPR_14_X          = &023B
+SPR_15_Y          = &023C
+SPR_15_TILE       = &023D
+SPR_15_ATTR       = &023E
+SPR_15_X          = &023F
+SPR_16_Y          = &0240
+SPR_16_TILE       = &0241
+SPR_16_ATTR       = &0242
+SPR_16_X          = &0243
+SPR_17_Y          = &0244
+SPR_17_TILE       = &0245
+SPR_17_ATTR       = &0246
+SPR_17_X          = &0247
+SPR_18_Y          = &0248
+SPR_18_TILE       = &0249
+SPR_18_ATTR       = &024A
+SPR_18_X          = &024B
+SPR_19_Y          = &024C
+SPR_19_TILE       = &024D
+SPR_19_ATTR       = &024E
+SPR_19_X          = &024F
+SPR_20_Y          = &0250
+SPR_20_TILE       = &0251
+SPR_20_ATTR       = &0252
+SPR_20_X          = &0253
+SPR_21_Y          = &0254
+SPR_21_TILE       = &0255
+SPR_21_ATTR       = &0256
+SPR_21_X          = &0257
+SPR_22_Y          = &0258
+SPR_22_TILE       = &0259
+SPR_22_ATTR       = &025A
+SPR_22_X          = &025B
+SPR_23_Y          = &025C
+SPR_23_TILE       = &025D
+SPR_23_ATTR       = &025E
+SPR_23_X          = &025F
+SPR_24_Y          = &0260
+SPR_24_TILE       = &0261
+SPR_24_ATTR       = &0262
+SPR_24_X          = &0263
+SPR_25_Y          = &0264
+SPR_25_TILE       = &0265
+SPR_25_ATTR       = &0266
+SPR_25_X          = &0267
+SPR_26_Y          = &0268
+SPR_26_TILE       = &0269
+SPR_26_ATTR       = &026A
+SPR_26_X          = &026B
+SPR_27_Y          = &026C
+SPR_27_TILE       = &026D
+SPR_27_ATTR       = &026E
+SPR_27_X          = &026F
+SPR_28_Y          = &0270
+SPR_28_TILE       = &0271
+SPR_28_ATTR       = &0272
+SPR_28_X          = &0273
+SPR_29_Y          = &0274
+SPR_29_TILE       = &0275
+SPR_29_ATTR       = &0276
+SPR_29_X          = &0277
+SPR_30_Y          = &0278
+SPR_30_TILE       = &0279
+SPR_30_ATTR       = &027A
+SPR_30_X          = &027B
+SPR_31_Y          = &027C
+SPR_31_TILE       = &027D
+SPR_31_ATTR       = &027E
+SPR_31_X          = &027F
+SPR_32_Y          = &0280
+SPR_32_TILE       = &0281
+SPR_32_ATTR       = &0282
+SPR_32_X          = &0283
+SPR_33_Y          = &0284
+SPR_33_TILE       = &0285
+SPR_33_ATTR       = &0286
+SPR_33_X          = &0287
+SPR_34_Y          = &0288
+SPR_34_TILE       = &0289
+SPR_34_ATTR       = &028A
+SPR_34_X          = &028B
+SPR_35_Y          = &028C
+SPR_35_TILE       = &028D
+SPR_35_ATTR       = &028E
+SPR_35_X          = &028F
+SPR_36_Y          = &0290
+SPR_36_TILE       = &0291
+SPR_36_ATTR       = &0292
+SPR_36_X          = &0293
+SPR_37_Y          = &0294
+SPR_37_TILE       = &0295
+SPR_37_ATTR       = &0296
+SPR_37_X          = &0297
+SPR_38_Y          = &0298
+SPR_38_TILE       = &0299
+SPR_38_ATTR       = &029A
+SPR_38_X          = &029B
+SPR_39_Y          = &029C
+SPR_39_TILE       = &029D
+SPR_39_ATTR       = &029E
+SPR_39_X          = &029F
+SPR_40_Y          = &02A0
+SPR_40_TILE       = &02A1
+SPR_40_ATTR       = &02A2
+SPR_40_X          = &02A3
+SPR_41_Y          = &02A4
+SPR_41_TILE       = &02A5
+SPR_41_ATTR       = &02A6
+SPR_41_X          = &02A7
+SPR_42_Y          = &02A8
+SPR_42_TILE       = &02A9
+SPR_42_ATTR       = &02AA
+SPR_42_X          = &02AB
+SPR_43_Y          = &02AC
+SPR_43_TILE       = &02AD
+SPR_43_ATTR       = &02AE
+SPR_43_X          = &02AF
+SPR_44_Y          = &02B0
+SPR_44_TILE       = &02B1
+SPR_44_ATTR       = &02B2
+SPR_44_X          = &02B3
+SPR_45_Y          = &02B4
+SPR_45_TILE       = &02B5
+SPR_45_ATTR       = &02B6
+SPR_45_X          = &02B7
+SPR_46_Y          = &02B8
+SPR_46_TILE       = &02B9
+SPR_46_ATTR       = &02BA
+SPR_46_X          = &02BB
+SPR_47_Y          = &02BC
+SPR_47_TILE       = &02BD
+SPR_47_ATTR       = &02BE
+SPR_47_X          = &02BF
+SPR_48_Y          = &02C0
+SPR_48_TILE       = &02C1
+SPR_48_ATTR       = &02C2
+SPR_48_X          = &02C3
+SPR_49_Y          = &02C4
+SPR_49_TILE       = &02C5
+SPR_49_ATTR       = &02C6
+SPR_49_X          = &02C7
+SPR_50_Y          = &02C8
+SPR_50_TILE       = &02C9
+SPR_50_ATTR       = &02CA
+SPR_50_X          = &02CB
+SPR_51_Y          = &02CC
+SPR_51_TILE       = &02CD
+SPR_51_ATTR       = &02CE
+SPR_51_X          = &02CF
+SPR_52_Y          = &02D0
+SPR_52_TILE       = &02D1
+SPR_52_ATTR       = &02D2
+SPR_52_X          = &02D3
+SPR_53_Y          = &02D4
+SPR_53_TILE       = &02D5
+SPR_53_ATTR       = &02D6
+SPR_53_X          = &02D7
+SPR_54_Y          = &02D8
+SPR_54_TILE       = &02D9
+SPR_54_ATTR       = &02DA
+SPR_54_X          = &02DB
+SPR_55_Y          = &02DC
+SPR_55_TILE       = &02DD
+SPR_55_ATTR       = &02DE
+SPR_55_X          = &02DF
+SPR_56_Y          = &02E0
+SPR_56_TILE       = &02E1
+SPR_56_ATTR       = &02E2
+SPR_56_X          = &02E3
+SPR_57_Y          = &02E4
+SPR_57_TILE       = &02E5
+SPR_57_ATTR       = &02E6
+SPR_57_X          = &02E7
+SPR_58_Y          = &02E8
+SPR_58_TILE       = &02E9
+SPR_58_ATTR       = &02EA
+SPR_58_X          = &02EB
+SPR_59_Y          = &02EC
+SPR_59_TILE       = &02ED
+SPR_59_ATTR       = &02EE
+SPR_59_X          = &02EF
+SPR_60_Y          = &02F0
+SPR_60_TILE       = &02F1
+SPR_60_ATTR       = &02F2
+SPR_60_X          = &02F3
+SPR_61_Y          = &02F4
+SPR_61_TILE       = &02F5
+SPR_61_ATTR       = &02F6
+SPR_61_X          = &02F7
+SPR_62_Y          = &02F8
+SPR_62_TILE       = &02F9
+SPR_62_ATTR       = &02FA
+SPR_62_X          = &02FB
+SPR_63_Y          = &02FC
+SPR_63_TILE       = &02FD
+SPR_63_ATTR       = &02FE
+SPR_63_X          = &02FF
 L0300             = &0300
 L0305             = &0305
 L0306             = &0306
@@ -2290,11 +2532,11 @@ NORM              = &FAF8
  LDA L00BA                                    ; 8BB7: A5 BA       ..
  SEC                                          ; 8BB9: 38          8
  SBC #4                                       ; 8BBA: E9 04       ..
- STA SPR_X,X                                  ; 8BBC: 9D 03 02    ...
+ STA SPR_00_X,X                               ; 8BBC: 9D 03 02    ...
  TYA                                          ; 8BBF: 98          .
  CLC                                          ; 8BC0: 18          .
  ADC #&AA                                     ; 8BC1: 69 AA       i.
- STA SPR_Y,X                                  ; 8BC3: 9D 00 02    ...
+ STA SPR_00_Y,X                               ; 8BC3: 9D 00 02    ...
  RTS                                          ; 8BC6: 60          `
 
 ; ******************************************************************************
@@ -4553,9 +4795,9 @@ M32_1 = M32+1
  STA L044F                                    ; 9BCC: 8D 4F 04    .O.
 .C9BCF
  LDA #&F8                                     ; 9BCF: A9 F8       ..
- STA L023D                                    ; 9BD1: 8D 3D 02    .=.
+ STA SPR_15_TILE                              ; 9BD1: 8D 3D 02    .=.
  LDA #1                                       ; 9BD4: A9 01       ..
- STA L023E                                    ; 9BD6: 8D 3E 02    .>.
+ STA SPR_15_ATTR                              ; 9BD6: 8D 3E 02    .>.
  LDA QQ19                                     ; 9BD9: AD 4D 04    .M.
  STA L00BA                                    ; 9BDC: 85 BA       ..
  LDY QQ19_1                                   ; 9BDE: AC 4E 04    .N.
@@ -4566,16 +4808,16 @@ M32_1 = M32+1
  LDA L00BA                                    ; 9BE6: A5 BA       ..
  SEC                                          ; 9BE8: 38          8
  SBC #4                                       ; 9BE9: E9 04       ..
- STA SPR_X,X                                  ; 9BEB: 9D 03 02    ...
+ STA SPR_00_X,X                               ; 9BEB: 9D 03 02    ...
  TYA                                          ; 9BEE: 98          .
  CLC                                          ; 9BEF: 18          .
  ADC #&0A                                     ; 9BF0: 69 0A       i.
- STA SPR_Y,X                                  ; 9BF2: 9D 00 02    ...
+ STA SPR_00_Y,X                               ; 9BF2: 9D 00 02    ...
  RTS                                          ; 9BF5: 60          `
 
 .C9BF6
  LDA #&F0                                     ; 9BF6: A9 F0       ..
- STA L023C                                    ; 9BF8: 8D 3C 02    .<.
+ STA SPR_15_Y                                 ; 9BF8: 8D 3C 02    .<.
  RTS                                          ; 9BFB: 60          `
 
 .L9BFC
@@ -4707,17 +4949,17 @@ M32_1 = M32+1
  TAY                                          ; 9CDA: A8          .
  LDA K3                                       ; 9CDB: A5 3D       .=
  SBC #3                                       ; 9CDD: E9 03       ..
- STA L029B,Y                                  ; 9CDF: 99 9B 02    ...
+ STA SPR_38_X,Y                               ; 9CDF: 99 9B 02    ...
  LDA K4                                       ; 9CE2: A5 4B       .K
  CLC                                          ; 9CE4: 18          .
  ADC #&0A                                     ; 9CE5: 69 0A       i.
- STA L0298,Y                                  ; 9CE7: 99 98 02    ...
+ STA SPR_38_Y,Y                               ; 9CE7: 99 98 02    ...
  LDA #&D5                                     ; 9CEA: A9 D5       ..
  CLC                                          ; 9CEC: 18          .
  ADC K                                        ; 9CED: 65 7D       e}
- STA L0299,Y                                  ; 9CEF: 99 99 02    ...
+ STA SPR_38_TILE,Y                            ; 9CEF: 99 99 02    ...
  LDA #2                                       ; 9CF2: A9 02       ..
- STA L029A,Y                                  ; 9CF4: 99 9A 02    ...
+ STA SPR_38_ATTR,Y                            ; 9CF4: 99 9A 02    ...
 .C9CF7
  RTS                                          ; 9CF7: 60          `
 
@@ -6581,7 +6823,7 @@ M32_1 = M32+1
 
 .loop_CAA10
  LDA #&F0                                     ; AA10: A9 F0       ..
- STA L0234                                    ; AA12: 8D 34 02    .4.
+ STA SPR_13_Y                                 ; AA12: 8D 34 02    .4.
  RTS                                          ; AA15: 60          `
 
 .sub_CAA16
@@ -6600,20 +6842,20 @@ M32_1 = M32+1
  TXA                                          ; AA2E: 8A          .
  CLC                                          ; AA2F: 18          .
  ADC #&DC                                     ; AA30: 69 DC       i.
- STA L0237                                    ; AA32: 8D 37 02    .7.
+ STA SPR_13_X                                 ; AA32: 8D 37 02    .7.
  LDA Y1                                       ; AA35: A5 72       .r
  JSR sub_CB531                                ; AA37: 20 31 B5     1.
  STX T                                        ; AA3A: 86 9A       ..
  LDA #&BA                                     ; AA3C: A9 BA       ..
  SEC                                          ; AA3E: 38          8
  SBC T                                        ; AA3F: E5 9A       ..
- STA L0234                                    ; AA41: 8D 34 02    .4.
+ STA SPR_13_Y                                 ; AA41: 8D 34 02    .4.
  LDA #&F7                                     ; AA44: A9 F7       ..
  LDX X2                                       ; AA46: A6 73       .s
  BPL CAA4C                                    ; AA48: 10 02       ..
  LDA #&F6                                     ; AA4A: A9 F6       ..
 .CAA4C
- STA L0235                                    ; AA4C: 8D 35 02    .5.
+ STA SPR_13_TILE                              ; AA4C: 8D 35 02    .5.
  RTS                                          ; AA4F: 60          `
 
 .sub_CAA50
@@ -9414,15 +9656,15 @@ LAFB4 = sub_CAFB3+1
  JSR NAMETABLE0                               ; BE25: 20 6D D0     m.
 .CBE28
  LDA #&F0                                     ; BE28: A9 F0       ..
- STA SPR_Y,Y                                  ; BE2A: 99 00 02    ...
+ STA SPR_00_Y,Y                               ; BE2A: 99 00 02    ...
  LDA #&D2                                     ; BE2D: A9 D2       ..
- STA SPR_TILE,Y                               ; BE2F: 99 01 02    ...
+ STA SPR_00_TILE,Y                            ; BE2F: 99 01 02    ...
  TXA                                          ; BE32: 8A          .
  LSR A                                        ; BE33: 4A          J
  ROR A                                        ; BE34: 6A          j
  ROR A                                        ; BE35: 6A          j
  AND #&E1                                     ; BE36: 29 E1       ).
- STA SPR_ATTR,Y                               ; BE38: 99 02 02    ...
+ STA SPR_00_ATTR,Y                            ; BE38: 99 02 02    ...
  INY                                          ; BE3B: C8          .
  INY                                          ; BE3C: C8          .
  INY                                          ; BE3D: C8          .

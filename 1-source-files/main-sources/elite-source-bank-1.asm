@@ -30,76 +30,6 @@
  _NTSC                  = (_VARIANT = 1)
  _PAL                   = (_VARIANT = 2)
 
-\ Workspace &0200
-
-SPR_Y    = &0200
-SPR_TILE = &0201
-SPR_ATTR = &0202
-SPR_X    = &0203
-
-\ WP workspace
-
-L0374               = &0374
-L037E               = &037E
-MJ                  = &038A
-VIEW                = &038E
-QQ0                 = &039F
-QQ1                 = &03A0
-CASH                = &03A1
-GCNT                = &03A7
-CRGO                = &03AC
-QQ20                = &03AD
-BST                 = &03BF
-GHYP                = &03C3
-FIST                = &03C9
-AVL                 = &03CA
-QQ26                = &03DB
-L03DD               = &03DD
-QQ21                = &03DF
-NOSTM               = &03E5
-L03E6               = &03E6
-L03F1               = &03F1
-DTW6                = &03F3
-DTW2                = &03F4
-DTW3                = &03F5
-DTW4                = &03F6
-DTW5                = &03F7
-DTW1                = &03F8
-DTW8                = &03F9
-L040A               = &040A
-QQ19                = &044D
-K2                  = &0459
-SWAP                = &047F
-QQ24                = &0487
-QQ25                = &0488
-QQ28                = &0489
-QQ29                = &048A
-QQ8                 = &049B
-QQ9                 = &049D
-QQ10                = &049E
-QQ18_LO              = &04A4
-QQ18_HI              = &04A5
-TKN1_LO             = &04A6
-TKN1_HI             = &04A7
-SX                  = &04C8
-SY                  = &04DD
-SZ                  = &04F2
-BUFm1               = &0506
-BUF                 = &0507
-HANGFLAG            = &0561
-SXL                 = &05A5
-SYL                 = &05BA
-SZL                 = &05CF
-safehouse           = &05E4
-L05EA               = &05EA
-L05EB               = &05EB
-L05EC               = &05EC
-L05ED               = &05ED
-L05EE               = &05EE
-L05EF               = &05EF
-L05F0               = &05F0
-L05F1               = &05F1
-
 \ ******************************************************************************
 \
 \ Configuration variables
@@ -1031,6 +961,408 @@ L05F1               = &05F1
 
  SKIP 0                 \ Temporary storage, typically used for storing tables
                         \ of values such as screen coordinates or ship data
+
+\ ******************************************************************************
+\
+\       Name: SPR
+\       Type: Workspace
+\    Address: &0200 to &02FF
+\   Category: Workspaces
+\    Summary: Configuration data for sprites 0 to 63, which gets copied to the
+\             PPU to update the screen
+\
+\ ******************************************************************************
+
+ SPR_00_Y    = &0200
+ SPR_00_TILE = &0201
+ SPR_00_ATTR = &0202
+ SPR_00_X    = &0203
+
+ SPR_01_Y    = &0204
+ SPR_01_TILE = &0205
+ SPR_01_ATTR = &0206
+ SPR_01_X    = &0207
+
+ SPR_02_Y    = &0208
+ SPR_02_TILE = &0209
+ SPR_02_ATTR = &020A
+ SPR_02_X    = &020B
+
+ SPR_03_Y    = &020C
+ SPR_03_TILE = &020D
+ SPR_03_ATTR = &020E
+ SPR_03_X    = &020F
+
+ SPR_04_Y    = &0210
+ SPR_04_TILE = &0211
+ SPR_04_ATTR = &0212
+ SPR_04_X    = &0213
+
+ SPR_05_Y    = &0214
+ SPR_05_TILE = &0215
+ SPR_05_ATTR = &0216
+ SPR_05_X    = &0217
+
+ SPR_06_Y    = &0218
+ SPR_06_TILE = &0219
+ SPR_06_ATTR = &021A
+ SPR_06_X    = &021B
+
+ SPR_07_Y    = &021C
+ SPR_07_TILE = &021D
+ SPR_07_ATTR = &021E
+ SPR_07_X    = &021F
+
+ SPR_08_Y    = &0220
+ SPR_08_TILE = &0221
+ SPR_08_ATTR = &0222
+ SPR_08_X    = &0223
+
+ SPR_09_Y    = &0224
+ SPR_09_TILE = &0225
+ SPR_09_ATTR = &0226
+ SPR_09_X    = &0227
+
+ SPR_10_Y    = &0228
+ SPR_10_TILE = &0229
+ SPR_10_ATTR = &022A
+ SPR_10_X    = &022B
+
+ SPR_11_Y    = &022C
+ SPR_11_TILE = &022D
+ SPR_11_ATTR = &022E
+ SPR_11_X    = &022F
+
+ SPR_12_Y    = &0230
+ SPR_12_TILE = &0231
+ SPR_12_ATTR = &0232
+ SPR_12_X    = &0233
+
+ SPR_13_Y    = &0234
+ SPR_13_TILE = &0235
+ SPR_13_ATTR = &0236
+ SPR_13_X    = &0237
+
+ SPR_14_Y    = &0238
+ SPR_14_TILE = &0239
+ SPR_14_ATTR = &023A
+ SPR_14_X    = &023B
+
+ SPR_15_Y    = &023C
+ SPR_15_TILE = &023D
+ SPR_15_ATTR = &023E
+ SPR_15_X    = &023F
+
+ SPR_16_Y    = &0240
+ SPR_16_TILE = &0241
+ SPR_16_ATTR = &0242
+ SPR_16_X    = &0243
+
+ SPR_17_Y    = &0244
+ SPR_17_TILE = &0245
+ SPR_17_ATTR = &0246
+ SPR_17_X    = &0247
+
+ SPR_18_Y    = &0248
+ SPR_18_TILE = &0249
+ SPR_18_ATTR = &024A
+ SPR_18_X    = &024B
+
+ SPR_19_Y    = &024C
+ SPR_19_TILE = &024D
+ SPR_19_ATTR = &024E
+ SPR_19_X    = &024F
+
+ SPR_20_Y    = &0250
+ SPR_20_TILE = &0251
+ SPR_20_ATTR = &0252
+ SPR_20_X    = &0253
+
+ SPR_21_Y    = &0254
+ SPR_21_TILE = &0255
+ SPR_21_ATTR = &0256
+ SPR_21_X    = &0257
+
+ SPR_22_Y    = &0258
+ SPR_22_TILE = &0259
+ SPR_22_ATTR = &025A
+ SPR_22_X    = &025B
+
+ SPR_23_Y    = &025C
+ SPR_23_TILE = &025D
+ SPR_23_ATTR = &025E
+ SPR_23_X    = &025F
+
+ SPR_24_Y    = &0260
+ SPR_24_TILE = &0261
+ SPR_24_ATTR = &0262
+ SPR_24_X    = &0263
+
+ SPR_25_Y    = &0264
+ SPR_25_TILE = &0265
+ SPR_25_ATTR = &0266
+ SPR_25_X    = &0267
+
+ SPR_26_Y    = &0268
+ SPR_26_TILE = &0269
+ SPR_26_ATTR = &026A
+ SPR_26_X    = &026B
+
+ SPR_27_Y    = &026C
+ SPR_27_TILE = &026D
+ SPR_27_ATTR = &026E
+ SPR_27_X    = &026F
+
+ SPR_28_Y    = &0270
+ SPR_28_TILE = &0271
+ SPR_28_ATTR = &0272
+ SPR_28_X    = &0273
+
+ SPR_29_Y    = &0274
+ SPR_29_TILE = &0275
+ SPR_29_ATTR = &0276
+ SPR_29_X    = &0277
+
+ SPR_30_Y    = &0278
+ SPR_30_TILE = &0279
+ SPR_30_ATTR = &027A
+ SPR_30_X    = &027B
+
+ SPR_31_Y    = &027C
+ SPR_31_TILE = &027D
+ SPR_31_ATTR = &027E
+ SPR_31_X    = &027F
+
+ SPR_32_Y    = &0280
+ SPR_32_TILE = &0281
+ SPR_32_ATTR = &0282
+ SPR_32_X    = &0283
+
+ SPR_33_Y    = &0284
+ SPR_33_TILE = &0285
+ SPR_33_ATTR = &0286
+ SPR_33_X    = &0287
+
+ SPR_34_Y    = &0288
+ SPR_34_TILE = &0289
+ SPR_34_ATTR = &028A
+ SPR_34_X    = &028B
+
+ SPR_35_Y    = &028C
+ SPR_35_TILE = &028D
+ SPR_35_ATTR = &028E
+ SPR_35_X    = &028F
+
+ SPR_36_Y    = &0290
+ SPR_36_TILE = &0291
+ SPR_36_ATTR = &0292
+ SPR_36_X    = &0293
+
+ SPR_37_Y    = &0294
+ SPR_37_TILE = &0295
+ SPR_37_ATTR = &0296
+ SPR_37_X    = &0297
+
+ SPR_38_Y    = &0298
+ SPR_38_TILE = &0299
+ SPR_38_ATTR = &029A
+ SPR_38_X    = &029B
+
+ SPR_39_Y    = &029C
+ SPR_39_TILE = &029D
+ SPR_39_ATTR = &029E
+ SPR_39_X    = &029F
+
+ SPR_40_Y    = &02A0
+ SPR_40_TILE = &02A1
+ SPR_40_ATTR = &02A2
+ SPR_40_X    = &02A3
+
+ SPR_41_Y    = &02A4
+ SPR_41_TILE = &02A5
+ SPR_41_ATTR = &02A6
+ SPR_41_X    = &02A7
+
+ SPR_42_Y    = &02A8
+ SPR_42_TILE = &02A9
+ SPR_42_ATTR = &02AA
+ SPR_42_X    = &02AB
+
+ SPR_43_Y    = &02AC
+ SPR_43_TILE = &02AD
+ SPR_43_ATTR = &02AE
+ SPR_43_X    = &02AF
+
+ SPR_44_Y    = &02B0
+ SPR_44_TILE = &02B1
+ SPR_44_ATTR = &02B2
+ SPR_44_X    = &02B3
+
+ SPR_45_Y    = &02B4
+ SPR_45_TILE = &02B5
+ SPR_45_ATTR = &02B6
+ SPR_45_X    = &02B7
+
+ SPR_46_Y    = &02B8
+ SPR_46_TILE = &02B9
+ SPR_46_ATTR = &02BA
+ SPR_46_X    = &02BB
+
+ SPR_47_Y    = &02BC
+ SPR_47_TILE = &02BD
+ SPR_47_ATTR = &02BE
+ SPR_47_X    = &02BF
+
+ SPR_48_Y    = &02C0
+ SPR_48_TILE = &02C1
+ SPR_48_ATTR = &02C2
+ SPR_48_X    = &02C3
+
+ SPR_49_Y    = &02C4
+ SPR_49_TILE = &02C5
+ SPR_49_ATTR = &02C6
+ SPR_49_X    = &02C7
+
+ SPR_50_Y    = &02C8
+ SPR_50_TILE = &02C9
+ SPR_50_ATTR = &02CA
+ SPR_50_X    = &02CB
+
+ SPR_51_Y    = &02CC
+ SPR_51_TILE = &02CD
+ SPR_51_ATTR = &02CE
+ SPR_51_X    = &02CF
+
+ SPR_52_Y    = &02D0
+ SPR_52_TILE = &02D1
+ SPR_52_ATTR = &02D2
+ SPR_52_X    = &02D3
+
+ SPR_53_Y    = &02D4
+ SPR_53_TILE = &02D5
+ SPR_53_ATTR = &02D6
+ SPR_53_X    = &02D7
+
+ SPR_54_Y    = &02D8
+ SPR_54_TILE = &02D9
+ SPR_54_ATTR = &02DA
+ SPR_54_X    = &02DB
+
+ SPR_55_Y    = &02DC
+ SPR_55_TILE = &02DD
+ SPR_55_ATTR = &02DE
+ SPR_55_X    = &02DF
+
+ SPR_56_Y    = &02E0
+ SPR_56_TILE = &02E1
+ SPR_56_ATTR = &02E2
+ SPR_56_X    = &02E3
+
+ SPR_57_Y    = &02E4
+ SPR_57_TILE = &02E5
+ SPR_57_ATTR = &02E6
+ SPR_57_X    = &02E7
+
+ SPR_58_Y    = &02E8
+ SPR_58_TILE = &02E9
+ SPR_58_ATTR = &02EA
+ SPR_58_X    = &02EB
+
+ SPR_59_Y    = &02EC
+ SPR_59_TILE = &02ED
+ SPR_59_ATTR = &02EE
+ SPR_59_X    = &02EF
+
+ SPR_60_Y    = &02F0
+ SPR_60_TILE = &02F1
+ SPR_60_ATTR = &02F2
+ SPR_60_X    = &02F3
+
+ SPR_61_Y    = &02F4
+ SPR_61_TILE = &02F5
+ SPR_61_ATTR = &02F6
+ SPR_61_X    = &02F7
+
+ SPR_62_Y    = &02F8
+ SPR_62_TILE = &02F9
+ SPR_62_ATTR = &02FA
+ SPR_62_X    = &02FB
+
+ SPR_63_Y    = &02FC
+ SPR_63_TILE = &02FD
+ SPR_63_ATTR = &02FE
+ SPR_63_X    = &02FF
+
+\ ******************************************************************************
+\
+\       Name: WP
+\       Type: Workspace
+\    Address: &0300 to &05FF
+\   Category: Workspaces
+\    Summary: Ship slots, variables
+\
+\ ******************************************************************************
+
+L0374               = &0374
+L037E               = &037E
+MJ                  = &038A
+VIEW                = &038E
+QQ0                 = &039F
+QQ1                 = &03A0
+CASH                = &03A1
+GCNT                = &03A7
+CRGO                = &03AC
+QQ20                = &03AD
+BST                 = &03BF
+GHYP                = &03C3
+FIST                = &03C9
+AVL                 = &03CA
+QQ26                = &03DB
+L03DD               = &03DD
+QQ21                = &03DF
+NOSTM               = &03E5
+L03E6               = &03E6
+L03F1               = &03F1
+DTW6                = &03F3
+DTW2                = &03F4
+DTW3                = &03F5
+DTW4                = &03F6
+DTW5                = &03F7
+DTW1                = &03F8
+DTW8                = &03F9
+L040A               = &040A
+QQ19                = &044D
+K2                  = &0459
+SWAP                = &047F
+QQ24                = &0487
+QQ25                = &0488
+QQ28                = &0489
+QQ29                = &048A
+QQ8                 = &049B
+QQ9                 = &049D
+QQ10                = &049E
+QQ18_LO              = &04A4
+QQ18_HI              = &04A5
+TKN1_LO             = &04A6
+TKN1_HI             = &04A7
+SX                  = &04C8
+SY                  = &04DD
+SZ                  = &04F2
+BUFm1               = &0506
+BUF                 = &0507
+HANGFLAG            = &0561
+SXL                 = &05A5
+SYL                 = &05BA
+SZL                 = &05CF
+safehouse           = &05E4
+L05EA               = &05EA
+L05EB               = &05EB
+L05EC               = &05EC
+L05ED               = &05ED
+L05EE               = &05EE
+L05EF               = &05EF
+L05F0               = &05F0
+L05F1               = &05F1
 
 \ ******************************************************************************
 \
@@ -13057,9 +13389,9 @@ ENDMACRO
 
 .CB969
  LDA #&F0
- STA SPR_Y,Y
- STA SPR_Y+1*4,Y
- STA SPR_Y+2*4,Y
+ STA SPR_00_Y,Y
+ STA SPR_01_Y,Y
+ STA SPR_02_Y,Y
 .CB974
  RTS
 
@@ -13079,7 +13411,7 @@ ENDMACRO
  ADC #&2C
  TAY
  LDA L037E,X
- STA SPR_ATTR,Y
+ STA SPR_00_ATTR,Y
  LDA INWK+1
  CMP INWK+4
  BCS CB998
@@ -13149,17 +13481,17 @@ ENDMACRO
  CMP #&10
  BCC CBA24
  LDA L00BA
- STA SPR_X,Y
- STA SPR_X+1*4,Y
+ STA SPR_00_X,Y
+ STA SPR_01_X,Y
  LDA L00BB
- STA SPR_Y,Y
+ STA SPR_00_Y,Y
  SEC
  SBC #8
- STA SPR_Y+1*4,Y
- LDA SPR_ATTR,Y
+ STA SPR_01_Y,Y
+ LDA SPR_00_ATTR,Y
  AND #3
- STA SPR_ATTR,Y
- STA SPR_ATTR+1*4,Y
+ STA SPR_00_ATTR,Y
+ STA SPR_01_ATTR,Y
  LDA L00BB
  SBC #&10
  STA L00BB
@@ -13168,35 +13500,35 @@ ENDMACRO
  CMP #8
  BCC CBA47
  LDA #&F0
- STA SPR_Y,Y
+ STA SPR_00_Y,Y
  LDA L00BA
- STA SPR_X+1*4,Y
+ STA SPR_01_X,Y
  LDA L00BB
- STA SPR_Y+1*4,Y
- LDA SPR_ATTR,Y
+ STA SPR_01_Y,Y
+ LDA SPR_00_ATTR,Y
  AND #3
- STA SPR_ATTR+1*4,Y
+ STA SPR_01_ATTR,Y
  LDA L00BB
  SBC #8
  STA L00BB
  BNE CBA4F
 .CBA47
  LDA #&F0
- STA SPR_Y,Y
- STA SPR_Y+1*4,Y
+ STA SPR_00_Y,Y
+ STA SPR_01_Y,Y
 .CBA4F
  LDA Y1
  AND #7
  CLC
  ADC #&DB
- STA SPR_TILE+2*4,Y
- LDA SPR_ATTR,Y
+ STA SPR_02_TILE,Y
+ LDA SPR_00_ATTR,Y
  AND #3
- STA SPR_ATTR+2*4,Y
+ STA SPR_02_ATTR,Y
  LDA L00BA
- STA SPR_X+2*4,Y
+ STA SPR_02_X,Y
  LDA L00BB
- STA SPR_Y+2*4,Y
+ STA SPR_02_Y,Y
  RTS
 
 .CBA6C
@@ -13212,17 +13544,17 @@ ENDMACRO
  CMP #&10
  BCC CBAA5
  LDA L00BA
- STA SPR_X,Y
- STA SPR_X+1*4,Y
+ STA SPR_00_X,Y
+ STA SPR_01_X,Y
  LDA L00BB
- STA SPR_Y,Y
+ STA SPR_00_Y,Y
  CLC
  ADC #8
- STA SPR_Y+1*4,Y
- LDA SPR_ATTR,Y
+ STA SPR_01_Y,Y
+ LDA SPR_00_ATTR,Y
  ORA #&20
- STA SPR_ATTR,Y
- STA SPR_ATTR+1*4,Y
+ STA SPR_00_ATTR,Y
+ STA SPR_01_ATTR,Y
  LDA L00BB
  CLC
  ADC #&10
@@ -13232,35 +13564,35 @@ ENDMACRO
  CMP #8
  BCC CBAC8
  LDA #&F0
- STA SPR_Y,Y
+ STA SPR_00_Y,Y
  LDA L00BA
- STA SPR_X+1*4,Y
+ STA SPR_01_X,Y
  LDA L00BB
- STA SPR_Y+1*4,Y
- LDA SPR_ATTR,Y
+ STA SPR_01_Y,Y
+ LDA SPR_00_ATTR,Y
  ORA #&20
- STA SPR_ATTR+1*4,Y
+ STA SPR_01_ATTR,Y
  LDA L00BB
  ADC #7
  STA L00BB
  BNE CBAD0
 .CBAC8
  LDA #&F0
- STA SPR_Y,Y
- STA SPR_Y+1*4,Y
+ STA SPR_00_Y,Y
+ STA SPR_01_Y,Y
 .CBAD0
  LDA Y1
  AND #7
  CLC
  ADC #&DB
- STA SPR_TILE+2*4,Y
- LDA SPR_ATTR,Y
+ STA SPR_02_TILE,Y
+ LDA SPR_00_ATTR,Y
  ORA #&E0
- STA SPR_ATTR+2*4,Y
+ STA SPR_02_ATTR,Y
  LDA L00BA
- STA SPR_X+2*4,Y
+ STA SPR_02_X,Y
  LDA L00BB
- STA SPR_Y+2*4,Y
+ STA SPR_02_Y,Y
  RTS
 
 \ ******************************************************************************
@@ -13291,9 +13623,9 @@ ENDMACRO
  LDA W
  BNE CBB1F
  LDA #&F0
- STA SPR_Y+11*4,X
- STA SPR_Y+12*4,X
- STA SPR_Y+13*4,X
+ STA SPR_11_Y,X
+ STA SPR_12_Y,X
+ STA SPR_13_Y,X
 .CBB1F
  LDA #0
  STA L002A
@@ -13395,21 +13727,21 @@ ENDMACRO
  LDA XX2+3
  SBC #3
  BCC CBB7C
- STA SPR_X+58*4,Y
+ STA SPR_58_X,Y
  LDA #2
- STA SPR_ATTR+58*4,Y
+ STA SPR_58_ATTR,Y
  LDA K3+1
  CMP #&80
  BCC CBB83
 .CBB7C
  LDA #&F0
- STA SPR_Y+58*4,Y
+ STA SPR_58_Y,Y
  BNE CBB8D
 .CBB83
  ADC #&0A
- STA SPR_Y+58*4,Y
+ STA SPR_58_Y,Y
  LDA #&F5
- STA SPR_TILE+58*4,Y
+ STA SPR_58_TILE,Y
 
 .CBB8D
 
@@ -13555,7 +13887,7 @@ ENDMACRO
  ADC #0
  CPX #&90
  ADC #0
- STA SPR_TILE+37*4,Y
+ STA SPR_37_TILE,Y
 
  LDA X1                 \ Fetch the x-coordinate offset into A
 
@@ -13572,7 +13904,7 @@ ENDMACRO
  SBC #3
  CMP #&F4
  BCS CBC49
- STA SPR_X+37*4,Y
+ STA SPR_37_X,Y
  LDA Y1
  AND #&7F
  CMP Yx1M2
@@ -13593,13 +13925,13 @@ ENDMACRO
  LDA Yx1M2
  SBC T
  ADC #&0A
- STA SPR_Y+37*4,Y
+ STA SPR_37_Y,Y
  LDY T1
  RTS
 
 .CBC49
  LDA #&F0
- STA SPR_Y+37*4,Y
+ STA SPR_37_Y,Y
  LDY T1
  RTS
 
