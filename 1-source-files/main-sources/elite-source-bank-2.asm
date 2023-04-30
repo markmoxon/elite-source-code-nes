@@ -53,8 +53,8 @@ YSAV2             = &0482
 QQ2               = &048E
 QQ8               = &049B
 L049F             = &049F
-QQ18_LO            = &04A4
-QQ18_HI            = &04A5
+QQ18_LO           = &04A4
+QQ18_HI           = &04A5
 TKN1_LO           = &04A6
 TKN1_HI           = &04A7
 LANG              = &04A8
@@ -65,99 +65,6 @@ SY                = &04DD
 SZ                = &04F2
 BUF               = &0507
 MANY              = &0562
-
-\ NES PPU registers
-
-PPU_CTRL          = &2000
-PPU_MASK          = &2001
-PPU_STATUS        = &2002
-OAM_ADDR          = &2003
-OAM_DATA          = &2004
-PPU_SCROLL        = &2005
-PPU_ADDR          = &2006
-PPU_DATA          = &2007
-OAM_DMA           = &4014
-
-\ Shared code from 7.asm
-
-RESETBANK         = &C0AD
-SETBANK           = &C0AE
-log               = &C100
-logL              = &C200
-antilog           = &C300
-antilogODD        = &C400
-SNE               = &C500
-ACT               = &C520
-XX21m2            = &C53E
-XX21m1            = &C53F
-XX21              = &C540
-UNIV              = &CE7E
-UNIV_1            = &CE7E
-GINF              = &CE90
-NMI               = &CED5
-NAMETABLE0        = &D06D
-LD8C5             = &D8C5
-LDBD8             = &DBD8
-LOIN              = &DC0F
-PIXEL             = &E4F0
-ECBLB2            = &E596
-DELAY             = &EBA2
-EXNO3             = &EBAD
-BOOP              = &EBE5
-NOISE             = &EBF2
-NAMETABLE0_BANK7  = &EC7D
-TIDY              = &EDEA
-PAS1              = &EF7A
-LL164             = &EFF7
-DETOK_BANK7       = &F082
-DTS_BANK7         = &F09D
-F186_BANK7        = &F186
-MVS5_BANK7        = &F1A2
-HALL              = &F1BD
-DASC_BANK7        = &F1E6
-TT27_BANK7        = &F201
-TT27_control_codes = &F237
-TT66              = &F26E
-SCAN_BANK7        = &F2A8
-LF2BD             = &F2BD
-CLYNS             = &F2DE
-Ze                = &F42E
-NLIN4             = &F473
-DORND2            = &F4AC
-DORND             = &F4AD
-PROJ              = &F4C1
-MU5               = &F65A
-MULT3             = &F664
-MLS2              = &F6BA
-MLS1              = &F6C2
-MULTSm2           = &F6C4
-MULTS             = &F6C6
-MU6               = &F707
-SQUA              = &F70C
-SQUA2             = &F70E
-MU1               = &F713
-MLU1              = &F718
-MLU2              = &F71D
-MULTU             = &F721
-MU11              = &F725
-FMLTU2            = &F766
-FMLTU             = &F770
-MLTU2m2           = &F7AB
-MLTU2             = &F7AD
-MUT2              = &F7D2
-MUT1              = &F7D6
-MULT1             = &F7DA
-MULT12            = &F83C
-TAS3              = &F853
-MAD               = &F86F
-ADD               = &F872
-TIS1              = &F8AE
-DV42              = &F8D1
-DV41              = &F8D4
-DVID3B2           = &F962
-LL5               = &FA55
-LL28              = &FA91
-NORM              = &FAF8
 
 \ ******************************************************************************
 \
@@ -172,6 +79,95 @@ NORM              = &FAF8
                         \ in the extended tokens system
 
  S% = &C007             \ The game's main entry point in bank 7
+
+ PPU_CTRL   = &2000     \ NES PPU registers
+ PPU_MASK   = &2001
+ PPU_STATUS = &2002
+ OAM_ADDR   = &2003
+ OAM_DATA   = &2004
+ PPU_SCROLL = &2005
+ PPU_ADDR   = &2006
+ PPU_DATA   = &2007
+ OAM_DMA    = &4014
+
+ RESETBANK           = &C0AD    \ Addresses of routines in bank 7
+ SETBANK             = &C0AE
+ log                 = &C100
+ logL                = &C200
+ antilog             = &C300
+ antilogODD          = &C400
+ SNE                 = &C500
+ ACT                 = &C520
+ XX21m2              = &C53E
+ XX21m1              = &C53F
+ XX21                = &C540
+ UNIV                = &CE7E
+ UNIV_1              = &CE7E
+ GINF                = &CE90
+ NMI                 = &CED5
+ NAMETABLE0          = &D06D
+ LD8C5               = &D8C5
+ LDBD8               = &DBD8
+ LOIN                = &DC0F
+ PIXEL               = &E4F0
+ ECBLB2              = &E596
+ DELAY               = &EBA2
+ EXNO3               = &EBAD
+ BOOP                = &EBE5
+ NOISE               = &EBF2
+ NAMETABLE0_BANK7    = &EC7D
+ TIDY                = &EDEA
+ PAS1                = &EF7A
+ LL164               = &EFF7
+ DETOK_BANK7         = &F082
+ DTS_BANK7           = &F09D
+ F186_BANK7          = &F186
+ MVS5_BANK7          = &F1A2
+ HALL                = &F1BD
+ DASC_BANK7          = &F1E6
+ TT27_BANK7          = &F201
+ TT27_control_codes  = &F237
+ TT66                = &F26E
+ SCAN_BANK7          = &F2A8
+ LF2BD               = &F2BD
+ CLYNS               = &F2DE
+ Ze                  = &F42E
+ NLIN4               = &F473
+ DORND2              = &F4AC
+ DORND               = &F4AD
+ PROJ                = &F4C1
+ MU5                 = &F65A
+ MULT3               = &F664
+ MLS2                = &F6BA
+ MLS1                = &F6C2
+ MULTSm2             = &F6C4
+ MULTS               = &F6C6
+ MU6                 = &F707
+ SQUA                = &F70C
+ SQUA2               = &F70E
+ MU1                 = &F713
+ MLU1                = &F718
+ MLU2                = &F71D
+ MULTU               = &F721
+ MU11                = &F725
+ FMLTU2              = &F766
+ FMLTU               = &F770
+ MLTU2m2             = &F7AB
+ MLTU2               = &F7AD
+ MUT2                = &F7D2
+ MUT1                = &F7D6
+ MULT1               = &F7DA
+ MULT12              = &F83C
+ TAS3                = &F853
+ MAD                 = &F86F
+ ADD                 = &F872
+ TIS1                = &F8AE
+ DV42                = &F8D1
+ DV41                = &F8D4
+ DVID3B2             = &F962
+ LL5                 = &FA55
+ LL28                = &FA91
+ NORM                = &FAF8
 
 \ ******************************************************************************
 \
@@ -374,8 +370,6 @@ NORM              = &FAF8
  SKIP 18                \ Temporary storage for a block of values, used in a
                         \ number of places
 
-SUNX = &003E
-
 .XX0
 
  SKIP 2                 \ Temporary storage, used to store the address of a ship
@@ -545,7 +539,8 @@ SUNX = &003E
 
 .XX18
 
- SKIP 4                 \ ???
+ SKIP 4                 \ Temporary storage used to store coordinates in the
+                        \ LL9 ship-drawing routine
 
 .K6
 
@@ -746,8 +741,7 @@ SUNX = &003E
 
  SKIP 1                 \ This is used to store the number of pixel rows in the
                         \ space view, which is also the y-coordinate of the
-                        \ bottom pixel row of the space view (it is set to 191
-                        \ in the RES2 routine)
+                        \ bottom pixel row of the space view
 
 .L00B4
 
@@ -914,7 +908,13 @@ SUNX = &003E
 
  SKIP 1                 \ ???
 
- ORG &E9
+.L00E7
+
+ SKIP 1                 \ ???
+
+.L00E8
+
+ SKIP 1                 \ ???
 
 .L00E9
 
@@ -1036,7 +1036,7 @@ SUNX = &003E
 \
 \       Name: K%
 \       Type: Workspace
-\    Address: &0600 to &0800 ???
+\    Address: &0600 to &07FF
 \   Category: Workspaces
 \    Summary: Ship data blocks
 \  Deep dive: Ship data blocks
@@ -1072,6 +1072,7 @@ LOAD% = &8000
 
 ORG CODE%
 
+\ ******************************************************************************
 \
 \       Name: RESET_MMC1
 \       Type: Variable
@@ -1129,6 +1130,30 @@ ORG CODE%
 
 \ ******************************************************************************
 \
+\       Name: NMIRQ_MMC1
+\       Type: Subroutine
+\   Category: Text
+\    Summary: The IRQ and NMI handler while the MMC1 mapper reset routine is
+\             still running
+\
+\ ******************************************************************************
+
+.NMIRQ_MMC1
+
+ RTI                    \ Return from the IRQ interrupt without doing anything
+                        \
+                        \ This ensures that while the system is starting up and
+                        \ the ROM banks are in an unknown configuration, any IRQ
+                        \ interrupts that go via the vector at &FFFE and any NMI
+                        \ interrupts that go via the vector at &FFFA will end up
+                        \ here and be dealt with
+                        \
+                        \ Once bank 7 is switched into &C000 by the RESET_MMC1
+                        \ routine, the vector is overwritten with the last two
+                        \ bytes of bank 7, which point to the IRQ routine
+
+\ ******************************************************************************
+\
 \       Name: Version number
 \       Type: Variable
 \   Category: Text
@@ -1136,7 +1161,7 @@ ORG CODE%
 \
 \ ******************************************************************************
 
- EQUS "@ 5.0"
+ EQUS " 5.0"
 
 \ ******************************************************************************
 \
@@ -18207,8 +18232,8 @@ ENDMACRO
                         \ down one row
 
  BNE RR4S               \ Jump to RR4 to restore the registers and return from
-                        \ the subroutine using a tail call (this BNE is effectively a JMP as Y
-                        \ will never be zero)
+                        \ the subroutine using a tail call (this BNE is
+                        \ effectively a JMP as Y will never be zero)
 
 .RR1
 
@@ -18651,11 +18676,18 @@ ENDMACRO
 
  NEXT
 
- EQUW &C007             \ Vector to NMI handler
+ EQUW NMIRQ_MMC1+&4000  \ Vector to the NMI handler in case this bank is loaded
+                        \ into &C000 during startup (the handler contains an RTI
+                        \ so the interrupt is processed but has no effect)
 
- EQUW &C000             \ Vector to RESET handler
+ EQUW RESET_MMC1+&4000  \ Vector to the RESET handler in case this bank is
+                        \ loaded into &C000 during startup (the handler resets
+                        \ the MMC1 mapper to map bank 7 into &C000 instead)
 
- EQUW &C007             \ Vector to IRQ/BRK handler
+ EQUW NMIRQ_MMC1+&4000  \ Vector to the IRQ/BRK handler in case this bank is
+                        \ loaded into &C000 during startup (the handler contains
+                        \ an RTI so the interrupt is processed but has no
+                        \ effect)
 
 \ ******************************************************************************
 \

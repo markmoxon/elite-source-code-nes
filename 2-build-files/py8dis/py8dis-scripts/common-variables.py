@@ -253,6 +253,7 @@ label(0x045A, "K2_1")
 label(0x045B, "K2_2")
 label(0x045C, "K2_3")
 label(0x045F, "QQ19_2")
+label(0x0475, "CONT2_SCAN")     # My addition, if non-zero, scan controller 2
 label(0x047F, "SWAP")
 label(0x0481, "XSAV2")
 label(0x0482, "YSAV2")
@@ -271,11 +272,27 @@ label(0x049C, "QQ8_1")
 label(0x049D, "QQ9")
 label(0x049E, "QQ10")
 
-label(0x04A4, "QQ18_LO")     # My addition, gets set to address of token table
-label(0x04A5, "QQ18_HI")     # that ex then accesses
-label(0x04A6, "TKN1_LO")    # My addition, gets set to address of token table
-label(0x04A7, "TKN1_HI")    # that DETOK then accesses
-label(0x04A8, "LANG")  		# My addition
+label(0x04A4, "QQ18_LO")    	# My addition, gets set to address of token table
+label(0x04A5, "QQ18_HI")    	# that ex then accesses
+label(0x04A6, "TKN1_LO")    	# My addition, gets set to address of token table
+label(0x04A7, "TKN1_HI")   		# that DETOK then accesses
+label(0x04A8, "LANG")  			# My addition
+label(0x04AA, "CONT1_DOWN")		# My addition
+label(0x04AB, "CONT2_DOWN")
+label(0x04AC, "CONT1_UP")
+label(0x04AD, "CONT2_UP")
+label(0x04AE, "CONT1_LEFT")
+label(0x04AF, "CONT2_LEFT")
+label(0x04B0, "CONT1_RIGHT")
+label(0x04B1, "CONT2_RIGHT")
+label(0x04B2, "CONT1_A")
+label(0x04B3, "CONT2_A")
+label(0x04B4, "CONT1_B")
+label(0x04B5, "CONT2_B")
+label(0x04B6, "CONT1_START")
+label(0x04B7, "CONT2_START")
+label(0x04B8, "CONT1_SELECT")
+label(0x04B9, "CONT2_SELECT")
 
 label(0x04C8, "SX")
 label(0x04DD, "SY")
@@ -341,6 +358,7 @@ subroutine(0xC007, "Spercent")
 subroutine(0xC0AD, "RESETBANK")     # My addition, switch bank to stack value
 subroutine(0xC0AE, "SETBANK")       # My addition, switch bank to A
 subroutine(0xCE90, "GINF")
+subroutine(0xCED4, "IRQ")           # My addition, IRQ handler
 subroutine(0xCED5, "NMI")           # My addition, NMI handler
 subroutine(0xD0F8, "CONTROLLERS")	# My addition
 subroutine(0xD06D, "NAMETABLE0")    # My addition, switches PPU to namespace 0

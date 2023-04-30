@@ -116,61 +116,6 @@ L05EF               = &05EF
 L05F0               = &05F0
 L05F1               = &05F1
 
-\ NES PPU registers
-
-PPU_CTRL            = &2000
-PPU_MASK            = &2001
-PPU_STATUS          = &2002
-OAM_ADDR            = &2003
-OAM_DATA            = &2004
-PPU_SCROLL          = &2005
-PPU_ADDR            = &2006
-PPU_DATA            = &2007
-OAM_DMA             = &4014
-
-\ Shared code from 7.asm
-
-SNE                 = &C500
-ACT                 = &C520
-XX21                = &C540
-NAMETABLE0          = &D06D
-LD9F7               = &D9F7
-LDA18               = &DA18
-LDAF8               = &DAF8
-LOIN                = &DC0F
-LE04A               = &E04A
-LE0BA               = &E0BA
-PIXEL               = &E4F0
-MVS5_BANK7          = &F1A2
-TT66                = &F26E
-LF2CE               = &F2CE
-DORND2              = &F4AC
-DORND               = &F4AD
-PROJ                = &F4C1
-MLS2                = &F6BA
-MLS1                = &F6C2
-MULTS               = &F6C6
-SQUA2               = &F70E
-MLU1                = &F718
-MLU2                = &F71D
-MULTU               = &F721
-FMLTU2              = &F766
-FMLTU               = &F770
-MUT2                = &F7D2
-MUT1                = &F7D6
-MULT1               = &F7DA
-MULT12              = &F83C
-MAD                 = &F86F
-ADD                 = &F872
-TIS1                = &F8AE
-DV42                = &F8D1
-DV41                = &F8D4
-LF8D8               = &F8D8
-DVID3B2             = &F962
-LL5                 = &FA55
-LL28                = &FA91
-NORM                = &FAF8
-
 \ ******************************************************************************
 \
 \ Configuration variables
@@ -188,6 +133,57 @@ NORM                = &FAF8
                         \ stored in INWK and K%)
 
  S% = &C007             \ The game's main entry point in bank 7
+
+ PPU_CTRL   = &2000     \ NES PPU registers
+ PPU_MASK   = &2001
+ PPU_STATUS = &2002
+ OAM_ADDR   = &2003
+ OAM_DATA   = &2004
+ PPU_SCROLL = &2005
+ PPU_ADDR   = &2006
+ PPU_DATA   = &2007
+ OAM_DMA    = &4014
+ 
+ SNE        = &C500     \ Addresses of routines in bank 7
+ ACT        = &C520
+ XX21       = &C540
+ NAMETABLE0 = &D06D
+ LD9F7      = &D9F7
+ LDA18      = &DA18
+ LDAF8      = &DAF8
+ LOIN       = &DC0F
+ LE04A      = &E04A
+ LE0BA      = &E0BA
+ PIXEL      = &E4F0
+ MVS5_BANK7 = &F1A2
+ TT66       = &F26E
+ LF2CE      = &F2CE
+ DORND2     = &F4AC
+ DORND      = &F4AD
+ PROJ       = &F4C1
+ MLS2       = &F6BA
+ MLS1       = &F6C2
+ MULTS      = &F6C6
+ SQUA2      = &F70E
+ MLU1       = &F718
+ MLU2       = &F71D
+ MULTU      = &F721
+ FMLTU2     = &F766
+ FMLTU      = &F770
+ MUT2       = &F7D2
+ MUT1       = &F7D6
+ MULT1      = &F7DA
+ MULT12     = &F83C
+ MAD        = &F86F
+ ADD        = &F872
+ TIS1       = &F8AE
+ DV42       = &F8D1
+ DV41       = &F8D4
+ LF8D8      = &F8D8
+ DVID3B2    = &F962
+ LL5        = &FA55
+ LL28       = &FA91
+ NORM       = &FAF8
 
 \ ******************************************************************************
 \
@@ -390,8 +386,6 @@ NORM                = &FAF8
  SKIP 18                \ Temporary storage for a block of values, used in a
                         \ number of places
 
-SUNX = &003E
-
 .XX0
 
  SKIP 2                 \ Temporary storage, used to store the address of a ship
@@ -561,7 +555,8 @@ SUNX = &003E
 
 .XX18
 
- SKIP 4                 \ ???
+ SKIP 4                 \ Temporary storage used to store coordinates in the
+                        \ LL9 ship-drawing routine
 
 .K6
 
@@ -762,8 +757,7 @@ SUNX = &003E
 
  SKIP 1                 \ This is used to store the number of pixel rows in the
                         \ space view, which is also the y-coordinate of the
-                        \ bottom pixel row of the space view (it is set to 191
-                        \ in the RES2 routine)
+                        \ bottom pixel row of the space view
 
 .L00B4
 
@@ -930,7 +924,13 @@ SUNX = &003E
 
  SKIP 1                 \ ???
 
- ORG &E9
+.L00E7
+
+ SKIP 1                 \ ???
+
+.L00E8
+
+ SKIP 1                 \ ???
 
 .L00E9
 
@@ -1052,7 +1052,7 @@ SUNX = &003E
 \
 \       Name: K%
 \       Type: Workspace
-\    Address: &0600 to &0800 ???
+\    Address: &0600 to &07FF
 \   Category: Workspaces
 \    Summary: Ship data blocks
 \  Deep dive: Ship data blocks
@@ -1088,6 +1088,7 @@ LOAD% = &8000
 
 ORG CODE%
 
+\ ******************************************************************************
 \
 \       Name: RESET_MMC1
 \       Type: Variable
@@ -1145,6 +1146,30 @@ ORG CODE%
 
 \ ******************************************************************************
 \
+\       Name: NMIRQ_MMC1
+\       Type: Subroutine
+\   Category: Text
+\    Summary: The IRQ and NMI handler while the MMC1 mapper reset routine is
+\             still running
+\
+\ ******************************************************************************
+
+.NMIRQ_MMC1
+
+ RTI                    \ Return from the IRQ interrupt without doing anything
+                        \
+                        \ This ensures that while the system is starting up and
+                        \ the ROM banks are in an unknown configuration, any IRQ
+                        \ interrupts that go via the vector at &FFFE and any NMI
+                        \ interrupts that go via the vector at &FFFA will end up
+                        \ here and be dealt with
+                        \
+                        \ Once bank 7 is switched into &C000 by the RESET_MMC1
+                        \ routine, the vector is overwritten with the last two
+                        \ bytes of bank 7, which point to the IRQ routine
+
+\ ******************************************************************************
+\
 \       Name: Version number
 \       Type: Variable
 \   Category: Text
@@ -1152,7 +1177,7 @@ ORG CODE%
 \
 \ ******************************************************************************
 
- EQUS "@ 5.0"
+ EQUS " 5.0"
 
 \ ******************************************************************************
 \
@@ -1192,33 +1217,33 @@ ENDMACRO
 \
 \ ******************************************************************************
 
- EQUB &9D, &84          \ These bytes appear to be unused
- EQUB &73, &85          \
- EQUB &AF, &85          \ This is a truncated version of XX21, the table of ship
- EQUB &E1, &86          \ blueprint addresses. This version only contains the
- EQUB &C3, &88          \ asteroid onwards, and it is not used anywhere, so it
- EQUB &4B, &8A          \ looks like this is all that remains of a copy of XX21
- EQUB &3D, &8B          \ that was assembled at address &8000, and then ignored
- EQUB &33, &8C
- EQUB &35, &8D
- EQUB &0B, &8E
- EQUB &E5, &8E
- EQUB &8D, &8F
- EQUB &BB, &90
- EQUB &A1, &91
- EQUB &D1, &92
- EQUB &95, &93
- EQUB &5B, &94
- EQUB &0B, &95
- EQUB &93, &96
- EQUB &BD, &97
- EQUB &AF, &98
- EQUB &C9, &99
- EQUB &A1, &9A
- EQUB &BD, &9B
- EQUB &29, &9C
- EQUB &2B, &9D
- EQUB &2D, &9E
+ EQUW SHIP_ASTEROID     \ These bytes appear to be unused
+ EQUW SHIP_SPLINTER     \
+ EQUW SHIP_SHUTTLE      \ This is a truncated copy of XX21, the table of ship
+ EQUW SHIP_TRANSPORTER  \ blueprint addresses. This version only contains the
+ EQUW SHIP_COBRA_MK_3   \ asteroid onwards, and it is not used anywhere, so it
+ EQUW SHIP_PYTHON       \ looks like this is all that remains of a copy of XX21
+ EQUW SHIP_BOA          \ that was assembled at address &8000, and then
+ EQUW SHIP_ANACONDA     \ partially overwritten
+ EQUW SHIP_ROCK_HERMIT
+ EQUW SHIP_VIPER
+ EQUW SHIP_SIDEWINDER
+ EQUW SHIP_MAMBA
+ EQUW SHIP_KRAIT
+ EQUW SHIP_ADDER
+ EQUW SHIP_GECKO
+ EQUW SHIP_COBRA_MK_1
+ EQUW SHIP_WORM
+ EQUW SHIP_COBRA_MK_3_P
+ EQUW SHIP_ASP_MK_2
+ EQUW SHIP_PYTHON_P
+ EQUW SHIP_FER_DE_LANCE
+ EQUW SHIP_MORAY
+ EQUW SHIP_THARGOID
+ EQUW SHIP_THARGON
+ EQUW SHIP_CONSTRICTOR
+ EQUW SHIP_COUGAR
+ EQUW SHIP_DODO
 
 \ ******************************************************************************
 \
@@ -13609,11 +13634,18 @@ ENDMACRO
 
  NEXT
 
- EQUW &C007             \ Vector to NMI handler
+ EQUW NMIRQ_MMC1+&4000  \ Vector to the NMI handler in case this bank is loaded
+                        \ into &C000 during startup (the handler contains an RTI
+                        \ so the interrupt is processed but has no effect)
 
- EQUW &C000             \ Vector to RESET handler
+ EQUW RESET_MMC1+&4000  \ Vector to the RESET handler in case this bank is
+                        \ loaded into &C000 during startup (the handler resets
+                        \ the MMC1 mapper to map bank 7 into &C000 instead)
 
- EQUW &C007             \ Vector to IRQ/BRK handler
+ EQUW NMIRQ_MMC1+&4000  \ Vector to the IRQ/BRK handler in case this bank is
+                        \ loaded into &C000 during startup (the handler contains
+                        \ an RTI so the interrupt is processed but has no
+                        \ effect)
 
 \ ******************************************************************************
 \
