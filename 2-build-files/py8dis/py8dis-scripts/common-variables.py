@@ -31,7 +31,7 @@ label(0x0003, "RAND_2")
 label(0x0004, "RAND_3")
 label(0x0006, "T1")
 label(0x0007, "SC")
-label(0x0008, "SC_1")
+label(0x0008, "SCH")
 label(0x0009, "XX1")
 label(0x0009, "INWK")
 label(0x000A, "INWK_1")
@@ -161,7 +161,7 @@ label(0x008B, "XX18_3")
 label(0x008C, "K6")
 label(0x008D, "K6_1")
 label(0x008E, "K6_2")
-label(0x008F, "K6_3")	# XX18+7
+label(0x008F, "K6_3")	    # XX18+7
 label(0x0090, "K6_4")
 label(0x0091, "BET2")
 label(0x0092, "BET2_1")
@@ -194,13 +194,31 @@ label(0x00AC, "XX20")
 label(0x00AE, "RAT")
 label(0x00AF, "RAT2")
 label(0x00B0, "widget")
-label(0x00B1, "Yx1M2")		# My addition = height of screen for text screens?
-label(0x00B2, "Yx2M2")		# My addition = 2 x Yx1M2
+label(0x00B1, "Yx1M2")		# Mine = height of screen for text screens?
+label(0x00B2, "Yx2M2")		# Mine = 2 x Yx1M2
 label(0x00B3, "Yx2M1")
 label(0x00B4, "messXC")
 label(0x00B6, "newzp")
 
-label(0x00F7, "BANK")        # My addition, contains lower bank number
+label(0x00B8, "NEXT_TILE")   # Mine, contains next free tile number to draw into
+label(0x00B9, "PATTERNS_HI") # Mine, high byte of current nametable (&70 or &74)
+                             # HI(PATTERNS_0) or HI(PATTERNS_1)
+
+label(0x00BA, "T5")         # Mine, temporary storage
+label(0x00BB, "T5_1")
+
+label(0x00D4, "ADDR1_LO")   # Mine, an address within the PPU to be poked to
+label(0x00D5, "ADDR1_HI")
+
+label(0x00E6, "NAMES_HI")   # Mine, high byte of current nametable (&70 or &74)
+                            # HI(NAMES_0) or HI(NAMES_1)
+
+label(0x00EB, "T6")         # Mine, an address within the PPU to be poked to
+label(0x00EC, "T6_1")
+label(0x00ED, "T7")         # Mine, an address to fetch PPU data from
+label(0x00EE, "T7_1")
+
+label(0x00F7, "BANK")        # Mine, contains lower bank number
 
 label(0x0100, "XX3")
 label(0x0101, "XX3_1")
@@ -254,7 +272,9 @@ label(0x045A, "K2_1")
 label(0x045B, "K2_2")
 label(0x045C, "K2_3")
 label(0x045F, "QQ19_2")
-label(0x0475, "CONT2_SCAN")     # My addition, if non-zero, scan controller 2
+label(0x046E, "BOXEDGE1")       # Mine, bitmap for drawing box edge?
+label(0x046F, "BOXEDGE2")       # Mine, bitmap for drawing box edge?
+label(0x0475, "CONT2_SCAN")     # Mine, if non-zero, scan controller 2
 label(0x047F, "SWAP")
 label(0x0481, "XSAV2")
 label(0x0482, "YSAV2")
@@ -273,12 +293,12 @@ label(0x049C, "QQ8_1")
 label(0x049D, "QQ9")
 label(0x049E, "QQ10")
 
-label(0x04A4, "QQ18_LO")    	# My addition, gets set to address of token table
+label(0x04A4, "QQ18_LO")    	# Mine, gets set to address of token table
 label(0x04A5, "QQ18_HI")    	# that ex then accesses
-label(0x04A6, "TKN1_LO")    	# My addition, gets set to address of token table
+label(0x04A6, "TKN1_LO")    	# Mine, gets set to address of token table
 label(0x04A7, "TKN1_HI")   		# that DETOK then accesses
-label(0x04A8, "LANG")  			# My addition
-label(0x04AA, "CONT1_DOWN")		# My addition
+label(0x04A8, "LANG")  			# Mine
+label(0x04AA, "CONT1_DOWN")		# Mine
 label(0x04AB, "CONT2_DOWN")
 label(0x04AC, "CONT1_UP")
 label(0x04AD, "CONT2_UP")
@@ -341,6 +361,14 @@ label(0x4015, "APU_FLAGS")
 label(0x4016, "CONTROLLER_1")
 label(0x4017, "CONTROLLER_2")
 
+# Battery-backed WRAM in the cartridge
+
+label(0x6000, "PATTERNS_0")     # Mine, two buffers for tile patterns
+label(0x6800, "PATTERNS_1")
+
+label(0x7000, "NAMES_0")        # Mine, two buffers for nametables
+label(0x7400, "NAMES_1")
+
 # Permanently loaded labels in 7.asm ($C000-$FFFF)
 
 label(0xC100, "log")
@@ -353,39 +381,66 @@ label(0xC53E, "XX21m2")
 label(0xC53F, "XX21m1")
 label(0xC540, "XX21")
 label(0xCE7E, "UNIV")
-label(0xCE7E, "UNIV_1")
+label(0xCE7F, "UNIV_1")
+label(0xCED0, "NAMES_LOOKUP")
+label(0xCED2, "PATTERNS_LOOKUP")
+label(0xD9F7, "TWOS")
+label(0xDA01, "TWOS2")
+label(0xDA09, "TWFL")
+label(0xDA10, "TWFR")
+label(0xDA18, "ylookupLO")
+label(0xDAF8, "ylookupHI")
 
 subroutine(0xC007, "Spercent")
-subroutine(0xC0AD, "RESETBANK")     # My addition, switch bank to stack value
-subroutine(0xC0AE, "SETBANK")       # My addition, switch bank to A
+subroutine(0xC0AD, "RESETBANK")     # Mine, switch bank to stack value
+subroutine(0xC0AE, "SETBANK")       # Mine, switch bank to A
+subroutine(0xCD6F, "BOXEDGES")      # Mine, draw space view box edges?
 subroutine(0xCE90, "GINF")
-subroutine(0xCED4, "IRQ")           # My addition, IRQ handler
-subroutine(0xCED5, "NMI")           # My addition, NMI handler
-subroutine(0xD0F8, "CONTROLLERS")	# My addition
-subroutine(0xD06D, "NAMETABLE0")    # My addition, switches PPU to namespace 0
-subroutine(0xDC0F, "LOIN")     # Could also be LSPUT
+subroutine(0xCED4, "IRQ")           # Mine, IRQ handler
+subroutine(0xCED5, "NMI")           # Mine, NMI handler
+subroutine(0xCF2E, "SETPALETTE")    # Mine, set PPU palette?
+subroutine(0xD02D, "RESETNAMES1")   # Mine, does this clear down nametable 1?
+subroutine(0xD0F8, "CONTROLLERS")   # Mine, reads controllers
+subroutine(0xD06D, "NAMETABLE0")    # Mine, switches PPU to namespace 0
+subroutine(0xD710, "FILLMEMORY")    # Mine, something to do with memory filling?
+subroutine(0xD986, "SENDTOPPU")     # Mine, something to do with sending to PPU?
+subroutine(0xDC0F, "LOIN")
 subroutine(0xE4F0, "PIXEL")
+subroutine(0xE543, "PIXELx2")       # Mine, draws two pixel dash in space view
 subroutine(0xE596, "ECBLB2")
 subroutine(0xEBA2, "DELAY")
 subroutine(0xEBAD, "EXNO3")
 subroutine(0xEBE5, "BOOP")
 subroutine(0xEBF2, "NOISE")
+subroutine(0xEC7D, "SET_NAMETABLE_0_A")	    # SET_NAMETABLE_0 macro that preserves A
 subroutine(0xEC8D, "LDA_XX0_Y")
 subroutine(0xECA0, "LDA_EPC_Y")
-subroutine(0xEDEA, "TIDY")
-subroutine(0xEF7A, "PAS1_BANK7")
-subroutine(0xEFF7, "LL164")
-subroutine(0xF082, "DETOK_BANK7")
-subroutine(0xF09D, "DTS")
-subroutine(0xEC7D, "NAMETABLE0_BANK7")	# BANK7 version of SET_NAMETABLE_0
-subroutine(0xF186, "F186_BANK7")
-subroutine(0xF1A2, "MVS5_BANK7")
-subroutine(0xF1BD, "HALL")
-subroutine(0xF1E6, "DASC_BANK7")
-subroutine(0xF201, "TT27_BANK7")
-subroutine(0xF237, "TT27_control_codes")    # My addition, it's the control code part of TT27 in bank 0
-subroutine(0xF26E, "TT66")
-subroutine(0xF2A8, "SCAN_BANK7")
+subroutine(0xECAE, "INC_TALLY")     # Mine, adds KWL/KWH to TALLY
+
+subroutine(0xECE2, "CB1D4_BANK0")
+subroutine(0xECF9, "SETK_K3_XC_YC")     # Temporary name
+subroutine(0xED16, "C811E_BANK6")
+subroutine(0xED24, "C8021_BANK6")
+subroutine(0xED24, "C8021_BANK6")
+subroutine(0xED50, "C89D1_BANK6")
+subroutine(0xED6B, "C8012_BANK6")
+subroutine(0xED81, "CBF41_BANK5")
+
+
+subroutine(0xEDEA, "TIDY_BANK1")
+subroutine(0xEF7A, "PAS1_BANK0")
+subroutine(0xEFF7, "LL164_BANK6")
+subroutine(0xF082, "DETOK_BANK2")
+subroutine(0xF09D, "DTS_BANK2")
+subroutine(0xF186, "CF186_BANK6")
+subroutine(0xF1A2, "MVS5_BANK0")
+subroutine(0xF1BD, "HALL_BANK1")
+subroutine(0xF1E6, "DASC_BANK2")
+subroutine(0xF201, "TT27_BANK2")
+subroutine(0xF237, "TT27_BANK0")    # Mine, it's the control code part of TT27 in bank 0
+subroutine(0xF26E, "TT66_BANK0")
+subroutine(0xF2A8, "SCAN_BANK1")
+
 subroutine(0xF2DE, "CLYNS")
 subroutine(0xF42E, "Ze")
 subroutine(0xF473, "NLIN4")

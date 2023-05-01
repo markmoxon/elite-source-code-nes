@@ -69,7 +69,7 @@
  LE04A      = &E04A
  LE0BA      = &E0BA
  PIXEL      = &E4F0
- MVS5_BANK7 = &F1A2
+ MVS5_BANK0 = &F1A2
  TT66       = &F26E
  LF2CE      = &F2CE
  DORND2     = &F4AC
@@ -12997,15 +12997,15 @@ ENDMACRO
 
  LDX #21                \ Rotate (sidev_x, nosev_x) by a small angle (yaw)
  LDY #9
- JSR MVS5_BANK7
+ JSR MVS5_BANK0
 
  LDX #23                \ Rotate (sidev_y, nosev_y) by a small angle (yaw)
  LDY #11
- JSR MVS5_BANK7
+ JSR MVS5_BANK0
 
  LDX #25                \ Rotate (sidev_z, nosev_z) by a small angle (yaw)
  LDY #13
- JSR MVS5_BANK7
+ JSR MVS5_BANK0
 
  DEC XSAV               \ Decrement the yaw counter in XSAV
 
