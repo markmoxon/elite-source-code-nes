@@ -597,6 +597,7 @@ LC006            = &C006
 Spercent         = &C007
 RESETBANK        = &C0AD
 SETBANK          = &C0AE
+LC0DF            = &C0DF
 log              = &C100
 logL             = &C200
 antilog          = &C300
@@ -606,11 +607,14 @@ ACT              = &C520
 XX21m2           = &C53E
 XX21m1           = &C53F
 XX21             = &C540
+SENDTOPPU1       = &CC2E
+COPYNAMES        = &CD34
 BOXEDGES         = &CD6F
 UNIV             = &CE7E
 UNIV_1           = &CE7F
 GINF             = &CE90
-LCE9E            = &CE9E
+sub_CE9E         = &CE9E
+sub_CEA5         = &CEA5
 NAMES_LOOKUP     = &CED0
 PATTERNS_LOOKUP  = &CED2
 IRQ              = &CED4
@@ -620,7 +624,7 @@ RESETNAMES1      = &D02D
 NAMETABLE0       = &D06D
 CONTROLLERS      = &D0F8
 FILLMEMORY       = &D710
-SENDTOPPU        = &D986
+SENDTOPPU2       = &D986
 TWOS             = &D9F7
 TWOS2            = &DA01
 TWFL             = &DA09
@@ -648,22 +652,90 @@ C8021_BANK6      = &ED24
 C89D1_BANK6      = &ED50
 C8012_BANK6      = &ED6B
 CBF41_BANK5      = &ED81
+CB9F9_BANK4      = &ED8F
+CB96B_BANK4      = &ED9D
+CB63D_BANK3      = &EDAB
+CB88C_BANK6      = &EDB9
+CA070_BANK1      = &EDC7
+CBA23_BANK3      = &EDDC
 TIDY_BANK1       = &EDEA
+CBC83_BANK6      = &EDFF
+C9522_BANK0      = &EE0D
+CB1BE_BANK1      = &EE15
+CAC25_BANK1      = &EE3F
+CB2FB_BANK3      = &EE54
+CB219_BANK3      = &EE62
+CB9C1_BANK4      = &EE78
+CA082_BANK6      = &EE8B
+CA0F8_BANK6      = &EE99
+CB882_BANK4      = &EEA7
+CA4A5_BANK6      = &EEB5
+CB2EF_BANK0      = &EEC3
+CB9E2_BANK3      = &EED3
+CB673_BANK3      = &EEE8
+CB2BC_BANK3      = &EEF6
+CB248_BANK3      = &EF04
+CBA17_BANK6      = &EF12
+CAFCD_BANK3      = &EF20
+CBE52_BANK6      = &EF35
+CBED2_BANK6      = &EF43
+CB0E1_BANK3      = &EF51
+CB18E_BANK3      = &EF6C
 PAS1_BANK0       = &EF7A
+CBED7_BANK5      = &EF88
+CBEEA_BANK5      = &EF96
+CB93C_BANK4      = &EFA4
+CB8F9_BANK4      = &EFB2
+CA2C3_BANK6      = &EFC0
+CBA63_BANK6      = &EFCE
+CB39D_BANK0      = &EFDC
 LL164_BANK6      = &EFF7
+CB919_BANK6      = &F005
+CA166_BANK6      = &F013
+CBBDE_BANK6      = &F021
+CBB37_BANK6      = &F02F
+CB8FE_BANK6      = &F03D
+CB90D_BANK6      = &F04B
+CA5AB_BANK6      = &F059
+CEBA9_BANK0      = &F06F
 DETOK_BANK2      = &F082
 DTS_BANK2        = &F09D
+CB3E8_BANK2      = &F0B8
+CAE18_BANK3      = &F0C6
+CAC1D_BANK3      = &F0E1
+CA730_BANK3      = &F0FC
+CA775_BANK3      = &F10A
+CAABC_BANK3      = &F118
+CA7B7_BANK3      = &F126
+CA9D1_BANK3      = &F139
+CA972_BANK3      = &F15C
+CAC5C_BANK3      = &F171
 CF186_BANK6      = &F186
+CB459_BANK6      = &F194
 MVS5_BANK0       = &F1A2
 HALL_BANK1       = &F1BD
+CB635_BANK2      = &F1CB
 DASC_BANK2       = &F1E6
 TT27_BANK2       = &F201
+CB4AA_BANK2      = &F21C
 TT27_BANK0       = &F237
+CA379_BANK0      = &F245
+CBAF3_BANK1      = &F25A
 TT66_BANK0       = &F26E
+CA65D_BANK1      = &F280
+CB341_BANK3      = &F293
 SCAN_BANK1       = &F2A8
-LF2CE            = &F2CE
+C8926_BANK0      = &F2BD
+CCD34_BANK0      = &F2CE
 CLYNS            = &F2DE
+LF333            = &F333
+sub_CF338        = &F338
+sub_CF359        = &F359
+sub_CF3BC        = &F3BC
+sub_CF42A        = &F42A
 Ze               = &F42E
+sub_CF454        = &F454
+sub_CF46A        = &F46A
 NLIN4            = &F473
 DORND2           = &F4AC
 DORND            = &F4AD
@@ -3520,7 +3592,7 @@ NORM             = &FAF8
  ORA #&A0                                     ; A8F4: 09 A0       ..
  STA INWK_31                                  ; A8F6: 85 28       .(
 .CA8F8
- JMP LCE9E                                    ; A8F8: 4C 9E CE    L..
+ JMP sub_CE9E                                 ; A8F8: 4C 9E CE    L..
 
  EQUB 0, 2                                    ; A8FB: 00 02       ..
 
@@ -3588,7 +3660,7 @@ NORM             = &FAF8
  JMP CBB24                                    ; A964: 4C 24 BB    L$.
 
 .CA967
- JSR LCE9E                                    ; A967: 20 9E CE     ..
+ JSR sub_CE9E                                 ; A967: 20 9E CE     ..
  LDA L040A                                    ; A96A: AD 0A 04    ...
  STA Q                                        ; A96D: 85 97       ..
  LDA INWK_34                                  ; A96F: A5 2B       .+
@@ -5635,7 +5707,7 @@ LB5CF = sub_CB5CE+1
  STA L00D2                                    ; B79C: 85 D2       ..
  LDA #&50 ; 'P'                               ; B79E: A9 50       .P
  STA L00D8                                    ; B7A0: 85 D8       ..
- JMP LF2CE                                    ; B7A2: 4C CE F2    L..
+ JMP CCD34_BANK0                              ; B7A2: 4C CE F2    L..
 
 ; ******************************************************************************
 .ZINF

@@ -637,6 +637,7 @@ LC006            = &C006
 Spercent         = &C007
 RESETBANK        = &C0AD
 SETBANK          = &C0AE
+LC0DF            = &C0DF
 log              = &C100
 logL             = &C200
 antilog          = &C300
@@ -647,10 +648,14 @@ XX21m2           = &C53E
 XX21m1           = &C53F
 XX21             = &C540
 LC6F4            = &C6F4
+SENDTOPPU1       = &CC2E
+COPYNAMES        = &CD34
 BOXEDGES         = &CD6F
 UNIV             = &CE7E
 UNIV_1           = &CE7F
 GINF             = &CE90
+sub_CE9E         = &CE9E
+sub_CEA5         = &CEA5
 NAMES_LOOKUP     = &CED0
 PATTERNS_LOOKUP  = &CED2
 IRQ              = &CED4
@@ -667,7 +672,7 @@ LD8EC            = &D8EC
 LD933            = &D933
 LD946            = &D946
 LD977            = &D977
-SENDTOPPU        = &D986
+SENDTOPPU2       = &D986
 TWOS             = &D9F7
 TWOS2            = &DA01
 TWFL             = &DA09
@@ -694,28 +699,90 @@ C8021_BANK6      = &ED24
 C89D1_BANK6      = &ED50
 C8012_BANK6      = &ED6B
 CBF41_BANK5      = &ED81
+CB9F9_BANK4      = &ED8F
+CB96B_BANK4      = &ED9D
+CB63D_BANK3      = &EDAB
+CB88C_BANK6      = &EDB9
+CA070_BANK1      = &EDC7
+CBA23_BANK3      = &EDDC
 TIDY_BANK1       = &EDEA
-LEE54            = &EE54
-LEE99            = &EE99
-LEEE8            = &EEE8
+CBC83_BANK6      = &EDFF
+C9522_BANK0      = &EE0D
+CB1BE_BANK1      = &EE15
+CAC25_BANK1      = &EE3F
+CB2FB_BANK3      = &EE54
+CB219_BANK3      = &EE62
+CB9C1_BANK4      = &EE78
+CA082_BANK6      = &EE8B
+CA0F8_BANK6      = &EE99
+CB882_BANK4      = &EEA7
+CA4A5_BANK6      = &EEB5
+CB2EF_BANK0      = &EEC3
+CB9E2_BANK3      = &EED3
+CB673_BANK3      = &EEE8
+CB2BC_BANK3      = &EEF6
+CB248_BANK3      = &EF04
+CBA17_BANK6      = &EF12
+CAFCD_BANK3      = &EF20
+CBE52_BANK6      = &EF35
+CBED2_BANK6      = &EF43
+CB0E1_BANK3      = &EF51
+CB18E_BANK3      = &EF6C
 PAS1_BANK0       = &EF7A
-LEF88            = &EF88
-LEF96            = &EF96
-LEFA4            = &EFA4
-LEFB2            = &EFB2
+CBED7_BANK5      = &EF88
+CBEEA_BANK5      = &EF96
+CB93C_BANK4      = &EFA4
+CB8F9_BANK4      = &EFB2
+CA2C3_BANK6      = &EFC0
+CBA63_BANK6      = &EFCE
+CB39D_BANK0      = &EFDC
 LL164_BANK6      = &EFF7
+CB919_BANK6      = &F005
+CA166_BANK6      = &F013
+CBBDE_BANK6      = &F021
+CBB37_BANK6      = &F02F
+CB8FE_BANK6      = &F03D
+CB90D_BANK6      = &F04B
+CA5AB_BANK6      = &F059
+CEBA9_BANK0      = &F06F
 DETOK_BANK2      = &F082
 DTS_BANK2        = &F09D
+CB3E8_BANK2      = &F0B8
+CAE18_BANK3      = &F0C6
+CAC1D_BANK3      = &F0E1
+CA730_BANK3      = &F0FC
+CA775_BANK3      = &F10A
+CAABC_BANK3      = &F118
+CA7B7_BANK3      = &F126
+CA9D1_BANK3      = &F139
+CA972_BANK3      = &F15C
+CAC5C_BANK3      = &F171
 CF186_BANK6      = &F186
+CB459_BANK6      = &F194
 MVS5_BANK0       = &F1A2
 HALL_BANK1       = &F1BD
+CB635_BANK2      = &F1CB
 DASC_BANK2       = &F1E6
 TT27_BANK2       = &F201
+CB4AA_BANK2      = &F21C
 TT27_BANK0       = &F237
+CA379_BANK0      = &F245
+CBAF3_BANK1      = &F25A
 TT66_BANK0       = &F26E
+CA65D_BANK1      = &F280
+CB341_BANK3      = &F293
 SCAN_BANK1       = &F2A8
+C8926_BANK0      = &F2BD
+CCD34_BANK0      = &F2CE
 CLYNS            = &F2DE
+LF333            = &F333
+sub_CF338        = &F338
+sub_CF359        = &F359
+sub_CF3BC        = &F3BC
+sub_CF42A        = &F42A
 Ze               = &F42E
+sub_CF454        = &F454
+sub_CF46A        = &F46A
 NLIN4            = &F473
 DORND2           = &F4AC
 DORND            = &F4AD
@@ -2052,13 +2119,13 @@ NORM             = &FAF8
  BEQ CA83A                                    ; A7DA: F0 5E       .^
  CMP #&96                                     ; A7DC: C9 96       ..
  BNE CA7E6                                    ; A7DE: D0 06       ..
- JSR LEF88                                    ; A7E0: 20 88 EF     ..
+ JSR CBED7_BANK5                              ; A7E0: 20 88 EF     ..
  JMP CA8A2                                    ; A7E3: 4C A2 A8    L..
 
 .CA7E6
  CMP #&98                                     ; A7E6: C9 98       ..
  BNE CA7F0                                    ; A7E8: D0 06       ..
- JSR LEFA4                                    ; A7EA: 20 A4 EF     ..
+ JSR CB93C_BANK4                              ; A7EA: 20 A4 EF     ..
  JMP CA8A2                                    ; A7ED: 4C A2 A8    L..
 
 .CA7F0
@@ -2147,7 +2214,7 @@ NORM             = &FAF8
  JMP CA8A2                                    ; A89C: 4C A2 A8    L..
 
 .CA89F
- JSR SENDTOPPU                                ; A89F: 20 86 D9     ..
+ JSR SENDTOPPU2                               ; A89F: 20 86 D9     ..
 .CA8A2
  JSR sub_CAC86                                ; A8A2: 20 86 AC     ..
  LDA #&10                                     ; A8A5: A9 10       ..
@@ -2198,7 +2265,7 @@ NORM             = &FAF8
  PLA                                          ; A900: 68          h
  STA L00F5                                    ; A901: 85 F5       ..
  STA PPU_CTRL                                 ; A903: 8D 00 20    ..
- JMP LEEE8                                    ; A906: 4C E8 EE    L..
+ JMP CB673_BANK3                              ; A906: 4C E8 EE    L..
 
 .sub_CA909
  LDY #0                                       ; A909: A0 00       ..
@@ -2316,13 +2383,13 @@ NORM             = &FAF8
  LDA W                                        ; A9D5: A5 9E       ..
  CMP #&96                                     ; A9D7: C9 96       ..
  BNE CA9E1                                    ; A9D9: D0 06       ..
- JSR LEF96                                    ; A9DB: 20 96 EF     ..
+ JSR CBEEA_BANK5                              ; A9DB: 20 96 EF     ..
  JMP CA9E8                                    ; A9DE: 4C E8 A9    L..
 
 .CA9E1
  CMP #&98                                     ; A9E1: C9 98       ..
  BNE CA9E8                                    ; A9E3: D0 03       ..
- JSR LEFB2                                    ; A9E5: 20 B2 EF     ..
+ JSR CB8F9_BANK4                              ; A9E5: 20 B2 EF     ..
 .CA9E8
  LDA W                                        ; A9E8: A5 9E       ..
  AND #&40 ; '@'                               ; A9EA: 29 40       )@
@@ -2367,7 +2434,7 @@ NORM             = &FAF8
 .CAA3B
  LDA L0473                                    ; AA3B: AD 73 04    .s.
  BPL CAA43                                    ; AA3E: 10 03       ..
- JMP LEEE8                                    ; AA40: 4C E8 EE    L..
+ JMP CB673_BANK3                              ; AA40: 4C E8 EE    L..
 
 .CAA43
  LDA W                                        ; AA43: A5 9E       ..
@@ -3455,14 +3522,14 @@ NORM             = &FAF8
  STA NEXT_TILE                                ; B225: 85 B8       ..
  LDA L046C                                    ; B227: AD 6C 04    .l.
  STA K_2                                      ; B22A: 85 7F       ..
- JSR LEE54                                    ; B22C: 20 54 EE     T.
+ JSR CB2FB_BANK3                              ; B22C: 20 54 EE     T.
  LDA #&45 ; 'E'                               ; B22F: A9 45       .E
  STA K_2                                      ; B231: 85 7F       ..
  LDA #8                                       ; B233: A9 08       ..
  STA K_3                                      ; B235: 85 80       ..
  LDX #0                                       ; B237: A2 00       ..
  LDY #0                                       ; B239: A0 00       ..
- JSR LEE99                                    ; B23B: 20 99 EE     ..
+ JSR CA0F8_BANK6                              ; B23B: 20 99 EE     ..
  DEC XC                                       ; B23E: C6 32       .2
  DEC YC                                       ; B240: C6 3B       .;
  INC K                                        ; B242: E6 7D       .}
