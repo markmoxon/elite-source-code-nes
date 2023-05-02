@@ -61,7 +61,7 @@
  SNE        = &C500     \ Addresses of routines in bank 7
  ACT        = &C520
  XX21       = &C540
- NAMETABLE0 = &D06D
+ SWITCH_TO_TABLE_0 = &D06D
  LD9F7      = &D9F7
  LDA18      = &DA18
  LDAF8      = &DAF8
@@ -846,7 +846,7 @@
 
  SKIP 1                 \ ???
 
-.L00E9
+.DASHBOARD_SWITCH
 
  SKIP 1                 \ ???
 
@@ -1497,22 +1497,22 @@
 
 \ ******************************************************************************
 \
-\       Name: SET_NAMETABLE_0
+\       Name: CHECK_DASHBOARD
 \       Type: Macro
-\   Category: NES graphics
-\    Summary: Switch the base nametable address to nametable 0 (&2000) when
-\             conditions are met
+\   Category: Screen mode
+\    Summary: If the PPU has started drawing the dashboard, switch to nametable
+\             0 (&2000) and pattern table 0 (&0000)
 \
 \ ******************************************************************************
 
-MACRO SET_NAMETABLE_0
+MACRO CHECK_DASHBOARD
 
- LDA L00E9              \ If bit 7 of L00E9 and bit 6 of PPU_STATUS are set,
- BPL skip               \ then call NAMETABLE0 to:
+ LDA DASHBOARD_SWITCH   \ If bit 7 of DASHBOARD_SWITCH and bit 6 of PPU_STATUS
+ BPL skip               \ are set, then call SWITCH_TO_TABLE_0 to:
  LDA PPU_STATUS         \
- ASL A                  \   * Zero L00E9 to disable calls to NAMETABLE0 until
- BPL skip               \     both conditions are met once again
- JSR NAMETABLE0         \
+ ASL A                  \   * Zero DASHBOARD_SWITCH to disable this process
+ BPL skip               \     until both conditions are met once again
+ JSR SWITCH_TO_TABLE_0  \
                         \   * Clear bits 0 and 4 of L00F5 and PPU_CTRL, to set
                         \     the base nametable address to &2000 (nametable 0)
                         \     or &2800 (which is a mirror of &2000)
@@ -5098,7 +5098,8 @@ ENDMACRO
 
 .LL51
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDX #0                 \ Set X = 0, which will contain the offset of the vector
                         \ to use in the calculation, increasing by 6 for each
@@ -5160,7 +5161,8 @@ ENDMACRO
  STA XX12,Y             \ Store the result in XX12+Y(1 0), starting with the low
                         \ byte
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA S                  \ And then the high byte
  STA XX12+1,Y
@@ -5223,7 +5225,8 @@ ENDMACRO
 
 .LL9
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA TYPE               \ If the ship type is negative then this indicates a
  BMI LL25               \ planet or sun, so jump to PLANET via LL25 above
@@ -5285,7 +5288,8 @@ ENDMACRO
  JSR DORND
  STA (XX19),Y
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
 .EE28
 
@@ -5497,7 +5501,8 @@ ENDMACRO
 
 .LL21
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA XX16,Y             \ Set A = the low byte of the vector coordinate, e.g.
                         \ nosev_z_lo when Y = 16
@@ -5761,7 +5766,8 @@ ENDMACRO
 
 .LL86
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA (V),Y              \ Fetch byte #0 for this face into A, so:
                         \
@@ -5863,7 +5869,8 @@ ENDMACRO
                         \ If we get here then the addition below overflowed, so
                         \ we halve the dot products and normal vector
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LSR XX18               \ Divide dot_sidev_lo by 2, so dot_sidev = dot_sidev / 2
 
@@ -6007,7 +6014,8 @@ ENDMACRO
  LDA XX12               \ Set Q = XX12
  STA Q
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA XX15               \ Set A = XX15
 
@@ -6219,7 +6227,8 @@ ENDMACRO
 
 .LL48
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  STY XX17               \ Set XX17 = Y, so XX17 now contains the offset of the
                         \ current vertex's data
@@ -6800,7 +6809,8 @@ ENDMACRO
  LDX CNT                \ Fetch the pointer to the end of the XX3 heap from CNT
                         \ into X
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA XX15+2             \ If x_sign is negative, jump up to LL62, which will
  BMI LL62               \ store 128 - (U R) on the XX3 heap and return by
@@ -7152,7 +7162,8 @@ ENDMACRO
 
 .LL75
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA (V),Y              \ Fetch byte #0 for this edge, which contains the
                         \ visibility distance for this edge, beyond which the
@@ -7678,7 +7689,8 @@ ENDMACRO
 
  STA XX12+2             \ ???
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA S                  \ Store the type of slope in XX12+3, bit 7 clear means
  STA XX12+3             \ top left to bottom right, bit 7 set means top right to
@@ -7899,7 +7911,8 @@ ENDMACRO
 
 .LL118
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA XX15+1             \ If x1_hi is positive, jump down to LL119 to skip
                         \ the following ???
@@ -7972,7 +7985,8 @@ ENDMACRO
 
 .CA80D
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
                         \ ???
 
 .LL134
@@ -8061,7 +8075,8 @@ ENDMACRO
 
 .LL136
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  RTS                    \ Return from the subroutine
 
@@ -8402,7 +8417,8 @@ ENDMACRO
 
 .DOEXP
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA INWK+6             \ Set T = z_lo
  STA T
@@ -8444,7 +8460,8 @@ ENDMACRO
  STA L002B
  JSR LF8D8
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA P                  \ Set A = P, so we now have:
                         \
@@ -8551,7 +8568,8 @@ ENDMACRO
 
 .EXL4
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  CLC                    \ This contains the code from the DORND2 routine, so
  LDA RAND               \ this section is exactly equivalent to a JSR DORND2
@@ -9395,7 +9413,8 @@ ENDMACRO
 
 .PL42
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  TXA                    \ Set K6(1 0) = K3(1 0) + (T X)
  ADC K3                 \
@@ -9933,7 +9952,8 @@ ENDMACRO
  JMP CAE9B
 
 .CAE29
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
  TYA
  CLC
  ADC #7
@@ -9989,7 +10009,8 @@ ENDMACRO
  RTS
 
 .CAE9B
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
  LDX P
  BEQ CAE9A
  TYA
@@ -10021,13 +10042,8 @@ ENDMACRO
  JMP CB039
 
 .sub_CAEE8
- LDA L00E9
- BPL CAEF5
- LDA PPU_STATUS
- ASL A
- BPL CAEF5
- JSR NAMETABLE0
-.CAEF5
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
  LDX P+1
  STX XX15
  TYA
@@ -10059,7 +10075,8 @@ ENDMACRO
  JMP CB05D
 
 .sub_CAF35
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
  STY Y1
 
 \ ******************************************************************************
@@ -10131,7 +10148,8 @@ ENDMACRO
 
  LDY Y1                 \ Restore Y from Y1
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  JSR DORND              \ Set A and X to random numbers
 
@@ -10201,7 +10219,8 @@ ENDMACRO
 
 .CIRCLE
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  JSR CHKON              \ Call CHKON to check whether the circle fits on-screen
 
@@ -10422,7 +10441,8 @@ ENDMACRO
 
 .ED1
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  SEC
  RTS
@@ -11115,7 +11135,8 @@ ENDMACRO
 
 .BLINE
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  TXA                    \ Set K6(3 2) = (T X) + K4(1 0)
  ADC K4                 \             = y-coord of centre + y-coord of new point
@@ -11163,7 +11184,8 @@ ENDMACRO
  LDA K6+3               \ Set XX12+1 = y_hi of new point
  STA XX12+1
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  JSR CLIP               \ Call CLIP to see if the new line segment needs to be
                         \ clipped to fit on-screen, returning the clipped line's
@@ -11296,7 +11318,8 @@ ENDMACRO
 
 .STL1
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  JSR DV42               \ Call DV42 to set the following:
                         \
@@ -11383,7 +11406,8 @@ ENDMACRO
 
  STA XX+1               \ First we store the high byte A in XX+1
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA P                  \ Then we do the low bytes:
  ADC SXL,Y              \
@@ -11449,7 +11473,8 @@ ENDMACRO
  STX XX                 \
                         \   x = x - alpha * y / 256
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDX BET1               \ Fetch the pitch magnitude into X
 
@@ -11511,7 +11536,8 @@ ENDMACRO
  LDA #0                 \ Set P = 0
  STA P
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA BETA               \ Set A = -beta, so:
  EOR #%10000000         \
@@ -11602,7 +11628,8 @@ ENDMACRO
  STA SZ,Y               \ z_hi so the new particle starts in the far distance
  STA ZZ
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA Y1                 \ Set A to the new value of y_hi. This has no effect as
                         \ STC1 starts with a jump to PIXEL2, which starts with a
@@ -11652,7 +11679,8 @@ ENDMACRO
 
 .STL6
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  JSR DV42               \ Call DV42 to set the following:
                         \
@@ -11718,7 +11746,8 @@ ENDMACRO
 
  STA YY+1               \ First we store the high byte A in YY+1
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA SYL,Y              \ Then we do the low bytes with:
  SBC P                  \
@@ -11861,7 +11890,8 @@ ENDMACRO
  LDA YY                 \ Set (S R) = YY(1 0) = y (low byte)
  STA R
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA YY+1               \ Set (S R) = YY(1 0) = y (high byte)
  STA S
@@ -12067,7 +12097,8 @@ ENDMACRO
 
 .STL2
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA SZ,Y               \ Set A = ZZ = z_hi
 
@@ -12114,7 +12145,8 @@ ENDMACRO
  STA S                  \ Set (S R) = (A X)
  STX R                  \           = x + delta_x
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA SY,Y               \ Set A = y_hi
 
@@ -12196,7 +12228,8 @@ ENDMACRO
                         \
                         \   x = x - alpha * x * y
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA YY                 \ Set (S R) = YY(1 0)
  STA R                  \           = y
@@ -12416,7 +12449,8 @@ ENDMACRO
  AND #7
  STA T
 .CB5D9
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
  LDX #0
  LDA (L00BA,X)
  BEQ CB615
@@ -12478,7 +12512,8 @@ ENDMACRO
  AND #7
  TAY
 .CB647
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
  LDX #0
  LDA (L00BA,X)
  BEQ CB699
@@ -12548,7 +12583,8 @@ ENDMACRO
  AND #7
  TAY
 .CB6BA
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
  LDX #0
  LDA (L00BA,X)
  BEQ CB70B
@@ -12875,7 +12911,8 @@ ENDMACRO
 
 .ZINF
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDY #NI%-4-1           \ There are NI% bytes in the INWK workspace, so set a
                         \ counter in Y so we can loop through them all except
@@ -12906,7 +12943,8 @@ ENDMACRO
                         \ and we're done. The negative nosev makes the ship
                         \ point towards us, as the z-axis points into the screen
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA #96                \ Set A to represent a 1 (in vector terms)
 
@@ -13118,7 +13156,8 @@ ENDMACRO
 
 .TIDY
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA INWK+10            \ Set (XX15, XX15+1, XX15+2) = nosev
  STA XX15
@@ -13150,7 +13189,8 @@ ENDMACRO
 
 .TI3
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA INWK+16            \ Set (XX15, XX15+1, XX15+2) = roofv
  STA XX15
@@ -13187,7 +13227,8 @@ ENDMACRO
  EOR #%10000000         \ Set sidev_x = -A
  STA INWK+22            \        = (nosev_z * roofv_y - nosev_y * roofv_z) / 96
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA INWK+16            \ Set A = roofv_x
 
@@ -13205,7 +13246,8 @@ ENDMACRO
  EOR #%10000000         \ Set sidev_y = -A
  STA INWK+24            \        = (nosev_x * roofv_z - nosev_z * roofv_x) / 96
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA INWK+18            \ Set A = roofv_y
 
@@ -13221,7 +13263,8 @@ ENDMACRO
  EOR #%10000000         \ Set sidev_z = -A
  STA INWK+26            \        = (nosev_y * roofv_x - nosev_x * roofv_y) / 96
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA #0                 \ Set A = 0 so we can clear the low bytes of the
                         \ orientation vectors
@@ -13609,7 +13652,8 @@ ENDMACRO
  LDA #0
  LDY #&21
  STA (INF),Y
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
  LDX L002A
  BEQ CBB23
  LDA #0
@@ -13771,7 +13815,8 @@ ENDMACRO
 
 .EXL4
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  JSR DORND2             \ Set ZZ to a random number, making sure the C flag
  STA ZZ                 \ doesn't affect the outcome

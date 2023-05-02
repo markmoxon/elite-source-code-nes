@@ -69,7 +69,7 @@
  UNIV_1              = &CE7E
  GINF                = &CE90
  NMI                 = &CED5
- NAMETABLE0          = &D06D
+ SWITCH_TO_TABLE_0   = &D06D
  LD8C5               = &D8C5
  LDBD8               = &DBD8
  LOIN                = &DC0F
@@ -79,7 +79,7 @@
  EXNO3               = &EBAD
  BOOP                = &EBE5
  NOISE               = &EBF2
- SET_NAMETABLE_0_A    = &EC7D
+ CHECK_DASHBOARD_A   = &EC7D
  TIDY                = &EDEA
  PAS1                = &EF7A
  LL164               = &EFF7
@@ -877,7 +877,7 @@
 
  SKIP 1                 \ ???
 
-.L00E9
+.DASHBOARD_SWITCH
 
  SKIP 1                 \ ???
 
@@ -15733,22 +15733,22 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: SET_NAMETABLE_0
+\       Name: CHECK_DASHBOARD
 \       Type: Macro
-\   Category: NES graphics
-\    Summary: Switch the base nametable address to nametable 0 (&2000) when
-\             conditions are met
+\   Category: Screen mode
+\    Summary: If the PPU has started drawing the dashboard, switch to nametable
+\             0 (&2000) and pattern table 0 (&0000)
 \
 \ ******************************************************************************
 
-MACRO SET_NAMETABLE_0
+MACRO CHECK_DASHBOARD
 
- LDA L00E9              \ If bit 7 of L00E9 and bit 6 of PPU_STATUS are set,
- BPL skip               \ then call NAMETABLE0 to:
+ LDA DASHBOARD_SWITCH   \ If bit 7 of DASHBOARD_SWITCH and bit 6 of PPU_STATUS
+ BPL skip               \ are set, then call SWITCH_TO_TABLE_0 to:
  LDA PPU_STATUS         \
- ASL A                  \   * Zero L00E9 to disable calls to NAMETABLE0 until
- BPL skip               \     both conditions are met once again
- JSR NAMETABLE0         \
+ ASL A                  \   * Zero DASHBOARD_SWITCH to disable this process
+ BPL skip               \     until both conditions are met once again
+ JSR SWITCH_TO_TABLE_0  \
                         \   * Clear bits 0 and 4 of L00F5 and PPU_CTRL, to set
                         \     the base nametable address to &2000 (nametable 0)
                         \     or &2800 (which is a mirror of &2000)
@@ -15845,7 +15845,8 @@ ENDMACRO
 
  TAX                    \ Copy the token number from A into X
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  TXA                    \ Copy the token number from X into A
 
@@ -15877,7 +15878,8 @@ ENDMACRO
 
 .DTL1
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA (V),Y              \ Load the character at offset Y in the token table,
                         \ which is the next character from the token table
@@ -16152,7 +16154,8 @@ ENDMACRO
 
  STA SC                 \ Store the token number in SC
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  TYA                    \ Store Y on the stack
  PHA
@@ -17055,7 +17058,7 @@ ENDMACRO
 
 .loop_CB3C4
 
- JSR SET_NAMETABLE_0_A  \ ???
+ JSR CHECK_DASHBOARD_A  \ ???
  LDA L04B2
  ORA L04B4
  AND #&C0
@@ -17329,7 +17332,8 @@ ENDMACRO
 
  PHA                    \ Store A on the stack, so we can retrieve it below
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  PLA                    \ Restore A from the stack
 
@@ -17677,7 +17681,8 @@ ENDMACRO
 
 .TT49
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  INY                    \ Increment the character pointer
 
@@ -17782,7 +17787,8 @@ ENDMACRO
 
  STA SC+1               \ Store A in SC+1, so we can retrieve it later
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA SC+1               \ Restore A from SC+1
 
@@ -17870,7 +17876,8 @@ ENDMACRO
  INC DTW5               \ Increment the size of the BUF buffer that is stored in
                         \ DTW5
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  CLC                    \ Clear the C flag
 
@@ -17942,7 +17949,8 @@ ENDMACRO
 
 .DAL2
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  DEY                    \ Decrement the loop counter in Y
 
@@ -17973,7 +17981,8 @@ ENDMACRO
 
 .DAL6
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA BUF,Y              \ Copy the Y-th character from BUF into the Y+1-th
  STA BUF+1,Y            \ position
@@ -18045,7 +18054,7 @@ ENDMACRO
                         \ pointer and is therefore equal to the number of
                         \ characters minus 1)
 
- JSR SET_NAMETABLE_0_A  \ ???
+ JSR CHECK_DASHBOARD_A  \ ???
 
 .DAL4
 
@@ -18192,7 +18201,8 @@ ENDMACRO
 
  STA K3                 \ Store the A register in K3 so we can retrieve it below
 
- SET_NAMETABLE_0        \ Switch the base nametable address to nametable 0
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA K3                 \ Store the A, X and Y registers, so we can restore
  STY YSAV2              \ them at the end (so they don't get changed by this
@@ -18408,14 +18418,8 @@ ENDMACRO
 
  LDY YSAV2                                        ; B75B: AC 82 04    ...
  LDX XSAV2                                        ; B75E: AE 81 04    ...
- LDA L00E9                                        ; B761: A5 E9       ..
- BPL CB76E                                        ; B763: 10 09       ..
- LDA PPU_STATUS                                   ; B765: AD 02 20    ..
- ASL A                                            ; B768: 0A          .
- BPL CB76E                                        ; B769: 10 03       ..
- JSR NAMETABLE0                                   ; B76B: 20 6D D0     m.
-
-.CB76E
+ CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
+                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
 
  LDA K3                                           ; B76E: A5 3D       .=
  CLC                                              ; B770: 18          .

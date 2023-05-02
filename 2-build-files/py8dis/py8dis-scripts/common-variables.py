@@ -200,7 +200,7 @@ label(0x00B3, "Yx2M1")
 label(0x00B4, "messXC")
 label(0x00B6, "newzp")
 
-label(0x00B8, "NEXT_TILE")   # Mine, contains next free tile number to draw into
+label(0x00B8, "TILE")        # Mine, contains tile number to draw into
 label(0x00B9, "PATTERNS_HI") # Mine, high byte of current nametable (&70 or &74)
                              # HI(PATTERNS_0) or HI(PATTERNS_1)
 
@@ -213,10 +213,16 @@ label(0x00D5, "ADDR1_HI")
 label(0x00E6, "NAMES_HI")   # Mine, high byte of current nametable (&70 or &74)
                             # HI(NAMES_0) or HI(NAMES_1)
 
+label(0x00E9, "DASHBOARD_SWITCH")   # Mine, a flag to control whether we switch
+                                    # to nametable 0 and palette 0 for the
+                                    # dashboard
+
 label(0x00EB, "T6")         # Mine, an address within the PPU to be poked to
 label(0x00EC, "T6_1")
 label(0x00ED, "T7")         # Mine, an address to fetch PPU data from
 label(0x00EE, "T7_1")
+
+label(0x00F5, "PPU_CTRL_COPY")  # Mine, contains a copy of PPU_CTRL
 
 label(0x00F7, "BANK")        # Mine, contains lower bank number
 
@@ -394,22 +400,22 @@ label(0xDAF8, "ylookupHI")
 label(0xF333, "LF333")
 
 subroutine(0xC007, "Spercent")
-subroutine(0xC0AD, "RESETBANK")     # Mine, switch bank to stack value
-subroutine(0xC0AE, "SETBANK")       # Mine, switch bank to A
+subroutine(0xC0AD, "RESET_BANK")    # Mine, switch bank to stack value
+subroutine(0xC0AE, "SET_BANK")      # Mine, switch bank to A
 subroutine(0xCD6F, "BOXEDGES")      # Mine, draw space view box edges?
-subroutine(0xCC2E, "SENDTOPPU1")    # Mine, something to do with sending to PPU?
-subroutine(0xCD34, "COPYNAMES")     # Mine, copies nametable buffer 0 to buffer 1
+subroutine(0xCC2E, "SEND_TO_PPU1")  # Mine, something to do with sending to PPU?
+subroutine(0xCD34, "COPY_NAMES")    # Mine, copies nametable buffer 0 to buffer 1
 subroutine(0xCE90, "GINF")
 subroutine(0xCED4, "IRQ")           # Mine, IRQ handler
 subroutine(0xCED5, "NMI")           # Mine, NMI handler
 subroutine(0xCE9E, "sub_CE9E")
 subroutine(0xCEA5, "sub_CEA5")
-subroutine(0xCF2E, "SETPALETTE")    # Mine, set PPU palette?
-subroutine(0xD02D, "RESETNAMES1")   # Mine, does this clear down nametable 1?
+subroutine(0xCF2E, "SET_PALETTE")   # Mine, set PPU palette?
+subroutine(0xD02D, "RESET_NAMES1")  # Mine, does this clear down nametable 1?
 subroutine(0xD0F8, "CONTROLLERS")   # Mine, reads controllers
-subroutine(0xD06D, "NAMETABLE0")    # Mine, switches PPU to namespace 0
-subroutine(0xD710, "FILLMEMORY")    # Mine, something to do with memory filling?
-subroutine(0xD986, "SENDTOPPU2")    # Mine, something to do with sending to PPU?
+subroutine(0xD06D, "SWITCH_TO_TABLE_0")    # Mine, switches PPU to nametable/palette table 0
+subroutine(0xD710, "FILL_MEMORY")   # Mine, something to do with memory filling?
+subroutine(0xD986, "SEND_TO_PPU2")  # Mine, something to do with sending to PPU?
 subroutine(0xDC0F, "LOIN")
 subroutine(0xE4F0, "PIXEL")
 subroutine(0xE543, "PIXELx2")       # Mine, draws two pixel dash in space view
@@ -418,7 +424,7 @@ subroutine(0xEBA2, "DELAY")
 subroutine(0xEBAD, "EXNO3")
 subroutine(0xEBE5, "BOOP")
 subroutine(0xEBF2, "NOISE")
-subroutine(0xEC7D, "SET_NAMETABLE_0_A")	    # SET_NAMETABLE_0 macro that preserves A
+subroutine(0xEC7D, "CHECK_DASHBOARD_A")	    # CHECK_DASHBOARD macro that preserves A
 subroutine(0xEC8D, "LDA_XX0_Y")
 subroutine(0xECA0, "LDA_EPC_Y")
 subroutine(0xECAE, "INC_TALLY")     # Mine, adds KWL/KWH to TALLY

@@ -174,18 +174,19 @@ Yx2M2            = &00B2
 Yx2M1            = &00B3
 messXC           = &00B4
 newzp            = &00B6
-NEXT_TILE        = &00B8
+TILE             = &00B8
 PATTERNS_HI      = &00B9
 T5               = &00BA
 T5_1             = &00BB
 ADDR1_LO         = &00D4
 ADDR1_HI         = &00D5
 NAMES_HI         = &00E6
-L00E9            = &00E9
+DASHBOARD_SWITCH = &00E9
 T6               = &00EB
 T6_1             = &00EC
 T7               = &00ED
 T7_1             = &00EE
+PPU_CTRL_COPY    = &00F5
 BANK             = &00F7
 XX3              = &0100
 XX3_1            = &0101
@@ -577,8 +578,8 @@ NAMES_0          = &7000
 NAMES_1          = &7400
 LC006            = &C006
 Spercent         = &C007
-RESETBANK        = &C0AD
-SETBANK          = &C0AE
+RESET_BANK       = &C0AD
+SET_BANK         = &C0AE
 LC0DF            = &C0DF
 log              = &C100
 logL             = &C200
@@ -589,8 +590,8 @@ ACT              = &C520
 XX21m2           = &C53E
 XX21m1           = &C53F
 XX21             = &C540
-SENDTOPPU1       = &CC2E
-COPYNAMES        = &CD34
+SEND_TO_PPU1     = &CC2E
+COPY_NAMES       = &CD34
 BOXEDGES         = &CD6F
 UNIV             = &CE7E
 UNIV_1           = &CE7F
@@ -601,12 +602,12 @@ NAMES_LOOKUP     = &CED0
 PATTERNS_LOOKUP  = &CED2
 IRQ              = &CED4
 NMI              = &CED5
-SETPALETTE       = &CF2E
-RESETNAMES1      = &D02D
-NAMETABLE0       = &D06D
+SET_PALETTE      = &CF2E
+RESET_NAMES1     = &D02D
+SWITCH_TO_TABLE_0 = &D06D
 CONTROLLERS      = &D0F8
-FILLMEMORY       = &D710
-SENDTOPPU2       = &D986
+FILL_MEMORY      = &D710
+SEND_TO_PPU2     = &D986
 TWOS             = &D9F7
 TWOS2            = &DA01
 TWFL             = &DA09
@@ -622,7 +623,7 @@ DELAY            = &EBA2
 EXNO3            = &EBAD
 BOOP             = &EBE5
 NOISE            = &EBF2
-SET_NAMETABLE_0_A = &EC7D
+CHECK_DASHBOARD_A = &EC7D
 LDA_XX0_Y        = &EC8D
 LDA_EPC_Y        = &ECA0
 INC_TALLY        = &ECAE
@@ -2654,7 +2655,7 @@ L951D = L800C+5393
  STA V_1                                      ; B96D: 85 64       .d
  LDA #&1C                                     ; B96F: A9 1C       ..
  STA V                                        ; B971: 85 63       .c
- LDA NEXT_TILE                                ; B973: A5 B8       ..
+ LDA TILE                                     ; B973: A5 B8       ..
  TAY                                          ; B975: A8          .
  STY K_2                                      ; B976: 84 7F       ..
  ASL A                                        ; B978: 0A          .
@@ -2690,10 +2691,10 @@ L951D = L800C+5393
  LDA #5                                       ; B9B2: A9 05       ..
  STA XC                                       ; B9B4: 85 32       .2
  JSR sub_CB9C1                                ; B9B6: 20 C1 B9     ..
- LDA NEXT_TILE                                ; B9B9: A5 B8       ..
+ LDA TILE                                     ; B9B9: A5 B8       ..
  CLC                                          ; B9BB: 18          .
  ADC #&D0                                     ; B9BC: 69 D0       i.
- STA NEXT_TILE                                ; B9BE: 85 B8       ..
+ STA TILE                                     ; B9BE: 85 B8       ..
  RTS                                          ; B9C0: 60          `
 
 .sub_CB9C1
@@ -2781,12 +2782,12 @@ L951D = L800C+5393
  STA T                                        ; BA43: 85 9A       ..
  LDY #0                                       ; BA45: A0 00       ..
 .CBA47
- LDA L00E9                                    ; BA47: A5 E9       ..
+ LDA DASHBOARD_SWITCH                         ; BA47: A5 E9       ..
  BPL CBA54                                    ; BA49: 10 09       ..
  LDA PPU_STATUS                               ; BA4B: AD 02 20    ..
  ASL A                                        ; BA4E: 0A          .
  BPL CBA54                                    ; BA4F: 10 03       ..
- JSR NAMETABLE0                               ; BA51: 20 6D D0     m.
+ JSR SWITCH_TO_TABLE_0                        ; BA51: 20 6D D0     m.
 .CBA54
  LDA SC                                       ; BA54: A5 07       ..
  STA T5                                       ; BA56: 85 BA       ..
