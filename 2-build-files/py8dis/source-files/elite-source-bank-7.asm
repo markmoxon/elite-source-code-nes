@@ -4130,7 +4130,7 @@ LC006 = sub_CC004+2
  JMP CD8C5                                    ; D96C: 4C C5 D8    L..
 
  JSR sub_CD8E1                                ; D96F: 20 E1 D8     ..
- JSR CA070_BANK1                              ; D972: 20 C7 ED     ..
+ JSR LL9_BANK1                                ; D972: 20 C7 ED     ..
  LDA #&C8                                     ; D975: A9 C8       ..
  PHA                                          ; D977: 48          H
  JSR BOXEDGES                                 ; D978: 20 6F CD     o.
@@ -6669,7 +6669,7 @@ LDFFF = sub_CDFFE+1
  JMP RESET_BANK                               ; EDC4: 4C AD C0    L..
 
 ; ******************************************************************************
-.CA070_BANK1
+.LL9_BANK1
  LDA BANK                                     ; EDC7: A5 F7       ..
  CMP #1                                       ; EDC9: C9 01       ..
  BEQ CEDD9                                    ; EDCB: F0 0C       ..
@@ -6721,7 +6721,7 @@ LDFFF = sub_CDFFE+1
  JMP L9522                                    ; EE12: 4C 22 95    L".
 
 ; ******************************************************************************
-.CB1BE_BANK1
+.STARS_BANK1
  LDA BANK                                     ; EE15: A5 F7       ..
  CMP #1                                       ; EE17: C9 01       ..
  BEQ CEE27                                    ; EE19: F0 0C       ..
@@ -6747,7 +6747,7 @@ LDFFF = sub_CDFFE+1
  JMP LAF9D                                    ; EE3C: 4C 9D AF    L..
 
 ; ******************************************************************************
-.CAC25_BANK1
+.SUN_BANK1
  LDA BANK                                     ; EE3F: A5 F7       ..
  CMP #1                                       ; EE41: C9 01       ..
  BEQ CEE51                                    ; EE43: F0 0C       ..
@@ -7096,7 +7096,7 @@ LDFFF = sub_CDFFE+1
  STA L00B7                                    ; F059: 85 B7       ..
  LDA BANK                                     ; F05B: A5 F7       ..
  CMP #6                                       ; F05D: C9 06       ..
- BEQ CEBA9_BANK0                              ; F05F: F0 0E       ..
+ BEQ sub_CF06F                                ; F05F: F0 0E       ..
  PHA                                          ; F061: 48          H
  LDA #6                                       ; F062: A9 06       ..
  JSR SET_BANK                                 ; F064: 20 AE C0     ..
@@ -7105,7 +7105,7 @@ LDFFF = sub_CDFFE+1
  JMP RESET_BANK                               ; F06C: 4C AD C0    L..
 
 ; ******************************************************************************
-.CEBA9_BANK0
+.sub_CF06F
  LDA L00B7                                    ; F06F: A5 B7       ..
  JMP LA5AB                                    ; F071: 4C AB A5    L..
 
@@ -7151,7 +7151,7 @@ LDFFF = sub_CDFFE+1
  JMP LB187                                    ; F0B5: 4C 87 B1    L..
 
 ; ******************************************************************************
-.CB3E8_BANK2
+.PDESC_BANK2
  LDA BANK                                     ; F0B8: A5 F7       ..
  PHA                                          ; F0BA: 48          H
  LDA #2                                       ; F0BB: A9 02       ..
@@ -7281,7 +7281,7 @@ LDFFF = sub_CDFFE+1
  JMP LAC5C                                    ; F183: 4C 5C AC    L\.
 
 ; ******************************************************************************
-.CF186_BANK6
+.C8980_BANK0
  LDA BANK                                     ; F186: A5 F7       ..
  PHA                                          ; F188: 48          H
  LDA #0                                       ; F189: A9 00       ..
@@ -7325,7 +7325,7 @@ LDFFF = sub_CDFFE+1
  JMP RESET_BANK                               ; F1C8: 4C AD C0    L..
 
 ; ******************************************************************************
-.CB635_BANK2
+.CHPR_BANK2
  STA L00B7                                    ; F1CB: 85 B7       ..
  LDA BANK                                     ; F1CD: A5 F7       ..
  CMP #2                                       ; F1CF: C9 02       ..
@@ -7376,7 +7376,7 @@ LDFFF = sub_CDFFE+1
  JMP LB44F                                    ; F219: 4C 4F B4    LO.
 
 ; ******************************************************************************
-.CB4AA_BANK2
+.ex_BANK2
  STA L00B7                                    ; F21C: 85 B7       ..
  LDA BANK                                     ; F21E: A5 F7       ..
  CMP #2                                       ; F220: C9 02       ..
@@ -7402,7 +7402,7 @@ LDFFF = sub_CDFFE+1
  JMP RESET_BANK                               ; F242: 4C AD C0    L..
 
 ; ******************************************************************************
-.CA379_BANK0
+.BR1_BANK0
  LDA BANK                                     ; F245: A5 F7       ..
  CMP #0                                       ; F247: C9 00       ..
  BEQ CF257                                    ; F249: F0 0C       ..
@@ -7439,7 +7439,7 @@ LDFFF = sub_CDFFE+1
  JMP RESET_BANK                               ; F27D: 4C AD C0    L..
 
 ; ******************************************************************************
-.CA65D_BANK1
+.CLIP_BANK1
  LDA BANK                                     ; F280: A5 F7       ..
  PHA                                          ; F282: 48          H
  LDA #1                                       ; F283: A9 01       ..
@@ -7489,7 +7489,7 @@ LDFFF = sub_CDFFE+1
  JMP RESET_BANK                               ; F2CB: 4C AD C0    L..
 
 ; ******************************************************************************
-.CCD34_BANK0
+.sub_CF2CE
  LDA #0                                       ; F2CE: A9 00       ..
  JSR SET_BANK                                 ; F2D0: 20 AE C0     ..
  JSR COPY_NAMES                               ; F2D3: 20 34 CD     4.

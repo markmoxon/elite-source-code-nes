@@ -13649,12 +13649,25 @@ ENDMACRO
 
 .sub_CBAED
 
- LDA #0
+ LDA #0                 \ ???
  LDY #&21
  STA (INF),Y
+
  CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
                         \ to nametable 0 (&2000) and pattern table 0 (&0000)
- LDX L002A
+
+\ ******************************************************************************
+\
+\       Name: sub_CBAF3
+\   Category: Dashboard
+\   Category: Drawing ships
+\    Summary: ??? Called via CBAF3_BANK1
+\
+\ ******************************************************************************
+
+.sub_CBAF3
+
+ LDX L002A              \ ???
  BEQ CBB23
  LDA #0
  STA L0374,X

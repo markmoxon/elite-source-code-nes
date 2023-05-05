@@ -863,13 +863,13 @@ CB9F9_BANK4      = &ED8F
 CB96B_BANK4      = &ED9D
 CB63D_BANK3      = &EDAB
 CB88C_BANK6      = &EDB9
-CA070_BANK1      = &EDC7
+LL9_BANK1        = &EDC7
 CBA23_BANK3      = &EDDC
 TIDY_BANK1       = &EDEA
 CBC83_BANK6      = &EDFF
 C9522_BANK0      = &EE0D
-CB1BE_BANK1      = &EE15
-CAC25_BANK1      = &EE3F
+STARS_BANK1      = &EE15
+SUN_BANK1        = &EE3F
 CB2FB_BANK3      = &EE54
 CB219_BANK3      = &EE62
 CB9C1_BANK4      = &EE78
@@ -905,10 +905,10 @@ CBB37_BANK6      = &F02F
 CB8FE_BANK6      = &F03D
 CB90D_BANK6      = &F04B
 CA5AB_BANK6      = &F059
-CEBA9_BANK0      = &F06F
+sub_CF06F        = &F06F
 DETOK_BANK2      = &F082
 DTS_BANK2        = &F09D
-CB3E8_BANK2      = &F0B8
+PDESC_BANK2      = &F0B8
 CAE18_BANK3      = &F0C6
 CAC1D_BANK3      = &F0E1
 CA730_BANK3      = &F0FC
@@ -918,24 +918,24 @@ CA7B7_BANK3      = &F126
 CA9D1_BANK3      = &F139
 CA972_BANK3      = &F15C
 CAC5C_BANK3      = &F171
-CF186_BANK6      = &F186
+C8980_BANK0      = &F186
 CB459_BANK6      = &F194
 MVS5_BANK0       = &F1A2
 HALL_BANK1       = &F1BD
-CB635_BANK2      = &F1CB
+CHPR_BANK2       = &F1CB
 DASC_BANK2       = &F1E6
 TT27_BANK2       = &F201
-CB4AA_BANK2      = &F21C
+ex_BANK2         = &F21C
 TT27_BANK0       = &F237
-CA379_BANK0      = &F245
+BR1_BANK0        = &F245
 CBAF3_BANK1      = &F25A
 TT66_BANK0       = &F26E
-CA65D_BANK1      = &F280
+CLIP_BANK1       = &F280
 CB341_BANK3      = &F293
 SCAN_BANK1       = &F2A8
 C8926_BANK0      = &F2BD
 LF2C0            = &F2C0
-CCD34_BANK0      = &F2CE
+sub_CF2CE        = &F2CE
 CLYNS            = &F2DE
 LF333            = &F333
 sub_CF338        = &F338
@@ -4097,7 +4097,7 @@ LA3F8 = LA3F5+3
  INY                                          ; A60D: C8          .
  DEX                                          ; A60E: CA          .
  BNE CA5EF                                    ; A60F: D0 DE       ..
- JSR CB1BE_BANK1                              ; A611: 20 15 EE     ..
+ JSR STARS_BANK1                              ; A611: 20 15 EE     ..
 .CA614
  LDA #0                                       ; A614: A9 00       ..
  STA L03A8                                    ; A616: 8D A8 03    ...
@@ -4852,7 +4852,7 @@ LA3F8 = LA3F5+3
  JSR sub_CAAC0                                ; AB5F: 20 C0 AA     ..
  STX XX15_4                                   ; AB62: 86 75       .u
  STA XX15_5                                   ; AB64: 85 76       .v
- JSR CA65D_BANK1                              ; AB66: 20 80 F2     ..
+ JSR CLIP_BANK1                               ; AB66: 20 80 F2     ..
  LDY YP                                       ; AB69: AC FB 03    ...
  JMP CAAEA                                    ; AB6C: 4C EA AA    L..
 
@@ -5399,7 +5399,7 @@ LA3F8 = LA3F5+3
 
 .sub_CB6C7
  PHA                                          ; B6C7: 48          H
- JSR CF186_BANK6                              ; B6C8: 20 86 F1     ..
+ JSR C8980_BANK0                              ; B6C8: 20 86 F1     ..
  JSR LD8C5                                    ; B6CB: 20 C5 D8     ..
  PLA                                          ; B6CE: 68          h
  RTS                                          ; B6CF: 60          `
@@ -5640,7 +5640,7 @@ LA3F8 = LA3F5+3
  STA L0396,X                                  ; B881: 9D 96 03    ...
  DEX                                          ; B884: CA          .
  BPL loop_CB87B                               ; B885: 10 F4       ..
- JSR CA379_BANK0                              ; B887: 20 45 F2     E.
+ JSR BR1_BANK0                                ; B887: 20 45 F2     E.
  PLA                                          ; B88A: 68          h
  RTS                                          ; B88B: 60          `
 

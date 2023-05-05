@@ -657,13 +657,13 @@ CB9F9_BANK4      = &ED8F
 CB96B_BANK4      = &ED9D
 CB63D_BANK3      = &EDAB
 CB88C_BANK6      = &EDB9
-CA070_BANK1      = &EDC7
+LL9_BANK1        = &EDC7
 CBA23_BANK3      = &EDDC
 TIDY_BANK1       = &EDEA
 CBC83_BANK6      = &EDFF
 C9522_BANK0      = &EE0D
-CB1BE_BANK1      = &EE15
-CAC25_BANK1      = &EE3F
+STARS_BANK1      = &EE15
+SUN_BANK1        = &EE3F
 CB2FB_BANK3      = &EE54
 CB219_BANK3      = &EE62
 CB9C1_BANK4      = &EE78
@@ -698,10 +698,10 @@ CBB37_BANK6      = &F02F
 CB8FE_BANK6      = &F03D
 CB90D_BANK6      = &F04B
 CA5AB_BANK6      = &F059
-CEBA9_BANK0      = &F06F
+sub_CF06F        = &F06F
 DETOK_BANK2      = &F082
 DTS_BANK2        = &F09D
-CB3E8_BANK2      = &F0B8
+PDESC_BANK2      = &F0B8
 CAE18_BANK3      = &F0C6
 CAC1D_BANK3      = &F0E1
 CA730_BANK3      = &F0FC
@@ -711,23 +711,23 @@ CA7B7_BANK3      = &F126
 CA9D1_BANK3      = &F139
 CA972_BANK3      = &F15C
 CAC5C_BANK3      = &F171
-CF186_BANK6      = &F186
+C8980_BANK0      = &F186
 CB459_BANK6      = &F194
 MVS5_BANK0       = &F1A2
 HALL_BANK1       = &F1BD
-CB635_BANK2      = &F1CB
+CHPR_BANK2       = &F1CB
 DASC_BANK2       = &F1E6
 TT27_BANK2       = &F201
-CB4AA_BANK2      = &F21C
+ex_BANK2         = &F21C
 TT27_BANK0       = &F237
-CA379_BANK0      = &F245
+BR1_BANK0        = &F245
 CBAF3_BANK1      = &F25A
 TT66_BANK0       = &F26E
-CA65D_BANK1      = &F280
+CLIP_BANK1       = &F280
 CB341_BANK3      = &F293
 SCAN_BANK1       = &F2A8
 C8926_BANK0      = &F2BD
-CCD34_BANK0      = &F2CE
+sub_CF2CE        = &F2CE
 CLYNS            = &F2DE
 LF333            = &F333
 sub_CF338        = &F338
@@ -5708,7 +5708,7 @@ LB5CF = sub_CB5CE+1
  STA L00D2                                    ; B79C: 85 D2       ..
  LDA #&50 ; 'P'                               ; B79E: A9 50       .P
  STA L00D8                                    ; B7A0: 85 D8       ..
- JMP CCD34_BANK0                              ; B7A2: 4C CE F2    L..
+ JMP sub_CF2CE                                ; B7A2: 4C CE F2    L..
 
 ; ******************************************************************************
 .ZINF
