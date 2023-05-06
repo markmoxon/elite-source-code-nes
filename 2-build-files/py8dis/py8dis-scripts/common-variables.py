@@ -66,9 +66,9 @@ label(0x0026, "INWK_29")
 label(0x0027, "INWK_30")
 label(0x0028, "INWK_31")
 label(0x0029, "INWK_32")
-label(0x002A, "INWK_33")    # No heap, reused
-label(0x002B, "INWK_34")    # No heap, reused
-label(0x002C, "INWK_35")    # Used? NI% is one bigger than in Master
+label(0x002A, "INWK_33")            # No heap in NES Elite, so this is reused
+label(0x002B, "INWK_34")            # No heap in NES Elite, so this is reused
+label(0x002C, "INWK_35")            # Is this used? NI% is one bigger than in Master
 label(0x002D, "NEWB")
 label(0x002F, "P")
 label(0x0030, "P_1")
@@ -161,7 +161,7 @@ label(0x008B, "XX18_3")
 label(0x008C, "K6")
 label(0x008D, "K6_1")
 label(0x008E, "K6_2")
-label(0x008F, "K6_3")	    # XX18+7
+label(0x008F, "K6_3")	            # XX18+7
 label(0x0090, "K6_4")
 label(0x0091, "BET2")
 label(0x0092, "BET2_1")
@@ -194,37 +194,37 @@ label(0x00AC, "XX20")
 label(0x00AE, "RAT")
 label(0x00AF, "RAT2")
 label(0x00B0, "widget")
-label(0x00B1, "Yx1M2")		# Mine = height of screen for text screens?
-label(0x00B2, "Yx2M2")		# Mine = 2 x Yx1M2
+label(0x00B1, "Yx1M2")		        # Mine = height of screen for text screens?
+label(0x00B2, "Yx2M2")		        # Mine = 2 x Yx1M2
 label(0x00B3, "Yx2M1")
 label(0x00B4, "messXC")
 label(0x00B6, "newzp")
 
-label(0x00B8, "TILE")        # Mine, contains tile number to draw into
-label(0x00B9, "PATTERNS_HI") # Mine, high byte of current nametable (&70 or &74)
-                             # HI(PATTERNS_0) or HI(PATTERNS_1)
+label(0x00B8, "TILE")               # Mine, contains tile number to draw into
+label(0x00B9, "PATTERNS_HI")        # Mine, high byte of current nametable (&70 or &74)
+                                    # HI(PATTERNS_0) or HI(PATTERNS_1)
 
-label(0x00BA, "T5")         # Mine, temporary storage
+label(0x00BA, "T5")                 # Mine, temporary storage
 label(0x00BB, "T5_1")
 
-label(0x00D4, "ADDR1_LO")   # Mine, an address within the PPU to be poked to
+label(0x00D4, "ADDR1_LO")           # Mine, an address within the PPU to be poked to
 label(0x00D5, "ADDR1_HI")
 
-label(0x00E6, "NAMES_HI")   # Mine, high byte of current nametable (&70 or &74)
-                            # HI(NAMES_0) or HI(NAMES_1)
+label(0x00E6, "NAMES_HI")           # Mine, high byte of current nametable (&70 or &74)
+                                    # HI(NAMES_0) or HI(NAMES_1)
 
 label(0x00E9, "DASHBOARD_SWITCH")   # Mine, a flag to control whether we switch
                                     # to nametable 0 and palette 0 for the
                                     # dashboard
 
-label(0x00EB, "T6")         # Mine, an address within the PPU to be poked to
+label(0x00EB, "T6")                 # Mine, an address within the PPU to be poked to
 label(0x00EC, "T6_1")
-label(0x00ED, "T7")         # Mine, an address to fetch PPU data from
+label(0x00ED, "T7")                 # Mine, an address to fetch PPU data from
 label(0x00EE, "T7_1")
 
-label(0x00F5, "PPU_CTRL_COPY")  # Mine, contains a copy of PPU_CTRL
+label(0x00F5, "PPU_CTRL_COPY")      # Mine, contains a copy of PPU_CTRL
 
-label(0x00F7, "BANK")        # Mine, contains lower bank number
+label(0x00F7, "BANK")               # Mine, contains lower bank number
 
 label(0x0100, "XX3")
 label(0x0101, "XX3_1")
@@ -236,21 +236,28 @@ for i in range(0, 64):
     label(0x0203 + i * 4, "SPR_" + str(i).zfill(2) + "_X")
 
 label(0x036A, "FRIN")
+label(0x0389, "ECMP")
 label(0x038A, "MJ")
 label(0x038E, "VIEW")
 label(0x0392, "EV")
+label(0x0393, "LAS2")
 label(0x039E, "TP")
 label(0x039F, "QQ0")
 label(0x03A0, "QQ1")
 label(0x03A1, "CASH")
 label(0x03A5, "QQ14")
 label(0x03A7, "GCNT")
+label(0x03A8, "LASER")
 label(0x03AC, "CRGO")
 label(0x03AD, "QQ20")
 label(0x03BF, "BST")
 label(0x03C0, "BOMB")
+label(0x03C1, "ENGY")
+label(0x03C2, "DKCMP")
 label(0x03C3, "GHYP")
-label(0x03C6, "ESCP")
+label(0x03C4, "ESCP")
+label(0x03C5, "TRIBBLE")
+label(0x03C6, "TRIBBLE_1")
 label(0x03C8, "NOMSL")
 label(0x03C9, "FIST")
 label(0x03CA, "AVL")
@@ -268,6 +275,7 @@ label(0x03F8, "DTW1")
 label(0x03F9, "DTW8")
 label(0x03FA, "XP")
 label(0x03FB, "YP")
+label(0x0400, "LAS")
 label(0x0401, "MSTG")
 label(0x044D, "QQ19")
 label(0x044E, "QQ19_1")
@@ -277,13 +285,15 @@ label(0x0459, "K2")
 label(0x045A, "K2_1")
 label(0x045B, "K2_2")
 label(0x045C, "K2_3")
+label(0x045D, "DLY")
 label(0x045F, "QQ19_2")
-label(0x046E, "BOXEDGE1")       # Mine, bitmap for drawing box edge?
-label(0x046F, "BOXEDGE2")       # Mine, bitmap for drawing box edge?
-label(0x0475, "CONT2_SCAN")     # Mine, if non-zero, scan controller 2
+label(0x046E, "BOXEDGE1")           # Mine, bitmap for drawing box edge?
+label(0x046F, "BOXEDGE2")           # Mine, bitmap for drawing box edge?
+label(0x0475, "CONT2_SCAN")         # Mine, if non-zero, scan controller 2
 label(0x047F, "SWAP")
 label(0x0481, "XSAV2")
 label(0x0482, "YSAV2")
+label(0x0486, "ENERGY")
 label(0x0487, "QQ24")
 label(0x0488, "QQ25")
 label(0x0489, "QQ28")
@@ -298,13 +308,12 @@ label(0x049B, "QQ8")
 label(0x049C, "QQ8_1")
 label(0x049D, "QQ9")
 label(0x049E, "QQ10")
-
-label(0x04A4, "QQ18_LO")    	# Mine, gets set to address of token table
-label(0x04A5, "QQ18_HI")    	# that ex then accesses
-label(0x04A6, "TKN1_LO")    	# Mine, gets set to address of token table
-label(0x04A7, "TKN1_HI")   		# that DETOK then accesses
-label(0x04A8, "LANG")  			# Mine
-label(0x04AA, "CONT1_DOWN")		# Mine
+label(0x04A4, "QQ18_LO")    	    # Mine, gets set to address of token table
+label(0x04A5, "QQ18_HI")    	    #   that ex then accesses
+label(0x04A6, "TKN1_LO")    	    # Mine, gets set to address of token table
+label(0x04A7, "TKN1_HI")   		    #   that DETOK then accesses
+label(0x04A8, "LANG")  			    # Mine
+label(0x04AA, "CONT1_DOWN")		    # Mine
 label(0x04AB, "CONT2_DOWN")
 label(0x04AC, "CONT1_UP")
 label(0x04AD, "CONT2_UP")
@@ -320,7 +329,6 @@ label(0x04B6, "CONT1_START")
 label(0x04B7, "CONT2_START")
 label(0x04B8, "CONT1_SELECT")
 label(0x04B9, "CONT2_SELECT")
-
 label(0x04C8, "SX")
 label(0x04DD, "SY")
 label(0x04F2, "SZ")
@@ -369,10 +377,10 @@ label(0x4017, "CONTROLLER_2")
 
 # Battery-backed WRAM in the cartridge
 
-label(0x6000, "PATTERNS_0")     # Mine, two buffers for tile patterns
+label(0x6000, "PATTERNS_0")         # Mine, two buffers for tile patterns
 label(0x6800, "PATTERNS_1")
 
-label(0x7000, "NAMES_0")        # Mine, two buffers for nametables
+label(0x7000, "NAMES_0")            # Mine, two buffers for nametables
 label(0x7400, "NAMES_1")
 
 # Permanently loaded labels in 7.asm ($C000-$FFFF)
@@ -421,6 +429,7 @@ subroutine(0xE4F0, "PIXEL")
 subroutine(0xE543, "PIXELx2")       # Mine, draws two pixel dash in space view
 subroutine(0xE596, "ECBLB2")
 subroutine(0xEBA2, "DELAY")
+subroutine(0xEBA9, "BEEP")
 subroutine(0xEBAD, "EXNO3")
 subroutine(0xEBE5, "BOOP")
 subroutine(0xEBF2, "NOISE")
@@ -428,7 +437,6 @@ subroutine(0xEC7D, "CHECK_DASHBOARD_A")	    # CHECK_DASHBOARD macro that preserv
 subroutine(0xEC8D, "LDA_XX0_Y")
 subroutine(0xECA0, "LDA_EPC_Y")
 subroutine(0xECAE, "INC_TALLY")     # Mine, adds KWL/KWH to TALLY
-
 subroutine(0xECE2, "CB1D4_BANK0")
 subroutine(0xECF9, "SETK_K3_XC_YC")     # Temporary name
 subroutine(0xED16, "C811E_BANK6")
@@ -483,6 +491,7 @@ subroutine(0xF03D, "CB8FE_BANK6")
 subroutine(0xF04B, "CB90D_BANK6")
 subroutine(0xF059, "CA5AB_BANK6")
 subroutine(0xF06F, "sub_CF06F")
+subroutine(0xF074, "BEEP_BANK7")
 subroutine(0xF082, "DETOK_BANK2")
 subroutine(0xF09D, "DTS_BANK2")
 subroutine(0xF0B8, "PDESC_BANK2")
@@ -519,7 +528,7 @@ subroutine(0xF3BC, "sub_CF3BC")
 subroutine(0xF42A, "sub_CF42A")
 subroutine(0xF42E, "Ze")
 subroutine(0xF454, "sub_CF454")
-subroutine(0xF46A, "sub_CF46A")
+subroutine(0xF46A, "NLIN3")
 subroutine(0xF473, "NLIN4")
 subroutine(0xF4AC, "DORND2")
 subroutine(0xF4AD, "DORND")

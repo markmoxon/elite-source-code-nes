@@ -489,9 +489,11 @@ SPR_63_ATTR      = &02FE
 SPR_63_X         = &02FF
 L0300            = &0300
 FRIN             = &036A
+ECMP             = &0389
 MJ               = &038A
 VIEW             = &038E
 EV               = &0392
+LAS2             = &0393
 L0395            = &0395
 TP               = &039E
 QQ0              = &039F
@@ -500,15 +502,18 @@ CASH             = &03A1
 QQ14             = &03A5
 L03A6            = &03A6
 GCNT             = &03A7
-L03A8            = &03A8
+LASER            = &03A8
 CRGO             = &03AC
 QQ20             = &03AD
 L03BE            = &03BE
 BST              = &03BF
 BOMB             = &03C0
+ENGY             = &03C1
+DKCMP            = &03C2
 GHYP             = &03C3
-L03C4            = &03C4
-ESCP             = &03C6
+ESCP             = &03C4
+TRIBBLE          = &03C5
+TRIBBLE_1        = &03C6
 NOMSL            = &03C8
 FIST             = &03C9
 AVL              = &03CA
@@ -533,6 +538,7 @@ DTW1             = &03F8
 DTW8             = &03F9
 XP               = &03FA
 YP               = &03FB
+LAS              = &0400
 MSTG             = &0401
 QQ19             = &044D
 QQ19_1           = &044E
@@ -542,6 +548,7 @@ K2               = &0459
 K2_1             = &045A
 K2_2             = &045B
 K2_3             = &045C
+DLY              = &045D
 QQ19_2           = &045F
 L0461            = &0461
 L0464            = &0464
@@ -553,6 +560,7 @@ CONT2_SCAN       = &0475
 SWAP             = &047F
 XSAV2            = &0481
 YSAV2            = &0482
+ENERGY           = &0486
 QQ24             = &0487
 QQ25             = &0488
 QQ28             = &0489
@@ -685,6 +693,7 @@ PIXEL            = &E4F0
 PIXELx2          = &E543
 ECBLB2           = &E596
 DELAY            = &EBA2
+BEEP             = &EBA9
 EXNO3            = &EBAD
 BOOP             = &EBE5
 NOISE            = &EBF2
@@ -745,6 +754,7 @@ CB8FE_BANK6      = &F03D
 CB90D_BANK6      = &F04B
 CA5AB_BANK6      = &F059
 sub_CF06F        = &F06F
+BEEP_BANK7       = &F074
 DETOK_BANK2      = &F082
 DTS_BANK2        = &F09D
 PDESC_BANK2      = &F0B8
@@ -782,7 +792,7 @@ sub_CF3BC        = &F3BC
 sub_CF42A        = &F42A
 Ze               = &F42E
 sub_CF454        = &F454
-sub_CF46A        = &F46A
+NLIN3            = &F46A
 NLIN4            = &F473
 DORND2           = &F4AC
 DORND            = &F4AD
@@ -2983,7 +2993,7 @@ NORM             = &FAF8
 .CAE8D
  LDA MJ                                       ; AE8D: AD 8A 03    ...
  BNE CAE97                                    ; AE90: D0 05       ..
- LDA L03C4                                    ; AE92: AD C4 03    ...
+ LDA ESCP                                     ; AE92: AD C4 03    ...
  BNE CAE9C                                    ; AE95: D0 05       ..
 .CAE97
  LDY #&1B                                     ; AE97: A0 1B       ..
@@ -4167,7 +4177,7 @@ NORM             = &FAF8
  RTS                                          ; BA22: 60          `
 
  LDY VIEW                                     ; BA23: AC 8E 03    ...
- LDA L03A8,Y                                  ; BA26: B9 A8 03    ...
+ LDA LASER,Y                                  ; BA26: B9 A8 03    ...
  BEQ loop_CBA11                               ; BA29: F0 E6       ..
  CMP #&18                                     ; BA2B: C9 18       ..
  BNE CBA32                                    ; BA2D: D0 03       ..

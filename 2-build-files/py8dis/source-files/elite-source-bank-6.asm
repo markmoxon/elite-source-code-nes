@@ -549,6 +549,7 @@ L0365            = &0365
 L0366            = &0366
 L0368            = &0368
 FRIN             = &036A
+ECMP             = &0389
 MJ               = &038A
 L038B            = &038B
 L038D            = &038D
@@ -556,6 +557,7 @@ VIEW             = &038E
 L038F            = &038F
 L0390            = &0390
 EV               = &0392
+LAS2             = &0393
 L0396            = &0396
 L039D            = &039D
 TP               = &039E
@@ -567,7 +569,7 @@ L03A3            = &03A3
 QQ14             = &03A5
 L03A6            = &03A6
 GCNT             = &03A7
-L03A8            = &03A8
+LASER            = &03A8
 L03A9            = &03A9
 L03AA            = &03AA
 L03AB            = &03AB
@@ -575,11 +577,12 @@ CRGO             = &03AC
 QQ20             = &03AD
 BST              = &03BF
 BOMB             = &03C0
-L03C1            = &03C1
-L03C2            = &03C2
+ENGY             = &03C1
+DKCMP            = &03C2
 GHYP             = &03C3
-L03C4            = &03C4
-ESCP             = &03C6
+ESCP             = &03C4
+TRIBBLE          = &03C5
+TRIBBLE_1        = &03C6
 NOMSL            = &03C8
 FIST             = &03C9
 AVL              = &03CA
@@ -606,6 +609,7 @@ DTW8             = &03F9
 XP               = &03FA
 YP               = &03FB
 L03FC            = &03FC
+LAS              = &0400
 MSTG             = &0401
 L0402            = &0402
 L040B            = &040B
@@ -679,6 +683,7 @@ K2               = &0459
 K2_1             = &045A
 K2_2             = &045B
 K2_3             = &045C
+DLY              = &045D
 L045E            = &045E
 QQ19_2           = &045F
 L0464            = &0464
@@ -693,7 +698,7 @@ XSAV2            = &0481
 YSAV2            = &0482
 L0484            = &0484
 L0485            = &0485
-L0486            = &0486
+ENERGY           = &0486
 QQ24             = &0487
 QQ25             = &0488
 QQ28             = &0489
@@ -843,6 +848,7 @@ PIXELx2          = &E543
 ECBLB2           = &E596
 LEB86            = &EB86
 DELAY            = &EBA2
+BEEP             = &EBA9
 EXNO3            = &EBAD
 BOOP             = &EBE5
 NOISE            = &EBF2
@@ -906,6 +912,7 @@ CB8FE_BANK6      = &F03D
 CB90D_BANK6      = &F04B
 CA5AB_BANK6      = &F059
 sub_CF06F        = &F06F
+BEEP_BANK7       = &F074
 DETOK_BANK2      = &F082
 DTS_BANK2        = &F09D
 PDESC_BANK2      = &F0B8
@@ -944,7 +951,7 @@ sub_CF3BC        = &F3BC
 sub_CF42A        = &F42A
 Ze               = &F42E
 sub_CF454        = &F454
-sub_CF46A        = &F46A
+NLIN3            = &F46A
 NLIN4            = &F473
 DORND2           = &F4AC
 DORND            = &F4AD
@@ -3745,7 +3752,7 @@ L9167 = L8D7A+1005
  JSR sub_CA223                                ; A2E8: 20 23 A2     #.
  LDA L0485                                    ; A2EB: AD 85 04    ...
  JSR sub_CA223                                ; A2EE: 20 23 A2     #.
- LDA L0486                                    ; A2F1: AD 86 04    ...
+ LDA ENERGY                                   ; A2F1: AD 86 04    ...
  JSR sub_CA223                                ; A2F4: 20 23 A2     #.
  LDA #0                                       ; A2F7: A9 00       ..
  STA K                                        ; A2F9: 85 7D       .}
@@ -3917,7 +3924,7 @@ LA3F8 = LA3F5+3
  LDY #0                                       ; A4AD: A0 00       ..
  LDX #3                                       ; A4AF: A2 03       ..
  JSR sub_CA39F                                ; A4B1: 20 9F A3     ..
- LDX L03A8                                    ; A4B4: AE A8 03    ...
+ LDX LASER                                    ; A4B4: AE A8 03    ...
  BEQ CA4C6                                    ; A4B7: F0 0D       ..
  JSR sub_CA3DE                                ; A4B9: 20 DE A3     ..
  LDY #&0C                                     ; A4BC: A0 0C       ..
@@ -3971,7 +3978,7 @@ LA3F8 = LA3F5+3
  LDX #2                                       ; A519: A2 02       ..
  JSR sub_CA39F                                ; A51B: 20 9F A3     ..
 .CA51E
- LDA L03C1                                    ; A51E: AD C1 03    ...
+ LDA ENGY                                     ; A51E: AD C1 03    ...
  BEQ CA537                                    ; A521: F0 14       ..
  LSR A                                        ; A523: 4A          J
  BNE CA530                                    ; A524: D0 0A       ..
@@ -4022,13 +4029,13 @@ LA3F8 = LA3F5+3
  LDX #2                                       ; A581: A2 02       ..
  JSR sub_CA39F                                ; A583: 20 9F A3     ..
 .CA586
- LDA L03C4                                    ; A586: AD C4 03    ...
+ LDA ESCP                                     ; A586: AD C4 03    ...
  BEQ CA592                                    ; A589: F0 07       ..
  LDY #&84                                     ; A58B: A0 84       ..
  LDX #1                                       ; A58D: A2 01       ..
  JSR sub_CA39F                                ; A58F: 20 9F A3     ..
 .CA592
- LDA L03C2                                    ; A592: AD C2 03    ...
+ LDA DKCMP                                    ; A592: AD C2 03    ...
  BEQ CA59E                                    ; A595: F0 07       ..
  LDY #&88                                     ; A597: A0 88       ..
  LDX #8                                       ; A599: A2 08       ..
@@ -4100,7 +4107,7 @@ LA3F8 = LA3F5+3
  JSR STARS_BANK1                              ; A611: 20 15 EE     ..
 .CA614
  LDA #0                                       ; A614: A9 00       ..
- STA L03A8                                    ; A616: 8D A8 03    ...
+ STA LASER                                    ; A616: 8D A8 03    ...
  STA QQ12                                     ; A619: 85 A5       ..
  LDA #&10                                     ; A61B: A9 10       ..
  JSR CB39D_BANK0                              ; A61D: 20 DC EF     ..
