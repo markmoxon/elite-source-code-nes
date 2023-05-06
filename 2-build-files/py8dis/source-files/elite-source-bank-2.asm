@@ -152,8 +152,8 @@ T                = &009A
 XSAV             = &009B
 YSAV             = &009C
 XX17             = &009D
-W                = &009E
-QQ11             = &009F
+QQ11             = &009E
+QQ11_MASK        = &009F
 ZZ               = &00A0
 XX13             = &00A1
 MCNT             = &00A2
@@ -453,11 +453,16 @@ SPR_63_TILE      = &02FD
 SPR_63_ATTR      = &02FE
 SPR_63_X         = &02FF
 FRIN             = &036A
+JUNK             = &0373
 ECMP             = &0389
 MJ               = &038A
+CABTMP           = &038B
+LAS2             = &038C
+LASCT            = &038E
 VIEW             = &038E
+GNTMP            = &0390
 EV               = &0392
-LAS2             = &0393
+NAME             = &0396
 TP               = &039E
 QQ0              = &039F
 QQ1              = &03A0
@@ -507,9 +512,14 @@ QQ19_2           = &045F
 BOXEDGE1         = &046E
 BOXEDGE2         = &046F
 CONT2_SCAN       = &0475
+LASX             = &047B
+LASY             = &047C
+ALTIT            = &047E
 SWAP             = &047F
 XSAV2            = &0481
 YSAV2            = &0482
+FSH              = &0484
+ASH              = &0485
 ENERGY           = &0486
 QQ24             = &0487
 QQ25             = &0488
@@ -640,6 +650,7 @@ LOIN             = &DC0F
 PIXEL            = &E4F0
 PIXELx2          = &E543
 ECBLB2           = &E596
+MSBAR            = &E59F
 DELAY            = &EBA2
 BEEP             = &EBA9
 EXNO3            = &EBAD
@@ -745,6 +756,7 @@ NLIN4            = &F473
 DORND2           = &F4AC
 DORND            = &F4AD
 PROJ             = &F4C1
+FAROF2           = &F60C
 MU5              = &F65A
 MULT3            = &F664
 MLS2             = &F6BA
@@ -3233,7 +3245,7 @@ JMTBm1 = sub_CB203+2
 
 .CB686
  INC XC                                       ; B686: E6 32       .2
- LDA W                                        ; B688: A5 9E       ..
+ LDA QQ11                                     ; B688: A5 9E       ..
  AND #&30 ; '0'                               ; B68A: 29 30       )0
  BEQ CB6A9                                    ; B68C: F0 1B       ..
  LDY L0037                                    ; B68E: A4 37       .7
@@ -3282,7 +3294,7 @@ JMTBm1 = sub_CB203+2
  JMP CB8A6                                    ; B6D5: 4C A6 B8    L..
 
 .CB6D8
- LDA W                                        ; B6D8: A5 9E       ..
+ LDA QQ11                                     ; B6D8: A5 9E       ..
  BNE CB6DF                                    ; B6DA: D0 03       ..
  JMP CB83E                                    ; B6DC: 4C 3E B8    L>.
 
@@ -3449,7 +3461,7 @@ JMTBm1 = sub_CB203+2
  JMP CB75B                                    ; B7E2: 4C 5B B7    L[.
 
 .CB7E5
- LDY W                                        ; B7E5: A4 9E       ..
+ LDY QQ11                                     ; B7E5: A4 9E       ..
  CPY #&9D                                     ; B7E7: C0 9D       ..
  BEQ CB7EF                                    ; B7E9: F0 04       ..
  CPY #&DF                                     ; B7EB: C0 DF       ..

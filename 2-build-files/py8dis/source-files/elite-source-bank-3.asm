@@ -155,8 +155,8 @@ T                = &009A
 XSAV             = &009B
 YSAV             = &009C
 XX17             = &009D
-W                = &009E
-QQ11             = &009F
+QQ11             = &009E
+QQ11_MASK        = &009F
 ZZ               = &00A0
 XX13             = &00A1
 MCNT             = &00A2
@@ -489,12 +489,17 @@ SPR_63_ATTR      = &02FE
 SPR_63_X         = &02FF
 L0300            = &0300
 FRIN             = &036A
+JUNK             = &0373
 ECMP             = &0389
 MJ               = &038A
+CABTMP           = &038B
+LAS2             = &038C
+LASCT            = &038E
 VIEW             = &038E
+GNTMP            = &0390
 EV               = &0392
-LAS2             = &0393
 L0395            = &0395
+NAME             = &0396
 TP               = &039E
 QQ0              = &039F
 QQ1              = &03A0
@@ -557,9 +562,14 @@ BOXEDGE1         = &046E
 BOXEDGE2         = &046F
 L0473            = &0473
 CONT2_SCAN       = &0475
+LASX             = &047B
+LASY             = &047C
+ALTIT            = &047E
 SWAP             = &047F
 XSAV2            = &0481
 YSAV2            = &0482
+FSH              = &0484
+ASH              = &0485
 ENERGY           = &0486
 QQ24             = &0487
 QQ25             = &0488
@@ -692,6 +702,7 @@ LOIN             = &DC0F
 PIXEL            = &E4F0
 PIXELx2          = &E543
 ECBLB2           = &E596
+MSBAR            = &E59F
 DELAY            = &EBA2
 BEEP             = &EBA9
 EXNO3            = &EBAD
@@ -799,6 +810,7 @@ DORND            = &F4AD
 PROJ             = &F4C1
 LF52D            = &F52D
 LF5AF            = &F5AF
+FAROF2           = &F60C
 MU5              = &F65A
 MULT3            = &F664
 MLS2             = &F6BA
@@ -2117,7 +2129,7 @@ NORM             = &FAF8
  STA DASHBOARD_SWITCH                         ; A7C4: 85 E9       ..
  LDA #0                                       ; A7C6: A9 00       ..
  STA PPU_MASK                                 ; A7C8: 8D 01 20    ..
- LDA W                                        ; A7CB: A5 9E       ..
+ LDA QQ11                                     ; A7CB: A5 9E       ..
  CMP #&B9                                     ; A7CD: C9 B9       ..
  BNE CA7D4                                    ; A7CF: D0 03       ..
  JMP CA87D                                    ; A7D1: 4C 7D A8    L}.
@@ -2192,7 +2204,7 @@ NORM             = &FAF8
  LDA #&E8                                     ; A858: A9 E8       ..
  STA SC                                       ; A85A: 85 07       ..
  JSR sub_CA909                                ; A85C: 20 09 A9     ..
- LDA W                                        ; A85F: A5 9E       ..
+ LDA QQ11                                     ; A85F: A5 9E       ..
  CMP #&DF                                     ; A861: C9 DF       ..
  BNE CA8A2                                    ; A863: D0 3D       .=
  LDA #&0E                                     ; A865: A9 0E       ..
@@ -2259,11 +2271,11 @@ NORM             = &FAF8
  STX L00F4                                    ; A8E2: 86 F4       ..
  JSR LD8EC                                    ; A8E4: 20 EC D8     ..
  JSR LD946                                    ; A8E7: 20 46 D9     F.
- LDA W                                        ; A8EA: A5 9E       ..
- STA QQ11                                     ; A8EC: 85 9F       ..
+ LDA QQ11                                     ; A8EA: A5 9E       ..
+ STA QQ11_MASK                                ; A8EC: 85 9F       ..
  AND #&40 ; '@'                               ; A8EE: 29 40       )@
  BEQ CA8FC                                    ; A8F0: F0 0A       ..
- LDA W                                        ; A8F2: A5 9E       ..
+ LDA QQ11                                     ; A8F2: A5 9E       ..
  CMP #&DF                                     ; A8F4: C9 DF       ..
  BEQ CA8FC                                    ; A8F6: F0 04       ..
  LDA #0                                       ; A8F8: A9 00       ..
@@ -2337,7 +2349,7 @@ NORM             = &FAF8
  STX L00F3                                    ; A976: 86 F3       ..
  LDA #0                                       ; A978: A9 00       ..
  STA L00CC                                    ; A97A: 85 CC       ..
- LDA W                                        ; A97C: A5 9E       ..
+ LDA QQ11                                     ; A97C: A5 9E       ..
  CMP #&DF                                     ; A97E: C9 DF       ..
  BNE CA986                                    ; A980: D0 04       ..
  LDA #4                                       ; A982: A9 04       ..
@@ -2390,7 +2402,7 @@ NORM             = &FAF8
 
  PHA                                          ; A9D1: 48          H
  JSR LD8C5                                    ; A9D2: 20 C5 D8     ..
- LDA W                                        ; A9D5: A5 9E       ..
+ LDA QQ11                                     ; A9D5: A5 9E       ..
  CMP #&96                                     ; A9D7: C9 96       ..
  BNE CA9E1                                    ; A9D9: D0 06       ..
  JSR CBEEA_BANK5                              ; A9DB: 20 96 EF     ..
@@ -2401,7 +2413,7 @@ NORM             = &FAF8
  BNE CA9E8                                    ; A9E3: D0 03       ..
  JSR CB8F9_BANK4                              ; A9E5: 20 B2 EF     ..
 .CA9E8
- LDA W                                        ; A9E8: A5 9E       ..
+ LDA QQ11                                     ; A9E8: A5 9E       ..
  AND #&40 ; '@'                               ; A9EA: 29 40       )@
  BEQ CA9F2                                    ; A9EC: F0 04       ..
  LDA #0                                       ; A9EE: A9 00       ..
@@ -2425,8 +2437,8 @@ NORM             = &FAF8
  LDA #&50 ; 'P'                               ; AA13: A9 50       .P
  STA L00CD                                    ; AA15: 85 CD       ..
  STA L00CE                                    ; AA17: 85 CE       ..
- LDA W                                        ; AA19: A5 9E       ..
- STA QQ11                                     ; AA1B: 85 9F       ..
+ LDA QQ11                                     ; AA19: A5 9E       ..
+ STA QQ11_MASK                                ; AA1B: 85 9F       ..
  LDA TILE                                     ; AA1D: A5 B8       ..
  STA L00C3                                    ; AA1F: 85 C3       ..
  STA L00C4                                    ; AA21: 85 C4       ..
@@ -2435,7 +2447,7 @@ NORM             = &FAF8
  STX L00F3                                    ; AA27: 86 F3       ..
  STX L00F4                                    ; AA29: 86 F4       ..
  JSR LD8EC                                    ; AA2B: 20 EC D8     ..
- LDA W                                        ; AA2E: A5 9E       ..
+ LDA QQ11                                     ; AA2E: A5 9E       ..
  AND #&40 ; '@'                               ; AA30: 29 40       )@
  BNE CAA3B                                    ; AA32: D0 07       ..
  JSR LD167                                    ; AA34: 20 67 D1     g.
@@ -2447,7 +2459,7 @@ NORM             = &FAF8
  JMP CB673_BANK3                              ; AA40: 4C E8 EE    L..
 
 .CAA43
- LDA W                                        ; AA43: A5 9E       ..
+ LDA QQ11                                     ; AA43: A5 9E       ..
  AND #&0F                                     ; AA45: 29 0F       ).
  TAX                                          ; AA47: AA          .
  LDA LAA5C,X                                  ; AA48: BD 5C AA    .\.
@@ -2605,7 +2617,7 @@ NORM             = &FAF8
  STA L0036                                    ; ABCF: 85 36       .6
  LDA #0                                       ; ABD1: A9 00       ..
  STA L00DA                                    ; ABD3: 85 DA       ..
- STA QQ11                                     ; ABD5: 85 9F       ..
+ STA QQ11_MASK                                ; ABD5: 85 9F       ..
  LDA #&FF                                     ; ABD7: A9 FF       ..
  STA L0473                                    ; ABD9: 8D 73 04    .s.
  JSR LD933                                    ; ABDC: 20 33 D9     3.
@@ -2615,7 +2627,7 @@ NORM             = &FAF8
  RTS                                          ; ABE6: 60          `
 
 .sub_CABE7
- LDA W                                        ; ABE7: A5 9E       ..
+ LDA QQ11                                     ; ABE7: A5 9E       ..
  CMP #&BA                                     ; ABE9: C9 BA       ..
  BNE CAC08                                    ; ABEB: D0 1B       ..
  LDA L0464                                    ; ABED: AD 64 04    .d.
@@ -2635,7 +2647,7 @@ NORM             = &FAF8
  STA ADDR1_HI                                 ; AC0A: 85 D5       ..
  LDA #&80                                     ; AC0C: A9 80       ..
  STA ADDR1_LO                                 ; AC0E: 85 D4       ..
- LDA W                                        ; AC10: A5 9E       ..
+ LDA QQ11                                     ; AC10: A5 9E       ..
  BPL CAC1C                                    ; AC12: 10 08       ..
  LDA #3                                       ; AC14: A9 03       ..
  STA ADDR1_HI                                 ; AC16: 85 D5       ..
@@ -2645,7 +2657,7 @@ NORM             = &FAF8
  RTS                                          ; AC1C: 60          `
 
  TAY                                          ; AC1D: A8          .
- LDA W                                        ; AC1E: A5 9E       ..
+ LDA QQ11                                     ; AC1E: A5 9E       ..
  AND #&40 ; '@'                               ; AC20: 29 40       )@
  BNE CAC1C                                    ; AC22: D0 F8       ..
  STY L0464                                    ; AC24: 8C 64 04    .d.
@@ -2654,7 +2666,7 @@ NORM             = &FAF8
  STA ADDR1_HI                                 ; AC2C: 85 D5       ..
  LDA #&80                                     ; AC2E: A9 80       ..
  STA ADDR1_LO                                 ; AC30: 85 D4       ..
- LDA W                                        ; AC32: A5 9E       ..
+ LDA QQ11                                     ; AC32: A5 9E       ..
  BPL CAC3E                                    ; AC34: 10 08       ..
  LDA #3                                       ; AC36: A9 03       ..
  STA ADDR1_HI                                 ; AC38: 85 D5       ..
@@ -2680,7 +2692,7 @@ NORM             = &FAF8
  BPL loop_CAC4B                               ; AC5A: 10 EF       ..
  LDA L0464                                    ; AC5C: AD 64 04    .d.
  JSR sub_CAE18                                ; AC5F: 20 18 AE     ..
- LDA W                                        ; AC62: A5 9E       ..
+ LDA QQ11                                     ; AC62: A5 9E       ..
  AND #&40 ; '@'                               ; AC64: 29 40       )@
  BNE CAC85                                    ; AC66: D0 1D       ..
  JSR sub_CABE7                                ; AC68: 20 E7 AB     ..
@@ -2714,7 +2726,7 @@ NORM             = &FAF8
  STA SPR_00_X                                 ; AC95: 8D 03 02    ...
  LDY #&12                                     ; AC98: A0 12       ..
  LDX #&9D                                     ; AC9A: A2 9D       ..
- LDA W                                        ; AC9C: A5 9E       ..
+ LDA QQ11                                     ; AC9C: A5 9E       ..
  BPL CACCC                                    ; AC9E: 10 2C       .,
  CMP #&C4                                     ; ACA0: C9 C4       ..
  BNE CACA8                                    ; ACA2: D0 04       ..
@@ -2729,7 +2741,7 @@ NORM             = &FAF8
  LDA #&F8                                     ; ACB2: A9 F8       ..
  STA SPR_00_X                                 ; ACB4: 8D 03 02    ...
 .CACB7
- LDA W                                        ; ACB7: A5 9E       ..
+ LDA QQ11                                     ; ACB7: A5 9E       ..
  AND #&0F                                     ; ACB9: 29 0F       ).
  CMP #&0F                                     ; ACBB: C9 0F       ..
  BNE CACC1                                    ; ACBD: D0 02       ..
@@ -2753,7 +2765,7 @@ NORM             = &FAF8
  ASL A                                        ; ACDB: 0A          .
  ADC #&81                                     ; ACDC: 69 81       i.
  STA L00D6                                    ; ACDE: 85 D6       ..
- LDA W                                        ; ACE0: A5 9E       ..
+ LDA QQ11                                     ; ACE0: A5 9E       ..
  AND #&40 ; '@'                               ; ACE2: 29 40       )@
  BNE CACEA                                    ; ACE4: D0 04       ..
  LDX #0                                       ; ACE6: A2 00       ..
@@ -2809,7 +2821,7 @@ NORM             = &FAF8
  STY V                                        ; AD3D: 84 63       .c
  ADC #0                                       ; AD3F: 69 00       i.
  STA V_1                                      ; AD41: 85 64       .d
- LDA W                                        ; AD43: A5 9E       ..
+ LDA QQ11                                     ; AD43: A5 9E       ..
  BMI CAD5A                                    ; AD45: 30 13       0.
  LDA #&72 ; 'r'                               ; AD47: A9 72       .r
  STA SCH                                      ; AD49: 85 08       ..
@@ -2970,7 +2982,7 @@ NORM             = &FAF8
  LDY #&0E                                     ; AE60: A0 0E       ..
  JSR sub_CAF5B                                ; AE62: 20 5B AF     [.
 .CAE65
- LDA W                                        ; AE65: A5 9E       ..
+ LDA QQ11                                     ; AE65: A5 9E       ..
  BEQ CAE6F                                    ; AE67: F0 06       ..
  JSR sub_CAD16                                ; AE69: 20 16 AD     ..
  JMP CAE9C                                    ; AE6C: 4C 9C AE    L..
@@ -3010,14 +3022,14 @@ NORM             = &FAF8
 .CAEAB
  LDA L03A6                                    ; AEAB: AD A6 03    ...
  BNE CAEB6                                    ; AEAE: D0 06       ..
- LDA W                                        ; AEB0: A5 9E       ..
+ LDA QQ11                                     ; AEB0: A5 9E       ..
  CMP #&BB                                     ; AEB2: C9 BB       ..
  BEQ CAEBB                                    ; AEB4: F0 05       ..
 .CAEB6
  LDY #&11                                     ; AEB6: A0 11       ..
  JSR CAF2E                                    ; AEB8: 20 2E AF     ..
 .CAEBB
- LDA W                                        ; AEBB: A5 9E       ..
+ LDA QQ11                                     ; AEBB: A5 9E       ..
  CMP #&BA                                     ; AEBD: C9 BA       ..
  BNE CAEC6                                    ; AEBF: D0 05       ..
  LDY #4                                       ; AEC1: A0 04       ..
@@ -3184,13 +3196,13 @@ NORM             = &FAF8
  STX TILE                                     ; AFCA: 86 B8       ..
  RTS                                          ; AFCC: 60          `
 
- LDA W                                        ; AFCD: A5 9E       ..
+ LDA QQ11                                     ; AFCD: A5 9E       ..
  CMP #&CF                                     ; AFCF: C9 CF       ..
  BEQ loop_CAFC3                               ; AFD1: F0 F0       ..
  CMP #&10                                     ; AFD3: C9 10       ..
  BEQ loop_CAFC8                               ; AFD5: F0 F1       ..
  LDX #&42 ; 'B'                               ; AFD7: A2 42       .B
- LDA W                                        ; AFD9: A5 9E       ..
+ LDA QQ11                                     ; AFD9: A5 9E       ..
  BMI CAFDF                                    ; AFDB: 30 02       0.
  LDX #&3C ; '<'                               ; AFDD: A2 3C       .<
 .CAFDF
@@ -3353,7 +3365,7 @@ NORM             = &FAF8
  ADC #&5F ; '_'                               ; B0EB: 69 5F       i_
  STA TILE                                     ; B0ED: 85 B8       ..
  LDX #0                                       ; B0EF: A2 00       ..
- LDA W                                        ; B0F1: A5 9E       ..
+ LDA QQ11                                     ; B0F1: A5 9E       ..
  CMP #&BB                                     ; B0F3: C9 BB       ..
  BNE CB0F8                                    ; B0F5: D0 01       ..
  DEX                                          ; B0F7: CA          .
@@ -3452,7 +3464,7 @@ NORM             = &FAF8
  LDA #8                                       ; B19A: A9 08       ..
  STA SC                                       ; B19C: 85 07       ..
  LDX #&5F ; '_'                               ; B19E: A2 5F       ._
- LDA W                                        ; B1A0: A5 9E       ..
+ LDA QQ11                                     ; B1A0: A5 9E       ..
  CMP #&BB                                     ; B1A2: C9 BB       ..
  BNE CB1A8                                    ; B1A4: D0 02       ..
  LDX #&46 ; 'F'                               ; B1A6: A2 46       .F
@@ -3845,7 +3857,7 @@ NORM             = &FAF8
  EQUB &0F, &0F, &0F                           ; B57C: 0F 0F 0F    ...
 
 .sub_CB57F
- LDA QQ11                                     ; B57F: A5 9F       ..
+ LDA QQ11_MASK                                ; B57F: A5 9F       ..
  AND #&0F                                     ; B581: 29 0F       ).
  TAX                                          ; B583: AA          .
  LDA #0                                       ; B584: A9 00       ..
@@ -3870,7 +3882,7 @@ NORM             = &FAF8
  STA XX3,Y                                    ; B5A4: 99 00 01    ...
  DEY                                          ; B5A7: 88          .
  BPL loop_CB5A2                               ; B5A8: 10 F8       ..
- LDA QQ11                                     ; B5AA: A5 9F       ..
+ LDA QQ11_MASK                                ; B5AA: A5 9F       ..
  BEQ CB5DE                                    ; B5AC: F0 30       .0
  CMP #&98                                     ; B5AE: C9 98       ..
  BEQ CB607                                    ; B5B0: F0 55       .U
@@ -3922,7 +3934,7 @@ NORM             = &FAF8
 .CB607
  LDA #&0F                                     ; B607: A9 0F       ..
  STA L0033                                    ; B609: 85 33       .3
- LDA QQ11                                     ; B60B: A5 9F       ..
+ LDA QQ11_MASK                                ; B60B: A5 9F       ..
  BPL CB627                                    ; B60D: 10 18       ..
  CMP #&C4                                     ; B60F: C9 C4       ..
  BEQ CB627                                    ; B611: F0 14       ..
@@ -3950,7 +3962,7 @@ NORM             = &FAF8
  STA L0036                                    ; B63A: 85 36       .6
  RTS                                          ; B63C: 60          `
 
- LDA QQ11                                     ; B63D: A5 9F       ..
+ LDA QQ11_MASK                                ; B63D: A5 9F       ..
  CMP #&FF                                     ; B63F: C9 FF       ..
  BEQ CB66D                                    ; B641: F0 2A       .*
  LDA L0473                                    ; B643: AD 73 04    .s.
@@ -4149,7 +4161,7 @@ NORM             = &FAF8
  STA V                                        ; B9E8: 85 63       .c
  LDA LB9DE,X                                  ; B9EA: BD DE B9    ...
  STA V_1                                      ; B9ED: 85 64       .d
- LDA W                                        ; B9EF: A5 9E       ..
+ LDA QQ11                                     ; B9EF: A5 9E       ..
  AND #&0F                                     ; B9F1: 29 0F       ).
  TAY                                          ; B9F3: A8          .
  LDA (V),Y                                    ; B9F4: B1 63       .c

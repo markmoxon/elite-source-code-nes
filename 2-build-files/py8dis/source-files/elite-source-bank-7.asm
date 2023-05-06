@@ -159,8 +159,8 @@ T               = &009A
 XSAV            = &009B
 YSAV            = &009C
 XX17            = &009D
-W               = &009E
-QQ11            = &009F
+QQ11            = &009E
+QQ11_MASK       = &009F
 ZZ              = &00A0
 XX13            = &00A1
 MCNT            = &00A2
@@ -507,14 +507,19 @@ L0309           = &0309
 L030A           = &030A
 FRIN            = &036A
 L036C           = &036C
-L0373           = &0373
+JUNK            = &0373
 L0388           = &0388
 ECMP            = &0389
 MJ              = &038A
+CABTMP          = &038B
+LAS2            = &038C
+LASCT           = &038E
 VIEW            = &038E
+GNTMP           = &0390
 EV              = &0392
-LAS2            = &0393
+L0393           = &0393
 L0394           = &0394
+NAME            = &0396
 L039D           = &039D
 TP              = &039E
 QQ0             = &039F
@@ -591,9 +596,14 @@ CONT2_SCAN      = &0475
 L0476           = &0476
 L0477           = &0477
 L0478           = &0478
+LASX            = &047B
+LASY            = &047C
+ALTIT           = &047E
 SWAP            = &047F
 XSAV2           = &0481
 YSAV2           = &0482
+FSH             = &0484
+ASH             = &0485
 ENERGY          = &0486
 QQ24            = &0487
 QQ25            = &0488
@@ -2547,7 +2557,7 @@ LC006 = sub_CC004+2
  LDA #0                                       ; CF47: A9 00       ..
  STA PPU_MASK                                 ; CF49: 8D 01 20    ..
 .sub_CCF4C
- LDA QQ11                                     ; CF4C: A5 9F       ..
+ LDA QQ11_MASK                                ; CF4C: A5 9F       ..
  BNE CCF96                                    ; CF4E: D0 46       .F
  LDY L0034                                    ; CF50: A4 34       .4
  LDA L00F3                                    ; CF52: A5 F3       ..
@@ -5794,6 +5804,8 @@ LDFFF = sub_CDFFE+1
  LDY #2                                       ; E59A: A0 02       ..
  JMP NOISE                                    ; E59C: 4C F2 EB    L..
 
+; ******************************************************************************
+.MSBAR
  TYA                                          ; E59F: 98          .
  PHA                                          ; E5A0: 48          H
  LDY LE5AB,X                                  ; E5A1: BC AB E5    ...
@@ -6239,7 +6251,7 @@ LDFFF = sub_CDFFE+1
  RTS                                          ; EAAF: 60          `
 
 .sub_CEAB0
- LDA QQ11                                     ; EAB0: A5 9F       ..
+ LDA QQ11_MASK                                ; EAB0: A5 9F       ..
  BNE CEA8D                                    ; EAB2: D0 D9       ..
  LDX L0476                                    ; EAB4: AE 76 04    .v.
  LDA #8                                       ; EAB7: A9 08       ..
@@ -6347,8 +6359,8 @@ LDFFF = sub_CDFFE+1
  RTS                                          ; EB85: 60          `
 
 .sub_CEB86
- LDA QQ11                                     ; EB86: A5 9F       ..
- CMP W                                        ; EB88: C5 9E       ..
+ LDA QQ11_MASK                                ; EB86: A5 9F       ..
+ CMP QQ11                                     ; EB88: C5 9E       ..
  BEQ CEB8F                                    ; EB8A: F0 03       ..
  JSR CB63D_BANK3                              ; EB8C: 20 AB ED     ..
 .CEB8F
@@ -7512,7 +7524,7 @@ LDFFF = sub_CDFFE+1
 ; ******************************************************************************
 .CLYNS
  LDA #0                                       ; F2DE: A9 00       ..
- STA LAS2                                     ; F2E0: 8D 93 03    ...
+ STA L0393                                    ; F2E0: 8D 93 03    ...
  STA L0394                                    ; F2E3: 8D 94 03    ...
  LDA #&FF                                     ; F2E6: A9 FF       ..
  STA DTW2                                     ; F2E8: 8D F4 03    ...
@@ -7524,7 +7536,7 @@ LDFFF = sub_CDFFE+1
  STA XC                                       ; F2F5: 85 32       .2
  LDA L00D2                                    ; F2F7: A5 D2       ..
  STA TILE                                     ; F2F9: 85 B8       ..
- LDA W                                        ; F2FB: A5 9E       ..
+ LDA QQ11                                     ; F2FB: A5 9E       ..
  BPL CF332                                    ; F2FD: 10 33       .3
  LDA #&72 ; 'r'                               ; F2FF: A9 72       .r
  STA SCH                                      ; F301: 85 08       ..
@@ -7567,7 +7579,7 @@ LDFFF = sub_CDFFE+1
  LDY QQ12                                     ; F33A: A4 A5       ..
  BNE CF355                                    ; F33C: D0 17       ..
  INX                                          ; F33E: E8          .
- LDY L0373                                    ; F33F: AC 73 03    .s.
+ LDY JUNK                                     ; F33F: AC 73 03    .s.
  LDA L036C,Y                                  ; F342: B9 6C 03    .l.
  BEQ CF355                                    ; F345: F0 0E       ..
  INX                                          ; F347: E8          .
@@ -7638,7 +7650,7 @@ LDFFF = sub_CDFFE+1
  JSR C8021_BANK6                              ; F3C1: 20 24 ED     $.
  JSR CEB8F                                    ; F3C4: 20 8F EB     ..
  LDA #&FF                                     ; F3C7: A9 FF       ..
- STA QQ11                                     ; F3C9: 85 9F       ..
+ STA QQ11_MASK                                ; F3C9: 85 9F       ..
  LDA #1                                       ; F3CB: A9 01       ..
  STA CONT2_SCAN                               ; F3CD: 8D 75 04    .u.
  LDA #&32 ; '2'                               ; F3D0: A9 32       .2
@@ -8007,6 +8019,8 @@ LDFFF = sub_CDFFE+1
 .CF60B
  RTS                                          ; F60B: 60          `
 
+; ******************************************************************************
+.FAROF2
  STA T                                        ; F60C: 85 9A       ..
  LDA DASHBOARD_SWITCH                         ; F60E: A5 E9       ..
  BPL CF61B                                    ; F610: 10 09       ..
