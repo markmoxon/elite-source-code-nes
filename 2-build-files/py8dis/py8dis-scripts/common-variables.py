@@ -31,7 +31,7 @@ label(0x0003, "RAND_2")
 label(0x0004, "RAND_3")
 label(0x0006, "T1")
 label(0x0007, "SC")
-label(0x0008, "SCH")
+label(0x0008, "SC_1")
 label(0x0009, "XX1")
 label(0x0009, "INWK")
 label(0x000A, "INWK_1")
@@ -226,6 +226,9 @@ label(0x00F5, "PPU_CTRL_COPY")      # Mine, contains a copy of PPU_CTRL
 
 label(0x00F7, "BANK")               # Mine, contains lower bank number
 
+label(0x00FA, "ADDR2_LO")           # Mine, an address within the PPU to be poked to
+label(0x00FB, "ADDR2_HI")
+
 label(0x0100, "XX3")
 label(0x0101, "XX3_1")
 
@@ -292,8 +295,8 @@ label(0x045B, "K2_2")
 label(0x045C, "K2_3")
 label(0x045D, "DLY")
 label(0x045F, "QQ19_2")
-label(0x046E, "BOXEDGE1")           # Mine, bitmap for drawing box edge?
-label(0x046F, "BOXEDGE2")           # Mine, bitmap for drawing box edge?
+label(0x046E, "BOX_EDGE1")          # Mine, bitmap for drawing box edge?
+label(0x046F, "BOX_EDGE2")          # Mine, bitmap for drawing box edge?
 label(0x0475, "CONT2_SCAN")         # Mine, if non-zero, scan controller 2
 label(0x047B, "LASX")
 label(0x047C, "LASY")
@@ -395,7 +398,7 @@ label(0x7400, "NAMES_1")
 
 # Permanently loaded labels in 7.asm ($C000-$FFFF)
 
-label(0xC0DF, "LC0DF")
+label(0xC0DF, "LC0DF")              # Mine
 label(0xC100, "log")
 label(0xC200, "logL")
 label(0xC300, "antilog")
@@ -407,38 +410,72 @@ label(0xC53F, "XX21m1")
 label(0xC540, "XX21")
 label(0xCE7E, "UNIV")
 label(0xCE7F, "UNIV_1")
-label(0xCED0, "NAMES_LOOKUP")
-label(0xCED2, "PATTERNS_LOOKUP")
+label(0xCED0, "NAMES_LOOKUP")       # Mine
+label(0xCED2, "PATTERNS_LOOKUP")    # Mine
 label(0xD9F7, "TWOS")
 label(0xDA01, "TWOS2")
 label(0xDA09, "TWFL")
 label(0xDA10, "TWFR")
-label(0xDA18, "ylookupLO")
-label(0xDAF8, "ylookupHI")
-label(0xF333, "LF333")
+label(0xDA18, "ylookupLo")          # Mine
+label(0xDAF8, "ylookupHi")          # Mine
+label(0xEC3C, "NOISE_lookup1")      # Mine
+label(0xEC5C, "NOISE_lookup2")      # Mine
+label(0xF333, "LF333")              # Mine
 
 subroutine(0xC007, "Spercent")
 subroutine(0xC0AD, "RESET_BANK")    # Mine, switch bank to stack value
 subroutine(0xC0AE, "SET_BANK")      # Mine, switch bank to A
-subroutine(0xCD6F, "BOXEDGES")      # Mine, draw space view box edges?
+subroutine(0xC03E, "subm_C03E")
+subroutine(0xC0A8, "subm_C0A8")
+subroutine(0xC582, "subm_C582")
+subroutine(0xC5D2, "subm_C5D2")
+subroutine(0xC630, "subm_C630")
+subroutine(0xC6C0, "subm_C6C0")
+subroutine(0xC6C6, "subm_C6C6")
+subroutine(0xC6F4, "subm_C6F4")
+subroutine(0xC836, "subm_C836")
+subroutine(0xCA56, "subm_CA56")
+subroutine(0xCB42, "subm_CB42")
+subroutine(0xCB9C, "subm_CB9C")
+subroutine(0xCC1F, "subm_CC1F")
 subroutine(0xCC2E, "SEND_TO_PPU1")  # Mine, something to do with sending to PPU?
 subroutine(0xCD34, "COPY_NAMES")    # Mine, copies nametable buffer 0 to buffer 1
+subroutine(0xCD62, "subm_CD62")
+subroutine(0xCD6F, "BOX_EDGES")     # Mine, draw space view box edges?
 subroutine(0xCE90, "GINF")
 subroutine(0xCED4, "IRQ")           # Mine, IRQ handler
 subroutine(0xCED5, "NMI")           # Mine, NMI handler
-subroutine(0xCE9E, "sub_CE9E")
-subroutine(0xCEA5, "sub_CEA5")
+subroutine(0xCE9E, "subm_CE9E")
+subroutine(0xCEA5, "subm_CEA5")
 subroutine(0xCF2E, "SET_PALETTE")   # Mine, set PPU palette?
 subroutine(0xD02D, "RESET_NAMES1")  # Mine, does this clear down nametable 1?
 subroutine(0xD0F8, "CONTROLLERS")   # Mine, reads controllers
 subroutine(0xD06D, "SWITCH_TO_TABLE_0")    # Mine, switches PPU to nametable/palette table 0
 subroutine(0xD710, "FILL_MEMORY")   # Mine, something to do with memory filling?
+subroutine(0xD8D8, "subm_D8D8")
 subroutine(0xD986, "SEND_TO_PPU2")  # Mine, something to do with sending to PPU?
 subroutine(0xDC0F, "LOIN")
+subroutine(0xDEA5, "subm_DEA5")
+subroutine(0xDF76, "subm_DF76")
+subroutine(0xE04A, "subm_E04A")
+subroutine(0xE04A, "subm_E0BA")
+subroutine(0xE18E, "subm_E18E")
+subroutine(0xE33E, "subm_E33E")
 subroutine(0xE4F0, "PIXEL")
 subroutine(0xE543, "PIXELx2")       # Mine, draws two pixel dash in space view
 subroutine(0xE596, "ECBLB2")
 subroutine(0xE59F, "MSBAR")
+subroutine(0xE802, "subm_E802")
+subroutine(0xE8DE, "subm_E8DE")
+subroutine(0xE802, "subm_E802")
+subroutine(0xE909, "subm_E909")
+subroutine(0xE91D, "subm_E91D")
+subroutine(0xEA8D, "subm_EA8D")
+subroutine(0xEAB0, "subm_EAB0")
+subroutine(0xEB0D, "subm_EB0D")
+subroutine(0xEB19, "subm_EB19")
+subroutine(0xEB67, "subm_EB67")
+subroutine(0xEB86, "subm_EB86")
 subroutine(0xEBA2, "DELAY")
 subroutine(0xEBA9, "BEEP")
 subroutine(0xEBAD, "EXNO3")
@@ -501,7 +538,7 @@ subroutine(0xF02F, "CBB37_BANK6")
 subroutine(0xF03D, "CB8FE_BANK6")
 subroutine(0xF04B, "CB90D_BANK6")
 subroutine(0xF059, "CA5AB_BANK6")
-subroutine(0xF06F, "sub_CF06F")
+subroutine(0xF06F, "subm_F06F")
 subroutine(0xF074, "BEEP_BANK7")
 subroutine(0xF082, "DETOK_BANK2")
 subroutine(0xF09D, "DTS_BANK2")
@@ -531,19 +568,24 @@ subroutine(0xF280, "CLIP_BANK1")
 subroutine(0xF293, "CB341_BANK3")
 subroutine(0xF2A8, "SCAN_BANK1")
 subroutine(0xF2BD, "C8926_BANK0")
-subroutine(0xF2CE, "sub_CF2CE")
+subroutine(0xF2CE, "subm_F2CE")
 subroutine(0xF2DE, "CLYNS")
-subroutine(0xF338, "sub_CF338")
-subroutine(0xF359, "sub_CF359")
-subroutine(0xF3BC, "sub_CF3BC")
-subroutine(0xF42A, "sub_CF42A")
+subroutine(0xF338, "subm_F338")
+subroutine(0xF359, "subm_F359")
+subroutine(0xF3BC, "subm_F3BC")
+subroutine(0xF42A, "subm_F42A")
 subroutine(0xF42E, "Ze")
-subroutine(0xF454, "sub_CF454")
+subroutine(0xF454, "subm_F454")
 subroutine(0xF46A, "NLIN3")
 subroutine(0xF473, "NLIN4")
+subroutine(0xF48D, "subm_F48D")
+subroutine(0xF493, "subm_F493")
 subroutine(0xF4AC, "DORND2")
 subroutine(0xF4AD, "DORND")
 subroutine(0xF4C1, "PROJ")
+subroutine(0xF4FB, "subm_F4FB")
+subroutine(0xF52D, "subm_F52D")
+subroutine(0xF5AF, "subm_F5AF")
 subroutine(0xF60C, "FAROF2")
 subroutine(0xF65A, "MU5")
 subroutine(0xF664, "MULT3")
@@ -563,6 +605,7 @@ subroutine(0xF766, "FMLTU2")
 subroutine(0xF770, "FMLTU")
 subroutine(0xF7AB, "MLTU2m2")
 subroutine(0xF7AD, "MLTU2")
+subroutine(0xF7CE, "MUT3")
 subroutine(0xF7D2, "MUT2")
 subroutine(0xF7D6, "MUT1")
 subroutine(0xF7DA, "MULT1")
@@ -574,6 +617,10 @@ subroutine(0xF8AE, "TIS1")
 subroutine(0xF8D1, "DV42")
 subroutine(0xF8D4, "DV41")
 subroutine(0xF962, "DVID3B2")
+subroutine(0xFA16, "subm_FA16")
+subroutine(0xFA43, "subm_FA43")
 subroutine(0xFA55, "LL5")
 subroutine(0xFA91, "LL28")
+subroutine(0xFACB, "subm_FACB")
 subroutine(0xFAF8, "NORM")
+subroutine(0xFB89, "subm_FB89")

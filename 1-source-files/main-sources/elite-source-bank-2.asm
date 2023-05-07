@@ -833,11 +833,11 @@
 
  SKIP 1                 \ ???
 
-.L00D4
+.ADDR1_LO
 
  SKIP 1                 \ ???
 
-.L00D5
+.ADDR1_HI
 
  SKIP 1                 \ ???
 
@@ -925,7 +925,7 @@
 
  SKIP 1                 \ ???
 
-.L00F5
+.PPU_CTRL_COPY
 
  SKIP 1                 \ ???
 
@@ -945,11 +945,11 @@
 
  SKIP 1                 \ ???
 
-.L00FA
+.ADDR2_LO
 
  SKIP 1                 \ ???
 
-.L00FB
+.ADDR2_HI
 
  SKIP 1                 \ ???
 
@@ -15749,9 +15749,9 @@ MACRO CHECK_DASHBOARD
  ASL A                  \   * Zero DASHBOARD_SWITCH to disable this process
  BPL skip               \     until both conditions are met once again
  JSR SWITCH_TO_TABLE_0  \
-                        \   * Clear bits 0 and 4 of L00F5 and PPU_CTRL, to set
-                        \     the base nametable address to &2000 (nametable 0)
-                        \     or &2800 (which is a mirror of &2000)
+                        \   * Clear bits 0 and 4 of PPU_CTRL and PPU_CTRL_COPY,
+                        \     to set the base nametable address to &2000 (for
+                        \     nametable 0) or &2800 (which is a mirror of &2000)
                         \
                         \   * Clear the C flag
  

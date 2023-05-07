@@ -6,7 +6,7 @@ RAND_2           = &0003
 RAND_3           = &0004
 T1               = &0006
 SC               = &0007
-SCH              = &0008
+SC_1             = &0008
 INWK             = &0009
 XX1              = &0009
 INWK_1           = &000A
@@ -188,6 +188,8 @@ T7               = &00ED
 T7_1             = &00EE
 PPU_CTRL_COPY    = &00F5
 BANK             = &00F7
+ADDR2_LO         = &00FA
+ADDR2_HI         = &00FB
 XX3              = &0100
 XX3_1            = &0101
 SPR_00_Y         = &0200
@@ -504,8 +506,8 @@ K2_3             = &045C
 DLY              = &045D
 QQ19_2           = &045F
 L046C            = &046C
-BOXEDGE1         = &046E
-BOXEDGE2         = &046F
+BOX_EDGE1        = &046E
+BOX_EDGE2        = &046F
 CONT2_SCAN       = &0475
 LASX             = &047B
 LASY             = &047C
@@ -598,6 +600,8 @@ NAMES_0          = &7000
 NAMES_1          = &7400
 LC006            = &C006
 Spercent         = &C007
+subm_C03E        = &C03E
+subm_C0A8        = &C0A8
 RESET_BANK       = &C0AD
 SET_BANK         = &C0AE
 LC0DF            = &C0DF
@@ -610,14 +614,26 @@ ACT              = &C520
 XX21m2           = &C53E
 XX21m1           = &C53F
 XX21             = &C540
+subm_C582        = &C582
+subm_C5D2        = &C5D2
+subm_C630        = &C630
+subm_C6C0        = &C6C0
+subm_C6C6        = &C6C6
+subm_C6F4        = &C6F4
+subm_C836        = &C836
+subm_CA56        = &CA56
+subm_CB42        = &CB42
+subm_CB9C        = &CB9C
+subm_CC1F        = &CC1F
 SEND_TO_PPU1     = &CC2E
 COPY_NAMES       = &CD34
-BOXEDGES         = &CD6F
+subm_CD62        = &CD62
+BOX_EDGES        = &CD6F
 UNIV             = &CE7E
 UNIV_1           = &CE7F
 GINF             = &CE90
-sub_CE9E         = &CE9E
-sub_CEA5         = &CEA5
+subm_CE9E        = &CE9E
+subm_CEA5        = &CEA5
 NAMES_LOOKUP     = &CED0
 PATTERNS_LOOKUP  = &CED2
 IRQ              = &CED4
@@ -627,24 +643,43 @@ RESET_NAMES1     = &D02D
 SWITCH_TO_TABLE_0 = &D06D
 CONTROLLERS      = &D0F8
 FILL_MEMORY      = &D710
+subm_D8D8        = &D8D8
 SEND_TO_PPU2     = &D986
 TWOS             = &D9F7
 TWOS2            = &DA01
 TWFL             = &DA09
 TWFR             = &DA10
-ylookupLO        = &DA18
-ylookupHI        = &DAF8
+ylookupLo        = &DA18
+ylookupHi        = &DAF8
 LDBD8            = &DBD8
 LOIN             = &DC0F
+subm_DEA5        = &DEA5
+subm_DF76        = &DF76
+subm_E04A        = &E04A
+subm_E0BA        = &E04A
+subm_E18E        = &E18E
+subm_E33E        = &E33E
 PIXEL            = &E4F0
 PIXELx2          = &E543
 ECBLB2           = &E596
 MSBAR            = &E59F
+subm_E802        = &E802
+subm_E8DE        = &E8DE
+subm_E909        = &E909
+subm_E91D        = &E91D
+subm_EA8D        = &EA8D
+subm_EAB0        = &EAB0
+subm_EB0D        = &EB0D
+subm_EB19        = &EB19
+subm_EB67        = &EB67
+subm_EB86        = &EB86
 DELAY            = &EBA2
 BEEP             = &EBA9
 EXNO3            = &EBAD
 BOOP             = &EBE5
 NOISE            = &EBF2
+NOISE_lookup1    = &EC3C
+NOISE_lookup2    = &EC5C
 CHECK_DASHBOARD_A = &EC7D
 LDA_XX0_Y        = &EC8D
 LDA_EPC_Y        = &ECA0
@@ -701,7 +736,7 @@ CBB37_BANK6      = &F02F
 CB8FE_BANK6      = &F03D
 CB90D_BANK6      = &F04B
 CA5AB_BANK6      = &F059
-sub_CF06F        = &F06F
+subm_F06F        = &F06F
 BEEP_BANK7       = &F074
 DETOK_BANK2      = &F082
 DTS_BANK2        = &F09D
@@ -731,22 +766,25 @@ CLIP_BANK1       = &F280
 CB341_BANK3      = &F293
 SCAN_BANK1       = &F2A8
 C8926_BANK0      = &F2BD
-sub_CF2CE        = &F2CE
+subm_F2CE        = &F2CE
 CLYNS            = &F2DE
 LF333            = &F333
-sub_CF338        = &F338
-sub_CF359        = &F359
-sub_CF3BC        = &F3BC
-sub_CF42A        = &F42A
+subm_F338        = &F338
+subm_F359        = &F359
+subm_F3BC        = &F3BC
+subm_F42A        = &F42A
 Ze               = &F42E
-sub_CF454        = &F454
+subm_F454        = &F454
 NLIN3            = &F46A
 NLIN4            = &F473
+subm_F48D        = &F48D
+subm_F493        = &F493
 DORND2           = &F4AC
 DORND            = &F4AD
 PROJ             = &F4C1
-LF52D            = &F52D
-LF5AF            = &F5AF
+subm_F4FB        = &F4FB
+subm_F52D        = &F52D
+subm_F5AF        = &F5AF
 FAROF2           = &F60C
 MU5              = &F65A
 MULT3            = &F664
@@ -766,6 +804,7 @@ FMLTU2           = &F766
 FMLTU            = &F770
 MLTU2m2          = &F7AB
 MLTU2            = &F7AD
+MUT3             = &F7CE
 MUT2             = &F7D2
 MUT1             = &F7D6
 MULT1            = &F7DA
@@ -777,9 +816,13 @@ TIS1             = &F8AE
 DV42             = &F8D1
 DV41             = &F8D4
 DVID3B2          = &F962
+subm_FA16        = &FA16
+subm_FA43        = &FA43
 LL5              = &FA55
 LL28             = &FA91
+subm_FACB        = &FACB
 NORM             = &FAF8
+subm_FB89        = &FB89
 
  ORG &8000
 
@@ -2617,24 +2660,25 @@ L951D = L800C+5393
  EQUB &0A, &0B, &0B, &0B, &0C, &0C, &0C, &0D  ; B8EC: 0A 0B 0B... ...
  EQUB &0D, &0D, &0E, &0E, &0E                 ; B8F4: 0D 0D 0E... ...
 
-.sub_CB8F9
+; ******************************************************************************
+.subm_B8F9
  LDA #0                                       ; B8F9: A9 00       ..
- STA SCH                                      ; B8FB: 85 08       ..
+ STA SC_1                                     ; B8FB: 85 08       ..
  LDA L046C                                    ; B8FD: AD 6C 04    .l.
  ASL A                                        ; B900: 0A          .
- ROL SCH                                      ; B901: 26 08       &.
+ ROL SC_1                                     ; B901: 26 08       &.
  ASL A                                        ; B903: 0A          .
- ROL SCH                                      ; B904: 26 08       &.
+ ROL SC_1                                     ; B904: 26 08       &.
  ASL A                                        ; B906: 0A          .
- ROL SCH                                      ; B907: 26 08       &.
+ ROL SC_1                                     ; B907: 26 08       &.
  STA SC                                       ; B909: 85 07       ..
  STA T5                                       ; B90B: 85 BA       ..
- LDA SCH                                      ; B90D: A5 08       ..
+ LDA SC_1                                     ; B90D: A5 08       ..
  ADC #&68 ; 'h'                               ; B90F: 69 68       ih
  STA T5_1                                     ; B911: 85 BB       ..
- LDA SCH                                      ; B913: A5 08       ..
+ LDA SC_1                                     ; B913: A5 08       ..
  ADC #&60 ; '`'                               ; B915: 69 60       i`
- STA SCH                                      ; B917: 85 08       ..
+ STA SC_1                                     ; B917: 85 08       ..
  LDA L048B                                    ; B919: AD 8B 04    ...
  ASL A                                        ; B91C: 0A          .
  TAX                                          ; B91D: AA          .
@@ -2645,15 +2689,17 @@ L951D = L800C+5393
  LDA L951D,X                                  ; B926: BD 1D 95    ...
  ADC #&95                                     ; B929: 69 95       i.
  STA V_1                                      ; B92B: 85 64       .d
- JSR LF52D                                    ; B92D: 20 2D F5     -.
+ JSR subm_F52D                                ; B92D: 20 2D F5     -.
  LDA T5                                       ; B930: A5 BA       ..
  STA SC                                       ; B932: 85 07       ..
  LDA T5_1                                     ; B934: A5 BB       ..
- STA SCH                                      ; B936: 85 08       ..
- JSR LF52D                                    ; B938: 20 2D F5     -.
+ STA SC_1                                     ; B936: 85 08       ..
+ JSR subm_F52D                                ; B938: 20 2D F5     -.
  RTS                                          ; B93B: 60          `
 
- JSR sub_CB8F9                                ; B93C: 20 F9 B8     ..
+; ******************************************************************************
+.subm_B93C
+ JSR subm_B8F9                                ; B93C: 20 F9 B8     ..
  LDA L048B                                    ; B93F: AD 8B 04    ...
  ASL A                                        ; B942: 0A          .
  TAX                                          ; B943: AA          .
@@ -2668,13 +2714,15 @@ L951D = L800C+5393
  STA PPU_ADDR                                 ; B955: 8D 06 20    ..
  LDA #&50 ; 'P'                               ; B958: A9 50       .P
  STA PPU_ADDR                                 ; B95A: 8D 06 20    ..
- JSR LF5AF                                    ; B95D: 20 AF F5     ..
+ JSR subm_F5AF                                ; B95D: 20 AF F5     ..
  LDA #&AA                                     ; B960: A9 AA       ..
  STA V_1                                      ; B962: 85 64       .d
  LDA #&9F                                     ; B964: A9 9F       ..
  STA V                                        ; B966: 85 63       .c
- JMP LF5AF                                    ; B968: 4C AF F5    L..
+ JMP subm_F5AF                                ; B968: 4C AF F5    L..
 
+; ******************************************************************************
+.subm_B96B
  LDA #&AB                                     ; B96B: A9 AB       ..
  STA V_1                                      ; B96D: 85 64       .d
  LDA #&1C                                     ; B96F: A9 1C       ..
@@ -2691,17 +2739,17 @@ L951D = L800C+5393
  ASL SC                                       ; B981: 06 07       ..
  ROL A                                        ; B983: 2A          *
  ADC #&60 ; '`'                               ; B984: 69 60       i`
- STA SCH                                      ; B986: 85 08       ..
+ STA SC_1                                     ; B986: 85 08       ..
  ADC #8                                       ; B988: 69 08       i.
  STA T5_1                                     ; B98A: 85 BB       ..
  LDA SC                                       ; B98C: A5 07       ..
  STA T5                                       ; B98E: 85 BA       ..
- JSR LF52D                                    ; B990: 20 2D F5     -.
+ JSR subm_F52D                                ; B990: 20 2D F5     -.
  LDA T5                                       ; B993: A5 BA       ..
  STA SC                                       ; B995: 85 07       ..
  LDA T5_1                                     ; B997: A5 BB       ..
- STA SCH                                      ; B999: 85 08       ..
- JSR LF52D                                    ; B99B: 20 2D F5     -.
+ STA SC_1                                     ; B999: 85 08       ..
+ JSR subm_F52D                                ; B99B: 20 2D F5     -.
  LDA #&B5                                     ; B99E: A9 B5       ..
  STA V_1                                      ; B9A0: 85 64       .d
  LDA #&CC                                     ; B9A2: A9 CC       ..
@@ -2714,14 +2762,15 @@ L951D = L800C+5393
  STA YC                                       ; B9B0: 85 3B       .;
  LDA #5                                       ; B9B2: A9 05       ..
  STA XC                                       ; B9B4: 85 32       .2
- JSR sub_CB9C1                                ; B9B6: 20 C1 B9     ..
+ JSR subm_B9C1                                ; B9B6: 20 C1 B9     ..
  LDA TILE                                     ; B9B9: A5 B8       ..
  CLC                                          ; B9BB: 18          .
  ADC #&D0                                     ; B9BC: 69 D0       i.
  STA TILE                                     ; B9BE: 85 B8       ..
  RTS                                          ; B9C0: 60          `
 
-.sub_CB9C1
+; ******************************************************************************
+.subm_B9C1
  LDA #&20 ; ' '                               ; B9C1: A9 20       .
  SEC                                          ; B9C3: 38          8
  SBC K                                        ; B9C4: E5 7D       .}
@@ -2744,7 +2793,7 @@ L951D = L800C+5393
  INY                                          ; B9DF: C8          .
  BNE CB9E6                                    ; B9E0: D0 04       ..
  INC V_1                                      ; B9E2: E6 64       .d
- INC SCH                                      ; B9E4: E6 08       ..
+ INC SC_1                                     ; B9E4: E6 08       ..
 .CB9E6
  DEX                                          ; B9E6: CA          .
  BNE loop_CB9D6                               ; B9E7: D0 ED       ..
@@ -2753,12 +2802,14 @@ L951D = L800C+5393
  ADC ZZ                                       ; B9EC: 65 A0       e.
  STA SC                                       ; B9EE: 85 07       ..
  BCC CB9F4                                    ; B9F0: 90 02       ..
- INC SCH                                      ; B9F2: E6 08       ..
+ INC SC_1                                     ; B9F2: E6 08       ..
 .CB9F4
  DEC K_1                                      ; B9F4: C6 7E       .~
  BNE CB9D4                                    ; B9F6: D0 DC       ..
  RTS                                          ; B9F8: 60          `
 
+; ******************************************************************************
+.subm_B9F9
  LDA #1                                       ; B9F9: A9 01       ..
  STA XC                                       ; B9FB: 85 32       .2
  ASL A                                        ; B9FD: 0A          .
@@ -2794,10 +2845,10 @@ L951D = L800C+5393
  ASL A                                        ; BA31: 0A          .
  ASL A                                        ; BA32: 0A          .
  ADC #6                                       ; BA33: 69 06       i.
- STA SCH                                      ; BA35: 85 08       ..
+ STA SC_1                                     ; BA35: 85 08       ..
  TYA                                          ; BA37: 98          .
- ADC SCH                                      ; BA38: 65 08       e.
- STA SCH                                      ; BA3A: 85 08       ..
+ ADC SC_1                                     ; BA38: 65 08       e.
+ STA SC_1                                     ; BA3A: 85 08       ..
  LDA K_3                                      ; BA3C: A5 80       ..
  ASL A                                        ; BA3E: 0A          .
  ASL A                                        ; BA3F: 0A          .
@@ -2831,7 +2882,7 @@ L951D = L800C+5393
  STA SPR_00_ATTR,X                            ; BA6E: 9D 02 02    ...
  LDA T5                                       ; BA71: A5 BA       ..
  STA SPR_00_X,X                               ; BA73: 9D 03 02    ...
- LDA SCH                                      ; BA76: A5 08       ..
+ LDA SC_1                                     ; BA76: A5 08       ..
  STA SPR_00_Y,X                               ; BA78: 9D 00 02    ...
  TXA                                          ; BA7B: 8A          .
  CLC                                          ; BA7C: 18          .
@@ -2845,9 +2896,9 @@ L951D = L800C+5393
  STA T5                                       ; BA87: 85 BA       ..
  DEC ZZ                                       ; BA89: C6 A0       ..
  BNE CBA5C                                    ; BA8B: D0 CF       ..
- LDA SCH                                      ; BA8D: A5 08       ..
+ LDA SC_1                                     ; BA8D: A5 08       ..
  ADC #8                                       ; BA8F: 69 08       i.
- STA SCH                                      ; BA91: 85 08       ..
+ STA SC_1                                     ; BA91: 85 08       ..
  DEC T                                        ; BA93: C6 9A       ..
  BNE CBA47                                    ; BA95: D0 B0       ..
 .CBA97

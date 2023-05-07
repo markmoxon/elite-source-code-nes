@@ -6,7 +6,7 @@ RAND_2           = &0003
 RAND_3           = &0004
 T1               = &0006
 SC               = &0007
-SCH              = &0008
+SC_1             = &0008
 INWK             = &0009
 XX1              = &0009
 INWK_1           = &000A
@@ -194,6 +194,8 @@ T7_1             = &00EE
 PPU_CTRL_COPY    = &00F5
 BANK             = &00F7
 L00F9            = &00F9
+ADDR2_LO         = &00FA
+ADDR2_HI         = &00FB
 XX3              = &0100
 XX3_1            = &0101
 SPR_00_Y         = &0200
@@ -509,8 +511,8 @@ K2_2             = &045B
 K2_3             = &045C
 DLY              = &045D
 QQ19_2           = &045F
-BOXEDGE1         = &046E
-BOXEDGE2         = &046F
+BOX_EDGE1        = &046E
+BOX_EDGE2        = &046F
 CONT2_SCAN       = &0475
 LASX             = &047B
 LASY             = &047C
@@ -608,6 +610,8 @@ L80A9            = &80A9
 LB0A9            = &B0A9
 LC006            = &C006
 Spercent         = &C007
+subm_C03E        = &C03E
+subm_C0A8        = &C0A8
 RESET_BANK       = &C0AD
 SET_BANK         = &C0AE
 LC0DF            = &C0DF
@@ -620,14 +624,26 @@ ACT              = &C520
 XX21m2           = &C53E
 XX21m1           = &C53F
 XX21             = &C540
+subm_C582        = &C582
+subm_C5D2        = &C5D2
+subm_C630        = &C630
+subm_C6C0        = &C6C0
+subm_C6C6        = &C6C6
+subm_C6F4        = &C6F4
+subm_C836        = &C836
+subm_CA56        = &CA56
+subm_CB42        = &CB42
+subm_CB9C        = &CB9C
+subm_CC1F        = &CC1F
 SEND_TO_PPU1     = &CC2E
 COPY_NAMES       = &CD34
-BOXEDGES         = &CD6F
+subm_CD62        = &CD62
+BOX_EDGES        = &CD6F
 UNIV             = &CE7E
 UNIV_1           = &CE7F
 GINF             = &CE90
-sub_CE9E         = &CE9E
-sub_CEA5         = &CEA5
+subm_CE9E        = &CE9E
+subm_CEA5        = &CEA5
 NAMES_LOOKUP     = &CED0
 PATTERNS_LOOKUP  = &CED2
 IRQ              = &CED4
@@ -638,24 +654,43 @@ SWITCH_TO_TABLE_0 = &D06D
 CONTROLLERS      = &D0F8
 FILL_MEMORY      = &D710
 LD8C5            = &D8C5
+subm_D8D8        = &D8D8
 SEND_TO_PPU2     = &D986
 TWOS             = &D9F7
 TWOS2            = &DA01
 TWFL             = &DA09
 TWFR             = &DA10
-ylookupLO        = &DA18
-ylookupHI        = &DAF8
+ylookupLo        = &DA18
+ylookupHi        = &DAF8
 LDBD8            = &DBD8
 LOIN             = &DC0F
+subm_DEA5        = &DEA5
+subm_DF76        = &DF76
+subm_E04A        = &E04A
+subm_E0BA        = &E04A
+subm_E18E        = &E18E
+subm_E33E        = &E33E
 PIXEL            = &E4F0
 PIXELx2          = &E543
 ECBLB2           = &E596
 MSBAR            = &E59F
+subm_E802        = &E802
+subm_E8DE        = &E8DE
+subm_E909        = &E909
+subm_E91D        = &E91D
+subm_EA8D        = &EA8D
+subm_EAB0        = &EAB0
+subm_EB0D        = &EB0D
+subm_EB19        = &EB19
+subm_EB67        = &EB67
+subm_EB86        = &EB86
 DELAY            = &EBA2
 BEEP             = &EBA9
 EXNO3            = &EBAD
 BOOP             = &EBE5
 NOISE            = &EBF2
+NOISE_lookup1    = &EC3C
+NOISE_lookup2    = &EC5C
 CHECK_DASHBOARD_A = &EC7D
 LDA_XX0_Y        = &EC8D
 LDA_EPC_Y        = &ECA0
@@ -712,7 +747,7 @@ CBB37_BANK6      = &F02F
 CB8FE_BANK6      = &F03D
 CB90D_BANK6      = &F04B
 CA5AB_BANK6      = &F059
-sub_CF06F        = &F06F
+subm_F06F        = &F06F
 BEEP_BANK7       = &F074
 DETOK_BANK2      = &F082
 DTS_BANK2        = &F09D
@@ -742,20 +777,25 @@ CLIP_BANK1       = &F280
 CB341_BANK3      = &F293
 SCAN_BANK1       = &F2A8
 C8926_BANK0      = &F2BD
-sub_CF2CE        = &F2CE
+subm_F2CE        = &F2CE
 CLYNS            = &F2DE
 LF333            = &F333
-sub_CF338        = &F338
-sub_CF359        = &F359
-sub_CF3BC        = &F3BC
-sub_CF42A        = &F42A
+subm_F338        = &F338
+subm_F359        = &F359
+subm_F3BC        = &F3BC
+subm_F42A        = &F42A
 Ze               = &F42E
-sub_CF454        = &F454
+subm_F454        = &F454
 NLIN3            = &F46A
 NLIN4            = &F473
+subm_F48D        = &F48D
+subm_F493        = &F493
 DORND2           = &F4AC
 DORND            = &F4AD
 PROJ             = &F4C1
+subm_F4FB        = &F4FB
+subm_F52D        = &F52D
+subm_F5AF        = &F5AF
 FAROF2           = &F60C
 MU5              = &F65A
 MULT3            = &F664
@@ -775,6 +815,7 @@ FMLTU2           = &F766
 FMLTU            = &F770
 MLTU2m2          = &F7AB
 MLTU2            = &F7AD
+MUT3             = &F7CE
 MUT2             = &F7D2
 MUT1             = &F7D6
 MULT1            = &F7DA
@@ -786,9 +827,13 @@ TIS1             = &F8AE
 DV42             = &F8D1
 DV41             = &F8D4
 DVID3B2          = &F962
+subm_FA16        = &FA16
+subm_FA43        = &FA43
 LL5              = &FA55
 LL28             = &FA91
+subm_FACB        = &FACB
 NORM             = &FAF8
+subm_FB89        = &FB89
 
  ORG &8000
 
@@ -2837,7 +2882,7 @@ JMTBm1 = sub_CB203+2
  LDA RUPLA_LO,X                               ; B3F7: BD D4 B3    ...
  STA SC                                       ; B3FA: 85 07       ..
  LDA RUPLA_HI,X                               ; B3FC: BD D8 B3    ...
- STA SCH                                      ; B3FF: 85 08       ..
+ STA SC_1                                     ; B3FF: 85 08       ..
  LDA RUGAL_LO,X                               ; B401: BD DC B3    ...
  STA T5                                       ; B404: 85 BA       ..
  LDA RUGAL_HI,X                               ; B406: BD E0 B3    ...
@@ -3000,7 +3045,7 @@ JMTBm1 = sub_CB203+2
 
 ; ******************************************************************************
 .DASC
- STA SCH                                      ; B4F5: 85 08       ..
+ STA SC_1                                     ; B4F5: 85 08       ..
  LDA DASHBOARD_SWITCH                         ; B4F7: A5 E9       ..
  BPL CB504                                    ; B4F9: 10 09       ..
  LDA PPU_STATUS                               ; B4FB: AD 02 20    ..
@@ -3008,7 +3053,7 @@ JMTBm1 = sub_CB203+2
  BPL CB504                                    ; B4FF: 10 03       ..
  JSR SWITCH_TO_TABLE_0                        ; B501: 20 6D D0     m.
 .CB504
- LDA SCH                                      ; B504: A5 08       ..
+ LDA SC_1                                     ; B504: A5 08       ..
  STX SC                                       ; B506: 86 07       ..
  LDX #&FF                                     ; B508: A2 FF       ..
  STX DTW8                                     ; B50A: 8E F9 03    ...
@@ -3040,7 +3085,7 @@ JMTBm1 = sub_CB203+2
 .CB53C
  STX DTW2                                     ; B53C: 8E F4 03    ...
  LDX SC                                       ; B53F: A6 07       ..
- LDA SCH                                      ; B541: A5 08       ..
+ LDA SC_1                                     ; B541: A5 08       ..
  BIT DTW4                                     ; B543: 2C F6 03    ,..
  BMI CB54B                                    ; B546: 30 03       0.
  JMP CHPR                                     ; B548: 4C 35 B6    L5.
@@ -3081,12 +3126,12 @@ JMTBm1 = sub_CB203+2
  BEQ loop_CB56E                               ; B57B: F0 F1       ..
  CPX #&1E                                     ; B57D: E0 1E       ..
  BCC loop_CB571                               ; B57F: 90 F0       ..
- LSR SCH                                      ; B581: 46 08       F.
+ LSR SC_1                                     ; B581: 46 08       F.
 .CB583
- LDA SCH                                      ; B583: A5 08       ..
+ LDA SC_1                                     ; B583: A5 08       ..
  BMI CB58B                                    ; B585: 30 04       0.
  LDA #&40 ; '@'                               ; B587: A9 40       .@
- STA SCH                                      ; B589: 85 08       ..
+ STA SC_1                                     ; B589: 85 08       ..
 .CB58B
  LDY #&1C                                     ; B58B: A0 1C       ..
 .CB58D
@@ -3107,7 +3152,7 @@ JMTBm1 = sub_CB203+2
  LDA BUF,Y                                    ; B5A6: B9 07 05    ...
  CMP #&20 ; ' '                               ; B5A9: C9 20       .
  BNE CB594                                    ; B5AB: D0 E7       ..
- ASL SCH                                      ; B5AD: 06 08       ..
+ ASL SC_1                                     ; B5AD: 06 08       ..
  BMI CB594                                    ; B5AF: 30 E3       0.
  STY SC                                       ; B5B1: 84 07       ..
  LDY DTW5                                     ; B5B3: AC F7 03    ...
@@ -3288,7 +3333,7 @@ JMTBm1 = sub_CB203+2
  ADC #&FC                                     ; B6C9: 69 FC       i.
  STA P_2                                      ; B6CB: 85 31       .1
  LDA #0                                       ; B6CD: A9 00       ..
- STA SCH                                      ; B6CF: 85 08       ..
+ STA SC_1                                     ; B6CF: 85 08       ..
  LDA YC                                       ; B6D1: A5 3B       .;
  BNE CB6D8                                    ; B6D3: D0 03       ..
  JMP CB8A6                                    ; B6D5: 4C A6 B8    L..
@@ -3332,13 +3377,13 @@ JMTBm1 = sub_CB203+2
  STA T5                                       ; B710: 85 BA       ..
  TYA                                          ; B712: 98          .
  LDX #&0D                                     ; B713: A2 0D       ..
- STX SCH                                      ; B715: 86 08       ..
+ STX SC_1                                     ; B715: 86 08       ..
  ASL A                                        ; B717: 0A          .
- ROL SCH                                      ; B718: 26 08       &.
+ ROL SC_1                                     ; B718: 26 08       &.
  ASL A                                        ; B71A: 0A          .
- ROL SCH                                      ; B71B: 26 08       &.
+ ROL SC_1                                     ; B71B: 26 08       &.
  ASL A                                        ; B71D: 0A          .
- ROL SCH                                      ; B71E: 26 08       &.
+ ROL SC_1                                     ; B71E: 26 08       &.
  STA SC                                       ; B720: 85 07       ..
  LDY #0                                       ; B722: A0 00       ..
  LDA (P_1),Y                                  ; B724: B1 30       .0
@@ -3388,25 +3433,25 @@ JMTBm1 = sub_CB203+2
 
 .CB772
  LDX #&0C                                     ; B772: A2 0C       ..
- STX SCH                                      ; B774: 86 08       ..
+ STX SC_1                                     ; B774: 86 08       ..
  ASL A                                        ; B776: 0A          .
- ROL SCH                                      ; B777: 26 08       &.
+ ROL SC_1                                     ; B777: 26 08       &.
  ASL A                                        ; B779: 0A          .
- ROL SCH                                      ; B77A: 26 08       &.
+ ROL SC_1                                     ; B77A: 26 08       &.
  ASL A                                        ; B77C: 0A          .
- ROL SCH                                      ; B77D: 26 08       &.
+ ROL SC_1                                     ; B77D: 26 08       &.
  STA SC                                       ; B77F: 85 07       ..
  JMP CB793                                    ; B781: 4C 93 B7    L..
 
 .CB784
  LDX #&0D                                     ; B784: A2 0D       ..
- STX SCH                                      ; B786: 86 08       ..
+ STX SC_1                                     ; B786: 86 08       ..
  ASL A                                        ; B788: 0A          .
- ROL SCH                                      ; B789: 26 08       &.
+ ROL SC_1                                     ; B789: 26 08       &.
  ASL A                                        ; B78B: 0A          .
- ROL SCH                                      ; B78C: 26 08       &.
+ ROL SC_1                                     ; B78C: 26 08       &.
  ASL A                                        ; B78E: 0A          .
- ROL SCH                                      ; B78F: 26 08       &.
+ ROL SC_1                                     ; B78F: 26 08       &.
  STA SC                                       ; B791: 85 07       ..
 .CB793
  LDY #0                                       ; B793: A0 00       ..
@@ -3471,13 +3516,13 @@ JMTBm1 = sub_CB203+2
  BEQ loop_CB7DB                               ; B7F1: F0 E8       ..
 .CB7F3
  LDX PATTERNS_HI                              ; B7F3: A6 B9       ..
- STX SCH                                      ; B7F5: 86 08       ..
+ STX SC_1                                     ; B7F5: 86 08       ..
  ASL A                                        ; B7F7: 0A          .
- ROL SCH                                      ; B7F8: 26 08       &.
+ ROL SC_1                                     ; B7F8: 26 08       &.
  ASL A                                        ; B7FA: 0A          .
- ROL SCH                                      ; B7FB: 26 08       &.
+ ROL SC_1                                     ; B7FB: 26 08       &.
  ASL A                                        ; B7FD: 0A          .
- ROL SCH                                      ; B7FE: 26 08       &.
+ ROL SC_1                                     ; B7FE: 26 08       &.
  STA SC                                       ; B800: 85 07       ..
  LDY #0                                       ; B802: A0 00       ..
  LDA (P_1),Y                                  ; B804: B1 30       .0
@@ -3515,7 +3560,7 @@ JMTBm1 = sub_CB203+2
 
 .CB83E
  LDA #0                                       ; B83E: A9 00       ..
- STA SCH                                      ; B840: 85 08       ..
+ STA SC_1                                     ; B840: 85 08       ..
  LDA YC                                       ; B842: A5 3B       .;
  BNE CB848                                    ; B844: D0 02       ..
  LDA #&FF                                     ; B846: A9 FF       ..
@@ -3526,14 +3571,14 @@ JMTBm1 = sub_CB203+2
  ASL A                                        ; B84C: 0A          .
  ASL A                                        ; B84D: 0A          .
  ASL A                                        ; B84E: 0A          .
- ROL SCH                                      ; B84F: 26 08       &.
+ ROL SC_1                                     ; B84F: 26 08       &.
  SEC                                          ; B851: 38          8
  ROL A                                        ; B852: 2A          *
  STA SC                                       ; B853: 85 07       ..
- LDA SCH                                      ; B855: A5 08       ..
+ LDA SC_1                                     ; B855: A5 08       ..
  ROL A                                        ; B857: 2A          *
  ADC NAMES_HI                                 ; B858: 65 E6       e.
- STA SCH                                      ; B85A: 85 08       ..
+ STA SC_1                                     ; B85A: 85 08       ..
  LDY XC                                       ; B85C: A4 32       .2
  DEY                                          ; B85E: 88          .
  LDA (SC),Y                                   ; B85F: B1 07       ..
@@ -3543,13 +3588,13 @@ JMTBm1 = sub_CB203+2
  STA (SC),Y                                   ; B867: 91 07       ..
  INC TILE                                     ; B869: E6 B8       ..
  LDX PATTERNS_HI                              ; B86B: A6 B9       ..
- STX SCH                                      ; B86D: 86 08       ..
+ STX SC_1                                     ; B86D: 86 08       ..
  ASL A                                        ; B86F: 0A          .
- ROL SCH                                      ; B870: 26 08       &.
+ ROL SC_1                                     ; B870: 26 08       &.
  ASL A                                        ; B872: 0A          .
- ROL SCH                                      ; B873: 26 08       &.
+ ROL SC_1                                     ; B873: 26 08       &.
  ASL A                                        ; B875: 0A          .
- ROL SCH                                      ; B876: 26 08       &.
+ ROL SC_1                                     ; B876: 26 08       &.
  STA SC                                       ; B878: 85 07       ..
  LDY #0                                       ; B87A: A0 00       ..
  LDA (P_1),Y                                  ; B87C: B1 30       .0
@@ -3582,7 +3627,7 @@ JMTBm1 = sub_CB203+2
  LDA #&21 ; '!'                               ; B8A6: A9 21       .!
  STA SC                                       ; B8A8: 85 07       ..
  LDA NAMES_HI                                 ; B8AA: A5 E6       ..
- STA SCH                                      ; B8AC: 85 08       ..
+ STA SC_1                                     ; B8AC: 85 08       ..
  LDY XC                                       ; B8AE: A4 32       .2
  DEY                                          ; B8B0: 88          .
  JMP CB6E9                                    ; B8B1: 4C E9 B6    L..

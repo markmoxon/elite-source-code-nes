@@ -802,11 +802,11 @@
 
  SKIP 1                 \ ???
 
-.L00D4
+.ADDR1_LO
 
  SKIP 1                 \ ???
 
-.L00D5
+.ADDR1_HI
 
  SKIP 1                 \ ???
 
@@ -894,7 +894,7 @@
 
  SKIP 1                 \ ???
 
-.L00F5
+.PPU_CTRL_COPY
 
  SKIP 1                 \ ???
 
@@ -914,11 +914,11 @@
 
  SKIP 1                 \ ???
 
-.L00FA
+.ADDR2_LO
 
  SKIP 1                 \ ???
 
-.L00FB
+.ADDR2_HI
 
  SKIP 1                 \ ???
 
@@ -1513,9 +1513,9 @@ MACRO CHECK_DASHBOARD
  ASL A                  \   * Zero DASHBOARD_SWITCH to disable this process
  BPL skip               \     until both conditions are met once again
  JSR SWITCH_TO_TABLE_0  \
-                        \   * Clear bits 0 and 4 of L00F5 and PPU_CTRL, to set
-                        \     the base nametable address to &2000 (nametable 0)
-                        \     or &2800 (which is a mirror of &2000)
+                        \   * Clear bits 0 and 4 of PPU_CTRL and PPU_CTRL_COPY,
+                        \     to set the base nametable address to &2000 (for
+                        \     nametable 0) or &2800 (which is a mirror of &2000)
                         \
                         \   * Clear the C flag
  
@@ -10866,18 +10866,18 @@ ENDMACRO
  BMI P%+4               \ instruction to leave the angle in A as a positive
                         \ integer in the range 0 to 128 (so when we calculate
                         \ CNT2 below, it will be in the right half of the
-                        \ anti-clockwise that we describe when drawing circles,
-                        \ i.e. from 6 o'clock, through 3 o'clock and on to 12
-                        \ o'clock)
+                        \ anti-clockwise arc that we describe when drawing
+                        \ circles, i.e. from 6 o'clock, through 3 o'clock and
+                        \ on to 12 o'clock)
 
  EOR #%10000000         \ If we get here then nosev_z_hi is positive, so flip
                         \ bit 7 of the angle in A, which is the same as adding
                         \ 128 to give a result in the range 129 to 256 (i.e. 129
                         \ to 0), or 180 to 360 degrees (so when we calculate
                         \ CNT2 below, it will be in the left half of the
-                        \ anti-clockwise that we describe when drawing circles,
-                        \ i.e. from 12 o'clock, through 9 o'clock and on to 6
-                        \ o'clock)
+                        \ anti-clockwise arc that we describe when drawing
+                        \ circles, i.e. from 12 o'clock, through 9 o'clock and
+                        \ on to 6 o'clock)
 
  LSR A                  \ Set CNT2 = A / 4
  LSR A
@@ -12636,6 +12636,7 @@ ENDMACRO
  ADC #&25
  STA (L00BA,X)
  JMP loop_CB6FC
+
 \ ******************************************************************************
 \
 \       Name: HATB

@@ -25,6 +25,12 @@ entry(0xB96B)
 entry(0xB9F9)
 entry(0xB9F9)
 
+subroutine(0xB8F9, "subm_B8F9")
+subroutine(0xB93C, "subm_B93C")
+subroutine(0xB96B, "subm_B96B")
+subroutine(0xB9C1, "subm_B9C1")
+subroutine(0xB9F9, "subm_B9F9")
+
 exec(open('py8dis-scripts/common-variables.py').read())
 
 go()
