@@ -232,8 +232,8 @@ addr5          = &00ED
 addr5_1        = &00EE
 L00EF          = &00EF
 L00F0          = &00F0
-L00F1          = &00F1
-L00F2          = &00F2
+addr6          = &00F1
+addr6_1        = &00F2
 L00F3          = &00F3
 L00F4          = &00F4
 ppuCtrlCopy    = &00F5
@@ -786,27 +786,27 @@ L8926          = &8926
 L8980          = &8980
 L89D1          = &89D1
 MVS5           = &8A14
-L9522          = &9522
+DemoShips      = &9522
 tnpr           = &9620
 L9FFF          = &9FFF
-LA070          = &A070
+LL9            = &A070
 LA082          = &A082
 LA0F8          = &A0F8
 LA166          = &A166
 LA2C3          = &A2C3
-LA379          = &A379
+BR1            = &A379
 LA4A5          = &A4A5
 LA5AB          = &A5AB
 LA65D          = &A65D
 LA730          = &A730
 LA775          = &A775
 LA7B7          = &A7B7
-TT27           = &A8D9
+TT27_0         = &A8D9
 LA972          = &A972
 LA9D1          = &A9D1
 LAABC          = &AABC
 LAC1D          = &AC1D
-LAC25          = &AC25
+SUN            = &AC25
 LAC5C          = &AC5C
 LAE03          = &AE03
 LAE18          = &AE18
@@ -814,9 +814,9 @@ LAF9D          = &AF9D
 LAFCD          = &AFCD
 LB0E1          = &B0E1
 DETOK          = &B0EF
-LB187          = &B187
+DTS            = &B187
 LB18E          = &B18E
-LB1BE          = &B1BE
+STARS          = &B1BE
 MAS4           = &B1CA
 LB1D4          = &B1D4
 LB219          = &B219
@@ -825,20 +825,20 @@ LB2BC          = &B2BC
 LB2C3          = &B2C3
 LB2EF          = &B2EF
 LB2FB          = &B2FB
-LB341          = &B341
+CLIP           = &B341
 LB358          = &B358
 LB39D          = &B39D
 LB3BC          = &B3BC
-LB3E8          = &B3E8
-LB44F          = &B44F
+PDESC          = &B3E8
+TT27           = &B44F
 LB459          = &B459
-LB4AA          = &B4AA
-LB4F5          = &B4F5
-LB635          = &B635
+ex             = &B4AA
+DASC           = &B4F5
+CHPR           = &B635
 LB63D          = &B63D
 LB673          = &B673
-HALL1          = &B738
-LB85C          = &B85C
+HALL           = &B738
+TIDY           = &B85C
 LB882          = &B882
 LB88C          = &B88C
 PAS1           = &B8F7
@@ -849,7 +849,7 @@ LB919          = &B919
 LB93C          = &B93C
 LB96B          = &B96B
 SCAN           = &B975
-LB980          = &B980
+LL164          = &B980
 LB9C1          = &B9C1
 LB9E2          = &B9E2
 LB9F9          = &B9F9
@@ -861,7 +861,7 @@ LBB37          = &BB37
 LBBDE          = &BBDE
 LBC83          = &BC83
 LBE52          = &BE52
-LBEB5          = &BEB5
+TT66           = &BEB5
 LBED2          = &BED2
 LBED7          = &BED7
 LBEEA          = &BEEA
@@ -953,7 +953,7 @@ LC006 = sub_CC004+2
  JSR sub_CED6E                                ; C085: 20 6E ED     n.
  LDA #&80                                     ; C088: A9 80       ..
  ASL A                                        ; C08A: 0A          .
- JSR CAABC_BANK3                              ; C08B: 20 18 F1     ..
+ JSR CAABC_b3                                 ; C08B: 20 18 F1     ..
  JSR subm_F48D                                ; C08E: 20 8D F4     ..
  JSR subm_F493                                ; C091: 20 93 F4     ..
  LDA #0                                       ; C094: A9 00       ..
@@ -1001,7 +1001,7 @@ LC006 = sub_CC004+2
  PHA                                          ; C0D2: 48          H
  TYA                                          ; C0D3: 98          .
  PHA                                          ; C0D4: 48          H
- JSR C811E_BANK6                              ; C0D5: 20 16 ED     ..
+ JSR C811E_b6                                 ; C0D5: 20 16 ED     ..
  PLA                                          ; C0D8: 68          h
  TAY                                          ; C0D9: A8          .
  PLA                                          ; C0DA: 68          h
@@ -2531,7 +2531,7 @@ LC006 = sub_CC004+2
  JSR sub_CCF18                                ; CEF8: 20 18 CF     ..
  LDA L00F8                                    ; CEFB: A5 F8       ..
  BNE CCF0C                                    ; CEFD: D0 0D       ..
- JSR C811E_BANK6                              ; CEFF: 20 16 ED     ..
+ JSR C811E_b6                                 ; CEFF: 20 16 ED     ..
  LDA L0469                                    ; CF02: AD 69 04    .i.
  LDX L046A                                    ; CF05: AE 6A 04    .j.
  LDY L046B                                    ; CF08: AC 6B 04    .k.
@@ -2754,18 +2754,18 @@ LC006 = sub_CC004+2
  PHA                                          ; D0A3: 48          H
  LDA L00F0                                    ; D0A4: A5 F0       ..
  PHA                                          ; D0A6: 48          H
- LDA L00F1                                    ; D0A7: A5 F1       ..
+ LDA addr6                                    ; D0A7: A5 F1       ..
  PHA                                          ; D0A9: 48          H
- LDA L00F2                                    ; D0AA: A5 F2       ..
+ LDA addr6_1                                  ; D0AA: A5 F2       ..
  PHA                                          ; D0AC: 48          H
  LDX #0                                       ; D0AD: A2 00       ..
  JSR sub_CD2C4                                ; D0AF: 20 C4 D2     ..
  LDX #1                                       ; D0B2: A2 01       ..
  JSR sub_CD2C4                                ; D0B4: 20 C4 D2     ..
  PLA                                          ; D0B7: 68          h
- STA L00F2                                    ; D0B8: 85 F2       ..
+ STA addr6_1                                  ; D0B8: 85 F2       ..
  PLA                                          ; D0BA: 68          h
- STA L00F1                                    ; D0BB: 85 F1       ..
+ STA addr6                                    ; D0BB: 85 F1       ..
  PLA                                          ; D0BD: 68          h
  STA L00F0                                    ; D0BE: 85 F0       ..
  PLA                                          ; D0C0: 68          h
@@ -2936,17 +2936,17 @@ LC006 = sub_CC004+2
  BCS CD239                                    ; D1E2: B0 55       .U
  STY L00C5,X                                  ; D1E4: 94 C5       ..
  LDY #0                                       ; D1E6: A0 00       ..
- STY L00F2                                    ; D1E8: 84 F2       ..
+ STY addr6_1                                  ; D1E8: 84 F2       ..
  ASL A                                        ; D1EA: 0A          .
- ROL L00F2                                    ; D1EB: 26 F2       &.
+ ROL addr6_1                                  ; D1EB: 26 F2       &.
  ASL A                                        ; D1ED: 0A          .
- ROL L00F2                                    ; D1EE: 26 F2       &.
+ ROL addr6_1                                  ; D1EE: 26 F2       &.
  ASL A                                        ; D1F0: 0A          .
- STA L00F1                                    ; D1F1: 85 F1       ..
- LDA L00F2                                    ; D1F3: A5 F2       ..
+ STA addr6                                    ; D1F1: 85 F1       ..
+ LDA addr6_1                                  ; D1F3: A5 F2       ..
  ROL A                                        ; D1F5: 2A          *
  ADC nametableAddrHi,X                        ; D1F6: 7D D0 CE    }..
- STA L00F2                                    ; D1F9: 85 F2       ..
+ STA addr6_1                                  ; D1F9: 85 F2       ..
  LDA #0                                       ; D1FB: A9 00       ..
  ASL SC                                       ; D1FD: 06 07       ..
  ROL A                                        ; D1FF: 2A          *
@@ -2966,10 +2966,10 @@ LC006 = sub_CC004+2
 .CD218
  LDA SC                                       ; D218: A5 07       ..
  SEC                                          ; D21A: 38          8
- SBC L00F1                                    ; D21B: E5 F1       ..
+ SBC addr6                                    ; D21B: E5 F1       ..
  STA L00EF                                    ; D21D: 85 EF       ..
  LDA SC_1                                     ; D21F: A5 08       ..
- SBC L00F2                                    ; D221: E5 F2       ..
+ SBC addr6_1                                  ; D221: E5 F2       ..
  BCC CD239                                    ; D223: 90 14       ..
  STA L00F0                                    ; D225: 85 F0       ..
  ORA L00EF                                    ; D227: 05 EF       ..
@@ -2993,17 +2993,17 @@ LC006 = sub_CC004+2
  BCS CD2A2                                    ; D24B: B0 55       .U
  STY L00C3,X                                  ; D24D: 94 C3       ..
  LDY #0                                       ; D24F: A0 00       ..
- STY L00F2                                    ; D251: 84 F2       ..
+ STY addr6_1                                  ; D251: 84 F2       ..
  ASL A                                        ; D253: 0A          .
- ROL L00F2                                    ; D254: 26 F2       &.
+ ROL addr6_1                                  ; D254: 26 F2       &.
  ASL A                                        ; D256: 0A          .
- ROL L00F2                                    ; D257: 26 F2       &.
+ ROL addr6_1                                  ; D257: 26 F2       &.
  ASL A                                        ; D259: 0A          .
- STA L00F1                                    ; D25A: 85 F1       ..
- LDA L00F2                                    ; D25C: A5 F2       ..
+ STA addr6                                    ; D25A: 85 F1       ..
+ LDA addr6_1                                  ; D25C: A5 F2       ..
  ROL A                                        ; D25E: 2A          *
  ADC patternAddrHi,X                          ; D25F: 7D D2 CE    }..
- STA L00F2                                    ; D262: 85 F2       ..
+ STA addr6_1                                  ; D262: 85 F2       ..
  LDA #0                                       ; D264: A9 00       ..
  ASL SC                                       ; D266: 06 07       ..
  ROL A                                        ; D268: 2A          *
@@ -3023,10 +3023,10 @@ LC006 = sub_CC004+2
 .CD281
  LDA SC                                       ; D281: A5 07       ..
  SEC                                          ; D283: 38          8
- SBC L00F1                                    ; D284: E5 F1       ..
+ SBC addr6                                    ; D284: E5 F1       ..
  STA L00EF                                    ; D286: 85 EF       ..
  LDA SC_1                                     ; D288: A5 08       ..
- SBC L00F2                                    ; D28A: E5 F2       ..
+ SBC addr6_1                                  ; D28A: E5 F2       ..
  BCC CD239                                    ; D28C: 90 AB       ..
  STA L00F0                                    ; D28E: 85 F0       ..
  ORA L00EF                                    ; D290: 05 EF       ..
@@ -3106,17 +3106,17 @@ LC006 = sub_CC004+2
  CMP L00EF                                    ; D301: C5 EF       ..
  BCS CD2B4                                    ; D303: B0 AF       ..
  LDY #0                                       ; D305: A0 00       ..
- STY L00F2                                    ; D307: 84 F2       ..
+ STY addr6_1                                  ; D307: 84 F2       ..
  ASL A                                        ; D309: 0A          .
- ROL L00F2                                    ; D30A: 26 F2       &.
+ ROL addr6_1                                  ; D30A: 26 F2       &.
  ASL A                                        ; D30C: 0A          .
- ROL L00F2                                    ; D30D: 26 F2       &.
+ ROL addr6_1                                  ; D30D: 26 F2       &.
  ASL A                                        ; D30F: 0A          .
- STA L00F1                                    ; D310: 85 F1       ..
- LDA L00F2                                    ; D312: A5 F2       ..
+ STA addr6                                    ; D310: 85 F1       ..
+ LDA addr6_1                                  ; D312: A5 F2       ..
  ROL A                                        ; D314: 2A          *
  ADC nametableAddrHi,X                        ; D315: 7D D0 CE    }..
- STA L00F2                                    ; D318: 85 F2       ..
+ STA addr6_1                                  ; D318: 85 F2       ..
  LDA #0                                       ; D31A: A9 00       ..
  ASL L00EF                                    ; D31C: 06 EF       ..
  ROL A                                        ; D31E: 2A          *
@@ -3128,24 +3128,24 @@ LC006 = sub_CC004+2
  STA L00F0                                    ; D328: 85 F0       ..
  LDA L00EF                                    ; D32A: A5 EF       ..
  SEC                                          ; D32C: 38          8
- SBC L00F1                                    ; D32D: E5 F1       ..
+ SBC addr6                                    ; D32D: E5 F1       ..
  STA L00EF                                    ; D32F: 85 EF       ..
  LDA L00F0                                    ; D331: A5 F0       ..
- SBC L00F2                                    ; D333: E5 F2       ..
+ SBC addr6_1                                  ; D333: E5 F2       ..
  BCC CD359                                    ; D335: 90 22       ."
  STA L00F0                                    ; D337: 85 F0       ..
  ORA L00EF                                    ; D339: 05 EF       ..
  BEQ CD35D                                    ; D33B: F0 20       .
  JSR FillMemory                               ; D33D: 20 10 D7     ..
- LDA L00F2                                    ; D340: A5 F2       ..
+ LDA addr6_1                                  ; D340: A5 F2       ..
  SEC                                          ; D342: 38          8
  SBC nametableAddrHi,X                        ; D343: FD D0 CE    ...
  LSR A                                        ; D346: 4A          J
- ROR L00F1                                    ; D347: 66 F1       f.
+ ROR addr6                                    ; D347: 66 F1       f.
  LSR A                                        ; D349: 4A          J
- ROR L00F1                                    ; D34A: 66 F1       f.
+ ROR addr6                                    ; D34A: 66 F1       f.
  LSR A                                        ; D34C: 4A          J
- LDA L00F1                                    ; D34D: A5 F1       ..
+ LDA addr6                                    ; D34D: A5 F1       ..
  ROR A                                        ; D34F: 6A          j
  CMP L00C5,X                                  ; D350: D5 C5       ..
  BCC CD37B                                    ; D352: 90 27       .'
@@ -3210,17 +3210,17 @@ LC006 = sub_CC004+2
  BCS CD36D                                    ; D3A7: B0 C4       ..
  NOP                                          ; D3A9: EA          .
  LDY #0                                       ; D3AA: A0 00       ..
- STY L00F2                                    ; D3AC: 84 F2       ..
+ STY addr6_1                                  ; D3AC: 84 F2       ..
  ASL A                                        ; D3AE: 0A          .
- ROL L00F2                                    ; D3AF: 26 F2       &.
+ ROL addr6_1                                  ; D3AF: 26 F2       &.
  ASL A                                        ; D3B1: 0A          .
- ROL L00F2                                    ; D3B2: 26 F2       &.
+ ROL addr6_1                                  ; D3B2: 26 F2       &.
  ASL A                                        ; D3B4: 0A          .
- STA L00F1                                    ; D3B5: 85 F1       ..
- LDA L00F2                                    ; D3B7: A5 F2       ..
+ STA addr6                                    ; D3B5: 85 F1       ..
+ LDA addr6_1                                  ; D3B7: A5 F2       ..
  ROL A                                        ; D3B9: 2A          *
  ADC patternAddrHi,X                          ; D3BA: 7D D2 CE    }..
- STA L00F2                                    ; D3BD: 85 F2       ..
+ STA addr6_1                                  ; D3BD: 85 F2       ..
  LDA #0                                       ; D3BF: A9 00       ..
  ASL L00EF                                    ; D3C1: 06 EF       ..
  ROL A                                        ; D3C3: 2A          *
@@ -3232,24 +3232,24 @@ LC006 = sub_CC004+2
  STA L00F0                                    ; D3CD: 85 F0       ..
  LDA L00EF                                    ; D3CF: A5 EF       ..
  SEC                                          ; D3D1: 38          8
- SBC L00F1                                    ; D3D2: E5 F1       ..
+ SBC addr6                                    ; D3D2: E5 F1       ..
  STA L00EF                                    ; D3D4: 85 EF       ..
  LDA L00F0                                    ; D3D6: A5 F0       ..
- SBC L00F2                                    ; D3D8: E5 F2       ..
+ SBC addr6_1                                  ; D3D8: E5 F2       ..
  BCC CD3FC                                    ; D3DA: 90 20       .
  STA L00F0                                    ; D3DC: 85 F0       ..
  ORA L00EF                                    ; D3DE: 05 EF       ..
  BEQ CD401                                    ; D3E0: F0 1F       ..
  JSR FillMemory                               ; D3E2: 20 10 D7     ..
- LDA L00F2                                    ; D3E5: A5 F2       ..
+ LDA addr6_1                                  ; D3E5: A5 F2       ..
  SEC                                          ; D3E7: 38          8
  SBC patternAddrHi,X                          ; D3E8: FD D2 CE    ...
  LSR A                                        ; D3EB: 4A          J
- ROR L00F1                                    ; D3EC: 66 F1       f.
+ ROR addr6                                    ; D3EC: 66 F1       f.
  LSR A                                        ; D3EE: 4A          J
- ROR L00F1                                    ; D3EF: 66 F1       f.
+ ROR addr6                                    ; D3EF: 66 F1       f.
  LSR A                                        ; D3F1: 4A          J
- LDA L00F1                                    ; D3F2: A5 F1       ..
+ LDA addr6                                    ; D3F2: A5 F1       ..
  ROR A                                        ; D3F4: 6A          j
  CMP L00C3,X                                  ; D3F5: D5 C3       ..
  BCC CD3FC                                    ; D3F7: 90 03       ..
@@ -3274,518 +3274,518 @@ LC006 = sub_CC004+2
  RTS                                          ; D40E: 60          `
 
 .sub_CD40F
- STA (L00F1),Y                                ; D40F: 91 F1       ..
+ STA (addr6),Y                                ; D40F: 91 F1       ..
  INY                                          ; D411: C8          .
- STA (L00F1),Y                                ; D412: 91 F1       ..
+ STA (addr6),Y                                ; D412: 91 F1       ..
  INY                                          ; D414: C8          .
- STA (L00F1),Y                                ; D415: 91 F1       ..
+ STA (addr6),Y                                ; D415: 91 F1       ..
  INY                                          ; D417: C8          .
- STA (L00F1),Y                                ; D418: 91 F1       ..
+ STA (addr6),Y                                ; D418: 91 F1       ..
  INY                                          ; D41A: C8          .
- STA (L00F1),Y                                ; D41B: 91 F1       ..
+ STA (addr6),Y                                ; D41B: 91 F1       ..
  INY                                          ; D41D: C8          .
- STA (L00F1),Y                                ; D41E: 91 F1       ..
+ STA (addr6),Y                                ; D41E: 91 F1       ..
  INY                                          ; D420: C8          .
- STA (L00F1),Y                                ; D421: 91 F1       ..
+ STA (addr6),Y                                ; D421: 91 F1       ..
  INY                                          ; D423: C8          .
- STA (L00F1),Y                                ; D424: 91 F1       ..
+ STA (addr6),Y                                ; D424: 91 F1       ..
  INY                                          ; D426: C8          .
- STA (L00F1),Y                                ; D427: 91 F1       ..
+ STA (addr6),Y                                ; D427: 91 F1       ..
  INY                                          ; D429: C8          .
- STA (L00F1),Y                                ; D42A: 91 F1       ..
+ STA (addr6),Y                                ; D42A: 91 F1       ..
  INY                                          ; D42C: C8          .
- STA (L00F1),Y                                ; D42D: 91 F1       ..
+ STA (addr6),Y                                ; D42D: 91 F1       ..
  INY                                          ; D42F: C8          .
- STA (L00F1),Y                                ; D430: 91 F1       ..
+ STA (addr6),Y                                ; D430: 91 F1       ..
  INY                                          ; D432: C8          .
- STA (L00F1),Y                                ; D433: 91 F1       ..
+ STA (addr6),Y                                ; D433: 91 F1       ..
  INY                                          ; D435: C8          .
- STA (L00F1),Y                                ; D436: 91 F1       ..
+ STA (addr6),Y                                ; D436: 91 F1       ..
  INY                                          ; D438: C8          .
- STA (L00F1),Y                                ; D439: 91 F1       ..
+ STA (addr6),Y                                ; D439: 91 F1       ..
  INY                                          ; D43B: C8          .
- STA (L00F1),Y                                ; D43C: 91 F1       ..
+ STA (addr6),Y                                ; D43C: 91 F1       ..
  INY                                          ; D43E: C8          .
- STA (L00F1),Y                                ; D43F: 91 F1       ..
+ STA (addr6),Y                                ; D43F: 91 F1       ..
  INY                                          ; D441: C8          .
- STA (L00F1),Y                                ; D442: 91 F1       ..
+ STA (addr6),Y                                ; D442: 91 F1       ..
  INY                                          ; D444: C8          .
- STA (L00F1),Y                                ; D445: 91 F1       ..
+ STA (addr6),Y                                ; D445: 91 F1       ..
  INY                                          ; D447: C8          .
- STA (L00F1),Y                                ; D448: 91 F1       ..
+ STA (addr6),Y                                ; D448: 91 F1       ..
  INY                                          ; D44A: C8          .
- STA (L00F1),Y                                ; D44B: 91 F1       ..
+ STA (addr6),Y                                ; D44B: 91 F1       ..
  INY                                          ; D44D: C8          .
- STA (L00F1),Y                                ; D44E: 91 F1       ..
+ STA (addr6),Y                                ; D44E: 91 F1       ..
  INY                                          ; D450: C8          .
- STA (L00F1),Y                                ; D451: 91 F1       ..
+ STA (addr6),Y                                ; D451: 91 F1       ..
  INY                                          ; D453: C8          .
- STA (L00F1),Y                                ; D454: 91 F1       ..
+ STA (addr6),Y                                ; D454: 91 F1       ..
  INY                                          ; D456: C8          .
- STA (L00F1),Y                                ; D457: 91 F1       ..
+ STA (addr6),Y                                ; D457: 91 F1       ..
  INY                                          ; D459: C8          .
- STA (L00F1),Y                                ; D45A: 91 F1       ..
+ STA (addr6),Y                                ; D45A: 91 F1       ..
  INY                                          ; D45C: C8          .
- STA (L00F1),Y                                ; D45D: 91 F1       ..
+ STA (addr6),Y                                ; D45D: 91 F1       ..
  INY                                          ; D45F: C8          .
- STA (L00F1),Y                                ; D460: 91 F1       ..
+ STA (addr6),Y                                ; D460: 91 F1       ..
  INY                                          ; D462: C8          .
- STA (L00F1),Y                                ; D463: 91 F1       ..
+ STA (addr6),Y                                ; D463: 91 F1       ..
  INY                                          ; D465: C8          .
- STA (L00F1),Y                                ; D466: 91 F1       ..
+ STA (addr6),Y                                ; D466: 91 F1       ..
  INY                                          ; D468: C8          .
- STA (L00F1),Y                                ; D469: 91 F1       ..
+ STA (addr6),Y                                ; D469: 91 F1       ..
  INY                                          ; D46B: C8          .
- STA (L00F1),Y                                ; D46C: 91 F1       ..
+ STA (addr6),Y                                ; D46C: 91 F1       ..
  INY                                          ; D46E: C8          .
- STA (L00F1),Y                                ; D46F: 91 F1       ..
+ STA (addr6),Y                                ; D46F: 91 F1       ..
  INY                                          ; D471: C8          .
- STA (L00F1),Y                                ; D472: 91 F1       ..
+ STA (addr6),Y                                ; D472: 91 F1       ..
  INY                                          ; D474: C8          .
- STA (L00F1),Y                                ; D475: 91 F1       ..
+ STA (addr6),Y                                ; D475: 91 F1       ..
  INY                                          ; D477: C8          .
- STA (L00F1),Y                                ; D478: 91 F1       ..
+ STA (addr6),Y                                ; D478: 91 F1       ..
  INY                                          ; D47A: C8          .
- STA (L00F1),Y                                ; D47B: 91 F1       ..
+ STA (addr6),Y                                ; D47B: 91 F1       ..
  INY                                          ; D47D: C8          .
- STA (L00F1),Y                                ; D47E: 91 F1       ..
+ STA (addr6),Y                                ; D47E: 91 F1       ..
  INY                                          ; D480: C8          .
- STA (L00F1),Y                                ; D481: 91 F1       ..
+ STA (addr6),Y                                ; D481: 91 F1       ..
  INY                                          ; D483: C8          .
- STA (L00F1),Y                                ; D484: 91 F1       ..
+ STA (addr6),Y                                ; D484: 91 F1       ..
  INY                                          ; D486: C8          .
- STA (L00F1),Y                                ; D487: 91 F1       ..
+ STA (addr6),Y                                ; D487: 91 F1       ..
  INY                                          ; D489: C8          .
- STA (L00F1),Y                                ; D48A: 91 F1       ..
+ STA (addr6),Y                                ; D48A: 91 F1       ..
  INY                                          ; D48C: C8          .
- STA (L00F1),Y                                ; D48D: 91 F1       ..
+ STA (addr6),Y                                ; D48D: 91 F1       ..
  INY                                          ; D48F: C8          .
- STA (L00F1),Y                                ; D490: 91 F1       ..
+ STA (addr6),Y                                ; D490: 91 F1       ..
  INY                                          ; D492: C8          .
- STA (L00F1),Y                                ; D493: 91 F1       ..
+ STA (addr6),Y                                ; D493: 91 F1       ..
  INY                                          ; D495: C8          .
- STA (L00F1),Y                                ; D496: 91 F1       ..
+ STA (addr6),Y                                ; D496: 91 F1       ..
  INY                                          ; D498: C8          .
- STA (L00F1),Y                                ; D499: 91 F1       ..
+ STA (addr6),Y                                ; D499: 91 F1       ..
  INY                                          ; D49B: C8          .
- STA (L00F1),Y                                ; D49C: 91 F1       ..
+ STA (addr6),Y                                ; D49C: 91 F1       ..
  INY                                          ; D49E: C8          .
- STA (L00F1),Y                                ; D49F: 91 F1       ..
+ STA (addr6),Y                                ; D49F: 91 F1       ..
  INY                                          ; D4A1: C8          .
- STA (L00F1),Y                                ; D4A2: 91 F1       ..
+ STA (addr6),Y                                ; D4A2: 91 F1       ..
  INY                                          ; D4A4: C8          .
- STA (L00F1),Y                                ; D4A5: 91 F1       ..
+ STA (addr6),Y                                ; D4A5: 91 F1       ..
  INY                                          ; D4A7: C8          .
- STA (L00F1),Y                                ; D4A8: 91 F1       ..
+ STA (addr6),Y                                ; D4A8: 91 F1       ..
  INY                                          ; D4AA: C8          .
- STA (L00F1),Y                                ; D4AB: 91 F1       ..
+ STA (addr6),Y                                ; D4AB: 91 F1       ..
  INY                                          ; D4AD: C8          .
- STA (L00F1),Y                                ; D4AE: 91 F1       ..
+ STA (addr6),Y                                ; D4AE: 91 F1       ..
  INY                                          ; D4B0: C8          .
- STA (L00F1),Y                                ; D4B1: 91 F1       ..
+ STA (addr6),Y                                ; D4B1: 91 F1       ..
  INY                                          ; D4B3: C8          .
- STA (L00F1),Y                                ; D4B4: 91 F1       ..
+ STA (addr6),Y                                ; D4B4: 91 F1       ..
  INY                                          ; D4B6: C8          .
- STA (L00F1),Y                                ; D4B7: 91 F1       ..
+ STA (addr6),Y                                ; D4B7: 91 F1       ..
  INY                                          ; D4B9: C8          .
- STA (L00F1),Y                                ; D4BA: 91 F1       ..
+ STA (addr6),Y                                ; D4BA: 91 F1       ..
  INY                                          ; D4BC: C8          .
- STA (L00F1),Y                                ; D4BD: 91 F1       ..
+ STA (addr6),Y                                ; D4BD: 91 F1       ..
  INY                                          ; D4BF: C8          .
- STA (L00F1),Y                                ; D4C0: 91 F1       ..
+ STA (addr6),Y                                ; D4C0: 91 F1       ..
  INY                                          ; D4C2: C8          .
- STA (L00F1),Y                                ; D4C3: 91 F1       ..
+ STA (addr6),Y                                ; D4C3: 91 F1       ..
  INY                                          ; D4C5: C8          .
- STA (L00F1),Y                                ; D4C6: 91 F1       ..
+ STA (addr6),Y                                ; D4C6: 91 F1       ..
  INY                                          ; D4C8: C8          .
- STA (L00F1),Y                                ; D4C9: 91 F1       ..
+ STA (addr6),Y                                ; D4C9: 91 F1       ..
  INY                                          ; D4CB: C8          .
- STA (L00F1),Y                                ; D4CC: 91 F1       ..
+ STA (addr6),Y                                ; D4CC: 91 F1       ..
  INY                                          ; D4CE: C8          .
- STA (L00F1),Y                                ; D4CF: 91 F1       ..
+ STA (addr6),Y                                ; D4CF: 91 F1       ..
  INY                                          ; D4D1: C8          .
- STA (L00F1),Y                                ; D4D2: 91 F1       ..
+ STA (addr6),Y                                ; D4D2: 91 F1       ..
  INY                                          ; D4D4: C8          .
- STA (L00F1),Y                                ; D4D5: 91 F1       ..
+ STA (addr6),Y                                ; D4D5: 91 F1       ..
  INY                                          ; D4D7: C8          .
- STA (L00F1),Y                                ; D4D8: 91 F1       ..
+ STA (addr6),Y                                ; D4D8: 91 F1       ..
  INY                                          ; D4DA: C8          .
- STA (L00F1),Y                                ; D4DB: 91 F1       ..
+ STA (addr6),Y                                ; D4DB: 91 F1       ..
  INY                                          ; D4DD: C8          .
- STA (L00F1),Y                                ; D4DE: 91 F1       ..
+ STA (addr6),Y                                ; D4DE: 91 F1       ..
  INY                                          ; D4E0: C8          .
- STA (L00F1),Y                                ; D4E1: 91 F1       ..
+ STA (addr6),Y                                ; D4E1: 91 F1       ..
  INY                                          ; D4E3: C8          .
- STA (L00F1),Y                                ; D4E4: 91 F1       ..
+ STA (addr6),Y                                ; D4E4: 91 F1       ..
  INY                                          ; D4E6: C8          .
- STA (L00F1),Y                                ; D4E7: 91 F1       ..
+ STA (addr6),Y                                ; D4E7: 91 F1       ..
  INY                                          ; D4E9: C8          .
- STA (L00F1),Y                                ; D4EA: 91 F1       ..
+ STA (addr6),Y                                ; D4EA: 91 F1       ..
  INY                                          ; D4EC: C8          .
- STA (L00F1),Y                                ; D4ED: 91 F1       ..
+ STA (addr6),Y                                ; D4ED: 91 F1       ..
  INY                                          ; D4EF: C8          .
- STA (L00F1),Y                                ; D4F0: 91 F1       ..
+ STA (addr6),Y                                ; D4F0: 91 F1       ..
  INY                                          ; D4F2: C8          .
- STA (L00F1),Y                                ; D4F3: 91 F1       ..
+ STA (addr6),Y                                ; D4F3: 91 F1       ..
  INY                                          ; D4F5: C8          .
- STA (L00F1),Y                                ; D4F6: 91 F1       ..
+ STA (addr6),Y                                ; D4F6: 91 F1       ..
  INY                                          ; D4F8: C8          .
- STA (L00F1),Y                                ; D4F9: 91 F1       ..
+ STA (addr6),Y                                ; D4F9: 91 F1       ..
  INY                                          ; D4FB: C8          .
- STA (L00F1),Y                                ; D4FC: 91 F1       ..
+ STA (addr6),Y                                ; D4FC: 91 F1       ..
  INY                                          ; D4FE: C8          .
- STA (L00F1),Y                                ; D4FF: 91 F1       ..
+ STA (addr6),Y                                ; D4FF: 91 F1       ..
  INY                                          ; D501: C8          .
- STA (L00F1),Y                                ; D502: 91 F1       ..
+ STA (addr6),Y                                ; D502: 91 F1       ..
  INY                                          ; D504: C8          .
- STA (L00F1),Y                                ; D505: 91 F1       ..
+ STA (addr6),Y                                ; D505: 91 F1       ..
  INY                                          ; D507: C8          .
- STA (L00F1),Y                                ; D508: 91 F1       ..
+ STA (addr6),Y                                ; D508: 91 F1       ..
  INY                                          ; D50A: C8          .
- STA (L00F1),Y                                ; D50B: 91 F1       ..
+ STA (addr6),Y                                ; D50B: 91 F1       ..
  INY                                          ; D50D: C8          .
- STA (L00F1),Y                                ; D50E: 91 F1       ..
+ STA (addr6),Y                                ; D50E: 91 F1       ..
  INY                                          ; D510: C8          .
- STA (L00F1),Y                                ; D511: 91 F1       ..
+ STA (addr6),Y                                ; D511: 91 F1       ..
  INY                                          ; D513: C8          .
- STA (L00F1),Y                                ; D514: 91 F1       ..
+ STA (addr6),Y                                ; D514: 91 F1       ..
  INY                                          ; D516: C8          .
- STA (L00F1),Y                                ; D517: 91 F1       ..
+ STA (addr6),Y                                ; D517: 91 F1       ..
  INY                                          ; D519: C8          .
- STA (L00F1),Y                                ; D51A: 91 F1       ..
+ STA (addr6),Y                                ; D51A: 91 F1       ..
  INY                                          ; D51C: C8          .
- STA (L00F1),Y                                ; D51D: 91 F1       ..
+ STA (addr6),Y                                ; D51D: 91 F1       ..
  INY                                          ; D51F: C8          .
- STA (L00F1),Y                                ; D520: 91 F1       ..
+ STA (addr6),Y                                ; D520: 91 F1       ..
  INY                                          ; D522: C8          .
- STA (L00F1),Y                                ; D523: 91 F1       ..
+ STA (addr6),Y                                ; D523: 91 F1       ..
  INY                                          ; D525: C8          .
- STA (L00F1),Y                                ; D526: 91 F1       ..
+ STA (addr6),Y                                ; D526: 91 F1       ..
  INY                                          ; D528: C8          .
- STA (L00F1),Y                                ; D529: 91 F1       ..
+ STA (addr6),Y                                ; D529: 91 F1       ..
  INY                                          ; D52B: C8          .
- STA (L00F1),Y                                ; D52C: 91 F1       ..
+ STA (addr6),Y                                ; D52C: 91 F1       ..
  INY                                          ; D52E: C8          .
- STA (L00F1),Y                                ; D52F: 91 F1       ..
+ STA (addr6),Y                                ; D52F: 91 F1       ..
  INY                                          ; D531: C8          .
- STA (L00F1),Y                                ; D532: 91 F1       ..
+ STA (addr6),Y                                ; D532: 91 F1       ..
  INY                                          ; D534: C8          .
- STA (L00F1),Y                                ; D535: 91 F1       ..
+ STA (addr6),Y                                ; D535: 91 F1       ..
  INY                                          ; D537: C8          .
- STA (L00F1),Y                                ; D538: 91 F1       ..
+ STA (addr6),Y                                ; D538: 91 F1       ..
  INY                                          ; D53A: C8          .
- STA (L00F1),Y                                ; D53B: 91 F1       ..
+ STA (addr6),Y                                ; D53B: 91 F1       ..
  INY                                          ; D53D: C8          .
- STA (L00F1),Y                                ; D53E: 91 F1       ..
+ STA (addr6),Y                                ; D53E: 91 F1       ..
  INY                                          ; D540: C8          .
- STA (L00F1),Y                                ; D541: 91 F1       ..
+ STA (addr6),Y                                ; D541: 91 F1       ..
  INY                                          ; D543: C8          .
- STA (L00F1),Y                                ; D544: 91 F1       ..
+ STA (addr6),Y                                ; D544: 91 F1       ..
  INY                                          ; D546: C8          .
- STA (L00F1),Y                                ; D547: 91 F1       ..
+ STA (addr6),Y                                ; D547: 91 F1       ..
  INY                                          ; D549: C8          .
- STA (L00F1),Y                                ; D54A: 91 F1       ..
+ STA (addr6),Y                                ; D54A: 91 F1       ..
  INY                                          ; D54C: C8          .
- STA (L00F1),Y                                ; D54D: 91 F1       ..
+ STA (addr6),Y                                ; D54D: 91 F1       ..
  INY                                          ; D54F: C8          .
- STA (L00F1),Y                                ; D550: 91 F1       ..
+ STA (addr6),Y                                ; D550: 91 F1       ..
  INY                                          ; D552: C8          .
- STA (L00F1),Y                                ; D553: 91 F1       ..
+ STA (addr6),Y                                ; D553: 91 F1       ..
  INY                                          ; D555: C8          .
- STA (L00F1),Y                                ; D556: 91 F1       ..
+ STA (addr6),Y                                ; D556: 91 F1       ..
  INY                                          ; D558: C8          .
- STA (L00F1),Y                                ; D559: 91 F1       ..
+ STA (addr6),Y                                ; D559: 91 F1       ..
  INY                                          ; D55B: C8          .
- STA (L00F1),Y                                ; D55C: 91 F1       ..
+ STA (addr6),Y                                ; D55C: 91 F1       ..
  INY                                          ; D55E: C8          .
- STA (L00F1),Y                                ; D55F: 91 F1       ..
+ STA (addr6),Y                                ; D55F: 91 F1       ..
  INY                                          ; D561: C8          .
- STA (L00F1),Y                                ; D562: 91 F1       ..
+ STA (addr6),Y                                ; D562: 91 F1       ..
  INY                                          ; D564: C8          .
- STA (L00F1),Y                                ; D565: 91 F1       ..
+ STA (addr6),Y                                ; D565: 91 F1       ..
  INY                                          ; D567: C8          .
- STA (L00F1),Y                                ; D568: 91 F1       ..
+ STA (addr6),Y                                ; D568: 91 F1       ..
  INY                                          ; D56A: C8          .
- STA (L00F1),Y                                ; D56B: 91 F1       ..
+ STA (addr6),Y                                ; D56B: 91 F1       ..
  INY                                          ; D56D: C8          .
- STA (L00F1),Y                                ; D56E: 91 F1       ..
+ STA (addr6),Y                                ; D56E: 91 F1       ..
  INY                                          ; D570: C8          .
- STA (L00F1),Y                                ; D571: 91 F1       ..
+ STA (addr6),Y                                ; D571: 91 F1       ..
  INY                                          ; D573: C8          .
- STA (L00F1),Y                                ; D574: 91 F1       ..
+ STA (addr6),Y                                ; D574: 91 F1       ..
  INY                                          ; D576: C8          .
- STA (L00F1),Y                                ; D577: 91 F1       ..
+ STA (addr6),Y                                ; D577: 91 F1       ..
  INY                                          ; D579: C8          .
- STA (L00F1),Y                                ; D57A: 91 F1       ..
+ STA (addr6),Y                                ; D57A: 91 F1       ..
  INY                                          ; D57C: C8          .
- STA (L00F1),Y                                ; D57D: 91 F1       ..
+ STA (addr6),Y                                ; D57D: 91 F1       ..
  INY                                          ; D57F: C8          .
- STA (L00F1),Y                                ; D580: 91 F1       ..
+ STA (addr6),Y                                ; D580: 91 F1       ..
  INY                                          ; D582: C8          .
- STA (L00F1),Y                                ; D583: 91 F1       ..
+ STA (addr6),Y                                ; D583: 91 F1       ..
  INY                                          ; D585: C8          .
- STA (L00F1),Y                                ; D586: 91 F1       ..
+ STA (addr6),Y                                ; D586: 91 F1       ..
  INY                                          ; D588: C8          .
- STA (L00F1),Y                                ; D589: 91 F1       ..
+ STA (addr6),Y                                ; D589: 91 F1       ..
  INY                                          ; D58B: C8          .
- STA (L00F1),Y                                ; D58C: 91 F1       ..
+ STA (addr6),Y                                ; D58C: 91 F1       ..
  INY                                          ; D58E: C8          .
- STA (L00F1),Y                                ; D58F: 91 F1       ..
+ STA (addr6),Y                                ; D58F: 91 F1       ..
  INY                                          ; D591: C8          .
- STA (L00F1),Y                                ; D592: 91 F1       ..
+ STA (addr6),Y                                ; D592: 91 F1       ..
  INY                                          ; D594: C8          .
- STA (L00F1),Y                                ; D595: 91 F1       ..
+ STA (addr6),Y                                ; D595: 91 F1       ..
  INY                                          ; D597: C8          .
- STA (L00F1),Y                                ; D598: 91 F1       ..
+ STA (addr6),Y                                ; D598: 91 F1       ..
  INY                                          ; D59A: C8          .
- STA (L00F1),Y                                ; D59B: 91 F1       ..
+ STA (addr6),Y                                ; D59B: 91 F1       ..
  INY                                          ; D59D: C8          .
- STA (L00F1),Y                                ; D59E: 91 F1       ..
+ STA (addr6),Y                                ; D59E: 91 F1       ..
  INY                                          ; D5A0: C8          .
- STA (L00F1),Y                                ; D5A1: 91 F1       ..
+ STA (addr6),Y                                ; D5A1: 91 F1       ..
  INY                                          ; D5A3: C8          .
- STA (L00F1),Y                                ; D5A4: 91 F1       ..
+ STA (addr6),Y                                ; D5A4: 91 F1       ..
  INY                                          ; D5A6: C8          .
- STA (L00F1),Y                                ; D5A7: 91 F1       ..
+ STA (addr6),Y                                ; D5A7: 91 F1       ..
  INY                                          ; D5A9: C8          .
- STA (L00F1),Y                                ; D5AA: 91 F1       ..
+ STA (addr6),Y                                ; D5AA: 91 F1       ..
  INY                                          ; D5AC: C8          .
- STA (L00F1),Y                                ; D5AD: 91 F1       ..
+ STA (addr6),Y                                ; D5AD: 91 F1       ..
  INY                                          ; D5AF: C8          .
- STA (L00F1),Y                                ; D5B0: 91 F1       ..
+ STA (addr6),Y                                ; D5B0: 91 F1       ..
  INY                                          ; D5B2: C8          .
- STA (L00F1),Y                                ; D5B3: 91 F1       ..
+ STA (addr6),Y                                ; D5B3: 91 F1       ..
  INY                                          ; D5B5: C8          .
- STA (L00F1),Y                                ; D5B6: 91 F1       ..
+ STA (addr6),Y                                ; D5B6: 91 F1       ..
  INY                                          ; D5B8: C8          .
- STA (L00F1),Y                                ; D5B9: 91 F1       ..
+ STA (addr6),Y                                ; D5B9: 91 F1       ..
  INY                                          ; D5BB: C8          .
- STA (L00F1),Y                                ; D5BC: 91 F1       ..
+ STA (addr6),Y                                ; D5BC: 91 F1       ..
  INY                                          ; D5BE: C8          .
- STA (L00F1),Y                                ; D5BF: 91 F1       ..
+ STA (addr6),Y                                ; D5BF: 91 F1       ..
  INY                                          ; D5C1: C8          .
- STA (L00F1),Y                                ; D5C2: 91 F1       ..
+ STA (addr6),Y                                ; D5C2: 91 F1       ..
  INY                                          ; D5C4: C8          .
- STA (L00F1),Y                                ; D5C5: 91 F1       ..
+ STA (addr6),Y                                ; D5C5: 91 F1       ..
  INY                                          ; D5C7: C8          .
- STA (L00F1),Y                                ; D5C8: 91 F1       ..
+ STA (addr6),Y                                ; D5C8: 91 F1       ..
  INY                                          ; D5CA: C8          .
- STA (L00F1),Y                                ; D5CB: 91 F1       ..
+ STA (addr6),Y                                ; D5CB: 91 F1       ..
  INY                                          ; D5CD: C8          .
- STA (L00F1),Y                                ; D5CE: 91 F1       ..
+ STA (addr6),Y                                ; D5CE: 91 F1       ..
  INY                                          ; D5D0: C8          .
- STA (L00F1),Y                                ; D5D1: 91 F1       ..
+ STA (addr6),Y                                ; D5D1: 91 F1       ..
  INY                                          ; D5D3: C8          .
- STA (L00F1),Y                                ; D5D4: 91 F1       ..
+ STA (addr6),Y                                ; D5D4: 91 F1       ..
  INY                                          ; D5D6: C8          .
- STA (L00F1),Y                                ; D5D7: 91 F1       ..
+ STA (addr6),Y                                ; D5D7: 91 F1       ..
  INY                                          ; D5D9: C8          .
- STA (L00F1),Y                                ; D5DA: 91 F1       ..
+ STA (addr6),Y                                ; D5DA: 91 F1       ..
  INY                                          ; D5DC: C8          .
- STA (L00F1),Y                                ; D5DD: 91 F1       ..
+ STA (addr6),Y                                ; D5DD: 91 F1       ..
  INY                                          ; D5DF: C8          .
- STA (L00F1),Y                                ; D5E0: 91 F1       ..
+ STA (addr6),Y                                ; D5E0: 91 F1       ..
  INY                                          ; D5E2: C8          .
- STA (L00F1),Y                                ; D5E3: 91 F1       ..
+ STA (addr6),Y                                ; D5E3: 91 F1       ..
  INY                                          ; D5E5: C8          .
- STA (L00F1),Y                                ; D5E6: 91 F1       ..
+ STA (addr6),Y                                ; D5E6: 91 F1       ..
  INY                                          ; D5E8: C8          .
- STA (L00F1),Y                                ; D5E9: 91 F1       ..
+ STA (addr6),Y                                ; D5E9: 91 F1       ..
  INY                                          ; D5EB: C8          .
- STA (L00F1),Y                                ; D5EC: 91 F1       ..
+ STA (addr6),Y                                ; D5EC: 91 F1       ..
  INY                                          ; D5EE: C8          .
- STA (L00F1),Y                                ; D5EF: 91 F1       ..
+ STA (addr6),Y                                ; D5EF: 91 F1       ..
  INY                                          ; D5F1: C8          .
- STA (L00F1),Y                                ; D5F2: 91 F1       ..
+ STA (addr6),Y                                ; D5F2: 91 F1       ..
  INY                                          ; D5F4: C8          .
- STA (L00F1),Y                                ; D5F5: 91 F1       ..
+ STA (addr6),Y                                ; D5F5: 91 F1       ..
  INY                                          ; D5F7: C8          .
- STA (L00F1),Y                                ; D5F8: 91 F1       ..
+ STA (addr6),Y                                ; D5F8: 91 F1       ..
  INY                                          ; D5FA: C8          .
- STA (L00F1),Y                                ; D5FB: 91 F1       ..
+ STA (addr6),Y                                ; D5FB: 91 F1       ..
  INY                                          ; D5FD: C8          .
- STA (L00F1),Y                                ; D5FE: 91 F1       ..
+ STA (addr6),Y                                ; D5FE: 91 F1       ..
  INY                                          ; D600: C8          .
- STA (L00F1),Y                                ; D601: 91 F1       ..
+ STA (addr6),Y                                ; D601: 91 F1       ..
  INY                                          ; D603: C8          .
- STA (L00F1),Y                                ; D604: 91 F1       ..
+ STA (addr6),Y                                ; D604: 91 F1       ..
  INY                                          ; D606: C8          .
- STA (L00F1),Y                                ; D607: 91 F1       ..
+ STA (addr6),Y                                ; D607: 91 F1       ..
  INY                                          ; D609: C8          .
- STA (L00F1),Y                                ; D60A: 91 F1       ..
+ STA (addr6),Y                                ; D60A: 91 F1       ..
  INY                                          ; D60C: C8          .
- STA (L00F1),Y                                ; D60D: 91 F1       ..
+ STA (addr6),Y                                ; D60D: 91 F1       ..
  INY                                          ; D60F: C8          .
- STA (L00F1),Y                                ; D610: 91 F1       ..
+ STA (addr6),Y                                ; D610: 91 F1       ..
  INY                                          ; D612: C8          .
- STA (L00F1),Y                                ; D613: 91 F1       ..
+ STA (addr6),Y                                ; D613: 91 F1       ..
  INY                                          ; D615: C8          .
- STA (L00F1),Y                                ; D616: 91 F1       ..
+ STA (addr6),Y                                ; D616: 91 F1       ..
  INY                                          ; D618: C8          .
- STA (L00F1),Y                                ; D619: 91 F1       ..
+ STA (addr6),Y                                ; D619: 91 F1       ..
  INY                                          ; D61B: C8          .
- STA (L00F1),Y                                ; D61C: 91 F1       ..
+ STA (addr6),Y                                ; D61C: 91 F1       ..
  INY                                          ; D61E: C8          .
- STA (L00F1),Y                                ; D61F: 91 F1       ..
+ STA (addr6),Y                                ; D61F: 91 F1       ..
  INY                                          ; D621: C8          .
- STA (L00F1),Y                                ; D622: 91 F1       ..
+ STA (addr6),Y                                ; D622: 91 F1       ..
  INY                                          ; D624: C8          .
- STA (L00F1),Y                                ; D625: 91 F1       ..
+ STA (addr6),Y                                ; D625: 91 F1       ..
  INY                                          ; D627: C8          .
- STA (L00F1),Y                                ; D628: 91 F1       ..
+ STA (addr6),Y                                ; D628: 91 F1       ..
  INY                                          ; D62A: C8          .
- STA (L00F1),Y                                ; D62B: 91 F1       ..
+ STA (addr6),Y                                ; D62B: 91 F1       ..
  INY                                          ; D62D: C8          .
- STA (L00F1),Y                                ; D62E: 91 F1       ..
+ STA (addr6),Y                                ; D62E: 91 F1       ..
  INY                                          ; D630: C8          .
- STA (L00F1),Y                                ; D631: 91 F1       ..
+ STA (addr6),Y                                ; D631: 91 F1       ..
  INY                                          ; D633: C8          .
- STA (L00F1),Y                                ; D634: 91 F1       ..
+ STA (addr6),Y                                ; D634: 91 F1       ..
  INY                                          ; D636: C8          .
- STA (L00F1),Y                                ; D637: 91 F1       ..
+ STA (addr6),Y                                ; D637: 91 F1       ..
  INY                                          ; D639: C8          .
- STA (L00F1),Y                                ; D63A: 91 F1       ..
+ STA (addr6),Y                                ; D63A: 91 F1       ..
  INY                                          ; D63C: C8          .
- STA (L00F1),Y                                ; D63D: 91 F1       ..
+ STA (addr6),Y                                ; D63D: 91 F1       ..
  INY                                          ; D63F: C8          .
- STA (L00F1),Y                                ; D640: 91 F1       ..
+ STA (addr6),Y                                ; D640: 91 F1       ..
  INY                                          ; D642: C8          .
- STA (L00F1),Y                                ; D643: 91 F1       ..
+ STA (addr6),Y                                ; D643: 91 F1       ..
  INY                                          ; D645: C8          .
- STA (L00F1),Y                                ; D646: 91 F1       ..
+ STA (addr6),Y                                ; D646: 91 F1       ..
  INY                                          ; D648: C8          .
- STA (L00F1),Y                                ; D649: 91 F1       ..
+ STA (addr6),Y                                ; D649: 91 F1       ..
  INY                                          ; D64B: C8          .
- STA (L00F1),Y                                ; D64C: 91 F1       ..
+ STA (addr6),Y                                ; D64C: 91 F1       ..
  INY                                          ; D64E: C8          .
- STA (L00F1),Y                                ; D64F: 91 F1       ..
+ STA (addr6),Y                                ; D64F: 91 F1       ..
  INY                                          ; D651: C8          .
- STA (L00F1),Y                                ; D652: 91 F1       ..
+ STA (addr6),Y                                ; D652: 91 F1       ..
  INY                                          ; D654: C8          .
- STA (L00F1),Y                                ; D655: 91 F1       ..
+ STA (addr6),Y                                ; D655: 91 F1       ..
  INY                                          ; D657: C8          .
- STA (L00F1),Y                                ; D658: 91 F1       ..
+ STA (addr6),Y                                ; D658: 91 F1       ..
  INY                                          ; D65A: C8          .
- STA (L00F1),Y                                ; D65B: 91 F1       ..
+ STA (addr6),Y                                ; D65B: 91 F1       ..
  INY                                          ; D65D: C8          .
- STA (L00F1),Y                                ; D65E: 91 F1       ..
+ STA (addr6),Y                                ; D65E: 91 F1       ..
  INY                                          ; D660: C8          .
- STA (L00F1),Y                                ; D661: 91 F1       ..
+ STA (addr6),Y                                ; D661: 91 F1       ..
  INY                                          ; D663: C8          .
- STA (L00F1),Y                                ; D664: 91 F1       ..
+ STA (addr6),Y                                ; D664: 91 F1       ..
  INY                                          ; D666: C8          .
- STA (L00F1),Y                                ; D667: 91 F1       ..
+ STA (addr6),Y                                ; D667: 91 F1       ..
  INY                                          ; D669: C8          .
- STA (L00F1),Y                                ; D66A: 91 F1       ..
+ STA (addr6),Y                                ; D66A: 91 F1       ..
  INY                                          ; D66C: C8          .
- STA (L00F1),Y                                ; D66D: 91 F1       ..
+ STA (addr6),Y                                ; D66D: 91 F1       ..
  INY                                          ; D66F: C8          .
- STA (L00F1),Y                                ; D670: 91 F1       ..
+ STA (addr6),Y                                ; D670: 91 F1       ..
  INY                                          ; D672: C8          .
- STA (L00F1),Y                                ; D673: 91 F1       ..
+ STA (addr6),Y                                ; D673: 91 F1       ..
  INY                                          ; D675: C8          .
- STA (L00F1),Y                                ; D676: 91 F1       ..
+ STA (addr6),Y                                ; D676: 91 F1       ..
  INY                                          ; D678: C8          .
- STA (L00F1),Y                                ; D679: 91 F1       ..
+ STA (addr6),Y                                ; D679: 91 F1       ..
  INY                                          ; D67B: C8          .
- STA (L00F1),Y                                ; D67C: 91 F1       ..
+ STA (addr6),Y                                ; D67C: 91 F1       ..
  INY                                          ; D67E: C8          .
- STA (L00F1),Y                                ; D67F: 91 F1       ..
+ STA (addr6),Y                                ; D67F: 91 F1       ..
  INY                                          ; D681: C8          .
- STA (L00F1),Y                                ; D682: 91 F1       ..
+ STA (addr6),Y                                ; D682: 91 F1       ..
  INY                                          ; D684: C8          .
- STA (L00F1),Y                                ; D685: 91 F1       ..
+ STA (addr6),Y                                ; D685: 91 F1       ..
  INY                                          ; D687: C8          .
- STA (L00F1),Y                                ; D688: 91 F1       ..
+ STA (addr6),Y                                ; D688: 91 F1       ..
  INY                                          ; D68A: C8          .
- STA (L00F1),Y                                ; D68B: 91 F1       ..
+ STA (addr6),Y                                ; D68B: 91 F1       ..
  INY                                          ; D68D: C8          .
- STA (L00F1),Y                                ; D68E: 91 F1       ..
+ STA (addr6),Y                                ; D68E: 91 F1       ..
  INY                                          ; D690: C8          .
- STA (L00F1),Y                                ; D691: 91 F1       ..
+ STA (addr6),Y                                ; D691: 91 F1       ..
  INY                                          ; D693: C8          .
- STA (L00F1),Y                                ; D694: 91 F1       ..
+ STA (addr6),Y                                ; D694: 91 F1       ..
  INY                                          ; D696: C8          .
- STA (L00F1),Y                                ; D697: 91 F1       ..
+ STA (addr6),Y                                ; D697: 91 F1       ..
  INY                                          ; D699: C8          .
- STA (L00F1),Y                                ; D69A: 91 F1       ..
+ STA (addr6),Y                                ; D69A: 91 F1       ..
  INY                                          ; D69C: C8          .
- STA (L00F1),Y                                ; D69D: 91 F1       ..
+ STA (addr6),Y                                ; D69D: 91 F1       ..
  INY                                          ; D69F: C8          .
- STA (L00F1),Y                                ; D6A0: 91 F1       ..
+ STA (addr6),Y                                ; D6A0: 91 F1       ..
  INY                                          ; D6A2: C8          .
- STA (L00F1),Y                                ; D6A3: 91 F1       ..
+ STA (addr6),Y                                ; D6A3: 91 F1       ..
  INY                                          ; D6A5: C8          .
- STA (L00F1),Y                                ; D6A6: 91 F1       ..
+ STA (addr6),Y                                ; D6A6: 91 F1       ..
  INY                                          ; D6A8: C8          .
- STA (L00F1),Y                                ; D6A9: 91 F1       ..
+ STA (addr6),Y                                ; D6A9: 91 F1       ..
  INY                                          ; D6AB: C8          .
- STA (L00F1),Y                                ; D6AC: 91 F1       ..
+ STA (addr6),Y                                ; D6AC: 91 F1       ..
  INY                                          ; D6AE: C8          .
 .sub_CD6AF
- STA (L00F1),Y                                ; D6AF: 91 F1       ..
+ STA (addr6),Y                                ; D6AF: 91 F1       ..
  INY                                          ; D6B1: C8          .
- STA (L00F1),Y                                ; D6B2: 91 F1       ..
+ STA (addr6),Y                                ; D6B2: 91 F1       ..
  INY                                          ; D6B4: C8          .
- STA (L00F1),Y                                ; D6B5: 91 F1       ..
+ STA (addr6),Y                                ; D6B5: 91 F1       ..
  INY                                          ; D6B7: C8          .
- STA (L00F1),Y                                ; D6B8: 91 F1       ..
+ STA (addr6),Y                                ; D6B8: 91 F1       ..
  INY                                          ; D6BA: C8          .
- STA (L00F1),Y                                ; D6BB: 91 F1       ..
+ STA (addr6),Y                                ; D6BB: 91 F1       ..
  INY                                          ; D6BD: C8          .
- STA (L00F1),Y                                ; D6BE: 91 F1       ..
+ STA (addr6),Y                                ; D6BE: 91 F1       ..
  INY                                          ; D6C0: C8          .
- STA (L00F1),Y                                ; D6C1: 91 F1       ..
+ STA (addr6),Y                                ; D6C1: 91 F1       ..
  INY                                          ; D6C3: C8          .
- STA (L00F1),Y                                ; D6C4: 91 F1       ..
+ STA (addr6),Y                                ; D6C4: 91 F1       ..
  INY                                          ; D6C6: C8          .
- STA (L00F1),Y                                ; D6C7: 91 F1       ..
+ STA (addr6),Y                                ; D6C7: 91 F1       ..
  INY                                          ; D6C9: C8          .
- STA (L00F1),Y                                ; D6CA: 91 F1       ..
+ STA (addr6),Y                                ; D6CA: 91 F1       ..
  INY                                          ; D6CC: C8          .
- STA (L00F1),Y                                ; D6CD: 91 F1       ..
+ STA (addr6),Y                                ; D6CD: 91 F1       ..
  INY                                          ; D6CF: C8          .
- STA (L00F1),Y                                ; D6D0: 91 F1       ..
+ STA (addr6),Y                                ; D6D0: 91 F1       ..
  INY                                          ; D6D2: C8          .
- STA (L00F1),Y                                ; D6D3: 91 F1       ..
+ STA (addr6),Y                                ; D6D3: 91 F1       ..
  INY                                          ; D6D5: C8          .
- STA (L00F1),Y                                ; D6D6: 91 F1       ..
+ STA (addr6),Y                                ; D6D6: 91 F1       ..
  INY                                          ; D6D8: C8          .
- STA (L00F1),Y                                ; D6D9: 91 F1       ..
+ STA (addr6),Y                                ; D6D9: 91 F1       ..
  INY                                          ; D6DB: C8          .
- STA (L00F1),Y                                ; D6DC: 91 F1       ..
+ STA (addr6),Y                                ; D6DC: 91 F1       ..
  INY                                          ; D6DE: C8          .
- STA (L00F1),Y                                ; D6DF: 91 F1       ..
+ STA (addr6),Y                                ; D6DF: 91 F1       ..
  INY                                          ; D6E1: C8          .
- STA (L00F1),Y                                ; D6E2: 91 F1       ..
+ STA (addr6),Y                                ; D6E2: 91 F1       ..
  INY                                          ; D6E4: C8          .
- STA (L00F1),Y                                ; D6E5: 91 F1       ..
+ STA (addr6),Y                                ; D6E5: 91 F1       ..
  INY                                          ; D6E7: C8          .
- STA (L00F1),Y                                ; D6E8: 91 F1       ..
+ STA (addr6),Y                                ; D6E8: 91 F1       ..
  INY                                          ; D6EA: C8          .
- STA (L00F1),Y                                ; D6EB: 91 F1       ..
+ STA (addr6),Y                                ; D6EB: 91 F1       ..
  INY                                          ; D6ED: C8          .
- STA (L00F1),Y                                ; D6EE: 91 F1       ..
+ STA (addr6),Y                                ; D6EE: 91 F1       ..
  INY                                          ; D6F0: C8          .
- STA (L00F1),Y                                ; D6F1: 91 F1       ..
+ STA (addr6),Y                                ; D6F1: 91 F1       ..
  INY                                          ; D6F3: C8          .
- STA (L00F1),Y                                ; D6F4: 91 F1       ..
+ STA (addr6),Y                                ; D6F4: 91 F1       ..
  INY                                          ; D6F6: C8          .
- STA (L00F1),Y                                ; D6F7: 91 F1       ..
+ STA (addr6),Y                                ; D6F7: 91 F1       ..
  INY                                          ; D6F9: C8          .
- STA (L00F1),Y                                ; D6FA: 91 F1       ..
+ STA (addr6),Y                                ; D6FA: 91 F1       ..
  INY                                          ; D6FC: C8          .
- STA (L00F1),Y                                ; D6FD: 91 F1       ..
+ STA (addr6),Y                                ; D6FD: 91 F1       ..
  INY                                          ; D6FF: C8          .
- STA (L00F1),Y                                ; D700: 91 F1       ..
+ STA (addr6),Y                                ; D700: 91 F1       ..
  INY                                          ; D702: C8          .
- STA (L00F1),Y                                ; D703: 91 F1       ..
+ STA (addr6),Y                                ; D703: 91 F1       ..
  INY                                          ; D705: C8          .
- STA (L00F1),Y                                ; D706: 91 F1       ..
+ STA (addr6),Y                                ; D706: 91 F1       ..
  INY                                          ; D708: C8          .
- STA (L00F1),Y                                ; D709: 91 F1       ..
+ STA (addr6),Y                                ; D709: 91 F1       ..
  INY                                          ; D70B: C8          .
- STA (L00F1),Y                                ; D70C: 91 F1       ..
+ STA (addr6),Y                                ; D70C: 91 F1       ..
  INY                                          ; D70E: C8          .
  RTS                                          ; D70F: 60          `
 
@@ -3817,7 +3817,7 @@ LC006 = sub_CC004+2
  LDY #0                                       ; D737: A0 00       ..
  JSR sub_CD40F                                ; D739: 20 0F D4     ..
  DEC L00F0                                    ; D73C: C6 F0       ..
- INC L00F2                                    ; D73E: E6 F2       ..
+ INC addr6_1                                  ; D73E: E6 F2       ..
  JMP FillMemory                               ; D740: 4C 10 D7    L..
 
 .CD743
@@ -3844,13 +3844,13 @@ LC006 = sub_CC004+2
  LDA #0                                       ; D764: A9 00       ..
  LDY #0                                       ; D766: A0 00       ..
  JSR sub_CD6AF                                ; D768: 20 AF D6     ..
- LDA L00F1                                    ; D76B: A5 F1       ..
+ LDA addr6                                    ; D76B: A5 F1       ..
  CLC                                          ; D76D: 18          .
  ADC #&20 ; ' '                               ; D76E: 69 20       i
- STA L00F1                                    ; D770: 85 F1       ..
- LDA L00F2                                    ; D772: A5 F2       ..
+ STA addr6                                    ; D770: 85 F1       ..
+ LDA addr6_1                                  ; D772: A5 F2       ..
  ADC #0                                       ; D774: 69 00       i.
- STA L00F2                                    ; D776: 85 F2       ..
+ STA addr6_1                                  ; D776: 85 F2       ..
  JMP CD743                                    ; D778: 4C 43 D7    LC.
 
 .CD77B
@@ -3931,11 +3931,11 @@ LC006 = sub_CC004+2
  JSR sub_CD806                                ; D7F6: 20 06 D8     ..
  PLA                                          ; D7F9: 68          h
  CLC                                          ; D7FA: 18          .
- ADC L00F1                                    ; D7FB: 65 F1       e.
- STA L00F1                                    ; D7FD: 85 F1       ..
- LDA L00F2                                    ; D7FF: A5 F2       ..
+ ADC addr6                                    ; D7FB: 65 F1       e.
+ STA addr6                                    ; D7FD: 85 F1       ..
+ LDA addr6_1                                  ; D7FF: A5 F2       ..
  ADC #0                                       ; D801: 69 00       i.
- STA L00F2                                    ; D803: 85 F2       ..
+ STA addr6_1                                  ; D803: 85 F2       ..
  RTS                                          ; D805: 60          `
 
 .sub_CD806
@@ -3978,12 +3978,12 @@ LC006 = sub_CC004+2
  LDA #0                                       ; D840: A9 00       ..
  LDY #0                                       ; D842: A0 00       ..
  JSR sub_CD6AF                                ; D844: 20 AF D6     ..
- LDA L00F1                                    ; D847: A5 F1       ..
+ LDA addr6                                    ; D847: A5 F1       ..
  CLC                                          ; D849: 18          .
  ADC #&20 ; ' '                               ; D84A: 69 20       i
- STA L00F1                                    ; D84C: 85 F1       ..
+ STA addr6                                    ; D84C: 85 F1       ..
  BCC CD816                                    ; D84E: 90 C6       ..
- INC L00F2                                    ; D850: E6 F2       ..
+ INC addr6_1                                  ; D850: E6 F2       ..
  JMP CD816                                    ; D852: 4C 16 D8    L..
 
 .CD855
@@ -4025,28 +4025,28 @@ LC006 = sub_CC004+2
  STA L00EF                                    ; D88B: 85 EF       ..
  LDA #0                                       ; D88D: A9 00       ..
  LDY #0                                       ; D88F: A0 00       ..
- STA (L00F1),Y                                ; D891: 91 F1       ..
+ STA (addr6),Y                                ; D891: 91 F1       ..
  INY                                          ; D893: C8          .
- STA (L00F1),Y                                ; D894: 91 F1       ..
+ STA (addr6),Y                                ; D894: 91 F1       ..
  INY                                          ; D896: C8          .
- STA (L00F1),Y                                ; D897: 91 F1       ..
+ STA (addr6),Y                                ; D897: 91 F1       ..
  INY                                          ; D899: C8          .
- STA (L00F1),Y                                ; D89A: 91 F1       ..
+ STA (addr6),Y                                ; D89A: 91 F1       ..
  INY                                          ; D89C: C8          .
- STA (L00F1),Y                                ; D89D: 91 F1       ..
+ STA (addr6),Y                                ; D89D: 91 F1       ..
  INY                                          ; D89F: C8          .
- STA (L00F1),Y                                ; D8A0: 91 F1       ..
+ STA (addr6),Y                                ; D8A0: 91 F1       ..
  INY                                          ; D8A2: C8          .
- STA (L00F1),Y                                ; D8A3: 91 F1       ..
+ STA (addr6),Y                                ; D8A3: 91 F1       ..
  INY                                          ; D8A5: C8          .
- STA (L00F1),Y                                ; D8A6: 91 F1       ..
+ STA (addr6),Y                                ; D8A6: 91 F1       ..
  INY                                          ; D8A8: C8          .
- LDA L00F1                                    ; D8A9: A5 F1       ..
+ LDA addr6                                    ; D8A9: A5 F1       ..
  CLC                                          ; D8AB: 18          .
  ADC #8                                       ; D8AC: 69 08       i.
- STA L00F1                                    ; D8AE: 85 F1       ..
+ STA addr6                                    ; D8AE: 85 F1       ..
  BCC CD8B4                                    ; D8B0: 90 02       ..
- INC L00F2                                    ; D8B2: E6 F2       ..
+ INC addr6_1                                  ; D8B2: E6 F2       ..
 .CD8B4
  JMP CD863                                    ; D8B4: 4C 63 D8    Lc.
 
@@ -4060,7 +4060,8 @@ LC006 = sub_CC004+2
  STA L00D1                                    ; D8C2: 85 D1       ..
  RTS                                          ; D8C4: 60          `
 
-.CD8C5
+; ******************************************************************************
+.subm_D8C5
  LDA dashboardSwitch                          ; D8C5: A5 E9       ..
  BPL CD8D2                                    ; D8C7: 10 09       ..
  LDA PPU_STATUS                               ; D8C9: AD 02 20    ..
@@ -4070,27 +4071,22 @@ LC006 = sub_CC004+2
 .CD8D2
  LDA L03EF                                    ; D8D2: AD EF 03    ...
  AND #&40 ; '@'                               ; D8D5: 29 40       )@
-; overlapping:  CD8C5                         ; D8D7: D0 EC       ..
- EQUB &D0                                     ; D8D7: D0          .
-
-; ******************************************************************************
-.subm_D8D8
- CPX CF0AD                                    ; D8D8: EC AD F0    ...
-; overlapping:  L03F0                         ; D8D9: AD F0 03    ...
- EQUB 3                                       ; D8DB: 03          .
-
+ BNE subm_D8C5                                ; D8D7: D0 EC       ..
+ LDA L03F0                                    ; D8D9: AD F0 03    ...
  AND #&40 ; '@'                               ; D8DC: 29 40       )@
- BNE CD8C5                                    ; D8DE: D0 E5       ..
+ BNE subm_D8C5                                ; D8DE: D0 E5       ..
  RTS                                          ; D8E0: 60          `
 
-.sub_CD8E1
+; ******************************************************************************
+.subm_D8E1
  LDA L00C0                                    ; D8E1: A5 C0       ..
  EOR #1                                       ; D8E3: 49 01       I.
  TAX                                          ; D8E5: AA          .
- JSR sub_CD8EC                                ; D8E6: 20 EC D8     ..
+ JSR subm_D8EC                                ; D8E6: 20 EC D8     ..
  JMP CD19C                                    ; D8E9: 4C 9C D1    L..
 
-.sub_CD8EC
+; ******************************************************************************
+.subm_D8EC
  STX L00C0                                    ; D8EC: 86 C0       ..
  LDA L00C1,X                                  ; D8EE: B5 C1       ..
  STA tileNumber                               ; D8F0: 85 B8       ..
@@ -4107,6 +4103,8 @@ LC006 = sub_CC004+2
  STA patternTableHi                           ; D905: 85 B9       ..
  RTS                                          ; D907: 60          `
 
+; ******************************************************************************
+.subm_D908
  LDY #0                                       ; D908: A0 00       ..
 .CD90A
  LDA (V),Y                                    ; D90A: B1 63       .c
@@ -4119,6 +4117,8 @@ LC006 = sub_CC004+2
  BNE CD90A                                    ; D916: D0 F2       ..
  RTS                                          ; D918: 60          `
 
+; ******************************************************************************
+.subm_D919
  LDY #0                                       ; D919: A0 00       ..
  INC V                                        ; D91B: E6 63       .c
  INC V_1                                      ; D91D: E6 64       .d
@@ -4136,6 +4136,8 @@ LC006 = sub_CC004+2
  BNE CD91F                                    ; D930: D0 ED       ..
  RTS                                          ; D932: 60          `
 
+; ******************************************************************************
+.subm_D933
  LDA PPU_STATUS                               ; D933: AD 02 20    ..
 .loop_CD936
  LDA PPU_STATUS                               ; D936: AD 02 20    ..
@@ -4148,15 +4150,19 @@ LC006 = sub_CC004+2
  BPL CD940                                    ; D943: 10 FB       ..
  RTS                                          ; D945: 60          `
 
+; ******************************************************************************
+.subm_D946
  TXA                                          ; D946: 8A          .
  PHA                                          ; D947: 48          H
  JSR CD940                                    ; D948: 20 40 D9     @.
- JSR C811E_BANK6                              ; D94B: 20 16 ED     ..
+ JSR C811E_b6                                 ; D94B: 20 16 ED     ..
  PLA                                          ; D94E: 68          h
  TAX                                          ; D94F: AA          .
  RTS                                          ; D950: 60          `
 
- JSR CD8C5                                    ; D951: 20 C5 D8     ..
+; ******************************************************************************
+.subm_D951
+ JSR subm_D8C5                                ; D951: 20 C5 D8     ..
  LDA tileNumber                               ; D954: A5 B8       ..
  STA L00C1                                    ; D956: 85 C1       ..
  STA L00C2                                    ; D958: 85 C2       ..
@@ -4168,10 +4174,12 @@ LC006 = sub_CC004+2
  LDA #&C4                                     ; D964: A9 C4       ..
  STA L03EF                                    ; D966: 8D EF 03    ...
  STA L03F0                                    ; D969: 8D F0 03    ...
- JMP CD8C5                                    ; D96C: 4C C5 D8    L..
+ JMP subm_D8C5                                ; D96C: 4C C5 D8    L..
 
- JSR sub_CD8E1                                ; D96F: 20 E1 D8     ..
- JSR LL9_BANK1                                ; D972: 20 C7 ED     ..
+; ******************************************************************************
+.subm_D96F
+ JSR subm_D8E1                                ; D96F: 20 E1 D8     ..
+ JSR LL9_b1                                   ; D972: 20 C7 ED     ..
  LDA #&C8                                     ; D975: A9 C8       ..
  PHA                                          ; D977: 48          H
  JSR DrawBoxEdges                             ; D978: 20 6F CD     o.
@@ -6411,7 +6419,7 @@ LDFFF = sub_CDFFE+1
  LDA QQ11Mask                                 ; EB86: A5 9F       ..
  CMP QQ11                                     ; EB88: C5 9E       ..
  BEQ CEB8F                                    ; EB8A: F0 03       ..
- JSR CB63D_BANK3                              ; EB8C: 20 AB ED     ..
+ JSR CB63D_b3                                 ; EB8C: 20 AB ED     ..
 .CEB8F
  LDA dashboardSwitch                          ; EB8F: A5 E9       ..
  BPL CEB9C                                    ; EB91: 10 09       ..
@@ -6509,7 +6517,7 @@ LDFFF = sub_CDFFE+1
 .CEC2A
  TYA                                          ; EC2A: 98          .
 .CEC2B
- JSR C89D1_BANK6                              ; EC2B: 20 50 ED     P.
+ JSR C89D1_b6                                 ; EC2B: 20 50 ED     P.
 .CEC2E
  LDA dashboardSwitch                          ; EC2E: A5 E9       ..
  BPL CEC3B                                    ; EC30: 10 09       ..
@@ -6602,7 +6610,7 @@ LDFFF = sub_CDFFE+1
  RTS                                          ; ECE1: 60          `
 
 ; ******************************************************************************
-.CB1D4_BANK0
+.CB1D4_b0
  LDA L0465                                    ; ECE2: AD 65 04    .e.
  BEQ CECE1                                    ; ECE5: F0 FA       ..
  STA L00B7                                    ; ECE7: 85 B7       ..
@@ -6629,10 +6637,10 @@ LDFFF = sub_CDFFE+1
  STA YC                                       ; ED0D: 85 3B       .;
  LDX #7                                       ; ED0F: A2 07       ..
  LDY #7                                       ; ED11: A0 07       ..
- JMP CA0F8_BANK6                              ; ED13: 4C 99 EE    L..
+ JMP CA0F8_b6                                 ; ED13: 4C 99 EE    L..
 
 ; ******************************************************************************
-.C811E_BANK6
+.C811E_b6
  LDA currentBank                              ; ED16: A5 F7       ..
  PHA                                          ; ED18: 48          H
  LDA #6                                       ; ED19: A9 06       ..
@@ -6641,7 +6649,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; ED21: 4C AD C0    L..
 
 ; ******************************************************************************
-.C8021_BANK6
+.C8021_b6
  PHA                                          ; ED24: 48          H
  JSR sub_CD167                                ; ED25: 20 67 D1     g.
  PLA                                          ; ED28: 68          h
@@ -6666,7 +6674,7 @@ LDFFF = sub_CDFFE+1
  JMP L8021                                    ; ED4D: 4C 21 80    L!.
 
 ; ******************************************************************************
-.C89D1_BANK6
+.C89D1_b6
  STA L00B7                                    ; ED50: 85 B7       ..
  LDA currentBank                              ; ED52: A5 F7       ..
  CMP #6                                       ; ED54: C9 06       ..
@@ -6683,7 +6691,7 @@ LDFFF = sub_CDFFE+1
  JMP L89D1                                    ; ED68: 4C D1 89    L..
 
 ; ******************************************************************************
-.C8012_BANK6
+.C8012_b6
  JSR sub_CD167                                ; ED6B: 20 67 D1     g.
 .sub_CED6E
  LDA #0                                       ; ED6E: A9 00       ..
@@ -6696,7 +6704,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; ED7E: 4C AD C0    L..
 
 ; ******************************************************************************
-.CBF41_BANK5
+.CBF41_b5
  LDA currentBank                              ; ED81: A5 F7       ..
  PHA                                          ; ED83: 48          H
  LDA #5                                       ; ED84: A9 05       ..
@@ -6705,7 +6713,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; ED8C: 4C AD C0    L..
 
 ; ******************************************************************************
-.CB9F9_BANK4
+.CB9F9_b4
  LDA currentBank                              ; ED8F: A5 F7       ..
  PHA                                          ; ED91: 48          H
  LDA #4                                       ; ED92: A9 04       ..
@@ -6714,7 +6722,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; ED9A: 4C AD C0    L..
 
 ; ******************************************************************************
-.CB96B_BANK4
+.CB96B_b4
  LDA currentBank                              ; ED9D: A5 F7       ..
  PHA                                          ; ED9F: 48          H
  LDA #4                                       ; EDA0: A9 04       ..
@@ -6723,7 +6731,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EDA8: 4C AD C0    L..
 
 ; ******************************************************************************
-.CB63D_BANK3
+.CB63D_b3
  LDA currentBank                              ; EDAB: A5 F7       ..
  PHA                                          ; EDAD: 48          H
  LDA #3                                       ; EDAE: A9 03       ..
@@ -6732,7 +6740,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EDB6: 4C AD C0    L..
 
 ; ******************************************************************************
-.CB88C_BANK6
+.CB88C_b6
  LDA currentBank                              ; EDB9: A5 F7       ..
  PHA                                          ; EDBB: 48          H
  LDA #6                                       ; EDBC: A9 06       ..
@@ -6741,21 +6749,21 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EDC4: 4C AD C0    L..
 
 ; ******************************************************************************
-.LL9_BANK1
+.LL9_b1
  LDA currentBank                              ; EDC7: A5 F7       ..
  CMP #1                                       ; EDC9: C9 01       ..
  BEQ CEDD9                                    ; EDCB: F0 0C       ..
  PHA                                          ; EDCD: 48          H
  LDA #1                                       ; EDCE: A9 01       ..
  JSR SetBank                                  ; EDD0: 20 AE C0     ..
- JSR LA070                                    ; EDD3: 20 70 A0     p.
+ JSR LL9                                      ; EDD3: 20 70 A0     p.
  JMP ResetBank                                ; EDD6: 4C AD C0    L..
 
 .CEDD9
- JMP LA070                                    ; EDD9: 4C 70 A0    Lp.
+ JMP LL9                                      ; EDD9: 4C 70 A0    Lp.
 
 ; ******************************************************************************
-.CBA23_BANK3
+.CBA23_b3
  LDA currentBank                              ; EDDC: A5 F7       ..
  PHA                                          ; EDDE: 48          H
  LDA #3                                       ; EDDF: A9 03       ..
@@ -6764,21 +6772,21 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EDE7: 4C AD C0    L..
 
 ; ******************************************************************************
-.TIDY_BANK1
+.TIDY_b1
  LDA currentBank                              ; EDEA: A5 F7       ..
  CMP #1                                       ; EDEC: C9 01       ..
  BEQ CEDFC                                    ; EDEE: F0 0C       ..
  PHA                                          ; EDF0: 48          H
  LDA #1                                       ; EDF1: A9 01       ..
  JSR SetBank                                  ; EDF3: 20 AE C0     ..
- JSR LB85C                                    ; EDF6: 20 5C B8     \.
+ JSR TIDY                                     ; EDF6: 20 5C B8     \.
  JMP ResetBank                                ; EDF9: 4C AD C0    L..
 
 .CEDFC
- JMP LB85C                                    ; EDFC: 4C 5C B8    L\.
+ JMP TIDY                                     ; EDFC: 4C 5C B8    L\.
 
 ; ******************************************************************************
-.CBC83_BANK6
+.CBC83_b6
  LDA currentBank                              ; EDFF: A5 F7       ..
  PHA                                          ; EE01: 48          H
  LDA #6                                       ; EE02: A9 06       ..
@@ -6787,24 +6795,24 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EE0A: 4C AD C0    L..
 
 ; ******************************************************************************
-.C9522_BANK0
+.SpawnDemoShips_b0
  LDA #0                                       ; EE0D: A9 00       ..
  JSR SetBank                                  ; EE0F: 20 AE C0     ..
- JMP L9522                                    ; EE12: 4C 22 95    L".
+ JMP DemoShips                                ; EE12: 4C 22 95    L".
 
 ; ******************************************************************************
-.STARS_BANK1
+.STARS_b1
  LDA currentBank                              ; EE15: A5 F7       ..
  CMP #1                                       ; EE17: C9 01       ..
  BEQ CEE27                                    ; EE19: F0 0C       ..
  PHA                                          ; EE1B: 48          H
  LDA #1                                       ; EE1C: A9 01       ..
  JSR SetBank                                  ; EE1E: 20 AE C0     ..
- JSR LB1BE                                    ; EE21: 20 BE B1     ..
+ JSR STARS                                    ; EE21: 20 BE B1     ..
  JMP ResetBank                                ; EE24: 4C AD C0    L..
 
 .CEE27
- JMP LB1BE                                    ; EE27: 4C BE B1    L..
+ JMP STARS                                    ; EE27: 4C BE B1    L..
 
  LDA currentBank                              ; EE2A: A5 F7       ..
  CMP #1                                       ; EE2C: C9 01       ..
@@ -6819,21 +6827,21 @@ LDFFF = sub_CDFFE+1
  JMP LAF9D                                    ; EE3C: 4C 9D AF    L..
 
 ; ******************************************************************************
-.SUN_BANK1
+.SUN_b1
  LDA currentBank                              ; EE3F: A5 F7       ..
  CMP #1                                       ; EE41: C9 01       ..
  BEQ CEE51                                    ; EE43: F0 0C       ..
  PHA                                          ; EE45: 48          H
  LDA #1                                       ; EE46: A9 01       ..
  JSR SetBank                                  ; EE48: 20 AE C0     ..
- JSR LAC25                                    ; EE4B: 20 25 AC     %.
+ JSR SUN                                      ; EE4B: 20 25 AC     %.
  JMP ResetBank                                ; EE4E: 4C AD C0    L..
 
 .CEE51
- JMP LAC25                                    ; EE51: 4C 25 AC    L%.
+ JMP SUN                                      ; EE51: 4C 25 AC    L%.
 
 ; ******************************************************************************
-.CB2FB_BANK3
+.CB2FB_b3
  LDA currentBank                              ; EE54: A5 F7       ..
  PHA                                          ; EE56: 48          H
  LDA #3                                       ; EE57: A9 03       ..
@@ -6842,11 +6850,11 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EE5F: 4C AD C0    L..
 
 ; ******************************************************************************
-.CB219_BANK3
+.CB219_b3
  STA L00B7                                    ; EE62: 85 B7       ..
  LDA currentBank                              ; EE64: A5 F7       ..
  CMP #3                                       ; EE66: C9 03       ..
- BEQ CB9C1_BANK4                              ; EE68: F0 0E       ..
+ BEQ CB9C1_b4                                 ; EE68: F0 0E       ..
  PHA                                          ; EE6A: 48          H
  LDA #3                                       ; EE6B: A9 03       ..
  JSR SetBank                                  ; EE6D: 20 AE C0     ..
@@ -6855,7 +6863,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EE75: 4C AD C0    L..
 
 ; ******************************************************************************
-.CB9C1_BANK4
+.CB9C1_b4
  LDA L00B7                                    ; EE78: A5 B7       ..
  JMP LB219                                    ; EE7A: 4C 19 B2    L..
 
@@ -6867,7 +6875,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EE88: 4C AD C0    L..
 
 ; ******************************************************************************
-.CA082_BANK6
+.CA082_b6
  LDA currentBank                              ; EE8B: A5 F7       ..
  PHA                                          ; EE8D: 48          H
  LDA #6                                       ; EE8E: A9 06       ..
@@ -6876,7 +6884,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EE96: 4C AD C0    L..
 
 ; ******************************************************************************
-.CA0F8_BANK6
+.CA0F8_b6
  LDA currentBank                              ; EE99: A5 F7       ..
  PHA                                          ; EE9B: 48          H
  LDA #6                                       ; EE9C: A9 06       ..
@@ -6885,7 +6893,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EEA4: 4C AD C0    L..
 
 ; ******************************************************************************
-.CB882_BANK4
+.CB882_b4
  LDA currentBank                              ; EEA7: A5 F7       ..
  PHA                                          ; EEA9: 48          H
  LDA #4                                       ; EEAA: A9 04       ..
@@ -6894,7 +6902,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EEB2: 4C AD C0    L..
 
 ; ******************************************************************************
-.CA4A5_BANK6
+.CA4A5_b6
  LDA currentBank                              ; EEB5: A5 F7       ..
  PHA                                          ; EEB7: 48          H
  LDA #6                                       ; EEB8: A9 06       ..
@@ -6903,7 +6911,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EEC0: 4C AD C0    L..
 
 ; ******************************************************************************
-.CB2EF_BANK0
+.CB2EF_b0
  LDA #0                                       ; EEC3: A9 00       ..
  JSR SetBank                                  ; EEC5: 20 AE C0     ..
  JMP LB2EF                                    ; EEC8: 4C EF B2    L..
@@ -6913,7 +6921,7 @@ LDFFF = sub_CDFFE+1
  JMP LB358                                    ; EED0: 4C 58 B3    LX.
 
 ; ******************************************************************************
-.CB9E2_BANK3
+.CB9E2_b3
  LDA currentBank                              ; EED3: A5 F7       ..
  CMP #3                                       ; EED5: C9 03       ..
  BEQ CEEE5                                    ; EED7: F0 0C       ..
@@ -6927,7 +6935,7 @@ LDFFF = sub_CDFFE+1
  JMP LB9E2                                    ; EEE5: 4C E2 B9    L..
 
 ; ******************************************************************************
-.CB673_BANK3
+.CB673_b3
  LDA currentBank                              ; EEE8: A5 F7       ..
  PHA                                          ; EEEA: 48          H
  LDA #3                                       ; EEEB: A9 03       ..
@@ -6936,7 +6944,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EEF3: 4C AD C0    L..
 
 ; ******************************************************************************
-.CB2BC_BANK3
+.CB2BC_b3
  LDA currentBank                              ; EEF6: A5 F7       ..
  PHA                                          ; EEF8: 48          H
  LDA #3                                       ; EEF9: A9 03       ..
@@ -6945,7 +6953,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EF01: 4C AD C0    L..
 
 ; ******************************************************************************
-.CB248_BANK3
+.CB248_b3
  LDA currentBank                              ; EF04: A5 F7       ..
  PHA                                          ; EF06: 48          H
  LDA #3                                       ; EF07: A9 03       ..
@@ -6954,7 +6962,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EF0F: 4C AD C0    L..
 
 ; ******************************************************************************
-.CBA17_BANK6
+.CBA17_b6
  LDA currentBank                              ; EF12: A5 F7       ..
  PHA                                          ; EF14: 48          H
  LDA #6                                       ; EF15: A9 06       ..
@@ -6963,7 +6971,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EF1D: 4C AD C0    L..
 
 ; ******************************************************************************
-.CAFCD_BANK3
+.CAFCD_b3
  LDA currentBank                              ; EF20: A5 F7       ..
  CMP #3                                       ; EF22: C9 03       ..
  BEQ CEF32                                    ; EF24: F0 0C       ..
@@ -6977,7 +6985,7 @@ LDFFF = sub_CDFFE+1
  JMP LAFCD                                    ; EF32: 4C CD AF    L..
 
 ; ******************************************************************************
-.CBE52_BANK6
+.CBE52_b6
  LDA currentBank                              ; EF35: A5 F7       ..
  PHA                                          ; EF37: 48          H
  LDA #6                                       ; EF38: A9 06       ..
@@ -6986,7 +6994,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EF40: 4C AD C0    L..
 
 ; ******************************************************************************
-.CBED2_BANK6
+.CBED2_b6
  LDA currentBank                              ; EF43: A5 F7       ..
  PHA                                          ; EF45: 48          H
  LDA #6                                       ; EF46: A9 06       ..
@@ -6995,7 +7003,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EF4E: 4C AD C0    L..
 
 ; ******************************************************************************
-.CB0E1_BANK3
+.CB0E1_b3
  STA L00B7                                    ; EF51: 85 B7       ..
  LDA currentBank                              ; EF53: A5 F7       ..
  CMP #3                                       ; EF55: C9 03       ..
@@ -7012,7 +7020,7 @@ LDFFF = sub_CDFFE+1
  JMP LB0E1                                    ; EF69: 4C E1 B0    L..
 
 ; ******************************************************************************
-.CB18E_BANK3
+.CB18E_b3
  LDA currentBank                              ; EF6C: A5 F7       ..
  PHA                                          ; EF6E: 48          H
  LDA #3                                       ; EF6F: A9 03       ..
@@ -7021,7 +7029,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EF77: 4C AD C0    L..
 
 ; ******************************************************************************
-.PAS1_BANK0
+.PAS1_b0
  LDA currentBank                              ; EF7A: A5 F7       ..
  PHA                                          ; EF7C: 48          H
  LDA #0                                       ; EF7D: A9 00       ..
@@ -7030,7 +7038,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EF85: 4C AD C0    L..
 
 ; ******************************************************************************
-.CBED7_BANK5
+.SetSystemImage_b5
  LDA currentBank                              ; EF88: A5 F7       ..
  PHA                                          ; EF8A: 48          H
  LDA #5                                       ; EF8B: A9 05       ..
@@ -7039,7 +7047,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EF93: 4C AD C0    L..
 
 ; ******************************************************************************
-.CBEEA_BANK5
+.GetSystemImage_b5
  LDA currentBank                              ; EF96: A5 F7       ..
  PHA                                          ; EF98: 48          H
  LDA #5                                       ; EF99: A9 05       ..
@@ -7048,7 +7056,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EFA1: 4C AD C0    L..
 
 ; ******************************************************************************
-.CB93C_BANK4
+.CB93C_b4
  LDA currentBank                              ; EFA4: A5 F7       ..
  PHA                                          ; EFA6: 48          H
  LDA #4                                       ; EFA7: A9 04       ..
@@ -7057,7 +7065,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EFAF: 4C AD C0    L..
 
 ; ******************************************************************************
-.CB8F9_BANK4
+.CB8F9_b4
  LDA currentBank                              ; EFB2: A5 F7       ..
  PHA                                          ; EFB4: 48          H
  LDA #4                                       ; EFB5: A9 04       ..
@@ -7066,7 +7074,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EFBD: 4C AD C0    L..
 
 ; ******************************************************************************
-.CA2C3_BANK6
+.CA2C3_b6
  LDA currentBank                              ; EFC0: A5 F7       ..
  PHA                                          ; EFC2: 48          H
  LDA #6                                       ; EFC3: A9 06       ..
@@ -7075,7 +7083,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EFCB: 4C AD C0    L..
 
 ; ******************************************************************************
-.CBA63_BANK6
+.CBA63_b6
  LDA currentBank                              ; EFCE: A5 F7       ..
  PHA                                          ; EFD0: 48          H
  LDA #6                                       ; EFD1: A9 06       ..
@@ -7084,7 +7092,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EFD9: 4C AD C0    L..
 
 ; ******************************************************************************
-.CB39D_BANK0
+.CB39D_b0
  STA L00B7                                    ; EFDC: 85 B7       ..
  LDA currentBank                              ; EFDE: A5 F7       ..
  CMP #0                                       ; EFE0: C9 00       ..
@@ -7101,16 +7109,16 @@ LDFFF = sub_CDFFE+1
  JMP LB39D                                    ; EFF4: 4C 9D B3    L..
 
 ; ******************************************************************************
-.LL164_BANK6
+.LL164_b6
  LDA currentBank                              ; EFF7: A5 F7       ..
  PHA                                          ; EFF9: 48          H
  LDA #6                                       ; EFFA: A9 06       ..
  JSR SetBank                                  ; EFFC: 20 AE C0     ..
- JSR LB980                                    ; EFFF: 20 80 B9     ..
+ JSR LL164                                    ; EFFF: 20 80 B9     ..
  JMP ResetBank                                ; F002: 4C AD C0    L..
 
 ; ******************************************************************************
-.CB919_BANK6
+.CB919_b6
  LDA currentBank                              ; F005: A5 F7       ..
  PHA                                          ; F007: 48          H
  LDA #6                                       ; F008: A9 06       ..
@@ -7119,7 +7127,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; F010: 4C AD C0    L..
 
 ; ******************************************************************************
-.CA166_BANK6
+.CA166_b6
  LDA currentBank                              ; F013: A5 F7       ..
  PHA                                          ; F015: 48          H
  LDA #6                                       ; F016: A9 06       ..
@@ -7128,7 +7136,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; F01E: 4C AD C0    L..
 
 ; ******************************************************************************
-.CBBDE_BANK6
+.CBBDE_b6
  LDA currentBank                              ; F021: A5 F7       ..
  PHA                                          ; F023: 48          H
  LDA #6                                       ; F024: A9 06       ..
@@ -7137,7 +7145,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; F02C: 4C AD C0    L..
 
 ; ******************************************************************************
-.CBB37_BANK6
+.CBB37_b6
  LDA currentBank                              ; F02F: A5 F7       ..
  PHA                                          ; F031: 48          H
  LDA #6                                       ; F032: A9 06       ..
@@ -7146,7 +7154,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; F03A: 4C AD C0    L..
 
 ; ******************************************************************************
-.CB8FE_BANK6
+.CB8FE_b6
  LDA currentBank                              ; F03D: A5 F7       ..
  PHA                                          ; F03F: 48          H
  LDA #6                                       ; F040: A9 06       ..
@@ -7155,7 +7163,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; F048: 4C AD C0    L..
 
 ; ******************************************************************************
-.CB90D_BANK6
+.CB90D_b6
  LDA currentBank                              ; F04B: A5 F7       ..
  PHA                                          ; F04D: 48          H
  LDA #6                                       ; F04E: A9 06       ..
@@ -7164,7 +7172,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; F056: 4C AD C0    L..
 
 ; ******************************************************************************
-.CA5AB_BANK6
+.CA5AB_b6
  STA L00B7                                    ; F059: 85 B7       ..
  LDA currentBank                              ; F05B: A5 F7       ..
  CMP #6                                       ; F05D: C9 06       ..
@@ -7182,7 +7190,7 @@ LDFFF = sub_CDFFE+1
  JMP LA5AB                                    ; F071: 4C AB A5    L..
 
 ; ******************************************************************************
-.BEEP_BANK7
+.BEEP_b7
  LDA currentBank                              ; F074: A5 F7       ..
  PHA                                          ; F076: 48          H
  LDA #0                                       ; F077: A9 00       ..
@@ -7191,7 +7199,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; F07F: 4C AD C0    L..
 
 ; ******************************************************************************
-.DETOK_BANK2
+.DETOK_b2
  STA L00B7                                    ; F082: 85 B7       ..
  LDA currentBank                              ; F084: A5 F7       ..
  CMP #2                                       ; F086: C9 02       ..
@@ -7208,7 +7216,7 @@ LDFFF = sub_CDFFE+1
  JMP DETOK                                    ; F09A: 4C EF B0    L..
 
 ; ******************************************************************************
-.DTS_BANK2
+.DTS_b2
  STA L00B7                                    ; F09D: 85 B7       ..
  LDA currentBank                              ; F09F: A5 F7       ..
  CMP #2                                       ; F0A1: C9 02       ..
@@ -7217,25 +7225,24 @@ LDFFF = sub_CDFFE+1
  LDA #2                                       ; F0A6: A9 02       ..
  JSR SetBank                                  ; F0A8: 20 AE C0     ..
  LDA L00B7                                    ; F0AB: A5 B7       ..
-.CF0AD
- JSR LB187                                    ; F0AD: 20 87 B1     ..
+ JSR DTS                                      ; F0AD: 20 87 B1     ..
  JMP ResetBank                                ; F0B0: 4C AD C0    L..
 
 .CF0B3
  LDA L00B7                                    ; F0B3: A5 B7       ..
- JMP LB187                                    ; F0B5: 4C 87 B1    L..
+ JMP DTS                                      ; F0B5: 4C 87 B1    L..
 
 ; ******************************************************************************
-.PDESC_BANK2
+.PDESC_b2
  LDA currentBank                              ; F0B8: A5 F7       ..
  PHA                                          ; F0BA: 48          H
  LDA #2                                       ; F0BB: A9 02       ..
  JSR SetBank                                  ; F0BD: 20 AE C0     ..
- JSR LB3E8                                    ; F0C0: 20 E8 B3     ..
+ JSR PDESC                                    ; F0C0: 20 E8 B3     ..
  JMP ResetBank                                ; F0C3: 4C AD C0    L..
 
 ; ******************************************************************************
-.CAE18_BANK3
+.CAE18_b3
  STA L00B7                                    ; F0C6: 85 B7       ..
  LDA currentBank                              ; F0C8: A5 F7       ..
  CMP #3                                       ; F0CA: C9 03       ..
@@ -7252,7 +7259,7 @@ LDFFF = sub_CDFFE+1
  JMP LAE18                                    ; F0DE: 4C 18 AE    L..
 
 ; ******************************************************************************
-.CAC1D_BANK3
+.CAC1D_b3
  STA L00B7                                    ; F0E1: 85 B7       ..
  LDA currentBank                              ; F0E3: A5 F7       ..
  CMP #3                                       ; F0E5: C9 03       ..
@@ -7269,7 +7276,7 @@ LDFFF = sub_CDFFE+1
  JMP LAC1D                                    ; F0F9: 4C 1D AC    L..
 
 ; ******************************************************************************
-.CA730_BANK3
+.CA730_b3
  LDA currentBank                              ; F0FC: A5 F7       ..
  PHA                                          ; F0FE: 48          H
  LDA #3                                       ; F0FF: A9 03       ..
@@ -7278,7 +7285,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; F107: 4C AD C0    L..
 
 ; ******************************************************************************
-.CA775_BANK3
+.CA775_b3
  LDA currentBank                              ; F10A: A5 F7       ..
  PHA                                          ; F10C: 48          H
  LDA #3                                       ; F10D: A9 03       ..
@@ -7287,7 +7294,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; F115: 4C AD C0    L..
 
 ; ******************************************************************************
-.CAABC_BANK3
+.CAABC_b3
  LDA currentBank                              ; F118: A5 F7       ..
  PHA                                          ; F11A: 48          H
  LDA #3                                       ; F11B: A9 03       ..
@@ -7296,9 +7303,9 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; F123: 4C AD C0    L..
 
 ; ******************************************************************************
-.CA7B7_BANK3
+.CA7B7_b3
  LDA L0473                                    ; F126: AD 73 04    .s.
- BPL CA9D1_BANK3                              ; F129: 10 0E       ..
+ BPL CA9D1_b3                                 ; F129: 10 0E       ..
  LDA currentBank                              ; F12B: A5 F7       ..
  PHA                                          ; F12D: 48          H
  LDA #3                                       ; F12E: A9 03       ..
@@ -7307,7 +7314,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; F136: 4C AD C0    L..
 
 ; ******************************************************************************
-.CA9D1_BANK3
+.CA9D1_b3
  LDA #&74 ; 't'                               ; F139: A9 74       .t
  STA L00CD                                    ; F13B: 85 CD       ..
  STA L00CE                                    ; F13D: 85 CE       ..
@@ -7328,7 +7335,7 @@ LDFFF = sub_CDFFE+1
  JMP LA9D1                                    ; F159: 4C D1 A9    L..
 
 ; ******************************************************************************
-.CA972_BANK3
+.CA972_b3
  LDA currentBank                              ; F15C: A5 F7       ..
  CMP #3                                       ; F15E: C9 03       ..
  BEQ CF16E                                    ; F160: F0 0C       ..
@@ -7342,7 +7349,7 @@ LDFFF = sub_CDFFE+1
  JMP LA972                                    ; F16E: 4C 72 A9    Lr.
 
 ; ******************************************************************************
-.CAC5C_BANK3
+.CAC5C_b3
  LDA currentBank                              ; F171: A5 F7       ..
  CMP #3                                       ; F173: C9 03       ..
  BEQ CF183                                    ; F175: F0 0C       ..
@@ -7356,7 +7363,7 @@ LDFFF = sub_CDFFE+1
  JMP LAC5C                                    ; F183: 4C 5C AC    L\.
 
 ; ******************************************************************************
-.C8980_BANK0
+.C8980_b0
  LDA currentBank                              ; F186: A5 F7       ..
  PHA                                          ; F188: 48          H
  LDA #0                                       ; F189: A9 00       ..
@@ -7365,7 +7372,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; F191: 4C AD C0    L..
 
 ; ******************************************************************************
-.CB459_BANK6
+.CB459_b6
  LDA currentBank                              ; F194: A5 F7       ..
  PHA                                          ; F196: 48          H
  LDA #6                                       ; F197: A9 06       ..
@@ -7374,7 +7381,7 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; F19F: 4C AD C0    L..
 
 ; ******************************************************************************
-.MVS5_BANK0
+.MVS5_b0
  STA L00B7                                    ; F1A2: 85 B7       ..
  LDA currentBank                              ; F1A4: A5 F7       ..
  CMP #0                                       ; F1A6: C9 00       ..
@@ -7391,16 +7398,16 @@ LDFFF = sub_CDFFE+1
  JMP MVS5                                     ; F1BA: 4C 14 8A    L..
 
 ; ******************************************************************************
-.HALL_BANK1
+.HALL_b1
  LDA currentBank                              ; F1BD: A5 F7       ..
  PHA                                          ; F1BF: 48          H
  LDA #1                                       ; F1C0: A9 01       ..
  JSR SetBank                                  ; F1C2: 20 AE C0     ..
- JSR HALL1                                    ; F1C5: 20 38 B7     8.
+ JSR HALL                                     ; F1C5: 20 38 B7     8.
  JMP ResetBank                                ; F1C8: 4C AD C0    L..
 
 ; ******************************************************************************
-.CHPR_BANK2
+.CHPR_b2
  STA L00B7                                    ; F1CB: 85 B7       ..
  LDA currentBank                              ; F1CD: A5 F7       ..
  CMP #2                                       ; F1CF: C9 02       ..
@@ -7409,15 +7416,15 @@ LDFFF = sub_CDFFE+1
  LDA #2                                       ; F1D4: A9 02       ..
  JSR SetBank                                  ; F1D6: 20 AE C0     ..
  LDA L00B7                                    ; F1D9: A5 B7       ..
- JSR LB635                                    ; F1DB: 20 35 B6     5.
+ JSR CHPR                                     ; F1DB: 20 35 B6     5.
  JMP ResetBank                                ; F1DE: 4C AD C0    L..
 
 .CF1E1
  LDA L00B7                                    ; F1E1: A5 B7       ..
- JMP LB635                                    ; F1E3: 4C 35 B6    L5.
+ JMP CHPR                                     ; F1E3: 4C 35 B6    L5.
 
 ; ******************************************************************************
-.DASC_BANK2
+.DASC_b2
  STA L00B7                                    ; F1E6: 85 B7       ..
  LDA currentBank                              ; F1E8: A5 F7       ..
  CMP #2                                       ; F1EA: C9 02       ..
@@ -7426,15 +7433,15 @@ LDFFF = sub_CDFFE+1
  LDA #2                                       ; F1EF: A9 02       ..
  JSR SetBank                                  ; F1F1: 20 AE C0     ..
  LDA L00B7                                    ; F1F4: A5 B7       ..
- JSR LB4F5                                    ; F1F6: 20 F5 B4     ..
+ JSR DASC                                     ; F1F6: 20 F5 B4     ..
  JMP ResetBank                                ; F1F9: 4C AD C0    L..
 
 .CF1FC
  LDA L00B7                                    ; F1FC: A5 B7       ..
- JMP LB4F5                                    ; F1FE: 4C F5 B4    L..
+ JMP DASC                                     ; F1FE: 4C F5 B4    L..
 
 ; ******************************************************************************
-.TT27_BANK2
+.TT27_b2
  STA L00B7                                    ; F201: 85 B7       ..
  LDA currentBank                              ; F203: A5 F7       ..
  CMP #2                                       ; F205: C9 02       ..
@@ -7443,15 +7450,15 @@ LDFFF = sub_CDFFE+1
  LDA #2                                       ; F20A: A9 02       ..
  JSR SetBank                                  ; F20C: 20 AE C0     ..
  LDA L00B7                                    ; F20F: A5 B7       ..
- JSR LB44F                                    ; F211: 20 4F B4     O.
+ JSR TT27                                     ; F211: 20 4F B4     O.
  JMP ResetBank                                ; F214: 4C AD C0    L..
 
 .CF217
  LDA L00B7                                    ; F217: A5 B7       ..
- JMP LB44F                                    ; F219: 4C 4F B4    LO.
+ JMP TT27                                     ; F219: 4C 4F B4    LO.
 
 ; ******************************************************************************
-.ex_BANK2
+.ex_b2
  STA L00B7                                    ; F21C: 85 B7       ..
  LDA currentBank                              ; F21E: A5 F7       ..
  CMP #2                                       ; F220: C9 02       ..
@@ -7460,38 +7467,38 @@ LDFFF = sub_CDFFE+1
  LDA #2                                       ; F225: A9 02       ..
  JSR SetBank                                  ; F227: 20 AE C0     ..
  LDA L00B7                                    ; F22A: A5 B7       ..
- JSR LB4AA                                    ; F22C: 20 AA B4     ..
+ JSR ex                                       ; F22C: 20 AA B4     ..
  JMP ResetBank                                ; F22F: 4C AD C0    L..
 
 .CF232
  LDA L00B7                                    ; F232: A5 B7       ..
- JMP LB4AA                                    ; F234: 4C AA B4    L..
+ JMP ex                                       ; F234: 4C AA B4    L..
 
 ; ******************************************************************************
-.TT27_BANK0
+.TT27_b0
  LDA currentBank                              ; F237: A5 F7       ..
  PHA                                          ; F239: 48          H
  LDA #0                                       ; F23A: A9 00       ..
  JSR SetBank                                  ; F23C: 20 AE C0     ..
- JSR TT27                                     ; F23F: 20 D9 A8     ..
+ JSR TT27_0                                   ; F23F: 20 D9 A8     ..
  JMP ResetBank                                ; F242: 4C AD C0    L..
 
 ; ******************************************************************************
-.BR1_BANK0
+.BR1_b0
  LDA currentBank                              ; F245: A5 F7       ..
  CMP #0                                       ; F247: C9 00       ..
  BEQ CF257                                    ; F249: F0 0C       ..
  PHA                                          ; F24B: 48          H
  LDA #0                                       ; F24C: A9 00       ..
  JSR SetBank                                  ; F24E: 20 AE C0     ..
- JSR LA379                                    ; F251: 20 79 A3     y.
+ JSR BR1                                      ; F251: 20 79 A3     y.
  JMP ResetBank                                ; F254: 4C AD C0    L..
 
 .CF257
- JMP LA379                                    ; F257: 4C 79 A3    Ly.
+ JMP BR1                                      ; F257: 4C 79 A3    Ly.
 
 ; ******************************************************************************
-.CBAF3_BANK1
+.CBAF3_b1
  LDA #0                                       ; F25A: A9 00       ..
  LDY #&21 ; '!'                               ; F25C: A0 21       .!
  STA (XX19),Y                                 ; F25E: 91 61       .a
@@ -7503,18 +7510,18 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; F26B: 4C AD C0    L..
 
 ; ******************************************************************************
-.TT66_BANK0
+.TT66_b0
  STA L00B7                                    ; F26E: 85 B7       ..
  LDA currentBank                              ; F270: A5 F7       ..
  PHA                                          ; F272: 48          H
  LDA #0                                       ; F273: A9 00       ..
  JSR SetBank                                  ; F275: 20 AE C0     ..
  LDA L00B7                                    ; F278: A5 B7       ..
- JSR LBEB5                                    ; F27A: 20 B5 BE     ..
+ JSR TT66                                     ; F27A: 20 B5 BE     ..
  JMP ResetBank                                ; F27D: 4C AD C0    L..
 
 ; ******************************************************************************
-.CLIP_BANK1
+.CLIP_b1
  LDA currentBank                              ; F280: A5 F7       ..
  PHA                                          ; F282: 48          H
  LDA #1                                       ; F283: A9 01       ..
@@ -7526,21 +7533,21 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; F290: 4C AD C0    L..
 
 ; ******************************************************************************
-.CB341_BANK3
+.CB341_b3
  LDA currentBank                              ; F293: A5 F7       ..
  CMP #3                                       ; F295: C9 03       ..
  BEQ CF2A5                                    ; F297: F0 0C       ..
  PHA                                          ; F299: 48          H
  LDA #3                                       ; F29A: A9 03       ..
  JSR SetBank                                  ; F29C: 20 AE C0     ..
- JSR LB341                                    ; F29F: 20 41 B3     A.
+ JSR CLIP                                     ; F29F: 20 41 B3     A.
  JMP ResetBank                                ; F2A2: 4C AD C0    L..
 
 .CF2A5
- JMP LB341                                    ; F2A5: 4C 41 B3    LA.
+ JMP CLIP                                     ; F2A5: 4C 41 B3    LA.
 
 ; ******************************************************************************
-.SCAN_BANK1
+.SCAN_b1
  LDA currentBank                              ; F2A8: A5 F7       ..
  CMP #1                                       ; F2AA: C9 01       ..
  BEQ CF2BA                                    ; F2AC: F0 0C       ..
@@ -7554,7 +7561,7 @@ LDFFF = sub_CDFFE+1
  JMP SCAN                                     ; F2BA: 4C 75 B9    Lu.
 
 ; ******************************************************************************
-.C8926_BANK0
+.C8926_b0
  JSR subm_EB86                                ; F2BD: 20 86 EB     ..
  LDA currentBank                              ; F2C0: A5 F7       ..
  PHA                                          ; F2C2: 48          H
@@ -7568,7 +7575,7 @@ LDFFF = sub_CDFFE+1
  LDA #0                                       ; F2CE: A9 00       ..
  JSR SetBank                                  ; F2D0: 20 AE C0     ..
  JSR CopyNametable0To1                        ; F2D3: 20 34 CD     4.
- JSR CA7B7_BANK3                              ; F2D6: 20 26 F1     &.
+ JSR CA7B7_b3                                 ; F2D6: 20 26 F1     &.
  LDX #1                                       ; F2D9: A2 01       ..
  STX L00F3                                    ; F2DB: 86 F3       ..
  RTS                                          ; F2DD: 60          `
@@ -7697,9 +7704,9 @@ LDFFF = sub_CDFFE+1
 
 ; ******************************************************************************
 .subm_F3BC
- JSR CB63D_BANK3                              ; F3BC: 20 AB ED     ..
+ JSR CB63D_b3                                 ; F3BC: 20 AB ED     ..
  LDA #0                                       ; F3BF: A9 00       ..
- JSR C8021_BANK6                              ; F3C1: 20 24 ED     $.
+ JSR C8021_b6                                 ; F3C1: 20 24 ED     $.
  JSR CEB8F                                    ; F3C4: 20 8F EB     ..
  LDA #&FF                                     ; F3C7: A9 FF       ..
  STA QQ11Mask                                 ; F3C9: 85 9F       ..
@@ -7728,8 +7735,8 @@ LDFFF = sub_CDFFE+1
  CMP #1                                       ; F3F6: C9 01       ..
  BCC loop_CF3DC                               ; F3F8: 90 E2       ..
  LSR scanController2                          ; F3FA: 4E 75 04    Nu.
- JSR C8012_BANK6                              ; F3FD: 20 6B ED     k.
- JSR CB63D_BANK3                              ; F400: 20 AB ED     ..
+ JSR C8012_b6                                 ; F3FD: 20 6B ED     k.
+ JSR CB63D_b3                                 ; F400: 20 AB ED     ..
  LDA language                                 ; F403: AD A8 04    ...
  STA Kpercent                                 ; F406: 8D 00 06    ...
  LDA #5                                       ; F409: A9 05       ..
@@ -7737,7 +7744,7 @@ LDFFF = sub_CDFFE+1
  JMP CC035                                    ; F40E: 4C 35 C0    L5.
 
 .CF411
- JSR C8012_BANK6                              ; F411: 20 6B ED     k.
+ JSR C8012_b6                                 ; F411: 20 6B ED     k.
  RTS                                          ; F414: 60          `
 
 .LF415
@@ -7794,7 +7801,7 @@ LDFFF = sub_CDFFE+1
  LDA #0                                       ; F46B: A9 00       ..
  STA YC                                       ; F46D: 85 3B       .;
  PLA                                          ; F46F: 68          h
- JSR TT27_BANK2                               ; F470: 20 01 F2     ..
+ JSR TT27_b2                                  ; F470: 20 01 F2     ..
 ; ******************************************************************************
 .NLIN4
  LDA #4                                       ; F473: A9 04       ..
@@ -7816,7 +7823,7 @@ LDFFF = sub_CDFFE+1
 ; ******************************************************************************
 .subm_F48D
  LDX #0                                       ; F48D: A2 00       ..
- JSR sub_CD8EC                                ; F48F: 20 EC D8     ..
+ JSR subm_D8EC                                ; F48F: 20 EC D8     ..
  RTS                                          ; F492: 60          `
 
 ; ******************************************************************************
@@ -7924,7 +7931,7 @@ LDFFF = sub_CDFFE+1
  RTS                                          ; F52C: 60          `
 
 ; ******************************************************************************
-.subm_F52D
+.UnpackToRAM
  LDY #0                                       ; F52D: A0 00       ..
 .CF52F
  LDA dashboardSwitch                          ; F52F: A5 E9       ..
@@ -8012,9 +8019,10 @@ LDFFF = sub_CDFFE+1
  RTS                                          ; F5AE: 60          `
 
 ; ******************************************************************************
-.subm_F5AF
+.UnpackToPPU
  LDY #0                                       ; F5AF: A0 00       ..
-.CF5B1
+; ******************************************************************************
+.UnpackToPPU_2
  LDA (V),Y                                    ; F5B1: B1 63       .c
  INY                                          ; F5B3: C8          .
  BNE CF5B8                                    ; F5B4: D0 02       ..
@@ -8039,7 +8047,7 @@ LDFFF = sub_CDFFE+1
  STA PPU_DATA                                 ; F5D3: 8D 07 20    ..
  DEX                                          ; F5D6: CA          .
  BNE CF5D3                                    ; F5D7: D0 FA       ..
- JMP CF5B1                                    ; F5D9: 4C B1 F5    L..
+ JMP UnpackToPPU_2                            ; F5D9: 4C B1 F5    L..
 
 .CF5DC
  LDA #&FF                                     ; F5DC: A9 FF       ..
@@ -8067,13 +8075,13 @@ LDFFF = sub_CDFFE+1
  STA PPU_DATA                                 ; F5FB: 8D 07 20    ..
  DEX                                          ; F5FE: CA          .
  BNE loop_CF5F4                               ; F5FF: D0 F3       ..
- JMP CF5B1                                    ; F601: 4C B1 F5    L..
+ JMP UnpackToPPU_2                            ; F601: 4C B1 F5    L..
 
 .CF604
  TXA                                          ; F604: 8A          .
 .CF605
  STA PPU_DATA                                 ; F605: 8D 07 20    ..
- JMP CF5B1                                    ; F608: 4C B1 F5    L..
+ JMP UnpackToPPU_2                            ; F608: 4C B1 F5    L..
 
 .CF60B
  RTS                                          ; F60B: 60          `

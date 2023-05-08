@@ -60,10 +60,10 @@
  DELAY              = &EBA2
  CheckDashboardA    = &EC7D
  PAS1               = &EF7A
- DETOK_BANK2        = &F082
- DTS_BANK2          = &F09D
- CF186_BANK6        = &F186
- TT27_BANK0         = &F237
+ DETOK_b2           = &F082
+ DTS_b2             = &F09D
+ C8980_b0           = &F186
+ TT27_b0            = &F237
  TT66               = &F26E
  LF2BD              = &F2BD
  CLYNS              = &F2DE
@@ -843,13 +843,9 @@
 
  SKIP 1                 \ ???
 
-.L00F1
+.addr6
 
- SKIP 1                 \ ???
-
-.L00F2
-
- SKIP 1                 \ ???
+ SKIP 2                 \ ???
 
 .L00F3
 
@@ -16300,7 +16296,7 @@ ENDMACRO
  CLC                    \ range 220-221, as this is only called in galaxies 0
  ADC GCNT               \ and 1
 
- JMP DETOK_BANK2        \ Jump to DETOK to print extended token 220-221,
+ JMP DETOK_b2           \ Jump to DETOK to print extended token 220-221,
                         \ returning from the subroutine using a tail call (this
                         \ BNE is effectively a JMP as A is never zero)
 
@@ -16620,7 +16616,7 @@ ENDMACRO
 .MT171
 
  LDA #153               \ Print extended token 153 ("IAN"), returning from the
- JMP DETOK_BANK2        \ subroutine using a tail call
+ JMP DETOK_b2           \ subroutine using a tail call
 
 \ ******************************************************************************
 \
@@ -16655,7 +16651,7 @@ ENDMACRO
                         \ the first token in TKN2, which contains a newline)
 
  LDA TKN2+2,X           \ Print the first letter of the token at TKN2+2 + X
- JSR DTS_BANK2
+ JSR DTS_b2
 
  LDA TKN2+3,X           \ Fetch the second letter of the token from TKN2+2 + X
 
@@ -16663,7 +16659,7 @@ ENDMACRO
  BEQ P%+5               \ following instruction (as ? indicates a single-letter
                         \ token)
 
- JSR DTS_BANK2          \ Print the second letter of the token at TKN2+2 + X
+ JSR DTS_b2             \ Print the second letter of the token at TKN2+2 + X
 
  DEY                    \ Decrement the loop counter
 
@@ -16866,7 +16862,7 @@ ENDMACRO
 
 .PAUSE
 
- JSR CF186_BANK6         \ ???
+ JSR C8980_b0            \ ???
  JSR LD8C5
  LDA tileNumber
  STA L00D2
@@ -16984,7 +16980,7 @@ ENDMACRO
 
 .PAUSE2
 
- JSR CF186_BANK6         \ ???
+ JSR C8980_b0           \ ???
 
 .loop_CB3C4
 
@@ -17256,7 +17252,7 @@ ENDMACRO
 \
 \ ******************************************************************************
 
- JMP TT27_BANK0
+ JMP TT27_b0
 
 .TT27
 

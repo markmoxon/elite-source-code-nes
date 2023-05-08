@@ -191,6 +191,8 @@ addr4            = &00EB
 addr4_1          = &00EC
 addr5            = &00ED
 addr5_1          = &00EE
+addr6            = &00F1
+addr6_1          = &00F2
 ppuCtrlCopy      = &00F5
 currentBank      = &00F7
 L00F9            = &00F9
@@ -653,8 +655,15 @@ ResetNametable1  = &D02D
 SwitchTablesTo0  = &D06D
 ReadControllers  = &D0F8
 FillMemory       = &D710
-LD8C5            = &D8C5
-subm_D8D8        = &D8D8
+subm_D8C5        = &D8C5
+subm_D8E1        = &D8E1
+subm_D8EC        = &D8EC
+subm_D908        = &D908
+subm_D919        = &D919
+subm_D933        = &D933
+subm_D946        = &D946
+subm_D951        = &D951
+subm_D96F        = &D96F
 SendToPPU2       = &D986
 TWOS             = &D9F7
 TWOS2            = &DA01
@@ -696,88 +705,88 @@ CheckDashboardA  = &EC7D
 LDA_XX0_Y        = &EC8D
 LDA_Epc_Y        = &ECA0
 IncreaseTally    = &ECAE
-CB1D4_BANK0      = &ECE2
+CB1D4_b0         = &ECE2
 Set_K_K3_XC_YC   = &ECF9
-C811E_BANK6      = &ED16
-C8021_BANK6      = &ED24
-C89D1_BANK6      = &ED50
-C8012_BANK6      = &ED6B
-CBF41_BANK5      = &ED81
-CB9F9_BANK4      = &ED8F
-CB96B_BANK4      = &ED9D
-CB63D_BANK3      = &EDAB
-CB88C_BANK6      = &EDB9
-LL9_BANK1        = &EDC7
-CBA23_BANK3      = &EDDC
-TIDY_BANK1       = &EDEA
-CBC83_BANK6      = &EDFF
-C9522_BANK0      = &EE0D
-STARS_BANK1      = &EE15
-SUN_BANK1        = &EE3F
-CB2FB_BANK3      = &EE54
-CB219_BANK3      = &EE62
-CB9C1_BANK4      = &EE78
-CA082_BANK6      = &EE8B
-CA0F8_BANK6      = &EE99
-CB882_BANK4      = &EEA7
-CA4A5_BANK6      = &EEB5
-CB2EF_BANK0      = &EEC3
-CB9E2_BANK3      = &EED3
-CB673_BANK3      = &EEE8
-CB2BC_BANK3      = &EEF6
-CB248_BANK3      = &EF04
-CBA17_BANK6      = &EF12
-CAFCD_BANK3      = &EF20
-CBE52_BANK6      = &EF35
-CBED2_BANK6      = &EF43
-CB0E1_BANK3      = &EF51
-CB18E_BANK3      = &EF6C
-PAS1_BANK0       = &EF7A
-CBED7_BANK5      = &EF88
-CBEEA_BANK5      = &EF96
-CB93C_BANK4      = &EFA4
-CB8F9_BANK4      = &EFB2
-CA2C3_BANK6      = &EFC0
-CBA63_BANK6      = &EFCE
-CB39D_BANK0      = &EFDC
-LL164_BANK6      = &EFF7
-CB919_BANK6      = &F005
-CA166_BANK6      = &F013
-CBBDE_BANK6      = &F021
-CBB37_BANK6      = &F02F
-CB8FE_BANK6      = &F03D
-CB90D_BANK6      = &F04B
-CA5AB_BANK6      = &F059
+C811E_b6         = &ED16
+C8021_b6         = &ED24
+C89D1_b6         = &ED50
+C8012_b6         = &ED6B
+CBF41_b5         = &ED81
+CB9F9_b4         = &ED8F
+CB96B_b4         = &ED9D
+CB63D_b3         = &EDAB
+CB88C_b6         = &EDB9
+LL9_b1           = &EDC7
+CBA23_b3         = &EDDC
+TIDY_b1          = &EDEA
+CBC83_b6         = &EDFF
+SpawnDemoShips_b0 = &EE0D
+STARS_b1         = &EE15
+SUN_b1           = &EE3F
+CB2FB_b3         = &EE54
+CB219_b3         = &EE62
+CB9C1_b4         = &EE78
+CA082_b6         = &EE8B
+CA0F8_b6         = &EE99
+CB882_b4         = &EEA7
+CA4A5_b6         = &EEB5
+CB2EF_b0         = &EEC3
+CB9E2_b3         = &EED3
+CB673_b3         = &EEE8
+CB2BC_b3         = &EEF6
+CB248_b3         = &EF04
+CBA17_b6         = &EF12
+CAFCD_b3         = &EF20
+CBE52_b6         = &EF35
+CBED2_b6         = &EF43
+CB0E1_b3         = &EF51
+CB18E_b3         = &EF6C
+PAS1_b0          = &EF7A
+SetSystemImage_b5 = &EF88
+GetSystemImage_b5 = &EF96
+CB93C_b4         = &EFA4
+CB8F9_b4         = &EFB2
+CA2C3_b6         = &EFC0
+CBA63_b6         = &EFCE
+CB39D_b0         = &EFDC
+LL164_b6         = &EFF7
+CB919_b6         = &F005
+CA166_b6         = &F013
+CBBDE_b6         = &F021
+CBB37_b6         = &F02F
+CB8FE_b6         = &F03D
+CB90D_b6         = &F04B
+CA5AB_b6         = &F059
 subm_F06F        = &F06F
-BEEP_BANK7       = &F074
-DETOK_BANK2      = &F082
-DTS_BANK2        = &F09D
-PDESC_BANK2      = &F0B8
-CAE18_BANK3      = &F0C6
-CAC1D_BANK3      = &F0E1
-CA730_BANK3      = &F0FC
-CA775_BANK3      = &F10A
-CAABC_BANK3      = &F118
-CA7B7_BANK3      = &F126
-CA9D1_BANK3      = &F139
-CA972_BANK3      = &F15C
-CAC5C_BANK3      = &F171
-C8980_BANK0      = &F186
-CB459_BANK6      = &F194
-MVS5_BANK0       = &F1A2
-HALL_BANK1       = &F1BD
-CHPR_BANK2       = &F1CB
-DASC_BANK2       = &F1E6
-TT27_BANK2       = &F201
-ex_BANK2         = &F21C
-TT27_BANK0       = &F237
-BR1_BANK0        = &F245
-CBAF3_BANK1      = &F25A
-TT66_BANK0       = &F26E
-CLIP_BANK1       = &F280
-CB341_BANK3      = &F293
-SCAN_BANK1       = &F2A8
-C8926_BANK0      = &F2BD
+BEEP_b7          = &F074
+DETOK_b2         = &F082
+DTS_b2           = &F09D
+PDESC_b2         = &F0B8
+CAE18_b3         = &F0C6
+CAC1D_b3         = &F0E1
+CA730_b3         = &F0FC
+CA775_b3         = &F10A
+CAABC_b3         = &F118
+CA7B7_b3         = &F126
+CA9D1_b3         = &F139
+CA972_b3         = &F15C
+CAC5C_b3         = &F171
+C8980_b0         = &F186
+CB459_b6         = &F194
+MVS5_b0          = &F1A2
+HALL_b1          = &F1BD
+CHPR_b2          = &F1CB
+DASC_b2          = &F1E6
+TT27_b2          = &F201
+ex_b2            = &F21C
+TT27_b0          = &F237
+BR1_b0           = &F245
+CBAF3_b1         = &F25A
+TT66_b0          = &F26E
+CLIP_b1          = &F280
+CB341_b3         = &F293
+SCAN_b1          = &F2A8
+C8926_b0         = &F2BD
 subm_F2CE        = &F2CE
 CLYNS            = &F2DE
 LF333            = &F333
@@ -795,8 +804,9 @@ DORND2           = &F4AC
 DORND            = &F4AD
 PROJ             = &F4C1
 subm_F4FB        = &F4FB
-subm_F52D        = &F52D
-subm_F5AF        = &F5AF
+UnpackToRAM      = &F52D
+UnpackToPPU      = &F5AF
+UnpackToPPU_2    = &F5B1
 FAROF2           = &F60C
 MU5              = &F65A
 MULT3            = &F664
@@ -2658,7 +2668,7 @@ JMTBm1 = sub_CB203+2
 .CB272
  CLC                                          ; B272: 18          .
  ADC GCNT                                     ; B273: 6D A7 03    m..
- JMP DETOK_BANK2                              ; B276: 4C 82 F0    L..
+ JMP DETOK_b2                                 ; B276: 4C 82 F0    L..
 
 ; ******************************************************************************
 .MT1
@@ -2693,7 +2703,7 @@ JMTBm1 = sub_CB203+2
  LDA #1                                       ; B292: A9 01       ..
  STA XC                                       ; B294: 85 32       .2
  LDA #&95                                     ; B296: A9 95       ..
- JMP TT66_BANK0                               ; B298: 4C 6E F2    Ln.
+ JMP TT66_b0                                  ; B298: 4C 6E F2    Ln.
 
 ; ******************************************************************************
 .MT6
@@ -2737,7 +2747,7 @@ JMTBm1 = sub_CB203+2
  DEC DTW5                                     ; B2CB: CE F7 03    ...
 .CB2CE
  LDA #&99                                     ; B2CE: A9 99       ..
- JMP DETOK_BANK2                              ; B2D0: 4C 82 F0    L..
+ JMP DETOK_b2                                 ; B2D0: 4C 82 F0    L..
 
 ; ******************************************************************************
 .MT18
@@ -2750,11 +2760,11 @@ JMTBm1 = sub_CB203+2
  AND #&3E ; '>'                               ; B2DF: 29 3E       )>
  TAX                                          ; B2E1: AA          .
  LDA TKN2_2,X                                 ; B2E2: BD 1B B3    ...
- JSR DTS_BANK2                                ; B2E5: 20 9D F0     ..
+ JSR DTS_b2                                   ; B2E5: 20 9D F0     ..
  LDA TKN2_3,X                                 ; B2E8: BD 1C B3    ...
  CMP #&3F ; '?'                               ; B2EB: C9 3F       .?
  BEQ CB2F2                                    ; B2ED: F0 03       ..
- JSR DTS_BANK2                                ; B2EF: 20 9D F0     ..
+ JSR DTS_b2                                   ; B2EF: 20 9D F0     ..
 .CB2F2
  DEY                                          ; B2F2: 88          .
  BPL loop_CB2DC                               ; B2F3: 10 E7       ..
@@ -2805,14 +2815,14 @@ JMTBm1 = sub_CB203+2
 .BRIS
  LDA #&D8                                     ; B373: A9 D8       ..
  JSR DETOK                                    ; B375: 20 EF B0     ..
- JSR C8926_BANK0                              ; B378: 20 BD F2     ..
+ JSR C8926_b0                                 ; B378: 20 BD F2     ..
  LDY #&64 ; 'd'                               ; B37B: A0 64       .d
  JMP DELAY                                    ; B37D: 4C A2 EB    L..
 
 ; ******************************************************************************
 .PAUSE
- JSR C8980_BANK0                              ; B380: 20 86 F1     ..
- JSR LD8C5                                    ; B383: 20 C5 D8     ..
+ JSR C8980_b0                                 ; B380: 20 86 F1     ..
+ JSR subm_D8C5                                ; B383: 20 C5 D8     ..
  LDA tileNumber                               ; B386: A5 B8       ..
  STA L00D2                                    ; B388: 85 D2       ..
  LDA #&28 ; '('                               ; B38A: A9 28       .(
@@ -2820,19 +2830,19 @@ JMTBm1 = sub_CB203+2
  LDX #8                                       ; B38E: A2 08       ..
  STX L00CC                                    ; B390: 86 CC       ..
 .loop_CB392
- JSR PAS1_BANK0                               ; B392: 20 7A EF     z.
+ JSR PAS1_b0                                  ; B392: 20 7A EF     z.
  LDA CONT1_A                                  ; B395: AD B2 04    ...
  ORA CONT1_B                                  ; B398: 0D B4 04    ...
  BPL loop_CB392                               ; B39B: 10 F5       ..
 .loop_CB39D
- JSR PAS1_BANK0                               ; B39D: 20 7A EF     z.
+ JSR PAS1_b0                                  ; B39D: 20 7A EF     z.
  LDA CONT1_A                                  ; B3A0: AD B2 04    ...
  ORA CONT1_B                                  ; B3A3: 0D B4 04    ...
  BMI loop_CB39D                               ; B3A6: 30 F5       0.
  LDA #0                                       ; B3A8: A9 00       ..
  STA INWK_31                                  ; B3AA: 85 28       .(
  LDA #&93                                     ; B3AC: A9 93       ..
- JSR TT66_BANK0                               ; B3AE: 20 6E F2     n.
+ JSR TT66_b0                                  ; B3AE: 20 6E F2     n.
 ; ******************************************************************************
 .MT23
  LDA #9                                       ; B3B1: A9 09       ..
@@ -2852,7 +2862,7 @@ JMTBm1 = sub_CB203+2
 
 ; ******************************************************************************
 .PAUSE2
- JSR C8980_BANK0                              ; B3C1: 20 86 F1     ..
+ JSR C8980_b0                                 ; B3C1: 20 86 F1     ..
 .loop_CB3C4
  JSR CheckDashboardA                          ; B3C4: 20 7D EC     }.
  LDA CONT1_A                                  ; B3C7: AD B2 04    ...
@@ -2930,7 +2940,7 @@ JMTBm1 = sub_CB203+2
  JMP DETOK                                    ; B449: 4C EF B0    L..
 
 .loop_CB44C
- JMP TT27_BANK0                               ; B44C: 4C 37 F2    L7.
+ JMP TT27_b0                                  ; B44C: 4C 37 F2    L7.
 
 ; ******************************************************************************
 .TT27

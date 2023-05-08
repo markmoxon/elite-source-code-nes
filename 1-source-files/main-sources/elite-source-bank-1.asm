@@ -69,7 +69,7 @@
  LE04A              = &E04A
  LE0BA              = &E0BA
  PIXEL              = &E4F0
- MVS5_BANK0         = &F1A2
+ MVS5_b0            = &F1A2
  TT66               = &F26E
  LF2CE              = &F2CE
  DORND2             = &F4AC
@@ -872,13 +872,9 @@
 
  SKIP 1                 \ ???
 
-.L00F1
+.addr6
 
- SKIP 1                 \ ???
-
-.L00F2
-
- SKIP 1                 \ ???
+ SKIP 2                 \ ???
 
 .L00F3
 
@@ -13026,15 +13022,15 @@ ENDMACRO
 
  LDX #21                \ Rotate (sidev_x, nosev_x) by a small angle (yaw)
  LDY #9
- JSR MVS5_BANK0
+ JSR MVS5_b0
 
  LDX #23                \ Rotate (sidev_y, nosev_y) by a small angle (yaw)
  LDY #11
- JSR MVS5_BANK0
+ JSR MVS5_b0
 
  LDX #25                \ Rotate (sidev_z, nosev_z) by a small angle (yaw)
  LDY #13
- JSR MVS5_BANK0
+ JSR MVS5_b0
 
  DEC XSAV               \ Decrement the yaw counter in XSAV
 
@@ -13652,7 +13648,7 @@ ENDMACRO
 \       Name: sub_CBAF3
 \   Category: Dashboard
 \   Category: Drawing ships
-\    Summary: ??? Called via CBAF3_BANK1
+\    Summary: ??? Called via CBAF3_B1
 \
 \ ******************************************************************************
 

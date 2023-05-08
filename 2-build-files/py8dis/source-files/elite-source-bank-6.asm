@@ -197,6 +197,8 @@ addr4            = &00EB
 addr4_1          = &00EC
 addr5            = &00ED
 addr5_1          = &00EE
+addr6            = &00F1
+addr6_1          = &00F2
 ppuCtrlCopy      = &00F5
 currentBank      = &00F7
 L00F9            = &00F9
@@ -890,10 +892,15 @@ SwitchTablesTo0  = &D06D
 ReadControllers  = &D0F8
 LD167            = &D167
 FillMemory       = &D710
-LD8C5            = &D8C5
-subm_D8D8        = &D8D8
-LD8E1            = &D8E1
-LD951            = &D951
+subm_D8C5        = &D8C5
+subm_D8E1        = &D8E1
+subm_D8EC        = &D8EC
+subm_D908        = &D908
+subm_D919        = &D919
+subm_D933        = &D933
+subm_D946        = &D946
+subm_D951        = &D951
+subm_D96F        = &D96F
 LD975            = &D975
 SendToPPU2       = &D986
 TWOS             = &D9F7
@@ -937,91 +944,91 @@ CheckDashboardA  = &EC7D
 LDA_XX0_Y        = &EC8D
 LDA_Epc_Y        = &ECA0
 IncreaseTally    = &ECAE
-CB1D4_BANK0      = &ECE2
+CB1D4_b0         = &ECE2
 LECE7            = &ECE7
 Set_K_K3_XC_YC   = &ECF9
-C811E_BANK6      = &ED16
-C8021_BANK6      = &ED24
-C89D1_BANK6      = &ED50
-C8012_BANK6      = &ED6B
+C811E_b6         = &ED16
+C8021_b6         = &ED24
+C89D1_b6         = &ED50
+C8012_b6         = &ED6B
 LED73            = &ED73
-CBF41_BANK5      = &ED81
-CB9F9_BANK4      = &ED8F
-CB96B_BANK4      = &ED9D
-CB63D_BANK3      = &EDAB
-CB88C_BANK6      = &EDB9
-LL9_BANK1        = &EDC7
-CBA23_BANK3      = &EDDC
-TIDY_BANK1       = &EDEA
-CBC83_BANK6      = &EDFF
-C9522_BANK0      = &EE0D
-STARS_BANK1      = &EE15
-SUN_BANK1        = &EE3F
-CB2FB_BANK3      = &EE54
-CB219_BANK3      = &EE62
-CB9C1_BANK4      = &EE78
-CA082_BANK6      = &EE8B
-CA0F8_BANK6      = &EE99
-CB882_BANK4      = &EEA7
-CA4A5_BANK6      = &EEB5
-CB2EF_BANK0      = &EEC3
+CBF41_b5         = &ED81
+CB9F9_b4         = &ED8F
+CB96B_b4         = &ED9D
+CB63D_b3         = &EDAB
+CB88C_b6         = &EDB9
+LL9_b1           = &EDC7
+CBA23_b3         = &EDDC
+TIDY_b1          = &EDEA
+CBC83_b6         = &EDFF
+SpawnDemoShips_b0 = &EE0D
+STARS_b1         = &EE15
+SUN_b1           = &EE3F
+CB2FB_b3         = &EE54
+CB219_b3         = &EE62
+CB9C1_b4         = &EE78
+CA082_b6         = &EE8B
+CA0F8_b6         = &EE99
+CB882_b4         = &EEA7
+CA4A5_b6         = &EEB5
+CB2EF_b0         = &EEC3
 LEECB            = &EECB
-CB9E2_BANK3      = &EED3
-CB673_BANK3      = &EEE8
-CB2BC_BANK3      = &EEF6
-CB248_BANK3      = &EF04
-CBA17_BANK6      = &EF12
-CAFCD_BANK3      = &EF20
-CBE52_BANK6      = &EF35
-CBED2_BANK6      = &EF43
-CB0E1_BANK3      = &EF51
-CB18E_BANK3      = &EF6C
-PAS1_BANK0       = &EF7A
-CBED7_BANK5      = &EF88
-CBEEA_BANK5      = &EF96
-CB93C_BANK4      = &EFA4
-CB8F9_BANK4      = &EFB2
-CA2C3_BANK6      = &EFC0
-CBA63_BANK6      = &EFCE
-CB39D_BANK0      = &EFDC
-LL164_BANK6      = &EFF7
-CB919_BANK6      = &F005
-CA166_BANK6      = &F013
-CBBDE_BANK6      = &F021
-CBB37_BANK6      = &F02F
-CB8FE_BANK6      = &F03D
-CB90D_BANK6      = &F04B
-CA5AB_BANK6      = &F059
+CB9E2_b3         = &EED3
+CB673_b3         = &EEE8
+CB2BC_b3         = &EEF6
+CB248_b3         = &EF04
+CBA17_b6         = &EF12
+CAFCD_b3         = &EF20
+CBE52_b6         = &EF35
+CBED2_b6         = &EF43
+CB0E1_b3         = &EF51
+CB18E_b3         = &EF6C
+PAS1_b0          = &EF7A
+SetSystemImage_b5 = &EF88
+GetSystemImage_b5 = &EF96
+CB93C_b4         = &EFA4
+CB8F9_b4         = &EFB2
+CA2C3_b6         = &EFC0
+CBA63_b6         = &EFCE
+CB39D_b0         = &EFDC
+LL164_b6         = &EFF7
+CB919_b6         = &F005
+CA166_b6         = &F013
+CBBDE_b6         = &F021
+CBB37_b6         = &F02F
+CB8FE_b6         = &F03D
+CB90D_b6         = &F04B
+CA5AB_b6         = &F059
 subm_F06F        = &F06F
-BEEP_BANK7       = &F074
-DETOK_BANK2      = &F082
-DTS_BANK2        = &F09D
-PDESC_BANK2      = &F0B8
-CAE18_BANK3      = &F0C6
-CAC1D_BANK3      = &F0E1
-CA730_BANK3      = &F0FC
-CA775_BANK3      = &F10A
-CAABC_BANK3      = &F118
-CA7B7_BANK3      = &F126
-CA9D1_BANK3      = &F139
-CA972_BANK3      = &F15C
-CAC5C_BANK3      = &F171
-C8980_BANK0      = &F186
-CB459_BANK6      = &F194
-MVS5_BANK0       = &F1A2
-HALL_BANK1       = &F1BD
-CHPR_BANK2       = &F1CB
-DASC_BANK2       = &F1E6
-TT27_BANK2       = &F201
-ex_BANK2         = &F21C
-TT27_BANK0       = &F237
-BR1_BANK0        = &F245
-CBAF3_BANK1      = &F25A
-TT66_BANK0       = &F26E
-CLIP_BANK1       = &F280
-CB341_BANK3      = &F293
-SCAN_BANK1       = &F2A8
-C8926_BANK0      = &F2BD
+BEEP_b7          = &F074
+DETOK_b2         = &F082
+DTS_b2           = &F09D
+PDESC_b2         = &F0B8
+CAE18_b3         = &F0C6
+CAC1D_b3         = &F0E1
+CA730_b3         = &F0FC
+CA775_b3         = &F10A
+CAABC_b3         = &F118
+CA7B7_b3         = &F126
+CA9D1_b3         = &F139
+CA972_b3         = &F15C
+CAC5C_b3         = &F171
+C8980_b0         = &F186
+CB459_b6         = &F194
+MVS5_b0          = &F1A2
+HALL_b1          = &F1BD
+CHPR_b2          = &F1CB
+DASC_b2          = &F1E6
+TT27_b2          = &F201
+ex_b2            = &F21C
+TT27_b0          = &F237
+BR1_b0           = &F245
+CBAF3_b1         = &F25A
+TT66_b0          = &F26E
+CLIP_b1          = &F280
+CB341_b3         = &F293
+SCAN_b1          = &F2A8
+C8926_b0         = &F2BD
 LF2C0            = &F2C0
 subm_F2CE        = &F2CE
 CLYNS            = &F2DE
@@ -1040,8 +1047,9 @@ DORND2           = &F4AC
 DORND            = &F4AD
 PROJ             = &F4C1
 subm_F4FB        = &F4FB
-subm_F52D        = &F52D
-subm_F5AF        = &F5AF
+UnpackToRAM      = &F52D
+UnpackToPPU      = &F5AF
+UnpackToPPU_2    = &F5B1
 FAROF2           = &F60C
 MU5              = &F65A
 MULT3            = &F664
@@ -3487,7 +3495,7 @@ L9167 = L8D7A+1005
  STA tileNumber                               ; A092: 85 B8       ..
  LDX L046C                                    ; A094: AE 6C 04    .l.
  STX K_2                                      ; A097: 86 7F       ..
- JSR CB2FB_BANK3                              ; A099: 20 54 EE     T.
+ JSR CB2FB_b3                                 ; A099: 20 54 EE     T.
  LDA #5                                       ; A09C: A9 05       ..
  STA K                                        ; A09E: 85 7D       .}
  LDA #7                                       ; A0A0: A9 07       ..
@@ -3498,7 +3506,7 @@ L9167 = L8D7A+1005
  STA K_3                                      ; A0AA: 85 80       ..
  LDX #4                                       ; A0AC: A2 04       ..
  LDY #0                                       ; A0AE: A0 00       ..
- JSR CA0F8_BANK6                              ; A0B0: 20 99 EE     ..
+ JSR CA0F8_b6                                 ; A0B0: 20 99 EE     ..
  LDA FIST                                     ; A0B3: AD C9 03    ...
  CMP #&28 ; '('                               ; A0B6: C9 28       .(
  BCC CA0BD                                    ; A0B8: 90 03       ..
@@ -3534,7 +3542,7 @@ L9167 = L8D7A+1005
  STA K                                        ; A0EF: 85 7D       .}
  LDA #&0A                                     ; A0F1: A9 0A       ..
  STA K_1                                      ; A0F3: 85 7E       .~
- JMP CB248_BANK3                              ; A0F5: 4C 04 EF    L..
+ JMP CB248_b3                                 ; A0F5: 4C 04 EF    L..
 
  LDA #1                                       ; A0F8: A9 01       ..
 .CA0FA
@@ -3614,7 +3622,7 @@ L9167 = L8D7A+1005
  PHA                                          ; A172: 48          H
  LDA L003A                                    ; A173: A5 3A       .:
  PHA                                          ; A175: 48          H
- JSR LD8C5                                    ; A176: 20 C5 D8     ..
+ JSR subm_D8C5                                ; A176: 20 C5 D8     ..
  LDA L045F                                    ; A179: AD 5F 04    ._.
  PHA                                          ; A17C: 48          H
  LDA L0464                                    ; A17D: AD 64 04    .d.
@@ -3622,16 +3630,16 @@ L9167 = L8D7A+1005
  LDA #&FF                                     ; A181: A9 FF       ..
  STA L045F                                    ; A183: 8D 5F 04    ._.
  LDA #3                                       ; A186: A9 03       ..
- JSR CAC1D_BANK3                              ; A188: 20 E1 F0     ..
+ JSR CAC1D_b3                                 ; A188: 20 E1 F0     ..
 .CA18B
  LDY #4                                       ; A18B: A0 04       ..
  JSR DELAY                                    ; A18D: 20 A2 EB     ..
- JSR CBBDE_BANK6                              ; A190: 20 21 F0     !.
+ JSR CBBDE_b6                                 ; A190: 20 21 F0     !.
  TXA                                          ; A193: 8A          .
  CMP #&50 ; 'P'                               ; A194: C9 50       .P
  BNE CA1B1                                    ; A196: D0 19       ..
  PLA                                          ; A198: 68          h
- JSR CAC1D_BANK3                              ; A199: 20 E1 F0     ..
+ JSR CAC1D_b3                                 ; A199: 20 E1 F0     ..
  PLA                                          ; A19C: 68          h
  STA L045F                                    ; A19D: 8D 5F 04    ._.
  JSR LD167                                    ; A1A0: 20 67 D1     g.
@@ -3669,7 +3677,7 @@ L9167 = L8D7A+1005
  LDA L045E                                    ; A1D4: AD 5E 04    .^.
  BEQ CA1DE                                    ; A1D7: F0 05       ..
  AND #&7F                                     ; A1D9: 29 7F       ).
- JSR C8021_BANK6                              ; A1DB: 20 24 ED     $.
+ JSR C8021_b6                                 ; A1DB: 20 24 ED     $.
 .CA1DE
  JMP CA21D                                    ; A1DE: 4C 1D A2    L..
 
@@ -3679,7 +3687,7 @@ L9167 = L8D7A+1005
  PLA                                          ; A1E5: 68          h
  PLA                                          ; A1E6: 68          h
  STA L045F                                    ; A1E7: 8D 5F 04    ._.
- JMP CB2EF_BANK0                              ; A1EA: 4C C3 EE    L..
+ JMP CB2EF_b0                                 ; A1EA: 4C C3 EE    L..
 
 .CA1ED
  CMP #&35 ; '5'                               ; A1ED: C9 35       .5
@@ -3709,7 +3717,7 @@ L9167 = L8D7A+1005
  JMP CA18B                                    ; A21A: 4C 8B A1    L..
 
 .CA21D
- JSR CAC5C_BANK3                              ; A21D: 20 71 F1     q.
+ JSR CAC5C_b3                                 ; A21D: 20 71 F1     q.
  JMP CA18B                                    ; A220: 4C 8B A1    L..
 
 .sub_CA223
@@ -4149,7 +4157,7 @@ LA3F8 = LA3F5+3
  JMP CA614                                    ; A5B3: 4C 14 A6    L..
 
 .CA5B6
- JSR CB63D_BANK3                              ; A5B6: 20 AB ED     ..
+ JSR CB63D_b3                                 ; A5B6: 20 AB ED     ..
  LDY #&14                                     ; A5B9: A0 14       ..
  STY NOSTM                                    ; A5BB: 8C E5 03    ...
  STY RAND_2                                   ; A5BE: 84 03       ..
@@ -4197,13 +4205,13 @@ LA3F8 = LA3F5+3
  INY                                          ; A60D: C8          .
  DEX                                          ; A60E: CA          .
  BNE CA5EF                                    ; A60F: D0 DE       ..
- JSR STARS_BANK1                              ; A611: 20 15 EE     ..
+ JSR STARS_b1                                 ; A611: 20 15 EE     ..
 .CA614
  LDA #0                                       ; A614: A9 00       ..
  STA LASER                                    ; A616: 8D A8 03    ...
  STA QQ12                                     ; A619: 85 A5       ..
  LDA #&10                                     ; A61B: A9 10       ..
- JSR CB39D_BANK0                              ; A61D: 20 DC EF     ..
+ JSR CB39D_b0                                 ; A61D: 20 DC EF     ..
  LDA #&FF                                     ; A620: A9 FF       ..
  STA L045F                                    ; A622: 8D 5F 04    ._.
  LDA #&F0                                     ; A625: A9 F0       ..
@@ -4289,13 +4297,13 @@ LA3F8 = LA3F5+3
  JSR sub_CA917                                ; A6BB: 20 17 A9     ..
  LDA #0                                       ; A6BE: A9 00       ..
  STA QQ11                                     ; A6C0: 85 9E       ..
- JSR CAFCD_BANK3                              ; A6C2: 20 20 EF      .
+ JSR CAFCD_b3                                 ; A6C2: 20 20 EF      .
  LDA #&25 ; '%'                               ; A6C5: A9 25       .%
  STA L00D2                                    ; A6C7: 85 D2       ..
  JSR sub_CA761                                ; A6C9: 20 61 A7     a.
  LDA #&3C ; '<'                               ; A6CC: A9 3C       .<
  STA L00D2                                    ; A6CE: 85 D2       ..
- JMP C9522_BANK0                              ; A6D0: 4C 0D EE    L..
+ JMP SpawnDemoShips_b0                        ; A6D0: 4C 0D EE    L..
 
 .CA6D3
  CMP #2                                       ; A6D3: C9 02       ..
@@ -4348,7 +4356,7 @@ LA3F8 = LA3F5+3
  LDA #6                                       ; A724: A9 06       ..
 .CA726
  JSR sub_CA917                                ; A726: 20 17 A9     ..
- JSR CB63D_BANK3                              ; A729: 20 AB ED     ..
+ JSR CB63D_b3                                 ; A729: 20 AB ED     ..
  JMP LEECB                                    ; A72C: 4C CB EE    L..
 
 .CA72F
@@ -4373,7 +4381,7 @@ LA3F8 = LA3F5+3
  LDA #3                                       ; A75D: A9 03       ..
  BNE CA726                                    ; A75F: D0 C5       ..
 .sub_CA761
- JSR LD8C5                                    ; A761: 20 C5 D8     ..
+ JSR subm_D8C5                                ; A761: 20 C5 D8     ..
  LDA #&FE                                     ; A764: A9 FE       ..
  STA tileNumber                               ; A766: 85 B8       ..
  LDA #&C8                                     ; A768: A9 C8       ..
@@ -4623,7 +4631,7 @@ LA3F8 = LA3F5+3
  STA L0300                                    ; A921: 8D 00 03    ...
  LDA #2                                       ; A924: A9 02       ..
  STA L0402                                    ; A926: 8D 02 04    ...
- JSR CAC5C_BANK3                              ; A929: 20 71 F1     q.
+ JSR CAC5C_b3                                 ; A929: 20 71 F1     q.
  LDA #&28 ; '('                               ; A92C: A9 28       .(
  STA L00CC                                    ; A92E: 85 CC       ..
  LDA #&A0                                     ; A930: A9 A0       ..
@@ -4666,7 +4674,7 @@ LA3F8 = LA3F5+3
  LDA #9                                       ; A97F: A9 09       ..
  STA L0402                                    ; A981: 8D 02 04    ...
 .CA984
- JSR LD8E1                                    ; A984: 20 E1 D8     ..
+ JSR subm_D8E1                                ; A984: 20 E1 D8     ..
  JSR sub_CAAE5                                ; A987: 20 E5 AA     ..
  JSR LD975                                    ; A98A: 20 75 D9     u.
  LDA L0465                                    ; A98D: AD 65 04    .e.
@@ -4952,7 +4960,7 @@ LA3F8 = LA3F5+3
  JSR sub_CAAC0                                ; AB5F: 20 C0 AA     ..
  STX XX15_4                                   ; AB62: 86 75       .u
  STA XX15_5                                   ; AB64: 85 76       .v
- JSR CLIP_BANK1                               ; AB66: 20 80 F2     ..
+ JSR CLIP_b1                                  ; AB66: 20 80 F2     ..
  LDY YP                                       ; AB69: AC FB 03    ...
  JMP CAAEA                                    ; AB6C: 4C EA AA    L..
 
@@ -5139,14 +5147,14 @@ LA3F8 = LA3F5+3
 .loop_CB44E
  LDA (V),Y                                    ; B44E: B1 63       .c
  BEQ CB458                                    ; B450: F0 06       ..
- JSR TT27_BANK2                               ; B452: 20 01 F2     ..
+ JSR TT27_b2                                  ; B452: 20 01 F2     ..
  INY                                          ; B455: C8          .
  BNE loop_CB44E                               ; B456: D0 F6       ..
 .CB458
  RTS                                          ; B458: 60          `
 
  LDA #&BB                                     ; B459: A9 BB       ..
- JSR TT66_BANK0                               ; B45B: 20 6E F2     n.
+ JSR TT66_b0                                  ; B45B: 20 6E F2     n.
  LDA #&8B                                     ; B45E: A9 8B       ..
  STA QQ11                                     ; B460: 85 9E       ..
  LDY #0                                       ; B462: A0 00       ..
@@ -5209,7 +5217,7 @@ LA3F8 = LA3F5+3
  JSR sub_CB62C                                ; B4D5: 20 2C B6     ,.
  DEY                                          ; B4D8: 88          .
  BPL loop_CB4CA                               ; B4D9: 10 EF       ..
- JSR CB9F9_BANK4                              ; B4DB: 20 8F ED     ..
+ JSR CB9F9_b4                                 ; B4DB: 20 8F ED     ..
  LDA #0                                       ; B4DE: A9 00       ..
 .loop_CB4E0
  CMP #8                                       ; B4E0: C9 08       ..
@@ -5277,7 +5285,7 @@ LA3F8 = LA3F5+3
  BMI CB558                                    ; B540: 30 16       0.
  LDA #0                                       ; B542: A9 00       ..
  STA L0465                                    ; B544: 8D 65 04    .e.
- JSR CBB37_BANK6                              ; B547: 20 2F F0     /.
+ JSR CBB37_b6                                 ; B547: 20 2F F0     /.
  LDA L0465                                    ; B54A: AD 65 04    .e.
  BEQ CB553                                    ; B54D: F0 04       ..
  CMP #7                                       ; B54F: C9 07       ..
@@ -5383,7 +5391,7 @@ LA3F8 = LA3F5+3
  JSR sub_CB6E8                                ; B60A: 20 E8 B6     ..
  LDA #9                                       ; B60D: A9 09       ..
  JSR sub_CB854                                ; B60F: 20 54 B8     T.
- JSR CAC5C_BANK3                              ; B612: 20 71 F1     q.
+ JSR CAC5C_b3                                 ; B612: 20 71 F1     q.
  JMP CB569                                    ; B615: 4C 69 B5    Li.
 
 .CB618
@@ -5462,7 +5470,7 @@ LA3F8 = LA3F5+3
  LDY #0                                       ; B68C: A0 00       ..
 .loop_CB68E
  LDA BUF,Y                                    ; B68E: B9 07 05    ...
- JSR DASC_BANK2                               ; B691: 20 E6 F1     ..
+ JSR DASC_b2                                  ; B691: 20 E6 F1     ..
  INY                                          ; B694: C8          .
  CPY #7                                       ; B695: C0 07       ..
  BCC loop_CB68E                               ; B697: 90 F5       ..
@@ -5481,11 +5489,11 @@ LA3F8 = LA3F5+3
  TXA                                          ; B6AC: 8A          .
  ADC #&30 ; '0'                               ; B6AD: 69 30       i0
 .CB6AF
- JSR DASC_BANK2                               ; B6AF: 20 E6 F1     ..
+ JSR DASC_b2                                  ; B6AF: 20 E6 F1     ..
  TYA                                          ; B6B2: 98          .
  CLC                                          ; B6B3: 18          .
  ADC #&3A ; ':'                               ; B6B4: 69 3A       i:
- JSR DASC_BANK2                               ; B6B6: 20 E6 F1     ..
+ JSR DASC_b2                                  ; B6B6: 20 E6 F1     ..
  PLA                                          ; B6B9: 68          h
  RTS                                          ; B6BA: 60          `
 
@@ -5499,8 +5507,8 @@ LA3F8 = LA3F5+3
 
 .sub_CB6C7
  PHA                                          ; B6C7: 48          H
- JSR C8980_BANK0                              ; B6C8: 20 86 F1     ..
- JSR LD8C5                                    ; B6CB: 20 C5 D8     ..
+ JSR C8980_b0                                 ; B6C8: 20 86 F1     ..
+ JSR subm_D8C5                                ; B6CB: 20 C5 D8     ..
  PLA                                          ; B6CE: 68          h
  RTS                                          ; B6CF: 60          `
 
@@ -5741,7 +5749,7 @@ LA3F8 = LA3F5+3
  STA NAME,X                                   ; B881: 9D 96 03    ...
  DEX                                          ; B884: CA          .
  BPL loop_CB87B                               ; B885: 10 F4       ..
- JSR BR1_BANK0                                ; B887: 20 45 F2     E.
+ JSR BR1_b0                                   ; B887: 20 45 F2     E.
  PLA                                          ; B88A: 68          h
  RTS                                          ; B88B: 60          `
 
@@ -5848,7 +5856,7 @@ LA3F8 = LA3F5+3
  JSR LOIN                                     ; B97C: 20 0F DC     ..
  RTS                                          ; B97F: 60          `
 
- JSR LD8C5                                    ; B980: 20 C5 D8     ..
+ JSR subm_D8C5                                ; B980: 20 C5 D8     ..
  JSR subm_EB67                                ; B983: 20 67 EB     g.
  JSR subm_CE9E                                ; B986: 20 9E CE     ..
  JSR LEBED                                    ; B989: 20 ED EB     ..
@@ -5859,13 +5867,13 @@ LA3F8 = LA3F5+3
  LDA #&40 ; '@'                               ; B994: A9 40       .@
  STA XP                                       ; B996: 8D FA 03    ...
 .CB999
- JSR CB1D4_BANK0                              ; B999: 20 E2 EC     ..
+ JSR CB1D4_b0                                 ; B999: 20 E2 EC     ..
  JSR DORND                                    ; B99C: 20 AD F4     ..
  AND #&0F                                     ; B99F: 29 0F       ).
  TAX                                          ; B9A1: AA          .
  LDA LBA06,X                                  ; B9A2: BD 06 BA    ...
  STA L0034                                    ; B9A5: 85 34       .4
- JSR LD8E1                                    ; B9A7: 20 E1 D8     ..
+ JSR subm_D8E1                                ; B9A7: 20 E1 D8     ..
  LDA XP                                       ; B9AA: AD FA 03    ...
  AND #&1F                                     ; B9AD: 29 1F       ).
  STA STP                                      ; B9AF: 85 AA       ..
@@ -5913,7 +5921,7 @@ LA3F8 = LA3F5+3
  JSR LD975                                    ; B9FB: 20 75 D9     u.
  DEC XP                                       ; B9FE: CE FA 03    ...
  BNE CB999                                    ; BA01: D0 96       ..
- JMP LD8C5                                    ; BA03: 4C C5 D8    L..
+ JMP subm_D8C5                                ; BA03: 4C C5 D8    L..
 
 .LBA06
  EQUB &06, &0F, &38, &2A, &23, &25, &22, &11  ; BA06: 06 0F 38... ..8
@@ -5992,7 +6000,7 @@ LA3F8 = LA3F5+3
  JMP CBA65                                    ; BA90: 4C 65 BA    Le.
 
 .CBA93
- JSR BEEP_BANK7                               ; BA93: 20 74 F0     t.
+ JSR BEEP_b7                                  ; BA93: 20 74 F0     t.
  LDY L0483                                    ; BA96: AC 83 04    ...
  JMP CBA65                                    ; BA99: 4C 65 BA    Le.
 
@@ -6002,8 +6010,8 @@ LA3F8 = LA3F5+3
  LDA #&0D                                     ; BAA0: A9 0D       ..
  STA INWK_5,Y                                 ; BAA2: 99 0E 00    ...
  LDA #&0C                                     ; BAA5: A9 0C       ..
- JSR CHPR_BANK2                               ; BAA7: 20 CB F1     ..
- JSR LD951                                    ; BAAA: 20 51 D9     Q.
+ JSR CHPR_b2                                  ; BAA7: 20 CB F1     ..
+ JSR subm_D951                                ; BAAA: 20 51 D9     Q.
  CLC                                          ; BAAD: 18          .
  RTS                                          ; BAAE: 60          `
 
@@ -6018,12 +6026,12 @@ LA3F8 = LA3F5+3
  BEQ CBAC4                                    ; BAB6: F0 0C       ..
  DEY                                          ; BAB8: 88          .
  LDA #&7F                                     ; BAB9: A9 7F       ..
- JSR CHPR_BANK2                               ; BABB: 20 CB F1     ..
+ JSR CHPR_b2                                  ; BABB: 20 CB F1     ..
  LDA INWK_5,Y                                 ; BABE: B9 0E 00    ...
  JMP CBA6E                                    ; BAC1: 4C 6E BA    Ln.
 
 .CBAC4
- JSR BEEP_BANK7                               ; BAC4: 20 74 F0     t.
+ JSR BEEP_b7                                  ; BAC4: 20 74 F0     t.
  LDY #0                                       ; BAC7: A0 00       ..
  BEQ CBA65                                    ; BAC9: F0 9A       ..
 .sub_CBACB
@@ -6044,9 +6052,9 @@ LA3F8 = LA3F5+3
  JSR DELAY                                    ; BADF: 20 A2 EB     ..
  PLA                                          ; BAE2: 68          h
  PHA                                          ; BAE3: 48          H
- JSR CHPR_BANK2                               ; BAE4: 20 CB F1     ..
+ JSR CHPR_b2                                  ; BAE4: 20 CB F1     ..
  DEC XC                                       ; BAE7: C6 32       .2
- JSR LD951                                    ; BAE9: 20 51 D9     Q.
+ JSR subm_D951                                ; BAE9: 20 51 D9     Q.
  SEC                                          ; BAEC: 38          8
  LDA CONT1_A                                  ; BAED: AD B2 04    ...
  BMI CBB2A                                    ; BAF0: 30 38       08
@@ -6095,7 +6103,7 @@ LA3F8 = LA3F5+3
  JSR CLYNS                                    ; BB37: 20 DE F2     ..
  INC YC                                       ; BB3A: E6 3B       .;
  LDA #8                                       ; BB3C: A9 08       ..
- JSR DETOK_BANK2                              ; BB3E: 20 82 F0     ..
+ JSR DETOK_b2                                 ; BB3E: 20 82 F0     ..
  LDY #6                                       ; BB41: A0 06       ..
  STY L0483                                    ; BB43: 8C 83 04    ...
 .loop_CBB46
@@ -6153,7 +6161,7 @@ LA3F8 = LA3F5+3
  STA CASH                                     ; BBAD: 8D A1 03    ...
 .CBBB0
  JSR CLYNS                                    ; BBB0: 20 DE F2     ..
- JMP LD951                                    ; BBB3: 4C 51 D9    LQ.
+ JMP subm_D951                                ; BBB3: 4C 51 D9    LQ.
 
 .CBBB6
  LDA #&20 ; ' '                               ; BBB6: A9 20       .
@@ -6256,7 +6264,7 @@ LA3F8 = LA3F5+3
  STY L03EE                                    ; BC89: 8C EE 03    ...
  JSR sub_CBDFC                                ; BC8C: 20 FC BD     ..
  LDA #&CF                                     ; BC8F: A9 CF       ..
- JSR TT66_BANK0                               ; BC91: 20 6E F2     n.
+ JSR TT66_b0                                  ; BC91: 20 6E F2     n.
  LDA #&8D                                     ; BC94: A9 8D       ..
  STA L00D6                                    ; BC96: 85 D6       ..
  LDA #0                                       ; BC98: A9 00       ..
@@ -6266,7 +6274,7 @@ LA3F8 = LA3F5+3
  LDA #3                                       ; BCA0: A9 03       ..
  LDA #&DF                                     ; BCA2: A9 DF       ..
  STA QQ11                                     ; BCA4: 85 9E       ..
- JSR CB96B_BANK4                              ; BCA6: 20 9D ED     ..
+ JSR CB96B_b4                                 ; BCA6: 20 9D ED     ..
  LDA #&24 ; '$'                               ; BCA9: A9 24       .$
  STA L00D9                                    ; BCAB: 85 D9       ..
  LDA #&15                                     ; BCAD: A9 15       ..
@@ -6283,7 +6291,7 @@ LA3F8 = LA3F5+3
  LDA #3                                       ; BCC3: A9 03       ..
  STA XC                                       ; BCC5: 85 32       .2
  LDA #&0C                                     ; BCC7: A9 0C       ..
- JSR DETOK_BANK2                              ; BCC9: 20 82 F0     ..
+ JSR DETOK_b2                                 ; BCC9: 20 82 F0     ..
  LDA #&1A                                     ; BCCC: A9 1A       ..
  STA YC                                       ; BCCE: 85 3B       .;
  LDA #6                                       ; BCD0: A9 06       ..
@@ -6312,7 +6320,7 @@ LA3F8 = LA3F5+3
  LDA #0                                       ; BD01: A9 00       ..
  STA DTW8                                     ; BD03: 8D F9 03    ...
  LDA #4                                       ; BD06: A9 04       ..
- JSR DETOK_BANK2                              ; BD08: 20 82 F0     ..
+ JSR DETOK_b2                                 ; BD08: 20 82 F0     ..
  INC XC                                       ; BD0B: E6 32       .2
  INC XC                                       ; BD0D: E6 32       .2
  INY                                          ; BD0F: C8          .
@@ -6334,7 +6342,7 @@ LA3F8 = LA3F5+3
  BMI CBD3E                                    ; BD39: 30 03       0.
  JSR sub_CB818                                ; BD3B: 20 18 B8     ..
 .CBD3E
- JSR CB88C_BANK6                              ; BD3E: 20 B9 ED     ..
+ JSR CB88C_b6                                 ; BD3E: 20 B9 ED     ..
  LDA #&80                                     ; BD41: A9 80       ..
  STA S                                        ; BD43: 85 99       ..
  LDA #&19                                     ; BD45: A9 19       ..
@@ -6437,7 +6445,7 @@ LA3F8 = LA3F5+3
  DEC V_1                                      ; BDEF: C6 64       .d
  BNE CBDE2                                    ; BDF1: D0 EF       ..
  JSR CBDF9                                    ; BDF3: 20 F9 BD     ..
- JMP CBF41_BANK5                              ; BDF6: 4C 81 ED    L..
+ JMP CBF41_b5                                 ; BDF6: 4C 81 ED    L..
 
 .CBDF9
  LDY LASCT                                    ; BDF9: AC 8F 03    ...
