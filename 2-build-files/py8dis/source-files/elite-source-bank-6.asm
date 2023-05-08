@@ -127,6 +127,7 @@ K                = &007D
 K_1              = &007E
 K_2              = &007F
 K_3              = &0080
+L0081            = &0081
 QQ15             = &0082
 QQ15_1           = &0083
 QQ15_2           = &0084
@@ -188,6 +189,8 @@ L00CC            = &00CC
 L00D2            = &00D2
 addr1            = &00D4
 addr1_1          = &00D5
+L00D6            = &00D6
+L00D9            = &00D9
 nametableHi      = &00E6
 dashboardSwitch  = &00E9
 addr4            = &00EB
@@ -196,6 +199,7 @@ addr5            = &00ED
 addr5_1          = &00EE
 ppuCtrlCopy      = &00F5
 currentBank      = &00F7
+L00F9            = &00F9
 addr2            = &00FA
 addr2_1          = &00FB
 L00FE            = &00FE
@@ -561,6 +565,7 @@ VIEW             = &038E
 LASCT            = &038F
 GNTMP            = &0390
 EV               = &0392
+L0395            = &0395
 NAME             = &0396
 L039D            = &039D
 TP               = &039E
@@ -569,6 +574,7 @@ QQ1              = &03A0
 CASH             = &03A1
 L03A2            = &03A2
 L03A3            = &03A3
+L03A4            = &03A4
 QQ14             = &03A5
 L03A6            = &03A6
 GCNT             = &03A7
@@ -612,9 +618,17 @@ DTW8             = &03F9
 XP               = &03FA
 YP               = &03FB
 L03FC            = &03FC
+L03FD            = &03FD
 LAS              = &0400
 MSTG             = &0401
 L0402            = &0402
+L0403            = &0403
+L0404            = &0404
+L0405            = &0405
+L0406            = &0406
+L0407            = &0407
+L0408            = &0408
+L0409            = &0409
 L040B            = &040B
 L040C            = &040C
 L040D            = &040D
@@ -702,6 +716,7 @@ ALTIT            = &047E
 SWAP             = &047F
 XSAV2            = &0481
 YSAV2            = &0482
+L0483            = &0483
 FSH              = &0484
 ASH              = &0485
 ENERGY           = &0486
@@ -715,10 +730,14 @@ QQ2              = &048E
 QQ3              = &0494
 QQ4              = &0495
 QQ5              = &0496
+L0497            = &0497
+L0499            = &0499
+L049A            = &049A
 QQ8              = &049B
 QQ8_1            = &049C
 QQ9              = &049D
 QQ10             = &049E
+L049F            = &049F
 QQ18Lo           = &04A4
 QQ18Hi           = &04A5
 TKN1Lo           = &04A6
@@ -762,6 +781,7 @@ SYL              = &05BA
 SZL              = &05CF
 safehouse        = &05E4
 Kpercent         = &0600
+L0601            = &0601
 L0616            = &0616
 L0617            = &0617
 L0636            = &0636
@@ -802,8 +822,27 @@ CONTROLLER_2     = &4017
 PATTERNS_0       = &6000
 PATTERNS_1       = &6800
 NAMES_0          = &7000
+L7280            = &7280
+L72A0            = &72A0
 L72C0            = &72C0
+L72E0            = &72E0
+L7300            = &7300
+L7320            = &7320
+L7340            = &7340
+L7360            = &7360
+L7361            = &7361
+L7380            = &7380
+L7381            = &7381
 NAMES_1          = &7400
+L7680            = &7680
+L76A0            = &76A0
+L76C0            = &76C0
+L76E0            = &76E0
+L7700            = &7700
+L7720            = &7720
+L7740            = &7740
+L7760            = &7760
+L77FF            = &77FF
 L7800            = &7800
 LC006            = &C006
 Spercent         = &C007
@@ -854,6 +893,7 @@ FillMemory       = &D710
 LD8C5            = &D8C5
 subm_D8D8        = &D8D8
 LD8E1            = &D8E1
+LD951            = &D951
 LD975            = &D975
 SendToPPU2       = &D986
 TWOS             = &D9F7
@@ -889,6 +929,7 @@ BEEP             = &EBA9
 EXNO3            = &EBAD
 ECBLB            = &EBBF
 BOOP             = &EBE5
+LEBED            = &EBED
 NOISE            = &EBF2
 noiseLookup1     = &EC3C
 noiseLookup2     = &EC5C
@@ -5633,6 +5674,7 @@ LA3F8 = LA3F5+3
  PLA                                          ; B816: 68          h
  RTS                                          ; B817: 60          `
 
+.sub_CB818
  LDX #7                                       ; B818: A2 07       ..
 .loop_CB81A
  TXA                                          ; B81A: 8A          .
@@ -5727,231 +5769,833 @@ LA3F8 = LA3F5+3
  EQUB &80, &4A, &5A, &48, &02, &53, &B7, &AA  ; B8E4: 80 4A 5A... .JZ
  EQUB &27, &03, &00, &00, &00, &00, &00, &00  ; B8EC: 27 03 00... '..
  EQUB &00, &00, &00, &00, &00, &00, &00, &00  ; B8F4: 00 00 00... ...
- EQUB &00, &00, &20, &0D, &B9, &A2, &4F, &BD  ; B8FC: 00 00 20... ..
- EQUB &FF, &77, &9D, &95, &03, &CA, &D0, &F7  ; B904: FF 77 9D... .w.
- EQUB &60, &A0, &5E, &B9, &9C, &B8, &99, &00  ; B90C: 60 A0 5E... `.^
- EQUB &78, &88, &10, &F7, &60, &A5, &7E, &4A  ; B914: 78 88 10... x..
- EQUB &85, &3E, &A5, &80, &38, &E5, &3E, &18  ; B91C: 85 3E A5... .>.
- EQUB &69, &01, &85, &3D, &20, &32, &B9, &A5  ; B924: 69 01 85... i..
- EQUB &80, &18, &65, &3E, &85, &3D, &A5, &7D  ; B92C: 80 18 65... ..e
- EQUB &4A, &4A, &85, &AA, &A5, &7F, &38, &E5  ; B934: 4A 4A 85... JJ.
- EQUB &7D, &85, &71, &A5, &3D, &85, &72, &A0  ; B93C: 7D 85 71... }.q
- EQUB &07, &20, &AD, &F4, &85, &97, &A5, &7E  ; B944: 07 20 AD... . .
- EQUB &20, &70, &F7, &18, &65, &3D, &38, &E5  ; B94C: 20 70 F7...  p.
- EQUB &3E, &85, &74, &A5, &71, &18, &65, &AA  ; B954: 3E 85 74... >.t
- EQUB &85, &73, &20, &0F, &DC, &AD, &7F, &04  ; B95C: 85 73 20... .s
- EQUB &D0, &08, &A5, &73, &85, &71, &A5, &74  ; B964: D0 08 A5... ...
- EQUB &85, &72, &88, &D0, &D4, &A5, &7F, &18  ; B96C: 85 72 88... .r.
- EQUB &65, &7D, &85, &73, &A5, &3D, &85, &74  ; B974: 65 7D 85... e}.
- EQUB &20, &0F, &DC, &60, &20, &C5, &D8, &20  ; B97C: 20 0F DC...  ..
- EQUB &67, &EB, &20, &9E, &CE, &20, &ED, &EB  ; B984: 67 EB 20... g.
- EQUB &A9, &80, &85, &7F, &A9, &48, &85, &80  ; B98C: A9 80 85... ...
- EQUB &A9, &40, &8D, &FA, &03, &20, &E2, &EC  ; B994: A9 40 8D... .@.
- EQUB &20, &AD, &F4, &29, &0F, &AA, &BD, &06  ; B99C: 20 AD F4...  ..
- EQUB &BA, &85, &34, &20, &E1, &D8, &AD, &FA  ; B9A4: BA 85 34... ..4
- EQUB &03, &29, &1F, &85, &AA, &A9, &08, &85  ; B9AC: 03 29 1F... .).
- EQUB &71, &A9, &F8, &85, &73, &A5, &E9, &10  ; B9B4: 71 A9 F8... q..
- EQUB &09, &AD, &02, &20, &0A, &10, &03, &20  ; B9BC: 09 AD 02... ...
- EQUB &6D, &D0, &A5, &AA, &18, &69, &10, &85  ; B9C4: 6D D0 A5... m..
- EQUB &AA, &C9, &5A, &B0, &2A, &85, &97, &A9  ; B9CC: AA C9 5A... ..Z
- EQUB &08, &20, &91, &FA, &A5, &98, &38, &E9  ; B9D4: 08 20 91... . .
- EQUB &14, &85, &7E, &A5, &B1, &E5, &7E, &90  ; B9DC: 14 85 7E... ..~
- EQUB &D4, &F0, &D2, &A8, &20, &BA, &E0, &E6  ; B9E4: D4 F0 D2... ...
- EQUB &73, &A5, &7E, &18, &65, &B1, &A8, &20  ; B9EC: 73 A5 7E... s.~
- EQUB &BA, &E0, &E6, &73, &4C, &B9, &B9, &20  ; B9F4: BA E0 E6... ...
- EQUB &75, &D9, &CE, &FA, &03, &D0, &96, &4C  ; B9FC: 75 D9 CE... u..
- EQUB &C5, &D8, &06, &0F, &38, &2A, &23, &25  ; BA04: C5 D8 06... ...
- EQUB &22, &11, &1A, &00, &26, &2C, &20, &13  ; BA0C: 22 11 1A... "..
- EQUB &0F, &00, &60, &A5, &7F, &18, &65, &7D  ; BA14: 0F 00 60... ..`
- EQUB &B0, &F8, &85, &73, &85, &71, &A5, &80  ; BA1C: B0 F8 85... ...
- EQUB &38, &E5, &7E, &B0, &02, &A9, &00, &85  ; BA24: 38 E5 7E... 8.~
- EQUB &72, &A5, &80, &18, &65, &7E, &B0, &06  ; BA2C: 72 A5 80... r..
- EQUB &C5, &B3, &90, &02, &A5, &B3, &85, &74  ; BA34: C5 B3 90... ...
- EQUB &20, &3E, &E3, &A5, &7F, &38, &E5, &7D  ; BA3C: 20 3E E3...  >.
- EQUB &90, &D0, &85, &71, &20, &3E, &E3, &E6  ; BA44: 90 D0 85... ...
- EQUB &71, &A4, &72, &F0, &05, &20, &BA, &E0  ; BA4C: 71 A4 72... q.r
- EQUB &E6, &73, &C6, &71, &E6, &73, &A4, &74  ; BA54: E6 73 C6... .s.
- EQUB &C4, &B3, &B0, &B6, &4C, &BA, &E0, &A0  ; BA5C: C4 B3 B0... ...
- EQUB &00, &B9, &0E, &00, &C9, &41, &B0, &02  ; BA64: 00 B9 0E... ...
- EQUB &A9, &41, &48, &68, &20, &CB, &BA, &B0  ; BA6C: A9 41 48... .AH
- EQUB &27, &C9, &1B, &F0, &36, &C9, &7F, &F0  ; BA74: 27 C9 1B... '..
- EQUB &38, &CC, &83, &04, &B0, &11, &C9, &21  ; BA7C: 38 CC 83... 8..
- EQUB &90, &0D, &C9, &7B, &B0, &09, &99, &0E  ; BA84: 90 0D C9... ...
- EQUB &00, &C8, &E6, &32, &4C, &65, &BA, &20  ; BA8C: 00 C8 E6... ...
- EQUB &74, &F0, &AC, &83, &04, &4C, &65, &BA  ; BA94: 74 F0 AC... t..
- EQUB &99, &0E, &00, &C8, &A9, &0D, &99, &0E  ; BA9C: 99 0E 00... ...
- EQUB &00, &A9, &0C, &20, &CB, &F1, &20, &51  ; BAA4: 00 A9 0C... ...
- EQUB &D9, &18, &60, &A9, &0D, &85, &0E, &38  ; BAAC: D9 18 60... ..`
- EQUB &60, &98, &F0, &0C, &88, &A9, &7F, &20  ; BAB4: 60 98 F0... `..
- EQUB &CB, &F1, &B9, &0E, &00, &4C, &6E, &BA  ; BABC: CB F1 B9... ...
- EQUB &20, &74, &F0, &A0, &00, &F0, &9A, &AA  ; BAC4: 20 74 F0...  t.
- EQUB &84, &9C, &A5, &37, &48, &A5, &9E, &29  ; BACC: 84 9C A5... ...
- EQUB &20, &F0, &04, &A9, &01, &85, &37, &8A  ; BAD4: 20 F0 04...  ..
- EQUB &48, &A0, &04, &20, &A2, &EB, &68, &48  ; BADC: 48 A0 04... H..
- EQUB &20, &CB, &F1, &C6, &32, &20, &51, &D9  ; BAE4: 20 CB F1...  ..
- EQUB &38, &AD, &B2, &04, &30, &38, &18, &68  ; BAEC: 38 AD B2... 8..
- EQUB &AE, &B4, &04, &30, &E3, &AE, &65, &04  ; BAF4: AE B4 04... ...
- EQUB &D0, &35, &AE, &BA, &04, &30, &23, &AE  ; BAFC: D0 35 AE... .5.
- EQUB &BB, &04, &30, &23, &AE, &AC, &04, &10  ; BB04: BB 04 30... ..0
- EQUB &09, &18, &69, &01, &C9, &5B, &D0, &02  ; BB0C: 09 18 69... ..i
- EQUB &A9, &41, &AE, &AA, &04, &10, &C1, &38  ; BB14: A9 41 AE... .A.
- EQUB &E9, &01, &C9, &40, &D0, &BA, &A9, &5A  ; BB1C: E9 01 C9... ...
- EQUB &D0, &B6, &A9, &7F, &D0, &01, &68, &AA  ; BB24: D0 B6 A9... ...
- EQUB &68, &85, &37, &A4, &9C, &8A, &60, &A9  ; BB2C: 68 85 37... h.7
- EQUB &1B, &D0, &F4, &20, &DE, &F2, &E6, &3B  ; BB34: 1B D0 F4... ...
- EQUB &A9, &08, &20, &82, &F0, &A0, &06, &8C  ; BB3C: A9 08 20... ..
- EQUB &83, &04, &B9, &96, &03, &99, &0E, &00  ; BB44: 83 04 B9... ...
- EQUB &88, &10, &F7, &20, &63, &BA, &A5, &0E  ; BB4C: 88 10 F7... ...
- EQUB &C9, &0D, &F0, &58, &A0, &00, &B9, &0E  ; BB54: C9 0D F0... ...
- EQUB &00, &C9, &0D, &F0, &55, &C8, &C0, &07  ; BB5C: 00 C9 0D... ...
- EQUB &D0, &F4, &88, &B9, &0E, &00, &99, &96  ; BB64: D0 F4 88... ...
- EQUB &03, &88, &10, &F7, &AD, &A6, &03, &30  ; BB6C: 03 88 10... ...
- EQUB &3B, &C8, &AE, &A8, &04, &B9, &96, &03  ; BB74: 3B C8 AE... ;..
- EQUB &DD, &C2, &BB, &D0, &2F, &E8, &E8, &E8  ; BB7C: DD C2 BB... ...
- EQUB &E8, &C8, &C0, &07, &D0, &EF, &A9, &80  ; BB84: E8 C8 C0... ...
- EQUB &8D, &A6, &03, &A9, &A0, &18, &6D, &A4  ; BB8C: 8D A6 03... ...
- EQUB &03, &8D, &A4, &03, &A9, &86, &6D, &A3  ; BB94: 03 8D A4... ...
- EQUB &03, &8D, &A3, &03, &AD, &A2, &03, &69  ; BB9C: 03 8D A3... ...
- EQUB &01, &8D, &A2, &03, &AD, &A1, &03, &69  ; BBA4: 01 8D A2... ...
- EQUB &00, &8D, &A1, &03, &20, &DE, &F2, &4C  ; BBAC: 00 8D A1... ...
- EQUB &51, &D9, &A9, &20, &99, &0E, &00, &C0  ; BBB4: 51 D9 A9... Q..
- EQUB &06, &F0, &A8, &C8, &D0, &F4, &43, &42  ; BBBC: 06 F0 A8... ...
- EQUB &54, &49, &48, &45, &52, &4E, &45, &54  ; BBC4: 54 49 48... TIH
- EQUB &49, &47, &41, &52, &43, &41, &54, &55  ; BBCC: 49 47 41... IGA
- EQUB &48, &4E, &45, &47, &45, &4E, &52, &20  ; BBD4: 48 4E 45... HNE
- EQUB &52, &4F, &98, &48, &A2, &05, &A9, &00  ; BBDC: 52 4F 98... RO.
- EQUB &85, &81, &9D, &03, &04, &CA, &10, &FA  ; BBE4: 85 81 9D... ...
- EQUB &A5, &E9, &10, &09, &AD, &02, &20, &0A  ; BBEC: A5 E9 10... ...
- EQUB &10, &03, &20, &6D, &D0, &AD, &75, &04  ; BBF4: 10 03 20... ..
- EQUB &F0, &34, &A2, &FF, &AD, &AB, &04, &10  ; BBFC: F0 34 A2... .4.
- EQUB &03, &8E, &07, &04, &AD, &AD, &04, &10  ; BC04: 03 8E 07... ...
- EQUB &03, &8E, &08, &04, &AD, &AF, &04, &10  ; BC0C: 03 8E 08... ...
- EQUB &03, &8E, &05, &04, &AD, &B1, &04, &10  ; BC14: 03 8E 05... ...
- EQUB &03, &8E, &06, &04, &AD, &B3, &04, &10  ; BC1C: 03 8E 06... ...
- EQUB &03, &8E, &04, &04, &AD, &B5, &04, &10  ; BC24: 03 8E 04... ...
- EQUB &3E, &8E, &03, &04, &30, &39, &A2, &FF  ; BC2C: 3E 8E 03... >..
- EQUB &AD, &B4, &04, &30, &22, &AD, &AA, &04  ; BC34: AD B4 04... ...
- EQUB &10, &03, &8E, &07, &04, &AD, &AC, &04  ; BC3C: 10 03 8E... ...
- EQUB &10, &03, &8E, &08, &04, &AD, &AE, &04  ; BC44: 10 03 8E... ...
- EQUB &10, &03, &8E, &05, &04, &AD, &B0, &04  ; BC4C: 10 03 8E... ...
- EQUB &10, &15, &8E, &06, &04, &30, &10, &AD  ; BC54: 10 15 8E... ...
- EQUB &AC, &04, &10, &03, &8E, &04, &04, &AD  ; BC5C: AC 04 10... ...
- EQUB &AA, &04, &10, &03, &8E, &03, &04, &AD  ; BC64: AA 04 10... ...
- EQUB &B2, &04, &C9, &80, &6E, &09, &04, &A2  ; BC6C: B2 04 C9... ...
- EQUB &00, &AD, &65, &04, &8E, &65, &04, &85  ; BC74: 00 AD 65... ..e
- EQUB &81, &68, &A8, &A5, &81, &AA, &60, &A9  ; BC7C: 81 68 A8... .h.
- EQUB &81, &85, &D6, &A0, &00, &8C, &EE, &03  ; BC84: 81 85 D6... ...
- EQUB &20, &FC, &BD, &A9, &CF, &20, &6E, &F2  ; BC8C: 20 FC BD...  ..
- EQUB &A9, &8D, &85, &D6, &A9, &00, &85, &3B  ; BC94: A9 8D 85... ...
- EQUB &A9, &07, &85, &32, &A9, &03, &A9, &DF  ; BC9C: A9 07 85... ...
- EQUB &85, &9E, &20, &9D, &ED, &A9, &24, &85  ; BCA4: 85 9E 20... ..
- EQUB &D9, &A9, &15, &85, &3B, &A9, &0A, &85  ; BCAC: D9 A9 15... ...
- EQUB &32, &A9, &06, &E6, &3B, &A9, &03, &85  ; BCB4: 32 A9 06... 2..
- EQUB &32, &A9, &09, &A9, &19, &85, &3B, &A9  ; BCBC: 32 A9 09... 2..
- EQUB &03, &85, &32, &A9, &0C, &20, &82, &F0  ; BCC4: 03 85 32... ..2
- EQUB &A9, &1A, &85, &3B, &A9, &06, &85, &32  ; BCCC: A9 1A 85... ...
- EQUB &A9, &07, &A0, &02, &A9, &E5, &99, &80  ; BCD4: A9 07 A0... ...
- EQUB &73, &C8, &C0, &20, &D0, &F8, &A9, &02  ; BCDC: 73 C8 C0... s..
- EQUB &8D, &60, &73, &8D, &80, &73, &A9, &01  ; BCE4: 8D 60 73... .`s
- EQUB &8D, &61, &73, &8D, &81, &73, &A0, &00  ; BCEC: 8D 61 73... .as
- EQUB &20, &FC, &BD, &B9, &2C, &BE, &85, &32  ; BCF4: 20 FC BD...  ..
- EQUB &B9, &30, &BE, &85, &3B, &A9, &00, &8D  ; BCFC: B9 30 BE... .0.
- EQUB &F9, &03, &A9, &04, &20, &82, &F0, &E6  ; BD04: F9 03 A9... ...
- EQUB &32, &E6, &32, &C8, &B9, &4B, &BE, &10  ; BD0C: 32 E6 32... 2.2
- EQUB &DF, &8C, &9F, &04, &A9, &8D, &85, &D6  ; BD14: DF 8C 9F... ...
- EQUB &20, &C0, &F2, &AD, &AE, &04, &2D, &AC  ; BD1C: 20 C0 F2...  ..
- EQUB &04, &2D, &B8, &04, &2D, &B4, &04, &10  ; BD24: 04 2D B8... .-.
- EQUB &11, &AD, &B0, &04, &0D, &AA, &04, &0D  ; BD2C: 11 AD B0... ...
- EQUB &B6, &04, &0D, &B2, &04, &30, &03, &20  ; BD34: B6 04 0D... ...
- EQUB &18, &B8, &20, &B9, &ED, &A9, &80, &85  ; BD3C: 18 B8 20... ..
- EQUB &99, &A9, &19, &85, &9A, &AD, &01, &06  ; BD44: 99 A9 19... ...
- EQUB &85, &64, &A9, &00, &85, &63, &85, &97  ; BD4C: 85 64 A9... .d.
- EQUB &AD, &00, &06, &8D, &8F, &03, &20, &67  ; BD54: AD 00 06... ...
- EQUB &D1, &AC, &8F, &03, &B9, &2C, &BE, &0A  ; BD5C: D1 AC 8F... ...
- EQUB &0A, &0A, &69, &00, &AA, &18, &A0, &00  ; BD64: 0A 0A 69... ..i
- EQUB &A9, &F0, &99, &14, &02, &A9, &FF, &99  ; BD6C: A9 F0 99... ...
- EQUB &15, &02, &A9, &20, &99, &16, &02, &8A  ; BD74: 15 02 A9... ...
- EQUB &99, &17, &02, &69, &08, &AA, &C8, &C8  ; BD7C: 99 17 02... ...
- EQUB &C8, &C8, &C0, &20, &D0, &E2, &AE, &8F  ; BD84: C8 C8 C0... ...
- EQUB &03, &BD, &3C, &BE, &0A, &0A, &A8, &BD  ; BD8C: 03 BD 3C... ..<
- EQUB &30, &BE, &0A, &0A, &0A, &69, &06, &99  ; BD94: 30 BE 0A... 0..
- EQUB &14, &02, &88, &88, &88, &88, &10, &F7  ; BD9C: 14 02 88... ...
- EQUB &AD, &B6, &04, &29, &C0, &C9, &40, &D0  ; BDA4: AD B6 04... ...
- EQUB &02, &46, &99, &AE, &8F, &03, &AD, &AE  ; BDAC: 02 46 99... .F.
- EQUB &04, &29, &C0, &C9, &40, &D0, &06, &CA  ; BDB4: 04 29 C0... .).
- EQUB &AD, &01, &06, &85, &64, &AD, &B0, &04  ; BDBC: AD 01 06... ...
- EQUB &29, &C0, &C9, &40, &D0, &06, &E8, &AD  ; BDC4: 29 C0 C9... )..
- EQUB &01, &06, &85, &64, &8A, &10, &02, &A9  ; BDCC: 01 06 85... ...
- EQUB &00, &C9, &03, &90, &02, &A9, &02, &8D  ; BDD4: 00 C9 03... ...
- EQUB &8F, &03, &C6, &9A, &F0, &03, &4C, &5A  ; BDDC: 8F 03 C6... ...
- EQUB &BD, &E6, &9A, &A5, &99, &10, &0E, &C6  ; BDE4: BD E6 9A... ...
- EQUB &63, &D0, &F3, &C6, &64, &D0, &EF, &20  ; BDEC: 63 D0 F3... c..
- EQUB &F9, &BD, &4C, &81, &ED, &AC, &8F, &03  ; BDF4: F9 BD 4C... ..L
- EQUB &B9, &3F, &BE, &8D, &A4, &04, &B9, &42  ; BDFC: B9 3F BE... .?.
- EQUB &BE, &8D, &A5, &04, &B9, &45, &BE, &8D  ; BE04: BE 8D A5... ...
- EQUB &A6, &04, &B9, &48, &BE, &8D, &A7, &04  ; BE0C: A6 04 B9... ...
- EQUB &B9, &4B, &BE, &8D, &A8, &04, &B9, &4F  ; BE14: B9 4B BE... .K.
- EQUB &BE, &8D, &A9, &04, &B9, &34, &BE, &85  ; BE1C: BE 8D A9... ...
- EQUB &F9, &B9, &38, &BE, &8D, &FD, &03, &60  ; BE24: F9 B9 38... ..8
- EQUB &02, &0C, &16, &11, &17, &18, &17, &18  ; BE2C: 02 0C 16... ...
- EQUB &5B, &60, &60, &60, &2E, &2E, &2C, &2E  ; BE34: 5B 60 60... [``
- EQUB &06, &06, &07, &CF, &9C, &4D, &A3, &A7  ; BE3C: 06 06 07... ...
- EQUB &AC, &0C, &FD, &2C, &80, &8D, &9A, &00  ; BE44: AC 0C FD... ...
- EQUB &01, &02, &FF, &01, &02, &04, &A5, &83  ; BE4C: 01 02 FF... ...
- EQUB &29, &07, &8D, &94, &04, &A5, &84, &4A  ; BE54: 29 07 8D... )..
- EQUB &4A, &4A, &29, &07, &8D, &95, &04, &4A  ; BE5C: 4A 4A 29... JJ)
- EQUB &D0, &08, &AD, &94, &04, &09, &02, &8D  ; BE64: D0 08 AD... ...
- EQUB &94, &04, &AD, &94, &04, &49, &07, &18  ; BE6C: 94 04 AD... ...
- EQUB &8D, &96, &04, &A5, &85, &29, &03, &6D  ; BE74: 8D 96 04... ...
- EQUB &96, &04, &8D, &96, &04, &A5, &E9, &10  ; BE7C: 96 04 8D... ...
- EQUB &09, &AD, &02, &20, &0A, &10, &03, &20  ; BE84: 09 AD 02... ...
- EQUB &6D, &D0, &AD, &95, &04, &4A, &6D, &96  ; BE8C: 6D D0 AD... m..
- EQUB &04, &8D, &96, &04, &0A, &0A, &6D, &94  ; BE94: 04 8D 96... ...
- EQUB &04, &6D, &95, &04, &69, &01, &8D, &97  ; BE9C: 04 6D 95... .m.
- EQUB &04, &AD, &94, &04, &49, &07, &69, &03  ; BEA4: 04 AD 94... ...
- EQUB &85, &2F, &AD, &95, &04, &69, &04, &85  ; BEAC: 85 2F AD... ./.
- EQUB &97, &20, &21, &F7, &AD, &97, &04, &85  ; BEB4: 97 20 21... . !
- EQUB &97, &20, &21, &F7, &06, &2F, &2A, &06  ; BEBC: 97 20 21... . !
- EQUB &2F, &2A, &06, &2F, &2A, &8D, &9A, &04  ; BEC4: 2F 2A 06... /*.
- EQUB &A5, &2F, &8D, &99, &04, &60, &20, &7D  ; BECC: A5 2F 8D... ./.
- EQUB &EC, &A9, &00, &8D, &80, &72, &8D, &A0  ; BED4: EC A9 00... ...
- EQUB &72, &8D, &C0, &72, &8D, &E0, &72, &8D  ; BEDC: 72 8D C0... r..
- EQUB &00, &73, &8D, &20, &73, &8D, &40, &73  ; BEE4: 00 73 8D... .s.
- EQUB &8D, &60, &73, &8D, &80, &76, &8D, &A0  ; BEEC: 8D 60 73... .`s
- EQUB &76, &8D, &C0, &76, &8D, &E0, &76, &8D  ; BEF4: 76 8D C0... v..
- EQUB &00, &77, &8D, &20, &77, &8D, &40, &77  ; BEFC: 00 77 8D... .w.
- EQUB &8D, &60, &77, &60, &FF, &FF, &FF, &FF  ; BF04: 8D 60 77... .`w
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF0C: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF14: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF1C: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF24: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF2C: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF34: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF3C: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF44: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF4C: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF54: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF5C: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF64: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF6C: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF74: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF7C: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF84: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF8C: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF94: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF9C: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BFA4: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BFAC: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BFB4: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BFBC: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BFC4: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BFCC: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BFD4: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BFDC: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BFE4: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BFEC: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF, &FF, &FF, &07, &C0  ; BFF4: FF FF FF... ...
- EQUB &00, &C0, &07, &C0                      ; BFFC: 00 C0 07... ...
+ EQUB &00, &00                                ; B8FC: 00 00       ..
+
+ JSR sub_CB90D                                ; B8FE: 20 0D B9     ..
+ LDX #&4F ; 'O'                               ; B901: A2 4F       .O
+.loop_CB903
+ LDA L77FF,X                                  ; B903: BD FF 77    ..w
+ STA L0395,X                                  ; B906: 9D 95 03    ...
+ DEX                                          ; B909: CA          .
+ BNE loop_CB903                               ; B90A: D0 F7       ..
+ RTS                                          ; B90C: 60          `
+
+.sub_CB90D
+ LDY #&5E ; '^'                               ; B90D: A0 5E       .^
+.loop_CB90F
+ LDA LB89C,Y                                  ; B90F: B9 9C B8    ...
+ STA L7800,Y                                  ; B912: 99 00 78    ..x
+ DEY                                          ; B915: 88          .
+ BPL loop_CB90F                               ; B916: 10 F7       ..
+ RTS                                          ; B918: 60          `
+
+ LDA K_1                                      ; B919: A5 7E       .~
+ LSR A                                        ; B91B: 4A          J
+ STA XX2_1                                    ; B91C: 85 3E       .>
+ LDA K_3                                      ; B91E: A5 80       ..
+ SEC                                          ; B920: 38          8
+ SBC XX2_1                                    ; B921: E5 3E       .>
+ CLC                                          ; B923: 18          .
+ ADC #1                                       ; B924: 69 01       i.
+ STA K3                                       ; B926: 85 3D       .=
+ JSR sub_CB932                                ; B928: 20 32 B9     2.
+ LDA K_3                                      ; B92B: A5 80       ..
+ CLC                                          ; B92D: 18          .
+ ADC XX2_1                                    ; B92E: 65 3E       e>
+ STA K3                                       ; B930: 85 3D       .=
+.sub_CB932
+ LDA K                                        ; B932: A5 7D       .}
+ LSR A                                        ; B934: 4A          J
+ LSR A                                        ; B935: 4A          J
+ STA STP                                      ; B936: 85 AA       ..
+ LDA K_2                                      ; B938: A5 7F       ..
+ SEC                                          ; B93A: 38          8
+ SBC K                                        ; B93B: E5 7D       .}
+ STA XX15                                     ; B93D: 85 71       .q
+ LDA K3                                       ; B93F: A5 3D       .=
+ STA Y1                                       ; B941: 85 72       .r
+ LDY #7                                       ; B943: A0 07       ..
+.CB945
+ JSR DORND                                    ; B945: 20 AD F4     ..
+ STA Q                                        ; B948: 85 97       ..
+ LDA K_1                                      ; B94A: A5 7E       .~
+ JSR FMLTU                                    ; B94C: 20 70 F7     p.
+ CLC                                          ; B94F: 18          .
+ ADC K3                                       ; B950: 65 3D       e=
+ SEC                                          ; B952: 38          8
+ SBC XX2_1                                    ; B953: E5 3E       .>
+ STA Y2                                       ; B955: 85 74       .t
+ LDA XX15                                     ; B957: A5 71       .q
+ CLC                                          ; B959: 18          .
+ ADC STP                                      ; B95A: 65 AA       e.
+ STA X2                                       ; B95C: 85 73       .s
+ JSR LOIN                                     ; B95E: 20 0F DC     ..
+ LDA SWAP                                     ; B961: AD 7F 04    ...
+ BNE CB96E                                    ; B964: D0 08       ..
+ LDA X2                                       ; B966: A5 73       .s
+ STA XX15                                     ; B968: 85 71       .q
+ LDA Y2                                       ; B96A: A5 74       .t
+ STA Y1                                       ; B96C: 85 72       .r
+.CB96E
+ DEY                                          ; B96E: 88          .
+ BNE CB945                                    ; B96F: D0 D4       ..
+ LDA K_2                                      ; B971: A5 7F       ..
+ CLC                                          ; B973: 18          .
+ ADC K                                        ; B974: 65 7D       e}
+ STA X2                                       ; B976: 85 73       .s
+ LDA K3                                       ; B978: A5 3D       .=
+ STA Y2                                       ; B97A: 85 74       .t
+ JSR LOIN                                     ; B97C: 20 0F DC     ..
+ RTS                                          ; B97F: 60          `
+
+ JSR LD8C5                                    ; B980: 20 C5 D8     ..
+ JSR subm_EB67                                ; B983: 20 67 EB     g.
+ JSR subm_CE9E                                ; B986: 20 9E CE     ..
+ JSR LEBED                                    ; B989: 20 ED EB     ..
+ LDA #&80                                     ; B98C: A9 80       ..
+ STA K_2                                      ; B98E: 85 7F       ..
+ LDA #&48 ; 'H'                               ; B990: A9 48       .H
+ STA K_3                                      ; B992: 85 80       ..
+ LDA #&40 ; '@'                               ; B994: A9 40       .@
+ STA XP                                       ; B996: 8D FA 03    ...
+.CB999
+ JSR CB1D4_BANK0                              ; B999: 20 E2 EC     ..
+ JSR DORND                                    ; B99C: 20 AD F4     ..
+ AND #&0F                                     ; B99F: 29 0F       ).
+ TAX                                          ; B9A1: AA          .
+ LDA LBA06,X                                  ; B9A2: BD 06 BA    ...
+ STA L0034                                    ; B9A5: 85 34       .4
+ JSR LD8E1                                    ; B9A7: 20 E1 D8     ..
+ LDA XP                                       ; B9AA: AD FA 03    ...
+ AND #&1F                                     ; B9AD: 29 1F       ).
+ STA STP                                      ; B9AF: 85 AA       ..
+ LDA #8                                       ; B9B1: A9 08       ..
+ STA XX15                                     ; B9B3: 85 71       .q
+ LDA #&F8                                     ; B9B5: A9 F8       ..
+ STA X2                                       ; B9B7: 85 73       .s
+.CB9B9
+ LDA dashboardSwitch                          ; B9B9: A5 E9       ..
+ BPL CB9C6                                    ; B9BB: 10 09       ..
+ LDA PPU_STATUS                               ; B9BD: AD 02 20    ..
+ ASL A                                        ; B9C0: 0A          .
+ BPL CB9C6                                    ; B9C1: 10 03       ..
+ JSR SwitchTablesTo0                          ; B9C3: 20 6D D0     m.
+.CB9C6
+ LDA STP                                      ; B9C6: A5 AA       ..
+ CLC                                          ; B9C8: 18          .
+ ADC #&10                                     ; B9C9: 69 10       i.
+ STA STP                                      ; B9CB: 85 AA       ..
+ CMP #&5A ; 'Z'                               ; B9CD: C9 5A       .Z
+ BCS CB9FB                                    ; B9CF: B0 2A       .*
+ STA Q                                        ; B9D1: 85 97       ..
+ LDA #8                                       ; B9D3: A9 08       ..
+ JSR LL28                                     ; B9D5: 20 91 FA     ..
+ LDA R                                        ; B9D8: A5 98       ..
+ SEC                                          ; B9DA: 38          8
+ SBC #&14                                     ; B9DB: E9 14       ..
+ STA K_1                                      ; B9DD: 85 7E       .~
+ LDA Yx1M2                                    ; B9DF: A5 B1       ..
+ SBC K_1                                      ; B9E1: E5 7E       .~
+ BCC CB9B9                                    ; B9E3: 90 D4       ..
+ BEQ CB9B9                                    ; B9E5: F0 D2       ..
+ TAY                                          ; B9E7: A8          .
+ JSR subm_E0BA                                ; B9E8: 20 BA E0     ..
+ INC X2                                       ; B9EB: E6 73       .s
+ LDA K_1                                      ; B9ED: A5 7E       .~
+ CLC                                          ; B9EF: 18          .
+ ADC Yx1M2                                    ; B9F0: 65 B1       e.
+ TAY                                          ; B9F2: A8          .
+ JSR subm_E0BA                                ; B9F3: 20 BA E0     ..
+ INC X2                                       ; B9F6: E6 73       .s
+ JMP CB9B9                                    ; B9F8: 4C B9 B9    L..
+
+.CB9FB
+ JSR LD975                                    ; B9FB: 20 75 D9     u.
+ DEC XP                                       ; B9FE: CE FA 03    ...
+ BNE CB999                                    ; BA01: D0 96       ..
+ JMP LD8C5                                    ; BA03: 4C C5 D8    L..
+
+.LBA06
+ EQUB &06, &0F, &38, &2A, &23, &25, &22, &11  ; BA06: 06 0F 38... ..8
+ EQUB &1A, &00, &26, &2C, &20, &13, &0F, &00  ; BA0E: 1A 00 26... ..&
+
+.CBA16
+ RTS                                          ; BA16: 60          `
+
+ LDA K_2                                      ; BA17: A5 7F       ..
+ CLC                                          ; BA19: 18          .
+ ADC K                                        ; BA1A: 65 7D       e}
+ BCS CBA16                                    ; BA1C: B0 F8       ..
+ STA X2                                       ; BA1E: 85 73       .s
+ STA XX15                                     ; BA20: 85 71       .q
+ LDA K_3                                      ; BA22: A5 80       ..
+ SEC                                          ; BA24: 38          8
+ SBC K_1                                      ; BA25: E5 7E       .~
+ BCS CBA2B                                    ; BA27: B0 02       ..
+ LDA #0                                       ; BA29: A9 00       ..
+.CBA2B
+ STA Y1                                       ; BA2B: 85 72       .r
+ LDA K_3                                      ; BA2D: A5 80       ..
+ CLC                                          ; BA2F: 18          .
+ ADC K_1                                      ; BA30: 65 7E       e~
+ BCS CBA3A                                    ; BA32: B0 06       ..
+ CMP Yx2M1                                    ; BA34: C5 B3       ..
+ BCC CBA3A                                    ; BA36: 90 02       ..
+ LDA Yx2M1                                    ; BA38: A5 B3       ..
+.CBA3A
+ STA Y2                                       ; BA3A: 85 74       .t
+ JSR subm_E33E                                ; BA3C: 20 3E E3     >.
+ LDA K_2                                      ; BA3F: A5 7F       ..
+ SEC                                          ; BA41: 38          8
+ SBC K                                        ; BA42: E5 7D       .}
+ BCC CBA16                                    ; BA44: 90 D0       ..
+ STA XX15                                     ; BA46: 85 71       .q
+ JSR subm_E33E                                ; BA48: 20 3E E3     >.
+ INC XX15                                     ; BA4B: E6 71       .q
+ LDY Y1                                       ; BA4D: A4 72       .r
+ BEQ CBA56                                    ; BA4F: F0 05       ..
+ JSR subm_E0BA                                ; BA51: 20 BA E0     ..
+ INC X2                                       ; BA54: E6 73       .s
+.CBA56
+ DEC XX15                                     ; BA56: C6 71       .q
+ INC X2                                       ; BA58: E6 73       .s
+ LDY Y2                                       ; BA5A: A4 74       .t
+ CPY Yx2M1                                    ; BA5C: C4 B3       ..
+ BCS CBA16                                    ; BA5E: B0 B6       ..
+ JMP subm_E0BA                                ; BA60: 4C BA E0    L..
+
+.sub_CBA63
+ LDY #0                                       ; BA63: A0 00       ..
+.CBA65
+ LDA INWK_5,Y                                 ; BA65: B9 0E 00    ...
+ CMP #&41 ; 'A'                               ; BA68: C9 41       .A
+ BCS CBA6E                                    ; BA6A: B0 02       ..
+ LDA #&41 ; 'A'                               ; BA6C: A9 41       .A
+.CBA6E
+ PHA                                          ; BA6E: 48          H
+ PLA                                          ; BA6F: 68          h
+ JSR sub_CBACB                                ; BA70: 20 CB BA     ..
+ BCS CBA9C                                    ; BA73: B0 27       .'
+ CMP #&1B                                     ; BA75: C9 1B       ..
+ BEQ CBAAF                                    ; BA77: F0 36       .6
+ CMP #&7F                                     ; BA79: C9 7F       ..
+ BEQ CBAB5                                    ; BA7B: F0 38       .8
+ CPY L0483                                    ; BA7D: CC 83 04    ...
+ BCS CBA93                                    ; BA80: B0 11       ..
+ CMP #&21 ; '!'                               ; BA82: C9 21       .!
+ BCC CBA93                                    ; BA84: 90 0D       ..
+ CMP #&7B ; '{'                               ; BA86: C9 7B       .{
+ BCS CBA93                                    ; BA88: B0 09       ..
+ STA INWK_5,Y                                 ; BA8A: 99 0E 00    ...
+ INY                                          ; BA8D: C8          .
+ INC XC                                       ; BA8E: E6 32       .2
+ JMP CBA65                                    ; BA90: 4C 65 BA    Le.
+
+.CBA93
+ JSR BEEP_BANK7                               ; BA93: 20 74 F0     t.
+ LDY L0483                                    ; BA96: AC 83 04    ...
+ JMP CBA65                                    ; BA99: 4C 65 BA    Le.
+
+.CBA9C
+ STA INWK_5,Y                                 ; BA9C: 99 0E 00    ...
+ INY                                          ; BA9F: C8          .
+ LDA #&0D                                     ; BAA0: A9 0D       ..
+ STA INWK_5,Y                                 ; BAA2: 99 0E 00    ...
+ LDA #&0C                                     ; BAA5: A9 0C       ..
+ JSR CHPR_BANK2                               ; BAA7: 20 CB F1     ..
+ JSR LD951                                    ; BAAA: 20 51 D9     Q.
+ CLC                                          ; BAAD: 18          .
+ RTS                                          ; BAAE: 60          `
+
+.CBAAF
+ LDA #&0D                                     ; BAAF: A9 0D       ..
+ STA INWK_5                                   ; BAB1: 85 0E       ..
+ SEC                                          ; BAB3: 38          8
+ RTS                                          ; BAB4: 60          `
+
+.CBAB5
+ TYA                                          ; BAB5: 98          .
+ BEQ CBAC4                                    ; BAB6: F0 0C       ..
+ DEY                                          ; BAB8: 88          .
+ LDA #&7F                                     ; BAB9: A9 7F       ..
+ JSR CHPR_BANK2                               ; BABB: 20 CB F1     ..
+ LDA INWK_5,Y                                 ; BABE: B9 0E 00    ...
+ JMP CBA6E                                    ; BAC1: 4C 6E BA    Ln.
+
+.CBAC4
+ JSR BEEP_BANK7                               ; BAC4: 20 74 F0     t.
+ LDY #0                                       ; BAC7: A0 00       ..
+ BEQ CBA65                                    ; BAC9: F0 9A       ..
+.sub_CBACB
+ TAX                                          ; BACB: AA          .
+ STY YSAV                                     ; BACC: 84 9C       ..
+ LDA L0037                                    ; BACE: A5 37       .7
+ PHA                                          ; BAD0: 48          H
+ LDA QQ11                                     ; BAD1: A5 9E       ..
+ AND #&20 ; ' '                               ; BAD3: 29 20       )
+ BEQ CBADB                                    ; BAD5: F0 04       ..
+ LDA #1                                       ; BAD7: A9 01       ..
+ STA L0037                                    ; BAD9: 85 37       .7
+.CBADB
+ TXA                                          ; BADB: 8A          .
+.CBADC
+ PHA                                          ; BADC: 48          H
+ LDY #4                                       ; BADD: A0 04       ..
+ JSR DELAY                                    ; BADF: 20 A2 EB     ..
+ PLA                                          ; BAE2: 68          h
+ PHA                                          ; BAE3: 48          H
+ JSR CHPR_BANK2                               ; BAE4: 20 CB F1     ..
+ DEC XC                                       ; BAE7: C6 32       .2
+ JSR LD951                                    ; BAE9: 20 51 D9     Q.
+ SEC                                          ; BAEC: 38          8
+ LDA CONT1_A                                  ; BAED: AD B2 04    ...
+ BMI CBB2A                                    ; BAF0: 30 38       08
+ CLC                                          ; BAF2: 18          .
+ PLA                                          ; BAF3: 68          h
+ LDX CONT1_B                                  ; BAF4: AE B4 04    ...
+ BMI CBADC                                    ; BAF7: 30 E3       0.
+ LDX L0465                                    ; BAF9: AE 65 04    .e.
+ BNE CBB33                                    ; BAFC: D0 35       .5
+ LDX L04BA                                    ; BAFE: AE BA 04    ...
+ BMI CBB26                                    ; BB01: 30 23       0#
+ LDX L04BB                                    ; BB03: AE BB 04    ...
+ BMI CBB2B                                    ; BB06: 30 23       0#
+ LDX CONT1_UP                                 ; BB08: AE AC 04    ...
+ BPL CBB16                                    ; BB0B: 10 09       ..
+ CLC                                          ; BB0D: 18          .
+ ADC #1                                       ; BB0E: 69 01       i.
+ CMP #&5B ; '['                               ; BB10: C9 5B       .[
+ BNE CBB16                                    ; BB12: D0 02       ..
+ LDA #&41 ; 'A'                               ; BB14: A9 41       .A
+.CBB16
+ LDX CONT1_DOWN                               ; BB16: AE AA 04    ...
+ BPL CBADC                                    ; BB19: 10 C1       ..
+ SEC                                          ; BB1B: 38          8
+ SBC #1                                       ; BB1C: E9 01       ..
+ CMP #&40 ; '@'                               ; BB1E: C9 40       .@
+ BNE CBADC                                    ; BB20: D0 BA       ..
+ LDA #&5A ; 'Z'                               ; BB22: A9 5A       .Z
+ BNE CBADC                                    ; BB24: D0 B6       ..
+.CBB26
+ LDA #&7F                                     ; BB26: A9 7F       ..
+ BNE CBB2B                                    ; BB28: D0 01       ..
+.CBB2A
+ PLA                                          ; BB2A: 68          h
+.CBB2B
+ TAX                                          ; BB2B: AA          .
+ PLA                                          ; BB2C: 68          h
+ STA L0037                                    ; BB2D: 85 37       .7
+ LDY YSAV                                     ; BB2F: A4 9C       ..
+ TXA                                          ; BB31: 8A          .
+ RTS                                          ; BB32: 60          `
+
+.CBB33
+ LDA #&1B                                     ; BB33: A9 1B       ..
+ BNE CBB2B                                    ; BB35: D0 F4       ..
+ JSR CLYNS                                    ; BB37: 20 DE F2     ..
+ INC YC                                       ; BB3A: E6 3B       .;
+ LDA #8                                       ; BB3C: A9 08       ..
+ JSR DETOK_BANK2                              ; BB3E: 20 82 F0     ..
+ LDY #6                                       ; BB41: A0 06       ..
+ STY L0483                                    ; BB43: 8C 83 04    ...
+.loop_CBB46
+ LDA NAME,Y                                   ; BB46: B9 96 03    ...
+ STA INWK_5,Y                                 ; BB49: 99 0E 00    ...
+ DEY                                          ; BB4C: 88          .
+ BPL loop_CBB46                               ; BB4D: 10 F7       ..
+ JSR sub_CBA63                                ; BB4F: 20 63 BA     c.
+ LDA INWK_5                                   ; BB52: A5 0E       ..
+ CMP #&0D                                     ; BB54: C9 0D       ..
+ BEQ CBBB0                                    ; BB56: F0 58       .X
+ LDY #0                                       ; BB58: A0 00       ..
+.loop_CBB5A
+ LDA INWK_5,Y                                 ; BB5A: B9 0E 00    ...
+ CMP #&0D                                     ; BB5D: C9 0D       ..
+ BEQ CBBB6                                    ; BB5F: F0 55       .U
+ INY                                          ; BB61: C8          .
+ CPY #7                                       ; BB62: C0 07       ..
+ BNE loop_CBB5A                               ; BB64: D0 F4       ..
+ DEY                                          ; BB66: 88          .
+.CBB67
+ LDA INWK_5,Y                                 ; BB67: B9 0E 00    ...
+ STA NAME,Y                                   ; BB6A: 99 96 03    ...
+ DEY                                          ; BB6D: 88          .
+ BPL CBB67                                    ; BB6E: 10 F7       ..
+ LDA L03A6                                    ; BB70: AD A6 03    ...
+ BMI CBBB0                                    ; BB73: 30 3B       0;
+ INY                                          ; BB75: C8          .
+ LDX language                                 ; BB76: AE A8 04    ...
+.loop_CBB79
+ LDA NAME,Y                                   ; BB79: B9 96 03    ...
+ CMP LBBC2,X                                  ; BB7C: DD C2 BB    ...
+ BNE CBBB0                                    ; BB7F: D0 2F       ./
+ INX                                          ; BB81: E8          .
+ INX                                          ; BB82: E8          .
+ INX                                          ; BB83: E8          .
+ INX                                          ; BB84: E8          .
+ INY                                          ; BB85: C8          .
+ CPY #7                                       ; BB86: C0 07       ..
+ BNE loop_CBB79                               ; BB88: D0 EF       ..
+ LDA #&80                                     ; BB8A: A9 80       ..
+ STA L03A6                                    ; BB8C: 8D A6 03    ...
+ LDA #&A0                                     ; BB8F: A9 A0       ..
+ CLC                                          ; BB91: 18          .
+ ADC L03A4                                    ; BB92: 6D A4 03    m..
+ STA L03A4                                    ; BB95: 8D A4 03    ...
+ LDA #&86                                     ; BB98: A9 86       ..
+ ADC L03A3                                    ; BB9A: 6D A3 03    m..
+ STA L03A3                                    ; BB9D: 8D A3 03    ...
+ LDA L03A2                                    ; BBA0: AD A2 03    ...
+ ADC #1                                       ; BBA3: 69 01       i.
+ STA L03A2                                    ; BBA5: 8D A2 03    ...
+ LDA CASH                                     ; BBA8: AD A1 03    ...
+ ADC #0                                       ; BBAB: 69 00       i.
+ STA CASH                                     ; BBAD: 8D A1 03    ...
+.CBBB0
+ JSR CLYNS                                    ; BBB0: 20 DE F2     ..
+ JMP LD951                                    ; BBB3: 4C 51 D9    LQ.
+
+.CBBB6
+ LDA #&20 ; ' '                               ; BBB6: A9 20       .
+ STA INWK_5,Y                                 ; BBB8: 99 0E 00    ...
+ CPY #6                                       ; BBBB: C0 06       ..
+ BEQ CBB67                                    ; BBBD: F0 A8       ..
+ INY                                          ; BBBF: C8          .
+ BNE CBBB6                                    ; BBC0: D0 F4       ..
+.LBBC2
+ EQUS "CBTIHERNETIGARCATUHNEGENR RO"          ; BBC2: 43 42 54... CBT
+
+ TYA                                          ; BBDE: 98          .
+ PHA                                          ; BBDF: 48          H
+ LDX #5                                       ; BBE0: A2 05       ..
+ LDA #0                                       ; BBE2: A9 00       ..
+ STA L0081                                    ; BBE4: 85 81       ..
+.loop_CBBE6
+ STA L0403,X                                  ; BBE6: 9D 03 04    ...
+ DEX                                          ; BBE9: CA          .
+ BPL loop_CBBE6                               ; BBEA: 10 FA       ..
+ LDA dashboardSwitch                          ; BBEC: A5 E9       ..
+ BPL CBBF9                                    ; BBEE: 10 09       ..
+ LDA PPU_STATUS                               ; BBF0: AD 02 20    ..
+ ASL A                                        ; BBF3: 0A          .
+ BPL CBBF9                                    ; BBF4: 10 03       ..
+ JSR SwitchTablesTo0                          ; BBF6: 20 6D D0     m.
+.CBBF9
+ LDA scanController2                          ; BBF9: AD 75 04    .u.
+ BEQ CBC32                                    ; BBFC: F0 34       .4
+ LDX #&FF                                     ; BBFE: A2 FF       ..
+ LDA CONT2_DOWN                               ; BC00: AD AB 04    ...
+ BPL CBC08                                    ; BC03: 10 03       ..
+ STX L0407                                    ; BC05: 8E 07 04    ...
+.CBC08
+ LDA CONT2_UP                                 ; BC08: AD AD 04    ...
+ BPL CBC10                                    ; BC0B: 10 03       ..
+ STX L0408                                    ; BC0D: 8E 08 04    ...
+.CBC10
+ LDA CONT2_LEFT                               ; BC10: AD AF 04    ...
+ BPL CBC18                                    ; BC13: 10 03       ..
+ STX L0405                                    ; BC15: 8E 05 04    ...
+.CBC18
+ LDA CONT2_RIGHT                              ; BC18: AD B1 04    ...
+ BPL CBC20                                    ; BC1B: 10 03       ..
+ STX L0406                                    ; BC1D: 8E 06 04    ...
+.CBC20
+ LDA CONT2_A                                  ; BC20: AD B3 04    ...
+ BPL CBC28                                    ; BC23: 10 03       ..
+ STX L0404                                    ; BC25: 8E 04 04    ...
+.CBC28
+ LDA CONT2_B                                  ; BC28: AD B5 04    ...
+ BPL CBC6B                                    ; BC2B: 10 3E       .>
+ STX L0403                                    ; BC2D: 8E 03 04    ...
+ BMI CBC6B                                    ; BC30: 30 39       09
+.CBC32
+ LDX #&FF                                     ; BC32: A2 FF       ..
+ LDA CONT1_B                                  ; BC34: AD B4 04    ...
+ BMI CBC5B                                    ; BC37: 30 22       0"
+ LDA CONT1_DOWN                               ; BC39: AD AA 04    ...
+ BPL CBC41                                    ; BC3C: 10 03       ..
+ STX L0407                                    ; BC3E: 8E 07 04    ...
+.CBC41
+ LDA CONT1_UP                                 ; BC41: AD AC 04    ...
+ BPL CBC49                                    ; BC44: 10 03       ..
+ STX L0408                                    ; BC46: 8E 08 04    ...
+.CBC49
+ LDA CONT1_LEFT                               ; BC49: AD AE 04    ...
+ BPL CBC51                                    ; BC4C: 10 03       ..
+ STX L0405                                    ; BC4E: 8E 05 04    ...
+.CBC51
+ LDA CONT1_RIGHT                              ; BC51: AD B0 04    ...
+ BPL CBC6B                                    ; BC54: 10 15       ..
+ STX L0406                                    ; BC56: 8E 06 04    ...
+ BMI CBC6B                                    ; BC59: 30 10       0.
+.CBC5B
+ LDA CONT1_UP                                 ; BC5B: AD AC 04    ...
+ BPL CBC63                                    ; BC5E: 10 03       ..
+ STX L0404                                    ; BC60: 8E 04 04    ...
+.CBC63
+ LDA CONT1_DOWN                               ; BC63: AD AA 04    ...
+ BPL CBC6B                                    ; BC66: 10 03       ..
+ STX L0403                                    ; BC68: 8E 03 04    ...
+.CBC6B
+ LDA CONT1_A                                  ; BC6B: AD B2 04    ...
+ CMP #&80                                     ; BC6E: C9 80       ..
+ ROR L0409                                    ; BC70: 6E 09 04    n..
+ LDX #0                                       ; BC73: A2 00       ..
+ LDA L0465                                    ; BC75: AD 65 04    .e.
+ STX L0465                                    ; BC78: 8E 65 04    .e.
+ STA L0081                                    ; BC7B: 85 81       ..
+ PLA                                          ; BC7D: 68          h
+ TAY                                          ; BC7E: A8          .
+ LDA L0081                                    ; BC7F: A5 81       ..
+ TAX                                          ; BC81: AA          .
+ RTS                                          ; BC82: 60          `
+
+ LDA #&81                                     ; BC83: A9 81       ..
+ STA L00D6                                    ; BC85: 85 D6       ..
+ LDY #0                                       ; BC87: A0 00       ..
+ STY L03EE                                    ; BC89: 8C EE 03    ...
+ JSR sub_CBDFC                                ; BC8C: 20 FC BD     ..
+ LDA #&CF                                     ; BC8F: A9 CF       ..
+ JSR TT66_BANK0                               ; BC91: 20 6E F2     n.
+ LDA #&8D                                     ; BC94: A9 8D       ..
+ STA L00D6                                    ; BC96: 85 D6       ..
+ LDA #0                                       ; BC98: A9 00       ..
+ STA YC                                       ; BC9A: 85 3B       .;
+ LDA #7                                       ; BC9C: A9 07       ..
+ STA XC                                       ; BC9E: 85 32       .2
+ LDA #3                                       ; BCA0: A9 03       ..
+ LDA #&DF                                     ; BCA2: A9 DF       ..
+ STA QQ11                                     ; BCA4: 85 9E       ..
+ JSR CB96B_BANK4                              ; BCA6: 20 9D ED     ..
+ LDA #&24 ; '$'                               ; BCA9: A9 24       .$
+ STA L00D9                                    ; BCAB: 85 D9       ..
+ LDA #&15                                     ; BCAD: A9 15       ..
+ STA YC                                       ; BCAF: 85 3B       .;
+ LDA #&0A                                     ; BCB1: A9 0A       ..
+ STA XC                                       ; BCB3: 85 32       .2
+ LDA #6                                       ; BCB5: A9 06       ..
+ INC YC                                       ; BCB7: E6 3B       .;
+ LDA #3                                       ; BCB9: A9 03       ..
+ STA XC                                       ; BCBB: 85 32       .2
+ LDA #9                                       ; BCBD: A9 09       ..
+ LDA #&19                                     ; BCBF: A9 19       ..
+ STA YC                                       ; BCC1: 85 3B       .;
+ LDA #3                                       ; BCC3: A9 03       ..
+ STA XC                                       ; BCC5: 85 32       .2
+ LDA #&0C                                     ; BCC7: A9 0C       ..
+ JSR DETOK_BANK2                              ; BCC9: 20 82 F0     ..
+ LDA #&1A                                     ; BCCC: A9 1A       ..
+ STA YC                                       ; BCCE: 85 3B       .;
+ LDA #6                                       ; BCD0: A9 06       ..
+ STA XC                                       ; BCD2: 85 32       .2
+ LDA #7                                       ; BCD4: A9 07       ..
+ LDY #2                                       ; BCD6: A0 02       ..
+ LDA #&E5                                     ; BCD8: A9 E5       ..
+.loop_CBCDA
+ STA L7380,Y                                  ; BCDA: 99 80 73    ..s
+ INY                                          ; BCDD: C8          .
+ CPY #&20 ; ' '                               ; BCDE: C0 20       .
+ BNE loop_CBCDA                               ; BCE0: D0 F8       ..
+ LDA #2                                       ; BCE2: A9 02       ..
+ STA L7360                                    ; BCE4: 8D 60 73    .`s
+ STA L7380                                    ; BCE7: 8D 80 73    ..s
+ LDA #1                                       ; BCEA: A9 01       ..
+ STA L7361                                    ; BCEC: 8D 61 73    .as
+ STA L7381                                    ; BCEF: 8D 81 73    ..s
+ LDY #0                                       ; BCF2: A0 00       ..
+.loop_CBCF4
+ JSR sub_CBDFC                                ; BCF4: 20 FC BD     ..
+ LDA LBE2C,Y                                  ; BCF7: B9 2C BE    .,.
+ STA XC                                       ; BCFA: 85 32       .2
+ LDA LBE30,Y                                  ; BCFC: B9 30 BE    .0.
+ STA YC                                       ; BCFF: 85 3B       .;
+ LDA #0                                       ; BD01: A9 00       ..
+ STA DTW8                                     ; BD03: 8D F9 03    ...
+ LDA #4                                       ; BD06: A9 04       ..
+ JSR DETOK_BANK2                              ; BD08: 20 82 F0     ..
+ INC XC                                       ; BD0B: E6 32       .2
+ INC XC                                       ; BD0D: E6 32       .2
+ INY                                          ; BD0F: C8          .
+ LDA LBE4B,Y                                  ; BD10: B9 4B BE    .K.
+ BPL loop_CBCF4                               ; BD13: 10 DF       ..
+ STY L049F                                    ; BD15: 8C 9F 04    ...
+ LDA #&8D                                     ; BD18: A9 8D       ..
+ STA L00D6                                    ; BD1A: 85 D6       ..
+ JSR LF2C0                                    ; BD1C: 20 C0 F2     ..
+ LDA CONT1_LEFT                               ; BD1F: AD AE 04    ...
+ AND CONT1_UP                                 ; BD22: 2D AC 04    -..
+ AND CONT1_SELECT                             ; BD25: 2D B8 04    -..
+ AND CONT1_B                                  ; BD28: 2D B4 04    -..
+ BPL CBD3E                                    ; BD2B: 10 11       ..
+ LDA CONT1_RIGHT                              ; BD2D: AD B0 04    ...
+ ORA CONT1_DOWN                               ; BD30: 0D AA 04    ...
+ ORA CONT1_START                              ; BD33: 0D B6 04    ...
+ ORA CONT1_A                                  ; BD36: 0D B2 04    ...
+ BMI CBD3E                                    ; BD39: 30 03       0.
+ JSR sub_CB818                                ; BD3B: 20 18 B8     ..
+.CBD3E
+ JSR CB88C_BANK6                              ; BD3E: 20 B9 ED     ..
+ LDA #&80                                     ; BD41: A9 80       ..
+ STA S                                        ; BD43: 85 99       ..
+ LDA #&19                                     ; BD45: A9 19       ..
+ STA T                                        ; BD47: 85 9A       ..
+ LDA L0601                                    ; BD49: AD 01 06    ...
+ STA V_1                                      ; BD4C: 85 64       .d
+ LDA #0                                       ; BD4E: A9 00       ..
+ STA V                                        ; BD50: 85 63       .c
+ STA Q                                        ; BD52: 85 97       ..
+ LDA Kpercent                                 ; BD54: AD 00 06    ...
+ STA LASCT                                    ; BD57: 8D 8F 03    ...
+.CBD5A
+ JSR LD167                                    ; BD5A: 20 67 D1     g.
+ LDY LASCT                                    ; BD5D: AC 8F 03    ...
+ LDA LBE2C,Y                                  ; BD60: B9 2C BE    .,.
+ ASL A                                        ; BD63: 0A          .
+ ASL A                                        ; BD64: 0A          .
+ ASL A                                        ; BD65: 0A          .
+ ADC #0                                       ; BD66: 69 00       i.
+ TAX                                          ; BD68: AA          .
+ CLC                                          ; BD69: 18          .
+ LDY #0                                       ; BD6A: A0 00       ..
+.loop_CBD6C
+ LDA #&F0                                     ; BD6C: A9 F0       ..
+ STA SPR_05_Y,Y                               ; BD6E: 99 14 02    ...
+ LDA #&FF                                     ; BD71: A9 FF       ..
+ STA SPR_05_TILE,Y                            ; BD73: 99 15 02    ...
+ LDA #&20 ; ' '                               ; BD76: A9 20       .
+ STA SPR_05_ATTR,Y                            ; BD78: 99 16 02    ...
+ TXA                                          ; BD7B: 8A          .
+ STA SPR_05_X,Y                               ; BD7C: 99 17 02    ...
+ ADC #8                                       ; BD7F: 69 08       i.
+ TAX                                          ; BD81: AA          .
+ INY                                          ; BD82: C8          .
+ INY                                          ; BD83: C8          .
+ INY                                          ; BD84: C8          .
+ INY                                          ; BD85: C8          .
+ CPY #&20 ; ' '                               ; BD86: C0 20       .
+ BNE loop_CBD6C                               ; BD88: D0 E2       ..
+ LDX LASCT                                    ; BD8A: AE 8F 03    ...
+ LDA LBE3C,X                                  ; BD8D: BD 3C BE    .<.
+ ASL A                                        ; BD90: 0A          .
+ ASL A                                        ; BD91: 0A          .
+ TAY                                          ; BD92: A8          .
+ LDA LBE30,X                                  ; BD93: BD 30 BE    .0.
+ ASL A                                        ; BD96: 0A          .
+ ASL A                                        ; BD97: 0A          .
+ ASL A                                        ; BD98: 0A          .
+ ADC #6                                       ; BD99: 69 06       i.
+.loop_CBD9B
+ STA SPR_05_Y,Y                               ; BD9B: 99 14 02    ...
+ DEY                                          ; BD9E: 88          .
+ DEY                                          ; BD9F: 88          .
+ DEY                                          ; BDA0: 88          .
+ DEY                                          ; BDA1: 88          .
+ BPL loop_CBD9B                               ; BDA2: 10 F7       ..
+ LDA CONT1_START                              ; BDA4: AD B6 04    ...
+ AND #&C0                                     ; BDA7: 29 C0       ).
+ CMP #&40 ; '@'                               ; BDA9: C9 40       .@
+ BNE CBDAF                                    ; BDAB: D0 02       ..
+ LSR S                                        ; BDAD: 46 99       F.
+.CBDAF
+ LDX LASCT                                    ; BDAF: AE 8F 03    ...
+ LDA CONT1_LEFT                               ; BDB2: AD AE 04    ...
+ AND #&C0                                     ; BDB5: 29 C0       ).
+ CMP #&40 ; '@'                               ; BDB7: C9 40       .@
+ BNE CBDC1                                    ; BDB9: D0 06       ..
+ DEX                                          ; BDBB: CA          .
+ LDA L0601                                    ; BDBC: AD 01 06    ...
+ STA V_1                                      ; BDBF: 85 64       .d
+.CBDC1
+ LDA CONT1_RIGHT                              ; BDC1: AD B0 04    ...
+ AND #&C0                                     ; BDC4: 29 C0       ).
+ CMP #&40 ; '@'                               ; BDC6: C9 40       .@
+ BNE CBDD0                                    ; BDC8: D0 06       ..
+ INX                                          ; BDCA: E8          .
+ LDA L0601                                    ; BDCB: AD 01 06    ...
+ STA V_1                                      ; BDCE: 85 64       .d
+.CBDD0
+ TXA                                          ; BDD0: 8A          .
+ BPL CBDD5                                    ; BDD1: 10 02       ..
+ LDA #0                                       ; BDD3: A9 00       ..
+.CBDD5
+ CMP #3                                       ; BDD5: C9 03       ..
+ BCC CBDDB                                    ; BDD7: 90 02       ..
+ LDA #2                                       ; BDD9: A9 02       ..
+.CBDDB
+ STA LASCT                                    ; BDDB: 8D 8F 03    ...
+ DEC T                                        ; BDDE: C6 9A       ..
+ BEQ CBDE5                                    ; BDE0: F0 03       ..
+.CBDE2
+ JMP CBD5A                                    ; BDE2: 4C 5A BD    LZ.
+
+.CBDE5
+ INC T                                        ; BDE5: E6 9A       ..
+ LDA S                                        ; BDE7: A5 99       ..
+ BPL CBDF9                                    ; BDE9: 10 0E       ..
+ DEC V                                        ; BDEB: C6 63       .c
+ BNE CBDE2                                    ; BDED: D0 F3       ..
+ DEC V_1                                      ; BDEF: C6 64       .d
+ BNE CBDE2                                    ; BDF1: D0 EF       ..
+ JSR CBDF9                                    ; BDF3: 20 F9 BD     ..
+ JMP CBF41_BANK5                              ; BDF6: 4C 81 ED    L..
+
+.CBDF9
+ LDY LASCT                                    ; BDF9: AC 8F 03    ...
+.sub_CBDFC
+ LDA LBE3F,Y                                  ; BDFC: B9 3F BE    .?.
+ STA QQ18Lo                                   ; BDFF: 8D A4 04    ...
+ LDA LBE42,Y                                  ; BE02: B9 42 BE    .B.
+ STA QQ18Hi                                   ; BE05: 8D A5 04    ...
+ LDA LBE45,Y                                  ; BE08: B9 45 BE    .E.
+ STA TKN1Lo                                   ; BE0B: 8D A6 04    ...
+ LDA LBE48,Y                                  ; BE0E: B9 48 BE    .H.
+ STA TKN1Hi                                   ; BE11: 8D A7 04    ...
+ LDA LBE4B,Y                                  ; BE14: B9 4B BE    .K.
+ STA language                                 ; BE17: 8D A8 04    ...
+ LDA LBE4F,Y                                  ; BE1A: B9 4F BE    .O.
+ STA L04A9                                    ; BE1D: 8D A9 04    ...
+ LDA LBE34,Y                                  ; BE20: B9 34 BE    .4.
+ STA L00F9                                    ; BE23: 85 F9       ..
+ LDA LBE38,Y                                  ; BE25: B9 38 BE    .8.
+ STA L03FD                                    ; BE28: 8D FD 03    ...
+ RTS                                          ; BE2B: 60          `
+
+.LBE2C
+ EQUB &02, &0C, &16, &11                      ; BE2C: 02 0C 16... ...
+.LBE30
+ EQUB &17, &18, &17, &18                      ; BE30: 17 18 17... ...
+.LBE34
+ EQUB &5B, &60, &60, &60                      ; BE34: 5B 60 60... [``
+.LBE38
+ EQUB &2E, &2E, &2C, &2E                      ; BE38: 2E 2E 2C... ..,
+.LBE3C
+ EQUB &06, &06, &07                           ; BE3C: 06 06 07    ...
+.LBE3F
+ EQUB &CF, &9C, &4D                           ; BE3F: CF 9C 4D    ..M
+.LBE42
+ EQUB &A3, &A7, &AC                           ; BE42: A3 A7 AC    ...
+.LBE45
+ EQUB &0C, &FD, &2C                           ; BE45: 0C FD 2C    ..,
+.LBE48
+ EQUB &80, &8D, &9A                           ; BE48: 80 8D 9A    ...
+.LBE4B
+ EQUB &00, &01, &02, &FF                      ; BE4B: 00 01 02... ...
+.LBE4F
+ EQUB &01, &02, &04                           ; BE4F: 01 02 04    ...
+
+ LDA QQ15_1                                   ; BE52: A5 83       ..
+ AND #7                                       ; BE54: 29 07       ).
+ STA QQ3                                      ; BE56: 8D 94 04    ...
+ LDA QQ15_2                                   ; BE59: A5 84       ..
+ LSR A                                        ; BE5B: 4A          J
+ LSR A                                        ; BE5C: 4A          J
+ LSR A                                        ; BE5D: 4A          J
+ AND #7                                       ; BE5E: 29 07       ).
+ STA QQ4                                      ; BE60: 8D 95 04    ...
+ LSR A                                        ; BE63: 4A          J
+ BNE CBE6E                                    ; BE64: D0 08       ..
+ LDA QQ3                                      ; BE66: AD 94 04    ...
+ ORA #2                                       ; BE69: 09 02       ..
+ STA QQ3                                      ; BE6B: 8D 94 04    ...
+.CBE6E
+ LDA QQ3                                      ; BE6E: AD 94 04    ...
+ EOR #7                                       ; BE71: 49 07       I.
+ CLC                                          ; BE73: 18          .
+ STA QQ5                                      ; BE74: 8D 96 04    ...
+ LDA QQ15_3                                   ; BE77: A5 85       ..
+ AND #3                                       ; BE79: 29 03       ).
+ ADC QQ5                                      ; BE7B: 6D 96 04    m..
+ STA QQ5                                      ; BE7E: 8D 96 04    ...
+ LDA dashboardSwitch                          ; BE81: A5 E9       ..
+ BPL CBE8E                                    ; BE83: 10 09       ..
+ LDA PPU_STATUS                               ; BE85: AD 02 20    ..
+ ASL A                                        ; BE88: 0A          .
+ BPL CBE8E                                    ; BE89: 10 03       ..
+ JSR SwitchTablesTo0                          ; BE8B: 20 6D D0     m.
+.CBE8E
+ LDA QQ4                                      ; BE8E: AD 95 04    ...
+ LSR A                                        ; BE91: 4A          J
+ ADC QQ5                                      ; BE92: 6D 96 04    m..
+ STA QQ5                                      ; BE95: 8D 96 04    ...
+ ASL A                                        ; BE98: 0A          .
+ ASL A                                        ; BE99: 0A          .
+ ADC QQ3                                      ; BE9A: 6D 94 04    m..
+ ADC QQ4                                      ; BE9D: 6D 95 04    m..
+ ADC #1                                       ; BEA0: 69 01       i.
+ STA L0497                                    ; BEA2: 8D 97 04    ...
+ LDA QQ3                                      ; BEA5: AD 94 04    ...
+ EOR #7                                       ; BEA8: 49 07       I.
+ ADC #3                                       ; BEAA: 69 03       i.
+ STA P                                        ; BEAC: 85 2F       ./
+ LDA QQ4                                      ; BEAE: AD 95 04    ...
+ ADC #4                                       ; BEB1: 69 04       i.
+ STA Q                                        ; BEB3: 85 97       ..
+ JSR MULTU                                    ; BEB5: 20 21 F7     !.
+ LDA L0497                                    ; BEB8: AD 97 04    ...
+ STA Q                                        ; BEBB: 85 97       ..
+ JSR MULTU                                    ; BEBD: 20 21 F7     !.
+ ASL P                                        ; BEC0: 06 2F       ./
+ ROL A                                        ; BEC2: 2A          *
+ ASL P                                        ; BEC3: 06 2F       ./
+ ROL A                                        ; BEC5: 2A          *
+ ASL P                                        ; BEC6: 06 2F       ./
+ ROL A                                        ; BEC8: 2A          *
+ STA L049A                                    ; BEC9: 8D 9A 04    ...
+ LDA P                                        ; BECC: A5 2F       ./
+ STA L0499                                    ; BECE: 8D 99 04    ...
+ RTS                                          ; BED1: 60          `
+
+ JSR CheckDashboardA                          ; BED2: 20 7D EC     }.
+ LDA #0                                       ; BED5: A9 00       ..
+ STA L7280                                    ; BED7: 8D 80 72    ..r
+ STA L72A0                                    ; BEDA: 8D A0 72    ..r
+ STA L72C0                                    ; BEDD: 8D C0 72    ..r
+ STA L72E0                                    ; BEE0: 8D E0 72    ..r
+ STA L7300                                    ; BEE3: 8D 00 73    ..s
+ STA L7320                                    ; BEE6: 8D 20 73    . s
+ STA L7340                                    ; BEE9: 8D 40 73    .@s
+ STA L7360                                    ; BEEC: 8D 60 73    .`s
+ STA L7680                                    ; BEEF: 8D 80 76    ..v
+ STA L76A0                                    ; BEF2: 8D A0 76    ..v
+ STA L76C0                                    ; BEF5: 8D C0 76    ..v
+ STA L76E0                                    ; BEF8: 8D E0 76    ..v
+ STA L7700                                    ; BEFB: 8D 00 77    ..w
+ STA L7720                                    ; BEFE: 8D 20 77    . w
+ STA L7740                                    ; BF01: 8D 40 77    .@w
+ STA L7760                                    ; BF04: 8D 60 77    .`w
+ RTS                                          ; BF07: 60          `
+
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF08: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF10: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF18: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF20: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF28: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF30: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF38: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF40: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF48: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF50: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF58: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF60: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF68: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF70: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF78: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF80: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF88: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF90: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF98: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BFA0: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BFA8: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BFB0: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BFB8: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BFC0: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BFC8: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BFD0: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BFD8: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BFE0: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BFE8: FF FF FF... ...
+ EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BFF0: FF FF FF... ...
+ EQUB &FF, &FF,   7, &C0,   0, &C0,   7, &C0  ; BFF8: FF FF 07... ...
 .pydis_end
 
 SAVE pydis_start, pydis_end
