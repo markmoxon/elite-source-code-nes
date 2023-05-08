@@ -58,46 +58,46 @@
  PPU_DATA   = &2007
  OAM_DMA    = &4014
  
- SNE        = &C500     \ Addresses of routines in bank 7
- ACT        = &C520
- XX21       = &C540
- SWITCH_TO_TABLE_0 = &D06D
- LD9F7      = &D9F7
- LDA18      = &DA18
- LDAF8      = &DAF8
- LOIN       = &DC0F
- LE04A      = &E04A
- LE0BA      = &E0BA
- PIXEL      = &E4F0
- MVS5_BANK0 = &F1A2
- TT66       = &F26E
- LF2CE      = &F2CE
- DORND2     = &F4AC
- DORND      = &F4AD
- PROJ       = &F4C1
- MLS2       = &F6BA
- MLS1       = &F6C2
- MULTS      = &F6C6
- SQUA2      = &F70E
- MLU1       = &F718
- MLU2       = &F71D
- MULTU      = &F721
- FMLTU2     = &F766
- FMLTU      = &F770
- MUT2       = &F7D2
- MUT1       = &F7D6
- MULT1      = &F7DA
- MULT12     = &F83C
- MAD        = &F86F
- ADD        = &F872
- TIS1       = &F8AE
- DV42       = &F8D1
- DV41       = &F8D4
- LF8D8      = &F8D8
- DVID3B2    = &F962
- LL5        = &FA55
- LL28       = &FA91
- NORM       = &FAF8
+ SNE                = &C500
+ ACT                = &C520
+ XX21               = &C540
+ SwitchTablesTo0    = &D06D
+ TWOS               = &D9F7
+ yLookupLo          = &DA18
+ yLookupHi          = &DAF8
+ LOIN               = &DC0F
+ LE04A              = &E04A
+ LE0BA              = &E0BA
+ PIXEL              = &E4F0
+ MVS5_BANK0         = &F1A2
+ TT66               = &F26E
+ LF2CE              = &F2CE
+ DORND2             = &F4AC
+ DORND              = &F4AD
+ PROJ               = &F4C1
+ MLS2               = &F6BA
+ MLS1               = &F6C2
+ MULTS              = &F6C6
+ SQUA2              = &F70E
+ MLU1               = &F718
+ MLU2               = &F71D
+ MULTU              = &F721
+ FMLTU2             = &F766
+ FMLTU              = &F770
+ MUT2               = &F7D2
+ MUT1               = &F7D6
+ MULT1              = &F7DA
+ MULT12             = &F83C
+ MAD                = &F86F
+ ADD                = &F872
+ TIS1               = &F8AE
+ DV42               = &F8D1
+ DV41               = &F8D4
+ DVID4              = &F8D8
+ DVID3B2            = &F962
+ LL5                = &FA55
+ LL28               = &FA91
+ NORM               = &FAF8
 
 \ ******************************************************************************
 \
@@ -673,9 +673,11 @@
                         \ space view, which is also the y-coordinate of the
                         \ bottom pixel row of the space view
 
-.L00B4
+.messXC
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Temporary storage, used to store the text column
+                        \ of the in-flight message in MESS, so it can be erased
+                        \ from the screen at the correct time
 
 .L00B5
 
@@ -690,21 +692,17 @@
 
  SKIP 1                 \ ???
 
-.L00B8
+.tileNumber
 
  SKIP 1                 \ ???
 
-.L00B9
+.patternTableHi
 
  SKIP 1                 \ ???
 
-.L00BA
+.addr3
 
- SKIP 1                 \ ???
-
-.L00BB
-
- SKIP 1                 \ ???
+ SKIP 2                 \ ???
 
 .L00BC
 
@@ -802,13 +800,9 @@
 
  SKIP 1                 \ ???
 
-.ADDR1_LO
+.addr1
 
- SKIP 1                 \ ???
-
-.ADDR1_HI
-
- SKIP 1                 \ ???
+ SKIP 2                 \ ???
 
 .L00D6
 
@@ -834,7 +828,7 @@
 
  SKIP 11                \ ???
 
-.L00E6
+.nametableHi
 
  SKIP 1                 \ ???
 
@@ -846,7 +840,7 @@
 
  SKIP 1                 \ ???
 
-.DASHBOARD_SWITCH
+.dashboardSwitch
 
  SKIP 1                 \ ???
 
@@ -894,7 +888,7 @@
 
  SKIP 1                 \ ???
 
-.PPU_CTRL_COPY
+.ppuCtrlCopy
 
  SKIP 1                 \ ???
 
@@ -902,7 +896,7 @@
 
  SKIP 1                 \ ???
 
-.BANK
+.currentBank
 
  SKIP 1                 \ ???
 
@@ -914,13 +908,9 @@
 
  SKIP 1                 \ ???
 
-.ADDR2_LO
+.addr2
 
- SKIP 1                 \ ???
-
-.ADDR2_HI
-
- SKIP 1                 \ ???
+ SKIP 2                 \ ???
 
 .L00FC
 
@@ -1341,10 +1331,10 @@
  QQ8                 = &049B
  QQ9                 = &049D
  QQ10                = &049E
- QQ18_LO              = &04A4
- QQ18_HI              = &04A5
- TKN1_LO             = &04A6
- TKN1_HI             = &04A7
+ QQ18Lo              = &04A4
+ QQ18Hi              = &04A5
+ TKN1Lo              = &04A6
+ TKN1Hi              = &04A7
  SX                  = &04C8
  SY                  = &04DD
  SZ                  = &04F2
@@ -1406,7 +1396,7 @@
 
 \ ******************************************************************************
 \
-\       Name: RESET_MMC1
+\       Name: ResetMMC1
 \       Type: Variable
 \   Category: Start and end
 \    Summary: The MMC1 mapper reset routine at the start of the ROM bank
@@ -1431,7 +1421,7 @@
 \
 \ ******************************************************************************
 
-.RESET_MMC1
+.ResetMMC1
 
  SEI                    \ Disable interrupts
 
@@ -1462,7 +1452,7 @@
 
 \ ******************************************************************************
 \
-\       Name: NMIRQ_MMC1
+\       Name: Interrupts
 \       Type: Subroutine
 \   Category: Text
 \    Summary: The IRQ and NMI handler while the MMC1 mapper reset routine is
@@ -1470,7 +1460,7 @@
 \
 \ ******************************************************************************
 
-.NMIRQ_MMC1
+.Interrupts
 
  RTI                    \ Return from the IRQ interrupt without doing anything
                         \
@@ -1480,7 +1470,7 @@
                         \ interrupts that go via the vector at &FFFA will end up
                         \ here and be dealt with
                         \
-                        \ Once bank 7 is switched into &C000 by the RESET_MMC1
+                        \ Once bank 7 is switched into &C000 by the ResetMMC1
                         \ routine, the vector is overwritten with the last two
                         \ bytes of bank 7, which point to the IRQ routine
 
@@ -1507,12 +1497,12 @@
 
 MACRO CHECK_DASHBOARD
 
- LDA DASHBOARD_SWITCH   \ If bit 7 of DASHBOARD_SWITCH and bit 6 of PPU_STATUS
- BPL skip               \ are set, then call SWITCH_TO_TABLE_0 to:
+ LDA dashboardSwitch    \ If bit 7 of dashboardSwitch and bit 6 of PPU_STATUS
+ BPL skip               \ are set, then call SwitchTablesTo0 to:
  LDA PPU_STATUS         \
- ASL A                  \   * Zero DASHBOARD_SWITCH to disable this process
+ ASL A                  \   * Zero dashboardSwitch to disable this process
  BPL skip               \     until both conditions are met once again
- JSR SWITCH_TO_TABLE_0  \
+ JSR SwitchTablesTo0    \
                         \   * Clear bits 0 and 4 of PPU_CTRL and PPU_CTRL_COPY,
                         \     to set the base nametable address to &2000 (for
                         \     nametable 0) or &2800 (which is a mirror of &2000)
@@ -8458,7 +8448,7 @@ ENDMACRO
                         \ the explosion flags and return from the subroutine
 
  STA L002B
- JSR LF8D8
+ JSR DVID4
 
  CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
                         \ to nametable 0 (&2000) and pattern table 0 (&0000)
@@ -12440,11 +12430,11 @@ ENDMACRO
  LSR A
  LSR A
  CLC
- ADC LDA18,Y
- STA L00BA
- LDA L00E6
- ADC LDAF8,Y
- STA L00BB
+ ADC yLookupLo,Y
+ STA addr3
+ LDA nametableHi
+ ADC yLookupHi,Y
+ STA addr3+1
  LDA S
  AND #7
  STA T
@@ -12452,9 +12442,9 @@ ENDMACRO
  CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
                         \ to nametable 0 (&2000) and pattern table 0 (&0000)
  LDX #0
- LDA (L00BA,X)
+ LDA (addr3,X)
  BEQ CB615
- LDX L00B9
+ LDX patternTableHi
  STX SC+1
  ASL A
  ROL SC+1
@@ -12467,10 +12457,10 @@ ENDMACRO
  LDX T
 .loop_CB5FF
  LDA (SC),Y
- AND LD9F7,X
+ AND TWOS,X
  BNE CB62A
  LDA (SC),Y
- ORA LD9F7,X
+ ORA TWOS,X
  STA (SC),Y
  INY
  CPY #8
@@ -12481,14 +12471,14 @@ ENDMACRO
  LDA T
  CLC
  ADC #&34
- STA (L00BA,X)
+ STA (addr3,X)
 .CB61C
- LDA L00BA
+ LDA addr3
  CLC
  ADC #&20
- STA L00BA
+ STA addr3
  BCC CB5D9
- INC L00BB
+ INC addr3+1
  JMP CB5D9
 
 .CB62A
@@ -12503,11 +12493,11 @@ ENDMACRO
  LSR A
  LSR A
  CLC
- ADC LDA18,Y
- STA L00BA
- LDA L00E6
- ADC LDAF8,Y
- STA L00BB
+ ADC yLookupLo,Y
+ STA addr3
+ LDA nametableHi
+ ADC yLookupHi,Y
+ STA addr3+1
  TYA
  AND #7
  TAY
@@ -12515,9 +12505,9 @@ ENDMACRO
  CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
                         \ to nametable 0 (&2000) and pattern table 0 (&0000)
  LDX #0
- LDA (L00BA,X)
+ LDA (addr3,X)
  BEQ CB699
- LDX L00B9
+ LDX patternTableHi
  STX SC+1
  ASL A
  ROL SC+1
@@ -12551,9 +12541,9 @@ ENDMACRO
 .loop_CB689
  DEC R
  BEQ CB696
- INC L00BA
+ INC addr3
  BNE CB647
- INC L00BB
+ INC addr3+1
  JMP CB647
 
 .CB696
@@ -12564,7 +12554,7 @@ ENDMACRO
  TYA
  CLC
  ADC #&25
- STA (L00BA,X)
+ STA (addr3,X)
  JMP loop_CB689
 .HAS3
 
@@ -12574,11 +12564,11 @@ ENDMACRO
  LSR A
  LSR A
  CLC
- ADC LDA18,Y
- STA L00BA
- LDA L00E6
- ADC LDAF8,Y
- STA L00BB
+ ADC yLookupLo,Y
+ STA addr3
+ LDA nametableHi
+ ADC yLookupHi,Y
+ STA addr3+1
  TYA
  AND #7
  TAY
@@ -12586,9 +12576,9 @@ ENDMACRO
  CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
                         \ to nametable 0 (&2000) and pattern table 0 (&0000)
  LDX #0
- LDA (L00BA,X)
+ LDA (addr3,X)
  BEQ CB70B
- LDX L00B9
+ LDX patternTableHi
  STX SC+1
  ASL A
  ROL SC+1
@@ -12623,18 +12613,18 @@ ENDMACRO
 .loop_CB6FC
  DEC R
  BEQ loop_CB6F5
- LDA L00BA
+ LDA addr3
  BNE CB706
- DEC L00BB
+ DEC addr3+1
 .CB706
- DEC L00BA
+ DEC addr3
  JMP CB6BA
 
 .CB70B
  TYA
  CLC
  ADC #&25
- STA (L00BA,X)
+ STA (addr3,X)
  JMP loop_CB6FC
 
 \ ******************************************************************************
@@ -13467,20 +13457,20 @@ ENDMACRO
 .CB99E
  CMP #&40
  BCS CB969
- STA L00BA
+ STA addr3
  LDA INWK+1
  ADC INWK+4
  ADC INWK+7
  BCS CB969
  SEC
- SBC L00BA
+ SBC addr3
  LSR A
  LSR A
- STA L00BB
+ STA addr3+1
  LSR A
  LSR A
- ADC L00BB
- ADC L00BA
+ ADC addr3+1
+ ADC addr3
  CMP #&40
  BCS CB969
  LDA INWK+1
@@ -13491,7 +13481,7 @@ ENDMACRO
  ADC #1
 .CB9C8
  ADC #&7C
- STA L00BA
+ STA addr3
  LDA INWK+7
  LSR A
  LSR A
@@ -13502,7 +13492,7 @@ ENDMACRO
  SEC
 .CB9D8
  ADC #&C7
- STA L00BB
+ STA addr3+1
  LDA INWK+4
  CMP #&30
  BCC CB9E4
@@ -13517,17 +13507,17 @@ ENDMACRO
  JMP CBA6C
 
 .CB9F1
- LDA L00BB
+ LDA addr3+1
  SEC
  SBC #8
- STA L00BB
+ STA addr3+1
  LDA Y1
  CMP #&10
  BCC CBA24
- LDA L00BA
+ LDA addr3
  STA SPR_00_X,Y
  STA SPR_01_X,Y
- LDA L00BB
+ LDA addr3+1
  STA SPR_00_Y,Y
  SEC
  SBC #8
@@ -13536,25 +13526,25 @@ ENDMACRO
  AND #3
  STA SPR_00_ATTR,Y
  STA SPR_01_ATTR,Y
- LDA L00BB
+ LDA addr3+1
  SBC #&10
- STA L00BB
+ STA addr3+1
  BNE CBA4F
 .CBA24
  CMP #8
  BCC CBA47
  LDA #&F0
  STA SPR_00_Y,Y
- LDA L00BA
+ LDA addr3
  STA SPR_01_X,Y
- LDA L00BB
+ LDA addr3+1
  STA SPR_01_Y,Y
  LDA SPR_00_ATTR,Y
  AND #3
  STA SPR_01_ATTR,Y
- LDA L00BB
+ LDA addr3+1
  SBC #8
- STA L00BB
+ STA addr3+1
  BNE CBA4F
 .CBA47
  LDA #&F0
@@ -13569,28 +13559,28 @@ ENDMACRO
  LDA SPR_00_ATTR,Y
  AND #3
  STA SPR_02_ATTR,Y
- LDA L00BA
+ LDA addr3
  STA SPR_02_X,Y
- LDA L00BB
+ LDA addr3+1
  STA SPR_02_Y,Y
  RTS
 
 .CBA6C
  CLC
- ADC L00BB
+ ADC addr3+1
  CMP #&DC
  BCC CBA75
  LDA #&DC
 .CBA75
  SEC
- SBC L00BB
+ SBC addr3+1
  STA Y1
  CMP #&10
  BCC CBAA5
- LDA L00BA
+ LDA addr3
  STA SPR_00_X,Y
  STA SPR_01_X,Y
- LDA L00BB
+ LDA addr3+1
  STA SPR_00_Y,Y
  CLC
  ADC #8
@@ -13599,26 +13589,26 @@ ENDMACRO
  ORA #&20
  STA SPR_00_ATTR,Y
  STA SPR_01_ATTR,Y
- LDA L00BB
+ LDA addr3+1
  CLC
  ADC #&10
- STA L00BB
+ STA addr3+1
  BNE CBAD0
 .CBAA5
  CMP #8
  BCC CBAC8
  LDA #&F0
  STA SPR_00_Y,Y
- LDA L00BA
+ LDA addr3
  STA SPR_01_X,Y
- LDA L00BB
+ LDA addr3+1
  STA SPR_01_Y,Y
  LDA SPR_00_ATTR,Y
  ORA #&20
  STA SPR_01_ATTR,Y
- LDA L00BB
+ LDA addr3+1
  ADC #7
- STA L00BB
+ STA addr3+1
  BNE CBAD0
 .CBAC8
  LDA #&F0
@@ -13633,9 +13623,9 @@ ENDMACRO
  LDA SPR_00_ATTR,Y
  ORA #&E0
  STA SPR_02_ATTR,Y
- LDA L00BA
+ LDA addr3
  STA SPR_02_X,Y
- LDA L00BB
+ LDA addr3+1
  STA SPR_02_Y,Y
  RTS
 
@@ -14009,15 +13999,15 @@ ENDMACRO
 
  NEXT
 
- EQUW NMIRQ_MMC1+&4000  \ Vector to the NMI handler in case this bank is loaded
+ EQUW Interrupts+&4000  \ Vector to the NMI handler in case this bank is loaded
                         \ into &C000 during startup (the handler contains an RTI
                         \ so the interrupt is processed but has no effect)
 
- EQUW RESET_MMC1+&4000  \ Vector to the RESET handler in case this bank is
+ EQUW ResetMMC1+&4000   \ Vector to the RESET handler in case this bank is
                         \ loaded into &C000 during startup (the handler resets
                         \ the MMC1 mapper to map bank 7 into &C000 instead)
 
- EQUW NMIRQ_MMC1+&4000  \ Vector to the IRQ/BRK handler in case this bank is
+ EQUW Interrupts+&4000  \ Vector to the IRQ/BRK handler in case this bank is
                         \ loaded into &C000 during startup (the handler contains
                         \ an RTI so the interrupt is processed but has no
                         \ effect)

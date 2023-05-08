@@ -54,81 +54,21 @@
  PPU_DATA   = &2007
  OAM_DMA    = &4014
 
- RESETBANK           = &C0AD    \ Addresses of routines in bank 7
- SETBANK             = &C0AE
- log                 = &C100
- logL                = &C200
- antilog             = &C300
- antilogODD          = &C400
- SNE                 = &C500
- ACT                 = &C520
- XX21m2              = &C53E
- XX21m1              = &C53F
- XX21                = &C540
- UNIV                = &CE7E
- UNIV_1              = &CE7E
- GINF                = &CE90
- NMI                 = &CED5
- SWITCH_TO_TABLE_0   = &D06D
- LD8C5               = &D8C5
- LDBD8               = &DBD8
- LOIN                = &DC0F
- PIXEL               = &E4F0
- ECBLB2              = &E596
- DELAY               = &EBA2
- EXNO3               = &EBAD
- BOOP                = &EBE5
- NOISE               = &EBF2
- CHECK_DASHBOARD_A   = &EC7D
- TIDY                = &EDEA
- PAS1                = &EF7A
- LL164               = &EFF7
- DETOK_BANK2         = &F082
- DTS_BANK2           = &F09D
- CF186_BANK6         = &F186
- MVS5_BANK0          = &F1A2
- HALL                = &F1BD
- TT27_BANK0          = &F237
- TT66                = &F26E
- LF2BD               = &F2BD
- CLYNS               = &F2DE
- Ze                  = &F42E
- NLIN4               = &F473
- DORND2              = &F4AC
- DORND               = &F4AD
- PROJ                = &F4C1
- MU5                 = &F65A
- MULT3               = &F664
- MLS2                = &F6BA
- MLS1                = &F6C2
- MULTSm2             = &F6C4
- MULTS               = &F6C6
- MU6                 = &F707
- SQUA                = &F70C
- SQUA2               = &F70E
- MU1                 = &F713
- MLU1                = &F718
- MLU2                = &F71D
- MULTU               = &F721
- MU11                = &F725
- FMLTU2              = &F766
- FMLTU               = &F770
- MLTU2m2             = &F7AB
- MLTU2               = &F7AD
- MUT2                = &F7D2
- MUT1                = &F7D6
- MULT1               = &F7DA
- MULT12              = &F83C
- TAS3                = &F853
- MAD                 = &F86F
- ADD                 = &F872
- TIS1                = &F8AE
- DV42                = &F8D1
- DV41                = &F8D4
- DVID3B2             = &F962
- LL5                 = &FA55
- LL28                = &FA91
- NORM                = &FAF8
+ SwitchTablesTo0    = &D06D
+ LD8C5              = &D8C5
+ LDBD8              = &DBD8
+ DELAY              = &EBA2
+ CheckDashboardA    = &EC7D
+ PAS1               = &EF7A
+ DETOK_BANK2        = &F082
+ DTS_BANK2          = &F09D
+ CF186_BANK6        = &F186
+ TT27_BANK0         = &F237
+ TT66               = &F26E
+ LF2BD              = &F2BD
+ CLYNS              = &F2DE
+ NLIN4              = &F473
+ DORND              = &F4AD
 
 \ ******************************************************************************
 \
@@ -704,9 +644,11 @@
                         \ space view, which is also the y-coordinate of the
                         \ bottom pixel row of the space view
 
-.L00B4
+.messXC
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Temporary storage, used to store the text column
+                        \ of the in-flight message in MESS, so it can be erased
+                        \ from the screen at the correct time
 
 .L00B5
 
@@ -721,21 +663,17 @@
 
  SKIP 1                 \ ???
 
-.L00B8
+.tileNumber
 
  SKIP 1                 \ ???
 
-.L00B9
+.patternTableHi
 
  SKIP 1                 \ ???
 
-.L00BA
+.addr3
 
- SKIP 1                 \ ???
-
-.L00BB
-
- SKIP 1                 \ ???
+ SKIP 2                 \ ???
 
 .L00BC
 
@@ -833,13 +771,9 @@
 
  SKIP 1                 \ ???
 
-.ADDR1_LO
+.addr1
 
- SKIP 1                 \ ???
-
-.ADDR1_HI
-
- SKIP 1                 \ ???
+ SKIP 2                 \ ???
 
 .L00D6
 
@@ -865,7 +799,7 @@
 
  SKIP 11                \ ???
 
-.L00E6
+.nametableHi
 
  SKIP 1                 \ ???
 
@@ -877,7 +811,7 @@
 
  SKIP 1                 \ ???
 
-.DASHBOARD_SWITCH
+.dashboardSwitch
 
  SKIP 1                 \ ???
 
@@ -925,7 +859,7 @@
 
  SKIP 1                 \ ???
 
-.PPU_CTRL_COPY
+.ppuCtrlCopy
 
  SKIP 1                 \ ???
 
@@ -933,7 +867,7 @@
 
  SKIP 1                 \ ???
 
-.BANK
+.currentBank
 
  SKIP 1                 \ ???
 
@@ -945,13 +879,9 @@
 
  SKIP 1                 \ ???
 
-.ADDR2_LO
+.addr2
 
- SKIP 1                 \ ???
-
-.ADDR2_HI
-
- SKIP 1                 \ ???
+ SKIP 2                 \ ???
 
 .L00FC
 
@@ -1024,10 +954,10 @@
  QQ2               = &048E
  QQ8               = &049B
  L049F             = &049F
- QQ18_LO           = &04A4
- QQ18_HI           = &04A5
- TKN1_LO           = &04A6
- TKN1_HI           = &04A7
+ QQ18Lo            = &04A4
+ QQ18Hi            = &04A5
+ TKN1Lo            = &04A6
+ TKN1Hi            = &04A7
  LANG              = &04A8
  L04B2             = &04B2
  L04B4             = &04B4
@@ -1079,7 +1009,7 @@
 
 \ ******************************************************************************
 \
-\       Name: RESET_MMC1
+\       Name: ResetMMC1
 \       Type: Variable
 \   Category: Start and end
 \    Summary: The MMC1 mapper reset routine at the start of the ROM bank
@@ -1104,7 +1034,7 @@
 \
 \ ******************************************************************************
 
-.RESET_MMC1
+.ResetMMC1
 
  SEI                    \ Disable interrupts
 
@@ -1135,7 +1065,7 @@
 
 \ ******************************************************************************
 \
-\       Name: NMIRQ_MMC1
+\       Name: Interrupts
 \       Type: Subroutine
 \   Category: Text
 \    Summary: The IRQ and NMI handler while the MMC1 mapper reset routine is
@@ -1143,7 +1073,7 @@
 \
 \ ******************************************************************************
 
-.NMIRQ_MMC1
+.Interrupts
 
  RTI                    \ Return from the IRQ interrupt without doing anything
                         \
@@ -1153,7 +1083,7 @@
                         \ interrupts that go via the vector at &FFFA will end up
                         \ here and be dealt with
                         \
-                        \ Once bank 7 is switched into &C000 by the RESET_MMC1
+                        \ Once bank 7 is switched into &C000 by the ResetMMC1
                         \ routine, the vector is overwritten with the last two
                         \ bytes of bank 7, which point to the IRQ routine
 
@@ -15743,12 +15673,12 @@ ENDMACRO
 
 MACRO CHECK_DASHBOARD
 
- LDA DASHBOARD_SWITCH   \ If bit 7 of DASHBOARD_SWITCH and bit 6 of PPU_STATUS
- BPL skip               \ are set, then call SWITCH_TO_TABLE_0 to:
+ LDA dashboardSwitch    \ If bit 7 of dashboardSwitch and bit 6 of PPU_STATUS
+ BPL skip               \ are set, then call SwitchTablesTo0 to:
  LDA PPU_STATUS         \
- ASL A                  \   * Zero DASHBOARD_SWITCH to disable this process
+ ASL A                  \   * Zero dashboardSwitch to disable this process
  BPL skip               \     until both conditions are met once again
- JSR SWITCH_TO_TABLE_0  \
+ JSR SwitchTablesTo0    \
                         \   * Clear bits 0 and 4 of PPU_CTRL and PPU_CTRL_COPY,
                         \     to set the base nametable address to &2000 (for
                         \     nametable 0) or &2800 (which is a mirror of &2000)
@@ -15860,9 +15790,9 @@ ENDMACRO
  LDA V+1
  PHA
 
- LDA TKN1_LO            \ Set V(1 0) to the address of the TKN1 table for ths
+ LDA TKN1Lo             \ Set V(1 0) to the address of the TKN1 table for ths
  STA V                  \ chosen language
- LDA TKN1_HI
+ LDA TKN1Hi
  STA V+1
 
 .DTEN
@@ -16938,7 +16868,7 @@ ENDMACRO
 
  JSR CF186_BANK6         \ ???
  JSR LD8C5
- LDA L00B8
+ LDA tileNumber
  STA L00D2
  LDA #&28
  STA L00D8
@@ -17058,7 +16988,7 @@ ENDMACRO
 
 .loop_CB3C4
 
- JSR CHECK_DASHBOARD_A  \ ???
+ JSR CheckDashboardA    \ ???
  LDA L04B2
  ORA L04B4
  AND #&C0
@@ -17212,9 +17142,9 @@ ENDMACRO
  LDA RUPLA_HI,X
  STA SC+1
  LDA RUGAL_LO,X
- STA L00BA
+ STA addr3
  LDA RUGAL_HI,X
- STA L00BB
+ STA addr3+1
 
  LDY NRU,X
 
@@ -17223,7 +17153,7 @@ ENDMACRO
  LDA (SC),Y
  CMP L049F
  BNE PD2
- LDA (L00BA),Y
+ LDA (addr3),Y
 
  AND #%01111111         \ Extract bits 0-6 of A
 
@@ -17231,7 +17161,7 @@ ENDMACRO
  BNE PD2                \ number, jump to PD2 to keep looping through the system
                         \ numbers in RUPLA
 
- LDA (L00BA),Y          \ ???
+ LDA (addr3),Y          \ ???
  BMI PD3
 
  LDA TP                 \ Fetch bit 0 of TP into the C flag, and skip to PD1 if
@@ -17646,9 +17576,9 @@ ENDMACRO
 
  TAX                    \ Copy the token number into X
 
- LDA QQ18_LO            \ Set V(1 0) to point to the recursive token table at
+ LDA QQ18Lo             \ Set V(1 0) to point to the recursive token table at
  STA V                  \ location QQ18
- LDA QQ18_HI
+ LDA QQ18Hi
  STA V+1
 
  LDY #0                 \ Set a counter Y to point to the character offset
@@ -18054,7 +17984,7 @@ ENDMACRO
                         \ pointer and is therefore equal to the number of
                         \ characters minus 1)
 
- JSR CHECK_DASHBOARD_A  \ ???
+ JSR CheckDashboardA    \ ???
 
 .DAL4
 
@@ -18345,13 +18275,13 @@ ENDMACRO
 
 .CB6E9
 
- LDA L00B8                                        ; B6E9: A5 B8       ..
+ LDA tileNumber                                   ; B6E9: A5 B8       ..
  BEQ CB75B                                        ; B6EB: F0 6E       .n
  CMP #&FF                                         ; B6ED: C9 FF       ..
  BEQ CB75B                                        ; B6EF: F0 6A       .j
  STA (SC),Y                                       ; B6F1: 91 07       ..
- STA (L00BA),Y                                    ; B6F3: 91 BA       ..
- INC L00B8                                        ; B6F5: E6 B8       ..
+ STA (addr3),Y                                    ; B6F3: 91 BA       ..
+ INC tileNumber                                   ; B6F5: E6 B8       ..
  LDY L0037                                        ; B6F7: A4 37       .7
  DEY                                              ; B6F9: 88          .
  BEQ CB772                                        ; B6FA: F0 76       .v
@@ -18363,14 +18293,14 @@ ENDMACRO
 
  TAY                                              ; B702: A8          .
  LDX #&0C                                         ; B703: A2 0C       ..
- STX L00BB                                        ; B705: 86 BB       ..
+ STX addr3+1                                        ; B705: 86 BB       ..
  ASL A                                            ; B707: 0A          .
- ROL L00BB                                        ; B708: 26 BB       &.
+ ROL addr3+1                                        ; B708: 26 BB       &.
  ASL A                                            ; B70A: 0A          .
- ROL L00BB                                        ; B70B: 26 BB       &.
+ ROL addr3+1                                        ; B70B: 26 BB       &.
  ASL A                                            ; B70D: 0A          .
- ROL L00BB                                        ; B70E: 26 BB       &.
- STA L00BA                                        ; B710: 85 BA       ..
+ ROL addr3+1                                        ; B70E: 26 BB       &.
+ STA addr3                                        ; B710: 85 BA       ..
  TYA                                              ; B712: 98          .
  LDX #&0D                                         ; B713: A2 0D       ..
  STX SC+1                                         ; B715: 86 08       ..
@@ -18384,34 +18314,34 @@ ENDMACRO
  LDY #0                                           ; B722: A0 00       ..
  LDA (P+1),Y                                      ; B724: B1 30       .0
  STA (SC),Y                                       ; B726: 91 07       ..
- STA (L00BA),Y                                    ; B728: 91 BA       ..
+ STA (addr3),Y                                    ; B728: 91 BA       ..
  INY                                              ; B72A: C8          .
  LDA (P+1),Y                                      ; B72B: B1 30       .0
  STA (SC),Y                                       ; B72D: 91 07       ..
- STA (L00BA),Y                                    ; B72F: 91 BA       ..
+ STA (addr3),Y                                    ; B72F: 91 BA       ..
  INY                                              ; B731: C8          .
  LDA (P+1),Y                                      ; B732: B1 30       .0
  STA (SC),Y                                       ; B734: 91 07       ..
- STA (L00BA),Y                                    ; B736: 91 BA       ..
+ STA (addr3),Y                                    ; B736: 91 BA       ..
  INY                                              ; B738: C8          .
  LDA (P+1),Y                                      ; B739: B1 30       .0
  STA (SC),Y                                       ; B73B: 91 07       ..
- STA (L00BA),Y                                    ; B73D: 91 BA       ..
+ STA (addr3),Y                                    ; B73D: 91 BA       ..
  INY                                              ; B73F: C8          .
  LDA (P+1),Y                                      ; B740: B1 30       .0
  STA (SC),Y                                       ; B742: 91 07       ..
- STA (L00BA),Y                                    ; B744: 91 BA       ..
+ STA (addr3),Y                                    ; B744: 91 BA       ..
  INY                                              ; B746: C8          .
  LDA (P+1),Y                                      ; B747: B1 30       .0
  STA (SC),Y                                       ; B749: 91 07       ..
- STA (L00BA),Y                                    ; B74B: 91 BA       ..
+ STA (addr3),Y                                    ; B74B: 91 BA       ..
  INY                                              ; B74D: C8          .
  LDA (P+1),Y                                      ; B74E: B1 30       .0
  STA (SC),Y                                       ; B750: 91 07       ..
- STA (L00BA),Y                                    ; B752: 91 BA       ..
+ STA (addr3),Y                                    ; B752: 91 BA       ..
  INY                                              ; B754: C8          .
  LDA (P+1),Y                                      ; B755: B1 30       .0
- STA (L00BA),Y                                    ; B757: 91 BA       ..
+ STA (addr3),Y                                    ; B757: 91 BA       ..
  STA (SC),Y                                       ; B759: 91 07       ..
 
 .CB75B
@@ -18485,7 +18415,7 @@ ENDMACRO
  DEC XC                                           ; B7C4: C6 32       .2
  LDA #0                                           ; B7C6: A9 00       ..
  STA (SC),Y                                       ; B7C8: 91 07       ..
- STA (L00BA),Y                                    ; B7CA: 91 BA       ..
+ STA (addr3),Y                                    ; B7CA: 91 BA       ..
  JMP CB75B                                        ; B7CC: 4C 5B B7    L[.
 
 .CB7CF
@@ -18506,7 +18436,7 @@ ENDMACRO
  LDY XC                                           ; B7DB: A4 32       .2
  DEY                                              ; B7DD: 88          .
  STA (SC),Y                                       ; B7DE: 91 07       ..
- STA (L00BA),Y                                    ; B7E0: 91 BA       ..
+ STA (addr3),Y                                    ; B7E0: 91 BA       ..
  JMP CB75B                                        ; B7E2: 4C 5B B7    L[.
 
 .CB7E5
@@ -18524,7 +18454,7 @@ ENDMACRO
 
 .CB7F3
 
- LDX L00B9                                        ; B7F3: A6 B9       ..
+ LDX patternTableHi                                        ; B7F3: A6 B9       ..
  STX SC+1                                         ; B7F5: 86 08       ..
  ASL A                                            ; B7F7: 0A          .
  ROL SC+1                                         ; B7F8: 26 08       &.
@@ -18589,17 +18519,17 @@ ENDMACRO
  STA SC                                           ; B853: 85 07       ..
  LDA SC+1                                         ; B855: A5 08       ..
  ROL A                                            ; B857: 2A          *
- ADC L00E6                                        ; B858: 65 E6       e.
+ ADC nametableHi                                        ; B858: 65 E6       e.
  STA SC+1                                         ; B85A: 85 08       ..
  LDY XC                                           ; B85C: A4 32       .2
  DEY                                              ; B85E: 88          .
  LDA (SC),Y                                       ; B85F: B1 07       ..
  BNE CB7F3                                        ; B861: D0 90       ..
- LDA L00B8                                        ; B863: A5 B8       ..
+ LDA tileNumber                                   ; B863: A5 B8       ..
  BEQ CB8A3                                        ; B865: F0 3C       .<
  STA (SC),Y                                       ; B867: 91 07       ..
- INC L00B8                                        ; B869: E6 B8       ..
- LDX L00B9                                        ; B86B: A6 B9       ..
+ INC tileNumber                                   ; B869: E6 B8       ..
+ LDX patternTableHi                                        ; B86B: A6 B9       ..
  STX SC+1                                         ; B86D: 86 08       ..
  ASL A                                            ; B86F: 0A          .
  ROL SC+1                                         ; B870: 26 08       &.
@@ -18641,7 +18571,7 @@ ENDMACRO
 
  LDA #&21 ; '!'                                   ; B8A6: A9 21       .!
  STA SC                                           ; B8A8: 85 07       ..
- LDA L00E6                                        ; B8AA: A5 E6       ..
+ LDA nametableHi                                        ; B8AA: A5 E6       ..
  STA SC+1                                         ; B8AC: 85 08       ..
  LDY XC                                           ; B8AE: A4 32       .2
  DEY                                              ; B8B0: 88          .
@@ -18685,15 +18615,15 @@ ENDMACRO
 
  NEXT
 
- EQUW NMIRQ_MMC1+&4000  \ Vector to the NMI handler in case this bank is loaded
+ EQUW Interrupts+&4000  \ Vector to the NMI handler in case this bank is loaded
                         \ into &C000 during startup (the handler contains an RTI
                         \ so the interrupt is processed but has no effect)
 
- EQUW RESET_MMC1+&4000  \ Vector to the RESET handler in case this bank is
+ EQUW ResetMMC1+&4000   \ Vector to the RESET handler in case this bank is
                         \ loaded into &C000 during startup (the handler resets
                         \ the MMC1 mapper to map bank 7 into &C000 instead)
 
- EQUW NMIRQ_MMC1+&4000  \ Vector to the IRQ/BRK handler in case this bank is
+ EQUW Interrupts+&4000  \ Vector to the IRQ/BRK handler in case this bank is
                         \ loaded into &C000 during startup (the handler contains
                         \ an RTI so the interrupt is processed but has no
                         \ effect)

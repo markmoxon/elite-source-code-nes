@@ -156,7 +156,7 @@ XSAV             = &009B
 YSAV             = &009C
 XX17             = &009D
 QQ11             = &009E
-QQ11_MASK        = &009F
+QQ11Mask         = &009F
 ZZ               = &00A0
 XX13             = &00A1
 MCNT             = &00A2
@@ -178,10 +178,10 @@ Yx2M2            = &00B2
 Yx2M1            = &00B3
 messXC           = &00B4
 newzp            = &00B6
-TILE             = &00B8
-PATTERNS_HI      = &00B9
-T5               = &00BA
-T5_1             = &00BB
+tileNumber       = &00B8
+patternTableHi   = &00B9
+addr3            = &00BA
+addr3_1          = &00BB
 L00BE            = &00BE
 L00BF            = &00BF
 L00C0            = &00C0
@@ -202,8 +202,8 @@ L00D0            = &00D0
 L00D1            = &00D1
 L00D2            = &00D2
 L00D3            = &00D3
-ADDR1_LO         = &00D4
-ADDR1_HI         = &00D5
+addr1            = &00D4
+addr1_1          = &00D5
 L00D6            = &00D6
 L00D7            = &00D7
 L00D9            = &00D9
@@ -212,19 +212,19 @@ L00DF            = &00DF
 L00E0            = &00E0
 L00E3            = &00E3
 L00E4            = &00E4
-NAMES_HI         = &00E6
-DASHBOARD_SWITCH = &00E9
+nametableHi      = &00E6
+dashboardSwitch  = &00E9
 L00EA            = &00EA
-T6               = &00EB
-T6_1             = &00EC
-T7               = &00ED
-T7_1             = &00EE
+addr4            = &00EB
+addr4_1          = &00EC
+addr5            = &00ED
+addr5_1          = &00EE
 L00F3            = &00F3
 L00F4            = &00F4
-PPU_CTRL_COPY    = &00F5
-BANK             = &00F7
-ADDR2_LO         = &00FA
-ADDR2_HI         = &00FB
+ppuCtrlCopy      = &00F5
+currentBank      = &00F7
+addr2            = &00FA
+addr2_1          = &00FB
 XX3              = &0100
 XX3_1            = &0101
 L0102            = &0102
@@ -496,8 +496,8 @@ ECMP             = &0389
 MJ               = &038A
 CABTMP           = &038B
 LAS2             = &038C
-LASCT            = &038E
 VIEW             = &038E
+LASCT            = &038F
 GNTMP            = &0390
 EV               = &0392
 L0395            = &0395
@@ -549,6 +549,7 @@ LAS              = &0400
 MSTG             = &0401
 QQ19             = &044D
 QQ19_1           = &044E
+QQ19_2           = &044F
 QQ19_3           = &0450
 QQ19_4           = &0450
 K2               = &0459
@@ -556,14 +557,13 @@ K2_1             = &045A
 K2_2             = &045B
 K2_3             = &045C
 DLY              = &045D
-QQ19_2           = &045F
 L0461            = &0461
 L0464            = &0464
 L046C            = &046C
-BOX_EDGE1        = &046E
-BOX_EDGE2        = &046F
+boxEdge1         = &046E
+boxEdge2         = &046F
 L0473            = &0473
-CONT2_SCAN       = &0475
+scanController2  = &0475
 LASX             = &047B
 LASY             = &047C
 ALTIT            = &047E
@@ -588,11 +588,11 @@ QQ8              = &049B
 QQ8_1            = &049C
 QQ9              = &049D
 QQ10             = &049E
-QQ18_LO          = &04A4
-QQ18_HI          = &04A5
-TKN1_LO          = &04A6
-TKN1_HI          = &04A7
-LANG             = &04A8
+QQ18Lo           = &04A4
+QQ18Hi           = &04A5
+TKN1Lo           = &04A6
+TKN1Hi           = &04A7
+language         = &04A8
 CONT1_DOWN       = &04AA
 CONT2_DOWN       = &04AB
 CONT1_UP         = &04AC
@@ -657,8 +657,8 @@ LC006            = &C006
 Spercent         = &C007
 subm_C03E        = &C03E
 subm_C0A8        = &C0A8
-RESET_BANK       = &C0AD
-SET_BANK         = &C0AE
+ResetBank        = &C0AD
+SetBank          = &C0AE
 LC0DF            = &C0DF
 log              = &C100
 logL             = &C200
@@ -680,49 +680,49 @@ subm_CA56        = &CA56
 subm_CB42        = &CB42
 subm_CB9C        = &CB9C
 subm_CC1F        = &CC1F
-SEND_TO_PPU1     = &CC2E
-COPY_NAMES       = &CD34
+SendToPPU1       = &CC2E
+CopyNametable0To1 = &CD34
 subm_CD62        = &CD62
-BOX_EDGES        = &CD6F
+DrawBoxEdges     = &CD6F
 UNIV             = &CE7E
 UNIV_1           = &CE7F
 GINF             = &CE90
 subm_CE9E        = &CE9E
 subm_CEA5        = &CEA5
-NAMES_LOOKUP     = &CED0
-PATTERNS_LOOKUP  = &CED2
+nametableAddrHi  = &CED0
+patternAddrHi    = &CED2
 IRQ              = &CED4
 NMI              = &CED5
-SET_PALETTE      = &CF2E
-RESET_NAMES1     = &D02D
-SWITCH_TO_TABLE_0 = &D06D
-CONTROLLERS      = &D0F8
+SetPalette       = &CF2E
+ResetNametable1  = &D02D
+SwitchTablesTo0  = &D06D
+ReadControllers  = &D0F8
 LD164            = &D164
 LD167            = &D167
-FILL_MEMORY      = &D710
+FillMemory       = &D710
 LD8C5            = &D8C5
 subm_D8D8        = &D8D8
 LD8EC            = &D8EC
 LD933            = &D933
 LD946            = &D946
 LD977            = &D977
-SEND_TO_PPU2     = &D986
+SendToPPU2       = &D986
 TWOS             = &D9F7
 TWOS2            = &DA01
 TWFL             = &DA09
 TWFR             = &DA10
-ylookupLo        = &DA18
-ylookupHi        = &DAF8
+yLookupLo        = &DA18
+yLookupHi        = &DAF8
 LDBD8            = &DBD8
 LOIN             = &DC0F
 subm_DEA5        = &DEA5
 subm_DF76        = &DF76
 subm_E04A        = &E04A
-subm_E0BA        = &E04A
+subm_E0BA        = &E0BA
 subm_E18E        = &E18E
 subm_E33E        = &E33E
 PIXEL            = &E4F0
-PIXELx2          = &E543
+DrawDash         = &E543
 ECBLB2           = &E596
 MSBAR            = &E59F
 subm_E802        = &E802
@@ -738,16 +738,17 @@ subm_EB86        = &EB86
 DELAY            = &EBA2
 BEEP             = &EBA9
 EXNO3            = &EBAD
+ECBLB            = &EBBF
 BOOP             = &EBE5
 NOISE            = &EBF2
-NOISE_lookup1    = &EC3C
-NOISE_lookup2    = &EC5C
-CHECK_DASHBOARD_A = &EC7D
+noiseLookup1     = &EC3C
+noiseLookup2     = &EC5C
+CheckDashboardA  = &EC7D
 LDA_XX0_Y        = &EC8D
-LDA_EPC_Y        = &ECA0
-INC_TALLY        = &ECAE
+LDA_Epc_Y        = &ECA0
+IncreaseTally    = &ECAE
 CB1D4_BANK0      = &ECE2
-SETK_K3_XC_YC    = &ECF9
+Set_K_K3_XC_YC   = &ECF9
 C811E_BANK6      = &ED16
 C8021_BANK6      = &ED24
 C89D1_BANK6      = &ED50
@@ -877,6 +878,7 @@ ADD              = &F872
 TIS1             = &F8AE
 DV42             = &F8D1
 DV41             = &F8D4
+DVID4            = &F8D8
 DVID3B2          = &F962
 subm_FA16        = &FA16
 subm_FA43        = &FA43
@@ -2163,12 +2165,12 @@ subm_FB89        = &FB89
  RTS                                          ; A7B6: 60          `
 
  JSR LD167                                    ; A7B7: 20 67 D1     g.
- LDA PPU_CTRL_COPY                            ; A7BA: A5 F5       ..
+ LDA ppuCtrlCopy                              ; A7BA: A5 F5       ..
  PHA                                          ; A7BC: 48          H
  LDA #0                                       ; A7BD: A9 00       ..
- STA PPU_CTRL_COPY                            ; A7BF: 85 F5       ..
+ STA ppuCtrlCopy                              ; A7BF: 85 F5       ..
  STA PPU_CTRL                                 ; A7C1: 8D 00 20    ..
- STA DASHBOARD_SWITCH                         ; A7C4: 85 E9       ..
+ STA dashboardSwitch                          ; A7C4: 85 E9       ..
  LDA #0                                       ; A7C6: A9 00       ..
  STA PPU_MASK                                 ; A7C8: 8D 01 20    ..
  LDA QQ11                                     ; A7CB: A5 9E       ..
@@ -2278,7 +2280,7 @@ subm_FB89        = &FB89
  JMP CA8A2                                    ; A89C: 4C A2 A8    L..
 
 .CA89F
- JSR SEND_TO_PPU2                             ; A89F: 20 86 D9     ..
+ JSR SendToPPU2                               ; A89F: 20 86 D9     ..
 .CA8A2
  JSR sub_CAC86                                ; A8A2: 20 86 AC     ..
  LDA #&10                                     ; A8A5: A9 10       ..
@@ -2314,7 +2316,7 @@ subm_FB89        = &FB89
  JSR LD8EC                                    ; A8E4: 20 EC D8     ..
  JSR LD946                                    ; A8E7: 20 46 D9     F.
  LDA QQ11                                     ; A8EA: A5 9E       ..
- STA QQ11_MASK                                ; A8EC: 85 9F       ..
+ STA QQ11Mask                                 ; A8EC: 85 9F       ..
  AND #&40 ; '@'                               ; A8EE: 29 40       )@
  BEQ CA8FC                                    ; A8F0: F0 0A       ..
  LDA QQ11                                     ; A8F2: A5 9E       ..
@@ -2327,7 +2329,7 @@ subm_FB89        = &FB89
 .CA8FE
  STA L00EA                                    ; A8FE: 85 EA       ..
  PLA                                          ; A900: 68          h
- STA PPU_CTRL_COPY                            ; A901: 85 F5       ..
+ STA ppuCtrlCopy                              ; A901: 85 F5       ..
  STA PPU_CTRL                                 ; A903: 8D 00 20    ..
  JMP CB673_BANK3                              ; A906: 4C E8 EE    L..
 
@@ -2400,12 +2402,12 @@ subm_FB89        = &FB89
  LDA #&25 ; '%'                               ; A986: A9 25       .%
 .CA988
  STA L00D2                                    ; A988: 85 D2       ..
- LDA TILE                                     ; A98A: A5 B8       ..
+ LDA tileNumber                               ; A98A: A5 B8       ..
  STA L00C1,X                                  ; A98C: 95 C1       ..
  LDA #&C4                                     ; A98E: A9 C4       ..
  JSR LD977                                    ; A990: 20 77 D9     w.
  JSR CA99B                                    ; A993: 20 9B A9     ..
- LDA TILE                                     ; A996: A5 B8       ..
+ LDA tileNumber                               ; A996: A5 B8       ..
  STA L00C3,X                                  ; A998: 95 C3       ..
  RTS                                          ; A99A: 60          `
 
@@ -2466,7 +2468,7 @@ subm_FB89        = &FB89
  STA L00CC                                    ; A9F7: 85 CC       ..
  LDA #&25 ; '%'                               ; A9F9: A9 25       .%
  STA L00D2                                    ; A9FB: 85 D2       ..
- LDA TILE                                     ; A9FD: A5 B8       ..
+ LDA tileNumber                               ; A9FD: A5 B8       ..
  STA L00C1                                    ; A9FF: 85 C1       ..
  STA L00C2                                    ; AA01: 85 C2       ..
  LDA #&54 ; 'T'                               ; AA03: A9 54       .T
@@ -2480,8 +2482,8 @@ subm_FB89        = &FB89
  STA L00CD                                    ; AA15: 85 CD       ..
  STA L00CE                                    ; AA17: 85 CE       ..
  LDA QQ11                                     ; AA19: A5 9E       ..
- STA QQ11_MASK                                ; AA1B: 85 9F       ..
- LDA TILE                                     ; AA1D: A5 B8       ..
+ STA QQ11Mask                                 ; AA1B: 85 9F       ..
+ LDA tileNumber                               ; AA1D: A5 B8       ..
  STA L00C3                                    ; AA1F: 85 C3       ..
  STA L00C4                                    ; AA21: 85 C4       ..
  LDA #0                                       ; AA23: A9 00       ..
@@ -2530,9 +2532,9 @@ subm_FB89        = &FB89
 
  JSR LD933                                    ; AABC: 20 33 D9     3.
  LDA #2                                       ; AABF: A9 02       ..
- STA ADDR1_HI                                 ; AAC1: 85 D5       ..
+ STA addr1_1                                  ; AAC1: 85 D5       ..
  LDA #&80                                     ; AAC3: A9 80       ..
- STA ADDR1_LO                                 ; AAC5: 85 D4       ..
+ STA addr1                                    ; AAC5: 85 D4       ..
  LDA #&3F ; '?'                               ; AAC7: A9 3F       .?
  STA PPU_ADDR                                 ; AAC9: 8D 06 20    ..
  LDA #0                                       ; AACC: A9 00       ..
@@ -2659,12 +2661,12 @@ subm_FB89        = &FB89
  STA L0036                                    ; ABCF: 85 36       .6
  LDA #0                                       ; ABD1: A9 00       ..
  STA L00DA                                    ; ABD3: 85 DA       ..
- STA QQ11_MASK                                ; ABD5: 85 9F       ..
+ STA QQ11Mask                                 ; ABD5: 85 9F       ..
  LDA #&FF                                     ; ABD7: A9 FF       ..
  STA L0473                                    ; ABD9: 8D 73 04    .s.
  JSR LD933                                    ; ABDC: 20 33 D9     3.
  LDA #&90                                     ; ABDF: A9 90       ..
- STA PPU_CTRL_COPY                            ; ABE1: 85 F5       ..
+ STA ppuCtrlCopy                              ; ABE1: 85 F5       ..
  STA PPU_CTRL                                 ; ABE3: 8D 00 20    ..
  RTS                                          ; ABE6: 60          `
 
@@ -2675,7 +2677,7 @@ subm_FB89        = &FB89
  LDA L0464                                    ; ABED: AD 64 04    .d.
  CMP #3                                       ; ABF0: C9 03       ..
  BEQ CABFA                                    ; ABF2: F0 06       ..
- JSR SETK_K3_XC_YC                            ; ABF4: 20 F9 EC     ..
+ JSR Set_K_K3_XC_YC                           ; ABF4: 20 F9 EC     ..
  JMP CAC08                                    ; ABF7: 4C 08 AC    L..
 
 .CABFA
@@ -2686,15 +2688,15 @@ subm_FB89        = &FB89
  STX SPR_11_Y                                 ; AC05: 8E 2C 02    .,.
 .CAC08
  LDA #2                                       ; AC08: A9 02       ..
- STA ADDR1_HI                                 ; AC0A: 85 D5       ..
+ STA addr1_1                                  ; AC0A: 85 D5       ..
  LDA #&80                                     ; AC0C: A9 80       ..
- STA ADDR1_LO                                 ; AC0E: 85 D4       ..
+ STA addr1                                    ; AC0E: 85 D4       ..
  LDA QQ11                                     ; AC10: A5 9E       ..
  BPL CAC1C                                    ; AC12: 10 08       ..
  LDA #3                                       ; AC14: A9 03       ..
- STA ADDR1_HI                                 ; AC16: 85 D5       ..
+ STA addr1_1                                  ; AC16: 85 D5       ..
  LDA #&60 ; '`'                               ; AC18: A9 60       .`
- STA ADDR1_LO                                 ; AC1A: 85 D4       ..
+ STA addr1                                    ; AC1A: 85 D4       ..
 .CAC1C
  RTS                                          ; AC1C: 60          `
 
@@ -2705,15 +2707,15 @@ subm_FB89        = &FB89
  STY L0464                                    ; AC24: 8C 64 04    .d.
  JSR sub_CACEB                                ; AC27: 20 EB AC     ..
  LDA #2                                       ; AC2A: A9 02       ..
- STA ADDR1_HI                                 ; AC2C: 85 D5       ..
+ STA addr1_1                                  ; AC2C: 85 D5       ..
  LDA #&80                                     ; AC2E: A9 80       ..
- STA ADDR1_LO                                 ; AC30: 85 D4       ..
+ STA addr1                                    ; AC30: 85 D4       ..
  LDA QQ11                                     ; AC32: A5 9E       ..
  BPL CAC3E                                    ; AC34: 10 08       ..
  LDA #3                                       ; AC36: A9 03       ..
- STA ADDR1_HI                                 ; AC38: 85 D5       ..
+ STA addr1_1                                  ; AC38: 85 D5       ..
  LDA #&60 ; '`'                               ; AC3A: A9 60       .`
- STA ADDR1_LO                                 ; AC3C: 85 D4       ..
+ STA addr1                                    ; AC3C: 85 D4       ..
 .CAC3E
  LDA L0464                                    ; AC3E: AD 64 04    .d.
  ASL A                                        ; AC41: 0A          .
@@ -2723,12 +2725,12 @@ subm_FB89        = &FB89
  LDX #0                                       ; AC47: A2 00       ..
  STX L00D3                                    ; AC49: 86 D3       ..
 .loop_CAC4B
- LDA DASHBOARD_SWITCH                         ; AC4B: A5 E9       ..
+ LDA dashboardSwitch                          ; AC4B: A5 E9       ..
  BPL CAC58                                    ; AC4D: 10 09       ..
  LDA PPU_STATUS                               ; AC4F: AD 02 20    ..
  ASL A                                        ; AC52: 0A          .
  BPL CAC58                                    ; AC53: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; AC55: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; AC55: 20 6D D0     m.
 .CAC58
  LDA L00D3                                    ; AC58: A5 D3       ..
  BPL loop_CAC4B                               ; AC5A: 10 EF       ..
@@ -2743,12 +2745,12 @@ subm_FB89        = &FB89
  ASL A                                        ; AC6F: 0A          .
  STA L00D3                                    ; AC70: 85 D3       ..
 .loop_CAC72
- LDA DASHBOARD_SWITCH                         ; AC72: A5 E9       ..
+ LDA dashboardSwitch                          ; AC72: A5 E9       ..
  BPL CAC7F                                    ; AC74: 10 09       ..
  LDA PPU_STATUS                               ; AC76: AD 02 20    ..
  ASL A                                        ; AC79: 0A          .
  BPL CAC7F                                    ; AC7A: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; AC7C: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; AC7C: 20 6D D0     m.
 .CAC7F
  LDA L00D3                                    ; AC7F: A5 D3       ..
  BPL loop_CAC72                               ; AC81: 10 EF       ..
@@ -2757,12 +2759,12 @@ subm_FB89        = &FB89
  RTS                                          ; AC85: 60          `
 
 .sub_CAC86
- LDA DASHBOARD_SWITCH                         ; AC86: A5 E9       ..
+ LDA dashboardSwitch                          ; AC86: A5 E9       ..
  BPL CAC93                                    ; AC88: 10 09       ..
  LDA PPU_STATUS                               ; AC8A: AD 02 20    ..
  ASL A                                        ; AC8D: 0A          .
  BPL CAC93                                    ; AC8E: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; AC90: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; AC90: 20 6D D0     m.
 .CAC93
  LDA #&F8                                     ; AC93: A9 F8       ..
  STA SPR_00_X                                 ; AC95: 8D 03 02    ...
@@ -2870,9 +2872,9 @@ subm_FB89        = &FB89
  LDA #&80                                     ; AD4B: A9 80       ..
  STA SC                                       ; AD4D: 85 07       ..
  LDA #&76 ; 'v'                               ; AD4F: A9 76       .v
- STA T5_1                                     ; AD51: 85 BB       ..
+ STA addr3_1                                  ; AD51: 85 BB       ..
  LDA #&80                                     ; AD53: A9 80       ..
- STA T5                                       ; AD55: 85 BA       ..
+ STA addr3                                    ; AD55: 85 BA       ..
  JMP CAD77                                    ; AD57: 4C 77 AD    Lw.
 
 .CAD5A
@@ -2881,53 +2883,53 @@ subm_FB89        = &FB89
  LDA #&60 ; '`'                               ; AD5E: A9 60       .`
  STA SC                                       ; AD60: 85 07       ..
  LDA #&77 ; 'w'                               ; AD62: A9 77       .w
- STA T5_1                                     ; AD64: 85 BB       ..
+ STA addr3_1                                  ; AD64: 85 BB       ..
  LDA #&60 ; '`'                               ; AD66: A9 60       .`
- STA T5                                       ; AD68: 85 BA       ..
- LDA DASHBOARD_SWITCH                         ; AD6A: A5 E9       ..
+ STA addr3                                    ; AD68: 85 BA       ..
+ LDA dashboardSwitch                          ; AD6A: A5 E9       ..
  BPL CAD77                                    ; AD6C: 10 09       ..
  LDA PPU_STATUS                               ; AD6E: AD 02 20    ..
  ASL A                                        ; AD71: 0A          .
  BPL CAD77                                    ; AD72: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; AD74: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; AD74: 20 6D D0     m.
 .CAD77
  LDY #&3F ; '?'                               ; AD77: A0 3F       .?
 .loop_CAD79
  LDA (V),Y                                    ; AD79: B1 63       .c
  STA (SC),Y                                   ; AD7B: 91 07       ..
- STA (T5),Y                                   ; AD7D: 91 BA       ..
+ STA (addr3),Y                                ; AD7D: 91 BA       ..
  DEY                                          ; AD7F: 88          .
  CPY #&21 ; '!'                               ; AD80: C0 21       .!
  BNE loop_CAD79                               ; AD82: D0 F5       ..
- LDA DASHBOARD_SWITCH                         ; AD84: A5 E9       ..
+ LDA dashboardSwitch                          ; AD84: A5 E9       ..
  BPL CAD91                                    ; AD86: 10 09       ..
  LDA PPU_STATUS                               ; AD88: AD 02 20    ..
  ASL A                                        ; AD8B: 0A          .
  BPL CAD91                                    ; AD8C: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; AD8E: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; AD8E: 20 6D D0     m.
 .CAD91
  LDA (V),Y                                    ; AD91: B1 63       .c
  STA (SC),Y                                   ; AD93: 91 07       ..
- STA (T5),Y                                   ; AD95: 91 BA       ..
+ STA (addr3),Y                                ; AD95: 91 BA       ..
  DEY                                          ; AD97: 88          .
  BNE CAD91                                    ; AD98: D0 F7       ..
- LDA DASHBOARD_SWITCH                         ; AD9A: A5 E9       ..
+ LDA dashboardSwitch                          ; AD9A: A5 E9       ..
  BPL CADA7                                    ; AD9C: 10 09       ..
  LDA PPU_STATUS                               ; AD9E: AD 02 20    ..
  ASL A                                        ; ADA1: 0A          .
  BPL CADA7                                    ; ADA2: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; ADA4: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; ADA4: 20 6D D0     m.
 .CADA7
  LDY #&20 ; ' '                               ; ADA7: A0 20       .
  LDA (V),Y                                    ; ADA9: B1 63       .c
  LDY #0                                       ; ADAB: A0 00       ..
  STA (SC),Y                                   ; ADAD: 91 07       ..
- STA (T5),Y                                   ; ADAF: 91 BA       ..
+ STA (addr3),Y                                ; ADAF: 91 BA       ..
  LDY #&40 ; '@'                               ; ADB1: A0 40       .@
  LDA (V),Y                                    ; ADB3: B1 63       .c
  LDY #&20 ; ' '                               ; ADB5: A0 20       .
  STA (SC),Y                                   ; ADB7: 91 07       ..
- STA (T5),Y                                   ; ADB9: 91 BA       ..
+ STA (addr3),Y                                ; ADB9: 91 BA       ..
  RTS                                          ; ADBB: 60          `
 
 .CADBC
@@ -2936,20 +2938,20 @@ subm_FB89        = &FB89
  LDA #&60 ; '`'                               ; ADC0: A9 60       .`
  STA SC                                       ; ADC2: 85 07       ..
  LDA #&77 ; 'w'                               ; ADC4: A9 77       .w
- STA T5_1                                     ; ADC6: 85 BB       ..
+ STA addr3_1                                  ; ADC6: 85 BB       ..
  LDA #&60 ; '`'                               ; ADC8: A9 60       .`
- STA T5                                       ; ADCA: 85 BA       ..
+ STA addr3                                    ; ADCA: 85 BA       ..
  LDY #&3F ; '?'                               ; ADCC: A0 3F       .?
  LDA #0                                       ; ADCE: A9 00       ..
 .loop_CADD0
  STA (SC),Y                                   ; ADD0: 91 07       ..
- STA (T5),Y                                   ; ADD2: 91 BA       ..
+ STA (addr3),Y                                ; ADD2: 91 BA       ..
  DEY                                          ; ADD4: 88          .
  BNE loop_CADD0                               ; ADD5: D0 F9       ..
  LDA #&20 ; ' '                               ; ADD7: A9 20       .
  LDY #0                                       ; ADD9: A0 00       ..
  STA (SC),Y                                   ; ADDB: 91 07       ..
- STA (T5),Y                                   ; ADDD: 91 BA       ..
+ STA (addr3),Y                                ; ADDD: 91 BA       ..
  RTS                                          ; ADDF: 60          `
 
 .CADE0
@@ -2973,7 +2975,7 @@ subm_FB89        = &FB89
  LDY #9                                       ; AE03: A0 09       ..
  JSR sub_CAF96                                ; AE05: 20 96 AF     ..
 .CAE08
- LDA CONT2_SCAN                               ; AE08: AD 75 04    .u.
+ LDA scanController2                          ; AE08: AD 75 04    .u.
  BNE CAE12                                    ; AE0B: D0 05       ..
  LDY #&0C                                     ; AE0D: A0 0C       ..
  JSR sub_CAF9A                                ; AE0F: 20 9A AF     ..
@@ -2986,12 +2988,12 @@ subm_FB89        = &FB89
  TAY                                          ; AE18: A8          .
  BMI CADBC                                    ; AE19: 30 A1       0.
  STA L0464                                    ; AE1B: 8D 64 04    .d.
- LDA DASHBOARD_SWITCH                         ; AE1E: A5 E9       ..
+ LDA dashboardSwitch                          ; AE1E: A5 E9       ..
  BPL CAE2B                                    ; AE20: 10 09       ..
  LDA PPU_STATUS                               ; AE22: AD 02 20    ..
  ASL A                                        ; AE25: 0A          .
  BPL CAE2B                                    ; AE26: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; AE28: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; AE28: 20 6D D0     m.
 .CAE2B
  JSR sub_CAD2A                                ; AE2B: 20 2A AD     *.
  LDA L0464                                    ; AE2E: AD 64 04    .d.
@@ -3077,12 +3079,12 @@ subm_FB89        = &FB89
  LDY #4                                       ; AEC1: A0 04       ..
  JSR sub_CAF5B                                ; AEC3: 20 5B AF     [.
 .CAEC6
- LDA DASHBOARD_SWITCH                         ; AEC6: A5 E9       ..
+ LDA dashboardSwitch                          ; AEC6: A5 E9       ..
  BPL CAED3                                    ; AEC8: 10 09       ..
  LDA PPU_STATUS                               ; AECA: AD 02 20    ..
  ASL A                                        ; AECD: 0A          .
  BPL CAED3                                    ; AECE: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; AED0: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; AED0: 20 6D D0     m.
 .CAED3
  LDA L0464                                    ; AED3: AD 64 04    .d.
  ASL A                                        ; AED6: 0A          .
@@ -3137,86 +3139,86 @@ subm_FB89        = &FB89
  JMP CAE8D                                    ; AF2B: 4C 8D AE    L..
 
 .CAF2E
- LDA DASHBOARD_SWITCH                         ; AF2E: A5 E9       ..
+ LDA dashboardSwitch                          ; AF2E: A5 E9       ..
  BPL CAF3B                                    ; AF30: 10 09       ..
  LDA PPU_STATUS                               ; AF32: AD 02 20    ..
  ASL A                                        ; AF35: 0A          .
  BPL CAF3B                                    ; AF36: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; AF38: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; AF38: 20 6D D0     m.
 .CAF3B
  LDA #4                                       ; AF3B: A9 04       ..
  STA (SC),Y                                   ; AF3D: 91 07       ..
- STA (T5),Y                                   ; AF3F: 91 BA       ..
+ STA (addr3),Y                                ; AF3F: 91 BA       ..
  INY                                          ; AF41: C8          .
  LDA #5                                       ; AF42: A9 05       ..
  STA (SC),Y                                   ; AF44: 91 07       ..
- STA (T5),Y                                   ; AF46: 91 BA       ..
+ STA (addr3),Y                                ; AF46: 91 BA       ..
  TYA                                          ; AF48: 98          .
  CLC                                          ; AF49: 18          .
  ADC #&1F                                     ; AF4A: 69 1F       i.
  TAY                                          ; AF4C: A8          .
  LDA #&24 ; '$'                               ; AF4D: A9 24       .$
  STA (SC),Y                                   ; AF4F: 91 07       ..
- STA (T5),Y                                   ; AF51: 91 BA       ..
+ STA (addr3),Y                                ; AF51: 91 BA       ..
  INY                                          ; AF53: C8          .
  LDA #&25 ; '%'                               ; AF54: A9 25       .%
  STA (SC),Y                                   ; AF56: 91 07       ..
- STA (T5),Y                                   ; AF58: 91 BA       ..
+ STA (addr3),Y                                ; AF58: 91 BA       ..
  RTS                                          ; AF5A: 60          `
 
 .sub_CAF5B
- LDA DASHBOARD_SWITCH                         ; AF5B: A5 E9       ..
+ LDA dashboardSwitch                          ; AF5B: A5 E9       ..
  BPL CAF68                                    ; AF5D: 10 09       ..
  LDA PPU_STATUS                               ; AF5F: AD 02 20    ..
  ASL A                                        ; AF62: 0A          .
  BPL CAF68                                    ; AF63: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; AF65: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; AF65: 20 6D D0     m.
 .CAF68
  LDA #6                                       ; AF68: A9 06       ..
  STA (SC),Y                                   ; AF6A: 91 07       ..
- STA (T5),Y                                   ; AF6C: 91 BA       ..
+ STA (addr3),Y                                ; AF6C: 91 BA       ..
  INY                                          ; AF6E: C8          .
  LDA #7                                       ; AF6F: A9 07       ..
  STA (SC),Y                                   ; AF71: 91 07       ..
- STA (T5),Y                                   ; AF73: 91 BA       ..
+ STA (addr3),Y                                ; AF73: 91 BA       ..
  INY                                          ; AF75: C8          .
  LDA #8                                       ; AF76: A9 08       ..
  STA (SC),Y                                   ; AF78: 91 07       ..
- STA (T5),Y                                   ; AF7A: 91 BA       ..
+ STA (addr3),Y                                ; AF7A: 91 BA       ..
  TYA                                          ; AF7C: 98          .
  CLC                                          ; AF7D: 18          .
  ADC #&1E                                     ; AF7E: 69 1E       i.
  TAY                                          ; AF80: A8          .
  LDA #&26 ; '&'                               ; AF81: A9 26       .&
  STA (SC),Y                                   ; AF83: 91 07       ..
- STA (T5),Y                                   ; AF85: 91 BA       ..
+ STA (addr3),Y                                ; AF85: 91 BA       ..
  INY                                          ; AF87: C8          .
  LDA #&25 ; '%'                               ; AF88: A9 25       .%
  STA (SC),Y                                   ; AF8A: 91 07       ..
- STA (T5),Y                                   ; AF8C: 91 BA       ..
+ STA (addr3),Y                                ; AF8C: 91 BA       ..
  INY                                          ; AF8E: C8          .
  LDA #&27 ; '''                               ; AF8F: A9 27       .'
  STA (SC),Y                                   ; AF91: 91 07       ..
- STA (T5),Y                                   ; AF93: 91 BA       ..
+ STA (addr3),Y                                ; AF93: 91 BA       ..
  RTS                                          ; AF95: 60          `
 
 .sub_CAF96
  JSR sub_CAFAB                                ; AF96: 20 AB AF     ..
  INY                                          ; AF99: C8          .
 .sub_CAF9A
- LDA DASHBOARD_SWITCH                         ; AF9A: A5 E9       ..
+ LDA dashboardSwitch                          ; AF9A: A5 E9       ..
  BPL CAFA7                                    ; AF9C: 10 09       ..
  LDA PPU_STATUS                               ; AF9E: AD 02 20    ..
  ASL A                                        ; AFA1: 0A          .
  BPL CAFA7                                    ; AFA2: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; AFA4: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; AFA4: 20 6D D0     m.
 .CAFA7
  JSR sub_CAFAB                                ; AFA7: 20 AB AF     ..
  INY                                          ; AFAA: C8          .
 .sub_CAFAB
  LDA L95CE,Y                                  ; AFAB: B9 CE 95    ...
  STA (SC),Y                                   ; AFAE: 91 07       ..
- STA (T5),Y                                   ; AFB0: 91 BA       ..
+ STA (addr3),Y                                ; AFB0: 91 BA       ..
  STY T                                        ; AFB2: 84 9A       ..
  TYA                                          ; AFB4: 98          .
  CLC                                          ; AFB5: 18          .
@@ -3224,18 +3226,18 @@ subm_FB89        = &FB89
  TAY                                          ; AFB8: A8          .
  LDA L95CE,Y                                  ; AFB9: B9 CE 95    ...
  STA (SC),Y                                   ; AFBC: 91 07       ..
- STA (T5),Y                                   ; AFBE: 91 BA       ..
+ STA (addr3),Y                                ; AFBE: 91 BA       ..
  LDY T                                        ; AFC0: A4 9A       ..
  RTS                                          ; AFC2: 60          `
 
 .loop_CAFC3
  LDX #4                                       ; AFC3: A2 04       ..
- STX TILE                                     ; AFC5: 86 B8       ..
+ STX tileNumber                               ; AFC5: 86 B8       ..
  RTS                                          ; AFC7: 60          `
 
 .loop_CAFC8
  LDX #&25 ; '%'                               ; AFC8: A2 25       .%
- STX TILE                                     ; AFCA: 86 B8       ..
+ STX tileNumber                               ; AFCA: 86 B8       ..
  RTS                                          ; AFCC: 60          `
 
  LDA QQ11                                     ; AFCD: A5 9E       ..
@@ -3248,7 +3250,7 @@ subm_FB89        = &FB89
  BMI CAFDF                                    ; AFDB: 30 02       0.
  LDX #&3C ; '<'                               ; AFDD: A2 3C       .<
 .CAFDF
- STX TILE                                     ; AFDF: 86 B8       ..
+ STX tileNumber                               ; AFDF: 86 B8       ..
  LDA #&FC                                     ; AFE1: A9 FC       ..
  STA V_1                                      ; AFE3: 85 64       .d
  LDA #0                                       ; AFE5: A9 00       ..
@@ -3258,143 +3260,143 @@ subm_FB89        = &FB89
  LDA #&28 ; '('                               ; AFED: A9 28       .(
  STA SC                                       ; AFEF: 85 07       ..
  LDA #&69 ; 'i'                               ; AFF1: A9 69       .i
- STA T5_1                                     ; AFF3: 85 BB       ..
+ STA addr3_1                                  ; AFF3: 85 BB       ..
  LDA #&28 ; '('                               ; AFF5: A9 28       .(
- STA T5                                       ; AFF7: 85 BA       ..
+ STA addr3                                    ; AFF7: 85 BA       ..
  LDY #0                                       ; AFF9: A0 00       ..
  LDX #&25 ; '%'                               ; AFFB: A2 25       .%
 .CAFFD
- LDA DASHBOARD_SWITCH                         ; AFFD: A5 E9       ..
+ LDA dashboardSwitch                          ; AFFD: A5 E9       ..
  BPL CB00A                                    ; AFFF: 10 09       ..
  LDA PPU_STATUS                               ; B001: AD 02 20    ..
  ASL A                                        ; B004: 0A          .
  BPL CB00A                                    ; B005: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; B007: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; B007: 20 6D D0     m.
 .CB00A
  LDA (V),Y                                    ; B00A: B1 63       .c
  STA (SC),Y                                   ; B00C: 91 07       ..
- STA (T5),Y                                   ; B00E: 91 BA       ..
+ STA (addr3),Y                                ; B00E: 91 BA       ..
  INY                                          ; B010: C8          .
  LDA (V),Y                                    ; B011: B1 63       .c
  STA (SC),Y                                   ; B013: 91 07       ..
- STA (T5),Y                                   ; B015: 91 BA       ..
+ STA (addr3),Y                                ; B015: 91 BA       ..
  INY                                          ; B017: C8          .
  LDA (V),Y                                    ; B018: B1 63       .c
  STA (SC),Y                                   ; B01A: 91 07       ..
- STA (T5),Y                                   ; B01C: 91 BA       ..
+ STA (addr3),Y                                ; B01C: 91 BA       ..
  INY                                          ; B01E: C8          .
  LDA (V),Y                                    ; B01F: B1 63       .c
  STA (SC),Y                                   ; B021: 91 07       ..
- STA (T5),Y                                   ; B023: 91 BA       ..
+ STA (addr3),Y                                ; B023: 91 BA       ..
  INY                                          ; B025: C8          .
  LDA (V),Y                                    ; B026: B1 63       .c
  STA (SC),Y                                   ; B028: 91 07       ..
- STA (T5),Y                                   ; B02A: 91 BA       ..
+ STA (addr3),Y                                ; B02A: 91 BA       ..
  INY                                          ; B02C: C8          .
  LDA (V),Y                                    ; B02D: B1 63       .c
  STA (SC),Y                                   ; B02F: 91 07       ..
- STA (T5),Y                                   ; B031: 91 BA       ..
+ STA (addr3),Y                                ; B031: 91 BA       ..
  INY                                          ; B033: C8          .
  LDA (V),Y                                    ; B034: B1 63       .c
  STA (SC),Y                                   ; B036: 91 07       ..
- STA (T5),Y                                   ; B038: 91 BA       ..
+ STA (addr3),Y                                ; B038: 91 BA       ..
  INY                                          ; B03A: C8          .
  LDA (V),Y                                    ; B03B: B1 63       .c
  STA (SC),Y                                   ; B03D: 91 07       ..
- STA (T5),Y                                   ; B03F: 91 BA       ..
+ STA (addr3),Y                                ; B03F: 91 BA       ..
  INY                                          ; B041: C8          .
  BNE CB04A                                    ; B042: D0 06       ..
  INC V_1                                      ; B044: E6 64       .d
  INC SC_1                                     ; B046: E6 08       ..
- INC T5_1                                     ; B048: E6 BB       ..
+ INC addr3_1                                  ; B048: E6 BB       ..
 .CB04A
  INX                                          ; B04A: E8          .
  CPX #&3C ; '<'                               ; B04B: E0 3C       .<
  BNE CAFFD                                    ; B04D: D0 AE       ..
 .CB04F
- LDA DASHBOARD_SWITCH                         ; B04F: A5 E9       ..
+ LDA dashboardSwitch                          ; B04F: A5 E9       ..
  BPL CB05C                                    ; B051: 10 09       ..
  LDA PPU_STATUS                               ; B053: AD 02 20    ..
  ASL A                                        ; B056: 0A          .
  BPL CB05C                                    ; B057: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; B059: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; B059: 20 6D D0     m.
 .CB05C
- CPX TILE                                     ; B05C: E4 B8       ..
+ CPX tileNumber                               ; B05C: E4 B8       ..
  BEQ CB0B4                                    ; B05E: F0 54       .T
  LDA (V),Y                                    ; B060: B1 63       .c
- STA (T5),Y                                   ; B062: 91 BA       ..
+ STA (addr3),Y                                ; B062: 91 BA       ..
  LDA #0                                       ; B064: A9 00       ..
  STA (SC),Y                                   ; B066: 91 07       ..
  INY                                          ; B068: C8          .
  LDA (V),Y                                    ; B069: B1 63       .c
- STA (T5),Y                                   ; B06B: 91 BA       ..
+ STA (addr3),Y                                ; B06B: 91 BA       ..
  LDA #0                                       ; B06D: A9 00       ..
  STA (SC),Y                                   ; B06F: 91 07       ..
  INY                                          ; B071: C8          .
  LDA (V),Y                                    ; B072: B1 63       .c
- STA (T5),Y                                   ; B074: 91 BA       ..
+ STA (addr3),Y                                ; B074: 91 BA       ..
  LDA #0                                       ; B076: A9 00       ..
  STA (SC),Y                                   ; B078: 91 07       ..
  INY                                          ; B07A: C8          .
  LDA (V),Y                                    ; B07B: B1 63       .c
- STA (T5),Y                                   ; B07D: 91 BA       ..
+ STA (addr3),Y                                ; B07D: 91 BA       ..
  LDA #0                                       ; B07F: A9 00       ..
  STA (SC),Y                                   ; B081: 91 07       ..
  INY                                          ; B083: C8          .
  LDA (V),Y                                    ; B084: B1 63       .c
- STA (T5),Y                                   ; B086: 91 BA       ..
+ STA (addr3),Y                                ; B086: 91 BA       ..
  LDA #0                                       ; B088: A9 00       ..
  STA (SC),Y                                   ; B08A: 91 07       ..
  INY                                          ; B08C: C8          .
  LDA (V),Y                                    ; B08D: B1 63       .c
- STA (T5),Y                                   ; B08F: 91 BA       ..
+ STA (addr3),Y                                ; B08F: 91 BA       ..
  LDA #0                                       ; B091: A9 00       ..
  STA (SC),Y                                   ; B093: 91 07       ..
  INY                                          ; B095: C8          .
  LDA (V),Y                                    ; B096: B1 63       .c
- STA (T5),Y                                   ; B098: 91 BA       ..
+ STA (addr3),Y                                ; B098: 91 BA       ..
  LDA #0                                       ; B09A: A9 00       ..
  STA (SC),Y                                   ; B09C: 91 07       ..
  INY                                          ; B09E: C8          .
  LDA (V),Y                                    ; B09F: B1 63       .c
- STA (T5),Y                                   ; B0A1: 91 BA       ..
+ STA (addr3),Y                                ; B0A1: 91 BA       ..
  LDA #0                                       ; B0A3: A9 00       ..
  STA (SC),Y                                   ; B0A5: 91 07       ..
  INY                                          ; B0A7: C8          .
  BNE CB0B0                                    ; B0A8: D0 06       ..
  INC V_1                                      ; B0AA: E6 64       .d
  INC SC_1                                     ; B0AC: E6 08       ..
- INC T5_1                                     ; B0AE: E6 BB       ..
+ INC addr3_1                                  ; B0AE: E6 BB       ..
 .CB0B0
  INX                                          ; B0B0: E8          .
  JMP CB04F                                    ; B0B1: 4C 4F B0    LO.
 
 .CB0B4
- LDA DASHBOARD_SWITCH                         ; B0B4: A5 E9       ..
+ LDA dashboardSwitch                          ; B0B4: A5 E9       ..
  BPL CB0C1                                    ; B0B6: 10 09       ..
  LDA PPU_STATUS                               ; B0B8: AD 02 20    ..
  ASL A                                        ; B0BB: 0A          .
  BPL CB0C1                                    ; B0BC: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; B0BE: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; B0BE: 20 6D D0     m.
 .CB0C1
  LDA #0                                       ; B0C1: A9 00       ..
  LDX #&30 ; '0'                               ; B0C3: A2 30       .0
 .loop_CB0C5
- STA (T5),Y                                   ; B0C5: 91 BA       ..
+ STA (addr3),Y                                ; B0C5: 91 BA       ..
  STA (SC),Y                                   ; B0C7: 91 07       ..
  INY                                          ; B0C9: C8          .
  BNE CB0D0                                    ; B0CA: D0 04       ..
- INC T5_1                                     ; B0CC: E6 BB       ..
+ INC addr3_1                                  ; B0CC: E6 BB       ..
  INC SC_1                                     ; B0CE: E6 08       ..
 .CB0D0
  DEX                                          ; B0D0: CA          .
  BNE loop_CB0C5                               ; B0D1: D0 F2       ..
- LDA DASHBOARD_SWITCH                         ; B0D3: A5 E9       ..
+ LDA dashboardSwitch                          ; B0D3: A5 E9       ..
  BPL CB0E0                                    ; B0D5: 10 09       ..
  LDA PPU_STATUS                               ; B0D7: AD 02 20    ..
  ASL A                                        ; B0DA: 0A          .
  BPL CB0E0                                    ; B0DB: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; B0DD: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; B0DD: 20 6D D0     m.
 .CB0E0
  RTS                                          ; B0E0: 60          `
 
@@ -3405,7 +3407,7 @@ subm_FB89        = &FB89
  LDA SC                                       ; B0E8: A5 07       ..
  CLC                                          ; B0EA: 18          .
  ADC #&5F ; '_'                               ; B0EB: 69 5F       i_
- STA TILE                                     ; B0ED: 85 B8       ..
+ STA tileNumber                               ; B0ED: 85 B8       ..
  LDX #0                                       ; B0EF: A2 00       ..
  LDA QQ11                                     ; B0F1: A5 9E       ..
  CMP #&BB                                     ; B0F3: C9 BB       ..
@@ -3421,11 +3423,11 @@ subm_FB89        = &FB89
  ASL SC                                       ; B102: 06 07       ..
  ROL A                                        ; B104: 2A          *
  ADC #&60 ; '`'                               ; B105: 69 60       i`
- STA T5_1                                     ; B107: 85 BB       ..
+ STA addr3_1                                  ; B107: 85 BB       ..
  ADC #8                                       ; B109: 69 08       i.
  STA SC_1                                     ; B10B: 85 08       ..
  LDA SC                                       ; B10D: A5 07       ..
- STA T5                                       ; B10F: 85 BA       ..
+ STA addr3                                    ; B10F: 85 BA       ..
  LDA #&FC                                     ; B111: A9 FC       ..
  STA V_1                                      ; B113: 85 64       .d
  LDA #&E8                                     ; B115: A9 E8       ..
@@ -3433,64 +3435,64 @@ subm_FB89        = &FB89
  LDX #&5F ; '_'                               ; B119: A2 5F       ._
  LDY #0                                       ; B11B: A0 00       ..
 .CB11D
- LDA DASHBOARD_SWITCH                         ; B11D: A5 E9       ..
+ LDA dashboardSwitch                          ; B11D: A5 E9       ..
  BPL CB12A                                    ; B11F: 10 09       ..
  LDA PPU_STATUS                               ; B121: AD 02 20    ..
  ASL A                                        ; B124: 0A          .
  BPL CB12A                                    ; B125: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; B127: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; B127: 20 6D D0     m.
 .CB12A
  LDA (V),Y                                    ; B12A: B1 63       .c
- STA (T5),Y                                   ; B12C: 91 BA       ..
+ STA (addr3),Y                                ; B12C: 91 BA       ..
  AND T                                        ; B12E: 25 9A       %.
  EOR T                                        ; B130: 45 9A       E.
  STA (SC),Y                                   ; B132: 91 07       ..
  INY                                          ; B134: C8          .
  LDA (V),Y                                    ; B135: B1 63       .c
- STA (T5),Y                                   ; B137: 91 BA       ..
+ STA (addr3),Y                                ; B137: 91 BA       ..
  AND T                                        ; B139: 25 9A       %.
  EOR T                                        ; B13B: 45 9A       E.
  STA (SC),Y                                   ; B13D: 91 07       ..
  INY                                          ; B13F: C8          .
  LDA (V),Y                                    ; B140: B1 63       .c
- STA (T5),Y                                   ; B142: 91 BA       ..
+ STA (addr3),Y                                ; B142: 91 BA       ..
  AND T                                        ; B144: 25 9A       %.
  EOR T                                        ; B146: 45 9A       E.
  STA (SC),Y                                   ; B148: 91 07       ..
  INY                                          ; B14A: C8          .
  LDA (V),Y                                    ; B14B: B1 63       .c
- STA (T5),Y                                   ; B14D: 91 BA       ..
+ STA (addr3),Y                                ; B14D: 91 BA       ..
  AND T                                        ; B14F: 25 9A       %.
  EOR T                                        ; B151: 45 9A       E.
  STA (SC),Y                                   ; B153: 91 07       ..
  INY                                          ; B155: C8          .
  LDA (V),Y                                    ; B156: B1 63       .c
- STA (T5),Y                                   ; B158: 91 BA       ..
+ STA (addr3),Y                                ; B158: 91 BA       ..
  AND T                                        ; B15A: 25 9A       %.
  EOR T                                        ; B15C: 45 9A       E.
  STA (SC),Y                                   ; B15E: 91 07       ..
  INY                                          ; B160: C8          .
  LDA (V),Y                                    ; B161: B1 63       .c
- STA (T5),Y                                   ; B163: 91 BA       ..
+ STA (addr3),Y                                ; B163: 91 BA       ..
  AND T                                        ; B165: 25 9A       %.
  EOR T                                        ; B167: 45 9A       E.
  STA (SC),Y                                   ; B169: 91 07       ..
  INY                                          ; B16B: C8          .
  LDA (V),Y                                    ; B16C: B1 63       .c
- STA (T5),Y                                   ; B16E: 91 BA       ..
+ STA (addr3),Y                                ; B16E: 91 BA       ..
  AND T                                        ; B170: 25 9A       %.
  EOR T                                        ; B172: 45 9A       E.
  STA (SC),Y                                   ; B174: 91 07       ..
  INY                                          ; B176: C8          .
  LDA (V),Y                                    ; B177: B1 63       .c
- STA (T5),Y                                   ; B179: 91 BA       ..
+ STA (addr3),Y                                ; B179: 91 BA       ..
  AND T                                        ; B17B: 25 9A       %.
  EOR T                                        ; B17D: 45 9A       E.
  STA (SC),Y                                   ; B17F: 91 07       ..
  INY                                          ; B181: C8          .
  BNE CB18A                                    ; B182: D0 06       ..
  INC V_1                                      ; B184: E6 64       .d
- INC T5_1                                     ; B186: E6 BB       ..
+ INC addr3_1                                  ; B186: E6 BB       ..
  INC SC_1                                     ; B188: E6 08       ..
 .CB18A
  DEX                                          ; B18A: CA          .
@@ -3498,9 +3500,9 @@ subm_FB89        = &FB89
  RTS                                          ; B18D: 60          `
 
  LDA #&65 ; 'e'                               ; B18E: A9 65       .e
- STA T5_1                                     ; B190: 85 BB       ..
+ STA addr3_1                                  ; B190: 85 BB       ..
  LDA #8                                       ; B192: A9 08       ..
- STA T5                                       ; B194: 85 BA       ..
+ STA addr3                                    ; B194: 85 BA       ..
  LDA #&6D ; 'm'                               ; B196: A9 6D       .m
  STA SC_1                                     ; B198: 85 08       ..
  LDA #8                                       ; B19A: A9 08       ..
@@ -3513,65 +3515,65 @@ subm_FB89        = &FB89
 .CB1A8
  TXA                                          ; B1A8: 8A          .
  CLC                                          ; B1A9: 18          .
- ADC TILE                                     ; B1AA: 65 B8       e.
- STA TILE                                     ; B1AC: 85 B8       ..
+ ADC tileNumber                               ; B1AA: 65 B8       e.
+ STA tileNumber                               ; B1AC: 85 B8       ..
  LDA #&FC                                     ; B1AE: A9 FC       ..
  STA V_1                                      ; B1B0: 85 64       .d
  LDA #&E8                                     ; B1B2: A9 E8       ..
  STA V                                        ; B1B4: 85 63       .c
  LDY #0                                       ; B1B6: A0 00       ..
 .CB1B8
- LDA DASHBOARD_SWITCH                         ; B1B8: A5 E9       ..
+ LDA dashboardSwitch                          ; B1B8: A5 E9       ..
  BPL CB1C5                                    ; B1BA: 10 09       ..
  LDA PPU_STATUS                               ; B1BC: AD 02 20    ..
  ASL A                                        ; B1BF: 0A          .
  BPL CB1C5                                    ; B1C0: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; B1C2: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; B1C2: 20 6D D0     m.
 .CB1C5
  LDA (V),Y                                    ; B1C5: B1 63       .c
  STA (SC),Y                                   ; B1C7: 91 07       ..
  LDA #&FF                                     ; B1C9: A9 FF       ..
- STA (T5),Y                                   ; B1CB: 91 BA       ..
+ STA (addr3),Y                                ; B1CB: 91 BA       ..
  INY                                          ; B1CD: C8          .
  LDA (V),Y                                    ; B1CE: B1 63       .c
  STA (SC),Y                                   ; B1D0: 91 07       ..
  LDA #&FF                                     ; B1D2: A9 FF       ..
- STA (T5),Y                                   ; B1D4: 91 BA       ..
+ STA (addr3),Y                                ; B1D4: 91 BA       ..
  INY                                          ; B1D6: C8          .
  LDA (V),Y                                    ; B1D7: B1 63       .c
  STA (SC),Y                                   ; B1D9: 91 07       ..
  LDA #&FF                                     ; B1DB: A9 FF       ..
- STA (T5),Y                                   ; B1DD: 91 BA       ..
+ STA (addr3),Y                                ; B1DD: 91 BA       ..
  INY                                          ; B1DF: C8          .
  LDA (V),Y                                    ; B1E0: B1 63       .c
  STA (SC),Y                                   ; B1E2: 91 07       ..
  LDA #&FF                                     ; B1E4: A9 FF       ..
- STA (T5),Y                                   ; B1E6: 91 BA       ..
+ STA (addr3),Y                                ; B1E6: 91 BA       ..
  INY                                          ; B1E8: C8          .
  LDA (V),Y                                    ; B1E9: B1 63       .c
  STA (SC),Y                                   ; B1EB: 91 07       ..
  LDA #&FF                                     ; B1ED: A9 FF       ..
- STA (T5),Y                                   ; B1EF: 91 BA       ..
+ STA (addr3),Y                                ; B1EF: 91 BA       ..
  INY                                          ; B1F1: C8          .
  LDA (V),Y                                    ; B1F2: B1 63       .c
  STA (SC),Y                                   ; B1F4: 91 07       ..
  LDA #&FF                                     ; B1F6: A9 FF       ..
- STA (T5),Y                                   ; B1F8: 91 BA       ..
+ STA (addr3),Y                                ; B1F8: 91 BA       ..
  INY                                          ; B1FA: C8          .
  LDA (V),Y                                    ; B1FB: B1 63       .c
  STA (SC),Y                                   ; B1FD: 91 07       ..
  LDA #&FF                                     ; B1FF: A9 FF       ..
- STA (T5),Y                                   ; B201: 91 BA       ..
+ STA (addr3),Y                                ; B201: 91 BA       ..
  INY                                          ; B203: C8          .
  LDA (V),Y                                    ; B204: B1 63       .c
  STA (SC),Y                                   ; B206: 91 07       ..
  LDA #&FF                                     ; B208: A9 FF       ..
- STA (T5),Y                                   ; B20A: 91 BA       ..
+ STA (addr3),Y                                ; B20A: 91 BA       ..
  INY                                          ; B20C: C8          .
  BNE CB215                                    ; B20D: D0 06       ..
  INC V_1                                      ; B20F: E6 64       .d
  INC SC_1                                     ; B211: E6 08       ..
- INC T5_1                                     ; B213: E6 BB       ..
+ INC addr3_1                                  ; B213: E6 BB       ..
 .CB215
  DEX                                          ; B215: CA          .
  BNE CB1B8                                    ; B216: D0 A0       ..
@@ -3579,11 +3581,11 @@ subm_FB89        = &FB89
 
  STX K                                        ; B219: 86 7D       .}
  STY K_1                                      ; B21B: 84 7E       .~
- LDA TILE                                     ; B21D: A5 B8       ..
+ LDA tileNumber                               ; B21D: A5 B8       ..
  STA L046C                                    ; B21F: 8D 6C 04    .l.
  CLC                                          ; B222: 18          .
  ADC #&38 ; '8'                               ; B223: 69 38       i8
- STA TILE                                     ; B225: 85 B8       ..
+ STA tileNumber                               ; B225: 85 B8       ..
  LDA L046C                                    ; B227: AD 6C 04    .l.
  STA K_2                                      ; B22A: 85 7F       ..
  JSR CB2FB_BANK3                              ; B22C: 20 54 EE     T.
@@ -3603,53 +3605,53 @@ subm_FB89        = &FB89
  LDY #0                                       ; B24B: A0 00       ..
  LDA #&40 ; '@'                               ; B24D: A9 40       .@
  STA (SC),Y                                   ; B24F: 91 07       ..
- STA (T5),Y                                   ; B251: 91 BA       ..
+ STA (addr3),Y                                ; B251: 91 BA       ..
  LDA #&3C ; '<'                               ; B253: A9 3C       .<
  JSR CB29D                                    ; B255: 20 9D B2     ..
  LDA #&3E ; '>'                               ; B258: A9 3E       .>
  STA (SC),Y                                   ; B25A: 91 07       ..
- STA (T5),Y                                   ; B25C: 91 BA       ..
+ STA (addr3),Y                                ; B25C: 91 BA       ..
  DEC K_1                                      ; B25E: C6 7E       .~
  JMP CB276                                    ; B260: 4C 76 B2    Lv.
 
 .CB263
- JSR CHECK_DASHBOARD_A                        ; B263: 20 7D EC     }.
+ JSR CheckDashboardA                          ; B263: 20 7D EC     }.
  LDA #1                                       ; B266: A9 01       ..
  LDY #0                                       ; B268: A0 00       ..
  STA (SC),Y                                   ; B26A: 91 07       ..
- STA (T5),Y                                   ; B26C: 91 BA       ..
+ STA (addr3),Y                                ; B26C: 91 BA       ..
  LDA #2                                       ; B26E: A9 02       ..
  LDY K                                        ; B270: A4 7D       .}
  STA (SC),Y                                   ; B272: 91 07       ..
- STA (T5),Y                                   ; B274: 91 BA       ..
+ STA (addr3),Y                                ; B274: 91 BA       ..
 .CB276
  LDA SC                                       ; B276: A5 07       ..
  CLC                                          ; B278: 18          .
  ADC #&20 ; ' '                               ; B279: 69 20       i
  STA SC                                       ; B27B: 85 07       ..
- STA T5                                       ; B27D: 85 BA       ..
+ STA addr3                                    ; B27D: 85 BA       ..
  BCC CB285                                    ; B27F: 90 04       ..
  INC SC_1                                     ; B281: E6 08       ..
- INC T5_1                                     ; B283: E6 BB       ..
+ INC addr3_1                                  ; B283: E6 BB       ..
 .CB285
  DEC K_1                                      ; B285: C6 7E       .~
  BNE CB263                                    ; B287: D0 DA       ..
  LDY #0                                       ; B289: A0 00       ..
  LDA #&41 ; 'A'                               ; B28B: A9 41       .A
  STA (SC),Y                                   ; B28D: 91 07       ..
- STA (T5),Y                                   ; B28F: 91 BA       ..
+ STA (addr3),Y                                ; B28F: 91 BA       ..
  LDA #&3D ; '='                               ; B291: A9 3D       .=
  JSR CB29D                                    ; B293: 20 9D B2     ..
  LDA #&3F ; '?'                               ; B296: A9 3F       .?
  STA (SC),Y                                   ; B298: 91 07       ..
- STA (T5),Y                                   ; B29A: 91 BA       ..
+ STA (addr3),Y                                ; B29A: 91 BA       ..
  RTS                                          ; B29C: 60          `
 
 .CB29D
  LDY #1                                       ; B29D: A0 01       ..
 .loop_CB29F
  STA (SC),Y                                   ; B29F: 91 07       ..
- STA (T5),Y                                   ; B2A1: 91 BA       ..
+ STA (addr3),Y                                ; B2A1: 91 BA       ..
  INY                                          ; B2A3: C8          .
  CPY K                                        ; B2A4: C4 7D       .}
  BNE loop_CB29F                               ; B2A6: D0 F7       ..
@@ -3661,10 +3663,10 @@ subm_FB89        = &FB89
  CLC                                          ; B2AE: 18          .
  ADC XC                                       ; B2AF: 65 32       e2
  STA SC                                       ; B2B1: 85 07       ..
- STA T5                                       ; B2B3: 85 BA       ..
+ STA addr3                                    ; B2B3: 85 BA       ..
  BCC CB2BB                                    ; B2B5: 90 04       ..
  INC SC_1                                     ; B2B7: E6 08       ..
- INC T5_1                                     ; B2B9: E6 BB       ..
+ INC addr3_1                                  ; B2B9: E6 BB       ..
 .CB2BB
  RTS                                          ; B2BB: 60          `
 
@@ -3679,24 +3681,24 @@ subm_FB89        = &FB89
  JMP CB2E3                                    ; B2CE: 4C E3 B2    L..
 
 .CB2D1
- JSR CHECK_DASHBOARD_A                        ; B2D1: 20 7D EC     }.
+ JSR CheckDashboardA                          ; B2D1: 20 7D EC     }.
  LDA SC                                       ; B2D4: A5 07       ..
  CLC                                          ; B2D6: 18          .
  ADC #&20 ; ' '                               ; B2D7: 69 20       i
  STA SC                                       ; B2D9: 85 07       ..
- STA T5                                       ; B2DB: 85 BA       ..
+ STA addr3                                    ; B2DB: 85 BA       ..
  BCC CB2E3                                    ; B2DD: 90 04       ..
  INC SC_1                                     ; B2DF: E6 08       ..
- INC T5_1                                     ; B2E1: E6 BB       ..
+ INC addr3_1                                  ; B2E1: E6 BB       ..
 .CB2E3
  LDA #1                                       ; B2E3: A9 01       ..
  LDY #0                                       ; B2E5: A0 00       ..
  STA (SC),Y                                   ; B2E7: 91 07       ..
- STA (T5),Y                                   ; B2E9: 91 BA       ..
+ STA (addr3),Y                                ; B2E9: 91 BA       ..
  LDA #2                                       ; B2EB: A9 02       ..
  LDY K                                        ; B2ED: A4 7D       .}
  STA (SC),Y                                   ; B2EF: 91 07       ..
- STA (T5),Y                                   ; B2F1: 91 BA       ..
+ STA (addr3),Y                                ; B2F1: 91 BA       ..
  DEX                                          ; B2F3: CA          .
  BNE CB2D1                                    ; B2F4: D0 DB       ..
  LDA #&3C ; '<'                               ; B2F6: A9 3C       .<
@@ -3707,24 +3709,24 @@ subm_FB89        = &FB89
  CLC                                          ; B300: 18          .
  ADC XC                                       ; B301: 65 32       e2
  STA SC                                       ; B303: 85 07       ..
- STA T5                                       ; B305: 85 BA       ..
+ STA addr3                                    ; B305: 85 BA       ..
  BCC CB30D                                    ; B307: 90 04       ..
  INC SC_1                                     ; B309: E6 08       ..
- INC T5_1                                     ; B30B: E6 BB       ..
+ INC addr3_1                                  ; B30B: E6 BB       ..
 .CB30D
  LDX K_1                                      ; B30D: A6 7E       .~
 .CB30F
- LDA DASHBOARD_SWITCH                         ; B30F: A5 E9       ..
+ LDA dashboardSwitch                          ; B30F: A5 E9       ..
  BPL CB31C                                    ; B311: 10 09       ..
  LDA PPU_STATUS                               ; B313: AD 02 20    ..
  ASL A                                        ; B316: 0A          .
  BPL CB31C                                    ; B317: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; B319: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; B319: 20 6D D0     m.
 .CB31C
  LDY #0                                       ; B31C: A0 00       ..
  LDA K_2                                      ; B31E: A5 7F       ..
 .loop_CB320
- STA (T5),Y                                   ; B320: 91 BA       ..
+ STA (addr3),Y                                ; B320: 91 BA       ..
  STA (SC),Y                                   ; B322: 91 07       ..
  CLC                                          ; B324: 18          .
  ADC #1                                       ; B325: 69 01       i.
@@ -3736,10 +3738,10 @@ subm_FB89        = &FB89
  CLC                                          ; B330: 18          .
  ADC #&20 ; ' '                               ; B331: 69 20       i
  STA SC                                       ; B333: 85 07       ..
- STA T5                                       ; B335: 85 BA       ..
+ STA addr3                                    ; B335: 85 BA       ..
  BCC CB33D                                    ; B337: 90 04       ..
  INC SC_1                                     ; B339: E6 08       ..
- INC T5_1                                     ; B33B: E6 BB       ..
+ INC addr3_1                                  ; B33B: E6 BB       ..
 .CB33D
  DEX                                          ; B33D: CA          .
  BNE CB30F                                    ; B33E: D0 CF       ..
@@ -3755,10 +3757,10 @@ subm_FB89        = &FB89
  ASL A                                        ; B34D: 0A          .
  ROL SC_1                                     ; B34E: 26 08       &.
  STA SC                                       ; B350: 85 07       ..
- STA T5                                       ; B352: 85 BA       ..
+ STA addr3                                    ; B352: 85 BA       ..
  LDA SC_1                                     ; B354: A5 08       ..
  ADC #&68 ; 'h'                               ; B356: 69 68       ih
- STA T5_1                                     ; B358: 85 BB       ..
+ STA addr3_1                                  ; B358: 85 BB       ..
  LDA SC_1                                     ; B35A: A5 08       ..
  ADC #&60 ; '`'                               ; B35C: 69 60       i`
  STA SC_1                                     ; B35E: 85 08       ..
@@ -3767,73 +3769,73 @@ subm_FB89        = &FB89
 .CB364
  LDA #0                                       ; B364: A9 00       ..
  STA (SC),Y                                   ; B366: 91 07       ..
- STA (T5),Y                                   ; B368: 91 BA       ..
+ STA (addr3),Y                                ; B368: 91 BA       ..
  INY                                          ; B36A: C8          .
  STA (SC),Y                                   ; B36B: 91 07       ..
- STA (T5),Y                                   ; B36D: 91 BA       ..
+ STA (addr3),Y                                ; B36D: 91 BA       ..
  INY                                          ; B36F: C8          .
  STA (SC),Y                                   ; B370: 91 07       ..
- STA (T5),Y                                   ; B372: 91 BA       ..
+ STA (addr3),Y                                ; B372: 91 BA       ..
  INY                                          ; B374: C8          .
  STA (SC),Y                                   ; B375: 91 07       ..
- STA (T5),Y                                   ; B377: 91 BA       ..
+ STA (addr3),Y                                ; B377: 91 BA       ..
  INY                                          ; B379: C8          .
  STA (SC),Y                                   ; B37A: 91 07       ..
- STA (T5),Y                                   ; B37C: 91 BA       ..
+ STA (addr3),Y                                ; B37C: 91 BA       ..
  INY                                          ; B37E: C8          .
  STA (SC),Y                                   ; B37F: 91 07       ..
- STA (T5),Y                                   ; B381: 91 BA       ..
+ STA (addr3),Y                                ; B381: 91 BA       ..
  INY                                          ; B383: C8          .
  STA (SC),Y                                   ; B384: 91 07       ..
- STA (T5),Y                                   ; B386: 91 BA       ..
+ STA (addr3),Y                                ; B386: 91 BA       ..
  INY                                          ; B388: C8          .
  STA (SC),Y                                   ; B389: 91 07       ..
- STA (T5),Y                                   ; B38B: 91 BA       ..
+ STA (addr3),Y                                ; B38B: 91 BA       ..
  INY                                          ; B38D: C8          .
  BNE CB394                                    ; B38E: D0 04       ..
  INC SC_1                                     ; B390: E6 08       ..
- INC T5_1                                     ; B392: E6 BB       ..
+ INC addr3_1                                  ; B392: E6 BB       ..
 .CB394
- LDA DASHBOARD_SWITCH                         ; B394: A5 E9       ..
+ LDA dashboardSwitch                          ; B394: A5 E9       ..
  BPL CB3A1                                    ; B396: 10 09       ..
  LDA PPU_STATUS                               ; B398: AD 02 20    ..
  ASL A                                        ; B39B: 0A          .
  BPL CB3A1                                    ; B39C: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; B39E: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; B39E: 20 6D D0     m.
 .CB3A1
  INX                                          ; B3A1: E8          .
  BNE CB364                                    ; B3A2: D0 C0       ..
  LDA #0                                       ; B3A4: A9 00       ..
  STA SC                                       ; B3A6: 85 07       ..
- STA T5                                       ; B3A8: 85 BA       ..
+ STA addr3                                    ; B3A8: 85 BA       ..
  LDA #&70 ; 'p'                               ; B3AA: A9 70       .p
  STA SC_1                                     ; B3AC: 85 08       ..
  LDA #&74 ; 't'                               ; B3AE: A9 74       .t
- STA T5_1                                     ; B3B0: 85 BB       ..
+ STA addr3_1                                  ; B3B0: 85 BB       ..
  LDX #&1C                                     ; B3B2: A2 1C       ..
 .CB3B4
  LDY #&20 ; ' '                               ; B3B4: A0 20       .
  LDA #0                                       ; B3B6: A9 00       ..
 .loop_CB3B8
  STA (SC),Y                                   ; B3B8: 91 07       ..
- STA (T5),Y                                   ; B3BA: 91 BA       ..
+ STA (addr3),Y                                ; B3BA: 91 BA       ..
  DEY                                          ; B3BC: 88          .
  BPL loop_CB3B8                               ; B3BD: 10 F9       ..
- LDA DASHBOARD_SWITCH                         ; B3BF: A5 E9       ..
+ LDA dashboardSwitch                          ; B3BF: A5 E9       ..
  BPL CB3CC                                    ; B3C1: 10 09       ..
  LDA PPU_STATUS                               ; B3C3: AD 02 20    ..
  ASL A                                        ; B3C6: 0A          .
  BPL CB3CC                                    ; B3C7: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; B3C9: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; B3C9: 20 6D D0     m.
 .CB3CC
  LDA SC                                       ; B3CC: A5 07       ..
  CLC                                          ; B3CE: 18          .
  ADC #&20 ; ' '                               ; B3CF: 69 20       i
  STA SC                                       ; B3D1: 85 07       ..
- STA T5                                       ; B3D3: 85 BA       ..
+ STA addr3                                    ; B3D3: 85 BA       ..
  BCC CB3DB                                    ; B3D5: 90 04       ..
  INC SC_1                                     ; B3D7: E6 08       ..
- INC T5_1                                     ; B3D9: E6 BB       ..
+ INC addr3_1                                  ; B3D9: E6 BB       ..
 .CB3DB
  DEX                                          ; B3DB: CA          .
  BNE CB3B4                                    ; B3DC: D0 D6       ..
@@ -3899,7 +3901,7 @@ subm_FB89        = &FB89
  EQUB &0F, &0F, &0F                           ; B57C: 0F 0F 0F    ...
 
 .sub_CB57F
- LDA QQ11_MASK                                ; B57F: A5 9F       ..
+ LDA QQ11Mask                                 ; B57F: A5 9F       ..
  AND #&0F                                     ; B581: 29 0F       ).
  TAX                                          ; B583: AA          .
  LDA #0                                       ; B584: A9 00       ..
@@ -3924,7 +3926,7 @@ subm_FB89        = &FB89
  STA XX3,Y                                    ; B5A4: 99 00 01    ...
  DEY                                          ; B5A7: 88          .
  BPL loop_CB5A2                               ; B5A8: 10 F8       ..
- LDA QQ11_MASK                                ; B5AA: A5 9F       ..
+ LDA QQ11Mask                                 ; B5AA: A5 9F       ..
  BEQ CB5DE                                    ; B5AC: F0 30       .0
  CMP #&98                                     ; B5AE: C9 98       ..
  BEQ CB607                                    ; B5B0: F0 55       .U
@@ -3976,7 +3978,7 @@ subm_FB89        = &FB89
 .CB607
  LDA #&0F                                     ; B607: A9 0F       ..
  STA L0033                                    ; B609: 85 33       .3
- LDA QQ11_MASK                                ; B60B: A5 9F       ..
+ LDA QQ11Mask                                 ; B60B: A5 9F       ..
  BPL CB627                                    ; B60D: 10 18       ..
  CMP #&C4                                     ; B60F: C9 C4       ..
  BEQ CB627                                    ; B611: F0 14       ..
@@ -4004,7 +4006,7 @@ subm_FB89        = &FB89
  STA L0036                                    ; B63A: 85 36       .6
  RTS                                          ; B63C: 60          `
 
- LDA QQ11_MASK                                ; B63D: A5 9F       ..
+ LDA QQ11Mask                                 ; B63D: A5 9F       ..
  CMP #&FF                                     ; B63F: C9 FF       ..
  BEQ CB66D                                    ; B641: F0 2A       .*
  LDA L0473                                    ; B643: AD 73 04    .s.
@@ -4198,7 +4200,7 @@ subm_FB89        = &FB89
 .LB9DE
  EQUB &B9, &B9, &B9, &B9                      ; B9DE: B9 B9 B9... ...
 
- LDX LANG                                     ; B9E2: AE A8 04    ...
+ LDX language                                 ; B9E2: AE A8 04    ...
  LDA LB9DA,X                                  ; B9E5: BD DA B9    ...
  STA V                                        ; B9E8: 85 63       .c
  LDA LB9DE,X                                  ; B9EA: BD DE B9    ...

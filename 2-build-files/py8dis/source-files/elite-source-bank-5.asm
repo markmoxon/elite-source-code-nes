@@ -152,7 +152,7 @@ XSAV             = &009B
 YSAV             = &009C
 XX17             = &009D
 QQ11             = &009E
-QQ11_MASK        = &009F
+QQ11Mask         = &009F
 ZZ               = &00A0
 XX13             = &00A1
 MCNT             = &00A2
@@ -174,22 +174,22 @@ Yx2M2            = &00B2
 Yx2M1            = &00B3
 messXC           = &00B4
 newzp            = &00B6
-TILE             = &00B8
-PATTERNS_HI      = &00B9
-T5               = &00BA
-T5_1             = &00BB
-ADDR1_LO         = &00D4
-ADDR1_HI         = &00D5
-NAMES_HI         = &00E6
-DASHBOARD_SWITCH = &00E9
-T6               = &00EB
-T6_1             = &00EC
-T7               = &00ED
-T7_1             = &00EE
-PPU_CTRL_COPY    = &00F5
-BANK             = &00F7
-ADDR2_LO         = &00FA
-ADDR2_HI         = &00FB
+tileNumber       = &00B8
+patternTableHi   = &00B9
+addr3            = &00BA
+addr3_1          = &00BB
+addr1            = &00D4
+addr1_1          = &00D5
+nametableHi      = &00E6
+dashboardSwitch  = &00E9
+addr4            = &00EB
+addr4_1          = &00EC
+addr5            = &00ED
+addr5_1          = &00EE
+ppuCtrlCopy      = &00F5
+currentBank      = &00F7
+addr2            = &00FA
+addr2_1          = &00FB
 XX3              = &0100
 XX3_1            = &0101
 SPR_00_Y         = &0200
@@ -454,8 +454,8 @@ ECMP             = &0389
 MJ               = &038A
 CABTMP           = &038B
 LAS2             = &038C
-LASCT            = &038E
 VIEW             = &038E
+LASCT            = &038F
 GNTMP            = &0390
 EV               = &0392
 NAME             = &0396
@@ -498,6 +498,7 @@ LAS              = &0400
 MSTG             = &0401
 QQ19             = &044D
 QQ19_1           = &044E
+QQ19_2           = &044F
 QQ19_3           = &0450
 QQ19_4           = &0450
 K2               = &0459
@@ -505,11 +506,10 @@ K2_1             = &045A
 K2_2             = &045B
 K2_3             = &045C
 DLY              = &045D
-QQ19_2           = &045F
 L046C            = &046C
-BOX_EDGE1        = &046E
-BOX_EDGE2        = &046F
-CONT2_SCAN       = &0475
+boxEdge1         = &046E
+boxEdge2         = &046F
+scanController2  = &0475
 LASX             = &047B
 LASY             = &047C
 ALTIT            = &047E
@@ -534,11 +534,11 @@ QQ8              = &049B
 QQ8_1            = &049C
 QQ9              = &049D
 QQ10             = &049E
-QQ18_LO          = &04A4
-QQ18_HI          = &04A5
-TKN1_LO          = &04A6
-TKN1_HI          = &04A7
-LANG             = &04A8
+QQ18Lo           = &04A4
+QQ18Hi           = &04A5
+TKN1Lo           = &04A6
+TKN1Hi           = &04A7
+language         = &04A8
 CONT1_DOWN       = &04AA
 CONT2_DOWN       = &04AB
 CONT1_UP         = &04AC
@@ -605,8 +605,8 @@ LC006            = &C006
 Spercent         = &C007
 subm_C03E        = &C03E
 subm_C0A8        = &C0A8
-RESET_BANK       = &C0AD
-SET_BANK         = &C0AE
+ResetBank        = &C0AD
+SetBank          = &C0AE
 LC0DF            = &C0DF
 log              = &C100
 logL             = &C200
@@ -628,41 +628,41 @@ subm_CA56        = &CA56
 subm_CB42        = &CB42
 subm_CB9C        = &CB9C
 subm_CC1F        = &CC1F
-SEND_TO_PPU1     = &CC2E
-COPY_NAMES       = &CD34
+SendToPPU1       = &CC2E
+CopyNametable0To1 = &CD34
 subm_CD62        = &CD62
-BOX_EDGES        = &CD6F
+DrawBoxEdges     = &CD6F
 UNIV             = &CE7E
 UNIV_1           = &CE7F
 GINF             = &CE90
 subm_CE9E        = &CE9E
 subm_CEA5        = &CEA5
-NAMES_LOOKUP     = &CED0
-PATTERNS_LOOKUP  = &CED2
+nametableAddrHi  = &CED0
+patternAddrHi    = &CED2
 IRQ              = &CED4
 NMI              = &CED5
-SET_PALETTE      = &CF2E
-RESET_NAMES1     = &D02D
-SWITCH_TO_TABLE_0 = &D06D
-CONTROLLERS      = &D0F8
-FILL_MEMORY      = &D710
+SetPalette       = &CF2E
+ResetNametable1  = &D02D
+SwitchTablesTo0  = &D06D
+ReadControllers  = &D0F8
+FillMemory       = &D710
 subm_D8D8        = &D8D8
-SEND_TO_PPU2     = &D986
+SendToPPU2       = &D986
 TWOS             = &D9F7
 TWOS2            = &DA01
 TWFL             = &DA09
 TWFR             = &DA10
-ylookupLo        = &DA18
-ylookupHi        = &DAF8
+yLookupLo        = &DA18
+yLookupHi        = &DAF8
 LOIN             = &DC0F
 subm_DEA5        = &DEA5
 subm_DF76        = &DF76
 subm_E04A        = &E04A
-subm_E0BA        = &E04A
+subm_E0BA        = &E0BA
 subm_E18E        = &E18E
 subm_E33E        = &E33E
 PIXEL            = &E4F0
-PIXELx2          = &E543
+DrawDash         = &E543
 ECBLB2           = &E596
 MSBAR            = &E59F
 subm_E802        = &E802
@@ -678,16 +678,17 @@ subm_EB86        = &EB86
 DELAY            = &EBA2
 BEEP             = &EBA9
 EXNO3            = &EBAD
+ECBLB            = &EBBF
 BOOP             = &EBE5
 NOISE            = &EBF2
-NOISE_lookup1    = &EC3C
-NOISE_lookup2    = &EC5C
-CHECK_DASHBOARD_A = &EC7D
+noiseLookup1     = &EC3C
+noiseLookup2     = &EC5C
+CheckDashboardA  = &EC7D
 LDA_XX0_Y        = &EC8D
-LDA_EPC_Y        = &ECA0
-INC_TALLY        = &ECAE
+LDA_Epc_Y        = &ECA0
+IncreaseTally    = &ECAE
 CB1D4_BANK0      = &ECE2
-SETK_K3_XC_YC    = &ECF9
+Set_K_K3_XC_YC   = &ECF9
 C811E_BANK6      = &ED16
 C8021_BANK6      = &ED24
 C89D1_BANK6      = &ED50
@@ -819,6 +820,7 @@ ADD              = &F872
 TIS1             = &F8AE
 DV42             = &F8D1
 DV41             = &F8D4
+DVID4            = &F8D8
 DVID3B2          = &F962
 subm_FA16        = &FA16
 subm_FA43        = &FA43
@@ -836,7 +838,7 @@ subm_FB89        = &FB89
  JMP Spercent                                 ; 8004: 4C 07 C0    L..
 
  EQUS "@ 5.0"                                 ; 8007: 40 20 35... @ 5
-.IMAGE_COUNT
+.imageCount
  EQUB &0F,   0                                ; 800C: 0F 00       ..
 .L800E
  EQUB &20                                     ; 800E: 20
@@ -846,7 +848,7 @@ subm_FB89        = &FB89
  EQUB &22, &11, &26, &D8                      ; 801F: 22 11 26... ".&
  EQUS ") .22"                                 ; 8023: 29 20 2E... ) .
  EQUB &C5, &36,   7, &3B                      ; 8028: C5 36 07... .6.
-.IMAGE_0
+.image0
  EQUB &0F, &0F, &0F, &0F, &0F, &0F, &0F, &07  ; 802C: 0F 0F 0F... ...
  EQUB &21, &02, &00, &22, &02, &33, &12, &0F  ; 8034: 21 02 00... !..
  EQUB &0F, &5F, &04, &40, &22, &80, &D0, &02  ; 803C: 0F 5F 04... ._.
@@ -982,7 +984,7 @@ subm_FB89        = &FB89
  EQUB &82, &40, &21, &05, &AB, &21, &3D, &00  ; 844C: 82 40 21... .@!
  EQUB &40, &05, &20, &35, &02, &04, &02, &04  ; 8454: 40 05 20... @.
  EQUB &29, &7C, &E8, &D2, &06, &40, &80, &3F  ; 845C: 29 7C E8... )|.
-.IMAGE_1
+.image1
  EQUB &0F, &0F, &0F, &0B, &22, &04, &36, &0E  ; 8464: 0F 0F 0F... ...
  EQUB &1E, &1E, &08, &00, &04, &0F, &01, &20  ; 846C: 1E 1E 08... ...
  EQUB &52, &21, &11, &60, &21, &14, &0F, &06  ; 8474: 52 21 11... R!.
@@ -1109,7 +1111,7 @@ subm_FB89        = &FB89
  EQUB &80, &00, &FF, &21, &0B, &00, &21, &28  ; 883C: 80 00 FF... ...
  EQUB &10, &21, &01, &02, &FE, &21, &0B, &00  ; 8844: 10 21 01... .!.
  EQUB &21, &28, &10, &21, &01, &02, &3F       ; 884C: 21 28 10... !(.
-.IMAGE_2
+.image2
  EQUB &0F, &0F, &0F, &0F, &0F, &03, &22, &01  ; 8853: 0F 0F 0F... ...
  EQUB &04, &21, &3E, &13, &05, &80, &E0, &9C  ; 885B: 04 21 3E... .!>
  EQUB &0F, &0F, &05, &32, &08, &34, &03, &25  ; 8863: 0F 0F 05... ...
@@ -1295,7 +1297,7 @@ subm_FB89        = &FB89
  EQUB &21, &01, &07, &21, &01, &07, &21, &18  ; 8E03: 21 01 07... !..
  EQUB &07, &10, &0F, &0F, &0F, &0F, &0F, &0C  ; 8E0B: 07 10 0F... ...
  EQUB &3F                                     ; 8E13: 3F          ?
-.IMAGE_3
+.image3
  EQUB &0F, &01, &37, &02, &17, &2B, &05, &0A  ; 8E14: 0F 01 37... ..7
  EQUB &57, &3F, &5F, &FE, &FF, &FE, &B5, &FA  ; 8E1C: 57 3F 5F... W?_
  EQUB &DF, &EA, &50, &AE, &F4, &E8, &50, &00  ; 8E24: DF EA 50... ..P
@@ -1451,7 +1453,7 @@ subm_FB89        = &FB89
  EQUB &21, &02, &55, &21, &2A, &80, &03, &80  ; 92D4: 21 02 55... !.U
  EQUB &21, &11, &55, &EA, &40, &CE, &79, &21  ; 92DC: 21 11 55... !.U
  EQUB &2E, &8A, &21, &11, &45, &AA, &40, &3F  ; 92E4: 2E 8A 21... ..!
-.IMAGE_4
+.image4
  EQUB &F0, &78, &21, &3C, &7C, &FE, &13, &03  ; 92EC: F0 78 21... .x!
  EQUB &10, &02, &21, &02, &87, &03, &21, &01  ; 92F4: 10 02 21... ..!
  EQUB &03, &20, &02, &80, &C0, &80, &21, &01  ; 92FC: 03 20 02... . .
@@ -1566,7 +1568,7 @@ subm_FB89        = &FB89
  EQUB &22, &0C, &3A, &06, &02, &03, &28, &28  ; 9664: 22 0C 3A... ".:
  EQUB &38, &34, &04, &02, &02, &81, &0F, &0F  ; 966C: 38 34 04... 84.
  EQUB &0F, &0F, &04, &3F                      ; 9674: 0F 0F 04... ...
-.IMAGE_5
+.image5
  EQUB &23, &10, &34, &18, &38, &10, &2C, &7E  ; 9678: 23 10 34... #.4
  EQUB &0D, &22, &10, &30, &0F, &0F, &02, &3D  ; 9680: 0D 22 10... .".
  EQUB &04, &0C, &04, &04, &0E, &1E, &1E, &0C  ; 9688: 04 0C 04... ...
@@ -1700,7 +1702,7 @@ subm_FB89        = &FB89
  EQUB &B7, &BF, &BB, &DE, &FF, &22, &DF, &8F  ; 9A88: B7 BF BB... ...
  EQUB &F0, &F8, &FC, &15, &70, &F8, &FC, &12  ; 9A90: F0 F8 FC... ...
  EQUB &EF, &E7, &D7, &3F                      ; 9A98: EF E7 D7... ...
-.IMAGE_6
+.image6
  EQUB &40, &10, &80, &20, &02, &40, &0F, &0F  ; 9A9C: 40 10 80... @..
  EQUB &0F, &01, &21, &18, &5E, &21, &3C, &06  ; 9AA4: 0F 01 21... ..!
  EQUB &80, &03, &40, &02, &90, &21, &02, &05  ; 9AAC: 80 03 40... ..@
@@ -1829,7 +1831,7 @@ subm_FB89        = &FB89
  EQUB &01, &36, &03, &07, &0E, &0E, &1C, &38  ; 9E84: 01 36 03... .6.
  EQUB &08, &C0, &80, &04, &22, &01, &0C, &22  ; 9E8C: 08 C0 80... ...
  EQUB &E0, &22, &C0, &0F, &0F, &0F, &03, &3F  ; 9E94: E0 22 C0... .".
-.IMAGE_7
+.image7
  EQUB &44, &10, &80, &32, &28, &02, &40, &08  ; 9E9C: 44 10 80... D..
  EQUB &20, &08, &10, &02, &20, &40, &E0, &7A  ; 9EA4: 20 08 10...  ..
  EQUB &FD, &FF, &02, &40, &20, &02, &40, &80  ; 9EAC: FD FF 02... ...
@@ -1969,7 +1971,7 @@ subm_FB89        = &FB89
  EQUB &83, &C1, &34, &24, &08, &04, &08, &40  ; A2DC: 83 C1 34... ..4
  EQUB &20, &80, &90, &48, &00, &84, &00, &40  ; A2E4: 20 80 90...  ..
  EQUB &20, &80, &90, &48, &00, &84, &00, &3F  ; A2EC: 20 80 90...  ..
-.IMAGE_8
+.image8
  EQUB &02, &36, &08, &01, &04, &00, &02, &08  ; A2F4: 02 36 08... .6.
  EQUB &02, &21, &04, &02, &80, &0F, &02, &21  ; A2FC: 02 21 04... .!.
  EQUB &01, &09, &40, &80, &21, &24, &42, &EF  ; A304: 01 09 40... ..@
@@ -2072,7 +2074,7 @@ subm_FB89        = &FB89
  EQUB &20, &06, &20, &07, &20, &05, &40, &00  ; A60C: 20 06 20...  .
  EQUB &21, &08, &05, &40, &00, &21, &08, &04  ; A614: 21 08 05... !..
  EQUB &3F                                     ; A61C: 3F          ?
-.IMAGE_9
+.image9
  EQUB &02, &80, &C0, &E0, &70, &B8, &5C, &0F  ; A61D: 02 80 C0... ...
  EQUB &0F, &01, &21, &02, &0F, &09, &AE, &D7  ; A625: 0F 01 21... ..!
  EQUB &6B, &35, &34, &1B, &0D, &06, &03, &00  ; A62D: 6B 35 34... k54
@@ -2194,7 +2196,7 @@ subm_FB89        = &FB89
  EQUB &20, &84, &10, &05, &20, &84, &10, &0F  ; A9CD: 20 84 10...  ..
  EQUB &0F, &0F, &0F, &0A, &80, &10, &80, &05  ; A9D5: 0F 0F 0F... ...
  EQUB &80, &10, &80, &0F, &0F, &06, &3F       ; A9DD: 80 10 80... ...
-.IMAGE_10
+.image10
  EQUB &00, &40, &00, &10, &00, &21, &04, &0B  ; A9E4: 00 40 00... .@.
  EQUB &21, &02, &0F, &21, &02, &0F, &21, &02  ; A9EC: 21 02 0F... !..
  EQUB &08, &21, &08, &06, &80, &0F, &0D, &10  ; A9F4: 08 21 08... .!.
@@ -2332,7 +2334,7 @@ subm_FB89        = &FB89
  EQUB &05, &32, &03, &08, &40, &05, &E0, &40  ; AE14: 05 32 03... .2.
  EQUB &06, &20, &40, &0F, &0F, &0F, &0F, &0F  ; AE1C: 06 20 40... . @
  EQUB &0F, &0F, &0F, &0F, &0F, &0F, &01, &3F  ; AE24: 0F 0F 0F... ...
-.IMAGE_11
+.image11
  EQUB &06, &22, &01, &0F, &09, &23, &08, &00  ; AE2C: 06 22 01... .".
  EQUB &21, &04, &0F, &0C, &34, &01, &02, &02  ; AE34: 21 04 0F... !..
  EQUB &08, &0F, &0F, &0A, &10, &00, &22, &10  ; AE3C: 08 0F 0F... ...
@@ -2464,7 +2466,7 @@ subm_FB89        = &FB89
  EQUB &F0, &07, &C6, &02, &21, &01, &03, &80  ; B22C: F0 07 C6... ...
  EQUB &09, &37, &31, &06, &90, &03, &60, &0C  ; B234: 09 37 31... .71
  EQUB &01, &3F                                ; B23C: 01 3F       .?
-.IMAGE_12
+.image12
  EQUB &12, &FB, &C1, &80, &02, &10, &FF, &FB  ; B23E: 12 FB C1... ...
  EQUB &E0, &C0, &04, &F8, &F0, &E0, &05, &22  ; B246: E0 C0 04... ...
  EQUB &3F, &7F, &13, &22, &7F, &15, &FE, &FD  ; B24E: 3F 7F 13... ?..
@@ -2612,7 +2614,7 @@ subm_FB89        = &FB89
  EQUB &00, &21, &06, &10, &20, &80, &02, &E0  ; B6BE: 00 21 06... .!.
  EQUB &80, &06, &63, &8F, &33, &1F, &3F, &3F  ; B6C6: 80 06 63... ..c
  EQUB &7F, &12, &3F                           ; B6CE: 7F 12 3F    ..?
-.IMAGE_13
+.image13
  EQUB &23, &1F, &22, &0F, &33, &05, &03, &01  ; B6D1: 23 1F 22... #."
  EQUB &FE, &F4, &A0, &FD, &E8, &40, &A8, &40  ; B6D9: FE F4 A0... ...
  EQUB &80, &0F, &04, &21, &08, &0C, &21, &02  ; B6E1: 80 0F 04... ...
@@ -2750,7 +2752,7 @@ subm_FB89        = &FB89
  EQUB &80, &44, &A0, &10, &21, &08, &00, &82  ; BB01: 80 44 A0... .D.
  EQUB &10, &80, &44, &A0, &10, &21, &08, &00  ; BB09: 10 80 44... ..D
  EQUB &82, &3F                                ; BB11: 82 3F       .?
-.IMAGE_14
+.image14
  EQUB &00, &10, &04, &21, &01, &02, &33, &04  ; BB13: 00 10 04... ...
  EQUB &0E, &04, &04, &21, &04, &03, &10, &03  ; BB1B: 0E 04 04... ...
  EQUB &21, &02, &0E, &C0, &21, &04, &02, &10  ; BB23: 21 02 0E... !..
@@ -2895,10 +2897,10 @@ subm_FB89        = &FB89
  ASL A                                        ; BEF7: 0A          .
  ROL SC_1                                     ; BEF8: 26 08       &.
  STA SC                                       ; BEFA: 85 07       ..
- STA T5                                       ; BEFC: 85 BA       ..
+ STA addr3                                    ; BEFC: 85 BA       ..
  LDA SC_1                                     ; BEFE: A5 08       ..
  ADC #&68 ; 'h'                               ; BF00: 69 68       ih
- STA T5_1                                     ; BF02: 85 BB       ..
+ STA addr3_1                                  ; BF02: 85 BB       ..
  LDA SC_1                                     ; BF04: A5 08       ..
  ADC #&60 ; '`'                               ; BF06: 69 60       i`
  STA SC_1                                     ; BF08: 85 08       ..
@@ -2907,9 +2909,9 @@ subm_FB89        = &FB89
  EOR QQ15_3                                   ; BF0E: 45 85       E.
  AND #&0F                                     ; BF10: 29 0F       ).
  TAX                                          ; BF12: AA          .
- CPX IMAGE_COUNT                              ; BF13: EC 0C 80    ...
+ CPX imageCount                               ; BF13: EC 0C 80    ...
  BCC CBF1C                                    ; BF16: 90 04       ..
- LDX IMAGE_COUNT                              ; BF18: AE 0C 80    ...
+ LDX imageCount                               ; BF18: AE 0C 80    ...
  DEX                                          ; BF1B: CA          .
 .CBF1C
  TXA                                          ; BF1C: 8A          .
@@ -2925,9 +2927,9 @@ subm_FB89        = &FB89
  ADC #&80                                     ; BF2F: 69 80       i.
  STA V_1                                      ; BF31: 85 64       .d
  JSR subm_F52D                                ; BF33: 20 2D F5     -.
- LDA T5                                       ; BF36: A5 BA       ..
+ LDA addr3                                    ; BF36: A5 BA       ..
  STA SC                                       ; BF38: 85 07       ..
- LDA T5_1                                     ; BF3A: A5 BB       ..
+ LDA addr3_1                                  ; BF3A: A5 BB       ..
  STA SC_1                                     ; BF3C: 85 08       ..
  JMP subm_F52D                                ; BF3E: 4C 2D F5    L-.
 
@@ -2936,11 +2938,11 @@ subm_FB89        = &FB89
  LDA #5                                       ; BF41: A9 05       ..
  JSR subm_E909                                ; BF43: 20 09 E9     ..
  JSR LF362                                    ; BF46: 20 62 F3     b.
- LDX LANG                                     ; BF49: AE A8 04    ...
- LDA ADDR3_LO,X                               ; BF4C: BD 64 BF    .d.
- STA ADDR2_LO                                 ; BF4F: 85 FA       ..
- LDA ADDR3_HI,X                               ; BF51: BD 68 BF    .h.
- STA ADDR2_HI                                 ; BF54: 85 FB       ..
+ LDX language                                 ; BF49: AE A8 04    ...
+ LDA addrLo,X                                 ; BF4C: BD 64 BF    .d.
+ STA addr2                                    ; BF4F: 85 FA       ..
+ LDA addrHi,X                                 ; BF51: BD 68 BF    .h.
+ STA addr2_1                                  ; BF54: 85 FB       ..
  LDA #0                                       ; BF56: A9 00       ..
  STA L04BC                                    ; BF58: 8D BC 04    ...
  STA L04BD                                    ; BF5B: 8D BD 04    ...
@@ -2948,9 +2950,9 @@ subm_FB89        = &FB89
  STX L03EE                                    ; BF60: 8E EE 03    ...
  RTS                                          ; BF63: 60          `
 
-.ADDR3_LO
+.addrLo
  EQUB &B0, &02, &53, &B0                      ; BF64: B0 02 53... ..S
-.ADDR3_HI
+.addrHi
  EQUB &E5, &E6, &E6, &E5                      ; BF68: E5 E6 E6... ...
  EQUB &FF                                     ; BF6C: FF          .
  EQUB &FF, &FF, &FF, &FF, &FF, &FF, &FF, &FF  ; BF6D: FF FF FF... ...

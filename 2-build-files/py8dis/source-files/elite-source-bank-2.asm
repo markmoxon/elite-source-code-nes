@@ -153,7 +153,7 @@ XSAV             = &009B
 YSAV             = &009C
 XX17             = &009D
 QQ11             = &009E
-QQ11_MASK        = &009F
+QQ11Mask         = &009F
 ZZ               = &00A0
 XX13             = &00A1
 MCNT             = &00A2
@@ -175,27 +175,27 @@ Yx2M2            = &00B2
 Yx2M1            = &00B3
 messXC           = &00B4
 newzp            = &00B6
-TILE             = &00B8
-PATTERNS_HI      = &00B9
-T5               = &00BA
-T5_1             = &00BB
+tileNumber       = &00B8
+patternTableHi   = &00B9
+addr3            = &00BA
+addr3_1          = &00BB
 L00CC            = &00CC
 L00D2            = &00D2
-ADDR1_LO         = &00D4
-ADDR1_HI         = &00D5
+addr1            = &00D4
+addr1_1          = &00D5
 L00D8            = &00D8
 L00D9            = &00D9
-NAMES_HI         = &00E6
-DASHBOARD_SWITCH = &00E9
-T6               = &00EB
-T6_1             = &00EC
-T7               = &00ED
-T7_1             = &00EE
-PPU_CTRL_COPY    = &00F5
-BANK             = &00F7
+nametableHi      = &00E6
+dashboardSwitch  = &00E9
+addr4            = &00EB
+addr4_1          = &00EC
+addr5            = &00ED
+addr5_1          = &00EE
+ppuCtrlCopy      = &00F5
+currentBank      = &00F7
 L00F9            = &00F9
-ADDR2_LO         = &00FA
-ADDR2_HI         = &00FB
+addr2            = &00FA
+addr2_1          = &00FB
 XX3              = &0100
 XX3_1            = &0101
 SPR_00_Y         = &0200
@@ -460,8 +460,8 @@ ECMP             = &0389
 MJ               = &038A
 CABTMP           = &038B
 LAS2             = &038C
-LASCT            = &038E
 VIEW             = &038E
+LASCT            = &038F
 GNTMP            = &0390
 EV               = &0392
 NAME             = &0396
@@ -503,6 +503,7 @@ LAS              = &0400
 MSTG             = &0401
 QQ19             = &044D
 QQ19_1           = &044E
+QQ19_2           = &044F
 QQ19_3           = &0450
 QQ19_4           = &0450
 K2               = &0459
@@ -510,10 +511,9 @@ K2_1             = &045A
 K2_2             = &045B
 K2_3             = &045C
 DLY              = &045D
-QQ19_2           = &045F
-BOX_EDGE1        = &046E
-BOX_EDGE2        = &046F
-CONT2_SCAN       = &0475
+boxEdge1         = &046E
+boxEdge2         = &046F
+scanController2  = &0475
 LASX             = &047B
 LASY             = &047C
 ALTIT            = &047E
@@ -538,11 +538,11 @@ QQ8_1            = &049C
 QQ9              = &049D
 QQ10             = &049E
 L049F            = &049F
-QQ18_LO          = &04A4
-QQ18_HI          = &04A5
-TKN1_LO          = &04A6
-TKN1_HI          = &04A7
-LANG             = &04A8
+QQ18Lo           = &04A4
+QQ18Hi           = &04A5
+TKN1Lo           = &04A6
+TKN1Hi           = &04A7
+language         = &04A8
 CONT1_DOWN       = &04AA
 CONT2_DOWN       = &04AB
 CONT1_UP         = &04AC
@@ -612,8 +612,8 @@ LC006            = &C006
 Spercent         = &C007
 subm_C03E        = &C03E
 subm_C0A8        = &C0A8
-RESET_BANK       = &C0AD
-SET_BANK         = &C0AE
+ResetBank        = &C0AD
+SetBank          = &C0AE
 LC0DF            = &C0DF
 log              = &C100
 logL             = &C200
@@ -635,43 +635,43 @@ subm_CA56        = &CA56
 subm_CB42        = &CB42
 subm_CB9C        = &CB9C
 subm_CC1F        = &CC1F
-SEND_TO_PPU1     = &CC2E
-COPY_NAMES       = &CD34
+SendToPPU1       = &CC2E
+CopyNametable0To1 = &CD34
 subm_CD62        = &CD62
-BOX_EDGES        = &CD6F
+DrawBoxEdges     = &CD6F
 UNIV             = &CE7E
 UNIV_1           = &CE7F
 GINF             = &CE90
 subm_CE9E        = &CE9E
 subm_CEA5        = &CEA5
-NAMES_LOOKUP     = &CED0
-PATTERNS_LOOKUP  = &CED2
+nametableAddrHi  = &CED0
+patternAddrHi    = &CED2
 IRQ              = &CED4
 NMI              = &CED5
-SET_PALETTE      = &CF2E
-RESET_NAMES1     = &D02D
-SWITCH_TO_TABLE_0 = &D06D
-CONTROLLERS      = &D0F8
-FILL_MEMORY      = &D710
+SetPalette       = &CF2E
+ResetNametable1  = &D02D
+SwitchTablesTo0  = &D06D
+ReadControllers  = &D0F8
+FillMemory       = &D710
 LD8C5            = &D8C5
 subm_D8D8        = &D8D8
-SEND_TO_PPU2     = &D986
+SendToPPU2       = &D986
 TWOS             = &D9F7
 TWOS2            = &DA01
 TWFL             = &DA09
 TWFR             = &DA10
-ylookupLo        = &DA18
-ylookupHi        = &DAF8
+yLookupLo        = &DA18
+yLookupHi        = &DAF8
 LDBD8            = &DBD8
 LOIN             = &DC0F
 subm_DEA5        = &DEA5
 subm_DF76        = &DF76
 subm_E04A        = &E04A
-subm_E0BA        = &E04A
+subm_E0BA        = &E0BA
 subm_E18E        = &E18E
 subm_E33E        = &E33E
 PIXEL            = &E4F0
-PIXELx2          = &E543
+DrawDash         = &E543
 ECBLB2           = &E596
 MSBAR            = &E59F
 subm_E802        = &E802
@@ -687,16 +687,17 @@ subm_EB86        = &EB86
 DELAY            = &EBA2
 BEEP             = &EBA9
 EXNO3            = &EBAD
+ECBLB            = &EBBF
 BOOP             = &EBE5
 NOISE            = &EBF2
-NOISE_lookup1    = &EC3C
-NOISE_lookup2    = &EC5C
-CHECK_DASHBOARD_A = &EC7D
+noiseLookup1     = &EC3C
+noiseLookup2     = &EC5C
+CheckDashboardA  = &EC7D
 LDA_XX0_Y        = &EC8D
-LDA_EPC_Y        = &ECA0
-INC_TALLY        = &ECAE
+LDA_Epc_Y        = &ECA0
+IncreaseTally    = &ECAE
 CB1D4_BANK0      = &ECE2
-SETK_K3_XC_YC    = &ECF9
+Set_K_K3_XC_YC   = &ECF9
 C811E_BANK6      = &ED16
 C8021_BANK6      = &ED24
 C89D1_BANK6      = &ED50
@@ -826,6 +827,7 @@ ADD              = &F872
 TIS1             = &F8AE
 DV42             = &F8D1
 DV41             = &F8D4
+DVID4            = &F8D8
 DVID3B2          = &F962
 subm_FA16        = &FA16
 subm_FA43        = &FA43
@@ -2438,7 +2440,7 @@ subm_FB89        = &FB89
  PHA                                          ; B0DC: 48          H
  LDA V_1                                      ; B0DD: A5 64       .d
  PHA                                          ; B0DF: 48          H
- LDY LANG                                     ; B0E0: AC A8 04    ...
+ LDY language                                 ; B0E0: AC A8 04    ...
  LDA RUTOK_LO,Y                               ; B0E3: B9 CE B0    ...
  STA V                                        ; B0E6: 85 63       .c
  LDA RUTOK_HI,Y                               ; B0E8: B9 D2 B0    ...
@@ -2447,12 +2449,12 @@ subm_FB89        = &FB89
 ; ******************************************************************************
 .DETOK
  TAX                                          ; B0EF: AA          .
- LDA DASHBOARD_SWITCH                         ; B0F0: A5 E9       ..
+ LDA dashboardSwitch                          ; B0F0: A5 E9       ..
  BPL CB0FD                                    ; B0F2: 10 09       ..
  LDA PPU_STATUS                               ; B0F4: AD 02 20    ..
  ASL A                                        ; B0F7: 0A          .
  BPL CB0FD                                    ; B0F8: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; B0FA: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; B0FA: 20 6D D0     m.
 .CB0FD
  TXA                                          ; B0FD: 8A          .
  PHA                                          ; B0FE: 48          H
@@ -2462,19 +2464,19 @@ subm_FB89        = &FB89
  PHA                                          ; B103: 48          H
  LDA V_1                                      ; B104: A5 64       .d
  PHA                                          ; B106: 48          H
- LDA TKN1_LO                                  ; B107: AD A6 04    ...
+ LDA TKN1Lo                                   ; B107: AD A6 04    ...
  STA V                                        ; B10A: 85 63       .c
- LDA TKN1_HI                                  ; B10C: AD A7 04    ...
+ LDA TKN1Hi                                   ; B10C: AD A7 04    ...
  STA V_1                                      ; B10F: 85 64       .d
 .CB111
  LDY #0                                       ; B111: A0 00       ..
 .CB113
- LDA DASHBOARD_SWITCH                         ; B113: A5 E9       ..
+ LDA dashboardSwitch                          ; B113: A5 E9       ..
  BPL CB120                                    ; B115: 10 09       ..
  LDA PPU_STATUS                               ; B117: AD 02 20    ..
  ASL A                                        ; B11A: 0A          .
  BPL CB120                                    ; B11B: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; B11D: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; B11D: 20 6D D0     m.
 .CB120
  LDA (V),Y                                    ; B120: B1 63       .c
  EOR #&57 ; 'W'                               ; B122: 49 57       IW
@@ -2596,12 +2598,12 @@ subm_FB89        = &FB89
 
 .CB1D0
  STA SC                                       ; B1D0: 85 07       ..
- LDA DASHBOARD_SWITCH                         ; B1D2: A5 E9       ..
+ LDA dashboardSwitch                          ; B1D2: A5 E9       ..
  BPL CB1DF                                    ; B1D4: 10 09       ..
  LDA PPU_STATUS                               ; B1D6: AD 02 20    ..
  ASL A                                        ; B1D9: 0A          .
  BPL CB1DF                                    ; B1DA: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; B1DC: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; B1DC: 20 6D D0     m.
 .CB1DF
  TYA                                          ; B1DF: 98          .
  PHA                                          ; B1E0: 48          H
@@ -2811,7 +2813,7 @@ JMTBm1 = sub_CB203+2
 .PAUSE
  JSR C8980_BANK0                              ; B380: 20 86 F1     ..
  JSR LD8C5                                    ; B383: 20 C5 D8     ..
- LDA TILE                                     ; B386: A5 B8       ..
+ LDA tileNumber                               ; B386: A5 B8       ..
  STA L00D2                                    ; B388: 85 D2       ..
  LDA #&28 ; '('                               ; B38A: A9 28       .(
  STA L00D8                                    ; B38C: 85 D8       ..
@@ -2852,7 +2854,7 @@ JMTBm1 = sub_CB203+2
 .PAUSE2
  JSR C8980_BANK0                              ; B3C1: 20 86 F1     ..
 .loop_CB3C4
- JSR CHECK_DASHBOARD_A                        ; B3C4: 20 7D EC     }.
+ JSR CheckDashboardA                          ; B3C4: 20 7D EC     }.
  LDA CONT1_A                                  ; B3C7: AD B2 04    ...
  ORA CONT1_B                                  ; B3CA: 0D B4 04    ...
  AND #&C0                                     ; B3CD: 29 C0       ).
@@ -2878,25 +2880,25 @@ JMTBm1 = sub_CB203+2
  BNE CB43E                                    ; B3EE: D0 4E       .N
  LDA QQ12                                     ; B3F0: A5 A5       ..
  BPL CB43E                                    ; B3F2: 10 4A       .J
- LDX LANG                                     ; B3F4: AE A8 04    ...
+ LDX language                                 ; B3F4: AE A8 04    ...
  LDA RUPLA_LO,X                               ; B3F7: BD D4 B3    ...
  STA SC                                       ; B3FA: 85 07       ..
  LDA RUPLA_HI,X                               ; B3FC: BD D8 B3    ...
  STA SC_1                                     ; B3FF: 85 08       ..
  LDA RUGAL_LO,X                               ; B401: BD DC B3    ...
- STA T5                                       ; B404: 85 BA       ..
+ STA addr3                                    ; B404: 85 BA       ..
  LDA RUGAL_HI,X                               ; B406: BD E0 B3    ...
- STA T5_1                                     ; B409: 85 BB       ..
+ STA addr3_1                                  ; B409: 85 BB       ..
  LDY NRU,X                                    ; B40B: BC E4 B3    ...
 .CB40E
  LDA (SC),Y                                   ; B40E: B1 07       ..
  CMP L049F                                    ; B410: CD 9F 04    ...
  BNE CB43B                                    ; B413: D0 26       .&
- LDA (T5),Y                                   ; B415: B1 BA       ..
+ LDA (addr3),Y                                ; B415: B1 BA       ..
  AND #&7F                                     ; B417: 29 7F       ).
  CMP GCNT                                     ; B419: CD A7 03    ...
  BNE CB43B                                    ; B41C: D0 1D       ..
- LDA (T5),Y                                   ; B41E: B1 BA       ..
+ LDA (addr3),Y                                ; B41E: B1 BA       ..
  BMI CB42E                                    ; B420: 30 0C       0.
  LDA TP                                       ; B422: AD 9E 03    ...
  LSR A                                        ; B425: 4A          J
@@ -2933,12 +2935,12 @@ JMTBm1 = sub_CB203+2
 ; ******************************************************************************
 .TT27
  PHA                                          ; B44F: 48          H
- LDA DASHBOARD_SWITCH                         ; B450: A5 E9       ..
+ LDA dashboardSwitch                          ; B450: A5 E9       ..
  BPL CB45D                                    ; B452: 10 09       ..
  LDA PPU_STATUS                               ; B454: AD 02 20    ..
  ASL A                                        ; B457: 0A          .
  BPL CB45D                                    ; B458: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; B45A: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; B45A: 20 6D D0     m.
 .CB45D
  PLA                                          ; B45D: 68          h
  TAX                                          ; B45E: AA          .
@@ -2995,9 +2997,9 @@ JMTBm1 = sub_CB203+2
 ; ******************************************************************************
 .ex
  TAX                                          ; B4AA: AA          .
- LDA QQ18_LO                                  ; B4AB: AD A4 04    ...
+ LDA QQ18Lo                                   ; B4AB: AD A4 04    ...
  STA V                                        ; B4AE: 85 63       .c
- LDA QQ18_HI                                  ; B4B0: AD A5 04    ...
+ LDA QQ18Hi                                   ; B4B0: AD A5 04    ...
  STA V_1                                      ; B4B3: 85 64       .d
  LDY #0                                       ; B4B5: A0 00       ..
  TXA                                          ; B4B7: 8A          .
@@ -3010,12 +3012,12 @@ JMTBm1 = sub_CB203+2
  INC V_1                                      ; B4C1: E6 64       .d
  BNE CB4BA                                    ; B4C3: D0 F5       ..
 .CB4C5
- LDA DASHBOARD_SWITCH                         ; B4C5: A5 E9       ..
+ LDA dashboardSwitch                          ; B4C5: A5 E9       ..
  BPL CB4D2                                    ; B4C7: 10 09       ..
  LDA PPU_STATUS                               ; B4C9: AD 02 20    ..
  ASL A                                        ; B4CC: 0A          .
  BPL CB4D2                                    ; B4CD: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; B4CF: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; B4CF: 20 6D D0     m.
 .CB4D2
  INY                                          ; B4D2: C8          .
  BNE CB4D7                                    ; B4D3: D0 02       ..
@@ -3046,12 +3048,12 @@ JMTBm1 = sub_CB203+2
 ; ******************************************************************************
 .DASC
  STA SC_1                                     ; B4F5: 85 08       ..
- LDA DASHBOARD_SWITCH                         ; B4F7: A5 E9       ..
+ LDA dashboardSwitch                          ; B4F7: A5 E9       ..
  BPL CB504                                    ; B4F9: 10 09       ..
  LDA PPU_STATUS                               ; B4FB: AD 02 20    ..
  ASL A                                        ; B4FE: 0A          .
  BPL CB504                                    ; B4FF: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; B501: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; B501: 20 6D D0     m.
 .CB504
  LDA SC_1                                     ; B504: A5 08       ..
  STX SC                                       ; B506: 86 07       ..
@@ -3100,12 +3102,12 @@ JMTBm1 = sub_CB203+2
  STA BUF,X                                    ; B557: 9D 07 05    ...
  LDX SC                                       ; B55A: A6 07       ..
  INC DTW5                                     ; B55C: EE F7 03    ...
- LDA DASHBOARD_SWITCH                         ; B55F: A5 E9       ..
+ LDA dashboardSwitch                          ; B55F: A5 E9       ..
  BPL CB56C                                    ; B561: 10 09       ..
  LDA PPU_STATUS                               ; B563: AD 02 20    ..
  ASL A                                        ; B566: 0A          .
  BPL CB56C                                    ; B567: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; B569: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; B569: 20 6D D0     m.
 .CB56C
  CLC                                          ; B56C: 18          .
  RTS                                          ; B56D: 60          `
@@ -3139,12 +3141,12 @@ JMTBm1 = sub_CB203+2
  CMP #&20 ; ' '                               ; B590: C9 20       .
  BEQ CB5DD                                    ; B592: F0 49       .I
 .CB594
- LDA DASHBOARD_SWITCH                         ; B594: A5 E9       ..
+ LDA dashboardSwitch                          ; B594: A5 E9       ..
  BPL CB5A1                                    ; B596: 10 09       ..
  LDA PPU_STATUS                               ; B598: AD 02 20    ..
  ASL A                                        ; B59B: 0A          .
  BPL CB5A1                                    ; B59C: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; B59E: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; B59E: 20 6D D0     m.
 .CB5A1
  DEY                                          ; B5A1: 88          .
  BMI CB583                                    ; B5A2: 30 DF       0.
@@ -3157,12 +3159,12 @@ JMTBm1 = sub_CB203+2
  STY SC                                       ; B5B1: 84 07       ..
  LDY DTW5                                     ; B5B3: AC F7 03    ...
 .loop_CB5B6
- LDA DASHBOARD_SWITCH                         ; B5B6: A5 E9       ..
+ LDA dashboardSwitch                          ; B5B6: A5 E9       ..
  BPL CB5C3                                    ; B5B8: 10 09       ..
  LDA PPU_STATUS                               ; B5BA: AD 02 20    ..
  ASL A                                        ; B5BD: 0A          .
  BPL CB5C3                                    ; B5BE: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; B5C0: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; B5C0: 20 6D D0     m.
 .CB5C3
  LDA BUF,Y                                    ; B5C3: B9 07 05    ...
  STA BUF_1,Y                                  ; B5C6: 99 08 05    ...
@@ -3189,7 +3191,7 @@ JMTBm1 = sub_CB203+2
  BEQ CB615                                    ; B5F0: F0 23       .#
  LDY #0                                       ; B5F2: A0 00       ..
  INX                                          ; B5F4: E8          .
- JSR CHECK_DASHBOARD_A                        ; B5F5: 20 7D EC     }.
+ JSR CheckDashboardA                          ; B5F5: 20 7D EC     }.
 .loop_CB5F8
  LDA L0525,Y                                  ; B5F8: B9 25 05    .%.
  STA BUF,Y                                    ; B5FB: 99 07 05    ...
@@ -3243,12 +3245,12 @@ JMTBm1 = sub_CB203+2
 ; ******************************************************************************
 .CHPR
  STA K3                                       ; B635: 85 3D       .=
- LDA DASHBOARD_SWITCH                         ; B637: A5 E9       ..
+ LDA dashboardSwitch                          ; B637: A5 E9       ..
  BPL CB644                                    ; B639: 10 09       ..
  LDA PPU_STATUS                               ; B63B: AD 02 20    ..
  ASL A                                        ; B63E: 0A          .
  BPL CB644                                    ; B63F: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; B641: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; B641: 20 6D D0     m.
 .CB644
  LDA K3                                       ; B644: A5 3D       .=
  STY YSAV2                                    ; B646: 8C 82 04    ...
@@ -3350,13 +3352,13 @@ JMTBm1 = sub_CB203+2
  LDA (SC),Y                                   ; B6E5: B1 07       ..
  BEQ CB6E9                                    ; B6E7: F0 00       ..
 .CB6E9
- LDA TILE                                     ; B6E9: A5 B8       ..
+ LDA tileNumber                               ; B6E9: A5 B8       ..
  BEQ CB75B                                    ; B6EB: F0 6E       .n
  CMP #&FF                                     ; B6ED: C9 FF       ..
  BEQ CB75B                                    ; B6EF: F0 6A       .j
  STA (SC),Y                                   ; B6F1: 91 07       ..
- STA (T5),Y                                   ; B6F3: 91 BA       ..
- INC TILE                                     ; B6F5: E6 B8       ..
+ STA (addr3),Y                                ; B6F3: 91 BA       ..
+ INC tileNumber                               ; B6F5: E6 B8       ..
  LDY L0037                                    ; B6F7: A4 37       .7
  DEY                                          ; B6F9: 88          .
  BEQ CB772                                    ; B6FA: F0 76       .v
@@ -3367,14 +3369,14 @@ JMTBm1 = sub_CB203+2
 .CB702
  TAY                                          ; B702: A8          .
  LDX #&0C                                     ; B703: A2 0C       ..
- STX T5_1                                     ; B705: 86 BB       ..
+ STX addr3_1                                  ; B705: 86 BB       ..
  ASL A                                        ; B707: 0A          .
- ROL T5_1                                     ; B708: 26 BB       &.
+ ROL addr3_1                                  ; B708: 26 BB       &.
  ASL A                                        ; B70A: 0A          .
- ROL T5_1                                     ; B70B: 26 BB       &.
+ ROL addr3_1                                  ; B70B: 26 BB       &.
  ASL A                                        ; B70D: 0A          .
- ROL T5_1                                     ; B70E: 26 BB       &.
- STA T5                                       ; B710: 85 BA       ..
+ ROL addr3_1                                  ; B70E: 26 BB       &.
+ STA addr3                                    ; B710: 85 BA       ..
  TYA                                          ; B712: 98          .
  LDX #&0D                                     ; B713: A2 0D       ..
  STX SC_1                                     ; B715: 86 08       ..
@@ -3388,44 +3390,44 @@ JMTBm1 = sub_CB203+2
  LDY #0                                       ; B722: A0 00       ..
  LDA (P_1),Y                                  ; B724: B1 30       .0
  STA (SC),Y                                   ; B726: 91 07       ..
- STA (T5),Y                                   ; B728: 91 BA       ..
+ STA (addr3),Y                                ; B728: 91 BA       ..
  INY                                          ; B72A: C8          .
  LDA (P_1),Y                                  ; B72B: B1 30       .0
  STA (SC),Y                                   ; B72D: 91 07       ..
- STA (T5),Y                                   ; B72F: 91 BA       ..
+ STA (addr3),Y                                ; B72F: 91 BA       ..
  INY                                          ; B731: C8          .
  LDA (P_1),Y                                  ; B732: B1 30       .0
  STA (SC),Y                                   ; B734: 91 07       ..
- STA (T5),Y                                   ; B736: 91 BA       ..
+ STA (addr3),Y                                ; B736: 91 BA       ..
  INY                                          ; B738: C8          .
  LDA (P_1),Y                                  ; B739: B1 30       .0
  STA (SC),Y                                   ; B73B: 91 07       ..
- STA (T5),Y                                   ; B73D: 91 BA       ..
+ STA (addr3),Y                                ; B73D: 91 BA       ..
  INY                                          ; B73F: C8          .
  LDA (P_1),Y                                  ; B740: B1 30       .0
  STA (SC),Y                                   ; B742: 91 07       ..
- STA (T5),Y                                   ; B744: 91 BA       ..
+ STA (addr3),Y                                ; B744: 91 BA       ..
  INY                                          ; B746: C8          .
  LDA (P_1),Y                                  ; B747: B1 30       .0
  STA (SC),Y                                   ; B749: 91 07       ..
- STA (T5),Y                                   ; B74B: 91 BA       ..
+ STA (addr3),Y                                ; B74B: 91 BA       ..
  INY                                          ; B74D: C8          .
  LDA (P_1),Y                                  ; B74E: B1 30       .0
  STA (SC),Y                                   ; B750: 91 07       ..
- STA (T5),Y                                   ; B752: 91 BA       ..
+ STA (addr3),Y                                ; B752: 91 BA       ..
  INY                                          ; B754: C8          .
  LDA (P_1),Y                                  ; B755: B1 30       .0
- STA (T5),Y                                   ; B757: 91 BA       ..
+ STA (addr3),Y                                ; B757: 91 BA       ..
  STA (SC),Y                                   ; B759: 91 07       ..
 .CB75B
  LDY YSAV2                                    ; B75B: AC 82 04    ...
  LDX XSAV2                                    ; B75E: AE 81 04    ...
- LDA DASHBOARD_SWITCH                         ; B761: A5 E9       ..
+ LDA dashboardSwitch                          ; B761: A5 E9       ..
  BPL CB76E                                    ; B763: 10 09       ..
  LDA PPU_STATUS                               ; B765: AD 02 20    ..
  ASL A                                        ; B768: 0A          .
  BPL CB76E                                    ; B769: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; B76B: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; B76B: 20 6D D0     m.
 .CB76E
  LDA K3                                       ; B76E: A5 3D       .=
  CLC                                          ; B770: 18          .
@@ -3486,7 +3488,7 @@ JMTBm1 = sub_CB203+2
  DEC XC                                       ; B7C4: C6 32       .2
  LDA #0                                       ; B7C6: A9 00       ..
  STA (SC),Y                                   ; B7C8: 91 07       ..
- STA (T5),Y                                   ; B7CA: 91 BA       ..
+ STA (addr3),Y                                ; B7CA: 91 BA       ..
  JMP CB75B                                    ; B7CC: 4C 5B B7    L[.
 
 .CB7CF
@@ -3502,7 +3504,7 @@ JMTBm1 = sub_CB203+2
  LDY XC                                       ; B7DB: A4 32       .2
  DEY                                          ; B7DD: 88          .
  STA (SC),Y                                   ; B7DE: 91 07       ..
- STA (T5),Y                                   ; B7E0: 91 BA       ..
+ STA (addr3),Y                                ; B7E0: 91 BA       ..
  JMP CB75B                                    ; B7E2: 4C 5B B7    L[.
 
 .CB7E5
@@ -3515,7 +3517,7 @@ JMTBm1 = sub_CB203+2
  LDA #0                                       ; B7EF: A9 00       ..
  BEQ loop_CB7DB                               ; B7F1: F0 E8       ..
 .CB7F3
- LDX PATTERNS_HI                              ; B7F3: A6 B9       ..
+ LDX patternTableHi                           ; B7F3: A6 B9       ..
  STX SC_1                                     ; B7F5: 86 08       ..
  ASL A                                        ; B7F7: 0A          .
  ROL SC_1                                     ; B7F8: 26 08       &.
@@ -3577,17 +3579,17 @@ JMTBm1 = sub_CB203+2
  STA SC                                       ; B853: 85 07       ..
  LDA SC_1                                     ; B855: A5 08       ..
  ROL A                                        ; B857: 2A          *
- ADC NAMES_HI                                 ; B858: 65 E6       e.
+ ADC nametableHi                              ; B858: 65 E6       e.
  STA SC_1                                     ; B85A: 85 08       ..
  LDY XC                                       ; B85C: A4 32       .2
  DEY                                          ; B85E: 88          .
  LDA (SC),Y                                   ; B85F: B1 07       ..
  BNE CB7F3                                    ; B861: D0 90       ..
- LDA TILE                                     ; B863: A5 B8       ..
+ LDA tileNumber                               ; B863: A5 B8       ..
  BEQ CB8A3                                    ; B865: F0 3C       .<
  STA (SC),Y                                   ; B867: 91 07       ..
- INC TILE                                     ; B869: E6 B8       ..
- LDX PATTERNS_HI                              ; B86B: A6 B9       ..
+ INC tileNumber                               ; B869: E6 B8       ..
+ LDX patternTableHi                           ; B86B: A6 B9       ..
  STX SC_1                                     ; B86D: 86 08       ..
  ASL A                                        ; B86F: 0A          .
  ROL SC_1                                     ; B870: 26 08       &.
@@ -3626,7 +3628,7 @@ JMTBm1 = sub_CB203+2
 .CB8A6
  LDA #&21 ; '!'                               ; B8A6: A9 21       .!
  STA SC                                       ; B8A8: 85 07       ..
- LDA NAMES_HI                                 ; B8AA: A5 E6       ..
+ LDA nametableHi                              ; B8AA: A5 E6       ..
  STA SC_1                                     ; B8AC: 85 08       ..
  LDY XC                                       ; B8AE: A4 32       .2
  DEY                                          ; B8B0: 88          .

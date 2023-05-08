@@ -161,7 +161,7 @@ label(0x008B, "XX18_3")
 label(0x008C, "K6")
 label(0x008D, "K6_1")
 label(0x008E, "K6_2")
-label(0x008F, "K6_3")	            # XX18+7
+label(0x008F, "K6_3")
 label(0x0090, "K6_4")
 label(0x0091, "BET2")
 label(0x0092, "BET2_1")
@@ -177,7 +177,7 @@ label(0x009B, "XSAV")
 label(0x009C, "YSAV")
 label(0x009D, "XX17")
 label(0x009E, "QQ11")
-label(0x009F, "QQ11_MASK")          # Can be 0, &FF or QQ11
+label(0x009F, "QQ11Mask")          # Can be 0, &FF or QQ11
 label(0x00A0, "ZZ")
 label(0x00A1, "XX13")
 label(0x00A2, "MCNT")
@@ -200,34 +200,34 @@ label(0x00B3, "Yx2M1")
 label(0x00B4, "messXC")
 label(0x00B6, "newzp")
 
-label(0x00B8, "TILE")               # Mine, contains tile number to draw into
-label(0x00B9, "PATTERNS_HI")        # Mine, high byte of current nametable (&70 or &74)
+label(0x00B8, "tileNumber")         # Mine, contains tile number to draw into
+label(0x00B9, "patternTableHi")     # Mine, high byte of current nametable (&70 or &74)
                                     # HI(PATTERNS_0) or HI(PATTERNS_1)
 
-label(0x00BA, "T5")                 # Mine, temporary storage
-label(0x00BB, "T5_1")
+label(0x00BA, "addr3")            # Mine, typically an address
+label(0x00BB, "addr3_1")
 
-label(0x00D4, "ADDR1_LO")           # Mine, an address within the PPU to be poked to
-label(0x00D5, "ADDR1_HI")
+label(0x00D4, "addr1")            # Mine, an address within the PPU to be poked to
+label(0x00D5, "addr1_1")
 
-label(0x00E6, "NAMES_HI")           # Mine, high byte of current nametable (&70 or &74)
+label(0x00E6, "nametableHi")        # Mine, high byte of current nametable (&70 or &74)
                                     # HI(NAMES_0) or HI(NAMES_1)
 
-label(0x00E9, "DASHBOARD_SWITCH")   # Mine, a flag to control whether we switch
+label(0x00E9, "dashboardSwitch")    # Mine, a flag to control whether we switch
                                     # to nametable 0 and palette 0 for the
                                     # dashboard
 
-label(0x00EB, "T6")                 # Mine, an address within the PPU to be poked to
-label(0x00EC, "T6_1")
-label(0x00ED, "T7")                 # Mine, an address to fetch PPU data from
-label(0x00EE, "T7_1")
+label(0x00EB, "addr4")              # Mine, an address within the PPU to be poked to
+label(0x00EC, "addr4_1")
+label(0x00ED, "addr5")              # Mine, an address to fetch PPU data from
+label(0x00EE, "addr5_1")
 
-label(0x00F5, "PPU_CTRL_COPY")      # Mine, contains a copy of PPU_CTRL
+label(0x00F5, "ppuCtrlCopy")        # Mine, contains a copy of PPU_CTRL
 
-label(0x00F7, "BANK")               # Mine, contains lower bank number
+label(0x00F7, "currentBank")        # Mine, contains lower bank number
 
-label(0x00FA, "ADDR2_LO")           # Mine, an address within the PPU to be poked to
-label(0x00FB, "ADDR2_HI")
+label(0x00FA, "addr2")              # Mine, an address within the PPU to be poked to
+label(0x00FB, "addr2_1")
 
 label(0x0100, "XX3")
 label(0x0101, "XX3_1")
@@ -245,7 +245,7 @@ label(0x038A, "MJ")
 label(0x038B, "CABTMP")
 label(0x038C, "LAS2")
 label(0x038E, "VIEW")
-label(0x038E, "LASCT")
+label(0x038F, "LASCT")
 label(0x0390, "GNTMP")
 label(0x0392, "EV")
 label(0x0396, "NAME")
@@ -287,6 +287,7 @@ label(0x0400, "LAS")
 label(0x0401, "MSTG")
 label(0x044D, "QQ19")
 label(0x044E, "QQ19_1")
+label(0x044F, "QQ19_2")
 label(0x0450, "QQ19_3")
 label(0x0450, "QQ19_4")
 label(0x0459, "K2")
@@ -294,10 +295,9 @@ label(0x045A, "K2_1")
 label(0x045B, "K2_2")
 label(0x045C, "K2_3")
 label(0x045D, "DLY")
-label(0x045F, "QQ19_2")
-label(0x046E, "BOX_EDGE1")          # Mine, bitmap for drawing box edge?
-label(0x046F, "BOX_EDGE2")          # Mine, bitmap for drawing box edge?
-label(0x0475, "CONT2_SCAN")         # Mine, if non-zero, scan controller 2
+label(0x046E, "boxEdge1")          # Mine, bitmap for drawing box edge?
+label(0x046F, "boxEdge2")          # Mine, bitmap for drawing box edge?
+label(0x0475, "scanController2")   # Mine, if non-zero, scan controller 2
 label(0x047B, "LASX")
 label(0x047C, "LASY")
 label(0x047E, "ALTIT")
@@ -321,11 +321,11 @@ label(0x049B, "QQ8")
 label(0x049C, "QQ8_1")
 label(0x049D, "QQ9")
 label(0x049E, "QQ10")
-label(0x04A4, "QQ18_LO")    	    # Mine, gets set to address of token table
-label(0x04A5, "QQ18_HI")    	    #   that ex then accesses
-label(0x04A6, "TKN1_LO")    	    # Mine, gets set to address of token table
-label(0x04A7, "TKN1_HI")   		    #   that DETOK then accesses
-label(0x04A8, "LANG")  			    # Mine
+label(0x04A4, "QQ18Lo")    	        # Mine, gets set to address of token table
+label(0x04A5, "QQ18Hi")    	        #   that ex then accesses
+label(0x04A6, "TKN1Lo")    	        # Mine, gets set to address of token table
+label(0x04A7, "TKN1Hi")   		    #   that DETOK then accesses
+label(0x04A8, "language")  			# Mine
 label(0x04AA, "CONT1_DOWN")		    # Mine
 label(0x04AB, "CONT2_DOWN")
 label(0x04AC, "CONT1_UP")
@@ -410,21 +410,21 @@ label(0xC53F, "XX21m1")
 label(0xC540, "XX21")
 label(0xCE7E, "UNIV")
 label(0xCE7F, "UNIV_1")
-label(0xCED0, "NAMES_LOOKUP")       # Mine
-label(0xCED2, "PATTERNS_LOOKUP")    # Mine
+label(0xCED0, "nametableAddrHi")    # Mine
+label(0xCED2, "patternAddrHi")      # Mine
 label(0xD9F7, "TWOS")
 label(0xDA01, "TWOS2")
 label(0xDA09, "TWFL")
 label(0xDA10, "TWFR")
-label(0xDA18, "ylookupLo")          # Mine
-label(0xDAF8, "ylookupHi")          # Mine
-label(0xEC3C, "NOISE_lookup1")      # Mine
-label(0xEC5C, "NOISE_lookup2")      # Mine
+label(0xDA18, "yLookupLo")          # Mine
+label(0xDAF8, "yLookupHi")          # Mine
+label(0xEC3C, "noiseLookup1")       # Mine
+label(0xEC5C, "noiseLookup2")       # Mine
 label(0xF333, "LF333")              # Mine
 
 subroutine(0xC007, "Spercent")
-subroutine(0xC0AD, "RESET_BANK")    # Mine, switch bank to stack value
-subroutine(0xC0AE, "SET_BANK")      # Mine, switch bank to A
+subroutine(0xC0AD, "ResetBank")     # Mine, switch bank to stack value
+subroutine(0xC0AE, "SetBank")       # Mine, switch bank to A
 subroutine(0xC03E, "subm_C03E")
 subroutine(0xC0A8, "subm_C0A8")
 subroutine(0xC582, "subm_C582")
@@ -438,31 +438,31 @@ subroutine(0xCA56, "subm_CA56")
 subroutine(0xCB42, "subm_CB42")
 subroutine(0xCB9C, "subm_CB9C")
 subroutine(0xCC1F, "subm_CC1F")
-subroutine(0xCC2E, "SEND_TO_PPU1")  # Mine, something to do with sending to PPU?
-subroutine(0xCD34, "COPY_NAMES")    # Mine, copies nametable buffer 0 to buffer 1
+subroutine(0xCC2E, "SendToPPU1")    # Mine, something to do with sending to PPU?
+subroutine(0xCD34, "CopyNametable0To1")    # Mine, copies nametable buffer 0 to buffer 1
 subroutine(0xCD62, "subm_CD62")
-subroutine(0xCD6F, "BOX_EDGES")     # Mine, draw space view box edges?
+subroutine(0xCD6F, "DrawBoxEdges")  # Mine, draw space view box edges?
 subroutine(0xCE90, "GINF")
 subroutine(0xCED4, "IRQ")           # Mine, IRQ handler
 subroutine(0xCED5, "NMI")           # Mine, NMI handler
 subroutine(0xCE9E, "subm_CE9E")
 subroutine(0xCEA5, "subm_CEA5")
-subroutine(0xCF2E, "SET_PALETTE")   # Mine, set PPU palette?
-subroutine(0xD02D, "RESET_NAMES1")  # Mine, does this clear down nametable 1?
-subroutine(0xD0F8, "CONTROLLERS")   # Mine, reads controllers
-subroutine(0xD06D, "SWITCH_TO_TABLE_0")    # Mine, switches PPU to nametable/palette table 0
-subroutine(0xD710, "FILL_MEMORY")   # Mine, something to do with memory filling?
+subroutine(0xCF2E, "SetPalette")    # Mine, set PPU palette?
+subroutine(0xD02D, "ResetNametable1")  # Mine, does this clear down nametable 1?
+subroutine(0xD0F8, "ReadControllers")   # Mine, reads controllers
+subroutine(0xD06D, "SwitchTablesTo0")    # Mine, switches PPU to nametable/palette table 0
+subroutine(0xD710, "FillMemory")    # Mine, something to do with memory filling?
 subroutine(0xD8D8, "subm_D8D8")
-subroutine(0xD986, "SEND_TO_PPU2")  # Mine, something to do with sending to PPU?
+subroutine(0xD986, "SendToPPU2")    # Mine, something to do with sending to PPU?
 subroutine(0xDC0F, "LOIN")
 subroutine(0xDEA5, "subm_DEA5")
 subroutine(0xDF76, "subm_DF76")
 subroutine(0xE04A, "subm_E04A")
-subroutine(0xE04A, "subm_E0BA")
+subroutine(0xE0BA, "subm_E0BA")
 subroutine(0xE18E, "subm_E18E")
 subroutine(0xE33E, "subm_E33E")
 subroutine(0xE4F0, "PIXEL")
-subroutine(0xE543, "PIXELx2")       # Mine, draws two pixel dash in space view
+subroutine(0xE543, "DrawDash")      # Mine, draws two pixel dash in space view
 subroutine(0xE596, "ECBLB2")
 subroutine(0xE59F, "MSBAR")
 subroutine(0xE802, "subm_E802")
@@ -479,14 +479,15 @@ subroutine(0xEB86, "subm_EB86")
 subroutine(0xEBA2, "DELAY")
 subroutine(0xEBA9, "BEEP")
 subroutine(0xEBAD, "EXNO3")
+subroutine(0xEBBF, "ECBLB")
 subroutine(0xEBE5, "BOOP")
 subroutine(0xEBF2, "NOISE")
-subroutine(0xEC7D, "CHECK_DASHBOARD_A")	    # CHECK_DASHBOARD macro that preserves A
+subroutine(0xEC7D, "CheckDashboardA")	    # CHECK_DASHBOARD macro that preserves A
 subroutine(0xEC8D, "LDA_XX0_Y")
-subroutine(0xECA0, "LDA_EPC_Y")
-subroutine(0xECAE, "INC_TALLY")     # Mine, adds KWL/KWH to TALLY
+subroutine(0xECA0, "LDA_Epc_Y")
+subroutine(0xECAE, "IncreaseTally")      # Mine, adds KWL/KWH to TALLY
 subroutine(0xECE2, "CB1D4_BANK0")
-subroutine(0xECF9, "SETK_K3_XC_YC")     # Temporary name
+subroutine(0xECF9, "Set_K_K3_XC_YC")     # Temporary name
 subroutine(0xED16, "C811E_BANK6")
 subroutine(0xED24, "C8021_BANK6")
 subroutine(0xED24, "C8021_BANK6")
@@ -616,6 +617,7 @@ subroutine(0xF872, "ADD")
 subroutine(0xF8AE, "TIS1")
 subroutine(0xF8D1, "DV42")
 subroutine(0xF8D4, "DV41")
+subroutine(0xF8D8, "DVID4")
 subroutine(0xF962, "DVID3B2")
 subroutine(0xFA16, "subm_FA16")
 subroutine(0xFA43, "subm_FA43")

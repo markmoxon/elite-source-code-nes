@@ -152,7 +152,7 @@ XSAV             = &009B
 YSAV             = &009C
 XX17             = &009D
 QQ11             = &009E
-QQ11_MASK        = &009F
+QQ11Mask         = &009F
 ZZ               = &00A0
 XX13             = &00A1
 MCNT             = &00A2
@@ -174,22 +174,22 @@ Yx2M2            = &00B2
 Yx2M1            = &00B3
 messXC           = &00B4
 newzp            = &00B6
-TILE             = &00B8
-PATTERNS_HI      = &00B9
-T5               = &00BA
-T5_1             = &00BB
-ADDR1_LO         = &00D4
-ADDR1_HI         = &00D5
-NAMES_HI         = &00E6
-DASHBOARD_SWITCH = &00E9
-T6               = &00EB
-T6_1             = &00EC
-T7               = &00ED
-T7_1             = &00EE
-PPU_CTRL_COPY    = &00F5
-BANK             = &00F7
-ADDR2_LO         = &00FA
-ADDR2_HI         = &00FB
+tileNumber       = &00B8
+patternTableHi   = &00B9
+addr3            = &00BA
+addr3_1          = &00BB
+addr1            = &00D4
+addr1_1          = &00D5
+nametableHi      = &00E6
+dashboardSwitch  = &00E9
+addr4            = &00EB
+addr4_1          = &00EC
+addr5            = &00ED
+addr5_1          = &00EE
+ppuCtrlCopy      = &00F5
+currentBank      = &00F7
+addr2            = &00FA
+addr2_1          = &00FB
 XX3              = &0100
 XX3_1            = &0101
 SPR_00_Y         = &0200
@@ -454,8 +454,8 @@ ECMP             = &0389
 MJ               = &038A
 CABTMP           = &038B
 LAS2             = &038C
-LASCT            = &038E
 VIEW             = &038E
+LASCT            = &038F
 GNTMP            = &0390
 EV               = &0392
 NAME             = &0396
@@ -497,6 +497,7 @@ LAS              = &0400
 MSTG             = &0401
 QQ19             = &044D
 QQ19_1           = &044E
+QQ19_2           = &044F
 QQ19_3           = &0450
 QQ19_4           = &0450
 K2               = &0459
@@ -504,11 +505,10 @@ K2_1             = &045A
 K2_2             = &045B
 K2_3             = &045C
 DLY              = &045D
-QQ19_2           = &045F
 L046C            = &046C
-BOX_EDGE1        = &046E
-BOX_EDGE2        = &046F
-CONT2_SCAN       = &0475
+boxEdge1         = &046E
+boxEdge2         = &046F
+scanController2  = &0475
 LASX             = &047B
 LASY             = &047C
 ALTIT            = &047E
@@ -533,11 +533,11 @@ QQ8              = &049B
 QQ8_1            = &049C
 QQ9              = &049D
 QQ10             = &049E
-QQ18_LO          = &04A4
-QQ18_HI          = &04A5
-TKN1_LO          = &04A6
-TKN1_HI          = &04A7
-LANG             = &04A8
+QQ18Lo           = &04A4
+QQ18Hi           = &04A5
+TKN1Lo           = &04A6
+TKN1Hi           = &04A7
+language         = &04A8
 CONT1_DOWN       = &04AA
 CONT2_DOWN       = &04AB
 CONT1_UP         = &04AC
@@ -602,8 +602,8 @@ LC006            = &C006
 Spercent         = &C007
 subm_C03E        = &C03E
 subm_C0A8        = &C0A8
-RESET_BANK       = &C0AD
-SET_BANK         = &C0AE
+ResetBank        = &C0AD
+SetBank          = &C0AE
 LC0DF            = &C0DF
 log              = &C100
 logL             = &C200
@@ -625,42 +625,42 @@ subm_CA56        = &CA56
 subm_CB42        = &CB42
 subm_CB9C        = &CB9C
 subm_CC1F        = &CC1F
-SEND_TO_PPU1     = &CC2E
-COPY_NAMES       = &CD34
+SendToPPU1       = &CC2E
+CopyNametable0To1 = &CD34
 subm_CD62        = &CD62
-BOX_EDGES        = &CD6F
+DrawBoxEdges     = &CD6F
 UNIV             = &CE7E
 UNIV_1           = &CE7F
 GINF             = &CE90
 subm_CE9E        = &CE9E
 subm_CEA5        = &CEA5
-NAMES_LOOKUP     = &CED0
-PATTERNS_LOOKUP  = &CED2
+nametableAddrHi  = &CED0
+patternAddrHi    = &CED2
 IRQ              = &CED4
 NMI              = &CED5
-SET_PALETTE      = &CF2E
-RESET_NAMES1     = &D02D
-SWITCH_TO_TABLE_0 = &D06D
-CONTROLLERS      = &D0F8
-FILL_MEMORY      = &D710
+SetPalette       = &CF2E
+ResetNametable1  = &D02D
+SwitchTablesTo0  = &D06D
+ReadControllers  = &D0F8
+FillMemory       = &D710
 subm_D8D8        = &D8D8
-SEND_TO_PPU2     = &D986
+SendToPPU2       = &D986
 TWOS             = &D9F7
 TWOS2            = &DA01
 TWFL             = &DA09
 TWFR             = &DA10
-ylookupLo        = &DA18
-ylookupHi        = &DAF8
+yLookupLo        = &DA18
+yLookupHi        = &DAF8
 LDBD8            = &DBD8
 LOIN             = &DC0F
 subm_DEA5        = &DEA5
 subm_DF76        = &DF76
 subm_E04A        = &E04A
-subm_E0BA        = &E04A
+subm_E0BA        = &E0BA
 subm_E18E        = &E18E
 subm_E33E        = &E33E
 PIXEL            = &E4F0
-PIXELx2          = &E543
+DrawDash         = &E543
 ECBLB2           = &E596
 MSBAR            = &E59F
 subm_E802        = &E802
@@ -676,16 +676,17 @@ subm_EB86        = &EB86
 DELAY            = &EBA2
 BEEP             = &EBA9
 EXNO3            = &EBAD
+ECBLB            = &EBBF
 BOOP             = &EBE5
 NOISE            = &EBF2
-NOISE_lookup1    = &EC3C
-NOISE_lookup2    = &EC5C
-CHECK_DASHBOARD_A = &EC7D
+noiseLookup1     = &EC3C
+noiseLookup2     = &EC5C
+CheckDashboardA  = &EC7D
 LDA_XX0_Y        = &EC8D
-LDA_EPC_Y        = &ECA0
-INC_TALLY        = &ECAE
+LDA_Epc_Y        = &ECA0
+IncreaseTally    = &ECAE
 CB1D4_BANK0      = &ECE2
-SETK_K3_XC_YC    = &ECF9
+Set_K_K3_XC_YC   = &ECF9
 C811E_BANK6      = &ED16
 C8021_BANK6      = &ED24
 C89D1_BANK6      = &ED50
@@ -815,6 +816,7 @@ ADD              = &F872
 TIS1             = &F8AE
 DV42             = &F8D1
 DV41             = &F8D4
+DVID4            = &F8D8
 DVID3B2          = &F962
 subm_FA16        = &FA16
 subm_FA43        = &FA43
@@ -2672,10 +2674,10 @@ L951D = L800C+5393
  ASL A                                        ; B906: 0A          .
  ROL SC_1                                     ; B907: 26 08       &.
  STA SC                                       ; B909: 85 07       ..
- STA T5                                       ; B90B: 85 BA       ..
+ STA addr3                                    ; B90B: 85 BA       ..
  LDA SC_1                                     ; B90D: A5 08       ..
  ADC #&68 ; 'h'                               ; B90F: 69 68       ih
- STA T5_1                                     ; B911: 85 BB       ..
+ STA addr3_1                                  ; B911: 85 BB       ..
  LDA SC_1                                     ; B913: A5 08       ..
  ADC #&60 ; '`'                               ; B915: 69 60       i`
  STA SC_1                                     ; B917: 85 08       ..
@@ -2690,9 +2692,9 @@ L951D = L800C+5393
  ADC #&95                                     ; B929: 69 95       i.
  STA V_1                                      ; B92B: 85 64       .d
  JSR subm_F52D                                ; B92D: 20 2D F5     -.
- LDA T5                                       ; B930: A5 BA       ..
+ LDA addr3                                    ; B930: A5 BA       ..
  STA SC                                       ; B932: 85 07       ..
- LDA T5_1                                     ; B934: A5 BB       ..
+ LDA addr3_1                                  ; B934: A5 BB       ..
  STA SC_1                                     ; B936: 85 08       ..
  JSR subm_F52D                                ; B938: 20 2D F5     -.
  RTS                                          ; B93B: 60          `
@@ -2727,7 +2729,7 @@ L951D = L800C+5393
  STA V_1                                      ; B96D: 85 64       .d
  LDA #&1C                                     ; B96F: A9 1C       ..
  STA V                                        ; B971: 85 63       .c
- LDA TILE                                     ; B973: A5 B8       ..
+ LDA tileNumber                               ; B973: A5 B8       ..
  TAY                                          ; B975: A8          .
  STY K_2                                      ; B976: 84 7F       ..
  ASL A                                        ; B978: 0A          .
@@ -2741,13 +2743,13 @@ L951D = L800C+5393
  ADC #&60 ; '`'                               ; B984: 69 60       i`
  STA SC_1                                     ; B986: 85 08       ..
  ADC #8                                       ; B988: 69 08       i.
- STA T5_1                                     ; B98A: 85 BB       ..
+ STA addr3_1                                  ; B98A: 85 BB       ..
  LDA SC                                       ; B98C: A5 07       ..
- STA T5                                       ; B98E: 85 BA       ..
+ STA addr3                                    ; B98E: 85 BA       ..
  JSR subm_F52D                                ; B990: 20 2D F5     -.
- LDA T5                                       ; B993: A5 BA       ..
+ LDA addr3                                    ; B993: A5 BA       ..
  STA SC                                       ; B995: 85 07       ..
- LDA T5_1                                     ; B997: A5 BB       ..
+ LDA addr3_1                                  ; B997: A5 BB       ..
  STA SC_1                                     ; B999: 85 08       ..
  JSR subm_F52D                                ; B99B: 20 2D F5     -.
  LDA #&B5                                     ; B99E: A9 B5       ..
@@ -2763,10 +2765,10 @@ L951D = L800C+5393
  LDA #5                                       ; B9B2: A9 05       ..
  STA XC                                       ; B9B4: 85 32       .2
  JSR subm_B9C1                                ; B9B6: 20 C1 B9     ..
- LDA TILE                                     ; B9B9: A5 B8       ..
+ LDA tileNumber                               ; B9B9: A5 B8       ..
  CLC                                          ; B9BB: 18          .
  ADC #&D0                                     ; B9BC: 69 D0       i.
- STA TILE                                     ; B9BE: 85 B8       ..
+ STA tileNumber                               ; B9BE: 85 B8       ..
  RTS                                          ; B9C0: 60          `
 
 ; ******************************************************************************
@@ -2857,15 +2859,15 @@ L951D = L800C+5393
  STA T                                        ; BA43: 85 9A       ..
  LDY #0                                       ; BA45: A0 00       ..
 .CBA47
- LDA DASHBOARD_SWITCH                         ; BA47: A5 E9       ..
+ LDA dashboardSwitch                          ; BA47: A5 E9       ..
  BPL CBA54                                    ; BA49: 10 09       ..
  LDA PPU_STATUS                               ; BA4B: AD 02 20    ..
  ASL A                                        ; BA4E: 0A          .
  BPL CBA54                                    ; BA4F: 10 03       ..
- JSR SWITCH_TO_TABLE_0                        ; BA51: 20 6D D0     m.
+ JSR SwitchTablesTo0                          ; BA51: 20 6D D0     m.
 .CBA54
  LDA SC                                       ; BA54: A5 07       ..
- STA T5                                       ; BA56: 85 BA       ..
+ STA addr3                                    ; BA56: 85 BA       ..
  LDA K                                        ; BA58: A5 7D       .}
  STA ZZ                                       ; BA5A: 85 A0       ..
 .CBA5C
@@ -2880,7 +2882,7 @@ L951D = L800C+5393
  STA SPR_00_TILE,X                            ; BA69: 9D 01 02    ...
  LDA S                                        ; BA6C: A5 99       ..
  STA SPR_00_ATTR,X                            ; BA6E: 9D 02 02    ...
- LDA T5                                       ; BA71: A5 BA       ..
+ LDA addr3                                    ; BA71: A5 BA       ..
  STA SPR_00_X,X                               ; BA73: 9D 03 02    ...
  LDA SC_1                                     ; BA76: A5 08       ..
  STA SPR_00_Y,X                               ; BA78: 9D 00 02    ...
@@ -2890,10 +2892,10 @@ L951D = L800C+5393
  BCS CBA97                                    ; BA7F: B0 16       ..
  TAX                                          ; BA81: AA          .
 .CBA82
- LDA T5                                       ; BA82: A5 BA       ..
+ LDA addr3                                    ; BA82: A5 BA       ..
  CLC                                          ; BA84: 18          .
  ADC #8                                       ; BA85: 69 08       i.
- STA T5                                       ; BA87: 85 BA       ..
+ STA addr3                                    ; BA87: 85 BA       ..
  DEC ZZ                                       ; BA89: C6 A0       ..
  BNE CBA5C                                    ; BA8B: D0 CF       ..
  LDA SC_1                                     ; BA8D: A5 08       ..
