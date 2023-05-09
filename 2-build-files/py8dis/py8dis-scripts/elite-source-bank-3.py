@@ -46,6 +46,8 @@ entry(0xB9E2)
 entry(0xBA11)
 entry(0xBA23)
 
+subroutine(0xAABC, "DrawTitleScreen")
+
 exec(open('py8dis-scripts/common-variables.py').read())
 
 go()

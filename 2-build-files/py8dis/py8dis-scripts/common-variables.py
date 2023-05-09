@@ -1,6 +1,6 @@
-# NI% = 42			\ Sometimes need to do NI%-4
+# NI% = 42          \ Sometimes need to do NI%-4
 
-# NOSH = 8    		\ As UNIV contains 9 addresses, 0 to NOSH
+# NOSH = 8          \ As UNIV contains 9 addresses, 0 to NOSH
 
 # NOST = 20
 
@@ -179,7 +179,7 @@ label(0x009B, "XSAV")
 label(0x009C, "YSAV")
 label(0x009D, "XX17")
 label(0x009E, "QQ11")
-label(0x009F, "QQ11Mask")          # Can be 0, &FF or QQ11
+label(0x009F, "QQ11Mask")          # Mine, can be 0, &FF or QQ11
 label(0x00A0, "ZZ")
 label(0x00A1, "XX13")
 label(0x00A2, "MCNT")
@@ -196,28 +196,27 @@ label(0x00AC, "XX20")
 label(0x00AE, "RAT")
 label(0x00AF, "RAT2")
 label(0x00B0, "widget")
-label(0x00B1, "Yx1M2")		        # Mine = height of screen for text screens?
-label(0x00B2, "Yx2M2")		        # Mine = 2 x Yx1M2
+label(0x00B1, "Yx1M2")              # Mine = height of screen for text screens?
+label(0x00B2, "Yx2M2")              # Mine = 2 x Yx1M2
 label(0x00B3, "Yx2M1")
 label(0x00B4, "messXC")
 label(0x00B6, "newzp")
 
 label(0x00B8, "tileNumber")         # Mine, contains tile number to draw into
 label(0x00B9, "patternTableHi")     # Mine, high byte of current nametable (&70 or &74)
-                                    # HI(PATTERNS_0) or HI(PATTERNS_1)
+                                    # i.e. HI(patternTable0) or HI(patternTable1)
 
-label(0x00BA, "addr3")            # Mine, typically an address
+label(0x00BA, "addr3")              # Mine, typically an address
 label(0x00BB, "addr3_1")
 
-label(0x00D4, "addr1")            # Mine, an address within the PPU to be poked to
+label(0x00D4, "addr1")              # Mine, an address within the PPU to be poked to
 label(0x00D5, "addr1_1")
 
 label(0x00E6, "nametableHi")        # Mine, high byte of current nametable (&70 or &74)
-                                    # HI(NAMES_0) or HI(NAMES_1)
+                                    # i.e. HI(nametable0) or HI(nametable1)
 
-label(0x00E9, "dashboardSwitch")    # Mine, a flag to control whether we switch
-                                    # to nametable 0 and palette 0 for the
-                                    # dashboard
+label(0x00E9, "dashboardSwitch")    # Mine, a flag to control whether we switch to
+                                    # nametable 0 and palette 0 for the dashboard
 
 label(0x00EB, "addr4")              # Mine, an address within the PPU to be poked to
 label(0x00EC, "addr4_1")
@@ -279,6 +278,7 @@ label(0x03DC, "TALLY")
 label(0x03DD, "TALLY_1")
 label(0x03DF, "QQ21")
 label(0x03E5, "NOSTM")
+label(0x03F1, "frameCounter")       # Mine, increments every VBlank
 label(0x03F3, "DTW6")
 label(0x03F4, "DTW2")
 label(0x03F5, "DTW3")
@@ -290,6 +290,14 @@ label(0x03FA, "XP")
 label(0x03FB, "YP")
 label(0x0400, "LAS")
 label(0x0401, "MSTG")
+label(0x0403, "KL")
+label(0x0403, "KY1")
+label(0x0404, "KY2")
+label(0x0405, "KY3")
+label(0x0406, "KY4")
+label(0x0407, "KY5")
+label(0x0408, "KY6")
+label(0x0409, "KY7")
 label(0x044D, "QQ19")
 label(0x044E, "QQ19_1")
 label(0x044F, "QQ19_2")
@@ -300,6 +308,8 @@ label(0x045A, "K2_1")
 label(0x045B, "K2_2")
 label(0x045C, "K2_3")
 label(0x045D, "DLY")
+label(0x0476, "JSTX")
+label(0x0477, "JSTY")
 label(0x046E, "boxEdge1")          # Mine, bitmap for drawing box edge?
 label(0x046F, "boxEdge2")          # Mine, bitmap for drawing box edge?
 label(0x0475, "scanController2")   # Mine, if non-zero, scan controller 2
@@ -326,27 +336,27 @@ label(0x049B, "QQ8")
 label(0x049C, "QQ8_1")
 label(0x049D, "QQ9")
 label(0x049E, "QQ10")
-label(0x04A4, "QQ18Lo")    	        # Mine, gets set to address of token table
-label(0x04A5, "QQ18Hi")    	        #   that ex then accesses
-label(0x04A6, "TKN1Lo")    	        # Mine, gets set to address of token table
-label(0x04A7, "TKN1Hi")   		    #   that DETOK then accesses
-label(0x04A8, "language")  			# Mine
-label(0x04AA, "CONT1_DOWN")		    # Mine
-label(0x04AB, "CONT2_DOWN")
-label(0x04AC, "CONT1_UP")
-label(0x04AD, "CONT2_UP")
-label(0x04AE, "CONT1_LEFT")
-label(0x04AF, "CONT2_LEFT")
-label(0x04B0, "CONT1_RIGHT")
-label(0x04B1, "CONT2_RIGHT")
-label(0x04B2, "CONT1_A")
-label(0x04B3, "CONT2_A")
-label(0x04B4, "CONT1_B")
-label(0x04B5, "CONT2_B")
-label(0x04B6, "CONT1_START")
-label(0x04B7, "CONT2_START")
-label(0x04B8, "CONT1_SELECT")
-label(0x04B9, "CONT2_SELECT")
+label(0x04A4, "QQ18Lo")             # Mine, gets set to address of token table
+label(0x04A5, "QQ18Hi")             #   that ex then accesses
+label(0x04A6, "TKN1Lo")             # Mine, gets set to address of token table
+label(0x04A7, "TKN1Hi")             #   that DETOK then accesses
+label(0x04A8, "language")           # Mine
+label(0x04AA, "controller1Down")    # Mine
+label(0x04AB, "controller2Down")    # Mine
+label(0x04AC, "controller1Up")      # Mine
+label(0x04AD, "controller2Up")      # Mine
+label(0x04AE, "controller1Left")    # Mine
+label(0x04AF, "controller2Left")    # Mine
+label(0x04B0, "controller1Right")   # Mine
+label(0x04B1, "controller2Right")   # Mine
+label(0x04B2, "controller1A")       # Mine
+label(0x04B3, "controller2A")       # Mine
+label(0x04B4, "controller1B")       # Mine
+label(0x04B5, "controller2B")       # Mine
+label(0x04B6, "controller1Start")   # Mine
+label(0x04B7, "controller2Start")   # Mine
+label(0x04B8, "controller1Select")  # Mine
+label(0x04B9, "controller2Select")  # Mine
 label(0x04C8, "SX")
 label(0x04DD, "SY")
 label(0x04F2, "SZ")
@@ -395,11 +405,11 @@ label(0x4017, "CONTROLLER_2")
 
 # Battery-backed WRAM in the cartridge
 
-label(0x6000, "PATTERNS_0")         # Mine, two buffers for tile patterns
-label(0x6800, "PATTERNS_1")
+label(0x6000, "patternTable0")      # Mine, two buffers for tile patterns
+label(0x6800, "patternTable1")
 
-label(0x7000, "NAMES_0")            # Mine, two buffers for nametables
-label(0x7400, "NAMES_1")
+label(0x7000, "nametable0")         # Mine, two buffers for nametables
+label(0x7400, "nametable1")
 
 # Permanently loaded labels in 7.asm ($C000-$FFFF)
 
@@ -430,7 +440,7 @@ label(0xF333, "LF333")              # Mine
 subroutine(0xC007, "Spercent")
 subroutine(0xC0AD, "ResetBank")     # Mine, switch bank to stack value
 subroutine(0xC0AE, "SetBank")       # Mine, switch bank to A
-subroutine(0xC03E, "subm_C03E")
+subroutine(0xC03E, "ResetVariables")
 subroutine(0xC0A8, "subm_C0A8")
 subroutine(0xC582, "subm_C582")
 subroutine(0xC5D2, "subm_C5D2")
@@ -456,6 +466,8 @@ subroutine(0xCF2E, "SetPalette")    # Mine, set PPU palette?
 subroutine(0xD02D, "ResetNametable1")  # Mine, does this clear down nametable 1?
 subroutine(0xD0F8, "ReadControllers")   # Mine, reads controllers
 subroutine(0xD06D, "SwitchTablesTo0")    # Mine, switches PPU to nametable/palette table 0
+subroutine(0xD164, "SetTable0UntilNMI2")
+subroutine(0xD167, "SetTable0UntilNMI")
 subroutine(0xD710, "FillMemory")    # Mine, something to do with memory filling?
 subroutine(0xD8C5, "subm_D8C5")
 subroutine(0xD8E1, "subm_D8E1")
@@ -495,17 +507,18 @@ subroutine(0xEBAD, "EXNO3")
 subroutine(0xEBBF, "ECBLB")
 subroutine(0xEBE5, "BOOP")
 subroutine(0xEBF2, "NOISE")
-subroutine(0xEC7D, "CheckDashboardA")	    # CHECK_DASHBOARD macro that preserves A
+subroutine(0xEC7D, "CheckDashboardA")   # CHECK_DASHBOARD macro that preserves A
 subroutine(0xEC8D, "LDA_XX0_Y")
 subroutine(0xECA0, "LDA_Epc_Y")
-subroutine(0xECAE, "IncreaseTally")      # Mine, adds KWL/KWH to TALLY
+subroutine(0xECAE, "IncreaseTally")     # Mine, adds KWL/KWH to TALLY
 subroutine(0xECE2, "CB1D4_b0")
-subroutine(0xECF9, "Set_K_K3_XC_YC")     # Temporary name
+subroutine(0xECF9, "Set_K_K3_XC_YC")    # Temporary name
 subroutine(0xED16, "C811E_b6")
 subroutine(0xED24, "C8021_b6")
 subroutine(0xED24, "C8021_b6")
 subroutine(0xED50, "C89D1_b6")
-subroutine(0xED6B, "C8012_b6")
+subroutine(0xED6B, "ResetSound_b6")
+subroutine(0xED6E, "ResetSoundNow_b6")
 subroutine(0xED81, "CBF41_b5")
 subroutine(0xED8F, "CB9F9_b4")
 subroutine(0xED9D, "CB96B_b4")
@@ -514,7 +527,7 @@ subroutine(0xEDB9, "CB88C_b6")
 subroutine(0xEDC7, "LL9_b1")
 subroutine(0xEDDC, "CBA23_b3")
 subroutine(0xEDEA, "TIDY_b1")
-subroutine(0xEDFF, "CBC83_b6")
+subroutine(0xEDFF, "TITLE_b6")
 subroutine(0xEE0D, "SpawnDemoShips_b0")
 subroutine(0xEE15, "STARS_b1")
 subroutine(0xEE3F, "SUN_b1")
@@ -561,7 +574,7 @@ subroutine(0xF0C6, "CAE18_b3")
 subroutine(0xF0E1, "CAC1D_b3")
 subroutine(0xF0FC, "CA730_b3")
 subroutine(0xF10A, "CA775_b3")
-subroutine(0xF118, "CAABC_b3")
+subroutine(0xF118, "DrawTitleScreen_b3")
 subroutine(0xF126, "CA7B7_b3")
 subroutine(0xF139, "CA9D1_b3")
 subroutine(0xF15C, "CA972_b3")
@@ -586,6 +599,7 @@ subroutine(0xF2CE, "subm_F2CE")
 subroutine(0xF2DE, "CLYNS")
 subroutine(0xF338, "subm_F338")
 subroutine(0xF359, "subm_F359")
+subroutine(0xF362, "subm_F362")
 subroutine(0xF3BC, "subm_F3BC")
 subroutine(0xF42A, "subm_F42A")
 subroutine(0xF42E, "Ze")
@@ -634,9 +648,10 @@ subroutine(0xF8D4, "DV41")
 subroutine(0xF8D8, "DVID4")
 subroutine(0xF962, "DVID3B2")
 subroutine(0xFA16, "subm_FA16")
-subroutine(0xFA43, "subm_FA43")
+subroutine(0xFA33, "BUMP2")
+subroutine(0xFA43, "REDU2")
 subroutine(0xFA55, "LL5")
 subroutine(0xFA91, "LL28")
 subroutine(0xFACB, "subm_FACB")
 subroutine(0xFAF8, "NORM")
-subroutine(0xFB89, "subm_FB89")
+subroutine(0xFB89, "SetupMMC1")

@@ -97,8 +97,11 @@ label(0xAB6F, "LTDEF")
 label(0xAC96, "NOFX")
 label(0xACA2, "NOFY")
 
+subroutine(0x8012, "ResetSound")
+subroutine(0x80F3, "DoResetSound")
 subroutine(0xA771, "GRIDSET")
 subroutine(0xA802, "GRS1")
+subroutine(0xBC83, "TITLE")
 
 exec(open('py8dis-scripts/common-variables.py').read())
 

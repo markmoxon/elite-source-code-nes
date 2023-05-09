@@ -1,990 +1,992 @@
 ; Memory locations
-ZP               = &0000
-RAND             = &0002
-RAND_1           = &0002
-RAND_2           = &0003
-RAND_3           = &0004
-L0005            = &0005
-T1               = &0006
-SC               = &0007
-SC_1             = &0008
-INWK             = &0009
-XX1              = &0009
-INWK_1           = &000A
-INWK_2           = &000B
-INWK_3           = &000C
-INWK_4           = &000D
-INWK_5           = &000E
-INWK_6           = &000F
-INWK_7           = &0010
-INWK_8           = &0011
-INWK_9           = &0012
-INWK_10          = &0013
-INWK_11          = &0014
-INWK_12          = &0015
-INWK_13          = &0016
-INWK_14          = &0017
-INWK_15          = &0018
-INWK_16          = &0019
-INWK_17          = &001A
-INWK_18          = &001B
-INWK_19          = &001C
-INWK_20          = &001D
-INWK_21          = &001E
-INWK_22          = &001F
-INWK_23          = &0020
-INWK_24          = &0021
-INWK_25          = &0022
-INWK_26          = &0023
-INWK_27          = &0024
-INWK_28          = &0025
-INWK_29          = &0026
-INWK_30          = &0027
-INWK_31          = &0028
-INWK_32          = &0029
-INWK_33          = &002A
-INWK_34          = &002B
-INWK_35          = &002C
-NEWB             = &002D
-P                = &002F
-P_1              = &0030
-P_2              = &0031
-XC               = &0032
-L0033            = &0033
-L0034            = &0034
-L0037            = &0037
-L0038            = &0038
-L0039            = &0039
-L003A            = &003A
-YC               = &003B
-QQ17             = &003C
-K3               = &003D
-XX2              = &003D
-XX2_1            = &003E
-XX2_2            = &003F
-XX2_3            = &0040
-XX2_4            = &0041
-XX2_5            = &0042
-XX2_6            = &0043
-XX2_7            = &0044
-XX2_8            = &0045
-XX2_9            = &0046
-XX2_10           = &0047
-XX2_11           = &0048
-XX2_12           = &0049
-XX2_13           = &004A
-K4               = &004B
-K4_1             = &004C
-XX16             = &004D
-XX16_1           = &004E
-XX16_2           = &004F
-XX16_3           = &0050
-XX16_4           = &0051
-XX16_5           = &0052
-XX16_6           = &0053
-XX16_7           = &0054
-XX16_8           = &0055
-XX16_9           = &0056
-XX16_10          = &0057
-XX16_11          = &0058
-XX16_12          = &0059
-XX16_13          = &005A
-XX16_14          = &005B
-XX16_15          = &005C
-XX16_16          = &005D
-XX16_17          = &005E
-XX0              = &005F
-XX0_1            = &0060
-INF              = &0061
-XX19             = &0061
-INF_1            = &0062
-V                = &0063
-V_1              = &0064
-XX               = &0065
-XX_1             = &0066
-YY               = &0067
-YY_1             = &0068
-BETA             = &0069
-BET1             = &006A
-QQ22             = &006B
-QQ22_1           = &006C
-ECMA             = &006D
-ALP1             = &006E
-ALP2             = &006F
-ALP2_1           = &0070
-X1               = &0071
-XX15             = &0071
-Y1               = &0072
-X2               = &0073
-Y2               = &0074
-XX15_4           = &0075
-XX15_5           = &0076
-XX12             = &0077
-XX12_1           = &0078
-XX12_2           = &0079
-XX12_3           = &007A
-XX12_4           = &007B
-XX12_5           = &007C
-K                = &007D
-K_1              = &007E
-K_2              = &007F
-K_3              = &0080
-L0081            = &0081
-QQ15             = &0082
-QQ15_1           = &0083
-QQ15_2           = &0084
-QQ15_3           = &0085
-QQ15_4           = &0086
-QQ15_5           = &0087
-K5               = &0088
-XX18             = &0088
-XX18_1           = &0089
-XX18_2           = &008A
-XX18_3           = &008B
-K6               = &008C
-K6_1             = &008D
-K6_2             = &008E
-K6_3             = &008F
-K6_4             = &0090
-BET2             = &0091
-BET2_1           = &0092
-DELTA            = &0093
-DELT4            = &0094
-DELT4_1          = &0095
-U                = &0096
-Q                = &0097
-R                = &0098
-S                = &0099
-T                = &009A
-XSAV             = &009B
-YSAV             = &009C
-XX17             = &009D
-QQ11             = &009E
-QQ11Mask         = &009F
-ZZ               = &00A0
-XX13             = &00A1
-MCNT             = &00A2
-TYPE             = &00A3
-ALPHA            = &00A4
-QQ12             = &00A5
-TGT              = &00A6
-FLAG             = &00A7
-CNT              = &00A8
-CNT2             = &00A9
-STP              = &00AA
-XX4              = &00AB
-XX20             = &00AC
-RAT              = &00AE
-RAT2             = &00AF
-widget           = &00B0
-Yx1M2            = &00B1
-Yx2M2            = &00B2
-Yx2M1            = &00B3
-messXC           = &00B4
-L00B5            = &00B5
-newzp            = &00B6
-tileNumber       = &00B8
-patternTableHi   = &00B9
-addr3            = &00BA
-addr3_1          = &00BB
-L00C0            = &00C0
-L00CC            = &00CC
-L00CD            = &00CD
-L00CE            = &00CE
-L00D2            = &00D2
-addr1            = &00D4
-addr1_1          = &00D5
-L00D8            = &00D8
-nametableHi      = &00E6
-dashboardSwitch  = &00E9
-addr4            = &00EB
-addr4_1          = &00EC
-addr5            = &00ED
-addr5_1          = &00EE
-addr6            = &00F1
-addr6_1          = &00F2
-ppuCtrlCopy      = &00F5
-L00F6            = &00F6
-currentBank      = &00F7
-addr2            = &00FA
-addr2_1          = &00FB
-XX3              = &0100
-XX3_1            = &0101
-SPR_00_Y         = &0200
-SPR_00_TILE      = &0201
-SPR_00_ATTR      = &0202
-SPR_00_X         = &0203
-SPR_01_Y         = &0204
-SPR_01_TILE      = &0205
-SPR_01_ATTR      = &0206
-SPR_01_X         = &0207
-SPR_02_Y         = &0208
-SPR_02_TILE      = &0209
-SPR_02_ATTR      = &020A
-SPR_02_X         = &020B
-SPR_03_Y         = &020C
-SPR_03_TILE      = &020D
-SPR_03_ATTR      = &020E
-SPR_03_X         = &020F
-SPR_04_Y         = &0210
-SPR_04_TILE      = &0211
-SPR_04_ATTR      = &0212
-SPR_04_X         = &0213
-SPR_05_Y         = &0214
-SPR_05_TILE      = &0215
-SPR_05_ATTR      = &0216
-SPR_05_X         = &0217
-SPR_06_Y         = &0218
-SPR_06_TILE      = &0219
-SPR_06_ATTR      = &021A
-SPR_06_X         = &021B
-SPR_07_Y         = &021C
-SPR_07_TILE      = &021D
-SPR_07_ATTR      = &021E
-SPR_07_X         = &021F
-SPR_08_Y         = &0220
-SPR_08_TILE      = &0221
-SPR_08_ATTR      = &0222
-SPR_08_X         = &0223
-SPR_09_Y         = &0224
-SPR_09_TILE      = &0225
-SPR_09_ATTR      = &0226
-SPR_09_X         = &0227
-SPR_10_Y         = &0228
-SPR_10_TILE      = &0229
-SPR_10_ATTR      = &022A
-SPR_10_X         = &022B
-SPR_11_Y         = &022C
-SPR_11_TILE      = &022D
-SPR_11_ATTR      = &022E
-SPR_11_X         = &022F
-SPR_12_Y         = &0230
-SPR_12_TILE      = &0231
-SPR_12_ATTR      = &0232
-SPR_12_X         = &0233
-SPR_13_Y         = &0234
-SPR_13_TILE      = &0235
-SPR_13_ATTR      = &0236
-SPR_13_X         = &0237
-SPR_14_Y         = &0238
-SPR_14_TILE      = &0239
-SPR_14_ATTR      = &023A
-SPR_14_X         = &023B
-SPR_15_Y         = &023C
-SPR_15_TILE      = &023D
-SPR_15_ATTR      = &023E
-SPR_15_X         = &023F
-SPR_16_Y         = &0240
-SPR_16_TILE      = &0241
-SPR_16_ATTR      = &0242
-SPR_16_X         = &0243
-SPR_17_Y         = &0244
-SPR_17_TILE      = &0245
-SPR_17_ATTR      = &0246
-SPR_17_X         = &0247
-SPR_18_Y         = &0248
-SPR_18_TILE      = &0249
-SPR_18_ATTR      = &024A
-SPR_18_X         = &024B
-SPR_19_Y         = &024C
-SPR_19_TILE      = &024D
-SPR_19_ATTR      = &024E
-SPR_19_X         = &024F
-SPR_20_Y         = &0250
-SPR_20_TILE      = &0251
-SPR_20_ATTR      = &0252
-SPR_20_X         = &0253
-SPR_21_Y         = &0254
-SPR_21_TILE      = &0255
-SPR_21_ATTR      = &0256
-SPR_21_X         = &0257
-SPR_22_Y         = &0258
-SPR_22_TILE      = &0259
-SPR_22_ATTR      = &025A
-SPR_22_X         = &025B
-SPR_23_Y         = &025C
-SPR_23_TILE      = &025D
-SPR_23_ATTR      = &025E
-SPR_23_X         = &025F
-SPR_24_Y         = &0260
-SPR_24_TILE      = &0261
-SPR_24_ATTR      = &0262
-SPR_24_X         = &0263
-SPR_25_Y         = &0264
-SPR_25_TILE      = &0265
-SPR_25_ATTR      = &0266
-SPR_25_X         = &0267
-SPR_26_Y         = &0268
-SPR_26_TILE      = &0269
-SPR_26_ATTR      = &026A
-SPR_26_X         = &026B
-SPR_27_Y         = &026C
-SPR_27_TILE      = &026D
-SPR_27_ATTR      = &026E
-SPR_27_X         = &026F
-SPR_28_Y         = &0270
-SPR_28_TILE      = &0271
-SPR_28_ATTR      = &0272
-SPR_28_X         = &0273
-SPR_29_Y         = &0274
-SPR_29_TILE      = &0275
-SPR_29_ATTR      = &0276
-SPR_29_X         = &0277
-SPR_30_Y         = &0278
-SPR_30_TILE      = &0279
-SPR_30_ATTR      = &027A
-SPR_30_X         = &027B
-SPR_31_Y         = &027C
-SPR_31_TILE      = &027D
-SPR_31_ATTR      = &027E
-SPR_31_X         = &027F
-SPR_32_Y         = &0280
-SPR_32_TILE      = &0281
-SPR_32_ATTR      = &0282
-SPR_32_X         = &0283
-SPR_33_Y         = &0284
-SPR_33_TILE      = &0285
-SPR_33_ATTR      = &0286
-SPR_33_X         = &0287
-SPR_34_Y         = &0288
-SPR_34_TILE      = &0289
-SPR_34_ATTR      = &028A
-SPR_34_X         = &028B
-SPR_35_Y         = &028C
-SPR_35_TILE      = &028D
-SPR_35_ATTR      = &028E
-SPR_35_X         = &028F
-SPR_36_Y         = &0290
-SPR_36_TILE      = &0291
-SPR_36_ATTR      = &0292
-SPR_36_X         = &0293
-SPR_37_Y         = &0294
-SPR_37_TILE      = &0295
-SPR_37_ATTR      = &0296
-SPR_37_X         = &0297
-SPR_38_Y         = &0298
-SPR_38_TILE      = &0299
-SPR_38_ATTR      = &029A
-SPR_38_X         = &029B
-SPR_39_Y         = &029C
-SPR_39_TILE      = &029D
-SPR_39_ATTR      = &029E
-SPR_39_X         = &029F
-SPR_40_Y         = &02A0
-SPR_40_TILE      = &02A1
-SPR_40_ATTR      = &02A2
-SPR_40_X         = &02A3
-SPR_41_Y         = &02A4
-SPR_41_TILE      = &02A5
-SPR_41_ATTR      = &02A6
-SPR_41_X         = &02A7
-SPR_42_Y         = &02A8
-SPR_42_TILE      = &02A9
-SPR_42_ATTR      = &02AA
-SPR_42_X         = &02AB
-SPR_43_Y         = &02AC
-SPR_43_TILE      = &02AD
-SPR_43_ATTR      = &02AE
-SPR_43_X         = &02AF
-SPR_44_Y         = &02B0
-SPR_44_TILE      = &02B1
-SPR_44_ATTR      = &02B2
-SPR_44_X         = &02B3
-SPR_45_Y         = &02B4
-SPR_45_TILE      = &02B5
-SPR_45_ATTR      = &02B6
-SPR_45_X         = &02B7
-SPR_46_Y         = &02B8
-SPR_46_TILE      = &02B9
-SPR_46_ATTR      = &02BA
-SPR_46_X         = &02BB
-SPR_47_Y         = &02BC
-SPR_47_TILE      = &02BD
-SPR_47_ATTR      = &02BE
-SPR_47_X         = &02BF
-SPR_48_Y         = &02C0
-SPR_48_TILE      = &02C1
-SPR_48_ATTR      = &02C2
-SPR_48_X         = &02C3
-SPR_49_Y         = &02C4
-SPR_49_TILE      = &02C5
-SPR_49_ATTR      = &02C6
-SPR_49_X         = &02C7
-SPR_50_Y         = &02C8
-SPR_50_TILE      = &02C9
-SPR_50_ATTR      = &02CA
-SPR_50_X         = &02CB
-SPR_51_Y         = &02CC
-SPR_51_TILE      = &02CD
-SPR_51_ATTR      = &02CE
-SPR_51_X         = &02CF
-SPR_52_Y         = &02D0
-SPR_52_TILE      = &02D1
-SPR_52_ATTR      = &02D2
-SPR_52_X         = &02D3
-SPR_53_Y         = &02D4
-SPR_53_TILE      = &02D5
-SPR_53_ATTR      = &02D6
-SPR_53_X         = &02D7
-SPR_54_Y         = &02D8
-SPR_54_TILE      = &02D9
-SPR_54_ATTR      = &02DA
-SPR_54_X         = &02DB
-SPR_55_Y         = &02DC
-SPR_55_TILE      = &02DD
-SPR_55_ATTR      = &02DE
-SPR_55_X         = &02DF
-SPR_56_Y         = &02E0
-SPR_56_TILE      = &02E1
-SPR_56_ATTR      = &02E2
-SPR_56_X         = &02E3
-SPR_57_Y         = &02E4
-SPR_57_TILE      = &02E5
-SPR_57_ATTR      = &02E6
-SPR_57_X         = &02E7
-SPR_58_Y         = &02E8
-SPR_58_TILE      = &02E9
-SPR_58_ATTR      = &02EA
-SPR_58_X         = &02EB
-SPR_59_Y         = &02EC
-SPR_59_TILE      = &02ED
-SPR_59_ATTR      = &02EE
-SPR_59_X         = &02EF
-SPR_60_Y         = &02F0
-SPR_60_TILE      = &02F1
-SPR_60_ATTR      = &02F2
-SPR_60_X         = &02F3
-SPR_61_Y         = &02F4
-SPR_61_TILE      = &02F5
-SPR_61_ATTR      = &02F6
-SPR_61_X         = &02F7
-SPR_62_Y         = &02F8
-SPR_62_TILE      = &02F9
-SPR_62_ATTR      = &02FA
-SPR_62_X         = &02FB
-SPR_63_Y         = &02FC
-SPR_63_TILE      = &02FD
-SPR_63_ATTR      = &02FE
-SPR_63_X         = &02FF
-L0300            = &0300
-L0305            = &0305
-L0306            = &0306
-L0307            = &0307
-L0308            = &0308
-L0309            = &0309
-L030A            = &030A
-L034F            = &034F
-L0369            = &0369
-FRIN             = &036A
-L036B            = &036B
-L036C            = &036C
-L0370            = &0370
-JUNK             = &0373
-L0374            = &0374
-L037E            = &037E
-L0388            = &0388
-ECMP             = &0389
-MJ               = &038A
-CABTMP           = &038B
-LAS2             = &038C
-L038D            = &038D
-VIEW             = &038E
-LASCT            = &038F
-GNTMP            = &0390
-EV               = &0392
-L0393            = &0393
-L0394            = &0394
-L0395            = &0395
-NAME             = &0396
-TP               = &039E
-QQ0              = &039F
-QQ1              = &03A0
-CASH             = &03A1
-L03A2            = &03A2
-L03A3            = &03A3
-L03A4            = &03A4
-QQ14             = &03A5
-L03A6            = &03A6
-GCNT             = &03A7
-LASER            = &03A8
-CRGO             = &03AC
-QQ20             = &03AD
-L03B0            = &03B0
-L03B3            = &03B3
-L03B7            = &03B7
-L03BE            = &03BE
-BST              = &03BF
-BOMB             = &03C0
-ENGY             = &03C1
-DKCMP            = &03C2
-GHYP             = &03C3
-ESCP             = &03C4
-TRIBBLE          = &03C5
-TRIBBLE_1        = &03C6
-NOMSL            = &03C8
-FIST             = &03C9
-AVL              = &03CA
-L03DA            = &03DA
-QQ26             = &03DB
-TALLY            = &03DC
-TALLY_1          = &03DD
-QQ21             = &03DF
-NOSTM            = &03E5
-L03E7            = &03E7
-L03E8            = &03E8
-L03E9            = &03E9
-L03EE            = &03EE
-L03EF            = &03EF
-L03F0            = &03F0
-L03F1            = &03F1
-DTW6             = &03F3
-DTW2             = &03F4
-DTW3             = &03F5
-DTW4             = &03F6
-DTW5             = &03F7
-DTW1             = &03F8
-DTW8             = &03F9
-XP               = &03FA
-YP               = &03FB
-L03FC            = &03FC
-L03FD            = &03FD
-LAS              = &0400
-MSTG             = &0401
-L0403            = &0403
-L0404            = &0404
-L0405            = &0405
-L0406            = &0406
-L0407            = &0407
-L0408            = &0408
-L0409            = &0409
-QQ19             = &044D
-QQ19_1           = &044E
-QQ19_2           = &044F
-QQ19_3           = &0450
-QQ19_4           = &0450
-L0451            = &0451
-L0452            = &0452
-L0453            = &0453
-K2               = &0459
-K2_1             = &045A
-K2_2             = &045B
-K2_3             = &045C
-DLY              = &045D
-L045F            = &045F
-L0464            = &0464
-L0465            = &0465
-L046D            = &046D
-boxEdge1         = &046E
-boxEdge2         = &046F
-L0470            = &0470
-L0471            = &0471
-scanController2  = &0475
-L0476            = &0476
-L0477            = &0477
-LASX             = &047B
-LASY             = &047C
-ALTIT            = &047E
-SWAP             = &047F
-L0480            = &0480
-XSAV2            = &0481
-YSAV2            = &0482
-L0483            = &0483
-FSH              = &0484
-ASH              = &0485
-ENERGY           = &0486
-QQ24             = &0487
-QQ25             = &0488
-QQ28             = &0489
-QQ29             = &048A
-L048B            = &048B
-gov              = &048C
-tek              = &048D
-QQ2              = &048E
-QQ3              = &0494
-QQ4              = &0495
-QQ5              = &0496
-L0497            = &0497
-L0499            = &0499
-L049A            = &049A
-QQ8              = &049B
-QQ8_1            = &049C
-QQ9              = &049D
-QQ10             = &049E
-L049F            = &049F
-L04A1            = &04A1
-L04A2            = &04A2
-L04A3            = &04A3
-QQ18Lo           = &04A4
-QQ18Hi           = &04A5
-TKN1Lo           = &04A6
-TKN1Hi           = &04A7
-language         = &04A8
-L04A9            = &04A9
-CONT1_DOWN       = &04AA
-CONT2_DOWN       = &04AB
-CONT1_UP         = &04AC
-CONT2_UP         = &04AD
-CONT1_LEFT       = &04AE
-CONT2_LEFT       = &04AF
-CONT1_RIGHT      = &04B0
-CONT2_RIGHT      = &04B1
-CONT1_A          = &04B2
-CONT2_A          = &04B3
-CONT1_B          = &04B4
-CONT2_B          = &04B5
-CONT1_START      = &04B6
-CONT2_START      = &04B7
-CONT1_SELECT     = &04B8
-CONT2_SELECT     = &04B9
-L04BA            = &04BA
-L04BB            = &04BB
-SX               = &04C8
-SY               = &04DD
-SZ               = &04F2
-BUFm1            = &0506
-BUF              = &0507
-BUF_1            = &0508
-HANGFLAG         = &0561
-MANY             = &0562
-L0563            = &0563
-SSPR             = &0564
-L056C            = &056C
-L0572            = &0572
-L057F            = &057F
-L0581            = &0581
-L0584            = &0584
-L0585            = &0585
-SXL              = &05A5
-SYL              = &05BA
-SZL              = &05CF
-safehouse        = &05E4
-L05F2            = &05F2
-Kpercent         = &0600
-L0601            = &0601
-L0602            = &0602
-L0604            = &0604
-L0605            = &0605
-L0606            = &0606
-L0607            = &0607
-L0608            = &0608
-L062A            = &062A
-L062C            = &062C
-L062E            = &062E
-L0634            = &0634
-L0636            = &0636
-L0638            = &0638
-L064E            = &064E
-L0670            = &0670
-L0672            = &0672
-L06C6            = &06C6
-L0FA0            = &0FA0
-L1FA9            = &1FA9
-PPU_CTRL         = &2000
-PPU_MASK         = &2001
-PPU_STATUS       = &2002
-OAM_ADDR         = &2003
-OAM_DATA         = &2004
-PPU_SCROLL       = &2005
-PPU_ADDR         = &2006
-PPU_DATA         = &2007
-SQ1_ENV          = &4000
-SQ1_SWEEP        = &4001
-SQ1_LO           = &4002
-SQ1_HI           = &4003
-SQ2_ENV          = &4004
-SQ2_SWEEP        = &4005
-SQ2_LO           = &4006
-SQ2_HI           = &4007
-TRI_CTRL         = &4008
-TRI_LO           = &400A
-TRI_HI           = &400B
-NOI_ENV          = &400C
-NOI_RAND         = &400E
-NOI_LEN          = &400F
-OAM_DMA          = &4014
-APU_FLAGS        = &4015
-CONTROLLER_1     = &4016
-CONTROLLER_2     = &4017
-PATTERNS_0       = &6000
-PATTERNS_1       = &6800
-NAMES_0          = &7000
-L7280            = &7280
-L7281            = &7281
-L72A0            = &72A0
-L72A1            = &72A1
-L72C0            = &72C0
-L72C1            = &72C1
-L72E0            = &72E0
-L72E1            = &72E1
-L7300            = &7300
-L7301            = &7301
-L7320            = &7320
-L7321            = &7321
-L7340            = &7340
-L7341            = &7341
-NAMES_1          = &7400
-LC006            = &C006
-Spercent         = &C007
-subm_C03E        = &C03E
-subm_C0A8        = &C0A8
-ResetBank        = &C0AD
-SetBank          = &C0AE
-LC0DF            = &C0DF
-LC0E3            = &C0E3
-log              = &C100
-logL             = &C200
-antilog          = &C300
-antilogODD       = &C400
-SNE              = &C500
-ACT              = &C520
-XX21m2           = &C53E
-XX21m1           = &C53F
-XX21             = &C540
-LC542            = &C542
-LC543            = &C543
-LC547            = &C547
-LC580            = &C580
-LC581            = &C581
-subm_C582        = &C582
-subm_C5D2        = &C5D2
-subm_C630        = &C630
-subm_C6C0        = &C6C0
-subm_C6C6        = &C6C6
-subm_C6F4        = &C6F4
-subm_C836        = &C836
-subm_CA56        = &CA56
-subm_CB42        = &CB42
-subm_CB9C        = &CB9C
-subm_CC1F        = &CC1F
-SendToPPU1       = &CC2E
+ZP                = &0000
+RAND              = &0002
+RAND_1            = &0002
+RAND_2            = &0003
+RAND_3            = &0004
+L0005             = &0005
+T1                = &0006
+SC                = &0007
+SC_1              = &0008
+INWK              = &0009
+XX1               = &0009
+INWK_1            = &000A
+INWK_2            = &000B
+INWK_3            = &000C
+INWK_4            = &000D
+INWK_5            = &000E
+INWK_6            = &000F
+INWK_7            = &0010
+INWK_8            = &0011
+INWK_9            = &0012
+INWK_10           = &0013
+INWK_11           = &0014
+INWK_12           = &0015
+INWK_13           = &0016
+INWK_14           = &0017
+INWK_15           = &0018
+INWK_16           = &0019
+INWK_17           = &001A
+INWK_18           = &001B
+INWK_19           = &001C
+INWK_20           = &001D
+INWK_21           = &001E
+INWK_22           = &001F
+INWK_23           = &0020
+INWK_24           = &0021
+INWK_25           = &0022
+INWK_26           = &0023
+INWK_27           = &0024
+INWK_28           = &0025
+INWK_29           = &0026
+INWK_30           = &0027
+INWK_31           = &0028
+INWK_32           = &0029
+INWK_33           = &002A
+INWK_34           = &002B
+INWK_35           = &002C
+NEWB              = &002D
+P                 = &002F
+P_1               = &0030
+P_2               = &0031
+XC                = &0032
+L0033             = &0033
+L0034             = &0034
+L0037             = &0037
+L0038             = &0038
+L0039             = &0039
+L003A             = &003A
+YC                = &003B
+QQ17              = &003C
+K3                = &003D
+XX2               = &003D
+XX2_1             = &003E
+XX2_2             = &003F
+XX2_3             = &0040
+XX2_4             = &0041
+XX2_5             = &0042
+XX2_6             = &0043
+XX2_7             = &0044
+XX2_8             = &0045
+XX2_9             = &0046
+XX2_10            = &0047
+XX2_11            = &0048
+XX2_12            = &0049
+XX2_13            = &004A
+K4                = &004B
+K4_1              = &004C
+XX16              = &004D
+XX16_1            = &004E
+XX16_2            = &004F
+XX16_3            = &0050
+XX16_4            = &0051
+XX16_5            = &0052
+XX16_6            = &0053
+XX16_7            = &0054
+XX16_8            = &0055
+XX16_9            = &0056
+XX16_10           = &0057
+XX16_11           = &0058
+XX16_12           = &0059
+XX16_13           = &005A
+XX16_14           = &005B
+XX16_15           = &005C
+XX16_16           = &005D
+XX16_17           = &005E
+XX0               = &005F
+XX0_1             = &0060
+INF               = &0061
+XX19              = &0061
+INF_1             = &0062
+V                 = &0063
+V_1               = &0064
+XX                = &0065
+XX_1              = &0066
+YY                = &0067
+YY_1              = &0068
+BETA              = &0069
+BET1              = &006A
+QQ22              = &006B
+QQ22_1            = &006C
+ECMA              = &006D
+ALP1              = &006E
+ALP2              = &006F
+ALP2_1            = &0070
+X1                = &0071
+XX15              = &0071
+Y1                = &0072
+X2                = &0073
+Y2                = &0074
+XX15_4            = &0075
+XX15_5            = &0076
+XX12              = &0077
+XX12_1            = &0078
+XX12_2            = &0079
+XX12_3            = &007A
+XX12_4            = &007B
+XX12_5            = &007C
+K                 = &007D
+K_1               = &007E
+K_2               = &007F
+K_3               = &0080
+L0081             = &0081
+QQ15              = &0082
+QQ15_1            = &0083
+QQ15_2            = &0084
+QQ15_3            = &0085
+QQ15_4            = &0086
+QQ15_5            = &0087
+K5                = &0088
+XX18              = &0088
+XX18_1            = &0089
+XX18_2            = &008A
+XX18_3            = &008B
+K6                = &008C
+K6_1              = &008D
+K6_2              = &008E
+K6_3              = &008F
+K6_4              = &0090
+BET2              = &0091
+BET2_1            = &0092
+DELTA             = &0093
+DELT4             = &0094
+DELT4_1           = &0095
+U                 = &0096
+Q                 = &0097
+R                 = &0098
+S                 = &0099
+T                 = &009A
+XSAV              = &009B
+YSAV              = &009C
+XX17              = &009D
+QQ11              = &009E
+QQ11Mask          = &009F
+ZZ                = &00A0
+XX13              = &00A1
+MCNT              = &00A2
+TYPE              = &00A3
+ALPHA             = &00A4
+QQ12              = &00A5
+TGT               = &00A6
+FLAG              = &00A7
+CNT               = &00A8
+CNT2              = &00A9
+STP               = &00AA
+XX4               = &00AB
+XX20              = &00AC
+RAT               = &00AE
+RAT2              = &00AF
+widget            = &00B0
+Yx1M2             = &00B1
+Yx2M2             = &00B2
+Yx2M1             = &00B3
+messXC            = &00B4
+L00B5             = &00B5
+newzp             = &00B6
+tileNumber        = &00B8
+patternTableHi    = &00B9
+addr3             = &00BA
+addr3_1           = &00BB
+L00C0             = &00C0
+L00CC             = &00CC
+L00CD             = &00CD
+L00CE             = &00CE
+L00D2             = &00D2
+addr1             = &00D4
+addr1_1           = &00D5
+L00D8             = &00D8
+nametableHi       = &00E6
+dashboardSwitch   = &00E9
+addr4             = &00EB
+addr4_1           = &00EC
+addr5             = &00ED
+addr5_1           = &00EE
+addr6             = &00F1
+addr6_1           = &00F2
+ppuCtrlCopy       = &00F5
+L00F6             = &00F6
+currentBank       = &00F7
+addr2             = &00FA
+addr2_1           = &00FB
+XX3               = &0100
+XX3_1             = &0101
+SPR_00_Y          = &0200
+SPR_00_TILE       = &0201
+SPR_00_ATTR       = &0202
+SPR_00_X          = &0203
+SPR_01_Y          = &0204
+SPR_01_TILE       = &0205
+SPR_01_ATTR       = &0206
+SPR_01_X          = &0207
+SPR_02_Y          = &0208
+SPR_02_TILE       = &0209
+SPR_02_ATTR       = &020A
+SPR_02_X          = &020B
+SPR_03_Y          = &020C
+SPR_03_TILE       = &020D
+SPR_03_ATTR       = &020E
+SPR_03_X          = &020F
+SPR_04_Y          = &0210
+SPR_04_TILE       = &0211
+SPR_04_ATTR       = &0212
+SPR_04_X          = &0213
+SPR_05_Y          = &0214
+SPR_05_TILE       = &0215
+SPR_05_ATTR       = &0216
+SPR_05_X          = &0217
+SPR_06_Y          = &0218
+SPR_06_TILE       = &0219
+SPR_06_ATTR       = &021A
+SPR_06_X          = &021B
+SPR_07_Y          = &021C
+SPR_07_TILE       = &021D
+SPR_07_ATTR       = &021E
+SPR_07_X          = &021F
+SPR_08_Y          = &0220
+SPR_08_TILE       = &0221
+SPR_08_ATTR       = &0222
+SPR_08_X          = &0223
+SPR_09_Y          = &0224
+SPR_09_TILE       = &0225
+SPR_09_ATTR       = &0226
+SPR_09_X          = &0227
+SPR_10_Y          = &0228
+SPR_10_TILE       = &0229
+SPR_10_ATTR       = &022A
+SPR_10_X          = &022B
+SPR_11_Y          = &022C
+SPR_11_TILE       = &022D
+SPR_11_ATTR       = &022E
+SPR_11_X          = &022F
+SPR_12_Y          = &0230
+SPR_12_TILE       = &0231
+SPR_12_ATTR       = &0232
+SPR_12_X          = &0233
+SPR_13_Y          = &0234
+SPR_13_TILE       = &0235
+SPR_13_ATTR       = &0236
+SPR_13_X          = &0237
+SPR_14_Y          = &0238
+SPR_14_TILE       = &0239
+SPR_14_ATTR       = &023A
+SPR_14_X          = &023B
+SPR_15_Y          = &023C
+SPR_15_TILE       = &023D
+SPR_15_ATTR       = &023E
+SPR_15_X          = &023F
+SPR_16_Y          = &0240
+SPR_16_TILE       = &0241
+SPR_16_ATTR       = &0242
+SPR_16_X          = &0243
+SPR_17_Y          = &0244
+SPR_17_TILE       = &0245
+SPR_17_ATTR       = &0246
+SPR_17_X          = &0247
+SPR_18_Y          = &0248
+SPR_18_TILE       = &0249
+SPR_18_ATTR       = &024A
+SPR_18_X          = &024B
+SPR_19_Y          = &024C
+SPR_19_TILE       = &024D
+SPR_19_ATTR       = &024E
+SPR_19_X          = &024F
+SPR_20_Y          = &0250
+SPR_20_TILE       = &0251
+SPR_20_ATTR       = &0252
+SPR_20_X          = &0253
+SPR_21_Y          = &0254
+SPR_21_TILE       = &0255
+SPR_21_ATTR       = &0256
+SPR_21_X          = &0257
+SPR_22_Y          = &0258
+SPR_22_TILE       = &0259
+SPR_22_ATTR       = &025A
+SPR_22_X          = &025B
+SPR_23_Y          = &025C
+SPR_23_TILE       = &025D
+SPR_23_ATTR       = &025E
+SPR_23_X          = &025F
+SPR_24_Y          = &0260
+SPR_24_TILE       = &0261
+SPR_24_ATTR       = &0262
+SPR_24_X          = &0263
+SPR_25_Y          = &0264
+SPR_25_TILE       = &0265
+SPR_25_ATTR       = &0266
+SPR_25_X          = &0267
+SPR_26_Y          = &0268
+SPR_26_TILE       = &0269
+SPR_26_ATTR       = &026A
+SPR_26_X          = &026B
+SPR_27_Y          = &026C
+SPR_27_TILE       = &026D
+SPR_27_ATTR       = &026E
+SPR_27_X          = &026F
+SPR_28_Y          = &0270
+SPR_28_TILE       = &0271
+SPR_28_ATTR       = &0272
+SPR_28_X          = &0273
+SPR_29_Y          = &0274
+SPR_29_TILE       = &0275
+SPR_29_ATTR       = &0276
+SPR_29_X          = &0277
+SPR_30_Y          = &0278
+SPR_30_TILE       = &0279
+SPR_30_ATTR       = &027A
+SPR_30_X          = &027B
+SPR_31_Y          = &027C
+SPR_31_TILE       = &027D
+SPR_31_ATTR       = &027E
+SPR_31_X          = &027F
+SPR_32_Y          = &0280
+SPR_32_TILE       = &0281
+SPR_32_ATTR       = &0282
+SPR_32_X          = &0283
+SPR_33_Y          = &0284
+SPR_33_TILE       = &0285
+SPR_33_ATTR       = &0286
+SPR_33_X          = &0287
+SPR_34_Y          = &0288
+SPR_34_TILE       = &0289
+SPR_34_ATTR       = &028A
+SPR_34_X          = &028B
+SPR_35_Y          = &028C
+SPR_35_TILE       = &028D
+SPR_35_ATTR       = &028E
+SPR_35_X          = &028F
+SPR_36_Y          = &0290
+SPR_36_TILE       = &0291
+SPR_36_ATTR       = &0292
+SPR_36_X          = &0293
+SPR_37_Y          = &0294
+SPR_37_TILE       = &0295
+SPR_37_ATTR       = &0296
+SPR_37_X          = &0297
+SPR_38_Y          = &0298
+SPR_38_TILE       = &0299
+SPR_38_ATTR       = &029A
+SPR_38_X          = &029B
+SPR_39_Y          = &029C
+SPR_39_TILE       = &029D
+SPR_39_ATTR       = &029E
+SPR_39_X          = &029F
+SPR_40_Y          = &02A0
+SPR_40_TILE       = &02A1
+SPR_40_ATTR       = &02A2
+SPR_40_X          = &02A3
+SPR_41_Y          = &02A4
+SPR_41_TILE       = &02A5
+SPR_41_ATTR       = &02A6
+SPR_41_X          = &02A7
+SPR_42_Y          = &02A8
+SPR_42_TILE       = &02A9
+SPR_42_ATTR       = &02AA
+SPR_42_X          = &02AB
+SPR_43_Y          = &02AC
+SPR_43_TILE       = &02AD
+SPR_43_ATTR       = &02AE
+SPR_43_X          = &02AF
+SPR_44_Y          = &02B0
+SPR_44_TILE       = &02B1
+SPR_44_ATTR       = &02B2
+SPR_44_X          = &02B3
+SPR_45_Y          = &02B4
+SPR_45_TILE       = &02B5
+SPR_45_ATTR       = &02B6
+SPR_45_X          = &02B7
+SPR_46_Y          = &02B8
+SPR_46_TILE       = &02B9
+SPR_46_ATTR       = &02BA
+SPR_46_X          = &02BB
+SPR_47_Y          = &02BC
+SPR_47_TILE       = &02BD
+SPR_47_ATTR       = &02BE
+SPR_47_X          = &02BF
+SPR_48_Y          = &02C0
+SPR_48_TILE       = &02C1
+SPR_48_ATTR       = &02C2
+SPR_48_X          = &02C3
+SPR_49_Y          = &02C4
+SPR_49_TILE       = &02C5
+SPR_49_ATTR       = &02C6
+SPR_49_X          = &02C7
+SPR_50_Y          = &02C8
+SPR_50_TILE       = &02C9
+SPR_50_ATTR       = &02CA
+SPR_50_X          = &02CB
+SPR_51_Y          = &02CC
+SPR_51_TILE       = &02CD
+SPR_51_ATTR       = &02CE
+SPR_51_X          = &02CF
+SPR_52_Y          = &02D0
+SPR_52_TILE       = &02D1
+SPR_52_ATTR       = &02D2
+SPR_52_X          = &02D3
+SPR_53_Y          = &02D4
+SPR_53_TILE       = &02D5
+SPR_53_ATTR       = &02D6
+SPR_53_X          = &02D7
+SPR_54_Y          = &02D8
+SPR_54_TILE       = &02D9
+SPR_54_ATTR       = &02DA
+SPR_54_X          = &02DB
+SPR_55_Y          = &02DC
+SPR_55_TILE       = &02DD
+SPR_55_ATTR       = &02DE
+SPR_55_X          = &02DF
+SPR_56_Y          = &02E0
+SPR_56_TILE       = &02E1
+SPR_56_ATTR       = &02E2
+SPR_56_X          = &02E3
+SPR_57_Y          = &02E4
+SPR_57_TILE       = &02E5
+SPR_57_ATTR       = &02E6
+SPR_57_X          = &02E7
+SPR_58_Y          = &02E8
+SPR_58_TILE       = &02E9
+SPR_58_ATTR       = &02EA
+SPR_58_X          = &02EB
+SPR_59_Y          = &02EC
+SPR_59_TILE       = &02ED
+SPR_59_ATTR       = &02EE
+SPR_59_X          = &02EF
+SPR_60_Y          = &02F0
+SPR_60_TILE       = &02F1
+SPR_60_ATTR       = &02F2
+SPR_60_X          = &02F3
+SPR_61_Y          = &02F4
+SPR_61_TILE       = &02F5
+SPR_61_ATTR       = &02F6
+SPR_61_X          = &02F7
+SPR_62_Y          = &02F8
+SPR_62_TILE       = &02F9
+SPR_62_ATTR       = &02FA
+SPR_62_X          = &02FB
+SPR_63_Y          = &02FC
+SPR_63_TILE       = &02FD
+SPR_63_ATTR       = &02FE
+SPR_63_X          = &02FF
+L0300             = &0300
+L0305             = &0305
+L0306             = &0306
+L0307             = &0307
+L0308             = &0308
+L0309             = &0309
+L030A             = &030A
+L034F             = &034F
+L0369             = &0369
+FRIN              = &036A
+L036B             = &036B
+L036C             = &036C
+L0370             = &0370
+JUNK              = &0373
+L0374             = &0374
+L037E             = &037E
+L0388             = &0388
+ECMP              = &0389
+MJ                = &038A
+CABTMP            = &038B
+LAS2              = &038C
+L038D             = &038D
+VIEW              = &038E
+LASCT             = &038F
+GNTMP             = &0390
+EV                = &0392
+L0393             = &0393
+L0394             = &0394
+L0395             = &0395
+NAME              = &0396
+TP                = &039E
+QQ0               = &039F
+QQ1               = &03A0
+CASH              = &03A1
+L03A2             = &03A2
+L03A3             = &03A3
+L03A4             = &03A4
+QQ14              = &03A5
+L03A6             = &03A6
+GCNT              = &03A7
+LASER             = &03A8
+CRGO              = &03AC
+QQ20              = &03AD
+L03B0             = &03B0
+L03B3             = &03B3
+L03B7             = &03B7
+L03BE             = &03BE
+BST               = &03BF
+BOMB              = &03C0
+ENGY              = &03C1
+DKCMP             = &03C2
+GHYP              = &03C3
+ESCP              = &03C4
+TRIBBLE           = &03C5
+TRIBBLE_1         = &03C6
+NOMSL             = &03C8
+FIST              = &03C9
+AVL               = &03CA
+L03DA             = &03DA
+QQ26              = &03DB
+TALLY             = &03DC
+TALLY_1           = &03DD
+QQ21              = &03DF
+NOSTM             = &03E5
+L03E7             = &03E7
+L03E8             = &03E8
+L03E9             = &03E9
+L03EE             = &03EE
+L03EF             = &03EF
+L03F0             = &03F0
+frameCounter      = &03F1
+DTW6              = &03F3
+DTW2              = &03F4
+DTW3              = &03F5
+DTW4              = &03F6
+DTW5              = &03F7
+DTW1              = &03F8
+DTW8              = &03F9
+XP                = &03FA
+YP                = &03FB
+L03FC             = &03FC
+L03FD             = &03FD
+LAS               = &0400
+MSTG              = &0401
+KL                = &0403
+KY1               = &0403
+KY2               = &0404
+KY3               = &0405
+KY4               = &0406
+KY5               = &0407
+KY6               = &0408
+KY7               = &0409
+QQ19              = &044D
+QQ19_1            = &044E
+QQ19_2            = &044F
+QQ19_3            = &0450
+QQ19_4            = &0450
+L0451             = &0451
+L0452             = &0452
+L0453             = &0453
+K2                = &0459
+K2_1              = &045A
+K2_2              = &045B
+K2_3              = &045C
+DLY               = &045D
+L045F             = &045F
+L0464             = &0464
+L0465             = &0465
+L046D             = &046D
+boxEdge1          = &046E
+boxEdge2          = &046F
+L0470             = &0470
+L0471             = &0471
+scanController2   = &0475
+JSTX              = &0476
+JSTY              = &0477
+LASX              = &047B
+LASY              = &047C
+ALTIT             = &047E
+SWAP              = &047F
+L0480             = &0480
+XSAV2             = &0481
+YSAV2             = &0482
+L0483             = &0483
+FSH               = &0484
+ASH               = &0485
+ENERGY            = &0486
+QQ24              = &0487
+QQ25              = &0488
+QQ28              = &0489
+QQ29              = &048A
+L048B             = &048B
+gov               = &048C
+tek               = &048D
+QQ2               = &048E
+QQ3               = &0494
+QQ4               = &0495
+QQ5               = &0496
+L0497             = &0497
+L0499             = &0499
+L049A             = &049A
+QQ8               = &049B
+QQ8_1             = &049C
+QQ9               = &049D
+QQ10              = &049E
+L049F             = &049F
+L04A1             = &04A1
+L04A2             = &04A2
+L04A3             = &04A3
+QQ18Lo            = &04A4
+QQ18Hi            = &04A5
+TKN1Lo            = &04A6
+TKN1Hi            = &04A7
+language          = &04A8
+L04A9             = &04A9
+controller1Down   = &04AA
+controller2Down   = &04AB
+controller1Up     = &04AC
+controller2Up     = &04AD
+controller1Left   = &04AE
+controller2Left   = &04AF
+controller1Right  = &04B0
+controller2Right  = &04B1
+controller1A      = &04B2
+controller2A      = &04B3
+controller1B      = &04B4
+controller2B      = &04B5
+controller1Start  = &04B6
+controller2Start  = &04B7
+controller1Select = &04B8
+controller2Select = &04B9
+L04BA             = &04BA
+L04BB             = &04BB
+SX                = &04C8
+SY                = &04DD
+SZ                = &04F2
+BUFm1             = &0506
+BUF               = &0507
+BUF_1             = &0508
+HANGFLAG          = &0561
+MANY              = &0562
+L0563             = &0563
+SSPR              = &0564
+L056C             = &056C
+L0572             = &0572
+L057F             = &057F
+L0581             = &0581
+L0584             = &0584
+L0585             = &0585
+SXL               = &05A5
+SYL               = &05BA
+SZL               = &05CF
+safehouse         = &05E4
+L05F2             = &05F2
+Kpercent          = &0600
+L0601             = &0601
+L0602             = &0602
+L0604             = &0604
+L0605             = &0605
+L0606             = &0606
+L0607             = &0607
+L0608             = &0608
+L062A             = &062A
+L062C             = &062C
+L062E             = &062E
+L0634             = &0634
+L0636             = &0636
+L0638             = &0638
+L064E             = &064E
+L0670             = &0670
+L0672             = &0672
+L06C6             = &06C6
+L0FA0             = &0FA0
+L1FA9             = &1FA9
+PPU_CTRL          = &2000
+PPU_MASK          = &2001
+PPU_STATUS        = &2002
+OAM_ADDR          = &2003
+OAM_DATA          = &2004
+PPU_SCROLL        = &2005
+PPU_ADDR          = &2006
+PPU_DATA          = &2007
+SQ1_ENV           = &4000
+SQ1_SWEEP         = &4001
+SQ1_LO            = &4002
+SQ1_HI            = &4003
+SQ2_ENV           = &4004
+SQ2_SWEEP         = &4005
+SQ2_LO            = &4006
+SQ2_HI            = &4007
+TRI_CTRL          = &4008
+TRI_LO            = &400A
+TRI_HI            = &400B
+NOI_ENV           = &400C
+NOI_RAND          = &400E
+NOI_LEN           = &400F
+OAM_DMA           = &4014
+APU_FLAGS         = &4015
+CONTROLLER_1      = &4016
+CONTROLLER_2      = &4017
+patternTable0     = &6000
+patternTable1     = &6800
+nametable0        = &7000
+L7280             = &7280
+L7281             = &7281
+L72A0             = &72A0
+L72A1             = &72A1
+L72C0             = &72C0
+L72C1             = &72C1
+L72E0             = &72E0
+L72E1             = &72E1
+L7300             = &7300
+L7301             = &7301
+L7320             = &7320
+L7321             = &7321
+L7340             = &7340
+L7341             = &7341
+nametable1        = &7400
+LC006             = &C006
+Spercent          = &C007
+ResetVariables    = &C03E
+subm_C0A8         = &C0A8
+ResetBank         = &C0AD
+SetBank           = &C0AE
+LC0DF             = &C0DF
+LC0E3             = &C0E3
+log               = &C100
+logL              = &C200
+antilog           = &C300
+antilogODD        = &C400
+SNE               = &C500
+ACT               = &C520
+XX21m2            = &C53E
+XX21m1            = &C53F
+XX21              = &C540
+LC542             = &C542
+LC543             = &C543
+LC547             = &C547
+LC580             = &C580
+LC581             = &C581
+subm_C582         = &C582
+subm_C5D2         = &C5D2
+subm_C630         = &C630
+subm_C6C0         = &C6C0
+subm_C6C6         = &C6C6
+subm_C6F4         = &C6F4
+subm_C836         = &C836
+subm_CA56         = &CA56
+subm_CB42         = &CB42
+subm_CB9C         = &CB9C
+subm_CC1F         = &CC1F
+SendToPPU1        = &CC2E
 CopyNametable0To1 = &CD34
-subm_CD62        = &CD62
-DrawBoxEdges     = &CD6F
-UNIV             = &CE7E
-UNIV_1           = &CE7F
-GINF             = &CE90
-subm_CE9E        = &CE9E
-subm_CEA5        = &CEA5
-nametableAddrHi  = &CED0
-patternAddrHi    = &CED2
-IRQ              = &CED4
-NMI              = &CED5
-SetPalette       = &CF2E
-ResetNametable1  = &D02D
-SwitchTablesTo0  = &D06D
-ReadControllers  = &D0F8
-LD167            = &D167
-LD17F            = &D17F
-FillMemory       = &D710
-subm_D8C5        = &D8C5
-subm_D8E1        = &D8E1
-subm_D8EC        = &D8EC
-LD8FD            = &D8FD
-subm_D908        = &D908
-subm_D919        = &D919
-subm_D933        = &D933
-subm_D946        = &D946
-subm_D951        = &D951
-subm_D96F        = &D96F
-LD975            = &D975
-LD977            = &D977
-SendToPPU2       = &D986
-TWOS             = &D9F7
-TWOS2            = &DA01
-TWFL             = &DA09
-TWFR             = &DA10
-yLookupLo        = &DA18
-yLookupHi        = &DAF8
-LOIN             = &DC0F
-subm_DEA5        = &DEA5
-subm_DF76        = &DF76
-subm_E04A        = &E04A
-subm_E0BA        = &E0BA
-subm_E18E        = &E18E
-subm_E33E        = &E33E
-PIXEL            = &E4F0
-DrawDash         = &E543
-ECBLB2           = &E596
-MSBAR            = &E59F
-subm_E802        = &E802
-subm_E8DE        = &E8DE
-subm_E909        = &E909
-subm_E91D        = &E91D
-subm_EA8D        = &EA8D
-subm_EAB0        = &EAB0
-subm_EB0D        = &EB0D
-subm_EB19        = &EB19
-subm_EB67        = &EB67
-subm_EB86        = &EB86
-LEB8C            = &EB8C
-LEB8F            = &EB8F
-DELAY            = &EBA2
-BEEP             = &EBA9
-EXNO3            = &EBAD
-ECBLB            = &EBBF
-BOOP             = &EBE5
-LEBE9            = &EBE9
-LEBED            = &EBED
-NOISE            = &EBF2
-noiseLookup1     = &EC3C
-noiseLookup2     = &EC5C
-CheckDashboardA  = &EC7D
-LDA_XX0_Y        = &EC8D
-LDA_Epc_Y        = &ECA0
-IncreaseTally    = &ECAE
-CB1D4_b0         = &ECE2
-Set_K_K3_XC_YC   = &ECF9
-C811E_b6         = &ED16
-C8021_b6         = &ED24
-C89D1_b6         = &ED50
-C8012_b6         = &ED6B
-LED6E            = &ED6E
-CBF41_b5         = &ED81
-CB9F9_b4         = &ED8F
-CB96B_b4         = &ED9D
-CB63D_b3         = &EDAB
-CB88C_b6         = &EDB9
-LL9_b1           = &EDC7
-CBA23_b3         = &EDDC
-TIDY_b1          = &EDEA
-CBC83_b6         = &EDFF
+subm_CD62         = &CD62
+DrawBoxEdges      = &CD6F
+UNIV              = &CE7E
+UNIV_1            = &CE7F
+GINF              = &CE90
+subm_CE9E         = &CE9E
+subm_CEA5         = &CEA5
+nametableAddrHi   = &CED0
+patternAddrHi     = &CED2
+IRQ               = &CED4
+NMI               = &CED5
+SetPalette        = &CF2E
+ResetNametable1   = &D02D
+SwitchTablesTo0   = &D06D
+ReadControllers   = &D0F8
+SetTable0UntilNMI2 = &D164
+SetTable0UntilNMI = &D167
+LD17F             = &D17F
+FillMemory        = &D710
+subm_D8C5         = &D8C5
+subm_D8E1         = &D8E1
+subm_D8EC         = &D8EC
+LD8FD             = &D8FD
+subm_D908         = &D908
+subm_D919         = &D919
+subm_D933         = &D933
+subm_D946         = &D946
+subm_D951         = &D951
+subm_D96F         = &D96F
+LD975             = &D975
+LD977             = &D977
+SendToPPU2        = &D986
+TWOS              = &D9F7
+TWOS2             = &DA01
+TWFL              = &DA09
+TWFR              = &DA10
+yLookupLo         = &DA18
+yLookupHi         = &DAF8
+LOIN              = &DC0F
+subm_DEA5         = &DEA5
+subm_DF76         = &DF76
+subm_E04A         = &E04A
+subm_E0BA         = &E0BA
+subm_E18E         = &E18E
+subm_E33E         = &E33E
+PIXEL             = &E4F0
+DrawDash          = &E543
+ECBLB2            = &E596
+MSBAR             = &E59F
+subm_E802         = &E802
+subm_E8DE         = &E8DE
+subm_E909         = &E909
+subm_E91D         = &E91D
+subm_EA8D         = &EA8D
+subm_EAB0         = &EAB0
+subm_EB0D         = &EB0D
+subm_EB19         = &EB19
+subm_EB67         = &EB67
+subm_EB86         = &EB86
+LEB8C             = &EB8C
+LEB8F             = &EB8F
+DELAY             = &EBA2
+BEEP              = &EBA9
+EXNO3             = &EBAD
+ECBLB             = &EBBF
+BOOP              = &EBE5
+LEBE9             = &EBE9
+LEBED             = &EBED
+NOISE             = &EBF2
+noiseLookup1      = &EC3C
+noiseLookup2      = &EC5C
+CheckDashboardA   = &EC7D
+LDA_XX0_Y         = &EC8D
+LDA_Epc_Y         = &ECA0
+IncreaseTally     = &ECAE
+CB1D4_b0          = &ECE2
+Set_K_K3_XC_YC    = &ECF9
+C811E_b6          = &ED16
+C8021_b6          = &ED24
+C89D1_b6          = &ED50
+ResetSound_b6     = &ED6B
+ResetSoundNow_b6  = &ED6E
+CBF41_b5          = &ED81
+CB9F9_b4          = &ED8F
+CB96B_b4          = &ED9D
+CB63D_b3          = &EDAB
+CB88C_b6          = &EDB9
+LL9_b1            = &EDC7
+CBA23_b3          = &EDDC
+TIDY_b1           = &EDEA
+TITLE_b6          = &EDFF
 SpawnDemoShips_b0 = &EE0D
-STARS_b1         = &EE15
-LEE2A            = &EE2A
-SUN_b1           = &EE3F
-CB2FB_b3         = &EE54
-CB219_b3         = &EE62
-CB9C1_b4         = &EE78
-LEE7D            = &EE7D
-CA082_b6         = &EE8B
-CA0F8_b6         = &EE99
-CB882_b4         = &EEA7
-CA4A5_b6         = &EEB5
-CB2EF_b0         = &EEC3
-CB9E2_b3         = &EED3
-CB673_b3         = &EEE8
-CB2BC_b3         = &EEF6
-CB248_b3         = &EF04
-CBA17_b6         = &EF12
-CAFCD_b3         = &EF20
-CBE52_b6         = &EF35
-CBED2_b6         = &EF43
-CB0E1_b3         = &EF51
-CB18E_b3         = &EF6C
-PAS1_b0          = &EF7A
+STARS_b1          = &EE15
+LEE2A             = &EE2A
+SUN_b1            = &EE3F
+CB2FB_b3          = &EE54
+CB219_b3          = &EE62
+CB9C1_b4          = &EE78
+LEE7D             = &EE7D
+CA082_b6          = &EE8B
+CA0F8_b6          = &EE99
+CB882_b4          = &EEA7
+CA4A5_b6          = &EEB5
+CB2EF_b0          = &EEC3
+CB9E2_b3          = &EED3
+CB673_b3          = &EEE8
+CB2BC_b3          = &EEF6
+CB248_b3          = &EF04
+CBA17_b6          = &EF12
+CAFCD_b3          = &EF20
+CBE52_b6          = &EF35
+CBED2_b6          = &EF43
+CB0E1_b3          = &EF51
+CB18E_b3          = &EF6C
+PAS1_b0           = &EF7A
 SetSystemImage_b5 = &EF88
 GetSystemImage_b5 = &EF96
-CB93C_b4         = &EFA4
-CB8F9_b4         = &EFB2
-CA2C3_b6         = &EFC0
-CBA63_b6         = &EFCE
-CB39D_b0         = &EFDC
-LL164_b6         = &EFF7
-CB919_b6         = &F005
-CA166_b6         = &F013
-CBBDE_b6         = &F021
-CBB37_b6         = &F02F
-CB8FE_b6         = &F03D
-CB90D_b6         = &F04B
-CA5AB_b6         = &F059
-subm_F06F        = &F06F
-BEEP_b7          = &F074
-DETOK_b2         = &F082
-DTS_b2           = &F09D
-PDESC_b2         = &F0B8
-CAE18_b3         = &F0C6
-CAC1D_b3         = &F0E1
-CA730_b3         = &F0FC
-CA775_b3         = &F10A
-CAABC_b3         = &F118
-CA7B7_b3         = &F126
-LF12B            = &F12B
-CA9D1_b3         = &F139
-LF13F            = &F13F
-CA972_b3         = &F15C
-CAC5C_b3         = &F171
-C8980_b0         = &F186
-CB459_b6         = &F194
-MVS5_b0          = &F1A2
-HALL_b1          = &F1BD
-CHPR_b2          = &F1CB
-DASC_b2          = &F1E6
-TT27_b2          = &F201
-ex_b2            = &F21C
-TT27_b0          = &F237
-BR1_b0           = &F245
-CBAF3_b1         = &F25A
-LF260            = &F260
-TT66_b0          = &F26E
-CLIP_b1          = &F280
-CB341_b3         = &F293
-SCAN_b1          = &F2A8
-C8926_b0         = &F2BD
-subm_F2CE        = &F2CE
-CLYNS            = &F2DE
-LF2E6            = &F2E6
-LF333            = &F333
-subm_F338        = &F338
-subm_F359        = &F359
-LF362            = &F362
-LF39A            = &F39A
-LF3AB            = &F3AB
-subm_F3BC        = &F3BC
-subm_F42A        = &F42A
-Ze               = &F42E
-subm_F454        = &F454
-NLIN3            = &F46A
-NLIN4            = &F473
-LF47D            = &F47D
-subm_F48D        = &F48D
-subm_F493        = &F493
-DORND2           = &F4AC
-DORND            = &F4AD
-PROJ             = &F4C1
-subm_F4FB        = &F4FB
-UnpackToRAM      = &F52D
-UnpackToPPU      = &F5AF
-UnpackToPPU_2    = &F5B1
-FAROF2           = &F60C
-MU5              = &F65A
-MULT3            = &F664
-MLS2             = &F6BA
-MLS1             = &F6C2
-MULTSm2          = &F6C4
-MULTS            = &F6C6
-MU6              = &F707
-SQUA             = &F70C
-SQUA2            = &F70E
-MU1              = &F713
-MLU1             = &F718
-MLU2             = &F71D
-MULTU            = &F721
-MU11             = &F725
-FMLTU2           = &F766
-FMLTU            = &F770
-MLTU2m2          = &F7AB
-MLTU2            = &F7AD
-MUT3             = &F7CE
-MUT2             = &F7D2
-MUT1             = &F7D6
-MULT1            = &F7DA
-MULT12           = &F83C
-TAS3             = &F853
-MAD              = &F86F
-ADD              = &F872
-TIS1             = &F8AE
-DV42             = &F8D1
-DV41             = &F8D4
-DVID4            = &F8D8
-DVID3B2          = &F962
-subm_FA16        = &FA16
-LFA33            = &FA33
-subm_FA43        = &FA43
-LL5              = &FA55
-LL28             = &FA91
-subm_FACB        = &FACB
-NORM             = &FAF8
-subm_FB89        = &FB89
+CB93C_b4          = &EFA4
+CB8F9_b4          = &EFB2
+CA2C3_b6          = &EFC0
+CBA63_b6          = &EFCE
+CB39D_b0          = &EFDC
+LL164_b6          = &EFF7
+CB919_b6          = &F005
+CA166_b6          = &F013
+CBBDE_b6          = &F021
+CBB37_b6          = &F02F
+CB8FE_b6          = &F03D
+CB90D_b6          = &F04B
+CA5AB_b6          = &F059
+subm_F06F         = &F06F
+BEEP_b7           = &F074
+DETOK_b2          = &F082
+DTS_b2            = &F09D
+PDESC_b2          = &F0B8
+CAE18_b3          = &F0C6
+CAC1D_b3          = &F0E1
+CA730_b3          = &F0FC
+CA775_b3          = &F10A
+DrawTitleScreen_b3 = &F118
+CA7B7_b3          = &F126
+LF12B             = &F12B
+CA9D1_b3          = &F139
+LF13F             = &F13F
+CA972_b3          = &F15C
+CAC5C_b3          = &F171
+C8980_b0          = &F186
+CB459_b6          = &F194
+MVS5_b0           = &F1A2
+HALL_b1           = &F1BD
+CHPR_b2           = &F1CB
+DASC_b2           = &F1E6
+TT27_b2           = &F201
+ex_b2             = &F21C
+TT27_b0           = &F237
+BR1_b0            = &F245
+CBAF3_b1          = &F25A
+LF260             = &F260
+TT66_b0           = &F26E
+CLIP_b1           = &F280
+CB341_b3          = &F293
+SCAN_b1           = &F2A8
+C8926_b0          = &F2BD
+subm_F2CE         = &F2CE
+CLYNS             = &F2DE
+LF2E6             = &F2E6
+LF333             = &F333
+subm_F338         = &F338
+subm_F359         = &F359
+subm_F362         = &F362
+LF39A             = &F39A
+LF3AB             = &F3AB
+subm_F3BC         = &F3BC
+subm_F42A         = &F42A
+Ze                = &F42E
+subm_F454         = &F454
+NLIN3             = &F46A
+NLIN4             = &F473
+LF47D             = &F47D
+subm_F48D         = &F48D
+subm_F493         = &F493
+DORND2            = &F4AC
+DORND             = &F4AD
+PROJ              = &F4C1
+subm_F4FB         = &F4FB
+UnpackToRAM       = &F52D
+UnpackToPPU       = &F5AF
+UnpackToPPU_2     = &F5B1
+FAROF2            = &F60C
+MU5               = &F65A
+MULT3             = &F664
+MLS2              = &F6BA
+MLS1              = &F6C2
+MULTSm2           = &F6C4
+MULTS             = &F6C6
+MU6               = &F707
+SQUA              = &F70C
+SQUA2             = &F70E
+MU1               = &F713
+MLU1              = &F718
+MLU2              = &F71D
+MULTU             = &F721
+MU11              = &F725
+FMLTU2            = &F766
+FMLTU             = &F770
+MLTU2m2           = &F7AB
+MLTU2             = &F7AD
+MUT3              = &F7CE
+MUT2              = &F7D2
+MUT1              = &F7D6
+MULT1             = &F7DA
+MULT12            = &F83C
+TAS3              = &F853
+MAD               = &F86F
+ADD               = &F872
+TIS1              = &F8AE
+DV42              = &F8D1
+DV41              = &F8D4
+DVID4             = &F8D8
+DVID3B2           = &F962
+subm_FA16         = &FA16
+BUMP2             = &FA33
+REDU2             = &FA43
+LL5               = &FA55
+LL28              = &FA91
+subm_FACB         = &FACB
+NORM              = &FAF8
+SetupMMC1         = &FB89
 
  ORG &8000
 
@@ -1265,7 +1267,7 @@ subm_FB89        = &FB89
  BCC MA62                                     ; 81F3: 90 06       ..
 ; ******************************************************************************
 .GOIN
- JSR C8012_b6                                 ; 81F5: 20 6B ED     k.
+ JSR ResetSound_b6                            ; 81F5: 20 6B ED     k.
  JMP DOENTRY                                  ; 81F8: 4C 23 80    L#.
 
 .MA62
@@ -1457,7 +1459,7 @@ subm_FB89        = &FB89
  JMP C8360                                    ; 8347: 4C 60 83    L`.
 
 ; ******************************************************************************
-.subm_834A
+.subm_MA23
  LDA QQ11                                     ; 834A: A5 9E       ..
  BNE subm_8334                                ; 834C: D0 E6       ..
  DEC L0393                                    ; 834E: CE 93 03    ...
@@ -1758,12 +1760,12 @@ subm_FB89        = &FB89
  JSR sub_CB5FE                                ; 856B: 20 FE B5     ..
 .C856E
  ROR L0300                                    ; 856E: 6E 00 03    n..
- LDX L0476                                    ; 8571: AE 76 04    .v.
+ LDX JSTX                                     ; 8571: AE 76 04    .v.
  LDY scanController2                          ; 8574: AC 75 04    .u.
- LDA CONT1_LEFT,Y                             ; 8577: B9 AE 04    ...
- ORA CONT1_RIGHT,Y                            ; 857A: 19 B0 04    ...
- ORA L0405                                    ; 857D: 0D 05 04    ...
- ORA L0406                                    ; 8580: 0D 06 04    ...
+ LDA controller1Left,Y                        ; 8577: B9 AE 04    ...
+ ORA controller1Right,Y                       ; 857A: 19 B0 04    ...
+ ORA KY3                                      ; 857D: 0D 05 04    ...
+ ORA KY4                                      ; 8580: 0D 06 04    ...
  BMI C858A                                    ; 8583: 30 05       0.
  LDA #&10                                     ; 8585: A9 10       ..
  JSR subm_FA16                                ; 8587: 20 16 FA     ..
@@ -1773,7 +1775,7 @@ subm_FB89        = &FB89
  TAY                                          ; 858D: A8          .
  AND #&80                                     ; 858E: 29 80       ).
  STA ALP2                                     ; 8590: 85 6F       .o
- STX L0476                                    ; 8592: 8E 76 04    .v.
+ STX JSTX                                     ; 8592: 8E 76 04    .v.
  EOR #&80                                     ; 8595: 49 80       I.
  STA ALP2_1                                   ; 8597: 85 70       .p
  TYA                                          ; 8599: 98          .
@@ -1787,12 +1789,12 @@ subm_FB89        = &FB89
  STA ALP1                                     ; 85A3: 85 6E       .n
  ORA ALP2                                     ; 85A5: 05 6F       .o
  STA ALPHA                                    ; 85A7: 85 A4       ..
- LDX L0477                                    ; 85A9: AE 77 04    .w.
+ LDX JSTY                                     ; 85A9: AE 77 04    .w.
  LDY scanController2                          ; 85AC: AC 75 04    .u.
- LDA CONT1_UP,Y                               ; 85AF: B9 AC 04    ...
- ORA CONT1_DOWN,Y                             ; 85B2: 19 AA 04    ...
- ORA L0407                                    ; 85B5: 0D 07 04    ...
- ORA L0408                                    ; 85B8: 0D 08 04    ...
+ LDA controller1Up,Y                          ; 85AF: B9 AC 04    ...
+ ORA controller1Down,Y                        ; 85B2: 19 AA 04    ...
+ ORA KY5                                      ; 85B5: 0D 07 04    ...
+ ORA KY6                                      ; 85B8: 0D 08 04    ...
  BMI C85C2                                    ; 85BB: 30 05       0.
  LDA #&0C                                     ; 85BD: A9 0C       ..
  JSR subm_FA16                                ; 85BF: 20 16 FA     ..
@@ -1801,7 +1803,7 @@ subm_FB89        = &FB89
  EOR #&80                                     ; 85C3: 49 80       I.
  TAY                                          ; 85C5: A8          .
  AND #&80                                     ; 85C6: 29 80       ).
- STX L0477                                    ; 85C8: 8E 77 04    .w.
+ STX JSTY                                     ; 85C8: 8E 77 04    .w.
  STA BET2_1                                   ; 85CB: 85 92       ..
  EOR #&80                                     ; 85CD: 49 80       I.
  STA BET2                                     ; 85CF: 85 91       ..
@@ -1818,7 +1820,7 @@ subm_FB89        = &FB89
  STA BETA                                     ; 85DF: 85 69       .i
 ; ******************************************************************************
 .BS2
- LDA L0404                                    ; 85E1: AD 04 04    ...
+ LDA KY2                                      ; 85E1: AD 04 04    ...
  BEQ C85F5                                    ; 85E4: F0 0F       ..
  LDA DELTA                                    ; 85E6: A5 93       ..
  CLC                                          ; 85E8: 18          .
@@ -1837,7 +1839,7 @@ subm_FB89        = &FB89
  BPL C8602                                    ; 85FD: 10 03       ..
  JSR SwitchTablesTo0                          ; 85FF: 20 6D D0     m.
 .C8602
- LDA L0403                                    ; 8602: AD 03 04    ...
+ LDA KL                                       ; 8602: AD 03 04    ...
  BEQ C8614                                    ; 8605: F0 0D       ..
  LDA DELTA                                    ; 8607: A5 93       ..
  SEC                                          ; 8609: 38          8
@@ -1935,7 +1937,7 @@ subm_FB89        = &FB89
  LDA LASCT                                    ; 86B7: AD 8F 03    ...
  ORA QQ11                                     ; 86BA: 05 9E       ..
  BNE MA3                                      ; 86BC: D0 4B       .K
- LDA L0409                                    ; 86BE: AD 09 04    ...
+ LDA KY7                                      ; 86BE: AD 09 04    ...
  BPL MA3                                      ; 86C1: 10 46       .F
  LDA GNTMP                                    ; 86C3: AD 90 03    ...
  CMP #&F2                                     ; 86C6: C9 F2       ..
@@ -1944,7 +1946,7 @@ subm_FB89        = &FB89
  LDA LASER,X                                  ; 86CD: BD A8 03    ...
  BEQ MA3                                      ; 86D0: F0 37       .7
  BMI C86D9                                    ; 86D2: 30 05       0.
- BIT L0409                                    ; 86D4: 2C 09 04    ,..
+ BIT KY7                                      ; 86D4: 2C 09 04    ,..
  BVS MA3                                      ; 86D7: 70 30       p0
 .C86D9
  PHA                                          ; 86D9: 48          H
@@ -1980,7 +1982,7 @@ subm_FB89        = &FB89
  STA LASCT                                    ; 8706: 8D 8F 03    ...
 ; ******************************************************************************
 .MA3
- JSR subm_834A                                ; 8709: 20 4A 83     J.
+ JSR subm_MA23                                ; 8709: 20 4A 83     J.
  LDA QQ11                                     ; 870C: A5 9E       ..
  BNE C874C                                    ; 870E: D0 3C       .<
  JSR CheckDashboardA                          ; 8710: 20 7D EC     }.
@@ -1990,20 +1992,20 @@ subm_FB89        = &FB89
  EOR #&FF                                     ; 871A: 49 FF       I.
  STA L046D                                    ; 871C: 8D 6D 04    .m.
  BMI C8733                                    ; 871F: 30 12       0.
- LDA L0403                                    ; 8721: AD 03 04    ...
- ORA L0404                                    ; 8724: 0D 04 04    ...
+ LDA KL                                       ; 8721: AD 03 04    ...
+ ORA KY2                                      ; 8724: 0D 04 04    ...
  ROR A                                        ; 8727: 6A          j
  BNE C8733                                    ; 8728: D0 09       ..
 .C872A
  JSR LD975                                    ; 872A: 20 75 D9     u.
  JSR COMPAS                                   ; 872D: 20 16 AA     ..
- JMP DrawRollPitchBars                        ; 8730: 4C 91 8B    L..
+ JMP DrawPitchRollBars                        ; 8730: 4C 91 8B    L..
 
 .C8733
  LDA #&88                                     ; 8733: A9 88       ..
  JSR LD977                                    ; 8735: 20 77 D9     w.
  JSR COMPAS                                   ; 8738: 20 16 AA     ..
- JSR DrawRollPitchBars                        ; 873B: 20 91 8B     ..
+ JSR DrawPitchRollBars                        ; 873B: 20 91 8B     ..
  JSR CA2C3_b6                                 ; 873E: 20 C0 EF     ..
  LDX L00C0                                    ; 8741: A6 C0       ..
  LDA L03EF,X                                  ; 8743: BD EF 03    ...
@@ -2022,7 +2024,7 @@ subm_FB89        = &FB89
  LDX L0471                                    ; 875B: AE 71 04    .q.
  CPX #3                                       ; 875E: E0 03       ..
  BNE C876A                                    ; 8760: D0 08       ..
- LDA L03F1                                    ; 8762: AD F1 03    ...
+ LDA frameCounter                             ; 8762: AD F1 03    ...
  AND #&20 ; ' '                               ; 8765: 29 20       )
  BNE C876A                                    ; 8767: D0 01       ..
  INX                                          ; 8769: E8          .
@@ -2124,7 +2126,8 @@ subm_FB89        = &FB89
  BCS C87F0                                    ; 8814: B0 DA       ..
  DEX                                          ; 8816: CA          .
  BNE C87F0                                    ; 8817: D0 D7       ..
-.sub_C8819
+; ******************************************************************************
+.subm_8819
  LDA #&7D ; '}'                               ; 8819: A9 7D       .}
  JSR spc                                      ; 881B: 20 B3 96     ..
  LDA #&13                                     ; 881E: A9 13       ..
@@ -2166,7 +2169,7 @@ subm_FB89        = &FB89
  LDA L04A9                                    ; 885F: AD A9 04    ...
  AND #4                                       ; 8862: 29 04       ).
  BEQ C8874                                    ; 8864: F0 0E       ..
- JSR sub_C8819                                ; 8866: 20 19 88     ..
+ JSR subm_8819                                ; 8866: 20 19 88     ..
  JSR PrintCombatRank                          ; 8869: 20 BF 87     ..
  LDA #5                                       ; 886C: A9 05       ..
  JSR plf                                      ; 886E: 20 C8 A8     ..
@@ -2176,7 +2179,7 @@ subm_FB89        = &FB89
  JSR PrintCombatRank                          ; 8874: 20 BF 87     ..
  LDA #5                                       ; 8877: A9 05       ..
  JSR plf                                      ; 8879: 20 C8 A8     ..
- JSR sub_C8819                                ; 887C: 20 19 88     ..
+ JSR subm_8819                                ; 887C: 20 19 88     ..
 .C887F
  LDA #&12                                     ; 887F: A9 12       ..
  JSR PrintTokenCrTab                          ; 8881: 20 A5 89     ..
@@ -2637,8 +2640,8 @@ subm_FB89        = &FB89
  RTS                                          ; 8B90: 60          `
 
 ; ******************************************************************************
-.DrawRollPitchBars
- LDA L0476                                    ; 8B91: AD 76 04    .v.
+.DrawPitchRollBars
+ LDA JSTX                                     ; 8B91: AD 76 04    .v.
  EOR #&FF                                     ; 8B94: 49 FF       I.
  LSR A                                        ; 8B96: 4A          J
  LSR A                                        ; 8B97: 4A          J
@@ -2649,7 +2652,7 @@ subm_FB89        = &FB89
  LDY #&1D                                     ; 8B9E: A0 1D       ..
  LDA #&0B                                     ; 8BA0: A9 0B       ..
  JSR sub_C8BB4                                ; 8BA2: 20 B4 8B     ..
- LDA L0477                                    ; 8BA5: AD 77 04    .w.
+ LDA JSTY                                     ; 8BA5: AD 77 04    .w.
  LSR A                                        ; 8BA8: 4A          J
  LSR A                                        ; 8BA9: 4A          J
  LSR A                                        ; 8BAA: 4A          J
@@ -4114,7 +4117,7 @@ M32_1 = M32+1
  STA LASCT                                    ; 95E4: 8D 8F 03    ...
 .loop_C95E7
  JSR subm_D8E1                                ; 95E7: 20 E1 D8     ..
- JSR subm_834A                                ; 95EA: 20 4A 83     J.
+ JSR subm_MA23                                ; 95EA: 20 4A 83     J.
  JSR LD975                                    ; 95ED: 20 75 D9     u.
  LDA L0465                                    ; 95F0: AD 65 04    .e.
  JSR subm_B1D4                                ; 95F3: 20 D4 B1     ..
@@ -4815,12 +4818,12 @@ M32_1 = M32+1
 
 ; ******************************************************************************
 .subm_9AE7
- LDA CONT1_B                                  ; 9AE7: AD B4 04    ...
+ LDA controller1B                             ; 9AE7: AD B4 04    ...
  BMI C9AE4                                    ; 9AEA: 30 F8       0.
  LDA L04BA                                    ; 9AEC: AD BA 04    ...
  ORA L04BB                                    ; 9AEF: 0D BB 04    ...
- ORA CONT1_UP                                 ; 9AF2: 0D AC 04    ...
- ORA CONT1_DOWN                               ; 9AF5: 0D AA 04    ...
+ ORA controller1Up                            ; 9AF2: 0D AC 04    ...
+ ORA controller1Down                          ; 9AF5: 0D AA 04    ...
  AND #&F0                                     ; 9AF8: 29 F0       ).
  BEQ C9AE4                                    ; 9AFA: F0 E8       ..
  TXA                                          ; 9AFC: 8A          .
@@ -4856,7 +4859,7 @@ M32_1 = M32+1
  ASL A                                        ; 9B26: 0A          .
  PHA                                          ; 9B27: 48          H
 .C9B28
- JSR LD167                                    ; 9B28: 20 67 D1     g.
+ JSR SetTable0UntilNMI                        ; 9B28: 20 67 D1     g.
  PLA                                          ; 9B2B: 68          h
  STA QQ19_3                                   ; 9B2C: 8D 50 04    .P.
  LDA QQ10                                     ; 9B2F: AD 9E 04    ...
@@ -5595,20 +5598,20 @@ M32_1 = M32+1
  JSR sub_CA01C                                ; A033: 20 1C A0     ..
 .CA036
  JSR CheckDashboardA                          ; A036: 20 7D EC     }.
- LDA CONT1_B                                  ; A039: AD B4 04    ...
+ LDA controller1B                             ; A039: AD B4 04    ...
  BMI CA06E                                    ; A03C: 30 30       00
- LDA CONT1_UP                                 ; A03E: AD AC 04    ...
- ORA CONT1_DOWN                               ; A041: 0D AA 04    ...
+ LDA controller1Up                            ; A03E: AD AC 04    ...
+ ORA controller1Down                          ; A041: 0D AA 04    ...
  BEQ CA04E                                    ; A044: F0 08       ..
- LDA CONT1_LEFT                               ; A046: AD AE 04    ...
- ORA CONT1_RIGHT                              ; A049: 0D B0 04    ...
+ LDA controller1Left                          ; A046: AD AE 04    ...
+ ORA controller1Right                         ; A049: 0D B0 04    ...
  BNE CA06E                                    ; A04C: D0 20       .
 .CA04E
- LDA CONT1_UP                                 ; A04E: AD AC 04    ...
+ LDA controller1Up                            ; A04E: AD AC 04    ...
  AND #&F0                                     ; A051: 29 F0       ).
  CMP #&F0                                     ; A053: C9 F0       ..
  BEQ CA079                                    ; A055: F0 22       ."
- LDA CONT1_DOWN                               ; A057: AD AA 04    ...
+ LDA controller1Down                          ; A057: AD AA 04    ...
  AND #&F0                                     ; A05A: 29 F0       ).
  CMP #&F0                                     ; A05C: C9 F0       ..
  BEQ CA09B                                    ; A05E: F0 3B       .;
@@ -5874,7 +5877,7 @@ M32_1 = M32+1
 
 ; ******************************************************************************
 .TT18
- JSR C8012_b6                                 ; A24E: 20 6B ED     k.
+ JSR ResetSound_b6                            ; A24E: 20 6B ED     k.
  LDA QQ14                                     ; A251: AD A5 03    ...
  SEC                                          ; A254: 38          8
  SBC QQ8                                      ; A255: ED 9B 04    ...
@@ -5891,14 +5894,14 @@ M32_1 = M32+1
 .CA26C
  JSR LEBED                                    ; A26C: 20 ED EB     ..
 .CA26F
- LDA CONT1_UP                                 ; A26F: AD AC 04    ...
- ORA CONT1_DOWN                               ; A272: 0D AA 04    ...
+ LDA controller1Up                            ; A26F: AD AC 04    ...
+ ORA controller1Down                          ; A272: 0D AA 04    ...
  BMI MJP                                      ; A275: 30 A8       0.
  JSR DORND                                    ; A277: 20 AD F4     ..
  CMP #&FD                                     ; A27A: C9 FD       ..
  BCS MJP                                      ; A27C: B0 A1       ..
  JSR hyp1                                     ; A27E: 20 8F A1     ..
- JSR LD167                                    ; A281: 20 67 D1     g.
+ JSR SetTable0UntilNMI                        ; A281: 20 67 D1     g.
  JSR RES2                                     ; A284: 20 8A AD     ..
  JSR SOLAR                                    ; A287: 20 2C A9     ,.
 .CA28A
@@ -5950,7 +5953,7 @@ M32_1 = M32+1
  JSR LAUN                                     ; A2D7: 20 1C 93     ..
  JSR RES2                                     ; A2DA: 20 8A AD     ..
  JSR subm_F454                                ; A2DD: 20 54 F4     T.
- JSR LD167                                    ; A2E0: 20 67 D1     g.
+ JSR SetTable0UntilNMI                        ; A2E0: 20 67 D1     g.
  INC INWK_8                                   ; A2E3: E6 11       ..
  JSR SOS1                                     ; A2E5: 20 19 A9     ..
  LDA #&80                                     ; A2E8: A9 80       ..
@@ -5963,7 +5966,7 @@ M32_1 = M32+1
  ORA FIST                                     ; A2F8: 0D C9 03    ...
  STA FIST                                     ; A2FB: 8D C9 03    ...
  JSR NWSTARS                                  ; A2FE: 20 8D A9     ..
- JSR LD167                                    ; A301: 20 67 D1     g.
+ JSR SetTable0UntilNMI                        ; A301: 20 67 D1     g.
  LDX #4                                       ; A304: A2 04       ..
  STX VIEW                                     ; A306: 8E 8E 03    ...
 .CA309
@@ -6232,17 +6235,17 @@ M32_1 = M32+1
  BPL CA4E8                                    ; A4E3: 10 03       ..
  JSR SwitchTablesTo0                          ; A4E5: 20 6D D0     m.
 .CA4E8
- LDA CONT1_UP                                 ; A4E8: AD AC 04    ...
+ LDA controller1Up                            ; A4E8: AD AC 04    ...
  BPL CA4F0                                    ; A4EB: 10 03       ..
  JMP subm_EQSHP4                              ; A4ED: 4C 58 A4    LX.
 
 .CA4F0
- LDA CONT1_DOWN                               ; A4F0: AD AA 04    ...
+ LDA controller1Down                          ; A4F0: AD AA 04    ...
  BPL CA4F8                                    ; A4F3: 10 03       ..
  JMP subm_EQSHP5                              ; A4F5: 4C 75 A4    Lu.
 
 .CA4F8
- LDA CONT1_A                                  ; A4F8: AD B2 04    ...
+ LDA controller1A                             ; A4F8: AD B2 04    ...
  BMI CA508                                    ; A4FB: 30 0B       0.
  LDA L0465                                    ; A4FD: AD 65 04    .e.
  BEQ CA4DB                                    ; A500: F0 D9       ..
@@ -6327,7 +6330,7 @@ M32_1 = M32+1
 .CA58A
  STY K                                        ; A58A: 84 7D       .}
  PHA                                          ; A58C: 48          H
- JSR LD167                                    ; A58D: 20 67 D1     g.
+ JSR SetTable0UntilNMI                        ; A58D: 20 67 D1     g.
  PLA                                          ; A590: 68          h
  JSR prx                                      ; A591: 20 97 A6     ..
  JSR MCASH                                    ; A594: 20 41 A3     A.
@@ -6546,7 +6549,7 @@ M32_1 = M32+1
  JSR CheckDashboardA                          ; A6F6: 20 7D EC     }.
  LDA L04BA                                    ; A6F9: AD BA 04    ...
  ORA L04BB                                    ; A6FC: 0D BB 04    ...
- ORA CONT1_A                                  ; A6FF: 0D B2 04    ...
+ ORA controller1A                             ; A6FF: 0D B2 04    ...
  BMI qv                                       ; A702: 30 F2       0.
  LDY #3                                       ; A704: A0 03       ..
 .loop_CA706
@@ -6574,7 +6577,7 @@ M32_1 = M32+1
  LDY #0                                       ; A735: A0 00       ..
 .CA737
  JSR CheckDashboardA                          ; A737: 20 7D EC     }.
- LDA CONT1_UP                                 ; A73A: AD AC 04    ...
+ LDA controller1Up                            ; A73A: AD AC 04    ...
  BPL CA74A                                    ; A73D: 10 0B       ..
  JSR subm_A6A8                                ; A73F: 20 A8 A6     ..
  DEY                                          ; A742: 88          .
@@ -6583,7 +6586,7 @@ M32_1 = M32+1
 .CA747
  JSR subm_A6DC                                ; A747: 20 DC A6     ..
 .CA74A
- LDA CONT1_DOWN                               ; A74A: AD AA 04    ...
+ LDA controller1Down                          ; A74A: AD AA 04    ...
  BPL CA75C                                    ; A74D: 10 0D       ..
  JSR subm_A6A8                                ; A74F: 20 A8 A6     ..
  INY                                          ; A752: C8          .
@@ -6593,7 +6596,7 @@ M32_1 = M32+1
 .CA759
  JSR subm_A6DC                                ; A759: 20 DC A6     ..
 .CA75C
- LDA CONT1_A                                  ; A75C: AD B2 04    ...
+ LDA controller1A                             ; A75C: AD B2 04    ...
  BMI CA775                                    ; A75F: 30 14       0.
  LDA L0465                                    ; A761: AD 65 04    .e.
  BEQ CA737                                    ; A764: F0 D1       ..
@@ -6942,11 +6945,11 @@ M32_1 = M32+1
  BNE WPSHPS                                   ; A992: D0 43       .C
 ; ******************************************************************************
 .nWq
- LDA L03F1                                    ; A994: AD F1 03    ...
+ LDA frameCounter                             ; A994: AD F1 03    ...
  CLC                                          ; A997: 18          .
  ADC RAND                                     ; A998: 65 02       e.
  STA RAND                                     ; A99A: 85 02       ..
- LDA L03F1                                    ; A99C: AD F1 03    ...
+ LDA frameCounter                             ; A99C: AD F1 03    ...
  STA RAND_2                                   ; A99F: 85 03       ..
  LDY NOSTM                                    ; A9A1: AC E5 03    ...
 .CA9A4
@@ -7463,10 +7466,10 @@ M32_1 = M32+1
  PHA                                          ; ACF7: 48          H
  JSR DETOK_b2                                 ; ACF8: 20 82 F0     ..
  JSR subm_D951                                ; ACFB: 20 51 D9     Q.
- LDA CONT1_A                                  ; ACFE: AD B2 04    ...
+ LDA controller1A                             ; ACFE: AD B2 04    ...
  BMI CAD17                                    ; AD01: 30 14       0.
- LDA CONT1_UP                                 ; AD03: AD AC 04    ...
- ORA CONT1_DOWN                               ; AD06: 0D AA 04    ...
+ LDA controller1Up                            ; AD03: AD AC 04    ...
+ ORA controller1Down                          ; AD06: 0D AA 04    ...
  BPL CAD0F                                    ; AD09: 10 04       ..
  PLA                                          ; AD0B: 68          h
  EOR #3                                       ; AD0C: 49 03       I.
@@ -7479,7 +7482,7 @@ M32_1 = M32+1
 .CAD17
  LDA #0                                       ; AD17: A9 00       ..
  STA L0081                                    ; AD19: 85 81       ..
- STA CONT1_A                                  ; AD1B: 8D B2 04    ...
+ STA controller1A                             ; AD1B: 8D B2 04    ...
  PLA                                          ; AD1E: 68          h
  TAX                                          ; AD1F: AA          .
  PLA                                          ; AD20: 68          h
@@ -7491,15 +7494,15 @@ M32_1 = M32+1
 .subm_AD25
  LDA QQ11                                     ; AD25: A5 9E       ..
  BNE CAD2E                                    ; AD27: D0 05       ..
- JSR subm_B6A8                                ; AD29: 20 A8 B6     ..
+ JSR DOKEY                                    ; AD29: 20 A8 B6     ..
  TXA                                          ; AD2C: 8A          .
  RTS                                          ; AD2D: 60          `
 
 .CAD2E
- JSR subm_B6A8                                ; AD2E: 20 A8 B6     ..
+ JSR DOKEY                                    ; AD2E: 20 A8 B6     ..
  LDX #0                                       ; AD31: A2 00       ..
  LDY #0                                       ; AD33: A0 00       ..
- LDA CONT1_B                                  ; AD35: AD B4 04    ...
+ LDA controller1B                             ; AD35: AD B4 04    ...
  BMI CAD52                                    ; AD38: 30 18       0.
  LDA L04BA                                    ; AD3A: AD BA 04    ...
  BPL CAD40                                    ; AD3D: 10 01       ..
@@ -7509,11 +7512,11 @@ M32_1 = M32+1
  BPL CAD46                                    ; AD43: 10 01       ..
  INX                                          ; AD45: E8          .
 .CAD46
- LDA CONT1_UP                                 ; AD46: AD AC 04    ...
+ LDA controller1Up                            ; AD46: AD AC 04    ...
  BPL CAD4C                                    ; AD49: 10 01       ..
  INY                                          ; AD4B: C8          .
 .CAD4C
- LDA CONT1_DOWN                               ; AD4C: AD AA 04    ...
+ LDA controller1Down                          ; AD4C: AD AA 04    ...
  BPL CAD52                                    ; AD4F: 10 01       ..
  DEY                                          ; AD51: 88          .
 .CAD52
@@ -7580,8 +7583,8 @@ M32_1 = M32+1
  ORA #&80                                     ; ADB7: 09 80       ..
  STA L0300                                    ; ADB9: 8D 00 03    ...
  LDA #&80                                     ; ADBC: A9 80       ..
- STA L0476                                    ; ADBE: 8D 76 04    .v.
- STA L0477                                    ; ADC1: 8D 77 04    .w.
+ STA JSTX                                     ; ADBE: 8D 76 04    .v.
+ STA JSTY                                     ; ADC1: 8D 77 04    .w.
  STA ALP2                                     ; ADC4: 85 6F       .o
  STA BET2                                     ; ADC6: 85 91       ..
  ASL A                                        ; ADC8: 0A          .
@@ -8046,12 +8049,12 @@ LAFB4 = sub_CAFB3+1
  JSR MESS                                     ; B0F7: 20 8F B7     ..
 .CB0FA
  LDA #1                                       ; B0FA: A9 01       ..
- JSR LD167                                    ; B0FC: 20 67 D1     g.
+ JSR SetTable0UntilNMI                        ; B0FC: 20 67 D1     g.
  JSR C8021_b6                                 ; B0FF: 20 24 ED     $.
  LDA #&FF                                     ; B102: A9 FF       ..
  BNE CB10B                                    ; B104: D0 05       ..
 .CB106
- JSR C8012_b6                                 ; B106: 20 6B ED     k.
+ JSR ResetSound_b6                            ; B106: 20 6B ED     k.
  LDA #0                                       ; B109: A9 00       ..
 .CB10B
  STA L0388                                    ; B10B: 8D 88 03    ...
@@ -8207,7 +8210,7 @@ LAFB4 = sub_CAFB3+1
 
 ; ******************************************************************************
 .DEATH
- JSR C8012_b6                                 ; B1E4: 20 6B ED     k.
+ JSR ResetSound_b6                            ; B1E4: 20 6B ED     k.
  JSR EXNO3                                    ; B1E7: 20 AD EB     ..
  JSR RES2                                     ; B1EA: 20 8A AD     ..
  ASL DELTA                                    ; B1ED: 06 93       ..
@@ -8304,7 +8307,7 @@ LAFB4 = sub_CAFB3+1
  STA LASCT                                    ; B2AA: 8D 8F 03    ...
 .loop_CB2AD
  JSR subm_D8E1                                ; B2AD: 20 E1 D8     ..
- JSR subm_834A                                ; B2B0: 20 4A 83     J.
+ JSR subm_MA23                                ; B2B0: 20 4A 83     J.
  JSR CBED2_b6                                 ; B2B3: 20 43 EF     C.
  LDA #&CC                                     ; B2B6: A9 CC       ..
  JSR LD977                                    ; B2B8: 20 77 D9     w.
@@ -8322,7 +8325,7 @@ LAFB4 = sub_CAFB3+1
  STA L0309                                    ; B2CF: 8D 09 03    ...
  LDA #&34 ; '4'                               ; B2D2: A9 34       .4
  STA L030A                                    ; B2D4: 8D 0A 03    ...
- JSR LED6E                                    ; B2D7: 20 6E ED     n.
+ JSR ResetSoundNow_b6                         ; B2D7: 20 6E ED     n.
  JSR CB90D_b6                                 ; B2DA: 20 4B F0     K.
  JSR LF3AB                                    ; B2DD: 20 AB F3     ..
  LDA #1                                       ; B2E0: A9 01       ..
@@ -8331,7 +8334,7 @@ LAFB4 = sub_CAFB3+1
  STX QQ11Mask                                 ; B2E6: 86 9F       ..
  TXS                                          ; B2E8: 9A          .
  JSR RESET                                    ; B2E9: 20 6B AD     k.
- JSR CBC83_b6                                 ; B2EC: 20 FF ED     ..
+ JSR TITLE_b6                                 ; B2EC: 20 FF ED     ..
 .CB2EF
  LDX #&FF                                     ; B2EF: A2 FF       ..
  TXS                                          ; B2F1: 9A          .
@@ -8342,13 +8345,13 @@ LAFB4 = sub_CAFB3+1
  JSR subm_E909                                ; B2FB: 20 09 E9     ..
  JSR subm_B484                                ; B2FE: 20 84 B4     ..
  JSR subm_F3BC                                ; B301: 20 BC F3     ..
- LDA CONT1_SELECT                             ; B304: AD B8 04    ...
- AND CONT1_START                              ; B307: 2D B6 04    -..
- AND CONT1_A                                  ; B30A: 2D B2 04    -..
- AND CONT1_B                                  ; B30D: 2D B4 04    -..
+ LDA controller1Select                        ; B304: AD B8 04    ...
+ AND controller1Start                         ; B307: 2D B6 04    -..
+ AND controller1A                             ; B30A: 2D B2 04    -..
+ AND controller1B                             ; B30D: 2D B4 04    -..
  BNE CB341                                    ; B310: D0 2F       ./
- LDA CONT1_SELECT                             ; B312: AD B8 04    ...
- ORA CONT2_SELECT                             ; B315: 0D B9 04    ...
+ LDA controller1Select                        ; B312: AD B8 04    ...
+ ORA controller2Select                        ; B315: 0D B9 04    ...
  BNE CB355                                    ; B318: D0 3B       .;
  LDA #0                                       ; B31A: A9 00       ..
  PHA                                          ; B31C: 48          H
@@ -8357,9 +8360,9 @@ LAFB4 = sub_CAFB3+1
  STA QQ11                                     ; B322: 85 9E       ..
  LDA L03EE                                    ; B324: AD EE 03    ...
  BEQ CB32C                                    ; B327: F0 03       ..
- JSR LF362                                    ; B329: 20 62 F3     b.
+ JSR subm_F362                                ; B329: 20 62 F3     b.
 .CB32C
- JSR LD167                                    ; B32C: 20 67 D1     g.
+ JSR SetTable0UntilNMI                        ; B32C: 20 67 D1     g.
  LDA #4                                       ; B32F: A9 04       ..
  JSR C8021_b6                                 ; B331: 20 24 ED     $.
  LDA L0305                                    ; B334: AD 05 03    ...
@@ -8373,7 +8376,7 @@ LAFB4 = sub_CAFB3+1
  JSR BR2_Part2                                ; B341: 20 6A B3     j.
  LDA #&FF                                     ; B344: A9 FF       ..
  STA QQ11                                     ; B346: 85 9E       ..
- JSR LD167                                    ; B348: 20 67 D1     g.
+ JSR SetTable0UntilNMI                        ; B348: 20 67 D1     g.
  LDA #4                                       ; B34B: A9 04       ..
  JSR C8021_b6                                 ; B34D: 20 24 ED     $.
  LDA #2                                       ; B350: A9 02       ..
@@ -8397,7 +8400,7 @@ LAFB4 = sub_CAFB3+1
 .BR2_Part2
  JSR CheckDashboardA                          ; B36A: 20 7D EC     }.
  JSR CB8FE_b6                                 ; B36D: 20 3D F0     =.
- JSR C8012_b6                                 ; B370: 20 6B ED     k.
+ JSR ResetSound_b6                            ; B370: 20 6B ED     k.
  JSR ping                                     ; B373: 20 16 95     ..
  JSR TT111                                    ; B376: 20 6B 9D     k.
  JSR jmp                                      ; B379: 20 C6 9E     ..
@@ -8512,15 +8515,15 @@ LAFB4 = sub_CAFB3+1
 .CB445
  JSR subm_D96F                                ; B445: 20 6F D9     o.
  INC MCNT                                     ; B448: E6 A2       ..
- LDA CONT1_A                                  ; B44A: AD B2 04    ...
- ORA CONT1_START                              ; B44D: 0D B6 04    ...
- ORA CONT1_SELECT                             ; B450: 0D B8 04    ...
+ LDA controller1A                             ; B44A: AD B2 04    ...
+ ORA controller1Start                         ; B44D: 0D B6 04    ...
+ ORA controller1Select                        ; B450: 0D B8 04    ...
  BMI CB457                                    ; B453: 30 02       0.
  BNE CB466                                    ; B455: D0 0F       ..
 .CB457
- LDA CONT2_A                                  ; B457: AD B3 04    ...
- ORA CONT2_START                              ; B45A: 0D B7 04    ...
- ORA CONT2_SELECT                             ; B45D: 0D B9 04    ...
+ LDA controller2A                             ; B457: AD B3 04    ...
+ ORA controller2Start                         ; B45A: 0D B7 04    ...
+ ORA controller2Select                        ; B45D: 0D B9 04    ...
  BMI CB464                                    ; B460: 30 02       0.
  BNE CB469                                    ; B462: D0 05       ..
 .CB464
@@ -8556,7 +8559,7 @@ LAFB4 = sub_CAFB3+1
  LDA #0                                       ; B486: A9 00       ..
  STA L0081                                    ; B488: 85 81       ..
 .loop_CB48A
- STA L0403,X                                  ; B48A: 9D 03 04    ...
+ STA KL,X                                     ; B48A: 9D 03 04    ...
  DEX                                          ; B48D: CA          .
  BPL loop_CB48A                               ; B48E: 10 FA       ..
  RTS                                          ; B490: 60          `
@@ -8762,7 +8765,7 @@ LAFB4 = sub_CAFB3+1
  BCS CB5DF                                    ; B5D2: B0 0B       ..
  JSR subm_B5F8                                ; B5D4: 20 F8 B5     ..
  BCS CB5DF                                    ; B5D7: B0 06       ..
- JSR LD167                                    ; B5D9: 20 67 D1     g.
+ JSR SetTable0UntilNMI                        ; B5D9: 20 67 D1     g.
  JSR subm_B665                                ; B5DC: 20 65 B6     e.
 .CB5DF
  LDA #1                                       ; B5DF: A9 01       ..
@@ -8781,7 +8784,7 @@ LAFB4 = sub_CAFB3+1
 
 ; ******************************************************************************
 .subm_B5F8
- JSR LD167                                    ; B5F8: 20 67 D1     g.
+ JSR SetTable0UntilNMI                        ; B5F8: 20 67 D1     g.
  JSR subm_B665                                ; B5FB: 20 65 B6     e.
 .sub_CB5FE
  LDA #&80                                     ; B5FE: A9 80       ..
@@ -8892,7 +8895,7 @@ LAFB4 = sub_CAFB3+1
  RTS                                          ; B6A7: 60          `
 
 ; ******************************************************************************
-.subm_B6A8
+.DOKEY
  JSR CBBDE_b6                                 ; B6A8: 20 21 F0     !.
  LDA L0388                                    ; B6AB: AD 88 03    ...
  BNE CB6BA                                    ; B6AE: D0 0A       ..
@@ -8909,7 +8912,7 @@ LAFB4 = sub_CAFB3+1
  LDA SSPR                                     ; B6BA: AD 64 05    .d.
  BNE CB6C8                                    ; B6BD: D0 09       ..
  STA L0388                                    ; B6BF: 8D 88 03    ...
- JSR C8012_b6                                 ; B6C2: 20 6B ED     k.
+ JSR ResetSound_b6                            ; B6C2: 20 6B ED     k.
  JMP CB6B0                                    ; B6C5: 4C B0 B6    L..
 
 .CB6C8
@@ -8935,7 +8938,7 @@ LAFB4 = sub_CAFB3+1
  BMI CB6F2                                    ; B6EE: 30 02       0.
  LDX #1                                       ; B6F0: A2 01       ..
 .CB6F2
- STA L0403,X                                  ; B6F2: 9D 03 04    ...
+ STA KL,X                                     ; B6F2: 9D 03 04    ...
 .CB6F5
  LDA #&80                                     ; B6F5: A9 80       ..
  LDX #2                                       ; B6F7: A2 02       ..
@@ -8947,13 +8950,13 @@ LAFB4 = sub_CAFB3+1
  BIT INWK_29                                  ; B701: 24 26       $&
  BPL CB70C                                    ; B703: 10 07       ..
  LDA #&40 ; '@'                               ; B705: A9 40       .@
- STA L0476                                    ; B707: 8D 76 04    .v.
+ STA JSTX                                     ; B707: 8D 76 04    .v.
  LDA #0                                       ; B70A: A9 00       ..
 .CB70C
- STA L0403,X                                  ; B70C: 9D 03 04    ...
- LDA L0476                                    ; B70F: AD 76 04    .v.
+ STA KL,X                                     ; B70C: 9D 03 04    ...
+ LDA JSTX                                     ; B70F: AD 76 04    .v.
 .CB712
- STA L0476                                    ; B712: 8D 76 04    .v.
+ STA JSTX                                     ; B712: 8D 76 04    .v.
  LDA #&80                                     ; B715: A9 80       ..
  LDX #4                                       ; B717: A2 04       ..
  ASL INWK_30                                  ; B719: 06 27       .'
@@ -8961,44 +8964,44 @@ LAFB4 = sub_CAFB3+1
  BCS CB721                                    ; B71D: B0 02       ..
  LDX #5                                       ; B71F: A2 05       ..
 .CB721
- STA L0403,X                                  ; B721: 9D 03 04    ...
- LDA L0477                                    ; B724: AD 77 04    .w.
+ STA KL,X                                     ; B721: 9D 03 04    ...
+ LDA JSTY                                     ; B724: AD 77 04    .w.
 .CB727
- STA L0477                                    ; B727: 8D 77 04    .w.
- LDX L0476                                    ; B72A: AE 76 04    .v.
+ STA JSTY                                     ; B727: 8D 77 04    .w.
+ LDX JSTX                                     ; B72A: AE 76 04    .v.
  LDA #&0E                                     ; B72D: A9 0E       ..
- LDY L0405                                    ; B72F: AC 05 04    ...
+ LDY KY3                                      ; B72F: AC 05 04    ...
  BEQ CB737                                    ; B732: F0 03       ..
- JSR LFA33                                    ; B734: 20 33 FA     3.
+ JSR BUMP2                                    ; B734: 20 33 FA     3.
 .CB737
- LDY L0406                                    ; B737: AC 06 04    ...
+ LDY KY4                                      ; B737: AC 06 04    ...
  BEQ CB73F                                    ; B73A: F0 03       ..
- JSR subm_FA43                                ; B73C: 20 43 FA     C.
+ JSR REDU2                                    ; B73C: 20 43 FA     C.
 .CB73F
- STX L0476                                    ; B73F: 8E 76 04    .v.
+ STX JSTX                                     ; B73F: 8E 76 04    .v.
  LDA #&0E                                     ; B742: A9 0E       ..
- LDX L0477                                    ; B744: AE 77 04    .w.
- LDY L0407                                    ; B747: AC 07 04    ...
+ LDX JSTY                                     ; B744: AE 77 04    .w.
+ LDY KY5                                      ; B747: AC 07 04    ...
  BEQ CB74F                                    ; B74A: F0 03       ..
- JSR subm_FA43                                ; B74C: 20 43 FA     C.
+ JSR REDU2                                    ; B74C: 20 43 FA     C.
 .CB74F
- LDY L0408                                    ; B74F: AC 08 04    ...
+ LDY KY6                                      ; B74F: AC 08 04    ...
  BEQ CB757                                    ; B752: F0 03       ..
- JSR LFA33                                    ; B754: 20 33 FA     3.
+ JSR BUMP2                                    ; B754: 20 33 FA     3.
 .CB757
- STX L0477                                    ; B757: 8E 77 04    .w.
+ STX JSTY                                     ; B757: 8E 77 04    .w.
  LDA L0388                                    ; B75A: AD 88 03    ...
  BNE CB777                                    ; B75D: D0 18       ..
  LDX #&80                                     ; B75F: A2 80       ..
- LDA L0405                                    ; B761: AD 05 04    ...
- ORA L0406                                    ; B764: 0D 06 04    ...
+ LDA KY3                                      ; B761: AD 05 04    ...
+ ORA KY4                                      ; B764: 0D 06 04    ...
  BNE CB76C                                    ; B767: D0 03       ..
- STX L0476                                    ; B769: 8E 76 04    .v.
+ STX JSTX                                     ; B769: 8E 76 04    .v.
 .CB76C
- LDA L0407                                    ; B76C: AD 07 04    ...
- ORA L0408                                    ; B76F: 0D 08 04    ...
+ LDA KY5                                      ; B76C: AD 07 04    ...
+ ORA KY6                                      ; B76F: 0D 08 04    ...
  BNE CB777                                    ; B772: D0 03       ..
- STX L0477                                    ; B774: 8E 77 04    .w.
+ STX JSTY                                     ; B774: 8E 77 04    .w.
 .CB777
  JMP CB6B0                                    ; B777: 4C B0 B6    L..
 
@@ -9854,7 +9857,7 @@ LAFB4 = sub_CAFB3+1
  BEQ LO2                                      ; BDBC: F0 EE       ..
  JSR ResetStardust                            ; BDBE: 20 03 BE     ..
  JSR FLIP                                     ; BDC1: 20 C7 BD     ..
- JMP LD167                                    ; BDC4: 4C 67 D1    Lg.
+ JMP SetTable0UntilNMI                        ; BDC4: 4C 67 D1    Lg.
 
 ; ******************************************************************************
 .FLIP
@@ -9926,7 +9929,7 @@ LAFB4 = sub_CAFB3+1
  INY                                          ; BE3E: C8          .
  DEX                                          ; BE3F: CA          .
  BNE CBE1B                                    ; BE40: D0 D9       ..
- JSR LD167                                    ; BE42: 20 67 D1     g.
+ JSR SetTable0UntilNMI                        ; BE42: 20 67 D1     g.
  JSR CBA23_b3                                 ; BE45: 20 DC ED     ..
 .sub_CBE48
  LDA #&FF                                     ; BE48: A9 FF       ..
