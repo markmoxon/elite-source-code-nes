@@ -203,17 +203,25 @@ label(0x00B4, "messXC")
 label(0x00B6, "newzp")
 
 label(0x00B8, "tileNumber")         # Mine, contains tile number to draw into
-label(0x00B9, "patternTableHi")     # Mine, high byte of current nametable (&70 or &74)
-                                    # i.e. HI(patternTable0) or HI(patternTable1)
+label(0x00B9, "pattBufferHi")       # Mine, high byte of current pattern buffer (&60 or &68)
 
-label(0x00BA, "addr3")              # Mine, typically an address
-label(0x00BB, "addr3_1")
+label(0x00BA, "SC2")                # Mine, typically an address that's used alongside
+label(0x00BB, "SC2_1")              # SC(1 0)
+
+label(0x00C0, "tileIndex")          # Mine, used to store an index into table? 0 or 1
+label(0x00C1, "tileNumber0")        # Mine, used to store tile numbers in a table
+label(0x00C2, "tileNumber0_1")
+label(0x00C3, "tileNumber1")
+label(0x00C4, "tileNumber1_1")
+label(0x00C5, "tileNumber2")
+label(0x00C6, "tileNumber2_2")
+label(0x00C7, "tileNumber3")
+label(0x00C8, "tileNumber3_1")
 
 label(0x00D4, "addr1")              # Mine, an address within the PPU to be poked to
 label(0x00D5, "addr1_1")
 
-label(0x00E6, "nametableHi")        # Mine, high byte of current nametable (&70 or &74)
-                                    # i.e. HI(nametable0) or HI(nametable1)
+label(0x00E6, "nameBufferHi")       # Mine, high byte of current nametable buffer (&70 or &74)
 
 label(0x00E9, "dashboardSwitch")    # Mine, a flag to control whether we switch to
                                     # nametable 0 and palette 0 for the dashboard
@@ -308,6 +316,7 @@ label(0x045A, "K2_1")
 label(0x045B, "K2_2")
 label(0x045C, "K2_3")
 label(0x045D, "DLY")
+label(0x046C, "pictureTile")       # Mine, the number of the first tile where system pictures are stored
 label(0x0476, "JSTX")
 label(0x0477, "JSTY")
 label(0x046E, "boxEdge1")          # Mine, bitmap for drawing box edge?
@@ -326,6 +335,9 @@ label(0x0487, "QQ24")
 label(0x0488, "QQ25")
 label(0x0489, "QQ28")
 label(0x048A, "QQ29")
+label(0x048B, "systemFlag")         # Mine, contains a new generated value for current system
+                                    # Bits 0-3 contain system image number from bank 5
+                                    # Bits 6 and 7 are set in bank 5 routine
 label(0x048C, "gov")
 label(0x048D, "tek")
 label(0x048E, "QQ2")
@@ -405,11 +417,11 @@ label(0x4017, "CONTROLLER_2")
 
 # Battery-backed WRAM in the cartridge
 
-label(0x6000, "patternTable0")      # Mine, two buffers for tile patterns
-label(0x6800, "patternTable1")
+label(0x6000, "pattBuffer0")         # Mine, two buffers for tile patterns
+label(0x6800, "pattBuffer1")
 
-label(0x7000, "nametable0")         # Mine, two buffers for nametables
-label(0x7400, "nametable1")
+label(0x7000, "nameBuffer0")         # Mine, two buffers for nametables
+label(0x7400, "nameBuffer1")
 
 # Permanently loaded labels in 7.asm ($C000-$FFFF)
 
@@ -425,8 +437,8 @@ label(0xC53F, "XX21m1")
 label(0xC540, "XX21")
 label(0xCE7E, "UNIV")
 label(0xCE7F, "UNIV_1")
-label(0xCED0, "nametableAddrHi")    # Mine
-label(0xCED2, "patternAddrHi")      # Mine
+label(0xCED0, "nameBufferAddr")     # Mine, contains high byte of name buffers (&70, &74)
+label(0xCED2, "pattBufferAddr")     # Mine, contains high byte of pattern buffers (&60, &68)
 label(0xD9F7, "TWOS")
 label(0xDA01, "TWOS2")
 label(0xDA09, "TWFL")

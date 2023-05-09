@@ -176,14 +176,23 @@ Yx2M1             = &00B3
 messXC            = &00B4
 newzp             = &00B6
 tileNumber        = &00B8
-patternTableHi    = &00B9
-addr3             = &00BA
-addr3_1           = &00BB
+pattBufferHi      = &00B9
+SC2               = &00BA
+SC2_1             = &00BB
+tileIndex         = &00C0
+tileNumber0       = &00C1
+tileNumber0_1     = &00C2
+tileNumber1       = &00C3
+tileNumber1_1     = &00C4
+tileNumber2       = &00C5
+tileNumber2_2     = &00C6
+tileNumber3       = &00C7
+tileNumber3_1     = &00C8
 L00D2             = &00D2
 addr1             = &00D4
 addr1_1           = &00D5
 L00D8             = &00D8
-nametableHi       = &00E6
+nameBufferHi      = &00E6
 dashboardSwitch   = &00E9
 addr4             = &00EB
 addr4_1           = &00EC
@@ -526,6 +535,7 @@ K2_1              = &045A
 K2_2              = &045B
 K2_3              = &045C
 DLY               = &045D
+pictureTile       = &046C
 boxEdge1          = &046E
 boxEdge2          = &046F
 scanController2   = &0475
@@ -544,6 +554,7 @@ QQ24              = &0487
 QQ25              = &0488
 QQ28              = &0489
 QQ29              = &048A
+systemFlag        = &048B
 gov               = &048C
 tek               = &048D
 QQ2               = &048E
@@ -624,10 +635,10 @@ OAM_DMA           = &4014
 APU_FLAGS         = &4015
 CONTROLLER_1      = &4016
 CONTROLLER_2      = &4017
-patternTable0     = &6000
-patternTable1     = &6800
-nametable0        = &7000
-nametable1        = &7400
+pattBuffer0       = &6000
+pattBuffer1       = &6800
+nameBuffer0       = &7000
+nameBuffer1       = &7400
 LC006             = &C006
 Spercent          = &C007
 ResetVariables    = &C03E
@@ -664,8 +675,8 @@ UNIV_1            = &CE7F
 GINF              = &CE90
 subm_CE9E         = &CE9E
 subm_CEA5         = &CEA5
-nametableAddrHi   = &CED0
-patternAddrHi     = &CED2
+nameBufferAddr    = &CED0
+pattBufferAddr    = &CED2
 IRQ               = &CED4
 NMI               = &CED5
 SetPalette        = &CF2E
@@ -5523,13 +5534,13 @@ SetupMMC1         = &FB89
  LSR A                                        ; B5C5: 4A          J
  CLC                                          ; B5C6: 18          .
  ADC yLookupLo,Y                              ; B5C7: 79 18 DA    y..
- STA addr3                                    ; B5CA: 85 BA       ..
- LDA nametableHi                              ; B5CC: A5 E6       ..
+ STA SC2                                      ; B5CA: 85 BA       ..
+ LDA nameBufferHi                             ; B5CC: A5 E6       ..
 .sub_CB5CE
 LB5CF = sub_CB5CE+1
  ADC yLookupHi,Y                              ; B5CE: 79 F8 DA    y..
 ; overlapping:                                ; B5CF: F8          .
- STA addr3_1                                  ; B5D1: 85 BB       ..
+ STA SC2_1                                    ; B5D1: 85 BB       ..
  LDA S                                        ; B5D3: A5 99       ..
  AND #7                                       ; B5D5: 29 07       ).
  STA T                                        ; B5D7: 85 9A       ..
@@ -5542,9 +5553,9 @@ LB5CF = sub_CB5CE+1
  JSR SwitchTablesTo0                          ; B5E3: 20 6D D0     m.
 .CB5E6
  LDX #0                                       ; B5E6: A2 00       ..
- LDA (addr3,X)                                ; B5E8: A1 BA       ..
+ LDA (SC2,X)                                  ; B5E8: A1 BA       ..
  BEQ CB615                                    ; B5EA: F0 29       .)
- LDX patternTableHi                           ; B5EC: A6 B9       ..
+ LDX pattBufferHi                             ; B5EC: A6 B9       ..
  STX SC_1                                     ; B5EE: 86 08       ..
  ASL A                                        ; B5F0: 0A          .
  ROL SC_1                                     ; B5F1: 26 08       &.
@@ -5571,14 +5582,14 @@ LB5CF = sub_CB5CE+1
  LDA T                                        ; B615: A5 9A       ..
  CLC                                          ; B617: 18          .
  ADC #&34 ; '4'                               ; B618: 69 34       i4
- STA (addr3,X)                                ; B61A: 81 BA       ..
+ STA (SC2,X)                                  ; B61A: 81 BA       ..
 .CB61C
- LDA addr3                                    ; B61C: A5 BA       ..
+ LDA SC2                                      ; B61C: A5 BA       ..
  CLC                                          ; B61E: 18          .
  ADC #&20 ; ' '                               ; B61F: 69 20       i
- STA addr3                                    ; B621: 85 BA       ..
+ STA SC2                                      ; B621: 85 BA       ..
  BCC CB5D9                                    ; B623: 90 B4       ..
- INC addr3_1                                  ; B625: E6 BB       ..
+ INC SC2_1                                    ; B625: E6 BB       ..
  JMP CB5D9                                    ; B627: 4C D9 B5    L..
 
 .CB62A
@@ -5594,10 +5605,10 @@ LB5CF = sub_CB5CE+1
  LSR A                                        ; B635: 4A          J
  CLC                                          ; B636: 18          .
  ADC yLookupLo,Y                              ; B637: 79 18 DA    y..
- STA addr3                                    ; B63A: 85 BA       ..
- LDA nametableHi                              ; B63C: A5 E6       ..
+ STA SC2                                      ; B63A: 85 BA       ..
+ LDA nameBufferHi                             ; B63C: A5 E6       ..
  ADC yLookupHi,Y                              ; B63E: 79 F8 DA    y..
- STA addr3_1                                  ; B641: 85 BB       ..
+ STA SC2_1                                    ; B641: 85 BB       ..
  TYA                                          ; B643: 98          .
  AND #7                                       ; B644: 29 07       ).
  TAY                                          ; B646: A8          .
@@ -5610,9 +5621,9 @@ LB5CF = sub_CB5CE+1
  JSR SwitchTablesTo0                          ; B651: 20 6D D0     m.
 .CB654
  LDX #0                                       ; B654: A2 00       ..
- LDA (addr3,X)                                ; B656: A1 BA       ..
+ LDA (SC2,X)                                  ; B656: A1 BA       ..
  BEQ CB699                                    ; B658: F0 3F       .?
- LDX patternTableHi                           ; B65A: A6 B9       ..
+ LDX pattBufferHi                             ; B65A: A6 B9       ..
  STX SC_1                                     ; B65C: 86 08       ..
  ASL A                                        ; B65E: 0A          .
  ROL SC_1                                     ; B65F: 26 08       &.
@@ -5646,9 +5657,9 @@ LB5CF = sub_CB5CE+1
 .loop_CB689
  DEC R                                        ; B689: C6 98       ..
  BEQ CB696                                    ; B68B: F0 09       ..
- INC addr3                                    ; B68D: E6 BA       ..
+ INC SC2                                      ; B68D: E6 BA       ..
  BNE CB647                                    ; B68F: D0 B6       ..
- INC addr3_1                                  ; B691: E6 BB       ..
+ INC SC2_1                                    ; B691: E6 BB       ..
  JMP CB647                                    ; B693: 4C 47 B6    LG.
 
 .CB696
@@ -5659,7 +5670,7 @@ LB5CF = sub_CB5CE+1
  TYA                                          ; B699: 98          .
  CLC                                          ; B69A: 18          .
  ADC #&25 ; '%'                               ; B69B: 69 25       i%
- STA (addr3,X)                                ; B69D: 81 BA       ..
+ STA (SC2,X)                                  ; B69D: 81 BA       ..
  JMP loop_CB689                               ; B69F: 4C 89 B6    L..
 
 .sub_CB6A2
@@ -5670,10 +5681,10 @@ LB5CF = sub_CB5CE+1
  LSR A                                        ; B6A8: 4A          J
  CLC                                          ; B6A9: 18          .
  ADC yLookupLo,Y                              ; B6AA: 79 18 DA    y..
- STA addr3                                    ; B6AD: 85 BA       ..
- LDA nametableHi                              ; B6AF: A5 E6       ..
+ STA SC2                                      ; B6AD: 85 BA       ..
+ LDA nameBufferHi                             ; B6AF: A5 E6       ..
  ADC yLookupHi,Y                              ; B6B1: 79 F8 DA    y..
- STA addr3_1                                  ; B6B4: 85 BB       ..
+ STA SC2_1                                    ; B6B4: 85 BB       ..
  TYA                                          ; B6B6: 98          .
  AND #7                                       ; B6B7: 29 07       ).
  TAY                                          ; B6B9: A8          .
@@ -5686,9 +5697,9 @@ LB5CF = sub_CB5CE+1
  JSR SwitchTablesTo0                          ; B6C4: 20 6D D0     m.
 .CB6C7
  LDX #0                                       ; B6C7: A2 00       ..
- LDA (addr3,X)                                ; B6C9: A1 BA       ..
+ LDA (SC2,X)                                  ; B6C9: A1 BA       ..
  BEQ CB70B                                    ; B6CB: F0 3E       .>
- LDX patternTableHi                           ; B6CD: A6 B9       ..
+ LDX pattBufferHi                             ; B6CD: A6 B9       ..
  STX SC_1                                     ; B6CF: 86 08       ..
  ASL A                                        ; B6D1: 0A          .
  ROL SC_1                                     ; B6D2: 26 08       &.
@@ -5723,18 +5734,18 @@ LB5CF = sub_CB5CE+1
 .loop_CB6FC
  DEC R                                        ; B6FC: C6 98       ..
  BEQ loop_CB6F5                               ; B6FE: F0 F5       ..
- LDA addr3                                    ; B700: A5 BA       ..
+ LDA SC2                                      ; B700: A5 BA       ..
  BNE CB706                                    ; B702: D0 02       ..
- DEC addr3_1                                  ; B704: C6 BB       ..
+ DEC SC2_1                                    ; B704: C6 BB       ..
 .CB706
- DEC addr3                                    ; B706: C6 BA       ..
+ DEC SC2                                      ; B706: C6 BA       ..
  JMP CB6BA                                    ; B708: 4C BA B6    L..
 
 .CB70B
  TYA                                          ; B70B: 98          .
  CLC                                          ; B70C: 18          .
  ADC #&25 ; '%'                               ; B70D: 69 25       i%
- STA (addr3,X)                                ; B70F: 81 BA       ..
+ STA (SC2,X)                                  ; B70F: 81 BA       ..
  JMP loop_CB6FC                               ; B711: 4C FC B6    L..
 
 .HATB
@@ -6089,20 +6100,20 @@ LB5CF = sub_CB5CE+1
 .CB99E
  CMP #&40 ; '@'                               ; B99E: C9 40       .@
  BCS CB969                                    ; B9A0: B0 C7       ..
- STA addr3                                    ; B9A2: 85 BA       ..
+ STA SC2                                      ; B9A2: 85 BA       ..
  LDA INWK_1                                   ; B9A4: A5 0A       ..
  ADC INWK_4                                   ; B9A6: 65 0D       e.
  ADC INWK_7                                   ; B9A8: 65 10       e.
  BCS CB969                                    ; B9AA: B0 BD       ..
  SEC                                          ; B9AC: 38          8
- SBC addr3                                    ; B9AD: E5 BA       ..
+ SBC SC2                                      ; B9AD: E5 BA       ..
  LSR A                                        ; B9AF: 4A          J
  LSR A                                        ; B9B0: 4A          J
- STA addr3_1                                  ; B9B1: 85 BB       ..
+ STA SC2_1                                    ; B9B1: 85 BB       ..
  LSR A                                        ; B9B3: 4A          J
  LSR A                                        ; B9B4: 4A          J
- ADC addr3_1                                  ; B9B5: 65 BB       e.
- ADC addr3                                    ; B9B7: 65 BA       e.
+ ADC SC2_1                                    ; B9B5: 65 BB       e.
+ ADC SC2                                      ; B9B7: 65 BA       e.
  CMP #&40 ; '@'                               ; B9B9: C9 40       .@
  BCS CB969                                    ; B9BB: B0 AC       ..
  LDA INWK_1                                   ; B9BD: A5 0A       ..
@@ -6113,7 +6124,7 @@ LB5CF = sub_CB5CE+1
  ADC #1                                       ; B9C6: 69 01       i.
 .CB9C8
  ADC #&7C ; '|'                               ; B9C8: 69 7C       i|
- STA addr3                                    ; B9CA: 85 BA       ..
+ STA SC2                                      ; B9CA: 85 BA       ..
  LDA INWK_7                                   ; B9CC: A5 10       ..
  LSR A                                        ; B9CE: 4A          J
  LSR A                                        ; B9CF: 4A          J
@@ -6124,7 +6135,7 @@ LB5CF = sub_CB5CE+1
  SEC                                          ; B9D7: 38          8
 .CB9D8
  ADC #&C7                                     ; B9D8: 69 C7       i.
- STA addr3_1                                  ; B9DA: 85 BB       ..
+ STA SC2_1                                    ; B9DA: 85 BB       ..
  LDA INWK_4                                   ; B9DC: A5 0D       ..
  CMP #&30 ; '0'                               ; B9DE: C9 30       .0
  BCC CB9E4                                    ; B9E0: 90 02       ..
@@ -6139,17 +6150,17 @@ LB5CF = sub_CB5CE+1
  JMP CBA6C                                    ; B9EE: 4C 6C BA    Ll.
 
 .CB9F1
- LDA addr3_1                                  ; B9F1: A5 BB       ..
+ LDA SC2_1                                    ; B9F1: A5 BB       ..
  SEC                                          ; B9F3: 38          8
  SBC #8                                       ; B9F4: E9 08       ..
- STA addr3_1                                  ; B9F6: 85 BB       ..
+ STA SC2_1                                    ; B9F6: 85 BB       ..
  LDA Y1                                       ; B9F8: A5 72       .r
  CMP #&10                                     ; B9FA: C9 10       ..
  BCC CBA24                                    ; B9FC: 90 26       .&
- LDA addr3                                    ; B9FE: A5 BA       ..
+ LDA SC2                                      ; B9FE: A5 BA       ..
  STA SPR_00_X,Y                               ; BA00: 99 03 02    ...
  STA SPR_01_X,Y                               ; BA03: 99 07 02    ...
- LDA addr3_1                                  ; BA06: A5 BB       ..
+ LDA SC2_1                                    ; BA06: A5 BB       ..
  STA SPR_00_Y,Y                               ; BA08: 99 00 02    ...
  SEC                                          ; BA0B: 38          8
  SBC #8                                       ; BA0C: E9 08       ..
@@ -6158,25 +6169,25 @@ LB5CF = sub_CB5CE+1
  AND #3                                       ; BA14: 29 03       ).
  STA SPR_00_ATTR,Y                            ; BA16: 99 02 02    ...
  STA SPR_01_ATTR,Y                            ; BA19: 99 06 02    ...
- LDA addr3_1                                  ; BA1C: A5 BB       ..
+ LDA SC2_1                                    ; BA1C: A5 BB       ..
  SBC #&10                                     ; BA1E: E9 10       ..
- STA addr3_1                                  ; BA20: 85 BB       ..
+ STA SC2_1                                    ; BA20: 85 BB       ..
  BNE CBA4F                                    ; BA22: D0 2B       .+
 .CBA24
  CMP #8                                       ; BA24: C9 08       ..
  BCC CBA47                                    ; BA26: 90 1F       ..
  LDA #&F0                                     ; BA28: A9 F0       ..
  STA SPR_00_Y,Y                               ; BA2A: 99 00 02    ...
- LDA addr3                                    ; BA2D: A5 BA       ..
+ LDA SC2                                      ; BA2D: A5 BA       ..
  STA SPR_01_X,Y                               ; BA2F: 99 07 02    ...
- LDA addr3_1                                  ; BA32: A5 BB       ..
+ LDA SC2_1                                    ; BA32: A5 BB       ..
  STA SPR_01_Y,Y                               ; BA34: 99 04 02    ...
  LDA SPR_00_ATTR,Y                            ; BA37: B9 02 02    ...
  AND #3                                       ; BA3A: 29 03       ).
  STA SPR_01_ATTR,Y                            ; BA3C: 99 06 02    ...
- LDA addr3_1                                  ; BA3F: A5 BB       ..
+ LDA SC2_1                                    ; BA3F: A5 BB       ..
  SBC #8                                       ; BA41: E9 08       ..
- STA addr3_1                                  ; BA43: 85 BB       ..
+ STA SC2_1                                    ; BA43: 85 BB       ..
  BNE CBA4F                                    ; BA45: D0 08       ..
 .CBA47
  LDA #&F0                                     ; BA47: A9 F0       ..
@@ -6191,28 +6202,28 @@ LB5CF = sub_CB5CE+1
  LDA SPR_00_ATTR,Y                            ; BA59: B9 02 02    ...
  AND #3                                       ; BA5C: 29 03       ).
  STA SPR_02_ATTR,Y                            ; BA5E: 99 0A 02    ...
- LDA addr3                                    ; BA61: A5 BA       ..
+ LDA SC2                                      ; BA61: A5 BA       ..
  STA SPR_02_X,Y                               ; BA63: 99 0B 02    ...
- LDA addr3_1                                  ; BA66: A5 BB       ..
+ LDA SC2_1                                    ; BA66: A5 BB       ..
  STA SPR_02_Y,Y                               ; BA68: 99 08 02    ...
  RTS                                          ; BA6B: 60          `
 
 .CBA6C
  CLC                                          ; BA6C: 18          .
- ADC addr3_1                                  ; BA6D: 65 BB       e.
+ ADC SC2_1                                    ; BA6D: 65 BB       e.
  CMP #&DC                                     ; BA6F: C9 DC       ..
  BCC CBA75                                    ; BA71: 90 02       ..
  LDA #&DC                                     ; BA73: A9 DC       ..
 .CBA75
  SEC                                          ; BA75: 38          8
- SBC addr3_1                                  ; BA76: E5 BB       ..
+ SBC SC2_1                                    ; BA76: E5 BB       ..
  STA Y1                                       ; BA78: 85 72       .r
  CMP #&10                                     ; BA7A: C9 10       ..
  BCC CBAA5                                    ; BA7C: 90 27       .'
- LDA addr3                                    ; BA7E: A5 BA       ..
+ LDA SC2                                      ; BA7E: A5 BA       ..
  STA SPR_00_X,Y                               ; BA80: 99 03 02    ...
  STA SPR_01_X,Y                               ; BA83: 99 07 02    ...
- LDA addr3_1                                  ; BA86: A5 BB       ..
+ LDA SC2_1                                    ; BA86: A5 BB       ..
  STA SPR_00_Y,Y                               ; BA88: 99 00 02    ...
  CLC                                          ; BA8B: 18          .
  ADC #8                                       ; BA8C: 69 08       i.
@@ -6221,26 +6232,26 @@ LB5CF = sub_CB5CE+1
  ORA #&20 ; ' '                               ; BA94: 09 20       .
  STA SPR_00_ATTR,Y                            ; BA96: 99 02 02    ...
  STA SPR_01_ATTR,Y                            ; BA99: 99 06 02    ...
- LDA addr3_1                                  ; BA9C: A5 BB       ..
+ LDA SC2_1                                    ; BA9C: A5 BB       ..
  CLC                                          ; BA9E: 18          .
  ADC #&10                                     ; BA9F: 69 10       i.
- STA addr3_1                                  ; BAA1: 85 BB       ..
+ STA SC2_1                                    ; BAA1: 85 BB       ..
  BNE CBAD0                                    ; BAA3: D0 2B       .+
 .CBAA5
  CMP #8                                       ; BAA5: C9 08       ..
  BCC CBAC8                                    ; BAA7: 90 1F       ..
  LDA #&F0                                     ; BAA9: A9 F0       ..
  STA SPR_00_Y,Y                               ; BAAB: 99 00 02    ...
- LDA addr3                                    ; BAAE: A5 BA       ..
+ LDA SC2                                      ; BAAE: A5 BA       ..
  STA SPR_01_X,Y                               ; BAB0: 99 07 02    ...
- LDA addr3_1                                  ; BAB3: A5 BB       ..
+ LDA SC2_1                                    ; BAB3: A5 BB       ..
  STA SPR_01_Y,Y                               ; BAB5: 99 04 02    ...
  LDA SPR_00_ATTR,Y                            ; BAB8: B9 02 02    ...
  ORA #&20 ; ' '                               ; BABB: 09 20       .
  STA SPR_01_ATTR,Y                            ; BABD: 99 06 02    ...
- LDA addr3_1                                  ; BAC0: A5 BB       ..
+ LDA SC2_1                                    ; BAC0: A5 BB       ..
  ADC #7                                       ; BAC2: 69 07       i.
- STA addr3_1                                  ; BAC4: 85 BB       ..
+ STA SC2_1                                    ; BAC4: 85 BB       ..
  BNE CBAD0                                    ; BAC6: D0 08       ..
 .CBAC8
  LDA #&F0                                     ; BAC8: A9 F0       ..
@@ -6255,9 +6266,9 @@ LB5CF = sub_CB5CE+1
  LDA SPR_00_ATTR,Y                            ; BADA: B9 02 02    ...
  ORA #&E0                                     ; BADD: 09 E0       ..
  STA SPR_02_ATTR,Y                            ; BADF: 99 0A 02    ...
- LDA addr3                                    ; BAE2: A5 BA       ..
+ LDA SC2                                      ; BAE2: A5 BA       ..
  STA SPR_02_X,Y                               ; BAE4: 99 0B 02    ...
- LDA addr3_1                                  ; BAE7: A5 BB       ..
+ LDA SC2_1                                    ; BAE7: A5 BB       ..
  STA SPR_02_Y,Y                               ; BAE9: 99 08 02    ...
  RTS                                          ; BAEC: 60          `
 

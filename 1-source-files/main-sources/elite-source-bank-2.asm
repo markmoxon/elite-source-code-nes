@@ -671,7 +671,7 @@
 
  SKIP 1                 \ ???
 
-.addr3
+.SC2
 
  SKIP 2                 \ ???
 
@@ -17138,9 +17138,9 @@ ENDMACRO
  LDA RUPLA_HI,X
  STA SC+1
  LDA RUGAL_LO,X
- STA addr3
+ STA SC2
  LDA RUGAL_HI,X
- STA addr3+1
+ STA SC2+1
 
  LDY NRU,X
 
@@ -17149,7 +17149,7 @@ ENDMACRO
  LDA (SC),Y
  CMP L049F
  BNE PD2
- LDA (addr3),Y
+ LDA (SC2),Y
 
  AND #%01111111         \ Extract bits 0-6 of A
 
@@ -17157,7 +17157,7 @@ ENDMACRO
  BNE PD2                \ number, jump to PD2 to keep looping through the system
                         \ numbers in RUPLA
 
- LDA (addr3),Y          \ ???
+ LDA (SC2),Y          \ ???
  BMI PD3
 
  LDA TP                 \ Fetch bit 0 of TP into the C flag, and skip to PD1 if
@@ -18276,7 +18276,7 @@ ENDMACRO
  CMP #&FF                                         ; B6ED: C9 FF       ..
  BEQ CB75B                                        ; B6EF: F0 6A       .j
  STA (SC),Y                                       ; B6F1: 91 07       ..
- STA (addr3),Y                                    ; B6F3: 91 BA       ..
+ STA (SC2),Y                                    ; B6F3: 91 BA       ..
  INC tileNumber                                   ; B6F5: E6 B8       ..
  LDY L0037                                        ; B6F7: A4 37       .7
  DEY                                              ; B6F9: 88          .
@@ -18289,14 +18289,14 @@ ENDMACRO
 
  TAY                                              ; B702: A8          .
  LDX #&0C                                         ; B703: A2 0C       ..
- STX addr3+1                                        ; B705: 86 BB       ..
+ STX SC2+1                                        ; B705: 86 BB       ..
  ASL A                                            ; B707: 0A          .
- ROL addr3+1                                        ; B708: 26 BB       &.
+ ROL SC2+1                                        ; B708: 26 BB       &.
  ASL A                                            ; B70A: 0A          .
- ROL addr3+1                                        ; B70B: 26 BB       &.
+ ROL SC2+1                                        ; B70B: 26 BB       &.
  ASL A                                            ; B70D: 0A          .
- ROL addr3+1                                        ; B70E: 26 BB       &.
- STA addr3                                        ; B710: 85 BA       ..
+ ROL SC2+1                                        ; B70E: 26 BB       &.
+ STA SC2                                        ; B710: 85 BA       ..
  TYA                                              ; B712: 98          .
  LDX #&0D                                         ; B713: A2 0D       ..
  STX SC+1                                         ; B715: 86 08       ..
@@ -18310,34 +18310,34 @@ ENDMACRO
  LDY #0                                           ; B722: A0 00       ..
  LDA (P+1),Y                                      ; B724: B1 30       .0
  STA (SC),Y                                       ; B726: 91 07       ..
- STA (addr3),Y                                    ; B728: 91 BA       ..
+ STA (SC2),Y                                    ; B728: 91 BA       ..
  INY                                              ; B72A: C8          .
  LDA (P+1),Y                                      ; B72B: B1 30       .0
  STA (SC),Y                                       ; B72D: 91 07       ..
- STA (addr3),Y                                    ; B72F: 91 BA       ..
+ STA (SC2),Y                                    ; B72F: 91 BA       ..
  INY                                              ; B731: C8          .
  LDA (P+1),Y                                      ; B732: B1 30       .0
  STA (SC),Y                                       ; B734: 91 07       ..
- STA (addr3),Y                                    ; B736: 91 BA       ..
+ STA (SC2),Y                                    ; B736: 91 BA       ..
  INY                                              ; B738: C8          .
  LDA (P+1),Y                                      ; B739: B1 30       .0
  STA (SC),Y                                       ; B73B: 91 07       ..
- STA (addr3),Y                                    ; B73D: 91 BA       ..
+ STA (SC2),Y                                    ; B73D: 91 BA       ..
  INY                                              ; B73F: C8          .
  LDA (P+1),Y                                      ; B740: B1 30       .0
  STA (SC),Y                                       ; B742: 91 07       ..
- STA (addr3),Y                                    ; B744: 91 BA       ..
+ STA (SC2),Y                                    ; B744: 91 BA       ..
  INY                                              ; B746: C8          .
  LDA (P+1),Y                                      ; B747: B1 30       .0
  STA (SC),Y                                       ; B749: 91 07       ..
- STA (addr3),Y                                    ; B74B: 91 BA       ..
+ STA (SC2),Y                                    ; B74B: 91 BA       ..
  INY                                              ; B74D: C8          .
  LDA (P+1),Y                                      ; B74E: B1 30       .0
  STA (SC),Y                                       ; B750: 91 07       ..
- STA (addr3),Y                                    ; B752: 91 BA       ..
+ STA (SC2),Y                                    ; B752: 91 BA       ..
  INY                                              ; B754: C8          .
  LDA (P+1),Y                                      ; B755: B1 30       .0
- STA (addr3),Y                                    ; B757: 91 BA       ..
+ STA (SC2),Y                                    ; B757: 91 BA       ..
  STA (SC),Y                                       ; B759: 91 07       ..
 
 .CB75B
@@ -18411,7 +18411,7 @@ ENDMACRO
  DEC XC                                           ; B7C4: C6 32       .2
  LDA #0                                           ; B7C6: A9 00       ..
  STA (SC),Y                                       ; B7C8: 91 07       ..
- STA (addr3),Y                                    ; B7CA: 91 BA       ..
+ STA (SC2),Y                                    ; B7CA: 91 BA       ..
  JMP CB75B                                        ; B7CC: 4C 5B B7    L[.
 
 .CB7CF
@@ -18432,7 +18432,7 @@ ENDMACRO
  LDY XC                                           ; B7DB: A4 32       .2
  DEY                                              ; B7DD: 88          .
  STA (SC),Y                                       ; B7DE: 91 07       ..
- STA (addr3),Y                                    ; B7E0: 91 BA       ..
+ STA (SC2),Y                                    ; B7E0: 91 BA       ..
  JMP CB75B                                        ; B7E2: 4C 5B B7    L[.
 
 .CB7E5

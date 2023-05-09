@@ -184,10 +184,18 @@ messXC            = &00B4
 L00B5             = &00B5
 newzp             = &00B6
 tileNumber        = &00B8
-patternTableHi    = &00B9
-addr3             = &00BA
-addr3_1           = &00BB
-L00C0             = &00C0
+pattBufferHi      = &00B9
+SC2               = &00BA
+SC2_1             = &00BB
+tileIndex         = &00C0
+tileNumber0       = &00C1
+tileNumber0_1     = &00C2
+tileNumber1       = &00C3
+tileNumber1_1     = &00C4
+tileNumber2       = &00C5
+tileNumber2_2     = &00C6
+tileNumber3       = &00C7
+tileNumber3_1     = &00C8
 L00CC             = &00CC
 L00CD             = &00CD
 L00CE             = &00CE
@@ -195,7 +203,7 @@ L00D2             = &00D2
 addr1             = &00D4
 addr1_1           = &00D5
 L00D8             = &00D8
-nametableHi       = &00E6
+nameBufferHi      = &00E6
 dashboardSwitch   = &00E9
 addr4             = &00EB
 addr4_1           = &00EC
@@ -574,6 +582,7 @@ DLY               = &045D
 L045F             = &045F
 L0464             = &0464
 L0465             = &0465
+pictureTile       = &046C
 L046D             = &046D
 boxEdge1          = &046E
 boxEdge2          = &046F
@@ -597,7 +606,7 @@ QQ24              = &0487
 QQ25              = &0488
 QQ28              = &0489
 QQ29              = &048A
-L048B             = &048B
+systemFlag        = &048B
 gov               = &048C
 tek               = &048D
 QQ2               = &048E
@@ -706,9 +715,9 @@ OAM_DMA           = &4014
 APU_FLAGS         = &4015
 CONTROLLER_1      = &4016
 CONTROLLER_2      = &4017
-patternTable0     = &6000
-patternTable1     = &6800
-nametable0        = &7000
+pattBuffer0       = &6000
+pattBuffer1       = &6800
+nameBuffer0       = &7000
 L7280             = &7280
 L7281             = &7281
 L72A0             = &72A0
@@ -723,7 +732,7 @@ L7320             = &7320
 L7321             = &7321
 L7340             = &7340
 L7341             = &7341
-nametable1        = &7400
+nameBuffer1       = &7400
 LC006             = &C006
 Spercent          = &C007
 ResetVariables    = &C03E
@@ -766,8 +775,8 @@ UNIV_1            = &CE7F
 GINF              = &CE90
 subm_CE9E         = &CE9E
 subm_CEA5         = &CEA5
-nametableAddrHi   = &CED0
-patternAddrHi     = &CED2
+nameBufferAddr    = &CED0
+pattBufferAddr    = &CED2
 IRQ               = &CED4
 NMI               = &CED5
 SetPalette        = &CF2E
@@ -1986,7 +1995,7 @@ SetupMMC1         = &FB89
  LDA QQ11                                     ; 870C: A5 9E       ..
  BNE C874C                                    ; 870E: D0 3C       .<
  JSR CheckDashboardA                          ; 8710: 20 7D EC     }.
- LDA L00C0                                    ; 8713: A5 C0       ..
+ LDA tileIndex                                ; 8713: A5 C0       ..
  BNE C872A                                    ; 8715: D0 13       ..
  LDA L046D                                    ; 8717: AD 6D 04    .m.
  EOR #&FF                                     ; 871A: 49 FF       I.
@@ -2007,7 +2016,7 @@ SetupMMC1         = &FB89
  JSR COMPAS                                   ; 8738: 20 16 AA     ..
  JSR DrawPitchRollBars                        ; 873B: 20 91 8B     ..
  JSR CA2C3_b6                                 ; 873E: 20 C0 EF     ..
- LDX L00C0                                    ; 8741: A6 C0       ..
+ LDX tileIndex                                ; 8741: A6 C0       ..
  LDA L03EF,X                                  ; 8743: BD EF 03    ...
  ORA #&40 ; '@'                               ; 8746: 09 40       .@
  STA L03EF,X                                  ; 8748: 9D EF 03    ...
@@ -2262,8 +2271,8 @@ SetupMMC1         = &FB89
  JSR CB882_b4                                 ; 8911: 20 A7 EE     ..
  LDA S                                        ; 8914: A5 99       ..
  ORA #&80                                     ; 8916: 09 80       ..
- CMP L048B                                    ; 8918: CD 8B 04    ...
- STA L048B                                    ; 891B: 8D 8B 04    ...
+ CMP systemFlag                               ; 8918: CD 8B 04    ...
+ STA systemFlag                               ; 891B: 8D 8B 04    ...
  BEQ C8923                                    ; 891E: F0 03       ..
  JSR LEB8C                                    ; 8920: 20 8C EB     ..
 .C8923
@@ -2648,7 +2657,7 @@ SetupMMC1         = &FB89
  LSR A                                        ; 8B98: 4A          J
  CLC                                          ; 8B99: 18          .
  ADC #&D8                                     ; 8B9A: 69 D8       i.
- STA addr3                                    ; 8B9C: 85 BA       ..
+ STA SC2                                      ; 8B9C: 85 BA       ..
  LDY #&1D                                     ; 8B9E: A0 1D       ..
  LDA #&0B                                     ; 8BA0: A9 0B       ..
  JSR sub_C8BB4                                ; 8BA2: 20 B4 8B     ..
@@ -2658,14 +2667,14 @@ SetupMMC1         = &FB89
  LSR A                                        ; 8BAA: 4A          J
  CLC                                          ; 8BAB: 18          .
  ADC #&D8                                     ; 8BAC: 69 D8       i.
- STA addr3                                    ; 8BAE: 85 BA       ..
+ STA SC2                                      ; 8BAE: 85 BA       ..
  LDY #&25 ; '%'                               ; 8BB0: A0 25       .%
  LDA #&0C                                     ; 8BB2: A9 0C       ..
 .sub_C8BB4
  ASL A                                        ; 8BB4: 0A          .
  ASL A                                        ; 8BB5: 0A          .
  TAX                                          ; 8BB6: AA          .
- LDA addr3                                    ; 8BB7: A5 BA       ..
+ LDA SC2                                      ; 8BB7: A5 BA       ..
  SEC                                          ; 8BB9: 38          8
  SBC #4                                       ; 8BBA: E9 04       ..
  STA SPR_00_X,X                               ; 8BBC: 9D 03 02    ...
@@ -4954,13 +4963,13 @@ M32_1 = M32+1
  LDA #1                                       ; 9BD4: A9 01       ..
  STA SPR_15_ATTR                              ; 9BD6: 8D 3E 02    .>.
  LDA QQ19                                     ; 9BD9: AD 4D 04    .M.
- STA addr3                                    ; 9BDC: 85 BA       ..
+ STA SC2                                      ; 9BDC: 85 BA       ..
  LDY QQ19_1                                   ; 9BDE: AC 4E 04    .N.
  LDA #&0F                                     ; 9BE1: A9 0F       ..
  ASL A                                        ; 9BE3: 0A          .
  ASL A                                        ; 9BE4: 0A          .
  TAX                                          ; 9BE5: AA          .
- LDA addr3                                    ; 9BE6: A5 BA       ..
+ LDA SC2                                      ; 9BE6: A5 BA       ..
  SEC                                          ; 9BE8: 38          8
  SBC #4                                       ; 9BE9: E9 04       ..
  STA SPR_00_X,X                               ; 9BEB: 9D 03 02    ...
@@ -7177,7 +7186,7 @@ M32_1 = M32+1
  STA XX0_1                                    ; AB0E: 85 60       .`
  LDA XX21m2,Y                                 ; AB10: B9 3E C5    .>.
  STA XX0                                      ; AB13: 85 5F       ._
- STX addr3                                    ; AB15: 86 BA       ..
+ STX SC2                                      ; AB15: 86 BA       ..
  LDX T                                        ; AB17: A6 9A       ..
  LDA #0                                       ; AB19: A9 00       ..
  STA INWK_33                                  ; AB1B: 85 2A       .*
@@ -7205,7 +7214,7 @@ M32_1 = M32+1
  LDX INWK_33                                  ; AB3E: A6 2A       .*
  STA L037E,X                                  ; AB40: 9D 7E 03    .~.
 .CAB43
- LDX addr3                                    ; AB43: A6 BA       ..
+ LDX SC2                                      ; AB43: A6 BA       ..
 .NW6
  LDY #&0E                                     ; AB45: A0 0E       ..
  JSR LDA_XX0_Y                                ; AB47: 20 8D EC     ..

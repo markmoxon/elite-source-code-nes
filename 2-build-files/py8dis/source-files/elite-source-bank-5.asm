@@ -175,12 +175,21 @@ Yx2M1             = &00B3
 messXC            = &00B4
 newzp             = &00B6
 tileNumber        = &00B8
-patternTableHi    = &00B9
-addr3             = &00BA
-addr3_1           = &00BB
+pattBufferHi      = &00B9
+SC2               = &00BA
+SC2_1             = &00BB
+tileIndex         = &00C0
+tileNumber0       = &00C1
+tileNumber0_1     = &00C2
+tileNumber1       = &00C3
+tileNumber1_1     = &00C4
+tileNumber2       = &00C5
+tileNumber2_2     = &00C6
+tileNumber3       = &00C7
+tileNumber3_1     = &00C8
 addr1             = &00D4
 addr1_1           = &00D5
-nametableHi       = &00E6
+nameBufferHi      = &00E6
 dashboardSwitch   = &00E9
 addr4             = &00EB
 addr4_1           = &00EC
@@ -517,7 +526,7 @@ K2_1              = &045A
 K2_2              = &045B
 K2_3              = &045C
 DLY               = &045D
-L046C             = &046C
+pictureTile       = &046C
 boxEdge1          = &046E
 boxEdge2          = &046F
 scanController2   = &0475
@@ -536,7 +545,7 @@ QQ24              = &0487
 QQ25              = &0488
 QQ28              = &0489
 QQ29              = &048A
-L048B             = &048B
+systemFlag        = &048B
 gov               = &048C
 tek               = &048D
 QQ2               = &048E
@@ -610,10 +619,10 @@ OAM_DMA           = &4014
 APU_FLAGS         = &4015
 CONTROLLER_1      = &4016
 CONTROLLER_2      = &4017
-patternTable0     = &6000
-patternTable1     = &6800
-nametable0        = &7000
-nametable1        = &7400
+pattBuffer0       = &6000
+pattBuffer1       = &6800
+nameBuffer0       = &7000
+nameBuffer1       = &7400
 LC006             = &C006
 Spercent          = &C007
 ResetVariables    = &C03E
@@ -650,8 +659,8 @@ UNIV_1            = &CE7F
 GINF              = &CE90
 subm_CE9E         = &CE9E
 subm_CEA5         = &CEA5
-nametableAddrHi   = &CED0
-patternAddrHi     = &CED2
+nameBufferAddr    = &CED0
+pattBufferAddr    = &CED2
 IRQ               = &CED4
 NMI               = &CED5
 SetPalette        = &CF2E
@@ -2889,16 +2898,16 @@ SetupMMC1         = &FB89
  EQUB &02, &10, &80, &00, &21, &02, &09, &21  ; BE73: 02 10 80... ...
  EQUB &04, &20, &00, &21, &02, &10, &40, &09  ; BE7B: 04 20 00... . .
  EQUB &32, &01, &04, &20, &80, &00, &21, &15  ; BE83: 32 01 04... 2..
- EQUB &00, &21, &05, &3F, &43, &00, &63, &00  ; BE8B: 00 21 05... .!.
- EQUB &70, &00, &79, &00, &72, &00, &69, &00  ; BE93: 70 00 79... p.y
- EQUB &67, &00, &68, &00, &74, &00, &20, &00  ; BE9B: 67 00 68... g.h
- EQUB &28, &00, &43, &00, &29, &00, &20, &00  ; BEA3: 28 00 43... (.C
- EQUB &44, &00, &2E, &00, &42, &00, &72, &00  ; BEAB: 44 00 2E... D..
- EQUB &61, &00, &62, &00, &65, &00, &6E, &00  ; BEB3: 61 00 62... a.b
- EQUB &2C, &00, &20, &00, &49, &00, &2E, &00  ; BEBB: 2C 00 20... ,.
- EQUB &42, &00, &65, &00, &6C, &00, &6C, &00  ; BEC3: 42 00 65... B.e
- EQUB &20, &00, &31, &00, &39, &00, &39, &00  ; BECB: 20 00 31...  .1
- EQUB &31, &00, &2E, &00                      ; BED3: 31 00 2E... 1..
+ EQUB &00, &21, &05, &3F                      ; BE8B: 00 21 05... .!.
+.LBE8F
+ EQUS "C", 0, "c", 0, "p", 0, "y", 0, "r", 0  ; BE8F: 43 00 63... C.c
+ EQUS "i", 0, "g", 0, "h", 0, "t", 0, " ", 0  ; BE99: 69 00 67... i.g
+ EQUS "(", 0, "C", 0, ")", 0, " ", 0, "D", 0  ; BEA3: 28 00 43... (.C
+ EQUS ".", 0, "B", 0, "r", 0, "a", 0, "b", 0  ; BEAD: 2E 00 42... ..B
+ EQUS "e", 0, "n", 0, ",", 0, " ", 0, "I", 0  ; BEB7: 65 00 6E... e.n
+ EQUS ".", 0, "B", 0, "e", 0, "l", 0, "l", 0  ; BEC1: 2E 00 42... ..B
+ EQUS " ", 0, "1", 0, "9", 0, "9", 0, "1", 0  ; BECB: 20 00 31...  .1
+ EQUS ".", 0                                  ; BED5: 2E 00       ..
 
 ; ******************************************************************************
 .SetSystemImage
@@ -2914,7 +2923,7 @@ SetupMMC1         = &FB89
 .GetSystemImage
  LDA #0                                       ; BEEA: A9 00       ..
  STA SC_1                                     ; BEEC: 85 08       ..
- LDA L046C                                    ; BEEE: AD 6C 04    .l.
+ LDA pictureTile                              ; BEEE: AD 6C 04    .l.
  ASL A                                        ; BEF1: 0A          .
  ROL SC_1                                     ; BEF2: 26 08       &.
  ASL A                                        ; BEF4: 0A          .
@@ -2922,10 +2931,10 @@ SetupMMC1         = &FB89
  ASL A                                        ; BEF7: 0A          .
  ROL SC_1                                     ; BEF8: 26 08       &.
  STA SC                                       ; BEFA: 85 07       ..
- STA addr3                                    ; BEFC: 85 BA       ..
+ STA SC2                                      ; BEFC: 85 BA       ..
  LDA SC_1                                     ; BEFE: A5 08       ..
  ADC #&68 ; 'h'                               ; BF00: 69 68       ih
- STA addr3_1                                  ; BF02: 85 BB       ..
+ STA SC2_1                                    ; BF02: 85 BB       ..
  LDA SC_1                                     ; BF04: A5 08       ..
  ADC #&60 ; '`'                               ; BF06: 69 60       i`
  STA SC_1                                     ; BF08: 85 08       ..
@@ -2941,7 +2950,7 @@ SetupMMC1         = &FB89
 .CBF1C
  TXA                                          ; BF1C: 8A          .
  ORA #&C0                                     ; BF1D: 09 C0       ..
- STA L048B                                    ; BF1F: 8D 8B 04    ...
+ STA systemFlag                               ; BF1F: 8D 8B 04    ...
  TXA                                          ; BF22: 8A          .
  ASL A                                        ; BF23: 0A          .
  TAX                                          ; BF24: AA          .
@@ -2952,9 +2961,9 @@ SetupMMC1         = &FB89
  ADC #&80                                     ; BF2F: 69 80       i.
  STA V_1                                      ; BF31: 85 64       .d
  JSR UnpackToRAM                              ; BF33: 20 2D F5     -.
- LDA addr3                                    ; BF36: A5 BA       ..
+ LDA SC2                                      ; BF36: A5 BA       ..
  STA SC                                       ; BF38: 85 07       ..
- LDA addr3_1                                  ; BF3A: A5 BB       ..
+ LDA SC2_1                                    ; BF3A: A5 BB       ..
  STA SC_1                                     ; BF3C: 85 08       ..
  JMP UnpackToRAM                              ; BF3E: 4C 2D F5    L-.
 

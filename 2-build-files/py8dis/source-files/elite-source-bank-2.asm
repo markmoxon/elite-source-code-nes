@@ -176,16 +176,25 @@ Yx2M1             = &00B3
 messXC            = &00B4
 newzp             = &00B6
 tileNumber        = &00B8
-patternTableHi    = &00B9
-addr3             = &00BA
-addr3_1           = &00BB
+pattBufferHi      = &00B9
+SC2               = &00BA
+SC2_1             = &00BB
+tileIndex         = &00C0
+tileNumber0       = &00C1
+tileNumber0_1     = &00C2
+tileNumber1       = &00C3
+tileNumber1_1     = &00C4
+tileNumber2       = &00C5
+tileNumber2_2     = &00C6
+tileNumber3       = &00C7
+tileNumber3_1     = &00C8
 L00CC             = &00CC
 L00D2             = &00D2
 addr1             = &00D4
 addr1_1           = &00D5
 L00D8             = &00D8
 L00D9             = &00D9
-nametableHi       = &00E6
+nameBufferHi      = &00E6
 dashboardSwitch   = &00E9
 addr4             = &00EB
 addr4_1           = &00EC
@@ -522,6 +531,7 @@ K2_1              = &045A
 K2_2              = &045B
 K2_3              = &045C
 DLY               = &045D
+pictureTile       = &046C
 boxEdge1          = &046E
 boxEdge2          = &046F
 scanController2   = &0475
@@ -540,6 +550,7 @@ QQ24              = &0487
 QQ25              = &0488
 QQ28              = &0489
 QQ29              = &048A
+systemFlag        = &048B
 gov               = &048C
 tek               = &048D
 QQ2               = &048E
@@ -615,10 +626,10 @@ OAM_DMA           = &4014
 APU_FLAGS         = &4015
 CONTROLLER_1      = &4016
 CONTROLLER_2      = &4017
-patternTable0     = &6000
-patternTable1     = &6800
-nametable0        = &7000
-nametable1        = &7400
+pattBuffer0       = &6000
+pattBuffer1       = &6800
+nameBuffer0       = &7000
+nameBuffer1       = &7400
 L80A9             = &80A9
 LB0A9             = &B0A9
 LC006             = &C006
@@ -657,8 +668,8 @@ UNIV_1            = &CE7F
 GINF              = &CE90
 subm_CE9E         = &CE9E
 subm_CEA5         = &CEA5
-nametableAddrHi   = &CED0
-patternAddrHi     = &CED2
+nameBufferAddr    = &CED0
+pattBufferAddr    = &CED2
 IRQ               = &CED4
 NMI               = &CED5
 SetPalette        = &CF2E
@@ -2912,19 +2923,19 @@ JMTBm1 = sub_CB203+2
  LDA RUPLA_HI,X                               ; B3FC: BD D8 B3    ...
  STA SC_1                                     ; B3FF: 85 08       ..
  LDA RUGAL_LO,X                               ; B401: BD DC B3    ...
- STA addr3                                    ; B404: 85 BA       ..
+ STA SC2                                      ; B404: 85 BA       ..
  LDA RUGAL_HI,X                               ; B406: BD E0 B3    ...
- STA addr3_1                                  ; B409: 85 BB       ..
+ STA SC2_1                                    ; B409: 85 BB       ..
  LDY NRU,X                                    ; B40B: BC E4 B3    ...
 .CB40E
  LDA (SC),Y                                   ; B40E: B1 07       ..
  CMP L049F                                    ; B410: CD 9F 04    ...
  BNE CB43B                                    ; B413: D0 26       .&
- LDA (addr3),Y                                ; B415: B1 BA       ..
+ LDA (SC2),Y                                  ; B415: B1 BA       ..
  AND #&7F                                     ; B417: 29 7F       ).
  CMP GCNT                                     ; B419: CD A7 03    ...
  BNE CB43B                                    ; B41C: D0 1D       ..
- LDA (addr3),Y                                ; B41E: B1 BA       ..
+ LDA (SC2),Y                                  ; B41E: B1 BA       ..
  BMI CB42E                                    ; B420: 30 0C       0.
  LDA TP                                       ; B422: AD 9E 03    ...
  LSR A                                        ; B425: 4A          J
@@ -3383,7 +3394,7 @@ JMTBm1 = sub_CB203+2
  CMP #&FF                                     ; B6ED: C9 FF       ..
  BEQ CB75B                                    ; B6EF: F0 6A       .j
  STA (SC),Y                                   ; B6F1: 91 07       ..
- STA (addr3),Y                                ; B6F3: 91 BA       ..
+ STA (SC2),Y                                  ; B6F3: 91 BA       ..
  INC tileNumber                               ; B6F5: E6 B8       ..
  LDY L0037                                    ; B6F7: A4 37       .7
  DEY                                          ; B6F9: 88          .
@@ -3395,14 +3406,14 @@ JMTBm1 = sub_CB203+2
 .CB702
  TAY                                          ; B702: A8          .
  LDX #&0C                                     ; B703: A2 0C       ..
- STX addr3_1                                  ; B705: 86 BB       ..
+ STX SC2_1                                    ; B705: 86 BB       ..
  ASL A                                        ; B707: 0A          .
- ROL addr3_1                                  ; B708: 26 BB       &.
+ ROL SC2_1                                    ; B708: 26 BB       &.
  ASL A                                        ; B70A: 0A          .
- ROL addr3_1                                  ; B70B: 26 BB       &.
+ ROL SC2_1                                    ; B70B: 26 BB       &.
  ASL A                                        ; B70D: 0A          .
- ROL addr3_1                                  ; B70E: 26 BB       &.
- STA addr3                                    ; B710: 85 BA       ..
+ ROL SC2_1                                    ; B70E: 26 BB       &.
+ STA SC2                                      ; B710: 85 BA       ..
  TYA                                          ; B712: 98          .
  LDX #&0D                                     ; B713: A2 0D       ..
  STX SC_1                                     ; B715: 86 08       ..
@@ -3416,34 +3427,34 @@ JMTBm1 = sub_CB203+2
  LDY #0                                       ; B722: A0 00       ..
  LDA (P_1),Y                                  ; B724: B1 30       .0
  STA (SC),Y                                   ; B726: 91 07       ..
- STA (addr3),Y                                ; B728: 91 BA       ..
+ STA (SC2),Y                                  ; B728: 91 BA       ..
  INY                                          ; B72A: C8          .
  LDA (P_1),Y                                  ; B72B: B1 30       .0
  STA (SC),Y                                   ; B72D: 91 07       ..
- STA (addr3),Y                                ; B72F: 91 BA       ..
+ STA (SC2),Y                                  ; B72F: 91 BA       ..
  INY                                          ; B731: C8          .
  LDA (P_1),Y                                  ; B732: B1 30       .0
  STA (SC),Y                                   ; B734: 91 07       ..
- STA (addr3),Y                                ; B736: 91 BA       ..
+ STA (SC2),Y                                  ; B736: 91 BA       ..
  INY                                          ; B738: C8          .
  LDA (P_1),Y                                  ; B739: B1 30       .0
  STA (SC),Y                                   ; B73B: 91 07       ..
- STA (addr3),Y                                ; B73D: 91 BA       ..
+ STA (SC2),Y                                  ; B73D: 91 BA       ..
  INY                                          ; B73F: C8          .
  LDA (P_1),Y                                  ; B740: B1 30       .0
  STA (SC),Y                                   ; B742: 91 07       ..
- STA (addr3),Y                                ; B744: 91 BA       ..
+ STA (SC2),Y                                  ; B744: 91 BA       ..
  INY                                          ; B746: C8          .
  LDA (P_1),Y                                  ; B747: B1 30       .0
  STA (SC),Y                                   ; B749: 91 07       ..
- STA (addr3),Y                                ; B74B: 91 BA       ..
+ STA (SC2),Y                                  ; B74B: 91 BA       ..
  INY                                          ; B74D: C8          .
  LDA (P_1),Y                                  ; B74E: B1 30       .0
  STA (SC),Y                                   ; B750: 91 07       ..
- STA (addr3),Y                                ; B752: 91 BA       ..
+ STA (SC2),Y                                  ; B752: 91 BA       ..
  INY                                          ; B754: C8          .
  LDA (P_1),Y                                  ; B755: B1 30       .0
- STA (addr3),Y                                ; B757: 91 BA       ..
+ STA (SC2),Y                                  ; B757: 91 BA       ..
  STA (SC),Y                                   ; B759: 91 07       ..
 .CB75B
  LDY YSAV2                                    ; B75B: AC 82 04    ...
@@ -3514,7 +3525,7 @@ JMTBm1 = sub_CB203+2
  DEC XC                                       ; B7C4: C6 32       .2
  LDA #0                                       ; B7C6: A9 00       ..
  STA (SC),Y                                   ; B7C8: 91 07       ..
- STA (addr3),Y                                ; B7CA: 91 BA       ..
+ STA (SC2),Y                                  ; B7CA: 91 BA       ..
  JMP CB75B                                    ; B7CC: 4C 5B B7    L[.
 
 .CB7CF
@@ -3530,7 +3541,7 @@ JMTBm1 = sub_CB203+2
  LDY XC                                       ; B7DB: A4 32       .2
  DEY                                          ; B7DD: 88          .
  STA (SC),Y                                   ; B7DE: 91 07       ..
- STA (addr3),Y                                ; B7E0: 91 BA       ..
+ STA (SC2),Y                                  ; B7E0: 91 BA       ..
  JMP CB75B                                    ; B7E2: 4C 5B B7    L[.
 
 .CB7E5
@@ -3543,7 +3554,7 @@ JMTBm1 = sub_CB203+2
  LDA #0                                       ; B7EF: A9 00       ..
  BEQ loop_CB7DB                               ; B7F1: F0 E8       ..
 .CB7F3
- LDX patternTableHi                           ; B7F3: A6 B9       ..
+ LDX pattBufferHi                             ; B7F3: A6 B9       ..
  STX SC_1                                     ; B7F5: 86 08       ..
  ASL A                                        ; B7F7: 0A          .
  ROL SC_1                                     ; B7F8: 26 08       &.
@@ -3605,7 +3616,7 @@ JMTBm1 = sub_CB203+2
  STA SC                                       ; B853: 85 07       ..
  LDA SC_1                                     ; B855: A5 08       ..
  ROL A                                        ; B857: 2A          *
- ADC nametableHi                              ; B858: 65 E6       e.
+ ADC nameBufferHi                             ; B858: 65 E6       e.
  STA SC_1                                     ; B85A: 85 08       ..
  LDY XC                                       ; B85C: A4 32       .2
  DEY                                          ; B85E: 88          .
@@ -3615,7 +3626,7 @@ JMTBm1 = sub_CB203+2
  BEQ CB8A3                                    ; B865: F0 3C       .<
  STA (SC),Y                                   ; B867: 91 07       ..
  INC tileNumber                               ; B869: E6 B8       ..
- LDX patternTableHi                           ; B86B: A6 B9       ..
+ LDX pattBufferHi                             ; B86B: A6 B9       ..
  STX SC_1                                     ; B86D: 86 08       ..
  ASL A                                        ; B86F: 0A          .
  ROL SC_1                                     ; B870: 26 08       &.
@@ -3654,7 +3665,7 @@ JMTBm1 = sub_CB203+2
 .CB8A6
  LDA #&21 ; '!'                               ; B8A6: A9 21       .!
  STA SC                                       ; B8A8: 85 07       ..
- LDA nametableHi                              ; B8AA: A5 E6       ..
+ LDA nameBufferHi                             ; B8AA: A5 E6       ..
  STA SC_1                                     ; B8AC: 85 08       ..
  LDY XC                                       ; B8AE: A4 32       .2
  DEY                                          ; B8B0: 88          .

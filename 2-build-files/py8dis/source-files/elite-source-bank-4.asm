@@ -175,12 +175,21 @@ Yx2M1             = &00B3
 messXC            = &00B4
 newzp             = &00B6
 tileNumber        = &00B8
-patternTableHi    = &00B9
-addr3             = &00BA
-addr3_1           = &00BB
+pattBufferHi      = &00B9
+SC2               = &00BA
+SC2_1             = &00BB
+tileIndex         = &00C0
+tileNumber0       = &00C1
+tileNumber0_1     = &00C2
+tileNumber1       = &00C3
+tileNumber1_1     = &00C4
+tileNumber2       = &00C5
+tileNumber2_2     = &00C6
+tileNumber3       = &00C7
+tileNumber3_1     = &00C8
 addr1             = &00D4
 addr1_1           = &00D5
-nametableHi       = &00E6
+nameBufferHi      = &00E6
 dashboardSwitch   = &00E9
 addr4             = &00EB
 addr4_1           = &00EC
@@ -516,7 +525,7 @@ K2_1              = &045A
 K2_2              = &045B
 K2_3              = &045C
 DLY               = &045D
-L046C             = &046C
+pictureTile       = &046C
 boxEdge1          = &046E
 boxEdge2          = &046F
 scanController2   = &0475
@@ -535,7 +544,7 @@ QQ24              = &0487
 QQ25              = &0488
 QQ28              = &0489
 QQ29              = &048A
-L048B             = &048B
+systemFlag        = &048B
 gov               = &048C
 tek               = &048D
 QQ2               = &048E
@@ -607,10 +616,10 @@ OAM_DMA           = &4014
 APU_FLAGS         = &4015
 CONTROLLER_1      = &4016
 CONTROLLER_2      = &4017
-patternTable0     = &6000
-patternTable1     = &6800
-nametable0        = &7000
-nametable1        = &7400
+pattBuffer0       = &6000
+pattBuffer1       = &6800
+nameBuffer0       = &7000
+nameBuffer1       = &7400
 LC006             = &C006
 Spercent          = &C007
 ResetVariables    = &C03E
@@ -647,8 +656,8 @@ UNIV_1            = &CE7F
 GINF              = &CE90
 subm_CE9E         = &CE9E
 subm_CEA5         = &CEA5
-nametableAddrHi   = &CED0
-patternAddrHi     = &CED2
+nameBufferAddr    = &CED0
+pattBufferAddr    = &CED2
 IRQ               = &CED4
 NMI               = &CED5
 SetPalette        = &CF2E
@@ -2693,7 +2702,7 @@ L951D = L800C+5393
 .subm_B8F9
  LDA #0                                       ; B8F9: A9 00       ..
  STA SC_1                                     ; B8FB: 85 08       ..
- LDA L046C                                    ; B8FD: AD 6C 04    .l.
+ LDA pictureTile                              ; B8FD: AD 6C 04    .l.
  ASL A                                        ; B900: 0A          .
  ROL SC_1                                     ; B901: 26 08       &.
  ASL A                                        ; B903: 0A          .
@@ -2701,14 +2710,14 @@ L951D = L800C+5393
  ASL A                                        ; B906: 0A          .
  ROL SC_1                                     ; B907: 26 08       &.
  STA SC                                       ; B909: 85 07       ..
- STA addr3                                    ; B90B: 85 BA       ..
+ STA SC2                                      ; B90B: 85 BA       ..
  LDA SC_1                                     ; B90D: A5 08       ..
  ADC #&68 ; 'h'                               ; B90F: 69 68       ih
- STA addr3_1                                  ; B911: 85 BB       ..
+ STA SC2_1                                    ; B911: 85 BB       ..
  LDA SC_1                                     ; B913: A5 08       ..
  ADC #&60 ; '`'                               ; B915: 69 60       i`
  STA SC_1                                     ; B917: 85 08       ..
- LDA L048B                                    ; B919: AD 8B 04    ...
+ LDA systemFlag                               ; B919: AD 8B 04    ...
  ASL A                                        ; B91C: 0A          .
  TAX                                          ; B91D: AA          .
  LDA L951C,X                                  ; B91E: BD 1C 95    ...
@@ -2719,9 +2728,9 @@ L951D = L800C+5393
  ADC #&95                                     ; B929: 69 95       i.
  STA V_1                                      ; B92B: 85 64       .d
  JSR UnpackToRAM                              ; B92D: 20 2D F5     -.
- LDA addr3                                    ; B930: A5 BA       ..
+ LDA SC2                                      ; B930: A5 BA       ..
  STA SC                                       ; B932: 85 07       ..
- LDA addr3_1                                  ; B934: A5 BB       ..
+ LDA SC2_1                                    ; B934: A5 BB       ..
  STA SC_1                                     ; B936: 85 08       ..
  JSR UnpackToRAM                              ; B938: 20 2D F5     -.
  RTS                                          ; B93B: 60          `
@@ -2729,7 +2738,7 @@ L951D = L800C+5393
 ; ******************************************************************************
 .subm_B93C
  JSR subm_B8F9                                ; B93C: 20 F9 B8     ..
- LDA L048B                                    ; B93F: AD 8B 04    ...
+ LDA systemFlag                               ; B93F: AD 8B 04    ...
  ASL A                                        ; B942: 0A          .
  TAX                                          ; B943: AA          .
  CLC                                          ; B944: 18          .
@@ -2770,13 +2779,13 @@ L951D = L800C+5393
  ADC #&60 ; '`'                               ; B984: 69 60       i`
  STA SC_1                                     ; B986: 85 08       ..
  ADC #8                                       ; B988: 69 08       i.
- STA addr3_1                                  ; B98A: 85 BB       ..
+ STA SC2_1                                    ; B98A: 85 BB       ..
  LDA SC                                       ; B98C: A5 07       ..
- STA addr3                                    ; B98E: 85 BA       ..
+ STA SC2                                      ; B98E: 85 BA       ..
  JSR UnpackToRAM                              ; B990: 20 2D F5     -.
- LDA addr3                                    ; B993: A5 BA       ..
+ LDA SC2                                      ; B993: A5 BA       ..
  STA SC                                       ; B995: 85 07       ..
- LDA addr3_1                                  ; B997: A5 BB       ..
+ LDA SC2_1                                    ; B997: A5 BB       ..
  STA SC_1                                     ; B999: 85 08       ..
  JSR UnpackToRAM                              ; B99B: 20 2D F5     -.
  LDA #&B5                                     ; B99E: A9 B5       ..
@@ -2894,7 +2903,7 @@ L951D = L800C+5393
  JSR SwitchTablesTo0                          ; BA51: 20 6D D0     m.
 .CBA54
  LDA SC                                       ; BA54: A5 07       ..
- STA addr3                                    ; BA56: 85 BA       ..
+ STA SC2                                      ; BA56: 85 BA       ..
  LDA K                                        ; BA58: A5 7D       .}
  STA ZZ                                       ; BA5A: 85 A0       ..
 .CBA5C
@@ -2909,7 +2918,7 @@ L951D = L800C+5393
  STA SPR_00_TILE,X                            ; BA69: 9D 01 02    ...
  LDA S                                        ; BA6C: A5 99       ..
  STA SPR_00_ATTR,X                            ; BA6E: 9D 02 02    ...
- LDA addr3                                    ; BA71: A5 BA       ..
+ LDA SC2                                      ; BA71: A5 BA       ..
  STA SPR_00_X,X                               ; BA73: 9D 03 02    ...
  LDA SC_1                                     ; BA76: A5 08       ..
  STA SPR_00_Y,X                               ; BA78: 9D 00 02    ...
@@ -2919,10 +2928,10 @@ L951D = L800C+5393
  BCS CBA97                                    ; BA7F: B0 16       ..
  TAX                                          ; BA81: AA          .
 .CBA82
- LDA addr3                                    ; BA82: A5 BA       ..
+ LDA SC2                                      ; BA82: A5 BA       ..
  CLC                                          ; BA84: 18          .
  ADC #8                                       ; BA85: 69 08       i.
- STA addr3                                    ; BA87: 85 BA       ..
+ STA SC2                                      ; BA87: 85 BA       ..
  DEC ZZ                                       ; BA89: C6 A0       ..
  BNE CBA5C                                    ; BA8B: D0 CF       ..
  LDA SC_1                                     ; BA8D: A5 08       ..

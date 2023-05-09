@@ -181,17 +181,25 @@ Yx2M1             = &00B3
 messXC            = &00B4
 newzp             = &00B6
 tileNumber        = &00B8
-patternTableHi    = &00B9
-addr3             = &00BA
-addr3_1           = &00BB
-L00C0             = &00C0
+pattBufferHi      = &00B9
+SC2               = &00BA
+SC2_1             = &00BB
+tileIndex         = &00C0
+tileNumber0       = &00C1
+tileNumber0_1     = &00C2
+tileNumber1       = &00C3
+tileNumber1_1     = &00C4
+tileNumber2       = &00C5
+tileNumber2_2     = &00C6
+tileNumber3       = &00C7
+tileNumber3_1     = &00C8
 L00CC             = &00CC
 L00D2             = &00D2
 addr1             = &00D4
 addr1_1           = &00D5
 L00D6             = &00D6
 L00D9             = &00D9
-nametableHi       = &00E6
+nameBufferHi      = &00E6
 dashboardSwitch   = &00E9
 addr4             = &00EB
 addr4_1           = &00EC
@@ -709,7 +717,7 @@ L045E             = &045E
 L045F             = &045F
 L0464             = &0464
 L0465             = &0465
-L046C             = &046C
+pictureTile       = &046C
 boxEdge1          = &046E
 boxEdge2          = &046F
 scanController2   = &0475
@@ -729,6 +737,7 @@ QQ24              = &0487
 QQ25              = &0488
 QQ28              = &0489
 QQ29              = &048A
+systemFlag        = &048B
 gov               = &048C
 tek               = &048D
 QQ2               = &048E
@@ -824,9 +833,9 @@ OAM_DMA           = &4014
 APU_FLAGS         = &4015
 CONTROLLER_1      = &4016
 CONTROLLER_2      = &4017
-patternTable0     = &6000
-patternTable1     = &6800
-nametable0        = &7000
+pattBuffer0       = &6000
+pattBuffer1       = &6800
+nameBuffer0       = &7000
 L7280             = &7280
 L72A0             = &72A0
 L72C0             = &72C0
@@ -838,7 +847,7 @@ L7360             = &7360
 L7361             = &7361
 L7380             = &7380
 L7381             = &7381
-nametable1        = &7400
+nameBuffer1       = &7400
 L7680             = &7680
 L76A0             = &76A0
 L76C0             = &76C0
@@ -885,8 +894,8 @@ UNIV_1            = &CE7F
 GINF              = &CE90
 subm_CE9E         = &CE9E
 subm_CEA5         = &CEA5
-nametableAddrHi   = &CED0
-patternAddrHi     = &CED2
+nameBufferAddr    = &CED0
+pattBufferAddr    = &CED2
 IRQ               = &CED4
 NMI               = &CED5
 SetPalette        = &CF2E
@@ -3498,11 +3507,11 @@ L9167 = L8D7A+1005
  STX K                                        ; A086: 86 7D       .}
  STY K_1                                      ; A088: 84 7E       .~
  LDA tileNumber                               ; A08A: A5 B8       ..
- STA L046C                                    ; A08C: 8D 6C 04    .l.
+ STA pictureTile                              ; A08C: 8D 6C 04    .l.
  CLC                                          ; A08F: 18          .
  ADC #&30 ; '0'                               ; A090: 69 30       i0
  STA tileNumber                               ; A092: 85 B8       ..
- LDX L046C                                    ; A094: AE 6C 04    .l.
+ LDX pictureTile                              ; A094: AE 6C 04    .l.
  STX K_2                                      ; A097: 86 7F       ..
  JSR CB2FB_b3                                 ; A099: 20 54 EE     T.
  LDA #5                                       ; A09C: A9 05       ..
@@ -3590,18 +3599,18 @@ L9167 = L8D7A+1005
  JSR SwitchTablesTo0                          ; A12D: 20 6D D0     m.
 .CA130
  LDX SC                                       ; A130: A6 07       ..
- STX addr3                                    ; A132: 86 BA       ..
+ STX SC2                                      ; A132: 86 BA       ..
  LDX K                                        ; A134: A6 7D       .}
 .CA136
  LDA K_2                                      ; A136: A5 7F       ..
  STA SPR_00_TILE,Y                            ; A138: 99 01 02    ...
  LDA S                                        ; A13B: A5 99       ..
  STA SPR_00_ATTR,Y                            ; A13D: 99 02 02    ...
- LDA addr3                                    ; A140: A5 BA       ..
+ LDA SC2                                      ; A140: A5 BA       ..
  STA SPR_00_X,Y                               ; A142: 99 03 02    ...
  CLC                                          ; A145: 18          .
  ADC #8                                       ; A146: 69 08       i.
- STA addr3                                    ; A148: 85 BA       ..
+ STA SC2                                      ; A148: 85 BA       ..
  LDA SC_1                                     ; A14A: A5 08       ..
  STA SPR_00_Y,Y                               ; A14C: 99 00 02    ...
  TYA                                          ; A14F: 98          .
@@ -3842,7 +3851,7 @@ L9167 = L8D7A+1005
 .CA2C2
  RTS                                          ; A2C2: 60          `
 
- LDA L00C0                                    ; A2C3: A5 C0       ..
+ LDA tileIndex                                ; A2C3: A5 C0       ..
  BNE CA331                                    ; A2C5: D0 6A       .j
  LDA #&72 ; 'r'                               ; A2C7: A9 72       .r
  STA SC_1                                     ; A2C9: 85 08       ..
@@ -4239,10 +4248,10 @@ LA3F8 = LA3F5+3
  ASL A                                        ; A642: 0A          .
  ROL SC_1                                     ; A643: 26 08       &.
  STA SC                                       ; A645: 85 07       ..
- STA addr3                                    ; A647: 85 BA       ..
+ STA SC2                                      ; A647: 85 BA       ..
  LDA SC_1                                     ; A649: A5 08       ..
  ADC #&68 ; 'h'                               ; A64B: 69 68       ih
- STA addr3_1                                  ; A64D: 85 BB       ..
+ STA SC2_1                                    ; A64D: 85 BB       ..
  LDA SC_1                                     ; A64F: A5 08       ..
  ADC #&60 ; '`'                               ; A651: 69 60       i`
  STA SC_1                                     ; A653: 85 08       ..
@@ -4251,32 +4260,32 @@ LA3F8 = LA3F5+3
 .CA659
  LDA #0                                       ; A659: A9 00       ..
  STA (SC),Y                                   ; A65B: 91 07       ..
- STA (addr3),Y                                ; A65D: 91 BA       ..
+ STA (SC2),Y                                  ; A65D: 91 BA       ..
  INY                                          ; A65F: C8          .
  STA (SC),Y                                   ; A660: 91 07       ..
- STA (addr3),Y                                ; A662: 91 BA       ..
+ STA (SC2),Y                                  ; A662: 91 BA       ..
  INY                                          ; A664: C8          .
  STA (SC),Y                                   ; A665: 91 07       ..
- STA (addr3),Y                                ; A667: 91 BA       ..
+ STA (SC2),Y                                  ; A667: 91 BA       ..
  INY                                          ; A669: C8          .
  STA (SC),Y                                   ; A66A: 91 07       ..
- STA (addr3),Y                                ; A66C: 91 BA       ..
+ STA (SC2),Y                                  ; A66C: 91 BA       ..
  INY                                          ; A66E: C8          .
  STA (SC),Y                                   ; A66F: 91 07       ..
- STA (addr3),Y                                ; A671: 91 BA       ..
+ STA (SC2),Y                                  ; A671: 91 BA       ..
  INY                                          ; A673: C8          .
  STA (SC),Y                                   ; A674: 91 07       ..
- STA (addr3),Y                                ; A676: 91 BA       ..
+ STA (SC2),Y                                  ; A676: 91 BA       ..
  INY                                          ; A678: C8          .
  STA (SC),Y                                   ; A679: 91 07       ..
- STA (addr3),Y                                ; A67B: 91 BA       ..
+ STA (SC2),Y                                  ; A67B: 91 BA       ..
  INY                                          ; A67D: C8          .
  STA (SC),Y                                   ; A67E: 91 07       ..
- STA (addr3),Y                                ; A680: 91 BA       ..
+ STA (SC2),Y                                  ; A680: 91 BA       ..
  INY                                          ; A682: C8          .
  BNE CA689                                    ; A683: D0 04       ..
  INC SC_1                                     ; A685: E6 08       ..
- INC addr3_1                                  ; A687: E6 BB       ..
+ INC SC2_1                                    ; A687: E6 BB       ..
 .CA689
  LDA dashboardSwitch                          ; A689: A5 E9       ..
  BPL CA696                                    ; A68B: 10 09       ..
@@ -5624,17 +5633,17 @@ LA3F8 = LA3F5+3
 .CB7A4
  LDA (Q),Y                                    ; B7A4: B1 97       ..
  EOR #&F0                                     ; B7A6: 49 F0       I.
- STA addr3_1                                  ; B7A8: 85 BB       ..
+ STA SC2_1                                    ; B7A8: 85 BB       ..
  LDA (S),Y                                    ; B7AA: B1 99       ..
  EOR #&0F                                     ; B7AC: 49 0F       I.
- STA addr3                                    ; B7AE: 85 BA       ..
+ STA SC2                                      ; B7AE: 85 BA       ..
  LDA (SC),Y                                   ; B7B0: B1 07       ..
- CMP addr3_1                                  ; B7B2: C5 BB       ..
+ CMP SC2_1                                    ; B7B2: C5 BB       ..
  BEQ CB7C0                                    ; B7B4: F0 0A       ..
- CMP addr3                                    ; B7B6: C5 BA       ..
+ CMP SC2                                      ; B7B6: C5 BA       ..
  BEQ CB7C0                                    ; B7B8: F0 06       ..
- LDA addr3_1                                  ; B7BA: A5 BB       ..
- CMP addr3                                    ; B7BC: C5 BA       ..
+ LDA SC2_1                                    ; B7BA: A5 BB       ..
+ CMP SC2                                      ; B7BC: C5 BA       ..
  BNE CB7FF                                    ; B7BE: D0 3F       .?
 .CB7C0
  STA BUF,Y                                    ; B7C0: 99 07 05    ...
