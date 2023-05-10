@@ -686,6 +686,7 @@ TWFL              = &DA09
 TWFR              = &DA10
 yLookupLo         = &DA18
 yLookupHi         = &DAF8
+subm_DBD8         = &DBD8
 LOIN              = &DC0F
 subm_DEA5         = &DEA5
 subm_DF76         = &DF76
@@ -721,7 +722,7 @@ LDA_Epc_Y         = &ECA0
 IncreaseTally     = &ECAE
 CB1D4_b0          = &ECE2
 Set_K_K3_XC_YC    = &ECF9
-C811E_b6          = &ED16
+PlayMusic_b6      = &ED16
 C8021_b6          = &ED24
 C89D1_b6          = &ED50
 ResetSound_b6     = &ED6B
@@ -759,8 +760,8 @@ CB18E_b3          = &EF6C
 PAS1_b0           = &EF7A
 SetSystemImage_b5 = &EF88
 GetSystemImage_b5 = &EF96
-CB93C_b4          = &EFA4
-CB8F9_b4          = &EFB2
+SetSystemImage2_b4 = &EFA4
+GetSystemImage2_b4 = &EFB2
 CA2C3_b6          = &EFC0
 CBA63_b6          = &EFCE
 CB39D_b0          = &EFDC
@@ -2910,8 +2911,8 @@ SetupMMC1         = &FB89
  EQUS ".", 0                                  ; BED5: 2E 00       ..
 
 ; ******************************************************************************
-.SetSystemImage
- JSR GetSystemImage                           ; BED7: 20 EA BE     ..
+.SetSystemImage1
+ JSR GetSystemImage1                          ; BED7: 20 EA BE     ..
  LDA #4                                       ; BEDA: A9 04       ..
  STA PPU_ADDR                                 ; BEDC: 8D 06 20    ..
  LDA #&50 ; 'P'                               ; BEDF: A9 50       .P
@@ -2920,7 +2921,7 @@ SetupMMC1         = &FB89
  JMP UnpackToPPU_2                            ; BEE7: 4C B1 F5    L..
 
 ; ******************************************************************************
-.GetSystemImage
+.GetSystemImage1
  LDA #0                                       ; BEEA: A9 00       ..
  STA SC_1                                     ; BEEC: 85 08       ..
  LDA pictureTile                              ; BEEE: AD 6C 04    .l.

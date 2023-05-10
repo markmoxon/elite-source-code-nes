@@ -99,6 +99,7 @@ label(0xACA2, "NOFY")
 
 subroutine(0x8012, "ResetSound")
 subroutine(0x80F3, "DoResetSound")
+subroutine(0x811E, "PlayMusic")
 subroutine(0xA771, "GRIDSET")
 subroutine(0xA802, "GRS1")
 subroutine(0xBC83, "TITLE")

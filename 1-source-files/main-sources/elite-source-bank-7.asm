@@ -828,7 +828,7 @@ L8021            = &8021
 L8041            = &8041
 L8062            = &8062
 L8083            = &8083
-L811E            = &811E
+PlayMusic        = &811E
 slvy2            = &81B6
 L8926            = &8926
 L8980            = &8980
@@ -890,11 +890,11 @@ TIDY             = &B85C
 LB882            = &B882
 LB88C            = &B88C
 PAS1             = &B8F7
-LB8F9            = &B8F9
+GetSystemImage2  = &B8F9
 LB8FE            = &B8FE
 LB90D            = &B90D
 LB919            = &B919
-LB93C            = &B93C
+SetSystemImage2  = &B93C
 LB96B            = &B96B
 SCAN             = &B975
 LL164            = &B980
@@ -911,8 +911,8 @@ TITLE            = &BC83
 LBE52            = &BE52
 TT66             = &BEB5
 LBED2            = &BED2
-LBED7            = &BED7
-LBEEA            = &BEEA
+SetSystemImage1  = &BED7
+GetSystemImage1  = &BEEA
 LBF41            = &BF41
 LBFFF            = &BFFF
 
@@ -1049,7 +1049,7 @@ LC006 = sub_CC004+2
  PHA                                          ; C0D2: 48          H
  TYA                                          ; C0D3: 98          .
  PHA                                          ; C0D4: 48          H
- JSR C811E_b6                                 ; C0D5: 20 16 ED     ..
+ JSR PlayMusic_b6                             ; C0D5: 20 16 ED     ..
  PLA                                          ; C0D8: 68          h
  TAY                                          ; C0D9: A8          .
  PLA                                          ; C0DA: 68          h
@@ -2579,7 +2579,7 @@ LC006 = sub_CC004+2
  JSR sub_CCF18                                ; CEF8: 20 18 CF     ..
  LDA L00F8                                    ; CEFB: A5 F8       ..
  BNE CCF0C                                    ; CEFD: D0 0D       ..
- JSR C811E_b6                                 ; CEFF: 20 16 ED     ..
+ JSR PlayMusic_b6                             ; CEFF: 20 16 ED     ..
  LDA L0469                                    ; CF02: AD 69 04    .i.
  LDX L046A                                    ; CF05: AE 6A 04    .j.
  LDY L046B                                    ; CF08: AC 6B 04    .k.
@@ -4206,7 +4206,7 @@ LC006 = sub_CC004+2
  TXA                                          ; D946: 8A          .
  PHA                                          ; D947: 48          H
  JSR CD940                                    ; D948: 20 40 D9     @.
- JSR C811E_b6                                 ; D94B: 20 16 ED     ..
+ JSR PlayMusic_b6                             ; D94B: 20 16 ED     ..
  PLA                                          ; D94E: 68          h
  TAX                                          ; D94F: AA          .
  RTS                                          ; D950: 60          `
@@ -4354,6 +4354,8 @@ LC006 = sub_CC004+2
  EQUB 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3   ; DBC8: 03 03 03... ...
  EQUB 3, 3, 3                                 ; DBD5: 03 03 03    ...
 
+; ******************************************************************************
+.subm_DBD8
  LDA #0                                       ; DBD8: A9 00       ..
  STA SC_1                                     ; DBDA: 85 08       ..
  LDA YC                                       ; DBDC: A5 3B       .;
@@ -6693,12 +6695,12 @@ LDFFF = sub_CDFFE+1
  JMP CA0F8_b6                                 ; ED13: 4C 99 EE    L..
 
 ; ******************************************************************************
-.C811E_b6
+.PlayMusic_b6
  LDA currentBank                              ; ED16: A5 F7       ..
  PHA                                          ; ED18: 48          H
  LDA #6                                       ; ED19: A9 06       ..
  JSR SetBank                                  ; ED1B: 20 AE C0     ..
- JSR L811E                                    ; ED1E: 20 1E 81     ..
+ JSR PlayMusic                                ; ED1E: 20 1E 81     ..
  JMP ResetBank                                ; ED21: 4C AD C0    L..
 
 ; ******************************************************************************
@@ -7097,7 +7099,7 @@ LDFFF = sub_CDFFE+1
  PHA                                          ; EF8A: 48          H
  LDA #5                                       ; EF8B: A9 05       ..
  JSR SetBank                                  ; EF8D: 20 AE C0     ..
- JSR LBED7                                    ; EF90: 20 D7 BE     ..
+ JSR SetSystemImage1                          ; EF90: 20 D7 BE     ..
  JMP ResetBank                                ; EF93: 4C AD C0    L..
 
 ; ******************************************************************************
@@ -7106,25 +7108,25 @@ LDFFF = sub_CDFFE+1
  PHA                                          ; EF98: 48          H
  LDA #5                                       ; EF99: A9 05       ..
  JSR SetBank                                  ; EF9B: 20 AE C0     ..
- JSR LBEEA                                    ; EF9E: 20 EA BE     ..
+ JSR GetSystemImage1                          ; EF9E: 20 EA BE     ..
  JMP ResetBank                                ; EFA1: 4C AD C0    L..
 
 ; ******************************************************************************
-.CB93C_b4
+.SetSystemImage2_b4
  LDA currentBank                              ; EFA4: A5 F7       ..
  PHA                                          ; EFA6: 48          H
  LDA #4                                       ; EFA7: A9 04       ..
  JSR SetBank                                  ; EFA9: 20 AE C0     ..
- JSR LB93C                                    ; EFAC: 20 3C B9     <.
+ JSR SetSystemImage2                          ; EFAC: 20 3C B9     <.
  JMP ResetBank                                ; EFAF: 4C AD C0    L..
 
 ; ******************************************************************************
-.CB8F9_b4
+.GetSystemImage2_b4
  LDA currentBank                              ; EFB2: A5 F7       ..
  PHA                                          ; EFB4: 48          H
  LDA #4                                       ; EFB5: A9 04       ..
  JSR SetBank                                  ; EFB7: 20 AE C0     ..
- JSR LB8F9                                    ; EFBA: 20 F9 B8     ..
+ JSR GetSystemImage2                          ; EFBA: 20 F9 B8     ..
  JMP ResetBank                                ; EFBD: 4C AD C0    L..
 
 ; ******************************************************************************

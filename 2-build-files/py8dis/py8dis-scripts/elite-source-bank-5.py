@@ -16,8 +16,8 @@ config.set_indent_string(" ")
 entry(0x8000)
 string(0x8007, 5)
 
-subroutine(0xBED7, "SetSystemImage")
-subroutine(0xBEEA, "GetSystemImage")
+subroutine(0xBED7, "SetSystemImage1")
+subroutine(0xBEEA, "GetSystemImage1")
 subroutine(0xBF41, "subm_BF41")
 
 label(0xBF64, "addrLo")

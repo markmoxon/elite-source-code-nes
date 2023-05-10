@@ -695,7 +695,7 @@ TWFL              = &DA09
 TWFR              = &DA10
 yLookupLo         = &DA18
 yLookupHi         = &DAF8
-LDBD8             = &DBD8
+subm_DBD8         = &DBD8
 LOIN              = &DC0F
 subm_DEA5         = &DEA5
 subm_DF76         = &DF76
@@ -731,7 +731,7 @@ LDA_Epc_Y         = &ECA0
 IncreaseTally     = &ECAE
 CB1D4_b0          = &ECE2
 Set_K_K3_XC_YC    = &ECF9
-C811E_b6          = &ED16
+PlayMusic_b6      = &ED16
 C8021_b6          = &ED24
 C89D1_b6          = &ED50
 ResetSound_b6     = &ED6B
@@ -769,8 +769,8 @@ CB18E_b3          = &EF6C
 PAS1_b0           = &EF7A
 SetSystemImage_b5 = &EF88
 GetSystemImage_b5 = &EF96
-CB93C_b4          = &EFA4
-CB8F9_b4          = &EFB2
+SetSystemImage2_b4 = &EFA4
+GetSystemImage2_b4 = &EFB2
 CA2C3_b6          = &EFC0
 CBA63_b6          = &EFCE
 CB39D_b0          = &EFDC
@@ -3383,7 +3383,7 @@ JMTBm1 = sub_CB203+2
  JMP CB83E                                    ; B6DC: 4C 3E B8    L>.
 
 .CB6DF
- JSR LDBD8                                    ; B6DF: 20 D8 DB     ..
+ JSR subm_DBD8                                ; B6DF: 20 D8 DB     ..
  LDY XC                                       ; B6E2: A4 32       .2
  DEY                                          ; B6E4: 88          .
  LDA (SC),Y                                   ; B6E5: B1 07       ..
@@ -3520,7 +3520,7 @@ JMTBm1 = sub_CB203+2
  JMP CB75B                                    ; B7BC: 4C 5B B7    L[.
 
 .CB7BF
- JSR LDBD8                                    ; B7BF: 20 D8 DB     ..
+ JSR subm_DBD8                                ; B7BF: 20 D8 DB     ..
  LDY XC                                       ; B7C2: A4 32       .2
  DEC XC                                       ; B7C4: C6 32       .2
  LDA #0                                       ; B7C6: A9 00       ..
@@ -3530,7 +3530,7 @@ JMTBm1 = sub_CB203+2
 
 .CB7CF
  PHA                                          ; B7CF: 48          H
- JSR LDBD8                                    ; B7D0: 20 D8 DB     ..
+ JSR subm_DBD8                                ; B7D0: 20 D8 DB     ..
  PLA                                          ; B7D3: 68          h
  CMP #&20 ; ' '                               ; B7D4: C9 20       .
  BEQ CB7E5                                    ; B7D6: F0 0D       ..

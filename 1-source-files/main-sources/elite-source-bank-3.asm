@@ -765,7 +765,7 @@ TWFL              = &DA09
 TWFR              = &DA10
 yLookupLo         = &DA18
 yLookupHi         = &DAF8
-LDBD8             = &DBD8
+subm_DBD8         = &DBD8
 LOIN              = &DC0F
 subm_DEA5         = &DEA5
 subm_DF76         = &DF76
@@ -801,7 +801,7 @@ LDA_Epc_Y         = &ECA0
 IncreaseTally     = &ECAE
 CB1D4_b0          = &ECE2
 Set_K_K3_XC_YC    = &ECF9
-C811E_b6          = &ED16
+PlayMusic_b6      = &ED16
 C8021_b6          = &ED24
 C89D1_b6          = &ED50
 ResetSound_b6     = &ED6B
@@ -839,8 +839,8 @@ CB18E_b3          = &EF6C
 PAS1_b0           = &EF7A
 SetSystemImage_b5 = &EF88
 GetSystemImage_b5 = &EF96
-CB93C_b4          = &EFA4
-CB8F9_b4          = &EFB2
+SetSystemImage2_b4 = &EFA4
+GetSystemImage2_b4 = &EFB2
 CA2C3_b6          = &EFC0
 CBA63_b6          = &EFCE
 CB39D_b0          = &EFDC
@@ -7658,7 +7658,7 @@ SetupMMC1         = &FB89
 .CA7E6
  CMP #&98                ; A7E6: C9 98       ..
  BNE CA7F0               ; A7E8: D0 06       ..
- JSR CB93C_b4            ; A7EA: 20 A4 EF     ..
+ JSR SetSystemImage2_b4  ; A7EA: 20 A4 EF     ..
  JMP CA8A2               ; A7ED: 4C A2 A8    L..
 
 .CA7F0
@@ -7927,7 +7927,7 @@ SetupMMC1         = &FB89
 .CA9E1
  CMP #&98                ; A9E1: C9 98       ..
  BNE CA9E8               ; A9E3: D0 03       ..
- JSR CB8F9_b4            ; A9E5: 20 B2 EF     ..
+ JSR GetSystemImage2_b4  ; A9E5: 20 B2 EF     ..
 .CA9E8
  LDA QQ11                ; A9E8: A5 9E       ..
  AND #&40 ; '@'          ; A9EA: 29 40       )@
@@ -9167,7 +9167,7 @@ SetupMMC1         = &FB89
 
 ; ******************************************************************************
 .subm_B2A9
- JSR LDBD8               ; B2A9: 20 D8 DB     ..
+ JSR subm_DBD8           ; B2A9: 20 D8 DB     ..
  LDA SC                  ; B2AC: A5 07       ..
  CLC                     ; B2AE: 18          .
  ADC XC                  ; B2AF: 65 32       e2
@@ -9217,7 +9217,7 @@ SetupMMC1         = &FB89
 
 ; ******************************************************************************
 .subm_B2FB
- JSR LDBD8               ; B2FB: 20 D8 DB     ..
+ JSR subm_DBD8           ; B2FB: 20 D8 DB     ..
  LDA SC                  ; B2FE: A5 07       ..
  CLC                     ; B300: 18          .
  ADC XC                  ; B301: 65 32       e2

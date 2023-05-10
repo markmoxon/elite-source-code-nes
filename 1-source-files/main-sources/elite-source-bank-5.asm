@@ -1056,10 +1056,38 @@ UnpackToPPU       = &F5AF
 
 \ ******************************************************************************
 \
+\       Name: CHECK_DASHBOARD
+\       Type: Macro
+\   Category: Screen mode
+\    Summary: If the PPU has started drawing the dashboard, switch to nametable
+\             0 (&2000) and pattern table 0 (&0000)
+\
+\ ******************************************************************************
+
+MACRO CHECK_DASHBOARD
+
+ LDA dashboardSwitch    \ If bit 7 of dashboardSwitch and bit 6 of PPU_STATUS
+ BPL skip               \ are set, then call SwitchTablesTo0 to:
+ LDA PPU_STATUS         \
+ ASL A                  \   * Zero dashboardSwitch to disable this process
+ BPL skip               \     until both conditions are met once again
+ JSR SwitchTablesTo0    \
+                        \   * Clear bits 0 and 4 of PPU_CTRL and PPU_CTRL_COPY,
+                        \     to set the base nametable address to &2000 (for
+                        \     nametable 0) or &2800 (which is a mirror of &2000)
+                        \
+                        \   * Clear the C flag
+ 
+.skip
+
+ENDMACRO
+
+\ ******************************************************************************
+\
 \       Name: imageCount
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: The number of system images in the imageOffset table
+\    Summary: The number of images in the imageOffset table
 \
 \ ******************************************************************************
 
@@ -1072,7 +1100,7 @@ UnpackToPPU       = &F5AF
 \       Name: imageOffset
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Offset to the data for each of the 15 system images
+\    Summary: Offset to the data for each of the 15 images
 \
 \ ******************************************************************************
 
@@ -1099,7 +1127,7 @@ UnpackToPPU       = &F5AF
 \       Name: image0
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for system image 0
+\    Summary: Data for image 0
 \
 \ ******************************************************************************
 
@@ -1246,7 +1274,7 @@ UnpackToPPU       = &F5AF
 \       Name: image1
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for system image 1
+\    Summary: Data for image 1
 \
 \ ******************************************************************************
 
@@ -1384,7 +1412,7 @@ UnpackToPPU       = &F5AF
 \       Name: image2
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for system image 2
+\    Summary: Data for image 2
 \
 \ ******************************************************************************
 
@@ -1581,7 +1609,7 @@ UnpackToPPU       = &F5AF
 \       Name: image3
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for system image 3
+\    Summary: Data for image 3
 \
 \ ******************************************************************************
 
@@ -1748,7 +1776,7 @@ UnpackToPPU       = &F5AF
 \       Name: image4
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for system image 4
+\    Summary: Data for image 4
 \
 \ ******************************************************************************
 
@@ -1874,7 +1902,7 @@ UnpackToPPU       = &F5AF
 \       Name: image5
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for system image 5
+\    Summary: Data for image 5
 \
 \ ******************************************************************************
 
@@ -2019,7 +2047,7 @@ UnpackToPPU       = &F5AF
 \       Name: image6
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for system image 6
+\    Summary: Data for image 6
 \
 \ ******************************************************************************
 
@@ -2159,7 +2187,7 @@ UnpackToPPU       = &F5AF
 \       Name: image7
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for system image 7
+\    Summary: Data for image 7
 \
 \ ******************************************************************************
 
@@ -2310,7 +2338,7 @@ UnpackToPPU       = &F5AF
 \       Name: image8
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for system image 8
+\    Summary: Data for image 8
 \
 \ ******************************************************************************
 
@@ -2424,7 +2452,7 @@ UnpackToPPU       = &F5AF
 \       Name: image9
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for system image 9
+\    Summary: Data for image 9
 \
 \ ******************************************************************************
 
@@ -2557,7 +2585,7 @@ UnpackToPPU       = &F5AF
 \       Name: image10
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for system image 10
+\    Summary: Data for image 10
 \
 \ ******************************************************************************
 
@@ -2706,7 +2734,7 @@ UnpackToPPU       = &F5AF
 \       Name: image11
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for system image 11
+\    Summary: Data for image 11
 \
 \ ******************************************************************************
 
@@ -2849,7 +2877,7 @@ UnpackToPPU       = &F5AF
 \       Name: image12
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for system image 12
+\    Summary: Data for image 12
 \
 \ ******************************************************************************
 
@@ -3008,7 +3036,7 @@ UnpackToPPU       = &F5AF
 \       Name: image13
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for system image 13
+\    Summary: Data for image 13
 \
 \ ******************************************************************************
 
@@ -3157,7 +3185,7 @@ UnpackToPPU       = &F5AF
 \       Name: image14
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for system image 14
+\    Summary: Data for image 14
 \
 \ ******************************************************************************
 
@@ -3326,35 +3354,36 @@ UnpackToPPU       = &F5AF
 
 \ ******************************************************************************
 \
-\       Name: SetSystemImage
+\       Name: SetSystemImage1
 \       Type: Subroutine
 \   Category: Drawing images
 \    Summary: ???
 \
 \ ******************************************************************************
 
-.SetSystemImage
+.SetSystemImage1
 
- JSR GetSystemImage     \ Fetch the system image for the current system and
-                        \ store it in the pattern tables, starting at tile
+ JSR GetSystemImage1    \ Fetch the system image for the current system and
+                        \ store it in the pattern buffers, starting at tile
                         \ number pictureTile
 
- LDA #&04               \ Set PPU_ADDR = &0450
- STA PPU_ADDR           \
- LDA #&50               \ So this points to pattern #69 in pattern table 0 in
- STA PPU_ADDR           \ the PPU
+ LDA #HI(16*69)         \ Set PPU_ADDR to the address of pattern #69 in pattern
+ STA PPU_ADDR           \ table 0
+ LDA #LO(16*69)
+ STA PPU_ADDR
 
  JSR UnpackToPPU        \ Unpack the rest of the image data to the PPU ???
 
- JMP UnpackToPPU+2      \ Unpack the rest of the image data to the PPU ???
+ JMP UnpackToPPU+2      \ Unpack the rest of the image data to the PPU, ???
+                        \ returning from the subroutine using a tail call
 
 \ ******************************************************************************
 \
-\       Name: GetSystemImage
+\       Name: GetSystemImage1
 \       Type: Subroutine
 \   Category: Drawing images
-\    Summary: Fetch the system image for the current system and store it in the
-\             pattern tables
+\    Summary: Fetch the image for the current system and store it in the pattern
+\             buffers
 \
 \ ------------------------------------------------------------------------------
 \
@@ -3365,7 +3394,7 @@ UnpackToPPU       = &F5AF
 \
 \ ******************************************************************************
 
-.GetSystemImage
+.GetSystemImage1
 
  LDA #0                 \ Set (SC+1 A) = (0 pictureTile)
  STA SC+1               \              = pictureTile
@@ -3402,7 +3431,7 @@ UnpackToPPU       = &F5AF
 
 .gsys1
 
- TXA                    \ Set systemFlag to X with bits 6 and 7 set ???
+ TXA                    \ Set systemFlag to %1100xxxx where X is %xxxx
  ORA #%11000000
  STA systemFlag
 
@@ -3413,7 +3442,7 @@ UnpackToPPU       = &F5AF
  LDA imageOffset,X      \ Set V(1 0) = imageOffset for image X + imageCount
  ADC #LO(imageCount)    \
  STA V                  \ So V(1 0) points to image0 when X = 0, image1 when
- LDA imageOffset+1,X    \ when X = 1, and so on up to image14 when X = 14
+ LDA imageOffset+1,X    \ X = 1, and so on up to image14 when X = 14
  ADC #HI(imageCount)
  STA V+1
 
