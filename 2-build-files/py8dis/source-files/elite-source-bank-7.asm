@@ -1,885 +1,885 @@
 ; Memory locations
-ZP               = &0000
-RAND             = &0002
-RAND_1           = &0002
-RAND_2           = &0003
-RAND_3           = &0004
-L0005            = &0005
-T1               = &0006
-SC               = &0007
-SC_1             = &0008
-INWK             = &0009
-XX1              = &0009
-INWK_1           = &000A
-INWK_2           = &000B
-INWK_3           = &000C
-INWK_4           = &000D
-INWK_5           = &000E
-INWK_6           = &000F
-INWK_7           = &0010
-INWK_8           = &0011
-INWK_9           = &0012
-INWK_10          = &0013
-INWK_11          = &0014
-INWK_12          = &0015
-INWK_13          = &0016
-INWK_14          = &0017
-INWK_15          = &0018
-INWK_16          = &0019
-INWK_17          = &001A
-INWK_18          = &001B
-INWK_19          = &001C
-INWK_20          = &001D
-INWK_21          = &001E
-INWK_22          = &001F
-INWK_23          = &0020
-INWK_24          = &0021
-INWK_25          = &0022
-INWK_26          = &0023
-INWK_27          = &0024
-INWK_28          = &0025
-INWK_29          = &0026
-INWK_30          = &0027
-INWK_31          = &0028
-INWK_32          = &0029
-INWK_33          = &002A
-INWK_34          = &002B
-INWK_35          = &002C
-NEWB             = &002D
-P                = &002F
-P_1              = &0030
-P_2              = &0031
-XC               = &0032
-L0033            = &0033
-L0034            = &0034
-L0035            = &0035
-L0036            = &0036
-L0038            = &0038
-L0039            = &0039
-L003A            = &003A
-YC               = &003B
-QQ17             = &003C
-K3               = &003D
-XX2              = &003D
-XX2_1            = &003E
-XX2_2            = &003F
-XX2_3            = &0040
-XX2_4            = &0041
-XX2_5            = &0042
-XX2_6            = &0043
-XX2_7            = &0044
-XX2_8            = &0045
-XX2_9            = &0046
-XX2_10           = &0047
-XX2_11           = &0048
-XX2_12           = &0049
-XX2_13           = &004A
-K4               = &004B
-K4_1             = &004C
-XX16             = &004D
-XX16_1           = &004E
-XX16_2           = &004F
-XX16_3           = &0050
-XX16_4           = &0051
-XX16_5           = &0052
-XX16_6           = &0053
-XX16_7           = &0054
-XX16_8           = &0055
-XX16_9           = &0056
-XX16_10          = &0057
-XX16_11          = &0058
-XX16_12          = &0059
-XX16_13          = &005A
-XX16_14          = &005B
-XX16_15          = &005C
-XX16_16          = &005D
-XX16_17          = &005E
-XX0              = &005F
-XX0_1            = &0060
-INF              = &0061
-XX19             = &0061
-INF_1            = &0062
-V                = &0063
-V_1              = &0064
-XX               = &0065
-XX_1             = &0066
-YY               = &0067
-YY_1             = &0068
-BETA             = &0069
-BET1             = &006A
-QQ22             = &006B
-QQ22_1           = &006C
-ECMA             = &006D
-ALP1             = &006E
-ALP2             = &006F
-ALP2_1           = &0070
-X1               = &0071
-XX15             = &0071
-Y1               = &0072
-X2               = &0073
-Y2               = &0074
-XX15_4           = &0075
-XX15_5           = &0076
-XX12             = &0077
-XX12_1           = &0078
-XX12_2           = &0079
-XX12_3           = &007A
-XX12_4           = &007B
-XX12_5           = &007C
-K                = &007D
-K_1              = &007E
-K_2              = &007F
-K_3              = &0080
-QQ15             = &0082
-QQ15_1           = &0083
-QQ15_2           = &0084
-QQ15_3           = &0085
-QQ15_4           = &0086
-QQ15_5           = &0087
-K5               = &0088
-XX18             = &0088
-XX18_1           = &0089
-XX18_2           = &008A
-XX18_3           = &008B
-K6               = &008C
-K6_1             = &008D
-K6_2             = &008E
-K6_3             = &008F
-K6_4             = &0090
-BET2             = &0091
-BET2_1           = &0092
-DELTA            = &0093
-DELT4            = &0094
-DELT4_1          = &0095
-U                = &0096
-Q                = &0097
-R                = &0098
-S                = &0099
-T                = &009A
-XSAV             = &009B
-YSAV             = &009C
-XX17             = &009D
-QQ11             = &009E
-QQ11Mask         = &009F
-ZZ               = &00A0
-XX13             = &00A1
-MCNT             = &00A2
-TYPE             = &00A3
-ALPHA            = &00A4
-QQ12             = &00A5
-TGT              = &00A6
-FLAG             = &00A7
-CNT              = &00A8
-CNT2             = &00A9
-STP              = &00AA
-XX4              = &00AB
-XX20             = &00AC
-RAT              = &00AE
-RAT2             = &00AF
-widget           = &00B0
-Yx1M2            = &00B1
-Yx2M2            = &00B2
-Yx2M1            = &00B3
-messXC           = &00B4
-newzp            = &00B6
-L00B7            = &00B7
-tileNumber       = &00B8
-pattBufferHi     = &00B9
-SC2              = &00BA
-SC2_1            = &00BB
-L00BC            = &00BC
-L00BD            = &00BD
-L00BE            = &00BE
-tileIndex        = &00C0
-tileNumber0      = &00C1
-tileNumber0_1    = &00C2
-tileNumber1      = &00C3
-tileNumber1_1    = &00C4
-tileNumber2      = &00C5
-tileNumber2_2    = &00C6
-tileNumber3      = &00C7
-tileNumber3_1    = &00C8
-L00C9            = &00C9
-L00CA            = &00CA
-L00CC            = &00CC
-L00CD            = &00CD
-L00CE            = &00CE
-L00CF            = &00CF
-L00D0            = &00D0
-L00D1            = &00D1
-L00D2            = &00D2
-L00D3            = &00D3
-addr1            = &00D4
-addr1_1          = &00D5
-L00D6            = &00D6
-L00D7            = &00D7
-L00D8            = &00D8
-L00DA            = &00DA
-L00DB            = &00DB
-L00DD            = &00DD
-L00DF            = &00DF
-L00E0            = &00E0
-L00E1            = &00E1
-L00E2            = &00E2
-L00E3            = &00E3
-L00E4            = &00E4
-L00E5            = &00E5
-nameBufferHi     = &00E6
-L00E7            = &00E7
-L00E8            = &00E8
-dashboardSwitch  = &00E9
-L00EA            = &00EA
-addr4            = &00EB
-addr4_1          = &00EC
-addr5            = &00ED
-addr5_1          = &00EE
-L00EF            = &00EF
-L00F0            = &00F0
-addr6            = &00F1
-addr6_1          = &00F2
-L00F3            = &00F3
-L00F4            = &00F4
-ppuCtrlCopy      = &00F5
-L00F6            = &00F6
-currentBank      = &00F7
-L00F8            = &00F8
-addr2            = &00FA
-addr2_1          = &00FB
-XX3              = &0100
-XX3_1            = &0101
-SPR_00_Y         = &0200
-SPR_00_TILE      = &0201
-SPR_00_ATTR      = &0202
-SPR_00_X         = &0203
-SPR_01_Y         = &0204
-SPR_01_TILE      = &0205
-SPR_01_ATTR      = &0206
-SPR_01_X         = &0207
-SPR_02_Y         = &0208
-SPR_02_TILE      = &0209
-SPR_02_ATTR      = &020A
-SPR_02_X         = &020B
-SPR_03_Y         = &020C
-SPR_03_TILE      = &020D
-SPR_03_ATTR      = &020E
-SPR_03_X         = &020F
-SPR_04_Y         = &0210
-SPR_04_TILE      = &0211
-SPR_04_ATTR      = &0212
-SPR_04_X         = &0213
-SPR_05_Y         = &0214
-SPR_05_TILE      = &0215
-SPR_05_ATTR      = &0216
-SPR_05_X         = &0217
-SPR_06_Y         = &0218
-SPR_06_TILE      = &0219
-SPR_06_ATTR      = &021A
-SPR_06_X         = &021B
-SPR_07_Y         = &021C
-SPR_07_TILE      = &021D
-SPR_07_ATTR      = &021E
-SPR_07_X         = &021F
-SPR_08_Y         = &0220
-SPR_08_TILE      = &0221
-SPR_08_ATTR      = &0222
-SPR_08_X         = &0223
-SPR_09_Y         = &0224
-SPR_09_TILE      = &0225
-SPR_09_ATTR      = &0226
-SPR_09_X         = &0227
-SPR_10_Y         = &0228
-SPR_10_TILE      = &0229
-SPR_10_ATTR      = &022A
-SPR_10_X         = &022B
-SPR_11_Y         = &022C
-SPR_11_TILE      = &022D
-SPR_11_ATTR      = &022E
-SPR_11_X         = &022F
-SPR_12_Y         = &0230
-SPR_12_TILE      = &0231
-SPR_12_ATTR      = &0232
-SPR_12_X         = &0233
-SPR_13_Y         = &0234
-SPR_13_TILE      = &0235
-SPR_13_ATTR      = &0236
-SPR_13_X         = &0237
-SPR_14_Y         = &0238
-SPR_14_TILE      = &0239
-SPR_14_ATTR      = &023A
-SPR_14_X         = &023B
-SPR_15_Y         = &023C
-SPR_15_TILE      = &023D
-SPR_15_ATTR      = &023E
-SPR_15_X         = &023F
-SPR_16_Y         = &0240
-SPR_16_TILE      = &0241
-SPR_16_ATTR      = &0242
-SPR_16_X         = &0243
-SPR_17_Y         = &0244
-SPR_17_TILE      = &0245
-SPR_17_ATTR      = &0246
-SPR_17_X         = &0247
-SPR_18_Y         = &0248
-SPR_18_TILE      = &0249
-SPR_18_ATTR      = &024A
-SPR_18_X         = &024B
-SPR_19_Y         = &024C
-SPR_19_TILE      = &024D
-SPR_19_ATTR      = &024E
-SPR_19_X         = &024F
-SPR_20_Y         = &0250
-SPR_20_TILE      = &0251
-SPR_20_ATTR      = &0252
-SPR_20_X         = &0253
-SPR_21_Y         = &0254
-SPR_21_TILE      = &0255
-SPR_21_ATTR      = &0256
-SPR_21_X         = &0257
-SPR_22_Y         = &0258
-SPR_22_TILE      = &0259
-SPR_22_ATTR      = &025A
-SPR_22_X         = &025B
-SPR_23_Y         = &025C
-SPR_23_TILE      = &025D
-SPR_23_ATTR      = &025E
-SPR_23_X         = &025F
-SPR_24_Y         = &0260
-SPR_24_TILE      = &0261
-SPR_24_ATTR      = &0262
-SPR_24_X         = &0263
-SPR_25_Y         = &0264
-SPR_25_TILE      = &0265
-SPR_25_ATTR      = &0266
-SPR_25_X         = &0267
-SPR_26_Y         = &0268
-SPR_26_TILE      = &0269
-SPR_26_ATTR      = &026A
-SPR_26_X         = &026B
-SPR_27_Y         = &026C
-SPR_27_TILE      = &026D
-SPR_27_ATTR      = &026E
-SPR_27_X         = &026F
-SPR_28_Y         = &0270
-SPR_28_TILE      = &0271
-SPR_28_ATTR      = &0272
-SPR_28_X         = &0273
-SPR_29_Y         = &0274
-SPR_29_TILE      = &0275
-SPR_29_ATTR      = &0276
-SPR_29_X         = &0277
-SPR_30_Y         = &0278
-SPR_30_TILE      = &0279
-SPR_30_ATTR      = &027A
-SPR_30_X         = &027B
-SPR_31_Y         = &027C
-SPR_31_TILE      = &027D
-SPR_31_ATTR      = &027E
-SPR_31_X         = &027F
-SPR_32_Y         = &0280
-SPR_32_TILE      = &0281
-SPR_32_ATTR      = &0282
-SPR_32_X         = &0283
-SPR_33_Y         = &0284
-SPR_33_TILE      = &0285
-SPR_33_ATTR      = &0286
-SPR_33_X         = &0287
-SPR_34_Y         = &0288
-SPR_34_TILE      = &0289
-SPR_34_ATTR      = &028A
-SPR_34_X         = &028B
-SPR_35_Y         = &028C
-SPR_35_TILE      = &028D
-SPR_35_ATTR      = &028E
-SPR_35_X         = &028F
-SPR_36_Y         = &0290
-SPR_36_TILE      = &0291
-SPR_36_ATTR      = &0292
-SPR_36_X         = &0293
-SPR_37_Y         = &0294
-SPR_37_TILE      = &0295
-SPR_37_ATTR      = &0296
-SPR_37_X         = &0297
-SPR_38_Y         = &0298
-SPR_38_TILE      = &0299
-SPR_38_ATTR      = &029A
-SPR_38_X         = &029B
-SPR_39_Y         = &029C
-SPR_39_TILE      = &029D
-SPR_39_ATTR      = &029E
-SPR_39_X         = &029F
-SPR_40_Y         = &02A0
-SPR_40_TILE      = &02A1
-SPR_40_ATTR      = &02A2
-SPR_40_X         = &02A3
-SPR_41_Y         = &02A4
-SPR_41_TILE      = &02A5
-SPR_41_ATTR      = &02A6
-SPR_41_X         = &02A7
-SPR_42_Y         = &02A8
-SPR_42_TILE      = &02A9
-SPR_42_ATTR      = &02AA
-SPR_42_X         = &02AB
-SPR_43_Y         = &02AC
-SPR_43_TILE      = &02AD
-SPR_43_ATTR      = &02AE
-SPR_43_X         = &02AF
-SPR_44_Y         = &02B0
-SPR_44_TILE      = &02B1
-SPR_44_ATTR      = &02B2
-SPR_44_X         = &02B3
-SPR_45_Y         = &02B4
-SPR_45_TILE      = &02B5
-SPR_45_ATTR      = &02B6
-SPR_45_X         = &02B7
-SPR_46_Y         = &02B8
-SPR_46_TILE      = &02B9
-SPR_46_ATTR      = &02BA
-SPR_46_X         = &02BB
-SPR_47_Y         = &02BC
-SPR_47_TILE      = &02BD
-SPR_47_ATTR      = &02BE
-SPR_47_X         = &02BF
-SPR_48_Y         = &02C0
-SPR_48_TILE      = &02C1
-SPR_48_ATTR      = &02C2
-SPR_48_X         = &02C3
-SPR_49_Y         = &02C4
-SPR_49_TILE      = &02C5
-SPR_49_ATTR      = &02C6
-SPR_49_X         = &02C7
-SPR_50_Y         = &02C8
-SPR_50_TILE      = &02C9
-SPR_50_ATTR      = &02CA
-SPR_50_X         = &02CB
-SPR_51_Y         = &02CC
-SPR_51_TILE      = &02CD
-SPR_51_ATTR      = &02CE
-SPR_51_X         = &02CF
-SPR_52_Y         = &02D0
-SPR_52_TILE      = &02D1
-SPR_52_ATTR      = &02D2
-SPR_52_X         = &02D3
-SPR_53_Y         = &02D4
-SPR_53_TILE      = &02D5
-SPR_53_ATTR      = &02D6
-SPR_53_X         = &02D7
-SPR_54_Y         = &02D8
-SPR_54_TILE      = &02D9
-SPR_54_ATTR      = &02DA
-SPR_54_X         = &02DB
-SPR_55_Y         = &02DC
-SPR_55_TILE      = &02DD
-SPR_55_ATTR      = &02DE
-SPR_55_X         = &02DF
-SPR_56_Y         = &02E0
-SPR_56_TILE      = &02E1
-SPR_56_ATTR      = &02E2
-SPR_56_X         = &02E3
-SPR_57_Y         = &02E4
-SPR_57_TILE      = &02E5
-SPR_57_ATTR      = &02E6
-SPR_57_X         = &02E7
-SPR_58_Y         = &02E8
-SPR_58_TILE      = &02E9
-SPR_58_ATTR      = &02EA
-SPR_58_X         = &02EB
-SPR_59_Y         = &02EC
-SPR_59_TILE      = &02ED
-SPR_59_ATTR      = &02EE
-SPR_59_X         = &02EF
-SPR_60_Y         = &02F0
-SPR_60_TILE      = &02F1
-SPR_60_ATTR      = &02F2
-SPR_60_X         = &02F3
-SPR_61_Y         = &02F4
-SPR_61_TILE      = &02F5
-SPR_61_ATTR      = &02F6
-SPR_61_X         = &02F7
-SPR_62_Y         = &02F8
-SPR_62_TILE      = &02F9
-SPR_62_ATTR      = &02FA
-SPR_62_X         = &02FB
-SPR_63_Y         = &02FC
-SPR_63_TILE      = &02FD
-SPR_63_ATTR      = &02FE
-SPR_63_X         = &02FF
-L0302            = &0302
-L0307            = &0307
-L0308            = &0308
-L0309            = &0309
-L030A            = &030A
-FRIN             = &036A
-L036C            = &036C
-JUNK             = &0373
-L0388            = &0388
-ECMP             = &0389
-MJ               = &038A
-CABTMP           = &038B
-LAS2             = &038C
-VIEW             = &038E
-LASCT            = &038F
-GNTMP            = &0390
-EV               = &0392
-L0393            = &0393
-L0394            = &0394
-NAME             = &0396
-L039D            = &039D
-TP               = &039E
-QQ0              = &039F
-QQ1              = &03A0
-CASH             = &03A1
-QQ14             = &03A5
-GCNT             = &03A7
-LASER            = &03A8
-CRGO             = &03AC
-QQ20             = &03AD
-BST              = &03BF
-BOMB             = &03C0
-ENGY             = &03C1
-DKCMP            = &03C2
-GHYP             = &03C3
-ESCP             = &03C4
-TRIBBLE          = &03C5
-TRIBBLE_1        = &03C6
-L03C7            = &03C7
-NOMSL            = &03C8
-FIST             = &03C9
-AVL              = &03CA
-QQ26             = &03DB
-TALLY            = &03DC
-TALLY_1          = &03DD
-QQ21             = &03DF
-NOSTM            = &03E5
-L03EA            = &03EA
-L03EB            = &03EB
-L03EC            = &03EC
-L03ED            = &03ED
-L03EE            = &03EE
-L03EF            = &03EF
-L03F0            = &03F0
-frameCounter     = &03F1
-DTW6             = &03F3
-DTW2             = &03F4
-DTW3             = &03F5
-DTW4             = &03F6
-DTW5             = &03F7
-DTW1             = &03F8
-DTW8             = &03F9
-XP               = &03FA
-YP               = &03FB
-L03FC            = &03FC
-LAS              = &0400
-MSTG             = &0401
-KL               = &0403
-KY1              = &0403
-KY2              = &0404
-KY3              = &0405
-KY4              = &0406
-KY5              = &0407
-KY6              = &0408
-KY7              = &0409
-QQ19             = &044D
-QQ19_1           = &044E
-QQ19_2           = &044F
-QQ19_3           = &0450
-QQ19_4           = &0450
-K2               = &0459
-K2_1             = &045A
-K2_2             = &045B
-K2_3             = &045C
-DLY              = &045D
-L045E            = &045E
-L045F            = &045F
-L0460            = &0460
-L0461            = &0461
-L0462            = &0462
-L0463            = &0463
-L0465            = &0465
-L0467            = &0467
-L0468            = &0468
-L0469            = &0469
-L046A            = &046A
-L046B            = &046B
-pictureTile      = &046C
-boxEdge1         = &046E
-boxEdge2         = &046F
-L0472            = &0472
-L0473            = &0473
-scanController2  = &0475
-JSTX             = &0476
-JSTY             = &0477
-L0478            = &0478
-LASX             = &047B
-LASY             = &047C
-ALTIT            = &047E
-SWAP             = &047F
-XSAV2            = &0481
-YSAV2            = &0482
-FSH              = &0484
-ASH              = &0485
-ENERGY           = &0486
-QQ24             = &0487
-QQ25             = &0488
-QQ28             = &0489
-QQ29             = &048A
-systemFlag       = &048B
-gov              = &048C
-tek              = &048D
-QQ2              = &048E
-QQ3              = &0494
-QQ4              = &0495
-QQ5              = &0496
-QQ8              = &049B
-QQ8_1            = &049C
-QQ9              = &049D
-QQ10             = &049E
-QQ18Lo           = &04A4
-QQ18Hi           = &04A5
-TKN1Lo           = &04A6
-TKN1Hi           = &04A7
-language         = &04A8
-controller1Down  = &04AA
-controller2Down  = &04AB
-controller1Up    = &04AC
-controller2Up    = &04AD
-controller1Left  = &04AE
-controller2Left  = &04AF
-controller1Right = &04B0
-controller2Right = &04B1
-controller1A     = &04B2
-controller2A     = &04B3
-controller1B     = &04B4
-controller2B     = &04B5
-controller1Start = &04B6
-controller2Start = &04B7
+ZP                = &0000
+RAND              = &0002
+RAND_1            = &0002
+RAND_2            = &0003
+RAND_3            = &0004
+L0005             = &0005
+T1                = &0006
+SC                = &0007
+SC_1              = &0008
+INWK              = &0009
+XX1               = &0009
+INWK_1            = &000A
+INWK_2            = &000B
+INWK_3            = &000C
+INWK_4            = &000D
+INWK_5            = &000E
+INWK_6            = &000F
+INWK_7            = &0010
+INWK_8            = &0011
+INWK_9            = &0012
+INWK_10           = &0013
+INWK_11           = &0014
+INWK_12           = &0015
+INWK_13           = &0016
+INWK_14           = &0017
+INWK_15           = &0018
+INWK_16           = &0019
+INWK_17           = &001A
+INWK_18           = &001B
+INWK_19           = &001C
+INWK_20           = &001D
+INWK_21           = &001E
+INWK_22           = &001F
+INWK_23           = &0020
+INWK_24           = &0021
+INWK_25           = &0022
+INWK_26           = &0023
+INWK_27           = &0024
+INWK_28           = &0025
+INWK_29           = &0026
+INWK_30           = &0027
+INWK_31           = &0028
+INWK_32           = &0029
+INWK_33           = &002A
+INWK_34           = &002B
+INWK_35           = &002C
+NEWB              = &002D
+P                 = &002F
+P_1               = &0030
+P_2               = &0031
+XC                = &0032
+hiddenColour      = &0033
+visibleColour     = &0034
+paletteColour1    = &0035
+paletteColour2    = &0036
+nmiTimer          = &0038
+nmiTimerLo        = &0039
+nmiTimerHi        = &003A
+YC                = &003B
+QQ17              = &003C
+K3                = &003D
+XX2               = &003D
+XX2_1             = &003E
+XX2_2             = &003F
+XX2_3             = &0040
+XX2_4             = &0041
+XX2_5             = &0042
+XX2_6             = &0043
+XX2_7             = &0044
+XX2_8             = &0045
+XX2_9             = &0046
+XX2_10            = &0047
+XX2_11            = &0048
+XX2_12            = &0049
+XX2_13            = &004A
+K4                = &004B
+K4_1              = &004C
+XX16              = &004D
+XX16_1            = &004E
+XX16_2            = &004F
+XX16_3            = &0050
+XX16_4            = &0051
+XX16_5            = &0052
+XX16_6            = &0053
+XX16_7            = &0054
+XX16_8            = &0055
+XX16_9            = &0056
+XX16_10           = &0057
+XX16_11           = &0058
+XX16_12           = &0059
+XX16_13           = &005A
+XX16_14           = &005B
+XX16_15           = &005C
+XX16_16           = &005D
+XX16_17           = &005E
+XX0               = &005F
+XX0_1             = &0060
+INF               = &0061
+XX19              = &0061
+INF_1             = &0062
+V                 = &0063
+V_1               = &0064
+XX                = &0065
+XX_1              = &0066
+YY                = &0067
+YY_1              = &0068
+BETA              = &0069
+BET1              = &006A
+QQ22              = &006B
+QQ22_1            = &006C
+ECMA              = &006D
+ALP1              = &006E
+ALP2              = &006F
+ALP2_1            = &0070
+X1                = &0071
+XX15              = &0071
+Y1                = &0072
+X2                = &0073
+Y2                = &0074
+XX15_4            = &0075
+XX15_5            = &0076
+XX12              = &0077
+XX12_1            = &0078
+XX12_2            = &0079
+XX12_3            = &007A
+XX12_4            = &007B
+XX12_5            = &007C
+K                 = &007D
+K_1               = &007E
+K_2               = &007F
+K_3               = &0080
+QQ15              = &0082
+QQ15_1            = &0083
+QQ15_2            = &0084
+QQ15_3            = &0085
+QQ15_4            = &0086
+QQ15_5            = &0087
+K5                = &0088
+XX18              = &0088
+XX18_1            = &0089
+XX18_2            = &008A
+XX18_3            = &008B
+K6                = &008C
+K6_1              = &008D
+K6_2              = &008E
+K6_3              = &008F
+K6_4              = &0090
+BET2              = &0091
+BET2_1            = &0092
+DELTA             = &0093
+DELT4             = &0094
+DELT4_1           = &0095
+U                 = &0096
+Q                 = &0097
+R                 = &0098
+S                 = &0099
+T                 = &009A
+XSAV              = &009B
+YSAV              = &009C
+XX17              = &009D
+QQ11              = &009E
+QQ11a             = &009F
+ZZ                = &00A0
+XX13              = &00A1
+MCNT              = &00A2
+TYPE              = &00A3
+ALPHA             = &00A4
+QQ12              = &00A5
+TGT               = &00A6
+FLAG              = &00A7
+CNT               = &00A8
+CNT2              = &00A9
+STP               = &00AA
+XX4               = &00AB
+XX20              = &00AC
+RAT               = &00AE
+RAT2              = &00AF
+widget            = &00B0
+Yx1M2             = &00B1
+Yx2M2             = &00B2
+Yx2M1             = &00B3
+messXC            = &00B4
+newzp             = &00B6
+L00B7             = &00B7
+tileNumber        = &00B8
+pattBufferHi      = &00B9
+SC2               = &00BA
+SC2_1             = &00BB
+L00BC             = &00BC
+L00BD             = &00BD
+L00BE             = &00BE
+drawingPhase      = &00C0
+tileNumber0       = &00C1
+tileNumber0_1     = &00C2
+tileNumber1       = &00C3
+tileNumber1_1     = &00C4
+tileNumber2       = &00C5
+tileNumber2_2     = &00C6
+tileNumber3       = &00C7
+tileNumber3_1     = &00C8
+L00C9             = &00C9
+L00CA             = &00CA
+L00CC             = &00CC
+L00CD             = &00CD
+L00CE             = &00CE
+L00CF             = &00CF
+tempVar           = &00D0
+tempVar_1         = &00D1
+L00D2             = &00D2
+L00D3             = &00D3
+addr1             = &00D4
+addr1_1           = &00D5
+L00D6             = &00D6
+L00D7             = &00D7
+L00D8             = &00D8
+L00DA             = &00DA
+L00DB             = &00DB
+L00DD             = &00DD
+L00DF             = &00DF
+L00E0             = &00E0
+L00E1             = &00E1
+L00E2             = &00E2
+L00E3             = &00E3
+L00E4             = &00E4
+L00E5             = &00E5
+nameBufferHi      = &00E6
+L00E7             = &00E7
+L00E8             = &00E8
+setupPPUForIconBar = &00E9
+showUserInterface = &00EA
+addr4             = &00EB
+addr4_1           = &00EC
+addr5             = &00ED
+addr5_1           = &00EE
+L00EF             = &00EF
+L00F0             = &00F0
+addr6             = &00F1
+addr6_1           = &00F2
+palettePhase      = &00F3
+otherPhase        = &00F4
+ppuCtrlCopy       = &00F5
+L00F6             = &00F6
+currentBank       = &00F7
+runningSetBank    = &00F8
+addr2             = &00FA
+addr2_1           = &00FB
+XX3               = &0100
+XX3_1             = &0101
+SPR_00_Y          = &0200
+SPR_00_TILE       = &0201
+SPR_00_ATTR       = &0202
+SPR_00_X          = &0203
+SPR_01_Y          = &0204
+SPR_01_TILE       = &0205
+SPR_01_ATTR       = &0206
+SPR_01_X          = &0207
+SPR_02_Y          = &0208
+SPR_02_TILE       = &0209
+SPR_02_ATTR       = &020A
+SPR_02_X          = &020B
+SPR_03_Y          = &020C
+SPR_03_TILE       = &020D
+SPR_03_ATTR       = &020E
+SPR_03_X          = &020F
+SPR_04_Y          = &0210
+SPR_04_TILE       = &0211
+SPR_04_ATTR       = &0212
+SPR_04_X          = &0213
+SPR_05_Y          = &0214
+SPR_05_TILE       = &0215
+SPR_05_ATTR       = &0216
+SPR_05_X          = &0217
+SPR_06_Y          = &0218
+SPR_06_TILE       = &0219
+SPR_06_ATTR       = &021A
+SPR_06_X          = &021B
+SPR_07_Y          = &021C
+SPR_07_TILE       = &021D
+SPR_07_ATTR       = &021E
+SPR_07_X          = &021F
+SPR_08_Y          = &0220
+SPR_08_TILE       = &0221
+SPR_08_ATTR       = &0222
+SPR_08_X          = &0223
+SPR_09_Y          = &0224
+SPR_09_TILE       = &0225
+SPR_09_ATTR       = &0226
+SPR_09_X          = &0227
+SPR_10_Y          = &0228
+SPR_10_TILE       = &0229
+SPR_10_ATTR       = &022A
+SPR_10_X          = &022B
+SPR_11_Y          = &022C
+SPR_11_TILE       = &022D
+SPR_11_ATTR       = &022E
+SPR_11_X          = &022F
+SPR_12_Y          = &0230
+SPR_12_TILE       = &0231
+SPR_12_ATTR       = &0232
+SPR_12_X          = &0233
+SPR_13_Y          = &0234
+SPR_13_TILE       = &0235
+SPR_13_ATTR       = &0236
+SPR_13_X          = &0237
+SPR_14_Y          = &0238
+SPR_14_TILE       = &0239
+SPR_14_ATTR       = &023A
+SPR_14_X          = &023B
+SPR_15_Y          = &023C
+SPR_15_TILE       = &023D
+SPR_15_ATTR       = &023E
+SPR_15_X          = &023F
+SPR_16_Y          = &0240
+SPR_16_TILE       = &0241
+SPR_16_ATTR       = &0242
+SPR_16_X          = &0243
+SPR_17_Y          = &0244
+SPR_17_TILE       = &0245
+SPR_17_ATTR       = &0246
+SPR_17_X          = &0247
+SPR_18_Y          = &0248
+SPR_18_TILE       = &0249
+SPR_18_ATTR       = &024A
+SPR_18_X          = &024B
+SPR_19_Y          = &024C
+SPR_19_TILE       = &024D
+SPR_19_ATTR       = &024E
+SPR_19_X          = &024F
+SPR_20_Y          = &0250
+SPR_20_TILE       = &0251
+SPR_20_ATTR       = &0252
+SPR_20_X          = &0253
+SPR_21_Y          = &0254
+SPR_21_TILE       = &0255
+SPR_21_ATTR       = &0256
+SPR_21_X          = &0257
+SPR_22_Y          = &0258
+SPR_22_TILE       = &0259
+SPR_22_ATTR       = &025A
+SPR_22_X          = &025B
+SPR_23_Y          = &025C
+SPR_23_TILE       = &025D
+SPR_23_ATTR       = &025E
+SPR_23_X          = &025F
+SPR_24_Y          = &0260
+SPR_24_TILE       = &0261
+SPR_24_ATTR       = &0262
+SPR_24_X          = &0263
+SPR_25_Y          = &0264
+SPR_25_TILE       = &0265
+SPR_25_ATTR       = &0266
+SPR_25_X          = &0267
+SPR_26_Y          = &0268
+SPR_26_TILE       = &0269
+SPR_26_ATTR       = &026A
+SPR_26_X          = &026B
+SPR_27_Y          = &026C
+SPR_27_TILE       = &026D
+SPR_27_ATTR       = &026E
+SPR_27_X          = &026F
+SPR_28_Y          = &0270
+SPR_28_TILE       = &0271
+SPR_28_ATTR       = &0272
+SPR_28_X          = &0273
+SPR_29_Y          = &0274
+SPR_29_TILE       = &0275
+SPR_29_ATTR       = &0276
+SPR_29_X          = &0277
+SPR_30_Y          = &0278
+SPR_30_TILE       = &0279
+SPR_30_ATTR       = &027A
+SPR_30_X          = &027B
+SPR_31_Y          = &027C
+SPR_31_TILE       = &027D
+SPR_31_ATTR       = &027E
+SPR_31_X          = &027F
+SPR_32_Y          = &0280
+SPR_32_TILE       = &0281
+SPR_32_ATTR       = &0282
+SPR_32_X          = &0283
+SPR_33_Y          = &0284
+SPR_33_TILE       = &0285
+SPR_33_ATTR       = &0286
+SPR_33_X          = &0287
+SPR_34_Y          = &0288
+SPR_34_TILE       = &0289
+SPR_34_ATTR       = &028A
+SPR_34_X          = &028B
+SPR_35_Y          = &028C
+SPR_35_TILE       = &028D
+SPR_35_ATTR       = &028E
+SPR_35_X          = &028F
+SPR_36_Y          = &0290
+SPR_36_TILE       = &0291
+SPR_36_ATTR       = &0292
+SPR_36_X          = &0293
+SPR_37_Y          = &0294
+SPR_37_TILE       = &0295
+SPR_37_ATTR       = &0296
+SPR_37_X          = &0297
+SPR_38_Y          = &0298
+SPR_38_TILE       = &0299
+SPR_38_ATTR       = &029A
+SPR_38_X          = &029B
+SPR_39_Y          = &029C
+SPR_39_TILE       = &029D
+SPR_39_ATTR       = &029E
+SPR_39_X          = &029F
+SPR_40_Y          = &02A0
+SPR_40_TILE       = &02A1
+SPR_40_ATTR       = &02A2
+SPR_40_X          = &02A3
+SPR_41_Y          = &02A4
+SPR_41_TILE       = &02A5
+SPR_41_ATTR       = &02A6
+SPR_41_X          = &02A7
+SPR_42_Y          = &02A8
+SPR_42_TILE       = &02A9
+SPR_42_ATTR       = &02AA
+SPR_42_X          = &02AB
+SPR_43_Y          = &02AC
+SPR_43_TILE       = &02AD
+SPR_43_ATTR       = &02AE
+SPR_43_X          = &02AF
+SPR_44_Y          = &02B0
+SPR_44_TILE       = &02B1
+SPR_44_ATTR       = &02B2
+SPR_44_X          = &02B3
+SPR_45_Y          = &02B4
+SPR_45_TILE       = &02B5
+SPR_45_ATTR       = &02B6
+SPR_45_X          = &02B7
+SPR_46_Y          = &02B8
+SPR_46_TILE       = &02B9
+SPR_46_ATTR       = &02BA
+SPR_46_X          = &02BB
+SPR_47_Y          = &02BC
+SPR_47_TILE       = &02BD
+SPR_47_ATTR       = &02BE
+SPR_47_X          = &02BF
+SPR_48_Y          = &02C0
+SPR_48_TILE       = &02C1
+SPR_48_ATTR       = &02C2
+SPR_48_X          = &02C3
+SPR_49_Y          = &02C4
+SPR_49_TILE       = &02C5
+SPR_49_ATTR       = &02C6
+SPR_49_X          = &02C7
+SPR_50_Y          = &02C8
+SPR_50_TILE       = &02C9
+SPR_50_ATTR       = &02CA
+SPR_50_X          = &02CB
+SPR_51_Y          = &02CC
+SPR_51_TILE       = &02CD
+SPR_51_ATTR       = &02CE
+SPR_51_X          = &02CF
+SPR_52_Y          = &02D0
+SPR_52_TILE       = &02D1
+SPR_52_ATTR       = &02D2
+SPR_52_X          = &02D3
+SPR_53_Y          = &02D4
+SPR_53_TILE       = &02D5
+SPR_53_ATTR       = &02D6
+SPR_53_X          = &02D7
+SPR_54_Y          = &02D8
+SPR_54_TILE       = &02D9
+SPR_54_ATTR       = &02DA
+SPR_54_X          = &02DB
+SPR_55_Y          = &02DC
+SPR_55_TILE       = &02DD
+SPR_55_ATTR       = &02DE
+SPR_55_X          = &02DF
+SPR_56_Y          = &02E0
+SPR_56_TILE       = &02E1
+SPR_56_ATTR       = &02E2
+SPR_56_X          = &02E3
+SPR_57_Y          = &02E4
+SPR_57_TILE       = &02E5
+SPR_57_ATTR       = &02E6
+SPR_57_X          = &02E7
+SPR_58_Y          = &02E8
+SPR_58_TILE       = &02E9
+SPR_58_ATTR       = &02EA
+SPR_58_X          = &02EB
+SPR_59_Y          = &02EC
+SPR_59_TILE       = &02ED
+SPR_59_ATTR       = &02EE
+SPR_59_X          = &02EF
+SPR_60_Y          = &02F0
+SPR_60_TILE       = &02F1
+SPR_60_ATTR       = &02F2
+SPR_60_X          = &02F3
+SPR_61_Y          = &02F4
+SPR_61_TILE       = &02F5
+SPR_61_ATTR       = &02F6
+SPR_61_X          = &02F7
+SPR_62_Y          = &02F8
+SPR_62_TILE       = &02F9
+SPR_62_ATTR       = &02FA
+SPR_62_X          = &02FB
+SPR_63_Y          = &02FC
+SPR_63_TILE       = &02FD
+SPR_63_ATTR       = &02FE
+SPR_63_X          = &02FF
+L0302             = &0302
+L0307             = &0307
+L0308             = &0308
+L0309             = &0309
+L030A             = &030A
+FRIN              = &036A
+L036C             = &036C
+JUNK              = &0373
+L0388             = &0388
+ECMP              = &0389
+MJ                = &038A
+CABTMP            = &038B
+LAS2              = &038C
+VIEW              = &038E
+LASCT             = &038F
+GNTMP             = &0390
+EV                = &0392
+L0393             = &0393
+L0394             = &0394
+NAME              = &0396
+L039D             = &039D
+TP                = &039E
+QQ0               = &039F
+QQ1               = &03A0
+CASH              = &03A1
+QQ14              = &03A5
+GCNT              = &03A7
+LASER             = &03A8
+CRGO              = &03AC
+QQ20              = &03AD
+BST               = &03BF
+BOMB              = &03C0
+ENGY              = &03C1
+DKCMP             = &03C2
+GHYP              = &03C3
+ESCP              = &03C4
+TRIBBLE           = &03C5
+TRIBBLE_1         = &03C6
+L03C7             = &03C7
+NOMSL             = &03C8
+FIST              = &03C9
+AVL               = &03CA
+QQ26              = &03DB
+TALLY             = &03DC
+TALLY_1           = &03DD
+QQ21              = &03DF
+NOSTM             = &03E5
+L03EA             = &03EA
+L03EB             = &03EB
+L03EC             = &03EC
+L03ED             = &03ED
+L03EE             = &03EE
+L03EF             = &03EF
+L03F0             = &03F0
+frameCounter      = &03F1
+DTW6              = &03F3
+DTW2              = &03F4
+DTW3              = &03F5
+DTW4              = &03F6
+DTW5              = &03F7
+DTW1              = &03F8
+DTW8              = &03F9
+XP                = &03FA
+YP                = &03FB
+L03FC             = &03FC
+LAS               = &0400
+MSTG              = &0401
+KL                = &0403
+KY1               = &0403
+KY2               = &0404
+KY3               = &0405
+KY4               = &0406
+KY5               = &0407
+KY6               = &0408
+KY7               = &0409
+QQ19              = &044D
+QQ19_1            = &044E
+QQ19_2            = &044F
+QQ19_3            = &0450
+QQ19_4            = &0450
+K2                = &0459
+K2_1              = &045A
+K2_2              = &045B
+K2_3              = &045C
+DLY               = &045D
+L045E             = &045E
+L045F             = &045F
+L0460             = &0460
+L0461             = &0461
+L0462             = &0462
+L0463             = &0463
+L0465             = &0465
+L0467             = &0467
+L0468             = &0468
+nmiStoreA         = &0469
+nmiStoreX         = &046A
+nmiStoreY         = &046B
+pictureTile       = &046C
+boxEdge1          = &046E
+boxEdge2          = &046F
+L0472             = &0472
+L0473             = &0473
+scanController2   = &0475
+JSTX              = &0476
+JSTY              = &0477
+L0478             = &0478
+LASX              = &047B
+LASY              = &047C
+ALTIT             = &047E
+SWAP              = &047F
+XSAV2             = &0481
+YSAV2             = &0482
+FSH               = &0484
+ASH               = &0485
+ENERGY            = &0486
+QQ24              = &0487
+QQ25              = &0488
+QQ28              = &0489
+QQ29              = &048A
+systemFlag        = &048B
+gov               = &048C
+tek               = &048D
+QQ2               = &048E
+QQ3               = &0494
+QQ4               = &0495
+QQ5               = &0496
+QQ8               = &049B
+QQ8_1             = &049C
+QQ9               = &049D
+QQ10              = &049E
+QQ18Lo            = &04A4
+QQ18Hi            = &04A5
+TKN1Lo            = &04A6
+TKN1Hi            = &04A7
+language          = &04A8
+controller1Down   = &04AA
+controller2Down   = &04AB
+controller1Up     = &04AC
+controller2Up     = &04AD
+controller1Left   = &04AE
+controller2Left   = &04AF
+controller1Right  = &04B0
+controller2Right  = &04B1
+controller1A      = &04B2
+controller2A      = &04B3
+controller1B      = &04B4
+controller2B      = &04B5
+controller1Start  = &04B6
+controller2Start  = &04B7
 controller1Select = &04B8
 controller2Select = &04B9
-L04BA            = &04BA
-L04BB            = &04BB
-L04BC            = &04BC
-L04BD            = &04BD
-L04BE            = &04BE
-L04C0            = &04C0
-L04C6            = &04C6
-SX               = &04C8
-SY               = &04DD
-SZ               = &04F2
-BUFm1            = &0506
-BUF              = &0507
-BUF_1            = &0508
-HANGFLAG         = &0561
-MANY             = &0562
-SSPR             = &0564
-SXL              = &05A5
-SYL              = &05BA
-SZL              = &05CF
-safehouse        = &05E4
-Kpercent         = &0600
-L0601            = &0601
-L0606            = &0606
-PPU_CTRL         = &2000
-PPU_MASK         = &2001
-PPU_STATUS       = &2002
-OAM_ADDR         = &2003
-OAM_DATA         = &2004
-PPU_SCROLL       = &2005
-PPU_ADDR         = &2006
-PPU_DATA         = &2007
-SQ1_ENV          = &4000
-SQ1_SWEEP        = &4001
-SQ1_LO           = &4002
-SQ1_HI           = &4003
-SQ2_ENV          = &4004
-SQ2_SWEEP        = &4005
-SQ2_LO           = &4006
-SQ2_HI           = &4007
-TRI_CTRL         = &4008
-TRI_LO           = &400A
-TRI_HI           = &400B
-NOI_ENV          = &400C
-NOI_RAND         = &400E
-NOI_LEN          = &400F
-OAM_DMA          = &4014
-APU_FLAGS        = &4015
-CONTROLLER_1     = &4016
-CONTROLLER_2     = &4017
-pattBuffer0      = &6000
-pattBuffer1      = &6800
-nameBuffer0      = &7000
-L7001            = &7001
-L7020            = &7020
-L7021            = &7021
-L7040            = &7040
-L7041            = &7041
-L7060            = &7060
-L7061            = &7061
-L7080            = &7080
-L7081            = &7081
-L70A0            = &70A0
-L70A1            = &70A1
-L70C0            = &70C0
-L70C1            = &70C1
-L70E0            = &70E0
-L70E1            = &70E1
-L7100            = &7100
-L7101            = &7101
-L7120            = &7120
-L7121            = &7121
-L7140            = &7140
-L7141            = &7141
-L7160            = &7160
-L7161            = &7161
-L7180            = &7180
-L7181            = &7181
-L71A0            = &71A0
-L71A1            = &71A1
-L71C0            = &71C0
-L71C1            = &71C1
-L71E0            = &71E0
-L71E1            = &71E1
-L7200            = &7200
-L7201            = &7201
-L7220            = &7220
-L7221            = &7221
-L7240            = &7240
-L7241            = &7241
-L7260            = &7260
-L7261            = &7261
-L72C0            = &72C0
-L7300            = &7300
-nameBuffer1      = &7400
-L7401            = &7401
-L7420            = &7420
-L7421            = &7421
-L7440            = &7440
-L7441            = &7441
-L7460            = &7460
-L7461            = &7461
-L7480            = &7480
-L7481            = &7481
-L74A0            = &74A0
-L74A1            = &74A1
-L74C0            = &74C0
-L74C1            = &74C1
-L74E0            = &74E0
-L74E1            = &74E1
-L7500            = &7500
-L7501            = &7501
-L7520            = &7520
-L7521            = &7521
-L7540            = &7540
-L7541            = &7541
-L7560            = &7560
-L7561            = &7561
-L7580            = &7580
-L7581            = &7581
-L75A0            = &75A0
-L75A1            = &75A1
-L75C0            = &75C0
-L75C1            = &75C1
-L75E0            = &75E0
-L75E1            = &75E1
-L7600            = &7600
-L7601            = &7601
-L7620            = &7620
-L7621            = &7621
-L7640            = &7640
-L7641            = &7641
-L7660            = &7660
-L7661            = &7661
-L7700            = &7700
-L8012            = &8012
-L8021            = &8021
-L8041            = &8041
-L8062            = &8062
-L8083            = &8083
-PlayMusic        = &811E
-slvy2            = &81B6
-L8926            = &8926
-L8980            = &8980
-L89D1            = &89D1
-MVS5             = &8A14
-DemoShips        = &9522
-tnpr             = &9620
-L9FFF            = &9FFF
-LL9              = &A070
-LA082            = &A082
-LA0F8            = &A0F8
-LA166            = &A166
-LA2C3            = &A2C3
-BR1              = &A379
-LA4A5            = &A4A5
-LA5AB            = &A5AB
-LA65D            = &A65D
-LA730            = &A730
-LA775            = &A775
-LA7B7            = &A7B7
-TT27_0           = &A8D9
-LA972            = &A972
-LA9D1            = &A9D1
-LAABC            = &AABC
-LAC1D            = &AC1D
-SUN              = &AC25
-LAC5C            = &AC5C
-LAE03            = &AE03
-LAE18            = &AE18
-LAF9D            = &AF9D
-LAFCD            = &AFCD
-LB0E1            = &B0E1
-DETOK            = &B0EF
-DTS              = &B187
-LB18E            = &B18E
-STARS            = &B1BE
-MAS4             = &B1CA
-LB1D4            = &B1D4
-LB219            = &B219
-LB248            = &B248
-LB2BC            = &B2BC
-subm_B2C3        = &B2C3
-LB2EF            = &B2EF
-LB2FB            = &B2FB
-CLIP             = &B341
-LB358            = &B358
-LB39D            = &B39D
-LB3BC            = &B3BC
-PDESC            = &B3E8
-TT27             = &B44F
-LB459            = &B459
-ex               = &B4AA
-DASC             = &B4F5
-CHPR             = &B635
-LB63D            = &B63D
-LB673            = &B673
-HALL             = &B738
-TIDY             = &B85C
-LB882            = &B882
-LB88C            = &B88C
-PAS1             = &B8F7
-GetSystemImage2  = &B8F9
-LB8FE            = &B8FE
-LB90D            = &B90D
-LB919            = &B919
-SetSystemImage2  = &B93C
-LB96B            = &B96B
-SCAN             = &B975
-LL164            = &B980
-LB9C1            = &B9C1
-LB9E2            = &B9E2
-LB9F9            = &B9F9
-LBA17            = &BA17
-LBA23            = &BA23
-LBA63            = &BA63
-LBAF3            = &BAF3
-LBB37            = &BB37
-LBBDE            = &BBDE
-TITLE            = &BC83
-LBE52            = &BE52
-TT66             = &BEB5
-LBED2            = &BED2
-SetSystemImage1  = &BED7
-GetSystemImage1  = &BEEA
-LBF41            = &BF41
-LBFFF            = &BFFF
+L04BA             = &04BA
+L04BB             = &04BB
+L04BC             = &04BC
+L04BD             = &04BD
+L04BE             = &04BE
+L04C0             = &04C0
+L04C6             = &04C6
+SX                = &04C8
+SY                = &04DD
+SZ                = &04F2
+BUFm1             = &0506
+BUF               = &0507
+BUF_1             = &0508
+HANGFLAG          = &0561
+MANY              = &0562
+SSPR              = &0564
+SXL               = &05A5
+SYL               = &05BA
+SZL               = &05CF
+safehouse         = &05E4
+Kpercent          = &0600
+L0601             = &0601
+L0606             = &0606
+PPU_CTRL          = &2000
+PPU_MASK          = &2001
+PPU_STATUS        = &2002
+OAM_ADDR          = &2003
+OAM_DATA          = &2004
+PPU_SCROLL        = &2005
+PPU_ADDR          = &2006
+PPU_DATA          = &2007
+SQ1_ENV           = &4000
+SQ1_SWEEP         = &4001
+SQ1_LO            = &4002
+SQ1_HI            = &4003
+SQ2_ENV           = &4004
+SQ2_SWEEP         = &4005
+SQ2_LO            = &4006
+SQ2_HI            = &4007
+TRI_CTRL          = &4008
+TRI_LO            = &400A
+TRI_HI            = &400B
+NOI_ENV           = &400C
+NOI_RAND          = &400E
+NOI_LEN           = &400F
+OAM_DMA           = &4014
+APU_FLAGS         = &4015
+CONTROLLER_1      = &4016
+CONTROLLER_2      = &4017
+pattBuffer0       = &6000
+pattBuffer1       = &6800
+nameBuffer0       = &7000
+L7001             = &7001
+L7020             = &7020
+L7021             = &7021
+L7040             = &7040
+L7041             = &7041
+L7060             = &7060
+L7061             = &7061
+L7080             = &7080
+L7081             = &7081
+L70A0             = &70A0
+L70A1             = &70A1
+L70C0             = &70C0
+L70C1             = &70C1
+L70E0             = &70E0
+L70E1             = &70E1
+L7100             = &7100
+L7101             = &7101
+L7120             = &7120
+L7121             = &7121
+L7140             = &7140
+L7141             = &7141
+L7160             = &7160
+L7161             = &7161
+L7180             = &7180
+L7181             = &7181
+L71A0             = &71A0
+L71A1             = &71A1
+L71C0             = &71C0
+L71C1             = &71C1
+L71E0             = &71E0
+L71E1             = &71E1
+L7200             = &7200
+L7201             = &7201
+L7220             = &7220
+L7221             = &7221
+L7240             = &7240
+L7241             = &7241
+L7260             = &7260
+L7261             = &7261
+L72C0             = &72C0
+L7300             = &7300
+nameBuffer1       = &7400
+L7401             = &7401
+L7420             = &7420
+L7421             = &7421
+L7440             = &7440
+L7441             = &7441
+L7460             = &7460
+L7461             = &7461
+L7480             = &7480
+L7481             = &7481
+L74A0             = &74A0
+L74A1             = &74A1
+L74C0             = &74C0
+L74C1             = &74C1
+L74E0             = &74E0
+L74E1             = &74E1
+L7500             = &7500
+L7501             = &7501
+L7520             = &7520
+L7521             = &7521
+L7540             = &7540
+L7541             = &7541
+L7560             = &7560
+L7561             = &7561
+L7580             = &7580
+L7581             = &7581
+L75A0             = &75A0
+L75A1             = &75A1
+L75C0             = &75C0
+L75C1             = &75C1
+L75E0             = &75E0
+L75E1             = &75E1
+L7600             = &7600
+L7601             = &7601
+L7620             = &7620
+L7621             = &7621
+L7640             = &7640
+L7641             = &7641
+L7660             = &7660
+L7661             = &7661
+L7700             = &7700
+L8012             = &8012
+L8021             = &8021
+L8041             = &8041
+L8062             = &8062
+L8083             = &8083
+PlayMusic         = &811E
+slvy2             = &81B6
+L8926             = &8926
+L8980             = &8980
+L89D1             = &89D1
+MVS5              = &8A14
+DemoShips         = &9522
+tnpr              = &9620
+L9FFF             = &9FFF
+LL9               = &A070
+LA082             = &A082
+LA0F8             = &A0F8
+LA166             = &A166
+LA2C3             = &A2C3
+BR1               = &A379
+LA4A5             = &A4A5
+LA5AB             = &A5AB
+LA65D             = &A65D
+LA730             = &A730
+LA775             = &A775
+LA7B7             = &A7B7
+TT27_0            = &A8D9
+LA972             = &A972
+LA9D1             = &A9D1
+LAABC             = &AABC
+LAC1D             = &AC1D
+SUN               = &AC25
+LAC5C             = &AC5C
+LAE03             = &AE03
+LAE18             = &AE18
+LAF9D             = &AF9D
+LAFCD             = &AFCD
+LB0E1             = &B0E1
+DETOK             = &B0EF
+DTS               = &B187
+LB18E             = &B18E
+STARS             = &B1BE
+MAS4              = &B1CA
+LB1D4             = &B1D4
+LB219             = &B219
+LB248             = &B248
+LB2BC             = &B2BC
+subm_B2C3         = &B2C3
+LB2EF             = &B2EF
+LB2FB             = &B2FB
+CLIP              = &B341
+LB358             = &B358
+LB39D             = &B39D
+LB3BC             = &B3BC
+PDESC             = &B3E8
+TT27              = &B44F
+LB459             = &B459
+ex                = &B4AA
+DASC              = &B4F5
+CHPR              = &B635
+LB63D             = &B63D
+LB673             = &B673
+HALL              = &B738
+TIDY              = &B85C
+LB882             = &B882
+LB88C             = &B88C
+PAS1              = &B8F7
+GetSystemImage2   = &B8F9
+LB8FE             = &B8FE
+LB90D             = &B90D
+LB919             = &B919
+SetSystemImage2   = &B93C
+LB96B             = &B96B
+SCAN              = &B975
+LL164             = &B980
+LB9C1             = &B9C1
+LB9E2             = &B9E2
+LB9F9             = &B9F9
+LBA17             = &BA17
+LBA23             = &BA23
+LBA63             = &BA63
+LBAF3             = &BAF3
+LBB37             = &BB37
+LBBDE             = &BBDE
+TITLE             = &BC83
+LBE52             = &BE52
+TT66              = &BEB5
+LBED2             = &BED2
+SetSystemImage1   = &BED7
+GetSystemImage1   = &BEEA
+LBF41             = &BF41
+LBFFF             = &BFFF
 
  ORG &C000
 
@@ -928,7 +928,7 @@ LC006 = sub_CC004+2
  STA PPU_CTRL                                 ; C040: 8D 00 20    ..
  STA ppuCtrlCopy                              ; C043: 85 F5       ..
  STA PPU_MASK                                 ; C045: 8D 01 20    ..
- STA dashboardSwitch                          ; C048: 85 E9       ..
+ STA setupPPUForIconBar                       ; C048: 85 E9       ..
  LDA #&40 ; '@'                               ; C04A: A9 40       .@
  STA CONTROLLER_2                             ; C04C: 8D 17 40    ..@
  INC LC006                                    ; C04F: EE 06 C0    ...
@@ -990,7 +990,7 @@ LC006 = sub_CC004+2
  PLA                                          ; C0AD: 68          h
 ; ******************************************************************************
 .SetBank
- DEC L00F8                                    ; C0AE: C6 F8       ..
+ DEC runningSetBank                           ; C0AE: C6 F8       ..
  STA currentBank                              ; C0B0: 85 F7       ..
  STA &FFFF                                    ; C0B2: 8D FF FF    ...
  LSR A                                        ; C0B5: 4A          J
@@ -1001,13 +1001,13 @@ LC006 = sub_CC004+2
  STA &FFFF                                    ; C0BE: 8D FF FF    ...
  LSR A                                        ; C0C1: 4A          J
  STA &FFFF                                    ; C0C2: 8D FF FF    ...
- INC L00F8                                    ; C0C5: E6 F8       ..
+ INC runningSetBank                           ; C0C5: E6 F8       ..
  BNE CC0CA                                    ; C0C7: D0 01       ..
  RTS                                          ; C0C9: 60          `
 
 .CC0CA
  LDA #0                                       ; C0CA: A9 00       ..
- STA L00F8                                    ; C0CC: 85 F8       ..
+ STA runningSetBank                           ; C0CC: 85 F8       ..
  LDA currentBank                              ; C0CE: A5 F7       ..
  PHA                                          ; C0D0: 48          H
  TXA                                          ; C0D1: 8A          .
@@ -1183,12 +1183,12 @@ LC006 = sub_CC004+2
 ; ******************************************************************************
 .subm_C582
  SEC                                          ; C582: 38          8
- LDA L00D0                                    ; C583: A5 D0       ..
+ LDA tempVar                                  ; C583: A5 D0       ..
  SBC #&53 ; 'S'                               ; C585: E9 53       .S
- STA L00D0                                    ; C587: 85 D0       ..
- LDA L00D1                                    ; C589: A5 D1       ..
+ STA tempVar                                  ; C587: 85 D0       ..
+ LDA tempVar_1                                ; C589: A5 D1       ..
  SBC #8                                       ; C58B: E9 08       ..
- STA L00D1                                    ; C58D: 85 D1       ..
+ STA tempVar_1                                ; C58D: 85 D1       ..
  LDX addr1                                    ; C58F: A6 D4       ..
  STX addr5                                    ; C591: 86 ED       ..
  LDA addr1_1                                  ; C593: A5 D5       ..
@@ -1228,22 +1228,22 @@ LC006 = sub_CC004+2
 ; ******************************************************************************
 .subm_C5D2
  SEC                                          ; C5D2: 38          8
- LDA L00D0                                    ; C5D3: A5 D0       ..
+ LDA tempVar                                  ; C5D3: A5 D0       ..
  SBC #&9A                                     ; C5D5: E9 9A       ..
- STA L00D0                                    ; C5D7: 85 D0       ..
- LDA L00D1                                    ; C5D9: A5 D1       ..
+ STA tempVar                                  ; C5D7: 85 D0       ..
+ LDA tempVar_1                                ; C5D9: A5 D1       ..
  SBC #2                                       ; C5DB: E9 02       ..
- STA L00D1                                    ; C5DD: 85 D1       ..
+ STA tempVar_1                                ; C5DD: 85 D1       ..
  BMI CC5E4                                    ; C5DF: 30 03       0.
  JMP CC5F3                                    ; C5E1: 4C F3 C5    L..
 
 .CC5E4
- LDA L00D0                                    ; C5E4: A5 D0       ..
+ LDA tempVar                                  ; C5E4: A5 D0       ..
  ADC #&6F ; 'o'                               ; C5E6: 69 6F       io
- STA L00D0                                    ; C5E8: 85 D0       ..
- LDA L00D1                                    ; C5EA: A5 D1       ..
+ STA tempVar                                  ; C5E8: 85 D0       ..
+ LDA tempVar_1                                ; C5EA: A5 D1       ..
  ADC #2                                       ; C5EC: 69 02       i.
- STA L00D1                                    ; C5EE: 85 D1       ..
+ STA tempVar_1                                ; C5EE: 85 D1       ..
  JMP CC6F3                                    ; C5F0: 4C F3 C6    L..
 
 .CC5F3
@@ -1289,22 +1289,22 @@ LC006 = sub_CC004+2
  ASL A                                        ; C630: 0A          .
  BMI subm_C5D2                                ; C631: 30 9F       0.
  SEC                                          ; C633: 38          8
- LDA L00D0                                    ; C634: A5 D0       ..
+ LDA tempVar                                  ; C634: A5 D0       ..
  SBC #&11                                     ; C636: E9 11       ..
- STA L00D0                                    ; C638: 85 D0       ..
- LDA L00D1                                    ; C63A: A5 D1       ..
+ STA tempVar                                  ; C638: 85 D0       ..
+ LDA tempVar_1                                ; C63A: A5 D1       ..
  SBC #5                                       ; C63C: E9 05       ..
- STA L00D1                                    ; C63E: 85 D1       ..
+ STA tempVar_1                                ; C63E: 85 D1       ..
  BMI CC645                                    ; C640: 30 03       0.
  JMP CC654                                    ; C642: 4C 54 C6    LT.
 
 .CC645
- LDA L00D0                                    ; C645: A5 D0       ..
+ LDA tempVar                                  ; C645: A5 D0       ..
  ADC #&E3                                     ; C647: 69 E3       i.
- STA L00D0                                    ; C649: 85 D0       ..
- LDA L00D1                                    ; C64B: A5 D1       ..
+ STA tempVar                                  ; C649: 85 D0       ..
+ LDA tempVar_1                                ; C64B: A5 D1       ..
  ADC #4                                       ; C64D: 69 04       i.
- STA L00D1                                    ; C64F: 85 D1       ..
+ STA tempVar_1                                ; C64F: 85 D1       ..
  JMP CC6F3                                    ; C651: 4C F3 C6    L..
 
 .CC654
@@ -1383,27 +1383,27 @@ LC006 = sub_CC004+2
 
 ; ******************************************************************************
 .subm_C6C6
- LDX L00F4                                    ; C6C6: A6 F4       ..
+ LDX otherPhase                               ; C6C6: A6 F4       ..
  LDA L03EF,X                                  ; C6C8: BD EF 03    ...
  AND #&10                                     ; C6CB: 29 10       ).
  BEQ CC6F3                                    ; C6CD: F0 24       .$
  SEC                                          ; C6CF: 38          8
- LDA L00D0                                    ; C6D0: A5 D0       ..
+ LDA tempVar                                  ; C6D0: A5 D0       ..
  SBC #&2A ; '*'                               ; C6D2: E9 2A       .*
- STA L00D0                                    ; C6D4: 85 D0       ..
- LDA L00D1                                    ; C6D6: A5 D1       ..
+ STA tempVar                                  ; C6D4: 85 D0       ..
+ LDA tempVar_1                                ; C6D6: A5 D1       ..
  SBC #0                                       ; C6D8: E9 00       ..
- STA L00D1                                    ; C6DA: 85 D1       ..
+ STA tempVar_1                                ; C6DA: 85 D1       ..
  BMI CC6E1                                    ; C6DC: 30 03       0.
  JMP CC6F0                                    ; C6DE: 4C F0 C6    L..
 
 .CC6E1
- LDA L00D0                                    ; C6E1: A5 D0       ..
+ LDA tempVar                                  ; C6E1: A5 D0       ..
  ADC #&F1                                     ; C6E3: 69 F1       i.
- STA L00D0                                    ; C6E5: 85 D0       ..
- LDA L00D1                                    ; C6E7: A5 D1       ..
+ STA tempVar                                  ; C6E5: 85 D0       ..
+ LDA tempVar_1                                ; C6E7: A5 D1       ..
  ADC #&FF                                     ; C6E9: 69 FF       i.
- STA L00D1                                    ; C6EB: 85 D1       ..
+ STA tempVar_1                                ; C6EB: 85 D1       ..
  JMP CC6F3                                    ; C6ED: 4C F3 C6    L..
 
 .CC6F0
@@ -1417,17 +1417,17 @@ LC006 = sub_CC004+2
  LDA L00D3                                    ; C6F4: A5 D3       ..
  BEQ CC6C3                                    ; C6F6: F0 CB       ..
  BPL subm_C6C0                                ; C6F8: 10 C6       ..
- LDX L00F4                                    ; C6FA: A6 F4       ..
+ LDX otherPhase                               ; C6FA: A6 F4       ..
  LDA L03EF,X                                  ; C6FC: BD EF 03    ...
  AND #&10                                     ; C6FF: 29 10       ).
  BEQ CC77E                                    ; C701: F0 7B       .{
  SEC                                          ; C703: 38          8
- LDA L00D0                                    ; C704: A5 D0       ..
+ LDA tempVar                                  ; C704: A5 D0       ..
  SBC #&38 ; '8'                               ; C706: E9 38       .8
- STA L00D0                                    ; C708: 85 D0       ..
- LDA L00D1                                    ; C70A: A5 D1       ..
+ STA tempVar                                  ; C708: 85 D0       ..
+ LDA tempVar_1                                ; C70A: A5 D1       ..
  SBC #0                                       ; C70C: E9 00       ..
- STA L00D1                                    ; C70E: 85 D1       ..
+ STA tempVar_1                                ; C70E: 85 D1       ..
  TXA                                          ; C710: 8A          .
  EOR #1                                       ; C711: 49 01       I.
  TAY                                          ; C713: A8          .
@@ -1444,12 +1444,12 @@ LC006 = sub_CC004+2
  BEQ CC73B                                    ; C727: F0 12       ..
  BCS CC73B                                    ; C729: B0 10       ..
  SEC                                          ; C72B: 38          8
- LDA L00D0                                    ; C72C: A5 D0       ..
+ LDA tempVar                                  ; C72C: A5 D0       ..
  SBC #&20 ; ' '                               ; C72E: E9 20       .
- STA L00D0                                    ; C730: 85 D0       ..
- LDA L00D1                                    ; C732: A5 D1       ..
+ STA tempVar                                  ; C730: 85 D0       ..
+ LDA tempVar_1                                ; C732: A5 D1       ..
  SBC #0                                       ; C734: E9 00       ..
- STA L00D1                                    ; C736: 85 D1       ..
+ STA tempVar_1                                ; C736: 85 D1       ..
 .CC738
  JMP CC849                                    ; C738: 4C 49 C8    LI.
 
@@ -1468,12 +1468,12 @@ LC006 = sub_CC004+2
  CMP #&30 ; '0'                               ; C74D: C9 30       .0
  BCC CC761                                    ; C74F: 90 10       ..
  SEC                                          ; C751: 38          8
- LDA L00D0                                    ; C752: A5 D0       ..
+ LDA tempVar                                  ; C752: A5 D0       ..
  SBC #&3C ; '<'                               ; C754: E9 3C       .<
- STA L00D0                                    ; C756: 85 D0       ..
- LDA L00D1                                    ; C758: A5 D1       ..
+ STA tempVar                                  ; C756: 85 D0       ..
+ LDA tempVar_1                                ; C758: A5 D1       ..
  SBC #0                                       ; C75A: E9 00       ..
- STA L00D1                                    ; C75C: 85 D1       ..
+ STA tempVar_1                                ; C75C: 85 D1       ..
 .loop_CC75E
  JMP CC849                                    ; C75E: 4C 49 C8    LI.
 
@@ -1481,26 +1481,26 @@ LC006 = sub_CC004+2
  LDA ppuCtrlCopy                              ; C761: A5 F5       ..
  BEQ loop_CC75E                               ; C763: F0 F9       ..
  SEC                                          ; C765: 38          8
- LDA L00D0                                    ; C766: A5 D0       ..
+ LDA tempVar                                  ; C766: A5 D0       ..
  SBC #&86                                     ; C768: E9 86       ..
- STA L00D0                                    ; C76A: 85 D0       ..
- LDA L00D1                                    ; C76C: A5 D1       ..
+ STA tempVar                                  ; C76A: 85 D0       ..
+ LDA tempVar_1                                ; C76C: A5 D1       ..
  SBC #0                                       ; C76E: E9 00       ..
- STA L00D1                                    ; C770: 85 D1       ..
+ STA tempVar_1                                ; C770: 85 D1       ..
  LDA L00F6                                    ; C772: A5 F6       ..
- EOR L00F3                                    ; C774: 45 F3       E.
- STA L00F3                                    ; C776: 85 F3       ..
+ EOR palettePhase                             ; C774: 45 F3       E.
+ STA palettePhase                             ; C776: 85 F3       ..
  JSR sub_CCF4C                                ; C778: 20 4C CF     L.
  JMP CC849                                    ; C77B: 4C 49 C8    LI.
 
 .CC77E
  SEC                                          ; C77E: 38          8
- LDA L00D0                                    ; C77F: A5 D0       ..
+ LDA tempVar                                  ; C77F: A5 D0       ..
  SBC #&2A ; '*'                               ; C781: E9 2A       .*
- STA L00D0                                    ; C783: 85 D0       ..
- LDA L00D1                                    ; C785: A5 D1       ..
+ STA tempVar                                  ; C783: 85 D0       ..
+ LDA tempVar_1                                ; C785: A5 D1       ..
  SBC #1                                       ; C787: E9 01       ..
- STA L00D1                                    ; C789: 85 D1       ..
+ STA tempVar_1                                ; C789: 85 D1       ..
  LDA L03EF                                    ; C78B: AD EF 03    ...
  AND #&A0                                     ; C78E: 29 A0       ).
  CMP #&80                                     ; C790: C9 80       ..
@@ -1519,31 +1519,31 @@ LC006 = sub_CC004+2
  CMP #&80                                     ; C7A3: C9 80       ..
  BEQ CC7C5                                    ; C7A5: F0 1E       ..
  CLC                                          ; C7A7: 18          .
- LDA L00D0                                    ; C7A8: A5 D0       ..
+ LDA tempVar                                  ; C7A8: A5 D0       ..
  ADC #&DF                                     ; C7AA: 69 DF       i.
- STA L00D0                                    ; C7AC: 85 D0       ..
- LDA L00D1                                    ; C7AE: A5 D1       ..
+ STA tempVar                                  ; C7AC: 85 D0       ..
+ LDA tempVar_1                                ; C7AE: A5 D1       ..
  ADC #0                                       ; C7B0: 69 00       i.
- STA L00D1                                    ; C7B2: 85 D1       ..
+ STA tempVar_1                                ; C7B2: 85 D1       ..
  RTS                                          ; C7B4: 60          `
 
 .loop_CC7B5
  CLC                                          ; C7B5: 18          .
- LDA L00D0                                    ; C7B6: A5 D0       ..
+ LDA tempVar                                  ; C7B6: A5 D0       ..
  ADC #&2D ; '-'                               ; C7B8: 69 2D       i-
- STA L00D0                                    ; C7BA: 85 D0       ..
- LDA L00D1                                    ; C7BC: A5 D1       ..
+ STA tempVar                                  ; C7BA: 85 D0       ..
+ LDA tempVar_1                                ; C7BC: A5 D1       ..
  ADC #0                                       ; C7BE: 69 00       i.
- STA L00D1                                    ; C7C0: 85 D1       ..
+ STA tempVar_1                                ; C7C0: 85 D1       ..
  JMP CC7D2                                    ; C7C2: 4C D2 C7    L..
 
 .CC7C5
  LDX #1                                       ; C7C5: A2 01       ..
 .CC7C7
- STX L00F4                                    ; C7C7: 86 F4       ..
+ STX otherPhase                               ; C7C7: 86 F4       ..
  LDA L00F6                                    ; C7C9: A5 F6       ..
  BEQ loop_CC7B5                               ; C7CB: F0 E8       ..
- STX L00F3                                    ; C7CD: 86 F3       ..
+ STX palettePhase                             ; C7CD: 86 F3       ..
  JSR sub_CCF4C                                ; C7CF: 20 4C CF     L.
 .CC7D2
  TXA                                          ; C7D2: 8A          .
@@ -1602,12 +1602,12 @@ LC006 = sub_CC004+2
 ; ******************************************************************************
 .subm_C836
  CLC                                          ; C836: 18          .
- LDA L00D0                                    ; C837: A5 D0       ..
+ LDA tempVar                                  ; C837: A5 D0       ..
  ADC #4                                       ; C839: 69 04       i.
- STA L00D0                                    ; C83B: 85 D0       ..
- LDA L00D1                                    ; C83D: A5 D1       ..
+ STA tempVar                                  ; C83B: 85 D0       ..
+ LDA tempVar_1                                ; C83D: A5 D1       ..
  ADC #0                                       ; C83F: 69 00       i.
- STA L00D1                                    ; C841: 85 D1       ..
+ STA tempVar_1                                ; C841: 85 D1       ..
  JMP CCBDD                                    ; C843: 4C DD CB    L..
 
 .CC846
@@ -1615,22 +1615,22 @@ LC006 = sub_CC004+2
 
 .CC849
  SEC                                          ; C849: 38          8
- LDA L00D0                                    ; C84A: A5 D0       ..
+ LDA tempVar                                  ; C84A: A5 D0       ..
  SBC #&B6                                     ; C84C: E9 B6       ..
- STA L00D0                                    ; C84E: 85 D0       ..
- LDA L00D1                                    ; C850: A5 D1       ..
+ STA tempVar                                  ; C84E: 85 D0       ..
+ LDA tempVar_1                                ; C850: A5 D1       ..
  SBC #0                                       ; C852: E9 00       ..
- STA L00D1                                    ; C854: 85 D1       ..
+ STA tempVar_1                                ; C854: 85 D1       ..
  BMI CC85B                                    ; C856: 30 03       0.
  JMP CC86A                                    ; C858: 4C 6A C8    Lj.
 
 .CC85B
- LDA L00D0                                    ; C85B: A5 D0       ..
+ LDA tempVar                                  ; C85B: A5 D0       ..
  ADC #&8D                                     ; C85D: 69 8D       i.
- STA L00D0                                    ; C85F: 85 D0       ..
- LDA L00D1                                    ; C861: A5 D1       ..
+ STA tempVar                                  ; C85F: 85 D0       ..
+ LDA tempVar_1                                ; C861: A5 D1       ..
  ADC #0                                       ; C863: 69 00       i.
- STA L00D1                                    ; C865: 85 D1       ..
+ STA tempVar_1                                ; C865: 85 D1       ..
  JMP CC6F3                                    ; C867: 4C F3 C6    L..
 
 .CC86A
@@ -1682,12 +1682,12 @@ LC006 = sub_CC004+2
 .CC8BB
  INC addr5_1                                  ; C8BB: E6 EE       ..
  SEC                                          ; C8BD: 38          8
- LDA L00D0                                    ; C8BE: A5 D0       ..
+ LDA tempVar                                  ; C8BE: A5 D0       ..
  SBC #&1B                                     ; C8C0: E9 1B       ..
- STA L00D0                                    ; C8C2: 85 D0       ..
- LDA L00D1                                    ; C8C4: A5 D1       ..
+ STA tempVar                                  ; C8C2: 85 D0       ..
+ LDA tempVar_1                                ; C8C4: A5 D1       ..
  SBC #0                                       ; C8C6: E9 00       ..
- STA L00D1                                    ; C8C8: 85 D1       ..
+ STA tempVar_1                                ; C8C8: 85 D1       ..
  JMP CC925                                    ; C8CA: 4C 25 C9    L%.
 
 .CC8CD
@@ -1697,22 +1697,22 @@ LC006 = sub_CC004+2
  LDX L00C9                                    ; C8D0: A6 C9       ..
 .CC8D2
  SEC                                          ; C8D2: 38          8
- LDA L00D0                                    ; C8D3: A5 D0       ..
+ LDA tempVar                                  ; C8D3: A5 D0       ..
  SBC #&90                                     ; C8D5: E9 90       ..
- STA L00D0                                    ; C8D7: 85 D0       ..
- LDA L00D1                                    ; C8D9: A5 D1       ..
+ STA tempVar                                  ; C8D7: 85 D0       ..
+ LDA tempVar_1                                ; C8D9: A5 D1       ..
  SBC #1                                       ; C8DB: E9 01       ..
- STA L00D1                                    ; C8DD: 85 D1       ..
+ STA tempVar_1                                ; C8DD: 85 D1       ..
  BMI CC8E4                                    ; C8DF: 30 03       0.
  JMP CC8F3                                    ; C8E1: 4C F3 C8    L..
 
 .CC8E4
- LDA L00D0                                    ; C8E4: A5 D0       ..
+ LDA tempVar                                  ; C8E4: A5 D0       ..
  ADC #&67 ; 'g'                               ; C8E6: 69 67       ig
- STA L00D0                                    ; C8E8: 85 D0       ..
- LDA L00D1                                    ; C8EA: A5 D1       ..
+ STA tempVar                                  ; C8E8: 85 D0       ..
+ LDA tempVar_1                                ; C8EA: A5 D1       ..
  ADC #1                                       ; C8EC: 69 01       i.
- STA L00D1                                    ; C8EE: 85 D1       ..
+ STA tempVar_1                                ; C8EE: 85 D1       ..
  JMP CCB30                                    ; C8F0: 4C 30 CB    L0.
 
 .CC8F3
@@ -1836,37 +1836,37 @@ LC006 = sub_CC004+2
 .CC9D8
  INC addr5_1                                  ; C9D8: E6 EE       ..
  SEC                                          ; C9DA: 38          8
- LDA L00D0                                    ; C9DB: A5 D0       ..
+ LDA tempVar                                  ; C9DB: A5 D0       ..
  SBC #&1D                                     ; C9DD: E9 1D       ..
- STA L00D0                                    ; C9DF: 85 D0       ..
- LDA L00D1                                    ; C9E1: A5 D1       ..
+ STA tempVar                                  ; C9DF: 85 D0       ..
+ LDA tempVar_1                                ; C9E1: A5 D1       ..
  SBC #0                                       ; C9E3: E9 00       ..
- STA L00D1                                    ; C9E5: 85 D1       ..
+ STA tempVar_1                                ; C9E5: 85 D1       ..
  CLC                                          ; C9E7: 18          .
  JMP CC971                                    ; C9E8: 4C 71 C9    Lq.
 
 .CC9EB
  CLC                                          ; C9EB: 18          .
- LDA L00D0                                    ; C9EC: A5 D0       ..
+ LDA tempVar                                  ; C9EC: A5 D0       ..
  ADC #&E0                                     ; C9EE: 69 E0       i.
- STA L00D0                                    ; C9F0: 85 D0       ..
- LDA L00D1                                    ; C9F2: A5 D1       ..
+ STA tempVar                                  ; C9F0: 85 D0       ..
+ LDA tempVar_1                                ; C9F2: A5 D1       ..
  ADC #0                                       ; C9F4: 69 00       i.
- STA L00D1                                    ; C9F6: 85 D1       ..
+ STA tempVar_1                                ; C9F6: 85 D1       ..
  JMP CCA08                                    ; C9F8: 4C 08 CA    L..
 
 .CC9FB
  CLC                                          ; C9FB: 18          .
- LDA L00D0                                    ; C9FC: A5 D0       ..
+ LDA tempVar                                  ; C9FC: A5 D0       ..
  ADC #&6D ; 'm'                               ; C9FE: 69 6D       im
- STA L00D0                                    ; CA00: 85 D0       ..
- LDA L00D1                                    ; CA02: A5 D1       ..
+ STA tempVar                                  ; CA00: 85 D0       ..
+ LDA tempVar_1                                ; CA02: A5 D1       ..
  ADC #0                                       ; CA04: 69 00       i.
- STA L00D1                                    ; CA06: 85 D1       ..
+ STA tempVar_1                                ; CA06: 85 D1       ..
 .CCA08
  STX L00C9                                    ; CA08: 86 C9       ..
  NOP                                          ; CA0A: EA          .
- LDX L00F4                                    ; CA0B: A6 F4       ..
+ LDX otherPhase                               ; CA0B: A6 F4       ..
  STY L00DB,X                                  ; CA0D: 94 DB       ..
  LDA addr5_1                                  ; CA0F: A5 EE       ..
  STA L04BE,X                                  ; CA11: 9D BE 04    ...
@@ -1877,12 +1877,12 @@ LC006 = sub_CC004+2
 .CCA1B
  INC addr5_1                                  ; CA1B: E6 EE       ..
  SEC                                          ; CA1D: 38          8
- LDA L00D0                                    ; CA1E: A5 D0       ..
+ LDA tempVar                                  ; CA1E: A5 D0       ..
  SBC #&1D                                     ; CA20: E9 1D       ..
- STA L00D0                                    ; CA22: 85 D0       ..
- LDA L00D1                                    ; CA24: A5 D1       ..
+ STA tempVar                                  ; CA22: 85 D0       ..
+ LDA tempVar_1                                ; CA24: A5 D1       ..
  SBC #0                                       ; CA26: E9 00       ..
- STA L00D1                                    ; CA28: 85 D1       ..
+ STA tempVar_1                                ; CA28: 85 D1       ..
  CLC                                          ; CA2A: 18          .
  JMP CC9BC                                    ; CA2B: 4C BC C9    L..
 
@@ -1914,34 +1914,34 @@ LC006 = sub_CC004+2
 .subm_CA56
  INC addr5_1                                  ; CA56: E6 EE       ..
  SEC                                          ; CA58: 38          8
- LDA L00D0                                    ; CA59: A5 D0       ..
+ LDA tempVar                                  ; CA59: A5 D0       ..
  SBC #&1B                                     ; CA5B: E9 1B       ..
- STA L00D0                                    ; CA5D: 85 D0       ..
- LDA L00D1                                    ; CA5F: A5 D1       ..
+ STA tempVar                                  ; CA5D: 85 D0       ..
+ LDA tempVar_1                                ; CA5F: A5 D1       ..
  SBC #0                                       ; CA61: E9 00       ..
- STA L00D1                                    ; CA63: 85 D1       ..
+ STA tempVar_1                                ; CA63: 85 D1       ..
  JMP CCABD                                    ; CA65: 4C BD CA    L..
 
 .CCA68
  LDX L00C9                                    ; CA68: A6 C9       ..
 .CCA6A
  SEC                                          ; CA6A: 38          8
- LDA L00D0                                    ; CA6B: A5 D0       ..
+ LDA tempVar                                  ; CA6B: A5 D0       ..
  SBC #&0A                                     ; CA6D: E9 0A       ..
- STA L00D0                                    ; CA6F: 85 D0       ..
- LDA L00D1                                    ; CA71: A5 D1       ..
+ STA tempVar                                  ; CA6F: 85 D0       ..
+ LDA tempVar_1                                ; CA71: A5 D1       ..
  SBC #1                                       ; CA73: E9 01       ..
- STA L00D1                                    ; CA75: 85 D1       ..
+ STA tempVar_1                                ; CA75: 85 D1       ..
  BMI CCA7C                                    ; CA77: 30 03       0.
  JMP CCA8B                                    ; CA79: 4C 8B CA    L..
 
 .CCA7C
- LDA L00D0                                    ; CA7C: A5 D0       ..
+ LDA tempVar                                  ; CA7C: A5 D0       ..
  ADC #&E1                                     ; CA7E: 69 E1       i.
- STA L00D0                                    ; CA80: 85 D0       ..
- LDA L00D1                                    ; CA82: A5 D1       ..
+ STA tempVar                                  ; CA80: 85 D0       ..
+ LDA tempVar_1                                ; CA82: A5 D1       ..
  ADC #0                                       ; CA84: 69 00       i.
- STA L00D1                                    ; CA86: 85 D1       ..
+ STA tempVar_1                                ; CA86: 85 D1       ..
  JMP CCB30                                    ; CA88: 4C 30 CB    L0.
 
 .CCA8B
@@ -2023,18 +2023,18 @@ LC006 = sub_CC004+2
 .CCB1D
  INC addr5_1                                  ; CB1D: E6 EE       ..
  SEC                                          ; CB1F: 38          8
- LDA L00D0                                    ; CB20: A5 D0       ..
+ LDA tempVar                                  ; CB20: A5 D0       ..
  SBC #&1D                                     ; CB22: E9 1D       ..
- STA L00D0                                    ; CB24: 85 D0       ..
- LDA L00D1                                    ; CB26: A5 D1       ..
+ STA tempVar                                  ; CB24: 85 D0       ..
+ LDA tempVar_1                                ; CB26: A5 D1       ..
  SBC #0                                       ; CB28: E9 00       ..
- STA L00D1                                    ; CB2A: 85 D1       ..
+ STA tempVar_1                                ; CB2A: 85 D1       ..
  CLC                                          ; CB2C: 18          .
  JMP CCB04                                    ; CB2D: 4C 04 CB    L..
 
 .CCB30
  STX L00C9                                    ; CB30: 86 C9       ..
- LDX L00F4                                    ; CB32: A6 F4       ..
+ LDX otherPhase                               ; CB32: A6 F4       ..
  STY L00DB,X                                  ; CB34: 94 DB       ..
  LDA addr5_1                                  ; CB36: A5 EE       ..
  STA L04BE,X                                  ; CB38: 9D BE 04    ...
@@ -2044,33 +2044,33 @@ LC006 = sub_CC004+2
 
 ; ******************************************************************************
 .subm_CB42
- LDX L00F4                                    ; CB42: A6 F4       ..
+ LDX otherPhase                               ; CB42: A6 F4       ..
  LDA #&20 ; ' '                               ; CB44: A9 20       .
  STA L03EF,X                                  ; CB46: 9D EF 03    ...
  SEC                                          ; CB49: 38          8
- LDA L00D0                                    ; CB4A: A5 D0       ..
+ LDA tempVar                                  ; CB4A: A5 D0       ..
  SBC #&E3                                     ; CB4C: E9 E3       ..
- STA L00D0                                    ; CB4E: 85 D0       ..
- LDA L00D1                                    ; CB50: A5 D1       ..
+ STA tempVar                                  ; CB4E: 85 D0       ..
+ LDA tempVar_1                                ; CB50: A5 D1       ..
  SBC #0                                       ; CB52: E9 00       ..
- STA L00D1                                    ; CB54: 85 D1       ..
+ STA tempVar_1                                ; CB54: 85 D1       ..
  BMI CCB5B                                    ; CB56: 30 03       0.
  JMP CCB6A                                    ; CB58: 4C 6A CB    Lj.
 
 .CCB5B
- LDA L00D0                                    ; CB5B: A5 D0       ..
+ LDA tempVar                                  ; CB5B: A5 D0       ..
  ADC #&B0                                     ; CB5D: 69 B0       i.
- STA L00D0                                    ; CB5F: 85 D0       ..
- LDA L00D1                                    ; CB61: A5 D1       ..
+ STA tempVar                                  ; CB5F: 85 D0       ..
+ LDA tempVar_1                                ; CB61: A5 D1       ..
  ADC #0                                       ; CB63: 69 00       i.
- STA L00D1                                    ; CB65: 85 D1       ..
+ STA tempVar_1                                ; CB65: 85 D1       ..
  JMP CC6F3                                    ; CB67: 4C F3 C6    L..
 
 .CCB6A
  TXA                                          ; CB6A: 8A          .
  EOR #1                                       ; CB6B: 49 01       I.
- STA L00F4                                    ; CB6D: 85 F4       ..
- CMP L00F3                                    ; CB6F: C5 F3       ..
+ STA otherPhase                               ; CB6D: 85 F4       ..
+ CMP palettePhase                             ; CB6F: C5 F3       ..
  BNE CCB8E                                    ; CB71: D0 1B       ..
  TAX                                          ; CB73: AA          .
  LDA L03EF,X                                  ; CB74: BD EF 03    ...
@@ -2081,67 +2081,67 @@ LC006 = sub_CC004+2
 
 .CCB80
  CLC                                          ; CB80: 18          .
- LDA L00D0                                    ; CB81: A5 D0       ..
+ LDA tempVar                                  ; CB81: A5 D0       ..
  ADC #&97                                     ; CB83: 69 97       i.
- STA L00D0                                    ; CB85: 85 D0       ..
- LDA L00D1                                    ; CB87: A5 D1       ..
+ STA tempVar                                  ; CB85: 85 D0       ..
+ LDA tempVar_1                                ; CB87: A5 D1       ..
  ADC #0                                       ; CB89: 69 00       i.
- STA L00D1                                    ; CB8B: 85 D1       ..
+ STA tempVar_1                                ; CB8B: 85 D1       ..
  RTS                                          ; CB8D: 60          `
 
 .CCB8E
  CLC                                          ; CB8E: 18          .
- LDA L00D0                                    ; CB8F: A5 D0       ..
+ LDA tempVar                                  ; CB8F: A5 D0       ..
  ADC #&A3                                     ; CB91: 69 A3       i.
- STA L00D0                                    ; CB93: 85 D0       ..
- LDA L00D1                                    ; CB95: A5 D1       ..
+ STA tempVar                                  ; CB93: 85 D0       ..
+ LDA tempVar_1                                ; CB95: A5 D1       ..
  ADC #0                                       ; CB97: 69 00       i.
- STA L00D1                                    ; CB99: 85 D1       ..
+ STA tempVar_1                                ; CB99: 85 D1       ..
  RTS                                          ; CB9B: 60          `
 
 ; ******************************************************************************
 .subm_CB9C
  CLC                                          ; CB9C: 18          .
- LDA L00D0                                    ; CB9D: A5 D0       ..
+ LDA tempVar                                  ; CB9D: A5 D0       ..
  ADC #&3A ; ':'                               ; CB9F: 69 3A       i:
- STA L00D0                                    ; CBA1: 85 D0       ..
- LDA L00D1                                    ; CBA3: A5 D1       ..
+ STA tempVar                                  ; CBA1: 85 D0       ..
+ LDA tempVar_1                                ; CBA3: A5 D1       ..
  ADC #0                                       ; CBA5: 69 00       i.
- STA L00D1                                    ; CBA7: 85 D1       ..
+ STA tempVar_1                                ; CBA7: 85 D1       ..
  JMP CC6F3                                    ; CBA9: 4C F3 C6    L..
 
 .CCBAC
  CLC                                          ; CBAC: 18          .
- LDA L00D0                                    ; CBAD: A5 D0       ..
+ LDA tempVar                                  ; CBAD: A5 D0       ..
  ADC #&35 ; '5'                               ; CBAF: 69 35       i5
- STA L00D0                                    ; CBB1: 85 D0       ..
- LDA L00D1                                    ; CBB3: A5 D1       ..
+ STA tempVar                                  ; CBB1: 85 D0       ..
+ LDA tempVar_1                                ; CBB3: A5 D1       ..
  ADC #0                                       ; CBB5: 69 00       i.
- STA L00D1                                    ; CBB7: 85 D1       ..
+ STA tempVar_1                                ; CBB7: 85 D1       ..
  JMP subm_CB42                                ; CBB9: 4C 42 CB    LB.
 
 .CCBBC
  SEC                                          ; CBBC: 38          8
- LDA L00D0                                    ; CBBD: A5 D0       ..
+ LDA tempVar                                  ; CBBD: A5 D0       ..
  SBC #&6D ; 'm'                               ; CBBF: E9 6D       .m
- STA L00D0                                    ; CBC1: 85 D0       ..
- LDA L00D1                                    ; CBC3: A5 D1       ..
+ STA tempVar                                  ; CBC1: 85 D0       ..
+ LDA tempVar_1                                ; CBC3: A5 D1       ..
  SBC #0                                       ; CBC5: E9 00       ..
- STA L00D1                                    ; CBC7: 85 D1       ..
+ STA tempVar_1                                ; CBC7: 85 D1       ..
  BMI CCBCE                                    ; CBC9: 30 03       0.
  JMP CCBDD                                    ; CBCB: 4C DD CB    L..
 
 .CCBCE
- LDA L00D0                                    ; CBCE: A5 D0       ..
+ LDA tempVar                                  ; CBCE: A5 D0       ..
  ADC #&44 ; 'D'                               ; CBD0: 69 44       iD
- STA L00D0                                    ; CBD2: 85 D0       ..
- LDA L00D1                                    ; CBD4: A5 D1       ..
+ STA tempVar                                  ; CBD2: 85 D0       ..
+ LDA tempVar_1                                ; CBD4: A5 D1       ..
  ADC #0                                       ; CBD6: 69 00       i.
- STA L00D1                                    ; CBD8: 85 D1       ..
+ STA tempVar_1                                ; CBD8: 85 D1       ..
  JMP CC6F3                                    ; CBDA: 4C F3 C6    L..
 
 .CCBDD
- LDX L00F4                                    ; CBDD: A6 F4       ..
+ LDX otherPhase                               ; CBDD: A6 F4       ..
  LDA L03EF,X                                  ; CBDF: BD EF 03    ...
  ASL A                                        ; CBE2: 0A          .
  BPL subm_CB9C                                ; CBE3: 10 B7       ..
@@ -2167,23 +2167,23 @@ LC006 = sub_CC004+2
  STA addr5                                    ; CC0B: 85 ED       ..
 .CCC0D
  SEC                                          ; CC0D: 38          8
- LDA L00D0                                    ; CC0E: A5 D0       ..
+ LDA tempVar                                  ; CC0E: A5 D0       ..
  SBC #&89                                     ; CC10: E9 89       ..
- STA L00D0                                    ; CC12: 85 D0       ..
- LDA L00D1                                    ; CC14: A5 D1       ..
+ STA tempVar                                  ; CC12: 85 D0       ..
+ LDA tempVar_1                                ; CC14: A5 D1       ..
  SBC #1                                       ; CC16: E9 01       ..
- STA L00D1                                    ; CC18: 85 D1       ..
+ STA tempVar_1                                ; CC18: 85 D1       ..
  BMI subm_CC1F                                ; CC1A: 30 03       0.
  JMP SendToPPU1                               ; CC1C: 4C 2E CC    L..
 
 ; ******************************************************************************
 .subm_CC1F
- LDA L00D0                                    ; CC1F: A5 D0       ..
+ LDA tempVar                                  ; CC1F: A5 D0       ..
  ADC #&5D ; ']'                               ; CC21: 69 5D       i]
- STA L00D0                                    ; CC23: 85 D0       ..
- LDA L00D1                                    ; CC25: A5 D1       ..
+ STA tempVar                                  ; CC23: 85 D0       ..
+ LDA tempVar_1                                ; CC25: A5 D1       ..
  ADC #1                                       ; CC27: 69 01       i.
- STA L00D1                                    ; CC29: 85 D1       ..
+ STA tempVar_1                                ; CC29: 85 D1       ..
  JMP CCD26                                    ; CC2B: 4C 26 CD    L&.
 
 ; ******************************************************************************
@@ -2302,12 +2302,12 @@ LC006 = sub_CC004+2
 .CCD09
  INC addr5_1                                  ; CD09: E6 EE       ..
  SEC                                          ; CD0B: 38          8
- LDA L00D0                                    ; CD0C: A5 D0       ..
+ LDA tempVar                                  ; CD0C: A5 D0       ..
  SBC #&1A                                     ; CD0E: E9 1A       ..
- STA L00D0                                    ; CD10: 85 D0       ..
- LDA L00D1                                    ; CD12: A5 D1       ..
+ STA tempVar                                  ; CD10: 85 D0       ..
+ LDA tempVar_1                                ; CD12: A5 D1       ..
  SBC #0                                       ; CD14: E9 00       ..
- STA L00D1                                    ; CD16: 85 D1       ..
+ STA tempVar_1                                ; CD16: 85 D1       ..
  LDA L00CF                                    ; CD18: A5 CF       ..
  CLC                                          ; CD1A: 18          .
  ADC #4                                       ; CD1B: 69 04       i.
@@ -2337,7 +2337,7 @@ LC006 = sub_CC004+2
  STA L7600,Y                                  ; CD47: 99 00 76    ..v
  LDA L7300,Y                                  ; CD4A: B9 00 73    ..s
  STA L7700,Y                                  ; CD4D: 99 00 77    ..w
- JSR CheckDashboardA                          ; CD50: 20 7D EC     }.
+ JSR SetupPPUForIconBar                       ; CD50: 20 7D EC     }.
  DEX                                          ; CD53: CA          .
  BNE CCD58                                    ; CD54: D0 02       ..
  LDX #&10                                     ; CD56: A2 10       ..
@@ -2362,7 +2362,7 @@ LC006 = sub_CC004+2
 
 ; ******************************************************************************
 .DrawBoxEdges
- LDX tileIndex                                ; CD6F: A6 C0       ..
+ LDX drawingPhase                             ; CD6F: A6 C0       ..
  BNE CCDF2                                    ; CD71: D0 7F       ..
  LDA boxEdge1                                 ; CD73: AD 6E 04    .n.
  STA L7001                                    ; CD76: 8D 01 70    ..p
@@ -2451,12 +2451,12 @@ LC006 = sub_CC004+2
  STA L7620                                    ; CE67: 8D 20 76    . v
  STA L7640                                    ; CE6A: 8D 40 76    .@v
  STA L7660                                    ; CE6D: 8D 60 76    .`v
- LDA dashboardSwitch                          ; CE70: A5 E9       ..
+ LDA setupPPUForIconBar                       ; CE70: A5 E9       ..
  BPL CCE7D                                    ; CE72: 10 09       ..
  LDA PPU_STATUS                               ; CE74: AD 02 20    ..
  ASL A                                        ; CE77: 0A          .
  BPL CCE7D                                    ; CE78: 10 03       ..
- JSR SwitchTablesTo0                          ; CE7A: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; CE7A: 20 6D D0     m.
 .CCE7D
  RTS                                          ; CE7D: 60          `
 
@@ -2527,12 +2527,12 @@ LC006 = sub_CC004+2
 ; ******************************************************************************
 .NMI
  JSR SetPalette                               ; CED5: 20 2E CF     ..
- LDA L00EA                                    ; CED8: A5 EA       ..
- STA dashboardSwitch                          ; CEDA: 85 E9       ..
+ LDA showUserInterface                        ; CED8: A5 EA       ..
+ STA setupPPUForIconBar                       ; CEDA: 85 E9       ..
  LDA #&1A                                     ; CEDC: A9 1A       ..
- STA L00D1                                    ; CEDE: 85 D1       ..
+ STA tempVar_1                                ; CEDE: 85 D1       ..
  LDA #&8D                                     ; CEE0: A9 8D       ..
- STA L00D0                                    ; CEE2: 85 D0       ..
+ STA tempVar                                  ; CEE2: 85 D0       ..
  JSR sub_CD00B                                ; CEE4: 20 0B D0     ..
  JSR ReadControllers                          ; CEE7: 20 F8 D0     ..
  LDA L03EE                                    ; CEEA: AD EE 03    ...
@@ -2542,41 +2542,41 @@ LC006 = sub_CC004+2
  JSR subm_E91D                                ; CEF2: 20 1D E9     ..
  JSR subm_EAB0                                ; CEF5: 20 B0 EA     ..
  JSR sub_CCF18                                ; CEF8: 20 18 CF     ..
- LDA L00F8                                    ; CEFB: A5 F8       ..
+ LDA runningSetBank                           ; CEFB: A5 F8       ..
  BNE CCF0C                                    ; CEFD: D0 0D       ..
  JSR PlayMusic_b6                             ; CEFF: 20 16 ED     ..
- LDA L0469                                    ; CF02: AD 69 04    .i.
- LDX L046A                                    ; CF05: AE 6A 04    .j.
- LDY L046B                                    ; CF08: AC 6B 04    .k.
+ LDA nmiStoreA                                ; CF02: AD 69 04    .i.
+ LDX nmiStoreX                                ; CF05: AE 6A 04    .j.
+ LDY nmiStoreY                                ; CF08: AC 6B 04    .k.
  RTI                                          ; CF0B: 40          @
 
 .CCF0C
- INC L00F8                                    ; CF0C: E6 F8       ..
- LDA L0469                                    ; CF0E: AD 69 04    .i.
- LDX L046A                                    ; CF11: AE 6A 04    .j.
- LDY L046B                                    ; CF14: AC 6B 04    .k.
+ INC runningSetBank                           ; CF0C: E6 F8       ..
+ LDA nmiStoreA                                ; CF0E: AD 69 04    .i.
+ LDX nmiStoreX                                ; CF11: AE 6A 04    .j.
+ LDY nmiStoreY                                ; CF14: AC 6B 04    .k.
  RTI                                          ; CF17: 40          @
 
 .sub_CCF18
- DEC L0038                                    ; CF18: C6 38       .8
+ DEC nmiTimer                                 ; CF18: C6 38       .8
  BNE CCF2D                                    ; CF1A: D0 11       ..
  LDA #&32 ; '2'                               ; CF1C: A9 32       .2
- STA L0038                                    ; CF1E: 85 38       .8
- LDA L0039                                    ; CF20: A5 39       .9
+ STA nmiTimer                                 ; CF1E: 85 38       .8
+ LDA nmiTimerLo                               ; CF20: A5 39       .9
  CLC                                          ; CF22: 18          .
  ADC #1                                       ; CF23: 69 01       i.
- STA L0039                                    ; CF25: 85 39       .9
- LDA L003A                                    ; CF27: A5 3A       .:
+ STA nmiTimerLo                               ; CF25: 85 39       .9
+ LDA nmiTimerHi                               ; CF27: A5 3A       .:
  ADC #0                                       ; CF29: 69 00       i.
- STA L003A                                    ; CF2B: 85 3A       .:
+ STA nmiTimerHi                               ; CF2B: 85 3A       .:
 .CCF2D
  RTS                                          ; CF2D: 60          `
 
 ; ******************************************************************************
 .SetPalette
- STA L0469                                    ; CF2E: 8D 69 04    .i.
- STX L046A                                    ; CF31: 8E 6A 04    .j.
- STY L046B                                    ; CF34: 8C 6B 04    .k.
+ STA nmiStoreA                                ; CF2E: 8D 69 04    .i.
+ STX nmiStoreX                                ; CF31: 8E 6A 04    .j.
+ STY nmiStoreY                                ; CF34: 8C 6B 04    .k.
  LDA PPU_STATUS                               ; CF37: AD 02 20    ..
  INC frameCounter                             ; CF3A: EE F1 03    ...
  LDA #0                                       ; CF3D: A9 00       ..
@@ -2586,16 +2586,16 @@ LC006 = sub_CC004+2
  LDA #0                                       ; CF47: A9 00       ..
  STA PPU_MASK                                 ; CF49: 8D 01 20    ..
 .sub_CCF4C
- LDA QQ11Mask                                 ; CF4C: A5 9F       ..
+ LDA QQ11a                                    ; CF4C: A5 9F       ..
  BNE CCF96                                    ; CF4E: D0 46       .F
- LDY L0034                                    ; CF50: A4 34       .4
- LDA L00F3                                    ; CF52: A5 F3       ..
+ LDY visibleColour                            ; CF50: A4 34       .4
+ LDA palettePhase                             ; CF52: A5 F3       ..
  BNE CCF76                                    ; CF54: D0 20       .
  LDA #&3F ; '?'                               ; CF56: A9 3F       .?
  STA PPU_ADDR                                 ; CF58: 8D 06 20    ..
  LDA #1                                       ; CF5B: A9 01       ..
  STA PPU_ADDR                                 ; CF5D: 8D 06 20    ..
- LDA L0033                                    ; CF60: A5 33       .3
+ LDA hiddenColour                             ; CF60: A5 33       .3
  STA PPU_DATA                                 ; CF62: 8D 07 20    ..
  STY PPU_DATA                                 ; CF65: 8C 07 20    ..
  STY PPU_DATA                                 ; CF68: 8C 07 20    ..
@@ -2610,7 +2610,7 @@ LC006 = sub_CC004+2
  STA PPU_ADDR                                 ; CF78: 8D 06 20    ..
  LDA #1                                       ; CF7B: A9 01       ..
  STA PPU_ADDR                                 ; CF7D: 8D 06 20    ..
- LDA L0033                                    ; CF80: A5 33       .3
+ LDA hiddenColour                             ; CF80: A5 33       .3
  STY PPU_DATA                                 ; CF82: 8C 07 20    ..
  STA PPU_DATA                                 ; CF85: 8D 07 20    ..
  STY PPU_DATA                                 ; CF88: 8C 07 20    ..
@@ -2627,11 +2627,11 @@ LC006 = sub_CC004+2
  STA PPU_ADDR                                 ; CF9C: 8D 06 20    ..
  LDA #&15                                     ; CF9F: A9 15       ..
  STA PPU_ADDR                                 ; CFA1: 8D 06 20    ..
- LDA L0034                                    ; CFA4: A5 34       .4
+ LDA visibleColour                            ; CFA4: A5 34       .4
  STA PPU_DATA                                 ; CFA6: 8D 07 20    ..
- LDA L0035                                    ; CFA9: A5 35       .5
+ LDA paletteColour1                           ; CFA9: A5 35       .5
  STA PPU_DATA                                 ; CFAB: 8D 07 20    ..
- LDA L0036                                    ; CFAE: A5 36       .6
+ LDA paletteColour2                           ; CFAE: A5 36       .6
  STA PPU_DATA                                 ; CFB0: 8D 07 20    ..
  LDA #0                                       ; CFB3: A9 00       ..
  STA PPU_ADDR                                 ; CFB5: 8D 06 20    ..
@@ -2644,11 +2644,11 @@ LC006 = sub_CC004+2
  STA PPU_ADDR                                 ; CFC0: 8D 06 20    ..
  LDA #1                                       ; CFC3: A9 01       ..
  STA PPU_ADDR                                 ; CFC5: 8D 06 20    ..
- LDA L0034                                    ; CFC8: A5 34       .4
+ LDA visibleColour                            ; CFC8: A5 34       .4
  STA PPU_DATA                                 ; CFCA: 8D 07 20    ..
- LDA L0035                                    ; CFCD: A5 35       .5
+ LDA paletteColour1                           ; CFCD: A5 35       .5
  STA PPU_DATA                                 ; CFCF: 8D 07 20    ..
- LDA L0036                                    ; CFD2: A5 36       .6
+ LDA paletteColour2                           ; CFD2: A5 36       .6
  STA PPU_DATA                                 ; CFD4: 8D 07 20    ..
  LDA #0                                       ; CFD7: A9 00       ..
  STA PPU_ADDR                                 ; CFD9: 8D 06 20    ..
@@ -2670,12 +2670,12 @@ LC006 = sub_CC004+2
  CPX #&20 ; ' '                               ; CFF7: E0 20       .
  BNE loop_CCFEE                               ; CFF9: D0 F3       ..
  SEC                                          ; CFFB: 38          8
- LDA L00D0                                    ; CFFC: A5 D0       ..
+ LDA tempVar                                  ; CFFC: A5 D0       ..
  SBC #&2F ; '/'                               ; CFFE: E9 2F       ./
- STA L00D0                                    ; D000: 85 D0       ..
- LDA L00D1                                    ; D002: A5 D1       ..
+ STA tempVar                                  ; D000: 85 D0       ..
+ LDA tempVar_1                                ; D002: A5 D1       ..
  SBC #2                                       ; D004: E9 02       ..
- STA L00D1                                    ; D006: 85 D1       ..
+ STA tempVar_1                                ; D006: 85 D1       ..
  JMP CD00F                                    ; D008: 4C 0F D0    L..
 
 .sub_CD00B
@@ -2684,13 +2684,13 @@ LC006 = sub_CC004+2
 .CD00F
  JSR subm_C6F4                                ; D00F: 20 F4 C6     ..
  JSR ResetNametable1                          ; D012: 20 2D D0     -.
- LDA L00D0                                    ; D015: A5 D0       ..
+ LDA tempVar                                  ; D015: A5 D0       ..
  CLC                                          ; D017: 18          .
  ADC #&64 ; 'd'                               ; D018: 69 64       id
- STA L00D0                                    ; D01A: 85 D0       ..
- LDA L00D1                                    ; D01C: A5 D1       ..
+ STA tempVar                                  ; D01A: 85 D0       ..
+ LDA tempVar_1                                ; D01C: A5 D1       ..
  ADC #0                                       ; D01E: 69 00       i.
- STA L00D1                                    ; D020: 85 D1       ..
+ STA tempVar_1                                ; D020: 85 D1       ..
  BMI CD027                                    ; D022: 30 03       0.
  JSR sub_CD07C                                ; D024: 20 7C D0     |.
 .CD027
@@ -2701,14 +2701,14 @@ LC006 = sub_CC004+2
 ; ******************************************************************************
 .ResetNametable1
  LDX #&90                                     ; D02D: A2 90       ..
- LDA L00F3                                    ; D02F: A5 F3       ..
+ LDA palettePhase                             ; D02F: A5 F3       ..
  BNE CD035                                    ; D031: D0 02       ..
  LDX #&91                                     ; D033: A2 91       ..
 .CD035
  STX PPU_CTRL                                 ; D035: 8E 00 20    ..
  STX ppuCtrlCopy                              ; D038: 86 F5       ..
  LDA #&20 ; ' '                               ; D03A: A9 20       .
- LDX L00F3                                    ; D03C: A6 F3       ..
+ LDX palettePhase                             ; D03C: A6 F3       ..
  BNE CD042                                    ; D03E: D0 02       ..
  LDA #&24 ; '$'                               ; D040: A9 24       .$
 .CD042
@@ -2730,9 +2730,9 @@ LC006 = sub_CC004+2
  RTS                                          ; D06C: 60          `
 
 ; ******************************************************************************
-.SwitchTablesTo0
+.SetPPUTablesTo0
  LDA #0                                       ; D06D: A9 00       ..
- STA dashboardSwitch                          ; D06F: 85 E9       ..
+ STA setupPPUForIconBar                       ; D06F: 85 E9       ..
  LDA ppuCtrlCopy                              ; D071: A5 F5       ..
  AND #&EE                                     ; D073: 29 EE       ).
  STA PPU_CTRL                                 ; D075: 8D 00 20    ..
@@ -2741,25 +2741,25 @@ LC006 = sub_CC004+2
  RTS                                          ; D07B: 60          `
 
 .sub_CD07C
- LDA L00D1                                    ; D07C: A5 D1       ..
+ LDA tempVar_1                                ; D07C: A5 D1       ..
  BEQ CD0D0                                    ; D07E: F0 50       .P
  SEC                                          ; D080: 38          8
- LDA L00D0                                    ; D081: A5 D0       ..
+ LDA tempVar                                  ; D081: A5 D0       ..
  SBC #&6B ; 'k'                               ; D083: E9 6B       .k
- STA L00D0                                    ; D085: 85 D0       ..
- LDA L00D1                                    ; D087: A5 D1       ..
+ STA tempVar                                  ; D085: 85 D0       ..
+ LDA tempVar_1                                ; D087: A5 D1       ..
  SBC #1                                       ; D089: E9 01       ..
- STA L00D1                                    ; D08B: 85 D1       ..
+ STA tempVar_1                                ; D08B: 85 D1       ..
  BMI CD092                                    ; D08D: 30 03       0.
  JMP CD0A1                                    ; D08F: 4C A1 D0    L..
 
 .CD092
- LDA L00D0                                    ; D092: A5 D0       ..
+ LDA tempVar                                  ; D092: A5 D0       ..
  ADC #&3E ; '>'                               ; D094: 69 3E       i>
- STA L00D0                                    ; D096: 85 D0       ..
- LDA L00D1                                    ; D098: A5 D1       ..
+ STA tempVar                                  ; D096: 85 D0       ..
+ LDA tempVar_1                                ; D098: A5 D1       ..
  ADC #1                                       ; D09A: 69 01       i.
- STA L00D1                                    ; D09C: 85 D1       ..
+ STA tempVar_1                                ; D09C: 85 D1       ..
  JMP CD0D0                                    ; D09E: 4C D0 D0    L..
 
 .CD0A1
@@ -2784,30 +2784,30 @@ LC006 = sub_CC004+2
  PLA                                          ; D0C0: 68          h
  STA L00EF                                    ; D0C1: 85 EF       ..
  CLC                                          ; D0C3: 18          .
- LDA L00D0                                    ; D0C4: A5 D0       ..
+ LDA tempVar                                  ; D0C4: A5 D0       ..
  ADC #&EE                                     ; D0C6: 69 EE       i.
- STA L00D0                                    ; D0C8: 85 D0       ..
- LDA L00D1                                    ; D0CA: A5 D1       ..
+ STA tempVar                                  ; D0C8: 85 D0       ..
+ LDA tempVar_1                                ; D0CA: A5 D1       ..
  ADC #0                                       ; D0CC: 69 00       i.
- STA L00D1                                    ; D0CE: 85 D1       ..
+ STA tempVar_1                                ; D0CE: 85 D1       ..
 .CD0D0
  SEC                                          ; D0D0: 38          8
- LDA L00D0                                    ; D0D1: A5 D0       ..
+ LDA tempVar                                  ; D0D1: A5 D0       ..
  SBC #&20 ; ' '                               ; D0D3: E9 20       .
- STA L00D0                                    ; D0D5: 85 D0       ..
- LDA L00D1                                    ; D0D7: A5 D1       ..
+ STA tempVar                                  ; D0D5: 85 D0       ..
+ LDA tempVar_1                                ; D0D7: A5 D1       ..
  SBC #0                                       ; D0D9: E9 00       ..
- STA L00D1                                    ; D0DB: 85 D1       ..
+ STA tempVar_1                                ; D0DB: 85 D1       ..
  BMI CD0E2                                    ; D0DD: 30 03       0.
  JMP CD0F1                                    ; D0DF: 4C F1 D0    L..
 
 .CD0E2
- LDA L00D0                                    ; D0E2: A5 D0       ..
+ LDA tempVar                                  ; D0E2: A5 D0       ..
  ADC #&F7                                     ; D0E4: 69 F7       i.
- STA L00D0                                    ; D0E6: 85 D0       ..
- LDA L00D1                                    ; D0E8: A5 D1       ..
+ STA tempVar                                  ; D0E6: 85 D0       ..
+ LDA tempVar_1                                ; D0E8: A5 D1       ..
  ADC #&FF                                     ; D0EA: 69 FF       i.
- STA L00D1                                    ; D0EC: 85 D1       ..
+ STA tempVar_1                                ; D0EC: 85 D1       ..
  JMP CD0F7                                    ; D0EE: 4C F7 D0    L..
 
 .CD0F1
@@ -2872,19 +2872,19 @@ LC006 = sub_CC004+2
  RTS                                          ; D163: 60          `
 
 ; ******************************************************************************
-.SetTable0UntilNMI2
- JSR SetTable0UntilNMI                        ; D164: 20 67 D1     g.
+.KeepPPUTablesAt0x2
+ JSR KeepPPUTablesAt0                         ; D164: 20 67 D1     g.
 ; ******************************************************************************
-.SetTable0UntilNMI
+.KeepPPUTablesAt0
  PHA                                          ; D167: 48          H
  LDX frameCounter                             ; D168: AE F1 03    ...
 .loop_CD16B
- LDA dashboardSwitch                          ; D16B: A5 E9       ..
+ LDA setupPPUForIconBar                       ; D16B: A5 E9       ..
  BPL CD178                                    ; D16D: 10 09       ..
  LDA PPU_STATUS                               ; D16F: AD 02 20    ..
  ASL A                                        ; D172: 0A          .
  BPL CD178                                    ; D173: 10 03       ..
- JSR SwitchTablesTo0                          ; D175: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; D175: 20 6D D0     m.
 .CD178
  CPX frameCounter                             ; D178: EC F1 03    ...
  BEQ loop_CD16B                               ; D17B: F0 EE       ..
@@ -2892,17 +2892,17 @@ LC006 = sub_CC004+2
  RTS                                          ; D17E: 60          `
 
 .loop_CD17F
- LDA dashboardSwitch                          ; D17F: A5 E9       ..
+ LDA setupPPUForIconBar                       ; D17F: A5 E9       ..
  BEQ loop_CD17F                               ; D181: F0 FC       ..
 .loop_CD183
- LDA dashboardSwitch                          ; D183: A5 E9       ..
+ LDA setupPPUForIconBar                       ; D183: A5 E9       ..
  BPL CD190                                    ; D185: 10 09       ..
  LDA PPU_STATUS                               ; D187: AD 02 20    ..
  ASL A                                        ; D18A: 0A          .
  BPL CD190                                    ; D18B: 10 03       ..
- JSR SwitchTablesTo0                          ; D18D: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; D18D: 20 6D D0     m.
 .CD190
- LDA dashboardSwitch                          ; D190: A5 E9       ..
+ LDA setupPPUForIconBar                       ; D190: A5 E9       ..
  BNE loop_CD183                               ; D192: D0 EF       ..
  RTS                                          ; D194: 60          `
 
@@ -2910,12 +2910,12 @@ LC006 = sub_CC004+2
  JSR CD19C                                    ; D197: 20 9C D1     ..
  LDX #1                                       ; D19A: A2 01       ..
 .CD19C
- LDA dashboardSwitch                          ; D19C: A5 E9       ..
+ LDA setupPPUForIconBar                       ; D19C: A5 E9       ..
  BPL CD1A9                                    ; D19E: 10 09       ..
  LDA PPU_STATUS                               ; D1A0: AD 02 20    ..
  ASL A                                        ; D1A3: 0A          .
  BPL CD1A9                                    ; D1A4: 10 03       ..
- JSR SwitchTablesTo0                          ; D1A6: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; D1A6: 20 6D D0     m.
 .CD1A9
  LDA L03EF,X                                  ; D1A9: BD EF 03    ...
  BEQ CD1C7                                    ; D1AC: F0 19       ..
@@ -2973,12 +2973,12 @@ LC006 = sub_CC004+2
  ADC nameBufferAddr,X                         ; D206: 7D D0 CE    }..
  STA SC_1                                     ; D209: 85 08       ..
 .CD20B
- LDA dashboardSwitch                          ; D20B: A5 E9       ..
+ LDA setupPPUForIconBar                       ; D20B: A5 E9       ..
  BPL CD218                                    ; D20D: 10 09       ..
  LDA PPU_STATUS                               ; D20F: AD 02 20    ..
  ASL A                                        ; D212: 0A          .
  BPL CD218                                    ; D213: 10 03       ..
- JSR SwitchTablesTo0                          ; D215: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; D215: 20 6D D0     m.
 .CD218
  LDA SC                                       ; D218: A5 07       ..
  SEC                                          ; D21A: 38          8
@@ -2991,9 +2991,9 @@ LC006 = sub_CC004+2
  ORA L00EF                                    ; D227: 05 EF       ..
  BEQ CD239                                    ; D229: F0 0E       ..
  LDA #3                                       ; D22B: A9 03       ..
- STA L00D1                                    ; D22D: 85 D1       ..
+ STA tempVar_1                                ; D22D: 85 D1       ..
  LDA #&16                                     ; D22F: A9 16       ..
- STA L00D0                                    ; D231: 85 D0       ..
+ STA tempVar                                  ; D231: 85 D0       ..
  JSR FillMemory                               ; D233: 20 10 D7     ..
  JMP CD20B                                    ; D236: 4C 0B D2    L..
 
@@ -3030,12 +3030,12 @@ LC006 = sub_CC004+2
  ADC pattBufferAddr,X                         ; D26F: 7D D2 CE    }..
  STA SC_1                                     ; D272: 85 08       ..
 .CD274
- LDA dashboardSwitch                          ; D274: A5 E9       ..
+ LDA setupPPUForIconBar                       ; D274: A5 E9       ..
  BPL CD281                                    ; D276: 10 09       ..
  LDA PPU_STATUS                               ; D278: AD 02 20    ..
  ASL A                                        ; D27B: 0A          .
  BPL CD281                                    ; D27C: 10 03       ..
- JSR SwitchTablesTo0                          ; D27E: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; D27E: 20 6D D0     m.
 .CD281
  LDA SC                                       ; D281: A5 07       ..
  SEC                                          ; D283: 38          8
@@ -3048,9 +3048,9 @@ LC006 = sub_CC004+2
  ORA L00EF                                    ; D290: 05 EF       ..
  BEQ CD2A2                                    ; D292: F0 0E       ..
  LDA #3                                       ; D294: A9 03       ..
- STA L00D1                                    ; D296: 85 D1       ..
+ STA tempVar_1                                ; D296: 85 D1       ..
  LDA #&16                                     ; D298: A9 16       ..
- STA L00D0                                    ; D29A: 85 D0       ..
+ STA tempVar                                  ; D29A: 85 D0       ..
  JSR FillMemory                               ; D29C: 20 10 D7     ..
  JMP CD274                                    ; D29F: 4C 74 D2    Lt.
 
@@ -3065,27 +3065,27 @@ LC006 = sub_CC004+2
  NOP                                          ; D2A5: EA          .
 .CD2A6
  SEC                                          ; D2A6: 38          8
- LDA L00D0                                    ; D2A7: A5 D0       ..
+ LDA tempVar                                  ; D2A7: A5 D0       ..
  SBC #&27 ; '''                               ; D2A9: E9 27       .'
- STA L00D0                                    ; D2AB: 85 D0       ..
- LDA L00D1                                    ; D2AD: A5 D1       ..
+ STA tempVar                                  ; D2AB: 85 D0       ..
+ LDA tempVar_1                                ; D2AD: A5 D1       ..
  SBC #0                                       ; D2AF: E9 00       ..
- STA L00D1                                    ; D2B1: 85 D1       ..
+ STA tempVar_1                                ; D2B1: 85 D1       ..
 .CD2B3
  RTS                                          ; D2B3: 60          `
 
 .CD2B4
  CLC                                          ; D2B4: 18          .
- LDA L00D0                                    ; D2B5: A5 D0       ..
+ LDA tempVar                                  ; D2B5: A5 D0       ..
  ADC #&7E ; '~'                               ; D2B7: 69 7E       i~
- STA L00D0                                    ; D2B9: 85 D0       ..
- LDA L00D1                                    ; D2BB: A5 D1       ..
+ STA tempVar                                  ; D2B9: 85 D0       ..
+ LDA tempVar_1                                ; D2BB: A5 D1       ..
  ADC #0                                       ; D2BD: 69 00       i.
- STA L00D1                                    ; D2BF: 85 D1       ..
+ STA tempVar_1                                ; D2BF: 85 D1       ..
  JMP CD37E                                    ; D2C1: 4C 7E D3    L~.
 
 .sub_CD2C4
- LDA L00D1                                    ; D2C4: A5 D1       ..
+ LDA tempVar_1                                ; D2C4: A5 D1       ..
  BEQ CD2B3                                    ; D2C6: F0 EB       ..
  LDA L03EF,X                                  ; D2C8: BD EF 03    ...
  BIT LD2A3                                    ; D2CB: 2C A3 D2    ,..
@@ -3093,22 +3093,22 @@ LC006 = sub_CC004+2
  AND #8                                       ; D2D0: 29 08       ).
  BEQ CD2A6                                    ; D2D2: F0 D2       ..
  SEC                                          ; D2D4: 38          8
- LDA L00D0                                    ; D2D5: A5 D0       ..
+ LDA tempVar                                  ; D2D5: A5 D0       ..
  SBC #&D5                                     ; D2D7: E9 D5       ..
- STA L00D0                                    ; D2D9: 85 D0       ..
- LDA L00D1                                    ; D2DB: A5 D1       ..
+ STA tempVar                                  ; D2D9: 85 D0       ..
+ LDA tempVar_1                                ; D2DB: A5 D1       ..
  SBC #0                                       ; D2DD: E9 00       ..
- STA L00D1                                    ; D2DF: 85 D1       ..
+ STA tempVar_1                                ; D2DF: 85 D1       ..
  BMI CD2E6                                    ; D2E1: 30 03       0.
  JMP CD2F5                                    ; D2E3: 4C F5 D2    L..
 
 .CD2E6
- LDA L00D0                                    ; D2E6: A5 D0       ..
+ LDA tempVar                                  ; D2E6: A5 D0       ..
  ADC #&99                                     ; D2E8: 69 99       i.
- STA L00D0                                    ; D2EA: 85 D0       ..
- LDA L00D1                                    ; D2EC: A5 D1       ..
+ STA tempVar                                  ; D2EA: 85 D0       ..
+ LDA tempVar_1                                ; D2EC: A5 D1       ..
  ADC #0                                       ; D2EE: 69 00       i.
- STA L00D1                                    ; D2F0: 85 D1       ..
+ STA tempVar_1                                ; D2F0: 85 D1       ..
  JMP CD2B3                                    ; D2F2: 4C B3 D2    L..
 
 .CD2F5
@@ -3175,22 +3175,22 @@ LC006 = sub_CC004+2
  NOP                                          ; D35C: EA          .
 .CD35D
  CLC                                          ; D35D: 18          .
- LDA L00D0                                    ; D35E: A5 D0       ..
+ LDA tempVar                                  ; D35E: A5 D0       ..
  ADC #&1C                                     ; D360: 69 1C       i.
- STA L00D0                                    ; D362: 85 D0       ..
- LDA L00D1                                    ; D364: A5 D1       ..
+ STA tempVar                                  ; D362: 85 D0       ..
+ LDA tempVar_1                                ; D364: A5 D1       ..
  ADC #0                                       ; D366: 69 00       i.
- STA L00D1                                    ; D368: 85 D1       ..
+ STA tempVar_1                                ; D368: 85 D1       ..
  JMP CD37E                                    ; D36A: 4C 7E D3    L~.
 
 .CD36D
  CLC                                          ; D36D: 18          .
- LDA L00D0                                    ; D36E: A5 D0       ..
+ LDA tempVar                                  ; D36E: A5 D0       ..
  ADC #&7E ; '~'                               ; D370: 69 7E       i~
- STA L00D0                                    ; D372: 85 D0       ..
- LDA L00D1                                    ; D374: A5 D1       ..
+ STA tempVar                                  ; D372: 85 D0       ..
+ LDA tempVar_1                                ; D374: A5 D1       ..
  ADC #0                                       ; D376: 69 00       i.
- STA L00D1                                    ; D378: 85 D1       ..
+ STA tempVar_1                                ; D378: 85 D1       ..
 .CD37A
  RTS                                          ; D37A: 60          `
 
@@ -3200,22 +3200,22 @@ LC006 = sub_CC004+2
  NOP                                          ; D37D: EA          .
 .CD37E
  SEC                                          ; D37E: 38          8
- LDA L00D0                                    ; D37F: A5 D0       ..
+ LDA tempVar                                  ; D37F: A5 D0       ..
  SBC #&BB                                     ; D381: E9 BB       ..
- STA L00D0                                    ; D383: 85 D0       ..
- LDA L00D1                                    ; D385: A5 D1       ..
+ STA tempVar                                  ; D383: 85 D0       ..
+ LDA tempVar_1                                ; D385: A5 D1       ..
  SBC #0                                       ; D387: E9 00       ..
- STA L00D1                                    ; D389: 85 D1       ..
+ STA tempVar_1                                ; D389: 85 D1       ..
  BMI CD390                                    ; D38B: 30 03       0.
  JMP CD39F                                    ; D38D: 4C 9F D3    L..
 
 .CD390
- LDA L00D0                                    ; D390: A5 D0       ..
+ LDA tempVar                                  ; D390: A5 D0       ..
  ADC #&92                                     ; D392: 69 92       i.
- STA L00D0                                    ; D394: 85 D0       ..
- LDA L00D1                                    ; D396: A5 D1       ..
+ STA tempVar                                  ; D394: 85 D0       ..
+ LDA tempVar_1                                ; D396: A5 D1       ..
  ADC #0                                       ; D398: 69 00       i.
- STA L00D1                                    ; D39A: 85 D1       ..
+ STA tempVar_1                                ; D39A: 85 D1       ..
  JMP CD37A                                    ; D39C: 4C 7A D3    Lz.
 
 .CD39F
@@ -3281,12 +3281,12 @@ LC006 = sub_CC004+2
 
 .CD401
  CLC                                          ; D401: 18          .
- LDA L00D0                                    ; D402: A5 D0       ..
+ LDA tempVar                                  ; D402: A5 D0       ..
  ADC #&23 ; '#'                               ; D404: 69 23       i#
- STA L00D0                                    ; D406: 85 D0       ..
- LDA L00D1                                    ; D408: A5 D1       ..
+ STA tempVar                                  ; D406: 85 D0       ..
+ LDA tempVar_1                                ; D408: A5 D1       ..
  ADC #0                                       ; D40A: 69 00       i.
- STA L00D1                                    ; D40C: 85 D1       ..
+ STA tempVar_1                                ; D40C: 85 D1       ..
  RTS                                          ; D40E: 60          `
 
 .sub_CD40F
@@ -3810,22 +3810,22 @@ LC006 = sub_CC004+2
  LDA L00F0                                    ; D710: A5 F0       ..
  BEQ CD789                                    ; D712: F0 75       .u
  SEC                                          ; D714: 38          8
- LDA L00D0                                    ; D715: A5 D0       ..
+ LDA tempVar                                  ; D715: A5 D0       ..
  SBC #&39 ; '9'                               ; D717: E9 39       .9
- STA L00D0                                    ; D719: 85 D0       ..
- LDA L00D1                                    ; D71B: A5 D1       ..
+ STA tempVar                                  ; D719: 85 D0       ..
+ LDA tempVar_1                                ; D71B: A5 D1       ..
  SBC #8                                       ; D71D: E9 08       ..
- STA L00D1                                    ; D71F: 85 D1       ..
+ STA tempVar_1                                ; D71F: 85 D1       ..
  BMI CD726                                    ; D721: 30 03       0.
  JMP CD735                                    ; D723: 4C 35 D7    L5.
 
 .CD726
- LDA L00D0                                    ; D726: A5 D0       ..
+ LDA tempVar                                  ; D726: A5 D0       ..
  ADC #&0B                                     ; D728: 69 0B       i.
- STA L00D0                                    ; D72A: 85 D0       ..
- LDA L00D1                                    ; D72C: A5 D1       ..
+ STA tempVar                                  ; D72A: 85 D0       ..
+ LDA tempVar_1                                ; D72C: A5 D1       ..
  ADC #8                                       ; D72E: 69 08       i.
- STA L00D1                                    ; D730: 85 D1       ..
+ STA tempVar_1                                ; D730: 85 D1       ..
  JMP CD743                                    ; D732: 4C 43 D7    LC.
 
 .CD735
@@ -3838,22 +3838,22 @@ LC006 = sub_CC004+2
 
 .CD743
  SEC                                          ; D743: 38          8
- LDA L00D0                                    ; D744: A5 D0       ..
+ LDA tempVar                                  ; D744: A5 D0       ..
  SBC #&3E ; '>'                               ; D746: E9 3E       .>
- STA L00D0                                    ; D748: 85 D0       ..
- LDA L00D1                                    ; D74A: A5 D1       ..
+ STA tempVar                                  ; D748: 85 D0       ..
+ LDA tempVar_1                                ; D74A: A5 D1       ..
  SBC #1                                       ; D74C: E9 01       ..
- STA L00D1                                    ; D74E: 85 D1       ..
+ STA tempVar_1                                ; D74E: 85 D1       ..
  BMI CD755                                    ; D750: 30 03       0.
  JMP CD764                                    ; D752: 4C 64 D7    Ld.
 
 .CD755
- LDA L00D0                                    ; D755: A5 D0       ..
+ LDA tempVar                                  ; D755: A5 D0       ..
  ADC #&15                                     ; D757: 69 15       i.
- STA L00D0                                    ; D759: 85 D0       ..
- LDA L00D1                                    ; D75B: A5 D1       ..
+ STA tempVar                                  ; D759: 85 D0       ..
+ LDA tempVar_1                                ; D75B: A5 D1       ..
  ADC #1                                       ; D75D: 69 01       i.
- STA L00D1                                    ; D75F: 85 D1       ..
+ STA tempVar_1                                ; D75F: 85 D1       ..
  JMP CD788                                    ; D761: 4C 88 D7    L..
 
 .CD764
@@ -3871,33 +3871,33 @@ LC006 = sub_CC004+2
 
 .CD77B
  CLC                                          ; D77B: 18          .
- LDA L00D0                                    ; D77C: A5 D0       ..
+ LDA tempVar                                  ; D77C: A5 D0       ..
  ADC #&84                                     ; D77E: 69 84       i.
- STA L00D0                                    ; D780: 85 D0       ..
- LDA L00D1                                    ; D782: A5 D1       ..
+ STA tempVar                                  ; D780: 85 D0       ..
+ LDA tempVar_1                                ; D782: A5 D1       ..
  ADC #0                                       ; D784: 69 00       i.
- STA L00D1                                    ; D786: 85 D1       ..
+ STA tempVar_1                                ; D786: 85 D1       ..
 .CD788
  RTS                                          ; D788: 60          `
 
 .CD789
  SEC                                          ; D789: 38          8
- LDA L00D0                                    ; D78A: A5 D0       ..
+ LDA tempVar                                  ; D78A: A5 D0       ..
  SBC #&BA                                     ; D78C: E9 BA       ..
- STA L00D0                                    ; D78E: 85 D0       ..
- LDA L00D1                                    ; D790: A5 D1       ..
+ STA tempVar                                  ; D78E: 85 D0       ..
+ LDA tempVar_1                                ; D790: A5 D1       ..
  SBC #0                                       ; D792: E9 00       ..
- STA L00D1                                    ; D794: 85 D1       ..
+ STA tempVar_1                                ; D794: 85 D1       ..
  BMI CD79B                                    ; D796: 30 03       0.
  JMP CD7AA                                    ; D798: 4C AA D7    L..
 
 .CD79B
- LDA L00D0                                    ; D79B: A5 D0       ..
+ LDA tempVar                                  ; D79B: A5 D0       ..
  ADC #&8A                                     ; D79D: 69 8A       i.
- STA L00D0                                    ; D79F: 85 D0       ..
- LDA L00D1                                    ; D7A1: A5 D1       ..
+ STA tempVar                                  ; D79F: 85 D0       ..
+ LDA tempVar_1                                ; D7A1: A5 D1       ..
  ADC #0                                       ; D7A3: 69 00       i.
- STA L00D1                                    ; D7A5: 85 D1       ..
+ STA tempVar_1                                ; D7A5: 85 D1       ..
  JMP CD788                                    ; D7A7: 4C 88 D7    L..
 
 .CD7AA
@@ -3907,7 +3907,7 @@ LC006 = sub_CC004+2
  LSR A                                        ; D7AF: 4A          J
  LSR A                                        ; D7B0: 4A          J
  LSR A                                        ; D7B1: 4A          J
- CMP L00D1                                    ; D7B2: C5 D1       ..
+ CMP tempVar_1                                ; D7B2: C5 D1       ..
  BCS CD809                                    ; D7B4: B0 53       .S
  LDA #0                                       ; D7B6: A9 00       ..
  STA L00F0                                    ; D7B8: 85 F0       ..
@@ -3920,12 +3920,12 @@ LC006 = sub_CC004+2
  ROL L00F0                                    ; D7C3: 26 F0       &.
  EOR #&FF                                     ; D7C5: 49 FF       I.
  SEC                                          ; D7C7: 38          8
- ADC L00D0                                    ; D7C8: 65 D0       e.
- STA L00D0                                    ; D7CA: 85 D0       ..
+ ADC tempVar                                  ; D7C8: 65 D0       e.
+ STA tempVar                                  ; D7CA: 85 D0       ..
  LDA L00F0                                    ; D7CC: A5 F0       ..
  EOR #&FF                                     ; D7CE: 49 FF       I.
- ADC L00D1                                    ; D7D0: 65 D1       e.
- STA L00D1                                    ; D7D2: 85 D1       ..
+ ADC tempVar_1                                ; D7D0: 65 D1       e.
+ STA tempVar_1                                ; D7D2: 85 D1       ..
  LDY #0                                       ; D7D4: A0 00       ..
  STY L00F0                                    ; D7D6: 84 F0       ..
  LDA L00EF                                    ; D7D8: A5 EF       ..
@@ -3959,30 +3959,30 @@ LC006 = sub_CC004+2
 
 .CD809
  CLC                                          ; D809: 18          .
- LDA L00D0                                    ; D80A: A5 D0       ..
+ LDA tempVar                                  ; D80A: A5 D0       ..
  ADC #&76 ; 'v'                               ; D80C: 69 76       iv
- STA L00D0                                    ; D80E: 85 D0       ..
- LDA L00D1                                    ; D810: A5 D1       ..
+ STA tempVar                                  ; D80E: 85 D0       ..
+ LDA tempVar_1                                ; D810: A5 D1       ..
  ADC #0                                       ; D812: 69 00       i.
- STA L00D1                                    ; D814: 85 D1       ..
+ STA tempVar_1                                ; D814: 85 D1       ..
 .CD816
  SEC                                          ; D816: 38          8
- LDA L00D0                                    ; D817: A5 D0       ..
+ LDA tempVar                                  ; D817: A5 D0       ..
  SBC #&41 ; 'A'                               ; D819: E9 41       .A
- STA L00D0                                    ; D81B: 85 D0       ..
- LDA L00D1                                    ; D81D: A5 D1       ..
+ STA tempVar                                  ; D81B: 85 D0       ..
+ LDA tempVar_1                                ; D81D: A5 D1       ..
  SBC #1                                       ; D81F: E9 01       ..
- STA L00D1                                    ; D821: 85 D1       ..
+ STA tempVar_1                                ; D821: 85 D1       ..
  BMI CD828                                    ; D823: 30 03       0.
  JMP CD837                                    ; D825: 4C 37 D8    L7.
 
 .CD828
- LDA L00D0                                    ; D828: A5 D0       ..
+ LDA tempVar                                  ; D828: A5 D0       ..
  ADC #&18                                     ; D82A: 69 18       i.
- STA L00D0                                    ; D82C: 85 D0       ..
- LDA L00D1                                    ; D82E: A5 D1       ..
+ STA tempVar                                  ; D82C: 85 D0       ..
+ LDA tempVar_1                                ; D82E: A5 D1       ..
  ADC #1                                       ; D830: 69 01       i.
- STA L00D1                                    ; D832: 85 D1       ..
+ STA tempVar_1                                ; D832: 85 D1       ..
  JMP CD855                                    ; D834: 4C 55 D8    LU.
 
 .CD837
@@ -4007,30 +4007,30 @@ LC006 = sub_CC004+2
 
 .CD856
  CLC                                          ; D856: 18          .
- LDA L00D0                                    ; D857: A5 D0       ..
+ LDA tempVar                                  ; D857: A5 D0       ..
  ADC #&0D                                     ; D859: 69 0D       i.
- STA L00D0                                    ; D85B: 85 D0       ..
- LDA L00D1                                    ; D85D: A5 D1       ..
+ STA tempVar                                  ; D85B: 85 D0       ..
+ LDA tempVar_1                                ; D85D: A5 D1       ..
  ADC #1                                       ; D85F: 69 01       i.
- STA L00D1                                    ; D861: 85 D1       ..
+ STA tempVar_1                                ; D861: 85 D1       ..
 .CD863
  SEC                                          ; D863: 38          8
- LDA L00D0                                    ; D864: A5 D0       ..
+ LDA tempVar                                  ; D864: A5 D0       ..
  SBC #&77 ; 'w'                               ; D866: E9 77       .w
- STA L00D0                                    ; D868: 85 D0       ..
- LDA L00D1                                    ; D86A: A5 D1       ..
+ STA tempVar                                  ; D868: 85 D0       ..
+ LDA tempVar_1                                ; D86A: A5 D1       ..
  SBC #0                                       ; D86C: E9 00       ..
- STA L00D1                                    ; D86E: 85 D1       ..
+ STA tempVar_1                                ; D86E: 85 D1       ..
  BMI CD875                                    ; D870: 30 03       0.
  JMP CD884                                    ; D872: 4C 84 D8    L..
 
 .CD875
- LDA L00D0                                    ; D875: A5 D0       ..
+ LDA tempVar                                  ; D875: A5 D0       ..
  ADC #&4E ; 'N'                               ; D877: 69 4E       iN
- STA L00D0                                    ; D879: 85 D0       ..
- LDA L00D1                                    ; D87B: A5 D1       ..
+ STA tempVar                                  ; D879: 85 D0       ..
+ LDA tempVar_1                                ; D87B: A5 D1       ..
  ADC #0                                       ; D87D: 69 00       i.
- STA L00D1                                    ; D87F: 85 D1       ..
+ STA tempVar_1                                ; D87F: 85 D1       ..
  JMP CD855                                    ; D881: 4C 55 D8    LU.
 
 .CD884
@@ -4068,22 +4068,22 @@ LC006 = sub_CC004+2
 
 .CD8B7
  CLC                                          ; D8B7: 18          .
- LDA L00D0                                    ; D8B8: A5 D0       ..
+ LDA tempVar                                  ; D8B8: A5 D0       ..
  ADC #&42 ; 'B'                               ; D8BA: 69 42       iB
- STA L00D0                                    ; D8BC: 85 D0       ..
- LDA L00D1                                    ; D8BE: A5 D1       ..
+ STA tempVar                                  ; D8BC: 85 D0       ..
+ LDA tempVar_1                                ; D8BE: A5 D1       ..
  ADC #0                                       ; D8C0: 69 00       i.
- STA L00D1                                    ; D8C2: 85 D1       ..
+ STA tempVar_1                                ; D8C2: 85 D1       ..
  RTS                                          ; D8C4: 60          `
 
 ; ******************************************************************************
 .subm_D8C5
- LDA dashboardSwitch                          ; D8C5: A5 E9       ..
+ LDA setupPPUForIconBar                       ; D8C5: A5 E9       ..
  BPL CD8D2                                    ; D8C7: 10 09       ..
  LDA PPU_STATUS                               ; D8C9: AD 02 20    ..
  ASL A                                        ; D8CC: 0A          .
  BPL CD8D2                                    ; D8CD: 10 03       ..
- JSR SwitchTablesTo0                          ; D8CF: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; D8CF: 20 6D D0     m.
 .CD8D2
  LDA L03EF                                    ; D8D2: AD EF 03    ...
  AND #&40 ; '@'                               ; D8D5: 29 40       )@
@@ -4094,8 +4094,8 @@ LC006 = sub_CC004+2
  RTS                                          ; D8E0: 60          `
 
 ; ******************************************************************************
-.subm_D8E1
- LDA tileIndex                                ; D8E1: A5 C0       ..
+.ChangeDrawingPhase
+ LDA drawingPhase                             ; D8E1: A5 C0       ..
  EOR #1                                       ; D8E3: 49 01       I.
  TAX                                          ; D8E5: AA          .
  JSR subm_D8EC                                ; D8E6: 20 EC D8     ..
@@ -4103,7 +4103,7 @@ LC006 = sub_CC004+2
 
 ; ******************************************************************************
 .subm_D8EC
- STX tileIndex                                ; D8EC: 86 C0       ..
+ STX drawingPhase                             ; D8EC: 86 C0       ..
  LDA tileNumber0,X                            ; D8EE: B5 C1       ..
  STA tileNumber                               ; D8F0: 85 B8       ..
  LDA nameBufferAddr,X                         ; D8F2: BD D0 CE    ...
@@ -4194,12 +4194,12 @@ LC006 = sub_CC004+2
 
 ; ******************************************************************************
 .subm_D96F
- JSR subm_D8E1                                ; D96F: 20 E1 D8     ..
+ JSR ChangeDrawingPhase                       ; D96F: 20 E1 D8     ..
  JSR LL9_b1                                   ; D972: 20 C7 ED     ..
  LDA #&C8                                     ; D975: A9 C8       ..
  PHA                                          ; D977: 48          H
  JSR DrawBoxEdges                             ; D978: 20 6F CD     o.
- LDX tileIndex                                ; D97B: A6 C0       ..
+ LDX drawingPhase                             ; D97B: A6 C0       ..
  LDA tileNumber                               ; D97D: A5 B8       ..
  STA tileNumber0,X                            ; D97F: 95 C1       ..
  PLA                                          ; D981: 68          h
@@ -4359,12 +4359,12 @@ LC006 = sub_CC004+2
 ; ******************************************************************************
 .LOIN
  STY YSAV                                     ; DC0F: 84 9C       ..
- LDA dashboardSwitch                          ; DC11: A5 E9       ..
+ LDA setupPPUForIconBar                       ; DC11: A5 E9       ..
  BPL CDC1E                                    ; DC13: 10 09       ..
  LDA PPU_STATUS                               ; DC15: AD 02 20    ..
  ASL A                                        ; DC18: 0A          .
  BPL CDC1E                                    ; DC19: 10 03       ..
- JSR SwitchTablesTo0                          ; DC1B: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; DC1B: 20 6D D0     m.
 .CDC1E
  LDA #&80                                     ; DC1E: A9 80       ..
  STA S                                        ; DC20: 85 99       ..
@@ -4465,12 +4465,12 @@ LC006 = sub_CC004+2
 .CDCC8
  STA R                                        ; DCC8: 85 98       ..
 .CDCCA
- LDA dashboardSwitch                          ; DCCA: A5 E9       ..
+ LDA setupPPUForIconBar                       ; DCCA: A5 E9       ..
  BPL CDCD7                                    ; DCCC: 10 09       ..
  LDA PPU_STATUS                               ; DCCE: AD 02 20    ..
  ASL A                                        ; DCD1: 0A          .
  BPL CDCD7                                    ; DCD2: 10 03       ..
- JSR SwitchTablesTo0                          ; DCD4: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; DCD4: 20 6D D0     m.
 .CDCD7
  LDX #0                                       ; DCD7: A2 00       ..
  LDA (SC2,X)                                  ; DCD9: A1 BA       ..
@@ -4547,12 +4547,12 @@ LC006 = sub_CC004+2
 
 .CDD51
  LDY YSAV                                     ; DD51: A4 9C       ..
- LDA dashboardSwitch                          ; DD53: A5 E9       ..
+ LDA setupPPUForIconBar                       ; DD53: A5 E9       ..
  BPL CDD60                                    ; DD55: 10 09       ..
  LDA PPU_STATUS                               ; DD57: AD 02 20    ..
  ASL A                                        ; DD5A: 0A          .
  BPL CDD60                                    ; DD5B: 10 03       ..
- JSR SwitchTablesTo0                          ; DD5D: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; DD5D: 20 6D D0     m.
 .CDD60
  CLC                                          ; DD60: 18          .
  RTS                                          ; DD61: 60          `
@@ -4578,12 +4578,12 @@ LC006 = sub_CC004+2
 .CDD80
  STA R                                        ; DD80: 85 98       ..
 .CDD82
- LDA dashboardSwitch                          ; DD82: A5 E9       ..
+ LDA setupPPUForIconBar                       ; DD82: A5 E9       ..
  BPL CDD8F                                    ; DD84: 10 09       ..
  LDA PPU_STATUS                               ; DD86: AD 02 20    ..
  ASL A                                        ; DD89: 0A          .
  BPL CDD8F                                    ; DD8A: 10 03       ..
- JSR SwitchTablesTo0                          ; DD8C: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; DD8C: 20 6D D0     m.
 .CDD8F
  LDX #0                                       ; DD8F: A2 00       ..
  LDA (SC2,X)                                  ; DD91: A1 BA       ..
@@ -4663,12 +4663,12 @@ LC006 = sub_CC004+2
  JMP CDD80                                    ; DE0C: 4C 80 DD    L..
 
 .loop_CDE0F
- LDA dashboardSwitch                          ; DE0F: A5 E9       ..
+ LDA setupPPUForIconBar                       ; DE0F: A5 E9       ..
  BPL CDE1C                                    ; DE11: 10 09       ..
  LDA PPU_STATUS                               ; DE13: AD 02 20    ..
  ASL A                                        ; DE16: 0A          .
  BPL CDE1C                                    ; DE17: 10 03       ..
- JSR SwitchTablesTo0                          ; DE19: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; DE19: 20 6D D0     m.
 .CDE1C
  LDY YSAV                                     ; DE1C: A4 9C       ..
  CLC                                          ; DE1E: 18          .
@@ -4789,12 +4789,12 @@ LC006 = sub_CC004+2
  DEC SC2_1                                    ; DEDB: C6 BB       ..
 .CDEDD
  STX Q                                        ; DEDD: 86 97       ..
- LDA dashboardSwitch                          ; DEDF: A5 E9       ..
+ LDA setupPPUForIconBar                       ; DEDF: A5 E9       ..
  BPL CDEEC                                    ; DEE1: 10 09       ..
  LDA PPU_STATUS                               ; DEE3: AD 02 20    ..
  ASL A                                        ; DEE6: 0A          .
  BPL CDEEC                                    ; DEE7: 10 03       ..
- JSR SwitchTablesTo0                          ; DEE9: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; DEE9: 20 6D D0     m.
 .CDEEC
  LDX #0                                       ; DEEC: A2 00       ..
  LDA (SC2,X)                                  ; DEEE: A1 BA       ..
@@ -4918,12 +4918,12 @@ LC006 = sub_CC004+2
  DEC SC2_1                                    ; DFA8: C6 BB       ..
 .CDFAA
  STX Q                                        ; DFAA: 86 97       ..
- LDA dashboardSwitch                          ; DFAC: A5 E9       ..
+ LDA setupPPUForIconBar                       ; DFAC: A5 E9       ..
  BPL CDFB9                                    ; DFAE: 10 09       ..
  LDA PPU_STATUS                               ; DFB0: AD 02 20    ..
  ASL A                                        ; DFB3: 0A          .
  BPL CDFB9                                    ; DFB4: 10 03       ..
- JSR SwitchTablesTo0                          ; DFB6: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; DFB6: 20 6D D0     m.
 .CDFB9
  LDX #0                                       ; DFB9: A2 00       ..
  LDA (SC2,X)                                  ; DFBB: A1 BA       ..
@@ -5023,12 +5023,12 @@ LDFFF = sub_CDFFE+1
 
 ; ******************************************************************************
 .subm_E04A
- LDA dashboardSwitch                          ; E04A: A5 E9       ..
+ LDA setupPPUForIconBar                       ; E04A: A5 E9       ..
  BPL CE057                                    ; E04C: 10 09       ..
  LDA PPU_STATUS                               ; E04E: AD 02 20    ..
  ASL A                                        ; E051: 0A          .
  BPL CE057                                    ; E052: 10 03       ..
- JSR SwitchTablesTo0                          ; E054: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; E054: 20 6D D0     m.
 .CE057
  STY YSAV                                     ; E057: 84 9C       ..
  LDA P                                        ; E059: A5 2F       ./
@@ -5070,12 +5070,12 @@ LDFFF = sub_CDFFE+1
  ASL A                                        ; E08F: 0A          .
  ROL SC_1                                     ; E090: 26 08       &.
  STA SC                                       ; E092: 85 07       ..
- LDA dashboardSwitch                          ; E094: A5 E9       ..
+ LDA setupPPUForIconBar                       ; E094: A5 E9       ..
  BPL CE0A1                                    ; E096: 10 09       ..
  LDA PPU_STATUS                               ; E098: AD 02 20    ..
  ASL A                                        ; E09B: 0A          .
  BPL CE0A1                                    ; E09C: 10 03       ..
- JSR SwitchTablesTo0                          ; E09E: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; E09E: 20 6D D0     m.
 .CE0A1
  LDY #7                                       ; E0A1: A0 07       ..
 .loop_CE0A3
@@ -5099,12 +5099,12 @@ LDFFF = sub_CDFFE+1
 
 ; ******************************************************************************
 .subm_E0BA
- LDA dashboardSwitch                          ; E0BA: A5 E9       ..
+ LDA setupPPUForIconBar                       ; E0BA: A5 E9       ..
  BPL CE0C7                                    ; E0BC: 10 09       ..
  LDA PPU_STATUS                               ; E0BE: AD 02 20    ..
  ASL A                                        ; E0C1: 0A          .
  BPL CE0C7                                    ; E0C2: 10 03       ..
- JSR SwitchTablesTo0                          ; E0C4: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; E0C4: 20 6D D0     m.
 .CE0C7
  STY YSAV                                     ; E0C7: 84 9C       ..
  LDX XX15                                     ; E0C9: A6 71       .q
@@ -5142,12 +5142,12 @@ LDFFF = sub_CDFFE+1
  LSR A                                        ; E0FE: 4A          J
  LSR A                                        ; E0FF: 4A          J
  STA R                                        ; E100: 85 98       ..
- LDA dashboardSwitch                          ; E102: A5 E9       ..
+ LDA setupPPUForIconBar                       ; E102: A5 E9       ..
  BPL CE10F                                    ; E104: 10 09       ..
  LDA PPU_STATUS                               ; E106: AD 02 20    ..
  ASL A                                        ; E109: 0A          .
  BPL CE10F                                    ; E10A: 10 03       ..
- JSR SwitchTablesTo0                          ; E10C: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; E10C: 20 6D D0     m.
 .CE10F
  LDX #0                                       ; E10F: A2 00       ..
  LDA (SC2,X)                                  ; E111: A1 BA       ..
@@ -5230,12 +5230,12 @@ LDFFF = sub_CDFFE+1
  STX R                                        ; E18C: 86 98       ..
 ; ******************************************************************************
 .subm_E18E
- LDA dashboardSwitch                          ; E18E: A5 E9       ..
+ LDA setupPPUForIconBar                       ; E18E: A5 E9       ..
  BPL CE19B                                    ; E190: 10 09       ..
  LDA PPU_STATUS                               ; E192: AD 02 20    ..
  ASL A                                        ; E195: 0A          .
  BPL CE19B                                    ; E196: 10 03       ..
- JSR SwitchTablesTo0                          ; E198: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; E198: 20 6D D0     m.
 .CE19B
  LDX #0                                       ; E19B: A2 00       ..
  LDA (SC2,X)                                  ; E19D: A1 BA       ..
@@ -5326,12 +5326,12 @@ LDFFF = sub_CDFFE+1
  JMP CE1BA                                    ; E228: 4C BA E1    L..
 
 .CE22B
- LDA dashboardSwitch                          ; E22B: A5 E9       ..
+ LDA setupPPUForIconBar                       ; E22B: A5 E9       ..
  BPL CE238                                    ; E22D: 10 09       ..
  LDA PPU_STATUS                               ; E22F: AD 02 20    ..
  ASL A                                        ; E232: 0A          .
  BPL CE238                                    ; E233: 10 03       ..
- JSR SwitchTablesTo0                          ; E235: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; E235: 20 6D D0     m.
 .CE238
  LDX #0                                       ; E238: A2 00       ..
  LDA (SC2,X)                                  ; E23A: A1 BA       ..
@@ -5401,12 +5401,12 @@ LDFFF = sub_CDFFE+1
  JMP CE32A                                    ; E2A3: 4C 2A E3    L*.
 
 .CE2A6
- LDA dashboardSwitch                          ; E2A6: A5 E9       ..
+ LDA setupPPUForIconBar                       ; E2A6: A5 E9       ..
  BPL CE2B3                                    ; E2A8: 10 09       ..
  LDA PPU_STATUS                               ; E2AA: AD 02 20    ..
  ASL A                                        ; E2AD: 0A          .
  BPL CE2B3                                    ; E2AE: 10 03       ..
- JSR SwitchTablesTo0                          ; E2B0: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; E2B0: 20 6D D0     m.
 .CE2B3
  LDX #0                                       ; E2B3: A2 00       ..
  LDA (SC2,X)                                  ; E2B5: A1 BA       ..
@@ -5483,24 +5483,24 @@ LDFFF = sub_CDFFE+1
  EOR (SC),Y                                   ; E32A: 51 07       Q.
  STA (SC),Y                                   ; E32C: 91 07       ..
 .CE32E
- LDA dashboardSwitch                          ; E32E: A5 E9       ..
+ LDA setupPPUForIconBar                       ; E32E: A5 E9       ..
  BPL CE33B                                    ; E330: 10 09       ..
  LDA PPU_STATUS                               ; E332: AD 02 20    ..
  ASL A                                        ; E335: 0A          .
  BPL CE33B                                    ; E336: 10 03       ..
- JSR SwitchTablesTo0                          ; E338: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; E338: 20 6D D0     m.
 .CE33B
  LDY YSAV                                     ; E33B: A4 9C       ..
  RTS                                          ; E33D: 60          `
 
 ; ******************************************************************************
 .subm_E33E
- LDA dashboardSwitch                          ; E33E: A5 E9       ..
+ LDA setupPPUForIconBar                       ; E33E: A5 E9       ..
  BPL CE34B                                    ; E340: 10 09       ..
  LDA PPU_STATUS                               ; E342: AD 02 20    ..
  ASL A                                        ; E345: 0A          .
  BPL CE34B                                    ; E346: 10 03       ..
- JSR SwitchTablesTo0                          ; E348: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; E348: 20 6D D0     m.
 .CE34B
  STY YSAV                                     ; E34B: 84 9C       ..
  LDY Y1                                       ; E34D: A4 72       .r
@@ -5549,12 +5549,12 @@ LDFFF = sub_CDFFE+1
 
 .CE394
  STY Q                                        ; E394: 84 97       ..
- LDA dashboardSwitch                          ; E396: A5 E9       ..
+ LDA setupPPUForIconBar                       ; E396: A5 E9       ..
  BPL CE3A3                                    ; E398: 10 09       ..
  LDA PPU_STATUS                               ; E39A: AD 02 20    ..
  ASL A                                        ; E39D: 0A          .
  BPL CE3A3                                    ; E39E: 10 03       ..
- JSR SwitchTablesTo0                          ; E3A0: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; E3A0: 20 6D D0     m.
 .CE3A3
  LDX #0                                       ; E3A3: A2 00       ..
  LDA (SC2,X)                                  ; E3A5: A1 BA       ..
@@ -5636,12 +5636,12 @@ LDFFF = sub_CDFFE+1
  RTS                                          ; E422: 60          `
 
 .CE423
- LDA dashboardSwitch                          ; E423: A5 E9       ..
+ LDA setupPPUForIconBar                       ; E423: A5 E9       ..
  BPL CE430                                    ; E425: 10 09       ..
  LDA PPU_STATUS                               ; E427: AD 02 20    ..
  ASL A                                        ; E42A: 0A          .
  BPL CE430                                    ; E42B: 10 03       ..
- JSR SwitchTablesTo0                          ; E42D: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; E42D: 20 6D D0     m.
 .CE430
  LDY #0                                       ; E430: A0 00       ..
  LDA SC2                                      ; E432: A5 BA       ..
@@ -5767,12 +5767,12 @@ LDFFF = sub_CDFFE+1
  LDA nameBufferHi                             ; E4FF: A5 E6       ..
  ADC yLookupHi,Y                              ; E501: 79 F8 DA    y..
  STA SC_1                                     ; E504: 85 08       ..
- LDA dashboardSwitch                          ; E506: A5 E9       ..
+ LDA setupPPUForIconBar                       ; E506: A5 E9       ..
  BPL CE513                                    ; E508: 10 09       ..
  LDA PPU_STATUS                               ; E50A: AD 02 20    ..
  ASL A                                        ; E50D: 0A          .
  BPL CE513                                    ; E50E: 10 03       ..
- JSR SwitchTablesTo0                          ; E510: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; E510: 20 6D D0     m.
 .CE513
  LDX #0                                       ; E513: A2 00       ..
  LDA (SC,X)                                   ; E515: A1 07       ..
@@ -5819,12 +5819,12 @@ LDFFF = sub_CDFFE+1
  LDA nameBufferHi                             ; E552: A5 E6       ..
  ADC yLookupHi,Y                              ; E554: 79 F8 DA    y..
  STA SC_1                                     ; E557: 85 08       ..
- LDA dashboardSwitch                          ; E559: A5 E9       ..
+ LDA setupPPUForIconBar                       ; E559: A5 E9       ..
  BPL CE566                                    ; E55B: 10 09       ..
  LDA PPU_STATUS                               ; E55D: AD 02 20    ..
  ASL A                                        ; E560: 0A          .
  BPL CE566                                    ; E561: 10 03       ..
- JSR SwitchTablesTo0                          ; E563: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; E563: 20 6D D0     m.
 .CE566
  LDX #0                                       ; E566: A2 00       ..
  LDA (SC,X)                                   ; E568: A1 07       ..
@@ -6323,7 +6323,7 @@ LDFFF = sub_CDFFE+1
 
 ; ******************************************************************************
 .subm_EAB0
- LDA QQ11Mask                                 ; EAB0: A5 9F       ..
+ LDA QQ11a                                    ; EAB0: A5 9F       ..
  BNE subm_EA8D                                ; EAB2: D0 D9       ..
  LDX JSTX                                     ; EAB4: AE 76 04    .v.
  LDA #8                                       ; EAB7: A9 08       ..
@@ -6413,12 +6413,12 @@ LDFFF = sub_CDFFE+1
 
 ; ******************************************************************************
 .subm_EB67
- LDA dashboardSwitch                          ; EB67: A5 E9       ..
+ LDA setupPPUForIconBar                       ; EB67: A5 E9       ..
  BPL CEB74                                    ; EB69: 10 09       ..
  LDA PPU_STATUS                               ; EB6B: AD 02 20    ..
  ASL A                                        ; EB6E: 0A          .
  BPL CEB74                                    ; EB6F: 10 03       ..
- JSR SwitchTablesTo0                          ; EB71: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; EB71: 20 6D D0     m.
 .CEB74
  LDX NOSTM                                    ; EB74: AE E5 03    ...
  LDY #&98                                     ; EB77: A0 98       ..
@@ -6436,24 +6436,24 @@ LDFFF = sub_CDFFE+1
 
 ; ******************************************************************************
 .subm_EB86
- LDA QQ11Mask                                 ; EB86: A5 9F       ..
+ LDA QQ11a                                    ; EB86: A5 9F       ..
  CMP QQ11                                     ; EB88: C5 9E       ..
  BEQ CEB8F                                    ; EB8A: F0 03       ..
  JSR CB63D_b3                                 ; EB8C: 20 AB ED     ..
 .CEB8F
- LDA dashboardSwitch                          ; EB8F: A5 E9       ..
+ LDA setupPPUForIconBar                       ; EB8F: A5 E9       ..
  BPL CEB9C                                    ; EB91: 10 09       ..
  LDA PPU_STATUS                               ; EB93: AD 02 20    ..
  ASL A                                        ; EB96: 0A          .
  BPL CEB9C                                    ; EB97: 10 03       ..
- JSR SwitchTablesTo0                          ; EB99: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; EB99: 20 6D D0     m.
 .CEB9C
  LDX #&3A ; ':'                               ; EB9C: A2 3A       .:
  LDY #&14                                     ; EB9E: A0 14       ..
  BNE CEB79                                    ; EBA0: D0 D7       ..
 ; ******************************************************************************
 .DELAY
- JSR SetTable0UntilNMI                        ; EBA2: 20 67 D1     g.
+ JSR KeepPPUTablesAt0                         ; EBA2: 20 67 D1     g.
  DEY                                          ; EBA5: 88          .
  BNE DELAY                                    ; EBA6: D0 FA       ..
  RTS                                          ; EBA8: 60          `
@@ -6484,12 +6484,12 @@ LDFFF = sub_CDFFE+1
  JSR CEBCF                                    ; EBCA: 20 CF EB     ..
  LDX #2                                       ; EBCD: A2 02       ..
 .CEBCF
- LDA dashboardSwitch                          ; EBCF: A5 E9       ..
+ LDA setupPPUForIconBar                       ; EBCF: A5 E9       ..
  BPL CEBDC                                    ; EBD1: 10 09       ..
  LDA PPU_STATUS                               ; EBD3: AD 02 20    ..
  ASL A                                        ; EBD6: 0A          .
  BPL CEBDC                                    ; EBD7: 10 03       ..
- JSR SwitchTablesTo0                          ; EBD9: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; EBD9: 20 6D D0     m.
 .CEBDC
  LDA #0                                       ; EBDC: A9 00       ..
  STA L0478,X                                  ; EBDE: 9D 78 04    .x.
@@ -6528,23 +6528,23 @@ LDFFF = sub_CDFFE+1
 .CEC17
  LDA noiseLookup2,Y                           ; EC17: B9 5C EC    .\.
  STA L0478,X                                  ; EC1A: 9D 78 04    .x.
- LDA dashboardSwitch                          ; EC1D: A5 E9       ..
+ LDA setupPPUForIconBar                       ; EC1D: A5 E9       ..
  BPL CEC2A                                    ; EC1F: 10 09       ..
  LDA PPU_STATUS                               ; EC21: AD 02 20    ..
  ASL A                                        ; EC24: 0A          .
  BPL CEC2A                                    ; EC25: 10 03       ..
- JSR SwitchTablesTo0                          ; EC27: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; EC27: 20 6D D0     m.
 .CEC2A
  TYA                                          ; EC2A: 98          .
 .CEC2B
  JSR C89D1_b6                                 ; EC2B: 20 50 ED     P.
 .CEC2E
- LDA dashboardSwitch                          ; EC2E: A5 E9       ..
+ LDA setupPPUForIconBar                       ; EC2E: A5 E9       ..
  BPL CEC3B                                    ; EC30: 10 09       ..
  LDA PPU_STATUS                               ; EC32: AD 02 20    ..
  ASL A                                        ; EC35: 0A          .
  BPL CEC3B                                    ; EC36: 10 03       ..
- JSR SwitchTablesTo0                          ; EC38: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; EC38: 20 6D D0     m.
 .CEC3B
  RTS                                          ; EC3B: 60          `
 
@@ -6561,14 +6561,14 @@ LDFFF = sub_CDFFE+1
  EQUB &60                                     ; EC7C: 60          `
 
 ; ******************************************************************************
-.CheckDashboardA
+.SetupPPUForIconBar
  PHA                                          ; EC7D: 48          H
- LDA dashboardSwitch                          ; EC7E: A5 E9       ..
+ LDA setupPPUForIconBar                       ; EC7E: A5 E9       ..
  BPL CEC8B                                    ; EC80: 10 09       ..
  LDA PPU_STATUS                               ; EC82: AD 02 20    ..
  ASL A                                        ; EC85: 0A          .
  BPL CEC8B                                    ; EC86: 10 03       ..
- JSR SwitchTablesTo0                          ; EC88: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; EC88: 20 6D D0     m.
 .CEC8B
  PLA                                          ; EC8B: 68          h
  RTS                                          ; EC8C: 60          `
@@ -6598,12 +6598,12 @@ LDFFF = sub_CDFFE+1
 
 ; ******************************************************************************
 .IncreaseTally
- LDA dashboardSwitch                          ; ECAE: A5 E9       ..
+ LDA setupPPUForIconBar                       ; ECAE: A5 E9       ..
  BPL CECBB                                    ; ECB0: 10 09       ..
  LDA PPU_STATUS                               ; ECB2: AD 02 20    ..
  ASL A                                        ; ECB5: 0A          .
  BPL CECBB                                    ; ECB6: 10 03       ..
- JSR SwitchTablesTo0                          ; ECB8: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; ECB8: 20 6D D0     m.
 .CECBB
  LDA currentBank                              ; ECBB: A5 F7       ..
  PHA                                          ; ECBD: 48          H
@@ -6671,7 +6671,7 @@ LDFFF = sub_CDFFE+1
 ; ******************************************************************************
 .C8021_b6
  PHA                                          ; ED24: 48          H
- JSR SetTable0UntilNMI                        ; ED25: 20 67 D1     g.
+ JSR KeepPPUTablesAt0                         ; ED25: 20 67 D1     g.
  PLA                                          ; ED28: 68          h
  ORA #&80                                     ; ED29: 09 80       ..
  STA L045E                                    ; ED2B: 8D 5E 04    .^.
@@ -6712,7 +6712,7 @@ LDFFF = sub_CDFFE+1
 
 ; ******************************************************************************
 .ResetSound_b6
- JSR SetTable0UntilNMI                        ; ED6B: 20 67 D1     g.
+ JSR KeepPPUTablesAt0                         ; ED6B: 20 67 D1     g.
 ; ******************************************************************************
 .ResetSoundNow_b6
  LDA #0                                       ; ED6E: A9 00       ..
@@ -7598,7 +7598,7 @@ LDFFF = sub_CDFFE+1
  JSR CopyNametable0To1                        ; F2D3: 20 34 CD     4.
  JSR CA7B7_b3                                 ; F2D6: 20 26 F1     &.
  LDX #1                                       ; F2D9: A2 01       ..
- STX L00F3                                    ; F2DB: 86 F3       ..
+ STX palettePhase                             ; F2DB: 86 F3       ..
  RTS                                          ; F2DD: 60          `
 
 ; ******************************************************************************
@@ -7628,7 +7628,7 @@ LDFFF = sub_CDFFE+1
  STA SC2                                      ; F30D: 85 BA       ..
  LDX #2                                       ; F30F: A2 02       ..
 .loop_CF311
- JSR CheckDashboardA                          ; F311: 20 7D EC     }.
+ JSR SetupPPUForIconBar                       ; F311: 20 7D EC     }.
  LDY #2                                       ; F314: A0 02       ..
  LDA #0                                       ; F316: A9 00       ..
 .loop_CF318
@@ -7688,12 +7688,12 @@ LDFFF = sub_CDFFE+1
  CLC                                          ; F369: 18          .
  ADC #0                                       ; F36A: 69 00       i.
  STA frameCounter                             ; F36C: 8D F1 03    ...
- STA L0038                                    ; F36F: 85 38       .8
- STA L0039                                    ; F371: 85 39       .9
- STA L003A                                    ; F373: 85 3A       .:
- STA L00F3                                    ; F375: 85 F3       ..
- STA L00F4                                    ; F377: 85 F4       ..
- STA tileIndex                                ; F379: 85 C0       ..
+ STA nmiTimer                                 ; F36F: 85 38       .8
+ STA nmiTimerLo                               ; F371: 85 39       .9
+ STA nmiTimerHi                               ; F373: 85 3A       .:
+ STA palettePhase                             ; F375: 85 F3       ..
+ STA otherPhase                               ; F377: 85 F4       ..
+ STA drawingPhase                             ; F379: 85 C0       ..
  LDA #&FF                                     ; F37B: A9 FF       ..
  STA L0307                                    ; F37D: 8D 07 03    ...
  LDA #&80                                     ; F380: A9 80       ..
@@ -7732,14 +7732,14 @@ LDFFF = sub_CDFFE+1
  JSR C8021_b6                                 ; F3C1: 20 24 ED     $.
  JSR CEB8F                                    ; F3C4: 20 8F EB     ..
  LDA #&FF                                     ; F3C7: A9 FF       ..
- STA QQ11Mask                                 ; F3C9: 85 9F       ..
+ STA QQ11a                                    ; F3C9: 85 9F       ..
  LDA #1                                       ; F3CB: A9 01       ..
  STA scanController2                          ; F3CD: 8D 75 04    .u.
  LDA #&32 ; '2'                               ; F3D0: A9 32       .2
- STA L0038                                    ; F3D2: 85 38       .8
+ STA nmiTimer                                 ; F3D2: 85 38       .8
  LDA #0                                       ; F3D4: A9 00       ..
- STA L0039                                    ; F3D6: 85 39       .9
- STA L003A                                    ; F3D8: 85 3A       .:
+ STA nmiTimerLo                               ; F3D6: 85 39       .9
+ STA nmiTimerHi                               ; F3D8: 85 3A       .:
 .loop_CF3DA
  LDY #0                                       ; F3DA: A0 00       ..
 .loop_CF3DC
@@ -7754,7 +7754,7 @@ LDFFF = sub_CDFFE+1
  BCS CF411                                    ; F3EE: B0 21       .!
  LDY L03FC                                    ; F3F0: AC FC 03    ...
  INY                                          ; F3F3: C8          .
- LDA L003A                                    ; F3F4: A5 3A       .:
+ LDA nmiTimerHi                               ; F3F4: A5 3A       .:
  CMP #1                                       ; F3F6: C9 01       ..
  BCC loop_CF3DC                               ; F3F8: 90 E2       ..
  LSR scanController2                          ; F3FA: 4E 75 04    Nu.
@@ -7833,7 +7833,7 @@ LDFFF = sub_CDFFE+1
  STA YC                                       ; F479: 85 3B       .;
  LDA #4                                       ; F47B: A9 04       ..
 .CF47D
- JSR CheckDashboardA                          ; F47D: 20 7D EC     }.
+ JSR SetupPPUForIconBar                       ; F47D: 20 7D EC     }.
  LDY #1                                       ; F480: A0 01       ..
  LDA #3                                       ; F482: A9 03       ..
 .loop_CF484
@@ -7925,12 +7925,12 @@ LDFFF = sub_CDFFE+1
 ; ******************************************************************************
 .subm_F4FB
  JSR DVID3B2                                  ; F4FB: 20 62 F9     b.
- LDA dashboardSwitch                          ; F4FE: A5 E9       ..
+ LDA setupPPUForIconBar                       ; F4FE: A5 E9       ..
  BPL CF50B                                    ; F500: 10 09       ..
  LDA PPU_STATUS                               ; F502: AD 02 20    ..
  ASL A                                        ; F505: 0A          .
  BPL CF50B                                    ; F506: 10 03       ..
- JSR SwitchTablesTo0                          ; F508: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; F508: 20 6D D0     m.
 .CF50B
  LDA K_3                                      ; F50B: A5 80       ..
  AND #&7F                                     ; F50D: 29 7F       ).
@@ -7957,12 +7957,12 @@ LDFFF = sub_CDFFE+1
 .UnpackToRAM
  LDY #0                                       ; F52D: A0 00       ..
 .CF52F
- LDA dashboardSwitch                          ; F52F: A5 E9       ..
+ LDA setupPPUForIconBar                       ; F52F: A5 E9       ..
  BPL CF53C                                    ; F531: 10 09       ..
  LDA PPU_STATUS                               ; F533: AD 02 20    ..
  ASL A                                        ; F536: 0A          .
  BPL CF53C                                    ; F537: 10 03       ..
- JSR SwitchTablesTo0                          ; F539: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; F539: 20 6D D0     m.
 .CF53C
  LDX #0                                       ; F53C: A2 00       ..
  LDA (V,X)                                    ; F53E: A1 63       .c
@@ -8112,12 +8112,12 @@ LDFFF = sub_CDFFE+1
 ; ******************************************************************************
 .FAROF2
  STA T                                        ; F60C: 85 9A       ..
- LDA dashboardSwitch                          ; F60E: A5 E9       ..
+ LDA setupPPUForIconBar                       ; F60E: A5 E9       ..
  BPL CF61B                                    ; F610: 10 09       ..
  LDA PPU_STATUS                               ; F612: AD 02 20    ..
  ASL A                                        ; F615: 0A          .
  BPL CF61B                                    ; F616: 10 03       ..
- JSR SwitchTablesTo0                          ; F618: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; F618: 20 6D D0     m.
 .CF61B
  LDA INWK_2                                   ; F61B: A5 0B       ..
  ORA INWK_5                                   ; F61D: 05 0E       ..
@@ -8189,12 +8189,12 @@ LDFFF = sub_CDFFE+1
  LDA P                                        ; F67C: A5 2F       ./
  ROR A                                        ; F67E: 6A          j
  STA K                                        ; F67F: 85 7D       .}
- LDA dashboardSwitch                          ; F681: A5 E9       ..
+ LDA setupPPUForIconBar                       ; F681: A5 E9       ..
  BPL CF68E                                    ; F683: 10 09       ..
  LDA PPU_STATUS                               ; F685: AD 02 20    ..
  ASL A                                        ; F688: 0A          .
  BPL CF68E                                    ; F689: 10 03       ..
- JSR SwitchTablesTo0                          ; F68B: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; F68B: 20 6D D0     m.
 .CF68E
  LDA #0                                       ; F68E: A9 00       ..
  LDX #&18                                     ; F690: A2 18       ..
@@ -8209,12 +8209,12 @@ LDFFF = sub_CDFFE+1
  DEX                                          ; F69D: CA          .
  BNE loop_CF692                               ; F69E: D0 F2       ..
  STA T                                        ; F6A0: 85 9A       ..
- LDA dashboardSwitch                          ; F6A2: A5 E9       ..
+ LDA setupPPUForIconBar                       ; F6A2: A5 E9       ..
  BPL CF6AF                                    ; F6A4: 10 09       ..
  LDA PPU_STATUS                               ; F6A6: AD 02 20    ..
  ASL A                                        ; F6A9: 0A          .
  BPL CF6AF                                    ; F6AA: 10 03       ..
- JSR SwitchTablesTo0                          ; F6AC: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; F6AC: 20 6D D0     m.
 .CF6AF
  LDA R                                        ; F6AF: A5 98       ..
  EOR Q                                        ; F6B1: 45 97       E.
@@ -8452,12 +8452,12 @@ LDFFF = sub_CDFFE+1
 ; ******************************************************************************
 .MULT1
  TAX                                          ; F7DA: AA          .
- LDA dashboardSwitch                          ; F7DB: A5 E9       ..
+ LDA setupPPUForIconBar                       ; F7DB: A5 E9       ..
  BPL CF7E8                                    ; F7DD: 10 09       ..
  LDA PPU_STATUS                               ; F7DF: AD 02 20    ..
  ASL A                                        ; F7E2: 0A          .
  BPL CF7E8                                    ; F7E3: 10 03       ..
- JSR SwitchTablesTo0                          ; F7E5: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; F7E5: 20 6D D0     m.
 .CF7E8
  TXA                                          ; F7E8: 8A          .
  AND #&7F                                     ; F7E9: 29 7F       ).
@@ -8523,12 +8523,12 @@ LDFFF = sub_CDFFE+1
 .MULT12
  JSR MULT1                                    ; F83C: 20 DA F7     ..
  STA S                                        ; F83F: 85 99       ..
- LDA dashboardSwitch                          ; F841: A5 E9       ..
+ LDA setupPPUForIconBar                       ; F841: A5 E9       ..
  BPL CF84E                                    ; F843: 10 09       ..
  LDA PPU_STATUS                               ; F845: AD 02 20    ..
  ASL A                                        ; F848: 0A          .
  BPL CF84E                                    ; F849: 10 03       ..
- JSR SwitchTablesTo0                          ; F84B: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; F84B: 20 6D D0     m.
 .CF84E
  LDA P                                        ; F84E: A5 2F       ./
  STA R                                        ; F850: 85 98       ..
@@ -8722,12 +8722,12 @@ LDFFF = sub_CDFFE+1
  STA R                                        ; F96C: 85 98       ..
  LDA INWK_8                                   ; F96E: A5 11       ..
  STA S                                        ; F970: 85 99       ..
- LDA dashboardSwitch                          ; F972: A5 E9       ..
+ LDA setupPPUForIconBar                       ; F972: A5 E9       ..
  BPL CF97F                                    ; F974: 10 09       ..
  LDA PPU_STATUS                               ; F976: AD 02 20    ..
  ASL A                                        ; F979: 0A          .
  BPL CF97F                                    ; F97A: 10 03       ..
- JSR SwitchTablesTo0                          ; F97C: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; F97C: 20 6D D0     m.
 .CF97F
  LDA P                                        ; F97F: A5 2F       ./
  ORA #1                                       ; F981: 09 01       ..
@@ -8758,12 +8758,12 @@ LDFFF = sub_CDFFE+1
  ROL A                                        ; F9AA: 2A          *
  BPL loop_CF9A5                               ; F9AB: 10 F8       ..
  STA Q                                        ; F9AD: 85 97       ..
- LDA dashboardSwitch                          ; F9AF: A5 E9       ..
+ LDA setupPPUForIconBar                       ; F9AF: A5 E9       ..
  BPL CF9BC                                    ; F9B1: 10 09       ..
  LDA PPU_STATUS                               ; F9B3: AD 02 20    ..
  ASL A                                        ; F9B6: 0A          .
  BPL CF9BC                                    ; F9B7: 10 03       ..
- JSR SwitchTablesTo0                          ; F9B9: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; F9B9: 20 6D D0     m.
 .CF9BC
  LDA #&FE                                     ; F9BC: A9 FE       ..
  STA R                                        ; F9BE: 85 98       ..
@@ -9001,12 +9001,12 @@ LDFFF = sub_CDFFE+1
 
 ; ******************************************************************************
 .NORM
- LDA dashboardSwitch                          ; FAF8: A5 E9       ..
+ LDA setupPPUForIconBar                       ; FAF8: A5 E9       ..
  BPL CFB05                                    ; FAFA: 10 09       ..
  LDA PPU_STATUS                               ; FAFC: AD 02 20    ..
  ASL A                                        ; FAFF: 0A          .
  BPL CFB05                                    ; FB00: 10 03       ..
- JSR SwitchTablesTo0                          ; FB02: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; FB02: 20 6D D0     m.
 .CFB05
  LDA XX15                                     ; FB05: A5 71       .q
  JSR SQUA                                     ; FB07: 20 0C F7     ..
@@ -9025,12 +9025,12 @@ LDFFF = sub_CDFFE+1
  LDA X2                                       ; FB23: A5 73       .s
  JSR SQUA                                     ; FB25: 20 0C F7     ..
  STA T                                        ; FB28: 85 9A       ..
- LDA dashboardSwitch                          ; FB2A: A5 E9       ..
+ LDA setupPPUForIconBar                       ; FB2A: A5 E9       ..
  BPL CFB37                                    ; FB2C: 10 09       ..
  LDA PPU_STATUS                               ; FB2E: AD 02 20    ..
  ASL A                                        ; FB31: 0A          .
  BPL CFB37                                    ; FB32: 10 03       ..
- JSR SwitchTablesTo0                          ; FB34: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; FB34: 20 6D D0     m.
 .CFB37
  CLC                                          ; FB37: 18          .
  LDA P                                        ; FB38: A5 2F       ./
@@ -9045,12 +9045,12 @@ LDFFF = sub_CDFFE+1
  LDA XX15                                     ; FB49: A5 71       .q
  JSR subm_FACB                                ; FB4B: 20 CB FA     ..
  STA XX15                                     ; FB4E: 85 71       .q
- LDA dashboardSwitch                          ; FB50: A5 E9       ..
+ LDA setupPPUForIconBar                       ; FB50: A5 E9       ..
  BPL CFB5D                                    ; FB52: 10 09       ..
  LDA PPU_STATUS                               ; FB54: AD 02 20    ..
  ASL A                                        ; FB57: 0A          .
  BPL CFB5D                                    ; FB58: 10 03       ..
- JSR SwitchTablesTo0                          ; FB5A: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; FB5A: 20 6D D0     m.
 .CFB5D
  LDA Y1                                       ; FB5D: A5 72       .r
  JSR subm_FACB                                ; FB5F: 20 CB FA     ..
@@ -9058,12 +9058,12 @@ LDFFF = sub_CDFFE+1
  LDA X2                                       ; FB64: A5 73       .s
  JSR subm_FACB                                ; FB66: 20 CB FA     ..
  STA X2                                       ; FB69: 85 73       .s
- LDA dashboardSwitch                          ; FB6B: A5 E9       ..
+ LDA setupPPUForIconBar                       ; FB6B: A5 E9       ..
  BPL CFB78                                    ; FB6D: 10 09       ..
  LDA PPU_STATUS                               ; FB6F: AD 02 20    ..
  ASL A                                        ; FB72: 0A          .
  BPL CFB78                                    ; FB73: 10 03       ..
- JSR SwitchTablesTo0                          ; FB75: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; FB75: 20 6D D0     m.
 .CFB78
  RTS                                          ; FB78: 60          `
 

@@ -76,6 +76,24 @@ label(0x002F, "P")
 label(0x0030, "P_1")
 label(0x0031, "P_2")
 label(0x0032, "XC")
+
+label(0x0033, "hiddenColour")       # Contains the colour value for when lines are hidden
+                                    # in palette 0, e.g. &0F for black (SetPalette)
+
+label(0x0034, "visibleColour")      # Contains the colour value for when lines are visible
+                                    # in palette 0, e.g. &2C for cyan (SetPalette)
+
+label(0x0035, "paletteColour1")     # Contains the colour value to be used for palette entry 1
+                                    # in the current (non-space) view (SetPalette)
+
+label(0x0036, "paletteColour2")     # Contains the colour value to be used for palette entry 1
+                                    # in the current (non-space) view (SetPalette)
+
+label(0x0038, "nmiTimer")           # Mine, decremented in NMI from 50 (&32) to 1
+                                    # and back up to &32
+label(0x0039, "nmiTimerLo")         # Mine, incremented by 1 every time nmiTimer wraps
+label(0x003A, "nmiTimerHi")
+
 label(0x003B, "YC")
 label(0x003C, "QQ17")
 label(0x003D, "K3")
@@ -179,7 +197,7 @@ label(0x009B, "XSAV")
 label(0x009C, "YSAV")
 label(0x009D, "XX17")
 label(0x009E, "QQ11")
-label(0x009F, "QQ11Mask")          # Mine, can be 0, &FF or QQ11
+label(0x009F, "QQ11a")              # Mine, can be 0, &FF or QQ11 - some kind of view flag
 label(0x00A0, "ZZ")
 label(0x00A1, "XX13")
 label(0x00A2, "MCNT")
@@ -203,40 +221,62 @@ label(0x00B4, "messXC")
 label(0x00B6, "newzp")
 
 label(0x00B8, "tileNumber")         # Mine, contains tile number to draw into
+
 label(0x00B9, "pattBufferHi")       # Mine, high byte of current pattern buffer (&60 or &68)
 
 label(0x00BA, "SC2")                # Mine, typically an address that's used alongside
 label(0x00BB, "SC2_1")              # SC(1 0)
 
-label(0x00C0, "tileIndex")          # Mine, used to store an index into table? 0 or 1
-label(0x00C1, "tileNumber0")        # Mine, used to store tile numbers in a table
+label(0x00C0, "drawingPhase")       # Mine, 0 or 1, flipped manually by calling ChangeDrawingPhase,
+                                    # controls whether we are showing namespace/palette buffer 0 or 1
+                                    # (and which tile number is chosen from the followingf)
+
+label(0x00C1, "tileNumber0")        # Mine, stores a pair of tile numbers, for phase 0 and 1
 label(0x00C2, "tileNumber0_1")
-label(0x00C3, "tileNumber1")
+
+label(0x00C3, "tileNumber1")        # Mine, stores a pair of tile numbers, for phase 0 and 1
 label(0x00C4, "tileNumber1_1")
-label(0x00C5, "tileNumber2")
+
+label(0x00C5, "tileNumber2")        # Mine, stores a pair of tile numbers, for phase 0 and 1
 label(0x00C6, "tileNumber2_2")
-label(0x00C7, "tileNumber3")
+
+label(0x00C7, "tileNumber3")        # Mine, stores a pair of tile numbers, for phase 0 and 1
 label(0x00C8, "tileNumber3_1")
+
+label(0x00D0, "tempVar")            # Mine, stores a 16-bit number, not an address?
+label(0x00D1, "tempVar_1")
 
 label(0x00D4, "addr1")              # Mine, an address within the PPU to be poked to
 label(0x00D5, "addr1_1")
 
 label(0x00E6, "nameBufferHi")       # Mine, high byte of current nametable buffer (&70 or &74)
 
-label(0x00E9, "dashboardSwitch")    # Mine, a flag to control whether we switch to
-                                    # nametable 0 and palette 0 for the dashboard
+label(0x00E9, "setupPPUForIconBar") # Mine, bit 7 set means we set nametable 0 and palette
+                                    # table 0 when the PPU starts drawing the icon bar
+
+label(0x00EA, "showUserInterface")  # Mine, bit 7 set means display user interface (clear for
+                                    # game over screen)
 
 label(0x00EB, "addr4")              # Mine, an address within the PPU to be poked to
 label(0x00EC, "addr4_1")
+
 label(0x00ED, "addr5")              # Mine, an address to fetch PPU data from
 label(0x00EE, "addr5_1")
 
 label(0x00F1, "addr6")              # Mine
 label(0x00F2, "addr6_1")
 
+label(0x00F3, "palettePhase")       # Mine, 0 or 1, flips every NMI, controls palette switching for space
+                                    # view in NMI
+
+label(0x00F4, "otherPhase")         # Mine, 0 or 1, flipped in subm_CB42 ???
+
 label(0x00F5, "ppuCtrlCopy")        # Mine, contains a copy of PPU_CTRL
 
-label(0x00F7, "currentBank")        # Mine, contains lower bank number
+label(0x00F7, "currentBank")        # Mine, contains current lower bank number
+
+label(0x00F8, "runningSetBank")     # Mine, set to &FF if we are inside SetBank when
+                                    # the NMI interrupts, 0 otherwise
 
 label(0x00FA, "addr2")              # Mine, an address within the PPU to be poked to
 label(0x00FB, "addr2_1")
@@ -319,6 +359,11 @@ label(0x045D, "DLY")
 label(0x046C, "pictureTile")       # Mine, the number of the first tile where system pictures are stored
 label(0x0476, "JSTX")
 label(0x0477, "JSTY")
+
+label(0x0469, "nmiStoreA")          # Mine, temporary storage for registers during NMI
+label(0x046A, "nmiStoreX")
+label(0x046B, "nmiStoreY")
+
 label(0x046E, "boxEdge1")          # Mine, bitmap for drawing box edge?
 label(0x046F, "boxEdge2")          # Mine, bitmap for drawing box edge?
 label(0x0475, "scanController2")   # Mine, if non-zero, scan controller 2
@@ -474,16 +519,16 @@ subroutine(0xCED4, "IRQ")           # Mine, IRQ handler
 subroutine(0xCED5, "NMI")           # Mine, NMI handler
 subroutine(0xCE9E, "subm_CE9E")
 subroutine(0xCEA5, "subm_CEA5")
-subroutine(0xCF2E, "SetPalette")    # Mine, set PPU palette?
+subroutine(0xCF2E, "SetPalette")      # Mine, set PPU palette?
 subroutine(0xD02D, "ResetNametable1")  # Mine, does this clear down nametable 1?
 subroutine(0xD0F8, "ReadControllers")   # Mine, reads controllers
-subroutine(0xD06D, "SwitchTablesTo0")    # Mine, switches PPU to nametable/palette table 0
-subroutine(0xD164, "SetTable0UntilNMI2")
-subroutine(0xD167, "SetTable0UntilNMI")
+subroutine(0xD06D, "SetPPUTablesTo0")      # Mine, switches PPU to nametable/palette table 0
+subroutine(0xD164, "KeepPPUTablesAt0x2")    # Mine, set PPU tables to 0 for the rest of the frame count plus another 
+subroutine(0xD167, "KeepPPUTablesAt0")      # Mine, set PPU tables to 0 for the rest of the frame count
 subroutine(0xD710, "FillMemory")    # Mine, something to do with memory filling?
 subroutine(0xD8C5, "subm_D8C5")
 subroutine(0xDBD8, "subm_DBD8")
-subroutine(0xD8E1, "subm_D8E1")
+subroutine(0xD8E1, "ChangeDrawingPhase")
 subroutine(0xD8EC, "subm_D8EC")
 subroutine(0xD908, "subm_D908")
 subroutine(0xD919, "subm_D919")
@@ -520,7 +565,7 @@ subroutine(0xEBAD, "EXNO3")
 subroutine(0xEBBF, "ECBLB")
 subroutine(0xEBE5, "BOOP")
 subroutine(0xEBF2, "NOISE")
-subroutine(0xEC7D, "CheckDashboardA")   # CHECK_DASHBOARD macro that preserves A
+subroutine(0xEC7D, "SetupPPUForIconBar")   # Preserves A
 subroutine(0xEC8D, "LDA_XX0_Y")
 subroutine(0xECA0, "LDA_Epc_Y")
 subroutine(0xECAE, "IncreaseTally")     # Mine, adds KWL/KWH to TALLY

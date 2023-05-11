@@ -61,7 +61,7 @@
  SNE                = &C500
  ACT                = &C520
  XX21               = &C540
- SwitchTablesTo0    = &D06D
+ SetPPUTablesTo0    = &D06D
  TWOS               = &D9F7
  yLookupLo          = &DA18
  yLookupHi          = &DAF8
@@ -205,19 +205,19 @@
                         \ clashes with columns 0 and 32, text is only shown
                         \ in columns 1-31
 
-.L0033
+.hiddenColour
 
  SKIP 1                 \ ???
 
-.L0034
+.visibleColour
 
  SKIP 1                 \ ???
 
-.L0035
+.paletteColour1
 
  SKIP 1                 \ ???
 
-.L0036
+.paletteColour2
 
  SKIP 1                 \ ???
 
@@ -225,15 +225,15 @@
 
  SKIP 1                 \ ???
 
-.L0038
+.nmiTimer
 
  SKIP 1                 \ ???
 
-.L0039
+.nmiTimerLo
 
  SKIP 1                 \ ???
 
-.L003A
+.nmiTimerHi
 
  SKIP 1                 \ ???
 
@@ -530,10 +530,6 @@
                         \ of characters to print, and as the edge counter in the
                         \ main ship-drawing routine
 
-.W
-
- SKIP 1                 \ Temporary storage, used in a number of places
-
 .QQ11
 
  SKIP 1                 \ The number of the current view:
@@ -544,6 +540,10 @@
                         \         In-system jump just arrived ("J")
                         \
                         \ This value is typically set by calling routine TT66
+
+.QQ11a
+
+ SKIP 1
 
 .ZZ
 
@@ -696,7 +696,7 @@
 
  SKIP 1                 \ ???
 
-.patternTableHi
+.pattBufferHi
 
  SKIP 1                 \ ???
 
@@ -720,41 +720,25 @@
 
  SKIP 1                 \ ???
 
-.L00C0
+.drawingPhase
 
  SKIP 1                 \ ???
 
-.L00C1
+.tileNumber0
 
- SKIP 1                 \ ???
+ SKIP 2                 \ ???
 
-.L00C2
+.tileNumber1
 
- SKIP 1                 \ ???
+ SKIP 2                 \ ???
 
-.L00C3
+.tileNumber2
 
- SKIP 1                 \ ???
+ SKIP 2                 \ ???
 
-.L00C4
+.tileNumber3
 
- SKIP 1                 \ ???
-
-.L00C5
-
- SKIP 1                 \ ???
-
-.L00C6
-
- SKIP 1                 \ ???
-
-.L00C7
-
- SKIP 1                 \ ???
-
-.L00C8
-
- SKIP 1                 \ ???
+ SKIP 2                 \ ???
 
 .L00C9
 
@@ -784,13 +768,9 @@
 
  SKIP 1                 \ ???
 
-.L00D0
+.tempVar
 
- SKIP 1                 \ ???
-
-.L00D1
-
- SKIP 1                 \ ???
+ SKIP 2                 \ ???
 
 .L00D2
 
@@ -828,7 +808,7 @@
 
  SKIP 11                \ ???
 
-.nametableHi
+.nameBufferHi
 
  SKIP 1                 \ ???
 
@@ -840,29 +820,21 @@
 
  SKIP 1                 \ ???
 
-.dashboardSwitch
+.setupPPUForIconBar
 
  SKIP 1                 \ ???
 
-.L00EA
+.showUserInterface
 
  SKIP 1                 \ ???
 
-.L00EB
+.addr4
 
- SKIP 1                 \ ???
+ SKIP 2                 \ ???
 
-.L00EC
+.addr5
 
- SKIP 1                 \ ???
-
-.L00ED
-
- SKIP 1                 \ ???
-
-.L00EE
-
- SKIP 1                 \ ???
+ SKIP 2                 \ ???
 
 .L00EF
 
@@ -876,11 +848,11 @@
 
  SKIP 2                 \ ???
 
-.L00F3
+.palettePhase
 
  SKIP 1                 \ ???
 
-.L00F4
+.otherPhase
 
  SKIP 1                 \ ???
 
@@ -896,7 +868,7 @@
 
  SKIP 1                 \ ???
 
-.L00F8
+.runningSetBank
 
  SKIP 1                 \ ???
 
@@ -1483,22 +1455,22 @@
 
 \ ******************************************************************************
 \
-\       Name: CHECK_DASHBOARD
+\       Name: SETUP_PPU_FOR_ICON_BAR
 \       Type: Macro
 \   Category: Screen mode
-\    Summary: If the PPU has started drawing the dashboard, switch to nametable
-\             0 (&2000) and pattern table 0 (&0000)
+\    Summary: If the PPU has started drawing the icon bar, configure the PPU to
+\             use nametable 0 and pattern table 0
 \
 \ ******************************************************************************
 
-MACRO CHECK_DASHBOARD
+MACRO SETUP_PPU_FOR_ICON_BAR
 
- LDA dashboardSwitch    \ If bit 7 of dashboardSwitch and bit 6 of PPU_STATUS
- BPL skip               \ are set, then call SwitchTablesTo0 to:
+ LDA setupPPUForIconBar \ If bit 7 of setupPPUForIconBar and bit 6 of PPU_STATUS
+ BPL skip               \ are set, then call SetPPUTablesTo0 to:
  LDA PPU_STATUS         \
- ASL A                  \   * Zero dashboardSwitch to disable this process
+ ASL A                  \   * Zero setupPPUForIconBar to disable this process
  BPL skip               \     until both conditions are met once again
- JSR SwitchTablesTo0    \
+ JSR SetPPUTablesTo0    \
                         \   * Clear bits 0 and 4 of PPU_CTRL and PPU_CTRL_COPY,
                         \     to set the base nametable address to &2000 (for
                         \     nametable 0) or &2800 (which is a mirror of &2000)
@@ -5084,8 +5056,8 @@ ENDMACRO
 
 .LL51
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDX #0                 \ Set X = 0, which will contain the offset of the vector
                         \ to use in the calculation, increasing by 6 for each
@@ -5147,8 +5119,8 @@ ENDMACRO
  STA XX12,Y             \ Store the result in XX12+Y(1 0), starting with the low
                         \ byte
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA S                  \ And then the high byte
  STA XX12+1,Y
@@ -5211,8 +5183,8 @@ ENDMACRO
 
 .LL9
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA TYPE               \ If the ship type is negative then this indicates a
  BMI LL25               \ planet or sun, so jump to PLANET via LL25 above
@@ -5274,8 +5246,8 @@ ENDMACRO
  JSR DORND
  STA (XX19),Y
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
 .EE28
 
@@ -5487,8 +5459,8 @@ ENDMACRO
 
 .LL21
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA XX16,Y             \ Set A = the low byte of the vector coordinate, e.g.
                         \ nosev_z_lo when Y = 16
@@ -5752,8 +5724,8 @@ ENDMACRO
 
 .LL86
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA (V),Y              \ Fetch byte #0 for this face into A, so:
                         \
@@ -5855,8 +5827,8 @@ ENDMACRO
                         \ If we get here then the addition below overflowed, so
                         \ we halve the dot products and normal vector
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LSR XX18               \ Divide dot_sidev_lo by 2, so dot_sidev = dot_sidev / 2
 
@@ -6000,8 +5972,8 @@ ENDMACRO
  LDA XX12               \ Set Q = XX12
  STA Q
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA XX15               \ Set A = XX15
 
@@ -6213,8 +6185,8 @@ ENDMACRO
 
 .LL48
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  STY XX17               \ Set XX17 = Y, so XX17 now contains the offset of the
                         \ current vertex's data
@@ -6795,8 +6767,8 @@ ENDMACRO
  LDX CNT                \ Fetch the pointer to the end of the XX3 heap from CNT
                         \ into X
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA XX15+2             \ If x_sign is negative, jump up to LL62, which will
  BMI LL62               \ store 128 - (U R) on the XX3 heap and return by
@@ -7148,8 +7120,8 @@ ENDMACRO
 
 .LL75
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA (V),Y              \ Fetch byte #0 for this edge, which contains the
                         \ visibility distance for this edge, beyond which the
@@ -7675,8 +7647,8 @@ ENDMACRO
 
  STA XX12+2             \ ???
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA S                  \ Store the type of slope in XX12+3, bit 7 clear means
  STA XX12+3             \ top left to bottom right, bit 7 set means top right to
@@ -7897,8 +7869,8 @@ ENDMACRO
 
 .LL118
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA XX15+1             \ If x1_hi is positive, jump down to LL119 to skip
                         \ the following ???
@@ -7971,8 +7943,8 @@ ENDMACRO
 
 .CA80D
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
                         \ ???
 
 .LL134
@@ -8061,8 +8033,8 @@ ENDMACRO
 
 .LL136
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  RTS                    \ Return from the subroutine
 
@@ -8403,8 +8375,8 @@ ENDMACRO
 
 .DOEXP
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA INWK+6             \ Set T = z_lo
  STA T
@@ -8446,8 +8418,8 @@ ENDMACRO
  STA L002B
  JSR DVID4
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA P                  \ Set A = P, so we now have:
                         \
@@ -8554,8 +8526,8 @@ ENDMACRO
 
 .EXL4
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  CLC                    \ This contains the code from the DORND2 routine, so
  LDA RAND               \ this section is exactly equivalent to a JSR DORND2
@@ -9399,8 +9371,8 @@ ENDMACRO
 
 .PL42
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  TXA                    \ Set K6(1 0) = K3(1 0) + (T X)
  ADC K3                 \
@@ -9938,8 +9910,8 @@ ENDMACRO
  JMP CAE9B
 
 .CAE29
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
  TYA
  CLC
  ADC #7
@@ -9995,8 +9967,8 @@ ENDMACRO
  RTS
 
 .CAE9B
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
  LDX P
  BEQ CAE9A
  TYA
@@ -10028,8 +10000,8 @@ ENDMACRO
  JMP CB039
 
 .sub_CAEE8
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
  LDX P+1
  STX XX15
  TYA
@@ -10061,8 +10033,8 @@ ENDMACRO
  JMP CB05D
 
 .sub_CAF35
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
  STY Y1
 
 \ ******************************************************************************
@@ -10134,8 +10106,8 @@ ENDMACRO
 
  LDY Y1                 \ Restore Y from Y1
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  JSR DORND              \ Set A and X to random numbers
 
@@ -10205,8 +10177,8 @@ ENDMACRO
 
 .CIRCLE
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  JSR CHKON              \ Call CHKON to check whether the circle fits on-screen
 
@@ -10427,8 +10399,8 @@ ENDMACRO
 
 .ED1
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  SEC
  RTS
@@ -11121,8 +11093,8 @@ ENDMACRO
 
 .BLINE
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  TXA                    \ Set K6(3 2) = (T X) + K4(1 0)
  ADC K4                 \             = y-coord of centre + y-coord of new point
@@ -11170,8 +11142,8 @@ ENDMACRO
  LDA K6+3               \ Set XX12+1 = y_hi of new point
  STA XX12+1
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  JSR CLIP               \ Call CLIP to see if the new line segment needs to be
                         \ clipped to fit on-screen, returning the clipped line's
@@ -11304,8 +11276,8 @@ ENDMACRO
 
 .STL1
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  JSR DV42               \ Call DV42 to set the following:
                         \
@@ -11392,8 +11364,8 @@ ENDMACRO
 
  STA XX+1               \ First we store the high byte A in XX+1
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA P                  \ Then we do the low bytes:
  ADC SXL,Y              \
@@ -11459,8 +11431,8 @@ ENDMACRO
  STX XX                 \
                         \   x = x - alpha * y / 256
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDX BET1               \ Fetch the pitch magnitude into X
 
@@ -11522,8 +11494,8 @@ ENDMACRO
  LDA #0                 \ Set P = 0
  STA P
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA BETA               \ Set A = -beta, so:
  EOR #%10000000         \
@@ -11614,8 +11586,8 @@ ENDMACRO
  STA SZ,Y               \ z_hi so the new particle starts in the far distance
  STA ZZ
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA Y1                 \ Set A to the new value of y_hi. This has no effect as
                         \ STC1 starts with a jump to PIXEL2, which starts with a
@@ -11665,8 +11637,8 @@ ENDMACRO
 
 .STL6
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  JSR DV42               \ Call DV42 to set the following:
                         \
@@ -11732,8 +11704,8 @@ ENDMACRO
 
  STA YY+1               \ First we store the high byte A in YY+1
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA SYL,Y              \ Then we do the low bytes with:
  SBC P                  \
@@ -11876,8 +11848,8 @@ ENDMACRO
  LDA YY                 \ Set (S R) = YY(1 0) = y (low byte)
  STA R
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA YY+1               \ Set (S R) = YY(1 0) = y (high byte)
  STA S
@@ -12083,8 +12055,8 @@ ENDMACRO
 
 .STL2
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA SZ,Y               \ Set A = ZZ = z_hi
 
@@ -12131,8 +12103,8 @@ ENDMACRO
  STA S                  \ Set (S R) = (A X)
  STX R                  \           = x + delta_x
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA SY,Y               \ Set A = y_hi
 
@@ -12214,8 +12186,8 @@ ENDMACRO
                         \
                         \   x = x - alpha * x * y
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA YY                 \ Set (S R) = YY(1 0)
  STA R                  \           = y
@@ -12428,19 +12400,19 @@ ENDMACRO
  CLC
  ADC yLookupLo,Y
  STA SC2
- LDA nametableHi
+ LDA nameBufferHi
  ADC yLookupHi,Y
  STA SC2+1
  LDA S
  AND #7
  STA T
 .CB5D9
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
  LDX #0
  LDA (SC2,X)
  BEQ CB615
- LDX patternTableHi
+ LDX pattBufferHi
  STX SC+1
  ASL A
  ROL SC+1
@@ -12491,19 +12463,19 @@ ENDMACRO
  CLC
  ADC yLookupLo,Y
  STA SC2
- LDA nametableHi
+ LDA nameBufferHi
  ADC yLookupHi,Y
  STA SC2+1
  TYA
  AND #7
  TAY
 .CB647
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
  LDX #0
  LDA (SC2,X)
  BEQ CB699
- LDX patternTableHi
+ LDX pattBufferHi
  STX SC+1
  ASL A
  ROL SC+1
@@ -12562,19 +12534,19 @@ ENDMACRO
  CLC
  ADC yLookupLo,Y
  STA SC2
- LDA nametableHi
+ LDA nameBufferHi
  ADC yLookupHi,Y
  STA SC2+1
  TYA
  AND #7
  TAY
 .CB6BA
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
  LDX #0
  LDA (SC2,X)
  BEQ CB70B
- LDX patternTableHi
+ LDX pattBufferHi
  STX SC+1
  ASL A
  ROL SC+1
@@ -12898,8 +12870,8 @@ ENDMACRO
 
 .ZINF
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDY #NI%-4-1           \ There are NI% bytes in the INWK workspace, so set a
                         \ counter in Y so we can loop through them all except
@@ -12930,8 +12902,8 @@ ENDMACRO
                         \ and we're done. The negative nosev makes the ship
                         \ point towards us, as the z-axis points into the screen
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA #96                \ Set A to represent a 1 (in vector terms)
 
@@ -13143,8 +13115,8 @@ ENDMACRO
 
 .TIDY
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA INWK+10            \ Set (XX15, XX15+1, XX15+2) = nosev
  STA XX15
@@ -13176,8 +13148,8 @@ ENDMACRO
 
 .TI3
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA INWK+16            \ Set (XX15, XX15+1, XX15+2) = roofv
  STA XX15
@@ -13214,8 +13186,8 @@ ENDMACRO
  EOR #%10000000         \ Set sidev_x = -A
  STA INWK+22            \        = (nosev_z * roofv_y - nosev_y * roofv_z) / 96
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA INWK+16            \ Set A = roofv_x
 
@@ -13233,8 +13205,8 @@ ENDMACRO
  EOR #%10000000         \ Set sidev_y = -A
  STA INWK+24            \        = (nosev_x * roofv_z - nosev_z * roofv_x) / 96
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA INWK+18            \ Set A = roofv_y
 
@@ -13250,8 +13222,8 @@ ENDMACRO
  EOR #%10000000         \ Set sidev_z = -A
  STA INWK+26            \        = (nosev_y * roofv_x - nosev_x * roofv_y) / 96
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA #0                 \ Set A = 0 so we can clear the low bytes of the
                         \ orientation vectors
@@ -13427,7 +13399,7 @@ ENDMACRO
 
 .SCAN
 
- LDA W                  \ ???
+ LDA QQ11               \ ???
  BNE CB974
  LDX TYPE
  BMI CB974
@@ -13640,8 +13612,8 @@ ENDMACRO
  LDY #&21
  STA (INF),Y
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
 \ ******************************************************************************
 \
@@ -13664,7 +13636,7 @@ ENDMACRO
  ASL A
  ASL A
  TAX
- LDA W
+ LDA QQ11
  BNE CBB1F
  LDA #&F0
  STA SPR_11_Y,X
@@ -13815,8 +13787,8 @@ ENDMACRO
 
 .EXL4
 
- CHECK_DASHBOARD        \ If the PPU has started drawing the dashboard, switch
-                        \ to nametable 0 (&2000) and pattern table 0 (&0000)
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  JSR DORND2             \ Set ZZ to a random number, making sure the C flag
  STA ZZ                 \ doesn't affect the outcome

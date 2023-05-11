@@ -50,6 +50,13 @@ P                 = &002F
 P_1               = &0030
 P_2               = &0031
 XC                = &0032
+hiddenColour      = &0033
+visibleColour     = &0034
+paletteColour1    = &0035
+paletteColour2    = &0036
+nmiTimer          = &0038
+nmiTimerLo        = &0039
+nmiTimerHi        = &003A
 YC                = &003B
 QQ17              = &003C
 K3                = &003D
@@ -153,7 +160,7 @@ XSAV              = &009B
 YSAV              = &009C
 XX17              = &009D
 QQ11              = &009E
-QQ11Mask          = &009F
+QQ11a             = &009F
 ZZ                = &00A0
 XX13              = &00A1
 MCNT              = &00A2
@@ -179,7 +186,7 @@ tileNumber        = &00B8
 pattBufferHi      = &00B9
 SC2               = &00BA
 SC2_1             = &00BB
-tileIndex         = &00C0
+drawingPhase      = &00C0
 tileNumber0       = &00C1
 tileNumber0_1     = &00C2
 tileNumber1       = &00C3
@@ -188,20 +195,26 @@ tileNumber2       = &00C5
 tileNumber2_2     = &00C6
 tileNumber3       = &00C7
 tileNumber3_1     = &00C8
+tempVar           = &00D0
+tempVar_1         = &00D1
 L00D2             = &00D2
 addr1             = &00D4
 addr1_1           = &00D5
 L00D8             = &00D8
 nameBufferHi      = &00E6
-dashboardSwitch   = &00E9
+setupPPUForIconBar = &00E9
+showUserInterface = &00EA
 addr4             = &00EB
 addr4_1           = &00EC
 addr5             = &00ED
 addr5_1           = &00EE
 addr6             = &00F1
 addr6_1           = &00F2
+palettePhase      = &00F3
+otherPhase        = &00F4
 ppuCtrlCopy       = &00F5
 currentBank       = &00F7
+runningSetBank    = &00F8
 L00F9             = &00F9
 addr2             = &00FA
 addr2_1           = &00FB
@@ -535,6 +548,9 @@ K2_1              = &045A
 K2_2              = &045B
 K2_3              = &045C
 DLY               = &045D
+nmiStoreA         = &0469
+nmiStoreX         = &046A
+nmiStoreY         = &046B
 pictureTile       = &046C
 boxEdge1          = &046E
 boxEdge2          = &046F
@@ -681,13 +697,13 @@ IRQ               = &CED4
 NMI               = &CED5
 SetPalette        = &CF2E
 ResetNametable1   = &D02D
-SwitchTablesTo0   = &D06D
+SetPPUTablesTo0   = &D06D
 ReadControllers   = &D0F8
-SetTable0UntilNMI2 = &D164
-SetTable0UntilNMI = &D167
+KeepPPUTablesAt0x2 = &D164
+KeepPPUTablesAt0  = &D167
 FillMemory        = &D710
 subm_D8C5         = &D8C5
-subm_D8E1         = &D8E1
+ChangeDrawingPhase = &D8E1
 subm_D8EC         = &D8EC
 subm_D908         = &D908
 subm_D919         = &D919
@@ -732,7 +748,7 @@ BOOP              = &EBE5
 NOISE             = &EBF2
 noiseLookup1      = &EC3C
 noiseLookup2      = &EC5C
-CheckDashboardA   = &EC7D
+SetupPPUForIconBar = &EC7D
 LDA_XX0_Y         = &EC8D
 LDA_Epc_Y         = &ECA0
 IncreaseTally     = &ECAE
@@ -2334,12 +2350,12 @@ SetupMMC1         = &FB89
 
 ; ******************************************************************************
 .LL51
- LDA dashboardSwitch                          ; 9FFC: A5 E9       ..
+ LDA setupPPUForIconBar                       ; 9FFC: A5 E9       ..
  BPL CA009                                    ; 9FFE: 10 09       ..
  LDA PPU_STATUS                               ; A000: AD 02 20    ..
  ASL A                                        ; A003: 0A          .
  BPL CA009                                    ; A004: 10 03       ..
- JSR SwitchTablesTo0                          ; A006: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; A006: 20 6D D0     m.
 .CA009
  LDX #0                                       ; A009: A2 00       ..
  LDY #0                                       ; A00B: A0 00       ..
@@ -2374,12 +2390,12 @@ SetupMMC1         = &FB89
  EOR XX16_5,X                                 ; A047: 55 52       UR
  JSR LL38                                     ; A049: 20 DC 9F     ..
  STA XX12,Y                                   ; A04C: 99 77 00    .w.
- LDA dashboardSwitch                          ; A04F: A5 E9       ..
+ LDA setupPPUForIconBar                       ; A04F: A5 E9       ..
  BPL CA05C                                    ; A051: 10 09       ..
  LDA PPU_STATUS                               ; A053: AD 02 20    ..
  ASL A                                        ; A056: 0A          .
  BPL CA05C                                    ; A057: 10 03       ..
- JSR SwitchTablesTo0                          ; A059: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; A059: 20 6D D0     m.
 .CA05C
  LDA S                                        ; A05C: A5 99       ..
  STA XX12_1,Y                                 ; A05E: 99 78 00    .x.
@@ -2399,12 +2415,12 @@ SetupMMC1         = &FB89
 
 ; ******************************************************************************
 .LL9
- LDA dashboardSwitch                          ; A070: A5 E9       ..
+ LDA setupPPUForIconBar                       ; A070: A5 E9       ..
  BPL CA07D                                    ; A072: 10 09       ..
  LDA PPU_STATUS                               ; A074: AD 02 20    ..
  ASL A                                        ; A077: 0A          .
  BPL CA07D                                    ; A078: 10 03       ..
- JSR SwitchTablesTo0                          ; A07A: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; A07A: 20 6D D0     m.
 .CA07D
  LDA TYPE                                     ; A07D: A5 A3       ..
  BMI LL25                                     ; A07F: 30 EC       0.
@@ -2439,12 +2455,12 @@ SetupMMC1         = &FB89
  INY                                          ; A0BB: C8          .
  JSR DORND                                    ; A0BC: 20 AD F4     ..
  STA (XX19),Y                                 ; A0BF: 91 61       .a
- LDA dashboardSwitch                          ; A0C1: A5 E9       ..
+ LDA setupPPUForIconBar                       ; A0C1: A5 E9       ..
  BPL EE28                                     ; A0C3: 10 09       ..
  LDA PPU_STATUS                               ; A0C5: AD 02 20    ..
  ASL A                                        ; A0C8: 0A          .
  BPL EE28                                     ; A0C9: 10 03       ..
- JSR SwitchTablesTo0                          ; A0CB: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; A0CB: 20 6D D0     m.
 .EE28
  LDA INWK_8                                   ; A0CE: A5 11       ..
  BPL LL10                                     ; A0D0: 10 16       ..
@@ -2528,12 +2544,12 @@ SetupMMC1         = &FB89
  STA Q                                        ; A14F: 85 97       ..
  LDY #&10                                     ; A151: A0 10       ..
 .loop_CA153
- LDA dashboardSwitch                          ; A153: A5 E9       ..
+ LDA setupPPUForIconBar                       ; A153: A5 E9       ..
  BPL CA160                                    ; A155: 10 09       ..
  LDA PPU_STATUS                               ; A157: AD 02 20    ..
  ASL A                                        ; A15A: 0A          .
  BPL CA160                                    ; A15B: 10 03       ..
- JSR SwitchTablesTo0                          ; A15D: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; A15D: 20 6D D0     m.
 .CA160
  LDA XX16,Y                                   ; A160: B9 4D 00    .M.
  ASL A                                        ; A163: 0A          .
@@ -2630,12 +2646,12 @@ SetupMMC1         = &FB89
  STA V_1                                      ; A1FD: 85 64       .d
  LDY #0                                       ; A1FF: A0 00       ..
 .LL86
- LDA dashboardSwitch                          ; A201: A5 E9       ..
+ LDA setupPPUForIconBar                       ; A201: A5 E9       ..
  BPL CA20E                                    ; A203: 10 09       ..
  LDA PPU_STATUS                               ; A205: AD 02 20    ..
  ASL A                                        ; A208: 0A          .
  BPL CA20E                                    ; A209: 10 03       ..
- JSR SwitchTablesTo0                          ; A20B: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; A20B: 20 6D D0     m.
 .CA20E
  LDA (V),Y                                    ; A20E: B1 63       .c
  STA XX12_1                                   ; A210: 85 78       .x
@@ -2686,12 +2702,12 @@ SetupMMC1         = &FB89
  JMP CA2D2                                    ; A25C: 4C D2 A2    L..
 
 .ovflw
- LDA dashboardSwitch                          ; A25F: A5 E9       ..
+ LDA setupPPUForIconBar                       ; A25F: A5 E9       ..
  BPL CA26C                                    ; A261: 10 09       ..
  LDA PPU_STATUS                               ; A263: AD 02 20    ..
  ASL A                                        ; A266: 0A          .
  BPL CA26C                                    ; A267: 10 03       ..
- JSR SwitchTablesTo0                          ; A269: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; A269: 20 6D D0     m.
 .CA26C
  LSR K5                                       ; A26C: 46 88       F.
  LSR K6_2                                     ; A26E: 46 8E       F.
@@ -2750,12 +2766,12 @@ SetupMMC1         = &FB89
 .CA2D2
  LDA XX12                                     ; A2D2: A5 77       .w
  STA Q                                        ; A2D4: 85 97       ..
- LDA dashboardSwitch                          ; A2D6: A5 E9       ..
+ LDA setupPPUForIconBar                       ; A2D6: A5 E9       ..
  BPL CA2E3                                    ; A2D8: 10 09       ..
  LDA PPU_STATUS                               ; A2DA: AD 02 20    ..
  ASL A                                        ; A2DD: 0A          .
  BPL CA2E3                                    ; A2DE: 10 03       ..
- JSR SwitchTablesTo0                          ; A2E0: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; A2E0: 20 6D D0     m.
 .CA2E3
  LDA XX15                                     ; A2E3: A5 71       .q
  JSR FMLTU                                    ; A2E5: 20 70 F7     p.
@@ -2840,12 +2856,12 @@ SetupMMC1         = &FB89
  LDY #0                                       ; A377: A0 00       ..
  STY CNT                                      ; A379: 84 A8       ..
 .LL48
- LDA dashboardSwitch                          ; A37B: A5 E9       ..
+ LDA setupPPUForIconBar                       ; A37B: A5 E9       ..
  BPL CA388                                    ; A37D: 10 09       ..
  LDA PPU_STATUS                               ; A37F: AD 02 20    ..
  ASL A                                        ; A382: 0A          .
  BPL CA388                                    ; A383: 10 03       ..
- JSR SwitchTablesTo0                          ; A385: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; A385: 20 6D D0     m.
 .CA388
  STY XX17                                     ; A388: 84 9D       ..
  LDA (V),Y                                    ; A38A: B1 63       .c
@@ -3071,12 +3087,12 @@ SetupMMC1         = &FB89
  JSR LL28                                     ; A4ED: 20 91 FA     ..
 .CA4F0
  LDX CNT                                      ; A4F0: A6 A8       ..
- LDA dashboardSwitch                          ; A4F2: A5 E9       ..
+ LDA setupPPUForIconBar                       ; A4F2: A5 E9       ..
  BPL CA4FF                                    ; A4F4: 10 09       ..
  LDA PPU_STATUS                               ; A4F6: AD 02 20    ..
  ASL A                                        ; A4F9: 0A          .
  BPL CA4FF                                    ; A4FA: 10 03       ..
- JSR SwitchTablesTo0                          ; A4FC: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; A4FC: 20 6D D0     m.
 .CA4FF
  LDA X2                                       ; A4FF: A5 73       .s
  BMI LL62                                     ; A501: 30 91       0.
@@ -3218,12 +3234,12 @@ SetupMMC1         = &FB89
  LDY XX17                                     ; A5F0: A4 9D       ..
 ; ******************************************************************************
 .LL75
- LDA dashboardSwitch                          ; A5F2: A5 E9       ..
+ LDA setupPPUForIconBar                       ; A5F2: A5 E9       ..
  BPL CA5FF                                    ; A5F4: 10 09       ..
  LDA PPU_STATUS                               ; A5F6: AD 02 20    ..
  ASL A                                        ; A5F9: 0A          .
  BPL CA5FF                                    ; A5FA: 10 03       ..
- JSR SwitchTablesTo0                          ; A5FC: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; A5FC: 20 6D D0     m.
 .CA5FF
  LDA (V),Y                                    ; A5FF: B1 63       .c
  CMP XX4                                      ; A601: C5 AB       ..
@@ -3410,12 +3426,12 @@ SetupMMC1         = &FB89
  DEC T                                        ; A735: C6 9A       ..
 .CA737
  STA XX12_2                                   ; A737: 85 79       .y
- LDA dashboardSwitch                          ; A739: A5 E9       ..
+ LDA setupPPUForIconBar                       ; A739: A5 E9       ..
  BPL CA746                                    ; A73B: 10 09       ..
  LDA PPU_STATUS                               ; A73D: AD 02 20    ..
  ASL A                                        ; A740: 0A          .
  BPL CA746                                    ; A741: 10 03       ..
- JSR SwitchTablesTo0                          ; A743: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; A743: 20 6D D0     m.
 .CA746
  LDA S                                        ; A746: A5 99       ..
  STA XX12_3                                   ; A748: 85 7A       .z
@@ -3503,12 +3519,12 @@ SetupMMC1         = &FB89
 
 ; ******************************************************************************
 .LL118
- LDA dashboardSwitch                          ; A7CA: A5 E9       ..
+ LDA setupPPUForIconBar                       ; A7CA: A5 E9       ..
  BPL CA7D7                                    ; A7CC: 10 09       ..
  LDA PPU_STATUS                               ; A7CE: AD 02 20    ..
  ASL A                                        ; A7D1: 0A          .
  BPL CA7D7                                    ; A7D2: 10 03       ..
- JSR SwitchTablesTo0                          ; A7D4: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; A7D4: 20 6D D0     m.
 .CA7D7
  LDA Y1                                       ; A7D7: A5 72       .r
  STA S                                        ; A7D9: 85 99       ..
@@ -3542,12 +3558,12 @@ SetupMMC1         = &FB89
  INX                                          ; A80A: E8          .
  STX Y1                                       ; A80B: 86 72       .r
 .CA80D
- LDA dashboardSwitch                          ; A80D: A5 E9       ..
+ LDA setupPPUForIconBar                       ; A80D: A5 E9       ..
  BPL CA81A                                    ; A80F: 10 09       ..
  LDA PPU_STATUS                               ; A811: AD 02 20    ..
  ASL A                                        ; A814: 0A          .
  BPL CA81A                                    ; A815: 10 03       ..
- JSR SwitchTablesTo0                          ; A817: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; A817: 20 6D D0     m.
 .CA81A
  LDA Y2                                       ; A81A: A5 74       .t
  BPL CA838                                    ; A81C: 10 1A       ..
@@ -3587,12 +3603,12 @@ SetupMMC1         = &FB89
  LDA #0                                       ; A859: A9 00       ..
  STA Y2                                       ; A85B: 85 74       .t
 .CA85D
- LDA dashboardSwitch                          ; A85D: A5 E9       ..
+ LDA setupPPUForIconBar                       ; A85D: A5 E9       ..
  BPL CA86A                                    ; A85F: 10 09       ..
  LDA PPU_STATUS                               ; A861: AD 02 20    ..
  ASL A                                        ; A864: 0A          .
  BPL CA86A                                    ; A865: 10 03       ..
- JSR SwitchTablesTo0                          ; A867: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; A867: 20 6D D0     m.
 .CA86A
  RTS                                          ; A86A: 60          `
 
@@ -3705,12 +3721,12 @@ SetupMMC1         = &FB89
 
 ; ******************************************************************************
 .DOEXP
- LDA dashboardSwitch                          ; A8FD: A5 E9       ..
+ LDA setupPPUForIconBar                       ; A8FD: A5 E9       ..
  BPL CA90A                                    ; A8FF: 10 09       ..
  LDA PPU_STATUS                               ; A901: AD 02 20    ..
  ASL A                                        ; A904: 0A          .
  BPL CA90A                                    ; A905: 10 03       ..
- JSR SwitchTablesTo0                          ; A907: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; A907: 20 6D D0     m.
 .CA90A
  LDA INWK_6                                   ; A90A: A5 0F       ..
  STA T                                        ; A90C: 85 9A       ..
@@ -3733,12 +3749,12 @@ SetupMMC1         = &FB89
  BCS CA8F2                                    ; A926: B0 CA       ..
  STA INWK_34                                  ; A928: 85 2B       .+
  JSR DVID4                                    ; A92A: 20 D8 F8     ..
- LDA dashboardSwitch                          ; A92D: A5 E9       ..
+ LDA setupPPUForIconBar                       ; A92D: A5 E9       ..
  BPL CA93A                                    ; A92F: 10 09       ..
  LDA PPU_STATUS                               ; A931: AD 02 20    ..
  ASL A                                        ; A934: 0A          .
  BPL CA93A                                    ; A935: 10 03       ..
- JSR SwitchTablesTo0                          ; A937: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; A937: 20 6D D0     m.
 .CA93A
  LDA P                                        ; A93A: A5 2F       ./
  CMP #&1C                                     ; A93C: C9 1C       ..
@@ -3813,12 +3829,12 @@ SetupMMC1         = &FB89
  STA L0005                                    ; A9B0: 85 05       ..
  LDY U                                        ; A9B2: A4 96       ..
 .CA9B4
- LDA dashboardSwitch                          ; A9B4: A5 E9       ..
+ LDA setupPPUForIconBar                       ; A9B4: A5 E9       ..
  BPL CA9C1                                    ; A9B6: 10 09       ..
  LDA PPU_STATUS                               ; A9B8: AD 02 20    ..
  ASL A                                        ; A9BB: 0A          .
  BPL CA9C1                                    ; A9BC: 10 03       ..
- JSR SwitchTablesTo0                          ; A9BE: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; A9BE: 20 6D D0     m.
 .CA9C1
  CLC                                          ; A9C1: 18          .
  LDA RAND                                     ; A9C2: A5 02       ..
@@ -4110,12 +4126,12 @@ SetupMMC1         = &FB89
  ADC #0                                       ; ABB9: 69 00       i.
  STA T                                        ; ABBB: 85 9A       ..
 .CABBD
- LDA dashboardSwitch                          ; ABBD: A5 E9       ..
+ LDA setupPPUForIconBar                       ; ABBD: A5 E9       ..
  BPL CABCA                                    ; ABBF: 10 09       ..
  LDA PPU_STATUS                               ; ABC1: AD 02 20    ..
  ASL A                                        ; ABC4: 0A          .
  BPL CABCA                                    ; ABC5: 10 03       ..
- JSR SwitchTablesTo0                          ; ABC7: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; ABC7: 20 6D D0     m.
 .CABCA
  TXA                                          ; ABCA: 8A          .
  ADC K3                                       ; ABCB: 65 3D       e=
@@ -4454,12 +4470,12 @@ SetupMMC1         = &FB89
  JMP CAE9B                                    ; AE26: 4C 9B AE    L..
 
 .CAE29
- LDA dashboardSwitch                          ; AE29: A5 E9       ..
+ LDA setupPPUForIconBar                       ; AE29: A5 E9       ..
  BPL CAE36                                    ; AE2B: 10 09       ..
  LDA PPU_STATUS                               ; AE2D: AD 02 20    ..
  ASL A                                        ; AE30: 0A          .
  BPL CAE36                                    ; AE31: 10 03       ..
- JSR SwitchTablesTo0                          ; AE33: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; AE33: 20 6D D0     m.
 .CAE36
  TYA                                          ; AE36: 98          .
  CLC                                          ; AE37: 18          .
@@ -4516,12 +4532,12 @@ SetupMMC1         = &FB89
  RTS                                          ; AE9A: 60          `
 
 .CAE9B
- LDA dashboardSwitch                          ; AE9B: A5 E9       ..
+ LDA setupPPUForIconBar                       ; AE9B: A5 E9       ..
  BPL CAEA8                                    ; AE9D: 10 09       ..
  LDA PPU_STATUS                               ; AE9F: AD 02 20    ..
  ASL A                                        ; AEA2: 0A          .
  BPL CAEA8                                    ; AEA3: 10 03       ..
- JSR SwitchTablesTo0                          ; AEA5: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; AEA5: 20 6D D0     m.
 .CAEA8
  LDX P                                        ; AEA8: A6 2F       ./
  BEQ CAE9A                                    ; AEAA: F0 EE       ..
@@ -4554,12 +4570,12 @@ SetupMMC1         = &FB89
  JMP CB039                                    ; AEE5: 4C 39 B0    L9.
 
 .sub_CAEE8
- LDA dashboardSwitch                          ; AEE8: A5 E9       ..
+ LDA setupPPUForIconBar                       ; AEE8: A5 E9       ..
  BPL CAEF5                                    ; AEEA: 10 09       ..
  LDA PPU_STATUS                               ; AEEC: AD 02 20    ..
  ASL A                                        ; AEEF: 0A          .
  BPL CAEF5                                    ; AEF0: 10 03       ..
- JSR SwitchTablesTo0                          ; AEF2: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; AEF2: 20 6D D0     m.
 .CAEF5
  LDX P_1                                      ; AEF5: A6 30       .0
  STX XX15                                     ; AEF7: 86 71       .q
@@ -4592,12 +4608,12 @@ SetupMMC1         = &FB89
  JMP CB05D                                    ; AF32: 4C 5D B0    L].
 
 .sub_CAF35
- LDA dashboardSwitch                          ; AF35: A5 E9       ..
+ LDA setupPPUForIconBar                       ; AF35: A5 E9       ..
  BPL CAF42                                    ; AF37: 10 09       ..
  LDA PPU_STATUS                               ; AF39: AD 02 20    ..
  ASL A                                        ; AF3C: 0A          .
  BPL CAF42                                    ; AF3D: 10 03       ..
- JSR SwitchTablesTo0                          ; AF3F: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; AF3F: 20 6D D0     m.
 .CAF42
  STY Y1                                       ; AF42: 84 72       .r
  LDA V                                        ; AF44: A5 63       .c
@@ -4612,12 +4628,12 @@ SetupMMC1         = &FB89
  STA R                                        ; AF58: 85 98       ..
  JSR LL5                                      ; AF5A: 20 55 FA     U.
  LDY Y1                                       ; AF5D: A4 72       .r
- LDA dashboardSwitch                          ; AF5F: A5 E9       ..
+ LDA setupPPUForIconBar                       ; AF5F: A5 E9       ..
  BPL CAF6C                                    ; AF61: 10 09       ..
  LDA PPU_STATUS                               ; AF63: AD 02 20    ..
  ASL A                                        ; AF66: 0A          .
  BPL CAF6C                                    ; AF67: 10 03       ..
- JSR SwitchTablesTo0                          ; AF69: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; AF69: 20 6D D0     m.
 .CAF6C
  JSR DORND                                    ; AF6C: 20 AD F4     ..
  AND CNT                                      ; AF6F: 25 A8       %.
@@ -4631,12 +4647,12 @@ SetupMMC1         = &FB89
 
 ; ******************************************************************************
 .CIRCLE
- LDA dashboardSwitch                          ; AF7B: A5 E9       ..
+ LDA setupPPUForIconBar                       ; AF7B: A5 E9       ..
  BPL CAF88                                    ; AF7D: 10 09       ..
  LDA PPU_STATUS                               ; AF7F: AD 02 20    ..
  ASL A                                        ; AF82: 0A          .
  BPL CAF88                                    ; AF83: 10 03       ..
- JSR SwitchTablesTo0                          ; AF85: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; AF85: 20 6D D0     m.
 .CAF88
  JSR CHKON                                    ; AF88: 20 77 B0     w.
  BCS RTS2                                     ; AF8B: B0 ED       ..
@@ -4717,12 +4733,12 @@ SetupMMC1         = &FB89
  RTS                                          ; B002: 60          `
 
 .ED1
- LDA dashboardSwitch                          ; B003: A5 E9       ..
+ LDA setupPPUForIconBar                       ; B003: A5 E9       ..
  BPL CB010                                    ; B005: 10 09       ..
  LDA PPU_STATUS                               ; B007: AD 02 20    ..
  ASL A                                        ; B00A: 0A          .
  BPL CB010                                    ; B00B: 10 03       ..
- JSR SwitchTablesTo0                          ; B00D: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; B00D: 20 6D D0     m.
 .CB010
  SEC                                          ; B010: 38          8
  RTS                                          ; B011: 60          `
@@ -4934,12 +4950,12 @@ SetupMMC1         = &FB89
 
 ; ******************************************************************************
 .BLINE
- LDA dashboardSwitch                          ; B13B: A5 E9       ..
+ LDA setupPPUForIconBar                       ; B13B: A5 E9       ..
  BPL CB148                                    ; B13D: 10 09       ..
  LDA PPU_STATUS                               ; B13F: AD 02 20    ..
  ASL A                                        ; B142: 0A          .
  BPL CB148                                    ; B143: 10 03       ..
- JSR SwitchTablesTo0                          ; B145: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; B145: 20 6D D0     m.
 .CB148
  TXA                                          ; B148: 8A          .
  ADC K4                                       ; B149: 65 4B       eK
@@ -4969,12 +4985,12 @@ SetupMMC1         = &FB89
  STA XX12                                     ; B176: 85 77       .w
  LDA K6_3                                     ; B178: A5 8F       ..
  STA XX12_1                                   ; B17A: 85 78       .x
- LDA dashboardSwitch                          ; B17C: A5 E9       ..
+ LDA setupPPUForIconBar                       ; B17C: A5 E9       ..
  BPL CB189                                    ; B17E: 10 09       ..
  LDA PPU_STATUS                               ; B180: AD 02 20    ..
  ASL A                                        ; B183: 0A          .
  BPL CB189                                    ; B184: 10 03       ..
- JSR SwitchTablesTo0                          ; B186: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; B186: 20 6D D0     m.
 .CB189
  JSR CLIP                                     ; B189: 20 5D A6     ].
  BCS CB1A6                                    ; B18C: B0 18       ..
@@ -5020,12 +5036,12 @@ SetupMMC1         = &FB89
 .STARS1
  LDY NOSTM                                    ; B1CC: AC E5 03    ...
 .CB1CF
- LDA dashboardSwitch                          ; B1CF: A5 E9       ..
+ LDA setupPPUForIconBar                       ; B1CF: A5 E9       ..
  BPL CB1DC                                    ; B1D1: 10 09       ..
  LDA PPU_STATUS                               ; B1D3: AD 02 20    ..
  ASL A                                        ; B1D6: 0A          .
  BPL CB1DC                                    ; B1D7: 10 03       ..
- JSR SwitchTablesTo0                          ; B1D9: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; B1D9: 20 6D D0     m.
 .CB1DC
  JSR DV42                                     ; B1DC: 20 D1 F8     ..
  LDA R                                        ; B1DF: A5 98       ..
@@ -5056,12 +5072,12 @@ SetupMMC1         = &FB89
  STA XX15                                     ; B216: 85 71       .q
  JSR MLU2                                     ; B218: 20 1D F7     ..
  STA XX_1                                     ; B21B: 85 66       .f
- LDA dashboardSwitch                          ; B21D: A5 E9       ..
+ LDA setupPPUForIconBar                       ; B21D: A5 E9       ..
  BPL CB22A                                    ; B21F: 10 09       ..
  LDA PPU_STATUS                               ; B221: AD 02 20    ..
  ASL A                                        ; B224: 0A          .
  BPL CB22A                                    ; B225: 10 03       ..
- JSR SwitchTablesTo0                          ; B227: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; B227: 20 6D D0     m.
 .CB22A
  LDA P                                        ; B22A: A5 2F       ./
  ADC SXL,Y                                    ; B22C: 79 A5 05    y..
@@ -5079,12 +5095,12 @@ SetupMMC1         = &FB89
  JSR ADD                                      ; B248: 20 72 F8     r.
  STA XX_1                                     ; B24B: 85 66       .f
  STX XX                                       ; B24D: 86 65       .e
- LDA dashboardSwitch                          ; B24F: A5 E9       ..
+ LDA setupPPUForIconBar                       ; B24F: A5 E9       ..
  BPL CB25C                                    ; B251: 10 09       ..
  LDA PPU_STATUS                               ; B253: AD 02 20    ..
  ASL A                                        ; B256: 0A          .
  BPL CB25C                                    ; B257: 10 03       ..
- JSR SwitchTablesTo0                          ; B259: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; B259: 20 6D D0     m.
 .CB25C
  LDX BET1                                     ; B25C: A6 6A       .j
  LDA YY_1                                     ; B25E: A5 68       .h
@@ -5108,12 +5124,12 @@ SetupMMC1         = &FB89
  STA S                                        ; B283: 85 99       ..
  LDA #0                                       ; B285: A9 00       ..
  STA P                                        ; B287: 85 2F       ./
- LDA dashboardSwitch                          ; B289: A5 E9       ..
+ LDA setupPPUForIconBar                       ; B289: A5 E9       ..
  BPL CB296                                    ; B28B: 10 09       ..
  LDA PPU_STATUS                               ; B28D: AD 02 20    ..
  ASL A                                        ; B290: 0A          .
  BPL CB296                                    ; B291: 10 03       ..
- JSR SwitchTablesTo0                          ; B293: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; B293: 20 6D D0     m.
 .CB296
  LDA BETA                                     ; B296: A5 69       .i
  EOR #&80                                     ; B298: 49 80       I.
@@ -5160,12 +5176,12 @@ SetupMMC1         = &FB89
  ORA #&90                                     ; B2E9: 09 90       ..
  STA SZ,Y                                     ; B2EB: 99 F2 04    ...
  STA ZZ                                       ; B2EE: 85 A0       ..
- LDA dashboardSwitch                          ; B2F0: A5 E9       ..
+ LDA setupPPUForIconBar                       ; B2F0: A5 E9       ..
  BPL CB2FD                                    ; B2F2: 10 09       ..
  LDA PPU_STATUS                               ; B2F4: AD 02 20    ..
  ASL A                                        ; B2F7: 0A          .
  BPL CB2FD                                    ; B2F8: 10 03       ..
- JSR SwitchTablesTo0                          ; B2FA: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; B2FA: 20 6D D0     m.
 .CB2FD
  LDA Y1                                       ; B2FD: A5 72       .r
  JMP CB2C6                                    ; B2FF: 4C C6 B2    L..
@@ -5174,12 +5190,12 @@ SetupMMC1         = &FB89
 .STARS6
  LDY NOSTM                                    ; B302: AC E5 03    ...
 .CB305
- LDA dashboardSwitch                          ; B305: A5 E9       ..
+ LDA setupPPUForIconBar                       ; B305: A5 E9       ..
  BPL CB312                                    ; B307: 10 09       ..
  LDA PPU_STATUS                               ; B309: AD 02 20    ..
  ASL A                                        ; B30C: 0A          .
  BPL CB312                                    ; B30D: 10 03       ..
- JSR SwitchTablesTo0                          ; B30F: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; B30F: 20 6D D0     m.
 .CB312
  JSR DV42                                     ; B312: 20 D1 F8     ..
  LDA R                                        ; B315: A5 98       ..
@@ -5201,12 +5217,12 @@ SetupMMC1         = &FB89
  STA XX_1                                     ; B336: 85 66       .f
  JSR MLU1                                     ; B338: 20 18 F7     ..
  STA YY_1                                     ; B33B: 85 68       .h
- LDA dashboardSwitch                          ; B33D: A5 E9       ..
+ LDA setupPPUForIconBar                       ; B33D: A5 E9       ..
  BPL CB34A                                    ; B33F: 10 09       ..
  LDA PPU_STATUS                               ; B341: AD 02 20    ..
  ASL A                                        ; B344: 0A          .
  BPL CB34A                                    ; B345: 10 03       ..
- JSR SwitchTablesTo0                          ; B347: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; B347: 20 6D D0     m.
 .CB34A
  LDA SYL,Y                                    ; B34A: B9 BA 05    ...
  SBC P                                        ; B34D: E5 2F       ./
@@ -5255,12 +5271,12 @@ SetupMMC1         = &FB89
  STA SXL,Y                                    ; B3AB: 99 A5 05    ...
  LDA YY                                       ; B3AE: A5 67       .g
  STA R                                        ; B3B0: 85 98       ..
- LDA dashboardSwitch                          ; B3B2: A5 E9       ..
+ LDA setupPPUForIconBar                       ; B3B2: A5 E9       ..
  BPL CB3BF                                    ; B3B4: 10 09       ..
  LDA PPU_STATUS                               ; B3B6: AD 02 20    ..
  ASL A                                        ; B3B9: 0A          .
  BPL CB3BF                                    ; B3BA: 10 03       ..
- JSR SwitchTablesTo0                          ; B3BC: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; B3BC: 20 6D D0     m.
 .CB3BF
  LDA YY_1                                     ; B3BF: A5 68       .h
  STA S                                        ; B3C1: 85 99       ..
@@ -5340,12 +5356,12 @@ SetupMMC1         = &FB89
  JSR CB52A                                    ; B44A: 20 2A B5     *.
  LDY NOSTM                                    ; B44D: AC E5 03    ...
 .CB450
- LDA dashboardSwitch                          ; B450: A5 E9       ..
+ LDA setupPPUForIconBar                       ; B450: A5 E9       ..
  BPL CB45D                                    ; B452: 10 09       ..
  LDA PPU_STATUS                               ; B454: AD 02 20    ..
  ASL A                                        ; B457: 0A          .
  BPL CB45D                                    ; B458: 10 03       ..
- JSR SwitchTablesTo0                          ; B45A: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; B45A: 20 6D D0     m.
 .CB45D
  LDA SZ,Y                                     ; B45D: B9 F2 04    ...
  STA ZZ                                       ; B460: 85 A0       ..
@@ -5364,12 +5380,12 @@ SetupMMC1         = &FB89
  JSR ADD                                      ; B47A: 20 72 F8     r.
  STA S                                        ; B47D: 85 99       ..
  STX R                                        ; B47F: 86 98       ..
- LDA dashboardSwitch                          ; B481: A5 E9       ..
+ LDA setupPPUForIconBar                       ; B481: A5 E9       ..
  BPL CB48E                                    ; B483: 10 09       ..
  LDA PPU_STATUS                               ; B485: AD 02 20    ..
  ASL A                                        ; B488: 0A          .
  BPL CB48E                                    ; B489: 10 03       ..
- JSR SwitchTablesTo0                          ; B48B: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; B48B: 20 6D D0     m.
 .CB48E
  LDA SY,Y                                     ; B48E: B9 DD 04    ...
  STA Y1                                       ; B491: 85 72       .r
@@ -5402,12 +5418,12 @@ SetupMMC1         = &FB89
  STA XX_1                                     ; B4CE: 85 66       .f
  TXA                                          ; B4D0: 8A          .
  STA SXL,Y                                    ; B4D1: 99 A5 05    ...
- LDA dashboardSwitch                          ; B4D4: A5 E9       ..
+ LDA setupPPUForIconBar                       ; B4D4: A5 E9       ..
  BPL CB4E1                                    ; B4D6: 10 09       ..
  LDA PPU_STATUS                               ; B4D8: AD 02 20    ..
  ASL A                                        ; B4DB: 0A          .
  BPL CB4E1                                    ; B4DC: 10 03       ..
- JSR SwitchTablesTo0                          ; B4DE: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; B4DE: 20 6D D0     m.
 .CB4E1
  LDA YY                                       ; B4E1: A5 67       .g
  STA R                                        ; B4E3: 85 98       ..
@@ -5546,12 +5562,12 @@ LB5CF = sub_CB5CE+1
  AND #7                                       ; B5D5: 29 07       ).
  STA T                                        ; B5D7: 85 9A       ..
 .CB5D9
- LDA dashboardSwitch                          ; B5D9: A5 E9       ..
+ LDA setupPPUForIconBar                       ; B5D9: A5 E9       ..
  BPL CB5E6                                    ; B5DB: 10 09       ..
  LDA PPU_STATUS                               ; B5DD: AD 02 20    ..
  ASL A                                        ; B5E0: 0A          .
  BPL CB5E6                                    ; B5E1: 10 03       ..
- JSR SwitchTablesTo0                          ; B5E3: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; B5E3: 20 6D D0     m.
 .CB5E6
  LDX #0                                       ; B5E6: A2 00       ..
  LDA (SC2,X)                                  ; B5E8: A1 BA       ..
@@ -5614,12 +5630,12 @@ LB5CF = sub_CB5CE+1
  AND #7                                       ; B644: 29 07       ).
  TAY                                          ; B646: A8          .
 .CB647
- LDA dashboardSwitch                          ; B647: A5 E9       ..
+ LDA setupPPUForIconBar                       ; B647: A5 E9       ..
  BPL CB654                                    ; B649: 10 09       ..
  LDA PPU_STATUS                               ; B64B: AD 02 20    ..
  ASL A                                        ; B64E: 0A          .
  BPL CB654                                    ; B64F: 10 03       ..
- JSR SwitchTablesTo0                          ; B651: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; B651: 20 6D D0     m.
 .CB654
  LDX #0                                       ; B654: A2 00       ..
  LDA (SC2,X)                                  ; B656: A1 BA       ..
@@ -5690,12 +5706,12 @@ LB5CF = sub_CB5CE+1
  AND #7                                       ; B6B7: 29 07       ).
  TAY                                          ; B6B9: A8          .
 .CB6BA
- LDA dashboardSwitch                          ; B6BA: A5 E9       ..
+ LDA setupPPUForIconBar                       ; B6BA: A5 E9       ..
  BPL CB6C7                                    ; B6BC: 10 09       ..
  LDA PPU_STATUS                               ; B6BE: AD 02 20    ..
  ASL A                                        ; B6C1: 0A          .
  BPL CB6C7                                    ; B6C2: 10 03       ..
- JSR SwitchTablesTo0                          ; B6C4: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; B6C4: 20 6D D0     m.
 .CB6C7
  LDX #0                                       ; B6C7: A2 00       ..
  LDA (SC2,X)                                  ; B6C9: A1 BA       ..
@@ -5818,12 +5834,12 @@ LB5CF = sub_CB5CE+1
 
 ; ******************************************************************************
 .ZINF
- LDA dashboardSwitch                          ; B7A5: A5 E9       ..
+ LDA setupPPUForIconBar                       ; B7A5: A5 E9       ..
  BPL CB7B2                                    ; B7A7: 10 09       ..
  LDA PPU_STATUS                               ; B7A9: AD 02 20    ..
  ASL A                                        ; B7AC: 0A          .
  BPL CB7B2                                    ; B7AD: 10 03       ..
- JSR SwitchTablesTo0                          ; B7AF: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; B7AF: 20 6D D0     m.
 .CB7B2
  LDY #&25 ; '%'                               ; B7B2: A0 25       .%
  LDA #0                                       ; B7B4: A9 00       ..
@@ -5831,12 +5847,12 @@ LB5CF = sub_CB5CE+1
  STA XX1,Y                                    ; B7B6: 99 09 00    ...
  DEY                                          ; B7B9: 88          .
  BPL loop_CB7B6                               ; B7BA: 10 FA       ..
- LDA dashboardSwitch                          ; B7BC: A5 E9       ..
+ LDA setupPPUForIconBar                       ; B7BC: A5 E9       ..
  BPL CB7C9                                    ; B7BE: 10 09       ..
  LDA PPU_STATUS                               ; B7C0: AD 02 20    ..
  ASL A                                        ; B7C3: 0A          .
  BPL CB7C9                                    ; B7C4: 10 03       ..
- JSR SwitchTablesTo0                          ; B7C6: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; B7C6: 20 6D D0     m.
 .CB7C9
  LDA #&60 ; '`'                               ; B7C9: A9 60       .`
  STA INWK_18                                  ; B7CB: 85 1B       ..
@@ -5923,12 +5939,12 @@ LB5CF = sub_CB5CE+1
 
 ; ******************************************************************************
 .TIDY
- LDA dashboardSwitch                          ; B85C: A5 E9       ..
+ LDA setupPPUForIconBar                       ; B85C: A5 E9       ..
  BPL CB869                                    ; B85E: 10 09       ..
  LDA PPU_STATUS                               ; B860: AD 02 20    ..
  ASL A                                        ; B863: 0A          .
  BPL CB869                                    ; B864: 10 03       ..
- JSR SwitchTablesTo0                          ; B866: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; B866: 20 6D D0     m.
 .CB869
  LDA INWK_10                                  ; B869: A5 13       ..
  STA XX15                                     ; B86B: 85 71       .q
@@ -5952,12 +5968,12 @@ LB5CF = sub_CB5CE+1
  JSR TIS3                                     ; B890: 20 23 B9     #.
  STA INWK_16                                  ; B893: 85 19       ..
 .CB895
- LDA dashboardSwitch                          ; B895: A5 E9       ..
+ LDA setupPPUForIconBar                       ; B895: A5 E9       ..
  BPL CB8A2                                    ; B897: 10 09       ..
  LDA PPU_STATUS                               ; B899: AD 02 20    ..
  ASL A                                        ; B89C: 0A          .
  BPL CB8A2                                    ; B89D: 10 03       ..
- JSR SwitchTablesTo0                          ; B89F: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; B89F: 20 6D D0     m.
 .CB8A2
  LDA INWK_16                                  ; B8A2: A5 19       ..
  STA XX15                                     ; B8A4: 85 71       .q
@@ -5981,12 +5997,12 @@ LB5CF = sub_CB5CE+1
  JSR TIS1                                     ; B8CA: 20 AE F8     ..
  EOR #&80                                     ; B8CD: 49 80       I.
  STA INWK_22                                  ; B8CF: 85 1F       ..
- LDA dashboardSwitch                          ; B8D1: A5 E9       ..
+ LDA setupPPUForIconBar                       ; B8D1: A5 E9       ..
  BPL CB8DE                                    ; B8D3: 10 09       ..
  LDA PPU_STATUS                               ; B8D5: AD 02 20    ..
  ASL A                                        ; B8D8: 0A          .
  BPL CB8DE                                    ; B8D9: 10 03       ..
- JSR SwitchTablesTo0                          ; B8DB: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; B8DB: 20 6D D0     m.
 .CB8DE
  LDA INWK_16                                  ; B8DE: A5 19       ..
  JSR MULT12                                   ; B8E0: 20 3C F8     <.
@@ -5995,12 +6011,12 @@ LB5CF = sub_CB5CE+1
  JSR TIS1                                     ; B8E7: 20 AE F8     ..
  EOR #&80                                     ; B8EA: 49 80       I.
  STA INWK_24                                  ; B8EC: 85 21       .!
- LDA dashboardSwitch                          ; B8EE: A5 E9       ..
+ LDA setupPPUForIconBar                       ; B8EE: A5 E9       ..
  BPL CB8FB                                    ; B8F0: 10 09       ..
  LDA PPU_STATUS                               ; B8F2: AD 02 20    ..
  ASL A                                        ; B8F5: 0A          .
  BPL CB8FB                                    ; B8F6: 10 03       ..
- JSR SwitchTablesTo0                          ; B8F8: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; B8F8: 20 6D D0     m.
 .CB8FB
  LDA INWK_18                                  ; B8FB: A5 1B       ..
  JSR MULT12                                   ; B8FD: 20 3C F8     <.
@@ -6009,12 +6025,12 @@ LB5CF = sub_CB5CE+1
  JSR TIS1                                     ; B904: 20 AE F8     ..
  EOR #&80                                     ; B907: 49 80       I.
  STA INWK_26                                  ; B909: 85 23       .#
- LDA dashboardSwitch                          ; B90B: A5 E9       ..
+ LDA setupPPUForIconBar                       ; B90B: A5 E9       ..
  BPL CB918                                    ; B90D: 10 09       ..
  LDA PPU_STATUS                               ; B90F: AD 02 20    ..
  ASL A                                        ; B912: 0A          .
  BPL CB918                                    ; B913: 10 03       ..
- JSR SwitchTablesTo0                          ; B915: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; B915: 20 6D D0     m.
 .CB918
  LDA #0                                       ; B918: A9 00       ..
  LDX #&0E                                     ; B91A: A2 0E       ..
@@ -6277,12 +6293,12 @@ LB5CF = sub_CB5CE+1
  LDA #0                                       ; BAED: A9 00       ..
  LDY #&21 ; '!'                               ; BAEF: A0 21       .!
  STA (XX19),Y                                 ; BAF1: 91 61       .a
- LDA dashboardSwitch                          ; BAF3: A5 E9       ..
+ LDA setupPPUForIconBar                       ; BAF3: A5 E9       ..
  BPL CBB00                                    ; BAF5: 10 09       ..
  LDA PPU_STATUS                               ; BAF7: AD 02 20    ..
  ASL A                                        ; BAFA: 0A          .
  BPL CBB00                                    ; BAFB: 10 03       ..
- JSR SwitchTablesTo0                          ; BAFD: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; BAFD: 20 6D D0     m.
 .CBB00
  LDX INWK_33                                  ; BB00: A6 2A       .*
  BEQ CBB23                                    ; BB02: F0 1F       ..
@@ -6383,12 +6399,12 @@ LB5CF = sub_CB5CE+1
  STA L0005                                    ; BBA8: 85 05       ..
  LDY U                                        ; BBAA: A4 96       ..
 .CBBAC
- LDA dashboardSwitch                          ; BBAC: A5 E9       ..
+ LDA setupPPUForIconBar                       ; BBAC: A5 E9       ..
  BPL CBBB9                                    ; BBAE: 10 09       ..
  LDA PPU_STATUS                               ; BBB0: AD 02 20    ..
  ASL A                                        ; BBB3: 0A          .
  BPL CBBB9                                    ; BBB4: 10 03       ..
- JSR SwitchTablesTo0                          ; BBB6: 20 6D D0     m.
+ JSR SetPPUTablesTo0                          ; BBB6: 20 6D D0     m.
 .CBBB9
  JSR DORND2                                   ; BBB9: 20 AC F4     ..
  STA ZZ                                       ; BBBC: 85 A0       ..

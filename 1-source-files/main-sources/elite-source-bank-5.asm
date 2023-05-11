@@ -154,19 +154,19 @@
                         \ clashes with columns 0 and 32, text is only shown
                         \ in columns 1-31
 
-.L0033
+.hiddenColour
 
  SKIP 1                 \ ???
 
-.L0034
+.visibleColour
 
  SKIP 1                 \ ???
 
-.L0035
+.paletteColour1
 
  SKIP 1                 \ ???
 
-.L0036
+.paletteColour2
 
  SKIP 1                 \ ???
 
@@ -174,15 +174,15 @@
 
  SKIP 1                 \ ???
 
-.L0038
+.nmiTimer
 
  SKIP 1                 \ ???
 
-.L0039
+.nmiTimerLo
 
  SKIP 1                 \ ???
 
-.L003A
+.nmiTimerHi
 
  SKIP 1                 \ ???
 
@@ -479,10 +479,6 @@
                         \ of characters to print, and as the edge counter in the
                         \ main ship-drawing routine
 
-.W
-
- SKIP 1                 \ Temporary storage, used in a number of places
-
 .QQ11
 
  SKIP 1                 \ The number of the current view:
@@ -493,6 +489,10 @@
                         \         In-system jump just arrived ("J")
                         \
                         \ This value is typically set by calling routine TT66
+
+.QQ11a
+
+ SKIP 1
 
 .ZZ
 
@@ -645,7 +645,7 @@
 
  SKIP 1                 \ ???
 
-.patternTableHi
+.pattBufferHi
 
  SKIP 1                 \ ???
 
@@ -669,41 +669,25 @@
 
  SKIP 1                 \ ???
 
-.L00C0
+.drawingPhase
 
  SKIP 1                 \ ???
 
-.L00C1
+.tileNumber0
 
- SKIP 1                 \ ???
+ SKIP 2                 \ ???
 
-.L00C2
+.tileNumber1
 
- SKIP 1                 \ ???
+ SKIP 2                 \ ???
 
-.L00C3
+.tileNumber2
 
- SKIP 1                 \ ???
+ SKIP 2                 \ ???
 
-.L00C4
+.tileNumber3
 
- SKIP 1                 \ ???
-
-.L00C5
-
- SKIP 1                 \ ???
-
-.L00C6
-
- SKIP 1                 \ ???
-
-.L00C7
-
- SKIP 1                 \ ???
-
-.L00C8
-
- SKIP 1                 \ ???
+ SKIP 2                 \ ???
 
 .L00C9
 
@@ -733,13 +717,9 @@
 
  SKIP 1                 \ ???
 
-.L00D0
+.tempVar
 
- SKIP 1                 \ ???
-
-.L00D1
-
- SKIP 1                 \ ???
+ SKIP 2                 \ ???
 
 .L00D2
 
@@ -777,7 +757,7 @@
 
  SKIP 11                \ ???
 
-.nametableHi
+.nameBufferHi
 
  SKIP 1                 \ ???
 
@@ -789,29 +769,21 @@
 
  SKIP 1                 \ ???
 
-.dashboardSwitch
+.setupPPUForIconBar
 
  SKIP 1                 \ ???
 
-.L00EA
+.showUserInterface
 
  SKIP 1                 \ ???
 
-.L00EB
+.addr4
 
- SKIP 1                 \ ???
+ SKIP 2                 \ ???
 
-.L00EC
+.addr5
 
- SKIP 1                 \ ???
-
-.L00ED
-
- SKIP 1                 \ ???
-
-.L00EE
-
- SKIP 1                 \ ???
+ SKIP 2                 \ ???
 
 .L00EF
 
@@ -825,11 +797,11 @@
 
  SKIP 2                 \ ???
 
-.L00F3
+.palettePhase
 
  SKIP 1                 \ ???
 
-.L00F4
+.otherPhase
 
  SKIP 1                 \ ???
 
@@ -845,7 +817,7 @@
 
  SKIP 1                 \ ???
 
-.L00F8
+.runningSetBank
 
  SKIP 1                 \ ???
 
@@ -1056,22 +1028,22 @@ UnpackToPPU       = &F5AF
 
 \ ******************************************************************************
 \
-\       Name: CHECK_DASHBOARD
+\       Name: SETUP_PPU_FOR_ICON_BAR
 \       Type: Macro
 \   Category: Screen mode
-\    Summary: If the PPU has started drawing the dashboard, switch to nametable
-\             0 (&2000) and pattern table 0 (&0000)
+\    Summary: If the PPU has started drawing the icon bar, configure the PPU to
+\             use nametable 0 and pattern table 0
 \
 \ ******************************************************************************
 
-MACRO CHECK_DASHBOARD
+MACRO SETUP_PPU_FOR_ICON_BAR
 
- LDA dashboardSwitch    \ If bit 7 of dashboardSwitch and bit 6 of PPU_STATUS
- BPL skip               \ are set, then call SwitchTablesTo0 to:
+ LDA setupPPUForIconBar \ If bit 7 of setupPPUForIconBar and bit 6 of PPU_STATUS
+ BPL skip               \ are set, then call SetPPUTablesTo0 to:
  LDA PPU_STATUS         \
- ASL A                  \   * Zero dashboardSwitch to disable this process
+ ASL A                  \   * Zero setupPPUForIconBar to disable this process
  BPL skip               \     until both conditions are met once again
- JSR SwitchTablesTo0    \
+ JSR SetPPUTablesTo0    \
                         \   * Clear bits 0 and 4 of PPU_CTRL and PPU_CTRL_COPY,
                         \     to set the base nametable address to &2000 (for
                         \     nametable 0) or &2800 (which is a mirror of &2000)
