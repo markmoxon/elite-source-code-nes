@@ -188,14 +188,14 @@ SC2_1             = &00BB
 L00BE             = &00BE
 L00BF             = &00BF
 drawingPhase      = &00C0
-tileNumber0       = &00C1
-tileNumber0_1     = &00C2
-tileNumber1       = &00C3
-tileNumber1_1     = &00C4
-tileNumber2       = &00C5
-tileNumber2_2     = &00C6
-tileNumber3       = &00C7
-tileNumber3_1     = &00C8
+tile0Phase0       = &00C1
+tile0Phase1       = &00C2
+tile1Phase0       = &00C3
+tile1Phase1       = &00C4
+tile2Phase0       = &00C5
+tile2Phase1       = &00C6
+tile3Phase0       = &00C7
+tile3Phase1       = &00C8
 L00CA             = &00CA
 L00CB             = &00CB
 L00CC             = &00CC
@@ -211,11 +211,16 @@ L00D6             = &00D6
 L00D7             = &00D7
 L00D9             = &00D9
 L00DA             = &00DA
-L00DF             = &00DF
+pallettePhasex8   = &00DF
 L00E0             = &00E0
-L00E3             = &00E3
-L00E4             = &00E4
+patternBufferLo   = &00E1
+patternBufferHi   = &00E2
+ppuNametableLo    = &00E3
+ppuNametableHi    = &00E4
+drawingPhaseDebug = &00E5
 nameBufferHi      = &00E6
+startupDebug      = &00E7
+temp1             = &00E8
 setupPPUForIconBar = &00E9
 showUserInterface = &00EA
 addr4             = &00EB
@@ -7845,12 +7850,12 @@ SetupMMC1         = &FB89
 .CA988
  STA L00D2               ; A988: 85 D2       ..
  LDA tileNumber          ; A98A: A5 B8       ..
- STA tileNumber0,X       ; A98C: 95 C1       ..
+ STA tile0Phase0,X       ; A98C: 95 C1       ..
  LDA #&C4                ; A98E: A9 C4       ..
  JSR LD977               ; A990: 20 77 D9     w.
  JSR CA99B               ; A993: 20 9B A9     ..
  LDA tileNumber          ; A996: A5 B8       ..
- STA tileNumber1,X       ; A998: 95 C3       ..
+ STA tile1Phase0,X       ; A998: 95 C3       ..
  RTS                     ; A99A: 60          `
 
 .CA99B
@@ -7913,8 +7918,8 @@ SetupMMC1         = &FB89
  LDA #&25 ; '%'          ; A9F9: A9 25       .%
  STA L00D2               ; A9FB: 85 D2       ..
  LDA tileNumber          ; A9FD: A5 B8       ..
- STA tileNumber0         ; A9FF: 85 C1       ..
- STA tileNumber0_1       ; AA01: 85 C2       ..
+ STA tile0Phase0         ; A9FF: 85 C1       ..
+ STA tile0Phase1         ; AA01: 85 C2       ..
  LDA #&54 ; 'T'          ; AA03: A9 54       .T
  LDX #0                  ; AA05: A2 00       ..
  PLA                     ; AA07: 68          h
@@ -7928,8 +7933,8 @@ SetupMMC1         = &FB89
  LDA QQ11                ; AA19: A5 9E       ..
  STA QQ11a               ; AA1B: 85 9F       ..
  LDA tileNumber          ; AA1D: A5 B8       ..
- STA tileNumber1         ; AA1F: 85 C3       ..
- STA tileNumber1_1       ; AA21: 85 C4       ..
+ STA tile1Phase0         ; AA1F: 85 C3       ..
+ STA tile1Phase1         ; AA21: 85 C4       ..
  LDA #0                  ; AA23: A9 00       ..
  LDX #0                  ; AA25: A2 00       ..
  STX palettePhase        ; AA27: 86 F3       ..
@@ -8095,23 +8100,23 @@ SetupMMC1         = &FB89
  LDA #&10                ; AB9D: A9 10       ..
  STA L00E0               ; AB9F: 85 E0       ..
  LDA #0                  ; ABA1: A9 00       ..
- STA L00DF               ; ABA3: 85 DF       ..
+ STA pallettePhasex8     ; ABA3: 85 DF       ..
  LDA #&20 ; ' '          ; ABA5: A9 20       .
- STA L00E4               ; ABA7: 85 E4       ..
+ STA ppuNametableHi      ; ABA7: 85 E4       ..
  LDA #0                  ; ABA9: A9 00       ..
- STA L00E3               ; ABAB: 85 E3       ..
+ STA ppuNametableLo      ; ABAB: 85 E3       ..
  LDA #&28 ; '('          ; ABAD: A9 28       .(
  STA L03EF               ; ABAF: 8D EF 03    ...
  STA L03F0               ; ABB2: 8D F0 03    ...
  LDA #4                  ; ABB5: A9 04       ..
- STA tileNumber1         ; ABB7: 85 C3       ..
- STA tileNumber1_1       ; ABB9: 85 C4       ..
- STA tileNumber2         ; ABBB: 85 C5       ..
- STA tileNumber2_2       ; ABBD: 85 C6       ..
+ STA tile1Phase0         ; ABB7: 85 C3       ..
+ STA tile1Phase1         ; ABB9: 85 C4       ..
+ STA tile2Phase0         ; ABBB: 85 C5       ..
+ STA tile2Phase1         ; ABBD: 85 C6       ..
  STA L00CA               ; ABBF: 85 CA       ..
  STA L00CB               ; ABC1: 85 CB       ..
- STA tileNumber3         ; ABC3: 85 C7       ..
- STA tileNumber3_1       ; ABC5: 85 C8       ..
+ STA tile3Phase0         ; ABC3: 85 C7       ..
+ STA tile3Phase1         ; ABC5: 85 C8       ..
  LDA #&0F                ; ABC7: A9 0F       ..
  STA hiddenColour        ; ABC9: 85 33       .3
  STA visibleColour       ; ABCB: 85 34       .4

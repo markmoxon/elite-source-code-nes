@@ -191,14 +191,14 @@ L00BC             = &00BC
 L00BD             = &00BD
 L00BE             = &00BE
 drawingPhase      = &00C0
-tileNumber0       = &00C1
-tileNumber0_1     = &00C2
-tileNumber1       = &00C3
-tileNumber1_1     = &00C4
-tileNumber2       = &00C5
-tileNumber2_2     = &00C6
-tileNumber3       = &00C7
-tileNumber3_1     = &00C8
+tile0Phase0       = &00C1
+tile0Phase1       = &00C2
+tile1Phase0       = &00C3
+tile1Phase1       = &00C4
+tile2Phase0       = &00C5
+tile2Phase1       = &00C6
+tile3Phase0       = &00C7
+tile3Phase1       = &00C8
 L00C9             = &00C9
 L00CA             = &00CA
 L00CC             = &00CC
@@ -217,16 +217,16 @@ L00D8             = &00D8
 L00DA             = &00DA
 L00DB             = &00DB
 L00DD             = &00DD
-L00DF             = &00DF
+pallettePhasex8   = &00DF
 L00E0             = &00E0
-L00E1             = &00E1
-L00E2             = &00E2
-L00E3             = &00E3
-L00E4             = &00E4
-L00E5             = &00E5
+patternBufferLo   = &00E1
+patternBufferHi   = &00E2
+ppuNametableLo    = &00E3
+ppuNametableHi    = &00E4
+drawingPhaseDebug = &00E5
 nameBufferHi      = &00E6
-L00E7             = &00E7
-L00E8             = &00E8
+startupDebug      = &00E7
+temp1             = &00E8
 setupPPUForIconBar = &00E9
 showUserInterface = &00EA
 addr4             = &00EB
@@ -897,7 +897,7 @@ LC006 = sub_CC004+2
  LDX #&FF                                     ; C009: A2 FF       ..
  TXS                                          ; C00B: 9A          .
  LDX #0                                       ; C00C: A2 00       ..
- STX L00E7                                    ; C00E: 86 E7       ..
+ STX startupDebug                             ; C00E: 86 E7       ..
  LDA #&10                                     ; C010: A9 10       ..
  STA PPU_CTRL                                 ; C012: 8D 00 20    ..
  STA ppuCtrlCopy                              ; C015: 85 F5       ..
@@ -1436,7 +1436,7 @@ LC006 = sub_CC004+2
  ORA L00F6                                    ; C719: 05 F6       ..
  CMP #&81                                     ; C71B: C9 81       ..
  BNE CC738                                    ; C71D: D0 19       ..
- LDA tileNumber0,X                            ; C71F: B5 C1       ..
+ LDA tile0Phase0,X                            ; C71F: B5 C1       ..
  BNE CC725                                    ; C721: D0 02       ..
  LDA #&FF                                     ; C723: A9 FF       ..
 .CC725
@@ -1464,7 +1464,7 @@ LC006 = sub_CC004+2
 .CC749
  TYA                                          ; C749: 98          .
  SEC                                          ; C74A: 38          8
- SBC tileNumber3,X                            ; C74B: F5 C7       ..
+ SBC tile3Phase0,X                            ; C74B: F5 C7       ..
  CMP #&30 ; '0'                               ; C74D: C9 30       .0
  BCC CC761                                    ; C74F: 90 10       ..
  SEC                                          ; C751: 38          8
@@ -1550,20 +1550,20 @@ LC006 = sub_CC004+2
  ASL A                                        ; C7D3: 0A          .
  ASL A                                        ; C7D4: 0A          .
  ASL A                                        ; C7D5: 0A          .
- STA L00DF                                    ; C7D6: 85 DF       ..
+ STA pallettePhasex8                          ; C7D6: 85 DF       ..
  LSR A                                        ; C7D8: 4A          J
  ORA #&20 ; ' '                               ; C7D9: 09 20       .
- STA L00E4                                    ; C7DB: 85 E4       ..
+ STA ppuNametableHi                           ; C7DB: 85 E4       ..
  LDA #&10                                     ; C7DD: A9 10       ..
  STA L00E0                                    ; C7DF: 85 E0       ..
  LDA #0                                       ; C7E1: A9 00       ..
- STA L00E3                                    ; C7E3: 85 E3       ..
+ STA ppuNametableLo                           ; C7E3: 85 E3       ..
  LDA L00CC                                    ; C7E5: A5 CC       ..
- STA tileNumber3,X                            ; C7E7: 95 C7       ..
- STA tileNumber2,X                            ; C7E9: 95 C5       ..
+ STA tile3Phase0,X                            ; C7E7: 95 C7       ..
+ STA tile2Phase0,X                            ; C7E9: 95 C5       ..
  LDA L00D2                                    ; C7EB: A5 D2       ..
  STA L00CA,X                                  ; C7ED: 95 CA       ..
- STA tileNumber1,X                            ; C7EF: 95 C3       ..
+ STA tile1Phase0,X                            ; C7EF: 95 C3       ..
  LDA L03EF,X                                  ; C7F1: BD EF 03    ...
  ORA #&10                                     ; C7F4: 09 10       ..
  STA L03EF,X                                  ; C7F6: 9D EF 03    ...
@@ -1582,7 +1582,7 @@ LC006 = sub_CC004+2
  STA L04BE,X                                  ; C80E: 9D BE 04    ...
  LDA #0                                       ; C811: A9 00       ..
  STA addr4                                    ; C813: 85 EB       ..
- LDA tileNumber3,X                            ; C815: B5 C7       ..
+ LDA tile3Phase0,X                            ; C815: B5 C7       ..
  ASL A                                        ; C817: 0A          .
  ROL addr4                                    ; C818: 26 EB       &.
  ASL A                                        ; C81A: 0A          .
@@ -1593,7 +1593,7 @@ LC006 = sub_CC004+2
  LDA addr4                                    ; C822: A5 EB       ..
  ADC nameBufferAddr,X                         ; C824: 7D D0 CE    }..
  STA L04C0,X                                  ; C827: 9D C0 04    ...
- LDA L00E4                                    ; C82A: A5 E4       ..
+ LDA ppuNametableHi                           ; C82A: A5 E4       ..
  SEC                                          ; C82C: 38          8
  SBC nameBufferAddr,X                         ; C82D: FD D0 CE    ...
  STA L04C6,X                                  ; C830: 9D C6 04    ...
@@ -1634,12 +1634,12 @@ LC006 = sub_CC004+2
  JMP CC6F3                                    ; C867: 4C F3 C6    L..
 
 .CC86A
- LDA tileNumber0,X                            ; C86A: B5 C1       ..
+ LDA tile0Phase0,X                            ; C86A: B5 C1       ..
  BNE CC870                                    ; C86C: D0 02       ..
  LDA #&FF                                     ; C86E: A9 FF       ..
 .CC870
- STA L00E8                                    ; C870: 85 E8       ..
- LDA L00E4                                    ; C872: A5 E4       ..
+ STA temp1                                    ; C870: 85 E8       ..
+ LDA ppuNametableHi                           ; C872: A5 E4       ..
  SEC                                          ; C874: 38          8
  SBC nameBufferAddr,X                         ; C875: FD D0 CE    ...
  STA L04C6,X                                  ; C878: 9D C6 04    ...
@@ -1649,7 +1649,7 @@ LC006 = sub_CC004+2
  LDA L00CA,X                                  ; C882: B5 CA       ..
  STA L00C9                                    ; C884: 85 C9       ..
  SEC                                          ; C886: 38          8
- SBC L00E8                                    ; C887: E5 E8       ..
+ SBC temp1                                    ; C887: E5 E8       ..
  BCS subm_C836                                ; C889: B0 AB       ..
  LDX ppuCtrlCopy                              ; C88B: A6 F5       ..
  BEQ CC893                                    ; C88D: F0 04       ..
@@ -1674,7 +1674,7 @@ LC006 = sub_CC004+2
  STA PPU_ADDR                                 ; C8AB: 8D 06 20    ..
  STA addr4_1                                  ; C8AE: 85 EC       ..
  TXA                                          ; C8B0: 8A          .
- ADC L00DF                                    ; C8B1: 65 DF       e.
+ ADC pallettePhasex8                          ; C8B1: 65 DF       e.
  STA PPU_ADDR                                 ; C8B3: 8D 06 20    ..
  STA addr4                                    ; C8B6: 85 EB       ..
  JMP CC8D0                                    ; C8B8: 4C D0 C8    L..
@@ -1753,7 +1753,7 @@ LC006 = sub_CC004+2
  LDA addr4                                    ; C935: A5 EB       ..
  STA PPU_ADDR                                 ; C937: 8D 06 20    ..
  INX                                          ; C93A: E8          .
- CPX L00E8                                    ; C93B: E4 E8       ..
+ CPX temp1                                    ; C93B: E4 E8       ..
  BCS CC8CD                                    ; C93D: B0 8E       ..
  LDA (addr5),Y                                ; C93F: B1 ED       ..
  STA PPU_DATA                                 ; C941: 8D 07 20    ..
@@ -1791,7 +1791,7 @@ LC006 = sub_CC004+2
  LDA addr4                                    ; C980: A5 EB       ..
  STA PPU_ADDR                                 ; C982: 8D 06 20    ..
  INX                                          ; C985: E8          .
- CPX L00E8                                    ; C986: E4 E8       ..
+ CPX temp1                                    ; C986: E4 E8       ..
  BCS CC9FB                                    ; C988: B0 71       .q
  LDA (addr5),Y                                ; C98A: B1 ED       ..
  STA PPU_DATA                                 ; C98C: 8D 07 20    ..
@@ -1829,7 +1829,7 @@ LC006 = sub_CC004+2
  LDA addr4                                    ; C9CB: A5 EB       ..
  STA PPU_ADDR                                 ; C9CD: 8D 06 20    ..
  INX                                          ; C9D0: E8          .
- CPX L00E8                                    ; C9D1: E4 E8       ..
+ CPX temp1                                    ; C9D1: E4 E8       ..
  BCS CCA08                                    ; C9D3: B0 33       .3
  JMP CC8D2                                    ; C9D5: 4C D2 C8    L..
 
@@ -1905,7 +1905,7 @@ LC006 = sub_CC004+2
  STA PPU_ADDR                                 ; CA46: 8D 06 20    ..
  STA addr4_1                                  ; CA49: 85 EC       ..
  TXA                                          ; CA4B: 8A          .
- ADC L00DF                                    ; CA4C: 65 DF       e.
+ ADC pallettePhasex8                          ; CA4C: 65 DF       e.
  STA PPU_ADDR                                 ; CA4E: 8D 06 20    ..
  STA addr4                                    ; CA51: 85 EB       ..
  JMP CCA68                                    ; CA53: 4C 68 CA    Lh.
@@ -2150,11 +2150,11 @@ LC006 = sub_CC004+2
  BEQ CCBED                                    ; CBE9: F0 02       ..
  LDY #&80                                     ; CBEB: A0 80       ..
 .CCBED
- STY L00E8                                    ; CBED: 84 E8       ..
- LDA tileNumber3,X                            ; CBEF: B5 C7       ..
+ STY temp1                                    ; CBED: 84 E8       ..
+ LDA tile3Phase0,X                            ; CBEF: B5 C7       ..
  STA L00CF                                    ; CBF1: 85 CF       ..
  SEC                                          ; CBF3: 38          8
- SBC L00E8                                    ; CBF4: E5 E8       ..
+ SBC temp1                                    ; CBF4: E5 E8       ..
  BCS CCBAC                                    ; CBF6: B0 B4       ..
  LDY L00DD,X                                  ; CBF8: B4 DD       ..
  LDA L04C0,X                                  ; CBFA: BD C0 04    ...
@@ -2288,12 +2288,12 @@ LC006 = sub_CC004+2
  LDA L00CF                                    ; CCF0: A5 CF       ..
  ADC #3                                       ; CCF2: 69 03       i.
  STA L00CF                                    ; CCF4: 85 CF       ..
- CMP L00E8                                    ; CCF6: C5 E8       ..
+ CMP temp1                                    ; CCF6: C5 E8       ..
  BCS CCCFD                                    ; CCF8: B0 03       ..
  JMP CCC0D                                    ; CCFA: 4C 0D CC    L..
 
 .CCCFD
- STA tileNumber3,X                            ; CCFD: 95 C7       ..
+ STA tile3Phase0,X                            ; CCFD: 95 C7       ..
  STY L00DD,X                                  ; CCFF: 94 DD       ..
  LDA addr5_1                                  ; CD01: A5 EE       ..
  STA L04C0,X                                  ; CD03: 9D C0 04    ...
@@ -2312,13 +2312,13 @@ LC006 = sub_CC004+2
  CLC                                          ; CD1A: 18          .
  ADC #4                                       ; CD1B: 69 04       i.
  STA L00CF                                    ; CD1D: 85 CF       ..
- CMP L00E8                                    ; CD1F: C5 E8       ..
+ CMP temp1                                    ; CD1F: C5 E8       ..
  BCS CCCFD                                    ; CD21: B0 DA       ..
  JMP CCC0D                                    ; CD23: 4C 0D CC    L..
 
 .CCD26
  LDA L00CF                                    ; CD26: A5 CF       ..
- STA tileNumber3,X                            ; CD28: 95 C7       ..
+ STA tile3Phase0,X                            ; CD28: 95 C7       ..
  STY L00DD,X                                  ; CD2A: 94 DD       ..
  LDA addr5_1                                  ; CD2C: A5 EE       ..
  STA L04C0,X                                  ; CD2E: 9D C0 04    ...
@@ -2345,8 +2345,8 @@ LC006 = sub_CC004+2
  DEY                                          ; CD58: 88          .
  BNE CCD38                                    ; CD59: D0 DD       ..
  LDA tileNumber                               ; CD5B: A5 B8       ..
- STA tileNumber0                              ; CD5D: 85 C1       ..
- STA tileNumber0_1                            ; CD5F: 85 C2       ..
+ STA tile0Phase0                              ; CD5D: 85 C1       ..
+ STA tile0Phase1                              ; CD5F: 85 C2       ..
  RTS                                          ; CD61: 60          `
 
 ; ******************************************************************************
@@ -2937,9 +2937,9 @@ LC006 = sub_CC004+2
 
 .CD1C8
  LDY frameCounter                             ; D1C8: AC F1 03    ...
- LDA tileNumber3,X                            ; D1CB: B5 C7       ..
+ LDA tile3Phase0,X                            ; D1CB: B5 C7       ..
  STA SC                                       ; D1CD: 85 07       ..
- LDA tileNumber2,X                            ; D1CF: B5 C5       ..
+ LDA tile2Phase0,X                            ; D1CF: B5 C5       ..
  CPY frameCounter                             ; D1D1: CC F1 03    ...
  BNE CD1C8                                    ; D1D4: D0 F2       ..
  LDY SC                                       ; D1D6: A4 07       ..
@@ -2950,7 +2950,7 @@ LC006 = sub_CC004+2
  STY SC                                       ; D1DE: 84 07       ..
  CMP SC                                       ; D1E0: C5 07       ..
  BCS CD239                                    ; D1E2: B0 55       .U
- STY tileNumber2,X                            ; D1E4: 94 C5       ..
+ STY tile2Phase0,X                            ; D1E4: 94 C5       ..
  LDY #0                                       ; D1E6: A0 00       ..
  STY addr6_1                                  ; D1E8: 84 F2       ..
  ASL A                                        ; D1EA: 0A          .
@@ -3001,13 +3001,13 @@ LC006 = sub_CC004+2
  LDY frameCounter                             ; D239: AC F1 03    ...
  LDA L00CA,X                                  ; D23C: B5 CA       ..
  STA SC                                       ; D23E: 85 07       ..
- LDA tileNumber1,X                            ; D240: B5 C3       ..
+ LDA tile1Phase0,X                            ; D240: B5 C3       ..
  CPY frameCounter                             ; D242: CC F1 03    ...
  BNE CD239                                    ; D245: D0 F2       ..
  LDY SC                                       ; D247: A4 07       ..
  CMP SC                                       ; D249: C5 07       ..
  BCS CD2A2                                    ; D24B: B0 55       .U
- STY tileNumber1,X                            ; D24D: 94 C3       ..
+ STY tile1Phase0,X                            ; D24D: 94 C3       ..
  LDY #0                                       ; D24F: A0 00       ..
  STY addr6_1                                  ; D251: 84 F2       ..
  ASL A                                        ; D253: 0A          .
@@ -3112,8 +3112,8 @@ LC006 = sub_CC004+2
  JMP CD2B3                                    ; D2F2: 4C B3 D2    L..
 
 .CD2F5
- LDA tileNumber2,X                            ; D2F5: B5 C5       ..
- LDY tileNumber3,X                            ; D2F7: B4 C7       ..
+ LDA tile2Phase0,X                            ; D2F5: B5 C5       ..
+ LDY tile3Phase0,X                            ; D2F7: B4 C7       ..
  CPY L00D8                                    ; D2F9: C4 D8       ..
  BCC CD2FF                                    ; D2FB: 90 02       ..
  LDY L00D8                                    ; D2FD: A4 D8       ..
@@ -3163,9 +3163,9 @@ LC006 = sub_CC004+2
  LSR A                                        ; D34C: 4A          J
  LDA addr6                                    ; D34D: A5 F1       ..
  ROR A                                        ; D34F: 6A          j
- CMP tileNumber2,X                            ; D350: D5 C5       ..
+ CMP tile2Phase0,X                            ; D350: D5 C5       ..
  BCC CD37B                                    ; D352: 90 27       .'
- STA tileNumber2,X                            ; D354: 95 C5       ..
+ STA tile2Phase0,X                            ; D354: 95 C5       ..
  JMP CD37E                                    ; D356: 4C 7E D3    L~.
 
 .CD359
@@ -3219,7 +3219,7 @@ LC006 = sub_CC004+2
  JMP CD37A                                    ; D39C: 4C 7A D3    Lz.
 
 .CD39F
- LDA tileNumber1,X                            ; D39F: B5 C3       ..
+ LDA tile1Phase0,X                            ; D39F: B5 C3       ..
  LDY L00CA,X                                  ; D3A1: B4 CA       ..
  STY L00EF                                    ; D3A3: 84 EF       ..
  CMP L00EF                                    ; D3A5: C5 EF       ..
@@ -3267,9 +3267,9 @@ LC006 = sub_CC004+2
  LSR A                                        ; D3F1: 4A          J
  LDA addr6                                    ; D3F2: A5 F1       ..
  ROR A                                        ; D3F4: 6A          j
- CMP tileNumber1,X                            ; D3F5: D5 C3       ..
+ CMP tile1Phase0,X                            ; D3F5: D5 C3       ..
  BCC CD3FC                                    ; D3F7: 90 03       ..
- STA tileNumber1,X                            ; D3F9: 95 C3       ..
+ STA tile1Phase0,X                            ; D3F9: 95 C3       ..
  RTS                                          ; D3FB: 60          `
 
 .CD3FC
@@ -4104,15 +4104,15 @@ LC006 = sub_CC004+2
 ; ******************************************************************************
 .subm_D8EC
  STX drawingPhase                             ; D8EC: 86 C0       ..
- LDA tileNumber0,X                            ; D8EE: B5 C1       ..
+ LDA tile0Phase0,X                            ; D8EE: B5 C1       ..
  STA tileNumber                               ; D8F0: 85 B8       ..
  LDA nameBufferAddr,X                         ; D8F2: BD D0 CE    ...
  STA nameBufferHi                             ; D8F5: 85 E6       ..
  LDA #0                                       ; D8F7: A9 00       ..
- STA L00E1                                    ; D8F9: 85 E1       ..
- STA L00E5                                    ; D8FB: 85 E5       ..
+ STA patternBufferLo                          ; D8F9: 85 E1       ..
+ STA drawingPhaseDebug                        ; D8FB: 85 E5       ..
  LDA pattBufferAddr,X                         ; D8FD: BD D2 CE    ...
- STA L00E2                                    ; D900: 85 E2       ..
+ STA patternBufferHi                          ; D900: 85 E2       ..
  LSR A                                        ; D902: 4A          J
  LSR A                                        ; D903: 4A          J
  LSR A                                        ; D904: 4A          J
@@ -4180,8 +4180,8 @@ LC006 = sub_CC004+2
 .subm_D951
  JSR subm_D8C5                                ; D951: 20 C5 D8     ..
  LDA tileNumber                               ; D954: A5 B8       ..
- STA tileNumber0                              ; D956: 85 C1       ..
- STA tileNumber0_1                            ; D958: 85 C2       ..
+ STA tile0Phase0                              ; D956: 85 C1       ..
+ STA tile0Phase1                              ; D958: 85 C2       ..
  LDA #&58 ; 'X'                               ; D95A: A9 58       .X
  STA L00CC                                    ; D95C: 85 CC       ..
  LDA #&64 ; 'd'                               ; D95E: A9 64       .d
@@ -4201,7 +4201,7 @@ LC006 = sub_CC004+2
  JSR DrawBoxEdges                             ; D978: 20 6F CD     o.
  LDX drawingPhase                             ; D97B: A6 C0       ..
  LDA tileNumber                               ; D97D: A5 B8       ..
- STA tileNumber0,X                            ; D97F: 95 C1       ..
+ STA tile0Phase0,X                            ; D97F: 95 C1       ..
  PLA                                          ; D981: 68          h
  STA L03EF,X                                  ; D982: 9D EF 03    ...
  RTS                                          ; D985: 60          `

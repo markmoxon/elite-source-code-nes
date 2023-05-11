@@ -231,17 +231,17 @@ label(0x00C0, "drawingPhase")       # Mine, 0 or 1, flipped manually by calling 
                                     # controls whether we are showing namespace/palette buffer 0 or 1
                                     # (and which tile number is chosen from the followingf)
 
-label(0x00C1, "tileNumber0")        # Mine, stores a pair of tile numbers, for phase 0 and 1
-label(0x00C2, "tileNumber0_1")
+label(0x00C1, "tile0Phase0")        # Mine, stores a pair of tile numbers, for phase 0 and 1
+label(0x00C2, "tile0Phase1")
 
-label(0x00C3, "tileNumber1")        # Mine, stores a pair of tile numbers, for phase 0 and 1
-label(0x00C4, "tileNumber1_1")
+label(0x00C3, "tile1Phase0")        # Mine, stores a pair of tile numbers, for phase 0 and 1
+label(0x00C4, "tile1Phase1")
 
-label(0x00C5, "tileNumber2")        # Mine, stores a pair of tile numbers, for phase 0 and 1
-label(0x00C6, "tileNumber2_2")
+label(0x00C5, "tile2Phase0")        # Mine, stores a pair of tile numbers, for phase 0 and 1
+label(0x00C6, "tile2Phase1")
 
-label(0x00C7, "tileNumber3")        # Mine, stores a pair of tile numbers, for phase 0 and 1
-label(0x00C8, "tileNumber3_1")
+label(0x00C7, "tile3Phase0")        # Mine, stores a pair of tile numbers, for phase 0 and 1
+label(0x00C8, "tile3Phase1")
 
 label(0x00D0, "tempVar")            # Mine, stores a 16-bit number, not an address?
 label(0x00D1, "tempVar_1")
@@ -249,13 +249,29 @@ label(0x00D1, "tempVar_1")
 label(0x00D4, "addr1")              # Mine, an address within the PPU to be poked to
 label(0x00D5, "addr1_1")
 
+label(0x00DF, "pallettePhasex8")    # Set to 0 or palettePhase * 8 (i.e. 0 or %0001)
+
+label(0x00E1, "patternBufferLo")    # Mine, address of the current pattern buffer (unused)
+label(0x00E2, "patternBufferHi")    # i.e. &6000 when drawingPhase = 0
+                                    #      &6800 when drawingPhase = 1
+
+label(0x00E3, "ppuNametableLo")     # Mine, address of the current PPU nametable (unused)
+label(0x00E4, "ppuNametableHi")     # i.e. &2000 when palettePhase = 0
+                                    #      &2400 when palettePhase = 1
+
+label(0x00E5, "drawingPhaseDebug")  # Mine, always set to 0 when changing drawing phase
+
 label(0x00E6, "nameBufferHi")       # Mine, high byte of current nametable buffer (&70 or &74)
+
+label(0x00E7, "startupDebug")       # Mine, set to 0 in S%, never used again
+
+label(0x00E8, "temp1")              # Mine, temporary variable, used in bank 7
 
 label(0x00E9, "setupPPUForIconBar") # Mine, bit 7 set means we set nametable 0 and palette
                                     # table 0 when the PPU starts drawing the icon bar
 
 label(0x00EA, "showUserInterface")  # Mine, bit 7 set means display user interface (clear for
-                                    # game over screen)
+                                    # game over screen) 
 
 label(0x00EB, "addr4")              # Mine, an address within the PPU to be poked to
 label(0x00EC, "addr4_1")
