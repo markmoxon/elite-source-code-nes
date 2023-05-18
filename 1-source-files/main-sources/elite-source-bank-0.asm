@@ -269,262 +269,262 @@ addr2             = &00FA
 addr2_1           = &00FB
 XX3               = &0100
 XX3_1             = &0101
-SPR_00_Y          = &0200
-SPR_00_TILE       = &0201
-SPR_00_ATTR       = &0202
-SPR_00_X          = &0203
-SPR_01_Y          = &0204
-SPR_01_TILE       = &0205
-SPR_01_ATTR       = &0206
-SPR_01_X          = &0207
-SPR_02_Y          = &0208
-SPR_02_TILE       = &0209
-SPR_02_ATTR       = &020A
-SPR_02_X          = &020B
-SPR_03_Y          = &020C
-SPR_03_TILE       = &020D
-SPR_03_ATTR       = &020E
-SPR_03_X          = &020F
-SPR_04_Y          = &0210
-SPR_04_TILE       = &0211
-SPR_04_ATTR       = &0212
-SPR_04_X          = &0213
-SPR_05_Y          = &0214
-SPR_05_TILE       = &0215
-SPR_05_ATTR       = &0216
-SPR_05_X          = &0217
-SPR_06_Y          = &0218
-SPR_06_TILE       = &0219
-SPR_06_ATTR       = &021A
-SPR_06_X          = &021B
-SPR_07_Y          = &021C
-SPR_07_TILE       = &021D
-SPR_07_ATTR       = &021E
-SPR_07_X          = &021F
-SPR_08_Y          = &0220
-SPR_08_TILE       = &0221
-SPR_08_ATTR       = &0222
-SPR_08_X          = &0223
-SPR_09_Y          = &0224
-SPR_09_TILE       = &0225
-SPR_09_ATTR       = &0226
-SPR_09_X          = &0227
-SPR_10_Y          = &0228
-SPR_10_TILE       = &0229
-SPR_10_ATTR       = &022A
-SPR_10_X          = &022B
-SPR_11_Y          = &022C
-SPR_11_TILE       = &022D
-SPR_11_ATTR       = &022E
-SPR_11_X          = &022F
-SPR_12_Y          = &0230
-SPR_12_TILE       = &0231
-SPR_12_ATTR       = &0232
-SPR_12_X          = &0233
-SPR_13_Y          = &0234
-SPR_13_TILE       = &0235
-SPR_13_ATTR       = &0236
-SPR_13_X          = &0237
-SPR_14_Y          = &0238
-SPR_14_TILE       = &0239
-SPR_14_ATTR       = &023A
-SPR_14_X          = &023B
-SPR_15_Y          = &023C
-SPR_15_TILE       = &023D
-SPR_15_ATTR       = &023E
-SPR_15_X          = &023F
-SPR_16_Y          = &0240
-SPR_16_TILE       = &0241
-SPR_16_ATTR       = &0242
-SPR_16_X          = &0243
-SPR_17_Y          = &0244
-SPR_17_TILE       = &0245
-SPR_17_ATTR       = &0246
-SPR_17_X          = &0247
-SPR_18_Y          = &0248
-SPR_18_TILE       = &0249
-SPR_18_ATTR       = &024A
-SPR_18_X          = &024B
-SPR_19_Y          = &024C
-SPR_19_TILE       = &024D
-SPR_19_ATTR       = &024E
-SPR_19_X          = &024F
-SPR_20_Y          = &0250
-SPR_20_TILE       = &0251
-SPR_20_ATTR       = &0252
-SPR_20_X          = &0253
-SPR_21_Y          = &0254
-SPR_21_TILE       = &0255
-SPR_21_ATTR       = &0256
-SPR_21_X          = &0257
-SPR_22_Y          = &0258
-SPR_22_TILE       = &0259
-SPR_22_ATTR       = &025A
-SPR_22_X          = &025B
-SPR_23_Y          = &025C
-SPR_23_TILE       = &025D
-SPR_23_ATTR       = &025E
-SPR_23_X          = &025F
-SPR_24_Y          = &0260
-SPR_24_TILE       = &0261
-SPR_24_ATTR       = &0262
-SPR_24_X          = &0263
-SPR_25_Y          = &0264
-SPR_25_TILE       = &0265
-SPR_25_ATTR       = &0266
-SPR_25_X          = &0267
-SPR_26_Y          = &0268
-SPR_26_TILE       = &0269
-SPR_26_ATTR       = &026A
-SPR_26_X          = &026B
-SPR_27_Y          = &026C
-SPR_27_TILE       = &026D
-SPR_27_ATTR       = &026E
-SPR_27_X          = &026F
-SPR_28_Y          = &0270
-SPR_28_TILE       = &0271
-SPR_28_ATTR       = &0272
-SPR_28_X          = &0273
-SPR_29_Y          = &0274
-SPR_29_TILE       = &0275
-SPR_29_ATTR       = &0276
-SPR_29_X          = &0277
-SPR_30_Y          = &0278
-SPR_30_TILE       = &0279
-SPR_30_ATTR       = &027A
-SPR_30_X          = &027B
-SPR_31_Y          = &027C
-SPR_31_TILE       = &027D
-SPR_31_ATTR       = &027E
-SPR_31_X          = &027F
-SPR_32_Y          = &0280
-SPR_32_TILE       = &0281
-SPR_32_ATTR       = &0282
-SPR_32_X          = &0283
-SPR_33_Y          = &0284
-SPR_33_TILE       = &0285
-SPR_33_ATTR       = &0286
-SPR_33_X          = &0287
-SPR_34_Y          = &0288
-SPR_34_TILE       = &0289
-SPR_34_ATTR       = &028A
-SPR_34_X          = &028B
-SPR_35_Y          = &028C
-SPR_35_TILE       = &028D
-SPR_35_ATTR       = &028E
-SPR_35_X          = &028F
-SPR_36_Y          = &0290
-SPR_36_TILE       = &0291
-SPR_36_ATTR       = &0292
-SPR_36_X          = &0293
-SPR_37_Y          = &0294
-SPR_37_TILE       = &0295
-SPR_37_ATTR       = &0296
-SPR_37_X          = &0297
-SPR_38_Y          = &0298
-SPR_38_TILE       = &0299
-SPR_38_ATTR       = &029A
-SPR_38_X          = &029B
-SPR_39_Y          = &029C
-SPR_39_TILE       = &029D
-SPR_39_ATTR       = &029E
-SPR_39_X          = &029F
-SPR_40_Y          = &02A0
-SPR_40_TILE       = &02A1
-SPR_40_ATTR       = &02A2
-SPR_40_X          = &02A3
-SPR_41_Y          = &02A4
-SPR_41_TILE       = &02A5
-SPR_41_ATTR       = &02A6
-SPR_41_X          = &02A7
-SPR_42_Y          = &02A8
-SPR_42_TILE       = &02A9
-SPR_42_ATTR       = &02AA
-SPR_42_X          = &02AB
-SPR_43_Y          = &02AC
-SPR_43_TILE       = &02AD
-SPR_43_ATTR       = &02AE
-SPR_43_X          = &02AF
-SPR_44_Y          = &02B0
-SPR_44_TILE       = &02B1
-SPR_44_ATTR       = &02B2
-SPR_44_X          = &02B3
-SPR_45_Y          = &02B4
-SPR_45_TILE       = &02B5
-SPR_45_ATTR       = &02B6
-SPR_45_X          = &02B7
-SPR_46_Y          = &02B8
-SPR_46_TILE       = &02B9
-SPR_46_ATTR       = &02BA
-SPR_46_X          = &02BB
-SPR_47_Y          = &02BC
-SPR_47_TILE       = &02BD
-SPR_47_ATTR       = &02BE
-SPR_47_X          = &02BF
-SPR_48_Y          = &02C0
-SPR_48_TILE       = &02C1
-SPR_48_ATTR       = &02C2
-SPR_48_X          = &02C3
-SPR_49_Y          = &02C4
-SPR_49_TILE       = &02C5
-SPR_49_ATTR       = &02C6
-SPR_49_X          = &02C7
-SPR_50_Y          = &02C8
-SPR_50_TILE       = &02C9
-SPR_50_ATTR       = &02CA
-SPR_50_X          = &02CB
-SPR_51_Y          = &02CC
-SPR_51_TILE       = &02CD
-SPR_51_ATTR       = &02CE
-SPR_51_X          = &02CF
-SPR_52_Y          = &02D0
-SPR_52_TILE       = &02D1
-SPR_52_ATTR       = &02D2
-SPR_52_X          = &02D3
-SPR_53_Y          = &02D4
-SPR_53_TILE       = &02D5
-SPR_53_ATTR       = &02D6
-SPR_53_X          = &02D7
-SPR_54_Y          = &02D8
-SPR_54_TILE       = &02D9
-SPR_54_ATTR       = &02DA
-SPR_54_X          = &02DB
-SPR_55_Y          = &02DC
-SPR_55_TILE       = &02DD
-SPR_55_ATTR       = &02DE
-SPR_55_X          = &02DF
-SPR_56_Y          = &02E0
-SPR_56_TILE       = &02E1
-SPR_56_ATTR       = &02E2
-SPR_56_X          = &02E3
-SPR_57_Y          = &02E4
-SPR_57_TILE       = &02E5
-SPR_57_ATTR       = &02E6
-SPR_57_X          = &02E7
-SPR_58_Y          = &02E8
-SPR_58_TILE       = &02E9
-SPR_58_ATTR       = &02EA
-SPR_58_X          = &02EB
-SPR_59_Y          = &02EC
-SPR_59_TILE       = &02ED
-SPR_59_ATTR       = &02EE
-SPR_59_X          = &02EF
-SPR_60_Y          = &02F0
-SPR_60_TILE       = &02F1
-SPR_60_ATTR       = &02F2
-SPR_60_X          = &02F3
-SPR_61_Y          = &02F4
-SPR_61_TILE       = &02F5
-SPR_61_ATTR       = &02F6
-SPR_61_X          = &02F7
-SPR_62_Y          = &02F8
-SPR_62_TILE       = &02F9
-SPR_62_ATTR       = &02FA
-SPR_62_X          = &02FB
-SPR_63_Y          = &02FC
-SPR_63_TILE       = &02FD
-SPR_63_ATTR       = &02FE
-SPR_63_X          = &02FF
+ySprite0          = &0200
+tileSprite0       = &0201
+attrSprite0       = &0202
+xSprite0          = &0203
+ySprite1          = &0204
+tileSprite1       = &0205
+attrSprite1       = &0206
+xSprite1          = &0207
+ySprite2          = &0208
+tileSprite2       = &0209
+attrSprite2       = &020A
+xSprite2          = &020B
+ySprite3          = &020C
+tileSprite3       = &020D
+attrSprite3       = &020E
+xSprite3          = &020F
+ySprite4          = &0210
+tileSprite4       = &0211
+attrSprite4       = &0212
+xSprite4          = &0213
+ySprite5          = &0214
+tileSprite5       = &0215
+attrSprite5       = &0216
+xSprite5          = &0217
+ySprite6          = &0218
+tileSprite6       = &0219
+attrSprite6       = &021A
+xSprite6          = &021B
+ySprite7          = &021C
+tileSprite7       = &021D
+attrSprite7       = &021E
+xSprite7          = &021F
+ySprite8          = &0220
+tileSprite8       = &0221
+attrSprite8       = &0222
+xSprite8          = &0223
+ySprite9          = &0224
+tileSprite9       = &0225
+attrSprite9       = &0226
+xSprite9          = &0227
+ySprite10         = &0228
+tileSprite10      = &0229
+attrSprite10      = &022A
+xSprite10         = &022B
+ySprite11         = &022C
+tileSprite11      = &022D
+attrSprite11      = &022E
+xSprite11         = &022F
+ySprite12         = &0230
+tileSprite12      = &0231
+attrSprite12      = &0232
+xSprite12         = &0233
+ySprite13         = &0234
+tileSprite13      = &0235
+attrSprite13      = &0236
+xSprite13         = &0237
+ySprite14         = &0238
+tileSprite14      = &0239
+attrSprite14      = &023A
+xSprite14         = &023B
+ySprite15         = &023C
+tileSprite15      = &023D
+attrSprite15      = &023E
+xSprite15         = &023F
+ySprite16         = &0240
+tileSprite16      = &0241
+attrSprite16      = &0242
+xSprite16         = &0243
+ySprite17         = &0244
+tileSprite17      = &0245
+attrSprite17      = &0246
+xSprite17         = &0247
+ySprite18         = &0248
+tileSprite18      = &0249
+attrSprite18      = &024A
+xSprite18         = &024B
+ySprite19         = &024C
+tileSprite19      = &024D
+attrSprite19      = &024E
+xSprite19         = &024F
+ySprite20         = &0250
+tileSprite20      = &0251
+attrSprite20      = &0252
+xSprite20         = &0253
+ySprite21         = &0254
+tileSprite21      = &0255
+attrSprite21      = &0256
+xSprite21         = &0257
+ySprite22         = &0258
+tileSprite22      = &0259
+attrSprite22      = &025A
+xSprite22         = &025B
+ySprite23         = &025C
+tileSprite23      = &025D
+attrSprite23      = &025E
+xSprite23         = &025F
+ySprite24         = &0260
+tileSprite24      = &0261
+attrSprite24      = &0262
+xSprite24         = &0263
+ySprite25         = &0264
+tileSprite25      = &0265
+attrSprite25      = &0266
+xSprite25         = &0267
+ySprite26         = &0268
+tileSprite26      = &0269
+attrSprite26      = &026A
+xSprite26         = &026B
+ySprite27         = &026C
+tileSprite27      = &026D
+attrSprite27      = &026E
+xSprite27         = &026F
+ySprite28         = &0270
+tileSprite28      = &0271
+attrSprite28      = &0272
+xSprite28         = &0273
+ySprite29         = &0274
+tileSprite29      = &0275
+attrSprite29      = &0276
+xSprite29         = &0277
+ySprite30         = &0278
+tileSprite30      = &0279
+attrSprite30      = &027A
+xSprite30         = &027B
+ySprite31         = &027C
+tileSprite31      = &027D
+attrSprite31      = &027E
+xSprite31         = &027F
+ySprite32         = &0280
+tileSprite32      = &0281
+attrSprite32      = &0282
+xSprite32         = &0283
+ySprite33         = &0284
+tileSprite33      = &0285
+attrSprite33      = &0286
+xSprite33         = &0287
+ySprite34         = &0288
+tileSprite34      = &0289
+attrSprite34      = &028A
+xSprite34         = &028B
+ySprite35         = &028C
+tileSprite35      = &028D
+attrSprite35      = &028E
+xSprite35         = &028F
+ySprite36         = &0290
+tileSprite36      = &0291
+attrSprite36      = &0292
+xSprite36         = &0293
+ySprite37         = &0294
+tileSprite37      = &0295
+attrSprite37      = &0296
+xSprite37         = &0297
+ySprite38         = &0298
+tileSprite38      = &0299
+attrSprite38      = &029A
+xSprite38         = &029B
+ySprite39         = &029C
+tileSprite39      = &029D
+attrSprite39      = &029E
+xSprite39         = &029F
+ySprite40         = &02A0
+tileSprite40      = &02A1
+attrSprite40      = &02A2
+xSprite40         = &02A3
+ySprite41         = &02A4
+tileSprite41      = &02A5
+attrSprite41      = &02A6
+xSprite41         = &02A7
+ySprite42         = &02A8
+tileSprite42      = &02A9
+attrSprite42      = &02AA
+xSprite42         = &02AB
+ySprite43         = &02AC
+tileSprite43      = &02AD
+attrSprite43      = &02AE
+xSprite43         = &02AF
+ySprite44         = &02B0
+tileSprite44      = &02B1
+attrSprite44      = &02B2
+xSprite44         = &02B3
+ySprite45         = &02B4
+tileSprite45      = &02B5
+attrSprite45      = &02B6
+xSprite45         = &02B7
+ySprite46         = &02B8
+tileSprite46      = &02B9
+attrSprite46      = &02BA
+xSprite46         = &02BB
+ySprite47         = &02BC
+tileSprite47      = &02BD
+attrSprite47      = &02BE
+xSprite47         = &02BF
+ySprite48         = &02C0
+tileSprite48      = &02C1
+attrSprite48      = &02C2
+xSprite48         = &02C3
+ySprite49         = &02C4
+tileSprite49      = &02C5
+attrSprite49      = &02C6
+xSprite49         = &02C7
+ySprite50         = &02C8
+tileSprite50      = &02C9
+attrSprite50      = &02CA
+xSprite50         = &02CB
+ySprite51         = &02CC
+tileSprite51      = &02CD
+attrSprite51      = &02CE
+xSprite51         = &02CF
+ySprite52         = &02D0
+tileSprite52      = &02D1
+attrSprite52      = &02D2
+xSprite52         = &02D3
+ySprite53         = &02D4
+tileSprite53      = &02D5
+attrSprite53      = &02D6
+xSprite53         = &02D7
+ySprite54         = &02D8
+tileSprite54      = &02D9
+attrSprite54      = &02DA
+xSprite54         = &02DB
+ySprite55         = &02DC
+tileSprite55      = &02DD
+attrSprite55      = &02DE
+xSprite55         = &02DF
+ySprite56         = &02E0
+tileSprite56      = &02E1
+attrSprite56      = &02E2
+xSprite56         = &02E3
+ySprite57         = &02E4
+tileSprite57      = &02E5
+attrSprite57      = &02E6
+xSprite57         = &02E7
+ySprite58         = &02E8
+tileSprite58      = &02E9
+attrSprite58      = &02EA
+xSprite58         = &02EB
+ySprite59         = &02EC
+tileSprite59      = &02ED
+attrSprite59      = &02EE
+xSprite59         = &02EF
+ySprite60         = &02F0
+tileSprite60      = &02F1
+attrSprite60      = &02F2
+xSprite60         = &02F3
+ySprite61         = &02F4
+tileSprite61      = &02F5
+attrSprite61      = &02F6
+xSprite61         = &02F7
+ySprite62         = &02F8
+tileSprite62      = &02F9
+attrSprite62      = &02FA
+xSprite62         = &02FB
+ySprite63         = &02FC
+tileSprite63      = &02FD
+attrSprite63      = &02FE
+xSprite63         = &02FF
 L0300             = &0300
 L0305             = &0305
 L0306             = &0306
@@ -541,15 +541,16 @@ L0370             = &0370
 JUNK              = &0373
 L0374             = &0374
 L037E             = &037E
-L0388             = &0388
+auto              = &0388
 ECMP              = &0389
 MJ                = &038A
 CABTMP            = &038B
 LAS2              = &038C
-L038D             = &038D
+MSAR              = &038D
 VIEW              = &038E
 LASCT             = &038F
 GNTMP             = &0390
+HFX               = &0391
 EV                = &0392
 L0393             = &0393
 L0394             = &0394
@@ -571,7 +572,7 @@ QQ20              = &03AD
 L03B0             = &03B0
 L03B3             = &03B3
 L03B7             = &03B7
-L03BE             = &03BE
+ECM               = &03BE
 BST               = &03BF
 BOMB              = &03C0
 ENGY              = &03C1
@@ -580,6 +581,7 @@ GHYP              = &03C3
 ESCP              = &03C4
 TRIBBLE           = &03C5
 TRIBBLE_1         = &03C6
+TALLY_L           = &03C7
 NOMSL             = &03C8
 FIST              = &03C9
 AVL               = &03CA
@@ -667,8 +669,8 @@ QQ2               = &048E
 QQ3               = &0494
 QQ4               = &0495
 QQ5               = &0496
-L0497             = &0497
-L0499             = &0499
+QQ6               = &0497
+QQ7               = &0499
 L049A             = &049A
 QQ8               = &049B
 QQ8_1             = &049C
@@ -1339,7 +1341,7 @@ SetupMMC1         = &FB89
  JMP DOENTRY                                  ; 81F8: 4C 23 80    L#.
 
 .MA62
- LDA L0388                                    ; 81FB: AD 88 03    ...
+ LDA auto                                     ; 81FB: AD 88 03    ...
  BNE GOIN                                     ; 81FE: D0 F5       ..
 .C8200
  LDA DELTA                                    ; 8200: A5 93       ..
@@ -1379,7 +1381,7 @@ SetupMMC1         = &FB89
  JSR PLUT                                     ; 8231: 20 25 BD     %.
  LDA LAS                                      ; 8234: AD 00 04    ...
  BNE C8243                                    ; 8237: D0 0A       ..
- LDA L038D                                    ; 8239: AD 8D 03    ...
+ LDA MSAR                                     ; 8239: AD 8D 03    ...
  BEQ C8248                                    ; 823C: F0 0A       ..
  LDA MSTG                                     ; 823E: AD 01 04    ...
  BPL C8248                                    ; 8241: 10 05       ..
@@ -1390,7 +1392,7 @@ SetupMMC1         = &FB89
  JMP MA8                                      ; 8248: 4C DA 82    L..
 
 .C824B
- LDA L038D                                    ; 824B: AD 8D 03    ...
+ LDA MSAR                                     ; 824B: AD 8D 03    ...
  BEQ C825F                                    ; 824E: F0 0F       ..
  LDA MSTG                                     ; 8250: AD 01 04    ...
  BPL C825F                                    ; 8253: 10 0A       ..
@@ -1682,7 +1684,7 @@ SetupMMC1         = &FB89
 .MA29
  CMP #&0F                                     ; 845C: C9 0F       ..
  BNE C8469                                    ; 845E: D0 09       ..
- LDA L0388                                    ; 8460: AD 88 03    ...
+ LDA auto                                     ; 8460: AD 88 03    ...
  BEQ MA23                                     ; 8463: F0 65       .e
  LDA #&7B ; '{'                               ; 8465: A9 7B       .{
  BNE C84C7                                    ; 8467: D0 5E       .^
@@ -1808,7 +1810,7 @@ SetupMMC1         = &FB89
  LDA Kpercent                                 ; 8547: AD 00 06    ...
  EOR nmiTimerLo                               ; 854A: 45 39       E9
  STA RAND                                     ; 854C: 85 02       ..
- LDA L0388                                    ; 854E: AD 88 03    ...
+ LDA auto                                     ; 854E: AD 88 03    ...
  BEQ C8556                                    ; 8551: F0 03       ..
  CLC                                          ; 8553: 18          .
  BCC C856E                                    ; 8554: 90 18       ..
@@ -1924,9 +1926,9 @@ SetupMMC1         = &FB89
  BNE C8642                                    ; 8618: D0 28       .(
  LDA NOMSL                                    ; 861A: AD C8 03    ...
  BEQ C8651                                    ; 861D: F0 32       .2
- LDA L038D                                    ; 861F: AD 8D 03    ...
+ LDA MSAR                                     ; 861F: AD 8D 03    ...
  EOR #&FF                                     ; 8622: 49 FF       I.
- STA L038D                                    ; 8624: 8D 8D 03    ...
+ STA MSAR                                     ; 8624: 8D 8D 03    ...
  BNE C8636                                    ; 8627: D0 0D       ..
  LDY #&6C ; 'l'                               ; 8629: A0 6C       .l
  JSR ABORT                                    ; 862B: 20 C1 AC     ..
@@ -1985,7 +1987,7 @@ SetupMMC1         = &FB89
 .C8690
  CMP #&17                                     ; 8690: C9 17       ..
  BNE MA68                                     ; 8692: D0 0F       ..
- LDA L03BE                                    ; 8694: AD BE 03    ...
+ LDA ECM                                      ; 8694: AD BE 03    ...
  BEQ MA68                                     ; 8697: F0 0A       ..
  LDA ECMA                                     ; 8699: A5 6D       .m
  BNE MA68                                     ; 869B: D0 06       ..
@@ -2262,7 +2264,7 @@ SetupMMC1         = &FB89
  LDA #&6F ; 'o'                               ; 8895: A9 6F       .o
  JSR PrintTokenCrTab                          ; 8897: 20 A5 89     ..
 .C889A
- LDA L03BE                                    ; 889A: AD BE 03    ...
+ LDA ECM                                      ; 889A: AD BE 03    ...
  BEQ C88A4                                    ; 889D: F0 05       ..
  LDA #&6C ; 'l'                               ; 889F: A9 6C       .l
  JSR PrintTokenCrTab                          ; 88A1: 20 A5 89     ..
@@ -2736,11 +2738,11 @@ SetupMMC1         = &FB89
  LDA SC2                                      ; 8BB7: A5 BA       ..
  SEC                                          ; 8BB9: 38          8
  SBC #4                                       ; 8BBA: E9 04       ..
- STA SPR_00_X,X                               ; 8BBC: 9D 03 02    ...
+ STA xSprite0,X                               ; 8BBC: 9D 03 02    ...
  TYA                                          ; 8BBF: 98          .
  CLC                                          ; 8BC0: 18          .
  ADC #&AA                                     ; 8BC1: 69 AA       i.
- STA SPR_00_Y,X                               ; 8BC3: 9D 00 02    ...
+ STA ySprite0,X                               ; 8BC3: 9D 00 02    ...
  RTS                                          ; 8BC6: 60          `
 
 ; ******************************************************************************
@@ -2972,7 +2974,7 @@ M32_1 = M32+1
  AND #4                                       ; 8D61: 29 04       ).
  BNE C8D7B                                    ; 8D63: D0 16       ..
  LDA L056C                                    ; 8D65: AD 6C 05    .l.
- ORA L0388                                    ; 8D68: 0D 88 03    ...
+ ORA auto                                     ; 8D68: 0D 88 03    ...
  BNE C8D33                                    ; 8D6B: D0 C6       ..
  JSR DORND                                    ; 8D6D: 20 AD F4     ..
  CMP #&FD                                     ; 8D70: C9 FD       ..
@@ -4108,7 +4110,7 @@ M32_1 = M32+1
  STA CASH                                     ; 952D: 8D A1 03    ...
  STA L03A2                                    ; 9530: 8D A2 03    ...
  LDA #&FF                                     ; 9533: A9 FF       ..
- STA L03BE                                    ; 9535: 8D BE 03    ...
+ STA ECM                                      ; 9535: 8D BE 03    ...
  LDA #1                                       ; 9538: A9 01       ..
  STA ENGY                                     ; 953A: 8D C1 03    ...
  LDA #&8F                                     ; 953D: A9 8F       ..
@@ -4415,7 +4417,7 @@ M32_1 = M32+1
  JSR TTX69                                    ; 975E: 20 A0 96     ..
  LDA #&C1                                     ; 9761: A9 C1       ..
  JSR TT68                                     ; 9763: 20 CE A8     ..
- LDX L0499                                    ; 9766: AE 99 04    ...
+ LDX QQ7                                      ; 9766: AE 99 04    ...
  LDY L049A                                    ; 9769: AC 9A 04    ...
  CLC                                          ; 976C: 18          .
  LDA #6                                       ; 976D: A9 06       ..
@@ -4463,7 +4465,7 @@ M32_1 = M32+1
  LDA #&C0                                     ; 97C9: A9 C0       ..
  JSR TT68                                     ; 97CB: 20 CE A8     ..
 .C97CE
- LDA L0497                                    ; 97CE: AD 97 04    ...
+ LDA QQ6                                      ; 97CE: AD 97 04    ...
  LSR A                                        ; 97D1: 4A          J
  LSR A                                        ; 97D2: 4A          J
  LSR A                                        ; 97D3: 4A          J
@@ -5018,9 +5020,9 @@ M32_1 = M32+1
  STA QQ19_2                                   ; 9BCC: 8D 4F 04    .O.
 .C9BCF
  LDA #&F8                                     ; 9BCF: A9 F8       ..
- STA SPR_15_TILE                              ; 9BD1: 8D 3D 02    .=.
+ STA tileSprite15                             ; 9BD1: 8D 3D 02    .=.
  LDA #1                                       ; 9BD4: A9 01       ..
- STA SPR_15_ATTR                              ; 9BD6: 8D 3E 02    .>.
+ STA attrSprite15                             ; 9BD6: 8D 3E 02    .>.
  LDA QQ19                                     ; 9BD9: AD 4D 04    .M.
  STA SC2                                      ; 9BDC: 85 BA       ..
  LDY QQ19_1                                   ; 9BDE: AC 4E 04    .N.
@@ -5031,16 +5033,16 @@ M32_1 = M32+1
  LDA SC2                                      ; 9BE6: A5 BA       ..
  SEC                                          ; 9BE8: 38          8
  SBC #4                                       ; 9BE9: E9 04       ..
- STA SPR_00_X,X                               ; 9BEB: 9D 03 02    ...
+ STA xSprite0,X                               ; 9BEB: 9D 03 02    ...
  TYA                                          ; 9BEE: 98          .
  CLC                                          ; 9BEF: 18          .
  ADC #&0A                                     ; 9BF0: 69 0A       i.
- STA SPR_00_Y,X                               ; 9BF2: 9D 00 02    ...
+ STA ySprite0,X                               ; 9BF2: 9D 00 02    ...
  RTS                                          ; 9BF5: 60          `
 
 .C9BF6
  LDA #&F0                                     ; 9BF6: A9 F0       ..
- STA SPR_15_Y                                 ; 9BF8: 8D 3C 02    .<.
+ STA ySprite15                                ; 9BF8: 8D 3C 02    .<.
  RTS                                          ; 9BFB: 60          `
 
 .L9BFC
@@ -5174,17 +5176,17 @@ M32_1 = M32+1
  TAY                                          ; 9CDA: A8          .
  LDA K3                                       ; 9CDB: A5 3D       .=
  SBC #3                                       ; 9CDD: E9 03       ..
- STA SPR_38_X,Y                               ; 9CDF: 99 9B 02    ...
+ STA xSprite38,Y                              ; 9CDF: 99 9B 02    ...
  LDA K4                                       ; 9CE2: A5 4B       .K
  CLC                                          ; 9CE4: 18          .
  ADC #&0A                                     ; 9CE5: 69 0A       i.
- STA SPR_38_Y,Y                               ; 9CE7: 99 98 02    ...
+ STA ySprite38,Y                              ; 9CE7: 99 98 02    ...
  LDA #&D5                                     ; 9CEA: A9 D5       ..
  CLC                                          ; 9CEC: 18          .
  ADC K                                        ; 9CED: 65 7D       e}
- STA SPR_38_TILE,Y                            ; 9CEF: 99 99 02    ...
+ STA tileSprite38,Y                           ; 9CEF: 99 99 02    ...
  LDA #2                                       ; 9CF2: A9 02       ..
- STA SPR_38_ATTR,Y                            ; 9CF4: 99 9A 02    ...
+ STA attrSprite38,Y                           ; 9CF4: 99 9A 02    ...
 .C9CF7
  RTS                                          ; 9CF7: 60          `
 
@@ -6371,9 +6373,9 @@ M32_1 = M32+1
  CMP #3                                       ; A558: C9 03       ..
  BNE CA565                                    ; A55A: D0 09       ..
  INY                                          ; A55C: C8          .
- LDX L03BE                                    ; A55D: AE BE 03    ...
+ LDX ECM                                      ; A55D: AE BE 03    ...
  BNE CA58A                                    ; A560: D0 28       .(
- DEC L03BE                                    ; A562: CE BE 03    ...
+ DEC ECM                                      ; A562: CE BE 03    ...
 .CA565
  CMP #4                                       ; A565: C9 04       ..
  BNE CA573                                    ; A567: D0 0A       ..
@@ -7090,7 +7092,7 @@ M32_1 = M32+1
 
 .loop_CAA10
  LDA #&F0                                     ; AA10: A9 F0       ..
- STA SPR_13_Y                                 ; AA12: 8D 34 02    .4.
+ STA ySprite13                                ; AA12: 8D 34 02    .4.
  RTS                                          ; AA15: 60          `
 
 ; ******************************************************************************
@@ -7112,20 +7114,20 @@ M32_1 = M32+1
  TXA                                          ; AA2E: 8A          .
  CLC                                          ; AA2F: 18          .
  ADC #&DC                                     ; AA30: 69 DC       i.
- STA SPR_13_X                                 ; AA32: 8D 37 02    .7.
+ STA xSprite13                                ; AA32: 8D 37 02    .7.
  LDA Y1                                       ; AA35: A5 72       .r
  JSR SPS2                                     ; AA37: 20 31 B5     1.
  STX T                                        ; AA3A: 86 9A       ..
  LDA #&BA                                     ; AA3C: A9 BA       ..
  SEC                                          ; AA3E: 38          8
  SBC T                                        ; AA3F: E5 9A       ..
- STA SPR_13_Y                                 ; AA41: 8D 34 02    .4.
+ STA ySprite13                                ; AA41: 8D 34 02    .4.
  LDA #&F7                                     ; AA44: A9 F7       ..
  LDX X2                                       ; AA46: A6 73       .s
  BPL CAA4C                                    ; AA48: 10 02       ..
  LDA #&F6                                     ; AA4A: A9 F6       ..
 .CAA4C
- STA SPR_13_TILE                              ; AA4C: 8D 35 02    .5.
+ STA tileSprite13                             ; AA4C: 8D 35 02    .5.
  RTS                                          ; AA4F: 60          `
 
 ; ******************************************************************************
@@ -7499,7 +7501,7 @@ M32_1 = M32+1
 ; ******************************************************************************
 .ABORT
  LDX #0                                       ; ACC1: A2 00       ..
- STX L038D                                    ; ACC3: 8E 8D 03    ...
+ STX MSAR                                     ; ACC3: 8E 8D 03    ...
  DEX                                          ; ACC6: CA          .
 ; ******************************************************************************
 .ABORT2
@@ -8098,7 +8100,7 @@ LAFB4 = sub_CAFB3+1
  BNE CB119                                    ; B0CE: D0 49       .I
  LDX QQ12                                     ; B0D0: A6 A5       ..
  BNE CB119                                    ; B0D2: D0 45       .E
- LDA L0388                                    ; B0D4: AD 88 03    ...
+ LDA auto                                     ; B0D4: AD 88 03    ...
  BNE CB106                                    ; B0D7: D0 2D       .-
  LDA SSPR                                     ; B0D9: AD 64 05    .d.
  BEQ CB119                                    ; B0DC: F0 3B       .;
@@ -8125,7 +8127,7 @@ LAFB4 = sub_CAFB3+1
  JSR ResetSound_b6                            ; B106: 20 6B ED     k.
  LDA #0                                       ; B109: A9 00       ..
 .CB10B
- STA L0388                                    ; B10B: 8D 88 03    ...
+ STA auto                                     ; B10B: 8D 88 03    ...
  LDA QQ11                                     ; B10E: A5 9E       ..
  BEQ CB118                                    ; B110: F0 06       ..
  JSR CLYNS                                    ; B112: 20 DE F2     ..
@@ -8821,7 +8823,7 @@ LAFB4 = sub_CAFB3+1
  JMP CB358                                    ; B5BC: 4C 58 B3    LX.
 
 .CB5BF
- LDA L0388                                    ; B5BF: AD 88 03    ...
+ LDA auto                                     ; B5BF: AD 88 03    ...
  AND SSPR                                     ; B5C2: 2D 64 05    -d.
  BEQ CB5CA                                    ; B5C5: F0 03       ..
  JMP GOIN                                     ; B5C7: 4C F5 81    L..
@@ -8965,7 +8967,7 @@ LAFB4 = sub_CAFB3+1
 ; ******************************************************************************
 .DOKEY
  JSR CBBDE_b6                                 ; B6A8: 20 21 F0     !.
- LDA L0388                                    ; B6AB: AD 88 03    ...
+ LDA auto                                     ; B6AB: AD 88 03    ...
  BNE CB6BA                                    ; B6AE: D0 0A       ..
 .CB6B0
  LDX L0081                                    ; B6B0: A6 81       ..
@@ -8979,7 +8981,7 @@ LAFB4 = sub_CAFB3+1
 .CB6BA
  LDA SSPR                                     ; B6BA: AD 64 05    .d.
  BNE CB6C8                                    ; B6BD: D0 09       ..
- STA L0388                                    ; B6BF: 8D 88 03    ...
+ STA auto                                     ; B6BF: 8D 88 03    ...
  JSR ResetSound_b6                            ; B6C2: 20 6B ED     k.
  JMP CB6B0                                    ; B6C5: 4C B0 B6    L..
 
@@ -9058,7 +9060,7 @@ LAFB4 = sub_CAFB3+1
  JSR BUMP2                                    ; B754: 20 33 FA     3.
 .CB757
  STX JSTY                                     ; B757: 8E 77 04    .w.
- LDA L0388                                    ; B75A: AD 88 03    ...
+ LDA auto                                     ; B75A: AD 88 03    ...
  BNE CB777                                    ; B75D: D0 18       ..
  LDX #&80                                     ; B75F: A2 80       ..
  LDA KY3                                      ; B761: AD 05 04    ...
@@ -9982,15 +9984,15 @@ LAFB4 = sub_CAFB3+1
  JSR SetPPUTablesTo0                          ; BE25: 20 6D D0     m.
 .CBE28
  LDA #&F0                                     ; BE28: A9 F0       ..
- STA SPR_00_Y,Y                               ; BE2A: 99 00 02    ...
+ STA ySprite0,Y                               ; BE2A: 99 00 02    ...
  LDA #&D2                                     ; BE2D: A9 D2       ..
- STA SPR_00_TILE,Y                            ; BE2F: 99 01 02    ...
+ STA tileSprite0,Y                            ; BE2F: 99 01 02    ...
  TXA                                          ; BE32: 8A          .
  LSR A                                        ; BE33: 4A          J
  ROR A                                        ; BE34: 6A          j
  ROR A                                        ; BE35: 6A          j
  AND #&E1                                     ; BE36: 29 E1       ).
- STA SPR_00_ATTR,Y                            ; BE38: 99 02 02    ...
+ STA attrSprite0,Y                            ; BE38: 99 02 02    ...
  INY                                          ; BE3B: C8          .
  INY                                          ; BE3C: C8          .
  INY                                          ; BE3D: C8          .
