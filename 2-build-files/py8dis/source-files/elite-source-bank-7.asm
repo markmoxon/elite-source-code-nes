@@ -685,24 +685,28 @@ OAM_DATA          = &2004
 PPU_SCROLL        = &2005
 PPU_ADDR          = &2006
 PPU_DATA          = &2007
-SQ1_ENV           = &4000
+SQ1_VOL           = &4000
 SQ1_SWEEP         = &4001
 SQ1_LO            = &4002
 SQ1_HI            = &4003
-SQ2_ENV           = &4004
+SQ2_VOL           = &4004
 SQ2_SWEEP         = &4005
 SQ2_LO            = &4006
 SQ2_HI            = &4007
-TRI_CTRL          = &4008
+TRI_LINEAR        = &4008
 TRI_LO            = &400A
 TRI_HI            = &400B
-NOI_ENV           = &400C
-NOI_RAND          = &400E
-NOI_LEN           = &400F
+NOISE_VOL         = &400C
+NOISE_LO          = &400E
+NOISE_HI          = &400F
+DMC_FREQ          = &4010
+DMC_RAW           = &4011
+DMC_START         = &4012
+DMC_LEN           = &4013
 OAM_DMA           = &4014
-APU_FLAGS         = &4015
-CONTROLLER_1      = &4016
-CONTROLLER_2      = &4017
+SND_CHN           = &4015
+JOY1              = &4016
+JOY2              = &4017
 pattBuffer0       = &6000
 pattBuffer1       = &6800
 nameBuffer0       = &7000
@@ -806,7 +810,7 @@ LL9               = &A070
 LA082             = &A082
 LA0F8             = &A0F8
 LA166             = &A166
-LA2C3             = &A2C3
+DIALS             = &A2C3
 BR1               = &A379
 LA4A5             = &A4A5
 LA5AB             = &A5AB
@@ -838,7 +842,7 @@ LB2BC             = &B2BC
 subm_B2C3         = &B2C3
 LB2EF             = &B2EF
 LB2FB             = &B2FB
-CLIP              = &B341
+ClearTiles        = &B341
 LB358             = &B358
 LB39D             = &B39D
 LB3BC             = &B3BC
@@ -930,7 +934,7 @@ LC006 = sub_CC004+2
  STA PPU_MASK                                 ; C045: 8D 01 20    ..
  STA setupPPUForIconBar                       ; C048: 85 E9       ..
  LDA #&40 ; '@'                               ; C04A: A9 40       .@
- STA CONTROLLER_2                             ; C04C: 8D 17 40    ..@
+ STA JOY2                                     ; C04C: 8D 17 40    ..@
  INC LC006                                    ; C04F: EE 06 C0    ...
  LDA PPU_STATUS                               ; C052: AD 02 20    ..
 .loop_CC055
@@ -2822,43 +2826,43 @@ LC006 = sub_CC004+2
 ; ******************************************************************************
 .ReadControllers
  LDA #1                                       ; D0F8: A9 01       ..
- STA CONTROLLER_1                             ; D0FA: 8D 16 40    ..@
+ STA JOY1                                     ; D0FA: 8D 16 40    ..@
  LSR A                                        ; D0FD: 4A          J
- STA CONTROLLER_1                             ; D0FE: 8D 16 40    ..@
+ STA JOY1                                     ; D0FE: 8D 16 40    ..@
  TAX                                          ; D101: AA          .
  JSR sub_CD10A                                ; D102: 20 0A D1     ..
  LDX scanController2                          ; D105: AE 75 04    .u.
  BEQ CD15A                                    ; D108: F0 50       .P
 .sub_CD10A
- LDA CONTROLLER_1,X                           ; D10A: BD 16 40    ..@
+ LDA JOY1,X                                   ; D10A: BD 16 40    ..@
  AND #3                                       ; D10D: 29 03       ).
  CMP #1                                       ; D10F: C9 01       ..
  ROR controller1A,X                           ; D111: 7E B2 04    ~..
- LDA CONTROLLER_1,X                           ; D114: BD 16 40    ..@
+ LDA JOY1,X                                   ; D114: BD 16 40    ..@
  AND #3                                       ; D117: 29 03       ).
  CMP #1                                       ; D119: C9 01       ..
  ROR controller1B,X                           ; D11B: 7E B4 04    ~..
- LDA CONTROLLER_1,X                           ; D11E: BD 16 40    ..@
+ LDA JOY1,X                                   ; D11E: BD 16 40    ..@
  AND #3                                       ; D121: 29 03       ).
  CMP #1                                       ; D123: C9 01       ..
  ROR controller1Select,X                      ; D125: 7E B8 04    ~..
- LDA CONTROLLER_1,X                           ; D128: BD 16 40    ..@
+ LDA JOY1,X                                   ; D128: BD 16 40    ..@
  AND #3                                       ; D12B: 29 03       ).
  CMP #1                                       ; D12D: C9 01       ..
  ROR controller1Start,X                       ; D12F: 7E B6 04    ~..
- LDA CONTROLLER_1,X                           ; D132: BD 16 40    ..@
+ LDA JOY1,X                                   ; D132: BD 16 40    ..@
  AND #3                                       ; D135: 29 03       ).
  CMP #1                                       ; D137: C9 01       ..
  ROR controller1Up,X                          ; D139: 7E AC 04    ~..
- LDA CONTROLLER_1,X                           ; D13C: BD 16 40    ..@
+ LDA JOY1,X                                   ; D13C: BD 16 40    ..@
  AND #3                                       ; D13F: 29 03       ).
  CMP #1                                       ; D141: C9 01       ..
  ROR controller1Down,X                        ; D143: 7E AA 04    ~..
- LDA CONTROLLER_1,X                           ; D146: BD 16 40    ..@
+ LDA JOY1,X                                   ; D146: BD 16 40    ..@
  AND #3                                       ; D149: 29 03       ).
  CMP #1                                       ; D14B: C9 01       ..
  ROR controller1Left,X                        ; D14D: 7E AE 04    ~..
- LDA CONTROLLER_1,X                           ; D150: BD 16 40    ..@
+ LDA JOY1,X                                   ; D150: BD 16 40    ..@
  AND #3                                       ; D153: 29 03       ).
  CMP #1                                       ; D155: C9 01       ..
  ROR controller1Right,X                       ; D157: 7E B0 04    ~..
@@ -7095,12 +7099,12 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; EFBD: 4C AD C0    L..
 
 ; ******************************************************************************
-.CA2C3_b6
+.DIALS_b6
  LDA currentBank                              ; EFC0: A5 F7       ..
  PHA                                          ; EFC2: 48          H
  LDA #6                                       ; EFC3: A9 06       ..
  JSR SetBank                                  ; EFC5: 20 AE C0     ..
- JSR LA2C3                                    ; EFC8: 20 C3 A2     ..
+ JSR DIALS                                    ; EFC8: 20 C3 A2     ..
  JMP ResetBank                                ; EFCB: 4C AD C0    L..
 
 ; ******************************************************************************
@@ -7554,18 +7558,18 @@ LDFFF = sub_CDFFE+1
  JMP ResetBank                                ; F290: 4C AD C0    L..
 
 ; ******************************************************************************
-.CB341_b3
+.ClearTiles_b3
  LDA currentBank                              ; F293: A5 F7       ..
  CMP #3                                       ; F295: C9 03       ..
  BEQ CF2A5                                    ; F297: F0 0C       ..
  PHA                                          ; F299: 48          H
  LDA #3                                       ; F29A: A9 03       ..
  JSR SetBank                                  ; F29C: 20 AE C0     ..
- JSR CLIP                                     ; F29F: 20 41 B3     A.
+ JSR ClearTiles                               ; F29F: 20 41 B3     A.
  JMP ResetBank                                ; F2A2: 4C AD C0    L..
 
 .CF2A5
- JMP CLIP                                     ; F2A5: 4C 41 B3    LA.
+ JMP ClearTiles                               ; F2A5: 4C 41 B3    LA.
 
 ; ******************************************************************************
 .SCAN_b1

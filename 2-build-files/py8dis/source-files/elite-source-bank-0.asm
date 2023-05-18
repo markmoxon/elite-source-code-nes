@@ -716,24 +716,28 @@ OAM_DATA          = &2004
 PPU_SCROLL        = &2005
 PPU_ADDR          = &2006
 PPU_DATA          = &2007
-SQ1_ENV           = &4000
+SQ1_VOL           = &4000
 SQ1_SWEEP         = &4001
 SQ1_LO            = &4002
 SQ1_HI            = &4003
-SQ2_ENV           = &4004
+SQ2_VOL           = &4004
 SQ2_SWEEP         = &4005
 SQ2_LO            = &4006
 SQ2_HI            = &4007
-TRI_CTRL          = &4008
+TRI_LINEAR        = &4008
 TRI_LO            = &400A
 TRI_HI            = &400B
-NOI_ENV           = &400C
-NOI_RAND          = &400E
-NOI_LEN           = &400F
+NOISE_VOL         = &400C
+NOISE_LO          = &400E
+NOISE_HI          = &400F
+DMC_FREQ          = &4010
+DMC_RAW           = &4011
+DMC_START         = &4012
+DMC_LEN           = &4013
 OAM_DMA           = &4014
-APU_FLAGS         = &4015
-CONTROLLER_1      = &4016
-CONTROLLER_2      = &4017
+SND_CHN           = &4015
+JOY1              = &4016
+JOY2              = &4017
 pattBuffer0       = &6000
 pattBuffer1       = &6800
 nameBuffer0       = &7000
@@ -907,7 +911,7 @@ SetSystemImage_b5 = &EF88
 GetSystemImage_b5 = &EF96
 SetSystemImage2_b4 = &EFA4
 GetSystemImage2_b4 = &EFB2
-CA2C3_b6          = &EFC0
+DIALS_b6          = &EFC0
 CBA63_b6          = &EFCE
 CB39D_b0          = &EFDC
 LL164_b6          = &EFF7
@@ -948,7 +952,7 @@ CBAF3_b1          = &F25A
 LF260             = &F260
 TT66_b0           = &F26E
 CLIP_b1           = &F280
-CB341_b3          = &F293
+ClearTiles_b3     = &F293
 SCAN_b1           = &F2A8
 C8926_b0          = &F2BD
 subm_F2CE         = &F2CE
@@ -2035,7 +2039,7 @@ SetupMMC1         = &FB89
  JSR LD977                                    ; 8735: 20 77 D9     w.
  JSR COMPAS                                   ; 8738: 20 16 AA     ..
  JSR DrawPitchRollBars                        ; 873B: 20 91 8B     ..
- JSR CA2C3_b6                                 ; 873E: 20 C0 EF     ..
+ JSR DIALS_b6                                 ; 873E: 20 C0 EF     ..
  LDX drawingPhase                             ; 8741: A6 C0       ..
  LDA L03EF,X                                  ; 8743: BD EF 03    ...
  ORA #&40 ; '@'                               ; 8746: 09 40       .@
@@ -3970,7 +3974,7 @@ M32_1 = M32+1
  BNE BRP                                      ; 9470: D0 C4       ..
 ; ******************************************************************************
 .TBRIEF
- JSR CB341_b3                                 ; 9472: 20 93 F2     ..
+ JSR ClearTiles_b3                            ; 9472: 20 93 F2     ..
  LDA #&95                                     ; 9475: A9 95       ..
  JSR TT66                                     ; 9477: 20 B5 BE     ..
  LDA TP                                       ; 947A: AD 9E 03    ...
@@ -8372,7 +8376,7 @@ LAFB4 = sub_CAFB3+1
  JSR RES2                                     ; B2F6: 20 8A AD     ..
  LDA #5                                       ; B2F9: A9 05       ..
  JSR subm_E909                                ; B2FB: 20 09 E9     ..
- JSR subm_B484                                ; B2FE: 20 84 B4     ..
+ JSR ResetKeyLogger                           ; B2FE: 20 84 B4     ..
  JSR subm_F3BC                                ; B301: 20 BC F3     ..
  LDA controller1Select                        ; B304: AD B8 04    ...
  AND controller1Start                         ; B307: 2D B6 04    -..
@@ -8419,7 +8423,7 @@ LAFB4 = sub_CAFB3+1
  JSR BR2_Part2                                ; B35B: 20 6A B3     j.
 ; ******************************************************************************
 .BAY
- JSR CB341_b3                                 ; B35E: 20 93 F2     ..
+ JSR ClearTiles_b3                            ; B35E: 20 93 F2     ..
  LDA #&FF                                     ; B361: A9 FF       ..
  STA QQ12                                     ; B363: 85 A5       ..
  LDA #3                                       ; B365: A9 03       ..
@@ -8471,7 +8475,7 @@ LAFB4 = sub_CAFB3+1
  STY L0480                                    ; B3BC: 8C 80 04    ...
  STX TYPE                                     ; B3BF: 86 A3       ..
  JSR RESET                                    ; B3C1: 20 6B AD     k.
- JSR subm_B484                                ; B3C4: 20 84 B4     ..
+ JSR ResetKeyLogger                           ; B3C4: 20 84 B4     ..
  JSR SetupPPUForIconBar                       ; B3C7: 20 7D EC     }.
  LDA #&60 ; '`'                               ; B3CA: A9 60       .`
  STA INWK_14                                  ; B3CC: 85 17       ..
@@ -8583,7 +8587,7 @@ LAFB4 = sub_CAFB3+1
  RTS                                          ; B483: 60          `
 
 ; ******************************************************************************
-.subm_B484
+.ResetKeyLogger
  LDX #6                                       ; B484: A2 06       ..
  LDA #0                                       ; B486: A9 00       ..
  STA L0081                                    ; B488: 85 81       ..
@@ -10041,7 +10045,7 @@ LAFB4 = sub_CAFB3+1
  JSR subm_CEA5                                ; BEC1: 20 A5 CE     ..
 .CBEC4
  JSR subm_D8C5                                ; BEC4: 20 C5 D8     ..
- JSR CB341_b3                                 ; BEC7: 20 93 F2     ..
+ JSR ClearTiles_b3                            ; BEC7: 20 93 F2     ..
  LDA #&10                                     ; BECA: A9 10       ..
  STA L00B5                                    ; BECC: 85 B5       ..
  LDX #0                                       ; BECE: A2 00       ..
