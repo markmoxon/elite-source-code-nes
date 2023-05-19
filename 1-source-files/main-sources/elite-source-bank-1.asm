@@ -11027,6 +11027,15 @@ ENDMACRO
  BNE STC2               \ Jump up to STC2 to draw this new particle (this BNE is
                         \ effectively a JMP as A will never be zero)
 
+\ ******************************************************************************
+\
+\       Name: HANGER
+\       Type: Subroutine
+\   Category: Ship hangar
+\    Summary: Display the ship hangar
+\
+\ ******************************************************************************
+
 .CB575
 
  EQUB &50, &58          \ ???

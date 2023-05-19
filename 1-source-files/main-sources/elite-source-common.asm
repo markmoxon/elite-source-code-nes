@@ -1,5 +1,30 @@
 \ ******************************************************************************
 \
+\ NES ELITE GAME SOURCE (BANK CONFIGURATION)
+\
+\ NES Elite was written by Ian Bell and David Braben and is copyright D. Braben
+\ and I. Bell 1992
+\
+\ The code on this site has been reconstructed from a disassembly of the version
+\ released on Ian Bell's personal website at http://www.elitehomepage.org/
+\
+\ The commentary is copyright Mark Moxon, and any misunderstandings or mistakes
+\ in the documentation are entirely my fault
+\
+\ The terminology and notations used in this commentary are explained at
+\ https://www.bbcelite.com/about_site/terminology_used_in_this_commentary.html
+\
+\ The deep dive articles referred to in this commentary can be found at
+\ https://www.bbcelite.com/deep_dives
+\
+\ ------------------------------------------------------------------------------
+\
+\ This source file contains configuration that is common to all eight banks.
+\
+\ ******************************************************************************
+
+\ ******************************************************************************
+\
 \ Configuration variables
 \
 \ ******************************************************************************
@@ -47,7 +72,15 @@
  LL = 29                \ The length of lines (in characters) of justified text
                         \ in the extended tokens system
 
- PPU_CTRL   = &2000     \ NES PPU registers
+\ ******************************************************************************
+\
+\ NES PPU registers
+\
+\ See https://www.nesdev.org/wiki/PPU_registers
+\
+\ ******************************************************************************
+
+ PPU_CTRL   = &2000
  PPU_MASK   = &2001
  PPU_STATUS = &2002
  OAM_ADDR   = &2003
@@ -56,6 +89,37 @@
  PPU_ADDR   = &2006
  PPU_DATA   = &2007
  OAM_DMA    = &4014
+
+\ ******************************************************************************
+\
+\ NES 2A03 CPU registers (I/O and sound)
+\
+\ See https://www.nesdev.org/wiki/2A03
+\
+\ ******************************************************************************
+
+ SQ1_VOL    = &4000
+ SQ1_SWEEP  = &4001
+ SQ1_LO     = &4002
+ SQ1_HI     = &4003
+ SQ2_VOL    = &4004
+ SQ2_SWEEP  = &4005
+ SQ2_LO     = &4006
+ SQ2_HI     = &4007
+ TRI_LINEAR = &4008
+ TRI_LO     = &400A
+ TRI_HI     = &400B
+ NOISE_VOL  = &400C
+ L400D      = &400D
+ NOISE_LO   = &400E
+ NOISE_HI   = &400F
+ DMC_FREQ   = &4010
+ DMC_RAW    = &4011
+ DMC_START  = &4012
+ DMC_LEN    = &4013
+ SND_CHN    = &4015
+ JOY1       = &4016
+ JOY2       = &4017
 
 \ ******************************************************************************
 \
@@ -568,7 +632,7 @@
 
 .QQ11a
 
- SKIP 1
+ SKIP 1                 \ ???
 
 .ZZ
 
@@ -847,7 +911,7 @@
 
 .L00DB
 
- SKIP 2                \ ???
+ SKIP 2                 \ ???
 
 .L00DD
 
@@ -2056,6 +2120,7 @@ ORG &0200
                         \
                         \ There are #NOSH + 1 slots, but the ship-spawning
                         \ routine at NWSHP only populates #NOSH of them, so
+                        \ there are 9 slots but only 8 are used for ships
                         \ (the last slot is effectively used as a null
                         \ terminator when shuffling the slots down in the
                         \ KILLSHP routine)
@@ -2399,10 +2464,6 @@ ORG &0200
 .TRIBBLE
 
  SKIP 2                 \ The number of Trumbles in the cargo hold
-                        \
-                        \ The Master version doesn't actually have Trumbles, but
-                        \ the Trumble code from the other versions was kept when
-                        \ the Master version was put together
 
 .TALLYL
 
@@ -2564,249 +2625,72 @@ ORG &0200
 
  SKIP 1                 \ ???
 
-\ ******************************************************************************
-\
-\       Name: DTW6
-\       Type: Variable
-\   Category: Text
-\    Summary: A flag to denote whether printing in lower case is enabled for
-\             extended text tokens
-\  Deep dive: Extended text tokens
-\
-\ ------------------------------------------------------------------------------
-\
-\ This variable is used to indicate whether lower case is currently enabled. It
-\ has two values:
-\
-\   * %10000000 = lower case is enabled
-\
-\   * %00000000 = lower case is not enabled
-\
-\ The default value is %00000000 (lower case is not enabled).
-\
-\ The flag is set to %10000000 (lower case is enabled) by jump token 13 {lower
-\ case}, which calls routine MT10 to change the value of DTW6.
-\
-\ The flag is set to %00000000 (lower case is not enabled) by jump token 1, {all
-\ caps}, and jump token 1, {sentence case}, which call routines MT1 and MT2 to
-\ change the value of DTW6.
-\
-\ ******************************************************************************
-
 .DTW6
 
- EQUB %00000000
-
-\ ******************************************************************************
-\
-\       Name: DTW2
-\       Type: Variable
-\   Category: Text
-\    Summary: A flag that indicates whether we are currently printing a word
-\  Deep dive: Extended text tokens
-\
-\ ------------------------------------------------------------------------------
-\
-\ This variable is used to indicate whether we are currently printing a word. It
-\ has two values:
-\
-\   * 0 = we are currently printing a word
-\
-\   * Non-zero = we are not currently printing a word
-\
-\ The default value is %11111111 (we are not currently printing a word).
-\
-\ The flag is set to %00000000 (we are currently printing a word) whenever a
-\ non-terminator character is passed to DASC for printing.
-\
-\ The flag is set to %11111111 (we are not currently printing a word) whenever a
-\ terminator character (full stop, colon, carriage return, line feed, space) is
-\ passed to DASC for printing. It is also set to %11111111 by jump token 8,
-\ {tab 6}, which calls routine MT8 to change the value of DTW2, and to %10000000
-\ by TTX66 when we clear the screen.
-\
-\ ******************************************************************************
+ SKIP 1                 \ A flag to denote whether printing in lower case is enabled for
+                        \ enabled for extended text tokens
+                        \
+                        \   * %10000000 = lower case is enabled
+                        \
+                        \   * %00000000 = lower case is not enabled
 
 .DTW2
 
- EQUB %11111111
-
-\ ******************************************************************************
-\
-\       Name: DTW3
-\       Type: Variable
-\   Category: Text
-\    Summary: A flag for switching between standard and extended text tokens
-\  Deep dive: Extended text tokens
-\
-\ ------------------------------------------------------------------------------
-\
-\ This variable is used to indicate whether standard or extended text tokens
-\ should be printed by calls to DETOK. It allows us to mix standard tokens in
-\ with extended tokens. It has two values:
-\
-\   * %00000000 = print extended tokens (i.e. those in TKN1 and RUTOK)
-\
-\   * %11111111 = print standard tokens (i.e. those in QQ18)
-\
-\ The default value is %00000000 (extended tokens).
-\
-\ Standard tokens are set by jump token {6}, which calls routine MT6 to change
-\ the value of DTW3 to %11111111.
-\
-\ Extended tokens are set by jump token {5}, which calls routine MT5 to change
-\ the value of DTW3 to %00000000.
-\
-\ ******************************************************************************
+ SKIP 1                 \ A flag that indicates whether we are currently
+                        \ printing a word
+                        \
+                        \   * 0 = we are currently printing a word
+                        \
+                        \   * Non-zero = we are not currently printing a word
 
 .DTW3
 
- EQUB %00000000
-
-\ ******************************************************************************
-\
-\       Name: DTW4
-\       Type: Variable
-\   Category: Text
-\    Summary: Flags that govern how justified extended text tokens are printed
-\  Deep dive: Extended text tokens
-\
-\ ------------------------------------------------------------------------------
-\
-\ This variable is used to control how justified text tokens are printed as part
-\ of the extended text token system. There are two bits that affect justified
-\ text:
-\
-\   * Bit 7: 1 = justify text
-\            0 = do not justify text
-\
-\   * Bit 6: 1 = buffer the entire token before printing, including carriage
-\                returns (used for in-flight messages only)
-\            0 = print the contents of the buffer whenever a carriage return
-\                appears in the token
-\
-\ The default value is %00000000 (do not justify text, print buffer on carriage
-\ return).
-\
-\ The flag is set to %10000000 (justify text, print buffer on carriage return)
-\ by jump token 14, {justify}, which calls routine MT14 to change the value of
-\ DTW4.
-\
-\ The flag is set to %11000000 (justify text, buffer entire token) by routine
-\ MESS, which printe in-flight messages.
-\
-\ The flag is set to %00000000 (do not justify text, print buffer on carriage
-\ return) by jump token 15, {left align}, which calls routine MT1 to change the
-\ value of DTW4.
-\
-\ ******************************************************************************
+ SKIP 1                 \ A flag for switching between standard and extended
+                        \ text tokens
+                        \
+                        \   * %00000000 = print extended tokens (i.e. those in
+                        \                 TKN1 and RUTOK)
+                        \
+                        \   * %11111111 = print standard tokens (i.e. those in
+                        \                 QQ18)
 
 .DTW4
 
- EQUB 0
-
-\ ******************************************************************************
-\
-\       Name: DTW5
-\       Type: Variable
-\   Category: Text
-\    Summary: The size of the justified text buffer at BUF
-\  Deep dive: Extended text tokens
-\
-\ ------------------------------------------------------------------------------
-\
-\ When justified text is enabled by jump token 14, {justify}, during printing of
-\ extended text tokens, text is fed into a buffer at BUF instead of being
-\ printed straight away, so it can be padded out with spaces to justify the
-\ text. DTW5 contains the size of the buffer, so BUF + DTW5 points to the first
-\ free byte after the end of the buffer.
-\
-\ ******************************************************************************
+ SKIP 1                 \ Flags that govern how justified extended text tokens
+                        \ are printed
+                        \
+                        \   * Bit 7: 1 = justify text
+                        \            0 = do not justify text
+                        \
+                        \   * Bit 6: 1 = buffer the entire token before
+                        \                printing, including carriage returns
+                        \                (used for in-flight messages only)
+                        \            0 = print the contents of the buffer
+                        \                whenever a carriage return appears
+                        \                in the token
 
 .DTW5
 
- EQUB 0
-
-\ ******************************************************************************
-\
-\       Name: DTW1
-\       Type: Variable
-\   Category: Text
-\    Summary: A mask for applying the lower case part of Sentence Case to
-\             extended text tokens
-\  Deep dive: Extended text tokens
-\
-\ ------------------------------------------------------------------------------
-\
-\ This variable is used to change characters to lower case as part of applying
-\ Sentence Case to extended text tokens. It has two values:
-\
-\   * %00100000 = apply lower case to the second letter of a word onwards
-\
-\   * %00000000 = do not change case to lower case
-\
-\ The default value is %00100000 (apply lower case).
-\
-\ The flag is set to %00100000 (apply lower case) by jump token 2, {sentence
-\ case}, which calls routine MT2 to change the value of DTW1.
-\
-\ The flag is set to %00000000 (do not change case to lower case) by jump token
-\ 1, {all caps}, which calls routine MT1 to change the value of DTW1.
-\
-\ The letter to print is OR'd with DTW1 in DETOK2, which lower-cases the letter
-\ by setting bit 5 (if DTW1 is %00100000). However, this OR is only done if bit
-\ 7 of DTW2 is clear, i.e. we are printing a word, so this doesn't affect the
-\ first letter of the word, which remains capitalised.
-\
-\ ******************************************************************************
+ SKIP 1                 \ The size of the justified text buffer at BUF
 
 .DTW1
 
- EQUB %00100000
-
-\ ******************************************************************************
-\
-\       Name: DTW8
-\       Type: Variable
-\   Category: Text
-\    Summary: A mask for capitalising the next letter in an extended text token
-\  Deep dive: Extended text tokens
-\
-\ ------------------------------------------------------------------------------
-\
-\ This variable is only used by one specific extended token, the {single cap}
-\ jump token, which capitalises the next letter only. It has two values:
-\
-\   * %11011111 = capitalise the next letter
-\
-\   * %11111111 = do not change case
-\
-\ The default value is %11111111 (do not change case).
-\
-\ The flag is set to %11011111 (capitalise the next letter) by jump token 19,
-\ {single cap}, which calls routine MT19 to change the value of DTW.
-\
-\ The flag is set to %11111111 (do not change case) at the start of DASC, after
-\ the letter has been capitalised in DETOK2, so the effect is to capitalise one
-\ letter only.
-\
-\ The letter to print is AND'd with DTW8 in DETOK2, which capitalises the letter
-\ by clearing bit 5 (if DTW8 is %11011111). However, this AND is only done if at
-\ least one of the following is true:
-\
-\   * Bit 7 of DTW2 is set (we are not currently printing a word)
-\
-\   * Bit 7 of DTW6 is set (lower case has been enabled by jump token 13, {lower
-\     case}
-\
-\ In other words, we only capitalise the next letter if it's the first letter in
-\ a word, or we are printing in lower case.
-\
-\ ******************************************************************************
+ SKIP 1                 \ A mask for applying the lower case part of Sentence
+                        \ Case to extended text tokens
+                        \
+                        \   * %00100000 = apply lower case to the second letter
+                        \                 of a word onwards
+                        \
+                        \   * %00000000 = do not change case to lower case
 
 .DTW8
 
- EQUB %11111111
+ SKIP 1                 \ A mask for capitalising the next letter in an extended
+                        \ text token
+                        \
+                        \   * %11011111 = capitalise the next letter
+                        \
+                        \   * %11111111 = do not change case
 
 .XP
 
@@ -2851,7 +2735,8 @@ ORG &0200
                         \
                         \   * &FF = no target
                         \
-                        \            missile is locked onto
+                        \   * 1-8 = the slot number of the ship that our
+                        \           missile is locked onto
 
 .L0402
 
@@ -3055,7 +2940,6 @@ ORG &0200
                         \ centre point, so 1 means roll is decreasing at the
                         \ maximum rate, 128 means roll is not changing, and
                         \ 255 means roll is increasing at the maximum rate
-                        \
 
 .JSTY
 
@@ -3068,7 +2952,6 @@ ORG &0200
                         \ centre point, so 1 means pitch is decreasing at the
                         \ maximum rate, 128 means pitch is not changing, and
                         \ 255 means pitch is increasing at the maximum rate
-                        \
 
 .L0478
 
@@ -3117,12 +3000,12 @@ ORG &0200
 .XSAV2
 
  SKIP 1                 \ Temporary storage, used for storing the value of the X
-                        \ register in the TT26 routine
+                        \ register in the CHPR routine
 
 .YSAV2
 
  SKIP 1                 \ Temporary storage, used for storing the value of the Y
-                        \ register in the TT26 routine
+                        \ register in the CHPR routine
 
 .L4083
 
@@ -3427,18 +3310,9 @@ ORG &0200
 
  SKIP 90                \ The line buffer used by DASC to print justified text
 
-\ ******************************************************************************
-\
-\       Name: HANGFLAG
-\       Type: Variable
-\   Category: Ship hangar
-\    Summary: The number of ships being displayed in the ship hangar
-\
-\ ******************************************************************************
-
 .HANGFLAG
 
- EQUB 0
+ SKIP 1                 \ The number of ships being displayed in the ship hangar
 
 .MANY
 
@@ -3592,4 +3466,34 @@ ORG &0200
 .pattBuffer1
 
  SKIP 8 * 256           \ 256 patterns, 8 bytes per pattern (8x8 pixels)
+
+\ ******************************************************************************
+\
+\       Name: nameBuffer0
+\       Type: Variable
+\   Category: Drawing lines
+\    Summary: Buffer for nametable and attribute table 0
+\
+\ ******************************************************************************
+
+.nameBuffer0
+
+ SKIP 30 * 32           \ 30 rows of 32 tile numbers
+
+ SKIP 8 * 8             \ 8 rows of 8 attribute bytes (each is a 2x2 tile block)
+
+\ ******************************************************************************
+\
+\       Name: nameBuffer1
+\       Type: Variable
+\   Category: Drawing lines
+\    Summary: Buffer for nametable and attribute table 1
+\
+\ ******************************************************************************
+
+.nameBuffer1
+
+ SKIP 30 * 32           \ 30 rows of 32 tile numbers
+
+ SKIP 8 * 8             \ 8 rows of 8 attribute bytes (each is a 2x2 tile block)
 
