@@ -296,19 +296,23 @@
 
 .hiddenColour
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Contains the colour value for when lines are hidden
+                        \ in palette 0, e.g. &0F for black (see SetPalette)
 
 .visibleColour
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Contains the colour value for when lines are visible
+                        \ in palette 0, e.g. &2C for cyan (see SetPalette)
 
 .paletteColour1
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Contains the colour value to be used for palette entry
+                        \ 1 in the current (non-space) view (see SetPalette)
 
 .paletteColour2
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Contains the colour value to be used for palette entry
+                        \ 2 in the current (non-space) view (see SetPalette)
 
 .L0037
 
@@ -316,15 +320,18 @@
 
 .nmiTimer
 
- SKIP 1                 \ ???
+ SKIP 1                 \ A counter that gets decremented in the NMI routine
+                        \ from 50 (&32) to 1 and back up to &32
 
 .nmiTimerLo
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Low byte of a counter that's incremented by 1 every
+                        \ time nmiTimer wraps
 
 .nmiTimerHi
 
- SKIP 1                 \ ???
+ SKIP 1                 \ High byte of a counter that's incremented by 1 every
+                        \ time nmiTimer wraps
 
 .YC
 
@@ -632,7 +639,7 @@
 
 .QQ11a
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Can be 0, &FF or QQ11 - some kind of view flag ???
 
 .ZZ
 
@@ -750,11 +757,11 @@
 
 .Yx1M2
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Height of screen for text-based views ???
 
 .Yx2M2
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Contains 2 x Yx1M2 ???
 
 .Yx2M1
 
@@ -783,15 +790,17 @@
 
 .tileNumber
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Contains the current tile number to draw into ???
 
 .pattBufferHi
 
- SKIP 1                 \ ???
+ SKIP 1                 \ High byte of the address of the current pattern
+                        \ buffer (&60 or &68)
 
 .SC2
 
- SKIP 2                 \ ???
+ SKIP 2                 \ Typically contains an address that's used alongside
+                        \ SC(1 0)???
 
 .L00BC
 
@@ -811,39 +820,42 @@
 
 .drawingPhase
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Flipped manually by calling ChangeDrawingPhase,
+                        \ controls whether we are showing namespace/palette
+                        \ buffer 0 or 1 (and which tile number is chosen from
+                        \ the following)
 
 .tile0Phase0
 
- SKIP 1                 \ ???
+ SKIP 1                 \ A tile number, for phase 0
 
 .tile0Phase1
 
- SKIP 1                 \ ???
+ SKIP 1                 \ A tile number, for phase 1
 
 .tile1Phase0
 
- SKIP 1                 \ ???
+ SKIP 1                 \ A tile number, for phase 0
 
 .tile1Phase1
 
- SKIP 1                 \ ???
+ SKIP 1                 \ A tile number, for phase 1
 
 .tile2Phase0
 
- SKIP 1                 \ ???
+ SKIP 1                 \ A tile number, for phase 0
 
 .tile2Phase1
 
- SKIP 1                 \ ???
+ SKIP 1                 \ A tile number, for phase 1
 
 .tile3Phase0
 
- SKIP 1                 \ ???
+ SKIP 1                 \ A tile number, for phase 0
 
 .tile3Phase1
 
- SKIP 1                 \ ???
+ SKIP 1                 \ A tile number, for phase 1
 
 .L00C9
 
@@ -875,7 +887,7 @@
 
 .tempVar
 
- SKIP 2                 \ ???
+ SKIP 2                 \ Stores a 16-bit number, not an address ???
 
 .L00D2
 
@@ -887,7 +899,7 @@
 
 .addr1
 
- SKIP 2                 \ ???
+ SKIP 2                 \ An address within the PPU to be poked to ???
 
 .L00D6
 
@@ -917,9 +929,9 @@
 
  SKIP 2                 \ ???
 
-.L00DF
+.pallettePhasex8
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Set to 0 or palettePhase * 8 (i.e. 0 or %0001) ???
 
 .L00E0
 
@@ -927,51 +939,64 @@
 
 .patternBufferLo
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Low byte of the address of the current pattern
+                        \ buffer (unused), always zero
 
 .patternBufferHi
 
- SKIP 1                 \ ???
+ SKIP 1                 \ High byte of the address of the current pattern
+                        \ buffer (unused)
+                        \
+                        \   * &60 when drawingPhase = 0
+                        \   * &68 when drawingPhase = 1
 
 .ppuNametableLo
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Low byte of the address of the current PPU nametable
+                        \ (unused), always zero
 
 .ppuNametableHi
 
- SKIP 1                 \ ???
+ SKIP 1                 \ High byte of the address of the current PPU nametable
+                        \ (unused)
+                        \
+                        \   * &20 when drawingPhase = 0
+                        \   * &24 when drawingPhase = 1
 
 .drawingPhaseDebug
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Set to 0 when drawing phase changes, never read ???
 
 .nameBufferHi
 
- SKIP 1                 \ ???
+ SKIP 1                 \ High byte of the address of the current nametable
+                        \ buffer (&70 or &74)
 
 .startupDebug
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Set to 0 in S%, never used again ???
 
 .temp1
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Temporary variable, used in bank 7 ???
 
 .setupPPUForIconBar
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Bit 7 set means we set nametable 0 and palette table 0
+                        \ when the PPU starts drawing the icon bar
 
 .showUserInterface
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Bit 7 set means display the user interface (so we only
+                        \ clear it for the game over screen) 
 
 .addr4
 
- SKIP 2                 \ ???
+ SKIP 2                 \ An address within the PPU to be poked to ???
 
 .addr5
 
- SKIP 2                 \ ???
+ SKIP 2                 \ An address to fetch PPU data from ???
 
 .L00EF
 
@@ -987,15 +1012,16 @@
 
 .palettePhase
 
- SKIP 1                 \ ???
+ SKIP 1                 \ 0 or 1, flips every NMI, controls palette switching
+                        \ for space view in NMI routine ???
 
 .otherPhase
 
- SKIP 1                 \ ???
+ SKIP 1                 \ 0 or 1, flipped in subm_CB42 ???
 
 .ppuCtrlCopy
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Contains a copy of PPU_CTRL
 
 .L00F6
 
@@ -1003,11 +1029,13 @@
 
 .currentBank
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Contains the number of the ROM bank (0 to 6) that is
+                        \ currently paged into memory at &8000
 
 .runningSetBank
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Set to &FF if we are inside the SetBank routine when
+                        \ the NMI interrupts, 0 otherwise
 
 .L00F9
 
@@ -1015,7 +1043,7 @@
 
 .addr2
 
- SKIP 2                 \ ???
+ SKIP 2                 \ An address within the PPU to be poked to ???
 
 .L00FC
 
@@ -2619,7 +2647,7 @@ ORG &0200
 
 .frameCounter
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Increments every VBlank ???
 
 .L03F2
 
@@ -2879,19 +2907,20 @@ ORG &0200
 
 .nmiStoreA
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Temporary storage for the A register during NMI
 
 .nmiStoreX
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Temporary storage for the X register during NMI
 
 .nmiStoreY
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Temporary storage for the Y register during NMI
 
 .pictureTile
 
- SKIP 1                 \ ???
+ SKIP 1                 \ The number of the first tile where system pictures
+                        \ are stored ???
 
 .L046D
 
@@ -2899,11 +2928,11 @@ ORG &0200
 
 .boxEdge1
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Bitmap for drawing box edge ???
 
 .boxEdge2
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Bitmap for drawing box edge ???
 
 .L0470
 
@@ -2927,7 +2956,7 @@ ORG &0200
 
 .scanController2
 
- SKIP 1                 \ ???
+ SKIP 1                 \ If non-zero, scan controller 2 ???
 
 .JSTX
 
@@ -3067,7 +3096,10 @@ ORG &0200
 
 .systemFlag
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Contains a new generated value for current system:
+                        \
+                        \   * Bits 0-3 contain system image number from bank 5
+                        \   * Bits 6 and 7 are set in bank 5 routine ???
 
 .gov
 
@@ -3179,23 +3211,27 @@ ORG &0200
 
 .QQ18Lo
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Gets set to the low byte of the address of the text
+                        \ token table used by the ex routine (QQ18)
 
 .QQ18Hi
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Gets set to the high byte of the address of the text
+                        \ token table used by the ex routine (QQ18)
 
 .TKN1Lo
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Gets set to the low byte of the address of the text
+                        \ token table used by the DETOK routine (TKN1)
 
 .TKN1Hi
 
- SKIP 1                 \ ???
+ SKIP 1                 \ Gets set to the high byte of the address of the text
+                        \ token table used by the DETOK routine (TKN1)
 
 .language
 
- SKIP 1                 \ ???
+ SKIP 1                 \ The language chosen (English, German, French) ???
 
 .L04A9
 
