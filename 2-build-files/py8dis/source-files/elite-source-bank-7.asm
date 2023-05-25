@@ -1,54 +1,12 @@
 ; Memory locations
 ZP                = &0000
 RAND              = &0002
-RAND_1            = &0002
-RAND_2            = &0003
-RAND_3            = &0004
-L0005             = &0005
 T1                = &0006
 SC                = &0007
-SC_1              = &0008
 INWK              = &0009
 XX1               = &0009
-INWK_1            = &000A
-INWK_2            = &000B
-INWK_3            = &000C
-INWK_4            = &000D
-INWK_5            = &000E
-INWK_6            = &000F
-INWK_7            = &0010
-INWK_8            = &0011
-INWK_9            = &0012
-INWK_10           = &0013
-INWK_11           = &0014
-INWK_12           = &0015
-INWK_13           = &0016
-INWK_14           = &0017
-INWK_15           = &0018
-INWK_16           = &0019
-INWK_17           = &001A
-INWK_18           = &001B
-INWK_19           = &001C
-INWK_20           = &001D
-INWK_21           = &001E
-INWK_22           = &001F
-INWK_23           = &0020
-INWK_24           = &0021
-INWK_25           = &0022
-INWK_26           = &0023
-INWK_27           = &0024
-INWK_28           = &0025
-INWK_29           = &0026
-INWK_30           = &0027
-INWK_31           = &0028
-INWK_32           = &0029
-INWK_33           = &002A
-INWK_34           = &002B
-INWK_35           = &002C
 NEWB              = &002D
 P                 = &002F
-P_1               = &0030
-P_2               = &0031
 XC                = &0032
 hiddenColour      = &0033
 visibleColour     = &0034
@@ -61,96 +19,34 @@ YC                = &003B
 QQ17              = &003C
 K3                = &003D
 XX2               = &003D
-XX2_1             = &003E
-XX2_2             = &003F
-XX2_3             = &0040
-XX2_4             = &0041
-XX2_5             = &0042
-XX2_6             = &0043
-XX2_7             = &0044
-XX2_8             = &0045
-XX2_9             = &0046
-XX2_10            = &0047
-XX2_11            = &0048
-XX2_12            = &0049
-XX2_13            = &004A
 K4                = &004B
-K4_1              = &004C
 XX16              = &004D
-XX16_1            = &004E
-XX16_2            = &004F
-XX16_3            = &0050
-XX16_4            = &0051
-XX16_5            = &0052
-XX16_6            = &0053
-XX16_7            = &0054
-XX16_8            = &0055
-XX16_9            = &0056
-XX16_10           = &0057
-XX16_11           = &0058
-XX16_12           = &0059
-XX16_13           = &005A
-XX16_14           = &005B
-XX16_15           = &005C
-XX16_16           = &005D
-XX16_17           = &005E
 XX0               = &005F
-XX0_1             = &0060
 INF               = &0061
 XX19              = &0061
-INF_1             = &0062
 V                 = &0063
-V_1               = &0064
 XX                = &0065
-XX_1              = &0066
 YY                = &0067
-YY_1              = &0068
 BETA              = &0069
 BET1              = &006A
 QQ22              = &006B
-QQ22_1            = &006C
 ECMA              = &006D
 ALP1              = &006E
 ALP2              = &006F
-ALP2_1            = &0070
 X1                = &0071
 XX15              = &0071
 Y1                = &0072
 X2                = &0073
 Y2                = &0074
-XX15_4            = &0075
-XX15_5            = &0076
 XX12              = &0077
-XX12_1            = &0078
-XX12_2            = &0079
-XX12_3            = &007A
-XX12_4            = &007B
-XX12_5            = &007C
 K                 = &007D
-K_1               = &007E
-K_2               = &007F
-K_3               = &0080
 QQ15              = &0082
-QQ15_1            = &0083
-QQ15_2            = &0084
-QQ15_3            = &0085
-QQ15_4            = &0086
-QQ15_5            = &0087
 K5                = &0088
 XX18              = &0088
-XX18_1            = &0089
-XX18_2            = &008A
-XX18_3            = &008B
 K6                = &008C
-K6_1              = &008D
-K6_2              = &008E
-K6_3              = &008F
-K6_4              = &0090
 BET2              = &0091
-BET2_1            = &0092
 DELTA             = &0093
 DELT4             = &0094
-DELT4_1           = &0095
 U                 = &0096
 Q                 = &0097
 R                 = &0098
@@ -186,7 +82,6 @@ L00B7             = &00B7
 tileNumber        = &00B8
 pattBufferHi      = &00B9
 SC2               = &00BA
-SC2_1             = &00BB
 L00BC             = &00BC
 L00BD             = &00BD
 L00BE             = &00BE
@@ -206,11 +101,9 @@ L00CD             = &00CD
 L00CE             = &00CE
 L00CF             = &00CF
 tempVar           = &00D0
-tempVar_1         = &00D1
 L00D2             = &00D2
 L00D3             = &00D3
 addr1             = &00D4
-addr1_1           = &00D5
 L00D6             = &00D6
 L00D7             = &00D7
 L00D8             = &00D8
@@ -230,13 +123,10 @@ temp1             = &00E8
 setupPPUForIconBar = &00E9
 showUserInterface = &00EA
 addr4             = &00EB
-addr4_1           = &00EC
 addr5             = &00ED
-addr5_1           = &00EE
 L00EF             = &00EF
 L00F0             = &00F0
 addr6             = &00F1
-addr6_1           = &00F2
 palettePhase      = &00F3
 otherPhase        = &00F4
 ppuCtrlCopy       = &00F5
@@ -244,9 +134,7 @@ L00F6             = &00F6
 currentBank       = &00F7
 runningSetBank    = &00F8
 addr2             = &00FA
-addr2_1           = &00FB
 XX3               = &0100
-XX3_1             = &0101
 ySprite0          = &0200
 tileSprite0       = &0201
 attrSprite0       = &0202
@@ -509,7 +397,6 @@ L0308             = &0308
 L0309             = &0309
 L030A             = &030A
 FRIN              = &036A
-L036C             = &036C
 JUNK              = &0373
 L0374             = &0374
 L037E             = &037E
@@ -528,12 +415,12 @@ L0393             = &0393
 L0394             = &0394
 L0395             = &0395
 NAME              = &0396
-L039D             = &039D
 TP                = &039E
 QQ0               = &039F
 QQ1               = &03A0
 CASH              = &03A1
 QQ14              = &03A5
+COK               = &03A6
 GCNT              = &03A7
 LASER             = &03A8
 CRGO              = &03AC
@@ -546,14 +433,12 @@ DKCMP             = &03C2
 GHYP              = &03C3
 ESCP              = &03C4
 TRIBBLE           = &03C5
-TRIBBLE_1         = &03C6
-TALLY_L           = &03C7
+TALLYL            = &03C7
 NOMSL             = &03C8
 FIST              = &03C9
 AVL               = &03CA
 QQ26              = &03DB
 TALLY             = &03DC
-TALLY_1           = &03DD
 QQ21              = &03DF
 NOSTM             = &03E5
 L03EA             = &03EA
@@ -585,14 +470,7 @@ KY5               = &0407
 KY6               = &0408
 KY7               = &0409
 QQ19              = &044D
-QQ19_1            = &044E
-QQ19_2            = &044F
-QQ19_3            = &0450
-QQ19_4            = &0450
 K2                = &0459
-K2_1              = &045A
-K2_2              = &045B
-K2_3              = &045C
 DLY               = &045D
 L045E             = &045E
 L045F             = &045F
@@ -638,7 +516,6 @@ QQ5               = &0496
 QQ6               = &0497
 QQ7               = &0499
 QQ8               = &049B
-QQ8_1             = &049C
 QQ9               = &049D
 QQ10              = &049E
 QQ18Lo            = &04A4
@@ -672,9 +549,7 @@ L04C6             = &04C6
 SX                = &04C8
 SY                = &04DD
 SZ                = &04F2
-BUFm1             = &0506
 BUF               = &0507
-BUF_1             = &0508
 HANGFLAG          = &0561
 MANY              = &0562
 SSPR              = &0564
@@ -683,8 +558,6 @@ SYL               = &05BA
 SZL               = &05CF
 safehouse         = &05E4
 Kpercent          = &0600
-L0601             = &0601
-L0606             = &0606
 PPU_CTRL          = &2000
 PPU_MASK          = &2001
 PPU_STATUS        = &2002
@@ -718,88 +591,7 @@ JOY2              = &4017
 pattBuffer0       = &6000
 pattBuffer1       = &6800
 nameBuffer0       = &7000
-L7001             = &7001
-L7020             = &7020
-L7021             = &7021
-L7040             = &7040
-L7041             = &7041
-L7060             = &7060
-L7061             = &7061
-L7080             = &7080
-L7081             = &7081
-L70A0             = &70A0
-L70A1             = &70A1
-L70C0             = &70C0
-L70C1             = &70C1
-L70E0             = &70E0
-L70E1             = &70E1
-L7100             = &7100
-L7101             = &7101
-L7120             = &7120
-L7121             = &7121
-L7140             = &7140
-L7141             = &7141
-L7160             = &7160
-L7161             = &7161
-L7180             = &7180
-L7181             = &7181
-L71A0             = &71A0
-L71A1             = &71A1
-L71C0             = &71C0
-L71C1             = &71C1
-L71E0             = &71E0
-L71E1             = &71E1
-L7200             = &7200
-L7201             = &7201
-L7220             = &7220
-L7221             = &7221
-L7240             = &7240
-L7241             = &7241
-L7260             = &7260
-L7261             = &7261
-L72C0             = &72C0
-L7300             = &7300
 nameBuffer1       = &7400
-L7401             = &7401
-L7420             = &7420
-L7421             = &7421
-L7440             = &7440
-L7441             = &7441
-L7460             = &7460
-L7461             = &7461
-L7480             = &7480
-L7481             = &7481
-L74A0             = &74A0
-L74A1             = &74A1
-L74C0             = &74C0
-L74C1             = &74C1
-L74E0             = &74E0
-L74E1             = &74E1
-L7500             = &7500
-L7501             = &7501
-L7520             = &7520
-L7521             = &7521
-L7540             = &7540
-L7541             = &7541
-L7560             = &7560
-L7561             = &7561
-L7580             = &7580
-L7581             = &7581
-L75A0             = &75A0
-L75A1             = &75A1
-L75C0             = &75C0
-L75C1             = &75C1
-L75E0             = &75E0
-L75E1             = &75E1
-L7600             = &7600
-L7601             = &7601
-L7620             = &7620
-L7621             = &7621
-L7640             = &7640
-L7641             = &7641
-L7660             = &7660
-L7661             = &7661
-L7700             = &7700
 L8012             = &8012
 L8021             = &8021
 L8041             = &8041
@@ -927,7 +719,7 @@ LC006 = sub_CC004+2
  LDA #0                                       ; C02B: A9 00       ..
  STA Kpercent                                 ; C02D: 8D 00 06    ...
  LDA #&3C ; '<'                               ; C030: A9 3C       .<
- STA L0601                                    ; C032: 8D 01 06    ...
+ STA Kpercent+1                               ; C032: 8D 01 06    ...
 .CC035
  LDX #&FF                                     ; C035: A2 FF       ..
  TXS                                          ; C037: 9A          .
@@ -961,7 +753,7 @@ LC006 = sub_CC004+2
  INX                                          ; C069: E8          .
  BNE loop_CC067                               ; C06A: D0 FB       ..
  LDA #3                                       ; C06C: A9 03       ..
- STA SC_1                                     ; C06E: 85 08       ..
+ STA SC+1                                     ; C06E: 85 08       ..
  LDA #0                                       ; C070: A9 00       ..
  STA SC                                       ; C072: 85 07       ..
  TXA                                          ; C074: 8A          .
@@ -971,7 +763,7 @@ LC006 = sub_CC004+2
  STA (SC),Y                                   ; C078: 91 07       ..
  INY                                          ; C07A: C8          .
  BNE CC078                                    ; C07B: D0 FB       ..
- INC SC_1                                     ; C07D: E6 08       ..
+ INC SC+1                                     ; C07D: E6 08       ..
  DEX                                          ; C07F: CA          .
  BNE CC078                                    ; C080: D0 F6       ..
  JSR SetupMMC1                                ; C082: 20 89 FB     ..
@@ -1177,20 +969,23 @@ LC006 = sub_CC004+2
  EQUB &0A, &0B, &0C, &0D, &0F, &10, &11, &12  ; C528: 0A 0B 0C... ...
  EQUB &13, &14, &15, &16, &17, &18, &19, &19  ; C530: 13 14 15... ...
  EQUB &1A, &1B, &1C, &1D, &1D, &1E            ; C538: 1A 1B 1C... ...
-.XX21m2
  EQUB &1F                                     ; C53E: 1F          .
-.XX21m1
  EQUB &1F                                     ; C53F: 1F          .
 .XX21
- EQUB &A5, &80, &A3, &81, &BF, &82, &13, &83  ; C540: A5 80 A3... ...
- EQUB &53, &83, &FB, &83, &9D, &84, &73, &85  ; C548: 53 83 FB... S..
- EQUB &AF, &85, &E1, &86, &C3, &88, &4B, &8A  ; C550: AF 85 E1... ...
- EQUB &3D, &8B, &33, &8C, &35, &8D, &0B, &8E  ; C558: 3D 8B 33... =.3
- EQUB &E5, &8E, &8D, &8F, &BB, &90, &A1, &91  ; C560: E5 8E 8D... ...
- EQUB &D1, &92, &95, &93, &5B, &94, &0B, &95  ; C568: D1 92 95... ...
- EQUB &93, &96, &BD, &97, &AF, &98, &C9, &99  ; C570: 93 96 BD... ...
- EQUB &A1, &9A, &BD, &9B, &29, &9C, &2B, &9D  ; C578: A1 9A BD... ...
- EQUB &2D, &9E                                ; C580: 2D 9E       -.
+ EQUB &A5                                     ; C540: A5          .
+ EQUB &80                                     ; C541: 80          .
+ EQUB &A3                                     ; C542: A3          .
+ EQUB &81, &BF, &82, &13                      ; C543: 81 BF 82... ...
+ EQUB &83, &53, &83, &FB, &83, &9D, &84, &73  ; C547: 83 53 83... .S.
+ EQUB &85, &AF, &85, &E1, &86, &C3, &88, &4B  ; C54F: 85 AF 85... ...
+ EQUB &8A, &3D, &8B, &33, &8C, &35, &8D, &0B  ; C557: 8A 3D 8B... .=.
+ EQUB &8E, &E5, &8E, &8D, &8F, &BB, &90, &A1  ; C55F: 8E E5 8E... ...
+ EQUB &91, &D1, &92, &95, &93, &5B, &94, &0B  ; C567: 91 D1 92... ...
+ EQUB &95, &93, &96, &BD, &97, &AF, &98, &C9  ; C56F: 95 93 96... ...
+ EQUB &99, &A1, &9A, &BD, &9B, &29, &9C, &2B  ; C577: 99 A1 9A... ...
+ EQUB &9D                                     ; C57F: 9D          .
+ EQUB &2D                                     ; C580: 2D          -
+ EQUB &9E                                     ; C581: 9E          .
 
 ; ******************************************************************************
 .subm_C582
@@ -1198,16 +993,16 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; C583: A5 D0       ..
  SBC #&53 ; 'S'                               ; C585: E9 53       .S
  STA tempVar                                  ; C587: 85 D0       ..
- LDA tempVar_1                                ; C589: A5 D1       ..
+ LDA tempVar+1                                ; C589: A5 D1       ..
  SBC #8                                       ; C58B: E9 08       ..
- STA tempVar_1                                ; C58D: 85 D1       ..
+ STA tempVar+1                                ; C58D: 85 D1       ..
  LDX addr1                                    ; C58F: A6 D4       ..
  STX addr5                                    ; C591: 86 ED       ..
- LDA addr1_1                                  ; C593: A5 D5       ..
+ LDA addr1+1                                  ; C593: A5 D5       ..
  CLC                                          ; C595: 18          .
  ADC #&70 ; 'p'                               ; C596: 69 70       ip
- STA addr5_1                                  ; C598: 85 EE       ..
- LDA addr1_1                                  ; C59A: A5 D5       ..
+ STA addr5+1                                  ; C598: 85 EE       ..
+ LDA addr1+1                                  ; C59A: A5 D5       ..
  ADC #&20 ; ' '                               ; C59C: 69 20       i
  STA PPU_ADDR                                 ; C59E: 8D 06 20    ..
  STX PPU_ADDR                                 ; C5A1: 8E 06 20    ..
@@ -1218,7 +1013,7 @@ LC006 = sub_CC004+2
  INY                                          ; C5AB: C8          .
  CPY #&40 ; '@'                               ; C5AC: C0 40       .@
  BNE loop_CC5A6                               ; C5AE: D0 F6       ..
- LDA addr1_1                                  ; C5B0: A5 D5       ..
+ LDA addr1+1                                  ; C5B0: A5 D5       ..
  ADC #&23 ; '#'                               ; C5B2: 69 23       i#
  STA PPU_ADDR                                 ; C5B4: 8D 06 20    ..
  STX PPU_ADDR                                 ; C5B7: 8E 06 20    ..
@@ -1243,9 +1038,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; C5D3: A5 D0       ..
  SBC #&9A                                     ; C5D5: E9 9A       ..
  STA tempVar                                  ; C5D7: 85 D0       ..
- LDA tempVar_1                                ; C5D9: A5 D1       ..
+ LDA tempVar+1                                ; C5D9: A5 D1       ..
  SBC #2                                       ; C5DB: E9 02       ..
- STA tempVar_1                                ; C5DD: 85 D1       ..
+ STA tempVar+1                                ; C5DD: 85 D1       ..
  BMI CC5E4                                    ; C5DF: 30 03       0.
  JMP CC5F3                                    ; C5E1: 4C F3 C5    L..
 
@@ -1253,9 +1048,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; C5E4: A5 D0       ..
  ADC #&6F ; 'o'                               ; C5E6: 69 6F       io
  STA tempVar                                  ; C5E8: 85 D0       ..
- LDA tempVar_1                                ; C5EA: A5 D1       ..
+ LDA tempVar+1                                ; C5EA: A5 D1       ..
  ADC #2                                       ; C5EC: 69 02       i.
- STA tempVar_1                                ; C5EE: 85 D1       ..
+ STA tempVar+1                                ; C5EE: 85 D1       ..
  JMP CC6F3                                    ; C5F0: 4C F3 C6    L..
 
 .CC5F3
@@ -1278,7 +1073,7 @@ LC006 = sub_CC004+2
  STX PPU_ADDR                                 ; C60D: 8E 06 20    ..
  LDA L00D6                                    ; C610: A5 D6       ..
  ADC addr4                                    ; C612: 65 EB       e.
- STA addr5_1                                  ; C614: 85 EE       ..
+ STA addr5+1                                  ; C614: 85 EE       ..
  LDX #&20 ; ' '                               ; C616: A2 20       .
 .loop_CC618
  LDA (addr5),Y                                ; C618: B1 ED       ..
@@ -1304,9 +1099,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; C634: A5 D0       ..
  SBC #&11                                     ; C636: E9 11       ..
  STA tempVar                                  ; C638: 85 D0       ..
- LDA tempVar_1                                ; C63A: A5 D1       ..
+ LDA tempVar+1                                ; C63A: A5 D1       ..
  SBC #5                                       ; C63C: E9 05       ..
- STA tempVar_1                                ; C63E: 85 D1       ..
+ STA tempVar+1                                ; C63E: 85 D1       ..
  BMI CC645                                    ; C640: 30 03       0.
  JMP CC654                                    ; C642: 4C 54 C6    LT.
 
@@ -1314,9 +1109,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; C645: A5 D0       ..
  ADC #&E3                                     ; C647: 69 E3       i.
  STA tempVar                                  ; C649: 85 D0       ..
- LDA tempVar_1                                ; C64B: A5 D1       ..
+ LDA tempVar+1                                ; C64B: A5 D1       ..
  ADC #4                                       ; C64D: 69 04       i.
- STA tempVar_1                                ; C64F: 85 D1       ..
+ STA tempVar+1                                ; C64F: 85 D1       ..
  JMP CC6F3                                    ; C651: 4C F3 C6    L..
 
 .CC654
@@ -1339,7 +1134,7 @@ LC006 = sub_CC004+2
  STX PPU_ADDR                                 ; C66E: 8E 06 20    ..
  LDA L00D6                                    ; C671: A5 D6       ..
  ADC addr4                                    ; C673: 65 EB       e.
- STA addr5_1                                  ; C675: 85 EE       ..
+ STA addr5+1                                  ; C675: 85 EE       ..
  LDX #&20 ; ' '                               ; C677: A2 20       .
 .loop_CC679
  LDA (addr5),Y                                ; C679: B1 ED       ..
@@ -1369,7 +1164,7 @@ LC006 = sub_CC004+2
  STX PPU_ADDR                                 ; C69F: 8E 06 20    ..
  LDA L00D6                                    ; C6A2: A5 D6       ..
  ADC addr4                                    ; C6A4: 65 EB       e.
- STA addr5_1                                  ; C6A6: 85 EE       ..
+ STA addr5+1                                  ; C6A6: 85 EE       ..
  LDX #&20 ; ' '                               ; C6A8: A2 20       .
 .loop_CC6AA
  LDA (addr5),Y                                ; C6AA: B1 ED       ..
@@ -1403,9 +1198,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; C6D0: A5 D0       ..
  SBC #&2A ; '*'                               ; C6D2: E9 2A       .*
  STA tempVar                                  ; C6D4: 85 D0       ..
- LDA tempVar_1                                ; C6D6: A5 D1       ..
+ LDA tempVar+1                                ; C6D6: A5 D1       ..
  SBC #0                                       ; C6D8: E9 00       ..
- STA tempVar_1                                ; C6DA: 85 D1       ..
+ STA tempVar+1                                ; C6DA: 85 D1       ..
  BMI CC6E1                                    ; C6DC: 30 03       0.
  JMP CC6F0                                    ; C6DE: 4C F0 C6    L..
 
@@ -1413,9 +1208,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; C6E1: A5 D0       ..
  ADC #&F1                                     ; C6E3: 69 F1       i.
  STA tempVar                                  ; C6E5: 85 D0       ..
- LDA tempVar_1                                ; C6E7: A5 D1       ..
+ LDA tempVar+1                                ; C6E7: A5 D1       ..
  ADC #&FF                                     ; C6E9: 69 FF       i.
- STA tempVar_1                                ; C6EB: 85 D1       ..
+ STA tempVar+1                                ; C6EB: 85 D1       ..
  JMP CC6F3                                    ; C6ED: 4C F3 C6    L..
 
 .CC6F0
@@ -1437,9 +1232,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; C704: A5 D0       ..
  SBC #&38 ; '8'                               ; C706: E9 38       .8
  STA tempVar                                  ; C708: 85 D0       ..
- LDA tempVar_1                                ; C70A: A5 D1       ..
+ LDA tempVar+1                                ; C70A: A5 D1       ..
  SBC #0                                       ; C70C: E9 00       ..
- STA tempVar_1                                ; C70E: 85 D1       ..
+ STA tempVar+1                                ; C70E: 85 D1       ..
  TXA                                          ; C710: 8A          .
  EOR #1                                       ; C711: 49 01       I.
  TAY                                          ; C713: A8          .
@@ -1459,9 +1254,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; C72C: A5 D0       ..
  SBC #&20 ; ' '                               ; C72E: E9 20       .
  STA tempVar                                  ; C730: 85 D0       ..
- LDA tempVar_1                                ; C732: A5 D1       ..
+ LDA tempVar+1                                ; C732: A5 D1       ..
  SBC #0                                       ; C734: E9 00       ..
- STA tempVar_1                                ; C736: 85 D1       ..
+ STA tempVar+1                                ; C736: 85 D1       ..
 .CC738
  JMP CC849                                    ; C738: 4C 49 C8    LI.
 
@@ -1483,9 +1278,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; C752: A5 D0       ..
  SBC #&3C ; '<'                               ; C754: E9 3C       .<
  STA tempVar                                  ; C756: 85 D0       ..
- LDA tempVar_1                                ; C758: A5 D1       ..
+ LDA tempVar+1                                ; C758: A5 D1       ..
  SBC #0                                       ; C75A: E9 00       ..
- STA tempVar_1                                ; C75C: 85 D1       ..
+ STA tempVar+1                                ; C75C: 85 D1       ..
 .loop_CC75E
  JMP CC849                                    ; C75E: 4C 49 C8    LI.
 
@@ -1496,9 +1291,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; C766: A5 D0       ..
  SBC #&86                                     ; C768: E9 86       ..
  STA tempVar                                  ; C76A: 85 D0       ..
- LDA tempVar_1                                ; C76C: A5 D1       ..
+ LDA tempVar+1                                ; C76C: A5 D1       ..
  SBC #0                                       ; C76E: E9 00       ..
- STA tempVar_1                                ; C770: 85 D1       ..
+ STA tempVar+1                                ; C770: 85 D1       ..
  LDA L00F6                                    ; C772: A5 F6       ..
  EOR palettePhase                             ; C774: 45 F3       E.
  STA palettePhase                             ; C776: 85 F3       ..
@@ -1510,9 +1305,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; C77F: A5 D0       ..
  SBC #&2A ; '*'                               ; C781: E9 2A       .*
  STA tempVar                                  ; C783: 85 D0       ..
- LDA tempVar_1                                ; C785: A5 D1       ..
+ LDA tempVar+1                                ; C785: A5 D1       ..
  SBC #1                                       ; C787: E9 01       ..
- STA tempVar_1                                ; C789: 85 D1       ..
+ STA tempVar+1                                ; C789: 85 D1       ..
  LDA L03EF                                    ; C78B: AD EF 03    ...
  AND #&A0                                     ; C78E: 29 A0       ).
  CMP #&80                                     ; C790: C9 80       ..
@@ -1534,9 +1329,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; C7A8: A5 D0       ..
  ADC #&DF                                     ; C7AA: 69 DF       i.
  STA tempVar                                  ; C7AC: 85 D0       ..
- LDA tempVar_1                                ; C7AE: A5 D1       ..
+ LDA tempVar+1                                ; C7AE: A5 D1       ..
  ADC #0                                       ; C7B0: 69 00       i.
- STA tempVar_1                                ; C7B2: 85 D1       ..
+ STA tempVar+1                                ; C7B2: 85 D1       ..
  RTS                                          ; C7B4: 60          `
 
 .loop_CC7B5
@@ -1544,9 +1339,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; C7B6: A5 D0       ..
  ADC #&2D ; '-'                               ; C7B8: 69 2D       i-
  STA tempVar                                  ; C7BA: 85 D0       ..
- LDA tempVar_1                                ; C7BC: A5 D1       ..
+ LDA tempVar+1                                ; C7BC: A5 D1       ..
  ADC #0                                       ; C7BE: 69 00       i.
- STA tempVar_1                                ; C7C0: 85 D1       ..
+ STA tempVar+1                                ; C7C0: 85 D1       ..
  JMP CC7D2                                    ; C7C2: 4C D2 C7    L..
 
 .CC7C5
@@ -1617,9 +1412,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; C837: A5 D0       ..
  ADC #4                                       ; C839: 69 04       i.
  STA tempVar                                  ; C83B: 85 D0       ..
- LDA tempVar_1                                ; C83D: A5 D1       ..
+ LDA tempVar+1                                ; C83D: A5 D1       ..
  ADC #0                                       ; C83F: 69 00       i.
- STA tempVar_1                                ; C841: 85 D1       ..
+ STA tempVar+1                                ; C841: 85 D1       ..
  JMP CCBDD                                    ; C843: 4C DD CB    L..
 
 .CC846
@@ -1630,9 +1425,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; C84A: A5 D0       ..
  SBC #&B6                                     ; C84C: E9 B6       ..
  STA tempVar                                  ; C84E: 85 D0       ..
- LDA tempVar_1                                ; C850: A5 D1       ..
+ LDA tempVar+1                                ; C850: A5 D1       ..
  SBC #0                                       ; C852: E9 00       ..
- STA tempVar_1                                ; C854: 85 D1       ..
+ STA tempVar+1                                ; C854: 85 D1       ..
  BMI CC85B                                    ; C856: 30 03       0.
  JMP CC86A                                    ; C858: 4C 6A C8    Lj.
 
@@ -1640,9 +1435,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; C85B: A5 D0       ..
  ADC #&8D                                     ; C85D: 69 8D       i.
  STA tempVar                                  ; C85F: 85 D0       ..
- LDA tempVar_1                                ; C861: A5 D1       ..
+ LDA tempVar+1                                ; C861: A5 D1       ..
  ADC #0                                       ; C863: 69 00       i.
- STA tempVar_1                                ; C865: 85 D1       ..
+ STA tempVar+1                                ; C865: 85 D1       ..
  JMP CC6F3                                    ; C867: 4C F3 C6    L..
 
 .CC86A
@@ -1657,7 +1452,7 @@ LC006 = sub_CC004+2
  STA L04C6,X                                  ; C878: 9D C6 04    ...
  LDY L00DB,X                                  ; C87B: B4 DB       ..
  LDA L04BE,X                                  ; C87D: BD BE 04    ...
- STA addr5_1                                  ; C880: 85 EE       ..
+ STA addr5+1                                  ; C880: 85 EE       ..
  LDA L00CA,X                                  ; C882: B5 CA       ..
  STA L00C9                                    ; C884: 85 C9       ..
  SEC                                          ; C886: 38          8
@@ -1684,7 +1479,7 @@ LC006 = sub_CC004+2
  ROL A                                        ; C8A8: 2A          *
  ADC L00E0                                    ; C8A9: 65 E0       e.
  STA PPU_ADDR                                 ; C8AB: 8D 06 20    ..
- STA addr4_1                                  ; C8AE: 85 EC       ..
+ STA addr4+1                                  ; C8AE: 85 EC       ..
  TXA                                          ; C8B0: 8A          .
  ADC pallettePhasex8                          ; C8B1: 65 DF       e.
  STA PPU_ADDR                                 ; C8B3: 8D 06 20    ..
@@ -1692,14 +1487,14 @@ LC006 = sub_CC004+2
  JMP CC8D0                                    ; C8B8: 4C D0 C8    L..
 
 .CC8BB
- INC addr5_1                                  ; C8BB: E6 EE       ..
+ INC addr5+1                                  ; C8BB: E6 EE       ..
  SEC                                          ; C8BD: 38          8
  LDA tempVar                                  ; C8BE: A5 D0       ..
  SBC #&1B                                     ; C8C0: E9 1B       ..
  STA tempVar                                  ; C8C2: 85 D0       ..
- LDA tempVar_1                                ; C8C4: A5 D1       ..
+ LDA tempVar+1                                ; C8C4: A5 D1       ..
  SBC #0                                       ; C8C6: E9 00       ..
- STA tempVar_1                                ; C8C8: 85 D1       ..
+ STA tempVar+1                                ; C8C8: 85 D1       ..
  JMP CC925                                    ; C8CA: 4C 25 C9    L%.
 
 .CC8CD
@@ -1712,9 +1507,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; C8D3: A5 D0       ..
  SBC #&90                                     ; C8D5: E9 90       ..
  STA tempVar                                  ; C8D7: 85 D0       ..
- LDA tempVar_1                                ; C8D9: A5 D1       ..
+ LDA tempVar+1                                ; C8D9: A5 D1       ..
  SBC #1                                       ; C8DB: E9 01       ..
- STA tempVar_1                                ; C8DD: 85 D1       ..
+ STA tempVar+1                                ; C8DD: 85 D1       ..
  BMI CC8E4                                    ; C8DF: 30 03       0.
  JMP CC8F3                                    ; C8E1: 4C F3 C8    L..
 
@@ -1722,9 +1517,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; C8E4: A5 D0       ..
  ADC #&67 ; 'g'                               ; C8E6: 69 67       ig
  STA tempVar                                  ; C8E8: 85 D0       ..
- LDA tempVar_1                                ; C8EA: A5 D1       ..
+ LDA tempVar+1                                ; C8EA: A5 D1       ..
  ADC #1                                       ; C8EC: 69 01       i.
- STA tempVar_1                                ; C8EE: 85 D1       ..
+ STA tempVar+1                                ; C8EE: 85 D1       ..
  JMP CCB30                                    ; C8F0: 4C 30 CB    L0.
 
 .CC8F3
@@ -1758,9 +1553,9 @@ LC006 = sub_CC004+2
  CLC                                          ; C927: 18          .
  ADC #&10                                     ; C928: 69 10       i.
  STA addr4                                    ; C92A: 85 EB       ..
- LDA addr4_1                                  ; C92C: A5 EC       ..
+ LDA addr4+1                                  ; C92C: A5 EC       ..
  ADC #0                                       ; C92E: 69 00       i.
- STA addr4_1                                  ; C930: 85 EC       ..
+ STA addr4+1                                  ; C930: 85 EC       ..
  STA PPU_ADDR                                 ; C932: 8D 06 20    ..
  LDA addr4                                    ; C935: A5 EB       ..
  STA PPU_ADDR                                 ; C937: 8D 06 20    ..
@@ -1796,9 +1591,9 @@ LC006 = sub_CC004+2
  LDA addr4                                    ; C971: A5 EB       ..
  ADC #&10                                     ; C973: 69 10       i.
  STA addr4                                    ; C975: 85 EB       ..
- LDA addr4_1                                  ; C977: A5 EC       ..
+ LDA addr4+1                                  ; C977: A5 EC       ..
  ADC #0                                       ; C979: 69 00       i.
- STA addr4_1                                  ; C97B: 85 EC       ..
+ STA addr4+1                                  ; C97B: 85 EC       ..
  STA PPU_ADDR                                 ; C97D: 8D 06 20    ..
  LDA addr4                                    ; C980: A5 EB       ..
  STA PPU_ADDR                                 ; C982: 8D 06 20    ..
@@ -1834,9 +1629,9 @@ LC006 = sub_CC004+2
  LDA addr4                                    ; C9BC: A5 EB       ..
  ADC #&10                                     ; C9BE: 69 10       i.
  STA addr4                                    ; C9C0: 85 EB       ..
- LDA addr4_1                                  ; C9C2: A5 EC       ..
+ LDA addr4+1                                  ; C9C2: A5 EC       ..
  ADC #0                                       ; C9C4: 69 00       i.
- STA addr4_1                                  ; C9C6: 85 EC       ..
+ STA addr4+1                                  ; C9C6: 85 EC       ..
  STA PPU_ADDR                                 ; C9C8: 8D 06 20    ..
  LDA addr4                                    ; C9CB: A5 EB       ..
  STA PPU_ADDR                                 ; C9CD: 8D 06 20    ..
@@ -1846,14 +1641,14 @@ LC006 = sub_CC004+2
  JMP CC8D2                                    ; C9D5: 4C D2 C8    L..
 
 .CC9D8
- INC addr5_1                                  ; C9D8: E6 EE       ..
+ INC addr5+1                                  ; C9D8: E6 EE       ..
  SEC                                          ; C9DA: 38          8
  LDA tempVar                                  ; C9DB: A5 D0       ..
  SBC #&1D                                     ; C9DD: E9 1D       ..
  STA tempVar                                  ; C9DF: 85 D0       ..
- LDA tempVar_1                                ; C9E1: A5 D1       ..
+ LDA tempVar+1                                ; C9E1: A5 D1       ..
  SBC #0                                       ; C9E3: E9 00       ..
- STA tempVar_1                                ; C9E5: 85 D1       ..
+ STA tempVar+1                                ; C9E5: 85 D1       ..
  CLC                                          ; C9E7: 18          .
  JMP CC971                                    ; C9E8: 4C 71 C9    Lq.
 
@@ -1862,9 +1657,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; C9EC: A5 D0       ..
  ADC #&E0                                     ; C9EE: 69 E0       i.
  STA tempVar                                  ; C9F0: 85 D0       ..
- LDA tempVar_1                                ; C9F2: A5 D1       ..
+ LDA tempVar+1                                ; C9F2: A5 D1       ..
  ADC #0                                       ; C9F4: 69 00       i.
- STA tempVar_1                                ; C9F6: 85 D1       ..
+ STA tempVar+1                                ; C9F6: 85 D1       ..
  JMP CCA08                                    ; C9F8: 4C 08 CA    L..
 
 .CC9FB
@@ -1872,29 +1667,29 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; C9FC: A5 D0       ..
  ADC #&6D ; 'm'                               ; C9FE: 69 6D       im
  STA tempVar                                  ; CA00: 85 D0       ..
- LDA tempVar_1                                ; CA02: A5 D1       ..
+ LDA tempVar+1                                ; CA02: A5 D1       ..
  ADC #0                                       ; CA04: 69 00       i.
- STA tempVar_1                                ; CA06: 85 D1       ..
+ STA tempVar+1                                ; CA06: 85 D1       ..
 .CCA08
  STX L00C9                                    ; CA08: 86 C9       ..
  NOP                                          ; CA0A: EA          .
  LDX otherPhase                               ; CA0B: A6 F4       ..
  STY L00DB,X                                  ; CA0D: 94 DB       ..
- LDA addr5_1                                  ; CA0F: A5 EE       ..
+ LDA addr5+1                                  ; CA0F: A5 EE       ..
  STA L04BE,X                                  ; CA11: 9D BE 04    ...
  LDA L00C9                                    ; CA14: A5 C9       ..
  STA L00CA,X                                  ; CA16: 95 CA       ..
  JMP CCBBC                                    ; CA18: 4C BC CB    L..
 
 .CCA1B
- INC addr5_1                                  ; CA1B: E6 EE       ..
+ INC addr5+1                                  ; CA1B: E6 EE       ..
  SEC                                          ; CA1D: 38          8
  LDA tempVar                                  ; CA1E: A5 D0       ..
  SBC #&1D                                     ; CA20: E9 1D       ..
  STA tempVar                                  ; CA22: 85 D0       ..
- LDA tempVar_1                                ; CA24: A5 D1       ..
+ LDA tempVar+1                                ; CA24: A5 D1       ..
  SBC #0                                       ; CA26: E9 00       ..
- STA tempVar_1                                ; CA28: 85 D1       ..
+ STA tempVar+1                                ; CA28: 85 D1       ..
  CLC                                          ; CA2A: 18          .
  JMP CC9BC                                    ; CA2B: 4C BC C9    L..
 
@@ -1915,7 +1710,7 @@ LC006 = sub_CC004+2
  ROL A                                        ; CA43: 2A          *
  ADC L00E0                                    ; CA44: 65 E0       e.
  STA PPU_ADDR                                 ; CA46: 8D 06 20    ..
- STA addr4_1                                  ; CA49: 85 EC       ..
+ STA addr4+1                                  ; CA49: 85 EC       ..
  TXA                                          ; CA4B: 8A          .
  ADC pallettePhasex8                          ; CA4C: 65 DF       e.
  STA PPU_ADDR                                 ; CA4E: 8D 06 20    ..
@@ -1924,14 +1719,14 @@ LC006 = sub_CC004+2
 
 ; ******************************************************************************
 .subm_CA56
- INC addr5_1                                  ; CA56: E6 EE       ..
+ INC addr5+1                                  ; CA56: E6 EE       ..
  SEC                                          ; CA58: 38          8
  LDA tempVar                                  ; CA59: A5 D0       ..
  SBC #&1B                                     ; CA5B: E9 1B       ..
  STA tempVar                                  ; CA5D: 85 D0       ..
- LDA tempVar_1                                ; CA5F: A5 D1       ..
+ LDA tempVar+1                                ; CA5F: A5 D1       ..
  SBC #0                                       ; CA61: E9 00       ..
- STA tempVar_1                                ; CA63: 85 D1       ..
+ STA tempVar+1                                ; CA63: 85 D1       ..
  JMP CCABD                                    ; CA65: 4C BD CA    L..
 
 .CCA68
@@ -1941,9 +1736,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; CA6B: A5 D0       ..
  SBC #&0A                                     ; CA6D: E9 0A       ..
  STA tempVar                                  ; CA6F: 85 D0       ..
- LDA tempVar_1                                ; CA71: A5 D1       ..
+ LDA tempVar+1                                ; CA71: A5 D1       ..
  SBC #1                                       ; CA73: E9 01       ..
- STA tempVar_1                                ; CA75: 85 D1       ..
+ STA tempVar+1                                ; CA75: 85 D1       ..
  BMI CCA7C                                    ; CA77: 30 03       0.
  JMP CCA8B                                    ; CA79: 4C 8B CA    L..
 
@@ -1951,9 +1746,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; CA7C: A5 D0       ..
  ADC #&E1                                     ; CA7E: 69 E1       i.
  STA tempVar                                  ; CA80: 85 D0       ..
- LDA tempVar_1                                ; CA82: A5 D1       ..
+ LDA tempVar+1                                ; CA82: A5 D1       ..
  ADC #0                                       ; CA84: 69 00       i.
- STA tempVar_1                                ; CA86: 85 D1       ..
+ STA tempVar+1                                ; CA86: 85 D1       ..
  JMP CCB30                                    ; CA88: 4C 30 CB    L0.
 
 .CCA8B
@@ -1987,9 +1782,9 @@ LC006 = sub_CC004+2
  CLC                                          ; CABF: 18          .
  ADC #&10                                     ; CAC0: 69 10       i.
  STA addr4                                    ; CAC2: 85 EB       ..
- LDA addr4_1                                  ; CAC4: A5 EC       ..
+ LDA addr4+1                                  ; CAC4: A5 EC       ..
  ADC #0                                       ; CAC6: 69 00       i.
- STA addr4_1                                  ; CAC8: 85 EC       ..
+ STA addr4+1                                  ; CAC8: 85 EC       ..
  STA PPU_ADDR                                 ; CACA: 8D 06 20    ..
  LDA addr4                                    ; CACD: A5 EB       ..
  STA PPU_ADDR                                 ; CACF: 8D 06 20    ..
@@ -2022,9 +1817,9 @@ LC006 = sub_CC004+2
  LDA addr4                                    ; CB04: A5 EB       ..
  ADC #&10                                     ; CB06: 69 10       i.
  STA addr4                                    ; CB08: 85 EB       ..
- LDA addr4_1                                  ; CB0A: A5 EC       ..
+ LDA addr4+1                                  ; CB0A: A5 EC       ..
  ADC #0                                       ; CB0C: 69 00       i.
- STA addr4_1                                  ; CB0E: 85 EC       ..
+ STA addr4+1                                  ; CB0E: 85 EC       ..
  STA PPU_ADDR                                 ; CB10: 8D 06 20    ..
  LDA addr4                                    ; CB13: A5 EB       ..
  STA PPU_ADDR                                 ; CB15: 8D 06 20    ..
@@ -2033,14 +1828,14 @@ LC006 = sub_CC004+2
  JMP CCA6A                                    ; CB1A: 4C 6A CA    Lj.
 
 .CCB1D
- INC addr5_1                                  ; CB1D: E6 EE       ..
+ INC addr5+1                                  ; CB1D: E6 EE       ..
  SEC                                          ; CB1F: 38          8
  LDA tempVar                                  ; CB20: A5 D0       ..
  SBC #&1D                                     ; CB22: E9 1D       ..
  STA tempVar                                  ; CB24: 85 D0       ..
- LDA tempVar_1                                ; CB26: A5 D1       ..
+ LDA tempVar+1                                ; CB26: A5 D1       ..
  SBC #0                                       ; CB28: E9 00       ..
- STA tempVar_1                                ; CB2A: 85 D1       ..
+ STA tempVar+1                                ; CB2A: 85 D1       ..
  CLC                                          ; CB2C: 18          .
  JMP CCB04                                    ; CB2D: 4C 04 CB    L..
 
@@ -2048,7 +1843,7 @@ LC006 = sub_CC004+2
  STX L00C9                                    ; CB30: 86 C9       ..
  LDX otherPhase                               ; CB32: A6 F4       ..
  STY L00DB,X                                  ; CB34: 94 DB       ..
- LDA addr5_1                                  ; CB36: A5 EE       ..
+ LDA addr5+1                                  ; CB36: A5 EE       ..
  STA L04BE,X                                  ; CB38: 9D BE 04    ...
  LDA L00C9                                    ; CB3B: A5 C9       ..
  STA L00CA,X                                  ; CB3D: 95 CA       ..
@@ -2063,9 +1858,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; CB4A: A5 D0       ..
  SBC #&E3                                     ; CB4C: E9 E3       ..
  STA tempVar                                  ; CB4E: 85 D0       ..
- LDA tempVar_1                                ; CB50: A5 D1       ..
+ LDA tempVar+1                                ; CB50: A5 D1       ..
  SBC #0                                       ; CB52: E9 00       ..
- STA tempVar_1                                ; CB54: 85 D1       ..
+ STA tempVar+1                                ; CB54: 85 D1       ..
  BMI CCB5B                                    ; CB56: 30 03       0.
  JMP CCB6A                                    ; CB58: 4C 6A CB    Lj.
 
@@ -2073,9 +1868,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; CB5B: A5 D0       ..
  ADC #&B0                                     ; CB5D: 69 B0       i.
  STA tempVar                                  ; CB5F: 85 D0       ..
- LDA tempVar_1                                ; CB61: A5 D1       ..
+ LDA tempVar+1                                ; CB61: A5 D1       ..
  ADC #0                                       ; CB63: 69 00       i.
- STA tempVar_1                                ; CB65: 85 D1       ..
+ STA tempVar+1                                ; CB65: 85 D1       ..
  JMP CC6F3                                    ; CB67: 4C F3 C6    L..
 
 .CCB6A
@@ -2096,9 +1891,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; CB81: A5 D0       ..
  ADC #&97                                     ; CB83: 69 97       i.
  STA tempVar                                  ; CB85: 85 D0       ..
- LDA tempVar_1                                ; CB87: A5 D1       ..
+ LDA tempVar+1                                ; CB87: A5 D1       ..
  ADC #0                                       ; CB89: 69 00       i.
- STA tempVar_1                                ; CB8B: 85 D1       ..
+ STA tempVar+1                                ; CB8B: 85 D1       ..
  RTS                                          ; CB8D: 60          `
 
 .CCB8E
@@ -2106,9 +1901,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; CB8F: A5 D0       ..
  ADC #&A3                                     ; CB91: 69 A3       i.
  STA tempVar                                  ; CB93: 85 D0       ..
- LDA tempVar_1                                ; CB95: A5 D1       ..
+ LDA tempVar+1                                ; CB95: A5 D1       ..
  ADC #0                                       ; CB97: 69 00       i.
- STA tempVar_1                                ; CB99: 85 D1       ..
+ STA tempVar+1                                ; CB99: 85 D1       ..
  RTS                                          ; CB9B: 60          `
 
 ; ******************************************************************************
@@ -2117,9 +1912,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; CB9D: A5 D0       ..
  ADC #&3A ; ':'                               ; CB9F: 69 3A       i:
  STA tempVar                                  ; CBA1: 85 D0       ..
- LDA tempVar_1                                ; CBA3: A5 D1       ..
+ LDA tempVar+1                                ; CBA3: A5 D1       ..
  ADC #0                                       ; CBA5: 69 00       i.
- STA tempVar_1                                ; CBA7: 85 D1       ..
+ STA tempVar+1                                ; CBA7: 85 D1       ..
  JMP CC6F3                                    ; CBA9: 4C F3 C6    L..
 
 .CCBAC
@@ -2127,9 +1922,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; CBAD: A5 D0       ..
  ADC #&35 ; '5'                               ; CBAF: 69 35       i5
  STA tempVar                                  ; CBB1: 85 D0       ..
- LDA tempVar_1                                ; CBB3: A5 D1       ..
+ LDA tempVar+1                                ; CBB3: A5 D1       ..
  ADC #0                                       ; CBB5: 69 00       i.
- STA tempVar_1                                ; CBB7: 85 D1       ..
+ STA tempVar+1                                ; CBB7: 85 D1       ..
  JMP subm_CB42                                ; CBB9: 4C 42 CB    LB.
 
 .CCBBC
@@ -2137,9 +1932,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; CBBD: A5 D0       ..
  SBC #&6D ; 'm'                               ; CBBF: E9 6D       .m
  STA tempVar                                  ; CBC1: 85 D0       ..
- LDA tempVar_1                                ; CBC3: A5 D1       ..
+ LDA tempVar+1                                ; CBC3: A5 D1       ..
  SBC #0                                       ; CBC5: E9 00       ..
- STA tempVar_1                                ; CBC7: 85 D1       ..
+ STA tempVar+1                                ; CBC7: 85 D1       ..
  BMI CCBCE                                    ; CBC9: 30 03       0.
  JMP CCBDD                                    ; CBCB: 4C DD CB    L..
 
@@ -2147,9 +1942,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; CBCE: A5 D0       ..
  ADC #&44 ; 'D'                               ; CBD0: 69 44       iD
  STA tempVar                                  ; CBD2: 85 D0       ..
- LDA tempVar_1                                ; CBD4: A5 D1       ..
+ LDA tempVar+1                                ; CBD4: A5 D1       ..
  ADC #0                                       ; CBD6: 69 00       i.
- STA tempVar_1                                ; CBD8: 85 D1       ..
+ STA tempVar+1                                ; CBD8: 85 D1       ..
  JMP CC6F3                                    ; CBDA: 4C F3 C6    L..
 
 .CCBDD
@@ -2170,7 +1965,7 @@ LC006 = sub_CC004+2
  BCS CCBAC                                    ; CBF6: B0 B4       ..
  LDY L00DD,X                                  ; CBF8: B4 DD       ..
  LDA L04C0,X                                  ; CBFA: BD C0 04    ...
- STA addr5_1                                  ; CBFD: 85 EE       ..
+ STA addr5+1                                  ; CBFD: 85 EE       ..
  CLC                                          ; CBFF: 18          .
  ADC L04C6,X                                  ; CC00: 7D C6 04    }..
  STA PPU_ADDR                                 ; CC03: 8D 06 20    ..
@@ -2182,9 +1977,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; CC0E: A5 D0       ..
  SBC #&89                                     ; CC10: E9 89       ..
  STA tempVar                                  ; CC12: 85 D0       ..
- LDA tempVar_1                                ; CC14: A5 D1       ..
+ LDA tempVar+1                                ; CC14: A5 D1       ..
  SBC #1                                       ; CC16: E9 01       ..
- STA tempVar_1                                ; CC18: 85 D1       ..
+ STA tempVar+1                                ; CC18: 85 D1       ..
  BMI subm_CC1F                                ; CC1A: 30 03       0.
  JMP SendToPPU1                               ; CC1C: 4C 2E CC    L..
 
@@ -2193,9 +1988,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; CC1F: A5 D0       ..
  ADC #&5D ; ']'                               ; CC21: 69 5D       i]
  STA tempVar                                  ; CC23: 85 D0       ..
- LDA tempVar_1                                ; CC25: A5 D1       ..
+ LDA tempVar+1                                ; CC25: A5 D1       ..
  ADC #1                                       ; CC27: 69 01       i.
- STA tempVar_1                                ; CC29: 85 D1       ..
+ STA tempVar+1                                ; CC29: 85 D1       ..
  JMP CCD26                                    ; CC2B: 4C 26 CD    L&.
 
 ; ******************************************************************************
@@ -2307,19 +2102,19 @@ LC006 = sub_CC004+2
 .CCCFD
  STA tile3Phase0,X                            ; CCFD: 95 C7       ..
  STY L00DD,X                                  ; CCFF: 94 DD       ..
- LDA addr5_1                                  ; CD01: A5 EE       ..
+ LDA addr5+1                                  ; CD01: A5 EE       ..
  STA L04C0,X                                  ; CD03: 9D C0 04    ...
  JMP subm_CB42                                ; CD06: 4C 42 CB    LB.
 
 .CCD09
- INC addr5_1                                  ; CD09: E6 EE       ..
+ INC addr5+1                                  ; CD09: E6 EE       ..
  SEC                                          ; CD0B: 38          8
  LDA tempVar                                  ; CD0C: A5 D0       ..
  SBC #&1A                                     ; CD0E: E9 1A       ..
  STA tempVar                                  ; CD10: 85 D0       ..
- LDA tempVar_1                                ; CD12: A5 D1       ..
+ LDA tempVar+1                                ; CD12: A5 D1       ..
  SBC #0                                       ; CD14: E9 00       ..
- STA tempVar_1                                ; CD16: 85 D1       ..
+ STA tempVar+1                                ; CD16: 85 D1       ..
  LDA L00CF                                    ; CD18: A5 CF       ..
  CLC                                          ; CD1A: 18          .
  ADC #4                                       ; CD1B: 69 04       i.
@@ -2332,7 +2127,7 @@ LC006 = sub_CC004+2
  LDA L00CF                                    ; CD26: A5 CF       ..
  STA tile3Phase0,X                            ; CD28: 95 C7       ..
  STY L00DD,X                                  ; CD2A: 94 DD       ..
- LDA addr5_1                                  ; CD2C: A5 EE       ..
+ LDA addr5+1                                  ; CD2C: A5 EE       ..
  STA L04C0,X                                  ; CD2E: 9D C0 04    ...
  JMP CC6F3                                    ; CD31: 4C F3 C6    L..
 
@@ -2343,12 +2138,12 @@ LC006 = sub_CC004+2
 .CCD38
  LDA nameBuffer0,Y                            ; CD38: B9 00 70    ..p
  STA nameBuffer1,Y                            ; CD3B: 99 00 74    ..t
- LDA L7100,Y                                  ; CD3E: B9 00 71    ..q
- STA L7500,Y                                  ; CD41: 99 00 75    ..u
- LDA L7200,Y                                  ; CD44: B9 00 72    ..r
- STA L7600,Y                                  ; CD47: 99 00 76    ..v
- LDA L7300,Y                                  ; CD4A: B9 00 73    ..s
- STA L7700,Y                                  ; CD4D: 99 00 77    ..w
+ LDA nameBuffer0+256,Y                        ; CD3E: B9 00 71    ..q
+ STA nameBuffer1+256,Y                        ; CD41: 99 00 75    ..u
+ LDA nameBuffer0+512,Y                        ; CD44: B9 00 72    ..r
+ STA nameBuffer1+512,Y                        ; CD47: 99 00 76    ..v
+ LDA nameBuffer0+768,Y                        ; CD4A: B9 00 73    ..s
+ STA nameBuffer1+768,Y                        ; CD4D: 99 00 77    ..w
  JSR SetupPPUForIconBar                       ; CD50: 20 7D EC     }.
  DEX                                          ; CD53: CA          .
  BNE CCD58                                    ; CD54: D0 02       ..
@@ -2377,92 +2172,92 @@ LC006 = sub_CC004+2
  LDX drawingPhase                             ; CD6F: A6 C0       ..
  BNE CCDF2                                    ; CD71: D0 7F       ..
  LDA boxEdge1                                 ; CD73: AD 6E 04    .n.
- STA L7001                                    ; CD76: 8D 01 70    ..p
- STA L7021                                    ; CD79: 8D 21 70    .!p
- STA L7041                                    ; CD7C: 8D 41 70    .Ap
- STA L7061                                    ; CD7F: 8D 61 70    .ap
- STA L7081                                    ; CD82: 8D 81 70    ..p
- STA L70A1                                    ; CD85: 8D A1 70    ..p
- STA L70C1                                    ; CD88: 8D C1 70    ..p
- STA L70E1                                    ; CD8B: 8D E1 70    ..p
- STA L7101                                    ; CD8E: 8D 01 71    ..q
- STA L7121                                    ; CD91: 8D 21 71    .!q
- STA L7141                                    ; CD94: 8D 41 71    .Aq
- STA L7161                                    ; CD97: 8D 61 71    .aq
- STA L7181                                    ; CD9A: 8D 81 71    ..q
- STA L71A1                                    ; CD9D: 8D A1 71    ..q
- STA L71C1                                    ; CDA0: 8D C1 71    ..q
- STA L71E1                                    ; CDA3: 8D E1 71    ..q
- STA L7201                                    ; CDA6: 8D 01 72    ..r
- STA L7221                                    ; CDA9: 8D 21 72    .!r
- STA L7241                                    ; CDAC: 8D 41 72    .Ar
- STA L7261                                    ; CDAF: 8D 61 72    .ar
+ STA nameBuffer0+1                            ; CD76: 8D 01 70    ..p
+ STA nameBuffer0+33                           ; CD79: 8D 21 70    .!p
+ STA nameBuffer0+65                           ; CD7C: 8D 41 70    .Ap
+ STA nameBuffer0+97                           ; CD7F: 8D 61 70    .ap
+ STA nameBuffer0+129                          ; CD82: 8D 81 70    ..p
+ STA nameBuffer0+161                          ; CD85: 8D A1 70    ..p
+ STA nameBuffer0+193                          ; CD88: 8D C1 70    ..p
+ STA nameBuffer0+225                          ; CD8B: 8D E1 70    ..p
+ STA nameBuffer0+257                          ; CD8E: 8D 01 71    ..q
+ STA nameBuffer0+289                          ; CD91: 8D 21 71    .!q
+ STA nameBuffer0+321                          ; CD94: 8D 41 71    .Aq
+ STA nameBuffer0+353                          ; CD97: 8D 61 71    .aq
+ STA nameBuffer0+385                          ; CD9A: 8D 81 71    ..q
+ STA nameBuffer0+417                          ; CD9D: 8D A1 71    ..q
+ STA nameBuffer0+449                          ; CDA0: 8D C1 71    ..q
+ STA nameBuffer0+481                          ; CDA3: 8D E1 71    ..q
+ STA nameBuffer0+513                          ; CDA6: 8D 01 72    ..r
+ STA nameBuffer0+545                          ; CDA9: 8D 21 72    .!r
+ STA nameBuffer0+577                          ; CDAC: 8D 41 72    .Ar
+ STA nameBuffer0+609                          ; CDAF: 8D 61 72    .ar
  LDA boxEdge2                                 ; CDB2: AD 6F 04    .o.
  STA nameBuffer0                              ; CDB5: 8D 00 70    ..p
- STA L7020                                    ; CDB8: 8D 20 70    . p
- STA L7040                                    ; CDBB: 8D 40 70    .@p
- STA L7060                                    ; CDBE: 8D 60 70    .`p
- STA L7080                                    ; CDC1: 8D 80 70    ..p
- STA L70A0                                    ; CDC4: 8D A0 70    ..p
- STA L70C0                                    ; CDC7: 8D C0 70    ..p
- STA L70E0                                    ; CDCA: 8D E0 70    ..p
- STA L7100                                    ; CDCD: 8D 00 71    ..q
- STA L7120                                    ; CDD0: 8D 20 71    . q
- STA L7140                                    ; CDD3: 8D 40 71    .@q
- STA L7160                                    ; CDD6: 8D 60 71    .`q
- STA L7180                                    ; CDD9: 8D 80 71    ..q
- STA L71A0                                    ; CDDC: 8D A0 71    ..q
- STA L71C0                                    ; CDDF: 8D C0 71    ..q
- STA L71E0                                    ; CDE2: 8D E0 71    ..q
- STA L7200                                    ; CDE5: 8D 00 72    ..r
- STA L7220                                    ; CDE8: 8D 20 72    . r
- STA L7240                                    ; CDEB: 8D 40 72    .@r
- STA L7260                                    ; CDEE: 8D 60 72    .`r
+ STA nameBuffer0+32                           ; CDB8: 8D 20 70    . p
+ STA nameBuffer0+64                           ; CDBB: 8D 40 70    .@p
+ STA nameBuffer0+96                           ; CDBE: 8D 60 70    .`p
+ STA nameBuffer0+128                          ; CDC1: 8D 80 70    ..p
+ STA nameBuffer0+160                          ; CDC4: 8D A0 70    ..p
+ STA nameBuffer0+192                          ; CDC7: 8D C0 70    ..p
+ STA nameBuffer0+224                          ; CDCA: 8D E0 70    ..p
+ STA nameBuffer0+256                          ; CDCD: 8D 00 71    ..q
+ STA nameBuffer0+288                          ; CDD0: 8D 20 71    . q
+ STA nameBuffer0+320                          ; CDD3: 8D 40 71    .@q
+ STA nameBuffer0+352                          ; CDD6: 8D 60 71    .`q
+ STA nameBuffer0+384                          ; CDD9: 8D 80 71    ..q
+ STA nameBuffer0+416                          ; CDDC: 8D A0 71    ..q
+ STA nameBuffer0+448                          ; CDDF: 8D C0 71    ..q
+ STA nameBuffer0+480                          ; CDE2: 8D E0 71    ..q
+ STA nameBuffer0+512                          ; CDE5: 8D 00 72    ..r
+ STA nameBuffer0+544                          ; CDE8: 8D 20 72    . r
+ STA nameBuffer0+576                          ; CDEB: 8D 40 72    .@r
+ STA nameBuffer0+608                          ; CDEE: 8D 60 72    .`r
  RTS                                          ; CDF1: 60          `
 
 .CCDF2
  LDA boxEdge1                                 ; CDF2: AD 6E 04    .n.
- STA L7401                                    ; CDF5: 8D 01 74    ..t
- STA L7421                                    ; CDF8: 8D 21 74    .!t
- STA L7441                                    ; CDFB: 8D 41 74    .At
- STA L7461                                    ; CDFE: 8D 61 74    .at
- STA L7481                                    ; CE01: 8D 81 74    ..t
- STA L74A1                                    ; CE04: 8D A1 74    ..t
- STA L74C1                                    ; CE07: 8D C1 74    ..t
- STA L74E1                                    ; CE0A: 8D E1 74    ..t
- STA L7501                                    ; CE0D: 8D 01 75    ..u
- STA L7521                                    ; CE10: 8D 21 75    .!u
- STA L7541                                    ; CE13: 8D 41 75    .Au
- STA L7561                                    ; CE16: 8D 61 75    .au
- STA L7581                                    ; CE19: 8D 81 75    ..u
- STA L75A1                                    ; CE1C: 8D A1 75    ..u
- STA L75C1                                    ; CE1F: 8D C1 75    ..u
- STA L75E1                                    ; CE22: 8D E1 75    ..u
- STA L7601                                    ; CE25: 8D 01 76    ..v
- STA L7621                                    ; CE28: 8D 21 76    .!v
- STA L7641                                    ; CE2B: 8D 41 76    .Av
- STA L7661                                    ; CE2E: 8D 61 76    .av
+ STA nameBuffer1+1                            ; CDF5: 8D 01 74    ..t
+ STA nameBuffer1+33                           ; CDF8: 8D 21 74    .!t
+ STA nameBuffer1+65                           ; CDFB: 8D 41 74    .At
+ STA nameBuffer1+97                           ; CDFE: 8D 61 74    .at
+ STA nameBuffer1+129                          ; CE01: 8D 81 74    ..t
+ STA nameBuffer1+161                          ; CE04: 8D A1 74    ..t
+ STA nameBuffer1+193                          ; CE07: 8D C1 74    ..t
+ STA nameBuffer1+225                          ; CE0A: 8D E1 74    ..t
+ STA nameBuffer1+257                          ; CE0D: 8D 01 75    ..u
+ STA nameBuffer1+289                          ; CE10: 8D 21 75    .!u
+ STA nameBuffer1+321                          ; CE13: 8D 41 75    .Au
+ STA nameBuffer1+353                          ; CE16: 8D 61 75    .au
+ STA nameBuffer1+385                          ; CE19: 8D 81 75    ..u
+ STA nameBuffer1+417                          ; CE1C: 8D A1 75    ..u
+ STA nameBuffer1+449                          ; CE1F: 8D C1 75    ..u
+ STA nameBuffer1+481                          ; CE22: 8D E1 75    ..u
+ STA nameBuffer1+513                          ; CE25: 8D 01 76    ..v
+ STA nameBuffer1+545                          ; CE28: 8D 21 76    .!v
+ STA nameBuffer1+577                          ; CE2B: 8D 41 76    .Av
+ STA nameBuffer1+609                          ; CE2E: 8D 61 76    .av
  LDA boxEdge2                                 ; CE31: AD 6F 04    .o.
  STA nameBuffer1                              ; CE34: 8D 00 74    ..t
- STA L7420                                    ; CE37: 8D 20 74    . t
- STA L7440                                    ; CE3A: 8D 40 74    .@t
- STA L7460                                    ; CE3D: 8D 60 74    .`t
- STA L7480                                    ; CE40: 8D 80 74    ..t
- STA L74A0                                    ; CE43: 8D A0 74    ..t
- STA L74C0                                    ; CE46: 8D C0 74    ..t
- STA L74E0                                    ; CE49: 8D E0 74    ..t
- STA L7500                                    ; CE4C: 8D 00 75    ..u
- STA L7520                                    ; CE4F: 8D 20 75    . u
- STA L7540                                    ; CE52: 8D 40 75    .@u
- STA L7560                                    ; CE55: 8D 60 75    .`u
- STA L7580                                    ; CE58: 8D 80 75    ..u
- STA L75A0                                    ; CE5B: 8D A0 75    ..u
- STA L75C0                                    ; CE5E: 8D C0 75    ..u
- STA L75E0                                    ; CE61: 8D E0 75    ..u
- STA L7600                                    ; CE64: 8D 00 76    ..v
- STA L7620                                    ; CE67: 8D 20 76    . v
- STA L7640                                    ; CE6A: 8D 40 76    .@v
- STA L7660                                    ; CE6D: 8D 60 76    .`v
+ STA nameBuffer1+32                           ; CE37: 8D 20 74    . t
+ STA nameBuffer1+64                           ; CE3A: 8D 40 74    .@t
+ STA nameBuffer1+96                           ; CE3D: 8D 60 74    .`t
+ STA nameBuffer1+128                          ; CE40: 8D 80 74    ..t
+ STA nameBuffer1+160                          ; CE43: 8D A0 74    ..t
+ STA nameBuffer1+192                          ; CE46: 8D C0 74    ..t
+ STA nameBuffer1+224                          ; CE49: 8D E0 74    ..t
+ STA nameBuffer1+256                          ; CE4C: 8D 00 75    ..u
+ STA nameBuffer1+288                          ; CE4F: 8D 20 75    . u
+ STA nameBuffer1+320                          ; CE52: 8D 40 75    .@u
+ STA nameBuffer1+352                          ; CE55: 8D 60 75    .`u
+ STA nameBuffer1+384                          ; CE58: 8D 80 75    ..u
+ STA nameBuffer1+416                          ; CE5B: 8D A0 75    ..u
+ STA nameBuffer1+448                          ; CE5E: 8D C0 75    ..u
+ STA nameBuffer1+480                          ; CE61: 8D E0 75    ..u
+ STA nameBuffer1+512                          ; CE64: 8D 00 76    ..v
+ STA nameBuffer1+544                          ; CE67: 8D 20 76    . v
+ STA nameBuffer1+576                          ; CE6A: 8D 40 76    .@v
+ STA nameBuffer1+608                          ; CE6D: 8D 60 76    .`v
  LDA setupPPUForIconBar                       ; CE70: A5 E9       ..
  BPL CCE7D                                    ; CE72: 10 09       ..
  LDA PPU_STATUS                               ; CE74: AD 02 20    ..
@@ -2474,7 +2269,6 @@ LC006 = sub_CC004+2
 
 .UNIV
  EQUB 0                                       ; CE7E: 00          .
-.UNIV_1
  EQUB   6, &2A,   6, &54,   6, &7E,   6, &A8  ; CE7F: 06 2A 06... .*.
  EQUB   6, &D2,   6, &FC,   6, &26,   7, &50  ; CE87: 06 D2 06... ...
  EQUB   7                                     ; CE8F: 07          .
@@ -2486,8 +2280,8 @@ LC006 = sub_CC004+2
  TAY                                          ; CE92: A8          .
  LDA UNIV,Y                                   ; CE93: B9 7E CE    .~.
  STA XX19                                     ; CE96: 85 61       .a
- LDA UNIV_1,Y                                 ; CE98: B9 7F CE    ...
- STA INF_1                                    ; CE9B: 85 62       .b
+ LDA UNIV+1,Y                                 ; CE98: B9 7F CE    ...
+ STA INF+1                                    ; CE9B: 85 62       .b
  RTS                                          ; CE9D: 60          `
 
 ; ******************************************************************************
@@ -2542,7 +2336,7 @@ LC006 = sub_CC004+2
  LDA showUserInterface                        ; CED8: A5 EA       ..
  STA setupPPUForIconBar                       ; CEDA: 85 E9       ..
  LDA #&1A                                     ; CEDC: A9 1A       ..
- STA tempVar_1                                ; CEDE: 85 D1       ..
+ STA tempVar+1                                ; CEDE: 85 D1       ..
  LDA #&8D                                     ; CEE0: A9 8D       ..
  STA tempVar                                  ; CEE2: 85 D0       ..
  JSR sub_CD00B                                ; CEE4: 20 0B D0     ..
@@ -2685,9 +2479,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; CFFC: A5 D0       ..
  SBC #&2F ; '/'                               ; CFFE: E9 2F       ./
  STA tempVar                                  ; D000: 85 D0       ..
- LDA tempVar_1                                ; D002: A5 D1       ..
+ LDA tempVar+1                                ; D002: A5 D1       ..
  SBC #2                                       ; D004: E9 02       ..
- STA tempVar_1                                ; D006: 85 D1       ..
+ STA tempVar+1                                ; D006: 85 D1       ..
  JMP CD00F                                    ; D008: 4C 0F D0    L..
 
 .sub_CD00B
@@ -2700,9 +2494,9 @@ LC006 = sub_CC004+2
  CLC                                          ; D017: 18          .
  ADC #&64 ; 'd'                               ; D018: 69 64       id
  STA tempVar                                  ; D01A: 85 D0       ..
- LDA tempVar_1                                ; D01C: A5 D1       ..
+ LDA tempVar+1                                ; D01C: A5 D1       ..
  ADC #0                                       ; D01E: 69 00       i.
- STA tempVar_1                                ; D020: 85 D1       ..
+ STA tempVar+1                                ; D020: 85 D1       ..
  BMI CD027                                    ; D022: 30 03       0.
  JSR sub_CD07C                                ; D024: 20 7C D0     |.
 .CD027
@@ -2753,15 +2547,15 @@ LC006 = sub_CC004+2
  RTS                                          ; D07B: 60          `
 
 .sub_CD07C
- LDA tempVar_1                                ; D07C: A5 D1       ..
+ LDA tempVar+1                                ; D07C: A5 D1       ..
  BEQ CD0D0                                    ; D07E: F0 50       .P
  SEC                                          ; D080: 38          8
  LDA tempVar                                  ; D081: A5 D0       ..
  SBC #&6B ; 'k'                               ; D083: E9 6B       .k
  STA tempVar                                  ; D085: 85 D0       ..
- LDA tempVar_1                                ; D087: A5 D1       ..
+ LDA tempVar+1                                ; D087: A5 D1       ..
  SBC #1                                       ; D089: E9 01       ..
- STA tempVar_1                                ; D08B: 85 D1       ..
+ STA tempVar+1                                ; D08B: 85 D1       ..
  BMI CD092                                    ; D08D: 30 03       0.
  JMP CD0A1                                    ; D08F: 4C A1 D0    L..
 
@@ -2769,9 +2563,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; D092: A5 D0       ..
  ADC #&3E ; '>'                               ; D094: 69 3E       i>
  STA tempVar                                  ; D096: 85 D0       ..
- LDA tempVar_1                                ; D098: A5 D1       ..
+ LDA tempVar+1                                ; D098: A5 D1       ..
  ADC #1                                       ; D09A: 69 01       i.
- STA tempVar_1                                ; D09C: 85 D1       ..
+ STA tempVar+1                                ; D09C: 85 D1       ..
  JMP CD0D0                                    ; D09E: 4C D0 D0    L..
 
 .CD0A1
@@ -2781,14 +2575,14 @@ LC006 = sub_CC004+2
  PHA                                          ; D0A6: 48          H
  LDA addr6                                    ; D0A7: A5 F1       ..
  PHA                                          ; D0A9: 48          H
- LDA addr6_1                                  ; D0AA: A5 F2       ..
+ LDA addr6+1                                  ; D0AA: A5 F2       ..
  PHA                                          ; D0AC: 48          H
  LDX #0                                       ; D0AD: A2 00       ..
  JSR sub_CD2C4                                ; D0AF: 20 C4 D2     ..
  LDX #1                                       ; D0B2: A2 01       ..
  JSR sub_CD2C4                                ; D0B4: 20 C4 D2     ..
  PLA                                          ; D0B7: 68          h
- STA addr6_1                                  ; D0B8: 85 F2       ..
+ STA addr6+1                                  ; D0B8: 85 F2       ..
  PLA                                          ; D0BA: 68          h
  STA addr6                                    ; D0BB: 85 F1       ..
  PLA                                          ; D0BD: 68          h
@@ -2799,17 +2593,17 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; D0C4: A5 D0       ..
  ADC #&EE                                     ; D0C6: 69 EE       i.
  STA tempVar                                  ; D0C8: 85 D0       ..
- LDA tempVar_1                                ; D0CA: A5 D1       ..
+ LDA tempVar+1                                ; D0CA: A5 D1       ..
  ADC #0                                       ; D0CC: 69 00       i.
- STA tempVar_1                                ; D0CE: 85 D1       ..
+ STA tempVar+1                                ; D0CE: 85 D1       ..
 .CD0D0
  SEC                                          ; D0D0: 38          8
  LDA tempVar                                  ; D0D1: A5 D0       ..
  SBC #&20 ; ' '                               ; D0D3: E9 20       .
  STA tempVar                                  ; D0D5: 85 D0       ..
- LDA tempVar_1                                ; D0D7: A5 D1       ..
+ LDA tempVar+1                                ; D0D7: A5 D1       ..
  SBC #0                                       ; D0D9: E9 00       ..
- STA tempVar_1                                ; D0DB: 85 D1       ..
+ STA tempVar+1                                ; D0DB: 85 D1       ..
  BMI CD0E2                                    ; D0DD: 30 03       0.
  JMP CD0F1                                    ; D0DF: 4C F1 D0    L..
 
@@ -2817,9 +2611,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; D0E2: A5 D0       ..
  ADC #&F7                                     ; D0E4: 69 F7       i.
  STA tempVar                                  ; D0E6: 85 D0       ..
- LDA tempVar_1                                ; D0E8: A5 D1       ..
+ LDA tempVar+1                                ; D0E8: A5 D1       ..
  ADC #&FF                                     ; D0EA: 69 FF       i.
- STA tempVar_1                                ; D0EC: 85 D1       ..
+ STA tempVar+1                                ; D0EC: 85 D1       ..
  JMP CD0F7                                    ; D0EE: 4C F7 D0    L..
 
 .CD0F1
@@ -2964,17 +2758,17 @@ LC006 = sub_CC004+2
  BCS CD239                                    ; D1E2: B0 55       .U
  STY tile2Phase0,X                            ; D1E4: 94 C5       ..
  LDY #0                                       ; D1E6: A0 00       ..
- STY addr6_1                                  ; D1E8: 84 F2       ..
+ STY addr6+1                                  ; D1E8: 84 F2       ..
  ASL A                                        ; D1EA: 0A          .
- ROL addr6_1                                  ; D1EB: 26 F2       &.
+ ROL addr6+1                                  ; D1EB: 26 F2       &.
  ASL A                                        ; D1ED: 0A          .
- ROL addr6_1                                  ; D1EE: 26 F2       &.
+ ROL addr6+1                                  ; D1EE: 26 F2       &.
  ASL A                                        ; D1F0: 0A          .
  STA addr6                                    ; D1F1: 85 F1       ..
- LDA addr6_1                                  ; D1F3: A5 F2       ..
+ LDA addr6+1                                  ; D1F3: A5 F2       ..
  ROL A                                        ; D1F5: 2A          *
  ADC nameBufferAddr,X                         ; D1F6: 7D D0 CE    }..
- STA addr6_1                                  ; D1F9: 85 F2       ..
+ STA addr6+1                                  ; D1F9: 85 F2       ..
  LDA #0                                       ; D1FB: A9 00       ..
  ASL SC                                       ; D1FD: 06 07       ..
  ROL A                                        ; D1FF: 2A          *
@@ -2983,7 +2777,7 @@ LC006 = sub_CC004+2
  ASL SC                                       ; D203: 06 07       ..
  ROL A                                        ; D205: 2A          *
  ADC nameBufferAddr,X                         ; D206: 7D D0 CE    }..
- STA SC_1                                     ; D209: 85 08       ..
+ STA SC+1                                     ; D209: 85 08       ..
 .CD20B
  LDA setupPPUForIconBar                       ; D20B: A5 E9       ..
  BPL CD218                                    ; D20D: 10 09       ..
@@ -2996,14 +2790,14 @@ LC006 = sub_CC004+2
  SEC                                          ; D21A: 38          8
  SBC addr6                                    ; D21B: E5 F1       ..
  STA L00EF                                    ; D21D: 85 EF       ..
- LDA SC_1                                     ; D21F: A5 08       ..
- SBC addr6_1                                  ; D221: E5 F2       ..
+ LDA SC+1                                     ; D21F: A5 08       ..
+ SBC addr6+1                                  ; D221: E5 F2       ..
  BCC CD239                                    ; D223: 90 14       ..
  STA L00F0                                    ; D225: 85 F0       ..
  ORA L00EF                                    ; D227: 05 EF       ..
  BEQ CD239                                    ; D229: F0 0E       ..
  LDA #3                                       ; D22B: A9 03       ..
- STA tempVar_1                                ; D22D: 85 D1       ..
+ STA tempVar+1                                ; D22D: 85 D1       ..
  LDA #&16                                     ; D22F: A9 16       ..
  STA tempVar                                  ; D231: 85 D0       ..
  JSR FillMemory                               ; D233: 20 10 D7     ..
@@ -3021,17 +2815,17 @@ LC006 = sub_CC004+2
  BCS CD2A2                                    ; D24B: B0 55       .U
  STY tile1Phase0,X                            ; D24D: 94 C3       ..
  LDY #0                                       ; D24F: A0 00       ..
- STY addr6_1                                  ; D251: 84 F2       ..
+ STY addr6+1                                  ; D251: 84 F2       ..
  ASL A                                        ; D253: 0A          .
- ROL addr6_1                                  ; D254: 26 F2       &.
+ ROL addr6+1                                  ; D254: 26 F2       &.
  ASL A                                        ; D256: 0A          .
- ROL addr6_1                                  ; D257: 26 F2       &.
+ ROL addr6+1                                  ; D257: 26 F2       &.
  ASL A                                        ; D259: 0A          .
  STA addr6                                    ; D25A: 85 F1       ..
- LDA addr6_1                                  ; D25C: A5 F2       ..
+ LDA addr6+1                                  ; D25C: A5 F2       ..
  ROL A                                        ; D25E: 2A          *
  ADC pattBufferAddr,X                         ; D25F: 7D D2 CE    }..
- STA addr6_1                                  ; D262: 85 F2       ..
+ STA addr6+1                                  ; D262: 85 F2       ..
  LDA #0                                       ; D264: A9 00       ..
  ASL SC                                       ; D266: 06 07       ..
  ROL A                                        ; D268: 2A          *
@@ -3040,7 +2834,7 @@ LC006 = sub_CC004+2
  ASL SC                                       ; D26C: 06 07       ..
  ROL A                                        ; D26E: 2A          *
  ADC pattBufferAddr,X                         ; D26F: 7D D2 CE    }..
- STA SC_1                                     ; D272: 85 08       ..
+ STA SC+1                                     ; D272: 85 08       ..
 .CD274
  LDA setupPPUForIconBar                       ; D274: A5 E9       ..
  BPL CD281                                    ; D276: 10 09       ..
@@ -3053,14 +2847,14 @@ LC006 = sub_CC004+2
  SEC                                          ; D283: 38          8
  SBC addr6                                    ; D284: E5 F1       ..
  STA L00EF                                    ; D286: 85 EF       ..
- LDA SC_1                                     ; D288: A5 08       ..
- SBC addr6_1                                  ; D28A: E5 F2       ..
+ LDA SC+1                                     ; D288: A5 08       ..
+ SBC addr6+1                                  ; D28A: E5 F2       ..
  BCC CD239                                    ; D28C: 90 AB       ..
  STA L00F0                                    ; D28E: 85 F0       ..
  ORA L00EF                                    ; D290: 05 EF       ..
  BEQ CD2A2                                    ; D292: F0 0E       ..
  LDA #3                                       ; D294: A9 03       ..
- STA tempVar_1                                ; D296: 85 D1       ..
+ STA tempVar+1                                ; D296: 85 D1       ..
  LDA #&16                                     ; D298: A9 16       ..
  STA tempVar                                  ; D29A: 85 D0       ..
  JSR FillMemory                               ; D29C: 20 10 D7     ..
@@ -3080,9 +2874,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; D2A7: A5 D0       ..
  SBC #&27 ; '''                               ; D2A9: E9 27       .'
  STA tempVar                                  ; D2AB: 85 D0       ..
- LDA tempVar_1                                ; D2AD: A5 D1       ..
+ LDA tempVar+1                                ; D2AD: A5 D1       ..
  SBC #0                                       ; D2AF: E9 00       ..
- STA tempVar_1                                ; D2B1: 85 D1       ..
+ STA tempVar+1                                ; D2B1: 85 D1       ..
 .CD2B3
  RTS                                          ; D2B3: 60          `
 
@@ -3091,13 +2885,13 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; D2B5: A5 D0       ..
  ADC #&7E ; '~'                               ; D2B7: 69 7E       i~
  STA tempVar                                  ; D2B9: 85 D0       ..
- LDA tempVar_1                                ; D2BB: A5 D1       ..
+ LDA tempVar+1                                ; D2BB: A5 D1       ..
  ADC #0                                       ; D2BD: 69 00       i.
- STA tempVar_1                                ; D2BF: 85 D1       ..
+ STA tempVar+1                                ; D2BF: 85 D1       ..
  JMP CD37E                                    ; D2C1: 4C 7E D3    L~.
 
 .sub_CD2C4
- LDA tempVar_1                                ; D2C4: A5 D1       ..
+ LDA tempVar+1                                ; D2C4: A5 D1       ..
  BEQ CD2B3                                    ; D2C6: F0 EB       ..
  LDA L03EF,X                                  ; D2C8: BD EF 03    ...
  BIT LD2A3                                    ; D2CB: 2C A3 D2    ,..
@@ -3108,9 +2902,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; D2D5: A5 D0       ..
  SBC #&D5                                     ; D2D7: E9 D5       ..
  STA tempVar                                  ; D2D9: 85 D0       ..
- LDA tempVar_1                                ; D2DB: A5 D1       ..
+ LDA tempVar+1                                ; D2DB: A5 D1       ..
  SBC #0                                       ; D2DD: E9 00       ..
- STA tempVar_1                                ; D2DF: 85 D1       ..
+ STA tempVar+1                                ; D2DF: 85 D1       ..
  BMI CD2E6                                    ; D2E1: 30 03       0.
  JMP CD2F5                                    ; D2E3: 4C F5 D2    L..
 
@@ -3118,9 +2912,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; D2E6: A5 D0       ..
  ADC #&99                                     ; D2E8: 69 99       i.
  STA tempVar                                  ; D2EA: 85 D0       ..
- LDA tempVar_1                                ; D2EC: A5 D1       ..
+ LDA tempVar+1                                ; D2EC: A5 D1       ..
  ADC #0                                       ; D2EE: 69 00       i.
- STA tempVar_1                                ; D2F0: 85 D1       ..
+ STA tempVar+1                                ; D2F0: 85 D1       ..
  JMP CD2B3                                    ; D2F2: 4C B3 D2    L..
 
 .CD2F5
@@ -3134,17 +2928,17 @@ LC006 = sub_CC004+2
  CMP L00EF                                    ; D301: C5 EF       ..
  BCS CD2B4                                    ; D303: B0 AF       ..
  LDY #0                                       ; D305: A0 00       ..
- STY addr6_1                                  ; D307: 84 F2       ..
+ STY addr6+1                                  ; D307: 84 F2       ..
  ASL A                                        ; D309: 0A          .
- ROL addr6_1                                  ; D30A: 26 F2       &.
+ ROL addr6+1                                  ; D30A: 26 F2       &.
  ASL A                                        ; D30C: 0A          .
- ROL addr6_1                                  ; D30D: 26 F2       &.
+ ROL addr6+1                                  ; D30D: 26 F2       &.
  ASL A                                        ; D30F: 0A          .
  STA addr6                                    ; D310: 85 F1       ..
- LDA addr6_1                                  ; D312: A5 F2       ..
+ LDA addr6+1                                  ; D312: A5 F2       ..
  ROL A                                        ; D314: 2A          *
  ADC nameBufferAddr,X                         ; D315: 7D D0 CE    }..
- STA addr6_1                                  ; D318: 85 F2       ..
+ STA addr6+1                                  ; D318: 85 F2       ..
  LDA #0                                       ; D31A: A9 00       ..
  ASL L00EF                                    ; D31C: 06 EF       ..
  ROL A                                        ; D31E: 2A          *
@@ -3159,13 +2953,13 @@ LC006 = sub_CC004+2
  SBC addr6                                    ; D32D: E5 F1       ..
  STA L00EF                                    ; D32F: 85 EF       ..
  LDA L00F0                                    ; D331: A5 F0       ..
- SBC addr6_1                                  ; D333: E5 F2       ..
+ SBC addr6+1                                  ; D333: E5 F2       ..
  BCC CD359                                    ; D335: 90 22       ."
  STA L00F0                                    ; D337: 85 F0       ..
  ORA L00EF                                    ; D339: 05 EF       ..
  BEQ CD35D                                    ; D33B: F0 20       .
  JSR FillMemory                               ; D33D: 20 10 D7     ..
- LDA addr6_1                                  ; D340: A5 F2       ..
+ LDA addr6+1                                  ; D340: A5 F2       ..
  SEC                                          ; D342: 38          8
  SBC nameBufferAddr,X                         ; D343: FD D0 CE    ...
  LSR A                                        ; D346: 4A          J
@@ -3190,9 +2984,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; D35E: A5 D0       ..
  ADC #&1C                                     ; D360: 69 1C       i.
  STA tempVar                                  ; D362: 85 D0       ..
- LDA tempVar_1                                ; D364: A5 D1       ..
+ LDA tempVar+1                                ; D364: A5 D1       ..
  ADC #0                                       ; D366: 69 00       i.
- STA tempVar_1                                ; D368: 85 D1       ..
+ STA tempVar+1                                ; D368: 85 D1       ..
  JMP CD37E                                    ; D36A: 4C 7E D3    L~.
 
 .CD36D
@@ -3200,9 +2994,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; D36E: A5 D0       ..
  ADC #&7E ; '~'                               ; D370: 69 7E       i~
  STA tempVar                                  ; D372: 85 D0       ..
- LDA tempVar_1                                ; D374: A5 D1       ..
+ LDA tempVar+1                                ; D374: A5 D1       ..
  ADC #0                                       ; D376: 69 00       i.
- STA tempVar_1                                ; D378: 85 D1       ..
+ STA tempVar+1                                ; D378: 85 D1       ..
 .CD37A
  RTS                                          ; D37A: 60          `
 
@@ -3215,9 +3009,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; D37F: A5 D0       ..
  SBC #&BB                                     ; D381: E9 BB       ..
  STA tempVar                                  ; D383: 85 D0       ..
- LDA tempVar_1                                ; D385: A5 D1       ..
+ LDA tempVar+1                                ; D385: A5 D1       ..
  SBC #0                                       ; D387: E9 00       ..
- STA tempVar_1                                ; D389: 85 D1       ..
+ STA tempVar+1                                ; D389: 85 D1       ..
  BMI CD390                                    ; D38B: 30 03       0.
  JMP CD39F                                    ; D38D: 4C 9F D3    L..
 
@@ -3225,9 +3019,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; D390: A5 D0       ..
  ADC #&92                                     ; D392: 69 92       i.
  STA tempVar                                  ; D394: 85 D0       ..
- LDA tempVar_1                                ; D396: A5 D1       ..
+ LDA tempVar+1                                ; D396: A5 D1       ..
  ADC #0                                       ; D398: 69 00       i.
- STA tempVar_1                                ; D39A: 85 D1       ..
+ STA tempVar+1                                ; D39A: 85 D1       ..
  JMP CD37A                                    ; D39C: 4C 7A D3    Lz.
 
 .CD39F
@@ -3238,17 +3032,17 @@ LC006 = sub_CC004+2
  BCS CD36D                                    ; D3A7: B0 C4       ..
  NOP                                          ; D3A9: EA          .
  LDY #0                                       ; D3AA: A0 00       ..
- STY addr6_1                                  ; D3AC: 84 F2       ..
+ STY addr6+1                                  ; D3AC: 84 F2       ..
  ASL A                                        ; D3AE: 0A          .
- ROL addr6_1                                  ; D3AF: 26 F2       &.
+ ROL addr6+1                                  ; D3AF: 26 F2       &.
  ASL A                                        ; D3B1: 0A          .
- ROL addr6_1                                  ; D3B2: 26 F2       &.
+ ROL addr6+1                                  ; D3B2: 26 F2       &.
  ASL A                                        ; D3B4: 0A          .
  STA addr6                                    ; D3B5: 85 F1       ..
- LDA addr6_1                                  ; D3B7: A5 F2       ..
+ LDA addr6+1                                  ; D3B7: A5 F2       ..
  ROL A                                        ; D3B9: 2A          *
  ADC pattBufferAddr,X                         ; D3BA: 7D D2 CE    }..
- STA addr6_1                                  ; D3BD: 85 F2       ..
+ STA addr6+1                                  ; D3BD: 85 F2       ..
  LDA #0                                       ; D3BF: A9 00       ..
  ASL L00EF                                    ; D3C1: 06 EF       ..
  ROL A                                        ; D3C3: 2A          *
@@ -3263,13 +3057,13 @@ LC006 = sub_CC004+2
  SBC addr6                                    ; D3D2: E5 F1       ..
  STA L00EF                                    ; D3D4: 85 EF       ..
  LDA L00F0                                    ; D3D6: A5 F0       ..
- SBC addr6_1                                  ; D3D8: E5 F2       ..
+ SBC addr6+1                                  ; D3D8: E5 F2       ..
  BCC CD3FC                                    ; D3DA: 90 20       .
  STA L00F0                                    ; D3DC: 85 F0       ..
  ORA L00EF                                    ; D3DE: 05 EF       ..
  BEQ CD401                                    ; D3E0: F0 1F       ..
  JSR FillMemory                               ; D3E2: 20 10 D7     ..
- LDA addr6_1                                  ; D3E5: A5 F2       ..
+ LDA addr6+1                                  ; D3E5: A5 F2       ..
  SEC                                          ; D3E7: 38          8
  SBC pattBufferAddr,X                         ; D3E8: FD D2 CE    ...
  LSR A                                        ; D3EB: 4A          J
@@ -3296,9 +3090,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; D402: A5 D0       ..
  ADC #&23 ; '#'                               ; D404: 69 23       i#
  STA tempVar                                  ; D406: 85 D0       ..
- LDA tempVar_1                                ; D408: A5 D1       ..
+ LDA tempVar+1                                ; D408: A5 D1       ..
  ADC #0                                       ; D40A: 69 00       i.
- STA tempVar_1                                ; D40C: 85 D1       ..
+ STA tempVar+1                                ; D40C: 85 D1       ..
  RTS                                          ; D40E: 60          `
 
 .sub_CD40F
@@ -3825,9 +3619,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; D715: A5 D0       ..
  SBC #&39 ; '9'                               ; D717: E9 39       .9
  STA tempVar                                  ; D719: 85 D0       ..
- LDA tempVar_1                                ; D71B: A5 D1       ..
+ LDA tempVar+1                                ; D71B: A5 D1       ..
  SBC #8                                       ; D71D: E9 08       ..
- STA tempVar_1                                ; D71F: 85 D1       ..
+ STA tempVar+1                                ; D71F: 85 D1       ..
  BMI CD726                                    ; D721: 30 03       0.
  JMP CD735                                    ; D723: 4C 35 D7    L5.
 
@@ -3835,9 +3629,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; D726: A5 D0       ..
  ADC #&0B                                     ; D728: 69 0B       i.
  STA tempVar                                  ; D72A: 85 D0       ..
- LDA tempVar_1                                ; D72C: A5 D1       ..
+ LDA tempVar+1                                ; D72C: A5 D1       ..
  ADC #8                                       ; D72E: 69 08       i.
- STA tempVar_1                                ; D730: 85 D1       ..
+ STA tempVar+1                                ; D730: 85 D1       ..
  JMP CD743                                    ; D732: 4C 43 D7    LC.
 
 .CD735
@@ -3845,7 +3639,7 @@ LC006 = sub_CC004+2
  LDY #0                                       ; D737: A0 00       ..
  JSR sub_CD40F                                ; D739: 20 0F D4     ..
  DEC L00F0                                    ; D73C: C6 F0       ..
- INC addr6_1                                  ; D73E: E6 F2       ..
+ INC addr6+1                                  ; D73E: E6 F2       ..
  JMP FillMemory                               ; D740: 4C 10 D7    L..
 
 .CD743
@@ -3853,9 +3647,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; D744: A5 D0       ..
  SBC #&3E ; '>'                               ; D746: E9 3E       .>
  STA tempVar                                  ; D748: 85 D0       ..
- LDA tempVar_1                                ; D74A: A5 D1       ..
+ LDA tempVar+1                                ; D74A: A5 D1       ..
  SBC #1                                       ; D74C: E9 01       ..
- STA tempVar_1                                ; D74E: 85 D1       ..
+ STA tempVar+1                                ; D74E: 85 D1       ..
  BMI CD755                                    ; D750: 30 03       0.
  JMP CD764                                    ; D752: 4C 64 D7    Ld.
 
@@ -3863,9 +3657,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; D755: A5 D0       ..
  ADC #&15                                     ; D757: 69 15       i.
  STA tempVar                                  ; D759: 85 D0       ..
- LDA tempVar_1                                ; D75B: A5 D1       ..
+ LDA tempVar+1                                ; D75B: A5 D1       ..
  ADC #1                                       ; D75D: 69 01       i.
- STA tempVar_1                                ; D75F: 85 D1       ..
+ STA tempVar+1                                ; D75F: 85 D1       ..
  JMP CD788                                    ; D761: 4C 88 D7    L..
 
 .CD764
@@ -3876,9 +3670,9 @@ LC006 = sub_CC004+2
  CLC                                          ; D76D: 18          .
  ADC #&20 ; ' '                               ; D76E: 69 20       i
  STA addr6                                    ; D770: 85 F1       ..
- LDA addr6_1                                  ; D772: A5 F2       ..
+ LDA addr6+1                                  ; D772: A5 F2       ..
  ADC #0                                       ; D774: 69 00       i.
- STA addr6_1                                  ; D776: 85 F2       ..
+ STA addr6+1                                  ; D776: 85 F2       ..
  JMP CD743                                    ; D778: 4C 43 D7    LC.
 
 .CD77B
@@ -3886,9 +3680,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; D77C: A5 D0       ..
  ADC #&84                                     ; D77E: 69 84       i.
  STA tempVar                                  ; D780: 85 D0       ..
- LDA tempVar_1                                ; D782: A5 D1       ..
+ LDA tempVar+1                                ; D782: A5 D1       ..
  ADC #0                                       ; D784: 69 00       i.
- STA tempVar_1                                ; D786: 85 D1       ..
+ STA tempVar+1                                ; D786: 85 D1       ..
 .CD788
  RTS                                          ; D788: 60          `
 
@@ -3897,9 +3691,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; D78A: A5 D0       ..
  SBC #&BA                                     ; D78C: E9 BA       ..
  STA tempVar                                  ; D78E: 85 D0       ..
- LDA tempVar_1                                ; D790: A5 D1       ..
+ LDA tempVar+1                                ; D790: A5 D1       ..
  SBC #0                                       ; D792: E9 00       ..
- STA tempVar_1                                ; D794: 85 D1       ..
+ STA tempVar+1                                ; D794: 85 D1       ..
  BMI CD79B                                    ; D796: 30 03       0.
  JMP CD7AA                                    ; D798: 4C AA D7    L..
 
@@ -3907,9 +3701,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; D79B: A5 D0       ..
  ADC #&8A                                     ; D79D: 69 8A       i.
  STA tempVar                                  ; D79F: 85 D0       ..
- LDA tempVar_1                                ; D7A1: A5 D1       ..
+ LDA tempVar+1                                ; D7A1: A5 D1       ..
  ADC #0                                       ; D7A3: 69 00       i.
- STA tempVar_1                                ; D7A5: 85 D1       ..
+ STA tempVar+1                                ; D7A5: 85 D1       ..
  JMP CD788                                    ; D7A7: 4C 88 D7    L..
 
 .CD7AA
@@ -3919,7 +3713,7 @@ LC006 = sub_CC004+2
  LSR A                                        ; D7AF: 4A          J
  LSR A                                        ; D7B0: 4A          J
  LSR A                                        ; D7B1: 4A          J
- CMP tempVar_1                                ; D7B2: C5 D1       ..
+ CMP tempVar+1                                ; D7B2: C5 D1       ..
  BCS CD809                                    ; D7B4: B0 53       .S
  LDA #0                                       ; D7B6: A9 00       ..
  STA L00F0                                    ; D7B8: 85 F0       ..
@@ -3936,8 +3730,8 @@ LC006 = sub_CC004+2
  STA tempVar                                  ; D7CA: 85 D0       ..
  LDA L00F0                                    ; D7CC: A5 F0       ..
  EOR #&FF                                     ; D7CE: 49 FF       I.
- ADC tempVar_1                                ; D7D0: 65 D1       e.
- STA tempVar_1                                ; D7D2: 85 D1       ..
+ ADC tempVar+1                                ; D7D0: 65 D1       e.
+ STA tempVar+1                                ; D7D2: 85 D1       ..
  LDY #0                                       ; D7D4: A0 00       ..
  STY L00F0                                    ; D7D6: 84 F0       ..
  LDA L00EF                                    ; D7D8: A5 EF       ..
@@ -3961,9 +3755,9 @@ LC006 = sub_CC004+2
  CLC                                          ; D7FA: 18          .
  ADC addr6                                    ; D7FB: 65 F1       e.
  STA addr6                                    ; D7FD: 85 F1       ..
- LDA addr6_1                                  ; D7FF: A5 F2       ..
+ LDA addr6+1                                  ; D7FF: A5 F2       ..
  ADC #0                                       ; D801: 69 00       i.
- STA addr6_1                                  ; D803: 85 F2       ..
+ STA addr6+1                                  ; D803: 85 F2       ..
  RTS                                          ; D805: 60          `
 
 .sub_CD806
@@ -3974,17 +3768,17 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; D80A: A5 D0       ..
  ADC #&76 ; 'v'                               ; D80C: 69 76       iv
  STA tempVar                                  ; D80E: 85 D0       ..
- LDA tempVar_1                                ; D810: A5 D1       ..
+ LDA tempVar+1                                ; D810: A5 D1       ..
  ADC #0                                       ; D812: 69 00       i.
- STA tempVar_1                                ; D814: 85 D1       ..
+ STA tempVar+1                                ; D814: 85 D1       ..
 .CD816
  SEC                                          ; D816: 38          8
  LDA tempVar                                  ; D817: A5 D0       ..
  SBC #&41 ; 'A'                               ; D819: E9 41       .A
  STA tempVar                                  ; D81B: 85 D0       ..
- LDA tempVar_1                                ; D81D: A5 D1       ..
+ LDA tempVar+1                                ; D81D: A5 D1       ..
  SBC #1                                       ; D81F: E9 01       ..
- STA tempVar_1                                ; D821: 85 D1       ..
+ STA tempVar+1                                ; D821: 85 D1       ..
  BMI CD828                                    ; D823: 30 03       0.
  JMP CD837                                    ; D825: 4C 37 D8    L7.
 
@@ -3992,9 +3786,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; D828: A5 D0       ..
  ADC #&18                                     ; D82A: 69 18       i.
  STA tempVar                                  ; D82C: 85 D0       ..
- LDA tempVar_1                                ; D82E: A5 D1       ..
+ LDA tempVar+1                                ; D82E: A5 D1       ..
  ADC #1                                       ; D830: 69 01       i.
- STA tempVar_1                                ; D832: 85 D1       ..
+ STA tempVar+1                                ; D832: 85 D1       ..
  JMP CD855                                    ; D834: 4C 55 D8    LU.
 
 .CD837
@@ -4011,7 +3805,7 @@ LC006 = sub_CC004+2
  ADC #&20 ; ' '                               ; D84A: 69 20       i
  STA addr6                                    ; D84C: 85 F1       ..
  BCC CD816                                    ; D84E: 90 C6       ..
- INC addr6_1                                  ; D850: E6 F2       ..
+ INC addr6+1                                  ; D850: E6 F2       ..
  JMP CD816                                    ; D852: 4C 16 D8    L..
 
 .CD855
@@ -4022,17 +3816,17 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; D857: A5 D0       ..
  ADC #&0D                                     ; D859: 69 0D       i.
  STA tempVar                                  ; D85B: 85 D0       ..
- LDA tempVar_1                                ; D85D: A5 D1       ..
+ LDA tempVar+1                                ; D85D: A5 D1       ..
  ADC #1                                       ; D85F: 69 01       i.
- STA tempVar_1                                ; D861: 85 D1       ..
+ STA tempVar+1                                ; D861: 85 D1       ..
 .CD863
  SEC                                          ; D863: 38          8
  LDA tempVar                                  ; D864: A5 D0       ..
  SBC #&77 ; 'w'                               ; D866: E9 77       .w
  STA tempVar                                  ; D868: 85 D0       ..
- LDA tempVar_1                                ; D86A: A5 D1       ..
+ LDA tempVar+1                                ; D86A: A5 D1       ..
  SBC #0                                       ; D86C: E9 00       ..
- STA tempVar_1                                ; D86E: 85 D1       ..
+ STA tempVar+1                                ; D86E: 85 D1       ..
  BMI CD875                                    ; D870: 30 03       0.
  JMP CD884                                    ; D872: 4C 84 D8    L..
 
@@ -4040,9 +3834,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; D875: A5 D0       ..
  ADC #&4E ; 'N'                               ; D877: 69 4E       iN
  STA tempVar                                  ; D879: 85 D0       ..
- LDA tempVar_1                                ; D87B: A5 D1       ..
+ LDA tempVar+1                                ; D87B: A5 D1       ..
  ADC #0                                       ; D87D: 69 00       i.
- STA tempVar_1                                ; D87F: 85 D1       ..
+ STA tempVar+1                                ; D87F: 85 D1       ..
  JMP CD855                                    ; D881: 4C 55 D8    LU.
 
 .CD884
@@ -4074,7 +3868,7 @@ LC006 = sub_CC004+2
  ADC #8                                       ; D8AC: 69 08       i.
  STA addr6                                    ; D8AE: 85 F1       ..
  BCC CD8B4                                    ; D8B0: 90 02       ..
- INC addr6_1                                  ; D8B2: E6 F2       ..
+ INC addr6+1                                  ; D8B2: E6 F2       ..
 .CD8B4
  JMP CD863                                    ; D8B4: 4C 63 D8    Lc.
 
@@ -4083,9 +3877,9 @@ LC006 = sub_CC004+2
  LDA tempVar                                  ; D8B8: A5 D0       ..
  ADC #&42 ; 'B'                               ; D8BA: 69 42       iB
  STA tempVar                                  ; D8BC: 85 D0       ..
- LDA tempVar_1                                ; D8BE: A5 D1       ..
+ LDA tempVar+1                                ; D8BE: A5 D1       ..
  ADC #0                                       ; D8C0: 69 00       i.
- STA tempVar_1                                ; D8C2: 85 D1       ..
+ STA tempVar+1                                ; D8C2: 85 D1       ..
  RTS                                          ; D8C4: 60          `
 
 ; ******************************************************************************
@@ -4139,8 +3933,8 @@ LC006 = sub_CC004+2
  STA (SC),Y                                   ; D90C: 91 07       ..
  DEY                                          ; D90E: 88          .
  BNE CD90A                                    ; D90F: D0 F9       ..
- INC V_1                                      ; D911: E6 64       .d
- INC SC_1                                     ; D913: E6 08       ..
+ INC V+1                                      ; D911: E6 64       .d
+ INC SC+1                                     ; D913: E6 08       ..
  DEX                                          ; D915: CA          .
  BNE CD90A                                    ; D916: D0 F2       ..
  RTS                                          ; D918: 60          `
@@ -4149,18 +3943,18 @@ LC006 = sub_CC004+2
 .subm_D919
  LDY #0                                       ; D919: A0 00       ..
  INC V                                        ; D91B: E6 63       .c
- INC V_1                                      ; D91D: E6 64       .d
+ INC V+1                                      ; D91D: E6 64       .d
 .CD91F
  LDA (SC2),Y                                  ; D91F: B1 BA       ..
  STA (SC),Y                                   ; D921: 91 07       ..
  INY                                          ; D923: C8          .
  BNE CD92A                                    ; D924: D0 04       ..
- INC SC_1                                     ; D926: E6 08       ..
- INC SC2_1                                    ; D928: E6 BB       ..
+ INC SC+1                                     ; D926: E6 08       ..
+ INC SC2+1                                    ; D928: E6 BB       ..
 .CD92A
  DEC V                                        ; D92A: C6 63       .c
  BNE CD91F                                    ; D92C: D0 F1       ..
- DEC V_1                                      ; D92E: C6 64       .d
+ DEC V+1                                      ; D92E: C6 64       .d
  BNE CD91F                                    ; D930: D0 ED       ..
  RTS                                          ; D932: 60          `
 
@@ -4274,7 +4068,7 @@ LC006 = sub_CC004+2
  ADC #&10                                     ; D9EB: 69 10       i.
  STA SC                                       ; D9ED: 85 07       ..
  BCC CD9F3                                    ; D9EF: 90 02       ..
- INC SC_1                                     ; D9F1: E6 08       ..
+ INC SC+1                                     ; D9F1: E6 08       ..
 .CD9F3
  DEX                                          ; D9F3: CA          .
  BNE SendToPPU2                               ; D9F4: D0 90       ..
@@ -4334,7 +4128,7 @@ LC006 = sub_CC004+2
 ; ******************************************************************************
 .subm_DBD8
  LDA #0                                       ; DBD8: A9 00       ..
- STA SC_1                                     ; DBDA: 85 08       ..
+ STA SC+1                                     ; DBDA: 85 08       ..
  LDA YC                                       ; DBDC: A5 3B       .;
  BEQ CDBFE                                    ; DBDE: F0 1E       ..
  LDA YC                                       ; DBE0: A5 3B       .;
@@ -4344,26 +4138,26 @@ LC006 = sub_CC004+2
  ASL A                                        ; DBE6: 0A          .
  ASL A                                        ; DBE7: 0A          .
  ASL A                                        ; DBE8: 0A          .
- ROL SC_1                                     ; DBE9: 26 08       &.
+ ROL SC+1                                     ; DBE9: 26 08       &.
  SEC                                          ; DBEB: 38          8
  ROL A                                        ; DBEC: 2A          *
- ROL SC_1                                     ; DBED: 26 08       &.
+ ROL SC+1                                     ; DBED: 26 08       &.
  STA SC                                       ; DBEF: 85 07       ..
  STA SC2                                      ; DBF1: 85 BA       ..
- LDA SC_1                                     ; DBF3: A5 08       ..
+ LDA SC+1                                     ; DBF3: A5 08       ..
  ADC #&70 ; 'p'                               ; DBF5: 69 70       ip
- STA SC_1                                     ; DBF7: 85 08       ..
+ STA SC+1                                     ; DBF7: 85 08       ..
  ADC #4                                       ; DBF9: 69 04       i.
- STA SC2_1                                    ; DBFB: 85 BB       ..
+ STA SC2+1                                    ; DBFB: 85 BB       ..
  RTS                                          ; DBFD: 60          `
 
 .CDBFE
  LDA #&70 ; 'p'                               ; DBFE: A9 70       .p
- STA SC_1                                     ; DC00: 85 08       ..
+ STA SC+1                                     ; DC00: 85 08       ..
  LDA #&21 ; '!'                               ; DC02: A9 21       .!
  STA SC                                       ; DC04: 85 07       ..
  LDA #&74 ; 't'                               ; DC06: A9 74       .t
- STA SC2_1                                    ; DC08: 85 BB       ..
+ STA SC2+1                                    ; DC08: 85 BB       ..
  LDA #&21 ; '!'                               ; DC0A: A9 21       .!
  STA SC2                                      ; DC0C: 85 BA       ..
  RTS                                          ; DC0E: 60          `
@@ -4466,7 +4260,7 @@ LC006 = sub_CC004+2
  STA SC2                                      ; DCB3: 85 BA       ..
  LDA nameBufferHi                             ; DCB5: A5 E6       ..
  ADC yLookupHi,Y                              ; DCB7: 79 F8 DA    y..
- STA SC2_1                                    ; DCBA: 85 BB       ..
+ STA SC2+1                                    ; DCBA: 85 BB       ..
  TYA                                          ; DCBC: 98          .
  AND #7                                       ; DCBD: 29 07       ).
  TAY                                          ; DCBF: A8          .
@@ -4493,13 +4287,13 @@ LC006 = sub_CC004+2
  INC tileNumber                               ; DCE3: E6 B8       ..
 .CDCE5
  LDX pattBufferHi                             ; DCE5: A6 B9       ..
- STX SC_1                                     ; DCE7: 86 08       ..
+ STX SC+1                                     ; DCE7: 86 08       ..
  ASL A                                        ; DCE9: 0A          .
- ROL SC_1                                     ; DCEA: 26 08       &.
+ ROL SC+1                                     ; DCEA: 26 08       &.
  ASL A                                        ; DCEC: 0A          .
- ROL SC_1                                     ; DCED: 26 08       &.
+ ROL SC+1                                     ; DCED: 26 08       &.
  ASL A                                        ; DCEF: 0A          .
- ROL SC_1                                     ; DCF0: 26 08       &.
+ ROL SC+1                                     ; DCF0: 26 08       &.
  STA SC                                       ; DCF2: 85 07       ..
  CLC                                          ; DCF4: 18          .
 .loop_CDCF5
@@ -4520,14 +4314,14 @@ LC006 = sub_CC004+2
  LDA #&80                                     ; DD0E: A9 80       ..
  INC SC2                                      ; DD10: E6 BA       ..
  BNE CDCC8                                    ; DD12: D0 B4       ..
- INC SC2_1                                    ; DD14: E6 BB       ..
+ INC SC2+1                                    ; DD14: E6 BB       ..
  BNE CDCC8                                    ; DD16: D0 B0       ..
 .CDD18
  LDA SC2                                      ; DD18: A5 BA       ..
  SBC #&20 ; ' '                               ; DD1A: E9 20       .
  STA SC2                                      ; DD1C: 85 BA       ..
  BCS CDD22                                    ; DD1E: B0 02       ..
- DEC SC2_1                                    ; DD20: C6 BB       ..
+ DEC SC2+1                                    ; DD20: C6 BB       ..
 .CDD22
  LDY #7                                       ; DD22: A0 07       ..
  LSR R                                        ; DD24: 46 98       F.
@@ -4535,7 +4329,7 @@ LC006 = sub_CC004+2
  LDA #&80                                     ; DD28: A9 80       ..
  INC SC2                                      ; DD2A: E6 BA       ..
  BNE CDCC8                                    ; DD2C: D0 9A       ..
- INC SC2_1                                    ; DD2E: E6 BB       ..
+ INC SC2+1                                    ; DD2E: E6 BB       ..
  BNE CDCC8                                    ; DD30: D0 96       ..
 .CDD32
  DEC P                                        ; DD32: C6 2F       ./
@@ -4553,7 +4347,7 @@ LC006 = sub_CC004+2
  LDA #&80                                     ; DD46: A9 80       ..
  INC SC2                                      ; DD48: E6 BA       ..
  BNE CDD4E                                    ; DD4A: D0 02       ..
- INC SC2_1                                    ; DD4C: E6 BB       ..
+ INC SC2+1                                    ; DD4C: E6 BB       ..
 .CDD4E
  JMP CDCC8                                    ; DD4E: 4C C8 DC    L..
 
@@ -4579,7 +4373,7 @@ LC006 = sub_CC004+2
  STA SC2                                      ; DD6B: 85 BA       ..
  LDA nameBufferHi                             ; DD6D: A5 E6       ..
  ADC yLookupHi,Y                              ; DD6F: 79 F8 DA    y..
- STA SC2_1                                    ; DD72: 85 BB       ..
+ STA SC2+1                                    ; DD72: 85 BB       ..
  TYA                                          ; DD74: 98          .
  AND #7                                       ; DD75: 29 07       ).
  TAY                                          ; DD77: A8          .
@@ -4606,13 +4400,13 @@ LC006 = sub_CC004+2
  INC tileNumber                               ; DD9B: E6 B8       ..
 .CDD9D
  LDX pattBufferHi                             ; DD9D: A6 B9       ..
- STX SC_1                                     ; DD9F: 86 08       ..
+ STX SC+1                                     ; DD9F: 86 08       ..
  ASL A                                        ; DDA1: 0A          .
- ROL SC_1                                     ; DDA2: 26 08       &.
+ ROL SC+1                                     ; DDA2: 26 08       &.
  ASL A                                        ; DDA4: 0A          .
- ROL SC_1                                     ; DDA5: 26 08       &.
+ ROL SC+1                                     ; DDA5: 26 08       &.
  ASL A                                        ; DDA7: 0A          .
- ROL SC_1                                     ; DDA8: 26 08       &.
+ ROL SC+1                                     ; DDA8: 26 08       &.
  STA SC                                       ; DDAA: 85 07       ..
  CLC                                          ; DDAC: 18          .
 .loop_CDDAD
@@ -4634,7 +4428,7 @@ LC006 = sub_CC004+2
  LDA #&80                                     ; DDC8: A9 80       ..
  INC SC2                                      ; DDCA: E6 BA       ..
  BNE CDD80                                    ; DDCC: D0 B2       ..
- INC SC2_1                                    ; DDCE: E6 BB       ..
+ INC SC2+1                                    ; DDCE: E6 BB       ..
  JMP CDD80                                    ; DDD0: 4C 80 DD    L..
 
 .CDDD3
@@ -4642,7 +4436,7 @@ LC006 = sub_CC004+2
  ADC #&1F                                     ; DDD5: 69 1F       i.
  STA SC2                                      ; DDD7: 85 BA       ..
  BCC CDDDD                                    ; DDD9: 90 02       ..
- INC SC2_1                                    ; DDDB: E6 BB       ..
+ INC SC2+1                                    ; DDDB: E6 BB       ..
 .CDDDD
  LDY #0                                       ; DDDD: A0 00       ..
  LSR R                                        ; DDDF: 46 98       F.
@@ -4650,7 +4444,7 @@ LC006 = sub_CC004+2
  LDA #&80                                     ; DDE3: A9 80       ..
  INC SC2                                      ; DDE5: E6 BA       ..
  BNE CDD80                                    ; DDE7: D0 97       ..
- INC SC2_1                                    ; DDE9: E6 BB       ..
+ INC SC2+1                                    ; DDE9: E6 BB       ..
  JMP CDD80                                    ; DDEB: 4C 80 DD    L..
 
 .CDDEE
@@ -4670,7 +4464,7 @@ LC006 = sub_CC004+2
  LDA #&80                                     ; DE04: A9 80       ..
  INC SC2                                      ; DE06: E6 BA       ..
  BNE CDE0C                                    ; DE08: D0 02       ..
- INC SC2_1                                    ; DE0A: E6 BB       ..
+ INC SC2+1                                    ; DE0A: E6 BB       ..
 .CDE0C
  JMP CDD80                                    ; DE0C: 4C 80 DD    L..
 
@@ -4744,7 +4538,7 @@ LC006 = sub_CC004+2
  STA SC2                                      ; DE81: 85 BA       ..
  LDA nameBufferHi                             ; DE83: A5 E6       ..
  ADC yLookupHi,Y                              ; DE85: 79 F8 DA    y..
- STA SC2_1                                    ; DE88: 85 BB       ..
+ STA SC2+1                                    ; DE88: 85 BB       ..
  TYA                                          ; DE8A: 98          .
  AND #7                                       ; DE8B: 29 07       ).
  TAY                                          ; DE8D: A8          .
@@ -4769,13 +4563,13 @@ LC006 = sub_CC004+2
 
 .CDEA9
  LDX pattBufferHi                             ; DEA9: A6 B9       ..
- STX SC_1                                     ; DEAB: 86 08       ..
+ STX SC+1                                     ; DEAB: 86 08       ..
  ASL A                                        ; DEAD: 0A          .
- ROL SC_1                                     ; DEAE: 26 08       &.
+ ROL SC+1                                     ; DEAE: 26 08       &.
  ASL A                                        ; DEB0: 0A          .
- ROL SC_1                                     ; DEB1: 26 08       &.
+ ROL SC+1                                     ; DEB1: 26 08       &.
  ASL A                                        ; DEB3: 0A          .
- ROL SC_1                                     ; DEB4: 26 08       &.
+ ROL SC+1                                     ; DEB4: 26 08       &.
  STA SC                                       ; DEB6: 85 07       ..
  CLC                                          ; DEB8: 18          .
  LDX Q                                        ; DEB9: A6 97       ..
@@ -4798,7 +4592,7 @@ LC006 = sub_CC004+2
  SBC #&1F                                     ; DED5: E9 1F       ..
  STA SC2                                      ; DED7: 85 BA       ..
  BCS CDEDD                                    ; DED9: B0 02       ..
- DEC SC2_1                                    ; DEDB: C6 BB       ..
+ DEC SC2+1                                    ; DEDB: C6 BB       ..
 .CDEDD
  STX Q                                        ; DEDD: 86 97       ..
  LDA setupPPUForIconBar                       ; DEDF: A5 E9       ..
@@ -4819,13 +4613,13 @@ LC006 = sub_CC004+2
 
 .CDEFD
  LDX pattBufferHi                             ; DEFD: A6 B9       ..
- STX SC_1                                     ; DEFF: 86 08       ..
+ STX SC+1                                     ; DEFF: 86 08       ..
  ASL A                                        ; DF01: 0A          .
- ROL SC_1                                     ; DF02: 26 08       &.
+ ROL SC+1                                     ; DF02: 26 08       &.
  ASL A                                        ; DF04: 0A          .
- ROL SC_1                                     ; DF05: 26 08       &.
+ ROL SC+1                                     ; DF05: 26 08       &.
  ASL A                                        ; DF07: 0A          .
- ROL SC_1                                     ; DF08: 26 08       &.
+ ROL SC+1                                     ; DF08: 26 08       &.
  STA SC                                       ; DF0A: 85 07       ..
  CLC                                          ; DF0C: 18          .
  LDX Q                                        ; DF0D: A6 97       ..
@@ -4849,13 +4643,13 @@ LC006 = sub_CC004+2
  SBC #&1F                                     ; DF2B: E9 1F       ..
  STA SC2                                      ; DF2D: 85 BA       ..
  BCS CDEDD                                    ; DF2F: B0 AC       ..
- DEC SC2_1                                    ; DF31: C6 BB       ..
+ DEC SC2+1                                    ; DF31: C6 BB       ..
  BNE CDEDD                                    ; DF33: D0 A8       ..
 .CDF35
  ROR R                                        ; DF35: 66 98       f.
  INC SC2                                      ; DF37: E6 BA       ..
  BNE CDF3D                                    ; DF39: D0 02       ..
- INC SC2_1                                    ; DF3B: E6 BB       ..
+ INC SC2+1                                    ; DF3B: E6 BB       ..
 .CDF3D
  DEY                                          ; DF3D: 88          .
  BPL CDEDD                                    ; DF3E: 10 9D       ..
@@ -4864,7 +4658,7 @@ LC006 = sub_CC004+2
  SBC #&1F                                     ; DF44: E9 1F       ..
  STA SC2                                      ; DF46: 85 BA       ..
  BCS CDEDD                                    ; DF48: B0 93       ..
- DEC SC2_1                                    ; DF4A: C6 BB       ..
+ DEC SC2+1                                    ; DF4A: C6 BB       ..
  JMP CDEDD                                    ; DF4C: 4C DD DE    L..
 
 .CDF4F
@@ -4886,7 +4680,7 @@ LC006 = sub_CC004+2
  SBC #&1F                                     ; DF67: E9 1F       ..
  STA SC2                                      ; DF69: 85 BA       ..
  BCS CDF6F                                    ; DF6B: B0 02       ..
- DEC SC2_1                                    ; DF6D: C6 BB       ..
+ DEC SC2+1                                    ; DF6D: C6 BB       ..
 .CDF6F
  JMP CDEDD                                    ; DF6F: 4C DD DE    L..
 
@@ -4898,13 +4692,13 @@ LC006 = sub_CC004+2
 ; ******************************************************************************
 .subm_DF76
  LDX pattBufferHi                             ; DF76: A6 B9       ..
- STX SC_1                                     ; DF78: 86 08       ..
+ STX SC+1                                     ; DF78: 86 08       ..
  ASL A                                        ; DF7A: 0A          .
- ROL SC_1                                     ; DF7B: 26 08       &.
+ ROL SC+1                                     ; DF7B: 26 08       &.
  ASL A                                        ; DF7D: 0A          .
- ROL SC_1                                     ; DF7E: 26 08       &.
+ ROL SC+1                                     ; DF7E: 26 08       &.
  ASL A                                        ; DF80: 0A          .
- ROL SC_1                                     ; DF81: 26 08       &.
+ ROL SC+1                                     ; DF81: 26 08       &.
  STA SC                                       ; DF83: 85 07       ..
  CLC                                          ; DF85: 18          .
  LDX Q                                        ; DF86: A6 97       ..
@@ -4927,7 +4721,7 @@ LC006 = sub_CC004+2
  SBC #&1F                                     ; DFA2: E9 1F       ..
  STA SC2                                      ; DFA4: 85 BA       ..
  BCS CDFAA                                    ; DFA6: B0 02       ..
- DEC SC2_1                                    ; DFA8: C6 BB       ..
+ DEC SC2+1                                    ; DFA8: C6 BB       ..
 .CDFAA
  STX Q                                        ; DFAA: 86 97       ..
  LDA setupPPUForIconBar                       ; DFAC: A5 E9       ..
@@ -4948,13 +4742,13 @@ LC006 = sub_CC004+2
 
 .CDFCA
  LDX pattBufferHi                             ; DFCA: A6 B9       ..
- STX SC_1                                     ; DFCC: 86 08       ..
+ STX SC+1                                     ; DFCC: 86 08       ..
  ASL A                                        ; DFCE: 0A          .
- ROL SC_1                                     ; DFCF: 26 08       &.
+ ROL SC+1                                     ; DFCF: 26 08       &.
  ASL A                                        ; DFD1: 0A          .
- ROL SC_1                                     ; DFD2: 26 08       &.
+ ROL SC+1                                     ; DFD2: 26 08       &.
  ASL A                                        ; DFD4: 0A          .
- ROL SC_1                                     ; DFD5: 26 08       &.
+ ROL SC+1                                     ; DFD5: 26 08       &.
  STA SC                                       ; DFD7: 85 07       ..
  CLC                                          ; DFD9: 18          .
  LDX Q                                        ; DFDA: A6 97       ..
@@ -4980,14 +4774,14 @@ LC006 = sub_CC004+2
  BCS CDFAA                                    ; DFFC: B0 AC       ..
 .sub_CDFFE
 LDFFF = sub_CDFFE+1
- DEC SC2_1                                    ; DFFE: C6 BB       ..
+ DEC SC2+1                                    ; DFFE: C6 BB       ..
  JMP CDFAA                                    ; E000: 4C AA DF    L..
 
 .CE003
  ROL R                                        ; E003: 26 98       &.
  LDA SC2                                      ; E005: A5 BA       ..
  BNE CE00B                                    ; E007: D0 02       ..
- DEC SC2_1                                    ; E009: C6 BB       ..
+ DEC SC2+1                                    ; E009: C6 BB       ..
 .CE00B
  DEC SC2                                      ; E00B: C6 BA       ..
  DEY                                          ; E00D: 88          .
@@ -4997,7 +4791,7 @@ LDFFF = sub_CDFFE+1
  SBC #&1F                                     ; E014: E9 1F       ..
  STA SC2                                      ; E016: 85 BA       ..
  BCS CDFAA                                    ; E018: B0 90       ..
- DEC SC2_1                                    ; E01A: C6 BB       ..
+ DEC SC2+1                                    ; E01A: C6 BB       ..
  JMP CDFAA                                    ; E01C: 4C AA DF    L..
 
 .CE01F
@@ -5019,7 +4813,7 @@ LDFFF = sub_CDFFE+1
  SBC #&1F                                     ; E037: E9 1F       ..
  STA SC2                                      ; E039: 85 BA       ..
  BCS CE03F                                    ; E03B: B0 02       ..
- DEC SC2_1                                    ; E03D: C6 BB       ..
+ DEC SC2+1                                    ; E03D: C6 BB       ..
 .CE03F
  JMP CDFAA                                    ; E03F: 4C AA DF    L..
 
@@ -5052,8 +4846,8 @@ LDFFF = sub_CDFFE+1
  STA SC2                                      ; E062: 85 BA       ..
  LDA nameBufferHi                             ; E064: A5 E6       ..
  ADC yLookupHi,Y                              ; E066: 79 F8 DA    y..
- STA SC2_1                                    ; E069: 85 BB       ..
- LDA P_1                                      ; E06B: A5 30       .0
+ STA SC2+1                                    ; E069: 85 BB       ..
+ LDA P+1                                      ; E06B: A5 30       .0
  SEC                                          ; E06D: 38          8
  SBC P                                        ; E06E: E5 2F       ./
  LSR A                                        ; E070: 4A          J
@@ -5074,13 +4868,13 @@ LDFFF = sub_CDFFE+1
 .CE083
  STY T                                        ; E083: 84 9A       ..
  LDY pattBufferHi                             ; E085: A4 B9       ..
- STY SC_1                                     ; E087: 84 08       ..
+ STY SC+1                                     ; E087: 84 08       ..
  ASL A                                        ; E089: 0A          .
- ROL SC_1                                     ; E08A: 26 08       &.
+ ROL SC+1                                     ; E08A: 26 08       &.
  ASL A                                        ; E08C: 0A          .
- ROL SC_1                                     ; E08D: 26 08       &.
+ ROL SC+1                                     ; E08D: 26 08       &.
  ASL A                                        ; E08F: 0A          .
- ROL SC_1                                     ; E090: 26 08       &.
+ ROL SC+1                                     ; E090: 26 08       &.
  STA SC                                       ; E092: 85 07       ..
  LDA setupPPUForIconBar                       ; E094: A5 E9       ..
  BPL CE0A1                                    ; E096: 10 09       ..
@@ -5138,7 +4932,7 @@ LDFFF = sub_CDFFE+1
  STA SC2                                      ; E0E2: 85 BA       ..
  LDA nameBufferHi                             ; E0E4: A5 E6       ..
  ADC yLookupHi,Y                              ; E0E6: 79 F8 DA    y..
- STA SC2_1                                    ; E0E9: 85 BB       ..
+ STA SC2+1                                    ; E0E9: 85 BB       ..
  TYA                                          ; E0EB: 98          .
  AND #7                                       ; E0EC: 29 07       ).
  TAY                                          ; E0EE: A8          .
@@ -5193,13 +4987,13 @@ LDFFF = sub_CDFFE+1
  STA (SC2,X)                                  ; E140: 81 BA       ..
  INC tileNumber                               ; E142: E6 B8       ..
  LDX pattBufferHi                             ; E144: A6 B9       ..
- STX SC_1                                     ; E146: 86 08       ..
+ STX SC+1                                     ; E146: 86 08       ..
  ASL A                                        ; E148: 0A          .
- ROL SC_1                                     ; E149: 26 08       &.
+ ROL SC+1                                     ; E149: 26 08       &.
  ASL A                                        ; E14B: 0A          .
- ROL SC_1                                     ; E14C: 26 08       &.
+ ROL SC+1                                     ; E14C: 26 08       &.
  ASL A                                        ; E14E: 0A          .
- ROL SC_1                                     ; E14F: 26 08       &.
+ ROL SC+1                                     ; E14F: 26 08       &.
  STA SC                                       ; E151: 85 07       ..
  STY T                                        ; E153: 84 9A       ..
  LDY #7                                       ; E155: A0 07       ..
@@ -5213,13 +5007,13 @@ LDFFF = sub_CDFFE+1
 
 .CE163
  LDX pattBufferHi                             ; E163: A6 B9       ..
- STX SC_1                                     ; E165: 86 08       ..
+ STX SC+1                                     ; E165: 86 08       ..
  ASL A                                        ; E167: 0A          .
- ROL SC_1                                     ; E168: 26 08       &.
+ ROL SC+1                                     ; E168: 26 08       &.
  ASL A                                        ; E16A: 0A          .
- ROL SC_1                                     ; E16B: 26 08       &.
+ ROL SC+1                                     ; E16B: 26 08       &.
  ASL A                                        ; E16D: 0A          .
- ROL SC_1                                     ; E16E: 26 08       &.
+ ROL SC+1                                     ; E16E: 26 08       &.
  STA SC                                       ; E170: 85 07       ..
 .CE172
  LDA XX15                                     ; E172: A5 71       .q
@@ -5231,7 +5025,7 @@ LDFFF = sub_CDFFE+1
 .CE17E
  INC SC2                                      ; E17E: E6 BA       ..
  BNE CE184                                    ; E180: D0 02       ..
- INC SC2_1                                    ; E182: E6 BB       ..
+ INC SC2+1                                    ; E182: E6 BB       ..
 .CE184
  LDX R                                        ; E184: A6 98       ..
  DEX                                          ; E186: CA          .
@@ -5255,13 +5049,13 @@ LDFFF = sub_CDFFE+1
  CMP #&3C ; '<'                               ; E1A1: C9 3C       .<
  BCC CE1E4                                    ; E1A3: 90 3F       .?
  LDX pattBufferHi                             ; E1A5: A6 B9       ..
- STX SC_1                                     ; E1A7: 86 08       ..
+ STX SC+1                                     ; E1A7: 86 08       ..
  ASL A                                        ; E1A9: 0A          .
- ROL SC_1                                     ; E1AA: 26 08       &.
+ ROL SC+1                                     ; E1AA: 26 08       &.
  ASL A                                        ; E1AC: 0A          .
- ROL SC_1                                     ; E1AD: 26 08       &.
+ ROL SC+1                                     ; E1AD: 26 08       &.
  ASL A                                        ; E1AF: 0A          .
- ROL SC_1                                     ; E1B0: 26 08       &.
+ ROL SC+1                                     ; E1B0: 26 08       &.
  STA SC                                       ; E1B2: 85 07       ..
  LDA #&FF                                     ; E1B4: A9 FF       ..
  EOR (SC),Y                                   ; E1B6: 51 07       Q.
@@ -5269,7 +5063,7 @@ LDFFF = sub_CDFFE+1
 .CE1BA
  INC SC2                                      ; E1BA: E6 BA       ..
  BNE CE1C0                                    ; E1BC: D0 02       ..
- INC SC2_1                                    ; E1BE: E6 BB       ..
+ INC SC2+1                                    ; E1BE: E6 BB       ..
 .CE1C0
  DEC R                                        ; E1C0: C6 98       ..
  BNE subm_E18E                                ; E1C2: D0 CA       ..
@@ -5289,7 +5083,7 @@ LDFFF = sub_CDFFE+1
  STA (SC2,X)                                  ; E1D5: 81 BA       ..
  INC SC2                                      ; E1D7: E6 BA       ..
  BNE CE1DD                                    ; E1D9: D0 02       ..
- INC SC2_1                                    ; E1DB: E6 BB       ..
+ INC SC2+1                                    ; E1DB: E6 BB       ..
 .CE1DD
  DEC R                                        ; E1DD: C6 98       ..
  BNE subm_E18E                                ; E1DF: D0 AD       ..
@@ -5316,13 +5110,13 @@ LDFFF = sub_CDFFE+1
  STA L00BC                                    ; E202: 85 BC       ..
  LDA SC                                       ; E204: A5 07       ..
  LDX pattBufferHi                             ; E206: A6 B9       ..
- STX SC_1                                     ; E208: 86 08       ..
+ STX SC+1                                     ; E208: 86 08       ..
  ASL A                                        ; E20A: 0A          .
- ROL SC_1                                     ; E20B: 26 08       &.
+ ROL SC+1                                     ; E20B: 26 08       &.
  ASL A                                        ; E20D: 0A          .
- ROL SC_1                                     ; E20E: 26 08       &.
+ ROL SC+1                                     ; E20E: 26 08       &.
  ASL A                                        ; E210: 0A          .
- ROL SC_1                                     ; E211: 26 08       &.
+ ROL SC+1                                     ; E211: 26 08       &.
  STA SC                                       ; E213: 85 07       ..
  STY T                                        ; E215: 84 9A       ..
  LDY #7                                       ; E217: A0 07       ..
@@ -5377,13 +5171,13 @@ LDFFF = sub_CDFFE+1
  STA (SC2,X)                                  ; E269: 81 BA       ..
  INC tileNumber                               ; E26B: E6 B8       ..
  LDX pattBufferHi                             ; E26D: A6 B9       ..
- STX SC_1                                     ; E26F: 86 08       ..
+ STX SC+1                                     ; E26F: 86 08       ..
  ASL A                                        ; E271: 0A          .
- ROL SC_1                                     ; E272: 26 08       &.
+ ROL SC+1                                     ; E272: 26 08       &.
  ASL A                                        ; E274: 0A          .
- ROL SC_1                                     ; E275: 26 08       &.
+ ROL SC+1                                     ; E275: 26 08       &.
  ASL A                                        ; E277: 0A          .
- ROL SC_1                                     ; E278: 26 08       &.
+ ROL SC+1                                     ; E278: 26 08       &.
  STA SC                                       ; E27A: 85 07       ..
  STY T                                        ; E27C: 84 9A       ..
  LDY #7                                       ; E27E: A0 07       ..
@@ -5397,13 +5191,13 @@ LDFFF = sub_CDFFE+1
 
 .CE28C
  LDX pattBufferHi                             ; E28C: A6 B9       ..
- STX SC_1                                     ; E28E: 86 08       ..
+ STX SC+1                                     ; E28E: 86 08       ..
  ASL A                                        ; E290: 0A          .
- ROL SC_1                                     ; E291: 26 08       &.
+ ROL SC+1                                     ; E291: 26 08       &.
  ASL A                                        ; E293: 0A          .
- ROL SC_1                                     ; E294: 26 08       &.
+ ROL SC+1                                     ; E294: 26 08       &.
  ASL A                                        ; E296: 0A          .
- ROL SC_1                                     ; E297: 26 08       &.
+ ROL SC+1                                     ; E297: 26 08       &.
  STA SC                                       ; E299: 85 07       ..
 .CE29B
  LDA X2                                       ; E29B: A5 73       .s
@@ -5452,13 +5246,13 @@ LDFFF = sub_CDFFE+1
  STA (SC2,X)                                  ; E2E4: 81 BA       ..
  INC tileNumber                               ; E2E6: E6 B8       ..
  LDX pattBufferHi                             ; E2E8: A6 B9       ..
- STX SC_1                                     ; E2EA: 86 08       ..
+ STX SC+1                                     ; E2EA: 86 08       ..
  ASL A                                        ; E2EC: 0A          .
- ROL SC_1                                     ; E2ED: 26 08       &.
+ ROL SC+1                                     ; E2ED: 26 08       &.
  ASL A                                        ; E2EF: 0A          .
- ROL SC_1                                     ; E2F0: 26 08       &.
+ ROL SC+1                                     ; E2F0: 26 08       &.
  ASL A                                        ; E2F2: 0A          .
- ROL SC_1                                     ; E2F3: 26 08       &.
+ ROL SC+1                                     ; E2F3: 26 08       &.
  STA SC                                       ; E2F5: 85 07       ..
  STY T                                        ; E2F7: 84 9A       ..
  LDY #7                                       ; E2F9: A0 07       ..
@@ -5472,13 +5266,13 @@ LDFFF = sub_CDFFE+1
 
 .CE307
  LDX pattBufferHi                             ; E307: A6 B9       ..
- STX SC_1                                     ; E309: 86 08       ..
+ STX SC+1                                     ; E309: 86 08       ..
  ASL A                                        ; E30B: 0A          .
- ROL SC_1                                     ; E30C: 26 08       &.
+ ROL SC+1                                     ; E30C: 26 08       &.
  ASL A                                        ; E30E: 0A          .
- ROL SC_1                                     ; E30F: 26 08       &.
+ ROL SC+1                                     ; E30F: 26 08       &.
  ASL A                                        ; E311: 0A          .
- ROL SC_1                                     ; E312: 26 08       &.
+ ROL SC+1                                     ; E312: 26 08       &.
  STA SC                                       ; E314: 85 07       ..
 .CE316
  LDA XX15                                     ; E316: A5 71       .q
@@ -5533,7 +5327,7 @@ LDFFF = sub_CDFFE+1
  STA SC2                                      ; E365: 85 BA       ..
  LDA nameBufferHi                             ; E367: A5 E6       ..
  ADC yLookupHi,Y                              ; E369: 79 F8 DA    y..
- STA SC2_1                                    ; E36C: 85 BB       ..
+ STA SC2+1                                    ; E36C: 85 BB       ..
  LDA XX15                                     ; E36E: A5 71       .q
  AND #7                                       ; E370: 29 07       ).
  STA S                                        ; E372: 85 99       ..
@@ -5600,13 +5394,13 @@ LDFFF = sub_CDFFE+1
  STA (SC2,X)                                  ; E3D4: 81 BA       ..
  INC tileNumber                               ; E3D6: E6 B8       ..
  LDX pattBufferHi                             ; E3D8: A6 B9       ..
- STX SC_1                                     ; E3DA: 86 08       ..
+ STX SC+1                                     ; E3DA: 86 08       ..
  ASL A                                        ; E3DC: 0A          .
- ROL SC_1                                     ; E3DD: 26 08       &.
+ ROL SC+1                                     ; E3DD: 26 08       &.
  ASL A                                        ; E3DF: 0A          .
- ROL SC_1                                     ; E3E0: 26 08       &.
+ ROL SC+1                                     ; E3E0: 26 08       &.
  ASL A                                        ; E3E2: 0A          .
- ROL SC_1                                     ; E3E3: 26 08       &.
+ ROL SC+1                                     ; E3E3: 26 08       &.
  STA SC                                       ; E3E5: 85 07       ..
  STY T                                        ; E3E7: 84 9A       ..
  LDY #7                                       ; E3E9: A0 07       ..
@@ -5620,13 +5414,13 @@ LDFFF = sub_CDFFE+1
 
 .CE3F7
  LDX pattBufferHi                             ; E3F7: A6 B9       ..
- STX SC_1                                     ; E3F9: 86 08       ..
+ STX SC+1                                     ; E3F9: 86 08       ..
  ASL A                                        ; E3FB: 0A          .
- ROL SC_1                                     ; E3FC: 26 08       &.
+ ROL SC+1                                     ; E3FC: 26 08       &.
  ASL A                                        ; E3FE: 0A          .
- ROL SC_1                                     ; E3FF: 26 08       &.
+ ROL SC+1                                     ; E3FF: 26 08       &.
  ASL A                                        ; E401: 0A          .
- ROL SC_1                                     ; E402: 26 08       &.
+ ROL SC+1                                     ; E402: 26 08       &.
  STA SC                                       ; E404: 85 07       ..
 .CE406
  LDX S                                        ; E406: A6 99       ..
@@ -5661,7 +5455,7 @@ LDFFF = sub_CDFFE+1
  ADC #&20 ; ' '                               ; E435: 69 20       i
  STA SC2                                      ; E437: 85 BA       ..
  BCC CE43D                                    ; E439: 90 02       ..
- INC SC2_1                                    ; E43B: E6 BB       ..
+ INC SC2+1                                    ; E43B: E6 BB       ..
 .CE43D
  LDA R                                        ; E43D: A5 98       ..
  BEQ CE420                                    ; E43F: F0 DF       ..
@@ -5678,13 +5472,13 @@ LDFFF = sub_CDFFE+1
  CMP #&3C ; '<'                               ; E451: C9 3C       .<
  BCC CE4B4                                    ; E453: 90 5F       ._
  LDX pattBufferHi                             ; E455: A6 B9       ..
- STX SC_1                                     ; E457: 86 08       ..
+ STX SC+1                                     ; E457: 86 08       ..
  ASL A                                        ; E459: 0A          .
- ROL SC_1                                     ; E45A: 26 08       &.
+ ROL SC+1                                     ; E45A: 26 08       &.
  ASL A                                        ; E45C: 0A          .
- ROL SC_1                                     ; E45D: 26 08       &.
+ ROL SC+1                                     ; E45D: 26 08       &.
  ASL A                                        ; E45F: 0A          .
- ROL SC_1                                     ; E460: 26 08       &.
+ ROL SC+1                                     ; E460: 26 08       &.
  STA SC                                       ; E462: 85 07       ..
  LDX S                                        ; E464: A6 99       ..
  LDY #0                                       ; E466: A0 00       ..
@@ -5746,13 +5540,13 @@ LDFFF = sub_CDFFE+1
  STA L00BC                                    ; E4CB: 85 BC       ..
  LDA SC                                       ; E4CD: A5 07       ..
  LDX pattBufferHi                             ; E4CF: A6 B9       ..
- STX SC_1                                     ; E4D1: 86 08       ..
+ STX SC+1                                     ; E4D1: 86 08       ..
  ASL A                                        ; E4D3: 0A          .
- ROL SC_1                                     ; E4D4: 26 08       &.
+ ROL SC+1                                     ; E4D4: 26 08       &.
  ASL A                                        ; E4D6: 0A          .
- ROL SC_1                                     ; E4D7: 26 08       &.
+ ROL SC+1                                     ; E4D7: 26 08       &.
  ASL A                                        ; E4D9: 0A          .
- ROL SC_1                                     ; E4DA: 26 08       &.
+ ROL SC+1                                     ; E4DA: 26 08       &.
  STA SC                                       ; E4DC: 85 07       ..
  STY T                                        ; E4DE: 84 9A       ..
  LDY #7                                       ; E4E0: A0 07       ..
@@ -5778,7 +5572,7 @@ LDFFF = sub_CDFFE+1
  STA SC                                       ; E4FD: 85 07       ..
  LDA nameBufferHi                             ; E4FF: A5 E6       ..
  ADC yLookupHi,Y                              ; E501: 79 F8 DA    y..
- STA SC_1                                     ; E504: 85 08       ..
+ STA SC+1                                     ; E504: 85 08       ..
  LDA setupPPUForIconBar                       ; E506: A5 E9       ..
  BPL CE513                                    ; E508: 10 09       ..
  LDA PPU_STATUS                               ; E50A: AD 02 20    ..
@@ -5795,13 +5589,13 @@ LDFFF = sub_CDFFE+1
  INC tileNumber                               ; E51F: E6 B8       ..
 .CE521
  LDX pattBufferHi                             ; E521: A6 B9       ..
- STX SC_1                                     ; E523: 86 08       ..
+ STX SC+1                                     ; E523: 86 08       ..
  ASL A                                        ; E525: 0A          .
- ROL SC_1                                     ; E526: 26 08       &.
+ ROL SC+1                                     ; E526: 26 08       &.
  ASL A                                        ; E528: 0A          .
- ROL SC_1                                     ; E529: 26 08       &.
+ ROL SC+1                                     ; E529: 26 08       &.
  ASL A                                        ; E52B: 0A          .
- ROL SC_1                                     ; E52C: 26 08       &.
+ ROL SC+1                                     ; E52C: 26 08       &.
  STA SC                                       ; E52E: 85 07       ..
  TYA                                          ; E530: 98          .
  AND #7                                       ; E531: 29 07       ).
@@ -5830,7 +5624,7 @@ LDFFF = sub_CDFFE+1
  STA SC                                       ; E550: 85 07       ..
  LDA nameBufferHi                             ; E552: A5 E6       ..
  ADC yLookupHi,Y                              ; E554: 79 F8 DA    y..
- STA SC_1                                     ; E557: 85 08       ..
+ STA SC+1                                     ; E557: 85 08       ..
  LDA setupPPUForIconBar                       ; E559: A5 E9       ..
  BPL CE566                                    ; E55B: 10 09       ..
  LDA PPU_STATUS                               ; E55D: AD 02 20    ..
@@ -5847,13 +5641,13 @@ LDFFF = sub_CDFFE+1
  INC tileNumber                               ; E572: E6 B8       ..
 .CE574
  LDX #&0C                                     ; E574: A2 0C       ..
- STX SC_1                                     ; E576: 86 08       ..
+ STX SC+1                                     ; E576: 86 08       ..
  ASL A                                        ; E578: 0A          .
- ROL SC_1                                     ; E579: 26 08       &.
+ ROL SC+1                                     ; E579: 26 08       &.
  ASL A                                        ; E57B: 0A          .
- ROL SC_1                                     ; E57C: 26 08       &.
+ ROL SC+1                                     ; E57C: 26 08       &.
  ASL A                                        ; E57E: 0A          .
- ROL SC_1                                     ; E57F: 26 08       &.
+ ROL SC+1                                     ; E57F: 26 08       &.
  STA SC                                       ; E581: 85 07       ..
  TYA                                          ; E583: 98          .
  AND #7                                       ; E584: 29 07       ).
@@ -5880,7 +5674,7 @@ LDFFF = sub_CDFFE+1
  PHA                                          ; E5A0: 48          H
  LDY LE5AB,X                                  ; E5A1: BC AB E5    ...
  PLA                                          ; E5A4: 68          h
- STA L72C0,Y                                  ; E5A5: 99 C0 72    ..r
+ STA nameBuffer0+704,Y                        ; E5A5: 99 C0 72    ..r
  LDY #0                                       ; E5A8: A0 00       ..
  RTS                                          ; E5AA: 60          `
 
@@ -6001,7 +5795,7 @@ LDFFF = sub_CDFFE+1
  ADC addr2                                    ; E837: 65 FA       e.
  STA addr2                                    ; E839: 85 FA       ..
  BCC CE83F                                    ; E83B: 90 02       ..
- INC addr2_1                                  ; E83D: E6 FB       ..
+ INC addr2+1                                  ; E83D: E6 FB       ..
 .CE83F
  DEX                                          ; E83F: CA          .
  STX L04BD                                    ; E840: 8E BD 04    ...
@@ -6051,7 +5845,7 @@ LDFFF = sub_CDFFE+1
  STA addr4                                    ; E893: 85 EB       ..
  INY                                          ; E895: C8          .
  LDA (addr2),Y                                ; E896: B1 FA       ..
- STA addr4_1                                  ; E898: 85 EC       ..
+ STA addr4+1                                  ; E898: 85 EC       ..
  LDY #0                                       ; E89A: A0 00       ..
  LDX #1                                       ; E89C: A2 01       ..
  PLA                                          ; E89E: 68          h
@@ -6088,7 +5882,7 @@ LDFFF = sub_CDFFE+1
  BCC CE87F                                    ; E8CF: 90 AE       ..
 .CE8D1
  LDA #&E6                                     ; E8D1: A9 E6       ..
- STA addr2_1                                  ; E8D3: 85 FB       ..
+ STA addr2+1                                  ; E8D3: 85 FB       ..
  LDA #&A4                                     ; E8D5: A9 A4       ..
  STA addr2                                    ; E8D7: 85 FA       ..
  RTS                                          ; E8D9: 60          `
@@ -6628,8 +6422,8 @@ LDFFF = sub_CDFFE+1
  ROL A                                        ; ECCB: 2A          *
  TAY                                          ; ECCC: A8          .
  PLA                                          ; ECCD: 68          h
- ADC TALLY_L                                  ; ECCE: 6D C7 03    m..
- STA TALLY_L                                  ; ECD1: 8D C7 03    ...
+ ADC TALLYL                                   ; ECCE: 6D C7 03    m..
+ STA TALLYL                                   ; ECD1: 8D C7 03    ...
  TYA                                          ; ECD4: 98          .
  ADC TALLY                                    ; ECD5: 6D DC 03    m..
  STA TALLY                                    ; ECD8: 8D DC 03    ...
@@ -6658,11 +6452,11 @@ LDFFF = sub_CDFFE+1
 .Set_K_K3_XC_YC
  LDA #2                                       ; ECF9: A9 02       ..
  STA K                                        ; ECFB: 85 7D       .}
- STA K_1                                      ; ECFD: 85 7E       .~
+ STA K+1                                      ; ECFD: 85 7E       .~
  LDA #&45 ; 'E'                               ; ECFF: A9 45       .E
- STA K_2                                      ; ED01: 85 7F       ..
+ STA K+2                                      ; ED01: 85 7F       ..
  LDA #8                                       ; ED03: A9 08       ..
- STA K_3                                      ; ED05: 85 80       ..
+ STA K+3                                      ; ED05: 85 80       ..
  LDA #3                                       ; ED07: A9 03       ..
  STA XC                                       ; ED09: 85 32       .2
  LDA #&19                                     ; ED0B: A9 19       ..
@@ -7631,11 +7425,11 @@ LDFFF = sub_CDFFE+1
  LDA QQ11                                     ; F2FB: A5 9E       ..
  BPL CF332                                    ; F2FD: 10 33       .3
  LDA #&72 ; 'r'                               ; F2FF: A9 72       .r
- STA SC_1                                     ; F301: 85 08       ..
+ STA SC+1                                     ; F301: 85 08       ..
  LDA #&E0                                     ; F303: A9 E0       ..
  STA SC                                       ; F305: 85 07       ..
  LDA #&76 ; 'v'                               ; F307: A9 76       .v
- STA SC2_1                                    ; F309: 85 BB       ..
+ STA SC2+1                                    ; F309: 85 BB       ..
  LDA #&E0                                     ; F30B: A9 E0       ..
  STA SC2                                      ; F30D: 85 BA       ..
  LDX #2                                       ; F30F: A2 02       ..
@@ -7654,8 +7448,8 @@ LDFFF = sub_CDFFE+1
  STA SC                                       ; F325: 85 07       ..
  STA SC2                                      ; F327: 85 BA       ..
  BCC CF32F                                    ; F329: 90 04       ..
- INC SC_1                                     ; F32B: E6 08       ..
- INC SC2_1                                    ; F32D: E6 BB       ..
+ INC SC+1                                     ; F32B: E6 08       ..
+ INC SC2+1                                    ; F32D: E6 BB       ..
 .CF32F
  DEX                                          ; F32F: CA          .
  BNE loop_CF311                               ; F330: D0 DF       ..
@@ -7672,7 +7466,7 @@ LDFFF = sub_CDFFE+1
  BNE CF355                                    ; F33C: D0 17       ..
  INX                                          ; F33E: E8          .
  LDY JUNK                                     ; F33F: AC 73 03    .s.
- LDA L036C,Y                                  ; F342: B9 6C 03    .l.
+ LDA FRIN+2,Y                                 ; F342: B9 6C 03    .l.
  BEQ CF355                                    ; F345: F0 0E       ..
  INX                                          ; F347: E8          .
  LDY L0472                                    ; F348: AC 72 04    .r.
@@ -7716,18 +7510,19 @@ LDFFF = sub_CDFFE+1
  STA L030A                                    ; F38C: 8D 0A 03    ...
  JSR sub_CF3AB                                ; F38F: 20 AB F3     ..
  LDA #0                                       ; F392: A9 00       ..
- STA L0606                                    ; F394: 8D 06 06    ...
+ STA Kpercent+6                               ; F394: 8D 06 06    ...
  STA Kpercent                                 ; F397: 8D 00 06    ...
  LDA #&75 ; 'u'                               ; F39A: A9 75       .u
  STA RAND                                     ; F39C: 85 02       ..
  LDA #&0A                                     ; F39E: A9 0A       ..
- STA RAND_2                                   ; F3A0: 85 03       ..
+ STA RAND+1                                   ; F3A0: 85 03       ..
  LDA #&2A ; '*'                               ; F3A2: A9 2A       .*
- STA RAND_3                                   ; F3A4: 85 04       ..
+ STA RAND+2                                   ; F3A4: 85 04       ..
  LDX #&E6                                     ; F3A6: A2 E6       ..
- STX L0005                                    ; F3A8: 86 05       ..
+ STX RAND+3                                   ; F3A8: 86 05       ..
  RTS                                          ; F3AA: 60          `
 
+; ******************************************************************************
 .sub_CF3AB
  LDA #0                                       ; F3AB: A9 00       ..
  STA L03EB                                    ; F3AD: 8D EB 03    ...
@@ -7775,7 +7570,7 @@ LDFFF = sub_CDFFE+1
  LDA language                                 ; F403: AD A8 04    ...
  STA Kpercent                                 ; F406: 8D 00 06    ...
  LDA #5                                       ; F409: A9 05       ..
- STA L0601                                    ; F40B: 8D 01 06    ...
+ STA Kpercent+1                               ; F40B: 8D 01 06    ...
  JMP CC035                                    ; F40E: 4C 35 C0    L5.
 
 .CF411
@@ -7791,7 +7586,7 @@ LDFFF = sub_CDFFE+1
 ; ******************************************************************************
 .subm_F42A
  ASL A                                        ; F42A: 0A          .
- LSR INWK_31                                  ; F42B: 46 28       F(
+ LSR INWK+31                                  ; F42B: 46 28       F(
  ASL A                                        ; F42D: 0A          .
 ; ******************************************************************************
 .Ze
@@ -7799,25 +7594,25 @@ LDFFF = sub_CDFFE+1
  JSR DORND                                    ; F431: 20 AD F4     ..
  STA T1                                       ; F434: 85 06       ..
  AND #&80                                     ; F436: 29 80       ).
- STA INWK_2                                   ; F438: 85 0B       ..
+ STA INWK+2                                   ; F438: 85 0B       ..
  JSR DORND                                    ; F43A: 20 AD F4     ..
  AND #&80                                     ; F43D: 29 80       ).
- STA INWK_5                                   ; F43F: 85 0E       ..
+ STA INWK+5                                   ; F43F: 85 0E       ..
  LDA #&19                                     ; F441: A9 19       ..
- STA INWK_1                                   ; F443: 85 0A       ..
- STA INWK_4                                   ; F445: 85 0D       ..
- STA INWK_7                                   ; F447: 85 10       ..
+ STA INWK+1                                   ; F443: 85 0A       ..
+ STA INWK+4                                   ; F445: 85 0D       ..
+ STA INWK+7                                   ; F447: 85 10       ..
  TXA                                          ; F449: 8A          .
  CMP #&F5                                     ; F44A: C9 F5       ..
  ROL A                                        ; F44C: 2A          *
  ORA #&C0                                     ; F44D: 09 C0       ..
- STA INWK_32                                  ; F44F: 85 29       .)
+ STA INWK+32                                  ; F44F: 85 29       .)
  JMP DORND2                                   ; F451: 4C AC F4    L..
 
 ; ******************************************************************************
 .subm_F454
  PHA                                          ; F454: 48          H
- LDA L039D                                    ; F455: AD 9D 03    ...
+ LDA NAME+7                                   ; F455: AD 9D 03    ...
  BMI CF463                                    ; F458: 30 09       0.
  CLC                                          ; F45A: 18          .
  ADC #1                                       ; F45B: 69 01       i.
@@ -7826,7 +7621,7 @@ LDFFF = sub_CDFFE+1
  LDA #0                                       ; F461: A9 00       ..
 .CF463
  ORA #&80                                     ; F463: 09 80       ..
- STA L039D                                    ; F465: 8D 9D 03    ...
+ STA NAME+7                                   ; F465: 8D 9D 03    ...
  PLA                                          ; F468: 68          h
  RTS                                          ; F469: 60          `
 
@@ -7849,7 +7644,7 @@ LDFFF = sub_CDFFE+1
  LDY #1                                       ; F480: A0 01       ..
  LDA #3                                       ; F482: A9 03       ..
 .loop_CF484
- STA L7040,Y                                  ; F484: 99 40 70    .@p
+ STA nameBuffer0+64,Y                         ; F484: 99 40 70    .@p
  INY                                          ; F487: C8          .
  CPY #&20 ; ' '                               ; F488: C0 20       .
  BNE loop_CF484                               ; F48A: D0 F8       ..
@@ -7864,7 +7659,7 @@ LDFFF = sub_CDFFE+1
 ; ******************************************************************************
 .subm_F493
  LDA #&60 ; '`'                               ; F493: A9 60       .`
- STA SC2_1                                    ; F495: 85 BB       ..
+ STA SC2+1                                    ; F495: 85 BB       ..
  LDA #0                                       ; F497: A9 00       ..
  STA SC2                                      ; F499: 85 BA       ..
  LDY #0                                       ; F49B: A0 00       ..
@@ -7874,7 +7669,7 @@ LDFFF = sub_CDFFE+1
  STA (SC2),Y                                  ; F4A1: 91 BA       ..
  INY                                          ; F4A3: C8          .
  BNE CF4A1                                    ; F4A4: D0 FB       ..
- INC SC2_1                                    ; F4A6: E6 BB       ..
+ INC SC2+1                                    ; F4A6: E6 BB       ..
  DEX                                          ; F4A8: CA          .
  BNE CF4A1                                    ; F4A9: D0 F6       ..
  RTS                                          ; F4AB: 60          `
@@ -7887,23 +7682,23 @@ LDFFF = sub_CDFFE+1
  LDA RAND                                     ; F4AD: A5 02       ..
  ROL A                                        ; F4AF: 2A          *
  TAX                                          ; F4B0: AA          .
- ADC RAND_3                                   ; F4B1: 65 04       e.
+ ADC RAND+2                                   ; F4B1: 65 04       e.
  STA RAND                                     ; F4B3: 85 02       ..
- STX RAND_3                                   ; F4B5: 86 04       ..
- LDA RAND_2                                   ; F4B7: A5 03       ..
+ STX RAND+2                                   ; F4B5: 86 04       ..
+ LDA RAND+1                                   ; F4B7: A5 03       ..
  TAX                                          ; F4B9: AA          .
- ADC L0005                                    ; F4BA: 65 05       e.
- STA RAND_2                                   ; F4BC: 85 03       ..
- STX L0005                                    ; F4BE: 86 05       ..
+ ADC RAND+3                                   ; F4BA: 65 05       e.
+ STA RAND+1                                   ; F4BC: 85 03       ..
+ STX RAND+3                                   ; F4BE: 86 05       ..
  RTS                                          ; F4C0: 60          `
 
 ; ******************************************************************************
 .PROJ
  LDA XX1                                      ; F4C1: A5 09       ..
  STA P                                        ; F4C3: 85 2F       ./
- LDA INWK_1                                   ; F4C5: A5 0A       ..
- STA P_1                                      ; F4C7: 85 30       .0
- LDA INWK_2                                   ; F4C9: A5 0B       ..
+ LDA INWK+1                                   ; F4C5: A5 0A       ..
+ STA P+1                                      ; F4C7: 85 30       .0
+ LDA INWK+2                                   ; F4C9: A5 0B       ..
  JSR subm_F4FB                                ; F4CB: 20 FB F4     ..
  BCS CF4F8                                    ; F4CE: B0 28       .(
  LDA K                                        ; F4D0: A5 7D       .}
@@ -7911,12 +7706,12 @@ LDFFF = sub_CDFFE+1
  STA K3                                       ; F4D4: 85 3D       .=
  TXA                                          ; F4D6: 8A          .
  ADC #0                                       ; F4D7: 69 00       i.
- STA XX2_1                                    ; F4D9: 85 3E       .>
- LDA INWK_3                                   ; F4DB: A5 0C       ..
+ STA XX2+1                                    ; F4D9: 85 3E       .>
+ LDA INWK+3                                   ; F4DB: A5 0C       ..
  STA P                                        ; F4DD: 85 2F       ./
- LDA INWK_4                                   ; F4DF: A5 0D       ..
- STA P_1                                      ; F4E1: 85 30       .0
- LDA INWK_5                                   ; F4E3: A5 0E       ..
+ LDA INWK+4                                   ; F4DF: A5 0D       ..
+ STA P+1                                      ; F4E1: 85 30       .0
+ LDA INWK+5                                   ; F4E3: A5 0E       ..
  EOR #&80                                     ; F4E5: 49 80       I.
  JSR subm_F4FB                                ; F4E7: 20 FB F4     ..
  BCS CF4F8                                    ; F4EA: B0 0C       ..
@@ -7925,7 +7720,7 @@ LDFFF = sub_CDFFE+1
  STA K4                                       ; F4F0: 85 4B       .K
  TXA                                          ; F4F2: 8A          .
  ADC #0                                       ; F4F3: 69 00       i.
- STA K4_1                                     ; F4F5: 85 4C       .L
+ STA K4+1                                     ; F4F5: 85 4C       .L
  CLC                                          ; F4F7: 18          .
 .CF4F8
  RTS                                          ; F4F8: 60          `
@@ -7944,14 +7739,14 @@ LDFFF = sub_CDFFE+1
  BPL CF50B                                    ; F506: 10 03       ..
  JSR SetPPUTablesTo0                          ; F508: 20 6D D0     m.
 .CF50B
- LDA K_3                                      ; F50B: A5 80       ..
+ LDA K+3                                      ; F50B: A5 80       ..
  AND #&7F                                     ; F50D: 29 7F       ).
- ORA K_2                                      ; F50F: 05 7F       ..
+ ORA K+2                                      ; F50F: 05 7F       ..
  BNE loop_CF4F9                               ; F511: D0 E6       ..
- LDX K_1                                      ; F513: A6 7E       .~
+ LDX K+1                                      ; F513: A6 7E       .~
  CPX #4                                       ; F515: E0 04       ..
  BCS CF52C                                    ; F517: B0 13       ..
- LDA K_3                                      ; F519: A5 80       ..
+ LDA K+3                                      ; F519: A5 80       ..
  BPL CF52C                                    ; F51B: 10 0F       ..
  LDA K                                        ; F51D: A5 7D       .}
  EOR #&FF                                     ; F51F: 49 FF       I.
@@ -7980,7 +7775,7 @@ LDFFF = sub_CDFFE+1
  LDA (V,X)                                    ; F53E: A1 63       .c
  INC V                                        ; F540: E6 63       .c
  BNE CF546                                    ; F542: D0 02       ..
- INC V_1                                      ; F544: E6 64       .d
+ INC V+1                                      ; F544: E6 64       .d
 .CF546
  CMP #&40 ; '@'                               ; F546: C9 40       .@
  BCS CF5A4                                    ; F548: B0 5A       .Z
@@ -8001,7 +7796,7 @@ LDFFF = sub_CDFFE+1
  STA (SC),Y                                   ; F561: 91 07       ..
  INY                                          ; F563: C8          .
  BNE CF568                                    ; F564: D0 02       ..
- INC SC_1                                     ; F566: E6 08       ..
+ INC SC+1                                     ; F566: E6 08       ..
 .CF568
  DEX                                          ; F568: CA          .
  BNE CF561                                    ; F569: D0 F6       ..
@@ -8020,7 +7815,7 @@ LDFFF = sub_CDFFE+1
  LDX T                                        ; F57E: A6 9A       ..
  INC V                                        ; F580: E6 63       .c
  BNE CF561                                    ; F582: D0 DD       ..
- INC V_1                                      ; F584: E6 64       .d
+ INC V+1                                      ; F584: E6 64       .d
  JMP CF561                                    ; F586: 4C 61 F5    La.
 
 .CF589
@@ -8030,12 +7825,12 @@ LDFFF = sub_CDFFE+1
  LDA (V,X)                                    ; F58D: A1 63       .c
  INC V                                        ; F58F: E6 63       .c
  BNE CF595                                    ; F591: D0 02       ..
- INC V_1                                      ; F593: E6 64       .d
+ INC V+1                                      ; F593: E6 64       .d
 .CF595
  STA (SC),Y                                   ; F595: 91 07       ..
  INY                                          ; F597: C8          .
  BNE CF59C                                    ; F598: D0 02       ..
- INC SC_1                                     ; F59A: E6 08       ..
+ INC SC+1                                     ; F59A: E6 08       ..
 .CF59C
  DEC T                                        ; F59C: C6 9A       ..
  BNE loop_CF58D                               ; F59E: D0 ED       ..
@@ -8047,7 +7842,7 @@ LDFFF = sub_CDFFE+1
  STA (SC),Y                                   ; F5A4: 91 07       ..
  INY                                          ; F5A6: C8          .
  BNE CF52F                                    ; F5A7: D0 86       ..
- INC SC_1                                     ; F5A9: E6 08       ..
+ INC SC+1                                     ; F5A9: E6 08       ..
  JMP CF52F                                    ; F5AB: 4C 2F F5    L/.
 
 .CF5AE
@@ -8061,7 +7856,7 @@ LDFFF = sub_CDFFE+1
  LDA (V),Y                                    ; F5B1: B1 63       .c
  INY                                          ; F5B3: C8          .
  BNE CF5B8                                    ; F5B4: D0 02       ..
- INC V_1                                      ; F5B6: E6 64       .d
+ INC V+1                                      ; F5B6: E6 64       .d
 .CF5B8
  CMP #&40 ; '@'                               ; F5B8: C9 40       .@
  BCS CF605                                    ; F5BA: B0 49       .I
@@ -8095,7 +7890,7 @@ LDFFF = sub_CDFFE+1
  LDA (V),Y                                    ; F5E7: B1 63       .c
  INY                                          ; F5E9: C8          .
  BNE CF5D3                                    ; F5EA: D0 E7       ..
- INC V_1                                      ; F5EC: E6 64       .d
+ INC V+1                                      ; F5EC: E6 64       .d
  JMP CF5D3                                    ; F5EE: 4C D3 F5    L..
 
 .CF5F1
@@ -8105,7 +7900,7 @@ LDFFF = sub_CDFFE+1
  LDA (V),Y                                    ; F5F4: B1 63       .c
  INY                                          ; F5F6: C8          .
  BNE CF5FB                                    ; F5F7: D0 02       ..
- INC V_1                                      ; F5F9: E6 64       .d
+ INC V+1                                      ; F5F9: E6 64       .d
 .CF5FB
  STA PPU_DATA                                 ; F5FB: 8D 07 20    ..
  DEX                                          ; F5FE: CA          .
@@ -8131,41 +7926,41 @@ LDFFF = sub_CDFFE+1
  BPL CF61B                                    ; F616: 10 03       ..
  JSR SetPPUTablesTo0                          ; F618: 20 6D D0     m.
 .CF61B
- LDA INWK_2                                   ; F61B: A5 0B       ..
- ORA INWK_5                                   ; F61D: 05 0E       ..
- ORA INWK_8                                   ; F61F: 05 11       ..
+ LDA INWK+2                                   ; F61B: A5 0B       ..
+ ORA INWK+5                                   ; F61D: 05 0E       ..
+ ORA INWK+8                                   ; F61F: 05 11       ..
  ASL A                                        ; F621: 0A          .
  BNE CF658                                    ; F622: D0 34       .4
- LDA INWK_7                                   ; F624: A5 10       ..
+ LDA INWK+7                                   ; F624: A5 10       ..
  LSR A                                        ; F626: 4A          J
- STA K_2                                      ; F627: 85 7F       ..
- LDA INWK_1                                   ; F629: A5 0A       ..
+ STA K+2                                      ; F627: 85 7F       ..
+ LDA INWK+1                                   ; F629: A5 0A       ..
  LSR A                                        ; F62B: 4A          J
  STA K                                        ; F62C: 85 7D       .}
- LDA INWK_4                                   ; F62E: A5 0D       ..
+ LDA INWK+4                                   ; F62E: A5 0D       ..
  LSR A                                        ; F630: 4A          J
- STA K_1                                      ; F631: 85 7E       .~
+ STA K+1                                      ; F631: 85 7E       .~
  CMP K                                        ; F633: C5 7D       .}
  BCS CF639                                    ; F635: B0 02       ..
  LDA K                                        ; F637: A5 7D       .}
 .CF639
- CMP K_2                                      ; F639: C5 7F       ..
+ CMP K+2                                      ; F639: C5 7F       ..
  BCS CF63F                                    ; F63B: B0 02       ..
- LDA K_2                                      ; F63D: A5 7F       ..
+ LDA K+2                                      ; F63D: A5 7F       ..
 .CF63F
  STA SC                                       ; F63F: 85 07       ..
  LDA K                                        ; F641: A5 7D       .}
  CLC                                          ; F643: 18          .
- ADC K_1                                      ; F644: 65 7E       e~
- ADC K_2                                      ; F646: 65 7F       e.
+ ADC K+1                                      ; F644: 65 7E       e~
+ ADC K+2                                      ; F646: 65 7F       e.
  SEC                                          ; F648: 38          8
  SBC SC                                       ; F649: E5 07       ..
  LSR A                                        ; F64B: 4A          J
  LSR A                                        ; F64C: 4A          J
- STA SC_1                                     ; F64D: 85 08       ..
+ STA SC+1                                     ; F64D: 85 08       ..
  LSR A                                        ; F64F: 4A          J
  LSR A                                        ; F650: 4A          J
- ADC SC_1                                     ; F651: 65 08       e.
+ ADC SC+1                                     ; F651: 65 08       e.
  ADC SC                                       ; F653: 65 07       e.
  CMP T                                        ; F655: C5 9A       ..
  RTS                                          ; F657: 60          `
@@ -8177,9 +7972,9 @@ LDFFF = sub_CDFFE+1
 ; ******************************************************************************
 .MU5
  STA K                                        ; F65A: 85 7D       .}
- STA K_1                                      ; F65C: 85 7E       .~
- STA K_2                                      ; F65E: 85 7F       ..
- STA K_3                                      ; F660: 85 80       ..
+ STA K+1                                      ; F65C: 85 7E       .~
+ STA K+2                                      ; F65E: 85 7F       ..
+ STA K+3                                      ; F660: 85 80       ..
  CLC                                          ; F662: 18          .
  RTS                                          ; F663: 60          `
 
@@ -8187,17 +7982,17 @@ LDFFF = sub_CDFFE+1
 .MULT3
  STA R                                        ; F664: 85 98       ..
  AND #&7F                                     ; F666: 29 7F       ).
- STA K_2                                      ; F668: 85 7F       ..
+ STA K+2                                      ; F668: 85 7F       ..
  LDA Q                                        ; F66A: A5 97       ..
  AND #&7F                                     ; F66C: 29 7F       ).
  BEQ MU5                                      ; F66E: F0 EA       ..
  SEC                                          ; F670: 38          8
  SBC #1                                       ; F671: E9 01       ..
  STA T                                        ; F673: 85 9A       ..
- LDA P_1                                      ; F675: A5 30       .0
- LSR K_2                                      ; F677: 46 7F       F.
+ LDA P+1                                      ; F675: A5 30       .0
+ LSR K+2                                      ; F677: 46 7F       F.
  ROR A                                        ; F679: 6A          j
- STA K_1                                      ; F67A: 85 7E       .~
+ STA K+1                                      ; F67A: 85 7E       .~
  LDA P                                        ; F67C: A5 2F       ./
  ROR A                                        ; F67E: 6A          j
  STA K                                        ; F67F: 85 7D       .}
@@ -8215,8 +8010,8 @@ LDFFF = sub_CDFFE+1
  ADC T                                        ; F694: 65 9A       e.
 .CF696
  ROR A                                        ; F696: 6A          j
- ROR K_2                                      ; F697: 66 7F       f.
- ROR K_1                                      ; F699: 66 7E       f~
+ ROR K+2                                      ; F697: 66 7F       f.
+ ROR K+1                                      ; F699: 66 7E       f~
  ROR K                                        ; F69B: 66 7D       f}
  DEX                                          ; F69D: CA          .
  BNE loop_CF692                               ; F69E: D0 F2       ..
@@ -8232,20 +8027,19 @@ LDFFF = sub_CDFFE+1
  EOR Q                                        ; F6B1: 45 97       E.
  AND #&80                                     ; F6B3: 29 80       ).
  ORA T                                        ; F6B5: 05 9A       ..
- STA K_3                                      ; F6B7: 85 80       ..
+ STA K+3                                      ; F6B7: 85 80       ..
  RTS                                          ; F6B9: 60          `
 
 ; ******************************************************************************
 .MLS2
  LDX XX                                       ; F6BA: A6 65       .e
  STX R                                        ; F6BC: 86 98       ..
- LDX XX_1                                     ; F6BE: A6 66       .f
+ LDX XX+1                                     ; F6BE: A6 66       .f
  STX S                                        ; F6C0: 86 99       ..
 ; ******************************************************************************
 .MLS1
  LDX ALP1                                     ; F6C2: A6 6E       .n
 ; ******************************************************************************
-.MULTSm2
  STX P                                        ; F6C4: 86 2F       ./
 ; ******************************************************************************
 .MULTS
@@ -8296,7 +8090,7 @@ LDFFF = sub_CDFFE+1
 
 ; ******************************************************************************
 .MU6
- STA P_1                                      ; F707: 85 30       .0
+ STA P+1                                      ; F707: 85 30       .0
  STA P                                        ; F709: 85 2F       ./
  RTS                                          ; F70B: 60          `
 
@@ -8421,13 +8215,12 @@ LDFFF = sub_CDFFE+1
  RTS                                          ; F7AA: 60          `
 
 ; ******************************************************************************
-.MLTU2m2
  STX Q                                        ; F7AB: 86 97       ..
 ; ******************************************************************************
 .MLTU2
  EOR #&FF                                     ; F7AD: 49 FF       I.
  LSR A                                        ; F7AF: 4A          J
- STA P_1                                      ; F7B0: 85 30       .0
+ STA P+1                                      ; F7B0: 85 30       .0
  LDA #0                                       ; F7B2: A9 00       ..
  LDX #&10                                     ; F7B4: A2 10       ..
  ROR P                                        ; F7B6: 66 2F       f/
@@ -8435,7 +8228,7 @@ LDFFF = sub_CDFFE+1
  BCS CF7C5                                    ; F7B8: B0 0B       ..
  ADC Q                                        ; F7BA: 65 97       e.
  ROR A                                        ; F7BC: 6A          j
- ROR P_1                                      ; F7BD: 66 30       f0
+ ROR P+1                                      ; F7BD: 66 30       f0
  ROR P                                        ; F7BF: 66 2F       f/
  DEX                                          ; F7C1: CA          .
  BNE CF7B8                                    ; F7C2: D0 F4       ..
@@ -8443,7 +8236,7 @@ LDFFF = sub_CDFFE+1
 
 .CF7C5
  LSR A                                        ; F7C5: 4A          J
- ROR P_1                                      ; F7C6: 66 30       f0
+ ROR P+1                                      ; F7C6: 66 30       f0
  ROR P                                        ; F7C8: 66 2F       f/
  DEX                                          ; F7CA: CA          .
  BNE CF7B8                                    ; F7CB: D0 EB       ..
@@ -8455,7 +8248,7 @@ LDFFF = sub_CDFFE+1
  STX P                                        ; F7D0: 86 2F       ./
 ; ******************************************************************************
 .MUT2
- LDX XX_1                                     ; F7D2: A6 66       .f
+ LDX XX+1                                     ; F7D2: A6 66       .f
  STX S                                        ; F7D4: 86 99       ..
 ; ******************************************************************************
 .MUT1
@@ -8552,13 +8345,13 @@ LDFFF = sub_CDFFE+1
  STX Q                                        ; F855: 86 97       ..
  LDA XX15                                     ; F857: A5 71       .q
  JSR MULT12                                   ; F859: 20 3C F8     <.
- LDX INWK_2,Y                                 ; F85C: B6 0B       ..
+ LDX INWK+2,Y                                 ; F85C: B6 0B       ..
  STX Q                                        ; F85E: 86 97       ..
  LDA Y1                                       ; F860: A5 72       .r
  JSR MAD                                      ; F862: 20 6F F8     o.
  STA S                                        ; F865: 85 99       ..
  STX R                                        ; F867: 86 98       ..
- LDX INWK_4,Y                                 ; F869: B6 0D       ..
+ LDX INWK+4,Y                                 ; F869: B6 0D       ..
  STX Q                                        ; F86B: 86 97       ..
  LDA X2                                       ; F86D: A5 73       .s
 ; ******************************************************************************
@@ -8726,13 +8519,13 @@ LDFFF = sub_CDFFE+1
 
 ; ******************************************************************************
 .DVID3B2
- STA P_2                                      ; F962: 85 31       .1
- LDA INWK_6                                   ; F964: A5 0F       ..
+ STA P+2                                      ; F962: 85 31       .1
+ LDA INWK+6                                   ; F964: A5 0F       ..
  ORA #1                                       ; F966: 09 01       ..
  STA Q                                        ; F968: 85 97       ..
- LDA INWK_7                                   ; F96A: A5 10       ..
+ LDA INWK+7                                   ; F96A: A5 10       ..
  STA R                                        ; F96C: 85 98       ..
- LDA INWK_8                                   ; F96E: A5 11       ..
+ LDA INWK+8                                   ; F96E: A5 11       ..
  STA S                                        ; F970: 85 99       ..
  LDA setupPPUForIconBar                       ; F972: A5 E9       ..
  BPL CF97F                                    ; F974: 10 09       ..
@@ -8744,23 +8537,23 @@ LDFFF = sub_CDFFE+1
  LDA P                                        ; F97F: A5 2F       ./
  ORA #1                                       ; F981: 09 01       ..
  STA P                                        ; F983: 85 2F       ./
- LDA P_2                                      ; F985: A5 31       .1
+ LDA P+2                                      ; F985: A5 31       .1
  EOR S                                        ; F987: 45 99       E.
  AND #&80                                     ; F989: 29 80       ).
  STA T                                        ; F98B: 85 9A       ..
  LDY #0                                       ; F98D: A0 00       ..
- LDA P_2                                      ; F98F: A5 31       .1
+ LDA P+2                                      ; F98F: A5 31       .1
  AND #&7F                                     ; F991: 29 7F       ).
 .loop_CF993
  CMP #&40 ; '@'                               ; F993: C9 40       .@
  BCS CF99F                                    ; F995: B0 08       ..
  ASL P                                        ; F997: 06 2F       ./
- ROL P_1                                      ; F999: 26 30       &0
+ ROL P+1                                      ; F999: 26 30       &0
  ROL A                                        ; F99B: 2A          *
  INY                                          ; F99C: C8          .
  BNE loop_CF993                               ; F99D: D0 F4       ..
 .CF99F
- STA P_2                                      ; F99F: 85 31       .1
+ STA P+2                                      ; F99F: 85 31       .1
  LDA S                                        ; F9A1: A5 99       ..
  AND #&7F                                     ; F9A3: 29 7F       ).
 .loop_CF9A5
@@ -8779,7 +8572,7 @@ LDFFF = sub_CDFFE+1
 .CF9BC
  LDA #&FE                                     ; F9BC: A9 FE       ..
  STA R                                        ; F9BE: 85 98       ..
- LDA P_2                                      ; F9C0: A5 31       .1
+ LDA P+2                                      ; F9C0: A5 31       .1
 .CF9C2
  ASL A                                        ; F9C2: 0A          .
  BCS CF9D2                                    ; F9C3: B0 0D       ..
@@ -8799,30 +8592,30 @@ LDFFF = sub_CDFFE+1
  LDA R                                        ; F9D9: A5 98       ..
 .CF9DB
  LDA #0                                       ; F9DB: A9 00       ..
- STA K_1                                      ; F9DD: 85 7E       .~
- STA K_2                                      ; F9DF: 85 7F       ..
- STA K_3                                      ; F9E1: 85 80       ..
+ STA K+1                                      ; F9DD: 85 7E       .~
+ STA K+2                                      ; F9DF: 85 7F       ..
+ STA K+3                                      ; F9E1: 85 80       ..
  TYA                                          ; F9E3: 98          .
  BPL CFA04                                    ; F9E4: 10 1E       ..
  LDA R                                        ; F9E6: A5 98       ..
 .loop_CF9E8
  ASL A                                        ; F9E8: 0A          .
- ROL K_1                                      ; F9E9: 26 7E       &~
- ROL K_2                                      ; F9EB: 26 7F       &.
- ROL K_3                                      ; F9ED: 26 80       &.
+ ROL K+1                                      ; F9E9: 26 7E       &~
+ ROL K+2                                      ; F9EB: 26 7F       &.
+ ROL K+3                                      ; F9ED: 26 80       &.
  INY                                          ; F9EF: C8          .
  BNE loop_CF9E8                               ; F9F0: D0 F6       ..
  STA K                                        ; F9F2: 85 7D       .}
- LDA K_3                                      ; F9F4: A5 80       ..
+ LDA K+3                                      ; F9F4: A5 80       ..
  ORA T                                        ; F9F6: 05 9A       ..
- STA K_3                                      ; F9F8: 85 80       ..
+ STA K+3                                      ; F9F8: 85 80       ..
  RTS                                          ; F9FA: 60          `
 
 .loop_CF9FB
  LDA R                                        ; F9FB: A5 98       ..
  STA K                                        ; F9FD: 85 7D       .}
  LDA T                                        ; F9FF: A5 9A       ..
- STA K_3                                      ; FA01: 85 80       ..
+ STA K+3                                      ; FA01: 85 80       ..
  RTS                                          ; FA03: 60          `
 
 .CFA04
@@ -8834,7 +8627,7 @@ LDFFF = sub_CDFFE+1
  BNE loop_CFA08                               ; FA0A: D0 FC       ..
  STA K                                        ; FA0C: 85 7D       .}
  LDA T                                        ; FA0E: A5 9A       ..
- STA K_3                                      ; FA10: 85 80       ..
+ STA K+3                                      ; FA10: 85 80       ..
  RTS                                          ; FA12: 60          `
 
 .CFA13

@@ -30,6 +30,8 @@
  _NTSC                  = (_VARIANT = 1)
  _PAL                   = (_VARIANT = 2)
 
+ _BANK = 2
+
  INCLUDE "1-source-files/main-sources/elite-source-common.asm"
 
 \ ******************************************************************************
@@ -15495,7 +15497,7 @@ ENDMACRO
 
  LDA #&95               \ ???
 
- JMP TT66               \ Jump to TT66 to clear the screen and set the current
+ JMP TT66_b0            \ Jump to TT66 to clear the screen and set the current
                         \ view type to 1, returning from the subroutine using a
                         \ tail call
 
@@ -15887,7 +15889,7 @@ ENDMACRO
  JSR DETOK              \ to row 10, white, lower case}{white}{all caps}INCOMING
                         \ MESSAGE"
 
- JSR LF2BD              \ ???
+ JSR C8926_b0           \ ???
 
  LDY #100               \ Delay for 100 vertical syncs (100/50 = 2 seconds) and
  JMP DELAY              \ return from the subroutine using a tail call
@@ -15905,7 +15907,7 @@ ENDMACRO
 .PAUSE
 
  JSR C8980_b0            \ ???
- JSR LD8C5
+ JSR subm_D8C5
  LDA tileNumber
  STA L00D2
  LDA #&28
@@ -15915,14 +15917,14 @@ ENDMACRO
 
 .loop_CB392
 
- JSR PAS1
+ JSR PAS1_b0
  LDA controller1A
  ORA controller1B
  BPL loop_CB392
 
 .loop_CB39D
 
- JSR PAS1
+ JSR PAS1_b0
  LDA controller1A
  ORA controller1B
  BMI loop_CB39D
@@ -15931,7 +15933,7 @@ ENDMACRO
  STA INWK+31            \ any ideas of its own
 
  LDA #&93               \ Clear the top part of the screen, draw a white border,
- JSR TT66               \ and set the current view type in QQ11 to ???
+ JSR TT66_b0            \ and set the current view type in QQ11 to ???
 
                         \ Fall through into MT23 to move to row 10, switch to
                         \ white text, and switch to lower case when printing

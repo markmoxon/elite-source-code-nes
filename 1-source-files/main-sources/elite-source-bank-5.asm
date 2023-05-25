@@ -30,6 +30,8 @@
  _NTSC                  = (_VARIANT = 1)
  _PAL                   = (_VARIANT = 2)
 
+ _BANK = 5
+
  INCLUDE "1-source-files/main-sources/elite-source-common.asm"
 
 \ ******************************************************************************

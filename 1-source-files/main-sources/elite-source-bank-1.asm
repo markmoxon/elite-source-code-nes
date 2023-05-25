@@ -30,6 +30,8 @@
  _NTSC                  = (_VARIANT = 1)
  _PAL                   = (_VARIANT = 2)
 
+ _BANK = 1
+
  INCLUDE "1-source-files/main-sources/elite-source-common.asm"
 
 \ ******************************************************************************
@@ -8588,7 +8590,7 @@ ENDMACRO
  CMP #&F8
  BCS CAE26
  JSR sub_CAEE8
- JSR LE04A
+ JSR subm_E04A
 .CAE26
  JMP CAE9B
 
@@ -8602,49 +8604,49 @@ ENDMACRO
  LDA L05F1
  JSR EDGES-2
  BCS CAE46
- JSR LE0BA
+ JSR subm_E0BA
 .CAE46
  DEY
  LDA L05F0
  JSR EDGES-2
  BCS CAE52
- JSR LE0BA
+ JSR subm_E0BA
 .CAE52
  DEY
  LDA L05EF
  JSR EDGES-2
  BCS CAE5E
- JSR LE0BA
+ JSR subm_E0BA
 .CAE5E
  DEY
  LDA L05EE
  JSR EDGES-2
  BCS CAE6A
- JSR LE0BA
+ JSR subm_E0BA
 .CAE6A
  DEY
  LDA L05ED
  JSR EDGES-2
  BCS CAE76
- JSR LE0BA
+ JSR subm_E0BA
 .CAE76
  DEY
  LDA L05EC
  JSR EDGES-2
  BCS CAE82
- JSR LE0BA
+ JSR subm_E0BA
 .CAE82
  DEY
  LDA L05EB
  JSR EDGES-2
  BCS CAE8E
- JSR LE0BA
+ JSR subm_E0BA
 .CAE8E
  DEY
  LDA L05EA
  JSR EDGES-2
  BCS CAE9A
- JMP LE0BA
+ JMP subm_E0BA
 
 .CAE9A
  RTS
@@ -9164,13 +9166,13 @@ ENDMACRO
  LDA XX15
  CMP X2
  BCS CB04C
- JMP LE0BA
+ JMP subm_E0BA
 
 .CB056
 
  LDA #0
  STA XX15
- JMP LE0BA
+ JMP subm_E0BA
 
 \ ******************************************************************************
 \
@@ -9195,7 +9197,7 @@ ENDMACRO
  CMP XX15
  BEQ CB04C
  BCC CB04C
- JMP LE0BA
+ JMP subm_E0BA
 
 \ ******************************************************************************
 \
@@ -11403,7 +11405,7 @@ ENDMACRO
 .HALL
 
  LDA #0                 \ Clear the top part of the screen, draw a white border,
- JSR TT66               \ and set the current view type in QQ11 to 0 (space
+ JSR TT66_b0            \ and set the current view type in QQ11 to 0 (space
                         \ view)
 
  LDA frameCounter       \ ???
@@ -11539,7 +11541,7 @@ ENDMACRO
  STA L00D2
  LDA #&50
  STA L00D8
- JMP LF2CE
+ JMP subm_F2CE
 
 \ ******************************************************************************
 \
