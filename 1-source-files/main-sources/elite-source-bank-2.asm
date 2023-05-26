@@ -29,10 +29,11 @@
 
  _NTSC                  = (_VARIANT = 1)
  _PAL                   = (_VARIANT = 2)
-
- _BANK = 2
+ _BANK                  = 2
 
  INCLUDE "1-source-files/main-sources/elite-source-common.asm"
+
+ INCLUDE "1-source-files/main-sources/elite-source-bank-7.asm"
 
 \ ******************************************************************************
 \

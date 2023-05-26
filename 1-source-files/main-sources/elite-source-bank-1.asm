@@ -29,10 +29,11 @@
 
  _NTSC                  = (_VARIANT = 1)
  _PAL                   = (_VARIANT = 2)
-
- _BANK = 1
+ _BANK                  = 1
 
  INCLUDE "1-source-files/main-sources/elite-source-common.asm"
+
+ INCLUDE "1-source-files/main-sources/elite-source-bank-7.asm"
 
 \ ******************************************************************************
 \
@@ -12305,6 +12306,8 @@ ENDMACRO
  LDA #0                 \ ???
  LDY #&21
  STA (INF),Y
+
+.LBAF3
 
  SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
                         \ the PPU to use nametable 0 and pattern table 0

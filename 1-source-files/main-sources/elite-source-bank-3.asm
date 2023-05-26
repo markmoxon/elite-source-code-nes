@@ -29,10 +29,11 @@
 
  _NTSC                  = (_VARIANT = 1)
  _PAL                   = (_VARIANT = 2)
-
- _BANK = 3
+ _BANK                  = 3
 
  INCLUDE "1-source-files/main-sources/elite-source-common.asm"
+
+ INCLUDE "1-source-files/main-sources/elite-source-bank-7.asm"
 
 \ ******************************************************************************
 \
@@ -165,6 +166,15 @@ MACRO SETUP_PPU_FOR_ICON_BAR
 .skip
 
 ENDMACRO
+
+\ ******************************************************************************
+\
+\       Name: L800C
+\       Type: Variable
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
 
  EQUS "  NES ELITE IM"   ; 800C: 20 20 4E...   N
  EQUS "AGE 5.2  -   2"   ; 801A: 41 47 45... AGE
@@ -6843,8 +6853,17 @@ ENDMACRO
 
  RTS                     ; A7B6: 60          `
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_A7B7
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_A7B7
+
  JSR KeepPPUTablesAt0    ; A7B7: 20 67 D1     g.
  LDA ppuCtrlCopy         ; A7BA: A5 F5       ..
  PHA                     ; A7BC: 48          H
@@ -7014,8 +7033,17 @@ ENDMACRO
  STA PPU_CTRL            ; A903: 8D 00 20    ..
  JMP CB673_b3            ; A906: 4C E8 EE    L..
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_A909
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_A909
+
  LDY #0                  ; A909: A0 00       ..
 .CA90B
  LDA (SC),Y              ; A90B: B1 07       ..
@@ -7058,8 +7086,17 @@ ENDMACRO
  BNE CA90B               ; A95A: D0 AF       ..
  RTS                     ; A95C: 60          `
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_A95D
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_A95D
+
  LDA #4                  ; A95D: A9 04       ..
  STA PPU_ADDR            ; A95F: 8D 06 20    ..
  LDA #&50 ; 'P'          ; A962: A9 50       .P
@@ -7070,8 +7107,17 @@ ENDMACRO
  STA V                   ; A96D: 85 63       .c
  JMP UnpackToPPU         ; A96F: 4C AF F5    L..
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_A972
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_A972
+
  STX drawingPhase        ; A972: 86 C0       ..
  STX otherPhase          ; A974: 86 F4       ..
  STX palettePhase        ; A976: 86 F3       ..
@@ -7128,8 +7174,17 @@ ENDMACRO
 .CA9CE
  JMP subm_D946           ; A9CE: 4C 46 D9    LF.
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_A9D1
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_A9D1
+
  PHA                     ; A9D1: 48          H
  JSR subm_D8C5           ; A9D2: 20 C5 D8     ..
  LDA QQ11                ; A9D5: A5 9E       ..
@@ -7201,6 +7256,15 @@ ENDMACRO
  INC L00DA               ; AA59: E6 DA       ..
  RTS                     ; AA5B: 60          `
 
+\ ******************************************************************************
+\
+\       Name: LAA5C
+\       Type: Variable
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .LAA5C
  EQUB   0,   2, &0A, &0A ; AA5C: 00 02 0A... ...
  EQUB   0, &0A,   6,   8 ; AA60: 00 0A 06... ...
@@ -7228,8 +7292,17 @@ ENDMACRO
  EQUB &0F, &1F, &1F, &DF ; AAB4: 0F 1F 1F... ...
  EQUB &DF, &BF, &BF, &BF ; AAB8: DF BF BF... ...
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: DrawTitleScreen
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .DrawTitleScreen
+
  JSR subm_D933           ; AABC: 20 33 D9     3.
  LDA #2                  ; AABF: A9 02       ..
  STA addr1+1             ; AAC1: 85 D5       ..
@@ -7370,8 +7443,17 @@ ENDMACRO
  STA PPU_CTRL            ; ABE3: 8D 00 20    ..
  RTS                     ; ABE6: 60          `
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_ABE7
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_ABE7
+
  LDA QQ11                ; ABE7: A5 9E       ..
  CMP #&BA                ; ABE9: C9 BA       ..
  BNE CAC08               ; ABEB: D0 1B       ..
@@ -7401,8 +7483,17 @@ ENDMACRO
 .CAC1C
  RTS                     ; AC1C: 60          `
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_AC1D
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_AC1D
+
  TAY                     ; AC1D: A8          .
  LDA QQ11                ; AC1E: A5 9E       ..
  AND #&40 ; '@'          ; AC20: 29 40       )@
@@ -7461,8 +7552,17 @@ ENDMACRO
 .CAC85
  RTS                     ; AC85: 60          `
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_AC86
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_AC86
+
  LDA setupPPUForIconBar  ; AC86: A5 E9       ..
  BPL CAC93               ; AC88: 10 09       ..
  LDA PPU_STATUS          ; AC8A: AD 02 20    ..
@@ -7521,8 +7621,17 @@ ENDMACRO
 .CACEA
  RTS                     ; ACEA: 60          `
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_ACEB
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_ACEB
+
  JSR subm_AD2A           ; ACEB: 20 2A AD     *.
  LDY #2                  ; ACEE: A0 02       ..
  JSR subm_AF2E           ; ACF0: 20 2E AF     ..
@@ -7551,8 +7660,17 @@ ENDMACRO
  LDY #&1B                ; AD25: A0 1B       ..
  JMP subm_AF2E           ; AD27: 4C 2E AF    L..
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_AD2A
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_AD2A
+
  LDA L0464               ; AD2A: AD 64 04    .d.
  ASL A                   ; AD2D: 0A          .
  ASL A                   ; AD2E: 0A          .
@@ -7638,8 +7756,17 @@ ENDMACRO
  STA (SC2),Y             ; ADB9: 91 BA       ..
  RTS                     ; ADBB: 60          `
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_AE18_ADBC
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_AE18_ADBC
+
  LDA #&73 ; 's'          ; ADBC: A9 73       .s
  STA SC+1                ; ADBE: 85 08       ..
  LDA #&60 ; '`'          ; ADC0: A9 60       .`
@@ -7661,8 +7788,17 @@ ENDMACRO
  STA (SC2),Y             ; ADDD: 91 BA       ..
  RTS                     ; ADDF: 60          `
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_AE18_ADE0
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_AE18_ADE0
+
  LDA L03EB               ; ADE0: AD EB 03    ...
  BEQ CADEA               ; ADE3: F0 05       ..
  LDY #2                  ; ADE5: A0 02       ..
@@ -7692,8 +7828,17 @@ ENDMACRO
 .CAE15
  JMP CAEC6               ; AE15: 4C C6 AE    L..
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_AE18
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_AE18
+
  TAY                     ; AE18: A8          .
  BMI subm_AE18_ADBC      ; AE19: 30 A1       0.
  STA L0464               ; AE1B: 8D 64 04    .d.
@@ -7847,8 +7992,17 @@ ENDMACRO
 .CAF2B
  JMP CAE8D               ; AF2B: 4C 8D AE    L..
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_AF2E
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_AF2E
+
  LDA setupPPUForIconBar  ; AF2E: A5 E9       ..
  BPL CAF3B               ; AF30: 10 09       ..
  LDA PPU_STATUS          ; AF32: AD 02 20    ..
@@ -7876,8 +8030,17 @@ ENDMACRO
  STA (SC2),Y             ; AF58: 91 BA       ..
  RTS                     ; AF5A: 60          `
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_AF5B
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_AF5B
+
  LDA setupPPUForIconBar  ; AF5B: A5 E9       ..
  BPL CAF68               ; AF5D: 10 09       ..
  LDA PPU_STATUS          ; AF5F: AD 02 20    ..
@@ -7913,8 +8076,17 @@ ENDMACRO
  STA (SC2),Y             ; AF93: 91 BA       ..
  RTS                     ; AF95: 60          `
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_AF96
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_AF96
+
  JSR sub_CAFAB           ; AF96: 20 AB AF     ..
  INY                     ; AF99: C8          .
 .sub_CAF9A
@@ -7942,20 +8114,47 @@ ENDMACRO
  LDY T                   ; AFC0: A4 9A       ..
  RTS                     ; AFC2: 60          `
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_AFCD_AFC3
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_AFCD_AFC3
+
  LDX #4                  ; AFC3: A2 04       ..
  STX tileNumber          ; AFC5: 86 B8       ..
  RTS                     ; AFC7: 60          `
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_AFCD_AFC8
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_AFCD_AFC8
+
  LDX #&25 ; '%'          ; AFC8: A2 25       .%
  STX tileNumber          ; AFCA: 86 B8       ..
  RTS                     ; AFCC: 60          `
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_AFCD
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_AFCD
+
  LDA QQ11                ; AFCD: A5 9E       ..
  CMP #&CF                ; AFCF: C9 CF       ..
  BEQ subm_AFCD_AFC3      ; AFD1: F0 F0       ..
@@ -8116,8 +8315,17 @@ ENDMACRO
 .CB0E0
  RTS                     ; B0E0: 60          `
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_B0E1
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_B0E1
+
  STA SC                  ; B0E1: 85 07       ..
  SEC                     ; B0E3: 38          8
  SBC #&20 ; ' '          ; B0E4: E9 20       .
@@ -8217,8 +8425,17 @@ ENDMACRO
  BNE CB11D               ; B18B: D0 90       ..
  RTS                     ; B18D: 60          `
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_B18E
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_B18E
+
  LDA #&65 ; 'e'          ; B18E: A9 65       .e
  STA SC2+1               ; B190: 85 BB       ..
  LDA #8                  ; B192: A9 08       ..
@@ -8299,8 +8516,17 @@ ENDMACRO
  BNE CB1B8               ; B216: D0 A0       ..
  RTS                     ; B218: 60          `
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_B219
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_B219
+
  STX K                   ; B219: 86 7D       .}
  STY K+1                 ; B21B: 84 7E       .~
  LDA tileNumber          ; B21D: A5 B8       ..
@@ -8379,8 +8605,17 @@ ENDMACRO
  BNE loop_CB29F          ; B2A6: D0 F7       ..
  RTS                     ; B2A8: 60          `
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_B2A9
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_B2A9
+
  JSR subm_DBD8           ; B2A9: 20 D8 DB     ..
  LDA SC                  ; B2AC: A5 07       ..
  CLC                     ; B2AE: 18          .
@@ -8393,8 +8628,17 @@ ENDMACRO
 .CB2BB
  RTS                     ; B2BB: 60          `
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_B2BC
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_B2BC
+
  LDA K+2                 ; B2BC: A5 7F       ..
  STA XC                  ; B2BE: 85 32       .2
  LDA K+3                 ; B2C0: A5 80       ..
@@ -8429,8 +8673,17 @@ ENDMACRO
  LDA #&3C ; '<'          ; B2F6: A9 3C       .<
  JMP CB29D               ; B2F8: 4C 9D B2    L..
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_B2FB
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_B2FB
+
  JSR subm_DBD8           ; B2FB: 20 D8 DB     ..
  LDA SC                  ; B2FE: A5 07       ..
  CLC                     ; B300: 18          .
@@ -8474,8 +8727,17 @@ ENDMACRO
  BNE CB30F               ; B33E: D0 CF       ..
  RTS                     ; B340: 60          `
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: ClearTiles
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .ClearTiles
+
  LDA #0                  ; B341: A9 00       ..
  STA SC+1                ; B343: 85 08       ..
  LDA #&42 ; 'B'          ; B345: A9 42       .B
@@ -8569,6 +8831,17 @@ ENDMACRO
  DEX                     ; B3DB: CA          .
  BNE CB3B4               ; B3DC: D0 D6       ..
  RTS                     ; B3DE: 60          `
+
+\ ******************************************************************************
+\
+\       Name: LB3DF
+\       Type: Variable
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
+.LB3DF
 
  EQUB &0F, &2C, &0F, &2C ; B3DF: 0F 2C 0F... .,.
  EQUB &0F, &28, &00, &1A ; B3E3: 0F 28 00... .(.
@@ -8676,8 +8949,17 @@ ENDMACRO
  EQUB &28, &29, &2A, &2B ; B577: 28 29 2A... ()*
  EQUB &2C, &0F, &0F, &0F ; B57B: 2C 0F 0F... ,..
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_B57F
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_B57F
+
  LDA QQ11a               ; B57F: A5 9F       ..
  AND #&0F                ; B581: 29 0F       ).
  TAX                     ; B583: AA          .
@@ -8742,11 +9024,30 @@ ENDMACRO
  STA XX3+2               ; B5F2: 8D 02 01    ...
  RTS                     ; B5F5: 60          `
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_B5F6
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_B5F6
+
  JSR subm_B5F9           ; B5F6: 20 F9 B5     ..
-; ******************************************************************************
+
+\ ******************************************************************************
+\
+\       Name: subm_B5F9
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_B5F9
+
  LDX #&1F                ; B5F9: A2 1F       ..
 .loop_CB5FB
  LDY XX3,X               ; B5FB: BC 00 01    ...
@@ -8785,8 +9086,17 @@ ENDMACRO
  STA paletteColour2      ; B63A: 85 36       .6
  RTS                     ; B63C: 60          `
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_B63D
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_B63D
+
  LDA QQ11a               ; B63D: A5 9F       ..
  CMP #&FF                ; B63F: C9 FF       ..
  BEQ CB66D               ; B641: F0 2A       .*
@@ -8810,8 +9120,17 @@ ENDMACRO
  STA L0473               ; B66F: 8D 73 04    .s.
  RTS                     ; B672: 60          `
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_B673
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_B673
+
  JSR KeepPPUTablesAt0    ; B673: 20 67 D1     g.
  JSR subm_B57F           ; B676: 20 7F B5     ..
  JSR subm_B5F6           ; B679: 20 F6 B5     ..
@@ -8830,6 +9149,15 @@ ENDMACRO
  INC L00DA               ; B69F: E6 DA       ..
  LSR L0473               ; B6A1: 4E 73 04    Ns.
  RTS                     ; B6A4: 60          `
+
+\ ******************************************************************************
+\
+\       Name: LB6A5
+\       Type: Variable
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
 
 .LB6A5
  EQUB &0F                ; B6A5: 0F          .
@@ -9034,28 +9362,87 @@ ENDMACRO
  EQUB &07, &F3, &27, &F0 ; B9A0: 07 F3 27... ..'
  EQUB &FB, &27, &5A, &28 ; B9A4: FB 27 5A... .'Z
  EQUB &0F, &3F           ; B9A8: 0F 3F       .?
+
+\ ******************************************************************************
+\
+\       Name: LB9AA
+\       Type: Variable
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .LB9AA
  EQUB &00, &01, &16, &04 ; B9AA: 00 01 16... ...
  EQUB &05, &02, &0A, &13 ; B9AE: 05 02 0A... ...
  EQUB &0D, &09, &06, &10 ; B9B2: 0D 09 06... ...
  EQUB &03, &03, &02, &17 ; B9B6: 03 03 02... ...
+
+\ ******************************************************************************
+\
+\       Name: LB9BA
+\       Type: Variable
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .LB9BA
  EQUB &00, &01, &16, &04 ; B9BA: 00 01 16... ...
  EQUB &05, &02, &0B, &14 ; B9BE: 05 02 0B... ...
  EQUB &0E, &09, &07, &11 ; B9C2: 0E 09 07... ...
  EQUB &03, &03, &02, &02 ; B9C6: 03 03 02... ...
+
+\ ******************************************************************************
+\
+\       Name: LB9CA
+\       Type: Variable
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .LB9CA
  EQUB &00, &01, &16, &04 ; B9CA: 00 01 16... ...
  EQUB &05, &02, &0C, &15 ; B9CE: 05 02 0C... ...
  EQUB &0F, &09, &08, &12 ; B9D2: 0F 09 08... ...
  EQUB &03, &03, &02, &17 ; B9D6: 03 03 02... ...
+
+\ ******************************************************************************
+\
+\       Name: LB9DA
+\       Type: Variable
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .LB9DA
  EQUB &AA, &BA, &CA, &AA ; B9DA: AA BA CA... ...
+
+\ ******************************************************************************
+\
+\       Name: LB9DE
+\       Type: Variable
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .LB9DE
  EQUB &B9, &B9, &B9, &B9 ; B9DE: B9 B9 B9... ...
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_B9E2
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_B9E2
+
  LDX language            ; B9E2: AE A8 04    ...
  LDA LB9DA,X             ; B9E5: BD DA B9    ...
  STA V                   ; B9E8: 85 63       .c
@@ -9079,8 +9466,17 @@ ENDMACRO
  STA SC                  ; BA0C: 85 07       ..
  JMP UnpackToRAM         ; BA0E: 4C 2D F5    L-.
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_BA23_BA11
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_BA23_BA11
+
  LDA #&F0                ; BA11: A9 F0       ..
  STA ySprite5            ; BA13: 8D 14 02    ...
  STA ySprite6            ; BA16: 8D 18 02    ...
@@ -9089,8 +9485,17 @@ ENDMACRO
  STA ySprite9            ; BA1F: 8D 24 02    .$.
  RTS                     ; BA22: 60          `
 
-; ******************************************************************************
+\ ******************************************************************************
+\
+\       Name: subm_BA23
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .subm_BA23
+
  LDY VIEW                ; BA23: AC 8E 03    ...
  LDA LASER,Y             ; BA26: B9 A8 03    ...
  BEQ subm_BA23_BA11      ; BA29: F0 E6       ..
@@ -9219,309 +9624,33 @@ ENDMACRO
  STA ySprite8            ; BB47: 8D 20 02    . .
  RTS                     ; BB4A: 60          `
 
- EQUB &FF, &FF, &FF, &FF ; BB4B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BB4F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BB53: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BB57: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BB5B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BB5F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BB63: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BB67: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BB6B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BB6F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BB73: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BB77: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BB7B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BB7F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BB83: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BB87: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BB8B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BB8F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BB93: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BB97: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BB9B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BB9F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BBA3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BBA7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BBAB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BBAF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BBB3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BBB7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BBBB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BBBF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BBC3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BBC7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BBCB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BBCF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BBD3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BBD7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BBDB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BBDF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BBE3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BBE7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BBEB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BBEF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BBF3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BBF7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BBFB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BBFF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC03: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC07: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC0B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC0F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC13: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC17: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC1B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC1F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC23: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC27: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC2B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC2F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC33: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC37: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC3B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC3F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC43: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC47: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC4B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC4F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC53: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC57: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC5B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC5F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC63: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC67: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC6B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC6F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC73: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC77: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC7B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC7F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC83: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC87: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC8B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC8F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC93: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC97: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC9B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BC9F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BCA3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BCA7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BCAB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BCAF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BCB3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BCB7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BCBB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BCBF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BCC3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BCC7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BCCB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BCCF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BCD3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BCD7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BCDB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BCDF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BCE3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BCE7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BCEB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BCEF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BCF3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BCF7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BCFB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BCFF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD03: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD07: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD0B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD0F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD13: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD17: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD1B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD1F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD23: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD27: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD2B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD2F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD33: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD37: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD3B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD3F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD43: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD47: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD4B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD4F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD53: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD57: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD5B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD5F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD63: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD67: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD6B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD6F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD73: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD77: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD7B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD7F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD83: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD87: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD8B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD8F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD93: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD97: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD9B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BD9F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BDA3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BDA7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BDAB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BDAF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BDB3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BDB7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BDBB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BDBF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BDC3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BDC7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BDCB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BDCF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BDD3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BDD7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BDDB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BDDF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BDE3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BDE7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BDEB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BDEF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BDF3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BDF7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BDFB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BDFF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE03: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE07: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE0B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE0F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE13: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE17: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE1B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE1F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE23: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE27: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE2B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE2F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE33: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE37: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE3B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE3F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE43: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE47: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE4B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE4F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE53: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE57: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE5B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE5F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE63: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE67: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE6B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE6F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE73: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE77: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE7B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE7F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE83: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE87: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE8B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE8F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE93: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE97: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE9B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BE9F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BEA3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BEA7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BEAB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BEAF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BEB3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BEB7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BEBB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BEBF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BEC3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BEC7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BECB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BECF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BED3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BED7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BEDB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BEDF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BEE3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BEE7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BEEB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BEEF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BEF3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BEF7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BEFB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BEFF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF03: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF07: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF0B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF0F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF13: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF17: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF1B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF1F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF23: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF27: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF2B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF2F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF33: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF37: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF3B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF3F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF43: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF47: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF4B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF4F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF53: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF57: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF5B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF5F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF63: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF67: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF6B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF6F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF73: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF77: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF7B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF7F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF83: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF87: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF8B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF8F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF93: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF97: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF9B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BF9F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BFA3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BFA7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BFAB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BFAF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BFB3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BFB7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BFBB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BFBF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BFC3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BFC7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BFCB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BFCF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BFD3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BFD7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BFDB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BFDF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BFE3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BFE7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BFEB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BFEF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; BFF3: FF FF FF... ...
- EQUB &FF, &FF, &FF,   7 ; BFF7: FF FF FF... ...
- EQUB &C0,   0, &C0,   7 ; BFFB: C0 00 C0... ...
- EQUB &C0                ; BFFF: C0          .
-.pydis_end
+\ ******************************************************************************
+\
+\       Name: Vectors
+\       Type: Variable
+\   Category: Text
+\    Summary: Vectors and padding at the end of the ROM bank
+\
+\ ******************************************************************************
+
+ FOR I%, P%, &BFF9
+
+  EQUB &FF              \ Pad out the rest of the ROM bank with &FF
+
+ NEXT
+
+ EQUW Interrupts+&4000  \ Vector to the NMI handler in case this bank is loaded
+                        \ into &C000 during startup (the handler contains an RTI
+                        \ so the interrupt is processed but has no effect)
+
+ EQUW ResetMMC1+&4000   \ Vector to the RESET handler in case this bank is
+                        \ loaded into &C000 during startup (the handler resets
+                        \ the MMC1 mapper to map bank 7 into &C000 instead)
+
+ EQUW Interrupts+&4000  \ Vector to the IRQ/BRK handler in case this bank is
+                        \ loaded into &C000 during startup (the handler contains
+                        \ an RTI so the interrupt is processed but has no
+                        \ effect)
 
 \ ******************************************************************************
 \

@@ -29,10 +29,11 @@
 
  _NTSC                  = (_VARIANT = 1)
  _PAL                   = (_VARIANT = 2)
-
- _BANK = 4
+ _BANK                  = 4
 
  INCLUDE "1-source-files/main-sources/elite-source-common.asm"
+
+ INCLUDE "1-source-files/main-sources/elite-source-bank-7.asm"
 
 \ ******************************************************************************
 \
@@ -2438,18 +2439,83 @@ ENDMACRO
  EQUB &00, &00, &00, &00, &00, &00, &00, &00
  EQUB &00, &00, &00, &00, &00, &00, &00, &00
  EQUB &00, &00, &00, &00, &00, &00, &00, &00
- EQUB &00, &00, &00, &00, &00, &00, &AD, &DD
- EQUB &03, &D0, &1F, &AE, &DC, &03, &E0, &00
- EQUB &69, &00, &E0, &02, &69, &00, &E0, &08
- EQUB &69, &00, &E0, &18, &69, &00, &E0, &2C
- EQUB &69, &00, &E0, &82, &69, &00, &AA, &4C
- EQUB &B7, &B8, &A2, &09, &C9, &19, &B0, &0B
- EQUB &CA, &C9, &0A, &B0, &06, &CA, &C9, &02
- EQUB &B0, &01, &CA, &CA, &8A, &85, &99, &0A
- EQUB &65, &99, &85, &99, &AE, &71, &04, &F0
- EQUB &01, &CA, &8A, &18, &65, &99, &AA, &BD
- EQUB &DB, &B8, &CD, &1A, &95, &90, &05, &AD
- EQUB &1A, &95, &E9, &01, &85, &99, &60, &00
+ EQUB &00, &00, &00, &00, &00, &00
+
+\ ******************************************************************************
+\
+\       Name: LB882
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
+.LB882
+
+ LDA TALLY+1
+ BNE LB8A6
+ LDX TALLY
+ CPX #0
+ ADC #0
+ CPX #2
+ ADC #0
+ CPX #8
+ ADC #0
+ CPX #&18
+ ADC #0
+ CPX #&2C
+ ADC #0
+ CPX #&82
+ ADC #0
+ TAX
+ JMP LB8B7
+.LB8A6
+ LDX #9
+ CMP #&19
+ BCS LB8B7
+ DEX
+ CMP #&0A
+ BCS LB8B7
+ DEX
+ CMP #2
+ BCS LB8B7
+ DEX
+.LB8B7
+ DEX
+ TXA
+ STA S
+ ASL A
+ ADC S
+ STA S
+ LDX L0471
+ BEQ LB8C6
+ DEX
+.LB8C6
+ TXA
+ CLC
+ ADC S
+ TAX
+ LDA LB8DB,X
+ CMP image2Count
+ BCC LB8D8
+ LDA image2Count
+ SBC #1
+.LB8D8
+ STA S
+ RTS
+
+\ ******************************************************************************
+\
+\       Name: LB8DB
+\       Type: Variable
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
+.LB8DB
+
+ EQUB &00
  EQUB &01, &02, &03, &04, &05, &06, &06, &07
  EQUB &08, &08, &08, &09, &09, &09, &0A, &0A
  EQUB &0A, &0B, &0B, &0B, &0C, &0C, &0C, &0D
