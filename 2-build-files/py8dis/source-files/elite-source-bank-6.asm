@@ -3946,13 +3946,16 @@ LA3F8 = LA3F5+3
  EQUB &44, &B2, &9C, &94, &43, &BA, &9C, &98  ; A48D: 44 B2 9C... D..
  EQUB &46, &B2, &A4, &9C, &45, &BA, &A4, &A0  ; A495: 46 B2 A4... F..
  EQUB &1D, &40, &BE, &A6, &5D, &4A, &BE, &AA  ; A49D: 1D 40 BE... .@.
- EQUB &20, &67, &D1, &AD, &BE, &03, &F0, &07  ; A4A5: 20 67 D1...  g.
 
+ JSR KeepPPUTablesAt0                         ; A4A5: 20 67 D1     g.
+ LDA ECM                                      ; A4A8: AD BE 03    ...
+ BEQ CA4B4                                    ; A4AB: F0 07       ..
 ; ******************************************************************************
 .subm_A4AD
  LDY #0                                       ; A4AD: A0 00       ..
  LDX #3                                       ; A4AF: A2 03       ..
  JSR subm_A39F                                ; A4B1: 20 9F A3     ..
+.CA4B4
  LDX LASER                                    ; A4B4: AE A8 03    ...
  BEQ CA4C6                                    ; A4B7: F0 0D       ..
  JSR subm_A3DE                                ; A4B9: 20 DE A3     ..

@@ -27,8 +27,8 @@
 
  INCLUDE "1-source-files/main-sources/elite-build-options.asm"
 
- _NTSC                  = (_VARIANT = 1)
- _PAL                   = (_VARIANT = 2)
+ _NTSC = (_VARIANT = 1)
+ _PAL  = (_VARIANT = 2)
 
 \ ******************************************************************************
 \

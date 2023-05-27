@@ -27,9 +27,7 @@
 
  INCLUDE "1-source-files/main-sources/elite-build-options.asm"
 
- _NTSC                  = (_VARIANT = 1)
- _PAL                   = (_VARIANT = 2)
- _BANK                  = 4
+ _BANK = 4
 
  INCLUDE "1-source-files/main-sources/elite-source-common.asm"
 
@@ -66,10 +64,10 @@
 \     to &C000 when it starts up via the JMP (&FFFC), irrespective of which
 \     ROM bank is mapped to &C000.
 \
-\   * We put the same RESET routine at the start of every ROM bank, so the same
+\   * We put the same reset routine at the start of every ROM bank, so the same
 \     routine gets run, whichever ROM bank is mapped to &C000.
 \
-\ This RESET routine is therefore called when the NES starts up, whatever the
+\ This reset routine is therefore called when the NES starts up, whatever the
 \ bank configuration ends up being. It then switches ROM bank 7 to &C000 and
 \ jumps into bank 7 at the game's entry point S%, which starts the game.
 \
@@ -2443,66 +2441,74 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: LB882
+\       Name: subm_B882
 \       Type: Subroutine
 \   Category: ???
 \    Summary: ???
 \
 \ ******************************************************************************
 
-.LB882
+.subm_B882
 
- LDA TALLY+1
- BNE LB8A6
- LDX TALLY
- CPX #0
- ADC #0
- CPX #2
- ADC #0
- CPX #8
- ADC #0
- CPX #&18
- ADC #0
- CPX #&2C
- ADC #0
- CPX #&82
- ADC #0
- TAX
- JMP LB8B7
-.LB8A6
- LDX #9
- CMP #&19
- BCS LB8B7
- DEX
- CMP #&0A
- BCS LB8B7
- DEX
- CMP #2
- BCS LB8B7
- DEX
-.LB8B7
- DEX
- TXA
- STA S
- ASL A
- ADC S
- STA S
- LDX L0471
- BEQ LB8C6
- DEX
-.LB8C6
- TXA
- CLC
- ADC S
- TAX
- LDA LB8DB,X
- CMP image2Count
- BCC LB8D8
- LDA image2Count
- SBC #1
-.LB8D8
- STA S
- RTS
+ LDA TALLY+1                                  ; B882: AD DD 03    ...
+ BNE CB8A6                                    ; B885: D0 1F       ..
+ LDX TALLY                                    ; B887: AE DC 03    ...
+ CPX #0                                       ; B88A: E0 00       ..
+ ADC #0                                       ; B88C: 69 00       i.
+ CPX #2                                       ; B88E: E0 02       ..
+ ADC #0                                       ; B890: 69 00       i.
+ CPX #8                                       ; B892: E0 08       ..
+ ADC #0                                       ; B894: 69 00       i.
+ CPX #&18                                     ; B896: E0 18       ..
+ ADC #0                                       ; B898: 69 00       i.
+ CPX #&2C ; ','                               ; B89A: E0 2C       .,
+ ADC #0                                       ; B89C: 69 00       i.
+ CPX #&82                                     ; B89E: E0 82       ..
+ ADC #0                                       ; B8A0: 69 00       i.
+ TAX                                          ; B8A2: AA          .
+ JMP CB8B7                                    ; B8A3: 4C B7 B8    L..
+
+.CB8A6
+
+ LDX #9                                       ; B8A6: A2 09       ..
+ CMP #&19                                     ; B8A8: C9 19       ..
+ BCS CB8B7                                    ; B8AA: B0 0B       ..
+ DEX                                          ; B8AC: CA          .
+ CMP #&0A                                     ; B8AD: C9 0A       ..
+ BCS CB8B7                                    ; B8AF: B0 06       ..
+ DEX                                          ; B8B1: CA          .
+ CMP #2                                       ; B8B2: C9 02       ..
+ BCS CB8B7                                    ; B8B4: B0 01       ..
+ DEX                                          ; B8B6: CA          .
+
+.CB8B7
+
+ DEX                                          ; B8B7: CA          .
+ TXA                                          ; B8B8: 8A          .
+ STA S                                        ; B8B9: 85 99       ..
+ ASL A                                        ; B8BB: 0A          .
+ ADC S                                        ; B8BC: 65 99       e.
+ STA S                                        ; B8BE: 85 99       ..
+ LDX L0471                                    ; B8C0: AE 71 04    .q.
+ BEQ CB8C6                                    ; B8C3: F0 01       ..
+ DEX                                          ; B8C5: CA          .
+
+.CB8C6
+
+ TXA                                          ; B8C6: 8A          .
+ CLC                                          ; B8C7: 18          .
+ ADC S                                        ; B8C8: 65 99       e.
+ TAX                                          ; B8CA: AA          .
+ LDA LB8DB,X                                  ; B8CB: BD DB B8    ...
+ CMP image2Count                              ; B8CE: CD 1A 95    ...
+ BCC CB8D8                                    ; B8D1: 90 05       ..
+ LDA image2Count                              ; B8D3: AD 1A 95    ...
+ SBC #1                                       ; B8D6: E9 01       ..
+
+.CB8D8
+
+ STA S                                        ; B8D8: 85 99       ..
+ RTS                                          ; B8DA: 60          `
 
 \ ******************************************************************************
 \
@@ -2515,11 +2521,10 @@ ENDMACRO
 
 .LB8DB
 
- EQUB &00
- EQUB &01, &02, &03, &04, &05, &06, &06, &07
- EQUB &08, &08, &08, &09, &09, &09, &0A, &0A
- EQUB &0A, &0B, &0B, &0B, &0C, &0C, &0C, &0D
- EQUB &0D, &0D, &0E, &0E, &0E
+ EQUB   0,   1,   2,   3,   4,   5,   6,   6  ; B8DB: 00 01 02... ...
+ EQUB   7,   8,   8,   8,   9,   9,   9, &0A  ; B8E3: 07 08 08... ...
+ EQUB &0A, &0A, &0B, &0B, &0B, &0C, &0C, &0C  ; B8EB: 0A 0A 0B... ...
+ EQUB &0D, &0D, &0D, &0E, &0E, &0E            ; B8F3: 0D 0D 0D... ...
 
 \ ******************************************************************************
 \

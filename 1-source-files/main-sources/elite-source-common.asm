@@ -1,6 +1,6 @@
 \ ******************************************************************************
 \
-\ NES ELITE GAME SOURCE (BANK CONFIGURATION)
+\ NES ELITE GAME SOURCE (COMMON VARIABLES)
 \
 \ NES Elite was written by Ian Bell and David Braben and is copyright D. Braben
 \ and I. Bell 1992
@@ -19,9 +19,13 @@
 \
 \ ------------------------------------------------------------------------------
 \
-\ This source file contains configuration that is common to all eight banks.
+\ This source file contains variables and addresses that are shared across all
+\ eight banks.
 \
 \ ******************************************************************************
+
+ _NTSC = (_VARIANT = 1)
+ _PAL  = (_VARIANT = 2)
 
 \ ******************************************************************************
 \
@@ -110,7 +114,6 @@
  TRI_LO     = &400A
  TRI_HI     = &400B
  NOISE_VOL  = &400C
- L400D      = &400D
  NOISE_LO   = &400E
  NOISE_HI   = &400F
  DMC_FREQ   = &4010
@@ -123,7 +126,7 @@
 
 \ ******************************************************************************
 \
-\ Exported addresses from banks 0 to 6
+\ Exported addresses from bank 0
 \
 \ ******************************************************************************
 
@@ -148,6 +151,12 @@ IF NOT(_BANK = 0)
 
 ENDIF
 
+\ ******************************************************************************
+\
+\ Exported addresses from bank 1
+\
+\ ******************************************************************************
+
 IF NOT(_BANK = 1)
 
  E%                 = &8042
@@ -161,9 +170,15 @@ IF NOT(_BANK = 1)
  HALL               = &B738
  TIDY               = &B85C
  SCAN               = &B975
- LBAF3              = &BAF3
+ sub_CBAF3          = &BAF3
 
 ENDIF
+
+\ ******************************************************************************
+\
+\ Exported addresses from bank 2
+\
+\ ******************************************************************************
 
 IF NOT(_BANK = 2)
 
@@ -177,15 +192,47 @@ IF NOT(_BANK = 2)
 
 ENDIF
 
+\ ******************************************************************************
+\
+\ Exported addresses from bank 3
+\
+\ ******************************************************************************
+
 IF NOT(_BANK = 3)
 
+ subm_A730          = &A730
+ subm_A775          = &A775
+ subm_A7B7          = &A7B7
+ subm_A972          = &A972
+ subm_A9D1          = &A9D1
+ DrawTitleScreen    = &AABC
+ subm_AC1D          = &AC1D
+ subm_AC5C          = &AC5C
+ subm_AE18          = &AE18
+ subm_AFCD          = &AFCD
+ subm_B0E1          = &B0E1
+ subm_B18E          = &B18E
+ subm_B219          = &B219
+ subm_B248          = &B248
+ subm_B2BC          = &B2BC
+ subm_B2FB          = &B2FB
  ClearTiles         = &B341
+ subm_B63D          = &B63D
+ subm_B673          = &B673
+ subm_B9E2          = &B9E2
+ subm_BA23          = &BA23
 
 ENDIF
 
+\ ******************************************************************************
+\
+\ Exported addresses from bank 4
+\
+\ ******************************************************************************
+
 IF NOT(_BANK = 4)
 
- LB882              = &B882
+ subm_B882          = &B882
  GetSystemImage2    = &B8F9
  SetSystemImage2    = &B93C
  subm_B96B          = &B96B
@@ -193,6 +240,12 @@ IF NOT(_BANK = 4)
  subm_B9F9          = &B9F9
 
 ENDIF
+
+\ ******************************************************************************
+\
+\ Exported addresses from bank 5
+\
+\ ******************************************************************************
 
 IF NOT(_BANK = 5)
 
@@ -202,61 +255,39 @@ IF NOT(_BANK = 5)
 
 ENDIF
 
+\ ******************************************************************************
+\
+\ Exported addresses from bank 6
+\
+\ ******************************************************************************
+
 IF NOT(_BANK = 6)
 
  ResetSound         = &8012
  subm_8021          = &8021
  PlayMusic          = &811E
+ subm_89D1          = &89D1
+ subm_A082          = &A082
+ subm_A0F8          = &A0F8
+ subm_A166          = &A166
  DIALS              = &A2C3
+ subm_A4A5          = &A4A5
+ subm_A5AB          = &A5AB
+ subm_B459          = &B459
+ subm_B88C          = &B88C
+ subm_B8FE          = &B8FE
+ subm_B90D6         = &B90D
+ subm_B919          = &B919
  LL164              = &B980
+ subm_BA17          = &BA17
+ subm_BA63          = &BA63
+ subm_BB37          = &BB37
+ subm_BBDE          = &BBDE
  TITLE              = &BC83
+ subm_BE52          = &BE52
+ subm_BED2          = &BED2
 
 ENDIF
-
- \ These variables should be added as labels and moved into the above
-
- \ Bank 3
-
- LA730              = &A730
- LA775              = &A775
- LA7B7              = &A7B7
- LA972              = &A972
- LA9D1              = &A9D1
- LAABC              = &AABC
- LAC1D              = &AC1D
- LAC5C              = &AC5C
- LAE18              = &AE18
- LAFCD              = &AFCD
- LB0E1              = &B0E1
- LB18E              = &B18E
- LB219              = &B219
- LB248              = &B248
- LB2BC              = &B2BC
- LB2FB              = &B2FB
- LB63D              = &B63D
- LB673              = &B673
- LB9E2              = &B9E2
- LBA23              = &BA23
-
- \ Bank 6
-
- L89D1              = &89D1
- LA082              = &A082
- LA0F8              = &A0F8
- LA166              = &A166
- LA4A5              = &A4A5
- LA5AB              = &A5AB
- LB459              = &B459
- LB88C              = &B88C
- LB8FE              = &B8FE
- LB90D              = &B90D
- LB919              = &B919
- LBA17              = &BA17
- LBA63              = &BA63
- LBB37              = &BB37
- LBBDE              = &BBDE
- LBE52              = &BE52
- LBED2              = &BED2
 
 \ ******************************************************************************
 \
@@ -3145,7 +3176,7 @@ ORG &0200
 
 .DTW6
 
- SKIP 1                 \ A flag to denote whether printing in lower case is enabled for
+ SKIP 1                 \ A flag to denote whether printing in lower case is
                         \ enabled for extended text tokens
                         \
                         \   * %10000000 = lower case is enabled

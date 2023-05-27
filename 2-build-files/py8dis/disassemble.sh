@@ -63,5 +63,5 @@ sed -i "" -e "s/\.pydis_end/    EQUB \&CE\n.pydis_end/" source-files/elite-sourc
 
 # Build resulting sources
 
-cd ../../../../
-make nes
+#cd ../../../../
+#make nes

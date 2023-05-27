@@ -27,9 +27,7 @@
 
  INCLUDE "1-source-files/main-sources/elite-build-options.asm"
 
- _NTSC                  = (_VARIANT = 1)
- _PAL                   = (_VARIANT = 2)
- _BANK                  = 0
+ _BANK = 0
 
  INCLUDE "1-source-files/main-sources/elite-source-common.asm"
 
@@ -66,10 +64,10 @@
 \     to &C000 when it starts up via the JMP (&FFFC), irrespective of which
 \     ROM bank is mapped to &C000.
 \
-\   * We put the same RESET routine at the start of every ROM bank, so the same
+\   * We put the same reset routine at the start of every ROM bank, so the same
 \     routine gets run, whichever ROM bank is mapped to &C000.
 \
-\ This RESET routine is therefore called when the NES starts up, whatever the
+\ This reset routine is therefore called when the NES starts up, whatever the
 \ bank configuration ends up being. It then switches ROM bank 7 to &C000 and
 \ jumps into bank 7 at the game's entry point S%, which starts the game.
 \
@@ -219,11 +217,13 @@ ENDMACRO
  JMP BRIEF                                    ; 8049: 4C 9E 94    L..
 
 .C804C
+
  CMP #3                                       ; 804C: C9 03       ..
  BNE C8053                                    ; 804E: D0 03       ..
  JMP DEBRIEF                                  ; 8050: 4C 61 94    La.
 
 .C8053
+
  LDA GCNT                                     ; 8053: AD A7 03    ...
  CMP #2                                       ; 8056: C9 02       ..
  BNE C8097                                    ; 8058: D0 3D       .=
@@ -237,6 +237,7 @@ ENDMACRO
  JMP BRIEF2                                   ; 806A: 4C 23 94    L#.
 
 .C806D
+
  CMP #6                                       ; 806D: C9 06       ..
  BNE C8082                                    ; 806F: D0 11       ..
  LDA QQ0                                      ; 8071: AD 9F 03    ...
@@ -248,6 +249,7 @@ ENDMACRO
  JMP BRIEF3                                   ; 807F: 4C 3F 94    L?.
 
 .C8082
+
  CMP #&0A                                     ; 8082: C9 0A       ..
  BNE C8097                                    ; 8084: D0 11       ..
  LDA QQ0                                      ; 8086: AD 9F 03    ...
@@ -259,6 +261,7 @@ ENDMACRO
  JMP DEBRIEF2                                 ; 8094: 4C 4D 94    LM.
 
 .C8097
+
  LDA COK                                      ; 8097: AD A6 03    ...
  BMI C80AB                                    ; 809A: 30 0F       0.
  LDA CASH+1                                   ; 809C: AD A2 03    ...
@@ -269,6 +272,7 @@ ENDMACRO
  JMP TBRIEF                                   ; 80A8: 4C 72 94    Lr.
 
 .C80AB
+
  JMP BAY                                      ; 80AB: 4C 5E B3    L^.
 
  RTS                                          ; 80AE: 60          `
@@ -292,10 +296,14 @@ ENDMACRO
  ASL A                                        ; 80BA: 0A          .
  BPL C80C0                                    ; 80BB: 10 03       ..
  JSR SetPPUTablesTo0                          ; 80BD: 20 6D D0     m.
+
 .C80C0
+
  JSR GINF                                     ; 80C0: 20 90 CE     ..
  LDY #&25 ; '%'                               ; 80C3: A0 25       .%
+
 .loop_C80C5
+
  LDA (XX19),Y                                 ; 80C5: B1 61       .a
  STA XX1,Y                                    ; 80C7: 99 09 00    ...
  DEY                                          ; 80CA: 88          .
@@ -306,7 +314,9 @@ ENDMACRO
  ASL A                                        ; 80D4: 0A          .
  BPL C80DA                                    ; 80D5: 10 03       ..
  JSR SetPPUTablesTo0                          ; 80D7: 20 6D D0     m.
+
 .C80DA
+
  LDA TYPE                                     ; 80DA: A5 A3       ..
  BMI MA21                                     ; 80DC: 30 6A       0j
  CMP #2                                       ; 80DE: C9 02       ..
@@ -317,14 +327,18 @@ ENDMACRO
  STA XX0+1                                    ; 80EA: 85 60       .`
  LDY #4                                       ; 80EC: A0 04       ..
  BNE C80FC                                    ; 80EE: D0 0C       ..
+
 .C80F0
+
  ASL A                                        ; 80F0: 0A          .
  TAY                                          ; 80F1: A8          .
  LDA XX21-2,Y                                 ; 80F2: B9 3E C5    .>.
  STA XX0                                      ; 80F5: 85 5F       ._
  LDA XX21-1,Y                                 ; 80F7: B9 3F C5    .?.
  STA XX0+1                                    ; 80FA: 85 60       .`
+
 .C80FC
+
  CPY #6                                       ; 80FC: C0 06       ..
  BEQ MainFlight5                              ; 80FE: F0 27       .'
  CPY #&3C ; '<'                               ; 8100: C0 3C       .<
@@ -337,11 +351,15 @@ ENDMACRO
  BEQ C8114                                    ; 810E: F0 04       ..
  AND #&3E ; '>'                               ; 8110: 29 3E       )>
  BEQ MainFlight5                              ; 8112: F0 13       ..
+
 .C8114
+
  LDA INWK+31                                  ; 8114: A5 28       .(
  AND #&A0                                     ; 8116: 29 A0       ).
  BNE MainFlight5                              ; 8118: D0 0D       ..
+
 .C811A
+
  LDA NEWB                                     ; 811A: A5 2D       .-
  AND #4                                       ; 811C: 29 04       ).
  BEQ MainFlight5                              ; 811E: F0 07       ..
@@ -395,9 +413,13 @@ ENDMACRO
  ASL A                                        ; 8152: 0A          .
  BPL C8158                                    ; 8153: 10 03       ..
  JSR SetPPUTablesTo0                          ; 8155: 20 6D D0     m.
+
 .C8158
+
  LDY #&25 ; '%'                               ; 8158: A0 25       .%
+
 .loop_C815A
+
  LDA XX1,Y                                    ; 815A: B9 09 00    ...
  STA (XX19),Y                                 ; 815D: 91 61       .a
  DEY                                          ; 815F: 88          .
@@ -465,10 +487,14 @@ ENDMACRO
  BEQ C821B                                    ; 81AB: F0 6E       .n
  ADC #1                                       ; 81AD: 69 01       i.
  BNE slvy2                                    ; 81AF: D0 05       ..
+
 .C81B1
+
  JSR DORND                                    ; 81B1: 20 AD F4     ..
  AND #7                                       ; 81B4: 29 07       ).
+
 .slvy2
+
  JSR tnpr1                                    ; 81B6: 20 20 96      .
  LDY #&4E ; 'N'                               ; 81B9: A0 4E       .N
  BCS MA59                                     ; 81BB: B0 4C       .L
@@ -478,11 +504,13 @@ ENDMACRO
  TYA                                          ; 81C6: 98          .
  ADC #&D0                                     ; 81C7: 69 D0       i.
  JSR MESS                                     ; 81C9: 20 8F B7     ..
- JSR LEBE9                                    ; 81CC: 20 E9 EB     ..
+ JSR subm_EBE9                                    ; 81CC: 20 E9 EB     ..
  ASL NEWB                                     ; 81CF: 06 2D       .-
  SEC                                          ; 81D1: 38          8
  ROR NEWB                                     ; 81D2: 66 2D       f-
+
 .C81D4
+
  JMP C822A                                    ; 81D4: 4C 2A 82    L*.
 
 \ ******************************************************************************
@@ -526,9 +554,12 @@ ENDMACRO
  JMP DOENTRY                                  ; 81F8: 4C 23 80    L#.
 
 .MA62
+
  LDA auto                                     ; 81FB: AD 88 03    ...
  BNE GOIN                                     ; 81FE: D0 F5       ..
+
 .C8200
+
  LDA DELTA                                    ; 8200: A5 93       ..
  CMP #5                                       ; 8202: C9 05       ..
  BCC MA67                                     ; 8204: 90 0D       ..
@@ -550,22 +581,30 @@ ENDMACRO
  SEC                                          ; 820E: 38          8
  ROR INWK+31                                  ; 820F: 66 28       f(
  BNE C822A                                    ; 8211: D0 17       ..
+
 .MA67
+
  LDA #1                                       ; 8213: A9 01       ..
  STA DELTA                                    ; 8215: 85 93       ..
  LDA #5                                       ; 8217: A9 05       ..
  BNE C8224                                    ; 8219: D0 09       ..
+
 .C821B
+
  ASL INWK+31                                  ; 821B: 06 28       .(
  SEC                                          ; 821D: 38          8
  ROR INWK+31                                  ; 821E: 66 28       f(
  LDA INWK+35                                  ; 8220: A5 2C       .,
  SEC                                          ; 8222: 38          8
  ROR A                                        ; 8223: 6A          j
+
 .C8224
+
  JSR OOPS                                     ; 8224: 20 5D AA     ].
  JSR EXNO3                                    ; 8227: 20 AD EB     ..
+
 .C822A
+
  LDA QQ11                                     ; 822A: A5 9E       ..
  BEQ MA26                                     ; 822C: F0 03       ..
  JMP MA15                                     ; 822E: 4C DD 82    L..
@@ -588,13 +627,18 @@ ENDMACRO
  BEQ C8248                                    ; 823C: F0 0A       ..
  LDA MSTG                                     ; 823E: AD 01 04    ...
  BPL C8248                                    ; 8241: 10 05       ..
+
 .C8243
+
  JSR HITCH                                    ; 8243: 20 95 91     ..
  BCS C824B                                    ; 8246: B0 03       ..
+
 .C8248
+
  JMP MA8                                      ; 8248: 4C DA 82    L..
 
 .C824B
+
  LDA MSAR                                     ; 824B: AD 8D 03    ...
  BEQ C825F                                    ; 824E: F0 0F       ..
  LDA MSTG                                     ; 8250: AD 01 04    ...
@@ -603,7 +647,9 @@ ENDMACRO
  LDX XSAV                                     ; 8258: A6 9B       ..
  LDY #&6D ; 'm'                               ; 825A: A0 6D       .m
  JSR ABORT2                                   ; 825C: 20 C7 AC     ..
+
 .C825F
+
  LDA LAS                                      ; 825F: AD 00 04    ...
  BEQ MA8                                      ; 8262: F0 76       .v
  LDX #&0F                                     ; 8264: A2 0F       ..
@@ -616,7 +662,9 @@ ENDMACRO
  LDX LAS                                      ; 8273: AE 00 04    ...
  CPX #&32 ; '2'                               ; 8276: E0 32       .2
  BEQ C82D5                                    ; 8278: F0 5B       .[
+
 .C827A
+
  CMP #&1F                                     ; 827A: C9 1F       ..
  BCC BURN                                     ; 827C: 90 0D       ..
  LDA LAS                                      ; 827E: AD 00 04    ...
@@ -624,7 +672,9 @@ ENDMACRO
  BNE C82D5                                    ; 8283: D0 50       .P
  LSR LAS                                      ; 8285: 4E 00 04    N..
  LSR LAS                                      ; 8288: 4E 00 04    N..
+
 .BURN
+
  LDA INWK+35                                  ; 828B: A5 2C       .,
  SEC                                          ; 828D: 38          8
  SBC LAS                                      ; 828E: ED 00 04    ...
@@ -632,7 +682,7 @@ ENDMACRO
  ASL INWK+31                                  ; 8293: 06 28       .(
  SEC                                          ; 8295: 38          8
  ROR INWK+31                                  ; 8296: 66 28       f(
- JSR CBAF3_b1                                 ; 8298: 20 5A F2     Z.
+ JSR subm_F25A                                 ; 8298: 20 5A F2     Z.
  LDA LAS                                      ; 829B: AD 00 04    ...
  CMP #&32 ; '2'                               ; 829E: C9 32       .2
  BNE C82C4                                    ; 82A0: D0 22       ."
@@ -645,26 +695,37 @@ ENDMACRO
  BPL C82CE                                    ; 82AF: 10 1D       ..
  LDA #1                                       ; 82B1: A9 01       ..
  BNE C82BC                                    ; 82B3: D0 07       ..
+
 .C82B5
+
  JSR DORND                                    ; 82B5: 20 AD F4     ..
  ORA #1                                       ; 82B8: 09 01       ..
  AND #3                                       ; 82BA: 29 03       ).
+
 .C82BC
+
  LDX #8                                       ; 82BC: A2 08       ..
  JSR SPIN2                                    ; 82BE: 20 82 87     ..
  JMP C82CE                                    ; 82C1: 4C CE 82    L..
 
 .C82C4
+
  LDY #4                                       ; 82C4: A0 04       ..
  JSR SPIN                                     ; 82C6: 20 70 87     p.
  LDY #5                                       ; 82C9: A0 05       ..
  JSR SPIN                                     ; 82CB: 20 70 87     p.
+
 .C82CE
+
  LDX TYPE                                     ; 82CE: A6 A3       ..
  JSR EXNO2                                    ; 82D0: 20 80 BE     ..
+
 .C82D3
+
  STA INWK+35                                  ; 82D3: 85 2C       .,
+
 .C82D5
+
  LDA TYPE                                     ; 82D5: A5 A3       ..
  JSR ANGRY                                    ; 82D7: 20 3A 92     :.
 
@@ -680,7 +741,9 @@ ENDMACRO
 .MA8
 
  JSR LL9_b1                                   ; 82DA: 20 C7 ED     ..
+
 .MA15
+
  LDY #&23 ; '#'                               ; 82DD: A0 23       .#
  LDA INWK+35                                  ; 82DF: A5 2C       .,
  STA (XX19),Y                                 ; 82E1: 91 61       .a
@@ -710,15 +773,20 @@ ENDMACRO
  JSR MCASH                                    ; 8314: 20 41 A3     A.
  LDA #0                                       ; 8317: A9 00       ..
  JSR MESS                                     ; 8319: 20 8F B7     ..
+
 .C831C
+
  JMP KS1                                      ; 831C: 4C B6 AB    L..
 
 .C831F
+
  LDA TYPE                                     ; 831F: A5 A3       ..
  BMI C8328                                    ; 8321: 30 05       0.
  JSR FAROF                                    ; 8323: 20 B2 B1     ..
  BCC C831C                                    ; 8326: 90 F4       ..
+
 .C8328
+
  LDY #&1F                                     ; 8328: A0 1F       ..
  LDA INWK+31                                  ; 832A: A5 28       .(
  AND #&BF                                     ; 832C: 29 BF       ).
@@ -745,8 +813,11 @@ ENDMACRO
  JMP C8344                                    ; 833E: 4C 44 83    LD.
 
 .C8341
+
  JSR CLYNS                                    ; 8341: 20 DE F2     ..
+
 .C8344
+
  JSR subm_D951                                ; 8344: 20 51 D9     Q.
  JMP C8360                                    ; 8347: 4C 60 83    L`.
 
@@ -770,14 +841,19 @@ ENDMACRO
  JMP C8360                                    ; 8358: 4C 60 83    L`.
 
 .C835B
+
  LDA #0                                       ; 835B: A9 00       ..
  STA L0393                                    ; 835D: 8D 93 03    ...
+
 .C8360
+
  LDA ECMP                                     ; 8360: AD 89 03    ...
  BEQ C836A                                    ; 8363: F0 05       ..
  JSR DENGY                                    ; 8365: 20 05 AA     ..
  BEQ C8383                                    ; 8368: F0 19       ..
+
 .C836A
+
  LDA ECMA                                     ; 836A: A5 6D       .m
  BEQ C8386                                    ; 836C: F0 18       ..
  LDA #&80                                     ; 836E: A9 80       ..
@@ -790,29 +866,40 @@ ENDMACRO
  JSR CB919_b6                                 ; 837C: 20 05 F0     ..
  DEC ECMA                                     ; 837F: C6 6D       .m
  BNE C8386                                    ; 8381: D0 03       ..
+
 .C8383
+
  JSR ECMOF                                    ; 8383: 20 62 BE     b.
+
 .C8386
+
  LDX #0                                       ; 8386: A2 00       ..
  LDA FRIN                                     ; 8388: AD 6A 03    .j.
  BEQ C8390                                    ; 838B: F0 03       ..
  JSR MAL1                                     ; 838D: 20 AF 80     ..
+
 .C8390
+
  LDX #2                                       ; 8390: A2 02       ..
+
 .loop_C8392
+
  LDA FRIN,X                                   ; 8392: BD 6A 03    .j.
  BEQ C839D                                    ; 8395: F0 06       ..
  JSR MAL1                                     ; 8397: 20 AF 80     ..
  JMP loop_C8392                               ; 839A: 4C 92 83    L..
 
 .C839D
+
  LDX #1                                       ; 839D: A2 01       ..
  LDA FRIN+1                                   ; 839F: AD 6B 03    .k.
  BEQ MA18                                     ; 83A2: F0 0A       ..
  BPL C83AB                                    ; 83A4: 10 05       ..
  LDY #0                                       ; 83A6: A0 00       ..
  STY SSPR                                     ; 83A8: 8C 64 05    .d.
+
 .C83AB
+
  JSR MAL1                                     ; 83AB: 20 AF 80     ..
 
 \ ******************************************************************************
@@ -832,14 +919,18 @@ ENDMACRO
  ASL A                                        ; 83B5: 0A          .
  BPL C83BB                                    ; 83B6: 10 03       ..
  JSR SetPPUTablesTo0                          ; 83B8: 20 6D D0     m.
+
 .C83BB
+
  LDA BOMB                                     ; 83BB: AD C0 03    ...
  BPL C83CB                                    ; 83BE: 10 0B       ..
  ASL BOMB                                     ; 83C0: 0E C0 03    ...
  BMI C83CB                                    ; 83C3: 30 06       0.
  JSR subm_8790                                ; 83C5: 20 90 87     ..
  JSR CAC5C_b3                                 ; 83C8: 20 71 F1     q.
+
 .C83CB
+
  LDA MCNT                                     ; 83CB: A5 A2       ..
  AND #7                                       ; 83CD: 29 07       ).
  BNE MA22                                     ; 83CF: D0 49       .I
@@ -867,7 +958,9 @@ ENDMACRO
  JSR MAS2                                     ; 83E5: 20 B4 B4     ..
  BNE C8417                                    ; 83E8: D0 2D       .-
  LDX #&1C                                     ; 83EA: A2 1C       ..
+
 .loop_C83EC
+
  LDA K%,X                               ; 83EC: BD 00 06    ...
  STA XX1,X                                    ; 83EF: 95 09       ..
  DEX                                          ; 83F1: CA          .
@@ -875,13 +968,17 @@ ENDMACRO
  JSR subm_MainFlight14                        ; 83F4: 20 EE B4     ..
  BCS C8417                                    ; 83F7: B0 1E       ..
  LDX #8                                       ; 83F9: A2 08       ..
+
 .loop_C83FB
+
  LDA K%,X                               ; 83FB: BD 00 06    ...
  STA XX1,X                                    ; 83FE: 95 09       ..
  DEX                                          ; 8400: CA          .
  BPL loop_C83FB                               ; 8401: 10 F8       ..
  LDX #5                                       ; 8403: A2 05       ..
+
 .loop_C8405
+
  LDY INWK+9,X                                 ; 8405: B4 12       ..
  LDA INWK+15,X                                ; 8407: B5 18       ..
  STA INWK+9,X                                 ; 8409: 95 12       ..
@@ -891,7 +988,9 @@ ENDMACRO
  DEX                                          ; 8411: CA          .
  BPL loop_C8405                               ; 8412: 10 F1       ..
  JSR subm_MainFlight14                        ; 8414: 20 EE B4     ..
+
 .C8417
+
  JMP MA23                                     ; 8417: 4C CA 84    L..
 
 \ ******************************************************************************
@@ -907,7 +1006,9 @@ ENDMACRO
 
  LDA MJ                                       ; 841A: AD 8A 03    ...
  BNE C8417                                    ; 841D: D0 F8       ..
+
 .C841F
+
  LDA DLY                                      ; 841F: AD 5D 04    .].
  BEQ C8436                                    ; 8422: F0 12       ..
  LDA JUNK                                     ; 8424: AD 73 03    .s.
@@ -920,13 +1021,16 @@ ENDMACRO
  JMP CA5AB_b6                                 ; 8433: 4C 59 F0    LY.
 
 .C8436
+
  LDA MCNT                                     ; 8436: A5 A2       ..
  AND #&1F                                     ; 8438: 29 1F       ).
  CMP #&0A                                     ; 843A: C9 0A       ..
  BEQ C8442                                    ; 843C: F0 04       ..
  CMP #&14                                     ; 843E: C9 14       ..
  BNE MA29                                     ; 8440: D0 1A       ..
+
 .C8442
+
  LDA #&50 ; 'P'                               ; 8442: A9 50       .P
  CMP ENERGY                                   ; 8444: CD 86 04    ...
  BCC C8453                                    ; 8447: 90 0A       ..
@@ -934,21 +1038,27 @@ ENDMACRO
  JSR MESS                                     ; 844B: 20 8F B7     ..
  LDY #7                                       ; 844E: A0 07       ..
  JSR NOISE                                    ; 8450: 20 F2 EB     ..
+
 .C8453
+
  JSR subm_MainFlight15                        ; 8453: 20 02 85     ..
  JMP MA23                                     ; 8456: 4C CA 84    L..
 
 .MA28
+
  JMP DEATH                                    ; 8459: 4C E4 B1    L..
 
 .MA29
+
  CMP #&0F                                     ; 845C: C9 0F       ..
  BNE C8469                                    ; 845E: D0 09       ..
  LDA auto                                     ; 8460: AD 88 03    ...
  BEQ MA23                                     ; 8463: F0 65       .e
  LDA #&7B ; '{'                               ; 8465: A9 7B       .{
  BNE C84C7                                    ; 8467: D0 5E       .^
+
 .C8469
+
  AND #&0F                                     ; 8469: 29 0F       ).
  CMP #6                                       ; 846B: C9 06       ..
  BNE MA23                                     ; 846D: D0 5B       .[
@@ -975,7 +1085,9 @@ ENDMACRO
  ROR TRIBBLE                                  ; 849F: 6E C5 03    n..
  LDY #&1F                                     ; 84A2: A0 1F       ..
  JSR NOISE                                    ; 84A4: 20 F2 EB     ..
+
 .nokilltr
+
  LDA BST                                      ; 84A7: AD BF 03    ...
  BEQ MA23                                     ; 84AA: F0 1E       ..
  LDA DELT4+1                                  ; 84AC: A5 95       ..
@@ -985,13 +1097,17 @@ ENDMACRO
  CMP #&46 ; 'F'                               ; 84B4: C9 46       .F
  BCC C84BA                                    ; 84B6: 90 02       ..
  LDA #&46 ; 'F'                               ; 84B8: A9 46       .F
+
 .C84BA
+
  STA QQ14                                     ; 84BA: 8D A5 03    ...
  BCS MA23                                     ; 84BD: B0 0B       ..
- JSR LEBE9                                    ; 84BF: 20 E9 EB     ..
+ JSR subm_EBE9                                    ; 84BF: 20 E9 EB     ..
  JSR C9D35                                    ; 84C2: 20 35 9D     5.
  LDA #&A0                                     ; 84C5: A9 A0       ..
+
 .C84C7
+
  JSR MESS                                     ; 84C7: 20 8F B7     ..
 
 \ ******************************************************************************
@@ -1026,7 +1142,9 @@ ENDMACRO
  ASL A                                        ; 84D8: 0A          .
  BPL C84DE                                    ; 84D9: 10 03       ..
  JSR SetPPUTablesTo0                          ; 84DB: 20 6D D0     m.
+
 .C84DE
+
  LDX ENERGY                                   ; 84DE: AE 86 04    ...
  BPL C84F5                                    ; 84E1: 10 12       ..
  LDX ASH                                      ; 84E3: AE 85 04    ...
@@ -1035,13 +1153,17 @@ ENDMACRO
  LDX FSH                                      ; 84EC: AE 84 04    ...
  JSR SHD                                      ; 84EF: 20 02 AA     ..
  STX FSH                                      ; 84F2: 8E 84 04    ...
+
 .C84F5
+
  SEC                                          ; 84F5: 38          8
  LDA ENGY                                     ; 84F6: AD C1 03    ...
  ADC ENERGY                                   ; 84F9: 6D 86 04    m..
  BCS C8501                                    ; 84FC: B0 03       ..
  STA ENERGY                                   ; 84FE: 8D 86 04    ...
+
 .C8501
+
  RTS                                          ; 8501: 60          `
 
 \ ******************************************************************************
@@ -1071,15 +1193,20 @@ ENDMACRO
  ASL A                                        ; 851F: 0A          .
  BPL C8525                                    ; 8520: 10 03       ..
  JSR SetPPUTablesTo0                          ; 8522: 20 6D D0     m.
+
 .C8525
+
  JSR LL5                                      ; 8525: 20 55 FA     U.
  LDA Q                                        ; 8528: A5 97       ..
  STA ALTIT                                    ; 852A: 8D 7E 04    .~.
  BNE C8532                                    ; 852D: D0 03       ..
+
 .C852F
+
  JMP DEATH                                    ; 852F: 4C E4 B1    L..
 
 .C8532
+
  RTS                                          ; 8532: 60          `
 
 \ ******************************************************************************
@@ -1096,14 +1223,18 @@ ENDMACRO
  LDA QQ11                                     ; 8533: A5 9E       ..
  BNE C853A                                    ; 8535: D0 03       ..
  JSR ChangeDrawingPhase                       ; 8537: 20 E1 D8     ..
+
 .C853A
+
  LDA setupPPUForIconBar                       ; 853A: A5 E9       ..
  BPL C8547                                    ; 853C: 10 09       ..
  LDA PPU_STATUS                               ; 853E: AD 02 20    ..
  ASL A                                        ; 8541: 0A          .
  BPL C8547                                    ; 8542: 10 03       ..
  JSR SetPPUTablesTo0                          ; 8544: 20 6D D0     m.
+
 .C8547
+
  LDA K%                                 ; 8547: AD 00 06    ...
  EOR nmiTimerLo                               ; 854A: 45 39       E9
  STA RAND                                     ; 854C: 85 02       ..
@@ -1111,12 +1242,16 @@ ENDMACRO
  BEQ C8556                                    ; 8551: F0 03       ..
  CLC                                          ; 8553: 18          .
  BCC C856E                                    ; 8554: 90 18       ..
+
 .C8556
+
  LDA MJ                                       ; 8556: AD 8A 03    ...
  BEQ C855E                                    ; 8559: F0 03       ..
  SEC                                          ; 855B: 38          8
  BCS C856E                                    ; 855C: B0 10       ..
+
 .C855E
+
  LDA L0300                                    ; 855E: AD 00 03    ...
  BPL C856B                                    ; 8561: 10 08       ..
  LDA #&B0                                     ; 8563: A9 B0       ..
@@ -1124,8 +1259,11 @@ ENDMACRO
  JMP C856E                                    ; 8568: 4C 6E 85    Ln.
 
 .C856B
+
  JSR sub_CB5FE                                ; 856B: 20 FE B5     ..
+
 .C856E
+
  ROR L0300                                    ; 856E: 6E 00 03    n..
  LDX JSTX                                     ; 8571: AE 76 04    .v.
  LDY scanController2                          ; 8574: AC 75 04    .u.
@@ -1136,7 +1274,9 @@ ENDMACRO
  BMI C858A                                    ; 8583: 30 05       0.
  LDA #&10                                     ; 8585: A9 10       ..
  JSR subm_FA16                                ; 8587: 20 16 FA     ..
+
 .C858A
+
  TXA                                          ; 858A: 8A          .
  EOR #&80                                     ; 858B: 49 80       I.
  TAY                                          ; 858D: A8          .
@@ -1150,7 +1290,9 @@ ENDMACRO
  EOR #&FF                                     ; 859C: 49 FF       I.
  CLC                                          ; 859E: 18          .
  ADC #1                                       ; 859F: 69 01       i.
+
 .C85A1
+
  LSR A                                        ; 85A1: 4A          J
  LSR A                                        ; 85A2: 4A          J
  STA ALP1                                     ; 85A3: 85 6E       .n
@@ -1165,7 +1307,9 @@ ENDMACRO
  BMI C85C2                                    ; 85BB: 30 05       0.
  LDA #&0C                                     ; 85BD: A9 0C       ..
  JSR subm_FA16                                ; 85BF: 20 16 FA     ..
+
 .C85C2
+
  TXA                                          ; 85C2: 8A          .
  EOR #&80                                     ; 85C3: 49 80       I.
  TAY                                          ; 85C5: A8          .
@@ -1177,7 +1321,9 @@ ENDMACRO
  TYA                                          ; 85D1: 98          .
  BPL C85D6                                    ; 85D2: 10 02       ..
  EOR #&FF                                     ; 85D4: 49 FF       I.
+
 .C85D6
+
  ADC #1                                       ; 85D6: 69 01       i.
  LSR A                                        ; 85D8: 4A          J
  LSR A                                        ; 85D9: 4A          J
@@ -1206,16 +1352,22 @@ ENDMACRO
  CMP #&28 ; '('                               ; 85ED: C9 28       .(
  BCC C85F3                                    ; 85EF: 90 02       ..
  LDA #&28 ; '('                               ; 85F1: A9 28       .(
+
 .C85F3
+
  STA DELTA                                    ; 85F3: 85 93       ..
+
 .C85F5
+
  LDA setupPPUForIconBar                       ; 85F5: A5 E9       ..
  BPL C8602                                    ; 85F7: 10 09       ..
  LDA PPU_STATUS                               ; 85F9: AD 02 20    ..
  ASL A                                        ; 85FC: 0A          .
  BPL C8602                                    ; 85FD: 10 03       ..
  JSR SetPPUTablesTo0                          ; 85FF: 20 6D D0     m.
+
 .C8602
+
  LDA KL                                       ; 8602: AD 03 04    ...
  BEQ C8614                                    ; 8605: F0 0D       ..
  LDA DELTA                                    ; 8607: A5 93       ..
@@ -1223,11 +1375,17 @@ ENDMACRO
  SBC #4                                       ; 860A: E9 04       ..
  BEQ C8610                                    ; 860C: F0 02       ..
  BCS C8612                                    ; 860E: B0 02       ..
+
 .C8610
+
  LDA #1                                       ; 8610: A9 01       ..
+
 .C8612
+
  STA DELTA                                    ; 8612: 85 93       ..
+
 .C8614
+
  LDA L0081                                    ; 8614: A5 81       ..
  CMP #&18                                     ; 8616: C9 18       ..
  BNE C8642                                    ; 8618: D0 28       .(
@@ -1240,27 +1398,35 @@ ENDMACRO
  LDY #&6C ; 'l'                               ; 8629: A0 6C       .l
  JSR ABORT                                    ; 862B: 20 C1 AC     ..
  LDY #4                                       ; 862E: A0 04       ..
+
 .loop_C8630
+
  JSR NOISE                                    ; 8630: 20 F2 EB     ..
  JMP MA68                                     ; 8633: 4C A3 86    L..
 
 .C8636
+
  LDY #&6C ; 'l'                               ; 8636: A0 6C       .l
  LDX NOMSL                                    ; 8638: AE C8 03    ...
  JSR MSBAR                                    ; 863B: 20 9F E5     ..
  LDY #3                                       ; 863E: A0 03       ..
  BNE loop_C8630                               ; 8640: D0 EE       ..
+
 .C8642
+
  CMP #&19                                     ; 8642: C9 19       ..
  BNE C8654                                    ; 8644: D0 0E       ..
  LDA MSTG                                     ; 8646: AD 01 04    ...
  BMI C8651                                    ; 8649: 30 06       0.
  JSR FRMIS                                    ; 864B: 20 FF 91     ..
  JSR CAC5C_b3                                 ; 864E: 20 71 F1     q.
+
 .C8651
+
  JMP MA68                                     ; 8651: 4C A3 86    L..
 
 .C8654
+
  CMP #&1A                                     ; 8654: C9 1A       ..
  BNE C866E                                    ; 8656: D0 16       ..
  LDA BOMB                                     ; 8658: AD C0 03    ...
@@ -1274,6 +1440,7 @@ ENDMACRO
  JMP MA68                                     ; 866B: 4C A3 86    L..
 
 .C866E
+
  CMP #&1B                                     ; 866E: C9 1B       ..
  BNE C867F                                    ; 8670: D0 0D       ..
  LDX ESCP                                     ; 8672: AE C4 03    ...
@@ -1283,6 +1450,7 @@ ENDMACRO
  JMP ESCAPE                                   ; 867C: 4C C7 8B    L..
 
 .C867F
+
  CMP #&0C                                     ; 867F: C9 0C       ..
  BNE C8690                                    ; 8681: D0 0D       ..
  LDA L0300                                    ; 8683: AD 00 03    ...
@@ -1292,6 +1460,7 @@ ENDMACRO
  JMP MA68                                     ; 868D: 4C A3 86    L..
 
 .C8690
+
  CMP #&17                                     ; 8690: C9 17       ..
  BNE MA68                                     ; 8692: D0 0F       ..
  LDA ECM                                      ; 8694: AD BE 03    ...
@@ -1300,7 +1469,9 @@ ENDMACRO
  BNE MA68                                     ; 869B: D0 06       ..
  DEC ECMP                                     ; 869D: CE 89 03    ...
  JSR ECBLB2                                   ; 86A0: 20 96 E5     ..
+
 .MA68
+
  JSR SetupPPUForIconBar                       ; 86A3: 20 7D EC     }.
  LDA #0                                       ; 86A6: A9 00       ..
  STA LAS                                      ; 86A8: 8D 00 04    ...
@@ -1325,7 +1496,9 @@ ENDMACRO
  BMI C86D9                                    ; 86D2: 30 05       0.
  BIT KY7                                      ; 86D4: 2C 09 04    ,..
  BVS MA3                                      ; 86D7: 70 30       p0
+
 .C86D9
+
  PHA                                          ; 86D9: 48          H
  AND #&7F                                     ; 86DA: 29 7F       ).
  STA LAS                                      ; 86DC: 8D 00 04    ...
@@ -1337,9 +1510,13 @@ ENDMACRO
  CMP #&32 ; '2'                               ; 86E8: C9 32       .2
  BNE C86EE                                    ; 86EA: D0 02       ..
  LDY #&10                                     ; 86EC: A0 10       ..
+
 .C86EE
+
  BNE C86F9                                    ; 86EE: D0 09       ..
+
 .C86F0
+
  CMP #&97                                     ; 86F0: C9 97       ..
  BEQ C86F7                                    ; 86F2: F0 03       ..
  LDY #&11                                     ; 86F4: A0 11       ..
@@ -1347,14 +1524,19 @@ ENDMACRO
  EQUB &2C                                     ; 86F6: 2C          ,
 
 .C86F7
+
  LDY #&0F                                     ; 86F7: A0 0F       ..
+
 .C86F9
+
  JSR NOISE                                    ; 86F9: 20 F2 EB     ..
  JSR LASLI                                    ; 86FC: 20 CD 93     ..
  PLA                                          ; 86FF: 68          h
  BPL C8704                                    ; 8700: 10 02       ..
  LDA #0                                       ; 8702: A9 00       ..
+
 .C8704
+
  AND #&EF                                     ; 8704: 29 EF       ).
  STA LASCT                                    ; 8706: 8D 8F 03    ...
 
@@ -1383,14 +1565,17 @@ ENDMACRO
  ORA KY2                                      ; 8724: 0D 04 04    ...
  ROR A                                        ; 8727: 6A          j
  BNE C8733                                    ; 8728: D0 09       ..
+
 .C872A
- JSR LD975                                    ; 872A: 20 75 D9     u.
+
+ JSR subm_D975                                    ; 872A: 20 75 D9     u.
  JSR COMPAS                                   ; 872D: 20 16 AA     ..
  JMP DrawPitchRollBars                        ; 8730: 4C 91 8B    L..
 
 .C8733
+
  LDA #&88                                     ; 8733: A9 88       ..
- JSR LD977                                    ; 8735: 20 77 D9     w.
+ JSR subm_D977                                    ; 8735: 20 77 D9     w.
  JSR COMPAS                                   ; 8738: 20 16 AA     ..
  JSR DrawPitchRollBars                        ; 873B: 20 91 8B     ..
  JSR DIALS_b6                                 ; 873E: 20 C0 EF     ..
@@ -1401,13 +1586,16 @@ ENDMACRO
  RTS                                          ; 874B: 60          `
 
 .C874C
+
  CMP #&98                                     ; 874C: C9 98       ..
  BNE C876F                                    ; 874E: D0 1F       ..
  JSR subm_F338                                ; 8750: 20 38 F3     8.
  CPX L0471                                    ; 8753: EC 71 04    .q.
  BEQ C875B                                    ; 8756: F0 03       ..
  JSR STATUS                                   ; 8758: 20 37 88     7.
+
 .C875B
+
  LDX L0471                                    ; 875B: AE 71 04    .q.
  CPX #3                                       ; 875E: E0 03       ..
  BNE C876A                                    ; 8760: D0 08       ..
@@ -1415,10 +1603,14 @@ ENDMACRO
  AND #&20 ; ' '                               ; 8765: 29 20       )
  BNE C876A                                    ; 8767: D0 01       ..
  INX                                          ; 8769: E8          .
+
 .C876A
+
  LDA LF333,X                                  ; 876A: BD 33 F3    .3.
  STA visibleColour                            ; 876D: 85 34       .4
+
 .C876F
+
  RTS                                          ; 876F: 60          `
 
 \ ******************************************************************************
@@ -1441,9 +1633,13 @@ ENDMACRO
  JSR LDA_XX0_Y                                ; 877B: 20 8D EC     ..
  AND CNT                                      ; 877E: 25 A8       %.
  AND #&0F                                     ; 8780: 29 0F       ).
+
 .SPIN2
+
  STA CNT                                      ; 8782: 85 A8       ..
+
 .loop_C8784
+
  DEC CNT                                      ; 8784: C6 A8       ..
  BMI C8794                                    ; 8786: 30 0C       0.
  LDA #0                                       ; 8788: A9 00       ..
@@ -1463,7 +1659,9 @@ ENDMACRO
 
  LDA #&0F                                     ; 8790: A9 0F       ..
  STA hiddenColour                             ; 8792: 85 33       .3
+
 .C8794
+
  RTS                                          ; 8794: 60          `
 
 \ ******************************************************************************
@@ -1515,7 +1713,9 @@ ENDMACRO
  AND #1                                       ; 87C7: 29 01       ).
  BEQ C87CE                                    ; 87C9: F0 03       ..
  JSR TT162                                    ; 87CB: 20 9C 9F     ..
+
 .C87CE
+
  LDA TALLY+1                                  ; 87CE: AD DD 03    ...
  BNE C8806                                    ; 87D1: D0 33       .3
  TAX                                          ; 87D3: AA          .
@@ -1533,7 +1733,9 @@ ENDMACRO
  CPX #&82                                     ; 87EB: E0 82       ..
  ADC #0                                       ; 87ED: 69 00       i.
  TAX                                          ; 87EF: AA          .
+
 .C87F0
+
  TXA                                          ; 87F0: 8A          .
  PHA                                          ; 87F1: 48          H
  LDA L04A9                                    ; 87F2: AD A9 04    ...
@@ -1541,13 +1743,16 @@ ENDMACRO
  BEQ C87FF                                    ; 87F7: F0 06       ..
  JSR TT162                                    ; 87F9: 20 9C 9F     ..
  JSR TT162                                    ; 87FC: 20 9C 9F     ..
+
 .C87FF
+
  PLA                                          ; 87FF: 68          h
  CLC                                          ; 8800: 18          .
  ADC #&15                                     ; 8801: 69 15       i.
  JMP plf                                      ; 8803: 4C C8 A8    L..
 
 .C8806
+
  LDX #9                                       ; 8806: A2 09       ..
  CMP #&19                                     ; 8808: C9 19       ..
  BCS C87F0                                    ; 880A: B0 E4       ..
@@ -1578,7 +1783,9 @@ ENDMACRO
  BEQ C8829                                    ; 8823: F0 04       ..
  CPY #&28 ; '('                               ; 8825: C0 28       .(
  ADC #1                                       ; 8827: 69 01       i.
+
 .C8829
+
  JMP plf                                      ; 8829: 4C C8 A8    L..
 
 \ ******************************************************************************
@@ -1624,9 +1831,13 @@ ENDMACRO
  LDY ENERGY                                   ; 8855: AC 86 04    ...
  CPY #&80                                     ; 8858: C0 80       ..
  ADC #1                                       ; 885A: 69 01       i.
+
 .C885C
+
  JSR plf                                      ; 885C: 20 C8 A8     ..
+
 .C885F
+
  LDA L04A9                                    ; 885F: AD A9 04    ...
  AND #4                                       ; 8862: 29 04       ).
  BEQ C8874                                    ; 8864: F0 0E       ..
@@ -1637,11 +1848,14 @@ ENDMACRO
  JMP C887F                                    ; 8871: 4C 7F 88    L..
 
 .C8874
+
  JSR PrintCombatRank                          ; 8874: 20 BF 87     ..
  LDA #5                                       ; 8877: A9 05       ..
  JSR plf                                      ; 8879: 20 C8 A8     ..
  JSR subm_8819                                ; 887C: 20 19 88     ..
+
 .C887F
+
  LDA #&12                                     ; 887F: A9 12       ..
  JSR PrintTokenCrTab                          ; 8881: 20 A5 89     ..
  INC YC                                       ; 8884: E6 3B       .;
@@ -1649,31 +1863,43 @@ ENDMACRO
  BEQ C8890                                    ; 8889: F0 05       ..
  LDA #&70 ; 'p'                               ; 888B: A9 70       .p
  JSR PrintTokenCrTab                          ; 888D: 20 A5 89     ..
+
 .C8890
+
  LDA BST                                      ; 8890: AD BF 03    ...
  BEQ C889A                                    ; 8893: F0 05       ..
  LDA #&6F ; 'o'                               ; 8895: A9 6F       .o
  JSR PrintTokenCrTab                          ; 8897: 20 A5 89     ..
+
 .C889A
+
  LDA ECM                                      ; 889A: AD BE 03    ...
  BEQ C88A4                                    ; 889D: F0 05       ..
  LDA #&6C ; 'l'                               ; 889F: A9 6C       .l
  JSR PrintTokenCrTab                          ; 88A1: 20 A5 89     ..
+
 .C88A4
+
  LDA #&71 ; 'q'                               ; 88A4: A9 71       .q
  STA XX4                                      ; 88A6: 85 AB       ..
+
 .loop_C88A8
+
  TAY                                          ; 88A8: A8          .
  LDX L034F,Y                                  ; 88A9: BE 4F 03    .O.
  BEQ C88B1                                    ; 88AC: F0 03       ..
  JSR PrintTokenCrTab                          ; 88AE: 20 A5 89     ..
+
 .C88B1
+
  INC XX4                                      ; 88B1: E6 AB       ..
  LDA XX4                                      ; 88B3: A5 AB       ..
  CMP #&75 ; 'u'                               ; 88B5: C9 75       .u
  BCC loop_C88A8                               ; 88B7: 90 EF       ..
  LDX #0                                       ; 88B9: A2 00       ..
+
 .C88BB
+
  STX CNT                                      ; 88BB: 86 A8       ..
  LDY LASER,X                                  ; 88BD: BC A8 03    ...
  BEQ C88FE                                    ; 88C0: F0 3C       .<
@@ -1684,22 +1910,30 @@ ENDMACRO
  CLC                                          ; 88CA: 18          .
  ADC #&60 ; '`'                               ; 88CB: 69 60       i`
  JSR spc                                      ; 88CD: 20 B3 96     ..
+
 .C88D0
+
  LDA #&67 ; 'g'                               ; 88D0: A9 67       .g
  LDX CNT                                      ; 88D2: A6 A8       ..
  LDY LASER,X                                  ; 88D4: BC A8 03    ...
  CPY #&8F                                     ; 88D7: C0 8F       ..
  BNE C88DD                                    ; 88D9: D0 02       ..
  LDA #&68 ; 'h'                               ; 88DB: A9 68       .h
+
 .C88DD
+
  CPY #&97                                     ; 88DD: C0 97       ..
  BNE C88E3                                    ; 88DF: D0 02       ..
  LDA #&75 ; 'u'                               ; 88E1: A9 75       .u
+
 .C88E3
+
  CPY #&32 ; '2'                               ; 88E3: C0 32       .2
  BNE C88E9                                    ; 88E5: D0 02       ..
  LDA #&76 ; 'v'                               ; 88E7: A9 76       .v
+
 .C88E9
+
  JSR TT27_b2                                  ; 88E9: 20 01 F2     ..
  LDA L04A9                                    ; 88EC: AD A9 04    ...
  AND #4                                       ; 88EF: 29 04       ).
@@ -1708,9 +1942,13 @@ ENDMACRO
  CLC                                          ; 88F5: 18          .
  ADC #&60 ; '`'                               ; 88F6: 69 60       i`
  JSR subm_96B9                                ; 88F8: 20 B9 96     ..
+
 .C88FB
+
  JSR PrintCrTab                               ; 88FB: 20 A8 89     ..
+
 .C88FE
+
  LDX CNT                                      ; 88FE: A6 A8       ..
  INX                                          ; 8900: E8          .
  CPX #4                                       ; 8901: E0 04       ..
@@ -1726,8 +1964,10 @@ ENDMACRO
  CMP systemFlag                               ; 8918: CD 8B 04    ...
  STA systemFlag                               ; 891B: 8D 8B 04    ...
  BEQ C8923                                    ; 891E: F0 03       ..
- JSR LEB8C                                    ; 8920: 20 8C EB     ..
+ JSR subm_EB8C                                    ; 8920: 20 8C EB     ..
+
 .C8923
+
  JSR CA082_b6                                 ; 8923: 20 8B EE     ..
 
 \ ******************************************************************************
@@ -1745,7 +1985,9 @@ ENDMACRO
  BNE C892E                                    ; 8928: D0 04       ..
  LDA #&FF                                     ; 892A: A9 FF       ..
  STA tileNumber                               ; 892C: 85 B8       ..
+
 .C892E
+
  LDA #0                                       ; 892E: A9 00       ..
  STA L00CC                                    ; 8930: 85 CC       ..
  LDA #&6C ; 'l'                               ; 8932: A9 6C       .l
@@ -1757,15 +1999,19 @@ ENDMACRO
  AND #&40 ; '@'                               ; 893E: 29 40       )@
  BEQ C8944                                    ; 8940: F0 02       ..
  LDX #4                                       ; 8942: A2 04       ..
+
 .C8944
+
  STX L00D2                                    ; 8944: 86 D2       ..
  JSR DrawBoxEdges                             ; 8946: 20 6F CD     o.
  JSR CopyNametable0To1                        ; 8949: 20 34 CD     4.
  LDA QQ11                                     ; 894C: A5 9E       ..
  CMP QQ11a                                    ; 894E: C5 9F       ..
  BEQ C8976                                    ; 8950: F0 24       .$
- JSR LF12B                                    ; 8952: 20 2B F1     +.
+ JSR CA7B7_b3                                    ; 8952: 20 2B F1     +.
+
 .C8955
+
  LDX #&FF                                     ; 8955: A2 FF       ..
  LDA QQ11                                     ; 8957: A5 9E       ..
  CMP #&95                                     ; 8959: C9 95       ..
@@ -1778,19 +2024,25 @@ ENDMACRO
  BEQ C896C                                    ; 8967: F0 03       ..
  ASL A                                        ; 8969: 0A          .
  BPL C896E                                    ; 896A: 10 02       ..
+
 .C896C
+
  LDX #0                                       ; 896C: A2 00       ..
+
 .C896E
+
  STX L045F                                    ; 896E: 8E 5F 04    ._.
  LDA tileNumber                               ; 8971: A5 B8       ..
  STA L00D2                                    ; 8973: 85 D2       ..
  RTS                                          ; 8975: 60          `
 
 .C8976
- JSR CA7B7_b3                                 ; 8976: 20 26 F1     &.
+
+ JSR subm_F126                                 ; 8976: 20 26 F1     &.
  JMP C8955                                    ; 8979: 4C 55 89    LU.
 
 .C897C
+
  PHP                                          ; 897C: 08          .
  PHP                                          ; 897D: 08          .
  ASL A                                        ; 897E: 0A          .
@@ -1864,6 +2116,7 @@ ENDMACRO
 \ ******************************************************************************
 
 .L89B4
+
  EQUB 3, 3, 1, 3                              ; 89B4: 03 03 01... ...
 
 \ ******************************************************************************
@@ -1898,6 +2151,7 @@ ENDMACRO
  RTS                                          ; 89DB: 60          `
 
 .C89DC
+
  LDA S                                        ; 89DC: A5 99       ..
  AND #&7F                                     ; 89DE: 29 7F       ).
  STA S                                        ; 89E0: 85 99       ..
@@ -1926,7 +2180,9 @@ ENDMACRO
  AND #&7F                                     ; 8A0D: 29 7F       ).
  ORA T                                        ; 8A0F: 05 9A       ..
  STA K+3                                      ; 8A11: 85 80       ..
+
 .C8A13
+
  RTS                                          ; 8A13: 60          `
 
 \ ******************************************************************************
@@ -1946,7 +2202,9 @@ ENDMACRO
  ASL A                                        ; 8A1B: 0A          .
  BPL C8A21                                    ; 8A1C: 10 03       ..
  JSR SetPPUTablesTo0                          ; 8A1E: 20 6D D0     m.
+
 .C8A21
+
  LDA INWK+1,X                                 ; 8A21: B5 0A       ..
  AND #&7F                                     ; 8A23: 29 7F       ).
  LSR A                                        ; 8A25: 4A          J
@@ -2024,7 +2282,9 @@ ENDMACRO
  ASL A                                        ; 8AB3: 0A          .
  BPL C8AB9                                    ; 8AB4: 10 03       ..
  JSR SetPPUTablesTo0                          ; 8AB6: 20 6D D0     m.
+
 .C8AB9
+
  RTS                                          ; 8AB9: 60          `
 
 \ ******************************************************************************
@@ -2037,6 +2297,7 @@ ENDMACRO
 \ ******************************************************************************
 
 .TENS
+
  EQUB &48, &76, &E8,   0                      ; 8ABA: 48 76 E8... Hv.
 
 \ ******************************************************************************
@@ -2089,7 +2350,9 @@ ENDMACRO
  BCC C8AD9                                    ; 8AD3: 90 04       ..
  DEC T                                        ; 8AD5: C6 9A       ..
  DEC U                                        ; 8AD7: C6 96       ..
+
 .C8AD9
+
  LDA #&0B                                     ; 8AD9: A9 0B       ..
  SEC                                          ; 8ADB: 38          8
  STA XX17                                     ; 8ADC: 85 9D       ..
@@ -2101,13 +2364,16 @@ ENDMACRO
  JMP C8B2A                                    ; 8AE8: 4C 2A 8B    L*.
 
 .C8AEB
+
  ASL K+3                                      ; 8AEB: 06 80       ..
  ROL K+2                                      ; 8AED: 26 7F       &.
  ROL K+1                                      ; 8AEF: 26 7E       &~
  ROL K                                        ; 8AF1: 26 7D       &}
  ROL S                                        ; 8AF3: 26 99       &.
  LDX #3                                       ; 8AF5: A2 03       ..
+
 .loop_C8AF7
+
  LDA K,X                                      ; 8AF7: B5 7D       .}
  STA XX15,X                                   ; 8AF9: 95 71       .q
  DEX                                          ; 8AFB: CA          .
@@ -2126,7 +2392,9 @@ ENDMACRO
  ROL S                                        ; 8B14: 26 99       &.
  CLC                                          ; 8B16: 18          .
  LDX #3                                       ; 8B17: A2 03       ..
+
 .loop_C8B19
+
  LDA K,X                                      ; 8B19: B5 7D       .}
  ADC XX15,X                                   ; 8B1B: 75 71       uq
  STA K,X                                      ; 8B1D: 95 7D       .}
@@ -2136,10 +2404,14 @@ ENDMACRO
  ADC S                                        ; 8B24: 65 99       e.
  STA S                                        ; 8B26: 85 99       ..
  LDY #0                                       ; 8B28: A0 00       ..
+
 .C8B2A
+
  LDX #3                                       ; 8B2A: A2 03       ..
  SEC                                          ; 8B2C: 38          8
+
 .loop_C8B2D
+
  PHP                                          ; 8B2D: 08          .
  LDA setupPPUForIconBar                       ; 8B2E: A5 E9       ..
  BPL C8B3B                                    ; 8B30: 10 09       ..
@@ -2147,7 +2419,9 @@ ENDMACRO
  ASL A                                        ; 8B35: 0A          .
  BPL C8B3B                                    ; 8B36: 10 03       ..
  JSR SetPPUTablesTo0                          ; 8B38: 20 6D D0     m.
+
 .C8B3B
+
  PLP                                          ; 8B3B: 28          (
  LDA K,X                                      ; 8B3C: B5 7D       .}
  SBC TENS,X                                   ; 8B3E: FD BA 8A    ...
@@ -2159,7 +2433,9 @@ ENDMACRO
  STA XX15+4                                   ; 8B4A: 85 75       .u
  BCC C8B5F                                    ; 8B4C: 90 11       ..
  LDX #3                                       ; 8B4E: A2 03       ..
+
 .loop_C8B50
+
  LDA XX15,X                                   ; 8B50: B5 71       .q
  STA K,X                                      ; 8B52: 95 7D       .}
  DEX                                          ; 8B54: CA          .
@@ -2170,6 +2446,7 @@ ENDMACRO
  JMP C8B2A                                    ; 8B5C: 4C 2A 8B    L*.
 
 .C8B5F
+
  TYA                                          ; 8B5F: 98          .
  BNE C8B6E                                    ; 8B60: D0 0C       ..
  LDA T                                        ; 8B62: A5 9A       ..
@@ -2178,18 +2455,26 @@ ENDMACRO
  BPL C8B78                                    ; 8B68: 10 0E       ..
  LDA #&20 ; ' '                               ; 8B6A: A9 20       .
  BNE C8B75                                    ; 8B6C: D0 07       ..
+
 .C8B6E
+
  LDY #0                                       ; 8B6E: A0 00       ..
  STY T                                        ; 8B70: 84 9A       ..
  CLC                                          ; 8B72: 18          .
  ADC #&30 ; '0'                               ; 8B73: 69 30       i0
+
 .C8B75
+
  JSR DASC_b2                                  ; 8B75: 20 E6 F1     ..
+
 .C8B78
+
  DEC T                                        ; 8B78: C6 9A       ..
  BPL C8B7E                                    ; 8B7A: 10 02       ..
  INC T                                        ; 8B7C: E6 9A       ..
+
 .C8B7E
+
  DEC XX17                                     ; 8B7E: C6 9D       ..
  BMI C8B90                                    ; 8B80: 30 0E       0.
  BNE C8B8D                                    ; 8B82: D0 09       ..
@@ -2197,10 +2482,13 @@ ENDMACRO
  BCC C8B8D                                    ; 8B85: 90 06       ..
  LDA L03FD                                    ; 8B87: AD FD 03    ...
  JSR DASC_b2                                  ; 8B8A: 20 E6 F1     ..
+
 .C8B8D
+
  JMP C8AEB                                    ; 8B8D: 4C EB 8A    L..
 
 .C8B90
+
  RTS                                          ; 8B90: 60          `
 
 \ ******************************************************************************
@@ -2234,7 +2522,9 @@ ENDMACRO
  STA SC2                                      ; 8BAE: 85 BA       ..
  LDY #&25 ; '%'                               ; 8BB0: A0 25       .%
  LDA #&0C                                     ; 8BB2: A9 0C       ..
+
 .sub_C8BB4
+
  ASL A                                        ; 8BB4: 0A          .
  ASL A                                        ; 8BB5: 0A          .
  TAX                                          ; 8BB6: AA          .
@@ -2273,22 +2563,30 @@ ENDMACRO
  BCS C8BE9                                    ; 8BE2: B0 05       ..
  LDX #&18                                     ; 8BE4: A2 18       ..
  JSR FRS1                                     ; 8BE6: 20 D8 91     ..
+
 .C8BE9
+
  LDA #8                                       ; 8BE9: A9 08       ..
  STA INWK+27                                  ; 8BEB: 85 24       .$
  LDA #&C2                                     ; 8BED: A9 C2       ..
  STA INWK+30                                  ; 8BEF: 85 27       .'
  LDA #&2C ; ','                               ; 8BF1: A9 2C       .,
  STA INWK+32                                  ; 8BF3: 85 29       .)
+
 .loop_C8BF5
+
  JSR MVEIT                                    ; 8BF5: 20 10 B9     ..
  JSR subm_D96F                                ; 8BF8: 20 6F D9     o.
  DEC INWK+32                                  ; 8BFB: C6 29       .)
  BNE loop_C8BF5                               ; 8BFD: D0 F6       ..
+
 .C8BFF
+
  LDA #0                                       ; 8BFF: A9 00       ..
  LDX #&10                                     ; 8C01: A2 10       ..
+
 .loop_C8C03
+
  STA QQ20,X                                   ; 8C03: 9D AD 03    ...
  DEX                                          ; 8C06: CA          .
  BPL loop_C8C03                               ; 8C07: 10 FA       ..
@@ -2302,7 +2600,9 @@ ENDMACRO
  STA TRIBBLE                                  ; 8C1B: 8D C5 03    ...
  LDA #0                                       ; 8C1E: A9 00       ..
  STA TRIBBLE+1                                ; 8C20: 8D C6 03    ...
+
 .C8C23
+
  LDA #&46 ; 'F'                               ; 8C23: A9 46       .F
  STA QQ14                                     ; 8C25: 8D A5 03    ...
  JMP GOIN                                     ; 8C28: 4C F5 81    L..
@@ -2324,7 +2624,9 @@ ENDMACRO
  LDY #9                                       ; 8C33: A0 09       ..
  STY L0483                                    ; 8C35: 8C 83 04    ...
  LDA #&41 ; 'A'                               ; 8C38: A9 41       .A
+
 .loop_C8C3A
+
  STA INWK+5,Y                                 ; 8C3A: 99 0E 00    ...
  DEY                                          ; 8C3D: 88          .
  BPL loop_C8C3A                               ; 8C3E: 10 FA       ..
@@ -2335,14 +2637,18 @@ ENDMACRO
  JSR TT81                                     ; 8C49: 20 F8 9C     ..
  LDA #0                                       ; 8C4C: A9 00       ..
  STA XX20                                     ; 8C4E: 85 AC       ..
+
 .C8C50
+
  LDA setupPPUForIconBar                       ; 8C50: A5 E9       ..
  BPL C8C5D                                    ; 8C52: 10 09       ..
  LDA PPU_STATUS                               ; 8C54: AD 02 20    ..
  ASL A                                        ; 8C57: 0A          .
  BPL C8C5D                                    ; 8C58: 10 03       ..
  JSR SetPPUTablesTo0                          ; 8C5A: 20 6D D0     m.
+
 .C8C5D
+
  LDA #&80                                     ; 8C5D: A9 80       ..
  STA DTW4                                     ; 8C5F: 8D F6 03    ...
  ASL A                                        ; 8C62: 0A          .
@@ -2352,7 +2658,9 @@ ENDMACRO
  LDA INWK+5,X                                 ; 8C6C: B5 0E       ..
  CMP #&0D                                     ; 8C6E: C9 0D       ..
  BNE C8C7F                                    ; 8C70: D0 0D       ..
+
 .loop_C8C72
+
  DEX                                          ; 8C72: CA          .
  LDA INWK+5,X                                 ; 8C73: B5 0E       ..
  ORA #&20 ; ' '                               ; 8C75: 09 20       .
@@ -2360,7 +2668,9 @@ ENDMACRO
  BEQ loop_C8C72                               ; 8C7A: F0 F6       ..
  TXA                                          ; 8C7C: 8A          .
  BMI C8C97                                    ; 8C7D: 30 18       0.
+
 .C8C7F
+
  JSR CB831                                    ; 8C7F: 20 31 B8     1.
  JSR TT20                                     ; 8C82: 20 4D 96     M.
  INC XX20                                     ; 8C85: E6 AC       ..
@@ -2372,6 +2682,7 @@ ENDMACRO
  JMP subm_8980                                ; 8C94: 4C 80 89    L..
 
 .C8C97
+
  JSR CB831                                    ; 8C97: 20 31 B8     1.
  JSR CLYNS                                    ; 8C9A: 20 DE F2     ..
  LDA #0                                       ; 8C9D: A9 00       ..
@@ -2383,6 +2694,7 @@ ENDMACRO
  JMP CB181                                    ; 8CAC: 4C 81 B1    L..
 
 .C8CAF
+
  JSR CLYNS                                    ; 8CAF: 20 DE F2     ..
  JMP subm_8980                                ; 8CB2: 4C 80 89    L..
 
@@ -2403,22 +2715,28 @@ ENDMACRO
  BNE C8CC2                                    ; 8CBB: D0 05       ..
  LDA #&50 ; 'P'                               ; 8CBD: A9 50       .P
  JSR OOPS                                     ; 8CBF: 20 5D AA     ].
+
 .C8CC2
+
  LDX #4                                       ; 8CC2: A2 04       ..
  BNE C8D2B                                    ; 8CC4: D0 65       .e
+
 .loop_C8CC6
+
  LDA #0                                       ; 8CC6: A9 00       ..
  JSR MAS4                                     ; 8CC8: 20 CA B1     ..
  BEQ C8CD0                                    ; 8CCB: F0 03       ..
  JMP TN4                                      ; 8CCD: 4C 09 8E    L..
 
 .C8CD0
+
  JSR TA873                                    ; 8CD0: 20 2E 8D     ..
  JSR EXNO3                                    ; 8CD3: 20 AD EB     ..
  LDA #&FA                                     ; 8CD6: A9 FA       ..
  JMP OOPS                                     ; 8CD8: 4C 5D AA    L].
 
 .C8CDB
+
  LDA ECMA                                     ; 8CDB: A5 6D       .m
  BNE TA352                                    ; 8CDD: D0 D6       ..
  LDA INWK+32                                  ; 8CDF: A5 29       .)
@@ -2447,21 +2765,27 @@ ENDMACRO
  BNE C8D14                                    ; 8D0E: D0 04       ..
  ORA #&80                                     ; 8D10: 09 80       ..
  STA (V),Y                                    ; 8D12: 91 63       .c
+
 .C8D14
+
  LDA XX1                                      ; 8D14: A5 09       ..
  ORA INWK+3                                   ; 8D16: 05 0C       ..
  ORA INWK+6                                   ; 8D18: 05 0F       ..
  BNE C8D21                                    ; 8D1A: D0 05       ..
  LDA #&50 ; 'P'                               ; 8D1C: A9 50       .P
  JSR OOPS                                     ; 8D1E: 20 5D AA     ].
+
 .C8D21
+
  LDA INWK+32                                  ; 8D21: A5 29       .)
  AND #&7F                                     ; 8D23: 29 7F       ).
  LSR A                                        ; 8D25: 4A          J
  TAX                                          ; 8D26: AA          .
  LDA FRIN,X                                   ; 8D27: BD 6A 03    .j.
  TAX                                          ; 8D2A: AA          .
+
 .C8D2B
+
  JSR EXNO2                                    ; 8D2B: 20 80 BE     ..
 
 \ ******************************************************************************
@@ -2478,22 +2802,30 @@ ENDMACRO
  ASL INWK+31                                  ; 8D2E: 06 28       .(
  SEC                                          ; 8D30: 38          8
  ROR INWK+31                                  ; 8D31: 66 28       f(
+
 .C8D33
+
  RTS                                          ; 8D33: 60          `
 
 .C8D34
+
  JSR DORND                                    ; 8D34: 20 AD F4     ..
  CMP #&10                                     ; 8D37: C9 10       ..
  BCS C8D42                                    ; 8D39: B0 07       ..
+
 .M32
+
  LDY #&20 ; ' '                               ; 8D3B: A0 20       .
  LDA (V),Y                                    ; 8D3D: B1 63       .c
  LSR A                                        ; 8D3F: 4A          J
  BCS C8D45                                    ; 8D40: B0 03       ..
+
 .C8D42
+
  JMP TA19                                     ; 8D42: 4C 12 8E    L..
 
 .C8D45
+
  JMP ECBLB2                                   ; 8D45: 4C 96 E5    L..
 
 \ ******************************************************************************
@@ -2531,7 +2863,9 @@ ENDMACRO
  ADC #8                                       ; 8D76: 69 08       i.
  TAX                                          ; 8D78: AA          .
  BNE TN6                                      ; 8D79: D0 10       ..
+
 .C8D7B
+
  JSR DORND                                    ; 8D7B: 20 AD F4     ..
  CMP #&F0                                     ; 8D7E: C9 F0       ..
  BCC C8D33                                    ; 8D80: 90 B1       ..
@@ -2539,11 +2873,14 @@ ENDMACRO
  CMP #4                                       ; 8D85: C9 04       ..
  BCS C8DCC                                    ; 8D87: B0 43       .C
  LDX #&10                                     ; 8D89: A2 10       ..
+
 .TN6
+
  LDA #&F1                                     ; 8D8B: A9 F1       ..
  JMP SFS1                                     ; 8D8D: 4C 7F 92    L..
 
 .C8D90
+
  CPX #&0F                                     ; 8D90: E0 0F       ..
  BNE C8DB0                                    ; 8D92: D0 1C       ..
  JSR DORND                                    ; 8D94: 20 AD F4     ..
@@ -2562,6 +2899,7 @@ ENDMACRO
  RTS                                          ; 8DAF: 60          `
 
 .C8DB0
+
  LDY #&0E                                     ; 8DB0: A0 0E       ..
  JSR LDA_XX0_Y                                ; 8DB2: 20 8D EC     ..
  CMP INWK+35                                  ; 8DB5: C5 2C       .,
@@ -2587,17 +2925,22 @@ ENDMACRO
  LSR INWK+32                                  ; 8DC6: 46 29       F)
  ASL INWK+32                                  ; 8DC8: 06 29       .)
  LSR INWK+27                                  ; 8DCA: 46 24       F$
+
 .C8DCC
+
  RTS                                          ; 8DCC: 60          `
 
 .C8DCD
+
  JSR DORND                                    ; 8DCD: 20 AD F4     ..
  LDA NEWB                                     ; 8DD0: A5 2D       .-
  LSR A                                        ; 8DD2: 4A          J
  BCC C8DD9                                    ; 8DD3: 90 04       ..
  CPX #&32 ; '2'                               ; 8DD5: E0 32       .2
  BCS C8DCC                                    ; 8DD7: B0 F3       ..
+
 .C8DD9
+
  LSR A                                        ; 8DD9: 4A          J
  BCC C8DEB                                    ; 8DDA: 90 0F       ..
  LDX FIST                                     ; 8DDC: AE C9 03    ...
@@ -2608,7 +2951,9 @@ ENDMACRO
  STA NEWB                                     ; 8DE7: 85 2D       .-
  LSR A                                        ; 8DE9: 4A          J
  LSR A                                        ; 8DEA: 4A          J
+
 .C8DEB
+
  LSR A                                        ; 8DEB: 4A          J
  BCS C8DFB                                    ; 8DEC: B0 0D       ..
  LSR A                                        ; 8DEE: 4A          J
@@ -2617,10 +2962,12 @@ ENDMACRO
  JMP DOCKIT                                   ; 8DF2: 4C F8 8F    L..
 
 .GOPL
+
  JSR SPS1                                     ; 8DF5: 20 57 B5     W.
  JMP TA151                                    ; 8DF8: 4C 8F 8F    L..
 
 .C8DFB
+
  LSR A                                        ; 8DFB: 4A          J
  BCC TN4                                      ; 8DFC: 90 0B       ..
  LDA SSPR                                     ; 8DFE: AD 64 05    .d.
@@ -2628,14 +2975,20 @@ ENDMACRO
  LDA INWK+32                                  ; 8E03: A5 29       .)
  AND #&81                                     ; 8E05: 29 81       ).
  STA INWK+32                                  ; 8E07: 85 29       .)
+
 .TN4
+
  LDX #8                                       ; 8E09: A2 08       ..
+
 .loop_C8E0B
+
  LDA XX1,X                                    ; 8E0B: B5 09       ..
  STA K3,X                                     ; 8E0D: 95 3D       .=
  DEX                                          ; 8E0F: CA          .
  BPL loop_C8E0B                               ; 8E10: 10 F9       ..
+
 .TA19
+
  JSR TAS2                                     ; 8E12: 20 66 B5     f.
  LDY #&0A                                     ; 8E15: A0 0A       ..
  JSR TAS3                                     ; 8E17: 20 53 F8     S.
@@ -2646,13 +2999,16 @@ ENDMACRO
  ASL A                                        ; 8E23: 0A          .
  BPL C8E29                                    ; 8E24: 10 03       ..
  JSR SetPPUTablesTo0                          ; 8E26: 20 6D D0     m.
+
 .C8E29
+
  LDA TYPE                                     ; 8E29: A5 A3       ..
  CMP #1                                       ; 8E2B: C9 01       ..
  BNE C8E32                                    ; 8E2D: D0 03       ..
  JMP TA20                                     ; 8E2F: 4C 3E 8F    L>.
 
 .C8E32
+
  CMP #&0E                                     ; 8E32: C9 0E       ..
  BNE C8E4B                                    ; 8E34: D0 15       ..
  JSR DORND                                    ; 8E36: 20 AD F4     ..
@@ -2663,17 +3019,22 @@ ENDMACRO
  CMP #&64 ; 'd'                               ; 8E42: C9 64       .d
  BCS C8E48                                    ; 8E44: B0 02       ..
  LDX #&11                                     ; 8E46: A2 11       ..
+
 .C8E48
+
  JMP TN6                                      ; 8E48: 4C 8B 8D    L..
 
 .C8E4B
+
  JSR DORND                                    ; 8E4B: 20 AD F4     ..
  CMP #&FA                                     ; 8E4E: C9 FA       ..
  BCC C8E59                                    ; 8E50: 90 07       ..
  JSR DORND                                    ; 8E52: 20 AD F4     ..
  ORA #&68 ; 'h'                               ; 8E55: 09 68       .h
  STA INWK+29                                  ; 8E57: 85 26       .&
+
 .C8E59
+
  LDY #&0E                                     ; 8E59: A0 0E       ..
  JSR LDA_XX0_Y                                ; 8E5B: 20 8D EC     ..
  LSR A                                        ; 8E5E: 4A          J
@@ -2729,6 +3090,7 @@ ENDMACRO
  JMP SFS1                                     ; 8EAB: 4C 7F 92    L..
 
 .C8EAE
+
  JMP SFRMIS                                   ; 8EAE: 4C 6E BE    Ln.
 
 \ ******************************************************************************
@@ -2748,7 +3110,9 @@ ENDMACRO
  ASL A                                        ; 8EB8: 0A          .
  BPL C8EBE                                    ; 8EB9: 10 03       ..
  JSR SetPPUTablesTo0                          ; 8EBB: 20 6D D0     m.
+
 .C8EBE
+
  LDA #0                                       ; 8EBE: A9 00       ..
  JSR MAS4                                     ; 8EC0: 20 CA B1     ..
  AND #&E0                                     ; 8EC3: 29 E0       ).
@@ -2767,7 +3131,9 @@ ENDMACRO
  STA INWK+31                                  ; 8EDE: 85 28       .(
  CPX #&A3                                     ; 8EE0: E0 A3       ..
  BCS C8EF3                                    ; 8EE2: B0 0F       ..
+
 .C8EE4
+
  JSR TAS6                                     ; 8EE4: 20 2B 91     +.
  LDA CNT                                      ; 8EE7: A5 A8       ..
  EOR #&80                                     ; 8EE9: 49 80       I.
@@ -2776,12 +3142,15 @@ ENDMACRO
  JMP C8EFF                                    ; 8EF0: 4C FF 8E    L..
 
 .C8EF3
+
  JSR LDA_XX0_Y                                ; 8EF3: 20 8D EC     ..
  LSR A                                        ; 8EF6: 4A          J
  JSR OOPS                                     ; 8EF7: 20 5D AA     ].
  LDY #&0B                                     ; 8EFA: A0 0B       ..
  JSR NOISE                                    ; 8EFC: 20 F2 EB     ..
+
 .C8EFF
+
  LDA INWK+7                                   ; 8EFF: A5 10       ..
  CMP #3                                       ; 8F01: C9 03       ..
  BCS C8F18                                    ; 8F03: B0 13       ..
@@ -2795,6 +3164,7 @@ ENDMACRO
  JMP C8F6C                                    ; 8F15: 4C 6C 8F    Ll.
 
 .C8F18
+
  LDA INWK+1                                   ; 8F18: A5 0A       ..
  ORA INWK+4                                   ; 8F1A: 05 0D       ..
  ORA INWK+7                                   ; 8F1C: 05 10       ..
@@ -2820,19 +3190,27 @@ ENDMACRO
  ORA INWK+4                                   ; 8F2C: 05 0D       ..
  AND #&FE                                     ; 8F2E: 29 FE       ).
  BEQ C8F47                                    ; 8F30: F0 15       ..
+
 .C8F32
+
  JSR DORND                                    ; 8F32: 20 AD F4     ..
  ORA #&80                                     ; 8F35: 09 80       ..
  CMP INWK+32                                  ; 8F37: C5 29       .)
  BCS C8F47                                    ; 8F39: B0 0C       ..
  STA L05F2                                    ; 8F3B: 8D F2 05    ...
+
 .TA20
+
  JSR TAS6                                     ; 8F3E: 20 2B 91     +.
  LDA CNT                                      ; 8F41: A5 A8       ..
  EOR #&80                                     ; 8F43: 49 80       I.
+
 .C8F45
+
  STA CNT                                      ; 8F45: 85 A8       ..
+
 .C8F47
+
  JSR TA15                                     ; 8F47: 20 9F 8F     ..
  LDA L05F2                                    ; 8F4A: AD F2 05    ...
  BPL C8F64                                    ; 8F4D: 10 15       ..
@@ -2845,50 +3223,69 @@ ENDMACRO
  BMI C8F61                                    ; 8F5B: 30 04       0.
  CMP CNT2                                     ; 8F5D: C5 A9       ..
  BCS C8F83                                    ; 8F5F: B0 22       ."
+
 .C8F61
+
  JMP C8F76                                    ; 8F61: 4C 76 8F    Lv.
 
 .C8F64
+
  LDA CNT                                      ; 8F64: A5 A8       ..
  BMI C8F70                                    ; 8F66: 30 08       0.
  CMP CNT2                                     ; 8F68: C5 A9       ..
  BCC C8F76                                    ; 8F6A: 90 0A       ..
+
 .C8F6C
+
  LDA #3                                       ; 8F6C: A9 03       ..
  BNE C8F8C                                    ; 8F6E: D0 1C       ..
+
 .C8F70
+
  AND #&7F                                     ; 8F70: 29 7F       ).
  CMP #6                                       ; 8F72: C9 06       ..
  BCS C8F83                                    ; 8F74: B0 0D       ..
+
 .C8F76
+
  LDA INWK+27                                  ; 8F76: A5 24       .$
  CMP #6                                       ; 8F78: C9 06       ..
  BCC C8F6C                                    ; 8F7A: 90 F0       ..
  JSR DORND                                    ; 8F7C: 20 AD F4     ..
  CMP #&C8                                     ; 8F7F: C9 C8       ..
  BCC C8F8E                                    ; 8F81: 90 0B       ..
+
 .C8F83
+
  LDA #&FF                                     ; 8F83: A9 FF       ..
  LDX TYPE                                     ; 8F85: A6 A3       ..
  CPX #1                                       ; 8F87: E0 01       ..
  BNE C8F8C                                    ; 8F89: D0 01       ..
  ASL A                                        ; 8F8B: 0A          .
+
 .C8F8C
+
  STA INWK+28                                  ; 8F8C: 85 25       .%
+
 .C8F8E
+
  RTS                                          ; 8F8E: 60          `
 
 .TA151
+
  LDY #&0A                                     ; 8F8F: A0 0A       ..
  JSR TAS3                                     ; 8F91: 20 53 F8     S.
  CMP #&98                                     ; 8F94: C9 98       ..
  BCC C8F9C                                    ; 8F96: 90 04       ..
  LDX #0                                       ; 8F98: A2 00       ..
  STX RAT2                                     ; 8F9A: 86 AF       ..
+
 .C8F9C
+
  JMP C8F45                                    ; 8F9C: 4C 45 8F    LE.
 
 .TA15
+
  LDY #&10                                     ; 8F9F: A0 10       ..
  JSR TAS3                                     ; 8FA1: 20 53 F8     S.
  TAX                                          ; 8FA4: AA          .
@@ -2901,7 +3298,9 @@ ENDMACRO
  ASL A                                        ; 8FB2: 0A          .
  BPL C8FB8                                    ; 8FB3: 10 03       ..
  JSR SetPPUTablesTo0                          ; 8FB5: 20 6D D0     m.
+
 .C8FB8
+
  LDA CNT                                      ; 8FB8: A5 A8       ..
  BPL C8FCA                                    ; 8FBA: 10 0E       ..
  CMP #&9F                                     ; 8FBC: C9 9F       ..
@@ -2911,7 +3310,9 @@ ENDMACRO
  STA INWK+30                                  ; 8FC4: 85 27       .'
  LDA #0                                       ; 8FC6: A9 00       ..
  BEQ C8FF5                                    ; 8FC8: F0 2B       .+
+
 .C8FCA
+
  TXA                                          ; 8FCA: 8A          .
  ASL A                                        ; 8FCB: 0A          .
  CMP RAT2                                     ; 8FCC: C5 AF       ..
@@ -2919,7 +3320,9 @@ ENDMACRO
  LDA RAT                                      ; 8FD0: A5 AE       ..
  ORA INWK+30                                  ; 8FD2: 05 27       .'
  STA INWK+30                                  ; 8FD4: 85 27       .'
+
 .C8FD6
+
  LDA INWK+29                                  ; 8FD6: A5 26       .&
  ASL A                                        ; 8FD8: 0A          .
  CMP #&20 ; ' '                               ; 8FD9: C9 20       .
@@ -2937,9 +3340,13 @@ ENDMACRO
  BCC C8FF7                                    ; 8FEF: 90 06       ..
  LDA RAT                                      ; 8FF1: A5 AE       ..
  ORA INWK+29                                  ; 8FF3: 05 26       .&
+
 .C8FF5
+
  STA INWK+29                                  ; 8FF5: 85 26       .&
+
 .C8FF7
+
  RTS                                          ; 8FF7: 60          `
 
 \ ******************************************************************************
@@ -2961,10 +3368,13 @@ ENDMACRO
  STA CNT2                                     ; 9001: 85 A9       ..
  LDA SSPR                                     ; 9003: AD 64 05    .d.
  BNE C900B                                    ; 9006: D0 03       ..
+
 .loop_C9008
+
  JMP GOPL                                     ; 9008: 4C F5 8D    L..
 
 .C900B
+
  JSR VCSU1                                    ; 900B: 20 C4 90     ..
  LDA XX2+2                                    ; 900E: A5 3F       .?
  ORA XX2+5                                    ; 9010: 05 42       .B
@@ -2989,10 +3399,14 @@ ENDMACRO
  BCC C9040                                    ; 903A: 90 04       ..
  LDA TYPE                                     ; 903C: A5 A3       ..
  BMI C9068                                    ; 903E: 30 28       0(
+
 .C9040
+
  JSR TAS6                                     ; 9040: 20 2B 91     +.
  JSR TA151                                    ; 9043: 20 8F 8F     ..
+
 .C9046
+
  LDX #0                                       ; 9046: A2 00       ..
  STX INWK+28                                  ; 9048: 86 25       .%
  INX                                          ; 904A: E8          .
@@ -3000,6 +3414,7 @@ ENDMACRO
  RTS                                          ; 904D: 60          `
 
 .C904E
+
  JSR VCSU1                                    ; 904E: 20 C4 90     ..
  JSR DCS1                                     ; 9051: 20 3E 91     >.
  JSR DCS1                                     ; 9054: 20 3E 91     >.
@@ -3008,18 +3423,23 @@ ENDMACRO
  JMP TA151                                    ; 905D: 4C 8F 8F    L..
 
 .C9060
+
  INC INWK+28                                  ; 9060: E6 25       .%
  LDA #&7F                                     ; 9062: A9 7F       ..
  STA INWK+29                                  ; 9064: 85 26       .&
  BNE C90BA                                    ; 9066: D0 52       .R
+
 .C9068
+
  LDA setupPPUForIconBar                       ; 9068: A5 E9       ..
  BPL C9075                                    ; 906A: 10 09       ..
  LDA PPU_STATUS                               ; 906C: AD 02 20    ..
  ASL A                                        ; 906F: 0A          .
  BPL C9075                                    ; 9070: 10 03       ..
  JSR SetPPUTablesTo0                          ; 9072: 20 6D D0     m.
+
 .C9075
+
  LDX #0                                       ; 9075: A2 00       ..
  STX RAT2                                     ; 9077: 86 AF       ..
  STX INWK+30                                  ; 9079: 86 27       .'
@@ -3044,7 +3464,9 @@ ENDMACRO
  ASL A                                        ; 909A: 0A          .
  CMP #&0C                                     ; 909B: C9 0C       ..
  BCS C9046                                    ; 909D: B0 A7       ..
+
 .C909F
+
  STX INWK+29                                  ; 909F: 86 26       .&
  LDA INWK+22                                  ; 90A1: A5 1F       ..
  STA XX15                                     ; 90A3: 85 71       .q
@@ -3058,13 +3480,17 @@ ENDMACRO
  CMP #&42 ; 'B'                               ; 90B3: C9 42       .B
  BCS C9060                                    ; 90B5: B0 A9       ..
  JSR C9046                                    ; 90B7: 20 46 90     F.
+
 .C90BA
+
  LDA XX2+10                                   ; 90BA: A5 47       .G
  BNE C90C3                                    ; 90BC: D0 05       ..
  ASL NEWB                                     ; 90BE: 06 2D       .-
  SEC                                          ; 90C0: 38          8
  ROR NEWB                                     ; 90C1: 66 2D       f-
+
 .C90C3
+
  RTS                                          ; 90C3: 60          `
 
 \ ******************************************************************************
@@ -3117,7 +3543,9 @@ ENDMACRO
  ASL A                                        ; 90DF: 0A          .
  BPL C90E5                                    ; 90E0: 10 03       ..
  JSR SetPPUTablesTo0                          ; 90E2: 20 6D D0     m.
+
 .C90E5
+
  LDA (V),Y                                    ; 90E5: B1 63       .c
  EOR #&80                                     ; 90E7: 49 80       I.
  STA K+3                                      ; 90E9: 85 80       ..
@@ -3198,7 +3626,9 @@ ENDMACRO
 .DCS1
 
  JSR sub_C9141                                ; 913E: 20 41 91     A.
+
 .sub_C9141
+
  LDA K%+52                              ; 9141: AD 34 06    .4.
  LDX #0                                       ; 9144: A2 00       ..
  JSR sub_C9156                                ; 9146: 20 56 91     V.
@@ -3207,7 +3637,9 @@ ENDMACRO
  JSR sub_C9156                                ; 914E: 20 56 91     V.
  LDA K%+56                              ; 9151: AD 38 06    .8.
  LDX #6                                       ; 9154: A2 06       ..
+
 .sub_C9156
+
  ASL A                                        ; 9156: 0A          .
  STA R                                        ; 9157: 85 98       ..
  LDA #0                                       ; 9159: A9 00       ..
@@ -3220,10 +3652,13 @@ ENDMACRO
  STA K3,X                                     ; 9166: 95 3D       .=
  BCC C916C                                    ; 9168: 90 02       ..
  INC XX2+1,X                                  ; 916A: F6 3E       .>
+
 .C916C
+
  RTS                                          ; 916C: 60          `
 
 .C916D
+
  LDA K3,X                                     ; 916D: B5 3D       .=
  SEC                                          ; 916F: 38          8
  SBC R                                        ; 9170: E5 98       ..
@@ -3288,10 +3723,13 @@ ENDMACRO
  DEY                                          ; 91CF: 88          .
  JSR LDA_XX0_Y                                ; 91D0: 20 8D EC     ..
  CMP R                                        ; 91D3: C5 98       ..
+
 .C91D5
+
  RTS                                          ; 91D5: 60          `
 
 .C91D6
+
  CLC                                          ; 91D6: 18          .
  RTS                                          ; 91D7: 60          `
 
@@ -3317,7 +3755,9 @@ ENDMACRO
  ASL A                                        ; 91E9: 0A          .
  ORA #&80                                     ; 91EA: 09 80       ..
  STA INWK+32                                  ; 91EC: 85 29       .)
+
 .fq1
+
  LDA #&60 ; '`'                               ; 91EE: A9 60       .`
  STA INWK+14                                  ; 91F0: 85 17       ..
  ORA #&80                                     ; 91F2: 09 80       ..
@@ -3362,7 +3802,9 @@ ENDMACRO
  STA nmiTimerLo                               ; 922F: 85 39       .9
  BCC C9235                                    ; 9231: 90 02       ..
  INC nmiTimerHi                               ; 9233: E6 3A       .:
+
 .C9235
+
  LDY #9                                       ; 9235: A0 09       ..
  JMP NOISE                                    ; 9237: 4C F2 EB    L..
 
@@ -3384,7 +3826,9 @@ ENDMACRO
  AND #&20 ; ' '                               ; 9242: 29 20       )
  BEQ C9249                                    ; 9244: F0 03       ..
  JSR C926D                                    ; 9246: 20 6D 92     m.
+
 .C9249
+
  LDY #&20 ; ' '                               ; 9249: A0 20       .
  LDA (XX19),Y                                 ; 924B: B1 61       .a
  BEQ C91D5                                    ; 924D: F0 86       ..
@@ -3403,10 +3847,13 @@ ENDMACRO
  LDA (XX19),Y                                 ; 9266: B1 61       .a
  ORA #4                                       ; 9268: 09 04       ..
  STA (XX19),Y                                 ; 926A: 91 61       .a
+
 .C926C
+
  RTS                                          ; 926C: 60          `
 
 .C926D
+
  LDA K%+78                              ; 926D: AD 4E 06    .N.
  ORA #4                                       ; 9270: 09 04       ..
  STA K%+78                              ; 9272: 8D 4E 06    .N.
@@ -3438,7 +3885,9 @@ ENDMACRO
 .SESCP
 
  LDX #3                                       ; 927B: A2 03       ..
+
 .sub_C927D
+
  LDA #&FE                                     ; 927D: A9 FE       ..
 
 \ ******************************************************************************
@@ -3459,7 +3908,9 @@ ENDMACRO
  ASL A                                        ; 9288: 0A          .
  BPL C928E                                    ; 9289: 10 03       ..
  JSR SetPPUTablesTo0                          ; 928B: 20 6D D0     m.
+
 .C928E
+
  TXA                                          ; 928E: 8A          .
  PHA                                          ; 928F: 48          H
  LDA XX0                                      ; 9290: A5 5F       ._
@@ -3471,7 +3922,9 @@ ENDMACRO
  LDA INF+1                                    ; 9299: A5 62       .b
  PHA                                          ; 929B: 48          H
  LDY #&25 ; '%'                               ; 929C: A0 25       .%
+
 .loop_C929E
+
  LDA XX1,Y                                    ; 929E: B9 09 00    ...
  STA XX3,Y                                    ; 92A1: 99 00 01    ...
  LDA (XX19),Y                                 ; 92A4: B1 61       .a
@@ -3496,7 +3949,9 @@ ENDMACRO
  JSR sub_C9313                                ; 92CA: 20 13 93     ..
  PLA                                          ; 92CD: 68          h
  TAX                                          ; 92CE: AA          .
+
 .C92CF
+
  LDA T1                                       ; 92CF: A5 06       ..
  STA INWK+32                                  ; 92D1: 85 29       .)
  LSR INWK+29                                  ; 92D3: 46 26       F&
@@ -3517,7 +3972,9 @@ ENDMACRO
  ROR A                                        ; 92EE: 6A          j
  STA INWK+29                                  ; 92EF: 85 26       .&
  PLA                                          ; 92F1: 68          h
+
 .C92F2
+
  JSR NWSHP                                    ; 92F2: 20 E3 AA     ..
  PLA                                          ; 92F5: 68          h
  STA INF+1                                    ; 92F6: 85 62       .b
@@ -3527,7 +3984,9 @@ ENDMACRO
  JSR SetupPPUForIconBar                       ; 92FC: 20 7D EC     }.
  PLP                                          ; 92FF: 28          (
  LDX #&25 ; '%'                               ; 9300: A2 25       .%
+
 .loop_C9302
+
  LDA XX3,X                                    ; 9302: BD 00 01    ...
  STA XX1,X                                    ; 9305: 95 09       ..
  DEX                                          ; 9307: CA          .
@@ -3541,6 +4000,7 @@ ENDMACRO
  RTS                                          ; 9312: 60          `
 
 .sub_C9313
+
  ASL A                                        ; 9313: 0A          .
  STA R                                        ; 9314: 85 98       ..
  LDA #0                                       ; 9316: A9 00       ..
@@ -3560,7 +4020,7 @@ ENDMACRO
 
  LDA #0                                       ; 931C: A9 00       ..
  JSR subm_B39D                                ; 931E: 20 9D B3     ..
- JSR LEB8F                                    ; 9321: 20 8F EB     ..
+ JSR subm_EB8F                                    ; 9321: 20 8F EB     ..
  LDY #&0C                                     ; 9324: A0 0C       ..
  JSR NOISE                                    ; 9326: 20 F2 EB     ..
  LDA #&80                                     ; 9329: A9 80       ..
@@ -3575,7 +4035,9 @@ ENDMACRO
  JSR DELAY                                    ; 933D: 20 A2 EB     ..
  LDY #&18                                     ; 9340: A0 18       ..
  JSR NOISE                                    ; 9342: 20 F2 EB     ..
+
 .C9345
+
  JSR subm_B1D1                                ; 9345: 20 D1 B1     ..
  JSR ChangeDrawingPhase                       ; 9348: 20 E1 D8     ..
  LDA XP                                       ; 934B: AD FA 03    ...
@@ -3584,14 +4046,18 @@ ENDMACRO
  STA STP                                      ; 9352: 85 AA       ..
  LDA #&80                                     ; 9354: A9 80       ..
  STA L03FC                                    ; 9356: 8D FC 03    ...
+
 .C9359
+
  LDA setupPPUForIconBar                       ; 9359: A5 E9       ..
  BPL C9366                                    ; 935B: 10 09       ..
  LDA PPU_STATUS                               ; 935D: AD 02 20    ..
  ASL A                                        ; 9360: 0A          .
  BPL C9366                                    ; 9361: 10 03       ..
  JSR SetPPUTablesTo0                          ; 9363: 20 6D D0     m.
+
 .C9366
+
  LDA STP                                      ; 9366: A5 AA       ..
  SEC                                          ; 9368: 38          8
  SBC #&10                                     ; 9369: E9 10       ..
@@ -3624,12 +4090,15 @@ ENDMACRO
  JSR CB919_b6                                 ; 93A0: 20 05 F0     ..
  PLA                                          ; 93A3: 68          h
  STA STP                                      ; 93A4: 85 AA       ..
+
 .C93A6
+
  JSR CBA17_b6                                 ; 93A6: 20 12 EF     ..
  JMP C9359                                    ; 93A9: 4C 59 93    LY.
 
 .C93AC
- JSR LD975                                    ; 93AC: 20 75 D9     u.
+
+ JSR subm_D975                                    ; 93AC: 20 75 D9     u.
  DEC YP                                       ; 93AF: CE FB 03    ...
  DEC XP                                       ; 93B2: CE FA 03    ...
  BNE C9345                                    ; 93B5: D0 8E       ..
@@ -3637,6 +4106,7 @@ ENDMACRO
  JMP NOISE                                    ; 93B9: 4C F2 EB    L..
 
 .C93BC
+
  LDA #&48 ; 'H'                               ; 93BC: A9 48       .H
  STA K+1                                      ; 93BE: 85 7E       .~
  LDA STP                                      ; 93C0: A5 AA       ..
@@ -3647,6 +4117,7 @@ ENDMACRO
  JMP C9359                                    ; 93C9: 4C 59 93    LY.
 
 .C93CC
+
  RTS                                          ; 93CC: 60          `
 
 \ ******************************************************************************
@@ -3680,7 +4151,9 @@ ENDMACRO
  JSR las                                      ; 93F6: 20 FD 93     ..
  LDA #&30 ; '0'                               ; 93F9: A9 30       .0
  LDY #&D0                                     ; 93FB: A0 D0       ..
+
 .las
+
  STA X2                                       ; 93FD: 85 73       .s
  LDA LASX                                     ; 93FF: AD 7B 04    .{.
  STA XX15                                     ; 9402: 85 71       .q
@@ -3730,7 +4203,9 @@ ENDMACRO
 
  JSR DETOK_b2                                 ; 9436: 20 82 F0     ..
  JSR CB63D_b3                                 ; 9439: 20 AB ED     ..
+
 .C943C
+
  JMP BAY                                      ; 943C: 4C 5E B3    L^.
 
 \ ******************************************************************************
@@ -3838,19 +4313,21 @@ ENDMACRO
  LDA #&1F                                     ; 94AB: A9 1F       ..
  STA TYPE                                     ; 94AD: 85 A3       ..
  JSR NWSHP                                    ; 94AF: 20 E3 AA     ..
- JSR LF260                                    ; 94B2: 20 60 F2     `.
+ JSR CBAF3_b1                                    ; 94B2: 20 60 F2     `.
  LDA #1                                       ; 94B5: A9 01       ..
  STA XC                                       ; 94B7: 85 32       .2
  LDA #1                                       ; 94B9: A9 01       ..
  STA INWK+7                                   ; 94BB: 85 10       ..
  LDA #&50 ; 'P'                               ; 94BD: A9 50       .P
  STA INWK+6                                   ; 94BF: 85 0F       ..
- JSR LEB8C                                    ; 94C1: 20 8C EB     ..
+ JSR subm_EB8C                                    ; 94C1: 20 8C EB     ..
  LDA #&92                                     ; 94C4: A9 92       ..
  JSR subm_B39D                                ; 94C6: 20 9D B3     ..
  LDA #&40 ; '@'                               ; 94C9: A9 40       .@
  STA MCNT                                     ; 94CB: 85 A2       ..
+
 .loop_C94CD
+
  LDX #&7F                                     ; 94CD: A2 7F       ..
  STX INWK+29                                  ; 94CF: 86 26       .&
  STX INWK+30                                  ; 94D1: 86 27       .'
@@ -3858,7 +4335,9 @@ ENDMACRO
  JSR MVEIT                                    ; 94D6: 20 10 B9     ..
  DEC MCNT                                     ; 94D9: C6 A2       ..
  BNE loop_C94CD                               ; 94DB: D0 F0       ..
+
 .loop_C94DD
+
  LSR XX1                                      ; 94DD: 46 09       F.
  INC INWK+6                                   ; 94DF: E6 0F       ..
  BEQ C94FD                                    ; 94E1: F0 1A       ..
@@ -3869,7 +4348,9 @@ ENDMACRO
  CPX #&64 ; 'd'                               ; 94EA: E0 64       .d
  BCC C94F0                                    ; 94EC: 90 02       ..
  LDX #&64 ; 'd'                               ; 94EE: A2 64       .d
+
 .C94F0
+
  STX INWK+3                                   ; 94F0: 86 0C       ..
  JSR subm_D96F                                ; 94F2: 20 6F D9     o.
  JSR MVEIT                                    ; 94F5: 20 10 B9     ..
@@ -3877,6 +4358,7 @@ ENDMACRO
  JMP loop_C94DD                               ; 94FA: 4C DD 94    L..
 
 .C94FD
+
  INC INWK+7                                   ; 94FD: E6 10       ..
  LDA #&93                                     ; 94FF: A9 93       ..
  JSR TT66                                     ; 9501: 20 B5 BE     ..
@@ -3884,9 +4366,10 @@ ENDMACRO
  JMP BRP                                      ; 9506: 4C 36 94    L6.
 
 .sub_C9509
+
  LDA #&D8                                     ; 9509: A9 D8       ..
  JSR DETOK_b2                                 ; 950B: 20 82 F0     ..
- JSR C8926_b0                                 ; 950E: 20 BD F2     ..
+ JSR subm_F2BD                                 ; 950E: 20 BD F2     ..
  LDY #&64 ; 'd'                               ; 9511: A0 64       .d
  JMP DELAY                                    ; 9513: 4C A2 EB    L..
 
@@ -3902,7 +4385,9 @@ ENDMACRO
 .ping
 
  LDX #1                                       ; 9516: A2 01       ..
+
 .loop_C9518
+
  LDA QQ0,X                                    ; 9518: BD 9F 03    ...
  STA QQ9,X                                    ; 951B: 9D 9D 04    ...
  DEX                                          ; 951E: CA          .
@@ -3944,9 +4429,9 @@ ENDMACRO
  JSR TT66                                     ; 9557: 20 B5 BE     ..
  LSR DLY                                      ; 955A: 4E 5D 04    N].
  JSR CopyNametable0To1                        ; 955D: 20 34 CD     4.
- JSR CA9D1_b3                                 ; 9560: 20 39 F1     9.
+ JSR subm_F139                                 ; 9560: 20 39 F1     9.
  JSR sub_CBE48                                ; 9563: 20 48 BE     H.
- JSR LF39A                                    ; 9566: 20 9A F3     ..
+ JSR sub_CF39A                                    ; 9566: 20 9A F3     ..
  JSR sub_C95FC                                ; 9569: 20 FC 95     ..
  LDA #6                                       ; 956C: A9 06       ..
  STA INWK+30                                  ; 956E: 85 27       .'
@@ -4001,11 +4486,14 @@ ENDMACRO
  JMP MLOOP                                    ; 95E1: 4C EF AF    L..
 
 .sub_C95E4
+
  STA LASCT                                    ; 95E4: 8D 8F 03    ...
+
 .loop_C95E7
+
  JSR ChangeDrawingPhase                       ; 95E7: 20 E1 D8     ..
  JSR subm_MA23                                ; 95EA: 20 4A 83     J.
- JSR LD975                                    ; 95ED: 20 75 D9     u.
+ JSR subm_D975                                    ; 95ED: 20 75 D9     u.
  LDA L0465                                    ; 95F0: AD 65 04    .e.
  JSR subm_B1D4                                ; 95F3: 20 D4 B1     ..
  DEC LASCT                                    ; 95F6: CE 8F 03    ...
@@ -4013,6 +4501,7 @@ ENDMACRO
  RTS                                          ; 95FB: 60          `
 
 .sub_C95FC
+
  JSR ZINF_0                                     ; 95FC: 20 03 AE     ..
  LDA #&60 ; '`'                               ; 95FF: A9 60       .`
  STA INWK+14                                  ; 9601: 85 17       ..
@@ -4045,12 +4534,16 @@ ENDMACRO
 
  STA QQ29                                     ; 9620: 8D 8A 04    ...
  LDA #1                                       ; 9623: A9 01       ..
+
 .sub_C9625
+
  PHA                                          ; 9625: 48          H
  LDX #&0C                                     ; 9626: A2 0C       ..
  CPX QQ29                                     ; 9628: EC 8A 04    ...
  BCC C963B                                    ; 962B: 90 0E       ..
+
 .loop_C962D
+
  ADC QQ20,X                                   ; 962D: 7D AD 03    }..
  DEX                                          ; 9630: CA          .
  BPL loop_C962D                               ; 9631: 10 FA       ..
@@ -4060,6 +4553,7 @@ ENDMACRO
  RTS                                          ; 963A: 60          `
 
 .C963B
+
  LDY QQ29                                     ; 963B: AC 8A 04    ...
  ADC QQ20,Y                                   ; 963E: 79 AD 03    y..
  CMP #&C9                                     ; 9641: C9 C9       ..
@@ -4094,7 +4588,9 @@ ENDMACRO
 .TT20
 
  JSR sub_C9650                                ; 964D: 20 50 96     P.
+
 .sub_C9650
+
  JSR TT54                                     ; 9650: 20 53 96     S.
 
 \ ******************************************************************************
@@ -4153,6 +4649,7 @@ ENDMACRO
  RTS                                          ; 968B: 60          `
 
 .C968C
+
  LDA #&BF                                     ; 968C: A9 BF       ..
  JSR TT68                                     ; 968E: 20 CE A8     ..
  LDX QQ8                                      ; 9691: AE 9B 04    ...
@@ -4335,10 +4832,13 @@ ENDMACRO
  JMP C970E                                    ; 9703: 4C 0E 97    L..
 
 .C9706
+
  LDA #&C2                                     ; 9706: A9 C2       ..
  JSR TT68                                     ; 9708: 20 CE A8     ..
  JSR TT162                                    ; 970B: 20 9C 9F     ..
+
 .C970E
+
  LDA QQ3                                      ; 970E: AD 94 04    ...
  CLC                                          ; 9711: 18          .
  ADC #1                                       ; 9712: 69 01       i.
@@ -4349,7 +4849,9 @@ ENDMACRO
  BCC C9721                                    ; 971C: 90 03       ..
  SBC #5                                       ; 971E: E9 05       ..
  CLC                                          ; 9720: 18          .
+
 .C9721
+
  ADC #&AA                                     ; 9721: 69 AA       i.
  JSR TT27_b2                                  ; 9723: 20 01 F2     ..
 
@@ -4378,10 +4880,13 @@ ENDMACRO
  JMP C9748                                    ; 973D: 4C 48 97    LH.
 
 .C9740
+
  LDA #&A2                                     ; 9740: A9 A2       ..
  JSR TT68                                     ; 9742: 20 CE A8     ..
  JSR TT162                                    ; 9745: 20 9C 9F     ..
+
 .C9748
+
  LDA QQ4                                      ; 9748: AD 95 04    ...
  CLC                                          ; 974B: 18          .
  ADC #&B1                                     ; 974C: 69 B1       i.
@@ -4410,7 +4915,9 @@ ENDMACRO
  LDA #&52 ; 'R'                               ; 9783: A9 52       .R
  JSR TT60                                     ; 9785: 20 9D 96     ..
  LDY #0                                       ; 9788: A0 00       ..
+
 .loop_C978A
+
  LDA L96D6,Y                                  ; 978A: B9 D6 96    ...
  JSR TT27_b2                                  ; 978D: 20 01 F2     ..
  INY                                          ; 9790: C8          .
@@ -4440,9 +4947,12 @@ ENDMACRO
  JMP C97CE                                    ; 97C6: 4C CE 97    L..
 
 .C97C9
+
  LDA #&C0                                     ; 97C9: A9 C0       ..
  JSR TT68                                     ; 97CB: 20 CE A8     ..
+
 .C97CE
+
  LDA QQ6                                      ; 97CE: AD 97 04    ...
  LSR A                                        ; 97D1: 4A          J
  LSR A                                        ; 97D2: 4A          J
@@ -4458,7 +4968,9 @@ ENDMACRO
  BNE C97EC                                    ; 97E5: D0 05       ..
  LDA #&28 ; '('                               ; 97E7: A9 28       .(
  JSR TT27_b2                                  ; 97E9: 20 01 F2     ..
+
 .C97EC
+
  LDA QQ15+4                                   ; 97EC: A5 86       ..
  BMI C9826                                    ; 97EE: 30 36       06
  LDA #&BC                                     ; 97F0: A9 BC       ..
@@ -4466,6 +4978,7 @@ ENDMACRO
  JMP C9861                                    ; 97F5: 4C 61 98    La.
 
 .TT207
+
  LDA QQ15+5                                   ; 97F8: A5 87       ..
  AND #3                                       ; 97FA: 29 03       ).
  CLC                                          ; 97FC: 18          .
@@ -4483,7 +4996,9 @@ ENDMACRO
  BCS C9817                                    ; 9810: B0 05       ..
  ADC #&E6                                     ; 9812: 69 E6       i.
  JSR subm_96B9                                ; 9814: 20 B9 96     ..
+
 .C9817
+
  LDA QQ19                                     ; 9817: AD 4D 04    .M.
  CMP #6                                       ; 981A: C9 06       ..
  BCS C9861                                    ; 981C: B0 43       .C
@@ -4492,6 +5007,7 @@ ENDMACRO
  JMP C9861                                    ; 9823: 4C 61 98    La.
 
 .C9826
+
  LDA QQ15+3                                   ; 9826: A5 85       ..
  EOR QQ15+1                                   ; 9828: 45 83       E.
  AND #7                                       ; 982A: 29 07       ).
@@ -4509,13 +5025,17 @@ ENDMACRO
  BCS C9846                                    ; 983F: B0 05       ..
  ADC #&E6                                     ; 9841: 69 E6       i.
  JSR spc                                      ; 9843: 20 B3 96     ..
+
 .C9846
+
  LDA QQ19                                     ; 9846: AD 4D 04    .M.
  CMP #6                                       ; 9849: C9 06       ..
  BCS C9852                                    ; 984B: B0 05       ..
  ADC #&EC                                     ; 984D: 69 EC       i.
  JSR spc                                      ; 984F: 20 B3 96     ..
+
 .C9852
+
  LDA QQ15+5                                   ; 9852: A5 87       ..
  AND #3                                       ; 9854: 29 03       ).
  CLC                                          ; 9856: 18          .
@@ -4523,16 +5043,20 @@ ENDMACRO
  AND #7                                       ; 985A: 29 07       ).
  ADC #&F2                                     ; 985C: 69 F2       i.
  JSR TT27_b2                                  ; 985E: 20 01 F2     ..
+
 .C9861
+
  LDA L04A9                                    ; 9861: AD A9 04    ...
  AND #2                                       ; 9864: 29 02       ).
  BNE C986D                                    ; 9866: D0 05       ..
  LDA #&29 ; ')'                               ; 9868: A9 29       .)
  JSR TT27_b2                                  ; 986A: 20 01 F2     ..
+
 .C986D
+
  JSR TTX69                                    ; 986D: 20 A0 96     ..
  JSR PDESC_b2                                 ; 9870: 20 B8 F0     ..
- JSR LEB8C                                    ; 9873: 20 8C EB     ..
+ JSR subm_EB8C                                    ; 9873: 20 8C EB     ..
  LDA #&16                                     ; 9876: A9 16       ..
  STA XC                                       ; 9878: 85 32       .2
  LDA #8                                       ; 987A: A9 08       ..
@@ -4567,11 +5091,13 @@ ENDMACRO
  LDA #&C7                                     ; 98A1: A9 C7       ..
  JSR NLIN3                                    ; 98A3: 20 6A F4     j.
  LDA #&98                                     ; 98A6: A9 98       ..
- JSR LF47D                                    ; 98A8: 20 7D F4     }.
- JSR LEB8C                                    ; 98AB: 20 8C EB     ..
+ JSR subm_F47D                                    ; 98A8: 20 7D F4     }.
+ JSR subm_EB8C                                    ; 98AB: 20 8C EB     ..
  JSR TT14                                     ; 98AE: 20 A4 99     ..
  LDX #0                                       ; 98B1: A2 00       ..
+
 .C98B3
+
  STX XSAV                                     ; 98B3: 86 9B       ..
  LDA QQ15+3                                   ; 98B5: A5 85       ..
  LSR A                                        ; 98B7: 4A          J
@@ -4642,21 +5168,27 @@ ENDMACRO
  CPX #&9C                                     ; 991E: E0 9C       ..
  BNE C9924                                    ; 9920: D0 02       ..
  LDA #0                                       ; 9922: A9 00       ..
+
 .C9924
+
  STA QQ19+5                                   ; 9924: 8D 52 04    .R.
  LDA QQ19                                     ; 9927: AD 4D 04    .M.
  SEC                                          ; 992A: 38          8
  SBC QQ19+2                                   ; 992B: ED 4F 04    .O.
  BCS C9932                                    ; 992E: B0 02       ..
  LDA #0                                       ; 9930: A9 00       ..
+
 .C9932
+
  STA XX15                                     ; 9932: 85 71       .q
  LDA QQ19                                     ; 9934: AD 4D 04    .M.
  CLC                                          ; 9937: 18          .
  ADC QQ19+2                                   ; 9938: 6D 4F 04    mO.
  BCC C993F                                    ; 993B: 90 02       ..
  LDA #&FF                                     ; 993D: A9 FF       ..
+
 .C993F
+
  STA X2                                       ; 993F: 85 73       .s
  LDA QQ19+1                                   ; 9941: AD 4E 04    .N.
  CLC                                          ; 9944: 18          .
@@ -4669,7 +5201,9 @@ ENDMACRO
  SBC QQ19+2                                   ; 9953: ED 4F 04    .O.
  BCS C995A                                    ; 9956: B0 02       ..
  LDA #0                                       ; 9958: A9 00       ..
+
 .C995A
+
  CLC                                          ; 995A: 18          .
  ADC QQ19+5                                   ; 995B: 6D 52 04    mR.
  STA Y1                                       ; 995E: 85 72       .r
@@ -4683,7 +5217,9 @@ ENDMACRO
  CPX #&9C                                     ; 9970: E0 9C       ..
  BEQ C9976                                    ; 9972: F0 02       ..
  LDA #&97                                     ; 9974: A9 97       ..
+
 .C9976
+
  STA Y2                                       ; 9976: 85 74       .t
  LDA QQ19                                     ; 9978: AD 4D 04    .M.
  STA XX15                                     ; 997B: 85 71       .q
@@ -4719,6 +5255,7 @@ ENDMACRO
  JMP TT128                                    ; 99A1: 4C F4 99    L..
 
 .TT14
+
  LDA QQ11                                     ; 99A4: A5 9E       ..
  CMP #&9C                                     ; 99A6: C9 9C       ..
  BEQ TT126                                    ; 99A8: F0 D8       ..
@@ -4783,7 +5320,7 @@ ENDMACRO
  LDX #2                                       ; 9A04: A2 02       ..
  STX STP                                      ; 9A06: 86 AA       ..
  LDX #1                                       ; 9A08: A2 01       ..
- JSR LD8FD                                    ; 9A0A: 20 FD D8     ..
+ JSR subm_D8FD                                    ; 9A0A: 20 FD D8     ..
  JMP CIRCLE2_b1                                 ; 9A0D: 4C 2A EE    L*.
 
 \ ******************************************************************************
@@ -4798,14 +5335,18 @@ ENDMACRO
 .TT210
 
  LDY #0                                       ; 9A10: A0 00       ..
+
 .C9A12
+
  LDA setupPPUForIconBar                       ; 9A12: A5 E9       ..
  BPL C9A1F                                    ; 9A14: 10 09       ..
  LDA PPU_STATUS                               ; 9A16: AD 02 20    ..
  ASL A                                        ; 9A19: 0A          .
  BPL C9A1F                                    ; 9A1A: 10 03       ..
  JSR SetPPUTablesTo0                          ; 9A1C: 20 6D D0     m.
+
 .C9A1F
+
  STY QQ29                                     ; 9A1F: 8C 8A 04    ...
  LDX QQ20,Y                                   ; 9A22: BE AD 03    ...
  BEQ C9A4F                                    ; 9A25: F0 28       .(
@@ -4830,7 +5371,9 @@ ENDMACRO
  CLC                                          ; 9A48: 18          .
  JSR pr2                                      ; 9A49: 20 BE 8A     ..
  JSR TT152                                    ; 9A4C: 20 8E 9F     ..
+
 .C9A4F
+
  LDY QQ29                                     ; 9A4F: AC 8A 04    ...
  INY                                          ; 9A52: C8          .
  CPY #&11                                     ; 9A53: C0 11       ..
@@ -4839,10 +5382,13 @@ ENDMACRO
  LDA TRIBBLE                                  ; 9A5A: AD C5 03    ...
  ORA TRIBBLE+1                                ; 9A5D: 0D C6 03    ...
  BNE C9A65                                    ; 9A60: D0 03       ..
+
 .C9A62
- JMP C8926_b0                                 ; 9A62: 4C BD F2    L..
+
+ JMP subm_F2BD                                 ; 9A62: 4C BD F2    L..
 
 .C9A65
+
  CLC                                          ; 9A65: 18          .
  LDA #0                                       ; 9A66: A9 00       ..
  LDX TRIBBLE                                  ; 9A68: AE C5 03    ...
@@ -4865,7 +5411,9 @@ ENDMACRO
  BEQ C9A99                                    ; 9A92: F0 05       ..
  LDA #&65 ; 'e'                               ; 9A94: A9 65       .e
  JSR DASC_b2                                  ; 9A96: 20 E6 F1     ..
+
 .C9A99
+
  LDA #&C6                                     ; 9A99: A9 C6       ..
  JSR DETOK_b2                                 ; 9A9B: 20 82 F0     ..
  LDA TRIBBLE+1                                ; 9A9E: AD C6 03    ...
@@ -4873,7 +5421,9 @@ ENDMACRO
  LDX TRIBBLE                                  ; 9AA3: AE C5 03    ...
  DEX                                          ; 9AA6: CA          .
  BEQ C9A62                                    ; 9AA7: F0 B9       ..
+
 .C9AA9
+
  LDA #&73 ; 's'                               ; 9AA9: A9 73       .s
  JSR DASC_b2                                  ; 9AAB: 20 E6 F1     ..
  JMP C9A62                                    ; 9AAE: 4C 62 9A    Lb.
@@ -4907,6 +5457,7 @@ ENDMACRO
  JMP TT210                                    ; 9AD6: 4C 10 9A    L..
 
 .C9AD9
+
  JSR TT67                                     ; 9AD9: 20 A6 96     ..
  JMP TT210                                    ; 9ADC: 4C 10 9A    L..
 
@@ -4926,6 +5477,7 @@ ENDMACRO
  RTS                                          ; 9AE3: 60          `
 
 .C9AE4
+
  JMP subm_9D09                                ; 9AE4: 4C 09 9D    L..
 
 \ ******************************************************************************
@@ -4952,7 +5504,9 @@ ENDMACRO
  BNE C9B03                                    ; 9AFE: D0 03       ..
  TYA                                          ; 9B00: 98          .
  BEQ C9B15                                    ; 9B01: F0 12       ..
+
 .C9B03
+
  LDX #0                                       ; 9B03: A2 00       ..
  LDA L0395                                    ; 9B05: AD 95 03    ...
  STX L0395                                    ; 9B08: 8E 95 03    ...
@@ -4963,7 +5517,9 @@ ENDMACRO
  JSR CAC5C_b3                                 ; 9B10: 20 71 F1     q.
  PLA                                          ; 9B13: 68          h
  TAY                                          ; 9B14: A8          .
+
 .C9B15
+
  DEY                                          ; 9B15: 88          .
  TYA                                          ; 9B16: 98          .
  EOR #&FF                                     ; 9B17: 49 FF       I.
@@ -4979,7 +5535,9 @@ ENDMACRO
  TXA                                          ; 9B25: 8A          .
  ASL A                                        ; 9B26: 0A          .
  PHA                                          ; 9B27: 48          H
+
 .C9B28
+
  JSR KeepPPUTablesAt0                         ; 9B28: 20 67 D1     g.
  PLA                                          ; 9B2B: 68          h
  STA QQ19+3                                   ; 9B2C: 8D 50 04    .P.
@@ -4995,7 +5553,9 @@ ENDMACRO
  LDA QQ19+4                                   ; 9B48: AD 51 04    .Q.
  STA QQ9                                      ; 9B4B: 8D 9D 04    ...
  STA QQ19                                     ; 9B4E: 8D 4D 04    .M.
+
 .sub_C9B51
+
  LDA QQ11                                     ; 9B51: A5 9E       ..
  CMP #&9C                                     ; 9B53: C9 9C       ..
  BEQ subm_9B9D                                ; 9B55: F0 46       .F
@@ -5042,10 +5602,14 @@ ENDMACRO
  BCC C9B99                                    ; 9B8F: 90 08       ..
  LDA #&FF                                     ; 9B91: A9 FF       ..
  BNE C9B99                                    ; 9B93: D0 04       ..
+
 .C9B95
+
  BCS C9B99                                    ; 9B95: B0 02       ..
  LDA #1                                       ; 9B97: A9 01       ..
+
 .C9B99
+
  STA QQ19+4                                   ; 9B99: 8D 51 04    .Q.
  RTS                                          ; 9B9C: 60          `
 
@@ -5067,7 +5631,9 @@ ENDMACRO
  BCC C9BAC                                    ; 9BA6: 90 04       ..
  CMP #&E9                                     ; 9BA8: C9 E9       ..
  BCC C9BF6                                    ; 9BAA: 90 4A       .J
+
 .C9BAC
+
  ASL A                                        ; 9BAC: 0A          .
  ASL A                                        ; 9BAD: 0A          .
  CLC                                          ; 9BAE: 18          .
@@ -5080,14 +5646,18 @@ ENDMACRO
  BCC C9BC3                                    ; 9BBD: 90 04       ..
  CMP #&DC                                     ; 9BBF: C9 DC       ..
  BCC C9BF6                                    ; 9BC1: 90 33       .3
+
 .C9BC3
+
  ASL A                                        ; 9BC3: 0A          .
  CLC                                          ; 9BC4: 18          .
  ADC #&5A ; 'Z'                               ; 9BC5: 69 5A       iZ
  STA QQ19+1                                   ; 9BC7: 8D 4E 04    .N.
  LDA #8                                       ; 9BCA: A9 08       ..
  STA QQ19+2                                   ; 9BCC: 8D 4F 04    .O.
+
 .C9BCF
+
  LDA #&F8                                     ; 9BCF: A9 F8       ..
  STA tileSprite15                             ; 9BD1: 8D 3D 02    .=.
  LDA #1                                       ; 9BD4: A9 01       ..
@@ -5110,6 +5680,7 @@ ENDMACRO
  RTS                                          ; 9BF5: 60          `
 
 .C9BF6
+
  LDA #&F0                                     ; 9BF6: A9 F0       ..
  STA ySprite15                                ; 9BF8: 8D 3C 02    .<.
  RTS                                          ; 9BFB: 60          `
@@ -5156,25 +5727,33 @@ ENDMACRO
  LDA #0                                       ; 9C27: A9 00       ..
  STA XX20                                     ; 9C29: 85 AC       ..
  LDX #&18                                     ; 9C2B: A2 18       ..
+
 .loop_C9C2D
+
  STA XX1,X                                    ; 9C2D: 95 09       ..
  DEX                                          ; 9C2F: CA          .
  BPL loop_C9C2D                               ; 9C30: 10 FB       ..
+
 .C9C32
+
  LDA setupPPUForIconBar                       ; 9C32: A5 E9       ..
  BPL C9C3F                                    ; 9C34: 10 09       ..
  LDA PPU_STATUS                               ; 9C36: AD 02 20    ..
  ASL A                                        ; 9C39: 0A          .
  BPL C9C3F                                    ; 9C3A: 10 03       ..
  JSR SetPPUTablesTo0                          ; 9C3C: 20 6D D0     m.
+
 .C9C3F
+
  LDA QQ15+3                                   ; 9C3F: A5 85       ..
  SEC                                          ; 9C41: 38          8
  SBC QQ0                                      ; 9C42: ED 9F 03    ...
  BCS C9C4B                                    ; 9C45: B0 04       ..
  EOR #&FF                                     ; 9C47: 49 FF       I.
  ADC #1                                       ; 9C49: 69 01       i.
+
 .C9C4B
+
  CMP #&14                                     ; 9C4B: C9 14       ..
  BCS C9CBB                                    ; 9C4D: B0 6C       .l
  LDA QQ15+1                                   ; 9C4F: A5 83       ..
@@ -5183,7 +5762,9 @@ ENDMACRO
  BCS C9C5B                                    ; 9C55: B0 04       ..
  EOR #&FF                                     ; 9C57: 49 FF       I.
  ADC #1                                       ; 9C59: 69 01       i.
+
 .C9C5B
+
  CMP #&26 ; '&'                               ; 9C5B: C9 26       .&
  BCS C9CBB                                    ; 9C5D: B0 5C       .\
  LDA QQ15+3                                   ; 9C5F: A5 85       ..
@@ -5218,7 +5799,9 @@ ENDMACRO
  DEY                                          ; 9C8C: 88          .
  LDX XX1,Y                                    ; 9C8D: B6 09       ..
  BNE C9CA4                                    ; 9C8F: D0 13       ..
+
 .C9C91
+
  TYA                                          ; 9C91: 98          .
  STA YC                                       ; 9C92: 85 3B       .;
  CPY #3                                       ; 9C94: C0 03       ..
@@ -5228,7 +5811,9 @@ ENDMACRO
  LDA #&80                                     ; 9C9D: A9 80       ..
  STA QQ17                                     ; 9C9F: 85 3C       .<
  JSR cpl                                      ; 9CA1: 20 D0 A7     ..
+
 .C9CA4
+
  LDA #0                                       ; 9CA4: A9 00       ..
  STA XX2+1                                    ; 9CA6: 85 3E       .>
  STA K4+1                                     ; 9CA8: 85 4C       .L
@@ -5240,13 +5825,16 @@ ENDMACRO
  ADC #2                                       ; 9CB4: 69 02       i.
  STA K                                        ; 9CB6: 85 7D       .}
  JSR DrawChartSystems                         ; 9CB8: 20 CC 9C     ..
+
 .C9CBB
+
  JSR TT20                                     ; 9CBB: 20 4D 96     M.
  INC XX20                                     ; 9CBE: E6 AC       ..
  BEQ C9CC5                                    ; 9CC0: F0 03       ..
  JMP C9C32                                    ; 9CC2: 4C 32 9C    L2.
 
 .C9CC5
+
  LDA #&8F                                     ; 9CC5: A9 8F       ..
  STA Yx2M1                                    ; 9CC7: 85 B3       ..
  JMP subm_8926                                ; 9CC9: 4C 26 89    L&.
@@ -5284,7 +5872,9 @@ ENDMACRO
  STA tileSprite38,Y                           ; 9CEF: 99 99 02    ...
  LDA #2                                       ; 9CF2: A9 02       ..
  STA attrSprite38,Y                           ; 9CF4: 99 9A 02    ...
+
 .C9CF7
+
  RTS                                          ; 9CF7: 60          `
 
 \ ******************************************************************************
@@ -5299,7 +5889,9 @@ ENDMACRO
 .TT81
 
  LDX #5                                       ; 9CF8: A2 05       ..
+
 .loop_C9CFA
+
  LDA QQ21,X                                   ; 9CFA: BD DF 03    ...
  STA QQ15,X                                   ; 9CFD: 95 82       ..
  DEX                                          ; 9CFF: CA          .
@@ -5349,7 +5941,9 @@ ENDMACRO
  JSR DASC_b2                                  ; 9D2C: 20 E6 F1     ..
  JSR TT146                                    ; 9D2F: 20 7A 96     z.
  JSR subm_D951                                ; 9D32: 20 51 D9     Q.
+
 .C9D35
+
  LDA QQ8+1                                    ; 9D35: AD 9C 04    ...
  BNE C9D51                                    ; 9D38: D0 17       ..
  LDA QQ8                                      ; 9D3A: AD 9B 04    ...
@@ -5357,16 +5951,24 @@ ENDMACRO
  LDA MJ                                       ; 9D3F: AD 8A 03    ...
  BEQ C9D51                                    ; 9D42: F0 0D       ..
  BNE C9D4D                                    ; 9D44: D0 07       ..
+
 .C9D46
+
  CMP QQ14                                     ; 9D46: CD A5 03    ...
  BEQ C9D4D                                    ; 9D49: F0 02       ..
  BCS C9D51                                    ; 9D4B: B0 04       ..
+
 .C9D4D
+
  LDA #&C0                                     ; 9D4D: A9 C0       ..
  BNE C9D53                                    ; 9D4F: D0 02       ..
+
 .C9D51
+
  LDA #&80                                     ; 9D51: A9 80       ..
+
 .C9D53
+
  TAX                                          ; 9D53: AA          .
  EOR L0395                                    ; 9D54: 4D 95 03    M..
  STX L0395                                    ; 9D57: 8E 95 03    ...
@@ -5375,13 +5977,18 @@ ENDMACRO
  JMP CAC5C_b3                                 ; 9D5D: 4C 71 F1    Lq.
 
 .C9D60
+
  LDX #5                                       ; 9D60: A2 05       ..
+
 .loop_C9D62
+
  LDA L0453,X                                  ; 9D62: BD 53 04    .S.
  STA QQ15,X                                   ; 9D65: 95 82       ..
  DEX                                          ; 9D67: CA          .
  BPL loop_C9D62                               ; 9D68: 10 F8       ..
+
 .C9D6A
+
  RTS                                          ; 9D6A: 60          `
 
 \ ******************************************************************************
@@ -5400,21 +6007,27 @@ ENDMACRO
  STY T                                        ; 9D70: 84 9A       ..
  LDA #0                                       ; 9D72: A9 00       ..
  STA U                                        ; 9D74: 85 96       ..
+
 .C9D76
+
  LDA setupPPUForIconBar                       ; 9D76: A5 E9       ..
  BPL C9D83                                    ; 9D78: 10 09       ..
  LDA PPU_STATUS                               ; 9D7A: AD 02 20    ..
  ASL A                                        ; 9D7D: 0A          .
  BPL C9D83                                    ; 9D7E: 10 03       ..
  JSR SetPPUTablesTo0                          ; 9D80: 20 6D D0     m.
+
 .C9D83
+
  LDA QQ15+3                                   ; 9D83: A5 85       ..
  SEC                                          ; 9D85: 38          8
  SBC QQ9                                      ; 9D86: ED 9D 04    ...
  BCS C9D8F                                    ; 9D89: B0 04       ..
  EOR #&FF                                     ; 9D8B: 49 FF       I.
  ADC #1                                       ; 9D8D: 69 01       i.
+
 .C9D8F
+
  LSR A                                        ; 9D8F: 4A          J
  STA S                                        ; 9D90: 85 99       ..
  LDA QQ15+1                                   ; 9D92: A5 83       ..
@@ -5423,7 +6036,9 @@ ENDMACRO
  BCS C9D9E                                    ; 9D98: B0 04       ..
  EOR #&FF                                     ; 9D9A: 49 FF       I.
  ADC #1                                       ; 9D9C: 69 01       i.
+
 .C9D9E
+
  LSR A                                        ; 9D9E: 4A          J
  CLC                                          ; 9D9F: 18          .
  ADC S                                        ; 9DA0: 65 99       e.
@@ -5431,26 +6046,34 @@ ENDMACRO
  BCS C9DB7                                    ; 9DA4: B0 11       ..
  STA T                                        ; 9DA6: 85 9A       ..
  LDX #5                                       ; 9DA8: A2 05       ..
+
 .loop_C9DAA
+
  LDA QQ15,X                                   ; 9DAA: B5 82       ..
  STA QQ19,X                                   ; 9DAC: 9D 4D 04    .M.
  DEX                                          ; 9DAF: CA          .
  BPL loop_C9DAA                               ; 9DB0: 10 F8       ..
  LDA U                                        ; 9DB2: A5 96       ..
  STA L049F                                    ; 9DB4: 8D 9F 04    ...
+
 .C9DB7
+
  LDA setupPPUForIconBar                       ; 9DB7: A5 E9       ..
  BPL C9DC4                                    ; 9DB9: 10 09       ..
  LDA PPU_STATUS                               ; 9DBB: AD 02 20    ..
  ASL A                                        ; 9DBE: 0A          .
  BPL C9DC4                                    ; 9DBF: 10 03       ..
  JSR SetPPUTablesTo0                          ; 9DC1: 20 6D D0     m.
+
 .C9DC4
+
  JSR TT20                                     ; 9DC4: 20 4D 96     M.
  INC U                                        ; 9DC7: E6 96       ..
  BNE C9D76                                    ; 9DC9: D0 AB       ..
  LDX #5                                       ; 9DCB: A2 05       ..
+
 .loop_C9DCD
+
  LDA QQ19,X                                   ; 9DCD: BD 4D 04    .M.
  STA L0453,X                                  ; 9DD0: 9D 53 04    .S.
  STA QQ15,X                                   ; 9DD3: 95 82       ..
@@ -5465,7 +6088,9 @@ ENDMACRO
  BCS C9DEC                                    ; 9DE6: B0 04       ..
  EOR #&FF                                     ; 9DE8: 49 FF       I.
  ADC #1                                       ; 9DEA: 69 01       i.
+
 .C9DEC
+
  JSR SQUA2                                    ; 9DEC: 20 0E F7     ..
  STA K+1                                      ; 9DEF: 85 7E       .~
  LDA P                                        ; 9DF1: A5 2F       ./
@@ -5476,7 +6101,9 @@ ENDMACRO
  BCS C9E02                                    ; 9DFC: B0 04       ..
  EOR #&FF                                     ; 9DFE: 49 FF       I.
  ADC #1                                       ; 9E00: 69 01       i.
+
 .C9E02
+
  LSR A                                        ; 9E02: 4A          J
  JSR SQUA2                                    ; 9E03: 20 0E F7     ..
  PHA                                          ; 9E06: 48          H
@@ -5486,7 +6113,9 @@ ENDMACRO
  ASL A                                        ; 9E0E: 0A          .
  BPL C9E14                                    ; 9E0F: 10 03       ..
  JSR SetPPUTablesTo0                          ; 9E11: 20 6D D0     m.
+
 .C9E14
+
  LDA P                                        ; 9E14: A5 2F       ./
  CLC                                          ; 9E16: 18          .
  ADC K                                        ; 9E17: 65 7D       e}
@@ -5495,7 +6124,9 @@ ENDMACRO
  ADC K+1                                      ; 9E1C: 65 7E       e~
  BCC C9E22                                    ; 9E1E: 90 02       ..
  LDA #&FF                                     ; 9E20: A9 FF       ..
+
 .C9E22
+
  STA R                                        ; 9E22: 85 98       ..
  JSR LL5                                      ; 9E24: 20 55 FA     U.
  LDA Q                                        ; 9E27: A5 97       ..
@@ -5526,6 +6157,7 @@ ENDMACRO
  JMP DETOK_b2                                 ; 9E45: 4C 82 F0    L..
 
 .C9E48
+
  LDA QQ12                                     ; 9E48: A5 A5       ..
  BNE subm_9E3C                                ; 9E4A: D0 F0       ..
  LDA QQ22+1                                   ; 9E4C: A5 6C       .l
@@ -5533,6 +6165,7 @@ ENDMACRO
  RTS                                          ; 9E50: 60          `
 
 .C9E51
+
  LDA QQ12                                     ; 9E51: A5 A5       ..
  BNE subm_9E3C                                ; 9E53: D0 E7       ..
  LDA QQ22+1                                   ; 9E55: A5 6C       .l
@@ -5540,14 +6173,18 @@ ENDMACRO
  RTS                                          ; 9E59: 60          `
 
 .C9E5A
+
  LDA L0395                                    ; 9E5A: AD 95 03    ...
  ASL A                                        ; 9E5D: 0A          .
  BMI C9E61                                    ; 9E5E: 30 01       0.
  RTS                                          ; 9E60: 60          `
 
 .C9E61
+
  LDX #5                                       ; 9E61: A2 05       ..
+
 .loop_C9E63
+
  LDA QQ15,X                                   ; 9E63: B5 82       ..
  STA safehouse,X                              ; 9E65: 9D E4 05    ...
  DEX                                          ; 9E68: CA          .
@@ -5565,7 +6202,9 @@ ENDMACRO
 .wW
 
  LDA #&10                                     ; 9E6B: A9 10       ..
+
 .wW2
+
  STA QQ22+1                                   ; 9E6D: 85 6C       .l
  LDA #1                                       ; 9E6F: A9 01       ..
  STA QQ22                                     ; 9E71: 85 6B       .k
@@ -5595,20 +6234,26 @@ ENDMACRO
  LDA GCNT                                     ; 9E8F: AD A7 03    ...
  AND #&F7                                     ; 9E92: 29 F7       ).
  STA GCNT                                     ; 9E94: 8D A7 03    ...
+
 .loop_C9E97
+
  LDA QQ21,X                                   ; 9E97: BD DF 03    ...
  ASL A                                        ; 9E9A: 0A          .
  ROL QQ21,X                                   ; 9E9B: 3E DF 03    >..
  DEX                                          ; 9E9E: CA          .
  BPL loop_C9E97                               ; 9E9F: 10 F6       ..
+
 .zZ
+
  LDA #&60 ; '`'                               ; 9EA1: A9 60       .`
  STA QQ9                                      ; 9EA3: 8D 9D 04    ...
  STA QQ10                                     ; 9EA6: 8D 9E 04    ...
  JSR TT110                                    ; 9EA9: 20 BE A2     ..
  JSR TT111                                    ; 9EAC: 20 6B 9D     k.
  LDX #5                                       ; 9EAF: A2 05       ..
+
 .loop_C9EB1
+
  LDA QQ15,X                                   ; 9EB1: B5 82       ..
  STA safehouse,X                              ; 9EB3: 9D E4 05    ...
  DEX                                          ; 9EB6: CA          .
@@ -5634,7 +6279,9 @@ ENDMACRO
  STA QQ0                                      ; 9EC9: 8D 9F 03    ...
  LDA QQ10                                     ; 9ECC: AD 9E 04    ...
  STA QQ1                                      ; 9ECF: 8D A0 03    ...
+
 .hy5
+
  RTS                                          ; 9ED2: 60          `
 
 \ ******************************************************************************
@@ -5699,6 +6346,7 @@ ENDMACRO
  JMP TT27_b2                                  ; 9EF1: 4C 01 F2    L..
 
 .loop_C9EF4
+
  PLA                                          ; 9EF4: 68          h
  RTS                                          ; 9EF5: 60          `
 
@@ -5729,7 +6377,9 @@ ENDMACRO
  CLC                                          ; 9F10: 18          .
  ADC #&D0                                     ; 9F11: 69 D0       i.
  JSR TT27_b2                                  ; 9F13: 20 01 F2     ..
+
 .loop_C9F16
+
  LDA #&20 ; ' '                               ; 9F16: A9 20       .
  JSR TT27_b2                                  ; 9F18: 20 01 F2     ..
  LDA XC                                       ; 9F1B: A5 32       .2
@@ -5752,10 +6402,13 @@ ENDMACRO
  JMP C9F52                                    ; 9F48: 4C 52 9F    LR.
 
 .C9F4B
+
  LDA QQ24                                     ; 9F4B: AD 87 04    ...
  SEC                                          ; 9F4E: 38          8
  SBC QQ19+3                                   ; 9F4F: ED 50 04    .P.
+
 .C9F52
+
  STA QQ24                                     ; 9F52: 8D 87 04    ...
  STA P                                        ; 9F55: 85 2F       ./
  LDA #0                                       ; 9F57: A9 00       ..
@@ -5773,10 +6426,12 @@ ENDMACRO
  JMP C9FBB                                    ; 9F74: 4C BB 9F    L..
 
 .C9F77
+
  JSR TT172                                    ; 9F77: 20 7D 9F     }.
  JMP C9FBB                                    ; 9F7A: 4C BB 9F    L..
 
 .TT172
+
  JSR TT162                                    ; 9F7D: 20 9C 9F     ..
  JSR TT162                                    ; 9F80: 20 9C 9F     ..
  LDA #&2D ; '-'                               ; 9F83: A9 2D       .-
@@ -5875,14 +6530,18 @@ ENDMACRO
  STA XC                                       ; 9FB5: 85 32       .2
  LDA #&FF                                     ; 9FB7: A9 FF       ..
  BNE TT162+2                                  ; 9FB9: D0 E3       ..
+
 .C9FBB
+
  LDA setupPPUForIconBar                       ; 9FBB: A5 E9       ..
  BPL C9FC8                                    ; 9FBD: 10 09       ..
  LDA PPU_STATUS                               ; 9FBF: AD 02 20    ..
  ASL A                                        ; 9FC2: 0A          .
  BPL C9FC8                                    ; 9FC3: 10 03       ..
  JSR SetPPUTablesTo0                          ; 9FC5: 20 6D D0     m.
+
 .C9FC8
+
  LDY QQ29                                     ; 9FC8: AC 8A 04    ...
  LDA #3                                       ; 9FCB: A9 03       ..
  LDX QQ20,Y                                   ; 9FCD: BE AD 03    ...
@@ -5935,7 +6594,9 @@ ENDMACRO
  STA YC                                       ; 9FFF: 85 3B       .;
  LDA #0                                       ; A001: A9 00       ..
  STA QQ29                                     ; A003: 8D 8A 04    ...
+
 .loop_CA006
+
  JSR SetupPPUForIconBar                       ; A006: 20 7D EC     }.
  JSR TT151                                    ; A009: 20 F6 9E     ..
  INC YC                                       ; A00C: E6 3B       .;
@@ -5945,21 +6606,27 @@ ENDMACRO
  BCC loop_CA006                               ; A016: 90 EE       ..
  LDA QQ12                                     ; A018: A5 A5       ..
  BNE CA028                                    ; A01A: D0 0C       ..
+
 .sub_CA01C
+
  JSR subm_EB86                                ; A01C: 20 86 EB     ..
  JSR Set_K_K3_XC_YC                           ; A01F: 20 F9 EC     ..
  JMP subm_8926                                ; A022: 4C 26 89    L&.
 
 .CA025
+
  JMP CA0F4                                    ; A025: 4C F4 A0    L..
 
 .CA028
+
  LDA #0                                       ; A028: A9 00       ..
  STA QQ29                                     ; A02A: 8D 8A 04    ...
  JSR subm_A130                                ; A02D: 20 30 A1     0.
  JSR subm_A155                                ; A030: 20 55 A1     U.
  JSR sub_CA01C                                ; A033: 20 1C A0     ..
+
 .CA036
+
  JSR SetupPPUForIconBar                       ; A036: 20 7D EC     }.
  LDA controller1B                             ; A039: AD B4 04    ...
  BMI CA06E                                    ; A03C: 30 30       00
@@ -5969,7 +6636,9 @@ ENDMACRO
  LDA controller1Left                          ; A046: AD AE 04    ...
  ORA controller1Right                         ; A049: 0D B0 04    ...
  BNE CA06E                                    ; A04C: D0 20       .
+
 .CA04E
+
  LDA controller1Up                            ; A04E: AD AC 04    ...
  AND #&F0                                     ; A051: 29 F0       ).
  CMP #&F0                                     ; A053: C9 F0       ..
@@ -5984,7 +6653,9 @@ ENDMACRO
  LDA L04BB                                    ; A067: AD BB 04    ...
  CMP #&F0                                     ; A06A: C9 F0       ..
  BEQ CA0B3                                    ; A06C: F0 45       .E
+
 .CA06E
+
  LDA L0465                                    ; A06E: AD 65 04    .e.
  BEQ CA036                                    ; A071: F0 C3       ..
  JSR subm_B1D1                                ; A073: 20 D1 B1     ..
@@ -5992,6 +6663,7 @@ ENDMACRO
  RTS                                          ; A078: 60          `
 
 .CA079
+
  LDA QQ29                                     ; A079: AD 8A 04    ...
  JSR subm_A147                                ; A07C: 20 47 A1     G.
  LDA QQ29                                     ; A07F: AD 8A 04    ...
@@ -5999,9 +6671,13 @@ ENDMACRO
  SBC #1                                       ; A083: E9 01       ..
  BPL CA089                                    ; A085: 10 02       ..
  LDA #0                                       ; A087: A9 00       ..
+
 .CA089
+
  STA QQ29                                     ; A089: 8D 8A 04    ...
+
 .CA08C
+
  LDA QQ29                                     ; A08C: AD 8A 04    ...
  JSR subm_A130                                ; A08F: 20 30 A1     0.
  JSR subm_8980                                ; A092: 20 80 89     ..
@@ -6009,6 +6685,7 @@ ENDMACRO
  JMP CA036                                    ; A098: 4C 36 A0    L6.
 
 .CA09B
+
  LDA QQ29                                     ; A09B: AD 8A 04    ...
  JSR subm_A147                                ; A09E: 20 47 A1     G.
  LDA QQ29                                     ; A0A1: AD 8A 04    ...
@@ -6017,11 +6694,14 @@ ENDMACRO
  CMP #&11                                     ; A0A7: C9 11       ..
  BNE CA0AD                                    ; A0A9: D0 02       ..
  LDA #&10                                     ; A0AB: A9 10       ..
+
 .CA0AD
+
  STA QQ29                                     ; A0AD: 8D 8A 04    ...
  JMP CA08C                                    ; A0B0: 4C 8C A0    L..
 
 .CA0B3
+
  LDA #1                                       ; A0B3: A9 01       ..
  JSR sub_C9625                                ; A0B5: 20 25 96     %.
  BCS CA12D                                    ; A0B8: B0 73       .s
@@ -6050,6 +6730,7 @@ ENDMACRO
  JMP CA08C                                    ; A0F1: 4C 8C A0    L..
 
 .CA0F4
+
  LDY QQ29                                     ; A0F4: AC 8A 04    ...
  LDA AVL,Y                                    ; A0F7: B9 CA 03    ...
  CMP #&63 ; 'c'                               ; A0FA: C9 63       .c
@@ -6075,6 +6756,7 @@ ENDMACRO
  JMP CA08C                                    ; A12A: 4C 8C A0    L..
 
 .CA12D
+
  JMP CA036                                    ; A12D: 4C 36 A0    L6.
 
 \ ******************************************************************************
@@ -6150,6 +6832,7 @@ ENDMACRO
 \ ******************************************************************************
 
 .LA169
+
  EQUB 5, 5, 3, 5                              ; A169: 05 05 03... ...
 
 \ ******************************************************************************
@@ -6162,6 +6845,7 @@ ENDMACRO
 \ ******************************************************************************
 
 .LA16D
+
  EQUB &16, &17, &16, &16                      ; A16D: 16 17 16... ...
 
 \ ******************************************************************************
@@ -6182,13 +6866,16 @@ ENDMACRO
  CLC                                          ; A17C: 18          .
  LDA #0                                       ; A17D: A9 00       ..
  STA AVL+16                                   ; A17F: 8D DA 03    ...
+
 .loop_CA182
+
  DEY                                          ; A182: 88          .
  BMI CA18B                                    ; A183: 30 06       0.
  ADC QQ19+2                                   ; A185: 6D 4F 04    mO.
  JMP loop_CA182                               ; A188: 4C 82 A1    L..
 
 .CA18B
+
  STA QQ19+3                                   ; A18B: 8D 50 04    .P.
  RTS                                          ; A18E: 60          `
 
@@ -6205,7 +6892,9 @@ ENDMACRO
 
  JSR jmp                                      ; A18F: 20 C6 9E     ..
  LDX #5                                       ; A192: A2 05       ..
+
 .loop_CA194
+
  LDA safehouse,X                              ; A194: BD E4 05    ...
  STA QQ2,X                                    ; A197: 9D 8E 04    ...
  STA QQ15,X                                   ; A19A: 95 82       ..
@@ -6239,7 +6928,9 @@ ENDMACRO
  STA QQ26                                     ; A1C3: 8D DB 03    ...
  LDX #0                                       ; A1C6: A2 00       ..
  STX XX4                                      ; A1C8: 86 AB       ..
+
 .CA1CA
+
  LDA QQ23+1,X                                 ; A1CA: BD B4 B8    ...
  STA QQ19+1                                   ; A1CD: 8D 4E 04    .N.
  JSR var                                      ; A1D0: 20 71 A1     q.
@@ -6254,12 +6945,17 @@ ENDMACRO
  JMP CA1ED                                    ; A1E6: 4C ED A1    L..
 
 .CA1E9
+
  CLC                                          ; A1E9: 18          .
  ADC QQ19+3                                   ; A1EA: 6D 50 04    mP.
+
 .CA1ED
+
  BPL CA1F1                                    ; A1ED: 10 02       ..
  LDA #0                                       ; A1EF: A9 00       ..
+
 .CA1F1
+
  LDY XX4                                      ; A1F1: A4 AB       ..
  AND #&3F ; '?'                               ; A1F3: 29 3F       )?
  STA AVL,Y                                    ; A1F5: 99 CA 03    ...
@@ -6271,7 +6967,9 @@ ENDMACRO
  TAX                                          ; A1FE: AA          .
  CMP #&3F ; '?'                               ; A1FF: C9 3F       .?
  BCC CA1CA                                    ; A201: 90 C7       ..
+
 .hyR
+
  RTS                                          ; A203: 60          `
 
 \ ******************************************************************************
@@ -6306,7 +7004,9 @@ ENDMACRO
  JSR Ze                                       ; A213: 20 2E F4     ..
  LDA #&F9                                     ; A216: A9 F9       ..
  STA INWK+32                                  ; A218: 85 29       .)
+
 .CA21A
+
  LDA #&1D                                     ; A21A: A9 1D       ..
  JMP NWSHP                                    ; A21C: 4C E3 AA    L..
 
@@ -6356,7 +7056,9 @@ ENDMACRO
  SBC QQ8                                      ; A255: ED 9B 04    ...
  BCS CA25C                                    ; A258: B0 02       ..
  LDA #0                                       ; A25A: A9 00       ..
+
 .CA25C
+
  STA QQ14                                     ; A25C: 8D A5 03    ...
  LDA QQ11                                     ; A25F: A5 9E       ..
  BNE CA26C                                    ; A261: D0 09       ..
@@ -6365,8 +7067,11 @@ ENDMACRO
  JMP CA26F                                    ; A269: 4C 6F A2    Lo.
 
 .CA26C
- JSR LEBED                                    ; A26C: 20 ED EB     ..
+
+ JSR subm_EBED                                    ; A26C: 20 ED EB     ..
+
 .CA26F
+
  LDA controller1Up                            ; A26F: AD AC 04    ...
  ORA controller1Down                          ; A272: 0D AA 04    ...
  BMI MJP                                      ; A275: 30 A8       0.
@@ -6377,7 +7082,9 @@ ENDMACRO
  JSR KeepPPUTablesAt0                         ; A281: 20 67 D1     g.
  JSR RES2                                     ; A284: 20 8A AD     ..
  JSR SOLAR                                    ; A287: 20 2C A9     ,.
+
 .CA28A
+
  LDA QQ11                                     ; A28A: A5 9E       ..
  BEQ CA2B9                                    ; A28C: F0 2B       .+
  LDA QQ11                                     ; A28E: A5 9E       ..
@@ -6390,15 +7097,18 @@ ENDMACRO
  JMP TT23                                     ; A29C: 4C 00 9C    L..
 
 .CA29F
+
  JMP TT22                                     ; A29F: 4C 90 98    L..
 
 .CA2A2
+
  LDA QQ11                                     ; A2A2: A5 9E       ..
  CMP #&97                                     ; A2A4: C9 97       ..
  BNE CA2AB                                    ; A2A6: D0 03       ..
  JMP TT213                                    ; A2A8: 4C B1 9A    L..
 
 .CA2AB
+
  CMP #&BA                                     ; A2AB: C9 BA       ..
  BNE CA2B6                                    ; A2AD: D0 07       ..
  LDA #&97                                     ; A2AF: A9 97       ..
@@ -6406,9 +7116,11 @@ ENDMACRO
  JMP subm_9FE0                                ; A2B3: 4C E0 9F    L..
 
 .CA2B6
+
  JMP STATUS                                   ; A2B6: 4C 37 88    L7.
 
 .CA2B9
+
  LDX #4                                       ; A2B9: A2 04       ..
  STX VIEW                                     ; A2BB: 8E 8E 03    ...
 
@@ -6452,7 +7164,9 @@ ENDMACRO
  JSR KeepPPUTablesAt0                         ; A301: 20 67 D1     g.
  LDX #4                                       ; A304: A2 04       ..
  STX VIEW                                     ; A306: 8E 8E 03    ...
+
 .CA309
+
  LDX #0                                       ; A309: A2 00       ..
  STX QQ12                                     ; A30B: 86 A5       ..
  JMP LOOK1                                    ; A30D: 4C B3 BD    L..
@@ -6473,6 +7187,7 @@ ENDMACRO
  JMP TT22                                     ; A314: 4C 90 98    L..
 
 .CA317
+
  JMP TT23                                     ; A317: 4C 00 9C    L..
 
 \ ******************************************************************************
@@ -6520,7 +7235,9 @@ ENDMACRO
  ASL A                                        ; A348: 0A          .
  BPL CA34E                                    ; A349: 10 03       ..
  JSR SetPPUTablesTo0                          ; A34B: 20 6D D0     m.
+
 .CA34E
+
  TXA                                          ; A34E: 8A          .
  CLC                                          ; A34F: 18          .
  ADC CASH+3                                   ; A350: 6D A4 03    m..
@@ -6535,7 +7252,9 @@ ENDMACRO
  ADC #0                                       ; A368: 69 00       i.
  STA CASH                                     ; A36A: 8D A1 03    ...
  CLC                                          ; A36D: 18          .
+
 .TT113
+
  RTS                                          ; A36E: 60          `
 
 \ ******************************************************************************
@@ -6572,7 +7291,9 @@ ENDMACRO
  JSR TT111                                    ; A37C: 20 6B 9D     k.
  JSR jmp                                      ; A37F: 20 C6 9E     ..
  LDX #5                                       ; A382: A2 05       ..
+
 .loop_CA384
+
  LDA QQ15,X                                   ; A384: B5 82       ..
  STA QQ2,X                                    ; A386: 9D 8E 04    ...
  DEX                                          ; A389: CA          .
@@ -6612,7 +7333,7 @@ ENDMACRO
  STA V                                        ; A3B9: 85 63       .c
  LDA #0                                       ; A3BB: A9 00       ..
  STA K+2                                      ; A3BD: 85 7F       ..
- JSR LB9C1_b4                                 ; A3BF: 20 7D EE     }.
+ JSR CB9C1_b4                                 ; A3BF: 20 7D EE     }.
  JMP CA4A5_b6                                 ; A3C2: 4C B5 EE    L..
 
 \ ******************************************************************************
@@ -6646,7 +7367,9 @@ ENDMACRO
 .subm_EQSHP3
 
  LDX XX13                                     ; A3D3: A6 A1       ..
+
 .sub_CA3D5
+
  JSR SetupPPUForIconBar                       ; A3D5: 20 7D EC     }.
  STX XX13                                     ; A3D8: 86 A1       ..
  TXA                                          ; A3DA: 8A          .
@@ -6657,7 +7380,9 @@ ENDMACRO
  BCC CA3E7                                    ; A3E2: 90 03       ..
  SEC                                          ; A3E4: 38          8
  SBC #1                                       ; A3E5: E9 01       ..
+
 .CA3E7
+
  STA YC                                       ; A3E7: 85 3B       .;
  LDA #1                                       ; A3E9: A9 01       ..
  STA XC                                       ; A3EB: 85 32       .2
@@ -6665,13 +7390,15 @@ ENDMACRO
  AND #2                                       ; A3F0: 29 02       ).
  BNE CA3F7                                    ; A3F2: D0 03       ..
  JSR TT162                                    ; A3F4: 20 9C 9F     ..
+
 .CA3F7
+
  JSR TT162                                    ; A3F7: 20 9C 9F     ..
  LDA XX13                                     ; A3FA: A5 A1       ..
  CLC                                          ; A3FC: 18          .
  ADC #&68 ; 'h'                               ; A3FD: 69 68       ih
  JSR TT27_b2                                  ; A3FF: 20 01 F2     ..
- JSR LD17F                                    ; A402: 20 7F D1     ..
+ JSR subm_D17F                                    ; A402: 20 7F D1     ..
  LDA XX13                                     ; A405: A5 A1       ..
  CMP #1                                       ; A407: C9 01       ..
  BNE CA43F                                    ; A409: D0 34       .4
@@ -6699,6 +7426,7 @@ ENDMACRO
  JMP TT27_b2                                  ; A43C: 4C 01 F2    L..
 
 .CA43F
+
  LDA #&20 ; ' '                               ; A43F: A9 20       .
  JSR TT27_b2                                  ; A441: 20 01 F2     ..
  LDA XC                                       ; A444: A5 32       .2
@@ -6728,9 +7456,13 @@ ENDMACRO
  SBC #1                                       ; A45E: E9 01       ..
  BNE CA464                                    ; A460: D0 02       ..
  LDA #1                                       ; A462: A9 01       ..
+
 .CA464
+
  STA XX13                                     ; A464: 85 A1       ..
+
 .CA466
+
  JSR subm_EQSHP2                              ; A466: 20 C5 A3     ..
  JSR CA4A5_b6                                 ; A469: 20 B5 EE     ..
  JSR subm_8980                                ; A46C: 20 80 89     ..
@@ -6756,7 +7488,9 @@ ENDMACRO
  BNE CA485                                    ; A47F: D0 04       ..
  LDA Q                                        ; A481: A5 97       ..
  SBC #1                                       ; A483: E9 01       ..
+
 .CA485
+
  STA XX13                                     ; A485: 85 A1       ..
  JMP CA466                                    ; A487: 4C 66 A4    Lf.
 
@@ -6799,7 +7533,9 @@ ENDMACRO
  CMP #&0C                                     ; A4A9: C9 0C       ..
  BCC CA4AF                                    ; A4AB: 90 02       ..
  LDA #&0E                                     ; A4AD: A9 0E       ..
+
 .CA4AF
+
  STA Q                                        ; A4AF: 85 97       ..
  STA QQ25                                     ; A4B1: 8D 88 04    ...
  INC Q                                        ; A4B4: E6 97       ..
@@ -6807,7 +7543,9 @@ ENDMACRO
  SEC                                          ; A4B8: 38          8
  SBC QQ14                                     ; A4B9: ED A5 03    ...
  LDX #1                                       ; A4BC: A2 01       ..
+
 .loop_CA4BE
+
  JSR sub_CA3D5                                ; A4BE: 20 D5 A3     ..
  LDX XX13                                     ; A4C1: A6 A1       ..
  INX                                          ; A4C3: E8          .
@@ -6820,24 +7558,30 @@ ENDMACRO
  JSR subm_EB86                                ; A4D2: 20 86 EB     ..
  JSR subm_EQSHP1                              ; A4D5: 20 A3 A3     ..
  JSR subm_8926                                ; A4D8: 20 26 89     &.
+
 .CA4DB
+
  LDA setupPPUForIconBar                       ; A4DB: A5 E9       ..
  BPL CA4E8                                    ; A4DD: 10 09       ..
  LDA PPU_STATUS                               ; A4DF: AD 02 20    ..
  ASL A                                        ; A4E2: 0A          .
  BPL CA4E8                                    ; A4E3: 10 03       ..
  JSR SetPPUTablesTo0                          ; A4E5: 20 6D D0     m.
+
 .CA4E8
+
  LDA controller1Up                            ; A4E8: AD AC 04    ...
  BPL CA4F0                                    ; A4EB: 10 03       ..
  JMP subm_EQSHP4                              ; A4ED: 4C 58 A4    LX.
 
 .CA4F0
+
  LDA controller1Down                          ; A4F0: AD AA 04    ...
  BPL CA4F8                                    ; A4F3: 10 03       ..
  JMP subm_EQSHP5                              ; A4F5: 4C 75 A4    Lu.
 
 .CA4F8
+
  LDA controller1A                             ; A4F8: AD B2 04    ...
  BMI CA508                                    ; A4FB: 30 0B       0.
  LDA L0465                                    ; A4FD: AD 65 04    .e.
@@ -6847,6 +7591,7 @@ ENDMACRO
  RTS                                          ; A507: 60          `
 
 .CA508
+
  JSR subm_F454                                ; A508: 20 54 F4     T.
  LDA XX13                                     ; A50B: A5 A1       ..
  SEC                                          ; A50D: 38          8
@@ -6859,6 +7604,7 @@ ENDMACRO
  JMP CA4DB                                    ; A51A: 4C DB A4    L..
 
 .CA51D
+
  PLA                                          ; A51D: 68          h
  BNE et0                                      ; A51E: D0 15       ..
  PHA                                          ; A520: 48          H
@@ -6872,9 +7618,12 @@ ENDMACRO
  JMP CA58A                                    ; A52E: 4C 8A A5    L..
 
 .CA531
+
  STA QQ14                                     ; A531: 8D A5 03    ...
  PLA                                          ; A534: 68          h
+
 .et0
+
  CMP #1                                       ; A535: C9 01       ..
  BNE CA548                                    ; A537: D0 0F       ..
  LDX NOMSL                                    ; A539: AE C8 03    ...
@@ -6884,7 +7633,9 @@ ENDMACRO
  BCS CA58A                                    ; A541: B0 47       .G
  STX NOMSL                                    ; A543: 8E C8 03    ...
  LDA #1                                       ; A546: A9 01       ..
+
 .CA548
+
  LDY #&6B ; 'k'                               ; A548: A0 6B       .k
  CMP #2                                       ; A54A: C9 02       ..
  BNE CA558                                    ; A54C: D0 0A       ..
@@ -6892,14 +7643,18 @@ ENDMACRO
  CPX CRGO                                     ; A550: EC AC 03    ...
  BEQ CA58A                                    ; A553: F0 35       .5
  STX CRGO                                     ; A555: 8E AC 03    ...
+
 .CA558
+
  CMP #3                                       ; A558: C9 03       ..
  BNE CA565                                    ; A55A: D0 09       ..
  INY                                          ; A55C: C8          .
  LDX ECM                                      ; A55D: AE BE 03    ...
  BNE CA58A                                    ; A560: D0 28       .(
  DEC ECM                                      ; A562: CE BE 03    ...
+
 .CA565
+
  CMP #4                                       ; A565: C9 04       ..
  BNE CA573                                    ; A567: D0 0A       ..
  JSR qv                                       ; A569: 20 F6 A6     ..
@@ -6907,7 +7662,9 @@ ENDMACRO
  JMP refund                                   ; A56E: 4C 78 A7    Lx.
 
  LDA #4                                       ; A571: A9 04       ..
+
 .CA573
+
  CMP #5                                       ; A573: C9 05       ..
  BNE CA57F                                    ; A575: D0 08       ..
  JSR qv                                       ; A577: 20 F6 A6     ..
@@ -6915,12 +7672,15 @@ ENDMACRO
  JMP refund                                   ; A57C: 4C 78 A7    Lx.
 
 .CA57F
+
  LDY #&6F ; 'o'                               ; A57F: A0 6F       .o
  CMP #6                                       ; A581: C9 06       ..
  BNE CA5E6                                    ; A583: D0 61       .a
  LDX BST                                      ; A585: AE BF 03    ...
  BEQ ed9                                      ; A588: F0 59       .Y
+
 .CA58A
+
  STY K                                        ; A58A: 84 7D       .}
  PHA                                          ; A58C: 48          H
  JSR KeepPPUTablesAt0                         ; A58D: 20 67 D1     g.
@@ -6935,7 +7695,9 @@ ENDMACRO
  JSR spc                                      ; A5A1: 20 B3 96     ..
  LDA #&1F                                     ; A5A4: A9 1F       ..
  JSR TT27_b2                                  ; A5A6: 20 01 F2     ..
+
 .loop_CA5A9
+
  JSR TT162                                    ; A5A9: 20 9C 9F     ..
  LDA XC                                       ; A5AC: A5 32       .2
  CMP #&1F                                     ; A5AE: C9 1F       ..
@@ -6948,7 +7710,9 @@ ENDMACRO
  STA XC                                       ; A5BF: 85 32       .2
  LDA #&11                                     ; A5C1: A9 11       ..
  STA YC                                       ; A5C3: 85 3B       .;
+
 .loop_CA5C5
+
  JSR TT162                                    ; A5C5: 20 9C 9F     ..
  LDA XC                                       ; A5C8: A5 32       .2
  CMP #&1F                                     ; A5CA: C9 1F       ..
@@ -6959,21 +7723,27 @@ ENDMACRO
  JMP CA4DB                                    ; A5D7: 4C DB A4    L..
 
 .CA5DA
+
  JMP CA58A                                    ; A5DA: 4C 8A A5    L..
 
  JSR subm_8980                                ; A5DD: 20 80 89     ..
  JMP CA4DB                                    ; A5E0: 4C DB A4    L..
 
 .ed9
+
  DEC BST                                      ; A5E3: CE BF 03    ...
+
 .CA5E6
+
  INY                                          ; A5E6: C8          .
  CMP #7                                       ; A5E7: C9 07       ..
  BNE CA5F3                                    ; A5E9: D0 08       ..
  LDX ESCP                                     ; A5EB: AE C4 03    ...
  BNE CA58A                                    ; A5EE: D0 9A       ..
  DEC ESCP                                     ; A5F0: CE C4 03    ...
+
 .CA5F3
+
  INY                                          ; A5F3: C8          .
  CMP #8                                       ; A5F4: C9 08       ..
  BNE CA602                                    ; A5F6: D0 0A       ..
@@ -6981,28 +7751,36 @@ ENDMACRO
  BNE CA58A                                    ; A5FB: D0 8D       ..
  LDX #&7F                                     ; A5FD: A2 7F       ..
  STX BOMB                                     ; A5FF: 8E C0 03    ...
+
 .CA602
+
  INY                                          ; A602: C8          .
  CMP #9                                       ; A603: C9 09       ..
  BNE CA60F                                    ; A605: D0 08       ..
  LDX ENGY                                     ; A607: AE C1 03    ...
  BNE CA5DA                                    ; A60A: D0 CE       ..
  INC ENGY                                     ; A60C: EE C1 03    ...
+
 .CA60F
+
  INY                                          ; A60F: C8          .
  CMP #&0A                                     ; A610: C9 0A       ..
  BNE CA61C                                    ; A612: D0 08       ..
  LDX DKCMP                                    ; A614: AE C2 03    ...
  BNE CA5DA                                    ; A617: D0 C1       ..
  DEC DKCMP                                    ; A619: CE C2 03    ...
+
 .CA61C
+
  INY                                          ; A61C: C8          .
  CMP #&0B                                     ; A61D: C9 0B       ..
  BNE CA629                                    ; A61F: D0 08       ..
  LDX GHYP                                     ; A621: AE C3 03    ...
  BNE CA5DA                                    ; A624: D0 B4       ..
  DEC GHYP                                     ; A626: CE C3 03    ...
+
 .CA629
+
  INY                                          ; A629: C8          .
  CMP #&0C                                     ; A62A: C9 0C       ..
  BNE CA636                                    ; A62C: D0 08       ..
@@ -7011,6 +7789,7 @@ ENDMACRO
  JMP refund                                   ; A633: 4C 78 A7    Lx.
 
 .CA636
+
  INY                                          ; A636: C8          .
  CMP #&0D                                     ; A637: C9 0D       ..
  BNE CA643                                    ; A639: D0 08       ..
@@ -7019,17 +7798,21 @@ ENDMACRO
  JMP refund                                   ; A640: 4C 78 A7    Lx.
 
 .CA643
+
  JSR sub_CA649                                ; A643: 20 49 A6     I.
  JMP CA466                                    ; A646: 4C 66 A4    Lf.
 
 .sub_CA649
+
  LDA setupPPUForIconBar                       ; A649: A5 E9       ..
  BPL CA656                                    ; A64B: 10 09       ..
  LDA PPU_STATUS                               ; A64D: AD 02 20    ..
  ASL A                                        ; A650: 0A          .
  BPL CA656                                    ; A651: 10 03       ..
  JSR SetPPUTablesTo0                          ; A653: 20 6D D0     m.
+
 .CA656
+
  JSR dn                                       ; A656: 20 5C A6     \.
  JMP BEEP_b7                                  ; A659: 4C 74 F0    Lt.
 
@@ -7072,7 +7855,9 @@ ENDMACRO
  JSR prq                                      ; A679: 20 EC 9E     ..
  JSR BOOP                                     ; A67C: 20 E5 EB     ..
  LDY #&14                                     ; A67F: A0 14       ..
+
 .loop_CA681
+
  JSR TT162                                    ; A681: 20 9C 9F     ..
  DEY                                          ; A684: 88          .
  BPL loop_CA681                               ; A685: 10 FA       ..
@@ -7113,7 +7898,9 @@ ENDMACRO
  LDX PRXS,Y                                   ; A699: BE AA A7    ...
  LDA PRXS+1,Y                                 ; A69C: B9 AB A7    ...
  TAY                                          ; A69F: A8          .
+
 .c
+
  RTS                                          ; A6A0: 60          `
 
 \ ******************************************************************************
@@ -7155,13 +7942,17 @@ ENDMACRO
  AND #6                                       ; A6B9: 29 06       ).
  BNE CA6C0                                    ; A6BB: D0 03       ..
  JSR TT162                                    ; A6BD: 20 9C 9F     ..
+
 .CA6C0
+
  PLA                                          ; A6C0: 68          h
  PHA                                          ; A6C1: 48          H
  CLC                                          ; A6C2: 18          .
  ADC #&60 ; '`'                               ; A6C3: 69 60       i`
  JSR TT27_b2                                  ; A6C5: 20 01 F2     ..
+
 .loop_CA6C8
+
  JSR TT162                                    ; A6C8: 20 9C 9F     ..
  LDA XC                                       ; A6CB: A5 32       .2
  LDX language                                 ; A6CD: AE A8 04    ...
@@ -7181,6 +7972,7 @@ ENDMACRO
 \ ******************************************************************************
 
 .LA6D8
+
  EQUB &15, &15, &16, &15                      ; A6D8: 15 15 16... ...
 
 \ ******************************************************************************
@@ -7237,7 +8029,9 @@ ENDMACRO
  ORA controller1A                             ; A6FF: 0D B2 04    ...
  BMI qv                                       ; A702: 30 F2       0.
  LDY #3                                       ; A704: A0 03       ..
+
 .loop_CA706
+
  JSR subm_A6A8                                ; A706: 20 A8 A6     ..
  DEY                                          ; A709: 88          .
  BNE loop_CA706                               ; A70A: D0 FA       ..
@@ -7260,7 +8054,9 @@ ENDMACRO
  JSR CB2BC_b3                                 ; A72F: 20 F6 EE     ..
  JSR subm_8980                                ; A732: 20 80 89     ..
  LDY #0                                       ; A735: A0 00       ..
+
 .CA737
+
  JSR SetupPPUForIconBar                       ; A737: 20 7D EC     }.
  LDA controller1Up                            ; A73A: AD AC 04    ...
  BPL CA74A                                    ; A73D: 10 0B       ..
@@ -7268,9 +8064,13 @@ ENDMACRO
  DEY                                          ; A742: 88          .
  BPL CA747                                    ; A743: 10 02       ..
  LDY #3                                       ; A745: A0 03       ..
+
 .CA747
+
  JSR subm_A6DC                                ; A747: 20 DC A6     ..
+
 .CA74A
+
  LDA controller1Down                          ; A74A: AD AA 04    ...
  BPL CA75C                                    ; A74D: 10 0D       ..
  JSR subm_A6A8                                ; A74F: 20 A8 A6     ..
@@ -7278,9 +8078,13 @@ ENDMACRO
  CPY #4                                       ; A753: C0 04       ..
  BNE CA759                                    ; A755: D0 02       ..
  LDY #0                                       ; A757: A0 00       ..
+
 .CA759
+
  JSR subm_A6DC                                ; A759: 20 DC A6     ..
+
 .CA75C
+
  LDA controller1A                             ; A75C: AD B2 04    ...
  BMI CA775                                    ; A75F: 30 14       0.
  LDA L0465                                    ; A761: AD 65 04    .e.
@@ -7293,6 +8097,7 @@ ENDMACRO
  JMP CA737                                    ; A772: 4C 37 A7    L7.
 
 .CA775
+
  TYA                                          ; A775: 98          .
  TAX                                          ; A776: AA          .
  RTS                                          ; A777: 60          `
@@ -7321,13 +8126,17 @@ ENDMACRO
  CMP #&97                                     ; A78D: C9 97       ..
  BEQ CA793                                    ; A78F: F0 02       ..
  LDY #&0D                                     ; A791: A0 0D       ..
+
 .CA793
+
  STX ZZ                                       ; A793: 86 A0       ..
  TYA                                          ; A795: 98          .
  JSR prx                                      ; A796: 20 97 A6     ..
  JSR MCASH                                    ; A799: 20 41 A3     A.
  LDX ZZ                                       ; A79C: A6 A0       ..
+
 .CA79E
+
  LDA T1                                       ; A79E: A5 06       ..
  STA LASER,X                                  ; A7A0: 9D A8 03    ...
  JSR BEEP_b7                                  ; A7A3: 20 74 F0     t.
@@ -7345,6 +8154,7 @@ ENDMACRO
 \ ******************************************************************************
 
 .PRXS
+
  EQUB 2                                       ; A7AA: 02          .
  EQUB   0, &2C,   1, &A0, &0F, &70, &17, &A0  ; A7AB: 00 2C 01... .,.
  EQUB &0F, &10, &27, &82, &14, &10            ; A7B3: 0F 10 27... ..'
@@ -7364,7 +8174,9 @@ ENDMACRO
 .hyp1_cpl
 
  LDX #5                                       ; A7C6: A2 05       ..
+
 .loop_CA7C8
+
  LDA safehouse,X                              ; A7C8: BD E4 05    ...
  STA QQ15,X                                   ; A7CB: 95 82       ..
  DEX                                          ; A7CD: CA          .
@@ -7382,7 +8194,9 @@ ENDMACRO
 .cpl
 
  LDX #5                                       ; A7D0: A2 05       ..
+
 .loop_CA7D2
+
  LDA QQ15,X                                   ; A7D2: B5 82       ..
  STA QQ19,X                                   ; A7D4: 9D 4D 04    .M.
  DEX                                          ; A7D7: CA          .
@@ -7391,27 +8205,37 @@ ENDMACRO
  BIT QQ15                                     ; A7DC: 24 82       $.
  BVS CA7E1                                    ; A7DE: 70 01       p.
  DEY                                          ; A7E0: 88          .
+
 .CA7E1
+
  STY T                                        ; A7E1: 84 9A       ..
+
 .loop_CA7E3
+
  LDA setupPPUForIconBar                       ; A7E3: A5 E9       ..
  BPL CA7F0                                    ; A7E5: 10 09       ..
  LDA PPU_STATUS                               ; A7E7: AD 02 20    ..
  ASL A                                        ; A7EA: 0A          .
  BPL CA7F0                                    ; A7EB: 10 03       ..
  JSR SetPPUTablesTo0                          ; A7ED: 20 6D D0     m.
+
 .CA7F0
+
  LDA QQ15+5                                   ; A7F0: A5 87       ..
  AND #&1F                                     ; A7F2: 29 1F       ).
  BEQ CA7FB                                    ; A7F4: F0 05       ..
  ORA #&80                                     ; A7F6: 09 80       ..
  JSR TT27_b2                                  ; A7F8: 20 01 F2     ..
+
 .CA7FB
+
  JSR TT54                                     ; A7FB: 20 53 96     S.
  DEC T                                        ; A7FE: C6 9A       ..
  BPL loop_CA7E3                               ; A800: 10 E1       ..
  LDX #5                                       ; A802: A2 05       ..
+
 .loop_CA804
+
  LDA QQ19,X                                   ; A804: BD 4D 04    .M.
  STA QQ15,X                                   ; A807: 95 82       ..
  DEX                                          ; A809: CA          .
@@ -7430,7 +8254,9 @@ ENDMACRO
 .cmn
 
  LDY #0                                       ; A80D: A0 00       ..
+
 .loop_CA80F
+
  LDA NAME,Y                                   ; A80F: B9 96 03    ...
  CMP #&20 ; ' '                               ; A812: C9 20       .
  BEQ CA81E                                    ; A814: F0 08       ..
@@ -7438,7 +8264,9 @@ ENDMACRO
  INY                                          ; A819: C8          .
  CPY #7                                       ; A81A: C0 07       ..
  BNE loop_CA80F                               ; A81C: D0 F1       ..
+
 .CA81E
+
  RTS                                          ; A81E: 60          `
 
 \ ******************************************************************************
@@ -7456,16 +8284,22 @@ ENDMACRO
  BMI CA839                                    ; A822: 30 15       0.
  JSR TT62                                     ; A824: 20 2A A8     *.
  JSR cpl                                      ; A827: 20 D0 A7     ..
+
 .TT62
+
  LDX #5                                       ; A82A: A2 05       ..
+
 .loop_CA82C
+
  LDA QQ15,X                                   ; A82C: B5 82       ..
  LDY QQ2,X                                    ; A82E: BC 8E 04    ...
  STA QQ2,X                                    ; A831: 9D 8E 04    ...
  STY QQ15,X                                   ; A834: 94 82       ..
  DEX                                          ; A836: CA          .
  BPL loop_CA82C                               ; A837: 10 F3       ..
+
 .CA839
+
  RTS                                          ; A839: 60          `
 
 \ ******************************************************************************
@@ -7505,7 +8339,9 @@ ENDMACRO
  AND #4                                       ; A854: 29 04       ).
  BEQ CA85B                                    ; A856: F0 03       ..
  JSR sub_CA8A2                                ; A858: 20 A2 A8     ..
+
 .CA85B
+
  LDX QQ14                                     ; A85B: AE A5 03    ...
  SEC                                          ; A85E: 38          8
  JSR pr2                                      ; A85F: 20 BE 8A     ..
@@ -7518,10 +8354,14 @@ ENDMACRO
  BNE CA879                                    ; A871: D0 06       ..
  JSR sub_CA8A2                                ; A873: 20 A2 A8     ..
  JSR TT162                                    ; A876: 20 9C 9F     ..
+
 .CA879
+
  LDA #0                                       ; A879: A9 00       ..
  BEQ CA89C                                    ; A87B: F0 1F       ..
+
 .CA87D
+
  LDA #&69 ; 'i'                               ; A87D: A9 69       .i
  JSR subm_96C5                                ; A87F: 20 C5 96     ..
  JSR TT162                                    ; A882: 20 9C 9F     ..
@@ -7534,9 +8374,13 @@ ENDMACRO
  JSR TT68                                     ; A893: 20 CE A8     ..
  LDA #0                                       ; A896: A9 00       ..
  BEQ CA89C                                    ; A898: F0 02       ..
+
 .CA89A
+
  LDA #&77 ; 'w'                               ; A89A: A9 77       .w
+
 .CA89C
+
  JMP spc                                      ; A89C: 4C B3 96    L..
 
 \ ******************************************************************************
@@ -7551,7 +8395,9 @@ ENDMACRO
 .subm_A89F
 
  JSR sub_CA8A2                                ; A89F: 20 A2 A8     ..
+
 .sub_CA8A2
+
  JSR TT162                                    ; A8A2: 20 9C 9F     ..
  JMP TT162                                    ; A8A5: 4C 9C 9F    L..
 
@@ -7580,7 +8426,9 @@ ENDMACRO
 .csh
 
  LDX #3                                       ; A8AB: A2 03       ..
+
 .loop_CA8AD
+
  LDA CASH,X                                   ; A8AD: BD A1 03    ...
  STA K,X                                      ; A8B0: 95 7D       .}
  DEX                                          ; A8B2: CA          .
@@ -7670,21 +8518,26 @@ ENDMACRO
  JMP cpl                                      ; A8E5: 4C D0 A7    L..
 
 .CA8E8
+
  DEX                                          ; A8E8: CA          .
  BNE CA8EE                                    ; A8E9: D0 03       ..
  JMP cmn                                      ; A8EB: 4C 0D A8    L..
 
 .CA8EE
+
  DEX                                          ; A8EE: CA          .
  BEQ fwls                                     ; A8EF: F0 25       .%
  DEX                                          ; A8F1: CA          .
  BNE CA8F9                                    ; A8F2: D0 05       ..
  LDA #&80                                     ; A8F4: A9 80       ..
  STA QQ17                                     ; A8F6: 85 3C       .<
+
 .loop_CA8F8
+
  RTS                                          ; A8F8: 60          `
 
 .CA8F9
+
  DEX                                          ; A8F9: CA          .
  BEQ loop_CA8F8                               ; A8FA: F0 FC       ..
  DEX                                          ; A8FC: CA          .
@@ -7693,6 +8546,7 @@ ENDMACRO
  RTS                                          ; A901: 60          `
 
 .CA902
+
  JSR TT73                                     ; A902: 20 D1 A8     ..
  LDA L04A9                                    ; A905: AD A9 04    ...
  AND #2                                       ; A908: 29 02       ).
@@ -7702,6 +8556,7 @@ ENDMACRO
  RTS                                          ; A910: 60          `
 
 .CA911
+
  LDA #&17                                     ; A911: A9 17       ..
  STA XC                                       ; A913: 85 32       .2
  RTS                                          ; A915: 60          `
@@ -7763,7 +8618,9 @@ ENDMACRO
  ROL TRIBBLE+1                                ; A944: 2E C6 03    ...
  BPL CA94C                                    ; A947: 10 03       ..
  ROR TRIBBLE+1                                ; A949: 6E C6 03    n..
+
 .CA94C
+
  LSR FIST                                     ; A94C: 4E C9 03    N..
  JSR ZINF_0                                     ; A94F: 20 03 AE     ..
  LDA QQ15+1                                   ; A952: A5 83       ..
@@ -7829,14 +8686,18 @@ ENDMACRO
  LDA frameCounter                             ; A99C: AD F1 03    ...
  STA RAND+1                                   ; A99F: 85 03       ..
  LDY NOSTM                                    ; A9A1: AC E5 03    ...
+
 .CA9A4
+
  LDA setupPPUForIconBar                       ; A9A4: A5 E9       ..
  BPL CA9B1                                    ; A9A6: 10 09       ..
  LDA PPU_STATUS                               ; A9A8: AD 02 20    ..
  ASL A                                        ; A9AB: 0A          .
  BPL CA9B1                                    ; A9AC: 10 03       ..
  JSR SetPPUTablesTo0                          ; A9AE: 20 6D D0     m.
+
 .CA9B1
+
  JSR DORND                                    ; A9B1: 20 AD F4     ..
  ORA #8                                       ; A9B4: 09 08       ..
  STA SZ,Y                                     ; A9B6: 99 F2 04    ...
@@ -7865,14 +8726,18 @@ ENDMACRO
 .WPSHPS
 
  LDX #0                                       ; A9D7: A2 00       ..
+
 .CA9D9
+
  LDA setupPPUForIconBar                       ; A9D9: A5 E9       ..
  BPL CA9E6                                    ; A9DB: 10 09       ..
  LDA PPU_STATUS                               ; A9DD: AD 02 20    ..
  ASL A                                        ; A9E0: 0A          .
  BPL CA9E6                                    ; A9E1: 10 03       ..
  JSR SetPPUTablesTo0                          ; A9E3: 20 6D D0     m.
+
 .CA9E6
+
  LDA FRIN,X                                   ; A9E6: BD 6A 03    .j.
  BEQ CA9FD                                    ; A9E9: F0 12       ..
  BMI CA9FA                                    ; A9EB: 30 0D       0.
@@ -7882,14 +8747,19 @@ ENDMACRO
  LDA (XX19),Y                                 ; A9F4: B1 61       .a
  AND #&B7                                     ; A9F6: 29 B7       ).
  STA (XX19),Y                                 ; A9F8: 91 61       .a
+
 .CA9FA
+
  INX                                          ; A9FA: E8          .
  BNE CA9D9                                    ; A9FB: D0 DC       ..
+
 .CA9FD
+
  LDX #0                                       ; A9FD: A2 00       ..
  RTS                                          ; A9FF: 60          `
 
 .loop_CAA00
+
  DEX                                          ; AA00: CA          .
  RTS                                          ; AA01: 60          `
 
@@ -7922,11 +8792,14 @@ ENDMACRO
  PHP                                          ; AA08: 08          .
  BNE CAA0E                                    ; AA09: D0 03       ..
  INC ENERGY                                   ; AA0B: EE 86 04    ...
+
 .CAA0E
+
  PLP                                          ; AA0E: 28          (
  RTS                                          ; AA0F: 60          `
 
 .loop_CAA10
+
  LDA #&F0                                     ; AA10: A9 F0       ..
  STA ySprite13                                ; AA12: 8D 34 02    .4.
  RTS                                          ; AA15: 60          `
@@ -7990,7 +8863,9 @@ ENDMACRO
  LDX X2                                       ; AA46: A6 73       .s
  BPL CAA4C                                    ; AA48: 10 02       ..
  LDA #&F6                                     ; AA4A: A9 F6       ..
+
 .CAA4C
+
  STA tileSprite13                             ; AA4C: 8D 35 02    .5.
  RTS                                          ; AA4F: 60          `
 
@@ -8006,7 +8881,9 @@ ENDMACRO
 .SPS4
 
  LDX #8                                       ; AA50: A2 08       ..
+
 .loop_CAA52
+
  LDA K%+42,X                            ; AA52: BD 2A 06    .*.
  STA K3,X                                     ; AA55: 95 3D       .=
  DEX                                          ; AA57: CA          .
@@ -8036,10 +8913,13 @@ ENDMACRO
  RTS                                          ; AA71: 60          `
 
 .CAA72
+
  LDX #0                                       ; AA72: A2 00       ..
  STX FSH                                      ; AA74: 8E 84 04    ...
  BCC CAA89                                    ; AA77: 90 10       ..
+
 .CAA79
+
  LDA ASH                                      ; AA79: AD 85 04    ...
  SBC T                                        ; AA7C: E5 9A       ..
  BCC CAA84                                    ; AA7E: 90 04       ..
@@ -8047,17 +8927,23 @@ ENDMACRO
  RTS                                          ; AA83: 60          `
 
 .CAA84
+
  LDX #0                                       ; AA84: A2 00       ..
  STX ASH                                      ; AA86: 8E 85 04    ...
+
 .CAA89
+
  ADC ENERGY                                   ; AA89: 6D 86 04    m..
  STA ENERGY                                   ; AA8C: 8D 86 04    ...
  BEQ CAA93                                    ; AA8F: F0 02       ..
  BCS CAA96                                    ; AA91: B0 03       ..
+
 .CAA93
+
  JMP DEATH                                    ; AA93: 4C E4 B1    L..
 
 .CAA96
+
  JSR EXNO3                                    ; AA96: 20 AD EB     ..
  JMP OUCH                                     ; AA99: 4C 75 B8    Lu.
 
@@ -8093,7 +8979,9 @@ ENDMACRO
  BCC CAACF                                    ; AAC7: 90 06       ..
  LDX XX21+64                                  ; AAC9: AE 80 C5    ...
  LDY XX21+65                                  ; AACC: AC 81 C5    ...
+
 .CAACF
+
  STX L04A2                                    ; AACF: 8E A2 04    ...
  STY L04A3                                    ; AAD2: 8C A3 04    ...
  JMP CAC5C_b3                                 ; AAD5: 4C 71 F1    Lq.
@@ -8133,19 +9021,26 @@ ENDMACRO
  ASL A                                        ; AAEC: 0A          .
  BPL CAAF2                                    ; AAED: 10 03       ..
  JSR SetPPUTablesTo0                          ; AAEF: 20 6D D0     m.
+
 .CAAF2
+
  LDX #0                                       ; AAF2: A2 00       ..
+
 .loop_CAAF4
+
  LDA FRIN,X                                   ; AAF4: BD 6A 03    .j.
  BEQ CAB00                                    ; AAF7: F0 07       ..
  INX                                          ; AAF9: E8          .
  CPX #8                                       ; AAFA: E0 08       ..
  BCC loop_CAAF4                               ; AAFC: 90 F6       ..
+
 .loop_CAAFE
+
  CLC                                          ; AAFE: 18          .
  RTS                                          ; AAFF: 60          `
 
 .CAB00
+
  JSR GINF                                     ; AB00: 20 90 CE     ..
  LDA T                                        ; AB03: A5 9A       ..
  BMI NW2                                      ; AB05: 30 D1       0.
@@ -8164,13 +9059,17 @@ ENDMACRO
  BMI CAB43                                    ; AB20: 30 21       0!
  TAX                                          ; AB22: AA          .
  LDY #8                                       ; AB23: A0 08       ..
+
 .loop_CAB25
+
  LDA L0374,Y                                  ; AB25: B9 74 03    .t.
  BEQ CAB2F                                    ; AB28: F0 05       ..
  DEY                                          ; AB2A: 88          .
  BNE loop_CAB25                               ; AB2B: D0 F8       ..
  BEQ CAB43                                    ; AB2D: F0 14       ..
+
 .CAB2F
+
  LDA #&FF                                     ; AB2F: A9 FF       ..
  STA L0374,Y                                  ; AB31: 99 74 03    .t.
  STY INWK+33                                  ; AB34: 84 2A       .*
@@ -8183,9 +9082,13 @@ ENDMACRO
  TXA                                          ; AB3D: 8A          .
  LDX INWK+33                                  ; AB3E: A6 2A       .*
  STA L037E,X                                  ; AB40: 9D 7E 03    .~.
+
 .CAB43
+
  LDX SC2                                      ; AB43: A6 BA       ..
+
 .NW6
+
  LDY #&0E                                     ; AB45: A0 0E       ..
  JSR LDA_XX0_Y                                ; AB47: 20 8D EC     ..
  STA INWK+35                                  ; AB4A: 85 2C       .,
@@ -8203,9 +9106,13 @@ ENDMACRO
  BCC NW7                                      ; AB63: 90 07       ..
  CPX #&0B                                     ; AB65: E0 0B       ..
  BCS NW7                                      ; AB67: B0 03       ..
+
 .gangbang
+
  INC JUNK                                     ; AB69: EE 73 03    .s.
+
 .NW7
+
  INC MANY,X                                   ; AB6C: FE 62 05    .b.
  LDY T                                        ; AB6F: A4 9A       ..
  JSR LDA_Epc_Y                                ; AB71: 20 A0 EC     ..
@@ -8217,16 +9124,22 @@ ENDMACRO
  LDA L0300                                    ; AB7E: AD 00 03    ...
  ORA #&80                                     ; AB81: 09 80       ..
  STA L0300                                    ; AB83: 8D 00 03    ...
+
 .CAB86
+
  LDA setupPPUForIconBar                       ; AB86: A5 E9       ..
  BPL CAB93                                    ; AB88: 10 09       ..
  LDA PPU_STATUS                               ; AB8A: AD 02 20    ..
  ASL A                                        ; AB8D: 0A          .
  BPL CAB93                                    ; AB8E: 10 03       ..
  JSR SetPPUTablesTo0                          ; AB90: 20 6D D0     m.
+
 .CAB93
+
  LDY #&25 ; '%'                               ; AB93: A0 25       .%
+
 .loop_CAB95
+
  LDA XX1,Y                                    ; AB95: B9 09 00    ...
  STA (XX19),Y                                 ; AB98: 91 61       .a
  DEY                                          ; AB9A: 88          .
@@ -8237,7 +9150,9 @@ ENDMACRO
  ASL A                                        ; ABA4: 0A          .
  BPL CABAA                                    ; ABA5: 10 03       ..
  JSR SetPPUTablesTo0                          ; ABA7: 20 6D D0     m.
+
 .CABAA
+
  SEC                                          ; ABAA: 38          8
  RTS                                          ; ABAB: 60          `
 
@@ -8321,14 +9236,18 @@ ENDMACRO
 .KS2
 
  LDX #&FF                                     ; ABD5: A2 FF       ..
+
 .CABD7
+
  LDA setupPPUForIconBar                       ; ABD7: A5 E9       ..
  BPL CABE4                                    ; ABD9: 10 09       ..
  LDA PPU_STATUS                               ; ABDB: AD 02 20    ..
  ASL A                                        ; ABDE: 0A          .
  BPL CABE4                                    ; ABDF: 10 03       ..
  JSR SetPPUTablesTo0                          ; ABE1: 20 6D D0     m.
+
 .CABE4
+
  INX                                          ; ABE4: E8          .
  LDA FRIN,X                                   ; ABE5: BD 6A 03    .j.
  BEQ KS3                                      ; ABE8: F0 CB       ..
@@ -8354,14 +9273,20 @@ ENDMACRO
  ORA #&80                                     ; AC0D: 09 80       ..
  STA (SC),Y                                   ; AC0F: 91 07       ..
  BNE CABD7                                    ; AC11: D0 C4       ..
+
 .CAC13
+
  LDA #0                                       ; AC13: A9 00       ..
  STA (SC),Y                                   ; AC15: 91 07       ..
  BEQ CABD7                                    ; AC17: F0 BE       ..
+
 .sub_CAC19
+
  JSR SetupPPUForIconBar                       ; AC19: 20 7D EC     }.
  LDY #&25 ; '%'                               ; AC1C: A0 25       .%
+
 .loop_CAC1E
+
  LDA (XX19),Y                                 ; AC1E: B1 61       .a
  STA XX1,Y                                    ; AC20: 99 09 00    ...
  DEY                                          ; AC23: 88          .
@@ -8379,7 +9304,7 @@ ENDMACRO
 .KILLSHP
 
  STX XX4                                      ; AC26: 86 AB       ..
- JSR LF260                                    ; AC28: 20 60 F2     `.
+ JSR CBAF3_b1                                    ; AC28: 20 60 F2     `.
  LDX XX4                                      ; AC2B: A6 AB       ..
  LDA MSTG                                     ; AC2D: AD 01 04    ...
  CMP XX4                                      ; AC30: C5 AB       ..
@@ -8388,7 +9313,9 @@ ENDMACRO
  JSR ABORT                                    ; AC36: 20 C1 AC     ..
  LDA #&C8                                     ; AC39: A9 C8       ..
  JSR MESS                                     ; AC3B: 20 8F B7     ..
+
 .CAC3E
+
  LDY XX4                                      ; AC3E: A4 AB       ..
  LDX FRIN,Y                                   ; AC40: BE 6A 03    .j.
  CPX #2                                       ; AC43: E0 02       ..
@@ -8396,32 +9323,43 @@ ENDMACRO
  JMP KS4                                      ; AC47: 4C BE AB    L..
 
 .CAC4A
+
  CPX #&1F                                     ; AC4A: E0 1F       ..
  BNE CAC59                                    ; AC4C: D0 0B       ..
  LDA TP                                       ; AC4E: AD 9E 03    ...
  ORA #2                                       ; AC51: 09 02       ..
  STA TP                                       ; AC53: 8D 9E 03    ...
  INC TALLY+1                                  ; AC56: EE DD 03    ...
+
 .CAC59
+
  CPX #&0F                                     ; AC59: E0 0F       ..
  BEQ blacksuspenders                          ; AC5B: F0 08       ..
  CPX #3                                       ; AC5D: E0 03       ..
  BCC CAC68                                    ; AC5F: 90 07       ..
  CPX #&0B                                     ; AC61: E0 0B       ..
  BCS CAC68                                    ; AC63: B0 03       ..
+
 .blacksuspenders
+
  DEC JUNK                                     ; AC65: CE 73 03    .s.
+
 .CAC68
+
  DEC MANY,X                                   ; AC68: DE 62 05    .b.
  LDX XX4                                      ; AC6B: A6 AB       ..
+
 .KSL1
+
  LDA setupPPUForIconBar                       ; AC6D: A5 E9       ..
  BPL CAC7A                                    ; AC6F: 10 09       ..
  LDA PPU_STATUS                               ; AC71: AD 02 20    ..
  ASL A                                        ; AC74: 0A          .
  BPL CAC7A                                    ; AC75: 10 03       ..
  JSR SetPPUTablesTo0                          ; AC77: 20 6D D0     m.
+
 .CAC7A
+
  INX                                          ; AC7A: E8          .
  LDA FRIN,X                                   ; AC7B: BD 6A 03    .j.
  STA L0369,X                                  ; AC7E: 9D 69 03    .i.
@@ -8429,6 +9367,7 @@ ENDMACRO
  JMP KS2                                      ; AC83: 4C D5 AB    L..
 
 .CAC86
+
  TXA                                          ; AC86: 8A          .
  ASL A                                        ; AC87: 0A          .
  TAY                                          ; AC88: A8          .
@@ -8442,9 +9381,13 @@ ENDMACRO
  ASL A                                        ; AC9A: 0A          .
  BPL CACA0                                    ; AC9B: 10 03       ..
  JSR SetPPUTablesTo0                          ; AC9D: 20 6D D0     m.
+
 .CACA0
+
  LDY #&29 ; ')'                               ; ACA0: A0 29       .)
+
 .loop_CACA2
+
  LDA (SC),Y                                   ; ACA2: B1 07       ..
  STA (XX19),Y                                 ; ACA4: 91 61       .a
  DEY                                          ; ACA6: 88          .
@@ -8459,7 +9402,9 @@ ENDMACRO
  ASL A                                        ; ACB8: 0A          .
  BPL CACBE                                    ; ACB9: 10 03       ..
  JSR SetPPUTablesTo0                          ; ACBB: 20 6D D0     m.
+
 .CACBE
+
  JMP KSL1                                     ; ACBE: 4C 6D AC    Lm.
 
 \ ******************************************************************************
@@ -8495,7 +9440,9 @@ ENDMACRO
  ASL A                                        ; ACD1: 0A          .
  BPL CACD7                                    ; ACD2: 10 03       ..
  JSR SetPPUTablesTo0                          ; ACD4: 20 6D D0     m.
+
 .CACD7
+
  LDX NOMSL                                    ; ACD7: AE C8 03    ...
  JSR MSBAR                                    ; ACDA: 20 9F E5     ..
  JMP CAC5C_b3                                 ; ACDD: 4C 71 F1    Lq.
@@ -8510,6 +9457,7 @@ ENDMACRO
 \ ******************************************************************************
 
 .msbpars
+
  EQUB 4, 0, 0, 0, 0                           ; ACE0: 04 00 00... ...
 
 \ ******************************************************************************
@@ -8529,7 +9477,9 @@ ENDMACRO
  STA L0037                                    ; ACEA: 85 37       .7
  LDA #1                                       ; ACEC: A9 01       ..
  PHA                                          ; ACEE: 48          H
+
 .CACEF
+
  JSR CLYNS                                    ; ACEF: 20 DE F2     ..
  LDA #&0F                                     ; ACF2: A9 0F       ..
  STA XC                                       ; ACF4: 85 32       .2
@@ -8545,12 +9495,15 @@ ENDMACRO
  PLA                                          ; AD0B: 68          h
  EOR #3                                       ; AD0C: 49 03       I.
  PHA                                          ; AD0E: 48          H
+
 .CAD0F
+
  LDY #8                                       ; AD0F: A0 08       ..
  JSR DELAY                                    ; AD11: 20 A2 EB     ..
  JMP CACEF                                    ; AD14: 4C EF AC    L..
 
 .CAD17
+
  LDA #0                                       ; AD17: A9 00       ..
  STA L0081                                    ; AD19: 85 81       ..
  STA controller1A                             ; AD1B: 8D B2 04    ...
@@ -8579,6 +9532,7 @@ ENDMACRO
  RTS                                          ; AD2D: 60          `
 
 .CAD2E
+
  JSR DOKEY                                    ; AD2E: 20 A8 B6     ..
  LDX #0                                       ; AD31: A2 00       ..
  LDY #0                                       ; AD33: A0 00       ..
@@ -8587,19 +9541,27 @@ ENDMACRO
  LDA L04BA                                    ; AD3A: AD BA 04    ...
  BPL CAD40                                    ; AD3D: 10 01       ..
  DEX                                          ; AD3F: CA          .
+
 .CAD40
+
  LDA L04BB                                    ; AD40: AD BB 04    ...
  BPL CAD46                                    ; AD43: 10 01       ..
  INX                                          ; AD45: E8          .
+
 .CAD46
+
  LDA controller1Up                            ; AD46: AD AC 04    ...
  BPL CAD4C                                    ; AD49: 10 01       ..
  INY                                          ; AD4B: C8          .
+
 .CAD4C
+
  LDA controller1Down                          ; AD4C: AD AA 04    ...
  BPL CAD52                                    ; AD4F: 10 01       ..
  DEY                                          ; AD51: 88          .
+
 .CAD52
+
  LDA L0081                                    ; AD52: A5 81       ..
  RTS                                          ; AD54: 60          `
 
@@ -8623,9 +9585,13 @@ ENDMACRO
  LDA QQ1                                      ; AD62: AD A0 03    ...
  CMP #&21 ; '!'                               ; AD65: C9 21       .!
  BEQ CAD6A                                    ; AD67: F0 01       ..
+
 .CAD69
+
  CLC                                          ; AD69: 18          .
+
 .CAD6A
+
  RTS                                          ; AD6A: 60          `
 
 \ ******************************************************************************
@@ -8643,14 +9609,18 @@ ENDMACRO
  LDA #0                                       ; AD6E: A9 00       ..
  STA L0395                                    ; AD70: 8D 95 03    ...
  LDX #6                                       ; AD73: A2 06       ..
+
 .loop_CAD75
+
  STA BETA,X                                   ; AD75: 95 69       .i
  DEX                                          ; AD77: CA          .
  BPL loop_CAD75                               ; AD78: 10 FB       ..
  TXA                                          ; AD7A: 8A          .
  STA QQ12                                     ; AD7B: 85 A5       ..
  LDX #2                                       ; AD7D: A2 02       ..
+
 .loop_CAD7F
+
  STA FSH,X                                    ; AD7F: 9D 84 04    ...
  DEX                                          ; AD82: CA          .
  BPL loop_CAD7F                               ; AD83: 10 FA       ..
@@ -8682,7 +9652,9 @@ ENDMACRO
  BPL CADAA                                    ; ADA2: 10 06       ..
  JSR subm_8790                                ; ADA4: 20 90 87     ..
  STA BOMB                                     ; ADA7: 8D C0 03    ...
+
 .CADAA
+
  LDA #&14                                     ; ADAA: A9 14       ..
  STA NOSTM                                    ; ADAC: 8D E5 03    ...
  LDX #&FF                                     ; ADAF: A2 FF       ..
@@ -8714,13 +9686,17 @@ ENDMACRO
  LDA ECMA                                     ; ADEC: A5 6D       .m
  BEQ CADF3                                    ; ADEE: F0 03       ..
  JSR ECMOF                                    ; ADF0: 20 62 BE     b.
+
 .CADF3
+
  JSR WPSHPS                                   ; ADF3: 20 D7 A9     ..
  LDA QQ11a                                    ; ADF6: A5 9F       ..
  BMI CAE00                                    ; ADF8: 30 06       0.
  JSR subm_CE9E                                ; ADFA: 20 9E CE     ..
  JSR subm_CEA5                                ; ADFD: 20 A5 CE     ..
+
 .CAE00
+
  JSR subm_B46B                                ; AE00: 20 6B B4     k.
 
 \ ******************************************************************************
@@ -8740,10 +9716,14 @@ ENDMACRO
  ASL A                                        ; AE0A: 0A          .
  BPL CAE10                                    ; AE0B: 10 03       ..
  JSR SetPPUTablesTo0                          ; AE0D: 20 6D D0     m.
+
 .CAE10
+
  LDY #&25 ; '%'                               ; AE10: A0 25       .%
  LDA #0                                       ; AE12: A9 00       ..
+
 .loop_CAE14
+
  STA XX1,Y                                    ; AE14: 99 09 00    ...
  DEY                                          ; AE17: 88          .
  BPL loop_CAE14                               ; AE18: 10 FA       ..
@@ -8753,7 +9733,9 @@ ENDMACRO
  ASL A                                        ; AE21: 0A          .
  BPL CAE27                                    ; AE22: 10 03       ..
  JSR SetPPUTablesTo0                          ; AE24: 20 6D D0     m.
+
 .CAE27
+
  LDA #&60 ; '`'                               ; AE27: A9 60       .`
  STA INWK+18                                  ; AE29: 85 1B       ..
  STA INWK+22                                  ; AE2B: 85 1F       ..
@@ -8791,7 +9773,9 @@ ENDMACRO
 .msblob
 
  LDX #4                                       ; AE3C: A2 04       ..
+
 .loop_CAE3E
+
  CPX NOMSL                                    ; AE3E: EC C8 03    ...
  BEQ CAE4C                                    ; AE41: F0 09       ..
  LDY #&85                                     ; AE43: A0 85       ..
@@ -8801,6 +9785,7 @@ ENDMACRO
  RTS                                          ; AE4B: 60          `
 
 .CAE4C
+
  LDY #&6C ; 'l'                               ; AE4C: A0 6C       .l
  JSR MSBAR                                    ; AE4E: 20 9F E5     ..
  DEX                                          ; AE51: CA          .
@@ -8833,13 +9818,17 @@ ENDMACRO
  STA INWK+32                                  ; AE6E: 85 29       .)
  LDX #&10                                     ; AE70: A2 10       ..
  STX NEWB                                     ; AE72: 86 2D       .-
+
 .CAE74
+
  AND #2                                       ; AE74: 29 02       ).
  ADC #&0B                                     ; AE76: 69 0B       i.
  CMP #&0F                                     ; AE78: C9 0F       ..
  BNE CAE7E                                    ; AE7A: D0 02       ..
  LDA #&0B                                     ; AE7C: A9 0B       ..
+
 .CAE7E
+
  JSR NWSHP                                    ; AE7E: 20 E3 AA     ..
  JMP MLOOP                                    ; AE81: 4C EF AF    L..
 
@@ -8878,10 +9867,13 @@ ENDMACRO
  JSR M%                                 ; AE99: 20 33 85     3.
  DEC MCNT                                     ; AE9C: C6 A2       ..
  BEQ CAEA3                                    ; AE9E: F0 03       ..
+
 .loop_CAEA0
+
  JMP MLOOP                                    ; AEA0: 4C EF AF    L..
 
 .CAEA3
+
  LDA MJ                                       ; AEA3: AD 8A 03    ...
  ORA DLY                                      ; AEA6: 0D 5D 04    .].
  BNE loop_CAEA0                               ; AEA9: D0 F5       ..
@@ -8910,6 +9902,7 @@ ENDMACRO
  JMP MTT4                                     ; AEDB: 4C 55 AE    LU.
 
 .CAEDE
+
  ORA #&6F ; 'o'                               ; AEDE: 09 6F       .o
  STA INWK+29                                  ; AEE0: 85 26       .&
  LDA SSPR                                     ; AEE2: AD 64 05    .d.
@@ -8920,23 +9913,33 @@ ENDMACRO
  ORA #&10                                     ; AEEC: 09 10       ..
  STA INWK+27                                  ; AEEE: 85 24       .$
  BCC CAEF6                                    ; AEF0: 90 04       ..
+
 .CAEF2
+
  ORA #&7F                                     ; AEF2: 09 7F       ..
  STA INWK+30                                  ; AEF4: 85 27       .'
+
 .CAEF6
+
  JSR DORND                                    ; AEF6: 20 AD F4     ..
  CMP #&FC                                     ; AEF9: C9 FC       ..
  BCC CAF03                                    ; AEFB: 90 06       ..
  LDA #&0F                                     ; AEFD: A9 0F       ..
  STA INWK+32                                  ; AEFF: 85 29       .)
  BNE CAF09                                    ; AF01: D0 06       ..
+
 .CAF03
+
  CMP #&0A                                     ; AF03: C9 0A       ..
  AND #1                                       ; AF05: 29 01       ).
  ADC #5                                       ; AF07: 69 05       i.
+
 .CAF09
+
  JSR NWSHP                                    ; AF09: 20 E3 AA     ..
+
 .MLOOPS
+
  JMP MLOOP                                    ; AF0C: 4C EF AF    L..
 
 \ ******************************************************************************
@@ -8957,7 +9960,9 @@ ENDMACRO
  LDX MANY+16                                  ; AF18: AE 72 05    .r.
  BEQ CAF20                                    ; AF1B: F0 03       ..
  ORA FIST                                     ; AF1D: 0D C9 03    ...
+
 .CAF20
+
  STA T                                        ; AF20: 85 9A       ..
  JSR Ze                                       ; AF22: 20 2E F4     ..
  CMP #&88                                     ; AF25: C9 88       ..
@@ -8965,6 +9970,7 @@ ENDMACRO
  JMP fothg                                    ; AF29: 4C BC AF    L..
 
 .CAF2C
+
  CMP T                                        ; AF2C: C5 9A       ..
  BCS CAF3B                                    ; AF2E: B0 0B       ..
  LDA NEWB                                     ; AF30: A5 2D       .-
@@ -8972,7 +9978,9 @@ ENDMACRO
  STA NEWB                                     ; AF34: 85 2D       .-
  LDA #&10                                     ; AF36: A9 10       ..
  JSR NWSHP                                    ; AF38: 20 E3 AA     ..
+
 .CAF3B
+
  LDA MANY+16                                  ; AF3B: AD 72 05    .r.
  BNE MLOOPS                                   ; AF3E: D0 CC       ..
 
@@ -8997,11 +10005,14 @@ ENDMACRO
  JSR DORND                                    ; AF51: 20 AD F4     ..
  CMP #&C8                                     ; AF54: C9 C8       ..
  BCC nopl                                     ; AF56: 90 06       ..
+
 .CAF58
+
  JSR SpawnThargoid                            ; AF58: 20 13 A2     ..
  JMP MLOOP                                    ; AF5B: 4C EF AF    L..
 
 .nopl
+
  JSR DORND                                    ; AF5E: 20 AD F4     ..
  LDY gov                                      ; AF61: AC 8C 04    ...
  BEQ LABEL_2                                  ; AF64: F0 17       ..
@@ -9010,13 +10021,17 @@ ENDMACRO
  BEQ CAF72                                    ; AF6C: F0 04       ..
  CMP #&32 ; '2'                               ; AF6E: C9 32       .2
  BCS MLOOPS                                   ; AF70: B0 9A       ..
+
 .CAF72
+
  CMP #&64 ; 'd'                               ; AF72: C9 64       .d
  BCS MLOOPS                                   ; AF74: B0 96       ..
  AND #7                                       ; AF76: 29 07       ).
  CMP gov                                      ; AF78: CD 8C 04    ...
  BCC MLOOPS                                   ; AF7B: 90 8F       ..
+
 .LABEL_2
+
  JSR Ze                                       ; AF7D: 20 2E F4     ..
  CMP #&64 ; 'd'                               ; AF80: C9 64       .d
  AND #&0F                                     ; AF82: 29 0F       ).
@@ -9037,22 +10052,31 @@ ENDMACRO
  BCC CAFA8                                    ; AFA1: 90 05       ..
  ORA MANY+31                                  ; AFA3: 0D 81 05    ...
  BEQ LAFB4                                    ; AFA6: F0 0C       ..
+
 .CAFA8
+
  JSR DORND                                    ; AFA8: 20 AD F4     ..
  CMP #&C8                                     ; AFAB: C9 C8       ..
  ROL A                                        ; AFAD: 2A          *
  ORA #&C0                                     ; AFAE: 09 C0       ..
  STA INWK+32                                  ; AFB0: 85 29       .)
  TYA                                          ; AFB2: 98          .
+
 .sub_CAFB3
+
  EQUB &2C
+
 .LAFB4
+
  LDA #&1F
+
 .loop_CAFB6
+
  JSR NWSHP                                    ; AFB6: 20 E3 AA     ..
  JMP MLOOP                                    ; AFB9: 4C EF AF    L..
 
 .fothg
+
  LDA K%+6                               ; AFBC: AD 06 06    ...
  AND #&3E ; '>'                               ; AFBF: 29 3E       )>
  BNE CAF58                                    ; AFC1: D0 95       ..
@@ -9062,11 +10086,15 @@ ENDMACRO
  STA INWK+32                                  ; AFC9: 85 29       .)
  LDA #&20 ; ' '                               ; AFCB: A9 20       .
  BNE loop_CAFB6                               ; AFCD: D0 E7       ..
+
 .CAFCF
+
  AND #3                                       ; AFCF: 29 03       ).
  STA EV                                       ; AFD1: 8D 92 03    ...
  STA XX13                                     ; AFD4: 85 A1       ..
+
 .loop_CAFD6
+
  LDA #4                                       ; AFD6: A9 04       ..
  STA NEWB                                     ; AFD8: 85 2D       .-
  JSR DORND                                    ; AFDA: 20 AD F4     ..
@@ -9095,20 +10123,28 @@ ENDMACRO
  LDX GNTMP                                    ; AFF2: AE 90 03    ...
  BEQ CAFFA                                    ; AFF5: F0 03       ..
  DEC GNTMP                                    ; AFF7: CE 90 03    ...
+
 .CAFFA
+
  LDX LASCT                                    ; AFFA: AE 8F 03    ...
  BEQ CB006                                    ; AFFD: F0 07       ..
  DEX                                          ; AFFF: CA          .
  BEQ CB003                                    ; B000: F0 01       ..
  DEX                                          ; B002: CA          .
+
 .CB003
+
  STX LASCT                                    ; B003: 8E 8F 03    ...
+
 .CB006
+
  LDA QQ11                                     ; B006: A5 9E       ..
  BEQ CB00F                                    ; B008: F0 05       ..
  LDY #4                                       ; B00A: A0 04       ..
  JSR DELAY                                    ; B00C: 20 A2 EB     ..
+
 .CB00F
+
  LDA TRIBBLE+1                                ; B00F: AD C6 03    ...
  BEQ CB02B                                    ; B012: F0 17       ..
  JSR DORND                                    ; B014: 20 AD F4     ..
@@ -9120,7 +10156,9 @@ ENDMACRO
  INC TRIBBLE+1                                ; B023: EE C6 03    ...
  BPL CB02B                                    ; B026: 10 03       ..
  DEC TRIBBLE+1                                ; B028: CE C6 03    ...
+
 .CB02B
+
  LDA TRIBBLE+1                                ; B02B: AD C6 03    ...
  BEQ CB04C                                    ; B02E: F0 1C       ..
  LDY CABTMP                                   ; B030: AC 8B 03    ...
@@ -9128,7 +10166,9 @@ ENDMACRO
  BCS CB039                                    ; B035: B0 02       ..
  LSR A                                        ; B037: 4A          J
  LSR A                                        ; B038: 4A          J
+
 .CB039
+
  STA T                                        ; B039: 85 9A       ..
  JSR DORND                                    ; B03B: 20 AD F4     ..
  CMP T                                        ; B03E: C5 9A       ..
@@ -9138,16 +10178,22 @@ ENDMACRO
  LDA LB079,Y                                  ; B045: B9 79 B0    .y.
  TAY                                          ; B048: A8          .
  JSR NOISE                                    ; B049: 20 F2 EB     ..
+
 .CB04C
+
  LDA L0300                                    ; B04C: AD 00 03    ...
  LDX QQ22+1                                   ; B04F: A6 6C       .l
  BEQ CB055                                    ; B051: F0 02       ..
  ORA #&80                                     ; B053: 09 80       ..
+
 .CB055
+
  LDX DLY                                      ; B055: AE 5D 04    .].
  BEQ CB05C                                    ; B058: F0 02       ..
  AND #&7F                                     ; B05A: 29 7F       ).
+
 .CB05C
+
  STA L0300                                    ; B05C: 8D 00 03    ...
  AND #&C0                                     ; B05F: 29 C0       ).
  BEQ CB070                                    ; B061: F0 0D       ..
@@ -9157,9 +10203,13 @@ ENDMACRO
  ROR A                                        ; B069: 6A          j
  STA L0300                                    ; B06A: 8D 00 03    ...
  JSR CAC5C_b3                                 ; B06D: 20 71 F1     q.
+
 .CB070
+
  JSR subm_AD25                                ; B070: 20 25 AD     %.
+
 .CB073
+
  JSR TT102                                    ; B073: 20 7D B0     }.
  JMP subm_AE84                                ; B076: 4C 84 AE    L..
 
@@ -9173,6 +10223,7 @@ ENDMACRO
 \ ******************************************************************************
 
 .LB079
+
  EQUB 5, 5, 5, 6                              ; B079: 05 05 05... ...
 
 \ ******************************************************************************
@@ -9191,11 +10242,13 @@ ENDMACRO
  JMP CB16A                                    ; B081: 4C 6A B1    Lj.
 
 .CB084
+
  CMP #3                                       ; B084: C9 03       ..
  BNE CB08B                                    ; B086: D0 03       ..
  JMP STATUS                                   ; B088: 4C 37 88    L7.
 
 .CB08B
+
  CMP #4                                       ; B08B: C9 04       ..
  BEQ CB09B                                    ; B08D: F0 0C       ..
  CMP #&24 ; '$'                               ; B08F: C9 24       .$
@@ -9203,31 +10256,38 @@ ENDMACRO
  LDA L0470                                    ; B093: AD 70 04    .p.
  EOR #&80                                     ; B096: 49 80       I.
  STA L0470                                    ; B098: 8D 70 04    .p.
+
 .CB09B
+
  LDA L0470                                    ; B09B: AD 70 04    .p.
  BPL CB0A3                                    ; B09E: 10 03       ..
  JMP TT22                                     ; B0A0: 4C 90 98    L..
 
 .CB0A3
+
  JMP TT23                                     ; B0A3: 4C 00 9C    L..
 
 .CB0A6
+
  CMP #&23 ; '#'                               ; B0A6: C9 23       .#
  BNE CB0B0                                    ; B0A8: D0 06       ..
  JSR subm_9D09                                ; B0AA: 20 09 9D     ..
  JMP TT25                                     ; B0AD: 4C DC 96    L..
 
 .CB0B0
+
  CMP #8                                       ; B0B0: C9 08       ..
  BNE CB0B7                                    ; B0B2: D0 03       ..
  JMP TT213                                    ; B0B4: 4C B1 9A    L..
 
 .CB0B7
+
  CMP #2                                       ; B0B7: C9 02       ..
  BNE CB0BE                                    ; B0B9: D0 03       ..
  JMP subm_9FE0                                ; B0BB: 4C E0 9F    L..
 
 .CB0BE
+
  CMP #1                                       ; B0BE: C9 01       ..
  BNE CB0CC                                    ; B0C0: D0 0A       ..
  LDX QQ12                                     ; B0C2: A6 A5       ..
@@ -9236,6 +10296,7 @@ ENDMACRO
  JMP TT110                                    ; B0C9: 4C BE A2    L..
 
 .CB0CC
+
  CMP #&11                                     ; B0CC: C9 11       ..
  BNE CB119                                    ; B0CE: D0 49       .I
  LDX QQ12                                     ; B0D0: A6 A5       ..
@@ -9254,28 +10315,38 @@ ENDMACRO
  JMP BOOP                                     ; B0EF: 4C E5 EB    L..
 
 .CB0F2
+
  DEC L03E8                                    ; B0F2: CE E8 03    ...
  LDA #0                                       ; B0F5: A9 00       ..
  JSR MESS                                     ; B0F7: 20 8F B7     ..
+
 .CB0FA
+
  LDA #1                                       ; B0FA: A9 01       ..
  JSR KeepPPUTablesAt0                         ; B0FC: 20 67 D1     g.
  JSR C8021_b6                                 ; B0FF: 20 24 ED     $.
  LDA #&FF                                     ; B102: A9 FF       ..
  BNE CB10B                                    ; B104: D0 05       ..
+
 .CB106
+
  JSR ResetSound_b6                            ; B106: 20 6B ED     k.
  LDA #0                                       ; B109: A9 00       ..
+
 .CB10B
+
  STA auto                                     ; B10B: 8D 88 03    ...
  LDA QQ11                                     ; B10E: A5 9E       ..
  BEQ CB118                                    ; B110: F0 06       ..
  JSR CLYNS                                    ; B112: 20 DE F2     ..
  JSR subm_8980                                ; B115: 20 80 89     ..
+
 .CB118
+
  RTS                                          ; B118: 60          `
 
 .CB119
+
  JSR subm_B1D4                                ; B119: 20 D4 B1     ..
  CMP #&15                                     ; B11C: C9 15       ..
  BNE CB137                                    ; B11E: D0 17       ..
@@ -9284,6 +10355,7 @@ ENDMACRO
  RTS                                          ; B124: 60          `
 
 .CB125
+
  LDA #0                                       ; B125: A9 00       ..
  LDX QQ11                                     ; B127: A6 9E       ..
  BNE CB133                                    ; B129: D0 08       ..
@@ -9291,11 +10363,14 @@ ENDMACRO
  CLC                                          ; B12E: 18          .
  ADC #1                                       ; B12F: 69 01       i.
  AND #3                                       ; B131: 29 03       ).
+
 .CB133
+
  TAX                                          ; B133: AA          .
  JMP LOOK1                                    ; B134: 4C B3 BD    L..
 
 .CB137
+
  BIT QQ12                                     ; B137: 24 A5       $.
  BPL CB149                                    ; B139: 10 0E       ..
  CMP #5                                       ; B13B: C9 05       ..
@@ -9303,21 +10378,25 @@ ENDMACRO
  JMP EQSHP                                    ; B13F: 4C 8D A4    L..
 
 .CB142
+
  CMP #6                                       ; B142: C9 06       ..
  BNE CB149                                    ; B144: D0 03       ..
  JMP CB459_b6                                 ; B146: 4C 94 F1    L..
 
 .CB149
+
  CMP #&16                                     ; B149: C9 16       ..
  BNE CB150                                    ; B14B: D0 03       ..
  JMP C9E51                                    ; B14D: 4C 51 9E    LQ.
 
 .CB150
+
  CMP #&29 ; ')'                               ; B150: C9 29       .)
  BNE CB157                                    ; B152: D0 03       ..
  JMP C9E48                                    ; B154: 4C 48 9E    LH.
 
 .CB157
+
  CMP #&27 ; '''                               ; B157: C9 27       .'
  BNE CB16A                                    ; B159: D0 0F       ..
  LDA QQ22+1                                   ; B15B: A5 6C       .l
@@ -9329,6 +10408,7 @@ ENDMACRO
  JMP HME2                                     ; B167: 4C 2B 8C    L+.
 
 .CB16A
+
  STA T1                                       ; B16A: 85 06       ..
  LDA QQ11                                     ; B16C: A5 9E       ..
  AND #&0E                                     ; B16E: 29 0E       ).
@@ -9340,14 +10420,19 @@ ENDMACRO
  CMP #&26 ; '&'                               ; B17A: C9 26       .&
  BNE CB18A                                    ; B17C: D0 0C       ..
  JSR ping                                     ; B17E: 20 16 95     ..
+
 .CB181
+
  ASL L0395                                    ; B181: 0E 95 03    ...
  LSR L0395                                    ; B184: 4E 95 03    N..
  JMP subm_9D09                                ; B187: 4C 09 9D    L..
 
 .CB18A
+
  JSR subm_9AE7                                ; B18A: 20 E7 9A     ..
+
 .CB18D
+
  LDA QQ22+1                                   ; B18D: A5 6C       .l
  BEQ CB1A5                                    ; B18F: F0 14       ..
  DEC QQ22                                     ; B191: C6 6B       .k
@@ -9360,9 +10445,11 @@ ENDMACRO
  JMP MESS                                     ; B19F: 4C 8F B7    L..
 
 .CB1A2
+
  JMP TT18                                     ; B1A2: 4C 4E A2    LN.
 
 .CB1A5
+
  RTS                                          ; B1A5: 60          `
 
 \ ******************************************************************************
@@ -9405,10 +10492,13 @@ ENDMACRO
  CMP INWK+4                                   ; B1C1: C5 0D       ..
  BCC CB1C7                                    ; B1C3: 90 02       ..
  CMP INWK+7                                   ; B1C5: C5 10       ..
+
 .CB1C7
+
  RTS                                          ; B1C7: 60          `
 
 .CB1C8
+
  CLC                                          ; B1C8: 18          .
  RTS                                          ; B1C9: 60          `
 
@@ -9461,6 +10551,7 @@ ENDMACRO
  RTS                                          ; B1E1: 60          `
 
 .CB1E2
+
  CLC                                          ; B1E2: 18          .
  RTS                                          ; B1E3: 60          `
 
@@ -9492,7 +10583,7 @@ ENDMACRO
  LDA #0                                       ; B20A: A9 00       ..
  STA L045F                                    ; B20C: 8D 5F 04    ._.
  LDA #&C4                                     ; B20F: A9 C4       ..
- JSR LF12B                                    ; B211: 20 2B F1     +.
+ JSR CA7B7_b3                                    ; B211: 20 2B F1     +.
  LDA #0                                       ; B214: A9 00       ..
  STA QQ11                                     ; B216: 85 9E       ..
  STA QQ11a                                    ; B218: 85 9F       ..
@@ -9506,7 +10597,9 @@ ENDMACRO
  JSR subm_AE32                                ; B228: 20 32 AE     2.
  LDY #8                                       ; B22B: A0 08       ..
  LDA #1                                       ; B22D: A9 01       ..
+
 .loop_CB22F
+
  STA L0374,Y                                  ; B22F: 99 74 03    .t.
  DEY                                          ; B232: 88          .
  BNE loop_CB22F                               ; B233: D0 FA       ..
@@ -9521,7 +10614,9 @@ ENDMACRO
  STA ALP2                                     ; B247: 85 6F       .o
  EOR #&80                                     ; B249: 49 80       I.
  STA ALP2+1                                   ; B24B: 85 70       .p
+
 .CB24D
+
  JSR Ze                                       ; B24D: 20 2E F4     ..
  LSR A                                        ; B250: 4A          J
  LSR A                                        ; B251: 4A          J
@@ -9552,7 +10647,9 @@ ENDMACRO
  BEQ CB285                                    ; B280: F0 03       ..
  BCC CB285                                    ; B282: 90 01       ..
  DEX                                          ; B284: CA          .
+
 .CB285
+
  JSR fq1                                      ; B285: 20 EE 91     ..
  JSR DORND                                    ; B288: 20 AD F4     ..
  AND #&80                                     ; B28B: 29 80       ).
@@ -9567,15 +10664,17 @@ ENDMACRO
  LDA #&92                                     ; B29E: A9 92       ..
  LDY #&78 ; 'x'                               ; B2A0: A0 78       .x
  JSR subm_B77A                                ; B2A2: 20 7A B7     z.
- JSR LEB8F                                    ; B2A5: 20 8F EB     ..
+ JSR subm_EB8F                                    ; B2A5: 20 8F EB     ..
  LDA #&1E                                     ; B2A8: A9 1E       ..
  STA LASCT                                    ; B2AA: 8D 8F 03    ...
+
 .loop_CB2AD
+
  JSR ChangeDrawingPhase                       ; B2AD: 20 E1 D8     ..
  JSR subm_MA23                                ; B2B0: 20 4A 83     J.
  JSR CBED2_b6                                 ; B2B3: 20 43 EF     C.
  LDA #&CC                                     ; B2B6: A9 CC       ..
- JSR LD977                                    ; B2B8: 20 77 D9     w.
+ JSR subm_D977                                    ; B2B8: 20 77 D9     w.
  DEC LASCT                                    ; B2BB: CE 8F 03    ...
  BNE loop_CB2AD                               ; B2BE: D0 ED       ..
  JMP subm_B2EF                                    ; B2C0: 4C EF B2    L..
@@ -9620,6 +10719,7 @@ ENDMACRO
 \ ******************************************************************************
 
 .subm_B2EF
+
  LDX #&FF                                     ; B2EF: A2 FF       ..
  TXS                                          ; B2F1: 9A          .
  INX                                          ; B2F2: E8          .
@@ -9645,7 +10745,9 @@ ENDMACRO
  LDA L03EE                                    ; B324: AD EE 03    ...
  BEQ CB32C                                    ; B327: F0 03       ..
  JSR subm_F362                                ; B329: 20 62 F3     b.
+
 .CB32C
+
  JSR KeepPPUTablesAt0                         ; B32C: 20 67 D1     g.
  LDA #4                                       ; B32F: A9 04       ..
  JSR C8021_b6                                 ; B331: 20 24 ED     $.
@@ -9657,6 +10759,7 @@ ENDMACRO
  JMP CA5AB_b6                                 ; B33E: 4C 59 F0    LY.
 
 .CB341
+
  JSR BR2_Part2                                ; B341: 20 6A B3     j.
  LDA #&FF                                     ; B344: A9 FF       ..
  STA QQ11                                     ; B346: 85 9E       ..
@@ -9667,6 +10770,7 @@ ENDMACRO
  JMP CA5AB_b6                                 ; B352: 4C 59 F0    LY.
 
 .CB355
+
  JSR CB63D_b3                                 ; B355: 20 AB ED     ..
 
 \ ******************************************************************************
@@ -9679,6 +10783,7 @@ ENDMACRO
 \ ******************************************************************************
 
 .subm_B358
+
  LDX #&FF                                     ; B358: A2 FF       ..
  TXS                                          ; B35A: 9A          .
  JSR BR2_Part2                                ; B35B: 20 6A B3     j.
@@ -9718,7 +10823,9 @@ ENDMACRO
  JSR TT111                                    ; B376: 20 6B 9D     k.
  JSR jmp                                      ; B379: 20 C6 9E     ..
  LDX #5                                       ; B37C: A2 05       ..
+
 .loop_CB37E
+
  LDA QQ15,X                                   ; B37E: B5 82       ..
  STA QQ2,X                                    ; B380: 9D 8E 04    ...
  DEX                                          ; B383: CA          .
@@ -9746,7 +10853,7 @@ ENDMACRO
 
  JSR TT66                                     ; B39D: 20 B5 BE     ..
  JSR CopyNametable0To1                        ; B3A0: 20 34 CD     4.
- JSR CA7B7_b3                                 ; B3A3: 20 26 F1     &.
+ JSR subm_F126                                 ; B3A3: 20 26 F1     &.
  LDA #0                                       ; B3A6: A9 00       ..
  STA QQ11                                     ; B3A8: 85 9E       ..
  STA QQ11a                                    ; B3AA: 85 9F       ..
@@ -9786,7 +10893,7 @@ ENDMACRO
  STX QQ17                                     ; B3D9: 86 3C       .<
  LDA TYPE                                     ; B3DB: A5 A3       ..
  JSR NWSHP                                    ; B3DD: 20 E3 AA     ..
- JSR LF260                                    ; B3E0: 20 60 F2     `.
+ JSR CBAF3_b1                                    ; B3E0: 20 60 F2     `.
  LDA #&0C                                     ; B3E3: A9 0C       ..
  STA CNT2                                     ; B3E5: 85 A9       ..
  LDA #5                                       ; B3E7: A9 05       ..
@@ -9797,33 +10904,44 @@ ENDMACRO
  JSR subm_B39D                                ; B3F1: 20 9D B3     ..
  LDA #7                                       ; B3F4: A9 07       ..
  STA YP                                       ; B3F6: 8D FB 03    ...
+
 .loop_CB3F9
+
  LDA #&19                                     ; B3F9: A9 19       ..
  STA XP                                       ; B3FB: 8D FA 03    ...
+
 .loop_CB3FE
+
  LDA INWK+7                                   ; B3FE: A5 10       ..
  CMP #1                                       ; B400: C9 01       ..
  BEQ CB406                                    ; B402: F0 02       ..
  DEC INWK+7                                   ; B404: C6 10       ..
+
 .CB406
+
  JSR subm_B426                                ; B406: 20 26 B4     &.
  BCS CB422                                    ; B409: B0 17       ..
  DEC XP                                       ; B40B: CE FA 03    ...
  BNE loop_CB3FE                               ; B40E: D0 EE       ..
  DEC YP                                       ; B410: CE FB 03    ...
  BNE loop_CB3F9                               ; B413: D0 E4       ..
+
 .loop_CB415
+
  LDA INWK+7                                   ; B415: A5 10       ..
  CMP #&37 ; '7'                               ; B417: C9 37       .7
  BCS CB424                                    ; B419: B0 09       ..
  INC INWK+7                                   ; B41B: E6 10       ..
  JSR subm_B426                                ; B41D: 20 26 B4     &.
  BCC loop_CB415                               ; B420: 90 F3       ..
+
 .CB422
+
  SEC                                          ; B422: 38          8
  RTS                                          ; B423: 60          `
 
 .CB424
+
  CLC                                          ; B424: 18          .
  RTS                                          ; B425: 60          `
 
@@ -9852,7 +10970,9 @@ ENDMACRO
  ASL A                                        ; B43F: 0A          .
  BPL CB445                                    ; B440: 10 03       ..
  JSR SetPPUTablesTo0                          ; B442: 20 6D D0     m.
+
 .CB445
+
  JSR subm_D96F                                ; B445: 20 6F D9     o.
  INC MCNT                                     ; B448: E6 A2       ..
  LDA controller1A                             ; B44A: AD B2 04    ...
@@ -9860,19 +10980,26 @@ ENDMACRO
  ORA controller1Select                        ; B450: 0D B8 04    ...
  BMI CB457                                    ; B453: 30 02       0.
  BNE CB466                                    ; B455: D0 0F       ..
+
 .CB457
+
  LDA controller2A                             ; B457: AD B3 04    ...
  ORA controller2Start                         ; B45A: 0D B7 04    ...
  ORA controller2Select                        ; B45D: 0D B9 04    ...
  BMI CB464                                    ; B460: 30 02       0.
  BNE CB469                                    ; B462: D0 05       ..
+
 .CB464
+
  CLC                                          ; B464: 18          .
  RTS                                          ; B465: 60          `
 
 .CB466
+
  LSR scanController2                          ; B466: 4E 75 04    Nu.
+
 .CB469
+
  SEC                                          ; B469: 38          8
  RTS                                          ; B46A: 60          `
 
@@ -9890,12 +11017,16 @@ ENDMACRO
  JSR SetupPPUForIconBar                       ; B46B: 20 7D EC     }.
  LDX #&2B ; '+'                               ; B46E: A2 2B       .+
  LDA #0                                       ; B470: A9 00       ..
+
 .loop_CB472
+
  STA L0369,X                                  ; B472: 9D 69 03    .i.
  DEX                                          ; B475: CA          .
  BNE loop_CB472                               ; B476: D0 FA       ..
  LDX #&21 ; '!'                               ; B478: A2 21       .!
+
 .loop_CB47A
+
  STA MANY,X                                   ; B47A: 9D 62 05    .b.
  DEX                                          ; B47D: CA          .
  BPL loop_CB47A                               ; B47E: 10 FA       ..
@@ -9916,7 +11047,9 @@ ENDMACRO
  LDX #6                                       ; B484: A2 06       ..
  LDA #0                                       ; B486: A9 00       ..
  STA L0081                                    ; B488: 85 81       ..
+
 .loop_CB48A
+
  STA KL,X                                     ; B48A: 9D 03 04    ...
  DEX                                          ; B48D: CA          .
  BPL loop_CB48A                               ; B48E: 10 FA       ..
@@ -10006,14 +11139,20 @@ ENDMACRO
  ASL A                                        ; B4DB: 0A          .
  BPL CB4E1                                    ; B4DC: 10 03       ..
  JSR SetPPUTablesTo0                          ; B4DE: 20 6D D0     m.
+
 .CB4E1
+
  LDA K%+7,Y                             ; B4E1: B9 07 06    ...
  JSR SQUA2                                    ; B4E4: 20 0E F7     ..
  ADC R                                        ; B4E7: 65 98       e.
  BCC CB4ED                                    ; B4E9: 90 02       ..
+
 .CB4EB
+
  LDA #&FF                                     ; B4EB: A9 FF       ..
+
 .CB4ED
+
  RTS                                          ; B4ED: 60          `
 
 \ ******************************************************************************
@@ -10033,7 +11172,9 @@ ENDMACRO
  ASL A                                        ; B4F5: 0A          .
  BPL CB4FB                                    ; B4F6: 10 03       ..
  JSR SetPPUTablesTo0                          ; B4F8: 20 6D D0     m.
+
 .CB4FB
+
  LDX #0                                       ; B4FB: A2 00       ..
  LDY #9                                       ; B4FD: A0 09       ..
  JSR MAS1                                     ; B4FF: 20 91 B4     ..
@@ -10054,13 +11195,16 @@ ENDMACRO
  RTS                                          ; B521: 60          `
 
 .MA23S
+
  LDA setupPPUForIconBar                       ; B522: A5 E9       ..
  BPL CB52F                                    ; B524: 10 09       ..
  LDA PPU_STATUS                               ; B526: AD 02 20    ..
  ASL A                                        ; B529: 0A          .
  BPL CB52F                                    ; B52A: 10 03       ..
  JSR SetPPUTablesTo0                          ; B52C: 20 6D D0     m.
+
 .CB52F
+
  CLC                                          ; B52F: 18          .
  RTS                                          ; B530: 60          `
 
@@ -10086,7 +11230,9 @@ ENDMACRO
  BCC CB542                                    ; B53C: 90 04       ..
  EOR #&FF                                     ; B53E: 49 FF       I.
  ADC #0                                       ; B540: 69 00       i.
+
 .CB542
+
  TAX                                          ; B542: AA          .
  RTS                                          ; B543: 60          `
 
@@ -10147,7 +11293,9 @@ ENDMACRO
  ASL A                                        ; B56D: 0A          .
  BPL CB573                                    ; B56E: 10 03       ..
  JSR SetPPUTablesTo0                          ; B570: 20 6D D0     m.
+
 .CB573
+
  LDA K3                                       ; B573: A5 3D       .=
  ORA XX2+3                                    ; B575: 05 40       .@
  ORA XX2+6                                    ; B577: 05 43       .C
@@ -10156,7 +11304,9 @@ ENDMACRO
  LDA XX2+1                                    ; B57D: A5 3E       .>
  ORA XX2+4                                    ; B57F: 05 41       .A
  ORA XX2+7                                    ; B581: 05 44       .D
+
 .loop_CB583
+
  ASL XX2+9                                    ; B583: 06 46       .F
  ROL A                                        ; B585: 2A          *
  BCS CB596                                    ; B586: B0 0E       ..
@@ -10167,11 +11317,15 @@ ENDMACRO
  ASL XX2+6                                    ; B590: 06 43       .C
  ROL XX2+7                                    ; B592: 26 44       &D
  BCC loop_CB583                               ; B594: 90 ED       ..
+
 .CB596
+
  LSR XX2+1                                    ; B596: 46 3E       F>
  LSR XX2+4                                    ; B598: 46 41       FA
  LSR XX2+7                                    ; B59A: 46 44       FD
+
 .sub_CB59C
+
  LDA XX2+1                                    ; B59C: A5 3E       .>
  LSR A                                        ; B59E: 4A          J
  ORA XX2+2                                    ; B59F: 05 3F       .?
@@ -10203,12 +11357,14 @@ ENDMACRO
  JMP subm_B358                                    ; B5BC: 4C 58 B3    LX.
 
 .CB5BF
+
  LDA auto                                     ; B5BF: AD 88 03    ...
  AND SSPR                                     ; B5C2: 2D 64 05    -d.
  BEQ CB5CA                                    ; B5C5: F0 03       ..
  JMP GOIN                                     ; B5C7: 4C F5 81    L..
 
 .CB5CA
+
  JSR subm_B5F8                                ; B5CA: 20 F8 B5     ..
  BCS CB5DF                                    ; B5CD: B0 10       ..
  JSR subm_B5F8                                ; B5CF: 20 F8 B5     ..
@@ -10217,7 +11373,9 @@ ENDMACRO
  BCS CB5DF                                    ; B5D7: B0 06       ..
  JSR KeepPPUTablesAt0                         ; B5D9: 20 67 D1     g.
  JSR subm_B665                                ; B5DC: 20 65 B6     e.
+
 .CB5DF
+
  LDA #1                                       ; B5DF: A9 01       ..
  STA MCNT                                     ; B5E1: 85 A2       ..
  LSR A                                        ; B5E3: 4A          J
@@ -10230,6 +11388,7 @@ ENDMACRO
  JMP LOOK1                                    ; B5F4: 4C B3 BD    L..
 
 .CB5F7
+
  RTS                                          ; B5F7: 60          `
 
 \ ******************************************************************************
@@ -10245,9 +11404,13 @@ ENDMACRO
 
  JSR KeepPPUTablesAt0                         ; B5F8: 20 67 D1     g.
  JSR subm_B665                                ; B5FB: 20 65 B6     e.
+
 .sub_CB5FE
+
  LDA #&80                                     ; B5FE: A9 80       ..
+
 .sub_CB600
+
  LSR A                                        ; B600: 4A          J
  STA T                                        ; B601: 85 9A       ..
  LDY #0                                       ; B603: A0 00       ..
@@ -10256,7 +11419,9 @@ ENDMACRO
  LDA SSPR                                     ; B60A: AD 64 05    .d.
  BNE CB664                                    ; B60D: D0 55       .U
  LDY #&2A ; '*'                               ; B60F: A0 2A       .*
+
 .sub_CB611
+
  LDA K%+2,Y                             ; B611: B9 02 06    ...
  ORA K%+5,Y                             ; B614: 19 05 06    ...
  ASL A                                        ; B617: 0A          .
@@ -10271,7 +11436,9 @@ ENDMACRO
  BCS CB62D                                    ; B627: B0 04       ..
  EOR #&FF                                     ; B629: 49 FF       I.
  ADC #1                                       ; B62B: 69 01       i.
+
 .CB62D
+
  STA K+2                                      ; B62D: 85 7F       ..
  LDA K%+1,Y                             ; B62F: B9 01 06    ...
  LSR A                                        ; B632: 4A          J
@@ -10282,11 +11449,15 @@ ENDMACRO
  CMP K                                        ; B63B: C5 7D       .}
  BCS CB641                                    ; B63D: B0 02       ..
  LDA K                                        ; B63F: A5 7D       .}
+
 .CB641
+
  CMP K+2                                      ; B641: C5 7F       ..
  BCS CB647                                    ; B643: B0 02       ..
  LDA K+2                                      ; B645: A5 7F       ..
+
 .CB647
+
  STA SC                                       ; B647: 85 07       ..
  LDA K                                        ; B649: A5 7D       .}
  CLC                                          ; B64B: 18          .
@@ -10303,13 +11474,18 @@ ENDMACRO
  ADC SC                                       ; B65B: 65 07       e.
  CMP T                                        ; B65D: C5 9A       ..
  BCC CB663                                    ; B65F: 90 02       ..
+
 .CB661
+
  CLC                                          ; B661: 18          .
  RTS                                          ; B662: 60          `
 
 .CB663
+
  SEC                                          ; B663: 38          8
+
 .CB664
+
  RTS                                          ; B664: 60          `
 
 \ ******************************************************************************
@@ -10324,13 +11500,17 @@ ENDMACRO
 .subm_B665
 
  LDY #&20 ; ' '                               ; B665: A0 20       .
+
 .loop_CB667
+
  JSR subm_MainFlight13                        ; B667: 20 D1 84     ..
  DEY                                          ; B66A: 88          .
  BNE loop_CB667                               ; B66B: D0 FA       ..
  LDX #0                                       ; B66D: A2 00       ..
  STX GNTMP                                    ; B66F: 8E 90 03    ...
+
 .CB672
+
  STX XSAV                                     ; B672: 86 9B       ..
  LDA FRIN,X                                   ; B674: BD 6A 03    .j.
  BEQ CB6A7                                    ; B677: F0 2E       ..
@@ -10341,6 +11521,7 @@ ENDMACRO
  JMP CB672                                    ; B683: 4C 72 B6    Lr.
 
 .CB686
+
  JSR GINF                                     ; B686: 20 90 CE     ..
  LDA #&80                                     ; B689: A9 80       ..
  STA S                                        ; B68B: 85 99       ..
@@ -10359,7 +11540,9 @@ ENDMACRO
  LDX XSAV                                     ; B6A2: A6 9B       ..
  INX                                          ; B6A4: E8          .
  BNE CB672                                    ; B6A5: D0 CB       ..
+
 .CB6A7
+
  RTS                                          ; B6A7: 60          `
 
 \ ******************************************************************************
@@ -10376,16 +11559,20 @@ ENDMACRO
  JSR CBBDE_b6                                 ; B6A8: 20 21 F0     !.
  LDA auto                                     ; B6AB: AD 88 03    ...
  BNE CB6BA                                    ; B6AE: D0 0A       ..
+
 .CB6B0
+
  LDX L0081                                    ; B6B0: A6 81       ..
  CPX #&40 ; '@'                               ; B6B2: E0 40       .@
  BNE CB6B9                                    ; B6B4: D0 03       ..
  JMP CA166_b6                                 ; B6B6: 4C 13 F0    L..
 
 .CB6B9
+
  RTS                                          ; B6B9: 60          `
 
 .CB6BA
+
  LDA SSPR                                     ; B6BA: AD 64 05    .d.
  BNE CB6C8                                    ; B6BD: D0 09       ..
  STA auto                                     ; B6BF: 8D 88 03    ...
@@ -10393,6 +11580,7 @@ ENDMACRO
  JMP CB6B0                                    ; B6C5: 4C B0 B6    L..
 
 .CB6C8
+
  JSR ZINF_0                                     ; B6C8: 20 03 AE     ..
  LDA #&60 ; '`'                               ; B6CB: A9 60       .`
  STA INWK+14                                  ; B6CD: 85 17       ..
@@ -10406,7 +11594,9 @@ ENDMACRO
  CMP #&16                                     ; B6DE: C9 16       ..
  BCC CB6E4                                    ; B6E0: 90 02       ..
  LDA #&16                                     ; B6E2: A9 16       ..
+
 .CB6E4
+
  STA DELTA                                    ; B6E4: 85 93       ..
  LDA #&FF                                     ; B6E6: A9 FF       ..
  LDX #0                                       ; B6E8: A2 00       ..
@@ -10414,25 +11604,35 @@ ENDMACRO
  BEQ CB6F5                                    ; B6EC: F0 07       ..
  BMI CB6F2                                    ; B6EE: 30 02       0.
  LDX #1                                       ; B6F0: A2 01       ..
+
 .CB6F2
+
  STA KL,X                                     ; B6F2: 9D 03 04    ...
+
 .CB6F5
+
  LDA #&80                                     ; B6F5: A9 80       ..
  LDX #2                                       ; B6F7: A2 02       ..
  ASL INWK+29                                  ; B6F9: 06 26       .&
  BEQ CB712                                    ; B6FB: F0 15       ..
  BCC CB701                                    ; B6FD: 90 02       ..
  LDX #3                                       ; B6FF: A2 03       ..
+
 .CB701
+
  BIT INWK+29                                  ; B701: 24 26       $&
  BPL CB70C                                    ; B703: 10 07       ..
  LDA #&40 ; '@'                               ; B705: A9 40       .@
  STA JSTX                                     ; B707: 8D 76 04    .v.
  LDA #0                                       ; B70A: A9 00       ..
+
 .CB70C
+
  STA KL,X                                     ; B70C: 9D 03 04    ...
  LDA JSTX                                     ; B70F: AD 76 04    .v.
+
 .CB712
+
  STA JSTX                                     ; B712: 8D 76 04    .v.
  LDA #&80                                     ; B715: A9 80       ..
  LDX #4                                       ; B717: A2 04       ..
@@ -10440,32 +11640,44 @@ ENDMACRO
  BEQ CB727                                    ; B71B: F0 0A       ..
  BCS CB721                                    ; B71D: B0 02       ..
  LDX #5                                       ; B71F: A2 05       ..
+
 .CB721
+
  STA KL,X                                     ; B721: 9D 03 04    ...
  LDA JSTY                                     ; B724: AD 77 04    .w.
+
 .CB727
+
  STA JSTY                                     ; B727: 8D 77 04    .w.
  LDX JSTX                                     ; B72A: AE 76 04    .v.
  LDA #&0E                                     ; B72D: A9 0E       ..
  LDY KY3                                      ; B72F: AC 05 04    ...
  BEQ CB737                                    ; B732: F0 03       ..
  JSR BUMP2                                    ; B734: 20 33 FA     3.
+
 .CB737
+
  LDY KY4                                      ; B737: AC 06 04    ...
  BEQ CB73F                                    ; B73A: F0 03       ..
  JSR REDU2                                    ; B73C: 20 43 FA     C.
+
 .CB73F
+
  STX JSTX                                     ; B73F: 8E 76 04    .v.
  LDA #&0E                                     ; B742: A9 0E       ..
  LDX JSTY                                     ; B744: AE 77 04    .w.
  LDY KY5                                      ; B747: AC 07 04    ...
  BEQ CB74F                                    ; B74A: F0 03       ..
  JSR REDU2                                    ; B74C: 20 43 FA     C.
+
 .CB74F
+
  LDY KY6                                      ; B74F: AC 08 04    ...
  BEQ CB757                                    ; B752: F0 03       ..
  JSR BUMP2                                    ; B754: 20 33 FA     3.
+
 .CB757
+
  STX JSTY                                     ; B757: 8E 77 04    .w.
  LDA auto                                     ; B75A: AD 88 03    ...
  BNE CB777                                    ; B75D: D0 18       ..
@@ -10474,12 +11686,16 @@ ENDMACRO
  ORA KY4                                      ; B764: 0D 06 04    ...
  BNE CB76C                                    ; B767: D0 03       ..
  STX JSTX                                     ; B769: 8E 76 04    .v.
+
 .CB76C
+
  LDA KY5                                      ; B76C: AD 07 04    ...
  ORA KY6                                      ; B76F: 0D 08 04    ...
  BNE CB777                                    ; B772: D0 03       ..
  STX JSTY                                     ; B774: 8E 77 04    .w.
+
 .CB777
+
  JMP CB6B0                                    ; B777: 4C B0 B6    L..
 
 \ ******************************************************************************
@@ -10521,7 +11737,9 @@ ENDMACRO
  ASL A                                        ; B797: 0A          .
  BPL CB79D                                    ; B798: 10 03       ..
  JSR SetPPUTablesTo0                          ; B79A: 20 6D D0     m.
+
 .CB79D
+
  LDY #&0A                                     ; B79D: A0 0A       ..
  STY L0393                                    ; B79F: 8C 93 03    ...
  LDA #&C0                                     ; B7A2: A9 C0       ..
@@ -10544,7 +11762,9 @@ ENDMACRO
  ASL A                                        ; B7C9: 0A          .
  BPL CB7CF                                    ; B7CA: 10 03       ..
  JSR SetPPUTablesTo0                          ; B7CC: 20 6D D0     m.
+
 .CB7CF
+
  JSR hyp1_cpl                                 ; B7CF: 20 C6 A7     ..
  LDA #3                                       ; B7D2: A9 03       ..
  CLC                                          ; B7D4: 18          .
@@ -10554,17 +11774,22 @@ ENDMACRO
  JMP CB7E8                                    ; B7DC: 4C E8 B7    L..
 
 .CB7DF
+
  PHA                                          ; B7DF: 48          H
  LDA #0                                       ; B7E0: A9 00       ..
  STA QQ17                                     ; B7E2: 85 3C       .<
  PLA                                          ; B7E4: 68          h
  JSR TT27_b2                                  ; B7E5: 20 01 F2     ..
+
 .CB7E8
+
  LDA L0394                                    ; B7E8: AD 94 03    ...
  BEQ CB7F2                                    ; B7EB: F0 05       ..
  LDA #&FD                                     ; B7ED: A9 FD       ..
  JSR TT27_b2                                  ; B7EF: 20 01 F2     ..
+
 .CB7F2
+
  LDA #&20 ; ' '                               ; B7F2: A9 20       .
  SEC                                          ; B7F4: 38          8
  SBC DTW5                                     ; B7F5: ED F7 03    ...
@@ -10572,7 +11797,9 @@ ENDMACRO
  LDA #&1F                                     ; B7FA: A9 1F       ..
  STA DTW5                                     ; B7FC: 8D F7 03    ...
  LDA #2                                       ; B7FF: A9 02       ..
+
 .CB801
+
  LSR A                                        ; B801: 4A          J
  STA messXC                                   ; B802: 85 B4       ..
  LDA setupPPUForIconBar                       ; B804: A5 E9       ..
@@ -10581,11 +11808,15 @@ ENDMACRO
  ASL A                                        ; B80B: 0A          .
  BPL CB811                                    ; B80C: 10 03       ..
  JSR SetPPUTablesTo0                          ; B80E: 20 6D D0     m.
+
 .CB811
+
  LDX DTW5                                     ; B811: AE F7 03    ...
  STX L0584                                    ; B814: 8E 84 05    ...
  INX                                          ; B817: E8          .
+
 .loop_CB818
+
  LDA BUF-1,X                                  ; B818: BD 06 05    ...
  STA L0584,X                                  ; B81B: 9D 84 05    ...
  DEX                                          ; B81E: CA          .
@@ -10597,11 +11828,15 @@ ENDMACRO
  ASL A                                        ; B82B: 0A          .
  BPL CB831                                    ; B82C: 10 03       ..
  JSR SetPPUTablesTo0                          ; B82E: 20 6D D0     m.
+
 .CB831
+
  LDA #0                                       ; B831: A9 00       ..
  STA DTW4                                     ; B833: 8D F6 03    ...
  STA DTW5                                     ; B836: 8D F7 03    ...
+
 .CB839
+
  RTS                                          ; B839: 60          `
 
 \ ******************************************************************************
@@ -10618,9 +11853,11 @@ ENDMACRO
  LDA L00B5                                    ; B83A: A5 B5       ..
  LDX QQ11                                     ; B83C: A6 9E       ..
  BEQ CB845                                    ; B83E: F0 05       ..
- JSR LF2E6                                    ; B840: 20 E6 F2     ..
+ JSR CLYNS+8                                    ; B840: 20 E6 F2     ..
  LDA #&17                                     ; B843: A9 17       ..
+
 .CB845
+
  STA YC                                       ; B845: 85 3B       .;
  LDX #0                                       ; B847: A2 00       ..
  STX QQ17                                     ; B849: 86 3C       .<
@@ -10630,13 +11867,17 @@ ENDMACRO
  ASL A                                        ; B852: 0A          .
  BPL CB858                                    ; B853: 10 03       ..
  JSR SetPPUTablesTo0                          ; B855: 20 6D D0     m.
+
 .CB858
+
  LDA messXC                                   ; B858: A5 B4       ..
  STA XC                                       ; B85A: 85 32       .2
  LDA messXC                                   ; B85C: A5 B4       ..
  STA XC                                       ; B85E: 85 32       .2
  LDY #0                                       ; B860: A0 00       ..
+
 .loop_CB862
+
  LDA L0585,Y                                  ; B862: B9 85 05    ...
  JSR CHPR_b2                                  ; B865: 20 CB F1     ..
  INY                                          ; B868: C8          .
@@ -10675,22 +11916,29 @@ ENDMACRO
  JMP MESS                                     ; B897: 4C 8F B7    L..
 
 .CB89A
+
  BEQ CB8AA                                    ; B89A: F0 0E       ..
  CPX #&12                                     ; B89C: E0 12       ..
  BEQ CB8AE                                    ; B89E: F0 0E       ..
  TXA                                          ; B8A0: 8A          .
  ADC #&5D ; ']'                               ; B8A1: 69 5D       i]
+
 .loop_CB8A3
+
  JSR MESS                                     ; B8A3: 20 8F B7     ..
  JMP CAC5C_b3                                 ; B8A6: 4C 71 F1    Lq.
 
 .CB8A9
+
  RTS                                          ; B8A9: 60          `
 
 .CB8AA
+
  LDA #&6C ; 'l'                               ; B8AA: A9 6C       .l
  BNE loop_CB8A3                               ; B8AC: D0 F5       ..
+
 .CB8AE
+
  LDA #&6F ; 'o'                               ; B8AE: A9 6F       .o
  JMP MESS                                     ; B8B0: 4C 8F B7    L..
 
@@ -10704,6 +11952,7 @@ ENDMACRO
 \ ******************************************************************************
 
 .QQ23
+
  EQUB &13                                     ; B8B3: 13          .
  EQUB &82                                     ; B8B4: 82          .
  EQUB 6                                       ; B8B5: 06          .
@@ -10769,7 +12018,9 @@ ENDMACRO
  ASL A                                        ; B917: 0A          .
  BPL CB91D                                    ; B918: 10 03       ..
  JSR SetPPUTablesTo0                          ; B91A: 20 6D D0     m.
+
 .CB91D
+
  LDA INWK+31                                  ; B91D: A5 28       .(
  AND #&A0                                     ; B91F: 29 A0       ).
  BNE MVEIT3                                   ; B921: D0 32       .2
@@ -10795,6 +12046,7 @@ ENDMACRO
  JMP MV40                                     ; B932: 4C 52 BC    LR.
 
 .CB935
+
  LDA INWK+32                                  ; B935: A5 29       .)
  BPL MVEIT3                                   ; B937: 10 1C       ..
  CPX #1                                       ; B939: E0 01       ..
@@ -10803,14 +12055,18 @@ ENDMACRO
  EOR XSAV                                     ; B93F: 45 9B       E.
  AND #7                                       ; B941: 29 07       ).
  BNE MVEIT3                                   ; B943: D0 10       ..
+
 .CB945
+
  LDA setupPPUForIconBar                       ; B945: A5 E9       ..
  BPL CB952                                    ; B947: 10 09       ..
  LDA PPU_STATUS                               ; B949: AD 02 20    ..
  ASL A                                        ; B94C: 0A          .
  BPL CB952                                    ; B94D: 10 03       ..
  JSR SetPPUTablesTo0                          ; B94F: 20 6D D0     m.
+
 .CB952
+
  JSR TACTICS                                  ; B952: 20 48 8D     H.
 
 \ ******************************************************************************
@@ -10830,7 +12086,9 @@ ENDMACRO
  ASL A                                        ; B95C: 0A          .
  BPL CB962                                    ; B95D: 10 03       ..
  JSR SetPPUTablesTo0                          ; B95F: 20 6D D0     m.
+
 .CB962
+
  LDA INWK+27                                  ; B962: A5 24       .$
  ASL A                                        ; B964: 0A          .
  ASL A                                        ; B965: 0A          .
@@ -10859,7 +12117,9 @@ ENDMACRO
  ASL A                                        ; B998: 0A          .
  BPL CB99E                                    ; B999: 10 03       ..
  JSR SetPPUTablesTo0                          ; B99B: 20 6D D0     m.
+
 .CB99E
+
  LDA INWK+14                                  ; B99E: A5 17       ..
  LDX #6                                       ; B9A0: A2 06       ..
  JSR MVT1m2                                   ; B9A2: 20 38 BB     8.
@@ -10880,14 +12140,18 @@ ENDMACRO
  ADC INWK+28                                  ; B9A8: 65 25       e%
  BPL CB9AE                                    ; B9AA: 10 02       ..
  LDA #0                                       ; B9AC: A9 00       ..
+
 .CB9AE
+
  STA INWK+27                                  ; B9AE: 85 24       .$
  LDY #&0F                                     ; B9B0: A0 0F       ..
  JSR LDA_XX0_Y                                ; B9B2: 20 8D EC     ..
  CMP INWK+27                                  ; B9B5: C5 24       .$
  BCS CB9BB                                    ; B9B7: B0 02       ..
  STA INWK+27                                  ; B9B9: 85 24       .$
+
 .CB9BB
+
  LDA #0                                       ; B9BB: A9 00       ..
  STA INWK+28                                  ; B9BD: 85 25       .%
 
@@ -10920,7 +12184,9 @@ ENDMACRO
  ASL A                                        ; B9E1: 0A          .
  BPL CB9E7                                    ; B9E2: 10 03       ..
  JSR SetPPUTablesTo0                          ; B9E4: 20 6D D0     m.
+
 .CB9E7
+
  LDA P+1                                      ; B9E7: A5 30       .0
  STA K2+1                                     ; B9E9: 8D 5A 04    .Z.
  EOR #&FF                                     ; B9EC: 49 FF       I.
@@ -10941,7 +12207,9 @@ ENDMACRO
  ASL A                                        ; BA0F: 0A          .
  BPL CBA15                                    ; BA10: 10 03       ..
  JSR SetPPUTablesTo0                          ; BA12: 20 6D D0     m.
+
 .CBA15
+
  LDA P+1                                      ; BA15: A5 30       .0
  STA INWK+6                                   ; BA17: 85 0F       ..
  EOR #&FF                                     ; BA19: 49 FF       I.
@@ -10964,13 +12232,16 @@ ENDMACRO
  JMP CBA71                                    ; BA3F: 4C 71 BA    Lq.
 
 .CBA42
+
  LDA setupPPUForIconBar                       ; BA42: A5 E9       ..
  BPL CBA4F                                    ; BA44: 10 09       ..
  LDA PPU_STATUS                               ; BA46: AD 02 20    ..
  ASL A                                        ; BA49: 0A          .
  BPL CBA4F                                    ; BA4A: 10 03       ..
  JSR SetPPUTablesTo0                          ; BA4C: 20 6D D0     m.
+
 .CBA4F
+
  LDA K2+1                                     ; BA4F: AD 5A 04    .Z.
  SBC P+1                                      ; BA52: E5 30       .0
  STA INWK+3                                   ; BA54: 85 0C       ..
@@ -10987,14 +12258,18 @@ ENDMACRO
  LDA INWK+5                                   ; BA6B: A5 0E       ..
  EOR #&80                                     ; BA6D: 49 80       I.
  STA INWK+5                                   ; BA6F: 85 0E       ..
+
 .CBA71
+
  LDA setupPPUForIconBar                       ; BA71: A5 E9       ..
  BPL CBA7E                                    ; BA73: 10 09       ..
  LDA PPU_STATUS                               ; BA75: AD 02 20    ..
  ASL A                                        ; BA78: 0A          .
  BPL CBA7E                                    ; BA79: 10 03       ..
  JSR SetPPUTablesTo0                          ; BA7B: 20 6D D0     m.
+
 .CBA7E
+
  LDX ALP1                                     ; BA7E: A6 6E       .n
  LDA INWK+3                                   ; BA80: A5 0C       ..
  EOR #&FF                                     ; BA82: 49 FF       I.
@@ -11029,7 +12304,9 @@ ENDMACRO
  ASL A                                        ; BAA7: 0A          .
  BPL CBAAD                                    ; BAA8: 10 03       ..
  JSR SetPPUTablesTo0                          ; BAAA: 20 6D D0     m.
+
 .CBAAD
+
  LDA DELTA                                    ; BAAD: A5 93       ..
  STA R                                        ; BAAF: 85 98       ..
  LDA #&80                                     ; BAB1: A9 80       ..
@@ -11042,6 +12319,7 @@ ENDMACRO
  RTS                                          ; BAC0: 60          `
 
 .CBAC1
+
  LDY #9                                       ; BAC1: A0 09       ..
  JSR MVS4                                     ; BAC3: 20 8F BB     ..
  LDY #&0F                                     ; BAC6: A0 0F       ..
@@ -11067,14 +12345,18 @@ ENDMACRO
  LDX #&13                                     ; BAF2: A2 13       ..
  LDY #&0D                                     ; BAF4: A0 0D       ..
  JSR MVS5                                     ; BAF6: 20 14 8A     ..
+
 .CBAF9
+
  LDA setupPPUForIconBar                       ; BAF9: A5 E9       ..
  BPL CBB06                                    ; BAFB: 10 09       ..
  LDA PPU_STATUS                               ; BAFD: AD 02 20    ..
  ASL A                                        ; BB00: 0A          .
  BPL CBB06                                    ; BB01: 10 03       ..
  JSR SetPPUTablesTo0                          ; BB03: 20 6D D0     m.
+
 .CBB06
+
  LDA INWK+29                                  ; BB06: A5 26       .&
  AND #&80                                     ; BB08: 29 80       ).
  STA RAT2                                     ; BB0A: 85 AF       ..
@@ -11156,6 +12438,7 @@ ENDMACRO
  RTS                                          ; BB5C: 60          `
 
 .CBB5D
+
  LDA XX1,X                                    ; BB5D: B5 09       ..
  SEC                                          ; BB5F: 38          8
  SBC R                                        ; BB60: E5 98       ..
@@ -11181,7 +12464,9 @@ ENDMACRO
  AND #&7F                                     ; BB88: 29 7F       ).
  ORA T                                        ; BB8A: 05 9A       ..
  STA INWK+2,X                                 ; BB8C: 95 0B       ..
+
 .CBB8E
+
  RTS                                          ; BB8E: 60          `
 
 \ ******************************************************************************
@@ -11201,7 +12486,9 @@ ENDMACRO
  ASL A                                        ; BB96: 0A          .
  BPL CBB9C                                    ; BB97: 10 03       ..
  JSR SetPPUTablesTo0                          ; BB99: 20 6D D0     m.
+
 .CBB9C
+
  LDA ALPHA                                    ; BB9C: A5 A4       ..
  STA Q                                        ; BB9E: 85 97       ..
  LDX INWK+2,Y                                 ; BBA0: B6 0B       ..
@@ -11231,7 +12518,9 @@ ENDMACRO
  ASL A                                        ; BBD7: 0A          .
  BPL CBBDD                                    ; BBD8: 10 03       ..
  JSR SetPPUTablesTo0                          ; BBDA: 20 6D D0     m.
+
 .CBBDD
+
  LDA BETA                                     ; BBDD: A5 69       .i
  STA Q                                        ; BBDF: 85 97       ..
  LDX INWK+2,Y                                 ; BBE1: B6 0B       ..
@@ -11260,7 +12549,9 @@ ENDMACRO
  ASL A                                        ; BC16: 0A          .
  BPL CBC1C                                    ; BC17: 10 03       ..
  JSR SetPPUTablesTo0                          ; BC19: 20 6D D0     m.
+
 .CBC1C
+
  RTS                                          ; BC1C: 60          `
 
 \ ******************************************************************************
@@ -11288,6 +12579,7 @@ ENDMACRO
  RTS                                          ; BC30: 60          `
 
 .CBC31
+
  LDA XX1,X                                    ; BC31: B5 09       ..
  SEC                                          ; BC33: 38          8
  SBC P+1                                      ; BC34: E5 30       .0
@@ -11301,6 +12593,7 @@ ENDMACRO
  RTS                                          ; BC43: 60          `
 
 .CBC44
+
  LDA #1                                       ; BC44: A9 01       ..
  SBC P+1                                      ; BC46: E5 30       .0
  STA P+1                                      ; BC48: 85 30       .0
@@ -11374,6 +12667,7 @@ ENDMACRO
  JMP CBCFC                                    ; BCC2: 4C FC BC    L..
 
 .CBCC5
+
  LDA K                                        ; BCC5: A5 7D       .}
  SEC                                          ; BCC7: 38          8
  SBC K2                                       ; BCC8: ED 59 04    .Y.
@@ -11400,7 +12694,9 @@ ENDMACRO
  LDA #0                                       ; BCF6: A9 00       ..
  SBC P                                        ; BCF8: E5 2F       ./
  ORA #&80                                     ; BCFA: 09 80       ..
+
 .CBCFC
+
  EOR T                                        ; BCFC: 45 9A       E.
  STA INWK+5                                   ; BCFE: 85 0E       ..
  LDA ALPHA                                    ; BD00: A5 A4       ..
@@ -11460,10 +12756,13 @@ ENDMACRO
  LDA INWK+26                                  ; BD57: A5 23       .#
  EOR #&80                                     ; BD59: 49 80       I.
  STA INWK+26                                  ; BD5B: 85 23       .#
+
 .CBD5D
+
  RTS                                          ; BD5D: 60          `
 
 .CBD5E
+
  LDA #0                                       ; BD5E: A9 00       ..
  CPX #2                                       ; BD60: E0 02       ..
  ROR A                                        ; BD62: 6A          j
@@ -11490,7 +12789,9 @@ ENDMACRO
  LDY #&0F                                     ; BD8B: A0 0F       ..
  JSR sub_CBD92                                ; BD8D: 20 92 BD     ..
  LDY #&15                                     ; BD90: A0 15       ..
+
 .sub_CBD92
+
  LDA XX1,Y                                    ; BD92: B9 09 00    ...
  LDX INWK+4,Y                                 ; BD95: B6 0D       ..
  STA INWK+4,Y                                 ; BD97: 99 0D 00    ...
@@ -11502,10 +12803,13 @@ ENDMACRO
  EOR RAT2                                     ; BDA5: 45 AF       E.
  STA INWK+1,Y                                 ; BDA7: 99 0A 00    ...
  STX INWK+5,Y                                 ; BDAA: 96 0E       ..
+
 .LO2
+
  RTS                                          ; BDAC: 60          `
 
 .LQ
+
  JSR subm_BDED                                ; BDAD: 20 ED BD     ..
  JMP NWSTARS                                  ; BDB0: 4C 8D A9    L..
 
@@ -11541,14 +12845,18 @@ ENDMACRO
 .FLIP
 
  LDY NOSTM                                    ; BDC7: AC E5 03    ...
+
 .CBDCA
+
  LDA setupPPUForIconBar                       ; BDCA: A5 E9       ..
  BPL CBDD7                                    ; BDCC: 10 09       ..
  LDA PPU_STATUS                               ; BDCE: AD 02 20    ..
  ASL A                                        ; BDD1: 0A          .
  BPL CBDD7                                    ; BDD2: 10 03       ..
  JSR SetPPUTablesTo0                          ; BDD4: 20 6D D0     m.
+
 .CBDD7
+
  LDX SY,Y                                     ; BDD7: BE DD 04    ...
  LDA SX,Y                                     ; BDDA: B9 C8 04    ...
  STA SY,Y                                     ; BDDD: 99 DD 04    ...
@@ -11577,7 +12885,7 @@ ENDMACRO
  LDA #0                                       ; BDF5: A9 00       ..
  JSR TT66                                     ; BDF7: 20 B5 BE     ..
  JSR CopyNametable0To1                        ; BDFA: 20 34 CD     4.
- JSR LF12B                                    ; BDFD: 20 2B F1     +.
+ JSR CA7B7_b3                                    ; BDFD: 20 2B F1     +.
  JMP CBE17                                    ; BE00: 4C 17 BE    L..
 
 \ ******************************************************************************
@@ -11598,18 +12906,24 @@ ENDMACRO
  LDA #&50 ; 'P'                               ; BE0E: A9 50       .P
  STA L00CD                                    ; BE10: 85 CD       ..
  STA L00CE                                    ; BE12: 85 CE       ..
- JSR LF13F                                    ; BE14: 20 3F F1     ?.
+ JSR CA9D1_b3                                    ; BE14: 20 3F F1     ?.
+
 .CBE17
+
  LDX #&14                                     ; BE17: A2 14       ..
  LDY #&98                                     ; BE19: A0 98       ..
+
 .CBE1B
+
  LDA setupPPUForIconBar                       ; BE1B: A5 E9       ..
  BPL CBE28                                    ; BE1D: 10 09       ..
  LDA PPU_STATUS                               ; BE1F: AD 02 20    ..
  ASL A                                        ; BE22: 0A          .
  BPL CBE28                                    ; BE23: 10 03       ..
  JSR SetPPUTablesTo0                          ; BE25: 20 6D D0     m.
+
 .CBE28
+
  LDA #&F0                                     ; BE28: A9 F0       ..
  STA ySprite0,Y                               ; BE2A: 99 00 02    ...
  LDA #&D2                                     ; BE2D: A9 D2       ..
@@ -11628,7 +12942,9 @@ ENDMACRO
  BNE CBE1B                                    ; BE40: D0 D9       ..
  JSR KeepPPUTablesAt0                         ; BE42: 20 67 D1     g.
  JSR CBA23_b3                                 ; BE45: 20 DC ED     ..
+
 .sub_CBE48
+
  LDA #&FF                                     ; BE48: A9 FF       ..
  STA L045F                                    ; BE4A: 8D 5F 04    ._.
  LDA #&2C ; ','                               ; BE4D: A9 2C       .,
@@ -11680,6 +12996,7 @@ ENDMACRO
  JMP NOISE                                    ; BE7C: 4C F2 EB    L..
 
 .CBE7F
+
  RTS                                          ; BE7F: 60          `
 
 \ ******************************************************************************
@@ -11698,7 +13015,9 @@ ENDMACRO
  INC TALLY+1                                  ; BE85: EE DD 03    ...
  LDA #&65 ; 'e'                               ; BE88: A9 65       .e
  JSR MESS                                     ; BE8A: 20 8F B7     ..
+
 .CBE8D
+
  LDA INWK+7                                   ; BE8D: A5 10       ..
  LDX #0                                       ; BE8F: A2 00       ..
  CMP #&10                                     ; BE91: C9 10       ..
@@ -11713,7 +13032,9 @@ ENDMACRO
  CMP #3                                       ; BEA0: C9 03       ..
  BCS CBEA5                                    ; BEA2: B0 01       ..
  INX                                          ; BEA4: E8          .
+
 .CBEA5
+
  LDY LBEAB,X                                  ; BEA5: BC AB BE    ...
  JMP NOISE                                    ; BEA8: 4C F2 EB    L..
 
@@ -11727,6 +13048,7 @@ ENDMACRO
 \ ******************************************************************************
 
 .LBEAB
+
  EQUB &1B, &17, &0E, &0D, &0D                 ; BEAB: 1B 17 0E... ...
 
 \ ******************************************************************************
@@ -11761,7 +13083,9 @@ ENDMACRO
  LDA QQ11                                     ; BEBD: A5 9E       ..
  BPL CBEC4                                    ; BEBF: 10 03       ..
  JSR subm_CEA5                                ; BEC1: 20 A5 CE     ..
+
 .CBEC4
+
  JSR subm_D8C5                                ; BEC4: 20 C5 D8     ..
  JSR ClearTiles_b3                            ; BEC7: 20 93 F2     ..
  LDA #&10                                     ; BECA: A9 10       ..
@@ -11799,7 +13123,9 @@ ENDMACRO
  LDA QQ12                                     ; BF13: A5 A5       ..
  BEQ CBF19                                    ; BF15: F0 02       ..
  LDX #0                                       ; BF17: A2 00       ..
+
 .CBF19
+
  LDA QQ11                                     ; BF19: A5 9E       ..
  BMI CBF37                                    ; BF1B: 30 1A       0.
  TXA                                          ; BF1D: 8A          .
@@ -11808,15 +13134,19 @@ ENDMACRO
  BPL CBF2B                                    ; BF23: 10 06       ..
  JSR subm_EB86                                ; BF25: 20 86 EB     ..
  JSR CA775_b3                                 ; BF28: 20 0A F1     ..
+
 .CBF2B
+
  JSR CA730_b3                                 ; BF2B: 20 FC F0     ..
  JSR msblob                                   ; BF2E: 20 3C AE     <.
  JMP CBF91                                    ; BF31: 4C 91 BF    L..
 
 .loop_CBF34
+
  JMP CB9E2_b3                                 ; BF34: 4C D3 EE    L..
 
 .CBF37
+
  TXA                                          ; BF37: 8A          .
  JSR CAE18_b3                                 ; BF38: 20 C6 F0     ..
  LDA QQ11                                     ; BF3B: A5 9E       ..
@@ -11831,12 +13161,16 @@ ENDMACRO
  BEQ CBF54                                    ; BF4D: F0 05       ..
  LDA #&42 ; 'B'                               ; BF4F: A9 42       .B
  JSR CB0E1_b3                                 ; BF51: 20 51 EF     Q.
+
 .CBF54
+
  LDA QQ11                                     ; BF54: A5 9E       ..
  AND #&20 ; ' '                               ; BF56: 29 20       )
  BEQ CBF5D                                    ; BF58: F0 03       ..
  JSR CB18E_b3                                 ; BF5A: 20 6C EF     l.
+
 .CBF5D
+
  LDA #1                                       ; BF5D: A9 01       ..
  STA nameBuffer0+641                          ; BF5F: 8D 81 72    ..r
  STA nameBuffer0+673                          ; BF62: 8D A1 72    ..r
@@ -11856,7 +13190,9 @@ ENDMACRO
  LDA QQ11                                     ; BF8B: A5 9E       ..
  AND #&40 ; '@'                               ; BF8D: 29 40       )@
  BNE CBF91                                    ; BF8F: D0 00       ..
+
 .CBF91
+
  JSR CB9E2_b3                                 ; BF91: 20 D3 EE     ..
  LDA DLY                                      ; BF94: AD 5D 04    .].
  BMI CBFA1                                    ; BF97: 30 08       0.
@@ -11864,7 +13200,9 @@ ENDMACRO
  BPL CBFA1                                    ; BF9B: 10 04       ..
  CMP QQ11a                                    ; BF9D: C5 9F       ..
  BEQ CBFA1                                    ; BF9F: F0 00       ..
+
 .CBFA1
+
  JSR subm_CD62                                ; BFA1: 20 62 CD     b.
  LDX language                                 ; BFA4: AE A8 04    ...
  LDA QQ11                                     ; BFA7: A5 9E       ..
@@ -11878,7 +13216,9 @@ ENDMACRO
  STA XC                                       ; BFB9: 85 32       .2
  LDA #&1E                                     ; BFBB: A9 1E       ..
  BNE CBFD5                                    ; BFBD: D0 16       ..
+
 .CBFBF
+
  STA YC                                       ; BFBF: 85 3B       .;
  LDA LC0E3,X                                  ; BFC1: BD E3 C0    ...
  STA XC                                       ; BFC4: 85 32       .2
@@ -11888,9 +13228,13 @@ ENDMACRO
  JSR sub_CBFED                                ; BFCD: 20 ED BF     ..
  JSR TT162                                    ; BFD0: 20 9C 9F     ..
  LDA #&AF                                     ; BFD3: A9 AF       ..
+
 .CBFD5
+
  JSR TT27_b2                                  ; BFD5: 20 01 F2     ..
+
 .CBFD8
+
  LDX #1                                       ; BFD8: A2 01       ..
  STX XC                                       ; BFDA: 86 32       .2
  STX YC                                       ; BFDC: 86 3B       .;
@@ -11899,12 +13243,14 @@ ENDMACRO
  RTS                                          ; BFE1: 60          `
 
 .CBFE2
+
  LDA #&AF                                     ; BFE2: A9 AF       ..
  JSR spc                                      ; BFE4: 20 B3 96     ..
  JSR sub_CBFED                                ; BFE7: 20 ED BF     ..
  JMP CBFD8                                    ; BFEA: 4C D8 BF    L..
 
 .sub_CBFED
+
  LDA VIEW                                     ; BFED: AD 8E 03    ...
  ORA #&60 ; '`'                               ; BFF0: 09 60       .`
  JMP TT27_b2                                  ; BFF2: 4C 01 F2    L..

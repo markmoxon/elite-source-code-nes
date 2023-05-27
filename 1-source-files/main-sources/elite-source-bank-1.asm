@@ -27,9 +27,7 @@
 
  INCLUDE "1-source-files/main-sources/elite-build-options.asm"
 
- _NTSC                  = (_VARIANT = 1)
- _PAL                   = (_VARIANT = 2)
- _BANK                  = 1
+ _BANK = 1
 
  INCLUDE "1-source-files/main-sources/elite-source-common.asm"
 
@@ -66,10 +64,10 @@
 \     to &C000 when it starts up via the JMP (&FFFC), irrespective of which
 \     ROM bank is mapped to &C000.
 \
-\   * We put the same RESET routine at the start of every ROM bank, so the same
+\   * We put the same reset routine at the start of every ROM bank, so the same
 \     routine gets run, whichever ROM bank is mapped to &C000.
 \
-\ This RESET routine is therefore called when the NES starts up, whatever the
+\ This reset routine is therefore called when the NES starts up, whatever the
 \ bank configuration ends up being. It then switches ROM bank 7 to &C000 and
 \ jumps into bank 7 at the game's entry point S%, which starts the game.
 \
@@ -12085,11 +12083,14 @@ ENDMACRO
 \ ******************************************************************************
 
 .CB969
+
  LDA #&F0
  STA ySprite0,Y
  STA ySprite1,Y
  STA ySprite2,Y
+
 .CB974
+
  RTS
 
 .SCAN
@@ -12113,11 +12114,15 @@ ENDMACRO
  CMP INWK+4
  BCS CB998
  LDA INWK+4
+
 .CB998
+
  CMP INWK+7
  BCS CB99E
  LDA INWK+7
+
 .CB99E
+
  CMP #&40
  BCS CB969
  STA SC2
@@ -12142,7 +12147,9 @@ ENDMACRO
  BPL CB9C8
  EOR #&FF
  ADC #1
+
 .CB9C8
+
  ADC #&7C
  STA SC2
  LDA INWK+7
@@ -12153,14 +12160,18 @@ ENDMACRO
  BMI CB9D8
  EOR #&FF
  SEC
+
 .CB9D8
+
  ADC #&C7
  STA SC2+1
  LDA INWK+4
  CMP #&30
  BCC CB9E4
  LDA #&2F
+
 .CB9E4
+
  LSR A
  STA Y1
  CLC
@@ -12170,6 +12181,7 @@ ENDMACRO
  JMP CBA6C
 
 .CB9F1
+
  LDA SC2+1
  SEC
  SBC #8
@@ -12193,7 +12205,9 @@ ENDMACRO
  SBC #&10
  STA SC2+1
  BNE CBA4F
+
 .CBA24
+
  CMP #8
  BCC CBA47
  LDA #&F0
@@ -12209,11 +12223,15 @@ ENDMACRO
  SBC #8
  STA SC2+1
  BNE CBA4F
+
 .CBA47
+
  LDA #&F0
  STA ySprite0,Y
  STA ySprite1,Y
+
 .CBA4F
+
  LDA Y1
  AND #7
  CLC
@@ -12229,12 +12247,15 @@ ENDMACRO
  RTS
 
 .CBA6C
+
  CLC
  ADC SC2+1
  CMP #&DC
  BCC CBA75
  LDA #&DC
+
 .CBA75
+
  SEC
  SBC SC2+1
  STA Y1
@@ -12257,7 +12278,9 @@ ENDMACRO
  ADC #&10
  STA SC2+1
  BNE CBAD0
+
 .CBAA5
+
  CMP #8
  BCC CBAC8
  LDA #&F0
@@ -12273,11 +12296,15 @@ ENDMACRO
  ADC #7
  STA SC2+1
  BNE CBAD0
+
 .CBAC8
+
  LDA #&F0
  STA ySprite0,Y
  STA ySprite1,Y
+
 .CBAD0
+
  LDA Y1
  AND #7
  CLC
@@ -12307,21 +12334,10 @@ ENDMACRO
  LDY #&21
  STA (INF),Y
 
-.LBAF3
+.sub_CBAF3
 
  SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
                         \ the PPU to use nametable 0 and pattern table 0
-
-\ ******************************************************************************
-\
-\       Name: sub_CBAF3
-\   Category: Dashboard
-\   Category: Drawing ships
-\    Summary: ??? Called via CBAF3_B1
-\
-\ ******************************************************************************
-
-.sub_CBAF3
 
  LDX L002A              \ ???
  BEQ CBB23
@@ -12339,10 +12355,14 @@ ENDMACRO
  STA ySprite11,X
  STA ySprite12,X
  STA ySprite13,X
+
 .CBB1F
+
  LDA #0
  STA L002A
+
 .CBB23
+
  RTS
 
 \ ******************************************************************************
