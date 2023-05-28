@@ -9185,43 +9185,69 @@ ENDMACRO
  EQUB %00000000          ; 94FE: 00          .
  EQUB %00000000          ; 94FF: 00          .
 
- EQUB   9, &0B, &0C,   6 ; 9500: 09 0B 0C... ...
+\ ******************************************************************************
+\
+\       Name: L9500
+\       Type: Variable
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
+.L9500
+
+ EQUB &09, &0B, &0C, &06 ; 9500: 09 0B 0C... ...
  EQUB &0D, &0E, &0F, &10 ; 9504: 0D 0E 0F... ...
- EQUB   6, &11, &12, &13 ; 9508: 06 11 12... ...
- EQUB &14,   6, &15, &16 ; 950C: 14 06 15... ...
- EQUB &17, &18,   6, &19 ; 9510: 17 18 06... ...
- EQUB &1A, &1B, &1C,   6 ; 9514: 1A 1B 1C... ...
- EQUB   7,   8,   4,   5 ; 9518: 07 08 04... ...
- EQUB   6,   7,   8, &0A ; 951C: 06 07 08... ...
- EQUS "(*+&,-./&01$2&"   ; 9520: 28 2A 2B... (*+
- EQUS "34$5&6789&%'$%"   ; 952E: 33 34 24... 34$
- EQUS "&%')"             ; 953C: 26 25 27... &%'
- EQUB   9, &0B, &0C,   6 ; 9540: 09 0B 0C... ...
+ EQUB &06, &11, &12, &13 ; 9508: 06 11 12... ...
+ EQUB &14, &06, &15, &16 ; 950C: 14 06 15... ...
+ EQUB &17, &18, &06, &19 ; 9510: 17 18 06... ...
+ EQUB &1A, &1B, &1C, &06 ; 9514: 1A 1B 1C... ...
+ EQUB &07, &08, &04, &05 ; 9518: 07 08 04... ...
+ EQUB &06, &07, &08, &0A ; 951C: 06 07 08... ...
+ EQUB &28, &2A, &2B, &26 ; 9520: 28 2A 2B... (*+
+ EQUB &2C, &2D, &2E, &2F ; 9524: 2C 2D 2E... ,-.
+ EQUB &26, &30, &31, &24 ; 9528: 26 30 31... &01
+ EQUB &32, &26, &33, &34 ; 952C: 32 26 33... 2&3
+ EQUB &24, &35, &26, &36 ; 9530: 24 35 26... $5&
+ EQUB &37, &38, &39, &26 ; 9534: 37 38 39... 789
+ EQUB &25, &27, &24, &25 ; 9538: 25 27 24... %'$
+ EQUB &26, &25, &27, &29 ; 953C: 26 25 27... &%'
+ EQUB &09, &0B, &0C, &06 ; 9540: 09 0B 0C... ...
  EQUB &0D, &0E, &0F, &10 ; 9544: 0D 0E 0F... ...
- EQUB   6, &11, &12, &13 ; 9548: 06 11 12... ...
+ EQUB &06, &11, &12, &13 ; 9548: 06 11 12... ...
  EQUB &14, &15, &16, &17 ; 954C: 14 15 16... ...
  EQUB &18, &19, &1A, &1B ; 9550: 18 19 1A... ...
- EQUB   8, &1C, &1D,   6 ; 9554: 08 1C 1D... ...
+ EQUB &08, &1C, &1D, &06 ; 9554: 08 1C 1D... ...
  EQUB &1E, &1F, &20, &21 ; 9558: 1E 1F 20... ..
- EQUB   6, &22, &23, &0A ; 955C: 06 22 23... ."#
- EQUS "(*+&,-./&0123&"   ; 9560: 28 2A 2B... (*+
- EQUS "4567&89:;&<=>?"   ; 956E: 34 35 36... 456
- EQUS "&@')"             ; 957C: 26 40 27... &@'
- EQUB   9, &0B, &0C,   6 ; 9580: 09 0B 0C... ...
+ EQUB &06, &22, &23, &0A ; 955C: 06 22 23... ."#
+ EQUB &28, &2A, &2B, &26 ; 9560: 28 2A 2B... (*+
+ EQUB &2C, &2D, &2E, &2F ; 9564: 2C 2D 2E... ,-.
+ EQUB &26, &30, &31, &32 ; 9568: 26 30 31... &01
+ EQUB &33, &26, &34, &35 ; 956C: 33 26 34... 3&4
+ EQUB &36, &37, &26, &38 ; 9570: 36 37 26... 67&
+ EQUB &39, &3A, &3B, &26 ; 9574: 39 3A 3B... 9:;
+ EQUB &3C, &3D, &3E, &3F ; 9578: 3C 3D 3E... <=>
+ EQUB &26, &40, &27, &29 ; 957C: 26 40 27... &@'
+ EQUB &09, &0B, &0C, &06 ; 9580: 09 0B 0C... ...
  EQUB &0D, &0E, &0F, &10 ; 9584: 0D 0E 0F... ...
- EQUB   6, &11, &12, &13 ; 9588: 06 11 12... ...
- EQUB &14,   6, &15, &16 ; 958C: 14 06 15... ...
+ EQUB &06, &11, &12, &13 ; 9588: 06 11 12... ...
+ EQUB &14, &06, &15, &16 ; 958C: 14 06 15... ...
  EQUB &17, &18, &19, &1A ; 9590: 17 18 19... ...
- EQUB &1B, &1C, &1D,   6 ; 9594: 1B 1C 1D... ...
+ EQUB &1B, &1C, &1D, &06 ; 9594: 1B 1C 1D... ...
  EQUB &1E, &1F, &20, &21 ; 9598: 1E 1F 20... ..
- EQUB   6, &22, &23, &0A ; 959C: 06 22 23... ."#
- EQUS "(*+&,-./&0123&"   ; 95A0: 28 2A 2B... (*+
- EQUS "45$6&789:&;<=>"   ; 95AE: 34 35 24... 45$
- EQUS "&?')"             ; 95BC: 26 3F 27... &?'
- EQUB   9, &0B, &0C, &0D ; 95C0: 09 0B 0C... ...
+ EQUB &06, &22, &23, &0A ; 959C: 06 22 23... ."#
+ EQUB &28, &2A, &2B, &26 ; 95A0: 28 2A 2B... (*+
+ EQUB &2C, &2D, &2E, &2F ; 95A4: 2C 2D 2E... ,-.
+ EQUB &26, &30, &31, &32 ; 95A8: 26 30 31... &01
+ EQUB &33, &26, &34, &35 ; 95AC: 33 26 34... 3&4
+ EQUB &24, &36, &26, &37 ; 95B0: 24 36 26... $6&
+ EQUB &38, &39, &3A, &26 ; 95B4: 38 39 3A... 89:
+ EQUB &3B, &3C, &3D, &3E ; 95B8: 3B 3C 3D... ;<=
+ EQUB &26, &3F, &27, &29 ; 95BC: 26 3F 27... &?'
+ EQUB &09, &0B, &0C, &0D ; 95C0: 09 0B 0C... ...
  EQUB &0E, &0F, &10, &11 ; 95C4: 0E 0F 10... ...
- EQUB   6, &12,   8, &13 ; 95C8: 06 12 08... ...
- EQUB &14,   6           ; 95CC: 14 06       ..
+ EQUB &06, &12, &08, &13 ; 95C8: 06 12 08... ...
+ EQUB &14, &06           ; 95CC: 14 06       ..
 
 .L95CE
 
@@ -10354,39 +10380,39 @@ ENDMACRO
 
 .subm_A730
 
- LDY #&E0                ; A730: A0 E0       ..
+ LDY #&E0
 
 .loop_CA732
 
- LDA setupPPUForIconBar  ; A732: A5 E9       ..
- BPL CA73F               ; A734: 10 09       ..
- LDA PPU_STATUS          ; A736: AD 02 20    ..
- ASL A                   ; A739: 0A          .
- BPL CA73F               ; A73A: 10 03       ..
- JSR SetPPUTablesTo0     ; A73C: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CA73F
+ LDA PPU_STATUS
+ ASL A
+ BPL CA73F
+ JSR SetPPUTablesTo0
 
 .CA73F
 
- LDA L963F,Y             ; A73F: B9 3F 96    .?.
- STA nameBuffer0+704,Y   ; A742: 99 C0 72    ..r
- STA nameBuffer1+704,Y   ; A745: 99 C0 76    ..v
- DEY                     ; A748: 88          .
- BNE loop_CA732          ; A749: D0 E7       ..
- LDA nameBuffer0+736     ; A74B: AD E0 72    ..r
- STA nameBuffer0+704     ; A74E: 8D C0 72    ..r
- LDA nameBuffer0+768     ; A751: AD 00 73    ..s
- STA nameBuffer0+736     ; A754: 8D E0 72    ..r
- LDA nameBuffer0+800     ; A757: AD 20 73    . s
- STA nameBuffer0+768     ; A75A: 8D 00 73    ..s
- LDA nameBuffer0+832     ; A75D: AD 40 73    .@s
- STA nameBuffer0+800     ; A760: 8D 20 73    . s
- LDA nameBuffer0+896     ; A763: AD 80 73    ..s
- STA nameBuffer0+864     ; A766: 8D 60 73    .`s
- LDA nameBuffer0+928     ; A769: AD A0 73    ..s
- STA nameBuffer0+896     ; A76C: 8D 80 73    ..s
- LDA #0                  ; A76F: A9 00       ..
- STA nameBuffer0+928     ; A771: 8D A0 73    ..s
- RTS                     ; A774: 60          `
+ LDA L963F,Y
+ STA nameBuffer0+704,Y
+ STA nameBuffer1+704,Y
+ DEY
+ BNE loop_CA732
+ LDA nameBuffer0+736
+ STA nameBuffer0+704
+ LDA nameBuffer0+768
+ STA nameBuffer0+736
+ LDA nameBuffer0+800
+ STA nameBuffer0+768
+ LDA nameBuffer0+832
+ STA nameBuffer0+800
+ LDA nameBuffer0+896
+ STA nameBuffer0+864
+ LDA nameBuffer0+928
+ STA nameBuffer0+896
+ LDA #0
+ STA nameBuffer0+928
+ RTS
 
 \ ******************************************************************************
 \
@@ -10399,47 +10425,47 @@ ENDMACRO
 
 .subm_A775
 
- LDA setupPPUForIconBar  ; A775: A5 E9       ..
- BPL CA782               ; A777: 10 09       ..
- LDA PPU_STATUS          ; A779: AD 02 20    ..
- ASL A                   ; A77C: 0A          .
- BPL CA782               ; A77D: 10 03       ..
- JSR SetPPUTablesTo0     ; A77F: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CA782
+ LDA PPU_STATUS
+ ASL A
+ BPL CA782
+ JSR SetPPUTablesTo0
 
 .CA782
 
- LDY #&60 ; '`'          ; A782: A0 60       .`
- LDA #0                  ; A784: A9 00       ..
+ LDY #&60
+ LDA #0
 
 .loop_CA786
 
- STA nameBuffer0+927,Y   ; A786: 99 9F 73    ..s
- DEY                     ; A789: 88          .
- BNE loop_CA786          ; A78A: D0 FA       ..
- LDA #&CB                ; A78C: A9 CB       ..
- STA tileSprite11        ; A78E: 8D 2D 02    .-.
- STA tileSprite12        ; A791: 8D 31 02    .1.
- LDA #3                  ; A794: A9 03       ..
- STA attrSprite11        ; A796: 8D 2E 02    ...
- STA attrSprite12        ; A799: 8D 32 02    .2.
- LDA #0                  ; A79C: A9 00       ..
- STA attrSprite13        ; A79E: 8D 36 02    .6.
- LDX #&18                ; A7A1: A2 18       ..
- LDY #&38 ; '8'          ; A7A3: A0 38       .8
+ STA nameBuffer0+927,Y
+ DEY
+ BNE loop_CA786
+ LDA #&CB
+ STA tileSprite11
+ STA tileSprite12
+ LDA #3
+ STA attrSprite11
+ STA attrSprite12
+ LDA #0
+ STA attrSprite13
+ LDX #&18
+ LDY #&38
 
 .loop_CA7A5
 
- LDA #&DA                ; A7A5: A9 DA       ..
- STA tileSprite0,Y       ; A7A7: 99 01 02    ...
- LDA #0                  ; A7AA: A9 00       ..
- STA attrSprite0,Y       ; A7AC: 99 02 02    ...
- INY                     ; A7AF: C8          .
- INY                     ; A7B0: C8          .
- INY                     ; A7B1: C8          .
- INY                     ; A7B2: C8          .
- DEX                     ; A7B3: CA          .
- BNE loop_CA7A5          ; A7B4: D0 EF       ..
- RTS                     ; A7B6: 60          `
+ LDA #&DA
+ STA tileSprite0,Y
+ LDA #0
+ STA attrSprite0,Y
+ INY
+ INY
+ INY
+ INY
+ DEX
+ BNE loop_CA7A5
+ RTS
 
 \ ******************************************************************************
 \
@@ -10452,195 +10478,195 @@ ENDMACRO
 
 .subm_A7B7
 
- JSR KeepPPUTablesAt0    ; A7B7: 20 67 D1     g.
- LDA ppuCtrlCopy         ; A7BA: A5 F5       ..
- PHA                     ; A7BC: 48          H
- LDA #0                  ; A7BD: A9 00       ..
- STA ppuCtrlCopy         ; A7BF: 85 F5       ..
- STA PPU_CTRL            ; A7C1: 8D 00 20    ..
- STA setupPPUForIconBar  ; A7C4: 85 E9       ..
- LDA #0                  ; A7C6: A9 00       ..
- STA PPU_MASK            ; A7C8: 8D 01 20    ..
- LDA QQ11                ; A7CB: A5 9E       ..
- CMP #&B9                ; A7CD: C9 B9       ..
- BNE CA7D4               ; A7CF: D0 03       ..
- JMP CA87D               ; A7D1: 4C 7D A8    L}.
+ JSR KeepPPUTablesAt0
+ LDA ppuCtrlCopy
+ PHA
+ LDA #0
+ STA ppuCtrlCopy
+ STA PPU_CTRL
+ STA setupPPUForIconBar
+ LDA #0
+ STA PPU_MASK
+ LDA QQ11
+ CMP #&B9
+ BNE CA7D4
+ JMP CA87D
 
 .CA7D4
 
- CMP #&9D                ; A7D4: C9 9D       ..
- BEQ CA83A               ; A7D6: F0 62       .b
- CMP #&DF                ; A7D8: C9 DF       ..
- BEQ CA83A               ; A7DA: F0 5E       .^
- CMP #&96                ; A7DC: C9 96       ..
- BNE CA7E6               ; A7DE: D0 06       ..
- JSR SetSystemImage_b5   ; A7E0: 20 88 EF     ..
- JMP CA8A2               ; A7E3: 4C A2 A8    L..
+ CMP #&9D
+ BEQ CA83A
+ CMP #&DF
+ BEQ CA83A
+ CMP #&96
+ BNE CA7E6
+ JSR SetSystemImage_b5
+ JMP CA8A2
 
 .CA7E6
 
- CMP #&98                ; A7E6: C9 98       ..
- BNE CA7F0               ; A7E8: D0 06       ..
- JSR SetSystemImage2_b4  ; A7EA: 20 A4 EF     ..
- JMP CA8A2               ; A7ED: 4C A2 A8    L..
+ CMP #&98
+ BNE CA7F0
+ JSR SetCmdrImage_b4
+ JMP CA8A2
 
 .CA7F0
 
- CMP #&BA                ; A7F0: C9 BA       ..
- BNE CA810               ; A7F2: D0 1C       ..
- LDA #4                  ; A7F4: A9 04       ..
- STA PPU_ADDR            ; A7F6: 8D 06 20    ..
- LDA #&50 ; 'P'          ; A7F9: A9 50       .P
- STA PPU_ADDR            ; A7FB: 8D 06 20    ..
- LDA #&A4                ; A7FE: A9 A4       ..
- STA SC+1                ; A800: 85 08       ..
- LDA #&93                ; A802: A9 93       ..
- STA SC                  ; A804: 85 07       ..
- LDA #&F5                ; A806: A9 F5       ..
- STA systemFlag          ; A808: 8D 8B 04    ...
- LDX #4                  ; A80B: A2 04       ..
- JMP CA89F               ; A80D: 4C 9F A8    L..
+ CMP #&BA
+ BNE CA810
+ LDA #4
+ STA PPU_ADDR
+ LDA #&50
+ STA PPU_ADDR
+ LDA #&A4
+ STA SC+1
+ LDA #&93
+ STA SC
+ LDA #&F5
+ STA systemFlag
+ LDX #4
+ JMP CA89F
 
 .CA810
 
- CMP #&BB                ; A810: C9 BB       ..
- BNE CA82A               ; A812: D0 16       ..
- LDA #4                  ; A814: A9 04       ..
- STA PPU_ADDR            ; A816: 8D 06 20    ..
- LDA #&50 ; 'P'          ; A819: A9 50       .P
- STA PPU_ADDR            ; A81B: 8D 06 20    ..
- LDA #&A4                ; A81E: A9 A4       ..
- STA V+1                 ; A820: 85 64       .d
- LDA #&D3                ; A822: A9 D3       ..
- STA V                   ; A824: 85 63       .c
- LDA #3                  ; A826: A9 03       ..
- BNE CA891               ; A828: D0 67       .g
+ CMP #&BB
+ BNE CA82A
+ LDA #4
+ STA PPU_ADDR
+ LDA #&50
+ STA PPU_ADDR
+ LDA #&A4
+ STA V+1
+ LDA #&D3
+ STA V
+ LDA #3
+ BNE CA891
 
 .CA82A
 
- LDA #0                  ; A82A: A9 00       ..
- CMP systemFlag          ; A82C: CD 8B 04    ...
- BEQ CA8A2               ; A82F: F0 71       .q
- STA systemFlag          ; A831: 8D 8B 04    ...
- JSR subm_A95D           ; A834: 20 5D A9     ].
- JMP CA8A2               ; A837: 4C A2 A8    L..
+ LDA #0
+ CMP systemFlag
+ BEQ CA8A2
+ STA systemFlag
+ JSR subm_A95D
+ JMP CA8A2
 
 .CA83A
 
- LDA #&24 ; '$'          ; A83A: A9 24       .$
- STA L00D9               ; A83C: 85 D9       ..
- LDA #1                  ; A83E: A9 01       ..
- CMP systemFlag          ; A840: CD 8B 04    ...
- BEQ CA8A2               ; A843: F0 5D       .]
- STA systemFlag          ; A845: 8D 8B 04    ...
- LDA #4                  ; A848: A9 04       ..
- STA PPU_ADDR            ; A84A: 8D 06 20    ..
- LDA #&40 ; '@'          ; A84D: A9 40       .@
- STA PPU_ADDR            ; A84F: 8D 06 20    ..
- LDX #&5F ; '_'          ; A852: A2 5F       ._
- LDA #&FC                ; A854: A9 FC       ..
- STA SC+1                ; A856: 85 08       ..
- LDA #&E8                ; A858: A9 E8       ..
- STA SC                  ; A85A: 85 07       ..
- JSR subm_A909           ; A85C: 20 09 A9     ..
- LDA QQ11                ; A85F: A5 9E       ..
- CMP #&DF                ; A861: C9 DF       ..
- BNE CA8A2               ; A863: D0 3D       .=
- LDA #&0E                ; A865: A9 0E       ..
- STA PPU_ADDR            ; A867: 8D 06 20    ..
- LDA #&30 ; '0'          ; A86A: A9 30       .0
- STA PPU_ADDR            ; A86C: 8D 06 20    ..
- LDA #&A7                ; A86F: A9 A7       ..
- STA V+1                 ; A871: 85 64       .d
- LDA #&1B                ; A873: A9 1B       ..
- STA V                   ; A875: 85 63       .c
- JSR UnpackToPPU         ; A877: 20 AF F5     ..
- JMP CA8A2               ; A87A: 4C A2 A8    L..
+ LDA #&24
+ STA L00D9
+ LDA #1
+ CMP systemFlag
+ BEQ CA8A2
+ STA systemFlag
+ LDA #4
+ STA PPU_ADDR
+ LDA #&40
+ STA PPU_ADDR
+ LDX #&5F
+ LDA #&FC
+ STA SC+1
+ LDA #&E8
+ STA SC
+ JSR subm_A909
+ LDA QQ11
+ CMP #&DF
+ BNE CA8A2
+ LDA #&0E
+ STA PPU_ADDR
+ LDA #&30
+ STA PPU_ADDR
+ LDA #&A7
+ STA V+1
+ LDA #&1B
+ STA V
+ JSR UnpackToPPU
+ JMP CA8A2
 
 .CA87D
 
- LDA #4                  ; A87D: A9 04       ..
- STA PPU_ADDR            ; A87F: 8D 06 20    ..
- LDA #&50 ; 'P'          ; A882: A9 50       .P
- STA PPU_ADDR            ; A884: 8D 06 20    ..
- LDA #&9F                ; A887: A9 9F       ..
- STA V+1                 ; A889: 85 64       .d
- LDA #&A1                ; A88B: A9 A1       ..
- STA V                   ; A88D: 85 63       .c
- LDA #2                  ; A88F: A9 02       ..
+ LDA #4
+ STA PPU_ADDR
+ LDA #&50
+ STA PPU_ADDR
+ LDA #&9F
+ STA V+1
+ LDA #&A1
+ STA V
+ LDA #2
 
 .CA891
 
- CMP systemFlag          ; A891: CD 8B 04    ...
- BEQ CA8A2               ; A894: F0 0C       ..
- STA systemFlag          ; A896: 8D 8B 04    ...
- JSR UnpackToPPU         ; A899: 20 AF F5     ..
- JMP CA8A2               ; A89C: 4C A2 A8    L..
+ CMP systemFlag
+ BEQ CA8A2
+ STA systemFlag
+ JSR UnpackToPPU
+ JMP CA8A2
 
 .CA89F
 
- JSR SendToPPU2          ; A89F: 20 86 D9     ..
+ JSR SendToPPU2
 
 .CA8A2
 
- JSR subm_AC86           ; A8A2: 20 86 AC     ..
- LDA #&10                ; A8A5: A9 10       ..
- STA PPU_ADDR            ; A8A7: 8D 06 20    ..
- LDA #0                  ; A8AA: A9 00       ..
- STA PPU_ADDR            ; A8AC: 8D 06 20    ..
- LDY #0                  ; A8AF: A0 00       ..
- LDX #&50 ; 'P'          ; A8B1: A2 50       .P
+ JSR subm_AC86
+ LDA #&10
+ STA PPU_ADDR
+ LDA #0
+ STA PPU_ADDR
+ LDY #0
+ LDX #&50
 
 .loop_CA8B3
 
- LDA LAA6C,Y             ; A8B3: B9 6C AA    .l.
- STA PPU_DATA            ; A8B6: 8D 07 20    ..
- INY                     ; A8B9: C8          .
- DEX                     ; A8BA: CA          .
- BNE loop_CA8B3          ; A8BB: D0 F6       ..
- LDA #&1F                ; A8BD: A9 1F       ..
- STA PPU_ADDR            ; A8BF: 8D 06 20    ..
- LDA #&F0                ; A8C2: A9 F0       ..
- STA PPU_ADDR            ; A8C4: 8D 06 20    ..
- LDA #0                  ; A8C7: A9 00       ..
- LDX #&10                ; A8C9: A2 10       ..
+ LDA LAA6C,Y
+ STA PPU_DATA
+ INY
+ DEX
+ BNE loop_CA8B3
+ LDA #&1F
+ STA PPU_ADDR
+ LDA #&F0
+ STA PPU_ADDR
+ LDA #0
+ LDX #&10
 
 .loop_CA8CB
 
- STA PPU_DATA            ; A8CB: 8D 07 20    ..
- DEX                     ; A8CE: CA          .
- BNE loop_CA8CB          ; A8CF: D0 FA       ..
- JSR subm_D946           ; A8D1: 20 46 D9     F.
- LDX #0                  ; A8D4: A2 00       ..
- JSR subm_A972           ; A8D6: 20 72 A9     r.
- LDX #1                  ; A8D9: A2 01       ..
- JSR subm_A972           ; A8DB: 20 72 A9     r.
- LDX #0                  ; A8DE: A2 00       ..
- STX palettePhase        ; A8E0: 86 F3       ..
- STX otherPhase          ; A8E2: 86 F4       ..
- JSR subm_D8EC           ; A8E4: 20 EC D8     ..
- JSR subm_D946           ; A8E7: 20 46 D9     F.
- LDA QQ11                ; A8EA: A5 9E       ..
- STA QQ11a               ; A8EC: 85 9F       ..
- AND #&40 ; '@'          ; A8EE: 29 40       )@
- BEQ CA8FC               ; A8F0: F0 0A       ..
- LDA QQ11                ; A8F2: A5 9E       ..
- CMP #&DF                ; A8F4: C9 DF       ..
- BEQ CA8FC               ; A8F6: F0 04       ..
- LDA #0                  ; A8F8: A9 00       ..
- BEQ CA8FE               ; A8FA: F0 02       ..
+ STA PPU_DATA
+ DEX
+ BNE loop_CA8CB
+ JSR subm_D946
+ LDX #0
+ JSR subm_A972
+ LDX #1
+ JSR subm_A972
+ LDX #0
+ STX palettePhase
+ STX otherPhase
+ JSR subm_D8EC
+ JSR subm_D946
+ LDA QQ11
+ STA QQ11a
+ AND #&40
+ BEQ CA8FC
+ LDA QQ11
+ CMP #&DF
+ BEQ CA8FC
+ LDA #0
+ BEQ CA8FE
 
 .CA8FC
 
- LDA #&80                ; A8FC: A9 80       ..
+ LDA #&80
 
 .CA8FE
 
- STA showUserInterface   ; A8FE: 85 EA       ..
- PLA                     ; A900: 68          h
- STA ppuCtrlCopy         ; A901: 85 F5       ..
- STA PPU_CTRL            ; A903: 8D 00 20    ..
- JMP CB673_b3            ; A906: 4C E8 EE    L..
+ STA showUserInterface
+ PLA
+ STA ppuCtrlCopy
+ STA PPU_CTRL
+ JMP CB673_b3
 
 \ ******************************************************************************
 \
@@ -10653,51 +10679,51 @@ ENDMACRO
 
 .subm_A909
 
- LDY #0                  ; A909: A0 00       ..
+ LDY #0
 
 .CA90B
 
- LDA (SC),Y              ; A90B: B1 07       ..
- STA PPU_DATA            ; A90D: 8D 07 20    ..
- INY                     ; A910: C8          .
- LDA (SC),Y              ; A911: B1 07       ..
- STA PPU_DATA            ; A913: 8D 07 20    ..
- INY                     ; A916: C8          .
- LDA (SC),Y              ; A917: B1 07       ..
- STA PPU_DATA            ; A919: 8D 07 20    ..
- INY                     ; A91C: C8          .
- LDA (SC),Y              ; A91D: B1 07       ..
- STA PPU_DATA            ; A91F: 8D 07 20    ..
- INY                     ; A922: C8          .
- LDA (SC),Y              ; A923: B1 07       ..
- STA PPU_DATA            ; A925: 8D 07 20    ..
- INY                     ; A928: C8          .
- LDA (SC),Y              ; A929: B1 07       ..
- STA PPU_DATA            ; A92B: 8D 07 20    ..
- INY                     ; A92E: C8          .
- LDA (SC),Y              ; A92F: B1 07       ..
- STA PPU_DATA            ; A931: 8D 07 20    ..
- INY                     ; A934: C8          .
- LDA (SC),Y              ; A935: B1 07       ..
- STA PPU_DATA            ; A937: 8D 07 20    ..
- INY                     ; A93A: C8          .
- BNE CA93F               ; A93B: D0 02       ..
- INC SC+1                ; A93D: E6 08       ..
+ LDA (SC),Y
+ STA PPU_DATA
+ INY
+ LDA (SC),Y
+ STA PPU_DATA
+ INY
+ LDA (SC),Y
+ STA PPU_DATA
+ INY
+ LDA (SC),Y
+ STA PPU_DATA
+ INY
+ LDA (SC),Y
+ STA PPU_DATA
+ INY
+ LDA (SC),Y
+ STA PPU_DATA
+ INY
+ LDA (SC),Y
+ STA PPU_DATA
+ INY
+ LDA (SC),Y
+ STA PPU_DATA
+ INY
+ BNE CA93F
+ INC SC+1
 
 .CA93F
 
- LDA #0                  ; A93F: A9 00       ..
- STA PPU_DATA            ; A941: 8D 07 20    ..
- STA PPU_DATA            ; A944: 8D 07 20    ..
- STA PPU_DATA            ; A947: 8D 07 20    ..
- STA PPU_DATA            ; A94A: 8D 07 20    ..
- STA PPU_DATA            ; A94D: 8D 07 20    ..
- STA PPU_DATA            ; A950: 8D 07 20    ..
- STA PPU_DATA            ; A953: 8D 07 20    ..
- STA PPU_DATA            ; A956: 8D 07 20    ..
- DEX                     ; A959: CA          .
- BNE CA90B               ; A95A: D0 AF       ..
- RTS                     ; A95C: 60          `
+ LDA #0
+ STA PPU_DATA
+ STA PPU_DATA
+ STA PPU_DATA
+ STA PPU_DATA
+ STA PPU_DATA
+ STA PPU_DATA
+ STA PPU_DATA
+ STA PPU_DATA
+ DEX
+ BNE CA90B
+ RTS
 
 \ ******************************************************************************
 \
@@ -10710,15 +10736,15 @@ ENDMACRO
 
 .subm_A95D
 
- LDA #4                  ; A95D: A9 04       ..
- STA PPU_ADDR            ; A95F: 8D 06 20    ..
- LDA #&50 ; 'P'          ; A962: A9 50       .P
- STA PPU_ADDR            ; A964: 8D 06 20    ..
- LDA #&97                ; A967: A9 97       ..
- STA V+1                 ; A969: 85 64       .d
- LDA #&60 ; '`'          ; A96B: A9 60       .`
- STA V                   ; A96D: 85 63       .c
- JMP UnpackToPPU         ; A96F: 4C AF F5    L..
+ LDA #4
+ STA PPU_ADDR
+ LDA #&50
+ STA PPU_ADDR
+ LDA #&97
+ STA V+1
+ LDA #&60
+ STA V
+ JMP UnpackToPPU
 
 \ ******************************************************************************
 \
@@ -10731,69 +10757,69 @@ ENDMACRO
 
 .subm_A972
 
- STX drawingPhase        ; A972: 86 C0       ..
- STX otherPhase          ; A974: 86 F4       ..
- STX palettePhase        ; A976: 86 F3       ..
- LDA #0                  ; A978: A9 00       ..
- STA L00CC               ; A97A: 85 CC       ..
- LDA QQ11                ; A97C: A5 9E       ..
- CMP #&DF                ; A97E: C9 DF       ..
- BNE CA986               ; A980: D0 04       ..
- LDA #4                  ; A982: A9 04       ..
- BNE CA988               ; A984: D0 02       ..
+ STX drawingPhase
+ STX otherPhase
+ STX palettePhase
+ LDA #0
+ STA L00CC
+ LDA QQ11
+ CMP #&DF
+ BNE CA986
+ LDA #4
+ BNE CA988
 
 .CA986
 
- LDA #&25 ; '%'          ; A986: A9 25       .%
+ LDA #&25
 
 .CA988
 
- STA L00D2               ; A988: 85 D2       ..
- LDA tileNumber          ; A98A: A5 B8       ..
- STA tile0Phase0,X       ; A98C: 95 C1       ..
- LDA #&C4                ; A98E: A9 C4       ..
- JSR subm_D977               ; A990: 20 77 D9     w.
- JSR CA99B               ; A993: 20 9B A9     ..
- LDA tileNumber          ; A996: A5 B8       ..
- STA tile1Phase0,X       ; A998: 95 C3       ..
- RTS                     ; A99A: 60          `
+ STA L00D2
+ LDA tileNumber
+ STA tile0Phase0,X
+ LDA #&C4
+ JSR subm_D977
+ JSR CA99B
+ LDA tileNumber
+ STA tile1Phase0,X
+ RTS
 
 .CA99B
 
- TXA                     ; A99B: 8A          .
- PHA                     ; A99C: 48          H
- LDA #&3F ; '?'          ; A99D: A9 3F       .?
- STA tempVar+1           ; A99F: 85 D1       ..
- LDA #&FF                ; A9A1: A9 FF       ..
- STA tempVar             ; A9A3: 85 D0       ..
- JSR subm_C6F4           ; A9A5: 20 F4 C6     ..
- PLA                     ; A9A8: 68          h
- PHA                     ; A9A9: 48          H
- TAX                     ; A9AA: AA          .
- LDA L03EF,X             ; A9AB: BD EF 03    ...
- AND #&20 ; ' '          ; A9AE: 29 20       )
- BNE CA9CC               ; A9B0: D0 1A       ..
- LDA #&10                ; A9B2: A9 10       ..
- STA tempVar+1           ; A9B4: 85 D1       ..
- LDA #0                  ; A9B6: A9 00       ..
- STA tempVar             ; A9B8: 85 D0       ..
- JSR subm_C6F4           ; A9BA: 20 F4 C6     ..
- PLA                     ; A9BD: 68          h
- TAX                     ; A9BE: AA          .
- LDA L03EF,X             ; A9BF: BD EF 03    ...
- AND #&20 ; ' '          ; A9C2: 29 20       )
- BNE CA9CE               ; A9C4: D0 08       ..
- JSR subm_D946           ; A9C6: 20 46 D9     F.
- JMP CA99B               ; A9C9: 4C 9B A9    L..
+ TXA
+ PHA
+ LDA #&3F
+ STA tempVar+1
+ LDA #&FF
+ STA tempVar
+ JSR subm_C6F4
+ PLA
+ PHA
+ TAX
+ LDA L03EF,X
+ AND #&20
+ BNE CA9CC
+ LDA #&10
+ STA tempVar+1
+ LDA #0
+ STA tempVar
+ JSR subm_C6F4
+ PLA
+ TAX
+ LDA L03EF,X
+ AND #&20
+ BNE CA9CE
+ JSR subm_D946
+ JMP CA99B
 
 .CA9CC
 
- PLA                     ; A9CC: 68          h
- TAX                     ; A9CD: AA          .
+ PLA
+ TAX
 
 .CA9CE
 
- JMP subm_D946           ; A9CE: 4C 46 D9    LF.
+ JMP subm_D946
 
 \ ******************************************************************************
 \
@@ -10806,84 +10832,84 @@ ENDMACRO
 
 .subm_A9D1
 
- PHA                     ; A9D1: 48          H
- JSR subm_D8C5           ; A9D2: 20 C5 D8     ..
- LDA QQ11                ; A9D5: A5 9E       ..
- CMP #&96                ; A9D7: C9 96       ..
- BNE CA9E1               ; A9D9: D0 06       ..
- JSR GetSystemImage_b5   ; A9DB: 20 96 EF     ..
- JMP CA9E8               ; A9DE: 4C E8 A9    L..
+ PHA
+ JSR subm_D8C5
+ LDA QQ11
+ CMP #&96
+ BNE CA9E1
+ JSR GetSystemImage_b5
+ JMP CA9E8
 
 .CA9E1
 
- CMP #&98                ; A9E1: C9 98       ..
- BNE CA9E8               ; A9E3: D0 03       ..
- JSR GetSystemImage2_b4  ; A9E5: 20 B2 EF     ..
+ CMP #&98
+ BNE CA9E8
+ JSR GetCmdrImage_b4
 
 .CA9E8
 
- LDA QQ11                ; A9E8: A5 9E       ..
- AND #&40 ; '@'          ; A9EA: 29 40       )@
- BEQ CA9F2               ; A9EC: F0 04       ..
- LDA #0                  ; A9EE: A9 00       ..
- STA showUserInterface   ; A9F0: 85 EA       ..
+ LDA QQ11
+ AND #&40
+ BEQ CA9F2
+ LDA #0
+ STA showUserInterface
 
 .CA9F2
 
- JSR subm_AC86           ; A9F2: 20 86 AC     ..
- LDA #0                  ; A9F5: A9 00       ..
- STA L00CC               ; A9F7: 85 CC       ..
- LDA #&25 ; '%'          ; A9F9: A9 25       .%
- STA L00D2               ; A9FB: 85 D2       ..
- LDA tileNumber          ; A9FD: A5 B8       ..
- STA tile0Phase0         ; A9FF: 85 C1       ..
- STA tile0Phase1         ; AA01: 85 C2       ..
- LDA #&54 ; 'T'          ; AA03: A9 54       .T
- LDX #0                  ; AA05: A2 00       ..
- PLA                     ; AA07: 68          h
- JSR subm_D977               ; AA08: 20 77 D9     w.
- INC drawingPhase        ; AA0B: E6 C0       ..
- JSR subm_D977               ; AA0D: 20 77 D9     w.
- JSR subm_D8C5           ; AA10: 20 C5 D8     ..
- LDA #&50 ; 'P'          ; AA13: A9 50       .P
- STA L00CD               ; AA15: 85 CD       ..
- STA L00CE               ; AA17: 85 CE       ..
- LDA QQ11                ; AA19: A5 9E       ..
- STA QQ11a               ; AA1B: 85 9F       ..
- LDA tileNumber          ; AA1D: A5 B8       ..
- STA tile1Phase0         ; AA1F: 85 C3       ..
- STA tile1Phase1         ; AA21: 85 C4       ..
- LDA #0                  ; AA23: A9 00       ..
- LDX #0                  ; AA25: A2 00       ..
- STX palettePhase        ; AA27: 86 F3       ..
- STX otherPhase          ; AA29: 86 F4       ..
- JSR subm_D8EC           ; AA2B: 20 EC D8     ..
- LDA QQ11                ; AA2E: A5 9E       ..
- AND #&40 ; '@'          ; AA30: 29 40       )@
- BNE CAA3B               ; AA32: D0 07       ..
- JSR KeepPPUTablesAt0    ; AA34: 20 67 D1     g.
- LDA #&80                ; AA37: A9 80       ..
- STA showUserInterface   ; AA39: 85 EA       ..
+ JSR subm_AC86
+ LDA #0
+ STA L00CC
+ LDA #&25
+ STA L00D2
+ LDA tileNumber
+ STA tile0Phase0
+ STA tile0Phase1
+ LDA #&54
+ LDX #0
+ PLA
+ JSR subm_D977
+ INC drawingPhase
+ JSR subm_D977
+ JSR subm_D8C5
+ LDA #&50
+ STA L00CD
+ STA L00CE
+ LDA QQ11
+ STA QQ11a
+ LDA tileNumber
+ STA tile1Phase0
+ STA tile1Phase1
+ LDA #0
+ LDX #0
+ STX palettePhase
+ STX otherPhase
+ JSR subm_D8EC
+ LDA QQ11
+ AND #&40
+ BNE CAA3B
+ JSR KeepPPUTablesAt0
+ LDA #&80
+ STA showUserInterface
 
 .CAA3B
 
- LDA L0473               ; AA3B: AD 73 04    .s.
- BPL CAA43               ; AA3E: 10 03       ..
- JMP CB673_b3            ; AA40: 4C E8 EE    L..
+ LDA L0473
+ BPL CAA43
+ JMP CB673_b3
 
 .CAA43
 
- LDA QQ11                ; AA43: A5 9E       ..
- AND #&0F                ; AA45: 29 0F       ).
- TAX                     ; AA47: AA          .
- LDA LAA5C,X             ; AA48: BD 5C AA    .\.
- CMP L03F2               ; AA4B: CD F2 03    ...
- STA L03F2               ; AA4E: 8D F2 03    ...
- JSR subm_B57F           ; AA51: 20 7F B5     ..
- DEC L00DA               ; AA54: C6 DA       ..
- JSR KeepPPUTablesAt0    ; AA56: 20 67 D1     g.
- INC L00DA               ; AA59: E6 DA       ..
- RTS                     ; AA5B: 60          `
+ LDA QQ11
+ AND #&0F
+ TAX
+ LDA LAA5C,X
+ CMP L03F2
+ STA L03F2
+ JSR subm_B57F
+ DEC L00DA
+ JSR KeepPPUTablesAt0
+ INC L00DA
+ RTS
 
 \ ******************************************************************************
 \
@@ -10935,155 +10961,155 @@ ENDMACRO
 
 .DrawTitleScreen
 
- JSR subm_D933           ; AABC: 20 33 D9     3.
- LDA #2                  ; AABF: A9 02       ..
- STA addr1+1             ; AAC1: 85 D5       ..
- LDA #&80                ; AAC3: A9 80       ..
- STA addr1               ; AAC5: 85 D4       ..
- LDA #&3F ; '?'          ; AAC7: A9 3F       .?
- STA PPU_ADDR            ; AAC9: 8D 06 20    ..
- LDA #0                  ; AACC: A9 00       ..
- STA PPU_ADDR            ; AACE: 8D 06 20    ..
- LDA #&0F                ; AAD1: A9 0F       ..
- LDX #&1F                ; AAD3: A2 1F       ..
+ JSR subm_D933
+ LDA #2
+ STA addr1+1
+ LDA #&80
+ STA addr1
+ LDA #&3F
+ STA PPU_ADDR
+ LDA #0
+ STA PPU_ADDR
+ LDA #&0F
+ LDX #&1F
 
 .loop_CAAD5
 
- STA PPU_DATA            ; AAD5: 8D 07 20    ..
- DEX                     ; AAD8: CA          .
- BPL loop_CAAD5          ; AAD9: 10 FA       ..
- LDA #&20 ; ' '          ; AADB: A9 20       .
- STA PPU_ADDR            ; AADD: 8D 06 20    ..
- LDA #0                  ; AAE0: A9 00       ..
- STA PPU_ADDR            ; AAE2: 8D 06 20    ..
- LDA #0                  ; AAE5: A9 00       ..
- LDX #8                  ; AAE7: A2 08       ..
- LDY #0                  ; AAE9: A0 00       ..
+ STA PPU_DATA
+ DEX
+ BPL loop_CAAD5
+ LDA #&20
+ STA PPU_ADDR
+ LDA #0
+ STA PPU_ADDR
+ LDA #0
+ LDX #8
+ LDY #0
 
 .CAAEB
 
- STA PPU_DATA            ; AAEB: 8D 07 20    ..
- DEY                     ; AAEE: 88          .
- BNE CAAEB               ; AAEF: D0 FA       ..
- JSR subm_D933           ; AAF1: 20 33 D9     3.
- LDA #0                  ; AAF4: A9 00       ..
- DEX                     ; AAF6: CA          .
- BNE CAAEB               ; AAF7: D0 F2       ..
- LDA #&F5                ; AAF9: A9 F5       ..
- STA L03F2               ; AAFB: 8D F2 03    ...
- STA systemFlag          ; AAFE: 8D 8B 04    ...
- LDA #0                  ; AB01: A9 00       ..
- STA PPU_ADDR            ; AB03: 8D 06 20    ..
- LDA #0                  ; AB06: A9 00       ..
- STA PPU_ADDR            ; AB08: 8D 06 20    ..
- LDY #0                  ; AB0B: A0 00       ..
- LDX #&50 ; 'P'          ; AB0D: A2 50       .P
+ STA PPU_DATA
+ DEY
+ BNE CAAEB
+ JSR subm_D933
+ LDA #0
+ DEX
+ BNE CAAEB
+ LDA #&F5
+ STA L03F2
+ STA systemFlag
+ LDA #0
+ STA PPU_ADDR
+ LDA #0
+ STA PPU_ADDR
+ LDY #0
+ LDX #&50
 
 .loop_CAB0F
 
- LDA LAA6C,Y             ; AB0F: B9 6C AA    .l.
- STA PPU_DATA            ; AB12: 8D 07 20    ..
- INY                     ; AB15: C8          .
- DEX                     ; AB16: CA          .
- BNE loop_CAB0F          ; AB17: D0 F6       ..
- LDA #&10                ; AB19: A9 10       ..
- STA PPU_ADDR            ; AB1B: 8D 06 20    ..
- LDA #0                  ; AB1E: A9 00       ..
- STA PPU_ADDR            ; AB20: 8D 06 20    ..
- LDY #0                  ; AB23: A0 00       ..
- LDX #&50 ; 'P'          ; AB25: A2 50       .P
+ LDA LAA6C,Y
+ STA PPU_DATA
+ INY
+ DEX
+ BNE loop_CAB0F
+ LDA #&10
+ STA PPU_ADDR
+ LDA #0
+ STA PPU_ADDR
+ LDY #0
+ LDX #&50
 
 .loop_CAB27
 
- LDA LAA6C,Y             ; AB27: B9 6C AA    .l.
- STA PPU_DATA            ; AB2A: 8D 07 20    ..
- INY                     ; AB2D: C8          .
- DEX                     ; AB2E: CA          .
- BNE loop_CAB27          ; AB2F: D0 F6       ..
- LDY #0                  ; AB31: A0 00       ..
+ LDA LAA6C,Y
+ STA PPU_DATA
+ INY
+ DEX
+ BNE loop_CAB27
+ LDY #0
 
 .loop_CAB33
 
- LDA #&F0                ; AB33: A9 F0       ..
- STA ySprite0,Y          ; AB35: 99 00 02    ...
- INY                     ; AB38: C8          .
- LDA #&FE                ; AB39: A9 FE       ..
- STA ySprite0,Y          ; AB3B: 99 00 02    ...
- INY                     ; AB3E: C8          .
- LDA #3                  ; AB3F: A9 03       ..
- STA ySprite0,Y          ; AB41: 99 00 02    ...
- INY                     ; AB44: C8          .
- LDA #0                  ; AB45: A9 00       ..
- STA ySprite0,Y          ; AB47: 99 00 02    ...
- INY                     ; AB4A: C8          .
- BNE loop_CAB33          ; AB4B: D0 E6       ..
- JSR subm_A95D           ; AB4D: 20 5D A9     ].
- LDA #&9D                ; AB50: A9 9D       ..
- STA ySprite0            ; AB52: 8D 00 02    ...
- LDA #&FE                ; AB55: A9 FE       ..
- STA tileSprite0         ; AB57: 8D 01 02    ...
- LDA #&F8                ; AB5A: A9 F8       ..
- STA xSprite0            ; AB5C: 8D 03 02    ...
- LDA #&23 ; '#'          ; AB5F: A9 23       .#
- STA attrSprite0         ; AB61: 8D 02 02    ...
- LDA #&FB                ; AB64: A9 FB       ..
- STA tileSprite1         ; AB66: 8D 05 02    ...
- STA tileSprite2         ; AB69: 8D 09 02    ...
- LDA #&FD                ; AB6C: A9 FD       ..
- STA tileSprite3         ; AB6E: 8D 0D 02    ...
- STA tileSprite4         ; AB71: 8D 11 02    ...
- LDA #3                  ; AB74: A9 03       ..
- STA attrSprite1         ; AB76: 8D 06 02    ...
- LDA #&43 ; 'C'          ; AB79: A9 43       .C
- STA attrSprite2         ; AB7B: 8D 0A 02    ...
- LDA #&43 ; 'C'          ; AB7E: A9 43       .C
- STA attrSprite3         ; AB80: 8D 0E 02    ...
- LDA #3                  ; AB83: A9 03       ..
- STA attrSprite4         ; AB85: 8D 12 02    ...
- JSR subm_D933           ; AB88: 20 33 D9     3.
- LDA #0                  ; AB8B: A9 00       ..
- STA OAM_ADDR            ; AB8D: 8D 03 20    ..
- LDA #2                  ; AB90: A9 02       ..
- STA OAM_DMA             ; AB92: 8D 14 40    ..@
- LDA #0                  ; AB95: A9 00       ..
- STA otherPhase          ; AB97: 85 F4       ..
- STA drawingPhase        ; AB99: 85 C0       ..
- STA palettePhase        ; AB9B: 85 F3       ..
- LDA #&10                ; AB9D: A9 10       ..
- STA L00E0               ; AB9F: 85 E0       ..
- LDA #0                  ; ABA1: A9 00       ..
- STA pallettePhasex8     ; ABA3: 85 DF       ..
- LDA #&20 ; ' '          ; ABA5: A9 20       .
- STA ppuNametableHi      ; ABA7: 85 E4       ..
- LDA #0                  ; ABA9: A9 00       ..
- STA ppuNametableLo      ; ABAB: 85 E3       ..
- LDA #&28 ; '('          ; ABAD: A9 28       .(
- STA L03EF               ; ABAF: 8D EF 03    ...
- STA L03F0               ; ABB2: 8D F0 03    ...
- LDA #4                  ; ABB5: A9 04       ..
- STA tile1Phase0         ; ABB7: 85 C3       ..
- STA tile1Phase1         ; ABB9: 85 C4       ..
- STA tile2Phase0         ; ABBB: 85 C5       ..
- STA tile2Phase1         ; ABBD: 85 C6       ..
- STA L00CA               ; ABBF: 85 CA       ..
- STA L00CB               ; ABC1: 85 CB       ..
- STA tile3Phase0         ; ABC3: 85 C7       ..
- STA tile3Phase1         ; ABC5: 85 C8       ..
- LDA #&0F                ; ABC7: A9 0F       ..
- STA hiddenColour        ; ABC9: 85 33       .3
- STA visibleColour       ; ABCB: 85 34       .4
- STA paletteColour1      ; ABCD: 85 35       .5
- STA paletteColour2      ; ABCF: 85 36       .6
- LDA #0                  ; ABD1: A9 00       ..
- STA L00DA               ; ABD3: 85 DA       ..
- STA QQ11a               ; ABD5: 85 9F       ..
- LDA #&FF                ; ABD7: A9 FF       ..
- STA L0473               ; ABD9: 8D 73 04    .s.
- JSR subm_D933           ; ABDC: 20 33 D9     3.
- LDA #&90                ; ABDF: A9 90       ..
- STA ppuCtrlCopy         ; ABE1: 85 F5       ..
- STA PPU_CTRL            ; ABE3: 8D 00 20    ..
- RTS                     ; ABE6: 60          `
+ LDA #&F0
+ STA ySprite0,Y
+ INY
+ LDA #&FE
+ STA ySprite0,Y
+ INY
+ LDA #3
+ STA ySprite0,Y
+ INY
+ LDA #0
+ STA ySprite0,Y
+ INY
+ BNE loop_CAB33
+ JSR subm_A95D
+ LDA #&9D
+ STA ySprite0
+ LDA #&FE
+ STA tileSprite0
+ LDA #&F8
+ STA xSprite0
+ LDA #&23
+ STA attrSprite0
+ LDA #&FB
+ STA tileSprite1
+ STA tileSprite2
+ LDA #&FD
+ STA tileSprite3
+ STA tileSprite4
+ LDA #3
+ STA attrSprite1
+ LDA #&43
+ STA attrSprite2
+ LDA #&43
+ STA attrSprite3
+ LDA #3
+ STA attrSprite4
+ JSR subm_D933
+ LDA #0
+ STA OAM_ADDR
+ LDA #2
+ STA OAM_DMA
+ LDA #0
+ STA otherPhase
+ STA drawingPhase
+ STA palettePhase
+ LDA #&10
+ STA L00E0
+ LDA #0
+ STA pallettePhasex8
+ LDA #&20
+ STA ppuNametableHi
+ LDA #0
+ STA ppuNametableLo
+ LDA #&28
+ STA L03EF
+ STA L03F0
+ LDA #4
+ STA tile1Phase0
+ STA tile1Phase1
+ STA tile2Phase0
+ STA tile2Phase1
+ STA L00CA
+ STA L00CB
+ STA tile3Phase0
+ STA tile3Phase1
+ LDA #&0F
+ STA hiddenColour
+ STA visibleColour
+ STA paletteColour1
+ STA paletteColour2
+ LDA #0
+ STA L00DA
+ STA QQ11a
+ LDA #&FF
+ STA L0473
+ JSR subm_D933
+ LDA #&90
+ STA ppuCtrlCopy
+ STA PPU_CTRL
+ RTS
 
 \ ******************************************************************************
 \
@@ -11096,39 +11122,39 @@ ENDMACRO
 
 .subm_ABE7
 
- LDA QQ11                ; ABE7: A5 9E       ..
- CMP #&BA                ; ABE9: C9 BA       ..
- BNE CAC08               ; ABEB: D0 1B       ..
- LDA L0464               ; ABED: AD 64 04    .d.
- CMP #3                  ; ABF0: C9 03       ..
- BEQ CABFA               ; ABF2: F0 06       ..
- JSR Set_K_K3_XC_YC      ; ABF4: 20 F9 EC     ..
- JMP CAC08               ; ABF7: 4C 08 AC    L..
+ LDA QQ11
+ CMP #&BA
+ BNE CAC08
+ LDA L0464
+ CMP #3
+ BEQ CABFA
+ JSR Set_K_K3_XC_YC
+ JMP CAC08
 
 .CABFA
 
- LDX #&F0                ; ABFA: A2 F0       ..
- STX ySprite8            ; ABFC: 8E 20 02    . .
- STX ySprite9            ; ABFF: 8E 24 02    .$.
- STX ySprite10           ; AC02: 8E 28 02    .(.
- STX ySprite11           ; AC05: 8E 2C 02    .,.
+ LDX #&F0
+ STX ySprite8
+ STX ySprite9
+ STX ySprite10
+ STX ySprite11
 
 .CAC08
 
- LDA #2                  ; AC08: A9 02       ..
- STA addr1+1             ; AC0A: 85 D5       ..
- LDA #&80                ; AC0C: A9 80       ..
- STA addr1               ; AC0E: 85 D4       ..
- LDA QQ11                ; AC10: A5 9E       ..
- BPL CAC1C               ; AC12: 10 08       ..
- LDA #3                  ; AC14: A9 03       ..
- STA addr1+1             ; AC16: 85 D5       ..
- LDA #&60 ; '`'          ; AC18: A9 60       .`
- STA addr1               ; AC1A: 85 D4       ..
+ LDA #2
+ STA addr1+1
+ LDA #&80
+ STA addr1
+ LDA QQ11
+ BPL CAC1C
+ LDA #3
+ STA addr1+1
+ LDA #&60
+ STA addr1
 
 .CAC1C
 
- RTS                     ; AC1C: 60          `
+ RTS
 
 \ ******************************************************************************
 \
@@ -11141,46 +11167,46 @@ ENDMACRO
 
 .subm_AC1D
 
- TAY                     ; AC1D: A8          .
- LDA QQ11                ; AC1E: A5 9E       ..
- AND #&40 ; '@'          ; AC20: 29 40       )@
- BNE CAC1C               ; AC22: D0 F8       ..
- STY L0464               ; AC24: 8C 64 04    .d.
- JSR subm_ACEB           ; AC27: 20 EB AC     ..
- LDA #2                  ; AC2A: A9 02       ..
- STA addr1+1             ; AC2C: 85 D5       ..
- LDA #&80                ; AC2E: A9 80       ..
- STA addr1               ; AC30: 85 D4       ..
- LDA QQ11                ; AC32: A5 9E       ..
- BPL CAC3E               ; AC34: 10 08       ..
- LDA #3                  ; AC36: A9 03       ..
- STA addr1+1             ; AC38: 85 D5       ..
- LDA #&60 ; '`'          ; AC3A: A9 60       .`
- STA addr1               ; AC3C: 85 D4       ..
+ TAY
+ LDA QQ11
+ AND #&40
+ BNE CAC1C
+ STY L0464
+ JSR subm_ACEB
+ LDA #2
+ STA addr1+1
+ LDA #&80
+ STA addr1
+ LDA QQ11
+ BPL CAC3E
+ LDA #3
+ STA addr1+1
+ LDA #&60
+ STA addr1
 
 .CAC3E
 
- LDA L0464               ; AC3E: AD 64 04    .d.
- ASL A                   ; AC41: 0A          .
- ASL A                   ; AC42: 0A          .
- ADC #&81                ; AC43: 69 81       i.
- STA L00D6               ; AC45: 85 D6       ..
- LDX #0                  ; AC47: A2 00       ..
- STX L00D3               ; AC49: 86 D3       ..
+ LDA L0464
+ ASL A
+ ASL A
+ ADC #&81
+ STA L00D6
+ LDX #0
+ STX L00D3
 
 .loop_CAC4B
 
- LDA setupPPUForIconBar  ; AC4B: A5 E9       ..
- BPL CAC58               ; AC4D: 10 09       ..
- LDA PPU_STATUS          ; AC4F: AD 02 20    ..
- ASL A                   ; AC52: 0A          .
- BPL CAC58               ; AC53: 10 03       ..
- JSR SetPPUTablesTo0     ; AC55: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CAC58
+ LDA PPU_STATUS
+ ASL A
+ BPL CAC58
+ JSR SetPPUTablesTo0
 
 .CAC58
 
- LDA L00D3               ; AC58: A5 D3       ..
- BPL loop_CAC4B          ; AC5A: 10 EF       ..
+ LDA L00D3
+ BPL loop_CAC4B
 
 \ ******************************************************************************
 \
@@ -11193,35 +11219,35 @@ ENDMACRO
 
 .subm_AC5C
 
- LDA L0464               ; AC5C: AD 64 04    .d.
- JSR subm_AE18           ; AC5F: 20 18 AE     ..
- LDA QQ11                ; AC62: A5 9E       ..
- AND #&40 ; '@'          ; AC64: 29 40       )@
- BNE CAC85               ; AC66: D0 1D       ..
- JSR subm_ABE7           ; AC68: 20 E7 AB     ..
- LDA #&80                ; AC6B: A9 80       ..
- STA L00D7               ; AC6D: 85 D7       ..
- ASL A                   ; AC6F: 0A          .
- STA L00D3               ; AC70: 85 D3       ..
+ LDA L0464
+ JSR subm_AE18
+ LDA QQ11
+ AND #&40
+ BNE CAC85
+ JSR subm_ABE7
+ LDA #&80
+ STA L00D7
+ ASL A
+ STA L00D3
 
 .loop_CAC72
 
- LDA setupPPUForIconBar  ; AC72: A5 E9       ..
- BPL CAC7F               ; AC74: 10 09       ..
- LDA PPU_STATUS          ; AC76: AD 02 20    ..
- ASL A                   ; AC79: 0A          .
- BPL CAC7F               ; AC7A: 10 03       ..
- JSR SetPPUTablesTo0     ; AC7C: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CAC7F
+ LDA PPU_STATUS
+ ASL A
+ BPL CAC7F
+ JSR SetPPUTablesTo0
 
 .CAC7F
 
- LDA L00D3               ; AC7F: A5 D3       ..
- BPL loop_CAC72          ; AC81: 10 EF       ..
- ASL L00D7               ; AC83: 06 D7       ..
+ LDA L00D3
+ BPL loop_CAC72
+ ASL L00D7
 
 .CAC85
 
- RTS                     ; AC85: 60          `
+ RTS
 
 \ ******************************************************************************
 \
@@ -11234,75 +11260,75 @@ ENDMACRO
 
 .subm_AC86
 
- LDA setupPPUForIconBar  ; AC86: A5 E9       ..
- BPL CAC93               ; AC88: 10 09       ..
- LDA PPU_STATUS          ; AC8A: AD 02 20    ..
- ASL A                   ; AC8D: 0A          .
- BPL CAC93               ; AC8E: 10 03       ..
- JSR SetPPUTablesTo0     ; AC90: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CAC93
+ LDA PPU_STATUS
+ ASL A
+ BPL CAC93
+ JSR SetPPUTablesTo0
 
 .CAC93
 
- LDA #&F8                ; AC93: A9 F8       ..
- STA xSprite0            ; AC95: 8D 03 02    ...
- LDY #&12                ; AC98: A0 12       ..
- LDX #&9D                ; AC9A: A2 9D       ..
- LDA QQ11                ; AC9C: A5 9E       ..
- BPL CACCC               ; AC9E: 10 2C       .,
- CMP #&C4                ; ACA0: C9 C4       ..
- BNE CACA8               ; ACA2: D0 04       ..
- LDX #&F0                ; ACA4: A2 F0       ..
- BNE CACCC               ; ACA6: D0 24       .$
+ LDA #&F8
+ STA xSprite0
+ LDY #&12
+ LDX #&9D
+ LDA QQ11
+ BPL CACCC
+ CMP #&C4
+ BNE CACA8
+ LDX #&F0
+ BNE CACCC
 
 .CACA8
 
- LDY #&19                ; ACA8: A0 19       ..
- LDX #&D5                ; ACAA: A2 D5       ..
- CMP #&B9                ; ACAC: C9 B9       ..
- BNE CACB7               ; ACAE: D0 07       ..
- LDX #&96                ; ACB0: A2 96       ..
- LDA #&F8                ; ACB2: A9 F8       ..
- STA xSprite0            ; ACB4: 8D 03 02    ...
+ LDY #&19
+ LDX #&D5
+ CMP #&B9
+ BNE CACB7
+ LDX #&96
+ LDA #&F8
+ STA xSprite0
 
 .CACB7
 
- LDA QQ11                ; ACB7: A5 9E       ..
- AND #&0F                ; ACB9: 29 0F       ).
- CMP #&0F                ; ACBB: C9 0F       ..
- BNE CACC1               ; ACBD: D0 02       ..
- LDX #&A6                ; ACBF: A2 A6       ..
+ LDA QQ11
+ AND #&0F
+ CMP #&0F
+ BNE CACC1
+ LDX #&A6
 
 .CACC1
 
- CMP #&0D                ; ACC1: C9 0D       ..
- BNE CACCC               ; ACC3: D0 07       ..
- LDX #&AD                ; ACC5: A2 AD       ..
- LDA #&F8                ; ACC7: A9 F8       ..
- STA xSprite0            ; ACC9: 8D 03 02    ...
+ CMP #&0D
+ BNE CACCC
+ LDX #&AD
+ LDA #&F8
+ STA xSprite0
 
 .CACCC
 
- STX ySprite0            ; ACCC: 8E 00 02    ...
- TYA                     ; ACCF: 98          .
- SEC                     ; ACD0: 38          8
- ROL A                   ; ACD1: 2A          *
- ASL A                   ; ACD2: 0A          .
- ASL A                   ; ACD3: 0A          .
- STA L0461               ; ACD4: 8D 61 04    .a.
- LDA L0464               ; ACD7: AD 64 04    .d.
- ASL A                   ; ACDA: 0A          .
- ASL A                   ; ACDB: 0A          .
- ADC #&81                ; ACDC: 69 81       i.
- STA L00D6               ; ACDE: 85 D6       ..
- LDA QQ11                ; ACE0: A5 9E       ..
- AND #&40 ; '@'          ; ACE2: 29 40       )@
- BNE CACEA               ; ACE4: D0 04       ..
- LDX #0                  ; ACE6: A2 00       ..
- STX L00D3               ; ACE8: 86 D3       ..
+ STX ySprite0
+ TYA
+ SEC
+ ROL A
+ ASL A
+ ASL A
+ STA L0461
+ LDA L0464
+ ASL A
+ ASL A
+ ADC #&81
+ STA L00D6
+ LDA QQ11
+ AND #&40
+ BNE CACEA
+ LDX #0
+ STX L00D3
 
 .CACEA
 
- RTS                     ; ACEA: 60          `
+ RTS
 
 \ ******************************************************************************
 \
@@ -11315,37 +11341,55 @@ ENDMACRO
 
 .subm_ACEB
 
- JSR subm_AD2A           ; ACEB: 20 2A AD     *.
- LDY #2                  ; ACEE: A0 02       ..
- JSR subm_AF2E           ; ACF0: 20 2E AF     ..
- LDY #4                  ; ACF3: A0 04       ..
- JSR subm_AF5B           ; ACF5: 20 5B AF     [.
- LDY #7                  ; ACF8: A0 07       ..
- JSR subm_AF2E           ; ACFA: 20 2E AF     ..
- LDY #9                  ; ACFD: A0 09       ..
- JSR subm_AF5B           ; ACFF: 20 5B AF     [.
- LDY #&0C                ; AD02: A0 0C       ..
- JSR subm_AF2E           ; AD04: 20 2E AF     ..
- LDY #&1D                ; AD07: A0 1D       ..
- JSR subm_AF5B           ; AD09: 20 5B AF     [.
+ JSR subm_AD2A
+ LDY #2
+ JSR subm_AF2E
+ LDY #4
+ JSR subm_AF5B
+ LDY #7
+ JSR subm_AF2E
+ LDY #9
+ JSR subm_AF5B
+ LDY #&0C
+ JSR subm_AF2E
+ LDY #&1D
+ JSR subm_AF5B
 
-.sub_CAD0C
+\ ******************************************************************************
+\
+\       Name: subm_AD0C
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
 
- LDY #&0E                ; AD0C: A0 0E       ..
- JSR subm_AF5B           ; AD0E: 20 5B AF     [.
- LDY #&11                ; AD11: A0 11       ..
- JSR subm_AF2E           ; AD13: 20 2E AF     ..
+.subm_AD0C
 
-.sub_CAD16
+ LDY #&0E
+ JSR subm_AF5B
+ LDY #&11
+ JSR subm_AF2E
 
- LDY #&13                ; AD16: A0 13       ..
- JSR subm_AF5B           ; AD18: 20 5B AF     [.
- LDY #&16                ; AD1B: A0 16       ..
- JSR subm_AF2E           ; AD1D: 20 2E AF     ..
- LDY #&18                ; AD20: A0 18       ..
- JSR subm_AF5B           ; AD22: 20 5B AF     [.
- LDY #&1B                ; AD25: A0 1B       ..
- JMP subm_AF2E           ; AD27: 4C 2E AF    L..
+\ ******************************************************************************
+\
+\       Name: subm_AD16
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
+.subm_AD16
+
+ LDY #&13
+ JSR subm_AF5B
+ LDY #&16
+ JSR subm_AF2E
+ LDY #&18
+ JSR subm_AF5B
+ LDY #&1B
+ JMP subm_AF2E
 
 \ ******************************************************************************
 \
@@ -11358,103 +11402,103 @@ ENDMACRO
 
 .subm_AD2A
 
- LDA L0464               ; AD2A: AD 64 04    .d.
- ASL A                   ; AD2D: 0A          .
- ASL A                   ; AD2E: 0A          .
- ASL A                   ; AD2F: 0A          .
- ASL A                   ; AD30: 0A          .
- ASL A                   ; AD31: 0A          .
- ASL A                   ; AD32: 0A          .
- TAY                     ; AD33: A8          .
- BNE CAD3A               ; AD34: D0 04       ..
- LDA #&94                ; AD36: A9 94       ..
- BNE CAD3C               ; AD38: D0 02       ..
+ LDA L0464
+ ASL A
+ ASL A
+ ASL A
+ ASL A
+ ASL A
+ ASL A
+ TAY
+ BNE CAD3A
+ LDA #&94
+ BNE CAD3C
 
 .CAD3A
 
- LDA #&95                ; AD3A: A9 95       ..
+ LDA #&95
 
 .CAD3C
 
- DEY                     ; AD3C: 88          .
- STY V                   ; AD3D: 84 63       .c
- ADC #0                  ; AD3F: 69 00       i.
- STA V+1                 ; AD41: 85 64       .d
- LDA QQ11                ; AD43: A5 9E       ..
- BMI CAD5A               ; AD45: 30 13       0.
- LDA #&72 ; 'r'          ; AD47: A9 72       .r
- STA SC+1                ; AD49: 85 08       ..
- LDA #&80                ; AD4B: A9 80       ..
- STA SC                  ; AD4D: 85 07       ..
- LDA #&76 ; 'v'          ; AD4F: A9 76       .v
- STA SC2+1               ; AD51: 85 BB       ..
- LDA #&80                ; AD53: A9 80       ..
- STA SC2                 ; AD55: 85 BA       ..
- JMP CAD77               ; AD57: 4C 77 AD    Lw.
+ DEY
+ STY V
+ ADC #0
+ STA V+1
+ LDA QQ11
+ BMI CAD5A
+ LDA #&72
+ STA SC+1
+ LDA #&80
+ STA SC
+ LDA #&76
+ STA SC2+1
+ LDA #&80
+ STA SC2
+ JMP CAD77
 
 .CAD5A
 
- LDA #&73 ; 's'          ; AD5A: A9 73       .s
- STA SC+1                ; AD5C: 85 08       ..
- LDA #&60 ; '`'          ; AD5E: A9 60       .`
- STA SC                  ; AD60: 85 07       ..
- LDA #&77 ; 'w'          ; AD62: A9 77       .w
- STA SC2+1               ; AD64: 85 BB       ..
- LDA #&60 ; '`'          ; AD66: A9 60       .`
- STA SC2                 ; AD68: 85 BA       ..
- LDA setupPPUForIconBar  ; AD6A: A5 E9       ..
- BPL CAD77               ; AD6C: 10 09       ..
- LDA PPU_STATUS          ; AD6E: AD 02 20    ..
- ASL A                   ; AD71: 0A          .
- BPL CAD77               ; AD72: 10 03       ..
- JSR SetPPUTablesTo0     ; AD74: 20 6D D0     m.
+ LDA #&73
+ STA SC+1
+ LDA #&60
+ STA SC
+ LDA #&77
+ STA SC2+1
+ LDA #&60
+ STA SC2
+ LDA setupPPUForIconBar
+ BPL CAD77
+ LDA PPU_STATUS
+ ASL A
+ BPL CAD77
+ JSR SetPPUTablesTo0
 
 .CAD77
 
- LDY #&3F ; '?'          ; AD77: A0 3F       .?
+ LDY #&3F
 
 .loop_CAD79
 
- LDA (V),Y               ; AD79: B1 63       .c
- STA (SC),Y              ; AD7B: 91 07       ..
- STA (SC2),Y             ; AD7D: 91 BA       ..
- DEY                     ; AD7F: 88          .
- CPY #&21 ; '!'          ; AD80: C0 21       .!
- BNE loop_CAD79          ; AD82: D0 F5       ..
- LDA setupPPUForIconBar  ; AD84: A5 E9       ..
- BPL CAD91               ; AD86: 10 09       ..
- LDA PPU_STATUS          ; AD88: AD 02 20    ..
- ASL A                   ; AD8B: 0A          .
- BPL CAD91               ; AD8C: 10 03       ..
- JSR SetPPUTablesTo0     ; AD8E: 20 6D D0     m.
+ LDA (V),Y
+ STA (SC),Y
+ STA (SC2),Y
+ DEY
+ CPY #&21
+ BNE loop_CAD79
+ LDA setupPPUForIconBar
+ BPL CAD91
+ LDA PPU_STATUS
+ ASL A
+ BPL CAD91
+ JSR SetPPUTablesTo0
 
 .CAD91
 
- LDA (V),Y               ; AD91: B1 63       .c
- STA (SC),Y              ; AD93: 91 07       ..
- STA (SC2),Y             ; AD95: 91 BA       ..
- DEY                     ; AD97: 88          .
- BNE CAD91               ; AD98: D0 F7       ..
- LDA setupPPUForIconBar  ; AD9A: A5 E9       ..
- BPL CADA7               ; AD9C: 10 09       ..
- LDA PPU_STATUS          ; AD9E: AD 02 20    ..
- ASL A                   ; ADA1: 0A          .
- BPL CADA7               ; ADA2: 10 03       ..
- JSR SetPPUTablesTo0     ; ADA4: 20 6D D0     m.
+ LDA (V),Y
+ STA (SC),Y
+ STA (SC2),Y
+ DEY
+ BNE CAD91
+ LDA setupPPUForIconBar
+ BPL CADA7
+ LDA PPU_STATUS
+ ASL A
+ BPL CADA7
+ JSR SetPPUTablesTo0
 
 .CADA7
 
- LDY #&20 ; ' '          ; ADA7: A0 20       .
- LDA (V),Y               ; ADA9: B1 63       .c
- LDY #0                  ; ADAB: A0 00       ..
- STA (SC),Y              ; ADAD: 91 07       ..
- STA (SC2),Y             ; ADAF: 91 BA       ..
- LDY #&40 ; '@'          ; ADB1: A0 40       .@
- LDA (V),Y               ; ADB3: B1 63       .c
- LDY #&20 ; ' '          ; ADB5: A0 20       .
- STA (SC),Y              ; ADB7: 91 07       ..
- STA (SC2),Y             ; ADB9: 91 BA       ..
- RTS                     ; ADBB: 60          `
+ LDY #&20
+ LDA (V),Y
+ LDY #0
+ STA (SC),Y
+ STA (SC2),Y
+ LDY #&40
+ LDA (V),Y
+ LDY #&20
+ STA (SC),Y
+ STA (SC2),Y
+ RTS
 
 \ ******************************************************************************
 \
@@ -11467,28 +11511,28 @@ ENDMACRO
 
 .subm_AE18_ADBC
 
- LDA #&73 ; 's'          ; ADBC: A9 73       .s
- STA SC+1                ; ADBE: 85 08       ..
- LDA #&60 ; '`'          ; ADC0: A9 60       .`
- STA SC                  ; ADC2: 85 07       ..
- LDA #&77 ; 'w'          ; ADC4: A9 77       .w
- STA SC2+1               ; ADC6: 85 BB       ..
- LDA #&60 ; '`'          ; ADC8: A9 60       .`
- STA SC2                 ; ADCA: 85 BA       ..
- LDY #&3F ; '?'          ; ADCC: A0 3F       .?
- LDA #0                  ; ADCE: A9 00       ..
+ LDA #&73
+ STA SC+1
+ LDA #&60
+ STA SC
+ LDA #&77
+ STA SC2+1
+ LDA #&60
+ STA SC2
+ LDY #&3F
+ LDA #0
 
 .loop_CADD0
 
- STA (SC),Y              ; ADD0: 91 07       ..
- STA (SC2),Y             ; ADD2: 91 BA       ..
- DEY                     ; ADD4: 88          .
- BNE loop_CADD0          ; ADD5: D0 F9       ..
- LDA #&20 ; ' '          ; ADD7: A9 20       .
- LDY #0                  ; ADD9: A0 00       ..
- STA (SC),Y              ; ADDB: 91 07       ..
- STA (SC2),Y             ; ADDD: 91 BA       ..
- RTS                     ; ADDF: 60          `
+ STA (SC),Y
+ STA (SC2),Y
+ DEY
+ BNE loop_CADD0
+ LDA #&20
+ LDY #0
+ STA (SC),Y
+ STA (SC2),Y
+ RTS
 
 \ ******************************************************************************
 \
@@ -11501,46 +11545,46 @@ ENDMACRO
 
 .subm_AE18_ADE0
 
- LDA L03EB               ; ADE0: AD EB 03    ...
- BEQ CADEA               ; ADE3: F0 05       ..
- LDY #2                  ; ADE5: A0 02       ..
- JSR sub_CAF9A           ; ADE7: 20 9A AF     ..
+ LDA L03EB
+ BEQ CADEA
+ LDY #2
+ JSR subm_AF9A
 
 .CADEA
 
- LDA L03EA               ; ADEA: AD EA 03    ...
- BEQ CADF4               ; ADED: F0 05       ..
- LDY #4                  ; ADEF: A0 04       ..
- JSR subm_AF96           ; ADF1: 20 96 AF     ..
+ LDA L03EA
+ BEQ CADF4
+ LDY #4
+ JSR subm_AF96
 
 .CADF4
 
- LDA L03ED               ; ADF4: AD ED 03    ...
- BPL CADFE               ; ADF7: 10 05       ..
- LDY #7                  ; ADF9: A0 07       ..
- JSR sub_CAF9A           ; ADFB: 20 9A AF     ..
+ LDA L03ED
+ BPL CADFE
+ LDY #7
+ JSR subm_AF9A
 
 .CADFE
 
- LDA L03EC               ; ADFE: AD EC 03    ...
- BMI CAE08               ; AE01: 30 05       0.
- LDY #9                  ; AE03: A0 09       ..
- JSR subm_AF96           ; AE05: 20 96 AF     ..
+ LDA L03EC
+ BMI CAE08
+ LDY #9
+ JSR subm_AF96
 
 .CAE08
 
- LDA scanController2     ; AE08: AD 75 04    .u.
- BNE CAE12               ; AE0B: D0 05       ..
- LDY #&0C                ; AE0D: A0 0C       ..
- JSR sub_CAF9A           ; AE0F: 20 9A AF     ..
+ LDA scanController2
+ BNE CAE12
+ LDY #&0C
+ JSR subm_AF9A
 
 .CAE12
 
- JSR sub_CAD0C           ; AE12: 20 0C AD     ..
+ JSR subm_AD0C
 
 .CAE15
 
- JMP CAEC6               ; AE15: 4C C6 AE    L..
+ JMP CAEC6
 
 \ ******************************************************************************
 \
@@ -11553,202 +11597,202 @@ ENDMACRO
 
 .subm_AE18
 
- TAY                     ; AE18: A8          .
- BMI subm_AE18_ADBC      ; AE19: 30 A1       0.
- STA L0464               ; AE1B: 8D 64 04    .d.
- LDA setupPPUForIconBar  ; AE1E: A5 E9       ..
- BPL CAE2B               ; AE20: 10 09       ..
- LDA PPU_STATUS          ; AE22: AD 02 20    ..
- ASL A                   ; AE25: 0A          .
- BPL CAE2B               ; AE26: 10 03       ..
- JSR SetPPUTablesTo0     ; AE28: 20 6D D0     m.
+ TAY
+ BMI subm_AE18_ADBC
+ STA L0464
+ LDA setupPPUForIconBar
+ BPL CAE2B
+ LDA PPU_STATUS
+ ASL A
+ BPL CAE2B
+ JSR SetPPUTablesTo0
 
 .CAE2B
 
- JSR subm_AD2A           ; AE2B: 20 2A AD     *.
- LDA L0464               ; AE2E: AD 64 04    .d.
- BEQ CAEAB               ; AE31: F0 78       .x
- CMP #1                  ; AE33: C9 01       ..
- BEQ CAE42               ; AE35: F0 0B       ..
- CMP #3                  ; AE37: C9 03       ..
- BEQ subm_AE18_ADE0      ; AE39: F0 A5       ..
- CMP #2                  ; AE3B: C9 02       ..
- BNE CAE15               ; AE3D: D0 D6       ..
- JMP CAEE5               ; AE3F: 4C E5 AE    L..
+ JSR subm_AD2A
+ LDA L0464
+ BEQ CAEAB
+ CMP #1
+ BEQ CAE42
+ CMP #3
+ BEQ subm_AE18_ADE0
+ CMP #2
+ BNE CAE15
+ JMP CAEE5
 
 .CAE42
 
- LDA SSPR                ; AE42: AD 64 05    .d.
- BNE CAE4C               ; AE45: D0 05       ..
- LDY #2                  ; AE47: A0 02       ..
- JSR subm_AF2E           ; AE49: 20 2E AF     ..
+ LDA SSPR
+ BNE CAE4C
+ LDY #2
+ JSR subm_AF2E
 
 .CAE4C
 
- LDA ECM                 ; AE4C: AD BE 03    ...
- BNE CAE56               ; AE4F: D0 05       ..
- LDY #&11                ; AE51: A0 11       ..
- JSR subm_AF2E           ; AE53: 20 2E AF     ..
+ LDA ECM
+ BNE CAE56
+ LDY #&11
+ JSR subm_AF2E
 
 .CAE56
 
- LDA QQ22+1              ; AE56: A5 6C       .l
- BNE CAE60               ; AE58: D0 06       ..
- LDA L0395               ; AE5A: AD 95 03    ...
- ASL A                   ; AE5D: 0A          .
- BMI CAE65               ; AE5E: 30 05       0.
+ LDA QQ22+1
+ BNE CAE60
+ LDA L0395
+ ASL A
+ BMI CAE65
 
 .CAE60
 
- LDY #&0E                ; AE60: A0 0E       ..
- JSR subm_AF5B           ; AE62: 20 5B AF     [.
+ LDY #&0E
+ JSR subm_AF5B
 
 .CAE65
 
- LDA QQ11                ; AE65: A5 9E       ..
- BEQ CAE6F               ; AE67: F0 06       ..
- JSR sub_CAD16           ; AE69: 20 16 AD     ..
- JMP CAE9C               ; AE6C: 4C 9C AE    L..
+ LDA QQ11
+ BEQ CAE6F
+ JSR subm_AD16
+ JMP CAE9C
 
 .CAE6F
 
- LDA NOMSL               ; AE6F: AD C8 03    ...
- BNE CAE79               ; AE72: D0 05       ..
- LDY #&13                ; AE74: A0 13       ..
- JSR subm_AF5B           ; AE76: 20 5B AF     [.
+ LDA NOMSL
+ BNE CAE79
+ LDY #&13
+ JSR subm_AF5B
 
 .CAE79
 
- LDA MSTG                ; AE79: AD 01 04    ...
- BPL CAE83               ; AE7C: 10 05       ..
- LDY #&16                ; AE7E: A0 16       ..
- JSR subm_AF2E           ; AE80: 20 2E AF     ..
+ LDA MSTG
+ BPL CAE83
+ LDY #&16
+ JSR subm_AF2E
 
 .CAE83
 
- LDA BOMB                ; AE83: AD C0 03    ...
- BNE CAE8D               ; AE86: D0 05       ..
- LDY #&18                ; AE88: A0 18       ..
- JSR subm_AF5B           ; AE8A: 20 5B AF     [.
+ LDA BOMB
+ BNE CAE8D
+ LDY #&18
+ JSR subm_AF5B
 
 .CAE8D
 
- LDA MJ                  ; AE8D: AD 8A 03    ...
- BNE CAE97               ; AE90: D0 05       ..
- LDA ESCP                ; AE92: AD C4 03    ...
- BNE CAE9C               ; AE95: D0 05       ..
+ LDA MJ
+ BNE CAE97
+ LDA ESCP
+ BNE CAE9C
 
 .CAE97
 
- LDY #&1B                ; AE97: A0 1B       ..
- JSR subm_AF2E           ; AE99: 20 2E AF     ..
+ LDY #&1B
+ JSR subm_AF2E
 
 .CAE9C
 
- LDA L0300               ; AE9C: AD 00 03    ...
- AND #&C0                ; AE9F: 29 C0       ).
- BEQ CAEBB               ; AEA1: F0 18       ..
+ LDA L0300
+ AND #&C0
+ BEQ CAEBB
 
 .CAEA3
 
- LDY #&1D                ; AEA3: A0 1D       ..
- JSR subm_AF5B           ; AEA5: 20 5B AF     [.
- JMP CAEBB               ; AEA8: 4C BB AE    L..
+ LDY #&1D
+ JSR subm_AF5B
+ JMP CAEBB
 
 .CAEAB
 
- LDA COK                 ; AEAB: AD A6 03    ...
- BNE CAEB6               ; AEAE: D0 06       ..
- LDA QQ11                ; AEB0: A5 9E       ..
- CMP #&BB                ; AEB2: C9 BB       ..
- BEQ CAEBB               ; AEB4: F0 05       ..
+ LDA COK
+ BNE CAEB6
+ LDA QQ11
+ CMP #&BB
+ BEQ CAEBB
 
 .CAEB6
 
- LDY #&11                ; AEB6: A0 11       ..
- JSR subm_AF2E           ; AEB8: 20 2E AF     ..
+ LDY #&11
+ JSR subm_AF2E
 
 .CAEBB
 
- LDA QQ11                ; AEBB: A5 9E       ..
- CMP #&BA                ; AEBD: C9 BA       ..
- BNE CAEC6               ; AEBF: D0 05       ..
- LDY #4                  ; AEC1: A0 04       ..
- JSR subm_AF5B           ; AEC3: 20 5B AF     [.
+ LDA QQ11
+ CMP #&BA
+ BNE CAEC6
+ LDY #4
+ JSR subm_AF5B
 
 .CAEC6
 
- LDA setupPPUForIconBar  ; AEC6: A5 E9       ..
- BPL CAED3               ; AEC8: 10 09       ..
- LDA PPU_STATUS          ; AECA: AD 02 20    ..
- ASL A                   ; AECD: 0A          .
- BPL CAED3               ; AECE: 10 03       ..
- JSR SetPPUTablesTo0     ; AED0: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CAED3
+ LDA PPU_STATUS
+ ASL A
+ BPL CAED3
+ JSR SetPPUTablesTo0
 
 .CAED3
 
- LDA L0464               ; AED3: AD 64 04    .d.
- ASL A                   ; AED6: 0A          .
- ASL A                   ; AED7: 0A          .
- ASL A                   ; AED8: 0A          .
- ASL A                   ; AED9: 0A          .
- ADC #&27 ; '''          ; AEDA: 69 27       i'
- STA L00BE               ; AEDC: 85 BE       ..
- LDA #&EB                ; AEDE: A9 EB       ..
- ADC #0                  ; AEE0: 69 00       i.
- STA L00BF               ; AEE2: 85 BF       ..
- RTS                     ; AEE4: 60          `
+ LDA L0464
+ ASL A
+ ASL A
+ ASL A
+ ASL A
+ ADC #&27
+ STA L00BE
+ LDA #&EB
+ ADC #0
+ STA L00BF
+ RTS
 
 .CAEE5
 
- LDX #4                  ; AEE5: A2 04       ..
- LDA QQ12                ; AEE7: A5 A5       ..
- BEQ CAEF6               ; AEE9: F0 0B       ..
- LDY #&0C                ; AEEB: A0 0C       ..
- JSR subm_AF2E           ; AEED: 20 2E AF     ..
- JSR sub_CAD16           ; AEF0: 20 16 AD     ..
- JMP CAEA3               ; AEF3: 4C A3 AE    L..
+ LDX #4
+ LDA QQ12
+ BEQ CAEF6
+ LDY #&0C
+ JSR subm_AF2E
+ JSR subm_AD16
+ JMP CAEA3
 
 .CAEF6
 
- LDY #2                  ; AEF6: A0 02       ..
- JSR subm_AF2E           ; AEF8: 20 2E AF     ..
- LDA QQ22+1              ; AEFB: A5 6C       .l
- BEQ CAF0C               ; AEFD: F0 0D       ..
- LDY #&0E                ; AEFF: A0 0E       ..
- JSR subm_AF5B           ; AF01: 20 5B AF     [.
- LDY #&11                ; AF04: A0 11       ..
- JSR subm_AF2E           ; AF06: 20 2E AF     ..
- JMP CAF12               ; AF09: 4C 12 AF    L..
+ LDY #2
+ JSR subm_AF2E
+ LDA QQ22+1
+ BEQ CAF0C
+ LDY #&0E
+ JSR subm_AF5B
+ LDY #&11
+ JSR subm_AF2E
+ JMP CAF12
 
 .CAF0C
 
- LDA L0395               ; AF0C: AD 95 03    ...
- ASL A                   ; AF0F: 0A          .
- BMI CAF17               ; AF10: 30 05       0.
+ LDA L0395
+ ASL A
+ BMI CAF17
 
 .CAF12
 
- LDY #&13                ; AF12: A0 13       ..
- JSR subm_AF5B           ; AF14: 20 5B AF     [.
+ LDY #&13
+ JSR subm_AF5B
 
 .CAF17
 
- LDA GHYP                ; AF17: AD C3 03    ...
- BNE CAF21               ; AF1A: D0 05       ..
- LDY #&16                ; AF1C: A0 16       ..
- JSR subm_AF2E           ; AF1E: 20 2E AF     ..
+ LDA GHYP
+ BNE CAF21
+ LDY #&16
+ JSR subm_AF2E
 
 .CAF21
 
- LDA ECM                 ; AF21: AD BE 03    ...
- BNE CAF2B               ; AF24: D0 05       ..
- LDY #&18                ; AF26: A0 18       ..
- JSR subm_AF5B           ; AF28: 20 5B AF     [.
+ LDA ECM
+ BNE CAF2B
+ LDY #&18
+ JSR subm_AF5B
 
 .CAF2B
 
- JMP CAE8D               ; AF2B: 4C 8D AE    L..
+ JMP CAE8D
 
 \ ******************************************************************************
 \
@@ -11761,34 +11805,34 @@ ENDMACRO
 
 .subm_AF2E
 
- LDA setupPPUForIconBar  ; AF2E: A5 E9       ..
- BPL CAF3B               ; AF30: 10 09       ..
- LDA PPU_STATUS          ; AF32: AD 02 20    ..
- ASL A                   ; AF35: 0A          .
- BPL CAF3B               ; AF36: 10 03       ..
- JSR SetPPUTablesTo0     ; AF38: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CAF3B
+ LDA PPU_STATUS
+ ASL A
+ BPL CAF3B
+ JSR SetPPUTablesTo0
 
 .CAF3B
 
- LDA #4                  ; AF3B: A9 04       ..
- STA (SC),Y              ; AF3D: 91 07       ..
- STA (SC2),Y             ; AF3F: 91 BA       ..
- INY                     ; AF41: C8          .
- LDA #5                  ; AF42: A9 05       ..
- STA (SC),Y              ; AF44: 91 07       ..
- STA (SC2),Y             ; AF46: 91 BA       ..
- TYA                     ; AF48: 98          .
- CLC                     ; AF49: 18          .
- ADC #&1F                ; AF4A: 69 1F       i.
- TAY                     ; AF4C: A8          .
- LDA #&24 ; '$'          ; AF4D: A9 24       .$
- STA (SC),Y              ; AF4F: 91 07       ..
- STA (SC2),Y             ; AF51: 91 BA       ..
- INY                     ; AF53: C8          .
- LDA #&25 ; '%'          ; AF54: A9 25       .%
- STA (SC),Y              ; AF56: 91 07       ..
- STA (SC2),Y             ; AF58: 91 BA       ..
- RTS                     ; AF5A: 60          `
+ LDA #4
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ LDA #5
+ STA (SC),Y
+ STA (SC2),Y
+ TYA
+ CLC
+ ADC #&1F
+ TAY
+ LDA #&24
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ LDA #&25
+ STA (SC),Y
+ STA (SC2),Y
+ RTS
 
 \ ******************************************************************************
 \
@@ -11801,42 +11845,42 @@ ENDMACRO
 
 .subm_AF5B
 
- LDA setupPPUForIconBar  ; AF5B: A5 E9       ..
- BPL CAF68               ; AF5D: 10 09       ..
- LDA PPU_STATUS          ; AF5F: AD 02 20    ..
- ASL A                   ; AF62: 0A          .
- BPL CAF68               ; AF63: 10 03       ..
- JSR SetPPUTablesTo0     ; AF65: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CAF68
+ LDA PPU_STATUS
+ ASL A
+ BPL CAF68
+ JSR SetPPUTablesTo0
 
 .CAF68
 
- LDA #6                  ; AF68: A9 06       ..
- STA (SC),Y              ; AF6A: 91 07       ..
- STA (SC2),Y             ; AF6C: 91 BA       ..
- INY                     ; AF6E: C8          .
- LDA #7                  ; AF6F: A9 07       ..
- STA (SC),Y              ; AF71: 91 07       ..
- STA (SC2),Y             ; AF73: 91 BA       ..
- INY                     ; AF75: C8          .
- LDA #8                  ; AF76: A9 08       ..
- STA (SC),Y              ; AF78: 91 07       ..
- STA (SC2),Y             ; AF7A: 91 BA       ..
- TYA                     ; AF7C: 98          .
- CLC                     ; AF7D: 18          .
- ADC #&1E                ; AF7E: 69 1E       i.
- TAY                     ; AF80: A8          .
- LDA #&26 ; '&'          ; AF81: A9 26       .&
- STA (SC),Y              ; AF83: 91 07       ..
- STA (SC2),Y             ; AF85: 91 BA       ..
- INY                     ; AF87: C8          .
- LDA #&25 ; '%'          ; AF88: A9 25       .%
- STA (SC),Y              ; AF8A: 91 07       ..
- STA (SC2),Y             ; AF8C: 91 BA       ..
- INY                     ; AF8E: C8          .
- LDA #&27 ; '''          ; AF8F: A9 27       .'
- STA (SC),Y              ; AF91: 91 07       ..
- STA (SC2),Y             ; AF93: 91 BA       ..
- RTS                     ; AF95: 60          `
+ LDA #6
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ LDA #7
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ LDA #8
+ STA (SC),Y
+ STA (SC2),Y
+ TYA
+ CLC
+ ADC #&1E
+ TAY
+ LDA #&26
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ LDA #&25
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ LDA #&27
+ STA (SC),Y
+ STA (SC2),Y
+ RTS
 
 \ ******************************************************************************
 \
@@ -11849,38 +11893,56 @@ ENDMACRO
 
 .subm_AF96
 
- JSR sub_CAFAB           ; AF96: 20 AB AF     ..
- INY                     ; AF99: C8          .
+ JSR subm_AFAB
+ INY
 
-.sub_CAF9A
+\ ******************************************************************************
+\
+\       Name: subm_AF9A
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
 
- LDA setupPPUForIconBar  ; AF9A: A5 E9       ..
- BPL CAFA7               ; AF9C: 10 09       ..
- LDA PPU_STATUS          ; AF9E: AD 02 20    ..
- ASL A                   ; AFA1: 0A          .
- BPL CAFA7               ; AFA2: 10 03       ..
- JSR SetPPUTablesTo0     ; AFA4: 20 6D D0     m.
+.subm_AF9A
+
+ LDA setupPPUForIconBar
+ BPL CAFA7
+ LDA PPU_STATUS
+ ASL A
+ BPL CAFA7
+ JSR SetPPUTablesTo0
 
 .CAFA7
 
- JSR sub_CAFAB           ; AFA7: 20 AB AF     ..
- INY                     ; AFAA: C8          .
+ JSR subm_AFAB
+ INY
 
-.sub_CAFAB
+\ ******************************************************************************
+\
+\       Name: subm_AFAB
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
 
- LDA L95CE,Y             ; AFAB: B9 CE 95    ...
- STA (SC),Y              ; AFAE: 91 07       ..
- STA (SC2),Y             ; AFB0: 91 BA       ..
- STY T                   ; AFB2: 84 9A       ..
- TYA                     ; AFB4: 98          .
- CLC                     ; AFB5: 18          .
- ADC #&20 ; ' '          ; AFB6: 69 20       i
- TAY                     ; AFB8: A8          .
- LDA L95CE,Y             ; AFB9: B9 CE 95    ...
- STA (SC),Y              ; AFBC: 91 07       ..
- STA (SC2),Y             ; AFBE: 91 BA       ..
- LDY T                   ; AFC0: A4 9A       ..
- RTS                     ; AFC2: 60          `
+.subm_AFAB
+
+ LDA L95CE,Y
+ STA (SC),Y
+ STA (SC2),Y
+ STY T
+ TYA
+ CLC
+ ADC #&20
+ TAY
+ LDA L95CE,Y
+ STA (SC),Y
+ STA (SC2),Y
+ LDY T
+ RTS
 
 \ ******************************************************************************
 \
@@ -11893,9 +11955,9 @@ ENDMACRO
 
 .subm_AFCD_AFC3
 
- LDX #4                  ; AFC3: A2 04       ..
- STX tileNumber          ; AFC5: 86 B8       ..
- RTS                     ; AFC7: 60          `
+ LDX #4
+ STX tileNumber
+ RTS
 
 \ ******************************************************************************
 \
@@ -11908,9 +11970,9 @@ ENDMACRO
 
 .subm_AFCD_AFC8
 
- LDX #&25 ; '%'          ; AFC8: A2 25       .%
- STX tileNumber          ; AFCA: 86 B8       ..
- RTS                     ; AFCC: 60          `
+ LDX #&25
+ STX tileNumber
+ RTS
 
 \ ******************************************************************************
 \
@@ -11923,188 +11985,188 @@ ENDMACRO
 
 .subm_AFCD
 
- LDA QQ11                ; AFCD: A5 9E       ..
- CMP #&CF                ; AFCF: C9 CF       ..
- BEQ subm_AFCD_AFC3      ; AFD1: F0 F0       ..
- CMP #&10                ; AFD3: C9 10       ..
- BEQ subm_AFCD_AFC8      ; AFD5: F0 F1       ..
- LDX #&42 ; 'B'          ; AFD7: A2 42       .B
- LDA QQ11                ; AFD9: A5 9E       ..
- BMI CAFDF               ; AFDB: 30 02       0.
- LDX #&3C ; '<'          ; AFDD: A2 3C       .<
+ LDA QQ11
+ CMP #&CF
+ BEQ subm_AFCD_AFC3
+ CMP #&10
+ BEQ subm_AFCD_AFC8
+ LDX #&42
+ LDA QQ11
+ BMI CAFDF
+ LDX #&3C
 
 .CAFDF
 
- STX tileNumber          ; AFDF: 86 B8       ..
- LDA #&FC                ; AFE1: A9 FC       ..
- STA V+1                 ; AFE3: 85 64       .d
- LDA #0                  ; AFE5: A9 00       ..
- STA V                   ; AFE7: 85 63       .c
- LDA #&61 ; 'a'          ; AFE9: A9 61       .a
- STA SC+1                ; AFEB: 85 08       ..
- LDA #&28 ; '('          ; AFED: A9 28       .(
- STA SC                  ; AFEF: 85 07       ..
- LDA #&69 ; 'i'          ; AFF1: A9 69       .i
- STA SC2+1               ; AFF3: 85 BB       ..
- LDA #&28 ; '('          ; AFF5: A9 28       .(
- STA SC2                 ; AFF7: 85 BA       ..
- LDY #0                  ; AFF9: A0 00       ..
- LDX #&25 ; '%'          ; AFFB: A2 25       .%
+ STX tileNumber
+ LDA #&FC
+ STA V+1
+ LDA #0
+ STA V
+ LDA #&61
+ STA SC+1
+ LDA #&28
+ STA SC
+ LDA #&69
+ STA SC2+1
+ LDA #&28
+ STA SC2
+ LDY #0
+ LDX #&25
 
 .CAFFD
 
- LDA setupPPUForIconBar  ; AFFD: A5 E9       ..
- BPL CB00A               ; AFFF: 10 09       ..
- LDA PPU_STATUS          ; B001: AD 02 20    ..
- ASL A                   ; B004: 0A          .
- BPL CB00A               ; B005: 10 03       ..
- JSR SetPPUTablesTo0     ; B007: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CB00A
+ LDA PPU_STATUS
+ ASL A
+ BPL CB00A
+ JSR SetPPUTablesTo0
 
 .CB00A
 
- LDA (V),Y               ; B00A: B1 63       .c
- STA (SC),Y              ; B00C: 91 07       ..
- STA (SC2),Y             ; B00E: 91 BA       ..
- INY                     ; B010: C8          .
- LDA (V),Y               ; B011: B1 63       .c
- STA (SC),Y              ; B013: 91 07       ..
- STA (SC2),Y             ; B015: 91 BA       ..
- INY                     ; B017: C8          .
- LDA (V),Y               ; B018: B1 63       .c
- STA (SC),Y              ; B01A: 91 07       ..
- STA (SC2),Y             ; B01C: 91 BA       ..
- INY                     ; B01E: C8          .
- LDA (V),Y               ; B01F: B1 63       .c
- STA (SC),Y              ; B021: 91 07       ..
- STA (SC2),Y             ; B023: 91 BA       ..
- INY                     ; B025: C8          .
- LDA (V),Y               ; B026: B1 63       .c
- STA (SC),Y              ; B028: 91 07       ..
- STA (SC2),Y             ; B02A: 91 BA       ..
- INY                     ; B02C: C8          .
- LDA (V),Y               ; B02D: B1 63       .c
- STA (SC),Y              ; B02F: 91 07       ..
- STA (SC2),Y             ; B031: 91 BA       ..
- INY                     ; B033: C8          .
- LDA (V),Y               ; B034: B1 63       .c
- STA (SC),Y              ; B036: 91 07       ..
- STA (SC2),Y             ; B038: 91 BA       ..
- INY                     ; B03A: C8          .
- LDA (V),Y               ; B03B: B1 63       .c
- STA (SC),Y              ; B03D: 91 07       ..
- STA (SC2),Y             ; B03F: 91 BA       ..
- INY                     ; B041: C8          .
- BNE CB04A               ; B042: D0 06       ..
- INC V+1                 ; B044: E6 64       .d
- INC SC+1                ; B046: E6 08       ..
- INC SC2+1               ; B048: E6 BB       ..
+ LDA (V),Y
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ LDA (V),Y
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ LDA (V),Y
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ LDA (V),Y
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ LDA (V),Y
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ LDA (V),Y
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ LDA (V),Y
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ LDA (V),Y
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ BNE CB04A
+ INC V+1
+ INC SC+1
+ INC SC2+1
 
 .CB04A
 
- INX                     ; B04A: E8          .
- CPX #&3C ; '<'          ; B04B: E0 3C       .<
- BNE CAFFD               ; B04D: D0 AE       ..
+ INX
+ CPX #&3C
+ BNE CAFFD
 
 .CB04F
 
- LDA setupPPUForIconBar  ; B04F: A5 E9       ..
- BPL CB05C               ; B051: 10 09       ..
- LDA PPU_STATUS          ; B053: AD 02 20    ..
- ASL A                   ; B056: 0A          .
- BPL CB05C               ; B057: 10 03       ..
- JSR SetPPUTablesTo0     ; B059: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CB05C
+ LDA PPU_STATUS
+ ASL A
+ BPL CB05C
+ JSR SetPPUTablesTo0
 
 .CB05C
 
- CPX tileNumber          ; B05C: E4 B8       ..
- BEQ CB0B4               ; B05E: F0 54       .T
- LDA (V),Y               ; B060: B1 63       .c
- STA (SC2),Y             ; B062: 91 BA       ..
- LDA #0                  ; B064: A9 00       ..
- STA (SC),Y              ; B066: 91 07       ..
- INY                     ; B068: C8          .
- LDA (V),Y               ; B069: B1 63       .c
- STA (SC2),Y             ; B06B: 91 BA       ..
- LDA #0                  ; B06D: A9 00       ..
- STA (SC),Y              ; B06F: 91 07       ..
- INY                     ; B071: C8          .
- LDA (V),Y               ; B072: B1 63       .c
- STA (SC2),Y             ; B074: 91 BA       ..
- LDA #0                  ; B076: A9 00       ..
- STA (SC),Y              ; B078: 91 07       ..
- INY                     ; B07A: C8          .
- LDA (V),Y               ; B07B: B1 63       .c
- STA (SC2),Y             ; B07D: 91 BA       ..
- LDA #0                  ; B07F: A9 00       ..
- STA (SC),Y              ; B081: 91 07       ..
- INY                     ; B083: C8          .
- LDA (V),Y               ; B084: B1 63       .c
- STA (SC2),Y             ; B086: 91 BA       ..
- LDA #0                  ; B088: A9 00       ..
- STA (SC),Y              ; B08A: 91 07       ..
- INY                     ; B08C: C8          .
- LDA (V),Y               ; B08D: B1 63       .c
- STA (SC2),Y             ; B08F: 91 BA       ..
- LDA #0                  ; B091: A9 00       ..
- STA (SC),Y              ; B093: 91 07       ..
- INY                     ; B095: C8          .
- LDA (V),Y               ; B096: B1 63       .c
- STA (SC2),Y             ; B098: 91 BA       ..
- LDA #0                  ; B09A: A9 00       ..
- STA (SC),Y              ; B09C: 91 07       ..
- INY                     ; B09E: C8          .
- LDA (V),Y               ; B09F: B1 63       .c
- STA (SC2),Y             ; B0A1: 91 BA       ..
- LDA #0                  ; B0A3: A9 00       ..
- STA (SC),Y              ; B0A5: 91 07       ..
- INY                     ; B0A7: C8          .
- BNE CB0B0               ; B0A8: D0 06       ..
- INC V+1                 ; B0AA: E6 64       .d
- INC SC+1                ; B0AC: E6 08       ..
- INC SC2+1               ; B0AE: E6 BB       ..
+ CPX tileNumber
+ BEQ CB0B4
+ LDA (V),Y
+ STA (SC2),Y
+ LDA #0
+ STA (SC),Y
+ INY
+ LDA (V),Y
+ STA (SC2),Y
+ LDA #0
+ STA (SC),Y
+ INY
+ LDA (V),Y
+ STA (SC2),Y
+ LDA #0
+ STA (SC),Y
+ INY
+ LDA (V),Y
+ STA (SC2),Y
+ LDA #0
+ STA (SC),Y
+ INY
+ LDA (V),Y
+ STA (SC2),Y
+ LDA #0
+ STA (SC),Y
+ INY
+ LDA (V),Y
+ STA (SC2),Y
+ LDA #0
+ STA (SC),Y
+ INY
+ LDA (V),Y
+ STA (SC2),Y
+ LDA #0
+ STA (SC),Y
+ INY
+ LDA (V),Y
+ STA (SC2),Y
+ LDA #0
+ STA (SC),Y
+ INY
+ BNE CB0B0
+ INC V+1
+ INC SC+1
+ INC SC2+1
 
 .CB0B0
 
- INX                     ; B0B0: E8          .
- JMP CB04F               ; B0B1: 4C 4F B0    LO.
+ INX
+ JMP CB04F
 
 .CB0B4
 
- LDA setupPPUForIconBar  ; B0B4: A5 E9       ..
- BPL CB0C1               ; B0B6: 10 09       ..
- LDA PPU_STATUS          ; B0B8: AD 02 20    ..
- ASL A                   ; B0BB: 0A          .
- BPL CB0C1               ; B0BC: 10 03       ..
- JSR SetPPUTablesTo0     ; B0BE: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CB0C1
+ LDA PPU_STATUS
+ ASL A
+ BPL CB0C1
+ JSR SetPPUTablesTo0
 
 .CB0C1
 
- LDA #0                  ; B0C1: A9 00       ..
- LDX #&30 ; '0'          ; B0C3: A2 30       .0
+ LDA #0
+ LDX #&30
 
 .loop_CB0C5
 
- STA (SC2),Y             ; B0C5: 91 BA       ..
- STA (SC),Y              ; B0C7: 91 07       ..
- INY                     ; B0C9: C8          .
- BNE CB0D0               ; B0CA: D0 04       ..
- INC SC2+1               ; B0CC: E6 BB       ..
- INC SC+1                ; B0CE: E6 08       ..
+ STA (SC2),Y
+ STA (SC),Y
+ INY
+ BNE CB0D0
+ INC SC2+1
+ INC SC+1
 
 .CB0D0
 
- DEX                     ; B0D0: CA          .
- BNE loop_CB0C5          ; B0D1: D0 F2       ..
- LDA setupPPUForIconBar  ; B0D3: A5 E9       ..
- BPL CB0E0               ; B0D5: 10 09       ..
- LDA PPU_STATUS          ; B0D7: AD 02 20    ..
- ASL A                   ; B0DA: 0A          .
- BPL CB0E0               ; B0DB: 10 03       ..
- JSR SetPPUTablesTo0     ; B0DD: 20 6D D0     m.
+ DEX
+ BNE loop_CB0C5
+ LDA setupPPUForIconBar
+ BPL CB0E0
+ LDA PPU_STATUS
+ ASL A
+ BPL CB0E0
+ JSR SetPPUTablesTo0
 
 .CB0E0
 
- RTS                     ; B0E0: 60          `
+ RTS
 
 \ ******************************************************************************
 \
@@ -12117,112 +12179,112 @@ ENDMACRO
 
 .subm_B0E1
 
- STA SC                  ; B0E1: 85 07       ..
- SEC                     ; B0E3: 38          8
- SBC #&20 ; ' '          ; B0E4: E9 20       .
- STA L00D9               ; B0E6: 85 D9       ..
- LDA SC                  ; B0E8: A5 07       ..
- CLC                     ; B0EA: 18          .
- ADC #&5F ; '_'          ; B0EB: 69 5F       i_
- STA tileNumber          ; B0ED: 85 B8       ..
- LDX #0                  ; B0EF: A2 00       ..
- LDA QQ11                ; B0F1: A5 9E       ..
- CMP #&BB                ; B0F3: C9 BB       ..
- BNE CB0F8               ; B0F5: D0 01       ..
- DEX                     ; B0F7: CA          .
+ STA SC
+ SEC
+ SBC #&20
+ STA L00D9
+ LDA SC
+ CLC
+ ADC #&5F
+ STA tileNumber
+ LDX #0
+ LDA QQ11
+ CMP #&BB
+ BNE CB0F8
+ DEX
 
 .CB0F8
 
- STX T                   ; B0F8: 86 9A       ..
- LDA #0                  ; B0FA: A9 00       ..
- ASL SC                  ; B0FC: 06 07       ..
- ROL A                   ; B0FE: 2A          *
- ASL SC                  ; B0FF: 06 07       ..
- ROL A                   ; B101: 2A          *
- ASL SC                  ; B102: 06 07       ..
- ROL A                   ; B104: 2A          *
- ADC #&60 ; '`'          ; B105: 69 60       i`
- STA SC2+1               ; B107: 85 BB       ..
- ADC #8                  ; B109: 69 08       i.
- STA SC+1                ; B10B: 85 08       ..
- LDA SC                  ; B10D: A5 07       ..
- STA SC2                 ; B10F: 85 BA       ..
- LDA #&FC                ; B111: A9 FC       ..
- STA V+1                 ; B113: 85 64       .d
- LDA #&E8                ; B115: A9 E8       ..
- STA V                   ; B117: 85 63       .c
- LDX #&5F ; '_'          ; B119: A2 5F       ._
- LDY #0                  ; B11B: A0 00       ..
+ STX T
+ LDA #0
+ ASL SC
+ ROL A
+ ASL SC
+ ROL A
+ ASL SC
+ ROL A
+ ADC #&60
+ STA SC2+1
+ ADC #8
+ STA SC+1
+ LDA SC
+ STA SC2
+ LDA #&FC
+ STA V+1
+ LDA #&E8
+ STA V
+ LDX #&5F
+ LDY #0
 
 .CB11D
 
- LDA setupPPUForIconBar  ; B11D: A5 E9       ..
- BPL CB12A               ; B11F: 10 09       ..
- LDA PPU_STATUS          ; B121: AD 02 20    ..
- ASL A                   ; B124: 0A          .
- BPL CB12A               ; B125: 10 03       ..
- JSR SetPPUTablesTo0     ; B127: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CB12A
+ LDA PPU_STATUS
+ ASL A
+ BPL CB12A
+ JSR SetPPUTablesTo0
 
 .CB12A
 
- LDA (V),Y               ; B12A: B1 63       .c
- STA (SC2),Y             ; B12C: 91 BA       ..
- AND T                   ; B12E: 25 9A       %.
- EOR T                   ; B130: 45 9A       E.
- STA (SC),Y              ; B132: 91 07       ..
- INY                     ; B134: C8          .
- LDA (V),Y               ; B135: B1 63       .c
- STA (SC2),Y             ; B137: 91 BA       ..
- AND T                   ; B139: 25 9A       %.
- EOR T                   ; B13B: 45 9A       E.
- STA (SC),Y              ; B13D: 91 07       ..
- INY                     ; B13F: C8          .
- LDA (V),Y               ; B140: B1 63       .c
- STA (SC2),Y             ; B142: 91 BA       ..
- AND T                   ; B144: 25 9A       %.
- EOR T                   ; B146: 45 9A       E.
- STA (SC),Y              ; B148: 91 07       ..
- INY                     ; B14A: C8          .
- LDA (V),Y               ; B14B: B1 63       .c
- STA (SC2),Y             ; B14D: 91 BA       ..
- AND T                   ; B14F: 25 9A       %.
- EOR T                   ; B151: 45 9A       E.
- STA (SC),Y              ; B153: 91 07       ..
- INY                     ; B155: C8          .
- LDA (V),Y               ; B156: B1 63       .c
- STA (SC2),Y             ; B158: 91 BA       ..
- AND T                   ; B15A: 25 9A       %.
- EOR T                   ; B15C: 45 9A       E.
- STA (SC),Y              ; B15E: 91 07       ..
- INY                     ; B160: C8          .
- LDA (V),Y               ; B161: B1 63       .c
- STA (SC2),Y             ; B163: 91 BA       ..
- AND T                   ; B165: 25 9A       %.
- EOR T                   ; B167: 45 9A       E.
- STA (SC),Y              ; B169: 91 07       ..
- INY                     ; B16B: C8          .
- LDA (V),Y               ; B16C: B1 63       .c
- STA (SC2),Y             ; B16E: 91 BA       ..
- AND T                   ; B170: 25 9A       %.
- EOR T                   ; B172: 45 9A       E.
- STA (SC),Y              ; B174: 91 07       ..
- INY                     ; B176: C8          .
- LDA (V),Y               ; B177: B1 63       .c
- STA (SC2),Y             ; B179: 91 BA       ..
- AND T                   ; B17B: 25 9A       %.
- EOR T                   ; B17D: 45 9A       E.
- STA (SC),Y              ; B17F: 91 07       ..
- INY                     ; B181: C8          .
- BNE CB18A               ; B182: D0 06       ..
- INC V+1                 ; B184: E6 64       .d
- INC SC2+1               ; B186: E6 BB       ..
- INC SC+1                ; B188: E6 08       ..
+ LDA (V),Y
+ STA (SC2),Y
+ AND T
+ EOR T
+ STA (SC),Y
+ INY
+ LDA (V),Y
+ STA (SC2),Y
+ AND T
+ EOR T
+ STA (SC),Y
+ INY
+ LDA (V),Y
+ STA (SC2),Y
+ AND T
+ EOR T
+ STA (SC),Y
+ INY
+ LDA (V),Y
+ STA (SC2),Y
+ AND T
+ EOR T
+ STA (SC),Y
+ INY
+ LDA (V),Y
+ STA (SC2),Y
+ AND T
+ EOR T
+ STA (SC),Y
+ INY
+ LDA (V),Y
+ STA (SC2),Y
+ AND T
+ EOR T
+ STA (SC),Y
+ INY
+ LDA (V),Y
+ STA (SC2),Y
+ AND T
+ EOR T
+ STA (SC),Y
+ INY
+ LDA (V),Y
+ STA (SC2),Y
+ AND T
+ EOR T
+ STA (SC),Y
+ INY
+ BNE CB18A
+ INC V+1
+ INC SC2+1
+ INC SC+1
 
 .CB18A
 
- DEX                     ; B18A: CA          .
- BNE CB11D               ; B18B: D0 90       ..
- RTS                     ; B18D: 60          `
+ DEX
+ BNE CB11D
+ RTS
 
 \ ******************************************************************************
 \
@@ -12235,93 +12297,93 @@ ENDMACRO
 
 .subm_B18E
 
- LDA #&65 ; 'e'          ; B18E: A9 65       .e
- STA SC2+1               ; B190: 85 BB       ..
- LDA #8                  ; B192: A9 08       ..
- STA SC2                 ; B194: 85 BA       ..
- LDA #&6D ; 'm'          ; B196: A9 6D       .m
- STA SC+1                ; B198: 85 08       ..
- LDA #8                  ; B19A: A9 08       ..
- STA SC                  ; B19C: 85 07       ..
- LDX #&5F ; '_'          ; B19E: A2 5F       ._
- LDA QQ11                ; B1A0: A5 9E       ..
- CMP #&BB                ; B1A2: C9 BB       ..
- BNE CB1A8               ; B1A4: D0 02       ..
- LDX #&46 ; 'F'          ; B1A6: A2 46       .F
+ LDA #&65
+ STA SC2+1
+ LDA #8
+ STA SC2
+ LDA #&6D
+ STA SC+1
+ LDA #8
+ STA SC
+ LDX #&5F
+ LDA QQ11
+ CMP #&BB
+ BNE CB1A8
+ LDX #&46
 
 .CB1A8
 
- TXA                     ; B1A8: 8A          .
- CLC                     ; B1A9: 18          .
- ADC tileNumber          ; B1AA: 65 B8       e.
- STA tileNumber          ; B1AC: 85 B8       ..
- LDA #&FC                ; B1AE: A9 FC       ..
- STA V+1                 ; B1B0: 85 64       .d
- LDA #&E8                ; B1B2: A9 E8       ..
- STA V                   ; B1B4: 85 63       .c
- LDY #0                  ; B1B6: A0 00       ..
+ TXA
+ CLC
+ ADC tileNumber
+ STA tileNumber
+ LDA #&FC
+ STA V+1
+ LDA #&E8
+ STA V
+ LDY #0
 
 .CB1B8
 
- LDA setupPPUForIconBar  ; B1B8: A5 E9       ..
- BPL CB1C5               ; B1BA: 10 09       ..
- LDA PPU_STATUS          ; B1BC: AD 02 20    ..
- ASL A                   ; B1BF: 0A          .
- BPL CB1C5               ; B1C0: 10 03       ..
- JSR SetPPUTablesTo0     ; B1C2: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CB1C5
+ LDA PPU_STATUS
+ ASL A
+ BPL CB1C5
+ JSR SetPPUTablesTo0
 
 .CB1C5
 
- LDA (V),Y               ; B1C5: B1 63       .c
- STA (SC),Y              ; B1C7: 91 07       ..
- LDA #&FF                ; B1C9: A9 FF       ..
- STA (SC2),Y             ; B1CB: 91 BA       ..
- INY                     ; B1CD: C8          .
- LDA (V),Y               ; B1CE: B1 63       .c
- STA (SC),Y              ; B1D0: 91 07       ..
- LDA #&FF                ; B1D2: A9 FF       ..
- STA (SC2),Y             ; B1D4: 91 BA       ..
- INY                     ; B1D6: C8          .
- LDA (V),Y               ; B1D7: B1 63       .c
- STA (SC),Y              ; B1D9: 91 07       ..
- LDA #&FF                ; B1DB: A9 FF       ..
- STA (SC2),Y             ; B1DD: 91 BA       ..
- INY                     ; B1DF: C8          .
- LDA (V),Y               ; B1E0: B1 63       .c
- STA (SC),Y              ; B1E2: 91 07       ..
- LDA #&FF                ; B1E4: A9 FF       ..
- STA (SC2),Y             ; B1E6: 91 BA       ..
- INY                     ; B1E8: C8          .
- LDA (V),Y               ; B1E9: B1 63       .c
- STA (SC),Y              ; B1EB: 91 07       ..
- LDA #&FF                ; B1ED: A9 FF       ..
- STA (SC2),Y             ; B1EF: 91 BA       ..
- INY                     ; B1F1: C8          .
- LDA (V),Y               ; B1F2: B1 63       .c
- STA (SC),Y              ; B1F4: 91 07       ..
- LDA #&FF                ; B1F6: A9 FF       ..
- STA (SC2),Y             ; B1F8: 91 BA       ..
- INY                     ; B1FA: C8          .
- LDA (V),Y               ; B1FB: B1 63       .c
- STA (SC),Y              ; B1FD: 91 07       ..
- LDA #&FF                ; B1FF: A9 FF       ..
- STA (SC2),Y             ; B201: 91 BA       ..
- INY                     ; B203: C8          .
- LDA (V),Y               ; B204: B1 63       .c
- STA (SC),Y              ; B206: 91 07       ..
- LDA #&FF                ; B208: A9 FF       ..
- STA (SC2),Y             ; B20A: 91 BA       ..
- INY                     ; B20C: C8          .
- BNE CB215               ; B20D: D0 06       ..
- INC V+1                 ; B20F: E6 64       .d
- INC SC+1                ; B211: E6 08       ..
- INC SC2+1               ; B213: E6 BB       ..
+ LDA (V),Y
+ STA (SC),Y
+ LDA #&FF
+ STA (SC2),Y
+ INY
+ LDA (V),Y
+ STA (SC),Y
+ LDA #&FF
+ STA (SC2),Y
+ INY
+ LDA (V),Y
+ STA (SC),Y
+ LDA #&FF
+ STA (SC2),Y
+ INY
+ LDA (V),Y
+ STA (SC),Y
+ LDA #&FF
+ STA (SC2),Y
+ INY
+ LDA (V),Y
+ STA (SC),Y
+ LDA #&FF
+ STA (SC2),Y
+ INY
+ LDA (V),Y
+ STA (SC),Y
+ LDA #&FF
+ STA (SC2),Y
+ INY
+ LDA (V),Y
+ STA (SC),Y
+ LDA #&FF
+ STA (SC2),Y
+ INY
+ LDA (V),Y
+ STA (SC),Y
+ LDA #&FF
+ STA (SC2),Y
+ INY
+ BNE CB215
+ INC V+1
+ INC SC+1
+ INC SC2+1
 
 .CB215
 
- DEX                     ; B215: CA          .
- BNE CB1B8               ; B216: D0 A0       ..
- RTS                     ; B218: 60          `
+ DEX
+ BNE CB1B8
+ RTS
 
 \ ******************************************************************************
 \
@@ -12334,28 +12396,28 @@ ENDMACRO
 
 .subm_B219
 
- STX K                   ; B219: 86 7D       .}
- STY K+1                 ; B21B: 84 7E       .~
- LDA tileNumber          ; B21D: A5 B8       ..
- STA pictureTile         ; B21F: 8D 6C 04    .l.
- CLC                     ; B222: 18          .
- ADC #&38 ; '8'          ; B223: 69 38       i8
- STA tileNumber          ; B225: 85 B8       ..
- LDA pictureTile         ; B227: AD 6C 04    .l.
- STA K+2                 ; B22A: 85 7F       ..
- JSR CB2FB_b3            ; B22C: 20 54 EE     T.
- LDA #&45 ; 'E'          ; B22F: A9 45       .E
- STA K+2                 ; B231: 85 7F       ..
- LDA #8                  ; B233: A9 08       ..
- STA K+3                 ; B235: 85 80       ..
- LDX #0                  ; B237: A2 00       ..
- LDY #0                  ; B239: A0 00       ..
- JSR CA0F8_b6            ; B23B: 20 99 EE     ..
- DEC XC                  ; B23E: C6 32       .2
- DEC YC                  ; B240: C6 3B       .;
- INC K                   ; B242: E6 7D       .}
- INC K+1                 ; B244: E6 7E       .~
- INC K+1                 ; B246: E6 7E       .~
+ STX K
+ STY K+1
+ LDA tileNumber
+ STA pictureTile
+ CLC
+ ADC #&38
+ STA tileNumber
+ LDA pictureTile
+ STA K+2
+ JSR CB2FB_b3
+ LDA #&45
+ STA K+2
+ LDA #8
+ STA K+3
+ LDX #0
+ LDY #0
+ JSR CA0F8_b6
+ DEC XC
+ DEC YC
+ INC K
+ INC K+1
+ INC K+1
 
 \ ******************************************************************************
 \
@@ -12368,69 +12430,69 @@ ENDMACRO
 
 .subm_B248
 
- JSR subm_B2A9           ; B248: 20 A9 B2     ..
- LDY #0                  ; B24B: A0 00       ..
- LDA #&40 ; '@'          ; B24D: A9 40       .@
- STA (SC),Y              ; B24F: 91 07       ..
- STA (SC2),Y             ; B251: 91 BA       ..
- LDA #&3C ; '<'          ; B253: A9 3C       .<
- JSR CB29D               ; B255: 20 9D B2     ..
- LDA #&3E ; '>'          ; B258: A9 3E       .>
- STA (SC),Y              ; B25A: 91 07       ..
- STA (SC2),Y             ; B25C: 91 BA       ..
- DEC K+1                 ; B25E: C6 7E       .~
- JMP CB276               ; B260: 4C 76 B2    Lv.
+ JSR subm_B2A9
+ LDY #0
+ LDA #&40
+ STA (SC),Y
+ STA (SC2),Y
+ LDA #&3C
+ JSR CB29D
+ LDA #&3E
+ STA (SC),Y
+ STA (SC2),Y
+ DEC K+1
+ JMP CB276
 
 .CB263
 
- JSR SetupPPUForIconBar  ; B263: 20 7D EC     }.
- LDA #1                  ; B266: A9 01       ..
- LDY #0                  ; B268: A0 00       ..
- STA (SC),Y              ; B26A: 91 07       ..
- STA (SC2),Y             ; B26C: 91 BA       ..
- LDA #2                  ; B26E: A9 02       ..
- LDY K                   ; B270: A4 7D       .}
- STA (SC),Y              ; B272: 91 07       ..
- STA (SC2),Y             ; B274: 91 BA       ..
+ JSR SetupPPUForIconBar
+ LDA #1
+ LDY #0
+ STA (SC),Y
+ STA (SC2),Y
+ LDA #2
+ LDY K
+ STA (SC),Y
+ STA (SC2),Y
 
 .CB276
 
- LDA SC                  ; B276: A5 07       ..
- CLC                     ; B278: 18          .
- ADC #&20 ; ' '          ; B279: 69 20       i
- STA SC                  ; B27B: 85 07       ..
- STA SC2                 ; B27D: 85 BA       ..
- BCC CB285               ; B27F: 90 04       ..
- INC SC+1                ; B281: E6 08       ..
- INC SC2+1               ; B283: E6 BB       ..
+ LDA SC
+ CLC
+ ADC #&20
+ STA SC
+ STA SC2
+ BCC CB285
+ INC SC+1
+ INC SC2+1
 
 .CB285
 
- DEC K+1                 ; B285: C6 7E       .~
- BNE CB263               ; B287: D0 DA       ..
- LDY #0                  ; B289: A0 00       ..
- LDA #&41 ; 'A'          ; B28B: A9 41       .A
- STA (SC),Y              ; B28D: 91 07       ..
- STA (SC2),Y             ; B28F: 91 BA       ..
- LDA #&3D ; '='          ; B291: A9 3D       .=
- JSR CB29D               ; B293: 20 9D B2     ..
- LDA #&3F ; '?'          ; B296: A9 3F       .?
- STA (SC),Y              ; B298: 91 07       ..
- STA (SC2),Y             ; B29A: 91 BA       ..
- RTS                     ; B29C: 60          `
+ DEC K+1
+ BNE CB263
+ LDY #0
+ LDA #&41
+ STA (SC),Y
+ STA (SC2),Y
+ LDA #&3D
+ JSR CB29D
+ LDA #&3F
+ STA (SC),Y
+ STA (SC2),Y
+ RTS
 
 .CB29D
 
- LDY #1                  ; B29D: A0 01       ..
+ LDY #1
 
 .loop_CB29F
 
- STA (SC),Y              ; B29F: 91 07       ..
- STA (SC2),Y             ; B2A1: 91 BA       ..
- INY                     ; B2A3: C8          .
- CPY K                   ; B2A4: C4 7D       .}
- BNE loop_CB29F          ; B2A6: D0 F7       ..
- RTS                     ; B2A8: 60          `
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ CPY K
+ BNE loop_CB29F
+ RTS
 
 \ ******************************************************************************
 \
@@ -12443,19 +12505,19 @@ ENDMACRO
 
 .subm_B2A9
 
- JSR subm_DBD8           ; B2A9: 20 D8 DB     ..
- LDA SC                  ; B2AC: A5 07       ..
- CLC                     ; B2AE: 18          .
- ADC XC                  ; B2AF: 65 32       e2
- STA SC                  ; B2B1: 85 07       ..
- STA SC2                 ; B2B3: 85 BA       ..
- BCC CB2BB               ; B2B5: 90 04       ..
- INC SC+1                ; B2B7: E6 08       ..
- INC SC2+1               ; B2B9: E6 BB       ..
+ JSR subm_DBD8
+ LDA SC
+ CLC
+ ADC XC
+ STA SC
+ STA SC2
+ BCC CB2BB
+ INC SC+1
+ INC SC2+1
 
 .CB2BB
 
- RTS                     ; B2BB: 60          `
+ RTS
 
 \ ******************************************************************************
 \
@@ -12468,42 +12530,42 @@ ENDMACRO
 
 .subm_B2BC
 
- LDA K+2                 ; B2BC: A5 7F       ..
- STA XC                  ; B2BE: 85 32       .2
- LDA K+3                 ; B2C0: A5 80       ..
- STA YC                  ; B2C2: 85 3B       .;
- JSR subm_B2A9           ; B2C4: 20 A9 B2     ..
- LDA #&3D ; '='          ; B2C7: A9 3D       .=
- JSR CB29D               ; B2C9: 20 9D B2     ..
- LDX K+1                 ; B2CC: A6 7E       .~
- JMP CB2E3               ; B2CE: 4C E3 B2    L..
+ LDA K+2
+ STA XC
+ LDA K+3
+ STA YC
+ JSR subm_B2A9
+ LDA #&3D
+ JSR CB29D
+ LDX K+1
+ JMP CB2E3
 
 .CB2D1
 
- JSR SetupPPUForIconBar  ; B2D1: 20 7D EC     }.
- LDA SC                  ; B2D4: A5 07       ..
- CLC                     ; B2D6: 18          .
- ADC #&20 ; ' '          ; B2D7: 69 20       i
- STA SC                  ; B2D9: 85 07       ..
- STA SC2                 ; B2DB: 85 BA       ..
- BCC CB2E3               ; B2DD: 90 04       ..
- INC SC+1                ; B2DF: E6 08       ..
- INC SC2+1               ; B2E1: E6 BB       ..
+ JSR SetupPPUForIconBar
+ LDA SC
+ CLC
+ ADC #&20
+ STA SC
+ STA SC2
+ BCC CB2E3
+ INC SC+1
+ INC SC2+1
 
 .CB2E3
 
- LDA #1                  ; B2E3: A9 01       ..
- LDY #0                  ; B2E5: A0 00       ..
- STA (SC),Y              ; B2E7: 91 07       ..
- STA (SC2),Y             ; B2E9: 91 BA       ..
- LDA #2                  ; B2EB: A9 02       ..
- LDY K                   ; B2ED: A4 7D       .}
- STA (SC),Y              ; B2EF: 91 07       ..
- STA (SC2),Y             ; B2F1: 91 BA       ..
- DEX                     ; B2F3: CA          .
- BNE CB2D1               ; B2F4: D0 DB       ..
- LDA #&3C ; '<'          ; B2F6: A9 3C       .<
- JMP CB29D               ; B2F8: 4C 9D B2    L..
+ LDA #1
+ LDY #0
+ STA (SC),Y
+ STA (SC2),Y
+ LDA #2
+ LDY K
+ STA (SC),Y
+ STA (SC2),Y
+ DEX
+ BNE CB2D1
+ LDA #&3C
+ JMP CB29D
 
 \ ******************************************************************************
 \
@@ -12516,58 +12578,58 @@ ENDMACRO
 
 .subm_B2FB
 
- JSR subm_DBD8           ; B2FB: 20 D8 DB     ..
- LDA SC                  ; B2FE: A5 07       ..
- CLC                     ; B300: 18          .
- ADC XC                  ; B301: 65 32       e2
- STA SC                  ; B303: 85 07       ..
- STA SC2                 ; B305: 85 BA       ..
- BCC CB30D               ; B307: 90 04       ..
- INC SC+1                ; B309: E6 08       ..
- INC SC2+1               ; B30B: E6 BB       ..
+ JSR subm_DBD8
+ LDA SC
+ CLC
+ ADC XC
+ STA SC
+ STA SC2
+ BCC CB30D
+ INC SC+1
+ INC SC2+1
 
 .CB30D
 
- LDX K+1                 ; B30D: A6 7E       .~
+ LDX K+1
 
 .CB30F
 
- LDA setupPPUForIconBar  ; B30F: A5 E9       ..
- BPL CB31C               ; B311: 10 09       ..
- LDA PPU_STATUS          ; B313: AD 02 20    ..
- ASL A                   ; B316: 0A          .
- BPL CB31C               ; B317: 10 03       ..
- JSR SetPPUTablesTo0     ; B319: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CB31C
+ LDA PPU_STATUS
+ ASL A
+ BPL CB31C
+ JSR SetPPUTablesTo0
 
 .CB31C
 
- LDY #0                  ; B31C: A0 00       ..
- LDA K+2                 ; B31E: A5 7F       ..
+ LDY #0
+ LDA K+2
 
 .loop_CB320
 
- STA (SC2),Y             ; B320: 91 BA       ..
- STA (SC),Y              ; B322: 91 07       ..
- CLC                     ; B324: 18          .
- ADC #1                  ; B325: 69 01       i.
- INY                     ; B327: C8          .
- CPY K                   ; B328: C4 7D       .}
- BNE loop_CB320          ; B32A: D0 F4       ..
- STA K+2                 ; B32C: 85 7F       ..
- LDA SC                  ; B32E: A5 07       ..
- CLC                     ; B330: 18          .
- ADC #&20 ; ' '          ; B331: 69 20       i
- STA SC                  ; B333: 85 07       ..
- STA SC2                 ; B335: 85 BA       ..
- BCC CB33D               ; B337: 90 04       ..
- INC SC+1                ; B339: E6 08       ..
- INC SC2+1               ; B33B: E6 BB       ..
+ STA (SC2),Y
+ STA (SC),Y
+ CLC
+ ADC #1
+ INY
+ CPY K
+ BNE loop_CB320
+ STA K+2
+ LDA SC
+ CLC
+ ADC #&20
+ STA SC
+ STA SC2
+ BCC CB33D
+ INC SC+1
+ INC SC2+1
 
 .CB33D
 
- DEX                     ; B33D: CA          .
- BNE CB30F               ; B33E: D0 CF       ..
- RTS                     ; B340: 60          `
+ DEX
+ BNE CB30F
+ RTS
 
 \ ******************************************************************************
 \
@@ -12580,113 +12642,113 @@ ENDMACRO
 
 .ClearTiles
 
- LDA #0                  ; B341: A9 00       ..
- STA SC+1                ; B343: 85 08       ..
- LDA #&42 ; 'B'          ; B345: A9 42       .B
- ASL A                   ; B347: 0A          .
- ROL SC+1                ; B348: 26 08       &.
- ASL A                   ; B34A: 0A          .
- ROL SC+1                ; B34B: 26 08       &.
- ASL A                   ; B34D: 0A          .
- ROL SC+1                ; B34E: 26 08       &.
- STA SC                  ; B350: 85 07       ..
- STA SC2                 ; B352: 85 BA       ..
- LDA SC+1                ; B354: A5 08       ..
- ADC #&68 ; 'h'          ; B356: 69 68       ih
- STA SC2+1               ; B358: 85 BB       ..
- LDA SC+1                ; B35A: A5 08       ..
- ADC #&60 ; '`'          ; B35C: 69 60       i`
- STA SC+1                ; B35E: 85 08       ..
- LDX #&42 ; 'B'          ; B360: A2 42       .B
- LDY #0                  ; B362: A0 00       ..
+ LDA #0
+ STA SC+1
+ LDA #&42
+ ASL A
+ ROL SC+1
+ ASL A
+ ROL SC+1
+ ASL A
+ ROL SC+1
+ STA SC
+ STA SC2
+ LDA SC+1
+ ADC #&68
+ STA SC2+1
+ LDA SC+1
+ ADC #&60
+ STA SC+1
+ LDX #&42
+ LDY #0
 
 .CB364
 
- LDA #0                  ; B364: A9 00       ..
- STA (SC),Y              ; B366: 91 07       ..
- STA (SC2),Y             ; B368: 91 BA       ..
- INY                     ; B36A: C8          .
- STA (SC),Y              ; B36B: 91 07       ..
- STA (SC2),Y             ; B36D: 91 BA       ..
- INY                     ; B36F: C8          .
- STA (SC),Y              ; B370: 91 07       ..
- STA (SC2),Y             ; B372: 91 BA       ..
- INY                     ; B374: C8          .
- STA (SC),Y              ; B375: 91 07       ..
- STA (SC2),Y             ; B377: 91 BA       ..
- INY                     ; B379: C8          .
- STA (SC),Y              ; B37A: 91 07       ..
- STA (SC2),Y             ; B37C: 91 BA       ..
- INY                     ; B37E: C8          .
- STA (SC),Y              ; B37F: 91 07       ..
- STA (SC2),Y             ; B381: 91 BA       ..
- INY                     ; B383: C8          .
- STA (SC),Y              ; B384: 91 07       ..
- STA (SC2),Y             ; B386: 91 BA       ..
- INY                     ; B388: C8          .
- STA (SC),Y              ; B389: 91 07       ..
- STA (SC2),Y             ; B38B: 91 BA       ..
- INY                     ; B38D: C8          .
- BNE CB394               ; B38E: D0 04       ..
- INC SC+1                ; B390: E6 08       ..
- INC SC2+1               ; B392: E6 BB       ..
+ LDA #0
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ BNE CB394
+ INC SC+1
+ INC SC2+1
 
 .CB394
 
- LDA setupPPUForIconBar  ; B394: A5 E9       ..
- BPL CB3A1               ; B396: 10 09       ..
- LDA PPU_STATUS          ; B398: AD 02 20    ..
- ASL A                   ; B39B: 0A          .
- BPL CB3A1               ; B39C: 10 03       ..
- JSR SetPPUTablesTo0     ; B39E: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CB3A1
+ LDA PPU_STATUS
+ ASL A
+ BPL CB3A1
+ JSR SetPPUTablesTo0
 
 .CB3A1
 
- INX                     ; B3A1: E8          .
- BNE CB364               ; B3A2: D0 C0       ..
- LDA #0                  ; B3A4: A9 00       ..
- STA SC                  ; B3A6: 85 07       ..
- STA SC2                 ; B3A8: 85 BA       ..
- LDA #&70 ; 'p'          ; B3AA: A9 70       .p
- STA SC+1                ; B3AC: 85 08       ..
- LDA #&74 ; 't'          ; B3AE: A9 74       .t
- STA SC2+1               ; B3B0: 85 BB       ..
- LDX #&1C                ; B3B2: A2 1C       ..
+ INX
+ BNE CB364
+ LDA #0
+ STA SC
+ STA SC2
+ LDA #&70
+ STA SC+1
+ LDA #&74
+ STA SC2+1
+ LDX #&1C
 
 .CB3B4
 
- LDY #&20 ; ' '          ; B3B4: A0 20       .
- LDA #0                  ; B3B6: A9 00       ..
+ LDY #&20
+ LDA #0
 
 .loop_CB3B8
 
- STA (SC),Y              ; B3B8: 91 07       ..
- STA (SC2),Y             ; B3BA: 91 BA       ..
- DEY                     ; B3BC: 88          .
- BPL loop_CB3B8          ; B3BD: 10 F9       ..
- LDA setupPPUForIconBar  ; B3BF: A5 E9       ..
- BPL CB3CC               ; B3C1: 10 09       ..
- LDA PPU_STATUS          ; B3C3: AD 02 20    ..
- ASL A                   ; B3C6: 0A          .
- BPL CB3CC               ; B3C7: 10 03       ..
- JSR SetPPUTablesTo0     ; B3C9: 20 6D D0     m.
+ STA (SC),Y
+ STA (SC2),Y
+ DEY
+ BPL loop_CB3B8
+ LDA setupPPUForIconBar
+ BPL CB3CC
+ LDA PPU_STATUS
+ ASL A
+ BPL CB3CC
+ JSR SetPPUTablesTo0
 
 .CB3CC
 
- LDA SC                  ; B3CC: A5 07       ..
- CLC                     ; B3CE: 18          .
- ADC #&20 ; ' '          ; B3CF: 69 20       i
- STA SC                  ; B3D1: 85 07       ..
- STA SC2                 ; B3D3: 85 BA       ..
- BCC CB3DB               ; B3D5: 90 04       ..
- INC SC+1                ; B3D7: E6 08       ..
- INC SC2+1               ; B3D9: E6 BB       ..
+ LDA SC
+ CLC
+ ADC #&20
+ STA SC
+ STA SC2
+ BCC CB3DB
+ INC SC+1
+ INC SC2+1
 
 .CB3DB
 
- DEX                     ; B3DB: CA          .
- BNE CB3B4               ; B3DC: D0 D6       ..
- RTS                     ; B3DE: 60          `
+ DEX
+ BNE CB3B4
+ RTS
 
 \ ******************************************************************************
 \
@@ -12788,6 +12850,15 @@ ENDMACRO
  EQUB &0F, &06, &28, &27 ; B537: 0F 06 28... ..(
  EQUB &0F, &15, &20, &25 ; B53B: 0F 15 20... ..
 
+\ ******************************************************************************
+\
+\       Name: LB53F
+\       Type: Variable
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
 .LB53F
 
  EQUB &0F, &0F, &0F, &0F ; B53F: 0F 0F 0F... ...
@@ -12818,75 +12889,75 @@ ENDMACRO
 
 .subm_B57F
 
- LDA QQ11a               ; B57F: A5 9F       ..
- AND #&0F                ; B581: 29 0F       ).
- TAX                     ; B583: AA          .
- LDA #0                  ; B584: A9 00       ..
- STA SC+1                ; B586: 85 08       ..
- LDA LAA5C,X             ; B588: BD 5C AA    .\.
- LDY #0                  ; B58B: A0 00       ..
- STY SC+1                ; B58D: 84 08       ..
- ASL A                   ; B58F: 0A          .
- ASL A                   ; B590: 0A          .
- ASL A                   ; B591: 0A          .
- ASL A                   ; B592: 0A          .
- ASL A                   ; B593: 0A          .
- ROL SC+1                ; B594: 26 08       &.
- ADC #&DF                ; B596: 69 DF       i.
- STA SC                  ; B598: 85 07       ..
- LDA #&B3                ; B59A: A9 B3       ..
- ADC SC+1                ; B59C: 65 08       e.
- STA SC+1                ; B59E: 85 08       ..
- LDY #&20 ; ' '          ; B5A0: A0 20       .
+ LDA QQ11a
+ AND #&0F
+ TAX
+ LDA #0
+ STA SC+1
+ LDA LAA5C,X
+ LDY #0
+ STY SC+1
+ ASL A
+ ASL A
+ ASL A
+ ASL A
+ ASL A
+ ROL SC+1
+ ADC #&DF
+ STA SC
+ LDA #&B3
+ ADC SC+1
+ STA SC+1
+ LDY #&20
 
 .loop_CB5A2
 
- LDA (SC),Y              ; B5A2: B1 07       ..
- STA XX3,Y               ; B5A4: 99 00 01    ...
- DEY                     ; B5A7: 88          .
- BPL loop_CB5A2          ; B5A8: 10 F8       ..
- LDA QQ11a               ; B5AA: A5 9F       ..
- BEQ CB5DE               ; B5AC: F0 30       .0
- CMP #&98                ; B5AE: C9 98       ..
- BEQ CB607               ; B5B0: F0 55       .U
- CMP #&96                ; B5B2: C9 96       ..
- BNE CB5DB               ; B5B4: D0 25       .%
- LDA QQ15                ; B5B6: A5 82       ..
- EOR QQ15+5              ; B5B8: 45 87       E.
- EOR QQ15+2              ; B5BA: 45 84       E.
- LSR A                   ; B5BC: 4A          J
- LSR A                   ; B5BD: 4A          J
- EOR #&0C                ; B5BE: 49 0C       I.
- AND #&1C                ; B5C0: 29 1C       ).
- TAX                     ; B5C2: AA          .
- LDA LB6A5,X             ; B5C3: BD A5 B6    ...
- STA XX3+20              ; B5C6: 8D 14 01    ...
- LDA LB6A6,X             ; B5C9: BD A6 B6    ...
- STA XX3+21              ; B5CC: 8D 15 01    ...
- LDA LB6A7,X             ; B5CF: BD A7 B6    ...
- STA XX3+22              ; B5D2: 8D 16 01    ...
- LDA LB6A8,X             ; B5D5: BD A8 B6    ...
- STA XX3+23              ; B5D8: 8D 17 01    ...
+ LDA (SC),Y
+ STA XX3,Y
+ DEY
+ BPL loop_CB5A2
+ LDA QQ11a
+ BEQ CB5DE
+ CMP #&98
+ BEQ CB607
+ CMP #&96
+ BNE CB5DB
+ LDA QQ15
+ EOR QQ15+5
+ EOR QQ15+2
+ LSR A
+ LSR A
+ EOR #&0C
+ AND #&1C
+ TAX
+ LDA LB6A5,X
+ STA XX3+20
+ LDA LB6A6,X
+ STA XX3+21
+ LDA LB6A7,X
+ STA XX3+22
+ LDA LB6A8,X
+ STA XX3+23
 
 .CB5DB
 
- JMP CB607               ; B5DB: 4C 07 B6    L..
+ JMP CB607
 
 .CB5DE
 
- LDA XX3                 ; B5DE: AD 00 01    ...
- LDY XX3+3               ; B5E1: AC 03 01    ...
- LDA palettePhase        ; B5E4: A5 F3       ..
- BNE CB5EF               ; B5E6: D0 07       ..
- STA XX3+1               ; B5E8: 8D 01 01    ...
- STY XX3+2               ; B5EB: 8C 02 01    ...
- RTS                     ; B5EE: 60          `
+ LDA XX3
+ LDY XX3+3
+ LDA palettePhase
+ BNE CB5EF
+ STA XX3+1
+ STY XX3+2
+ RTS
 
 .CB5EF
 
- STY XX3+1               ; B5EF: 8C 01 01    ...
- STA XX3+2               ; B5F2: 8D 02 01    ...
- RTS                     ; B5F5: 60          `
+ STY XX3+1
+ STA XX3+2
+ RTS
 
 \ ******************************************************************************
 \
@@ -12899,7 +12970,7 @@ ENDMACRO
 
 .subm_B5F6
 
- JSR subm_B5F9           ; B5F6: 20 F9 B5     ..
+ JSR subm_B5F9
 
 \ ******************************************************************************
 \
@@ -12912,49 +12983,49 @@ ENDMACRO
 
 .subm_B5F9
 
- LDX #&1F                ; B5F9: A2 1F       ..
+ LDX #&1F
 
 .loop_CB5FB
 
- LDY XX3,X               ; B5FB: BC 00 01    ...
- LDA LB53F,Y             ; B5FE: B9 3F B5    .?.
- STA XX3,X               ; B601: 9D 00 01    ...
- DEX                     ; B604: CA          .
- BNE loop_CB5FB          ; B605: D0 F4       ..
+ LDY XX3,X
+ LDA LB53F,Y
+ STA XX3,X
+ DEX
+ BNE loop_CB5FB
 
 .CB607
 
- LDA #&0F                ; B607: A9 0F       ..
- STA hiddenColour        ; B609: 85 33       .3
- LDA QQ11a               ; B60B: A5 9F       ..
- BPL CB627               ; B60D: 10 18       ..
- CMP #&C4                ; B60F: C9 C4       ..
- BEQ CB627               ; B611: F0 14       ..
- CMP #&98                ; B613: C9 98       ..
- BEQ CB62D               ; B615: F0 16       ..
- LDA XX3+21              ; B617: AD 15 01    ...
- STA visibleColour       ; B61A: 85 34       .4
- LDA XX3+22              ; B61C: AD 16 01    ...
- STA paletteColour1      ; B61F: 85 35       .5
- LDA XX3+23              ; B621: AD 17 01    ...
- STA paletteColour2      ; B624: 85 36       .6
- RTS                     ; B626: 60          `
+ LDA #&0F
+ STA hiddenColour
+ LDA QQ11a
+ BPL CB627
+ CMP #&C4
+ BEQ CB627
+ CMP #&98
+ BEQ CB62D
+ LDA XX3+21
+ STA visibleColour
+ LDA XX3+22
+ STA paletteColour1
+ LDA XX3+23
+ STA paletteColour2
+ RTS
 
 .CB627
 
- LDA XX3+3               ; B627: AD 03 01    ...
- STA visibleColour       ; B62A: 85 34       .4
- RTS                     ; B62C: 60          `
+ LDA XX3+3
+ STA visibleColour
+ RTS
 
 .CB62D
 
- LDA XX3+1               ; B62D: AD 01 01    ...
- STA visibleColour       ; B630: 85 34       .4
- LDA XX3+2               ; B632: AD 02 01    ...
- STA paletteColour1      ; B635: 85 35       .5
- LDA XX3+3               ; B637: AD 03 01    ...
- STA paletteColour2      ; B63A: 85 36       .6
- RTS                     ; B63C: 60          `
+ LDA XX3+1
+ STA visibleColour
+ LDA XX3+2
+ STA paletteColour1
+ LDA XX3+3
+ STA paletteColour2
+ RTS
 
 \ ******************************************************************************
 \
@@ -12967,30 +13038,30 @@ ENDMACRO
 
 .subm_B63D
 
- LDA QQ11a               ; B63D: A5 9F       ..
- CMP #&FF                ; B63F: C9 FF       ..
- BEQ CB66D               ; B641: F0 2A       .*
- LDA L0473               ; B643: AD 73 04    .s.
- BMI CB66D               ; B646: 30 25       0%
- JSR subm_D8C5           ; B648: 20 C5 D8     ..
- JSR KeepPPUTablesAt0    ; B64B: 20 67 D1     g.
- JSR subm_B57F           ; B64E: 20 7F B5     ..
- DEC L00DA               ; B651: C6 DA       ..
- JSR subm_B5F9           ; B653: 20 F9 B5     ..
- JSR KeepPPUTablesAt0x2  ; B656: 20 64 D1     d.
- JSR subm_B5F9           ; B659: 20 F9 B5     ..
- JSR KeepPPUTablesAt0x2  ; B65C: 20 64 D1     d.
- JSR subm_B5F9           ; B65F: 20 F9 B5     ..
- JSR KeepPPUTablesAt0x2  ; B662: 20 64 D1     d.
- JSR subm_B5F9           ; B665: 20 F9 B5     ..
- JSR KeepPPUTablesAt0x2  ; B668: 20 64 D1     d.
- INC L00DA               ; B66B: E6 DA       ..
+ LDA QQ11a
+ CMP #&FF
+ BEQ CB66D
+ LDA L0473
+ BMI CB66D
+ JSR subm_D8C5
+ JSR KeepPPUTablesAt0
+ JSR subm_B57F
+ DEC L00DA
+ JSR subm_B5F9
+ JSR KeepPPUTablesAt0x2
+ JSR subm_B5F9
+ JSR KeepPPUTablesAt0x2
+ JSR subm_B5F9
+ JSR KeepPPUTablesAt0x2
+ JSR subm_B5F9
+ JSR KeepPPUTablesAt0x2
+ INC L00DA
 
 .CB66D
 
- LDA #&FF                ; B66D: A9 FF       ..
- STA L0473               ; B66F: 8D 73 04    .s.
- RTS                     ; B672: 60          `
+ LDA #&FF
+ STA L0473
+ RTS
 
 \ ******************************************************************************
 \
@@ -13003,24 +13074,24 @@ ENDMACRO
 
 .subm_B673
 
- JSR KeepPPUTablesAt0    ; B673: 20 67 D1     g.
- JSR subm_B57F           ; B676: 20 7F B5     ..
- JSR subm_B5F6           ; B679: 20 F6 B5     ..
- JSR subm_B5F9           ; B67C: 20 F9 B5     ..
- DEC L00DA               ; B67F: C6 DA       ..
- JSR KeepPPUTablesAt0x2  ; B681: 20 64 D1     d.
- JSR subm_B57F           ; B684: 20 7F B5     ..
- JSR subm_B5F6           ; B687: 20 F6 B5     ..
- JSR KeepPPUTablesAt0x2  ; B68A: 20 64 D1     d.
- JSR subm_B57F           ; B68D: 20 7F B5     ..
- JSR subm_B5F9           ; B690: 20 F9 B5     ..
- JSR KeepPPUTablesAt0x2  ; B693: 20 64 D1     d.
- JSR subm_B57F           ; B696: 20 7F B5     ..
- JSR CB607               ; B699: 20 07 B6     ..
- JSR KeepPPUTablesAt0    ; B69C: 20 67 D1     g.
- INC L00DA               ; B69F: E6 DA       ..
- LSR L0473               ; B6A1: 4E 73 04    Ns.
- RTS                     ; B6A4: 60          `
+ JSR KeepPPUTablesAt0
+ JSR subm_B57F
+ JSR subm_B5F6
+ JSR subm_B5F9
+ DEC L00DA
+ JSR KeepPPUTablesAt0x2
+ JSR subm_B57F
+ JSR subm_B5F6
+ JSR KeepPPUTablesAt0x2
+ JSR subm_B57F
+ JSR subm_B5F9
+ JSR KeepPPUTablesAt0x2
+ JSR subm_B57F
+ JSR CB607
+ JSR KeepPPUTablesAt0
+ INC L00DA
+ LSR L0473
+ RTS
 
 \ ******************************************************************************
 \
@@ -13053,6 +13124,15 @@ ENDMACRO
  EQUB &0A, &0F, &32, &21 ; B6BC: 0A 0F 32... ..2
  EQUB &02, &0F, &2C, &22 ; B6C0: 02 0F 2C... ..,
  EQUB &1C, &18, &00      ; B6C4: 1C 18 00    ...
+
+\ ******************************************************************************
+\
+\       Name: LB6C7
+\       Type: Variable
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
 
 .LB6C7
 
@@ -13331,28 +13411,28 @@ ENDMACRO
 
 .subm_B9E2
 
- LDX language            ; B9E2: AE A8 04    ...
- LDA LB9DA,X             ; B9E5: BD DA B9    ...
- STA V                   ; B9E8: 85 63       .c
- LDA LB9DE,X             ; B9EA: BD DE B9    ...
- STA V+1                 ; B9ED: 85 64       .d
- LDA QQ11                ; B9EF: A5 9E       ..
- AND #&0F                ; B9F1: 29 0F       ).
- TAY                     ; B9F3: A8          .
- LDA (V),Y               ; B9F4: B1 63       .c
- ASL A                   ; B9F6: 0A          .
- TAX                     ; B9F7: AA          .
- LDA LB6C7,X             ; B9F8: BD C7 B6    ...
- ADC #&C5                ; B9FB: 69 C5       i.
- STA V                   ; B9FD: 85 63       .c
- LDA LB6C8,X             ; B9FF: BD C8 B6    ...
- ADC #&B6                ; BA02: 69 B6       i.
- STA V+1                 ; BA04: 85 64       .d
- LDA #&73 ; 's'          ; BA06: A9 73       .s
- STA SC+1                ; BA08: 85 08       ..
- LDA #&C0                ; BA0A: A9 C0       ..
- STA SC                  ; BA0C: 85 07       ..
- JMP UnpackToRAM         ; BA0E: 4C 2D F5    L-.
+ LDX language
+ LDA LB9DA,X
+ STA V
+ LDA LB9DE,X
+ STA V+1
+ LDA QQ11
+ AND #&0F
+ TAY
+ LDA (V),Y
+ ASL A
+ TAX
+ LDA LB6C7,X
+ ADC #&C5
+ STA V
+ LDA LB6C8,X
+ ADC #&B6
+ STA V+1
+ LDA #&73
+ STA SC+1
+ LDA #&C0
+ STA SC
+ JMP UnpackToRAM
 
 \ ******************************************************************************
 \
@@ -13365,13 +13445,13 @@ ENDMACRO
 
 .subm_BA23_BA11
 
- LDA #&F0                ; BA11: A9 F0       ..
- STA ySprite5            ; BA13: 8D 14 02    ...
- STA ySprite6            ; BA16: 8D 18 02    ...
- STA ySprite7            ; BA19: 8D 1C 02    ...
- STA ySprite8            ; BA1C: 8D 20 02    . .
- STA ySprite9            ; BA1F: 8D 24 02    .$.
- RTS                     ; BA22: 60          `
+ LDA #&F0
+ STA ySprite5
+ STA ySprite6
+ STA ySprite7
+ STA ySprite8
+ STA ySprite9
+ RTS
 
 \ ******************************************************************************
 \
@@ -13384,138 +13464,138 @@ ENDMACRO
 
 .subm_BA23
 
- LDY VIEW                ; BA23: AC 8E 03    ...
- LDA LASER,Y             ; BA26: B9 A8 03    ...
- BEQ subm_BA23_BA11      ; BA29: F0 E6       ..
- CMP #&18                ; BA2B: C9 18       ..
- BNE CBA32               ; BA2D: D0 03       ..
- JMP CBAC6               ; BA2F: 4C C6 BA    L..
+ LDY VIEW
+ LDA LASER,Y
+ BEQ subm_BA23_BA11
+ CMP #&18
+ BNE CBA32
+ JMP CBAC6
 
 .CBA32
 
- CMP #&8F                ; BA32: C9 8F       ..
- BNE CBA39               ; BA34: D0 03       ..
- JMP CBB08               ; BA36: 4C 08 BB    L..
+ CMP #&8F
+ BNE CBA39
+ JMP CBB08
 
 .CBA39
 
- CMP #&97                ; BA39: C9 97       ..
- BNE CBA83               ; BA3B: D0 46       .F
- LDA #&80                ; BA3D: A9 80       ..
- STA attrSprite8         ; BA3F: 8D 22 02    .".
- LDA #&40 ; '@'          ; BA42: A9 40       .@
- STA attrSprite6         ; BA44: 8D 1A 02    ...
- LDA #0                  ; BA47: A9 00       ..
- STA attrSprite7         ; BA49: 8D 1E 02    ...
- STA attrSprite5         ; BA4C: 8D 16 02    ...
- LDY #&CF                ; BA4F: A0 CF       ..
- STY tileSprite5         ; BA51: 8C 15 02    ...
- STY tileSprite6         ; BA54: 8C 19 02    ...
- INY                     ; BA57: C8          .
- STY tileSprite7         ; BA58: 8C 1D 02    ...
- STY tileSprite8         ; BA5B: 8C 21 02    .!.
- LDA #&76 ; 'v'          ; BA5E: A9 76       .v
- STA xSprite5            ; BA60: 8D 17 02    ...
- LDA #&86                ; BA63: A9 86       ..
- STA xSprite6            ; BA65: 8D 1B 02    ...
- LDA #&7E ; '~'          ; BA68: A9 7E       .~
- STA xSprite7            ; BA6A: 8D 1F 02    ...
- STA xSprite8            ; BA6D: 8D 23 02    .#.
- LDA #&53 ; 'S'          ; BA70: A9 53       .S
- STA ySprite5            ; BA72: 8D 14 02    ...
- STA ySprite6            ; BA75: 8D 18 02    ...
- LDA #&4B ; 'K'          ; BA78: A9 4B       .K
- STA ySprite7            ; BA7A: 8D 1C 02    ...
- LDA #&5B ; '['          ; BA7D: A9 5B       .[
- STA ySprite8            ; BA7F: 8D 20 02    . .
- RTS                     ; BA82: 60          `
+ CMP #&97
+ BNE CBA83
+ LDA #&80
+ STA attrSprite8
+ LDA #&40
+ STA attrSprite6
+ LDA #0
+ STA attrSprite7
+ STA attrSprite5
+ LDY #&CF
+ STY tileSprite5
+ STY tileSprite6
+ INY
+ STY tileSprite7
+ STY tileSprite8
+ LDA #&76
+ STA xSprite5
+ LDA #&86
+ STA xSprite6
+ LDA #&7E
+ STA xSprite7
+ STA xSprite8
+ LDA #&53
+ STA ySprite5
+ STA ySprite6
+ LDA #&4B
+ STA ySprite7
+ LDA #&5B
+ STA ySprite8
+ RTS
 
 .CBA83
 
- LDA #3                  ; BA83: A9 03       ..
- STA attrSprite5         ; BA85: 8D 16 02    ...
- LDA #&43 ; 'C'          ; BA88: A9 43       .C
- STA attrSprite6         ; BA8A: 8D 1A 02    ...
- LDA #&83                ; BA8D: A9 83       ..
- STA attrSprite7         ; BA8F: 8D 1E 02    ...
- LDA #&C3                ; BA92: A9 C3       ..
- STA attrSprite8         ; BA94: 8D 22 02    .".
- LDA #&D1                ; BA97: A9 D1       ..
- STA tileSprite5         ; BA99: 8D 15 02    ...
- STA tileSprite6         ; BA9C: 8D 19 02    ...
- STA tileSprite7         ; BA9F: 8D 1D 02    ...
- STA tileSprite8         ; BAA2: 8D 21 02    .!.
- LDA #&76 ; 'v'          ; BAA5: A9 76       .v
- STA xSprite5            ; BAA7: 8D 17 02    ...
- STA xSprite7            ; BAAA: 8D 1F 02    ...
- LDA #&86                ; BAAD: A9 86       ..
- STA xSprite6            ; BAAF: 8D 1B 02    ...
- STA xSprite8            ; BAB2: 8D 23 02    .#.
- LDA #&4B ; 'K'          ; BAB5: A9 4B       .K
- STA ySprite5            ; BAB7: 8D 14 02    ...
- STA ySprite6            ; BABA: 8D 18 02    ...
- LDA #&5B ; '['          ; BABD: A9 5B       .[
- STA ySprite7            ; BABF: 8D 1C 02    ...
- STA ySprite8            ; BAC2: 8D 20 02    . .
- RTS                     ; BAC5: 60          `
+ LDA #3
+ STA attrSprite5
+ LDA #&43
+ STA attrSprite6
+ LDA #&83
+ STA attrSprite7
+ LDA #&C3
+ STA attrSprite8
+ LDA #&D1
+ STA tileSprite5
+ STA tileSprite6
+ STA tileSprite7
+ STA tileSprite8
+ LDA #&76
+ STA xSprite5
+ STA xSprite7
+ LDA #&86
+ STA xSprite6
+ STA xSprite8
+ LDA #&4B
+ STA ySprite5
+ STA ySprite6
+ LDA #&5B
+ STA ySprite7
+ STA ySprite8
+ RTS
 
 .CBAC6
 
- LDA #1                  ; BAC6: A9 01       ..
- LDY #&CC                ; BAC8: A0 CC       ..
- STA attrSprite5         ; BACA: 8D 16 02    ...
- STA attrSprite6         ; BACD: 8D 1A 02    ...
- STA attrSprite7         ; BAD0: 8D 1E 02    ...
- STA attrSprite8         ; BAD3: 8D 22 02    .".
- STY tileSprite5         ; BAD6: 8C 15 02    ...
- STY tileSprite6         ; BAD9: 8C 19 02    ...
- INY                     ; BADC: C8          .
- STY tileSprite7         ; BADD: 8C 1D 02    ...
- STY tileSprite8         ; BAE0: 8C 21 02    .!.
- LDA #&72 ; 'r'          ; BAE3: A9 72       .r
- STA xSprite5            ; BAE5: 8D 17 02    ...
- LDA #&8A                ; BAE8: A9 8A       ..
- STA xSprite6            ; BAEA: 8D 1B 02    ...
- LDA #&7E ; '~'          ; BAED: A9 7E       .~
- STA xSprite7            ; BAEF: 8D 1F 02    ...
- STA xSprite8            ; BAF2: 8D 23 02    .#.
- LDA #&53 ; 'S'          ; BAF5: A9 53       .S
- STA ySprite5            ; BAF7: 8D 14 02    ...
- STA ySprite6            ; BAFA: 8D 18 02    ...
- LDA #&47 ; 'G'          ; BAFD: A9 47       .G
- STA ySprite7            ; BAFF: 8D 1C 02    ...
- LDA #&5F ; '_'          ; BB02: A9 5F       ._
- STA ySprite8            ; BB04: 8D 20 02    . .
- RTS                     ; BB07: 60          `
+ LDA #1
+ LDY #&CC
+ STA attrSprite5
+ STA attrSprite6
+ STA attrSprite7
+ STA attrSprite8
+ STY tileSprite5
+ STY tileSprite6
+ INY
+ STY tileSprite7
+ STY tileSprite8
+ LDA #&72
+ STA xSprite5
+ LDA #&8A
+ STA xSprite6
+ LDA #&7E
+ STA xSprite7
+ STA xSprite8
+ LDA #&53
+ STA ySprite5
+ STA ySprite6
+ LDA #&47
+ STA ySprite7
+ LDA #&5F
+ STA ySprite8
+ RTS
 
 .CBB08
 
- LDA #2                  ; BB08: A9 02       ..
- STA attrSprite5         ; BB0A: 8D 16 02    ...
- LDA #&42 ; 'B'          ; BB0D: A9 42       .B
- STA attrSprite6         ; BB0F: 8D 1A 02    ...
- LDA #&82                ; BB12: A9 82       ..
- STA attrSprite7         ; BB14: 8D 1E 02    ...
- LDA #&C2                ; BB17: A9 C2       ..
- STA attrSprite8         ; BB19: 8D 22 02    .".
- LDA #&CE                ; BB1C: A9 CE       ..
- STA tileSprite5         ; BB1E: 8D 15 02    ...
- STA tileSprite6         ; BB21: 8D 19 02    ...
- STA tileSprite7         ; BB24: 8D 1D 02    ...
- STA tileSprite8         ; BB27: 8D 21 02    .!.
- LDA #&7A ; 'z'          ; BB2A: A9 7A       .z
- STA xSprite5            ; BB2C: 8D 17 02    ...
- STA xSprite7            ; BB2F: 8D 1F 02    ...
- LDA #&82                ; BB32: A9 82       ..
- STA xSprite6            ; BB34: 8D 1B 02    ...
- STA xSprite8            ; BB37: 8D 23 02    .#.
- LDA #&4B ; 'K'          ; BB3A: A9 4B       .K
- STA ySprite5            ; BB3C: 8D 14 02    ...
- STA ySprite6            ; BB3F: 8D 18 02    ...
- LDA #&5B ; '['          ; BB42: A9 5B       .[
- STA ySprite7            ; BB44: 8D 1C 02    ...
- STA ySprite8            ; BB47: 8D 20 02    . .
- RTS                     ; BB4A: 60          `
+ LDA #2
+ STA attrSprite5
+ LDA #&42
+ STA attrSprite6
+ LDA #&82
+ STA attrSprite7
+ LDA #&C2
+ STA attrSprite8
+ LDA #&CE
+ STA tileSprite5
+ STA tileSprite6
+ STA tileSprite7
+ STA tileSprite8
+ LDA #&7A
+ STA xSprite5
+ STA xSprite7
+ LDA #&82
+ STA xSprite6
+ STA xSprite8
+ LDA #&4B
+ STA ySprite5
+ STA ySprite6
+ LDA #&5B
+ STA ySprite7
+ STA ySprite8
+ RTS
 
 \ ******************************************************************************
 \

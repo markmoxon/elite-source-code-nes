@@ -2437,16 +2437,16 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: SetSystemImage1
+\       Name: SetSystemImage
 \       Type: Subroutine
 \   Category: Drawing images
 \    Summary: ???
 \
 \ ******************************************************************************
 
-.SetSystemImage1
+.SetSystemImage
 
- JSR GetSystemImage1    \ Fetch the system image for the current system and
+ JSR GetSystemImage    \ Fetch the system image for the current system and
                         \ store it in the pattern buffers, starting at tile
                         \ number pictureTile
 
@@ -2462,7 +2462,7 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: GetSystemImage1
+\       Name: GetSystemImage
 \       Type: Subroutine
 \   Category: Drawing images
 \    Summary: Fetch the image for the current system and store it in the pattern
@@ -2477,7 +2477,7 @@ ENDMACRO
 \
 \ ******************************************************************************
 
-.GetSystemImage1
+.GetSystemImage
 
  LDA #0                 \ Set (SC+1 A) = (0 pictureTile)
  STA SC+1               \              = pictureTile

@@ -165,9 +165,31 @@ MACRO SETUP_PPU_FOR_ICON_BAR
 
 ENDMACRO
 
- JMP subm_8021                                ; 800C: 4C 21 80    L!.
+\ ******************************************************************************
+\
+\       Name: subm_800C
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
 
- JMP PlayMusic                                ; 800F: 4C 1E 81    L..
+.subm_800C
+
+ JMP subm_8021
+
+\ ******************************************************************************
+\
+\       Name: subm_800F
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
+.subm_800F
+
+ JMP PlayMusic
 
 \ ******************************************************************************
 \
@@ -180,15 +202,59 @@ ENDMACRO
 
 .ResetSound
 
- JMP DoResetSound                             ; 8012: 4C F3 80    L..
+ JMP DoResetSound
 
- JMP subm_80E5                                ; 8015: 4C E5 80    L..
+\ ******************************************************************************
+\
+\       Name: subm_8015
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
 
- JMP subm_895A                                ; 8018: 4C 5A 89    LZ.
+.subm_8015
 
- JMP subm_89DC                                ; 801B: 4C DC 89    L..
+ JMP subm_80E5
 
- JMP subm_8A53                                ; 801E: 4C 53 8A    LS.
+\ ******************************************************************************
+\
+\       Name: subm_8018
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
+.subm_8018
+
+ JMP subm_895A
+
+\ ******************************************************************************
+\
+\       Name: subm_801B
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
+.subm_801B
+
+ JMP subm_89DC
+
+\ ******************************************************************************
+\
+\       Name: subm_801E
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
+
+.subm_801E
+
+ JMP subm_8A53
 
 \ ******************************************************************************
 \
@@ -201,99 +267,99 @@ ENDMACRO
 
 .subm_8021
 
- TAY                                          ; 8021: A8          .
- JSR ResetSound                               ; 8022: 20 12 80     ..
- LDA #0                                       ; 8025: A9 00       ..
- CLC                                          ; 8027: 18          .
+ TAY
+ JSR ResetSound
+ LDA #0
+ CLC
 
 .loop_C8028
 
- DEY                                          ; 8028: 88          .
- BMI C802F                                    ; 8029: 30 04       0.
- ADC #9                                       ; 802B: 69 09       i.
- BNE loop_C8028                               ; 802D: D0 F9       ..
+ DEY
+ BMI C802F
+ ADC #9
+ BNE loop_C8028
 
 .C802F
 
- TAX                                          ; 802F: AA          .
- LDA #0                                       ; 8030: A9 00       ..
- LDY #&12                                     ; 8032: A0 12       ..
+ TAX
+ LDA #0
+ LDY #&12
 
 .loop_C8034
 
- STA L030E,Y                                  ; 8034: 99 0E 03    ...
- STA L0321,Y                                  ; 8037: 99 21 03    .!.
- STA L0334,Y                                  ; 803A: 99 34 03    .4.
- STA L0347,Y                                  ; 803D: 99 47 03    .G.
- DEY                                          ; 8040: 88          .
- BPL loop_C8034                               ; 8041: 10 F1       ..
- TAY                                          ; 8043: A8          .
- LDA L915F,X                                  ; 8044: BD 5F 91    ._.
- STA L0305                                    ; 8047: 8D 05 03    ...
- STA L0306                                    ; 804A: 8D 06 03    ...
- LDA L9160,X                                  ; 804D: BD 60 91    .`.
- STA L0310                                    ; 8050: 8D 10 03    ...
- STA L00FE                                    ; 8053: 85 FE       ..
- LDA L9161,X                                  ; 8055: BD 61 91    .a.
- STA L0311                                    ; 8058: 8D 11 03    ...
- STA L00FF                                    ; 805B: 85 FF       ..
- LDA (L00FE),Y                                ; 805D: B1 FE       ..
- STA L030E                                    ; 805F: 8D 0E 03    ...
- INY                                          ; 8062: C8          .
- LDA (L00FE),Y                                ; 8063: B1 FE       ..
- STA L030F                                    ; 8065: 8D 0F 03    ...
- LDA L9162,X                                  ; 8068: BD 62 91    .b.
- STA L0323                                    ; 806B: 8D 23 03    .#.
- STA L00FE                                    ; 806E: 85 FE       ..
- LDA L9163,X                                  ; 8070: BD 63 91    .c.
- STA L0324                                    ; 8073: 8D 24 03    .$.
- STA L00FF                                    ; 8076: 85 FF       ..
- DEY                                          ; 8078: 88          .
- LDA (L00FE),Y                                ; 8079: B1 FE       ..
- STA L0321                                    ; 807B: 8D 21 03    .!.
- INY                                          ; 807E: C8          .
- LDA (L00FE),Y                                ; 807F: B1 FE       ..
- STA L0322                                    ; 8081: 8D 22 03    .".
- LDA L9164,X                                  ; 8084: BD 64 91    .d.
- STA L0336                                    ; 8087: 8D 36 03    .6.
- STA L00FE                                    ; 808A: 85 FE       ..
- LDA L9165,X                                  ; 808C: BD 65 91    .e.
- STA L0337                                    ; 808F: 8D 37 03    .7.
- STA L00FF                                    ; 8092: 85 FF       ..
- DEY                                          ; 8094: 88          .
- LDA (L00FE),Y                                ; 8095: B1 FE       ..
- STA L0334                                    ; 8097: 8D 34 03    .4.
- INY                                          ; 809A: C8          .
- LDA (L00FE),Y                                ; 809B: B1 FE       ..
- STA L0335                                    ; 809D: 8D 35 03    .5.
- LDA L9166,X                                  ; 80A0: BD 66 91    .f.
- STA L0349                                    ; 80A3: 8D 49 03    .I.
- STA L00FE                                    ; 80A6: 85 FE       ..
- LDA L9167,X                                  ; 80A8: BD 67 91    .g.
- STA L034A                                    ; 80AB: 8D 4A 03    .J.
- STA L00FF                                    ; 80AE: 85 FF       ..
- DEY                                          ; 80B0: 88          .
- LDA (L00FE),Y                                ; 80B1: B1 FE       ..
- STA L0347                                    ; 80B3: 8D 47 03    .G.
- INY                                          ; 80B6: C8          .
- LDA (L00FE),Y                                ; 80B7: B1 FE       ..
- STA L0348                                    ; 80B9: 8D 48 03    .H.
- STY L0316                                    ; 80BC: 8C 16 03    ...
- STY L0329                                    ; 80BF: 8C 29 03    .).
- STY L033C                                    ; 80C2: 8C 3C 03    .<.
- STY L034F                                    ; 80C5: 8C 4F 03    .O.
- INY                                          ; 80C8: C8          .
- STY L0312                                    ; 80C9: 8C 12 03    ...
- STY L0325                                    ; 80CC: 8C 25 03    .%.
- STY L0338                                    ; 80CF: 8C 38 03    .8.
- STY L034B                                    ; 80D2: 8C 4B 03    .K.
- LDX #0                                       ; 80D5: A2 00       ..
- STX L030C                                    ; 80D7: 8E 0C 03    ...
- DEX                                          ; 80DA: CA          .
- STX L030B                                    ; 80DB: 8E 0B 03    ...
- STX L030D                                    ; 80DE: 8E 0D 03    ...
- INC L0301                                    ; 80E1: EE 01 03    ...
- RTS                                          ; 80E4: 60          `
+ STA L030E,Y
+ STA L0321,Y
+ STA L0334,Y
+ STA L0347,Y
+ DEY
+ BPL loop_C8034
+ TAY
+ LDA L915F,X
+ STA L0305
+ STA L0306
+ LDA L9160,X
+ STA L0310
+ STA L00FE
+ LDA L9161,X
+ STA L0311
+ STA L00FF
+ LDA (L00FE),Y
+ STA L030E
+ INY
+ LDA (L00FE),Y
+ STA L030F
+ LDA L9162,X
+ STA L0323
+ STA L00FE
+ LDA L9163,X
+ STA L0324
+ STA L00FF
+ DEY
+ LDA (L00FE),Y
+ STA L0321
+ INY
+ LDA (L00FE),Y
+ STA L0322
+ LDA L9164,X
+ STA L0336
+ STA L00FE
+ LDA L9165,X
+ STA L0337
+ STA L00FF
+ DEY
+ LDA (L00FE),Y
+ STA L0334
+ INY
+ LDA (L00FE),Y
+ STA L0335
+ LDA L9166,X
+ STA L0349
+ STA L00FE
+ LDA L9167,X
+ STA L034A
+ STA L00FF
+ DEY
+ LDA (L00FE),Y
+ STA L0347
+ INY
+ LDA (L00FE),Y
+ STA L0348
+ STY L0316
+ STY L0329
+ STY L033C
+ STY L034F
+ INY
+ STY L0312
+ STY L0325
+ STY L0338
+ STY L034B
+ LDX #0
+ STX L030C
+ DEX
+ STX L030B
+ STX L030D
+ INC L0301
+ RTS
 
 \ ******************************************************************************
 \
@@ -306,15 +372,15 @@ ENDMACRO
 
 .subm_80E5
 
- LDA L030D                                    ; 80E5: AD 0D 03    ...
- BEQ C80F2                                    ; 80E8: F0 08       ..
- LDA L0301                                    ; 80EA: AD 01 03    ...
- BNE C80F2                                    ; 80ED: D0 03       ..
- INC L0301                                    ; 80EF: EE 01 03    ...
+ LDA L030D
+ BEQ C80F2
+ LDA L0301
+ BNE C80F2
+ INC L0301
 
 .C80F2
 
- RTS                                          ; 80F2: 60          `
+ RTS
 
 \ ******************************************************************************
 \
@@ -327,27 +393,27 @@ ENDMACRO
 
 .DoResetSound
 
- LDA #0                                       ; 80F3: A9 00       ..
- STA L0301                                    ; 80F5: 8D 01 03    ...
- STA L0302                                    ; 80F8: 8D 02 03    ...
- STA L0303                                    ; 80FB: 8D 03 03    ...
- STA L0304                                    ; 80FE: 8D 04 03    ...
- TAX                                          ; 8101: AA          .
+ LDA #0
+ STA L0301
+ STA L0302
+ STA L0303
+ STA L0304
+ TAX
 
 .loop_C8102
 
- STA L035A,X                                  ; 8102: 9D 5A 03    .Z.
- INX                                          ; 8105: E8          .
- CPX #&10                                     ; 8106: E0 10       ..
- BNE loop_C8102                               ; 8108: D0 F8       ..
- STA TRI_LINEAR                               ; 810A: 8D 08 40    ..@
- LDA #&30 ; '0'                               ; 810D: A9 30       .0
- STA SQ1_VOL                                  ; 810F: 8D 00 40    ..@
- STA SQ2_VOL                                  ; 8112: 8D 04 40    ..@
- STA NOISE_VOL                                ; 8115: 8D 0C 40    ..@
- LDA #&0F                                     ; 8118: A9 0F       ..
- STA SND_CHN                                  ; 811A: 8D 15 40    ..@
- RTS                                          ; 811D: 60          `
+ STA L035A,X
+ INX
+ CPX #&10
+ BNE loop_C8102
+ STA TRI_LINEAR
+ LDA #&30
+ STA SQ1_VOL
+ STA SQ2_VOL
+ STA NOISE_VOL
+ LDA #&0F
+ STA SND_CHN
+ RTS
 
 \ ******************************************************************************
 \
@@ -360,69 +426,78 @@ ENDMACRO
 
 .PlayMusic
 
- JSR sub_C816D                                ; 811E: 20 6D 81     m.
- JSR subm_8AC8                                ; 8121: 20 C8 8A     ..
- LDA L0301                                    ; 8124: AD 01 03    ...
- BEQ C816C                                    ; 8127: F0 43       .C
- LDA L0302                                    ; 8129: AD 02 03    ...
- BNE C813F                                    ; 812C: D0 11       ..
- LDA L035A                                    ; 812E: AD 5A 03    .Z.
- STA SQ1_VOL                                  ; 8131: 8D 00 40    ..@
- LDA L0318                                    ; 8134: AD 18 03    ...
- BNE C813F                                    ; 8137: D0 06       ..
- LDA L035C                                    ; 8139: AD 5C 03    .\.
- STA SQ1_LO                                   ; 813C: 8D 02 40    ..@
+ JSR subm_816D
+ JSR subm_8AC8
+ LDA L0301
+ BEQ C816C
+ LDA L0302
+ BNE C813F
+ LDA L035A
+ STA SQ1_VOL
+ LDA L0318
+ BNE C813F
+ LDA L035C
+ STA SQ1_LO
 
 .C813F
 
- LDA L0303                                    ; 813F: AD 03 03    ...
- BNE C8155                                    ; 8142: D0 11       ..
- LDA L035E                                    ; 8144: AD 5E 03    .^.
- STA SQ2_VOL                                  ; 8147: 8D 04 40    ..@
- LDA L032B                                    ; 814A: AD 2B 03    .+.
- BNE C8155                                    ; 814D: D0 06       ..
- LDA L0360                                    ; 814F: AD 60 03    .`.
- STA SQ2_LO                                   ; 8152: 8D 06 40    ..@
+ LDA L0303
+ BNE C8155
+ LDA L035E
+ STA SQ2_VOL
+ LDA L032B
+ BNE C8155
+ LDA L0360
+ STA SQ2_LO
 
 .C8155
 
- LDA L0364                                    ; 8155: AD 64 03    .d.
- STA TRI_LO                                   ; 8158: 8D 0A 40    ..@
- LDA L0304                                    ; 815B: AD 04 03    ...
- BNE C816C                                    ; 815E: D0 0C       ..
- LDA L0366                                    ; 8160: AD 66 03    .f.
- STA NOISE_VOL                                ; 8163: 8D 0C 40    ..@
- LDA L0368                                    ; 8166: AD 68 03    .h.
- STA NOISE_LO                                 ; 8169: 8D 0E 40    ..@
+ LDA L0364
+ STA TRI_LO
+ LDA L0304
+ BNE C816C
+ LDA L0366
+ STA NOISE_VOL
+ LDA L0368
+ STA NOISE_LO
 
 .C816C
 
- RTS                                          ; 816C: 60          `
+ RTS
 
-.sub_C816D
+\ ******************************************************************************
+\
+\       Name: subm_816D
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
 
- LDA L0301                                    ; 816D: AD 01 03    ...
- BNE C8173                                    ; 8170: D0 01       ..
- RTS                                          ; 8172: 60          `
+.subm_816D
+
+ LDA L0301
+ BNE C8173
+ RTS
 
 .C8173
 
- LDA L0305                                    ; 8173: AD 05 03    ...
- CLC                                          ; 8176: 18          .
- ADC L030B                                    ; 8177: 6D 0B 03    m..
- STA L030B                                    ; 817A: 8D 0B 03    ...
- BCC C818B                                    ; 817D: 90 0C       ..
- JSR subm_8197                                ; 817F: 20 97 81     ..
- JSR subm_8392                                ; 8182: 20 92 83     ..
- JSR subm_858D                                ; 8185: 20 8D 85     ..
- JSR subm_8725                                ; 8188: 20 25 87     %.
+ LDA L0305
+ CLC
+ ADC L030B
+ STA L030B
+ BCC C818B
+ JSR subm_8197
+ JSR subm_8392
+ JSR subm_858D
+ JSR subm_8725
 
 .C818B
 
- JSR subm_8334                                ; 818B: 20 34 83     4.
- JSR subm_852F                                ; 818E: 20 2F 85     /.
- JSR subm_86EE                                ; 8191: 20 EE 86     ..
- JMP C885D                                    ; 8194: 4C 5D 88    L].
+ JSR subm_8334
+ JSR subm_852F
+ JSR subm_86EE
+ JMP C885D
 
 \ ******************************************************************************
 \
@@ -435,273 +510,273 @@ ENDMACRO
 
 .subm_8197
 
- DEC L0316                                    ; 8197: CE 16 03    ...
- BEQ C819D                                    ; 819A: F0 01       ..
- RTS                                          ; 819C: 60          `
+ DEC L0316
+ BEQ C819D
+ RTS
 
 .C819D
 
- LDA L030E                                    ; 819D: AD 0E 03    ...
- STA L00FE                                    ; 81A0: 85 FE       ..
- LDA L030F                                    ; 81A2: AD 0F 03    ...
- STA L00FF                                    ; 81A5: 85 FF       ..
- LDA #0                                       ; 81A7: A9 00       ..
- STA L0318                                    ; 81A9: 8D 18 03    ...
- STA L0320                                    ; 81AC: 8D 20 03    . .
+ LDA L030E
+ STA L00FE
+ LDA L030F
+ STA L00FF
+ LDA #0
+ STA L0318
+ STA L0320
 
 .C81AF
 
- LDY #0                                       ; 81AF: A0 00       ..
- LDA (L00FE),Y                                ; 81B1: B1 FE       ..
- TAY                                          ; 81B3: A8          .
- INC L00FE                                    ; 81B4: E6 FE       ..
- BNE C81BA                                    ; 81B6: D0 02       ..
- INC L00FF                                    ; 81B8: E6 FF       ..
+ LDY #0
+ LDA (L00FE),Y
+ TAY
+ INC L00FE
+ BNE C81BA
+ INC L00FF
 
 .C81BA
 
- TYA                                          ; 81BA: 98          .
- BMI C8217                                    ; 81BB: 30 5A       0Z
- CMP #&60 ; '`'                               ; 81BD: C9 60       .`
- BCC C81C9                                    ; 81BF: 90 08       ..
- ADC #&A0                                     ; 81C1: 69 A0       i.
- STA L0315                                    ; 81C3: 8D 15 03    ...
- JMP C81AF                                    ; 81C6: 4C AF 81    L..
+ TYA
+ BMI C8217
+ CMP #&60
+ BCC C81C9
+ ADC #&A0
+ STA L0315
+ JMP C81AF
 
 .C81C9
 
- CLC                                          ; 81C9: 18          .
- ADC L030C                                    ; 81CA: 6D 0C 03    m..
- CLC                                          ; 81CD: 18          .
- ADC L0314                                    ; 81CE: 6D 14 03    m..
- ASL A                                        ; 81D1: 0A          .
- TAY                                          ; 81D2: A8          .
- LDA L88BC,Y                                  ; 81D3: B9 BC 88    ...
- STA L031B                                    ; 81D6: 8D 1B 03    ...
- STA L035C                                    ; 81D9: 8D 5C 03    .\.
- LDA L88BC+1,Y                                  ; 81DC: B9 BD 88    ...
- STA L035D                                    ; 81DF: 8D 5D 03    .].
- LDX L0302                                    ; 81E2: AE 02 03    ...
- BNE C81F6                                    ; 81E5: D0 0F       ..
- LDX L0318                                    ; 81E7: AE 18 03    ...
- STX SQ1_SWEEP                                ; 81EA: 8E 01 40    ..@
- LDX L035C                                    ; 81ED: AE 5C 03    .\.
- STX SQ1_LO                                   ; 81F0: 8E 02 40    ..@
- STA SQ1_HI                                   ; 81F3: 8D 03 40    ..@
+ CLC
+ ADC L030C
+ CLC
+ ADC L0314
+ ASL A
+ TAY
+ LDA L88BC,Y
+ STA L031B
+ STA L035C
+ LDA L88BC+1,Y
+ STA L035D
+ LDX L0302
+ BNE C81F6
+ LDX L0318
+ STX SQ1_SWEEP
+ LDX L035C
+ STX SQ1_LO
+ STA SQ1_HI
 
 .C81F6
 
- LDA #1                                       ; 81F6: A9 01       ..
- STA L031C                                    ; 81F8: 8D 1C 03    ...
- LDA L031D                                    ; 81FB: AD 1D 03    ...
- STA L031E                                    ; 81FE: 8D 1E 03    ...
+ LDA #1
+ STA L031C
+ LDA L031D
+ STA L031E
 
 .C8201
 
- LDA #&FF                                     ; 8201: A9 FF       ..
- STA L0320                                    ; 8203: 8D 20 03    . .
+ LDA #&FF
+ STA L0320
 
 .C8206
 
- LDA L00FE                                    ; 8206: A5 FE       ..
- STA L030E                                    ; 8208: 8D 0E 03    ...
- LDA L00FF                                    ; 820B: A5 FF       ..
- STA L030F                                    ; 820D: 8D 0F 03    ...
- LDA L0315                                    ; 8210: AD 15 03    ...
- STA L0316                                    ; 8213: 8D 16 03    ...
- RTS                                          ; 8216: 60          `
+ LDA L00FE
+ STA L030E
+ LDA L00FF
+ STA L030F
+ LDA L0315
+ STA L0316
+ RTS
 
 .C8217
 
- LDY #0                                       ; 8217: A0 00       ..
- CMP #&FF                                     ; 8219: C9 FF       ..
- BNE C8265                                    ; 821B: D0 48       .H
- LDA L0312                                    ; 821D: AD 12 03    ...
- CLC                                          ; 8220: 18          .
- ADC L0310                                    ; 8221: 6D 10 03    m..
- STA L00FE                                    ; 8224: 85 FE       ..
- LDA L0313                                    ; 8226: AD 13 03    ...
- ADC L0311                                    ; 8229: 6D 11 03    m..
- STA L00FF                                    ; 822C: 85 FF       ..
- LDA L0312                                    ; 822E: AD 12 03    ...
- ADC #2                                       ; 8231: 69 02       i.
- STA L0312                                    ; 8233: 8D 12 03    ...
- TYA                                          ; 8236: 98          .
- ADC L0313                                    ; 8237: 6D 13 03    m..
- STA L0313                                    ; 823A: 8D 13 03    ...
- LDA (L00FE),Y                                ; 823D: B1 FE       ..
- INY                                          ; 823F: C8          .
- ORA (L00FE),Y                                ; 8240: 11 FE       ..
- BNE C8258                                    ; 8242: D0 14       ..
- LDA L0310                                    ; 8244: AD 10 03    ...
- STA L00FE                                    ; 8247: 85 FE       ..
- LDA L0311                                    ; 8249: AD 11 03    ...
- STA L00FF                                    ; 824C: 85 FF       ..
- LDA #2                                       ; 824E: A9 02       ..
- STA L0312                                    ; 8250: 8D 12 03    ...
- LDA #0                                       ; 8253: A9 00       ..
- STA L0313                                    ; 8255: 8D 13 03    ...
+ LDY #0
+ CMP #&FF
+ BNE C8265
+ LDA L0312
+ CLC
+ ADC L0310
+ STA L00FE
+ LDA L0313
+ ADC L0311
+ STA L00FF
+ LDA L0312
+ ADC #2
+ STA L0312
+ TYA
+ ADC L0313
+ STA L0313
+ LDA (L00FE),Y
+ INY
+ ORA (L00FE),Y
+ BNE C8258
+ LDA L0310
+ STA L00FE
+ LDA L0311
+ STA L00FF
+ LDA #2
+ STA L0312
+ LDA #0
+ STA L0313
 
 .C8258
 
- LDA (L00FE),Y                                ; 8258: B1 FE       ..
- TAX                                          ; 825A: AA          .
- DEY                                          ; 825B: 88          .
- LDA (L00FE),Y                                ; 825C: B1 FE       ..
- STA L00FE                                    ; 825E: 85 FE       ..
- STX L00FF                                    ; 8260: 86 FF       ..
- JMP C81AF                                    ; 8262: 4C AF 81    L..
+ LDA (L00FE),Y
+ TAX
+ DEY
+ LDA (L00FE),Y
+ STA L00FE
+ STX L00FF
+ JMP C81AF
 
 .C8265
 
- CMP #&F6                                     ; 8265: C9 F6       ..
- BNE C8277                                    ; 8267: D0 0E       ..
- LDA (L00FE),Y                                ; 8269: B1 FE       ..
- INC L00FE                                    ; 826B: E6 FE       ..
- BNE C8271                                    ; 826D: D0 02       ..
- INC L00FF                                    ; 826F: E6 FF       ..
+ CMP #&F6
+ BNE C8277
+ LDA (L00FE),Y
+ INC L00FE
+ BNE C8271
+ INC L00FF
 
 .C8271
 
- STA L031F                                    ; 8271: 8D 1F 03    ...
- JMP C81AF                                    ; 8274: 4C AF 81    L..
+ STA L031F
+ JMP C81AF
 
 .C8277
 
- CMP #&F7                                     ; 8277: C9 F7       ..
- BNE C828C                                    ; 8279: D0 11       ..
- LDA (L00FE),Y                                ; 827B: B1 FE       ..
- INC L00FE                                    ; 827D: E6 FE       ..
- BNE C8283                                    ; 827F: D0 02       ..
- INC L00FF                                    ; 8281: E6 FF       ..
+ CMP #&F7
+ BNE C828C
+ LDA (L00FE),Y
+ INC L00FE
+ BNE C8283
+ INC L00FF
 
 .C8283
 
- STA L031A                                    ; 8283: 8D 1A 03    ...
- STY L0319                                    ; 8286: 8C 19 03    ...
- JMP C81AF                                    ; 8289: 4C AF 81    L..
+ STA L031A
+ STY L0319
+ JMP C81AF
 
 .C828C
 
- CMP #&FA                                     ; 828C: C9 FA       ..
- BNE C829E                                    ; 828E: D0 0E       ..
- LDA (L00FE),Y                                ; 8290: B1 FE       ..
- STA L0317                                    ; 8292: 8D 17 03    ...
- INC L00FE                                    ; 8295: E6 FE       ..
- BNE C829B                                    ; 8297: D0 02       ..
- INC L00FF                                    ; 8299: E6 FF       ..
+ CMP #&FA
+ BNE C829E
+ LDA (L00FE),Y
+ STA L0317
+ INC L00FE
+ BNE C829B
+ INC L00FF
 
 .C829B
 
- JMP C81AF                                    ; 829B: 4C AF 81    L..
+ JMP C81AF
 
 .C829E
 
- CMP #&F8                                     ; 829E: C9 F8       ..
- BNE C82AA                                    ; 82A0: D0 08       ..
- LDA #&30 ; '0'                               ; 82A2: A9 30       .0
- STA L035A                                    ; 82A4: 8D 5A 03    .Z.
- JMP C8206                                    ; 82A7: 4C 06 82    L..
+ CMP #&F8
+ BNE C82AA
+ LDA #&30
+ STA L035A
+ JMP C8206
 
 .C82AA
 
- CMP #&F9                                     ; 82AA: C9 F9       ..
- BNE C82B1                                    ; 82AC: D0 03       ..
- JMP C8201                                    ; 82AE: 4C 01 82    L..
+ CMP #&F9
+ BNE C82B1
+ JMP C8201
 
 .C82B1
 
- CMP #&FD                                     ; 82B1: C9 FD       ..
- BNE C82C3                                    ; 82B3: D0 0E       ..
- LDA (L00FE),Y                                ; 82B5: B1 FE       ..
- INC L00FE                                    ; 82B7: E6 FE       ..
- BNE C82BD                                    ; 82B9: D0 02       ..
- INC L00FF                                    ; 82BB: E6 FF       ..
+ CMP #&FD
+ BNE C82C3
+ LDA (L00FE),Y
+ INC L00FE
+ BNE C82BD
+ INC L00FF
 
 .C82BD
 
- STA L0318                                    ; 82BD: 8D 18 03    ...
- JMP C81AF                                    ; 82C0: 4C AF 81    L..
+ STA L0318
+ JMP C81AF
 
 .C82C3
 
- CMP #&FB                                     ; 82C3: C9 FB       ..
- BNE C82D5                                    ; 82C5: D0 0E       ..
- LDA (L00FE),Y                                ; 82C7: B1 FE       ..
- INC L00FE                                    ; 82C9: E6 FE       ..
- BNE C82CF                                    ; 82CB: D0 02       ..
- INC L00FF                                    ; 82CD: E6 FF       ..
+ CMP #&FB
+ BNE C82D5
+ LDA (L00FE),Y
+ INC L00FE
+ BNE C82CF
+ INC L00FF
 
 .C82CF
 
- STA L030C                                    ; 82CF: 8D 0C 03    ...
- JMP C81AF                                    ; 82D2: 4C AF 81    L..
+ STA L030C
+ JMP C81AF
 
 .C82D5
 
- CMP #&FC                                     ; 82D5: C9 FC       ..
- BNE C82E7                                    ; 82D7: D0 0E       ..
- LDA (L00FE),Y                                ; 82D9: B1 FE       ..
- INC L00FE                                    ; 82DB: E6 FE       ..
- BNE C82E1                                    ; 82DD: D0 02       ..
- INC L00FF                                    ; 82DF: E6 FF       ..
+ CMP #&FC
+ BNE C82E7
+ LDA (L00FE),Y
+ INC L00FE
+ BNE C82E1
+ INC L00FF
 
 .C82E1
 
- STA L0314                                    ; 82E1: 8D 14 03    ...
- JMP C81AF                                    ; 82E4: 4C AF 81    L..
+ STA L0314
+ JMP C81AF
 
 .C82E7
 
- CMP #&F5                                     ; 82E7: C9 F5       ..
- BNE C8311                                    ; 82E9: D0 26       .&
- LDA (L00FE),Y                                ; 82EB: B1 FE       ..
- TAX                                          ; 82ED: AA          .
- STA L0310                                    ; 82EE: 8D 10 03    ...
- INY                                          ; 82F1: C8          .
- LDA (L00FE),Y                                ; 82F2: B1 FE       ..
- STX L00FE                                    ; 82F4: 86 FE       ..
- STA L00FF                                    ; 82F6: 85 FF       ..
- STA L0311                                    ; 82F8: 8D 11 03    ...
- LDA #2                                       ; 82FB: A9 02       ..
- STA L0312                                    ; 82FD: 8D 12 03    ...
- DEY                                          ; 8300: 88          .
- STY L0313                                    ; 8301: 8C 13 03    ...
- LDA (L00FE),Y                                ; 8304: B1 FE       ..
- TAX                                          ; 8306: AA          .
- INY                                          ; 8307: C8          .
- LDA (L00FE),Y                                ; 8308: B1 FE       ..
- STA L00FF                                    ; 830A: 85 FF       ..
- STX L00FE                                    ; 830C: 86 FE       ..
- JMP C81AF                                    ; 830E: 4C AF 81    L..
+ CMP #&F5
+ BNE C8311
+ LDA (L00FE),Y
+ TAX
+ STA L0310
+ INY
+ LDA (L00FE),Y
+ STX L00FE
+ STA L00FF
+ STA L0311
+ LDA #2
+ STA L0312
+ DEY
+ STY L0313
+ LDA (L00FE),Y
+ TAX
+ INY
+ LDA (L00FE),Y
+ STA L00FF
+ STX L00FE
+ JMP C81AF
 
 .C8311
 
- CMP #&F4                                     ; 8311: C9 F4       ..
- BNE C8326                                    ; 8313: D0 11       ..
- LDA (L00FE),Y                                ; 8315: B1 FE       ..
- INC L00FE                                    ; 8317: E6 FE       ..
- BNE C831D                                    ; 8319: D0 02       ..
- INC L00FF                                    ; 831B: E6 FF       ..
+ CMP #&F4
+ BNE C8326
+ LDA (L00FE),Y
+ INC L00FE
+ BNE C831D
+ INC L00FF
 
 .C831D
 
- STA L0305                                    ; 831D: 8D 05 03    ...
- STA L0306                                    ; 8320: 8D 06 03    ...
- JMP C81AF                                    ; 8323: 4C AF 81    L..
+ STA L0305
+ STA L0306
+ JMP C81AF
 
 .C8326
 
- CMP #&FE                                     ; 8326: C9 FE       ..
- BNE C8332                                    ; 8328: D0 08       ..
- STY L030D                                    ; 832A: 8C 0D 03    ...
- PLA                                          ; 832D: 68          h
- PLA                                          ; 832E: 68          h
- JMP ResetSound                               ; 832F: 4C 12 80    L..
+ CMP #&FE
+ BNE C8332
+ STY L030D
+ PLA
+ PLA
+ JMP ResetSound
 
 .C8332
 
- BEQ C8332                                    ; 8332: F0 FE       ..
+ BEQ C8332
 
 \ ******************************************************************************
 \
@@ -714,53 +789,53 @@ ENDMACRO
 
 .subm_8334
 
- LDA L0320                                    ; 8334: AD 20 03    . .
- BEQ C836A                                    ; 8337: F0 31       .1
- LDX L031F                                    ; 8339: AE 1F 03    ...
- LDA L902C,X                                  ; 833C: BD 2C 90    .,.
- STA L00FE                                    ; 833F: 85 FE       ..
- LDA L9040,X                                  ; 8341: BD 40 90    .@.
- STA L00FF                                    ; 8344: 85 FF       ..
- LDY #0                                       ; 8346: A0 00       ..
- LDA (L00FE),Y                                ; 8348: B1 FE       ..
- STA L031D                                    ; 834A: 8D 1D 03    ...
- LDY L031C                                    ; 834D: AC 1C 03    ...
- LDA (L00FE),Y                                ; 8350: B1 FE       ..
- BMI C8362                                    ; 8352: 30 0E       0.
- DEC L031E                                    ; 8354: CE 1E 03    ...
- BPL C8362                                    ; 8357: 10 09       ..
- LDX L031D                                    ; 8359: AE 1D 03    ...
- STX L031E                                    ; 835C: 8E 1E 03    ...
- INC L031C                                    ; 835F: EE 1C 03    ...
+ LDA L0320
+ BEQ C836A
+ LDX L031F
+ LDA L902C,X
+ STA L00FE
+ LDA L9040,X
+ STA L00FF
+ LDY #0
+ LDA (L00FE),Y
+ STA L031D
+ LDY L031C
+ LDA (L00FE),Y
+ BMI C8362
+ DEC L031E
+ BPL C8362
+ LDX L031D
+ STX L031E
+ INC L031C
 
 .C8362
 
- AND #&0F                                     ; 8362: 29 0F       ).
- ORA L0317                                    ; 8364: 0D 17 03    ...
- STA L035A                                    ; 8367: 8D 5A 03    .Z.
+ AND #&0F
+ ORA L0317
+ STA L035A
 
 .C836A
 
- LDX L031A                                    ; 836A: AE 1A 03    ...
- LDA L9119,X                                  ; 836D: BD 19 91    ...
- STA L00FE                                    ; 8370: 85 FE       ..
- LDA L9121,X                                  ; 8372: BD 21 91    .!.
- STA L00FF                                    ; 8375: 85 FF       ..
- LDY L0319                                    ; 8377: AC 19 03    ...
- LDA (L00FE),Y                                ; 837A: B1 FE       ..
- CMP #&80                                     ; 837C: C9 80       ..
- BNE C8387                                    ; 837E: D0 07       ..
- LDY #0                                       ; 8380: A0 00       ..
- STY L0319                                    ; 8382: 8C 19 03    ...
- LDA (L00FE),Y                                ; 8385: B1 FE       ..
+ LDX L031A
+ LDA L9119,X
+ STA L00FE
+ LDA L9121,X
+ STA L00FF
+ LDY L0319
+ LDA (L00FE),Y
+ CMP #&80
+ BNE C8387
+ LDY #0
+ STY L0319
+ LDA (L00FE),Y
 
 .C8387
 
- INC L0319                                    ; 8387: EE 19 03    ...
- CLC                                          ; 838A: 18          .
- ADC L031B                                    ; 838B: 6D 1B 03    m..
- STA L035C                                    ; 838E: 8D 5C 03    .\.
- RTS                                          ; 8391: 60          `
+ INC L0319
+ CLC
+ ADC L031B
+ STA L035C
+ RTS
 
 \ ******************************************************************************
 \
@@ -773,273 +848,273 @@ ENDMACRO
 
 .subm_8392
 
- DEC L0329                                    ; 8392: CE 29 03    .).
- BEQ C8398                                    ; 8395: F0 01       ..
- RTS                                          ; 8397: 60          `
+ DEC L0329
+ BEQ C8398
+ RTS
 
 .C8398
 
- LDA L0321                                    ; 8398: AD 21 03    .!.
- STA L00FE                                    ; 839B: 85 FE       ..
- LDA L0322                                    ; 839D: AD 22 03    .".
- STA L00FF                                    ; 83A0: 85 FF       ..
- LDA #0                                       ; 83A2: A9 00       ..
- STA L032B                                    ; 83A4: 8D 2B 03    .+.
- STA L0333                                    ; 83A7: 8D 33 03    .3.
+ LDA L0321
+ STA L00FE
+ LDA L0322
+ STA L00FF
+ LDA #0
+ STA L032B
+ STA L0333
 
 .C83AA
 
- LDY #0                                       ; 83AA: A0 00       ..
- LDA (L00FE),Y                                ; 83AC: B1 FE       ..
- TAY                                          ; 83AE: A8          .
- INC L00FE                                    ; 83AF: E6 FE       ..
- BNE C83B5                                    ; 83B1: D0 02       ..
- INC L00FF                                    ; 83B3: E6 FF       ..
+ LDY #0
+ LDA (L00FE),Y
+ TAY
+ INC L00FE
+ BNE C83B5
+ INC L00FF
 
 .C83B5
 
- TYA                                          ; 83B5: 98          .
- BMI C8412                                    ; 83B6: 30 5A       0Z
- CMP #&60 ; '`'                               ; 83B8: C9 60       .`
- BCC C83C4                                    ; 83BA: 90 08       ..
- ADC #&A0                                     ; 83BC: 69 A0       i.
- STA L0328                                    ; 83BE: 8D 28 03    .(.
- JMP C83AA                                    ; 83C1: 4C AA 83    L..
+ TYA
+ BMI C8412
+ CMP #&60
+ BCC C83C4
+ ADC #&A0
+ STA L0328
+ JMP C83AA
 
 .C83C4
 
- CLC                                          ; 83C4: 18          .
- ADC L030C                                    ; 83C5: 6D 0C 03    m..
- CLC                                          ; 83C8: 18          .
- ADC L0327                                    ; 83C9: 6D 27 03    m'.
- ASL A                                        ; 83CC: 0A          .
- TAY                                          ; 83CD: A8          .
- LDA L88BC,Y                                  ; 83CE: B9 BC 88    ...
- STA L032E                                    ; 83D1: 8D 2E 03    ...
- STA L0360                                    ; 83D4: 8D 60 03    .`.
- LDA L88BC+1,Y                                  ; 83D7: B9 BD 88    ...
- STA L0361                                    ; 83DA: 8D 61 03    .a.
- LDX L0303                                    ; 83DD: AE 03 03    ...
- BNE C83F1                                    ; 83E0: D0 0F       ..
- LDX L032B                                    ; 83E2: AE 2B 03    .+.
- STX SQ2_SWEEP                                ; 83E5: 8E 05 40    ..@
- LDX L0360                                    ; 83E8: AE 60 03    .`.
- STX SQ2_LO                                   ; 83EB: 8E 06 40    ..@
- STA SQ2_HI                                   ; 83EE: 8D 07 40    ..@
+ CLC
+ ADC L030C
+ CLC
+ ADC L0327
+ ASL A
+ TAY
+ LDA L88BC,Y
+ STA L032E
+ STA L0360
+ LDA L88BC+1,Y
+ STA L0361
+ LDX L0303
+ BNE C83F1
+ LDX L032B
+ STX SQ2_SWEEP
+ LDX L0360
+ STX SQ2_LO
+ STA SQ2_HI
 
 .C83F1
 
- LDA #1                                       ; 83F1: A9 01       ..
- STA L032F                                    ; 83F3: 8D 2F 03    ./.
- LDA L0330                                    ; 83F6: AD 30 03    .0.
- STA L0331                                    ; 83F9: 8D 31 03    .1.
+ LDA #1
+ STA L032F
+ LDA L0330
+ STA L0331
 
 .C83FC
 
- LDA #&FF                                     ; 83FC: A9 FF       ..
- STA L0333                                    ; 83FE: 8D 33 03    .3.
+ LDA #&FF
+ STA L0333
 
 .C8401
 
- LDA L00FE                                    ; 8401: A5 FE       ..
- STA L0321                                    ; 8403: 8D 21 03    .!.
- LDA L00FF                                    ; 8406: A5 FF       ..
- STA L0322                                    ; 8408: 8D 22 03    .".
- LDA L0328                                    ; 840B: AD 28 03    .(.
- STA L0329                                    ; 840E: 8D 29 03    .).
- RTS                                          ; 8411: 60          `
+ LDA L00FE
+ STA L0321
+ LDA L00FF
+ STA L0322
+ LDA L0328
+ STA L0329
+ RTS
 
 .C8412
 
- LDY #0                                       ; 8412: A0 00       ..
- CMP #&FF                                     ; 8414: C9 FF       ..
- BNE C8460                                    ; 8416: D0 48       .H
- LDA L0325                                    ; 8418: AD 25 03    .%.
- CLC                                          ; 841B: 18          .
- ADC L0323                                    ; 841C: 6D 23 03    m#.
- STA L00FE                                    ; 841F: 85 FE       ..
- LDA L0326                                    ; 8421: AD 26 03    .&.
- ADC L0324                                    ; 8424: 6D 24 03    m$.
- STA L00FF                                    ; 8427: 85 FF       ..
- LDA L0325                                    ; 8429: AD 25 03    .%.
- ADC #2                                       ; 842C: 69 02       i.
- STA L0325                                    ; 842E: 8D 25 03    .%.
- TYA                                          ; 8431: 98          .
- ADC L0326                                    ; 8432: 6D 26 03    m&.
- STA L0326                                    ; 8435: 8D 26 03    .&.
- LDA (L00FE),Y                                ; 8438: B1 FE       ..
- INY                                          ; 843A: C8          .
- ORA (L00FE),Y                                ; 843B: 11 FE       ..
- BNE C8453                                    ; 843D: D0 14       ..
- LDA L0323                                    ; 843F: AD 23 03    .#.
- STA L00FE                                    ; 8442: 85 FE       ..
- LDA L0324                                    ; 8444: AD 24 03    .$.
- STA L00FF                                    ; 8447: 85 FF       ..
- LDA #2                                       ; 8449: A9 02       ..
- STA L0325                                    ; 844B: 8D 25 03    .%.
- LDA #0                                       ; 844E: A9 00       ..
- STA L0326                                    ; 8450: 8D 26 03    .&.
+ LDY #0
+ CMP #&FF
+ BNE C8460
+ LDA L0325
+ CLC
+ ADC L0323
+ STA L00FE
+ LDA L0326
+ ADC L0324
+ STA L00FF
+ LDA L0325
+ ADC #2
+ STA L0325
+ TYA
+ ADC L0326
+ STA L0326
+ LDA (L00FE),Y
+ INY
+ ORA (L00FE),Y
+ BNE C8453
+ LDA L0323
+ STA L00FE
+ LDA L0324
+ STA L00FF
+ LDA #2
+ STA L0325
+ LDA #0
+ STA L0326
 
 .C8453
 
- LDA (L00FE),Y                                ; 8453: B1 FE       ..
- TAX                                          ; 8455: AA          .
- DEY                                          ; 8456: 88          .
- LDA (L00FE),Y                                ; 8457: B1 FE       ..
- STA L00FE                                    ; 8459: 85 FE       ..
- STX L00FF                                    ; 845B: 86 FF       ..
- JMP C83AA                                    ; 845D: 4C AA 83    L..
+ LDA (L00FE),Y
+ TAX
+ DEY
+ LDA (L00FE),Y
+ STA L00FE
+ STX L00FF
+ JMP C83AA
 
 .C8460
 
- CMP #&F6                                     ; 8460: C9 F6       ..
- BNE C8472                                    ; 8462: D0 0E       ..
- LDA (L00FE),Y                                ; 8464: B1 FE       ..
- INC L00FE                                    ; 8466: E6 FE       ..
- BNE C846C                                    ; 8468: D0 02       ..
- INC L00FF                                    ; 846A: E6 FF       ..
+ CMP #&F6
+ BNE C8472
+ LDA (L00FE),Y
+ INC L00FE
+ BNE C846C
+ INC L00FF
 
 .C846C
 
- STA L0332                                    ; 846C: 8D 32 03    .2.
- JMP C83AA                                    ; 846F: 4C AA 83    L..
+ STA L0332
+ JMP C83AA
 
 .C8472
 
- CMP #&F7                                     ; 8472: C9 F7       ..
- BNE C8487                                    ; 8474: D0 11       ..
- LDA (L00FE),Y                                ; 8476: B1 FE       ..
- INC L00FE                                    ; 8478: E6 FE       ..
- BNE C847E                                    ; 847A: D0 02       ..
- INC L00FF                                    ; 847C: E6 FF       ..
+ CMP #&F7
+ BNE C8487
+ LDA (L00FE),Y
+ INC L00FE
+ BNE C847E
+ INC L00FF
 
 .C847E
 
- STA L032D                                    ; 847E: 8D 2D 03    .-.
- STY L032C                                    ; 8481: 8C 2C 03    .,.
- JMP C83AA                                    ; 8484: 4C AA 83    L..
+ STA L032D
+ STY L032C
+ JMP C83AA
 
 .C8487
 
- CMP #&FA                                     ; 8487: C9 FA       ..
- BNE C8499                                    ; 8489: D0 0E       ..
- LDA (L00FE),Y                                ; 848B: B1 FE       ..
- STA L032A                                    ; 848D: 8D 2A 03    .*.
- INC L00FE                                    ; 8490: E6 FE       ..
- BNE C8496                                    ; 8492: D0 02       ..
- INC L00FF                                    ; 8494: E6 FF       ..
+ CMP #&FA
+ BNE C8499
+ LDA (L00FE),Y
+ STA L032A
+ INC L00FE
+ BNE C8496
+ INC L00FF
 
 .C8496
 
- JMP C83AA                                    ; 8496: 4C AA 83    L..
+ JMP C83AA
 
 .C8499
 
- CMP #&F8                                     ; 8499: C9 F8       ..
- BNE C84A5                                    ; 849B: D0 08       ..
- LDA #&30 ; '0'                               ; 849D: A9 30       .0
- STA L035E                                    ; 849F: 8D 5E 03    .^.
- JMP C8401                                    ; 84A2: 4C 01 84    L..
+ CMP #&F8
+ BNE C84A5
+ LDA #&30
+ STA L035E
+ JMP C8401
 
 .C84A5
 
- CMP #&F9                                     ; 84A5: C9 F9       ..
- BNE C84AC                                    ; 84A7: D0 03       ..
- JMP C83FC                                    ; 84A9: 4C FC 83    L..
+ CMP #&F9
+ BNE C84AC
+ JMP C83FC
 
 .C84AC
 
- CMP #&FD                                     ; 84AC: C9 FD       ..
- BNE C84BE                                    ; 84AE: D0 0E       ..
- LDA (L00FE),Y                                ; 84B0: B1 FE       ..
- INC L00FE                                    ; 84B2: E6 FE       ..
- BNE C84B8                                    ; 84B4: D0 02       ..
- INC L00FF                                    ; 84B6: E6 FF       ..
+ CMP #&FD
+ BNE C84BE
+ LDA (L00FE),Y
+ INC L00FE
+ BNE C84B8
+ INC L00FF
 
 .C84B8
 
- STA L032B                                    ; 84B8: 8D 2B 03    .+.
- JMP C83AA                                    ; 84BB: 4C AA 83    L..
+ STA L032B
+ JMP C83AA
 
 .C84BE
 
- CMP #&FB                                     ; 84BE: C9 FB       ..
- BNE C84D0                                    ; 84C0: D0 0E       ..
- LDA (L00FE),Y                                ; 84C2: B1 FE       ..
- INC L00FE                                    ; 84C4: E6 FE       ..
- BNE C84CA                                    ; 84C6: D0 02       ..
- INC L00FF                                    ; 84C8: E6 FF       ..
+ CMP #&FB
+ BNE C84D0
+ LDA (L00FE),Y
+ INC L00FE
+ BNE C84CA
+ INC L00FF
 
 .C84CA
 
- STA L030C                                    ; 84CA: 8D 0C 03    ...
- JMP C83AA                                    ; 84CD: 4C AA 83    L..
+ STA L030C
+ JMP C83AA
 
 .C84D0
 
- CMP #&FC                                     ; 84D0: C9 FC       ..
- BNE C84E2                                    ; 84D2: D0 0E       ..
- LDA (L00FE),Y                                ; 84D4: B1 FE       ..
- INC L00FE                                    ; 84D6: E6 FE       ..
- BNE C84DC                                    ; 84D8: D0 02       ..
- INC L00FF                                    ; 84DA: E6 FF       ..
+ CMP #&FC
+ BNE C84E2
+ LDA (L00FE),Y
+ INC L00FE
+ BNE C84DC
+ INC L00FF
 
 .C84DC
 
- STA L0327                                    ; 84DC: 8D 27 03    .'.
- JMP C83AA                                    ; 84DF: 4C AA 83    L..
+ STA L0327
+ JMP C83AA
 
 .C84E2
 
- CMP #&F5                                     ; 84E2: C9 F5       ..
- BNE C850C                                    ; 84E4: D0 26       .&
- LDA (L00FE),Y                                ; 84E6: B1 FE       ..
- TAX                                          ; 84E8: AA          .
- STA L0323                                    ; 84E9: 8D 23 03    .#.
- INY                                          ; 84EC: C8          .
- LDA (L00FE),Y                                ; 84ED: B1 FE       ..
- STX L00FE                                    ; 84EF: 86 FE       ..
- STA L00FF                                    ; 84F1: 85 FF       ..
- STA L0324                                    ; 84F3: 8D 24 03    .$.
- LDA #2                                       ; 84F6: A9 02       ..
- STA L0325                                    ; 84F8: 8D 25 03    .%.
- DEY                                          ; 84FB: 88          .
- STY L0326                                    ; 84FC: 8C 26 03    .&.
- LDA (L00FE),Y                                ; 84FF: B1 FE       ..
- TAX                                          ; 8501: AA          .
- INY                                          ; 8502: C8          .
- LDA (L00FE),Y                                ; 8503: B1 FE       ..
- STA L00FF                                    ; 8505: 85 FF       ..
- STX L00FE                                    ; 8507: 86 FE       ..
- JMP C83AA                                    ; 8509: 4C AA 83    L..
+ CMP #&F5
+ BNE C850C
+ LDA (L00FE),Y
+ TAX
+ STA L0323
+ INY
+ LDA (L00FE),Y
+ STX L00FE
+ STA L00FF
+ STA L0324
+ LDA #2
+ STA L0325
+ DEY
+ STY L0326
+ LDA (L00FE),Y
+ TAX
+ INY
+ LDA (L00FE),Y
+ STA L00FF
+ STX L00FE
+ JMP C83AA
 
 .C850C
 
- CMP #&F4                                     ; 850C: C9 F4       ..
- BNE C8521                                    ; 850E: D0 11       ..
- LDA (L00FE),Y                                ; 8510: B1 FE       ..
- INC L00FE                                    ; 8512: E6 FE       ..
- BNE C8518                                    ; 8514: D0 02       ..
- INC L00FF                                    ; 8516: E6 FF       ..
+ CMP #&F4
+ BNE C8521
+ LDA (L00FE),Y
+ INC L00FE
+ BNE C8518
+ INC L00FF
 
 .C8518
 
- STA L0305                                    ; 8518: 8D 05 03    ...
- STA L0306                                    ; 851B: 8D 06 03    ...
- JMP C83AA                                    ; 851E: 4C AA 83    L..
+ STA L0305
+ STA L0306
+ JMP C83AA
 
 .C8521
 
- CMP #&FE                                     ; 8521: C9 FE       ..
- BNE C852D                                    ; 8523: D0 08       ..
- STY L030D                                    ; 8525: 8C 0D 03    ...
- PLA                                          ; 8528: 68          h
- PLA                                          ; 8529: 68          h
- JMP ResetSound                               ; 852A: 4C 12 80    L..
+ CMP #&FE
+ BNE C852D
+ STY L030D
+ PLA
+ PLA
+ JMP ResetSound
 
 .C852D
 
- BEQ C852D                                    ; 852D: F0 FE       ..
+ BEQ C852D
 
 \ ******************************************************************************
 \
@@ -1052,53 +1127,53 @@ ENDMACRO
 
 .subm_852F
 
- LDA L0333                                    ; 852F: AD 33 03    .3.
- BEQ C8565                                    ; 8532: F0 31       .1
- LDX L0332                                    ; 8534: AE 32 03    .2.
- LDA L902C,X                                  ; 8537: BD 2C 90    .,.
- STA L00FE                                    ; 853A: 85 FE       ..
- LDA L9040,X                                  ; 853C: BD 40 90    .@.
- STA L00FF                                    ; 853F: 85 FF       ..
- LDY #0                                       ; 8541: A0 00       ..
- LDA (L00FE),Y                                ; 8543: B1 FE       ..
- STA L0330                                    ; 8545: 8D 30 03    .0.
- LDY L032F                                    ; 8548: AC 2F 03    ./.
- LDA (L00FE),Y                                ; 854B: B1 FE       ..
- BMI C855D                                    ; 854D: 30 0E       0.
- DEC L0331                                    ; 854F: CE 31 03    .1.
- BPL C855D                                    ; 8552: 10 09       ..
- LDX L0330                                    ; 8554: AE 30 03    .0.
- STX L0331                                    ; 8557: 8E 31 03    .1.
- INC L032F                                    ; 855A: EE 2F 03    ./.
+ LDA L0333
+ BEQ C8565
+ LDX L0332
+ LDA L902C,X
+ STA L00FE
+ LDA L9040,X
+ STA L00FF
+ LDY #0
+ LDA (L00FE),Y
+ STA L0330
+ LDY L032F
+ LDA (L00FE),Y
+ BMI C855D
+ DEC L0331
+ BPL C855D
+ LDX L0330
+ STX L0331
+ INC L032F
 
 .C855D
 
- AND #&0F                                     ; 855D: 29 0F       ).
- ORA L032A                                    ; 855F: 0D 2A 03    .*.
- STA L035E                                    ; 8562: 8D 5E 03    .^.
+ AND #&0F
+ ORA L032A
+ STA L035E
 
 .C8565
 
- LDX L032D                                    ; 8565: AE 2D 03    .-.
- LDA L9119,X                                  ; 8568: BD 19 91    ...
- STA L00FE                                    ; 856B: 85 FE       ..
- LDA L9121,X                                  ; 856D: BD 21 91    .!.
- STA L00FF                                    ; 8570: 85 FF       ..
- LDY L032C                                    ; 8572: AC 2C 03    .,.
- LDA (L00FE),Y                                ; 8575: B1 FE       ..
- CMP #&80                                     ; 8577: C9 80       ..
- BNE C8582                                    ; 8579: D0 07       ..
- LDY #0                                       ; 857B: A0 00       ..
- STY L032C                                    ; 857D: 8C 2C 03    .,.
- LDA (L00FE),Y                                ; 8580: B1 FE       ..
+ LDX L032D
+ LDA L9119,X
+ STA L00FE
+ LDA L9121,X
+ STA L00FF
+ LDY L032C
+ LDA (L00FE),Y
+ CMP #&80
+ BNE C8582
+ LDY #0
+ STY L032C
+ LDA (L00FE),Y
 
 .C8582
 
- INC L032C                                    ; 8582: EE 2C 03    .,.
- CLC                                          ; 8585: 18          .
- ADC L032E                                    ; 8586: 6D 2E 03    m..
- STA L0360                                    ; 8589: 8D 60 03    .`.
- RTS                                          ; 858C: 60          `
+ INC L032C
+ CLC
+ ADC L032E
+ STA L0360
+ RTS
 
 \ ******************************************************************************
 \
@@ -1111,230 +1186,230 @@ ENDMACRO
 
 .subm_858D
 
- DEC L033C                                    ; 858D: CE 3C 03    .<.
- BEQ C8593                                    ; 8590: F0 01       ..
- RTS                                          ; 8592: 60          `
+ DEC L033C
+ BEQ C8593
+ RTS
 
 .C8593
 
- LDA L0334                                    ; 8593: AD 34 03    .4.
- STA L00FE                                    ; 8596: 85 FE       ..
- LDA L0335                                    ; 8598: AD 35 03    .5.
- STA L00FF                                    ; 859B: 85 FF       ..
+ LDA L0334
+ STA L00FE
+ LDA L0335
+ STA L00FF
 
 .C859D
 
- LDY #0                                       ; 859D: A0 00       ..
- LDA (L00FE),Y                                ; 859F: B1 FE       ..
- TAY                                          ; 85A1: A8          .
- INC L00FE                                    ; 85A2: E6 FE       ..
- BNE C85A8                                    ; 85A4: D0 02       ..
- INC L00FF                                    ; 85A6: E6 FF       ..
+ LDY #0
+ LDA (L00FE),Y
+ TAY
+ INC L00FE
+ BNE C85A8
+ INC L00FF
 
 .C85A8
 
- TYA                                          ; 85A8: 98          .
- BMI C85F5                                    ; 85A9: 30 4A       0J
- CMP #&60 ; '`'                               ; 85AB: C9 60       .`
- BCC C85B7                                    ; 85AD: 90 08       ..
- ADC #&A0                                     ; 85AF: 69 A0       i.
- STA L033B                                    ; 85B1: 8D 3B 03    .;.
- JMP C859D                                    ; 85B4: 4C 9D 85    L..
+ TYA
+ BMI C85F5
+ CMP #&60
+ BCC C85B7
+ ADC #&A0
+ STA L033B
+ JMP C859D
 
 .C85B7
 
- CLC                                          ; 85B7: 18          .
- ADC L030C                                    ; 85B8: 6D 0C 03    m..
- CLC                                          ; 85BB: 18          .
- ADC L033A                                    ; 85BC: 6D 3A 03    m:.
- ASL A                                        ; 85BF: 0A          .
- TAY                                          ; 85C0: A8          .
- LDA L88BC,Y                                  ; 85C1: B9 BC 88    ...
- STA L0341                                    ; 85C4: 8D 41 03    .A.
- STA L0364                                    ; 85C7: 8D 64 03    .d.
- LDA L88BC+1,Y                                  ; 85CA: B9 BD 88    ...
- LDX L0364                                    ; 85CD: AE 64 03    .d.
- STX TRI_LO                                   ; 85D0: 8E 0A 40    ..@
- STA TRI_HI                                   ; 85D3: 8D 0B 40    ..@
- STA L0365                                    ; 85D6: 8D 65 03    .e.
- LDA L0345                                    ; 85D9: AD 45 03    .E.
- STA L0342                                    ; 85DC: 8D 42 03    .B.
- LDA #&81                                     ; 85DF: A9 81       ..
- STA TRI_LINEAR                               ; 85E1: 8D 08 40    ..@
+ CLC
+ ADC L030C
+ CLC
+ ADC L033A
+ ASL A
+ TAY
+ LDA L88BC,Y
+ STA L0341
+ STA L0364
+ LDA L88BC+1,Y
+ LDX L0364
+ STX TRI_LO
+ STA TRI_HI
+ STA L0365
+ LDA L0345
+ STA L0342
+ LDA #&81
+ STA TRI_LINEAR
 
 .C85E4
 
- LDA L00FE                                    ; 85E4: A5 FE       ..
- STA L0334                                    ; 85E6: 8D 34 03    .4.
- LDA L00FF                                    ; 85E9: A5 FF       ..
- STA L0335                                    ; 85EB: 8D 35 03    .5.
- LDA L033B                                    ; 85EE: AD 3B 03    .;.
- STA L033C                                    ; 85F1: 8D 3C 03    .<.
- RTS                                          ; 85F4: 60          `
+ LDA L00FE
+ STA L0334
+ LDA L00FF
+ STA L0335
+ LDA L033B
+ STA L033C
+ RTS
 
 .C85F5
 
- LDY #0                                       ; 85F5: A0 00       ..
- CMP #&FF                                     ; 85F7: C9 FF       ..
- BNE C8643                                    ; 85F9: D0 48       .H
- LDA L0338                                    ; 85FB: AD 38 03    .8.
- CLC                                          ; 85FE: 18          .
- ADC L0336                                    ; 85FF: 6D 36 03    m6.
- STA L00FE                                    ; 8602: 85 FE       ..
- LDA L0339                                    ; 8604: AD 39 03    .9.
- ADC L0337                                    ; 8607: 6D 37 03    m7.
- STA L00FF                                    ; 860A: 85 FF       ..
- LDA L0338                                    ; 860C: AD 38 03    .8.
- ADC #2                                       ; 860F: 69 02       i.
- STA L0338                                    ; 8611: 8D 38 03    .8.
- TYA                                          ; 8614: 98          .
- ADC L0339                                    ; 8615: 6D 39 03    m9.
- STA L0339                                    ; 8618: 8D 39 03    .9.
- LDA (L00FE),Y                                ; 861B: B1 FE       ..
- INY                                          ; 861D: C8          .
- ORA (L00FE),Y                                ; 861E: 11 FE       ..
- BNE C8636                                    ; 8620: D0 14       ..
- LDA L0336                                    ; 8622: AD 36 03    .6.
- STA L00FE                                    ; 8625: 85 FE       ..
- LDA L0337                                    ; 8627: AD 37 03    .7.
- STA L00FF                                    ; 862A: 85 FF       ..
- LDA #2                                       ; 862C: A9 02       ..
- STA L0338                                    ; 862E: 8D 38 03    .8.
- LDA #0                                       ; 8631: A9 00       ..
- STA L0339                                    ; 8633: 8D 39 03    .9.
+ LDY #0
+ CMP #&FF
+ BNE C8643
+ LDA L0338
+ CLC
+ ADC L0336
+ STA L00FE
+ LDA L0339
+ ADC L0337
+ STA L00FF
+ LDA L0338
+ ADC #2
+ STA L0338
+ TYA
+ ADC L0339
+ STA L0339
+ LDA (L00FE),Y
+ INY
+ ORA (L00FE),Y
+ BNE C8636
+ LDA L0336
+ STA L00FE
+ LDA L0337
+ STA L00FF
+ LDA #2
+ STA L0338
+ LDA #0
+ STA L0339
 
 .C8636
 
- LDA (L00FE),Y                                ; 8636: B1 FE       ..
- TAX                                          ; 8638: AA          .
- DEY                                          ; 8639: 88          .
- LDA (L00FE),Y                                ; 863A: B1 FE       ..
- STA L00FE                                    ; 863C: 85 FE       ..
- STX L00FF                                    ; 863E: 86 FF       ..
- JMP C859D                                    ; 8640: 4C 9D 85    L..
+ LDA (L00FE),Y
+ TAX
+ DEY
+ LDA (L00FE),Y
+ STA L00FE
+ STX L00FF
+ JMP C859D
 
 .C8643
 
- CMP #&F6                                     ; 8643: C9 F6       ..
- BNE C8655                                    ; 8645: D0 0E       ..
- LDA (L00FE),Y                                ; 8647: B1 FE       ..
- INC L00FE                                    ; 8649: E6 FE       ..
- BNE C864F                                    ; 864B: D0 02       ..
- INC L00FF                                    ; 864D: E6 FF       ..
+ CMP #&F6
+ BNE C8655
+ LDA (L00FE),Y
+ INC L00FE
+ BNE C864F
+ INC L00FF
 
 .C864F
 
- STA L0345                                    ; 864F: 8D 45 03    .E.
- JMP C859D                                    ; 8652: 4C 9D 85    L..
+ STA L0345
+ JMP C859D
 
 .C8655
 
- CMP #&F7                                     ; 8655: C9 F7       ..
- BNE C866A                                    ; 8657: D0 11       ..
- LDA (L00FE),Y                                ; 8659: B1 FE       ..
- INC L00FE                                    ; 865B: E6 FE       ..
- BNE C8661                                    ; 865D: D0 02       ..
- INC L00FF                                    ; 865F: E6 FF       ..
+ CMP #&F7
+ BNE C866A
+ LDA (L00FE),Y
+ INC L00FE
+ BNE C8661
+ INC L00FF
 
 .C8661
 
- STA L0340                                    ; 8661: 8D 40 03    .@.
- STY L033F                                    ; 8664: 8C 3F 03    .?.
- JMP C859D                                    ; 8667: 4C 9D 85    L..
+ STA L0340
+ STY L033F
+ JMP C859D
 
 .C866A
 
- CMP #&F8                                     ; 866A: C9 F8       ..
- BNE C8676                                    ; 866C: D0 08       ..
- LDA #1                                       ; 866E: A9 01       ..
- STA L0342                                    ; 8670: 8D 42 03    .B.
- JMP C85E4                                    ; 8673: 4C E4 85    L..
+ CMP #&F8
+ BNE C8676
+ LDA #1
+ STA L0342
+ JMP C85E4
 
 .C8676
 
- CMP #&F9                                     ; 8676: C9 F9       ..
- BNE C867D                                    ; 8678: D0 03       ..
- JMP C85E4                                    ; 867A: 4C E4 85    L..
+ CMP #&F9
+ BNE C867D
+ JMP C85E4
 
 .C867D
 
- CMP #&FB                                     ; 867D: C9 FB       ..
- BNE C868F                                    ; 867F: D0 0E       ..
- LDA (L00FE),Y                                ; 8681: B1 FE       ..
- INC L00FE                                    ; 8683: E6 FE       ..
- BNE C8689                                    ; 8685: D0 02       ..
- INC L00FF                                    ; 8687: E6 FF       ..
+ CMP #&FB
+ BNE C868F
+ LDA (L00FE),Y
+ INC L00FE
+ BNE C8689
+ INC L00FF
 
 .C8689
 
- STA L030C                                    ; 8689: 8D 0C 03    ...
- JMP C859D                                    ; 868C: 4C 9D 85    L..
+ STA L030C
+ JMP C859D
 
 .C868F
 
- CMP #&FC                                     ; 868F: C9 FC       ..
- BNE C86A1                                    ; 8691: D0 0E       ..
- LDA (L00FE),Y                                ; 8693: B1 FE       ..
- INC L00FE                                    ; 8695: E6 FE       ..
- BNE C869B                                    ; 8697: D0 02       ..
- INC L00FF                                    ; 8699: E6 FF       ..
+ CMP #&FC
+ BNE C86A1
+ LDA (L00FE),Y
+ INC L00FE
+ BNE C869B
+ INC L00FF
 
 .C869B
 
- STA L033A                                    ; 869B: 8D 3A 03    .:.
- JMP C859D                                    ; 869E: 4C 9D 85    L..
+ STA L033A
+ JMP C859D
 
 .C86A1
 
- CMP #&F5                                     ; 86A1: C9 F5       ..
- BNE C86CB                                    ; 86A3: D0 26       .&
- LDA (L00FE),Y                                ; 86A5: B1 FE       ..
- TAX                                          ; 86A7: AA          .
- STA L0336                                    ; 86A8: 8D 36 03    .6.
- INY                                          ; 86AB: C8          .
- LDA (L00FE),Y                                ; 86AC: B1 FE       ..
- STX L00FE                                    ; 86AE: 86 FE       ..
- STA L00FF                                    ; 86B0: 85 FF       ..
- STA L0337                                    ; 86B2: 8D 37 03    .7.
- LDA #2                                       ; 86B5: A9 02       ..
- STA L0338                                    ; 86B7: 8D 38 03    .8.
- DEY                                          ; 86BA: 88          .
- STY L0339                                    ; 86BB: 8C 39 03    .9.
- LDA (L00FE),Y                                ; 86BE: B1 FE       ..
- TAX                                          ; 86C0: AA          .
- INY                                          ; 86C1: C8          .
- LDA (L00FE),Y                                ; 86C2: B1 FE       ..
- STA L00FF                                    ; 86C4: 85 FF       ..
- STX L00FE                                    ; 86C6: 86 FE       ..
- JMP C859D                                    ; 86C8: 4C 9D 85    L..
+ CMP #&F5
+ BNE C86CB
+ LDA (L00FE),Y
+ TAX
+ STA L0336
+ INY
+ LDA (L00FE),Y
+ STX L00FE
+ STA L00FF
+ STA L0337
+ LDA #2
+ STA L0338
+ DEY
+ STY L0339
+ LDA (L00FE),Y
+ TAX
+ INY
+ LDA (L00FE),Y
+ STA L00FF
+ STX L00FE
+ JMP C859D
 
 .C86CB
 
- CMP #&F4                                     ; 86CB: C9 F4       ..
- BNE C86E0                                    ; 86CD: D0 11       ..
- LDA (L00FE),Y                                ; 86CF: B1 FE       ..
- INC L00FE                                    ; 86D1: E6 FE       ..
- BNE C86D7                                    ; 86D3: D0 02       ..
- INC L00FF                                    ; 86D5: E6 FF       ..
+ CMP #&F4
+ BNE C86E0
+ LDA (L00FE),Y
+ INC L00FE
+ BNE C86D7
+ INC L00FF
 
 .C86D7
 
- STA L0305                                    ; 86D7: 8D 05 03    ...
- STA L0306                                    ; 86DA: 8D 06 03    ...
- JMP C859D                                    ; 86DD: 4C 9D 85    L..
+ STA L0305
+ STA L0306
+ JMP C859D
 
 .C86E0
 
- CMP #&FE                                     ; 86E0: C9 FE       ..
- BNE C86EC                                    ; 86E2: D0 08       ..
- STY L030D                                    ; 86E4: 8C 0D 03    ...
- PLA                                          ; 86E7: 68          h
- PLA                                          ; 86E8: 68          h
- JMP ResetSound                               ; 86E9: 4C 12 80    L..
+ CMP #&FE
+ BNE C86EC
+ STY L030D
+ PLA
+ PLA
+ JMP ResetSound
 
 .C86EC
 
- BEQ C86EC                                    ; 86EC: F0 FE       ..
+ BEQ C86EC
 
 \ ******************************************************************************
 \
@@ -1347,35 +1422,35 @@ ENDMACRO
 
 .subm_86EE
 
- LDA L0342                                    ; 86EE: AD 42 03    .B.
- BEQ C86FD                                    ; 86F1: F0 0A       ..
- DEC L0342                                    ; 86F3: CE 42 03    .B.
- BNE C86FD                                    ; 86F6: D0 05       ..
- LDA #0                                       ; 86F8: A9 00       ..
- STA TRI_LINEAR                               ; 86FA: 8D 08 40    ..@
+ LDA L0342
+ BEQ C86FD
+ DEC L0342
+ BNE C86FD
+ LDA #0
+ STA TRI_LINEAR
 
 .C86FD
 
- LDX L0340                                    ; 86FD: AE 40 03    .@.
- LDA L9119,X                                  ; 8700: BD 19 91    ...
- STA L00FE                                    ; 8703: 85 FE       ..
- LDA L9121,X                                  ; 8705: BD 21 91    .!.
- STA L00FF                                    ; 8708: 85 FF       ..
- LDY L033F                                    ; 870A: AC 3F 03    .?.
- LDA (L00FE),Y                                ; 870D: B1 FE       ..
- CMP #&80                                     ; 870F: C9 80       ..
- BNE C871A                                    ; 8711: D0 07       ..
- LDY #0                                       ; 8713: A0 00       ..
- STY L033F                                    ; 8715: 8C 3F 03    .?.
- LDA (L00FE),Y                                ; 8718: B1 FE       ..
+ LDX L0340
+ LDA L9119,X
+ STA L00FE
+ LDA L9121,X
+ STA L00FF
+ LDY L033F
+ LDA (L00FE),Y
+ CMP #&80
+ BNE C871A
+ LDY #0
+ STY L033F
+ LDA (L00FE),Y
 
 .C871A
 
- INC L033F                                    ; 871A: EE 3F 03    .?.
- CLC                                          ; 871D: 18          .
- ADC L0341                                    ; 871E: 6D 41 03    mA.
- STA L0364                                    ; 8721: 8D 64 03    .d.
- RTS                                          ; 8724: 60          `
+ INC L033F
+ CLC
+ ADC L0341
+ STA L0364
+ RTS
 
 \ ******************************************************************************
 \
@@ -1388,253 +1463,253 @@ ENDMACRO
 
 .subm_8725
 
- DEC L034F                                    ; 8725: CE 4F 03    .O.
- BEQ C872B                                    ; 8728: F0 01       ..
- RTS                                          ; 872A: 60          `
+ DEC L034F
+ BEQ C872B
+ RTS
 
 .C872B
 
- LDA L0347                                    ; 872B: AD 47 03    .G.
- STA L00FE                                    ; 872E: 85 FE       ..
- LDA L0348                                    ; 8730: AD 48 03    .H.
- STA L00FF                                    ; 8733: 85 FF       ..
- STA L0359                                    ; 8735: 8D 59 03    .Y.
+ LDA L0347
+ STA L00FE
+ LDA L0348
+ STA L00FF
+ STA L0359
 
 .C8738
 
- LDY #0                                       ; 8738: A0 00       ..
- LDA (L00FE),Y                                ; 873A: B1 FE       ..
- TAY                                          ; 873C: A8          .
- INC L00FE                                    ; 873D: E6 FE       ..
- BNE C8743                                    ; 873F: D0 02       ..
- INC L00FF                                    ; 8741: E6 FF       ..
+ LDY #0
+ LDA (L00FE),Y
+ TAY
+ INC L00FE
+ BNE C8743
+ INC L00FF
 
 .C8743
 
- TYA                                          ; 8743: 98          .
- BMI C8788                                    ; 8744: 30 42       0B
- CMP #&60 ; '`'                               ; 8746: C9 60       .`
- BCC C8752                                    ; 8748: 90 08       ..
- ADC #&A0                                     ; 874A: 69 A0       i.
- STA L034E                                    ; 874C: 8D 4E 03    .N.
- JMP C8738                                    ; 874F: 4C 38 87    L8.
+ TYA
+ BMI C8788
+ CMP #&60
+ BCC C8752
+ ADC #&A0
+ STA L034E
+ JMP C8738
 
 .C8752
 
- AND #&0F                                     ; 8752: 29 0F       ).
- STA L0354                                    ; 8754: 8D 54 03    .T.
- STA L0368                                    ; 8757: 8D 68 03    .h.
- LDY #0                                       ; 875A: A0 00       ..
- LDX L0304                                    ; 875C: AE 04 03    ...
- BNE C8767                                    ; 875F: D0 06       ..
- STA NOISE_LO                                 ; 8761: 8D 0E 40    ..@
- STY NOISE_HI                                 ; 8764: 8C 0F 40    ..@
+ AND #&0F
+ STA L0354
+ STA L0368
+ LDY #0
+ LDX L0304
+ BNE C8767
+ STA NOISE_LO
+ STY NOISE_HI
 
 .C8767
 
- LDA #1                                       ; 8767: A9 01       ..
- STA L0355                                    ; 8769: 8D 55 03    .U.
- LDA L0356                                    ; 876C: AD 56 03    .V.
- STA L0357                                    ; 876F: 8D 57 03    .W.
+ LDA #1
+ STA L0355
+ LDA L0356
+ STA L0357
 
 .C8772
 
- LDA #&FF                                     ; 8772: A9 FF       ..
- STA L0359                                    ; 8774: 8D 59 03    .Y.
- LDA L00FE                                    ; 8777: A5 FE       ..
- STA L0347                                    ; 8779: 8D 47 03    .G.
- LDA L00FF                                    ; 877C: A5 FF       ..
- STA L0348                                    ; 877E: 8D 48 03    .H.
- LDA L034E                                    ; 8781: AD 4E 03    .N.
- STA L034F                                    ; 8784: 8D 4F 03    .O.
- RTS                                          ; 8787: 60          `
+ LDA #&FF
+ STA L0359
+ LDA L00FE
+ STA L0347
+ LDA L00FF
+ STA L0348
+ LDA L034E
+ STA L034F
+ RTS
 
 .C8788
 
- LDY #0                                       ; 8788: A0 00       ..
- CMP #&FF                                     ; 878A: C9 FF       ..
- BNE C87D6                                    ; 878C: D0 48       .H
- LDA L034B                                    ; 878E: AD 4B 03    .K.
- CLC                                          ; 8791: 18          .
- ADC L0349                                    ; 8792: 6D 49 03    mI.
- STA L00FE                                    ; 8795: 85 FE       ..
- LDA L034C                                    ; 8797: AD 4C 03    .L.
- ADC L034A                                    ; 879A: 6D 4A 03    mJ.
- STA L00FF                                    ; 879D: 85 FF       ..
- LDA L034B                                    ; 879F: AD 4B 03    .K.
- ADC #2                                       ; 87A2: 69 02       i.
- STA L034B                                    ; 87A4: 8D 4B 03    .K.
- TYA                                          ; 87A7: 98          .
- ADC L034C                                    ; 87A8: 6D 4C 03    mL.
- STA L034C                                    ; 87AB: 8D 4C 03    .L.
- LDA (L00FE),Y                                ; 87AE: B1 FE       ..
- INY                                          ; 87B0: C8          .
- ORA (L00FE),Y                                ; 87B1: 11 FE       ..
- BNE C87C9                                    ; 87B3: D0 14       ..
- LDA L0349                                    ; 87B5: AD 49 03    .I.
- STA L00FE                                    ; 87B8: 85 FE       ..
- LDA L034A                                    ; 87BA: AD 4A 03    .J.
- STA L00FF                                    ; 87BD: 85 FF       ..
- LDA #2                                       ; 87BF: A9 02       ..
- STA L034B                                    ; 87C1: 8D 4B 03    .K.
- LDA #0                                       ; 87C4: A9 00       ..
- STA L034C                                    ; 87C6: 8D 4C 03    .L.
+ LDY #0
+ CMP #&FF
+ BNE C87D6
+ LDA L034B
+ CLC
+ ADC L0349
+ STA L00FE
+ LDA L034C
+ ADC L034A
+ STA L00FF
+ LDA L034B
+ ADC #2
+ STA L034B
+ TYA
+ ADC L034C
+ STA L034C
+ LDA (L00FE),Y
+ INY
+ ORA (L00FE),Y
+ BNE C87C9
+ LDA L0349
+ STA L00FE
+ LDA L034A
+ STA L00FF
+ LDA #2
+ STA L034B
+ LDA #0
+ STA L034C
 
 .C87C9
 
- LDA (L00FE),Y                                ; 87C9: B1 FE       ..
- TAX                                          ; 87CB: AA          .
- DEY                                          ; 87CC: 88          .
- LDA (L00FE),Y                                ; 87CD: B1 FE       ..
- STA L00FE                                    ; 87CF: 85 FE       ..
- STX L00FF                                    ; 87D1: 86 FF       ..
- JMP C8738                                    ; 87D3: 4C 38 87    L8.
+ LDA (L00FE),Y
+ TAX
+ DEY
+ LDA (L00FE),Y
+ STA L00FE
+ STX L00FF
+ JMP C8738
 
 .C87D6
 
- CMP #&F6                                     ; 87D6: C9 F6       ..
- BNE C87E8                                    ; 87D8: D0 0E       ..
- LDA (L00FE),Y                                ; 87DA: B1 FE       ..
- INC L00FE                                    ; 87DC: E6 FE       ..
- BNE C87E2                                    ; 87DE: D0 02       ..
- INC L00FF                                    ; 87E0: E6 FF       ..
+ CMP #&F6
+ BNE C87E8
+ LDA (L00FE),Y
+ INC L00FE
+ BNE C87E2
+ INC L00FF
 
 .C87E2
 
- STA L0358                                    ; 87E2: 8D 58 03    .X.
- JMP C8738                                    ; 87E5: 4C 38 87    L8.
+ STA L0358
+ JMP C8738
 
 .C87E8
 
- CMP #&F7                                     ; 87E8: C9 F7       ..
- BNE C87FD                                    ; 87EA: D0 11       ..
- LDA (L00FE),Y                                ; 87EC: B1 FE       ..
- INC L00FE                                    ; 87EE: E6 FE       ..
- BNE C87F4                                    ; 87F0: D0 02       ..
- INC L00FF                                    ; 87F2: E6 FF       ..
+ CMP #&F7
+ BNE C87FD
+ LDA (L00FE),Y
+ INC L00FE
+ BNE C87F4
+ INC L00FF
 
 .C87F4
 
- STA L0353                                    ; 87F4: 8D 53 03    .S.
- STY L0352                                    ; 87F7: 8C 52 03    .R.
- JMP C8738                                    ; 87FA: 4C 38 87    L8.
+ STA L0353
+ STY L0352
+ JMP C8738
 
 .C87FD
 
- CMP #&F8                                     ; 87FD: C9 F8       ..
- BNE C8809                                    ; 87FF: D0 08       ..
- LDA #&30 ; '0'                               ; 8801: A9 30       .0
- STA L0366                                    ; 8803: 8D 66 03    .f.
- JMP C8772                                    ; 8806: 4C 72 87    Lr.
+ CMP #&F8
+ BNE C8809
+ LDA #&30
+ STA L0366
+ JMP C8772
 
 .C8809
 
- CMP #&F9                                     ; 8809: C9 F9       ..
- BNE C8810                                    ; 880B: D0 03       ..
- JMP C8772                                    ; 880D: 4C 72 87    Lr.
+ CMP #&F9
+ BNE C8810
+ JMP C8772
 
 .C8810
 
- CMP #&F5                                     ; 8810: C9 F5       ..
- BNE C883A                                    ; 8812: D0 26       .&
- LDA (L00FE),Y                                ; 8814: B1 FE       ..
- TAX                                          ; 8816: AA          .
- STA L0349                                    ; 8817: 8D 49 03    .I.
- INY                                          ; 881A: C8          .
- LDA (L00FE),Y                                ; 881B: B1 FE       ..
- STX L00FE                                    ; 881D: 86 FE       ..
- STA L00FF                                    ; 881F: 85 FF       ..
- STA L034A                                    ; 8821: 8D 4A 03    .J.
- LDA #2                                       ; 8824: A9 02       ..
- STA L034B                                    ; 8826: 8D 4B 03    .K.
- DEY                                          ; 8829: 88          .
- STY L034C                                    ; 882A: 8C 4C 03    .L.
- LDA (L00FE),Y                                ; 882D: B1 FE       ..
- TAX                                          ; 882F: AA          .
- INY                                          ; 8830: C8          .
- LDA (L00FE),Y                                ; 8831: B1 FE       ..
- STA L00FF                                    ; 8833: 85 FF       ..
- STX L00FE                                    ; 8835: 86 FE       ..
- JMP C8738                                    ; 8837: 4C 38 87    L8.
+ CMP #&F5
+ BNE C883A
+ LDA (L00FE),Y
+ TAX
+ STA L0349
+ INY
+ LDA (L00FE),Y
+ STX L00FE
+ STA L00FF
+ STA L034A
+ LDA #2
+ STA L034B
+ DEY
+ STY L034C
+ LDA (L00FE),Y
+ TAX
+ INY
+ LDA (L00FE),Y
+ STA L00FF
+ STX L00FE
+ JMP C8738
 
 .C883A
 
- CMP #&F4                                     ; 883A: C9 F4       ..
- BNE C884F                                    ; 883C: D0 11       ..
- LDA (L00FE),Y                                ; 883E: B1 FE       ..
- INC L00FE                                    ; 8840: E6 FE       ..
- BNE C8846                                    ; 8842: D0 02       ..
- INC L00FF                                    ; 8844: E6 FF       ..
+ CMP #&F4
+ BNE C884F
+ LDA (L00FE),Y
+ INC L00FE
+ BNE C8846
+ INC L00FF
 
 .C8846
 
- STA L0305                                    ; 8846: 8D 05 03    ...
- STA L0306                                    ; 8849: 8D 06 03    ...
- JMP C8738                                    ; 884C: 4C 38 87    L8.
+ STA L0305
+ STA L0306
+ JMP C8738
 
 .C884F
 
- CMP #&FE                                     ; 884F: C9 FE       ..
- BNE C885B                                    ; 8851: D0 08       ..
- STY L030D                                    ; 8853: 8C 0D 03    ...
- PLA                                          ; 8856: 68          h
- PLA                                          ; 8857: 68          h
- JMP ResetSound                               ; 8858: 4C 12 80    L..
+ CMP #&FE
+ BNE C885B
+ STY L030D
+ PLA
+ PLA
+ JMP ResetSound
 
 .C885B
 
- BEQ C885B                                    ; 885B: F0 FE       ..
+ BEQ C885B
 
 .C885D
 
- LDA L0359                                    ; 885D: AD 59 03    .Y.
- BEQ C8892                                    ; 8860: F0 30       .0
- LDX L0358                                    ; 8862: AE 58 03    .X.
- LDA L902C,X                                  ; 8865: BD 2C 90    .,.
- STA L00FE                                    ; 8868: 85 FE       ..
- LDA L9040,X                                  ; 886A: BD 40 90    .@.
- STA L00FF                                    ; 886D: 85 FF       ..
- LDY #0                                       ; 886F: A0 00       ..
- LDA (L00FE),Y                                ; 8871: B1 FE       ..
- STA L0356                                    ; 8873: 8D 56 03    .V.
- LDY L0355                                    ; 8876: AC 55 03    .U.
- LDA (L00FE),Y                                ; 8879: B1 FE       ..
- BMI C888B                                    ; 887B: 30 0E       0.
- DEC L0357                                    ; 887D: CE 57 03    .W.
- BPL C888B                                    ; 8880: 10 09       ..
- LDX L0356                                    ; 8882: AE 56 03    .V.
- STX L0357                                    ; 8885: 8E 57 03    .W.
- INC L0355                                    ; 8888: EE 55 03    .U.
+ LDA L0359
+ BEQ C8892
+ LDX L0358
+ LDA L902C,X
+ STA L00FE
+ LDA L9040,X
+ STA L00FF
+ LDY #0
+ LDA (L00FE),Y
+ STA L0356
+ LDY L0355
+ LDA (L00FE),Y
+ BMI C888B
+ DEC L0357
+ BPL C888B
+ LDX L0356
+ STX L0357
+ INC L0355
 
 .C888B
 
- AND #&0F                                     ; 888B: 29 0F       ).
- ORA #&30 ; '0'                               ; 888D: 09 30       .0
- STA L0366                                    ; 888F: 8D 66 03    .f.
+ AND #&0F
+ ORA #&30
+ STA L0366
 
 .C8892
 
- LDX L0353                                    ; 8892: AE 53 03    .S.
- LDA L9119,X                                  ; 8895: BD 19 91    ...
- STA L00FE                                    ; 8898: 85 FE       ..
- LDA L9121,X                                  ; 889A: BD 21 91    .!.
- STA L00FF                                    ; 889D: 85 FF       ..
- LDY L0352                                    ; 889F: AC 52 03    .R.
- LDA (L00FE),Y                                ; 88A2: B1 FE       ..
- CMP #&80                                     ; 88A4: C9 80       ..
- BNE C88AF                                    ; 88A6: D0 07       ..
- LDY #0                                       ; 88A8: A0 00       ..
- STY L0352                                    ; 88AA: 8C 52 03    .R.
- LDA (L00FE),Y                                ; 88AD: B1 FE       ..
+ LDX L0353
+ LDA L9119,X
+ STA L00FE
+ LDA L9121,X
+ STA L00FF
+ LDY L0352
+ LDA (L00FE),Y
+ CMP #&80
+ BNE C88AF
+ LDY #0
+ STY L0352
+ LDA (L00FE),Y
 
 .C88AF
 
- INC L0352                                    ; 88AF: EE 52 03    .R.
- CLC                                          ; 88B2: 18          .
- ADC L0354                                    ; 88B3: 6D 54 03    mT.
- AND #&0F                                     ; 88B6: 29 0F       ).
- STA L0368                                    ; 88B8: 8D 68 03    .h.
- RTS                                          ; 88BB: 60          `
+ INC L0352
+ CLC
+ ADC L0354
+ AND #&0F
+ STA L0368
+ RTS
 
 \ ******************************************************************************
 \
@@ -1679,61 +1754,61 @@ ENDMACRO
 
 .subm_895A
 
- ASL A                                        ; 895A: 0A          .
- TAY                                          ; 895B: A8          .
- LDA #0                                       ; 895C: A9 00       ..
- STA L0302                                    ; 895E: 8D 02 03    ...
- LDA L8D7A,Y                                  ; 8961: B9 7A 8D    .z.
- STA L00FE                                    ; 8964: 85 FE       ..
- LDA L8D7A+1,Y                                  ; 8966: B9 7B 8D    .{.
- STA L00FF                                    ; 8969: 85 FF       ..
- LDY #&0D                                     ; 896B: A0 0D       ..
+ ASL A
+ TAY
+ LDA #0
+ STA L0302
+ LDA L8D7A,Y
+ STA L00FE
+ LDA L8D7A+1,Y
+ STA L00FF
+ LDY #&0D
 
 .loop_C896D
 
- LDA (L00FE),Y                                ; 896D: B1 FE       ..
- STA L040B,Y                                  ; 896F: 99 0B 04    ...
- DEY                                          ; 8972: 88          .
- BPL loop_C896D                               ; 8973: 10 F8       ..
- LDA setupPPUForIconBar                       ; 8975: A5 E9       ..
- BPL C8982                                    ; 8977: 10 09       ..
- LDA PPU_STATUS                               ; 8979: AD 02 20    ..
- ASL A                                        ; 897C: 0A          .
- BPL C8982                                    ; 897D: 10 03       ..
- JSR SetPPUTablesTo0                          ; 897F: 20 6D D0     m.
+ LDA (L00FE),Y
+ STA L040B,Y
+ DEY
+ BPL loop_C896D
+ LDA setupPPUForIconBar
+ BPL C8982
+ LDA PPU_STATUS
+ ASL A
+ BPL C8982
+ JSR SetPPUTablesTo0
 
 .C8982
 
- LDA L0416                                    ; 8982: AD 16 04    ...
- STA L041E                                    ; 8985: 8D 1E 04    ...
- LDA L0418                                    ; 8988: AD 18 04    ...
- STA L041C                                    ; 898B: 8D 1C 04    ...
- LDA L040C                                    ; 898E: AD 0C 04    ...
- STA L041B                                    ; 8991: 8D 1B 04    ...
- LDA L0415                                    ; 8994: AD 15 04    ...
- ASL A                                        ; 8997: 0A          .
- TAY                                          ; 8998: A8          .
- LDA L8F7A,Y                                  ; 8999: B9 7A 8F    .z.
- STA L0447                                    ; 899C: 8D 47 04    .G.
- STA L00FE                                    ; 899F: 85 FE       ..
- LDA L8F7A+1,Y                                  ; 89A1: B9 7B 8F    .{.
- STA L0448                                    ; 89A4: 8D 48 04    .H.
- STA L00FF                                    ; 89A7: 85 FF       ..
- LDY #0                                       ; 89A9: A0 00       ..
- STY L041D                                    ; 89AB: 8C 1D 04    ...
- LDA (L00FE),Y                                ; 89AE: B1 FE       ..
- ORA L0411                                    ; 89B0: 0D 11 04    ...
- STA SQ1_VOL                                  ; 89B3: 8D 00 40    ..@
- LDA #0                                       ; 89B6: A9 00       ..
- STA SQ1_SWEEP                                ; 89B8: 8D 01 40    ..@
- LDA L040D                                    ; 89BB: AD 0D 04    ...
- STA L0419                                    ; 89BE: 8D 19 04    ...
- STA SQ1_LO                                   ; 89C1: 8D 02 40    ..@
- LDA L040E                                    ; 89C4: AD 0E 04    ...
- STA L041A                                    ; 89C7: 8D 1A 04    ...
- STA SQ1_HI                                   ; 89CA: 8D 03 40    ..@
- INC L0302                                    ; 89CD: EE 02 03    ...
- RTS                                          ; 89D0: 60          `
+ LDA L0416
+ STA L041E
+ LDA L0418
+ STA L041C
+ LDA L040C
+ STA L041B
+ LDA L0415
+ ASL A
+ TAY
+ LDA L8F7A,Y
+ STA L0447
+ STA L00FE
+ LDA L8F7A+1,Y
+ STA L0448
+ STA L00FF
+ LDY #0
+ STY L041D
+ LDA (L00FE),Y
+ ORA L0411
+ STA SQ1_VOL
+ LDA #0
+ STA SQ1_SWEEP
+ LDA L040D
+ STA L0419
+ STA SQ1_LO
+ LDA L040E
+ STA L041A
+ STA SQ1_HI
+ INC L0302
+ RTS
 
 \ ******************************************************************************
 \
@@ -1746,14 +1821,14 @@ ENDMACRO
 
 .subm_89D1
 
- DEX                                          ; 89D1: CA          .
- BMI C89D9                                    ; 89D2: 30 05       0.
- BEQ subm_89DC                                ; 89D4: F0 06       ..
- JMP subm_8A53                                ; 89D6: 4C 53 8A    LS.
+ DEX
+ BMI C89D9
+ BEQ subm_89DC
+ JMP subm_8A53
 
 .C89D9
 
- JMP subm_895A                                ; 89D9: 4C 5A 89    LZ.
+ JMP subm_895A
 
 \ ******************************************************************************
 \
@@ -1766,61 +1841,61 @@ ENDMACRO
 
 .subm_89DC
 
- ASL A                                        ; 89DC: 0A          .
- TAY                                          ; 89DD: A8          .
- LDA #0                                       ; 89DE: A9 00       ..
- STA L0303                                    ; 89E0: 8D 03 03    ...
- LDA L8D7A,Y                                  ; 89E3: B9 7A 8D    .z.
- STA L00FE                                    ; 89E6: 85 FE       ..
- LDA L8D7A+1,Y                                  ; 89E8: B9 7B 8D    .{.
- STA L00FF                                    ; 89EB: 85 FF       ..
- LDY #&0D                                     ; 89ED: A0 0D       ..
+ ASL A
+ TAY
+ LDA #0
+ STA L0303
+ LDA L8D7A,Y
+ STA L00FE
+ LDA L8D7A+1,Y
+ STA L00FF
+ LDY #&0D
 
 .loop_C89EF
 
- LDA (L00FE),Y                                ; 89EF: B1 FE       ..
- STA L041F,Y                                  ; 89F1: 99 1F 04    ...
- DEY                                          ; 89F4: 88          .
- BPL loop_C89EF                               ; 89F5: 10 F8       ..
- LDA setupPPUForIconBar                       ; 89F7: A5 E9       ..
- BPL C8A04                                    ; 89F9: 10 09       ..
- LDA PPU_STATUS                               ; 89FB: AD 02 20    ..
- ASL A                                        ; 89FE: 0A          .
- BPL C8A04                                    ; 89FF: 10 03       ..
- JSR SetPPUTablesTo0                          ; 8A01: 20 6D D0     m.
+ LDA (L00FE),Y
+ STA L041F,Y
+ DEY
+ BPL loop_C89EF
+ LDA setupPPUForIconBar
+ BPL C8A04
+ LDA PPU_STATUS
+ ASL A
+ BPL C8A04
+ JSR SetPPUTablesTo0
 
 .C8A04
 
- LDA L042A                                    ; 8A04: AD 2A 04    .*.
- STA L0432                                    ; 8A07: 8D 32 04    .2.
- LDA L042C                                    ; 8A0A: AD 2C 04    .,.
- STA L0430                                    ; 8A0D: 8D 30 04    .0.
- LDA L0420                                    ; 8A10: AD 20 04    . .
- STA L042F                                    ; 8A13: 8D 2F 04    ./.
- LDA L0429                                    ; 8A16: AD 29 04    .).
- ASL A                                        ; 8A19: 0A          .
- TAY                                          ; 8A1A: A8          .
- LDA L8F7A,Y                                  ; 8A1B: B9 7A 8F    .z.
- STA L0449                                    ; 8A1E: 8D 49 04    .I.
- STA L00FE                                    ; 8A21: 85 FE       ..
- LDA L8F7A+1,Y                                  ; 8A23: B9 7B 8F    .{.
- STA L044A                                    ; 8A26: 8D 4A 04    .J.
- STA L00FF                                    ; 8A29: 85 FF       ..
- LDY #0                                       ; 8A2B: A0 00       ..
- STY L0431                                    ; 8A2D: 8C 31 04    .1.
- LDA (L00FE),Y                                ; 8A30: B1 FE       ..
- ORA L0425                                    ; 8A32: 0D 25 04    .%.
- STA SQ2_VOL                                  ; 8A35: 8D 04 40    ..@
- LDA #0                                       ; 8A38: A9 00       ..
- STA SQ2_SWEEP                                ; 8A3A: 8D 05 40    ..@
- LDA L0421                                    ; 8A3D: AD 21 04    .!.
- STA L042D                                    ; 8A40: 8D 2D 04    .-.
- STA SQ2_LO                                   ; 8A43: 8D 06 40    ..@
- LDA L0422                                    ; 8A46: AD 22 04    .".
- STA L042E                                    ; 8A49: 8D 2E 04    ...
- STA SQ2_HI                                   ; 8A4C: 8D 07 40    ..@
- INC L0303                                    ; 8A4F: EE 03 03    ...
- RTS                                          ; 8A52: 60          `
+ LDA L042A
+ STA L0432
+ LDA L042C
+ STA L0430
+ LDA L0420
+ STA L042F
+ LDA L0429
+ ASL A
+ TAY
+ LDA L8F7A,Y
+ STA L0449
+ STA L00FE
+ LDA L8F7A+1,Y
+ STA L044A
+ STA L00FF
+ LDY #0
+ STY L0431
+ LDA (L00FE),Y
+ ORA L0425
+ STA SQ2_VOL
+ LDA #0
+ STA SQ2_SWEEP
+ LDA L0421
+ STA L042D
+ STA SQ2_LO
+ LDA L0422
+ STA L042E
+ STA SQ2_HI
+ INC L0303
+ RTS
 
 \ ******************************************************************************
 \
@@ -1833,61 +1908,61 @@ ENDMACRO
 
 .subm_8A53
 
- ASL A                                        ; 8A53: 0A          .
- TAY                                          ; 8A54: A8          .
- LDA #0                                       ; 8A55: A9 00       ..
- STA L0304                                    ; 8A57: 8D 04 03    ...
- LDA L8D7A,Y                                  ; 8A5A: B9 7A 8D    .z.
- STA L00FE                                    ; 8A5D: 85 FE       ..
- LDA L8D7A+1,Y                                  ; 8A5F: B9 7B 8D    .{.
- STA L00FF                                    ; 8A62: 85 FF       ..
- LDY #&0D                                     ; 8A64: A0 0D       ..
+ ASL A
+ TAY
+ LDA #0
+ STA L0304
+ LDA L8D7A,Y
+ STA L00FE
+ LDA L8D7A+1,Y
+ STA L00FF
+ LDY #&0D
 
 .loop_C8A66
 
- LDA (L00FE),Y                                ; 8A66: B1 FE       ..
- STA L0433,Y                                  ; 8A68: 99 33 04    .3.
- DEY                                          ; 8A6B: 88          .
- BPL loop_C8A66                               ; 8A6C: 10 F8       ..
- LDA setupPPUForIconBar                       ; 8A6E: A5 E9       ..
- BPL C8A7B                                    ; 8A70: 10 09       ..
- LDA PPU_STATUS                               ; 8A72: AD 02 20    ..
- ASL A                                        ; 8A75: 0A          .
- BPL C8A7B                                    ; 8A76: 10 03       ..
- JSR SetPPUTablesTo0                          ; 8A78: 20 6D D0     m.
+ LDA (L00FE),Y
+ STA L0433,Y
+ DEY
+ BPL loop_C8A66
+ LDA setupPPUForIconBar
+ BPL C8A7B
+ LDA PPU_STATUS
+ ASL A
+ BPL C8A7B
+ JSR SetPPUTablesTo0
 
 .C8A7B
 
- LDA L043E                                    ; 8A7B: AD 3E 04    .>.
- STA L0446                                    ; 8A7E: 8D 46 04    .F.
- LDA L0440                                    ; 8A81: AD 40 04    .@.
- STA L0444                                    ; 8A84: 8D 44 04    .D.
- LDA L0434                                    ; 8A87: AD 34 04    .4.
- STA L0443                                    ; 8A8A: 8D 43 04    .C.
- LDA L043D                                    ; 8A8D: AD 3D 04    .=.
- ASL A                                        ; 8A90: 0A          .
- TAY                                          ; 8A91: A8          .
- LDA L8F7A,Y                                  ; 8A92: B9 7A 8F    .z.
- STA L044B                                    ; 8A95: 8D 4B 04    .K.
- STA L00FE                                    ; 8A98: 85 FE       ..
- LDA L8F7A+1,Y                                  ; 8A9A: B9 7B 8F    .{.
- STA L044C                                    ; 8A9D: 8D 4C 04    .L.
- STA L00FF                                    ; 8AA0: 85 FF       ..
- LDY #0                                       ; 8AA2: A0 00       ..
- STY L0445                                    ; 8AA4: 8C 45 04    .E.
- LDA (L00FE),Y                                ; 8AA7: B1 FE       ..
- ORA L0439                                    ; 8AA9: 0D 39 04    .9.
- STA NOISE_VOL                                ; 8AAC: 8D 0C 40    ..@
- LDA #0                                       ; 8AAF: A9 00       ..
- STA NOISE_VOL+1                              ; 8AB1: 8D 0D 40    ..@
- LDA L0435                                    ; 8AB4: AD 35 04    .5.
- AND #&0F                                     ; 8AB7: 29 0F       ).
- STA L0441                                    ; 8AB9: 8D 41 04    .A.
- STA NOISE_LO                                 ; 8ABC: 8D 0E 40    ..@
- LDA #0                                       ; 8ABF: A9 00       ..
- STA NOISE_HI                                 ; 8AC1: 8D 0F 40    ..@
- INC L0304                                    ; 8AC4: EE 04 03    ...
- RTS                                          ; 8AC7: 60          `
+ LDA L043E
+ STA L0446
+ LDA L0440
+ STA L0444
+ LDA L0434
+ STA L0443
+ LDA L043D
+ ASL A
+ TAY
+ LDA L8F7A,Y
+ STA L044B
+ STA L00FE
+ LDA L8F7A+1,Y
+ STA L044C
+ STA L00FF
+ LDY #0
+ STY L0445
+ LDA (L00FE),Y
+ ORA L0439
+ STA NOISE_VOL
+ LDA #0
+ STA NOISE_VOL+1
+ LDA L0435
+ AND #&0F
+ STA L0441
+ STA NOISE_LO
+ LDA #0
+ STA NOISE_HI
+ INC L0304
+ RTS
 
 \ ******************************************************************************
 \
@@ -1900,10 +1975,10 @@ ENDMACRO
 
 .subm_8AC8
 
- JSR subm_8D64                                ; 8AC8: 20 64 8D     d.
- JSR subm_8AD4                                ; 8ACB: 20 D4 8A     ..
- JSR subm_8BBB                                ; 8ACE: 20 BB 8B     ..
- JMP subm_8CA2                                ; 8AD1: 4C A2 8C    L..
+ JSR subm_8D64
+ JSR subm_8AD4
+ JSR subm_8BBB
+ JMP subm_8CA2
 
 \ ******************************************************************************
 \
@@ -1916,130 +1991,130 @@ ENDMACRO
 
 .subm_8AD4
 
- LDA L0302                                    ; 8AD4: AD 02 03    ...
- BNE C8ADA                                    ; 8AD7: D0 01       ..
- RTS                                          ; 8AD9: 60          `
+ LDA L0302
+ BNE C8ADA
+ RTS
 
 .C8ADA
 
- LDA L040B                                    ; 8ADA: AD 0B 04    ...
- BNE C8B08                                    ; 8ADD: D0 29       .)
- LDX L0417                                    ; 8ADF: AE 17 04    ...
- BNE C8B08                                    ; 8AE2: D0 24       .$
- LDA L0301                                    ; 8AE4: AD 01 03    ...
- BEQ C8AFF                                    ; 8AE7: F0 16       ..
- LDA L035A                                    ; 8AE9: AD 5A 03    .Z.
- STA SQ1_VOL                                  ; 8AEC: 8D 00 40    ..@
- LDA L035C                                    ; 8AEF: AD 5C 03    .\.
- STA SQ1_LO                                   ; 8AF2: 8D 02 40    ..@
- LDA L035D                                    ; 8AF5: AD 5D 03    .].
- STA SQ1_HI                                   ; 8AF8: 8D 03 40    ..@
- STX L0302                                    ; 8AFB: 8E 02 03    ...
- RTS                                          ; 8AFE: 60          `
+ LDA L040B
+ BNE C8B08
+ LDX L0417
+ BNE C8B08
+ LDA L0301
+ BEQ C8AFF
+ LDA L035A
+ STA SQ1_VOL
+ LDA L035C
+ STA SQ1_LO
+ LDA L035D
+ STA SQ1_HI
+ STX L0302
+ RTS
 
 .C8AFF
 
- LDA #&30 ; '0'                               ; 8AFF: A9 30       .0
- STA SQ1_VOL                                  ; 8B01: 8D 00 40    ..@
- STX L0302                                    ; 8B04: 8E 02 03    ...
- RTS                                          ; 8B07: 60          `
+ LDA #&30
+ STA SQ1_VOL
+ STX L0302
+ RTS
 
 .C8B08
 
- DEC L040B                                    ; 8B08: CE 0B 04    ...
- DEC L041E                                    ; 8B0B: CE 1E 04    ...
- BNE C8B39                                    ; 8B0E: D0 29       .)
- LDA L0416                                    ; 8B10: AD 16 04    ...
- STA L041E                                    ; 8B13: 8D 1E 04    ...
- LDY L041D                                    ; 8B16: AC 1D 04    ...
- LDA L0447                                    ; 8B19: AD 47 04    .G.
- STA L00FE                                    ; 8B1C: 85 FE       ..
- LDA L0448                                    ; 8B1E: AD 48 04    .H.
- STA L00FF                                    ; 8B21: 85 FF       ..
- LDA (L00FE),Y                                ; 8B23: B1 FE       ..
- BPL C8B2F                                    ; 8B25: 10 08       ..
- CMP #&80                                     ; 8B27: C9 80       ..
- BNE C8B39                                    ; 8B29: D0 0E       ..
- LDY #0                                       ; 8B2B: A0 00       ..
- LDA (L00FE),Y                                ; 8B2D: B1 FE       ..
+ DEC L040B
+ DEC L041E
+ BNE C8B39
+ LDA L0416
+ STA L041E
+ LDY L041D
+ LDA L0447
+ STA L00FE
+ LDA L0448
+ STA L00FF
+ LDA (L00FE),Y
+ BPL C8B2F
+ CMP #&80
+ BNE C8B39
+ LDY #0
+ LDA (L00FE),Y
 
 .C8B2F
 
- ORA L0411                                    ; 8B2F: 0D 11 04    ...
- STA SQ1_VOL                                  ; 8B32: 8D 00 40    ..@
- INY                                          ; 8B35: C8          .
- STY L041D                                    ; 8B36: 8C 1D 04    ...
+ ORA L0411
+ STA SQ1_VOL
+ INY
+ STY L041D
 
 .C8B39
 
- LDA L041B                                    ; 8B39: AD 1B 04    ...
- BNE C8B6C                                    ; 8B3C: D0 2E       ..
- LDA L0417                                    ; 8B3E: AD 17 04    ...
- BNE C8B49                                    ; 8B41: D0 06       ..
- LDA L0414                                    ; 8B43: AD 14 04    ...
- BNE C8B49                                    ; 8B46: D0 01       ..
- RTS                                          ; 8B48: 60          `
+ LDA L041B
+ BNE C8B6C
+ LDA L0417
+ BNE C8B49
+ LDA L0414
+ BNE C8B49
+ RTS
 
 .C8B49
 
- DEC L0414                                    ; 8B49: CE 14 04    ...
- LDA L040C                                    ; 8B4C: AD 0C 04    ...
- STA L041B                                    ; 8B4F: 8D 1B 04    ...
- LDA L040D                                    ; 8B52: AD 0D 04    ...
- LDX L0412                                    ; 8B55: AE 12 04    ...
- BEQ C8B5D                                    ; 8B58: F0 03       ..
- ADC L0307                                    ; 8B5A: 6D 07 03    m..
+ DEC L0414
+ LDA L040C
+ STA L041B
+ LDA L040D
+ LDX L0412
+ BEQ C8B5D
+ ADC L0307
 
 .C8B5D
 
- STA L0419                                    ; 8B5D: 8D 19 04    ...
- STA SQ1_LO                                   ; 8B60: 8D 02 40    ..@
- LDA L040E                                    ; 8B63: AD 0E 04    ...
- STA L041A                                    ; 8B66: 8D 1A 04    ...
- STA SQ1_HI                                   ; 8B69: 8D 03 40    ..@
+ STA L0419
+ STA SQ1_LO
+ LDA L040E
+ STA L041A
+ STA SQ1_HI
 
 .C8B6C
 
- DEC L041B                                    ; 8B6C: CE 1B 04    ...
- LDA L0418                                    ; 8B6F: AD 18 04    ...
- BEQ C8B7C                                    ; 8B72: F0 08       ..
- DEC L041C                                    ; 8B74: CE 1C 04    ...
- BNE C8BBA                                    ; 8B77: D0 41       .A
- STA L041C                                    ; 8B79: 8D 1C 04    ...
+ DEC L041B
+ LDA L0418
+ BEQ C8B7C
+ DEC L041C
+ BNE C8BBA
+ STA L041C
 
 .C8B7C
 
- LDA L0413                                    ; 8B7C: AD 13 04    ...
- BEQ C8BBA                                    ; 8B7F: F0 39       .9
- BMI C8B9F                                    ; 8B81: 30 1C       0.
- LDA L0419                                    ; 8B83: AD 19 04    ...
- SEC                                          ; 8B86: 38          8
- SBC L040F                                    ; 8B87: ED 0F 04    ...
- STA L0419                                    ; 8B8A: 8D 19 04    ...
- STA SQ1_LO                                   ; 8B8D: 8D 02 40    ..@
- LDA L041A                                    ; 8B90: AD 1A 04    ...
- SBC L0410                                    ; 8B93: ED 10 04    ...
- AND #3                                       ; 8B96: 29 03       ).
- STA L041A                                    ; 8B98: 8D 1A 04    ...
- STA SQ1_HI                                   ; 8B9B: 8D 03 40    ..@
- RTS                                          ; 8B9E: 60          `
+ LDA L0413
+ BEQ C8BBA
+ BMI C8B9F
+ LDA L0419
+ SEC
+ SBC L040F
+ STA L0419
+ STA SQ1_LO
+ LDA L041A
+ SBC L0410
+ AND #3
+ STA L041A
+ STA SQ1_HI
+ RTS
 
 .C8B9F
 
- LDA L0419                                    ; 8B9F: AD 19 04    ...
- CLC                                          ; 8BA2: 18          .
- ADC L040F                                    ; 8BA3: 6D 0F 04    m..
- STA L0419                                    ; 8BA6: 8D 19 04    ...
- STA SQ1_LO                                   ; 8BA9: 8D 02 40    ..@
- LDA L041A                                    ; 8BAC: AD 1A 04    ...
- ADC L0410                                    ; 8BAF: 6D 10 04    m..
- AND #3                                       ; 8BB2: 29 03       ).
- STA L041A                                    ; 8BB4: 8D 1A 04    ...
- STA SQ1_HI                                   ; 8BB7: 8D 03 40    ..@
+ LDA L0419
+ CLC
+ ADC L040F
+ STA L0419
+ STA SQ1_LO
+ LDA L041A
+ ADC L0410
+ AND #3
+ STA L041A
+ STA SQ1_HI
 
 .C8BBA
 
- RTS                                          ; 8BBA: 60          `
+ RTS
 
 \ ******************************************************************************
 \
@@ -2052,130 +2127,130 @@ ENDMACRO
 
 .subm_8BBB
 
- LDA L0303                                    ; 8BBB: AD 03 03    ...
- BNE C8BC1                                    ; 8BBE: D0 01       ..
- RTS                                          ; 8BC0: 60          `
+ LDA L0303
+ BNE C8BC1
+ RTS
 
 .C8BC1
 
- LDA L041F                                    ; 8BC1: AD 1F 04    ...
- BNE C8BEF                                    ; 8BC4: D0 29       .)
- LDX L042B                                    ; 8BC6: AE 2B 04    .+.
- BNE C8BEF                                    ; 8BC9: D0 24       .$
- LDA L0301                                    ; 8BCB: AD 01 03    ...
- BEQ C8BE6                                    ; 8BCE: F0 16       ..
- LDA L035E                                    ; 8BD0: AD 5E 03    .^.
- STA SQ2_VOL                                  ; 8BD3: 8D 04 40    ..@
- LDA L0360                                    ; 8BD6: AD 60 03    .`.
- STA SQ2_LO                                   ; 8BD9: 8D 06 40    ..@
- LDA L0361                                    ; 8BDC: AD 61 03    .a.
- STA SQ2_HI                                   ; 8BDF: 8D 07 40    ..@
- STX L0303                                    ; 8BE2: 8E 03 03    ...
- RTS                                          ; 8BE5: 60          `
+ LDA L041F
+ BNE C8BEF
+ LDX L042B
+ BNE C8BEF
+ LDA L0301
+ BEQ C8BE6
+ LDA L035E
+ STA SQ2_VOL
+ LDA L0360
+ STA SQ2_LO
+ LDA L0361
+ STA SQ2_HI
+ STX L0303
+ RTS
 
 .C8BE6
 
- LDA #&30 ; '0'                               ; 8BE6: A9 30       .0
- STA SQ2_VOL                                  ; 8BE8: 8D 04 40    ..@
- STX L0303                                    ; 8BEB: 8E 03 03    ...
- RTS                                          ; 8BEE: 60          `
+ LDA #&30
+ STA SQ2_VOL
+ STX L0303
+ RTS
 
 .C8BEF
 
- DEC L041F                                    ; 8BEF: CE 1F 04    ...
- DEC L0432                                    ; 8BF2: CE 32 04    .2.
- BNE C8C20                                    ; 8BF5: D0 29       .)
- LDA L042A                                    ; 8BF7: AD 2A 04    .*.
- STA L0432                                    ; 8BFA: 8D 32 04    .2.
- LDY L0431                                    ; 8BFD: AC 31 04    .1.
- LDA L0449                                    ; 8C00: AD 49 04    .I.
- STA L00FE                                    ; 8C03: 85 FE       ..
- LDA L044A                                    ; 8C05: AD 4A 04    .J.
- STA L00FF                                    ; 8C08: 85 FF       ..
- LDA (L00FE),Y                                ; 8C0A: B1 FE       ..
- BPL C8C16                                    ; 8C0C: 10 08       ..
- CMP #&80                                     ; 8C0E: C9 80       ..
- BNE C8C20                                    ; 8C10: D0 0E       ..
- LDY #0                                       ; 8C12: A0 00       ..
- LDA (L00FE),Y                                ; 8C14: B1 FE       ..
+ DEC L041F
+ DEC L0432
+ BNE C8C20
+ LDA L042A
+ STA L0432
+ LDY L0431
+ LDA L0449
+ STA L00FE
+ LDA L044A
+ STA L00FF
+ LDA (L00FE),Y
+ BPL C8C16
+ CMP #&80
+ BNE C8C20
+ LDY #0
+ LDA (L00FE),Y
 
 .C8C16
 
- ORA L0425                                    ; 8C16: 0D 25 04    .%.
- STA SQ2_VOL                                  ; 8C19: 8D 04 40    ..@
- INY                                          ; 8C1C: C8          .
- STY L0431                                    ; 8C1D: 8C 31 04    .1.
+ ORA L0425
+ STA SQ2_VOL
+ INY
+ STY L0431
 
 .C8C20
 
- LDA L042F                                    ; 8C20: AD 2F 04    ./.
- BNE C8C53                                    ; 8C23: D0 2E       ..
- LDA L042B                                    ; 8C25: AD 2B 04    .+.
- BNE C8C30                                    ; 8C28: D0 06       ..
- LDA L0428                                    ; 8C2A: AD 28 04    .(.
- BNE C8C30                                    ; 8C2D: D0 01       ..
- RTS                                          ; 8C2F: 60          `
+ LDA L042F
+ BNE C8C53
+ LDA L042B
+ BNE C8C30
+ LDA L0428
+ BNE C8C30
+ RTS
 
 .C8C30
 
- DEC L0428                                    ; 8C30: CE 28 04    .(.
- LDA L0420                                    ; 8C33: AD 20 04    . .
- STA L042F                                    ; 8C36: 8D 2F 04    ./.
- LDA L0421                                    ; 8C39: AD 21 04    .!.
- LDX L0426                                    ; 8C3C: AE 26 04    .&.
- BEQ C8C44                                    ; 8C3F: F0 03       ..
- ADC L0307                                    ; 8C41: 6D 07 03    m..
+ DEC L0428
+ LDA L0420
+ STA L042F
+ LDA L0421
+ LDX L0426
+ BEQ C8C44
+ ADC L0307
 
 .C8C44
 
- STA L042D                                    ; 8C44: 8D 2D 04    .-.
- STA SQ2_LO                                   ; 8C47: 8D 06 40    ..@
- LDA L0422                                    ; 8C4A: AD 22 04    .".
- STA L042E                                    ; 8C4D: 8D 2E 04    ...
- STA SQ2_HI                                   ; 8C50: 8D 07 40    ..@
+ STA L042D
+ STA SQ2_LO
+ LDA L0422
+ STA L042E
+ STA SQ2_HI
 
 .C8C53
 
- DEC L042F                                    ; 8C53: CE 2F 04    ./.
- LDA L042C                                    ; 8C56: AD 2C 04    .,.
- BEQ C8C63                                    ; 8C59: F0 08       ..
- DEC L0430                                    ; 8C5B: CE 30 04    .0.
- BNE C8CA1                                    ; 8C5E: D0 41       .A
- STA L0430                                    ; 8C60: 8D 30 04    .0.
+ DEC L042F
+ LDA L042C
+ BEQ C8C63
+ DEC L0430
+ BNE C8CA1
+ STA L0430
 
 .C8C63
 
- LDA L0427                                    ; 8C63: AD 27 04    .'.
- BEQ C8CA1                                    ; 8C66: F0 39       .9
- BMI C8C86                                    ; 8C68: 30 1C       0.
- LDA L042D                                    ; 8C6A: AD 2D 04    .-.
- SEC                                          ; 8C6D: 38          8
- SBC L0423                                    ; 8C6E: ED 23 04    .#.
- STA L042D                                    ; 8C71: 8D 2D 04    .-.
- STA SQ2_LO                                   ; 8C74: 8D 06 40    ..@
- LDA L042E                                    ; 8C77: AD 2E 04    ...
- SBC L0424                                    ; 8C7A: ED 24 04    .$.
- AND #3                                       ; 8C7D: 29 03       ).
- STA L042E                                    ; 8C7F: 8D 2E 04    ...
- STA SQ2_HI                                   ; 8C82: 8D 07 40    ..@
- RTS                                          ; 8C85: 60          `
+ LDA L0427
+ BEQ C8CA1
+ BMI C8C86
+ LDA L042D
+ SEC
+ SBC L0423
+ STA L042D
+ STA SQ2_LO
+ LDA L042E
+ SBC L0424
+ AND #3
+ STA L042E
+ STA SQ2_HI
+ RTS
 
 .C8C86
 
- LDA L042D                                    ; 8C86: AD 2D 04    .-.
- CLC                                          ; 8C89: 18          .
- ADC L0423                                    ; 8C8A: 6D 23 04    m#.
- STA L042D                                    ; 8C8D: 8D 2D 04    .-.
- STA SQ2_LO                                   ; 8C90: 8D 06 40    ..@
- LDA L042E                                    ; 8C93: AD 2E 04    ...
- ADC L0424                                    ; 8C96: 6D 24 04    m$.
- AND #3                                       ; 8C99: 29 03       ).
- STA L042E                                    ; 8C9B: 8D 2E 04    ...
- STA SQ2_HI                                   ; 8C9E: 8D 07 40    ..@
+ LDA L042D
+ CLC
+ ADC L0423
+ STA L042D
+ STA SQ2_LO
+ LDA L042E
+ ADC L0424
+ AND #3
+ STA L042E
+ STA SQ2_HI
 
 .C8CA1
 
- RTS                                          ; 8CA1: 60          `
+ RTS
 
 \ ******************************************************************************
 \
@@ -2188,118 +2263,118 @@ ENDMACRO
 
 .subm_8CA2
 
- LDA L0304                                    ; 8CA2: AD 04 03    ...
- BNE C8CA8                                    ; 8CA5: D0 01       ..
- RTS                                          ; 8CA7: 60          `
+ LDA L0304
+ BNE C8CA8
+ RTS
 
 .C8CA8
 
- LDA L0433                                    ; 8CA8: AD 33 04    .3.
- BNE C8CD0                                    ; 8CAB: D0 23       .#
- LDX L043F                                    ; 8CAD: AE 3F 04    .?.
- BNE C8CD0                                    ; 8CB0: D0 1E       ..
- LDA L0301                                    ; 8CB2: AD 01 03    ...
- BEQ C8CC7                                    ; 8CB5: F0 10       ..
- LDA L0366                                    ; 8CB7: AD 66 03    .f.
- STA NOISE_VOL                                ; 8CBA: 8D 0C 40    ..@
- LDA L0368                                    ; 8CBD: AD 68 03    .h.
- STA NOISE_LO                                 ; 8CC0: 8D 0E 40    ..@
- STX L0304                                    ; 8CC3: 8E 04 03    ...
- RTS                                          ; 8CC6: 60          `
+ LDA L0433
+ BNE C8CD0
+ LDX L043F
+ BNE C8CD0
+ LDA L0301
+ BEQ C8CC7
+ LDA L0366
+ STA NOISE_VOL
+ LDA L0368
+ STA NOISE_LO
+ STX L0304
+ RTS
 
 .C8CC7
 
- LDA #&30 ; '0'                               ; 8CC7: A9 30       .0
- STA NOISE_VOL                                ; 8CC9: 8D 0C 40    ..@
- STX L0304                                    ; 8CCC: 8E 04 03    ...
- RTS                                          ; 8CCF: 60          `
+ LDA #&30
+ STA NOISE_VOL
+ STX L0304
+ RTS
 
 .C8CD0
 
- DEC L0433                                    ; 8CD0: CE 33 04    .3.
- DEC L0446                                    ; 8CD3: CE 46 04    .F.
- BNE C8D01                                    ; 8CD6: D0 29       .)
- LDA L043E                                    ; 8CD8: AD 3E 04    .>.
- STA L0446                                    ; 8CDB: 8D 46 04    .F.
- LDY L0445                                    ; 8CDE: AC 45 04    .E.
- LDA L044B                                    ; 8CE1: AD 4B 04    .K.
- STA L00FE                                    ; 8CE4: 85 FE       ..
- LDA L044C                                    ; 8CE6: AD 4C 04    .L.
- STA L00FF                                    ; 8CE9: 85 FF       ..
- LDA (L00FE),Y                                ; 8CEB: B1 FE       ..
- BPL C8CF7                                    ; 8CED: 10 08       ..
- CMP #&80                                     ; 8CEF: C9 80       ..
- BNE C8D01                                    ; 8CF1: D0 0E       ..
- LDY #0                                       ; 8CF3: A0 00       ..
- LDA (L00FE),Y                                ; 8CF5: B1 FE       ..
+ DEC L0433
+ DEC L0446
+ BNE C8D01
+ LDA L043E
+ STA L0446
+ LDY L0445
+ LDA L044B
+ STA L00FE
+ LDA L044C
+ STA L00FF
+ LDA (L00FE),Y
+ BPL C8CF7
+ CMP #&80
+ BNE C8D01
+ LDY #0
+ LDA (L00FE),Y
 
 .C8CF7
 
- ORA L0439                                    ; 8CF7: 0D 39 04    .9.
- STA NOISE_VOL                                ; 8CFA: 8D 0C 40    ..@
- INY                                          ; 8CFD: C8          .
- STY L0445                                    ; 8CFE: 8C 45 04    .E.
+ ORA L0439
+ STA NOISE_VOL
+ INY
+ STY L0445
 
 .C8D01
 
- LDA L0443                                    ; 8D01: AD 43 04    .C.
- BNE C8D2D                                    ; 8D04: D0 27       .'
- LDA L043F                                    ; 8D06: AD 3F 04    .?.
- BNE C8D11                                    ; 8D09: D0 06       ..
- LDA L043C                                    ; 8D0B: AD 3C 04    .<.
- BNE C8D11                                    ; 8D0E: D0 01       ..
- RTS                                          ; 8D10: 60          `
+ LDA L0443
+ BNE C8D2D
+ LDA L043F
+ BNE C8D11
+ LDA L043C
+ BNE C8D11
+ RTS
 
 .C8D11
 
- DEC L043C                                    ; 8D11: CE 3C 04    .<.
- LDA L0434                                    ; 8D14: AD 34 04    .4.
- STA L0443                                    ; 8D17: 8D 43 04    .C.
- LDA L0435                                    ; 8D1A: AD 35 04    .5.
- LDX L043A                                    ; 8D1D: AE 3A 04    .:.
- BEQ C8D27                                    ; 8D20: F0 05       ..
- ADC L0307                                    ; 8D22: 6D 07 03    m..
- AND #&0F                                     ; 8D25: 29 0F       ).
+ DEC L043C
+ LDA L0434
+ STA L0443
+ LDA L0435
+ LDX L043A
+ BEQ C8D27
+ ADC L0307
+ AND #&0F
 
 .C8D27
 
- STA L0441                                    ; 8D27: 8D 41 04    .A.
- STA NOISE_LO                                 ; 8D2A: 8D 0E 40    ..@
+ STA L0441
+ STA NOISE_LO
 
 .C8D2D
 
- DEC L0443                                    ; 8D2D: CE 43 04    .C.
- LDA L0440                                    ; 8D30: AD 40 04    .@.
- BEQ C8D3D                                    ; 8D33: F0 08       ..
- DEC L0444                                    ; 8D35: CE 44 04    .D.
- BNE C8D63                                    ; 8D38: D0 29       .)
- STA L0444                                    ; 8D3A: 8D 44 04    .D.
+ DEC L0443
+ LDA L0440
+ BEQ C8D3D
+ DEC L0444
+ BNE C8D63
+ STA L0444
 
 .C8D3D
 
- LDA L043B                                    ; 8D3D: AD 3B 04    .;.
- BEQ C8D63                                    ; 8D40: F0 21       .!
- BMI C8D54                                    ; 8D42: 30 10       0.
- LDA L0441                                    ; 8D44: AD 41 04    .A.
- SEC                                          ; 8D47: 38          8
- SBC L0437                                    ; 8D48: ED 37 04    .7.
- AND #&0F                                     ; 8D4B: 29 0F       ).
- STA L0441                                    ; 8D4D: 8D 41 04    .A.
- STA NOISE_LO                                 ; 8D50: 8D 0E 40    ..@
- RTS                                          ; 8D53: 60          `
+ LDA L043B
+ BEQ C8D63
+ BMI C8D54
+ LDA L0441
+ SEC
+ SBC L0437
+ AND #&0F
+ STA L0441
+ STA NOISE_LO
+ RTS
 
 .C8D54
 
- LDA L0441                                    ; 8D54: AD 41 04    .A.
- CLC                                          ; 8D57: 18          .
- ADC L0437                                    ; 8D58: 6D 37 04    m7.
- AND #&0F                                     ; 8D5B: 29 0F       ).
- STA L0441                                    ; 8D5D: 8D 41 04    .A.
- STA NOISE_LO                                 ; 8D60: 8D 0E 40    ..@
+ LDA L0441
+ CLC
+ ADC L0437
+ AND #&0F
+ STA L0441
+ STA NOISE_LO
 
 .C8D63
 
- RTS                                          ; 8D63: 60          `
+ RTS
 
 \ ******************************************************************************
 \
@@ -2312,16 +2387,16 @@ ENDMACRO
 
 .subm_8D64
 
- LDA L0307                                    ; 8D64: AD 07 03    ...
- AND #&48 ; 'H'                               ; 8D67: 29 48       )H
- ADC #&38 ; '8'                               ; 8D69: 69 38       i8
- ASL A                                        ; 8D6B: 0A          .
- ASL A                                        ; 8D6C: 0A          .
- ROL L030A                                    ; 8D6D: 2E 0A 03    ...
- ROL L0309                                    ; 8D70: 2E 09 03    ...
- ROL L0308                                    ; 8D73: 2E 08 03    ...
- ROL L0307                                    ; 8D76: 2E 07 03    ...
- RTS                                          ; 8D79: 60          `
+ LDA L0307
+ AND #&48
+ ADC #&38
+ ASL A
+ ASL A
+ ROL L030A
+ ROL L0309
+ ROL L0308
+ ROL L0307
+ RTS
 
 \ ******************************************************************************
 \
@@ -3039,55 +3114,55 @@ ENDMACRO
 
 .subm_9FD0
 
- LDA #&68 ; 'h'                               ; 9FD0: A9 68       .h
- STA tileSprite8                              ; 9FD2: 8D 21 02    .!.
- LDA #0                                       ; 9FD5: A9 00       ..
- STA attrSprite8                              ; 9FD7: 8D 22 02    .".
- LDA #&CB                                     ; 9FDA: A9 CB       ..
- STA xSprite8                                 ; 9FDC: 8D 23 02    .#.
- LDA L04A9                                    ; 9FDF: AD A9 04    ...
- AND #4                                       ; 9FE2: 29 04       ).
- BEQ C9FE8                                    ; 9FE4: F0 02       ..
- LDA #&10                                     ; 9FE6: A9 10       ..
+ LDA #&68
+ STA tileSprite8
+ LDA #0
+ STA attrSprite8
+ LDA #&CB
+ STA xSprite8
+ LDA L04A9
+ AND #4
+ BEQ C9FE8
+ LDA #&10
 
 .C9FE8
 
- CLC                                          ; 9FE8: 18          .
- ADC #&5A ; 'Z'                               ; 9FE9: 69 5A       iZ
- STA ySprite8                                 ; 9FEB: 8D 20 02    . .
- LDA #&69 ; 'i'                               ; 9FEE: A9 69       .i
- STA tileSprite9                              ; 9FF0: 8D 25 02    .%.
- LDA #0                                       ; 9FF3: A9 00       ..
- STA attrSprite9                              ; 9FF5: 8D 26 02    .&.
- LDA #&D3                                     ; 9FF8: A9 D3       ..
- STA xSprite9                                 ; 9FFA: 8D 27 02    .'.
- LDA L04A9                                    ; 9FFD: AD A9 04    ...
- AND #4                                       ; A000: 29 04       ).
- BEQ CA006                                    ; A002: F0 02       ..
- LDA #&10                                     ; A004: A9 10       ..
+ CLC
+ ADC #&5A
+ STA ySprite8
+ LDA #&69
+ STA tileSprite9
+ LDA #0
+ STA attrSprite9
+ LDA #&D3
+ STA xSprite9
+ LDA L04A9
+ AND #4
+ BEQ CA006
+ LDA #&10
 
 .CA006
 
- CLC                                          ; A006: 18          .
- ADC #&5A ; 'Z'                               ; A007: 69 5A       iZ
- STA ySprite9                                 ; A009: 8D 24 02    .$.
- LDA #&6A ; 'j'                               ; A00C: A9 6A       .j
- STA tileSprite10                             ; A00E: 8D 29 02    .).
- LDA #0                                       ; A011: A9 00       ..
- STA attrSprite10                             ; A013: 8D 2A 02    .*.
- LDA #&DB                                     ; A016: A9 DB       ..
- STA xSprite10                                ; A018: 8D 2B 02    .+.
- LDA L04A9                                    ; A01B: AD A9 04    ...
- AND #4                                       ; A01E: 29 04       ).
- BEQ CA024                                    ; A020: F0 02       ..
- LDA #&10                                     ; A022: A9 10       ..
+ CLC
+ ADC #&5A
+ STA ySprite9
+ LDA #&6A
+ STA tileSprite10
+ LDA #0
+ STA attrSprite10
+ LDA #&DB
+ STA xSprite10
+ LDA L04A9
+ AND #4
+ BEQ CA024
+ LDA #&10
 
 .CA024
 
- CLC                                          ; A024: 18          .
- ADC #&5A ; 'Z'                               ; A025: 69 5A       iZ
- STA ySprite10                                ; A027: 8D 28 02    .(.
- RTS                                          ; A02A: 60          `
+ CLC
+ ADC #&5A
+ STA ySprite10
+ RTS
 
 \ ******************************************************************************
 \
@@ -3100,23 +3175,23 @@ ENDMACRO
 
 .subm_A02B
 
- LDA #&6B ; 'k'                               ; A02B: A9 6B       .k
- STA tileSprite11                             ; A02D: 8D 2D 02    .-.
- LDA #2                                       ; A030: A9 02       ..
- STA attrSprite11                             ; A032: 8D 2E 02    ...
- LDA #&C3                                     ; A035: A9 C3       ..
- STA xSprite11                                ; A037: 8D 2F 02    ./.
- LDA L04A9                                    ; A03A: AD A9 04    ...
- AND #4                                       ; A03D: 29 04       ).
- BEQ CA043                                    ; A03F: F0 02       ..
- LDA #&10                                     ; A041: A9 10       ..
+ LDA #&6B
+ STA tileSprite11
+ LDA #2
+ STA attrSprite11
+ LDA #&C3
+ STA xSprite11
+ LDA L04A9
+ AND #4
+ BEQ CA043
+ LDA #&10
 
 .CA043
 
- CLC                                          ; A043: 18          .
- ADC #&62 ; 'b'                               ; A044: 69 62       ib
- STA ySprite11                                ; A046: 8D 2C 02    .,.
- RTS                                          ; A049: 60          `
+ CLC
+ ADC #&62
+ STA ySprite11
+ RTS
 
 \ ******************************************************************************
 \
@@ -3129,23 +3204,23 @@ ENDMACRO
 
 .subm_A04A
 
- LDA #&6C ; 'l'                               ; A04A: A9 6C       .l
- STA tileSprite12                             ; A04C: 8D 31 02    .1.
- LDA #2                                       ; A04F: A9 02       ..
- STA attrSprite12                             ; A051: 8D 32 02    .2.
- LDA #&E3                                     ; A054: A9 E3       ..
- STA xSprite12                                ; A056: 8D 33 02    .3.
- LDA L04A9                                    ; A059: AD A9 04    ...
- AND #4                                       ; A05C: 29 04       ).
- BEQ CA062                                    ; A05E: F0 02       ..
- LDA #&10                                     ; A060: A9 10       ..
+ LDA #&6C
+ STA tileSprite12
+ LDA #2
+ STA attrSprite12
+ LDA #&E3
+ STA xSprite12
+ LDA L04A9
+ AND #4
+ BEQ CA062
+ LDA #&10
 
 .CA062
 
- CLC                                          ; A062: 18          .
- ADC #&62 ; 'b'                               ; A063: 69 62       ib
- STA ySprite12                                ; A065: 8D 30 02    .0.
- RTS                                          ; A068: 60          `
+ CLC
+ ADC #&62
+ STA ySprite12
+ RTS
 
 \ ******************************************************************************
 \
@@ -3158,18 +3233,18 @@ ENDMACRO
 
 .subm_A069
 
- LDA #3                                       ; A069: A9 03       ..
- STA K                                        ; A06B: 85 7D       .}
- LDA #2                                       ; A06D: A9 02       ..
- STA K+1                                      ; A06F: 85 7E       .~
- LDA #&6F ; 'o'                               ; A071: A9 6F       .o
- STA K+2                                      ; A073: 85 7F       ..
- LDA #&0F                                     ; A075: A9 0F       ..
- STA K+3                                      ; A077: 85 80       ..
- LDX #&0B                                     ; A079: A2 0B       ..
- LDY #&31 ; '1'                               ; A07B: A0 31       .1
- LDA #2                                       ; A07D: A9 02       ..
- JMP CA0FA                                    ; A07F: 4C FA A0    L..
+ LDA #3
+ STA K
+ LDA #2
+ STA K+1
+ LDA #&6F
+ STA K+2
+ LDA #&0F
+ STA K+3
+ LDX #&0B
+ LDY #&31
+ LDA #2
+ JMP CA0FA
 
 \ ******************************************************************************
 \
@@ -3182,75 +3257,75 @@ ENDMACRO
 
 .subm_A082
 
- LDX #6                                       ; A082: A2 06       ..
- LDY #8                                       ; A084: A0 08       ..
- STX K                                        ; A086: 86 7D       .}
- STY K+1                                      ; A088: 84 7E       .~
- LDA tileNumber                               ; A08A: A5 B8       ..
- STA pictureTile                              ; A08C: 8D 6C 04    .l.
- CLC                                          ; A08F: 18          .
- ADC #&30 ; '0'                               ; A090: 69 30       i0
- STA tileNumber                               ; A092: 85 B8       ..
- LDX pictureTile                              ; A094: AE 6C 04    .l.
- STX K+2                                      ; A097: 86 7F       ..
- JSR CB2FB_b3                                 ; A099: 20 54 EE     T.
- LDA #5                                       ; A09C: A9 05       ..
- STA K                                        ; A09E: 85 7D       .}
- LDA #7                                       ; A0A0: A9 07       ..
- STA K+1                                      ; A0A2: 85 7E       .~
- LDA #&45 ; 'E'                               ; A0A4: A9 45       .E
- STA K+2                                      ; A0A6: 85 7F       ..
- LDA #&14                                     ; A0A8: A9 14       ..
- STA K+3                                      ; A0AA: 85 80       ..
- LDX #4                                       ; A0AC: A2 04       ..
- LDY #0                                       ; A0AE: A0 00       ..
- JSR CA0F8_b6                                 ; A0B0: 20 99 EE     ..
- LDA FIST                                     ; A0B3: AD C9 03    ...
- CMP #&28 ; '('                               ; A0B6: C9 28       .(
- BCC CA0BD                                    ; A0B8: 90 03       ..
- JSR subm_9FD0                                ; A0BA: 20 D0 9F     ..
+ LDX #6
+ LDY #8
+ STX K
+ STY K+1
+ LDA tileNumber
+ STA pictureTile
+ CLC
+ ADC #&30
+ STA tileNumber
+ LDX pictureTile
+ STX K+2
+ JSR CB2FB_b3
+ LDA #5
+ STA K
+ LDA #7
+ STA K+1
+ LDA #&45
+ STA K+2
+ LDA #&14
+ STA K+3
+ LDX #4
+ LDY #0
+ JSR CA0F8_b6
+ LDA FIST
+ CMP #&28
+ BCC CA0BD
+ JSR subm_9FD0
 
 .CA0BD
 
- LDA CASH                                     ; A0BD: AD A1 03    ...
- BNE CA0DA                                    ; A0C0: D0 18       ..
- LDA CASH+1                                   ; A0C2: AD A2 03    ...
- CMP #&99                                     ; A0C5: C9 99       ..
- BCS CA0DA                                    ; A0C7: B0 11       ..
- CMP #0                                       ; A0C9: C9 00       ..
- BNE CA0DD                                    ; A0CB: D0 10       ..
- LDA CASH+2                                   ; A0CD: AD A3 03    ...
- CMP #&4F ; 'O'                               ; A0D0: C9 4F       .O
- BCS CA0DD                                    ; A0D2: B0 09       ..
- CMP #&28 ; '('                               ; A0D4: C9 28       .(
- BCC CA0E3                                    ; A0D6: 90 0B       ..
- BCS CA0E0                                    ; A0D8: B0 06       ..
+ LDA CASH
+ BNE CA0DA
+ LDA CASH+1
+ CMP #&99
+ BCS CA0DA
+ CMP #0
+ BNE CA0DD
+ LDA CASH+2
+ CMP #&4F
+ BCS CA0DD
+ CMP #&28
+ BCC CA0E3
+ BCS CA0E0
 
 .CA0DA
 
- JSR subm_A069                                ; A0DA: 20 69 A0     i.
+ JSR subm_A069
 
 .CA0DD
 
- JSR subm_A02B                                ; A0DD: 20 2B A0     +.
+ JSR subm_A02B
 
 .CA0E0
 
- JSR subm_A04A                                ; A0E0: 20 4A A0     J.
+ JSR subm_A04A
 
 .CA0E3
 
- LDX XC                                       ; A0E3: A6 32       .2
- DEX                                          ; A0E5: CA          .
- STX XC                                       ; A0E6: 86 32       .2
- LDX YC                                       ; A0E8: A6 3B       .;
- DEX                                          ; A0EA: CA          .
- STX YC                                       ; A0EB: 86 3B       .;
- LDA #7                                       ; A0ED: A9 07       ..
- STA K                                        ; A0EF: 85 7D       .}
- LDA #&0A                                     ; A0F1: A9 0A       ..
- STA K+1                                      ; A0F3: 85 7E       .~
- JMP CB248_b3                                 ; A0F5: 4C 04 EF    L..
+ LDX XC
+ DEX
+ STX XC
+ LDX YC
+ DEX
+ STX YC
+ LDA #7
+ STA K
+ LDA #&0A
+ STA K+1
+ JMP CB248_b3
 
 \ ******************************************************************************
 \
@@ -3263,82 +3338,82 @@ ENDMACRO
 
 .subm_A0F8
 
- LDA #1                                       ; A0F8: A9 01       ..
+ LDA #1
 
 .CA0FA
 
- STA S                                        ; A0FA: 85 99       ..
- LDA XC                                       ; A0FC: A5 32       .2
- ASL A                                        ; A0FE: 0A          .
- ASL A                                        ; A0FF: 0A          .
- ASL A                                        ; A100: 0A          .
- ADC #0                                       ; A101: 69 00       i.
- STA SC                                       ; A103: 85 07       ..
- TXA                                          ; A105: 8A          .
- ADC SC                                       ; A106: 65 07       e.
- STA SC                                       ; A108: 85 07       ..
- LDA YC                                       ; A10A: A5 3B       .;
- ASL A                                        ; A10C: 0A          .
- ASL A                                        ; A10D: 0A          .
- ASL A                                        ; A10E: 0A          .
- ADC #6                                       ; A10F: 69 06       i.
- STA SC+1                                     ; A111: 85 08       ..
- TYA                                          ; A113: 98          .
- ADC SC+1                                     ; A114: 65 08       e.
- STA SC+1                                     ; A116: 85 08       ..
- LDA K+3                                      ; A118: A5 80       ..
- ASL A                                        ; A11A: 0A          .
- ASL A                                        ; A11B: 0A          .
- TAY                                          ; A11C: A8          .
- LDA K+2                                      ; A11D: A5 7F       ..
- LDX K+1                                      ; A11F: A6 7E       .~
- STX T                                        ; A121: 86 9A       ..
+ STA S
+ LDA XC
+ ASL A
+ ASL A
+ ASL A
+ ADC #0
+ STA SC
+ TXA
+ ADC SC
+ STA SC
+ LDA YC
+ ASL A
+ ASL A
+ ASL A
+ ADC #6
+ STA SC+1
+ TYA
+ ADC SC+1
+ STA SC+1
+ LDA K+3
+ ASL A
+ ASL A
+ TAY
+ LDA K+2
+ LDX K+1
+ STX T
 
 .CA123
 
- LDA setupPPUForIconBar                       ; A123: A5 E9       ..
- BPL CA130                                    ; A125: 10 09       ..
- LDA PPU_STATUS                               ; A127: AD 02 20    ..
- ASL A                                        ; A12A: 0A          .
- BPL CA130                                    ; A12B: 10 03       ..
- JSR SetPPUTablesTo0                          ; A12D: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CA130
+ LDA PPU_STATUS
+ ASL A
+ BPL CA130
+ JSR SetPPUTablesTo0
 
 .CA130
 
- LDX SC                                       ; A130: A6 07       ..
- STX SC2                                      ; A132: 86 BA       ..
- LDX K                                        ; A134: A6 7D       .}
+ LDX SC
+ STX SC2
+ LDX K
 
 .CA136
 
- LDA K+2                                      ; A136: A5 7F       ..
- STA tileSprite0,Y                            ; A138: 99 01 02    ...
- LDA S                                        ; A13B: A5 99       ..
- STA attrSprite0,Y                            ; A13D: 99 02 02    ...
- LDA SC2                                      ; A140: A5 BA       ..
- STA xSprite0,Y                               ; A142: 99 03 02    ...
- CLC                                          ; A145: 18          .
- ADC #8                                       ; A146: 69 08       i.
- STA SC2                                      ; A148: 85 BA       ..
- LDA SC+1                                     ; A14A: A5 08       ..
- STA ySprite0,Y                               ; A14C: 99 00 02    ...
- TYA                                          ; A14F: 98          .
- CLC                                          ; A150: 18          .
- ADC #4                                       ; A151: 69 04       i.
- BCS CA165                                    ; A153: B0 10       ..
- TAY                                          ; A155: A8          .
- INC K+2                                      ; A156: E6 7F       ..
- DEX                                          ; A158: CA          .
- BNE CA136                                    ; A159: D0 DB       ..
- LDA SC+1                                     ; A15B: A5 08       ..
- ADC #8                                       ; A15D: 69 08       i.
- STA SC+1                                     ; A15F: 85 08       ..
- DEC T                                        ; A161: C6 9A       ..
- BNE CA123                                    ; A163: D0 BE       ..
+ LDA K+2
+ STA tileSprite0,Y
+ LDA S
+ STA attrSprite0,Y
+ LDA SC2
+ STA xSprite0,Y
+ CLC
+ ADC #8
+ STA SC2
+ LDA SC+1
+ STA ySprite0,Y
+ TYA
+ CLC
+ ADC #4
+ BCS CA165
+ TAY
+ INC K+2
+ DEX
+ BNE CA136
+ LDA SC+1
+ ADC #8
+ STA SC+1
+ DEC T
+ BNE CA123
 
 .CA165
 
- RTS                                          ; A165: 60          `
+ RTS
 
 \ ******************************************************************************
 \
@@ -3351,127 +3426,127 @@ ENDMACRO
 
 .subm_A166
 
- TYA                                          ; A166: 98          .
- PHA                                          ; A167: 48          H
- TXA                                          ; A168: 8A          .
- PHA                                          ; A169: 48          H
- JSR KeepPPUTablesAt0                         ; A16A: 20 67 D1     g.
- LDA nmiTimer                                 ; A16D: A5 38       .8
- PHA                                          ; A16F: 48          H
- LDA nmiTimerLo                               ; A170: A5 39       .9
- PHA                                          ; A172: 48          H
- LDA nmiTimerHi                               ; A173: A5 3A       .:
- PHA                                          ; A175: 48          H
- JSR subm_D8C5                                ; A176: 20 C5 D8     ..
- LDA L045F                                    ; A179: AD 5F 04    ._.
- PHA                                          ; A17C: 48          H
- LDA L0464                                    ; A17D: AD 64 04    .d.
- PHA                                          ; A180: 48          H
- LDA #&FF                                     ; A181: A9 FF       ..
- STA L045F                                    ; A183: 8D 5F 04    ._.
- LDA #3                                       ; A186: A9 03       ..
- JSR CAC1D_b3                                 ; A188: 20 E1 F0     ..
+ TYA
+ PHA
+ TXA
+ PHA
+ JSR KeepPPUTablesAt0
+ LDA nmiTimer
+ PHA
+ LDA nmiTimerLo
+ PHA
+ LDA nmiTimerHi
+ PHA
+ JSR subm_D8C5
+ LDA L045F
+ PHA
+ LDA L0464
+ PHA
+ LDA #&FF
+ STA L045F
+ LDA #3
+ JSR CAC1D_b3
 
 .CA18B
 
- LDY #4                                       ; A18B: A0 04       ..
- JSR DELAY                                    ; A18D: 20 A2 EB     ..
- JSR CBBDE_b6                                 ; A190: 20 21 F0     !.
- TXA                                          ; A193: 8A          .
- CMP #&50 ; 'P'                               ; A194: C9 50       .P
- BNE CA1B1                                    ; A196: D0 19       ..
- PLA                                          ; A198: 68          h
- JSR CAC1D_b3                                 ; A199: 20 E1 F0     ..
- PLA                                          ; A19C: 68          h
- STA L045F                                    ; A19D: 8D 5F 04    ._.
- JSR KeepPPUTablesAt0                         ; A1A0: 20 67 D1     g.
- PLA                                          ; A1A3: 68          h
- STA nmiTimerHi                               ; A1A4: 85 3A       .:
- PLA                                          ; A1A6: 68          h
- STA nmiTimerLo                               ; A1A7: 85 39       .9
- PLA                                          ; A1A9: 68          h
- STA nmiTimer                                 ; A1AA: 85 38       .8
- PLA                                          ; A1AC: 68          h
- TAX                                          ; A1AD: AA          .
- PLA                                          ; A1AE: 68          h
- TAY                                          ; A1AF: A8          .
- RTS                                          ; A1B0: 60          `
+ LDY #4
+ JSR DELAY
+ JSR CBBDE_b6
+ TXA
+ CMP #&50
+ BNE CA1B1
+ PLA
+ JSR CAC1D_b3
+ PLA
+ STA L045F
+ JSR KeepPPUTablesAt0
+ PLA
+ STA nmiTimerHi
+ PLA
+ STA nmiTimerLo
+ PLA
+ STA nmiTimer
+ PLA
+ TAX
+ PLA
+ TAY
+ RTS
 
 .CA1B1
 
- CMP #&34 ; '4'                               ; A1B1: C9 34       .4
- BNE CA1C0                                    ; A1B3: D0 0B       ..
- LDA L03EC                                    ; A1B5: AD EC 03    ...
- EOR #&FF                                     ; A1B8: 49 FF       I.
- STA L03EC                                    ; A1BA: 8D EC 03    ...
- JMP CA21D                                    ; A1BD: 4C 1D A2    L..
+ CMP #&34
+ BNE CA1C0
+ LDA L03EC
+ EOR #&FF
+ STA L03EC
+ JMP CA21D
 
 .CA1C0
 
- CMP #&33 ; '3'                               ; A1C0: C9 33       .3
- BNE CA1E1                                    ; A1C2: D0 1D       ..
- LDA L03ED                                    ; A1C4: AD ED 03    ...
- EOR #&FF                                     ; A1C7: 49 FF       I.
- STA L03ED                                    ; A1C9: 8D ED 03    ...
- BPL CA1D4                                    ; A1CC: 10 06       ..
- JSR ResetSoundNow_b6+5                                    ; A1CE: 20 73 ED     s.
- JMP CA21D                                    ; A1D1: 4C 1D A2    L..
+ CMP #&33
+ BNE CA1E1
+ LDA L03ED
+ EOR #&FF
+ STA L03ED
+ BPL CA1D4
+ JSR ResetSound_b6
+ JMP CA21D
 
 .CA1D4
 
- LDA L045E                                    ; A1D4: AD 5E 04    .^.
- BEQ CA1DE                                    ; A1D7: F0 05       ..
- AND #&7F                                     ; A1D9: 29 7F       ).
- JSR C8021_b6                                 ; A1DB: 20 24 ED     $.
+ LDA L045E
+ BEQ CA1DE
+ AND #&7F
+ JSR C8021_b6
 
 .CA1DE
 
- JMP CA21D                                    ; A1DE: 4C 1D A2    L..
+ JMP CA21D
 
 .CA1E1
 
- CMP #&3C ; '<'                               ; A1E1: C9 3C       .<
- BNE CA1ED                                    ; A1E3: D0 08       ..
- PLA                                          ; A1E5: 68          h
- PLA                                          ; A1E6: 68          h
- STA L045F                                    ; A1E7: 8D 5F 04    ._.
- JMP CB2EF_b0                                 ; A1EA: 4C C3 EE    L..
+ CMP #&3C
+ BNE CA1ED
+ PLA
+ PLA
+ STA L045F
+ JMP CB2EF_b0
 
 .CA1ED
 
- CMP #&35 ; '5'                               ; A1ED: C9 35       .5
- BNE CA1FC                                    ; A1EF: D0 0B       ..
- LDA scanController2                          ; A1F1: AD 75 04    .u.
- EOR #1                                       ; A1F4: 49 01       I.
- STA scanController2                          ; A1F6: 8D 75 04    .u.
- JMP CA21D                                    ; A1F9: 4C 1D A2    L..
+ CMP #&35
+ BNE CA1FC
+ LDA scanController2
+ EOR #1
+ STA scanController2
+ JMP CA21D
 
 .CA1FC
 
- CMP #&31 ; '1'                               ; A1FC: C9 31       .1
- BNE CA20B                                    ; A1FE: D0 0B       ..
- LDA L03EB                                    ; A200: AD EB 03    ...
- EOR #&FF                                     ; A203: 49 FF       I.
- STA L03EB                                    ; A205: 8D EB 03    ...
- JMP CA21D                                    ; A208: 4C 1D A2    L..
+ CMP #&31
+ BNE CA20B
+ LDA L03EB
+ EOR #&FF
+ STA L03EB
+ JMP CA21D
 
 .CA20B
 
- CMP #&32 ; '2'                               ; A20B: C9 32       .2
- BNE CA21A                                    ; A20D: D0 0B       ..
- LDA L03EA                                    ; A20F: AD EA 03    ...
- EOR #&FF                                     ; A212: 49 FF       I.
- STA L03EA                                    ; A214: 8D EA 03    ...
- JMP CA21D                                    ; A217: 4C 1D A2    L..
+ CMP #&32
+ BNE CA21A
+ LDA L03EA
+ EOR #&FF
+ STA L03EA
+ JMP CA21D
 
 .CA21A
 
- JMP CA18B                                    ; A21A: 4C 8B A1    L..
+ JMP CA18B
 
 .CA21D
 
- JSR CAC5C_b3                                 ; A21D: 20 71 F1     q.
- JMP CA18B                                    ; A220: 4C 8B A1    L..
+ JSR CAC5C_b3
+ JMP CA18B
 
 \ ******************************************************************************
 \
@@ -3484,89 +3559,87 @@ ENDMACRO
 
 .DILX
 
- LSR A                                        ; A223: 4A          J
- LSR A                                        ; A224: 4A          J
+ LSR A
+ LSR A
 
-.sub_CA225
-
- LSR A                                        ; A225: 4A          J
- CMP #&1F                                     ; A226: C9 1F       ..
- BCC CA22C                                    ; A228: 90 02       ..
- LDA #&1E                                     ; A22A: A9 1E       ..
+ LSR A
+ CMP #&1F
+ BCC CA22C
+ LDA #&1E
 
 .CA22C
 
- LDY #0                                       ; A22C: A0 00       ..
- CMP K                                        ; A22E: C5 7D       .}
- BCC CA274                                    ; A230: 90 42       .B
- CMP K+1                                      ; A232: C5 7E       .~
- BCS CA274                                    ; A234: B0 3E       .>
- STA Q                                        ; A236: 85 97       ..
+ LDY #0
+ CMP K
+ BCC CA274
+ CMP K+1
+ BCS CA274
+ STA Q
 
 .CA238
 
- LSR A                                        ; A238: 4A          J
- LSR A                                        ; A239: 4A          J
- LSR A                                        ; A23A: 4A          J
- BEQ CA246                                    ; A23B: F0 09       ..
- TAX                                          ; A23D: AA          .
- LDA #&EC                                     ; A23E: A9 EC       ..
+ LSR A
+ LSR A
+ LSR A
+ BEQ CA246
+ TAX
+ LDA #&EC
 
 .loop_CA240
 
- STA (SC),Y                                   ; A240: 91 07       ..
- INY                                          ; A242: C8          .
- DEX                                          ; A243: CA          .
- BNE loop_CA240                               ; A244: D0 FA       ..
+ STA (SC),Y
+ INY
+ DEX
+ BNE loop_CA240
 
 .CA246
 
- LDA Q                                        ; A246: A5 97       ..
- AND #7                                       ; A248: 29 07       ).
- CLC                                          ; A24A: 18          .
- ADC #&ED                                     ; A24B: 69 ED       i.
- STA (SC),Y                                   ; A24D: 91 07       ..
- INY                                          ; A24F: C8          .
- LDA #&55 ; 'U'                               ; A250: A9 55       .U
+ LDA Q
+ AND #7
+ CLC
+ ADC #&ED
+ STA (SC),Y
+ INY
+ LDA #&55
 
 .loop_CA252
 
- CPY #4                                       ; A252: C0 04       ..
- BEQ CA25B                                    ; A254: F0 05       ..
- STA (SC),Y                                   ; A256: 91 07       ..
- INY                                          ; A258: C8          .
- BNE loop_CA252                               ; A259: D0 F7       ..
+ CPY #4
+ BEQ CA25B
+ STA (SC),Y
+ INY
+ BNE loop_CA252
 
 .CA25B
 
- LDA SC                                       ; A25B: A5 07       ..
- CLC                                          ; A25D: 18          .
- ADC #&20 ; ' '                               ; A25E: 69 20       i
- STA SC                                       ; A260: 85 07       ..
- BCC CA266                                    ; A262: 90 02       ..
- INC SC+1                                     ; A264: E6 08       ..
+ LDA SC
+ CLC
+ ADC #&20
+ STA SC
+ BCC CA266
+ INC SC+1
 
 .CA266
 
- LDA setupPPUForIconBar                       ; A266: A5 E9       ..
- BPL CA273                                    ; A268: 10 09       ..
- LDA PPU_STATUS                               ; A26A: AD 02 20    ..
- ASL A                                        ; A26D: 0A          .
- BPL CA273                                    ; A26E: 10 03       ..
- JSR SetPPUTablesTo0                          ; A270: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CA273
+ LDA PPU_STATUS
+ ASL A
+ BPL CA273
+ JSR SetPPUTablesTo0
 
 .CA273
 
- RTS                                          ; A273: 60          `
+ RTS
 
 .CA274
 
- STA Q                                        ; A274: 85 97       ..
- LDA MCNT                                     ; A276: A5 A2       ..
- AND #8                                       ; A278: 29 08       ).
- BNE CA285                                    ; A27A: D0 09       ..
- LDA Q                                        ; A27C: A5 97       ..
- JMP CA238                                    ; A27E: 4C 38 A2    L8.
+ STA Q
+ LDA MCNT
+ AND #8
+ BNE CA285
+ LDA Q
+ JMP CA238
 
 \ ******************************************************************************
 \
@@ -3579,68 +3652,68 @@ ENDMACRO
 
 .subm_A281
 
- LDY #0                                       ; A281: A0 00       ..
- BEQ CA29F                                    ; A283: F0 1A       ..
+ LDY #0
+ BEQ CA29F
 
 .CA285
 
- LDA Q                                        ; A285: A5 97       ..
- LSR A                                        ; A287: 4A          J
- LSR A                                        ; A288: 4A          J
- LSR A                                        ; A289: 4A          J
- BEQ CA295                                    ; A28A: F0 09       ..
- TAX                                          ; A28C: AA          .
- LDA #&E3                                     ; A28D: A9 E3       ..
+ LDA Q
+ LSR A
+ LSR A
+ LSR A
+ BEQ CA295
+ TAX
+ LDA #&E3
 
 .loop_CA28F
 
- STA (SC),Y                                   ; A28F: 91 07       ..
- INY                                          ; A291: C8          .
- DEX                                          ; A292: CA          .
- BNE loop_CA28F                               ; A293: D0 FA       ..
+ STA (SC),Y
+ INY
+ DEX
+ BNE loop_CA28F
 
 .CA295
 
- LDA Q                                        ; A295: A5 97       ..
- AND #7                                       ; A297: 29 07       ).
- CLC                                          ; A299: 18          .
- ADC #&E4                                     ; A29A: 69 E4       i.
- STA (SC),Y                                   ; A29C: 91 07       ..
- INY                                          ; A29E: C8          .
+ LDA Q
+ AND #7
+ CLC
+ ADC #&E4
+ STA (SC),Y
+ INY
 
 .CA29F
 
- LDA #&55 ; 'U'                               ; A29F: A9 55       .U
+ LDA #&55
 
 .loop_CA2A1
 
- CPY #4                                       ; A2A1: C0 04       ..
- BEQ CA2AA                                    ; A2A3: F0 05       ..
- STA (SC),Y                                   ; A2A5: 91 07       ..
- INY                                          ; A2A7: C8          .
- BNE loop_CA2A1                               ; A2A8: D0 F7       ..
+ CPY #4
+ BEQ CA2AA
+ STA (SC),Y
+ INY
+ BNE loop_CA2A1
 
 .CA2AA
 
- LDA SC                                       ; A2AA: A5 07       ..
- CLC                                          ; A2AC: 18          .
- ADC #&20 ; ' '                               ; A2AD: 69 20       i
- STA SC                                       ; A2AF: 85 07       ..
- BCC CA2B5                                    ; A2B1: 90 02       ..
- INC SC+1                                     ; A2B3: E6 08       ..
+ LDA SC
+ CLC
+ ADC #&20
+ STA SC
+ BCC CA2B5
+ INC SC+1
 
 .CA2B5
 
- LDA setupPPUForIconBar                       ; A2B5: A5 E9       ..
- BPL CA2C2                                    ; A2B7: 10 09       ..
- LDA PPU_STATUS                               ; A2B9: AD 02 20    ..
- ASL A                                        ; A2BC: 0A          .
- BPL CA2C2                                    ; A2BD: 10 03       ..
- JSR SetPPUTablesTo0                          ; A2BF: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CA2C2
+ LDA PPU_STATUS
+ ASL A
+ BPL CA2C2
+ JSR SetPPUTablesTo0
 
 .CA2C2
 
- RTS                                          ; A2C2: 60          `
+ RTS
 
 \ ******************************************************************************
 \
@@ -3653,101 +3726,101 @@ ENDMACRO
 
 .DIALS
 
- LDA drawingPhase                             ; A2C3: A5 C0       ..
- BNE CA331                                    ; A2C5: D0 6A       .j
- LDA #&72 ; 'r'                               ; A2C7: A9 72       .r
- STA SC+1                                     ; A2C9: 85 08       ..
- LDA #&E2                                     ; A2CB: A9 E2       ..
- STA SC                                       ; A2CD: 85 07       ..
- LDA #0                                       ; A2CF: A9 00       ..
- STA K                                        ; A2D1: 85 7D       .}
- LDA #&FF                                     ; A2D3: A9 FF       ..
- STA K+1                                      ; A2D5: 85 7E       .~
- LDA QQ14                                     ; A2D7: AD A5 03    ...
- JSR sub_CA225                                ; A2DA: 20 25 A2     %.
- LDA #8                                       ; A2DD: A9 08       ..
- STA K                                        ; A2DF: 85 7D       .}
- LDA #&FF                                     ; A2E1: A9 FF       ..
- STA K+1                                      ; A2E3: 85 7E       .~
- LDA FSH                                      ; A2E5: AD 84 04    ...
- JSR DILX                                     ; A2E8: 20 23 A2     #.
- LDA ASH                                      ; A2EB: AD 85 04    ...
- JSR DILX                                     ; A2EE: 20 23 A2     #.
- LDA ENERGY                                   ; A2F1: AD 86 04    ...
- JSR DILX                                     ; A2F4: 20 23 A2     #.
- LDA #0                                       ; A2F7: A9 00       ..
- STA K                                        ; A2F9: 85 7D       .}
- LDA #&18                                     ; A2FB: A9 18       ..
- STA K+1                                      ; A2FD: 85 7E       .~
- LDA CABTMP                                   ; A2FF: AD 8B 03    ...
- JSR DILX                                     ; A302: 20 23 A2     #.
- LDA GNTMP                                    ; A305: AD 90 03    ...
- JSR DILX                                     ; A308: 20 23 A2     #.
- LDA #&73 ; 's'                               ; A30B: A9 73       .s
- STA SC+1                                     ; A30D: 85 08       ..
- LDA #&7C ; '|'                               ; A30F: A9 7C       .|
- STA SC                                       ; A311: 85 07       ..
- LDA #0                                       ; A313: A9 00       ..
- STA K                                        ; A315: 85 7D       .}
- LDA #&FF                                     ; A317: A9 FF       ..
- STA K+1                                      ; A319: 85 7E       .~
- LDA DELTA                                    ; A31B: A5 93       ..
- LSR A                                        ; A31D: 4A          J
- ADC DELTA                                    ; A31E: 65 93       e.
- JSR sub_CA225                                ; A320: 20 25 A2     %.
- LDA #8                                       ; A323: A9 08       ..
- STA K                                        ; A325: 85 7D       .}
- LDA #&FF                                     ; A327: A9 FF       ..
- STA K+1                                      ; A329: 85 7E       .~
- LDA ALTIT                                    ; A32B: AD 7E 04    .~.
- JSR DILX                                     ; A32E: 20 23 A2     #.
+ LDA drawingPhase
+ BNE CA331
+ LDA #&72
+ STA SC+1
+ LDA #&E2
+ STA SC
+ LDA #0
+ STA K
+ LDA #&FF
+ STA K+1
+ LDA QQ14
+ JSR DILX+2
+ LDA #8
+ STA K
+ LDA #&FF
+ STA K+1
+ LDA FSH
+ JSR DILX
+ LDA ASH
+ JSR DILX
+ LDA ENERGY
+ JSR DILX
+ LDA #0
+ STA K
+ LDA #&18
+ STA K+1
+ LDA CABTMP
+ JSR DILX
+ LDA GNTMP
+ JSR DILX
+ LDA #&73
+ STA SC+1
+ LDA #&7C
+ STA SC
+ LDA #0
+ STA K
+ LDA #&FF
+ STA K+1
+ LDA DELTA
+ LSR A
+ ADC DELTA
+ JSR DILX+2
+ LDA #8
+ STA K
+ LDA #&FF
+ STA K+1
+ LDA ALTIT
+ JSR DILX
 
 .CA331
 
- LDA #&BA                                     ; A331: A9 BA       ..
- STA ySprite10                                ; A333: 8D 28 02    .(.
- LDA #&CE                                     ; A336: A9 CE       ..
- STA xSprite10                                ; A338: 8D 2B 02    .+.
- JSR subm_F338                                ; A33B: 20 38 F3     8.
- LDA LA386,X                                  ; A33E: BD 86 A3    ...
- STA attrSprite10                             ; A341: 8D 2A 02    .*.
- LDA LA38A,X                                  ; A344: BD 8A A3    ...
- STA tileSprite10                             ; A347: 8D 29 02    .).
- LDA QQ12                                     ; A34A: A5 A5       ..
- BNE CA368                                    ; A34C: D0 1A       ..
- LDA MSTG                                     ; A34E: AD 01 04    ...
- BPL CA371                                    ; A351: 10 1E       ..
- LDA MSAR                                     ; A353: AD 8D 03    ...
- BEQ CA368                                    ; A356: F0 10       ..
- LDX NOMSL                                    ; A358: AE C8 03    ...
- LDY #&6D ; 'm'                               ; A35B: A0 6D       .m
- LDA MCNT                                     ; A35D: A5 A2       ..
- AND #8                                       ; A35F: 29 08       ).
- BNE CA36E                                    ; A361: D0 0B       ..
- LDY #&6C ; 'l'                               ; A363: A0 6C       .l
- JSR subm_A38E                                ; A365: 20 8E A3     ..
+ LDA #&BA
+ STA ySprite10
+ LDA #&CE
+ STA xSprite10
+ JSR subm_F338
+ LDA LA386,X
+ STA attrSprite10
+ LDA LA38A,X
+ STA tileSprite10
+ LDA QQ12
+ BNE CA368
+ LDA MSTG
+ BPL CA371
+ LDA MSAR
+ BEQ CA368
+ LDX NOMSL
+ LDY #&6D
+ LDA MCNT
+ AND #8
+ BNE CA36E
+ LDY #&6C
+ JSR subm_A38E
 
 .CA368
 
- LDA #&F0                                     ; A368: A9 F0       ..
- STA ySprite9                                 ; A36A: 8D 24 02    .$.
- RTS                                          ; A36D: 60          `
+ LDA #&F0
+ STA ySprite9
+ RTS
 
 .CA36E
 
- JSR subm_A38E                                ; A36E: 20 8E A3     ..
+ JSR subm_A38E
 
 .CA371
 
- LDA #&F8                                     ; A371: A9 F8       ..
- STA tileSprite9                              ; A373: 8D 25 02    .%.
- LDA #1                                       ; A376: A9 01       ..
- STA attrSprite9                              ; A378: 8D 26 02    .&.
- LDA #&7E ; '~'                               ; A37B: A9 7E       .~
- STA xSprite9                                 ; A37D: 8D 27 02    .'.
- LDA #&53 ; 'S'                               ; A380: A9 53       .S
- STA ySprite9                                 ; A382: 8D 24 02    .$.
- RTS                                          ; A385: 60          `
+ LDA #&F8
+ STA tileSprite9
+ LDA #1
+ STA attrSprite9
+ LDA #&7E
+ STA xSprite9
+ LDA #&53
+ STA ySprite9
+ RTS
 
 \ ******************************************************************************
 \
@@ -3786,13 +3859,13 @@ ENDMACRO
 
 .subm_A38E
 
- TYA                                          ; A38E: 98          .
- PHA                                          ; A38F: 48          H
- LDY LA39A,X                                  ; A390: BC 9A A3    ...
- PLA                                          ; A393: 68          h
- STA nameBuffer0+704,Y                        ; A394: 99 C0 72    ..r
- LDY #0                                       ; A397: A0 00       ..
- RTS                                          ; A399: 60          `
+ TYA
+ PHA
+ LDY LA39A,X
+ PLA
+ STA nameBuffer0+704,Y
+ LDY #0
+ RTS
 
 \ ******************************************************************************
 \
@@ -3818,42 +3891,51 @@ ENDMACRO
 
 .subm_A39F
 
- LDA #0                                       ; A39F: A9 00       ..
+ LDA #0
 
-.sub_CA3A1
+\ ******************************************************************************
+\
+\       Name: subm_A3A1
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
 
- STA V                                        ; A3A1: 85 63       .c
- STX V+1                                      ; A3A3: 86 64       .d
+.subm_A3A1
+
+ STA V
+ STX V+1
 
 .CA3A5
 
- LDA LA3F5+3,Y                                  ; A3A5: B9 F8 A3    ...
- AND #&FC                                     ; A3A8: 29 FC       ).
- TAX                                          ; A3AA: AA          .
- LDA LA3F5+3,Y                                  ; A3AB: B9 F8 A3    ...
- AND #3                                       ; A3AE: 29 03       ).
- STA T                                        ; A3B0: 85 9A       ..
- LDA LA3F5,Y                                  ; A3B2: B9 F5 A3    ...
- AND #&C0                                     ; A3B5: 29 C0       ).
- ORA T                                        ; A3B7: 05 9A       ..
- STA attrSprite0,X                            ; A3B9: 9D 02 02    ...
- LDA LA3F5,Y                                  ; A3BC: B9 F5 A3    ...
- AND #&3F ; '?'                               ; A3BF: 29 3F       )?
- CLC                                          ; A3C1: 18          .
- ADC #&8C                                     ; A3C2: 69 8C       i.
- ADC V                                        ; A3C4: 65 63       ec
- STA tileSprite0,X                            ; A3C6: 9D 01 02    ...
- LDA LA3F5+1,Y                                  ; A3C9: B9 F6 A3    ...
- STA xSprite0,X                               ; A3CC: 9D 03 02    ...
- LDA LA3F5+2,Y                                  ; A3CF: B9 F7 A3    ...
- STA ySprite0,X                               ; A3D2: 9D 00 02    ...
- INY                                          ; A3D5: C8          .
- INY                                          ; A3D6: C8          .
- INY                                          ; A3D7: C8          .
- INY                                          ; A3D8: C8          .
- DEC V+1                                      ; A3D9: C6 64       .d
- BNE CA3A5                                    ; A3DB: D0 C8       ..
- RTS                                          ; A3DD: 60          `
+ LDA LA3F5+3,Y
+ AND #&FC
+ TAX
+ LDA LA3F5+3,Y
+ AND #3
+ STA T
+ LDA LA3F5,Y
+ AND #&C0
+ ORA T
+ STA attrSprite0,X
+ LDA LA3F5,Y
+ AND #&3F
+ CLC
+ ADC #&8C
+ ADC V
+ STA tileSprite0,X
+ LDA LA3F5+1,Y
+ STA xSprite0,X
+ LDA LA3F5+2,Y
+ STA ySprite0,X
+ INY
+ INY
+ INY
+ INY
+ DEC V+1
+ BNE CA3A5
+ RTS
 
 \ ******************************************************************************
 \
@@ -3866,28 +3948,28 @@ ENDMACRO
 
 .subm_A3DE
 
- LDA #0                                       ; A3DE: A9 00       ..
- CPX #&97                                     ; A3E0: E0 97       ..
- BEQ CA3F2                                    ; A3E2: F0 0E       ..
- CPX #&8F                                     ; A3E4: E0 8F       ..
- BEQ CA3EF                                    ; A3E6: F0 07       ..
- CPX #&32 ; '2'                               ; A3E8: E0 32       .2
- BNE CA3EE                                    ; A3EA: D0 02       ..
- LDA #8                                       ; A3EC: A9 08       ..
+ LDA #0
+ CPX #&97
+ BEQ CA3F2
+ CPX #&8F
+ BEQ CA3EF
+ CPX #&32
+ BNE CA3EE
+ LDA #8
 
 .CA3EE
 
- RTS                                          ; A3EE: 60          `
+ RTS
 
 .CA3EF
 
- LDA #4                                       ; A3EF: A9 04       ..
- RTS                                          ; A3F1: 60          `
+ LDA #4
+ RTS
 
 .CA3F2
 
- LDA #&0C                                     ; A3F2: A9 0C       ..
- RTS                                          ; A3F4: 60          `
+ LDA #&0C
+ RTS
 
 \ ******************************************************************************
 \
@@ -3934,9 +4016,9 @@ ENDMACRO
 
 .subm_A4A5
 
- JSR KeepPPUTablesAt0                         ; A4A5: 20 67 D1     g.
- LDA ECM                                      ; A4A8: AD BE 03    ...
- BEQ CA4B4                                    ; A4AB: F0 07       ..
+ JSR KeepPPUTablesAt0
+ LDA ECM
+ BEQ CA4B4
 
 \ ******************************************************************************
 \
@@ -3949,161 +4031,161 @@ ENDMACRO
 
 .subm_A4AD
 
- LDY #0                                       ; A4AD: A0 00       ..
- LDX #3                                       ; A4AF: A2 03       ..
- JSR subm_A39F                                ; A4B1: 20 9F A3     ..
+ LDY #0
+ LDX #3
+ JSR subm_A39F
 
 .CA4B4
 
- LDX LASER                                    ; A4B4: AE A8 03    ...
- BEQ CA4C6                                    ; A4B7: F0 0D       ..
- JSR subm_A3DE                                ; A4B9: 20 DE A3     ..
- LDY #&0C                                     ; A4BC: A0 0C       ..
- LDX #2                                       ; A4BE: A2 02       ..
- JSR sub_CA3A1                                ; A4C0: 20 A1 A3     ..
- JMP CA4C6                                    ; A4C3: 4C C6 A4    L..
+ LDX LASER
+ BEQ CA4C6
+ JSR subm_A3DE
+ LDY #&0C
+ LDX #2
+ JSR subm_A3A1
+ JMP CA4C6
 
 .CA4C6
 
- LDX LASER+1                                  ; A4C6: AE A9 03    ...
- BEQ CA4D8                                    ; A4C9: F0 0D       ..
- JSR subm_A3DE                                ; A4CB: 20 DE A3     ..
- LDY #&24 ; '$'                               ; A4CE: A0 24       .$
- LDX #1                                       ; A4D0: A2 01       ..
- JSR sub_CA3A1                                ; A4D2: 20 A1 A3     ..
- JMP CA4D8                                    ; A4D5: 4C D8 A4    L..
+ LDX LASER+1
+ BEQ CA4D8
+ JSR subm_A3DE
+ LDY #&24
+ LDX #1
+ JSR subm_A3A1
+ JMP CA4D8
 
 .CA4D8
 
- LDX LASER+2                                  ; A4D8: AE AA 03    ...
- BEQ CA4F5                                    ; A4DB: F0 18       ..
- CPX #&97                                     ; A4DD: E0 97       ..
- BEQ CA4EE                                    ; A4DF: F0 0D       ..
- JSR subm_A3DE                                ; A4E1: 20 DE A3     ..
- LDY #&14                                     ; A4E4: A0 14       ..
- LDX #2                                       ; A4E6: A2 02       ..
- JSR sub_CA3A1                                ; A4E8: 20 A1 A3     ..
- JMP CA4F5                                    ; A4EB: 4C F5 A4    L..
+ LDX LASER+2
+ BEQ CA4F5
+ CPX #&97
+ BEQ CA4EE
+ JSR subm_A3DE
+ LDY #&14
+ LDX #2
+ JSR subm_A3A1
+ JMP CA4F5
 
 .CA4EE
 
- LDY #&28 ; '('                               ; A4EE: A0 28       .(
- LDX #2                                       ; A4F0: A2 02       ..
- JSR subm_A39F                                ; A4F2: 20 9F A3     ..
+ LDY #&28
+ LDX #2
+ JSR subm_A39F
 
 .CA4F5
 
- LDX LASER+3                                  ; A4F5: AE AB 03    ...
- BEQ CA512                                    ; A4F8: F0 18       ..
- CPX #&97                                     ; A4FA: E0 97       ..
- BEQ CA50B                                    ; A4FC: F0 0D       ..
- JSR subm_A3DE                                ; A4FE: 20 DE A3     ..
- LDY #&1C                                     ; A501: A0 1C       ..
- LDX #2                                       ; A503: A2 02       ..
- JSR sub_CA3A1                                ; A505: 20 A1 A3     ..
- JMP CA512                                    ; A508: 4C 12 A5    L..
+ LDX LASER+3
+ BEQ CA512
+ CPX #&97
+ BEQ CA50B
+ JSR subm_A3DE
+ LDY #&1C
+ LDX #2
+ JSR subm_A3A1
+ JMP CA512
 
 .CA50B
 
- LDY #&30 ; '0'                               ; A50B: A0 30       .0
- LDX #2                                       ; A50D: A2 02       ..
- JSR subm_A39F                                ; A50F: 20 9F A3     ..
+ LDY #&30
+ LDX #2
+ JSR subm_A39F
 
 .CA512
 
- LDA BST                                      ; A512: AD BF 03    ...
- BEQ CA51E                                    ; A515: F0 07       ..
- LDY #&38 ; '8'                               ; A517: A0 38       .8
- LDX #2                                       ; A519: A2 02       ..
- JSR subm_A39F                                ; A51B: 20 9F A3     ..
+ LDA BST
+ BEQ CA51E
+ LDY #&38
+ LDX #2
+ JSR subm_A39F
 
 .CA51E
 
- LDA ENGY                                     ; A51E: AD C1 03    ...
- BEQ CA537                                    ; A521: F0 14       ..
- LSR A                                        ; A523: 4A          J
- BNE CA530                                    ; A524: D0 0A       ..
- LDY #&48 ; 'H'                               ; A526: A0 48       .H
- LDX #2                                       ; A528: A2 02       ..
- JSR subm_A39F                                ; A52A: 20 9F A3     ..
- JMP CA537                                    ; A52D: 4C 37 A5    L7.
+ LDA ENGY
+ BEQ CA537
+ LSR A
+ BNE CA530
+ LDY #&48
+ LDX #2
+ JSR subm_A39F
+ JMP CA537
 
 .CA530
 
- LDY #&40 ; '@'                               ; A530: A0 40       .@
- LDX #4                                       ; A532: A2 04       ..
- JSR subm_A39F                                ; A534: 20 9F A3     ..
+ LDY #&40
+ LDX #4
+ JSR subm_A39F
 
 .CA537
 
- LDA NOMSL                                    ; A537: AD C8 03    ...
- BEQ CA56C                                    ; A53A: F0 30       .0
- LDY #&50 ; 'P'                               ; A53C: A0 50       .P
- LDX #2                                       ; A53E: A2 02       ..
- JSR subm_A39F                                ; A540: 20 9F A3     ..
- LDA NOMSL                                    ; A543: AD C8 03    ...
- LSR A                                        ; A546: 4A          J
- BEQ CA56C                                    ; A547: F0 23       .#
- LDY #&58 ; 'X'                               ; A549: A0 58       .X
- LDX #2                                       ; A54B: A2 02       ..
- JSR subm_A39F                                ; A54D: 20 9F A3     ..
- LDA NOMSL                                    ; A550: AD C8 03    ...
- CMP #2                                       ; A553: C9 02       ..
- BEQ CA56C                                    ; A555: F0 15       ..
- LDY #&60 ; '`'                               ; A557: A0 60       .`
- LDX #2                                       ; A559: A2 02       ..
- JSR subm_A39F                                ; A55B: 20 9F A3     ..
- LDA NOMSL                                    ; A55E: AD C8 03    ...
- CMP #4                                       ; A561: C9 04       ..
- BNE CA56C                                    ; A563: D0 07       ..
- LDY #&68 ; 'h'                               ; A565: A0 68       .h
- LDX #2                                       ; A567: A2 02       ..
- JSR subm_A39F                                ; A569: 20 9F A3     ..
+ LDA NOMSL
+ BEQ CA56C
+ LDY #&50
+ LDX #2
+ JSR subm_A39F
+ LDA NOMSL
+ LSR A
+ BEQ CA56C
+ LDY #&58
+ LDX #2
+ JSR subm_A39F
+ LDA NOMSL
+ CMP #2
+ BEQ CA56C
+ LDY #&60
+ LDX #2
+ JSR subm_A39F
+ LDA NOMSL
+ CMP #4
+ BNE CA56C
+ LDY #&68
+ LDX #2
+ JSR subm_A39F
 
 .CA56C
 
- LDA BOMB                                     ; A56C: AD C0 03    ...
- BEQ CA578                                    ; A56F: F0 07       ..
- LDY #&70 ; 'p'                               ; A571: A0 70       .p
- LDX #3                                       ; A573: A2 03       ..
- JSR subm_A39F                                ; A575: 20 9F A3     ..
+ LDA BOMB
+ BEQ CA578
+ LDY #&70
+ LDX #3
+ JSR subm_A39F
 
 .CA578
 
- LDA CRGO                                     ; A578: AD AC 03    ...
- CMP #&25 ; '%'                               ; A57B: C9 25       .%
- BNE CA586                                    ; A57D: D0 07       ..
- LDY #&7C ; '|'                               ; A57F: A0 7C       .|
- LDX #2                                       ; A581: A2 02       ..
- JSR subm_A39F                                ; A583: 20 9F A3     ..
+ LDA CRGO
+ CMP #&25
+ BNE CA586
+ LDY #&7C
+ LDX #2
+ JSR subm_A39F
 
 .CA586
 
- LDA ESCP                                     ; A586: AD C4 03    ...
- BEQ CA592                                    ; A589: F0 07       ..
- LDY #&84                                     ; A58B: A0 84       ..
- LDX #1                                       ; A58D: A2 01       ..
- JSR subm_A39F                                ; A58F: 20 9F A3     ..
+ LDA ESCP
+ BEQ CA592
+ LDY #&84
+ LDX #1
+ JSR subm_A39F
 
 .CA592
 
- LDA DKCMP                                    ; A592: AD C2 03    ...
- BEQ CA59E                                    ; A595: F0 07       ..
- LDY #&88                                     ; A597: A0 88       ..
- LDX #8                                       ; A599: A2 08       ..
- JSR subm_A39F                                ; A59B: 20 9F A3     ..
+ LDA DKCMP
+ BEQ CA59E
+ LDY #&88
+ LDX #8
+ JSR subm_A39F
 
 .CA59E
 
- LDA GHYP                                     ; A59E: AD C3 03    ...
- BEQ CA5AA                                    ; A5A1: F0 07       ..
- LDY #&A8                                     ; A5A3: A0 A8       ..
- LDX #2                                       ; A5A5: A2 02       ..
- JSR subm_A39F                                ; A5A7: 20 9F A3     ..
+ LDA GHYP
+ BEQ CA5AA
+ LDY #&A8
+ LDX #2
+ JSR subm_A39F
 
 .CA5AA
 
- RTS                                          ; A5AA: 60          `
+ RTS
 
 \ ******************************************************************************
 \
@@ -4116,277 +4198,286 @@ ENDMACRO
 
 .subm_A5AB
 
- PHA                                          ; A5AB: 48          H
- LDA QQ11                                     ; A5AC: A5 9E       ..
- BNE CA5B6                                    ; A5AE: D0 06       ..
- JSR subm_CEA5                                ; A5B0: 20 A5 CE     ..
- JMP CA614                                    ; A5B3: 4C 14 A6    L..
+ PHA
+ LDA QQ11
+ BNE CA5B6
+ JSR subm_CEA5
+ JMP CA614
 
 .CA5B6
 
- JSR CB63D_b3                                 ; A5B6: 20 AB ED     ..
- LDY #&14                                     ; A5B9: A0 14       ..
- STY NOSTM                                    ; A5BB: 8C E5 03    ...
- STY RAND+1                                   ; A5BE: 84 03       ..
- LDA frameCounter                             ; A5C0: AD F1 03    ...
- STA RAND                                     ; A5C3: 85 02       ..
+ JSR CB63D_b3
+ LDY #&14
+ STY NOSTM
+ STY RAND+1
+ LDA frameCounter
+ STA RAND
 
 .CA5C5
 
- LDA setupPPUForIconBar                       ; A5C5: A5 E9       ..
- BPL CA5D2                                    ; A5C7: 10 09       ..
- LDA PPU_STATUS                               ; A5C9: AD 02 20    ..
- ASL A                                        ; A5CC: 0A          .
- BPL CA5D2                                    ; A5CD: 10 03       ..
- JSR SetPPUTablesTo0                          ; A5CF: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CA5D2
+ LDA PPU_STATUS
+ ASL A
+ BPL CA5D2
+ JSR SetPPUTablesTo0
 
 .CA5D2
 
- JSR DORND                                    ; A5D2: 20 AD F4     ..
- ORA #8                                       ; A5D5: 09 08       ..
- STA SZ,Y                                     ; A5D7: 99 F2 04    ...
- STA ZZ                                       ; A5DA: 85 A0       ..
- JSR DORND                                    ; A5DC: 20 AD F4     ..
- STA SX,Y                                     ; A5DF: 99 C8 04    ...
- JSR DORND                                    ; A5E2: 20 AD F4     ..
- STA SY,Y                                     ; A5E5: 99 DD 04    ...
- DEY                                          ; A5E8: 88          .
- BNE CA5C5                                    ; A5E9: D0 DA       ..
- LDX #&14                                     ; A5EB: A2 14       ..
- LDY #&98                                     ; A5ED: A0 98       ..
+ JSR DORND
+ ORA #8
+ STA SZ,Y
+ STA ZZ
+ JSR DORND
+ STA SX,Y
+ JSR DORND
+ STA SY,Y
+ DEY
+ BNE CA5C5
+ LDX #&14
+ LDY #&98
 
 .CA5EF
 
- LDA setupPPUForIconBar                       ; A5EF: A5 E9       ..
- BPL CA5FC                                    ; A5F1: 10 09       ..
- LDA PPU_STATUS                               ; A5F3: AD 02 20    ..
- ASL A                                        ; A5F6: 0A          .
- BPL CA5FC                                    ; A5F7: 10 03       ..
- JSR SetPPUTablesTo0                          ; A5F9: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CA5FC
+ LDA PPU_STATUS
+ ASL A
+ BPL CA5FC
+ JSR SetPPUTablesTo0
 
 .CA5FC
 
- LDA #&D2                                     ; A5FC: A9 D2       ..
- STA tileSprite0,Y                            ; A5FE: 99 01 02    ...
- TXA                                          ; A601: 8A          .
- LSR A                                        ; A602: 4A          J
- ROR A                                        ; A603: 6A          j
- ROR A                                        ; A604: 6A          j
- AND #&E1                                     ; A605: 29 E1       ).
- STA attrSprite0,Y                            ; A607: 99 02 02    ...
- INY                                          ; A60A: C8          .
- INY                                          ; A60B: C8          .
- INY                                          ; A60C: C8          .
- INY                                          ; A60D: C8          .
- DEX                                          ; A60E: CA          .
- BNE CA5EF                                    ; A60F: D0 DE       ..
- JSR STARS_b1                                 ; A611: 20 15 EE     ..
+ LDA #&D2
+ STA tileSprite0,Y
+ TXA
+ LSR A
+ ROR A
+ ROR A
+ AND #&E1
+ STA attrSprite0,Y
+ INY
+ INY
+ INY
+ INY
+ DEX
+ BNE CA5EF
+ JSR STARS_b1
 
 .CA614
 
- LDA #0                                       ; A614: A9 00       ..
- STA LASER                                    ; A616: 8D A8 03    ...
- STA QQ12                                     ; A619: 85 A5       ..
- LDA #&10                                     ; A61B: A9 10       ..
- JSR CB39D_b0                                 ; A61D: 20 DC EF     ..
- LDA #&FF                                     ; A620: A9 FF       ..
- STA L045F                                    ; A622: 8D 5F 04    ._.
- LDA #&F0                                     ; A625: A9 F0       ..
- STA ySprite5                                 ; A627: 8D 14 02    ...
- STA ySprite6                                 ; A62A: 8D 18 02    ...
- STA ySprite7                                 ; A62D: 8D 1C 02    ...
- STA ySprite8                                 ; A630: 8D 20 02    . .
- STA ySprite9                                 ; A633: 8D 24 02    .$.
- LDA #0                                       ; A636: A9 00       ..
- STA SC+1                                     ; A638: 85 08       ..
- LDA tileNumber                               ; A63A: A5 B8       ..
- ASL A                                        ; A63C: 0A          .
- ROL SC+1                                     ; A63D: 26 08       &.
- ASL A                                        ; A63F: 0A          .
- ROL SC+1                                     ; A640: 26 08       &.
- ASL A                                        ; A642: 0A          .
- ROL SC+1                                     ; A643: 26 08       &.
- STA SC                                       ; A645: 85 07       ..
- STA SC2                                      ; A647: 85 BA       ..
- LDA SC+1                                     ; A649: A5 08       ..
- ADC #&68 ; 'h'                               ; A64B: 69 68       ih
- STA SC2+1                                    ; A64D: 85 BB       ..
- LDA SC+1                                     ; A64F: A5 08       ..
- ADC #&60 ; '`'                               ; A651: 69 60       i`
- STA SC+1                                     ; A653: 85 08       ..
- LDX tileNumber                               ; A655: A6 B8       ..
- LDY #0                                       ; A657: A0 00       ..
+ LDA #0
+ STA LASER
+ STA QQ12
+ LDA #&10
+ JSR CB39D_b0
+ LDA #&FF
+ STA L045F
+ LDA #&F0
+ STA ySprite5
+ STA ySprite6
+ STA ySprite7
+ STA ySprite8
+ STA ySprite9
+ LDA #0
+ STA SC+1
+ LDA tileNumber
+ ASL A
+ ROL SC+1
+ ASL A
+ ROL SC+1
+ ASL A
+ ROL SC+1
+ STA SC
+ STA SC2
+ LDA SC+1
+ ADC #&68
+ STA SC2+1
+ LDA SC+1
+ ADC #&60
+ STA SC+1
+ LDX tileNumber
+ LDY #0
 
 .CA659
 
- LDA #0                                       ; A659: A9 00       ..
- STA (SC),Y                                   ; A65B: 91 07       ..
- STA (SC2),Y                                  ; A65D: 91 BA       ..
- INY                                          ; A65F: C8          .
- STA (SC),Y                                   ; A660: 91 07       ..
- STA (SC2),Y                                  ; A662: 91 BA       ..
- INY                                          ; A664: C8          .
- STA (SC),Y                                   ; A665: 91 07       ..
- STA (SC2),Y                                  ; A667: 91 BA       ..
- INY                                          ; A669: C8          .
- STA (SC),Y                                   ; A66A: 91 07       ..
- STA (SC2),Y                                  ; A66C: 91 BA       ..
- INY                                          ; A66E: C8          .
- STA (SC),Y                                   ; A66F: 91 07       ..
- STA (SC2),Y                                  ; A671: 91 BA       ..
- INY                                          ; A673: C8          .
- STA (SC),Y                                   ; A674: 91 07       ..
- STA (SC2),Y                                  ; A676: 91 BA       ..
- INY                                          ; A678: C8          .
- STA (SC),Y                                   ; A679: 91 07       ..
- STA (SC2),Y                                  ; A67B: 91 BA       ..
- INY                                          ; A67D: C8          .
- STA (SC),Y                                   ; A67E: 91 07       ..
- STA (SC2),Y                                  ; A680: 91 BA       ..
- INY                                          ; A682: C8          .
- BNE CA689                                    ; A683: D0 04       ..
- INC SC+1                                     ; A685: E6 08       ..
- INC SC2+1                                    ; A687: E6 BB       ..
+ LDA #0
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ STA (SC),Y
+ STA (SC2),Y
+ INY
+ BNE CA689
+ INC SC+1
+ INC SC2+1
 
 .CA689
 
- LDA setupPPUForIconBar                       ; A689: A5 E9       ..
- BPL CA696                                    ; A68B: 10 09       ..
- LDA PPU_STATUS                               ; A68D: AD 02 20    ..
- ASL A                                        ; A690: 0A          .
- BPL CA696                                    ; A691: 10 03       ..
- JSR SetPPUTablesTo0                          ; A693: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CA696
+ LDA PPU_STATUS
+ ASL A
+ BPL CA696
+ JSR SetPPUTablesTo0
 
 .CA696
 
- INX                                          ; A696: E8          .
- BNE CA659                                    ; A697: D0 C0       ..
- LDA #0                                       ; A699: A9 00       ..
- STA ALPHA                                    ; A69B: 85 A4       ..
- STA ALP1                                     ; A69D: 85 6E       .n
- STA DELTA                                    ; A69F: 85 93       ..
- LDA frameCounter                             ; A6A1: AD F1 03    ...
- CLC                                          ; A6A4: 18          .
- ADC RAND+1                                   ; A6A5: 65 03       e.
- STA RAND+1                                   ; A6A7: 85 03       ..
- JSR sub_CA761                                ; A6A9: 20 61 A7     a.
- PLA                                          ; A6AC: 68          h
- BNE CA6D3                                    ; A6AD: D0 24       .$
- LDX language                                 ; A6AF: AE A8 04    ...
- LDA LACAE,X                                  ; A6B2: BD AE AC    ...
- LDY LACB2,X                                  ; A6B5: BC B2 AC    ...
- TAX                                          ; A6B8: AA          .
- LDA #2                                       ; A6B9: A9 02       ..
- JSR subm_A917                                ; A6BB: 20 17 A9     ..
- LDA #0                                       ; A6BE: A9 00       ..
- STA QQ11                                     ; A6C0: 85 9E       ..
- JSR CAFCD_b3                                 ; A6C2: 20 20 EF      .
- LDA #&25 ; '%'                               ; A6C5: A9 25       .%
- STA L00D2                                    ; A6C7: 85 D2       ..
- JSR sub_CA761                                ; A6C9: 20 61 A7     a.
- LDA #&3C ; '<'                               ; A6CC: A9 3C       .<
- STA L00D2                                    ; A6CE: 85 D2       ..
- JMP SpawnDemoShips_b0                        ; A6D0: 4C 0D EE    L..
+ INX
+ BNE CA659
+ LDA #0
+ STA ALPHA
+ STA ALP1
+ STA DELTA
+ LDA frameCounter
+ CLC
+ ADC RAND+1
+ STA RAND+1
+ JSR subm_A761
+ PLA
+ BNE CA6D3
+ LDX language
+ LDA LACAE,X
+ LDY LACB2,X
+ TAX
+ LDA #2
+ JSR subm_A917
+ LDA #0
+ STA QQ11
+ JSR CAFCD_b3
+ LDA #&25
+ STA L00D2
+ JSR subm_A761
+ LDA #&3C
+ STA L00D2
+ JMP SpawnDemoShips_b0
 
 .CA6D3
 
- CMP #2                                       ; A6D3: C9 02       ..
- BEQ CA72F                                    ; A6D5: F0 58       .X
- LDA #&30 ; '0'                               ; A6D7: A9 30       .0
- STA XX18+1                                   ; A6D9: 85 89       ..
- STA XX18+2                                   ; A6DB: 85 8A       ..
- STA XX18+3                                   ; A6DD: 85 8B       ..
- LDA #&64 ; 'd'                               ; A6DF: A9 64       .d
- STA nmiTimer                                 ; A6E1: 85 38       .8
- SEC                                          ; A6E3: 38          8
+ CMP #2
+ BEQ CA72F
+ LDA #&30
+ STA XX18+1
+ STA XX18+2
+ STA XX18+3
+ LDA #&64
+ STA nmiTimer
+ SEC
 
 .loop_CA6E4
 
- LDA nmiTimerLo                               ; A6E4: A5 39       .9
- SBC #&58 ; 'X'                               ; A6E6: E9 58       .X
- TAX                                          ; A6E8: AA          .
- LDA nmiTimerHi                               ; A6E9: A5 3A       .:
- SBC #2                                       ; A6EB: E9 02       ..
- BCC CA6F7                                    ; A6ED: 90 08       ..
- STA nmiTimerHi                               ; A6EF: 85 3A       .:
- STX nmiTimerLo                               ; A6F1: 86 39       .9
- INC XX18+3                                   ; A6F3: E6 8B       ..
- BCS loop_CA6E4                               ; A6F5: B0 ED       ..
+ LDA nmiTimerLo
+ SBC #&58
+ TAX
+ LDA nmiTimerHi
+ SBC #2
+ BCC CA6F7
+ STA nmiTimerHi
+ STX nmiTimerLo
+ INC XX18+3
+ BCS loop_CA6E4
 
 .CA6F7
 
- SEC                                          ; A6F7: 38          8
- LDA nmiTimerLo                               ; A6F8: A5 39       .9
- SBC #&3C ; '<'                               ; A6FA: E9 3C       .<
- TAX                                          ; A6FC: AA          .
- LDA nmiTimerHi                               ; A6FD: A5 3A       .:
- SBC #0                                       ; A6FF: E9 00       ..
- BCC CA70B                                    ; A701: 90 08       ..
- STA nmiTimerHi                               ; A703: 85 3A       .:
- STX nmiTimerLo                               ; A705: 86 39       .9
- INC XX18+2                                   ; A707: E6 8A       ..
- BCS CA6F7                                    ; A709: B0 EC       ..
+ SEC
+ LDA nmiTimerLo
+ SBC #&3C
+ TAX
+ LDA nmiTimerHi
+ SBC #0
+ BCC CA70B
+ STA nmiTimerHi
+ STX nmiTimerLo
+ INC XX18+2
+ BCS CA6F7
 
 .CA70B
 
- SEC                                          ; A70B: 38          8
- LDA nmiTimerLo                               ; A70C: A5 39       .9
+ SEC
+ LDA nmiTimerLo
 
 .loop_CA70E
 
- SBC #&0A                                     ; A70E: E9 0A       ..
- BCC CA716                                    ; A710: 90 04       ..
- INC XX18+1                                   ; A712: E6 89       ..
- BCS loop_CA70E                               ; A714: B0 F8       ..
+ SBC #&0A
+ BCC CA716
+ INC XX18+1
+ BCS loop_CA70E
 
 .CA716
 
- ADC #&3A ; ':'                               ; A716: 69 3A       i:
- STA K5                                       ; A718: 85 88       ..
- LDX language                                 ; A71A: AE A8 04    ...
- LDA LACB6,X                                  ; A71D: BD B6 AC    ...
- LDY LACBA,X                                  ; A720: BC BA AC    ...
- TAX                                          ; A723: AA          .
- LDA #6                                       ; A724: A9 06       ..
+ ADC #&3A
+ STA K5
+ LDX language
+ LDA LACB6,X
+ LDY LACBA,X
+ TAX
+ LDA #6
 
 .CA726
 
- JSR subm_A917                                ; A726: 20 17 A9     ..
- JSR CB63D_b3                                 ; A729: 20 AB ED     ..
- JMP CB358_b0                                 ; A72C: 4C CB EE    L..
+ JSR subm_A917
+ JSR CB63D_b3
+ JMP CB358_b0
 
 .CA72F
 
- LDX language                                 ; A72F: AE A8 04    ...
- LDA LACBE,X                                  ; A732: BD BE AC    ...
- LDY LACC2,X                                  ; A735: BC C2 AC    ...
- TAX                                          ; A738: AA          .
- LDA #6                                       ; A739: A9 06       ..
- JSR subm_A917                                ; A73B: 20 17 A9     ..
- JSR KeepPPUTablesAt0                         ; A73E: 20 67 D1     g.
- LDX language                                 ; A741: AE A8 04    ...
- LDA LACC6,X                                  ; A744: BD C6 AC    ...
- LDY LACCA,X                                  ; A747: BC CA AC    ...
- TAX                                          ; A74A: AA          .
- LDA #5                                       ; A74B: A9 05       ..
- JSR subm_A917                                ; A74D: 20 17 A9     ..
- JSR KeepPPUTablesAt0                         ; A750: 20 67 D1     g.
- LDX language                                 ; A753: AE A8 04    ...
- LDA LACCE,X                                  ; A756: BD CE AC    ...
- LDY LACD2,X                                  ; A759: BC D2 AC    ...
- TAX                                          ; A75C: AA          .
- LDA #3                                       ; A75D: A9 03       ..
- BNE CA726                                    ; A75F: D0 C5       ..
+ LDX language
+ LDA LACBE,X
+ LDY LACC2,X
+ TAX
+ LDA #6
+ JSR subm_A917
+ JSR KeepPPUTablesAt0
+ LDX language
+ LDA LACC6,X
+ LDY LACCA,X
+ TAX
+ LDA #5
+ JSR subm_A917
+ JSR KeepPPUTablesAt0
+ LDX language
+ LDA LACCE,X
+ LDY LACD2,X
+ TAX
+ LDA #3
+ BNE CA726
 
-.sub_CA761
+\ ******************************************************************************
+\
+\       Name: subm_A761
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
 
- JSR subm_D8C5                                ; A761: 20 C5 D8     ..
- LDA #&FE                                     ; A764: A9 FE       ..
- STA tileNumber                               ; A766: 85 B8       ..
- LDA #&C8                                     ; A768: A9 C8       ..
- STA L03EF                                    ; A76A: 8D EF 03    ...
- STA L03F0                                    ; A76D: 8D F0 03    ...
- RTS                                          ; A770: 60          `
+.subm_A761
+
+ JSR subm_D8C5
+ LDA #&FE
+ STA tileNumber
+ LDA #&C8
+ STA L03EF
+ STA L03F0
+ RTS
 
 \ ******************************************************************************
 \
@@ -4395,89 +4486,93 @@ ENDMACRO
 \   Category: ???
 \    Summary: ???
 \
+\ ------------------------------------------------------------------------------
+\
+\ Other entry points:
+\
+\   GRIDSET+5           ???
+\
 \ ******************************************************************************
 
 .GRIDSET
 
- LDX #6                                       ; A771: A2 06       ..
- STX YP                                       ; A773: 8E FB 03    ...
+ LDX #6
+ STX YP
 
-.sub_CA776
-
- LDA setupPPUForIconBar                       ; A776: A5 E9       ..
- BPL CA783                                    ; A778: 10 09       ..
- LDA PPU_STATUS                               ; A77A: AD 02 20    ..
- ASL A                                        ; A77D: 0A          .
- BPL CA783                                    ; A77E: 10 03       ..
- JSR SetPPUTablesTo0                          ; A780: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CA783
+ LDA PPU_STATUS
+ ASL A
+ BPL CA783
+ JSR SetPPUTablesTo0
 
 .CA783
 
- LDX #&15                                     ; A783: A2 15       ..
- STX CNT                                      ; A785: 86 A8       ..
- LDX #0                                       ; A787: A2 00       ..
- STX XP                                       ; A789: 8E FA 03    ...
- LDY XC                                       ; A78C: A4 32       .2
+ LDX #&15
+ STX CNT
+ LDX #0
+ STX XP
+ LDY XC
 
 .CA78E
 
- LDA (XX19),Y                                 ; A78E: B1 61       .a
- BPL CA795                                    ; A790: 10 03       ..
- TAX                                          ; A792: AA          .
- LDA SC+1,X                                   ; A793: B5 08       ..
+ LDA (XX19),Y
+ BPL CA795
+ TAX
+ LDA SC+1,X
 
 .CA795
 
- SEC                                          ; A795: 38          8
- SBC #&20 ; ' '                               ; A796: E9 20       .
- STA S                                        ; A798: 85 99       ..
- ASL A                                        ; A79A: 0A          .
- ASL A                                        ; A79B: 0A          .
- ADC S                                        ; A79C: 65 99       e.
- BCS CA7D1                                    ; A79E: B0 31       .1
- TAY                                          ; A7A0: A8          .
- LDA LTDEF,Y                                  ; A7A1: B9 6F AB    .o.
- JSR GRS1                                     ; A7A4: 20 02 A8     ..
- LDA LAB70,Y                                  ; A7A7: B9 70 AB    .p.
- JSR GRS1                                     ; A7AA: 20 02 A8     ..
- LDA LAB71,Y                                  ; A7AD: B9 71 AB    .q.
- JSR GRS1                                     ; A7B0: 20 02 A8     ..
- LDA LAB72,Y                                  ; A7B3: B9 72 AB    .r.
- JSR GRS1                                     ; A7B6: 20 02 A8     ..
- LDA LAB73,Y                                  ; A7B9: B9 73 AB    .s.
- JSR GRS1                                     ; A7BC: 20 02 A8     ..
- INC XC                                       ; A7BF: E6 32       .2
- LDY XC                                       ; A7C1: A4 32       .2
- LDA XP                                       ; A7C3: AD FA 03    ...
- CLC                                          ; A7C6: 18          .
- ADC #3                                       ; A7C7: 69 03       i.
- STA XP                                       ; A7C9: 8D FA 03    ...
- DEC CNT                                      ; A7CC: C6 A8       ..
- BNE CA78E                                    ; A7CE: D0 BE       ..
- RTS                                          ; A7D0: 60          `
+ SEC
+ SBC #&20
+ STA S
+ ASL A
+ ASL A
+ ADC S
+ BCS CA7D1
+ TAY
+ LDA LTDEF,Y
+ JSR GRS1
+ LDA LAB70,Y
+ JSR GRS1
+ LDA LAB71,Y
+ JSR GRS1
+ LDA LAB72,Y
+ JSR GRS1
+ LDA LAB73,Y
+ JSR GRS1
+ INC XC
+ LDY XC
+ LDA XP
+ CLC
+ ADC #3
+ STA XP
+ DEC CNT
+ BNE CA78E
+ RTS
 
 .CA7D1
 
- TAY                                          ; A7D1: A8          .
- LDA LAC6F,Y                                  ; A7D2: B9 6F AC    .o.
- JSR GRS1                                     ; A7D5: 20 02 A8     ..
- LDA LAC70,Y                                  ; A7D8: B9 70 AC    .p.
- JSR GRS1                                     ; A7DB: 20 02 A8     ..
- LDA LAC71,Y                                  ; A7DE: B9 71 AC    .q.
- JSR GRS1                                     ; A7E1: 20 02 A8     ..
- LDA LAC72,Y                                  ; A7E4: B9 72 AC    .r.
- JSR GRS1                                     ; A7E7: 20 02 A8     ..
- LDA LAC73,Y                                  ; A7EA: B9 73 AC    .s.
- JSR GRS1                                     ; A7ED: 20 02 A8     ..
- INC XC                                       ; A7F0: E6 32       .2
- LDY XC                                       ; A7F2: A4 32       .2
- LDA XP                                       ; A7F4: AD FA 03    ...
- CLC                                          ; A7F7: 18          .
- ADC #3                                       ; A7F8: 69 03       i.
- STA XP                                       ; A7FA: 8D FA 03    ...
- DEC CNT                                      ; A7FD: C6 A8       ..
- BNE CA78E                                    ; A7FF: D0 8D       ..
- RTS                                          ; A801: 60          `
+ TAY
+ LDA LAC6F,Y
+ JSR GRS1
+ LDA LAC70,Y
+ JSR GRS1
+ LDA LAC71,Y
+ JSR GRS1
+ LDA LAC72,Y
+ JSR GRS1
+ LDA LAC73,Y
+ JSR GRS1
+ INC XC
+ LDY XC
+ LDA XP
+ CLC
+ ADC #3
+ STA XP
+ DEC CNT
+ BNE CA78E
+ RTS
 
 \ ******************************************************************************
 \
@@ -4490,71 +4585,71 @@ ENDMACRO
 
 .GRS1
 
- BEQ CA85E                                    ; A802: F0 5A       .Z
- STA R                                        ; A804: 85 98       ..
- STY P                                        ; A806: 84 2F       ./
- LDA setupPPUForIconBar                       ; A808: A5 E9       ..
- BPL CA815                                    ; A80A: 10 09       ..
- LDA PPU_STATUS                               ; A80C: AD 02 20    ..
- ASL A                                        ; A80F: 0A          .
- BPL CA815                                    ; A810: 10 03       ..
- JSR SetPPUTablesTo0                          ; A812: 20 6D D0     m.
+ BEQ CA85E
+ STA R
+ STY P
+ LDA setupPPUForIconBar
+ BPL CA815
+ LDA PPU_STATUS
+ ASL A
+ BPL CA815
+ JSR SetPPUTablesTo0
 
 .CA815
 
- LDA K%+23,X                            ; A815: BD 17 06    ...
- BEQ CA821                                    ; A818: F0 07       ..
- INX                                          ; A81A: E8          .
- CPX #&F0                                     ; A81B: E0 F0       ..
- BNE CA815                                    ; A81D: D0 F6       ..
- LDX #0                                       ; A81F: A2 00       ..
+ LDA K%+23,X
+ BEQ CA821
+ INX
+ CPX #&F0
+ BNE CA815
+ LDX #0
 
 .CA821
 
- LDA R                                        ; A821: A5 98       ..
- AND #&0F                                     ; A823: 29 0F       ).
- TAY                                          ; A825: A8          .
- LDA NOFX,Y                                   ; A826: B9 96 AC    ...
- CLC                                          ; A829: 18          .
- ADC XP                                       ; A82A: 6D FA 03    m..
- STA BUF+32,X                                 ; A82D: 9D 27 05    .'.
- LDA YP                                       ; A830: AD FB 03    ...
- SEC                                          ; A833: 38          8
- SBC NOFY,Y                                   ; A834: F9 A2 AC    ...
- STA K%+23,X                            ; A837: 9D 17 06    ...
- LDA R                                        ; A83A: A5 98       ..
- LSR A                                        ; A83C: 4A          J
- LSR A                                        ; A83D: 4A          J
- LSR A                                        ; A83E: 4A          J
- LSR A                                        ; A83F: 4A          J
- TAY                                          ; A840: A8          .
- LDA NOFX,Y                                   ; A841: B9 96 AC    ...
- CLC                                          ; A844: 18          .
- ADC XP                                       ; A845: 6D FA 03    m..
- STA K%+263,X                           ; A848: 9D 07 07    ...
- LDA YP                                       ; A84B: AD FB 03    ...
- SEC                                          ; A84E: 38          8
- SBC NOFY,Y                                   ; A84F: F9 A2 AC    ...
- ASL A                                        ; A852: 0A          .
- ASL A                                        ; A853: 0A          .
- ASL A                                        ; A854: 0A          .
- ASL A                                        ; A855: 0A          .
- ORA K%+23,X                            ; A856: 1D 17 06    ...
- STA K%+23,X                            ; A859: 9D 17 06    ...
- LDY P                                        ; A85C: A4 2F       ./
+ LDA R
+ AND #&0F
+ TAY
+ LDA NOFX,Y
+ CLC
+ ADC XP
+ STA BUF+32,X
+ LDA YP
+ SEC
+ SBC NOFY,Y
+ STA K%+23,X
+ LDA R
+ LSR A
+ LSR A
+ LSR A
+ LSR A
+ TAY
+ LDA NOFX,Y
+ CLC
+ ADC XP
+ STA K%+263,X
+ LDA YP
+ SEC
+ SBC NOFY,Y
+ ASL A
+ ASL A
+ ASL A
+ ASL A
+ ORA K%+23,X
+ STA K%+23,X
+ LDY P
 
 .CA85E
 
- LDA setupPPUForIconBar                       ; A85E: A5 E9       ..
- BPL CA86B                                    ; A860: 10 09       ..
- LDA PPU_STATUS                               ; A862: AD 02 20    ..
- ASL A                                        ; A865: 0A          .
- BPL CA86B                                    ; A866: 10 03       ..
- JSR SetPPUTablesTo0                          ; A868: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CA86B
+ LDA PPU_STATUS
+ ASL A
+ BPL CA86B
+ JSR SetPPUTablesTo0
 
 .CA86B
 
- RTS                                          ; A86B: 60          `
+ RTS
 
 \ ******************************************************************************
 \
@@ -4567,44 +4662,44 @@ ENDMACRO
 
 .subm_A86C
 
- STX XX19                                     ; A86C: 86 61       .a
- STY INF+1                                    ; A86E: 84 62       .b
- LDA setupPPUForIconBar                       ; A870: A5 E9       ..
- BPL CA87D                                    ; A872: 10 09       ..
- LDA PPU_STATUS                               ; A874: AD 02 20    ..
- ASL A                                        ; A877: 0A          .
- BPL CA87D                                    ; A878: 10 03       ..
- JSR SetPPUTablesTo0                          ; A87A: 20 6D D0     m.
+ STX XX19
+ STY INF+1
+ LDA setupPPUForIconBar
+ BPL CA87D
+ LDA PPU_STATUS
+ ASL A
+ BPL CA87D
+ JSR SetPPUTablesTo0
 
 .CA87D
 
- LDY #&F0                                     ; A87D: A0 F0       ..
- LDA #0                                       ; A87F: A9 00       ..
+ LDY #&F0
+ LDA #0
 
 .loop_CA881
 
- STA K%+22,Y                            ; A881: 99 16 06    ...
- DEY                                          ; A884: 88          .
- BNE loop_CA881                               ; A885: D0 FA       ..
- LDX #0                                       ; A887: A2 00       ..
- STX XP                                       ; A889: 8E FA 03    ...
- LDA #&0F                                     ; A88C: A9 0F       ..
- STA YP                                       ; A88E: 8D FB 03    ...
- LDY #0                                       ; A891: A0 00       ..
- STY XC                                       ; A893: 84 32       .2
- LDA #4                                       ; A895: A9 04       ..
- STA LASCT                                    ; A897: 8D 8F 03    ...
+ STA K%+22,Y
+ DEY
+ BNE loop_CA881
+ LDX #0
+ STX XP
+ LDA #&0F
+ STA YP
+ LDY #0
+ STY XC
+ LDA #4
+ STA LASCT
 
 .loop_CA89A
 
- JSR sub_CA776                                ; A89A: 20 76 A7     v.
- LDA YP                                       ; A89D: AD FB 03    ...
- SEC                                          ; A8A0: 38          8
- SBC #3                                       ; A8A1: E9 03       ..
- STA YP                                       ; A8A3: 8D FB 03    ...
- DEC LASCT                                    ; A8A6: CE 8F 03    ...
- BNE loop_CA89A                               ; A8A9: D0 EF       ..
- RTS                                          ; A8AB: 60          `
+ JSR GRIDSET+5
+ LDA YP
+ SEC
+ SBC #3
+ STA YP
+ DEC LASCT
+ BNE loop_CA89A
+ RTS
 
 \ ******************************************************************************
 \
@@ -4617,79 +4712,79 @@ ENDMACRO
 
 .subm_A8AC
 
- LDY #&0F                                     ; A8AC: A0 0F       ..
+ LDY #&0F
 
 .CA8AE
 
- LDA setupPPUForIconBar                       ; A8AE: A5 E9       ..
- BPL CA8BB                                    ; A8B0: 10 09       ..
- LDA PPU_STATUS                               ; A8B2: AD 02 20    ..
- ASL A                                        ; A8B5: 0A          .
- BPL CA8BB                                    ; A8B6: 10 03       ..
- JSR SetPPUTablesTo0                          ; A8B8: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CA8BB
+ LDA PPU_STATUS
+ ASL A
+ BPL CA8BB
+ JSR SetPPUTablesTo0
 
 .CA8BB
 
- STY T                                        ; A8BB: 84 9A       ..
- TYA                                          ; A8BD: 98          .
- ASL A                                        ; A8BE: 0A          .
- STA R                                        ; A8BF: 85 98       ..
- ASL A                                        ; A8C1: 0A          .
- STA S                                        ; A8C2: 85 99       ..
- ASL A                                        ; A8C4: 0A          .
- ADC #&1F                                     ; A8C5: 69 1F       i.
- SBC L03FC                                    ; A8C7: ED FC 03    ...
- STA BUF+16,Y                                 ; A8CA: 99 17 05    ...
- BPL CA8F8                                    ; A8CD: 10 29       .)
- STA Q                                        ; A8CF: 85 97       ..
- LDA L03FC                                    ; A8D1: AD FC 03    ...
- LSR A                                        ; A8D4: 4A          J
- LSR A                                        ; A8D5: 4A          J
- ADC #&25 ; '%'                               ; A8D6: 69 25       i%
- SBC R                                        ; A8D8: E5 98       ..
+ STY T
+ TYA
+ ASL A
+ STA R
+ ASL A
+ STA S
+ ASL A
+ ADC #&1F
+ SBC L03FC
+ STA BUF+16,Y
+ BPL CA8F8
+ STA Q
+ LDA L03FC
+ LSR A
+ LSR A
+ ADC #&25
+ SBC R
 
 .CA8DA
 
- CMP Q                                        ; A8DA: C5 97       ..
- BCS CA8EF                                    ; A8DC: B0 11       ..
- JSR LL28                                     ; A8DE: 20 91 FA     ..
- LSR R                                        ; A8E1: 46 98       F.
- LDA #&48 ; 'H'                               ; A8E3: A9 48       .H
- CLC                                          ; A8E5: 18          .
- ADC R                                        ; A8E6: 65 98       e.
- STA BUF,Y                                    ; A8E8: 99 07 05    ...
- DEY                                          ; A8EB: 88          .
- BPL CA8AE                                    ; A8EC: 10 C0       ..
- RTS                                          ; A8EE: 60          `
+ CMP Q
+ BCS CA8EF
+ JSR LL28
+ LSR R
+ LDA #&48
+ CLC
+ ADC R
+ STA BUF,Y
+ DEY
+ BPL CA8AE
+ RTS
 
 .CA8EF
 
- LDA #&FF                                     ; A8EF: A9 FF       ..
- STA BUF,Y                                    ; A8F1: 99 07 05    ...
- DEY                                          ; A8F4: 88          .
- BPL CA8AE                                    ; A8F5: 10 B7       ..
- RTS                                          ; A8F7: 60          `
+ LDA #&FF
+ STA BUF,Y
+ DEY
+ BPL CA8AE
+ RTS
 
 .CA8F8
 
- ASL A                                        ; A8F8: 0A          .
- BPL CA908                                    ; A8F9: 10 0D       ..
- STA Q                                        ; A8FB: 85 97       ..
- LDA L03FC                                    ; A8FD: AD FC 03    ...
- LSR A                                        ; A900: 4A          J
- ADC #&49 ; 'I'                               ; A901: 69 49       iI
- SBC S                                        ; A903: E5 99       ..
- JMP CA8DA                                    ; A905: 4C DA A8    L..
+ ASL A
+ BPL CA908
+ STA Q
+ LDA L03FC
+ LSR A
+ ADC #&49
+ SBC S
+ JMP CA8DA
 
 .CA908
 
- ASL A                                        ; A908: 0A          .
- STA Q                                        ; A909: 85 97       ..
- LDA L03FC                                    ; A90B: AD FC 03    ...
- ADC #&90                                     ; A90E: 69 90       i.
- SBC S                                        ; A910: E5 99       ..
- SBC S                                        ; A912: E5 99       ..
- JMP CA8DA                                    ; A914: 4C DA A8    L..
+ ASL A
+ STA Q
+ LDA L03FC
+ ADC #&90
+ SBC S
+ SBC S
+ JMP CA8DA
 
 \ ******************************************************************************
 \
@@ -4702,81 +4797,81 @@ ENDMACRO
 
 .subm_A917
 
- PHA                                          ; A917: 48          H
- JSR subm_A86C                                ; A918: 20 6C A8     l.
- LDA #&28 ; '('                               ; A91B: A9 28       .(
- STA visibleColour                            ; A91D: 85 34       .4
- LDA #0                                       ; A91F: A9 00       ..
- STA L0300                                    ; A921: 8D 00 03    ...
- LDA #2                                       ; A924: A9 02       ..
- STA L0402                                    ; A926: 8D 02 04    ...
- JSR CAC5C_b3                                 ; A929: 20 71 F1     q.
- LDA #&28 ; '('                               ; A92C: A9 28       .(
- STA L00CC                                    ; A92E: 85 CC       ..
- LDA #&A0                                     ; A930: A9 A0       ..
- STA L03FC                                    ; A932: 8D FC 03    ...
- JSR CA96E                                    ; A935: 20 6E A9     n.
- PLA                                          ; A938: 68          h
- STA LASCT                                    ; A939: 8D 8F 03    ...
+ PHA
+ JSR subm_A86C
+ LDA #&28
+ STA visibleColour
+ LDA #0
+ STA L0300
+ LDA #2
+ STA L0402
+ JSR CAC5C_b3
+ LDA #&28
+ STA L00CC
+ LDA #&A0
+ STA L03FC
+ JSR CA96E
+ PLA
+ STA LASCT
 
 .loop_CA93C
 
- LDA #&17                                     ; A93C: A9 17       ..
- STA L03FC                                    ; A93E: 8D FC 03    ...
- JSR subm_A9A2                                ; A941: 20 A2 A9     ..
- JSR GRIDSET                                  ; A944: 20 71 A7     q.
- JSR CA96E                                    ; A947: 20 6E A9     n.
- DEC LASCT                                    ; A94A: CE 8F 03    ...
- BNE loop_CA93C                               ; A94D: D0 ED       ..
- LDA #4                                       ; A94F: A9 04       ..
- STA LASCT                                    ; A951: 8D 8F 03    ...
+ LDA #&17
+ STA L03FC
+ JSR subm_A9A2
+ JSR GRIDSET
+ JSR CA96E
+ DEC LASCT
+ BNE loop_CA93C
+ LDA #4
+ STA LASCT
 
 .loop_CA954
 
- LDA #&17                                     ; A954: A9 17       ..
- STA L03FC                                    ; A956: 8D FC 03    ...
- JSR subm_A9A2                                ; A959: 20 A2 A9     ..
- JSR CA96E                                    ; A95C: 20 6E A9     n.
- DEC LASCT                                    ; A95F: CE 8F 03    ...
- BNE loop_CA954                               ; A962: D0 F0       ..
- LDA #0                                       ; A964: A9 00       ..
- STA L0402                                    ; A966: 8D 02 04    ...
- LDA #&2C ; ','                               ; A969: A9 2C       .,
- STA visibleColour                            ; A96B: 85 34       .4
- RTS                                          ; A96D: 60          `
+ LDA #&17
+ STA L03FC
+ JSR subm_A9A2
+ JSR CA96E
+ DEC LASCT
+ BNE loop_CA954
+ LDA #0
+ STA L0402
+ LDA #&2C
+ STA visibleColour
+ RTS
 
 .CA96E
 
- LDA controller1A                             ; A96E: AD B2 04    ...
- BMI CA97F                                    ; A971: 30 0C       0.
- LDA L0465                                    ; A973: AD 65 04    .e.
- CMP #&0C                                     ; A976: C9 0C       ..
- BNE CA984                                    ; A978: D0 0A       ..
- LDA #0                                       ; A97A: A9 00       ..
- STA L0465                                    ; A97C: 8D 65 04    .e.
+ LDA controller1A
+ BMI CA97F
+ LDA L0465
+ CMP #&0C
+ BNE CA984
+ LDA #0
+ STA L0465
 
 .CA97F
 
- LDA #9                                       ; A97F: A9 09       ..
- STA L0402                                    ; A981: 8D 02 04    ...
+ LDA #9
+ STA L0402
 
 .CA984
 
- JSR ChangeDrawingPhase                       ; A984: 20 E1 D8     ..
- JSR subm_AAE5                                ; A987: 20 E5 AA     ..
- JSR subm_D975                                    ; A98A: 20 75 D9     u.
- LDA L0465                                    ; A98D: AD 65 04    .e.
- BEQ CA995                                    ; A990: F0 03       ..
- JSR CB1D4_b0+5                                    ; A992: 20 E7 EC     ..
+ JSR ChangeDrawingPhase
+ JSR subm_AAE5
+ JSR subm_D975
+ LDA L0465
+ BEQ CA995
+ JSR CB1D4_b0
 
 .CA995
 
- LDA L03FC                                    ; A995: AD FC 03    ...
- SEC                                          ; A998: 38          8
- SBC L0402                                    ; A999: ED 02 04    ...
- STA L03FC                                    ; A99C: 8D FC 03    ...
- BCS CA96E                                    ; A99F: B0 CD       ..
- RTS                                          ; A9A1: 60          `
+ LDA L03FC
+ SEC
+ SBC L0402
+ STA L03FC
+ BCS CA96E
+ RTS
 
 \ ******************************************************************************
 \
@@ -4789,248 +4884,248 @@ ENDMACRO
 
 .subm_A9A2
 
- LDA setupPPUForIconBar                       ; A9A2: A5 E9       ..
- BPL CA9AF                                    ; A9A4: 10 09       ..
- LDA PPU_STATUS                               ; A9A6: AD 02 20    ..
- ASL A                                        ; A9A9: 0A          .
- BPL CA9AF                                    ; A9AA: 10 03       ..
- JSR SetPPUTablesTo0                          ; A9AC: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CA9AF
+ LDA PPU_STATUS
+ ASL A
+ BPL CA9AF
+ JSR SetPPUTablesTo0
 
 .CA9AF
 
- LDY #&10                                     ; A9AF: A0 10       ..
+ LDY #&10
 
 .loop_CA9B1
 
- LDA K%+246,Y                           ; A9B1: B9 F6 06    ...
- BEQ CA9C1                                    ; A9B4: F0 0B       ..
- CLC                                          ; A9B6: 18          .
- ADC #&33 ; '3'                               ; A9B7: 69 33       i3
- BCC CA9BE                                    ; A9B9: 90 03       ..
- LDA #0                                       ; A9BB: A9 00       ..
- CLC                                          ; A9BD: 18          .
+ LDA K%+246,Y
+ BEQ CA9C1
+ CLC
+ ADC #&33
+ BCC CA9BE
+ LDA #0
+ CLC
 
 .CA9BE
 
- STA K%+246,Y                           ; A9BE: 99 F6 06    ...
+ STA K%+246,Y
 
 .CA9C1
 
- DEY                                          ; A9C1: 88          .
- BNE loop_CA9B1                               ; A9C2: D0 ED       ..
- LDA setupPPUForIconBar                       ; A9C4: A5 E9       ..
- BPL CA9D1                                    ; A9C6: 10 09       ..
- LDA PPU_STATUS                               ; A9C8: AD 02 20    ..
- ASL A                                        ; A9CB: 0A          .
- BPL CA9D1                                    ; A9CC: 10 03       ..
- JSR SetPPUTablesTo0                          ; A9CE: 20 6D D0     m.
+ DEY
+ BNE loop_CA9B1
+ LDA setupPPUForIconBar
+ BPL CA9D1
+ LDA PPU_STATUS
+ ASL A
+ BPL CA9D1
+ JSR SetPPUTablesTo0
 
 .CA9D1
 
- LDY #&20 ; ' '                               ; A9D1: A0 20       .
+ LDY #&20
 
 .loop_CA9D3
 
- LDA K%+214,Y                           ; A9D3: B9 D6 06    ...
- BEQ CA9E3                                    ; A9D6: F0 0B       ..
- CLC                                          ; A9D8: 18          .
- ADC #&33 ; '3'                               ; A9D9: 69 33       i3
- BCC CA9E0                                    ; A9DB: 90 03       ..
- LDA #0                                       ; A9DD: A9 00       ..
- CLC                                          ; A9DF: 18          .
+ LDA K%+214,Y
+ BEQ CA9E3
+ CLC
+ ADC #&33
+ BCC CA9E0
+ LDA #0
+ CLC
 
 .CA9E0
 
- STA K%+214,Y                           ; A9E0: 99 D6 06    ...
+ STA K%+214,Y
 
 .CA9E3
 
- DEY                                          ; A9E3: 88          .
- BNE loop_CA9D3                               ; A9E4: D0 ED       ..
- LDA setupPPUForIconBar                       ; A9E6: A5 E9       ..
- BPL CA9F3                                    ; A9E8: 10 09       ..
- LDA PPU_STATUS                               ; A9EA: AD 02 20    ..
- ASL A                                        ; A9ED: 0A          .
- BPL CA9F3                                    ; A9EE: 10 03       ..
- JSR SetPPUTablesTo0                          ; A9F0: 20 6D D0     m.
+ DEY
+ BNE loop_CA9D3
+ LDA setupPPUForIconBar
+ BPL CA9F3
+ LDA PPU_STATUS
+ ASL A
+ BPL CA9F3
+ JSR SetPPUTablesTo0
 
 .CA9F3
 
- LDY #&20 ; ' '                               ; A9F3: A0 20       .
+ LDY #&20
 
 .loop_CA9F5
 
- LDA K%+182,Y                           ; A9F5: B9 B6 06    ...
- BEQ CAA05                                    ; A9F8: F0 0B       ..
- CLC                                          ; A9FA: 18          .
- ADC #&33 ; '3'                               ; A9FB: 69 33       i3
- BCC CAA02                                    ; A9FD: 90 03       ..
- LDA #0                                       ; A9FF: A9 00       ..
- CLC                                          ; AA01: 18          .
+ LDA K%+182,Y
+ BEQ CAA05
+ CLC
+ ADC #&33
+ BCC CAA02
+ LDA #0
+ CLC
 
 .CAA02
 
- STA K%+182,Y                           ; AA02: 99 B6 06    ...
+ STA K%+182,Y
 
 .CAA05
 
- DEY                                          ; AA05: 88          .
- BNE loop_CA9F5                               ; AA06: D0 ED       ..
- LDA setupPPUForIconBar                       ; AA08: A5 E9       ..
- BPL CAA15                                    ; AA0A: 10 09       ..
- LDA PPU_STATUS                               ; AA0C: AD 02 20    ..
- ASL A                                        ; AA0F: 0A          .
- BPL CAA15                                    ; AA10: 10 03       ..
- JSR SetPPUTablesTo0                          ; AA12: 20 6D D0     m.
+ DEY
+ BNE loop_CA9F5
+ LDA setupPPUForIconBar
+ BPL CAA15
+ LDA PPU_STATUS
+ ASL A
+ BPL CAA15
+ JSR SetPPUTablesTo0
 
 .CAA15
 
- LDY #&20 ; ' '                               ; AA15: A0 20       .
+ LDY #&20
 
 .loop_CAA17
 
- LDA K%+150,Y                           ; AA17: B9 96 06    ...
- BEQ CAA27                                    ; AA1A: F0 0B       ..
- CLC                                          ; AA1C: 18          .
- ADC #&33 ; '3'                               ; AA1D: 69 33       i3
- BCC CAA24                                    ; AA1F: 90 03       ..
- LDA #0                                       ; AA21: A9 00       ..
- CLC                                          ; AA23: 18          .
+ LDA K%+150,Y
+ BEQ CAA27
+ CLC
+ ADC #&33
+ BCC CAA24
+ LDA #0
+ CLC
 
 .CAA24
 
- STA K%+150,Y                           ; AA24: 99 96 06    ...
+ STA K%+150,Y
 
 .CAA27
 
- DEY                                          ; AA27: 88          .
- BNE loop_CAA17                               ; AA28: D0 ED       ..
- LDA setupPPUForIconBar                       ; AA2A: A5 E9       ..
- BPL CAA37                                    ; AA2C: 10 09       ..
- LDA PPU_STATUS                               ; AA2E: AD 02 20    ..
- ASL A                                        ; AA31: 0A          .
- BPL CAA37                                    ; AA32: 10 03       ..
- JSR SetPPUTablesTo0                          ; AA34: 20 6D D0     m.
+ DEY
+ BNE loop_CAA17
+ LDA setupPPUForIconBar
+ BPL CAA37
+ LDA PPU_STATUS
+ ASL A
+ BPL CAA37
+ JSR SetPPUTablesTo0
 
 .CAA37
 
- LDY #&20 ; ' '                               ; AA37: A0 20       .
+ LDY #&20
 
 .loop_CAA39
 
- LDA K%+118,Y                           ; AA39: B9 76 06    .v.
- BEQ CAA49                                    ; AA3C: F0 0B       ..
- CLC                                          ; AA3E: 18          .
- ADC #&33 ; '3'                               ; AA3F: 69 33       i3
- BCC CAA46                                    ; AA41: 90 03       ..
- LDA #0                                       ; AA43: A9 00       ..
- CLC                                          ; AA45: 18          .
+ LDA K%+118,Y
+ BEQ CAA49
+ CLC
+ ADC #&33
+ BCC CAA46
+ LDA #0
+ CLC
 
 .CAA46
 
- STA K%+118,Y                           ; AA46: 99 76 06    .v.
+ STA K%+118,Y
 
 .CAA49
 
- DEY                                          ; AA49: 88          .
- BNE loop_CAA39                               ; AA4A: D0 ED       ..
- LDA setupPPUForIconBar                       ; AA4C: A5 E9       ..
- BPL CAA59                                    ; AA4E: 10 09       ..
- LDA PPU_STATUS                               ; AA50: AD 02 20    ..
- ASL A                                        ; AA53: 0A          .
- BPL CAA59                                    ; AA54: 10 03       ..
- JSR SetPPUTablesTo0                          ; AA56: 20 6D D0     m.
+ DEY
+ BNE loop_CAA39
+ LDA setupPPUForIconBar
+ BPL CAA59
+ LDA PPU_STATUS
+ ASL A
+ BPL CAA59
+ JSR SetPPUTablesTo0
 
 .CAA59
 
- LDY #&20 ; ' '                               ; AA59: A0 20       .
+ LDY #&20
 
 .loop_CAA5B
 
- LDA K%+86,Y                            ; AA5B: B9 56 06    .V.
- BEQ CAA6B                                    ; AA5E: F0 0B       ..
- CLC                                          ; AA60: 18          .
- ADC #&33 ; '3'                               ; AA61: 69 33       i3
- BCC CAA68                                    ; AA63: 90 03       ..
- LDA #0                                       ; AA65: A9 00       ..
- CLC                                          ; AA67: 18          .
+ LDA K%+86,Y
+ BEQ CAA6B
+ CLC
+ ADC #&33
+ BCC CAA68
+ LDA #0
+ CLC
 
 .CAA68
 
- STA K%+86,Y                            ; AA68: 99 56 06    .V.
+ STA K%+86,Y
 
 .CAA6B
 
- DEY                                          ; AA6B: 88          .
- BNE loop_CAA5B                               ; AA6C: D0 ED       ..
- LDA setupPPUForIconBar                       ; AA6E: A5 E9       ..
- BPL CAA7B                                    ; AA70: 10 09       ..
- LDA PPU_STATUS                               ; AA72: AD 02 20    ..
- ASL A                                        ; AA75: 0A          .
- BPL CAA7B                                    ; AA76: 10 03       ..
- JSR SetPPUTablesTo0                          ; AA78: 20 6D D0     m.
+ DEY
+ BNE loop_CAA5B
+ LDA setupPPUForIconBar
+ BPL CAA7B
+ LDA PPU_STATUS
+ ASL A
+ BPL CAA7B
+ JSR SetPPUTablesTo0
 
 .CAA7B
 
- LDY #&20 ; ' '                               ; AA7B: A0 20       .
+ LDY #&20
 
 .loop_CAA7D
 
- LDA K%+54,Y                            ; AA7D: B9 36 06    .6.
- BEQ CAA8D                                    ; AA80: F0 0B       ..
- CLC                                          ; AA82: 18          .
- ADC #&33 ; '3'                               ; AA83: 69 33       i3
- BCC CAA8A                                    ; AA85: 90 03       ..
- LDA #0                                       ; AA87: A9 00       ..
- CLC                                          ; AA89: 18          .
+ LDA K%+54,Y
+ BEQ CAA8D
+ CLC
+ ADC #&33
+ BCC CAA8A
+ LDA #0
+ CLC
 
 .CAA8A
 
- STA K%+54,Y                            ; AA8A: 99 36 06    .6.
+ STA K%+54,Y
 
 .CAA8D
 
- DEY                                          ; AA8D: 88          .
- BNE loop_CAA7D                               ; AA8E: D0 ED       ..
- LDA setupPPUForIconBar                       ; AA90: A5 E9       ..
- BPL CAA9D                                    ; AA92: 10 09       ..
- LDA PPU_STATUS                               ; AA94: AD 02 20    ..
- ASL A                                        ; AA97: 0A          .
- BPL CAA9D                                    ; AA98: 10 03       ..
- JSR SetPPUTablesTo0                          ; AA9A: 20 6D D0     m.
+ DEY
+ BNE loop_CAA7D
+ LDA setupPPUForIconBar
+ BPL CAA9D
+ LDA PPU_STATUS
+ ASL A
+ BPL CAA9D
+ JSR SetPPUTablesTo0
 
 .CAA9D
 
- LDY #&20 ; ' '                               ; AA9D: A0 20       .
+ LDY #&20
 
 .loop_CAA9F
 
- LDA K%+22,Y                            ; AA9F: B9 16 06    ...
- BEQ CAAAF                                    ; AAA2: F0 0B       ..
- CLC                                          ; AAA4: 18          .
- ADC #&33 ; '3'                               ; AAA5: 69 33       i3
- BCC CAAAC                                    ; AAA7: 90 03       ..
- LDA #0                                       ; AAA9: A9 00       ..
- CLC                                          ; AAAB: 18          .
+ LDA K%+22,Y
+ BEQ CAAAF
+ CLC
+ ADC #&33
+ BCC CAAAC
+ LDA #0
+ CLC
 
 .CAAAC
 
- STA K%+22,Y                            ; AAAC: 99 16 06    ...
+ STA K%+22,Y
 
 .CAAAF
 
- DEY                                          ; AAAF: 88          .
- BNE loop_CAA9F                               ; AAB0: D0 ED       ..
- LDA setupPPUForIconBar                       ; AAB2: A5 E9       ..
- BPL CAABF                                    ; AAB4: 10 09       ..
- LDA PPU_STATUS                               ; AAB6: AD 02 20    ..
- ASL A                                        ; AAB9: 0A          .
- BPL CAABF                                    ; AABA: 10 03       ..
- JSR SetPPUTablesTo0                          ; AABC: 20 6D D0     m.
+ DEY
+ BNE loop_CAA9F
+ LDA setupPPUForIconBar
+ BPL CAABF
+ LDA PPU_STATUS
+ ASL A
+ BPL CAABF
+ JSR SetPPUTablesTo0
 
 .CAABF
 
- RTS                                          ; AABF: 60          `
+ RTS
 
 \ ******************************************************************************
 \
@@ -5043,33 +5138,33 @@ ENDMACRO
 
 .subm_AAC0
 
- SEC                                          ; AAC0: 38          8
- SBC #&20 ; ' '                               ; AAC1: E9 20       .
- BCS CAAD7                                    ; AAC3: B0 12       ..
- EOR #&FF                                     ; AAC5: 49 FF       I.
- ADC #1                                       ; AAC7: 69 01       i.
- JSR LL28                                     ; AAC9: 20 91 FA     ..
- LDA #&80                                     ; AACC: A9 80       ..
- SEC                                          ; AACE: 38          8
- SBC R                                        ; AACF: E5 98       ..
- TAX                                          ; AAD1: AA          .
- LDA #0                                       ; AAD2: A9 00       ..
- SBC #0                                       ; AAD4: E9 00       ..
- RTS                                          ; AAD6: 60          `
+ SEC
+ SBC #&20
+ BCS CAAD7
+ EOR #&FF
+ ADC #1
+ JSR LL28
+ LDA #&80
+ SEC
+ SBC R
+ TAX
+ LDA #0
+ SBC #0
+ RTS
 
 .CAAD7
 
- JSR LL28                                     ; AAD7: 20 91 FA     ..
- LDA R                                        ; AADA: A5 98       ..
- CLC                                          ; AADC: 18          .
- ADC #&80                                     ; AADD: 69 80       i.
- TAX                                          ; AADF: AA          .
- LDA #0                                       ; AAE0: A9 00       ..
- ADC #0                                       ; AAE2: 69 00       i.
+ JSR LL28
+ LDA R
+ CLC
+ ADC #&80
+ TAX
+ LDA #0
+ ADC #0
 
 .loop_CAAE4
 
- RTS                                          ; AAE4: 60          `
+ RTS
 
 \ ******************************************************************************
 \
@@ -5082,82 +5177,82 @@ ENDMACRO
 
 .subm_AAE5
 
- JSR subm_A8AC                                ; AAE5: 20 AC A8     ..
- LDY #&FF                                     ; AAE8: A0 FF       ..
+ JSR subm_A8AC
+ LDY #&FF
 
 .CAAEA
 
- LDA setupPPUForIconBar                       ; AAEA: A5 E9       ..
- BPL CAAF7                                    ; AAEC: 10 09       ..
- LDA PPU_STATUS                               ; AAEE: AD 02 20    ..
- ASL A                                        ; AAF1: 0A          .
- BPL CAAF7                                    ; AAF2: 10 03       ..
- JSR SetPPUTablesTo0                          ; AAF4: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CAAF7
+ LDA PPU_STATUS
+ ASL A
+ BPL CAAF7
+ JSR SetPPUTablesTo0
 
 .CAAF7
 
- INY                                          ; AAF7: C8          .
- CPY #&F0                                     ; AAF8: C0 F0       ..
- BEQ loop_CAAE4                               ; AAFA: F0 E8       ..
- LDA K%+23,Y                            ; AAFC: B9 17 06    ...
- BEQ CAAEA                                    ; AAFF: F0 E9       ..
- AND #&0F                                     ; AB01: 29 0F       ).
- STA Y1                                       ; AB03: 85 72       .r
- TAX                                          ; AB05: AA          .
- ASL A                                        ; AB06: 0A          .
- ASL A                                        ; AB07: 0A          .
- ASL A                                        ; AB08: 0A          .
- SEC                                          ; AB09: 38          8
- SBC L03FC                                    ; AB0A: ED FC 03    ...
- BCC CAAEA                                    ; AB0D: 90 DB       ..
- STY YP                                       ; AB0F: 8C FB 03    ...
- LDA BUF+16,X                                 ; AB12: BD 17 05    ...
- STA Q                                        ; AB15: 85 97       ..
- LDA BUF+32,Y                                 ; AB17: B9 27 05    .'.
- JSR subm_AAC0                                ; AB1A: 20 C0 AA     ..
- STX XX15                                     ; AB1D: 86 71       .q
- LDX Y1                                       ; AB1F: A6 72       .r
- STA Y1                                       ; AB21: 85 72       .r
- LDA BUF,X                                    ; AB23: BD 07 05    ...
- STA X2                                       ; AB26: 85 73       .s
- LDA #0                                       ; AB28: A9 00       ..
- STA Y2                                       ; AB2A: 85 74       .t
- LDA K%+23,Y                            ; AB2C: B9 17 06    ...
- LSR A                                        ; AB2F: 4A          J
- LSR A                                        ; AB30: 4A          J
- LSR A                                        ; AB31: 4A          J
- LSR A                                        ; AB32: 4A          J
- STA XX12+1                                   ; AB33: 85 78       .x
- TAX                                          ; AB35: AA          .
- ASL A                                        ; AB36: 0A          .
- ASL A                                        ; AB37: 0A          .
- ASL A                                        ; AB38: 0A          .
- SEC                                          ; AB39: 38          8
- SBC L03FC                                    ; AB3A: ED FC 03    ...
- BCC CAAEA                                    ; AB3D: 90 AB       ..
- LDA BUF,X                                    ; AB3F: BD 07 05    ...
- STA XX12                                     ; AB42: 85 77       .w
- LDA #0                                       ; AB44: A9 00       ..
- LDX XX12+1                                   ; AB46: A6 78       .x
- STA XX12+1                                   ; AB48: 85 78       .x
- LDA BUF+16,X                                 ; AB4A: BD 17 05    ...
- STA Q                                        ; AB4D: 85 97       ..
- LDA setupPPUForIconBar                       ; AB4F: A5 E9       ..
- BPL CAB5C                                    ; AB51: 10 09       ..
- LDA PPU_STATUS                               ; AB53: AD 02 20    ..
- ASL A                                        ; AB56: 0A          .
- BPL CAB5C                                    ; AB57: 10 03       ..
- JSR SetPPUTablesTo0                          ; AB59: 20 6D D0     m.
+ INY
+ CPY #&F0
+ BEQ loop_CAAE4
+ LDA K%+23,Y
+ BEQ CAAEA
+ AND #&0F
+ STA Y1
+ TAX
+ ASL A
+ ASL A
+ ASL A
+ SEC
+ SBC L03FC
+ BCC CAAEA
+ STY YP
+ LDA BUF+16,X
+ STA Q
+ LDA BUF+32,Y
+ JSR subm_AAC0
+ STX XX15
+ LDX Y1
+ STA Y1
+ LDA BUF,X
+ STA X2
+ LDA #0
+ STA Y2
+ LDA K%+23,Y
+ LSR A
+ LSR A
+ LSR A
+ LSR A
+ STA XX12+1
+ TAX
+ ASL A
+ ASL A
+ ASL A
+ SEC
+ SBC L03FC
+ BCC CAAEA
+ LDA BUF,X
+ STA XX12
+ LDA #0
+ LDX XX12+1
+ STA XX12+1
+ LDA BUF+16,X
+ STA Q
+ LDA setupPPUForIconBar
+ BPL CAB5C
+ LDA PPU_STATUS
+ ASL A
+ BPL CAB5C
+ JSR SetPPUTablesTo0
 
 .CAB5C
 
- LDA K%+263,Y                           ; AB5C: B9 07 07    ...
- JSR subm_AAC0                                ; AB5F: 20 C0 AA     ..
- STX XX15+4                                   ; AB62: 86 75       .u
- STA XX15+5                                   ; AB64: 85 76       .v
- JSR CLIP_b1                                  ; AB66: 20 80 F2     ..
- LDY YP                                       ; AB69: AC FB 03    ...
- JMP CAAEA                                    ; AB6C: 4C EA AA    L..
+ LDA K%+263,Y
+ JSR subm_AAC0
+ STX XX15+4
+ STA XX15+5
+ JSR CLIP_b1
+ LDY YP
+ JMP CAAEA
 
 \ ******************************************************************************
 \
@@ -5218,6 +5313,15 @@ ENDMACRO
  EQUB &02, &28, &68, &00, &06, &02, &25, &35  ; AC5B: 02 28 68... .(h
  EQUB &00, &06, &02, &28, &68, &48, &06, &02  ; AC63: 00 06 02... ...
  EQUB &25, &35, &48, &02                      ; AC6B: 25 35 48... %5H
+
+\ ******************************************************************************
+\
+\       Name: LAC6F
+\       Type: Variable
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
 
 .LAC6F
 
@@ -5411,19 +5515,19 @@ ENDMACRO
 
 .subm_B44C
 
- LDY #0                                       ; B44C: A0 00       ..
+ LDY #0
 
 .loop_CB44E
 
- LDA (V),Y                                    ; B44E: B1 63       .c
- BEQ CB458                                    ; B450: F0 06       ..
- JSR TT27_b2                                  ; B452: 20 01 F2     ..
- INY                                          ; B455: C8          .
- BNE loop_CB44E                               ; B456: D0 F6       ..
+ LDA (V),Y
+ BEQ CB458
+ JSR TT27_b2
+ INY
+ BNE loop_CB44E
 
 .CB458
 
- RTS                                          ; B458: 60          `
+ RTS
 
 \ ******************************************************************************
 \
@@ -5436,93 +5540,93 @@ ENDMACRO
 
 .subm_B459
 
- LDA #&BB                                     ; B459: A9 BB       ..
- JSR TT66_b0                                  ; B45B: 20 6E F2     n.
- LDA #&8B                                     ; B45E: A9 8B       ..
- STA QQ11                                     ; B460: 85 9E       ..
- LDY #0                                       ; B462: A0 00       ..
- STY L03EE                                    ; B464: 8C EE 03    ...
- STY QQ17                                     ; B467: 84 3C       .<
- STY YC                                       ; B469: 84 3B       .;
- LDX language                                 ; B46B: AE A8 04    ...
- LDA LB42C,X                                  ; B46E: BD 2C B4    .,.
- STA XC                                       ; B471: 85 32       .2
- LDA LB430,X                                  ; B473: BD 30 B4    .0.
- STA V                                        ; B476: 85 63       .c
- LDA LB433,X                                  ; B478: BD 33 B4    .3.
- STA V+1                                      ; B47B: 85 64       .d
- JSR subm_B44C                                ; B47D: 20 4C B4     L.
- LDA #&BB                                     ; B480: A9 BB       ..
- STA QQ11                                     ; B482: 85 9E       ..
- LDX language                                 ; B484: AE A8 04    ...
- LDA LB436,X                                  ; B487: BD 36 B4    .6.
- STA V                                        ; B48A: 85 63       .c
- LDA LB439,X                                  ; B48C: BD 39 B4    .9.
- STA V+1                                      ; B48F: 85 64       .d
- JSR subm_B44C                                ; B491: 20 4C B4     L.
- JSR NLIN4                                    ; B494: 20 73 F4     s.
- JSR subm_EB86                                ; B497: 20 86 EB     ..
- LDY #&14                                     ; B49A: A0 14       ..
- LDA #&39 ; '9'                               ; B49C: A9 39       .9
- STA T                                        ; B49E: 85 9A       ..
- LDX #0                                       ; B4A0: A2 00       ..
+ LDA #&BB
+ JSR TT66_b0
+ LDA #&8B
+ STA QQ11
+ LDY #0
+ STY L03EE
+ STY QQ17
+ STY YC
+ LDX language
+ LDA LB42C,X
+ STA XC
+ LDA LB430,X
+ STA V
+ LDA LB433,X
+ STA V+1
+ JSR subm_B44C
+ LDA #&BB
+ STA QQ11
+ LDX language
+ LDA LB436,X
+ STA V
+ LDA LB439,X
+ STA V+1
+ JSR subm_B44C
+ JSR NLIN4
+ JSR subm_EB86
+ LDY #&14
+ LDA #&39
+ STA T
+ LDX #0
 
 .CB4A2
 
- LDA #&22 ; '"'                               ; B4A2: A9 22       ."
- STA attrSprite0,Y                            ; B4A4: 99 02 02    ...
- LDA LB43C,X                                  ; B4A7: BD 3C B4    .<.
- BEQ CB4C6                                    ; B4AA: F0 1A       ..
- STA tileSprite0,Y                            ; B4AC: 99 01 02    ...
- LDA #&53 ; 'S'                               ; B4AF: A9 53       .S
- STA xSprite0,Y                               ; B4B1: 99 03 02    ...
- LDA T                                        ; B4B4: A5 9A       ..
- STA ySprite0,Y                               ; B4B6: 99 00 02    ...
- CLC                                          ; B4B9: 18          .
- ADC #8                                       ; B4BA: 69 08       i.
- STA T                                        ; B4BC: 85 9A       ..
- INY                                          ; B4BE: C8          .
- INY                                          ; B4BF: C8          .
- INY                                          ; B4C0: C8          .
- INY                                          ; B4C1: C8          .
- INX                                          ; B4C2: E8          .
- JMP CB4A2                                    ; B4C3: 4C A2 B4    L..
+ LDA #&22
+ STA attrSprite0,Y
+ LDA LB43C,X
+ BEQ CB4C6
+ STA tileSprite0,Y
+ LDA #&53
+ STA xSprite0,Y
+ LDA T
+ STA ySprite0,Y
+ CLC
+ ADC #8
+ STA T
+ INY
+ INY
+ INY
+ INY
+ INX
+ JMP CB4A2
 
 .CB4C6
 
- STY CNT                                      ; B4C6: 84 A8       ..
- LDY #7                                       ; B4C8: A0 07       ..
+ STY CNT
+ LDY #7
 
 .loop_CB4CA
 
- TYA                                          ; B4CA: 98          .
- ASL A                                        ; B4CB: 0A          .
- CLC                                          ; B4CC: 18          .
- ADC #6                                       ; B4CD: 69 06       i.
- STA YC                                       ; B4CF: 85 3B       .;
- LDX #&14                                     ; B4D1: A2 14       ..
- STX XC                                       ; B4D3: 86 32       .2
- JSR subm_B62C                                ; B4D5: 20 2C B6     ,.
- DEY                                          ; B4D8: 88          .
- BPL loop_CB4CA                               ; B4D9: 10 EF       ..
- JSR CB9F9_b4                                 ; B4DB: 20 8F ED     ..
- LDA #0                                       ; B4DE: A9 00       ..
+ TYA
+ ASL A
+ CLC
+ ADC #6
+ STA YC
+ LDX #&14
+ STX XC
+ JSR subm_B62C
+ DEY
+ BPL loop_CB4CA
+ JSR CB9F9_b4
+ LDA #0
 
 .loop_CB4E0
 
- CMP #8                                       ; B4E0: C9 08       ..
- BEQ CB4E7                                    ; B4E2: F0 03       ..
- JSR subm_B659                                ; B4E4: 20 59 B6     Y.
+ CMP #8
+ BEQ CB4E7
+ JSR subm_B659
 
 .CB4E7
 
- CLC                                          ; B4E7: 18          .
- ADC #1                                       ; B4E8: 69 01       i.
- CMP #9                                       ; B4EA: C9 09       ..
- BCC loop_CB4E0                               ; B4EC: 90 F2       ..
- JSR subm_B6BB                                ; B4EE: 20 BB B6     ..
- JSR C8926_b0                                    ; B4F1: 20 C0 F2     ..
- LDA #9                                       ; B4F4: A9 09       ..
+ CLC
+ ADC #1
+ CMP #9
+ BCC loop_CB4E0
+ JSR subm_B6BB
+ JSR C8926_b0
+ LDA #9
 
 \ ******************************************************************************
 \
@@ -5535,46 +5639,46 @@ ENDMACRO
 
 .subm_B4F6
 
- JSR SetupPPUForIconBar                       ; B4F6: 20 7D EC     }.
- LDX L04BA                                    ; B4F9: AE BA 04    ...
- BPL CB50F                                    ; B4FC: 10 11       ..
- JSR subm_B659                                ; B4FE: 20 59 B6     Y.
- CMP #9                                       ; B501: C9 09       ..
- BEQ CB50A                                    ; B503: F0 05       ..
- LDA #0                                       ; B505: A9 00       ..
- JMP CB50C                                    ; B507: 4C 0C B5    L..
+ JSR SetupPPUForIconBar
+ LDX L04BA
+ BPL CB50F
+ JSR subm_B659
+ CMP #9
+ BEQ CB50A
+ LDA #0
+ JMP CB50C
 
 .CB50A
 
- LDA #4                                       ; B50A: A9 04       ..
+ LDA #4
 
 .CB50C
 
- JMP subm_B577                                ; B50C: 4C 77 B5    Lw.
+ JMP subm_B577
 
 .CB50F
 
- LDX L04BB                                    ; B50F: AE BB 04    ...
- BPL CB525                                    ; B512: 10 11       ..
- JSR subm_B659                                ; B514: 20 59 B6     Y.
- CMP #9                                       ; B517: C9 09       ..
- BEQ CB520                                    ; B519: F0 05       ..
- LDA #0                                       ; B51B: A9 00       ..
- JMP CB522                                    ; B51D: 4C 22 B5    L".
+ LDX L04BB
+ BPL CB525
+ JSR subm_B659
+ CMP #9
+ BEQ CB520
+ LDA #0
+ JMP CB522
 
 .CB520
 
- LDA #4                                       ; B520: A9 04       ..
+ LDA #4
 
 .CB522
 
- JMP CB5CB                                    ; B522: 4C CB B5    L..
+ JMP CB5CB
 
 .CB525
 
- JSR subm_B52B                                ; B525: 20 2B B5     +.
- BCS subm_B4F6                                ; B528: B0 CC       ..
- RTS                                          ; B52A: 60          `
+ JSR subm_B52B
+ BCS subm_B4F6
+ RTS
 
 \ ******************************************************************************
 \
@@ -5587,43 +5691,43 @@ ENDMACRO
 
 .subm_B52B
 
- LDX L0465                                    ; B52B: AE 65 04    .e.
- BEQ CB53B                                    ; B52E: F0 0B       ..
- PHA                                          ; B530: 48          H
- CPX #7                                       ; B531: E0 07       ..
- BEQ CB53D                                    ; B533: F0 08       ..
- TXA                                          ; B535: 8A          .
- JSR CB1D4_b0+5                                    ; B536: 20 E7 EC     ..
- PLA                                          ; B539: 68          h
- RTS                                          ; B53A: 60          `
+ LDX L0465
+ BEQ CB53B
+ PHA
+ CPX #7
+ BEQ CB53D
+ TXA
+ JSR CB1D4_b0
+ PLA
+ RTS
 
 .CB53B
 
- SEC                                          ; B53B: 38          8
- RTS                                          ; B53C: 60          `
+ SEC
+ RTS
 
 .CB53D
 
- LDA COK                                      ; B53D: AD A6 03    ...
- BMI CB558                                    ; B540: 30 16       0.
- LDA #0                                       ; B542: A9 00       ..
- STA L0465                                    ; B544: 8D 65 04    .e.
- JSR CBB37_b6                                 ; B547: 20 2F F0     /.
- LDA L0465                                    ; B54A: AD 65 04    .e.
- BEQ CB553                                    ; B54D: F0 04       ..
- CMP #7                                       ; B54F: C9 07       ..
- BEQ CB53D                                    ; B551: F0 EA       ..
+ LDA COK
+ BMI CB558
+ LDA #0
+ STA L0465
+ JSR CBB37_b6
+ LDA L0465
+ BEQ CB553
+ CMP #7
+ BEQ CB53D
 
 .CB553
 
- LDA #6                                       ; B553: A9 06       ..
- STA L0465                                    ; B555: 8D 65 04    .e.
+ LDA #6
+ STA L0465
 
 .CB558
 
- CLC                                          ; B558: 18          .
- PLA                                          ; B559: 68          h
- RTS                                          ; B55A: 60          `
+ CLC
+ PLA
+ RTS
 
 \ ******************************************************************************
 \
@@ -5636,16 +5740,16 @@ ENDMACRO
 
 .subm_B55B
 
- PHA                                          ; B55B: 48          H
+ PHA
 
 .loop_CB55C
 
- JSR SetupPPUForIconBar                       ; B55C: 20 7D EC     }.
- LDA L04BA                                    ; B55F: AD BA 04    ...
- ORA L04BB                                    ; B562: 0D BB 04    ...
- BMI loop_CB55C                               ; B565: 30 F5       0.
- PLA                                          ; B567: 68          h
- RTS                                          ; B568: 60          `
+ JSR SetupPPUForIconBar
+ LDA L04BA
+ ORA L04BB
+ BMI loop_CB55C
+ PLA
+ RTS
 
 \ ******************************************************************************
 \
@@ -5658,11 +5762,11 @@ ENDMACRO
 
 .subm_B569
 
- LDA #9                                       ; B569: A9 09       ..
- JSR subm_B6BB                                ; B56B: 20 BB B6     ..
- JSR subm_B6C7                                ; B56E: 20 C7 B6     ..
- JSR subm_B55B                                ; B571: 20 5B B5     [.
- JMP subm_B4F6                                ; B574: 4C F6 B4    L..
+ LDA #9
+ JSR subm_B6BB
+ JSR subm_B6C7
+ JSR subm_B55B
+ JMP subm_B4F6
 
 \ ******************************************************************************
 \
@@ -5675,112 +5779,112 @@ ENDMACRO
 
 .subm_B577
 
- JSR subm_B6BB                                ; B577: 20 BB B6     ..
- JSR subm_B6C7                                ; B57A: 20 C7 B6     ..
- JSR subm_B55B                                ; B57D: 20 5B B5     [.
+ JSR subm_B6BB
+ JSR subm_B6C7
+ JSR subm_B55B
 
 .CB580
 
- JSR SetupPPUForIconBar                       ; B580: 20 7D EC     }.
- LDX controller1Up                            ; B583: AE AC 04    ...
- BPL CB598                                    ; B586: 10 10       ..
- CMP #0                                       ; B588: C9 00       ..
- BEQ CB598                                    ; B58A: F0 0C       ..
- JSR subm_B659                                ; B58C: 20 59 B6     Y.
- SEC                                          ; B58F: 38          8
- SBC #1                                       ; B590: E9 01       ..
- JSR subm_B6BB                                ; B592: 20 BB B6     ..
- JSR subm_B6C7                                ; B595: 20 C7 B6     ..
+ JSR SetupPPUForIconBar
+ LDX controller1Up
+ BPL CB598
+ CMP #0
+ BEQ CB598
+ JSR subm_B659
+ SEC
+ SBC #1
+ JSR subm_B6BB
+ JSR subm_B6C7
 
 .CB598
 
- LDX controller1Down                          ; B598: AE AA 04    ...
- BPL CB5AD                                    ; B59B: 10 10       ..
- CMP #7                                       ; B59D: C9 07       ..
- BCS CB5AD                                    ; B59F: B0 0C       ..
- JSR subm_B659                                ; B5A1: 20 59 B6     Y.
- CLC                                          ; B5A4: 18          .
- ADC #1                                       ; B5A5: 69 01       i.
- JSR subm_B6BB                                ; B5A7: 20 BB B6     ..
- JSR subm_B6C7                                ; B5AA: 20 C7 B6     ..
+ LDX controller1Down
+ BPL CB5AD
+ CMP #7
+ BCS CB5AD
+ JSR subm_B659
+ CLC
+ ADC #1
+ JSR subm_B6BB
+ JSR subm_B6C7
 
 .CB5AD
 
- LDX L04BA                                    ; B5AD: AE BA 04    ...
- BPL CB5B8                                    ; B5B0: 10 06       ..
- JSR subm_B659                                ; B5B2: 20 59 B6     Y.
- JMP CB5CB                                    ; B5B5: 4C CB B5    L..
+ LDX L04BA
+ BPL CB5B8
+ JSR subm_B659
+ JMP CB5CB
 
 .CB5B8
 
- LDX L04BB                                    ; B5B8: AE BB 04    ...
- BPL CB5C5                                    ; B5BB: 10 08       ..
- JSR subm_B659                                ; B5BD: 20 59 B6     Y.
- LDA #4                                       ; B5C0: A9 04       ..
- JMP subm_B569                                ; B5C2: 4C 69 B5    Li.
+ LDX L04BB
+ BPL CB5C5
+ JSR subm_B659
+ LDA #4
+ JMP subm_B569
 
 .CB5C5
 
- JSR subm_B52B                                ; B5C5: 20 2B B5     +.
- BCS CB580                                    ; B5C8: B0 B6       ..
- RTS                                          ; B5CA: 60          `
+ JSR subm_B52B
+ BCS CB580
+ RTS
 
 .CB5CB
 
- JSR subm_B6D0                                ; B5CB: 20 D0 B6     ..
- JSR subm_B6C7                                ; B5CE: 20 C7 B6     ..
- JSR subm_B55B                                ; B5D1: 20 5B B5     [.
+ JSR subm_B6D0
+ JSR subm_B6C7
+ JSR subm_B55B
 
 .CB5D4
 
- JSR SetupPPUForIconBar                       ; B5D4: 20 7D EC     }.
- LDX controller1Up                            ; B5D7: AE AC 04    ...
- BPL CB5EC                                    ; B5DA: 10 10       ..
- CMP #0                                       ; B5DC: C9 00       ..
- BEQ CB5EC                                    ; B5DE: F0 0C       ..
- JSR subm_B6E8                                ; B5E0: 20 E8 B6     ..
- SEC                                          ; B5E3: 38          8
- SBC #1                                       ; B5E4: E9 01       ..
- JSR subm_B6D0                                ; B5E6: 20 D0 B6     ..
- JSR subm_B6C7                                ; B5E9: 20 C7 B6     ..
+ JSR SetupPPUForIconBar
+ LDX controller1Up
+ BPL CB5EC
+ CMP #0
+ BEQ CB5EC
+ JSR subm_B6E8
+ SEC
+ SBC #1
+ JSR subm_B6D0
+ JSR subm_B6C7
 
 .CB5EC
 
- LDX controller1Down                          ; B5EC: AE AA 04    ...
- BPL CB601                                    ; B5EF: 10 10       ..
- CMP #7                                       ; B5F1: C9 07       ..
- BCS CB601                                    ; B5F3: B0 0C       ..
- JSR subm_B6E8                                ; B5F5: 20 E8 B6     ..
- CLC                                          ; B5F8: 18          .
- ADC #1                                       ; B5F9: 69 01       i.
- JSR subm_B6D0                                ; B5FB: 20 D0 B6     ..
- JSR subm_B6C7                                ; B5FE: 20 C7 B6     ..
+ LDX controller1Down
+ BPL CB601
+ CMP #7
+ BCS CB601
+ JSR subm_B6E8
+ CLC
+ ADC #1
+ JSR subm_B6D0
+ JSR subm_B6C7
 
 .CB601
 
- LDX L04BA                                    ; B601: AE BA 04    ...
- BPL CB618                                    ; B604: 10 12       ..
- CMP #4                                       ; B606: C9 04       ..
- BNE CB618                                    ; B608: D0 0E       ..
- JSR subm_B6E8                                ; B60A: 20 E8 B6     ..
- LDA #9                                       ; B60D: A9 09       ..
- JSR subm_B854                                ; B60F: 20 54 B8     T.
- JSR CAC5C_b3                                 ; B612: 20 71 F1     q.
- JMP subm_B569                                ; B615: 4C 69 B5    Li.
+ LDX L04BA
+ BPL CB618
+ CMP #4
+ BNE CB618
+ JSR subm_B6E8
+ LDA #9
+ JSR subm_B854
+ JSR CAC5C_b3
+ JMP subm_B569
 
 .CB618
 
- LDX L04BB                                    ; B618: AE BB 04    ...
- BPL CB626                                    ; B61B: 10 09       ..
- JSR subm_B6E8                                ; B61D: 20 E8 B6     ..
- JSR subm_B854                                ; B620: 20 54 B8     T.
- JMP subm_B577                                ; B623: 4C 77 B5    Lw.
+ LDX L04BB
+ BPL CB626
+ JSR subm_B6E8
+ JSR subm_B854
+ JMP subm_B577
 
 .CB626
 
- JSR subm_B52B                                ; B626: 20 2B B5     +.
- BCS CB5D4                                    ; B629: B0 A9       ..
- RTS                                          ; B62B: 60          `
+ JSR subm_B52B
+ BCS CB5D4
+ RTS
 
 \ ******************************************************************************
 \
@@ -5793,30 +5897,30 @@ ENDMACRO
 
 .subm_B62C
 
- STY YSAV2                                    ; B62C: 8C 82 04    ...
- LDY CNT                                      ; B62F: A4 A8       ..
- LDA #&6D ; 'm'                               ; B631: A9 6D       .m
- STA tileSprite0,Y                            ; B633: 99 01 02    ...
- LDA XC                                       ; B636: A5 32       .2
- ASL A                                        ; B638: 0A          .
- ASL A                                        ; B639: 0A          .
- ASL A                                        ; B63A: 0A          .
- ADC #0                                       ; B63B: 69 00       i.
- STA xSprite0,Y                               ; B63D: 99 03 02    ...
- LDA #&22 ; '"'                               ; B640: A9 22       ."
- STA attrSprite0,Y                            ; B642: 99 02 02    ...
- LDA YC                                       ; B645: A5 3B       .;
- ASL A                                        ; B647: 0A          .
- ASL A                                        ; B648: 0A          .
- ASL A                                        ; B649: 0A          .
- ADC #6                                       ; B64A: 69 06       i.
- STA ySprite0,Y                               ; B64C: 99 00 02    ...
- TYA                                          ; B64F: 98          .
- CLC                                          ; B650: 18          .
- ADC #4                                       ; B651: 69 04       i.
- STA CNT                                      ; B653: 85 A8       ..
- LDY YSAV2                                    ; B655: AC 82 04    ...
- RTS                                          ; B658: 60          `
+ STY YSAV2
+ LDY CNT
+ LDA #&6D
+ STA tileSprite0,Y
+ LDA XC
+ ASL A
+ ASL A
+ ASL A
+ ADC #0
+ STA xSprite0,Y
+ LDA #&22
+ STA attrSprite0,Y
+ LDA YC
+ ASL A
+ ASL A
+ ASL A
+ ADC #6
+ STA ySprite0,Y
+ TYA
+ CLC
+ ADC #4
+ STA CNT
+ LDY YSAV2
+ RTS
 
 \ ******************************************************************************
 \
@@ -5829,82 +5933,91 @@ ENDMACRO
 
 .subm_B659
 
- JSR subm_B786                                ; B659: 20 86 B7     ..
- PHA                                          ; B65C: 48          H
- CMP #8                                       ; B65D: C9 08       ..
- BCC CB680                                    ; B65F: 90 1F       ..
- LDX #1                                       ; B661: A2 01       ..
- STX XC                                       ; B663: 86 32       .2
- CMP #9                                       ; B665: C9 09       ..
- BCC CB679                                    ; B667: 90 10       ..
- BEQ CB672                                    ; B669: F0 07       ..
- LDA #&12                                     ; B66B: A9 12       ..
- STA YC                                       ; B66D: 85 3B       .;
- JMP CB68A                                    ; B66F: 4C 8A B6    L..
+ JSR subm_B786
+ PHA
+ CMP #8
+ BCC CB680
+ LDX #1
+ STX XC
+ CMP #9
+ BCC CB679
+ BEQ CB672
+ LDA #&12
+ STA YC
+ JMP CB68A
 
 .CB672
 
- LDA #&0E                                     ; B672: A9 0E       ..
- STA YC                                       ; B674: 85 3B       .;
- JMP CB68A                                    ; B676: 4C 8A B6    L..
+ LDA #&0E
+ STA YC
+ JMP CB68A
 
 .CB679
 
- LDA #6                                       ; B679: A9 06       ..
- STA YC                                       ; B67B: 85 3B       .;
- JMP CB68A                                    ; B67D: 4C 8A B6    L..
+ LDA #6
+ STA YC
+ JMP CB68A
 
 .CB680
 
- ASL A                                        ; B680: 0A          .
- CLC                                          ; B681: 18          .
- ADC #6                                       ; B682: 69 06       i.
- STA YC                                       ; B684: 85 3B       .;
- LDA #&15                                     ; B686: A9 15       ..
- STA XC                                       ; B688: 85 32       .2
+ ASL A
+ CLC
+ ADC #6
+ STA YC
+ LDA #&15
+ STA XC
 
 .CB68A
 
- PLA                                          ; B68A: 68          h
+ PLA
 
-.sub_CB68B
+\ ******************************************************************************
+\
+\       Name: subm_B68B
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
 
- PHA                                          ; B68B: 48          H
- LDY #0                                       ; B68C: A0 00       ..
+.subm_B68B
+
+ PHA
+ LDY #0
 
 .loop_CB68E
 
- LDA BUF,Y                                    ; B68E: B9 07 05    ...
- JSR DASC_b2                                  ; B691: 20 E6 F1     ..
- INY                                          ; B694: C8          .
- CPY #7                                       ; B695: C0 07       ..
- BCC loop_CB68E                               ; B697: 90 F5       ..
- LDX #0                                       ; B699: A2 00       ..
- LDA BUF+7                                    ; B69B: AD 0E 05    ...
- AND #&7F                                     ; B69E: 29 7F       ).
- SEC                                          ; B6A0: 38          8
+ LDA BUF,Y
+ JSR DASC_b2
+ INY
+ CPY #7
+ BCC loop_CB68E
+ LDX #0
+ LDA BUF+7
+ AND #&7F
+ SEC
 
 .loop_CB6A1
 
- SBC #&0A                                     ; B6A1: E9 0A       ..
- INX                                          ; B6A3: E8          .
- BCS loop_CB6A1                               ; B6A4: B0 FB       ..
- TAY                                          ; B6A6: A8          .
- LDA #&20 ; ' '                               ; B6A7: A9 20       .
- DEX                                          ; B6A9: CA          .
- BEQ CB6AF                                    ; B6AA: F0 03       ..
- TXA                                          ; B6AC: 8A          .
- ADC #&30 ; '0'                               ; B6AD: 69 30       i0
+ SBC #&0A
+ INX
+ BCS loop_CB6A1
+ TAY
+ LDA #&20
+ DEX
+ BEQ CB6AF
+ TXA
+ ADC #&30
 
 .CB6AF
 
- JSR DASC_b2                                  ; B6AF: 20 E6 F1     ..
- TYA                                          ; B6B2: 98          .
- CLC                                          ; B6B3: 18          .
- ADC #&3A ; ':'                               ; B6B4: 69 3A       i:
- JSR DASC_b2                                  ; B6B6: 20 E6 F1     ..
- PLA                                          ; B6B9: 68          h
- RTS                                          ; B6BA: 60          `
+ JSR DASC_b2
+ TYA
+ CLC
+ ADC #&3A
+ JSR DASC_b2
+ PLA
+ RTS
 
 \ ******************************************************************************
 \
@@ -5917,12 +6030,12 @@ ENDMACRO
 
 .subm_B6BB
 
- LDX #2                                       ; B6BB: A2 02       ..
- STX L0037                                    ; B6BD: 86 37       .7
- JSR subm_B659                                ; B6BF: 20 59 B6     Y.
- LDX #1                                       ; B6C2: A2 01       ..
- STX L0037                                    ; B6C4: 86 37       .7
- RTS                                          ; B6C6: 60          `
+ LDX #2
+ STX L0037
+ JSR subm_B659
+ LDX #1
+ STX L0037
+ RTS
 
 \ ******************************************************************************
 \
@@ -5935,11 +6048,11 @@ ENDMACRO
 
 .subm_B6C7
 
- PHA                                          ; B6C7: 48          H
- JSR C8980_b0                                 ; B6C8: 20 86 F1     ..
- JSR subm_D8C5                                ; B6CB: 20 C5 D8     ..
- PLA                                          ; B6CE: 68          h
- RTS                                          ; B6CF: 60          `
+ PHA
+ JSR C8980_b0
+ JSR subm_D8C5
+ PLA
+ RTS
 
 \ ******************************************************************************
 \
@@ -5952,20 +6065,20 @@ ENDMACRO
 
 .subm_B6D0
 
- LDX #2                                       ; B6D0: A2 02       ..
- STX L0037                                    ; B6D2: 86 37       .7
- LDX #&0B                                     ; B6D4: A2 0B       ..
- STX XC                                       ; B6D6: 86 32       .2
- PHA                                          ; B6D8: 48          H
- ASL A                                        ; B6D9: 0A          .
- CLC                                          ; B6DA: 18          .
- ADC #6                                       ; B6DB: 69 06       i.
- STA YC                                       ; B6DD: 85 3B       .;
- PLA                                          ; B6DF: 68          h
- JSR sub_CB68B                                ; B6E0: 20 8B B6     ..
- LDX #1                                       ; B6E3: A2 01       ..
- STX L0037                                    ; B6E5: 86 37       .7
- RTS                                          ; B6E7: 60          `
+ LDX #2
+ STX L0037
+ LDX #&0B
+ STX XC
+ PHA
+ ASL A
+ CLC
+ ADC #6
+ STA YC
+ PLA
+ JSR subm_B68B
+ LDX #1
+ STX L0037
+ RTS
 
 \ ******************************************************************************
 \
@@ -5978,28 +6091,28 @@ ENDMACRO
 
 .subm_B6E8
 
- LDX #&0B                                     ; B6E8: A2 0B       ..
- STX XC                                       ; B6EA: 86 32       .2
- PHA                                          ; B6EC: 48          H
- ASL A                                        ; B6ED: 0A          .
- CLC                                          ; B6EE: 18          .
- ADC #6                                       ; B6EF: 69 06       i.
- STA YC                                       ; B6F1: 85 3B       .;
- JSR subm_DBD8                                ; B6F3: 20 D8 DB     ..
- LDA SC                                       ; B6F6: A5 07       ..
- CLC                                          ; B6F8: 18          .
- ADC XC                                       ; B6F9: 65 32       e2
- STA SC                                       ; B6FB: 85 07       ..
- LDY #8                                       ; B6FD: A0 08       ..
- LDA #0                                       ; B6FF: A9 00       ..
+ LDX #&0B
+ STX XC
+ PHA
+ ASL A
+ CLC
+ ADC #6
+ STA YC
+ JSR subm_DBD8
+ LDA SC
+ CLC
+ ADC XC
+ STA SC
+ LDY #8
+ LDA #0
 
 .loop_CB701
 
- STA (SC),Y                                   ; B701: 91 07       ..
- DEY                                          ; B703: 88          .
- BPL loop_CB701                               ; B704: 10 FB       ..
- PLA                                          ; B706: 68          h
- RTS                                          ; B707: 60          `
+ STA (SC),Y
+ DEY
+ BPL loop_CB701
+ PLA
+ RTS
 
 \ ******************************************************************************
 \
@@ -6059,20 +6172,20 @@ ENDMACRO
 
 .subm_B778
 
- PHA                                          ; B778: 48          H
+ PHA
 
 .loop_CB779
 
- LDX #&4E ; 'N'                               ; B779: A2 4E       .N
+ LDX #&4E
 
 .loop_CB77B
 
- LDA LB89C,X                                  ; B77B: BD 9C B8    ...
- STA BUF,X                                    ; B77E: 9D 07 05    ...
- DEX                                          ; B781: CA          .
- BPL loop_CB77B                               ; B782: 10 F7       ..
- PLA                                          ; B784: 68          h
- RTS                                          ; B785: 60          `
+ LDA LB89C,X
+ STA BUF,X
+ DEX
+ BPL loop_CB77B
+ PLA
+ RTS
 
 \ ******************************************************************************
 \
@@ -6085,104 +6198,104 @@ ENDMACRO
 
 .subm_B786
 
- PHA                                          ; B786: 48          H
- JSR SetupPPUForIconBar                       ; B787: 20 7D EC     }.
- CMP #9                                       ; B78A: C9 09       ..
- BEQ CB7E7                                    ; B78C: F0 59       .Y
- CMP #8                                       ; B78E: C9 08       ..
- BEQ loop_CB779                               ; B790: F0 E7       ..
- JSR subm_B833                                ; B792: 20 33 B8     3.
- LDY #&48 ; 'H'                               ; B795: A0 48       .H
+ PHA
+ JSR SetupPPUForIconBar
+ CMP #9
+ BEQ CB7E7
+ CMP #8
+ BEQ loop_CB779
+ JSR subm_B833
+ LDY #&48
 
 .CB797
 
- LDA setupPPUForIconBar                       ; B797: A5 E9       ..
- BPL CB7A4                                    ; B799: 10 09       ..
- LDA PPU_STATUS                               ; B79B: AD 02 20    ..
- ASL A                                        ; B79E: 0A          .
- BPL CB7A4                                    ; B79F: 10 03       ..
- JSR SetPPUTablesTo0                          ; B7A1: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CB7A4
+ LDA PPU_STATUS
+ ASL A
+ BPL CB7A4
+ JSR SetPPUTablesTo0
 
 .CB7A4
 
- LDA (Q),Y                                    ; B7A4: B1 97       ..
- EOR #&F0                                     ; B7A6: 49 F0       I.
- STA SC2+1                                    ; B7A8: 85 BB       ..
- LDA (S),Y                                    ; B7AA: B1 99       ..
- EOR #&0F                                     ; B7AC: 49 0F       I.
- STA SC2                                      ; B7AE: 85 BA       ..
- LDA (SC),Y                                   ; B7B0: B1 07       ..
- CMP SC2+1                                    ; B7B2: C5 BB       ..
- BEQ CB7C0                                    ; B7B4: F0 0A       ..
- CMP SC2                                      ; B7B6: C5 BA       ..
- BEQ CB7C0                                    ; B7B8: F0 06       ..
- LDA SC2+1                                    ; B7BA: A5 BB       ..
- CMP SC2                                      ; B7BC: C5 BA       ..
- BNE CB7FF                                    ; B7BE: D0 3F       .?
+ LDA (Q),Y
+ EOR #&F0
+ STA SC2+1
+ LDA (S),Y
+ EOR #&0F
+ STA SC2
+ LDA (SC),Y
+ CMP SC2+1
+ BEQ CB7C0
+ CMP SC2
+ BEQ CB7C0
+ LDA SC2+1
+ CMP SC2
+ BNE CB7FF
 
 .CB7C0
 
- STA BUF,Y                                    ; B7C0: 99 07 05    ...
- STA (SC),Y                                   ; B7C3: 91 07       ..
- EOR #&0F                                     ; B7C5: 49 0F       I.
- STA (S),Y                                    ; B7C7: 91 99       ..
- EOR #&FF                                     ; B7C9: 49 FF       I.
- STA (Q),Y                                    ; B7CB: 91 97       ..
- DEY                                          ; B7CD: 88          .
- BPL CB797                                    ; B7CE: 10 C7       ..
- LDA BUF+17                                   ; B7D0: AD 18 05    ...
- ASL A                                        ; B7D3: 0A          .
- ASL A                                        ; B7D4: 0A          .
- ASL A                                        ; B7D5: 0A          .
- TAY                                          ; B7D6: A8          .
- LDX #0                                       ; B7D7: A2 00       ..
+ STA BUF,Y
+ STA (SC),Y
+ EOR #&0F
+ STA (S),Y
+ EOR #&FF
+ STA (Q),Y
+ DEY
+ BPL CB797
+ LDA BUF+17
+ ASL A
+ ASL A
+ ASL A
+ TAY
+ LDX #0
 
 .loop_CB7D9
 
- LDA LB708,Y                                  ; B7D9: B9 08 B7    ...
- STA BUF+73,X                                 ; B7DC: 9D 50 05    .P.
- INY                                          ; B7DF: C8          .
- INX                                          ; B7E0: E8          .
- CPX #6                                       ; B7E1: E0 06       ..
- BNE loop_CB7D9                               ; B7E3: D0 F4       ..
- PLA                                          ; B7E5: 68          h
- RTS                                          ; B7E6: 60          `
+ LDA LB708,Y
+ STA BUF+73,X
+ INY
+ INX
+ CPX #6
+ BNE loop_CB7D9
+ PLA
+ RTS
 
 .CB7E7
 
- LDA NAME+7                                   ; B7E7: AD 9D 03    ...
- AND #&7F                                     ; B7EA: 29 7F       ).
- STA NAME+7                                   ; B7EC: 8D 9D 03    ...
- LDX #&4E ; 'N'                               ; B7EF: A2 4E       .N
+ LDA NAME+7
+ AND #&7F
+ STA NAME+7
+ LDX #&4E
 
 .loop_CB7F1
 
- LDA NAME,X                                   ; B7F1: BD 96 03    ...
- STA L7800,X                                  ; B7F4: 9D 00 78    ..x
- STA BUF,X                                    ; B7F7: 9D 07 05    ...
- DEX                                          ; B7FA: CA          .
- BPL loop_CB7F1                               ; B7FB: 10 F4       ..
- PLA                                          ; B7FD: 68          h
- RTS                                          ; B7FE: 60          `
+ LDA NAME,X
+ STA L7800,X
+ STA BUF,X
+ DEX
+ BPL loop_CB7F1
+ PLA
+ RTS
 
 .CB7FF
 
- JSR subm_B778                                ; B7FF: 20 78 B7     x.
- LDA #&20 ; ' '                               ; B802: A9 20       .
- LDY #6                                       ; B804: A0 06       ..
+ JSR subm_B778
+ LDA #&20
+ LDY #6
 
 .loop_CB806
 
- STA BUF,Y                                    ; B806: 99 07 05    ...
- DEY                                          ; B809: 88          .
- BPL loop_CB806                               ; B80A: 10 FA       ..
- LDA #0                                       ; B80C: A9 00       ..
- STA BUF+7                                    ; B80E: 8D 0E 05    ...
- PLA                                          ; B811: 68          h
- PHA                                          ; B812: 48          H
- JSR subm_B854                                ; B813: 20 54 B8     T.
- PLA                                          ; B816: 68          h
- RTS                                          ; B817: 60          `
+ STA BUF,Y
+ DEY
+ BPL loop_CB806
+ LDA #0
+ STA BUF+7
+ PLA
+ PHA
+ JSR subm_B854
+ PLA
+ RTS
 
 \ ******************************************************************************
 \
@@ -6195,25 +6308,25 @@ ENDMACRO
 
 .subm_B818
 
- LDX #7                                       ; B818: A2 07       ..
+ LDX #7
 
 .loop_CB81A
 
- TXA                                          ; B81A: 8A          .
- PHA                                          ; B81B: 48          H
- JSR subm_B833                                ; B81C: 20 33 B8     3.
- LDY #&0A                                     ; B81F: A0 0A       ..
- LDA #1                                       ; B821: A9 01       ..
- STA (SC),Y                                   ; B823: 91 07       ..
- LDA #3                                       ; B825: A9 03       ..
- STA (Q),Y                                    ; B827: 91 97       ..
- LDA #7                                       ; B829: A9 07       ..
- STA (S),Y                                    ; B82B: 91 99       ..
- PLA                                          ; B82D: 68          h
- TAX                                          ; B82E: AA          .
- DEX                                          ; B82F: CA          .
- BPL loop_CB81A                               ; B830: 10 E8       ..
- RTS                                          ; B832: 60          `
+ TXA
+ PHA
+ JSR subm_B833
+ LDY #&0A
+ LDA #1
+ STA (SC),Y
+ LDA #3
+ STA (Q),Y
+ LDA #7
+ STA (S),Y
+ PLA
+ TAX
+ DEX
+ BPL loop_CB81A
+ RTS
 
 \ ******************************************************************************
 \
@@ -6226,21 +6339,21 @@ ENDMACRO
 
 .subm_B833
 
- ASL A                                        ; B833: 0A          .
- TAX                                          ; B834: AA          .
- LDA LB748,X                                  ; B835: BD 48 B7    .H.
- STA SC                                       ; B838: 85 07       ..
- LDA LB758,X                                  ; B83A: BD 58 B7    .X.
- STA Q                                        ; B83D: 85 97       ..
- LDA LB768,X                                  ; B83F: BD 68 B7    .h.
- STA S                                        ; B842: 85 99       ..
- LDA LB749,X                                  ; B844: BD 49 B7    .I.
- STA SC+1                                     ; B847: 85 08       ..
- LDA LB759,X                                  ; B849: BD 59 B7    .Y.
- STA R                                        ; B84C: 85 98       ..
- LDA LB769,X                                  ; B84E: BD 69 B7    .i.
- STA T                                        ; B851: 85 9A       ..
- RTS                                          ; B853: 60          `
+ ASL A
+ TAX
+ LDA LB748,X
+ STA SC
+ LDA LB758,X
+ STA Q
+ LDA LB768,X
+ STA S
+ LDA LB749,X
+ STA SC+1
+ LDA LB759,X
+ STA R
+ LDA LB769,X
+ STA T
+ RTS
 
 \ ******************************************************************************
 \
@@ -6253,27 +6366,27 @@ ENDMACRO
 
 .subm_B854
 
- PHA                                          ; B854: 48          H
- CMP #9                                       ; B855: C9 09       ..
- BEQ CB879                                    ; B857: F0 20       .
- JSR subm_B833                                ; B859: 20 33 B8     3.
- LDA BUF+7                                    ; B85C: AD 0E 05    ...
- AND #&7F                                     ; B85F: 29 7F       ).
- STA BUF+7                                    ; B861: 8D 0E 05    ...
- LDY #&48 ; 'H'                               ; B864: A0 48       .H
+ PHA
+ CMP #9
+ BEQ CB879
+ JSR subm_B833
+ LDA BUF+7
+ AND #&7F
+ STA BUF+7
+ LDY #&48
 
 .loop_CB866
 
- LDA BUF,Y                                    ; B866: B9 07 05    ...
- STA (SC),Y                                   ; B869: 91 07       ..
- EOR #&0F                                     ; B86B: 49 0F       I.
- STA (S),Y                                    ; B86D: 91 99       ..
- EOR #&FF                                     ; B86F: 49 FF       I.
- STA (Q),Y                                    ; B871: 91 97       ..
- DEY                                          ; B873: 88          .
- BPL loop_CB866                               ; B874: 10 F0       ..
- PLA                                          ; B876: 68          h
- RTS                                          ; B877: 60          `
+ LDA BUF,Y
+ STA (SC),Y
+ EOR #&0F
+ STA (S),Y
+ EOR #&FF
+ STA (Q),Y
+ DEY
+ BPL loop_CB866
+ PLA
+ RTS
 
 \ ******************************************************************************
 \
@@ -6286,22 +6399,22 @@ ENDMACRO
 
 .subm_B878
 
- PHA                                          ; B878: 48          H
+ PHA
 
 .CB879
 
- LDX #&4E ; 'N'                               ; B879: A2 4E       .N
+ LDX #&4E
 
 .loop_CB87B
 
- LDA BUF,X                                    ; B87B: BD 07 05    ...
- STA L7800,X                                  ; B87E: 9D 00 78    ..x
- STA NAME,X                                   ; B881: 9D 96 03    ...
- DEX                                          ; B884: CA          .
- BPL loop_CB87B                               ; B885: 10 F4       ..
- JSR BR1_b0                                   ; B887: 20 45 F2     E.
- PLA                                          ; B88A: 68          h
- RTS                                          ; B88B: 60          `
+ LDA BUF,X
+ STA L7800,X
+ STA NAME,X
+ DEX
+ BPL loop_CB87B
+ JSR BR1_b0
+ PLA
+ RTS
 
 \ ******************************************************************************
 \
@@ -6314,18 +6427,18 @@ ENDMACRO
 
 .subm_B88C
 
- LDA #7                                       ; B88C: A9 07       ..
+ LDA #7
 
 .loop_CB88E
 
- PHA                                          ; B88E: 48          H
- JSR KeepPPUTablesAt0                         ; B88F: 20 67 D1     g.
- PLA                                          ; B892: 68          h
- JSR subm_B786                                ; B893: 20 86 B7     ..
- SEC                                          ; B896: 38          8
- SBC #1                                       ; B897: E9 01       ..
- BPL loop_CB88E                               ; B899: 10 F3       ..
- RTS                                          ; B89B: 60          `
+ PHA
+ JSR KeepPPUTablesAt0
+ PLA
+ JSR subm_B786
+ SEC
+ SBC #1
+ BPL loop_CB88E
+ RTS
 
 \ ******************************************************************************
 \
@@ -6363,16 +6476,16 @@ ENDMACRO
 
 .subm_B8FE
 
- JSR subm_B90D6                               ; B8FE: 20 0D B9     ..
- LDX #&4F ; 'O'                               ; B901: A2 4F       .O
+ JSR subm_B90D6
+ LDX #&4F
 
 .loop_CB903
 
- LDA nameBuffer1+1023,X                       ; B903: BD FF 77    ..w
- STA L0395,X                                  ; B906: 9D 95 03    ...
- DEX                                          ; B909: CA          .
- BNE loop_CB903                               ; B90A: D0 F7       ..
- RTS                                          ; B90C: 60          `
+ LDA nameBuffer1+1023,X
+ STA L0395,X
+ DEX
+ BNE loop_CB903
+ RTS
 
 \ ******************************************************************************
 \
@@ -6385,15 +6498,15 @@ ENDMACRO
 
 .subm_B90D6
 
- LDY #&5E ; '^'                               ; B90D: A0 5E       .^
+ LDY #&5E
 
 .loop_CB90F
 
- LDA LB89C,Y                                  ; B90F: B9 9C B8    ...
- STA L7800,Y                                  ; B912: 99 00 78    ..x
- DEY                                          ; B915: 88          .
- BPL loop_CB90F                               ; B916: 10 F7       ..
- RTS                                          ; B918: 60          `
+ LDA LB89C,Y
+ STA L7800,Y
+ DEY
+ BPL loop_CB90F
+ RTS
 
 \ ******************************************************************************
 \
@@ -6406,70 +6519,70 @@ ENDMACRO
 
 .subm_B919
 
- LDA K+1                                      ; B919: A5 7E       .~
- LSR A                                        ; B91B: 4A          J
- STA XX2+1                                    ; B91C: 85 3E       .>
- LDA K+3                                      ; B91E: A5 80       ..
- SEC                                          ; B920: 38          8
- SBC XX2+1                                    ; B921: E5 3E       .>
- CLC                                          ; B923: 18          .
- ADC #1                                       ; B924: 69 01       i.
- STA K3                                       ; B926: 85 3D       .=
- JSR sub_CB932                                ; B928: 20 32 B9     2.
- LDA K+3                                      ; B92B: A5 80       ..
- CLC                                          ; B92D: 18          .
- ADC XX2+1                                    ; B92E: 65 3E       e>
- STA K3                                       ; B930: 85 3D       .=
+ LDA K+1
+ LSR A
+ STA XX2+1
+ LDA K+3
+ SEC
+ SBC XX2+1
+ CLC
+ ADC #1
+ STA K3
+ JSR CB932
+ LDA K+3
+ CLC
+ ADC XX2+1
+ STA K3
 
-.sub_CB932
+.CB932
 
- LDA K                                        ; B932: A5 7D       .}
- LSR A                                        ; B934: 4A          J
- LSR A                                        ; B935: 4A          J
- STA STP                                      ; B936: 85 AA       ..
- LDA K+2                                      ; B938: A5 7F       ..
- SEC                                          ; B93A: 38          8
- SBC K                                        ; B93B: E5 7D       .}
- STA XX15                                     ; B93D: 85 71       .q
- LDA K3                                       ; B93F: A5 3D       .=
- STA Y1                                       ; B941: 85 72       .r
- LDY #7                                       ; B943: A0 07       ..
+ LDA K
+ LSR A
+ LSR A
+ STA STP
+ LDA K+2
+ SEC
+ SBC K
+ STA XX15
+ LDA K3
+ STA Y1
+ LDY #7
 
 .CB945
 
- JSR DORND                                    ; B945: 20 AD F4     ..
- STA Q                                        ; B948: 85 97       ..
- LDA K+1                                      ; B94A: A5 7E       .~
- JSR FMLTU                                    ; B94C: 20 70 F7     p.
- CLC                                          ; B94F: 18          .
- ADC K3                                       ; B950: 65 3D       e=
- SEC                                          ; B952: 38          8
- SBC XX2+1                                    ; B953: E5 3E       .>
- STA Y2                                       ; B955: 85 74       .t
- LDA XX15                                     ; B957: A5 71       .q
- CLC                                          ; B959: 18          .
- ADC STP                                      ; B95A: 65 AA       e.
- STA X2                                       ; B95C: 85 73       .s
- JSR LOIN                                     ; B95E: 20 0F DC     ..
- LDA SWAP                                     ; B961: AD 7F 04    ...
- BNE CB96E                                    ; B964: D0 08       ..
- LDA X2                                       ; B966: A5 73       .s
- STA XX15                                     ; B968: 85 71       .q
- LDA Y2                                       ; B96A: A5 74       .t
- STA Y1                                       ; B96C: 85 72       .r
+ JSR DORND
+ STA Q
+ LDA K+1
+ JSR FMLTU
+ CLC
+ ADC K3
+ SEC
+ SBC XX2+1
+ STA Y2
+ LDA XX15
+ CLC
+ ADC STP
+ STA X2
+ JSR LOIN
+ LDA SWAP
+ BNE CB96E
+ LDA X2
+ STA XX15
+ LDA Y2
+ STA Y1
 
 .CB96E
 
- DEY                                          ; B96E: 88          .
- BNE CB945                                    ; B96F: D0 D4       ..
- LDA K+2                                      ; B971: A5 7F       ..
- CLC                                          ; B973: 18          .
- ADC K                                        ; B974: 65 7D       e}
- STA X2                                       ; B976: 85 73       .s
- LDA K3                                       ; B978: A5 3D       .=
- STA Y2                                       ; B97A: 85 74       .t
- JSR LOIN                                     ; B97C: 20 0F DC     ..
- RTS                                          ; B97F: 60          `
+ DEY
+ BNE CB945
+ LDA K+2
+ CLC
+ ADC K
+ STA X2
+ LDA K3
+ STA Y2
+ JSR LOIN
+ RTS
 
 \ ******************************************************************************
 \
@@ -6482,79 +6595,79 @@ ENDMACRO
 
 .LL164
 
- JSR subm_D8C5                                ; B980: 20 C5 D8     ..
- JSR subm_EB67                                ; B983: 20 67 EB     g.
- JSR subm_CE9E                                ; B986: 20 9E CE     ..
- JSR subm_EBED                                    ; B989: 20 ED EB     ..
- LDA #&80                                     ; B98C: A9 80       ..
- STA K+2                                      ; B98E: 85 7F       ..
- LDA #&48 ; 'H'                               ; B990: A9 48       .H
- STA K+3                                      ; B992: 85 80       ..
- LDA #&40 ; '@'                               ; B994: A9 40       .@
- STA XP                                       ; B996: 8D FA 03    ...
+ JSR subm_D8C5
+ JSR subm_EB67
+ JSR subm_CE9E
+ JSR subm_EBED
+ LDA #&80
+ STA K+2
+ LDA #&48
+ STA K+3
+ LDA #&40
+ STA XP
 
 .CB999
 
- JSR CB1D4_b0                                 ; B999: 20 E2 EC     ..
- JSR DORND                                    ; B99C: 20 AD F4     ..
- AND #&0F                                     ; B99F: 29 0F       ).
- TAX                                          ; B9A1: AA          .
- LDA LBA06,X                                  ; B9A2: BD 06 BA    ...
- STA visibleColour                            ; B9A5: 85 34       .4
- JSR ChangeDrawingPhase                       ; B9A7: 20 E1 D8     ..
- LDA XP                                       ; B9AA: AD FA 03    ...
- AND #&1F                                     ; B9AD: 29 1F       ).
- STA STP                                      ; B9AF: 85 AA       ..
- LDA #8                                       ; B9B1: A9 08       ..
- STA XX15                                     ; B9B3: 85 71       .q
- LDA #&F8                                     ; B9B5: A9 F8       ..
- STA X2                                       ; B9B7: 85 73       .s
+ JSR subm_ECE2
+ JSR DORND
+ AND #&0F
+ TAX
+ LDA LBA06,X
+ STA visibleColour
+ JSR ChangeDrawingPhase
+ LDA XP
+ AND #&1F
+ STA STP
+ LDA #8
+ STA XX15
+ LDA #&F8
+ STA X2
 
 .CB9B9
 
- LDA setupPPUForIconBar                       ; B9B9: A5 E9       ..
- BPL CB9C6                                    ; B9BB: 10 09       ..
- LDA PPU_STATUS                               ; B9BD: AD 02 20    ..
- ASL A                                        ; B9C0: 0A          .
- BPL CB9C6                                    ; B9C1: 10 03       ..
- JSR SetPPUTablesTo0                          ; B9C3: 20 6D D0     m.
+ LDA setupPPUForIconBar
+ BPL CB9C6
+ LDA PPU_STATUS
+ ASL A
+ BPL CB9C6
+ JSR SetPPUTablesTo0
 
 .CB9C6
 
- LDA STP                                      ; B9C6: A5 AA       ..
- CLC                                          ; B9C8: 18          .
- ADC #&10                                     ; B9C9: 69 10       i.
- STA STP                                      ; B9CB: 85 AA       ..
- CMP #&5A ; 'Z'                               ; B9CD: C9 5A       .Z
- BCS CB9FB                                    ; B9CF: B0 2A       .*
- STA Q                                        ; B9D1: 85 97       ..
- LDA #8                                       ; B9D3: A9 08       ..
- JSR LL28                                     ; B9D5: 20 91 FA     ..
- LDA R                                        ; B9D8: A5 98       ..
- SEC                                          ; B9DA: 38          8
- SBC #&14                                     ; B9DB: E9 14       ..
- STA K+1                                      ; B9DD: 85 7E       .~
- LDA Yx1M2                                    ; B9DF: A5 B1       ..
- SBC K+1                                      ; B9E1: E5 7E       .~
- BCC CB9B9                                    ; B9E3: 90 D4       ..
- BEQ CB9B9                                    ; B9E5: F0 D2       ..
- TAY                                          ; B9E7: A8          .
- JSR subm_E0BA                                ; B9E8: 20 BA E0     ..
- INC X2                                       ; B9EB: E6 73       .s
- LDA K+1                                      ; B9ED: A5 7E       .~
- CLC                                          ; B9EF: 18          .
- ADC Yx1M2                                    ; B9F0: 65 B1       e.
- TAY                                          ; B9F2: A8          .
- JSR subm_E0BA                                ; B9F3: 20 BA E0     ..
- INC X2                                       ; B9F6: E6 73       .s
- JMP CB9B9                                    ; B9F8: 4C B9 B9    L..
+ LDA STP
+ CLC
+ ADC #&10
+ STA STP
+ CMP #&5A
+ BCS CB9FB
+ STA Q
+ LDA #8
+ JSR LL28
+ LDA R
+ SEC
+ SBC #&14
+ STA K+1
+ LDA Yx1M2
+ SBC K+1
+ BCC CB9B9
+ BEQ CB9B9
+ TAY
+ JSR subm_E0BA
+ INC X2
+ LDA K+1
+ CLC
+ ADC Yx1M2
+ TAY
+ JSR subm_E0BA
+ INC X2
+ JMP CB9B9
 
 .CB9FB
 
- JSR subm_D975                                    ; B9FB: 20 75 D9     u.
- DEC XP                                       ; B9FE: CE FA 03    ...
- BNE CB999                                    ; BA01: D0 96       ..
- JMP subm_D8C5                                ; BA03: 4C C5 D8    L..
+ JSR subm_D975
+ DEC XP
+ BNE CB999
+ JMP subm_D8C5
 
 \ ******************************************************************************
 \
@@ -6572,7 +6685,7 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: CBA16
+\       Name: subm_BA17
 \       Type: Subroutine
 \   Category: ???
 \    Summary: ???
@@ -6581,66 +6694,57 @@ ENDMACRO
 
 .CBA16
 
- RTS                                          ; BA16: 60          `
-
-\ ******************************************************************************
-\
-\       Name: subm_BA17
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+ RTS
 
 .subm_BA17
 
- LDA K+2                                      ; BA17: A5 7F       ..
- CLC                                          ; BA19: 18          .
- ADC K                                        ; BA1A: 65 7D       e}
- BCS CBA16                                    ; BA1C: B0 F8       ..
- STA X2                                       ; BA1E: 85 73       .s
- STA XX15                                     ; BA20: 85 71       .q
- LDA K+3                                      ; BA22: A5 80       ..
- SEC                                          ; BA24: 38          8
- SBC K+1                                      ; BA25: E5 7E       .~
- BCS CBA2B                                    ; BA27: B0 02       ..
- LDA #0                                       ; BA29: A9 00       ..
+ LDA K+2
+ CLC
+ ADC K
+ BCS CBA16
+ STA X2
+ STA XX15
+ LDA K+3
+ SEC
+ SBC K+1
+ BCS CBA2B
+ LDA #0
 
 .CBA2B
 
- STA Y1                                       ; BA2B: 85 72       .r
- LDA K+3                                      ; BA2D: A5 80       ..
- CLC                                          ; BA2F: 18          .
- ADC K+1                                      ; BA30: 65 7E       e~
- BCS CBA3A                                    ; BA32: B0 06       ..
- CMP Yx2M1                                    ; BA34: C5 B3       ..
- BCC CBA3A                                    ; BA36: 90 02       ..
- LDA Yx2M1                                    ; BA38: A5 B3       ..
+ STA Y1
+ LDA K+3
+ CLC
+ ADC K+1
+ BCS CBA3A
+ CMP Yx2M1
+ BCC CBA3A
+ LDA Yx2M1
 
 .CBA3A
 
- STA Y2                                       ; BA3A: 85 74       .t
- JSR subm_E33E                                ; BA3C: 20 3E E3     >.
- LDA K+2                                      ; BA3F: A5 7F       ..
- SEC                                          ; BA41: 38          8
- SBC K                                        ; BA42: E5 7D       .}
- BCC CBA16                                    ; BA44: 90 D0       ..
- STA XX15                                     ; BA46: 85 71       .q
- JSR subm_E33E                                ; BA48: 20 3E E3     >.
- INC XX15                                     ; BA4B: E6 71       .q
- LDY Y1                                       ; BA4D: A4 72       .r
- BEQ CBA56                                    ; BA4F: F0 05       ..
- JSR subm_E0BA                                ; BA51: 20 BA E0     ..
- INC X2                                       ; BA54: E6 73       .s
+ STA Y2
+ JSR subm_E33E
+ LDA K+2
+ SEC
+ SBC K
+ BCC CBA16
+ STA XX15
+ JSR subm_E33E
+ INC XX15
+ LDY Y1
+ BEQ CBA56
+ JSR subm_E0BA
+ INC X2
 
 .CBA56
 
- DEC XX15                                     ; BA56: C6 71       .q
- INC X2                                       ; BA58: E6 73       .s
- LDY Y2                                       ; BA5A: A4 74       .t
- CPY Yx2M1                                    ; BA5C: C4 B3       ..
- BCS CBA16                                    ; BA5E: B0 B6       ..
- JMP subm_E0BA                                ; BA60: 4C BA E0    L..
+ DEC XX15
+ INC X2
+ LDY Y2
+ CPY Yx2M1
+ BCS CBA16
+ JMP subm_E0BA
 
 \ ******************************************************************************
 \
@@ -6653,157 +6757,166 @@ ENDMACRO
 
 .subm_BA63
 
- LDY #0                                       ; BA63: A0 00       ..
+ LDY #0
 
 .CBA65
 
- LDA INWK+5,Y                                 ; BA65: B9 0E 00    ...
- CMP #&41 ; 'A'                               ; BA68: C9 41       .A
- BCS CBA6E                                    ; BA6A: B0 02       ..
- LDA #&41 ; 'A'                               ; BA6C: A9 41       .A
+ LDA INWK+5,Y
+ CMP #&41
+ BCS CBA6E
+ LDA #&41
 
 .CBA6E
 
- PHA                                          ; BA6E: 48          H
- PLA                                          ; BA6F: 68          h
- JSR sub_CBACB                                ; BA70: 20 CB BA     ..
- BCS CBA9C                                    ; BA73: B0 27       .'
- CMP #&1B                                     ; BA75: C9 1B       ..
- BEQ CBAAF                                    ; BA77: F0 36       .6
- CMP #&7F                                     ; BA79: C9 7F       ..
- BEQ CBAB5                                    ; BA7B: F0 38       .8
- CPY L0483                                    ; BA7D: CC 83 04    ...
- BCS CBA93                                    ; BA80: B0 11       ..
- CMP #&21 ; '!'                               ; BA82: C9 21       .!
- BCC CBA93                                    ; BA84: 90 0D       ..
- CMP #&7B ; '{'                               ; BA86: C9 7B       .{
- BCS CBA93                                    ; BA88: B0 09       ..
- STA INWK+5,Y                                 ; BA8A: 99 0E 00    ...
- INY                                          ; BA8D: C8          .
- INC XC                                       ; BA8E: E6 32       .2
- JMP CBA65                                    ; BA90: 4C 65 BA    Le.
+ PHA
+ PLA
+ JSR subm_BACB
+ BCS CBA9C
+ CMP #&1B
+ BEQ CBAAF
+ CMP #&7F
+ BEQ CBAB5
+ CPY L0483
+ BCS CBA93
+ CMP #&21
+ BCC CBA93
+ CMP #&7B
+ BCS CBA93
+ STA INWK+5,Y
+ INY
+ INC XC
+ JMP CBA65
 
 .CBA93
 
- JSR BEEP_b7                                  ; BA93: 20 74 F0     t.
- LDY L0483                                    ; BA96: AC 83 04    ...
- JMP CBA65                                    ; BA99: 4C 65 BA    Le.
+ JSR BEEP_b7
+ LDY L0483
+ JMP CBA65
 
 .CBA9C
 
- STA INWK+5,Y                                 ; BA9C: 99 0E 00    ...
- INY                                          ; BA9F: C8          .
- LDA #&0D                                     ; BAA0: A9 0D       ..
- STA INWK+5,Y                                 ; BAA2: 99 0E 00    ...
- LDA #&0C                                     ; BAA5: A9 0C       ..
- JSR CHPR_b2                                  ; BAA7: 20 CB F1     ..
- JSR subm_D951                                ; BAAA: 20 51 D9     Q.
- CLC                                          ; BAAD: 18          .
- RTS                                          ; BAAE: 60          `
+ STA INWK+5,Y
+ INY
+ LDA #&0D
+ STA INWK+5,Y
+ LDA #&0C
+ JSR CHPR_b2
+ JSR subm_D951
+ CLC
+ RTS
 
 .CBAAF
 
- LDA #&0D                                     ; BAAF: A9 0D       ..
- STA INWK+5                                   ; BAB1: 85 0E       ..
- SEC                                          ; BAB3: 38          8
- RTS                                          ; BAB4: 60          `
+ LDA #&0D
+ STA INWK+5
+ SEC
+ RTS
 
 .CBAB5
 
- TYA                                          ; BAB5: 98          .
- BEQ CBAC4                                    ; BAB6: F0 0C       ..
- DEY                                          ; BAB8: 88          .
- LDA #&7F                                     ; BAB9: A9 7F       ..
- JSR CHPR_b2                                  ; BABB: 20 CB F1     ..
- LDA INWK+5,Y                                 ; BABE: B9 0E 00    ...
- JMP CBA6E                                    ; BAC1: 4C 6E BA    Ln.
+ TYA
+ BEQ CBAC4
+ DEY
+ LDA #&7F
+ JSR CHPR_b2
+ LDA INWK+5,Y
+ JMP CBA6E
 
 .CBAC4
 
- JSR BEEP_b7                                  ; BAC4: 20 74 F0     t.
- LDY #0                                       ; BAC7: A0 00       ..
- BEQ CBA65                                    ; BAC9: F0 9A       ..
+ JSR BEEP_b7
+ LDY #0
+ BEQ CBA65
 
-.sub_CBACB
+\ ******************************************************************************
+\
+\       Name: subm_BACB
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
 
- TAX                                          ; BACB: AA          .
- STY YSAV                                     ; BACC: 84 9C       ..
- LDA L0037                                    ; BACE: A5 37       .7
- PHA                                          ; BAD0: 48          H
- LDA QQ11                                     ; BAD1: A5 9E       ..
- AND #&20 ; ' '                               ; BAD3: 29 20       )
- BEQ CBADB                                    ; BAD5: F0 04       ..
- LDA #1                                       ; BAD7: A9 01       ..
- STA L0037                                    ; BAD9: 85 37       .7
+.subm_BACB
+
+ TAX
+ STY YSAV
+ LDA L0037
+ PHA
+ LDA QQ11
+ AND #&20
+ BEQ CBADB
+ LDA #1
+ STA L0037
 
 .CBADB
 
- TXA                                          ; BADB: 8A          .
+ TXA
 
 .CBADC
 
- PHA                                          ; BADC: 48          H
- LDY #4                                       ; BADD: A0 04       ..
- JSR DELAY                                    ; BADF: 20 A2 EB     ..
- PLA                                          ; BAE2: 68          h
- PHA                                          ; BAE3: 48          H
- JSR CHPR_b2                                  ; BAE4: 20 CB F1     ..
- DEC XC                                       ; BAE7: C6 32       .2
- JSR subm_D951                                ; BAE9: 20 51 D9     Q.
- SEC                                          ; BAEC: 38          8
- LDA controller1A                             ; BAED: AD B2 04    ...
- BMI CBB2A                                    ; BAF0: 30 38       08
- CLC                                          ; BAF2: 18          .
- PLA                                          ; BAF3: 68          h
- LDX controller1B                             ; BAF4: AE B4 04    ...
- BMI CBADC                                    ; BAF7: 30 E3       0.
- LDX L0465                                    ; BAF9: AE 65 04    .e.
- BNE CBB33                                    ; BAFC: D0 35       .5
- LDX L04BA                                    ; BAFE: AE BA 04    ...
- BMI CBB26                                    ; BB01: 30 23       0#
- LDX L04BB                                    ; BB03: AE BB 04    ...
- BMI CBB2B                                    ; BB06: 30 23       0#
- LDX controller1Up                            ; BB08: AE AC 04    ...
- BPL CBB16                                    ; BB0B: 10 09       ..
- CLC                                          ; BB0D: 18          .
- ADC #1                                       ; BB0E: 69 01       i.
- CMP #&5B ; '['                               ; BB10: C9 5B       .[
- BNE CBB16                                    ; BB12: D0 02       ..
- LDA #&41 ; 'A'                               ; BB14: A9 41       .A
+ PHA
+ LDY #4
+ JSR DELAY
+ PLA
+ PHA
+ JSR CHPR_b2
+ DEC XC
+ JSR subm_D951
+ SEC
+ LDA controller1A
+ BMI CBB2A
+ CLC
+ PLA
+ LDX controller1B
+ BMI CBADC
+ LDX L0465
+ BNE CBB33
+ LDX L04BA
+ BMI CBB26
+ LDX L04BB
+ BMI CBB2B
+ LDX controller1Up
+ BPL CBB16
+ CLC
+ ADC #1
+ CMP #&5B
+ BNE CBB16
+ LDA #&41
 
 .CBB16
 
- LDX controller1Down                          ; BB16: AE AA 04    ...
- BPL CBADC                                    ; BB19: 10 C1       ..
- SEC                                          ; BB1B: 38          8
- SBC #1                                       ; BB1C: E9 01       ..
- CMP #&40 ; '@'                               ; BB1E: C9 40       .@
- BNE CBADC                                    ; BB20: D0 BA       ..
- LDA #&5A ; 'Z'                               ; BB22: A9 5A       .Z
- BNE CBADC                                    ; BB24: D0 B6       ..
+ LDX controller1Down
+ BPL CBADC
+ SEC
+ SBC #1
+ CMP #&40
+ BNE CBADC
+ LDA #&5A
+ BNE CBADC
 
 .CBB26
 
- LDA #&7F                                     ; BB26: A9 7F       ..
- BNE CBB2B                                    ; BB28: D0 01       ..
+ LDA #&7F
+ BNE CBB2B
 
 .CBB2A
 
- PLA                                          ; BB2A: 68          h
+ PLA
 
 .CBB2B
 
- TAX                                          ; BB2B: AA          .
- PLA                                          ; BB2C: 68          h
- STA L0037                                    ; BB2D: 85 37       .7
- LDY YSAV                                     ; BB2F: A4 9C       ..
- TXA                                          ; BB31: 8A          .
- RTS                                          ; BB32: 60          `
+ TAX
+ PLA
+ STA L0037
+ LDY YSAV
+ TXA
+ RTS
 
 .CBB33
 
- LDA #&1B                                     ; BB33: A9 1B       ..
- BNE CBB2B                                    ; BB35: D0 F4       ..
+ LDA #&1B
+ BNE CBB2B
 
 \ ******************************************************************************
 \
@@ -6816,87 +6929,87 @@ ENDMACRO
 
 .subm_BB37
 
- JSR CLYNS                                    ; BB37: 20 DE F2     ..
- INC YC                                       ; BB3A: E6 3B       .;
- LDA #8                                       ; BB3C: A9 08       ..
- JSR DETOK_b2                                 ; BB3E: 20 82 F0     ..
- LDY #6                                       ; BB41: A0 06       ..
- STY L0483                                    ; BB43: 8C 83 04    ...
+ JSR CLYNS
+ INC YC
+ LDA #8
+ JSR DETOK_b2
+ LDY #6
+ STY L0483
 
 .loop_CBB46
 
- LDA NAME,Y                                   ; BB46: B9 96 03    ...
- STA INWK+5,Y                                 ; BB49: 99 0E 00    ...
- DEY                                          ; BB4C: 88          .
- BPL loop_CBB46                               ; BB4D: 10 F7       ..
- JSR subm_BA63                                ; BB4F: 20 63 BA     c.
- LDA INWK+5                                   ; BB52: A5 0E       ..
- CMP #&0D                                     ; BB54: C9 0D       ..
- BEQ CBBB0                                    ; BB56: F0 58       .X
- LDY #0                                       ; BB58: A0 00       ..
+ LDA NAME,Y
+ STA INWK+5,Y
+ DEY
+ BPL loop_CBB46
+ JSR subm_BA63
+ LDA INWK+5
+ CMP #&0D
+ BEQ CBBB0
+ LDY #0
 
 .loop_CBB5A
 
- LDA INWK+5,Y                                 ; BB5A: B9 0E 00    ...
- CMP #&0D                                     ; BB5D: C9 0D       ..
- BEQ CBBB6                                    ; BB5F: F0 55       .U
- INY                                          ; BB61: C8          .
- CPY #7                                       ; BB62: C0 07       ..
- BNE loop_CBB5A                               ; BB64: D0 F4       ..
- DEY                                          ; BB66: 88          .
+ LDA INWK+5,Y
+ CMP #&0D
+ BEQ CBBB6
+ INY
+ CPY #7
+ BNE loop_CBB5A
+ DEY
 
 .CBB67
 
- LDA INWK+5,Y                                 ; BB67: B9 0E 00    ...
- STA NAME,Y                                   ; BB6A: 99 96 03    ...
- DEY                                          ; BB6D: 88          .
- BPL CBB67                                    ; BB6E: 10 F7       ..
- LDA COK                                      ; BB70: AD A6 03    ...
- BMI CBBB0                                    ; BB73: 30 3B       0;
- INY                                          ; BB75: C8          .
- LDX language                                 ; BB76: AE A8 04    ...
+ LDA INWK+5,Y
+ STA NAME,Y
+ DEY
+ BPL CBB67
+ LDA COK
+ BMI CBBB0
+ INY
+ LDX language
 
 .loop_CBB79
 
- LDA NAME,Y                                   ; BB79: B9 96 03    ...
- CMP LBBC2,X                                  ; BB7C: DD C2 BB    ...
- BNE CBBB0                                    ; BB7F: D0 2F       ./
- INX                                          ; BB81: E8          .
- INX                                          ; BB82: E8          .
- INX                                          ; BB83: E8          .
- INX                                          ; BB84: E8          .
- INY                                          ; BB85: C8          .
- CPY #7                                       ; BB86: C0 07       ..
- BNE loop_CBB79                               ; BB88: D0 EF       ..
- LDA #&80                                     ; BB8A: A9 80       ..
- STA COK                                      ; BB8C: 8D A6 03    ...
- LDA #&A0                                     ; BB8F: A9 A0       ..
- CLC                                          ; BB91: 18          .
- ADC CASH+3                                   ; BB92: 6D A4 03    m..
- STA CASH+3                                   ; BB95: 8D A4 03    ...
- LDA #&86                                     ; BB98: A9 86       ..
- ADC CASH+2                                   ; BB9A: 6D A3 03    m..
- STA CASH+2                                   ; BB9D: 8D A3 03    ...
- LDA CASH+1                                   ; BBA0: AD A2 03    ...
- ADC #1                                       ; BBA3: 69 01       i.
- STA CASH+1                                   ; BBA5: 8D A2 03    ...
- LDA CASH                                     ; BBA8: AD A1 03    ...
- ADC #0                                       ; BBAB: 69 00       i.
- STA CASH                                     ; BBAD: 8D A1 03    ...
+ LDA NAME,Y
+ CMP LBBC2,X
+ BNE CBBB0
+ INX
+ INX
+ INX
+ INX
+ INY
+ CPY #7
+ BNE loop_CBB79
+ LDA #&80
+ STA COK
+ LDA #&A0
+ CLC
+ ADC CASH+3
+ STA CASH+3
+ LDA #&86
+ ADC CASH+2
+ STA CASH+2
+ LDA CASH+1
+ ADC #1
+ STA CASH+1
+ LDA CASH
+ ADC #0
+ STA CASH
 
 .CBBB0
 
- JSR CLYNS                                    ; BBB0: 20 DE F2     ..
- JMP subm_D951                                ; BBB3: 4C 51 D9    LQ.
+ JSR CLYNS
+ JMP subm_D951
 
 .CBBB6
 
- LDA #&20 ; ' '                               ; BBB6: A9 20       .
- STA INWK+5,Y                                 ; BBB8: 99 0E 00    ...
- CPY #6                                       ; BBBB: C0 06       ..
- BEQ CBB67                                    ; BBBD: F0 A8       ..
- INY                                          ; BBBF: C8          .
- BNE CBBB6                                    ; BBC0: D0 F4       ..
+ LDA #&20
+ STA INWK+5,Y
+ CPY #6
+ BEQ CBB67
+ INY
+ BNE CBBB6
 
 \ ******************************************************************************
 \
@@ -6922,118 +7035,118 @@ ENDMACRO
 
 .subm_BBDE
 
- TYA                                          ; BBDE: 98          .
- PHA                                          ; BBDF: 48          H
- LDX #5                                       ; BBE0: A2 05       ..
- LDA #0                                       ; BBE2: A9 00       ..
- STA L0081                                    ; BBE4: 85 81       ..
+ TYA
+ PHA
+ LDX #5
+ LDA #0
+ STA L0081
 
 .loop_CBBE6
 
- STA KL,X                                     ; BBE6: 9D 03 04    ...
- DEX                                          ; BBE9: CA          .
- BPL loop_CBBE6                               ; BBEA: 10 FA       ..
- LDA setupPPUForIconBar                       ; BBEC: A5 E9       ..
- BPL CBBF9                                    ; BBEE: 10 09       ..
- LDA PPU_STATUS                               ; BBF0: AD 02 20    ..
- ASL A                                        ; BBF3: 0A          .
- BPL CBBF9                                    ; BBF4: 10 03       ..
- JSR SetPPUTablesTo0                          ; BBF6: 20 6D D0     m.
+ STA KL,X
+ DEX
+ BPL loop_CBBE6
+ LDA setupPPUForIconBar
+ BPL CBBF9
+ LDA PPU_STATUS
+ ASL A
+ BPL CBBF9
+ JSR SetPPUTablesTo0
 
 .CBBF9
 
- LDA scanController2                          ; BBF9: AD 75 04    .u.
- BEQ CBC32                                    ; BBFC: F0 34       .4
- LDX #&FF                                     ; BBFE: A2 FF       ..
- LDA controller2Down                          ; BC00: AD AB 04    ...
- BPL CBC08                                    ; BC03: 10 03       ..
- STX KY5                                      ; BC05: 8E 07 04    ...
+ LDA scanController2
+ BEQ CBC32
+ LDX #&FF
+ LDA controller2Down
+ BPL CBC08
+ STX KY5
 
 .CBC08
 
- LDA controller2Up                            ; BC08: AD AD 04    ...
- BPL CBC10                                    ; BC0B: 10 03       ..
- STX KY6                                      ; BC0D: 8E 08 04    ...
+ LDA controller2Up
+ BPL CBC10
+ STX KY6
 
 .CBC10
 
- LDA controller2Left                          ; BC10: AD AF 04    ...
- BPL CBC18                                    ; BC13: 10 03       ..
- STX KY3                                      ; BC15: 8E 05 04    ...
+ LDA controller2Left
+ BPL CBC18
+ STX KY3
 
 .CBC18
 
- LDA controller2Right                         ; BC18: AD B1 04    ...
- BPL CBC20                                    ; BC1B: 10 03       ..
- STX KY4                                      ; BC1D: 8E 06 04    ...
+ LDA controller2Right
+ BPL CBC20
+ STX KY4
 
 .CBC20
 
- LDA controller2A                             ; BC20: AD B3 04    ...
- BPL CBC28                                    ; BC23: 10 03       ..
- STX KY2                                      ; BC25: 8E 04 04    ...
+ LDA controller2A
+ BPL CBC28
+ STX KY2
 
 .CBC28
 
- LDA controller2B                             ; BC28: AD B5 04    ...
- BPL CBC6B                                    ; BC2B: 10 3E       .>
- STX KL                                       ; BC2D: 8E 03 04    ...
- BMI CBC6B                                    ; BC30: 30 39       09
+ LDA controller2B
+ BPL CBC6B
+ STX KL
+ BMI CBC6B
 
 .CBC32
 
- LDX #&FF                                     ; BC32: A2 FF       ..
- LDA controller1B                             ; BC34: AD B4 04    ...
- BMI CBC5B                                    ; BC37: 30 22       0"
- LDA controller1Down                          ; BC39: AD AA 04    ...
- BPL CBC41                                    ; BC3C: 10 03       ..
- STX KY5                                      ; BC3E: 8E 07 04    ...
+ LDX #&FF
+ LDA controller1B
+ BMI CBC5B
+ LDA controller1Down
+ BPL CBC41
+ STX KY5
 
 .CBC41
 
- LDA controller1Up                            ; BC41: AD AC 04    ...
- BPL CBC49                                    ; BC44: 10 03       ..
- STX KY6                                      ; BC46: 8E 08 04    ...
+ LDA controller1Up
+ BPL CBC49
+ STX KY6
 
 .CBC49
 
- LDA controller1Left                          ; BC49: AD AE 04    ...
- BPL CBC51                                    ; BC4C: 10 03       ..
- STX KY3                                      ; BC4E: 8E 05 04    ...
+ LDA controller1Left
+ BPL CBC51
+ STX KY3
 
 .CBC51
 
- LDA controller1Right                         ; BC51: AD B0 04    ...
- BPL CBC6B                                    ; BC54: 10 15       ..
- STX KY4                                      ; BC56: 8E 06 04    ...
- BMI CBC6B                                    ; BC59: 30 10       0.
+ LDA controller1Right
+ BPL CBC6B
+ STX KY4
+ BMI CBC6B
 
 .CBC5B
 
- LDA controller1Up                            ; BC5B: AD AC 04    ...
- BPL CBC63                                    ; BC5E: 10 03       ..
- STX KY2                                      ; BC60: 8E 04 04    ...
+ LDA controller1Up
+ BPL CBC63
+ STX KY2
 
 .CBC63
 
- LDA controller1Down                          ; BC63: AD AA 04    ...
- BPL CBC6B                                    ; BC66: 10 03       ..
- STX KL                                       ; BC68: 8E 03 04    ...
+ LDA controller1Down
+ BPL CBC6B
+ STX KL
 
 .CBC6B
 
- LDA controller1A                             ; BC6B: AD B2 04    ...
- CMP #&80                                     ; BC6E: C9 80       ..
- ROR KY7                                      ; BC70: 6E 09 04    n..
- LDX #0                                       ; BC73: A2 00       ..
- LDA L0465                                    ; BC75: AD 65 04    .e.
- STX L0465                                    ; BC78: 8E 65 04    .e.
- STA L0081                                    ; BC7B: 85 81       ..
- PLA                                          ; BC7D: 68          h
- TAY                                          ; BC7E: A8          .
- LDA L0081                                    ; BC7F: A5 81       ..
- TAX                                          ; BC81: AA          .
- RTS                                          ; BC82: 60          `
+ LDA controller1A
+ CMP #&80
+ ROR KY7
+ LDX #0
+ LDA L0465
+ STX L0465
+ STA L0081
+ PLA
+ TAY
+ LDA L0081
+ TAX
+ RTS
 
 \ ******************************************************************************
 \
@@ -7046,243 +7159,252 @@ ENDMACRO
 
 .TITLE
 
- LDA #&81                                     ; BC83: A9 81       ..
- STA L00D6                                    ; BC85: 85 D6       ..
- LDY #0                                       ; BC87: A0 00       ..
- STY L03EE                                    ; BC89: 8C EE 03    ...
- JSR sub_CBDFC                                ; BC8C: 20 FC BD     ..
- LDA #&CF                                     ; BC8F: A9 CF       ..
- JSR TT66_b0                                  ; BC91: 20 6E F2     n.
- LDA #&8D                                     ; BC94: A9 8D       ..
- STA L00D6                                    ; BC96: 85 D6       ..
- LDA #0                                       ; BC98: A9 00       ..
- STA YC                                       ; BC9A: 85 3B       .;
- LDA #7                                       ; BC9C: A9 07       ..
- STA XC                                       ; BC9E: 85 32       .2
- LDA #3                                       ; BCA0: A9 03       ..
- LDA #&DF                                     ; BCA2: A9 DF       ..
- STA QQ11                                     ; BCA4: 85 9E       ..
- JSR CB96B_b4                                 ; BCA6: 20 9D ED     ..
- LDA #&24 ; '$'                               ; BCA9: A9 24       .$
- STA L00D9                                    ; BCAB: 85 D9       ..
- LDA #&15                                     ; BCAD: A9 15       ..
- STA YC                                       ; BCAF: 85 3B       .;
- LDA #&0A                                     ; BCB1: A9 0A       ..
- STA XC                                       ; BCB3: 85 32       .2
- LDA #6                                       ; BCB5: A9 06       ..
- INC YC                                       ; BCB7: E6 3B       .;
- LDA #3                                       ; BCB9: A9 03       ..
- STA XC                                       ; BCBB: 85 32       .2
- LDA #9                                       ; BCBD: A9 09       ..
- LDA #&19                                     ; BCBF: A9 19       ..
- STA YC                                       ; BCC1: 85 3B       .;
- LDA #3                                       ; BCC3: A9 03       ..
- STA XC                                       ; BCC5: 85 32       .2
- LDA #&0C                                     ; BCC7: A9 0C       ..
- JSR DETOK_b2                                 ; BCC9: 20 82 F0     ..
- LDA #&1A                                     ; BCCC: A9 1A       ..
- STA YC                                       ; BCCE: 85 3B       .;
- LDA #6                                       ; BCD0: A9 06       ..
- STA XC                                       ; BCD2: 85 32       .2
- LDA #7                                       ; BCD4: A9 07       ..
- LDY #2                                       ; BCD6: A0 02       ..
- LDA #&E5                                     ; BCD8: A9 E5       ..
+ LDA #&81
+ STA L00D6
+ LDY #0
+ STY L03EE
+ JSR subm_BDFC
+ LDA #&CF
+ JSR TT66_b0
+ LDA #&8D
+ STA L00D6
+ LDA #0
+ STA YC
+ LDA #7
+ STA XC
+ LDA #3
+ LDA #&DF
+ STA QQ11
+ JSR CB96B_b4
+ LDA #&24
+ STA L00D9
+ LDA #&15
+ STA YC
+ LDA #&0A
+ STA XC
+ LDA #6
+ INC YC
+ LDA #3
+ STA XC
+ LDA #9
+ LDA #&19
+ STA YC
+ LDA #3
+ STA XC
+ LDA #&0C
+ JSR DETOK_b2
+ LDA #&1A
+ STA YC
+ LDA #6
+ STA XC
+ LDA #7
+ LDY #2
+ LDA #&E5
 
 .loop_CBCDA
 
- STA nameBuffer0+896,Y                        ; BCDA: 99 80 73    ..s
- INY                                          ; BCDD: C8          .
- CPY #&20 ; ' '                               ; BCDE: C0 20       .
- BNE loop_CBCDA                               ; BCE0: D0 F8       ..
- LDA #2                                       ; BCE2: A9 02       ..
- STA nameBuffer0+864                          ; BCE4: 8D 60 73    .`s
- STA nameBuffer0+896                          ; BCE7: 8D 80 73    ..s
- LDA #1                                       ; BCEA: A9 01       ..
- STA nameBuffer0+865                          ; BCEC: 8D 61 73    .as
- STA nameBuffer0+897                          ; BCEF: 8D 81 73    ..s
- LDY #0                                       ; BCF2: A0 00       ..
+ STA nameBuffer0+896,Y
+ INY
+ CPY #&20
+ BNE loop_CBCDA
+ LDA #2
+ STA nameBuffer0+864
+ STA nameBuffer0+896
+ LDA #1
+ STA nameBuffer0+865
+ STA nameBuffer0+897
+ LDY #0
 
 .loop_CBCF4
 
- JSR sub_CBDFC                                ; BCF4: 20 FC BD     ..
- LDA LBE2C,Y                                  ; BCF7: B9 2C BE    .,.
- STA XC                                       ; BCFA: 85 32       .2
- LDA LBE30,Y                                  ; BCFC: B9 30 BE    .0.
- STA YC                                       ; BCFF: 85 3B       .;
- LDA #0                                       ; BD01: A9 00       ..
- STA DTW8                                     ; BD03: 8D F9 03    ...
- LDA #4                                       ; BD06: A9 04       ..
- JSR DETOK_b2                                 ; BD08: 20 82 F0     ..
- INC XC                                       ; BD0B: E6 32       .2
- INC XC                                       ; BD0D: E6 32       .2
- INY                                          ; BD0F: C8          .
- LDA LBE4B,Y                                  ; BD10: B9 4B BE    .K.
- BPL loop_CBCF4                               ; BD13: 10 DF       ..
- STY L049F                                    ; BD15: 8C 9F 04    ...
- LDA #&8D                                     ; BD18: A9 8D       ..
- STA L00D6                                    ; BD1A: 85 D6       ..
- JSR C8926_b0                                    ; BD1C: 20 C0 F2     ..
- LDA controller1Left                          ; BD1F: AD AE 04    ...
- AND controller1Up                            ; BD22: 2D AC 04    -..
- AND controller1Select                        ; BD25: 2D B8 04    -..
- AND controller1B                             ; BD28: 2D B4 04    -..
- BPL CBD3E                                    ; BD2B: 10 11       ..
- LDA controller1Right                         ; BD2D: AD B0 04    ...
- ORA controller1Down                          ; BD30: 0D AA 04    ...
- ORA controller1Start                         ; BD33: 0D B6 04    ...
- ORA controller1A                             ; BD36: 0D B2 04    ...
- BMI CBD3E                                    ; BD39: 30 03       0.
- JSR subm_B818                                ; BD3B: 20 18 B8     ..
+ JSR subm_BDFC
+ LDA LBE2C,Y
+ STA XC
+ LDA LBE30,Y
+ STA YC
+ LDA #0
+ STA DTW8
+ LDA #4
+ JSR DETOK_b2
+ INC XC
+ INC XC
+ INY
+ LDA LBE4B,Y
+ BPL loop_CBCF4
+ STY L049F
+ LDA #&8D
+ STA L00D6
+ JSR C8926_b0
+ LDA controller1Left
+ AND controller1Up
+ AND controller1Select
+ AND controller1B
+ BPL CBD3E
+ LDA controller1Right
+ ORA controller1Down
+ ORA controller1Start
+ ORA controller1A
+ BMI CBD3E
+ JSR subm_B818
 
 .CBD3E
 
- JSR CB88C_b6                                 ; BD3E: 20 B9 ED     ..
- LDA #&80                                     ; BD41: A9 80       ..
- STA S                                        ; BD43: 85 99       ..
- LDA #&19                                     ; BD45: A9 19       ..
- STA T                                        ; BD47: 85 9A       ..
- LDA K%+1                               ; BD49: AD 01 06    ...
- STA V+1                                      ; BD4C: 85 64       .d
- LDA #0                                       ; BD4E: A9 00       ..
- STA V                                        ; BD50: 85 63       .c
- STA Q                                        ; BD52: 85 97       ..
- LDA K%                                 ; BD54: AD 00 06    ...
- STA LASCT                                    ; BD57: 8D 8F 03    ...
+ JSR CB88C_b6
+ LDA #&80
+ STA S
+ LDA #&19
+ STA T
+ LDA K%+1
+ STA V+1
+ LDA #0
+ STA V
+ STA Q
+ LDA K%
+ STA LASCT
 
 .CBD5A
 
- JSR KeepPPUTablesAt0                         ; BD5A: 20 67 D1     g.
- LDY LASCT                                    ; BD5D: AC 8F 03    ...
- LDA LBE2C,Y                                  ; BD60: B9 2C BE    .,.
- ASL A                                        ; BD63: 0A          .
- ASL A                                        ; BD64: 0A          .
- ASL A                                        ; BD65: 0A          .
- ADC #0                                       ; BD66: 69 00       i.
- TAX                                          ; BD68: AA          .
- CLC                                          ; BD69: 18          .
- LDY #0                                       ; BD6A: A0 00       ..
+ JSR KeepPPUTablesAt0
+ LDY LASCT
+ LDA LBE2C,Y
+ ASL A
+ ASL A
+ ASL A
+ ADC #0
+ TAX
+ CLC
+ LDY #0
 
 .loop_CBD6C
 
- LDA #&F0                                     ; BD6C: A9 F0       ..
- STA ySprite5,Y                               ; BD6E: 99 14 02    ...
- LDA #&FF                                     ; BD71: A9 FF       ..
- STA tileSprite5,Y                            ; BD73: 99 15 02    ...
- LDA #&20 ; ' '                               ; BD76: A9 20       .
- STA attrSprite5,Y                            ; BD78: 99 16 02    ...
- TXA                                          ; BD7B: 8A          .
- STA xSprite5,Y                               ; BD7C: 99 17 02    ...
- ADC #8                                       ; BD7F: 69 08       i.
- TAX                                          ; BD81: AA          .
- INY                                          ; BD82: C8          .
- INY                                          ; BD83: C8          .
- INY                                          ; BD84: C8          .
- INY                                          ; BD85: C8          .
- CPY #&20 ; ' '                               ; BD86: C0 20       .
- BNE loop_CBD6C                               ; BD88: D0 E2       ..
- LDX LASCT                                    ; BD8A: AE 8F 03    ...
- LDA LBE3C,X                                  ; BD8D: BD 3C BE    .<.
- ASL A                                        ; BD90: 0A          .
- ASL A                                        ; BD91: 0A          .
- TAY                                          ; BD92: A8          .
- LDA LBE30,X                                  ; BD93: BD 30 BE    .0.
- ASL A                                        ; BD96: 0A          .
- ASL A                                        ; BD97: 0A          .
- ASL A                                        ; BD98: 0A          .
- ADC #6                                       ; BD99: 69 06       i.
+ LDA #&F0
+ STA ySprite5,Y
+ LDA #&FF
+ STA tileSprite5,Y
+ LDA #&20
+ STA attrSprite5,Y
+ TXA
+ STA xSprite5,Y
+ ADC #8
+ TAX
+ INY
+ INY
+ INY
+ INY
+ CPY #&20
+ BNE loop_CBD6C
+ LDX LASCT
+ LDA LBE3C,X
+ ASL A
+ ASL A
+ TAY
+ LDA LBE30,X
+ ASL A
+ ASL A
+ ASL A
+ ADC #6
 
 .loop_CBD9B
 
- STA ySprite5,Y                               ; BD9B: 99 14 02    ...
- DEY                                          ; BD9E: 88          .
- DEY                                          ; BD9F: 88          .
- DEY                                          ; BDA0: 88          .
- DEY                                          ; BDA1: 88          .
- BPL loop_CBD9B                               ; BDA2: 10 F7       ..
- LDA controller1Start                         ; BDA4: AD B6 04    ...
- AND #&C0                                     ; BDA7: 29 C0       ).
- CMP #&40 ; '@'                               ; BDA9: C9 40       .@
- BNE CBDAF                                    ; BDAB: D0 02       ..
- LSR S                                        ; BDAD: 46 99       F.
+ STA ySprite5,Y
+ DEY
+ DEY
+ DEY
+ DEY
+ BPL loop_CBD9B
+ LDA controller1Start
+ AND #&C0
+ CMP #&40
+ BNE CBDAF
+ LSR S
 
 .CBDAF
 
- LDX LASCT                                    ; BDAF: AE 8F 03    ...
- LDA controller1Left                          ; BDB2: AD AE 04    ...
- AND #&C0                                     ; BDB5: 29 C0       ).
- CMP #&40 ; '@'                               ; BDB7: C9 40       .@
- BNE CBDC1                                    ; BDB9: D0 06       ..
- DEX                                          ; BDBB: CA          .
- LDA K%+1                               ; BDBC: AD 01 06    ...
- STA V+1                                      ; BDBF: 85 64       .d
+ LDX LASCT
+ LDA controller1Left
+ AND #&C0
+ CMP #&40
+ BNE CBDC1
+ DEX
+ LDA K%+1
+ STA V+1
 
 .CBDC1
 
- LDA controller1Right                         ; BDC1: AD B0 04    ...
- AND #&C0                                     ; BDC4: 29 C0       ).
- CMP #&40 ; '@'                               ; BDC6: C9 40       .@
- BNE CBDD0                                    ; BDC8: D0 06       ..
- INX                                          ; BDCA: E8          .
- LDA K%+1                               ; BDCB: AD 01 06    ...
- STA V+1                                      ; BDCE: 85 64       .d
+ LDA controller1Right
+ AND #&C0
+ CMP #&40
+ BNE CBDD0
+ INX
+ LDA K%+1
+ STA V+1
 
 .CBDD0
 
- TXA                                          ; BDD0: 8A          .
- BPL CBDD5                                    ; BDD1: 10 02       ..
- LDA #0                                       ; BDD3: A9 00       ..
+ TXA
+ BPL CBDD5
+ LDA #0
 
 .CBDD5
 
- CMP #3                                       ; BDD5: C9 03       ..
- BCC CBDDB                                    ; BDD7: 90 02       ..
- LDA #2                                       ; BDD9: A9 02       ..
+ CMP #3
+ BCC CBDDB
+ LDA #2
 
 .CBDDB
 
- STA LASCT                                    ; BDDB: 8D 8F 03    ...
- DEC T                                        ; BDDE: C6 9A       ..
- BEQ CBDE5                                    ; BDE0: F0 03       ..
+ STA LASCT
+ DEC T
+ BEQ CBDE5
 
 .CBDE2
 
- JMP CBD5A                                    ; BDE2: 4C 5A BD    LZ.
+ JMP CBD5A
 
 .CBDE5
 
- INC T                                        ; BDE5: E6 9A       ..
- LDA S                                        ; BDE7: A5 99       ..
- BPL CBDF9                                    ; BDE9: 10 0E       ..
- DEC V                                        ; BDEB: C6 63       .c
- BNE CBDE2                                    ; BDED: D0 F3       ..
- DEC V+1                                      ; BDEF: C6 64       .d
- BNE CBDE2                                    ; BDF1: D0 EF       ..
- JSR CBDF9                                    ; BDF3: 20 F9 BD     ..
- JMP CBF41_b5                                 ; BDF6: 4C 81 ED    L..
+ INC T
+ LDA S
+ BPL CBDF9
+ DEC V
+ BNE CBDE2
+ DEC V+1
+ BNE CBDE2
+ JSR CBDF9
+ JMP CBF41_b5
 
 .CBDF9
 
- LDY LASCT                                    ; BDF9: AC 8F 03    ...
+ LDY LASCT
 
-.sub_CBDFC
+\ ******************************************************************************
+\
+\       Name: subm_BDFC
+\       Type: Subroutine
+\   Category: ???
+\    Summary: ???
+\
+\ ******************************************************************************
 
- LDA LBE3F,Y                                  ; BDFC: B9 3F BE    .?.
- STA QQ18Lo                                   ; BDFF: 8D A4 04    ...
- LDA LBE42,Y                                  ; BE02: B9 42 BE    .B.
- STA QQ18Hi                                   ; BE05: 8D A5 04    ...
- LDA LBE45,Y                                  ; BE08: B9 45 BE    .E.
- STA TKN1Lo                                   ; BE0B: 8D A6 04    ...
- LDA LBE48,Y                                  ; BE0E: B9 48 BE    .H.
- STA TKN1Hi                                   ; BE11: 8D A7 04    ...
- LDA LBE4B,Y                                  ; BE14: B9 4B BE    .K.
- STA language                                 ; BE17: 8D A8 04    ...
- LDA LBE4F,Y                                  ; BE1A: B9 4F BE    .O.
- STA L04A9                                    ; BE1D: 8D A9 04    ...
- LDA LBE34,Y                                  ; BE20: B9 34 BE    .4.
- STA L00F9                                    ; BE23: 85 F9       ..
- LDA LBE38,Y                                  ; BE25: B9 38 BE    .8.
- STA L03FD                                    ; BE28: 8D FD 03    ...
- RTS                                          ; BE2B: 60          `
+.subm_BDFC
+
+ LDA LBE3F,Y
+ STA QQ18Lo
+ LDA LBE42,Y
+ STA QQ18Hi
+ LDA LBE45,Y
+ STA TKN1Lo
+ LDA LBE48,Y
+ STA TKN1Hi
+ LDA LBE4B,Y
+ STA language
+ LDA LBE4F,Y
+ STA L04A9
+ LDA LBE34,Y
+ STA L00F9
+ LDA LBE38,Y
+ STA L03FD
+ RTS
 
 \ ******************************************************************************
 \
@@ -7348,71 +7470,71 @@ ENDMACRO
 
 .subm_BE52
 
- LDA QQ15+1                                   ; BE52: A5 83       ..
- AND #7                                       ; BE54: 29 07       ).
- STA QQ3                                      ; BE56: 8D 94 04    ...
- LDA QQ15+2                                   ; BE59: A5 84       ..
- LSR A                                        ; BE5B: 4A          J
- LSR A                                        ; BE5C: 4A          J
- LSR A                                        ; BE5D: 4A          J
- AND #7                                       ; BE5E: 29 07       ).
- STA QQ4                                      ; BE60: 8D 95 04    ...
- LSR A                                        ; BE63: 4A          J
- BNE CBE6E                                    ; BE64: D0 08       ..
- LDA QQ3                                      ; BE66: AD 94 04    ...
- ORA #2                                       ; BE69: 09 02       ..
- STA QQ3                                      ; BE6B: 8D 94 04    ...
+ LDA QQ15+1
+ AND #7
+ STA QQ3
+ LDA QQ15+2
+ LSR A
+ LSR A
+ LSR A
+ AND #7
+ STA QQ4
+ LSR A
+ BNE CBE6E
+ LDA QQ3
+ ORA #2
+ STA QQ3
 
 .CBE6E
 
- LDA QQ3                                      ; BE6E: AD 94 04    ...
- EOR #7                                       ; BE71: 49 07       I.
- CLC                                          ; BE73: 18          .
- STA QQ5                                      ; BE74: 8D 96 04    ...
- LDA QQ15+3                                   ; BE77: A5 85       ..
- AND #3                                       ; BE79: 29 03       ).
- ADC QQ5                                      ; BE7B: 6D 96 04    m..
- STA QQ5                                      ; BE7E: 8D 96 04    ...
- LDA setupPPUForIconBar                       ; BE81: A5 E9       ..
- BPL CBE8E                                    ; BE83: 10 09       ..
- LDA PPU_STATUS                               ; BE85: AD 02 20    ..
- ASL A                                        ; BE88: 0A          .
- BPL CBE8E                                    ; BE89: 10 03       ..
- JSR SetPPUTablesTo0                          ; BE8B: 20 6D D0     m.
+ LDA QQ3
+ EOR #7
+ CLC
+ STA QQ5
+ LDA QQ15+3
+ AND #3
+ ADC QQ5
+ STA QQ5
+ LDA setupPPUForIconBar
+ BPL CBE8E
+ LDA PPU_STATUS
+ ASL A
+ BPL CBE8E
+ JSR SetPPUTablesTo0
 
 .CBE8E
 
- LDA QQ4                                      ; BE8E: AD 95 04    ...
- LSR A                                        ; BE91: 4A          J
- ADC QQ5                                      ; BE92: 6D 96 04    m..
- STA QQ5                                      ; BE95: 8D 96 04    ...
- ASL A                                        ; BE98: 0A          .
- ASL A                                        ; BE99: 0A          .
- ADC QQ3                                      ; BE9A: 6D 94 04    m..
- ADC QQ4                                      ; BE9D: 6D 95 04    m..
- ADC #1                                       ; BEA0: 69 01       i.
- STA QQ6                                      ; BEA2: 8D 97 04    ...
- LDA QQ3                                      ; BEA5: AD 94 04    ...
- EOR #7                                       ; BEA8: 49 07       I.
- ADC #3                                       ; BEAA: 69 03       i.
- STA P                                        ; BEAC: 85 2F       ./
- LDA QQ4                                      ; BEAE: AD 95 04    ...
- ADC #4                                       ; BEB1: 69 04       i.
- STA Q                                        ; BEB3: 85 97       ..
- JSR MULTU                                    ; BEB5: 20 21 F7     !.
- LDA QQ6                                      ; BEB8: AD 97 04    ...
- STA Q                                        ; BEBB: 85 97       ..
- JSR MULTU                                    ; BEBD: 20 21 F7     !.
- ASL P                                        ; BEC0: 06 2F       ./
- ROL A                                        ; BEC2: 2A          *
- ASL P                                        ; BEC3: 06 2F       ./
- ROL A                                        ; BEC5: 2A          *
- ASL P                                        ; BEC6: 06 2F       ./
- ROL A                                        ; BEC8: 2A          *
- STA QQ7+1                                    ; BEC9: 8D 9A 04    ...
- LDA P                                        ; BECC: A5 2F       ./
- STA QQ7                                      ; BECE: 8D 99 04    ...
- RTS                                          ; BED1: 60          `
+ LDA QQ4
+ LSR A
+ ADC QQ5
+ STA QQ5
+ ASL A
+ ASL A
+ ADC QQ3
+ ADC QQ4
+ ADC #1
+ STA QQ6
+ LDA QQ3
+ EOR #7
+ ADC #3
+ STA P
+ LDA QQ4
+ ADC #4
+ STA Q
+ JSR MULTU
+ LDA QQ6
+ STA Q
+ JSR MULTU
+ ASL P
+ ROL A
+ ASL P
+ ROL A
+ ASL P
+ ROL A
+ STA QQ7+1
+ LDA P
+ STA QQ7
+ RTS
 
 \ ******************************************************************************
 \
@@ -7425,25 +7547,25 @@ ENDMACRO
 
 .subm_BED2
 
- JSR SetupPPUForIconBar                       ; BED2: 20 7D EC     }.
- LDA #0                                       ; BED5: A9 00       ..
- STA nameBuffer0+640                          ; BED7: 8D 80 72    ..r
- STA nameBuffer0+672                          ; BEDA: 8D A0 72    ..r
- STA nameBuffer0+704                          ; BEDD: 8D C0 72    ..r
- STA nameBuffer0+736                          ; BEE0: 8D E0 72    ..r
- STA nameBuffer0+768                          ; BEE3: 8D 00 73    ..s
- STA nameBuffer0+800                          ; BEE6: 8D 20 73    . s
- STA nameBuffer0+832                          ; BEE9: 8D 40 73    .@s
- STA nameBuffer0+864                          ; BEEC: 8D 60 73    .`s
- STA nameBuffer1+640                          ; BEEF: 8D 80 76    ..v
- STA nameBuffer1+672                          ; BEF2: 8D A0 76    ..v
- STA nameBuffer1+704                          ; BEF5: 8D C0 76    ..v
- STA nameBuffer1+736                          ; BEF8: 8D E0 76    ..v
- STA nameBuffer1+768                          ; BEFB: 8D 00 77    ..w
- STA nameBuffer1+800                          ; BEFE: 8D 20 77    . w
- STA nameBuffer1+832                          ; BF01: 8D 40 77    .@w
- STA nameBuffer1+864                          ; BF04: 8D 60 77    .`w
- RTS                                          ; BF07: 60          `
+ JSR SetupPPUForIconBar
+ LDA #0
+ STA nameBuffer0+640
+ STA nameBuffer0+672
+ STA nameBuffer0+704
+ STA nameBuffer0+736
+ STA nameBuffer0+768
+ STA nameBuffer0+800
+ STA nameBuffer0+832
+ STA nameBuffer0+864
+ STA nameBuffer1+640
+ STA nameBuffer1+672
+ STA nameBuffer1+704
+ STA nameBuffer1+736
+ STA nameBuffer1+768
+ STA nameBuffer1+800
+ STA nameBuffer1+832
+ STA nameBuffer1+864
+ RTS
 
 \ ******************************************************************************
 \
