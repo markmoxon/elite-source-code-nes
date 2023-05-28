@@ -96,10 +96,10 @@ def extract_image(input_data, sections, output_folder, input_file, palette):
     pixel_width = 64
 
     if sections == 1:
-        # image0_1
+        # faceImage0
         pixel_width = 40
     elif sections == 2:
-        # image0_2
+        # headImage0
         pixel_width = 48
 
     index = 0
@@ -109,27 +109,27 @@ def extract_image(input_data, sections, output_folder, input_file, palette):
 
     unpacked_data_0 = bytearray()
     unpack(input_data, unpacked_data_0)
-    output_file = open(output_path_binaries + "_pattern_0.bin", "wb")
+    output_file = open(output_path_binaries + "_pattern0.bin", "wb")
     output_file.write(unpacked_data_0)
     output_file.close()
 
     if sections >= 2:
         unpacked_data_1 = bytearray()
         unpack(input_data, unpacked_data_1)
-        output_file = open(output_path_binaries + "_pattern_1.bin", "wb")
+        output_file = open(output_path_binaries + "_pattern1.bin", "wb")
         output_file.write(unpacked_data_1)
         output_file.close()
 
     if sections >= 4:
         unpacked_data_2 = bytearray()
         unpack(input_data, unpacked_data_2)
-        output_file = open(output_path_binaries + "_sprite_0.bin", "wb")
+        output_file = open(output_path_binaries + "_sprite0.bin", "wb")
         output_file.write(unpacked_data_2)
         output_file.close()
 
         unpacked_data_3 = bytearray()
         unpack(input_data, unpacked_data_3)
-        output_file = open(output_path_binaries + "_sprite_1.bin", "wb")
+        output_file = open(output_path_binaries + "_sprite1.bin", "wb")
         output_file.write(unpacked_data_3)
         output_file.close()
 
@@ -217,7 +217,7 @@ bank5_palettes_sprite = [
     1
 ]
 
-# Offsets of faces in bank 4
+# Offsets of face images in bank 4
 
 bank4_offsets_1 = [
     0x001E,
@@ -237,7 +237,7 @@ bank4_offsets_1 = [
     0x150E
 ]
 
-# Offsets of headshots in bank 4
+# Offsets of head images in bank 4
 
 bank4_offsets_2 = [
     0x001E,
@@ -287,7 +287,7 @@ for i in range(0, 15):
     start = bank5_offsets[i] + 0x0C
     end = bank5_offsets[i + 1] + 0x0C
     palette = bank5_palettes_sprite[i]
-    extract_image(bank_data[start: end], 4, "../1-source-files/images/systems/", "image" + str(i), palette)
+    extract_image(bank_data[start: end], 4, "../1-source-files/images/system-images/", "systemImage" + str(i), palette)
 
 bank_data = bytearray()
 bank_file = open("../4-reference-binaries/ntsc/bank4.bin", "rb")
@@ -298,10 +298,10 @@ for i in range(0, 14):
     start = bank4_offsets_1[i] + 0x0C
     end = bank4_offsets_1[i + 1] + 0x0C
     palette = 7
-    extract_image(bank_data[start: end], 1, "../1-source-files/images/faces/", "image1_" + str(i), palette)
+    extract_image(bank_data[start: end], 1, "../1-source-files/images/face-images/", "faceImage" + str(i), palette)
 
 for i in range(0, 14):
     start = bank4_offsets_2[i] + 0x151A
     end = bank4_offsets_2[i + 1] + 0x151A
     palette = 6
-    extract_image(bank_data[start: end], 2, "../1-source-files/images/headshots/", "image2_" + str(i), palette)
+    extract_image(bank_data[start: end], 2, "../1-source-files/images/headshot-images/", "headImage" + str(i), palette)

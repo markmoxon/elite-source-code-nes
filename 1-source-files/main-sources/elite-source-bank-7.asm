@@ -1045,11 +1045,11 @@ ENDIF
  STA pallettePhasex8
  LSR A
  ORA #&20
- STA ppuNametableHi
+ STA debugNametableHi
  LDA #&10
  STA L00E0
  LDA #0
- STA ppuNametableLo
+ STA debugNametableLo
  LDA L00CC
  STA tile3Phase0,X
  STA tile2Phase0,X
@@ -1085,7 +1085,7 @@ ENDIF
  LDA addr4
  ADC nameBufferAddr,X
  STA L04C0,X
- LDA ppuNametableHi
+ LDA debugNametableHi
  SEC
  SBC nameBufferAddr,X
  STA L04C6,X
@@ -1146,7 +1146,7 @@ ENDIF
 .CC870
 
  STA temp1
- LDA ppuNametableHi
+ LDA debugNametableHi
  SEC
  SBC nameBufferAddr,X
  STA L04C6,X
@@ -4133,7 +4133,7 @@ ENDIF
  LDA nameBufferAddr,X
  STA nameBufferHi
  LDA #0
- STA patternBufferLo
+ STA debugPattBufferLo
  STA drawingPhaseDebug
 
 \ ******************************************************************************
@@ -4148,11 +4148,11 @@ ENDIF
 .subm_D8FD
 
  LDA pattBufferAddr,X
+ STA debugPattBufferHi
+ LSR A
+ LSR A
+ LSR A
  STA patternBufferHi
- LSR A
- LSR A
- LSR A
- STA pattBufferHi
  RTS
 
 \ ******************************************************************************
@@ -4743,7 +4743,7 @@ ENDIF
 
 .CDCE5
 
- LDX pattBufferHi
+ LDX patternBufferHi
  STX SC+1
  ASL A
  ROL SC+1
@@ -4882,7 +4882,7 @@ ENDIF
 
 .CDD9D
 
- LDX pattBufferHi
+ LDX patternBufferHi
  STX SC+1
  ASL A
  ROL SC+1
@@ -5080,7 +5080,7 @@ ENDIF
 
 .CDEA9
 
- LDX pattBufferHi
+ LDX patternBufferHi
  STX SC+1
  ASL A
  ROL SC+1
@@ -5139,7 +5139,7 @@ ENDIF
 
 .CDEFD
 
- LDX pattBufferHi
+ LDX patternBufferHi
  STX SC+1
  ASL A
  ROL SC+1
@@ -5243,7 +5243,7 @@ ENDIF
 
 .subm_DF76
 
- LDX pattBufferHi
+ LDX patternBufferHi
  STX SC+1
  ASL A
  ROL SC+1
@@ -5302,7 +5302,7 @@ ENDIF
 
 .CDFCA
 
- LDX pattBufferHi
+ LDX patternBufferHi
  STX SC+1
  ASL A
  ROL SC+1
@@ -5456,7 +5456,7 @@ ENDIF
 .CE083
 
  STY T
- LDY pattBufferHi
+ LDY patternBufferHi
  STY SC+1
  ASL A
  ROL SC+1
@@ -5585,7 +5585,7 @@ ENDIF
  BCS CE163
  CMP #&25
  BCC CE120
- LDX pattBufferHi
+ LDX patternBufferHi
  STX L00BD
  ASL A
  ROL L00BD
@@ -5599,7 +5599,7 @@ ENDIF
  LDX #0
  STA (SC2,X)
  INC tileNumber
- LDX pattBufferHi
+ LDX patternBufferHi
  STX SC+1
  ASL A
  ROL SC+1
@@ -5622,7 +5622,7 @@ ENDIF
 
 .CE163
 
- LDX pattBufferHi
+ LDX patternBufferHi
  STX SC+1
  ASL A
  ROL SC+1
@@ -5683,7 +5683,7 @@ ENDIF
  BEQ CE1C7
  CMP #&3C
  BCC CE1E4
- LDX pattBufferHi
+ LDX patternBufferHi
  STX SC+1
  ASL A
  ROL SC+1
@@ -5743,7 +5743,7 @@ ENDIF
  BEQ CE1BA
  INC tileNumber
  STA (SC2,X)
- LDX pattBufferHi
+ LDX patternBufferHi
  STX L00BD
  ASL A
  ROL L00BD
@@ -5753,7 +5753,7 @@ ENDIF
  ROL L00BD
  STA L00BC
  LDA SC
- LDX pattBufferHi
+ LDX patternBufferHi
  STX SC+1
  ASL A
  ROL SC+1
@@ -5807,7 +5807,7 @@ ENDIF
  BCS CE28C
  CMP #&25
  BCC CE249
- LDX pattBufferHi
+ LDX patternBufferHi
  STX L00BD
  ASL A
  ROL L00BD
@@ -5821,7 +5821,7 @@ ENDIF
  LDX #0
  STA (SC2,X)
  INC tileNumber
- LDX pattBufferHi
+ LDX patternBufferHi
  STX SC+1
  ASL A
  ROL SC+1
@@ -5844,7 +5844,7 @@ ENDIF
 
 .CE28C
 
- LDX pattBufferHi
+ LDX patternBufferHi
  STX SC+1
  ASL A
  ROL SC+1
@@ -5892,7 +5892,7 @@ ENDIF
  BCS CE307
  CMP #&25
  BCC CE2C4
- LDX pattBufferHi
+ LDX patternBufferHi
  STX L00BD
  ASL A
  ROL L00BD
@@ -5906,7 +5906,7 @@ ENDIF
  LDX #0
  STA (SC2,X)
  INC tileNumber
- LDX pattBufferHi
+ LDX patternBufferHi
  STX SC+1
  ASL A
  ROL SC+1
@@ -5929,7 +5929,7 @@ ENDIF
 
 .CE307
 
- LDX pattBufferHi
+ LDX patternBufferHi
  STX SC+1
  ASL A
  ROL SC+1
@@ -6071,7 +6071,7 @@ ENDIF
  BCS CE3F7
  CMP #&25
  BCC CE3B4
- LDX pattBufferHi
+ LDX patternBufferHi
  STX L00BD
  ASL A
  ROL L00BD
@@ -6085,7 +6085,7 @@ ENDIF
  LDX #0
  STA (SC2,X)
  INC tileNumber
- LDX pattBufferHi
+ LDX patternBufferHi
  STX SC+1
  ASL A
  ROL SC+1
@@ -6108,7 +6108,7 @@ ENDIF
 
 .CE3F7
 
- LDX pattBufferHi
+ LDX patternBufferHi
  STX SC+1
  ASL A
  ROL SC+1
@@ -6178,7 +6178,7 @@ ENDIF
  BEQ CE4AA
  CMP #&3C
  BCC CE4B4
- LDX pattBufferHi
+ LDX patternBufferHi
  STX SC+1
  ASL A
  ROL SC+1
@@ -6240,7 +6240,7 @@ ENDIF
  BEQ CE4B1
  INC tileNumber
  STA (SC2,X)
- LDX pattBufferHi
+ LDX patternBufferHi
  STX L00BD
  ASL A
  ROL L00BD
@@ -6250,7 +6250,7 @@ ENDIF
  ROL L00BD
  STA L00BC
  LDA SC
- LDX pattBufferHi
+ LDX patternBufferHi
  STX SC+1
  ASL A
  ROL SC+1
@@ -6315,7 +6315,7 @@ ENDIF
 
 .CE521
 
- LDX pattBufferHi
+ LDX patternBufferHi
  STX SC+1
  ASL A
  ROL SC+1
@@ -10081,7 +10081,31 @@ ENDIF
 \       Name: UnpackToRAM
 \       Type: Subroutine
 \   Category: ???
-\    Summary: ???
+\    Summary: Unpack compressed image data to RAM
+\
+\ ------------------------------------------------------------------------------
+\
+\ UnpackToRAM copies data from V(1 0) to SC(1 0)
+\ Fetch byte from V(1 0) and increment V(1 0), say byte is &xx
+\   >= &40 store byte as is and move on to next
+\   = &x0 store byte as is and move on to next
+\   = &3F stop and return from subroutine - end of decompression
+\   >= &20, jump to CF572
+\           >= &30 jump to CF589 to copy next &0x bytes from V(1 0) as they
+\                  are, incrementing V(1 0) as we go
+\           >= &20 fetch next byte and store it for &0x bytes
+\   >= &10, jump to CF56E to store &FF for &0x bytes
+\   < &10, store 0 for &0x bytes
+\ 
+\ &00 = unchanged
+\ &0x = store 0 for &0x bytes
+\ &10 = unchanged
+\ &1x = store &FF for &0x bytes
+\ &20 = unchanged
+\ &2x = store next byte for &0x bytes
+\ &30 = unchanged
+\ &3x = store next &0x bytes unchanged
+\ &40 and above = unchanged
 \
 \ ******************************************************************************
 
@@ -10202,7 +10226,7 @@ ENDIF
 \       Name: UnpackToPPU
 \       Type: Subroutine
 \   Category: ???
-\    Summary: ???
+\    Summary: Unpack compressed image data and send it to the PPU
 \
 \ ******************************************************************************
 

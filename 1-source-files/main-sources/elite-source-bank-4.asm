@@ -167,54 +167,53 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image1Count
+\       Name: faceCount
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: The number of images in group 1, as listed in the image1Offset
-\             table
+\    Summary: The number of commander face images in the faceOffset table
 \
 \ ******************************************************************************
 
-.image1Count
+.faceCount
 
  EQUW 14
 
 \ ******************************************************************************
 \
-\       Name: image1Offset
+\       Name: faceOffset
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Offset to the data for each of the 14 images in group 1
+\    Summary: Offset to the data for each of the 14 commander face images
 \
 \ ******************************************************************************
 
-.image1Offset
+.faceOffset
 
- EQUW image0_1 - image1Count
- EQUW image1_1 - image1Count
- EQUW image2_1 - image1Count
- EQUW image3_1 - image1Count
- EQUW image4_1 - image1Count
- EQUW image5_1 - image1Count
- EQUW image6_1 - image1Count
- EQUW image7_1 - image1Count
- EQUW image8_1 - image1Count
- EQUW image9_1 - image1Count
- EQUW image10_1 - image1Count
- EQUW image11_1 - image1Count
- EQUW image12_1 - image1Count
- EQUW image13_1 - image1Count
+ EQUW faceImage0 - faceCount
+ EQUW faceImage1 - faceCount
+ EQUW faceImage2 - faceCount
+ EQUW faceImage3 - faceCount
+ EQUW faceImage4 - faceCount
+ EQUW faceImage5 - faceCount
+ EQUW faceImage6 - faceCount
+ EQUW faceImage7 - faceCount
+ EQUW faceImage8 - faceCount
+ EQUW faceImage9 - faceCount
+ EQUW faceImage10 - faceCount
+ EQUW faceImage11 - faceCount
+ EQUW faceImage12 - faceCount
+ EQUW faceImage13 - faceCount
 
 \ ******************************************************************************
 \
-\       Name: image0_1
+\       Name: faceImage0
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 0 in group 1
+\    Summary: Data for commander face image 0
 \
 \ ******************************************************************************
 
-.image0_1
+.faceImage0
 
  EQUB &0F, &05, &32, &03, &19, &47, &BC, &05
  EQUB &32, &07, &38, &43, &04, &21, &2D, &5F
@@ -266,14 +265,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image1_1
+\       Name: faceImage1
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 1 in group 1
+\    Summary: Data for commander face image 1
 \
 \ ******************************************************************************
 
-.image1_1
+.faceImage1
 
  EQUB &0F, &05, &32, &03, &19, &47, &BC, &05
  EQUB &32, &07, &38, &43, &04, &21, &2D, &5F
@@ -324,14 +323,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image2_1
+\       Name: faceImage2
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 2 in group 1
+\    Summary: Data for commander face image 2
 \
 \ ******************************************************************************
 
-.image2_1
+.faceImage2
 
  EQUB &0F, &05, &32, &03, &19, &47, &BC, &05
  EQUB &32, &07, &38, &43, &04, &21, &2D, &5F
@@ -382,14 +381,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image3_1
+\       Name: faceImage3
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 3 in group 1
+\    Summary: Data for commander face image 3
 \
 \ ******************************************************************************
 
-.image3_1
+.faceImage3
 
  EQUB &0F, &21, &01, &04, &33, &08, &02, &01
  EQUB &B9, &04, &33, &1C, &06, &33, &C9, &04
@@ -443,14 +442,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image4_1
+\       Name: faceImage4
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 4 in group 1
+\    Summary: Data for commander face image 4
 \
 \ ******************************************************************************
 
-.image4_1
+.faceImage4
 
  EQUB &0F, &21, &01, &04, &33, &08, &02, &01
  EQUB &B9, &04, &33, &1C, &06, &33, &C9, &04
@@ -505,14 +504,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image5_1
+\       Name: faceImage5
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 5 in group 1
+\    Summary: Data for commander face image 5
 \
 \ ******************************************************************************
 
-.image5_1
+.faceImage5
 
  EQUB &0F, &21, &01, &04, &33, &08, &02, &01
  EQUB &B9, &04, &33, &1C, &06, &33, &C9, &04
@@ -566,14 +565,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image6_1
+\       Name: faceImage6
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 6 in group 1
+\    Summary: Data for commander face image 6
 \
 \ ******************************************************************************
 
-.image6_1
+.faceImage6
 
  EQUB &0F, &05, &32, &02, &14, &62, &D4, &04
  EQUB &34, &01, &0B, &1D, &2B, &04, &AA, &10
@@ -627,14 +626,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image7_1
+\       Name: faceImage7
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 7 in group 1
+\    Summary: Data for commander face image 7
 \
 \ ******************************************************************************
 
-.image7_1
+.faceImage7
 
  EQUB &0F, &05, &32, &02, &14, &62, &D4, &04
  EQUB &34, &01, &0B, &1D, &2B, &04, &AA, &10
@@ -688,14 +687,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image8_1
+\       Name: faceImage8
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 8 in group 1
+\    Summary: Data for commander face image 8
 \
 \ ******************************************************************************
 
-.image8_1
+.faceImage8
 
  EQUB &0F, &05, &32, &02, &14, &62, &D4, &04
  EQUB &34, &01, &0B, &1D, &2B, &04, &AA, &10
@@ -747,14 +746,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image9_1
+\       Name: faceImage9
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 9 in group 1
+\    Summary: Data for commander face image 9
 \
 \ ******************************************************************************
 
-.image9_1
+.faceImage9
 
  EQUB &0F, &21, &01, &04, &33, &08, &02, &01
  EQUB &B9, &04, &33, &1C, &06, &33, &C9, &04
@@ -807,14 +806,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image10_1
+\       Name: faceImage10
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 10 in group 1
+\    Summary: Data for commander face image 10
 \
 \ ******************************************************************************
 
-.image10_1
+.faceImage10
 
  EQUB &0F, &04, &32, &14, &02, &00, &53, &88
  EQUB &03, &34, &08, &06, &03, &21, &71, &03
@@ -870,14 +869,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image11_1
+\       Name: faceImage11
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 11 in group 1
+\    Summary: Data for commander face image 11
 \
 \ ******************************************************************************
 
-.image11_1
+.faceImage11
 
  EQUB &0F, &05, &34, &02, &14, &32, &24, &04
  EQUB &33, &01, &0B, &0D, &CB, &04, &AA, &10
@@ -929,14 +928,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image12_1
+\       Name: faceImage12
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 12 in group 1
+\    Summary: Data for commander face image 12
 \
 \ ******************************************************************************
 
-.image12_1
+.faceImage12
 
  EQUB &0F, &05, &32, &02, &14, &62, &D4, &04
  EQUB &34, &01, &0B, &1D, &2B, &04, &AA, &10
@@ -990,14 +989,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image13_1
+\       Name: faceImage13
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 13 in group 1
+\    Summary: Data for commander face image 13
 \
 \ ******************************************************************************
 
-.image13_1
+.faceImage13
 
  EQUB &0F, &21, &01, &04, &33, &08, &02, &01
  EQUB &B9, &04, &33, &1C, &06, &33, &C9, &04
@@ -1051,54 +1050,53 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image2Count
+\       Name: headCount
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: The number of images in group 2, as listed in the image2Offset
-\             table
+\    Summary: The number of commander headshot images in the headOffset table
 \
 \ ******************************************************************************
 
-.image2Count
+.headCount
 
  EQUW 14
 
 \ ******************************************************************************
 \
-\       Name: image2Offset
+\       Name: headOffset
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Offset to the data for each of the 14 images in group 2
+\    Summary: Offset to the data for each of the 14 commander headshot images
 \
 \ ******************************************************************************
 
-.image2Offset
+.headOffset
 
- EQUW image0_2 - image2Count
- EQUW image1_2 - image2Count
- EQUW image2_2 - image2Count
- EQUW image3_2 - image2Count
- EQUW image4_2 - image2Count
- EQUW image5_2 - image2Count
- EQUW image6_2 - image2Count
- EQUW image7_2 - image2Count
- EQUW image8_2 - image2Count
- EQUW image9_2 - image2Count
- EQUW image10_2 - image2Count
- EQUW image11_2 - image2Count
- EQUW image12_2 - image2Count
- EQUW image13_2 - image2Count
+ EQUW headImage0 - headCount
+ EQUW headImage1 - headCount
+ EQUW headImage2 - headCount
+ EQUW headImage3 - headCount
+ EQUW headImage4 - headCount
+ EQUW headImage5 - headCount
+ EQUW headImage6 - headCount
+ EQUW headImage7 - headCount
+ EQUW headImage8 - headCount
+ EQUW headImage9 - headCount
+ EQUW headImage10 - headCount
+ EQUW headImage11 - headCount
+ EQUW headImage12 - headCount
+ EQUW headImage13 - headCount
 
 \ ******************************************************************************
 \
-\       Name: image0_2
+\       Name: headImage0
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 0 in group 2
+\    Summary: Data for commander headshot image 0
 \
 \ ******************************************************************************
 
-.image0_2
+.headImage0
 
  EQUB &1D, &FC, &F0, &E0, &13, &E0, &04, &13
  EQUB &32, &0F, &01, &03, &15, &7F, &32, &1F
@@ -1150,14 +1148,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image1_2
+\       Name: headImage1
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 1 in group 2
+\    Summary: Data for commander headshot image 1
 \
 \ ******************************************************************************
 
-.image1_2
+.headImage1
 
  EQUB &1D, &FC, &F0, &E0, &13, &E0, &04, &13
  EQUB &32, &0F, &01, &03, &15, &7F, &32, &1F
@@ -1210,14 +1208,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image2_2
+\       Name: headImage2
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 2 in group 2
+\    Summary: Data for commander headshot image 2
 \
 \ ******************************************************************************
 
-.image2_2
+.headImage2
 
  EQUB &1D, &FC, &F0, &E0, &13, &E0, &04, &13
  EQUB &32, &0F, &01, &03, &15, &7F, &32, &1F
@@ -1268,14 +1266,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image3_2
+\       Name: headImage3
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 3 in group 2
+\    Summary: Data for commander headshot image 3
 \
 \ ******************************************************************************
 
-.image3_2
+.headImage3
 
  EQUB &1B, &FE, &22, &FC, &E0, &C0, &12, &F7
  EQUB &20, &04, &12, &6F, &21, &07, &04, &14
@@ -1331,14 +1329,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image4_2
+\       Name: headImage4
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 4 in group 2
+\    Summary: Data for commander headshot image 4
 \
 \ ******************************************************************************
 
-.image4_2
+.headImage4
 
  EQUB &1B, &FE, &22, &FC, &E0, &C0, &12, &F7
  EQUB &20, &04, &12, &6F, &21, &07, &04, &14
@@ -1394,14 +1392,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image5_2
+\       Name: headImage5
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 5 in group 2
+\    Summary: Data for commander headshot image 5
 \
 \ ******************************************************************************
 
-.image5_2
+.headImage5
 
  EQUB &1B, &FE, &22, &FC, &E0, &C0, &12, &F7
  EQUB &20, &04, &12, &6F, &21, &07, &04, &14
@@ -1455,14 +1453,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image6_2
+\       Name: headImage6
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 6 in group 2
+\    Summary: Data for commander headshot image 6
 \
 \ ******************************************************************************
 
-.image6_2
+.headImage6
 
  EQUB &1D, &FC, &F0, &E0, &13, &E0, &04, &13
  EQUB &32, &0F, &01, &03, &15, &7F, &32, &1F
@@ -1515,14 +1513,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image7_2
+\       Name: headImage7
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 7 in group 2
+\    Summary: Data for commander headshot image 7
 \
 \ ******************************************************************************
 
-.image7_2
+.headImage7
 
  EQUB &1D, &FC, &F0, &E0, &13, &E0, &04, &13
  EQUB &32, &0F, &01, &03, &15, &7F, &32, &1F
@@ -1575,14 +1573,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image8_2
+\       Name: headImage8
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 8 in group 2
+\    Summary: Data for commander headshot image 8
 \
 \ ******************************************************************************
 
-.image8_2
+.headImage8
 
  EQUB &1D, &FC, &F0, &E0, &13, &E0, &04, &13
  EQUB &32, &0F, &01, &03, &15, &7F, &32, &1F
@@ -1634,14 +1632,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image9_2
+\       Name: headImage9
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 9 in group 2
+\    Summary: Data for commander headshot image 9
 \
 \ ******************************************************************************
 
-.image9_2
+.headImage9
 
  EQUB &1B, &FE, &22, &FC, &E0, &C0, &12, &F7
  EQUB &20, &04, &12, &6F, &21, &03, &04, &14
@@ -1695,14 +1693,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image10_2
+\       Name: headImage10
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 10 in group 2
+\    Summary: Data for commander headshot image 10
 \
 \ ******************************************************************************
 
-.image10_2
+.headImage10
 
  EQUB &1A, &FE, &22, &FC, &22, &F0, &E0, &12
  EQUB &21, &34, &05, &FF, &6F, &21, &07, &05
@@ -1760,14 +1758,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image11_2
+\       Name: headImage11
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 11 in group 2
+\    Summary: Data for commander headshot image 11
 \
 \ ******************************************************************************
 
-.image11_2
+.headImage11
 
  EQUB &1D, &FC, &F0, &E0, &13, &E0, &04, &13
  EQUB &32, &0F, &01, &03, &15, &7F, &32, &1F
@@ -1819,14 +1817,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image12_2
+\       Name: headImage12
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 12 in group 2
+\    Summary: Data for commander headshot image 12
 \
 \ ******************************************************************************
 
-.image12_2
+.headImage12
 
  EQUB &1D, &FC, &F0, &E0, &13, &E0, &04, &13
  EQUB &32, &0F, &01, &03, &15, &7F, &32, &1F
@@ -1882,14 +1880,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image13_2
+\       Name: headImage13
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 13 in group 2
+\    Summary: Data for commander headshot image 13
 \
 \ ******************************************************************************
 
-.image13_2
+.headImage13
 
  EQUB &1B, &FE, &22, &FC, &E0, &C0, &12, &F7
  EQUB &20, &04, &12, &6F, &21, &03, &04, &14
@@ -2500,9 +2498,9 @@ ENDMACRO
  ADC S
  TAX
  LDA LB8DB,X
- CMP image2Count
+ CMP headCount
  BCC CB8D8
- LDA image2Count
+ LDA headCount
  SBC #1
 
 .CB8D8
@@ -2563,12 +2561,12 @@ ENDMACRO
  ASL A
  TAX
 
- LDA image2Offset,X     \ Set V(1 0) = image2Offset for image X + image2Count
+ LDA headOffset,X       \ Set V(1 0) = headOffset for image X + headCount
  CLC                    \
- ADC #LO(image2Count)   \ So V(1 0) points to image0_2 when X = 0, image1_2 when
- STA V                  \ when X = 1, and so on up to image13_2 when X = 13
- LDA image2Offset+1,X
- ADC #HI(image2Count)
+ ADC #LO(headCount)     \ So V(1 0) points to headImage0 when X = 0, headImage1 when
+ STA V                  \ when X = 1, and so on up to headImage13 when X = 13
+ LDA headOffset+1,X
+ ADC #HI(headCount)
  STA V+1
 
  JSR UnpackToRAM        \ Unpack the data at V(1 0) into SC(1 0), updating
@@ -2603,7 +2601,7 @@ ENDMACRO
 
 .SetCmdrImage
 
- JSR GetCmdrImage    \ Fetch the group 2 image for the current system and
+ JSR GetCmdrImage       \ Fetch the group 2 image for the current system and
                         \ store it in the pattern buffers, starting at tile
                         \ number pictureTile
 
@@ -2611,12 +2609,12 @@ ENDMACRO
  ASL A
  TAX
 
- CLC                    \ Set V(1 0) = image1Offset for image X + image1Count
- LDA image1Offset,X     \
- ADC #LO(image1Count)   \ So V(1 0) points to image0_1 when X = 0, image1_1 when
- STA V                  \ X = 1, and so on up to image13_1 when X = 13
- LDA image1Offset+1,X
- ADC #HI(image1Count)
+ CLC                    \ Set V(1 0) = faceOffset for image X + faceCount
+ LDA faceOffset,X       \
+ ADC #LO(faceCount)     \ So V(1 0) points to faceImage0 when X = 0, faceImage1 when
+ STA V                  \ X = 1, and so on up to faceImage13 when X = 13
+ LDA faceOffset+1,X
+ ADC #HI(faceCount)
  STA V+1
 
  LDA #HI(16*69)         \ Set PPU_ADDR to the address of pattern #69 in pattern

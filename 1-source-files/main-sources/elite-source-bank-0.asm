@@ -290,14 +290,9 @@ ENDMACRO
 
  STX XSAV
  STA TYPE
- LDA setupPPUForIconBar
- BPL C80C0
- LDA PPU_STATUS
- ASL A
- BPL C80C0
- JSR SetPPUTablesTo0
 
-.C80C0
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  JSR GINF
  LDY #&25
@@ -308,14 +303,9 @@ ENDMACRO
  STA XX1,Y
  DEY
  BPL loop_C80C5
- LDA setupPPUForIconBar
- BPL C80DA
- LDA PPU_STATUS
- ASL A
- BPL C80DA
- JSR SetPPUTablesTo0
 
-.C80DA
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA TYPE
  BMI MA21
@@ -407,14 +397,9 @@ ENDMACRO
 .MA21
 
  JSR MVEIT
- LDA setupPPUForIconBar
- BPL C8158
- LDA PPU_STATUS
- ASL A
- BPL C8158
- JSR SetPPUTablesTo0
 
-.C8158
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDY #&25
 
@@ -424,12 +409,9 @@ ENDMACRO
  STA (XX19),Y
  DEY
  BPL loop_C815A
- LDA setupPPUForIconBar
- BPL MainFlight7
- LDA PPU_STATUS
- ASL A
- BPL MainFlight7
- JSR SetPPUTablesTo0
+
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
 \ ******************************************************************************
 \
@@ -913,14 +895,8 @@ ENDMACRO
 
 .MA18
 
- LDA setupPPUForIconBar
- BPL C83BB
- LDA PPU_STATUS
- ASL A
- BPL C83BB
- JSR SetPPUTablesTo0
-
-.C83BB
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA BOMB
  BPL C83CB
@@ -1136,14 +1112,8 @@ ENDMACRO
 
 .subm_MainFlight13
 
- LDA setupPPUForIconBar
- BPL C84DE
- LDA PPU_STATUS
- ASL A
- BPL C84DE
- JSR SetPPUTablesTo0
-
-.C84DE
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDX ENERGY
  BPL C84F5
@@ -1187,14 +1157,9 @@ ENDMACRO
  SBC #&24
  BCC C852F
  STA R
- LDA setupPPUForIconBar
- BPL C8525
- LDA PPU_STATUS
- ASL A
- BPL C8525
- JSR SetPPUTablesTo0
 
-.C8525
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  JSR LL5
  LDA Q
@@ -1226,14 +1191,8 @@ ENDMACRO
 
 .C853A
 
- LDA setupPPUForIconBar
- BPL C8547
- LDA PPU_STATUS
- ASL A
- BPL C8547
- JSR SetPPUTablesTo0
-
-.C8547
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA K%
  EOR nmiTimerLo
@@ -1359,14 +1318,8 @@ ENDMACRO
 
 .C85F5
 
- LDA setupPPUForIconBar
- BPL C8602
- LDA PPU_STATUS
- ASL A
- BPL C8602
- JSR SetPPUTablesTo0
-
-.C8602
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA KL
  BEQ C8614
@@ -2196,14 +2149,8 @@ ENDMACRO
 
 .MVS5
 
- LDA setupPPUForIconBar
- BPL C8A21
- LDA PPU_STATUS
- ASL A
- BPL C8A21
- JSR SetPPUTablesTo0
-
-.C8A21
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA INWK+1,X
  AND #&7F
@@ -2276,14 +2223,9 @@ ENDMACRO
  STA XX1,X
  LDA K+1
  STA INWK+1,X
- LDA setupPPUForIconBar
- BPL C8AB9
- LDA PPU_STATUS
- ASL A
- BPL C8AB9
- JSR SetPPUTablesTo0
 
-.C8AB9
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  RTS
 
@@ -2413,14 +2355,9 @@ ENDMACRO
 .loop_C8B2D
 
  PHP
- LDA setupPPUForIconBar
- BPL C8B3B
- LDA PPU_STATUS
- ASL A
- BPL C8B3B
- JSR SetPPUTablesTo0
 
-.C8B3B
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  PLP
  LDA K,X
@@ -2497,6 +2434,11 @@ ENDMACRO
 \       Type: Subroutine
 \   Category: ???
 \    Summary: ???
+\
+\ ------------------------------------------------------------------------------
+\
+\ Moves sprite 11 to coord (JSTX, 29)
+\              12 to coord (JSTY, 37)
 \
 \ ******************************************************************************
 
@@ -2640,14 +2582,8 @@ ENDMACRO
 
 .C8C50
 
- LDA setupPPUForIconBar
- BPL C8C5D
- LDA PPU_STATUS
- ASL A
- BPL C8C5D
- JSR SetPPUTablesTo0
-
-.C8C5D
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA #&80
  STA DTW4
@@ -2993,14 +2929,9 @@ ENDMACRO
  LDY #&0A
  JSR TAS3
  STA CNT
- LDA setupPPUForIconBar
- BPL C8E29
- LDA PPU_STATUS
- ASL A
- BPL C8E29
- JSR SetPPUTablesTo0
 
-.C8E29
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA TYPE
  CMP #1
@@ -3104,14 +3035,8 @@ ENDMACRO
 
 .TA3
 
- LDA setupPPUForIconBar
- BPL C8EBE
- LDA PPU_STATUS
- ASL A
- BPL C8EBE
- JSR SetPPUTablesTo0
-
-.C8EBE
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA #0
  JSR MAS4
@@ -3292,14 +3217,9 @@ ENDMACRO
  EOR #&80
  AND #&80
  STA INWK+30
- LDA setupPPUForIconBar
- BPL C8FB8
- LDA PPU_STATUS
- ASL A
- BPL C8FB8
- JSR SetPPUTablesTo0
 
-.C8FB8
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA CNT
  BPL C8FCA
@@ -3431,14 +3351,8 @@ ENDMACRO
 
 .C9068
 
- LDA setupPPUForIconBar
- BPL C9075
- LDA PPU_STATUS
- ASL A
- BPL C9075
- JSR SetPPUTablesTo0
-
-.C9075
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDX #0
  STX RAT2
@@ -3537,14 +3451,8 @@ ENDMACRO
 
 .TAS1
 
- LDA setupPPUForIconBar
- BPL C90E5
- LDA PPU_STATUS
- ASL A
- BPL C90E5
- JSR SetPPUTablesTo0
-
-.C90E5
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA (V),Y
  EOR #&80
@@ -3900,14 +3808,9 @@ ENDMACRO
 .SFS1
 
  STA T1
- LDA setupPPUForIconBar
- BPL C928E
- LDA PPU_STATUS
- ASL A
- BPL C928E
- JSR SetPPUTablesTo0
 
-.C928E
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  TXA
  PHA
@@ -4056,14 +3959,8 @@ ENDMACRO
 
 .C9359
 
- LDA setupPPUForIconBar
- BPL C9366
- LDA PPU_STATUS
- ASL A
- BPL C9366
- JSR SetPPUTablesTo0
-
-.C9366
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA STP
  SEC
@@ -5372,14 +5269,8 @@ ENDMACRO
 
 .C9A12
 
- LDA setupPPUForIconBar
- BPL C9A1F
- LDA PPU_STATUS
- ASL A
- BPL C9A1F
- JSR SetPPUTablesTo0
-
-.C9A1F
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  STY QQ29
  LDX QQ20,Y
@@ -5779,14 +5670,8 @@ ENDMACRO
 
 .C9C32
 
- LDA setupPPUForIconBar
- BPL C9C3F
- LDA PPU_STATUS
- ASL A
- BPL C9C3F
- JSR SetPPUTablesTo0
-
-.C9C3F
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA QQ15+3
  SEC
@@ -5887,7 +5772,13 @@ ENDMACRO
 \       Name: DrawChartSystems
 \       Type: Subroutine
 \   Category: ???
-\    Summary: ???
+\    Summary: Draw system blobs on short-range chart
+\
+\ ------------------------------------------------------------------------------
+\
+\ Increments L04A1
+\ Sets sprite L04A1 to tile 213+K at (K3-4, K4+10)
+\ K = 2 or 3 or 4 -> 215-217
 \
 \ ******************************************************************************
 
@@ -6053,14 +5944,8 @@ ENDMACRO
 
 .C9D76
 
- LDA setupPPUForIconBar
- BPL C9D83
- LDA PPU_STATUS
- ASL A
- BPL C9D83
- JSR SetPPUTablesTo0
-
-.C9D83
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA QQ15+3
  SEC
@@ -6101,14 +5986,8 @@ ENDMACRO
 
 .C9DB7
 
- LDA setupPPUForIconBar
- BPL C9DC4
- LDA PPU_STATUS
- ASL A
- BPL C9DC4
- JSR SetPPUTablesTo0
-
-.C9DC4
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  JSR TT20
  INC U
@@ -6150,14 +6029,9 @@ ENDMACRO
  LSR A
  JSR SQUA2
  PHA
- LDA setupPPUForIconBar
- BPL C9E14
- LDA PPU_STATUS
- ASL A
- BPL C9E14
- JSR SetPPUTablesTo0
 
-.C9E14
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA P
  CLC
@@ -6576,14 +6450,8 @@ ENDMACRO
 
 .C9FBB
 
- LDA setupPPUForIconBar
- BPL C9FC8
- LDA PPU_STATUS
- ASL A
- BPL C9FC8
- JSR SetPPUTablesTo0
-
-.C9FC8
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDY QQ29
  LDA #3
@@ -7272,14 +7140,8 @@ ENDMACRO
 
 .MCASH
 
- LDA setupPPUForIconBar
- BPL CA34E
- LDA PPU_STATUS
- ASL A
- BPL CA34E
- JSR SetPPUTablesTo0
-
-.CA34E
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  TXA
  CLC
@@ -7602,14 +7464,8 @@ ENDMACRO
 
 .CA4DB
 
- LDA setupPPUForIconBar
- BPL CA4E8
- LDA PPU_STATUS
- ASL A
- BPL CA4E8
- JSR SetPPUTablesTo0
-
-.CA4E8
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA controller1Up
  BPL CA4F0
@@ -7845,14 +7701,8 @@ ENDMACRO
 
 .CA649
 
- LDA setupPPUForIconBar
- BPL CA656
- LDA PPU_STATUS
- ASL A
- BPL CA656
- JSR SetPPUTablesTo0
-
-.CA656
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  JSR dn
  JMP BEEP_b7
@@ -8253,14 +8103,8 @@ ENDMACRO
 
 .loop_CA7E3
 
- LDA setupPPUForIconBar
- BPL CA7F0
- LDA PPU_STATUS
- ASL A
- BPL CA7F0
- JSR SetPPUTablesTo0
-
-.CA7F0
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA QQ15+5
  AND #&1F
@@ -8739,14 +8583,8 @@ ENDMACRO
 
 .CA9A4
 
- LDA setupPPUForIconBar
- BPL CA9B1
- LDA PPU_STATUS
- ASL A
- BPL CA9B1
- JSR SetPPUTablesTo0
-
-.CA9B1
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  JSR DORND
  ORA #8
@@ -8779,14 +8617,8 @@ ENDMACRO
 
 .CA9D9
 
- LDA setupPPUForIconBar
- BPL CA9E6
- LDA PPU_STATUS
- ASL A
- BPL CA9E6
- JSR SetPPUTablesTo0
-
-.CA9E6
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA FRIN,X
  BEQ CA9FD
@@ -9065,14 +8897,9 @@ ENDMACRO
 .NWSHP
 
  STA T
- LDA setupPPUForIconBar
- BPL CAAF2
- LDA PPU_STATUS
- ASL A
- BPL CAAF2
- JSR SetPPUTablesTo0
 
-.CAAF2
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDX #0
 
@@ -9177,14 +9004,8 @@ ENDMACRO
 
 .CAB86
 
- LDA setupPPUForIconBar
- BPL CAB93
- LDA PPU_STATUS
- ASL A
- BPL CAB93
- JSR SetPPUTablesTo0
-
-.CAB93
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDY #&25
 
@@ -9194,14 +9015,9 @@ ENDMACRO
  STA (XX19),Y
  DEY
  BPL loop_CAB95
- LDA setupPPUForIconBar
- BPL CABAA
- LDA PPU_STATUS
- ASL A
- BPL CABAA
- JSR SetPPUTablesTo0
 
-.CABAA
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  SEC
  RTS
@@ -9289,14 +9105,8 @@ ENDMACRO
 
 .CABD7
 
- LDA setupPPUForIconBar
- BPL CABE4
- LDA PPU_STATUS
- ASL A
- BPL CABE4
- JSR SetPPUTablesTo0
-
-.CABE4
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  INX
  LDA FRIN,X
@@ -9410,14 +9220,8 @@ ENDMACRO
 
 .KSL1
 
- LDA setupPPUForIconBar
- BPL CAC7A
- LDA PPU_STATUS
- ASL A
- BPL CAC7A
- JSR SetPPUTablesTo0
-
-.CAC7A
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  INX
  LDA FRIN,X
@@ -9434,14 +9238,9 @@ ENDMACRO
  STA SC
  LDA UNIV+1,Y
  STA SC+1
- LDA setupPPUForIconBar
- BPL CACA0
- LDA PPU_STATUS
- ASL A
- BPL CACA0
- JSR SetPPUTablesTo0
 
-.CACA0
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDY #&29
 
@@ -9455,14 +9254,9 @@ ENDMACRO
  STA XX19
  LDA SC+1
  STA INF+1
- LDA setupPPUForIconBar
- BPL CACBE
- LDA PPU_STATUS
- ASL A
- BPL CACBE
- JSR SetPPUTablesTo0
 
-.CACBE
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  JMP KSL1
 
@@ -9493,14 +9287,9 @@ ENDMACRO
 .ABORT2
 
  STX MSTG
- LDA setupPPUForIconBar
- BPL CACD7
- LDA PPU_STATUS
- ASL A
- BPL CACD7
- JSR SetPPUTablesTo0
 
-.CACD7
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDX NOMSL
  JSR MSBAR
@@ -9769,14 +9558,8 @@ ENDMACRO
 
 .ZINF_0
 
- LDA setupPPUForIconBar
- BPL CAE10
- LDA PPU_STATUS
- ASL A
- BPL CAE10
- JSR SetPPUTablesTo0
-
-.CAE10
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDY #&25
  LDA #0
@@ -9786,14 +9569,9 @@ ENDMACRO
  STA XX1,Y
  DEY
  BPL loop_CAE14
- LDA setupPPUForIconBar
- BPL CAE27
- LDA PPU_STATUS
- ASL A
- BPL CAE27
- JSR SetPPUTablesTo0
 
-.CAE27
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA #&60
  STA INWK+18
@@ -11021,14 +10799,9 @@ ENDMACRO
  LDA #0
  STA XX1
  STA INWK+3
- LDA setupPPUForIconBar
- BPL CB445
- LDA PPU_STATUS
- ASL A
- BPL CB445
- JSR SetPPUTablesTo0
 
-.CB445
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  JSR subm_D96F
  INC MCNT
@@ -11190,14 +10963,9 @@ ENDMACRO
  ADC R
  BCS CB4EB
  STA R
- LDA setupPPUForIconBar
- BPL CB4E1
- LDA PPU_STATUS
- ASL A
- BPL CB4E1
- JSR SetPPUTablesTo0
 
-.CB4E1
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA K%+7,Y
  JSR SQUA2
@@ -11223,14 +10991,8 @@ ENDMACRO
 
 .subm_MainFlight14
 
- LDA setupPPUForIconBar
- BPL CB4FB
- LDA PPU_STATUS
- ASL A
- BPL CB4FB
- JSR SetPPUTablesTo0
-
-.CB4FB
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDX #0
  LDY #9
@@ -11253,14 +11015,8 @@ ENDMACRO
 
 .MA23S
 
- LDA setupPPUForIconBar
- BPL CB52F
- LDA PPU_STATUS
- ASL A
- BPL CB52F
- JSR SetPPUTablesTo0
-
-.CB52F
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  CLC
  RTS
@@ -11344,14 +11100,8 @@ ENDMACRO
 
 .TAS2
 
- LDA setupPPUForIconBar
- BPL CB573
- LDA PPU_STATUS
- ASL A
- BPL CB573
- JSR SetPPUTablesTo0
-
-.CB573
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA K3
  ORA XX2+3
@@ -11795,14 +11545,9 @@ ENDMACRO
 .MESS
 
  PHA
- LDA setupPPUForIconBar
- BPL CB79D
- LDA PPU_STATUS
- ASL A
- BPL CB79D
- JSR SetPPUTablesTo0
 
-.CB79D
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDY #&0A
  STY L0393
@@ -11820,14 +11565,9 @@ ENDMACRO
  LDA #&2D
  JSR TT27_b2
  JSR TT162
- LDA setupPPUForIconBar
- BPL CB7CF
- LDA PPU_STATUS
- ASL A
- BPL CB7CF
- JSR SetPPUTablesTo0
 
-.CB7CF
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  JSR hyp1_cpl
  LDA #3
@@ -11866,14 +11606,9 @@ ENDMACRO
 
  LSR A
  STA messXC
- LDA setupPPUForIconBar
- BPL CB811
- LDA PPU_STATUS
- ASL A
- BPL CB811
- JSR SetPPUTablesTo0
 
-.CB811
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDX DTW5
  STX L0584
@@ -11886,12 +11621,9 @@ ENDMACRO
  DEX
  BNE loop_CB818
  STX L0394
- LDA setupPPUForIconBar
- BPL CB831
- LDA PPU_STATUS
- ASL A
- BPL CB831
- JSR SetPPUTablesTo0
+
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
 .CB831
 
@@ -11925,14 +11657,9 @@ ENDMACRO
  STA YC
  LDX #0
  STX QQ17
- LDA setupPPUForIconBar
- BPL CB858
- LDA PPU_STATUS
- ASL A
- BPL CB858
- JSR SetPPUTablesTo0
 
-.CB858
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA messXC
  STA XC
@@ -12076,14 +11803,8 @@ ENDMACRO
 
 .MVEIT
 
- LDA setupPPUForIconBar
- BPL CB91D
- LDA PPU_STATUS
- ASL A
- BPL CB91D
- JSR SetPPUTablesTo0
-
-.CB91D
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA INWK+31
  AND #&A0
@@ -12122,14 +11843,8 @@ ENDMACRO
 
 .CB945
 
- LDA setupPPUForIconBar
- BPL CB952
- LDA PPU_STATUS
- ASL A
- BPL CB952
- JSR SetPPUTablesTo0
-
-.CB952
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  JSR TACTICS
 
@@ -12144,14 +11859,8 @@ ENDMACRO
 
 .MVEIT3
 
- LDA setupPPUForIconBar
- BPL CB962
- LDA PPU_STATUS
- ASL A
- BPL CB962
- JSR SetPPUTablesTo0
-
-.CB962
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA INWK+27
  ASL A
@@ -12175,14 +11884,9 @@ ENDMACRO
  AND #&7F
  JSR FMLTU
  STA R
- LDA setupPPUForIconBar
- BPL CB99E
- LDA PPU_STATUS
- ASL A
- BPL CB99E
- JSR SetPPUTablesTo0
 
-.CB99E
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA INWK+14
  LDX #6
@@ -12242,14 +11946,9 @@ ENDMACRO
  LDX #3
  JSR MVT6
  STA K2+3
- LDA setupPPUForIconBar
- BPL CB9E7
- LDA PPU_STATUS
- ASL A
- BPL CB9E7
- JSR SetPPUTablesTo0
 
-.CB9E7
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA P+1
  STA K2+1
@@ -12265,14 +11964,9 @@ ENDMACRO
  LDX #6
  JSR MVT6
  STA INWK+8
- LDA setupPPUForIconBar
- BPL CBA15
- LDA PPU_STATUS
- ASL A
- BPL CBA15
- JSR SetPPUTablesTo0
 
-.CBA15
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA P+1
  STA INWK+6
@@ -12297,14 +11991,8 @@ ENDMACRO
 
 .CBA42
 
- LDA setupPPUForIconBar
- BPL CBA4F
- LDA PPU_STATUS
- ASL A
- BPL CBA4F
- JSR SetPPUTablesTo0
-
-.CBA4F
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA K2+1
  SBC P+1
@@ -12325,14 +12013,8 @@ ENDMACRO
 
 .CBA71
 
- LDA setupPPUForIconBar
- BPL CBA7E
- LDA PPU_STATUS
- ASL A
- BPL CBA7E
- JSR SetPPUTablesTo0
-
-.CBA7E
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDX ALP1
  LDA INWK+3
@@ -12362,14 +12044,8 @@ ENDMACRO
 
 .MV45
 
- LDA setupPPUForIconBar
- BPL CBAAD
- LDA PPU_STATUS
- ASL A
- BPL CBAAD
- JSR SetPPUTablesTo0
-
-.CBAAD
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA DELTA
  STA R
@@ -12412,14 +12088,8 @@ ENDMACRO
 
 .CBAF9
 
- LDA setupPPUForIconBar
- BPL CBB06
- LDA PPU_STATUS
- ASL A
- BPL CBB06
- JSR SetPPUTablesTo0
-
-.CBB06
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA INWK+29
  AND #&80
@@ -12544,14 +12214,8 @@ ENDMACRO
 
 .MVS4
 
- LDA setupPPUForIconBar
- BPL CBB9C
- LDA PPU_STATUS
- ASL A
- BPL CBB9C
- JSR SetPPUTablesTo0
-
-.CBB9C
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA ALPHA
  STA Q
@@ -12576,14 +12240,9 @@ ENDMACRO
  STA INWK+1,Y
  STX XX1,Y
  STX P
- LDA setupPPUForIconBar
- BPL CBBDD
- LDA PPU_STATUS
- ASL A
- BPL CBBDD
- JSR SetPPUTablesTo0
 
-.CBBDD
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA BETA
  STA Q
@@ -12607,14 +12266,9 @@ ENDMACRO
  JSR MAD
  STA INWK+5,Y
  STX INWK+4,Y
- LDA setupPPUForIconBar
- BPL CBC1C
- LDA PPU_STATUS
- ASL A
- BPL CBC1C
- JSR SetPPUTablesTo0
 
-.CBC1C
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  RTS
 
@@ -12912,14 +12566,8 @@ ENDMACRO
 
 .CBDCA
 
- LDA setupPPUForIconBar
- BPL CBDD7
- LDA PPU_STATUS
- ASL A
- BPL CBDD7
- JSR SetPPUTablesTo0
-
-.CBDD7
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDX SY,Y
  LDA SX,Y
@@ -12957,7 +12605,12 @@ ENDMACRO
 \       Name: ResetStardust
 \       Type: Subroutine
 \   Category: ???
-\    Summary: ???
+\    Summary: Draws sprites for stardust
+\
+\ ------------------------------------------------------------------------------
+\
+\ writes to the 20 sprites from 38 onwards, tile = 210, y = &F0
+\ attr is based on sprite number
 \
 \ ******************************************************************************
 
@@ -12979,14 +12632,8 @@ ENDMACRO
 
 .CBE1B
 
- LDA setupPPUForIconBar
- BPL CBE28
- LDA PPU_STATUS
- ASL A
- BPL CBE28
- JSR SetPPUTablesTo0
-
-.CBE28
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA #&F0
  STA ySprite0,Y

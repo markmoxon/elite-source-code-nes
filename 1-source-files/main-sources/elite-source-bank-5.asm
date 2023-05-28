@@ -167,54 +167,54 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: imageCount
+\       Name: systemCount
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: The number of images in the imageOffset table
+\    Summary: The number of system images in the systemOffset table
 \
 \ ******************************************************************************
 
-.imageCount
+.systemCount
 
  EQUW 15
 
 \ ******************************************************************************
 \
-\       Name: imageOffset
+\       Name: systemOffset
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Offset to the data for each of the 15 images
+\    Summary: Offset to the data for each of the 15 system images
 \
 \ ******************************************************************************
 
-.imageOffset
+.systemOffset
 
- EQUW image0 - imageCount
- EQUW image1 - imageCount
- EQUW image2 - imageCount
- EQUW image3 - imageCount
- EQUW image4 - imageCount
- EQUW image5 - imageCount
- EQUW image6 - imageCount
- EQUW image7 - imageCount
- EQUW image8 - imageCount
- EQUW image9 - imageCount
- EQUW image10 - imageCount
- EQUW image11 - imageCount
- EQUW image12 - imageCount
- EQUW image13 - imageCount
- EQUW image14 - imageCount
+ EQUW systemImage0 - systemCount
+ EQUW systemImage1 - systemCount
+ EQUW systemImage2 - systemCount
+ EQUW systemImage3 - systemCount
+ EQUW systemImage4 - systemCount
+ EQUW systemImage5 - systemCount
+ EQUW systemImage6 - systemCount
+ EQUW systemImage7 - systemCount
+ EQUW systemImage8 - systemCount
+ EQUW systemImage9 - systemCount
+ EQUW systemImage10 - systemCount
+ EQUW systemImage11 - systemCount
+ EQUW systemImage12 - systemCount
+ EQUW systemImage13 - systemCount
+ EQUW systemImage14 - systemCount
 
 \ ******************************************************************************
 \
-\       Name: image0
+\       Name: systemImage0
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 0
+\    Summary: Data for system image 0
 \
 \ ******************************************************************************
 
-.image0
+.systemImage0
 
  EQUB &0F, &0F, &0F, &0F, &0F, &0F, &0F, &07
  EQUB &21, &02, &00, &22, &02, &33, &12, &0F
@@ -354,14 +354,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image1
+\       Name: systemImage1
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 1
+\    Summary: Data for system image 1
 \
 \ ******************************************************************************
 
-.image1
+.systemImage1
 
  EQUB &0F, &0F, &0F, &0B, &22, &04, &36, &0E
  EQUB &1E, &1E, &08, &00, &04, &0F, &01, &20
@@ -492,14 +492,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image2
+\       Name: systemImage2
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 2
+\    Summary: Data for system image 2
 \
 \ ******************************************************************************
 
-.image2
+.systemImage2
 
  EQUB &0F, &0F, &0F, &0F, &0F, &03, &22, &01
  EQUB &04, &21, &3E, &13, &05, &80, &E0, &9C
@@ -689,14 +689,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image3
+\       Name: systemImage3
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 3
+\    Summary: Data for system image 3
 \
 \ ******************************************************************************
 
-.image3
+.systemImage3
 
  EQUB &0F, &01, &37, &02, &17, &2B, &05, &0A
  EQUB &57, &3F, &5F, &FE, &FF, &FE, &B5, &FA
@@ -856,14 +856,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image4
+\       Name: systemImage4
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 4
+\    Summary: Data for system image 4
 \
 \ ******************************************************************************
 
-.image4
+.systemImage4
 
  EQUB &F0, &78, &21, &3C, &7C, &FE, &13, &03
  EQUB &10, &02, &21, &02, &87, &03, &21, &01
@@ -982,14 +982,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image5
+\       Name: systemImage5
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 5
+\    Summary: Data for system image 5
 \
 \ ******************************************************************************
 
-.image5
+.systemImage5
 
  EQUB &23, &10, &34, &18, &38, &10, &2C, &7E
  EQUB &0D, &22, &10, &30, &0F, &0F, &02, &3D
@@ -1127,14 +1127,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image6
+\       Name: systemImage6
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 6
+\    Summary: Data for system image 6
 \
 \ ******************************************************************************
 
-.image6
+.systemImage6
 
  EQUB &40, &10, &80, &20, &02, &40, &0F, &0F
  EQUB &0F, &01, &21, &18, &5E, &21, &3C, &06
@@ -1267,14 +1267,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image7
+\       Name: systemImage7
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 7
+\    Summary: Data for system image 7
 \
 \ ******************************************************************************
 
-.image7
+.systemImage7
 
  EQUB &44, &10, &80, &32, &28, &02, &40, &08
  EQUB &20, &08, &10, &02, &20, &40, &E0, &7A
@@ -1418,14 +1418,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image8
+\       Name: systemImage8
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 8
+\    Summary: Data for system image 8
 \
 \ ******************************************************************************
 
-.image8
+.systemImage8
 
  EQUB &02, &36, &08, &01, &04, &00, &02, &08
  EQUB &02, &21, &04, &02, &80, &0F, &02, &21
@@ -1532,14 +1532,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image9
+\       Name: systemImage9
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 9
+\    Summary: Data for system image 9
 \
 \ ******************************************************************************
 
-.image9
+.systemImage9
 
  EQUB &02, &80, &C0, &E0, &70, &B8, &5C, &0F
  EQUB &0F, &01, &21, &02, &0F, &09, &AE, &D7
@@ -1665,14 +1665,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image10
+\       Name: systemImage10
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 10
+\    Summary: Data for system image 10
 \
 \ ******************************************************************************
 
-.image10
+.systemImage10
 
  EQUB &00, &40, &00, &10, &00, &21, &04, &0B
  EQUB &21, &02, &0F, &21, &02, &0F, &21, &02
@@ -1814,14 +1814,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image11
+\       Name: systemImage11
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 11
+\    Summary: Data for system image 11
 \
 \ ******************************************************************************
 
-.image11
+.systemImage11
 
  EQUB &06, &22, &01, &0F, &09, &23, &08, &00
  EQUB &21, &04, &0F, &0C, &34, &01, &02, &02
@@ -1957,14 +1957,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image12
+\       Name: systemImage12
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 12
+\    Summary: Data for system image 12
 \
 \ ******************************************************************************
 
-.image12
+.systemImage12
 
  EQUB &12, &FB, &C1, &80, &02, &10, &FF, &FB
  EQUB &E0, &C0, &04, &F8, &F0, &E0, &05, &22
@@ -2116,14 +2116,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image13
+\       Name: systemImage13
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 13
+\    Summary: Data for system image 13
 \
 \ ******************************************************************************
 
-.image13
+.systemImage13
 
  EQUB &23, &1F, &22, &0F, &33, &05, &03, &01
  EQUB &FE, &F4, &A0, &FD, &E8, &40, &A8, &40
@@ -2265,14 +2265,14 @@ ENDMACRO
 
 \ ******************************************************************************
 \
-\       Name: image14
+\       Name: systemImage14
 \       Type: Variable
 \   Category: Drawing images
-\    Summary: Data for image 14
+\    Summary: Data for system image 14
 \
 \ ******************************************************************************
 
-.image14
+.systemImage14
 
  EQUB &00, &10, &04, &21, &01, &02, &33, &04
  EQUB &0E, &04, &04, &21, &04, &03, &10, &03
@@ -2446,7 +2446,7 @@ ENDMACRO
 
 .SetSystemImage
 
- JSR GetSystemImage    \ Fetch the system image for the current system and
+ JSR GetSystemImage     \ Fetch the system image for the current system and
                         \ store it in the pattern buffers, starting at tile
                         \ number pictureTile
 
@@ -2506,11 +2506,11 @@ ENDMACRO
  AND #&0F
  TAX
 
- CPX imageCount         \ If X < imageCount, skip the following two instructions
+ CPX systemCount        \ If X < systemCount, skip the following two instructions
  BCC gsys1
 
- LDX imageCount         \ Set X = imageCount - 1 so X has a maximum value of 14
- DEX                    \ (as imageCount is 15)
+ LDX systemCount        \ Set X = systemCount - 1 so X has a maximum value of 14
+ DEX                    \ (as systemCount is 15)
 
 .gsys1
 
@@ -2519,14 +2519,14 @@ ENDMACRO
  STA systemFlag
 
  TXA                    \ Set X = X * 2 so we can use it as an index into the
- ASL A                  \ table of 16-bit addresses at imageOffset
+ ASL A                  \ table of 16-bit addresses at systemOffset
  TAX
 
- LDA imageOffset,X      \ Set V(1 0) = imageOffset for image X + imageCount
- ADC #LO(imageCount)    \
- STA V                  \ So V(1 0) points to image0 when X = 0, image1 when
- LDA imageOffset+1,X    \ X = 1, and so on up to image14 when X = 14
- ADC #HI(imageCount)
+ LDA systemOffset,X     \ Set V(1 0) = systemOffset for image X + systemCount
+ ADC #LO(systemCount)   \
+ STA V                  \ So V(1 0) points to systemImage0 when X = 0, systemImage1 when
+ LDA systemOffset+1,X   \ X = 1, and so on up to systemImage14 when X = 14
+ ADC #HI(systemCount)
  STA V+1
 
  JSR UnpackToRAM        \ Unpack the data at V(1 0) into SC(1 0), updating

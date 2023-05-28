@@ -893,7 +893,7 @@ ENDIF
 
  SKIP 1                 \ Contains the current tile number to draw into ???
 
-.pattBufferHi
+.patternBufferHi
 
  SKIP 1                 \ High byte of the address of the current pattern
                         \ buffer (&60 or &68)
@@ -1038,12 +1038,12 @@ ENDIF
 
  SKIP 1                 \ ???
 
-.patternBufferLo
+.debugPattBufferLo
 
  SKIP 1                 \ Low byte of the address of the current pattern
                         \ buffer (unused), always zero
 
-.patternBufferHi
+.debugPattBufferHi
 
  SKIP 1                 \ High byte of the address of the current pattern
                         \ buffer (unused)
@@ -1051,12 +1051,12 @@ ENDIF
                         \   * &60 when drawingPhase = 0
                         \   * &68 when drawingPhase = 1
 
-.ppuNametableLo
+.debugNametableLo
 
  SKIP 1                 \ Low byte of the address of the current PPU nametable
                         \ (unused), always zero
 
-.ppuNametableHi
+.debugNametableHi
 
  SKIP 1                 \ High byte of the address of the current PPU nametable
                         \ (unused)
