@@ -139,34 +139,6 @@
 
 \ ******************************************************************************
 \
-\       Name: SETUP_PPU_FOR_ICON_BAR
-\       Type: Macro
-\   Category: Screen mode
-\    Summary: If the PPU has started drawing the icon bar, configure the PPU to
-\             use nametable 0 and pattern table 0
-\
-\ ******************************************************************************
-
-MACRO SETUP_PPU_FOR_ICON_BAR
-
- LDA setupPPUForIconBar \ If bit 7 of setupPPUForIconBar and bit 6 of PPU_STATUS
- BPL skip               \ are set, then call SetPPUTablesTo0 to:
- LDA PPU_STATUS         \
- ASL A                  \   * Zero setupPPUForIconBar to disable this process
- BPL skip               \     until both conditions are met once again
- JSR SetPPUTablesTo0    \
-                        \   * Clear bits 0 and 4 of PPU_CTRL and PPU_CTRL_COPY,
-                        \     to set the base nametable address to &2000 (for
-                        \     nametable 0) or &2800 (which is a mirror of &2000)
-                        \
-                        \   * Clear the C flag
- 
-.skip
-
-ENDMACRO
-
-\ ******************************************************************************
-\
 \       Name: systemCount
 \       Type: Variable
 \   Category: Drawing images
@@ -2506,8 +2478,8 @@ ENDMACRO
  AND #&0F
  TAX
 
- CPX systemCount        \ If X < systemCount, skip the following two instructions
- BCC gsys1
+ CPX systemCount        \ If X < systemCount, skip the following two
+ BCC gsys1              \ instructions
 
  LDX systemCount        \ Set X = systemCount - 1 so X has a maximum value of 14
  DEX                    \ (as systemCount is 15)
@@ -2524,9 +2496,9 @@ ENDMACRO
 
  LDA systemOffset,X     \ Set V(1 0) = systemOffset for image X + systemCount
  ADC #LO(systemCount)   \
- STA V                  \ So V(1 0) points to systemImage0 when X = 0, systemImage1 when
- LDA systemOffset+1,X   \ X = 1, and so on up to systemImage14 when X = 14
- ADC #HI(systemCount)
+ STA V                  \ So V(1 0) points to systemImage0 when X = 0,
+ LDA systemOffset+1,X   \ systemImage1 when X = 1, and so on up to systemImage14
+ ADC #HI(systemCount)   \ when X = 14
  STA V+1
 
  JSR UnpackToRAM        \ Unpack the data at V(1 0) into SC(1 0), updating

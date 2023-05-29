@@ -1948,7 +1948,10 @@ ENDIF
  STA nameBuffer1+512,Y
  LDA nameBuffer0+768,Y
  STA nameBuffer1+768,Y
- JSR SetupPPUForIconBar
+
+ JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
+
  DEX
  BNE CCD58
  LDX #&10
@@ -2085,14 +2088,9 @@ ENDIF
  STA nameBuffer1+544
  STA nameBuffer1+576
  STA nameBuffer1+608
- LDA setupPPUForIconBar
- BPL CCE7D
- LDA PPU_STATUS
- ASL A
- BPL CCE7D
- JSR SetPPUTablesTo0
 
-.CCE7D
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  RTS
 
@@ -2740,14 +2738,8 @@ ENDIF
 
 .loop_CD16B
 
- LDA setupPPUForIconBar
- BPL CD178
- LDA PPU_STATUS
- ASL A
- BPL CD178
- JSR SetPPUTablesTo0
-
-.CD178
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  CPX frameCounter
  BEQ loop_CD16B
@@ -2770,14 +2762,8 @@ ENDIF
 
 .loop_CD183
 
- LDA setupPPUForIconBar
- BPL CD190
- LDA PPU_STATUS
- ASL A
- BPL CD190
- JSR SetPPUTablesTo0
-
-.CD190
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA setupPPUForIconBar
  BNE loop_CD183
@@ -2789,14 +2775,8 @@ ENDIF
 
 .CD19C
 
- LDA setupPPUForIconBar
- BPL CD1A9
- LDA PPU_STATUS
- ASL A
- BPL CD1A9
- JSR SetPPUTablesTo0
-
-.CD1A9
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA L03EF,X
  BEQ CD1C7
@@ -2861,14 +2841,8 @@ ENDIF
 
 .CD20B
 
- LDA setupPPUForIconBar
- BPL CD218
- LDA PPU_STATUS
- ASL A
- BPL CD218
- JSR SetPPUTablesTo0
-
-.CD218
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA SC
  SEC
@@ -2923,14 +2897,8 @@ ENDIF
 
 .CD274
 
- LDA setupPPUForIconBar
- BPL CD281
- LDA PPU_STATUS
- ASL A
- BPL CD281
- JSR SetPPUTablesTo0
-
-.CD281
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA SC
  SEC
@@ -4082,14 +4050,8 @@ ENDIF
 
 .subm_D8C5
 
- LDA setupPPUForIconBar
- BPL CD8D2
- LDA PPU_STATUS
- ASL A
- BPL CD8D2
- JSR SetPPUTablesTo0
-
-.CD8D2
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA L03EF
  AND #&40
@@ -4597,14 +4559,9 @@ ENDIF
 .LOIN
 
  STY YSAV
- LDA setupPPUForIconBar
- BPL CDC1E
- LDA PPU_STATUS
- ASL A
- BPL CDC1E
- JSR SetPPUTablesTo0
 
-.CDC1E
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA #&80
  STA S
@@ -4724,14 +4681,8 @@ ENDIF
 
 .CDCCA
 
- LDA setupPPUForIconBar
- BPL CDCD7
- LDA PPU_STATUS
- ASL A
- BPL CDCD7
- JSR SetPPUTablesTo0
-
-.CDCD7
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDX #0
  LDA (SC2,X)
@@ -4825,14 +4776,9 @@ ENDIF
 .CDD51
 
  LDY YSAV
- LDA setupPPUForIconBar
- BPL CDD60
- LDA PPU_STATUS
- ASL A
- BPL CDD60
- JSR SetPPUTablesTo0
 
-.CDD60
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  CLC
  RTS
@@ -4863,14 +4809,8 @@ ENDIF
 
 .CDD82
 
- LDA setupPPUForIconBar
- BPL CDD8F
- LDA PPU_STATUS
- ASL A
- BPL CDD8F
- JSR SetPPUTablesTo0
-
-.CDD8F
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDX #0
  LDA (SC2,X)
@@ -4965,12 +4905,8 @@ ENDIF
 
 .loop_CDE0F
 
- LDA setupPPUForIconBar
- BPL CDE1C
- LDA PPU_STATUS
- ASL A
- BPL CDE1C
- JSR SetPPUTablesTo0
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
 .CDE1C
 
@@ -5119,14 +5055,9 @@ ENDIF
 .CDEDD
 
  STX Q
- LDA setupPPUForIconBar
- BPL CDEEC
- LDA PPU_STATUS
- ASL A
- BPL CDEEC
- JSR SetPPUTablesTo0
 
-.CDEEC
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDX #0
  LDA (SC2,X)
@@ -5282,14 +5213,9 @@ ENDIF
 .CDFAA
 
  STX Q
- LDA setupPPUForIconBar
- BPL CDFB9
- LDA PPU_STATUS
- ASL A
- BPL CDFB9
- JSR SetPPUTablesTo0
 
-.CDFB9
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDX #0
  LDA (SC2,X)
@@ -5413,14 +5339,8 @@ ENDIF
 
 .subm_E04A
 
- LDA setupPPUForIconBar
- BPL CE057
- LDA PPU_STATUS
- ASL A
- BPL CE057
- JSR SetPPUTablesTo0
-
-.CE057
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  STY YSAV
  LDA P
@@ -5465,14 +5385,9 @@ ENDIF
  ASL A
  ROL SC+1
  STA SC
- LDA setupPPUForIconBar
- BPL CE0A1
- LDA PPU_STATUS
- ASL A
- BPL CE0A1
- JSR SetPPUTablesTo0
 
-.CE0A1
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDY #7
 
@@ -5510,14 +5425,8 @@ ENDIF
 
 .subm_E0BA
 
- LDA setupPPUForIconBar
- BPL CE0C7
- LDA PPU_STATUS
- ASL A
- BPL CE0C7
- JSR SetPPUTablesTo0
-
-.CE0C7
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  STY YSAV
  LDX XX15
@@ -5557,14 +5466,9 @@ ENDIF
  LSR A
  LSR A
  STA R
- LDA setupPPUForIconBar
- BPL CE10F
- LDA PPU_STATUS
- ASL A
- BPL CE10F
- JSR SetPPUTablesTo0
 
-.CE10F
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDX #0
  LDA (SC2,X)
@@ -5669,14 +5573,8 @@ ENDIF
 
 .subm_E18E
 
- LDA setupPPUForIconBar
- BPL CE19B
- LDA PPU_STATUS
- ASL A
- BPL CE19B
- JSR SetPPUTablesTo0
-
-.CE19B
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDX #0
  LDA (SC2,X)
@@ -5779,14 +5677,8 @@ ENDIF
 
 .CE22B
 
- LDA setupPPUForIconBar
- BPL CE238
- LDA PPU_STATUS
- ASL A
- BPL CE238
- JSR SetPPUTablesTo0
-
-.CE238
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDX #0
  LDA (SC2,X)
@@ -5864,14 +5756,8 @@ ENDIF
 
 .CE2A6
 
- LDA setupPPUForIconBar
- BPL CE2B3
- LDA PPU_STATUS
- ASL A
- BPL CE2B3
- JSR SetPPUTablesTo0
-
-.CE2B3
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDX #0
  LDA (SC2,X)
@@ -5959,14 +5845,8 @@ ENDIF
 
 .CE32E
 
- LDA setupPPUForIconBar
- BPL CE33B
- LDA PPU_STATUS
- ASL A
- BPL CE33B
- JSR SetPPUTablesTo0
-
-.CE33B
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDY YSAV
  RTS
@@ -5982,14 +5862,8 @@ ENDIF
 
 .subm_E33E
 
- LDA setupPPUForIconBar
- BPL CE34B
- LDA PPU_STATUS
- ASL A
- BPL CE34B
- JSR SetPPUTablesTo0
-
-.CE34B
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  STY YSAV
  LDY Y1
@@ -6043,14 +5917,9 @@ ENDIF
 .CE394
 
  STY Q
- LDA setupPPUForIconBar
- BPL CE3A3
- LDA PPU_STATUS
- ASL A
- BPL CE3A3
- JSR SetPPUTablesTo0
 
-.CE3A3
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDX #0
  LDA (SC2,X)
@@ -6144,14 +6013,8 @@ ENDIF
 
 .CE423
 
- LDA setupPPUForIconBar
- BPL CE430
- LDA PPU_STATUS
- ASL A
- BPL CE430
- JSR SetPPUTablesTo0
-
-.CE430
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDY #0
  LDA SC2
@@ -6296,14 +6159,9 @@ ENDIF
  LDA nameBufferHi
  ADC yLookupHi,Y
  STA SC+1
- LDA setupPPUForIconBar
- BPL CE513
- LDA PPU_STATUS
- ASL A
- BPL CE513
- JSR SetPPUTablesTo0
 
-.CE513
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDX #0
  LDA (SC,X)
@@ -6363,14 +6221,9 @@ ENDIF
  LDA nameBufferHi
  ADC yLookupHi,Y
  STA SC+1
- LDA setupPPUForIconBar
- BPL CE566
- LDA PPU_STATUS
- ASL A
- BPL CE566
- JSR SetPPUTablesTo0
 
-.CE566
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDX #0
  LDA (SC,X)
@@ -7211,14 +7064,8 @@ ENDIF
 
 .subm_EB67
 
- LDA setupPPUForIconBar
- BPL CEB74
- LDA PPU_STATUS
- ASL A
- BPL CEB74
- JSR SetPPUTablesTo0
-
-.CEB74
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDX NOSTM
  LDY #&98
@@ -7277,14 +7124,8 @@ ENDIF
 
 .subm_EB8F
 
- LDA setupPPUForIconBar
- BPL CEB9C
- LDA PPU_STATUS
- ASL A
- BPL CEB9C
- JSR SetPPUTablesTo0
-
-.CEB9C
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDX #&3A
  LDY #&14
@@ -7376,14 +7217,8 @@ ENDIF
 
 .CEBCF
 
- LDA setupPPUForIconBar
- BPL CEBDC
- LDA PPU_STATUS
- ASL A
- BPL CEBDC
- JSR SetPPUTablesTo0
-
-.CEBDC
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA #0
  STA L0478,X
@@ -7470,14 +7305,9 @@ ENDIF
 
  LDA noiseLookup2,Y
  STA L0478,X
- LDA setupPPUForIconBar
- BPL CEC2A
- LDA PPU_STATUS
- ASL A
- BPL CEC2A
- JSR SetPPUTablesTo0
 
-.CEC2A
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  TYA
 
@@ -7487,14 +7317,8 @@ ENDIF
 
 .CEC2E
 
- LDA setupPPUForIconBar
- BPL CEC3B
- LDA PPU_STATUS
- ASL A
- BPL CEC3B
- JSR SetPPUTablesTo0
-
-.CEC3B
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  RTS
 
@@ -7542,14 +7366,9 @@ ENDIF
 .SetupPPUForIconBar
 
  PHA
- LDA setupPPUForIconBar
- BPL CEC8B
- LDA PPU_STATUS
- ASL A
- BPL CEC8B
- JSR SetPPUTablesTo0
 
-.CEC8B
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  PLA
  RTS
@@ -7608,14 +7427,8 @@ ENDIF
 
 .IncreaseTally
 
- LDA setupPPUForIconBar
- BPL CECBB
- LDA PPU_STATUS
- ASL A
- BPL CECBB
- JSR SetPPUTablesTo0
-
-.CECBB
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA currentBank
  PHA
@@ -9534,7 +9347,9 @@ ENDIF
 
 .loop_CF311
 
- JSR SetupPPUForIconBar
+ JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
+
  LDY #2
  LDA #0
 
@@ -9890,7 +9705,9 @@ ENDIF
 
 .subm_F47D
 
- JSR SetupPPUForIconBar
+ JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
+
  LDY #1
  LDA #3
 
@@ -10044,14 +9861,9 @@ ENDIF
 .subm_F4FB
 
  JSR DVID3B2
- LDA setupPPUForIconBar
- BPL CF50B
- LDA PPU_STATUS
- ASL A
- BPL CF50B
- JSR SetPPUTablesTo0
 
-.CF50B
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA K+3
  AND #&7F
@@ -10115,14 +9927,8 @@ ENDIF
 
 .CF52F
 
- LDA setupPPUForIconBar
- BPL CF53C
- LDA PPU_STATUS
- ASL A
- BPL CF53C
- JSR SetPPUTablesTo0
-
-.CF53C
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDX #0
  LDA (V,X)
@@ -10327,14 +10133,9 @@ ENDIF
 .FAROF2
 
  STA T
- LDA setupPPUForIconBar
- BPL CF61B
- LDA PPU_STATUS
- ASL A
- BPL CF61B
- JSR SetPPUTablesTo0
 
-.CF61B
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA INWK+2
  ORA INWK+5
@@ -10429,14 +10230,9 @@ ENDIF
  LDA P
  ROR A
  STA K
- LDA setupPPUForIconBar
- BPL CF68E
- LDA PPU_STATUS
- ASL A
- BPL CF68E
- JSR SetPPUTablesTo0
 
-.CF68E
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA #0
  LDX #&18
@@ -10455,14 +10251,9 @@ ENDIF
  DEX
  BNE loop_CF692
  STA T
- LDA setupPPUForIconBar
- BPL CF6AF
- LDA PPU_STATUS
- ASL A
- BPL CF6AF
- JSR SetPPUTablesTo0
 
-.CF6AF
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA R
  EOR Q
@@ -10904,14 +10695,9 @@ ENDIF
 .MULT1
 
  TAX
- LDA setupPPUForIconBar
- BPL CF7E8
- LDA PPU_STATUS
- ASL A
- BPL CF7E8
- JSR SetPPUTablesTo0
 
-.CF7E8
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  TXA
  AND #&7F
@@ -11001,14 +10787,9 @@ ENDIF
 
  JSR MULT1
  STA S
- LDA setupPPUForIconBar
- BPL CF84E
- LDA PPU_STATUS
- ASL A
- BPL CF84E
- JSR SetPPUTablesTo0
 
-.CF84E
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA P
  STA R
@@ -11305,14 +11086,9 @@ ENDIF
  STA R
  LDA INWK+8
  STA S
- LDA setupPPUForIconBar
- BPL CF97F
- LDA PPU_STATUS
- ASL A
- BPL CF97F
- JSR SetPPUTablesTo0
 
-.CF97F
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA P
  ORA #1
@@ -11349,14 +11125,9 @@ ENDIF
  ROL A
  BPL loop_CF9A5
  STA Q
- LDA setupPPUForIconBar
- BPL CF9BC
- LDA PPU_STATUS
- ASL A
- BPL CF9BC
- JSR SetPPUTablesTo0
 
-.CF9BC
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA #&FE
  STA R
@@ -11699,14 +11470,8 @@ ENDIF
 
 .NORM
 
- LDA setupPPUForIconBar
- BPL CFB05
- LDA PPU_STATUS
- ASL A
- BPL CFB05
- JSR SetPPUTablesTo0
-
-.CFB05
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA XX15
  JSR SQUA
@@ -11725,14 +11490,9 @@ ENDIF
  LDA X2
  JSR SQUA
  STA T
- LDA setupPPUForIconBar
- BPL CFB37
- LDA PPU_STATUS
- ASL A
- BPL CFB37
- JSR SetPPUTablesTo0
 
-.CFB37
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  CLC
  LDA P
@@ -11749,14 +11509,9 @@ ENDIF
  LDA XX15
  JSR subm_FACB
  STA XX15
- LDA setupPPUForIconBar
- BPL CFB5D
- LDA PPU_STATUS
- ASL A
- BPL CFB5D
- JSR SetPPUTablesTo0
 
-.CFB5D
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  LDA Y1
  JSR subm_FACB
@@ -11764,14 +11519,9 @@ ENDIF
  LDA X2
  JSR subm_FACB
  STA X2
- LDA setupPPUForIconBar
- BPL CFB78
- LDA PPU_STATUS
- ASL A
- BPL CFB78
- JSR SetPPUTablesTo0
 
-.CFB78
+ SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
 
  RTS
 

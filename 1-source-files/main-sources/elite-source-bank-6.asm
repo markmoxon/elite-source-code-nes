@@ -139,34 +139,6 @@
 
 \ ******************************************************************************
 \
-\       Name: SETUP_PPU_FOR_ICON_BAR
-\       Type: Macro
-\   Category: Screen mode
-\    Summary: If the PPU has started drawing the icon bar, configure the PPU to
-\             use nametable 0 and pattern table 0
-\
-\ ******************************************************************************
-
-MACRO SETUP_PPU_FOR_ICON_BAR
-
- LDA setupPPUForIconBar \ If bit 7 of setupPPUForIconBar and bit 6 of PPU_STATUS
- BPL skip               \ are set, then call SetPPUTablesTo0 to:
- LDA PPU_STATUS         \
- ASL A                  \   * Zero setupPPUForIconBar to disable this process
- BPL skip               \     until both conditions are met once again
- JSR SetPPUTablesTo0    \
-                        \   * Clear bits 0 and 4 of PPU_CTRL and PPU_CTRL_COPY,
-                        \     to set the base nametable address to &2000 (for
-                        \     nametable 0) or &2800 (which is a mirror of &2000)
-                        \
-                        \   * Clear the C flag
- 
-.skip
-
-ENDMACRO
-
-\ ******************************************************************************
-\
 \       Name: subm_800C
 \       Type: Subroutine
 \   Category: ???
@@ -5505,7 +5477,9 @@ ENDMACRO
 
 .subm_B4F6
 
- JSR SetupPPUForIconBar
+ JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
+
  LDX L04BA
  BPL CB50F
  JSR subm_B659
@@ -5610,7 +5584,9 @@ ENDMACRO
 
 .loop_CB55C
 
- JSR SetupPPUForIconBar
+ JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
+
  LDA L04BA
  ORA L04BB
  BMI loop_CB55C
@@ -5651,7 +5627,9 @@ ENDMACRO
 
 .CB580
 
- JSR SetupPPUForIconBar
+ JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
+
  LDX controller1Up
  BPL CB598
  CMP #0
@@ -5703,7 +5681,9 @@ ENDMACRO
 
 .CB5D4
 
- JSR SetupPPUForIconBar
+ JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
+
  LDX controller1Up
  BPL CB5EC
  CMP #0
@@ -6065,7 +6045,10 @@ ENDMACRO
 .subm_B786
 
  PHA
- JSR SetupPPUForIconBar
+
+ JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
+
  CMP #9
  BEQ CB7E7
  CMP #8
@@ -7391,7 +7374,9 @@ ENDMACRO
 
 .subm_BED2
 
- JSR SetupPPUForIconBar
+ JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
+                        \ the PPU to use nametable 0 and pattern table 0
+
  LDA #0
  STA nameBuffer0+640
  STA nameBuffer0+672

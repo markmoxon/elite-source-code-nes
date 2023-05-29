@@ -139,34 +139,6 @@
 
 \ ******************************************************************************
 \
-\       Name: SETUP_PPU_FOR_ICON_BAR
-\       Type: Macro
-\   Category: Screen mode
-\    Summary: If the PPU has started drawing the icon bar, configure the PPU to
-\             use nametable 0 and pattern table 0
-\
-\ ******************************************************************************
-
-MACRO SETUP_PPU_FOR_ICON_BAR
-
- LDA setupPPUForIconBar \ If bit 7 of setupPPUForIconBar and bit 6 of PPU_STATUS
- BPL skip               \ are set, then call SetPPUTablesTo0 to:
- LDA PPU_STATUS         \
- ASL A                  \   * Zero setupPPUForIconBar to disable this process
- BPL skip               \     until both conditions are met once again
- JSR SetPPUTablesTo0    \
-                        \   * Clear bits 0 and 4 of PPU_CTRL and PPU_CTRL_COPY,
-                        \     to set the base nametable address to &2000 (for
-                        \     nametable 0) or &2800 (which is a mirror of &2000)
-                        \
-                        \   * Clear the C flag
- 
-.skip
-
-ENDMACRO
-
-\ ******************************************************************************
-\
 \       Name: faceCount
 \       Type: Variable
 \   Category: Drawing images
@@ -2563,7 +2535,7 @@ ENDMACRO
 
  LDA headOffset,X       \ Set V(1 0) = headOffset for image X + headCount
  CLC                    \
- ADC #LO(headCount)     \ So V(1 0) points to headImage0 when X = 0, headImage1 when
+ ADC #LO(headCount)     \ So V(1 0) points to headImage0 when X = 0, headImage1
  STA V                  \ when X = 1, and so on up to headImage13 when X = 13
  LDA headOffset+1,X
  ADC #HI(headCount)
@@ -2611,8 +2583,8 @@ ENDMACRO
 
  CLC                    \ Set V(1 0) = faceOffset for image X + faceCount
  LDA faceOffset,X       \
- ADC #LO(faceCount)     \ So V(1 0) points to faceImage0 when X = 0, faceImage1 when
- STA V                  \ X = 1, and so on up to faceImage13 when X = 13
+ ADC #LO(faceCount)     \ So V(1 0) points to faceImage0 when X = 0, faceImage1
+ STA V                  \ when X = 1, and so on up to faceImage13 when X = 13
  LDA faceOffset+1,X
  ADC #HI(faceCount)
  STA V+1
