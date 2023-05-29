@@ -1,29 +1,29 @@
-\ ******************************************************************************
-\
-\ NES ELITE GAME SOURCE (BANK 0)
-\
-\ NES Elite was written by Ian Bell and David Braben and is copyright D. Braben
-\ and I. Bell 1992
-\
-\ The code on this site has been reconstructed from a disassembly of the version
-\ released on Ian Bell's personal website at http://www.elitehomepage.org/
-\
-\ The commentary is copyright Mark Moxon, and any misunderstandings or mistakes
-\ in the documentation are entirely my fault
-\
-\ The terminology and notations used in this commentary are explained at
-\ https://www.bbcelite.com/about_site/terminology_used_in_this_commentary.html
-\
-\ The deep dive articles referred to in this commentary can be found at
-\ https://www.bbcelite.com/deep_dives
-\
-\ ------------------------------------------------------------------------------
-\
-\ This source file produces the following binary file:
-\
-\   * bank0.bin
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+; NES ELITE GAME SOURCE (BANK 0)
+;
+; NES Elite was written by Ian Bell and David Braben and is copyright D. Braben
+; and I. Bell 1992
+;
+; The code on this site has been reconstructed from a disassembly of the version
+; released on Ian Bell's personal website at http://www.elitehomepage.org/
+;
+; The commentary is copyright Mark Moxon, and any misunderstandings or mistakes
+; in the documentation are entirely my fault
+;
+; The terminology and notations used in this commentary are explained at
+; https://www.bbcelite.com/about_site/terminology_used_in_this_commentary.html
+;
+; The deep dive articles referred to in this commentary can be found at
+; https://www.bbcelite.com/deep_dives
+;
+; ------------------------------------------------------------------------------
+;
+; This source file produces the following binary file:
+;
+;   * bank0.bin
+;
+; ******************************************************************************
 
  INCLUDE "1-source-files/main-sources/elite-build-options.asm"
 
@@ -33,118 +33,118 @@
 
  INCLUDE "1-source-files/main-sources/elite-source-bank-7.asm"
 
-\ ******************************************************************************
-\
-\ ELITE BANK 0
-\
-\ Produces the binary file bank0.bin.
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+; ELITE BANK 0
+;
+; Produces the binary file bank0.bin.
+;
+; ******************************************************************************
 
- CODE% = &8000
- LOAD% = &8000
+ CODE% = $8000
+ LOAD% = $8000
 
  ORG CODE%
 
-\ ******************************************************************************
-\
-\       Name: ResetMMC1
-\       Type: Variable
-\   Category: Start and end
-\    Summary: The MMC1 mapper reset routine at the start of the ROM bank
-\
-\ ------------------------------------------------------------------------------
-\
-\ When the NES is switched on, it is hardwired to perform a JMP (&FFFC). At this
-\ point, there is no guarantee as to which ROM banks are mapped to &8000 and
-\ &C000, so to ensure that the game starts up correctly, we put the same code
-\ in each ROM at the following locations:
-\
-\   * We put &C000 in address &FFFC in every ROM bank, so the NES always jumps
-\     to &C000 when it starts up via the JMP (&FFFC), irrespective of which
-\     ROM bank is mapped to &C000.
-\
-\   * We put the same reset routine at the start of every ROM bank, so the same
-\     routine gets run, whichever ROM bank is mapped to &C000.
-\
-\ This reset routine is therefore called when the NES starts up, whatever the
-\ bank configuration ends up being. It then switches ROM bank 7 to &C000 and
-\ jumps into bank 7 at the game's entry point S%, which starts the game.
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: ResetMMC1
+;       Type: Variable
+;   Category: Start and end
+;    Summary: The MMC1 mapper reset routine at the start of the ROM bank
+;
+; ------------------------------------------------------------------------------
+;
+; When the NES is switched on, it is hardwired to perform a JMP ($FFFC). At this
+; point, there is no guarantee as to which ROM banks are mapped to $8000 and
+; $C000, so to ensure that the game starts up correctly, we put the same code
+; in each ROM at the following locations:
+;
+;   * We put $C000 in address $FFFC in every ROM bank, so the NES always jumps
+;     to $C000 when it starts up via the JMP ($FFFC), irrespective of which
+;     ROM bank is mapped to $C000.
+;
+;   * We put the same reset routine at the start of every ROM bank, so the same
+;     routine gets run, whichever ROM bank is mapped to $C000.
+;
+; This reset routine is therefore called when the NES starts up, whatever the
+; bank configuration ends up being. It then switches ROM bank 7 to $C000 and
+; jumps into bank 7 at the game's entry point S%, which starts the game.
+;
+; ******************************************************************************
 
 .ResetMMC1
 
- SEI                    \ Disable interrupts
+ SEI                    ; Disable interrupts
 
- INC &C006              \ Reset the MMC1 mapper, which we can do by writing a
-                        \ value with bit 7 set into any address in ROM space
-                        \ (i.e. any address from &8000 to &FFFF)
-                        \
-                        \ The INC instruction does this in a more efficient
-                        \ manner than an LDA/STA pair, as it:
-                        \
-                        \   * Fetches the contents of address &C006, which
-                        \     contains the high byte of the JMP destination
-                        \     below, i.e. the high byte of S%, which is &C0
-                        \
-                        \   * Adds 1, to give &C1
-                        \
-                        \   * Writes the value &C1 back to address &C006
-                        \
-                        \ &C006 is in the ROM space and &C1 has bit 7 set, so
-                        \ the INC does all that is required to reset the mapper,
-                        \ in fewer cycles and bytes than an LDA/STA pair
-                        \
-                        \ Resetting MMC1 maps bank 7 to &C000 and enables the
-                        \ bank at &8000 to be switched, so this instruction
-                        \ ensures that bank 7 is present
+ INC $C006              ; Reset the MMC1 mapper, which we can do by writing a
+                        ; value with bit 7 set into any address in ROM space
+                        ; (i.e. any address from $8000 to $FFFF)
+                        ;
+                        ; The INC instruction does this in a more efficient
+                        ; manner than an LDA/STA pair, as it:
+                        ;
+                        ;   * Fetches the contents of address $C006, which
+                        ;     contains the high byte of the JMP destination
+                        ;     below, i.e. the high byte of S%, which is $C0
+                        ;
+                        ;   * Adds 1, to give $C1
+                        ;
+                        ;   * Writes the value $C1 back to address $C006
+                        ;
+                        ; $C006 is in the ROM space and $C1 has bit 7 set, so
+                        ; the INC does all that is required to reset the mapper,
+                        ; in fewer cycles and bytes than an LDA/STA pair
+                        ;
+                        ; Resetting MMC1 maps bank 7 to $C000 and enables the
+                        ; bank at $8000 to be switched, so this instruction
+                        ; ensures that bank 7 is present
 
- JMP S%                 \ Jump to S% in bank 7 to start the game
+ JMP S%                 ; Jump to S% in bank 7 to start the game
 
-\ ******************************************************************************
-\
-\       Name: Interrupts
-\       Type: Subroutine
-\   Category: Text
-\    Summary: The IRQ and NMI handler while the MMC1 mapper reset routine is
-\             still running
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: Interrupts
+;       Type: Subroutine
+;   Category: Text
+;    Summary: The IRQ and NMI handler while the MMC1 mapper reset routine is
+;             still running
+;
+; ******************************************************************************
 
 .Interrupts
 
- RTI                    \ Return from the IRQ interrupt without doing anything
-                        \
-                        \ This ensures that while the system is starting up and
-                        \ the ROM banks are in an unknown configuration, any IRQ
-                        \ interrupts that go via the vector at &FFFE and any NMI
-                        \ interrupts that go via the vector at &FFFA will end up
-                        \ here and be dealt with
-                        \
-                        \ Once bank 7 is switched into &C000 by the ResetMMC1
-                        \ routine, the vector is overwritten with the last two
-                        \ bytes of bank 7, which point to the IRQ routine
+ RTI                    ; Return from the IRQ interrupt without doing anything
+                        ;
+                        ; This ensures that while the system is starting up and
+                        ; the ROM banks are in an unknown configuration, any IRQ
+                        ; interrupts that go via the vector at $FFFE and any NMI
+                        ; interrupts that go via the vector at $FFFA will end up
+                        ; here and be dealt with
+                        ;
+                        ; Once bank 7 is switched into $C000 by the ResetMMC1
+                        ; routine, the vector is overwritten with the last two
+                        ; bytes of bank 7, which point to the IRQ routine
 
-\ ******************************************************************************
-\
-\       Name: Version number
-\       Type: Variable
-\   Category: Text
-\    Summary: The game's version number
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: Version number
+;       Type: Variable
+;   Category: Text
+;    Summary: The game's version number
+;
+; ******************************************************************************
 
  EQUS " 5.0"
 
-\ ******************************************************************************
-\
-\       Name: ResetShipStatus
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: ResetShipStatus
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .ResetShipStatus
 
@@ -153,30 +153,30 @@
  STA QQ22+1
  LDA #0
  STA GNTMP
- LDA #&FF
+ LDA #$FF
  STA FSH
  STA ASH
  STA ENERGY
  RTS
 
-\ ******************************************************************************
-\
-\       Name: DOENTRY
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: DOENTRY
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .DOENTRY
 
- LDX #&FF
+ LDX #$FF
  TXS
  JSR RES2
  JSR LAUN
  JSR ResetShipStatus
  JSR HALL_b1
- LDY #&2C
+ LDY #$2C
  JSR DELAY
  LDA TP
  AND #3
@@ -200,7 +200,7 @@
  CMP #2
  BNE C8097
  LDA TP
- AND #&0F
+ AND #$0F
  CMP #2
  BNE C806D
  LDA TALLY+1
@@ -213,22 +213,22 @@
  CMP #6
  BNE C8082
  LDA QQ0
- CMP #&D7
+ CMP #$D7
  BNE C8097
  LDA QQ1
- CMP #&54
+ CMP #$54
  BNE C8097
  JMP BRIEF3
 
 .C8082
 
- CMP #&0A
+ CMP #$0A
  BNE C8097
  LDA QQ0
- CMP #&3F
+ CMP #$3F
  BNE C8097
  LDA QQ1
- CMP #&48
+ CMP #$48
  BNE C8097
  JMP DEBRIEF2
 
@@ -239,7 +239,7 @@
  LDA CASH+1
  BEQ C80AB
  LDA TP
- AND #&10
+ AND #$10
  BNE C80AB
  JMP TBRIEF
 
@@ -249,25 +249,25 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: MAL1
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MAL1
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MAL1
 
  STX XSAV
  STA TYPE
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  JSR GINF
- LDY #&25
+ LDY #$25
 
 .loop_C80C5
 
@@ -276,8 +276,8 @@
  DEY
  BPL loop_C80C5
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA TYPE
  BMI MA21
@@ -303,7 +303,7 @@
 
  CPY #6
  BEQ MainFlight5
- CPY #&3C
+ CPY #$3C
  BEQ MainFlight5
  CPY #4
  BEQ C811A
@@ -311,13 +311,13 @@
  BPL MainFlight5
  CPY #2
  BEQ C8114
- AND #&3E
+ AND #$3E
  BEQ MainFlight5
 
 .C8114
 
  LDA INWK+31
- AND #&A0
+ AND #$A0
  BNE MainFlight5
 
 .C811A
@@ -329,14 +329,14 @@
  SEC
  ROR L0300
 
-\ ******************************************************************************
-\
-\       Name: MainFlight5
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MainFlight5
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MainFlight5
 
@@ -344,12 +344,12 @@
  BPL MA21
  CPY #4
  BEQ MA21
- CPY #&3A
+ CPY #$3A
  BEQ MA21
- CPY #&3E
+ CPY #$3E
  BCS MA21
  LDA INWK+31
- AND #&20
+ AND #$20
  BNE MA21
  ASL INWK+31
  SEC
@@ -357,23 +357,23 @@
  LDX TYPE
  JSR EXNO2
 
-\ ******************************************************************************
-\
-\       Name: MA21
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MA21
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MA21
 
  JSR MVEIT
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
- LDY #&25
+ LDY #$25
 
 .loop_C815A
 
@@ -382,22 +382,22 @@
  DEY
  BPL loop_C815A
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
-\ ******************************************************************************
-\
-\       Name: MainFlight7
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MainFlight7
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MainFlight7
 
  LDA INWK+31
- AND #&A0
+ AND #$A0
  LDX TYPE
  BMI C81D4
  JSR MAS4
@@ -408,7 +408,7 @@
  BMI C81D4
  CPX #2
  BEQ ISDK
- AND #&C0
+ AND #$C0
  BNE C81D4
  CPX #1
  BEQ C81D4
@@ -417,14 +417,14 @@
  BMI MainFlight8
  JMP C821B
 
-\ ******************************************************************************
-\
-\       Name: MainFlight8
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MainFlight8
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MainFlight8
 
@@ -433,7 +433,7 @@
  CPX #3
  BEQ C821B
  LDY #0
- JSR GetShipBlueprint   \ Set A to the Y-th byte from the current ship blueprint
+ JSR GetShipBlueprint   ; Set A to the Y-th byte from the current ship blueprint
  LSR A
  LSR A
  LSR A
@@ -450,13 +450,13 @@
 .slvy2
 
  JSR tnpr1
- LDY #&4E
+ LDY #$4E
  BCS MA59
  LDY QQ29
  ADC QQ20,Y
  STA QQ20,Y
  TYA
- ADC #&D0
+ ADC #$D0
  JSR MESS
  JSR subm_EBE9
  ASL NEWB
@@ -467,14 +467,14 @@
 
  JMP C822A
 
-\ ******************************************************************************
-\
-\       Name: ISDK
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: ISDK
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .ISDK
 
@@ -482,25 +482,25 @@
  AND #4
  BNE C8200
  LDA INWK+14
- CMP #&D6
+ CMP #$D6
  BCC MA62
  JSR SPS1
  LDA X2
- CMP #&59
+ CMP #$59
  BCC MA62
  LDA INWK+16
- AND #&7F
- CMP #&50
+ AND #$7F
+ CMP #$50
  BCC MA62
 
-\ ******************************************************************************
-\
-\       Name: GOIN
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: GOIN
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .GOIN
 
@@ -519,14 +519,14 @@
  BCC MA67
  JMP DEATH
 
-\ ******************************************************************************
-\
-\       Name: MA59
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MA59
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MA59
 
@@ -563,14 +563,14 @@
  BEQ MA26
  JMP MA15
 
-\ ******************************************************************************
-\
-\       Name: MA26
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MA26
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MA26
 
@@ -599,14 +599,14 @@
  BPL C825F
  JSR BEEP_b7
  LDX XSAV
- LDY #&6D
+ LDY #$6D
  JSR ABORT2
 
 .C825F
 
  LDA LAS
  BEQ MA8
- LDX #&0F
+ LDX #$0F
  JSR EXNO
  LDA TYPE
  CMP #2
@@ -614,15 +614,15 @@
  CMP #8
  BNE C827A
  LDX LAS
- CPX #&32
+ CPX #$32
  BEQ C82D5
 
 .C827A
 
- CMP #&1F
+ CMP #$1F
  BCC BURN
  LDA LAS
- CMP #&17
+ CMP #$17
  BNE C82D5
  LSR LAS
  LSR LAS
@@ -638,7 +638,7 @@
  ROR INWK+31
  JSR subm_F25A
  LDA LAS
- CMP #&32
+ CMP #$32
  BNE C82C4
  LDA TYPE
  CMP #7
@@ -683,14 +683,14 @@
  LDA TYPE
  JSR ANGRY
 
-\ ******************************************************************************
-\
-\       Name: MA8
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MA8
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MA8
 
@@ -698,31 +698,31 @@
 
 .MA15
 
- LDY #&23
+ LDY #$23
  LDA INWK+35
  STA (XX19),Y
  LDA INWK+34
- LDY #&22
+ LDY #$22
  STA (XX19),Y
  LDA NEWB
  BMI C831C
  LDA INWK+31
  BPL C831F
- AND #&20
+ AND #$20
  BEQ C831F
  LDA NEWB
- AND #&40
+ AND #$40
  ORA FIST
  STA FIST
  LDA MJ
  ORA DLY
  BNE C831C
- LDY #&0A
- JSR GetShipBlueprint   \ Set A to the Y-th byte from the current ship blueprint
+ LDY #$0A
+ JSR GetShipBlueprint   ; Set A to the Y-th byte from the current ship blueprint
  BEQ C831C
  TAX
  INY
- JSR GetShipBlueprint   \ Set A to the Y-th byte from the current ship blueprint
+ JSR GetShipBlueprint   ; Set A to the Y-th byte from the current ship blueprint
  TAY
  JSR MCASH
  LDA #0
@@ -741,22 +741,22 @@
 
 .C8328
 
- LDY #&1F
+ LDY #$1F
  LDA INWK+31
- AND #&BF
+ AND #$BF
  STA (XX19),Y
  LDX XSAV
  INX
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_8334
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_8334
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_8334
 
@@ -775,14 +775,14 @@
  JSR subm_D951
  JMP C8360
 
-\ ******************************************************************************
-\
-\       Name: subm_MA23
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_MA23
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_MA23
 
@@ -810,9 +810,9 @@
 
  LDA ECMA
  BEQ C8386
- LDA #&80
+ LDA #$80
  STA K+2
- LDA #&7F
+ LDA #$7F
  STA K
  LDA Yx1M2
  STA K+3
@@ -856,19 +856,19 @@
 
  JSR MAL1
 
-\ ******************************************************************************
-\
-\       Name: MA18
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MA18
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MA18
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA BOMB
  BPL C83CB
@@ -884,28 +884,28 @@
  BNE MA22
  JSR subm_MainFlight13
 
-\ ******************************************************************************
-\
-\       Name: MainFlight14
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MainFlight14
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MainFlight14
 
  LDA MJ
  BNE C8417
  LDA MCNT
- AND #&1F
+ AND #$1F
  BNE C841F
  LDA SSPR
  BNE C8417
  TAY
  JSR MAS2
  BNE C8417
- LDX #&1C
+ LDX #$1C
 
 .loop_C83EC
 
@@ -941,14 +941,14 @@
 
  JMP MA23
 
-\ ******************************************************************************
-\
-\       Name: MA22
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MA22
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MA22
 
@@ -971,18 +971,18 @@
 .C8436
 
  LDA MCNT
- AND #&1F
- CMP #&0A
+ AND #$1F
+ CMP #$0A
  BEQ C8442
- CMP #&14
+ CMP #$14
  BNE MA29
 
 .C8442
 
- LDA #&50
+ LDA #$50
  CMP ENERGY
  BCC C8453
- LDA #&64
+ LDA #$64
  JSR MESS
  LDY #7
  JSR NOISE
@@ -998,40 +998,40 @@
 
 .MA29
 
- CMP #&0F
+ CMP #$0F
  BNE C8469
  LDA auto
  BEQ MA23
- LDA #&7B
+ LDA #$7B
  BNE C84C7
 
 .C8469
 
- AND #&0F
+ AND #$0F
  CMP #6
  BNE MA23
- LDA #&1E
+ LDA #$1E
  STA CABTMP
  LDA SSPR
  BNE MA23
- LDY #&2A
+ LDY #$2A
  JSR MAS2
  BNE MA23
  JSR MAS3
- EOR #&FF
- ADC #&1E
+ EOR #$FF
+ ADC #$1E
  STA CABTMP
  BCS MA28
- CMP #&E0
+ CMP #$E0
  BCC MA23
- CMP #&F0
+ CMP #$F0
  BCC nokilltr
  LDA TRIBBLE+1
  ORA TRIBBLE
  BEQ nokilltr
  LSR TRIBBLE+1
  ROR TRIBBLE
- LDY #&1F
+ LDY #$1F
  JSR NOISE
 
 .nokilltr
@@ -1042,9 +1042,9 @@
  BEQ MA23
  LSR A
  ADC QQ14
- CMP #&46
+ CMP #$46
  BCC C84BA
- LDA #&46
+ LDA #$46
 
 .C84BA
 
@@ -1052,20 +1052,20 @@
  BCS MA23
  JSR subm_EBE9
  JSR C9D35
- LDA #&A0
+ LDA #$A0
 
 .C84C7
 
  JSR MESS
 
-\ ******************************************************************************
-\
-\       Name: MA23
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MA23
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MA23
 
@@ -1073,19 +1073,19 @@
  BNE C8532
  JMP STARS_b1
 
-\ ******************************************************************************
-\
-\       Name: subm_MainFlight13
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_MainFlight13
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_MainFlight13
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDX ENERGY
  BPL C84F5
@@ -1108,30 +1108,30 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_MainFlight15
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_MainFlight15
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_MainFlight15
 
- LDY #&FF
+ LDY #$FF
  STY ALTIT
  INY
  JSR m
  BNE C8532
  JSR MAS3
  BCS C8532
- SBC #&24
+ SBC #$24
  BCC C852F
  STA R
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  JSR LL5
  LDA Q
@@ -1146,14 +1146,14 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: M%
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: M%
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .M%
 
@@ -1163,8 +1163,8 @@
 
 .C853A
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA K%
  EOR nmiTimerLo
@@ -1185,7 +1185,7 @@
 
  LDA L0300
  BPL C856B
- LDA #&B0
+ LDA #$B0
  JSR subm_B5FE+2
  JMP C856E
 
@@ -1203,22 +1203,22 @@
  ORA KY3
  ORA KY4
  BMI C858A
- LDA #&10
+ LDA #$10
  JSR subm_FA16
 
 .C858A
 
  TXA
- EOR #&80
+ EOR #$80
  TAY
- AND #&80
+ AND #$80
  STA ALP2
  STX JSTX
- EOR #&80
+ EOR #$80
  STA ALP2+1
  TYA
  BPL C85A1
- EOR #&FF
+ EOR #$FF
  CLC
  ADC #1
 
@@ -1236,22 +1236,22 @@
  ORA KY5
  ORA KY6
  BMI C85C2
- LDA #&0C
+ LDA #$0C
  JSR subm_FA16
 
 .C85C2
 
  TXA
- EOR #&80
+ EOR #$80
  TAY
- AND #&80
+ AND #$80
  STX JSTY
  STA BET2+1
- EOR #&80
+ EOR #$80
  STA BET2
  TYA
  BPL C85D6
- EOR #&FF
+ EOR #$FF
 
 .C85D6
 
@@ -1263,14 +1263,14 @@
  ORA BET2
  STA BETA
 
-\ ******************************************************************************
-\
-\       Name: BS2
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: BS2
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .BS2
 
@@ -1280,9 +1280,9 @@
  CLC
  ADC #4
  STA DELTA
- CMP #&28
+ CMP #$28
  BCC C85F3
- LDA #&28
+ LDA #$28
 
 .C85F3
 
@@ -1290,8 +1290,8 @@
 
 .C85F5
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA KL
  BEQ C8614
@@ -1312,15 +1312,15 @@
 .C8614
 
  LDA L0081
- CMP #&18
+ CMP #$18
  BNE C8642
  LDA NOMSL
  BEQ C8651
  LDA MSAR
- EOR #&FF
+ EOR #$FF
  STA MSAR
  BNE C8636
- LDY #&6C
+ LDY #$6C
  JSR ABORT
  LDY #4
 
@@ -1331,7 +1331,7 @@
 
 .C8636
 
- LDY #&6C
+ LDY #$6C
  LDX NOMSL
  JSR MSBAR
  LDY #3
@@ -1339,7 +1339,7 @@
 
 .C8642
 
- CMP #&19
+ CMP #$19
  BNE C8654
  LDA MSTG
  BMI C8651
@@ -1352,13 +1352,13 @@
 
 .C8654
 
- CMP #&1A
+ CMP #$1A
  BNE C866E
  LDA BOMB
  BMI C8651
  ASL BOMB
  BEQ C8651
- LDA #&28
+ LDA #$28
  STA hiddenColour
  LDY #8
  JSR NOISE
@@ -1366,7 +1366,7 @@
 
 .C866E
 
- CMP #&1B
+ CMP #$1B
  BNE C867F
  LDX ESCP
  BEQ MA68
@@ -1376,17 +1376,17 @@
 
 .C867F
 
- CMP #&0C
+ CMP #$0C
  BNE C8690
  LDA L0300
- AND #&C0
+ AND #$C0
  BNE MA68
  JSR subm_B5B4
  JMP MA68
 
 .C8690
 
- CMP #&17
+ CMP #$17
  BNE MA68
  LDA ECM
  BEQ MA68
@@ -1397,8 +1397,8 @@
 
 .MA68
 
- JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA #0
  STA LAS
@@ -1415,7 +1415,7 @@
  LDA KY7
  BPL MA3
  LDA GNTMP
- CMP #&F2
+ CMP #$F2
  BCS MA3
  LDX VIEW
  LDA LASER,X
@@ -1427,16 +1427,16 @@
 .C86D9
 
  PHA
- AND #&7F
+ AND #$7F
  STA LAS
  STA LAS2
- LDY #&12
+ LDY #$12
  PLA
  PHA
  BMI C86F0
- CMP #&32
+ CMP #$32
  BNE C86EE
- LDY #&10
+ LDY #$10
 
 .C86EE
 
@@ -1444,15 +1444,15 @@
 
 .C86F0
 
- CMP #&97
+ CMP #$97
  BEQ C86F7
- LDY #&11
+ LDY #$11
 ; overlapping:  L0FA0                         ; 86F6: 2C A0 0F    ,..
- EQUB &2C                                     ; 86F6: 2C          ,
+ EQUB $2C                                     ; 86F6: 2C          ,
 
 .C86F7
 
- LDY #&0F
+ LDY #$0F
 
 .C86F9
 
@@ -1464,17 +1464,17 @@
 
 .C8704
 
- AND #&EF
+ AND #$EF
  STA LASCT
 
-\ ******************************************************************************
-\
-\       Name: MA3
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MA3
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MA3
 
@@ -1482,13 +1482,13 @@
  LDA QQ11
  BNE C874C
 
- JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA drawingPhase
  BNE C872A
  LDA L046D
- EOR #&FF
+ EOR #$FF
  STA L046D
  BMI C8733
  LDA KL
@@ -1504,20 +1504,20 @@
 
 .C8733
 
- LDA #&88
+ LDA #$88
  JSR subm_D977
  JSR COMPAS
  JSR DrawPitchRollBars
  JSR DIALS_b6
  LDX drawingPhase
  LDA L03EF,X
- ORA #&40
+ ORA #$40
  STA L03EF,X
  RTS
 
 .C874C
 
- CMP #&98
+ CMP #$98
  BNE C876F
  JSR subm_F338
  CPX L0471
@@ -1530,7 +1530,7 @@
  CPX #3
  BNE C876A
  LDA frameCounter
- AND #&20
+ AND #$20
  BNE C876A
  INX
 
@@ -1543,14 +1543,14 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: SPIN
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: SPIN
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .SPIN
 
@@ -1560,9 +1560,9 @@
  TAX
  LDY #0
  STA CNT
- JSR GetShipBlueprint   \ Set A to the Y-th byte from the current ship blueprint
+ JSR GetShipBlueprint   ; Set A to the Y-th byte from the current ship blueprint
  AND CNT
- AND #&0F
+ AND #$0F
 
 .SPIN2
 
@@ -1576,32 +1576,32 @@
  JSR SFS1
  JMP loop_C8784
 
-\ ******************************************************************************
-\
-\       Name: subm_8790
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_8790
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_8790
 
- LDA #&0F
+ LDA #$0F
  STA hiddenColour
 
 .C8794
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: scacol
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: scacol
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .scacol
 
@@ -1609,35 +1609,35 @@
  EQUB   1,   2,   2,   2,   2,   2,   2,   1  ; 879D: 01 02 02... ...
  EQUB   2,   2,   2,   2,   2,   2,   2,   2  ; 87A5: 02 02 02... ...
  EQUB   2,   2,   2,   2,   2,   0,   3,   2  ; 87AD: 02 02 02... ...
- EQUB &FF,   0,   0,   0,   0,   0            ; 87B5: FF 00 00... ...
+ EQUB $FF,   0,   0,   0,   0,   0            ; 87B5: FF 00 00... ...
 
-\ ******************************************************************************
-\
-\       Name: SetAXTo15
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: SetAXTo15
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .SetAXTo15
 
- LDA #&0F
+ LDA #$0F
  TAX
  RTS
 
-\ ******************************************************************************
-\
-\       Name: PrintCombatRank
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: PrintCombatRank
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .PrintCombatRank
 
- LDA #&10
+ LDA #$10
  JSR TT68
  LDA L04A9
  AND #1
@@ -1656,11 +1656,11 @@
  ADC #0
  CPX #8
  ADC #0
- CPX #&18
+ CPX #$18
  ADC #0
- CPX #&2C
+ CPX #$2C
  ADC #0
- CPX #&82
+ CPX #$82
  ADC #0
  TAX
 
@@ -1678,16 +1678,16 @@
 
  PLA
  CLC
- ADC #&15
+ ADC #$15
  JMP plf
 
 .C8806
 
  LDX #9
- CMP #&19
+ CMP #$19
  BCS C87F0
  DEX
- CMP #&0A
+ CMP #$0A
  BCS C87F0
  DEX
  CMP #2
@@ -1695,71 +1695,71 @@
  DEX
  BNE C87F0
 
-\ ******************************************************************************
-\
-\       Name: subm_8819
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_8819
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_8819
 
- LDA #&7D
+ LDA #$7D
  JSR spc
- LDA #&13
+ LDA #$13
  LDY FIST
  BEQ C8829
- CPY #&28
+ CPY #$28
  ADC #1
 
 .C8829
 
  JMP plf
 
-\ ******************************************************************************
-\
-\       Name: wearedocked
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: wearedocked
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .wearedocked
 
- LDA #&CD
+ LDA #$CD
  JSR DETOK_b2
  JSR TT67
  JMP C885F
 
-\ ******************************************************************************
-\
-\       Name: STATUS
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: STATUS
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .STATUS
 
- LDA #&98
+ LDA #$98
  JSR subm_9645
  JSR subm_9D09
  LDA #7
  STA XC
- LDA #&7E
+ LDA #$7E
  JSR NLIN3
  JSR subm_F338
  STX L0471
- LDA #&E6
+ LDA #$E6
  DEX
  BMI wearedocked
  BEQ C885C
  LDY ENERGY
- CPY #&80
+ CPY #$80
  ADC #1
 
 .C885C
@@ -1786,31 +1786,31 @@
 
 .C887F
 
- LDA #&12
+ LDA #$12
  JSR PrintTokenCrTab
  INC YC
  LDA ESCP
  BEQ C8890
- LDA #&70
+ LDA #$70
  JSR PrintTokenCrTab
 
 .C8890
 
  LDA BST
  BEQ C889A
- LDA #&6F
+ LDA #$6F
  JSR PrintTokenCrTab
 
 .C889A
 
  LDA ECM
  BEQ C88A4
- LDA #&6C
+ LDA #$6C
  JSR PrintTokenCrTab
 
 .C88A4
 
- LDA #&71
+ LDA #$71
  STA XX4
 
 .loop_C88A8
@@ -1824,7 +1824,7 @@
 
  INC XX4
  LDA XX4
- CMP #&75
+ CMP #$75
  BCC loop_C88A8
  LDX #0
 
@@ -1838,29 +1838,29 @@
  BNE C88D0
  TXA
  CLC
- ADC #&60
+ ADC #$60
  JSR spc
 
 .C88D0
 
- LDA #&67
+ LDA #$67
  LDX CNT
  LDY LASER,X
- CPY #&8F
+ CPY #$8F
  BNE C88DD
- LDA #&68
+ LDA #$68
 
 .C88DD
 
- CPY #&97
+ CPY #$97
  BNE C88E3
- LDA #&75
+ LDA #$75
 
 .C88E3
 
- CPY #&32
+ CPY #$32
  BNE C88E9
- LDA #&76
+ LDA #$76
 
 .C88E9
 
@@ -1870,7 +1870,7 @@
  BEQ C88FB
  LDA CNT
  CLC
- ADC #&60
+ ADC #$60
  JSR subm_96B9
 
 .C88FB
@@ -1883,14 +1883,14 @@
  INX
  CPX #4
  BCC C88BB
- LDA #&18
+ LDA #$18
  STA XC
  LDX language
  LDA C897C,X
  STA YC
  JSR CB882_b4
  LDA S
- ORA #&80
+ ORA #$80
  CMP systemFlag
  STA systemFlag
  BEQ C8923
@@ -1900,33 +1900,33 @@
 
  JSR CA082_b6
 
-\ ******************************************************************************
-\
-\       Name: subm_8926
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_8926
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_8926
 
  LDA tileNumber
  BNE C892E
- LDA #&FF
+ LDA #$FF
  STA tileNumber
 
 .C892E
 
  LDA #0
  STA L00CC
- LDA #&6C
+ LDA #$6C
  STA L00D8
  STA L00CD
  STA L00CE
- LDX #&25
+ LDX #$25
  LDA QQ11
- AND #&40
+ AND #$40
  BEQ C8944
  LDX #4
 
@@ -1942,15 +1942,15 @@
 
 .C8955
 
- LDX #&FF
+ LDX #$FF
  LDA QQ11
- CMP #&95
+ CMP #$95
  BEQ C896C
- CMP #&DF
+ CMP #$DF
  BEQ C896C
- CMP #&92
+ CMP #$92
  BEQ C896C
- CMP #&93
+ CMP #$93
  BEQ C896C
  ASL A
  BPL C896E
@@ -1978,58 +1978,58 @@
  ASL A
  PHP
 
-\ ******************************************************************************
-\
-\       Name: subm_8980
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_8980
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_8980
 
  JSR subm_D8C5
  LDA #0
  STA L00CC
- LDA #&64
+ LDA #$64
  STA L00D8
- LDA #&25
+ LDA #$25
  STA L00D2
 
- JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  JSR DrawBoxEdges
  JSR CopyNametable0To1
- LDA #&C4
+ LDA #$C4
  STA L03EF
  STA L03F0
  LDA tileNumber
  STA L00D2
  RTS
 
-\ ******************************************************************************
-\
-\       Name: PrintTokenCrTab
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: PrintTokenCrTab
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .PrintTokenCrTab
 
  JSR TT27_b2
 
-\ ******************************************************************************
-\
-\       Name: PrintCrTab
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: PrintCrTab
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .PrintCrTab
 
@@ -2039,33 +2039,33 @@
  STA XC
  RTS
 
-\ ******************************************************************************
-\
-\       Name: L89B4
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: L89B4
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .L89B4
 
  EQUB 3, 3, 1, 3                              ; 89B4: 03 03 01... ...
 
-\ ******************************************************************************
-\
-\       Name: MVT3
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MVT3
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MVT3
 
  LDA K+3
  STA S
- AND #&80
+ AND #$80
  STA T
  EOR INWK+2,X
  BMI C89DC
@@ -2078,7 +2078,7 @@
  STA K+2
  LDA K+3
  ADC INWK+2,X
- AND #&7F
+ AND #$7F
  ORA T
  STA K+3
  RTS
@@ -2086,7 +2086,7 @@
 .C89DC
 
  LDA S
- AND #&7F
+ AND #$7F
  STA S
  LDA XX1,X
  SEC
@@ -2096,9 +2096,9 @@
  SBC K+2
  STA K+2
  LDA INWK+2,X
- AND #&7F
+ AND #$7F
  SBC S
- ORA #&80
+ ORA #$80
  EOR T
  STA K+3
  BCS C8A13
@@ -2110,7 +2110,7 @@
  STA K+2
  LDA #0
  SBC K+3
- AND #&7F
+ AND #$7F
  ORA T
  STA K+3
 
@@ -2118,22 +2118,22 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: MVS5
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MVS5
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MVS5
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA INWK+1,X
- AND #&7F
+ AND #$7F
  LSR A
  STA T
  LDA XX1,X
@@ -2146,10 +2146,10 @@
  LDA XX1,Y
  STA P
  LDA INWK+1,Y
- AND #&80
+ AND #$80
  STA T
  LDA INWK+1,Y
- AND #&7F
+ AND #$7F
  LSR A
  ROR P
  LSR A
@@ -2166,7 +2166,7 @@
  STX K
  LDX Q
  LDA INWK+1,Y
- AND #&7F
+ AND #$7F
  LSR A
  STA T
  LDA XX1,Y
@@ -2179,10 +2179,10 @@
  LDA XX1,X
  STA P
  LDA INWK+1,X
- AND #&80
+ AND #$80
  STA T
  LDA INWK+1,X
- AND #&7F
+ AND #$7F
  LSR A
  ROR P
  LSR A
@@ -2192,7 +2192,7 @@
  LSR A
  ROR P
  ORA T
- EOR #&80
+ EOR #$80
  EOR RAT2
  STX Q
  JSR ADD
@@ -2204,32 +2204,32 @@
  LDA K+1
  STA INWK+1,X
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: TENS
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TENS
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TENS
 
- EQUB &48, &76, &E8,   0                      ; 8ABA: 48 76 E8... Hv.
+ EQUB $48, $76, $E8,   0                      ; 8ABA: 48 76 E8... Hv.
 
-\ ******************************************************************************
-\
-\       Name: pr2
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: pr2
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .pr2
 
@@ -2237,14 +2237,14 @@
 
  LDY #0
 
-\ ******************************************************************************
-\
-\       Name: TT11
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT11
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT11
 
@@ -2255,18 +2255,18 @@
  STY K+2
  STX K+3
 
-\ ******************************************************************************
-\
-\       Name: BPRNT
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: BPRNT
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .BPRNT
 
- LDX #&0B
+ LDX #$0B
  STX T
  PHP
  BCC C8AD9
@@ -2275,7 +2275,7 @@
 
 .C8AD9
 
- LDA #&0B
+ LDA #$0B
  SEC
  STA XX17
  SBC U
@@ -2336,8 +2336,8 @@
 
  PHP
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  PLP
  LDA K,X
@@ -2346,7 +2346,7 @@
  DEX
  BPL loop_C8B2D
  LDA S
- SBC #&17
+ SBC #$17
  STA XX15+4
  BCC C8B5F
  LDX #3
@@ -2370,7 +2370,7 @@
  BEQ C8B6E
  DEC U
  BPL C8B78
- LDA #&20
+ LDA #$20
  BNE C8B75
 
 .C8B6E
@@ -2378,7 +2378,7 @@
  LDY #0
  STY T
  CLC
- ADC #&30
+ ADC #$30
 
 .C8B75
 
@@ -2408,42 +2408,42 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: DrawPitchRollBars
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ------------------------------------------------------------------------------
-\
-\ Moves sprite 11 to coord (JSTX, 29)
-\              12 to coord (JSTY, 37)
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: DrawPitchRollBars
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ------------------------------------------------------------------------------
+;
+; Moves sprite 11 to coord (JSTX, 29)
+;              12 to coord (JSTY, 37)
+;
+; ******************************************************************************
 
 .DrawPitchRollBars
 
  LDA JSTX
- EOR #&FF
+ EOR #$FF
  LSR A
  LSR A
  LSR A
  CLC
- ADC #&D8
+ ADC #$D8
  STA SC2
- LDY #&1D
- LDA #&0B
+ LDY #$1D
+ LDA #$0B
  JSR C8BB4
  LDA JSTY
  LSR A
  LSR A
  LSR A
  CLC
- ADC #&D8
+ ADC #$D8
  STA SC2
- LDY #&25
- LDA #&0C
+ LDY #$25
+ LDA #$0C
 
 .C8BB4
 
@@ -2456,43 +2456,43 @@
  STA xSprite0,X
  TYA
  CLC
- ADC #&AA
+ ADC #$AA
  STA ySprite0,X
  RTS
 
-\ ******************************************************************************
-\
-\       Name: ESCAPE
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: ESCAPE
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .ESCAPE
 
  JSR RES2
- LDY #&13
+ LDY #$13
  JSR NOISE
  LDA #0
  STA ESCP
  JSR CAC5C_b3
  LDA QQ11
  BNE C8BFF
- LDX #&0B
+ LDX #$0B
  STX TYPE
  JSR FRS1
  BCS C8BE9
- LDX #&18
+ LDX #$18
  JSR FRS1
 
 .C8BE9
 
  LDA #8
  STA INWK+27
- LDA #&C2
+ LDA #$C2
  STA INWK+30
- LDA #&2C
+ LDA #$2C
  STA INWK+32
 
 .loop_C8BF5
@@ -2505,7 +2505,7 @@
 .C8BFF
 
  LDA #0
- LDX #&10
+ LDX #$10
 
 .loop_C8C03
 
@@ -2525,27 +2525,27 @@
 
 .C8C23
 
- LDA #&46
+ LDA #$46
  STA QQ14
  JMP GOIN
 
-\ ******************************************************************************
-\
-\       Name: HME2
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: HME2
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .HME2
 
  JSR CLYNS
- LDA #&0E
+ LDA #$0E
  JSR DETOK_b2
  LDY #9
  STY L0483
- LDA #&41
+ LDA #$41
 
 .loop_C8C3A
 
@@ -2554,7 +2554,7 @@
  BPL loop_C8C3A
  JSR CBA63_b6
  LDA INWK+5
- CMP #&0D
+ CMP #$0D
  BEQ C8CAF
  JSR TT81
  LDA #0
@@ -2562,24 +2562,24 @@
 
 .C8C50
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
- LDA #&80
+ LDA #$80
  STA DTW4
  ASL A
  STA DTW5
  JSR cpl
  LDX DTW5
  LDA INWK+5,X
- CMP #&0D
+ CMP #$0D
  BNE C8C7F
 
 .loop_C8C72
 
  DEX
  LDA INWK+5,X
- ORA #&20
+ ORA #$20
  CMP BUF,X
  BEQ loop_C8C72
  TXA
@@ -2593,7 +2593,7 @@
  BNE C8C50
  JSR TT111
  JSR BOOP
- LDA #&D7
+ LDA #$D7
  JSR DETOK_b2
  JMP subm_8980
 
@@ -2614,14 +2614,14 @@
  JSR CLYNS
  JMP subm_8980
 
-\ ******************************************************************************
-\
-\       Name: TA352
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TA352
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TA352
 
@@ -2629,7 +2629,7 @@
  ORA INWK+3
  ORA INWK+6
  BNE C8CC2
- LDA #&50
+ LDA #$50
  JSR OOPS
 
 .C8CC2
@@ -2648,7 +2648,7 @@
 
  JSR TA873
  JSR EXNO3
- LDA #&FA
+ LDA #$FA
  JMP OOPS
 
 .C8CDB
@@ -2667,19 +2667,19 @@
  LDA XX2+2
  ORA XX2+5
  ORA XX2+8
- AND #&7F
+ AND #$7F
  ORA XX2+1
  ORA XX2+4
  ORA XX2+7
  BNE C8D34
  LDA INWK+32
- CMP #&82
+ CMP #$82
  BEQ TA352
- LDY #&1F
+ LDY #$1F
  LDA (V),Y
  BIT M32+1
  BNE C8D14
- ORA #&80
+ ORA #$80
  STA (V),Y
 
 .C8D14
@@ -2688,13 +2688,13 @@
  ORA INWK+3
  ORA INWK+6
  BNE C8D21
- LDA #&50
+ LDA #$50
  JSR OOPS
 
 .C8D21
 
  LDA INWK+32
- AND #&7F
+ AND #$7F
  LSR A
  TAX
  LDA FRIN,X
@@ -2704,14 +2704,14 @@
 
  JSR EXNO2
 
-\ ******************************************************************************
-\
-\       Name: TA873
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TA873
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TA873
 
@@ -2726,12 +2726,12 @@
 .C8D34
 
  JSR DORND
- CMP #&10
+ CMP #$10
  BCS C8D42
 
 .M32
 
- LDY #&20
+ LDY #$20
  LDA (V),Y
  LSR A
  BCS C8D45
@@ -2744,14 +2744,14 @@
 
  JMP ECBLB2
 
-\ ******************************************************************************
-\
-\       Name: TACTICS
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TACTICS
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TACTICS
 
@@ -2760,7 +2760,7 @@
  STA L05F2
  LDA #4
  STA RAT2
- LDA #&16
+ LDA #$16
  STA CNT2
  CPX #1
  BEQ C8CDB
@@ -2773,7 +2773,7 @@
  ORA auto
  BNE C8D33
  JSR DORND
- CMP #&FD
+ CMP #$FD
  BCC C8D33
  AND #1
  ADC #8
@@ -2783,31 +2783,31 @@
 .C8D7B
 
  JSR DORND
- CMP #&F0
+ CMP #$F0
  BCC C8D33
  LDA MANY+16
  CMP #4
  BCS C8DCC
- LDX #&10
+ LDX #$10
 
 .TN6
 
- LDA #&F1
+ LDA #$F1
  JMP SFS1
 
 .C8D90
 
- CPX #&0F
+ CPX #$0F
  BNE C8DB0
  JSR DORND
- CMP #&C8
+ CMP #$C8
  BCC C8DCC
  LDX #0
  STX INWK+32
- LDX #&24
+ LDX #$24
  STX NEWB
  AND #3
- ADC #&11
+ ADC #$11
  TAX
  JSR TN6
  LDA #0
@@ -2816,25 +2816,25 @@
 
 .C8DB0
 
- LDY #&0E
- JSR GetShipBlueprint   \ Set A to the Y-th byte from the current ship blueprint
+ LDY #$0E
+ JSR GetShipBlueprint   ; Set A to the Y-th byte from the current ship blueprint
  CMP INWK+35
  BCC TA21
  BEQ TA21
  INC INWK+35
 
-\ ******************************************************************************
-\
-\       Name: TA21
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TA21
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TA21
 
- CPX #&1E
+ CPX #$1E
  BNE C8DCD
  LDA MANY+29
  BNE C8DCD
@@ -2852,7 +2852,7 @@
  LDA NEWB
  LSR A
  BCC C8DD9
- CPX #&32
+ CPX #$32
  BCS C8DCC
 
 .C8DD9
@@ -2860,7 +2860,7 @@
  LSR A
  BCC C8DEB
  LDX FIST
- CPX #&28
+ CPX #$28
  BCC C8DEB
  LDA NEWB
  ORA #4
@@ -2889,7 +2889,7 @@
  LDA SSPR
  BEQ TN4
  LDA INWK+32
- AND #&81
+ AND #$81
  STA INWK+32
 
 .TN4
@@ -2906,12 +2906,12 @@
 .TA19
 
  JSR TAS2
- LDY #&0A
+ LDY #$0A
  JSR TAS3
  STA CNT
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA TYPE
  CMP #1
@@ -2920,16 +2920,16 @@
 
 .C8E32
 
- CMP #&0E
+ CMP #$0E
  BNE C8E4B
  JSR DORND
- CMP #&C8
+ CMP #$C8
  BCC C8E4B
  JSR DORND
- LDX #&17
- CMP #&64
+ LDX #$17
+ CMP #$64
  BCS C8E48
- LDX #&11
+ LDX #$11
 
 .C8E48
 
@@ -2938,16 +2938,16 @@
 .C8E4B
 
  JSR DORND
- CMP #&FA
+ CMP #$FA
  BCC C8E59
  JSR DORND
- ORA #&68
+ ORA #$68
  STA INWK+29
 
 .C8E59
 
- LDY #&0E
- JSR GetShipBlueprint   \ Set A to the Y-th byte from the current ship blueprint
+ LDY #$0E
+ JSR GetShipBlueprint   ; Set A to the Y-th byte from the current ship blueprint
  LSR A
  CMP INWK+35
  BCC TA3
@@ -2956,29 +2956,29 @@
  CMP INWK+35
  BCC ta3
  JSR DORND
- CMP #&E6
+ CMP #$E6
  BCC ta3
  LDX TYPE
  LDY TYPE
- JSR GetDefaultNEWB     \ Set A to the default NEWB flags for ship type Y
+ JSR GetDefaultNEWB     ; Set A to the default NEWB flags for ship type Y
  BPL ta3
  LDA NEWB
- AND #&F0
+ AND #$F0
  STA NEWB
- LDY #&24
+ LDY #$24
  STA (XX19),Y
  LDA #0
  STA INWK+32
  JMP SESCP
 
-\ ******************************************************************************
-\
-\       Name: ta3
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: ta3
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .ta3
 
@@ -2987,16 +2987,16 @@
  BEQ TA3
  STA T
  JSR DORND
- AND #&1F
+ AND #$1F
  CMP T
  BCS TA3
  LDA ECMA
  BNE TA3
  DEC INWK+31
  LDA TYPE
- CMP #&1D
+ CMP #$1D
  BNE C8EAE
- LDX #&1E
+ LDX #$1E
  LDA INWK+32
  JMP SFS1
 
@@ -3004,54 +3004,54 @@
 
  JMP SFRMIS
 
-\ ******************************************************************************
-\
-\       Name: TA3
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TA3
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TA3
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA #0
  JSR MAS4
- AND #&E0
+ AND #$E0
  BNE TA4
  LDX CNT
- CPX #&9E
+ CPX #$9E
  BCC TA4
- LDY #&13
- JSR GetShipBlueprint   \ Set A to the Y-th byte from the current ship blueprint
- AND #&F8
+ LDY #$13
+ JSR GetShipBlueprint   ; Set A to the Y-th byte from the current ship blueprint
+ AND #$F8
  BEQ TA4
- CPX #&A1
+ CPX #$A1
  BCC C8EE4
  LDA INWK+31
- ORA #&40
+ ORA #$40
  STA INWK+31
- CPX #&A3
+ CPX #$A3
  BCS C8EF3
 
 .C8EE4
 
  JSR TAS6
  LDA CNT
- EOR #&80
+ EOR #$80
  STA CNT
  JSR TA15
  JMP C8EFF
 
 .C8EF3
 
- JSR GetShipBlueprint   \ Set A to the Y-th byte from the current ship blueprint
+ JSR GetShipBlueprint   ; Set A to the Y-th byte from the current ship blueprint
  LSR A
  JSR OOPS
- LDY #&0B
+ LDY #$0B
  JSR NOISE
 
 .C8EFF
@@ -3060,11 +3060,11 @@
  CMP #3
  BCS C8F18
  JSR DORND
- ORA #&C0
+ ORA #$C0
  CMP INWK+32
  BCC C8F18
  JSR DORND
- AND #&87
+ AND #$87
  STA INWK+30
  JMP C8F6C
 
@@ -3073,18 +3073,18 @@
  LDA INWK+1
  ORA INWK+4
  ORA INWK+7
- AND #&E0
+ AND #$E0
  BEQ C8F83
  BNE C8F6C
 
-\ ******************************************************************************
-\
-\       Name: TA4
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TA4
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TA4
 
@@ -3093,13 +3093,13 @@
  BCS C8F32
  LDA INWK+1
  ORA INWK+4
- AND #&FE
+ AND #$FE
  BEQ C8F47
 
 .C8F32
 
  JSR DORND
- ORA #&80
+ ORA #$80
  CMP INWK+32
  BCS C8F47
  STA L05F2
@@ -3108,7 +3108,7 @@
 
  JSR TAS6
  LDA CNT
- EOR #&80
+ EOR #$80
 
 .C8F45
 
@@ -3122,7 +3122,7 @@
  LDA INWK+1
  ORA INWK+4
  ORA INWK+7
- AND #&F8
+ AND #$F8
  BNE C8F64
  LDA CNT
  BMI C8F61
@@ -3147,7 +3147,7 @@
 
 .C8F70
 
- AND #&7F
+ AND #$7F
  CMP #6
  BCS C8F83
 
@@ -3157,12 +3157,12 @@
  CMP #6
  BCC C8F6C
  JSR DORND
- CMP #&C8
+ CMP #$C8
  BCC C8F8E
 
 .C8F83
 
- LDA #&FF
+ LDA #$FF
  LDX TYPE
  CPX #1
  BNE C8F8C
@@ -3178,9 +3178,9 @@
 
 .TA151
 
- LDY #&0A
+ LDY #$0A
  JSR TAS3
- CMP #&98
+ CMP #$98
  BCC C8F9C
  LDX #0
  STX RAT2
@@ -3191,19 +3191,19 @@
 
 .TA15
 
- LDY #&10
+ LDY #$10
  JSR TAS3
  TAX
- EOR #&80
- AND #&80
+ EOR #$80
+ AND #$80
  STA INWK+30
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA CNT
  BPL C8FCA
- CMP #&9F
+ CMP #$9F
  BCC C8FCA
  LDA #7
  ORA INWK+30
@@ -3225,14 +3225,14 @@
 
  LDA INWK+29
  ASL A
- CMP #&20
+ CMP #$20
  BCS C8FF7
- LDY #&16
+ LDY #$16
  JSR TAS3
  TAX
  EOR INWK+30
- AND #&80
- EOR #&80
+ AND #$80
+ EOR #$80
  STA INWK+29
  TXA
  ASL A
@@ -3249,14 +3249,14 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: DOCKIT
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: DOCKIT
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .DOCKIT
 
@@ -3264,7 +3264,7 @@
  STA RAT2
  LSR A
  STA RAT
- LDA #&1D
+ LDA #$1D
  STA CNT2
  LDA SSPR
  BNE C900B
@@ -3279,23 +3279,23 @@
  LDA XX2+2
  ORA XX2+5
  ORA XX2+8
- AND #&7F
+ AND #$7F
  BNE loop_C9008
  JSR TA2
  LDA Q
  STA K
  JSR TAS2
- LDY #&0A
+ LDY #$0A
  JSR TAS4
  BMI C904E
- CMP #&23
+ CMP #$23
  BCC C904E
- LDY #&0A
+ LDY #$0A
  JSR TAS3
- CMP #&A2
+ CMP #$A2
  BCS C9068
  LDA K
- CMP #&9D
+ CMP #$9D
  BCC C9040
  LDA TYPE
  BMI C9068
@@ -3325,14 +3325,14 @@
 .C9060
 
  INC INWK+28
- LDA #&7F
+ LDA #$7F
  STA INWK+29
  BNE C90BA
 
 .C9068
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDX #0
  STX RAT2
@@ -3347,7 +3347,7 @@
  STA INWK+29
  LDA XX15
  ASL A
- CMP #&0C
+ CMP #$0C
  BCS C9046
  LDA Y1
  ASL A
@@ -3356,7 +3356,7 @@
  STA INWK+30
  LDA Y1
  ASL A
- CMP #&0C
+ CMP #$0C
  BCS C9046
 
 .C909F
@@ -3368,10 +3368,10 @@
  STA Y1
  LDA INWK+26
  STA X2
- LDY #&10
+ LDY #$10
  JSR TAS4
  ASL A
- CMP #&42
+ CMP #$42
  BCS C9060
  JSR C9046
 
@@ -3387,29 +3387,29 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: VCSU1
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: VCSU1
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .VCSU1
 
- LDA #&2A
+ LDA #$2A
  STA V
  LDA #6
 
-\ ******************************************************************************
-\
-\       Name: VCSUB
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: VCSUB
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .VCSUB
 
@@ -3420,22 +3420,22 @@
  JSR TAS1
  LDY #8
 
-\ ******************************************************************************
-\
-\       Name: TAS1
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TAS1
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TAS1
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA (V),Y
- EOR #&80
+ EOR #$80
  STA K+3
  DEY
  LDA (V),Y
@@ -3454,14 +3454,14 @@
  STA K3,X
  RTS
 
-\ ******************************************************************************
-\
-\       Name: TAS4
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TAS4
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TAS4
 
@@ -3480,36 +3480,36 @@
  LDA X2
  JMP MAD
 
-\ ******************************************************************************
-\
-\       Name: TAS6
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TAS6
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TAS6
 
  LDA XX15
- EOR #&80
+ EOR #$80
  STA XX15
  LDA Y1
- EOR #&80
+ EOR #$80
  STA Y1
  LDA X2
- EOR #&80
+ EOR #$80
  STA X2
  RTS
 
-\ ******************************************************************************
-\
-\       Name: DCS1
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: DCS1
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .DCS1
 
@@ -3532,7 +3532,7 @@
  STA R
  LDA #0
  ROR A
- EOR #&80
+ EOR #$80
  EOR XX2+2,X
  BMI C916D
  LDA R
@@ -3556,26 +3556,26 @@
  STA XX2+1,X
  BCS C916C
  LDA K3,X
- EOR #&FF
+ EOR #$FF
  ADC #1
  STA K3,X
  LDA XX2+1,X
- EOR #&FF
+ EOR #$FF
  ADC #0
  STA XX2+1,X
  LDA XX2+2,X
- EOR #&80
+ EOR #$80
  STA XX2+2,X
  JMP C916C
 
-\ ******************************************************************************
-\
-\       Name: HITCH
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: HITCH
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .HITCH
 
@@ -3585,7 +3585,7 @@
  LDA TYPE
  BMI C91D5
  LDA INWK+31
- AND #&20
+ AND #$20
  ORA INWK+1
  ORA INWK+4
  BNE C91D5
@@ -3605,11 +3605,11 @@
  BCS C91D6
  STA S
  LDY #2
- JSR GetShipBlueprint   \ Set A to the Y-th byte from the current ship blueprint
+ JSR GetShipBlueprint   ; Set A to the Y-th byte from the current ship blueprint
  CMP S
  BNE C91D5
  DEY
- JSR GetShipBlueprint   \ Set A to the Y-th byte from the current ship blueprint
+ JSR GetShipBlueprint   ; Set A to the Y-th byte from the current ship blueprint
  CMP R
 
 .C91D5
@@ -3621,34 +3621,34 @@
  CLC
  RTS
 
-\ ******************************************************************************
-\
-\       Name: FRS1
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: FRS1
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .FRS1
 
  JSR ZINF_0
- LDA #&1C
+ LDA #$1C
  STA INWK+3
  LSR A
  STA INWK+6
- LDA #&80
+ LDA #$80
  STA INWK+5
  LDA MSTG
  ASL A
- ORA #&80
+ ORA #$80
  STA INWK+32
 
 .fq1
 
- LDA #&60
+ LDA #$60
  STA INWK+14
- ORA #&80
+ ORA #$80
  STA INWK+22
  LDA DELTA
  ROL A
@@ -3656,14 +3656,14 @@
  TXA
  JMP NWSHP
 
-\ ******************************************************************************
-\
-\       Name: FRMIS
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: FRMIS
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .FRMIS
 
@@ -3674,19 +3674,19 @@
  JSR GINF
  LDA FRIN,X
  JSR ANGRY
- LDY #&85
+ LDY #$85
  JSR ABORT
  DEC NOMSL
  LDA DLY
  BEQ C9235
- LDA #&93
- LDY #&0A
+ LDA #$93
+ LDY #$0A
  JSR subm_B77A
- LDA #&19
+ LDA #$19
  STA nmiTimer
  LDA nmiTimerLo
  CLC
- ADC #&3C
+ ADC #$3C
  STA nmiTimerLo
  BCC C9235
  INC nmiTimerHi
@@ -3696,42 +3696,42 @@
  LDY #9
  JMP NOISE
 
-\ ******************************************************************************
-\
-\       Name: ANGRY
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: ANGRY
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .ANGRY
 
  CMP #2
  BEQ C926D
- LDY #&24
+ LDY #$24
  LDA (XX19),Y
- AND #&20
+ AND #$20
  BEQ C9249
  JSR C926D
 
 .C9249
 
- LDY #&20
+ LDY #$20
  LDA (XX19),Y
  BEQ C91D5
- ORA #&80
+ ORA #$80
  STA (XX19),Y
- LDY #&1C
+ LDY #$1C
  LDA #2
  STA (XX19),Y
  ASL A
- LDY #&1E
+ LDY #$1E
  STA (XX19),Y
  LDA TYPE
- CMP #&0B
+ CMP #$0B
  BCC C926C
- LDY #&24
+ LDY #$24
  LDA (XX19),Y
  ORA #4
  STA (XX19),Y
@@ -3747,50 +3747,50 @@
  STA K%+78
  RTS
 
-\ ******************************************************************************
-\
-\       Name: FR1
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: FR1
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .FR1
 
- LDA #&C9
+ LDA #$C9
  JMP MESS
 
-\ ******************************************************************************
-\
-\       Name: SESCP
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: SESCP
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .SESCP
 
  LDX #3
 
-\ ******************************************************************************
-\
-\       Name: SFS1
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: SFS1
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
- LDA #&FE
+ LDA #$FE
 
 .SFS1
 
  STA T1
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  TXA
  PHA
@@ -3802,7 +3802,7 @@
  PHA
  LDA INF+1
  PHA
- LDY #&25
+ LDY #$25
 
 .loop_C929E
 
@@ -3817,7 +3817,7 @@
  BNE C92CF
  TXA
  PHA
- LDA #&20
+ LDA #$20
  STA INWK+27
  LDX #0
  LDA INWK+10
@@ -3847,9 +3847,9 @@
  ASL A
  STA INWK+30
  TXA
- AND #&0F
+ AND #$0F
  STA INWK+27
- LDA #&FF
+ LDA #$FF
  ROR A
  STA INWK+29
  PLA
@@ -3863,11 +3863,11 @@
  STA XX19
  PHP
 
- JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  PLP
- LDX #&25
+ LDX #$25
 
 .loop_C9302
 
@@ -3883,14 +3883,14 @@
  TAX
  RTS
 
-\ ******************************************************************************
-\
-\       Name: SFS2
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: SFS2
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .SFS2
 
@@ -3900,33 +3900,33 @@
  ROR A
  JMP MVT1
 
-\ ******************************************************************************
-\
-\       Name: LAUN
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: LAUN
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .LAUN
 
  LDA #0
  JSR subm_B39D
  JSR subm_EB8F
- LDY #&0C
+ LDY #$0C
  JSR NOISE
- LDA #&80
+ LDA #$80
  STA K+2
  LDA Yx1M2
  STA K+3
- LDA #&50
+ LDA #$50
  STA XP
- LDA #&70
+ LDA #$70
  STA YP
  LDY #4
  JSR DELAY
- LDY #&18
+ LDY #$18
  JSR NOISE
 
 .C9345
@@ -3934,20 +3934,20 @@
  JSR subm_B1D1
  JSR ChangeDrawingPhase
  LDA XP
- AND #&0F
- ORA #&60
+ AND #$0F
+ ORA #$60
  STA STP
- LDA #&80
+ LDA #$80
  STA L03FC
 
 .C9359
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA STP
  SEC
- SBC #&10
+ SBC #$10
  BMI C93AC
  STA STP
  CMP YP
@@ -3957,8 +3957,8 @@
  JSR LL28
  LDA R
  SEC
- SBC #&14
- CMP #&54
+ SBC #$14
+ CMP #$54
  BCS C93AC
  STA K+1
  LSR A
@@ -3967,10 +3967,10 @@
  ASL L03FC
  BCC C93A6
  LDA YP
- CMP #&64
+ CMP #$64
  BCS C93A6
  LDA K+1
- CMP #&48
+ CMP #$48
  BCS C93BC
  LDA STP
  PHA
@@ -3989,12 +3989,12 @@
  DEC YP
  DEC XP
  BNE C9345
- LDY #&17
+ LDY #$17
  JMP NOISE
 
 .C93BC
 
- LDA #&48
+ LDA #$48
  STA K+1
  LDA STP
  PHA
@@ -4007,14 +4007,14 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: LASLI
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: LASLI
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .LASLI
 
@@ -4025,7 +4025,7 @@
  STA LASY
  JSR DORND
  AND #7
- ADC #&7C
+ ADC #$7C
  STA LASX
  LDA GNTMP
  ADC #6
@@ -4033,11 +4033,11 @@
  JSR DENGY
  LDA QQ11
  BNE C93CC
- LDA #&20
- LDY #&E0
+ LDA #$20
+ LDY #$E0
  JSR las
- LDA #&30
- LDY #&D0
+ LDA #$30
+ LDY #$D0
 
 .las
 
@@ -4058,33 +4058,33 @@
  STA Y2
  JMP LOIN
 
-\ ******************************************************************************
-\
-\       Name: BRIEF2
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: BRIEF2
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .BRIEF2
 
  LDA TP
  ORA #4
  STA TP
- LDA #&0B
+ LDA #$0B
  JSR DETOK_b2
  JSR subm_8926
  JMP BAY
 
-\ ******************************************************************************
-\
-\       Name: BRP
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: BRP
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .BRP
 
@@ -4095,32 +4095,32 @@
 
  JMP BAY
 
-\ ******************************************************************************
-\
-\       Name: BRIEF3
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: BRIEF3
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .BRIEF3
 
  LDA TP
- AND #&F0
- ORA #&0A
+ AND #$F0
+ ORA #$0A
  STA TP
- LDA #&DE
+ LDA #$DE
  BNE BRP
 
-\ ******************************************************************************
-\
-\       Name: DEBRIEF2
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: DEBRIEF2
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .DEBRIEF2
 
@@ -4130,65 +4130,65 @@
  LDA #2
  STA ENGY
  INC TALLY+1
- LDA #&DF
+ LDA #$DF
  BNE BRP
 
-\ ******************************************************************************
-\
-\       Name: DEBRIEF
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: DEBRIEF
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .DEBRIEF
 
  LSR TP
  ASL TP
- LDX #&50
- LDY #&C3
+ LDX #$50
+ LDY #$C3
  JSR MCASH
- LDA #&0F
+ LDA #$0F
  BNE BRP
 
-\ ******************************************************************************
-\
-\       Name: TBRIEF
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TBRIEF
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TBRIEF
 
  JSR ClearTiles_b3
- LDA #&95
+ LDA #$95
  JSR TT66
  LDA TP
- ORA #&10
+ ORA #$10
  STA TP
- LDA #&C7
+ LDA #$C7
  JSR DETOK_b2
  JSR subm_8926
  JSR YESNO
  CMP #1
  BNE C943C
- LDY #&C3
- LDX #&50
+ LDY #$C3
+ LDX #$50
  JSR LCASH
  INC TRIBBLE
  JMP BAY
 
-\ ******************************************************************************
-\
-\       Name: BRIEF
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: BRIEF
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .BRIEF
 
@@ -4197,7 +4197,7 @@
  ROL TP
  JSR BRIS
  JSR ZINF_0
- LDA #&1F
+ LDA #$1F
  STA TYPE
  JSR NWSHP
  JSR CBAF3_b1
@@ -4205,17 +4205,17 @@
  STA XC
  LDA #1
  STA INWK+7
- LDA #&50
+ LDA #$50
  STA INWK+6
  JSR subm_EB8C
- LDA #&92
+ LDA #$92
  JSR subm_B39D
- LDA #&40
+ LDA #$40
  STA MCNT
 
 .loop_C94CD
 
- LDX #&7F
+ LDX #$7F
  STX INWK+29
  STX INWK+30
  JSR subm_D96F
@@ -4232,9 +4232,9 @@
  BEQ C94FD
  LDX INWK+3
  INX
- CPX #&64
+ CPX #$64
  BCC C94F0
- LDX #&64
+ LDX #$64
 
 .C94F0
 
@@ -4247,36 +4247,36 @@
 .C94FD
 
  INC INWK+7
- LDA #&93
+ LDA #$93
  JSR TT66
- LDA #&0A
+ LDA #$0A
  JMP BRP
 
-\ ******************************************************************************
-\
-\       Name: BRIS
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: BRIS
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .BRIS
 
- LDA #&D8
+ LDA #$D8
  JSR DETOK_b2
  JSR subm_F2BD
- LDY #&64
+ LDY #$64
  JMP DELAY
 
-\ ******************************************************************************
-\
-\       Name: ping
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: ping
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .ping
 
@@ -4290,14 +4290,14 @@
  BPL loop_C9518
  RTS
 
-\ ******************************************************************************
-\
-\       Name: DemoShips
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: DemoShips
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .DemoShips
 
@@ -4307,13 +4307,13 @@
  STA QQ14
  STA CASH
  STA CASH+1
- LDA #&FF
+ LDA #$FF
  STA ECM
  LDA #1
  STA ENGY
- LDA #&8F
+ LDA #$8F
  STA LASER
- LDA #&FF
+ LDA #$FF
  STA DLY
  JSR SOLAR
  LDA #0
@@ -4331,13 +4331,13 @@
  JSR subm_95FC
  LDA #6
  STA INWK+30
- LDA #&18
+ LDA #$18
  STA INWK+29
- LDA #&12
+ LDA #$12
  JSR NWSHP
- LDA #&0A
+ LDA #$0A
  JSR subm_95E4
- LDA #&92
+ LDA #$92
  STA K%+114
  LDA #1
  STA K%+112
@@ -4345,9 +4345,9 @@
  LDA #6
  STA INWK+30
  ASL INWK+2
- LDA #&C0
+ LDA #$C0
  STA INWK+29
- LDA #&13
+ LDA #$13
  JSR NWSHP
  LDA #6
  JSR subm_95E4
@@ -4357,17 +4357,17 @@
  ASL INWK+2
  LDA #0
  STA XX1
- LDA #&46
+ LDA #$46
  STA INWK+6
- LDA #&11
+ LDA #$11
  JSR NWSHP
  LDA #5
  JSR subm_95E4
- LDA #&C0
+ LDA #$C0
  STA K%+198
- LDA #&0B
+ LDA #$0B
  JSR subm_95E4
- LDA #&32
+ LDA #$32
  STA nmiTimer
  LDA #0
  STA nmiTimerLo
@@ -4377,18 +4377,18 @@
  JSR CAC5C_b3
  LDA L0306
  STA L0305
- LDA #&10
+ LDA #$10
  STA DELTA
  JMP MLOOP
 
-\ ******************************************************************************
-\
-\       Name: subm_95E4
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_95E4
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_95E4
 
@@ -4405,44 +4405,44 @@
  BNE loop_C95E7
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_95FC
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_95FC
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_95FC
 
  JSR ZINF_0
- LDA #&60
+ LDA #$60
  STA INWK+14
- ORA #&80
+ ORA #$80
  STA INWK+22
- LDA #&FE
+ LDA #$FE
  STA INWK+32
- LDA #&20
+ LDA #$20
  STA INWK+27
- LDA #&80
+ LDA #$80
  STA INWK+2
- LDA #&28
+ LDA #$28
  STA XX1
- LDA #&28
+ LDA #$28
  STA INWK+3
- LDA #&3C
+ LDA #$3C
  STA INWK+6
  RTS
 
-\ ******************************************************************************
-\
-\       Name: tnpr1
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tnpr1
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tnpr1
 
@@ -4452,7 +4452,7 @@
 .tnpr
 
  PHA
- LDX #&0C
+ LDX #$0C
  CPX QQ29
  BCC C963B
 
@@ -4470,18 +4470,18 @@
 
  LDY QQ29
  ADC QQ20,Y
- CMP #&C9
+ CMP #$C9
  PLA
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_9645
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_9645
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_9645
 
@@ -4490,14 +4490,14 @@
  STA YC
  RTS
 
-\ ******************************************************************************
-\
-\       Name: TT20
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT20
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT20
 
@@ -4507,14 +4507,14 @@
 
  JSR TT54
 
-\ ******************************************************************************
-\
-\       Name: TT54
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT54
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT54
 
@@ -4542,14 +4542,14 @@
  STA QQ15+5
  RTS
 
-\ ******************************************************************************
-\
-\       Name: TT146
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT146
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT146
 
@@ -4564,105 +4564,105 @@
 
 .C968C
 
- LDA #&BF
+ LDA #$BF
  JSR TT68
  LDX QQ8
  LDY QQ8+1
  SEC
  JSR pr5
- LDA #&C3
+ LDA #$C3
 
-\ ******************************************************************************
-\
-\       Name: TT60
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT60
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT60
 
  JSR TT27_b2
 
-\ ******************************************************************************
-\
-\       Name: TTX69
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TTX69
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TTX69
 
  INC YC
 
-\ ******************************************************************************
-\
-\       Name: TT69
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT69
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT69
 
- LDA #&80
+ LDA #$80
  STA QQ17
 
-\ ******************************************************************************
-\
-\       Name: TT67
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT67
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT67
 
- LDA #&0C
+ LDA #$0C
  JMP TT27_b2
 
-\ ******************************************************************************
-\
-\       Name: TT70
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT70
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT70
 
- LDA #&AD
+ LDA #$AD
  JSR TT27_b2
  JMP TT72
 
-\ ******************************************************************************
-\
-\       Name: spc
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: spc
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .spc
 
  JSR TT27_b2
  JMP TT162
 
-\ ******************************************************************************
-\
-\       Name: subm_96B9
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_96B9
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_96B9
 
@@ -4671,83 +4671,83 @@
  PLA
  JMP TT27_b2
 
-\ ******************************************************************************
-\
-\       Name: L96C1
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: L96C1
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .L96C1
 
  EQUB 9, 9, 7, 9                              ; 96C1: 09 09 07... ...
 
-\ ******************************************************************************
-\
-\       Name: subm_96C5
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_96C5
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_96C5
 
  JSR TT27_b2
  LDA #3
  STA L0037
- LDA #&3A
+ LDA #$3A
  JSR TT27_b2
  LDA #1
  STA L0037
  RTS
 
-\ ******************************************************************************
-\
-\       Name: L96D6
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: L96D6
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .L96D6
 
  EQUS "RADIUS"                                ; 96D6: 52 41 44... RAD
 
-\ ******************************************************************************
-\
-\       Name: TT25
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT25
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT25
 
- LDA #&96
+ LDA #$96
  JSR subm_9645
  JSR TT111
  LDX language
  LDA L96C1,X
  STA XC
- LDA #&A3
+ LDA #$A3
  JSR NLIN3
  JSR TTX69
  JSR TT146
  LDA L04A9
  AND #6
  BEQ C9706
- LDA #&C2
+ LDA #$C2
  JSR subm_96C5
  JMP C970E
 
 .C9706
 
- LDA #&C2
+ LDA #$C2
  JSR TT68
  JSR TT162
 
@@ -4766,17 +4766,17 @@
 
 .C9721
 
- ADC #&AA
+ ADC #$AA
  JSR TT27_b2
 
-\ ******************************************************************************
-\
-\       Name: TT72
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT72
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT72
 
@@ -4784,18 +4784,18 @@
  LSR A
  LSR A
  CLC
- ADC #&A8
+ ADC #$A8
  JSR TT60
  LDA L04A9
  AND #4
  BEQ C9740
- LDA #&A2
+ LDA #$A2
  JSR subm_96C5
  JMP C9748
 
 .C9740
 
- LDA #&A2
+ LDA #$A2
  JSR TT68
  JSR TT162
 
@@ -4803,16 +4803,16 @@
 
  LDA QQ4
  CLC
- ADC #&B1
+ ADC #$B1
  JSR TT60
- LDA #&C4
+ LDA #$C4
  JSR TT68
  LDX QQ5
  INX
  CLC
  JSR pr2
  JSR TTX69
- LDA #&C1
+ LDA #$C1
  JSR TT68
  LDX QQ7
  LDY QQ7+1
@@ -4822,11 +4822,11 @@
  JSR TT162
  LDA #0
  STA QQ17
- LDA #&4D
+ LDA #$4D
  JSR DASC_b2
- LDA #&43
+ LDA #$43
  JSR TT27_b2
- LDA #&52
+ LDA #$52
  JSR TT60
  LDY #0
 
@@ -4841,28 +4841,28 @@
  JSR TT68
  LDA QQ15+5
  LDX QQ15+3
- AND #&0F
+ AND #$0F
  CLC
- ADC #&0B
+ ADC #$0B
  TAY
  LDA #5
  JSR TT11
  JSR TT162
- LDA #&6B
+ LDA #$6B
  JSR DASC_b2
- LDA #&6D
+ LDA #$6D
  JSR DASC_b2
  JSR TTX69
  LDA L04A9
  AND #5
  BEQ C97C9
- LDA #&C0
+ LDA #$C0
  JSR subm_96C5
  JMP C97CE
 
 .C97C9
 
- LDA #&C0
+ LDA #$C0
  JSR TT68
 
 .C97CE
@@ -4875,19 +4875,19 @@
  CLC
  LDA #1
  JSR pr2+2
- LDA #&C6
+ LDA #$C6
  JSR TT60
  LDA L04A9
  AND #2
  BNE C97EC
- LDA #&28
+ LDA #$28
  JSR TT27_b2
 
 .C97EC
 
  LDA QQ15+4
  BMI C9826
- LDA #&BC
+ LDA #$BC
  JSR TT27_b2
  JMP C9861
 
@@ -4898,7 +4898,7 @@
  CLC
  ADC QQ19
  AND #7
- ADC #&F2
+ ADC #$F2
  JSR TT27_b2
  LDA QQ15+5
  LSR A
@@ -4908,7 +4908,7 @@
  LSR A
  CMP #6
  BCS C9817
- ADC #&E6
+ ADC #$E6
  JSR subm_96B9
 
 .C9817
@@ -4916,7 +4916,7 @@
  LDA QQ19
  CMP #6
  BCS C9861
- ADC #&EC
+ ADC #$EC
  JSR subm_96B9
  JMP C9861
 
@@ -4937,7 +4937,7 @@
  LSR A
  CMP #6
  BCS C9846
- ADC #&E6
+ ADC #$E6
  JSR spc
 
 .C9846
@@ -4945,7 +4945,7 @@
  LDA QQ19
  CMP #6
  BCS C9852
- ADC #&EC
+ ADC #$EC
  JSR spc
 
 .C9852
@@ -4955,7 +4955,7 @@
  CLC
  ADC QQ19
  AND #7
- ADC #&F2
+ ADC #$F2
  JSR TT27_b2
 
 .C9861
@@ -4963,7 +4963,7 @@
  LDA L04A9
  AND #2
  BNE C986D
- LDA #&29
+ LDA #$29
  JSR TT27_b2
 
 .C986D
@@ -4971,7 +4971,7 @@
  JSR TTX69
  JSR PDESC_b2
  JSR subm_EB8C
- LDA #&16
+ LDA #$16
  STA XC
  LDA #8
  STA YC
@@ -4984,27 +4984,27 @@
  JSR CB219_b3
  JMP subm_8926
 
-\ ******************************************************************************
-\
-\       Name: TT22
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT22
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT22
 
- LDA #&8D
+ LDA #$8D
  JSR TT66
- LDA #&4D
+ LDA #$4D
  JSR subm_AE32
  LDA #7
  STA XC
  JSR TT81
- LDA #&C7
+ LDA #$C7
  JSR NLIN3
- LDA #&98
+ LDA #$98
  JSR subm_F47D
  JSR subm_EB8C
  JSR TT14
@@ -5021,11 +5021,11 @@
  SEC
  SBC T1
  CLC
- ADC #&1F
+ ADC #$1F
  TAX
  LDY QQ15+4
  TYA
- ORA #&50
+ ORA #$50
  STA ZZ
  LDA QQ15+1
  LSR A
@@ -5036,7 +5036,7 @@
  SBC T1
  LSR A
  CLC
- ADC #&20
+ ADC #$20
  STA Y1
  JSR DrawDash
  JSR TT20
@@ -5047,9 +5047,9 @@
  STA K+2
  LDA #4
  STA K+3
- LDA #&19
+ LDA #$19
  STA K
- LDA #&0E
+ LDA #$0E
  STA K+1
  JSR CB2BC_b3
  LDA QQ9
@@ -5060,26 +5060,26 @@
  LDA #4
  STA QQ19+2
  JSR subm_9B51
- LDA #&9D
+ LDA #$9D
  STA QQ11
- LDA #&8F
+ LDA #$8F
  STA Yx2M1
  JMP subm_8926
 
-\ ******************************************************************************
-\
-\       Name: TT15
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT15
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT15
 
- LDA #&18
+ LDA #$18
  LDX QQ11
- CPX #&9C
+ CPX #$9C
  BNE C9924
  LDA #0
 
@@ -5099,7 +5099,7 @@
  CLC
  ADC QQ19+2
  BCC C993F
- LDA #&FF
+ LDA #$FF
 
 .C993F
 
@@ -5125,12 +5125,12 @@
  CLC
  ADC QQ19+2
  ADC QQ19+5
- CMP #&98
+ CMP #$98
  BCC C9976
  LDX QQ11
- CPX #&9C
+ CPX #$9C
  BEQ C9976
- LDA #&97
+ LDA #$97
 
 .C9976
 
@@ -5140,22 +5140,22 @@
  STA X2
  JMP LOIN
 
-\ ******************************************************************************
-\
-\       Name: TT126
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT126
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT126
 
- LDA #&68
+ LDA #$68
  STA QQ19
- LDA #&5A
+ LDA #$5A
  STA QQ19+1
- LDA #&10
+ LDA #$10
  STA QQ19+2
  JSR TT15
  LDA QQ14
@@ -5171,7 +5171,7 @@
 .TT14
 
  LDA QQ11
- CMP #&9C
+ CMP #$9C
  BEQ TT126
  LDA QQ14
  LSR A
@@ -5192,7 +5192,7 @@
  SEC
  SBC T1
  CLC
- ADC #&1F
+ ADC #$1F
  STA QQ19
  LDA QQ1
  LSR A
@@ -5210,17 +5210,17 @@
  JSR TT15
  LDA QQ19+1
  CLC
- ADC #&18
+ ADC #$18
  STA QQ19+1
 
-\ ******************************************************************************
-\
-\       Name: TT128
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT128
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT128
 
@@ -5237,14 +5237,14 @@
  JSR subm_D8FD
  JMP CIRCLE2_b1
 
-\ ******************************************************************************
-\
-\       Name: TT210
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT210
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT210
 
@@ -5252,8 +5252,8 @@
 
 .C9A12
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  STY QQ29
  LDX QQ20,Y
@@ -5269,9 +5269,9 @@
  JSR TT69
  CLC
  LDA QQ29
- ADC #&D0
+ ADC #$D0
  JSR TT27_b2
- LDA #&0E
+ LDA #$0E
  STA XC
  PLA
  TAX
@@ -5284,7 +5284,7 @@
 
  LDY QQ29
  INY
- CPY #&11
+ CPY #$11
  BCC C9A12
  JSR TT69
  LDA TRIBBLE
@@ -5308,21 +5308,21 @@
  JSR DORND
  AND #3
  CLC
- ADC #&6F
+ ADC #$6F
  JSR DETOK_b2
  LDA L04A9
  AND #2
  BEQ C9A99
  LDA TRIBBLE
- AND #&FE
+ AND #$FE
  ORA TRIBBLE+1
  BEQ C9A99
- LDA #&65
+ LDA #$65
  JSR DASC_b2
 
 .C9A99
 
- LDA #&C6
+ LDA #$C6
  JSR DETOK_b2
  LDA TRIBBLE+1
  BNE C9AA9
@@ -5332,35 +5332,35 @@
 
 .C9AA9
 
- LDA #&73
+ LDA #$73
  JSR DASC_b2
  JMP C9A62
 
-\ ******************************************************************************
-\
-\       Name: TT213
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT213
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT213
 
- LDA #&97
+ LDA #$97
  JSR subm_9645
- LDA #&0B
+ LDA #$0B
  STA XC
- LDA #&A4
+ LDA #$A4
  JSR TT60
  JSR NLIN4
  JSR fwl
  LDA CRGO
- CMP #&1A
+ CMP #$1A
  BCC C9AD9
- LDA #&0C
+ LDA #$0C
  JSR TT27_b2
- LDA #&6B
+ LDA #$6B
  JSR TT27_b2
  JMP TT210
 
@@ -5369,14 +5369,14 @@
  JSR TT67
  JMP TT210
 
-\ ******************************************************************************
-\
-\       Name: subm_9ADF
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_9ADF
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_9ADF
 
@@ -5388,14 +5388,14 @@
 
  JMP subm_9D09
 
-\ ******************************************************************************
-\
-\       Name: subm_9AE7
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_9AE7
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_9AE7
 
@@ -5405,7 +5405,7 @@
  ORA L04BB
  ORA controller1Up
  ORA controller1Down
- AND #&F0
+ AND #$F0
  BEQ C9AE4
  TXA
  PHA
@@ -5430,10 +5430,10 @@
 
  DEY
  TYA
- EOR #&FF
+ EOR #$FF
  PHA
  LDA QQ11
- CMP #&9C
+ CMP #$9C
  BEQ C9B28
  PLA
  TAX
@@ -5462,19 +5462,19 @@
  STA QQ9
  STA QQ19
 
-\ ******************************************************************************
-\
-\       Name: subm_9B51
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_9B51
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_9B51
 
  LDA QQ11
- CMP #&9C
+ CMP #$9C
  BEQ subm_9B9D
  LDA QQ9
  LSR A
@@ -5484,7 +5484,7 @@
  SEC
  SBC T1
  CLC
- ADC #&1F
+ ADC #$1F
  STA QQ19
  LDA QQ10
  LSR A
@@ -5495,20 +5495,20 @@
  SBC T1
  LSR A
  CLC
- ADC #&20
+ ADC #$20
  STA QQ19+1
  LDA #4
  STA QQ19+2
  JMP C9BCF
 
-\ ******************************************************************************
-\
-\       Name: subm_9B86
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_9B86
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_9B86
 
@@ -5517,7 +5517,7 @@
  LDX QQ19+3
  BMI C9B95
  BCC C9B99
- LDA #&FF
+ LDA #$FF
  BNE C9B99
 
 .C9B95
@@ -5530,23 +5530,23 @@
  STA QQ19+4
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_9B9D
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_9B9D
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_9B9D
 
  LDA QQ9
  SEC
  SBC QQ0
- CMP #&24
+ CMP #$24
  BCC C9BAC
- CMP #&E9
+ CMP #$E9
  BCC C9BF6
 
 .C9BAC
@@ -5554,35 +5554,35 @@
  ASL A
  ASL A
  CLC
- ADC #&68
+ ADC #$68
  STA QQ19
  LDA QQ10
  SEC
  SBC QQ1
- CMP #&26
+ CMP #$26
  BCC C9BC3
- CMP #&DC
+ CMP #$DC
  BCC C9BF6
 
 .C9BC3
 
  ASL A
  CLC
- ADC #&5A
+ ADC #$5A
  STA QQ19+1
  LDA #8
  STA QQ19+2
 
 .C9BCF
 
- LDA #&F8
+ LDA #$F8
  STA tileSprite15
  LDA #1
  STA attrSprite15
  LDA QQ19
  STA SC2
  LDY QQ19+1
- LDA #&0F
+ LDA #$0F
  ASL A
  ASL A
  TAX
@@ -5592,50 +5592,50 @@
  STA xSprite0,X
  TYA
  CLC
- ADC #&0A
+ ADC #$0A
  STA ySprite0,X
  RTS
 
 .C9BF6
 
- LDA #&F0
+ LDA #$F0
  STA ySprite15
  RTS
 
-\ ******************************************************************************
-\
-\       Name: L9BFC
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: L9BFC
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .L9BFC
 
- EQUB   7,   8, &0A,   8                      ; 9BFC: 07 08 0A... ...
+ EQUB   7,   8, $0A,   8                      ; 9BFC: 07 08 0A... ...
 
-\ ******************************************************************************
-\
-\       Name: TT23
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT23
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT23
 
  LDA #0
  STA L04A1
- LDA #&C7
+ LDA #$C7
  STA Yx2M1
- LDA #&9C
+ LDA #$9C
  JSR TT66
  LDX language
  LDA L9BFC,X
  STA XC
- LDA #&BE
+ LDA #$BE
  JSR NLIN3
  JSR subm_EB86
  JSR TT14
@@ -5643,7 +5643,7 @@
  JSR TT81
  LDA #0
  STA XX20
- LDX #&18
+ LDX #$18
 
 .loop_C9C2D
 
@@ -5653,37 +5653,37 @@
 
 .C9C32
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA QQ15+3
  SEC
  SBC QQ0
  BCS C9C4B
- EOR #&FF
+ EOR #$FF
  ADC #1
 
 .C9C4B
 
- CMP #&14
+ CMP #$14
  BCS C9CBB
  LDA QQ15+1
  SEC
  SBC QQ1
  BCS C9C5B
- EOR #&FF
+ EOR #$FF
  ADC #1
 
 .C9C5B
 
- CMP #&26
+ CMP #$26
  BCS C9CBB
  LDA QQ15+3
  SEC
  SBC QQ0
  ASL A
  ASL A
- ADC #&68
+ ADC #$68
  STA XX12
  LSR A
  LSR A
@@ -5695,7 +5695,7 @@
  SEC
  SBC QQ1
  ASL A
- ADC #&5A
+ ADC #$5A
  STA K4
  LSR A
  LSR A
@@ -5717,9 +5717,9 @@
  STA YC
  CPY #3
  BCC C9CBB
- LDA #&FF
+ LDA #$FF
  STA XX1,Y
- LDA #&80
+ LDA #$80
  STA QQ17
  JSR cpl
 
@@ -5746,29 +5746,29 @@
 
 .C9CC5
 
- LDA #&8F
+ LDA #$8F
  STA Yx2M1
  JMP subm_8926
 
-\ ******************************************************************************
-\
-\       Name: DrawChartSystems
-\       Type: Subroutine
-\   Category: ???
-\    Summary: Draw system blobs on short-range chart
-\
-\ ------------------------------------------------------------------------------
-\
-\ Increments L04A1
-\ Sets sprite L04A1 to tile 213+K at (K3-4, K4+10)
-\ K = 2 or 3 or 4 -> 215-217
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: DrawChartSystems
+;       Type: Subroutine
+;   Category: ???
+;    Summary: Draw system blobs on short-range chart
+;
+; ------------------------------------------------------------------------------
+;
+; Increments L04A1
+; Sets sprite L04A1 to tile 213+K at (K3-4, K4+10)
+; K = 2 or 3 or 4 -> 215-217
+;
+; ******************************************************************************
 
 .DrawChartSystems
 
  LDY L04A1
- CPY #&18
+ CPY #$18
  BCS C9CF7
  INY
  STY L04A1
@@ -5781,9 +5781,9 @@
  STA xSprite38,Y
  LDA K4
  CLC
- ADC #&0A
+ ADC #$0A
  STA ySprite38,Y
- LDA #&D5
+ LDA #$D5
  CLC
  ADC K
  STA tileSprite38,Y
@@ -5794,14 +5794,14 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: TT81
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT81
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT81
 
@@ -5815,28 +5815,28 @@
  BPL loop_C9CFA
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_9D03
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_9D03
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_9D03
 
  JSR TT111
  JMP C9D35
 
-\ ******************************************************************************
-\
-\       Name: subm_9D09
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_9D09
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_9D09
 
@@ -5844,17 +5844,17 @@
  BMI C9D60
  JSR TT111
  LDA QQ11
- AND #&0E
- CMP #&0C
+ AND #$0E
+ CMP #$0C
  BNE C9D35
  JSR subm_9B51
  LDA #0
  STA QQ17
  JSR CLYNS
  JSR cpl
- LDA #&80
+ LDA #$80
  STA QQ17
- LDA #&0C
+ LDA #$0C
  JSR DASC_b2
  JSR TT146
  JSR subm_D951
@@ -5877,12 +5877,12 @@
 
 .C9D4D
 
- LDA #&C0
+ LDA #$C0
  BNE C9D53
 
 .C9D51
 
- LDA #&80
+ LDA #$80
 
 .C9D53
 
@@ -5908,33 +5908,33 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: TT111
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT111
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT111
 
  JSR TT81
- LDY #&7F
+ LDY #$7F
  STY T
  LDA #0
  STA U
 
 .C9D76
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA QQ15+3
  SEC
  SBC QQ9
  BCS C9D8F
- EOR #&FF
+ EOR #$FF
  ADC #1
 
 .C9D8F
@@ -5945,7 +5945,7 @@
  SEC
  SBC QQ10
  BCS C9D9E
- EOR #&FF
+ EOR #$FF
  ADC #1
 
 .C9D9E
@@ -5969,8 +5969,8 @@
 
 .C9DB7
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  JSR TT20
  INC U
@@ -5991,7 +5991,7 @@
  SEC
  SBC QQ0
  BCS C9DEC
- EOR #&FF
+ EOR #$FF
  ADC #1
 
 .C9DEC
@@ -6004,7 +6004,7 @@
  SEC
  SBC QQ1
  BCS C9E02
- EOR #&FF
+ EOR #$FF
  ADC #1
 
 .C9E02
@@ -6013,8 +6013,8 @@
  JSR SQUA2
  PHA
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA P
  CLC
@@ -6023,7 +6023,7 @@
  PLA
  ADC K+1
  BCC C9E22
- LDA #&FF
+ LDA #$FF
 
 .C9E22
 
@@ -6039,21 +6039,21 @@
  STA QQ8
  JMP CBE52_b6
 
-\ ******************************************************************************
-\
-\       Name: subm_9E3C
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_9E3C
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_9E3C
 
  JSR CLYNS
- LDA #&0F
+ LDA #$0F
  STA XC
- LDA #&CD
+ LDA #$CD
  JMP DETOK_b2
 
 .C9E48
@@ -6090,18 +6090,18 @@
  DEX
  BPL loop_C9E63
 
-\ ******************************************************************************
-\
-\       Name: wW
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: wW
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .wW
 
- LDA #&10
+ LDA #$10
 
 .wW2
 
@@ -6110,14 +6110,14 @@
  STA QQ22
  JMP CAC5C_b3
 
-\ ******************************************************************************
-\
-\       Name: Ghy
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: Ghy
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .Ghy
 
@@ -6132,7 +6132,7 @@
  LDX #5
  INC GCNT
  LDA GCNT
- AND #&F7
+ AND #$F7
  STA GCNT
 
 .loop_C9E97
@@ -6145,7 +6145,7 @@
 
 .zZ
 
- LDA #&60
+ LDA #$60
  STA QQ9
  STA QQ10
  JSR TT110
@@ -6161,17 +6161,17 @@
  LDX #0
  STX QQ8
  STX QQ8+1
- LDY #&16
+ LDY #$16
  JSR NOISE
 
-\ ******************************************************************************
-\
-\       Name: jmp
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: jmp
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .jmp
 
@@ -6184,65 +6184,65 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: pr6
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: pr6
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .pr6
 
  CLC
 
-\ ******************************************************************************
-\
-\       Name: pr5
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: pr5
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .pr5
 
  LDA #5
  JMP TT11
 
-\ ******************************************************************************
-\
-\       Name: TT147
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT147
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT147
 
  JSR CLYNS
- LDA #&BD
+ LDA #$BD
  JSR TT27_b2
  JSR TT162
- LDA #&CA
+ LDA #$CA
  JSR prq
  JMP subm_8980
 
-\ ******************************************************************************
-\
-\       Name: prq
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: prq
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .prq
 
  JSR TT27_b2
- LDA #&3F
+ LDA #$3F
  JMP TT27_b2
 
 .loop_C9EF4
@@ -6250,14 +6250,14 @@
  PLA
  RTS
 
-\ ******************************************************************************
-\
-\       Name: TT151
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT151
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT151
 
@@ -6267,26 +6267,26 @@
  ASL A
  STA QQ19
 
- JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA MJ
  BNE loop_C9EF4
  LDA #1
  STA XC
- LDA #&80
+ LDA #$80
  STA QQ17
  PLA
  CLC
- ADC #&D0
+ ADC #$D0
  JSR TT27_b2
 
 .loop_C9F16
 
- LDA #&20
+ LDA #$20
  JSR TT27_b2
  LDA XC
- CMP #&0E
+ CMP #$0E
  BNE loop_C9F16
  LDX QQ19
  LDA QQ23+1,X
@@ -6337,107 +6337,107 @@
 
  JSR TT162
  JSR TT162
- LDA #&2D
+ LDA #$2D
  JSR TT27_b2
  JSR TT162
  JMP TT162
 
-\ ******************************************************************************
-\
-\       Name: TT152
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT152
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT152
 
  LDA QQ19+1
- AND #&60
+ AND #$60
  BEQ TT160
- CMP #&20
+ CMP #$20
  BEQ TT161
  JSR TT16a
 
-\ ******************************************************************************
-\
-\       Name: TT162
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT162
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT162
 
- LDA #&20
+ LDA #$20
 
  JMP TT27_b2
 
-\ ******************************************************************************
-\
-\       Name: TT160
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT160
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT160
 
- LDA #&74
+ LDA #$74
  JSR DASC_b2
  JMP TT162
 
-\ ******************************************************************************
-\
-\       Name: TT161
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT161
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT161
 
- LDA #&6B
+ LDA #$6B
  JSR DASC_b2
 
-\ ******************************************************************************
-\
-\       Name: TT16a
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT16a
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT16a
 
- LDA #&67
+ LDA #$67
  JMP DASC_b2
 
-\ ******************************************************************************
-\
-\       Name: TT163
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT163
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT163
 
  LDA #1
  STA XC
- LDA #&FF
+ LDA #$FF
  BNE TT162+2
 
 .C9FBB
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDY QQ29
  LDA #3
@@ -6447,27 +6447,27 @@
  JSR pr2+2
  JMP TT152
 
-\ ******************************************************************************
-\
-\       Name: L9FD9
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: L9FD9
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .L9FD9
 
  EQUB 4, 5, 4, 4                              ; 9FD9: 04 05 04... ...
 
-\ ******************************************************************************
-\
-\       Name: subm_9FE0
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_9FE0
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .loop_C9FDD
 
@@ -6475,13 +6475,13 @@
 
 .subm_9FE0
 
- LDA #&BA
+ LDA #$BA
  CMP QQ11
  BEQ loop_C9FDD
  JSR subm_9645
  LDA #5
  STA XC
- LDA #&A7
+ LDA #$A7
  JSR NLIN3
  LDA #2
  STA YC
@@ -6494,14 +6494,14 @@
 
 .loop_CA006
 
- JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  JSR TT151
  INC YC
  INC QQ29
  LDA QQ29
- CMP #&11
+ CMP #$11
  BCC loop_CA006
  LDA QQ12
  BNE CA028
@@ -6526,8 +6526,8 @@
 
 .CA036
 
- JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA controller1B
  BMI CA06E
@@ -6541,18 +6541,18 @@
 .CA04E
 
  LDA controller1Up
- AND #&F0
- CMP #&F0
+ AND #$F0
+ CMP #$F0
  BEQ CA079
  LDA controller1Down
- AND #&F0
- CMP #&F0
+ AND #$F0
+ CMP #$F0
  BEQ CA09B
  LDA L04BA
- CMP #&F0
+ CMP #$F0
  BEQ CA025
  LDA L04BB
- CMP #&F0
+ CMP #$F0
  BEQ CA0B3
 
 .CA06E
@@ -6592,9 +6592,9 @@
  LDA QQ29
  CLC
  ADC #1
- CMP #&11
+ CMP #$11
  BNE CA0AD
- LDA #&10
+ LDA #$10
 
 .CA0AD
 
@@ -6616,7 +6616,7 @@
  JSR LCASH
  BCC CA12D
  JSR subm_F454
- LDY #&1C
+ LDY #$1C
  JSR NOISE
  LDY QQ29
  LDA AVL,Y
@@ -6634,7 +6634,7 @@
 
  LDY QQ29
  LDA AVL,Y
- CMP #&63
+ CMP #$63
  BCS CA12D
  LDA QQ20,Y
  BEQ CA12D
@@ -6660,14 +6660,14 @@
 
  JMP CA036
 
-\ ******************************************************************************
-\
-\       Name: subm_A130
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_A130
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_A130
 
@@ -6684,14 +6684,14 @@
  STX L0037
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_A147
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_A147
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_A147
 
@@ -6703,18 +6703,18 @@
  TYA
  JMP TT151
 
-\ ******************************************************************************
-\
-\       Name: subm_A155
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_A155
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_A155
 
- LDA #&80
+ LDA #$80
  STA QQ17
  LDX language
  LDA LA16D,X
@@ -6723,45 +6723,45 @@
  STA XC
  JMP CA89A
 
-\ ******************************************************************************
-\
-\       Name: LA169
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: LA169
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .LA169
 
  EQUB 5, 5, 3, 5                              ; A169: 05 05 03... ...
 
-\ ******************************************************************************
-\
-\       Name: LA16D
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: LA16D
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .LA16D
 
- EQUB &16, &17, &16, &16                      ; A16D: 16 17 16... ...
+ EQUB $16, $17, $16, $16                      ; A16D: 16 17 16... ...
 
-\ ******************************************************************************
-\
-\       Name: var
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: var
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .var
 
  LDA QQ19+1
- AND #&1F
+ AND #$1F
  LDY QQ28
  STA QQ19+2
  CLC
@@ -6780,14 +6780,14 @@
  STA QQ19+3
  RTS
 
-\ ******************************************************************************
-\
-\       Name: hyp1
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: hyp1
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .hyp1
 
@@ -6803,7 +6803,7 @@
  BPL loop_CA194
  INX
  STX EV
- LDA #&80
+ LDA #$80
  STA L0395
  JSR CAC5C_b3
  JSR CBE52_b6
@@ -6814,14 +6814,14 @@
  LDA QQ4
  STA gov
 
-\ ******************************************************************************
-\
-\       Name: GVL
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: GVL
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .GVL
 
@@ -6858,7 +6858,7 @@
 .CA1F1
 
  LDY XX4
- AND #&3F
+ AND #$3F
  STA AVL,Y
  INY
  TYA
@@ -6866,68 +6866,68 @@
  ASL A
  ASL A
  TAX
- CMP #&3F
+ CMP #$3F
  BCC CA1CA
 
 .hyR
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: GTHG
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: GTHG
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .GTHG
 
  JSR Ze
- LDA #&FF
+ LDA #$FF
  STA INWK+32
- LDA #&1E
+ LDA #$1E
  JSR NWSHP
  JMP CA21A
 
-\ ******************************************************************************
-\
-\       Name: SpawnThargoid
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: SpawnThargoid
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .SpawnThargoid
 
  JSR Ze
- LDA #&F9
+ LDA #$F9
  STA INWK+32
 
 .CA21A
 
- LDA #&1D
+ LDA #$1D
  JMP NWSHP
 
-\ ******************************************************************************
-\
-\       Name: MJP
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MJP
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MJP
 
- LDY #&1D
+ LDY #$1D
  JSR NOISE
  JSR RES2
  STY MJ
  LDA QQ1
- EOR #&1F
+ EOR #$1F
  STA QQ1
  JSR GTHG
  JSR GTHG
@@ -6936,18 +6936,18 @@
  STA NOSTM
  JSR subm_9D03
  JSR CAC5C_b3
- LDY #&1E
+ LDY #$1E
  JSR NOISE
  JMP CA28A
 
-\ ******************************************************************************
-\
-\       Name: TT18
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT18
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT18
 
@@ -6977,7 +6977,7 @@
  ORA controller1Down
  BMI MJP
  JSR DORND
- CMP #&FD
+ CMP #$FD
  BCS MJP
  JSR hyp1
  JSR KeepPPUTablesAt0
@@ -6989,11 +6989,11 @@
  LDA QQ11
  BEQ CA2B9
  LDA QQ11
- AND #&0E
- CMP #&0C
+ AND #$0E
+ CMP #$0C
  BNE CA2A2
  LDA QQ11
- CMP #&9C
+ CMP #$9C
  BNE CA29F
  JMP TT23
 
@@ -7004,15 +7004,15 @@
 .CA2A2
 
  LDA QQ11
- CMP #&97
+ CMP #$97
  BNE CA2AB
  JMP TT213
 
 .CA2AB
 
- CMP #&BA
+ CMP #$BA
  BNE CA2B6
- LDA #&97
+ LDA #$97
  STA QQ11
  JMP subm_9FE0
 
@@ -7025,14 +7025,14 @@
  LDX #4
  STX VIEW
 
-\ ******************************************************************************
-\
-\       Name: TT110
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT110
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT110
 
@@ -7042,7 +7042,7 @@
  STA VIEW
  STA QQ12
  LDA L0300
- ORA #&80
+ ORA #$80
  STA L0300
  JSR ResetShipStatus
  JSR NWSTARS
@@ -7052,11 +7052,11 @@
  JSR KeepPPUTablesAt0
  INC INWK+8
  JSR SOS1
- LDA #&80
+ LDA #$80
  STA INWK+8
  INC INWK+7
  JSR NWSPS
- LDA #&0C
+ LDA #$0C
  STA DELTA
  JSR BAD
  ORA FIST
@@ -7072,18 +7072,18 @@
  STX QQ12
  JMP LOOK1
 
-\ ******************************************************************************
-\
-\       Name: TT114
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT114
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT114
 
- CMP #&9C
+ CMP #$9C
  BEQ CA317
  JMP TT22
 
@@ -7091,14 +7091,14 @@
 
  JMP TT23
 
-\ ******************************************************************************
-\
-\       Name: LCASH
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: LCASH
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .LCASH
 
@@ -7119,19 +7119,19 @@
  STA CASH
  BCS TT113
 
-\ ******************************************************************************
-\
-\       Name: MCASH
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MCASH
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MCASH
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  TXA
  CLC
@@ -7152,14 +7152,14 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: GC2
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: GC2
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .GC2
 
@@ -7171,14 +7171,14 @@
  LDX P
  RTS
 
-\ ******************************************************************************
-\
-\       Name: BR1
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: BR1
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .BR1
 
@@ -7203,42 +7203,42 @@
  STA gov
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_EQSHP1
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_EQSHP1
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_EQSHP1
 
- LDA #&14
+ LDA #$14
  STA YC
  LDA #2
  STA XC
- LDA #&1A
+ LDA #$1A
  STA K
  LDA #5
  STA K+1
- LDA #&B7
+ LDA #$B7
  STA V+1
- LDA #&EC
+ LDA #$EC
  STA V
  LDA #0
  STA K+2
  JSR CB9C1_b4
  JMP CA4A5_b6
 
-\ ******************************************************************************
-\
-\       Name: subm_EQSHP2
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_EQSHP2
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_EQSHP2
 
@@ -7250,28 +7250,28 @@
  STX L0037
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_EQSHP3
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_EQSHP3
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_EQSHP3
 
  LDX XX13
 
- JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  STX XX13
  TXA
  CLC
  ADC #2
  LDX Q
- CPX #&0C
+ CPX #$0C
  BCC CA3E7
  SEC
  SBC #1
@@ -7291,23 +7291,23 @@
  JSR TT162
  LDA XX13
  CLC
- ADC #&68
+ ADC #$68
  JSR TT27_b2
  JSR subm_D17F
  LDA XX13
  CMP #1
  BNE CA43F
- LDA #&20
+ LDA #$20
  JSR TT27_b2
- LDA #&28
+ LDA #$28
  JSR TT27_b2
  LDX QQ14
  SEC
  LDA #0
  JSR pr2+2
- LDA #&C3
+ LDA #$C3
  JSR TT27_b2
- LDA #&29
+ LDA #$29
  JSR TT27_b2
  LDA L04A9
  AND #4
@@ -7317,15 +7317,15 @@
  SEC
  LDA #5
  JSR TT11
- LDA #&20
+ LDA #$20
  JMP TT27_b2
 
 .CA43F
 
- LDA #&20
+ LDA #$20
  JSR TT27_b2
  LDA XC
- CMP #&18
+ CMP #$18
  BNE CA43F
  LDA XX13
  JSR prxm3
@@ -7334,14 +7334,14 @@
  JSR TT11
  JMP TT162
 
-\ ******************************************************************************
-\
-\       Name: subm_EQSHP4
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_EQSHP4
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_EQSHP4
 
@@ -7364,14 +7364,14 @@
  JSR subm_D8C5
  JMP CA4DB
 
-\ ******************************************************************************
-\
-\       Name: subm_EQSHP5
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_EQSHP5
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_EQSHP5
 
@@ -7389,52 +7389,52 @@
  STA XX13
  JMP CA466
 
-\ ******************************************************************************
-\
-\       Name: LA48A
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: LA48A
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .LA48A
 
- EQUB &0C,   8, &0A                           ; A48A: 0C 08 0A    ...
+ EQUB $0C,   8, $0A                           ; A48A: 0C 08 0A    ...
 
-\ ******************************************************************************
-\
-\       Name: EQSHP
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: EQSHP
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .EQSHP
 
- LDA #&B9
+ LDA #$B9
  JSR subm_9645
  LDX language
  LDA LA48A,X
  STA XC
- LDA #&CF
+ LDA #$CF
  JSR NLIN3
- LDA #&80
+ LDA #$80
  STA QQ17
  LDA tek
  CLC
  ADC #3
- CMP #&0C
+ CMP #$0C
  BCC CA4AF
- LDA #&0E
+ LDA #$0E
 
 .CA4AF
 
  STA Q
  STA QQ25
  INC Q
- LDA #&46
+ LDA #$46
  SEC
  SBC QQ14
  LDX #1
@@ -7456,8 +7456,8 @@
 
 .CA4DB
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA controller1Up
  BPL CA4F0
@@ -7500,9 +7500,9 @@
  LDA QQ14
  CLC
  ADC #1
- CMP #&47
+ CMP #$47
  BCC CA531
- LDY #&69
+ LDY #$69
  PLA
  JMP CA58A
 
@@ -7517,7 +7517,7 @@
  BNE CA548
  LDX NOMSL
  INX
- LDY #&7C
+ LDY #$7C
  CPX #5
  BCS CA58A
  STX NOMSL
@@ -7525,10 +7525,10 @@
 
 .CA548
 
- LDY #&6B
+ LDY #$6B
  CMP #2
  BNE CA558
- LDX #&25
+ LDX #$25
  CPX CRGO
  BEQ CA58A
  STX CRGO
@@ -7547,7 +7547,7 @@
  CMP #4
  BNE CA573
  JSR qv
- LDA #&18
+ LDA #$18
  JMP refund
 
  LDA #4
@@ -7557,12 +7557,12 @@
  CMP #5
  BNE CA57F
  JSR qv
- LDA #&8F
+ LDA #$8F
  JMP refund
 
 .CA57F
 
- LDY #&6F
+ LDY #$6F
  CMP #6
  BNE CA5E6
  LDX BST
@@ -7578,33 +7578,33 @@
  JSR MCASH
  LDA #2
  STA XC
- LDA #&11
+ LDA #$11
  STA YC
  LDA K
  JSR spc
- LDA #&1F
+ LDA #$1F
  JSR TT27_b2
 
 .loop_CA5A9
 
  JSR TT162
  LDA XC
- CMP #&1F
+ CMP #$1F
  BNE loop_CA5A9
  JSR BOOP
  JSR subm_8980
- LDY #&28
+ LDY #$28
  JSR DELAY
  LDA #6
  STA XC
- LDA #&11
+ LDA #$11
  STA YC
 
 .loop_CA5C5
 
  JSR TT162
  LDA XC
- CMP #&1F
+ CMP #$1F
  BNE loop_CA5C5
  JSR dn
  JSR CA4A5_b6
@@ -7638,7 +7638,7 @@
  BNE CA602
  LDX BOMB
  BNE CA58A
- LDX #&7F
+ LDX #$7F
  STX BOMB
 
 .CA602
@@ -7653,7 +7653,7 @@
 .CA60F
 
  INY
- CMP #&0A
+ CMP #$0A
  BNE CA61C
  LDX DKCMP
  BNE CA5DA
@@ -7662,7 +7662,7 @@
 .CA61C
 
  INY
- CMP #&0B
+ CMP #$0B
  BNE CA629
  LDX GHYP
  BNE CA5DA
@@ -7671,19 +7671,19 @@
 .CA629
 
  INY
- CMP #&0C
+ CMP #$0C
  BNE CA636
  JSR qv
- LDA #&97
+ LDA #$97
  JMP refund
 
 .CA636
 
  INY
- CMP #&0D
+ CMP #$0D
  BNE CA643
  JSR qv
- LDA #&32
+ LDA #$32
  JMP refund
 
 .CA643
@@ -7693,51 +7693,51 @@
 
 .CA649
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  JSR dn
  JMP BEEP_b7
 
-\ ******************************************************************************
-\
-\       Name: dn
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: dn
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .dn
 
- LDA #&11
+ LDA #$11
  STA YC
  LDA #2
  STA XC
  JMP CA89A
 
-\ ******************************************************************************
-\
-\       Name: eq
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: eq
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .eq
 
  JSR prx
  JSR LCASH
  BCS c
- LDA #&11
+ LDA #$11
  STA YC
  LDA #2
  STA XC
- LDA #&C5
+ LDA #$C5
  JSR prq
  JSR BOOP
- LDY #&14
+ LDY #$14
 
 .loop_CA681
 
@@ -7745,34 +7745,34 @@
  DEY
  BPL loop_CA681
  JSR subm_8980
- LDY #&28
+ LDY #$28
  JSR DELAY
  JSR dn
  CLC
  RTS
 
-\ ******************************************************************************
-\
-\       Name: prxm3
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: prxm3
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .prxm3
 
  SEC
  SBC #1
 
-\ ******************************************************************************
-\
-\       Name: prx
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: prx
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .prx
 
@@ -7786,14 +7786,14 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_A6A1
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_A6A1
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_A6A1
 
@@ -7802,18 +7802,18 @@
  TAY
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_A6A8
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_A6A8
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_A6A8
 
- LDA #&0C
+ LDA #$0C
  STA XC
  TYA
  PHA
@@ -7831,7 +7831,7 @@
  PLA
  PHA
  CLC
- ADC #&60
+ ADC #$60
  JSR TT27_b2
 
 .loop_CA6C8
@@ -7845,27 +7845,27 @@
  TAY
  RTS
 
-\ ******************************************************************************
-\
-\       Name: LA6D8
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: LA6D8
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .LA6D8
 
- EQUB &15, &15, &16, &15                      ; A6D8: 15 15 16... ...
+ EQUB $15, $15, $16, $15                      ; A6D8: 15 15 16... ...
 
-\ ******************************************************************************
-\
-\       Name: subm_A6DC
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_A6DC
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_A6DC
 
@@ -7882,32 +7882,32 @@
  TAY
  RTS
 
-\ ******************************************************************************
-\
-\       Name: LA6F2
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: LA6F2
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .LA6F2
 
- EQUB &0A, &0A, &0B, &0A                      ; A6F2: 0A 0A 0B... ...
+ EQUB $0A, $0A, $0B, $0A                      ; A6F2: 0A 0A 0B... ...
 
-\ ******************************************************************************
-\
-\       Name: qv
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: qv
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .qv
 
- JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA L04BA
  ORA L04BB
@@ -7925,7 +7925,7 @@
  JSR subm_A6A8
  LDA #1
  STA L0037
- LDA #&0B
+ LDA #$0B
  STA XC
  STA K+2
  LDA #7
@@ -7942,8 +7942,8 @@
 
 .CA737
 
- JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA controller1Up
  BPL CA74A
@@ -7976,7 +7976,7 @@
  BMI CA775
  LDA L0465
  BEQ CA737
- CMP #&50
+ CMP #$50
  BNE CA775
  LDA #0
  STA L0465
@@ -7989,14 +7989,14 @@
  TAX
  RTS
 
-\ ******************************************************************************
-\
-\       Name: refund
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: refund
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .refund
 
@@ -8004,15 +8004,15 @@
  LDA LASER,X
  BEQ CA79E
  LDY #4
- CMP #&18
+ CMP #$18
  BEQ CA793
  LDY #5
- CMP #&8F
+ CMP #$8F
  BEQ CA793
- LDY #&0C
- CMP #&97
+ LDY #$0C
+ CMP #$97
  BEQ CA793
- LDY #&0D
+ LDY #$0D
 
 .CA793
 
@@ -8031,32 +8031,32 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: PRXS
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: PRXS
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .PRXS
 
  EQUB 2                                       ; A7AA: 02          .
- EQUB   0, &2C,   1, &A0, &0F, &70, &17, &A0  ; A7AB: 00 2C 01... .,.
- EQUB &0F, &10, &27, &82, &14, &10            ; A7B3: 0F 10 27... ..'
- EQUB &27, &28, &23                           ; A7B9: 27 28 23    '(#
- EQUB &98, &3A, &D0,   7, &50, &C3, &60, &EA  ; A7BC: 98 3A D0... .:.
- EQUB &40, &1F                                ; A7C4: 40 1F       @.
+ EQUB   0, $2C,   1, $A0, $0F, $70, $17, $A0  ; A7AB: 00 2C 01... .,.
+ EQUB $0F, $10, $27, $82, $14, $10            ; A7B3: 0F 10 27... ..'
+ EQUB $27, $28, $23                           ; A7B9: 27 28 23    '(#
+ EQUB $98, $3A, $D0,   7, $50, $C3, $60, $EA  ; A7BC: 98 3A D0... .:.
+ EQUB $40, $1F                                ; A7C4: 40 1F       @.
 
-\ ******************************************************************************
-\
-\       Name: hyp1_cpl
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: hyp1_cpl
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .hyp1_cpl
 
@@ -8069,14 +8069,14 @@
  DEX
  BPL loop_CA7C8
 
-\ ******************************************************************************
-\
-\       Name: cpl
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: cpl
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .cpl
 
@@ -8099,13 +8099,13 @@
 
 .loop_CA7E3
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA QQ15+5
- AND #&1F
+ AND #$1F
  BEQ CA7FB
- ORA #&80
+ ORA #$80
  JSR TT27_b2
 
 .CA7FB
@@ -8123,14 +8123,14 @@
  BPL loop_CA804
  RTS
 
-\ ******************************************************************************
-\
-\       Name: cmn
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: cmn
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .cmn
 
@@ -8139,7 +8139,7 @@
 .loop_CA80F
 
  LDA NAME,Y
- CMP #&20
+ CMP #$20
  BEQ CA81E
  JSR DASC_b2
  INY
@@ -8150,14 +8150,14 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: ypl
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: ypl
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .ypl
 
@@ -8183,14 +8183,14 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: tal
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tal
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tal
 
@@ -8199,21 +8199,21 @@
  INX
  JMP pr2
 
-\ ******************************************************************************
-\
-\       Name: fwl
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: fwl
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .fwl
 
  LDA L04A9
  AND #2
  BNE CA87D
- LDA #&69
+ LDA #$69
  JSR TT68
  JSR subm_A8A2
  LDA L04A9
@@ -8226,9 +8226,9 @@
  LDX QQ14
  SEC
  JSR pr2
- LDA #&C3
+ LDA #$C3
  JSR plf
- LDA #&C5
+ LDA #$C5
  JSR TT68
  LDA L04A9
  AND #4
@@ -8243,75 +8243,75 @@
 
 .CA87D
 
- LDA #&69
+ LDA #$69
  JSR subm_96C5
  JSR TT162
  LDX QQ14
  SEC
  JSR pr2
- LDA #&C3
+ LDA #$C3
  JSR plf
- LDA #&C5
+ LDA #$C5
  JSR TT68
  LDA #0
  BEQ CA89C
 
 .CA89A
 
- LDA #&77
+ LDA #$77
 
 .CA89C
 
  JMP spc
 
-\ ******************************************************************************
-\
-\       Name: subm_A89F
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_A89F
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_A89F
 
  JSR subm_A8A2
 
-\ ******************************************************************************
-\
-\       Name: subm_A8A2
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_A8A2
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_A8A2
 
  JSR TT162
  JMP TT162
 
-\ ******************************************************************************
-\
-\       Name: ypls
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: ypls
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .ypls
 
  JMP ypl
 
-\ ******************************************************************************
-\
-\       Name: csh
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: csh
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .csh
 
@@ -8323,77 +8323,77 @@
  STA K,X
  DEX
  BPL loop_CA8AD
- LDA #&0B
+ LDA #$0B
  STA U
  SEC
  JSR BPRNT
- LDA #&E2
+ LDA #$E2
  JSR TT27_b2
  JSR TT162
  JMP TT162
 
-\ ******************************************************************************
-\
-\       Name: plf
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: plf
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .plf
 
  JSR TT27_b2
  JMP TT67
 
-\ ******************************************************************************
-\
-\       Name: TT68
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT68
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT68
 
  JSR TT27_b2
 
-\ ******************************************************************************
-\
-\       Name: TT73
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT73
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT73
 
- LDA #&3A
+ LDA #$3A
  JMP TT27_b2
 
-\ ******************************************************************************
-\
-\       Name: tals
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tals
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tals
 
  JMP tal
 
-\ ******************************************************************************
-\
-\       Name: TT27_0
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT27_0
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT27_0
 
@@ -8419,7 +8419,7 @@
  BEQ fwls
  DEX
  BNE CA8F9
- LDA #&80
+ LDA #$80
  STA QQ17
 
 .loop_CA8F8
@@ -8441,57 +8441,57 @@
  LDA L04A9
  AND #2
  BNE CA911
- LDA #&16
+ LDA #$16
  STA XC
  RTS
 
 .CA911
 
- LDA #&17
+ LDA #$17
  STA XC
  RTS
 
-\ ******************************************************************************
-\
-\       Name: fwls
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: fwls
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .fwls
 
  JMP fwl
 
-\ ******************************************************************************
-\
-\       Name: SOS1
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: SOS1
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .SOS1
 
  JSR msblob
- LDA #&7F
+ LDA #$7F
  STA INWK+29
  STA INWK+30
  LDA tek
  AND #2
- ORA #&80
+ ORA #$80
  JMP NWSHP
 
-\ ******************************************************************************
-\
-\       Name: SOLAR
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: SOLAR
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .SOLAR
 
@@ -8500,7 +8500,7 @@
  LDA #0
  STA QQ20
  JSR DORND
- AND #&0F
+ AND #$0F
  ADC TRIBBLE
  ORA #4
  ROL A
@@ -8518,18 +8518,18 @@
  ADC #3
  STA INWK+8
  LDX QQ15+2
- CPX #&80
+ CPX #$80
  ROR A
  STA INWK+2
  ROL A
  LDX QQ15+3
- CPX #&80
+ CPX #$80
  ROR A
  STA INWK+5
  JSR SOS1
  LDA QQ15+3
  AND #7
- ORA #&81
+ ORA #$81
  STA INWK+8
  LDA QQ15+5
  AND #3
@@ -8540,17 +8540,17 @@
  STA INWK+30
  STA FRIN+1
  STA SSPR
- LDA #&81
+ LDA #$81
  JSR NWSHP
 
-\ ******************************************************************************
-\
-\       Name: NWSTARS
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: NWSTARS
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .NWSTARS
 
@@ -8558,14 +8558,14 @@
  ORA DLY
  BNE WPSHPS
 
-\ ******************************************************************************
-\
-\       Name: nWq
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: nWq
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .nWq
 
@@ -8579,16 +8579,16 @@
 
 .CA9A4
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  JSR DORND
  ORA #8
  STA SZ,Y
  STA ZZ
  JSR DORND
- ORA #&10
- AND #&F8
+ ORA #$10
+ AND #$F8
  STA SX,Y
  JSR DORND
  STA SY,Y
@@ -8598,14 +8598,14 @@
  DEY
  BNE CA9A4
 
-\ ******************************************************************************
-\
-\       Name: WPSHPS
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: WPSHPS
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .WPSHPS
 
@@ -8613,17 +8613,17 @@
 
 .CA9D9
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA FRIN,X
  BEQ CA9FD
  BMI CA9FA
  STA TYPE
  JSR GINF
- LDY #&1F
+ LDY #$1F
  LDA (XX19),Y
- AND #&B7
+ AND #$B7
  STA (XX19),Y
 
 .CA9FA
@@ -8641,28 +8641,28 @@
  DEX
  RTS
 
-\ ******************************************************************************
-\
-\       Name: SHD
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: SHD
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .SHD
 
  INX
  BEQ loop_CAA00
 
-\ ******************************************************************************
-\
-\       Name: DENGY
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: DENGY
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .DENGY
 
@@ -8678,18 +8678,18 @@
 
 .loop_CAA10
 
- LDA #&F0
+ LDA #$F0
  STA ySprite13
  RTS
 
-\ ******************************************************************************
-\
-\       Name: COMPAS
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: COMPAS
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .COMPAS
 
@@ -8700,27 +8700,27 @@
  JSR SPS1
  JMP SP2
 
-\ ******************************************************************************
-\
-\       Name: SP1
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: SP1
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .SP1
 
  JSR SPS4
 
-\ ******************************************************************************
-\
-\       Name: SP2
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: SP2
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .SP2
 
@@ -8728,33 +8728,33 @@
  JSR SPS2
  TXA
  CLC
- ADC #&DC
+ ADC #$DC
  STA xSprite13
  LDA Y1
  JSR SPS2
  STX T
- LDA #&BA
+ LDA #$BA
  SEC
  SBC T
  STA ySprite13
- LDA #&F7
+ LDA #$F7
  LDX X2
  BPL CAA4C
- LDA #&F6
+ LDA #$F6
 
 .CAA4C
 
  STA tileSprite13
  RTS
 
-\ ******************************************************************************
-\
-\       Name: SPS4
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: SPS4
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .SPS4
 
@@ -8768,14 +8768,14 @@
  BPL loop_CAA52
  JMP TAS2
 
-\ ******************************************************************************
-\
-\       Name: OOPS
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: OOPS
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .OOPS
 
@@ -8825,18 +8825,18 @@
  JSR EXNO3
  JMP OUCH
 
-\ ******************************************************************************
-\
-\       Name: NWSPS
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: NWSPS
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .NWSPS
 
- LDX #&81
+ LDX #$81
  STX INWK+32
  LDX #0
  STX INWK+30
@@ -8844,7 +8844,7 @@
  STX FRIN+1
  DEX
  STX INWK+29
- LDX #&0A
+ LDX #$0A
  JSR NwS1
  JSR NwS1
  JSR NwS1
@@ -8853,7 +8853,7 @@
  LDX XX21+2
  LDY XX21+3
  LDA tek
- CMP #&0A
+ CMP #$0A
  BCC CAACF
  LDX XX21+64
  LDY XX21+65
@@ -8864,14 +8864,14 @@
  STY L04A3
  JMP CAC5C_b3
 
-\ ******************************************************************************
-\
-\       Name: NW2
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: NW2
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .NW2
 
@@ -8881,21 +8881,21 @@
  STA INWK+33
  JMP CAB86
 
-\ ******************************************************************************
-\
-\       Name: NWSHP
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: NWSHP
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .NWSHP
 
  STA T
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDX #0
 
@@ -8943,7 +8943,7 @@
 
 .CAB2F
 
- LDA #&FF
+ LDA #$FF
  STA L0374,Y
  STY INWK+33
  TYA
@@ -8962,22 +8962,22 @@
 
 .NW6
 
- LDY #&0E
- JSR GetShipBlueprint   \ Set A to the Y-th byte from the current ship blueprint
+ LDY #$0E
+ JSR GetShipBlueprint   ; Set A to the Y-th byte from the current ship blueprint
  STA INWK+35
- LDY #&13
- JSR GetShipBlueprint   \ Set A to the Y-th byte from the current ship blueprint
+ LDY #$13
+ JSR GetShipBlueprint   ; Set A to the Y-th byte from the current ship blueprint
  AND #7
  STA INWK+31
  LDA T
  STA FRIN,X
  TAX
  BMI CAB86
- CPX #&0F
+ CPX #$0F
  BEQ gangbang
  CPX #3
  BCC NW7
- CPX #&0B
+ CPX #$0B
  BCS NW7
 
 .gangbang
@@ -8988,22 +8988,22 @@
 
  INC MANY,X
  LDY T
- JSR GetDefaultNEWB     \ Set A to the default NEWB flags for ship type Y
- AND #&6F
+ JSR GetDefaultNEWB     ; Set A to the default NEWB flags for ship type Y
+ AND #$6F
  ORA NEWB
  STA NEWB
  AND #4
  BEQ CAB86
  LDA L0300
- ORA #&80
+ ORA #$80
  STA L0300
 
 .CAB86
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
- LDY #&25
+ LDY #$25
 
 .loop_CAB95
 
@@ -9012,51 +9012,51 @@
  DEY
  BPL loop_CAB95
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  SEC
  RTS
 
-\ ******************************************************************************
-\
-\       Name: NwS1
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: NwS1
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .NwS1
 
  LDA XX1,X
- EOR #&80
+ EOR #$80
  STA XX1,X
  INX
  INX
  RTS
 
-\ ******************************************************************************
-\
-\       Name: KS3
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: KS3
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .KS3
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: KS1
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: KS1
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .KS1
 
@@ -9065,14 +9065,14 @@
  LDX XSAV
  RTS
 
-\ ******************************************************************************
-\
-\       Name: KS4
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: KS4
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .KS4
 
@@ -9082,27 +9082,27 @@
  STA SSPR
  LDA #6
  STA INWK+5
- LDA #&81
+ LDA #$81
  JSR NWSHP
  JMP CAC5C_b3
 
-\ ******************************************************************************
-\
-\       Name: KS2
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: KS2
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .KS2
 
- LDX #&FF
+ LDX #$FF
 
 .CABD7
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  INX
  LDA FRIN,X
@@ -9116,17 +9116,17 @@
  STA SC
  LDA UNIV+1,Y
  STA SC+1
- LDY #&20
+ LDY #$20
  LDA (SC),Y
  BPL CABD7
- AND #&7F
+ AND #$7F
  LSR A
  CMP XX4
  BCC CABD7
  BEQ CAC13
  SBC #1
  ASL A
- ORA #&80
+ ORA #$80
  STA (SC),Y
  BNE CABD7
 
@@ -9136,21 +9136,21 @@
  STA (SC),Y
  BEQ CABD7
 
-\ ******************************************************************************
-\
-\       Name: subm_AC19
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_AC19
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_AC19
 
- JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
- LDY #&25
+ LDY #$25
 
 .loop_CAC1E
 
@@ -9159,14 +9159,14 @@
  DEY
  BPL loop_CAC1E
 
-\ ******************************************************************************
-\
-\       Name: KILLSHP
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: KILLSHP
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .KILLSHP
 
@@ -9176,9 +9176,9 @@
  LDA MSTG
  CMP XX4
  BNE CAC3E
- LDY #&6C
+ LDY #$6C
  JSR ABORT
- LDA #&C8
+ LDA #$C8
  JSR MESS
 
 .CAC3E
@@ -9191,7 +9191,7 @@
 
 .CAC4A
 
- CPX #&1F
+ CPX #$1F
  BNE CAC59
  LDA TP
  ORA #2
@@ -9200,11 +9200,11 @@
 
 .CAC59
 
- CPX #&0F
+ CPX #$0F
  BEQ blacksuspenders
  CPX #3
  BCC CAC68
- CPX #&0B
+ CPX #$0B
  BCS CAC68
 
 .blacksuspenders
@@ -9218,8 +9218,8 @@
 
 .KSL1
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  INX
  LDA FRIN,X
@@ -9237,10 +9237,10 @@
  LDA UNIV+1,Y
  STA SC+1
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
- LDY #&29
+ LDY #$29
 
 .loop_CACA2
 
@@ -9253,19 +9253,19 @@
  LDA SC+1
  STA INF+1
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  JMP KSL1
 
-\ ******************************************************************************
-\
-\       Name: ABORT
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: ABORT
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .ABORT
 
@@ -9273,47 +9273,47 @@
  STX MSAR
  DEX
 
-\ ******************************************************************************
-\
-\       Name: ABORT2
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: ABORT2
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .ABORT2
 
  STX MSTG
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDX NOMSL
  JSR MSBAR
  JMP CAC5C_b3
 
-\ ******************************************************************************
-\
-\       Name: msbpars
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: msbpars
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .msbpars
 
  EQUB 4, 0, 0, 0, 0                           ; ACE0: 04 00 00... ...
 
-\ ******************************************************************************
-\
-\       Name: YESNO
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: YESNO
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .YESNO
 
@@ -9327,7 +9327,7 @@
 .CACEF
 
  JSR CLYNS
- LDA #&0F
+ LDA #$0F
  STA XC
  PLA
  PHA
@@ -9360,14 +9360,14 @@
  TXA
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_AD25
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_AD25
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_AD25
 
@@ -9411,14 +9411,14 @@
  LDA L0081
  RTS
 
-\ ******************************************************************************
-\
-\       Name: THERE
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: THERE
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .THERE
 
@@ -9426,10 +9426,10 @@
  DEX
  BNE CAD69
  LDA QQ0
- CMP #&90
+ CMP #$90
  BNE CAD69
  LDA QQ1
- CMP #&21
+ CMP #$21
  BEQ CAD6A
 
 .CAD69
@@ -9440,14 +9440,14 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: RESET
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: RESET
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .RESET
 
@@ -9470,17 +9470,17 @@
  STA FSH,X
  DEX
  BPL loop_CAD7F
- LDA #&FF
+ LDA #$FF
  STA L0464
 
-\ ******************************************************************************
-\
-\       Name: RES2
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: RES2
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .RES2
 
@@ -9491,7 +9491,7 @@
  STA boxEdge1
  LDA #2
  STA boxEdge2
- LDA #&50
+ LDA #$50
  STA L00CD
  STA L00CE
  LDA BOMB
@@ -9501,14 +9501,14 @@
 
 .CADAA
 
- LDA #&14
+ LDA #$14
  STA NOSTM
- LDX #&FF
+ LDX #$FF
  STX MSTG
  LDA L0300
- ORA #&80
+ ORA #$80
  STA L0300
- LDA #&80
+ LDA #$80
  STA JSTX
  STA JSTY
  STA ALP2
@@ -9527,7 +9527,7 @@
  STA DELTA
  STA ALPHA
  STA ALP1
- LDA #&48
+ LDA #$48
  JSR subm_AE32
  LDA ECMA
  BEQ CADF3
@@ -9545,21 +9545,21 @@
 
  JSR subm_B46B
 
-\ ******************************************************************************
-\
-\       Name: ZINF_0
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: ZINF_0
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .ZINF_0
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
- LDY #&25
+ LDY #$25
  LDA #0
 
 .loop_CAE14
@@ -9568,24 +9568,24 @@
  DEY
  BPL loop_CAE14
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
- LDA #&60
+ LDA #$60
  STA INWK+18
  STA INWK+22
- ORA #&80
+ ORA #$80
  STA INWK+14
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_AE32
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_AE32
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_AE32
 
@@ -9596,14 +9596,14 @@
  STA Yx2M1
  RTS
 
-\ ******************************************************************************
-\
-\       Name: msblob
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: msblob
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .msblob
 
@@ -9613,7 +9613,7 @@
 
  CPX NOMSL
  BEQ CAE4C
- LDY #&85
+ LDY #$85
  JSR MSBAR
  DEX
  BNE loop_CAE3E
@@ -9621,20 +9621,20 @@
 
 .CAE4C
 
- LDY #&6C
+ LDY #$6C
  JSR MSBAR
  DEX
  BNE CAE4C
  RTS
 
-\ ******************************************************************************
-\
-\       Name: MTT4
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MTT4
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MTT4
 
@@ -9643,38 +9643,38 @@
  STA INWK+32
  STA INWK+29
  ROL INWK+31
- AND #&0F
- ADC #&0A
+ AND #$0F
+ ADC #$0A
  STA INWK+27
  JSR DORND
  BMI CAE74
  LDA INWK+32
- ORA #&C0
+ ORA #$C0
  STA INWK+32
- LDX #&10
+ LDX #$10
  STX NEWB
 
 .CAE74
 
  AND #2
- ADC #&0B
- CMP #&0F
+ ADC #$0B
+ CMP #$0F
  BNE CAE7E
- LDA #&0B
+ LDA #$0B
 
 .CAE7E
 
  JSR NWSHP
  JMP MLOOP
 
-\ ******************************************************************************
-\
-\       Name: subm_AE84
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_AE84
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_AE84
 
@@ -9688,14 +9688,14 @@
  BEQ TT100
  JMP MLOOP
 
-\ ******************************************************************************
-\
-\       Name: TT100
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT100
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT100
 
@@ -9713,59 +9713,59 @@
  ORA DLY
  BNE loop_CAEA0
  JSR DORND
- CMP #&28
+ CMP #$28
  BCS MTT1
  LDA JUNK
  CMP #3
  BCS MTT1
  JSR ZINF_0
- LDA #&26
+ LDA #$26
  STA INWK+7
  JSR DORND
  STA XX1
  STX INWK+3
- AND #&80
+ AND #$80
  STA INWK+2
  TXA
- AND #&80
+ AND #$80
  STA INWK+5
  ROL INWK+1
  ROL INWK+1
  JSR DORND
- AND #&30
+ AND #$30
  BNE CAEDE
  JMP MTT4
 
 .CAEDE
 
- ORA #&6F
+ ORA #$6F
  STA INWK+29
  LDA SSPR
  BNE MLOOPS
  TXA
  BCS CAEF2
- AND #&1F
- ORA #&10
+ AND #$1F
+ ORA #$10
  STA INWK+27
  BCC CAEF6
 
 .CAEF2
 
- ORA #&7F
+ ORA #$7F
  STA INWK+30
 
 .CAEF6
 
  JSR DORND
- CMP #&FC
+ CMP #$FC
  BCC CAF03
- LDA #&0F
+ LDA #$0F
  STA INWK+32
  BNE CAF09
 
 .CAF03
 
- CMP #&0A
+ CMP #$0A
  AND #1
  ADC #5
 
@@ -9777,14 +9777,14 @@
 
  JMP MLOOP
 
-\ ******************************************************************************
-\
-\       Name: MTT1
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MTT1
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MTT1
 
@@ -9800,7 +9800,7 @@
 
  STA T
  JSR Ze
- CMP #&88
+ CMP #$88
  BNE CAF2C
  JMP fothg
 
@@ -9811,7 +9811,7 @@
  LDA NEWB
  ORA #4
  STA NEWB
- LDA #&10
+ LDA #$10
  JSR NWSHP
 
 .CAF3B
@@ -9819,14 +9819,14 @@
  LDA MANY+16
  BNE MLOOPS
 
-\ ******************************************************************************
-\
-\       Name: MainLoop4
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MainLoop4
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MainLoop4
 
@@ -9834,11 +9834,11 @@
  BPL MLOOPS
  INC EV
  LDA TP
- AND #&0C
+ AND #$0C
  CMP #8
  BNE nopl
  JSR DORND
- CMP #&C8
+ CMP #$C8
  BCC nopl
 
 .CAF58
@@ -9854,12 +9854,12 @@
  LDY JUNK
  LDX FRIN+2,Y
  BEQ CAF72
- CMP #&32
+ CMP #$32
  BCS MLOOPS
 
 .CAF72
 
- CMP #&64
+ CMP #$64
  BCS MLOOPS
  AND #7
  CMP gov
@@ -9868,18 +9868,18 @@
 .LABEL_2
 
  JSR Ze
- CMP #&64
- AND #&0F
- ORA #&10
+ CMP #$64
+ AND #$0F
+ ORA #$10
  STA INWK+27
  BCS CAFCF
  INC EV
  AND #3
- ADC #&18
+ ADC #$18
  TAY
  JSR THERE
  BCC CAFA8
- LDA #&F9
+ LDA #$F9
  STA INWK+32
  LDA TP
  AND #3
@@ -9891,17 +9891,17 @@
 .CAFA8
 
  JSR DORND
- CMP #&C8
+ CMP #$C8
  ROL A
- ORA #&C0
+ ORA #$C0
  STA INWK+32
  TYA
 
- EQUB &2C
+ EQUB $2C
 
 .LAFB4
 
- LDA #&1F
+ LDA #$1F
 
 .loop_CAFB6
 
@@ -9911,13 +9911,13 @@
 .fothg
 
  LDA K%+6
- AND #&3E
+ AND #$3E
  BNE CAF58
- LDA #&12
+ LDA #$12
  STA INWK+27
- LDA #&79
+ LDA #$79
  STA INWK+32
- LDA #&20
+ LDA #$20
  BNE loop_CAFB6
 
 .CAFCF
@@ -9935,23 +9935,23 @@
  JSR DORND
  AND T
  AND #7
- ADC #&11
+ ADC #$11
  JSR NWSHP
  DEC XX13
  BPL loop_CAFD6
 
-\ ******************************************************************************
-\
-\       Name: MLOOP
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MLOOP
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MLOOP
 
- LDX #&FF
+ LDX #$FF
  TXS
  LDX GNTMP
  BEQ CAFFA
@@ -9981,7 +9981,7 @@
  LDA TRIBBLE+1
  BEQ CB02B
  JSR DORND
- CMP #&DC
+ CMP #$DC
  LDA TRIBBLE
  ADC #0
  STA TRIBBLE
@@ -9995,7 +9995,7 @@
  LDA TRIBBLE+1
  BEQ CB04C
  LDY CABTMP
- CPY #&E0
+ CPY #$E0
  BCS CB039
  LSR A
  LSR A
@@ -10017,22 +10017,22 @@
  LDA L0300
  LDX QQ22+1
  BEQ CB055
- ORA #&80
+ ORA #$80
 
 .CB055
 
  LDX DLY
  BEQ CB05C
- AND #&7F
+ AND #$7F
 
 .CB05C
 
  STA L0300
- AND #&C0
+ AND #$C0
  BEQ CB070
- CMP #&C0
+ CMP #$C0
  BEQ CB070
- CMP #&80
+ CMP #$80
  ROR A
  STA L0300
  JSR CAC5C_b3
@@ -10046,27 +10046,27 @@
  JSR TT102
  JMP subm_AE84
 
-\ ******************************************************************************
-\
-\       Name: LB079
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: LB079
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .LB079
 
  EQUB 5, 5, 5, 6                              ; B079: 05 05 05... ...
 
-\ ******************************************************************************
-\
-\       Name: TT102
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT102
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT102
 
@@ -10084,10 +10084,10 @@
 
  CMP #4
  BEQ CB09B
- CMP #&24
+ CMP #$24
  BNE CB0A6
  LDA L0470
- EOR #&80
+ EOR #$80
  STA L0470
 
 .CB09B
@@ -10102,7 +10102,7 @@
 
 .CB0A6
 
- CMP #&23
+ CMP #$23
  BNE CB0B0
  JSR subm_9D09
  JMP TT25
@@ -10130,7 +10130,7 @@
 
 .CB0CC
 
- CMP #&11
+ CMP #$11
  BNE CB119
  LDX QQ12
  BNE CB119
@@ -10142,7 +10142,7 @@
  ORA L03E8
  BNE CB0FA
  LDY #0
- LDX #&32
+ LDX #$32
  JSR LCASH
  BCS CB0F2
  JMP BOOP
@@ -10158,7 +10158,7 @@
  LDA #1
  JSR KeepPPUTablesAt0
  JSR C8021_b6
- LDA #&FF
+ LDA #$FF
  BNE CB10B
 
 .CB106
@@ -10181,7 +10181,7 @@
 .CB119
 
  JSR subm_B1D4
- CMP #&15
+ CMP #$15
  BNE CB137
  LDA QQ12
  BPL CB125
@@ -10218,25 +10218,25 @@
 
 .CB149
 
- CMP #&16
+ CMP #$16
  BNE CB150
  JMP C9E51
 
 .CB150
 
- CMP #&29
+ CMP #$29
  BNE CB157
  JMP C9E48
 
 .CB157
 
- CMP #&27
+ CMP #$27
  BNE CB16A
  LDA QQ22+1
  BNE CB1A5
  LDA QQ11
- AND #&0E
- CMP #&0C
+ AND #$0E
+ CMP #$0C
  BNE CB1A5
  JMP HME2
 
@@ -10244,13 +10244,13 @@
 
  STA T1
  LDA QQ11
- AND #&0E
- CMP #&0C
+ AND #$0E
+ CMP #$0C
  BNE CB18D
  LDA QQ22+1
  BNE CB18D
  LDA T1
- CMP #&26
+ CMP #$26
  BNE CB18A
  JSR ping
 
@@ -10274,7 +10274,7 @@
  STA QQ22
  DEC QQ22+1
  BEQ CB1A2
- LDA #&FA
+ LDA #$FA
  JMP MESS
 
 .CB1A2
@@ -10285,14 +10285,14 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: BAD
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: BAD
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .BAD
 
@@ -10303,14 +10303,14 @@
  ADC QQ20+10
  RTS
 
-\ ******************************************************************************
-\
-\       Name: FAROF
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: FAROF
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .FAROF
 
@@ -10319,7 +10319,7 @@
  ORA INWK+8
  ASL A
  BNE CB1C8
- LDA #&E0
+ LDA #$E0
  CMP INWK+1
  BCC CB1C7
  CMP INWK+4
@@ -10335,14 +10335,14 @@
  CLC
  RTS
 
-\ ******************************************************************************
-\
-\       Name: MAS4
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MAS4
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MAS4
 
@@ -10351,31 +10351,31 @@
  ORA INWK+7
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_B1D1
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B1D1
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B1D1
 
  LDA L0465
 
-\ ******************************************************************************
-\
-\       Name: subm_B1D4
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B1D4
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B1D4
 
- CMP #&50
+ CMP #$50
  BNE CB1E2
  LDA #0
  STA L0465
@@ -10388,14 +10388,14 @@
  CLC
  RTS
 
-\ ******************************************************************************
-\
-\       Name: DEATH
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: DEATH
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .DEATH
 
@@ -10408,25 +10408,25 @@
  STA boxEdge1
  STA boxEdge2
  STA L03EE
- LDA #&C4
+ LDA #$C4
  JSR TT66
  JSR CBED2_b6
  JSR CopyNametable0To1
  JSR subm_EB86
  LDA #0
  STA L045F
- LDA #&C4
+ LDA #$C4
  JSR CA7B7_b3
  LDA #0
  STA QQ11
  STA QQ11a
  LDA tileNumber
  STA L00D2
- LDA #&74
+ LDA #$74
  STA L00D8
  LDX #8
  STX L00CC
- LDA #&68
+ LDA #$68
  JSR subm_AE32
  LDY #8
  LDA #1
@@ -10438,14 +10438,14 @@
  BNE loop_CB22F
  JSR nWq
  JSR DORND
- AND #&87
+ AND #$87
  STA ALPHA
  AND #7
  STA ALP1
  LDA ALPHA
- AND #&80
+ AND #$80
  STA ALP2
- EOR #&80
+ EOR #$80
  STA ALP2+1
 
 .CB24D
@@ -10462,18 +10462,18 @@
  STY INWK+32
  DEY
  STY MCNT
- EOR #&2A
+ EOR #$2A
  STA INWK+3
- ORA #&50
+ ORA #$50
  STA INWK+6
  TXA
- AND #&8F
+ AND #$8F
  STA INWK+29
- LDY #&40
+ LDY #$40
  STY LASCT
  SEC
  ROR A
- AND #&87
+ AND #$87
  STA INWK+30
  LDX #5
  LDA XX21+7
@@ -10485,20 +10485,20 @@
 
  JSR fq1
  JSR DORND
- AND #&80
- LDY #&1F
+ AND #$80
+ LDY #$1F
  STA (XX19),Y
  LDA FRIN+6
  BEQ CB24D
  LDA #8
  STA DELTA
- LDA #&0C
+ LDA #$0C
  STA L00B5
- LDA #&92
- LDY #&78
+ LDA #$92
+ LDY #$78
  JSR subm_B77A
  JSR subm_EB8F
- LDA #&1E
+ LDA #$1E
  STA LASCT
 
 .loop_CB2AD
@@ -10506,54 +10506,54 @@
  JSR ChangeDrawingPhase
  JSR subm_MA23
  JSR CBED2_b6
- LDA #&CC
+ LDA #$CC
  JSR subm_D977
  DEC LASCT
  BNE loop_CB2AD
  JMP subm_B2EF
 
-\ ******************************************************************************
-\
-\       Name: subm_B2C3
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B2C3
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B2C3
 
- LDA #&FF
+ LDA #$FF
  STA L0307
- LDA #&80
+ LDA #$80
  STA L0308
- LDA #&1B
+ LDA #$1B
  STA L0309
- LDA #&34
+ LDA #$34
  STA L030A
  JSR ResetSoundL045E
  JSR CB90D_b6
  JSR subm_F3AB
  LDA #1
  STA L0037
- LDX #&FF
+ LDX #$FF
  STX QQ11a
  TXS
  JSR RESET
  JSR TITLE_b6
 
-\ ******************************************************************************
-\
-\       Name: subm_B2EF
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B2EF
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B2EF
 
- LDX #&FF
+ LDX #$FF
  TXS
  INX
  STX L0470
@@ -10573,7 +10573,7 @@
  LDA #0
  PHA
  JSR BR2_Part2
- LDA #&FF
+ LDA #$FF
  STA QQ11
  LDA L03EE
  BEQ CB32C
@@ -10594,7 +10594,7 @@
 .CB341
 
  JSR BR2_Part2
- LDA #&FF
+ LDA #$FF
  STA QQ11
  JSR KeepPPUTablesAt0
  LDA #4
@@ -10606,51 +10606,51 @@
 
  JSR CB63D_b3
 
-\ ******************************************************************************
-\
-\       Name: subm_B358
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B358
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B358
 
- LDX #&FF
+ LDX #$FF
  TXS
  JSR BR2_Part2
 
-\ ******************************************************************************
-\
-\       Name: BAY
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: BAY
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .BAY
 
  JSR ClearTiles_b3
- LDA #&FF
+ LDA #$FF
  STA QQ12
  LDA #3
  JMP CB073
 
-\ ******************************************************************************
-\
-\       Name: BR2_Part2
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: BR2_Part2
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .BR2_Part2
 
- JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  JSR CB8FE_b6
  JSR WaitResetSound
@@ -10675,14 +10675,14 @@
  STA gov
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_B39D
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B39D
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B39D
 
@@ -10695,20 +10695,20 @@
  STA L045F
  LDA tileNumber
  STA L00D2
- LDA #&50
+ LDA #$50
  STA L00D8
  LDX #8
  STX L00CC
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_B3BC
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B3BC
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B3BC
 
@@ -10717,14 +10717,14 @@
  JSR RESET
  JSR ResetKeyLogger
 
- JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
- LDA #&60
+ LDA #$60
  STA INWK+14
- LDA #&37
+ LDA #$37
  STA INWK+7
- LDX #&7F
+ LDX #$7F
  STX INWK+29
  STX INWK+30
  INX
@@ -10732,7 +10732,7 @@
  LDA TYPE
  JSR NWSHP
  JSR CBAF3_b1
- LDA #&0C
+ LDA #$0C
  STA CNT2
  LDA #5
  STA MCNT
@@ -10745,7 +10745,7 @@
 
 .loop_CB3F9
 
- LDA #&19
+ LDA #$19
  STA XP
 
 .loop_CB3FE
@@ -10767,7 +10767,7 @@
 .loop_CB415
 
  LDA INWK+7
- CMP #&37
+ CMP #$37
  BCS CB424
  INC INWK+7
  JSR subm_B426
@@ -10783,14 +10783,14 @@
  CLC
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_B426
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B426
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B426
 
@@ -10803,8 +10803,8 @@
  STA XX1
  STA INWK+3
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  JSR subm_D96F
  INC MCNT
@@ -10836,21 +10836,21 @@
  SEC
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_B46B
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B46B
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B46B
 
- JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
- LDX #&2B
+ LDX #$2B
  LDA #0
 
 .loop_CB472
@@ -10858,7 +10858,7 @@
  STA L0369,X
  DEX
  BNE loop_CB472
- LDX #&21
+ LDX #$21
 
 .loop_CB47A
 
@@ -10866,19 +10866,19 @@
  DEX
  BPL loop_CB47A
 
- JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: ResetKeyLogger
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: ResetKeyLogger
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .ResetKeyLogger
 
@@ -10893,14 +10893,14 @@
  BPL loop_CB48A
  RTS
 
-\ ******************************************************************************
-\
-\       Name: MAS1
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MAS1
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MAS1
 
@@ -10919,47 +10919,47 @@
  STY XX1,X
  LDY K+2
  STY INWK+1,X
- AND #&7F
+ AND #$7F
  RTS
 
-\ ******************************************************************************
-\
-\       Name: m
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: m
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .m
 
  LDA #0
 
-\ ******************************************************************************
-\
-\       Name: MAS2
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MAS2
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MAS2
 
  ORA K%+2,Y
  ORA K%+5,Y
  ORA K%+8,Y
- AND #&7F
+ AND #$7F
  RTS
 
-\ ******************************************************************************
-\
-\       Name: MAS3
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MAS3
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MAS3
 
@@ -10972,8 +10972,8 @@
  BCS CB4EB
  STA R
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA K%+7,Y
  JSR SQUA2
@@ -10982,39 +10982,39 @@
 
 .CB4EB
 
- LDA #&FF
+ LDA #$FF
 
 .CB4ED
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_MainFlight14
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_MainFlight14
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_MainFlight14
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDX #0
  LDY #9
  JSR MAS1
  BNE MA23S
  LDX #3
- LDY #&0B
+ LDY #$0B
  JSR MAS1
  BNE MA23S
  LDX #6
- LDY #&0D
+ LDY #$0D
  JSR MAS1
  BNE MA23S
- LDA #&64
+ LDA #$64
  JSR FAROF2
  BCS MA23S
  JSR NWSPS
@@ -11023,33 +11023,33 @@
 
 .MA23S
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  CLC
  RTS
 
-\ ******************************************************************************
-\
-\       Name: SPS2
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: SPS2
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .SPS2
 
  TAY
- AND #&7F
+ AND #$7F
  LSR A
  LSR A
  LSR A
  LSR A
  ADC #0
- CPY #&80
+ CPY #$80
  BCC CB542
- EOR #&FF
+ EOR #$FF
  ADC #0
 
 .CB542
@@ -11057,14 +11057,14 @@
  TAX
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_B544
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B544
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B544
 
@@ -11072,21 +11072,21 @@
  STA K3,X
  LDA K%+2,X
  TAY
- AND #&7F
+ AND #$7F
  STA XX2+1,X
  TYA
- AND #&80
+ AND #$80
  STA XX2+2,X
  RTS
 
-\ ******************************************************************************
-\
-\       Name: SPS1
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: SPS1
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .SPS1
 
@@ -11097,19 +11097,19 @@
  LDX #6
  JSR subm_B544
 
-\ ******************************************************************************
-\
-\       Name: TAS2
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TAS2
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TAS2
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA K3
  ORA XX2+3
@@ -11155,14 +11155,14 @@
  STA X2
  JMP NORM
 
-\ ******************************************************************************
-\
-\       Name: subm_B5B4
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B5B4
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B5B4
 
@@ -11206,32 +11206,32 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_B5F8
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B5F8
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B5F8
 
  JSR KeepPPUTablesAt0
  JSR subm_B665
 
-\ ******************************************************************************
-\
-\       Name: subm_B5FE
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B5FE
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B5FE
 
- LDA #&80
+ LDA #$80
 
  LSR A
  STA T
@@ -11240,7 +11240,7 @@
  BCS CB664
  LDA SSPR
  BNE CB664
- LDY #&2A
+ LDY #$2A
 
 .CB611
 
@@ -11254,9 +11254,9 @@
  LDA K%+7,Y
  ROR A
  SEC
- SBC #&20
+ SBC #$20
  BCS CB62D
- EOR #&FF
+ EOR #$FF
  ADC #1
 
 .CB62D
@@ -11310,18 +11310,18 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_B665
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B665
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B665
 
- LDY #&20
+ LDY #$20
 
 .loop_CB667
 
@@ -11345,7 +11345,7 @@
 .CB686
 
  JSR GINF
- LDA #&80
+ LDA #$80
  STA S
  LSR A
  STA R
@@ -11367,14 +11367,14 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: DOKEY
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: DOKEY
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .DOKEY
 
@@ -11385,7 +11385,7 @@
 .CB6B0
 
  LDX L0081
- CPX #&40
+ CPX #$40
  BNE CB6B9
  JMP CA166_b6
 
@@ -11404,23 +11404,23 @@
 .CB6C8
 
  JSR ZINF_0
- LDA #&60
+ LDA #$60
  STA INWK+14
- ORA #&80
+ ORA #$80
  STA INWK+22
  STA TYPE
  LDA DELTA
  STA INWK+27
  JSR DOCKIT
  LDA INWK+27
- CMP #&16
+ CMP #$16
  BCC CB6E4
- LDA #&16
+ LDA #$16
 
 .CB6E4
 
  STA DELTA
- LDA #&FF
+ LDA #$FF
  LDX #0
  LDY INWK+28
  BEQ CB6F5
@@ -11433,7 +11433,7 @@
 
 .CB6F5
 
- LDA #&80
+ LDA #$80
  LDX #2
  ASL INWK+29
  BEQ CB712
@@ -11444,7 +11444,7 @@
 
  BIT INWK+29
  BPL CB70C
- LDA #&40
+ LDA #$40
  STA JSTX
  LDA #0
 
@@ -11456,7 +11456,7 @@
 .CB712
 
  STA JSTX
- LDA #&80
+ LDA #$80
  LDX #4
  ASL INWK+30
  BEQ CB727
@@ -11472,7 +11472,7 @@
 
  STA JSTY
  LDX JSTX
- LDA #&0E
+ LDA #$0E
  LDY KY3
  BEQ CB737
  JSR BUMP2
@@ -11486,7 +11486,7 @@
 .CB73F
 
  STX JSTX
- LDA #&0E
+ LDA #$0E
  LDX JSTY
  LDY KY5
  BEQ CB74F
@@ -11503,7 +11503,7 @@
  STX JSTY
  LDA auto
  BNE CB777
- LDX #&80
+ LDX #$80
  LDA KY3
  ORA KY4
  BNE CB76C
@@ -11520,20 +11520,20 @@
 
  JMP CB6B0
 
-\ ******************************************************************************
-\
-\       Name: subm_B77A
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B77A
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B77A
 
  PHA
  STY L0393
- LDA #&C0
+ LDA #$C0
  STA DTW4
  LDA #0
  STA DTW5
@@ -11541,41 +11541,41 @@
  JSR ex_b2
  JMP CB7F2
 
-\ ******************************************************************************
-\
-\       Name: MESS
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MESS
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MESS
 
  PHA
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
- LDY #&0A
+ LDY #$0A
  STY L0393
- LDA #&C0
+ LDA #$C0
  STA DTW4
  LDA #0
  STA DTW5
  PLA
- CMP #&FA
+ CMP #$FA
  BNE CB7DF
  LDA #0
  STA QQ17
- LDA #&BD
+ LDA #$BD
  JSR TT27_b2
- LDA #&2D
+ LDA #$2D
  JSR TT27_b2
  JSR TT162
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  JSR hyp1_cpl
  LDA #3
@@ -11597,16 +11597,16 @@
 
  LDA L0394
  BEQ CB7F2
- LDA #&FD
+ LDA #$FD
  JSR TT27_b2
 
 .CB7F2
 
- LDA #&20
+ LDA #$20
  SEC
  SBC DTW5
  BCS CB801
- LDA #&1F
+ LDA #$1F
  STA DTW5
  LDA #2
 
@@ -11615,8 +11615,8 @@
  LSR A
  STA messXC
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDX DTW5
  STX L0584
@@ -11630,8 +11630,8 @@
  BNE loop_CB818
  STX L0394
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
 .CB831
 
@@ -11643,14 +11643,14 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: LASLI2
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: LASLI2
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .LASLI2
 
@@ -11658,7 +11658,7 @@
  LDX QQ11
  BEQ CB845
  JSR CLYNS+8
- LDA #&17
+ LDA #$17
 
 .CB845
 
@@ -11666,8 +11666,8 @@
  LDX #0
  STX QQ17
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA messXC
  STA XC
@@ -11686,20 +11686,20 @@
  BEQ CB839
  JMP subm_D951
 
-\ ******************************************************************************
-\
-\       Name: OUCH
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: OUCH
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .OUCH
 
  JSR DORND
  BMI CB8A9
- CPX #&16
+ CPX #$16
  BCS CB8A9
  LDA QQ20,X
  BEQ CB8A9
@@ -11708,19 +11708,19 @@
  LDY #3
  STY L0394
  STA QQ20,X
- CPX #&11
+ CPX #$11
  BCS CB89A
  TXA
- ADC #&D0
+ ADC #$D0
  JMP MESS
 
 .CB89A
 
  BEQ CB8AA
- CPX #&12
+ CPX #$12
  BEQ CB8AE
  TXA
- ADC #&5D
+ ADC #$5D
 
 .loop_CB8A3
 
@@ -11733,50 +11733,50 @@
 
 .CB8AA
 
- LDA #&6C
+ LDA #$6C
  BNE loop_CB8A3
 
 .CB8AE
 
- LDA #&6F
+ LDA #$6F
  JMP MESS
 
-\ ******************************************************************************
-\
-\       Name: QQ23
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: QQ23
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .QQ23
 
- EQUB &13                                     ; B8B3: 13          .
- EQUB &82                                     ; B8B4: 82          .
+ EQUB $13                                     ; B8B3: 13          .
+ EQUB $82                                     ; B8B4: 82          .
  EQUB 6                                       ; B8B5: 06          .
- EQUB   1, &14, &81, &0A,   3, &41, &83,   2  ; B8B6: 01 14 81... ...
- EQUB   7, &28, &85, &E2, &1F, &53, &85, &FB  ; B8BE: 07 28 85... .(.
- EQUB &0F, &C4,   8, &36,   3, &EB, &1D,   8  ; B8C6: 0F C4 08... ...
- EQUB &78, &9A, &0E, &38,   3, &75,   6, &28  ; B8CE: 78 9A 0E... x..
- EQUB   7, &4E,   1, &11, &1F, &7C, &0D, &1D  ; B8D6: 07 4E 01... .N.
- EQUB   7, &B0, &89, &DC, &3F, &20, &81, &35  ; B8DE: 07 B0 89... ...
- EQUB   3, &61, &A1, &42,   7, &AB, &A2, &37  ; B8E6: 03 61 A1... .a.
- EQUB &1F, &2D, &C1, &FA, &0F, &35, &0F, &C0  ; B8EE: 1F 2D C1... .-.
+ EQUB   1, $14, $81, $0A,   3, $41, $83,   2  ; B8B6: 01 14 81... ...
+ EQUB   7, $28, $85, $E2, $1F, $53, $85, $FB  ; B8BE: 07 28 85... .(.
+ EQUB $0F, $C4,   8, $36,   3, $EB, $1D,   8  ; B8C6: 0F C4 08... ...
+ EQUB $78, $9A, $0E, $38,   3, $75,   6, $28  ; B8CE: 78 9A 0E... x..
+ EQUB   7, $4E,   1, $11, $1F, $7C, $0D, $1D  ; B8D6: 07 4E 01... .N.
+ EQUB   7, $B0, $89, $DC, $3F, $20, $81, $35  ; B8DE: 07 B0 89... ...
+ EQUB   3, $61, $A1, $42,   7, $AB, $A2, $37  ; B8E6: 03 61 A1... .a.
+ EQUB $1F, $2D, $C1, $FA, $0F, $35, $0F, $C0  ; B8EE: 1F 2D C1... .-.
  EQUB   7                                     ; B8F6: 07          .
 
-\ ******************************************************************************
-\
-\       Name: PAS1
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: PAS1
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .PAS1
 
- LDA #&64
+ LDA #$64
  STA INWK+3
  LDA #0
  STA XX1
@@ -11787,50 +11787,50 @@
  INC MCNT
  JMP MVEIT
 
-\ ******************************************************************************
-\
-\       Name: subm_B90D
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B90D
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B90D
 
  JMP CBBDE_b6
 
-\ ******************************************************************************
-\
-\       Name: MVEIT
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MVEIT
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MVEIT
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA INWK+31
- AND #&A0
+ AND #$A0
  BNE MVEIT3
  LDA MCNT
  EOR XSAV
- AND #&0F
+ AND #$0F
  BNE MV3
  JSR TIDY_b1
 
-\ ******************************************************************************
-\
-\       Name: MV3
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MV3
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MV3
 
@@ -11851,63 +11851,63 @@
 
 .CB945
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  JSR TACTICS
 
-\ ******************************************************************************
-\
-\       Name: MVEIT3
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MVEIT3
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MVEIT3
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA INWK+27
  ASL A
  ASL A
  STA Q
  LDA INWK+10
- AND #&7F
+ AND #$7F
  JSR FMLTU
  STA R
  LDA INWK+10
  LDX #0
  JSR MVT1m2
  LDA INWK+12
- AND #&7F
+ AND #$7F
  JSR FMLTU
  STA R
  LDA INWK+12
  LDX #3
  JSR MVT1m2
  LDA INWK+14
- AND #&7F
+ AND #$7F
  JSR FMLTU
  STA R
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA INWK+14
  LDX #6
  JSR MVT1m2
 
-\ ******************************************************************************
-\
-\       Name: MVEIT4
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MVEIT4
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MVEIT4
 
@@ -11920,8 +11920,8 @@
 .CB9AE
 
  STA INWK+27
- LDY #&0F
- JSR GetShipBlueprint   \ Set A to the Y-th byte from the current ship blueprint
+ LDY #$0F
+ JSR GetShipBlueprint   ; Set A to the Y-th byte from the current ship blueprint
  CMP INWK+27
  BCS CB9BB
  STA INWK+27
@@ -11931,20 +11931,20 @@
  LDA #0
  STA INWK+28
 
-\ ******************************************************************************
-\
-\       Name: MVEIT5
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MVEIT5
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MVEIT5
 
  LDX ALP1
  LDA XX1
- EOR #&FF
+ EOR #$FF
  STA P
  LDA INWK+1
  JSR MLTU2-2
@@ -11955,12 +11955,12 @@
  JSR MVT6
  STA K2+3
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA P+1
  STA K2+1
- EOR #&FF
+ EOR #$FF
  STA P
  LDA P+2
  STA K2+2
@@ -11973,12 +11973,12 @@
  JSR MVT6
  STA INWK+8
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA P+1
  STA INWK+6
- EOR #&FF
+ EOR #$FF
  STA P
  LDA P+2
  STA INWK+7
@@ -11999,8 +11999,8 @@
 
 .CBA42
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA K2+1
  SBC P+1
@@ -12016,17 +12016,17 @@
  SBC INWK+4
  STA INWK+4
  LDA INWK+5
- EOR #&80
+ EOR #$80
  STA INWK+5
 
 .CBA71
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDX ALP1
  LDA INWK+3
- EOR #&FF
+ EOR #$FF
  STA P
  LDA INWK+4
  JSR MLTU2-2
@@ -12041,28 +12041,28 @@
  LDA P+1
  STA XX1
 
-\ ******************************************************************************
-\
-\       Name: MV45
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MV45
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MV45
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA DELTA
  STA R
- LDA #&80
+ LDA #$80
  LDX #6
  JSR MVT1
  LDA TYPE
- AND #&81
- CMP #&81
+ AND #$81
+ CMP #$81
  BNE CBAC1
  RTS
 
@@ -12070,92 +12070,92 @@
 
  LDY #9
  JSR MVS4
- LDY #&0F
+ LDY #$0F
  JSR MVS4
- LDY #&15
+ LDY #$15
  JSR MVS4
  LDA INWK+30
- AND #&80
+ AND #$80
  STA RAT2
  LDA INWK+30
- AND #&7F
+ AND #$7F
  BEQ CBAF9
- CMP #&7F
+ CMP #$7F
  SBC #0
  ORA RAT2
  STA INWK+30
- LDX #&0F
+ LDX #$0F
  LDY #9
  JSR MVS5
- LDX #&11
- LDY #&0B
+ LDX #$11
+ LDY #$0B
  JSR MVS5
- LDX #&13
- LDY #&0D
+ LDX #$13
+ LDY #$0D
  JSR MVS5
 
 .CBAF9
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA INWK+29
- AND #&80
+ AND #$80
  STA RAT2
  LDA INWK+29
- AND #&7F
+ AND #$7F
  BEQ MV5
- CMP #&7F
+ CMP #$7F
  SBC #0
  ORA RAT2
  STA INWK+29
- LDX #&0F
- LDY #&15
+ LDX #$0F
+ LDY #$15
  JSR MVS5
- LDX #&11
- LDY #&17
+ LDX #$11
+ LDY #$17
  JSR MVS5
- LDX #&13
- LDY #&19
+ LDX #$13
+ LDY #$19
  JSR MVS5
 
-\ ******************************************************************************
-\
-\       Name: MV5
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MV5
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MV5
 
  LDA INWK+31
- ORA #&10
+ ORA #$10
  STA INWK+31
  JMP SCAN_b1
 
-\ ******************************************************************************
-\
-\       Name: MVT1m2
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MVT1m2
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MVT1m2
 
- AND #&80
+ AND #$80
 
-\ ******************************************************************************
-\
-\       Name: MVT1
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MVT1
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MVT1
 
@@ -12189,9 +12189,9 @@
  SBC S
  STA INWK+1,X
  LDA INWK+2,X
- AND #&7F
+ AND #$7F
  SBC #0
- ORA #&80
+ ORA #$80
  EOR T
  STA INWK+2,X
  BCS CBB8E
@@ -12203,7 +12203,7 @@
  STA INWK+1,X
  LDA #0
  SBC INWK+2,X
- AND #&7F
+ AND #$7F
  ORA T
  STA INWK+2,X
 
@@ -12211,19 +12211,19 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: MVS4
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MVS4
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MVS4
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA ALPHA
  STA Q
@@ -12234,7 +12234,7 @@
  LDX XX1,Y
  STX P
  LDA INWK+1,Y
- EOR #&80
+ EOR #$80
  JSR MAD
  STA INWK+3,Y
  STX INWK+2,Y
@@ -12249,8 +12249,8 @@
  STX XX1,Y
  STX P
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA BETA
  STA Q
@@ -12261,7 +12261,7 @@
  LDX INWK+4,Y
  STX P
  LDA INWK+5,Y
- EOR #&80
+ EOR #$80
  JSR MAD
  STA INWK+3,Y
  STX INWK+2,Y
@@ -12275,19 +12275,19 @@
  STA INWK+5,Y
  STX INWK+4,Y
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: MVT6
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MVT6
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MVT6
 
@@ -12315,7 +12315,7 @@
  STA P+2
  BCC CBC44
  TYA
- EOR #&80
+ EOR #$80
  RTS
 
 .CBC44
@@ -12329,19 +12329,19 @@
  TYA
  RTS
 
-\ ******************************************************************************
-\
-\       Name: MV40
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: MV40
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .MV40
 
  LDA ALPHA
- EOR #&80
+ EOR #$80
  STA Q
  LDA XX1
  STA P
@@ -12372,10 +12372,10 @@
  STA INWK+7
  LDA K+3
  STA INWK+8
- EOR #&80
+ EOR #$80
  JSR MULT3
  LDA K+3
- AND #&80
+ AND #$80
  STA T
  EOR K2+3
  BMI CBCC5
@@ -12404,10 +12404,10 @@
  SBC K2+2
  STA INWK+4
  LDA K2+3
- AND #&7F
+ AND #$7F
  STA P
  LDA K+3
- AND #&7F
+ AND #$7F
  SBC P
  STA P
  BCS CBCFC
@@ -12419,7 +12419,7 @@
  STA INWK+4
  LDA #0
  SBC P
- ORA #&80
+ ORA #$80
 
 .CBCFC
 
@@ -12443,14 +12443,14 @@
  STA INWK+2
  JMP MV45
 
-\ ******************************************************************************
-\
-\       Name: PLUT
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: PLUT
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .PLUT
 
@@ -12459,28 +12459,28 @@
  DEX
  BNE CBD5E
  LDA INWK+2
- EOR #&80
+ EOR #$80
  STA INWK+2
  LDA INWK+8
- EOR #&80
+ EOR #$80
  STA INWK+8
  LDA INWK+10
- EOR #&80
+ EOR #$80
  STA INWK+10
  LDA INWK+14
- EOR #&80
+ EOR #$80
  STA INWK+14
  LDA INWK+16
- EOR #&80
+ EOR #$80
  STA INWK+16
  LDA INWK+20
- EOR #&80
+ EOR #$80
  STA INWK+20
  LDA INWK+22
- EOR #&80
+ EOR #$80
  STA INWK+22
  LDA INWK+26
- EOR #&80
+ EOR #$80
  STA INWK+26
 
 .CBD5D
@@ -12493,7 +12493,7 @@
  CPX #2
  ROR A
  STA RAT2
- EOR #&80
+ EOR #$80
  STA RAT
  LDA XX1
  LDX INWK+6
@@ -12512,9 +12512,9 @@
  STX INWK+8
  LDY #9
  JSR CBD92
- LDY #&0F
+ LDY #$0F
  JSR CBD92
- LDY #&15
+ LDY #$15
 
 .CBD92
 
@@ -12539,14 +12539,14 @@
  JSR subm_BDED
  JMP NWSTARS
 
-\ ******************************************************************************
-\
-\       Name: LOOK1
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: LOOK1
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .LOOK1
 
@@ -12559,14 +12559,14 @@
  JSR FLIP
  JMP KeepPPUTablesAt0
 
-\ ******************************************************************************
-\
-\       Name: FLIP
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: FLIP
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .FLIP
 
@@ -12574,8 +12574,8 @@
 
 .CBDCA
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDX SY,Y
  LDA SX,Y
@@ -12588,18 +12588,18 @@
  BNE CBDCA
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_BDED
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_BDED
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_BDED
 
- LDA #&48
+ LDA #$48
  JSR subm_AE32
  STX VIEW
  LDA #0
@@ -12608,19 +12608,19 @@
  JSR CA7B7_b3
  JMP CBE17
 
-\ ******************************************************************************
-\
-\       Name: ResetStardust
-\       Type: Subroutine
-\   Category: ???
-\    Summary: Draws sprites for stardust
-\
-\ ------------------------------------------------------------------------------
-\
-\ writes to the 20 sprites from 38 onwards, tile = 210, y = &F0
-\ attr is based on sprite number
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: ResetStardust
+;       Type: Subroutine
+;   Category: ???
+;    Summary: Draws sprites for stardust
+;
+; ------------------------------------------------------------------------------
+;
+; writes to the 20 sprites from 38 onwards, tile = 210, y = $F0
+; attr is based on sprite number
+;
+; ******************************************************************************
 
 .ResetStardust
 
@@ -12628,30 +12628,30 @@
  LDA #0
  JSR TT66
  JSR CopyNametable0To1
- LDA #&50
+ LDA #$50
  STA L00CD
  STA L00CE
  JSR CA9D1_b3
 
 .CBE17
 
- LDX #&14
- LDY #&98
+ LDX #$14
+ LDY #$98
 
 .CBE1B
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
- LDA #&F0
+ LDA #$F0
  STA ySprite0,Y
- LDA #&D2
+ LDA #$D2
  STA tileSprite0,Y
  TXA
  LSR A
  ROR A
  ROR A
- AND #&E1
+ AND #$E1
  STA attrSprite0,Y
  INY
  INY
@@ -12662,39 +12662,39 @@
  JSR KeepPPUTablesAt0
  JSR CBA23_b3
 
-\ ******************************************************************************
-\
-\       Name: subm_BE48
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_BE48
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_BE48
 
- LDA #&FF
+ LDA #$FF
  STA L045F
- LDA #&2C
+ LDA #$2C
  STA visibleColour
  LDA tileNumber
  STA L00D2
- LDA #&50
+ LDA #$50
  STA L00D8
  LDX #8
  STX L00CC
- LDA #&74
+ LDA #$74
  STA L00CD
  RTS
 
-\ ******************************************************************************
-\
-\       Name: ECMOF
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: ECMOF
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .ECMOF
 
@@ -12704,21 +12704,21 @@
  LDY #2
  JMP ECBLB
 
-\ ******************************************************************************
-\
-\       Name: SFRMIS
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: SFRMIS
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .SFRMIS
 
  LDX #1
  JSR SFS1-2
  BCC CBE7F
- LDA #&78
+ LDA #$78
  JSR MESS
  LDY #9
  JMP NOISE
@@ -12727,28 +12727,28 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: EXNO2
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: EXNO2
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .EXNO2
 
  JSR IncreaseTally
  BCC CBE8D
  INC TALLY+1
- LDA #&65
+ LDA #$65
  JSR MESS
 
 .CBE8D
 
  LDA INWK+7
  LDX #0
- CMP #&10
+ CMP #$10
  BCS CBEA5
  INX
  CMP #8
@@ -12766,41 +12766,41 @@
  LDY LBEAB,X
  JMP NOISE
 
-\ ******************************************************************************
-\
-\       Name: LBEAB
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: LBEAB
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .LBEAB
 
- EQUB &1B, &17, &0E, &0D, &0D                 ; BEAB: 1B 17 0E... ...
+ EQUB $1B, $17, $0E, $0D, $0D                 ; BEAB: 1B 17 0E... ...
 
-\ ******************************************************************************
-\
-\       Name: EXNO
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: EXNO
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .EXNO
 
- LDY #&0A
+ LDY #$0A
  JMP NOISE
 
-\ ******************************************************************************
-\
-\       Name: TT66
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: TT66
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .TT66
 
@@ -12816,12 +12816,12 @@
 
  JSR subm_D8C5
  JSR ClearTiles_b3
- LDA #&10
+ LDA #$10
  STA L00B5
  LDX #0
  STX L046D
  JSR subm_D8EC
- LDA #&80
+ LDA #$80
  STA QQ17
  STA DTW2
  STA DTW1
@@ -12835,8 +12835,8 @@
  STA YC
  JSR CAFCD_b3
  LDA QQ11
- LDX #&FF
- AND #&40
+ LDX #$FF
+ AND #$40
  BNE CBF19
  LDX #4
  LDA QQ11
@@ -12844,8 +12844,8 @@
  BEQ CBF19
  LDX #2
  LDA QQ11
- AND #&0E
- CMP #&0C
+ AND #$0E
+ CMP #$0C
  BEQ CBF19
  LDX #1
  LDA QQ12
@@ -12878,22 +12878,22 @@
  TXA
  JSR CAE18_b3
  LDA QQ11
- CMP #&C4
+ CMP #$C4
  BEQ loop_CBF34
  LDA QQ11
- CMP #&8D
+ CMP #$8D
  BEQ CBF54
- CMP #&CF
+ CMP #$CF
  BEQ CBF54
- AND #&10
+ AND #$10
  BEQ CBF54
- LDA #&42
+ LDA #$42
  JSR CB0E1_b3
 
 .CBF54
 
  LDA QQ11
- AND #&20
+ AND #$20
  BEQ CBF5D
  JSR CB18E_b3
 
@@ -12916,7 +12916,7 @@
  STA nameBuffer0+800
  STA nameBuffer0+832
  LDA QQ11
- AND #&40
+ AND #$40
  BNE CBF91
 
 .CBF91
@@ -12942,7 +12942,7 @@
  LDX language
  LDA LC0DF,X
  STA XC
- LDA #&1E
+ LDA #$1E
  BNE CBFD5
 
 .CBFBF
@@ -12955,7 +12955,7 @@
  BNE CBFE2
  JSR subm_BFED
  JSR TT162
- LDA #&AF
+ LDA #$AF
 
 .CBFD5
 
@@ -12972,59 +12972,59 @@
 
 .CBFE2
 
- LDA #&AF
+ LDA #$AF
  JSR spc
  JSR subm_BFED
  JMP CBFD8
 
-\ ******************************************************************************
-\
-\       Name: subm_BFED
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_BFED
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_BFED
 
  LDA VIEW
- ORA #&60
+ ORA #$60
  JMP TT27_b2
 
-\ ******************************************************************************
-\
-\       Name: Vectors
-\       Type: Variable
-\   Category: Text
-\    Summary: Vectors and padding at the end of the ROM bank
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: Vectors
+;       Type: Variable
+;   Category: Text
+;    Summary: Vectors and padding at the end of the ROM bank
+;
+; ******************************************************************************
 
- FOR I%, P%, &BFF9
+ FOR I%, P%, $BFF9
 
-  EQUB &FF              \ Pad out the rest of the ROM bank with &FF
+  EQUB $FF              ; Pad out the rest of the ROM bank with $FF
 
  NEXT
 
- EQUW Interrupts+&4000  \ Vector to the NMI handler in case this bank is loaded
-                        \ into &C000 during startup (the handler contains an RTI
-                        \ so the interrupt is processed but has no effect)
+ EQUW Interrupts+$4000  ; Vector to the NMI handler in case this bank is loaded
+                        ; into $C000 during startup (the handler contains an RTI
+                        ; so the interrupt is processed but has no effect)
 
- EQUW ResetMMC1+&4000   \ Vector to the RESET handler in case this bank is
-                        \ loaded into &C000 during startup (the handler resets
-                        \ the MMC1 mapper to map bank 7 into &C000 instead)
+ EQUW ResetMMC1+$4000   ; Vector to the RESET handler in case this bank is
+                        ; loaded into $C000 during startup (the handler resets
+                        ; the MMC1 mapper to map bank 7 into $C000 instead)
 
- EQUW Interrupts+&4000  \ Vector to the IRQ/BRK handler in case this bank is
-                        \ loaded into &C000 during startup (the handler contains
-                        \ an RTI so the interrupt is processed but has no
-                        \ effect)
+ EQUW Interrupts+$4000  ; Vector to the IRQ/BRK handler in case this bank is
+                        ; loaded into $C000 during startup (the handler contains
+                        ; an RTI so the interrupt is processed but has no
+                        ; effect)
 
-\ ******************************************************************************
-\
-\ Save bank0.bin
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+; Save bank0.bin
+;
+; ******************************************************************************
 
  PRINT "S.bank0.bin ", ~CODE%, " ", ~P%, " ", ~LOAD%, " ", ~LOAD%
  SAVE "3-assembled-output/bank0.bin", CODE%, P%, LOAD%

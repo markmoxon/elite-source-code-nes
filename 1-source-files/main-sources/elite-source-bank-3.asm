@@ -1,29 +1,29 @@
-\ ******************************************************************************
-\
-\ NES ELITE GAME SOURCE (BANK 3)
-\
-\ NES Elite was written by Ian Bell and David Braben and is copyright D. Braben
-\ and I. Bell 1992
-\
-\ The code on this site has been reconstructed from a disassembly of the version
-\ released on Ian Bell's personal website at http://www.elitehomepage.org/
-\
-\ The commentary is copyright Mark Moxon, and any misunderstandings or mistakes
-\ in the documentation are entirely my fault
-\
-\ The terminology and notations used in this commentary are explained at
-\ https://www.bbcelite.com/about_site/terminology_used_in_this_commentary.html
-\
-\ The deep dive articles referred to in this commentary can be found at
-\ https://www.bbcelite.com/deep_dives
-\
-\ ------------------------------------------------------------------------------
-\
-\ This source file produces the following binary file:
-\
-\   * bank3.bin
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+; NES ELITE GAME SOURCE (BANK 3)
+;
+; NES Elite was written by Ian Bell and David Braben and is copyright D. Braben
+; and I. Bell 1992
+;
+; The code on this site has been reconstructed from a disassembly of the version
+; released on Ian Bell's personal website at http://www.elitehomepage.org/
+;
+; The commentary is copyright Mark Moxon, and any misunderstandings or mistakes
+; in the documentation are entirely my fault
+;
+; The terminology and notations used in this commentary are explained at
+; https://www.bbcelite.com/about_site/terminology_used_in_this_commentary.html
+;
+; The deep dive articles referred to in this commentary can be found at
+; https://www.bbcelite.com/deep_dives
+;
+; ------------------------------------------------------------------------------
+;
+; This source file produces the following binary file:
+;
+;   * bank3.bin
+;
+; ******************************************************************************
 
  INCLUDE "1-source-files/main-sources/elite-build-options.asm"
 
@@ -33,118 +33,118 @@
 
  INCLUDE "1-source-files/main-sources/elite-source-bank-7.asm"
 
-\ ******************************************************************************
-\
-\ ELITE BANK 1
-\
-\ Produces the binary file bank1.bin.
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+; ELITE BANK 1
+;
+; Produces the binary file bank1.bin.
+;
+; ******************************************************************************
 
- CODE% = &8000
- LOAD% = &8000
+ CODE% = $8000
+ LOAD% = $8000
 
  ORG CODE%
 
-\ ******************************************************************************
-\
-\       Name: ResetMMC1
-\       Type: Variable
-\   Category: Start and end
-\    Summary: The MMC1 mapper reset routine at the start of the ROM bank
-\
-\ ------------------------------------------------------------------------------
-\
-\ When the NES is switched on, it is hardwired to perform a JMP (&FFFC). At this
-\ point, there is no guarantee as to which ROM banks are mapped to &8000 and
-\ &C000, so to ensure that the game starts up correctly, we put the same code
-\ in each ROM at the following locations:
-\
-\   * We put &C000 in address &FFFC in every ROM bank, so the NES always jumps
-\     to &C000 when it starts up via the JMP (&FFFC), irrespective of which
-\     ROM bank is mapped to &C000.
-\
-\   * We put the same reset routine at the start of every ROM bank, so the same
-\     routine gets run, whichever ROM bank is mapped to &C000.
-\
-\ This reset routine is therefore called when the NES starts up, whatever the
-\ bank configuration ends up being. It then switches ROM bank 7 to &C000 and
-\ jumps into bank 7 at the game's entry point S%, which starts the game.
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: ResetMMC1
+;       Type: Variable
+;   Category: Start and end
+;    Summary: The MMC1 mapper reset routine at the start of the ROM bank
+;
+; ------------------------------------------------------------------------------
+;
+; When the NES is switched on, it is hardwired to perform a JMP ($FFFC). At this
+; point, there is no guarantee as to which ROM banks are mapped to $8000 and
+; $C000, so to ensure that the game starts up correctly, we put the same code
+; in each ROM at the following locations:
+;
+;   * We put $C000 in address $FFFC in every ROM bank, so the NES always jumps
+;     to $C000 when it starts up via the JMP ($FFFC), irrespective of which
+;     ROM bank is mapped to $C000.
+;
+;   * We put the same reset routine at the start of every ROM bank, so the same
+;     routine gets run, whichever ROM bank is mapped to $C000.
+;
+; This reset routine is therefore called when the NES starts up, whatever the
+; bank configuration ends up being. It then switches ROM bank 7 to $C000 and
+; jumps into bank 7 at the game's entry point S%, which starts the game.
+;
+; ******************************************************************************
 
 .ResetMMC1
 
- SEI                    \ Disable interrupts
+ SEI                    ; Disable interrupts
 
- INC &C006              \ Reset the MMC1 mapper, which we can do by writing a
-                        \ value with bit 7 set into any address in ROM space
-                        \ (i.e. any address from &8000 to &FFFF)
-                        \
-                        \ The INC instruction does this in a more efficient
-                        \ manner than an LDA/STA pair, as it:
-                        \
-                        \   * Fetches the contents of address &C006, which
-                        \     contains the high byte of the JMP destination
-                        \     below, i.e. the high byte of S%, which is &C0
-                        \
-                        \   * Adds 1, to give &C1
-                        \
-                        \   * Writes the value &C1 back to address &C006
-                        \
-                        \ &C006 is in the ROM space and &C1 has bit 7 set, so
-                        \ the INC does all that is required to reset the mapper,
-                        \ in fewer cycles and bytes than an LDA/STA pair
-                        \
-                        \ Resetting MMC1 maps bank 7 to &C000 and enables the
-                        \ bank at &8000 to be switched, so this instruction
-                        \ ensures that bank 7 is present
+ INC $C006              ; Reset the MMC1 mapper, which we can do by writing a
+                        ; value with bit 7 set into any address in ROM space
+                        ; (i.e. any address from $8000 to $FFFF)
+                        ;
+                        ; The INC instruction does this in a more efficient
+                        ; manner than an LDA/STA pair, as it:
+                        ;
+                        ;   * Fetches the contents of address $C006, which
+                        ;     contains the high byte of the JMP destination
+                        ;     below, i.e. the high byte of S%, which is $C0
+                        ;
+                        ;   * Adds 1, to give $C1
+                        ;
+                        ;   * Writes the value $C1 back to address $C006
+                        ;
+                        ; $C006 is in the ROM space and $C1 has bit 7 set, so
+                        ; the INC does all that is required to reset the mapper,
+                        ; in fewer cycles and bytes than an LDA/STA pair
+                        ;
+                        ; Resetting MMC1 maps bank 7 to $C000 and enables the
+                        ; bank at $8000 to be switched, so this instruction
+                        ; ensures that bank 7 is present
 
- JMP S%                 \ Jump to S% in bank 7 to start the game
+ JMP S%                 ; Jump to S% in bank 7 to start the game
 
-\ ******************************************************************************
-\
-\       Name: Interrupts
-\       Type: Subroutine
-\   Category: Text
-\    Summary: The IRQ and NMI handler while the MMC1 mapper reset routine is
-\             still running
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: Interrupts
+;       Type: Subroutine
+;   Category: Text
+;    Summary: The IRQ and NMI handler while the MMC1 mapper reset routine is
+;             still running
+;
+; ******************************************************************************
 
 .Interrupts
 
- RTI                    \ Return from the IRQ interrupt without doing anything
-                        \
-                        \ This ensures that while the system is starting up and
-                        \ the ROM banks are in an unknown configuration, any IRQ
-                        \ interrupts that go via the vector at &FFFE and any NMI
-                        \ interrupts that go via the vector at &FFFA will end up
-                        \ here and be dealt with
-                        \
-                        \ Once bank 7 is switched into &C000 by the ResetMMC1
-                        \ routine, the vector is overwritten with the last two
-                        \ bytes of bank 7, which point to the IRQ routine
+ RTI                    ; Return from the IRQ interrupt without doing anything
+                        ;
+                        ; This ensures that while the system is starting up and
+                        ; the ROM banks are in an unknown configuration, any IRQ
+                        ; interrupts that go via the vector at $FFFE and any NMI
+                        ; interrupts that go via the vector at $FFFA will end up
+                        ; here and be dealt with
+                        ;
+                        ; Once bank 7 is switched into $C000 by the ResetMMC1
+                        ; routine, the vector is overwritten with the last two
+                        ; bytes of bank 7, which point to the IRQ routine
 
-\ ******************************************************************************
-\
-\       Name: Version number
-\       Type: Variable
-\   Category: Text
-\    Summary: The game's version number
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: Version number
+;       Type: Variable
+;   Category: Text
+;    Summary: The game's version number
+;
+; ******************************************************************************
 
  EQUS " 5.0"
 
-\ ******************************************************************************
-\
-\       Name: L800C
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: L800C
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
  EQUS "  NES ELITE IM"   ; 800C: 20 20 4E...   N
  EQUS "AGE 5.2  -   2"   ; 801A: 41 47 45... AGE
@@ -152,59 +152,59 @@
  EQUS ") D.Braben & I"   ; 8036: 29 20 44... ) D
  EQUS ".Bell 1991/92 "   ; 8044: 2E 42 65... .Be
  EQUS " "                ; 8052: 20
- EQUB &FF, &FF, &FF, &FF ; 8053: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 8057: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 805B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 805F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 8063: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 8067: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 806B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 806F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 8073: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 8077: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 807B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 807F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 8083: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 8087: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 808B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 808F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 8093: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 8097: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 809B: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 809F: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 80A3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 80A7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 80AB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 80AF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 80B3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 80B7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 80BB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 80BF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 80C3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 80C7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 80CB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 80CF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 80D3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 80D7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 80DB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 80DF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 80E3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 80E7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 80EB: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 80EF: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 80F3: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 80F7: FF FF FF... ...
- EQUB &FF, &FF, &FF, &FF ; 80FB: FF FF FF... ...
- EQUB &FF                ; 80FF: FF          .
+ EQUB $FF, $FF, $FF, $FF ; 8053: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 8057: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 805B: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 805F: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 8063: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 8067: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 806B: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 806F: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 8073: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 8077: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 807B: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 807F: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 8083: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 8087: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 808B: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 808F: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 8093: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 8097: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 809B: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 809F: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 80A3: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 80A7: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 80AB: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 80AF: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 80B3: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 80B7: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 80BB: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 80BF: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 80C3: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 80C7: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 80CB: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 80CF: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 80D3: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 80D7: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 80DB: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 80DF: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 80E3: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 80E7: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 80EB: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 80EF: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 80F3: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 80F7: FF FF FF... ...
+ EQUB $FF, $FF, $FF, $FF ; 80FB: FF FF FF... ...
+ EQUB $FF                ; 80FF: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_0
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_0
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_0
 
@@ -225,14 +225,14 @@
  EQUB %11111111          ; 810E: FF          .
  EQUB %11111111          ; 810F: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_1
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_1
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_1
 
@@ -253,14 +253,14 @@
  EQUB %10111011          ; 811E: BB          .
  EQUB %10111011          ; 811F: BB          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_2
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_2
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_2
 
@@ -281,14 +281,14 @@
  EQUB %11111111          ; 812E: FF          .
  EQUB %11111111          ; 812F: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_3
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_3
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_3
 
@@ -309,14 +309,14 @@
  EQUB %11111011          ; 813E: FB          .
  EQUB %11111011          ; 813F: FB          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_4
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_4
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_4
 
@@ -337,14 +337,14 @@
  EQUB %00000111          ; 814E: 07          .
  EQUB %00000111          ; 814F: 07          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_5
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_5
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_5
 
@@ -365,14 +365,14 @@
  EQUB %11100000          ; 815E: E0          .
  EQUB %11100000          ; 815F: E0          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_6
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_6
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_6
 
@@ -393,14 +393,14 @@
  EQUB %10101110          ; 816E: AE          .
  EQUB %10110110          ; 816F: B6          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_7
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_7
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_7
 
@@ -421,14 +421,14 @@
  EQUB %00000101          ; 817E: 05          .
  EQUB %10101001          ; 817F: A9          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_8
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_8
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_8
 
@@ -449,14 +449,14 @@
  EQUB %01000011          ; 818E: 43          C
  EQUB %01110111          ; 818F: 77          w
 
-\ ******************************************************************************
-\
-\       Name: tile3_9
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_9
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_9
 
@@ -477,14 +477,14 @@
  EQUB %11111011          ; 819E: FB          .
  EQUB %11111011          ; 819F: FB          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_10
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_10
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_10
 
@@ -505,14 +505,14 @@
  EQUB %10100101          ; 81AE: A5          .
  EQUB %10101101          ; 81AF: AD          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_11
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_11
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_11
 
@@ -533,14 +533,14 @@
  EQUB %10100000          ; 81BE: A0          .
  EQUB %10110101          ; 81BF: B5          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_12
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_12
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_12
 
@@ -561,14 +561,14 @@
  EQUB %11100011          ; 81CE: E3          .
  EQUB %11110111          ; 81CF: F7          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_13
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_13
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_13
 
@@ -589,14 +589,14 @@
  EQUB %11101011          ; 81DE: EB          .
  EQUB %11111011          ; 81DF: FB          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_14
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_14
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_14
 
@@ -617,14 +617,14 @@
  EQUB %10110111          ; 81EE: B7          .
  EQUB %10110000          ; 81EF: B0          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_15
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_15
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_15
 
@@ -645,14 +645,14 @@
  EQUB %11101111          ; 81FE: EF          .
  EQUB %00100001          ; 81FF: 21          !
 
-\ ******************************************************************************
-\
-\       Name: tile3_16
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_16
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_16
 
@@ -673,14 +673,14 @@
  EQUB %00000001          ; 820E: 01          .
  EQUB %00000000          ; 820F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_17
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_17
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_17
 
@@ -701,14 +701,14 @@
  EQUB %00011011          ; 821E: 1B          .
  EQUB %00011011          ; 821F: 1B          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_18
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_18
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_18
 
@@ -729,14 +729,14 @@
  EQUB %10110101          ; 822E: B5          .
  EQUB %10110101          ; 822F: B5          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_19
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_19
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_19
 
@@ -757,14 +757,14 @@
  EQUB %01010101          ; 823E: 55          U
  EQUB %01010101          ; 823F: 55          U
 
-\ ******************************************************************************
-\
-\       Name: tile3_20
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_20
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_20
 
@@ -785,14 +785,14 @@
  EQUB %11111110          ; 824E: FE          .
  EQUB %00010010          ; 824F: 12          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_21
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_21
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_21
 
@@ -813,14 +813,14 @@
  EQUB %11011011          ; 825E: DB          .
  EQUB %00011011          ; 825F: 1B          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_22
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_22
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_22
 
@@ -841,14 +841,14 @@
  EQUB %10111010          ; 826E: BA          .
  EQUB %10111010          ; 826F: BA          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_23
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_23
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_23
 
@@ -869,14 +869,14 @@
  EQUB %00000111          ; 827E: 07          .
  EQUB %00000111          ; 827F: 07          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_24
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_24
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_24
 
@@ -897,14 +897,14 @@
  EQUB %00000000          ; 828E: 00          .
  EQUB %00000000          ; 828F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_25
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_25
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_25
 
@@ -925,14 +925,14 @@
  EQUB %00000000          ; 829E: 00          .
  EQUB %00000000          ; 829F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_26
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_26
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_26
 
@@ -953,14 +953,14 @@
  EQUB %00000000          ; 82AE: 00          .
  EQUB %00000000          ; 82AF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_27
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_27
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_27
 
@@ -981,14 +981,14 @@
  EQUB %00000000          ; 82BE: 00          .
  EQUB %00000000          ; 82BF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_28
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_28
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_28
 
@@ -1009,14 +1009,14 @@
  EQUB %00000000          ; 82CE: 00          .
  EQUB %00000000          ; 82CF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_29
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_29
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_29
 
@@ -1037,14 +1037,14 @@
  EQUB %00000000          ; 82DE: 00          .
  EQUB %00000000          ; 82DF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_30
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_30
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_30
 
@@ -1065,14 +1065,14 @@
  EQUB %00000000          ; 82EE: 00          .
  EQUB %00000000          ; 82EF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_31
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_31
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_31
 
@@ -1093,14 +1093,14 @@
  EQUB %01011111          ; 82FE: 5F          _
  EQUB %01000000          ; 82FF: 40          @
 
-\ ******************************************************************************
-\
-\       Name: tile3_32
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_32
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_32
 
@@ -1121,14 +1121,14 @@
  EQUB %11111111          ; 830E: FF          .
  EQUB %00000000          ; 830F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_33
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_33
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_33
 
@@ -1149,14 +1149,14 @@
  EQUB %01000101          ; 831E: 45          E
  EQUB %01000100          ; 831F: 44          D
 
-\ ******************************************************************************
-\
-\       Name: tile3_34
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_34
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_34
 
@@ -1177,14 +1177,14 @@
  EQUB %11110100          ; 832E: F4          .
  EQUB %00000100          ; 832F: 04          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_35
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_35
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_35
 
@@ -1205,14 +1205,14 @@
  EQUB %01111110          ; 833E: 7E          ~
  EQUB %01110100          ; 833F: 74          t
 
-\ ******************************************************************************
-\
-\       Name: tile3_36
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_36
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_36
 
@@ -1233,14 +1233,14 @@
  EQUB %01111110          ; 834E: 7E          ~
  EQUB %00101110          ; 834F: 2E          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_37
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_37
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_37
 
@@ -1261,14 +1261,14 @@
  EQUB %01011111          ; 835E: 5F          _
  EQUB %01000000          ; 835F: 40          @
 
-\ ******************************************************************************
-\
-\       Name: tile3_38
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_38
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_38
 
@@ -1289,14 +1289,14 @@
  EQUB %11111111          ; 836E: FF          .
  EQUB %00000000          ; 836F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_39
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_39
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_39
 
@@ -1317,14 +1317,14 @@
  EQUB %11111111          ; 837E: FF          .
  EQUB %00000000          ; 837F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_40
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_40
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_40
 
@@ -1345,14 +1345,14 @@
  EQUB %11110100          ; 838E: F4          .
  EQUB %00000100          ; 838F: 04          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_41
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_41
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_41
 
@@ -1373,14 +1373,14 @@
  EQUB %01011111          ; 839E: 5F          _
  EQUB %01000000          ; 839F: 40          @
 
-\ ******************************************************************************
-\
-\       Name: tile3_42
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_42
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_42
 
@@ -1401,14 +1401,14 @@
  EQUB %11111111          ; 83AE: FF          .
  EQUB %00000000          ; 83AF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_43
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_43
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_43
 
@@ -1429,14 +1429,14 @@
  EQUB %11111111          ; 83BE: FF          .
  EQUB %00000000          ; 83BF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_44
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_44
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_44
 
@@ -1457,14 +1457,14 @@
  EQUB %11110100          ; 83CE: F4          .
  EQUB %00000100          ; 83CF: 04          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_45
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_45
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_45
 
@@ -1485,14 +1485,14 @@
  EQUB %11111111          ; 83DE: FF          .
  EQUB %00000000          ; 83DF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_46
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_46
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_46
 
@@ -1513,14 +1513,14 @@
  EQUB %11111111          ; 83EE: FF          .
  EQUB %00000000          ; 83EF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_47
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_47
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_47
 
@@ -1541,14 +1541,14 @@
  EQUB %11110100          ; 83FE: F4          .
  EQUB %00000100          ; 83FF: 04          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_48
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_48
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_48
 
@@ -1569,14 +1569,14 @@
  EQUB %11111111          ; 840E: FF          .
  EQUB %00000000          ; 840F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_49
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_49
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_49
 
@@ -1597,14 +1597,14 @@
  EQUB %11111111          ; 841E: FF          .
  EQUB %00000000          ; 841F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_50
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_50
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_50
 
@@ -1625,14 +1625,14 @@
  EQUB %11110100          ; 842E: F4          .
  EQUB %00000100          ; 842F: 04          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_51
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_51
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_51
 
@@ -1653,14 +1653,14 @@
  EQUB %01011111          ; 843E: 5F          _
  EQUB %01000000          ; 843F: 40          @
 
-\ ******************************************************************************
-\
-\       Name: tile3_52
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_52
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_52
 
@@ -1681,14 +1681,14 @@
  EQUB %11111111          ; 844E: FF          .
  EQUB %00000000          ; 844F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_53
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_53
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_53
 
@@ -1709,14 +1709,14 @@
  EQUB %00000000          ; 845E: 00          .
  EQUB %00000000          ; 845F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_54
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_54
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_54
 
@@ -1737,14 +1737,14 @@
  EQUB %00000000          ; 846E: 00          .
  EQUB %00000000          ; 846F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_55
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_55
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_55
 
@@ -1765,14 +1765,14 @@
  EQUB %00000000          ; 847E: 00          .
  EQUB %00000000          ; 847F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_56
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_56
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_56
 
@@ -1793,14 +1793,14 @@
  EQUB %00000000          ; 848E: 00          .
  EQUB %00000000          ; 848F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_57
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_57
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_57
 
@@ -1821,14 +1821,14 @@
  EQUB %00000000          ; 849E: 00          .
  EQUB %00000000          ; 849F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_58
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_58
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_58
 
@@ -1849,14 +1849,14 @@
  EQUB %00000000          ; 84AE: 00          .
  EQUB %00000000          ; 84AF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_59
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_59
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_59
 
@@ -1877,14 +1877,14 @@
  EQUB %00000000          ; 84BE: 00          .
  EQUB %00000000          ; 84BF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_60
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_60
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_60
 
@@ -1905,14 +1905,14 @@
  EQUB %00000000          ; 84CE: 00          .
  EQUB %00000000          ; 84CF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_61
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_61
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_61
 
@@ -1933,14 +1933,14 @@
  EQUB %00000000          ; 84DE: 00          .
  EQUB %00000000          ; 84DF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_62
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_62
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_62
 
@@ -1961,14 +1961,14 @@
  EQUB %00000000          ; 84EE: 00          .
  EQUB %00000000          ; 84EF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_63
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_63
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_63
 
@@ -1989,14 +1989,14 @@
  EQUB %00000000          ; 84FE: 00          .
  EQUB %00000000          ; 84FF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_64
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_64
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_64
 
@@ -2017,14 +2017,14 @@
  EQUB %11111111          ; 850E: FF          .
  EQUB %11111111          ; 850F: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_65
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_65
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_65
 
@@ -2045,14 +2045,14 @@
  EQUB %10111011          ; 851E: BB          .
  EQUB %10111011          ; 851F: BB          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_66
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_66
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_66
 
@@ -2073,14 +2073,14 @@
  EQUB %11111111          ; 852E: FF          .
  EQUB %11111111          ; 852F: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_67
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_67
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_67
 
@@ -2101,14 +2101,14 @@
  EQUB %11111011          ; 853E: FB          .
  EQUB %11111011          ; 853F: FB          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_68
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_68
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_68
 
@@ -2129,14 +2129,14 @@
  EQUB %00000111          ; 854E: 07          .
  EQUB %00000111          ; 854F: 07          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_69
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_69
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_69
 
@@ -2157,14 +2157,14 @@
  EQUB %11100000          ; 855E: E0          .
  EQUB %11100000          ; 855F: E0          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_70
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_70
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_70
 
@@ -2185,14 +2185,14 @@
  EQUB %10110111          ; 856E: B7          .
  EQUB %10110110          ; 856F: B6          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_71
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_71
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_71
 
@@ -2213,14 +2213,14 @@
  EQUB %00000101          ; 857E: 05          .
  EQUB %10101001          ; 857F: A9          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_72
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_72
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_72
 
@@ -2241,14 +2241,14 @@
  EQUB %01000011          ; 858E: 43          C
  EQUB %01110111          ; 858F: 77          w
 
-\ ******************************************************************************
-\
-\       Name: tile3_73
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_73
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_73
 
@@ -2269,14 +2269,14 @@
  EQUB %11111011          ; 859E: FB          .
  EQUB %11111011          ; 859F: FB          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_74
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_74
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_74
 
@@ -2297,14 +2297,14 @@
  EQUB %10100101          ; 85AE: A5          .
  EQUB %10101101          ; 85AF: AD          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_75
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_75
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_75
 
@@ -2325,14 +2325,14 @@
  EQUB %10100000          ; 85BE: A0          .
  EQUB %10110101          ; 85BF: B5          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_76
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_76
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_76
 
@@ -2353,14 +2353,14 @@
  EQUB %11100011          ; 85CE: E3          .
  EQUB %11110111          ; 85CF: F7          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_77
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_77
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_77
 
@@ -2381,14 +2381,14 @@
  EQUB %11101011          ; 85DE: EB          .
  EQUB %11111011          ; 85DF: FB          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_78
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_78
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_78
 
@@ -2409,14 +2409,14 @@
  EQUB %10111111          ; 85EE: BF          .
  EQUB %10111111          ; 85EF: BF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_79
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_79
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_79
 
@@ -2437,14 +2437,14 @@
  EQUB %10111111          ; 85FE: BF          .
  EQUB %10111111          ; 85FF: BF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_80
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_80
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_80
 
@@ -2465,14 +2465,14 @@
  EQUB %10111010          ; 860E: BA          .
  EQUB %10111011          ; 860F: BB          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_81
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_81
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_81
 
@@ -2493,14 +2493,14 @@
  EQUB %11100011          ; 861E: E3          .
  EQUB %01100101          ; 861F: 65          e
 
-\ ******************************************************************************
-\
-\       Name: tile3_82
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_82
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_82
 
@@ -2521,14 +2521,14 @@
  EQUB %00101011          ; 862E: 2B          +
  EQUB %00101011          ; 862F: 2B          +
 
-\ ******************************************************************************
-\
-\       Name: tile3_83
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_83
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_83
 
@@ -2549,14 +2549,14 @@
  EQUB %10110101          ; 863E: B5          .
  EQUB %10111100          ; 863F: BC          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_84
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_84
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_84
 
@@ -2577,14 +2577,14 @@
  EQUB %01010011          ; 864E: 53          S
  EQUB %10000101          ; 864F: 85          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_85
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_85
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_85
 
@@ -2605,14 +2605,14 @@
  EQUB %10111011          ; 865E: BB          .
  EQUB %10111010          ; 865F: BA          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_86
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_86
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_86
 
@@ -2633,14 +2633,14 @@
  EQUB %00000110          ; 866E: 06          .
  EQUB %00001110          ; 866F: 0E          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_87
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_87
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_87
 
@@ -2661,14 +2661,14 @@
  EQUB %10111000          ; 867E: B8          .
  EQUB %10111000          ; 867F: B8          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_88
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_88
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_88
 
@@ -2689,14 +2689,14 @@
  EQUB %00111111          ; 868E: 3F          ?
  EQUB %00111111          ; 868F: 3F          ?
 
-\ ******************************************************************************
-\
-\       Name: tile3_89
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_89
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_89
 
@@ -2717,14 +2717,14 @@
  EQUB %11100000          ; 869E: E0          .
  EQUB %11100000          ; 869F: E0          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_90
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_90
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_90
 
@@ -2745,14 +2745,14 @@
  EQUB %11111011          ; 86AE: FB          .
  EQUB %11111011          ; 86AF: FB          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_91
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_91
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_91
 
@@ -2773,14 +2773,14 @@
  EQUB %10111111          ; 86BE: BF          .
  EQUB %10111100          ; 86BF: BC          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_92
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_92
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_92
 
@@ -2801,14 +2801,14 @@
  EQUB %11111111          ; 86CE: FF          .
  EQUB %00000111          ; 86CF: 07          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_93
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_93
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_93
 
@@ -2829,14 +2829,14 @@
  EQUB %10110101          ; 86DE: B5          .
  EQUB %10101101          ; 86DF: AD          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_94
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_94
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_94
 
@@ -2857,14 +2857,14 @@
  EQUB %10111011          ; 86EE: BB          .
  EQUB %01111011          ; 86EF: 7B          {
 
-\ ******************************************************************************
-\
-\       Name: tile3_95
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_95
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_95
 
@@ -2885,14 +2885,14 @@
  EQUB %01011111          ; 86FE: 5F          _
  EQUB %01000000          ; 86FF: 40          @
 
-\ ******************************************************************************
-\
-\       Name: tile3_96
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_96
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_96
 
@@ -2913,14 +2913,14 @@
  EQUB %11111111          ; 870E: FF          .
  EQUB %00000000          ; 870F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_97
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_97
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_97
 
@@ -2941,14 +2941,14 @@
  EQUB %01000101          ; 871E: 45          E
  EQUB %01000100          ; 871F: 44          D
 
-\ ******************************************************************************
-\
-\       Name: tile3_98
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_98
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_98
 
@@ -2969,14 +2969,14 @@
  EQUB %11110100          ; 872E: F4          .
  EQUB %00000100          ; 872F: 04          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_99
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_99
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_99
 
@@ -2997,14 +2997,14 @@
  EQUB %01111110          ; 873E: 7E          ~
  EQUB %01110100          ; 873F: 74          t
 
-\ ******************************************************************************
-\
-\       Name: tile3_100
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_100
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_100
 
@@ -3025,14 +3025,14 @@
  EQUB %01111110          ; 874E: 7E          ~
  EQUB %00101110          ; 874F: 2E          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_101
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_101
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_101
 
@@ -3053,14 +3053,14 @@
  EQUB %01011111          ; 875E: 5F          _
  EQUB %01000000          ; 875F: 40          @
 
-\ ******************************************************************************
-\
-\       Name: tile3_102
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_102
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_102
 
@@ -3081,14 +3081,14 @@
  EQUB %11111111          ; 876E: FF          .
  EQUB %00000000          ; 876F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_103
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_103
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_103
 
@@ -3109,14 +3109,14 @@
  EQUB %11111111          ; 877E: FF          .
  EQUB %00000000          ; 877F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_104
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_104
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_104
 
@@ -3137,14 +3137,14 @@
  EQUB %11110100          ; 878E: F4          .
  EQUB %00000100          ; 878F: 04          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_105
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_105
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_105
 
@@ -3165,14 +3165,14 @@
  EQUB %01011111          ; 879E: 5F          _
  EQUB %01000000          ; 879F: 40          @
 
-\ ******************************************************************************
-\
-\       Name: tile3_106
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_106
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_106
 
@@ -3193,14 +3193,14 @@
  EQUB %11111111          ; 87AE: FF          .
  EQUB %00000000          ; 87AF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_107
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_107
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_107
 
@@ -3221,14 +3221,14 @@
  EQUB %11111111          ; 87BE: FF          .
  EQUB %00000000          ; 87BF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_108
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_108
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_108
 
@@ -3249,14 +3249,14 @@
  EQUB %11110100          ; 87CE: F4          .
  EQUB %00000100          ; 87CF: 04          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_109
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_109
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_109
 
@@ -3277,14 +3277,14 @@
  EQUB %01011111          ; 87DE: 5F          _
  EQUB %01000000          ; 87DF: 40          @
 
-\ ******************************************************************************
-\
-\       Name: tile3_110
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_110
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_110
 
@@ -3305,14 +3305,14 @@
  EQUB %11111111          ; 87EE: FF          .
  EQUB %00000000          ; 87EF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_111
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_111
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_111
 
@@ -3333,14 +3333,14 @@
  EQUB %11111111          ; 87FE: FF          .
  EQUB %00000000          ; 87FF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_112
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_112
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_112
 
@@ -3361,14 +3361,14 @@
  EQUB %11110100          ; 880E: F4          .
  EQUB %00000100          ; 880F: 04          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_113
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_113
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_113
 
@@ -3389,14 +3389,14 @@
  EQUB %01011111          ; 881E: 5F          _
  EQUB %01000000          ; 881F: 40          @
 
-\ ******************************************************************************
-\
-\       Name: tile3_114
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_114
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_114
 
@@ -3417,14 +3417,14 @@
  EQUB %11111111          ; 882E: FF          .
  EQUB %00000000          ; 882F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_115
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_115
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_115
 
@@ -3445,14 +3445,14 @@
  EQUB %11111111          ; 883E: FF          .
  EQUB %00000000          ; 883F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_116
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_116
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_116
 
@@ -3473,14 +3473,14 @@
  EQUB %11110100          ; 884E: F4          .
  EQUB %00000100          ; 884F: 04          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_117
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_117
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_117
 
@@ -3501,14 +3501,14 @@
  EQUB %01011111          ; 885E: 5F          _
  EQUB %01000000          ; 885F: 40          @
 
-\ ******************************************************************************
-\
-\       Name: tile3_118
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_118
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_118
 
@@ -3529,14 +3529,14 @@
  EQUB %11111111          ; 886E: FF          .
  EQUB %00000000          ; 886F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_119
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_119
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_119
 
@@ -3557,14 +3557,14 @@
  EQUB %11111111          ; 887E: FF          .
  EQUB %00000000          ; 887F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_120
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_120
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_120
 
@@ -3585,14 +3585,14 @@
  EQUB %11110100          ; 888E: F4          .
  EQUB %00000100          ; 888F: 04          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_121
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_121
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_121
 
@@ -3613,14 +3613,14 @@
  EQUB %01011111          ; 889E: 5F          _
  EQUB %01000000          ; 889F: 40          @
 
-\ ******************************************************************************
-\
-\       Name: tile3_122
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_122
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_122
 
@@ -3641,14 +3641,14 @@
  EQUB %11111111          ; 88AE: FF          .
  EQUB %00000000          ; 88AF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_123
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_123
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_123
 
@@ -3669,14 +3669,14 @@
  EQUB %11111111          ; 88BE: FF          .
  EQUB %00000000          ; 88BF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_124
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_124
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_124
 
@@ -3697,14 +3697,14 @@
  EQUB %00000000          ; 88CE: 00          .
  EQUB %00000000          ; 88CF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_125
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_125
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_125
 
@@ -3725,14 +3725,14 @@
  EQUB %00000000          ; 88DE: 00          .
  EQUB %00000000          ; 88DF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_126
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_126
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_126
 
@@ -3753,14 +3753,14 @@
  EQUB %00000000          ; 88EE: 00          .
  EQUB %00000000          ; 88EF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_127
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_127
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_127
 
@@ -3781,14 +3781,14 @@
  EQUB %00000000          ; 88FE: 00          .
  EQUB %00000000          ; 88FF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_128
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_128
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_128
 
@@ -3809,14 +3809,14 @@
  EQUB %11111111          ; 890E: FF          .
  EQUB %11111111          ; 890F: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_129
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_129
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_129
 
@@ -3837,14 +3837,14 @@
  EQUB %10111011          ; 891E: BB          .
  EQUB %10111011          ; 891F: BB          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_130
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_130
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_130
 
@@ -3865,14 +3865,14 @@
  EQUB %11111111          ; 892E: FF          .
  EQUB %11111111          ; 892F: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_131
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_131
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_131
 
@@ -3893,14 +3893,14 @@
  EQUB %11111011          ; 893E: FB          .
  EQUB %11111011          ; 893F: FB          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_132
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_132
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_132
 
@@ -3921,14 +3921,14 @@
  EQUB %00000111          ; 894E: 07          .
  EQUB %00000111          ; 894F: 07          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_133
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_133
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_133
 
@@ -3949,14 +3949,14 @@
  EQUB %11100000          ; 895E: E0          .
  EQUB %11100000          ; 895F: E0          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_134
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_134
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_134
 
@@ -3977,14 +3977,14 @@
  EQUB %10101110          ; 896E: AE          .
  EQUB %10110110          ; 896F: B6          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_135
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_135
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_135
 
@@ -4005,14 +4005,14 @@
  EQUB %00000101          ; 897E: 05          .
  EQUB %10101001          ; 897F: A9          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_136
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_136
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_136
 
@@ -4033,14 +4033,14 @@
  EQUB %01000011          ; 898E: 43          C
  EQUB %01110111          ; 898F: 77          w
 
-\ ******************************************************************************
-\
-\       Name: tile3_137
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_137
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_137
 
@@ -4061,14 +4061,14 @@
  EQUB %11111011          ; 899E: FB          .
  EQUB %11111011          ; 899F: FB          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_138
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_138
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_138
 
@@ -4089,14 +4089,14 @@
  EQUB %10111110          ; 89AE: BE          .
  EQUB %10111111          ; 89AF: BF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_139
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_139
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_139
 
@@ -4117,14 +4117,14 @@
  EQUB %00111110          ; 89BE: 3E          >
  EQUB %01111111          ; 89BF: 7F          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_140
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_140
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_140
 
@@ -4145,14 +4145,14 @@
  EQUB %11111110          ; 89CE: FE          .
  EQUB %00010010          ; 89CF: 12          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_141
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_141
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_141
 
@@ -4173,14 +4173,14 @@
  EQUB %11011011          ; 89DE: DB          .
  EQUB %00011011          ; 89DF: 1B          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_142
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_142
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_142
 
@@ -4201,14 +4201,14 @@
  EQUB %10111111          ; 89EE: BF          .
  EQUB %10111111          ; 89EF: BF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_143
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_143
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_143
 
@@ -4229,14 +4229,14 @@
  EQUB %10111111          ; 89FE: BF          .
  EQUB %10111111          ; 89FF: BF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_144
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_144
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_144
 
@@ -4257,14 +4257,14 @@
  EQUB %10000100          ; 8A0E: 84          .
  EQUB %11011011          ; 8A0F: DB          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_145
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_145
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_145
 
@@ -4285,14 +4285,14 @@
  EQUB %00111011          ; 8A1E: 3B          ;
  EQUB %01111011          ; 8A1F: 7B          {
 
-\ ******************************************************************************
-\
-\       Name: tile3_146
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_146
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_146
 
@@ -4313,14 +4313,14 @@
  EQUB %10111111          ; 8A2E: BF          .
  EQUB %10111111          ; 8A2F: BF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_147
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_147
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_147
 
@@ -4341,14 +4341,14 @@
  EQUB %10011111          ; 8A3E: 9F          .
  EQUB %11111111          ; 8A3F: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_148
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_148
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_148
 
@@ -4369,14 +4369,14 @@
  EQUB %10111010          ; 8A4E: BA          .
  EQUB %10111011          ; 8A4F: BB          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_149
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_149
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_149
 
@@ -4397,14 +4397,14 @@
  EQUB %11100011          ; 8A5E: E3          .
  EQUB %01100101          ; 8A5F: 65          e
 
-\ ******************************************************************************
-\
-\       Name: tile3_150
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_150
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_150
 
@@ -4425,14 +4425,14 @@
  EQUB %00101011          ; 8A6E: 2B          +
  EQUB %00101011          ; 8A6F: 2B          +
 
-\ ******************************************************************************
-\
-\       Name: tile3_151
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_151
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_151
 
@@ -4453,14 +4453,14 @@
  EQUB %10101110          ; 8A7E: AE          .
  EQUB %10110110          ; 8A7F: B6          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_152
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_152
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_152
 
@@ -4481,14 +4481,14 @@
  EQUB %01000011          ; 8A8E: 43          C
  EQUB %10000101          ; 8A8F: 85          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_153
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_153
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_153
 
@@ -4509,14 +4509,14 @@
  EQUB %01010101          ; 8A9E: 55          U
  EQUB %11001000          ; 8A9F: C8          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_154
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_154
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_154
 
@@ -4537,14 +4537,14 @@
  EQUB %00111011          ; 8AAE: 3B          ;
  EQUB %01011011          ; 8AAF: 5B          [
 
-\ ******************************************************************************
-\
-\       Name: tile3_155
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_155
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_155
 
@@ -4565,14 +4565,14 @@
  EQUB %10111111          ; 8ABE: BF          .
  EQUB %10111100          ; 8ABF: BC          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_156
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_156
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_156
 
@@ -4593,14 +4593,14 @@
  EQUB %11111111          ; 8ACE: FF          .
  EQUB %00000111          ; 8ACF: 07          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_157
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_157
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_157
 
@@ -4621,14 +4621,14 @@
  EQUB %10110101          ; 8ADE: B5          .
  EQUB %10101101          ; 8ADF: AD          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_158
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_158
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_158
 
@@ -4649,14 +4649,14 @@
  EQUB %10111011          ; 8AEE: BB          .
  EQUB %01111011          ; 8AEF: 7B          {
 
-\ ******************************************************************************
-\
-\       Name: tile3_159
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_159
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_159
 
@@ -4677,14 +4677,14 @@
  EQUB %01011111          ; 8AFE: 5F          _
  EQUB %01000000          ; 8AFF: 40          @
 
-\ ******************************************************************************
-\
-\       Name: tile3_160
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_160
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_160
 
@@ -4705,14 +4705,14 @@
  EQUB %11111111          ; 8B0E: FF          .
  EQUB %00000000          ; 8B0F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_161
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_161
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_161
 
@@ -4733,14 +4733,14 @@
  EQUB %01000101          ; 8B1E: 45          E
  EQUB %01000100          ; 8B1F: 44          D
 
-\ ******************************************************************************
-\
-\       Name: tile3_162
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_162
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_162
 
@@ -4761,14 +4761,14 @@
  EQUB %11110100          ; 8B2E: F4          .
  EQUB %00000100          ; 8B2F: 04          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_163
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_163
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_163
 
@@ -4789,14 +4789,14 @@
  EQUB %01111110          ; 8B3E: 7E          ~
  EQUB %01110100          ; 8B3F: 74          t
 
-\ ******************************************************************************
-\
-\       Name: tile3_164
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_164
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_164
 
@@ -4817,14 +4817,14 @@
  EQUB %01111110          ; 8B4E: 7E          ~
  EQUB %00101110          ; 8B4F: 2E          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_165
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_165
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_165
 
@@ -4845,14 +4845,14 @@
  EQUB %01011111          ; 8B5E: 5F          _
  EQUB %01000000          ; 8B5F: 40          @
 
-\ ******************************************************************************
-\
-\       Name: tile3_166
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_166
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_166
 
@@ -4873,14 +4873,14 @@
  EQUB %11111111          ; 8B6E: FF          .
  EQUB %00000000          ; 8B6F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_167
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_167
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_167
 
@@ -4901,14 +4901,14 @@
  EQUB %11111111          ; 8B7E: FF          .
  EQUB %00000000          ; 8B7F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_168
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_168
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_168
 
@@ -4929,14 +4929,14 @@
  EQUB %11110100          ; 8B8E: F4          .
  EQUB %00000100          ; 8B8F: 04          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_169
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_169
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_169
 
@@ -4957,14 +4957,14 @@
  EQUB %01011111          ; 8B9E: 5F          _
  EQUB %01000000          ; 8B9F: 40          @
 
-\ ******************************************************************************
-\
-\       Name: tile3_170
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_170
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_170
 
@@ -4985,14 +4985,14 @@
  EQUB %11111111          ; 8BAE: FF          .
  EQUB %00000000          ; 8BAF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_171
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_171
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_171
 
@@ -5013,14 +5013,14 @@
  EQUB %11111111          ; 8BBE: FF          .
  EQUB %00000000          ; 8BBF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_172
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_172
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_172
 
@@ -5041,14 +5041,14 @@
  EQUB %11110100          ; 8BCE: F4          .
  EQUB %00000100          ; 8BCF: 04          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_173
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_173
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_173
 
@@ -5069,14 +5069,14 @@
  EQUB %01011111          ; 8BDE: 5F          _
  EQUB %01000000          ; 8BDF: 40          @
 
-\ ******************************************************************************
-\
-\       Name: tile3_174
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_174
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_174
 
@@ -5097,14 +5097,14 @@
  EQUB %11111111          ; 8BEE: FF          .
  EQUB %00000000          ; 8BEF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_175
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_175
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_175
 
@@ -5125,14 +5125,14 @@
  EQUB %11111111          ; 8BFE: FF          .
  EQUB %00000000          ; 8BFF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_176
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_176
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_176
 
@@ -5153,14 +5153,14 @@
  EQUB %11110100          ; 8C0E: F4          .
  EQUB %00000100          ; 8C0F: 04          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_177
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_177
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_177
 
@@ -5181,14 +5181,14 @@
  EQUB %11111111          ; 8C1E: FF          .
  EQUB %00000000          ; 8C1F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_178
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_178
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_178
 
@@ -5209,14 +5209,14 @@
  EQUB %11111111          ; 8C2E: FF          .
  EQUB %00000000          ; 8C2F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_179
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_179
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_179
 
@@ -5237,14 +5237,14 @@
  EQUB %11110100          ; 8C3E: F4          .
  EQUB %00000100          ; 8C3F: 04          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_180
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_180
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_180
 
@@ -5265,14 +5265,14 @@
  EQUB %01011111          ; 8C4E: 5F          _
  EQUB %01000000          ; 8C4F: 40          @
 
-\ ******************************************************************************
-\
-\       Name: tile3_181
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_181
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_181
 
@@ -5293,14 +5293,14 @@
  EQUB %11111111          ; 8C5E: FF          .
  EQUB %00000000          ; 8C5F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_182
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_182
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_182
 
@@ -5321,14 +5321,14 @@
  EQUB %11111111          ; 8C6E: FF          .
  EQUB %00000000          ; 8C6F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_183
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_183
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_183
 
@@ -5349,14 +5349,14 @@
  EQUB %11110100          ; 8C7E: F4          .
  EQUB %00000100          ; 8C7F: 04          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_184
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_184
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_184
 
@@ -5377,14 +5377,14 @@
  EQUB %01011111          ; 8C8E: 5F          _
  EQUB %01000000          ; 8C8F: 40          @
 
-\ ******************************************************************************
-\
-\       Name: tile3_185
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_185
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_185
 
@@ -5405,14 +5405,14 @@
  EQUB %11111111          ; 8C9E: FF          .
  EQUB %00000000          ; 8C9F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_186
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_186
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_186
 
@@ -5433,14 +5433,14 @@
  EQUB %11111111          ; 8CAE: FF          .
  EQUB %00000000          ; 8CAF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_187
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_187
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_187
 
@@ -5461,14 +5461,14 @@
  EQUB %00000000          ; 8CBE: 00          .
  EQUB %00000000          ; 8CBF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_188
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_188
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_188
 
@@ -5489,14 +5489,14 @@
  EQUB %00000000          ; 8CCE: 00          .
  EQUB %00000000          ; 8CCF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_189
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_189
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_189
 
@@ -5517,14 +5517,14 @@
  EQUB %00000000          ; 8CDE: 00          .
  EQUB %00000000          ; 8CDF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_190
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_190
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_190
 
@@ -5545,14 +5545,14 @@
  EQUB %00000000          ; 8CEE: 00          .
  EQUB %00000000          ; 8CEF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_191
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_191
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_191
 
@@ -5573,14 +5573,14 @@
  EQUB %00000000          ; 8CFE: 00          .
  EQUB %00000000          ; 8CFF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_192
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_192
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_192
 
@@ -5601,14 +5601,14 @@
  EQUB %11111111          ; 8D0E: FF          .
  EQUB %11111111          ; 8D0F: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_193
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_193
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_193
 
@@ -5629,14 +5629,14 @@
  EQUB %10111011          ; 8D1E: BB          .
  EQUB %10111011          ; 8D1F: BB          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_194
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_194
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_194
 
@@ -5657,14 +5657,14 @@
  EQUB %11111111          ; 8D2E: FF          .
  EQUB %11111111          ; 8D2F: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_195
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_195
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_195
 
@@ -5685,14 +5685,14 @@
  EQUB %11111011          ; 8D3E: FB          .
  EQUB %11111011          ; 8D3F: FB          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_196
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_196
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_196
 
@@ -5713,14 +5713,14 @@
  EQUB %00000111          ; 8D4E: 07          .
  EQUB %00000111          ; 8D4F: 07          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_197
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_197
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_197
 
@@ -5741,14 +5741,14 @@
  EQUB %11100000          ; 8D5E: E0          .
  EQUB %11100000          ; 8D5F: E0          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_198
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_198
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_198
 
@@ -5769,14 +5769,14 @@
  EQUB %10111111          ; 8D6E: BF          .
  EQUB %10111111          ; 8D6F: BF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_199
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_199
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_199
 
@@ -5797,14 +5797,14 @@
  EQUB %11111111          ; 8D7E: FF          .
  EQUB %10111111          ; 8D7F: BF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_200
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_200
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_200
 
@@ -5825,14 +5825,14 @@
  EQUB %10111010          ; 8D8E: BA          .
  EQUB %10111010          ; 8D8F: BA          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_201
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_201
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_201
 
@@ -5853,14 +5853,14 @@
  EQUB %11111111          ; 8D9E: FF          .
  EQUB %11111111          ; 8D9F: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_202
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_202
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_202
 
@@ -5881,14 +5881,14 @@
  EQUB %11101011          ; 8DAE: EB          .
  EQUB %11101011          ; 8DAF: EB          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_203
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_203
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_203
 
@@ -5909,14 +5909,14 @@
  EQUB %10111110          ; 8DBE: BE          .
  EQUB %10111000          ; 8DBF: B8          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_204
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_204
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_204
 
@@ -5937,14 +5937,14 @@
  EQUB %11111011          ; 8DCE: FB          .
  EQUB %11100011          ; 8DCF: E3          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_205
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_205
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_205
 
@@ -5965,14 +5965,14 @@
  EQUB %11001000          ; 8DDE: C8          .
  EQUB %11001000          ; 8DDF: C8          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_206
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_206
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_206
 
@@ -5993,14 +5993,14 @@
  EQUB %10111000          ; 8DEE: B8          .
  EQUB %10111000          ; 8DEF: B8          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_207
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_207
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_207
 
@@ -6021,14 +6021,14 @@
  EQUB %01000011          ; 8DFE: 43          C
  EQUB %01100111          ; 8DFF: 67          g
 
-\ ******************************************************************************
-\
-\       Name: tile3_208
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_208
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_208
 
@@ -6049,14 +6049,14 @@
  EQUB %11000000          ; 8E0E: C0          .
  EQUB %11000000          ; 8E0F: C0          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_209
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_209
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_209
 
@@ -6077,14 +6077,14 @@
  EQUB %00111011          ; 8E1E: 3B          ;
  EQUB %00111011          ; 8E1F: 3B          ;
 
-\ ******************************************************************************
-\
-\       Name: tile3_210
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_210
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_210
 
@@ -6105,14 +6105,14 @@
  EQUB %10111111          ; 8E2E: BF          .
  EQUB %10111100          ; 8E2F: BC          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_211
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_211
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_211
 
@@ -6133,14 +6133,14 @@
  EQUB %11111111          ; 8E3E: FF          .
  EQUB %00000111          ; 8E3F: 07          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_212
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_212
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_212
 
@@ -6161,14 +6161,14 @@
  EQUB %11111111          ; 8E4E: FF          .
  EQUB %11111111          ; 8E4F: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_213
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_213
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_213
 
@@ -6189,14 +6189,14 @@
  EQUB %11111011          ; 8E5E: FB          .
  EQUB %11111011          ; 8E5F: FB          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_214
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_214
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_214
 
@@ -6217,14 +6217,14 @@
  EQUB %10111110          ; 8E6E: BE          .
  EQUB %10111000          ; 8E6F: B8          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_215
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_215
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_215
 
@@ -6245,14 +6245,14 @@
  EQUB %10111011          ; 8E7E: BB          .
  EQUB %01000011          ; 8E7F: 43          C
 
-\ ******************************************************************************
-\
-\       Name: tile3_216
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_216
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_216
 
@@ -6273,14 +6273,14 @@
  EQUB %11001000          ; 8E8E: C8          .
  EQUB %11000000          ; 8E8F: C0          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_217
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_217
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_217
 
@@ -6301,14 +6301,14 @@
  EQUB %11111011          ; 8E9E: FB          .
  EQUB %11111011          ; 8E9F: FB          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_218
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_218
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_218
 
@@ -6329,14 +6329,14 @@
  EQUB %10111111          ; 8EAE: BF          .
  EQUB %10111110          ; 8EAF: BE          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_219
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_219
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_219
 
@@ -6357,14 +6357,14 @@
  EQUB %00011111          ; 8EBE: 1F          .
  EQUB %00001111          ; 8EBF: 0F          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_220
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_220
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_220
 
@@ -6385,14 +6385,14 @@
  EQUB %00000000          ; 8ECE: 00          .
  EQUB %00000000          ; 8ECF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_221
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_221
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_221
 
@@ -6413,14 +6413,14 @@
  EQUB %00000000          ; 8EDE: 00          .
  EQUB %00000000          ; 8EDF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_222
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_222
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_222
 
@@ -6441,14 +6441,14 @@
  EQUB %00000000          ; 8EEE: 00          .
  EQUB %00000000          ; 8EEF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_223
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_223
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_223
 
@@ -6469,14 +6469,14 @@
  EQUB %01011111          ; 8EFE: 5F          _
  EQUB %01000000          ; 8EFF: 40          @
 
-\ ******************************************************************************
-\
-\       Name: tile3_224
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_224
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_224
 
@@ -6497,14 +6497,14 @@
  EQUB %11111111          ; 8F0E: FF          .
  EQUB %00000000          ; 8F0F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_225
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_225
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_225
 
@@ -6525,14 +6525,14 @@
  EQUB %01000101          ; 8F1E: 45          E
  EQUB %01000100          ; 8F1F: 44          D
 
-\ ******************************************************************************
-\
-\       Name: tile3_226
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_226
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_226
 
@@ -6553,14 +6553,14 @@
  EQUB %11110100          ; 8F2E: F4          .
  EQUB %00000100          ; 8F2F: 04          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_227
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_227
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_227
 
@@ -6581,14 +6581,14 @@
  EQUB %01111110          ; 8F3E: 7E          ~
  EQUB %01110100          ; 8F3F: 74          t
 
-\ ******************************************************************************
-\
-\       Name: tile3_228
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_228
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_228
 
@@ -6609,14 +6609,14 @@
  EQUB %01111110          ; 8F4E: 7E          ~
  EQUB %00101110          ; 8F4F: 2E          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_229
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_229
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_229
 
@@ -6637,14 +6637,14 @@
  EQUB %01011111          ; 8F5E: 5F          _
  EQUB %01000000          ; 8F5F: 40          @
 
-\ ******************************************************************************
-\
-\       Name: tile3_230
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_230
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_230
 
@@ -6665,14 +6665,14 @@
  EQUB %11111111          ; 8F6E: FF          .
  EQUB %00000000          ; 8F6F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_231
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_231
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_231
 
@@ -6693,14 +6693,14 @@
  EQUB %11111111          ; 8F7E: FF          .
  EQUB %00000000          ; 8F7F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_232
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_232
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_232
 
@@ -6721,14 +6721,14 @@
  EQUB %11110100          ; 8F8E: F4          .
  EQUB %00000100          ; 8F8F: 04          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_233
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_233
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_233
 
@@ -6749,14 +6749,14 @@
  EQUB %01011111          ; 8F9E: 5F          _
  EQUB %01000000          ; 8F9F: 40          @
 
-\ ******************************************************************************
-\
-\       Name: tile3_234
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_234
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_234
 
@@ -6777,14 +6777,14 @@
  EQUB %11111111          ; 8FAE: FF          .
  EQUB %00000000          ; 8FAF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_235
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_235
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_235
 
@@ -6805,14 +6805,14 @@
  EQUB %11111111          ; 8FBE: FF          .
  EQUB %00000000          ; 8FBF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_236
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_236
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_236
 
@@ -6833,14 +6833,14 @@
  EQUB %11111111          ; 8FCE: FF          .
  EQUB %00000000          ; 8FCF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_237
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_237
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_237
 
@@ -6861,14 +6861,14 @@
  EQUB %11111111          ; 8FDE: FF          .
  EQUB %00000000          ; 8FDF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_238
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_238
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_238
 
@@ -6889,14 +6889,14 @@
  EQUB %11110100          ; 8FEE: F4          .
  EQUB %00000100          ; 8FEF: 04          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_239
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_239
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_239
 
@@ -6917,14 +6917,14 @@
  EQUB %01011111          ; 8FFE: 5F          _
  EQUB %01000000          ; 8FFF: 40          @
 
-\ ******************************************************************************
-\
-\       Name: tile3_240
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_240
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_240
 
@@ -6945,14 +6945,14 @@
  EQUB %11111111          ; 900E: FF          .
  EQUB %00000000          ; 900F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_241
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_241
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_241
 
@@ -6973,14 +6973,14 @@
  EQUB %11110100          ; 901E: F4          .
  EQUB %00000100          ; 901F: 04          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_242
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_242
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_242
 
@@ -7001,14 +7001,14 @@
  EQUB %01011111          ; 902E: 5F          _
  EQUB %01000000          ; 902F: 40          @
 
-\ ******************************************************************************
-\
-\       Name: tile3_243
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_243
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_243
 
@@ -7029,14 +7029,14 @@
  EQUB %11111111          ; 903E: FF          .
  EQUB %00000000          ; 903F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_244
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_244
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_244
 
@@ -7057,14 +7057,14 @@
  EQUB %11111111          ; 904E: FF          .
  EQUB %00000000          ; 904F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_245
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_245
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_245
 
@@ -7085,14 +7085,14 @@
  EQUB %11110100          ; 905E: F4          .
  EQUB %00000100          ; 905F: 04          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_246
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_246
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_246
 
@@ -7113,14 +7113,14 @@
  EQUB %01011111          ; 906E: 5F          _
  EQUB %01000000          ; 906F: 40          @
 
-\ ******************************************************************************
-\
-\       Name: tile3_247
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_247
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_247
 
@@ -7141,14 +7141,14 @@
  EQUB %11111111          ; 907E: FF          .
  EQUB %00000000          ; 907F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_248
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_248
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_248
 
@@ -7169,14 +7169,14 @@
  EQUB %00000000          ; 908E: 00          .
  EQUB %00000000          ; 908F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_249
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_249
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_249
 
@@ -7197,14 +7197,14 @@
  EQUB %00000000          ; 909E: 00          .
  EQUB %00000000          ; 909F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_250
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_250
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_250
 
@@ -7225,14 +7225,14 @@
  EQUB %00000000          ; 90AE: 00          .
  EQUB %00000000          ; 90AF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_251
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_251
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_251
 
@@ -7253,14 +7253,14 @@
  EQUB %00000000          ; 90BE: 00          .
  EQUB %00000000          ; 90BF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_252
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_252
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_252
 
@@ -7281,14 +7281,14 @@
  EQUB %00000000          ; 90CE: 00          .
  EQUB %00000000          ; 90CF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_253
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_253
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_253
 
@@ -7309,14 +7309,14 @@
  EQUB %00000000          ; 90DE: 00          .
  EQUB %00000000          ; 90DF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_254
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_254
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_254
 
@@ -7337,14 +7337,14 @@
  EQUB %00000000          ; 90EE: 00          .
  EQUB %00000000          ; 90EF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_255
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_255
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_255
 
@@ -7365,14 +7365,14 @@
  EQUB %00000000          ; 90FE: 00          .
  EQUB %00000000          ; 90FF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_256
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_256
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_256
 
@@ -7393,14 +7393,14 @@
  EQUB %10111111          ; 910E: BF          .
  EQUB %10111111          ; 910F: BF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_257
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_257
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_257
 
@@ -7421,14 +7421,14 @@
  EQUB %11111111          ; 911E: FF          .
  EQUB %11111111          ; 911F: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_258
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_258
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_258
 
@@ -7449,14 +7449,14 @@
  EQUB %10111011          ; 912E: BB          .
  EQUB %10111011          ; 912F: BB          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_259
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_259
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_259
 
@@ -7477,14 +7477,14 @@
  EQUB %11111111          ; 913E: FF          .
  EQUB %11111111          ; 913F: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_260
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_260
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_260
 
@@ -7505,14 +7505,14 @@
  EQUB %11111011          ; 914E: FB          .
  EQUB %11111011          ; 914F: FB          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_261
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_261
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_261
 
@@ -7533,14 +7533,14 @@
  EQUB %00000111          ; 915E: 07          .
  EQUB %00000111          ; 915F: 07          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_262
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_262
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_262
 
@@ -7561,14 +7561,14 @@
  EQUB %11100000          ; 916E: E0          .
  EQUB %11100000          ; 916F: E0          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_263
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_263
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_263
 
@@ -7589,14 +7589,14 @@
  EQUB %00000111          ; 917E: 07          .
  EQUB %11111111          ; 917F: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_264
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_264
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_264
 
@@ -7617,14 +7617,14 @@
  EQUB %11111111          ; 918E: FF          .
  EQUB %11111111          ; 918F: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_265
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_265
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_265
 
@@ -7645,14 +7645,14 @@
  EQUB %11111111          ; 919E: FF          .
  EQUB %11111100          ; 919F: FC          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_266
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_266
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_266
 
@@ -7673,14 +7673,14 @@
  EQUB %11011111          ; 91AE: DF          .
  EQUB %01100111          ; 91AF: 67          g
 
-\ ******************************************************************************
-\
-\       Name: tile3_267
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_267
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_267
 
@@ -7701,14 +7701,14 @@
  EQUB %11011111          ; 91BE: DF          .
  EQUB %11111111          ; 91BF: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_268
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_268
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_268
 
@@ -7729,14 +7729,14 @@
  EQUB %11111111          ; 91CE: FF          .
  EQUB %11111111          ; 91CF: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_269
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_269
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_269
 
@@ -7757,14 +7757,14 @@
  EQUB %10111111          ; 91DE: BF          .
  EQUB %11111111          ; 91DF: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_270
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_270
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_270
 
@@ -7785,14 +7785,14 @@
  EQUB %11111111          ; 91EE: FF          .
  EQUB %11111111          ; 91EF: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_271
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_271
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_271
 
@@ -7813,14 +7813,14 @@
  EQUB %11111111          ; 91FE: FF          .
  EQUB %11100011          ; 91FF: E3          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_272
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_272
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_272
 
@@ -7841,14 +7841,14 @@
  EQUB %11111111          ; 920E: FF          .
  EQUB %10001111          ; 920F: 8F          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_273
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_273
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_273
 
@@ -7869,14 +7869,14 @@
  EQUB %11111111          ; 921E: FF          .
  EQUB %11111111          ; 921F: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_274
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_274
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_274
 
@@ -7897,14 +7897,14 @@
  EQUB %11111111          ; 922E: FF          .
  EQUB %11111111          ; 922F: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_275
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_275
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_275
 
@@ -7925,14 +7925,14 @@
  EQUB %11101111          ; 923E: EF          .
  EQUB %11101111          ; 923F: EF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_276
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_276
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_276
 
@@ -7953,14 +7953,14 @@
  EQUB %10111110          ; 924E: BE          .
  EQUB %11111111          ; 924F: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_277
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_277
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_277
 
@@ -7981,14 +7981,14 @@
  EQUB %11111011          ; 925E: FB          .
  EQUB %11111111          ; 925F: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_278
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_278
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_278
 
@@ -8009,14 +8009,14 @@
  EQUB %11100111          ; 926E: E7          .
  EQUB %11111111          ; 926F: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_279
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_279
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_279
 
@@ -8037,14 +8037,14 @@
  EQUB %11111111          ; 927E: FF          .
  EQUB %11111111          ; 927F: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_280
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_280
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_280
 
@@ -8065,14 +8065,14 @@
  EQUB %11110111          ; 928E: F7          .
  EQUB %11111111          ; 928F: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_281
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_281
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_281
 
@@ -8093,14 +8093,14 @@
  EQUB %11111111          ; 929E: FF          .
  EQUB %11111111          ; 929F: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_282
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_282
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_282
 
@@ -8121,14 +8121,14 @@
  EQUB %11111111          ; 92AE: FF          .
  EQUB %11111111          ; 92AF: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_283
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_283
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_283
 
@@ -8149,14 +8149,14 @@
  EQUB %11111111          ; 92BE: FF          .
  EQUB %11111111          ; 92BF: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_284
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_284
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_284
 
@@ -8177,14 +8177,14 @@
  EQUB %11101111          ; 92CE: EF          .
  EQUB %11111111          ; 92CF: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_285
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_285
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_285
 
@@ -8205,14 +8205,14 @@
  EQUB %10011111          ; 92DE: 9F          .
  EQUB %11111111          ; 92DF: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_286
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_286
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_286
 
@@ -8233,14 +8233,14 @@
  EQUB %11111111          ; 92EE: FF          .
  EQUB %11111111          ; 92EF: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_287
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_287
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_287
 
@@ -8261,14 +8261,14 @@
  EQUB %11100000          ; 92FE: E0          .
  EQUB %11111111          ; 92FF: FF          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_288
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_288
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_288
 
@@ -8289,14 +8289,14 @@
  EQUB %01011111          ; 930E: 5F          _
  EQUB %01000000          ; 930F: 40          @
 
-\ ******************************************************************************
-\
-\       Name: tile3_289
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_289
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_289
 
@@ -8317,14 +8317,14 @@
  EQUB %11111111          ; 931E: FF          .
  EQUB %00000000          ; 931F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_290
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_290
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_290
 
@@ -8345,14 +8345,14 @@
  EQUB %01000101          ; 932E: 45          E
  EQUB %01000100          ; 932F: 44          D
 
-\ ******************************************************************************
-\
-\       Name: tile3_291
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_291
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_291
 
@@ -8373,14 +8373,14 @@
  EQUB %11110100          ; 933E: F4          .
  EQUB %00000100          ; 933F: 04          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_292
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_292
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_292
 
@@ -8401,14 +8401,14 @@
  EQUB %01111110          ; 934E: 7E          ~
  EQUB %01110100          ; 934F: 74          t
 
-\ ******************************************************************************
-\
-\       Name: tile3_293
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_293
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_293
 
@@ -8429,14 +8429,14 @@
  EQUB %01111110          ; 935E: 7E          ~
  EQUB %00101110          ; 935F: 2E          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_294
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_294
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_294
 
@@ -8457,14 +8457,14 @@
  EQUB %11111111          ; 936E: FF          .
  EQUB %00000000          ; 936F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_295
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_295
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_295
 
@@ -8485,14 +8485,14 @@
  EQUB %11111111          ; 937E: FF          .
  EQUB %00000000          ; 937F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_296
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_296
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_296
 
@@ -8513,14 +8513,14 @@
  EQUB %11111111          ; 938E: FF          .
  EQUB %00000000          ; 938F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_297
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_297
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_297
 
@@ -8541,14 +8541,14 @@
  EQUB %11111111          ; 939E: FF          .
  EQUB %00000000          ; 939F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_298
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_298
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_298
 
@@ -8569,14 +8569,14 @@
  EQUB %11111111          ; 93AE: FF          .
  EQUB %00000000          ; 93AF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_299
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_299
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_299
 
@@ -8597,14 +8597,14 @@
  EQUB %11111111          ; 93BE: FF          .
  EQUB %00000000          ; 93BF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_300
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_300
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_300
 
@@ -8625,14 +8625,14 @@
  EQUB %11111111          ; 93CE: FF          .
  EQUB %00000000          ; 93CF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_301
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_301
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_301
 
@@ -8653,14 +8653,14 @@
  EQUB %11111111          ; 93DE: FF          .
  EQUB %00000000          ; 93DF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_302
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_302
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_302
 
@@ -8681,14 +8681,14 @@
  EQUB %11111111          ; 93EE: FF          .
  EQUB %00000000          ; 93EF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_303
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_303
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_303
 
@@ -8709,14 +8709,14 @@
  EQUB %11111111          ; 93FE: FF          .
  EQUB %00000000          ; 93FF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_304
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_304
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_304
 
@@ -8737,14 +8737,14 @@
  EQUB %11111111          ; 940E: FF          .
  EQUB %00000000          ; 940F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_305
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_305
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_305
 
@@ -8765,14 +8765,14 @@
  EQUB %11111111          ; 941E: FF          .
  EQUB %00000000          ; 941F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_306
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_306
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_306
 
@@ -8793,14 +8793,14 @@
  EQUB %11111111          ; 942E: FF          .
  EQUB %00000000          ; 942F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_307
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_307
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_307
 
@@ -8821,14 +8821,14 @@
  EQUB %11111111          ; 943E: FF          .
  EQUB %00000000          ; 943F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_308
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_308
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_308
 
@@ -8849,14 +8849,14 @@
  EQUB %11111111          ; 944E: FF          .
  EQUB %00000000          ; 944F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_309
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_309
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_309
 
@@ -8877,14 +8877,14 @@
  EQUB %11111111          ; 945E: FF          .
  EQUB %00000000          ; 945F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_310
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_310
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_310
 
@@ -8905,14 +8905,14 @@
  EQUB %11111111          ; 946E: FF          .
  EQUB %00000000          ; 946F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_311
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_311
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_311
 
@@ -8933,14 +8933,14 @@
  EQUB %00000000          ; 947E: 00          .
  EQUB %00000000          ; 947F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_312
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_312
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_312
 
@@ -8961,14 +8961,14 @@
  EQUB %00000000          ; 948E: 00          .
  EQUB %00000000          ; 948F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_313
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_313
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_313
 
@@ -8989,14 +8989,14 @@
  EQUB %00000000          ; 949E: 00          .
  EQUB %00000000          ; 949F: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_314
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_314
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_314
 
@@ -9017,14 +9017,14 @@
  EQUB %00000000          ; 94AE: 00          .
  EQUB %00000000          ; 94AF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_315
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_315
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_315
 
@@ -9045,14 +9045,14 @@
  EQUB %00000000          ; 94BE: 00          .
  EQUB %00000000          ; 94BF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_316
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_316
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_316
 
@@ -9073,14 +9073,14 @@
  EQUB %00000000          ; 94CE: 00          .
  EQUB %00000000          ; 94CF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_317
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_317
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_317
 
@@ -9101,14 +9101,14 @@
  EQUB %00000000          ; 94DE: 00          .
  EQUB %00000000          ; 94DF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_318
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_318
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_318
 
@@ -9129,14 +9129,14 @@
  EQUB %00000000          ; 94EE: 00          .
  EQUB %00000000          ; 94EF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: tile3_319
-\       Type: Variable
-\   Category: Drawing images
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: tile3_319
+;       Type: Variable
+;   Category: Drawing images
+;    Summary: ???
+;
+; ******************************************************************************
 
 .tile3_319
 
@@ -9157,1207 +9157,1207 @@
  EQUB %00000000          ; 94FE: 00          .
  EQUB %00000000          ; 94FF: 00          .
 
-\ ******************************************************************************
-\
-\       Name: L9500
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: L9500
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .L9500
 
- EQUB &09, &0B, &0C, &06 ; 9500: 09 0B 0C... ...
- EQUB &0D, &0E, &0F, &10 ; 9504: 0D 0E 0F... ...
- EQUB &06, &11, &12, &13 ; 9508: 06 11 12... ...
- EQUB &14, &06, &15, &16 ; 950C: 14 06 15... ...
- EQUB &17, &18, &06, &19 ; 9510: 17 18 06... ...
- EQUB &1A, &1B, &1C, &06 ; 9514: 1A 1B 1C... ...
- EQUB &07, &08, &04, &05 ; 9518: 07 08 04... ...
- EQUB &06, &07, &08, &0A ; 951C: 06 07 08... ...
- EQUB &28, &2A, &2B, &26 ; 9520: 28 2A 2B... (*+
- EQUB &2C, &2D, &2E, &2F ; 9524: 2C 2D 2E... ,-.
- EQUB &26, &30, &31, &24 ; 9528: 26 30 31... &01
- EQUB &32, &26, &33, &34 ; 952C: 32 26 33... 2&3
- EQUB &24, &35, &26, &36 ; 9530: 24 35 26... $5&
- EQUB &37, &38, &39, &26 ; 9534: 37 38 39... 789
- EQUB &25, &27, &24, &25 ; 9538: 25 27 24... %'$
- EQUB &26, &25, &27, &29 ; 953C: 26 25 27... &%'
- EQUB &09, &0B, &0C, &06 ; 9540: 09 0B 0C... ...
- EQUB &0D, &0E, &0F, &10 ; 9544: 0D 0E 0F... ...
- EQUB &06, &11, &12, &13 ; 9548: 06 11 12... ...
- EQUB &14, &15, &16, &17 ; 954C: 14 15 16... ...
- EQUB &18, &19, &1A, &1B ; 9550: 18 19 1A... ...
- EQUB &08, &1C, &1D, &06 ; 9554: 08 1C 1D... ...
- EQUB &1E, &1F, &20, &21 ; 9558: 1E 1F 20... ..
- EQUB &06, &22, &23, &0A ; 955C: 06 22 23... ."#
- EQUB &28, &2A, &2B, &26 ; 9560: 28 2A 2B... (*+
- EQUB &2C, &2D, &2E, &2F ; 9564: 2C 2D 2E... ,-.
- EQUB &26, &30, &31, &32 ; 9568: 26 30 31... &01
- EQUB &33, &26, &34, &35 ; 956C: 33 26 34... 3&4
- EQUB &36, &37, &26, &38 ; 9570: 36 37 26... 67&
- EQUB &39, &3A, &3B, &26 ; 9574: 39 3A 3B... 9:;
- EQUB &3C, &3D, &3E, &3F ; 9578: 3C 3D 3E... <=>
- EQUB &26, &40, &27, &29 ; 957C: 26 40 27... &@'
- EQUB &09, &0B, &0C, &06 ; 9580: 09 0B 0C... ...
- EQUB &0D, &0E, &0F, &10 ; 9584: 0D 0E 0F... ...
- EQUB &06, &11, &12, &13 ; 9588: 06 11 12... ...
- EQUB &14, &06, &15, &16 ; 958C: 14 06 15... ...
- EQUB &17, &18, &19, &1A ; 9590: 17 18 19... ...
- EQUB &1B, &1C, &1D, &06 ; 9594: 1B 1C 1D... ...
- EQUB &1E, &1F, &20, &21 ; 9598: 1E 1F 20... ..
- EQUB &06, &22, &23, &0A ; 959C: 06 22 23... ."#
- EQUB &28, &2A, &2B, &26 ; 95A0: 28 2A 2B... (*+
- EQUB &2C, &2D, &2E, &2F ; 95A4: 2C 2D 2E... ,-.
- EQUB &26, &30, &31, &32 ; 95A8: 26 30 31... &01
- EQUB &33, &26, &34, &35 ; 95AC: 33 26 34... 3&4
- EQUB &24, &36, &26, &37 ; 95B0: 24 36 26... $6&
- EQUB &38, &39, &3A, &26 ; 95B4: 38 39 3A... 89:
- EQUB &3B, &3C, &3D, &3E ; 95B8: 3B 3C 3D... ;<=
- EQUB &26, &3F, &27, &29 ; 95BC: 26 3F 27... &?'
- EQUB &09, &0B, &0C, &0D ; 95C0: 09 0B 0C... ...
- EQUB &0E, &0F, &10, &11 ; 95C4: 0E 0F 10... ...
- EQUB &06, &12, &08, &13 ; 95C8: 06 12 08... ...
- EQUB &14, &06           ; 95CC: 14 06       ..
+ EQUB $09, $0B, $0C, $06 ; 9500: 09 0B 0C... ...
+ EQUB $0D, $0E, $0F, $10 ; 9504: 0D 0E 0F... ...
+ EQUB $06, $11, $12, $13 ; 9508: 06 11 12... ...
+ EQUB $14, $06, $15, $16 ; 950C: 14 06 15... ...
+ EQUB $17, $18, $06, $19 ; 9510: 17 18 06... ...
+ EQUB $1A, $1B, $1C, $06 ; 9514: 1A 1B 1C... ...
+ EQUB $07, $08, $04, $05 ; 9518: 07 08 04... ...
+ EQUB $06, $07, $08, $0A ; 951C: 06 07 08... ...
+ EQUB $28, $2A, $2B, $26 ; 9520: 28 2A 2B... (*+
+ EQUB $2C, $2D, $2E, $2F ; 9524: 2C 2D 2E... ,-.
+ EQUB $26, $30, $31, $24 ; 9528: 26 30 31... $01
+ EQUB $32, $26, $33, $34 ; 952C: 32 26 33... 2$3
+ EQUB $24, $35, $26, $36 ; 9530: 24 35 26... $5&
+ EQUB $37, $38, $39, $26 ; 9534: 37 38 39... 789
+ EQUB $25, $27, $24, $25 ; 9538: 25 27 24... %'$
+ EQUB $26, $25, $27, $29 ; 953C: 26 25 27... &%'
+ EQUB $09, $0B, $0C, $06 ; 9540: 09 0B 0C... ...
+ EQUB $0D, $0E, $0F, $10 ; 9544: 0D 0E 0F... ...
+ EQUB $06, $11, $12, $13 ; 9548: 06 11 12... ...
+ EQUB $14, $15, $16, $17 ; 954C: 14 15 16... ...
+ EQUB $18, $19, $1A, $1B ; 9550: 18 19 1A... ...
+ EQUB $08, $1C, $1D, $06 ; 9554: 08 1C 1D... ...
+ EQUB $1E, $1F, $20, $21 ; 9558: 1E 1F 20... ..
+ EQUB $06, $22, $23, $0A ; 955C: 06 22 23... ."#
+ EQUB $28, $2A, $2B, $26 ; 9560: 28 2A 2B... (*+
+ EQUB $2C, $2D, $2E, $2F ; 9564: 2C 2D 2E... ,-.
+ EQUB $26, $30, $31, $32 ; 9568: 26 30 31... $01
+ EQUB $33, $26, $34, $35 ; 956C: 33 26 34... 3$4
+ EQUB $36, $37, $26, $38 ; 9570: 36 37 26... 67&
+ EQUB $39, $3A, $3B, $26 ; 9574: 39 3A 3B... 9:;
+ EQUB $3C, $3D, $3E, $3F ; 9578: 3C 3D 3E... <=>
+ EQUB $26, $40, $27, $29 ; 957C: 26 40 27... &@'
+ EQUB $09, $0B, $0C, $06 ; 9580: 09 0B 0C... ...
+ EQUB $0D, $0E, $0F, $10 ; 9584: 0D 0E 0F... ...
+ EQUB $06, $11, $12, $13 ; 9588: 06 11 12... ...
+ EQUB $14, $06, $15, $16 ; 958C: 14 06 15... ...
+ EQUB $17, $18, $19, $1A ; 9590: 17 18 19... ...
+ EQUB $1B, $1C, $1D, $06 ; 9594: 1B 1C 1D... ...
+ EQUB $1E, $1F, $20, $21 ; 9598: 1E 1F 20... ..
+ EQUB $06, $22, $23, $0A ; 959C: 06 22 23... ."#
+ EQUB $28, $2A, $2B, $26 ; 95A0: 28 2A 2B... (*+
+ EQUB $2C, $2D, $2E, $2F ; 95A4: 2C 2D 2E... ,-.
+ EQUB $26, $30, $31, $32 ; 95A8: 26 30 31... $01
+ EQUB $33, $26, $34, $35 ; 95AC: 33 26 34... 3$4
+ EQUB $24, $36, $26, $37 ; 95B0: 24 36 26... $6&
+ EQUB $38, $39, $3A, $26 ; 95B4: 38 39 3A... 89:
+ EQUB $3B, $3C, $3D, $3E ; 95B8: 3B 3C 3D... ;<=
+ EQUB $26, $3F, $27, $29 ; 95BC: 26 3F 27... &?'
+ EQUB $09, $0B, $0C, $0D ; 95C0: 09 0B 0C... ...
+ EQUB $0E, $0F, $10, $11 ; 95C4: 0E 0F 10... ...
+ EQUB $06, $12, $08, $13 ; 95C8: 06 12 08... ...
+ EQUB $14, $06           ; 95CC: 14 06       ..
 
 .L95CE
 
- EQUB &15, &16, &17, &18 ; 95CE: 15 16 17... ...
- EQUB &0D, &19, &1A, &1B ; 95D2: 0D 19 1A... ...
- EQUB &1C, &06, &1D, &1E ; 95D6: 1C 06 1D... ...
- EQUB &1F, &20, &06, &15 ; 95DA: 1F 20 06... . .
- EQUB &16, &0A, &28, &2A ; 95DE: 16 0A 28... ..(
- EQUB &2B, &26, &2C, &2D ; 95E2: 2B 26 2C... +&,
- EQUB &2E, &2F, &26, &30 ; 95E6: 2E 2F 26... ./&
- EQUB &27, &24, &31, &26 ; 95EA: 27 24 31... '$1
- EQUB &32, &33, &34, &35 ; 95EE: 32 33 34... 234
- EQUB &26, &2C, &36, &37 ; 95F2: 26 2C 36... &,6
- EQUB &38, &26, &39, &3A ; 95F6: 38 26 39... 8&9
- EQUB &3B, &3C, &26, &32 ; 95FA: 3B 3C 26... ;<&
- EQUB &33, &29, &0A, &05 ; 95FE: 33 29 0A... 3).
- EQUB &08, &0C, &0D, &0E ; 9602: 08 0C 0D... ...
- EQUB &0F, &10, &11, &12 ; 9606: 0F 10 11... ...
- EQUB &13, &14, &15, &16 ; 960A: 13 14 15... ...
- EQUB &08, &17, &18, &19 ; 960E: 08 17 18... ...
- EQUB &1A, &1B, &1C, &1D ; 9612: 1A 1B 1C... ...
- EQUB &1E, &1F, &20, &21 ; 9616: 1E 1F 20... ..
- EQUB &22, &23, &24, &08 ; 961A: 22 23 24... "#$
- EQUB &09, &0B, &29, &25 ; 961E: 09 0B 29... ..)
- EQUB &26, &26, &2B, &2C ; 9622: 26 26 2B... &&+
- EQUB &2D, &2E, &2F, &30 ; 9626: 2D 2E 2F... -./
- EQUB &26, &31, &32, &33 ; 962A: 26 31 32... &12
- EQUB &26, &34, &2F, &35 ; 962E: 26 34 2F... &4/
- EQUB &36, &2F, &37, &38 ; 9632: 36 2F 37... 6/7
- EQUB &2E, &39, &3A, &2F ; 9636: 2E 39 3A... .9:
- EQUB &3B, &36, &26, &26 ; 963A: 3B 36 26... ;6&
- EQUB &28
+ EQUB $15, $16, $17, $18 ; 95CE: 15 16 17... ...
+ EQUB $0D, $19, $1A, $1B ; 95D2: 0D 19 1A... ...
+ EQUB $1C, $06, $1D, $1E ; 95D6: 1C 06 1D... ...
+ EQUB $1F, $20, $06, $15 ; 95DA: 1F 20 06... . .
+ EQUB $16, $0A, $28, $2A ; 95DE: 16 0A 28... ..(
+ EQUB $2B, $26, $2C, $2D ; 95E2: 2B 26 2C... +&,
+ EQUB $2E, $2F, $26, $30 ; 95E6: 2E 2F 26... ./&
+ EQUB $27, $24, $31, $26 ; 95EA: 27 24 31... '$1
+ EQUB $32, $33, $34, $35 ; 95EE: 32 33 34... 234
+ EQUB $26, $2C, $36, $37 ; 95F2: 26 2C 36... &,6
+ EQUB $38, $26, $39, $3A ; 95F6: 38 26 39... 8$9
+ EQUB $3B, $3C, $26, $32 ; 95FA: 3B 3C 26... ;<&
+ EQUB $33, $29, $0A, $05 ; 95FE: 33 29 0A... 3).
+ EQUB $08, $0C, $0D, $0E ; 9602: 08 0C 0D... ...
+ EQUB $0F, $10, $11, $12 ; 9606: 0F 10 11... ...
+ EQUB $13, $14, $15, $16 ; 960A: 13 14 15... ...
+ EQUB $08, $17, $18, $19 ; 960E: 08 17 18... ...
+ EQUB $1A, $1B, $1C, $1D ; 9612: 1A 1B 1C... ...
+ EQUB $1E, $1F, $20, $21 ; 9616: 1E 1F 20... ..
+ EQUB $22, $23, $24, $08 ; 961A: 22 23 24... "#$
+ EQUB $09, $0B, $29, $25 ; 961E: 09 0B 29... ..)
+ EQUB $26, $26, $2B, $2C ; 9622: 26 26 2B... &&+
+ EQUB $2D, $2E, $2F, $30 ; 9626: 2D 2E 2F... -./
+ EQUB $26, $31, $32, $33 ; 962A: 26 31 32... $12
+ EQUB $26, $34, $2F, $35 ; 962E: 26 34 2F... $4/
+ EQUB $36, $2F, $37, $38 ; 9632: 36 2F 37... 6/7
+ EQUB $2E, $39, $3A, $2F ; 9636: 2E 39 3A... .9:
+ EQUB $3B, $36, $26, $26 ; 963A: 3B 36 26... ;6&
+ EQUB $28
 
 .L963F
 
- EQUB &2A, &45, &46 ; 963F: 2A 45... (*E
- EQUB &47, &48, &47, &49 ; 9642: 47 48 47... GHG
- EQUB &4A, &4B, &4C, &4D ; 9646: 4A 4B 4C... JKL
- EQUB &4E, &4F, &4D, &4C ; 964A: 4E 4F 4D... NOM
- EQUB &4D, &4E, &4F, &4D ; 964E: 4D 4E 4F... MNO
- EQUB &4C, &4D, &50, &4F ; 9652: 4C 4D 50... LMP
- EQUB &4D, &4C, &51, &52 ; 9656: 4D 4C 51... MLQ
- EQUB &46, &47, &48, &47 ; 965A: 46 47 48... FGH
- EQUB &49, &53, &54, &55 ; 965E: 49 53 54... IST
- EQUB &55, &55, &55, &56 ; 9662: 55 55 55... UUU
- EQUB &57, &58, &59, &00 ; 9666: 57 58 59... WXY
- EQUB &5A, &5B, &5C, &5D ; 966A: 5A 5B 5C... Z[\
- EQUB &5E, &5F, &60, &61 ; 966E: 5E 5F 60... ^_`
- EQUB &62, &63, &64, &65 ; 9672: 62 63 64... bcd
- EQUB &00, &66, &67, &68 ; 9676: 00 66 67... .fg
- EQUB &69, &6A, &6B, &85 ; 967A: 69 6A 6B... ijk
- EQUB &85, &6E, &54, &55 ; 967E: 85 6E 54... .nT
- EQUB &55, &55, &55, &6F ; 9682: 55 55 55... UUU
- EQUB &70, &00, &71, &72 ; 9686: 70 00 71... p.q
- EQUB &73, &74, &75, &76 ; 968A: 73 74 75... stu
- EQUB &77, &78, &79, &7A ; 968E: 77 78 79... wxy
- EQUB &7B, &7C, &7D, &7E ; 9692: 7B 7C 7D... {|}
- EQUB &7F, &80, &00, &81 ; 9696: 7F 80 00... ...
- EQUB &82, &83, &84, &85 ; 969A: 82 83 84... ...
- EQUB &85, &6E, &54, &55 ; 969E: 85 6E 54... .nT
- EQUB &55, &55, &55, &86 ; 96A2: 55 55 55... UUU
- EQUB &70, &87, &88, &89 ; 96A6: 70 87 88... p..
- EQUB &8A, &8B, &8C, &8D ; 96AA: 8A 8B 8C... ...
- EQUB &8C, &8E, &8F, &8C ; 96AE: 8C 8E 8F... ...
- EQUB &90, &8C, &91, &92 ; 96B2: 90 8C 91... ...
- EQUB &93, &94, &95, &96 ; 96B6: 93 94 95... ...
- EQUB &97, &55, &55, &55 ; 96BA: 97 55 55... .UU
- EQUB &55, &98, &54, &55 ; 96BE: 55 98 54... U.T
- EQUB &55, &55, &55, &99 ; 96C2: 55 55 55... UUU
- EQUB &9A, &9B, &9C, &9D ; 96C6: 9A 9B 9C... ...
- EQUB &9E, &9F, &A0, &A1 ; 96CA: 9E 9F A0... ...
- EQUB &A2, &A2, &A3, &A2 ; 96CE: A2 A2 A3... ...
- EQUB &A4, &A0, &A5, &A6 ; 96D2: A4 A0 A5... ...
- EQUB &A7, &A8, &A9, &AA ; 96D6: A7 A8 A9... ...
- EQUB &AB, &55, &55, &55 ; 96DA: AB 55 55... .UU
- EQUB &55, &98, &54, &55 ; 96DE: 55 98 54... U.T
- EQUB &55, &55, &55, &AC ; 96E2: 55 55 55... UUU
- EQUB &AD, &58, &AE, &AF ; 96E6: AD 58 AE... .X.
- EQUB &B0, &B1, &B2, &B3 ; 96EA: B0 B1 B2... ...
- EQUB &B4, &B5, &B6, &B7 ; 96EE: B4 B5 B6... ...
- EQUB &B8, &B9, &BA, &BB ; 96F2: B8 B9 BA... ...
- EQUB &BC, &BD, &67, &BE ; 96F6: BC BD 67... ..g
- EQUB &BF, &55, &55, &55 ; 96FA: BF 55 55... .UU
- EQUB &55, &98, &54, &55 ; 96FE: 55 98 54... U.T
- EQUB &55, &55, &55, &C0 ; 9702: 55 55 55... UUU
- EQUB &C1, &00, &00, &00 ; 9706: C1 00 00... ...
- EQUB &00, &00, &C2, &C3 ; 970A: 00 00 C2... ...
- EQUB &C4, &C5, &C6, &C7 ; 970E: C4 C5 C6... ...
- EQUB &C8, &C9, &00, &00 ; 9712: C8 C9 00... ...
- EQUB &00, &00, &00, &CA ; 9716: 00 00 00... ...
- EQUB &97, &55, &55, &55 ; 971A: 97 55 55... .UU
- EQUB &55, &98, &00, &00 ; 971E: 55 98 00... U..
- EQUB &00, &00, &00, &00 ; 9722: 00 00 00... ...
- EQUB &00, &00, &00, &00 ; 9726: 00 00 00... ...
- EQUB &00, &00, &00, &00 ; 972A: 00 00 00... ...
- EQUB &00, &00, &00, &00 ; 972E: 00 00 00... ...
- EQUB &00, &00, &00, &00 ; 9732: 00 00 00... ...
- EQUB &00, &00, &00, &00 ; 9736: 00 00 00... ...
- EQUB &00, &00, &00, &00 ; 973A: 00 00 00... ...
- EQUB &00, &00, &00, &00 ; 973E: 00 00 00... ...
- EQUB &00, &00, &00, &00 ; 9742: 00 00 00... ...
- EQUB &00, &00, &00, &00 ; 9746: 00 00 00... ...
- EQUB &00, &00, &00, &00 ; 974A: 00 00 00... ...
- EQUB &00, &00, &00, &00 ; 974E: 00 00 00... ...
- EQUB &00, &00, &00, &00 ; 9752: 00 00 00... ...
- EQUB &00, &00, &00, &00 ; 9756: 00 00 00... ...
- EQUB &00, &00, &00, &00 ; 975A: 00 00 00... ...
- EQUB &00, &00, &32, &17 ; 975E: 00 00 32... ..2
- EQUB &3F, &05, &21, &07 ; 9762: 3F 05 21... ?.!
- EQUB &E8, &C0, &FC, &E8 ; 9766: E8 C0 FC... ...
- EQUB &D1, &83, &21, &07 ; 976A: D1 83 21... ..!
- EQUB &98, &00, &80, &04 ; 976E: 98 00 80... ...
- EQUB &AA, &FF, &00, &7F ; 9772: AA FF 00... ...
- EQUB &00, &13, &55, &07 ; 9776: 00 13 55... ..U
- EQUB &AA, &FF, &00, &FF ; 977A: AA FF 00... ...
- EQUB &00, &13, &55, &00 ; 977E: 00 13 55... ..U
- EQUB &10, &21, &38, &04 ; 9782: 10 21 38... .!8
- EQUB &AA, &FF, &00, &C7 ; 9786: AA FF 00... ...
- EQUB &00, &13, &55, &00 ; 978A: 00 13 55... ..U
- EQUB &32, &01, &03, &04 ; 978E: 32 01 03... 2..
- EQUB &AA, &FF, &00, &FC ; 9792: AA FF 00... ...
- EQUB &00, &13, &55, &02 ; 9796: 00 13 55... ..U
- EQUB &80, &00, &32, &06 ; 979A: 80 00 32... ..2
- EQUB &0C, &5C, &B8, &F8 ; 979E: 0C 5C B8... .\.
- EQUB &00, &7F, &00, &F9 ; 97A2: 00 7F 00... ...
- EQUB &F3, &A3, &46, &21 ; 97A6: F3 A3 46... ..F
- EQUB &07, &09, &FF, &7F ; 97AA: 07 09 FF... ...
- EQUB &05, &10, &22, &38 ; 97AE: 05 10 22... .."
- EQUB &10, &05, &22, &C7 ; 97B2: 10 05 22... .."
- EQUB &33, &28, &38, &38 ; 97B6: 33 28 38... 3(8
- EQUB &10, &0A, &12, &05 ; 97BA: 10 0A 12... ...
- EQUB &34, &01, &03, &03 ; 97BE: 34 01 03... 4..
- EQUB &01, &05, &22, &FC ; 97C2: 01 05 22... .."
- EQUB &34, &02, &03, &03 ; 97C6: 34 02 03... 4..
- EQUB &01, &02, &22, &80 ; 97CA: 01 02 22... .."
- EQUB &06, &22, &7F, &23 ; 97CE: 06 22 7F... .".
- EQUB &80, &02, &35, &01 ; 97D2: 80 02 35... ..5
- EQUB &03, &03, &01, &01 ; 97D6: 03 03 01... ...
- EQUB &04, &22, &FC, &22 ; 97DA: 04 22 FC... .".
- EQUB &02, &32, &03, &01 ; 97DE: 02 32 03... .2.
- EQUB &0A, &FF, &FE, &05 ; 97E2: 0A FF FE... ...
- EQUB &32, &01, &03, &00 ; 97E6: 32 01 03... 2..
- EQUB &40, &20, &33, &34 ; 97EA: 40 20 33... @ 3
- EQUB &1A, &1F, &00, &FC ; 97EE: 1A 1F 00... ...
- EQUB &00, &BF, &DF, &CB ; 97F2: 00 BF DF... ...
- EQUB &65, &E0, &E8, &FC ; 97F6: 65 E0 E8... e..
- EQUB &04, &80, &E0, &34 ; 97FA: 04 80 E0... ...
- EQUB &17, &03, &3F, &17 ; 97FE: 17 03 3F... ..?
- EQUB &8B, &C1, &60, &21 ; 9802: 8B C1 60... ..`
- EQUB &19, &03, &31, &02 ; 9806: 19 03 31... ..1
- EQUB &23, &03, &35, &02 ; 980A: 23 03 35... #.5
- EQUB &07, &04, &06, &05 ; 980E: 07 04 06... ...
- EQUB &23, &04, &21, &05 ; 9812: 23 04 21... #.!
- EQUB &08, &FF, &05, &12 ; 9816: 08 FF 05... ...
- EQUB &03, &21, &0C, &00 ; 981A: 03 21 0C... .!.
- EQUB &21, &0C, &00, &21 ; 981E: 21 0C 00... !..
- EQUB &11, &FF, &31, &3F ; 9822: 11 FF 31... ..1
- EQUB &24, &22, &21, &2E ; 9826: 24 22 21... $"!
- EQUB &AE, &23, &08, &22 ; 982A: AE 23 08... .#.
- EQUB &09, &22, &08, &C8 ; 982E: 09 22 08... .".
- EQUB &F6, &F7, &23, &B6 ; 9832: F6 F7 23... ..#
- EQUB &B5, &32, &34, &35 ; 9836: B5 32 34... .24
- EQUB &03, &F0, &F2, &21 ; 983A: 03 F0 F2... ...
- EQUB &12, &00, &10, &04 ; 983E: 12 00 10... ...
- EQUB &21, &04, &E4, &21 ; 9842: 21 04 E4... !..
- EQUB &12, &E0, &32, &02 ; 9846: 12 E0 32... ..2
- EQUB &01, &02, &50, &40 ; 984A: 01 02 50... ..P
- EQUB &02, &21, &0C, &10 ; 984E: 02 21 0C... .!.
- EQUB &32, &05, &15, &8A ; 9852: 32 05 15... 2..
- EQUB &90, &40, &09, &21 ; 9856: 90 40 09... .@.
- EQUB &01, &03, &21, &02 ; 985A: 01 03 21... ..!
- EQUB &0A, &7F, &03, &21 ; 985E: 0A 7F 03... ...
- EQUB &09, &40, &02, &7F ; 9862: 09 40 02... .@.
- EQUB &06, &FF, &57, &02 ; 9866: 06 FF 57... ..W
- EQUB &21, &09, &40, &02 ; 986A: 21 09 40... !.@
- EQUB &FF, &57, &05, &FF ; 986E: FF 57 05... .W.
- EQUB &E0, &5D, &10, &00 ; 9872: E0 5D 10... .].
- EQUB &7F, &02, &FF, &E0 ; 9876: 7F 02 FF... ...
- EQUB &5D, &05, &FF, &21 ; 987A: 5D 05 FF... ]..
- EQUB &04, &5D, &00, &21 ; 987E: 04 5D 00... .].
- EQUB &17, &40, &02, &FF ; 9882: 17 40 02... .@.
- EQUB &21, &04, &5D, &05 ; 9886: 21 04 5D... !.]
- EQUB &FF, &00, &55, &21 ; 988A: FF 00 55... ..U
- EQUB &01, &FF, &03, &FF ; 988E: 01 FF 03... ...
- EQUB &00, &55, &05, &FF ; 9892: 00 55 05... .U.
- EQUB &80, &D5, &00, &FF ; 9896: 80 D5 00... ...
- EQUB &03, &FF, &80, &D5 ; 989A: 03 FF 80... ...
- EQUB &05, &FF, &20, &55 ; 989E: 05 FF 20... ..
- EQUB &00, &E8, &21, &02 ; 98A2: 00 E8 21... ..!
- EQUB &02, &FF, &20, &55 ; 98A6: 02 FF 20... ..
- EQUB &05, &FF, &21, &06 ; 98AA: 05 FF 21... ..!
- EQUB &5D, &10, &00, &FD ; 98AE: 5D 10 00... ]..
- EQUB &02, &FF, &21, &06 ; 98B2: 02 FF 21... ..!
- EQUB &5D, &06, &FF, &55 ; 98B6: 5D 06 FF... ]..
- EQUB &02, &20, &21, &05 ; 98BA: 02 20 21... . !
- EQUB &02, &FF, &55, &06 ; 98BE: 02 FF 55... ..U
- EQUB &80, &7F, &21, &01 ; 98C2: 80 7F 21... ..!
- EQUB &02, &20, &21, &04 ; 98C6: 02 20 21... . !
- EQUB &00, &80, &7F, &0C ; 98CA: 00 80 7F... ...
- EQUB &80, &03, &40, &80 ; 98CE: 80 03 40... ..@
- EQUB &02, &32, &0A, &02 ; 98D2: 02 32 0A... .2.
- EQUB &02, &30, &21, &08 ; 98D6: 02 30 21... .0!
- EQUB &A0, &A8, &51, &32 ; 98DA: A0 A8 51... ..Q
- EQUB &09, &02, &04, &21 ; 98DE: 09 02 04... ...
- EQUB &0F, &4F, &48, &00 ; 98E2: 0F 4F 48... .OH
- EQUB &21, &08, &04, &20 ; 98E6: 21 08 04... !..
- EQUB &21, &27, &48, &21 ; 98EA: 21 27 48... !'H
- EQUB &07, &23, &10, &22 ; 98EE: 07 23 10... .#.
- EQUB &90, &32, &11, &12 ; 98F2: 90 32 11... .2.
- EQUB &10, &6F, &EF, &23 ; 98F6: 10 6F EF... .o.
- EQUB &6F, &AE, &21, &2C ; 98FA: 6F AE 21... o.!
- EQUB &AE, &04, &F0, &32 ; 98FE: AE 04 F0... ...
- EQUB &08, &04, &00, &14 ; 9902: 08 04 00... ...
- EQUB &34, &0F, &07, &03 ; 9906: 34 0F 07... 4..
- EQUB &07, &03, &21, &01 ; 990A: 07 03 21... ..!
- EQUB &00, &22, &01, &21 ; 990E: 00 22 01... .".
- EQUB &17, &FC, &F0, &E0 ; 9912: 17 FC F0... ...
- EQUB &C1, &80, &81, &32 ; 9916: C1 80 81... ...
- EQUB &01, &17, &07, &D0 ; 991A: 01 17 07... ...
- EQUB &7F, &36, &1F, &0F ; 991E: 7F 36 1F... .6.
- EQUB &07, &03, &03, &01 ; 9922: 07 03 03... ...
- EQUB &D1, &02, &35, &01 ; 9926: D1 02 35... ..5
- EQUB &02, &04, &08, &08 ; 992A: 02 04 08... ...
- EQUB &00, &FC, &F8, &F0 ; 992E: 00 FC F8... ...
- EQUB &E1, &83, &22, &07 ; 9932: E1 83 22... .."
- EQUB &9F, &34, &03, &07 ; 9936: 9F 34 03... .4.
- EQUB &0F, &1E, &7C, &22 ; 993A: 0F 1E 7C... ..|
- EQUB &F8, &60, &12, &FE ; 993E: F8 60 12... .`.
- EQUB &FD, &FB, &22, &F7 ; 9942: FD FB 22... .."
- EQUB &FF, &08, &28, &E0 ; 9946: FF 08 28... ..(
- EQUB &03, &21, &0C, &00 ; 994A: 03 21 0C... .!.
- EQUB &21, &0D, &00, &21 ; 994E: 21 0D 00... !..
- EQUB &11, &FF, &31, &3F ; 9952: 11 FF 31... ..1
- EQUB &24, &22, &21, &2E ; 9956: 24 22 21... $"!
- EQUB &AE, &23, &08, &C8 ; 995A: AE 23 08... .#.
- EQUB &21, &08, &88, &21 ; 995E: 21 08 88... !..
- EQUB &08, &C8, &F6, &F7 ; 9962: 08 C8 F6... ...
- EQUB &36, &36, &37, &36 ; 9966: 36 36 37... 667
- EQUB &37, &36, &37, &04 ; 996A: 37 36 37... 767
- EQUB &34, &01, &07, &0C ; 996E: 34 01 07... 4..
- EQUB &38, &04, &41, &33 ; 9972: 38 04 41... 8.A
- EQUB &07, &0C, &38, &02 ; 9976: 07 0C 38... ..8
- EQUB &21, &0F, &78, &C0 ; 997A: 21 0F 78... !.x
- EQUB &AA, &04, &21, &0F ; 997E: AA 04 21... ..!
- EQUB &78, &C0, &AA, &02 ; 9982: 78 C0 AA... x..
- EQUB &21, &0F, &F8, &AA ; 9986: 21 0F F8... !..
- EQUB &32, &01, &06, &AA ; 998A: 32 01 06... 2..
- EQUB &30, &40, &21, &0F ; 998E: 30 40 21... 0@!
- EQUB &F8, &AA, &32, &01 ; 9992: F8 AA 32... ..2
- EQUB &06, &AA, &30, &40 ; 9996: 06 AA 30... ..0
- EQUB &C8, &30, &EA, &80 ; 999A: C8 30 EA... .0.
- EQUB &00, &AA, &00, &21 ; 999E: 00 AA 00... ...
- EQUB &01, &C8, &30, &EA ; 99A2: 01 C8 30... ..0
- EQUB &80, &00, &AA, &00 ; 99A6: 80 00 AA... ...
- EQUB &33, &01, &04, &08 ; 99AA: 33 01 04... 3..
- EQUB &BA, &10, &20, &EA ; 99AE: BA 10 20... ..
- EQUB &80, &00, &32, &04 ; 99B2: 80 00 32... ..2
- EQUB &08, &BA, &10, &20 ; 99B6: 08 BA 10... ...
- EQUB &EA, &80, &00, &32 ; 99BA: EA 80 00... ...
- EQUB &06, &01, &AA, &02 ; 99BE: 06 01 AA... ...
- EQUB &AA, &02, &32, &06 ; 99C2: AA 02 32... ..2
- EQUB &01, &AA, &02, &AA ; 99C6: 01 AA 02... ...
- EQUB &02, &21, &08, &90 ; 99CA: 02 21 08... .!.
- EQUB &FA, &21, &38, &44 ; 99CE: FA 21 38... .!8
- EQUB &EB, &22, &80, &21 ; 99D2: EB 22 80... .".
- EQUB &08, &90, &FA, &21 ; 99D6: 08 90 FA... ...
- EQUB &38, &44, &EB, &22 ; 99DA: 38 44 EB... 8D.
- EQUB &80, &02, &AA, &02 ; 99DE: 80 02 AA... ...
- EQUB &AA, &C0, &30, &02 ; 99E2: AA C0 30... ..0
- EQUB &AA, &02, &AA, &C0 ; 99E6: AA 02 AA... ...
- EQUB &30, &22, &80, &AA ; 99EA: 30 22 80... 0".
- EQUB &22, &80, &AA, &81 ; 99EE: 22 80 AA... "..
- EQUB &86, &22, &80, &AA ; 99F2: 86 22 80... .".
- EQUB &22, &80, &AA, &81 ; 99F6: 22 80 AA... "..
- EQUB &86, &10, &21, &08 ; 99FA: 86 10 21... ..!
- EQUB &AB, &3D, &0C, &32 ; 99FE: AB 3D 0C... .=.
- EQUB &EA, &01, &01, &10 ; 9A02: EA 01 01... ...
- EQUB &08, &AB, &0C, &32 ; 9A06: 08 AB 0C... ...
- EQUB &EA, &01, &01, &60 ; 9A0A: EA 01 01... ...
- EQUB &80, &AA, &02, &AA ; 9A0E: 80 AA 02... ...
- EQUB &02, &60, &80, &AA ; 9A12: 02 60 80... .`.
- EQUB &02, &AA, &02, &20 ; 9A16: 02 AA 02... ...
- EQUB &10, &AA, &34, &08 ; 9A1A: 10 AA 34... ..4
- EQUB &04, &AA, &01, &00 ; 9A1E: 04 AA 01... ...
- EQUB &20, &10, &AA, &39 ; 9A22: 20 10 AA...  ..
- EQUB &08, &04, &AA, &01 ; 9A26: 08 04 AA... ...
- EQUB &00, &11, &0C, &AA ; 9A2A: 00 11 0C... ...
- EQUB &01, &00, &AA, &00 ; 9A2E: 01 00 AA... ...
- EQUB &80, &34, &11, &0C ; 9A32: 80 34 11... .4.
- EQUB &AA, &01, &00, &AA ; 9A36: AA 01 00... ...
- EQUB &00, &80, &F8, &21 ; 9A3A: 00 80 F8... ...
- EQUB &0F, &AA, &80, &60 ; 9A3E: 0F AA 80... ...
- EQUB &BA, &34, &0C, &02 ; 9A42: BA 34 0C... .4.
- EQUB &F8, &0F, &AA, &80 ; 9A46: F8 0F AA... ...
- EQUB &60, &BA, &32, &0C ; 9A4A: 60 BA 32... `.2
- EQUB &02, &00, &80, &F8 ; 9A4E: 02 00 80... ...
- EQUB &32, &0F, &01, &AA ; 9A52: 32 0F 01... 2..
- EQUB &03, &80, &F8, &32 ; 9A56: 03 80 F8... ...
- EQUB &0F, &01, &AA, &06 ; 9A5A: 0F 01 AA... ...
- EQUB &C0, &F0, &32, &18 ; 9A5E: C0 F0 32... ..2
- EQUB &0E, &04, &C2, &F0 ; 9A62: 0E 04 C2... ...
- EQUB &35, &18, &0E, &12 ; 9A66: 35 18 0E... 5..
- EQUB &10, &11, &25, &10 ; 9A6A: 10 11 25... ..%
- EQUB &6C, &EE, &6E, &EE ; 9A6E: 6C EE 6E... l.n
- EQUB &6F, &EF, &6F, &EF ; 9A72: 6F EF 6F... o.o
- EQUB &21, &04, &00, &21 ; 9A76: 21 04 00... !..
- EQUB &08, &60, &04, &35 ; 9A7A: 08 60 04... .`.
- EQUB &03, &07, &07, &97 ; 9A7E: 03 07 07... ...
- EQUB &0F, &13, &22, &01 ; 9A82: 0F 13 22... .."
- EQUB &80, &21, &01, &40 ; 9A86: 80 21 01... .!.
- EQUB &20, &33, &18, &07 ; 9A8A: 20 33 18...  3.
- EQUB &01, &81, &00, &C1 ; 9A8E: 01 81 00... ...
- EQUB &A0, &D0, &E4, &F8 ; 9A92: A0 D0 E4... ...
- EQUB &02, &21, &02, &00 ; 9A96: 02 21 02... .!.
- EQUB &32, &04, &08, &30 ; 9A9A: 32 04 08... 2..
- EQUB &C0, &38, &01, &03 ; 9A9E: C0 38 01... .8.
- EQUB &01, &07, &0B, &17 ; 9AA2: 01 07 0B... ...
- EQUB &4F, &3F, &08, &18 ; 9AA6: 4F 3F 08... O?.
- EQUB &03, &21, &08, &00 ; 9AAA: 03 21 08... .!.
- EQUB &21, &09, &00, &21 ; 9AAE: 21 09 00... !..
- EQUB &15, &FF, &31, &3F ; 9AB2: 15 FF 31... ..1
- EQUB &24, &22, &21, &2A ; 9AB6: 24 22 21... $"!
- EQUB &AA, &08, &21, &08 ; 9ABA: AA 08 21... ..!
- EQUB &00, &24, &10, &22 ; 9ABE: 00 24 10... .$.
- EQUB &18, &30, &6A, &22 ; 9AC2: 18 30 6A... .0j
- EQUB &60, &30, &33, &3D ; 9AC6: 60 30 33... `03
- EQUB &0E, &07, &30, &6A ; 9ACA: 0E 07 30... ..0
- EQUB &22, &60, &30, &36 ; 9ACE: 22 60 30... "`0
- EQUB &3D, &0E, &07, &01 ; 9AD2: 3D 0E 07... =..
- EQUB &AA, &0C, &30, &40 ; 9AD6: AA 0C 30... ..0
- EQUB &D5, &02, &21, &01 ; 9ADA: D5 02 21... ..!
- EQUB &AA, &21, &0C, &30 ; 9ADE: AA 21 0C... .!.
- EQUB &40, &D5, &02, &80 ; 9AE2: 40 D5 02... @..
- EQUB &AA, &03, &55, &02 ; 9AE6: AA 03 55... ..U
- EQUB &80, &AA, &03, &55 ; 9AEA: 80 AA 03... ...
- EQUB &02, &21, &02, &AE ; 9AEE: 02 21 02... .!.
- EQUB &21, &08, &10, &20 ; 9AF2: 21 08 10... !..
- EQUB &55, &22, &80, &21 ; 9AF6: 55 22 80... U".
- EQUB &02, &AE, &21, &08 ; 9AFA: 02 AE 21... ..!
- EQUB &10, &20, &55, &22 ; 9AFE: 10 20 55... . U
- EQUB &80, &00, &AA, &03 ; 9B02: 80 00 AA... ...
- EQUB &55, &03, &AA, &03 ; 9B06: 55 03 AA... U..
- EQUB &55, &02, &21, &01 ; 9B0A: 55 02 21... U.!
- EQUB &AB, &3E, &02, &04 ; 9B0E: AB 3E 02... .>.
- EQUB &04, &5D, &08, &10 ; 9B12: 04 5D 08... .].
- EQUB &01, &AB, &02, &04 ; 9B16: 01 AB 02... ...
- EQUB &04, &5D, &08, &10 ; 9B1A: 04 5D 08... .].
- EQUB &21, &0C, &AB, &03 ; 9B1E: 21 0C AB... !..
- EQUB &55, &02, &21, &0C ; 9B22: 55 02 21... U.!
- EQUB &AB, &03, &55, &02 ; 9B26: AB 03 55... ..U
- EQUB &98, &EA, &23, &80 ; 9B2A: 98 EA 23... ..#
- EQUB &D5, &22, &80, &98 ; 9B2E: D5 22 80... .".
- EQUB &EA, &23, &80, &D5 ; 9B32: EA 23 80... .#.
- EQUB &23, &80, &AA, &40 ; 9B36: 23 80 AA... #..
- EQUB &22, &20, &55, &10 ; 9B3A: 22 20 55... " U
- EQUB &21, &08, &80, &AA ; 9B3E: 21 08 80... !..
- EQUB &40, &22, &20, &55 ; 9B42: 40 22 20... @"
- EQUB &10, &21, &08, &40 ; 9B46: 10 21 08... .!.
- EQUB &AA, &10, &35, &08 ; 9B4A: AA 10 35... ..5
- EQUB &04, &57, &01, &01 ; 9B4E: 04 57 01... .W.
- EQUB &40, &AA, &10, &33 ; 9B52: 40 AA 10... @..
- EQUB &08, &04, &57, &23 ; 9B56: 08 04 57... ..W
- EQUB &01, &AA, &03, &55 ; 9B5A: 01 AA 03... ...
- EQUB &02, &21, &01, &AA ; 9B5E: 02 21 01... .!.
- EQUB &03, &55, &02, &80 ; 9B62: 03 55 02... .U.
- EQUB &EA, &30, &32, &0C ; 9B66: EA 30 32... .02
- EQUB &02, &55, &02, &80 ; 9B6A: 02 55 02... .U.
- EQUB &EA, &30, &32, &0C ; 9B6E: EA 30 32... .02
- EQUB &02, &55, &02, &21 ; 9B72: 02 55 02... .U.
- EQUB &06, &AB, &22, &03 ; 9B76: 06 AB 22... .."
- EQUB &21, &06, &DE, &58 ; 9B7A: 21 06 DE... !..
- EQUB &70, &21, &06, &AB ; 9B7E: 70 21 06... p!.
- EQUB &22, &03, &21, &06 ; 9B82: 22 03 21... ".!
- EQUB &DE, &58, &70, &08 ; 9B86: DE 58 70... .Xp
- EQUB &10, &00, &24, &08 ; 9B8A: 10 00 24... ..$
- EQUB &22, &18, &23, &10 ; 9B8E: 22 18 23... ".#
- EQUB &35, &12, &11, &12 ; 9B92: 35 12 11... 5..
- EQUB &10, &15, &6F, &EF ; 9B96: 10 15 6F... ..o
- EQUB &68, &E8, &68, &E8 ; 9B9A: 68 E8 68... h.h
- EQUB &6A, &EA, &07, &70 ; 9B9E: 6A EA 07... j..
- EQUB &FF, &FC, &24, &BC ; 9BA2: FF FC 24... ..$
- EQUB &8C, &8D, &03, &40 ; 9BA6: 8C 8D 03... ...
- EQUB &23, &C0, &40, &E0 ; 9BAA: 23 C0 40... #.@
- EQUB &20, &60, &A0, &23 ; 9BAE: 20 60 A0...  `.
- EQUB &20, &A0, &03, &21 ; 9BB2: 20 A0 03...  ..
- EQUB &0C, &00, &21, &0C ; 9BB6: 0C 00 21... ..!
- EQUB &00, &21, &1D, &FF ; 9BBA: 00 21 1D... .!.
- EQUB &31, &3F, &25, &22 ; 9BBE: 31 3F 25... 1?%
- EQUB &A2, &23, &08, &88 ; 9BC2: A2 23 08... .#.
- EQUB &23, &08, &48, &F6 ; 9BC6: 23 08 48... #.H
- EQUB &F7, &76, &21, &37 ; 9BCA: F7 76 21... .v!
- EQUB &B6, &B7, &B6, &B7 ; 9BCE: B6 B7 B6... ...
- EQUB &03, &21, &01, &04 ; 9BD2: 03 21 01... .!.
- EQUB &36, &1C, &0E, &0F ; 9BD6: 36 1C 0E... 6..
- EQUB &06, &03, &01, &02 ; 9BDA: 06 03 01... ...
- EQUB &21, &01, &04, &58 ; 9BDE: 21 01 04... !..
- EQUB &33, &2E, &07, &01 ; 9BE2: 33 2E 07... 3..
- EQUB &02, &C0, &F0, &A4 ; 9BE6: 02 C0 F0... ...
- EQUB &51, &21, &18, &C0 ; 9BEA: 51 21 18... Q!.
- EQUB &7A, &21, &0F, &05 ; 9BEE: 7A 21 0F... z!.
- EQUB &C0, &7A, &21, &0F ; 9BF2: C0 7A 21... .z!
- EQUB &04, &80, &21, &01 ; 9BF6: 04 80 21... ..!
- EQUB &AA, &84, &F8, &21 ; 9BFA: AA 84 F8... ...
- EQUB &1F, &03, &21, &01 ; 9BFE: 1F 03 21... ..!
- EQUB &AA, &84, &F8, &21 ; 9C02: AA 84 F8... ...
- EQUB &1F, &04, &AA, &02 ; 9C06: 1F 04 AA... ...
- EQUB &C0, &FF, &03, &AA ; 9C0A: C0 FF 03... ...
- EQUB &02, &C0, &FF, &03 ; 9C0E: 02 C0 FF... ...
- EQUB &AA, &03, &AA, &FF ; 9C12: AA 03 AA... ...
- EQUB &02, &AA, &03, &AA ; 9C16: 02 AA 03... ...
- EQUB &FF, &00, &20, &AA ; 9C1A: FF 00 20... ..
- EQUB &22, &40, &80, &AA ; 9C1E: 22 40 80... "@.
- EQUB &80, &7F, &20, &AA ; 9C22: 80 7F 20... ..
- EQUB &22, &40, &80, &AA ; 9C26: 22 40 80... "@.
- EQUB &80, &7F, &00, &AA ; 9C2A: 80 7F 00... ...
- EQUB &03, &AA, &00, &FF ; 9C2E: 03 AA 00... ...
- EQUB &00, &AA, &03, &AA ; 9C32: 00 AA 03... ...
- EQUB &00, &FF, &80, &AA ; 9C36: 00 FF 80... ...
- EQUB &23, &80, &AA, &80 ; 9C3A: 23 80 AA... #..
- EQUB &FF, &80, &AA, &23 ; 9C3E: FF 80 AA... ...
- EQUB &80, &AA, &80, &FF ; 9C42: 80 AA 80... ...
- EQUB &21, &04, &AE, &22 ; 9C46: 21 04 AE... !..
- EQUB &02, &21, &01, &AB ; 9C4A: 02 21 01... .!.
- EQUB &00, &FF, &21, &04 ; 9C4E: 00 FF 21... ..!
- EQUB &AE, &22, &02, &21 ; 9C52: AE 22 02... .".
- EQUB &01, &AB, &00, &FF ; 9C56: 01 AB 00... ...
- EQUB &00, &AA, &02, &21 ; 9C5A: 00 AA 02... ...
- EQUB &01, &FF, &80, &02 ; 9C5E: 01 FF 80... ...
- EQUB &AA, &02, &21, &01 ; 9C62: AA 02 21... ..!
- EQUB &FF, &80, &00, &80 ; 9C66: FF 80 00... ...
- EQUB &EA, &20, &21, &1F ; 9C6A: EA 20 21... . !
- EQUB &F8, &80, &02, &80 ; 9C6E: F8 80 02... ...
- EQUB &EA, &20, &21, &1F ; 9C72: EA 20 21... . !
- EQUB &F8, &80, &02, &21 ; 9C76: F8 80 02... ...
- EQUB &01, &AF, &F8, &80 ; 9C7A: 01 AF F8... ...
- EQUB &03, &22, &01, &AF ; 9C7E: 03 22 01... .".
- EQUB &F8, &80, &03, &21 ; 9C82: F8 80 03... ...
- EQUB &02, &C0, &04, &21 ; 9C86: 02 C0 04... ...
- EQUB &1A, &74, &E0, &C0 ; 9C8A: 1A 74 E0... .t.
- EQUB &02, &35, &03, &0F ; 9C8E: 02 35 03... .5.
- EQUB &25, &8A, &18, &03 ; 9C92: 25 8A 18... %..
- EQUB &80, &04, &21, &38 ; 9C96: 80 04 21... ..!
- EQUB &70, &F0, &60, &C0 ; 9C9A: 70 F0 60... p.`
- EQUB &80, &02, &23, &10 ; 9C9E: 80 02 23... ..#
- EQUB &21, &12, &22, &10 ; 9CA2: 21 12 22... !."
- EQUB &32, &11, &16, &6F ; 9CA6: 32 11 16... 2..
- EQUB &EF, &69, &E8, &6A ; 9CAA: EF 69 E8... .i.
- EQUB &EA, &68, &E9, &03 ; 9CAE: EA 68 E9... .h.
- EQUB &30, &03, &70, &FF ; 9CB2: 30 03 70... 0.p
- EQUB &FC, &22, &8C, &22 ; 9CB6: FC 22 8C... .".
- EQUB &BC, &8C, &8D, &03 ; 9CBA: BC 8C 8D... ...
- EQUB &21, &0D, &03, &21 ; 9CBE: 21 0D 03... !..
- EQUB &1C, &FF, &37, &3F ; 9CC2: 1C FF 37... ..7
- EQUB &22, &22, &2F, &2F ; 9CC6: 22 22 2F... ""/
- EQUB &23, &A3, &23, &08 ; 9CCA: 23 A3 23... #.#
- EQUB &49, &33, &09, &08 ; 9CCE: 49 33 09... I3.
- EQUB &08, &88, &F6, &F7 ; 9CD2: 08 88 F6... ...
- EQUB &22, &36, &76, &75 ; 9CD6: 22 36 76... "6v
- EQUB &74, &75, &21, &03 ; 9CDA: 74 75 21... tu!
- EQUB &03, &C0, &40, &02 ; 9CDE: 03 C0 40... ..@
- EQUB &32, &04, &01, &03 ; 9CE2: 32 04 01... 2..
- EQUB &90, &5A, &00, &F0 ; 9CE6: 90 5A 00... .Z.
- EQUB &FE, &32, &1F, &03 ; 9CEA: FE 32 1F... .2.
- EQUB &04, &34, &08, &01 ; 9CEE: 04 34 08... .4.
- EQUB &20, &04, &06, &E0 ; 9CF2: 20 04 06...  ..
- EQUB &FF, &7F, &21, &0F ; 9CF6: FF 7F 21... ..!
- EQUB &04, &10, &00, &80 ; 9CFA: 04 10 00... ...
- EQUB &10, &21, &01, &05 ; 9CFE: 10 21 01... .!.
- EQUB &FC, &12, &21, &01 ; 9D02: FC 12 21... ..!
- EQUB &03, &C0, &21, &03 ; 9D06: 03 C0 21... ..!
- EQUB &02, &21, &06, &05 ; 9D0A: 02 21 06... .!.
- EQUB &F8, &12, &04, &80 ; 9D0E: F8 12 04... ...
- EQUB &21, &07, &08, &21 ; 9D12: 21 07 08... !..
- EQUB &3F, &06, &21, &3F ; 9D16: 3F 06 21... ?.!
- EQUB &40, &BF, &06, &FF ; 9D1A: 40 BF 06... @..
- EQUB &06, &FF, &00, &FF ; 9D1E: 06 FF 00... ...
- EQUB &06, &FF, &06, &FF ; 9D22: 06 FF 06... ...
- EQUB &00, &21, &17, &06 ; 9D26: 00 21 17... .!.
- EQUB &FF, &06, &FF, &00 ; 9D2A: FF 06 FF... ...
- EQUB &44, &06, &FF, &06 ; 9D2E: 44 06 FF... D..
- EQUB &FF, &00, &7F, &06 ; 9D32: FF 00 7F... ...
- EQUB &FC, &06, &FC, &21 ; 9D36: FC 06 FC... ...
- EQUB &02, &FD, &05, &21 ; 9D3A: 02 FD 05... ...
- EQUB &1F, &12, &04, &21 ; 9D3E: 1F 12 04... ...
- EQUB &01, &E0, &06, &21 ; 9D42: 01 E0 06... ...
- EQUB &3F, &12, &80, &03 ; 9D46: 3F 12 80... ?..
- EQUB &21, &03, &C0, &02 ; 9D4A: 21 03 C0... !..
- EQUB &60, &02, &21, &07 ; 9D4E: 60 02 21... `.!
- EQUB &FF, &FE, &F0, &04 ; 9D52: FF FE F0... ...
- EQUB &21, &08, &00, &32 ; 9D56: 21 08 00... !..
- EQUB &01, &08, &80, &00 ; 9D5A: 01 08 80... ...
- EQUB &21, &0F, &7F, &F8 ; 9D5E: 21 0F 7F... !..
- EQUB &C0, &04, &10, &80 ; 9D62: C0 04 10... ...
- EQUB &21, &04, &20, &04 ; 9D66: 21 04 20... !.
- EQUB &C0, &03, &32, &03 ; 9D6A: C0 03 32... ..2
- EQUB &02, &02, &20, &80 ; 9D6E: 02 02 20... ..
- EQUB &03, &21, &09, &5A ; 9D72: 03 21 09... .!.
- EQUB &00, &23, &10, &93 ; 9D76: 00 23 10... .#.
- EQUB &90, &21, &16, &10 ; 9D7A: 90 21 16... .!.
- EQUB &21, &17, &6F, &EF ; 9D7E: 21 17 6F... !.o
- EQUB &23, &68, &A8, &21 ; 9D82: 23 68 A8... #h.
- EQUB &28, &A8, &03, &20 ; 9D86: 28 A8 03... (..
- EQUB &00, &30, &00, &40 ; 9D8A: 00 30 00... .0.
- EQUB &FF, &FC, &24, &8C ; 9D8E: FF FC 24... ..$
- EQUB &BC, &BD, &03, &21 ; 9D92: BC BD 03... ...
- EQUB &01, &03, &21, &1C ; 9D96: 01 03 21... ..!
- EQUB &FF, &37, &3F, &2E ; 9D9A: FF 37 3F... .7?
- EQUB &2E, &2F, &2F, &23 ; 9D9E: 2E 2F 2F... .//
- EQUB &A3, &23, &08, &48 ; 9DA2: A3 23 08... .#.
- EQUB &21, &08, &00, &21 ; 9DA6: 21 08 00... !..
- EQUB &08, &80, &F6, &F7 ; 9DAA: 08 80 F6... ...
- EQUB &32, &36, &37, &76 ; 9DAE: 32 36 37... 267
- EQUB &7E, &74, &7C, &21 ; 9DB2: 7E 74 7C... ~t|
- EQUB &01, &07, &21, &0E ; 9DB6: 01 07 21... ..!
- EQUB &0F, &DF, &34, &0F ; 9DBA: 0F DF 34... ..4
- EQUB &07, &03, &01, &05 ; 9DBE: 07 03 01... ...
- EQUB &21, &0C, &05, &FF ; 9DC2: 21 0C 05... !..
- EQUB &22, &F3, &12, &03 ; 9DC6: 22 F3 12... "..
- EQUB &60, &00, &60, &00 ; 9DCA: 60 00 60... `.`
- EQUB &EE, &03, &23, &17 ; 9DCE: EE 03 23... ..#
- EQUB &22, &11, &03, &21 ; 9DD2: 22 11 03... "..
- EQUB &29, &00, &21, &01 ; 9DD6: 29 00 21... ).!
- EQUB &00, &93, &03, &44 ; 9DDA: 00 93 03... ...
- EQUB &24, &6C, &03, &80 ; 9DDE: 24 6C 03... $l.
- EQUB &00, &98, &00, &80 ; 9DE2: 00 98 00... ...
- EQUB &03, &7F, &22, &67 ; 9DE6: 03 7F 22... .."
- EQUB &22, &7F, &0B, &FB ; 9DEA: 22 7F 0B... "..
- EQUB &F0, &E0, &C0, &80 ; 9DEE: F0 E0 C0... ...
- EQUB &03, &C0, &07, &21 ; 9DF2: 03 C0 07... ...
- EQUB &38, &07, &23, &10 ; 9DF6: 38 07 23... 8.#
- EQUB &21, &12, &10, &21 ; 9DFA: 21 12 10... !..
- EQUB &02, &10, &21, &05 ; 9DFE: 02 10 21... ..!
- EQUB &6F, &EF, &68, &E8 ; 9E02: 6F EF 68... o.h
- EQUB &68, &78, &34, &2A ; 9E06: 68 78 34... hx4
- EQUB &3A, &00, &38, &22 ; 9E0A: 3A 00 38... :.8
- EQUB &10, &21, &38, &04 ; 9E0E: 10 21 38... .!8
- EQUB &21, &38, &22, &10 ; 9E12: 21 38 22... !8"
- EQUB &21, &38, &06, &FF ; 9E16: 21 38 06... !8.
- EQUB &07, &FF, &04, &28 ; 9E1A: 07 FF 04... ...
- EQUB &18, &28, &18, &23 ; 9E1E: 18 28 18... .(.
- EQUB &01, &FF, &24, &C0 ; 9E22: 01 FF 24... ..$
- EQUB &23, &01, &FF, &24 ; 9E26: 23 01 FF... #..
- EQUB &C0, &08, &E0, &98 ; 9E2A: C0 08 E0... ...
- EQUB &86, &81, &86, &98 ; 9E2E: 86 81 86... ...
- EQUB &E0, &09, &FF, &81 ; 9E32: E0 09 FF... ...
- EQUB &42, &32, &24, &18 ; 9E36: 42 32 24... B2$
- EQUB &03, &C0, &60, &30 ; 9E3A: 03 C0 60... ..`
- EQUB &34, &18, &0C, &06 ; 9E3E: 34 18 0C... 4..
- EQUB &02, &00, &C0, &60 ; 9E42: 02 00 C0... ...
- EQUB &30, &34, &18, &0C ; 9E46: 30 34 18... 04.
- EQUB &06, &02, &03, &31 ; 9E4A: 06 02 03... ...
- EQUB &18, &23, &3C, &21 ; 9E4E: 18 23 3C... .#<
- EQUB &18, &0B, &34, &18 ; 9E52: 18 0B 34... ..4
- EQUB &3C, &3C, &18, &0D ; 9E56: 3C 3C 18... <<.
- EQUB &22, &18, &0E, &21 ; 9E5A: 22 18 0E... "..
- EQUB &18, &0F, &10, &0F ; 9E5E: 18 0F 10... ...
- EQUB &22, &18, &06, &22 ; 9E62: 22 18 06... "..
- EQUB &18, &05, &34, &08 ; 9E66: 18 05 34... ..4
- EQUB &1C, &18, &08, &04 ; 9E6A: 1C 18 08... ...
- EQUB &34, &18, &2C, &24 ; 9E6E: 34 18 2C... 4.,
- EQUB &18, &03, &10, &34 ; 9E72: 18 03 10... ...
- EQUB &34, &28, &28, &1C ; 9E76: 34 28 28... 4((
- EQUB &10, &02, &36, &18 ; 9E7A: 10 02 36... ..6
- EQUB &38, &2C, &18, &3C ; 9E7E: 38 2C 18... 8,.
- EQUB &18, &09, &28, &18 ; 9E82: 18 09 28... ..(
- EQUB &0F, &78, &0E, &78 ; 9E86: 0F 78 0E... .x.
- EQUB &21, &18, &0D, &78 ; 9E8A: 21 18 0D... !..
- EQUB &22, &18, &0C, &78 ; 9E8E: 22 18 0C... "..
- EQUB &23, &18, &0B, &78 ; 9E92: 23 18 0B... #..
- EQUB &24, &18, &0A, &78 ; 9E96: 24 18 0A... $..
- EQUB &25, &18, &09, &78 ; 9E9A: 25 18 09... %..
- EQUB &26, &18, &08, &78 ; 9E9E: 26 18 08... &..
- EQUB &27, &18, &03, &13 ; 9EA2: 27 18 03... '..
- EQUB &02, &FF, &05, &12 ; 9EA6: 02 FF 05... ...
- EQUB &04, &80, &03, &FF ; 9EAA: 04 80 03... ...
- EQUB &05, &12, &03, &80 ; 9EAE: 05 12 03... ...
- EQUB &C0, &80, &02, &FF ; 9EB2: C0 80 02... ...
- EQUB &05, &12, &03, &C0 ; 9EB6: 05 12 03... ...
- EQUB &E0, &C0, &02, &FF ; 9EBA: E0 C0 02... ...
- EQUB &05, &12, &03, &E0 ; 9EBE: 05 12 03... ...
- EQUB &F0, &E0, &02, &FF ; 9EC2: F0 E0 02... ...
- EQUB &05, &12, &03, &F0 ; 9EC6: 05 12 03... ...
- EQUB &F8, &F0, &02, &FF ; 9ECA: F8 F0 02... ...
- EQUB &05, &12, &03, &F8 ; 9ECE: 05 12 03... ...
- EQUB &FC, &F8, &02, &FF ; 9ED2: FC F8 02... ...
- EQUB &05, &12, &03, &FC ; 9ED6: 05 12 03... ...
- EQUB &FE, &FC, &02, &FF ; 9EDA: FE FC 02... ...
- EQUB &05, &12, &03, &FE ; 9EDE: 05 12 03... ...
- EQUB &FF, &FE, &02, &FF ; 9EE2: FF FE 02... ...
- EQUB &05, &12, &03, &13 ; 9EE6: 05 12 03... ...
- EQUB &02, &FF, &02, &15 ; 9EEA: 02 FF 02... ...
- EQUB &04, &80, &03, &FF ; 9EEE: 04 80 03... ...
- EQUB &03, &80, &00, &12 ; 9EF2: 03 80 00... ...
- EQUB &03, &80, &C0, &80 ; 9EF6: 03 80 C0... ...
- EQUB &02, &FF, &02, &80 ; 9EFA: 02 FF 02... ...
- EQUB &C0, &80, &12, &03 ; 9EFE: C0 80 12... ...
- EQUB &C0, &E0, &C0, &02 ; 9F02: C0 E0 C0... ...
- EQUB &FF, &02, &C0, &E0 ; 9F06: FF 02 C0... ...
- EQUB &C0, &12, &03, &E0 ; 9F0A: C0 12 03... ...
- EQUB &F0, &E0, &02, &FF ; 9F0E: F0 E0 02... ...
- EQUB &02, &E0, &F0, &E0 ; 9F12: 02 E0 F0... ...
- EQUB &12, &03, &F0, &F8 ; 9F16: 12 03 F0... ...
- EQUB &F0, &02, &FF, &02 ; 9F1A: F0 02 FF... ...
- EQUB &F0, &F8, &F0, &12 ; 9F1E: F0 F8 F0... ...
- EQUB &03, &F8, &FC, &F8 ; 9F22: 03 F8 FC... ...
- EQUB &02, &FF, &02, &F8 ; 9F26: 02 FF 02... ...
- EQUB &FC, &F8, &12, &03 ; 9F2A: FC F8 12... ...
- EQUB &FC, &FE, &FC, &02 ; 9F2E: FC FE FC... ...
- EQUB &FF, &02, &FC, &FE ; 9F32: FF 02 FC... ...
- EQUB &FC, &12, &03, &FE ; 9F36: FC 12 03... ...
- EQUB &FF, &FE, &02, &FF ; 9F3A: FF FE 02... ...
- EQUB &02, &FE, &FF, &FE ; 9F3E: 02 FE FF... ...
- EQUB &12, &10, &33, &0C ; 9F42: 12 10 33... ..3
- EQUB &3A, &2B, &87, &E3 ; 9F46: 3A 2B 87... :+.
- EQUB &A4, &35, &08, &04 ; 9F4A: A4 35 08... .5.
- EQUB &34, &27, &3A, &BB ; 9F4E: 34 27 3A... 4':
- EQUB &48, &90, &21, &18 ; 9F52: 48 90 21... H.!
- EQUB &02, &33, &18, &24 ; 9F56: 02 33 18... .3.
- EQUB &18, &0F, &06, &33 ; 9F5A: 18 0F 06... ...
- EQUB &18, &3C, &18, &03 ; 9F5E: 18 3C 18... .<.
- EQUB &FF, &26, &81, &12 ; 9F62: FF 26 81... .&.
- EQUB &26, &81, &FF, &02 ; 9F66: 26 81 FF... &..
- EQUB &34, &18, &3C, &3C ; 9F6A: 34 18 3C... 4.<
- EQUB &18, &0F, &05, &34 ; 9F6E: 18 0F 05... ...
- EQUB &18, &3C, &3C, &18 ; 9F72: 18 3C 3C... .<<
- EQUB &02, &70, &24, &60 ; 9F76: 02 70 24... .p$
- EQUB &23, &C0, &70, &23 ; 9F7A: 23 C0 70... #.p
- EQUB &60, &22, &40, &22 ; 9F7E: 60 22 40... `"@
- EQUB &C0, &7F, &24, &60 ; 9F82: C0 7F 24... ..$
- EQUB &23, &C0, &7F, &23 ; 9F86: 23 C0 7F... #..
- EQUB &60, &22, &40, &22 ; 9F8A: 60 22 40... `"@
- EQUB &C0, &22, &60, &24 ; 9F8E: C0 22 60... ."`
- EQUB &C0, &12, &60, &22 ; 9F92: C0 12 60... ..`
- EQUB &40, &23, &C0, &FF ; 9F96: 40 23 C0... @#.
- EQUB &FE, &24, &C0, &0C ; 9F9A: FE 24 C0... .$.
- EQUB &18, &08, &3F, &07 ; 9F9E: 18 08 3F... ..?
- EQUB &21, &01, &0B, &32 ; 9FA2: 21 01 0B... !..
- EQUB &05, &34, &6B, &D6 ; 9FA6: 05 34 6B... .4k
- EQUB &9F, &03, &34, &02 ; 9FAA: 9F 03 34... ..4
- EQUB &0F, &1F, &3F, &7F ; 9FAE: 0F 1F 3F... ..?
- EQUB &02, &14, &DF, &B7 ; 9FB2: 02 14 DF... ...
- EQUB &03, &12, &7F, &BF ; 9FB6: 03 12 7F... ...
- EQUB &CF, &02, &FE, &F5 ; 9FBA: CF 02 FE... ...
- EQUB &F9, &FB, &FD, &D3 ; 9FBE: F9 FB FD... ...
- EQUB &03, &22, &FE, &FD ; 9FC2: 03 22 FE... .".
- EQUB &FB, &FF, &03, &C0 ; 9FC6: FB FF 03... ...
- EQUB &B0, &CC, &F2, &69 ; 9FCA: B0 CC F2... ...
- EQUB &04, &C0, &F0, &EC ; 9FCE: 04 C0 F0... ...
- EQUB &F6, &06, &32, &02 ; 9FD2: F6 06 32... ..2
- EQUB &0B, &06, &32, &01 ; 9FD6: 0B 06 32... ..2
- EQUB &07, &05, &21, &2B ; 9FDA: 07 05 21... ..!
- EQUB &EA, &FC, &05, &21 ; 9FDE: EA FC 05... ...
- EQUB &1F, &F5, &FF, &04 ; 9FE2: 1F F5 FF... ...
- EQUB &21, &01, &FF, &5F ; 9FE6: 21 01 FF... !..
- EQUB &F9, &05, &12, &21 ; 9FEA: F9 05 12... ...
- EQUB &07, &04, &9F, &FF ; 9FEE: 07 04 9F... ...
- EQUB &EE, &BB, &04, &7F ; 9FF2: EE BB 04... ...
- EQUB &13, &03, &21, &19 ; 9FF6: 13 03 21... ..!
- EQUB &12, &E0, &BF, &03 ; 9FFA: 12 E0 BF... ...
- EQUB &21, &07, &14, &03 ; 9FFE: 21 07 14... !..
- EQUB &FD, &FB, &E6, &D8 ; A002: FD FB E6... ...
- EQUB &21, &27, &03, &22 ; A006: 21 27 03... !'.
- EQUB &FE, &12, &DF, &03 ; A00A: FE 12 DF... ...
- EQUB &BE, &DF, &DA, &FD ; A00E: BE DF DA... ...
- EQUB &C5, &03, &7F, &BF ; A012: C5 03 7F... ...
- EQUB &EC, &21, &36, &FB ; A016: EC 21 36... .!6
- EQUB &03, &60, &FF, &10 ; A01A: 03 60 FF... .`.
- EQUB &7E, &A7, &03, &80 ; A01E: 7E A7 03... ~..
- EQUB &FF, &33, &0F, &01 ; A022: FF 33 0F... .3.
- EQUB &18, &04, &21, &1E ; A026: 18 04 21... ..!
- EQUB &5F, &10, &CE, &04 ; A02A: 5F 10 CE... _..
- EQUB &E0, &FF, &EF, &21 ; A02E: E0 FF EF... ...
- EQUB &31, &05, &40, &21 ; A032: 31 05 40... 1.@
- EQUB &03, &F6, &05, &FF ; A036: 03 F6 05... ...
- EQUB &FC, &21, &01, &05 ; A03A: FC 21 01... .!.
- EQUB &E0, &32, &0A, &2F ; A03E: E0 32 0A... .2.
- EQUB &06, &21, &05, &D0 ; A042: 06 21 05... .!.
- EQUB &06, &80, &E0, &0E ; A046: 06 80 E0... ...
- EQUB &32, &01, &06, &07 ; A04A: 32 01 06... 2..
- EQUB &34, &01, &03, &06 ; A04E: 34 01 03... 4..
- EQUB &19, &30, &65, &D2 ; A052: 19 30 65... .0e
- EQUB &67, &87, &00, &38 ; A056: 67 87 00... g..
- EQUB &01, &06, &0F, &1B ; A05A: 01 06 0F... ...
- EQUB &2F, &1F, &3F, &2F ; A05E: 2F 1F 3F... /.?
- EQUB &5F, &FF, &FE, &79 ; A062: 5F FF FE... _..
- EQUB &F7, &FF, &EF, &16 ; A066: F7 FF EF... ...
- EQUB &F7, &FF, &F3, &DF ; A06A: F7 FF F3... ...
- EQUB &EE, &21, &14, &EB ; A06E: EE 21 14... .!.
- EQUB &FD, &FB, &F7, &DC ; A072: FD FB F7... ...
- EQUB &FE, &12, &F6, &FA ; A076: FE 12 F6... ...
- EQUB &22, &FC, &9E, &F5 ; A07A: 22 FC 9E... "..
- EQUB &CE, &BC, &98, &68 ; A07E: CE BC 98... ...
- EQUB &D0, &E0, &67, &EF ; A082: D0 E0 67... ..g
- EQUB &FF, &DF, &FF, &BF ; A086: FF DF FF... ...
- EQUB &22, &7F, &B4, &58 ; A08A: 22 7F B4... "..
- EQUB &86, &21, &03, &00 ; A08E: 86 21 03... .!.
- EQUB &21, &01, &02, &FB ; A092: 21 01 02... !..
- EQUB &FF, &FD, &FE, &14 ; A096: FF FD FE... ...
- EQUB &80, &40, &10, &48 ; A09A: 80 40 10... .@.
- EQUB &B4, &4A, &BF, &21 ; A09E: B4 4A BF... .J.
- EQUB &2C, &00, &80, &E0 ; A0A2: 2C 00 80... ,..
- EQUB &B0, &48, &A4, &C0 ; A0A6: B0 48 A4... .H.
- EQUB &D1, &07, &C0, &08 ; A0AA: D1 07 C0... ...
- EQUB &20, &FF, &00, &21 ; A0AE: 20 FF 00...  ..
- EQUB &05, &04, &21, &1F ; A0B2: 05 04 21... ..!
- EQUB &07, &21, &01, &EA ; A0B6: 07 21 01... .!.
- EQUB &21, &02, &7F, &21 ; A0BA: 21 02 7F... !..
- EQUB &06, &03, &FE, &21 ; A0BE: 06 03 FE... ...
- EQUB &14, &06, &6B, &81 ; A0C2: 14 06 6B... ..k
- EQUB &FA, &FE, &A1, &21 ; A0C6: FA FE A1... ...
- EQUB &0E, &02, &21, &1C ; A0CA: 0E 02 21... ..!
- EQUB &7F, &21, &05, &05 ; A0CE: 7F 21 05... .!.
- EQUB &A7, &8C, &21, &11 ; A0D2: A7 8C 21... ..!
- EQUB &00, &55, &03, &5F ; A0D6: 00 55 03... .U.
- EQUB &F3, &EE, &05, &7E ; A0DA: F3 EE 05... ...
- EQUB &DD, &21, &16, &FC ; A0DE: DD 21 16... .!.
- EQUB &68, &21, &0A, &85 ; A0E2: 68 21 0A... h!.
- EQUB &21, &01, &FF, &21 ; A0E6: 21 01 FF... !..
- EQUB &3E, &E9, &22, &03 ; A0EA: 3E E9 22... >."
- EQUB &21, &01, &02, &BF ; A0EE: 21 01 02... !..
- EQUB &7F, &FD, &32, &3F ; A0F2: 7F FD 32... ..2
- EQUB &0B, &E8, &F5, &FE ; A0F6: 0B E8 F5... ...
- EQUB &7F, &12, &C0, &F4 ; A0FA: 7F 12 C0... ...
- EQUB &03, &FB, &FD, &00 ; A0FE: 03 FB FD... ...
- EQUB &F8, &D4, &02, &A1 ; A102: F8 D4 02... ...
- EQUB &FC, &FE, &FF, &05 ; A106: FC FE FF... ...
- EQUB &78, &86, &BF, &21 ; A10A: 78 86 BF... x..
- EQUB &1F, &00, &80, &53 ; A10E: 1F 00 80... ...
- EQUB &00, &87, &78, &06 ; A112: 00 87 78... ..x
- EQUB &21, &3D, &E0, &FF ; A116: 21 3D E0... !=.
- EQUB &F0, &00, &21, &0A ; A11A: F0 00 21... ..!
- EQUB &C0, &00, &C0, &21 ; A11E: C0 00 C0... ...
- EQUB &1F, &06, &83, &FF ; A122: 1F 06 83... ...
- EQUB &FE, &00, &21, &02 ; A126: FE 00 21... ..!
- EQUB &C0, &02, &7C, &07 ; A12A: C0 02 7C... ..|
- EQUB &12, &00, &21, &13 ; A12E: 12 00 21... ..!
- EQUB &C0, &0B, &F8, &FE ; A132: C0 0B F8... ...
- EQUB &00, &80, &0F, &01 ; A136: 00 80 0F... ...
- EQUB &34, &01, &03, &06 ; A13A: 34 01 03... 4..
- EQUB &0D, &06, &35, &01 ; A13E: 0D 06 35... ..5
- EQUB &02, &0D, &1F, &3A ; A142: 02 0D 1F... ...
- EQUB &74, &A9, &52, &81 ; A146: 74 A9 52... t.R
- EQUB &35, &27, &02, &00 ; A14A: 35 27 02... 5'.
- EQUB &05, &0B, &57, &AF ; A14E: 05 0B 57... ..W
- EQUB &21, &3F, &5B, &8F ; A152: 21 3F 5B... !?[
- EQUB &34, &1F, &3F, &7F ; A156: 34 1F 3F... 4.?
- EQUB &3F, &DF, &EE, &FD ; A15A: 3F DF EE... ?..
- EQUB &5F, &16, &F7, &12 ; A15E: 5F 16 F7... _..
- EQUB &EF, &D5, &AB, &54 ; A162: EF D5 AB... ...
- EQUB &BB, &71, &22, &EF ; A166: BB 71 22... .q"
- EQUB &12, &F7, &FB, &FC ; A16A: 12 F7 FB... ...
- EQUB &FE, &F9, &F5, &E9 ; A16E: FE F9 F5... ...
- EQUB &B2, &4C, &B2, &DE ; A172: B2 4C B2... .L.
- EQUB &F2, &23, &FE, &FD ; A176: F2 23 FE... .#.
- EQUB &F3, &CD, &32, &21 ; A17A: F3 CD 32... ..2
- EQUB &01, &80, &00, &C0 ; A17E: 01 80 00... ...
- EQUB &D0, &B4, &AC, &92 ; A182: D0 B4 AC... ...
- EQUB &E4, &12, &21, &3F ; A186: E4 12 21... ..!
- EQUB &6F, &7B, &7F, &6F ; A18A: 6F 7B 7F... o{.
- EQUB &21, &23, &06, &80 ; A18E: 21 23 06... !#.
- EQUB &A0, &16, &7F, &DF ; A192: A0 16 7F... ...
- EQUB &37, &1C, &2C, &04 ; A196: 37 1C 2C... 7.,
- EQUB &05, &02, &00, &01 ; A19A: 05 02 00... ...
- EQUB &00, &E0, &F0, &22 ; A19E: 00 E0 F0... ...
- EQUB &F8, &FC, &22, &FE ; A1A2: F8 FC 22... .."
- EQUB &FF, &E0, &30, &98 ; A1A6: FF E0 30... ..0
- EQUB &4C, &A7, &FB, &7D ; A1AA: 4C A7 FB... L..
- EQUB &BD, &0D, &80, &C0 ; A1AE: BD 0D 80... ...
- EQUB &60, &0C, &34, &01 ; A1B2: 60 0C 34... `.4
- EQUB &02, &0C, &1D, &05 ; A1B6: 02 0C 1D... ...
- EQUB &35, &01, &03, &03 ; A1BA: 35 01 03... 5..
- EQUB &1A, &1C, &65, &B9 ; A1BE: 1A 1C 65... ..e
- EQUB &21, &12, &60, &C2 ; A1C2: 21 12 60... !.`
- EQUB &A1, &33, &04, &01 ; A1C6: A1 33 04... .3.
- EQUB &02, &40, &EC, &DF ; A1CA: 02 40 EC... .@.
- EQUB &BF, &5E, &4B, &95 ; A1CE: BF 5E 4B... .^K
- EQUB &32, &2E, &17, &6F ; A1D2: 32 2E 17... 2..
- EQUB &BF, &5F, &FA, &BF ; A1D6: BF 5F FA... ._.
- EQUB &7F, &12, &21, &3F ; A1DA: 7F 12 21... ..!
- EQUB &7F, &14, &FB, &54 ; A1DE: 7F 14 FB... ...
- EQUB &E9, &E6, &D8, &7F ; A1E2: E9 E6 D8... ...
- EQUB &FB, &FD, &FE, &FF ; A1E6: FB FD FE... ...
- EQUB &BE, &D8, &E0, &80 ; A1EA: BE D8 E0... ...
- EQUB &A5, &4F, &B5, &CA ; A1EE: A5 4F B5... .O.
- EQUB &B1, &7E, &21, &1F ; A1F2: B1 7E 21... .~!
- EQUB &DF, &F8, &F0, &C0 ; A1F6: DF F8 F0... ...
- EQUB &05, &E2, &82, &21 ; A1FA: 05 E2 82... ...
- EQUB &3B, &DA, &73, &21 ; A1FE: 3B DA 73... ;.s
- EQUB &1F, &C3, &D8, &22 ; A202: 1F C3 D8... ...
- EQUB &01, &00, &21, &01 ; A206: 01 00 21... ..!
- EQUB &04, &82, &C0, &8E ; A20A: 04 82 C0... ...
- EQUB &CC, &60, &D7, &72 ; A20E: CC 60 D7... .`.
- EQUB &21, &18, &61, &20 ; A212: 21 18 61... !.a
- EQUB &60, &36, &21, &07 ; A216: 60 36 21... `6!
- EQUB &28, &01, &07, &28 ; A21A: 28 01 07... (..
- EQUB &96, &45, &21, &0F ; A21E: 96 45 21... .E!
- EQUB &F9, &40, &02, &F7 ; A222: F9 40 02... .@.
- EQUB &79, &21, &3E, &F0 ; A226: 79 21 3E... y!>
- EQUB &32, &07, &3F, &12 ; A22A: 32 07 3F... 2.?
- EQUB &00, &D3, &EB, &FE ; A22E: 00 D3 EB... ...
- EQUB &BA, &6F, &36, &2E ; A232: BA 6F 36... .o6
- EQUB &0F, &FF, &2C, &14 ; A236: 0F FF 2C... ..,
- EQUB &01, &C1, &22, &D0 ; A23A: 01 C1 22... .."
- EQUB &FC, &32, &3D, &1C ; A23E: FC 32 3D... .2=
- EQUB &AD, &95, &6D, &73 ; A242: AD 95 6D... ..m
- EQUB &21, &3D, &F2, &80 ; A246: 21 3D F2... !=.
- EQUB &C0, &40, &20, &10 ; A24A: C0 40 20... .@
- EQUB &21, &08, &40, &21 ; A24E: 21 08 40... !.@
- EQUB &04, &10, &21, &08 ; A252: 04 10 21... ..!
- EQUB &42, &21, &11, &40 ; A256: 42 21 11... B!.
- EQUB &22, &50, &D0, &0C ; A25A: 22 50 D0... "P.
- EQUB &80, &00, &20, &21 ; A25E: 80 00 20... ..
- EQUB &08, &08, &21, &3F ; A262: 08 08 21... ..!
- EQUB &7A, &BD, &9E, &85 ; A266: 7A BD 9E... z..
- EQUB &AA, &D9, &FC, &00 ; A26A: AA D9 FC... ...
- EQUB &21, &05, &42, &61 ; A26E: 21 05 42... !.B
- EQUB &72, &51, &20, &00 ; A272: 72 51 20... rQ
- EQUB &45, &8B, &34, &16 ; A276: 45 8B 34... E.4
- EQUB &2B, &54, &31, &64 ; A27A: 2B 54 31... +T1
- EQUB &F2, &BF, &7D, &FB ; A27E: F2 BF 7D... ..}
- EQUB &F7, &EF, &CE, &98 ; A282: F7 EF CE... ...
- EQUB &00, &F4, &A3, &CC ; A286: 00 F4 A3... ...
- EQUB &10, &44, &90, &60 ; A28A: 10 44 90... .D.
- EQUB &FD, &FF, &FC, &F0 ; A28E: FD FF FC... ...
- EQUB &E0, &80, &03, &D5 ; A292: E0 80 03... ...
- EQUB &55, &02, &21, &05 ; A296: 55 02 21... U.!
- EQUB &02, &48, &08, &5B ; A29A: 02 48 08... .H.
- EQUB &4E, &34, &1D, &0A ; A29E: 4E 34 1D... N4.
- EQUB &51, &02, &0A, &DF ; A2A2: 51 02 0A... Q..
- EQUB &FE, &DE, &85, &39 ; A2A6: FE DE 85... ...
- EQUB &2E, &03, &80, &01 ; A2AA: 2E 03 80... ...
- EQUB &00, &01, &01, &00 ; A2AE: 00 01 01... ...
- EQUB &01, &03, &50, &E8 ; A2B2: 01 03 50... ..P
- EQUB &FD, &7F, &D0, &7E ; A2B6: FD 7F D0... ...
- EQUB &38, &2F, &15, &2F ; A2BA: 38 2F 15... 8/.
- EQUB &17, &02, &00, &2F ; A2BE: 17 02 00... ...
- EQUB &01, &02, &BE, &21 ; A2C2: 01 02 BE... ...
- EQUB &03, &42, &F3, &21 ; A2C6: 03 42 F3... .B.
- EQUB &1D, &BF, &22, &ED ; A2CA: 1D BF 22... .."
- EQUB &41, &FC, &BD, &21 ; A2CE: 41 FC BD... A..
- EQUB &0C, &E0, &40, &02 ; A2D2: 0C E0 40... ..@
- EQUB &33, &23, &02, &2E ; A2D6: 33 23 02... 3#.
- EQUB &00, &82, &55, &AD ; A2DA: 00 82 55... ..U
- EQUB &EA, &DD, &FD, &D1 ; A2DE: EA DD FD... ...
- EQUB &FF, &7D, &AA, &50 ; A2E2: FF 7D AA... .}.
- EQUB &00, &FD, &EF, &32 ; A2E6: 00 FD EF... ...
- EQUB &3B, &0C, &BB, &C1 ; A2EA: 3B 0C BB... ;..
- EQUB &AA, &FF, &21, &02 ; A2EE: AA FF 21... ..!
- EQUB &80, &E0, &F0, &44 ; A2F2: 80 E0 F0... ...
- EQUB &21, &3E, &55, &00 ; A2F6: 21 3E 55... !>U
- EQUB &50, &70, &B0, &D0 ; A2FA: 50 70 B0... Pp.
- EQUB &60, &E9, &21, &37 ; A2FE: 60 E9 21... `.!
- EQUB &CA, &08, &34, &04 ; A302: CA 08 34... ..4
- EQUB &02, &16, &0A, &42 ; A306: 02 16 0A... ...
- EQUB &A0, &21, &02, &8E ; A30A: A0 21 02... .!.
- EQUB &08, &35, &0E, &04 ; A30E: 08 35 0E... .5.
- EQUB &06, &04, &08, &03 ; A312: 06 04 08... ...
- EQUB &34, &04, &0E, &0C ; A316: 34 04 0E... 4..
- EQUB &08, &08, &34, &04 ; A31A: 08 08 34... ..4
- EQUB &0C, &1C, &0A, &05 ; A31E: 0C 1C 0A... ...
- EQUB &22, &0E, &21, &04 ; A322: 22 0E 21... ".!
- EQUB &02, &60, &05, &80 ; A326: 02 60 05... .`.
- EQUB &50, &7D, &0C, &21 ; A32A: 50 7D 0C... P}.
- EQUB &0D, &0E, &60, &B0 ; A32E: 0D 0E 60... ..`
- EQUB &07, &60, &3E, &0B ; A332: 07 60 3E... .`>
- EQUB &07, &0F, &0A, &1F ; A336: 07 0F 0A... ...
- EQUB &16, &19, &0F, &04 ; A33A: 16 19 0F... ...
- EQUB &02, &01, &05, &00 ; A33E: 02 01 05... ...
- EQUB &09, &21, &06, &00 ; A342: 09 21 06... .!.
- EQUB &78, &F8, &68, &70 ; A346: 78 F8 68... x.h
- EQUB &22, &F0, &E0, &00 ; A34A: 22 F0 E0... "..
- EQUB &90, &10, &90, &A0 ; A34E: 90 10 90... ...
- EQUB &40, &80, &02, &21 ; A352: 40 80 02... @..
- EQUB &08, &00, &21, &08 ; A356: 08 00 21... ..!
- EQUB &03, &21, &18, &00 ; A35A: 03 21 18... .!.
- EQUB &21, &18, &00, &35 ; A35E: 21 18 00... !..
- EQUB &18, &08, &00, &18 ; A362: 18 08 00... ...
- EQUB &3C, &20, &7E, &5A ; A366: 3C 20 7E... < ~
- EQUB &3E, &24, &3C, &34 ; A36A: 3E 24 3C... >$<
- EQUB &2C, &3C, &2C, &00 ; A36E: 2C 3C 2C... ,<,
- EQUB &3C, &18, &00, &08 ; A372: 3C 18 00... <..
- EQUB &18, &00, &18, &03 ; A376: 18 00 18... ...
- EQUB &A0, &07, &B0, &A0 ; A37A: A0 07 B0... ...
- EQUB &08, &33, &3C, &34 ; A37E: 08 33 3C... .3<
- EQUB &2C, &06, &21, &18 ; A382: 2C 06 21... ,.!
- EQUB &10, &21, &04, &00 ; A386: 10 21 04... .!.
- EQUB &21, &04, &03, &21 ; A38A: 21 04 03... !..
- EQUB &18, &00, &37, &2C ; A38E: 18 00 37... ..7
- EQUB &04, &2C, &04, &00 ; A392: 04 2C 04... .,.
- EQUB &18, &3C, &20, &7E ; A396: 18 3C 20... .<
- EQUB &5A, &66, &7E, &7A ; A39A: 5A 66 7E... Zf~
- EQUB &56, &7A, &56, &00 ; A39E: 56 7A 56... VzV
- EQUB &37, &3C, &18, &00 ; A3A2: 37 3C 18... 7<.
- EQUB &04, &2C, &04, &2C ; A3A6: 04 2C 04... .,.
- EQUB &02, &A0, &07, &F0 ; A3AA: 02 A0 07... ...
- EQUB &A0, &00, &A0, &06 ; A3AE: A0 00 A0... ...
- EQUB &21, &3C, &22, &7A ; A3B2: 21 3C 22... !<"
- EQUB &21, &24, &04, &37 ; A3B6: 21 24 04... !$.
- EQUB &18, &24, &24, &18 ; A3BA: 18 24 24... .$$
- EQUB &00, &08, &08, &03 ; A3BE: 00 08 08... ...
- EQUB &21, &18, &02, &22 ; A3C2: 21 18 02... !..
- EQUB &18, &21, &08, &00 ; A3C6: 18 21 08... .!.
- EQUB &32, &18, &3C, &20 ; A3CA: 32 18 3C... 2.<
- EQUB &7E, &5A, &3D, &24 ; A3CE: 7E 5A 3D... ~Z=
- EQUB &3C, &34, &2C, &2C ; A3D2: 3C 34 2C... <4,
- EQUB &3C, &00, &3C, &18 ; A3D6: 3C 00 3C... <.<
- EQUB &00, &08, &18, &18 ; A3DA: 00 08 18... ...
- EQUB &04, &C0, &07, &E0 ; A3DE: 04 C0 07... ...
- EQUB &C0, &09, &21, &18 ; A3E2: C0 09 21... ..!
- EQUB &10, &06, &22, &18 ; A3E6: 10 06 22... .."
- EQUB &3A, &28, &08, &24 ; A3EA: 3A 28 08... :(.
- EQUB &00, &08, &10, &08 ; A3EE: 00 08 10... ...
- EQUB &10, &34, &34, &02 ; A3F2: 10 34 34... .44
- EQUB &10, &21, &18, &10 ; A3F6: 10 21 18... .!.
- EQUB &00, &35, &3C, &2C ; A3FA: 00 35 3C... .5<
- EQUB &34, &2C, &3C, &7E ; A3FE: 34 2C 3C... 4,<
- EQUB &4A, &6A, &00, &10 ; A402: 4A 6A 00... Jj.
- EQUB &21, &18, &10, &02 ; A406: 21 18 10... !..
- EQUB &22, &34, &02, &A0 ; A40A: 22 34 02... "4.
- EQUB &21, &05, &CA, &20 ; A40E: 21 05 CA... !..
- EQUB &04, &C0, &CE, &21 ; A412: 04 C0 CE... ...
- EQUB &04, &C0, &06, &7E ; A416: 04 C0 06... ...
- EQUB &22, &7A, &66, &04 ; A41A: 22 7A 66... "zf
- EQUB &36, &18, &24, &24 ; A41E: 36 18 24... 6.$
- EQUB &18, &00, &0F, &20 ; A422: 18 00 0F... ...
- EQUB &60, &04, &32, &06 ; A426: 60 04 32... `.2
- EQUB &2F, &78, &F0, &0D ; A42A: 2F 78 F0... /x.
- EQUB &C0, &32, &0A, &03 ; A42E: C0 32 0A... .2.
- EQUB &04, &22, &7E, &21 ; A432: 04 22 7E... ."~
- EQUB &3C, &05, &22, &30 ; A436: 3C 05 22... <."
- EQUB &08, &99, &21, &33 ; A43A: 08 99 21... ..!
- EQUB &66, &CC, &99, &21 ; A43E: 66 CC 99... f..
- EQUB &33, &0A, &66, &80 ; A442: 33 0A 66... 3.f
- EQUB &99, &32, &33, &26 ; A446: 99 32 33... .23
- EQUB &8C, &03, &4C, &32 ; A44A: 8C 03 4C... ..L
- EQUB &19, &33, &66, &4C ; A44E: 19 33 66... .3f
- EQUB &21, &38, &76, &C2 ; A452: 21 38 76... !8v
- EQUB &C3, &83, &46, &7C ; A456: C3 83 46... ..F
- EQUB &21, &18, &C7, &BB ; A45A: 21 18 C7... !..
- EQUB &23, &7D, &BB, &C7 ; A45E: 23 7D BB... #}.
- EQUB &FF, &35, &08, &2C ; A462: FF 35 08... .5.
- EQUB &3C, &2C, &04, &03 ; A466: 3C 2C 04... <,.
- EQUB &34, &04, &1C, &7C ; A46A: 34 04 1C... 4..
- EQUB &1C, &04, &80, &00 ; A46E: 1C 04 80... ...
- EQUB &CD, &06, &80, &F0 ; A472: CD 06 80... ...
- EQUB &08, &60, &70, &30 ; A476: 08 60 70... .`p
- EQUB &32, &08, &04, &03 ; A47A: 32 08 04... 2..
- EQUB &7C, &6C, &4C, &74 ; A47E: 7C 6C 4C... |lL
- EQUB &78, &05, &21, &08 ; A482: 78 05 21... x.!
- EQUB &00, &21, &08, &03 ; A486: 00 21 08... .!.
- EQUB &2B, &08, &02, &24 ; A48A: 2B 08 02... +..
- EQUB &08, &22, &0C, &02 ; A48E: 08 22 0C... .".
- EQUB &3F, &00, &00, &00 ; A492: 3F 00 00... ?..
- EQUB &06, &0F, &16, &10 ; A496: 06 0F 16... ...
- EQUB &16, &00, &00, &06 ; A49A: 16 00 00... ...
- EQUB &1F, &3F, &3F, &3F ; A49E: 1F 3F 3F... .??
- EQUB &39, &00, &00, &00 ; A4A2: 39 00 00... 9..
- EQUB &00, &00, &80, &80 ; A4A6: 00 00 80... ...
- EQUB &80, &00, &00, &00 ; A4AA: 80 00 00... ...
- EQUB &80, &C0, &40, &40 ; A4AE: 80 C0 40... ..@
- EQUB &40, &16, &16, &16 ; A4B2: 40 16 16... @..
- EQUB &06, &00, &00, &00 ; A4B6: 06 00 00... ...
- EQUB &00, &39, &39, &39 ; A4BA: 00 39 39... .99
- EQUB &19, &06, &00, &00 ; A4BE: 19 06 00... ...
- EQUB &00, &80, &80, &80 ; A4C2: 00 80 80... ...
- EQUB &00, &00, &00, &00 ; A4C6: 00 00 00... ...
- EQUB &00, &40, &40, &40 ; A4CA: 00 40 40... .@@
- EQUB &80, &00, &00, &00 ; A4CE: 80 00 00... ...
- EQUB &00, &00, &22, &80 ; A4D2: 00 00 22... .."
- EQUB &C0, &E0, &F0, &F8 ; A4D6: C0 E0 F0... ...
- EQUB &A0, &80, &40, &22 ; A4DA: A0 80 40... ..@
- EQUB &20, &10, &32, &08 ; A4DE: 20 10 32...  .2
- EQUB &04, &5E, &0F, &21 ; A4E2: 04 5E 0F... .^.
- EQUB &01, &00, &3C, &06 ; A4E6: 01 00 3C... ..<
- EQUB &0C, &00, &3C, &06 ; A4EA: 0C 00 3C... ..<
- EQUB &CC, &3C, &00, &06 ; A4EE: CC 3C 00... .<.
- EQUB &0A, &12, &22, &42 ; A4F2: 0A 12 22... .."
- EQUB &00, &21, &04, &4C ; A4F6: 00 21 04... .!.
- EQUB &3E, &1D, &1E, &05 ; A4FA: 3E 1D 1E... >..
- EQUB &0F, &02, &13, &01 ; A4FE: 0F 02 13... ...
- EQUB &33, &22, &01, &0A ; A502: 33 22 01... 3".
- EQUB &00, &1D, &1C, &21 ; A506: 00 1D 1C... ...
- EQUB &1E, &02, &80, &C0 ; A50A: 1E 02 80... ...
- EQUB &A0, &78, &B0, &78 ; A50E: A0 78 B0... .x.
- EQUB &00, &80, &40, &20 ; A512: 00 80 40... ..@
- EQUB &50, &88, &48, &84 ; A516: 50 88 48... P.H
- EQUB &36, &02, &01, &01 ; A51A: 36 02 01... 6..
- EQUB &0F, &3F, &2F, &7E ; A51E: 0F 3F 2F... .?/
- EQUB &F5, &00, &32, &04 ; A522: F5 00 32... ..2
- EQUB &08, &10, &22, &20 ; A526: 08 10 22... .."
- EQUB &41, &8A, &30, &22 ; A52A: 41 8A 30... A.0
- EQUB &F0, &A0, &40, &A0 ; A52E: F0 A0 40... ..@
- EQUB &20, &00, &21, &08 ; A532: 20 00 21...  .!
- EQUB &02, &40, &80, &40 ; A536: 02 40 80... .@.
- EQUB &22, &E0, &10, &00 ; A53A: 22 E0 10... "..
- EQUB &21, &08, &00, &21 ; A53E: 21 08 00... !..
- EQUB &04, &03, &22, &0F ; A542: 04 03 22... .."
- EQUB &22, &07, &31, &03 ; A546: 22 07 31... ".1
- EQUB &23, &01, &FA, &71 ; A54A: 23 01 FA... #..
- EQUB &37, &36, &3F, &1E ; A54E: 37 36 3F... 76?
- EQUB &3B, &07, &8F, &02 ; A552: 3B 07 8F... ;..
- EQUB &81, &22, &C0, &E0 ; A556: 81 22 C0... .".
- EQUB &C4, &F8, &70, &02 ; A55A: C4 F8 70... ..p
- EQUB &80, &C0, &00, &60 ; A55E: 80 C0 00... ...
- EQUB &A8, &F0, &02, &80 ; A562: A8 F0 02... ...
- EQUB &40, &20, &22, &10 ; A566: 40 20 22... @ "
- EQUB &21, &08, &02, &23 ; A56A: 21 08 02... !..
- EQUB &48, &78, &22, &58 ; A56E: 48 78 22... Hx"
- EQUB &02, &40, &02, &22 ; A572: 02 40 02... .@.
- EQUB &20, &00, &3E, &01 ; A576: 20 00 3E...  .>
- EQUB &03, &0C, &1A, &35 ; A57A: 03 0C 1A... ...
- EQUB &2A, &35, &4F, &01 ; A57E: 2A 35 4F... *5O
- EQUB &02, &06, &0C, &18 ; A582: 02 06 0C... ...
- EQUB &31, &63, &62, &B8 ; A586: 31 63 62... 1cb
- EQUB &D8, &88, &B0, &00 ; A58A: D8 88 B0... ...
- EQUB &22, &C5, &86, &32 ; A58E: 22 C5 86... "..
- EQUB &07, &27, &77, &4F ; A592: 07 27 77... .'w
- EQUB &FF, &BF, &21, &3E ; A596: FF BF 21... ..!
- EQUB &7C, &00, &20, &40 ; A59A: 7C 00 20... |.
- EQUB &C0, &22, &80, &02 ; A59E: C0 22 80... .".
- EQUB &E0, &22, &C0, &22 ; A5A2: E0 22 C0... .".
- EQUB &80, &03, &21, &01 ; A5A6: 80 03 21... ..!
- EQUB &07, &24, &01, &04 ; A5AA: 07 24 01... .$.
- EQUB &21, &07, &93, &33 ; A5AE: 21 07 93... !..
- EQUB &03, &0A, &0A, &40 ; A5B2: 03 0A 0A... ...
- EQUB &43, &00, &F8, &EC ; A5B6: 43 00 F8... C..
- EQUB &FC, &22, &F5, &FF ; A5BA: FC 22 F5... .".
- EQUB &7C, &21, &3D, &C8 ; A5BE: 7C 21 3D... |!=
- EQUB &F8, &E8, &F8, &E8 ; A5C2: F8 E8 F8... ...
- EQUB &F8, &F1, &20, &24 ; A5C6: F8 F1 20... ..
- EQUB &08, &21, &18, &22 ; A5CA: 08 21 18... .!.
- EQUB &10, &D0, &58, &10 ; A5CE: 10 D0 58... ..X
- EQUB &58, &BC, &22, &30 ; A5D2: 58 BC 22... X."
- EQUB &4C, &90, &22, &20 ; A5D6: 4C 90 22... L."
- EQUB &60, &40, &02, &21 ; A5DA: 60 40 02... `@.
- EQUB &02, &68, &72, &58 ; A5DE: 02 68 72... .hr
- EQUB &60, &72, &21, &3B ; A5E2: 60 72 21... `r!
- EQUB &10, &32, &0B, &33 ; A5E6: 10 32 0B... .2.
- EQUB &4F, &47, &5F, &4F ; A5EA: 4F 47 5F... OG_
- EQUB &67, &35, &2F, &17 ; A5EE: 67 35 2F... g5/
- EQUB &0F, &3A, &1E, &5E ; A5F2: 0F 3A 1E... .:.
- EQUB &B4, &32, &26, &1C ; A5F6: B4 32 26... .2&
- EQUB &10, &78, &24, &FE ; A5FA: 10 78 24... .x$
- EQUB &22, &FC, &F8, &F0 ; A5FE: 22 FC F8... "..
- EQUB &03, &21, &0B, &00 ; A602: 03 21 0B... .!.
- EQUB &32, &05, &02, &04 ; A606: 32 05 02... 2..
- EQUB &21, &07, &00, &3E ; A60A: 21 07 00... !..
- EQUB &03, &01, &00, &02 ; A60E: 03 01 00... ...
- EQUB &17, &23, &FA, &03 ; A612: 17 23 FA... .#.
- EQUB &8A, &0E, &03, &1D ; A616: 8A 0E 03... ...
- EQUB &08, &1B, &FA, &21 ; A61A: 08 1B FA... ...
- EQUB &03, &F3, &F2, &32 ; A61E: 03 F3 F2... ...
- EQUB &03, &33, &F8, &F3 ; A622: 03 33 F8... .3.
- EQUB &21, &37, &C4, &22 ; A626: 21 37 C4... !7.
- EQUB &37, &EF, &CC, &00 ; A62A: 37 EF CC... 7..
- EQUB &E4, &21, &04, &E4 ; A62E: E4 21 04... .!.
- EQUB &C4, &21, &04, &E7 ; A632: C4 21 04... .!.
- EQUB &B8, &7F, &D7, &B1 ; A636: B8 7F D7... ...
- EQUB &21, &21, &B1, &FD ; A63A: 21 21 B1... !!.
- EQUB &F1, &21, &03, &00 ; A63E: F1 21 03... .!.
- EQUB &31, &2F, &24, &21 ; A642: 31 2F 24... 1/$
- EQUB &A1, &EB, &E0, &CF ; A646: A1 EB E0... ...
- EQUB &32, &08, &0F, &E8 ; A64A: 32 08 0F... 2..
- EQUB &EB, &21, &1F, &D6 ; A64E: EB 21 1F... .!.
- EQUB &21, &1F, &EF, &35 ; A652: 21 1F EF... !..
- EQUB &08, &0F, &0F, &08 ; A656: 08 0F 0F... ...
- EQUB &0F, &10, &00, &80 ; A65A: 0F 10 00... ...
- EQUB &21, &3F, &00, &BC ; A65E: 21 3F 00... !?.
- EQUB &21, &01, &00, &22 ; A662: 21 01 00... !..
- EQUB &E0, &C0, &40, &80 ; A666: E0 C0 40... ..@
- EQUB &7F, &7E, &22, &80 ; A66A: 7F 7E 22... .~"
- EQUB &36, &1C, &08, &07 ; A66E: 36 1C 08... 6..
- EQUB &03, &00, &01, &00 ; A672: 03 00 01... ...
- EQUB &7C, &34, &38, &18 ; A676: 7C 34 38... |48
- EQUB &0F, &07, &03, &10 ; A67A: 0F 07 03... ...
- EQUB &21, &38, &10, &12 ; A67E: 21 38 10... !8.
- EQUB &34, &0B, &07, &FE ; A682: 34 0B 07... 4..
- EQUB &18, &10, &30, &12 ; A686: 18 10 30... ..0
- EQUB &21, &07, &FF, &7F ; A68A: 21 07 FF... !..
- EQUB &32, &0C, &1C, &88 ; A68E: 32 0C 1C... 2..
- EQUB &22, &AF, &76, &57 ; A692: 22 AF 76... ".v
- EQUB &DB, &22, &0C, &21 ; A696: DB 22 0C... .".
- EQUB &1C, &15, &60, &F0 ; A69A: 1C 15 60... ..`
- EQUB &60, &12, &80, &21 ; A69E: 60 12 80... `..
- EQUB &02, &F8, &70, &60 ; A6A2: 02 F8 70... ..p
- EQUB &E0, &12, &00, &22 ; A6A6: E0 12 00... ...
- EQUB &FC, &F8, &70, &E0 ; A6AA: FC F8 70... ..p
- EQUB &C0, &80, &03, &7C ; A6AE: C0 80 03... ...
- EQUB &F8, &F0, &E0, &C0 ; A6B2: F8 F0 E0... ...
- EQUB &03, &36, &3D, &1F ; A6B6: 03 36 3D... .6=
- EQUB &07, &07, &02, &01 ; A6BA: 07 07 02... ...
- EQUB &02, &35, &03, &1F ; A6BE: 02 35 03... .5.
- EQUB &0F, &01, &03, &03 ; A6C2: 0F 01 03... ...
- EQUB &AD, &AF, &77, &57 ; A6C6: AD AF 77... ..w
- EQUB &DA, &AC, &F8, &70 ; A6CA: DA AC F8... ...
- EQUB &FE, &12, &FC, &FE ; A6CE: FE 12 FC... ...
- EQUB &F8, &70, &F8, &F0 ; A6D2: F8 70 F8... .p.
- EQUB &E0, &C0, &06, &C0 ; A6D6: E0 C0 06... ...
- EQUB &80, &05, &FC, &02 ; A6DA: 80 05 FC... ...
- EQUB &30, &50, &03, &F8 ; A6DE: 30 50 03... 0P.
- EQUB &00, &20, &60, &20 ; A6E2: 00 20 60... . `
- EQUB &05, &10, &22, &30 ; A6E6: 05 10 22... .."
- EQUB &20, &02, &32, &0E ; A6EA: 20 02 32...  .2
- EQUB &1E, &26, &30, &02 ; A6EE: 1E 26 30... .&0
- EQUB &10, &22, &30, &20 ; A6F2: 10 22 30... ."0
- EQUB &02, &22, &3E, &26 ; A6F6: 02 22 3E... .">
- EQUB &30, &02, &10, &22 ; A6FA: 30 02 10... 0..
- EQUB &30, &20, &02, &28 ; A6FE: 30 20 02... 0 .
- EQUB &30, &22, &C0, &10 ; A702: 30 22 C0... 0".
- EQUB &22, &30, &20, &02 ; A706: 22 30 20... "0
- EQUB &22, &FE, &26, &30 ; A70A: 22 FE 26... ".&
- EQUB &08, &32, &1E, &0E ; A70E: 08 32 1E... .2.
- EQUB &09, &30, &21, &18 ; A712: 09 30 21... .0!
- EQUB &06, &22, &7E, &03 ; A716: 06 22 7E... ."~
- EQUB &3F, &35, &51, &38 ; A71A: 3F 35 51... ?5Q
- EQUB &3F, &11, &0B, &03 ; A71E: 3F 11 0B... ?..
- EQUB &21, &0C, &02, &21 ; A722: 21 0C 02... !..
- EQUB &0E, &04, &20, &40 ; A726: 0E 04 20... ..
- EQUB &00, &80, &0C, &0D ; A72A: 00 80 0C... ...
- EQUB &13, &3F
+ EQUB $2A, $45, $46 ; 963F: 2A 45... (*E
+ EQUB $47, $48, $47, $49 ; 9642: 47 48 47... GHG
+ EQUB $4A, $4B, $4C, $4D ; 9646: 4A 4B 4C... JKL
+ EQUB $4E, $4F, $4D, $4C ; 964A: 4E 4F 4D... NOM
+ EQUB $4D, $4E, $4F, $4D ; 964E: 4D 4E 4F... MNO
+ EQUB $4C, $4D, $50, $4F ; 9652: 4C 4D 50... LMP
+ EQUB $4D, $4C, $51, $52 ; 9656: 4D 4C 51... MLQ
+ EQUB $46, $47, $48, $47 ; 965A: 46 47 48... FGH
+ EQUB $49, $53, $54, $55 ; 965E: 49 53 54... IST
+ EQUB $55, $55, $55, $56 ; 9662: 55 55 55... UUU
+ EQUB $57, $58, $59, $00 ; 9666: 57 58 59... WXY
+ EQUB $5A, $5B, $5C, $5D ; 966A: 5A 5B 5C... Z[\
+ EQUB $5E, $5F, $60, $61 ; 966E: 5E 5F 60... ^_`
+ EQUB $62, $63, $64, $65 ; 9672: 62 63 64... bcd
+ EQUB $00, $66, $67, $68 ; 9676: 00 66 67... .fg
+ EQUB $69, $6A, $6B, $85 ; 967A: 69 6A 6B... ijk
+ EQUB $85, $6E, $54, $55 ; 967E: 85 6E 54... .nT
+ EQUB $55, $55, $55, $6F ; 9682: 55 55 55... UUU
+ EQUB $70, $00, $71, $72 ; 9686: 70 00 71... p.q
+ EQUB $73, $74, $75, $76 ; 968A: 73 74 75... stu
+ EQUB $77, $78, $79, $7A ; 968E: 77 78 79... wxy
+ EQUB $7B, $7C, $7D, $7E ; 9692: 7B 7C 7D... {|}
+ EQUB $7F, $80, $00, $81 ; 9696: 7F 80 00... ...
+ EQUB $82, $83, $84, $85 ; 969A: 82 83 84... ...
+ EQUB $85, $6E, $54, $55 ; 969E: 85 6E 54... .nT
+ EQUB $55, $55, $55, $86 ; 96A2: 55 55 55... UUU
+ EQUB $70, $87, $88, $89 ; 96A6: 70 87 88... p..
+ EQUB $8A, $8B, $8C, $8D ; 96AA: 8A 8B 8C... ...
+ EQUB $8C, $8E, $8F, $8C ; 96AE: 8C 8E 8F... ...
+ EQUB $90, $8C, $91, $92 ; 96B2: 90 8C 91... ...
+ EQUB $93, $94, $95, $96 ; 96B6: 93 94 95... ...
+ EQUB $97, $55, $55, $55 ; 96BA: 97 55 55... .UU
+ EQUB $55, $98, $54, $55 ; 96BE: 55 98 54... U.T
+ EQUB $55, $55, $55, $99 ; 96C2: 55 55 55... UUU
+ EQUB $9A, $9B, $9C, $9D ; 96C6: 9A 9B 9C... ...
+ EQUB $9E, $9F, $A0, $A1 ; 96CA: 9E 9F A0... ...
+ EQUB $A2, $A2, $A3, $A2 ; 96CE: A2 A2 A3... ...
+ EQUB $A4, $A0, $A5, $A6 ; 96D2: A4 A0 A5... ...
+ EQUB $A7, $A8, $A9, $AA ; 96D6: A7 A8 A9... ...
+ EQUB $AB, $55, $55, $55 ; 96DA: AB 55 55... .UU
+ EQUB $55, $98, $54, $55 ; 96DE: 55 98 54... U.T
+ EQUB $55, $55, $55, $AC ; 96E2: 55 55 55... UUU
+ EQUB $AD, $58, $AE, $AF ; 96E6: AD 58 AE... .X.
+ EQUB $B0, $B1, $B2, $B3 ; 96EA: B0 B1 B2... ...
+ EQUB $B4, $B5, $B6, $B7 ; 96EE: B4 B5 B6... ...
+ EQUB $B8, $B9, $BA, $BB ; 96F2: B8 B9 BA... ...
+ EQUB $BC, $BD, $67, $BE ; 96F6: BC BD 67... ..g
+ EQUB $BF, $55, $55, $55 ; 96FA: BF 55 55... .UU
+ EQUB $55, $98, $54, $55 ; 96FE: 55 98 54... U.T
+ EQUB $55, $55, $55, $C0 ; 9702: 55 55 55... UUU
+ EQUB $C1, $00, $00, $00 ; 9706: C1 00 00... ...
+ EQUB $00, $00, $C2, $C3 ; 970A: 00 00 C2... ...
+ EQUB $C4, $C5, $C6, $C7 ; 970E: C4 C5 C6... ...
+ EQUB $C8, $C9, $00, $00 ; 9712: C8 C9 00... ...
+ EQUB $00, $00, $00, $CA ; 9716: 00 00 00... ...
+ EQUB $97, $55, $55, $55 ; 971A: 97 55 55... .UU
+ EQUB $55, $98, $00, $00 ; 971E: 55 98 00... U..
+ EQUB $00, $00, $00, $00 ; 9722: 00 00 00... ...
+ EQUB $00, $00, $00, $00 ; 9726: 00 00 00... ...
+ EQUB $00, $00, $00, $00 ; 972A: 00 00 00... ...
+ EQUB $00, $00, $00, $00 ; 972E: 00 00 00... ...
+ EQUB $00, $00, $00, $00 ; 9732: 00 00 00... ...
+ EQUB $00, $00, $00, $00 ; 9736: 00 00 00... ...
+ EQUB $00, $00, $00, $00 ; 973A: 00 00 00... ...
+ EQUB $00, $00, $00, $00 ; 973E: 00 00 00... ...
+ EQUB $00, $00, $00, $00 ; 9742: 00 00 00... ...
+ EQUB $00, $00, $00, $00 ; 9746: 00 00 00... ...
+ EQUB $00, $00, $00, $00 ; 974A: 00 00 00... ...
+ EQUB $00, $00, $00, $00 ; 974E: 00 00 00... ...
+ EQUB $00, $00, $00, $00 ; 9752: 00 00 00... ...
+ EQUB $00, $00, $00, $00 ; 9756: 00 00 00... ...
+ EQUB $00, $00, $00, $00 ; 975A: 00 00 00... ...
+ EQUB $00, $00, $32, $17 ; 975E: 00 00 32... ..2
+ EQUB $3F, $05, $21, $07 ; 9762: 3F 05 21... ?.!
+ EQUB $E8, $C0, $FC, $E8 ; 9766: E8 C0 FC... ...
+ EQUB $D1, $83, $21, $07 ; 976A: D1 83 21... ..!
+ EQUB $98, $00, $80, $04 ; 976E: 98 00 80... ...
+ EQUB $AA, $FF, $00, $7F ; 9772: AA FF 00... ...
+ EQUB $00, $13, $55, $07 ; 9776: 00 13 55... ..U
+ EQUB $AA, $FF, $00, $FF ; 977A: AA FF 00... ...
+ EQUB $00, $13, $55, $00 ; 977E: 00 13 55... ..U
+ EQUB $10, $21, $38, $04 ; 9782: 10 21 38... .!8
+ EQUB $AA, $FF, $00, $C7 ; 9786: AA FF 00... ...
+ EQUB $00, $13, $55, $00 ; 978A: 00 13 55... ..U
+ EQUB $32, $01, $03, $04 ; 978E: 32 01 03... 2..
+ EQUB $AA, $FF, $00, $FC ; 9792: AA FF 00... ...
+ EQUB $00, $13, $55, $02 ; 9796: 00 13 55... ..U
+ EQUB $80, $00, $32, $06 ; 979A: 80 00 32... ..2
+ EQUB $0C, $5C, $B8, $F8 ; 979E: 0C 5C B8... .\.
+ EQUB $00, $7F, $00, $F9 ; 97A2: 00 7F 00... ...
+ EQUB $F3, $A3, $46, $21 ; 97A6: F3 A3 46... ..F
+ EQUB $07, $09, $FF, $7F ; 97AA: 07 09 FF... ...
+ EQUB $05, $10, $22, $38 ; 97AE: 05 10 22... .."
+ EQUB $10, $05, $22, $C7 ; 97B2: 10 05 22... .."
+ EQUB $33, $28, $38, $38 ; 97B6: 33 28 38... 3(8
+ EQUB $10, $0A, $12, $05 ; 97BA: 10 0A 12... ...
+ EQUB $34, $01, $03, $03 ; 97BE: 34 01 03... 4..
+ EQUB $01, $05, $22, $FC ; 97C2: 01 05 22... .."
+ EQUB $34, $02, $03, $03 ; 97C6: 34 02 03... 4..
+ EQUB $01, $02, $22, $80 ; 97CA: 01 02 22... .."
+ EQUB $06, $22, $7F, $23 ; 97CE: 06 22 7F... .".
+ EQUB $80, $02, $35, $01 ; 97D2: 80 02 35... ..5
+ EQUB $03, $03, $01, $01 ; 97D6: 03 03 01... ...
+ EQUB $04, $22, $FC, $22 ; 97DA: 04 22 FC... .".
+ EQUB $02, $32, $03, $01 ; 97DE: 02 32 03... .2.
+ EQUB $0A, $FF, $FE, $05 ; 97E2: 0A FF FE... ...
+ EQUB $32, $01, $03, $00 ; 97E6: 32 01 03... 2..
+ EQUB $40, $20, $33, $34 ; 97EA: 40 20 33... @ 3
+ EQUB $1A, $1F, $00, $FC ; 97EE: 1A 1F 00... ...
+ EQUB $00, $BF, $DF, $CB ; 97F2: 00 BF DF... ...
+ EQUB $65, $E0, $E8, $FC ; 97F6: 65 E0 E8... e..
+ EQUB $04, $80, $E0, $34 ; 97FA: 04 80 E0... ...
+ EQUB $17, $03, $3F, $17 ; 97FE: 17 03 3F... ..?
+ EQUB $8B, $C1, $60, $21 ; 9802: 8B C1 60... ..`
+ EQUB $19, $03, $31, $02 ; 9806: 19 03 31... ..1
+ EQUB $23, $03, $35, $02 ; 980A: 23 03 35... #.5
+ EQUB $07, $04, $06, $05 ; 980E: 07 04 06... ...
+ EQUB $23, $04, $21, $05 ; 9812: 23 04 21... #.!
+ EQUB $08, $FF, $05, $12 ; 9816: 08 FF 05... ...
+ EQUB $03, $21, $0C, $00 ; 981A: 03 21 0C... .!.
+ EQUB $21, $0C, $00, $21 ; 981E: 21 0C 00... !..
+ EQUB $11, $FF, $31, $3F ; 9822: 11 FF 31... ..1
+ EQUB $24, $22, $21, $2E ; 9826: 24 22 21... $"!
+ EQUB $AE, $23, $08, $22 ; 982A: AE 23 08... .#.
+ EQUB $09, $22, $08, $C8 ; 982E: 09 22 08... .".
+ EQUB $F6, $F7, $23, $B6 ; 9832: F6 F7 23... ..#
+ EQUB $B5, $32, $34, $35 ; 9836: B5 32 34... .24
+ EQUB $03, $F0, $F2, $21 ; 983A: 03 F0 F2... ...
+ EQUB $12, $00, $10, $04 ; 983E: 12 00 10... ...
+ EQUB $21, $04, $E4, $21 ; 9842: 21 04 E4... !..
+ EQUB $12, $E0, $32, $02 ; 9846: 12 E0 32... ..2
+ EQUB $01, $02, $50, $40 ; 984A: 01 02 50... ..P
+ EQUB $02, $21, $0C, $10 ; 984E: 02 21 0C... .!.
+ EQUB $32, $05, $15, $8A ; 9852: 32 05 15... 2..
+ EQUB $90, $40, $09, $21 ; 9856: 90 40 09... .@.
+ EQUB $01, $03, $21, $02 ; 985A: 01 03 21... ..!
+ EQUB $0A, $7F, $03, $21 ; 985E: 0A 7F 03... ...
+ EQUB $09, $40, $02, $7F ; 9862: 09 40 02... .@.
+ EQUB $06, $FF, $57, $02 ; 9866: 06 FF 57... ..W
+ EQUB $21, $09, $40, $02 ; 986A: 21 09 40... !.@
+ EQUB $FF, $57, $05, $FF ; 986E: FF 57 05... .W.
+ EQUB $E0, $5D, $10, $00 ; 9872: E0 5D 10... .].
+ EQUB $7F, $02, $FF, $E0 ; 9876: 7F 02 FF... ...
+ EQUB $5D, $05, $FF, $21 ; 987A: 5D 05 FF... ]..
+ EQUB $04, $5D, $00, $21 ; 987E: 04 5D 00... .].
+ EQUB $17, $40, $02, $FF ; 9882: 17 40 02... .@.
+ EQUB $21, $04, $5D, $05 ; 9886: 21 04 5D... !.]
+ EQUB $FF, $00, $55, $21 ; 988A: FF 00 55... ..U
+ EQUB $01, $FF, $03, $FF ; 988E: 01 FF 03... ...
+ EQUB $00, $55, $05, $FF ; 9892: 00 55 05... .U.
+ EQUB $80, $D5, $00, $FF ; 9896: 80 D5 00... ...
+ EQUB $03, $FF, $80, $D5 ; 989A: 03 FF 80... ...
+ EQUB $05, $FF, $20, $55 ; 989E: 05 FF 20... ..
+ EQUB $00, $E8, $21, $02 ; 98A2: 00 E8 21... ..!
+ EQUB $02, $FF, $20, $55 ; 98A6: 02 FF 20... ..
+ EQUB $05, $FF, $21, $06 ; 98AA: 05 FF 21... ..!
+ EQUB $5D, $10, $00, $FD ; 98AE: 5D 10 00... ]..
+ EQUB $02, $FF, $21, $06 ; 98B2: 02 FF 21... ..!
+ EQUB $5D, $06, $FF, $55 ; 98B6: 5D 06 FF... ]..
+ EQUB $02, $20, $21, $05 ; 98BA: 02 20 21... . !
+ EQUB $02, $FF, $55, $06 ; 98BE: 02 FF 55... ..U
+ EQUB $80, $7F, $21, $01 ; 98C2: 80 7F 21... ..!
+ EQUB $02, $20, $21, $04 ; 98C6: 02 20 21... . !
+ EQUB $00, $80, $7F, $0C ; 98CA: 00 80 7F... ...
+ EQUB $80, $03, $40, $80 ; 98CE: 80 03 40... ..@
+ EQUB $02, $32, $0A, $02 ; 98D2: 02 32 0A... .2.
+ EQUB $02, $30, $21, $08 ; 98D6: 02 30 21... .0!
+ EQUB $A0, $A8, $51, $32 ; 98DA: A0 A8 51... ..Q
+ EQUB $09, $02, $04, $21 ; 98DE: 09 02 04... ...
+ EQUB $0F, $4F, $48, $00 ; 98E2: 0F 4F 48... .OH
+ EQUB $21, $08, $04, $20 ; 98E6: 21 08 04... !..
+ EQUB $21, $27, $48, $21 ; 98EA: 21 27 48... !'H
+ EQUB $07, $23, $10, $22 ; 98EE: 07 23 10... .#.
+ EQUB $90, $32, $11, $12 ; 98F2: 90 32 11... .2.
+ EQUB $10, $6F, $EF, $23 ; 98F6: 10 6F EF... .o.
+ EQUB $6F, $AE, $21, $2C ; 98FA: 6F AE 21... o.!
+ EQUB $AE, $04, $F0, $32 ; 98FE: AE 04 F0... ...
+ EQUB $08, $04, $00, $14 ; 9902: 08 04 00... ...
+ EQUB $34, $0F, $07, $03 ; 9906: 34 0F 07... 4..
+ EQUB $07, $03, $21, $01 ; 990A: 07 03 21... ..!
+ EQUB $00, $22, $01, $21 ; 990E: 00 22 01... .".
+ EQUB $17, $FC, $F0, $E0 ; 9912: 17 FC F0... ...
+ EQUB $C1, $80, $81, $32 ; 9916: C1 80 81... ...
+ EQUB $01, $17, $07, $D0 ; 991A: 01 17 07... ...
+ EQUB $7F, $36, $1F, $0F ; 991E: 7F 36 1F... .6.
+ EQUB $07, $03, $03, $01 ; 9922: 07 03 03... ...
+ EQUB $D1, $02, $35, $01 ; 9926: D1 02 35... ..5
+ EQUB $02, $04, $08, $08 ; 992A: 02 04 08... ...
+ EQUB $00, $FC, $F8, $F0 ; 992E: 00 FC F8... ...
+ EQUB $E1, $83, $22, $07 ; 9932: E1 83 22... .."
+ EQUB $9F, $34, $03, $07 ; 9936: 9F 34 03... .4.
+ EQUB $0F, $1E, $7C, $22 ; 993A: 0F 1E 7C... ..|
+ EQUB $F8, $60, $12, $FE ; 993E: F8 60 12... .`.
+ EQUB $FD, $FB, $22, $F7 ; 9942: FD FB 22... .."
+ EQUB $FF, $08, $28, $E0 ; 9946: FF 08 28... ..(
+ EQUB $03, $21, $0C, $00 ; 994A: 03 21 0C... .!.
+ EQUB $21, $0D, $00, $21 ; 994E: 21 0D 00... !..
+ EQUB $11, $FF, $31, $3F ; 9952: 11 FF 31... ..1
+ EQUB $24, $22, $21, $2E ; 9956: 24 22 21... $"!
+ EQUB $AE, $23, $08, $C8 ; 995A: AE 23 08... .#.
+ EQUB $21, $08, $88, $21 ; 995E: 21 08 88... !..
+ EQUB $08, $C8, $F6, $F7 ; 9962: 08 C8 F6... ...
+ EQUB $36, $36, $37, $36 ; 9966: 36 36 37... 667
+ EQUB $37, $36, $37, $04 ; 996A: 37 36 37... 767
+ EQUB $34, $01, $07, $0C ; 996E: 34 01 07... 4..
+ EQUB $38, $04, $41, $33 ; 9972: 38 04 41... 8.A
+ EQUB $07, $0C, $38, $02 ; 9976: 07 0C 38... ..8
+ EQUB $21, $0F, $78, $C0 ; 997A: 21 0F 78... !.x
+ EQUB $AA, $04, $21, $0F ; 997E: AA 04 21... ..!
+ EQUB $78, $C0, $AA, $02 ; 9982: 78 C0 AA... x..
+ EQUB $21, $0F, $F8, $AA ; 9986: 21 0F F8... !..
+ EQUB $32, $01, $06, $AA ; 998A: 32 01 06... 2..
+ EQUB $30, $40, $21, $0F ; 998E: 30 40 21... 0@!
+ EQUB $F8, $AA, $32, $01 ; 9992: F8 AA 32... ..2
+ EQUB $06, $AA, $30, $40 ; 9996: 06 AA 30... ..0
+ EQUB $C8, $30, $EA, $80 ; 999A: C8 30 EA... .0.
+ EQUB $00, $AA, $00, $21 ; 999E: 00 AA 00... ...
+ EQUB $01, $C8, $30, $EA ; 99A2: 01 C8 30... ..0
+ EQUB $80, $00, $AA, $00 ; 99A6: 80 00 AA... ...
+ EQUB $33, $01, $04, $08 ; 99AA: 33 01 04... 3..
+ EQUB $BA, $10, $20, $EA ; 99AE: BA 10 20... ..
+ EQUB $80, $00, $32, $04 ; 99B2: 80 00 32... ..2
+ EQUB $08, $BA, $10, $20 ; 99B6: 08 BA 10... ...
+ EQUB $EA, $80, $00, $32 ; 99BA: EA 80 00... ...
+ EQUB $06, $01, $AA, $02 ; 99BE: 06 01 AA... ...
+ EQUB $AA, $02, $32, $06 ; 99C2: AA 02 32... ..2
+ EQUB $01, $AA, $02, $AA ; 99C6: 01 AA 02... ...
+ EQUB $02, $21, $08, $90 ; 99CA: 02 21 08... .!.
+ EQUB $FA, $21, $38, $44 ; 99CE: FA 21 38... .!8
+ EQUB $EB, $22, $80, $21 ; 99D2: EB 22 80... .".
+ EQUB $08, $90, $FA, $21 ; 99D6: 08 90 FA... ...
+ EQUB $38, $44, $EB, $22 ; 99DA: 38 44 EB... 8D.
+ EQUB $80, $02, $AA, $02 ; 99DE: 80 02 AA... ...
+ EQUB $AA, $C0, $30, $02 ; 99E2: AA C0 30... ..0
+ EQUB $AA, $02, $AA, $C0 ; 99E6: AA 02 AA... ...
+ EQUB $30, $22, $80, $AA ; 99EA: 30 22 80... 0".
+ EQUB $22, $80, $AA, $81 ; 99EE: 22 80 AA... "..
+ EQUB $86, $22, $80, $AA ; 99F2: 86 22 80... .".
+ EQUB $22, $80, $AA, $81 ; 99F6: 22 80 AA... "..
+ EQUB $86, $10, $21, $08 ; 99FA: 86 10 21... ..!
+ EQUB $AB, $3D, $0C, $32 ; 99FE: AB 3D 0C... .=.
+ EQUB $EA, $01, $01, $10 ; 9A02: EA 01 01... ...
+ EQUB $08, $AB, $0C, $32 ; 9A06: 08 AB 0C... ...
+ EQUB $EA, $01, $01, $60 ; 9A0A: EA 01 01... ...
+ EQUB $80, $AA, $02, $AA ; 9A0E: 80 AA 02... ...
+ EQUB $02, $60, $80, $AA ; 9A12: 02 60 80... .`.
+ EQUB $02, $AA, $02, $20 ; 9A16: 02 AA 02... ...
+ EQUB $10, $AA, $34, $08 ; 9A1A: 10 AA 34... ..4
+ EQUB $04, $AA, $01, $00 ; 9A1E: 04 AA 01... ...
+ EQUB $20, $10, $AA, $39 ; 9A22: 20 10 AA...  ..
+ EQUB $08, $04, $AA, $01 ; 9A26: 08 04 AA... ...
+ EQUB $00, $11, $0C, $AA ; 9A2A: 00 11 0C... ...
+ EQUB $01, $00, $AA, $00 ; 9A2E: 01 00 AA... ...
+ EQUB $80, $34, $11, $0C ; 9A32: 80 34 11... .4.
+ EQUB $AA, $01, $00, $AA ; 9A36: AA 01 00... ...
+ EQUB $00, $80, $F8, $21 ; 9A3A: 00 80 F8... ...
+ EQUB $0F, $AA, $80, $60 ; 9A3E: 0F AA 80... ...
+ EQUB $BA, $34, $0C, $02 ; 9A42: BA 34 0C... .4.
+ EQUB $F8, $0F, $AA, $80 ; 9A46: F8 0F AA... ...
+ EQUB $60, $BA, $32, $0C ; 9A4A: 60 BA 32... `.2
+ EQUB $02, $00, $80, $F8 ; 9A4E: 02 00 80... ...
+ EQUB $32, $0F, $01, $AA ; 9A52: 32 0F 01... 2..
+ EQUB $03, $80, $F8, $32 ; 9A56: 03 80 F8... ...
+ EQUB $0F, $01, $AA, $06 ; 9A5A: 0F 01 AA... ...
+ EQUB $C0, $F0, $32, $18 ; 9A5E: C0 F0 32... ..2
+ EQUB $0E, $04, $C2, $F0 ; 9A62: 0E 04 C2... ...
+ EQUB $35, $18, $0E, $12 ; 9A66: 35 18 0E... 5..
+ EQUB $10, $11, $25, $10 ; 9A6A: 10 11 25... ..%
+ EQUB $6C, $EE, $6E, $EE ; 9A6E: 6C EE 6E... l.n
+ EQUB $6F, $EF, $6F, $EF ; 9A72: 6F EF 6F... o.o
+ EQUB $21, $04, $00, $21 ; 9A76: 21 04 00... !..
+ EQUB $08, $60, $04, $35 ; 9A7A: 08 60 04... .`.
+ EQUB $03, $07, $07, $97 ; 9A7E: 03 07 07... ...
+ EQUB $0F, $13, $22, $01 ; 9A82: 0F 13 22... .."
+ EQUB $80, $21, $01, $40 ; 9A86: 80 21 01... .!.
+ EQUB $20, $33, $18, $07 ; 9A8A: 20 33 18...  3.
+ EQUB $01, $81, $00, $C1 ; 9A8E: 01 81 00... ...
+ EQUB $A0, $D0, $E4, $F8 ; 9A92: A0 D0 E4... ...
+ EQUB $02, $21, $02, $00 ; 9A96: 02 21 02... .!.
+ EQUB $32, $04, $08, $30 ; 9A9A: 32 04 08... 2..
+ EQUB $C0, $38, $01, $03 ; 9A9E: C0 38 01... .8.
+ EQUB $01, $07, $0B, $17 ; 9AA2: 01 07 0B... ...
+ EQUB $4F, $3F, $08, $18 ; 9AA6: 4F 3F 08... O?.
+ EQUB $03, $21, $08, $00 ; 9AAA: 03 21 08... .!.
+ EQUB $21, $09, $00, $21 ; 9AAE: 21 09 00... !..
+ EQUB $15, $FF, $31, $3F ; 9AB2: 15 FF 31... ..1
+ EQUB $24, $22, $21, $2A ; 9AB6: 24 22 21... $"!
+ EQUB $AA, $08, $21, $08 ; 9ABA: AA 08 21... ..!
+ EQUB $00, $24, $10, $22 ; 9ABE: 00 24 10... .$.
+ EQUB $18, $30, $6A, $22 ; 9AC2: 18 30 6A... .0j
+ EQUB $60, $30, $33, $3D ; 9AC6: 60 30 33... `03
+ EQUB $0E, $07, $30, $6A ; 9ACA: 0E 07 30... ..0
+ EQUB $22, $60, $30, $36 ; 9ACE: 22 60 30... "`0
+ EQUB $3D, $0E, $07, $01 ; 9AD2: 3D 0E 07... =..
+ EQUB $AA, $0C, $30, $40 ; 9AD6: AA 0C 30... ..0
+ EQUB $D5, $02, $21, $01 ; 9ADA: D5 02 21... ..!
+ EQUB $AA, $21, $0C, $30 ; 9ADE: AA 21 0C... .!.
+ EQUB $40, $D5, $02, $80 ; 9AE2: 40 D5 02... @..
+ EQUB $AA, $03, $55, $02 ; 9AE6: AA 03 55... ..U
+ EQUB $80, $AA, $03, $55 ; 9AEA: 80 AA 03... ...
+ EQUB $02, $21, $02, $AE ; 9AEE: 02 21 02... .!.
+ EQUB $21, $08, $10, $20 ; 9AF2: 21 08 10... !..
+ EQUB $55, $22, $80, $21 ; 9AF6: 55 22 80... U".
+ EQUB $02, $AE, $21, $08 ; 9AFA: 02 AE 21... ..!
+ EQUB $10, $20, $55, $22 ; 9AFE: 10 20 55... . U
+ EQUB $80, $00, $AA, $03 ; 9B02: 80 00 AA... ...
+ EQUB $55, $03, $AA, $03 ; 9B06: 55 03 AA... U..
+ EQUB $55, $02, $21, $01 ; 9B0A: 55 02 21... U.!
+ EQUB $AB, $3E, $02, $04 ; 9B0E: AB 3E 02... .>.
+ EQUB $04, $5D, $08, $10 ; 9B12: 04 5D 08... .].
+ EQUB $01, $AB, $02, $04 ; 9B16: 01 AB 02... ...
+ EQUB $04, $5D, $08, $10 ; 9B1A: 04 5D 08... .].
+ EQUB $21, $0C, $AB, $03 ; 9B1E: 21 0C AB... !..
+ EQUB $55, $02, $21, $0C ; 9B22: 55 02 21... U.!
+ EQUB $AB, $03, $55, $02 ; 9B26: AB 03 55... ..U
+ EQUB $98, $EA, $23, $80 ; 9B2A: 98 EA 23... ..#
+ EQUB $D5, $22, $80, $98 ; 9B2E: D5 22 80... .".
+ EQUB $EA, $23, $80, $D5 ; 9B32: EA 23 80... .#.
+ EQUB $23, $80, $AA, $40 ; 9B36: 23 80 AA... #..
+ EQUB $22, $20, $55, $10 ; 9B3A: 22 20 55... " U
+ EQUB $21, $08, $80, $AA ; 9B3E: 21 08 80... !..
+ EQUB $40, $22, $20, $55 ; 9B42: 40 22 20... @"
+ EQUB $10, $21, $08, $40 ; 9B46: 10 21 08... .!.
+ EQUB $AA, $10, $35, $08 ; 9B4A: AA 10 35... ..5
+ EQUB $04, $57, $01, $01 ; 9B4E: 04 57 01... .W.
+ EQUB $40, $AA, $10, $33 ; 9B52: 40 AA 10... @..
+ EQUB $08, $04, $57, $23 ; 9B56: 08 04 57... ..W
+ EQUB $01, $AA, $03, $55 ; 9B5A: 01 AA 03... ...
+ EQUB $02, $21, $01, $AA ; 9B5E: 02 21 01... .!.
+ EQUB $03, $55, $02, $80 ; 9B62: 03 55 02... .U.
+ EQUB $EA, $30, $32, $0C ; 9B66: EA 30 32... .02
+ EQUB $02, $55, $02, $80 ; 9B6A: 02 55 02... .U.
+ EQUB $EA, $30, $32, $0C ; 9B6E: EA 30 32... .02
+ EQUB $02, $55, $02, $21 ; 9B72: 02 55 02... .U.
+ EQUB $06, $AB, $22, $03 ; 9B76: 06 AB 22... .."
+ EQUB $21, $06, $DE, $58 ; 9B7A: 21 06 DE... !..
+ EQUB $70, $21, $06, $AB ; 9B7E: 70 21 06... p!.
+ EQUB $22, $03, $21, $06 ; 9B82: 22 03 21... ".!
+ EQUB $DE, $58, $70, $08 ; 9B86: DE 58 70... .Xp
+ EQUB $10, $00, $24, $08 ; 9B8A: 10 00 24... ..$
+ EQUB $22, $18, $23, $10 ; 9B8E: 22 18 23... ".#
+ EQUB $35, $12, $11, $12 ; 9B92: 35 12 11... 5..
+ EQUB $10, $15, $6F, $EF ; 9B96: 10 15 6F... ..o
+ EQUB $68, $E8, $68, $E8 ; 9B9A: 68 E8 68... h.h
+ EQUB $6A, $EA, $07, $70 ; 9B9E: 6A EA 07... j..
+ EQUB $FF, $FC, $24, $BC ; 9BA2: FF FC 24... ..$
+ EQUB $8C, $8D, $03, $40 ; 9BA6: 8C 8D 03... ...
+ EQUB $23, $C0, $40, $E0 ; 9BAA: 23 C0 40... #.@
+ EQUB $20, $60, $A0, $23 ; 9BAE: 20 60 A0...  `.
+ EQUB $20, $A0, $03, $21 ; 9BB2: 20 A0 03...  ..
+ EQUB $0C, $00, $21, $0C ; 9BB6: 0C 00 21... ..!
+ EQUB $00, $21, $1D, $FF ; 9BBA: 00 21 1D... .!.
+ EQUB $31, $3F, $25, $22 ; 9BBE: 31 3F 25... 1?%
+ EQUB $A2, $23, $08, $88 ; 9BC2: A2 23 08... .#.
+ EQUB $23, $08, $48, $F6 ; 9BC6: 23 08 48... #.H
+ EQUB $F7, $76, $21, $37 ; 9BCA: F7 76 21... .v!
+ EQUB $B6, $B7, $B6, $B7 ; 9BCE: B6 B7 B6... ...
+ EQUB $03, $21, $01, $04 ; 9BD2: 03 21 01... .!.
+ EQUB $36, $1C, $0E, $0F ; 9BD6: 36 1C 0E... 6..
+ EQUB $06, $03, $01, $02 ; 9BDA: 06 03 01... ...
+ EQUB $21, $01, $04, $58 ; 9BDE: 21 01 04... !..
+ EQUB $33, $2E, $07, $01 ; 9BE2: 33 2E 07... 3..
+ EQUB $02, $C0, $F0, $A4 ; 9BE6: 02 C0 F0... ...
+ EQUB $51, $21, $18, $C0 ; 9BEA: 51 21 18... Q!.
+ EQUB $7A, $21, $0F, $05 ; 9BEE: 7A 21 0F... z!.
+ EQUB $C0, $7A, $21, $0F ; 9BF2: C0 7A 21... .z!
+ EQUB $04, $80, $21, $01 ; 9BF6: 04 80 21... ..!
+ EQUB $AA, $84, $F8, $21 ; 9BFA: AA 84 F8... ...
+ EQUB $1F, $03, $21, $01 ; 9BFE: 1F 03 21... ..!
+ EQUB $AA, $84, $F8, $21 ; 9C02: AA 84 F8... ...
+ EQUB $1F, $04, $AA, $02 ; 9C06: 1F 04 AA... ...
+ EQUB $C0, $FF, $03, $AA ; 9C0A: C0 FF 03... ...
+ EQUB $02, $C0, $FF, $03 ; 9C0E: 02 C0 FF... ...
+ EQUB $AA, $03, $AA, $FF ; 9C12: AA 03 AA... ...
+ EQUB $02, $AA, $03, $AA ; 9C16: 02 AA 03... ...
+ EQUB $FF, $00, $20, $AA ; 9C1A: FF 00 20... ..
+ EQUB $22, $40, $80, $AA ; 9C1E: 22 40 80... "@.
+ EQUB $80, $7F, $20, $AA ; 9C22: 80 7F 20... ..
+ EQUB $22, $40, $80, $AA ; 9C26: 22 40 80... "@.
+ EQUB $80, $7F, $00, $AA ; 9C2A: 80 7F 00... ...
+ EQUB $03, $AA, $00, $FF ; 9C2E: 03 AA 00... ...
+ EQUB $00, $AA, $03, $AA ; 9C32: 00 AA 03... ...
+ EQUB $00, $FF, $80, $AA ; 9C36: 00 FF 80... ...
+ EQUB $23, $80, $AA, $80 ; 9C3A: 23 80 AA... #..
+ EQUB $FF, $80, $AA, $23 ; 9C3E: FF 80 AA... ...
+ EQUB $80, $AA, $80, $FF ; 9C42: 80 AA 80... ...
+ EQUB $21, $04, $AE, $22 ; 9C46: 21 04 AE... !..
+ EQUB $02, $21, $01, $AB ; 9C4A: 02 21 01... .!.
+ EQUB $00, $FF, $21, $04 ; 9C4E: 00 FF 21... ..!
+ EQUB $AE, $22, $02, $21 ; 9C52: AE 22 02... .".
+ EQUB $01, $AB, $00, $FF ; 9C56: 01 AB 00... ...
+ EQUB $00, $AA, $02, $21 ; 9C5A: 00 AA 02... ...
+ EQUB $01, $FF, $80, $02 ; 9C5E: 01 FF 80... ...
+ EQUB $AA, $02, $21, $01 ; 9C62: AA 02 21... ..!
+ EQUB $FF, $80, $00, $80 ; 9C66: FF 80 00... ...
+ EQUB $EA, $20, $21, $1F ; 9C6A: EA 20 21... . !
+ EQUB $F8, $80, $02, $80 ; 9C6E: F8 80 02... ...
+ EQUB $EA, $20, $21, $1F ; 9C72: EA 20 21... . !
+ EQUB $F8, $80, $02, $21 ; 9C76: F8 80 02... ...
+ EQUB $01, $AF, $F8, $80 ; 9C7A: 01 AF F8... ...
+ EQUB $03, $22, $01, $AF ; 9C7E: 03 22 01... .".
+ EQUB $F8, $80, $03, $21 ; 9C82: F8 80 03... ...
+ EQUB $02, $C0, $04, $21 ; 9C86: 02 C0 04... ...
+ EQUB $1A, $74, $E0, $C0 ; 9C8A: 1A 74 E0... .t.
+ EQUB $02, $35, $03, $0F ; 9C8E: 02 35 03... .5.
+ EQUB $25, $8A, $18, $03 ; 9C92: 25 8A 18... %..
+ EQUB $80, $04, $21, $38 ; 9C96: 80 04 21... ..!
+ EQUB $70, $F0, $60, $C0 ; 9C9A: 70 F0 60... p.`
+ EQUB $80, $02, $23, $10 ; 9C9E: 80 02 23... ..#
+ EQUB $21, $12, $22, $10 ; 9CA2: 21 12 22... !."
+ EQUB $32, $11, $16, $6F ; 9CA6: 32 11 16... 2..
+ EQUB $EF, $69, $E8, $6A ; 9CAA: EF 69 E8... .i.
+ EQUB $EA, $68, $E9, $03 ; 9CAE: EA 68 E9... .h.
+ EQUB $30, $03, $70, $FF ; 9CB2: 30 03 70... 0.p
+ EQUB $FC, $22, $8C, $22 ; 9CB6: FC 22 8C... .".
+ EQUB $BC, $8C, $8D, $03 ; 9CBA: BC 8C 8D... ...
+ EQUB $21, $0D, $03, $21 ; 9CBE: 21 0D 03... !..
+ EQUB $1C, $FF, $37, $3F ; 9CC2: 1C FF 37... ..7
+ EQUB $22, $22, $2F, $2F ; 9CC6: 22 22 2F... ""/
+ EQUB $23, $A3, $23, $08 ; 9CCA: 23 A3 23... #.#
+ EQUB $49, $33, $09, $08 ; 9CCE: 49 33 09... I3.
+ EQUB $08, $88, $F6, $F7 ; 9CD2: 08 88 F6... ...
+ EQUB $22, $36, $76, $75 ; 9CD6: 22 36 76... "6v
+ EQUB $74, $75, $21, $03 ; 9CDA: 74 75 21... tu!
+ EQUB $03, $C0, $40, $02 ; 9CDE: 03 C0 40... ..@
+ EQUB $32, $04, $01, $03 ; 9CE2: 32 04 01... 2..
+ EQUB $90, $5A, $00, $F0 ; 9CE6: 90 5A 00... .Z.
+ EQUB $FE, $32, $1F, $03 ; 9CEA: FE 32 1F... .2.
+ EQUB $04, $34, $08, $01 ; 9CEE: 04 34 08... .4.
+ EQUB $20, $04, $06, $E0 ; 9CF2: 20 04 06...  ..
+ EQUB $FF, $7F, $21, $0F ; 9CF6: FF 7F 21... ..!
+ EQUB $04, $10, $00, $80 ; 9CFA: 04 10 00... ...
+ EQUB $10, $21, $01, $05 ; 9CFE: 10 21 01... .!.
+ EQUB $FC, $12, $21, $01 ; 9D02: FC 12 21... ..!
+ EQUB $03, $C0, $21, $03 ; 9D06: 03 C0 21... ..!
+ EQUB $02, $21, $06, $05 ; 9D0A: 02 21 06... .!.
+ EQUB $F8, $12, $04, $80 ; 9D0E: F8 12 04... ...
+ EQUB $21, $07, $08, $21 ; 9D12: 21 07 08... !..
+ EQUB $3F, $06, $21, $3F ; 9D16: 3F 06 21... ?.!
+ EQUB $40, $BF, $06, $FF ; 9D1A: 40 BF 06... @..
+ EQUB $06, $FF, $00, $FF ; 9D1E: 06 FF 00... ...
+ EQUB $06, $FF, $06, $FF ; 9D22: 06 FF 06... ...
+ EQUB $00, $21, $17, $06 ; 9D26: 00 21 17... .!.
+ EQUB $FF, $06, $FF, $00 ; 9D2A: FF 06 FF... ...
+ EQUB $44, $06, $FF, $06 ; 9D2E: 44 06 FF... D..
+ EQUB $FF, $00, $7F, $06 ; 9D32: FF 00 7F... ...
+ EQUB $FC, $06, $FC, $21 ; 9D36: FC 06 FC... ...
+ EQUB $02, $FD, $05, $21 ; 9D3A: 02 FD 05... ...
+ EQUB $1F, $12, $04, $21 ; 9D3E: 1F 12 04... ...
+ EQUB $01, $E0, $06, $21 ; 9D42: 01 E0 06... ...
+ EQUB $3F, $12, $80, $03 ; 9D46: 3F 12 80... ?..
+ EQUB $21, $03, $C0, $02 ; 9D4A: 21 03 C0... !..
+ EQUB $60, $02, $21, $07 ; 9D4E: 60 02 21... `.!
+ EQUB $FF, $FE, $F0, $04 ; 9D52: FF FE F0... ...
+ EQUB $21, $08, $00, $32 ; 9D56: 21 08 00... !..
+ EQUB $01, $08, $80, $00 ; 9D5A: 01 08 80... ...
+ EQUB $21, $0F, $7F, $F8 ; 9D5E: 21 0F 7F... !..
+ EQUB $C0, $04, $10, $80 ; 9D62: C0 04 10... ...
+ EQUB $21, $04, $20, $04 ; 9D66: 21 04 20... !.
+ EQUB $C0, $03, $32, $03 ; 9D6A: C0 03 32... ..2
+ EQUB $02, $02, $20, $80 ; 9D6E: 02 02 20... ..
+ EQUB $03, $21, $09, $5A ; 9D72: 03 21 09... .!.
+ EQUB $00, $23, $10, $93 ; 9D76: 00 23 10... .#.
+ EQUB $90, $21, $16, $10 ; 9D7A: 90 21 16... .!.
+ EQUB $21, $17, $6F, $EF ; 9D7E: 21 17 6F... !.o
+ EQUB $23, $68, $A8, $21 ; 9D82: 23 68 A8... #h.
+ EQUB $28, $A8, $03, $20 ; 9D86: 28 A8 03... (..
+ EQUB $00, $30, $00, $40 ; 9D8A: 00 30 00... .0.
+ EQUB $FF, $FC, $24, $8C ; 9D8E: FF FC 24... ..$
+ EQUB $BC, $BD, $03, $21 ; 9D92: BC BD 03... ...
+ EQUB $01, $03, $21, $1C ; 9D96: 01 03 21... ..!
+ EQUB $FF, $37, $3F, $2E ; 9D9A: FF 37 3F... .7?
+ EQUB $2E, $2F, $2F, $23 ; 9D9E: 2E 2F 2F... .//
+ EQUB $A3, $23, $08, $48 ; 9DA2: A3 23 08... .#.
+ EQUB $21, $08, $00, $21 ; 9DA6: 21 08 00... !..
+ EQUB $08, $80, $F6, $F7 ; 9DAA: 08 80 F6... ...
+ EQUB $32, $36, $37, $76 ; 9DAE: 32 36 37... 267
+ EQUB $7E, $74, $7C, $21 ; 9DB2: 7E 74 7C... ~t|
+ EQUB $01, $07, $21, $0E ; 9DB6: 01 07 21... ..!
+ EQUB $0F, $DF, $34, $0F ; 9DBA: 0F DF 34... ..4
+ EQUB $07, $03, $01, $05 ; 9DBE: 07 03 01... ...
+ EQUB $21, $0C, $05, $FF ; 9DC2: 21 0C 05... !..
+ EQUB $22, $F3, $12, $03 ; 9DC6: 22 F3 12... "..
+ EQUB $60, $00, $60, $00 ; 9DCA: 60 00 60... `.`
+ EQUB $EE, $03, $23, $17 ; 9DCE: EE 03 23... ..#
+ EQUB $22, $11, $03, $21 ; 9DD2: 22 11 03... "..
+ EQUB $29, $00, $21, $01 ; 9DD6: 29 00 21... ).!
+ EQUB $00, $93, $03, $44 ; 9DDA: 00 93 03... ...
+ EQUB $24, $6C, $03, $80 ; 9DDE: 24 6C 03... $l.
+ EQUB $00, $98, $00, $80 ; 9DE2: 00 98 00... ...
+ EQUB $03, $7F, $22, $67 ; 9DE6: 03 7F 22... .."
+ EQUB $22, $7F, $0B, $FB ; 9DEA: 22 7F 0B... "..
+ EQUB $F0, $E0, $C0, $80 ; 9DEE: F0 E0 C0... ...
+ EQUB $03, $C0, $07, $21 ; 9DF2: 03 C0 07... ...
+ EQUB $38, $07, $23, $10 ; 9DF6: 38 07 23... 8.#
+ EQUB $21, $12, $10, $21 ; 9DFA: 21 12 10... !..
+ EQUB $02, $10, $21, $05 ; 9DFE: 02 10 21... ..!
+ EQUB $6F, $EF, $68, $E8 ; 9E02: 6F EF 68... o.h
+ EQUB $68, $78, $34, $2A ; 9E06: 68 78 34... hx4
+ EQUB $3A, $00, $38, $22 ; 9E0A: 3A 00 38... :.8
+ EQUB $10, $21, $38, $04 ; 9E0E: 10 21 38... .!8
+ EQUB $21, $38, $22, $10 ; 9E12: 21 38 22... !8"
+ EQUB $21, $38, $06, $FF ; 9E16: 21 38 06... !8.
+ EQUB $07, $FF, $04, $28 ; 9E1A: 07 FF 04... ...
+ EQUB $18, $28, $18, $23 ; 9E1E: 18 28 18... .(.
+ EQUB $01, $FF, $24, $C0 ; 9E22: 01 FF 24... ..$
+ EQUB $23, $01, $FF, $24 ; 9E26: 23 01 FF... #..
+ EQUB $C0, $08, $E0, $98 ; 9E2A: C0 08 E0... ...
+ EQUB $86, $81, $86, $98 ; 9E2E: 86 81 86... ...
+ EQUB $E0, $09, $FF, $81 ; 9E32: E0 09 FF... ...
+ EQUB $42, $32, $24, $18 ; 9E36: 42 32 24... B2$
+ EQUB $03, $C0, $60, $30 ; 9E3A: 03 C0 60... ..`
+ EQUB $34, $18, $0C, $06 ; 9E3E: 34 18 0C... 4..
+ EQUB $02, $00, $C0, $60 ; 9E42: 02 00 C0... ...
+ EQUB $30, $34, $18, $0C ; 9E46: 30 34 18... 04.
+ EQUB $06, $02, $03, $31 ; 9E4A: 06 02 03... ...
+ EQUB $18, $23, $3C, $21 ; 9E4E: 18 23 3C... .#<
+ EQUB $18, $0B, $34, $18 ; 9E52: 18 0B 34... ..4
+ EQUB $3C, $3C, $18, $0D ; 9E56: 3C 3C 18... <<.
+ EQUB $22, $18, $0E, $21 ; 9E5A: 22 18 0E... "..
+ EQUB $18, $0F, $10, $0F ; 9E5E: 18 0F 10... ...
+ EQUB $22, $18, $06, $22 ; 9E62: 22 18 06... "..
+ EQUB $18, $05, $34, $08 ; 9E66: 18 05 34... ..4
+ EQUB $1C, $18, $08, $04 ; 9E6A: 1C 18 08... ...
+ EQUB $34, $18, $2C, $24 ; 9E6E: 34 18 2C... 4.,
+ EQUB $18, $03, $10, $34 ; 9E72: 18 03 10... ...
+ EQUB $34, $28, $28, $1C ; 9E76: 34 28 28... 4((
+ EQUB $10, $02, $36, $18 ; 9E7A: 10 02 36... ..6
+ EQUB $38, $2C, $18, $3C ; 9E7E: 38 2C 18... 8,.
+ EQUB $18, $09, $28, $18 ; 9E82: 18 09 28... ..(
+ EQUB $0F, $78, $0E, $78 ; 9E86: 0F 78 0E... .x.
+ EQUB $21, $18, $0D, $78 ; 9E8A: 21 18 0D... !..
+ EQUB $22, $18, $0C, $78 ; 9E8E: 22 18 0C... "..
+ EQUB $23, $18, $0B, $78 ; 9E92: 23 18 0B... #..
+ EQUB $24, $18, $0A, $78 ; 9E96: 24 18 0A... $..
+ EQUB $25, $18, $09, $78 ; 9E9A: 25 18 09... %..
+ EQUB $26, $18, $08, $78 ; 9E9E: 26 18 08... &..
+ EQUB $27, $18, $03, $13 ; 9EA2: 27 18 03... '..
+ EQUB $02, $FF, $05, $12 ; 9EA6: 02 FF 05... ...
+ EQUB $04, $80, $03, $FF ; 9EAA: 04 80 03... ...
+ EQUB $05, $12, $03, $80 ; 9EAE: 05 12 03... ...
+ EQUB $C0, $80, $02, $FF ; 9EB2: C0 80 02... ...
+ EQUB $05, $12, $03, $C0 ; 9EB6: 05 12 03... ...
+ EQUB $E0, $C0, $02, $FF ; 9EBA: E0 C0 02... ...
+ EQUB $05, $12, $03, $E0 ; 9EBE: 05 12 03... ...
+ EQUB $F0, $E0, $02, $FF ; 9EC2: F0 E0 02... ...
+ EQUB $05, $12, $03, $F0 ; 9EC6: 05 12 03... ...
+ EQUB $F8, $F0, $02, $FF ; 9ECA: F8 F0 02... ...
+ EQUB $05, $12, $03, $F8 ; 9ECE: 05 12 03... ...
+ EQUB $FC, $F8, $02, $FF ; 9ED2: FC F8 02... ...
+ EQUB $05, $12, $03, $FC ; 9ED6: 05 12 03... ...
+ EQUB $FE, $FC, $02, $FF ; 9EDA: FE FC 02... ...
+ EQUB $05, $12, $03, $FE ; 9EDE: 05 12 03... ...
+ EQUB $FF, $FE, $02, $FF ; 9EE2: FF FE 02... ...
+ EQUB $05, $12, $03, $13 ; 9EE6: 05 12 03... ...
+ EQUB $02, $FF, $02, $15 ; 9EEA: 02 FF 02... ...
+ EQUB $04, $80, $03, $FF ; 9EEE: 04 80 03... ...
+ EQUB $03, $80, $00, $12 ; 9EF2: 03 80 00... ...
+ EQUB $03, $80, $C0, $80 ; 9EF6: 03 80 C0... ...
+ EQUB $02, $FF, $02, $80 ; 9EFA: 02 FF 02... ...
+ EQUB $C0, $80, $12, $03 ; 9EFE: C0 80 12... ...
+ EQUB $C0, $E0, $C0, $02 ; 9F02: C0 E0 C0... ...
+ EQUB $FF, $02, $C0, $E0 ; 9F06: FF 02 C0... ...
+ EQUB $C0, $12, $03, $E0 ; 9F0A: C0 12 03... ...
+ EQUB $F0, $E0, $02, $FF ; 9F0E: F0 E0 02... ...
+ EQUB $02, $E0, $F0, $E0 ; 9F12: 02 E0 F0... ...
+ EQUB $12, $03, $F0, $F8 ; 9F16: 12 03 F0... ...
+ EQUB $F0, $02, $FF, $02 ; 9F1A: F0 02 FF... ...
+ EQUB $F0, $F8, $F0, $12 ; 9F1E: F0 F8 F0... ...
+ EQUB $03, $F8, $FC, $F8 ; 9F22: 03 F8 FC... ...
+ EQUB $02, $FF, $02, $F8 ; 9F26: 02 FF 02... ...
+ EQUB $FC, $F8, $12, $03 ; 9F2A: FC F8 12... ...
+ EQUB $FC, $FE, $FC, $02 ; 9F2E: FC FE FC... ...
+ EQUB $FF, $02, $FC, $FE ; 9F32: FF 02 FC... ...
+ EQUB $FC, $12, $03, $FE ; 9F36: FC 12 03... ...
+ EQUB $FF, $FE, $02, $FF ; 9F3A: FF FE 02... ...
+ EQUB $02, $FE, $FF, $FE ; 9F3E: 02 FE FF... ...
+ EQUB $12, $10, $33, $0C ; 9F42: 12 10 33... ..3
+ EQUB $3A, $2B, $87, $E3 ; 9F46: 3A 2B 87... :+.
+ EQUB $A4, $35, $08, $04 ; 9F4A: A4 35 08... .5.
+ EQUB $34, $27, $3A, $BB ; 9F4E: 34 27 3A... 4':
+ EQUB $48, $90, $21, $18 ; 9F52: 48 90 21... H.!
+ EQUB $02, $33, $18, $24 ; 9F56: 02 33 18... .3.
+ EQUB $18, $0F, $06, $33 ; 9F5A: 18 0F 06... ...
+ EQUB $18, $3C, $18, $03 ; 9F5E: 18 3C 18... .<.
+ EQUB $FF, $26, $81, $12 ; 9F62: FF 26 81... .&.
+ EQUB $26, $81, $FF, $02 ; 9F66: 26 81 FF... &..
+ EQUB $34, $18, $3C, $3C ; 9F6A: 34 18 3C... 4.<
+ EQUB $18, $0F, $05, $34 ; 9F6E: 18 0F 05... ...
+ EQUB $18, $3C, $3C, $18 ; 9F72: 18 3C 3C... .<<
+ EQUB $02, $70, $24, $60 ; 9F76: 02 70 24... .p$
+ EQUB $23, $C0, $70, $23 ; 9F7A: 23 C0 70... #.p
+ EQUB $60, $22, $40, $22 ; 9F7E: 60 22 40... `"@
+ EQUB $C0, $7F, $24, $60 ; 9F82: C0 7F 24... ..$
+ EQUB $23, $C0, $7F, $23 ; 9F86: 23 C0 7F... #..
+ EQUB $60, $22, $40, $22 ; 9F8A: 60 22 40... `"@
+ EQUB $C0, $22, $60, $24 ; 9F8E: C0 22 60... ."`
+ EQUB $C0, $12, $60, $22 ; 9F92: C0 12 60... ..`
+ EQUB $40, $23, $C0, $FF ; 9F96: 40 23 C0... @#.
+ EQUB $FE, $24, $C0, $0C ; 9F9A: FE 24 C0... .$.
+ EQUB $18, $08, $3F, $07 ; 9F9E: 18 08 3F... ..?
+ EQUB $21, $01, $0B, $32 ; 9FA2: 21 01 0B... !..
+ EQUB $05, $34, $6B, $D6 ; 9FA6: 05 34 6B... .4k
+ EQUB $9F, $03, $34, $02 ; 9FAA: 9F 03 34... ..4
+ EQUB $0F, $1F, $3F, $7F ; 9FAE: 0F 1F 3F... ..?
+ EQUB $02, $14, $DF, $B7 ; 9FB2: 02 14 DF... ...
+ EQUB $03, $12, $7F, $BF ; 9FB6: 03 12 7F... ...
+ EQUB $CF, $02, $FE, $F5 ; 9FBA: CF 02 FE... ...
+ EQUB $F9, $FB, $FD, $D3 ; 9FBE: F9 FB FD... ...
+ EQUB $03, $22, $FE, $FD ; 9FC2: 03 22 FE... .".
+ EQUB $FB, $FF, $03, $C0 ; 9FC6: FB FF 03... ...
+ EQUB $B0, $CC, $F2, $69 ; 9FCA: B0 CC F2... ...
+ EQUB $04, $C0, $F0, $EC ; 9FCE: 04 C0 F0... ...
+ EQUB $F6, $06, $32, $02 ; 9FD2: F6 06 32... ..2
+ EQUB $0B, $06, $32, $01 ; 9FD6: 0B 06 32... ..2
+ EQUB $07, $05, $21, $2B ; 9FDA: 07 05 21... ..!
+ EQUB $EA, $FC, $05, $21 ; 9FDE: EA FC 05... ...
+ EQUB $1F, $F5, $FF, $04 ; 9FE2: 1F F5 FF... ...
+ EQUB $21, $01, $FF, $5F ; 9FE6: 21 01 FF... !..
+ EQUB $F9, $05, $12, $21 ; 9FEA: F9 05 12... ...
+ EQUB $07, $04, $9F, $FF ; 9FEE: 07 04 9F... ...
+ EQUB $EE, $BB, $04, $7F ; 9FF2: EE BB 04... ...
+ EQUB $13, $03, $21, $19 ; 9FF6: 13 03 21... ..!
+ EQUB $12, $E0, $BF, $03 ; 9FFA: 12 E0 BF... ...
+ EQUB $21, $07, $14, $03 ; 9FFE: 21 07 14... !..
+ EQUB $FD, $FB, $E6, $D8 ; A002: FD FB E6... ...
+ EQUB $21, $27, $03, $22 ; A006: 21 27 03... !'.
+ EQUB $FE, $12, $DF, $03 ; A00A: FE 12 DF... ...
+ EQUB $BE, $DF, $DA, $FD ; A00E: BE DF DA... ...
+ EQUB $C5, $03, $7F, $BF ; A012: C5 03 7F... ...
+ EQUB $EC, $21, $36, $FB ; A016: EC 21 36... .!6
+ EQUB $03, $60, $FF, $10 ; A01A: 03 60 FF... .`.
+ EQUB $7E, $A7, $03, $80 ; A01E: 7E A7 03... ~..
+ EQUB $FF, $33, $0F, $01 ; A022: FF 33 0F... .3.
+ EQUB $18, $04, $21, $1E ; A026: 18 04 21... ..!
+ EQUB $5F, $10, $CE, $04 ; A02A: 5F 10 CE... _..
+ EQUB $E0, $FF, $EF, $21 ; A02E: E0 FF EF... ...
+ EQUB $31, $05, $40, $21 ; A032: 31 05 40... 1.@
+ EQUB $03, $F6, $05, $FF ; A036: 03 F6 05... ...
+ EQUB $FC, $21, $01, $05 ; A03A: FC 21 01... .!.
+ EQUB $E0, $32, $0A, $2F ; A03E: E0 32 0A... .2.
+ EQUB $06, $21, $05, $D0 ; A042: 06 21 05... .!.
+ EQUB $06, $80, $E0, $0E ; A046: 06 80 E0... ...
+ EQUB $32, $01, $06, $07 ; A04A: 32 01 06... 2..
+ EQUB $34, $01, $03, $06 ; A04E: 34 01 03... 4..
+ EQUB $19, $30, $65, $D2 ; A052: 19 30 65... .0e
+ EQUB $67, $87, $00, $38 ; A056: 67 87 00... g..
+ EQUB $01, $06, $0F, $1B ; A05A: 01 06 0F... ...
+ EQUB $2F, $1F, $3F, $2F ; A05E: 2F 1F 3F... /.?
+ EQUB $5F, $FF, $FE, $79 ; A062: 5F FF FE... _..
+ EQUB $F7, $FF, $EF, $16 ; A066: F7 FF EF... ...
+ EQUB $F7, $FF, $F3, $DF ; A06A: F7 FF F3... ...
+ EQUB $EE, $21, $14, $EB ; A06E: EE 21 14... .!.
+ EQUB $FD, $FB, $F7, $DC ; A072: FD FB F7... ...
+ EQUB $FE, $12, $F6, $FA ; A076: FE 12 F6... ...
+ EQUB $22, $FC, $9E, $F5 ; A07A: 22 FC 9E... "..
+ EQUB $CE, $BC, $98, $68 ; A07E: CE BC 98... ...
+ EQUB $D0, $E0, $67, $EF ; A082: D0 E0 67... ..g
+ EQUB $FF, $DF, $FF, $BF ; A086: FF DF FF... ...
+ EQUB $22, $7F, $B4, $58 ; A08A: 22 7F B4... "..
+ EQUB $86, $21, $03, $00 ; A08E: 86 21 03... .!.
+ EQUB $21, $01, $02, $FB ; A092: 21 01 02... !..
+ EQUB $FF, $FD, $FE, $14 ; A096: FF FD FE... ...
+ EQUB $80, $40, $10, $48 ; A09A: 80 40 10... .@.
+ EQUB $B4, $4A, $BF, $21 ; A09E: B4 4A BF... .J.
+ EQUB $2C, $00, $80, $E0 ; A0A2: 2C 00 80... ,..
+ EQUB $B0, $48, $A4, $C0 ; A0A6: B0 48 A4... .H.
+ EQUB $D1, $07, $C0, $08 ; A0AA: D1 07 C0... ...
+ EQUB $20, $FF, $00, $21 ; A0AE: 20 FF 00...  ..
+ EQUB $05, $04, $21, $1F ; A0B2: 05 04 21... ..!
+ EQUB $07, $21, $01, $EA ; A0B6: 07 21 01... .!.
+ EQUB $21, $02, $7F, $21 ; A0BA: 21 02 7F... !..
+ EQUB $06, $03, $FE, $21 ; A0BE: 06 03 FE... ...
+ EQUB $14, $06, $6B, $81 ; A0C2: 14 06 6B... ..k
+ EQUB $FA, $FE, $A1, $21 ; A0C6: FA FE A1... ...
+ EQUB $0E, $02, $21, $1C ; A0CA: 0E 02 21... ..!
+ EQUB $7F, $21, $05, $05 ; A0CE: 7F 21 05... .!.
+ EQUB $A7, $8C, $21, $11 ; A0D2: A7 8C 21... ..!
+ EQUB $00, $55, $03, $5F ; A0D6: 00 55 03... .U.
+ EQUB $F3, $EE, $05, $7E ; A0DA: F3 EE 05... ...
+ EQUB $DD, $21, $16, $FC ; A0DE: DD 21 16... .!.
+ EQUB $68, $21, $0A, $85 ; A0E2: 68 21 0A... h!.
+ EQUB $21, $01, $FF, $21 ; A0E6: 21 01 FF... !..
+ EQUB $3E, $E9, $22, $03 ; A0EA: 3E E9 22... >."
+ EQUB $21, $01, $02, $BF ; A0EE: 21 01 02... !..
+ EQUB $7F, $FD, $32, $3F ; A0F2: 7F FD 32... ..2
+ EQUB $0B, $E8, $F5, $FE ; A0F6: 0B E8 F5... ...
+ EQUB $7F, $12, $C0, $F4 ; A0FA: 7F 12 C0... ...
+ EQUB $03, $FB, $FD, $00 ; A0FE: 03 FB FD... ...
+ EQUB $F8, $D4, $02, $A1 ; A102: F8 D4 02... ...
+ EQUB $FC, $FE, $FF, $05 ; A106: FC FE FF... ...
+ EQUB $78, $86, $BF, $21 ; A10A: 78 86 BF... x..
+ EQUB $1F, $00, $80, $53 ; A10E: 1F 00 80... ...
+ EQUB $00, $87, $78, $06 ; A112: 00 87 78... ..x
+ EQUB $21, $3D, $E0, $FF ; A116: 21 3D E0... !=.
+ EQUB $F0, $00, $21, $0A ; A11A: F0 00 21... ..!
+ EQUB $C0, $00, $C0, $21 ; A11E: C0 00 C0... ...
+ EQUB $1F, $06, $83, $FF ; A122: 1F 06 83... ...
+ EQUB $FE, $00, $21, $02 ; A126: FE 00 21... ..!
+ EQUB $C0, $02, $7C, $07 ; A12A: C0 02 7C... ..|
+ EQUB $12, $00, $21, $13 ; A12E: 12 00 21... ..!
+ EQUB $C0, $0B, $F8, $FE ; A132: C0 0B F8... ...
+ EQUB $00, $80, $0F, $01 ; A136: 00 80 0F... ...
+ EQUB $34, $01, $03, $06 ; A13A: 34 01 03... 4..
+ EQUB $0D, $06, $35, $01 ; A13E: 0D 06 35... ..5
+ EQUB $02, $0D, $1F, $3A ; A142: 02 0D 1F... ...
+ EQUB $74, $A9, $52, $81 ; A146: 74 A9 52... t.R
+ EQUB $35, $27, $02, $00 ; A14A: 35 27 02... 5'.
+ EQUB $05, $0B, $57, $AF ; A14E: 05 0B 57... ..W
+ EQUB $21, $3F, $5B, $8F ; A152: 21 3F 5B... !?[
+ EQUB $34, $1F, $3F, $7F ; A156: 34 1F 3F... 4.?
+ EQUB $3F, $DF, $EE, $FD ; A15A: 3F DF EE... ?..
+ EQUB $5F, $16, $F7, $12 ; A15E: 5F 16 F7... _..
+ EQUB $EF, $D5, $AB, $54 ; A162: EF D5 AB... ...
+ EQUB $BB, $71, $22, $EF ; A166: BB 71 22... .q"
+ EQUB $12, $F7, $FB, $FC ; A16A: 12 F7 FB... ...
+ EQUB $FE, $F9, $F5, $E9 ; A16E: FE F9 F5... ...
+ EQUB $B2, $4C, $B2, $DE ; A172: B2 4C B2... .L.
+ EQUB $F2, $23, $FE, $FD ; A176: F2 23 FE... .#.
+ EQUB $F3, $CD, $32, $21 ; A17A: F3 CD 32... ..2
+ EQUB $01, $80, $00, $C0 ; A17E: 01 80 00... ...
+ EQUB $D0, $B4, $AC, $92 ; A182: D0 B4 AC... ...
+ EQUB $E4, $12, $21, $3F ; A186: E4 12 21... ..!
+ EQUB $6F, $7B, $7F, $6F ; A18A: 6F 7B 7F... o{.
+ EQUB $21, $23, $06, $80 ; A18E: 21 23 06... !#.
+ EQUB $A0, $16, $7F, $DF ; A192: A0 16 7F... ...
+ EQUB $37, $1C, $2C, $04 ; A196: 37 1C 2C... 7.,
+ EQUB $05, $02, $00, $01 ; A19A: 05 02 00... ...
+ EQUB $00, $E0, $F0, $22 ; A19E: 00 E0 F0... ...
+ EQUB $F8, $FC, $22, $FE ; A1A2: F8 FC 22... .."
+ EQUB $FF, $E0, $30, $98 ; A1A6: FF E0 30... ..0
+ EQUB $4C, $A7, $FB, $7D ; A1AA: 4C A7 FB... L..
+ EQUB $BD, $0D, $80, $C0 ; A1AE: BD 0D 80... ...
+ EQUB $60, $0C, $34, $01 ; A1B2: 60 0C 34... `.4
+ EQUB $02, $0C, $1D, $05 ; A1B6: 02 0C 1D... ...
+ EQUB $35, $01, $03, $03 ; A1BA: 35 01 03... 5..
+ EQUB $1A, $1C, $65, $B9 ; A1BE: 1A 1C 65... ..e
+ EQUB $21, $12, $60, $C2 ; A1C2: 21 12 60... !.`
+ EQUB $A1, $33, $04, $01 ; A1C6: A1 33 04... .3.
+ EQUB $02, $40, $EC, $DF ; A1CA: 02 40 EC... .@.
+ EQUB $BF, $5E, $4B, $95 ; A1CE: BF 5E 4B... .^K
+ EQUB $32, $2E, $17, $6F ; A1D2: 32 2E 17... 2..
+ EQUB $BF, $5F, $FA, $BF ; A1D6: BF 5F FA... ._.
+ EQUB $7F, $12, $21, $3F ; A1DA: 7F 12 21... ..!
+ EQUB $7F, $14, $FB, $54 ; A1DE: 7F 14 FB... ...
+ EQUB $E9, $E6, $D8, $7F ; A1E2: E9 E6 D8... ...
+ EQUB $FB, $FD, $FE, $FF ; A1E6: FB FD FE... ...
+ EQUB $BE, $D8, $E0, $80 ; A1EA: BE D8 E0... ...
+ EQUB $A5, $4F, $B5, $CA ; A1EE: A5 4F B5... .O.
+ EQUB $B1, $7E, $21, $1F ; A1F2: B1 7E 21... .~!
+ EQUB $DF, $F8, $F0, $C0 ; A1F6: DF F8 F0... ...
+ EQUB $05, $E2, $82, $21 ; A1FA: 05 E2 82... ...
+ EQUB $3B, $DA, $73, $21 ; A1FE: 3B DA 73... ;.s
+ EQUB $1F, $C3, $D8, $22 ; A202: 1F C3 D8... ...
+ EQUB $01, $00, $21, $01 ; A206: 01 00 21... ..!
+ EQUB $04, $82, $C0, $8E ; A20A: 04 82 C0... ...
+ EQUB $CC, $60, $D7, $72 ; A20E: CC 60 D7... .`.
+ EQUB $21, $18, $61, $20 ; A212: 21 18 61... !.a
+ EQUB $60, $36, $21, $07 ; A216: 60 36 21... `6!
+ EQUB $28, $01, $07, $28 ; A21A: 28 01 07... (..
+ EQUB $96, $45, $21, $0F ; A21E: 96 45 21... .E!
+ EQUB $F9, $40, $02, $F7 ; A222: F9 40 02... .@.
+ EQUB $79, $21, $3E, $F0 ; A226: 79 21 3E... y!>
+ EQUB $32, $07, $3F, $12 ; A22A: 32 07 3F... 2.?
+ EQUB $00, $D3, $EB, $FE ; A22E: 00 D3 EB... ...
+ EQUB $BA, $6F, $36, $2E ; A232: BA 6F 36... .o6
+ EQUB $0F, $FF, $2C, $14 ; A236: 0F FF 2C... ..,
+ EQUB $01, $C1, $22, $D0 ; A23A: 01 C1 22... .."
+ EQUB $FC, $32, $3D, $1C ; A23E: FC 32 3D... .2=
+ EQUB $AD, $95, $6D, $73 ; A242: AD 95 6D... ..m
+ EQUB $21, $3D, $F2, $80 ; A246: 21 3D F2... !=.
+ EQUB $C0, $40, $20, $10 ; A24A: C0 40 20... .@
+ EQUB $21, $08, $40, $21 ; A24E: 21 08 40... !.@
+ EQUB $04, $10, $21, $08 ; A252: 04 10 21... ..!
+ EQUB $42, $21, $11, $40 ; A256: 42 21 11... B!.
+ EQUB $22, $50, $D0, $0C ; A25A: 22 50 D0... "P.
+ EQUB $80, $00, $20, $21 ; A25E: 80 00 20... ..
+ EQUB $08, $08, $21, $3F ; A262: 08 08 21... ..!
+ EQUB $7A, $BD, $9E, $85 ; A266: 7A BD 9E... z..
+ EQUB $AA, $D9, $FC, $00 ; A26A: AA D9 FC... ...
+ EQUB $21, $05, $42, $61 ; A26E: 21 05 42... !.B
+ EQUB $72, $51, $20, $00 ; A272: 72 51 20... rQ
+ EQUB $45, $8B, $34, $16 ; A276: 45 8B 34... E.4
+ EQUB $2B, $54, $31, $64 ; A27A: 2B 54 31... +T1
+ EQUB $F2, $BF, $7D, $FB ; A27E: F2 BF 7D... ..}
+ EQUB $F7, $EF, $CE, $98 ; A282: F7 EF CE... ...
+ EQUB $00, $F4, $A3, $CC ; A286: 00 F4 A3... ...
+ EQUB $10, $44, $90, $60 ; A28A: 10 44 90... .D.
+ EQUB $FD, $FF, $FC, $F0 ; A28E: FD FF FC... ...
+ EQUB $E0, $80, $03, $D5 ; A292: E0 80 03... ...
+ EQUB $55, $02, $21, $05 ; A296: 55 02 21... U.!
+ EQUB $02, $48, $08, $5B ; A29A: 02 48 08... .H.
+ EQUB $4E, $34, $1D, $0A ; A29E: 4E 34 1D... N4.
+ EQUB $51, $02, $0A, $DF ; A2A2: 51 02 0A... Q..
+ EQUB $FE, $DE, $85, $39 ; A2A6: FE DE 85... ...
+ EQUB $2E, $03, $80, $01 ; A2AA: 2E 03 80... ...
+ EQUB $00, $01, $01, $00 ; A2AE: 00 01 01... ...
+ EQUB $01, $03, $50, $E8 ; A2B2: 01 03 50... ..P
+ EQUB $FD, $7F, $D0, $7E ; A2B6: FD 7F D0... ...
+ EQUB $38, $2F, $15, $2F ; A2BA: 38 2F 15... 8/.
+ EQUB $17, $02, $00, $2F ; A2BE: 17 02 00... ...
+ EQUB $01, $02, $BE, $21 ; A2C2: 01 02 BE... ...
+ EQUB $03, $42, $F3, $21 ; A2C6: 03 42 F3... .B.
+ EQUB $1D, $BF, $22, $ED ; A2CA: 1D BF 22... .."
+ EQUB $41, $FC, $BD, $21 ; A2CE: 41 FC BD... A..
+ EQUB $0C, $E0, $40, $02 ; A2D2: 0C E0 40... ..@
+ EQUB $33, $23, $02, $2E ; A2D6: 33 23 02... 3#.
+ EQUB $00, $82, $55, $AD ; A2DA: 00 82 55... ..U
+ EQUB $EA, $DD, $FD, $D1 ; A2DE: EA DD FD... ...
+ EQUB $FF, $7D, $AA, $50 ; A2E2: FF 7D AA... .}.
+ EQUB $00, $FD, $EF, $32 ; A2E6: 00 FD EF... ...
+ EQUB $3B, $0C, $BB, $C1 ; A2EA: 3B 0C BB... ;..
+ EQUB $AA, $FF, $21, $02 ; A2EE: AA FF 21... ..!
+ EQUB $80, $E0, $F0, $44 ; A2F2: 80 E0 F0... ...
+ EQUB $21, $3E, $55, $00 ; A2F6: 21 3E 55... !>U
+ EQUB $50, $70, $B0, $D0 ; A2FA: 50 70 B0... Pp.
+ EQUB $60, $E9, $21, $37 ; A2FE: 60 E9 21... `.!
+ EQUB $CA, $08, $34, $04 ; A302: CA 08 34... ..4
+ EQUB $02, $16, $0A, $42 ; A306: 02 16 0A... ...
+ EQUB $A0, $21, $02, $8E ; A30A: A0 21 02... .!.
+ EQUB $08, $35, $0E, $04 ; A30E: 08 35 0E... .5.
+ EQUB $06, $04, $08, $03 ; A312: 06 04 08... ...
+ EQUB $34, $04, $0E, $0C ; A316: 34 04 0E... 4..
+ EQUB $08, $08, $34, $04 ; A31A: 08 08 34... ..4
+ EQUB $0C, $1C, $0A, $05 ; A31E: 0C 1C 0A... ...
+ EQUB $22, $0E, $21, $04 ; A322: 22 0E 21... ".!
+ EQUB $02, $60, $05, $80 ; A326: 02 60 05... .`.
+ EQUB $50, $7D, $0C, $21 ; A32A: 50 7D 0C... P}.
+ EQUB $0D, $0E, $60, $B0 ; A32E: 0D 0E 60... ..`
+ EQUB $07, $60, $3E, $0B ; A332: 07 60 3E... .`>
+ EQUB $07, $0F, $0A, $1F ; A336: 07 0F 0A... ...
+ EQUB $16, $19, $0F, $04 ; A33A: 16 19 0F... ...
+ EQUB $02, $01, $05, $00 ; A33E: 02 01 05... ...
+ EQUB $09, $21, $06, $00 ; A342: 09 21 06... .!.
+ EQUB $78, $F8, $68, $70 ; A346: 78 F8 68... x.h
+ EQUB $22, $F0, $E0, $00 ; A34A: 22 F0 E0... "..
+ EQUB $90, $10, $90, $A0 ; A34E: 90 10 90... ...
+ EQUB $40, $80, $02, $21 ; A352: 40 80 02... @..
+ EQUB $08, $00, $21, $08 ; A356: 08 00 21... ..!
+ EQUB $03, $21, $18, $00 ; A35A: 03 21 18... .!.
+ EQUB $21, $18, $00, $35 ; A35E: 21 18 00... !..
+ EQUB $18, $08, $00, $18 ; A362: 18 08 00... ...
+ EQUB $3C, $20, $7E, $5A ; A366: 3C 20 7E... < ~
+ EQUB $3E, $24, $3C, $34 ; A36A: 3E 24 3C... >$<
+ EQUB $2C, $3C, $2C, $00 ; A36E: 2C 3C 2C... ,<,
+ EQUB $3C, $18, $00, $08 ; A372: 3C 18 00... <..
+ EQUB $18, $00, $18, $03 ; A376: 18 00 18... ...
+ EQUB $A0, $07, $B0, $A0 ; A37A: A0 07 B0... ...
+ EQUB $08, $33, $3C, $34 ; A37E: 08 33 3C... .3<
+ EQUB $2C, $06, $21, $18 ; A382: 2C 06 21... ,.!
+ EQUB $10, $21, $04, $00 ; A386: 10 21 04... .!.
+ EQUB $21, $04, $03, $21 ; A38A: 21 04 03... !..
+ EQUB $18, $00, $37, $2C ; A38E: 18 00 37... ..7
+ EQUB $04, $2C, $04, $00 ; A392: 04 2C 04... .,.
+ EQUB $18, $3C, $20, $7E ; A396: 18 3C 20... .<
+ EQUB $5A, $66, $7E, $7A ; A39A: 5A 66 7E... Zf~
+ EQUB $56, $7A, $56, $00 ; A39E: 56 7A 56... VzV
+ EQUB $37, $3C, $18, $00 ; A3A2: 37 3C 18... 7<.
+ EQUB $04, $2C, $04, $2C ; A3A6: 04 2C 04... .,.
+ EQUB $02, $A0, $07, $F0 ; A3AA: 02 A0 07... ...
+ EQUB $A0, $00, $A0, $06 ; A3AE: A0 00 A0... ...
+ EQUB $21, $3C, $22, $7A ; A3B2: 21 3C 22... !<"
+ EQUB $21, $24, $04, $37 ; A3B6: 21 24 04... !$.
+ EQUB $18, $24, $24, $18 ; A3BA: 18 24 24... .$$
+ EQUB $00, $08, $08, $03 ; A3BE: 00 08 08... ...
+ EQUB $21, $18, $02, $22 ; A3C2: 21 18 02... !..
+ EQUB $18, $21, $08, $00 ; A3C6: 18 21 08... .!.
+ EQUB $32, $18, $3C, $20 ; A3CA: 32 18 3C... 2.<
+ EQUB $7E, $5A, $3D, $24 ; A3CE: 7E 5A 3D... ~Z=
+ EQUB $3C, $34, $2C, $2C ; A3D2: 3C 34 2C... <4,
+ EQUB $3C, $00, $3C, $18 ; A3D6: 3C 00 3C... <.<
+ EQUB $00, $08, $18, $18 ; A3DA: 00 08 18... ...
+ EQUB $04, $C0, $07, $E0 ; A3DE: 04 C0 07... ...
+ EQUB $C0, $09, $21, $18 ; A3E2: C0 09 21... ..!
+ EQUB $10, $06, $22, $18 ; A3E6: 10 06 22... .."
+ EQUB $3A, $28, $08, $24 ; A3EA: 3A 28 08... :(.
+ EQUB $00, $08, $10, $08 ; A3EE: 00 08 10... ...
+ EQUB $10, $34, $34, $02 ; A3F2: 10 34 34... .44
+ EQUB $10, $21, $18, $10 ; A3F6: 10 21 18... .!.
+ EQUB $00, $35, $3C, $2C ; A3FA: 00 35 3C... .5<
+ EQUB $34, $2C, $3C, $7E ; A3FE: 34 2C 3C... 4,<
+ EQUB $4A, $6A, $00, $10 ; A402: 4A 6A 00... Jj.
+ EQUB $21, $18, $10, $02 ; A406: 21 18 10... !..
+ EQUB $22, $34, $02, $A0 ; A40A: 22 34 02... "4.
+ EQUB $21, $05, $CA, $20 ; A40E: 21 05 CA... !..
+ EQUB $04, $C0, $CE, $21 ; A412: 04 C0 CE... ...
+ EQUB $04, $C0, $06, $7E ; A416: 04 C0 06... ...
+ EQUB $22, $7A, $66, $04 ; A41A: 22 7A 66... "zf
+ EQUB $36, $18, $24, $24 ; A41E: 36 18 24... 6.$
+ EQUB $18, $00, $0F, $20 ; A422: 18 00 0F... ...
+ EQUB $60, $04, $32, $06 ; A426: 60 04 32... `.2
+ EQUB $2F, $78, $F0, $0D ; A42A: 2F 78 F0... /x.
+ EQUB $C0, $32, $0A, $03 ; A42E: C0 32 0A... .2.
+ EQUB $04, $22, $7E, $21 ; A432: 04 22 7E... ."~
+ EQUB $3C, $05, $22, $30 ; A436: 3C 05 22... <."
+ EQUB $08, $99, $21, $33 ; A43A: 08 99 21... ..!
+ EQUB $66, $CC, $99, $21 ; A43E: 66 CC 99... f..
+ EQUB $33, $0A, $66, $80 ; A442: 33 0A 66... 3.f
+ EQUB $99, $32, $33, $26 ; A446: 99 32 33... .23
+ EQUB $8C, $03, $4C, $32 ; A44A: 8C 03 4C... ..L
+ EQUB $19, $33, $66, $4C ; A44E: 19 33 66... .3f
+ EQUB $21, $38, $76, $C2 ; A452: 21 38 76... !8v
+ EQUB $C3, $83, $46, $7C ; A456: C3 83 46... ..F
+ EQUB $21, $18, $C7, $BB ; A45A: 21 18 C7... !..
+ EQUB $23, $7D, $BB, $C7 ; A45E: 23 7D BB... #}.
+ EQUB $FF, $35, $08, $2C ; A462: FF 35 08... .5.
+ EQUB $3C, $2C, $04, $03 ; A466: 3C 2C 04... <,.
+ EQUB $34, $04, $1C, $7C ; A46A: 34 04 1C... 4..
+ EQUB $1C, $04, $80, $00 ; A46E: 1C 04 80... ...
+ EQUB $CD, $06, $80, $F0 ; A472: CD 06 80... ...
+ EQUB $08, $60, $70, $30 ; A476: 08 60 70... .`p
+ EQUB $32, $08, $04, $03 ; A47A: 32 08 04... 2..
+ EQUB $7C, $6C, $4C, $74 ; A47E: 7C 6C 4C... |lL
+ EQUB $78, $05, $21, $08 ; A482: 78 05 21... x.!
+ EQUB $00, $21, $08, $03 ; A486: 00 21 08... .!.
+ EQUB $2B, $08, $02, $24 ; A48A: 2B 08 02... +..
+ EQUB $08, $22, $0C, $02 ; A48E: 08 22 0C... .".
+ EQUB $3F, $00, $00, $00 ; A492: 3F 00 00... ?..
+ EQUB $06, $0F, $16, $10 ; A496: 06 0F 16... ...
+ EQUB $16, $00, $00, $06 ; A49A: 16 00 00... ...
+ EQUB $1F, $3F, $3F, $3F ; A49E: 1F 3F 3F... .??
+ EQUB $39, $00, $00, $00 ; A4A2: 39 00 00... 9..
+ EQUB $00, $00, $80, $80 ; A4A6: 00 00 80... ...
+ EQUB $80, $00, $00, $00 ; A4AA: 80 00 00... ...
+ EQUB $80, $C0, $40, $40 ; A4AE: 80 C0 40... ..@
+ EQUB $40, $16, $16, $16 ; A4B2: 40 16 16... @..
+ EQUB $06, $00, $00, $00 ; A4B6: 06 00 00... ...
+ EQUB $00, $39, $39, $39 ; A4BA: 00 39 39... .99
+ EQUB $19, $06, $00, $00 ; A4BE: 19 06 00... ...
+ EQUB $00, $80, $80, $80 ; A4C2: 00 80 80... ...
+ EQUB $00, $00, $00, $00 ; A4C6: 00 00 00... ...
+ EQUB $00, $40, $40, $40 ; A4CA: 00 40 40... .@@
+ EQUB $80, $00, $00, $00 ; A4CE: 80 00 00... ...
+ EQUB $00, $00, $22, $80 ; A4D2: 00 00 22... .."
+ EQUB $C0, $E0, $F0, $F8 ; A4D6: C0 E0 F0... ...
+ EQUB $A0, $80, $40, $22 ; A4DA: A0 80 40... ..@
+ EQUB $20, $10, $32, $08 ; A4DE: 20 10 32...  .2
+ EQUB $04, $5E, $0F, $21 ; A4E2: 04 5E 0F... .^.
+ EQUB $01, $00, $3C, $06 ; A4E6: 01 00 3C... ..<
+ EQUB $0C, $00, $3C, $06 ; A4EA: 0C 00 3C... ..<
+ EQUB $CC, $3C, $00, $06 ; A4EE: CC 3C 00... .<.
+ EQUB $0A, $12, $22, $42 ; A4F2: 0A 12 22... .."
+ EQUB $00, $21, $04, $4C ; A4F6: 00 21 04... .!.
+ EQUB $3E, $1D, $1E, $05 ; A4FA: 3E 1D 1E... >..
+ EQUB $0F, $02, $13, $01 ; A4FE: 0F 02 13... ...
+ EQUB $33, $22, $01, $0A ; A502: 33 22 01... 3".
+ EQUB $00, $1D, $1C, $21 ; A506: 00 1D 1C... ...
+ EQUB $1E, $02, $80, $C0 ; A50A: 1E 02 80... ...
+ EQUB $A0, $78, $B0, $78 ; A50E: A0 78 B0... .x.
+ EQUB $00, $80, $40, $20 ; A512: 00 80 40... ..@
+ EQUB $50, $88, $48, $84 ; A516: 50 88 48... P.H
+ EQUB $36, $02, $01, $01 ; A51A: 36 02 01... 6..
+ EQUB $0F, $3F, $2F, $7E ; A51E: 0F 3F 2F... .?/
+ EQUB $F5, $00, $32, $04 ; A522: F5 00 32... ..2
+ EQUB $08, $10, $22, $20 ; A526: 08 10 22... .."
+ EQUB $41, $8A, $30, $22 ; A52A: 41 8A 30... A.0
+ EQUB $F0, $A0, $40, $A0 ; A52E: F0 A0 40... ..@
+ EQUB $20, $00, $21, $08 ; A532: 20 00 21...  .!
+ EQUB $02, $40, $80, $40 ; A536: 02 40 80... .@.
+ EQUB $22, $E0, $10, $00 ; A53A: 22 E0 10... "..
+ EQUB $21, $08, $00, $21 ; A53E: 21 08 00... !..
+ EQUB $04, $03, $22, $0F ; A542: 04 03 22... .."
+ EQUB $22, $07, $31, $03 ; A546: 22 07 31... ".1
+ EQUB $23, $01, $FA, $71 ; A54A: 23 01 FA... #..
+ EQUB $37, $36, $3F, $1E ; A54E: 37 36 3F... 76?
+ EQUB $3B, $07, $8F, $02 ; A552: 3B 07 8F... ;..
+ EQUB $81, $22, $C0, $E0 ; A556: 81 22 C0... .".
+ EQUB $C4, $F8, $70, $02 ; A55A: C4 F8 70... ..p
+ EQUB $80, $C0, $00, $60 ; A55E: 80 C0 00... ...
+ EQUB $A8, $F0, $02, $80 ; A562: A8 F0 02... ...
+ EQUB $40, $20, $22, $10 ; A566: 40 20 22... @ "
+ EQUB $21, $08, $02, $23 ; A56A: 21 08 02... !..
+ EQUB $48, $78, $22, $58 ; A56E: 48 78 22... Hx"
+ EQUB $02, $40, $02, $22 ; A572: 02 40 02... .@.
+ EQUB $20, $00, $3E, $01 ; A576: 20 00 3E...  .>
+ EQUB $03, $0C, $1A, $35 ; A57A: 03 0C 1A... ...
+ EQUB $2A, $35, $4F, $01 ; A57E: 2A 35 4F... *5O
+ EQUB $02, $06, $0C, $18 ; A582: 02 06 0C... ...
+ EQUB $31, $63, $62, $B8 ; A586: 31 63 62... 1cb
+ EQUB $D8, $88, $B0, $00 ; A58A: D8 88 B0... ...
+ EQUB $22, $C5, $86, $32 ; A58E: 22 C5 86... "..
+ EQUB $07, $27, $77, $4F ; A592: 07 27 77... .'w
+ EQUB $FF, $BF, $21, $3E ; A596: FF BF 21... ..!
+ EQUB $7C, $00, $20, $40 ; A59A: 7C 00 20... |.
+ EQUB $C0, $22, $80, $02 ; A59E: C0 22 80... .".
+ EQUB $E0, $22, $C0, $22 ; A5A2: E0 22 C0... .".
+ EQUB $80, $03, $21, $01 ; A5A6: 80 03 21... ..!
+ EQUB $07, $24, $01, $04 ; A5AA: 07 24 01... .$.
+ EQUB $21, $07, $93, $33 ; A5AE: 21 07 93... !..
+ EQUB $03, $0A, $0A, $40 ; A5B2: 03 0A 0A... ...
+ EQUB $43, $00, $F8, $EC ; A5B6: 43 00 F8... C..
+ EQUB $FC, $22, $F5, $FF ; A5BA: FC 22 F5... .".
+ EQUB $7C, $21, $3D, $C8 ; A5BE: 7C 21 3D... |!=
+ EQUB $F8, $E8, $F8, $E8 ; A5C2: F8 E8 F8... ...
+ EQUB $F8, $F1, $20, $24 ; A5C6: F8 F1 20... ..
+ EQUB $08, $21, $18, $22 ; A5CA: 08 21 18... .!.
+ EQUB $10, $D0, $58, $10 ; A5CE: 10 D0 58... ..X
+ EQUB $58, $BC, $22, $30 ; A5D2: 58 BC 22... X."
+ EQUB $4C, $90, $22, $20 ; A5D6: 4C 90 22... L."
+ EQUB $60, $40, $02, $21 ; A5DA: 60 40 02... `@.
+ EQUB $02, $68, $72, $58 ; A5DE: 02 68 72... .hr
+ EQUB $60, $72, $21, $3B ; A5E2: 60 72 21... `r!
+ EQUB $10, $32, $0B, $33 ; A5E6: 10 32 0B... .2.
+ EQUB $4F, $47, $5F, $4F ; A5EA: 4F 47 5F... OG_
+ EQUB $67, $35, $2F, $17 ; A5EE: 67 35 2F... g5/
+ EQUB $0F, $3A, $1E, $5E ; A5F2: 0F 3A 1E... .:.
+ EQUB $B4, $32, $26, $1C ; A5F6: B4 32 26... .2&
+ EQUB $10, $78, $24, $FE ; A5FA: 10 78 24... .x$
+ EQUB $22, $FC, $F8, $F0 ; A5FE: 22 FC F8... "..
+ EQUB $03, $21, $0B, $00 ; A602: 03 21 0B... .!.
+ EQUB $32, $05, $02, $04 ; A606: 32 05 02... 2..
+ EQUB $21, $07, $00, $3E ; A60A: 21 07 00... !..
+ EQUB $03, $01, $00, $02 ; A60E: 03 01 00... ...
+ EQUB $17, $23, $FA, $03 ; A612: 17 23 FA... .#.
+ EQUB $8A, $0E, $03, $1D ; A616: 8A 0E 03... ...
+ EQUB $08, $1B, $FA, $21 ; A61A: 08 1B FA... ...
+ EQUB $03, $F3, $F2, $32 ; A61E: 03 F3 F2... ...
+ EQUB $03, $33, $F8, $F3 ; A622: 03 33 F8... .3.
+ EQUB $21, $37, $C4, $22 ; A626: 21 37 C4... !7.
+ EQUB $37, $EF, $CC, $00 ; A62A: 37 EF CC... 7..
+ EQUB $E4, $21, $04, $E4 ; A62E: E4 21 04... .!.
+ EQUB $C4, $21, $04, $E7 ; A632: C4 21 04... .!.
+ EQUB $B8, $7F, $D7, $B1 ; A636: B8 7F D7... ...
+ EQUB $21, $21, $B1, $FD ; A63A: 21 21 B1... !!.
+ EQUB $F1, $21, $03, $00 ; A63E: F1 21 03... .!.
+ EQUB $31, $2F, $24, $21 ; A642: 31 2F 24... 1/$
+ EQUB $A1, $EB, $E0, $CF ; A646: A1 EB E0... ...
+ EQUB $32, $08, $0F, $E8 ; A64A: 32 08 0F... 2..
+ EQUB $EB, $21, $1F, $D6 ; A64E: EB 21 1F... .!.
+ EQUB $21, $1F, $EF, $35 ; A652: 21 1F EF... !..
+ EQUB $08, $0F, $0F, $08 ; A656: 08 0F 0F... ...
+ EQUB $0F, $10, $00, $80 ; A65A: 0F 10 00... ...
+ EQUB $21, $3F, $00, $BC ; A65E: 21 3F 00... !?.
+ EQUB $21, $01, $00, $22 ; A662: 21 01 00... !..
+ EQUB $E0, $C0, $40, $80 ; A666: E0 C0 40... ..@
+ EQUB $7F, $7E, $22, $80 ; A66A: 7F 7E 22... .~"
+ EQUB $36, $1C, $08, $07 ; A66E: 36 1C 08... 6..
+ EQUB $03, $00, $01, $00 ; A672: 03 00 01... ...
+ EQUB $7C, $34, $38, $18 ; A676: 7C 34 38... |48
+ EQUB $0F, $07, $03, $10 ; A67A: 0F 07 03... ...
+ EQUB $21, $38, $10, $12 ; A67E: 21 38 10... !8.
+ EQUB $34, $0B, $07, $FE ; A682: 34 0B 07... 4..
+ EQUB $18, $10, $30, $12 ; A686: 18 10 30... ..0
+ EQUB $21, $07, $FF, $7F ; A68A: 21 07 FF... !..
+ EQUB $32, $0C, $1C, $88 ; A68E: 32 0C 1C... 2..
+ EQUB $22, $AF, $76, $57 ; A692: 22 AF 76... ".v
+ EQUB $DB, $22, $0C, $21 ; A696: DB 22 0C... .".
+ EQUB $1C, $15, $60, $F0 ; A69A: 1C 15 60... ..`
+ EQUB $60, $12, $80, $21 ; A69E: 60 12 80... `..
+ EQUB $02, $F8, $70, $60 ; A6A2: 02 F8 70... ..p
+ EQUB $E0, $12, $00, $22 ; A6A6: E0 12 00... ...
+ EQUB $FC, $F8, $70, $E0 ; A6AA: FC F8 70... ..p
+ EQUB $C0, $80, $03, $7C ; A6AE: C0 80 03... ...
+ EQUB $F8, $F0, $E0, $C0 ; A6B2: F8 F0 E0... ...
+ EQUB $03, $36, $3D, $1F ; A6B6: 03 36 3D... .6=
+ EQUB $07, $07, $02, $01 ; A6BA: 07 07 02... ...
+ EQUB $02, $35, $03, $1F ; A6BE: 02 35 03... .5.
+ EQUB $0F, $01, $03, $03 ; A6C2: 0F 01 03... ...
+ EQUB $AD, $AF, $77, $57 ; A6C6: AD AF 77... ..w
+ EQUB $DA, $AC, $F8, $70 ; A6CA: DA AC F8... ...
+ EQUB $FE, $12, $FC, $FE ; A6CE: FE 12 FC... ...
+ EQUB $F8, $70, $F8, $F0 ; A6D2: F8 70 F8... .p.
+ EQUB $E0, $C0, $06, $C0 ; A6D6: E0 C0 06... ...
+ EQUB $80, $05, $FC, $02 ; A6DA: 80 05 FC... ...
+ EQUB $30, $50, $03, $F8 ; A6DE: 30 50 03... 0P.
+ EQUB $00, $20, $60, $20 ; A6E2: 00 20 60... . `
+ EQUB $05, $10, $22, $30 ; A6E6: 05 10 22... .."
+ EQUB $20, $02, $32, $0E ; A6EA: 20 02 32...  .2
+ EQUB $1E, $26, $30, $02 ; A6EE: 1E 26 30... .$0
+ EQUB $10, $22, $30, $20 ; A6F2: 10 22 30... ."0
+ EQUB $02, $22, $3E, $26 ; A6F6: 02 22 3E... .">
+ EQUB $30, $02, $10, $22 ; A6FA: 30 02 10... 0..
+ EQUB $30, $20, $02, $28 ; A6FE: 30 20 02... 0 .
+ EQUB $30, $22, $C0, $10 ; A702: 30 22 C0... 0".
+ EQUB $22, $30, $20, $02 ; A706: 22 30 20... "0
+ EQUB $22, $FE, $26, $30 ; A70A: 22 FE 26... ".&
+ EQUB $08, $32, $1E, $0E ; A70E: 08 32 1E... .2.
+ EQUB $09, $30, $21, $18 ; A712: 09 30 21... .0!
+ EQUB $06, $22, $7E, $03 ; A716: 06 22 7E... ."~
+ EQUB $3F, $35, $51, $38 ; A71A: 3F 35 51... ?5Q
+ EQUB $3F, $11, $0B, $03 ; A71E: 3F 11 0B... ?..
+ EQUB $21, $0C, $02, $21 ; A722: 21 0C 02... !..
+ EQUB $0E, $04, $20, $40 ; A726: 0E 04 20... ..
+ EQUB $00, $80, $0C, $0D ; A72A: 00 80 0C... ...
+ EQUB $13, $3F
 
-\ ******************************************************************************
-\
-\       Name: subm_A730
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_A730
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_A730
 
- LDY #&E0
+ LDY #$E0
 
 .loop_CA732
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA L963F,Y
  STA nameBuffer0+704,Y
@@ -10380,21 +10380,21 @@
  STA nameBuffer0+928
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_A775
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_A775
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_A775
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
- LDY #&60
+ LDY #$60
  LDA #0
 
 .loop_CA786
@@ -10402,7 +10402,7 @@
  STA nameBuffer0+927,Y
  DEY
  BNE loop_CA786
- LDA #&CB
+ LDA #$CB
  STA tileSprite11
  STA tileSprite12
  LDA #3
@@ -10410,12 +10410,12 @@
  STA attrSprite12
  LDA #0
  STA attrSprite13
- LDX #&18
- LDY #&38
+ LDX #$18
+ LDY #$38
 
 .loop_CA7A5
 
- LDA #&DA
+ LDA #$DA
  STA tileSprite0,Y
  LDA #0
  STA attrSprite0,Y
@@ -10427,14 +10427,14 @@
  BNE loop_CA7A5
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_A7B7
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_A7B7
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_A7B7
 
@@ -10448,56 +10448,56 @@
  LDA #0
  STA PPU_MASK
  LDA QQ11
- CMP #&B9
+ CMP #$B9
  BNE CA7D4
  JMP CA87D
 
 .CA7D4
 
- CMP #&9D
+ CMP #$9D
  BEQ CA83A
- CMP #&DF
+ CMP #$DF
  BEQ CA83A
- CMP #&96
+ CMP #$96
  BNE CA7E6
  JSR SetSystemImage_b5
  JMP CA8A2
 
 .CA7E6
 
- CMP #&98
+ CMP #$98
  BNE CA7F0
  JSR SetCmdrImage_b4
  JMP CA8A2
 
 .CA7F0
 
- CMP #&BA
+ CMP #$BA
  BNE CA810
  LDA #4
  STA PPU_ADDR
- LDA #&50
+ LDA #$50
  STA PPU_ADDR
- LDA #&A4
+ LDA #$A4
  STA SC+1
- LDA #&93
+ LDA #$93
  STA SC
- LDA #&F5
+ LDA #$F5
  STA systemFlag
  LDX #4
  JMP CA89F
 
 .CA810
 
- CMP #&BB
+ CMP #$BB
  BNE CA82A
  LDA #4
  STA PPU_ADDR
- LDA #&50
+ LDA #$50
  STA PPU_ADDR
- LDA #&A4
+ LDA #$A4
  STA V+1
- LDA #&D3
+ LDA #$D3
  STA V
  LDA #3
  BNE CA891
@@ -10513,7 +10513,7 @@
 
 .CA83A
 
- LDA #&24
+ LDA #$24
  STA L00D9
  LDA #1
  CMP systemFlag
@@ -10521,24 +10521,24 @@
  STA systemFlag
  LDA #4
  STA PPU_ADDR
- LDA #&40
+ LDA #$40
  STA PPU_ADDR
- LDX #&5F
- LDA #&FC
+ LDX #$5F
+ LDA #$FC
  STA SC+1
- LDA #&E8
+ LDA #$E8
  STA SC
  JSR subm_A909
  LDA QQ11
- CMP #&DF
+ CMP #$DF
  BNE CA8A2
- LDA #&0E
+ LDA #$0E
  STA PPU_ADDR
- LDA #&30
+ LDA #$30
  STA PPU_ADDR
- LDA #&A7
+ LDA #$A7
  STA V+1
- LDA #&1B
+ LDA #$1B
  STA V
  JSR UnpackToPPU
  JMP CA8A2
@@ -10547,11 +10547,11 @@
 
  LDA #4
  STA PPU_ADDR
- LDA #&50
+ LDA #$50
  STA PPU_ADDR
- LDA #&9F
+ LDA #$9F
  STA V+1
- LDA #&A1
+ LDA #$A1
  STA V
  LDA #2
 
@@ -10570,12 +10570,12 @@
 .CA8A2
 
  JSR subm_AC86
- LDA #&10
+ LDA #$10
  STA PPU_ADDR
  LDA #0
  STA PPU_ADDR
  LDY #0
- LDX #&50
+ LDX #$50
 
 .loop_CA8B3
 
@@ -10584,12 +10584,12 @@
  INY
  DEX
  BNE loop_CA8B3
- LDA #&1F
+ LDA #$1F
  STA PPU_ADDR
- LDA #&F0
+ LDA #$F0
  STA PPU_ADDR
  LDA #0
- LDX #&10
+ LDX #$10
 
 .loop_CA8CB
 
@@ -10608,17 +10608,17 @@
  JSR subm_D946
  LDA QQ11
  STA QQ11a
- AND #&40
+ AND #$40
  BEQ CA8FC
  LDA QQ11
- CMP #&DF
+ CMP #$DF
  BEQ CA8FC
  LDA #0
  BEQ CA8FE
 
 .CA8FC
 
- LDA #&80
+ LDA #$80
 
 .CA8FE
 
@@ -10628,14 +10628,14 @@
  STA PPU_CTRL
  JMP CB673_b3
 
-\ ******************************************************************************
-\
-\       Name: subm_A909
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_A909
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_A909
 
@@ -10685,35 +10685,35 @@
  BNE CA90B
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_A95D
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_A95D
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_A95D
 
  LDA #4
  STA PPU_ADDR
- LDA #&50
+ LDA #$50
  STA PPU_ADDR
- LDA #&97
+ LDA #$97
  STA V+1
- LDA #&60
+ LDA #$60
  STA V
  JMP UnpackToPPU
 
-\ ******************************************************************************
-\
-\       Name: subm_A972
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_A972
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_A972
 
@@ -10723,21 +10723,21 @@
  LDA #0
  STA L00CC
  LDA QQ11
- CMP #&DF
+ CMP #$DF
  BNE CA986
  LDA #4
  BNE CA988
 
 .CA986
 
- LDA #&25
+ LDA #$25
 
 .CA988
 
  STA L00D2
  LDA tileNumber
  STA tile0Phase0,X
- LDA #&C4
+ LDA #$C4
  JSR subm_D977
  JSR CA99B
  LDA tileNumber
@@ -10748,18 +10748,18 @@
 
  TXA
  PHA
- LDA #&3F
+ LDA #$3F
  STA tempVar+1
- LDA #&FF
+ LDA #$FF
  STA tempVar
  JSR subm_C6F4
  PLA
  PHA
  TAX
  LDA L03EF,X
- AND #&20
+ AND #$20
  BNE CA9CC
- LDA #&10
+ LDA #$10
  STA tempVar+1
  LDA #0
  STA tempVar
@@ -10767,7 +10767,7 @@
  PLA
  TAX
  LDA L03EF,X
- AND #&20
+ AND #$20
  BNE CA9CE
  JSR subm_D946
  JMP CA99B
@@ -10781,35 +10781,35 @@
 
  JMP subm_D946
 
-\ ******************************************************************************
-\
-\       Name: subm_A9D1
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_A9D1
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_A9D1
 
  PHA
  JSR subm_D8C5
  LDA QQ11
- CMP #&96
+ CMP #$96
  BNE CA9E1
  JSR GetSystemImage_b5
  JMP CA9E8
 
 .CA9E1
 
- CMP #&98
+ CMP #$98
  BNE CA9E8
  JSR GetCmdrImage_b4
 
 .CA9E8
 
  LDA QQ11
- AND #&40
+ AND #$40
  BEQ CA9F2
  LDA #0
  STA showUserInterface
@@ -10819,19 +10819,19 @@
  JSR subm_AC86
  LDA #0
  STA L00CC
- LDA #&25
+ LDA #$25
  STA L00D2
  LDA tileNumber
  STA tile0Phase0
  STA tile0Phase1
- LDA #&54
+ LDA #$54
  LDX #0
  PLA
  JSR subm_D977
  INC drawingPhase
  JSR subm_D977
  JSR subm_D8C5
- LDA #&50
+ LDA #$50
  STA L00CD
  STA L00CE
  LDA QQ11
@@ -10845,10 +10845,10 @@
  STX otherPhase
  JSR subm_D8EC
  LDA QQ11
- AND #&40
+ AND #$40
  BNE CAA3B
  JSR KeepPPUTablesAt0
- LDA #&80
+ LDA #$80
  STA showUserInterface
 
 .CAA3B
@@ -10860,7 +10860,7 @@
 .CAA43
 
  LDA QQ11
- AND #&0F
+ AND #$0F
  TAX
  LDA LAA5C,X
  CMP L03F2
@@ -10871,19 +10871,19 @@
  INC L00DA
  RTS
 
-\ ******************************************************************************
-\
-\       Name: LAA5C
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: LAA5C
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .LAA5C
 
- EQUB   0,   2, &0A, &0A ; AA5C: 00 02 0A... ...
- EQUB   0, &0A,   6,   8 ; AA60: 00 0A 06... ...
+ EQUB   0,   2, $0A, $0A ; AA5C: 00 02 0A... ...
+ EQUB   0, $0A,   6,   8 ; AA60: 00 0A 06... ...
  EQUB   8,   5,   1,   7 ; AA64: 08 05 01... ...
  EQUB   3,   4,   0,   9 ; AA68: 03 04 00... ...
 
@@ -10899,46 +10899,46 @@
  EQUB   3,   3,   3,   3 ; AA88: 03 03 03... ...
  EQUB   0,   0,   0,   0 ; AA8C: 00 00 00... ...
  EQUB   0,   0,   0,   0 ; AA90: 00 00 00... ...
- EQUB &C0, &C0, &C0, &C0 ; AA94: C0 C0 C0... ...
- EQUB &C0, &C0, &C0, &C0 ; AA98: C0 C0 C0... ...
+ EQUB $C0, $C0, $C0, $C0 ; AA94: C0 C0 C0... ...
+ EQUB $C0, $C0, $C0, $C0 ; AA98: C0 C0 C0... ...
  EQUB   0,   0,   0,   0 ; AA9C: 00 00 00... ...
  EQUB   0,   0,   0,   0 ; AAA0: 00 00 00... ...
- EQUB   0,   0,   0, &FF ; AAA4: 00 00 00... ...
- EQUB &FF, &FF,   0,   0 ; AAA8: FF FF 00... ...
+ EQUB   0,   0,   0, $FF ; AAA4: 00 00 00... ...
+ EQUB $FF, $FF,   0,   0 ; AAA8: FF FF 00... ...
  EQUB   0,   0,   0,   0 ; AAAC: 00 00 00... ...
  EQUB   0,   0,   0,   0 ; AAB0: 00 00 00... ...
- EQUB &0F, &1F, &1F, &DF ; AAB4: 0F 1F 1F... ...
- EQUB &DF, &BF, &BF, &BF ; AAB8: DF BF BF... ...
+ EQUB $0F, $1F, $1F, $DF ; AAB4: 0F 1F 1F... ...
+ EQUB $DF, $BF, $BF, $BF ; AAB8: DF BF BF... ...
 
-\ ******************************************************************************
-\
-\       Name: DrawTitleScreen
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: DrawTitleScreen
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .DrawTitleScreen
 
  JSR subm_D933
  LDA #2
  STA addr1+1
- LDA #&80
+ LDA #$80
  STA addr1
- LDA #&3F
+ LDA #$3F
  STA PPU_ADDR
  LDA #0
  STA PPU_ADDR
- LDA #&0F
- LDX #&1F
+ LDA #$0F
+ LDX #$1F
 
 .loop_CAAD5
 
  STA PPU_DATA
  DEX
  BPL loop_CAAD5
- LDA #&20
+ LDA #$20
  STA PPU_ADDR
  LDA #0
  STA PPU_ADDR
@@ -10955,7 +10955,7 @@
  LDA #0
  DEX
  BNE CAAEB
- LDA #&F5
+ LDA #$F5
  STA L03F2
  STA systemFlag
  LDA #0
@@ -10963,7 +10963,7 @@
  LDA #0
  STA PPU_ADDR
  LDY #0
- LDX #&50
+ LDX #$50
 
 .loop_CAB0F
 
@@ -10972,12 +10972,12 @@
  INY
  DEX
  BNE loop_CAB0F
- LDA #&10
+ LDA #$10
  STA PPU_ADDR
  LDA #0
  STA PPU_ADDR
  LDY #0
- LDX #&50
+ LDX #$50
 
 .loop_CAB27
 
@@ -10990,10 +10990,10 @@
 
 .loop_CAB33
 
- LDA #&F0
+ LDA #$F0
  STA ySprite0,Y
  INY
- LDA #&FE
+ LDA #$FE
  STA ySprite0,Y
  INY
  LDA #3
@@ -11004,25 +11004,25 @@
  INY
  BNE loop_CAB33
  JSR subm_A95D
- LDA #&9D
+ LDA #$9D
  STA ySprite0
- LDA #&FE
+ LDA #$FE
  STA tileSprite0
- LDA #&F8
+ LDA #$F8
  STA xSprite0
- LDA #&23
+ LDA #$23
  STA attrSprite0
- LDA #&FB
+ LDA #$FB
  STA tileSprite1
  STA tileSprite2
- LDA #&FD
+ LDA #$FD
  STA tileSprite3
  STA tileSprite4
  LDA #3
  STA attrSprite1
- LDA #&43
+ LDA #$43
  STA attrSprite2
- LDA #&43
+ LDA #$43
  STA attrSprite3
  LDA #3
  STA attrSprite4
@@ -11035,15 +11035,15 @@
  STA otherPhase
  STA drawingPhase
  STA palettePhase
- LDA #&10
+ LDA #$10
  STA L00E0
  LDA #0
  STA pallettePhasex8
- LDA #&20
+ LDA #$20
  STA debugNametableHi
  LDA #0
  STA debugNametableLo
- LDA #&28
+ LDA #$28
  STA L03EF
  STA L03F0
  LDA #4
@@ -11055,7 +11055,7 @@
  STA L00CB
  STA tile3Phase0
  STA tile3Phase1
- LDA #&0F
+ LDA #$0F
  STA hiddenColour
  STA visibleColour
  STA paletteColour1
@@ -11063,27 +11063,27 @@
  LDA #0
  STA L00DA
  STA QQ11a
- LDA #&FF
+ LDA #$FF
  STA L0473
  JSR subm_D933
- LDA #&90
+ LDA #$90
  STA ppuCtrlCopy
  STA PPU_CTRL
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_ABE7
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_ABE7
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_ABE7
 
  LDA QQ11
- CMP #&BA
+ CMP #$BA
  BNE CAC08
  LDA L0464
  CMP #3
@@ -11093,7 +11093,7 @@
 
 .CABFA
 
- LDX #&F0
+ LDX #$F0
  STX ySprite8
  STX ySprite9
  STX ySprite10
@@ -11103,45 +11103,45 @@
 
  LDA #2
  STA addr1+1
- LDA #&80
+ LDA #$80
  STA addr1
  LDA QQ11
  BPL CAC1C
  LDA #3
  STA addr1+1
- LDA #&60
+ LDA #$60
  STA addr1
 
 .CAC1C
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_AC1D
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_AC1D
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_AC1D
 
  TAY
  LDA QQ11
- AND #&40
+ AND #$40
  BNE CAC1C
  STY L0464
  JSR subm_ACEB
  LDA #2
  STA addr1+1
- LDA #&80
+ LDA #$80
  STA addr1
  LDA QQ11
  BPL CAC3E
  LDA #3
  STA addr1+1
- LDA #&60
+ LDA #$60
  STA addr1
 
 .CAC3E
@@ -11149,45 +11149,45 @@
  LDA L0464
  ASL A
  ASL A
- ADC #&81
+ ADC #$81
  STA L00D6
  LDX #0
  STX L00D3
 
 .loop_CAC4B
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA L00D3
  BPL loop_CAC4B
 
-\ ******************************************************************************
-\
-\       Name: subm_AC5C
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_AC5C
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_AC5C
 
  LDA L0464
  JSR subm_AE18
  LDA QQ11
- AND #&40
+ AND #$40
  BNE CAC85
  JSR subm_ABE7
- LDA #&80
+ LDA #$80
  STA L00D7
  ASL A
  STA L00D3
 
 .loop_CAC72
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA L00D3
  BPL loop_CAC72
@@ -11197,55 +11197,55 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_AC86
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_AC86
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_AC86
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
- LDA #&F8
+ LDA #$F8
  STA xSprite0
- LDY #&12
- LDX #&9D
+ LDY #$12
+ LDX #$9D
  LDA QQ11
  BPL CACCC
- CMP #&C4
+ CMP #$C4
  BNE CACA8
- LDX #&F0
+ LDX #$F0
  BNE CACCC
 
 .CACA8
 
- LDY #&19
- LDX #&D5
- CMP #&B9
+ LDY #$19
+ LDX #$D5
+ CMP #$B9
  BNE CACB7
- LDX #&96
- LDA #&F8
+ LDX #$96
+ LDA #$F8
  STA xSprite0
 
 .CACB7
 
  LDA QQ11
- AND #&0F
- CMP #&0F
+ AND #$0F
+ CMP #$0F
  BNE CACC1
- LDX #&A6
+ LDX #$A6
 
 .CACC1
 
- CMP #&0D
+ CMP #$0D
  BNE CACCC
- LDX #&AD
- LDA #&F8
+ LDX #$AD
+ LDA #$F8
  STA xSprite0
 
 .CACCC
@@ -11260,10 +11260,10 @@
  LDA L0464
  ASL A
  ASL A
- ADC #&81
+ ADC #$81
  STA L00D6
  LDA QQ11
- AND #&40
+ AND #$40
  BNE CACEA
  LDX #0
  STX L00D3
@@ -11272,14 +11272,14 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_ACEB
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_ACEB
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_ACEB
 
@@ -11292,55 +11292,55 @@
  JSR subm_AF2E
  LDY #9
  JSR subm_AF5B
- LDY #&0C
+ LDY #$0C
  JSR subm_AF2E
- LDY #&1D
+ LDY #$1D
  JSR subm_AF5B
 
-\ ******************************************************************************
-\
-\       Name: subm_AD0C
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_AD0C
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_AD0C
 
- LDY #&0E
+ LDY #$0E
  JSR subm_AF5B
- LDY #&11
+ LDY #$11
  JSR subm_AF2E
 
-\ ******************************************************************************
-\
-\       Name: subm_AD16
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_AD16
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_AD16
 
- LDY #&13
+ LDY #$13
  JSR subm_AF5B
- LDY #&16
+ LDY #$16
  JSR subm_AF2E
- LDY #&18
+ LDY #$18
  JSR subm_AF5B
- LDY #&1B
+ LDY #$1B
  JMP subm_AF2E
 
-\ ******************************************************************************
-\
-\       Name: subm_AD2A
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_AD2A
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_AD2A
 
@@ -11353,12 +11353,12 @@
  ASL A
  TAY
  BNE CAD3A
- LDA #&94
+ LDA #$94
  BNE CAD3C
 
 .CAD3A
 
- LDA #&95
+ LDA #$95
 
 .CAD3C
 
@@ -11368,33 +11368,33 @@
  STA V+1
  LDA QQ11
  BMI CAD5A
- LDA #&72
+ LDA #$72
  STA SC+1
- LDA #&80
+ LDA #$80
  STA SC
- LDA #&76
+ LDA #$76
  STA SC2+1
- LDA #&80
+ LDA #$80
  STA SC2
  JMP CAD77
 
 .CAD5A
 
- LDA #&73
+ LDA #$73
  STA SC+1
- LDA #&60
+ LDA #$60
  STA SC
- LDA #&77
+ LDA #$77
  STA SC2+1
- LDA #&60
+ LDA #$60
  STA SC2
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
 .CAD77
 
- LDY #&3F
+ LDY #$3F
 
 .loop_CAD79
 
@@ -11402,11 +11402,11 @@
  STA (SC),Y
  STA (SC2),Y
  DEY
- CPY #&21
+ CPY #$21
  BNE loop_CAD79
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
 .CAD91
 
@@ -11416,41 +11416,41 @@
  DEY
  BNE CAD91
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
- LDY #&20
+ LDY #$20
  LDA (V),Y
  LDY #0
  STA (SC),Y
  STA (SC2),Y
- LDY #&40
+ LDY #$40
  LDA (V),Y
- LDY #&20
+ LDY #$20
  STA (SC),Y
  STA (SC2),Y
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_AE18_ADBC
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_AE18_ADBC
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_AE18_ADBC
 
- LDA #&73
+ LDA #$73
  STA SC+1
- LDA #&60
+ LDA #$60
  STA SC
- LDA #&77
+ LDA #$77
  STA SC2+1
- LDA #&60
+ LDA #$60
  STA SC2
- LDY #&3F
+ LDY #$3F
  LDA #0
 
 .loop_CADD0
@@ -11459,20 +11459,20 @@
  STA (SC2),Y
  DEY
  BNE loop_CADD0
- LDA #&20
+ LDA #$20
  LDY #0
  STA (SC),Y
  STA (SC2),Y
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_AE18_ADE0
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_AE18_ADE0
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_AE18_ADE0
 
@@ -11506,7 +11506,7 @@
 
  LDA scanController2
  BNE CAE12
- LDY #&0C
+ LDY #$0C
  JSR subm_AF9A
 
 .CAE12
@@ -11517,14 +11517,14 @@
 
  JMP CAEC6
 
-\ ******************************************************************************
-\
-\       Name: subm_AE18
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_AE18
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_AE18
 
@@ -11532,8 +11532,8 @@
  BMI subm_AE18_ADBC
  STA L0464
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  JSR subm_AD2A
  LDA L0464
@@ -11557,7 +11557,7 @@
 
  LDA ECM
  BNE CAE56
- LDY #&11
+ LDY #$11
  JSR subm_AF2E
 
 .CAE56
@@ -11570,7 +11570,7 @@
 
 .CAE60
 
- LDY #&0E
+ LDY #$0E
  JSR subm_AF5B
 
 .CAE65
@@ -11584,21 +11584,21 @@
 
  LDA NOMSL
  BNE CAE79
- LDY #&13
+ LDY #$13
  JSR subm_AF5B
 
 .CAE79
 
  LDA MSTG
  BPL CAE83
- LDY #&16
+ LDY #$16
  JSR subm_AF2E
 
 .CAE83
 
  LDA BOMB
  BNE CAE8D
- LDY #&18
+ LDY #$18
  JSR subm_AF5B
 
 .CAE8D
@@ -11610,18 +11610,18 @@
 
 .CAE97
 
- LDY #&1B
+ LDY #$1B
  JSR subm_AF2E
 
 .CAE9C
 
  LDA L0300
- AND #&C0
+ AND #$C0
  BEQ CAEBB
 
 .CAEA3
 
- LDY #&1D
+ LDY #$1D
  JSR subm_AF5B
  JMP CAEBB
 
@@ -11630,35 +11630,35 @@
  LDA COK
  BNE CAEB6
  LDA QQ11
- CMP #&BB
+ CMP #$BB
  BEQ CAEBB
 
 .CAEB6
 
- LDY #&11
+ LDY #$11
  JSR subm_AF2E
 
 .CAEBB
 
  LDA QQ11
- CMP #&BA
+ CMP #$BA
  BNE CAEC6
  LDY #4
  JSR subm_AF5B
 
 .CAEC6
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA L0464
  ASL A
  ASL A
  ASL A
  ASL A
- ADC #&27
+ ADC #$27
  STA L00BE
- LDA #&EB
+ LDA #$EB
  ADC #0
  STA L00BF
  RTS
@@ -11668,7 +11668,7 @@
  LDX #4
  LDA QQ12
  BEQ CAEF6
- LDY #&0C
+ LDY #$0C
  JSR subm_AF2E
  JSR subm_AD16
  JMP CAEA3
@@ -11679,9 +11679,9 @@
  JSR subm_AF2E
  LDA QQ22+1
  BEQ CAF0C
- LDY #&0E
+ LDY #$0E
  JSR subm_AF5B
- LDY #&11
+ LDY #$11
  JSR subm_AF2E
  JMP CAF12
 
@@ -11693,40 +11693,40 @@
 
 .CAF12
 
- LDY #&13
+ LDY #$13
  JSR subm_AF5B
 
 .CAF17
 
  LDA GHYP
  BNE CAF21
- LDY #&16
+ LDY #$16
  JSR subm_AF2E
 
 .CAF21
 
  LDA ECM
  BNE CAF2B
- LDY #&18
+ LDY #$18
  JSR subm_AF5B
 
 .CAF2B
 
  JMP CAE8D
 
-\ ******************************************************************************
-\
-\       Name: subm_AF2E
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_AF2E
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_AF2E
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA #4
  STA (SC),Y
@@ -11737,30 +11737,30 @@
  STA (SC2),Y
  TYA
  CLC
- ADC #&1F
+ ADC #$1F
  TAY
- LDA #&24
+ LDA #$24
  STA (SC),Y
  STA (SC2),Y
  INY
- LDA #&25
+ LDA #$25
  STA (SC),Y
  STA (SC2),Y
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_AF5B
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_AF5B
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_AF5B
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA #6
  STA (SC),Y
@@ -11775,60 +11775,60 @@
  STA (SC2),Y
  TYA
  CLC
- ADC #&1E
+ ADC #$1E
  TAY
- LDA #&26
+ LDA #$26
  STA (SC),Y
  STA (SC2),Y
  INY
- LDA #&25
+ LDA #$25
  STA (SC),Y
  STA (SC2),Y
  INY
- LDA #&27
+ LDA #$27
  STA (SC),Y
  STA (SC2),Y
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_AF96
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_AF96
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_AF96
 
  JSR subm_AFAB
  INY
 
-\ ******************************************************************************
-\
-\       Name: subm_AF9A
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_AF9A
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_AF9A
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  JSR subm_AFAB
  INY
 
-\ ******************************************************************************
-\
-\       Name: subm_AFAB
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_AFAB
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_AFAB
 
@@ -11838,7 +11838,7 @@
  STY T
  TYA
  CLC
- ADC #&20
+ ADC #$20
  TAY
  LDA L95CE,Y
  STA (SC),Y
@@ -11846,14 +11846,14 @@
  LDY T
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_AFCD_AFC3
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_AFCD_AFC3
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_AFCD_AFC3
 
@@ -11861,64 +11861,64 @@
  STX tileNumber
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_AFCD_AFC8
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_AFCD_AFC8
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_AFCD_AFC8
 
- LDX #&25
+ LDX #$25
  STX tileNumber
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_AFCD
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_AFCD
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_AFCD
 
  LDA QQ11
- CMP #&CF
+ CMP #$CF
  BEQ subm_AFCD_AFC3
- CMP #&10
+ CMP #$10
  BEQ subm_AFCD_AFC8
- LDX #&42
+ LDX #$42
  LDA QQ11
  BMI CAFDF
- LDX #&3C
+ LDX #$3C
 
 .CAFDF
 
  STX tileNumber
- LDA #&FC
+ LDA #$FC
  STA V+1
  LDA #0
  STA V
- LDA #&61
+ LDA #$61
  STA SC+1
- LDA #&28
+ LDA #$28
  STA SC
- LDA #&69
+ LDA #$69
  STA SC2+1
- LDA #&28
+ LDA #$28
  STA SC2
  LDY #0
- LDX #&25
+ LDX #$25
 
 .CAFFD
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA (V),Y
  STA (SC),Y
@@ -11960,13 +11960,13 @@
 .CB04A
 
  INX
- CPX #&3C
+ CPX #$3C
  BNE CAFFD
 
 .CB04F
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  CPX tileNumber
  BEQ CB0B4
@@ -12022,11 +12022,11 @@
 
 .CB0B4
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA #0
- LDX #&30
+ LDX #$30
 
 .loop_CB0C5
 
@@ -12042,33 +12042,33 @@
  DEX
  BNE loop_CB0C5
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_B0E1
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B0E1
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B0E1
 
  STA SC
  SEC
- SBC #&20
+ SBC #$20
  STA L00D9
  LDA SC
  CLC
- ADC #&5F
+ ADC #$5F
  STA tileNumber
  LDX #0
  LDA QQ11
- CMP #&BB
+ CMP #$BB
  BNE CB0F8
  DEX
 
@@ -12082,23 +12082,23 @@
  ROL A
  ASL SC
  ROL A
- ADC #&60
+ ADC #$60
  STA SC2+1
  ADC #8
  STA SC+1
  LDA SC
  STA SC2
- LDA #&FC
+ LDA #$FC
  STA V+1
- LDA #&E8
+ LDA #$E8
  STA V
- LDX #&5F
+ LDX #$5F
  LDY #0
 
 .CB11D
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA (V),Y
  STA (SC2),Y
@@ -12159,30 +12159,30 @@
  BNE CB11D
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_B18E
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B18E
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B18E
 
- LDA #&65
+ LDA #$65
  STA SC2+1
  LDA #8
  STA SC2
- LDA #&6D
+ LDA #$6D
  STA SC+1
  LDA #8
  STA SC
- LDX #&5F
+ LDX #$5F
  LDA QQ11
- CMP #&BB
+ CMP #$BB
  BNE CB1A8
- LDX #&46
+ LDX #$46
 
 .CB1A8
 
@@ -12190,55 +12190,55 @@
  CLC
  ADC tileNumber
  STA tileNumber
- LDA #&FC
+ LDA #$FC
  STA V+1
- LDA #&E8
+ LDA #$E8
  STA V
  LDY #0
 
 .CB1B8
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA (V),Y
  STA (SC),Y
- LDA #&FF
+ LDA #$FF
  STA (SC2),Y
  INY
  LDA (V),Y
  STA (SC),Y
- LDA #&FF
+ LDA #$FF
  STA (SC2),Y
  INY
  LDA (V),Y
  STA (SC),Y
- LDA #&FF
+ LDA #$FF
  STA (SC2),Y
  INY
  LDA (V),Y
  STA (SC),Y
- LDA #&FF
+ LDA #$FF
  STA (SC2),Y
  INY
  LDA (V),Y
  STA (SC),Y
- LDA #&FF
+ LDA #$FF
  STA (SC2),Y
  INY
  LDA (V),Y
  STA (SC),Y
- LDA #&FF
+ LDA #$FF
  STA (SC2),Y
  INY
  LDA (V),Y
  STA (SC),Y
- LDA #&FF
+ LDA #$FF
  STA (SC2),Y
  INY
  LDA (V),Y
  STA (SC),Y
- LDA #&FF
+ LDA #$FF
  STA (SC2),Y
  INY
  BNE CB215
@@ -12252,14 +12252,14 @@
  BNE CB1B8
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_B219
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B219
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B219
 
@@ -12268,12 +12268,12 @@
  LDA tileNumber
  STA pictureTile
  CLC
- ADC #&38
+ ADC #$38
  STA tileNumber
  LDA pictureTile
  STA K+2
  JSR CB2FB_b3
- LDA #&45
+ LDA #$45
  STA K+2
  LDA #8
  STA K+3
@@ -12286,25 +12286,25 @@
  INC K+1
  INC K+1
 
-\ ******************************************************************************
-\
-\       Name: subm_B248
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B248
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B248
 
  JSR subm_B2A9
  LDY #0
- LDA #&40
+ LDA #$40
  STA (SC),Y
  STA (SC2),Y
- LDA #&3C
+ LDA #$3C
  JSR CB29D
- LDA #&3E
+ LDA #$3E
  STA (SC),Y
  STA (SC2),Y
  DEC K+1
@@ -12312,8 +12312,8 @@
 
 .CB263
 
- JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA #1
  LDY #0
@@ -12328,7 +12328,7 @@
 
  LDA SC
  CLC
- ADC #&20
+ ADC #$20
  STA SC
  STA SC2
  BCC CB285
@@ -12340,12 +12340,12 @@
  DEC K+1
  BNE CB263
  LDY #0
- LDA #&41
+ LDA #$41
  STA (SC),Y
  STA (SC2),Y
- LDA #&3D
+ LDA #$3D
  JSR CB29D
- LDA #&3F
+ LDA #$3F
  STA (SC),Y
  STA (SC2),Y
  RTS
@@ -12363,14 +12363,14 @@
  BNE loop_CB29F
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_B2A9
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B2A9
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B2A9
 
@@ -12388,14 +12388,14 @@
 
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_B2BC
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B2BC
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B2BC
 
@@ -12404,19 +12404,19 @@
  LDA K+3
  STA YC
  JSR subm_B2A9
- LDA #&3D
+ LDA #$3D
  JSR CB29D
  LDX K+1
  JMP CB2E3
 
 .CB2D1
 
- JSR SetupPPUForIconBar \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA SC
  CLC
- ADC #&20
+ ADC #$20
  STA SC
  STA SC2
  BCC CB2E3
@@ -12435,17 +12435,17 @@
  STA (SC2),Y
  DEX
  BNE CB2D1
- LDA #&3C
+ LDA #$3C
  JMP CB29D
 
-\ ******************************************************************************
-\
-\       Name: subm_B2FB
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B2FB
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B2FB
 
@@ -12465,8 +12465,8 @@
 
 .CB30F
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDY #0
  LDA K+2
@@ -12483,7 +12483,7 @@
  STA K+2
  LDA SC
  CLC
- ADC #&20
+ ADC #$20
  STA SC
  STA SC2
  BCC CB33D
@@ -12496,20 +12496,20 @@
  BNE CB30F
  RTS
 
-\ ******************************************************************************
-\
-\       Name: ClearTiles
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: ClearTiles
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .ClearTiles
 
  LDA #0
  STA SC+1
- LDA #&42
+ LDA #$42
  ASL A
  ROL SC+1
  ASL A
@@ -12519,12 +12519,12 @@
  STA SC
  STA SC2
  LDA SC+1
- ADC #&68
+ ADC #$68
  STA SC2+1
  LDA SC+1
- ADC #&60
+ ADC #$60
  STA SC+1
- LDX #&42
+ LDX #$42
  LDY #0
 
 .CB364
@@ -12560,23 +12560,23 @@
 
 .CB394
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  INX
  BNE CB364
  LDA #0
  STA SC
  STA SC2
- LDA #&70
+ LDA #$70
  STA SC+1
- LDA #&74
+ LDA #$74
  STA SC2+1
- LDX #&1C
+ LDX #$1C
 
 .CB3B4
 
- LDY #&20
+ LDY #$20
  LDA #0
 
 .loop_CB3B8
@@ -12586,12 +12586,12 @@
  DEY
  BPL loop_CB3B8
 
- SETUP_PPU_FOR_ICON_BAR \ If the PPU has started drawing the icon bar, configure
-                        \ the PPU to use nametable 0 and pattern table 0
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
 
  LDA SC
  CLC
- ADC #&20
+ ADC #$20
  STA SC
  STA SC2
  BCC CB3DB
@@ -12604,147 +12604,147 @@
  BNE CB3B4
  RTS
 
-\ ******************************************************************************
-\
-\       Name: LB3DF
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: LB3DF
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .LB3DF
 
- EQUB &0F, &2C, &0F, &2C ; B3DF: 0F 2C 0F... .,.
- EQUB &0F, &28, &00, &1A ; B3E3: 0F 28 00... .(.
- EQUB &0F, &10, &00, &16 ; B3E7: 0F 10 00... ...
- EQUB &0F, &10, &00, &1C ; B3EB: 0F 10 00... ...
- EQUB &0F, &38, &2A, &15 ; B3EF: 0F 38 2A... .8*
- EQUB &0F, &1C, &22, &28 ; B3F3: 0F 1C 22... .."
- EQUB &0F, &16, &28, &27 ; B3F7: 0F 16 28... ..(
- EQUB &0F, &15, &20, &25 ; B3FB: 0F 15 20... ..
- EQUB &0F, &38, &38, &38 ; B3FF: 0F 38 38... .88
- EQUB &0F, &10, &06, &1A ; B403: 0F 10 06... ...
- EQUB &0F, &22, &00, &28 ; B407: 0F 22 00... .".
- EQUB &0F, &10, &00, &1C ; B40B: 0F 10 00... ...
- EQUB &0F, &38, &10, &15 ; B40F: 0F 38 10... .8.
- EQUB &0F, &10, &0F, &1C ; B413: 0F 10 0F... ...
- EQUB &0F, &06, &28, &25 ; B417: 0F 06 28... ..(
- EQUB &0F, &15, &20, &25 ; B41B: 0F 15 20... ..
- EQUB &0F, &2C, &0F, &2C ; B41F: 0F 2C 0F... .,.
- EQUB &0F, &28, &00, &1A ; B423: 0F 28 00... .(.
- EQUB &0F, &10, &00, &16 ; B427: 0F 10 00... ...
- EQUB &0F, &10, &00, &3A ; B42B: 0F 10 00... ...
- EQUB &0F, &38, &10, &15 ; B42F: 0F 38 10... .8.
- EQUB &0F, &1C, &10, &28 ; B433: 0F 1C 10... ...
- EQUB &0F, &06, &10, &27 ; B437: 0F 06 10... ...
- EQUB &0F, &00, &10, &25 ; B43B: 0F 00 10... ...
- EQUB &0F, &2C, &0F, &2C ; B43F: 0F 2C 0F... .,.
- EQUB &0F, &10, &1A, &28 ; B443: 0F 10 1A... ...
- EQUB &0F, &10, &00, &16 ; B447: 0F 10 00... ...
- EQUB &0F, &10, &00, &1C ; B44B: 0F 10 00... ...
- EQUB &0F, &38, &2A, &15 ; B44F: 0F 38 2A... .8*
- EQUB &0F, &1C, &22, &28 ; B453: 0F 1C 22... .."
- EQUB &0F, &06, &28, &27 ; B457: 0F 06 28... ..(
- EQUB &0F, &15, &20, &25 ; B45B: 0F 15 20... ..
- EQUB &0F, &2C, &0F, &2C ; B45F: 0F 2C 0F... .,.
- EQUB &0F, &20, &28, &25 ; B463: 0F 20 28... . (
- EQUB &0F, &10, &00, &16 ; B467: 0F 10 00... ...
- EQUB &0F, &10, &00, &1C ; B46B: 0F 10 00... ...
- EQUB &0F, &38, &2A, &15 ; B46F: 0F 38 2A... .8*
- EQUB &0F, &1C, &22, &28 ; B473: 0F 1C 22... .."
- EQUB &0F, &06, &28, &27 ; B477: 0F 06 28... ..(
- EQUB &0F, &15, &20, &25 ; B47B: 0F 15 20... ..
- EQUB &0F, &28, &10, &06 ; B47F: 0F 28 10... .(.
- EQUB &0F, &10, &00, &1A ; B483: 0F 10 00... ...
- EQUB &0F, &0C, &1C, &2C ; B487: 0F 0C 1C... ...
- EQUB &0F, &10, &00, &1C ; B48B: 0F 10 00... ...
- EQUB &0F, &0C, &1C, &2C ; B48F: 0F 0C 1C... ...
- EQUB &0F, &18, &28, &38 ; B493: 0F 18 28... ..(
- EQUB &0F, &25, &35, &25 ; B497: 0F 25 35... .%5
- EQUB &0F, &15, &20, &25 ; B49B: 0F 15 20... ..
- EQUB &0F, &2A, &00, &06 ; B49F: 0F 2A 00... .*.
- EQUB &0F, &20, &00, &2A ; B4A3: 0F 20 00... . .
- EQUB &0F, &10, &00, &20 ; B4A7: 0F 10 00... ...
- EQUB &0F, &10, &00, &1C ; B4AB: 0F 10 00... ...
- EQUB &0F, &38, &2A, &15 ; B4AF: 0F 38 2A... .8*
- EQUB &0F, &27, &28, &17 ; B4B3: 0F 27 28... .'(
- EQUB &0F, &06, &28, &27 ; B4B7: 0F 06 28... ..(
- EQUB &0F, &15, &20, &25 ; B4BB: 0F 15 20... ..
- EQUB &0F, &28, &0F, &25 ; B4BF: 0F 28 0F... .(.
- EQUB &0F, &10, &06, &1A ; B4C3: 0F 10 06... ...
- EQUB &0F, &10, &0F, &1A ; B4C7: 0F 10 0F... ...
- EQUB &0F, &10, &00, &1C ; B4CB: 0F 10 00... ...
- EQUB &0F, &38, &2A, &15 ; B4CF: 0F 38 2A... .8*
- EQUB &0F, &18, &28, &38 ; B4D3: 0F 18 28... ..(
- EQUB &0F, &06, &2C, &2C ; B4D7: 0F 06 2C... ..,
- EQUB &0F, &15, &20, &25 ; B4DB: 0F 15 20... ..
- EQUB &0F, &1C, &10, &30 ; B4DF: 0F 1C 10... ...
- EQUB &0F, &20, &00, &2A ; B4E3: 0F 20 00... . .
- EQUB &0F, &2A, &00, &06 ; B4E7: 0F 2A 00... .*.
- EQUB &0F, &10, &00, &1C ; B4EB: 0F 10 00... ...
- EQUB &0F, &0F, &10, &30 ; B4EF: 0F 0F 10... ...
- EQUB &0F, &17, &27, &37 ; B4F3: 0F 17 27... ..'
- EQUB &0F, &0F, &28, &38 ; B4F7: 0F 0F 28... ..(
- EQUB &0F, &15, &25, &25 ; B4FB: 0F 15 25... ..%
- EQUB &0F, &1C, &2C, &3C ; B4FF: 0F 1C 2C... ..,
- EQUB &0F, &38, &11, &11 ; B503: 0F 38 11... .8.
- EQUB &0F, &16, &00, &20 ; B507: 0F 16 00... ...
- EQUB &0F, &2B, &00, &25 ; B50B: 0F 2B 00... .+.
- EQUB &0F, &10, &1A, &25 ; B50F: 0F 10 1A... ...
- EQUB &0F, &08, &18, &27 ; B513: 0F 08 18... ...
- EQUB &0F, &0F, &28, &38 ; B517: 0F 0F 28... ..(
- EQUB &0F, &00, &10, &30 ; B51B: 0F 00 10... ...
- EQUB &0F, &2C, &0F, &2C ; B51F: 0F 2C 0F... .,.
- EQUB &0F, &10, &28, &1A ; B523: 0F 10 28... ..(
- EQUB &0F, &10, &00, &16 ; B527: 0F 10 00... ...
- EQUB &0F, &10, &00, &1C ; B52B: 0F 10 00... ...
- EQUB &0F, &38, &2A, &15 ; B52F: 0F 38 2A... .8*
- EQUB &0F, &1C, &22, &28 ; B533: 0F 1C 22... .."
- EQUB &0F, &06, &28, &27 ; B537: 0F 06 28... ..(
- EQUB &0F, &15, &20, &25 ; B53B: 0F 15 20... ..
+ EQUB $0F, $2C, $0F, $2C ; B3DF: 0F 2C 0F... .,.
+ EQUB $0F, $28, $00, $1A ; B3E3: 0F 28 00... .(.
+ EQUB $0F, $10, $00, $16 ; B3E7: 0F 10 00... ...
+ EQUB $0F, $10, $00, $1C ; B3EB: 0F 10 00... ...
+ EQUB $0F, $38, $2A, $15 ; B3EF: 0F 38 2A... .8*
+ EQUB $0F, $1C, $22, $28 ; B3F3: 0F 1C 22... .."
+ EQUB $0F, $16, $28, $27 ; B3F7: 0F 16 28... ..(
+ EQUB $0F, $15, $20, $25 ; B3FB: 0F 15 20... ..
+ EQUB $0F, $38, $38, $38 ; B3FF: 0F 38 38... .88
+ EQUB $0F, $10, $06, $1A ; B403: 0F 10 06... ...
+ EQUB $0F, $22, $00, $28 ; B407: 0F 22 00... .".
+ EQUB $0F, $10, $00, $1C ; B40B: 0F 10 00... ...
+ EQUB $0F, $38, $10, $15 ; B40F: 0F 38 10... .8.
+ EQUB $0F, $10, $0F, $1C ; B413: 0F 10 0F... ...
+ EQUB $0F, $06, $28, $25 ; B417: 0F 06 28... ..(
+ EQUB $0F, $15, $20, $25 ; B41B: 0F 15 20... ..
+ EQUB $0F, $2C, $0F, $2C ; B41F: 0F 2C 0F... .,.
+ EQUB $0F, $28, $00, $1A ; B423: 0F 28 00... .(.
+ EQUB $0F, $10, $00, $16 ; B427: 0F 10 00... ...
+ EQUB $0F, $10, $00, $3A ; B42B: 0F 10 00... ...
+ EQUB $0F, $38, $10, $15 ; B42F: 0F 38 10... .8.
+ EQUB $0F, $1C, $10, $28 ; B433: 0F 1C 10... ...
+ EQUB $0F, $06, $10, $27 ; B437: 0F 06 10... ...
+ EQUB $0F, $00, $10, $25 ; B43B: 0F 00 10... ...
+ EQUB $0F, $2C, $0F, $2C ; B43F: 0F 2C 0F... .,.
+ EQUB $0F, $10, $1A, $28 ; B443: 0F 10 1A... ...
+ EQUB $0F, $10, $00, $16 ; B447: 0F 10 00... ...
+ EQUB $0F, $10, $00, $1C ; B44B: 0F 10 00... ...
+ EQUB $0F, $38, $2A, $15 ; B44F: 0F 38 2A... .8*
+ EQUB $0F, $1C, $22, $28 ; B453: 0F 1C 22... .."
+ EQUB $0F, $06, $28, $27 ; B457: 0F 06 28... ..(
+ EQUB $0F, $15, $20, $25 ; B45B: 0F 15 20... ..
+ EQUB $0F, $2C, $0F, $2C ; B45F: 0F 2C 0F... .,.
+ EQUB $0F, $20, $28, $25 ; B463: 0F 20 28... . (
+ EQUB $0F, $10, $00, $16 ; B467: 0F 10 00... ...
+ EQUB $0F, $10, $00, $1C ; B46B: 0F 10 00... ...
+ EQUB $0F, $38, $2A, $15 ; B46F: 0F 38 2A... .8*
+ EQUB $0F, $1C, $22, $28 ; B473: 0F 1C 22... .."
+ EQUB $0F, $06, $28, $27 ; B477: 0F 06 28... ..(
+ EQUB $0F, $15, $20, $25 ; B47B: 0F 15 20... ..
+ EQUB $0F, $28, $10, $06 ; B47F: 0F 28 10... .(.
+ EQUB $0F, $10, $00, $1A ; B483: 0F 10 00... ...
+ EQUB $0F, $0C, $1C, $2C ; B487: 0F 0C 1C... ...
+ EQUB $0F, $10, $00, $1C ; B48B: 0F 10 00... ...
+ EQUB $0F, $0C, $1C, $2C ; B48F: 0F 0C 1C... ...
+ EQUB $0F, $18, $28, $38 ; B493: 0F 18 28... ..(
+ EQUB $0F, $25, $35, $25 ; B497: 0F 25 35... .%5
+ EQUB $0F, $15, $20, $25 ; B49B: 0F 15 20... ..
+ EQUB $0F, $2A, $00, $06 ; B49F: 0F 2A 00... .*.
+ EQUB $0F, $20, $00, $2A ; B4A3: 0F 20 00... . .
+ EQUB $0F, $10, $00, $20 ; B4A7: 0F 10 00... ...
+ EQUB $0F, $10, $00, $1C ; B4AB: 0F 10 00... ...
+ EQUB $0F, $38, $2A, $15 ; B4AF: 0F 38 2A... .8*
+ EQUB $0F, $27, $28, $17 ; B4B3: 0F 27 28... .'(
+ EQUB $0F, $06, $28, $27 ; B4B7: 0F 06 28... ..(
+ EQUB $0F, $15, $20, $25 ; B4BB: 0F 15 20... ..
+ EQUB $0F, $28, $0F, $25 ; B4BF: 0F 28 0F... .(.
+ EQUB $0F, $10, $06, $1A ; B4C3: 0F 10 06... ...
+ EQUB $0F, $10, $0F, $1A ; B4C7: 0F 10 0F... ...
+ EQUB $0F, $10, $00, $1C ; B4CB: 0F 10 00... ...
+ EQUB $0F, $38, $2A, $15 ; B4CF: 0F 38 2A... .8*
+ EQUB $0F, $18, $28, $38 ; B4D3: 0F 18 28... ..(
+ EQUB $0F, $06, $2C, $2C ; B4D7: 0F 06 2C... ..,
+ EQUB $0F, $15, $20, $25 ; B4DB: 0F 15 20... ..
+ EQUB $0F, $1C, $10, $30 ; B4DF: 0F 1C 10... ...
+ EQUB $0F, $20, $00, $2A ; B4E3: 0F 20 00... . .
+ EQUB $0F, $2A, $00, $06 ; B4E7: 0F 2A 00... .*.
+ EQUB $0F, $10, $00, $1C ; B4EB: 0F 10 00... ...
+ EQUB $0F, $0F, $10, $30 ; B4EF: 0F 0F 10... ...
+ EQUB $0F, $17, $27, $37 ; B4F3: 0F 17 27... ..'
+ EQUB $0F, $0F, $28, $38 ; B4F7: 0F 0F 28... ..(
+ EQUB $0F, $15, $25, $25 ; B4FB: 0F 15 25... ..%
+ EQUB $0F, $1C, $2C, $3C ; B4FF: 0F 1C 2C... ..,
+ EQUB $0F, $38, $11, $11 ; B503: 0F 38 11... .8.
+ EQUB $0F, $16, $00, $20 ; B507: 0F 16 00... ...
+ EQUB $0F, $2B, $00, $25 ; B50B: 0F 2B 00... .+.
+ EQUB $0F, $10, $1A, $25 ; B50F: 0F 10 1A... ...
+ EQUB $0F, $08, $18, $27 ; B513: 0F 08 18... ...
+ EQUB $0F, $0F, $28, $38 ; B517: 0F 0F 28... ..(
+ EQUB $0F, $00, $10, $30 ; B51B: 0F 00 10... ...
+ EQUB $0F, $2C, $0F, $2C ; B51F: 0F 2C 0F... .,.
+ EQUB $0F, $10, $28, $1A ; B523: 0F 10 28... ..(
+ EQUB $0F, $10, $00, $16 ; B527: 0F 10 00... ...
+ EQUB $0F, $10, $00, $1C ; B52B: 0F 10 00... ...
+ EQUB $0F, $38, $2A, $15 ; B52F: 0F 38 2A... .8*
+ EQUB $0F, $1C, $22, $28 ; B533: 0F 1C 22... .."
+ EQUB $0F, $06, $28, $27 ; B537: 0F 06 28... ..(
+ EQUB $0F, $15, $20, $25 ; B53B: 0F 15 20... ..
 
-\ ******************************************************************************
-\
-\       Name: LB53F
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: LB53F
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .LB53F
 
- EQUB &0F, &0F, &0F, &0F ; B53F: 0F 0F 0F... ...
- EQUB &0F, &0F, &0F, &0F ; B543: 0F 0F 0F... ...
- EQUB &0F, &0F, &0F, &0F ; B547: 0F 0F 0F... ...
- EQUB &0F, &0F, &0F, &0F ; B54B: 0F 0F 0F... ...
- EQUB &00, &01, &02, &03 ; B54F: 00 01 02... ...
- EQUB &04, &05, &06, &07 ; B553: 04 05 06... ...
- EQUB &08, &09, &0A, &0B ; B557: 08 09 0A... ...
- EQUB &0C, &0F, &0F, &0F ; B55B: 0C 0F 0F... ...
- EQUB &10, &11, &12, &13 ; B55F: 10 11 12... ...
- EQUB &14, &15, &16, &17 ; B563: 14 15 16... ...
- EQUB &18, &19, &1A, &1B ; B567: 18 19 1A... ...
- EQUB &1C, &0F, &0F, &0F ; B56B: 1C 0F 0F... ...
- EQUB &20, &21, &22, &23 ; B56F: 20 21 22...  !"
- EQUB &24, &25, &26, &27 ; B573: 24 25 26... $%&
- EQUB &28, &29, &2A, &2B ; B577: 28 29 2A... ()*
- EQUB &2C, &0F, &0F, &0F ; B57B: 2C 0F 0F... ,..
+ EQUB $0F, $0F, $0F, $0F ; B53F: 0F 0F 0F... ...
+ EQUB $0F, $0F, $0F, $0F ; B543: 0F 0F 0F... ...
+ EQUB $0F, $0F, $0F, $0F ; B547: 0F 0F 0F... ...
+ EQUB $0F, $0F, $0F, $0F ; B54B: 0F 0F 0F... ...
+ EQUB $00, $01, $02, $03 ; B54F: 00 01 02... ...
+ EQUB $04, $05, $06, $07 ; B553: 04 05 06... ...
+ EQUB $08, $09, $0A, $0B ; B557: 08 09 0A... ...
+ EQUB $0C, $0F, $0F, $0F ; B55B: 0C 0F 0F... ...
+ EQUB $10, $11, $12, $13 ; B55F: 10 11 12... ...
+ EQUB $14, $15, $16, $17 ; B563: 14 15 16... ...
+ EQUB $18, $19, $1A, $1B ; B567: 18 19 1A... ...
+ EQUB $1C, $0F, $0F, $0F ; B56B: 1C 0F 0F... ...
+ EQUB $20, $21, $22, $23 ; B56F: 20 21 22...  !"
+ EQUB $24, $25, $26, $27 ; B573: 24 25 26... $%&
+ EQUB $28, $29, $2A, $2B ; B577: 28 29 2A... ()*
+ EQUB $2C, $0F, $0F, $0F ; B57B: 2C 0F 0F... ,..
 
-\ ******************************************************************************
-\
-\       Name: subm_B57F
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B57F
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B57F
 
  LDA QQ11a
- AND #&0F
+ AND #$0F
  TAX
  LDA #0
  STA SC+1
@@ -12757,12 +12757,12 @@
  ASL A
  ASL A
  ROL SC+1
- ADC #&DF
+ ADC #$DF
  STA SC
- LDA #&B3
+ LDA #$B3
  ADC SC+1
  STA SC+1
- LDY #&20
+ LDY #$20
 
 .loop_CB5A2
 
@@ -12772,17 +12772,17 @@
  BPL loop_CB5A2
  LDA QQ11a
  BEQ CB5DE
- CMP #&98
+ CMP #$98
  BEQ CB607
- CMP #&96
+ CMP #$96
  BNE CB5DB
  LDA QQ15
  EOR QQ15+5
  EOR QQ15+2
  LSR A
  LSR A
- EOR #&0C
- AND #&1C
+ EOR #$0C
+ AND #$1C
  TAX
  LDA LB6A5,X
  STA XX3+20
@@ -12813,31 +12813,31 @@
  STA XX3+2
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_B5F6
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B5F6
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B5F6
 
  JSR subm_B5F9
 
-\ ******************************************************************************
-\
-\       Name: subm_B5F9
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B5F9
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B5F9
 
- LDX #&1F
+ LDX #$1F
 
 .loop_CB5FB
 
@@ -12849,13 +12849,13 @@
 
 .CB607
 
- LDA #&0F
+ LDA #$0F
  STA hiddenColour
  LDA QQ11a
  BPL CB627
- CMP #&C4
+ CMP #$C4
  BEQ CB627
- CMP #&98
+ CMP #$98
  BEQ CB62D
  LDA XX3+21
  STA visibleColour
@@ -12881,19 +12881,19 @@
  STA paletteColour2
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_B63D
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B63D
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B63D
 
  LDA QQ11a
- CMP #&FF
+ CMP #$FF
  BEQ CB66D
  LDA L0473
  BMI CB66D
@@ -12913,18 +12913,18 @@
 
 .CB66D
 
- LDA #&FF
+ LDA #$FF
  STA L0473
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_B673
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B673
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B673
 
@@ -12947,321 +12947,321 @@
  LSR L0473
  RTS
 
-\ ******************************************************************************
-\
-\       Name: LB6A5
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: LB6A5
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .LB6A5
 
- EQUB &0F                ; B6A5: 0F          .
+ EQUB $0F                ; B6A5: 0F          .
 
 .LB6A6
 
- EQUB &25                ; B6A6: 25          %
+ EQUB $25                ; B6A6: 25          %
 
 .LB6A7
 
- EQUB &16                ; B6A7: 16          .
+ EQUB $16                ; B6A7: 16          .
 
 .LB6A8
 
- EQUB &15, &0F, &35, &16 ; B6A8: 15 0F 35... ..5
- EQUB &25, &0F, &34, &04 ; B6AC: 25 0F 34... %.4
- EQUB &14, &0F, &27, &28 ; B6B0: 14 0F 27... ..'
- EQUB &17, &0F, &29, &2C ; B6B4: 17 0F 29... ..)
- EQUB &19, &0F, &2A, &1B ; B6B8: 19 0F 2A... ..*
- EQUB &0A, &0F, &32, &21 ; B6BC: 0A 0F 32... ..2
- EQUB &02, &0F, &2C, &22 ; B6C0: 02 0F 2C... ..,
- EQUB &1C, &18, &00      ; B6C4: 1C 18 00    ...
+ EQUB $15, $0F, $35, $16 ; B6A8: 15 0F 35... ..5
+ EQUB $25, $0F, $34, $04 ; B6AC: 25 0F 34... %.4
+ EQUB $14, $0F, $27, $28 ; B6B0: 14 0F 27... ..'
+ EQUB $17, $0F, $29, $2C ; B6B4: 17 0F 29... ..)
+ EQUB $19, $0F, $2A, $1B ; B6B8: 19 0F 2A... ..*
+ EQUB $0A, $0F, $32, $21 ; B6BC: 0A 0F 32... ..2
+ EQUB $02, $0F, $2C, $22 ; B6C0: 02 0F 2C... ..,
+ EQUB $1C, $18, $00      ; B6C4: 1C 18 00    ...
 
-\ ******************************************************************************
-\
-\       Name: LB6C7
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: LB6C7
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .LB6C7
 
- EQUB &32                ; B6C7: 32          2
+ EQUB $32                ; B6C7: 32          2
 
 .LB6C8
 
- EQUB &00, &56, &00, &77 ; B6C8: 00 56 00... .V.
- EQUB &00, &8B, &00, &A6 ; B6CC: 00 8B 00... ...
- EQUB &00, &C1, &00, &DA ; B6D0: 00 C1 00... ...
- EQUB &00, &EF, &00, &04 ; B6D4: 00 EF 00... ...
- EQUB &01, &19, &01, &2F ; B6D8: 01 19 01... ...
- EQUB &01, &55, &01, &77 ; B6DC: 01 55 01... .U.
- EQUB &01, &9A, &01, &B7 ; B6E0: 01 9A 01... ...
- EQUB &01, &D6, &01, &F4 ; B6E4: 01 D6 01... ...
- EQUB &01, &25, &02, &57 ; B6E8: 01 25 02... .%.
- EQUB &02, &89, &02, &96 ; B6EC: 02 89 02... ...
- EQUB &02, &A5, &02, &B5 ; B6F0: 02 A5 02... ...
- EQUB &02, &CC, &02, &31 ; B6F4: 02 CC 02... ...
- EQUB &3F, &27, &0F, &21 ; B6F8: 3F 27 0F... ?'.
- EQUB &33, &07, &21, &33 ; B6FC: 33 07 21... 3.!
- EQUB &07, &21, &33, &07 ; B700: 07 21 33... .!3
- EQUB &21, &33, &07, &FF ; B704: 21 33 07... !3.
- EQUB &BF, &23, &AF, &22 ; B708: BF 23 AF... .#.
- EQUB &AB, &AE, &77, &99 ; B70C: AB AE 77... ..w
- EQUB &25, &AA, &5A, &32 ; B710: 25 AA 5A... %.Z
- EQUB &07, &09, &25, &0A ; B714: 07 09 25... ..%
- EQUB &21, &0F, &3F, &31 ; B718: 21 0F 3F... !.?
- EQUB &3F, &27, &0F, &21 ; B71C: 3F 27 0F... ?'.
- EQUB &33, &07, &21, &33 ; B720: 33 07 21... 3.!
- EQUB &07, &21, &33, &07 ; B724: 07 21 33... .!3
- EQUB &21, &33, &07, &12 ; B728: 21 33 07... !3.
- EQUB &26, &AF, &77, &DD ; B72C: 26 AF 77... &.w
- EQUB &25, &AA, &5A, &32 ; B730: 25 AA 5A... %.Z
- EQUB &07, &0D, &24, &0F ; B734: 07 0D 24... ..$
- EQUB &32, &0E, &05, &3F ; B738: 32 0E 05... 2..
- EQUB &18, &77, &27, &55 ; B73C: 18 77 27... .w'
- EQUB &77, &27, &55, &77 ; B740: 77 27 55... w'U
- EQUB &27, &55, &77, &27 ; B744: 27 55 77... 'Uw
- EQUB &55, &77, &27, &55 ; B748: 55 77 27... Uw'
- EQUB &18, &28, &0F, &3F ; B74C: 18 28 0F... .(.
- EQUB &18, &77, &27, &55 ; B750: 18 77 27... .w'
- EQUB &77, &27, &55, &77 ; B754: 77 27 55... w'U
- EQUB &27, &55, &77, &27 ; B758: 27 55 77... 'Uw
- EQUB &55, &77, &27, &55 ; B75C: 55 77 27... Uw'
- EQUB &15, &22, &BF, &EF ; B760: 15 22 BF... .".
- EQUB &25, &0F, &22, &0B ; B764: 25 0F 22... %."
- EQUB &21, &0E, &3F, &31 ; B768: 21 0E 3F... !.?
- EQUB &3F, &27, &0F, &21 ; B76C: 3F 27 0F... ?'.
- EQUB &33, &07, &73, &27 ; B770: 33 07 73... 3.s
- EQUB &50, &77, &27, &55 ; B774: 50 77 27... Pw'
- EQUB &77, &27, &55, &77 ; B778: 77 27 55... w'U
- EQUB &27, &55, &F7, &FD ; B77C: 27 55 F7... 'U.
- EQUB &14, &FE, &F5, &28 ; B780: 14 FE F5... ...
- EQUB &0F, &3F, &31, &3F ; B784: 0F 3F 31... .?1
- EQUB &27, &0F, &21, &33 ; B788: 27 0F 21... '.!
- EQUB &07, &21, &33, &07 ; B78C: 07 21 33... .!3
- EQUB &21, &33, &07, &21 ; B790: 21 33 07... !3.
- EQUB &33, &07, &21, &33 ; B794: 33 07 21... 3.!
- EQUB &07, &21, &33, &07 ; B798: 07 21 33... .!3
- EQUB &28, &0F, &3F, &28 ; B79C: 28 0F 3F... (.?
- EQUB &AF, &77, &27, &55 ; B7A0: AF 77 27... .w'
- EQUB &77, &27, &55, &77 ; B7A4: 77 27 55... w'U
- EQUB &27, &55, &77, &27 ; B7A8: 27 55 77... 'Uw
- EQUB &55, &77, &27, &55 ; B7AC: 55 77 27... Uw'
- EQUB &18, &28, &0F, &3F ; B7B0: 18 28 0F... .(.
- EQUB &28, &AF, &77, &27 ; B7B4: 28 AF 77... (.w
- EQUB &5A, &77, &27, &55 ; B7B8: 5A 77 27... Zw'
- EQUB &77, &27, &55, &77 ; B7BC: 77 27 55... w'U
- EQUB &27, &55, &77, &27 ; B7C0: 27 55 77... 'Uw
- EQUB &55, &18, &28, &0F ; B7C4: 55 18 28... U.(
- EQUB &3F, &28, &AF, &77 ; B7C8: 3F 28 AF... ?(.
- EQUB &27, &55, &77, &27 ; B7CC: 27 55 77... 'Uw
- EQUB &55, &77, &27, &55 ; B7D0: 55 77 27... Uw'
- EQUB &77, &27, &55, &77 ; B7D4: 77 27 55... w'U
- EQUB &27, &55, &18, &28 ; B7D8: 27 55 18... 'U.
- EQUB &0F, &3F, &28, &5F ; B7DC: 0F 3F 28... .?(
- EQUB &77, &27, &55, &77 ; B7E0: 77 27 55... w'U
- EQUB &27, &55, &77, &27 ; B7E4: 27 55 77... 'Uw
- EQUB &55, &77, &27, &55 ; B7E8: 55 77 27... Uw'
- EQUB &BB, &27, &AA, &FB ; B7EC: BB 27 AA... .'.
- EQUB &27, &FA, &18, &3F ; B7F0: 27 FA 18... '..
- EQUB &23, &0F, &25, &5F ; B7F4: 23 0F 25... #.%
- EQUB &21, &33, &00, &21 ; B7F8: 21 33 00... !3.
- EQUB &04, &45, &24, &55 ; B7FC: 04 45 24... .E$
- EQUB &21, &33, &02, &54 ; B800: 21 33 02... !3.
- EQUB &55, &99, &22, &AA ; B804: 55 99 22... U."
- EQUB &21, &33, &00, &21 ; B808: 21 33 00... !3.
- EQUB &04, &22, &55, &99 ; B80C: 04 22 55... ."U
- EQUB &22, &AA, &F7, &27 ; B810: 22 AA F7... "..
- EQUB &F5, &1F, &11, &28 ; B814: F5 1F 11... ...
- EQUB &0F, &3F, &23, &0F ; B818: 0F 3F 23... .?#
- EQUB &4F, &24, &5F, &21 ; B81C: 4F 24 5F... O$_
- EQUB &33, &02, &25, &55 ; B820: 33 02 25... 3.%
- EQUB &21, &33, &00, &40 ; B824: 21 33 00... !3.
- EQUB &54, &55, &99, &22 ; B828: 54 55 99... TU.
- EQUB &AA, &21, &33, &00 ; B82C: AA 21 33... .!3
- EQUB &21, &04, &45, &55 ; B830: 21 04 45... !.E
- EQUB &99, &22, &AA, &1F ; B834: 99 22 AA... .".
- EQUB &19, &28, &0F, &3F ; B838: 19 28 0F... .(.
- EQUB &23, &0F, &25, &5F ; B83C: 23 0F 25... #.%
- EQUB &21, &33, &00, &21 ; B840: 21 33 00... !3.
- EQUB &04, &45, &24, &55 ; B844: 04 45 24... .E$
- EQUB &21, &33, &00, &22 ; B848: 21 33 00... !3.
- EQUB &50, &55, &99, &22 ; B84C: 50 55 99... PU.
- EQUB &AA, &21, &33, &00 ; B850: AA 21 33... .!3
- EQUB &21, &04, &22, &55 ; B854: 21 04 22... !."
- EQUB &99, &22, &AA, &1F ; B858: 99 22 AA... .".
- EQUB &1F, &12, &3F, &23 ; B85C: 1F 12 3F... ..?
- EQUB &AF, &25, &5F, &BB ; B860: AF 25 5F... .%_
- EQUB &22, &AA, &22, &5A ; B864: 22 AA 22... "."
- EQUB &23, &55, &BB, &AA ; B868: 23 55 BB... #U.
- EQUB &22, &A5, &22, &55 ; B86C: 22 A5 22... "."
- EQUB &02, &FB, &24, &FA ; B870: 02 FB 24... ..$
- EQUB &FF, &02, &16, &22 ; B874: FF 02 16... ...
- EQUB &F0, &1F, &19, &3F ; B878: F0 1F 19... ...
- EQUB &25, &AF, &23, &5F ; B87C: 25 AF 23... %.#
- EQUB &BB, &AA, &6A, &23 ; B880: BB AA 6A... ..j
- EQUB &5A, &22, &55, &BB ; B884: 5A 22 55... Z"U
- EQUB &22, &AA, &65, &22 ; B888: 22 AA 65... ".e
- EQUB &55, &02, &FB, &24 ; B88C: 55 02 FB... U..
- EQUB &FA, &FF, &02, &16 ; B890: FA FF 02... ...
- EQUB &22, &F0, &1F, &11 ; B894: 22 F0 1F... "..
- EQUB &28, &0F, &3F, &23 ; B898: 28 0F 3F... (.?
- EQUB &AF, &6F, &24, &5F ; B89C: AF 6F 24... .o$
- EQUB &BB, &23, &AA, &5A ; B8A0: BB 23 AA... .#.
- EQUB &56, &22, &55, &BB ; B8A4: 56 22 55... V"U
- EQUB &AA, &6A, &56, &22 ; B8A8: AA 6A 56... .jV
- EQUB &55, &22, &05, &FB ; B8AC: 55 22 05... U".
- EQUB &24, &FA, &FF, &02 ; B8B0: 24 FA FF... $..
- EQUB &16, &02, &1F, &19 ; B8B4: 16 02 1F... ...
- EQUB &3F, &18, &73, &22 ; B8B8: 3F 18 73... ?.s
- EQUB &50, &22, &A0, &60 ; B8BC: 50 22 A0... P".
- EQUB &22, &50, &77, &00 ; B8C0: 22 50 77... "Pw
- EQUB &99, &22, &AA, &66 ; B8C4: 99 22 AA... .".
- EQUB &22, &55, &73, &22 ; B8C8: 22 55 73... "Us
- EQUB &50, &22, &AA, &66 ; B8CC: 50 22 AA... P".
- EQUB &22, &55, &77, &55 ; B8D0: 22 55 77... "Uw
- EQUB &99, &22, &AA, &66 ; B8D4: 99 22 AA... .".
- EQUB &22, &55, &33, &37 ; B8D8: 22 55 33... "U3
- EQUB &05, &09, &22, &AA ; B8DC: 05 09 22... .."
- EQUB &A6, &22, &A5, &F3 ; B8E0: A6 22 A5... .".
- EQUB &22, &F0, &24, &FA ; B8E4: 22 F0 24... ".$
- EQUB &19, &3F, &18, &73 ; B8E8: 19 3F 18... .?.
- EQUB &22, &50, &22, &A0 ; B8EC: 22 50 22... "P"
- EQUB &60, &22, &50, &77 ; B8F0: 60 22 50... `"P
- EQUB &00, &99, &22, &AA ; B8F4: 00 99 22... .."
- EQUB &66, &22, &55, &73 ; B8F8: 66 22 55... f"U
- EQUB &22, &50, &22, &AA ; B8FC: 22 50 22... "P"
- EQUB &66, &22, &55, &77 ; B900: 66 22 55... f"U
- EQUB &55, &99, &22, &AA ; B904: 55 99 22... U."
- EQUB &66, &22, &55, &33 ; B908: 66 22 55... f"U
- EQUB &37, &05, &09, &8A ; B90C: 37 05 09... 7..
- EQUB &AA, &A6, &22, &A5 ; B910: AA A6 22... .."
- EQUB &F3, &22, &F0, &F8 ; B914: F3 22 F0... .".
- EQUB &23, &FA, &19, &3F ; B918: 23 FA 19... #..
- EQUB &18, &73, &22, &50 ; B91C: 18 73 22... .s"
- EQUB &22, &A0, &60, &22 ; B920: 22 A0 60... ".`
- EQUB &50, &77, &00, &99 ; B924: 50 77 00... Pw.
- EQUB &22, &AA, &66, &22 ; B928: 22 AA 66... ".f
- EQUB &55, &73, &22, &50 ; B92C: 55 73 22... Us"
- EQUB &22, &AA, &66, &22 ; B930: 22 AA 66... ".f
- EQUB &55, &77, &55, &99 ; B934: 55 77 55... UwU
- EQUB &22, &AA, &66, &22 ; B938: 22 AA 66... ".f
- EQUB &55, &33, &37, &05 ; B93C: 55 33 37... U37
- EQUB &09, &8A, &AA, &A6 ; B940: 09 8A AA... ...
- EQUB &22, &A5, &F3, &22 ; B944: 22 A5 F3... "..
- EQUB &F0, &F8, &23, &FA ; B948: F0 F8 23... ..#
- EQUB &19, &3F, &AF, &27 ; B94C: 19 3F AF... .?.
- EQUB &5F, &FB, &FA, &26 ; B950: 5F FB FA... _..
- EQUB &F5, &1F, &1F, &1A ; B954: F5 1F 1F... ...
- EQUB &28, &0F, &3F, &23 ; B958: 28 0F 3F... (.?
- EQUB &AF, &25, &5F, &FB ; B95C: AF 25 5F... .%_
- EQUB &22, &FA, &25, &F5 ; B960: 22 FA 25... ".%
- EQUB &1F, &1F, &1A, &28 ; B964: 1F 1F 1A... ...
- EQUB &0F, &3F, &22, &AF ; B968: 0F 3F 22... .?"
- EQUB &6F, &25, &5F, &FB ; B96C: 6F 25 5F... o%_
- EQUB &FA, &F6, &25, &F5 ; B970: FA F6 25... ..%
- EQUB &1F, &1F, &1A, &28 ; B974: 1F 1F 1A... ...
- EQUB &0F, &3F, &31, &3F ; B978: 0F 3F 31... .?1
- EQUB &27, &0F, &21, &33 ; B97C: 27 0F 21... '.!
- EQUB &07, &21, &33, &07 ; B980: 07 21 33... .!3
- EQUB &21, &33, &07, &21 ; B984: 21 33 07... !3.
- EQUB &33, &07, &21, &33 ; B988: 33 07 21... 3.!
- EQUB &07, &18, &28, &0F ; B98C: 07 18 28... ..(
- EQUB &3F, &31, &3F, &27 ; B990: 3F 31 3F... ?1?
- EQUB &0F, &21, &33, &07 ; B994: 0F 21 33... .!3
- EQUB &21, &33, &07, &21 ; B998: 21 33 07... !3.
- EQUB &33, &07, &21, &33 ; B99C: 33 07 21... 3.!
- EQUB &07, &F3, &27, &F0 ; B9A0: 07 F3 27... ..'
- EQUB &FB, &27, &5A, &28 ; B9A4: FB 27 5A... .'Z
- EQUB &0F, &3F           ; B9A8: 0F 3F       .?
+ EQUB $00, $56, $00, $77 ; B6C8: 00 56 00... .V.
+ EQUB $00, $8B, $00, $A6 ; B6CC: 00 8B 00... ...
+ EQUB $00, $C1, $00, $DA ; B6D0: 00 C1 00... ...
+ EQUB $00, $EF, $00, $04 ; B6D4: 00 EF 00... ...
+ EQUB $01, $19, $01, $2F ; B6D8: 01 19 01... ...
+ EQUB $01, $55, $01, $77 ; B6DC: 01 55 01... .U.
+ EQUB $01, $9A, $01, $B7 ; B6E0: 01 9A 01... ...
+ EQUB $01, $D6, $01, $F4 ; B6E4: 01 D6 01... ...
+ EQUB $01, $25, $02, $57 ; B6E8: 01 25 02... .%.
+ EQUB $02, $89, $02, $96 ; B6EC: 02 89 02... ...
+ EQUB $02, $A5, $02, $B5 ; B6F0: 02 A5 02... ...
+ EQUB $02, $CC, $02, $31 ; B6F4: 02 CC 02... ...
+ EQUB $3F, $27, $0F, $21 ; B6F8: 3F 27 0F... ?'.
+ EQUB $33, $07, $21, $33 ; B6FC: 33 07 21... 3.!
+ EQUB $07, $21, $33, $07 ; B700: 07 21 33... .!3
+ EQUB $21, $33, $07, $FF ; B704: 21 33 07... !3.
+ EQUB $BF, $23, $AF, $22 ; B708: BF 23 AF... .#.
+ EQUB $AB, $AE, $77, $99 ; B70C: AB AE 77... ..w
+ EQUB $25, $AA, $5A, $32 ; B710: 25 AA 5A... %.Z
+ EQUB $07, $09, $25, $0A ; B714: 07 09 25... ..%
+ EQUB $21, $0F, $3F, $31 ; B718: 21 0F 3F... !.?
+ EQUB $3F, $27, $0F, $21 ; B71C: 3F 27 0F... ?'.
+ EQUB $33, $07, $21, $33 ; B720: 33 07 21... 3.!
+ EQUB $07, $21, $33, $07 ; B724: 07 21 33... .!3
+ EQUB $21, $33, $07, $12 ; B728: 21 33 07... !3.
+ EQUB $26, $AF, $77, $DD ; B72C: 26 AF 77... &.w
+ EQUB $25, $AA, $5A, $32 ; B730: 25 AA 5A... %.Z
+ EQUB $07, $0D, $24, $0F ; B734: 07 0D 24... ..$
+ EQUB $32, $0E, $05, $3F ; B738: 32 0E 05... 2..
+ EQUB $18, $77, $27, $55 ; B73C: 18 77 27... .w'
+ EQUB $77, $27, $55, $77 ; B740: 77 27 55... w'U
+ EQUB $27, $55, $77, $27 ; B744: 27 55 77... 'Uw
+ EQUB $55, $77, $27, $55 ; B748: 55 77 27... Uw'
+ EQUB $18, $28, $0F, $3F ; B74C: 18 28 0F... .(.
+ EQUB $18, $77, $27, $55 ; B750: 18 77 27... .w'
+ EQUB $77, $27, $55, $77 ; B754: 77 27 55... w'U
+ EQUB $27, $55, $77, $27 ; B758: 27 55 77... 'Uw
+ EQUB $55, $77, $27, $55 ; B75C: 55 77 27... Uw'
+ EQUB $15, $22, $BF, $EF ; B760: 15 22 BF... .".
+ EQUB $25, $0F, $22, $0B ; B764: 25 0F 22... %."
+ EQUB $21, $0E, $3F, $31 ; B768: 21 0E 3F... !.?
+ EQUB $3F, $27, $0F, $21 ; B76C: 3F 27 0F... ?'.
+ EQUB $33, $07, $73, $27 ; B770: 33 07 73... 3.s
+ EQUB $50, $77, $27, $55 ; B774: 50 77 27... Pw'
+ EQUB $77, $27, $55, $77 ; B778: 77 27 55... w'U
+ EQUB $27, $55, $F7, $FD ; B77C: 27 55 F7... 'U.
+ EQUB $14, $FE, $F5, $28 ; B780: 14 FE F5... ...
+ EQUB $0F, $3F, $31, $3F ; B784: 0F 3F 31... .?1
+ EQUB $27, $0F, $21, $33 ; B788: 27 0F 21... '.!
+ EQUB $07, $21, $33, $07 ; B78C: 07 21 33... .!3
+ EQUB $21, $33, $07, $21 ; B790: 21 33 07... !3.
+ EQUB $33, $07, $21, $33 ; B794: 33 07 21... 3.!
+ EQUB $07, $21, $33, $07 ; B798: 07 21 33... .!3
+ EQUB $28, $0F, $3F, $28 ; B79C: 28 0F 3F... (.?
+ EQUB $AF, $77, $27, $55 ; B7A0: AF 77 27... .w'
+ EQUB $77, $27, $55, $77 ; B7A4: 77 27 55... w'U
+ EQUB $27, $55, $77, $27 ; B7A8: 27 55 77... 'Uw
+ EQUB $55, $77, $27, $55 ; B7AC: 55 77 27... Uw'
+ EQUB $18, $28, $0F, $3F ; B7B0: 18 28 0F... .(.
+ EQUB $28, $AF, $77, $27 ; B7B4: 28 AF 77... (.w
+ EQUB $5A, $77, $27, $55 ; B7B8: 5A 77 27... Zw'
+ EQUB $77, $27, $55, $77 ; B7BC: 77 27 55... w'U
+ EQUB $27, $55, $77, $27 ; B7C0: 27 55 77... 'Uw
+ EQUB $55, $18, $28, $0F ; B7C4: 55 18 28... U.(
+ EQUB $3F, $28, $AF, $77 ; B7C8: 3F 28 AF... ?(.
+ EQUB $27, $55, $77, $27 ; B7CC: 27 55 77... 'Uw
+ EQUB $55, $77, $27, $55 ; B7D0: 55 77 27... Uw'
+ EQUB $77, $27, $55, $77 ; B7D4: 77 27 55... w'U
+ EQUB $27, $55, $18, $28 ; B7D8: 27 55 18... 'U.
+ EQUB $0F, $3F, $28, $5F ; B7DC: 0F 3F 28... .?(
+ EQUB $77, $27, $55, $77 ; B7E0: 77 27 55... w'U
+ EQUB $27, $55, $77, $27 ; B7E4: 27 55 77... 'Uw
+ EQUB $55, $77, $27, $55 ; B7E8: 55 77 27... Uw'
+ EQUB $BB, $27, $AA, $FB ; B7EC: BB 27 AA... .'.
+ EQUB $27, $FA, $18, $3F ; B7F0: 27 FA 18... '..
+ EQUB $23, $0F, $25, $5F ; B7F4: 23 0F 25... #.%
+ EQUB $21, $33, $00, $21 ; B7F8: 21 33 00... !3.
+ EQUB $04, $45, $24, $55 ; B7FC: 04 45 24... .E$
+ EQUB $21, $33, $02, $54 ; B800: 21 33 02... !3.
+ EQUB $55, $99, $22, $AA ; B804: 55 99 22... U."
+ EQUB $21, $33, $00, $21 ; B808: 21 33 00... !3.
+ EQUB $04, $22, $55, $99 ; B80C: 04 22 55... ."U
+ EQUB $22, $AA, $F7, $27 ; B810: 22 AA F7... "..
+ EQUB $F5, $1F, $11, $28 ; B814: F5 1F 11... ...
+ EQUB $0F, $3F, $23, $0F ; B818: 0F 3F 23... .?#
+ EQUB $4F, $24, $5F, $21 ; B81C: 4F 24 5F... O$_
+ EQUB $33, $02, $25, $55 ; B820: 33 02 25... 3.%
+ EQUB $21, $33, $00, $40 ; B824: 21 33 00... !3.
+ EQUB $54, $55, $99, $22 ; B828: 54 55 99... TU.
+ EQUB $AA, $21, $33, $00 ; B82C: AA 21 33... .!3
+ EQUB $21, $04, $45, $55 ; B830: 21 04 45... !.E
+ EQUB $99, $22, $AA, $1F ; B834: 99 22 AA... .".
+ EQUB $19, $28, $0F, $3F ; B838: 19 28 0F... .(.
+ EQUB $23, $0F, $25, $5F ; B83C: 23 0F 25... #.%
+ EQUB $21, $33, $00, $21 ; B840: 21 33 00... !3.
+ EQUB $04, $45, $24, $55 ; B844: 04 45 24... .E$
+ EQUB $21, $33, $00, $22 ; B848: 21 33 00... !3.
+ EQUB $50, $55, $99, $22 ; B84C: 50 55 99... PU.
+ EQUB $AA, $21, $33, $00 ; B850: AA 21 33... .!3
+ EQUB $21, $04, $22, $55 ; B854: 21 04 22... !."
+ EQUB $99, $22, $AA, $1F ; B858: 99 22 AA... .".
+ EQUB $1F, $12, $3F, $23 ; B85C: 1F 12 3F... ..?
+ EQUB $AF, $25, $5F, $BB ; B860: AF 25 5F... .%_
+ EQUB $22, $AA, $22, $5A ; B864: 22 AA 22... "."
+ EQUB $23, $55, $BB, $AA ; B868: 23 55 BB... #U.
+ EQUB $22, $A5, $22, $55 ; B86C: 22 A5 22... "."
+ EQUB $02, $FB, $24, $FA ; B870: 02 FB 24... ..$
+ EQUB $FF, $02, $16, $22 ; B874: FF 02 16... ...
+ EQUB $F0, $1F, $19, $3F ; B878: F0 1F 19... ...
+ EQUB $25, $AF, $23, $5F ; B87C: 25 AF 23... %.#
+ EQUB $BB, $AA, $6A, $23 ; B880: BB AA 6A... ..j
+ EQUB $5A, $22, $55, $BB ; B884: 5A 22 55... Z"U
+ EQUB $22, $AA, $65, $22 ; B888: 22 AA 65... ".e
+ EQUB $55, $02, $FB, $24 ; B88C: 55 02 FB... U..
+ EQUB $FA, $FF, $02, $16 ; B890: FA FF 02... ...
+ EQUB $22, $F0, $1F, $11 ; B894: 22 F0 1F... "..
+ EQUB $28, $0F, $3F, $23 ; B898: 28 0F 3F... (.?
+ EQUB $AF, $6F, $24, $5F ; B89C: AF 6F 24... .o$
+ EQUB $BB, $23, $AA, $5A ; B8A0: BB 23 AA... .#.
+ EQUB $56, $22, $55, $BB ; B8A4: 56 22 55... V"U
+ EQUB $AA, $6A, $56, $22 ; B8A8: AA 6A 56... .jV
+ EQUB $55, $22, $05, $FB ; B8AC: 55 22 05... U".
+ EQUB $24, $FA, $FF, $02 ; B8B0: 24 FA FF... $..
+ EQUB $16, $02, $1F, $19 ; B8B4: 16 02 1F... ...
+ EQUB $3F, $18, $73, $22 ; B8B8: 3F 18 73... ?.s
+ EQUB $50, $22, $A0, $60 ; B8BC: 50 22 A0... P".
+ EQUB $22, $50, $77, $00 ; B8C0: 22 50 77... "Pw
+ EQUB $99, $22, $AA, $66 ; B8C4: 99 22 AA... .".
+ EQUB $22, $55, $73, $22 ; B8C8: 22 55 73... "Us
+ EQUB $50, $22, $AA, $66 ; B8CC: 50 22 AA... P".
+ EQUB $22, $55, $77, $55 ; B8D0: 22 55 77... "Uw
+ EQUB $99, $22, $AA, $66 ; B8D4: 99 22 AA... .".
+ EQUB $22, $55, $33, $37 ; B8D8: 22 55 33... "U3
+ EQUB $05, $09, $22, $AA ; B8DC: 05 09 22... .."
+ EQUB $A6, $22, $A5, $F3 ; B8E0: A6 22 A5... .".
+ EQUB $22, $F0, $24, $FA ; B8E4: 22 F0 24... ".$
+ EQUB $19, $3F, $18, $73 ; B8E8: 19 3F 18... .?.
+ EQUB $22, $50, $22, $A0 ; B8EC: 22 50 22... "P"
+ EQUB $60, $22, $50, $77 ; B8F0: 60 22 50... `"P
+ EQUB $00, $99, $22, $AA ; B8F4: 00 99 22... .."
+ EQUB $66, $22, $55, $73 ; B8F8: 66 22 55... f"U
+ EQUB $22, $50, $22, $AA ; B8FC: 22 50 22... "P"
+ EQUB $66, $22, $55, $77 ; B900: 66 22 55... f"U
+ EQUB $55, $99, $22, $AA ; B904: 55 99 22... U."
+ EQUB $66, $22, $55, $33 ; B908: 66 22 55... f"U
+ EQUB $37, $05, $09, $8A ; B90C: 37 05 09... 7..
+ EQUB $AA, $A6, $22, $A5 ; B910: AA A6 22... .."
+ EQUB $F3, $22, $F0, $F8 ; B914: F3 22 F0... .".
+ EQUB $23, $FA, $19, $3F ; B918: 23 FA 19... #..
+ EQUB $18, $73, $22, $50 ; B91C: 18 73 22... .s"
+ EQUB $22, $A0, $60, $22 ; B920: 22 A0 60... ".`
+ EQUB $50, $77, $00, $99 ; B924: 50 77 00... Pw.
+ EQUB $22, $AA, $66, $22 ; B928: 22 AA 66... ".f
+ EQUB $55, $73, $22, $50 ; B92C: 55 73 22... Us"
+ EQUB $22, $AA, $66, $22 ; B930: 22 AA 66... ".f
+ EQUB $55, $77, $55, $99 ; B934: 55 77 55... UwU
+ EQUB $22, $AA, $66, $22 ; B938: 22 AA 66... ".f
+ EQUB $55, $33, $37, $05 ; B93C: 55 33 37... U37
+ EQUB $09, $8A, $AA, $A6 ; B940: 09 8A AA... ...
+ EQUB $22, $A5, $F3, $22 ; B944: 22 A5 F3... "..
+ EQUB $F0, $F8, $23, $FA ; B948: F0 F8 23... ..#
+ EQUB $19, $3F, $AF, $27 ; B94C: 19 3F AF... .?.
+ EQUB $5F, $FB, $FA, $26 ; B950: 5F FB FA... _..
+ EQUB $F5, $1F, $1F, $1A ; B954: F5 1F 1F... ...
+ EQUB $28, $0F, $3F, $23 ; B958: 28 0F 3F... (.?
+ EQUB $AF, $25, $5F, $FB ; B95C: AF 25 5F... .%_
+ EQUB $22, $FA, $25, $F5 ; B960: 22 FA 25... ".%
+ EQUB $1F, $1F, $1A, $28 ; B964: 1F 1F 1A... ...
+ EQUB $0F, $3F, $22, $AF ; B968: 0F 3F 22... .?"
+ EQUB $6F, $25, $5F, $FB ; B96C: 6F 25 5F... o%_
+ EQUB $FA, $F6, $25, $F5 ; B970: FA F6 25... ..%
+ EQUB $1F, $1F, $1A, $28 ; B974: 1F 1F 1A... ...
+ EQUB $0F, $3F, $31, $3F ; B978: 0F 3F 31... .?1
+ EQUB $27, $0F, $21, $33 ; B97C: 27 0F 21... '.!
+ EQUB $07, $21, $33, $07 ; B980: 07 21 33... .!3
+ EQUB $21, $33, $07, $21 ; B984: 21 33 07... !3.
+ EQUB $33, $07, $21, $33 ; B988: 33 07 21... 3.!
+ EQUB $07, $18, $28, $0F ; B98C: 07 18 28... ..(
+ EQUB $3F, $31, $3F, $27 ; B990: 3F 31 3F... ?1?
+ EQUB $0F, $21, $33, $07 ; B994: 0F 21 33... .!3
+ EQUB $21, $33, $07, $21 ; B998: 21 33 07... !3.
+ EQUB $33, $07, $21, $33 ; B99C: 33 07 21... 3.!
+ EQUB $07, $F3, $27, $F0 ; B9A0: 07 F3 27... ..'
+ EQUB $FB, $27, $5A, $28 ; B9A4: FB 27 5A... .'Z
+ EQUB $0F, $3F           ; B9A8: 0F 3F       .?
 
-\ ******************************************************************************
-\
-\       Name: LB9AA
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: LB9AA
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .LB9AA
 
- EQUB &00, &01, &16, &04 ; B9AA: 00 01 16... ...
- EQUB &05, &02, &0A, &13 ; B9AE: 05 02 0A... ...
- EQUB &0D, &09, &06, &10 ; B9B2: 0D 09 06... ...
- EQUB &03, &03, &02, &17 ; B9B6: 03 03 02... ...
+ EQUB $00, $01, $16, $04 ; B9AA: 00 01 16... ...
+ EQUB $05, $02, $0A, $13 ; B9AE: 05 02 0A... ...
+ EQUB $0D, $09, $06, $10 ; B9B2: 0D 09 06... ...
+ EQUB $03, $03, $02, $17 ; B9B6: 03 03 02... ...
 
-\ ******************************************************************************
-\
-\       Name: LB9BA
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: LB9BA
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .LB9BA
 
- EQUB &00, &01, &16, &04 ; B9BA: 00 01 16... ...
- EQUB &05, &02, &0B, &14 ; B9BE: 05 02 0B... ...
- EQUB &0E, &09, &07, &11 ; B9C2: 0E 09 07... ...
- EQUB &03, &03, &02, &02 ; B9C6: 03 03 02... ...
+ EQUB $00, $01, $16, $04 ; B9BA: 00 01 16... ...
+ EQUB $05, $02, $0B, $14 ; B9BE: 05 02 0B... ...
+ EQUB $0E, $09, $07, $11 ; B9C2: 0E 09 07... ...
+ EQUB $03, $03, $02, $02 ; B9C6: 03 03 02... ...
 
-\ ******************************************************************************
-\
-\       Name: LB9CA
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: LB9CA
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .LB9CA
 
- EQUB &00, &01, &16, &04 ; B9CA: 00 01 16... ...
- EQUB &05, &02, &0C, &15 ; B9CE: 05 02 0C... ...
- EQUB &0F, &09, &08, &12 ; B9D2: 0F 09 08... ...
- EQUB &03, &03, &02, &17 ; B9D6: 03 03 02... ...
+ EQUB $00, $01, $16, $04 ; B9CA: 00 01 16... ...
+ EQUB $05, $02, $0C, $15 ; B9CE: 05 02 0C... ...
+ EQUB $0F, $09, $08, $12 ; B9D2: 0F 09 08... ...
+ EQUB $03, $03, $02, $17 ; B9D6: 03 03 02... ...
 
-\ ******************************************************************************
-\
-\       Name: LB9DA
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: LB9DA
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .LB9DA
 
- EQUB &AA, &BA, &CA, &AA ; B9DA: AA BA CA... ...
+ EQUB $AA, $BA, $CA, $AA ; B9DA: AA BA CA... ...
 
-\ ******************************************************************************
-\
-\       Name: LB9DE
-\       Type: Variable
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: LB9DE
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .LB9DE
 
- EQUB &B9, &B9, &B9, &B9 ; B9DE: B9 B9 B9... ...
+ EQUB $B9, $B9, $B9, $B9 ; B9DE: B9 B9 B9... ...
 
-\ ******************************************************************************
-\
-\       Name: subm_B9E2
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_B9E2
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_B9E2
 
@@ -13271,35 +13271,35 @@
  LDA LB9DE,X
  STA V+1
  LDA QQ11
- AND #&0F
+ AND #$0F
  TAY
  LDA (V),Y
  ASL A
  TAX
  LDA LB6C7,X
- ADC #&C5
+ ADC #$C5
  STA V
  LDA LB6C8,X
- ADC #&B6
+ ADC #$B6
  STA V+1
- LDA #&73
+ LDA #$73
  STA SC+1
- LDA #&C0
+ LDA #$C0
  STA SC
  JMP UnpackToRAM
 
-\ ******************************************************************************
-\
-\       Name: subm_BA23_BA11
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_BA23_BA11
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_BA23_BA11
 
- LDA #&F0
+ LDA #$F0
  STA ySprite5
  STA ySprite6
  STA ySprite7
@@ -13307,60 +13307,60 @@
  STA ySprite9
  RTS
 
-\ ******************************************************************************
-\
-\       Name: subm_BA23
-\       Type: Subroutine
-\   Category: ???
-\    Summary: ???
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: subm_BA23
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_BA23
 
  LDY VIEW
  LDA LASER,Y
  BEQ subm_BA23_BA11
- CMP #&18
+ CMP #$18
  BNE CBA32
  JMP CBAC6
 
 .CBA32
 
- CMP #&8F
+ CMP #$8F
  BNE CBA39
  JMP CBB08
 
 .CBA39
 
- CMP #&97
+ CMP #$97
  BNE CBA83
- LDA #&80
+ LDA #$80
  STA attrSprite8
- LDA #&40
+ LDA #$40
  STA attrSprite6
  LDA #0
  STA attrSprite7
  STA attrSprite5
- LDY #&CF
+ LDY #$CF
  STY tileSprite5
  STY tileSprite6
  INY
  STY tileSprite7
  STY tileSprite8
- LDA #&76
+ LDA #$76
  STA xSprite5
- LDA #&86
+ LDA #$86
  STA xSprite6
- LDA #&7E
+ LDA #$7E
  STA xSprite7
  STA xSprite8
- LDA #&53
+ LDA #$53
  STA ySprite5
  STA ySprite6
- LDA #&4B
+ LDA #$4B
  STA ySprite7
- LDA #&5B
+ LDA #$5B
  STA ySprite8
  RTS
 
@@ -13368,27 +13368,27 @@
 
  LDA #3
  STA attrSprite5
- LDA #&43
+ LDA #$43
  STA attrSprite6
- LDA #&83
+ LDA #$83
  STA attrSprite7
- LDA #&C3
+ LDA #$C3
  STA attrSprite8
- LDA #&D1
+ LDA #$D1
  STA tileSprite5
  STA tileSprite6
  STA tileSprite7
  STA tileSprite8
- LDA #&76
+ LDA #$76
  STA xSprite5
  STA xSprite7
- LDA #&86
+ LDA #$86
  STA xSprite6
  STA xSprite8
- LDA #&4B
+ LDA #$4B
  STA ySprite5
  STA ySprite6
- LDA #&5B
+ LDA #$5B
  STA ySprite7
  STA ySprite8
  RTS
@@ -13396,7 +13396,7 @@
 .CBAC6
 
  LDA #1
- LDY #&CC
+ LDY #$CC
  STA attrSprite5
  STA attrSprite6
  STA attrSprite7
@@ -13406,19 +13406,19 @@
  INY
  STY tileSprite7
  STY tileSprite8
- LDA #&72
+ LDA #$72
  STA xSprite5
- LDA #&8A
+ LDA #$8A
  STA xSprite6
- LDA #&7E
+ LDA #$7E
  STA xSprite7
  STA xSprite8
- LDA #&53
+ LDA #$53
  STA ySprite5
  STA ySprite6
- LDA #&47
+ LDA #$47
  STA ySprite7
- LDA #&5F
+ LDA #$5F
  STA ySprite8
  RTS
 
@@ -13426,64 +13426,64 @@
 
  LDA #2
  STA attrSprite5
- LDA #&42
+ LDA #$42
  STA attrSprite6
- LDA #&82
+ LDA #$82
  STA attrSprite7
- LDA #&C2
+ LDA #$C2
  STA attrSprite8
- LDA #&CE
+ LDA #$CE
  STA tileSprite5
  STA tileSprite6
  STA tileSprite7
  STA tileSprite8
- LDA #&7A
+ LDA #$7A
  STA xSprite5
  STA xSprite7
- LDA #&82
+ LDA #$82
  STA xSprite6
  STA xSprite8
- LDA #&4B
+ LDA #$4B
  STA ySprite5
  STA ySprite6
- LDA #&5B
+ LDA #$5B
  STA ySprite7
  STA ySprite8
  RTS
 
-\ ******************************************************************************
-\
-\       Name: Vectors
-\       Type: Variable
-\   Category: Text
-\    Summary: Vectors and padding at the end of the ROM bank
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+;       Name: Vectors
+;       Type: Variable
+;   Category: Text
+;    Summary: Vectors and padding at the end of the ROM bank
+;
+; ******************************************************************************
 
- FOR I%, P%, &BFF9
+ FOR I%, P%, $BFF9
 
-  EQUB &FF              \ Pad out the rest of the ROM bank with &FF
+  EQUB $FF              ; Pad out the rest of the ROM bank with $FF
 
  NEXT
 
- EQUW Interrupts+&4000  \ Vector to the NMI handler in case this bank is loaded
-                        \ into &C000 during startup (the handler contains an RTI
-                        \ so the interrupt is processed but has no effect)
+ EQUW Interrupts+$4000  ; Vector to the NMI handler in case this bank is loaded
+                        ; into $C000 during startup (the handler contains an RTI
+                        ; so the interrupt is processed but has no effect)
 
- EQUW ResetMMC1+&4000   \ Vector to the RESET handler in case this bank is
-                        \ loaded into &C000 during startup (the handler resets
-                        \ the MMC1 mapper to map bank 7 into &C000 instead)
+ EQUW ResetMMC1+$4000   ; Vector to the RESET handler in case this bank is
+                        ; loaded into $C000 during startup (the handler resets
+                        ; the MMC1 mapper to map bank 7 into $C000 instead)
 
- EQUW Interrupts+&4000  \ Vector to the IRQ/BRK handler in case this bank is
-                        \ loaded into &C000 during startup (the handler contains
-                        \ an RTI so the interrupt is processed but has no
-                        \ effect)
+ EQUW Interrupts+$4000  ; Vector to the IRQ/BRK handler in case this bank is
+                        ; loaded into $C000 during startup (the handler contains
+                        ; an RTI so the interrupt is processed but has no
+                        ; effect)
 
-\ ******************************************************************************
-\
-\ Save bank3.bin
-\
-\ ******************************************************************************
+; ******************************************************************************
+;
+; Save bank3.bin
+;
+; ******************************************************************************
 
  PRINT "S.bank3.bin ", ~CODE%, " ", ~P%, " ", ~LOAD%, " ", ~LOAD%
  SAVE "3-assembled-output/bank3.bin", CODE%, P%, LOAD%
