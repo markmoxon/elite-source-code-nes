@@ -18,6 +18,26 @@ See the [introduction](#introduction) for more information.
 
   * [A note on licences, copyright etc.](#user-content-a-note-on-licences-copyright-etc)
 
+## Introduction
+
+This repository contains work-in-progress source code for Elite on the NES.
+
+You can build a working game using this command for Windows:
+
+```
+make.bat build verify
+```
+
+or this command for Mac and Linux:
+
+```
+make build verify
+```
+
+Requirements and configuration are the same as for my other Elite repositories, such as the [master-elite-beebasm](https://github.com/markmoxon/master-elite-beebasm) repository (on which the NES version is based).
+
+Watch this space for developments...
+
 ## Acknowledgements
 
 NES Elite was written by Ian Bell and David Braben and is copyright &copy; D. Braben and I. Bell 1991.
@@ -41,26 +61,6 @@ The reason for this is that my commentary is intertwined with the original Elite
 Under GitHub's rules, you have the right to read and fork this repository... but that's it. No other use is permitted, I'm afraid.
 
 My hope is that the educational and non-profit intentions of this repository will enable it to stay hosted and available, but the original copyright holders do have the right to ask for it to be taken down, in which case I will comply without hesitation. I do hope, though, that along with the various other disassemblies and commentaries of this source, it will remain viable.
-
-## Introduction
-
-This repository contains work-in-progress source code for Elite on the NES.
-
-You can build a working game using this command for Windows:
-
-```
-make.bat build verify
-```
-
-or this command for Mac and Linux:
-
-```
-make build verify
-```
-
-Requirements and configuration are the same as for my other Elite repositories, such as the [master-elite-beebasm](https://github.com/markmoxon/master-elite-beebasm) repository (on which the NES version is based).
-
-Watch this space for developments...
 
 ---
 
