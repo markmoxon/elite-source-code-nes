@@ -4356,7 +4356,7 @@ MACRO SETUP_PPU_FOR_ICON_BAR
                         ;     nametable 0) or $2800 (which is a mirror of $2000)
                         ;
                         ;   * Clear the C flag
- 
+
 .skip
 
 ENDMACRO

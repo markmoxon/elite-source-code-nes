@@ -6472,7 +6472,7 @@ ENDMACRO
                         ; points to the end of the heap, and therefore contains
                         ; the heap size
 
- RTS                    ; Return from the subroutine (parts 12 of LL9 is not
+ RTS                    ; Return from the subroutine (part 12 of LL9 is not
                         ; included in the NES version)
 
 ; ******************************************************************************
