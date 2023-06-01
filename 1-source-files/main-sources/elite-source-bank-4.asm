@@ -181,7 +181,7 @@
 ;       Name: faceImage0
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander face image 0
+;    Summary: Packed image data for commander face image 0
 ;
 ; ******************************************************************************
 
@@ -240,7 +240,7 @@
 ;       Name: faceImage1
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander face image 1
+;    Summary: Packed image data for commander face image 1
 ;
 ; ******************************************************************************
 
@@ -298,7 +298,7 @@
 ;       Name: faceImage2
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander face image 2
+;    Summary: Packed image data for commander face image 2
 ;
 ; ******************************************************************************
 
@@ -356,7 +356,7 @@
 ;       Name: faceImage3
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander face image 3
+;    Summary: Packed image data for commander face image 3
 ;
 ; ******************************************************************************
 
@@ -417,7 +417,7 @@
 ;       Name: faceImage4
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander face image 4
+;    Summary: Packed image data for commander face image 4
 ;
 ; ******************************************************************************
 
@@ -479,7 +479,7 @@
 ;       Name: faceImage5
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander face image 5
+;    Summary: Packed image data for commander face image 5
 ;
 ; ******************************************************************************
 
@@ -540,7 +540,7 @@
 ;       Name: faceImage6
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander face image 6
+;    Summary: Packed image data for commander face image 6
 ;
 ; ******************************************************************************
 
@@ -601,7 +601,7 @@
 ;       Name: faceImage7
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander face image 7
+;    Summary: Packed image data for commander face image 7
 ;
 ; ******************************************************************************
 
@@ -662,7 +662,7 @@
 ;       Name: faceImage8
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander face image 8
+;    Summary: Packed image data for commander face image 8
 ;
 ; ******************************************************************************
 
@@ -721,7 +721,7 @@
 ;       Name: faceImage9
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander face image 9
+;    Summary: Packed image data for commander face image 9
 ;
 ; ******************************************************************************
 
@@ -781,7 +781,7 @@
 ;       Name: faceImage10
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander face image 10
+;    Summary: Packed image data for commander face image 10
 ;
 ; ******************************************************************************
 
@@ -844,7 +844,7 @@
 ;       Name: faceImage11
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander face image 11
+;    Summary: Packed image data for commander face image 11
 ;
 ; ******************************************************************************
 
@@ -903,7 +903,7 @@
 ;       Name: faceImage12
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander face image 12
+;    Summary: Packed image data for commander face image 12
 ;
 ; ******************************************************************************
 
@@ -964,7 +964,7 @@
 ;       Name: faceImage13
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander face image 13
+;    Summary: Packed image data for commander face image 13
 ;
 ; ******************************************************************************
 
@@ -1064,7 +1064,7 @@
 ;       Name: headImage0
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander headshot image 0
+;    Summary: Packed image data for commander headshot image 0
 ;
 ; ******************************************************************************
 
@@ -1123,7 +1123,7 @@
 ;       Name: headImage1
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander headshot image 1
+;    Summary: Packed image data for commander headshot image 1
 ;
 ; ******************************************************************************
 
@@ -1183,7 +1183,7 @@
 ;       Name: headImage2
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander headshot image 2
+;    Summary: Packed image data for commander headshot image 2
 ;
 ; ******************************************************************************
 
@@ -1241,7 +1241,7 @@
 ;       Name: headImage3
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander headshot image 3
+;    Summary: Packed image data for commander headshot image 3
 ;
 ; ******************************************************************************
 
@@ -1304,7 +1304,7 @@
 ;       Name: headImage4
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander headshot image 4
+;    Summary: Packed image data for commander headshot image 4
 ;
 ; ******************************************************************************
 
@@ -1367,7 +1367,7 @@
 ;       Name: headImage5
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander headshot image 5
+;    Summary: Packed image data for commander headshot image 5
 ;
 ; ******************************************************************************
 
@@ -1428,7 +1428,7 @@
 ;       Name: headImage6
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander headshot image 6
+;    Summary: Packed image data for commander headshot image 6
 ;
 ; ******************************************************************************
 
@@ -1488,7 +1488,7 @@
 ;       Name: headImage7
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander headshot image 7
+;    Summary: Packed image data for commander headshot image 7
 ;
 ; ******************************************************************************
 
@@ -1548,7 +1548,7 @@
 ;       Name: headImage8
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander headshot image 8
+;    Summary: Packed image data for commander headshot image 8
 ;
 ; ******************************************************************************
 
@@ -1607,7 +1607,7 @@
 ;       Name: headImage9
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander headshot image 9
+;    Summary: Packed image data for commander headshot image 9
 ;
 ; ******************************************************************************
 
@@ -1668,7 +1668,7 @@
 ;       Name: headImage10
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander headshot image 10
+;    Summary: Packed image data for commander headshot image 10
 ;
 ; ******************************************************************************
 
@@ -1733,7 +1733,7 @@
 ;       Name: headImage11
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander headshot image 11
+;    Summary: Packed image data for commander headshot image 11
 ;
 ; ******************************************************************************
 
@@ -1792,7 +1792,7 @@
 ;       Name: headImage12
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander headshot image 12
+;    Summary: Packed image data for commander headshot image 12
 ;
 ; ******************************************************************************
 
@@ -1855,7 +1855,7 @@
 ;       Name: headImage13
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for commander headshot image 13
+;    Summary: Packed image data for commander headshot image 13
 ;
 ; ******************************************************************************
 
@@ -1921,7 +1921,7 @@
 ;       Name: glassesImage
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: ???
+;    Summary: Packed image data for the glasses that the commander can wear
 ;
 ; ******************************************************************************
 
@@ -1949,7 +1949,7 @@
 ;       Name: eliteLogoBig
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: ???
+;    Summary: Packed image data for the big Elite logo shown on the start screen
 ;
 ; ******************************************************************************
 
@@ -2591,18 +2591,19 @@
 
  LDA #HI(16*69)         ; Set PPU_ADDR to the address of pattern #69 in pattern
  STA PPU_ADDR           ; table 0
- LDA #LO(16*69)
- STA PPU_ADDR
+ LDA #LO(16*69)         ;
+ STA PPU_ADDR           ; So we can unpack the image data for the relevant face
+                        ; image into pattern #69 onwards in pattern table 0
 
- JSR UnpackToPPU        ; Unpack the rest of the image data to the PPU ???
+ JSR UnpackToPPU        ; Unpack the image data to the PPU
 
  LDA #HI(glassesImage)  ; Set V(1 0) = glassesImage
- STA V+1
- LDA #LO(glassesImage)
- STA V
+ STA V+1                ;
+ LDA #LO(glassesImage)  ; So we can unpack the image data for the glasses into
+ STA V                  ; the next few pattern bytes in pattern table 0
 
- JMP UnpackToPPU        ; Unpack the image data to the PPU, ???
-                        ; returning from the subroutine using a tail call
+ JMP UnpackToPPU        ; Unpack the image data to the PPU, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -2615,10 +2616,10 @@
 
 .subm_B96B
 
- LDA #HI(eliteLogoBig)
- STA V+1
- LDA #LO(eliteLogoBig)
- STA V
+ LDA #HI(eliteLogoBig)  ; Set V(1 0) = eliteLogoBig
+ STA V+1                ;
+ LDA #LO(eliteLogoBig)  ; So we can unpack the image data for the big Elite logo
+ STA V                  ; into the pattern buffers
 
  LDA tileNumber
  TAY
@@ -2651,7 +2652,7 @@
 
  JSR UnpackToRAM
 
- LDA #HI(LB5CC)
+ LDA #HI(LB5CC)     ; Set V(1 0) = LB5CC
  STA V+1
  LDA #LO(LB5CC)
  STA V
@@ -2779,7 +2780,7 @@
  LSR A
  STA K+3
 
- LDA #HI(LB7AC)
+ LDA #HI(LB7AC)         ; Set V(1 0) = LB7AC
  STA V+1
  LDA #LO(LB7AC)
  STA V

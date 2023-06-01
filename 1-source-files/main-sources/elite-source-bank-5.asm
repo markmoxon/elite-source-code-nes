@@ -182,7 +182,7 @@
 ;       Name: systemImage0
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for system image 0
+;    Summary: Packed image data for system image 0
 ;
 ; ******************************************************************************
 
@@ -329,7 +329,7 @@
 ;       Name: systemImage1
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for system image 1
+;    Summary: Packed image data for system image 1
 ;
 ; ******************************************************************************
 
@@ -467,7 +467,7 @@
 ;       Name: systemImage2
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for system image 2
+;    Summary: Packed image data for system image 2
 ;
 ; ******************************************************************************
 
@@ -664,7 +664,7 @@
 ;       Name: systemImage3
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for system image 3
+;    Summary: Packed image data for system image 3
 ;
 ; ******************************************************************************
 
@@ -831,7 +831,7 @@
 ;       Name: systemImage4
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for system image 4
+;    Summary: Packed image data for system image 4
 ;
 ; ******************************************************************************
 
@@ -957,7 +957,7 @@
 ;       Name: systemImage5
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for system image 5
+;    Summary: Packed image data for system image 5
 ;
 ; ******************************************************************************
 
@@ -1102,7 +1102,7 @@
 ;       Name: systemImage6
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for system image 6
+;    Summary: Packed image data for system image 6
 ;
 ; ******************************************************************************
 
@@ -1242,7 +1242,7 @@
 ;       Name: systemImage7
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for system image 7
+;    Summary: Packed image data for system image 7
 ;
 ; ******************************************************************************
 
@@ -1393,7 +1393,7 @@
 ;       Name: systemImage8
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for system image 8
+;    Summary: Packed image data for system image 8
 ;
 ; ******************************************************************************
 
@@ -1507,7 +1507,7 @@
 ;       Name: systemImage9
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for system image 9
+;    Summary: Packed image data for system image 9
 ;
 ; ******************************************************************************
 
@@ -1640,7 +1640,7 @@
 ;       Name: systemImage10
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for system image 10
+;    Summary: Packed image data for system image 10
 ;
 ; ******************************************************************************
 
@@ -1789,7 +1789,7 @@
 ;       Name: systemImage11
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for system image 11
+;    Summary: Packed image data for system image 11
 ;
 ; ******************************************************************************
 
@@ -1932,7 +1932,7 @@
 ;       Name: systemImage12
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for system image 12
+;    Summary: Packed image data for system image 12
 ;
 ; ******************************************************************************
 
@@ -2091,7 +2091,7 @@
 ;       Name: systemImage13
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for system image 13
+;    Summary: Packed image data for system image 13
 ;
 ; ******************************************************************************
 
@@ -2240,7 +2240,7 @@
 ;       Name: systemImage14
 ;       Type: Variable
 ;   Category: Drawing images
-;    Summary: Data for system image 14
+;    Summary: Packed image data for system image 14
 ;
 ; ******************************************************************************
 
@@ -2412,33 +2412,48 @@
 ;       Name: SetSystemImage
 ;       Type: Subroutine
 ;   Category: Drawing images
-;    Summary: ???
+;    Summary: Fetch the background image and foreground sprite for the current
+;             system image and send them to the pattern buffers and PPU
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   pictureTile         The number of the tile in the pattern table from which
+;                       we store the image data for the background tiles
 ;
 ; ******************************************************************************
 
 .SetSystemImage
 
- JSR GetSystemImage     ; Fetch the system image for the current system and
-                        ; store it in the pattern buffers, starting at tile
-                        ; number pictureTile
+ JSR GetSystemImage     ; Fetch the first two sections of the system image data
+                        ; for the current system, which contains the background
+                        ; tiles for the image, and store it in the pattern
+                        ; buffers, starting at tile number pictureTile
 
  LDA #HI(16*69)         ; Set PPU_ADDR to the address of pattern #69 in pattern
  STA PPU_ADDR           ; table 0
- LDA #LO(16*69)
- STA PPU_ADDR
+ LDA #LO(16*69)         ;
+ STA PPU_ADDR           ; So we can unpack the rest of the system image data
+                        ; into pattern #69 onwards in pattern table 0, so we can
+                        ; display it as a foreground sprite on top of the
+                        ; background tiles that we just unpacked
 
- JSR UnpackToPPU        ; Unpack the rest of the image data to the PPU ???
+ JSR UnpackToPPU        ; Unpack the third section of the system image data to
+                        ; the PPU
 
- JMP UnpackToPPU+2      ; Unpack the rest of the image data to the PPU, ???
-                        ; returning from the subroutine using a tail call
+ JMP UnpackToPPU+2      ; Unpack the fourth section of the system image data to
+                        ; the PPU, putting it just after the data we unpacked
+                        ; in the previous call, returning from the subroutine
+                        ; using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: GetSystemImage
 ;       Type: Subroutine
 ;   Category: Drawing images
-;    Summary: Fetch the image for the current system and store it in the pattern
-;             buffers
+;    Summary: Fetch the background image for the current system and store it in
+;             the pattern buffers
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -2501,24 +2516,24 @@
  ADC #HI(systemCount)   ; when X = 14
  STA V+1
 
- JSR UnpackToRAM        ; Unpack the data at V(1 0) into SC(1 0), updating
-                        ; V(1 0) as we go
+ JSR UnpackToRAM        ; Unpack the first section of image data from V(1 0)
+                        ; into SC(1 0), updating V(1 0) as we go
                         ;
                         ; SC(1 0) is pattBuffer0 + pictureTile * 8, so this
-                        ; unpacks the data from tile number pictureTile in
-                        ; into pattern buffer 0
+                        ; unpacks the data for tile number pictureTile into
+                        ; pattern buffer 0
 
  LDA SC2                ; Set SC(1 0) = SC2(1 0)
  STA SC                 ;             = pattBuffer1 + pictureTile * 8
  LDA SC2+1
  STA SC+1
 
- JMP UnpackToRAM        ; Unpack the data at V(1 0) into SC(1 0), updating
-                        ; V(1 0) as we go
+ JMP UnpackToRAM        ; Unpack the second section of image data from V(1 0)
+                        ; into SC(1 0), updating V(1 0) as we go
                         ;
                         ; SC(1 0) is pattBuffer1 + pictureTile * 8, so this
-                        ; unpacks the data from tile number pictureTile in
-                        ; into pattern buffer 1
+                        ; unpacks the data for tile number pictureTile into
+                        ; pattern buffer 1
                         ;
                         ; When done, we return from the subroutine using a tail
                         ; call

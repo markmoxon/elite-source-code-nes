@@ -336,8 +336,9 @@ for i in range(0, 15):
     palette = system_image_palettes[i]
     extract_image(bank_data5[start: end], 4, "../1-source-files/images/system-images/", "systemImage" + str(i), palette, pixel_width=64, data_is_packed=True)
 
-# Other images are all one section per image
-# Stored as interleaved PPU tile format for sprite foreground
+# Other images all have one section per image
+# Stored as interleaved PPU tile format
+# (i.e. each pattern is 8 bytes for bit 0, then 8 bytes for bit 1)
 
 start = 0xAA9F - 0x8000
 end = 0xAB1C - 0x8000
@@ -365,9 +366,10 @@ extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/
 
 start = 0xA493 - 0x8000
 end = 0xA4D3 - 0x8000
-extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "cargoImage", palette=7, pixel_width=16, data_is_packed=False)
+extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "missileImage", palette=7, pixel_width=16, data_is_packed=False)
 
-# Font is stored as one set of characters in colour 1 and another in colour 2
+# The font is stored as interleaved PPU tile format
+# But with one set of characters in colour 1 and another in colour 2
 # We can save this as two images, with different palettes, to expose the letters
 
 start = 0xFCE8 - 0xC000
