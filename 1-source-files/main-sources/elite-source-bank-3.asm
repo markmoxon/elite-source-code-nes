@@ -9349,14 +9349,14 @@
 
 ; ******************************************************************************
 ;
-;       Name: L9760
+;       Name: dialsImage
 ;       Type: Variable
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.L9760
+.dialsImage
 
  EQUB $32, $17 ; 975E: 00 00 32... ..2
  EQUB $3F, $05, $21, $07 ; 9762: 3F 05 21... ?.!
@@ -9890,14 +9890,14 @@
 
 ; ******************************************************************************
 ;
-;       Name: L9FA1
+;       Name: cobraImage
 ;       Type: Variable
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.L9FA1
+.cobraImage
 
  EQUB $07                ; 9F9E: 18 08 3F... ..?
  EQUB $21, $01, $0B, $32 ; 9FA2: 21 01 0B... !..
@@ -10220,14 +10220,14 @@
 
 ; ******************************************************************************
 ;
-;       Name: LA493
+;       Name: cargoImage
 ;       Type: Variable
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.LA493
+.cargoImage
 
  EQUB $00, $00, $00 ; A492: 3F 00 00... ?..
  EQUB $06, $0F, $16, $10 ; A496: 06 0F 16... ...
@@ -10249,14 +10249,14 @@
 
 ; ******************************************************************************
 ;
-;       Name: LA4D3
+;       Name: eliteLogo
 ;       Type: Variable
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.LA4D3
+.eliteLogo
 
  EQUB $00, $22, $80 ; A4D2: 00 00 22... .."
  EQUB $C0, $E0, $F0, $F8 ; A4D6: C0 E0 F0... ...
@@ -10408,14 +10408,14 @@
 
 ; ******************************************************************************
 ;
-;       Name: LA71B
+;       Name: eliteLogoBall
 ;       Type: Variable
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.LA71B
+.eliteLogoBall
 
  EQUB $35, $51, $38 ; A71A: 3F 35 51... ?5Q
  EQUB $3F, $11, $0B, $03 ; A71E: 3F 11 0B... ?..
@@ -10561,9 +10561,9 @@
  STA PPU_ADDR
  LDA #$50
  STA PPU_ADDR
- LDA #HI(LA493)
+ LDA #HI(cargoImage)
  STA SC+1
- LDA #LO(LA493)
+ LDA #LO(cargoImage)
  STA SC
  LDA #$F5
  STA systemFlag
@@ -10578,9 +10578,9 @@
  STA PPU_ADDR
  LDA #$50
  STA PPU_ADDR
- LDA #HI(LA4D3)
+ LDA #HI(eliteLogo)
  STA V+1
- LDA #LO(LA4D3)
+ LDA #LO(eliteLogo)
  STA V
  LDA #3
  BNE CA891
@@ -10619,9 +10619,9 @@
  STA PPU_ADDR
  LDA #$30
  STA PPU_ADDR
- LDA #HI(LA71B)
+ LDA #HI(eliteLogoBall)
  STA V+1
- LDA #LO(LA71B)
+ LDA #LO(eliteLogoBall)
  STA V
  JSR UnpackToPPU
  JMP CA8A2
@@ -10632,9 +10632,9 @@
  STA PPU_ADDR
  LDA #$50
  STA PPU_ADDR
- LDA #HI(L9FA1)
+ LDA #HI(cobraImage)
  STA V+1
- LDA #LO(L9FA1)
+ LDA #LO(cobraImage)
  STA V
  LDA #2
 
@@ -10783,9 +10783,9 @@
  STA PPU_ADDR
  LDA #$50
  STA PPU_ADDR
- LDA #HI(L9760)
+ LDA #HI(dialsImage)
  STA V+1
- LDA #LO(L9760)
+ LDA #LO(dialsImage)
  STA V
  JMP UnpackToPPU
 
@@ -12273,9 +12273,9 @@
  CLC
  ADC tileNumber
  STA tileNumber
- LDA #HI(LFCE8)
+ LDA #HI(fontImage)
  STA V+1
- LDA #LO(LFCE8)
+ LDA #LO(fontImage)
  STA V
  LDY #0
 

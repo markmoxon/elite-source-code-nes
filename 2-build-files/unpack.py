@@ -11,19 +11,17 @@
 import png
 
 
-def fetch_byte(input_data):
-    global index
+def fetch_byte(input_data, index):
     if index < len(input_data):
         byte = input_data[index]
         index += 1
-        return byte
+        return byte, index
     else:
         print("End of file reached at index " + str(index))
-        return -1
+        return -1, index
 
 
-def unpack(input_data, unpacked_data):
-    global index
+def unpack(input_data, unpacked_data, index):
     read_file = True
     while read_file:
         if index < len(input_data):
@@ -41,7 +39,7 @@ def unpack(input_data, unpacked_data):
                 for i in range(0, byte - 0x10):
                     unpacked_data.append(0xFF)
             elif byte >= 0x21 and byte <= 0x2F:
-                byte2 = fetch_byte(input_data)
+                byte2, index = fetch_byte(input_data, index)
                 if byte2 != -1:
                     for i in range(0, byte - 0x20):
                         unpacked_data.append(byte2)
@@ -49,7 +47,7 @@ def unpack(input_data, unpacked_data):
                     read_file = False
             elif byte >= 0x31 and byte < 0x3F:
                 for i in range(0, byte - 0x30):
-                    byte2 = fetch_byte(input_data)
+                    byte2, index = fetch_byte(input_data, index)
                     if byte2 != -1:
                         unpacked_data.append(byte2)
                     else:
@@ -57,6 +55,32 @@ def unpack(input_data, unpacked_data):
         else:
             print("End of file reached at index " + str(index))
             read_file = False
+    return index
+
+
+def extract(input_data, unpacked_data, index):
+    read_file = True
+    while read_file:
+        if index < len(input_data):
+            byte = input_data[index]
+            unpacked_data.append(byte)
+            index += 1
+        else:
+            print("End of file reached at index " + str(index))
+            read_file = False
+    return index
+
+
+def unpack_data(input_data, filename, index, data_is_packed):
+    unpacked_data = bytearray()
+    if data_is_packed:
+        index = unpack(input_data, unpacked_data, index)
+    else:
+        index = extract(input_data, unpacked_data, index)
+    output_file = open(filename, "wb")
+    output_file.write(unpacked_data)
+    output_file.close()
+    return unpacked_data, index
 
 
 def png_pixel(colour, palette):
@@ -77,7 +101,7 @@ def png_full_pixel_row_ram(y, pixel_width, data_0, data_1, palette):
     row = []
     start_byte = (y // 8) * pixel_width + (y % 8)
     for i in range(start_byte, start_byte + pixel_width, 8):
-        row = row + png_8_pixel_row(data_0[i], data_1[i], palette)
+        row = row + png_8_pixel_row(pad_with_black(data_0, i), pad_with_black(data_1, i), palette)
     return row
 
 
@@ -85,53 +109,62 @@ def png_full_pixel_row_ppu(y, pixel_width, data, palette):
     row = []
     start_byte = (y // 8) * pixel_width * 2 + (y % 8)
     for i in range(start_byte, start_byte + (pixel_width * 2), 16):
-        row = row + png_8_pixel_row(data[i], data[i + 8], palette)
+        row = row + png_8_pixel_row(pad_with_black(data, i), pad_with_black(data, i + 8), palette)
     return row
 
 
-def extract_image(input_data, sections, output_folder, input_file, palette):
-    global index
+def pad_with_black(data, i):
+    if i < len(data):
+        return data[i]
+    return 0
 
-    # image0
-    pixel_width = 64
 
-    if sections == 1:
-        # faceImage0
-        pixel_width = 40
-    elif sections == 2:
-        # headImage0
-        pixel_width = 48
+def create_png_from_ppu_data(unpacked_data, output_path_pngs, pixel_width, palette):
+    pixel_height = int(0.5 * len(unpacked_data) / (pixel_width / 8))
 
-    index = 0
+    if pixel_height != 8 * (pixel_height // 8):
+        pixel_height = 8 * (pixel_height // 8) + 8
 
-    output_path = output_folder + "pngs/" + input_file
+    print("Image dimensions " + str(pixel_width) + "px wide x " + str(pixel_height) + "px high")
+
+    png_array = []
+    for i in range(0, pixel_height):
+        pixel_row = png_full_pixel_row_ppu(i, pixel_width, unpacked_data, palette)
+        png_array.append(pixel_row)
+
+    png.from_array(png_array, 'RGB').save(output_path_pngs + "_ppu.png")
+
+
+def create_png_from_ram_data(unpacked_data_0, unpacked_data_1, output_path_pngs, pixel_width, palette):
+    pixel_height = int(len(unpacked_data_0) / (pixel_width / 8))
+
+    if pixel_height != 8 * (pixel_height // 8):
+        pixel_height = 8 * (pixel_height // 8) + 8
+
+    print("Image dimensions 0/1 " + str(pixel_width) + "px wide x " + str(pixel_height) + "px high")
+
+    png_array = []
+    for i in range(0, pixel_height):
+        pixel_row = png_full_pixel_row_ram(i, pixel_width, unpacked_data_0, unpacked_data_1, palette)
+        png_array.append(pixel_row)
+
+    png.from_array(png_array, 'RGB').save(output_path_pngs + "_ram.png")
+
+
+def extract_image(input_data, sections, output_folder, input_file, palette, pixel_width, data_is_packed):
+    print("\nExtracting image: " + input_file)
+
+    output_path_pngs = output_folder + "pngs/" + input_file
     output_path_binaries = output_folder + "binaries/" + input_file
 
-    unpacked_data_0 = bytearray()
-    unpack(input_data, unpacked_data_0)
-    output_file = open(output_path_binaries + "_pattern0.bin", "wb")
-    output_file.write(unpacked_data_0)
-    output_file.close()
+    unpacked_data_0, index = unpack_data(input_data, output_path_binaries + "_pattern0.bin", 0, data_is_packed)
 
     if sections >= 2:
-        unpacked_data_1 = bytearray()
-        unpack(input_data, unpacked_data_1)
-        output_file = open(output_path_binaries + "_pattern1.bin", "wb")
-        output_file.write(unpacked_data_1)
-        output_file.close()
+        unpacked_data_1, index = unpack_data(input_data, output_path_binaries + "_pattern1.bin", index, data_is_packed)
 
     if sections >= 4:
-        unpacked_data_2 = bytearray()
-        unpack(input_data, unpacked_data_2)
-        output_file = open(output_path_binaries + "_sprite0.bin", "wb")
-        output_file.write(unpacked_data_2)
-        output_file.close()
-
-        unpacked_data_3 = bytearray()
-        unpack(input_data, unpacked_data_3)
-        output_file = open(output_path_binaries + "_sprite1.bin", "wb")
-        output_file.write(unpacked_data_3)
-        output_file.close()
+        unpacked_data_2, index = unpack_data(input_data, output_path_binaries + "_sprite0.bin", index, data_is_packed)
+        unpacked_data_3, index = unpack_data(input_data, output_path_binaries + "_sprite1.bin", index, data_is_packed)
 
     print("End index is " + str(index))
     print("File size " + str(len(input_data)))
@@ -142,49 +175,22 @@ def extract_image(input_data, sections, output_folder, input_file, palette):
         print("More sections detected")
 
     if sections == 1:
-        # Convert unpacked_data_0 into PNG
-        pixel_height = int(0.5 * len(unpacked_data_0) / (pixel_width / 8))
-        print("Image dimensions " + str(pixel_width) + "px wide x " + str(pixel_height) + "px high")
-
-        png_array = []
-        for i in range(0, pixel_height):
-            pixel_row = png_full_pixel_row_ppu(i, pixel_width, unpacked_data_0, palette)
-            png_array.append(pixel_row)
-
-        png.from_array(png_array, 'RGB').save(output_path + "_ppu.png")
+        create_png_from_ppu_data(unpacked_data_0, output_path_pngs, pixel_width, palette)
 
     if sections >= 2:
-        # Convert unpacked_data_0/unpacked_data_1 into PNG
-        pixel_height = int(len(unpacked_data_0) / (pixel_width / 8))
-        print("Image dimensions 0/1 " + str(pixel_width) + "px wide x " + str(pixel_height) + "px high")
-
-        png_array = []
-        for i in range(0, pixel_height):
-            if sections >= 4:
-                # For dual-image, RAM is always greyscale with palette 1 from palettes
-                pixel_row = png_full_pixel_row_ram(i, pixel_width, unpacked_data_0, unpacked_data_1, 1)
-            else:
-                pixel_row = png_full_pixel_row_ram(i, pixel_width, unpacked_data_0, unpacked_data_1, palette)
-            png_array.append(pixel_row)
-
-        png.from_array(png_array, 'RGB').save(output_path + "_ram.png")
+        if sections >= 4:
+            # For multiple-section images, RAM is always greyscale
+            create_png_from_ram_data(unpacked_data_0, unpacked_data_1, output_path_pngs, pixel_width, 1)
+        else:
+            create_png_from_ram_data(unpacked_data_0, unpacked_data_1, output_path_pngs, pixel_width, palette)
 
     if sections >= 4:
-        # Convert unpacked_data2/unpacked_data3 into PNG
-        unpacked_data = unpacked_data_2 + unpacked_data_3
-
-        pixel_height = int(len(unpacked_data_2) / (pixel_width / 8))
-        print("Image dimensions 2/3 " + str(pixel_width) + "px wide x " + str(pixel_height) + "px high")
-
-        png_array = []
-        for i in range(0, pixel_height):
-            pixel_row = png_full_pixel_row_ppu(i, pixel_width, unpacked_data, palette)
-            png_array.append(pixel_row)
-
-        png.from_array(png_array, 'RGB').save(output_path + "_ppu.png")
+        create_png_from_ppu_data(unpacked_data_2 + unpacked_data_3, output_path_pngs, pixel_width, palette)
 
 
 # Main loop
+
+# Palettes used to create PNGs
 
 palettes = [
     [[255,   0,   0], [  0, 255,   0], [  0,   0, 255]],        # 0 RGB
@@ -195,11 +201,13 @@ palettes = [
     [[254, 110, 204], [181,  49,  32], [183,  30, 123]],        # 5 Palette for Lave foreground sprite (PPU)
     [[188, 190,   0], [173, 173, 173], [255, 254, 255]],        # 6 Palette for commander headshot background (RAM)
     [[153,  78,   0], [234, 158,  34], [247, 216, 165]],        # 7 Palette for commander face foreground sprite (PPU)
+    [[255, 255, 255], [  0,   0,   0], [255, 255, 255]],        # 8 Only show colour 1
+    [[0,     0,   0], [255, 255, 255], [255, 255, 255]],        # 9 Only show colour 2
 ]
 
-# Palettes for colour foreground sprite in dual-image system pictures in bank 5
+# Palettes to use for colour foreground sprite in system images
 
-bank5_palettes_sprite = [
+system_image_palettes = [
     1,
     1,
     1,
@@ -217,9 +225,9 @@ bank5_palettes_sprite = [
     1
 ]
 
-# Offsets of face images in bank 4
+# faceOffset entries from bank 4
 
-bank4_offsets_1 = [
+face_offsets = [
     0x001E,
     0x0195,
     0x0305,
@@ -237,9 +245,9 @@ bank4_offsets_1 = [
     0x150E
 ]
 
-# Offsets of head images in bank 4
+# headOffset entries from bank 4
 
-bank4_offsets_2 = [
+head_offsets = [
     0x001E,
     0x0195,
     0x0310,
@@ -257,9 +265,9 @@ bank4_offsets_2 = [
     0x1585
 ]
 
-# Offsets of dual-image system pictures in bank 5
+# systemOffset entries from bank 4
 
-bank5_offsets = [
+system_offsets = [
     0x0020,
     0x0458,
     0x0847,
@@ -278,30 +286,91 @@ bank5_offsets = [
     0x3E82
 ]
 
-bank_data = bytearray()
-bank_file = open("../4-reference-binaries/ntsc/bank5.bin", "rb")
-bank_data.extend(bank_file.read())
+# Load game binaries
+
+bank_data3 = bytearray()
+bank_file = open("../4-reference-binaries/ntsc/bank3.bin", "rb")
+bank_data3.extend(bank_file.read())
 bank_file.close()
+
+bank_data4 = bytearray()
+bank_file = open("../4-reference-binaries/ntsc/bank4.bin", "rb")
+bank_data4.extend(bank_file.read())
+bank_file.close()
+
+bank_data5 = bytearray()
+bank_file = open("../4-reference-binaries/ntsc/bank5.bin", "rb")
+bank_data5.extend(bank_file.read())
+bank_file.close()
+
+bank_data7 = bytearray()
+bank_file = open("../4-reference-binaries/ntsc/bank7.bin", "rb")
+bank_data7.extend(bank_file.read())
+bank_file.close()
+
+# Face images have one section per image, one image per face
+# Stored as interleaved PPU tile format for sprite foreground
+# (i.e. each pattern is 8 bytes for bit 0, then 8 bytes for bit 1)
+
+for i in range(0, 14):
+    start = face_offsets[i] + 0x0C
+    end = face_offsets[i + 1] + 0x0C
+    extract_image(bank_data4[start: end], 1, "../1-source-files/images/face-images/", "faceImage" + str(i), palette=7, pixel_width=40, data_is_packed=True)
+
+# Headshot images have two sections per image, one image per headshot
+# Each section is stored as a 1-bpp pattern buffer for unpacking into RAM
+# (i.e. section 1 contains bit 0, section 2 contains bit 1)
+
+for i in range(0, 14):
+    start = head_offsets[i] + 0x151A
+    end = head_offsets[i + 1] + 0x151A
+    extract_image(bank_data4[start: end], 2, "../1-source-files/images/headshot-images/", "headImage" + str(i), palette=6, pixel_width=48, data_is_packed=True)
+
+# System images have four sections per image, two images per system
+# First two sections are as for headshots: each is in 1-bpp pattern buffer format
+# Second two sections are as for faces: concatenate to give interleaved PPU tile format
 
 for i in range(0, 15):
-    start = bank5_offsets[i] + 0x0C
-    end = bank5_offsets[i + 1] + 0x0C
-    palette = bank5_palettes_sprite[i]
-    extract_image(bank_data[start: end], 4, "../1-source-files/images/system-images/", "systemImage" + str(i), palette)
+    start = system_offsets[i] + 0x0C
+    end = system_offsets[i + 1] + 0x0C
+    palette = system_image_palettes[i]
+    extract_image(bank_data5[start: end], 4, "../1-source-files/images/system-images/", "systemImage" + str(i), palette, pixel_width=64, data_is_packed=True)
 
-bank_data = bytearray()
-bank_file = open("../4-reference-binaries/ntsc/bank4.bin", "rb")
-bank_data.extend(bank_file.read())
-bank_file.close()
+# Other images are all one section per image
+# Stored as interleaved PPU tile format for sprite foreground
 
-for i in range(0, 14):
-    start = bank4_offsets_1[i] + 0x0C
-    end = bank4_offsets_1[i + 1] + 0x0C
-    palette = 7
-    extract_image(bank_data[start: end], 1, "../1-source-files/images/face-images/", "faceImage" + str(i), palette)
+start = 0xAA9F - 0x8000
+end = 0xAB1C - 0x8000
+extract_image(bank_data4[start: end], 1, "../1-source-files/images/other-images/", "glassesImage", palette=7, pixel_width=24, data_is_packed=True)
 
-for i in range(0, 14):
-    start = bank4_offsets_2[i] + 0x151A
-    end = bank4_offsets_2[i + 1] + 0x151A
-    palette = 6
-    extract_image(bank_data[start: end], 2, "../1-source-files/images/headshot-images/", "headImage" + str(i), palette)
+start = 0xAB1C - 0x8000
+end = 0xB5CC - 0x8000
+extract_image(bank_data4[start: end], 1, "../1-source-files/images/other-images/", "eliteLogoBig", palette=7, pixel_width=48, data_is_packed=True)
+
+start = 0x9760 - 0x8000
+end = 0x9FA1 - 0x8000
+extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "dialsImage", palette=7, pixel_width=160, data_is_packed=True)
+
+start = 0x9FA1 - 0x8000
+end = 0xA493 - 0x8000
+extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "cobraImage", palette=7, pixel_width=40, data_is_packed=True)
+
+start = 0xA4D3 - 0x8000
+end = 0xA730 - 0x8000
+extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "eliteLogo", palette=7, pixel_width=40, data_is_packed=True)
+
+start = 0xA71B - 0x8000
+end = 0xA730 - 0x8000
+extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "eliteLogoBall", palette=7, pixel_width=16, data_is_packed=True)
+
+start = 0xA493 - 0x8000
+end = 0xA4D3 - 0x8000
+extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "cargoImage", palette=7, pixel_width=16, data_is_packed=False)
+
+# Font is stored as one set of characters in colour 1 and another in colour 2
+# We can save this as two images, with different palettes, to expose the letters
+
+start = 0xFCE8 - 0xC000
+end = 0xFFE0 - 0xC000
+extract_image(bank_data7[start: end], 1, "../1-source-files/images/other-images/", "font_0", palette=8, pixel_width=64, data_is_packed=False)
+extract_image(bank_data7[start: end], 1, "../1-source-files/images/other-images/", "font_1", palette=9, pixel_width=64, data_is_packed=False)
