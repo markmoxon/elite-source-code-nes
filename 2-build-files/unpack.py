@@ -368,6 +368,26 @@ start = 0xA493 - 0x8000
 end = 0xA4D3 - 0x8000
 extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "missileImage", palette=7, pixel_width=16, data_is_packed=False)
 
+start = 0x8100 - 0x8000
+end = 0x8500 - 0x8000
+extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "iconBarImage0", palette=7, pixel_width=256, data_is_packed=False)
+
+start = 0x8500 - 0x8000
+end = 0x8900 - 0x8000
+extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "iconBarImage1", palette=7, pixel_width=256, data_is_packed=False)
+
+start = 0x8900 - 0x8000
+end = 0x8D00 - 0x8000
+extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "iconBarImage2", palette=7, pixel_width=256, data_is_packed=False)
+
+start = 0x8D00 - 0x8000
+end = 0x9100 - 0x8000
+extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "iconBarImage3", palette=7, pixel_width=256, data_is_packed=False)
+
+start = 0x9100 - 0x8000
+end = 0x9500 - 0x8000
+extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "iconBarImage4", palette=7, pixel_width=256, data_is_packed=False)
+
 # The font is stored as interleaved PPU tile format
 # But with one set of characters in colour 1 and another in colour 2
 # We can save this as two images, with different palettes, to expose the letters

@@ -1519,7 +1519,7 @@
 
  CMP #$98
  BNE C876F
- JSR subm_F338
+ JSR GetStatusCondition
  CPX L0471
  BEQ C875B
  JSR STATUS
@@ -1752,7 +1752,7 @@
  STA XC
  LDA #$7E
  JSR NLIN3
- JSR subm_F338
+ JSR GetStatusCondition
  STX L0471
  LDA #$E6
  DEX

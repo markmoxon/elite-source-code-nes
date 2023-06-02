@@ -2361,14 +2361,12 @@
 
 ; ******************************************************************************
 ;
-;       Name: copyrightMessage
+;       Name: Copyright message
 ;       Type: Variable
 ;   Category: Text
 ;    Summary: A copyright message buried in the code, complete with typo
 ;
 ; ******************************************************************************
-
-.copyrightMessage
 
  EQUS "C", 0
  EQUS "c", 0

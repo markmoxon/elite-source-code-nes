@@ -9392,14 +9392,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_F338
+;       Name: GetStatusCondition
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_F338
+.GetStatusCondition
 
  LDX #0
  LDY QQ12
@@ -11642,7 +11642,7 @@ ENDIF
 ;       Name: fontImage
 ;       Type: Variable
 ;   Category: Text
-;    Summary: Image data for the text font (this data is not packed)
+;    Summary: Image data for the text font
 ;
 ; ******************************************************************************
 
