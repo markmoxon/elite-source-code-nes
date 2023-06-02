@@ -3165,9 +3165,9 @@
 
  STX tileNumber
 
- LDA #HI(LFC00)         ; Set V(1 0) = LFC00
+ LDA #HI(lineImage)     ; Set V(1 0) = lineImage
  STA V+1
- LDA #LO(LFC00)
+ LDA #LO(lineImage)
  STA V
 
  LDA #HI(pattBuffer0+8*37)  ; Set SC(1 0) to the address of pattern #37 in
@@ -3176,7 +3176,7 @@
  STA SC
 
  LDA #HI(pattBuffer1+8*37)  ; Set SC2(1 0) to the address of pattern #37 in
- STA SC2+1                  ; pattern buffer 0
+ STA SC2+1                  ; pattern buffer 1
  LDA #LO(pattBuffer1+8*37)
  STA SC2
 

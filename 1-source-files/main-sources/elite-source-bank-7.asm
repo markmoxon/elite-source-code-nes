@@ -11598,14 +11598,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LFC00
+;       Name: lineImage
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing images
+;    Summary: Image data for the horizontal line, vertical line and block images
 ;
 ; ******************************************************************************
 
-.LFC00
+.lineImage
 
  EQUB $FF, $00, $00, $00, $00, $00, $00, $00  ; FC00: FF 00 00... ...
  EQUB $00, $FF, $00, $00, $00, $00, $00, $00  ; FC08: 00 FF 00... ...

@@ -388,11 +388,20 @@ start = 0x9100 - 0x8000
 end = 0x9500 - 0x8000
 extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "iconBarImage4", palette=7, pixel_width=256, data_is_packed=False)
 
+# The lines image is stored as interleaved PPU tile format
+# With one set of lines in colour 1 and another in colour 2
+# We can save this as two images, with different palettes, to expose the lines
+
+start = 0xFC00 - 0xC000
+end = 0xFCE8 - 0xC000
+extract_image(bank_data7[start: end], 1, "../1-source-files/images/other-images/", "lineImage0", palette=8, pixel_width=120, data_is_packed=False)
+extract_image(bank_data7[start: end], 1, "../1-source-files/images/other-images/", "lineImage1", palette=9, pixel_width=120, data_is_packed=False)
+
 # The font is stored as interleaved PPU tile format
-# But with one set of characters in colour 1 and another in colour 2
+# With one set of characters in colour 1 and another in colour 2
 # We can save this as two images, with different palettes, to expose the letters
 
 start = 0xFCE8 - 0xC000
 end = 0xFFE0 - 0xC000
-extract_image(bank_data7[start: end], 1, "../1-source-files/images/other-images/", "font_0", palette=8, pixel_width=64, data_is_packed=False)
-extract_image(bank_data7[start: end], 1, "../1-source-files/images/other-images/", "font_1", palette=9, pixel_width=64, data_is_packed=False)
+extract_image(bank_data7[start: end], 1, "../1-source-files/images/other-images/", "fontImage0", palette=8, pixel_width=64, data_is_packed=False)
+extract_image(bank_data7[start: end], 1, "../1-source-files/images/other-images/", "fontImage1", palette=9, pixel_width=64, data_is_packed=False)
