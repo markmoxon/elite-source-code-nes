@@ -85,15 +85,23 @@ def unpack_data(input_data, filename, index, data_is_packed):
 
 def png_pixel(colour, palette):
     if colour == 0:
-        return [0, 0, 0]
+        return [0, 0, 0, 255]
     return palettes[palette][colour - 1]
 
 
 def png_8_pixel_row(byte_0, byte_1, palette):
     row = []
-    for i in range(0, 8):
-        pixel = ((byte_0 & (1 << i)) + ((byte_1 & (1 << i)) << 1)) >> i
-        row = png_pixel(pixel, palette) + row
+    if byte_0 == -1 and byte_1 == -1:
+        for i in range(0, 8):
+            row = [0, 0, 0, 0] + row
+    else:
+        if byte_0 == -1:
+            byte_0 = 0
+        if byte_1 == -1:
+            byte_1 = 0
+        for i in range(0, 8):
+            pixel = ((byte_0 & (1 << i)) + ((byte_1 & (1 << i)) << 1)) >> i
+            row = png_pixel(pixel, palette) + row
     return row
 
 
@@ -116,7 +124,7 @@ def png_full_pixel_row_ppu(y, pixel_width, data, palette):
 def pad_with_black(data, i):
     if i < len(data):
         return data[i]
-    return 0
+    return -1
 
 
 def create_png_from_ppu_data(unpacked_data, output_path_pngs, pixel_width, palette):
@@ -132,7 +140,7 @@ def create_png_from_ppu_data(unpacked_data, output_path_pngs, pixel_width, palet
         pixel_row = png_full_pixel_row_ppu(i, pixel_width, unpacked_data, palette)
         png_array.append(pixel_row)
 
-    png.from_array(png_array, 'RGB').save(output_path_pngs + "_ppu.png")
+    png.from_array(png_array, 'RGBA').save(output_path_pngs + "_ppu.png")
 
 
 def create_png_from_ram_data(unpacked_data_0, unpacked_data_1, output_path_pngs, pixel_width, palette):
@@ -148,7 +156,7 @@ def create_png_from_ram_data(unpacked_data_0, unpacked_data_1, output_path_pngs,
         pixel_row = png_full_pixel_row_ram(i, pixel_width, unpacked_data_0, unpacked_data_1, palette)
         png_array.append(pixel_row)
 
-    png.from_array(png_array, 'RGB').save(output_path_pngs + "_ram.png")
+    png.from_array(png_array, 'RGBA').save(output_path_pngs + "_ram.png")
 
 
 def extract_image(input_data, sections, output_folder, input_file, palette, pixel_width, data_is_packed):
@@ -193,16 +201,16 @@ def extract_image(input_data, sections, output_folder, input_file, palette, pixe
 # Palettes used to create PNGs
 
 palettes = [
-    [[255,   0,   0], [  0, 255,   0], [  0,   0, 255]],        # 0 RGB
-    [[173, 173, 173], [102, 102, 102], [255, 254, 255]],        # 1 Grey palette for system image backgrounds (RAM)
-    [[234, 158,  34], [188, 190,   0], [153,  78,   0]],        # 2 Palette for Leesti foreground sprite (PPU)
-    [[254, 196, 234], [181,  49,  32], [254, 110, 204]],        # 3 Palette for Diso foreground sprite (PPU)
-    [[ 92, 228,  48], [  0, 143,  50], [  0,  82,   0]],        # 4 Palette for Reorte foreground sprite (PPU)
-    [[254, 110, 204], [181,  49,  32], [183,  30, 123]],        # 5 Palette for Lave foreground sprite (PPU)
-    [[188, 190,   0], [173, 173, 173], [255, 254, 255]],        # 6 Palette for commander headshot background (RAM)
-    [[153,  78,   0], [234, 158,  34], [247, 216, 165]],        # 7 Palette for commander face foreground sprite (PPU)
-    [[255, 255, 255], [  0,   0,   0], [255, 255, 255]],        # 8 Only show colour 1
-    [[0,     0,   0], [255, 255, 255], [255, 255, 255]],        # 9 Only show colour 2
+    [[255,   0,   0, 255], [  0, 255,   0, 255], [  0,   0, 255, 255]],        # 0 RGB
+    [[173, 173, 173, 255], [102, 102, 102, 255], [255, 254, 255, 255]],        # 1 Grey palette for system image backgrounds (RAM)
+    [[234, 158,  34, 255], [188, 190,   0, 255], [153,  78,   0, 255]],        # 2 Palette for Leesti foreground sprite (PPU)
+    [[254, 196, 234, 255], [181,  49,  32, 255], [254, 110, 204, 255]],        # 3 Palette for Diso foreground sprite (PPU)
+    [[ 92, 228,  48, 255], [  0, 143,  50, 255], [  0,  82,   0, 255]],        # 4 Palette for Reorte foreground sprite (PPU)
+    [[254, 110, 204, 255], [181,  49,  32, 255], [183,  30, 123, 255]],        # 5 Palette for Lave foreground sprite (PPU)
+    [[188, 190,   0, 255], [173, 173, 173, 255], [255, 254, 255, 255]],        # 6 Palette for commander headshot background (RAM)
+    [[153,  78,   0, 255], [234, 158,  34, 255], [247, 216, 165, 255]],        # 7 Palette for commander face foreground sprite (PPU)
+    [[255, 255, 255, 255], [  0,   0,   0, 255], [255, 255, 255, 255]],        # 8 Only show colour 1
+    [[0,     0,   0, 255], [255, 255, 255, 255], [255, 255, 255, 255]],        # 9 Only show colour 2
 ]
 
 # Palettes to use for colour foreground sprite in system images
