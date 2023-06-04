@@ -274,18 +274,38 @@ IF NOT(_BANK = 6)
  subm_A4A5          = $A4A5
  subm_A5AB          = $A5AB
  subm_B459          = $B459
- subm_B88C          = $B88C
- subm_B8FE          = $B8FE
- subm_B90D6         = $B90D
- subm_B919          = $B919
- LL164              = $B980
- subm_BA17          = $BA17
- subm_BA63          = $BA63
- subm_BB37          = $BB37
- subm_BBDE          = $BBDE
- TITLE              = $BC83
- subm_BE52          = $BE52
- subm_BED2          = $BED2
+
+ IF _NTSC
+
+  subm_B88C         = $B88C
+  subm_B8FE         = $B8FE
+  subm_B90D6        = $B90D
+  subm_B919         = $B919
+  LL164             = $B980
+  subm_BA17         = $BA17
+  subm_BA63         = $BA63
+  subm_BB37         = $BB37
+  subm_BBDE         = $BBDE
+  TITLE             = $BC83
+  subm_BE52         = $BE52
+  subm_BED2         = $BED2
+
+ ELIF _PAL
+
+  subm_B88C         = $B89B
+  subm_B8FE         = $B90D
+  subm_B90D6        = $B91C
+  subm_B919         = $B928
+  LL164             = $B98F
+  subm_BA17         = $BA26
+  subm_BA63         = $BA72
+  subm_BB37         = $BB46
+  subm_BBDE         = $BBED
+  TITLE             = $BC92
+  subm_BE52         = $BE6D
+  subm_BED2         = $BEED
+
+ ENDIF
 
 ENDIF
 
@@ -3646,6 +3666,14 @@ ORG $0200
 
  SKIP 1                 ; ???
 
+IF _PAL
+
+.PAL_EXTRA
+
+ SKIP 1
+
+ENDIF
+
 .L045F
 
  SKIP 1                 ; ???
@@ -4232,6 +4260,25 @@ ORG $0200
 .L05F2
 
  SKIP 1                 ; ???
+
+ CLEAR BUF+32, P%       ; The following tables share space with BUF through to
+ ORG BUF+32             ; K%, which we can do as the scroll text is not shown
+                        ; at the same time as ships, stardust and so on
+
+.X1TB
+
+ SKIP 240               ; The x-coordinates of the start points for character
+                        ; lines in the scroll text
+
+.Y1TB
+
+ SKIP 240               ; The y-coordinates of the start points for character
+                        ; lines in the scroll text
+
+.X2TB
+
+ SKIP 240               ; The x-coordinates of the end points for character
+                        ; lines in the scroll text
 
  PRINT "WP workspace from  ", ~WP," to ", ~P%
 

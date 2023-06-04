@@ -330,10 +330,23 @@ ENDIF
 
 .LC0E3
 
- EQUB $0B,   9, $0D, $0A, $20, $20, $20, $20  ; C0DF: 06 06 07... ...
+ EQUB $0B,   9, $0D, $0A
+
+IF _NTSC
+
+ EQUB $20, $20, $20, $20  ; C0DF: 06 06 07... ...
  EQUB $10,   0, $C4, $ED, $5E, $E5, $22, $E5  ; C0EB: 10 00 C4... ...
  EQUB $22,   0,   0, $ED, $5E, $E5, $22,   9  ; C0F3: 22 00 00... "..
  EQUB $68,   0,   0,   0,   0                 ; C0FB: 68 00 00... h..
+
+ELIF _PAL
+
+ EQUB $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
+ EQUB $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
+ EQUB $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
+ EQUB $FF
+
+ENDIF
 
 ; ******************************************************************************
 ;
@@ -2249,10 +2262,23 @@ ENDIF
  JSR SetPalette
  LDA showUserInterface
  STA setupPPUForIconBar
+
+IF _NTSC
+
  LDA #$1A
  STA tempVar+1
  LDA #$8D
  STA tempVar
+
+ELIF _PAL
+
+ LDA #$1D
+ STA tempVar+1
+ LDA #$09
+ STA tempVar
+
+ENDIF
+
  JSR subm_D00B
  JSR ReadControllers
  LDA L03EE
@@ -6315,7 +6341,16 @@ ENDIF
 
 .LE5B0_EN
 
+IF _NTSC
+
  EQUB $9F, $C2, $00, $75, $05, $8A, $40, $04  ; E5B0: 9F C2 00... ...
+
+ELIF _PAL
+
+ EQUB $9F, $C2, $00, $76, $05, $8A, $40, $04  ; E5B0: 9F C2 00... ...
+
+ENDIF
+
  EQUB $83, $C2, $00, $6E, $03, $9C, $04, $14  ; E5B8: 83 C2 00... ...
  EQUB $44, $06, $40, $1F, $40, $1F, $21, $0E  ; E5C0: 44 06 40... D.@
  EQUB $83, $10, $03, $88, $8D, $01, $1F, $01  ; E5C8: 83 10 03... ...
@@ -6338,7 +6373,16 @@ ENDIF
 
 .LE602_DE
 
+IF _NTSC
+
  EQUB $9F, $C2, $00, $75, $05, $8A, $40, $04  ; E602: 9F C2 00... ...
+
+ELIF _PAL
+
+ EQUB $9F, $C2, $00, $76, $05, $8A, $40, $04  ; E602: 9F C2 00... ...
+
+ENDIF
+
  EQUB $83, $C2, $00, $6E, $03, $9C, $04, $14  ; E60A: 83 C2 00... ...
  EQUB $44, $06, $40, $1F, $40, $1F, $21, $0E  ; E612: 44 06 40... D.@
  EQUB $83, $10, $03, $88, $8D, $01, $1F, $01  ; E61A: 83 10 03... ...
@@ -6361,7 +6405,16 @@ ENDIF
 
 .LE653_FR
 
+IF _NTSC
+
  EQUB $9F, $C2, $00, $75, $05, $8A, $40, $04  ; E653: 9F C2 00... ...
+
+ELIF _PAL
+
+ EQUB $9F, $C2, $00, $76, $05, $8A, $40, $04  ; E653: 9F C2 00... ...
+
+ENDIF
+
  EQUB $83, $C2, $00, $6E, $03, $9C, $04, $14  ; E65B: 83 C2 00... ...
  EQUB $44, $06, $40, $1F, $40, $1F, $21, $0E  ; E663: 44 06 40... D.@
  EQUB $83, $10, $03, $88, $8D, $01, $1F, $01  ; E66B: 83 10 03... ...
@@ -6411,7 +6464,17 @@ ENDIF
  EQUB $88, $C4, $00, $6B, $03, $02, $16, $04  ; E764: 88 C4 00... ...
  EQUB $1E, $21, $22, $83, $10, $03, $88, $10  ; E76C: 1E 21 22... .!"
  EQUB $03, $88, $10, $03, $88, $10, $03, $88  ; E774: 03 88 10... ...
+
+IF _NTSC
+
  EQUB $C2, $00, $64, $05, $22, $3A, $83, $10  ; E77C: C2 00 64... ..d
+
+ELIF _PAL
+
+ EQUB $C2, $00, $65, $05, $22, $3A, $83, $10  ; E77C: C2 00 64... ..d
+
+ENDIF
+
  EQUB $03, $88, $C2, $00, $A5, $00, $9F, $21  ; E784: 03 88 C2... ...
  EQUB $02, $83, $10, $03, $88, $9F, $02, $04  ; E78C: 02 83 10... ...
  EQUB $83, $02, $04, $83, $02, $04, $83, $02  ; E794: 83 02 04... ...
@@ -6427,8 +6490,16 @@ ENDIF
  EQUB $08, $1F, $83, $10, $03, $88, $C3, $08  ; E7E4: 08 1F 83... ...
  EQUB $01, $04, $9F, $21, $02, $83, $10, $03  ; E7EC: 01 04 9F... ...
  EQUB $88, $22, $1E, $83, $28, $0A, $C3, $00  ; E7F4: 88 22 1E... .".
- EQUB $86, $04, $10, $03, $88                 ; E7FC: 86 04 10... ...
- EQUB $80                                     ; E801: 80          .
+
+IF _NTSC
+
+ EQUB $86, $04, $10, $03, $88, $80            ; E7FC: 86 04 10... ...
+
+ELIF _PAL
+
+ EQUB $87, $04, $10, $03, $88, $80            ; E7FC: 86 04 10... ...
+
+ENDIF
 
 ; ******************************************************************************
 ;
@@ -6645,10 +6716,18 @@ ENDIF
  ASL A
  STA L0460
  LDX #0
+
  STX L0463
  STX L0462
  STX L0468
  STX L0467
+
+IF _PAL
+
+ STX PAL_EXTRA
+
+ENDIF
+
  RTS
 
 ; ******************************************************************************
@@ -6662,7 +6741,20 @@ ENDIF
 
 .subm_E91D
 
+IF _NTSC
+
  DEC L0467
+
+ELIF _PAL
+
+ DEC $0468
+ BNE CE928
+ LSR $045F
+
+.CE928
+
+ENDIF
+
  BPL CE925
  INC L0467
 
@@ -6763,7 +6855,17 @@ ENDIF
  STA tileSprite2
  LDA L0461
  CLC
+
+IF _NTSC
+
  ADC #$0B
+
+ELIF _PAL
+
+ ADC #$11
+
+ENDIF
+
  STA ySprite1
  STA ySprite2
  LDA L0460
@@ -6780,7 +6882,17 @@ ENDIF
  STA xSprite3
  LDA L0461
  CLC
+
+IF _NTSC
+
  ADC #$13
+
+ELIF _PAL
+
+ ADC #$19
+
+ENDIF
+
  STA ySprite4
  STA ySprite3
  LDA L0460
@@ -6794,7 +6906,17 @@ ENDIF
  STA tileSprite2
  LDA L0461
  CLC
+
+IF _NTSC
+
  ADC #8
+
+ELIF _PAL
+
+ ADC #$E
+
+ENDIF
+
  STA ySprite1
  STA ySprite2
  LDA L0460
@@ -6811,7 +6933,17 @@ ENDIF
  STA xSprite3
  LDA L0461
  CLC
+
+IF _NTSC
+
  ADC #$10
+
+ELIF _PAL
+
+ ADC #$16
+
+ENDIF
+
  STA ySprite4
  STA ySprite3
 
@@ -6842,6 +6974,9 @@ ENDIF
 
  CMP #$40
  BNE CEA7E
+
+IF _NTSC
+
  LDA L0468
  BEQ CEA7E
 
@@ -6853,6 +6988,34 @@ ENDIF
  TAY
  LDA (L00BE),Y
  STA L0465
+
+ELIF _PAL
+
+ LDA $0469
+ BNE CEA80
+ STA $045F
+ BEQ CEA7E
+
+.CEA80
+
+ LDA #$28
+ STA $0468
+ LDA $045F
+ BNE CEA73
+ INC $045F
+ BNE CEA7E
+
+.CEA73
+
+ LSR $045F
+ LDA $0461
+ LSR A
+ LSR A
+ TAY
+ LDA ($BE),Y
+ STA $0466
+
+ENDIF
 
 .CEA7E
 
@@ -11588,6 +11751,8 @@ ENDIF
 ;
 ; ******************************************************************************
 
+IF _NTSC
+
  EQUB $F5, $F5, $F5, $F5, $F6, $F6, $F6, $F6  ; FBCB: F5 F5 F5... ...
  EQUB $F7, $F7, $F7, $F7, $F7, $F8, $F8, $F8  ; FBD3: F7 F7 F7... ...
  EQUB $F8, $F9, $F9, $F9, $F9, $F9, $FA, $FA  ; FBDB: F8 F9 F9... ...
@@ -11595,6 +11760,14 @@ ENDIF
  EQUB $FC, $FC, $FC, $FC, $FC, $FD, $FD, $FD  ; FBEB: FC FC FC... ...
  EQUB $FD, $FD, $FD, $FE, $FE, $FE, $FE, $FE  ; FBF3: FD FD FD... ...
  EQUB $FF, $FF, $FF, $FF, $FF
+
+ELIF _PAL
+
+ EQUB $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
+ EQUB $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
+ EQUB $FF, $FF, $FF, $FF, $FF, $FF
+
+ENDIF
 
 ; ******************************************************************************
 ;
@@ -11742,7 +11915,17 @@ ENDIF
  EQUB $36, $00, $7F, $03, $7F, $63, $7F, $00
  EQUB $36, $00, $7F, $63, $63, $63, $7F, $00
  EQUB $36, $00, $63, $63, $63, $63, $7F, $00
+
+IF _NTSC
+
  EQUB $00, $8D, $06, $20, $A9, $4C, $00, $C0
+
+ELIF _PAL
+
+ EQUB $FF, $FF, $FF, $FF, $FF, $4C, $00, $C0
+
+ENDIF
+
  EQUB $45, $4C, $20, $20, $20, $20, $20, $20
  EQUB $20, $20, $20, $20, $20, $20, $20, $20
  EQUB $00, $00, $00, $00, $38, $04, $01, $07

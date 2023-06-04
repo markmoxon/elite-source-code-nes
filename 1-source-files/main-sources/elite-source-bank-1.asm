@@ -114,6 +114,8 @@
 
 .Interrupts
 
+IF _NTSC
+
  RTI                    ; Return from the IRQ interrupt without doing anything
                         ;
                         ; This ensures that while the system is starting up and
@@ -126,6 +128,7 @@
                         ; routine, the vector is overwritten with the last two
                         ; bytes of bank 7, which point to the IRQ routine
 
+ENDIF
 ; ******************************************************************************
 ;
 ;       Name: Version number
@@ -135,7 +138,15 @@
 ;
 ; ******************************************************************************
 
+IF _NTSC
+
  EQUS " 5.0"
+
+ELIF _PAL
+
+ EQUS "<2.8>"
+
+ENDIF
 
 ; ******************************************************************************
 ;
@@ -12226,7 +12237,16 @@ ENDMACRO
 
 .CB9D8
 
+IF _NTSC
+
  ADC #$C7
+
+ELIF _PAL
+
+ ADC #$CD
+
+ENDIF
+
  STA SC2+1
  LDA INWK+4
  CMP #$30
@@ -12313,9 +12333,20 @@ ENDMACRO
 
  CLC
  ADC SC2+1
+
+IF _NTSC
+
  CMP #$DC
  BCC CBA75
  LDA #$DC
+
+ELIF _PAL
+
+ CMP #$E2
+ BCC CBA75
+ LDA #$E2
+
+ENDIF
 
 .CBA75
 
@@ -12538,12 +12569,25 @@ ENDMACRO
  LDA K3+1
  CMP #$80
  BCC CBB83
+
 .CBB7C
+
  LDA #$F0
  STA ySprite58,Y
  BNE CBB8D
+
 .CBB83
+
+IF _NTSC
+
  ADC #$0A
+
+ELIF _PAL
+
+ ADC #$10
+
+ENDIF
+
  STA ySprite58,Y
  LDA #$F5
  STA tileSprite58,Y
@@ -12730,7 +12774,17 @@ ENDMACRO
  STA T                  ; ???
  LDA Yx1M2
  SBC T
+
+IF _NTSC
+
  ADC #$0A
+
+ELIF _PAL
+
+ ADC #$10
+
+ENDIF
+
  STA ySprite37,Y
  LDY T1
  RTS
@@ -12756,6 +12810,8 @@ ENDMACRO
 
  NEXT
 
+IF _NTSC
+
  EQUW Interrupts+$4000  ; Vector to the NMI handler in case this bank is loaded
                         ; into $C000 during startup (the handler contains an RTI
                         ; so the interrupt is processed but has no effect)
@@ -12768,6 +12824,18 @@ ENDMACRO
                         ; loaded into $C000 during startup (the handler contains
                         ; an RTI so the interrupt is processed but has no
                         ; effect)
+
+ELIF _PAL
+
+ EQUW NMI               ; Vector to the NMI handler
+
+ EQUW ResetMMC1+$4000   ; Vector to the RESET handler in case this bank is
+                        ; loaded into $C000 during startup (the handler resets
+                        ; the MMC1 mapper to map bank 7 into $C000 instead)
+
+ EQUW IRQ               ; Vector to the IRQ/BRK handler
+
+ENDIF
 
 ; ******************************************************************************
 ;

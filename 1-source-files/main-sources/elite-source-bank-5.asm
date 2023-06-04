@@ -114,6 +114,8 @@
 
 .Interrupts
 
+IF _NTSC
+
  RTI                    ; Return from the IRQ interrupt without doing anything
                         ;
                         ; This ensures that while the system is starting up and
@@ -126,6 +128,7 @@
                         ; routine, the vector is overwritten with the last two
                         ; bytes of bank 7, which point to the IRQ routine
 
+ENDIF
 ; ******************************************************************************
 ;
 ;       Name: Version number
@@ -135,7 +138,15 @@
 ;
 ; ******************************************************************************
 
+IF _NTSC
+
  EQUS " 5.0"
+
+ELIF _PAL
+
+ EQUS "<2.8>"
+
+ENDIF
 
 ; ******************************************************************************
 ;
@@ -2620,6 +2631,8 @@
 
  NEXT
 
+IF _NTSC
+
  EQUW Interrupts+$4000  ; Vector to the NMI handler in case this bank is loaded
                         ; into $C000 during startup (the handler contains an RTI
                         ; so the interrupt is processed but has no effect)
@@ -2632,6 +2645,18 @@
                         ; loaded into $C000 during startup (the handler contains
                         ; an RTI so the interrupt is processed but has no
                         ; effect)
+
+ELIF _PAL
+
+ EQUW NMI               ; Vector to the NMI handler
+
+ EQUW ResetMMC1+$4000   ; Vector to the RESET handler in case this bank is
+                        ; loaded into $C000 during startup (the handler resets
+                        ; the MMC1 mapper to map bank 7 into $C000 instead)
+
+ EQUW IRQ               ; Vector to the IRQ/BRK handler
+
+ENDIF
 
 ; ******************************************************************************
 ;

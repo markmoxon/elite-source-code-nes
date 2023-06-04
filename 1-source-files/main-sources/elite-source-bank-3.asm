@@ -114,6 +114,8 @@
 
 .Interrupts
 
+IF _NTSC
+
  RTI                    ; Return from the IRQ interrupt without doing anything
                         ;
                         ; This ensures that while the system is starting up and
@@ -126,6 +128,7 @@
                         ; routine, the vector is overwritten with the last two
                         ; bytes of bank 7, which point to the IRQ routine
 
+ENDIF
 ; ******************************************************************************
 ;
 ;       Name: Version number
@@ -135,7 +138,15 @@
 ;
 ; ******************************************************************************
 
+IF _NTSC
+
  EQUS " 5.0"
+
+ELIF _PAL
+
+ EQUS "<2.8>"
+
+ENDIF
 
 ; ******************************************************************************
 ;
@@ -146,11 +157,23 @@
 ;
 ; ******************************************************************************
 
+IF _NTSC
+
  EQUS "  NES ELITE IMAGE 5.2"
  EQUS "  - "
  EQUS "  24 APR 1992"
  EQUS "  (C) D.Braben & I.Bell 1991/92"
  EQUS "  "
+
+ELIF _PAL
+
+ EQUS "  NES ELITE IMAGE 2.8"
+ EQUS "  - "
+ EQUS "  04 MAR 1992"
+ EQUS "  (C) D.Braben & I.Bell 1991/92"
+ EQUS "  "
+
+ENDIF
 
  EQUB $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
  EQUB $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
@@ -2262,7 +2285,17 @@
  INY
  BNE loop_CAB33
  JSR subm_A95D
+
+IF _NTSC
+
  LDA #$9D
+
+ELIF _PAL
+
+ LDA #$A3
+
+ENDIF
+
  STA ySprite0
  LDA #$FE
  STA tileSprite0
@@ -2472,7 +2505,17 @@
  LDA #$F8
  STA xSprite0
  LDY #$12
+
+IF _NTSC
+
  LDX #$9D
+
+ELIF _PAL
+
+ LDX #$A3
+
+ENDIF
+
  LDA QQ11
  BPL CACCC
  CMP #$C4
@@ -2483,10 +2526,30 @@
 .CACA8
 
  LDY #$19
+
+IF _NTSC
+
  LDX #$D5
+
+ELIF _PAL
+
+ LDX #$DB
+
+ENDIF
+
  CMP #$B9
  BNE CACB7
+
+IF _NTSC
+
  LDX #$96
+
+ELIF _PAL
+
+ LDX #$9C
+
+ENDIF
+
  LDA #$F8
  STA xSprite0
 
@@ -2496,13 +2559,32 @@
  AND #$0F
  CMP #$0F
  BNE CACC1
+
+IF _NTSC
+
  LDX #$A6
+
+ELIF _PAL
+
+ LDX #$AC
+
+ENDIF
 
 .CACC1
 
  CMP #$0D
  BNE CACCC
+
+IF _NTSC
+
  LDX #$AD
+
+ELIF _PAL
+
+ LDX #$B3
+
+ENDIF
+
  LDA #$F8
  STA xSprite0
 
@@ -2920,7 +3002,17 @@
  ASL A
  ASL A
  ASL A
+
+IF _NTSC
+
  ADC #$27
+
+ELIF _PAL
+
+ ADC #$46
+
+ENDIF
+
  STA L00BE
  LDA #$EB
  ADC #0
@@ -4634,6 +4726,9 @@
  LDA #$7E
  STA xSprite7
  STA xSprite8
+
+IF _NTSC
+
  LDA #$53
  STA ySprite5
  STA ySprite6
@@ -4641,6 +4736,19 @@
  STA ySprite7
  LDA #$5B
  STA ySprite8
+
+ELIF _PAL
+
+ LDA #$59
+ STA ySprite5
+ STA ySprite6
+ LDA #$51
+ STA ySprite7
+ LDA #$61
+ STA ySprite8
+
+ENDIF
+
  RTS
 
 .CBA83
@@ -4664,12 +4772,27 @@
  LDA #$86
  STA xSprite6
  STA xSprite8
+
+IF _NTSC
+
  LDA #$4B
  STA ySprite5
  STA ySprite6
  LDA #$5B
  STA ySprite7
  STA ySprite8
+
+ELIF _PAL
+
+ LDA #$51
+ STA ySprite5
+ STA ySprite6
+ LDA #$61
+ STA ySprite7
+ STA ySprite8
+
+ENDIF
+
  RTS
 
 .CBAC6
@@ -4692,6 +4815,9 @@
  LDA #$7E
  STA xSprite7
  STA xSprite8
+
+IF _NTSC
+
  LDA #$53
  STA ySprite5
  STA ySprite6
@@ -4699,6 +4825,19 @@
  STA ySprite7
  LDA #$5F
  STA ySprite8
+
+ELIF _PAL
+
+ LDA #$59
+ STA ySprite5
+ STA ySprite6
+ LDA #$4D
+ STA ySprite7
+ LDA #$65
+ STA ySprite8
+
+ENDIF
+
  RTS
 
 .CBB08
@@ -4722,12 +4861,27 @@
  LDA #$82
  STA xSprite6
  STA xSprite8
+
+IF _NTSC
+
  LDA #$4B
  STA ySprite5
  STA ySprite6
  LDA #$5B
  STA ySprite7
  STA ySprite8
+
+ELIF _PAL
+
+ LDA #$51
+ STA ySprite5
+ STA ySprite6
+ LDA #$61
+ STA ySprite7
+ STA ySprite8
+
+ENDIF
+
  RTS
 
 ; ******************************************************************************
@@ -4745,6 +4899,8 @@
 
  NEXT
 
+IF _NTSC
+
  EQUW Interrupts+$4000  ; Vector to the NMI handler in case this bank is loaded
                         ; into $C000 during startup (the handler contains an RTI
                         ; so the interrupt is processed but has no effect)
@@ -4757,6 +4913,18 @@
                         ; loaded into $C000 during startup (the handler contains
                         ; an RTI so the interrupt is processed but has no
                         ; effect)
+
+ELIF _PAL
+
+ EQUW NMI               ; Vector to the NMI handler
+
+ EQUW ResetMMC1+$4000   ; Vector to the RESET handler in case this bank is
+                        ; loaded into $C000 during startup (the handler resets
+                        ; the MMC1 mapper to map bank 7 into $C000 instead)
+
+ EQUW IRQ               ; Vector to the IRQ/BRK handler
+
+ENDIF
 
 ; ******************************************************************************
 ;
