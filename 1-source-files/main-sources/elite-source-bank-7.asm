@@ -10429,802 +10429,1394 @@ ENDIF
 ;
 ;       Name: MLS2
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate (S R) = XX(1 0) and (A P) = A * ALP1
+;
+; ------------------------------------------------------------------------------
+;
+; Calculate the following:
+;
+;   (S R) = XX(1 0)
+;
+;   (A P) = A * ALP1
+;
+; where ALP1 is the magnitude of the current roll angle alpha, in the range
+; 0-31.
 ;
 ; ******************************************************************************
 
 .MLS2
 
- LDX XX
+ LDX XX                 ; Set (S R) = XX(1 0), starting with the low bytes
  STX R
- LDX XX+1
+
+ LDX XX+1               ; And then doing the high bytes
  STX S
+
+                        ; Fall through into MLS1 to calculate (A P) = A * ALP1
 
 ; ******************************************************************************
 ;
 ;       Name: MLS1
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate (A P) = ALP1 * A
+;
+; ------------------------------------------------------------------------------
+;
+; Calculate the following:
+;
+;   (A P) = ALP1 * A
+;
+; where ALP1 is the magnitude of the current roll angle alpha, in the range
+; 0-31.
+;
+; This routine uses an unrolled version of MU11. MU11 calculates P * X, so we
+; use the same algorithm but with P set to ALP1 and X set to A. The unrolled
+; version here can skip the bit tests for bits 5-7 of P as we know P < 32, so
+; only 5 shifts with bit tests are needed (for bits 0-4), while the other 3
+; shifts can be done without a test (for bits 5-7).
+;
+; Other entry points:
+;
+;   MULTS-2             Calculate (A P) = X * A
 ;
 ; ******************************************************************************
 
 .MLS1
 
- LDX ALP1
-; ******************************************************************************
- STX P
-
-; ******************************************************************************
-;
-;       Name: MULTS
-;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
-;
-; ******************************************************************************
+ LDX ALP1               ; Set P to the roll angle alpha magnitude in ALP1
+ STX P                  ; (0-31), so now we calculate P * A
 
 .MULTS
 
- TAX
- AND #$80
+ TAX                    ; Set X = A, so now we can calculate P * X instead of
+                        ; P * A to get our result, and we can use the algorithm
+                        ; from MU11 to do that, just unrolled (as MU11 returns
+                        ; P * X)
+
+ AND #%10000000         ; Set T to the sign bit of A
  STA T
- TXA
- AND #$7F
- BEQ MU6
- TAX
- DEX
- STX T1
- LDA #0
- LSR P
- BCC CF6DC
+
+ TXA                    ; Set A = |A|
+ AND #127
+
+ BEQ MU6                ; If A = 0, jump to MU6 to set P(1 0) = 0 and return
+                        ; from the subroutine using a tail call
+
+ TAX                    ; Set T1 = X - 1
+ DEX                    ;
+ STX T1                 ; We subtract 1 as the C flag will be set when we want
+                        ; to do an addition in the loop below
+
+ LDA #0                 ; Set A = 0 so we can start building the answer in A
+
+ LSR P                  ; Set P = P >> 1
+                        ; and C flag = bit 0 of P
+
+                        ; We are now going to work our way through the bits of
+                        ; P, and do a shift-add for any bits that are set,
+                        ; keeping the running total in A, but instead of using a
+                        ; loop like MU11, we just unroll it, starting with bit 0
+
+ BCC P%+4               ; If C (i.e. the next bit from P) is set, do the
+ ADC T1                 ; addition for this bit of P:
+                        ;
+                        ;   A = A + T1 + C
+                        ;     = A + X - 1 + 1
+                        ;     = A + X
+
+ ROR A                  ; Shift A right to catch the next digit of our result,
+                        ; which the next ROR sticks into the left end of P while
+                        ; also extracting the next bit of P
+
+ ROR P                  ; Add the overspill from shifting A to the right onto
+                        ; the start of P, and shift P right to fetch the next
+                        ; bit for the calculation into the C flag
+
+ BCC P%+4               ; Repeat the shift-and-add loop for bit 1
  ADC T1
-
-.CF6DC
-
  ROR A
  ROR P
- BCC CF6E3
+
+ BCC P%+4               ; Repeat the shift-and-add loop for bit 2
  ADC T1
-
-.CF6E3
-
  ROR A
  ROR P
- BCC CF6EA
+
+ BCC P%+4               ; Repeat the shift-and-add loop for bit 3
  ADC T1
-
-.CF6EA
-
  ROR A
  ROR P
- BCC CF6F1
+
+ BCC P%+4               ; Repeat the shift-and-add loop for bit 4
  ADC T1
-
-.CF6F1
-
  ROR A
  ROR P
- BCC CF6F8
- ADC T1
 
-.CF6F8
+ LSR A                  ; Just do the "shift" part for bit 5
+ ROR P
 
- ROR A
+ LSR A                  ; Just do the "shift" part for bit 6
  ROR P
- LSR A
+
+ LSR A                  ; Just do the "shift" part for bit 7
  ROR P
- LSR A
- ROR P
- LSR A
- ROR P
- ORA T
- RTS
+
+ ORA T                  ; Give A the sign bit of the original argument A that
+                        ; we put into T above
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: MU6
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Set P(1 0) = (A A)
+;
+; ------------------------------------------------------------------------------
+;
+; In practice this is only called via a BEQ following an AND instruction, in
+; which case A = 0, so this routine effectively does this:
+;
+;   P(1 0) = 0
 ;
 ; ******************************************************************************
 
 .MU6
 
- STA P+1
+ STA P+1                ; Set P(1 0) = (A A)
  STA P
- RTS
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: SQUA
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Clear bit 7 of A and calculate (A P) = A * A
+;
+; ------------------------------------------------------------------------------
+;
+; Do the following multiplication of unsigned 8-bit numbers, after first
+; clearing bit 7 of A:
+;
+;   (A P) = A * A
 ;
 ; ******************************************************************************
 
 .SQUA
 
- AND #$7F
+ AND #%01111111         ; Clear bit 7 of A and fall through into SQUA2 to set
+                        ; (A P) = A * A
 
 ; ******************************************************************************
 ;
 ;       Name: SQUA2
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate (A P) = A * A
+;
+; ------------------------------------------------------------------------------
+;
+; Do the following multiplication of unsigned 8-bit numbers:
+;
+;   (A P) = A * A
 ;
 ; ******************************************************************************
 
 .SQUA2
 
- STA P
+ STA P                  ; Copy A into P and X
  TAX
- BNE MU11
+
+ BNE MU11               ; If X = 0 fall through into MU1 to return a 0,
+                        ; otherwise jump to MU11 to return P * X
 
 ; ******************************************************************************
 ;
 ;       Name: MU1
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Copy X into P and A, and clear the C flag
+;
+; ------------------------------------------------------------------------------
+;
+; Used to return a 0 result quickly from MULTU below.
 ;
 ; ******************************************************************************
 
 .MU1
 
- CLC
- STX P
+ CLC                    ; Clear the C flag
+
+ STX P                  ; Copy X into P and A
  TXA
- RTS
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: MLU1
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate Y1 = y_hi and (A P) = |y_hi| * Q for Y-th stardust
+;
+; ------------------------------------------------------------------------------
+;
+; Do the following assignment, and multiply the Y-th stardust particle's
+; y-coordinate with an unsigned number Q:
+;
+;   Y1 = y_hi
+;
+;   (A P) = |y_hi| * Q
 ;
 ; ******************************************************************************
 
 .MLU1
 
- LDA SY,Y
+ LDA SY,Y               ; Set Y1 the Y-th byte of SY
  STA Y1
+
+                        ; Fall through into MLU2 to calculate:
+                        ;
+                        ;   (A P) = |A| * Q
 
 ; ******************************************************************************
 ;
 ;       Name: MLU2
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate (A P) = |A| * Q
+;
+; ------------------------------------------------------------------------------
+;
+; Do the following multiplication of a sign-magnitude 8-bit number P with an
+; unsigned number Q:
+;
+;   (A P) = |A| * Q
 ;
 ; ******************************************************************************
 
 .MLU2
 
- AND #$7F
+ AND #%01111111         ; Clear the sign bit in P, so P = |A|
  STA P
+
+                        ; Fall through into MULTU to calculate:
+                        ;
+                        ;   (A P) = P * Q
+                        ;         = |A| * Q
 
 ; ******************************************************************************
 ;
 ;       Name: MULTU
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate (A P) = P * Q
+;
+; ------------------------------------------------------------------------------
+;
+; Do the following multiplication of unsigned 8-bit numbers:
+;
+;   (A P) = P * Q
 ;
 ; ******************************************************************************
 
 .MULTU
 
- LDX Q
- BEQ MU1
+ LDX Q                  ; Set X = Q
+
+ BEQ MU1                ; If X = Q = 0, jump to MU1 to copy X into P and A,
+                        ; clear the C flag and return from the subroutine using
+                        ; a tail call
+
+                        ; Otherwise fall through into MU11 to set (A P) = P * X
 
 ; ******************************************************************************
 ;
 ;       Name: MU11
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate (A P) = P * X
+;  Deep dive: Shift-and-add multiplication
+;
+; ------------------------------------------------------------------------------
+;
+; Do the following multiplication of two unsigned 8-bit numbers:
+;
+;   (A P) = P * X
+;
+; This uses the same shift-and-add approach as MULT1, but it's simpler as we
+; are dealing with unsigned numbers in P and X. See the deep dive on
+; "Shift-and-add multiplication" for a discussion of how this algorithm works.
 ;
 ; ******************************************************************************
 
 .MU11
 
- DEX
- STX T
- LDA #0
- TAX
- LSR P
- BCC CF731
+ DEX                    ; Set T = X - 1
+ STX T                  ;
+                        ; We subtract 1 as the C flag will be set when we want
+                        ; to do an addition in the loop below
+
+ LDA #0                 ; Set A = 0 so we can start building the answer in A
+
+;LDX #8                 ; This instruction is commented out in the original
+                        ; source
+
+ TAX                    ; Copy A into X. There is a comment in the original
+                        ; source here that says "just in case", which refers to
+                        ; the MU11 routine in the cassette and disc versions,
+                        ; which set X to 0 (as they use X as a loop counter).
+                        ; The version here doesn't use a loop, but this
+                        ; instruction makes sure the unrolled version returns
+                        ; the same results as the loop versions, just in case
+                        ; something out there relies on MU11 returning X = 0
+
+ LSR P                  ; Set P = P >> 1
+                        ; and C flag = bit 0 of P
+
+                        ; We now repeat the following four instruction block
+                        ; eight times, one for each bit in P. In the cassette
+                        ; and disc versions of Elite the following is done with
+                        ; a loop, but it is marginally faster to unroll the loop
+                        ; and have eight copies of the code, though it does take
+                        ; up a bit more memory (though that isn't a concern when
+                        ; you have a 6502 Second Processor)
+
+ BCC P%+4               ; If C (i.e. bit 0 of P) is set, do the
+ ADC T                  ; addition for this bit of P:
+                        ;
+                        ;   A = A + T + C
+                        ;     = A + X - 1 + 1
+                        ;     = A + X
+
+ ROR A                  ; Shift A right to catch the next digit of our result,
+                        ; which the next ROR sticks into the left end of P while
+                        ; also extracting the next bit of P
+
+ ROR P                  ; Add the overspill from shifting A to the right onto
+                        ; the start of P, and shift P right to fetch the next
+                        ; bit for the calculation into the C flag
+
+ BCC P%+4               ; Repeat for the second time
  ADC T
-
-.CF731
-
  ROR A
  ROR P
- BCC CF738
+
+ BCC P%+4               ; Repeat for the third time
  ADC T
-
-.CF738
-
  ROR A
  ROR P
- BCC CF73F
+
+ BCC P%+4               ; Repeat for the fourth time
  ADC T
-
-.CF73F
-
  ROR A
  ROR P
- BCC CF746
+
+ BCC P%+4               ; Repeat for the fifth time
  ADC T
-
-.CF746
-
  ROR A
  ROR P
- BCC CF74D
+
+ BCC P%+4               ; Repeat for the sixth time
  ADC T
-
-.CF74D
-
  ROR A
  ROR P
- BCC CF754
+
+ BCC P%+4               ; Repeat for the seventh time
  ADC T
-
-.CF754
-
  ROR A
  ROR P
- BCC CF75B
+
+ BCC P%+4               ; Repeat for the eighth time
  ADC T
-
-.CF75B
-
  ROR A
  ROR P
- BCC CF762
- ADC T
 
-.CF762
-
- ROR A
- ROR P
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: FMLTU2
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate A = K * sin(A)
+;  Deep dive: The sine, cosine and arctan tables
+;
+; ------------------------------------------------------------------------------
+;
+; Calculate the following:
+;
+;   A = K * sin(A)
+;
+; Because this routine uses the sine lookup table SNE, we can also call this
+; routine to calculate cosine multiplication. To calculate the following:
+;
+;   A = K * cos(B)
+;
+; call this routine with B + 16 in the accumulator, as sin(B + 16) = cos(B).
 ;
 ; ******************************************************************************
 
 .FMLTU2
 
- AND #$1F
- TAX
+ AND #%00011111         ; Restrict A to bits 0-5 (so it's in the range 0-31)
+
+ TAX                    ; Set Q = sin(A) * 256
  LDA SNE,X
  STA Q
- LDA K
+
+ LDA K                  ; Set A to the radius in K
+
+                        ; Fall through into FMLTU to do the following:
+                        ;
+                        ;   (A ?) = A * Q
+                        ;         = K * sin(A) * 256
+                        ;
+                        ; which is equivalent to:
+                        ;
+                        ;   A = K * sin(A)
 
 ; ******************************************************************************
 ;
 ;       Name: FMLTU
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate A = A * Q / 256
+;  Deep dive: Multiplication and division using logarithms
+;
+; ------------------------------------------------------------------------------
+;
+; Do the following multiplication of two unsigned 8-bit numbers, returning only
+; the high byte of the result:
+;
+;   (A ?) = A * Q
+;
+; or, to put it another way:
+;
+;   A = A * Q / 256
+;
+; The Master and 6502 Second Processor versions use logarithms to speed up the
+; multiplication process. See the deep dive on "Multiplication using logarithms"
+; for more details.
+;
+; Returns:
+;
+;   C flag              The C flag is clear if A = 0, or set if we return a
+;                       result from one of the log tables
 ;
 ; ******************************************************************************
 
 .FMLTU
 
- STX P
- STA widget
- TAX
- BEQ CF7A3
- LDA logL,X
- LDX Q
- BEQ CF7A6
- CLC
- ADC logL,X
- BMI CF795
- LDA log,X
- LDX widget
- ADC log,X
- BCC CF7A6
- TAX
- LDA antilog,X
- LDX P
- RTS
+ STX P                  ; Store X in P so we can preserve it through the call to
+                        ; FMULTU
 
-.CF795
+ STA widget             ; Store A in widget, so now widget = argument A
 
- LDA log,X
- LDX widget
- ADC log,X
- BCC CF7A6
- TAX
- LDA antilogODD,X
+ TAX                    ; Transfer A into X, so now X = argument A
 
-.CF7A3
+ BEQ MU3                ; If A = 0, jump to MU3 to return a result of 0, as
+                        ; 0 * Q / 256 is always 0
 
- LDX P
- RTS
+                        ; We now want to calculate La + Lq, first adding the low
+                        ; bytes (from the logL table), and then the high bytes
+                        ; (from the log table)
 
-.CF7A6
+ LDA logL,X             ; Set A = low byte of La
+                        ;       = low byte of La (as we set X to A above)
 
- LDA #0
- LDX P
- RTS
+ LDX Q                  ; Set X = Q
+
+ BEQ MU3again           ; If X = 0, jump to MU3again to return a result of 0, as
+                        ; A * 0 / 256 is always 0
+
+ CLC                    ; Set A = A + low byte of Lq
+ ADC logL,X             ;       = low byte of La + low byte of Lq
+
+ BMI oddlog             ; If A > 127, jump to oddlog
+
+ LDA log,X              ; Set A = high byte of Lq
+
+ LDX widget             ; Set A = A + C + high byte of La
+ ADC log,X              ;       = high byte of Lq + high byte of La + C
+                        ;
+                        ; so we now have:
+                        ;
+                        ;   A = high byte of (La + Lq)
+
+ BCC MU3again           ; If the addition fitted into one byte and didn't carry,
+                        ; then La + Lq < 256, so we jump to MU3again to return a
+                        ; result of 0 and the C flag clear
+
+                        ; If we get here then the C flag is set, ready for when
+                        ; we return from the subroutine below
+
+ TAX                    ; Otherwise La + Lq >= 256, so we return the A-th entry
+ LDA antilog,X          ; from the antilog table
+
+ LDX P                  ; Restore X from P so it is preserved
+
+ RTS                    ; Return from the subroutine
+
+.oddlog
+
+ LDA log,X              ; Set A = high byte of Lq
+
+ LDX widget             ; Set A = A + C + high byte of La
+ ADC log,X              ;       = high byte of Lq + high byte of La + C
+                        ;
+                        ; so we now have:
+                        ;
+                        ;   A = high byte of (La + Lq)
+
+ BCC MU3again           ; If the addition fitted into one byte and didn't carry,
+                        ; then La + Lq < 256, so we jump to MU3again to return a
+                        ; result of 0 and the C flag clear
+
+                        ; If we get here then the C flag is set, ready for when
+                        ; we return from the subroutine below
+
+ TAX                    ; Otherwise La + Lq >= 256, so we return the A-th entry
+ LDA antilogODD,X       ; from the antilogODD table
+
+.MU3
+
+                        ; If we get here then A (our result) is already 0
+
+ LDX P                  ; Restore X from P so it is preserved
+
+ RTS                    ; Return from the subroutine
+
+.MU3again
+
+ LDA #0                 ; Set A = 0
+
+ LDX P                  ; Restore X from P so it is preserved
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: MLTU2
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate (A P+1 P) = (A ~P) * Q
+;  Deep dive: Shift-and-add multiplication
+;
+; ------------------------------------------------------------------------------
+;
+; Do the following multiplication of an unsigned 16-bit number and an unsigned
+; 8-bit number:
+;
+;   (A P+1 P) = (A ~P) * Q
+;
+; where ~P means P EOR %11111111 (i.e. P with all its bits flipped). In other
+; words, if you wanted to calculate $1234 * $56, you would:
+;
+;   * Set A to $12
+;   * Set P to $34 EOR %11111111 = $CB
+;   * Set Q to $56
+;
+; before calling MLTU2.
+;
+; This routine is like a mash-up of MU11 and FMLTU. It uses part of FMLTU's
+; inverted argument trick to work out whether or not to do an addition, and like
+; MU11 it sets up a counter in X to extract bits from (P+1 P). But this time we
+; extract 16 bits from (P+1 P), so the result is a 24-bit number. The core of
+; the algorithm is still the shift-and-add approach explained in MULT1, just
+; with more bits.
+;
+; Returns:
+;
+;   Q                   Q is preserved
+;
+; Other entry points:
+;
+;   MLTU2-2             Set Q to X, so this calculates (A P+1 P) = (A ~P) * X
 ;
 ; ******************************************************************************
 
- STX Q
+ STX Q                  ; Store X in Q
 
 .MLTU2
 
- EOR #$FF
- LSR A
+ EOR #%11111111         ; Flip the bits in A and rotate right, storing the
+ LSR A                  ; result in P+1, so we now calculate (P+1 P) * Q
  STA P+1
- LDA #0
- LDX #$10
- ROR P
 
-.CF7B8
+ LDA #0                 ; Set A = 0 so we can start building the answer in A
 
- BCS CF7C5
- ADC Q
- ROR A
- ROR P+1
- ROR P
- DEX
- BNE CF7B8
- RTS
+ LDX #16                ; Set up a counter in X to count the 16 bits in (P+1 P)
 
-.CF7C5
+ ROR P                  ; Set P = P >> 1 with bit 7 = bit 0 of A
+                        ; and C flag = bit 0 of P
 
- LSR A
- ROR P+1
- ROR P
- DEX
- BNE CF7B8
- RTS
+.MUL7
+
+ BCS MU21               ; If C (i.e. the next bit from P) is set, do not do the
+                        ; addition for this bit of P, and instead skip to MU21
+                        ; to just do the shifts
+
+ ADC Q                  ; Do the addition for this bit of P:
+                        ;
+                        ;   A = A + Q + C
+                        ;     = A + Q
+
+ ROR A                  ; Rotate (A P+1 P) to the right, so we capture the next
+ ROR P+1                ; digit of the result in P+1, and extract the next digit
+ ROR P                  ; of (P+1 P) in the C flag
+
+ DEX                    ; Decrement the loop counter
+
+ BNE MUL7               ; Loop back for the next bit until P has been rotated
+                        ; all the way
+
+ RTS                    ; Return from the subroutine
+
+.MU21
+
+ LSR A                  ; Shift (A P+1 P) to the right, so we capture the next
+ ROR P+1                ; digit of the result in P+1, and extract the next digit
+ ROR P                  ; of (P+1 P) in the C flag
+
+ DEX                    ; Decrement the loop counter
+
+ BNE MUL7               ; Loop back for the next bit until P has been rotated
+                        ; all the way
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: MUT3
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Unused routine that does the same as MUT2
+;
+; ------------------------------------------------------------------------------
+;
+; This routine is never actually called, but it is identical to MUT2, as the
+; extra instructions have no effect.
 ;
 ; ******************************************************************************
 
 .MUT3
 
- LDX ALP1
- STX P
+ LDX ALP1               ; Set P = ALP1, though this gets overwritten by the
+ STX P                  ; following, so this has no effect
+
+                        ; Fall through into MUT2 to do the following:
+                        ;
+                        ;   (S R) = XX(1 0)
+                        ;   (A P) = Q * A
 
 ; ******************************************************************************
 ;
 ;       Name: MUT2
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate (S R) = XX(1 0) and (A P) = Q * A
+;
+; ------------------------------------------------------------------------------
+;
+; Do the following assignment, and multiplication of two signed 8-bit numbers:
+;
+;   (S R) = XX(1 0)
+;   (A P) = Q * A
 ;
 ; ******************************************************************************
 
 .MUT2
 
- LDX XX+1
+ LDX XX+1               ; Set S = XX+1
  STX S
+
+                        ; Fall through into MUT1 to do the following:
+                        ;
+                        ;   R = XX
+                        ;   (A P) = Q * A
 
 ; ******************************************************************************
 ;
 ;       Name: MUT1
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate R = XX and (A P) = Q * A
+;
+; ------------------------------------------------------------------------------
+;
+; Do the following assignment, and multiplication of two signed 8-bit numbers:
+;
+;   R = XX
+;   (A P) = Q * A
 ;
 ; ******************************************************************************
 
 .MUT1
 
- LDX XX
+ LDX XX                 ; Set R = XX
  STX R
+
+                        ; Fall through into MULT1 to do the following:
+                        ;
+                        ;   (A P) = Q * A
 
 ; ******************************************************************************
 ;
 ;       Name: MULT1
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate (A P) = Q * A
+;  Deep dive: Shift-and-add multiplication
+;
+; ------------------------------------------------------------------------------
+;
+; Do the following multiplication of two 8-bit sign-magnitude numbers:
+;
+;   (A P) = Q * A
 ;
 ; ******************************************************************************
 
 .MULT1
 
- TAX
+ TAX                    ; Store A in X
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- TXA
- AND #$7F
- LSR A
+ TXA                    ; ???
+
+ AND #%01111111         ; Set P = |A| >> 1
+ LSR A                  ; and C flag = bit 0 of A
  STA P
- TXA
- EOR Q
- AND #$80
- STA T
- LDA Q
- AND #$7F
- BEQ CF839
- TAX
- DEX
- STX T1
- LDA #0
- TAX
- BCC CF806
+
+ TXA                    ; Restore argument A
+
+ EOR Q                  ; Set bit 7 of A and T if Q and A have different signs,
+ AND #%10000000         ; clear bit 7 if they have the same signs, 0 all other
+ STA T                  ; bits, i.e. T contains the sign bit of Q * A
+
+ LDA Q                  ; Set A = |Q|
+ AND #%01111111
+
+ BEQ mu10               ; If |Q| = 0 jump to mu10 (with A set to 0)
+
+ TAX                    ; Set T1 = |Q| - 1
+ DEX                    ;
+ STX T1                 ; We subtract 1 as the C flag will be set when we want
+                        ; to do an addition in the loop below
+
+                        ; We are now going to work our way through the bits of
+                        ; P, and do a shift-add for any bits that are set,
+                        ; keeping the running total in A. We already set up
+                        ; the first shift at the start of this routine, as
+                        ; P = |A| >> 1 and C = bit 0 of A, so we now need to set
+                        ; up a loop to sift through the other 7 bits in P
+
+ LDA #0                 ; Set A = 0 so we can start building the answer in A
+
+ TAX                    ; Copy A into X, to make sure the unrolled version
+                        ; returns the same results as the loop versions, just
+                        ; in case something out there relies on MULT1 returning
+                        ; X = 0
+
+ BCC P%+4               ; If C (i.e. the next bit from P) is set, do the
+ ADC T1                 ; addition for this bit of P:
+                        ;
+                        ;   A = A + T1 + C
+                        ;     = A + |Q| - 1 + 1
+                        ;     = A + |Q|
+
+ ROR A                  ; As mentioned above, this ROR shifts A right and
+                        ; catches bit 0 in C - giving another digit for our
+                        ; result - and the next ROR sticks that bit into the
+                        ; left end of P while also extracting the next bit of P
+                        ; for the next addition
+
+ ROR P                  ; Add the overspill from shifting A to the right onto
+                        ; the start of P, and shift P right to fetch the next
+                        ; bit for the calculation
+
+ BCC P%+4               ; Repeat for the second time
  ADC T1
-
-.CF806
-
  ROR A
  ROR P
- BCC CF80D
+
+ BCC P%+4               ; Repeat for the third time
  ADC T1
-
-.CF80D
-
  ROR A
  ROR P
- BCC CF814
+
+ BCC P%+4               ; Repeat for the fourth time
  ADC T1
-
-.CF814
-
  ROR A
  ROR P
- BCC CF81B
+
+ BCC P%+4               ; Repeat for the fifth time
  ADC T1
-
-.CF81B
-
  ROR A
  ROR P
- BCC CF822
+
+ BCC P%+4               ; Repeat for the sixth time
  ADC T1
-
-.CF822
-
  ROR A
  ROR P
- BCC CF829
+
+ BCC P%+4               ; Repeat for the seventh time
  ADC T1
-
-.CF829
-
  ROR A
  ROR P
- BCC CF830
- ADC T1
 
-.CF830
+ LSR A                  ; Rotate (A P) once more to get the final result, as
+ ROR P                  ; we only pushed 7 bits through the above process
 
- ROR A
- ROR P
- LSR A
- ROR P
- ORA T
- RTS
+ ORA T                  ; Set the sign bit of the result that we stored in T
 
-.CF839
+ RTS                    ; Return from the subroutine
 
- STA P
- RTS
+.mu10
+
+ STA P                  ; If we get here, the result is 0 and A = 0, so set
+                        ; P = 0 so (A P) = 0
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: MULT12
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate (S R) = Q * A
+;
+; ------------------------------------------------------------------------------
+;
+; Calculate:
+;
+;   (S R) = Q * A
 ;
 ; ******************************************************************************
 
 .MULT12
 
- JSR MULT1
- STA S
+ JSR MULT1              ; Set (A P) = Q * A
+
+ STA S                  ; Set (S P) = (A P)
+                        ;           = Q * A
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA P
- STA R
- RTS
+ LDA P                  ; Set (S R) = (S P)
+ STA R                  ;           = Q * A
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: TAS3
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Geometry)
+;    Summary: Calculate the dot product of XX15 and an orientation vector
+;
+; ------------------------------------------------------------------------------
+;
+; Calculate the dot product of the vector in XX15 and one of the orientation
+; vectors, as determined by the value of Y. If vect is the orientation vector,
+; we calculate this:
+;
+;   (A X) = vect . XX15
+;         = vect_x * XX15 + vect_y * XX15+1 + vect_z * XX15+2
+;
+; Arguments:
+;
+;   Y                   The orientation vector:
+;
+;                         * If Y = 10, calculate nosev . XX15
+;
+;                         * If Y = 16, calculate roofv . XX15
+;
+;                         * If Y = 22, calculate sidev . XX15
+;
+; Returns:
+;
+;   (A X)               The result of the dot product
 ;
 ; ******************************************************************************
 
 .TAS3
 
- LDX XX1,Y
+ LDX INWK,Y             ; Set Q = the Y-th byte of INWK, i.e. vect_x
  STX Q
- LDA XX15
- JSR MULT12
- LDX INWK+2,Y
+
+ LDA XX15               ; Set A = XX15
+
+ JSR MULT12             ; Set (S R) = Q * A
+                        ;           = vect_x * XX15
+
+ LDX INWK+2,Y           ; Set Q = the Y+2-th byte of INWK, i.e. vect_y
  STX Q
- LDA Y1
- JSR MAD
- STA S
+
+ LDA XX15+1             ; Set A = XX15+1
+
+ JSR MAD                ; Set (A X) = Q * A + (S R)
+                        ;           = vect_y * XX15+1 + vect_x * XX15
+
+ STA S                  ; Set (S R) = (A X)
  STX R
- LDX INWK+4,Y
+
+ LDX INWK+4,Y           ; Set Q = the Y+2-th byte of INWK, i.e. vect_z
  STX Q
- LDA X2
+
+ LDA XX15+2             ; Set A = XX15+2
+
+                        ; Fall through into MAD to set:
+                        ;
+                        ;   (A X) = Q * A + (S R)
+                        ;           = vect_z * XX15+2 + vect_y * XX15+1 +
+                        ;             vect_x * XX15
 
 ; ******************************************************************************
 ;
 ;       Name: MAD
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate (A X) = Q * A + (S R)
+;
+; ------------------------------------------------------------------------------
+;
+; Calculate
+;
+;   (A X) = Q * A + (S R)
 ;
 ; ******************************************************************************
 
 .MAD
 
- JSR MULT1
+ JSR MULT1              ; Call MULT1 to set (A P) = Q * A
+
+                        ; Fall through into ADD to do:
+                        ;
+                        ;   (A X) = (A P) + (S R)
+                        ;         = Q * A + (S R)
 
 ; ******************************************************************************
 ;
 ;       Name: ADD
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate (A X) = (A P) + (S R)
+;  Deep dive: Adding sign-magnitude numbers
+;
+; ------------------------------------------------------------------------------
+;
+; Add two 16-bit sign-magnitude numbers together, calculating:
+;
+;   (A X) = (A P) + (S R)
 ;
 ; ******************************************************************************
 
 .ADD
 
- STA T1
- AND #$80
+ STA T1                 ; Store argument A in T1
+
+ AND #%10000000         ; Extract the sign (bit 7) of A and store it in T
  STA T
- EOR S
- BMI CF889
- LDA R
- CLC
- ADC P
+
+ EOR S                  ; EOR bit 7 of A with S. If they have different bit 7s
+ BMI MU8                ; (i.e. they have different signs) then bit 7 in the
+                        ; EOR result will be 1, which means the EOR result is
+                        ; negative. So the AND, EOR and BMI together mean "jump
+                        ; to MU8 if A and S have different signs"
+
+                        ; If we reach here, then A and S have the same sign, so
+                        ; we can add them and set the sign to get the result
+
+ LDA R                  ; Add the least significant bytes together into X:
+ CLC                    ;
+ ADC P                  ;   X = P + R
  TAX
- LDA S
- ADC T1
- ORA T
- RTS
 
-.CF889
+ LDA S                  ; Add the most significant bytes together into A. We
+ ADC T1                 ; stored the original argument A in T1 earlier, so we
+                        ; can do this with:
+                        ;
+                        ;   A = A  + S + C
+                        ;     = T1 + S + C
 
- LDA S
- AND #$7F
+ ORA T                  ; If argument A was negative (and therefore S was also
+                        ; negative) then make sure result A is negative by
+                        ; OR-ing the result with the sign bit from argument A
+                        ; (which we stored in T)
+
+ RTS                    ; Return from the subroutine
+
+.MU8
+
+                        ; If we reach here, then A and S have different signs,
+                        ; so we can subtract their absolute values and set the
+                        ; sign to get the result
+
+ LDA S                  ; Clear the sign (bit 7) in S and store the result in
+ AND #%01111111         ; U, so U now contains |S|
  STA U
- LDA P
- SEC
- SBC R
- TAX
- LDA T1
- AND #$7F
- SBC U
- BCS CF8AB
- STA U
- TXA
- EOR #$FF
- ADC #1
- TAX
- LDA #0
- SBC U
- ORA #$80
 
-.CF8AB
+ LDA P                  ; Subtract the least significant bytes into X:
+ SEC                    ;
+ SBC R                  ;   X = P - R
+ TAX
 
- EOR T
- RTS
+ LDA T1                 ; Restore the A of the argument (A P) from T1 and
+ AND #%01111111         ; clear the sign (bit 7), so A now contains |A|
+
+ SBC U                  ; Set A = |A| - |S|
+
+                        ; At this point we have |A P| - |S R| in (A X), so we
+                        ; need to check whether the subtraction above was the
+                        ; the right way round (i.e. that we subtracted the
+                        ; smaller absolute value from the larger absolute
+                        ; value)
+
+ BCS MU9                ; If |A| >= |S|, our subtraction was the right way
+                        ; round, so jump to MU9 to set the sign
+
+                        ; If we get here, then |A| < |S|, so our subtraction
+                        ; above was the wrong way round (we actually subtracted
+                        ; the larger absolute value from the smaller absolute
+                        ; value). So let's subtract the result we have in (A X)
+                        ; from zero, so that the subtraction is the right way
+                        ; round
+
+ STA U                  ; Store A in U
+
+ TXA                    ; Set X = 0 - X using two's complement (to negate a
+ EOR #$FF               ; number in two's complement, you can invert the bits
+ ADC #1                 ; and add one - and we know the C flag is clear as we
+ TAX                    ; didn't take the BCS branch above, so the ADC will do
+                        ; the correct addition)
+
+ LDA #0                 ; Set A = 0 - A, which we can do this time using a
+ SBC U                  ; a subtraction with the C flag clear
+
+ ORA #%10000000         ; We now set the sign bit of A, so that the EOR on the
+                        ; next line will give the result the opposite sign to
+                        ; argument A (as T contains the sign bit of argument
+                        ; A). This is the same as giving the result the same
+                        ; sign as argument S (as A and S have different signs),
+                        ; which is what we want, as S has the larger absolute
+                        ; value
+
+.MU9
+
+ EOR T                  ; If we get here from the BCS above, then |A| >= |S|,
+                        ; so we want to give the result the same sign as
+                        ; argument A, so if argument A was negative, we flip
+                        ; the sign of the result with an EOR (to make it
+                        ; negative)
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: TIS1
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate (A ?) = (-X * A + (S R)) / 96
+;  Deep dive: Shift-and-subtract division
+;
+; ------------------------------------------------------------------------------
+;
+; Calculate the following expression between sign-magnitude numbers, ignoring
+; the low byte of the result:
+;
+;   (A ?) = (-X * A + (S R)) / 96
+;
+; This uses the same shift-and-subtract algorithm as TIS2, just with the
+; quotient A hard-coded to 96.
+;
+; Returns:
+;
+;   Q                   Gets set to the value of argument X
 ;
 ; ******************************************************************************
 
 .TIS1
 
- STX Q
- EOR #$80
- JSR MAD
- TAX
- AND #$80
+ STX Q                  ; Set Q = X
+
+ EOR #%10000000         ; Flip the sign bit in A
+
+ JSR MAD                ; Set (A X) = Q * A + (S R)
+                        ;           = X * -A + (S R)
+
+.DVID96
+
+ TAX                    ; Set T to the sign bit of the result
+ AND #%10000000
  STA T
- TXA
- AND #$7F
- LDX #$FE
- STX T1
 
-.loop_CF8C1
+ TXA                    ; Set A to the high byte of the result with the sign bit
+ AND #%01111111         ; cleared, so (A ?) = |X * A + (S R)|
 
- ASL A
- CMP #$60
- BCC CF8C8
- SBC #$60
+                        ; The following is identical to TIS2, except Q is
+                        ; hard-coded to 96, so this does A = A / 96
 
-.CF8C8
+ LDX #254               ; Set T1 to have bits 1-7 set, so we can rotate through
+ STX T1                 ; 7 loop iterations, getting a 1 each time, and then
+                        ; getting a 0 on the 8th iteration... and we can also
+                        ; use T1 to catch our result bits into bit 0 each time
 
- ROL T1
- BCS loop_CF8C1
- LDA T1
- ORA T
- RTS
+.DVL3
+
+ ASL A                  ; Shift A to the left
+
+ CMP #96                ; If A < 96 skip the following subtraction
+ BCC DV4
+
+ SBC #96                ; Set A = A - 96
+                        ;
+                        ; Going into this subtraction we know the C flag is
+                        ; set as we passed through the BCC above, and we also
+                        ; know that A >= 96, so the C flag will still be set
+                        ; once we are done
+
+.DV4
+
+ ROL T1                 ; Rotate the counter in T1 to the left, and catch the
+                        ; result bit into bit 0 (which will be a 0 if we didn't
+                        ; do the subtraction, or 1 if we did)
+
+ BCS DVL3               ; If we still have set bits in T1, loop back to DVL3 to
+                        ; do the next iteration of 7
+
+ LDA T1                 ; Fetch the result from T1 into A
+
+ ORA T                  ; Give A the sign of the result that we stored above
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: DV42
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate (P R) = 256 * DELTA / z_hi
+;
+; ------------------------------------------------------------------------------
+;
+; Calculate the following division and remainder:
+;
+;   P = DELTA / (the Y-th stardust particle's z_hi coordinate)
+;
+;   R = remainder as a fraction of A, where 1.0 = 255
+;
+; Another way of saying the above is this:
+;
+;   (P R) = 256 * DELTA / z_hi
+;
+; DELTA is a value between 1 and 40, and the minimum z_hi is 16 (dust particles
+; are removed at lower values than this), so this means P is between 0 and 2
+; (as 40 / 16 = 2.5, so the maximum result is P = 2 and R = 128.
+;
+; This uses the same shift-and-subtract algorithm as TIS2, but this time we
+; keep the remainder.
+;
+; Arguments:
+;
+;   Y                   The number of the stardust particle to process
+;
+; Returns:
+;
+;   C flag              The C flag is cleared
 ;
 ; ******************************************************************************
 
 .DV42
 
- LDA SZ,Y
+ LDA SZ,Y               ; Fetch the Y-th dust particle's z_hi coordinate into A
+
+                        ; Fall through into DV41 to do:
+                        ;
+                        ;   (P R) = 256 * DELTA / A
+                        ;         = 256 * DELTA / Y-th stardust particle's z_hi
 
 ; ******************************************************************************
 ;
 ;       Name: DV41
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate (P R) = 256 * DELTA / A
+;
+; ------------------------------------------------------------------------------
+;
+; Calculate the following division and remainder:
+;
+;   P = DELTA / A
+;
+;   R = remainder as a fraction of A, where 1.0 = 255
+;
+; Another way of saying the above is this:
+;
+;   (P R) = 256 * DELTA / A
+;
+; This uses the same shift-and-subtract algorithm as TIS2, but this time we
+; keep the remainder.
+;
+; Returns:
+;
+;   C flag              The C flag is cleared
 ;
 ; ******************************************************************************
 
 .DV41
 
- STA Q
- LDA DELTA
+ STA Q                  ; Store A in Q
+
+ LDA DELTA              ; Fetch the speed from DELTA into A
+
+                        ; Fall through into DVID4 to do:
+                        ;
+                        ;   (P R) = 256 * A / Q
+                        ;         = 256 * DELTA / A
 
 ; ******************************************************************************
 ;
 ;       Name: DVID4
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate (P R) = 256 * A / Q
+;  Deep dive: Shift-and-subtract division
+;
+; ------------------------------------------------------------------------------
+;
+; Calculate the following division and remainder:
+;
+;   P = A / Q
+;
+;   R = remainder as a fraction of Q, where 1.0 = 255
+;
+; Another way of saying the above is this:
+;
+;   (P R) = 256 * A / Q
+;
+; This uses the same shift-and-subtract algorithm as TIS2, but this time we
+; keep the remainder and the loop is unrolled.
+;
+; Returns:
+;
+;   C flag              The C flag is cleared
 ;
 ; ******************************************************************************
 
 .DVID4
 
- ASL A
- STA P
- LDA #0
- ROL A
+ ASL A                  ; Shift A left and store in P (we will build the result
+ STA P                  ; in P)
+
+ LDA #0                 ; Set A = 0 for us to build a remainder
+
+                        ; We now repeat the following five instruction block
+                        ; eight times, one for each bit in P. In the cassette
+                        ; and disc versions of Elite the following is done with
+                        ; a loop, but it is marginally faster to unroll the loop
+                        ; and have eight copies of the code, though it does take
+                        ; up a bit more memory (though that isn't a concern when
+                        ; you have a 6502 Second Processor)
+
+ ROL A                  ; Shift A to the left
+
+ CMP Q                  ; If A < Q skip the following subtraction
+ BCC P%+4
+
+ SBC Q                  ; A >= Q, so set A = A - Q
+
+ ROL P                  ; Shift P to the left, pulling the C flag into bit 0
+
+ ROL A                  ; Repeat for the second time
  CMP Q
- BCC CF8E4
+ BCC P%+4
  SBC Q
-
-.CF8E4
-
  ROL P
- ROL A
+
+ ROL A                  ; Repeat for the third time
  CMP Q
- BCC CF8ED
+ BCC P%+4
  SBC Q
-
-.CF8ED
-
  ROL P
- ROL A
+
+ ROL A                  ; Repeat for the fourth time
  CMP Q
- BCC CF8F6
+ BCC P%+4
  SBC Q
-
-.CF8F6
-
  ROL P
- ROL A
+
+ ROL A                  ; Repeat for the fifth time
  CMP Q
- BCC CF8FF
+ BCC P%+4
  SBC Q
-
-.CF8FF
-
  ROL P
- ROL A
+
+ ROL A                  ; Repeat for the sixth time
  CMP Q
- BCC CF908
+ BCC P%+4
  SBC Q
-
-.CF908
-
  ROL P
- ROL A
+
+ ROL A                  ; Repeat for the seventh time
  CMP Q
- BCC CF911
+ BCC P%+4
  SBC Q
-
-.CF911
-
  ROL P
- ROL A
+
+ ROL A                  ; Repeat for the eighth time
  CMP Q
- BCC CF91A
+ BCC P%+4
  SBC Q
-
-.CF91A
-
  ROL P
- ROL A
- CMP Q
- BCC CF923
- SBC Q
 
-.CF923
+ LDX #0                 ; Set X = 0 so this unrolled version of DVID4 also
+                        ; returns X = 0
 
- ROL P
- LDX #0
- STA widget
- TAX
- BEQ CF947
- LDA logL,X
- LDX Q
- SEC
+ STA widget             ; This contains the code from the LL28+4 routine, so
+ TAX                    ; this section is exactly equivalent to a JMP LL28+4
+ BEQ LLfix22            ; call, but is slightly faster as it's been inlined
+ LDA logL,X             ; (so it converts the remainder in A into an integer
+ LDX Q                  ; representation of the fractional value A / Q, in R,
+ SEC                    ; where 1.0 = 255, and it also clears the C flag
  SBC logL,X
- BMI CF94F
+
+ BMI CF94F              ; ???
+
  LDX widget
  LDA log,X
  LDX Q
  SBC log,X
- BCS CF94A
+ BCS LL222
  TAX
  LDA antilog,X
 
-.CF947
+.LLfix22
 
  STA R
  RTS
 
-.CF94A
+.LL222
 
- LDA #$FF
+ LDA #255
  STA R
  RTS
 
 .CF94F
 
- LDX widget
+ LDX widget             ; ???
  LDA log,X
  LDX Q
  SBC log,X
- BCS CF94A
+ BCS LL222
  TAX
  LDA antilogODD,X
  STA R
@@ -11234,144 +11826,253 @@ ENDIF
 ;
 ;       Name: DVID3B2
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate K(3 2 1 0) = (A P+1 P) / (z_sign z_hi z_lo)
+;  Deep dive: Shift-and-subtract division
+;
+; ------------------------------------------------------------------------------
+;
+; Calculate the following:
+;
+;   K(3 2 1 0) = (A P+1 P) / (z_sign z_hi z_lo)
+;
+; The actual division here is done as an 8-bit calculation using LL31, but this
+; routine shifts both the numerator (the top part of the division) and the
+; denominator (the bottom part of the division) around to get the multi-byte
+; result we want.
+;
+; Specifically, it shifts both of them to the left as far as possible, keeping a
+; tally of how many shifts get done in each one - and specifically, the
+; difference in the number of shifts between the top and bottom (as shifting
+; both of them once in the same direction won't change the result). It then
+; divides the two highest bytes with the simple 8-bit routine in LL31, and
+; shifts the result by the difference in the number of shifts, which acts as a
+; scale factor to get the correct result.
+;
+; Returns:
+;
+;   K(3 2 1 0)          The result of the division
+;
+;   X                   X is preserved
 ;
 ; ******************************************************************************
 
 .DVID3B2
 
- STA P+2
- LDA INWK+6
+ STA P+2                ; Set P+2 = A
+
+ LDA INWK+6             ; Set Q = z_lo, making sure Q is at least 1
  ORA #1
  STA Q
- LDA INWK+7
+
+ LDA INWK+7             ; Set R = z_hi
  STA R
- LDA INWK+8
+
+ LDA INWK+8             ; Set S = z_sign
  STA S
 
+.DVID3B
+
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA P
+                        ; Given the above assignments, we now want to calculate
+                        ; the following to get the result we want:
+                        ;
+                        ;   K(3 2 1 0) = P(2 1 0) / (S R Q)
+
+ LDA P                  ; Make sure P(2 1 0) is at least 1
  ORA #1
  STA P
- LDA P+2
- EOR S
- AND #$80
+
+ LDA P+2                ; Set T to the sign of P+2 * S (i.e. the sign of the
+ EOR S                  ; result) and store it in T
+ AND #%10000000
  STA T
- LDY #0
- LDA P+2
- AND #$7F
 
-.loop_CF993
+ LDY #0                 ; Set Y = 0 to store the scale factor
 
- CMP #$40
- BCS CF99F
- ASL P
+ LDA P+2                ; Clear the sign bit of P+2, so the division can be done
+ AND #%01111111         ; with positive numbers and we'll set the correct sign
+                        ; below, once all the maths is done
+                        ;
+                        ; This also leaves A = P+2, which we use below
+
+.DVL9
+
+                        ; We now shift (A P+1 P) left until A >= 64, counting
+                        ; the number of shifts in Y. This makes the top part of
+                        ; the division as large as possible, thus retaining as
+                        ; much accuracy as we can.  When we come to return the
+                        ; final result, we shift the result by the number of
+                        ; places in Y, and in the correct direction
+
+ CMP #64                ; If A >= 64, jump down to DV14
+ BCS DV14
+
+ ASL P                  ; Shift (A P+1 P) to the left
  ROL P+1
  ROL A
- INY
- BNE loop_CF993
 
-.CF99F
+ INY                    ; Increment the scale factor in Y
 
- STA P+2
- LDA S
- AND #$7F
+ BNE DVL9               ; Loop up to DVL9 (this BNE is effectively a JMP, as Y
+                        ; will never be zero)
 
-.loop_CF9A5
+.DV14
 
- DEY
- ASL Q
+                        ; If we get here, A >= 64 and contains the highest byte
+                        ; of the numerator, scaled up by the number of left
+                        ; shifts in Y
+
+ STA P+2                ; Store A in P+2, so we now have the scaled value of
+                        ; the numerator in P(2 1 0)
+
+ LDA S                  ; Set A = |S|
+ AND #%01111111
+
+.DVL6
+
+                        ; We now shift (S R Q) left until bit 7 of S is set,
+                        ; reducing Y by the number of shifts. This makes the
+                        ; bottom part of the division as large as possible, thus
+                        ; retaining as much accuracy as we can. When we come to
+                        ; return the final result, we shift the result by the
+                        ; total number of places in Y, and in the correct
+                        ; direction, to give us the correct result
+                        ;
+                        ; We set A to |S| above, so the following actually
+                        ; shifts (A R Q)
+
+ DEY                    ; Decrement the scale factor in Y
+
+ ASL Q                  ; Shift (A R Q) to the left
  ROL R
  ROL A
- BPL loop_CF9A5
- STA Q
+
+ BPL DVL6               ; Loop up to DVL6 to do another shift, until bit 7 of A
+                        ; is set and we can't shift left any further
+
+.DV9
+
+                        ; We have now shifted both the numerator and denominator
+                        ; left as far as they will go, keeping a tally of the
+                        ; overall scale factor of the various shifts in Y. We
+                        ; can now divide just the two highest bytes to get our
+                        ; result
+
+ STA Q                  ; Set Q = A, the highest byte of the denominator
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA #$FE
- STA R
- LDA P+2
+ LDA #254               ; Set R to have bits 1-7 set, so we can pass this to
+ STA R                  ; LL31 to act as the bit counter in the division
 
-.CF9C2
+ LDA P+2                ; Set A to the highest byte of the numerator
 
- ASL A
- BCS CF9D2
- CMP Q
- BCC CF9CB
- SBC Q
+.LL31new
 
-.CF9CB
+ ASL A                  ; This contains the code from the LL31 routine, so
+ BCS LL29new            ; this section is exactly equivalent to a JSR LL31
+ CMP Q                  ; call, but is slightly faster as it's been inlined,
+ BCC P%+4               ; so it calculates:
+ SBC Q                  ;
+ ROL R                  ;   R = 256 * A / Q
+ BCS LL31new            ;     = 256 * numerator / denominator
+ JMP LL312new
 
- ROL R
- BCS CF9C2
- JMP CF9DB
-
-.CF9D2
+.LL29new
 
  SBC Q
  SEC
  ROL R
- BCS CF9C2
+ BCS LL31new
  LDA R
 
-.CF9DB
+.LL312new
 
- LDA #0
- STA K+1
+                        ; The result of our division is now in R, so we just
+                        ; need to shift it back by the scale factor in Y
+
+ LDA #0                 ; Set K(3 2 1) = 0 to hold the result (we populate K
+ STA K+1                ; next)
  STA K+2
  STA K+3
- TYA
- BPL CFA04
- LDA R
 
-.loop_CF9E8
+ TYA                    ; If Y is positive, jump to DV12
+ BPL DV12
 
- ASL A
+                        ; If we get here then Y is negative, so we need to shift
+                        ; the result R to the left by Y places, and then set the
+                        ; correct sign for the result
+
+ LDA R                  ; Set A = R
+
+.DVL8
+
+ ASL A                  ; Shift (K+3 K+2 K+1 A) left
  ROL K+1
  ROL K+2
  ROL K+3
- INY
- BNE loop_CF9E8
- STA K
- LDA K+3
- ORA T
+
+ INY                    ; Increment the scale factor in Y
+
+ BNE DVL8               ; Loop back to DVL8 until we have shifted left by Y
+                        ; places
+
+ STA K                  ; Store A in K so the result is now in K(3 2 1 0)
+
+ LDA K+3                ; Set K+3 to the sign in T, which we set above to the
+ ORA T                  ; correct sign for the result
  STA K+3
- RTS
 
-.loop_CF9FB
+ RTS                    ; Return from the subroutine
 
- LDA R
+.DV13
+
+                        ; If we get here then Y is zero, so we don't need to
+                        ; shift the result R, we just need to set the correct
+                        ; sign for the result
+
+ LDA R                  ; Store R in K so the result is now in K(3 2 1 0)
  STA K
- LDA T
- STA K+3
- RTS
 
-.CFA04
+ LDA T                  ; Set K+3 to the sign in T, which we set above to the
+ STA K+3                ; correct sign for the result
 
- BEQ loop_CF9FB
- LDA R
+ RTS                    ; Return from the subroutine
 
-.loop_CFA08
+.DV12
 
- LSR A
- DEY
- BNE loop_CFA08
- STA K
- LDA T
- STA K+3
- RTS
+ BEQ DV13               ; We jumped here having set A to the scale factor in Y,
+                        ; so this jumps up to DV13 if Y = 0
 
-.CFA13
+                        ; If we get here then Y is positive and non-zero, so we
+                        ; need to shift the result R to the right by Y places
+                        ; and then set the correct sign for the result. We also
+                        ; know that K(3 2 1) will stay 0, as we are shifting the
+                        ; lowest byte to the right, so no set bits will make
+                        ; their way into the top three bytes
 
- LDX #$80
+ LDA R                  ; Set A = R
 
-.loop_CFA15
+.DVL10
 
- RTS
+ LSR A                  ; Shift A right
+
+ DEY                    ; Decrement the scale factor in Y
+
+ BNE DVL10              ; Loop back to DVL10 until we have shifted right by Y
+                        ; places
+
+ STA K                  ; Store the shifted A in K so the result is now in
+                        ; K(3 2 1 0)
+
+ LDA T                  ; Set K+3 to the sign in T, which we set above to the
+ STA K+3                ; correct sign for the result
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -11381,6 +12082,14 @@ ENDIF
 ;    Summary: ???
 ;
 ; ******************************************************************************
+
+.CFA13
+
+ LDX #$80
+
+.loop_CFA15
+
+ RTS
 
 .subm_FA16
 
@@ -11412,56 +12121,124 @@ ENDIF
 ;
 ;       Name: BUMP2
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Dashboard
+;    Summary: Bump up the value of the pitch or roll dashboard indicator
+;
+; ------------------------------------------------------------------------------
+;
+; Increase ("bump up") X by A, where X is either the current rate of pitch or
+; the current rate of roll.
+;
+; The rate of pitch or roll ranges from 1 to 255 with 128 as the centre point.
+; This is the amount by which the pitch or roll is currently changing, so 1
+; means it is decreasing at the maximum rate, 128 means it is not changing,
+; and 255 means it is increasing at the maximum rate. These values correspond
+; to the line on the DC or RL indicators on the dashboard, with 1 meaning full
+; left, 128 meaning the middle, and 255 meaning full right.
+;
+; If bumping up X would push it past 255, then X is set to 255.
+;
+; If keyboard auto-recentre is configured and the result is less than 128, we
+; bump X up to the mid-point, 128. This is the equivalent of having a roll or
+; pitch in the left half of the indicator, when increasing the roll or pitch
+; should jump us straight to the mid-point.
+;
+; Other entry points:
+;
+;   RE2+2               Restore A from T and return from the subroutine
 ;
 ; ******************************************************************************
 
 .BUMP2
 
- STA T
- TXA
- CLC
- ADC T
+ STA T                  ; Store argument A in T so we can restore it later
+
+ TXA                    ; Copy argument X into A
+
+ CLC                    ; Clear the C flag so we can do addition without the
+                        ; C flag affecting the result
+
+ ADC T                  ; Set X = A = argument X + argument A
  TAX
- BCC CFA3E
- LDX #$FF
 
-.CFA3E
+ BCC RE2                ; If the C flag is clear, then we didn't overflow, so
+                        ; jump to RE2 to auto-recentre and return the result
 
- BPL CFA50
+ LDX #255               ; We have an overflow, so set X to the maximum possible
+                        ; value of 255
 
-.loop_CFA40
+.RE2
 
- LDA T
- RTS
+ BPL djd1               ; If X has bit 7 clear (i.e. the result < 128), then
+                        ; jump to djd1 in routine REDU2 to do an auto-recentre,
+                        ; if configured, because the result is on the left side
+                        ; of the centre point of 128
+
+                        ; Jumps to RE2+2 end up here
+
+ LDA T                  ; Restore the original argument A from T into A
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: REDU2
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Dashboard
+;    Summary: Reduce the value of the pitch or roll dashboard indicator
+;
+; ------------------------------------------------------------------------------
+;
+; Reduce X by A, where X is either the current rate of pitch or the current
+; rate of roll.
+;
+; The rate of pitch or roll ranges from 1 to 255 with 128 as the centre point.
+; This is the amount by which the pitch or roll is currently changing, so 1
+; means it is decreasing at the maximum rate, 128 means it is not changing,
+; and 255 means it is increasing at the maximum rate. These values correspond
+; to the line on the DC or RL indicators on the dashboard, with 1 meaning full
+; left, 128 meaning the middle, and 255 meaning full right.
+;
+; If reducing X would bring it below 1, then X is set to 1.
+;
+; If keyboard auto-recentre is configured and the result is greater than 128, we
+; reduce X down to the mid-point, 128. This is the equivalent of having a roll
+; or pitch in the right half of the indicator, when decreasing the roll or pitch
+; should jump us straight to the mid-point.
+;
+; Other entry points:
+;
 ;
 ; ******************************************************************************
 
 .REDU2
 
- STA T
- TXA
- SEC
- SBC T
+ STA T                  ; Store argument A in T so we can restore it later
+
+ TXA                    ; Copy argument X into A
+
+ SEC                    ; Set the C flag so we can do subtraction without the
+                        ; C flag affecting the result
+
+ SBC T                  ; Set X = A = argument X - argument A
  TAX
- BCS CFA4E
- LDX #1
 
-.CFA4E
+ BCS RE3                ; If the C flag is set, then we didn't underflow, so
+                        ; jump to RE3 to auto-recentre and return the result
 
- BPL loop_CFA40
+ LDX #1                 ; We have an underflow, so set X to the minimum possible
+                        ; value, 1
 
-.CFA50
+.RE3
 
- LDX #$80
+ BPL RE2+2              ; If X has bit 7 clear (i.e. the result < 128), then
+                        ; jump to RE2+2 above to return the result as is,
+                        ; because the result is on the left side of the centre
+                        ; point of 128, so we don't need to auto-centre
+
+.djd1
+
+ LDX #128               ; ???
  LDA T
  RTS
 
@@ -11469,165 +12246,314 @@ ENDIF
 ;
 ;       Name: LL5
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate Q = SQRT(R Q)
+;  Deep dive: Calculating square roots
+;
+; ------------------------------------------------------------------------------
+;
+; Calculate the following square root:
+;
+;   Q = SQRT(R Q)
 ;
 ; ******************************************************************************
 
 .LL5
 
- LDY R
+ LDY R                  ; Set (Y S) = (R Q)
  LDA Q
  STA S
- LDX #0
- STX Q
- LDA #8
+
+                        ; So now to calculate Q = SQRT(Y S)
+
+ LDX #0                 ; Set X = 0, to hold the remainder
+
+ STX Q                  ; Set Q = 0, to hold the result
+
+ LDA #8                 ; Set T = 8, to use as a loop counter
  STA T
 
-.CFA63
+.LL6
 
- CPX Q
- BCC CFA75
- BNE CFA6D
- CPY #$40
- BCC CFA75
+ CPX Q                  ; If X < Q, jump to LL7
+ BCC LL7
 
-.CFA6D
+ BNE P%+6               ; If X > Q, skip the next two instructions
 
- TYA
- SBC #$40
- TAY
- TXA
+ CPY #64                ; If Y < 64, jump to LL7 with the C flag clear,
+ BCC LL7                ; otherwise fall through into LL8 with the C flag set
+
+ TYA                    ; Set Y = Y - 64
+ SBC #64                ;
+ TAY                    ; This subtraction will work as we know C is set from
+                        ; the BCC above, and the result will not underflow as we
+                        ; already checked that Y >= 64, so the C flag is also
+                        ; set for the next subtraction
+
+ TXA                    ; Set X = X - Q
  SBC Q
  TAX
 
-.CFA75
+.LL7
 
- ROL Q
- ASL S
+ ROL Q                  ; Shift the result in Q to the left, shifting the C flag
+                        ; into bit 0 and bit 7 into the C flag
+
+ ASL S                  ; Shift the dividend in (Y S) to the left, inserting
+ TYA                    ; bit 7 from above into bit 0
+ ROL A
+ TAY
+
+ TXA                    ; Shift the remainder in X to the left
+ ROL A
+ TAX
+
+ ASL S                  ; Shift the dividend in (Y S) to the left
  TYA
  ROL A
  TAY
- TXA
+
+ TXA                    ; Shift the remainder in X to the left
  ROL A
  TAX
- ASL S
- TYA
- ROL A
- TAY
- TXA
- ROL A
- TAX
- DEC T
- BNE CFA63
- RTS
 
-.CFA8C
+ DEC T                  ; Decrement the loop counter
 
- LDA #$FF
- STA R
- RTS
+ BNE LL6                ; Loop back to LL6 until we have done 8 loops
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: LL28
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate R = 256 * A / Q
+;  Deep dive: Multiplication and division using logarithms
+;
+; ------------------------------------------------------------------------------
+;
+; Calculate the following, where A < Q:
+;
+;   R = 256 * A / Q
+;
+; This is a sister routine to LL61, which does the division when A >= Q.
+;
+; If A >= Q then 255 is returned and the C flag is set to indicate an overflow
+; (the C flag is clear if the division was a success).
+;
+; The result is returned in one byte as the result of the division multiplied
+; by 256, so we can return fractional results using integers.
+;
+; This routine uses the same logarithm algorithm that's documented in FMLTU,
+; except it subtracts the logarithm values, to do a division instead of a
+; multiplication.
+;
+; Returns:
+;
+;   C flag              Set if the answer is too big for one byte, clear if the
+;                       division was a success
+;
+; Other entry points:
+;
+;   LL28+4              Skips the A >= Q check and always returns with C flag
+;                       cleared, so this can be called if we know the division
+;                       will work
 ;
 ; ******************************************************************************
+
+.LL2
+
+ LDA #255               ; The division is very close to 1, so return the closest
+ STA R                  ; possible answer to 256, i.e. R = 255
+
+ RTS                    ; Return from the subroutine
 
 .LL28
 
- CMP Q
- BCS CFA8C
- STA widget
- TAX
- BEQ CFAB5
- LDA logL,X
- LDX Q
- SEC
- SBC logL,X
- BMI CFAB8
- LDX widget
+ CMP Q                  ; If A >= Q, then the answer will not fit in one byte,
+ BCS LL2                ; so jump to LL2 to return 255
+
+ STA widget             ; Store A in widget, so now widget = argument A
+
+ TAX                    ; Transfer A into X, so now X = argument A
+
+ BEQ LLfix              ; If A = 0, jump to LLfix to return a result of 0, as
+                        ; 0 * Q / 256 is always 0
+
+                        ; We now want to calculate log(A) - log(Q), first adding
+                        ; the low bytes (from the logL table), and then the high
+                        ; bytes (from the log table)
+
+ LDA logL,X             ; Set A = low byte of log(X)
+                        ;       = low byte of log(A) (as we set X to A above)
+
+ LDX Q                  ; Set X = Q
+
+ SEC                    ; Set A = A - low byte of log(Q)
+ SBC logL,X             ;       = low byte of log(A) - low byte of log(Q)
+
+ BMI noddlog            ; If the subtraction is negative, jump to noddlog
+
+ LDX widget             ; Set A = high byte of log(A) - high byte of log(Q)
  LDA log,X
  LDX Q
  SBC log,X
- BCS CFA8C
- TAX
- LDA antilog,X
 
-.CFAB5
+ BCS LL2                ; If the subtraction fitted into one byte and didn't
+                        ; underflow, then log(A) - log(Q) < 256, so we jump to
+                        ; LL2 return a result of 255
 
- STA R
- RTS
+ TAX                    ; Otherwise we return the A-th entry from the antilog
+ LDA antilog,X          ; table
 
-.CFAB8
+.LLfix
 
- LDX widget
+ STA R                  ; Set the result in R to the value of A
+
+ RTS                    ; Return from the subroutine
+
+.noddlog
+
+ LDX widget             ; Set A = high byte of log(A) - high byte of log(Q)
  LDA log,X
  LDX Q
  SBC log,X
- BCS CFA8C
- TAX
- LDA antilogODD,X
- STA R
- RTS
+
+ BCS LL2                ; If the subtraction fitted into one byte and didn't
+                        ; underflow, then log(A) - log(Q) < 256, so we jump to
+                        ; LL2 to return a result of 255
+
+ TAX                    ; Otherwise we return the A-th entry from the antilogODD
+ LDA antilogODD,X       ; table
+
+ STA R                  ; Set the result in R to the value of A
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: subm_FACB
+;       Name: TIS2
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate A = A / Q
+;  Deep dive: Shift-and-subtract division
+;
+; ------------------------------------------------------------------------------
+;
+; Calculate the following division, where A is a sign-magnitude number and Q is
+; a positive integer:
+;
+;   A = A / Q
+;
+; The value of A is returned as a sign-magnitude number with 96 representing 1,
+; and the maximum value returned is 1 (i.e. 96). This routine is used when
+; normalising vectors, where we represent fractions using integers, so this
+; gives us an approximation to two decimal places.
 ;
 ; ******************************************************************************
 
-.subm_FACB
+.TIS2
 
- TAY
- AND #$7F
- CMP Q
- BCS CFAF2
- LDX #$FE
- STX T
+ TAY                    ; Store the argument A in Y
 
-.loop_CFAD6
+ AND #%01111111         ; Strip the sign bit from the argument, so A = |A|
 
- ASL A
- CMP Q
- BCC CFADD
- SBC Q
+ CMP Q                  ; If A >= Q then jump to TI4 to return a 1 with the
+ BCS TI4                ; correct sign
 
-.CFADD
+ LDX #%11111110         ; Set T to have bits 1-7 set, so we can rotate through 7
+ STX T                  ; loop iterations, getting a 1 each time, and then
+                        ; getting a 0 on the 8th iteration... and we can also
+                        ; use T to catch our result bits into bit 0 each time
 
- ROL T
- BCS loop_CFAD6
- LDA T
+.TIL2
+
+ ASL A                  ; Shift A to the left
+
+ CMP Q                  ; If A < Q skip the following subtraction
+ BCC P%+4
+
+ SBC Q                  ; A >= Q, so set A = A - Q
+                        ;
+                        ; Going into this subtraction we know the C flag is
+                        ; set as we passed through the BCC above, and we also
+                        ; know that A >= Q, so the C flag will still be set once
+                        ; we are done
+
+ ROL T                  ; Rotate the counter in T to the left, and catch the
+                        ; result bit into bit 0 (which will be a 0 if we didn't
+                        ; do the subtraction, or 1 if we did)
+
+ BCS TIL2               ; If we still have set bits in T, loop back to TIL2 to
+                        ; do the next iteration of 7
+
+                        ; We've done the division and now have a result in the
+                        ; range 0-255 here, which we need to reduce to the range
+                        ; 0-96. We can do that by multiplying the result by 3/8,
+                        ; as 256 * 3/8 = 96
+
+ LDA T                  ; Set T = T / 4
  LSR A
  LSR A
  STA T
- LSR A
- ADC T
+
+ LSR A                  ; Set T = T / 8 + T / 4
+ ADC T                  ;       = 3T / 8
  STA T
- TYA
- AND #$80
- ORA T
- RTS
 
-.CFAF2
+ TYA                    ; Fetch the sign bit of the original argument A
+ AND #%10000000
 
- TYA
- AND #$80
- ORA #$60
- RTS
+ ORA T                  ; Apply the sign bit to T
+
+ RTS                    ; Return from the subroutine
+
+.TI4
+
+ TYA                    ; Fetch the sign bit of the original argument A
+ AND #%10000000
+
+ ORA #96                ; Apply the sign bit to 96 (which represents 1)
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: NORM
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Geometry)
+;    Summary: Normalise the three-coordinate vector in XX15
+;  Deep dive: Tidying orthonormal vectors
+;             Orientation vectors
+;
+; ------------------------------------------------------------------------------
+;
+; We do this by dividing each of the three coordinates by the length of the
+; vector, which we can calculate using Pythagoras. Once normalised, 96 ($60) is
+; used to represent a value of 1, and 96 with bit 7 set ($E0) is used to
+; represent -1. This enables us to represent fractional values of less than 1
+; using integers.
+;
+; Arguments:
+;
+;   XX15                The vector to normalise, with:
+;
+;                         * The x-coordinate in XX15
+;
+;                         * The y-coordinate in XX15+1
+;
+;                         * The z-coordinate in XX15+2
+;
+; Returns:
+;
+;   XX15                The normalised vector
+;
+;   Q                   The length of the original XX15 vector
+;
+; Other entry points:
+;
+;   NO1                 Contains an RTS
 ;
 ; ******************************************************************************
 
@@ -11636,61 +12562,93 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA XX15
- JSR SQUA
- STA R
+ LDA XX15               ; Fetch the x-coordinate into A
+
+ JSR SQUA               ; Set (A P) = A * A = x^2
+
+ STA R                  ; Set (R Q) = (A P) = x^2
  LDA P
  STA Q
- LDA Y1
- JSR SQUA
- STA T
- LDA P
- ADC Q
- STA Q
- LDA T
+
+ LDA XX15+1             ; Fetch the y-coordinate into A
+
+ JSR SQUA               ; Set (A P) = A * A = y^2
+
+ STA T                  ; Set (T P) = (A P) = y^2
+
+ LDA P                  ; Set (R Q) = (R Q) + (T P) = x^2 + y^2
+ ADC Q                  ;
+ STA Q                  ; First, doing the low bytes, Q = Q + P
+
+ LDA T                  ; And then the high bytes, R = R + T
  ADC R
  STA R
- LDA X2
- JSR SQUA
- STA T
+
+ LDA XX15+2             ; Fetch the z-coordinate into A
+
+ JSR SQUA               ; Set (A P) = A * A = z^2
+
+ STA T                  ; Set (T P) = (A P) = z^2
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- CLC
- LDA P
- ADC Q
- STA Q
- LDA T
+ CLC                    ; Clear the C flag (though this isn't nedded, as the
+                        ; SETUP_PPU_FOR_ICON_BAR does this for us)
+
+ LDA P                  ; Set (R Q) = (R Q) + (T P) = x^2 + y^2 + z^2
+ ADC Q                  ;
+ STA Q                  ; First, doing the low bytes, Q = Q + P
+
+ LDA T                  ; And then the high bytes, R = R + T
  ADC R
- BCS CFB79
+
+ BCS CFB79              ; ???
+
  STA R
- JSR LL5
+
+ JSR LL5                ; We now have the following:
+                        ;
+                        ; (R Q) = x^2 + y^2 + z^2
+                        ;
+                        ; so we can call LL5 to use Pythagoras to get:
+                        ;
+                        ; Q = SQRT(R Q)
+                        ;   = SQRT(x^2 + y^2 + z^2)
+                        ;
+                        ; So Q now contains the length of the vector (x, y, z),
+                        ; and we can normalise the vector by dividing each of
+                        ; the coordinates by this value, which we do by calling
+                        ; routine TIS2. TIS2 returns the divided figure, using
+                        ; 96 to represent 1 and 96 with bit 7 set for -1
 
 .CFB49
 
- LDA XX15
- JSR subm_FACB
+ LDA XX15               ; Call TIS2 to divide the x-coordinate in XX15 by Q,
+ JSR TIS2               ; with 1 being represented by 96
  STA XX15
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA Y1
- JSR subm_FACB
- STA Y1
- LDA X2
- JSR subm_FACB
- STA X2
+ LDA XX15+1             ; Call TIS2 to divide the y-coordinate in XX15+1 by Q,
+ JSR TIS2               ; with 1 being represented by 96
+ STA XX15+1
+
+ LDA XX15+2             ; Call TIS2 to divide the z-coordinate in XX15+2 by Q,
+ JSR TIS2               ; with 1 being represented by 96
+ STA XX15+2
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- RTS
+.NO1
+
+ RTS                    ; Return from the subroutine
 
 .CFB79
 
- ROR A
+ ROR A                  ; ???
  ROR Q
  LSR A
  ROR Q
