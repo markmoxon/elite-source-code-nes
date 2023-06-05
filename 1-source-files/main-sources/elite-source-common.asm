@@ -313,7 +313,7 @@ IF NOT(_BANK = 6)
 
   subm_B88C         = $B88C
   subm_B8FE         = $B8FE
-  subm_B90D6        = $B90D
+  subm_B906         = $B90D
   subm_B919         = $B919
   LL164             = $B980
   subm_BA17         = $BA17
@@ -328,7 +328,7 @@ IF NOT(_BANK = 6)
 
   subm_B88C         = $B89B
   subm_B8FE         = $B90D
-  subm_B90D6        = $B91C
+  subm_B906         = $B91C
   subm_B919         = $B928
   LL164             = $B98F
   subm_BA17         = $BA26

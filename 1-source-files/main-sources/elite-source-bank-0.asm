@@ -10583,7 +10583,7 @@ ENDIF
  LDA #$34
  STA L030A
  JSR ResetSoundL045E
- JSR subm_B90D_b6
+ JSR subm_B906_b6
  JSR subm_F3AB
  LDA #1
  STA L0037

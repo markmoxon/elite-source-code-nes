@@ -254,7 +254,7 @@ ENDIF
 ;
 ;       Name: ResetBank
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Utility routines
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -267,8 +267,14 @@ ENDIF
 ;
 ;       Name: SetBank
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Utility routines
+;    Summary: Page a specified bank into memory at $8000
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The number of the bank to page into memory at $8000
 ;
 ; ******************************************************************************
 
@@ -7470,7 +7476,7 @@ ENDIF
 ;
 ;       Name: BEEP
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -7484,7 +7490,7 @@ ENDIF
 ;
 ;       Name: EXNO3
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -7548,7 +7554,7 @@ ENDIF
 ;
 ;       Name: BOOP
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -7562,7 +7568,7 @@ ENDIF
 ;
 ;       Name: subm_EBE9
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -7576,7 +7582,7 @@ ENDIF
 ;
 ;       Name: subm_EBED
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -7590,7 +7596,7 @@ ENDIF
 ;
 ;       Name: NOISE
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -7645,7 +7651,7 @@ ENDIF
 ;
 ;       Name: noiseLookup1
 ;       Type: Variable
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -7660,7 +7666,7 @@ ENDIF
 ;
 ;       Name: noiseLookup2
 ;       Type: Variable
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -7677,27 +7683,41 @@ ENDIF
 ;
 ;       Name: SetupPPUForIconBar
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Screen mode
+;    Summary: If the PPU has started drawing the icon bar, configure the PPU to
+;             use nametable 0 and pattern table 0, while preserving A
 ;
 ; ******************************************************************************
 
 .SetupPPUForIconBar
 
- PHA
+ PHA                    ; Store the value of A on the stack so we can retrieve
+                        ; it below
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- PLA
- RTS
+ PLA                    ; Retrieve the value of A from the stack so it is
+                        ; unchanged
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: GetShipBlueprint
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing ships
+;    Summary: Fetch a specified byte from the current ship blueprint
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   Y                   The offset of the byte to return from the blueprint
+;
+; Returns:
+;
+;   A                   The Y-th byte of the current ship blueprint
 ;
 ; ******************************************************************************
 
@@ -7709,25 +7729,55 @@ ENDIF
  LDA #1                 ; Page ROM bank 1 into memory at $8000
  JSR SetBank
 
- LDA (XX0),Y
+ LDA (XX0),Y            ; Set A to the Y-th byte of the current ship blueprint
 
-.loop_CEC97
+                        ; Fall through into ResetBankA to retrieve the bank
+                        ; number we stored above and page it back into memory
+
+; ******************************************************************************
+;
+;       Name: ResetBankA
+;       Type: Subroutine
+;   Category: Utility routines
+;    Summary: Page a specified bank into memory at $8000 while preserving the
+;             value of A
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   Stack               The number of the bank to page into memory at $8000
+;
+; ******************************************************************************
+
+.ResetBankA
 
  STA ASAV               ; Store the value of A so we can retrieve it below
 
- PLA
- JSR SetBank
+ PLA                    ; Fetch the ROM bank number from the stack
+
+ JSR SetBank            ; Page bank A into memory at $8000
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: GetDefaultNEWB
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing ships
+;    Summary: Fetch the default NEWB flags for a specified ship type
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   Y                   The ship type
+;
+; Returns:
+;
+;   A                   The default NEWB flags for ship type Y
 ;
 ; ******************************************************************************
 
@@ -7739,8 +7789,11 @@ ENDIF
  LDA #1                 ; Page ROM bank 1 into memory at $8000
  JSR SetBank
 
- LDA E%-1,Y
- JMP loop_CEC97
+ LDA E%-1,Y             ; Set A to the default NEWB flags for ship type Y
+
+ JMP ResetBankA         ; Jump to ResetBankA to retrieve the bank number we
+                        ; stored above and page it back into memory, returning
+                        ; from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -7821,7 +7874,8 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR subm_B1D4
+ JSR subm_B1D4          ; Call subm_B1D4, now that it is paged into memory
+
  JMP loop_CECDB
 
 ; ******************************************************************************
@@ -7867,7 +7921,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR PlayMusic
+ JSR PlayMusic          ; Call PlayMusic, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -7887,9 +7941,12 @@ ENDIF
  PHA
  JSR KeepPPUTablesAt0
  PLA
+
  ORA #$80
  STA L045E
+
  AND #$7F
+
  LDX L03ED
  BMI CECE1
 
@@ -7905,7 +7962,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR subm_8021
+ JSR subm_8021          ; Call subm_8021, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -7940,7 +7997,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR subm_89D1
+ JSR subm_89D1          ; Call subm_89D1, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -7996,7 +8053,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR ResetSound
+ JSR ResetSound         ; Call ResetSound, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8019,7 +8076,7 @@ ENDIF
  LDA #5                 ; Page ROM bank 5 into memory at $8000
  JSR SetBank
 
- JSR subm_BF41
+ JSR subm_BF41          ; Call subm_BF41, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8042,7 +8099,7 @@ ENDIF
  LDA #4                 ; Page ROM bank 4 into memory at $8000
  JSR SetBank
 
- JSR subm_B9F9
+ JSR subm_B9F9          ; Call subm_B9F9, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8065,7 +8122,7 @@ ENDIF
  LDA #4                 ; Page ROM bank 4 into memory at $8000
  JSR SetBank
 
- JSR subm_B96B
+ JSR subm_B96B          ; Call subm_B96B, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8088,7 +8145,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR subm_B63D
+ JSR subm_B63D          ; Call subm_B63D, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8111,7 +8168,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR subm_B88C
+ JSR subm_B88C          ; Call subm_B88C, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8136,7 +8193,7 @@ ENDIF
  LDA #1                 ; Page ROM bank 1 into memory at $8000
  JSR SetBank
 
- JSR LL9
+ JSR LL9                ; Call LL9, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8163,7 +8220,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR subm_BA23
+ JSR subm_BA23          ; Call subm_BA23, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8188,7 +8245,7 @@ ENDIF
  LDA #1                 ; Page ROM bank 1 into memory at $8000
  JSR SetBank
 
- JSR TIDY
+ JSR TIDY               ; Call TIDY, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8215,7 +8272,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR TITLE
+ JSR TITLE              ; Call TITLE, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8256,7 +8313,7 @@ ENDIF
  LDA #1                 ; Page ROM bank 1 into memory at $8000
  JSR SetBank
 
- JSR STARS
+ JSR STARS              ; Call STARS, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8285,7 +8342,7 @@ ENDIF
  LDA #1                 ; Page ROM bank 1 into memory at $8000
  JSR SetBank
 
- JSR CIRCLE2
+ JSR CIRCLE2            ; Call CIRCLE2, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8314,7 +8371,7 @@ ENDIF
  LDA #1                 ; Page ROM bank 1 into memory at $8000
  JSR SetBank
 
- JSR SUN
+ JSR SUN                ; Call SUN, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8341,7 +8398,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR subm_B2FB
+ JSR subm_B2FB          ; Call subm_B2FB, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8370,7 +8427,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR subm_B219
+ JSR subm_B219          ; Call subm_B219, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8399,7 +8456,7 @@ ENDIF
  LDA #4                 ; Page ROM bank 4 into memory at $8000
  JSR SetBank
 
- JSR subm_B9C1
+ JSR subm_B9C1          ; Call subm_B9C1, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8422,7 +8479,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR subm_A082
+ JSR subm_A082          ; Call subm_A082, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8445,7 +8502,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR subm_A0F8
+ JSR subm_A0F8          ; Call subm_A0F8, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8468,7 +8525,7 @@ ENDIF
  LDA #4                 ; Page ROM bank 4 into memory at $8000
  JSR SetBank
 
- JSR subm_B882
+ JSR subm_B882          ; Call subm_B882, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8491,7 +8548,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR subm_A4A5
+ JSR subm_A4A5          ; Call subm_A4A5, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8548,7 +8605,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR subm_B9E2
+ JSR subm_B9E2          ; Call subm_B9E2, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8575,7 +8632,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR subm_B673
+ JSR subm_B673          ; Call subm_B673, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8598,7 +8655,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR subm_B2BC
+ JSR subm_B2BC          ; Call subm_B2BC, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8621,7 +8678,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR subm_B248
+ JSR subm_B248          ; Call subm_B248, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8644,7 +8701,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR subm_BA17
+ JSR subm_BA17          ; Call subm_BA17, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8669,7 +8726,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR subm_AFCD
+ JSR subm_AFCD          ; Call subm_AFCD, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8696,7 +8753,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR subm_BE52
+ JSR subm_BE52          ; Call subm_BE52, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8719,7 +8776,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR subm_BED2
+ JSR subm_BED2          ; Call subm_BED2, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8748,7 +8805,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR subm_B0E1
+ JSR subm_B0E1          ; Call subm_B0E1, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8777,7 +8834,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR subm_B18E
+ JSR subm_B18E          ; Call subm_B18E, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8800,7 +8857,7 @@ ENDIF
  LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
 
- JSR PAS1
+ JSR PAS1               ; Call PAS1, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8823,7 +8880,7 @@ ENDIF
  LDA #5                 ; Page ROM bank 5 into memory at $8000
  JSR SetBank
 
- JSR SetSystemImage
+ JSR SetSystemImage     ; Call SetSystemImage, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8846,7 +8903,7 @@ ENDIF
  LDA #5                 ; Page ROM bank 5 into memory at $8000
  JSR SetBank
 
- JSR GetSystemImage
+ JSR GetSystemImage     ; Call GetSystemImage, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8869,7 +8926,7 @@ ENDIF
  LDA #4                 ; Page ROM bank 4 into memory at $8000
  JSR SetBank
 
- JSR SetCmdrImage
+ JSR SetCmdrImage       ; Call SetCmdrImage, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8892,7 +8949,7 @@ ENDIF
  LDA #4                 ; Page ROM bank 4 into memory at $8000
  JSR SetBank
 
- JSR GetCmdrImage
+ JSR GetCmdrImage       ; Call GetCmdrImage, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8915,7 +8972,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR DIALS
+ JSR DIALS              ; Call DIALS, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8938,7 +8995,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR subm_BA63
+ JSR subm_BA63          ; Call subm_BA63, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8967,7 +9024,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR subm_B39D
+ JSR subm_B39D          ; Call subm_B39D, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -8996,7 +9053,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR LL164
+ JSR LL164              ; Call LL164, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9019,7 +9076,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR subm_B919
+ JSR subm_B919          ; Call subm_B919, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9042,7 +9099,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR subm_A166
+ JSR subm_A166          ; Call subm_A166, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9065,7 +9122,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR subm_BBDE
+ JSR subm_BBDE          ; Call subm_BBDE, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9088,7 +9145,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR subm_BB37
+ JSR subm_BB37          ; Call subm_BB37, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9111,7 +9168,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR subm_B8FE
+ JSR subm_B8FE          ; Call subm_B8FE, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9119,14 +9176,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B90D_b6
+;       Name: subm_B906_b6
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: Call the subm_B90D routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.subm_B90D_b6
+.subm_B906_b6
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -9134,7 +9191,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR subm_B90D6
+ JSR subm_B906          ; Call subm_B906, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9163,7 +9220,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR subm_A5AB
+ JSR subm_A5AB          ; Call subm_A5AB, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9192,7 +9249,7 @@ ENDIF
  LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
 
- JSR BEEP
+ JSR BEEP               ; Call BEEP, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9221,7 +9278,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR DETOK
+ JSR DETOK              ; Call DETOK, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9256,7 +9313,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR DTS
+ JSR DTS                ; Call DTS, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9285,7 +9342,7 @@ ENDIF
  LDA #2                 ; Page ROM bank 2 into memory at $8000
  JSR SetBank
 
- JSR PDESC
+ JSR PDESC              ; Call PDESC, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9314,7 +9371,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR subm_AE18
+ JSR subm_AE18          ; Call subm_AE18, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9349,7 +9406,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR subm_AC1D
+ JSR subm_AC1D          ; Call subm_AC1D, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9378,7 +9435,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR subm_A730
+ JSR subm_A730          ; Call subm_A730, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9401,7 +9458,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR subm_A775
+ JSR subm_A775          ; Call subm_A775, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9424,7 +9481,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR DrawTitleScreen
+ JSR DrawTitleScreen    ; Call DrawTitleScreen, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9461,7 +9518,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR subm_A7B7
+ JSR subm_A7B7          ; Call subm_A7B7, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9507,7 +9564,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR subm_A9D1
+ JSR subm_A9D1          ; Call subm_A9D1, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9538,7 +9595,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR subm_A972
+ JSR subm_A972          ; Call subm_A972, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9567,7 +9624,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR subm_AC5C
+ JSR subm_AC5C          ; Call subm_AC5C, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9594,7 +9651,7 @@ ENDIF
  LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
 
- JSR subm_8980
+ JSR subm_8980          ; Call subm_8980, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9617,7 +9674,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR subm_B459
+ JSR subm_B459          ; Call subm_B459, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9646,7 +9703,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR MVS5
+ JSR MVS5               ; Call MVS5, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9675,7 +9732,7 @@ ENDIF
  LDA #1                 ; Page ROM bank 1 into memory at $8000
  JSR SetBank
 
- JSR HALL
+ JSR HALL               ; Call HALL, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9704,7 +9761,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR CHPR
+ JSR CHPR               ; Call CHPR, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9739,7 +9796,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR DASC
+ JSR DASC               ; Call DASC, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9774,7 +9831,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR TT27
+ JSR TT27               ; Call TT27, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9809,7 +9866,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR ex
+ JSR ex                 ; Call ex, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9838,7 +9895,7 @@ ENDIF
  LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
 
- JSR TT27_0
+ JSR TT27_0             ; Call TT27_0, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9863,7 +9920,7 @@ ENDIF
  LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
 
- JSR BR1
+ JSR BR1                ; Call BR1, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9905,7 +9962,7 @@ ENDIF
  LDA #1                 ; Page ROM bank 1 into memory at $8000
  JSR SetBank
 
- JSR subm_BAF3
+ JSR subm_BAF3          ; Call subm_BAF3, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9932,7 +9989,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR TT66
+ JSR TT66               ; Call TT66, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -9955,7 +10012,8 @@ ENDIF
  LDA #1                 ; Page ROM bank 1 into memory at $8000
  JSR SetBank
 
- JSR CLIP
+ JSR CLIP               ; Call CLIP, now that it is paged into memory
+
  BCS CF290
  JSR LOIN
 
@@ -9984,7 +10042,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR ClearTiles
+ JSR ClearTiles         ; Call ClearTiles, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -10013,7 +10071,7 @@ ENDIF
  LDA #1                 ; Page ROM bank 1 into memory at $8000
  JSR SetBank
 
- JSR SCAN
+ JSR SCAN               ; Call SCAN, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -10053,7 +10111,7 @@ ENDIF
  LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
 
- JSR subm_8926
+ JSR subm_8926          ; Call subm_8926, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
                         ; bank back into memory at $8000, returning from the
@@ -10074,7 +10132,9 @@ ENDIF
  JSR SetBank
 
  JSR CopyNametable0To1
- JSR subm_F126
+
+ JSR subm_F126          ; Call subm_F126, now that it is paged into memory
+
  LDX #1
  STX palettePhase
  RTS
