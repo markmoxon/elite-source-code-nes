@@ -3532,8 +3532,8 @@ ENDMACRO
  JSR Shpt               ; Call Shpt to draw a horizontal 4-pixel dash for the
                         ; first row of the dot (i.e. a four-pixel dash)
 
- INY                    ; ??? Increment Y to the next row
- CLC
+ INY                    ; Increment Y to the next row (so this is the second row
+ CLC                    ; of the two-pixel-high dot)
 
  JSR Shpt               ; Call Shpt to draw a horizontal 4-pixel dash for the
                         ; second row of the dot (i.e. a four-pixel dash)
@@ -3547,7 +3547,9 @@ ENDMACRO
  LDA XX1+6
  BPL C9FB4
  LDX #$FF
+
 .C9FB4
+
  STX X2
  AND #$3F
  ADC #$20
@@ -5490,8 +5492,8 @@ ENDMACRO
 
                         ; This gets called from below when y_sign is negative
 
- LDA Yx1M2              ; Calculate #Y + (U R), starting with the low bytes
- CLC                    ; ???
+ LDA Yx1M2              ; Calculate Yx1M2 + (U R), starting with the low bytes
+ CLC
  ADC R
 
  STA XX3,X              ; Store the low byte of the result in the X-th byte of
@@ -5532,8 +5534,8 @@ ENDMACRO
                         ; and stick it on the XX3 heap, much like we did with
                         ; the x-coordinate above. Again, we convert the
                         ; coordinate by adding or subtracting the y-coordinate
-                        ; of the centre of the screen, which is in the constant
-                        ; #Y, but this time we do the opposite, as a positive
+                        ; of the centre of the screen, which is in the variable
+                        ; Yx1M2, but this time we do the opposite, as a positive
                         ; projected y-coordinate, i.e. up the space y-axis and
                         ; up the screen, converts to a low y-coordinate, which
                         ; is the opposite way round to the x-coordinates
@@ -5546,11 +5548,11 @@ ENDMACRO
                         ; increment it so it does point to the next free byte
 
  LDA XX15+5             ; If y_sign is negative, jump up to LL70, which will
- BMI LL70               ; store #Y + (U R) on the XX3 heap and return by jumping
-                        ; down to LL50 below
+ BMI LL70               ; store Yx1M2 + (U R) on the XX3 heap and return by
+                        ; jumping down to LL50 below
 
- LDA Yx1M2              ; Calculate #Y - (U R), starting with the low bytes
- SEC                    ; ???
+ LDA Yx1M2              ; Calculate Yx1M2 - (U R), starting with the low bytes
+ SEC
  SBC R
 
  STA XX3,X              ; Store the low byte of the result in the X-th byte of
@@ -5741,7 +5743,7 @@ ENDMACRO
  LDY U                  ; Fetch the ship line heap pointer, which points to the
                         ; next free byte on the heap, into Y
 
- JSR LOIN               ; ???
+ JSR LOIN               ; Draw the laser line
 
 ; ******************************************************************************
 ;
@@ -5893,9 +5895,9 @@ ENDMACRO
                         ; screen, so jump to LL78 (via LL79-3) so we don't store
                         ; this line in the ship line heap
 
- JSR LOIN               ; ???
+ JSR LOIN               ; Draw this edge
 
- JMP LL78               ; Jump down to part 11 to draw this edge
+ JMP LL78               ; Jump down to part 11 to skip to the next edge
 
 ; ******************************************************************************
 ;
@@ -5974,14 +5976,16 @@ ENDMACRO
 
 .CLIP2
 
- LDX #$FF               ; ???
+ LDX #255               ; Set X = 255, the highest y-coordinate possible, beyond
+                        ; the bottom of the screen
 
  ORA XX12+1             ; If one or both of x2_hi and y2_hi are non-zero, jump
- BNE LL107              ; to LL107 to skip the following
+ BNE LL107              ; to LL107 to skip the following, leaving X at 255
 
- LDA Yx2M1              ; ???
- CMP XX12
- BCC LL107
+ LDA Yx2M1              ; If y2_lo > the y-coordinate of the bottom of screen
+ CMP XX12               ; (which is in the variable Yx2M1), then (x2, y2) is off
+ BCC LL107              ; the bottom of the screen, so skip the following
+                        ; instruction, leaving X at 255
 
  LDX #0                 ; Set X = 0
 
@@ -6002,8 +6006,8 @@ ENDMACRO
  BNE LL83
 
  LDA Yx2M1              ; If y1_lo > the y-coordinate of the bottom of screen
- CMP XX15+2             ; then (x1, y1) is off the bottom of the screen, so jump
- BCC LL83               ; to LL83
+ CMP XX15+2             ; (which is in the variable Yx2M1),  then (x1, y1) is
+ BCC LL83               ; off the bottom of the screen, so jump to LL83
 
                         ; If we get here, (x1, y1) is on-screen
 
@@ -6115,8 +6119,9 @@ ENDMACRO
  BPL LL109              ; jump to LL109 to return from the subroutine with the C
                         ; flag set, as the line doesn't fit on-screen
 
- LDA XX15+2             ; If y1_lo < y-coordinate of screen bottom, clear the C
- CMP Yx2M2              ; flag, otherwise set it ???
+ LDA XX15+2             ; If y1_lo < y-coordinate of screen bottom (which is in
+ CMP Yx2M2              ; the variable Yx2M1), clear the C flag, otherwise set
+                        ; it
 
  LDA XX15+3             ; Set XX12+2 = y1_hi - (1 - C), so:
  SBC #0                 ;
@@ -6128,8 +6133,9 @@ ENDMACRO
                         ; might move the point into the space view portion of
                         ; the screen, i.e. if y1_lo is on-screen
 
- LDA XX12               ; If y2_lo < y-coordinate of screen bottom, clear the C
- CMP Yx2M2              ; flag, otherwise set it ???
+ LDA XX12               ; If y2_lo < y-coordinate of screen bottom (which is in
+ CMP Yx2M2              ; the variable Yx2M1), clear the C flag, otherwise set
+                        ; it
 
  LDA XX12+1             ; Set XX12+2 = y2_hi - (1 - C), so:
  SBC #0                 ;
@@ -6312,7 +6318,8 @@ ENDMACRO
 
 .LL116
 
- STA XX12+2             ; ???
+ STA XX12+2             ; Store the gradient in XX12+2 (as the call to LL28 in
+                        ; part 3 returns the gradient in both A and R)
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -6355,8 +6362,9 @@ ENDMACRO
  BNE LL137              ; set, as the line doesn't fit on-screen
 
  LDA XX15+2             ; If y1_lo > y-coordinate of the bottom of the screen
- CMP Yx2M2              ; jump to LL137 to return from the subroutine with the
- BCS LL137              ; C flag set, as the line doesn't fit on-screen ???
+ CMP Yx2M2              ; (which is in the variable Yx2M1), jump to LL137 to
+ BCS LL137              ; return from the subroutine with the C flag set, as the
+                        ; line doesn't fit on-screen
 
 .LLX117
 
@@ -6539,13 +6547,11 @@ ENDMACRO
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA XX15+1             ; If x1_hi is positive, jump down to LL119 to skip
-                        ; the following ???
+ LDA XX15+1             ; Set S = x1_hi
+ STA S
 
- STA S                  ; Otherwise x1_hi is negative, i.e. off the left of the
-                        ; screen, so set S = x1_hi
-
- BPL LL119              ; ???
+ BPL LL119              ; If x1_hi is positive, jump down to LL119 to skip the
+                        ; following
 
  JSR LL120              ; Call LL120 to calculate:
                         ;
@@ -6573,7 +6579,9 @@ ENDMACRO
 
  TAX                    ; Set X = 0 so the next instruction becomes a JMP
 
- BEQ CA80D              ; ???
+ BEQ LL134S             ; If x1_hi = 0 then jump down to LL134S to skip the
+                        ; following, as the x-coordinate is already on-screen
+                        ; (as 0 <= (x_hi x_lo) <= 255)
 
 .LL119
 
@@ -6581,7 +6589,11 @@ ENDMACRO
                         ; following, as the x-coordinate is already on-screen
                         ; (as 0 <= (x_hi x_lo) <= 255)
 
- DEC S                  ; ???
+ DEC S                  ; Otherwise x1_hi is positive, i.e. x1 >= 256 and off
+                        ; the right side of the screen, so set:
+                        ;
+                        ;   S = S - 1
+                        ;     = x1_hi - 1
 
  JSR LL120              ; Call LL120 to calculate:
                         ;
@@ -6608,11 +6620,10 @@ ENDMACRO
  INX
  STX XX15+1
 
-.CA80D
+.LL134S
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
-                        ; ???
 
 .LL134
 
@@ -6655,31 +6666,31 @@ ENDMACRO
 
 .LL135
 
- LDA XX15+2             ; Set (S R) = (y1_hi y1_lo) - screen height
+ LDA XX15+2             ; Set (S R) = (y1_hi y1_lo) - screen height in Yx2M2
  SEC                    ;
- SBC Yx2M2              ; starting with the low bytes ???
+ SBC Yx2M2              ; starting with the low bytes
  STA R
 
  LDA XX15+3             ; And then subtracting the high bytes
  SBC #0
  STA S
 
- BCC LL136              ; If the subtraction underflowed, i.e. if y1 < 192, then
-                        ; y1 is already on-screen, so jump to LL136 to return
-                        ; from the subroutine, as we are done
+ BCC LL136              ; If the subtraction underflowed, i.e. if y1 < screen
+                        ; height, then y1 is already on-screen, so jump to LL136
+                        ; to return from the subroutine, as we are done
 
 .LL139
 
-                        ; If we get here then y1 >= 192, i.e. off the bottom of
-                        ; the screen
+                        ; If we get here then y1 >= screen height, i.e. off the
+                        ; bottom of the screen
 
  JSR LL123              ; Call LL123 to calculate:
                         ;
                         ;   (Y X) = (S R) / XX12+2      if T = 0
-                        ;         = (y1 - 192) / gradient
+                        ;         = (y1 - screen height) / gradient
                         ;
                         ;   (Y X) = (S R) * XX12+2      if T <> 0
-                        ;         = (y1 - 192) * gradient
+                        ;         = (y1 - screen height) * gradient
                         ;
                         ; with the sign of (Y X) set to the opposite of the
                         ; line's direction of slope
@@ -6693,10 +6704,10 @@ ENDMACRO
  ADC XX15+1
  STA XX15+1
 
- LDA Yx2M1              ; Set y1 = 2 * #Y - 1. The constant #Y is 96, the
+ LDA Yx2M1              ; Set y1 = 2 * Yx2M1. The variable Yx2M1 is the
  STA XX15+2             ; y-coordinate of the mid-point of the space view, so
- LDA #0                 ; this sets Y2 to 191, the y-coordinate of the bottom
- STA XX15+3             ; pixel row of the space view ???
+ LDA #0                 ; this sets Y2 to y-coordinate of the bottom pixel
+ STA XX15+3             ; row of the space view
 
 .LL136
 
@@ -7036,7 +7047,7 @@ ENDMACRO
 
 .CA8F8
 
- JMP $CE9E              ; ???
+ JMP subm_CE9E          ; ???
 
  EQUB 0, 2
 
@@ -7135,7 +7146,7 @@ ENDMACRO
                         ; This part of the routine actually draws the explosion
                         ; cloud
 
- JSR $CE9E              ; ???
+ JSR subm_CE9E          ; ???
  LDA L040A
  STA Q
  LDA L002B
@@ -9149,7 +9160,7 @@ ENDMACRO
 
 .ED3
 
- BPL ED1
+ BPL ED1                ; ???
  LDA #0
  STA X1
  CLC
@@ -9163,7 +9174,7 @@ ENDMACRO
  SEC
  RTS
 
- BEQ ED1                ; ??? EDGES-2
+ BEQ ED1
 
 .EDGES
 
@@ -9444,15 +9455,22 @@ ENDMACRO
 ;
 ;       Name: PL44
 ;       Type: Subroutine
-;   Category: Drawing lines
-;    Summary: ??? normally in edges.asm, but is here instead
+;   Category: Drawing planets
+;    Summary: Return from a planet/sun-drawing routine with a success flag
+;
+; ------------------------------------------------------------------------------
+;
+; Clear the C flag and return from the subroutine. This is used to return from a
+; planet- or sun-drawing routine with the C flag indicating an overflow in the
+; calculation.
 ;
 ; ******************************************************************************
 
 .PL44
 
- CLC
- RTS
+ CLC                    ; Clear the C flag to indicate success
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -10678,7 +10696,7 @@ ENDMACRO
 
  JSR DORND              ; Set A and X to random numbers
 
- AND #$1F               ; ???
+ AND #%00011111         ; ???
 
  ADC #10                ; Make sure A is at least 10 and store it in z_hi and
  STA SZ,Y               ; ZZ, so the new particle starts close to us
@@ -11618,7 +11636,7 @@ ENDMACRO
 
 ; ******************************************************************************
 ;
-;       Name: ZINF
+;       Name: ZINF_b1
 ;       Type: Subroutine
 ;   Category: Utility routines
 ;    Summary: Reset the INWK workspace and orientation vectors
@@ -11635,7 +11653,7 @@ ENDMACRO
 ;
 ; ******************************************************************************
 
-.ZINF
+.ZINF_b1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -11720,7 +11738,7 @@ ENDMACRO
 
 .HAS1
 
- JSR ZINF               ; Call ZINF to reset the INWK ship workspace and reset
+ JSR ZINF_b1            ; Call ZINF to reset the INWK ship workspace and reset
                         ; the orientation vectors, with nosev pointing out of
                         ; the screen, so this puts the ship flat on the
                         ; horizontal deck (the y = 0 plane) with its nose

@@ -15053,7 +15053,7 @@ ENDMACRO
 
 .DT10
 
- BIT DTW8
+ BIT DTW8               ; ???
  BPL DT5
  STX SC
  TAX
@@ -16306,6 +16306,8 @@ ENDMACRO
 ;
 ; ******************************************************************************
 
+.TT27S
+
  JMP TT27_b0            ; ???
 
 .TT27
@@ -16328,7 +16330,7 @@ ENDMACRO
                         ; to TT43 to process tokens
 
  CMP #$0A
- BCC TT27-3
+ BCC TT27S
 
  CMP #96                ; By this point, token is either 7, or in 10-127.
  BCS ex                 ; Check token number in A and if token >= 96, then the

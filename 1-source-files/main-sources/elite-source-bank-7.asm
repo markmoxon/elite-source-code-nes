@@ -9770,31 +9770,66 @@ ENDIF
 ;
 ;       Name: Ze
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Universe
+;    Summary: Initialise the INWK workspace to a hostile ship
+;  Deep dive: Fixing ship positions
+;
+; ------------------------------------------------------------------------------
+;
+; Specifically, this routine does the following:
+;
+;   * Reset the INWK ship workspace
+;
+;   * Set the ship to a fair distance away in all axes, in front of us but
+;     randomly up or down, left or right
+;
+;   * Give the ship a 4% chance of having E.C.M.
+;
+;   * Set the ship to hostile, with AI enabled
+;
+; This routine also sets A, X, T1 and the C flag to random values.
+;
+; Note that because this routine uses the value of X returned by DORND, and X
+; contains the value of A returned by the previous call to DORND, this routine
+; does not necessarily set the new ship to a totally random location. See the
+; deep dive on "Fixing ship positions" for details.
 ;
 ; ******************************************************************************
 
 .Ze
 
- JSR ZINF_0
- JSR DORND
- STA T1
- AND #$80
+ JSR ZINF               ; Call ZINF to reset the INWK ship workspace
+
+ JSR DORND              ; Set A and X to random numbers
+
+ STA T1                 ; Store A in T1
+
+ AND #%10000000         ; Extract the sign of A and store in x_sign
  STA INWK+2
- JSR DORND
- AND #$80
+
+ JSR DORND              ; Set A and X to random numbers
+
+ AND #%10000000         ; Extract the sign of A and store in y_sign
  STA INWK+5
- LDA #$19
+
+ LDA #25                ; Set x_hi = y_hi = z_hi = 25, a fair distance away
  STA INWK+1
  STA INWK+4
  STA INWK+7
- TXA
- CMP #$F5
- ROL A
- ORA #$C0
- STA INWK+32
- JMP DORND2
+
+ TXA                    ; Set the C flag if X >= 245 (4% chance)
+ CMP #245
+
+ ROL A                  ; Set bit 0 of A to the C flag (i.e. there's a 4%
+                        ; chance of this ship having E.C.M.)
+
+ ORA #%11000000         ; Set bits 6 and 7 of A, so the ship is hostile (bit 6
+                        ; and has AI (bit 7)
+
+ STA INWK+32            ; Store A in the AI flag of this ship
+
+ JMP DORND2             ; Jump to DORND2 to set A, X and the C flag randomly,
+                        ; returning from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -9928,128 +9963,244 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: DORND2
+;       Name: DORND
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Utility routines
+;    Summary: Generate random numbers
+;  Deep dive: Generating random numbers
+;             Fixing ship positions
+;
+; ------------------------------------------------------------------------------
+;
+; Set A and X to random numbers (though note that X is set to the random number
+; that was returned in A the last time DORND was called).
+;
+; The C and V flags are also set randomly.
+;
+; If we want to generate a repeatable sequence of random numbers, when
+; generating explosion clouds, for example, then we call DORND2 to ensure that
+; the value of the C flag on entry doesn't affect the outcome, as otherwise we
+; might not get the same sequence of numbers if the C flag changes.
+;
+; Other entry points:
+;
+;   DORND2              Make sure the C flag doesn't affect the outcome
 ;
 ; ******************************************************************************
 
 .DORND2
 
- CLC
-
-; ******************************************************************************
-;
-;       Name: DORND
-;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
-;
-; ******************************************************************************
+ CLC                    ; Clear the C flag so the value of the C flag on entry
+                        ; doesn't affect the outcome
 
 .DORND
 
- LDA RAND
- ROL A
- TAX
- ADC RAND+2
- STA RAND
- STX RAND+2
- LDA RAND+1
- TAX
- ADC RAND+3
- STA RAND+1
- STX RAND+3
- RTS
+ LDA RAND               ; Calculate the next two values f2 and f3 in the feeder
+ ROL A                  ; sequence:
+ TAX                    ;
+ ADC RAND+2             ;   * f2 = (f1 << 1) mod 256 + C flag on entry
+ STA RAND               ;   * f3 = f0 + f2 + (1 if bit 7 of f1 is set)
+ STX RAND+2             ;   * C flag is set according to the f3 calculation
+
+ LDA RAND+1             ; Calculate the next value m2 in the main sequence:
+ TAX                    ;
+ ADC RAND+3             ;   * A = m2 = m0 + m1 + C flag from feeder calculation
+ STA RAND+1             ;   * X = m1
+ STX RAND+3             ;   * C and V flags set according to the m2 calculation
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: PROJ
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing ships
+;    Summary: Project the current ship onto the screen
+;  Deep dive: Extended screen coordinates
+;
+; ------------------------------------------------------------------------------
+;
+; Project the current ship's location onto the screen, either returning the
+; screen coordinates of the projection (if it's on-screen), or returning an
+; error via the C flag.
+;
+; In this context, "on-screen" means that the point is projected into the
+; following range:
+;
+;   centre of screen - 1024 < x < centre of screen + 1024
+;   centre of screen - 1024 < y < centre of screen + 1024
+;
+; This is to cater for ships (and, more likely, planets and suns) whose centres
+; are off-screen but whose edges may still be visible.
+;
+; The projection calculation is:
+;
+;   K3(1 0) = #X + x / z
+;   K4(1 0) = #Y + y / z
+;
+; where #X and #Y are the pixel x-coordinate and y-coordinate of the centre of
+; the screen.
+;
+; Arguments:
+;
+;   INWK                The ship data block for the ship to project on-screen
+;
+; Returns:
+;
+;   K3(1 0)             The x-coordinate of the ship's projection on-screen
+;
+;   K4(1 0)             The y-coordinate of the ship's projection on-screen
+;
+;   C flag              Set if the ship's projection doesn't fit on the screen,
+;                       clear if it does project onto the screen
+;
+;   A                   Contains K4+1, the high byte of the y-coordinate
 ;
 ; ******************************************************************************
 
 .PROJ
 
- LDA XX1
- STA P
+ LDA INWK               ; Set P(1 0) = (x_hi x_lo)
+ STA P                  ;            = x
  LDA INWK+1
  STA P+1
- LDA INWK+2
- JSR subm_F4FB
- BCS CF4F8
- LDA K
- ADC #$80
- STA K3
- TXA
- ADC #0
- STA XX2+1
- LDA INWK+3
+
+ LDA INWK+2             ; Set A = x_sign
+
+ JSR PLS6               ; Call PLS6 to calculate:
+                        ;
+                        ;   (X K) = (A P) / (z_sign z_hi z_lo)
+                        ;         = (x_sign x_hi x_lo) / (z_sign z_hi z_lo)
+                        ;         = x / z
+
+ BCS PL21S-1            ; If the C flag is set then the result overflowed and
+                        ; the coordinate doesn't fit on the screen, so return
+                        ; from the subroutine with the C flag set (as PL21S-1
+                        ; contains an RTS)
+
+ LDA K                  ; Set K3(1 0) = (X K) + #X
+ ADC #X                 ;             = #X + x / z
+ STA K3                 ;
+                        ; first doing the low bytes
+
+ TXA                    ; And then the high bytes. #X is the x-coordinate of
+ ADC #0                 ; the centre of the space view, so this converts the
+ STA K3+1               ; space x-coordinate into a screen x-coordinate
+
+ LDA INWK+3             ; Set P(1 0) = (y_hi y_lo)
  STA P
  LDA INWK+4
  STA P+1
- LDA INWK+5
- EOR #$80
- JSR subm_F4FB
- BCS CF4F8
- LDA K
- ADC Yx1M2
- STA K4
- TXA
- ADC #0
- STA K4+1
- CLC
 
-.CF4F8
+ LDA INWK+5             ; Set A = -y_sign
+ EOR #%10000000
 
- RTS
+ JSR PLS6               ; Call PLS6 to calculate:
+                        ;
+                        ;   (X K) = (A P) / (z_sign z_hi z_lo)
+                        ;         = -(y_sign y_hi y_lo) / (z_sign z_hi z_lo)
+                        ;         = -y / z
+
+ BCS PL21S-1            ; If the C flag is set then the result overflowed and
+                        ; the coordinate doesn't fit on the screen, so return
+                        ; from the subroutine with the C flag set (as PL21S-1
+                        ; contains an RTS)
+
+ LDA K                  ; Set K4(1 0) = (X K) + Yx1M2
+ ADC Yx1M2              ;             = Yx1M2 - y / z
+ STA K4                 ;
+                        ; first doing the low bytes
+
+ TXA                    ; And then the high bytes. Yx1M2 is the y-coordinate of
+ ADC #0                 ; the centre of the space view, so this converts the
+ STA K4+1               ; space x-coordinate into a screen y-coordinate
+
+ CLC                    ; Clear the C flag to indicate success
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: subm_F4FB
+;       Name: PLS6
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing planets
+;    Summary: Calculate (X K) = (A P) / (z_sign z_hi z_lo)
+;
+; ------------------------------------------------------------------------------
+;
+; Calculate the following:
+;
+;   (X K) = (A P) / (z_sign z_hi z_lo)
+;
+; returning an overflow in the C flag if the result is >= 1024.
+;
+; Arguments:
+;
+;   INWK                The planet or sun's ship data block
+;
+; Returns:
+;
+;   C flag              Set if the result >= 1024, clear otherwise
 ;
 ; ******************************************************************************
 
-.CF4F9
+.PL21S
 
- SEC
- RTS
+ SEC                    ; Set the C flag to indicate an overflow
 
-.subm_F4FB
+ RTS                    ; Return from the subroutine
 
- JSR DVID3B2
+.PLS6
+
+ JSR DVID3B2            ; Call DVID3B2 to calculate:
+                        ;
+                        ;   K(3 2 1 0) = (A P+1 P) / (z_sign z_hi z_lo)
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA K+3
- AND #$7F
+ LDA K+3                ; Set A = |K+3| OR K+2
+ AND #%01111111
  ORA K+2
- BNE CF4F9
- LDX K+1
- CPX #4
- BCS CF52C
- LDA K+3
- BPL CF52C
- LDA K
- EOR #$FF
- ADC #1
- STA K
- TXA
- EOR #$FF
- ADC #0
+
+ BNE PL21S              ; If A is non-zero then the two high bytes of K(3 2 1 0)
+                        ; are non-zero, so jump to PL21S to set the C flag and
+                        ; return from the subroutine
+
+                        ; We can now just consider K(1 0), as we know the top
+                        ; two bytes of K(3 2 1 0) are both 0
+
+ LDX K+1                ; Set X = K+1, so now (X K) contains the result in
+                        ; K(1 0), which is the format we want to return the
+                        ; result in
+
+ CPX #4                 ; If the high byte of K(1 0) >= 4 then the result is
+ BCS PL6                ; >= 1024, so return from the subroutine with the C flag
+                        ; set to indicate an overflow (as PL6 contains an RTS)
+
+ LDA K+3                ; Fetch the sign of the result from K+3 (which we know
+                        ; has zeroes in bits 0-6, so this just fetches the sign)
+
+ BPL PL6                ; If the sign bit is clear and the result is positive,
+                        ; then the result is already correct, so return from
+                        ; the subroutine with the C flag clear to indicate
+                        ; success (as PL6 contains an RTS)
+
+ LDA K                  ; Otherwise we need to negate the result, which we do
+ EOR #%11111111         ; using two's complement, starting with the low byte:
+ ADC #1                 ;
+ STA K                  ;   K = ~K + 1
+
+ TXA                    ; And then the high byte:
+ EOR #%11111111         ;
+ ADC #0                 ;   X = ~X
  TAX
- CLC
 
-.CF52C
+ CLC                    ; Clear the C flag to indicate success
 
- RTS
+.PL6
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -10352,78 +10503,155 @@ ENDIF
 ;
 ;       Name: MU5
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Set K(3 2 1 0) = (A A A A) and clear the C flGag
+;
+; ------------------------------------------------------------------------------
+;
+; In practice this is only called via a BEQ following an AND instruction, in
+; which case A = 0, so this routine effectively does this:
+;
+;   K(3 2 1 0) = 0
 ;
 ; ******************************************************************************
 
 .MU5
 
- STA K
+ STA K                  ; Set K(3 2 1 0) to (A A A A)
  STA K+1
  STA K+2
  STA K+3
- CLC
- RTS
+
+ CLC                    ; Clear the C flag
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: MULT3
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate K(3 2 1 0) = (A P+1 P) * Q
+;  Deep dive: Shift-and-add multiplication
+;
+; ------------------------------------------------------------------------------
+;
+; Calculate the following multiplication between a signed 24-bit number and a
+; signed 8-bit number, returning the result as a signed 32-bit number:
+;
+;   K(3 2 1 0) = (A P+1 P) * Q
+;
+; The algorithm is the same shift-and-add algorithm as in routine MULT1, but
+; extended to cope with more bits.
+;
+; Returns:
+;
+;   C flag              The C flag is cleared
 ;
 ; ******************************************************************************
 
 .MULT3
 
- STA R
- AND #$7F
+ STA R                  ; Store the high byte of (A P+1 P) in R
+
+ AND #%01111111         ; Set K+2 to |A|, the high byte of K(2 1 0)
  STA K+2
- LDA Q
- AND #$7F
- BEQ MU5
- SEC
+
+ LDA Q                  ; Set A to bits 0-6 of Q, so A = |Q|
+ AND #%01111111
+
+ BEQ MU5                ; If |Q| = 0, jump to MU5 to set K(3 2 1 0) to 0,
+                        ; returning from the subroutine using a tail call
+
+ SEC                    ; Set T = |Q| - 1
  SBC #1
  STA T
- LDA P+1
- LSR K+2
- ROR A
- STA K+1
- LDA P
- ROR A
+
+                        ; We now use the same shift-and-add algorithm as MULT1
+                        ; to calculate the following:
+                        ;
+                        ; K(2 1 0) = K(2 1 0) * |Q|
+                        ;
+                        ; so we start with the first shift right, in which we
+                        ; take (K+2 P+1 P) and shift it right, storing the
+                        ; result in K(2 1 0), ready for the multiplication loop
+                        ; (so the multiplication loop actually calculates
+                        ; (|A| P+1 P) * |Q|, as the following sets K(2 1 0) to
+                        ; (|A| P+1 P) shifted right)
+
+ LDA P+1                ; Set A = P+1
+
+ LSR K+2                ; Shift the high byte in K+2 to the right
+
+ ROR A                  ; Shift the middle byte in A to the right and store in
+ STA K+1                ; K+1 (so K+1 contains P+1 shifted right)
+
+ LDA P                  ; Shift the middle byte in P to the right and store in
+ ROR A                  ; K, so K(2 1 0) now contains (|A| P+1 P) shifted right
  STA K
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA #0
- LDX #$18
+                        ; We now use the same shift-and-add algorithm as MULT1
+                        ; to calculate the following:
+                        ;
+                        ; K(2 1 0) = K(2 1 0) * |Q|
 
-.loop_CF692
+ LDA #0                 ; Set A = 0 so we can start building the answer in A
 
- BCC CF696
- ADC T
+ LDX #24                ; Set up a counter in X to count the 24 bits in K(2 1 0)
 
-.CF696
+.MUL2
 
- ROR A
- ROR K+2
- ROR K+1
- ROR K
- DEX
- BNE loop_CF692
- STA T
+ BCC P%+4               ; If C (i.e. the next bit from K) is set, do the
+ ADC T                  ; addition for this bit of K:
+                        ;
+                        ;   A = A + T + C
+                        ;     = A + |Q| - 1 + 1
+                        ;     = A + |Q|
+
+ ROR A                  ; Shift A right by one place to catch the next digit
+ ROR K+2                ; next digit of our result in the left end of K(2 1 0),
+ ROR K+1                ; while also shifting K(2 1 0) right to fetch the next
+ ROR K                  ; bit for the calculation into the C flag
+                        ;
+                        ; On the last iteration of this loop, the bit falling
+                        ; off the end of K will be bit 0 of the original A, as
+                        ; we did one shift before the loop and we are doing 24
+                        ; iterations. We set A to 0 before looping, so this
+                        ; means the loop exits with the C flag clear
+
+ DEX                    ; Decrement the loop counter
+
+ BNE MUL2               ; Loop back for the next bit until K(2 1 0) has been
+                        ; rotated all the way
+
+                        ; The result (|A| P+1 P) * |Q| is now in (A K+2 K+1 K),
+                        ; but it is positive and doesn't have the correct sign
+                        ; of the final result yet
+
+ STA T                  ; Save the high byte of the result into T
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA R
- EOR Q
- AND #$80
- ORA T
- STA K+3
- RTS
+ LDA R                  ; Fetch the sign byte from the original (A P+1 P)
+                        ; argument that we stored in R
+
+ EOR Q                  ; EOR with Q so the sign bit is the same as that of
+                        ; (A P+1 P) * Q
+
+ AND #%10000000         ; Extract the sign bit
+
+ ORA T                  ; Apply this to the high byte of the result in T, so
+                        ; that A now has the correct sign for the result, and
+                        ; (A K+2 K+1 K) therefore contains the correctly signed
+                        ; result
+
+ STA K+3                ; Store A in K+3, so K(3 2 1 0) now contains the result
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
