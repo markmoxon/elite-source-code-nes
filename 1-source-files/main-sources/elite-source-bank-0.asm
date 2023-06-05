@@ -828,7 +828,7 @@ ENDIF
  LDA Yx1M2
  STA K+3
  STA K+1
- JSR CB919_b6
+ JSR subm_B919_b6
  DEC ECMA
  BNE C8386
 
@@ -886,7 +886,7 @@ ENDIF
  ASL BOMB
  BMI C83CB
  JSR subm_8790
- JSR CAC5C_b3
+ JSR subm_AC5C_b3
 
 .C83CB
 
@@ -977,7 +977,7 @@ ENDIF
  LDA FRIN+2,Y
  BNE C8436
  LDA #1
- JMP CA5AB_b6
+ JMP subm_A5AB_b6
 
 .C8436
 
@@ -1355,7 +1355,7 @@ ENDIF
  LDA MSTG
  BMI C8651
  JSR FRMIS
- JSR CAC5C_b3
+ JSR subm_AC5C_b3
 
 .C8651
 
@@ -1899,7 +1899,7 @@ ENDIF
  LDX language
  LDA C897C,X
  STA YC
- JSR CB882_b4
+ JSR subm_B882_b4
  LDA S
  ORA #$80
  CMP systemFlag
@@ -1909,7 +1909,7 @@ ENDIF
 
 .C8923
 
- JSR CA082_b6
+ JSR subm_A082_b6
 
 ; ******************************************************************************
 ;
@@ -1949,7 +1949,7 @@ ENDIF
  LDA QQ11
  CMP QQ11a
  BEQ C8976
- JSR CA7B7_b3
+ JSR subm_A7B7_b3
 
 .C8955
 
@@ -2497,7 +2497,7 @@ ENDIF
  JSR NOISE
  LDA #0
  STA ESCP
- JSR CAC5C_b3
+ JSR subm_AC5C_b3
  LDA QQ11
  BNE C8BFF
  LDX #$0B
@@ -2573,7 +2573,7 @@ ENDIF
  STA INWK+5,Y
  DEY
  BPL loop_C8C3A
- JSR CBA63_b6
+ JSR subm_BA63_b6
  LDA INWK+5
  CMP #$0D
  BEQ C8CAF
@@ -3995,13 +3995,13 @@ ENDIF
  BCS C93BC
  LDA STP
  PHA
- JSR CB919_b6
+ JSR subm_B919_b6
  PLA
  STA STP
 
 .C93A6
 
- JSR CBA17_b6
+ JSR subm_BA17_b6
  JMP C9359
 
 .C93AC
@@ -4019,7 +4019,7 @@ ENDIF
  STA K+1
  LDA STP
  PHA
- JSR CB919_b6
+ JSR subm_B919_b6
  PLA
  STA STP
  JMP C9359
@@ -4110,7 +4110,7 @@ ENDIF
 .BRP
 
  JSR DETOK_b2
- JSR CB63D_b3
+ JSR subm_B63D_b3
 
 .C943C
 
@@ -4221,7 +4221,7 @@ ENDIF
  LDA #$1F
  STA TYPE
  JSR NWSHP
- JSR CBAF3_b1
+ JSR subm_BAF3_b1
  LDA #1
  STA XC
  LDA #1
@@ -4323,7 +4323,7 @@ ENDIF
 .DemoShips
 
  JSR RES2
- JSR CB8FE_b6
+ JSR subm_B8FE_b6
  LDA #0
  STA QQ14
  STA CASH
@@ -4393,9 +4393,9 @@ ENDIF
  LDA #0
  STA nmiTimerLo
  STA nmiTimerHi
- JSR CBA23_b3
+ JSR subm_BA23_b3
  LSR L0300
- JSR CAC5C_b3
+ JSR subm_AC5C_b3
  LDA L0306
  STA L0305
  LDA #$10
@@ -5002,7 +5002,7 @@ ENDIF
  STA K+3
  LDX #8
  LDY #7
- JSR CB219_b3
+ JSR subm_B219_b3
  JMP subm_8926
 
 ; ******************************************************************************
@@ -5072,7 +5072,7 @@ ENDIF
  STA K
  LDA #$0E
  STA K+1
- JSR CB2BC_b3
+ JSR subm_B2BC_b3
  LDA QQ9
  STA QQ19
  LDA QQ10
@@ -5443,7 +5443,7 @@ ENDIF
  BPL C9B15
  TYA
  PHA
- JSR CAC5C_b3
+ JSR subm_AC5C_b3
  PLA
  TAY
 
@@ -5932,7 +5932,7 @@ ENDIF
  STX L0395
  ASL A
  BPL C9D6A
- JMP CAC5C_b3
+ JMP subm_AC5C_b3
 
 .C9D60
 
@@ -6078,7 +6078,7 @@ ENDIF
  ASL A
  ROL QQ8+1
  STA QQ8
- JMP CBE52_b6
+ JMP subm_BE52_b6
 
 ; ******************************************************************************
 ;
@@ -6149,7 +6149,7 @@ ENDIF
  STA QQ22+1
  LDA #1
  STA QQ22
- JMP CAC5C_b3
+ JMP subm_AC5C_b3
 
 ; ******************************************************************************
 ;
@@ -6167,7 +6167,7 @@ ENDIF
  INX
  STX GHYP
  STX FIST
- JSR CAC5C_b3
+ JSR subm_AC5C_b3
  LDA #1
  JSR wW2
  LDX #5
@@ -6846,8 +6846,8 @@ ENDIF
  STX EV
  LDA #$80
  STA L0395
- JSR CAC5C_b3
- JSR CBE52_b6
+ JSR subm_AC5C_b3
+ JSR subm_BE52_b6
  LDA QQ3
  STA QQ28
  LDA QQ5
@@ -6976,7 +6976,7 @@ ENDIF
  LDA #3
  STA NOSTM
  JSR subm_9D03
- JSR CAC5C_b3
+ JSR subm_AC5C_b3
  LDY #$1E
  JSR NOISE
  JMP CA28A
@@ -7269,8 +7269,8 @@ ENDIF
  STA V
  LDA #0
  STA K+2
- JSR CB9C1_b4
- JMP CA4A5_b6
+ JSR subm_B9C1_b4
+ JMP subm_A4A5_b6
 
 ; ******************************************************************************
 ;
@@ -7400,7 +7400,7 @@ ENDIF
 .CA466
 
  JSR subm_EQSHP2
- JSR CA4A5_b6
+ JSR subm_A4A5_b6
  JSR subm_8980
  JSR subm_D8C5
  JMP CA4DB
@@ -7648,7 +7648,7 @@ ENDIF
  CMP #$1F
  BNE loop_CA5C5
  JSR dn
- JSR CA4A5_b6
+ JSR subm_A4A5_b6
  JSR subm_8980
  JMP CA4DB
 
@@ -7977,7 +7977,7 @@ ENDIF
  STA K
  LDA #6
  STA K+1
- JSR CB2BC_b3
+ JSR subm_B2BC_b3
  JSR subm_8980
  LDY #0
 
@@ -8021,7 +8021,7 @@ ENDIF
  BNE CA775
  LDA #0
  STA L0465
- JSR CA166_b6
+ JSR subm_A166_b6
  JMP CA737
 
 .CA775
@@ -8913,7 +8913,7 @@ ENDIF
 
  STX L04A2
  STY L04A3
- JMP CAC5C_b3
+ JMP subm_AC5C_b3
 
 ; ******************************************************************************
 ;
@@ -9135,7 +9135,7 @@ ENDIF
  STA INWK+5
  LDA #$81
  JSR NWSHP
- JMP CAC5C_b3
+ JMP subm_AC5C_b3
 
 ; ******************************************************************************
 ;
@@ -9222,7 +9222,7 @@ ENDIF
 .KILLSHP
 
  STX XX4
- JSR CBAF3_b1
+ JSR subm_BAF3_b1
  LDX XX4
  LDA MSTG
  CMP XX4
@@ -9342,7 +9342,7 @@ ENDIF
 
  LDX NOMSL
  JSR MSBAR
- JMP CAC5C_b3
+ JMP subm_AC5C_b3
 
 ; ******************************************************************************
 ;
@@ -10047,11 +10047,11 @@ ENDIF
  BEQ CB04C
  LDY CABTMP
  CPY #$E0
- BCS CB039
+ BCS subm_B039
  LSR A
  LSR A
 
-.CB039
+.subm_B039
 
  STA T
  JSR DORND
@@ -10086,7 +10086,7 @@ ENDIF
  CMP #$80
  ROR A
  STA L0300
- JSR CAC5C_b3
+ JSR subm_AC5C_b3
 
 .CB070
 
@@ -10208,7 +10208,7 @@ ENDIF
 
  LDA #1
  JSR KeepPPUTablesAt0
- JSR C8021_b6
+ JSR subm_8021_b6
  LDA #$FF
  BNE CB10B
 
@@ -10265,7 +10265,7 @@ ENDIF
 
  CMP #6
  BNE CB149
- JMP CB459_b6
+ JMP subm_B459_b6
 
 .CB149
 
@@ -10430,7 +10430,7 @@ ENDIF
  BNE CB1E2
  LDA #0
  STA L0465
- JSR CA166_b6
+ JSR subm_A166_b6
  SEC
  RTS
 
@@ -10461,13 +10461,13 @@ ENDIF
  STA L03EE
  LDA #$C4
  JSR TT66
- JSR CBED2_b6
+ JSR subm_BED2_b6
  JSR CopyNametable0To1
  JSR subm_EB86
  LDA #0
  STA L045F
  LDA #$C4
- JSR CA7B7_b3
+ JSR subm_A7B7_b3
  LDA #0
  STA QQ11
  STA QQ11a
@@ -10556,7 +10556,7 @@ ENDIF
 
  JSR ChangeDrawingPhase
  JSR subm_MA23
- JSR CBED2_b6
+ JSR subm_BED2_b6
  LDA #$CC
  JSR subm_D977
  DEC LASCT
@@ -10583,7 +10583,7 @@ ENDIF
  LDA #$34
  STA L030A
  JSR ResetSoundL045E
- JSR CB90D_b6
+ JSR subm_B90D_b6
  JSR subm_F3AB
  LDA #1
  STA L0037
@@ -10634,13 +10634,13 @@ ENDIF
 
  JSR KeepPPUTablesAt0
  LDA #4
- JSR C8021_b6
+ JSR subm_8021_b6
  LDA L0305
  CLC
  ADC #6
  STA L0305
  PLA
- JMP CA5AB_b6
+ JMP subm_A5AB_b6
 
 .CB341
 
@@ -10649,13 +10649,13 @@ ENDIF
  STA QQ11
  JSR KeepPPUTablesAt0
  LDA #4
- JSR C8021_b6
+ JSR subm_8021_b6
  LDA #2
- JMP CA5AB_b6
+ JMP subm_A5AB_b6
 
 .CB355
 
- JSR CB63D_b3
+ JSR subm_B63D_b3
 
 ; ******************************************************************************
 ;
@@ -10703,7 +10703,7 @@ ENDIF
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- JSR CB8FE_b6
+ JSR subm_B8FE_b6
  JSR WaitResetSound
  JSR ping
  JSR TT111
@@ -10782,7 +10782,7 @@ ENDIF
  STX QQ17
  LDA TYPE
  JSR NWSHP
- JSR CBAF3_b1
+ JSR subm_BAF3_b1
  LDA #$0C
  STA CNT2
  LDA #5
@@ -11429,7 +11429,7 @@ ENDIF
 
 .DOKEY
 
- JSR CBBDE_b6
+ JSR subm_BBDE_b6
  LDA auto
  BNE CB6BA
 
@@ -11438,7 +11438,7 @@ ENDIF
  LDX L0081
  CPX #$40
  BNE CB6B9
- JMP CA166_b6
+ JMP subm_A166_b6
 
 .CB6B9
 
@@ -11776,7 +11776,7 @@ ENDIF
 .loop_CB8A3
 
  JSR MESS
- JMP CAC5C_b3
+ JMP subm_AC5C_b3
 
 .CB8A9
 
@@ -11849,7 +11849,7 @@ ENDIF
 
 .subm_B90D
 
- JMP CBBDE_b6
+ JMP subm_BBDE_b6
 
 ; ******************************************************************************
 ;
@@ -12656,7 +12656,7 @@ ENDIF
  LDA #0
  JSR TT66
  JSR CopyNametable0To1
- JSR CA7B7_b3
+ JSR subm_A7B7_b3
  JMP CBE17
 
 ; ******************************************************************************
@@ -12682,7 +12682,7 @@ ENDIF
  LDA #$50
  STA L00CD
  STA L00CE
- JSR CA9D1_b3
+ JSR subm_A9D1_b3
 
 .CBE17
 
@@ -12711,7 +12711,7 @@ ENDIF
  DEX
  BNE CBE1B
  JSR KeepPPUTablesAt0
- JSR CBA23_b3
+ JSR subm_BA23_b3
 
 ; ******************************************************************************
 ;
@@ -12884,7 +12884,7 @@ ENDIF
  LDA #1
  STA XC
  STA YC
- JSR CAFCD_b3
+ JSR subm_AFCD_b3
  LDA QQ11
  LDX #$FF
  AND #$40
@@ -12908,26 +12908,26 @@ ENDIF
  LDA QQ11
  BMI CBF37
  TXA
- JSR CAE18_b3
+ JSR subm_AE18_b3
  LDA QQ11a
  BPL CBF2B
  JSR subm_EB86
- JSR CA775_b3
+ JSR subm_A775_b3
 
 .CBF2B
 
- JSR CA730_b3
+ JSR subm_A730_b3
  JSR msblob
  JMP CBF91
 
 .loop_CBF34
 
- JMP CB9E2_b3
+ JMP subm_B9E2_b3
 
 .CBF37
 
  TXA
- JSR CAE18_b3
+ JSR subm_AE18_b3
  LDA QQ11
  CMP #$C4
  BEQ loop_CBF34
@@ -12939,40 +12939,44 @@ ENDIF
  AND #$10
  BEQ CBF54
  LDA #$42
- JSR CB0E1_b3
+ JSR subm_B0E1_b3
 
 .CBF54
 
  LDA QQ11
  AND #$20
  BEQ CBF5D
- JSR CB18E_b3
+ JSR subm_B18E_b3
 
 .CBF5D
 
  LDA #1
- STA nameBuffer0+641
- STA nameBuffer0+673
- STA nameBuffer0+705
- STA nameBuffer0+737
- STA nameBuffer0+769
- STA nameBuffer0+801
- STA nameBuffer0+833
+
+ STA nameBuffer0+20*32+1
+ STA nameBuffer0+21*32+1
+ STA nameBuffer0+22*32+1
+ STA nameBuffer0+23*32+1
+ STA nameBuffer0+24*32+1
+ STA nameBuffer0+25*32+1
+ STA nameBuffer0+26*32+1
+
  LDA #2
- STA nameBuffer0+640
- STA nameBuffer0+672
- STA nameBuffer0+704
- STA nameBuffer0+736
- STA nameBuffer0+768
- STA nameBuffer0+800
- STA nameBuffer0+832
+
+ STA nameBuffer0+20*32
+ STA nameBuffer0+21*32
+ STA nameBuffer0+22*32
+ STA nameBuffer0+23*32
+ STA nameBuffer0+24*32
+ STA nameBuffer0+25*32
+ STA nameBuffer0+26*32
+
  LDA QQ11
  AND #$40
  BNE CBF91
 
 .CBF91
 
- JSR CB9E2_b3
+ JSR subm_B9E2_b3
  LDA DLY
  BMI CBFA1
  LDA QQ11

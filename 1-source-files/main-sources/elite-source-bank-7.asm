@@ -293,8 +293,9 @@ ENDIF
 
  LDA #0
  STA runningSetBank
- LDA currentBank
- PHA
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
  TXA
  PHA
  TYA
@@ -304,7 +305,10 @@ ENDIF
  TAY
  PLA
  TAX
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -352,235 +356,319 @@ ENDIF
 ;
 ;       Name: log
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Binary logarithm table (high byte)
+;
+; ------------------------------------------------------------------------------
+;
+; At byte n, the table contains the high byte of:
+;
+;   $2000 * log10(n) / log10(2) = 32 * 256 * log10(n) / log10(2)
+;
+; where log10 is the logarithm to base 10. The change-of-base formula says that:
+;
+;   log2(n) = log10(n) / log10(2)
+;
+; so byte n contains the high byte of:
+;
+;   32 * log2(n) * 256
 ;
 ; ******************************************************************************
 
 .log
 
- EQUB $6C, $00, $20, $32, $40, $4A, $52, $59  ; C100: 6C 00 20... l.
- EQUB $5F, $65, $6A, $6E, $72, $76, $79, $7D  ; C108: 5F 65 6A... _ej
- EQUB $80, $82, $85, $87, $8A, $8C, $8E, $90  ; C110: 80 82 85... ...
- EQUB $92, $94, $96, $98, $99, $9B, $9D, $9E  ; C118: 92 94 96... ...
- EQUB $A0, $A1, $A2, $A4, $A5, $A6, $A7, $A9  ; C120: A0 A1 A2... ...
- EQUB $AA, $AB, $AC, $AD, $AE, $AF, $B0, $B1  ; C128: AA AB AC... ...
- EQUB $B2, $B3, $B4, $B5, $B6, $B7, $B8, $B9  ; C130: B2 B3 B4... ...
- EQUB $B9, $BA, $BB, $BC, $BD, $BD, $BE, $BF  ; C138: B9 BA BB... ...
- EQUB $BF, $C0, $C1, $C2, $C2, $C3, $C4, $C4  ; C140: BF C0 C1... ...
- EQUB $C5, $C6, $C6, $C7, $C7, $C8, $C9, $C9  ; C148: C5 C6 C6... ...
- EQUB $CA, $CA, $CB, $CC, $CC, $CD, $CD, $CE  ; C150: CA CA CB... ...
- EQUB $CE, $CF, $CF, $D0, $D0, $D1, $D1, $D2  ; C158: CE CF CF... ...
- EQUB $D2, $D3, $D3, $D4, $D4, $D5, $D5, $D5  ; C160: D2 D3 D3... ...
- EQUB $D6, $D6, $D7, $D7, $D8, $D8, $D9, $D9  ; C168: D6 D6 D7... ...
- EQUB $D9, $DA, $DA, $DB, $DB, $DB, $DC, $DC  ; C170: D9 DA DA... ...
- EQUB $DD, $DD, $DD, $DE, $DE, $DE, $DF, $DF  ; C178: DD DD DD... ...
- EQUB $E0, $E0, $E0, $E1, $E1, $E1, $E2, $E2  ; C180: E0 E0 E0... ...
- EQUB $E2, $E3, $E3, $E3, $E4, $E4, $E4, $E5  ; C188: E2 E3 E3... ...
- EQUB $E5, $E5, $E6, $E6, $E6, $E7, $E7, $E7  ; C190: E5 E5 E6... ...
- EQUB $E7, $E8, $E8, $E8, $E9, $E9, $E9, $EA  ; C198: E7 E8 E8... ...
- EQUB $EA, $EA, $EA, $EB, $EB, $EB, $EC, $EC  ; C1A0: EA EA EA... ...
- EQUB $EC, $EC, $ED, $ED, $ED, $ED, $EE, $EE  ; C1A8: EC EC ED... ...
- EQUB $EE, $EE, $EF, $EF, $EF, $EF, $F0, $F0  ; C1B0: EE EE EF... ...
- EQUB $F0, $F1, $F1, $F1, $F1, $F1, $F2, $F2  ; C1B8: F0 F1 F1... ...
- EQUB $F2, $F2, $F3, $F3, $F3, $F3, $F4, $F4  ; C1C0: F2 F2 F3... ...
- EQUB $F4, $F4, $F5, $F5, $F5, $F5, $F5, $F6  ; C1C8: F4 F4 F5... ...
- EQUB $F6, $F6, $F6, $F7, $F7, $F7, $F7, $F7  ; C1D0: F6 F6 F6... ...
- EQUB $F8, $F8, $F8, $F8, $F9, $F9, $F9, $F9  ; C1D8: F8 F8 F8... ...
- EQUB $F9, $FA, $FA, $FA, $FA, $FA, $FB, $FB  ; C1E0: F9 FA FA... ...
- EQUB $FB, $FB, $FB, $FC, $FC, $FC, $FC, $FC  ; C1E8: FB FB FB... ...
- EQUB $FD, $FD, $FD, $FD, $FD, $FD, $FE, $FE  ; C1F0: FD FD FD... ...
- EQUB $FE, $FE, $FE, $FF, $FF, $FF, $FF, $FF  ; C1F8: FE FE FE... ...
+IF _MATCH_ORIGINAL_BINARIES
+
+ INCBIN "4-reference-binaries/workspaces/BANK7-log.bin"
+
+ELSE
+
+ SKIP 1
+
+ FOR I%, 1, 255
+
+  B% = INT($2000 * LOG(I%) / LOG(2) + 0.5)
+
+  EQUB B% DIV 256
+
+ NEXT
+
+ENDIF
 
 ; ******************************************************************************
 ;
 ;       Name: logL
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Binary logarithm table (low byte)
+;
+; ------------------------------------------------------------------------------
+;
+; Byte n contains the low byte of:
+;
+;   32 * log2(n) * 256
 ;
 ; ******************************************************************************
 
 .logL
 
- EQUB $0D, $00, $00, $B8, $00, $4D, $B8, $D5  ; C200: 0D 00 00... ...
- EQUB $FF, $70, $4D, $B3, $B8, $6A, $D5, $05  ; C208: FF 70 4D... .pM
- EQUB $00, $CC, $70, $EF, $4D, $8D, $B3, $C1  ; C210: 00 CC 70... ..p
- EQUB $B8, $9A, $6A, $28, $D5, $74, $05, $88  ; C218: B8 9A 6A... ..j
- EQUB $00, $6B, $CC, $23, $70, $B3, $EF, $22  ; C220: 00 6B CC... .k.
- EQUB $4D, $71, $8D, $A3, $B3, $BD, $C1, $BF  ; C228: 4D 71 8D... Mq.
- EQUB $B8, $AB, $9A, $84, $6A, $4B, $28, $00  ; C230: B8 AB 9A... ...
- EQUB $D5, $A7, $74, $3E, $05, $C8, $88, $45  ; C238: D5 A7 74... ..t
- EQUB $FF, $B7, $6B, $1D, $CC, $79, $23, $CA  ; C240: FF B7 6B... ..k
- EQUB $70, $13, $B3, $52, $EF, $89, $22, $B8  ; C248: 70 13 B3... p..
- EQUB $4D, $E0, $71, $00, $8D, $19, $A3, $2C  ; C250: 4D E0 71... M.q
- EQUB $B3, $39, $BD, $3F, $C1, $40, $BF, $3C  ; C258: B3 39 BD... .9.
- EQUB $B8, $32, $AB, $23, $9A, $10, $84, $F7  ; C260: B8 32 AB... .2.
- EQUB $6A, $DB, $4B, $BA, $28, $94, $00, $6B  ; C268: 6A DB 4B... j.K
- EQUB $D5, $3E, $A7, $0E, $74, $DA, $3E, $A2  ; C270: D5 3E A7... .>.
- EQUB $05, $67, $C8, $29, $88, $E7, $45, $A3  ; C278: 05 67 C8... .g.
- EQUB $00, $5B, $B7, $11, $6B, $C4, $1D, $75  ; C280: 00 5B B7... .[.
- EQUB $CC, $23, $79, $CE, $23, $77, $CA, $1D  ; C288: CC 23 79... .#y
- EQUB $70, $C1, $13, $63, $B3, $03, $52, $A1  ; C290: 70 C1 13... p..
- EQUB $EF, $3C, $89, $D6, $22, $6D, $B8, $03  ; C298: EF 3C 89... .<.
- EQUB $4D, $96, $E0, $28, $71, $B8, $00, $47  ; C2A0: 4D 96 E0... M..
- EQUB $8D, $D4, $19, $5F, $A3, $E8, $2C, $70  ; C2A8: 8D D4 19... ...
- EQUB $B3, $F6, $39, $7B, $BD, $FE, $3F, $80  ; C2B0: B3 F6 39... ..9
- EQUB $C1, $01, $40, $80, $BF, $FD, $3C, $7A  ; C2B8: C1 01 40... ..@
- EQUB $B8, $F5, $32, $6F, $AB, $E7, $23, $5F  ; C2C0: B8 F5 32... ..2
- EQUB $9A, $D5, $10, $4A, $84, $BE, $F7, $31  ; C2C8: 9A D5 10... ...
- EQUB $6A, $A2, $DB, $13, $4B, $82, $BA, $F1  ; C2D0: 6A A2 DB... j..
- EQUB $28, $5E, $94, $CB, $00, $36, $6B, $A0  ; C2D8: 28 5E 94... (^.
- EQUB $D5, $0A, $3E, $73, $A7, $DA, $0E, $41  ; C2E0: D5 0A 3E... ..>
- EQUB $74, $A7, $DA, $0C, $3E, $70, $A2, $D3  ; C2E8: 74 A7 DA... t..
- EQUB $05, $36, $67, $98, $C8, $F8, $29, $59  ; C2F0: 05 36 67... .6g
- EQUB $88, $B8, $E7, $16, $45, $74, $A3, $D1  ; C2F8: 88 B8 E7... ...
+IF _MATCH_ORIGINAL_BINARIES
+
+ INCBIN "4-reference-binaries/workspaces/BANK7-logL.bin"
+
+ELSE
+
+ SKIP 1
+
+ FOR I%, 1, 255
+
+  B% = INT($2000 * LOG(I%) / LOG(2) + 0.5)
+
+  EQUB B% MOD 256
+
+ NEXT
+
+ENDIF
 
 ; ******************************************************************************
 ;
 ;       Name: antilog
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Binary antilogarithm table
+;
+; ------------------------------------------------------------------------------
+;
+; At byte n, the table contains:
+;
+;   2^((n / 2 + 128) / 16) / 256
+;
+; which equals:
+;
+;   2^(n / 32 + 8) / 256
 ;
 ; ******************************************************************************
 
 .antilog
 
- EQUB $01, $01, $01, $01, $01, $01, $01, $01  ; C300: 01 01 01... ...
- EQUB $01, $01, $01, $01, $01, $01, $01, $01  ; C308: 01 01 01... ...
- EQUB $01, $01, $01, $01, $01, $01, $01, $01  ; C310: 01 01 01... ...
- EQUB $01, $01, $01, $01, $01, $01, $01, $01  ; C318: 01 01 01... ...
- EQUB $02, $02, $02, $02, $02, $02, $02, $02  ; C320: 02 02 02... ...
- EQUB $02, $02, $02, $02, $02, $02, $02, $02  ; C328: 02 02 02... ...
- EQUB $02, $02, $02, $03, $03, $03, $03, $03  ; C330: 02 02 02... ...
- EQUB $03, $03, $03, $03, $03, $03, $03, $03  ; C338: 03 03 03... ...
- EQUB $04, $04, $04, $04, $04, $04, $04, $04  ; C340: 04 04 04... ...
- EQUB $04, $04, $04, $05, $05, $05, $05, $05  ; C348: 04 04 04... ...
- EQUB $05, $05, $05, $06, $06, $06, $06, $06  ; C350: 05 05 05... ...
- EQUB $06, $06, $07, $07, $07, $07, $07, $07  ; C358: 06 06 07... ...
- EQUB $08, $08, $08, $08, $08, $08, $09, $09  ; C360: 08 08 08... ...
- EQUB $09, $09, $09, $0A, $0A, $0A, $0A, $0B  ; C368: 09 09 09... ...
- EQUB $0B, $0B, $0B, $0C, $0C, $0C, $0C, $0D  ; C370: 0B 0B 0B... ...
- EQUB $0D, $0D, $0E, $0E, $0E, $0E, $0F, $0F  ; C378: 0D 0D 0E... ...
- EQUB $10, $10, $10, $11, $11, $11, $12, $12  ; C380: 10 10 10... ...
- EQUB $13, $13, $13, $14, $14, $15, $15, $16  ; C388: 13 13 13... ...
- EQUB $16, $17, $17, $18, $18, $19, $19, $1A  ; C390: 16 17 17... ...
- EQUB $1A, $1B, $1C, $1C, $1D, $1D, $1E, $1F  ; C398: 1A 1B 1C... ...
- EQUB $20, $20, $21, $22, $22, $23, $24, $25  ; C3A0: 20 20 21...   !
- EQUB $26, $26, $27, $28, $29, $2A, $2B, $2C  ; C3A8: 26 26 27... &&'
- EQUB $2D, $2E, $2F, $30, $31, $32, $33, $34  ; C3B0: 2D 2E 2F... -./
- EQUB $35, $36, $38, $39, $3A, $3B, $3D, $3E  ; C3B8: 35 36 38... 568
- EQUB $40, $41, $42, $44, $45, $47, $48, $4A  ; C3C0: 40 41 42... @AB
- EQUB $4C, $4D, $4F, $51, $52, $54, $56, $58  ; C3C8: 4C 4D 4F... LMO
- EQUB $5A, $5C, $5E, $60, $62, $64, $67, $69  ; C3D0: 5A 5C 5E... Z\^
- EQUB $6B, $6D, $70, $72, $75, $77, $7A, $7D  ; C3D8: 6B 6D 70... kmp
- EQUB $80, $82, $85, $88, $8B, $8E, $91, $94  ; C3E0: 80 82 85... ...
- EQUB $98, $9B, $9E, $A2, $A5, $A9, $AD, $B1  ; C3E8: 98 9B 9E... ...
- EQUB $B5, $B8, $BD, $C1, $C5, $C9, $CE, $D2  ; C3F0: B5 B8 BD... ...
- EQUB $D7, $DB, $E0, $E5, $EA, $EF, $F5, $FA  ; C3F8: D7 DB E0... ...
+IF _MATCH_ORIGINAL_BINARIES
+
+ INCBIN "4-reference-binaries/workspaces/BANK7-antilog.bin"
+
+ELSE
+
+ FOR I%, 0, 255
+
+  B% = INT(2^((I% / 2 + 128) / 16) + 0.5) DIV 256
+
+  IF B% = 256
+   N% = B%+1
+  ELSE
+   N% = B%
+  ENDIF
+
+  EQUB N%
+
+ NEXT
+
+ENDIF
 
 ; ******************************************************************************
 ;
 ;       Name: antilogODD
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Binary antilogarithm table
+;
+; ------------------------------------------------------------------------------
+;
+; At byte n, the table contains:
+;
+;   2^((n / 2 + 128.25) / 16) / 256
+;
+; which equals:
+;
+;   2^(n / 32 + 8.015625) / 256 = 2^(n / 32 + 8) * 2^(.015625) / 256
+;                               = (2^(n / 32 + 8) + 1) / 256
 ;
 ; ******************************************************************************
 
 .antilogODD
 
- EQUB $01, $01, $01, $01, $01, $01, $01, $01  ; C400: 01 01 01... ...
- EQUB $01, $01, $01, $01, $01, $01, $01, $01  ; C408: 01 01 01... ...
- EQUB $01, $01, $01, $01, $01, $01, $01, $01  ; C410: 01 01 01... ...
- EQUB $01, $01, $01, $01, $01, $01, $01, $01  ; C418: 01 01 01... ...
- EQUB $02, $02, $02, $02, $02, $02, $02, $02  ; C420: 02 02 02... ...
- EQUB $02, $02, $02, $02, $02, $02, $02, $02  ; C428: 02 02 02... ...
- EQUB $02, $02, $02, $03, $03, $03, $03, $03  ; C430: 02 02 02... ...
- EQUB $03, $03, $03, $03, $03, $03, $03, $03  ; C438: 03 03 03... ...
- EQUB $04, $04, $04, $04, $04, $04, $04, $04  ; C440: 04 04 04... ...
- EQUB $04, $04, $05, $05, $05, $05, $05, $05  ; C448: 04 04 05... ...
- EQUB $05, $05, $05, $06, $06, $06, $06, $06  ; C450: 05 05 05... ...
- EQUB $06, $06, $07, $07, $07, $07, $07, $07  ; C458: 06 06 07... ...
- EQUB $08, $08, $08, $08, $08, $09, $09, $09  ; C460: 08 08 08... ...
- EQUB $09, $09, $0A, $0A, $0A, $0A, $0A, $0B  ; C468: 09 09 0A... ...
- EQUB $0B, $0B, $0B, $0C, $0C, $0C, $0D, $0D  ; C470: 0B 0B 0B... ...
- EQUB $0D, $0D, $0E, $0E, $0E, $0F, $0F, $0F  ; C478: 0D 0D 0E... ...
- EQUB $10, $10, $10, $11, $11, $12, $12, $12  ; C480: 10 10 10... ...
- EQUB $13, $13, $14, $14, $14, $15, $15, $16  ; C488: 13 13 14... ...
- EQUB $16, $17, $17, $18, $18, $19, $1A, $1A  ; C490: 16 17 17... ...
- EQUB $1B, $1B, $1C, $1D, $1D, $1E, $1E, $1F  ; C498: 1B 1B 1C... ...
- EQUB $20, $21, $21, $22, $23, $24, $24, $25  ; C4A0: 20 21 21...  !!
- EQUB $26, $27, $28, $29, $29, $2A, $2B, $2C  ; C4A8: 26 27 28... &'(
- EQUB $2D, $2E, $2F, $30, $31, $32, $34, $35  ; C4B0: 2D 2E 2F... -./
- EQUB $36, $37, $38, $3A, $3B, $3C, $3D, $3F  ; C4B8: 36 37 38... 678
- EQUB $40, $42, $43, $45, $46, $48, $49, $4B  ; C4C0: 40 42 43... @BC
- EQUB $4C, $4E, $50, $52, $53, $55, $57, $59  ; C4C8: 4C 4E 50... LNP
- EQUB $5B, $5D, $5F, $61, $63, $65, $68, $6A  ; C4D0: 5B 5D 5F... []_
- EQUB $6C, $6F, $71, $74, $76, $79, $7B, $7E  ; C4D8: 6C 6F 71... loq
- EQUB $81, $84, $87, $8A, $8D, $90, $93, $96  ; C4E0: 81 84 87... ...
- EQUB $99, $9D, $A0, $A4, $A7, $AB, $AF, $B3  ; C4E8: 99 9D A0... ...
- EQUB $B6, $BA, $BF, $C3, $C7, $CB, $D0, $D4  ; C4F0: B6 BA BF... ...
- EQUB $D9, $DE, $E3, $E8, $ED, $F2, $F7, $FD  ; C4F8: D9 DE E3... ...
+IF _MATCH_ORIGINAL_BINARIES
+
+ INCBIN "4-reference-binaries/workspaces/BANK7-antilogODD.bin"
+
+ELSE
+
+ FOR I%, 0, 255
+
+  B% = INT(2^((I% / 2 + 128.25) / 16) + 0.5) DIV 256
+
+  IF B% = 256
+   N% = B%+1
+  ELSE
+   N% = B%
+  ENDIF
+
+  EQUB N%
+
+ NEXT
+
+ENDIF
 
 ; ******************************************************************************
 ;
 ;       Name: SNE
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Geometry)
+;    Summary: Sine/cosine table
+;  Deep dive: The sine, cosine and arctan tables
+;             Drawing circles
+;             Drawing ellipses
+;
+; ------------------------------------------------------------------------------
+;
+; This lookup table contains sine values for the first half of a circle, from 0
+; to 180 degrees (0 to PI radians). In terms of circle or ellipse line segments,
+; there are 64 segments in a circle, so this contains sine values for segments
+; 0 to 31.
+;
+; In terms of segments, to calculate the sine of the angle at segment x, we look
+; up the value in SNE + x, and to calculate the cosine of the angle we look up
+; the value in SNE + ((x + 16) mod 32).
+;
+; In terms of radians, to calculate the following:
+;
+;   sin(theta) * 256
+;
+; where theta is in radians, we look up the value in:
+;
+;   SNE + (theta * 10)
+;
+; To calculate the following:
+;
+;   cos(theta) * 256
+;
+; where theta is in radians, look up the value in:
+;
+;   SNE + ((theta * 10) + 16) mod 32
+;
+; Theta must be between 0 and 3.1 radians, so theta * 10 is between 0 and 31.
 ;
 ; ******************************************************************************
 
 .SNE
 
- EQUB $00, $19, $32, $4A, $62, $79, $8E, $A2  ; C500: 00 19 32... ..2
- EQUB $B5, $C6, $D5, $E2, $ED, $F5, $FB, $FF  ; C508: B5 C6 D5... ...
- EQUB $FF, $FF, $FB, $F5, $ED, $E2, $D5, $C6  ; C510: FF FF FB... ...
- EQUB $B5, $A2, $8E, $79, $62, $4A, $32, $19  ; C518: B5 A2 8E... ...
+ FOR I%, 0, 31
+ 
+  N = ABS(SIN((I% / 64) * 2 * PI))
+ 
+  IF N >= 1
+   B% = 255
+  ELSE
+   B% = INT(256 * N + 0.5)
+  ENDIF
+
+  EQUB B%
+
+ NEXT
 
 ; ******************************************************************************
 ;
 ;       Name: ACT
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Geometry)
+;    Summary: Arctan table
+;  Deep dive: The sine, cosine and arctan tables
+;
+; ------------------------------------------------------------------------------
+;
+; This table contains lookup values for arctangent calculations involving angles
+; in the range 0 to 45 degrees (or 0 to PI / 4 radians).
+;
+; To calculate the value of theta in the following:
+;
+;   theta = arctan(t)
+;
+; where 0 <= t < 1, we look up the value in:
+;
+;   ACT + (t * 32)
+;
+; The result will be an integer representing the angle in radians, where 256
+; represents a full circle of 360 degrees (2 * PI radians). The result of the
+; lookup will therefore be an integer in the range 0 to 31, as this represents
+; 0 to 45 degrees (0 to PI / 4 radians).
+;
+; The table does not support values of t >= 1 or t < 0 directly, so if we need
+; to calculate the arctangent for an angle greater than 45 degrees, we can apply
+; the following calculation to the result from the table:
+;
+;   * For t > 1, arctan(t) = 64 - arctan(1 / t)
+;
+; For negative values of t where -1 < t < 0, we can apply the following
+; calculation to the result from the table:
+;
+;   * For t < 0, arctan(-t) = 128 - arctan(t)
+;
+; Finally, if t < -1, we can do the first calculation to get arctan(|t|), and
+; the second to get arctan(-|t|).
 ;
 ; ******************************************************************************
 
 .ACT
 
- EQUB $00, $01, $03, $04, $05, $06, $08, $09  ; C520: 00 01 03... ...
- EQUB $0A, $0B, $0C, $0D, $0F, $10, $11, $12  ; C528: 0A 0B 0C... ...
- EQUB $13, $14, $15, $16, $17, $18, $19, $19  ; C530: 13 14 15... ...
- EQUB $1A, $1B, $1C, $1D, $1D, $1E, $1F, $1F  ; C538: 1A 1B 1C... ...
+ FOR I%, 0, 31
+
+  EQUB INT((128 / PI) * ATN(I% / 32) + 0.5)
+
+ NEXT
 
 ; ******************************************************************************
 ;
 ;       Name: XX21
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing ships
+;    Summary: Ship blueprints lookup table
+;  Deep dive: Ship blueprints
 ;
 ; ******************************************************************************
 
 .XX21
 
- EQUB $A5                                     ; C540: A5          .
- EQUB $80                                     ; C541: 80          .
- EQUB $A3                                     ; C542: A3          .
- EQUB $81, $BF, $82, $13                      ; C543: 81 BF 82... ...
- EQUB $83, $53, $83, $FB, $83, $9D, $84, $73  ; C547: 83 53 83... .S.
- EQUB $85, $AF, $85, $E1, $86, $C3, $88, $4B  ; C54F: 85 AF 85... ...
- EQUB $8A, $3D, $8B, $33, $8C, $35, $8D, $0B  ; C557: 8A 3D 8B... .=.
- EQUB $8E, $E5, $8E, $8D, $8F, $BB, $90, $A1  ; C55F: 8E E5 8E... ...
- EQUB $91, $D1, $92, $95, $93, $5B, $94, $0B  ; C567: 91 D1 92... ...
- EQUB $95, $93, $96, $BD, $97, $AF, $98, $C9  ; C56F: 95 93 96... ...
- EQUB $99, $A1, $9A, $BD, $9B, $29, $9C, $2B  ; C577: 99 A1 9A... ...
- EQUB $9D                                     ; C57F: 9D          .
- EQUB $2D                                     ; C580: 2D          -
- EQUB $9E                                     ; C581: 9E          .
+ EQUW SHIP_MISSILE      ; MSL  =  1 = Missile
+ EQUW SHIP_CORIOLIS     ; SST  =  2 = Coriolis space station
+ EQUW SHIP_ESCAPE_POD   ; ESC  =  3 = Escape pod
+ EQUW SHIP_PLATE        ; PLT  =  4 = Alloy plate
+ EQUW SHIP_CANISTER     ; OIL  =  5 = Cargo canister
+ EQUW SHIP_BOULDER      ;         6 = Boulder
+ EQUW SHIP_ASTEROID     ; AST  =  7 = Asteroid
+ EQUW SHIP_SPLINTER     ; SPL  =  8 = Splinter
+ EQUW SHIP_SHUTTLE      ; SHU  =  9 = Shuttle
+ EQUW SHIP_TRANSPORTER  ;        10 = Transporter
+ EQUW SHIP_COBRA_MK_3   ; CYL  = 11 = Cobra Mk III
+ EQUW SHIP_PYTHON       ;        12 = Python
+ EQUW SHIP_BOA          ;        13 = Boa
+ EQUW SHIP_ANACONDA     ; ANA  = 14 = Anaconda
+ EQUW SHIP_ROCK_HERMIT  ; HER  = 15 = Rock hermit (asteroid)
+ EQUW SHIP_VIPER        ; COPS = 16 = Viper
+ EQUW SHIP_SIDEWINDER   ; SH3  = 17 = Sidewinder
+ EQUW SHIP_MAMBA        ;        18 = Mamba
+ EQUW SHIP_KRAIT        ; KRA  = 19 = Krait
+ EQUW SHIP_ADDER        ; ADA  = 20 = Adder
+ EQUW SHIP_GECKO        ;        21 = Gecko
+ EQUW SHIP_COBRA_MK_1   ;        22 = Cobra Mk I
+ EQUW SHIP_WORM         ; WRM  = 23 = Worm
+ EQUW SHIP_COBRA_MK_3_P ; CYL2 = 24 = Cobra Mk III (pirate)
+ EQUW SHIP_ASP_MK_2     ; ASP  = 25 = Asp Mk II
+ EQUW SHIP_PYTHON_P     ;        26 = Python (pirate)
+ EQUW SHIP_FER_DE_LANCE ;        27 = Fer-de-lance
+ EQUW SHIP_MORAY        ;        28 = Moray
+ EQUW SHIP_THARGOID     ; THG  = 29 = Thargoid
+ EQUW SHIP_THARGON      ; TGL  = 30 = Thargon
+ EQUW SHIP_CONSTRICTOR  ; CON  = 31 = Constrictor
+ EQUW SHIP_COUGAR       ; COU  = 32 = Cougar
+ EQUW SHIP_DODO         ; DOD  = 33 = Dodecahedron ("Dodo") space station
 
 ; ******************************************************************************
 ;
@@ -1955,12 +2043,12 @@ ENDIF
 
  LDA nameBuffer0,Y
  STA nameBuffer1,Y
- LDA nameBuffer0+256,Y
- STA nameBuffer1+256,Y
- LDA nameBuffer0+512,Y
- STA nameBuffer1+512,Y
- LDA nameBuffer0+768,Y
- STA nameBuffer1+768,Y
+ LDA nameBuffer0+8*32,Y
+ STA nameBuffer1+8*32,Y
+ LDA nameBuffer0+16*32,Y
+ STA nameBuffer1+16*32,Y
+ LDA nameBuffer0+24*32,Y
+ STA nameBuffer1+24*32,Y
 
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -2013,94 +2101,102 @@ ENDIF
 
  LDX drawingPhase
  BNE CCDF2
+
  LDA boxEdge1
+
  STA nameBuffer0+1
- STA nameBuffer0+33
- STA nameBuffer0+65
- STA nameBuffer0+97
- STA nameBuffer0+129
- STA nameBuffer0+161
- STA nameBuffer0+193
- STA nameBuffer0+225
- STA nameBuffer0+257
- STA nameBuffer0+289
- STA nameBuffer0+321
- STA nameBuffer0+353
- STA nameBuffer0+385
- STA nameBuffer0+417
- STA nameBuffer0+449
- STA nameBuffer0+481
- STA nameBuffer0+513
- STA nameBuffer0+545
- STA nameBuffer0+577
- STA nameBuffer0+609
+ STA nameBuffer0+1*32+1
+ STA nameBuffer0+2*32+1
+ STA nameBuffer0+3*32+1
+ STA nameBuffer0+4*32+1
+ STA nameBuffer0+5*32+1
+ STA nameBuffer0+6*32+1
+ STA nameBuffer0+7*32+1
+ STA nameBuffer0+8*32+1
+ STA nameBuffer0+9*32+1
+ STA nameBuffer0+10*32+1
+ STA nameBuffer0+11*32+1
+ STA nameBuffer0+12*32+1
+ STA nameBuffer0+13*32+1
+ STA nameBuffer0+14*32+1
+ STA nameBuffer0+15*32+1
+ STA nameBuffer0+16*32+1
+ STA nameBuffer0+17*32+1
+ STA nameBuffer0+18*32+1
+ STA nameBuffer0+19*32+1
+
  LDA boxEdge2
+
  STA nameBuffer0
- STA nameBuffer0+32
- STA nameBuffer0+64
- STA nameBuffer0+96
- STA nameBuffer0+128
- STA nameBuffer0+160
- STA nameBuffer0+192
- STA nameBuffer0+224
- STA nameBuffer0+256
- STA nameBuffer0+288
- STA nameBuffer0+320
- STA nameBuffer0+352
- STA nameBuffer0+384
- STA nameBuffer0+416
- STA nameBuffer0+448
- STA nameBuffer0+480
- STA nameBuffer0+512
- STA nameBuffer0+544
- STA nameBuffer0+576
- STA nameBuffer0+608
+ STA nameBuffer0+1*32
+ STA nameBuffer0+2*32
+ STA nameBuffer0+3*32
+ STA nameBuffer0+4*32
+ STA nameBuffer0+5*32
+ STA nameBuffer0+6*32
+ STA nameBuffer0+7*32
+ STA nameBuffer0+8*32
+ STA nameBuffer0+9*32
+ STA nameBuffer0+10*32
+ STA nameBuffer0+11*32
+ STA nameBuffer0+12*32
+ STA nameBuffer0+13*32
+ STA nameBuffer0+14*32
+ STA nameBuffer0+15*32
+ STA nameBuffer0+16*32
+ STA nameBuffer0+17*32
+ STA nameBuffer0+18*32
+ STA nameBuffer0+19*32
+
  RTS
 
 .CCDF2
 
  LDA boxEdge1
+
  STA nameBuffer1+1
- STA nameBuffer1+33
- STA nameBuffer1+65
- STA nameBuffer1+97
- STA nameBuffer1+129
- STA nameBuffer1+161
- STA nameBuffer1+193
- STA nameBuffer1+225
- STA nameBuffer1+257
- STA nameBuffer1+289
- STA nameBuffer1+321
- STA nameBuffer1+353
- STA nameBuffer1+385
- STA nameBuffer1+417
- STA nameBuffer1+449
- STA nameBuffer1+481
- STA nameBuffer1+513
- STA nameBuffer1+545
- STA nameBuffer1+577
- STA nameBuffer1+609
+ STA nameBuffer1+1*32+1
+ STA nameBuffer1+2*32+1
+ STA nameBuffer1+3*32+1
+ STA nameBuffer1+4*32+1
+ STA nameBuffer1+5*32+1
+ STA nameBuffer1+6*32+1
+ STA nameBuffer1+7*32+1
+ STA nameBuffer1+8*32+1
+ STA nameBuffer1+9*32+1
+ STA nameBuffer1+10*32+1
+ STA nameBuffer1+11*32+1
+ STA nameBuffer1+12*32+1
+ STA nameBuffer1+13*32+1
+ STA nameBuffer1+14*32+1
+ STA nameBuffer1+15*32+1
+ STA nameBuffer1+16*32+1
+ STA nameBuffer1+17*32+1
+ STA nameBuffer1+18*32+1
+ STA nameBuffer1+19*32+1
+
  LDA boxEdge2
+
  STA nameBuffer1
- STA nameBuffer1+32
- STA nameBuffer1+64
- STA nameBuffer1+96
- STA nameBuffer1+128
- STA nameBuffer1+160
- STA nameBuffer1+192
- STA nameBuffer1+224
- STA nameBuffer1+256
- STA nameBuffer1+288
- STA nameBuffer1+320
- STA nameBuffer1+352
- STA nameBuffer1+384
- STA nameBuffer1+416
- STA nameBuffer1+448
- STA nameBuffer1+480
- STA nameBuffer1+512
- STA nameBuffer1+544
- STA nameBuffer1+576
- STA nameBuffer1+608
+ STA nameBuffer1+1*32
+ STA nameBuffer1+2*32
+ STA nameBuffer1+3*32
+ STA nameBuffer1+4*32
+ STA nameBuffer1+5*32
+ STA nameBuffer1+6*32
+ STA nameBuffer1+7*32
+ STA nameBuffer1+8*32
+ STA nameBuffer1+9*32
+ STA nameBuffer1+10*32
+ STA nameBuffer1+11*32
+ STA nameBuffer1+12*32
+ STA nameBuffer1+13*32
+ STA nameBuffer1+14*32
+ STA nameBuffer1+15*32
+ STA nameBuffer1+16*32
+ STA nameBuffer1+17*32
+ STA nameBuffer1+18*32
+ STA nameBuffer1+19*32
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -2111,37 +2207,59 @@ ENDIF
 ;
 ;       Name: UNIV
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Universe
+;    Summary: Table of pointers to the local universe's ship data blocks
+;  Deep dive: The local bubble of universe
+;
+; ------------------------------------------------------------------------------
+;
+; See the deep dive on "Ship data blocks" for details on ship data blocks, and
+; the deep dive on "The local bubble of universe" for details of how Elite
+; stores the local universe in K%, FRIN and UNIV.
 ;
 ; ******************************************************************************
 
 .UNIV
 
- EQUB 0                                       ; CE7E: 00          .
- EQUB   6, $2A,   6, $54,   6, $7E,   6, $A8  ; CE7F: 06 2A 06... .*.
- EQUB   6, $D2,   6, $FC,   6, $26,   7, $50  ; CE87: 06 D2 06... ...
- EQUB   7                                     ; CE8F: 07          .
+ FOR I%, 0, NOSH
+
+  EQUW K% + I% * NI%    ; Address of block no. I%, of size NI%, in workspace K%
+
+ NEXT
 
 ; ******************************************************************************
 ;
 ;       Name: GINF
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Universe
+;    Summary: Fetch the address of a ship's data block into INF
+;
+; ------------------------------------------------------------------------------
+;
+; Get the address of the data block for ship slot X and store it in INF. This
+; address is fetched from the UNIV table, which stores the addresses of the 13
+; ship data blocks in workspace K%.
+;
+; Arguments:
+;
+;   X                   The ship slot number for which we want the data block
+;                       address
 ;
 ; ******************************************************************************
 
 .GINF
 
- TXA
+ TXA                    ; Set Y = X * 2
  ASL A
  TAY
- LDA UNIV,Y
- STA XX19
- LDA UNIV+1,Y
- STA INF+1
- RTS
+
+ LDA UNIV,Y             ; Get the high byte of the address of the X-th ship
+ STA INF                ; from UNIV and store it in INF
+
+ LDA UNIV+1,Y           ; Get the low byte of the address of the X-th ship
+ STA INF+1              ; from UNIV and store it in INF
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -2213,27 +2331,29 @@ ENDIF
 ;
 ;       Name: nameBufferAddr
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing images
+;    Summary: The high bytes of the addresses of the two nametable buffers
 ;
 ; ******************************************************************************
 
 .nameBufferAddr
 
- EQUB $70, $74                                ; CED0: 70 74       pt
+ EQUB HI(nameBuffer0)
+ EQUB HI(nameBuffer1)
 
 ; ******************************************************************************
 ;
 ;       Name: pattBufferAddr
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing images
+;    Summary: The high bytes of the addresses of the two pattern buffers
 ;
 ; ******************************************************************************
 
 .pattBufferAddr
 
- EQUB $60, $68                                ; CED2: 60 68       `h
+ EQUB HI(pattBuffer0)
+ EQUB HI(pattBuffer1)
 
 ; ******************************************************************************
 ;
@@ -4397,134 +4517,168 @@ ENDIF
 ;
 ;       Name: TWOS
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing pixels
+;    Summary: Ready-made single-pixel character row bytes for mode 4
+;  Deep dive: Drawing monochrome pixels in mode 4
+;
+; ------------------------------------------------------------------------------
+;
+; Ready-made bytes for plotting one-pixel points in mode 4 (the top part of the
+; split screen). See the PIXEL routine for details.
 ;
 ; ******************************************************************************
 
 .TWOS
 
- EQUB $80, $40, $20, $10,   8,   4,   2,   1  ; D9F7: 80 40 20... .@
- EQUB $80, $40                                ; D9FF: 80 40       .@
+ EQUB %10000000
+ EQUB %01000000
+ EQUB %00100000
+ EQUB %00010000
+ EQUB %00001000
+ EQUB %00000100
+ EQUB %00000010
+ EQUB %00000001
+ EQUB %10000000
+ EQUB %01000000
 
 ; ******************************************************************************
 ;
 ;       Name: TWOS2
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing pixels
+;    Summary: Ready-made double-pixel character row bytes for mode 4
+;  Deep dive: Drawing monochrome pixels in mode 4
+;
+; ------------------------------------------------------------------------------
+;
+; Ready-made bytes for plotting two-pixel dashes in mode 4 (the top part of the
+; split screen). See the PIXEL routine for details.
 ;
 ; ******************************************************************************
 
 .TWOS2
 
- EQUB $C0, $C0, $60, $30, $18, $0C,   6,   3  ; DA01: C0 C0 60... ..`
+ EQUB %11000000
+ EQUB %11000000
+ EQUB %01100000
+ EQUB %00110000
+ EQUB %00011000
+ EQUB %00001100
+ EQUB %00000110
+ EQUB %00000011
 
 ; ******************************************************************************
 ;
 ;       Name: TWFL
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing lines
+;    Summary: Ready-made character rows for the left end of a horizontal line in
+;             mode 4
+;
+; ------------------------------------------------------------------------------
+;
+; Ready-made bytes for plotting horizontal line end caps in mode 4 (the top part
+; of the split screen). This table provides a byte with pixels at the left end,
+; which is used for the right end of the line.
+;
+; See the HLOIN routine for details.
 ;
 ; ******************************************************************************
 
 .TWFL
 
- EQUB $80, $C0, $E0, $F0, $F8, $FC, $FE       ; DA09: 80 C0 E0... ...
+ EQUB %10000000
+ EQUB %11000000
+ EQUB %11100000
+ EQUB %11110000
+ EQUB %11111000
+ EQUB %11111100
+ EQUB %11111110
 
 ; ******************************************************************************
 ;
 ;       Name: TWFR
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing lines
+;    Summary: Ready-made character rows for the right end of a horizontal line
+;             in mode 4
+;
+; ------------------------------------------------------------------------------
+;
+; Ready-made bytes for plotting horizontal line end caps in mode 4 (the top part
+; of the split screen). This table provides a byte with pixels at the right end,
+; which is used for the left end of the line.
+;
+; See the HLOIN routine for details.
 ;
 ; ******************************************************************************
 
 .TWFR
 
- EQUB $FF, $7F, $3F, $1F, $0F,   7,   3,   1  ; DA10: FF 7F 3F... ..?
+ EQUB %11111111
+ EQUB %01111111
+ EQUB %00111111
+ EQUB %00011111
+ EQUB %00001111
+ EQUB %00000111
+ EQUB %00000011
+ EQUB %00000001
 
 ; ******************************************************************************
 ;
 ;       Name: yLookupLo
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing pixels
+;    Summary: Lookup table for converting pixel y-coordinate to tile number
+;             (low byte)
+;
+; ------------------------------------------------------------------------------
+;
+; The NES screen mode is made up of 8x8-pixel tiles, with 32 tiles (256 pixels)
+; across the screen, and either 30 tiles (240 pixels) or 28 tiles (224 pixels)
+; vertically, for PAL or NTSC.
+;
+; This lookup table converts a pixel y-coordinate into the number of the first
+; tile on the row containing the pixel, if we assume tiles are numbered from 1
+; at the top-left, and counting across and then down.
 ;
 ; ******************************************************************************
 
 .yLookupLo
 
- EQUB $41, $41, $41, $41, $41, $41, $41, $41  ; DA18: 41 41 41... AAA
- EQUB $61, $61, $61, $61, $61, $61, $61, $61  ; DA20: 61 61 61... aaa
- EQUB $81, $81, $81, $81, $81, $81, $81, $81  ; DA28: 81 81 81... ...
- EQUB $A1, $A1, $A1, $A1, $A1, $A1, $A1, $A1  ; DA30: A1 A1 A1... ...
- EQUB $C1, $C1, $C1, $C1, $C1, $C1, $C1, $C1  ; DA38: C1 C1 C1... ...
- EQUB $E1, $E1, $E1, $E1, $E1, $E1, $E1, $E1  ; DA40: E1 E1 E1... ...
- EQUB $01, $01, $01, $01, $01, $01, $01, $01  ; DA48: 01 01 01... ...
- EQUB $21, $21, $21, $21, $21, $21, $21, $21  ; DA50: 21 21 21... !!!
- EQUB $41, $41, $41, $41, $41, $41, $41, $41  ; DA58: 41 41 41... AAA
- EQUB $61, $61, $61, $61, $61, $61, $61, $61  ; DA60: 61 61 61... aaa
- EQUB $81, $81, $81, $81, $81, $81, $81, $81  ; DA68: 81 81 81... ...
- EQUB $A1, $A1, $A1, $A1, $A1, $A1, $A1, $A1  ; DA70: A1 A1 A1... ...
- EQUB $C1, $C1, $C1, $C1, $C1, $C1, $C1, $C1  ; DA78: C1 C1 C1... ...
- EQUB $E1, $E1, $E1, $E1, $E1, $E1, $E1, $E1  ; DA80: E1 E1 E1... ...
- EQUB $01, $01, $01, $01, $01, $01, $01, $01  ; DA88: 01 01 01... ...
- EQUB $21, $21, $21, $21, $21, $21, $21, $21  ; DA90: 21 21 21... !!!
- EQUB $41, $41, $41, $41, $41, $41, $41, $41  ; DA98: 41 41 41... AAA
- EQUB $61, $61, $61, $61, $61, $61, $61, $61  ; DAA0: 61 61 61... aaa
- EQUB $81, $81, $81, $81, $81, $81, $81, $81  ; DAA8: 81 81 81... ...
- EQUB $A1, $A1, $A1, $A1, $A1, $A1, $A1, $A1  ; DAB0: A1 A1 A1... ...
- EQUB $C1, $C1, $C1, $C1, $C1, $C1, $C1, $C1  ; DAB8: C1 C1 C1... ...
- EQUB $E1, $E1, $E1, $E1, $E1, $E1, $E1, $E1  ; DAC0: E1 E1 E1... ...
- EQUB $01, $01, $01, $01, $01, $01, $01, $01  ; DAC8: 01 01 01... ...
- EQUB $21, $21, $21, $21, $21, $21, $21, $21  ; DAD0: 21 21 21... !!!
- EQUB $41, $41, $41, $41, $41, $41, $41, $41  ; DAD8: 41 41 41... AAA
- EQUB $61, $61, $61, $61, $61, $61, $61, $61  ; DAE0: 61 61 61... aaa
- EQUB $81, $81, $81, $81, $81, $81, $81, $81  ; DAE8: 81 81 81... ...
- EQUB $A1, $A1, $A1, $A1, $A1, $A1, $A1, $A1  ; DAF0: A1 A1 A1... ...
+ FOR I%, 16, 239
+
+  EQUB LO((I% DIV 8) * 32 + 1)
+
+ NEXT
 
 ; ******************************************************************************
 ;
 ;       Name: yLookupHi
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing pixels
+;    Summary: Lookup table for converting pixel y-coordinate to tile number
+;             (high byte)
+;
+; ------------------------------------------------------------------------------
+;
+; The NES screen mode is made up of 8x8-pixel tiles, with 32 tiles (256 pixels)
+; across the screen, and either 30 tiles (240 pixels) or 28 tiles (224 pixels)
+; vertically, for PAL or NTSC.
+;
+; This lookup table converts a pixel y-coordinate into the number of the first
+; tile on the row containing the pixel, if we assume tiles are numbered from 1
+; at the top-left, and counting across and then down.
 ;
 ; ******************************************************************************
 
 .yLookupHi
 
- EQUB $00, $00, $00, $00, $00, $00, $00, $00  ; DAF8: 00 00 00... ...
- EQUB $00, $00, $00, $00, $00, $00, $00, $00  ; DB00: 00 00 00... ...
- EQUB $00, $00, $00, $00, $00, $00, $00, $00  ; DB08: 00 00 00... ...
- EQUB $00, $00, $00, $00, $00, $00, $00, $00  ; DB10: 00 00 00... ...
- EQUB $00, $00, $00, $00, $00, $00, $00, $00  ; DB18: 00 00 00... ...
- EQUB $00, $00, $00, $00, $00, $00, $00, $00  ; DB20: 00 00 00... ...
- EQUB $01, $01, $01, $01, $01, $01, $01, $01  ; DB28: 01 01 01... ...
- EQUB $01, $01, $01, $01, $01, $01, $01, $01  ; DB30: 01 01 01... ...
- EQUB $01, $01, $01, $01, $01, $01, $01, $01  ; DB38: 01 01 01... ...
- EQUB $01, $01, $01, $01, $01, $01, $01, $01  ; DB40: 01 01 01... ...
- EQUB $01, $01, $01, $01, $01, $01, $01, $01  ; DB48: 01 01 01... ...
- EQUB $01, $01, $01, $01, $01, $01, $01, $01  ; DB50: 01 01 01... ...
- EQUB $01, $01, $01, $01, $01, $01, $01, $01  ; DB58: 01 01 01... ...
- EQUB $01, $01, $01, $01, $01, $01, $01, $01  ; DB60: 01 01 01... ...
- EQUB $02, $02, $02, $02, $02, $02, $02, $02  ; DB68: 02 02 02... ...
- EQUB $02, $02, $02, $02, $02, $02, $02, $02  ; DB70: 02 02 02... ...
- EQUB $02, $02, $02, $02, $02, $02, $02, $02  ; DB78: 02 02 02... ...
- EQUB $02, $02, $02, $02, $02, $02, $02, $02  ; DB80: 02 02 02... ...
- EQUB $02, $02, $02, $02, $02, $02, $02, $02  ; DB88: 02 02 02... ...
- EQUB $02, $02, $02, $02, $02, $02, $02, $02  ; DB90: 02 02 02... ...
- EQUB $02, $02, $02, $02, $02, $02, $02, $02  ; DB98: 02 02 02... ...
- EQUB $02, $02, $02, $02, $02, $02, $02, $02  ; DBA0: 02 02 02... ...
- EQUB $03, $03, $03, $03, $03, $03, $03, $03  ; DBA8: 03 03 03... ...
- EQUB $03, $03, $03, $03, $03, $03, $03, $03  ; DBB0: 03 03 03... ...
- EQUB $03, $03, $03, $03, $03, $03, $03, $03  ; DBB8: 03 03 03... ...
- EQUB $03, $03, $03, $03, $03, $03, $03, $03  ; DBC0: 03 03 03... ...
- EQUB $03, $03, $03, $03, $03, $03, $03, $03  ; DBC8: 03 03 03... ...
- EQUB $03, $03, $03, $03, $03, $03, $03, $03  ; DBD0: 03 03 03... ...
+ FOR I%, 16, 239
+
+  EQUB HI((I% DIV 8) * 32 + 1)
+
+ NEXT
 
 ; ******************************************************************************
 ;
@@ -4563,14 +4717,16 @@ ENDIF
 
 .CDBFE
 
- LDA #$70
- STA SC+1
- LDA #$21
+ LDA #HI(nameBuffer0+1*32+1)    ; Set SC(1 0) to the address of the second tile
+ STA SC+1                       ; on tile row 1 in nametable buffer 0
+ LDA #LO(nameBuffer0+1*32+1)
  STA SC
- LDA #$74
- STA SC2+1
- LDA #$21
+
+ LDA #HI(nameBuffer1+1*32+1)    ; Set SC2(1 0) to the address of the second tile
+ STA SC2+1                      ; on tile row 1 in nametable buffer 1
+ LDA #LO(nameBuffer1+1*32+1)
  STA SC2
+
  RTS
 
 ; ******************************************************************************
@@ -6313,7 +6469,7 @@ ENDIF
  PHA
  LDY LE5AB,X
  PLA
- STA nameBuffer0+704,Y
+ STA nameBuffer0+22*32,Y
  LDY #0
  RTS
 
@@ -7274,7 +7430,7 @@ ENDIF
 
 .subm_EB8C
 
- JSR CB63D_b3
+ JSR subm_B63D_b3
 
 ; ******************************************************************************
 ;
@@ -7476,7 +7632,7 @@ ENDIF
 
 .CEC2B
 
- JSR C89D1_b6
+ JSR subm_89D1_b6
 
 .CEC2E
 
@@ -7547,18 +7703,23 @@ ENDIF
 
 .GetShipBlueprint
 
- LDA currentBank
- PHA
- LDA #1
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #1                 ; Page ROM bank 1 into memory at $8000
  JSR SetBank
+
  LDA (XX0),Y
 
 .loop_CEC97
 
- STA L00B7
+ STA ASAV               ; Store the value of A so we can retrieve it below
+
  PLA
  JSR SetBank
- LDA L00B7
+
+ LDA ASAV               ; Restore the value of A that we stored above
+
  RTS
 
 ; ******************************************************************************
@@ -7572,10 +7733,12 @@ ENDIF
 
 .GetDefaultNEWB
 
- LDA currentBank
- PHA
- LDA #1
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #1                 ; Page ROM bank 1 into memory at $8000
  JSR SetBank
+
  LDA E%-1,Y
  JMP loop_CEC97
 
@@ -7593,10 +7756,12 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA currentBank
- PHA
- LDA #1
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #1                 ; Page ROM bank 1 into memory at $8000
  JSR SetBank
+
  LDA KWL%-1,X
  ASL A
  PHA
@@ -7637,21 +7802,25 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: CB1D4_b0
+;       Name: subm_B1D4_b0
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_B1D4 routine in ROM bank 0
 ;
 ; ******************************************************************************
 
-.CB1D4_b0
+.subm_B1D4_b0
 
- STA L00B7
- LDA currentBank
- PHA
- LDA #0
+ STA ASAV               ; Store the value of A so we can retrieve it below
+
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
- LDA L00B7
+
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JSR subm_B1D4
  JMP loop_CECDB
 
@@ -7679,36 +7848,41 @@ ENDIF
  STA YC
  LDX #7
  LDY #7
- JMP CA0F8_b6
+ JMP subm_A0F8_b6
 
 ; ******************************************************************************
 ;
 ;       Name: PlayMusic_b6
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the PlayMusic routine in ROM bank 6
 ;
 ; ******************************************************************************
 
 .PlayMusic_b6
 
- LDA currentBank
- PHA
- LDA #6
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
+
  JSR PlayMusic
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: C8021_b6
+;       Name: subm_8021_b6
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_8021 routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.C8021_b6
+.subm_8021_b6
 
  PHA
  JSR KeepPPUTablesAt0
@@ -7718,47 +7892,64 @@ ENDIF
  AND #$7F
  LDX L03ED
  BMI CECE1
- STA L00B7
+
+ STA ASAV               ; Store the value of A so we can retrieve it below
+
  LDA currentBank
  CMP #6
  BEQ CED4B
  PHA
- LDA #6
+
+ LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
- LDA L00B7
+
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JSR subm_8021
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CED4B
 
- LDA L00B7
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JMP subm_8021
 
 ; ******************************************************************************
 ;
-;       Name: C89D1_b6
+;       Name: subm_89D1_b6
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_89D1 routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.C89D1_b6
+.subm_89D1_b6
 
- STA L00B7
+ STA ASAV               ; Store the value of A so we can retrieve it below
+
  LDA currentBank
  CMP #6
  BEQ CED66
  PHA
- LDA #6
+
+ LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
- LDA L00B7
+
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JSR subm_89D1
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CED66
 
- LDA L00B7
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JMP subm_89D1
 
 ; ******************************************************************************
@@ -7793,115 +7984,145 @@ ENDIF
 ;       Name: ResetSound_b6
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the ResetSound routine in ROM bank 6
 ;
 ; ******************************************************************************
 
 .ResetSound_b6
 
- LDA currentBank
- PHA
- LDA #6
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
+
  JSR ResetSound
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CBF41_b5
+;       Name: subm_BF41_b5
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_BF41 routine in ROM bank 5
 ;
 ; ******************************************************************************
 
-.CBF41_b5
+.subm_BF41_b5
 
- LDA currentBank
- PHA
- LDA #5
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #5                 ; Page ROM bank 5 into memory at $8000
  JSR SetBank
+
  JSR subm_BF41
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CB9F9_b4
+;       Name: subm_B9F9_b4
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_B9F9 routine in ROM bank 4
 ;
 ; ******************************************************************************
 
-.CB9F9_b4
+.subm_B9F9_b4
 
- LDA currentBank
- PHA
- LDA #4
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #4                 ; Page ROM bank 4 into memory at $8000
  JSR SetBank
+
  JSR subm_B9F9
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CB96B_b4
+;       Name: subm_B96B_b4
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_B96B routine in ROM bank 4
 ;
 ; ******************************************************************************
 
-.CB96B_b4
+.subm_B96B_b4
 
- LDA currentBank
- PHA
- LDA #4
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #4                 ; Page ROM bank 4 into memory at $8000
  JSR SetBank
+
  JSR subm_B96B
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CB63D_b3
+;       Name: subm_B63D_b3
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_B63D routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.CB63D_b3
+.subm_B63D_b3
 
- LDA currentBank
- PHA
- LDA #3
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
+
  JSR subm_B63D
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CB88C_b6
+;       Name: subm_B88C_b6
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_B88C routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.CB88C_b6
+.subm_B88C_b6
 
- LDA currentBank
- PHA
- LDA #6
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
+
  JSR subm_B88C
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: LL9_b1
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the LL9 routine in ROM bank 1
 ;
 ; ******************************************************************************
 
@@ -7911,10 +8132,15 @@ ENDIF
  CMP #1
  BEQ CEDD9
  PHA
- LDA #1
+
+ LDA #1                 ; Page ROM bank 1 into memory at $8000
  JSR SetBank
+
  JSR LL9
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CEDD9
 
@@ -7922,28 +8148,33 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: CBA23_b3
+;       Name: subm_BA23_b3
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_BA23 routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.CBA23_b3
+.subm_BA23_b3
 
- LDA currentBank
- PHA
- LDA #3
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
+
  JSR subm_BA23
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: TIDY_b1
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the TIDY routine in ROM bank 1
 ;
 ; ******************************************************************************
 
@@ -7953,10 +8184,15 @@ ENDIF
  CMP #1
  BEQ CEDFC
  PHA
- LDA #1
+
+ LDA #1                 ; Page ROM bank 1 into memory at $8000
  JSR SetBank
+
  JSR TIDY
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CEDFC
 
@@ -7967,32 +8203,38 @@ ENDIF
 ;       Name: TITLE_b6
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the TITLE routine in ROM bank 6
 ;
 ; ******************************************************************************
 
 .TITLE_b6
 
- LDA currentBank
- PHA
- LDA #6
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
+
  JSR TITLE
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: SpawnDemoShips_b0
+;       Name: DemoShips_b0
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the SpawnDemoShips routine in ROM bank 0
 ;
 ; ******************************************************************************
 
-.SpawnDemoShips_b0
+.DemoShips_b0
 
- LDA #0
+ LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
+
  JMP DemoShips
 
 ; ******************************************************************************
@@ -8000,7 +8242,7 @@ ENDIF
 ;       Name: STARS_b1
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the STARS routine in ROM bank 1
 ;
 ; ******************************************************************************
 
@@ -8010,10 +8252,15 @@ ENDIF
  CMP #1
  BEQ CEE27
  PHA
- LDA #1
+
+ LDA #1                 ; Page ROM bank 1 into memory at $8000
  JSR SetBank
+
  JSR STARS
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CEE27
 
@@ -8024,7 +8271,7 @@ ENDIF
 ;       Name: CIRCLE2_b1
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the CIRCLE2 routine in ROM bank 1
 ;
 ; ******************************************************************************
 
@@ -8034,10 +8281,15 @@ ENDIF
  CMP #1
  BEQ CEE3C
  PHA
- LDA #1
+
+ LDA #1                 ; Page ROM bank 1 into memory at $8000
  JSR SetBank
+
  JSR CIRCLE2
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CEE3C
 
@@ -8048,7 +8300,7 @@ ENDIF
 ;       Name: SUN_b1
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the SUN routine in ROM bank 1
 ;
 ; ******************************************************************************
 
@@ -8058,10 +8310,15 @@ ENDIF
  CMP #1
  BEQ CEE51
  PHA
- LDA #1
+
+ LDA #1                 ; Page ROM bank 1 into memory at $8000
  JSR SetBank
+
  JSR SUN
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CEE51
 
@@ -8069,188 +8326,233 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: CB2FB_b3
+;       Name: subm_B2FB_b3
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_B2FB routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.CB2FB_b3
+.subm_B2FB_b3
 
- LDA currentBank
- PHA
- LDA #3
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
+
  JSR subm_B2FB
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CB219_b3
+;       Name: subm_B219_b3
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_B219 routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.CB219_b3
+.subm_B219_b3
 
- STA L00B7
+ STA ASAV               ; Store the value of A so we can retrieve it below
+
  LDA currentBank
  CMP #3
  BEQ CEE78
  PHA
- LDA #3
+
+ LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
- LDA L00B7
+
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JSR subm_B219
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CEE78
 
- LDA L00B7
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JMP subm_B219
 
 ; ******************************************************************************
 ;
-;       Name: CB9C1_b4
+;       Name: subm_B9C1_b4
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_B9C1 routine in ROM bank 4
 ;
 ; ******************************************************************************
 
-.CB9C1_b4
+.subm_B9C1_b4
 
- LDA currentBank
- PHA
- LDA #4
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #4                 ; Page ROM bank 4 into memory at $8000
  JSR SetBank
+
  JSR subm_B9C1
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CA082_b6
+;       Name: subm_A082_b6
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_A082 routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.CA082_b6
+.subm_A082_b6
 
- LDA currentBank
- PHA
- LDA #6
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
+
  JSR subm_A082
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CA0F8_b6
+;       Name: subm_A0F8_b6
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_A0F8 routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.CA0F8_b6
+.subm_A0F8_b6
 
- LDA currentBank
- PHA
- LDA #6
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
+
  JSR subm_A0F8
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CB882_b4
+;       Name: subm_B882_b4
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_B882 routine in ROM bank 4
 ;
 ; ******************************************************************************
 
-.CB882_b4
+.subm_B882_b4
 
- LDA currentBank
- PHA
- LDA #4
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #4                 ; Page ROM bank 4 into memory at $8000
  JSR SetBank
+
  JSR subm_B882
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CA4A5_b6
+;       Name: subm_A4A5_b6
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_A4A5 routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.CA4A5_b6
+.subm_A4A5_b6
 
- LDA currentBank
- PHA
- LDA #6
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
+
  JSR subm_A4A5
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CB2EF_b0
+;       Name: subm_B2EF_b0
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_B2EF routine in ROM bank 0
 ;
 ; ******************************************************************************
 
-.CB2EF_b0
+.subm_B2EF_b0
 
- LDA #0
+ LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
+
  JMP subm_B2EF
 
 ; ******************************************************************************
 ;
-;       Name: CB358_b0
+;       Name: subm_B358_b0
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_B358 routine in ROM bank 0
 ;
 ; ******************************************************************************
 
-.CB358_b0
+.subm_B358_b0
 
- LDA #0
+ LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
+
  JMP subm_B358
 
 ; ******************************************************************************
 ;
-;       Name: CB9E2_b3
+;       Name: subm_B9E2_b3
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_B9E2 routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.CB9E2_b3
+.subm_B9E2_b3
 
  LDA currentBank
  CMP #3
  BEQ CEEE5
  PHA
- LDA #3
+
+ LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
+
  JSR subm_B9E2
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CEEE5
 
@@ -8258,95 +8560,120 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: CB673_b3
+;       Name: subm_B673_b3
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_B673 routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.CB673_b3
+.subm_B673_b3
 
- LDA currentBank
- PHA
- LDA #3
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
+
  JSR subm_B673
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CB2BC_b3
+;       Name: subm_B2BC_b3
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_B2BC routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.CB2BC_b3
+.subm_B2BC_b3
 
- LDA currentBank
- PHA
- LDA #3
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
+
  JSR subm_B2BC
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CB248_b3
+;       Name: subm_B248_b3
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_B248 routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.CB248_b3
+.subm_B248_b3
 
- LDA currentBank
- PHA
- LDA #3
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
+
  JSR subm_B248
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CBA17_b6
+;       Name: subm_BA17_b6
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_BA17 routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.CBA17_b6
+.subm_BA17_b6
 
- LDA currentBank
- PHA
- LDA #6
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
+
  JSR subm_BA17
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CAFCD_b3
+;       Name: subm_AFCD_b3
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_AFCD routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.CAFCD_b3
+.subm_AFCD_b3
 
  LDA currentBank
  CMP #3
  BEQ CEF32
  PHA
- LDA #3
+
+ LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
+
  JSR subm_AFCD
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CEF32
 
@@ -8354,236 +8681,302 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: CBE52_b6
+;       Name: subm_BE52_b6
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_BE52 routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.CBE52_b6
+.subm_BE52_b6
 
- LDA currentBank
- PHA
- LDA #6
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
+
  JSR subm_BE52
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CBED2_b6
+;       Name: subm_BED2_b6
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_BED2 routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.CBED2_b6
+.subm_BED2_b6
 
- LDA currentBank
- PHA
- LDA #6
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
+
  JSR subm_BED2
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CB0E1_b3
+;       Name: subm_B0E1_b3
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_B0E1 routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.CB0E1_b3
+.subm_B0E1_b3
 
- STA L00B7
+ STA ASAV               ; Store the value of A so we can retrieve it below
+
  LDA currentBank
  CMP #3
  BEQ CEF67
  PHA
- LDA #3
+
+ LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
- LDA L00B7
+
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JSR subm_B0E1
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CEF67
 
- LDA L00B7
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JMP subm_B0E1
 
 ; ******************************************************************************
 ;
-;       Name: CB18E_b3
+;       Name: subm_B18E_b3
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_B18E routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.CB18E_b3
+.subm_B18E_b3
 
- LDA currentBank
- PHA
- LDA #3
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
+
  JSR subm_B18E
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: PAS1_b0
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the PAS1 routine in ROM bank 0
 ;
 ; ******************************************************************************
 
 .PAS1_b0
 
- LDA currentBank
- PHA
- LDA #0
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
+
  JSR PAS1
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: SetSystemImage_b5
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the SetSystemImage routine in ROM bank 5
 ;
 ; ******************************************************************************
 
 .SetSystemImage_b5
 
- LDA currentBank
- PHA
- LDA #5
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #5                 ; Page ROM bank 5 into memory at $8000
  JSR SetBank
+
  JSR SetSystemImage
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: GetSystemImage_b5
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the GetSystemImage routine in ROM bank 5
 ;
 ; ******************************************************************************
 
 .GetSystemImage_b5
 
- LDA currentBank
- PHA
- LDA #5
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #5                 ; Page ROM bank 5 into memory at $8000
  JSR SetBank
+
  JSR GetSystemImage
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: SetCmdrImage_b4
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the SetCmdrImage routine in ROM bank 4
 ;
 ; ******************************************************************************
 
 .SetCmdrImage_b4
 
- LDA currentBank
- PHA
- LDA #4
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #4                 ; Page ROM bank 4 into memory at $8000
  JSR SetBank
+
  JSR SetCmdrImage
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: GetCmdrImage_b4
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the GetCmdrImage routine in ROM bank 4
 ;
 ; ******************************************************************************
 
 .GetCmdrImage_b4
 
- LDA currentBank
- PHA
- LDA #4
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #4                 ; Page ROM bank 4 into memory at $8000
  JSR SetBank
+
  JSR GetCmdrImage
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: DIALS_b6
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the DIALS routine in ROM bank 6
 ;
 ; ******************************************************************************
 
 .DIALS_b6
 
- LDA currentBank
- PHA
- LDA #6
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
+
  JSR DIALS
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CBA63_b6
+;       Name: subm_BA63_b6
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_BA63 routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.CBA63_b6
+.subm_BA63_b6
 
- LDA currentBank
- PHA
- LDA #6
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
+
  JSR subm_BA63
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CB39D_b0
+;       Name: subm_B39D_b0
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_B39D routine in ROM bank 0
 ;
 ; ******************************************************************************
 
-.CB39D_b0
+.subm_B39D_b0
 
- STA L00B7
+ STA ASAV               ; Store the value of A so we can retrieve it below
+
  LDA currentBank
  CMP #0
  BEQ CEFF2
  PHA
- LDA #0
+
+ LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
- LDA L00B7
+
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JSR subm_B39D
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CEFF2
 
- LDA L00B7
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JMP subm_B39D
 
 ; ******************************************************************************
@@ -8591,152 +8984,195 @@ ENDIF
 ;       Name: LL164_b6
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the LL164 routine in ROM bank 6
 ;
 ; ******************************************************************************
 
 .LL164_b6
 
- LDA currentBank
- PHA
- LDA #6
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
+
  JSR LL164
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CB919_b6
+;       Name: subm_B919_b6
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_B919 routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.CB919_b6
+.subm_B919_b6
 
- LDA currentBank
- PHA
- LDA #6
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
+
  JSR subm_B919
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CA166_b6
+;       Name: subm_A166_b6
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_A166 routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.CA166_b6
+.subm_A166_b6
 
- LDA currentBank
- PHA
- LDA #6
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
+
  JSR subm_A166
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CBBDE_b6
+;       Name: subm_BBDE_b6
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_BBDE routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.CBBDE_b6
+.subm_BBDE_b6
 
- LDA currentBank
- PHA
- LDA #6
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
+
  JSR subm_BBDE
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CBB37_b6
+;       Name: subm_BB37_b6
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_BB37 routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.CBB37_b6
+.subm_BB37_b6
 
- LDA currentBank
- PHA
- LDA #6
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
+
  JSR subm_BB37
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CB8FE_b6
+;       Name: subm_B8FE_b6
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_B8FE routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.CB8FE_b6
+.subm_B8FE_b6
 
- LDA currentBank
- PHA
- LDA #6
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
+
  JSR subm_B8FE
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CB90D_b6
+;       Name: subm_B90D_b6
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_B90D routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.CB90D_b6
+.subm_B90D_b6
 
- LDA currentBank
- PHA
- LDA #6
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
+
  JSR subm_B90D6
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CA5AB_b6
+;       Name: subm_A5AB_b6
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_A5AB routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.CA5AB_b6
+.subm_A5AB_b6
 
- STA L00B7
+ STA ASAV               ; Store the value of A so we can retrieve it below
+
  LDA currentBank
  CMP #6
  BEQ CF06F
  PHA
- LDA #6
+
+ LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
- LDA L00B7
+
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JSR subm_A5AB
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CF06F
 
- LDA L00B7
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JMP subm_A5AB
 
 ; ******************************************************************************
@@ -8744,44 +9180,57 @@ ENDIF
 ;       Name: BEEP_b7
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the BEEP routine in ROM bank 7
 ;
 ; ******************************************************************************
 
 .BEEP_b7
 
- LDA currentBank
- PHA
- LDA #0
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
+
  JSR BEEP
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: DETOK_b2
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the DETOK routine in ROM bank 2
 ;
 ; ******************************************************************************
 
 .DETOK_b2
 
- STA L00B7
+ STA ASAV               ; Store the value of A so we can retrieve it below
+
  LDA currentBank
  CMP #2
  BEQ CF098
  PHA
- LDA #2
+
+ LDA #2                 ; Page ROM bank 2 into memory at $8000
  JSR SetBank
- LDA L00B7
+
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JSR DETOK
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CF098
 
- LDA L00B7
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JMP DETOK
 
 ; ******************************************************************************
@@ -8789,26 +9238,34 @@ ENDIF
 ;       Name: DTS_b2
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the DTS routine in ROM bank 2
 ;
 ; ******************************************************************************
 
 .DTS_b2
 
- STA L00B7
+ STA ASAV               ; Store the value of A so we can retrieve it below
+
  LDA currentBank
  CMP #2
  BEQ CF0B3
  PHA
- LDA #2
+
+ LDA #2                 ; Page ROM bank 2 into memory at $8000
  JSR SetBank
- LDA L00B7
+
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JSR DTS
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CF0B3
 
- LDA L00B7
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JMP DTS
 
 ; ******************************************************************************
@@ -8816,126 +9273,162 @@ ENDIF
 ;       Name: PDESC_b2
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the PDESC routine in ROM bank 2
 ;
 ; ******************************************************************************
 
 .PDESC_b2
 
- LDA currentBank
- PHA
- LDA #2
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #2                 ; Page ROM bank 2 into memory at $8000
  JSR SetBank
+
  JSR PDESC
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CAE18_b3
+;       Name: subm_AE18_b3
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_AE18 routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.CAE18_b3
+.subm_AE18_b3
 
- STA L00B7
+ STA ASAV               ; Store the value of A so we can retrieve it below
+
  LDA currentBank
  CMP #3
  BEQ CF0DC
  PHA
- LDA #3
+
+ LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
- LDA L00B7
+
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JSR subm_AE18
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CF0DC
 
- LDA L00B7
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JMP subm_AE18
 
 ; ******************************************************************************
 ;
-;       Name: CAC1D_b3
+;       Name: subm_AC1D_b3
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_AC1D routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.CAC1D_b3
+.subm_AC1D_b3
 
- STA L00B7
+ STA ASAV               ; Store the value of A so we can retrieve it below
+
  LDA currentBank
  CMP #3
  BEQ CF0F7
  PHA
- LDA #3
+
+ LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
- LDA L00B7
+
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JSR subm_AC1D
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CF0F7
 
- LDA L00B7
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JMP subm_AC1D
 
 ; ******************************************************************************
 ;
-;       Name: CA730_b3
+;       Name: subm_A730_b3
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_A730 routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.CA730_b3
+.subm_A730_b3
 
- LDA currentBank
- PHA
- LDA #3
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
+
  JSR subm_A730
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CA775_b3
+;       Name: subm_A775_b3
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_A775 routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.CA775_b3
+.subm_A775_b3
 
- LDA currentBank
- PHA
- LDA #3
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
+
  JSR subm_A775
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: DrawTitleScreen_b3
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the DrawTitleScreen routine in ROM bank 3
 ;
 ; ******************************************************************************
 
 .DrawTitleScreen_b3
 
- LDA currentBank
- PHA
- LDA #3
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
+
  JSR DrawTitleScreen
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -8953,21 +9446,26 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: CA7B7_b3
+;       Name: subm_A7B7_b3
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_A7B7 routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.CA7B7_b3
+.subm_A7B7_b3
 
- LDA currentBank
- PHA
- LDA #3
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
+
  JSR subm_A7B7
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -8986,51 +9484,65 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: CA9D1_b3
+;       Name: subm_A9D1_b3
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_A9D1 routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.CA9D1_b3
+.subm_A9D1_b3
 
  LDA #$C0
- STA L00B7
+
+ STA ASAV               ; Store the value of A so we can retrieve it below
+
  LDA currentBank
  CMP #3
  BEQ CF157
  PHA
- LDA #3
+
+ LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
- LDA L00B7
+
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JSR subm_A9D1
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CF157
 
- LDA L00B7
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JMP subm_A9D1
 
 ; ******************************************************************************
 ;
-;       Name: CA972_b3
+;       Name: subm_A972_b3
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_A972 routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.CA972_b3
+.subm_A972_b3
 
  LDA currentBank
  CMP #3
  BEQ CF16E
  PHA
- LDA #3
+
+ LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
+
  JSR subm_A972
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CF16E
 
@@ -9038,23 +9550,28 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: CAC5C_b3
+;       Name: subm_AC5C_b3
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_AC5C routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.CAC5C_b3
+.subm_AC5C_b3
 
  LDA currentBank
  CMP #3
  BEQ CF183
  PHA
- LDA #3
+
+ LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
+
  JSR subm_AC5C
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CF183
 
@@ -9062,65 +9579,83 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: C8980_b0
+;       Name: subm_8980_b0
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_8980 routine in ROM bank 0
 ;
 ; ******************************************************************************
 
-.C8980_b0
+.subm_8980_b0
 
- LDA currentBank
- PHA
- LDA #0
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
+
  JSR subm_8980
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: CB459_b6
+;       Name: subm_B459_b6
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_B459 routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.CB459_b6
+.subm_B459_b6
 
- LDA currentBank
- PHA
- LDA #6
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
+
  JSR subm_B459
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: MVS5_b0
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the MVS5 routine in ROM bank 0
 ;
 ; ******************************************************************************
 
 .MVS5_b0
 
- STA L00B7
+ STA ASAV               ; Store the value of A so we can retrieve it below
+
  LDA currentBank
  CMP #0
  BEQ CF1B8
  PHA
- LDA #0
+
+ LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
- LDA L00B7
+
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JSR MVS5
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CF1B8
 
- LDA L00B7
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JMP MVS5
 
 ; ******************************************************************************
@@ -9128,44 +9663,57 @@ ENDIF
 ;       Name: HALL_b1
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the HALL routine in ROM bank 1
 ;
 ; ******************************************************************************
 
 .HALL_b1
 
- LDA currentBank
- PHA
- LDA #1
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #1                 ; Page ROM bank 1 into memory at $8000
  JSR SetBank
+
  JSR HALL
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: CHPR_b2
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the CHPR routine in ROM bank 2
 ;
 ; ******************************************************************************
 
 .CHPR_b2
 
- STA L00B7
+ STA ASAV               ; Store the value of A so we can retrieve it below
+
  LDA currentBank
  CMP #2
  BEQ CF1E1
  PHA
- LDA #2
+
+ LDA #2                 ; Page ROM bank 2 into memory at $8000
  JSR SetBank
- LDA L00B7
+
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JSR CHPR
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CF1E1
 
- LDA L00B7
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JMP CHPR
 
 ; ******************************************************************************
@@ -9173,26 +9721,34 @@ ENDIF
 ;       Name: DASC_b2
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the DASC routine in ROM bank 2
 ;
 ; ******************************************************************************
 
 .DASC_b2
 
- STA L00B7
+ STA ASAV               ; Store the value of A so we can retrieve it below
+
  LDA currentBank
  CMP #2
  BEQ CF1FC
  PHA
- LDA #2
+
+ LDA #2                 ; Page ROM bank 2 into memory at $8000
  JSR SetBank
- LDA L00B7
+
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JSR DASC
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CF1FC
 
- LDA L00B7
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JMP DASC
 
 ; ******************************************************************************
@@ -9200,26 +9756,34 @@ ENDIF
 ;       Name: TT27_b2
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the TT27 routine in ROM bank 2
 ;
 ; ******************************************************************************
 
 .TT27_b2
 
- STA L00B7
+ STA ASAV               ; Store the value of A so we can retrieve it below
+
  LDA currentBank
  CMP #2
  BEQ CF217
  PHA
- LDA #2
+
+ LDA #2                 ; Page ROM bank 2 into memory at $8000
  JSR SetBank
- LDA L00B7
+
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JSR TT27
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CF217
 
- LDA L00B7
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JMP TT27
 
 ; ******************************************************************************
@@ -9227,26 +9791,34 @@ ENDIF
 ;       Name: ex_b2
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the ex routine in ROM bank 2
 ;
 ; ******************************************************************************
 
 .ex_b2
 
- STA L00B7
+ STA ASAV               ; Store the value of A so we can retrieve it below
+
  LDA currentBank
  CMP #2
  BEQ CF232
  PHA
- LDA #2
+
+ LDA #2                 ; Page ROM bank 2 into memory at $8000
  JSR SetBank
- LDA L00B7
+
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JSR ex
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CF232
 
- LDA L00B7
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JMP ex
 
 ; ******************************************************************************
@@ -9254,25 +9826,30 @@ ENDIF
 ;       Name: TT27_b0
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the TT27 routine in ROM bank 0
 ;
 ; ******************************************************************************
 
 .TT27_b0
 
- LDA currentBank
- PHA
- LDA #0
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
+
  JSR TT27_0
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: BR1_b0
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the BR1 routine in ROM bank 0
 ;
 ; ******************************************************************************
 
@@ -9282,10 +9859,15 @@ ENDIF
  CMP #0
  BEQ CF257
  PHA
- LDA #0
+
+ LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
+
  JSR BR1
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CF257
 
@@ -9308,71 +9890,87 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: CBAF3_b1
+;       Name: subm_BAF3_b1
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_BAF3 routine in ROM bank 1
 ;
 ; ******************************************************************************
 
-.CBAF3_b1
+.subm_BAF3_b1
 
- LDA currentBank
- PHA
- LDA #1
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #1                 ; Page ROM bank 1 into memory at $8000
  JSR SetBank
+
  JSR subm_BAF3
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: TT66_b0
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the TT66 routine in ROM bank 0
 ;
 ; ******************************************************************************
 
 .TT66_b0
 
- STA L00B7
- LDA currentBank
- PHA
- LDA #0
+ STA ASAV               ; Store the value of A so we can retrieve it below
+
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
- LDA L00B7
+
+ LDA ASAV               ; Restore the value of A that we stored above
+
  JSR TT66
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: CLIP_b1
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the CLIP routine in ROM bank 1
 ;
 ; ******************************************************************************
 
 .CLIP_b1
 
- LDA currentBank
- PHA
- LDA #1
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #1                 ; Page ROM bank 1 into memory at $8000
  JSR SetBank
+
  JSR CLIP
  BCS CF290
  JSR LOIN
 
 .CF290
 
- JMP ResetBank
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: ClearTiles_b3
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the ClearTiles routine in ROM bank 3
 ;
 ; ******************************************************************************
 
@@ -9382,10 +9980,15 @@ ENDIF
  CMP #3
  BEQ CF2A5
  PHA
- LDA #3
+
+ LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
+
  JSR ClearTiles
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CF2A5
 
@@ -9396,7 +9999,7 @@ ENDIF
 ;       Name: SCAN_b1
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the SCAN routine in ROM bank 1
 ;
 ; ******************************************************************************
 
@@ -9406,10 +10009,15 @@ ENDIF
  CMP #1
  BEQ CF2BA
  PHA
- LDA #1
+
+ LDA #1                 ; Page ROM bank 1 into memory at $8000
  JSR SetBank
+
  JSR SCAN
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 .CF2BA
 
@@ -9430,21 +10038,26 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: C8926_b0
+;       Name: subm_8926_b0
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Call the subm_8926 routine in ROM bank 0
 ;
 ; ******************************************************************************
 
-.C8926_b0
+.subm_8926_b0
 
- LDA currentBank
- PHA
- LDA #0
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
+
  JSR subm_8926
- JMP ResetBank
+
+ JMP ResetBank          ; Fetch the ROM bank number from the stack and page that
+                        ; bank back into memory at $8000, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -9457,8 +10070,9 @@ ENDIF
 
 .subm_F2CE
 
- LDA #0
+ LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
+
  JSR CopyNametable0To1
  JSR subm_F126
  LDX #1
@@ -9690,9 +10304,9 @@ ENDIF
 
 .subm_F3BC
 
- JSR CB63D_b3
+ JSR subm_B63D_b3
  LDA #0
- JSR C8021_b6
+ JSR subm_8021_b6
  JSR subm_EB8F
  LDA #$FF
  STA QQ11a
@@ -9726,7 +10340,7 @@ ENDIF
  BCC loop_CF3DC
  LSR scanController2
  JSR WaitResetSound
- JSR CB63D_b3
+ JSR subm_B63D_b3
  LDA language
  STA K%
  LDA #5
@@ -9911,7 +10525,7 @@ ENDIF
 
 .loop_CF484
 
- STA nameBuffer0+64,Y
+ STA nameBuffer0+2*32,Y
  INY
  CPY #$20
  BNE loop_CF484

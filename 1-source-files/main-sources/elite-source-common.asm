@@ -163,6 +163,39 @@ IF NOT(_BANK = 1)
  E%                 = $8042
  KWL%               = $8063
  KWH%               = $8084
+ SHIP_MISSILE       = $80A5
+ SHIP_CORIOLIS      = $81A3
+ SHIP_ESCAPE_POD    = $82BF
+ SHIP_PLATE         = $8313
+ SHIP_CANISTER      = $8353
+ SHIP_BOULDER       = $83FB
+ SHIP_ASTEROID      = $849D
+ SHIP_SPLINTER      = $8573
+ SHIP_SHUTTLE       = $85AF
+ SHIP_TRANSPORTER   = $86E1
+ SHIP_COBRA_MK_3    = $88C3
+ SHIP_PYTHON        = $8A4B
+ SHIP_BOA           = $8B3D
+ SHIP_ANACONDA      = $8C33
+ SHIP_ROCK_HERMIT   = $8D35
+ SHIP_VIPER         = $8E0B
+ SHIP_SIDEWINDER    = $8EE5
+ SHIP_MAMBA         = $8F8D
+ SHIP_KRAIT         = $90BB
+ SHIP_ADDER         = $91A1
+ SHIP_GECKO         = $92D1
+ SHIP_COBRA_MK_1    = $9395
+ SHIP_WORM          = $945B
+ SHIP_COBRA_MK_3_P  = $950B
+ SHIP_ASP_MK_2      = $9693
+ SHIP_PYTHON_P      = $97BD
+ SHIP_FER_DE_LANCE  = $98AF
+ SHIP_MORAY         = $99C9
+ SHIP_THARGOID      = $9AA1
+ SHIP_THARGON       = $9BBD
+ SHIP_CONSTRICTOR   = $9C29
+ SHIP_COUGAR        = $9D2B
+ SHIP_DODO          = $9E2D
  LL9                = $A070
  CLIP               = $A65D
  CIRCLE2            = $AF9D
@@ -906,9 +939,11 @@ ENDIF
  SKIP 1                 ; This is used by the STARS2 routine for storing the
                         ; stardust particle's delta_x value
 
-.L00B7
+.ASAV
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Temporary storage for saving the value of the A
+                        ; register, used in the bank-switching routines in
+                        ; bank 7
 
 .tileNumber
 
@@ -3757,11 +3792,11 @@ ENDIF
 
 .boxEdge1
 
- SKIP 1                 ; Bitmap for drawing box edge ???
+ SKIP 1                 ; Tile number for drawing box edge ???
 
 .boxEdge2
 
- SKIP 1                 ; Bitmap for drawing box edge ???
+ SKIP 1                 ; Tile number for drawing box edge ???
 
 .L0470
 
@@ -4370,6 +4405,8 @@ ENDIF
 
  SKIP 30 * 32           ; 30 rows of 32 tile numbers
 
+.attrBuffer0
+
  SKIP 8 * 8             ; 8 rows of 8 attribute bytes (each is a 2x2 tile block)
 
 ; ******************************************************************************
@@ -4384,6 +4421,8 @@ ENDIF
 .nameBuffer1
 
  SKIP 30 * 32           ; 30 rows of 32 tile numbers
+
+.attrBuffer1
 
  SKIP 8 * 8             ; 8 rows of 8 attribute bytes (each is a 2x2 tile block)
 

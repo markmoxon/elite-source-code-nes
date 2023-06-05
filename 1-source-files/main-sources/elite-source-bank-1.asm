@@ -8741,28 +8741,28 @@ ENDMACRO
  ADC #7
  TAY
  LDA L05F1
- JSR CB039
+ JSR subm_B039
  DEY
  LDA L05F0
- JSR CB039
+ JSR subm_B039
  DEY
  LDA L05EF
- JSR CB039
+ JSR subm_B039
  DEY
  LDA L05EE
- JSR CB039
+ JSR subm_B039
  DEY
  LDA L05ED
- JSR CB039
+ JSR subm_B039
  DEY
  LDA L05EC
- JSR CB039
+ JSR subm_B039
  DEY
  LDA L05EB
- JSR CB039
+ JSR subm_B039
  DEY
  LDA L05EA
- JMP CB039
+ JMP subm_B039
 
 .CAEE8
 
@@ -8776,28 +8776,28 @@ ENDMACRO
  ADC #7
  TAY
  LDA L05F1
- JSR CB05D
+ JSR subm_B05D
  DEY
  LDA L05F0
- JSR CB05D
+ JSR subm_B05D
  DEY
  LDA L05EF
- JSR CB05D
+ JSR subm_B05D
  DEY
  LDA L05EE
- JSR CB05D
+ JSR subm_B05D
  DEY
  LDA L05ED
- JSR CB05D
+ JSR subm_B05D
  DEY
  LDA L05EB
- JSR CB05D
+ JSR subm_B05D
  DEY
  LDA L05EB
- JSR CB05D
+ JSR subm_B05D
  DEY
  LDA L05EA
- JMP CB05D
+ JMP subm_B05D
 
 .CAF35
 
@@ -9221,14 +9221,14 @@ ENDMACRO
 
 ; ******************************************************************************
 ;
-;       Name: CB039
+;       Name: subm_B039
 ;       Type: Subroutine
 ;   Category: Drawing suns
 ;    Summary: ??? called from sun part 2
 ;
 ; ******************************************************************************
 
-.CB039
+.subm_B039
 
  LDX P                  ; ???
  STX X2
@@ -9260,14 +9260,14 @@ ENDMACRO
 
 ; ******************************************************************************
 ;
-;       Name: CB05D
+;       Name: subm_B05D
 ;       Type: Subroutine
 ;   Category: Drawing suns
 ;    Summary: ??? called from sun part 2
 ;
 ; ******************************************************************************
 
-.CB05D
+.subm_B05D
 
  CLC                    ; ???
  ADC YY

@@ -3286,7 +3286,7 @@ ENDIF
  STA tileNumber
  LDX pictureTile
  STX K+2
- JSR CB2FB_b3
+ JSR subm_B2FB_b3
  LDA #5
  STA K
  LDA #7
@@ -3297,7 +3297,7 @@ ENDIF
  STA K+3
  LDX #4
  LDY #0
- JSR CA0F8_b6
+ JSR subm_A0F8_b6
  LDA FIST
  CMP #$28
  BCC CA0BD
@@ -3343,7 +3343,7 @@ ENDIF
  STA K
  LDA #$0A
  STA K+1
- JMP CB248_b3
+ JMP subm_B248_b3
 
 ; ******************************************************************************
 ;
@@ -3467,18 +3467,18 @@ ENDIF
  LDA #$FF
  STA L045F
  LDA #3
- JSR CAC1D_b3
+ JSR subm_AC1D_b3
 
 .CA18B
 
  LDY #4
  JSR DELAY
- JSR CBBDE_b6
+ JSR subm_BBDE_b6
  TXA
  CMP #$50
  BNE CA1B1
  PLA
- JSR CAC1D_b3
+ JSR subm_AC1D_b3
  PLA
  STA L045F
  JSR KeepPPUTablesAt0
@@ -3519,7 +3519,7 @@ ENDIF
  LDA L045E
  BEQ CA1DE
  AND #$7F
- JSR C8021_b6
+ JSR subm_8021_b6
 
 .CA1DE
 
@@ -3532,7 +3532,7 @@ ENDIF
  PLA
  PLA
  STA L045F
- JMP CB2EF_b0
+ JMP subm_B2EF_b0
 
 .CA1ED
 
@@ -3567,7 +3567,7 @@ ENDIF
 
 .CA21D
 
- JSR CAC5C_b3
+ JSR subm_AC5C_b3
  JMP CA18B
 
 ; ******************************************************************************
@@ -4264,7 +4264,7 @@ ENDIF
 
 .CA5B6
 
- JSR CB63D_b3
+ JSR subm_B63D_b3
  LDY #$14
  STY NOSTM
  STY RAND+1
@@ -4316,7 +4316,7 @@ ENDIF
  STA LASER
  STA QQ12
  LDA #$10
- JSR CB39D_b0
+ JSR subm_B39D_b0
  LDA #$FF
  STA L045F
  LDA #$F0
@@ -4402,13 +4402,13 @@ ENDIF
  JSR subm_A917
  LDA #0
  STA QQ11
- JSR CAFCD_b3
+ JSR subm_AFCD_b3
  LDA #$25
  STA L00D2
  JSR subm_A761
  LDA #$3C
  STA L00D2
- JMP SpawnDemoShips_b0
+ JMP DemoShips_b0
 
 .CA6D3
 
@@ -4474,8 +4474,8 @@ ENDIF
 .CA726
 
  JSR subm_A917
- JSR CB63D_b3
- JMP CB358_b0
+ JSR subm_B63D_b3
+ JMP subm_B358_b0
 
 .CA72F
 
@@ -4819,7 +4819,7 @@ ENDIF
  STA L0300
  LDA #2
  STA L0402
- JSR CAC5C_b3
+ JSR subm_AC5C_b3
  LDA #$28
  STA L00CC
  LDA #$A0
@@ -4876,7 +4876,7 @@ ENDIF
  JSR subm_D975
  LDA L0465
  BEQ CA995
- JSR CB1D4_b0
+ JSR subm_B1D4_b0
 
 .CA995
 
@@ -5613,7 +5613,7 @@ ENDIF
  JSR subm_B62C
  DEY
  BPL loop_CB4CA
- JSR CB9F9_b4
+ JSR subm_B9F9_b4
  LDA #0
 
 .loop_CB4E0
@@ -5629,7 +5629,7 @@ ENDIF
  CMP #9
  BCC loop_CB4E0
  JSR subm_B6BB
- JSR C8926_b0
+ JSR subm_8926_b0
  LDA #9
 
 ; ******************************************************************************
@@ -5703,7 +5703,7 @@ ENDIF
  CPX #7
  BEQ CB53D
  TXA
- JSR CB1D4_b0
+ JSR subm_B1D4_b0
  PLA
  RTS
 
@@ -5718,7 +5718,7 @@ ENDIF
  BMI CB558
  LDA #0
  STA L0465
- JSR CBB37_b6
+ JSR subm_BB37_b6
  LDA L0465
  BEQ CB553
  CMP #7
@@ -5881,7 +5881,7 @@ ENDIF
  JSR subm_B6E8
  LDA #9
  JSR subm_B854
- JSR CAC5C_b3
+ JSR subm_AC5C_b3
  JMP subm_B569
 
 .CB618
@@ -6071,7 +6071,7 @@ ENDIF
 .subm_B6C7
 
  PHA
- JSR C8980_b0
+ JSR subm_8980_b0
  JSR subm_D8C5
  PLA
  RTS
@@ -7250,7 +7250,7 @@ ENDIF
 
  LDA #$DF
  STA QQ11
- JSR CB96B_b4
+ JSR subm_B96B_b4
  LDA #$24
  STA L00D9
  LDA #$15
@@ -7330,7 +7330,7 @@ ENDIF
  STY L049F
  LDA #$8D
  STA L00D6
- JSR C8926_b0
+ JSR subm_8926_b0
  LDA controller1Left
  AND controller1Up
  AND controller1Select
@@ -7345,7 +7345,7 @@ ENDIF
 
 .CBD3E
 
- JSR CB88C_b6
+ JSR subm_B88C_b6
  LDA #$80
  STA S
 
@@ -7486,7 +7486,7 @@ ENDIF
  DEC V+1
  BNE CBDE2
  JSR CBDF9
- JMP CBF41_b5
+ JMP subm_BF41_b5
 
 .CBDF9
 

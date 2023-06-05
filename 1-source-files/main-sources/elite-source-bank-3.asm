@@ -1594,7 +1594,7 @@ ENDIF
 
 .subm_A730
 
- LDY #$E0
+ LDY #7*32
 
 .loop_CA732
 
@@ -1602,24 +1602,35 @@ ENDIF
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDA L963F,Y
- STA nameBuffer0+704,Y
- STA nameBuffer1+704,Y
+
+ STA nameBuffer0+22*32,Y
+ STA nameBuffer1+22*32,Y
+
  DEY
+
  BNE loop_CA732
- LDA nameBuffer0+736
- STA nameBuffer0+704
- LDA nameBuffer0+768
- STA nameBuffer0+736
- LDA nameBuffer0+800
- STA nameBuffer0+768
- LDA nameBuffer0+832
- STA nameBuffer0+800
- LDA nameBuffer0+896
- STA nameBuffer0+864
- LDA nameBuffer0+928
- STA nameBuffer0+896
+
+ LDA nameBuffer0+23*32
+ STA nameBuffer0+22*32
+
+ LDA nameBuffer0+24*32
+ STA nameBuffer0+23*32
+
+ LDA nameBuffer0+25*32
+ STA nameBuffer0+24*32
+
+ LDA nameBuffer0+26*32
+ STA nameBuffer0+25*32
+
+ LDA nameBuffer0+28*32
+ STA nameBuffer0+27*32
+
+ LDA nameBuffer0+29*32
+ STA nameBuffer0+28*32
+
  LDA #0
- STA nameBuffer0+928
+ STA nameBuffer0+29*32
+
  RTS
 
 ; ******************************************************************************
@@ -1636,14 +1647,18 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDY #$60
+ LDY #3*32
+
  LDA #0
 
 .loop_CA786
 
- STA nameBuffer0+927,Y
+ STA nameBuffer0+29*32-1,Y
+
  DEY
+
  BNE loop_CA786
+
  LDA #$CB
  STA tileSprite11
  STA tileSprite12
@@ -1897,7 +1912,7 @@ ENDIF
  PLA
  STA ppuCtrlCopy
  STA PPU_CTRL
- JMP CB673_b3
+ JMP subm_B673_b3
 
 ; ******************************************************************************
 ;
@@ -2132,7 +2147,7 @@ ENDIF
 
  LDA L0473
  BPL CAA43
- JMP CB673_b3
+ JMP subm_B673_b3
 
 .CAA43
 
@@ -2709,28 +2724,28 @@ ENDIF
  LDA QQ11
  BMI CAD5A
 
- LDA #HI(nameBuffer0+8*80)  ; Set SC(1 0) to the address of tile number #80 in
- STA SC+1                   ; nametable buffer 0
- LDA #LO(nameBuffer0+8*80)
+ LDA #HI(nameBuffer0+20*32) ; Set SC(1 0) to the address of the first tile on
+ STA SC+1                   ; tile row 20 in nametable buffer 0
+ LDA #LO(nameBuffer0+20*32)
  STA SC
 
- LDA #HI(nameBuffer1+8*80)  ; Set SC2(1 0) to the address of tile number #80 in
- STA SC2+1                  ; nametable buffer 1
- LDA #LO(nameBuffer1+8*80)
+ LDA #HI(nameBuffer1+20*32) ; Set SC2(1 0) to the address of the first tile on
+ STA SC2+1                  ; tile row 20 in nametable buffer 1
+ LDA #LO(nameBuffer1+20*32)
  STA SC2
 
  JMP CAD77
 
 .CAD5A
 
- LDA #HI(nameBuffer0+8*108) ; Set SC(1 0) to the address of tile number #108 in
- STA SC+1                   ; nametable buffer 0
- LDA #LO(nameBuffer0+8*108)
+ LDA #HI(nameBuffer0+27*32) ; Set SC(1 0) to the address of the first tile on
+ STA SC+1                   ; tile row 27 in nametable buffer 0
+ LDA #LO(nameBuffer0+27*32)
  STA SC
 
- LDA #HI(nameBuffer1+8*108) ; Set SC2(1 0) to the address of tile number #108 in
- STA SC2+1                  ; nametable buffer 1
- LDA #LO(nameBuffer1+8*108)
+ LDA #HI(nameBuffer1+27*32) ; Set SC2(1 0) to the address of the first tile on
+ STA SC2+1                  ; tile row 27 in nametable buffer 1
+ LDA #LO(nameBuffer1+27*32)
  STA SC2
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
@@ -2786,14 +2801,14 @@ ENDIF
 
 .subm_AE18_ADBC
 
- LDA #HI(nameBuffer0+8*108) ; Set SC(1 0) to the address of tile number #108 in
- STA SC+1                   ; nametable buffer 0
- LDA #LO(nameBuffer0+8*108)
+ LDA #HI(nameBuffer0+27*32) ; Set SC(1 0) to the address of the first tile on
+ STA SC+1                   ; tile row 27 in nametable buffer 0
+ LDA #LO(nameBuffer0+27*32)
  STA SC
 
- LDA #HI(nameBuffer1+8*108) ; Set SC2(1 0) to the address of tile number #108 in
- STA SC2+1                  ; nametable buffer 1
- LDA #LO(nameBuffer1+8*108)
+ LDA #HI(nameBuffer1+27*32) ; Set SC2(1 0) to the address of the first tile on
+ STA SC2+1                  ; tile row 27 in nametable buffer 1
+ LDA #LO(nameBuffer1+27*32)
  STA SC2
 
  LDY #$3F
@@ -3638,14 +3653,14 @@ ENDIF
  STA tileNumber
  LDA pictureTile
  STA K+2
- JSR CB2FB_b3
+ JSR subm_B2FB_b3
  LDA #$45
  STA K+2
  LDA #8
  STA K+3
  LDX #0
  LDY #0
- JSR CA0F8_b6
+ JSR subm_A0F8_b6
  DEC XC
  DEC YC
  INC K
@@ -4652,9 +4667,9 @@ ENDIF
  ADC #$B6
  STA V+1
 
- LDA #HI(nameBuffer0+8*120) ; Set SC(1 0) to the address of tile number #120 in
- STA SC+1                   ; nametable buffer 0
- LDA #LO(nameBuffer0+8*120)
+ LDA #HI(attrBuffer0)   ; Set SC(1 0) to the address of attribute buffer 0
+ STA SC+1
+ LDA #LO(attrBuffer0)
  STA SC
 
  JMP UnpackToRAM
