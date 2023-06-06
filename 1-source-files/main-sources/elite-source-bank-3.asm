@@ -2041,9 +2041,9 @@ ENDIF
  TXA
  PHA
  LDA #$3F
- STA tempVar+1
+ STA cycleCount+1
  LDA #$FF
- STA tempVar
+ STA cycleCount
  JSR subm_C6F4
  PLA
  PHA
@@ -2052,9 +2052,9 @@ ENDIF
  AND #$20
  BNE CA9CC
  LDA #$10
- STA tempVar+1
+ STA cycleCount+1
  LDA #0
- STA tempVar
+ STA cycleCount
  JSR subm_C6F4
  PLA
  TAX

@@ -152,331 +152,606 @@ ENDIF
 ;
 ;       Name: ResetShipStatus
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Flight
+;    Summary: Reset the ship's speed, hyperspace counter, laser temperature,
+;             shields and energy banks
 ;
 ; ******************************************************************************
 
 .ResetShipStatus
 
- LDA #0
+ LDA #0                 ; Reduce the speed to 0
  STA DELTA
- STA QQ22+1
- LDA #0
+
+ STA QQ22+1             ; Reset the on-screen hyperspace counter
+
+ LDA #0                 ; Cool down the lasers completely
  STA GNTMP
- LDA #$FF
+
+ LDA #$FF               ; Recharge the forward and aft shields
  STA FSH
  STA ASH
- STA ENERGY
- RTS
+
+ STA ENERGY             ; Recharge the energy banks
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: DOENTRY
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Flight
+;    Summary: Dock at the space station, show the ship hangar and work out any
+;             mission progression
 ;
 ; ******************************************************************************
 
 .DOENTRY
 
- LDX #$FF
- TXS
- JSR RES2
- JSR LAUN
- JSR ResetShipStatus
- JSR HALL_b1
- LDY #$2C
+ LDX #$FF               ; Set the stack pointer to $01FF, which is the standard
+ TXS                    ; location for the 6502 stack, so this instruction
+                        ; effectively resets the stack
+
+ JSR RES2               ; Reset a number of flight variables and workspaces
+
+ JSR LAUN               ; Show the space station docking tunnel
+
+ JSR ResetShipStatus    ; Reset the ship's speed, hyperspace counter, laser
+                        ; temperature, shields and energy banks
+
+ JSR HALL_b1            ; Show the ship hangar
+
+ LDY #44                ; Wait for 44/50 of a second (0.88 seconds)
  JSR DELAY
- LDA TP
- AND #3
- BNE C804C
- LDA TALLY+1
- BEQ C8097
- LDA GCNT
- LSR A
- BNE C8097
- JMP BRIEF
 
-.C804C
+ LDA TP                 ; Fetch bits 0 and 1 of TP, and if they are non-zero
+ AND #%00000011         ; (i.e. mission 1 is either in progress or has been
+ BNE EN1                ; completed), skip to EN1
 
- CMP #3
- BNE C8053
- JMP DEBRIEF
+ LDA TALLY+1            ; If the high byte of TALLY is zero (so we have a combat
+ BEQ EN4                ; rank below Competent), jump to EN4 as we are not yet
+                        ; good enough to qualify for a mission
 
-.C8053
+ LDA GCNT               ; Fetch the galaxy number into A, and if any of bits 1-7
+ LSR A                  ; are set (i.e. A > 1), jump to EN4 as mission 1 can
+ BNE EN4                ; only be triggered in the first two galaxies
 
- LDA GCNT
- CMP #2
- BNE C8097
- LDA TP
- AND #$0F
- CMP #2
- BNE C806D
- LDA TALLY+1
- CMP #5
- BCC C8097
- JMP BRIEF2
+ JMP BRIEF              ; If we get here, mission 1 hasn't started, we have
+                        ; reached a combat rank of Competent, and we are in
+                        ; galaxy 0 or 1 (shown in-game as galaxy 1 or 2), so
+                        ; it's time to start mission 1 by calling BRIEF
 
-.C806D
+.EN1
 
- CMP #6
- BNE C8082
- LDA QQ0
- CMP #$D7
- BNE C8097
- LDA QQ1
- CMP #$54
- BNE C8097
- JMP BRIEF3
+                        ; If we get here then mission 1 is either in progress or
+                        ; has been completed
 
-.C8082
+ CMP #%00000011         ; If bits 0 and 1 are not both set, then jump to EN2
+ BNE EN2
 
- CMP #$0A
- BNE C8097
- LDA QQ0
- CMP #$3F
- BNE C8097
- LDA QQ1
- CMP #$48
- BNE C8097
- JMP DEBRIEF2
+ JMP DEBRIEF            ; Bits 0 and 1 are both set, so mission 1 is both in
+                        ; progress and has been completed, which means we have
+                        ; only just completed it, so jump to DEBRIEF to end the
+                        ; mission get our reward
 
-.C8097
+.EN2
 
- LDA COK
- BMI C80AB
+                        ; Mission 1 has been completed, so now to check for
+                        ; mission 2
+
+ LDA GCNT               ; Fetch the galaxy number into A
+
+ CMP #2                 ; If this is not galaxy 2 (shown in-game as galaxy 3),
+ BNE EN4                ; jump to EN4 as we can only start mission 2 in the
+                        ; third galaxy
+
+ LDA TP                 ; Extract bits 0-3 of TP into A
+ AND #%00001111
+
+ CMP #%00000010         ; If mission 1 is complete and no longer in progress,
+ BNE EN3                ; and mission 2 is not yet started, then bits 0-3 of TP
+                        ; will be %0010, so this jumps to EN3 if this is not the
+                        ; case
+
+ LDA TALLY+1            ; If the high byte of TALLY is < 5 (so we have a combat
+ CMP #5                 ; rank that is less than 3/8 of the way from Dangerous
+ BCC EN4                ; to Deadly), jump to EN4 as our rank isn't high enough
+                        ; for mission 2
+
+ JMP BRIEF2             ; If we get here, mission 1 is complete and no longer in
+                        ; progress, mission 2 hasn't started, we have reached a
+                        ; combat rank of 3/8 of the way from Dangerous to
+                        ; Deadly, and we are in galaxy 2 (shown in-game as
+                        ; galaxy 3), so it's time to start mission 2 by calling
+                        ; BRIEF2
+
+.EN3
+
+ CMP #%00000110         ; If mission 1 is complete and no longer in progress,
+ BNE EN5                ; and mission 2 has started but we have not yet been
+                        ; briefed and picked up the plans, then bits 0-3 of TP
+                        ; will be %0110, so this jumps to EN5 if this is not the
+                        ; case
+
+ LDA QQ0                ; Set A = the current system's galactic x-coordinate
+
+ CMP #215               ; If A <> 215 then jump to EN4
+ BNE EN4
+
+ LDA QQ1                ; Set A = the current system's galactic y-coordinate
+
+ CMP #84                ; If A <> 84 then jump to EN4
+ BNE EN4
+
+ JMP BRIEF3             ; If we get here, mission 1 is complete and no longer in
+                        ; progress, mission 2 has started but we have not yet
+                        ; picked up the plans, and we have just arrived at
+                        ; Ceerdi at galactic coordinates (215, 84), so we jump
+                        ; to BRIEF3 to get a mission brief and pick up the plans
+                        ; that we need to carry to Birera
+
+.EN5
+
+ CMP #%00001010         ; If mission 1 is complete and no longer in progress,
+ BNE EN4                ; and mission 2 has started and we have picked up the
+                        ; plans, then bits 0-3 of TP will be %1010, so this
+                        ; jumps to EN5 if this is not the case
+
+ LDA QQ0                ; Set A = the current system's galactic x-coordinate
+
+ CMP #63                ; If A <> 63 then jump to EN4
+ BNE EN4
+
+ LDA QQ1                ; Set A = the current system's galactic y-coordinate
+
+ CMP #72                ; If A <> 72 then jump to EN4
+ BNE EN4
+
+ JMP DEBRIEF2           ; If we get here, mission 1 is complete and no longer in
+                        ; progress, mission 2 has started and we have picked up
+                        ; the plans, and we have just arrived at Birera at
+                        ; galactic coordinates (63, 72), so we jump to DEBRIEF2
+                        ; to end the mission and get our reward
+
+.EN4
+
+ LDA COK                ; If bit 7 of COK is set, then cheat mode has been
+ BMI EN6                ; applied, so jump to EN6
+
  LDA CASH+1
- BEQ C80AB
- LDA TP
- AND #$10
- BNE C80AB
+ BEQ EN6
+
+ LDA TP                 ; If bit 4 of TP is set, then the Tribbles mission has
+ AND #%00010000         ; already been completed, so jump to EN6
+ BNE EN6
+
  JMP TBRIEF
 
-.C80AB
+.EN6
 
- JMP BAY
+ JMP BAY                ; If we get here them we didn't start or any missions,
+                        ; so jump to BAY to go to the docking bay (i.e. show the
+                        ; Status Mode screen)
 
  RTS
 
 ; ******************************************************************************
 ;
-;       Name: MAL1
+;       Name: Main flight loop (Part 4 of 16)
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Main loop
+;    Summary: For each nearby ship: Copy the ship's data block from K% to the
+;             zero-page workspace at INWK
+;  Deep dive: Program flow of the main game loop
+;             Ship data blocks
+;
+; ------------------------------------------------------------------------------
+;
+; The main flight loop covers most of the flight-specific aspects of Elite. This
+; section covers the following:
+;
+;   * Start looping through all the ships in the local bubble, and for each
+;     one:
+;
+;     * Copy the ship's data block from K% to INWK
+;
+;     * Set XX0 to point to the ship's blueprint (if this is a ship)
+;
+; Other entry points:
+;
+;   MAL1                Marks the beginning of the ship analysis loop, so we
+;                       can jump back here from part 12 of the main flight loop
+;                       to work our way through each ship in the local bubble.
+;                       We also jump back here when a ship is removed from the
+;                       bubble, so we can continue processing from the next ship
 ;
 ; ******************************************************************************
 
 .MAL1
 
- STX XSAV
- STA TYPE
+ STX XSAV               ; Store the current slot number in XSAV
+
+ STA TYPE               ; Store the ship type in TYPE
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- JSR GINF
- LDY #$25
+ JSR GINF               ; Call GINF to fetch the address of the ship data block
+                        ; for the ship in slot X and store it in INF. The data
+                        ; block is in the K% workspace, which is where all the
+                        ; ship data blocks are stored
 
-.loop_C80C5
+                        ; Next we want to copy the ship data block from INF to
+                        ; the zero-page workspace at INWK, so we can process it
+                        ; more efficiently
 
- LDA (XX19),Y
- STA XX1,Y
- DEY
- BPL loop_C80C5
+ LDY #NI%-5             ; There are NI% bytes in each ship data block (and in
+                        ; the INWK workspace, so we set a counter in Y so we can
+                        ; loop through them (ignoring the last four) ???
+
+.MAL2
+
+ LDA (INF),Y            ; Load the Y-th byte of INF and store it in the Y-th
+ STA INWK,Y             ; byte of INWK
+
+ DEY                    ; Decrement the loop counter
+
+ BPL MAL2               ; Loop back for the next byte until we have copied the
+                        ; last byte from INF to INWK
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA TYPE
- BMI MA21
- CMP #2
+ LDA TYPE               ; If the ship type is negative then this indicates a
+ BMI MA21               ; planet or sun, so jump down to MA21, as the next bit
+                        ; sets up a pointer to the ship blueprint, and then
+                        ; checks for energy bomb damage, and neither of these
+                        ; apply to planets and suns
+
+ CMP #2                 ; ???
  BNE C80F0
+
  LDA L04A2
  STA XX0
+
  LDA L04A3
  STA XX0+1
+
  LDY #4
  BNE C80FC
 
 .C80F0
 
- ASL A
+ ASL A                  ; Set Y = ship type * 2
  TAY
- LDA XX21-2,Y
- STA XX0
- LDA XX21-1,Y
- STA XX0+1
+
+ LDA XX21-2,Y           ; The ship blueprints at XX21 start with a lookup
+ STA XX0                ; table that points to the individual ship blueprints,
+                        ; so this fetches the low byte of this particular ship
+                        ; type's blueprint and stores it in XX0
+
+ LDA XX21-1,Y           ; Fetch the high byte of this particular ship type's
+ STA XX0+1              ; blueprint and store it in XX0+1
 
 .C80FC
 
  CPY #6
- BEQ MainFlight5
+ BEQ C815B
  CPY #$3C
- BEQ MainFlight5
+ BEQ C815B
  CPY #4
  BEQ C811A
  LDA INWK+32
- BPL MainFlight5
+ BPL C815B
  CPY #2
  BEQ C8114
  AND #$3E
- BEQ MainFlight5
+ BEQ C815B
 
 .C8114
 
  LDA INWK+31
  AND #$A0
- BNE MainFlight5
+ BNE C815B
 
 .C811A
 
  LDA NEWB
  AND #4
- BEQ MainFlight5
+ BEQ C815B
  ASL L0300
  SEC
  ROR L0300
 
+.C815B
+
 ; ******************************************************************************
 ;
-;       Name: MainFlight5
+;       Name: Main flight loop (Part 5 of 16)
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Main loop
+;    Summary: For each nearby ship: If an energy bomb has been set off,
+;             potentially kill this ship
+;  Deep dive: Program flow of the main game loop
+;
+; ------------------------------------------------------------------------------
+;
+; The main flight loop covers most of the flight-specific aspects of Elite. This
+; section covers the following:
+;
+;   * Continue looping through all the ships in the local bubble, and for each
+;     one:
+;
+;     * If an energy bomb has been set off and this ship can be killed, kill it
+;       and increase the kill tally
 ;
 ; ******************************************************************************
 
-.MainFlight5
+ LDA BOMB               ; If we set off our energy bomb (see MA24 above), then
+ BPL MA21               ; BOMB is now negative, so this skips to MA21 if our
+                        ; energy bomb is not going off
 
- LDA BOMB
- BPL MA21
- CPY #4
- BEQ MA21
- CPY #$3A
- BEQ MA21
- CPY #$3E
- BCS MA21
- LDA INWK+31
- AND #$20
- BNE MA21
- ASL INWK+31
- SEC
- ROR INWK+31
- LDX TYPE
- JSR EXNO2
+ CPY #2*SST             ; If the ship in Y is the space station, jump to BA21
+ BEQ MA21               ; as energy bombs are useless against space stations
+
+ CPY #2*THG             ; If the ship in Y is a Thargoid, jump to BA21 as energy
+ BEQ MA21               ; bombs have no effect against Thargoids
+
+ CPY #2*CON             ; If the ship in Y is the Constrictor, jump to BA21
+ BCS MA21               ; as energy bombs are useless against the Constrictor
+                        ; (the Constrictor is the target of mission 1, and it
+                        ; would be too easy if it could just be blown out of
+                        ; the sky with a single key press)
+
+ LDA INWK+31            ; If the ship we are checking has bit 5 set in its ship
+ AND #%00100000         ; byte #31, then it is already exploding, so jump to
+ BNE MA21               ; BA21 as ships can't explode more than once
+
+ ASL INWK+31            ; The energy bomb is killing this ship, so set bit 7 of
+ SEC                    ; the ship byte #31 to indicate that it has now been
+ ROR INWK+31            ; killed
+
+ LDX TYPE               ; Set X to the type of the ship that was killed so the
+                        ; following call to EXNO2 can award us the correct
+                        ; number of fractional kill points
+
+ JSR EXNO2              ; Call EXNO2 to process the fact that we have killed a
+                        ; ship (so increase the kill tally, make an explosion
+                        ; sound and possibly display "RIGHT ON COMMANDER!")
 
 ; ******************************************************************************
 ;
-;       Name: MA21
+;       Name: Main flight loop (Part 6 of 16)
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Main loop
+;    Summary: For each nearby ship: Move the ship in space and copy the updated
+;             INWK data block back to K%
+;  Deep dive: Program flow of the main game loop
+;             Program flow of the ship-moving routine
+;             Ship data blocks
+;
+; ------------------------------------------------------------------------------
+;
+; The main flight loop covers most of the flight-specific aspects of Elite. This
+; section covers the following:
+;
+;   * Continue looping through all the ships in the local bubble, and for each
+;     one:
+;
+;     * Move the ship in space
+;
+;     * Copy the updated ship's data block from INWK back to K%
 ;
 ; ******************************************************************************
 
 .MA21
 
- JSR MVEIT
+ JSR MVEIT              ; Call MVEIT to move the ship we are processing in space
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDY #$25
+                        ; Now that we are done processing this ship, we need to
+                        ; copy the ship data back from INWK to the correct place
+                        ; in the K% workspace. We already set INF in part 4 to
+                        ; point to the ship's data block in K%, so we can simply
+                        ; do the reverse of the copy we did before, this time
+                        ; copying from INWK to INF
 
-.loop_C815A
+ LDY #NI%-5             ; Set a counter in Y so we can loop through the NI%
+                        ; bytes in the ship data block (ignoring the last four)
+                        ; ???
 
- LDA XX1,Y
- STA (XX19),Y
- DEY
- BPL loop_C815A
+.MAL3
+
+ LDA INWK,Y             ; Load the Y-th byte of INWK and store it in the Y-th
+ STA (INF),Y            ; byte of INF
+
+ DEY                    ; Decrement the loop counter
+
+ BPL MAL3               ; Loop back for the next byte, until we have copied the
+                        ; last byte from INWK back to INF
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
 ; ******************************************************************************
 ;
-;       Name: MainFlight7
+;       Name: Main flight loop (Part 7 of 16)
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Main loop
+;    Summary: For each nearby ship: Check whether we are docking, scooping or
+;             colliding with it
+;  Deep dive: Program flow of the main game loop
+;
+; ------------------------------------------------------------------------------
+;
+; The main flight loop covers most of the flight-specific aspects of Elite. This
+; section covers the following:
+;
+;   * Continue looping through all the ships in the local bubble, and for each
+;     one:
+;
+;     * Check how close we are to this ship and work out if we are docking,
+;       scooping or colliding with it
 ;
 ; ******************************************************************************
 
-.MainFlight7
+ LDA INWK+31            ; Fetch the status of this ship from bits 5 (is ship
+ AND #%10100000         ; exploding?) and bit 7 (has ship been killed?) from
+                        ; ship byte #31 into A
 
- LDA INWK+31
- AND #$A0
- LDX TYPE
- BMI C81D4
- JSR MAS4
- BNE C81D4
- LDA XX1
- ORA INWK+3
- ORA INWK+6
- BMI C81D4
- CPX #2
- BEQ ISDK
- AND #$C0
- BNE C81D4
- CPX #1
- BEQ C81D4
- LDA BST
- AND INWK+5
- BMI MainFlight8
- JMP C821B
+ LDX TYPE               ; If the current ship type is negative then it's either
+ BMI MA65               ; a planet or a sun, so jump down to MA65 to skip the
+                        ; following, as we can't dock with it or scoop it
+
+ JSR MAS4               ; Or this value with x_hi, y_hi and z_hi
+
+ BNE MA65               ; If this value is non-zero, then either the ship is
+                        ; far away (i.e. has a non-zero high byte in at least
+                        ; one of the three axes), or it is already exploding,
+                        ; or has been flagged as being killed - in which case
+                        ; jump to MA65 to skip the following, as we can't dock
+                        ; scoop or collide with it
+
+ LDA INWK               ; Set A = (x_lo OR y_lo OR z_lo), and if bit 7 of the
+ ORA INWK+3             ; result is set, the ship is still a fair distance
+ ORA INWK+6             ; away (further than 127 in at least one axis), so jump
+ BMI MA65               ; to MA65 to skip the following, as it's too far away to
+                        ; dock, scoop or collide with
+
+ CPX #SST               ; If this ship is the space station, jump to ISDK to
+ BEQ ISDK               ; check whether we are docking with it
+
+ AND #%11000000         ; If bit 6 of (x_lo OR y_lo OR z_lo) is set, then the
+ BNE MA65               ; ship is still a reasonable distance away (further than
+                        ; 63 in at least one axis), so jump to MA65 to skip the
+                        ; following, as it's too far away to dock, scoop or
+                        ; collide with
+
+ CPX #MSL               ; If this ship is a missile, jump down to MA65 to skip
+ BEQ MA65               ; the following, as we can't scoop or dock with a
+                        ; missile, and it has its own dedicated collision
+                        ; checks in the TACTICS routine
+
+ LDA BST                ; If we have fuel scoops fitted then BST will be $FF,
+                        ; otherwise it will be 0
+
+ AND INWK+5             ; Ship byte #5 contains the y_sign of this ship, so a
+                        ; negative value here means the canister is below us,
+                        ; which means the result of the AND will be negative if
+                        ; the canister is below us and we have a fuel scoop
+                        ; fitted
+
+ BMI P%+5               ; If the result is negative, skip the following
+                        ; instruction
+
+ JMP MA58               ; If the result is positive, then we either have no
+                        ; scoop or the canister is above us, and in both cases
+                        ; this means we can't scoop the item, so jump to MA58
+                        ; to process a collision
 
 ; ******************************************************************************
 ;
-;       Name: MainFlight8
+;       Name: Main flight loop (Part 8 of 16)
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Main loop
+;    Summary: For each nearby ship: Process us potentially scooping this item
+;  Deep dive: Program flow of the main game loop
+;
+; ------------------------------------------------------------------------------
+;
+; The main flight loop covers most of the flight-specific aspects of Elite. This
+; section covers the following:
+;
+;   * Continue looping through all the ships in the local bubble, and for each
+;     one:
+;
+;     * Process us potentially scooping this item
 ;
 ; ******************************************************************************
 
-.MainFlight8
+ CPX #OIL               ; If this is a cargo canister, jump to oily to randomly
+ BEQ oily               ; decide the canister's contents
 
- CPX #5
- BEQ C81B1
- CPX #3
- BEQ C821B
- LDY #0
- JSR GetShipBlueprint   ; Set A to the Y-th byte from the current ship blueprint
- LSR A
- LSR A
- LSR A
- LSR A
- BEQ C821B
- ADC #1
- BNE slvy2
+ CPX #ESC               ; If this is an escape pod, jump to MA58 to skip all the
+ BEQ MA58               ; docking and scooping checks
 
-.C81B1
+ LDY #0                 ; Fetch byte #0 of the ship's blueprint
+ JSR GetShipBlueprint
 
- JSR DORND
- AND #7
+ LSR A                  ; Shift it right four times, so A now contains the high
+ LSR A                  ; nibble (i.e. bits 4-7)
+ LSR A
+ LSR A
+
+ BEQ MA58               ; If A = 0, jump to MA58 to skip all the docking and
+                        ; scooping checks
+
+                        ; Only the Thargon, alloy plate, splinter and escape pod
+                        ; have non-zero upper nibbles in their blueprint byte #0
+                        ; so if we get here, our ship is one of those, and the
+                        ; upper nibble gives the market item number of the item
+                        ; when scooped, less 1
+
+ ADC #1                 ; Add 1 to the upper nibble to get the market item
+                        ; number
+
+ BNE slvy2              ; Skip to slvy2 so we scoop the ship as a market item
+
+.oily
+
+ JSR DORND              ; Set A and X to random numbers and reduce A to a
+ AND #7                 ; random number in the range 0-7
 
 .slvy2
 
- JSR tnpr1
- LDY #$4E
- BCS MA59
- LDY QQ29
- ADC QQ20,Y
- STA QQ20,Y
- TYA
- ADC #$D0
- JSR MESS
- JSR subm_EBE9
- ASL NEWB
- SEC
+                        ; By the time we get here, we are scooping, and A
+                        ; contains the type of item we are scooping (a random
+                        ; number 0-7 if we are scooping a cargo canister, 3 if
+                        ; we are scooping an escape pod, or 16 if we are
+                        ; scooping a Thargon). These numbers correspond to the
+                        ; relevant market items (see QQ23 for a list), so a
+                        ; cargo canister can contain anything from food to
+                        ; computers, while escape pods contain slaves, and
+                        ; Thargons become alien items when scooped
+
+ JSR tnpr1              ; Call tnpr1 with the scooped cargo type stored in A
+                        ; to work out whether we have room in the hold for one
+                        ; tonne of this cargo (A is set to 1 by this call, and
+                        ; the C flag contains the result)
+
+ LDY #78                ; This instruction has no effect, so presumably it used
+                        ; to do something, but didn't get removed
+
+ BCS MA59               ; If the C flag is set then we have no room in the hold
+                        ; for the scooped item, so jump down to MA59 make a
+                        ; sound to indicate failure, before destroying the
+                        ; canister
+
+ LDY QQ29               ; Scooping was successful, so set Y to the type of
+                        ; item we just scooped, which we stored in QQ29 above
+
+ ADC QQ20,Y             ; Add A (which we set to 1 above) to the number of items
+ STA QQ20,Y             ; of type Y in the cargo hold, as we just successfully
+                        ; scooped one canister of type Y
+
+ TYA                    ; Print recursive token 48 + Y as an in-flight token,
+ ADC #208               ; which will be in the range 48 ("FOOD") to 64 ("ALIEN
+ JSR MESS               ; ITEMS"), so this prints the scooped item's name
+
+ JSR subm_EBE9          ; ???
+
+ ASL NEWB               ; The item has now been scooped, so set bit 7 of its
+ SEC                    ; NEWB flags to indicate this
  ROR NEWB
 
-.C81D4
+.MA65
 
- JMP C822A
+ JMP MA26               ; If we get here, then the ship we are processing was
+                        ; too far away to be scooped, docked or collided with,
+                        ; so jump to MA26 to skip over the collision routines
+                        ; and move on to missile targeting
 
 ; ******************************************************************************
 ;
@@ -545,7 +820,7 @@ ENDIF
  ASL INWK+31
  SEC
  ROR INWK+31
- BNE C822A
+ BNE MA26
 
 .MA67
 
@@ -554,7 +829,7 @@ ENDIF
  LDA #5
  BNE C8224
 
-.C821B
+.MA58
 
  ASL INWK+31
  SEC
@@ -568,12 +843,6 @@ ENDIF
  JSR OOPS
  JSR EXNO3
 
-.C822A
-
- LDA QQ11
- BEQ MA26
- JMP MA15
-
 ; ******************************************************************************
 ;
 ;       Name: MA26
@@ -584,6 +853,10 @@ ENDIF
 ; ******************************************************************************
 
 .MA26
+
+ LDA QQ11
+ BEQ P%+5
+ JMP MA15
 
  JSR PLUT
  LDA LAS

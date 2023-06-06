@@ -1042,9 +1042,10 @@ ENDIF
 
  SKIP 1                 ; ???
 
-.tempVar
+.cycleCount
 
- SKIP 2                 ; Stores a 16-bit number, not an address ???
+ SKIP 2                 ; Counts the number of CPU cycles spent in the NMI
+                        ; handler
 
 .L00D2
 
@@ -2957,11 +2958,13 @@ ORG $0200
 
 .COK
 
- SKIP 1                 ; Flags used to generate the competition code
+ SKIP 1                 ; A flag to record whether cheat mode has been applied
+                        ; (by renaming the commander file to CHEATER, BETRUG or
+                        ; TRICHER)
                         ;
-                        ; See the deep dive on "The competition code" for
-                        ; details of these flags and how they are used in
-                        ; generating and decoding the competition code
+                        ;   * Bit 7 clear = cheat mode has not been applied
+                        ;
+                        ;   * Bit 7 set = cheat mode has been applied
 
 .GCNT
 

@@ -688,12 +688,12 @@ ENDIF
 .subm_C582
 
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$53
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #8
- STA tempVar+1
+ STA cycleCount+1
  LDX addr1
  STX addr5
  LDA addr1+1
@@ -747,23 +747,23 @@ ENDIF
 .subm_C5D2
 
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$9A
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #2
- STA tempVar+1
+ STA cycleCount+1
  BMI CC5E4
  JMP CC5F3
 
 .CC5E4
 
- LDA tempVar
+ LDA cycleCount
  ADC #$6F
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #2
- STA tempVar+1
+ STA cycleCount+1
  JMP CC6F3
 
 .CC5F3
@@ -822,23 +822,23 @@ ENDIF
  ASL A
  BMI subm_C5D2
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$11
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #5
- STA tempVar+1
+ STA cycleCount+1
  BMI CC645
  JMP CC654
 
 .CC645
 
- LDA tempVar
+ LDA cycleCount
  ADC #$E3
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #4
- STA tempVar+1
+ STA cycleCount+1
  JMP CC6F3
 
 .CC654
@@ -957,23 +957,23 @@ ENDIF
  AND #$10
  BEQ CC6F3
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$2A
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #0
- STA tempVar+1
+ STA cycleCount+1
  BMI CC6E1
  JMP CC6F0
 
 .CC6E1
 
- LDA tempVar
+ LDA cycleCount
  ADC #$F1
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #$FF
- STA tempVar+1
+ STA cycleCount+1
  JMP CC6F3
 
 .CC6F0
@@ -1003,12 +1003,12 @@ ENDIF
  AND #$10
  BEQ CC77E
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$38
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #0
- STA tempVar+1
+ STA cycleCount+1
  TXA
  EOR #1
  TAY
@@ -1027,12 +1027,12 @@ ENDIF
  BEQ CC73B
  BCS CC73B
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$20
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #0
- STA tempVar+1
+ STA cycleCount+1
 
 .CC738
 
@@ -1056,12 +1056,12 @@ ENDIF
  CMP #$30
  BCC CC761
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$3C
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #0
- STA tempVar+1
+ STA cycleCount+1
 
 .loop_CC75E
 
@@ -1072,12 +1072,12 @@ ENDIF
  LDA ppuCtrlCopy
  BEQ loop_CC75E
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$86
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #0
- STA tempVar+1
+ STA cycleCount+1
  LDA L00F6
  EOR palettePhase
  STA palettePhase
@@ -1087,12 +1087,12 @@ ENDIF
 .CC77E
 
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$2A
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #1
- STA tempVar+1
+ STA cycleCount+1
  LDA L03EF
  AND #$A0
  CMP #$80
@@ -1112,23 +1112,23 @@ ENDIF
  CMP #$80
  BEQ CC7C5
  CLC
- LDA tempVar
+ LDA cycleCount
  ADC #$DF
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
  RTS
 
 .loop_CC7B5
 
  CLC
- LDA tempVar
+ LDA cycleCount
  ADC #$2D
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
  JMP CC7D2
 
 .CC7C5
@@ -1210,12 +1210,12 @@ ENDIF
 .subm_C836
 
  CLC
- LDA tempVar
+ LDA cycleCount
  ADC #4
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
  JMP CCBDD
 
 .CC846
@@ -1234,23 +1234,23 @@ ENDIF
 .subm_C849
 
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$B6
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #0
- STA tempVar+1
+ STA cycleCount+1
  BMI CC85B
  JMP CC86A
 
 .CC85B
 
- LDA tempVar
+ LDA cycleCount
  ADC #$8D
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
  JMP CC6F3
 
 .CC86A
@@ -1308,12 +1308,12 @@ ENDIF
 
  INC addr5+1
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$1B
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #0
- STA tempVar+1
+ STA cycleCount+1
  JMP CC925
 
 .CC8CD
@@ -1327,23 +1327,23 @@ ENDIF
 .CC8D2
 
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$90
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #1
- STA tempVar+1
+ STA cycleCount+1
  BMI CC8E4
  JMP CC8F3
 
 .CC8E4
 
- LDA tempVar
+ LDA cycleCount
  ADC #$67
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #1
- STA tempVar+1
+ STA cycleCount+1
  JMP CCB30
 
 .CC8F3
@@ -1475,35 +1475,35 @@ ENDIF
 
  INC addr5+1
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$1D
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #0
- STA tempVar+1
+ STA cycleCount+1
  CLC
  JMP CC971
 
 .CC9EB
 
  CLC
- LDA tempVar
+ LDA cycleCount
  ADC #$E0
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
  JMP CCA08
 
 .CC9FB
 
  CLC
- LDA tempVar
+ LDA cycleCount
  ADC #$6D
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
 
 .CCA08
 
@@ -1521,12 +1521,12 @@ ENDIF
 
  INC addr5+1
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$1D
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #0
- STA tempVar+1
+ STA cycleCount+1
  CLC
  JMP CC9BC
 
@@ -1568,12 +1568,12 @@ ENDIF
 
  INC addr5+1
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$1B
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #0
- STA tempVar+1
+ STA cycleCount+1
  JMP CCABD
 
 .CCA68
@@ -1583,23 +1583,23 @@ ENDIF
 .CCA6A
 
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$0A
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #1
- STA tempVar+1
+ STA cycleCount+1
  BMI CCA7C
  JMP CCA8B
 
 .CCA7C
 
- LDA tempVar
+ LDA cycleCount
  ADC #$E1
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
  JMP CCB30
 
 .CCA8B
@@ -1687,12 +1687,12 @@ ENDIF
 
  INC addr5+1
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$1D
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #0
- STA tempVar+1
+ STA cycleCount+1
  CLC
  JMP CCB04
 
@@ -1722,23 +1722,23 @@ ENDIF
  LDA #$20
  STA L03EF,X
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$E3
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #0
- STA tempVar+1
+ STA cycleCount+1
  BMI CCB5B
  JMP CCB6A
 
 .CCB5B
 
- LDA tempVar
+ LDA cycleCount
  ADC #$B0
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
  JMP CC6F3
 
 .CCB6A
@@ -1758,23 +1758,23 @@ ENDIF
 .CCB80
 
  CLC
- LDA tempVar
+ LDA cycleCount
  ADC #$97
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
  RTS
 
 .CCB8E
 
  CLC
- LDA tempVar
+ LDA cycleCount
  ADC #$A3
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
  RTS
 
 ; ******************************************************************************
@@ -1789,45 +1789,45 @@ ENDIF
 .subm_CB9C
 
  CLC
- LDA tempVar
+ LDA cycleCount
  ADC #$3A
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
  JMP CC6F3
 
 .CCBAC
 
  CLC
- LDA tempVar
+ LDA cycleCount
  ADC #$35
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
  JMP subm_CB42
 
 .CCBBC
 
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$6D
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #0
- STA tempVar+1
+ STA cycleCount+1
  BMI CCBCE
  JMP CCBDD
 
 .CCBCE
 
- LDA tempVar
+ LDA cycleCount
  ADC #$44
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
  JMP CC6F3
 
 .CCBDD
@@ -1862,12 +1862,12 @@ ENDIF
 .CCC0D
 
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$89
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #1
- STA tempVar+1
+ STA cycleCount+1
  BMI subm_CC1F
  JMP SendToPPU1
 
@@ -1882,12 +1882,12 @@ ENDIF
 
 .subm_CC1F
 
- LDA tempVar
+ LDA cycleCount
  ADC #$5D
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #1
- STA tempVar+1
+ STA cycleCount+1
  JMP CCD26
 
 ; ******************************************************************************
@@ -2017,12 +2017,12 @@ ENDIF
 
  INC addr5+1
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$1A
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #0
- STA tempVar+1
+ STA cycleCount+1
  LDA L00CF
  CLC
  ADC #4
@@ -2401,16 +2401,16 @@ ENDIF
 IF _NTSC
 
  LDA #$1A
- STA tempVar+1
+ STA cycleCount+1
  LDA #$8D
- STA tempVar
+ STA cycleCount
 
 ELIF _PAL
 
  LDA #$1D
- STA tempVar+1
+ STA cycleCount+1
  LDA #$09
- STA tempVar
+ STA cycleCount
 
 ENDIF
 
@@ -2601,12 +2601,12 @@ ENDIF
  CPX #$20
  BNE loop_CCFEE
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$2F
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #2
- STA tempVar+1
+ STA cycleCount+1
  JMP CD00F
 
 ; ******************************************************************************
@@ -2627,13 +2627,13 @@ ENDIF
 
  JSR subm_C6F4
  JSR ResetPPURegisters
- LDA tempVar
+ LDA cycleCount
  CLC
  ADC #$64
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
  BMI CD027
  JSR subm_D07C
 
@@ -2718,26 +2718,26 @@ ENDIF
 
 .subm_D07C
 
- LDA tempVar+1
+ LDA cycleCount+1
  BEQ CD0D0
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$6B
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #1
- STA tempVar+1
+ STA cycleCount+1
  BMI CD092
  JMP CD0A1
 
 .CD092
 
- LDA tempVar
+ LDA cycleCount
  ADC #$3E
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #1
- STA tempVar+1
+ STA cycleCount+1
  JMP CD0D0
 
 .CD0A1
@@ -2763,33 +2763,33 @@ ENDIF
  PLA
  STA L00EF
  CLC
- LDA tempVar
+ LDA cycleCount
  ADC #$EE
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
 
 .CD0D0
 
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$20
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #0
- STA tempVar+1
+ STA cycleCount+1
  BMI CD0E2
  JMP CD0F1
 
 .CD0E2
 
- LDA tempVar
+ LDA cycleCount
  ADC #$F7
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #$FF
- STA tempVar+1
+ STA cycleCount+1
  JMP CD0F7
 
 .CD0F1
@@ -3025,9 +3025,9 @@ ENDIF
  ORA L00EF
  BEQ CD239
  LDA #3
- STA tempVar+1
+ STA cycleCount+1
  LDA #$16
- STA tempVar
+ STA cycleCount
  JSR FillMemory
  JMP CD20B
 
@@ -3081,9 +3081,9 @@ ENDIF
  ORA L00EF
  BEQ CD2A2
  LDA #3
- STA tempVar+1
+ STA cycleCount+1
  LDA #$16
- STA tempVar
+ STA cycleCount
  JSR FillMemory
  JMP CD274
 
@@ -3121,12 +3121,12 @@ ENDIF
 .CD2A6
 
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$27
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #0
- STA tempVar+1
+ STA cycleCount+1
 
 .CD2B3
 
@@ -3135,17 +3135,17 @@ ENDIF
 .CD2B4
 
  CLC
- LDA tempVar
+ LDA cycleCount
  ADC #$7E
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
  JMP CD37E
 
 .subm_D2C4
 
- LDA tempVar+1
+ LDA cycleCount+1
  BEQ CD2B3
  LDA L03EF,X
  BIT LD2A3
@@ -3153,23 +3153,23 @@ ENDIF
  AND #8
  BEQ CD2A6
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$D5
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #0
- STA tempVar+1
+ STA cycleCount+1
  BMI CD2E6
  JMP CD2F5
 
 .CD2E6
 
- LDA tempVar
+ LDA cycleCount
  ADC #$99
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
  JMP CD2B3
 
 .CD2F5
@@ -3242,23 +3242,23 @@ ENDIF
 .CD35D
 
  CLC
- LDA tempVar
+ LDA cycleCount
  ADC #$1C
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
  JMP CD37E
 
 .CD36D
 
  CLC
- LDA tempVar
+ LDA cycleCount
  ADC #$7E
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
 
 .CD37A
 
@@ -3273,23 +3273,23 @@ ENDIF
 .CD37E
 
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$BB
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #0
- STA tempVar+1
+ STA cycleCount+1
  BMI CD390
  JMP CD39F
 
 .CD390
 
- LDA tempVar
+ LDA cycleCount
  ADC #$92
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
  JMP CD37A
 
 .CD39F
@@ -3358,12 +3358,12 @@ ENDIF
 .CD401
 
  CLC
- LDA tempVar
+ LDA cycleCount
  ADC #$23
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
  RTS
 
 ; ******************************************************************************
@@ -3917,23 +3917,23 @@ ENDIF
  LDA L00F0
  BEQ CD789
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$39
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #8
- STA tempVar+1
+ STA cycleCount+1
  BMI CD726
  JMP CD735
 
 .CD726
 
- LDA tempVar
+ LDA cycleCount
  ADC #$0B
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #8
- STA tempVar+1
+ STA cycleCount+1
  JMP CD743
 
 .CD735
@@ -3948,23 +3948,23 @@ ENDIF
 .CD743
 
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$3E
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #1
- STA tempVar+1
+ STA cycleCount+1
  BMI CD755
  JMP CD764
 
 .CD755
 
- LDA tempVar
+ LDA cycleCount
  ADC #$15
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #1
- STA tempVar+1
+ STA cycleCount+1
  JMP CD788
 
 .CD764
@@ -3984,12 +3984,12 @@ ENDIF
 .CD77B
 
  CLC
- LDA tempVar
+ LDA cycleCount
  ADC #$84
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
 
 .CD788
 
@@ -3998,23 +3998,23 @@ ENDIF
 .CD789
 
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$BA
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #0
- STA tempVar+1
+ STA cycleCount+1
  BMI CD79B
  JMP CD7AA
 
 .CD79B
 
- LDA tempVar
+ LDA cycleCount
  ADC #$8A
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
  JMP CD788
 
 .CD7AA
@@ -4025,7 +4025,7 @@ ENDIF
  LSR A
  LSR A
  LSR A
- CMP tempVar+1
+ CMP cycleCount+1
  BCS CD809
  LDA #0
  STA L00F0
@@ -4038,12 +4038,12 @@ ENDIF
  ROL L00F0
  EOR #$FF
  SEC
- ADC tempVar
- STA tempVar
+ ADC cycleCount
+ STA cycleCount
  LDA L00F0
  EOR #$FF
- ADC tempVar+1
- STA tempVar+1
+ ADC cycleCount+1
+ STA cycleCount+1
  LDY #0
  STY L00F0
  LDA L00EF
@@ -4079,33 +4079,33 @@ ENDIF
 .CD809
 
  CLC
- LDA tempVar
+ LDA cycleCount
  ADC #$76
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
 
 .CD816
 
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$41
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #1
- STA tempVar+1
+ STA cycleCount+1
  BMI CD828
  JMP CD837
 
 .CD828
 
- LDA tempVar
+ LDA cycleCount
  ADC #$18
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #1
- STA tempVar+1
+ STA cycleCount+1
  JMP CD855
 
 .CD837
@@ -4133,33 +4133,33 @@ ENDIF
 .CD856
 
  CLC
- LDA tempVar
+ LDA cycleCount
  ADC #$0D
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #1
- STA tempVar+1
+ STA cycleCount+1
 
 .CD863
 
  SEC
- LDA tempVar
+ LDA cycleCount
  SBC #$77
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  SBC #0
- STA tempVar+1
+ STA cycleCount+1
  BMI CD875
  JMP CD884
 
 .CD875
 
- LDA tempVar
+ LDA cycleCount
  ADC #$4E
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
  JMP CD855
 
 .CD884
@@ -4201,12 +4201,12 @@ ENDIF
 .CD8B7
 
  CLC
- LDA tempVar
+ LDA cycleCount
  ADC #$42
- STA tempVar
- LDA tempVar+1
+ STA cycleCount
+ LDA cycleCount+1
  ADC #0
- STA tempVar+1
+ STA cycleCount+1
  RTS
 
 ; ******************************************************************************
