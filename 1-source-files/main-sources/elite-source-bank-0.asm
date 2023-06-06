@@ -1215,7 +1215,7 @@ ENDIF
  ORA KY4
  BMI C858A
  LDA #$10
- JSR subm_FA16
+ JSR cntr
 
 .C858A
 
@@ -1248,7 +1248,7 @@ ENDIF
  ORA KY6
  BMI C85C2
  LDA #$0C
- JSR subm_FA16
+ JSR cntr
 
 .C85C2
 
@@ -1945,7 +1945,7 @@ ENDIF
 
  STX L00D2
  JSR DrawBoxEdges
- JSR CopyNametable0To1
+ JSR CopyNameBuffer0To1
  LDA QQ11
  CMP QQ11a
  BEQ C8976
@@ -2012,7 +2012,7 @@ ENDIF
                         ; the PPU to use nametable 0 and pattern table 0
 
  JSR DrawBoxEdges
- JSR CopyNametable0To1
+ JSR CopyNameBuffer0To1
  LDA #$C4
  STA L03EF
  STA L03F0
@@ -4315,7 +4315,7 @@ ENDIF
 ;
 ;       Name: DemoShips
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -4345,7 +4345,7 @@ ENDIF
  STA VIEW
  JSR TT66
  LSR DLY
- JSR CopyNametable0To1
+ JSR CopyNameBuffer0To1
  JSR subm_F139
  JSR subm_BE48
  JSR subm_F39A
@@ -5255,7 +5255,7 @@ ENDIF
  LDX #2
  STX STP
  LDX #1
- JSR subm_D8FD
+ JSR SetPatternBuffer
  JMP CIRCLE2_b1
 
 ; ******************************************************************************
@@ -10443,7 +10443,7 @@ ENDIF
 ;
 ;       Name: DEATH
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Start and end
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -10462,7 +10462,7 @@ ENDIF
  LDA #$C4
  JSR TT66
  JSR subm_BED2_b6
- JSR CopyNametable0To1
+ JSR CopyNameBuffer0To1
  JSR subm_EB86
  LDA #0
  STA L045F
@@ -10561,18 +10561,18 @@ ENDIF
  JSR subm_D977
  DEC LASCT
  BNE loop_CB2AD
- JMP subm_B2EF
+ JMP DEATH2
 
 ; ******************************************************************************
 ;
-;       Name: subm_B2C3
+;       Name: ShowStartScreen
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Start and end
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B2C3
+.ShowStartScreen
 
  LDA #$FF
  STA L0307
@@ -10595,14 +10595,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B2EF
+;       Name: DEATH2
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B2EF
+.DEATH2
 
  LDX #$FF
  TXS
@@ -10738,7 +10738,7 @@ ENDIF
 .subm_B39D
 
  JSR TT66
- JSR CopyNametable0To1
+ JSR CopyNameBuffer0To1
  JSR subm_F126
  LDA #0
  STA QQ11
@@ -11429,7 +11429,7 @@ ENDIF
 
 .DOKEY
 
- JSR subm_BBDE_b6
+ JSR SetKeyLogger_b6
  LDA auto
  BNE CB6BA
 
@@ -11849,7 +11849,7 @@ ENDIF
 
 .subm_B90D
 
- JMP subm_BBDE_b6
+ JMP SetKeyLogger_b6
 
 ; ******************************************************************************
 ;
@@ -12655,7 +12655,7 @@ ENDIF
  STX VIEW
  LDA #0
  JSR TT66
- JSR CopyNametable0To1
+ JSR CopyNameBuffer0To1
  JSR subm_A7B7_b3
  JMP CBE17
 
@@ -12678,7 +12678,7 @@ ENDIF
  STX VIEW
  LDA #0
  JSR TT66
- JSR CopyNametable0To1
+ JSR CopyNameBuffer0To1
  LDA #$50
  STA L00CD
  STA L00CE
@@ -12871,7 +12871,7 @@ ENDIF
  STA L00B5
  LDX #0
  STX L046D
- JSR subm_D8EC
+ JSR SetDrawingPhase
  LDA #$80
  STA QQ17
  STA DTW2

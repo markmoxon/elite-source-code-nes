@@ -3473,7 +3473,7 @@ ENDIF
 
  LDY #4
  JSR DELAY
- JSR subm_BBDE_b6
+ JSR SetKeyLogger_b6
  TXA
  CMP #$50
  BNE CA1B1
@@ -3532,7 +3532,7 @@ ENDIF
  PLA
  PLA
  STA L045F
- JMP subm_B2EF_b0
+ JMP DEATH2_b0
 
 .CA1ED
 
@@ -5718,7 +5718,7 @@ ENDIF
  BMI CB558
  LDA #0
  STA L0465
- JSR subm_BB37_b6
+ JSR ChangeCmdrName_b6
  LDA L0465
  BEQ CB553
  CMP #7
@@ -6675,7 +6675,7 @@ ENDIF
 .LL164
 
  JSR subm_D8C5
- JSR subm_EB67
+ JSR HideStardust
  JSR subm_CE9E
  JSR subm_EBED
  LDA #$80
@@ -6993,14 +6993,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_BB37
+;       Name: ChangeCmdrName
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_BB37
+.ChangeCmdrName
 
  JSR CLYNS
  INC YC
@@ -7045,7 +7045,7 @@ ENDIF
 .loop_CBB79
 
  LDA NAME,Y
- CMP LBBC2,X
+ CMP cheatCmdrName,X
  BNE CBBB0
  INX
  INX
@@ -7086,27 +7086,33 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LBBC2
+;       Name: cheatCmdrName
 ;       Type: Variable
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.LBBC2
+.cheatCmdrName
 
- EQUS "CBTIHERNETIGARCATUHNEGENR RO"          ; BBC2: 43 42 54... CBT
+ EQUS "CBTI"
+ EQUS "HERN"
+ EQUS "ETIG"
+ EQUS "ARCA"
+ EQUS "TUHN"
+ EQUS "EGEN"
+ EQUS "R RO"
 
 ; ******************************************************************************
 ;
-;       Name: subm_BBDE
+;       Name: SetKeyLogger
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_BBDE
+.SetKeyLogger
 
  TYA
  PHA

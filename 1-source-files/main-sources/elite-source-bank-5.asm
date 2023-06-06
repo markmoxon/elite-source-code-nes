@@ -2374,7 +2374,7 @@ ENDIF
 ;
 ;       Name: Copyright message
 ;       Type: Variable
-;   Category: Text
+;   Category: Copy protection
 ;    Summary: A copyright message buried in the code, complete with typo
 ;
 ; ******************************************************************************

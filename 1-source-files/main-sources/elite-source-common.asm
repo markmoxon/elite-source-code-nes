@@ -142,8 +142,8 @@ IF NOT(_BANK = 0)
  ZINF               = $AE03
  MAS4               = $B1CA
  subm_B1D4          = $B1D4
- subm_B2C3          = $B2C3
- subm_B2EF          = $B2EF
+ ShowStartScreen    = $B2C3
+ DEATH2             = $B2EF
  subm_B358          = $B358
  subm_B39D          = $B39D
  subm_B3BC          = $B3BC
@@ -318,8 +318,8 @@ IF NOT(_BANK = 6)
   LL164             = $B980
   subm_BA17         = $BA17
   subm_BA63         = $BA63
-  subm_BB37         = $BB37
-  subm_BBDE         = $BBDE
+  ChangeCmdrName    = $BB37
+  SetKeyLogger      = $BBDE
   TITLE             = $BC83
   subm_BE52         = $BE52
   subm_BED2         = $BED2
@@ -333,8 +333,8 @@ IF NOT(_BANK = 6)
   LL164             = $B98F
   subm_BA17         = $BA26
   subm_BA63         = $BA72
-  subm_BB37         = $BB46
-  subm_BBDE         = $BBED
+  ChangeCmdrName    = $BB46
+  SetKeyLogger      = $BBED
   TITLE             = $BC92
   subm_BE52         = $BE6D
   subm_BED2         = $BEED
@@ -949,10 +949,10 @@ ENDIF
 
  SKIP 1                 ; Contains the current tile number to draw into ???
 
-.patternBufferHi
+.pattBufferHiDiv8
 
  SKIP 1                 ; High byte of the address of the current pattern
-                        ; buffer ($60 or $68)
+                        ; buffer ($60 or $68) divided by 8
 
 .SC2
 
@@ -1074,9 +1074,14 @@ ENDIF
 
  SKIP 1                 ; ???
 
-.L00DA
+.updatePaletteInNMI
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A flag that controls whether to send the palette data
+                        ; from XX3 to the PPU during NMI:
+                        ;
+                        ;   * 0 = do not send palette data
+                        ;
+                        ;   * Non-zero = do send palette data
 
 .L00DB
 
@@ -1094,31 +1099,19 @@ ENDIF
 
  SKIP 1                 ; ???
 
-.debugPattBufferLo
+.pattBufferAddr
 
- SKIP 1                 ; Low byte of the address of the current pattern
-                        ; buffer (unused), always zero
-
-.debugPattBufferHi
-
- SKIP 1                 ; High byte of the address of the current pattern
-                        ; buffer (unused)
+ SKIP 2                 ; Address of the current pattern buffer:
                         ;
-                        ;   * $60 when drawingPhase = 0
-                        ;   * $68 when drawingPhase = 1
+                        ;   * $6000 when drawingPhase = 0
+                        ;   * $6800 when drawingPhase = 1
 
-.debugNametableLo
+.ppuNametableAddr
 
- SKIP 1                 ; Low byte of the address of the current PPU nametable
-                        ; (unused), always zero
-
-.debugNametableHi
-
- SKIP 1                 ; High byte of the address of the current PPU nametable
-                        ; (unused)
+ SKIP 2                 ; Address of the current PPU nametable:
                         ;
-                        ;   * $20 when drawingPhase = 0
-                        ;   * $24 when drawingPhase = 1
+                        ;   * $2000 when drawingPhase = 0
+                        ;   * $2400 when drawingPhase = 1
 
 .drawingPhaseDebug
 
