@@ -129,6 +129,7 @@ IF _NTSC
                         ; bytes of bank 7, which point to the IRQ routine
 
 ENDIF
+
 ; ******************************************************************************
 ;
 ;       Name: Version number
@@ -15898,7 +15899,7 @@ ENDMACRO
  JSR DETOK              ; to row 10, white, lower case}{white}{all caps}INCOMING
                         ; MESSAGE"
 
- JSR subm_F2BD           ; ???
+ JSR subm_F2BD          ; ???
 
  LDY #100               ; Delay for 100 vertical syncs (100/50 = 2 seconds) and
  JMP DELAY              ; return from the subroutine using a tail call
@@ -16212,7 +16213,7 @@ ENDMACRO
  BNE PD2                ; number, jump to PD2 to keep looping through the system
                         ; numbers in RUPLA
 
- LDA (SC2),Y          ; ???
+ LDA (SC2),Y            ; ???
  BMI PD3
 
  LDA TP                 ; Fetch bit 0 of TP into the C flag, and skip to PD1 if

@@ -129,6 +129,7 @@ IF _NTSC
                         ; bytes of bank 7, which point to the IRQ routine
 
 ENDIF
+
 ; ******************************************************************************
 ;
 ;       Name: Version number
@@ -7047,7 +7048,7 @@ ENDMACRO
 
 .CA8F8
 
- JMP subm_CE9E          ; ???
+ JMP HideSprites59_62   ; ???
 
  EQUB 0, 2
 
@@ -7146,7 +7147,7 @@ ENDMACRO
                         ; This part of the routine actually draws the explosion
                         ; cloud
 
- JSR subm_CE9E          ; ???
+ JSR HideSprites59_62   ; ???
  LDA L040A
  STA Q
  LDA L002B
@@ -11658,9 +11659,8 @@ ENDMACRO
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDY #NI%-4-1           ; There are NI% bytes in the INWK workspace, so set a
-                        ; counter in Y so we can loop through them all except
-                        ; the last four
+ LDY #NI%-1             ; There are NI% bytes in the INWK workspace, so set a
+                        ; counter in Y so we can loop through them
 
  LDA #0                 ; Set A to 0 so we can zero-fill the workspace
 

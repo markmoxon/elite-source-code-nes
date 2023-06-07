@@ -65,7 +65,13 @@
  COU = 32               ; Ship type for a Cougar
  DOD = 33               ; Ship type for a Dodecahedron ("Dodo") space station
 
- NI% = 42               ; The number of bytes in each ship's data block (as
+ POW = 15               ; Pulse laser power
+
+ Mlas = 50              ; Mining laser power
+
+ Armlas = INT(128.5+1.5*POW)  ; Military laser power
+
+ NI% = 38               ; The number of bytes in each ship's data block (as
                         ; stored in INWK and K%)
 
  X = 128                ; The centre x-coordinate of the space view
@@ -407,15 +413,15 @@ ENDIF
 
 .L002A
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Normally INWK+33 (ship heap lo), reused in NES ???
 
 .L002B
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Normally INWK+34 (ship heap hi), reused in NES ???
 
 .L002C
 
- SKIP 1                 ; ???
+ SKIP 1                 ; INWK+35 energy level
 
 .NEWB
 
@@ -432,7 +438,7 @@ ENDIF
 
 .L002E
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Unused ??? INWK+37
 
 .P
 
@@ -785,16 +791,40 @@ ENDIF
 
  SKIP 1                 ; The number of the current view:
                         ;
-                        ;   0   = Space view
-                        ;   1   = Title screen
-                        ;         Get commander name ("@", save/load commander)
-                        ;         In-system jump just arrived ("J")
+                        ;   0   = 
+                        ;   1   = 
+                        ;   $10 = 
+                        ;   $8B = 
+                        ;   $8D = 
+                        ;   $92 = 
+                        ;   $93 = 
+                        ;   $95 = 
+                        ;   $96 = 
+                        ;   $97 = 
+                        ;   $98 = 
+                        ;   $9C = 
+                        ;   $9D = 
+                        ;   $B9 = 
+                        ;   $BA = 
+                        ;   $BB = 
+                        ;   $C4 = 
+                        ;   $CF = 
+                        ;   $DF = 
+                        ;   $FF = 
                         ;
-                        ; This value is typically set by calling routine TT66
+                        ; STA: 0, $8B, $97, $9D, $BB, $DF, $FF
+                        ; TT66: 0, $8D, $93, $95, $9C, $BB, $C4, $CF
+                        ; subm_9645: $96, $97, $98, $B9, $BA
+                        ; subm_B39D: 0, 1, $10, $92
 
 .QQ11a
 
- SKIP 1                 ; Can be 0, $FF or QQ11 - some kind of view flag ???
+ SKIP 1                 ; Can be 0, $FF or QQ11
+                        ;
+                        ; When we change view, QQ11 gets set to the new view
+                        ; number straight away while QQ11a stays set to the old
+                        ; view number, only updating to the new view number once
+                        ; the new view has appeared
 
 .ZZ
 

@@ -129,6 +129,7 @@ IF _NTSC
                         ; bytes of bank 7, which point to the IRQ routine
 
 ENDIF
+
 ; ******************************************************************************
 ;
 ;       Name: Version number
@@ -4259,7 +4260,7 @@ ENDIF
  PHA
  LDA QQ11
  BNE CA5B6
- JSR subm_CEA5
+ JSR HideScannerSprites
  JMP CA614
 
 .CA5B6
@@ -6676,7 +6677,7 @@ ENDIF
 
  JSR subm_D8C5
  JSR HideStardust
- JSR subm_CE9E
+ JSR HideSprites59_62
  JSR subm_EBED
  LDA #$80
  STA K+2

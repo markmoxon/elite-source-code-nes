@@ -2083,14 +2083,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_CD62
+;       Name: DrawBoxTop
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_CD62
+.DrawBoxTop
 
  LDY #1
  LDA #3
@@ -2232,13 +2232,18 @@ ENDIF
 ; the deep dive on "The local bubble of universe" for details of how Elite
 ; stores the local universe in K%, FRIN and UNIV.
 ;
+; Note that in the NES version, there are four extra bytes at the end of each K%
+; block that don't form part of the core ship block, so each ship in K% contains
+; NI% + 4 bytes, rather than NI%.
+;
 ; ******************************************************************************
 
 .UNIV
 
  FOR I%, 0, NOSH
 
-  EQUW K% + I% * NI%    ; Address of block no. I%, of size NI%, in workspace K%
+  EQUW K% + I% * (NI% + 4)  ; Address of block no. I%, of size NI% + 4, in
+                            ; workspace K%
 
  NEXT
 
@@ -2278,29 +2283,29 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_CE9E
+;       Name: HideSprites59_62
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_CE9E
+.HideSprites59_62
 
  LDX #4
- LDY #$EC
- JMP CCEC0
+ LDY #236
+ JMP HideSprites
 
 ; ******************************************************************************
 ;
-;       Name: subm_CEA5
+;       Name: HideScannerSprites
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_CEA5
+.HideScannerSprites
 
  LDX #0
 
@@ -2325,9 +2330,18 @@ ENDIF
  LDY #$2C
  LDX #$1B
 
-.CCEC0
+; ******************************************************************************
+;
+;       Name: HideSprites
+;       Type: Subroutine
+;   Category: ???
+;    Summary: Hide X sprites from sprite Y/4 onwards
+;
+; ******************************************************************************
 
- LDA #$F0
+.HideSprites
+
+ LDA #240
 
 .loop_CCEC2
 
@@ -2819,20 +2833,20 @@ ENDIF
  LSR A
  STA JOY1
  TAX
- JSR subm_D10A
+ JSR ReadControls
  LDX scanController2
  BEQ CD15A
 
 ; ******************************************************************************
 ;
-;       Name: subm_D10A
+;       Name: ReadControls
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_D10A
+.ReadControls
 
  LDA JOY1,X
  AND #3
@@ -2962,7 +2976,7 @@ ENDIF
  STA L03EF,X
  LDA L00D2
  STA tileNumber
- JMP subm_CD62
+ JMP DrawBoxTop
 
 .CD1C7
 
@@ -3028,7 +3042,7 @@ ENDIF
  STA cycleCount+1
  LDA #$16
  STA cycleCount
- JSR FillMemory
+ JSR ClearMemory
  JMP CD20B
 
 .CD239
@@ -3084,7 +3098,7 @@ ENDIF
  STA cycleCount+1
  LDA #$16
  STA cycleCount
- JSR FillMemory
+ JSR ClearMemory
  JMP CD274
 
 .CD2A2
@@ -3216,7 +3230,7 @@ ENDIF
  STA L00F0
  ORA L00EF
  BEQ CD35D
- JSR FillMemory
+ JSR ClearMemory
  LDA addr6+1
  SEC
  SBC nameBufferHiAddr,X
@@ -3331,7 +3345,7 @@ ENDIF
  STA L00F0
  ORA L00EF
  BEQ CD401
- JSR FillMemory
+ JSR ClearMemory
  LDA addr6+1
  SEC
  SBC pattBufferHiAddr,X
@@ -3368,14 +3382,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_D40F
+;       Name: FillMemory
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_D40F
+.FillMemory
 
  STA (addr6),Y
  INY
@@ -3828,14 +3842,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_D6AF
+;       Name: FillMemory32Bytes
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_D6AF
+.FillMemory32Bytes
 
  STA (addr6),Y
  INY
@@ -3905,14 +3919,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: FillMemory
+;       Name: ClearMemory
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.FillMemory
+.ClearMemory
 
  LDA L00F0
  BEQ CD789
@@ -3940,10 +3954,10 @@ ENDIF
 
  LDA #0
  LDY #0
- JSR subm_D40F
+ JSR FillMemory
  DEC L00F0
  INC addr6+1
- JMP FillMemory
+ JMP ClearMemory
 
 .CD743
 
@@ -3971,7 +3985,7 @@ ENDIF
 
  LDA #0
  LDY #0
- JSR subm_D6AF
+ JSR FillMemory32Bytes
  LDA addr6
  CLC
  ADC #$20
@@ -4055,10 +4069,10 @@ ENDIF
  LDA L00F0
  ADC #0
  STA L00F0
- LDA #$10
+ LDA #LO(ClearMemory)
  SBC L00EF
  STA L00EF
- LDA #$D7
+ LDA #HI(ClearMemory)
  SBC L00F0
  STA L00F0
  LDA #0
@@ -4117,7 +4131,7 @@ ENDIF
  STA L00EF
  LDA #0
  LDY #0
- JSR subm_D6AF
+ JSR FillMemory32Bytes
  LDA addr6
  CLC
  ADC #$20
@@ -7411,20 +7425,20 @@ ENDIF
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDX NOSTM
- LDY #$98
+ LDY #152
 
 ; ******************************************************************************
 ;
-;       Name: HideSprites
+;       Name: HideSprites1
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: ???
+;    Summary: Hide X+1 sprites from sprite Y/4 onwards
 ;
 ; ******************************************************************************
 
-.HideSprites
+.HideSprites1
 
- LDA #$F0
+ LDA #240
 
 .loop_CEB7B
 
@@ -7479,9 +7493,11 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDX #$3A
- LDY #$14
- BNE HideSprites
+ LDX #58
+
+ LDY #20
+
+ BNE HideSprites1
 
 ; ******************************************************************************
 ;
