@@ -152,7 +152,7 @@ IF NOT(_BANK = 0)
  DEATH2             = $B2EF
  subm_B358          = $B358
  subm_B39D          = $B39D
- subm_B3BC          = $B3BC
+ TITLE              = $B3BC
  PAS1               = $B8F7
  TT66               = $BEB5
 
@@ -326,7 +326,7 @@ IF NOT(_BANK = 6)
   subm_BA63         = $BA63
   ChangeCmdrName    = $BB37
   SetKeyLogger      = $BBDE
-  TITLE             = $BC83
+  StartScreen       = $BC83
   subm_BE52         = $BE52
   subm_BED2         = $BED2
 
@@ -341,7 +341,7 @@ IF NOT(_BANK = 6)
   subm_BA63         = $BA72
   ChangeCmdrName    = $BB46
   SetKeyLogger      = $BBED
-  TITLE             = $BC92
+  StartScreen       = $BC92
   subm_BE52         = $BE6D
   subm_BED2         = $BEED
 
@@ -457,23 +457,31 @@ ENDIF
 
 .hiddenColour
 
- SKIP 1                 ; Contains the colour value for when lines are hidden
-                        ; in palette 0, e.g. $0F for black (see SetPalette)
+ SKIP 1                 ; Contains the colour to use for pixels that are hidden
+                        ; in palette 0, e.g. $0F for black
+                        ;
+                        ; See the SetPaletteForPhase routine for details
 
 .visibleColour
 
- SKIP 1                 ; Contains the colour value for when lines are visible
-                        ; in palette 0, e.g. $2C for cyan (see SetPalette)
-
-.paletteColour1
-
- SKIP 1                 ; Contains the colour value to be used for palette entry
-                        ; 1 in the current (non-space) view (see SetPalette)
+ SKIP 1                 ; Contains the colour to use for pixels that are visible
+                        ; in palette 0, e.g. $2C for cyan
+                        ;
+                        ; See the SetPaletteForPhase routine for details
 
 .paletteColour2
 
- SKIP 1                 ; Contains the colour value to be used for palette entry
-                        ; 2 in the current (non-space) view (see SetPalette)
+ SKIP 1                 ; Contains the colour to use for palette entry 2 in the
+                        ; current (non-space) view
+                        ;
+                        ; See the SetPaletteForPhase routine for details
+
+.paletteColour3
+
+ SKIP 1                 ; Contains the colour to use for palette entry 3 in the
+                        ; current (non-space) view
+                        ;
+                        ; See the SetPaletteForPhase routine for details
 
 .L0037
 

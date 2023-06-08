@@ -1369,7 +1369,7 @@ ENDIF
  BMI MA77               ; If the result has bit 7 set, skip the following
                         ; instruction as the bomb is still going off
 
- JSR subm_8790          ; ???
+ JSR HideHiddenColour   ; ???
 
  JSR subm_AC5C_b3
 
@@ -2213,8 +2213,11 @@ ENDIF
 
  ASL BOMB               ; ???
  BEQ MA64S
- LDA #$28
- STA hiddenColour
+
+ LDA #$28               ; Set hiddenColour to $28, which is green-brown, so this
+ STA hiddenColour       ; reveals pixels that use the (no-longer) hidden colour
+                        ; in palette 0
+
  LDY #8
  JSR NOISE
  JMP MA64
@@ -2456,73 +2459,145 @@ ENDIF
 ;
 ;       Name: SPIN
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Universe
+;    Summary: Randomly spawn cargo from a destroyed ship
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   Y                   The type of cargo to consider spawning (typically #PLT
+;                       or #OIL)
+;
+; Other entry points:
+;
+;   SPIN2               Remove any randomness: spawn cargo of a specific type
+;                       (given in X), and always spawn the number given in A
 ;
 ; ******************************************************************************
 
 .SPIN
 
- JSR DORND
- BPL oh
- TYA
+ JSR DORND              ; Fetch a random number, and jump to oh if it is
+ BPL oh                 ; positive (50% chance)
+
+ TYA                    ; Copy the cargo type from Y into A and X
  TAX
- LDY #0
- STA CNT
- JSR GetShipBlueprint   ; Set A to the Y-th byte from the current ship blueprint
- AND CNT
- AND #$0F
+
+ LDY #0                 ; Set Y = 0 to use as an index into the ship's blueprint
+                        ; in the call to GetShipBlueprint
+
+ STA CNT                ; Store the random numner in CNT
+
+ JSR GetShipBlueprint   ; Fetch the first byte of the hit ship's blueprint,
+                        ; which determines the maximum number of bits of
+                        ; debris shown when the ship is destroyed
+
+ AND CNT                ; AND with the random number we fetched above
+
+ AND #15                ; Reduce the random number in A to the range 0-15
 
 .SPIN2
 
- STA CNT
+ STA CNT                ; Store the result in CNT, so CNT contains a random
+                        ; number between 0 and the maximum number of bits of
+                        ; debris that this ship will release when destroyed
+                        ; (to a maximum of 15 bits of debris)
 
-.loop_C8784
+.spl
 
- DEC CNT
- BMI oh
- LDA #0
- JSR SFS1
- JMP loop_C8784
+ DEC CNT                ; Decrease the loop counter
+
+ BMI oh                 ; We're going to go round a loop using CNT as a counter
+                        ; so this checks whether the counter was zero and jumps
+                        ; to oh when it gets there (which might be straight
+                        ; away)
+
+ LDA #0                 ; Call SFS1 to spawn the specified cargo from the now
+ JSR SFS1               ; deceased parent ship, giving the spawned canister an
+                        ; AI flag of 0 (no AI, no E.C.M., non-hostile)
+
+ JMP spl                ; Loop back to spawn the next bit of random cargo
 
 ; ******************************************************************************
 ;
-;       Name: subm_8790
+;       Name: HideHiddenColour
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing tiles
+;    Summary: Set the hidden colour to black, so that pixels in this colour in
+;             palette 0 are invisible
+;
+; ------------------------------------------------------------------------------
+;
+; Other entry points:
+;
+;   oh                  Contains an RTS
 ;
 ; ******************************************************************************
 
-.subm_8790
+.HideHiddenColour
 
- LDA #$0F
- STA hiddenColour
+ LDA #$0F               ; Set hiddenColour to $0F, which is black, so this hides
+ STA hiddenColour       ; any pixels that use the hidden colour in palette 0
 
 .oh
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: scacol
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing ships
+;    Summary: Ship colours on the scanner
+;  Deep dive: The elusive Cougar
 ;
 ; ******************************************************************************
 
 .scacol
 
- EQUB   0,   3,   0,   1,   1,   1,   1,   1  ; 8795: 00 03 00... ...
- EQUB   1,   2,   2,   2,   2,   2,   2,   1  ; 879D: 01 02 02... ...
- EQUB   2,   2,   2,   2,   2,   2,   2,   2  ; 87A5: 02 02 02... ...
- EQUB   2,   2,   2,   2,   2,   0,   3,   2  ; 87AD: 02 02 02... ...
- EQUB $FF,   0,   0,   0,   0,   0            ; 87B5: FF 00 00... ...
+ EQUB 0
+
+ EQUB 3                 ; Missile
+ EQUB 0                 ; Coriolis space station
+ EQUB 1                 ; Escape pod
+ EQUB 1                 ; Alloy plate
+ EQUB 1                 ; Cargo canister
+ EQUB 1                 ; Boulder
+ EQUB 1                 ; Asteroid
+ EQUB 1                 ; Splinter
+ EQUB 2                 ; Shuttle
+ EQUB 2                 ; Transporter
+ EQUB 2                 ; Cobra Mk III
+ EQUB 2                 ; Python
+ EQUB 2                 ; Boa
+ EQUB 2                 ; Anaconda
+ EQUB 1                 ; Rock hermit (asteroid)
+ EQUB 2                 ; Viper
+ EQUB 2                 ; Sidewinder
+ EQUB 2                 ; Mamba
+ EQUB 2                 ; Krait
+ EQUB 2                 ; Adder
+ EQUB 2                 ; Gecko
+ EQUB 2                 ; Cobra Mk I
+ EQUB 2                 ; Worm
+ EQUB 2                 ; Cobra Mk III (pirate)
+ EQUB 2                 ; Asp Mk II
+ EQUB 2                 ; Python (pirate)
+ EQUB 2                 ; Fer-de-lance
+ EQUB 2                 ; Moray
+ EQUB 0                 ; Thargoid
+ EQUB 3                 ; Thargon
+ EQUB 2                 ; Constrictor
+ EQUB 255               ; Cougar
+
+ EQUB 0                 ; This byte appears to be unused
+
+ EQUD 0                 ; These bytes appear to be unused
 
 ; ******************************************************************************
 ;
-;       Name: SetAXTo15
+;       Name: SetAXTo15 (Unused)
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
@@ -2629,7 +2704,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: wearedocked
+;       Name: STATUS
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
@@ -2642,15 +2717,6 @@ ENDIF
  JSR DETOK_b2
  JSR TT67
  JMP C885F
-
-; ******************************************************************************
-;
-;       Name: STATUS
-;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
-;
-; ******************************************************************************
 
 .STATUS
 
@@ -2965,74 +3031,179 @@ ENDIF
 ;
 ;       Name: MVT3
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Moving
+;    Summary: Calculate K(3 2 1) = (x_sign x_hi x_lo) + K(3 2 1)
+;
+; ------------------------------------------------------------------------------
+;
+; Add an INWK position coordinate - i.e. x, y or z - to K(3 2 1), like this:
+;
+;   K(3 2 1) = (x_sign x_hi x_lo) + K(3 2 1)
+;
+; The INWK coordinate to add to K(3 2 1) is specified by X.
+;
+; Arguments:
+;
+;   X                   The coordinate to add to K(3 2 1), as follows:
+;
+;                         * If X = 0, add (x_sign x_hi x_lo)
+;
+;                         * If X = 3, add (y_sign y_hi y_lo)
+;
+;                         * If X = 6, add (z_sign z_hi z_lo)
+;
+; Returns:
+;
+;   A                   Contains a copy of the high byte of the result, K+3
+;
+;   X                   X is preserved
 ;
 ; ******************************************************************************
 
 .MVT3
 
- LDA K+3
+ LDA K+3                ; Set S = K+3
  STA S
- AND #$80
+
+ AND #%10000000         ; Set T = sign bit of K(3 2 1)
  STA T
- EOR INWK+2,X
- BMI C89DC
- LDA K+1
- CLC
- ADC XX1,X
+
+ EOR INWK+2,X           ; If x_sign has a different sign to K(3 2 1), jump to
+ BMI MV13               ; MV13 to process the addition as a subtraction
+
+ LDA K+1                ; Set K(3 2 1) = K(3 2 1) + (x_sign x_hi x_lo)
+ CLC                    ; starting with the low bytes
+ ADC INWK,X
  STA K+1
- LDA K+2
+
+ LDA K+2                ; Then the middle bytes
  ADC INWK+1,X
  STA K+2
- LDA K+3
+
+ LDA K+3                ; And finally the high bytes
  ADC INWK+2,X
- AND #$7F
- ORA T
+
+ AND #%01111111         ; Setting the sign bit of K+3 to T, the original sign
+ ORA T                  ; of K(3 2 1)
  STA K+3
- RTS
 
-.C89DC
+ RTS                    ; Return from the subroutine
 
- LDA S
- AND #$7F
+.MV13
+
+ LDA S                  ; Set S = |K+3| (i.e. K+3 with the sign bit cleared)
+ AND #%01111111
  STA S
- LDA XX1,X
- SEC
+
+ LDA INWK,X             ; Set K(3 2 1) = (x_sign x_hi x_lo) - K(3 2 1)
+ SEC                    ; starting with the low bytes
  SBC K+1
  STA K+1
- LDA INWK+1,X
+
+ LDA INWK+1,X           ; Then the middle bytes
  SBC K+2
  STA K+2
- LDA INWK+2,X
- AND #$7F
+
+ LDA INWK+2,X           ; And finally the high bytes, doing A = |x_sign| - |K+3|
+ AND #%01111111         ; and setting the C flag for testing below
  SBC S
- ORA #$80
- EOR T
+
+ ORA #%10000000         ; Set the sign bit of K+3 to the opposite sign of T,
+ EOR T                  ; i.e. the opposite sign to the original K(3 2 1)
  STA K+3
- BCS C8A13
- LDA #1
- SBC K+1
- STA K+1
- LDA #0
+
+ BCS MV14               ; If the C flag is set, i.e. |x_sign| >= |K+3|, then
+                        ; the sign of K(3 2 1). In this case, we want the
+                        ; result to have the same sign as the largest argument,
+                        ; which is (x_sign x_hi x_lo), which we know has the
+                        ; opposite sign to K(3 2 1), and that's what we just set
+                        ; the sign of K(3 2 1) to... so we can jump to MV14 to
+                        ; return from the subroutine
+
+ LDA #1                 ; We need to swap the sign of the result in K(3 2 1),
+ SBC K+1                ; which we do by calculating 0 - K(3 2 1), which we can
+ STA K+1                ; do with 1 - C - K(3 2 1), as we know the C flag is
+                        ; clear. We start with the low bytes
+
+ LDA #0                 ; Then the middle bytes
  SBC K+2
  STA K+2
- LDA #0
+
+ LDA #0                 ; And finally the high bytes
  SBC K+3
- AND #$7F
- ORA T
- STA K+3
 
-.C8A13
+ AND #%01111111         ; Set the sign bit of K+3 to the same sign as T,
+ ORA T                  ; i.e. the same sign as the original K(3 2 1), as
+ STA K+3                ; that's the largest argument
 
- RTS
+.MV14
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: MVS5
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Moving
+;    Summary: Apply a 3.6 degree pitch or roll to an orientation vector
+;  Deep dive: Orientation vectors
+;             Pitching and rolling by a fixed angle
+;
+; ------------------------------------------------------------------------------
+;
+; Pitch or roll a ship by a small, fixed amount (1/16 radians, or 3.6 degrees),
+; in a specified direction, by rotating the orientation vectors. The vectors to
+; rotate are given in X and Y, and the direction of the rotation is given in
+; RAT2. The calculation is as follows:
+;
+;   * If the direction is positive:
+;
+;     X = X * (1 - 1/512) + Y / 16
+;     Y = Y * (1 - 1/512) - X / 16
+;
+;   * If the direction is negative:
+;
+;     X = X * (1 - 1/512) - Y / 16
+;     Y = Y * (1 - 1/512) + X / 16
+;
+; So if X = 15 (roofv_x), Y = 21 (sidev_x) and RAT2 is positive, it does this:
+;
+;   roofv_x = roofv_x * (1 - 1/512)  + sidev_x / 16
+;   sidev_x = sidev_x * (1 - 1/512)  - roofv_x / 16
+;
+; Arguments:
+;
+;   X                   The first vector to rotate:
+;
+;                         * If X = 15, rotate roofv_x
+;
+;                         * If X = 17, rotate roofv_y
+;
+;                         * If X = 19, rotate roofv_z
+;
+;                         * If X = 21, rotate sidev_x
+;
+;                         * If X = 23, rotate sidev_y
+;
+;                         * If X = 25, rotate sidev_z
+;
+;   Y                   The second vector to rotate:
+;
+;                         * If Y = 9,  rotate nosev_x
+;
+;                         * If Y = 11, rotate nosev_y
+;
+;                         * If Y = 13, rotate nosev_z
+;
+;                         * If Y = 21, rotate sidev_x
+;
+;                         * If Y = 23, rotate sidev_y
+;
+;                         * If Y = 25, rotate sidev_z
+;
+;   RAT2                The direction of the pitch or roll to perform, positive
+;                       or negative (i.e. the sign of the roll or pitch counter
+;                       in bit 7)
 ;
 ; ******************************************************************************
 
@@ -3041,281 +3212,575 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA INWK+1,X
- AND #$7F
- LSR A
- STA T
- LDA XX1,X
- SEC
- SBC T
- STA R
- LDA INWK+1,X
- SBC #0
+ LDA INWK+1,X           ; Fetch roofv_x_hi, clear the sign bit, divide by 2 and
+ AND #%01111111         ; store in T, so:
+ LSR A                  ;
+ STA T                  ; T = |roofv_x_hi| / 2
+                        ;   = |roofv_x| / 512
+                        ;
+                        ; The above is true because:
+                        ;
+                        ; |roofv_x| = |roofv_x_hi| * 256 + roofv_x_lo
+                        ;
+                        ; so:
+                        ;
+                        ; |roofv_x| / 512 = |roofv_x_hi| * 256 / 512
+                        ;                    + roofv_x_lo / 512
+                        ;                  = |roofv_x_hi| / 2
+
+ LDA INWK,X             ; Now we do the following subtraction:
+ SEC                    ;
+ SBC T                  ; (S R) = (roofv_x_hi roofv_x_lo) - |roofv_x| / 512
+ STA R                  ;       = (1 - 1/512) * roofv_x
+                        ;
+                        ; by doing the low bytes first
+
+ LDA INWK+1,X           ; And then the high bytes (the high byte of the right
+ SBC #0                 ; side of the subtraction being 0)
  STA S
- LDA XX1,Y
+
+ LDA INWK,Y             ; Set P = nosev_x_lo
  STA P
- LDA INWK+1,Y
- AND #$80
+
+ LDA INWK+1,Y           ; Fetch the sign of nosev_x_hi (bit 7) and store in T
+ AND #%10000000
  STA T
- LDA INWK+1,Y
- AND #$7F
- LSR A
+
+ LDA INWK+1,Y           ; Fetch nosev_x_hi into A and clear the sign bit, so
+ AND #%01111111         ; A = |nosev_x_hi|
+
+ LSR A                  ; Set (A P) = (A P) / 16
+ ROR P                  ;           = |nosev_x_hi nosev_x_lo| / 16
+ LSR A                  ;           = |nosev_x| / 16
  ROR P
  LSR A
  ROR P
  LSR A
  ROR P
- LSR A
- ROR P
- ORA T
- EOR RAT2
- STX Q
- JSR ADD
- STA K+1
+
+ ORA T                  ; Set the sign of A to the sign in T (i.e. the sign of
+                        ; the original nosev_x), so now:
+                        ;
+                        ; (A P) = nosev_x / 16
+
+ EOR RAT2               ; Give it the sign as if we multiplied by the direction
+                        ; by the pitch or roll direction
+
+ STX Q                  ; Store the value of X so it can be restored after the
+                        ; call to ADD
+
+ JSR ADD                ; (A X) = (A P) + (S R)
+                        ;       = +/-nosev_x / 16 + (1 - 1/512) * roofv_x
+
+ STA K+1                ; Set K(1 0) = (1 - 1/512) * roofv_x +/- nosev_x / 16
  STX K
- LDX Q
- LDA INWK+1,Y
- AND #$7F
- LSR A
- STA T
- LDA XX1,Y
- SEC
- SBC T
- STA R
- LDA INWK+1,Y
- SBC #0
+
+ LDX Q                  ; Restore the value of X from before the call to ADD
+
+ LDA INWK+1,Y           ; Fetch nosev_x_hi, clear the sign bit, divide by 2 and
+ AND #%01111111         ; store in T, so:
+ LSR A                  ;
+ STA T                  ; T = |nosev_x_hi| / 2
+                        ;   = |nosev_x| / 512
+
+ LDA INWK,Y             ; Now we do the following subtraction:
+ SEC                    ;
+ SBC T                  ; (S R) = (nosev_x_hi nosev_x_lo) - |nosev_x| / 512
+ STA R                  ;       = (1 - 1/512) * nosev_x
+                        ;
+                        ; by doing the low bytes first
+
+ LDA INWK+1,Y           ; And then the high bytes (the high byte of the right
+ SBC #0                 ; side of the subtraction being 0)
  STA S
- LDA XX1,X
+
+ LDA INWK,X             ; Set P = roofv_x_lo
  STA P
- LDA INWK+1,X
- AND #$80
+
+ LDA INWK+1,X           ; Fetch the sign of roofv_x_hi (bit 7) and store in T
+ AND #%10000000
  STA T
- LDA INWK+1,X
- AND #$7F
- LSR A
+
+ LDA INWK+1,X           ; Fetch roofv_x_hi into A and clear the sign bit, so
+ AND #%01111111         ; A = |roofv_x_hi|
+
+ LSR A                  ; Set (A P) = (A P) / 16
+ ROR P                  ;           = |roofv_x_hi roofv_x_lo| / 16
+ LSR A                  ;           = |roofv_x| / 16
  ROR P
  LSR A
  ROR P
  LSR A
  ROR P
- LSR A
- ROR P
- ORA T
- EOR #$80
- EOR RAT2
- STX Q
- JSR ADD
- STA INWK+1,Y
- STX XX1,Y
- LDX Q
- LDA K
- STA XX1,X
+
+ ORA T                  ; Set the sign of A to the opposite sign to T (i.e. the
+ EOR #%10000000         ; sign of the original -roofv_x), so now:
+                        ;
+                        ; (A P) = -roofv_x / 16
+
+ EOR RAT2               ; Give it the sign as if we multiplied by the direction
+                        ; by the pitch or roll direction
+
+ STX Q                  ; Store the value of X so it can be restored after the
+                        ; call to ADD
+
+ JSR ADD                ; (A X) = (A P) + (S R)
+                        ;       = -/+roofv_x / 16 + (1 - 1/512) * nosev_x
+
+ STA INWK+1,Y           ; Set nosev_x = (1-1/512) * nosev_x -/+ roofv_x / 16
+ STX INWK,Y
+
+ LDX Q                  ; Restore the value of X from before the call to ADD
+
+ LDA K                  ; Set roofv_x = K(1 0)
+ STA INWK,X             ;              = (1-1/512) * roofv_x +/- nosev_x / 16
  LDA K+1
  STA INWK+1,X
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: TENS
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: A constant used when printing large numbers in BPRNT
+;  Deep dive: Printing decimal numbers
+;
+; ------------------------------------------------------------------------------
+;
+; Contains the four low bytes of the value 100,000,000,000 (100 billion).
+;
+; The maximum number of digits that we can print with the BPRNT routine is 11,
+; so the biggest number we can print is 99,999,999,999. This maximum number
+; plus 1 is 100,000,000,000, which in hexadecimal is:
+;
+;   & 17 48 76 E8 00
+;
+; The TENS variable contains the lowest four bytes in this number, with the
+; most significant byte first, i.e. 48 76 E8 00. This value is used in the
+; BPRNT routine when working out which decimal digits to print when printing a
+; number.
 ;
 ; ******************************************************************************
 
 .TENS
 
- EQUB $48, $76, $E8,   0                      ; 8ABA: 48 76 E8... Hv.
+ EQUD &00E87648
 
 ; ******************************************************************************
 ;
 ;       Name: pr2
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print an 8-bit number, left-padded to 3 digits, and optional point
+;
+; ------------------------------------------------------------------------------
+;
+; Print the 8-bit number in X to 3 digits, left-padding with spaces for numbers
+; with fewer than 3 digits (so numbers < 100 are right-aligned). Optionally
+; include a decimal point.
+;
+; Arguments:
+;
+;   X                   The number to print
+;
+;   C flag              If set, include a decimal point
+;
+; Other entry points:
+;
+;   pr2+2               Print the 8-bit number in X to the number of digits in A
 ;
 ; ******************************************************************************
 
 .pr2
 
- LDA #3
+ LDA #3                 ; Set A to the number of digits (3)
 
- LDY #0
+ LDY #0                 ; Zero the Y register, so we can fall through into TT11
+                        ; to print the 16-bit number (Y X) to 3 digits, which
+                        ; effectively prints X to 3 digits as the high byte is
+                        ; zero
 
 ; ******************************************************************************
 ;
 ;       Name: TT11
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print a 16-bit number, left-padded to n digits, and optional point
+;
+; ------------------------------------------------------------------------------
+;
+; Print the 16-bit number in (Y X) to a specific number of digits, left-padding
+; with spaces for numbers with fewer digits (so lower numbers will be right-
+; aligned). Optionally include a decimal point.
+;
+; Arguments:
+;
+;   X                   The low byte of the number to print
+;
+;   Y                   The high byte of the number to print
+;
+;   A                   The number of digits
+;
+;   C flag              If set, include a decimal point
 ;
 ; ******************************************************************************
 
 .TT11
 
- STA U
- LDA #0
- STA K
- STA K+1
- STY K+2
- STX K+3
+ STA U                  ; We are going to use the BPRNT routine (below) to
+                        ; print this number, so we store the number of digits
+                        ; in U, as that's what BPRNT takes as an argument
+
+ LDA #0                 ; BPRNT takes a 32-bit number in K to K+3, with the
+ STA K                  ; most significant byte first (big-endian), so we set
+ STA K+1                ; the two most significant bytes to zero (K and K+1)
+ STY K+2                ; and store (Y X) in the least two significant bytes
+ STX K+3                ; (K+2 and K+3), so we are going to print the 32-bit
+                        ; number (0 0 Y X)
+
+                        ; Finally we fall through into BPRNT to print out the
+                        ; number in K to K+3, which now contains (Y X), to 3
+                        ; digits (as U = 3), using the same C flag as when pr2
+                        ; was called to control the decimal point
 
 ; ******************************************************************************
 ;
 ;       Name: BPRNT
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print a 32-bit number, left-padded to a specific number of digits,
+;             with an optional decimal point
+;  Deep dive: Printing decimal numbers
+;
+; ------------------------------------------------------------------------------
+;
+; Print the 32-bit number stored in K(0 1 2 3) to a specific number of digits,
+; left-padding with spaces for numbers with fewer digits (so lower numbers are
+; right-aligned). Optionally include a decimal point.
+;
+; See the deep dive on "Printing decimal numbers" for details of the algorithm
+; used in this routine.
+;
+; Arguments:
+;
+;   K(0 1 2 3)          The number to print, stored with the most significant
+;                       byte in K and the least significant in K+3 (i.e. as a
+;                       big-endian number, which is the opposite way to how the
+;                       6502 assembler stores addresses, for example)
+;
+;   U                   The maximum number of digits to print, including the
+;                       decimal point (spaces will be used on the left to pad
+;                       out the result to this width, so the number is right-
+;                       aligned to this width). U must be 11 or less
+;
+;   C flag              If set, include a decimal point followed by one
+;                       fractional digit (i.e. show the number to 1 decimal
+;                       place). In this case, the number in K(0 1 2 3) contains
+;                       10 * the number we end up printing, so to print 123.4,
+;                       we would pass 1234 in K(0 1 2 3) and would set the C
+;                       flag to include the decimal point
 ;
 ; ******************************************************************************
 
 .BPRNT
 
- LDX #$0B
- STX T
- PHP
- BCC C8AD9
- DEC T
- DEC U
+ LDX #11                ; Set T to the maximum number of digits allowed (11
+ STX T                  ; characters, which is the number of digits in 10
+                        ; billion). We will use this as a flag when printing
+                        ; characters in TT37 below
 
-.C8AD9
+ PHP                    ; Make a copy of the status register (in particular
+                        ; the C flag) so we can retrieve it later
 
- LDA #$0B
- SEC
- STA XX17
- SBC U
- STA U
- INC U
- LDY #0
- STY S
- JMP C8B2A
+ BCC TT30               ; If the C flag is clear, we do not want to print a
+                        ; decimal point, so skip the next two instructions
 
-.C8AEB
+ DEC T                  ; As we are going to show a decimal point, decrement
+ DEC U                  ; both the number of characters and the number of
+                        ; digits (as one of them is now a decimal point)
 
- ASL K+3
+.TT30
+
+ LDA #11                ; Set A to 11, the maximum number of digits allowed
+
+ SEC                    ; Set the C flag so we can do subtraction without the
+                        ; C flag affecting the result
+
+ STA XX17               ; Store the maximum number of digits allowed (11) in
+                        ; XX17
+
+ SBC U                  ; Set U = 11 - U + 1, so U now contains the maximum
+ STA U                  ; number of digits minus the number of digits we want
+ INC U                  ; to display, plus 1 (so this is the number of digits
+                        ; we should skip before starting to print the number
+                        ; itself, and the plus 1 is there to ensure we print at
+                        ; least one digit)
+
+ LDY #0                 ; In the main loop below, we use Y to count the number
+                        ; of times we subtract 10 billion to get the leftmost
+                        ; digit, so set this to zero
+
+ STY S                  ; In the main loop below, we use location S as an
+                        ; 8-bit overflow for the 32-bit calculations, so
+                        ; we need to set this to 0 before joining the loop
+
+ JMP TT36               ; Jump to TT36 to start the process of printing this
+                        ; number's digits
+
+.TT35
+
+                        ; This subroutine multiplies K(S 0 1 2 3) by 10 and
+                        ; stores the result back in K(S 0 1 2 3), using the fact
+                        ; that K * 10 = (K * 2) + (K * 2 * 2 * 2)
+
+ ASL K+3                ; Set K(S 0 1 2 3) = K(S 0 1 2 3) * 2 by rotating left
  ROL K+2
  ROL K+1
  ROL K
  ROL S
- LDX #3
 
-.loop_C8AF7
+ LDX #3                 ; Now we want to make a copy of the newly doubled K in
+                        ; XX15, so we can use it for the first (K * 2) in the
+                        ; equation above, so set up a counter in X for copying
+                        ; four bytes, starting with the last byte in memory
+                        ; (i.e. the least significant)
 
- LDA K,X
- STA XX15,X
- DEX
- BPL loop_C8AF7
- LDA S
- STA XX15+4
- ASL K+3
- ROL K+2
- ROL K+1
+.tt35
+
+ LDA K,X                ; Copy the X-th byte of K(0 1 2 3) to the X-th byte of
+ STA XX15,X             ; XX15(0 1 2 3), so that XX15 will contain a copy of
+                        ; K(0 1 2 3) once we've copied all four bytes
+
+ DEX                    ; Decrement the loop counter
+
+ BPL tt35               ; Loop back to copy the next byte until we have copied
+                        ; all four
+
+ LDA S                  ; Store the value of location S, our overflow byte, in
+ STA XX15+4             ; XX15+4, so now XX15(4 0 1 2 3) contains a copy of
+                        ; K(S 0 1 2 3), which is the value of (K * 2) that we
+                        ; want to use in our calculation
+
+ ASL K+3                ; Now to calculate the (K * 2 * 2 * 2) part. We still
+ ROL K+2                ; have (K * 2) in K(S 0 1 2 3), so we just need to shift
+ ROL K+1                ; it twice. This is the first one, so we do this:
+ ROL K                  ;
+ ROL S                  ;   K(S 0 1 2 3) = K(S 0 1 2 3) * 2 = K * 4
+
+ ASL K+3                ; And then we do it again, so that means:
+ ROL K+2                ;
+ ROL K+1                ;   K(S 0 1 2 3) = K(S 0 1 2 3) * 2 = K * 8
  ROL K
  ROL S
- ASL K+3
- ROL K+2
- ROL K+1
- ROL K
- ROL S
- CLC
- LDX #3
 
-.loop_C8B19
+ CLC                    ; Clear the C flag so we can do addition without the
+                        ; C flag affecting the result
 
- LDA K,X
- ADC XX15,X
- STA K,X
- DEX
- BPL loop_C8B19
- LDA XX15+4
- ADC S
- STA S
- LDY #0
+ LDX #3                 ; By now we've got (K * 2) in XX15(4 0 1 2 3) and
+                        ; (K * 8) in K(S 0 1 2 3), so the final step is to add
+                        ; these two 32-bit numbers together to get K * 10.
+                        ; So we set a counter in X for four bytes, starting
+                        ; with the last byte in memory (i.e. the least
+                        ; significant)
 
-.C8B2A
+.tt36
 
- LDX #3
- SEC
+ LDA K,X                ; Fetch the X-th byte of K into A
 
-.loop_C8B2D
+ ADC XX15,X             ; Add the X-th byte of XX15 to A, with carry
 
- PHP
+ STA K,X                ; Store the result in the X-th byte of K
+
+ DEX                    ; Decrement the loop counter
+
+ BPL tt36               ; Loop back to add the next byte, moving from the least
+                        ; significant byte to the most significant, until we
+                        ; have added all four
+
+ LDA XX15+4             ; Finally, fetch the overflow byte from XX15(4 0 1 2 3)
+
+ ADC S                  ; And add it to the overflow byte from K(S 0 1 2 3),
+                        ; with carry
+
+ STA S                  ; And store the result in the overflow byte from
+                        ; K(S 0 1 2 3), so now we have our desired result, i.e.
+                        ;
+                        ;   K(S 0 1 2 3) = K(S 0 1 2 3) * 10
+
+ LDY #0                 ; In the main loop below, we use Y to count the number
+                        ; of times we subtract 10 billion to get the leftmost
+                        ; digit, so set this to zero so we can rejoin the main
+                        ; loop for another subtraction process
+
+.TT36
+
+                        ; This is the main loop of our digit-printing routine.
+                        ; In the following loop, we are going to count the
+                        ; number of times that we can subtract 10 million and
+                        ; store that count in Y, which we have already set to 0
+
+ LDX #3                 ; Our first calculation concerns 32-bit numbers, so
+                        ; set up a counter for a four-byte loop
+
+ SEC                    ; Set the C flag so we can do subtraction without the
+                        ; C flag affecting the result
+
+.tt37
+
+ PHP                    ; Store the flags on the stack to we can retrieve them
+                        ; after the macro
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- PLP
- LDA K,X
- SBC TENS,X
- STA XX15,X
- DEX
- BPL loop_C8B2D
- LDA S
- SBC #$17
- STA XX15+4
- BCC C8B5F
- LDX #3
+ PLP                    ; Retrieve the flags from the stack
 
-.loop_C8B50
+                        ; We now loop through each byte in turn to do this:
+                        ;
+                        ;   XX15(4 0 1 2 3) = K(S 0 1 2 3) - 100,000,000,000
 
- LDA XX15,X
- STA K,X
- DEX
- BPL loop_C8B50
- LDA XX15+4
- STA S
- INY
- JMP C8B2A
+ LDA K,X                ; Subtract the X-th byte of TENS (i.e. 10 billion) from
+ SBC TENS,X             ; the X-th byte of K
 
-.C8B5F
+ STA XX15,X             ; Store the result in the X-th byte of XX15
 
- TYA
- BNE C8B6E
- LDA T
- BEQ C8B6E
- DEC U
- BPL C8B78
- LDA #$20
- BNE C8B75
+ DEX                    ; Decrement the loop counter
 
-.C8B6E
+ BPL tt37               ; Loop back to subtract the next byte, moving from the
+                        ; least significant byte to the most significant, until
+                        ; we have subtracted all four
 
- LDY #0
- STY T
- CLC
- ADC #$30
+ LDA S                  ; Subtract the fifth byte of 10 billion (i.e. $17) from
+ SBC #$17               ; the fifth (overflow) byte of K, which is S
 
-.C8B75
+ STA XX15+4             ; Store the result in the overflow byte of XX15
 
- JSR DASC_b2
+ BCC TT37               ; If subtracting 10 billion took us below zero, jump to
+                        ; TT37 to print out this digit, which is now in Y
 
-.C8B78
+ LDX #3                 ; We now want to copy XX15(4 0 1 2 3) back into
+                        ; K(S 0 1 2 3), so we can loop back up to do the next
+                        ; subtraction, so set up a counter for a four-byte loop
 
- DEC T
- BPL C8B7E
+.tt38
+
+ LDA XX15,X             ; Copy the X-th byte of XX15(0 1 2 3) to the X-th byte
+ STA K,X                ; of K(0 1 2 3), so that K(0 1 2 3) will contain a copy
+                        ; of XX15(0 1 2 3) once we've copied all four bytes
+
+ DEX                    ; Decrement the loop counter
+
+ BPL tt38               ; Loop back to copy the next byte, until we have copied
+                        ; all four
+
+ LDA XX15+4             ; Store the value of location XX15+4, our overflow
+ STA S                  ; byte in S, so now K(S 0 1 2 3) contains a copy of
+                        ; XX15(4 0 1 2 3)
+
+ INY                    ; We have now managed to subtract 10 billion from our
+                        ; number, so increment Y, which is where we are keeping
+                        ; a count of the number of subtractions so far
+
+ JMP TT36               ; Jump back to TT36 to subtract the next 10 billion
+
+.TT37
+
+ TYA                    ; If we get here then Y contains the digit that we want
+                        ; to print (as Y has now counted the total number of
+                        ; subtractions of 10 billion), so transfer Y into A
+
+ BNE TT32               ; If the digit is non-zero, jump to TT32 to print it
+
+ LDA T                  ; Otherwise the digit is zero. If we are already
+                        ; printing the number then we will want to print a 0,
+                        ; but if we haven't started printing the number yet,
+                        ; then we probably don't, as we don't want to print
+                        ; leading zeroes unless this is the only digit before
+                        ; the decimal point
+                        ;
+                        ; To help with this, we are going to use T as a flag
+                        ; that tells us whether we have already started
+                        ; printing digits:
+                        ;
+                        ;   * If T <> 0 we haven't printed anything yet
+                        ;
+                        ;   * If T = 0 then we have started printing digits
+                        ;
+                        ; We initially set T above to the maximum number of
+                        ; characters allowed, less 1 if we are printing a
+                        ; decimal point, so the first time we enter the digit
+                        ; printing routine at TT37, it is definitely non-zero
+
+ BEQ TT32               ; If T = 0, jump straight to the print routine at TT32,
+                        ; as we have already started printing the number, so we
+                        ; definitely want to print this digit too
+
+ DEC U                  ; We initially set U to the number of digits we want to
+ BPL TT34               ; skip before starting to print the number. If we get
+                        ; here then we haven't printed any digits yet, so
+                        ; decrement U to see if we have reached the point where
+                        ; we should start printing the number, and if not, jump
+                        ; to TT34 to set up things for the next digit
+
+ LDA #' '               ; We haven't started printing any digits yet, but we
+ BNE tt34               ; have reached the point where we should start printing
+                        ; our number, so call TT26 (via tt34) to print a space
+                        ; so that the number is left-padded with spaces (this
+                        ; BNE is effectively a JMP as A will never be zero)
+
+.TT32
+
+ LDY #0                 ; We are printing an actual digit, so first set T to 0,
+ STY T                  ; to denote that we have now started printing digits as
+                        ; opposed to spaces
+
+ CLC                    ; The digit value is in A, so add ASCII "0" to get the
+ ADC #'0'               ; ASCII character number to print
+
+.tt34
+
+ JSR DASC_b2            ; Call DASC to print the character in A and fall through
+                        ; into TT34 to get things ready for the next digit
+
+.TT34
+
+ DEC T                  ; Decrement T but keep T >= 0 (by incrementing it
+ BPL P%+4               ; again if the above decrement made T negative)
  INC T
 
-.C8B7E
+ DEC XX17               ; Decrement the total number of characters left to
+                        ; print, which we stored in XX17
 
- DEC XX17
- BMI C8B90
- BNE C8B8D
- PLP
- BCC C8B8D
- LDA L03FD
- JSR DASC_b2
+ BMI rT10               ; If the result is negative, we have printed all the
+                        ; characters, so jump down to rT10 to return from the
+                        ; subroutine
 
-.C8B8D
+ BNE P%+11              ; If the result is positive (> 0) then we still have
+                        ; characters left to print, so loop back to TT35 (via
+                        ; the JMP TT35 instruction below) to print the next
+                        ; digit
 
- JMP C8AEB
+ PLP                    ; If we get here then we have printed the exact number
+                        ; of digits that we wanted to, so restore the C flag
+                        ; that we stored at the start of the routine
 
-.C8B90
+ BCC P%+8               ; If the C flag is clear, we don't want a decimal point,
+                        ; so loop back to TT35 (via the JMP TT35 instruction
+                        ; below) to print the next digit
 
- RTS
+ LDA L03FD              ; Otherwise the C flag is set, so print the decimal
+ JSR DASC_b2            ; point ???
+
+ JMP TT35               ; Loop back to TT35 to print the next digit
+
+.rT10
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -5917,7 +6382,7 @@ ENDIF
  LDA #$8D
  JSR TT66
  LDA #$4D
- JSR subm_AE32
+ JSR SetScreenHeight
  LDA #7
  STA XC
  JSR TT81
@@ -5978,7 +6443,7 @@ ENDIF
  STA QQ19+1
  LDA #4
  STA QQ19+2
- JSR subm_9B51
+ JSR TT103
  LDA #$9D
  STA QQ11
  LDA #$8F
@@ -6309,14 +6774,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_9AE7
+;       Name: TT16
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_9AE7
+.TT16
 
  LDA controller1B
  BMI C9AE4
@@ -6369,32 +6834,32 @@ ENDIF
  PLA
  STA QQ19+3
  LDA QQ10
- JSR subm_9B86
+ JSR TT123
  LDA QQ19+4
  STA QQ10
  STA QQ19+1
  PLA
  STA QQ19+3
  LDA QQ9
- JSR subm_9B86
+ JSR TT123
  LDA QQ19+4
  STA QQ9
  STA QQ19
 
 ; ******************************************************************************
 ;
-;       Name: subm_9B51
+;       Name: TT103
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_9B51
+.TT103
 
  LDA QQ11
  CMP #$9C
- BEQ subm_9B9D
+ BEQ TT105
  LDA QQ9
  LSR A
  LSR A
@@ -6422,14 +6887,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_9B86
+;       Name: TT123
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_9B86
+.TT123
 
  CLC
  ADC QQ19+3
@@ -6451,14 +6916,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_9B9D
+;       Name: TT105
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_9B9D
+.TT105
 
  LDA QQ9
  SEC
@@ -6568,7 +7033,7 @@ ENDIF
  JSR NLIN3
  JSR subm_EB86
  JSR TT14
- JSR subm_9B51
+ JSR TT103
  JSR TT81
  LDA #0
  STA XX20
@@ -6786,7 +7251,7 @@ ENDIF
  AND #$0E
  CMP #$0C
  BNE subm_9D35
- JSR subm_9B51
+ JSR TT103
  LDA #0
  STA QQ17
  JSR CLYNS
@@ -6995,7 +7460,16 @@ ENDIF
  LDA #$CD
  JMP DETOK_b2
 
-.C9E48
+; ******************************************************************************
+;
+;       Name: hyp
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
+
+.hyp
 
  LDA QQ12
  BNE subm_9E3C
@@ -7003,7 +7477,16 @@ ENDIF
  BEQ Ghy
  RTS
 
-.C9E51
+; ******************************************************************************
+;
+;       Name: subm_9E51
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
+
+.subm_9E51
 
  LDA QQ12
  BNE subm_9E3C
@@ -8345,7 +8828,7 @@ ENDIF
 ;
 ;       Name: EQSHP
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Equipment
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -10445,7 +10928,7 @@ ENDIF
  STA L00CE
  LDA BOMB
  BPL CADAA
- JSR subm_8790
+ JSR HideHiddenColour
  STA BOMB
 
 .CADAA
@@ -10477,7 +10960,7 @@ ENDIF
  STA ALPHA
  STA ALP1
  LDA #$48
- JSR subm_AE32
+ JSR SetScreenHeight
  LDA ECMA
  BEQ CADF3
  JSR ECMOF
@@ -10529,14 +11012,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_AE32
+;       Name: SetScreenHeight
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_AE32
+.SetScreenHeight
 
  STA Yx1M2
  ASL A
@@ -11169,13 +11652,13 @@ ENDIF
 
  CMP #$16
  BNE CB150
- JMP C9E51
+ JMP subm_9E51
 
 .CB150
 
  CMP #$29
  BNE CB157
- JMP C9E48
+ JMP hyp
 
 .CB157
 
@@ -11211,7 +11694,7 @@ ENDIF
 
 .CB18A
 
- JSR subm_9AE7
+ JSR TT16
 
 .CB18D
 
@@ -11376,7 +11859,7 @@ ENDIF
  LDX #8
  STX L00CC
  LDA #$68
- JSR subm_AE32
+ JSR SetScreenHeight
  LDY #8
  LDA #1
 
@@ -11489,7 +11972,7 @@ ENDIF
  STX QQ11a
  TXS
  JSR RESET
- JSR TITLE_b6
+ JSR StartScreen_b6
 
 ; ******************************************************************************
 ;
@@ -11652,14 +12135,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B3BC
+;       Name: TITLE
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B3BC
+.TITLE
 
  STY L0480
  STX TYPE
@@ -13605,7 +14088,7 @@ ENDIF
 .subm_BDED
 
  LDA #$48
- JSR subm_AE32
+ JSR SetScreenHeight
  STX VIEW
  LDA #0
  JSR TT66

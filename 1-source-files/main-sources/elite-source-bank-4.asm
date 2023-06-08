@@ -2314,7 +2314,7 @@ ENDIF
 ;
 ;       Name: LB5CC
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -2386,7 +2386,7 @@ ENDIF
 ;
 ;       Name: LB7AC
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -2692,7 +2692,7 @@ ENDIF
 ;
 ;       Name: subm_B9C1
 ;       Type: Subroutine
-;   Category: Drawing images
+;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -2764,7 +2764,7 @@ ENDIF
 ;
 ;       Name: subm_B9F9
 ;       Type: Subroutine
-;   Category: Drawing images
+;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************

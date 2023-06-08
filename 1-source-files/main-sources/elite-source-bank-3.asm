@@ -2362,11 +2362,13 @@ ENDIF
  STA L00CB
  STA tile3Phase0
  STA tile3Phase1
- LDA #$0F
- STA hiddenColour
+
+ LDA #$0F               ; Set hiddenColour to $0F, which is black, so this hides
+ STA hiddenColour       ; any pixels that use the hidden colour in palette 0
+
  STA visibleColour
- STA paletteColour1
  STA paletteColour2
+ STA paletteColour3
  LDA #0
  STA updatePaletteInNMI
  STA QQ11a
@@ -4234,8 +4236,9 @@ ENDIF
 
 .CB607
 
- LDA #$0F
- STA hiddenColour
+ LDA #$0F               ; Set hiddenColour to $0F, which is black, so this hides
+ STA hiddenColour       ; any pixels that use the hidden colour in palette 0
+
  LDA QQ11a
  BPL CB627
  CMP #$C4
@@ -4245,9 +4248,9 @@ ENDIF
  LDA XX3+21
  STA visibleColour
  LDA XX3+22
- STA paletteColour1
- LDA XX3+23
  STA paletteColour2
+ LDA XX3+23
+ STA paletteColour3
  RTS
 
 .CB627
@@ -4261,9 +4264,9 @@ ENDIF
  LDA XX3+1
  STA visibleColour
  LDA XX3+2
- STA paletteColour1
- LDA XX3+3
  STA paletteColour2
+ LDA XX3+3
+ STA paletteColour3
  RTS
 
 ; ******************************************************************************

@@ -2285,7 +2285,7 @@ ENDIF
 ;
 ;       Name: HideSprites59_62
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing sprites
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -2300,7 +2300,7 @@ ENDIF
 ;
 ;       Name: HideScannerSprites
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing sprites
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -2334,7 +2334,7 @@ ENDIF
 ;
 ;       Name: HideSprites
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing sprites
 ;    Summary: Hide X sprites from sprite Y/4 onwards
 ;
 ; ******************************************************************************
@@ -2360,7 +2360,7 @@ ENDIF
 ;
 ;       Name: nameBufferHiAddr
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Drawing tiles
 ;    Summary: The high bytes of the addresses of the two nametable buffers
 ;
 ; ******************************************************************************
@@ -2374,7 +2374,7 @@ ENDIF
 ;
 ;       Name: pattBufferHiAddr
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Drawing tiles
 ;    Summary: The high bytes of the addresses of the two pattern buffers
 ;
 ; ******************************************************************************
@@ -2408,7 +2408,7 @@ ENDIF
 
 .NMI
 
- JSR SetPalette
+ JSR SendPaletteSprites
  LDA showUserInterface
  STA setupPPUForIconBar
 
@@ -2484,144 +2484,231 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetPalette
+;       Name: SendPaletteSprites
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing tiles
+;    Summary: Send the current palette and sprite data to the PPU
 ;
 ; ******************************************************************************
 
-.SetPalette
+.SendPaletteSprites
 
- STA nmiStoreA
- STX nmiStoreX
+ STA nmiStoreA          ; Store the values of A, X and Y so we can retrieve them
+ STX nmiStoreX          ; later
  STY nmiStoreY
- LDA PPU_STATUS
- INC frameCounter
- LDA #0
- STA OAM_ADDR
- LDA #2
- STA OAM_DMA
- LDA #0
- STA PPU_MASK
+
+ LDA PPU_STATUS         ; Read from PPU_STATUS to clear bit 7 of PPU_STATUS and
+                        ; reset the VBlank start flag
+
+ INC frameCounter       ; Increment the frame counter
+
+ LDA #0                 ; Write 0 to OAM_ADDR so we can use OAM_DMA to send
+ STA OAM_ADDR           ; sprite data to the PPU
+
+ LDA #$02               ; Write $02 to OAM_DMA to upload 256 bytes of sprite
+ STA OAM_DMA            ; data from the sprite buffer at $02xx into the PPU
+
+ LDA #%00000000         ; Set PPU_MASK as follows:
+ STA PPU_MASK           ;
+                        ;   * Bit 0 clear = normal colour (not monochrome)
+                        ;   * Bit 1 clear = hide leftmost 8 pixels of background
+                        ;   * Bit 2 clear  = hide sprites in leftmost 8 pixels
+                        ;   * Bit 3 clear = hide background
+                        ;   * Bit 4 clear = hide sprites
+                        ;   * Bit 5 clear = do not intensify greens
+                        ;   * Bit 6 clear = do not intensify blues
+                        ;   * Bit 7 clear = do not intensify reds
 
 ; ******************************************************************************
 ;
 ;       Name: SetPaletteForPhase
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing tiles
+;    Summary: Set the palette according to the palette phase and view type
 ;
 ; ******************************************************************************
 
 .SetPaletteForPhase
 
- LDA QQ11a
- BNE CCF96
- LDY visibleColour
- LDA palettePhase
- BNE CCF76
- LDA #$3F
- STA PPU_ADDR
+ LDA QQ11a              ; Set A to the current view (or the old view that is
+                        ; still being shown, if we are in the process of
+                        ; changing view)
+
+ BNE paph2              ; If this is not the space view, jump to paph2
+
+                        ; If we get here then this is the space view
+
+ LDY visibleColour      ; Set Y to the colour to use for visible pixels
+
+ LDA palettePhase       ; If palettePhase is non-zero (i.e. 1), jump to paph1
+ BNE paph1
+
+ LDA #$3F               ; Set PPU_ADDR = $3F01, so it points to palette 0 in
+ STA PPU_ADDR           ; the PPU
  LDA #1
  STA PPU_ADDR
- LDA hiddenColour
- STA PPU_DATA
- STY PPU_DATA
- STY PPU_DATA
+
+ LDA hiddenColour       ; Set A to the colour to use for hidden pixels
+
+ STA PPU_DATA           ; Set palette 0 to the following:
+ STY PPU_DATA           ;
+ STY PPU_DATA           ;   * Colour 0 = background (black)
+                        ;
+                        ;   * Colour 1 = hidden colour
+                        ;
+                        ;   * Colour 2 = visible colour
+                        ;
+                        ;   * Colour 3 = visible colour
+                        ;
+                        ; So pixels in colour 1 will be invisible, while pixels
+                        ; in colour 2 will be visible
+
+ LDA #0                 ; Change the PPU address away from the palette entries
+ STA PPU_ADDR           ; to prevent the palette being corrupted
  LDA #0
  STA PPU_ADDR
- LDA #0
- STA PPU_ADDR
- RTS
 
-.CCF76
+ RTS                    ; Return from the subroutine
 
- LDA #$3F
- STA PPU_ADDR
+.paph1
+
+ LDA #$3F               ; Set PPU_ADDR = $3F01, so it points to palette 0 in
+ STA PPU_ADDR           ; the PPU
  LDA #1
  STA PPU_ADDR
- LDA hiddenColour
- STY PPU_DATA
- STA PPU_DATA
- STY PPU_DATA
+
+ LDA hiddenColour       ; Set A to the colour to use for hidden pixels
+
+ STY PPU_DATA           ; Set palette 0 to the following:
+ STA PPU_DATA           ;
+ STY PPU_DATA           ;   * Colour 0 = background (black)
+                        ;
+                        ;   * Colour 1 = visible colour
+                        ;
+                        ;   * Colour 2 = hidden colour
+                        ;
+                        ;   * Colour 3 = visible colour
+                        ;
+                        ; So pixels in colour 1 will be visible, while pixels
+                        ; in colour 2 will be invisible
+
+ LDA #0                 ; Change the PPU address away from the palette entries
+ STA PPU_ADDR           ; to prevent the palette being corrupted
  LDA #0
  STA PPU_ADDR
- LDA #0
- STA PPU_ADDR
- RTS
 
-.CCF96
+ RTS                    ; Return from the subroutine
 
- CMP #$98
- BEQ CCFBE
- LDA #$3F
- STA PPU_ADDR
+.paph2
+
+                        ; If we get here then this is not the space view
+
+ CMP #$98               ; If the view is $98, jump to paph3 ???
+ BEQ paph3
+
+                        ; If we get here then this is not the space view or view
+                        ; $98 ???
+
+ LDA #$3F               ; Set PPU_ADDR = $3F15, so it points to sprite palette 1
+ STA PPU_ADDR           ; in the PPU
  LDA #$15
  STA PPU_ADDR
- LDA visibleColour
- STA PPU_DATA
- LDA paletteColour1
- STA PPU_DATA
- LDA paletteColour2
- STA PPU_DATA
+
+ LDA visibleColour      ; Set palette 0 to the following:
+ STA PPU_DATA           ;
+ LDA paletteColour2     ;   * Colour 0 = background (black)
+ STA PPU_DATA           ;
+ LDA paletteColour3     ;   * Colour 1 = visible colour
+ STA PPU_DATA           ;
+                        ;   * Colour 2 = paletteColour2
+                        ;
+                        ;   * Colour 3 = paletteColour3
+
+ LDA #0                 ; Change the PPU address away from the palette entries
+ STA PPU_ADDR           ; to prevent the palette being corrupted
  LDA #0
  STA PPU_ADDR
- LDA #0
- STA PPU_ADDR
- RTS
 
-.CCFBE
+ RTS                    ; Return from the subroutine
 
- LDA #$3F
- STA PPU_ADDR
+.paph3
+
+                        ; If we get here then the view is $98 ???
+
+ LDA #$3F               ; Set PPU_ADDR = $3F01, so it points to palette 0 in
+ STA PPU_ADDR           ; the PPU
  LDA #1
  STA PPU_ADDR
- LDA visibleColour
- STA PPU_DATA
- LDA paletteColour1
- STA PPU_DATA
- LDA paletteColour2
- STA PPU_DATA
+
+ LDA visibleColour      ; Set palette 0 to the following:
+ STA PPU_DATA           ;
+ LDA paletteColour2     ;   * Colour 0 = background (black)
+ STA PPU_DATA           ;
+ LDA paletteColour3     ;   * Colour 1 = visible colour
+ STA PPU_DATA           ;
+                        ;   * Colour 2 = paletteColour2
+                        ;
+                        ;   * Colour 3 = paletteColour3
+
+ LDA #0                 ; Change the PPU address away from the palette entries
+ STA PPU_ADDR           ; to prevent the palette being corrupted
  LDA #0
  STA PPU_ADDR
- LDA #0
- STA PPU_ADDR
- RTS
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: SendPaletteToPPU
+;       Name: SendPalettesToPPU
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing tiles
+;    Summary: Send the palette data from XX3 to the PPU
 ;
 ; ******************************************************************************
 
-.SendPaletteToPPU
+.SendPalettesToPPU
 
- LDA #$3F
- STA PPU_ADDR
+ LDA #$3F               ; Set PPU_ADDR = $3F01, so it points to palette 0 in
+ STA PPU_ADDR           ; the PPU
  LDA #1
  STA PPU_ADDR
- LDX #1
 
-.loop_CCFEE
+ LDX #1                 ; We are about to send the palette data from XX3 to
+                        ; the PPU, so set an index counter in X so we send the
+                        ; following:
+                        ;
+                        ;   XX3+1 goes to $3F01
+                        ;   XX3+2 goes to $3F02
+                        ;   ...
+                        ;   XX3+$30 goes to $3F30
+                        ;   XX3+$31 goes to $3F31
+                        ;
+                        ; So the following loop sends data for the four
+                        ; background palettes and the four sprite palettes
 
- LDA XX3,X
- AND #$3F
- STA PPU_DATA
- INX
- CPX #$20
- BNE loop_CCFEE
- SEC
+.sepa1
+
+ LDA XX3,X              ; Set A to the X-th entry in XX3
+
+ AND #%00111111         ; Clear bits 6 and 7
+
+ STA PPU_DATA           ; Send the palette entry to the PPU
+
+ INX                    ; Increment the loop counter
+
+ CPX #$20               ; Loop back until we have sent XX3+1 through XX3+$1F
+ BNE sepa1
+
+ SEC                    ; Subtract 559 ($022F) from cycleCount
  LDA cycleCount
  SBC #$2F
  STA cycleCount
  LDA cycleCount+1
- SBC #2
+ SBC #$02
  STA cycleCount+1
- JMP CD00F
+
+ JMP UpdateScreen+4     ; Return to UpdateScreen to continue with the next
+                        ; instruction following the call to this routine
 
 ; ******************************************************************************
 ;
@@ -2634,28 +2721,40 @@ ENDIF
 
 .UpdateScreen
 
- LDA updatePaletteInNMI
- BNE SendPaletteToPPU
-
-.CD00F
+ LDA updatePaletteInNMI ; If updatePaletteInNMI is non-zero, then jump up to
+ BNE SendPalettesToPPU   ; SendPalettesToPPU to send the palette data in XX3 to
+                        ; the PPU, before continuing with the next instruction
 
  JSR subm_C6F4
  JSR ResetPPURegisters
- LDA cycleCount
+
+ LDA cycleCount         ; Add 100 ($0064) to cycleCount
  CLC
  ADC #$64
  STA cycleCount
  LDA cycleCount+1
- ADC #0
+ ADC #$00
  STA cycleCount+1
- BMI CD027
+
+ BMI upsc1              ; If cycleCount is negative, skip the following
+                        ; instruction
+
  JSR subm_D07C
 
-.CD027
+.upsc1
 
- LDA #$1E
- STA PPU_MASK
- RTS
+ LDA #%00011110         ; Set PPU_MASK as follows:
+ STA PPU_MASK           ;
+                        ;   * Bit 0 clear = normal colour (not monochrome)
+                        ;   * Bit 1 set   = show leftmost 8 pixels of background
+                        ;   * Bit 2 set   = show sprites in leftmost 8 pixels
+                        ;   * Bit 3 set   = show background
+                        ;   * Bit 4 set   = show sprites
+                        ;   * Bit 5 clear = do not intensify greens
+                        ;   * Bit 6 clear = do not intensify blues
+                        ;   * Bit 7 clear = do not intensify reds
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -8340,14 +8439,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: TITLE_b6
+;       Name: StartScreen_b6
 ;       Type: Subroutine
 ;   Category: Start and end
-;    Summary: Call the TITLE routine in ROM bank 6
+;    Summary: Call the StartScreen routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.TITLE_b6
+.StartScreen_b6
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -8355,7 +8454,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR TITLE              ; Call TITLE, now that it is paged into memory
+ JSR StartScreen        ; Call StartScreen, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -10526,7 +10625,7 @@ ENDIF
  LDA LF422,Y
  TAY
  LDA #6
- JSR subm_B3BC
+ JSR TITLE
  BCS CF411
  LDY L03FC
  INY
