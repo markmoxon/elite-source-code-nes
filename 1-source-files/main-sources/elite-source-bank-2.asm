@@ -3786,9 +3786,9 @@ ENDMACRO
 
 .RUTOK
 
- EQUB VE
+ EQUB VE                ; Token 0:      ""
 
- EJMP 19                ; Token xxx:    "
+ EJMP 19                ; Token 1:      ""
  ETWO 'T', 'H'
  ECHR 'E'
  ECHR ' '
@@ -3859,7 +3859,7 @@ ENDMACRO
  ETWO 'E', 'D'
  EQUB VE
 
- EJMP 19                ; Token xxx:    "
+ EJMP 19                ; Token 2:      ""
  ETWO 'T', 'H'
  ECHR 'E'
  EJMP 26
@@ -3883,7 +3883,7 @@ ENDMACRO
  ETOK 154
  EQUB VE
 
- EJMP 19                ; Token xxx:    "
+ EJMP 19                ; Token 3:      ""
  ECHR 'A'
  ECHR ' '
  ERND 23
@@ -3938,7 +3938,7 @@ ENDMACRO
  ETWO 'X', 'E'
  EQUB VE
 
- EJMP 19                ; Token xxx:    "
+ EJMP 19                ; Token 4:      ""
  ECHR 'Y'
  ETWO 'E', 'S'
  ECHR ','
@@ -3999,7 +3999,7 @@ ENDMACRO
  ECHR 'O'
  EQUB VE
 
- EJMP 19                ; Token xxx:    "
+ EJMP 19                ; Token 5:      ""
  ETWO 'T', 'H'
  ECHR 'I'
  ECHR 'S'
@@ -4077,7 +4077,7 @@ ENDMACRO
  ETWO 'B', 'E'
  EQUB VE
 
- ERND 24                ; Token xxx:    "
+ ERND 24                ; Token 6:      ""
  ECHR ' '
  ECHR 'S'
  ECHR 'H'
@@ -4132,7 +4132,7 @@ ENDMACRO
  ERND 24
  EQUB VE
 
- EJMP 19                ; Token xxx:    "
+ EJMP 19                ; Token 7:      ""
  ECHR 'O'
  ECHR 'H'
  ECHR ' '
@@ -4212,7 +4212,7 @@ ENDMACRO
  ECHR 'I'
  EQUB VE
 
- EJMP 19                ; Token xxx:    "
+ EJMP 19                ; Token 8:      ""
  ECHR 'Y'
  ETWO 'O', 'U'
  ECHR ' '
@@ -4256,46 +4256,46 @@ ENDMACRO
  ETWO 'R', 'A'
  EQUB VE
 
- ERND 25                ; Token xxx:    "
+ ERND 25                ; Token 9:      ""
  EQUB VE
 
- ERND 25                ; Token xxx:    "
+ ERND 25                ; Token 10:     ""
  EQUB VE
 
- ERND 25                ; Token xxx:    "
+ ERND 25                ; Token 11:     ""
  EQUB VE
 
- ERND 25                ; Token xxx:    "
+ ERND 25                ; Token 12:     ""
  EQUB VE
 
- ERND 25                ; Token xxx:    "
+ ERND 25                ; Token 13:     ""
  EQUB VE
 
- ERND 25                ; Token xxx:    "
+ ERND 25                ; Token 14:     ""
  EQUB VE
 
- ERND 25                ; Token xxx:    "
+ ERND 25                ; Token 15:     ""
  EQUB VE
 
- ERND 25                ; Token xxx:    "
+ ERND 25                ; Token 16:     ""
  EQUB VE
 
- ERND 25                ; Token xxx:    "
+ ERND 25                ; Token 17:     ""
  EQUB VE
 
- ERND 25                ; Token xxx:    "
+ ERND 25                ; Token 18:     ""
  EQUB VE
 
- ERND 25                ; Token xxx:    "
+ ERND 25                ; Token 19:     ""
  EQUB VE
 
- ERND 25                ; Token xxx:    "
+ ERND 25                ; Token 20:     ""
  EQUB VE
 
- ERND 25                ; Token xxx:    "
+ ERND 25                ; Token 21:     ""
  EQUB VE
 
- EJMP 19                ; Token xxx:    "
+ EJMP 19                ; Token 22:     ""
  ECHR 'B'
  ECHR 'O'
  ECHR 'Y'
@@ -4324,7 +4324,7 @@ ENDMACRO
  ECHR '!'
  EQUB VE
 
- EJMP 19                ; Token xxx:    "
+ EJMP 19                ; Token 23:     ""
  ETWO 'T', 'H'
  ECHR 'E'
  ETWO 'R', 'E'
