@@ -7776,130 +7776,203 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: L96D6
+;       Name: radiusText
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: The "RADIUS" string for use in the Data on System screen
 ;
 ; ******************************************************************************
 
-.L96D6
+.radiusText
 
- EQUS "RADIUS"                                ; 96D6: 52 41 44... RAD
+ EQUS "RADIUS"
 
 ; ******************************************************************************
 ;
 ;       Name: TT25
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Universe
+;    Summary: Show the Data on System screen
+;  Deep dive: Generating system data
+;             Galaxy and system seeds
+;
+; ------------------------------------------------------------------------------
+;
+; Other entry points:
+;
+;   TT72                Used by TT70 to re-enter the routine after displaying
+;                       "MAINLY" for the economy type
 ;
 ; ******************************************************************************
 
 .TT25
 
- LDA #$96
+ LDA #$96               ; ???
  JSR subm_9645
  JSR TT111
- LDX language
+
+ LDX language           ; ???
  LDA L96C1,X
  STA XC
- LDA #$A3
- JSR NLIN3
- JSR TTX69
- JSR TT146
- LDA L04A9
+
+ LDA #163               ; Print recursive token 3 ("DATA ON {selected system
+ JSR NLIN3              ; name}" and draw a horizontal line at pixel row 19
+                        ; to box in the title
+
+ JSR TTX69              ; Print a paragraph break and set Sentence Case
+
+ JSR TT146              ; If the distance to this system is non-zero, print
+                        ; "DISTANCE", then the distance, "LIGHT YEARS" and a
+                        ; paragraph break, otherwise just move the cursor down
+                        ; a line
+
+ LDA L04A9              ; ???
  AND #6
  BEQ C9706
- LDA #$C2
+ LDA #194
  JSR subm_96C5
  JMP C970E
 
 .C9706
 
- LDA #$C2
- JSR TT68
- JSR TT162
+ LDA #194               ; Print recursive token 34 ("ECONOMY") followed by
+ JSR TT68               ; a colon
+
+ JSR TT162              ; ???
 
 .C970E
 
- LDA QQ3
- CLC
- ADC #1
- LSR A
- CMP #2
+ LDA QQ3                ; The system economy is determined by the value in QQ3,
+                        ; so fetch it into A. First we work out the system's
+                        ; prosperity as follows:
+                        ;
+                        ;   QQ3 = 0 or 5 = %000 or %101 = Rich
+                        ;   QQ3 = 1 or 6 = %001 or %110 = Average
+                        ;   QQ3 = 2 or 7 = %010 or %111 = Poor
+                        ;   QQ3 = 3 or 4 = %011 or %100 = Mainly
+
+ CLC                    ; If (QQ3 + 1) >> 1 = %10, i.e. if QQ3 = %011 or %100
+ ADC #1                 ; (3 or 4), then call TT70, which prints "MAINLY " and
+ LSR A                  ; jumps down to TT72 to print the type of economy
+ CMP #%00000010
  BEQ TT70
- LDA QQ3
- BCC C9721
- SBC #5
- CLC
 
-.C9721
+ LDA QQ3                ; If (QQ3 + 1) >> 1 < %10, i.e. if QQ3 = %000, %001 or
+ BCC TT71               ; %010 (0, 1 or 2), then jump to TT71 with A set to the
+                        ; original value of QQ3
 
- ADC #$AA
- JSR TT27_b2
+ SBC #5                 ; Here QQ3 = %101, %110 or %111 (5, 6 or 7), so subtract
+ CLC                    ; 5 to bring it down to 0, 1 or 2 (the C flag is already
+                        ; set so the SBC will be correct)
+
+.TT71
+
+ ADC #170               ; A is now 0, 1 or 2, so print recursive token 10 + A.
+ JSR TT27_b2            ; This means that:
+                        ;
+                        ;   QQ3 = 0 or 5 prints token 10 ("RICH ")
+                        ;   QQ3 = 1 or 6 prints token 11 ("AVERAGE ")
+                        ;   QQ3 = 2 or 7 prints token 12 ("POOR ")
 
 .TT72
 
- LDA QQ3
- LSR A
- LSR A
- CLC
- ADC #$A8
- JSR TT60
- LDA L04A9
+ LDA QQ3                ; Now to work out the type of economy, which is
+ LSR A                  ; determined by bit 2 of QQ3, as follows:
+ LSR A                  ;
+                        ;   QQ3 bit 2 = 0 = Industrial
+                        ;   QQ3 bit 2 = 1 = Agricultural
+                        ;
+                        ; So we fetch QQ3 into A and set A = bit 2 of QQ3 using
+                        ; two right shifts (which will work as QQ3 is only a
+                        ; 3-bit number)
+
+ CLC                    ; Print recursive token 8 + A, followed by a paragraph
+ ADC #168               ; break and Sentence Case, so:
+ JSR TT60               ;
+                        ;   QQ3 bit 2 = 0 prints token 8 ("INDUSTRIAL")
+                        ;   QQ3 bit 2 = 1 prints token 9 ("AGRICULTURAL")
+
+ LDA L04A9              ; ???
  AND #4
  BEQ C9740
- LDA #$A2
+ LDA #162
  JSR subm_96C5
  JMP C9748
 
 .C9740
 
- LDA #$A2
- JSR TT68
- JSR TT162
+ LDA #162               ; Print recursive token 2 ("GOVERNMENT") followed by
+ JSR TT68               ; a colon
+
+ JSR TT162              ; ???
 
 .C9748
 
- LDA QQ4
- CLC
- ADC #$B1
- JSR TT60
- LDA #$C4
- JSR TT68
- LDX QQ5
- INX
- CLC
- JSR pr2
- JSR TTX69
- LDA #$C1
- JSR TT68
- LDX QQ7
- LDY QQ7+1
+ LDA QQ4                ; The system's government is determined by the value in
+                        ; QQ4, so fetch it into A
+
+ CLC                    ; Print recursive token 17 + A, followed by a paragraph
+ ADC #177               ; break and Sentence Case, so:
+ JSR TT60               ;
+                        ;   QQ4 = 0 prints token 17 ("ANARCHY")
+                        ;   QQ4 = 1 prints token 18 ("FEUDAL")
+                        ;   QQ4 = 2 prints token 19 ("MULTI-GOVERNMENT")
+                        ;   QQ4 = 3 prints token 20 ("DICTATORSHIP")
+                        ;   QQ4 = 4 prints token 21 ("COMMUNIST")
+                        ;   QQ4 = 5 prints token 22 ("CONFEDERACY")
+                        ;   QQ4 = 6 prints token 23 ("DEMOCRACY")
+                        ;   QQ4 = 7 prints token 24 ("CORPORATE STATE")
+
+ LDA #196               ; Print recursive token 36 ("TECH.LEVEL") followed by a
+ JSR TT68               ; colon
+
+ LDX QQ5                ; Fetch the tech level from QQ5 and increment it, as it
+ INX                    ; is stored in the range 0-14 but the displayed range
+                        ; should be 1-15
+
+ CLC                    ; Call pr2 to print the technology level as a 3-digit
+ JSR pr2                ; number without a decimal point (by clearing the C
+                        ; flag)
+
+ JSR TTX69              ; Print a paragraph break and set Sentence Case
+
+ LDA #193               ; Print recursive token 33 ("GROSS PRODUCTIVITY"),
+ JSR TT68               ; followed by colon
+
+ LDX QQ7                ; Fetch the 16-bit productivity value from QQ7 into
+ LDY QQ7+1              ; (Y X)
+
  CLC
  LDA #6
  JSR TT11
+
  JSR TT162
+
  LDA #0
  STA QQ17
- LDA #$4D
+
+ LDA #'M'
  JSR DASC_b2
- LDA #$43
+
+ LDA #'C'
  JSR TT27_b2
- LDA #$52
+
+ LDA #'R'
  JSR TT60
+
  LDY #0
 
 .loop_C978A
 
- LDA L96D6,Y
+ LDA radiusText,Y
  JSR TT27_b2
  INY
  CPY #5
  BCC loop_C978A
- LDA L96D6,Y
+
+ LDA radiusText,Y
  JSR TT68
+
  LDA QQ15+5
  LDX QQ15+3
  AND #$0F
@@ -7909,22 +7982,26 @@ ENDIF
  LDA #5
  JSR TT11
  JSR TT162
- LDA #$6B
+
+ LDA #'k'               ; Print "km"
  JSR DASC_b2
- LDA #$6D
+ LDA #'m'
  JSR DASC_b2
+
  JSR TTX69
+
  LDA L04A9
  AND #5
  BEQ C97C9
- LDA #$C0
+
+ LDA #192
  JSR subm_96C5
  JMP C97CE
 
 .C97C9
 
- LDA #$C0
- JSR TT68
+ LDA #192               ; Print recursive token 32 ("POPULATION") followed by a
+ JSR TT68               ; colon
 
 .C97CE
 
@@ -7936,31 +8013,45 @@ ENDIF
  CLC
  LDA #1
  JSR pr2+2
- LDA #$C6
- JSR TT60
+
+ LDA #198               ; Print recursive token 38 (" BILLION"), followed by a
+ JSR TT60               ; paragraph break and Sentence Case
+
  LDA L04A9
  AND #2
  BNE C97EC
- LDA #$28
+ LDA #40
  JSR TT27_b2
 
 .C97EC
 
  LDA QQ15+4
- BMI C9826
- LDA #$BC
- JSR TT27_b2
+ BMI TT206
+
+ LDA #188               ; Bit 7 of s2_lo is clear, so print recursive token 28
+ JSR TT27_b2            ; ("HUMAN COLONIAL")
+
  JMP C9861
 
 .TT207
 
- LDA QQ15+5
- AND #3
- CLC
+ LDA QQ15+5             ; Now for the actual species, so take bits 0-1 of
+ AND #%00000011         ; s2_hi, add this to the value of A that we used for
+ CLC                    ; the third adjective, and take bits 0-2 of the result
  ADC QQ19
- AND #7
- ADC #$F2
- JSR TT27_b2
+ AND #%00000111
+
+ ADC #242               ; A = 0 to 7, so print recursive token 82 + A, so:
+ JSR TT27_b2            ;
+                        ;   A = 0 prints token 76 ("RODENT")
+                        ;   A = 1 prints token 76 ("FROG")
+                        ;   A = 2 prints token 76 ("LIZARD")
+                        ;   A = 3 prints token 76 ("LOBSTER")
+                        ;   A = 4 prints token 76 ("BIRD")
+                        ;   A = 5 prints token 76 ("HUMANOID")
+                        ;   A = 6 prints token 76 ("FELINE")
+                        ;   A = 7 prints token 76 ("INSECT")
+
  LDA QQ15+5
  LSR A
  LSR A
@@ -7968,20 +8059,20 @@ ENDIF
  LSR A
  LSR A
  CMP #6
- BCS C9817
- ADC #$E6
+ BCS TT205
+ ADC #230
  JSR subm_96B9
 
-.C9817
+.TT205
 
  LDA QQ19
  CMP #6
  BCS C9861
- ADC #$EC
+ ADC #236
  JSR subm_96B9
  JMP C9861
 
-.C9826
+.TT206
 
  LDA QQ15+3
  EOR QQ15+1
@@ -7998,7 +8089,7 @@ ENDIF
  LSR A
  CMP #6
  BCS C9846
- ADC #$E6
+ ADC #230
  JSR spc
 
 .C9846
@@ -8006,8 +8097,16 @@ ENDIF
  LDA QQ19
  CMP #6
  BCS C9852
- ADC #$EC
- JSR spc
+
+ ADC #236               ; Otherwise A = 0 to 5, so print recursive token
+ JSR spc                ; 76 + A, followed by a space, so:
+                        ;
+                        ;   A = 0 prints token 76 ("SLIMY") and a space
+                        ;   A = 1 prints token 77 ("BUG-EYED") and a space
+                        ;   A = 2 prints token 78 ("HORNED") and a space
+                        ;   A = 3 prints token 79 ("BONY") and a space
+                        ;   A = 4 prints token 80 ("FAT") and a space
+                        ;   A = 5 prints token 81 ("FURRY") and a space
 
 .C9852
 
@@ -8016,7 +8115,7 @@ ENDIF
  CLC
  ADC QQ19
  AND #7
- ADC #$F2
+ ADC #242
  JSR TT27_b2
 
 .C9861
@@ -8024,15 +8123,23 @@ ENDIF
  LDA L04A9
  AND #2
  BNE C986D
- LDA #$29
+ LDA #41
  JSR TT27_b2
 
 .C986D
 
- JSR TTX69
- JSR PDESC_b2
- JSR subm_EB8C
- LDA #$16
+ JSR TTX69              ; Print a paragraph break and set Sentence Case
+
+                        ; By this point, ZZ contains the current system number
+                        ; which PDESC requires. It gets put there in the TT102
+                        ; routine, which calls TT111 to populate ZZ before
+                        ; calling TT25 (this routine)
+
+ JSR PDESC_b2           ; Call PDESC to print the system's extended description
+
+ JSR subm_EB8C          ; ???
+
+ LDA #22
  STA XC
  LDA #8
  STA YC
