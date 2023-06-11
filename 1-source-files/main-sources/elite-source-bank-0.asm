@@ -2721,7 +2721,7 @@ ENDIF
 .STATUS
 
  LDA #$98
- JSR subm_9645
+ JSR ChangeViewRow0
  JSR subm_9D09
  LDA #7
  STA XC
@@ -2846,7 +2846,7 @@ ENDIF
  LDA CNT
  CLC
  ADC #$60
- JSR subm_96B9
+ JSR PrintSpaceAndToken
 
 .C88FB
 
@@ -7460,19 +7460,29 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_9645
+;       Name: ChangeViewRow0
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Utility routines
+;    Summary: Clear the screen, set the current view type and move the cursor to
+;             row 0
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The type of the new current view (see QQ11 for a list of
+;                       view types)
 ;
 ; ******************************************************************************
 
-.subm_9645
+.ChangeViewRow0
 
- JSR TT66
- LDA #0
+ JSR TT66               ; Clear the screen and set the current view type
+
+ LDA #0                 ; Move the text cursor to row 0
  STA YC
- RTS
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -7727,59 +7737,85 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_96B9
+;       Name: PrintSpaceAndToken
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print a space followed by a text token
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The character to be printed
 ;
 ; ******************************************************************************
 
-.subm_96B9
+.PrintSpaceAndToken
 
- PHA
- JSR TT162
- PLA
- JMP TT27_b2
+ PHA                    ; Store the character to print on the stack
+
+ JSR TT162              ; Print a space
+
+ PLA                    ; Retrieve the character to print from the stack
+
+ JMP TT27_b2            ; Print the character in A, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: L96C1
+;       Name: tabDataOnSystem
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: The column for the Data on System title for each language
 ;
 ; ******************************************************************************
 
-.L96C1
+.tabDataOnSystem
 
- EQUB 9, 9, 7, 9                              ; 96C1: 09 09 07... ...
+ EQUB 9                 ; English
+
+ EQUB 9                 ; German
+
+ EQUB 7                 ; French
+
+ EQUB 9                 ; There is no fourth language, so this byte is ignored
 
 ; ******************************************************************************
 ;
-;       Name: subm_96C5
+;       Name: PrintTokenAndColon
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print a character followed by a colon, drawing in both bit planes
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The character to be printed
 ;
 ; ******************************************************************************
 
-.subm_96C5
+.PrintTokenAndColon
 
+ JSR TT27_b2            ; Print the character in A
+
+ LDA #3                 ; Set the font bit plane to print in both planes 1 and 2
+ STA fontBitPlane
+
+ LDA #':'               ; Print a colon
  JSR TT27_b2
- LDA #3
- STA L0037
- LDA #$3A
- JSR TT27_b2
- LDA #1
- STA L0037
- RTS
+
+ LDA #1                 ; Set the font bit plane to plane 1
+ STA fontBitPlane
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: radiusText
 ;       Type: Variable
 ;   Category: Text
-;    Summary: The "RADIUS" string for use in the Data on System screen
+;    Summary: The text string "RADIUS" for use in the Data on System screen
 ;
 ; ******************************************************************************
 
@@ -7807,12 +7843,14 @@ ENDIF
 
 .TT25
 
- LDA #$96               ; ???
- JSR subm_9645
- JSR TT111
+ LDA #$96               ; Change to view $96 and move the text cursor to row 0
+ JSR ChangeViewRow0
 
- LDX language           ; ???
- LDA L96C1,X
+ JSR TT111              ; Select the system closest to galactic coordinates
+                        ; (QQ9, QQ10)
+
+ LDX language           ; Move the text cursor to the correct column for the
+ LDA tabDataOnSystem,X  ; Data on System title in the chosen language
  STA XC
 
  LDA #163               ; Print recursive token 3 ("DATA ON {selected system
@@ -7827,20 +7865,22 @@ ENDIF
                         ; a line
 
  LDA L04A9              ; ???
- AND #6
- BEQ C9706
- LDA #194
- JSR subm_96C5
- JMP C970E
+ AND #%00000110
+ BEQ dsys1
 
-.C9706
+ LDA #194               ; Print recursive token 34 ("ECONOMY") followed by
+ JSR PrintTokenAndColon ; colon
+
+ JMP dsys2              ; Jump to dsys2 to print the economy type
+
+.dsys1
 
  LDA #194               ; Print recursive token 34 ("ECONOMY") followed by
  JSR TT68               ; a colon
 
- JSR TT162              ; ???
+ JSR TT162              ; Print a space
 
-.C970E
+.dsys2
 
  LDA QQ3                ; The system economy is determined by the value in QQ3,
                         ; so fetch it into A. First we work out the system's
@@ -7893,20 +7933,22 @@ ENDIF
                         ;   QQ3 bit 2 = 1 prints token 9 ("AGRICULTURAL")
 
  LDA L04A9              ; ???
- AND #4
- BEQ C9740
- LDA #162
- JSR subm_96C5
- JMP C9748
+ AND #%00000100
+ BEQ dsys3
 
-.C9740
+ LDA #162               ; Print recursive token 2 ("GOVERNMENT") followed by
+ JSR PrintTokenAndColon ; colon
+
+ JMP dsys4              ; Jump to dsys4 to print the government type
+
+.dsys3
 
  LDA #162               ; Print recursive token 2 ("GOVERNMENT") followed by
  JSR TT68               ; a colon
 
- JSR TT162              ; ???
+ JSR TT162              ; Print a space
 
-.C9748
+.dsys4
 
  LDA QQ4                ; The system's government is determined by the value in
                         ; QQ4, so fetch it into A
@@ -7936,102 +7978,232 @@ ENDIF
 
  JSR TTX69              ; Print a paragraph break and set Sentence Case
 
- LDA #193               ; Print recursive token 33 ("GROSS PRODUCTIVITY"),
- JSR TT68               ; followed by colon
+ LDA #193               ; Print recursive token 33 ("TURNOVER"), followed
+ JSR TT68               ; by a colon
 
  LDX QQ7                ; Fetch the 16-bit productivity value from QQ7 into
  LDY QQ7+1              ; (Y X)
 
- CLC
+ CLC                    ; Print (Y X) to 6 digits with no decimal point
  LDA #6
  JSR TT11
 
- JSR TT162
+ JSR TT162              ; Print a space
 
- LDA #0
+ LDA #0                 ; Set QQ17 = 0 to switch to ALL CAPS
  STA QQ17
 
- LDA #'M'
- JSR DASC_b2
-
+ LDA #'M'               ; Print "MCR", followed by a paragraph break and
+ JSR DASC_b2            ; Sentence Case
  LDA #'C'
  JSR TT27_b2
-
  LDA #'R'
  JSR TT60
 
- LDY #0
+ LDY #0                 ; We now print the string in radiusText ("RADIUS"), so
+                        ; set a character counter in Y
 
-.loop_C978A
+.dsys5
 
- LDA radiusText,Y
+ LDA radiusText,Y       ; Print the Y-th character from radiusText
  JSR TT27_b2
- INY
- CPY #5
- BCC loop_C978A
 
- LDA radiusText,Y
- JSR TT68
+ INY                    ; Increment the counter
 
- LDA QQ15+5
- LDX QQ15+3
- AND #$0F
+ CPY #5                 ; Loop back until we have printed the first five letters
+ BCC dsys5              ; of the string
+
+ LDA radiusText,Y       ; Print the last letter of the string, followed by a
+ JSR TT68               ; colon
+
+ LDA QQ15+5             ; Set A = QQ15+5
+ LDX QQ15+3             ; Set X = QQ15+3
+
+ AND #%00001111         ; Set Y = (A AND %1111) + 11
  CLC
- ADC #$0B
+ ADC #11
  TAY
- LDA #5
- JSR TT11
- JSR TT162
+
+ LDA #5                 ; Print (Y X) to 5 digits, not including a decimal
+ JSR TT11               ; point, as the C flag will be clear (as the maximum
+                        ; radius will always fit into 16 bits)
+
+ JSR TT162              ; Print a space
 
  LDA #'k'               ; Print "km"
  JSR DASC_b2
  LDA #'m'
  JSR DASC_b2
 
- JSR TTX69
+ JSR TTX69              ; Print a paragraph break and set Sentence Case
 
- LDA L04A9
- AND #5
- BEQ C97C9
+ LDA L04A9              ; ???
+ AND #%00000101
+ BEQ dsys6
 
- LDA #192
- JSR subm_96C5
- JMP C97CE
+ LDA #192               ; Print recursive token 32 ("POPULATION") followed by a
+ JSR PrintTokenAndColon ; colon
 
-.C97C9
+ JMP dsys7              ; ; Jump to dsys7 to print the population
+
+.dsys6
 
  LDA #192               ; Print recursive token 32 ("POPULATION") followed by a
  JSR TT68               ; colon
 
-.C97CE
+.dsys7
 
- LDA QQ6
- LSR A
- LSR A
+ LDA QQ6                ; Set X = QQ6 / 8
+ LSR A                  ;
+ LSR A                  ; We use this as the population figure, in billions
  LSR A
  TAX
- CLC
- LDA #1
- JSR pr2+2
+
+ CLC                    ; Clear the C flag so we do not print a decimal point in
+                        ; the call to pr2+2
+
+ LDA #1                 ; Set the number of digits to 1 for the call to pr2+2
+
+ JSR pr2+2              ; Print the population as a 1-digit number without a
+                        ; decimal point
 
  LDA #198               ; Print recursive token 38 (" BILLION"), followed by a
  JSR TT60               ; paragraph break and Sentence Case
 
- LDA L04A9
- AND #2
- BNE C97EC
- LDA #40
+ LDA L04A9              ; ???
+ AND #%00000010
+ BNE dsys8
+
+ LDA #'('               ; Print an opening bracket
  JSR TT27_b2
 
-.C97EC
+.dsys8
 
- LDA QQ15+4
- BMI TT206
+ LDA QQ15+4             ; Now to calculate the species, so first check bit 7 of
+ BMI TT205              ; s2_lo, and if it is set, jump to TT205 as this is an
+                        ; alien species
 
  LDA #188               ; Bit 7 of s2_lo is clear, so print recursive token 28
  JSR TT27_b2            ; ("HUMAN COLONIAL")
 
- JMP C9861
+ JMP TT76               ; Jump to TT76 to print "S)" and a paragraph break, so
+                        ; the whole species string is "(HUMAN COLONIALS)"
+
+.TT75
+
+ LDA QQ15+5             ; This is an alien species, so we take bits 0-1 of
+ AND #%00000011         ; s2_hi, add this to the value of A that we used for
+ CLC                    ; the third adjective, and take bits 0-2 of the result
+ ADC QQ19
+ AND #%00000111
+
+ ADC #242               ; A = 0 to 7, so print recursive token 82 + A, so:
+ JSR TT27_b2            ;
+                        ;   A = 0 prints token 76 ("RODENT")
+                        ;   A = 1 prints token 76 ("FROG")
+                        ;   A = 2 prints token 76 ("LIZARD")
+                        ;   A = 3 prints token 76 ("LOBSTER")
+                        ;   A = 4 prints token 76 ("BIRD")
+                        ;   A = 5 prints token 76 ("HUMANOID")
+                        ;   A = 6 prints token 76 ("FELINE")
+                        ;   A = 7 prints token 76 ("INSECT")
+
+ LDA QQ15+5             ; Now for the second adjective, so shift s2_hi so we get
+ LSR A                  ; A = bits 5-7 of s2_hi
+ LSR A
+ LSR A
+ LSR A
+ LSR A
+
+ CMP #6                 ; If A >= 6, jump to dsys9 to skip the second adjective
+ BCS dsys9
+
+ ADC #230               ; Otherwise A = 0 to 5, so print a space followed by
+ JSR PrintSpaceAndToken ; recursive token 70 + A, so:
+                        ;
+                        ;   A = 0 prints token 70 ("GREEN") and a space
+                        ;   A = 1 prints token 71 ("RED") and a space
+                        ;   A = 2 prints token 72 ("YELLOW") and a space
+                        ;   A = 3 prints token 73 ("BLUE") and a space
+                        ;   A = 4 prints token 74 ("BLACK") and a space
+                        ;   A = 5 prints token 75 ("HARMLESS") and a space
+
+.dsys9
+
+ LDA QQ19               ; Fetch the value that we calculated for the third
+                        ; adjective
+
+ CMP #6                 ; If A >= 6, jump to TT76 to skip the third adjective
+ BCS TT76
+
+ ADC #236               ; Otherwise A = 0 to 5, so print a space followed by
+ JSR PrintSpaceAndToken ; recursive token 76 + A, so:
+                        ;
+                        ;   A = 0 prints token 76 ("SLIMY") and a space
+                        ;   A = 1 prints token 77 ("BUG-EYED") and a space
+                        ;   A = 2 prints token 78 ("HORNED") and a space
+                        ;   A = 3 prints token 79 ("BONY") and a space
+                        ;   A = 4 prints token 80 ("FAT") and a space
+                        ;   A = 5 prints token 81 ("FURRY") and a space
+
+ JMP TT76               ; Jump to TT76 as we have finished printing the
+                        ; species string
+
+.TT205
+
+                        ; In NES Elite, there is no first adjective (in the
+                        ; other versions, the first adjective can be "Large",
+                        ; "Fierce" or "Small", but this is omitted in NES Elite
+                        ; as there isn't space on-screen)
+
+ LDA QQ15+3             ; In preparation for the third adjective, EOR the high
+ EOR QQ15+1             ; bytes of s0 and s1 and extract bits 0-2 of the result:
+ AND #%00000111         ;
+ STA QQ19               ;   A = (s0_hi EOR s1_hi) AND %111
+                        ;
+                        ; storing the result in QQ19 so we can use it later
+
+ LDA L04A9              ; If bit 2 of L04A9 is set, jump to TT75 to print the
+ AND #%00000100         ; species and then the third adjective, e.g. "Rodents
+ BNE TT75               ; Furry"
+
+ LDA QQ15+5             ; Now for the second adjective, so shift s2_hi so we get
+ LSR A                  ; A = bits 5-7 of s2_hi
+ LSR A
+ LSR A
+ LSR A
+ LSR A
+
+ CMP #6                 ; If A >= 6, jump to TT206 to skip the second adjective
+ BCS TT206
+
+ ADC #230               ; Otherwise A = 0 to 5, so print recursive token
+ JSR spc                ; 70 + A, followed by a space, so:
+                        ;
+                        ;   A = 0 prints token 70 ("GREEN") and a space
+                        ;   A = 1 prints token 71 ("RED") and a space
+                        ;   A = 2 prints token 72 ("YELLOW") and a space
+                        ;   A = 3 prints token 73 ("BLUE") and a space
+                        ;   A = 4 prints token 74 ("BLACK") and a space
+                        ;   A = 5 prints token 75 ("HARMLESS") and a space
+
+.TT206
+
+ LDA QQ19               ; Fetch the value that we calculated for the third
+                        ; adjective
+
+ CMP #6                 ; If A >= 6, jump to TT207 to skip the third adjective
+ BCS TT207
+
+ ADC #236               ; Otherwise A = 0 to 5, so print recursive token
+ JSR spc                ; 76 + A, followed by a space, so:
+                        ;
+                        ;   A = 0 prints token 76 ("SLIMY") and a space
+                        ;   A = 1 prints token 77 ("BUG-EYED") and a space
+                        ;   A = 2 prints token 78 ("HORNED") and a space
+                        ;   A = 3 prints token 79 ("BONY") and a space
+                        ;   A = 4 prints token 80 ("FAT") and a space
+                        ;   A = 5 prints token 81 ("FURRY") and a space
 
 .TT207
 
@@ -8052,81 +8224,16 @@ ENDIF
                         ;   A = 6 prints token 76 ("FELINE")
                         ;   A = 7 prints token 76 ("INSECT")
 
- LDA QQ15+5
- LSR A
- LSR A
- LSR A
- LSR A
- LSR A
- CMP #6
- BCS TT205
- ADC #230
- JSR subm_96B9
+.TT76
 
-.TT205
+ LDA L04A9              ; ???
+ AND #%00000010
+ BNE dsys10
 
- LDA QQ19
- CMP #6
- BCS C9861
- ADC #236
- JSR subm_96B9
- JMP C9861
-
-.TT206
-
- LDA QQ15+3
- EOR QQ15+1
- AND #7
- STA QQ19
- LDA L04A9
- AND #4
- BNE TT207
- LDA QQ15+5
- LSR A
- LSR A
- LSR A
- LSR A
- LSR A
- CMP #6
- BCS C9846
- ADC #230
- JSR spc
-
-.C9846
-
- LDA QQ19
- CMP #6
- BCS C9852
-
- ADC #236               ; Otherwise A = 0 to 5, so print recursive token
- JSR spc                ; 76 + A, followed by a space, so:
-                        ;
-                        ;   A = 0 prints token 76 ("SLIMY") and a space
-                        ;   A = 1 prints token 77 ("BUG-EYED") and a space
-                        ;   A = 2 prints token 78 ("HORNED") and a space
-                        ;   A = 3 prints token 79 ("BONY") and a space
-                        ;   A = 4 prints token 80 ("FAT") and a space
-                        ;   A = 5 prints token 81 ("FURRY") and a space
-
-.C9852
-
- LDA QQ15+5
- AND #3
- CLC
- ADC QQ19
- AND #7
- ADC #242
+ LDA #')'               ; Print a closing bracket
  JSR TT27_b2
 
-.C9861
-
- LDA L04A9
- AND #2
- BNE C986D
- LDA #41
- JSR TT27_b2
-
-.C986D
+.dsys10
 
  JSR TTX69              ; Print a paragraph break and set Sentence Case
 
@@ -8139,17 +8246,21 @@ ENDIF
 
  JSR subm_EB8C          ; ???
 
- LDA #22
+ LDA #22                ; Move the text cursor to column 22
  STA XC
- LDA #8
+
+ LDA #8                 ; Move the text cursor to row 8
  STA YC
- LDA #1
+
+ LDA #1                 ; ???
  STA K+2
  LDA #8
  STA K+3
+
  LDX #8
  LDY #7
  JSR subm_B219_b3
+
  JMP subm_8926
 
 ; ******************************************************************************
@@ -8516,7 +8627,7 @@ ENDIF
 .TT213
 
  LDA #$97
- JSR subm_9645
+ JSR ChangeViewRow0
  LDA #$0B
  STA XC
  LDA #$A4
@@ -9684,7 +9795,7 @@ ENDIF
  LDA #$BA
  CMP QQ11
  BEQ loop_C9FDD
- JSR subm_9645
+ JSR ChangeViewRow0
  LDA #5
  STA XC
  LDA #$A7
@@ -9879,7 +9990,7 @@ ENDIF
 
  TAY
  LDX #2
- STX L0037
+ STX fontBitPlane
  CLC
  LDX language
  ADC L9FD9,X
@@ -9887,7 +9998,7 @@ ENDIF
  TYA
  JSR TT151
  LDX #1
- STX L0037
+ STX fontBitPlane
  RTS
 
 ; ******************************************************************************
@@ -10449,11 +10560,11 @@ ENDIF
 .subm_EQSHP2
 
  LDX #2
- STX L0037
+ STX fontBitPlane
  LDX XX13
  JSR subm_EQSHP3+2
  LDX #1
- STX L0037
+ STX fontBitPlane
  RTS
 
 ; ******************************************************************************
@@ -10620,7 +10731,7 @@ ENDIF
 .EQSHP
 
  LDA #$B9
- JSR subm_9645
+ JSR ChangeViewRow0
  LDX language
  LDA LA48A,X
  STA XC
@@ -11076,10 +11187,10 @@ ENDIF
 .subm_A6DC
 
  LDA #2
- STA L0037
+ STA fontBitPlane
  JSR subm_A6A8
  LDA #1
- STA L0037
+ STA fontBitPlane
  TYA
  PHA
  JSR subm_8980
@@ -11127,10 +11238,10 @@ ENDIF
  DEY
  BNE loop_CA706
  LDA #2
- STA L0037
+ STA fontBitPlane
  JSR subm_A6A8
  LDA #1
- STA L0037
+ STA fontBitPlane
  LDA #$0B
  STA XC
  STA K+2
@@ -11450,7 +11561,7 @@ ENDIF
 .CA87D
 
  LDA #$69
- JSR subm_96C5
+ JSR PrintTokenAndColon
  JSR TT162
  LDX QQ14
  SEC
@@ -11576,7 +11687,7 @@ ENDIF
 
 .TT73
 
- LDA #$3A
+ LDA #':'
  JMP TT27_b2
 
 ; ******************************************************************************
@@ -12533,10 +12644,10 @@ ENDIF
 
 .YESNO
 
- LDA L0037
+ LDA fontBitPlane
  PHA
  LDA #2
- STA L0037
+ STA fontBitPlane
  LDA #1
  PHA
 
@@ -12572,7 +12683,7 @@ ENDIF
  PLA
  TAX
  PLA
- STA L0037
+ STA fontBitPlane
  TXA
  RTS
 
@@ -13751,7 +13862,7 @@ ENDIF
  JSR subm_B906_b6
  JSR subm_F3AB
  LDA #1
- STA L0037
+ STA fontBitPlane
  LDX #$FF
  STX QQ11a
  TXS

@@ -6054,10 +6054,10 @@ ENDIF
 .subm_B6BB
 
  LDX #2
- STX L0037
+ STX fontBitPlane
  JSR subm_B659
  LDX #1
- STX L0037
+ STX fontBitPlane
  RTS
 
 ; ******************************************************************************
@@ -6089,7 +6089,7 @@ ENDIF
 .subm_B6D0
 
  LDX #2
- STX L0037
+ STX fontBitPlane
  LDX #$0B
  STX XC
  PHA
@@ -6100,7 +6100,7 @@ ENDIF
  PLA
  JSR subm_B68B
  LDX #1
- STX L0037
+ STX fontBitPlane
  RTS
 
 ; ******************************************************************************
@@ -6915,13 +6915,13 @@ ENDIF
 
  TAX
  STY YSAV
- LDA L0037
+ LDA fontBitPlane
  PHA
  LDA QQ11
  AND #$20
  BEQ CBADB
  LDA #1
- STA L0037
+ STA fontBitPlane
 
 .CBADB
 
@@ -6982,7 +6982,7 @@ ENDIF
 
  TAX
  PLA
- STA L0037
+ STA fontBitPlane
  LDY YSAV
  TXA
  RTS
