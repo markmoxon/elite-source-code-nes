@@ -2561,7 +2561,7 @@ ENDIF
  STA PPU_MASK           ;
                         ;   * Bit 0 clear = normal colour (not monochrome)
                         ;   * Bit 1 clear = hide leftmost 8 pixels of background
-                        ;   * Bit 2 clear  = hide sprites in leftmost 8 pixels
+                        ;   * Bit 2 clear = hide sprites in leftmost 8 pixels
                         ;   * Bit 3 clear = hide background
                         ;   * Bit 4 clear = hide sprites
                         ;   * Bit 5 clear = do not intensify greens
@@ -2594,7 +2594,7 @@ ENDIF
 
  LDA #$3F               ; Set PPU_ADDR = $3F01, so it points to palette 0 in
  STA PPU_ADDR           ; the PPU
- LDA #1
+ LDA #$01
  STA PPU_ADDR
 
  LDA hiddenColour       ; Set A to the colour to use for hidden pixels
@@ -2612,9 +2612,9 @@ ENDIF
                         ; So pixels in colour 1 will be invisible, while pixels
                         ; in colour 2 will be visible
 
- LDA #0                 ; Change the PPU address away from the palette entries
+ LDA #$00               ; Change the PPU address away from the palette entries
  STA PPU_ADDR           ; to prevent the palette being corrupted
- LDA #0
+ LDA #$00
  STA PPU_ADDR
 
  RTS                    ; Return from the subroutine
@@ -2623,7 +2623,7 @@ ENDIF
 
  LDA #$3F               ; Set PPU_ADDR = $3F01, so it points to palette 0 in
  STA PPU_ADDR           ; the PPU
- LDA #1
+ LDA #$01
  STA PPU_ADDR
 
  LDA hiddenColour       ; Set A to the colour to use for hidden pixels
@@ -2641,9 +2641,9 @@ ENDIF
                         ; So pixels in colour 1 will be visible, while pixels
                         ; in colour 2 will be invisible
 
- LDA #0                 ; Change the PPU address away from the palette entries
+ LDA #$00               ; Change the PPU address away from the palette entries
  STA PPU_ADDR           ; to prevent the palette being corrupted
- LDA #0
+ LDA #$00
  STA PPU_ADDR
 
  RTS                    ; Return from the subroutine
@@ -2673,9 +2673,9 @@ ENDIF
                         ;
                         ;   * Colour 3 = paletteColour3
 
- LDA #0                 ; Change the PPU address away from the palette entries
+ LDA #$00               ; Change the PPU address away from the palette entries
  STA PPU_ADDR           ; to prevent the palette being corrupted
- LDA #0
+ LDA #$00
  STA PPU_ADDR
 
  RTS                    ; Return from the subroutine
@@ -2686,7 +2686,7 @@ ENDIF
 
  LDA #$3F               ; Set PPU_ADDR = $3F01, so it points to palette 0 in
  STA PPU_ADDR           ; the PPU
- LDA #1
+ LDA #$01
  STA PPU_ADDR
 
  LDA visibleColour      ; Set palette 0 to the following:
@@ -2699,9 +2699,9 @@ ENDIF
                         ;
                         ;   * Colour 3 = paletteColour3
 
- LDA #0                 ; Change the PPU address away from the palette entries
+ LDA #$00               ; Change the PPU address away from the palette entries
  STA PPU_ADDR           ; to prevent the palette being corrupted
- LDA #0
+ LDA #$00
  STA PPU_ADDR
 
  RTS                    ; Return from the subroutine
@@ -2719,7 +2719,7 @@ ENDIF
 
  LDA #$3F               ; Set PPU_ADDR = $3F01, so it points to palette 0 in
  STA PPU_ADDR           ; the PPU
- LDA #1
+ LDA #$01
  STA PPU_ADDR
 
  LDX #1                 ; We are about to send the palette data from XX3 to
@@ -2771,7 +2771,7 @@ ENDIF
 .UpdateScreen
 
  LDA updatePaletteInNMI ; If updatePaletteInNMI is non-zero, then jump up to
- BNE SendPalettesToPPU   ; SendPalettesToPPU to send the palette data in XX3 to
+ BNE SendPalettesToPPU  ; SendPalettesToPPU to send the palette data in XX3 to
                         ; the PPU, before continuing with the next instruction
 
  JSR SendBuffersToPPU
@@ -2816,15 +2816,18 @@ ENDIF
 
 .ResetPPURegisters
 
- LDX #$90
+ LDX #%10010000
+
  LDA palettePhase
  BNE CD035
- LDX #$91
+
+ LDX #%10010001
 
 .CD035
 
  STX PPU_CTRL
  STX ppuCtrlCopy
+
  LDA #$20
  LDX palettePhase
  BNE CD042
@@ -2833,16 +2836,18 @@ ENDIF
 .CD042
 
  STA PPU_ADDR
- LDA #0
+ LDA #$00
  STA PPU_ADDR
+
+ LDA PPU_DATA           ; Read from PPU_DATA eight times to clear the pipeline
+ LDA PPU_DATA           ; and reset the internal PPU read buffer
  LDA PPU_DATA
  LDA PPU_DATA
  LDA PPU_DATA
  LDA PPU_DATA
  LDA PPU_DATA
  LDA PPU_DATA
- LDA PPU_DATA
- LDA PPU_DATA
+
  LDA #8
  STA PPU_SCROLL
  LDA #0

@@ -8044,7 +8044,7 @@ ENDIF
  LDA #192               ; Print recursive token 32 ("POPULATION") followed by a
  JSR PrintTokenAndColon ; colon
 
- JMP dsys7              ; ; Jump to dsys7 to print the population
+ JMP dsys7              ; Jump to dsys7 to print the population
 
 .dsys6
 

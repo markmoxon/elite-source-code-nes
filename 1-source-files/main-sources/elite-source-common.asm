@@ -811,25 +811,25 @@ ENDIF
 
  SKIP 1                 ; The number of the current view:
                         ;
-                        ;   0   = 
-                        ;   1   = 
+                        ;   0   = Space view, Title screen
+                        ;   1   = Loading ship on Title screen
                         ;   $10 = 
                         ;   $8B = 
                         ;   $8D = 
                         ;   $92 = 
                         ;   $93 = 
                         ;   $95 = 
-                        ;   $96 = TRADEMODE, for Data on System screen (TT25)
-                        ;   $97 = 
-                        ;   $98 = 
-                        ;   $9C = 
-                        ;   $9D = 
-                        ;   $B9 = 
-                        ;   $BA = 
-                        ;   $BB = 
+                        ;   $96 = Data on System (TT25, TRADEMODE)
+                        ;   $97 = Inventory
+                        ;   $98 = Status Mode
+                        ;   $9C = Short-range Chart
+                        ;   $9D = Long-range Chart
+                        ;   $B9 = Equip Ship
+                        ;   $BA = Market Prices/Buy Cargo/Sell Cargo
+                        ;   $BB = Save and load
                         ;   $C4 = 
                         ;   $CF = 
-                        ;   $DF = 
+                        ;   $DF = Start screen
                         ;   $FF = 
                         ;
                         ; STA: 0, $8B, $97, $9D, $BB, $DF, $FF
