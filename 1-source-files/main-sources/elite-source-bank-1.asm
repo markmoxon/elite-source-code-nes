@@ -7048,7 +7048,7 @@ ENDMACRO
 
 .CA8F8
 
- JMP HideSprites59_62   ; ???
+ JMP HideSprites59To62  ; ???
 
  EQUB 0, 2
 
@@ -7147,7 +7147,7 @@ ENDMACRO
                         ; This part of the routine actually draws the explosion
                         ; cloud
 
- JSR HideSprites59_62   ; ???
+ JSR HideSprites59To62  ; ???
  LDA L040A
  STA Q
  LDA L002B

@@ -6677,7 +6677,7 @@ ENDIF
 
  JSR subm_D8C5
  JSR HideStardust
- JSR HideSprites59_62
+ JSR HideSprites59To62
  JSR subm_EBED
  LDA #$80
  STA K+2

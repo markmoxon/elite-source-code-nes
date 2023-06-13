@@ -2385,18 +2385,22 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: HideSprites59_62
+;       Name: HideSprites59To62
 ;       Type: Subroutine
 ;   Category: Drawing sprites
-;    Summary: ???
+;    Summary: Hide sprites 59 to 62
 ;
 ; ******************************************************************************
 
-.HideSprites59_62
+.HideSprites59To62
 
- LDX #4
- LDY #236
- JMP HideSprites
+ LDX #4                 ; Set X = 4 so we hide four sprites
+
+ LDY #236               ; Set Y so we start hiding from sprite 236 / 4 = 59
+
+ JMP HideSprites        ; Jump to HideSprites to hide four sprites from sprite
+                        ; 59 onwards (i.e. 59 to 62), returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -2429,34 +2433,54 @@ ENDIF
 
 .CCEBC
 
- LDY #$2C
- LDX #$1B
+ LDY #44                ; Set Y so we start hiding from sprite 44 / 4 = 11
+
+ LDX #27                ; Set X = 27 so we hide 27 sprites
+
+                        ; Fall through into HideSprites to hide 27 sprites
+                        ; from sprite 11 onwards (i.e. 11 to 37)
 
 ; ******************************************************************************
 ;
 ;       Name: HideSprites
 ;       Type: Subroutine
 ;   Category: Drawing sprites
-;    Summary: Hide X sprites from sprite Y/4 onwards
+;    Summary: Hide X sprites from sprite Y / 4 onwards
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The number of sprites to hide
+;
+;   Y                   The number of the first sprite to hide * 4
 ;
 ; ******************************************************************************
 
 .HideSprites
 
- LDA #240
+ LDA #240               ; Set A to the y-coordinate that's just below the bottom
+                        ; of the screen, so we can hide the required sprites by
+                        ; moving them off-screen
 
-.loop_CCEC2
+.hspr1
 
- STA ySprite0,Y
- INY
- INY
- INY
- INY
- DEX
- BNE loop_CCEC2
- RTS
+ STA ySprite0,Y         ; Set the y-coordinate for sprite Y / 4 to 240 to hide
+                        ; it (the division by four is because each sprite in the
+                        ; sprite buffer has four bytes of data)
 
- EQUB $0C, $20, $1F                           ; CECD: 0C 20 1F    . .
+ INY                    ; Add 4 to Y so it points to the next sprite's data in
+ INY                    ; the sprite buffer
+ INY
+ INY
+
+ DEX                    ; Decrement the loop counter in X
+
+ BNE hspr1              ; Loop back until we have hidden X sprites
+
+ RTS                    ; Return from the subroutine
+
+ EQUB $0C, $20, $1F     ; These bytes appear to be unused
 
 ; ******************************************************************************
 ;
@@ -7685,7 +7709,7 @@ ENDIF
 ;       Name: HideStardust
 ;       Type: Subroutine
 ;   Category: Stardust
-;    Summary: ???
+;    Summary: Hide the stardust sprites
 ;
 ; ******************************************************************************
 
@@ -7694,32 +7718,54 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDX NOSTM
- LDY #152
+ LDX NOSTM              ; Set X = NOSTM so we hide NOSTM+1 sprites
+
+ LDY #152               ; Set Y so we start hiding from sprite 152 / 4 = 38
+
+                        ; Fall through into HideSprites1 to hide NOSTM+1 sprites
+                        ; from sprite 38 onwards (i.e. 38 to 58 in normal space
+                        ; when NOSTM is 20, or 38 to 41 in witchspace when NOSTM
+                        ; is 3)
 
 ; ******************************************************************************
 ;
 ;       Name: HideSprites1
 ;       Type: Subroutine
 ;   Category: Drawing sprites
-;    Summary: Hide X+1 sprites from sprite Y/4 onwards
+;    Summary: Hide X + 1 sprites from sprite Y / 4 onwards
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The number of sprites to hide (we hide X + 1)
+;
+;   Y                   The number of the first sprite to hide * 4
 ;
 ; ******************************************************************************
 
 .HideSprites1
 
- LDA #240
+ LDA #240               ; Set A to the y-coordinate that's just below the bottom
+                        ; of the screen, so we can hide the required sprites by
+                        ; moving them off-screen
 
-.loop_CEB7B
+.hisp1
 
- STA ySprite0,Y
+ STA ySprite0,Y         ; Set the y-coordinate for sprite Y / 4 to 240 to hide
+                        ; it (the division by four is because each sprite in the
+                        ; sprite buffer has four bytes of data)
+
+ INY                    ; Add 4 to Y so it points to the next sprite's data in
+ INY                    ; the sprite buffer
  INY
  INY
- INY
- INY
- DEX
- BPL loop_CEB7B
- RTS
+
+ DEX                    ; Decrement the loop counter in X
+
+ BPL hisp1              ; Loop back until we have hidden X + 1 sprites
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -7732,9 +7778,9 @@ ENDIF
 
 .subm_EB86
 
- LDA QQ11a
- CMP QQ11
- BEQ subm_EB8F
+ LDA QQ11a              ; If QQ11 = QQ11a, then we are not currently changing
+ CMP QQ11               ; view, so jump to HideSprites5To63 to hide sprites 5
+ BEQ HideSprites5To63   ; to 63
 
 ; ******************************************************************************
 ;
@@ -7751,23 +7797,25 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_EB8F
+;       Name: HideSprites5To63
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing sprites
+;    Summary: Hide sprites 5 to 63
 ;
 ; ******************************************************************************
 
-.subm_EB8F
+.HideSprites5To63
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDX #58
+ LDX #58                ; Set X = 58 so we hide 59 sprites
 
- LDY #20
+ LDY #20                ; Set Y so we start hiding from sprite 20 / 4 = 5
 
- BNE HideSprites1
+ BNE HideSprites1       ; Jump to HideSprites1 to hide 59 sprites from sprite
+                        ; 5 onwards (i.e. 5 to 63), returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -10772,7 +10820,7 @@ ENDIF
  JSR subm_B63D_b3
  LDA #0
  JSR subm_8021_b6
- JSR subm_EB8F
+ JSR HideSprites5To63
  LDA #$FF
  STA QQ11a
  LDA #1
@@ -10966,21 +11014,22 @@ ENDIF
 .NLIN4
 
  LDA #4
- BNE subm_F47D
+ BNE NLIN2
+
  LDA #1
  STA YC
  LDA #4
 
 ; ******************************************************************************
 ;
-;       Name: subm_F47D
+;       Name: NLIN2
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_F47D
+.NLIN2
 
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
