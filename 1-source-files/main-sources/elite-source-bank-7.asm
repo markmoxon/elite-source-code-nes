@@ -120,32 +120,39 @@ ENDIF
 .S%
 
  SEI
+
  CLD
+
  LDX #$FF
  TXS
+
  LDX #0
  STX startupDebug
- LDA #$10
+
+ LDA #%00010000
  STA PPU_CTRL
+
  STA ppuCtrlCopy
+
  LDA #0
  STA PPU_MASK
 
-.loop_CC01C
+.sper1
 
  LDA PPU_STATUS
- BPL loop_CC01C
+ BPL sper1
 
-.loop_CC021
-
- LDA PPU_STATUS
- BPL loop_CC021
-
-.loop_CC026
+.sper2
 
  LDA PPU_STATUS
- BPL loop_CC026
- LDA #0
+ BPL sper2
+
+.sper3
+
+ LDA PPU_STATUS
+ BPL sper3
+
+ LDA #$00
  STA K%
  LDA #$3C
  STA K%+1
@@ -154,7 +161,9 @@ ENDIF
 
  LDX #$FF
  TXS
+
  JSR ResetVariables
+
  JMP ShowStartScreen
 
 ; ******************************************************************************
@@ -170,81 +179,124 @@ ENDIF
 
  LDA #0
  STA PPU_CTRL
+
  STA ppuCtrlCopy
+
  STA PPU_MASK
+
  STA setupPPUForIconBar
+
  LDA #$40
  STA JOY2
+
  INC $C006
- LDA PPU_STATUS
-
-.loop_CC055
 
  LDA PPU_STATUS
- BPL loop_CC055
 
-.loop_CC05A
-
- LDA PPU_STATUS
- BPL loop_CC05A
-
-.loop_CC05F
+.resv1
 
  LDA PPU_STATUS
- BPL loop_CC05F
+ BPL resv1
+
+.resv2
+
+ LDA PPU_STATUS
+ BPL resv2
+
+.resv3
+
+ LDA PPU_STATUS
+ BPL resv3
+
  LDA #0
  TAX
 
-.loop_CC067
+.resv4
 
  STA ZP,X
+
  INX
- BNE loop_CC067
+
+ BNE resv4
+
  LDA #3
  STA SC+1
  LDA #0
  STA SC
+
  TXA
+
  LDX #3
+
  TAY
 
-.CC078
+.resv5
 
  STA (SC),Y
+
  INY
- BNE CC078
+
+ BNE resv5
+
  INC SC+1
+
  DEX
- BNE CC078
+
+ BNE resv5
+
  JSR SetupMMC1
+
  JSR ResetSoundL045E
+
  LDA #$80
  ASL A
+
  JSR DrawTitleScreen_b3
+
  JSR ResetDrawingPhase
+
  JSR ResetBuffers
+
  LDA #0
  STA DTW6
+
  LDA #$FF
  STA DTW2
+
  LDA #$FF
  STA DTW8
 
-.CC0A3
+; ******************************************************************************
+;
+;       Name: SetBank0
+;       Type: Subroutine
+;   Category: Utility routines
+;    Summary: Page bank 0 into memory at $8000
+;
+; ******************************************************************************
+
+.SetBank0
 
  LDA #0
  JMP SetBank
 
 ; ******************************************************************************
 ;
-;       Name: subm_C0A8
+;       Name: SetNonZeroBank
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Utility routines
+;    Summary: Page a specified bank into memory at $8000, but only if it is
+;             non-zero
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The number of the bank to page into memory at $8000
 ;
 ; ******************************************************************************
 
-.subm_C0A8
+.SetNonZeroBank
 
  CMP currentBank
  BNE SetBank
@@ -255,7 +307,8 @@ ENDIF
 ;       Name: ResetBank
 ;       Type: Subroutine
 ;   Category: Utility routines
-;    Summary: ???
+;    Summary: Retrieve a bank number from the stack and page that bank into
+;             memory at $8000
 ;
 ; ******************************************************************************
 
@@ -2437,79 +2490,101 @@ ENDIF
 ;
 ;       Name: IRQ
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Utility routines
+;    Summary: Handle IRQ interrupts by doing nothing
 ;
 ; ******************************************************************************
 
 .IRQ
 
- RTI
+ RTI                    ; Return from the interrupt handler
 
 ; ******************************************************************************
 ;
 ;       Name: NMI
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Utility routines
+;    Summary: The NMI interrupt handler that gets called every VBlank and which
+;             updates the screen, reads the controllers and plays music
 ;
 ; ******************************************************************************
 
 .NMI
 
- JSR SendPaletteSprites
- LDA showUserInterface
- STA setupPPUForIconBar
+ JSR SendPaletteSprites ; Send the current palette and sprite data to the PPU
+
+ LDA showUserInterface  ; Set the value of setupPPUForIconBar so that if there
+ STA setupPPUForIconBar ; is an on-screen user interface (which there will be if
+                        ; this isn't the game over screen), then the calls to
+                        ; the SETUP_PPU_FOR_ICON_BAR macro sprinkled throughout
+                        ; the codebase will make sure we set nametable 0 and
+                        ; palette table 0 when the PPU starts drawing the icon
+                        ; bar
 
 IF _NTSC
 
- LDA #$1A
+ LDA #$1A               ; Set cycleCount = 6797 ($1A8D)
  STA cycleCount+1
  LDA #$8D
  STA cycleCount
 
 ELIF _PAL
 
- LDA #$1D
+ LDA #$1D               ; Set cycleCount = 7433 ($1D09)
  STA cycleCount+1
  LDA #$09
  STA cycleCount
 
 ENDIF
 
- JSR UpdateScreen
- JSR ReadControllers
- LDA L03EE
- BPL CCEF2
+ JSR UpdateScreen       ; Update the screen by copying the namespace and pattern
+                        ; data for the relevant tiles to the PPU
+
+ JSR ReadControllers    ; Read the buttons on the controllers
+ 
+ LDA L03EE              ; If bit 7 of L03EE is set, call subm_E802 ???
+ BPL inmi1
  JSR subm_E802
 
-.CCEF2
+.inmi1
 
- JSR MoveIconBarPointer
- JSR UpdateJoystick
- JSR UpdateNMITimer
- LDA runningSetBank
- BNE CCF0C
- JSR PlayMusic_b6
- LDA nmiStoreA
- LDX nmiStoreX
+ JSR MoveIconBarPointer ; Move the sprites that make up the icon bar pointer
+
+ JSR UpdateJoystick     ; Update the values of JSTX and JSTY with the values
+                        ; from the controller
+
+ JSR UpdateNMITimer     ; Update the NMI timer, which we can use in place of
+                        ; hardware timers (which the NES does not support)
+
+ LDA runningSetBank     ; If the NMI handler was called from within the SetBank
+ BNE inmi2              ; routine, then runningSetBank will be non-zero, so jump
+                        ; to inmi2 to skip the call to PlayMusic
+
+ JSR PlayMusic_b6       ; Play any background music that might be in progress
+
+ LDA nmiStoreA          ; Restore the values of A, X and Y that we stored at
+ LDX nmiStoreX          ; the start of the NMI handler
  LDY nmiStoreY
- RTI
 
-.CCF0C
+ RTI                    ; Return from the interrupt handler
+
+.inmi2
 
  INC runningSetBank
- LDA nmiStoreA
- LDX nmiStoreX
+
+ LDA nmiStoreA          ; Restore the values of A, X and Y that we stored at
+ LDX nmiStoreX          ; the start of the NMI handler
  LDY nmiStoreY
- RTI
+
+ RTI                    ; Return from the interrupt handler
 
 ; ******************************************************************************
 ;
 ;       Name: UpdateNMITimer
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Utility routines
+;    Summary: Update the NMI timer, which we can use in place of hardware
+;             timers (which the NES does not support)
 ;
 ; ******************************************************************************
 
@@ -2535,7 +2610,7 @@ ENDIF
 ;
 ;       Name: SendPaletteSprites
 ;       Type: Subroutine
-;   Category: Drawing tiles
+;   Category: Drawing sprites
 ;    Summary: Send the current palette and sprite data to the PPU
 ;
 ; ******************************************************************************
@@ -2543,7 +2618,7 @@ ENDIF
 .SendPaletteSprites
 
  STA nmiStoreA          ; Store the values of A, X and Y so we can retrieve them
- STX nmiStoreX          ; later
+ STX nmiStoreX          ; at the end of the NMI handler
  STY nmiStoreY
 
  LDA PPU_STATUS         ; Read from PPU_STATUS to clear bit 7 of PPU_STATUS and
@@ -2573,7 +2648,8 @@ ENDIF
 ;       Name: SetPaletteForPhase
 ;       Type: Subroutine
 ;   Category: Drawing tiles
-;    Summary: Set the palette according to the palette phase and view type
+;    Summary: Set backgroud palette 0 or sprite palette 1, according to the
+;             palette phase and view type
 ;
 ; ******************************************************************************
 
@@ -2652,11 +2728,11 @@ ENDIF
 
                         ; If we get here then this is not the space view
 
- CMP #$98               ; If the view is $98, jump to paph3 ???
+ CMP #$98               ; If this is the Status Mode screen, jump to paph3
  BEQ paph3
 
-                        ; If we get here then this is not the space view or view
-                        ; $98 ???
+                        ; If we get here then this is not the space view or the
+                        ; Status Mode screen
 
  LDA #$3F               ; Set PPU_ADDR = $3F15, so it points to sprite palette 1
  STA PPU_ADDR           ; in the PPU
@@ -2682,7 +2758,7 @@ ENDIF
 
 .paph3
 
-                        ; If we get here then the view is $98 ???
+                        ; If we get here then this is the Status Mode screen
 
  LDA #$3F               ; Set PPU_ADDR = $3F01, so it points to palette 0 in
  STA PPU_ADDR           ; the PPU
@@ -2775,6 +2851,7 @@ ENDIF
                         ; the PPU, before continuing with the next instruction
 
  JSR SendBuffersToPPU
+
  JSR ResetPPURegisters
 
  LDA cycleCount         ; Add 100 ($0064) to cycleCount
@@ -2809,7 +2886,7 @@ ENDIF
 ;
 ;       Name: ResetPPURegisters
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing tiles
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -2819,21 +2896,22 @@ ENDIF
  LDX #%10010000
 
  LDA palettePhase
- BNE CD035
+ BNE resp1
 
  LDX #%10010001
 
-.CD035
+.resp1
 
  STX PPU_CTRL
+
  STX ppuCtrlCopy
 
  LDA #$20
  LDX palettePhase
- BNE CD042
+ BNE resp2
  LDA #$24
 
-.CD042
+.resp2
 
  STA PPU_ADDR
  LDA #$00
@@ -2852,27 +2930,39 @@ ENDIF
  STA PPU_SCROLL
  LDA #0
  STA PPU_SCROLL
- RTS
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: SetPPUTablesTo0
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing tiles
+;    Summary: Set nametable 0 and pattern table 0 for drawing the icon bar
 ;
 ; ******************************************************************************
 
 .SetPPUTablesTo0
 
- LDA #0
- STA setupPPUForIconBar
- LDA ppuCtrlCopy
- AND #$EE
- STA PPU_CTRL
- STA ppuCtrlCopy
- CLC
- RTS
+ LDA #0                 ; Clear bit 7 of setupPPUForIconBar, so this routine
+ STA setupPPUForIconBar ; doesn't get called again until the next NMI interrupt
+                        ; at the next VBlank (as the SETUP_PPU_FOR_ICON_BAR
+                        ; macro and SetupPPUForIconBar routine only update the
+                        ; PPU when bit 7 is set)
+
+ LDA ppuCtrlCopy        ; Set A to the current value of PPU_CTRL
+
+ AND #%11101110         ; Clear bits 0 and 4, which will set the base nametable
+                        ; address to $2000 (for nametable 0) and the pattern
+                        ; table address to $0000 (for pattern table 0)
+
+ STA PPU_CTRL           ; Update PPU_CTRL to set nametable 0 and pattern table 0
+
+ STA ppuCtrlCopy        ; Store the new value of PPU_CTRL in ppuCtrlCopy
+
+ CLC                    ; Clear the C flag
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -7107,8 +7197,8 @@ ENDIF
 ;
 ;       Name: MoveIconBarPointer
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing sprites
+;    Summary: Move the sprites that make up the icon bar pointer
 ;
 ; ******************************************************************************
 
@@ -7441,8 +7531,9 @@ ENDIF
 ;
 ;       Name: UpdateJoystick
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Keyboard
+;    Summary: Update the values of JSTX and JSTY with the values from the
+;             controller
 ;
 ; ******************************************************************************
 
@@ -7610,7 +7701,7 @@ ENDIF
 ;
 ;       Name: HideSprites1
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing sprites
 ;    Summary: Hide X+1 sprites from sprite Y/4 onwards
 ;
 ; ******************************************************************************
@@ -7905,7 +7996,7 @@ ENDIF
 ;
 ;       Name: SetupPPUForIconBar
 ;       Type: Subroutine
-;   Category: Screen mode
+;   Category: Drawing tiles
 ;    Summary: If the PPU has started drawing the icon bar, configure the PPU to
 ;             use nametable 0 and pattern table 0, while preserving A
 ;
@@ -13914,7 +14005,7 @@ ENDIF
  STA $DFFF
  LSR A
  STA $DFFF
- JMP CC0A3
+ JMP SetBank0
 
 ; ******************************************************************************
 ;
