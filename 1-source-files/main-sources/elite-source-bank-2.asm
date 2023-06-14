@@ -3649,7 +3649,7 @@ ENDMACRO
 ;       Name: RUPLA
 ;       Type: Variable
 ;   Category: Text
-;    Summary: System numbers that have extended decription overrides
+;    Summary: System numbers that have extended description overrides
 ;  Deep dive: Extended system descriptions
 ;             Extended text tokens
 ;
@@ -3702,19 +3702,19 @@ ENDMACRO
 ;       Name: RUGAL
 ;       Type: Variable
 ;   Category: Text
-;    Summary: The criteria for systems with extended decription overrides
+;    Summary: The criteria for systems with extended description overrides
 ;  Deep dive: Extended system descriptions
 ;             Extended text tokens
 ;
 ; ------------------------------------------------------------------------------
 ;
-; This table contains the criteria for printing an extended decription override
+; This table contains the criteria for printing an extended description override
 ; for a system. The galaxy number is in bits 0-6, while bit 7 determines whether
 ; to show this token during mission 1 only (bit 7 is clear, i.e. a value of $0x
 ; in the table below), or all of the time (bit 7 is set, i.e. a value of $8x in
 ; the table below).
 ;
-; In other words, Teorge, Arredi, Anreer and Lave have extended decription
+; In other words, Teorge, Arredi, Anreer and Lave have extended description
 ; overrides that are always shown, while the rest only appear when mission 1 is
 ; in progress.
 ;
@@ -6983,7 +6983,7 @@ ENDMACRO
 ;       Name: RUPLA_DE
 ;       Type: Variable
 ;   Category: Text
-;    Summary: System numbers that have extended decription overrides (German)
+;    Summary: System numbers that have extended description overrides (German)
 ;  Deep dive: Extended system descriptions
 ;             Extended text tokens
 ;
@@ -7037,20 +7037,20 @@ ENDMACRO
 ;       Name: RUGAL_DE
 ;       Type: Variable
 ;   Category: Text
-;    Summary: The criteria for systems with extended decription overrides
+;    Summary: The criteria for systems with extended description overrides
 ;             (German)
 ;  Deep dive: Extended system descriptions
 ;             Extended text tokens
 ;
 ; ------------------------------------------------------------------------------
 ;
-; This table contains the criteria for printing an extended decription override
+; This table contains the criteria for printing an extended description override
 ; for a system. The galaxy number is in bits 0-6, while bit 7 determines whether
 ; to show this token during mission 1 only (bit 7 is clear, i.e. a value of $0x
 ; in the table below), or all of the time (bit 7 is set, i.e. a value of $8x in
 ; the table below).
 ;
-; In other words, Teorge has an extended decription override description that is
+; In other words, Teorge has an extended description override description that is
 ; always shown, while the rest only appear when mission 1 is in progress.
 ;
 ; The three variables work as follows:
@@ -10045,7 +10045,7 @@ ENDMACRO
 ;       Name: RUPLA_FR
 ;       Type: Variable
 ;   Category: Text
-;    Summary: System numbers that have extended decription overrides (French)
+;    Summary: System numbers that have extended description overrides (French)
 ;  Deep dive: Extended system descriptions
 ;             Extended text tokens
 ;
@@ -10099,20 +10099,20 @@ ENDMACRO
 ;       Name: RUGAL_FR
 ;       Type: Variable
 ;   Category: Text
-;    Summary: The criteria for systems with extended decription overrides
+;    Summary: The criteria for systems with extended description overrides
 ;             (French)
 ;  Deep dive: Extended system descriptions
 ;             Extended text tokens
 ;
 ; ------------------------------------------------------------------------------
 ;
-; This table contains the criteria for printing an extended decription override
+; This table contains the criteria for printing an extended description override
 ; for a system. The galaxy number is in bits 0-6, while bit 7 determines whether
 ; to show this token during mission 1 only (bit 7 is clear, i.e. a value of $0x
 ; in the table below), or all of the time (bit 7 is set, i.e. a value of $8x in
 ; the table below).
 ;
-; In other words, Teorge has an extended decription override description that is
+; In other words, Teorge has an extended description override description that is
 ; always shown, while the rest only appear when mission 1 is in progress.
 ;
 ; The three variables work as follows:
@@ -16430,7 +16430,7 @@ ENDMACRO
 ;
 ;   * If QQ17 bit 6 is set, print lower case (via TT45)
 ;
-;   * If QQ17 bit 6 clear, then:
+;   * If QQ17 bit 6 is clear, then:
 ;
 ;       * If character is punctuation, just print it
 ;
@@ -16894,7 +16894,7 @@ ENDMACRO
                         ; DA6+3 via DA63S to print a newline
 
  CPX #(LL+1)            ; If X < LL+1, i.e. X <= LL, then the buffer contains
- BCC DA6S               ; fewer than LL characters, which is less then a line
+ BCC DA6S               ; fewer than LL characters, which is less than a line
                         ; length, so jump down to DA6 via DA6S to print the
                         ; contents of BUF followed by a newline, as we don't
                         ; justify the last line of the paragraph
@@ -17693,15 +17693,15 @@ ENDMACRO
 IF _NTSC
 
  EQUW Interrupts+$4000  ; Vector to the NMI handler in case this bank is loaded
-                        ; into $C000 during startup (the handler contains an RTI
-                        ; so the interrupt is processed but has no effect)
+                        ; into $C000 during start-up (the handler contains an
+                        ; RTI so the interrupt is processed but has no effect)
 
  EQUW ResetMMC1+$4000   ; Vector to the RESET handler in case this bank is
-                        ; loaded into $C000 during startup (the handler resets
+                        ; loaded into $C000 during start-up (the handler resets
                         ; the MMC1 mapper to map bank 7 into $C000 instead)
 
  EQUW Interrupts+$4000  ; Vector to the IRQ/BRK handler in case this bank is
-                        ; loaded into $C000 during startup (the handler contains
+                        ; loaded into $C000 during start-up (the handler contains
                         ; an RTI so the interrupt is processed but has no
                         ; effect)
 
@@ -17710,7 +17710,7 @@ ELIF _PAL
  EQUW NMI               ; Vector to the NMI handler
 
  EQUW ResetMMC1+$4000   ; Vector to the RESET handler in case this bank is
-                        ; loaded into $C000 during startup (the handler resets
+                        ; loaded into $C000 during start-up (the handler resets
                         ; the MMC1 mapper to map bank 7 into $C000 instead)
 
  EQUW IRQ               ; Vector to the IRQ/BRK handler

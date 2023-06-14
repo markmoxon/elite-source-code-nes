@@ -55,7 +55,7 @@
  COPS = 16              ; Ship type for a Viper
  SH3 = 17               ; Ship type for a Sidewinder
  KRA = 19               ; Ship type for a Krait
- ADA = 20               ; Ship type for a Adder
+ ADA = 20               ; Ship type for an Adder
  WRM = 23               ; Ship type for a Worm
  CYL2 = 24              ; Ship type for a Cobra Mk III (pirate)
  ASP = 25               ; Ship type for an Asp Mk II
@@ -501,8 +501,10 @@ ENDIF
 
 .nmiTimer
 
- SKIP 1                 ; A counter that gets decremented in the NMI routine
-                        ; from 50 ($32) to 1 and back up to $32
+ SKIP 1                 ; A counter that gets decremented each time the NMI
+                        ; interrupt is called, starting at 50 and counting down
+                        ; to zero, at which point it jumps back up to 50 again
+                        ; and triggers and increment of (nmiTimerHi nmiTimerLo)
 
 .nmiTimerLo
 
@@ -3875,10 +3877,10 @@ ENDIF
                         ; This value is shown in the dashboard's RL indicator,
                         ; and determines the rate at which we are rolling
                         ;
-                        ; The value ranges from from 1 to 255 with 128 as the
-                        ; centre point, so 1 means roll is decreasing at the
-                        ; maximum rate, 128 means roll is not changing, and
-                        ; 255 means roll is increasing at the maximum rate
+                        ; The value ranges from 1 to 255 with 128 as the centre
+                        ; point, so 1 means roll is decreasing at the maximum
+                        ; rate, 128 means roll is not changing, and 255 means
+                        ; roll is increasing at the maximum rate
 
 .JSTY
 
@@ -3887,10 +3889,10 @@ ENDIF
                         ; This value is shown in the dashboard's DC indicator,
                         ; and determines the rate at which we are pitching
                         ;
-                        ; The value ranges from from 1 to 255 with 128 as the
-                        ; centre point, so 1 means pitch is decreasing at the
-                        ; maximum rate, 128 means pitch is not changing, and
-                        ; 255 means pitch is increasing at the maximum rate
+                        ; The value ranges from 1 to 255 with 128 as the centre
+                        ; point, so 1 means pitch is decreasing at the maximum
+                        ; rate, 128 means pitch is not changing, and 255 means
+                        ; pitch is increasing at the maximum rate
 
 .L0478
 
@@ -4083,7 +4085,7 @@ ENDIF
  SKIP 2                 ; The distance from the current system to the selected
                         ; system in light years * 10, stored as a 16-bit number
                         ;
-                        ; The distance will be 0 if the selected sysyem is the
+                        ; The distance will be 0 if the selected system is the
                         ; current system
                         ;
                         ; The galaxy chart is 102.4 light years wide and 51.2

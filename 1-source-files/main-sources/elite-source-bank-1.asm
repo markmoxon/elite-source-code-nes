@@ -386,7 +386,7 @@ ENDIF
 ;
 ; See the deep dive on "Ship blueprints" for details of how vertices are stored
 ; in the ship blueprints, and the deep dive on "Drawing ships" for information
-; on how vertices are used to draw 3D wiremesh ships.
+; on how vertices are used to draw 3D wireframe ships.
 ;
 ; Arguments:
 ;
@@ -456,7 +456,7 @@ ENDMACRO
 ;
 ; See the deep dive on "Ship blueprints" for details of how edges are stored
 ; in the ship blueprints, and the deep dive on "Drawing ships" for information
-; on how edges are used to draw 3D wiremesh ships.
+; on how edges are used to draw 3D wireframe ships.
 ;
 ; Arguments:
 ;
@@ -496,7 +496,7 @@ ENDMACRO
 ;
 ; See the deep dive on "Ship blueprints" for details of how faces are stored
 ; in the ship blueprints, and the deep dive on "Drawing ships" for information
-; on how faces are used to draw 3D wiremesh ships.
+; on how faces are used to draw 3D wireframe ships.
 ;
 ; Arguments:
 ;
@@ -6003,7 +6003,7 @@ ENDMACRO
                         ; otherwise it is 0
 
  LDA XX15+1             ; If one or both of x1_hi and y1_hi are non-zero, jump
- ORA XX15+3             ; jump to LL83
+ ORA XX15+3             ; to LL83
  BNE LL83
 
  LDA Yx2M1              ; If y1_lo > the y-coordinate of the bottom of screen
@@ -8271,7 +8271,7 @@ ENDMACRO
  BNE PLF2               ; the bottom of the screen, so skip to PLF2 with A = 191
 
  CMP P+1                ; If A < P+1, the maximum y-coordinate is underneath the
- BCC PLF2               ; the dashboard, so skip to PLF2 with A = 191
+ BCC PLF2               ; dashboard, so skip to PLF2 with A = 191
 
  LDA P+1                ; Set A = P+1, the low byte of the maximum y-coordinate
                         ; of the sun on-screen
@@ -9889,7 +9889,7 @@ ENDMACRO
                         ; point to the next
 
  JMP BL5                ; This is the first call to BLINE, so we don't need to
-                        ; to copy the previous point to XX15 as there isn't one,
+                        ; copy the previous point to XX15 as there isn't one,
                         ; so we jump to BL5 to tidy up and return from the
                         ; subroutine
 
@@ -11405,7 +11405,7 @@ ENDMACRO
 ;   Byte #2             Bits 0-7 = Ship's z_lo
 ;                       Bit 0    = Ship's x_sign
 ;
-; Ths ship's y-coordinate is calculated in the has1 routine from the size of
+; The ship's y-coordinate is calculated in the has1 routine from the size of
 ; its targetable area. Ships of type 0 are not shown.
 ;
 ; ******************************************************************************
@@ -11489,7 +11489,7 @@ ENDMACRO
 ; Half the time this will draw one of the four pre-defined ship hangar groups in
 ; HATB, and half the time this will draw a solitary Sidewinder, Mamba, Krait or
 ; Adder on a random position. In all cases, the ships will be randomly spun
-; around on the ground so they can face in any dirction, and larger ships are
+; around on the ground so they can face in any direction, and larger ships are
 ; drawn higher up off the ground than smaller ships.
 ;
 ; ******************************************************************************
@@ -11610,7 +11610,7 @@ ENDMACRO
  STA XX15+2             ; or Adder
 
  JSR HAS1               ; Call HAS1 to draw this ship in the hangar, with the
-                        ; the following properties:
+                        ; following properties:
                         ;
                         ;   * Random x-coordinate from -63 to +63
                         ;
@@ -12831,15 +12831,15 @@ ENDIF
 IF _NTSC
 
  EQUW Interrupts+$4000  ; Vector to the NMI handler in case this bank is loaded
-                        ; into $C000 during startup (the handler contains an RTI
-                        ; so the interrupt is processed but has no effect)
+                        ; into $C000 during start-up (the handler contains an
+                        ; RTI so the interrupt is processed but has no effect)
 
  EQUW ResetMMC1+$4000   ; Vector to the RESET handler in case this bank is
-                        ; loaded into $C000 during startup (the handler resets
+                        ; loaded into $C000 during start-up (the handler resets
                         ; the MMC1 mapper to map bank 7 into $C000 instead)
 
  EQUW Interrupts+$4000  ; Vector to the IRQ/BRK handler in case this bank is
-                        ; loaded into $C000 during startup (the handler contains
+                        ; loaded into $C000 during start-up (the handler contains
                         ; an RTI so the interrupt is processed but has no
                         ; effect)
 
@@ -12848,7 +12848,7 @@ ELIF _PAL
  EQUW NMI               ; Vector to the NMI handler
 
  EQUW ResetMMC1+$4000   ; Vector to the RESET handler in case this bank is
-                        ; loaded into $C000 during startup (the handler resets
+                        ; loaded into $C000 during start-up (the handler resets
                         ; the MMC1 mapper to map bank 7 into $C000 instead)
 
  EQUW IRQ               ; Vector to the IRQ/BRK handler

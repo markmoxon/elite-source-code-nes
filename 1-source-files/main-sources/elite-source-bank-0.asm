@@ -850,7 +850,7 @@ ENDIF
 ;   * Continue looping through all the ships in the local bubble, and for each
 ;     one:
 ;
-;     * Remove scooped item after both successful and failed scoopings
+;     * Remove scooped item after both successful and failed scooping attempts
 ;
 ;     * Process collisions
 ;
@@ -909,7 +909,7 @@ ENDIF
 
  JSR OOPS               ; The amount of damage is in A, so call OOPS to reduce
                         ; our shields, and if the shields are gone, there's a
-                        ; a chance of cargo loss or even death
+                        ; chance of cargo loss or even death
 
  JSR EXNO3              ; Make the sound of colliding with the other ship and
                         ; fall through into MA26 to try targeting a missile
@@ -1270,7 +1270,7 @@ ENDIF
 
 .MA69
 
- LDA ECMA               ; If an E.C.M is going off (our's or an opponent's) then
+ LDA ECMA               ; If an E.C.M is going off (ours or an opponent's) then
  BEQ MA66               ; keep going, otherwise skip to MA66
 
  LDA #$80
@@ -1527,7 +1527,7 @@ ENDIF
 ;   * Perform an altitude check with the planet (every 16 iterations of the main
 ;     loop, on iterations 10 and 20 of each 32)
 ;
-;   * Perform an an altitude check with the sun and process fuel scooping (every
+;   * Perform an altitude check with the sun and process fuel scooping (every
 ;     32 iterations of the main loop, on iteration 20 of each 32)
 ;
 ; ******************************************************************************
@@ -1650,7 +1650,7 @@ ENDIF
                         ; our temperature is off the scale
 
  CMP #224               ; If the cabin temperature < 224 then jump to MA23 to
- BCC MA23               ; to skip fuel scooping, as we aren't close enough
+ BCC MA23               ; skip fuel scooping, as we aren't close enough
 
  CMP #$F0
  BCC nokilltr
@@ -4042,7 +4042,7 @@ ENDIF
  JSR TT20               ; We want to move on to the next system, so call TT20
                         ; to twist the three 16-bit seeds in QQ15
 
- INC XX20               ; Incrememt the system counter in XX20
+ INC XX20               ; Increment the system counter in XX20
 
  BNE HME3               ; If we haven't yet checked all 256 systems in the
                         ; current galaxy, loop back to HME3 to check the next
@@ -4175,7 +4175,7 @@ ENDIF
                         ; This is the entry point for missile tactics and is
                         ; called from the main TACTICS routine below
 
- LDA ECMA               ; If an E.C.M. is currently active (either our's or an
+ LDA ECMA               ; If an E.C.M. is currently active (either ours or an
  BNE TA352              ; opponent's), jump to TA352 to destroy this missile
 
  LDA INWK+32            ; Fetch the AI flag from byte #32 and if bit 6 is set
@@ -4508,7 +4508,7 @@ ENDIF
 ;     really bad (i.e. a fugitive or serious offender), the ship becomes hostile
 ;     (if it isn't already)
 ;
-;   * If the ship is not hostile, then either perform docking manouevres (if
+;   * If the ship is not hostile, then either perform docking manoeuvres (if
 ;     it's docking) or fly towards the planet (if it isn't docking) and we're
 ;     done
 ;
@@ -4801,7 +4801,7 @@ ENDIF
  BCS TA3                ; with higher numbers of missiles, jump to TA3 to skip
                         ; firing a missile
 
- LDA ECMA               ; If an E.C.M. is currently active (either our's or an
+ LDA ECMA               ; If an E.C.M. is currently active (either ours or an
  BNE TA3                ; opponent's), jump to TA3 to skip firing a missile
 
  DEC INWK+31            ; We're done with the checks, so it's time to fire off a
@@ -5358,10 +5358,11 @@ ENDIF
 
  BMI PH3                ; If bit 7 is set, then that means the ship type was set
                         ; to -96 in the DOKEY routine when we switched on our
-                        ; docking compter, so this is us auto-docking our Cobra,
-                        ; so jump to PH3 to refine our approach. Otherwise this
-                        ; is an NPC trying to dock, so turn away from the
-                        ; station
+                        ; docking computer, so this is us auto-docking our
+                        ; Cobra, so jump to PH3 to refine our approach
+                        ;
+                        ; Otherwise this is an NPC trying to dock, so keep going
+                        ; to turn away from the station
 
 .PH2
 
@@ -5370,7 +5371,7 @@ ENDIF
                         ; attempt
 
  JSR TAS6               ; Call TAS6 to negate the vector in XX15 so it points in
-                        ; the opposite direction, away from from the station and
+                        ; the opposite direction, away from the station and
                         ; towards the ship
 
  JSR TA151              ; Call TA151 to make the ship head in the direction of
@@ -16879,15 +16880,15 @@ ENDIF
 IF _NTSC
 
  EQUW Interrupts+$4000  ; Vector to the NMI handler in case this bank is loaded
-                        ; into $C000 during startup (the handler contains an RTI
-                        ; so the interrupt is processed but has no effect)
+                        ; into $C000 during start-up (the handler contains an
+                        ; RTI so the interrupt is processed but has no effect)
 
  EQUW ResetMMC1+$4000   ; Vector to the RESET handler in case this bank is
-                        ; loaded into $C000 during startup (the handler resets
+                        ; loaded into $C000 during start-up (the handler resets
                         ; the MMC1 mapper to map bank 7 into $C000 instead)
 
  EQUW Interrupts+$4000  ; Vector to the IRQ/BRK handler in case this bank is
-                        ; loaded into $C000 during startup (the handler contains
+                        ; loaded into $C000 during start-up (the handler contains
                         ; an RTI so the interrupt is processed but has no
                         ; effect)
 
@@ -16896,7 +16897,7 @@ ELIF _PAL
  EQUW NMI               ; Vector to the NMI handler
 
  EQUW ResetMMC1+$4000   ; Vector to the RESET handler in case this bank is
-                        ; loaded into $C000 during startup (the handler resets
+                        ; loaded into $C000 during start-up (the handler resets
                         ; the MMC1 mapper to map bank 7 into $C000 instead)
 
  EQUW IRQ               ; Vector to the IRQ/BRK handler
