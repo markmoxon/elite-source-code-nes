@@ -740,6 +740,28 @@ ENDIF
 
 ; ******************************************************************************
 ;
+;       Name: ADD_CYCLES_CLC
+;       Type: Macro
+;   Category: Drawing tiles
+;    Summary: Add a specifed number to the cycle count
+;
+; ******************************************************************************
+
+MACRO ADD_CYCLES_CLC cycles
+
+ CLC                    ; Clear the C flag for the addition below
+
+ LDA cycleCount         ; Add cycles to cycleCount(1 0)
+ ADC #LO(cycles)
+ STA cycleCount
+ LDA cycleCount+1
+ ADC #HI(cycles)
+ STA cycleCount+1
+
+ENDMACRO
+
+; ******************************************************************************
+;
 ;       Name: ADD_CYCLES
 ;       Type: Macro
 ;   Category: Drawing tiles
@@ -747,13 +769,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-MACRO ADD_CYCLES cycles, clear_carry
-
- IF clear_carry
-
-  CLC                   ; Clear the C flag for the addition below
- 
- ENDIF
+MACRO ADD_CYCLES cycles
 
  LDA cycleCount         ; Add cycles to cycleCount(1 0)
  ADC #LO(cycles)
@@ -796,13 +812,7 @@ ENDMACRO
 
 .subm_C582
 
- SEC                    ; Subtract 2131 ($0853) from cycleCount
- LDA cycleCount
- SBC #$53
- STA cycleCount
- LDA cycleCount+1
- SBC #$08
- STA cycleCount+1
+ SUBTRACT_CYCLES 2131   ; Subtract 2131 from the cycle count
 
  LDX addr1
  STX addr5
@@ -856,27 +866,17 @@ ENDMACRO
 
 .subm_C5D2
 
- SEC                    ; Subtract 666 ($029A) from cycleCount
- LDA cycleCount
- SBC #$9A
- STA cycleCount
- LDA cycleCount+1
- SBC #$02
- STA cycleCount+1
+ SUBTRACT_CYCLES 666    ; Subtract 666 from the cycle count
 
  BMI CC5E4
  JMP CC5F3
 
 .CC5E4
 
- LDA cycleCount         ; Add 623 ($026F) to cycleCount
- ADC #$6F
- STA cycleCount
- LDA cycleCount+1
- ADC #$02
- STA cycleCount+1
+ ADD_CYCLES 623         ; Add 623 to the cycle count
 
- JMP CC6F3
+ JMP SendBuffersToPPU-1 ; Return from the subroutine (as SendBuffersToPPU-1
+                        ; contains an RTS)
 
 .CC5F3
 
@@ -934,27 +934,17 @@ ENDMACRO
  ASL A
  BMI subm_C5D2
 
- SEC                    ; Subtract 1297 ($0511) from cycleCount
- LDA cycleCount
- SBC #$11
- STA cycleCount
- LDA cycleCount+1
- SBC #$05
- STA cycleCount+1
+ SUBTRACT_CYCLES 1297   ; Subtract 1297 from the cycle count
 
  BMI CC645
  JMP CC654
 
 .CC645
 
- LDA cycleCount         ; Add 1251 ($04E3) to cycleCount
- ADC #$E3
- STA cycleCount
- LDA cycleCount+1
- ADC #$04
- STA cycleCount+1
+ ADD_CYCLES 1251        ; Add 1251 to the cycle count
 
- JMP CC6F3
+ JMP SendBuffersToPPU-1 ; Return from the subroutine (as SendBuffersToPPU-1
+                        ; contains an RTS)
 
 .CC654
 
@@ -1069,36 +1059,25 @@ ENDMACRO
 
  LDX otherPhase
  LDA L03EF,X
- AND #$10
- BEQ CC6F3
 
- SEC                    ; Subtract 42 ($002A) from cycleCount
- LDA cycleCount
- SBC #$2A
- STA cycleCount
- LDA cycleCount+1
- SBC #$00
- STA cycleCount+1
+ AND #%00010000         ; If bit 4 of A is clear, return from the subroutine
+ BEQ SendBuffersToPPU-1 ; (as SendBuffersToPPU-1 contains an RTS)
+
+ SUBTRACT_CYCLES 42     ; Subtract 42 from the cycle count
 
  BMI CC6E1
  JMP CC6F0
 
 .CC6E1
 
- LDA cycleCount         ; Add 65521 ($FFF1) to cycleCount
- ADC #$F1
- STA cycleCount
- LDA cycleCount+1
- ADC #$FF
- STA cycleCount+1
+ ADD_CYCLES 65521       ; Add 65521 to the cycle count (i.e. subtract 15)
 
- JMP CC6F3
+ JMP SendBuffersToPPU-1 ; Return from the subroutine (as SendBuffersToPPU-1
+                        ; contains an RTS)
 
 .CC6F0
 
  JMP subm_C849
-
-.CC6F3
 
  RTS
 
@@ -1108,6 +1087,12 @@ ENDMACRO
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
+;
+; ------------------------------------------------------------------------------
+;
+; Other entry points:
+;
+;   SendBuffersToPPU-1  Contains an RTS
 ;
 ; ******************************************************************************
 
@@ -1121,13 +1106,7 @@ ENDMACRO
  AND #$10
  BEQ CC77E
 
- SEC                    ; Subtract 56 ($0038) from cycleCount
- LDA cycleCount
- SBC #$38
- STA cycleCount
- LDA cycleCount+1
- SBC #$00
- STA cycleCount+1
+ SUBTRACT_CYCLES 56     ; Subtract 56 from the cycle count
 
  TXA
  EOR #1
@@ -1137,23 +1116,17 @@ ENDMACRO
  ORA L00F6
  CMP #$81
  BNE CC738
- LDA tile0Phase0,X
+ LDA tileNumber0,X
  BNE CC725
  LDA #$FF
 
 .CC725
 
- CMP L00CA,X
+ CMP tileNumber4,X
  BEQ CC73B
  BCS CC73B
 
- SEC                    ; Subtract 32 ($0020) from cycleCount
- LDA cycleCount
- SBC #$20
- STA cycleCount
- LDA cycleCount+1
- SBC #$00
- STA cycleCount+1
+ SUBTRACT_CYCLES 32     ; Subtract 32 from the cycle count
 
 .CC738
 
@@ -1162,8 +1135,10 @@ ENDMACRO
 .CC73B
 
  LDA L03EF,X
- ASL A
- BPL CC6F3
+
+ ASL A                  ; If bit 6 of A is clear, return from the subroutine
+ BPL SendBuffersToPPU-1 ; (as SendBuffersToPPU-1 contains an RTS)
+
  LDY L00CD,X
  AND #8
  BEQ CC749
@@ -1173,17 +1148,11 @@ ENDMACRO
 
  TYA
  SEC
- SBC tile3Phase0,X
+ SBC tileNumber3,X
  CMP #$30
  BCC CC761
 
- SEC                    ; Subtract 60 ($003C) from cycleCount
- LDA cycleCount
- SBC #$3C
- STA cycleCount
- LDA cycleCount+1
- SBC #$00
- STA cycleCount+1
+ SUBTRACT_CYCLES 60     ; Subtract 60 from the cycle count
 
 .loop_CC75E
 
@@ -1194,13 +1163,7 @@ ENDMACRO
  LDA ppuCtrlCopy
  BEQ loop_CC75E
 
- SEC                    ; Subtract 134 ($0086) from cycleCount
- LDA cycleCount
- SBC #$86
- STA cycleCount
- LDA cycleCount+1
- SBC #$00
- STA cycleCount+1
+ SUBTRACT_CYCLES 134    ; Subtract 134 from the cycle count
 
  LDA L00F6
  EOR palettePhase
@@ -1210,13 +1173,7 @@ ENDMACRO
 
 .CC77E
 
- SEC                    ; Subtract 298 ($012A) from cycleCount
- LDA cycleCount
- SBC #$2A
- STA cycleCount
- LDA cycleCount+1
- SBC #$01
- STA cycleCount+1
+ SUBTRACT_CYCLES 298    ; Subtract 298 from the cycle count
 
  LDA L03EF
  AND #$A0
@@ -1237,25 +1194,13 @@ ENDMACRO
  CMP #$80
  BEQ CC7C5
 
- CLC                    ; Add 223 ($00DF) to cycleCount
- LDA cycleCount
- ADC #$DF
- STA cycleCount
- LDA cycleCount+1
- ADC #$00
- STA cycleCount+1
+ ADD_CYCLES_CLC 223     ; Add 223 to the cycle count
 
  RTS
 
 .loop_CC7B5
 
- CLC                    ; Add 45 ($002D) to cycleCount
- LDA cycleCount
- ADC #$2D
- STA cycleCount
- LDA cycleCount+1
- ADC #$00
- STA cycleCount+1
+ ADD_CYCLES_CLC 45      ; Add 45 to the cycle count
 
  JMP CC7D2
 
@@ -1286,17 +1231,17 @@ ENDMACRO
  LDA #0
  STA ppuNametableAddr
  LDA L00CC
- STA tile3Phase0,X
- STA tile2Phase0,X
+ STA tileNumber3,X
+ STA tileNumber2,X
  LDA L00D2
- STA L00CA,X
- STA tile1Phase0,X
+ STA tileNumber4,X
+ STA tileNumber1,X
  LDA L03EF,X
  ORA #$10
  STA L03EF,X
  LDA #0
  STA addr4
- LDA L00CA,X
+ LDA tileNumber4,X
  ASL A
  ROL addr4
  ASL A
@@ -1309,7 +1254,7 @@ ENDMACRO
  STA L04BE,X
  LDA #0
  STA addr4
- LDA tile3Phase0,X
+ LDA tileNumber3,X
  ASL A
  ROL addr4
  ASL A
@@ -1337,13 +1282,7 @@ ENDMACRO
 
 .subm_C836
 
- CLC                    ; Add 4 ($0004) to cycleCount
- LDA cycleCount
- ADC #$04
- STA cycleCount
- LDA cycleCount+1
- ADC #$00
- STA cycleCount+1
+ ADD_CYCLES_CLC 4       ; Add 4 to the cycle count
 
  JMP CCBDD
 
@@ -1362,31 +1301,21 @@ ENDMACRO
 
 .subm_C849
 
- SEC                    ; Subtract 182 ($00B6) from cycleCount
- LDA cycleCount
- SBC #$B6
- STA cycleCount
- LDA cycleCount+1
- SBC #$00
- STA cycleCount+1
+ SUBTRACT_CYCLES 182    ; Subtract 182 from the cycle count
 
  BMI CC85B
  JMP CC86A
 
 .CC85B
 
- LDA cycleCount         ; Add 141 ($008D) to cycleCount
- ADC #$8D
- STA cycleCount
- LDA cycleCount+1
- ADC #$00
- STA cycleCount+1
+ ADD_CYCLES 141         ; Add 141 to the cycle count
 
- JMP CC6F3
+ JMP SendBuffersToPPU-1 ; Return from the subroutine (as SendBuffersToPPU-1
+                        ; contains an RTS)
 
 .CC86A
 
- LDA tile0Phase0,X
+ LDA tileNumber0,X
  BNE CC870
  LDA #$FF
 
@@ -1400,7 +1329,7 @@ ENDMACRO
  LDY L00DB,X
  LDA L04BE,X
  STA addr5+1
- LDA L00CA,X
+ LDA tileNumber4,X
  STA L00C9
  SEC
  SBC temp1
@@ -1439,13 +1368,7 @@ ENDMACRO
 
  INC addr5+1
 
- SEC                    ; Subtract 27 ($001B) from cycleCount
- LDA cycleCount
- SBC #$1B
- STA cycleCount
- LDA cycleCount+1
- SBC #$00
- STA cycleCount+1
+ SUBTRACT_CYCLES 27     ; Subtract 27 from the cycle count
 
  JMP CC925
 
@@ -1459,25 +1382,14 @@ ENDMACRO
 
 .CC8D2
 
- SEC                    ; Subtract 400 ($0190) from cycleCount
- LDA cycleCount
- SBC #$90
- STA cycleCount
- LDA cycleCount+1
- SBC #$01
- STA cycleCount+1
+ SUBTRACT_CYCLES 400    ; Subtract 400 from the cycle count
 
  BMI CC8E4
  JMP CC8F3
 
 .CC8E4
 
- LDA cycleCount         ; Add 359 ($0167) to cycleCount
- ADC #$67
- STA cycleCount
- LDA cycleCount+1
- ADC #$01
- STA cycleCount+1
+ ADD_CYCLES 359         ; Add 359 to the cycle count
 
  JMP CCB30
 
@@ -1610,38 +1522,20 @@ ENDMACRO
 
  INC addr5+1
 
- SEC                    ; Subtract 29 ($001D) from cycleCount
- LDA cycleCount
- SBC #$1D
- STA cycleCount
- LDA cycleCount+1
- SBC #$00
- STA cycleCount+1
+ SUBTRACT_CYCLES 29     ; Subtract 29 from the cycle count
 
  CLC
  JMP CC971
 
 .CC9EB
 
- CLC                    ; Add 224 ($00E0) to cycleCount
- LDA cycleCount
- ADC #$E0
- STA cycleCount
- LDA cycleCount+1
- ADC #$00
- STA cycleCount+1
+ ADD_CYCLES_CLC 224     ; Add 224 to the cycle count
 
  JMP CCA08
 
 .CC9FB
 
- CLC                    ; Add 109 ($006D) to cycleCount
- LDA cycleCount
- ADC #$6D
- STA cycleCount
- LDA cycleCount+1
- ADC #$00
- STA cycleCount+1
+ ADD_CYCLES_CLC 109     ; Add 109 to the cycle count
 
 .CCA08
 
@@ -1652,20 +1546,14 @@ ENDMACRO
  LDA addr5+1
  STA L04BE,X
  LDA L00C9
- STA L00CA,X
+ STA tileNumber4,X
  JMP CCBBC
 
 .CCA1B
 
  INC addr5+1
 
- SEC                    ; Subtract 29 ($001D) from cycleCount
- LDA cycleCount
- SBC #$1D
- STA cycleCount
- LDA cycleCount+1
- SBC #$00
- STA cycleCount+1
+ SUBTRACT_CYCLES 29     ; Subtract 29 from the cycle count
 
  CLC
  JMP CC9BC
@@ -1708,13 +1596,7 @@ ENDMACRO
 
  INC addr5+1
 
- SEC                    ; Subtract 27 ($001B) from cycleCount
- LDA cycleCount
- SBC #$1B
- STA cycleCount
- LDA cycleCount+1
- SBC #$00
- STA cycleCount+1
+ SUBTRACT_CYCLES 27     ; Subtract 27 from the cycle count
 
  JMP CCABD
 
@@ -1724,25 +1606,14 @@ ENDMACRO
 
 .CCA6A
 
- SEC                    ; Subtract 266 ($010A) from cycleCount
- LDA cycleCount
- SBC #$0A
- STA cycleCount
- LDA cycleCount+1
- SBC #$01
- STA cycleCount+1
+ SUBTRACT_CYCLES 266    ; Subtract 266 from the cycle count
 
  BMI CCA7C
  JMP CCA8B
 
 .CCA7C
 
- LDA cycleCount         ; Add 225 ($00E1) to cycleCount
- ADC #$E1
- STA cycleCount
- LDA cycleCount+1
- ADC #$00
- STA cycleCount+1
+ ADD_CYCLES 225         ; Add 225 to the cycle count
 
  JMP CCB30
 
@@ -1831,13 +1702,7 @@ ENDMACRO
 
  INC addr5+1
 
- SEC                    ; Subtract 29 ($001D) from cycleCount
- LDA cycleCount
- SBC #$1D
- STA cycleCount
- LDA cycleCount+1
- SBC #$00
- STA cycleCount+1
+ SUBTRACT_CYCLES 29     ; Subtract 29 from the cycle count
 
  CLC
  JMP CCB04
@@ -1850,8 +1715,10 @@ ENDMACRO
  LDA addr5+1
  STA L04BE,X
  LDA L00C9
- STA L00CA,X
- JMP CC6F3
+ STA tileNumber4,X
+
+ JMP SendBuffersToPPU-1 ; Return from the subroutine (as SendBuffersToPPU-1
+                        ; contains an RTS)
 
 ; ******************************************************************************
 ;
@@ -1868,27 +1735,17 @@ ENDMACRO
  LDA #$20
  STA L03EF,X
 
- SEC                    ; Subtract 227 ($00E3) from cycleCount
- LDA cycleCount
- SBC #$E3
- STA cycleCount
- LDA cycleCount+1
- SBC #$00
- STA cycleCount+1
+ SUBTRACT_CYCLES 227    ; Subtract 227 from the cycle count
 
  BMI CCB5B
  JMP CCB6A
 
 .CCB5B
 
- LDA cycleCount         ; Add 176 ($00B0) to cycleCount
- ADC #$B0
- STA cycleCount
- LDA cycleCount+1
- ADC #$00
- STA cycleCount+1
+ ADD_CYCLES 176         ; Add 176 to the cycle count
 
- JMP CC6F3
+ JMP SendBuffersToPPU-1 ; Return from the subroutine (as SendBuffersToPPU-1
+                        ; contains an RTS)
 
 .CCB6A
 
@@ -1906,25 +1763,13 @@ ENDMACRO
 
 .CCB80
 
- CLC                    ; Add 151 ($0097) to cycleCount
- LDA cycleCount
- ADC #$97
- STA cycleCount
- LDA cycleCount+1
- ADC #$00
- STA cycleCount+1
+ ADD_CYCLES_CLC 151     ; Add 151 to the cycle count
 
  RTS
 
 .CCB8E
 
- CLC                    ; Add 163 ($00A3) to cycleCount
- LDA cycleCount
- ADC #$A3
- STA cycleCount
- LDA cycleCount+1
- ADC #$00
- STA cycleCount+1
+ ADD_CYCLES_CLC 163     ; Add 163 to the cycle count
 
  RTS
 
@@ -1939,51 +1784,30 @@ ENDMACRO
 
 .subm_CB9C
 
- CLC                    ; Add 58 ($003A) to cycleCount
- LDA cycleCount
- ADC #$3A
- STA cycleCount
- LDA cycleCount+1
- ADC #$00
- STA cycleCount+1
+ ADD_CYCLES_CLC 58      ; Add 58 to the cycle count
 
- JMP CC6F3
+ JMP SendBuffersToPPU-1 ; Return from the subroutine (as SendBuffersToPPU-1
+                        ; contains an RTS)
 
 .CCBAC
 
- CLC                    ; Add 53 ($0035) to cycleCount
- LDA cycleCount
- ADC #$35
- STA cycleCount
- LDA cycleCount+1
- ADC #$00
- STA cycleCount+1
+ ADD_CYCLES_CLC 53      ; Add 53 to the cycle count
 
  JMP subm_CB42
 
 .CCBBC
 
- SEC                    ; Subtract 109 ($006D) from cycleCount
- LDA cycleCount
- SBC #$6D
- STA cycleCount
- LDA cycleCount+1
- SBC #$00
- STA cycleCount+1
+ SUBTRACT_CYCLES 109    ; Subtract 109 from the cycle count
 
  BMI CCBCE
  JMP CCBDD
 
 .CCBCE
 
- LDA cycleCount         ; Add 68 ($0044) to cycleCount
- ADC #$44
- STA cycleCount
- LDA cycleCount+1
- ADC #$00
- STA cycleCount+1
+ ADD_CYCLES 68          ; Add 68 to the cycle count
 
- JMP CC6F3
+ JMP SendBuffersToPPU-1 ; Return from the subroutine (as SendBuffersToPPU-1
+                        ; contains an RTS)
 
 .CCBDD
 
@@ -1999,7 +1823,7 @@ ENDMACRO
 .CCBED
 
  STY temp1
- LDA tile3Phase0,X
+ LDA tileNumber3,X
  STA L00CF
  SEC
  SBC temp1
@@ -2016,13 +1840,7 @@ ENDMACRO
 
 .CCC0D
 
- SEC                    ; Subtract 393 ($0189) from cycleCount
- LDA cycleCount
- SBC #$89
- STA cycleCount
- LDA cycleCount+1
- SBC #$01
- STA cycleCount+1
+ SUBTRACT_CYCLES 393    ; Subtract 393 from the cycle count
 
  BMI subm_CC1F
  JMP SendToPPU1
@@ -2038,12 +1856,7 @@ ENDMACRO
 
 .subm_CC1F
 
- LDA cycleCount         ; Add 349 ($015D) to cycleCount
- ADC #$5D
- STA cycleCount
- LDA cycleCount+1
- ADC #$01
- STA cycleCount+1
+ ADD_CYCLES 349         ; Add 349 to the cycle count
 
  JMP CCD26
 
@@ -2164,7 +1977,7 @@ ENDMACRO
 
 .CCCFD
 
- STA tile3Phase0,X
+ STA tileNumber3,X
  STY L00DD,X
  LDA addr5+1
  STA L04C0,X
@@ -2174,13 +1987,7 @@ ENDMACRO
 
  INC addr5+1
 
- SEC                    ; Subtract 26 ($001A) from cycleCount
- LDA cycleCount
- SBC #$1A
- STA cycleCount
- LDA cycleCount+1
- SBC #$00
- STA cycleCount+1
+ SUBTRACT_CYCLES 26     ; Subtract 26 from the cycle count
 
  LDA L00CF
  CLC
@@ -2193,11 +2000,13 @@ ENDMACRO
 .CCD26
 
  LDA L00CF
- STA tile3Phase0,X
+ STA tileNumber3,X
  STY L00DD,X
  LDA addr5+1
  STA L04C0,X
- JMP CC6F3
+
+ JMP SendBuffersToPPU-1 ; Return from the subroutine (as SendBuffersToPPU-1
+                        ; contains an RTS)
 
 ; ******************************************************************************
 ;
@@ -2236,8 +2045,8 @@ ENDMACRO
  DEY
  BNE CCD38
  LDA tileNumber
- STA tile0Phase0
- STA tile0Phase1
+ STA tileNumber0
+ STA tileNumber0+1
  RTS
 
 ; ******************************************************************************
@@ -2909,13 +2718,7 @@ ENDIF
  CPX #$20               ; Loop back until we have sent XX3+1 through XX3+$1F
  BNE sepa1
 
- SEC                    ; Subtract 559 ($022F) from cycleCount
- LDA cycleCount
- SBC #$2F
- STA cycleCount
- LDA cycleCount+1
- SBC #$02
- STA cycleCount+1
+ SUBTRACT_CYCLES 559    ; Subtract 559 from the cycle count
 
  JMP UpdateScreen+4     ; Return to UpdateScreen to continue with the next
                         ; instruction following the call to this routine
@@ -3095,33 +2898,22 @@ ENDIF
  LDA cycleCount+1
  BEQ CD0D0
 
- SEC                    ; Subtract 363 ($016B) from cycleCount
- LDA cycleCount
- SBC #$6B
- STA cycleCount
- LDA cycleCount+1
- SBC #$01
- STA cycleCount+1
+ SUBTRACT_CYCLES 363    ; Subtract 363 from the cycle count
 
  BMI CD092
  JMP CD0A1
 
 .CD092
 
- LDA cycleCount         ; Add 318 ($013E) to cycleCount
- ADC #$3E
- STA cycleCount
- LDA cycleCount+1
- ADC #$01
- STA cycleCount+1
+ ADD_CYCLES 318         ; Add 318 to the cycle count
 
  JMP CD0D0
 
 .CD0A1
 
- LDA L00EF              ; Store L00EF(1 0) and addr6(1 0) on the stack
+ LDA addr7              ; Store addr7(1 0) and addr6(1 0) on the stack
  PHA
- LDA L00F0
+ LDA addr7+1
  PHA
  LDA addr6
  PHA
@@ -3134,44 +2926,27 @@ ENDIF
  LDX #1
  JSR ClearPartOfBuffer
 
- PLA                    ; Retore L00EF(1 0) and addr6(1 0) from the stack
+ PLA                    ; Retore addr7(1 0) and addr6(1 0) from the stack
  STA addr6+1
  PLA
  STA addr6
  PLA
- STA L00F0
+ STA addr7+1
  PLA
- STA L00EF
+ STA addr7
 
- CLC                    ; Add 238 ($00EE) to cycleCount
- LDA cycleCount
- ADC #$EE
- STA cycleCount
- LDA cycleCount+1
- ADC #$00
- STA cycleCount+1
+ ADD_CYCLES_CLC 238     ; Add 238 to the cycle count
 
 .CD0D0
 
- SEC                    ; Subtract 32 ($0020) from cycleCount
- LDA cycleCount
- SBC #$20
- STA cycleCount
- LDA cycleCount+1
- SBC #$00
- STA cycleCount+1
+ SUBTRACT_CYCLES 32     ; Subtract 32 from the cycle count
 
  BMI CD0E2
  JMP CD0F1
 
 .CD0E2
 
- LDA cycleCount         ; Add xxx (&0FFF7) to cycleCount
- ADC #$F7
- STA cycleCount
- LDA cycleCount+1
- ADC #$0FF
- STA cycleCount+1
+ ADD_CYCLES 65527       ; Add 65527 to the cycle count (i.e. subtract 9)
 
  JMP CD0F7
 
@@ -3256,59 +3031,62 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_D15B
+;       Name: Unused copy of WSCAN
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Utility routines
+;    Summary: An unused copy of WSCAN that waits for the next VBlank, but
+;             without checking if the PPU has started drawing the icon bar
 ;
 ; ******************************************************************************
 
-.subm_D15B
+ LDA frameCounter       ; Set A to the frame counter, which increments with each
+                        ; call to the NMI handler
 
- LDA frameCounter
+.wscn1
 
-.loop_CD15E
+ CMP frameCounter       ; Loop back to wscn1 until the frame counter changes,
+ BEQ wscn1              ; which will happen when the NMI handler is called again
+                        ; (i.e. at the next VBlank)
 
- CMP frameCounter
- BEQ loop_CD15E
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: KeepPPUTablesAt0x2
+;       Name: WSCAN
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Utility routines
+;    Summary: Wait until the next NMI interrupt (i.e. the next VBlank)
+;
+; ------------------------------------------------------------------------------
+;
+; Other entry points:
+;
+;   WSCAN-3             Wait until two NMI interrupts have passed
 ;
 ; ******************************************************************************
 
-.KeepPPUTablesAt0x2
+ JSR WSCAN              ; Call WSCAN to wait for the next NMI interrupt, then
+                        ; fall through into WSCAN to wait for the next one
 
- JSR KeepPPUTablesAt0
+.WSCAN
 
-; ******************************************************************************
-;
-;       Name: KeepPPUTablesAt0
-;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
-;
-; ******************************************************************************
+ PHA                    ; Store A on the stack to preserve it
 
-.KeepPPUTablesAt0
+ LDX frameCounter       ; Set X to the frame counter, which increments with each
+                        ; call to the NMI handler
 
- PHA
- LDX frameCounter
-
-.loop_CD16B
+.WSCAN1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- CPX frameCounter
- BEQ loop_CD16B
- PLA
- RTS
+ CPX frameCounter       ; Loop back to WSCAN1 until the frame counter changes,
+ BEQ WSCAN1             ; which will happen when the NMI handler is called again
+                        ; (i.e. at the next VBlank)
+
+ PLA                    ; Retrieve A from the stack so that it's preserved
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -3365,9 +3143,9 @@ ENDIF
 .CD1C8
 
  LDY frameCounter
- LDA tile3Phase0,X
+ LDA tileNumber3,X
  STA SC
- LDA tile2Phase0,X
+ LDA tileNumber2,X
  CPY frameCounter
  BNE CD1C8
  LDY SC
@@ -3380,7 +3158,7 @@ ENDIF
  STY SC
  CMP SC
  BCS CD239
- STY tile2Phase0,X
+ STY tileNumber2,X
  LDY #0
  STY addr6+1
  ASL A
@@ -3411,12 +3189,12 @@ ENDIF
  LDA SC
  SEC
  SBC addr6
- STA L00EF
+ STA addr7
  LDA SC+1
  SBC addr6+1
  BCC CD239
- STA L00F0
- ORA L00EF
+ STA addr7+1
+ ORA addr7
  BEQ CD239
  LDA #3
  STA cycleCount+1
@@ -3428,15 +3206,15 @@ ENDIF
 .CD239
 
  LDY frameCounter
- LDA L00CA,X
+ LDA tileNumber4,X
  STA SC
- LDA tile1Phase0,X
+ LDA tileNumber1,X
  CPY frameCounter
  BNE CD239
  LDY SC
  CMP SC
  BCS CD2A2
- STY tile1Phase0,X
+ STY tileNumber1,X
  LDY #0
  STY addr6+1
  ASL A
@@ -3467,12 +3245,12 @@ ENDIF
  LDA SC
  SEC
  SBC addr6
- STA L00EF
+ STA addr7
  LDA SC+1
  SBC addr6+1
  BCC CD239
- STA L00F0
- ORA L00EF
+ STA addr7+1
+ ORA addr7
  BEQ CD2A2
  LDA #3
  STA cycleCount+1
@@ -3514,13 +3292,7 @@ ENDIF
 
 .CD2A6
 
- SEC                    ; Subtract 39 ($0027) from cycleCount
- LDA cycleCount
- SBC #$27
- STA cycleCount
- LDA cycleCount+1
- SBC #$00
- STA cycleCount+1
+ SUBTRACT_CYCLES 39     ; Subtract 39 from the cycle count
 
 .CD2B3
 
@@ -3528,13 +3300,7 @@ ENDIF
 
 .CD2B4
 
- CLC                    ; Add 126 ($007E) to cycleCount
- LDA cycleCount
- ADC #$7E
- STA cycleCount
- LDA cycleCount+1
- ADC #$00
- STA cycleCount+1
+ ADD_CYCLES_CLC 126     ; Add 126 to the cycle count
 
  JMP CD37E
 
@@ -3550,40 +3316,29 @@ ENDIF
  AND #8
  BEQ CD2A6
 
- SEC                    ; Subtract 213 ($00D5) from cycleCount
- LDA cycleCount
- SBC #$D5
- STA cycleCount
- LDA cycleCount+1
- SBC #$00
- STA cycleCount+1
+ SUBTRACT_CYCLES 213    ; Subtract 213 from the cycle count
 
  BMI CD2E6
  JMP CD2F5
 
 .CD2E6
 
- LDA cycleCount         ; Add 153 ($0099) to cycleCount
- ADC #$99
- STA cycleCount
- LDA cycleCount+1
- ADC #$00
- STA cycleCount+1
+ ADD_CYCLES 153         ; Add 153 to the cycle count
 
  JMP CD2B3
 
 .CD2F5
 
- LDA tile2Phase0,X
- LDY tile3Phase0,X
+ LDA tileNumber2,X
+ LDY tileNumber3,X
  CPY L00D8
  BCC CD2FF
  LDY L00D8
 
 .CD2FF
 
- STY L00EF
- CMP L00EF
+ STY addr7
+ CMP addr7
  BCS CD2B4
 
  LDY #0
@@ -3600,24 +3355,24 @@ ENDIF
  STA addr6+1
 
  LDA #0
- ASL L00EF
+ ASL addr7
  ROL A
- ASL L00EF
+ ASL addr7
  ROL A
- ASL L00EF
+ ASL addr7
  ROL A
  ADC nameBufferHiAddr,X
- STA L00F0
+ STA addr7+1
 
- LDA L00EF
+ LDA addr7
  SEC
  SBC addr6
- STA L00EF
- LDA L00F0
+ STA addr7
+ LDA addr7+1
  SBC addr6+1
  BCC CD359
- STA L00F0
- ORA L00EF
+ STA addr7+1
+ ORA addr7
  BEQ CD35D
  JSR ClearMemory
  LDA addr6+1
@@ -3630,9 +3385,9 @@ ENDIF
  LSR A
  LDA addr6
  ROR A
- CMP tile2Phase0,X
+ CMP tileNumber2,X
  BCC CD37B
- STA tile2Phase0,X
+ STA tileNumber2,X
  JMP CD37E
 
 .CD359
@@ -3644,25 +3399,13 @@ ENDIF
 
 .CD35D
 
- CLC                    ; Add 28 ($001C) to cycleCount
- LDA cycleCount
- ADC #$1C
- STA cycleCount
- LDA cycleCount+1
- ADC #$00
- STA cycleCount+1
+ ADD_CYCLES_CLC 28      ; Add 28 to the cycle count
 
  JMP CD37E
 
 .CD36D
 
- CLC                    ; Add 126 ($007E) to cycleCount
- LDA cycleCount
- ADC #$7E
- STA cycleCount
- LDA cycleCount+1
- ADC #$00
- STA cycleCount+1
+ ADD_CYCLES_CLC 126     ; Add 126 to the cycle count
 
 .CD37A
 
@@ -3676,34 +3419,23 @@ ENDIF
 
 .CD37E
 
- SEC                    ; Subtract 187 ($00BB) from cycleCount
- LDA cycleCount
- SBC #$BB
- STA cycleCount
- LDA cycleCount+1
- SBC #$00
- STA cycleCount+1
+ SUBTRACT_CYCLES 187    ; Subtract 187 from the cycle count
 
  BMI CD390
  JMP CD39F
 
 .CD390
 
- LDA cycleCount         ; Add 146 ($0092) to cycleCount
- ADC #$92
- STA cycleCount
- LDA cycleCount+1
- ADC #$00
- STA cycleCount+1
+ ADD_CYCLES 146         ; Add 146 to the cycle count
 
  JMP CD37A
 
 .CD39F
 
- LDA tile1Phase0,X
- LDY L00CA,X
- STY L00EF
- CMP L00EF
+ LDA tileNumber1,X
+ LDY tileNumber4,X
+ STY addr7
+ CMP addr7
  BCS CD36D
  NOP
 
@@ -3721,23 +3453,23 @@ ENDIF
  STA addr6+1
 
  LDA #0
- ASL L00EF
+ ASL addr7
  ROL A
- ASL L00EF
+ ASL addr7
  ROL A
- ASL L00EF
+ ASL addr7
  ROL A
  ADC pattBufferHiAddr,X
- STA L00F0
- LDA L00EF
+ STA addr7+1
+ LDA addr7
  SEC
  SBC addr6
- STA L00EF
- LDA L00F0
+ STA addr7
+ LDA addr7+1
  SBC addr6+1
  BCC CD3FC
- STA L00F0
- ORA L00EF
+ STA addr7+1
+ ORA addr7
  BEQ CD401
 
  JSR ClearMemory
@@ -3752,9 +3484,9 @@ ENDIF
  LSR A
  LDA addr6
  ROR A
- CMP tile1Phase0,X
+ CMP tileNumber1,X
  BCC CD3FC
- STA tile1Phase0,X
+ STA tileNumber1,X
  RTS
 
 .CD3FC
@@ -3767,13 +3499,7 @@ ENDIF
 
 .CD401
 
- CLC                    ; Add 35 ($0023) to cycleCount
- LDA cycleCount
- ADC #$23
- STA cycleCount
- LDA cycleCount+1
- ADC #$00
- STA cycleCount+1
+ ADD_CYCLES_CLC 35      ; Add 35 to the cycle count
 
  RTS
 
@@ -4325,28 +4051,17 @@ ENDIF
 
 .ClearMemory
 
- LDA L00F0
+ LDA addr7+1
  BEQ CD789
 
- SEC                    ; Subtract 2105 ($0839) from cycleCount
- LDA cycleCount
- SBC #$39
- STA cycleCount
- LDA cycleCount+1
- SBC #$08
- STA cycleCount+1
+ SUBTRACT_CYCLES 2105   ; Subtract 2105 from the cycle count
 
  BMI CD726
  JMP CD735
 
 .CD726
 
- LDA cycleCount         ; Add 2059 ($080B) to cycleCount
- ADC #$0B
- STA cycleCount
- LDA cycleCount+1
- ADC #$08
- STA cycleCount+1
+ ADD_CYCLES 2059        ; Add 2059 to the cycle count
 
  JMP CD743
 
@@ -4355,31 +4070,20 @@ ENDIF
  LDA #0
  LDY #0
  JSR FillMemory
- DEC L00F0
+ DEC addr7+1
  INC addr6+1
  JMP ClearMemory
 
 .CD743
 
- SEC                    ; Subtract 318 ($013E) from cycleCount
- LDA cycleCount
- SBC #$3E
- STA cycleCount
- LDA cycleCount+1
- SBC #$01
- STA cycleCount+1
+ SUBTRACT_CYCLES 318    ; Subtract 318 from the cycle count
 
  BMI CD755
  JMP CD764
 
 .CD755
 
- LDA cycleCount         ; Add 277 ($0115) to cycleCount
- ADC #$15
- STA cycleCount
- LDA cycleCount+1
- ADC #$01
- STA cycleCount+1
+ ADD_CYCLES 277         ; Add 277 to the cycle count
 
  JMP CD788
 
@@ -4399,13 +4103,7 @@ ENDIF
 
 .CD77B
 
- CLC                    ; Add 132 ($0084) to cycleCount
- LDA cycleCount
- ADC #$84
- STA cycleCount
- LDA cycleCount+1
- ADC #$00
- STA cycleCount+1
+ ADD_CYCLES_CLC 132     ; Add 132 to the cycle count
 
 .CD788
 
@@ -4413,31 +4111,20 @@ ENDIF
 
 .CD789
 
- SEC                    ; Subtract 186 ($00BA) from cycleCount
- LDA cycleCount
- SBC #$BA
- STA cycleCount
- LDA cycleCount+1
- SBC #$00
- STA cycleCount+1
+ SUBTRACT_CYCLES 186    ; Subtract 186 from the cycle count
 
  BMI CD79B
  JMP CD7AA
 
 .CD79B
 
- LDA cycleCount         ; Add 138 ($008A) to cycleCount
- ADC #$8A
- STA cycleCount
- LDA cycleCount+1
- ADC #$00
- STA cycleCount+1
+ ADD_CYCLES 138         ; Add 138 to the cycle count
 
  JMP CD788
 
 .CD7AA
 
- LDA L00EF
+ LDA addr7
  BEQ CD77B
  LSR A
  LSR A
@@ -4446,39 +4133,39 @@ ENDIF
  CMP cycleCount+1
  BCS CD809
  LDA #0
- STA L00F0
- LDA L00EF
+ STA addr7+1
+ LDA addr7
  ASL A
- ROL L00F0
+ ROL addr7+1
  ASL A
- ROL L00F0
+ ROL addr7+1
  ASL A
- ROL L00F0
+ ROL addr7+1
  EOR #$FF
  SEC
  ADC cycleCount
  STA cycleCount
- LDA L00F0
+ LDA addr7+1
  EOR #$FF
  ADC cycleCount+1
  STA cycleCount+1
  LDY #0
- STY L00F0
- LDA L00EF
+ STY addr7+1
+ LDA addr7
  PHA
  ASL A
- ROL L00F0
- ADC L00EF
- STA L00EF
- LDA L00F0
+ ROL addr7+1
+ ADC addr7
+ STA addr7
+ LDA addr7+1
  ADC #0
- STA L00F0
+ STA addr7+1
  LDA #LO(ClearMemory)
- SBC L00EF
- STA L00EF
+ SBC addr7
+ STA addr7
  LDA #HI(ClearMemory)
- SBC L00F0
- STA L00F0
+ SBC addr7+1
+ STA addr7+1
  LDA #0
  JSR CD806
  PLA
@@ -4492,49 +4179,32 @@ ENDIF
 
 .CD806
 
- JMP (L00EF)
+ JMP (addr7)
 
 .CD809
 
- CLC                    ; Add 118 ($0076) to cycleCount
- LDA cycleCount
- ADC #$76
- STA cycleCount
- LDA cycleCount+1
- ADC #$00
- STA cycleCount+1
+ ADD_CYCLES_CLC 118     ; Add 118 to the cycle count
 
 .CD816
 
- SEC                    ; Subtract 321 ($0141) from cycleCount
- LDA cycleCount
- SBC #$41
- STA cycleCount
- LDA cycleCount+1
- SBC #$01
- STA cycleCount+1
+ SUBTRACT_CYCLES 321    ; Subtract 321 from the cycle count
 
  BMI CD828
  JMP CD837
 
 .CD828
 
- LDA cycleCount         ; Add 280 ($0118) to cycleCount
- ADC #$18
- STA cycleCount
- LDA cycleCount+1
- ADC #$01
- STA cycleCount+1
+ ADD_CYCLES 280         ; Add 280 to the cycle count
 
  JMP CD855
 
 .CD837
 
- LDA L00EF
+ LDA addr7
  SEC
  SBC #$20
  BCC CD856
- STA L00EF
+ STA addr7
  LDA #0
  LDY #0
  JSR FillMemory32Bytes
@@ -4552,45 +4222,28 @@ ENDIF
 
 .CD856
 
- CLC                    ; Add 269 ($010D) to cycleCount
- LDA cycleCount
- ADC #$0D
- STA cycleCount
- LDA cycleCount+1
- ADC #$01
- STA cycleCount+1
+ ADD_CYCLES_CLC 269     ; Add 269 to the cycle count
 
 .CD863
 
- SEC                    ; Subtract 119 ($0077) from cycleCount
- LDA cycleCount
- SBC #$77
- STA cycleCount
- LDA cycleCount+1
- SBC #$00
- STA cycleCount+1
+ SUBTRACT_CYCLES 119    ; Subtract 119 from the cycle count
 
  BMI CD875
  JMP CD884
 
 .CD875
 
- LDA cycleCount         ; Add 78 ($004E) to cycleCount
- ADC #$4E
- STA cycleCount
- LDA cycleCount+1
- ADC #$00
- STA cycleCount+1
+ ADD_CYCLES 78          ; Add 78 to the cycle count
 
  JMP CD855
 
 .CD884
 
- LDA L00EF
+ LDA addr7
  SEC
  SBC #8
  BCC CD8B7
- STA L00EF
+ STA addr7
  LDA #0
  LDY #0
  STA (addr6),Y
@@ -4622,13 +4275,7 @@ ENDIF
 
 .CD8B7
 
- CLC                    ; Add 66 ($0042) to cycleCount
- LDA cycleCount
- ADC #$42
- STA cycleCount
- LDA cycleCount+1
- ADC #$00
- STA cycleCount+1
+ ADD_CYCLES_CLC 66      ; Add 66 to the cycle count
 
  RTS
 
@@ -4683,7 +4330,7 @@ ENDIF
 .SetDrawingPhase
 
  STX drawingPhase
- LDA tile0Phase0,X
+ LDA tileNumber0,X
  STA tileNumber
  LDA nameBufferHiAddr,X
  STA nameBufferHi
@@ -4828,8 +4475,8 @@ ENDIF
 
  JSR subm_D8C5
  LDA tileNumber
- STA tile0Phase0
- STA tile0Phase1
+ STA tileNumber0
+ STA tileNumber0+1
  LDA #$58
  STA L00CC
  LDA #$64
@@ -4882,7 +4529,7 @@ ENDIF
  JSR DrawBoxEdges
  LDX drawingPhase
  LDA tileNumber
- STA tile0Phase0,X
+ STA tileNumber0,X
  PLA
  STA L03EF,X
  RTS
@@ -7944,7 +7591,7 @@ ENDIF
 
 .DELAY
 
- JSR KeepPPUTablesAt0
+ JSR WSCAN
  DEY
  BNE DELAY
  RTS
@@ -8450,7 +8097,7 @@ ENDIF
 .subm_8021_b6
 
  PHA                    ; ???
- JSR KeepPPUTablesAt0
+ JSR WSCAN
  PLA
 
  ORA #$80
@@ -8533,7 +8180,7 @@ ENDIF
 
 .WaitResetSound
 
- JSR KeepPPUTablesAt0
+ JSR WSCAN
 
 ; ******************************************************************************
 ;

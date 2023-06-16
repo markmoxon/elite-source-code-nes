@@ -1696,7 +1696,7 @@ ENDIF
 
 .subm_A7B7
 
- JSR KeepPPUTablesAt0
+ JSR WSCAN
  LDA ppuCtrlCopy
  PHA
  LDA #0
@@ -2029,12 +2029,12 @@ ENDIF
 
  STA L00D2
  LDA tileNumber
- STA tile0Phase0,X
+ STA tileNumber0,X
  LDA #$C4
  JSR subm_D977
  JSR CA99B
  LDA tileNumber
- STA tile1Phase0,X
+ STA tileNumber1,X
  RTS
 
 .CA99B
@@ -2115,8 +2115,8 @@ ENDIF
  LDA #$25
  STA L00D2
  LDA tileNumber
- STA tile0Phase0
- STA tile0Phase1
+ STA tileNumber0
+ STA tileNumber0+1
  LDA #$54
  LDX #0
  PLA
@@ -2130,8 +2130,8 @@ ENDIF
  LDA QQ11
  STA QQ11a
  LDA tileNumber
- STA tile1Phase0
- STA tile1Phase1
+ STA tileNumber1
+ STA tileNumber1+1
  LDA #0
  LDX #0
  STX palettePhase
@@ -2140,7 +2140,7 @@ ENDIF
  LDA QQ11
  AND #$40
  BNE CAA3B
- JSR KeepPPUTablesAt0
+ JSR WSCAN
  LDA #$80
  STA showUserInterface
 
@@ -2160,7 +2160,7 @@ ENDIF
  STA L03F2
  JSR subm_B57F
  DEC updatePaletteInNMI
- JSR KeepPPUTablesAt0
+ JSR WSCAN
  INC updatePaletteInNMI
  RTS
 
@@ -2354,14 +2354,14 @@ ENDIF
  STA L03EF
  STA L03F0
  LDA #4
- STA tile1Phase0
- STA tile1Phase1
- STA tile2Phase0
- STA tile2Phase1
- STA L00CA
- STA L00CB
- STA tile3Phase0
- STA tile3Phase1
+ STA tileNumber1
+ STA tileNumber1+1
+ STA tileNumber2
+ STA tileNumber2+1
+ STA tileNumber4
+ STA tileNumber4+1
+ STA tileNumber3
+ STA tileNumber3+1
 
  LDA #$0F               ; Set hiddenColour to $0F, which is black, so this hides
  STA hiddenColour       ; any pixels that use the hidden colour in palette 0
@@ -4286,17 +4286,17 @@ ENDIF
  LDA L0473
  BMI CB66D
  JSR subm_D8C5
- JSR KeepPPUTablesAt0
+ JSR WSCAN
  JSR subm_B57F
  DEC updatePaletteInNMI
  JSR subm_B5F9
- JSR KeepPPUTablesAt0x2
+ JSR WSCAN-3
  JSR subm_B5F9
- JSR KeepPPUTablesAt0x2
+ JSR WSCAN-3
  JSR subm_B5F9
- JSR KeepPPUTablesAt0x2
+ JSR WSCAN-3
  JSR subm_B5F9
- JSR KeepPPUTablesAt0x2
+ JSR WSCAN-3
  INC updatePaletteInNMI
 
 .CB66D
@@ -4316,21 +4316,21 @@ ENDIF
 
 .subm_B673
 
- JSR KeepPPUTablesAt0
+ JSR WSCAN
  JSR subm_B57F
  JSR subm_B5F6
  JSR subm_B5F9
  DEC updatePaletteInNMI
- JSR KeepPPUTablesAt0x2
+ JSR WSCAN-3
  JSR subm_B57F
  JSR subm_B5F6
- JSR KeepPPUTablesAt0x2
+ JSR WSCAN-3
  JSR subm_B57F
  JSR subm_B5F9
- JSR KeepPPUTablesAt0x2
+ JSR WSCAN-3
  JSR subm_B57F
  JSR CB607
- JSR KeepPPUTablesAt0
+ JSR WSCAN
  INC updatePaletteInNMI
  LSR L0473
  RTS

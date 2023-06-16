@@ -1034,35 +1034,27 @@ ENDIF
                         ; buffer 0 or 1 (and which tile number is chosen from
                         ; the following)
 
-.tile0Phase0
+.tileNumber0
 
  SKIP 1                 ; A tile number, for phase 0
-
-.tile0Phase1
 
  SKIP 1                 ; A tile number, for phase 1
 
-.tile1Phase0
+.tileNumber1
 
  SKIP 1                 ; A tile number, for phase 0
-
-.tile1Phase1
 
  SKIP 1                 ; A tile number, for phase 1
 
-.tile2Phase0
+.tileNumber2
 
  SKIP 1                 ; A tile number, for phase 0
-
-.tile2Phase1
 
  SKIP 1                 ; A tile number, for phase 1
 
-.tile3Phase0
+.tileNumber3
 
  SKIP 1                 ; A tile number, for phase 0
-
-.tile3Phase1
 
  SKIP 1                 ; A tile number, for phase 1
 
@@ -1070,13 +1062,11 @@ ENDIF
 
  SKIP 1                 ; ???
 
-.L00CA
+.tileNumber4
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A tile number, for phase 0
 
-.L00CB
-
- SKIP 1                 ; ???
+ SKIP 1                 ; A tile number, for phase 1
 
 .L00CC
 
@@ -1201,13 +1191,9 @@ ENDIF
 
  SKIP 2                 ; An address to fetch PPU data from ???
 
-.L00EF
+.addr7
 
- SKIP 1                 ; ???
-
-.L00F0
-
- SKIP 1                 ; ???
+ SKIP 2                 ; ???
 
 .addr6
 
@@ -4105,9 +4091,14 @@ ENDIF
                         ; galaxy chart (and, most of the time, the selected
                         ; system's galactic y-coordinate)
 
-.L049F
+.systemNumber
 
- SKIP 2                 ; ???
+ SKIP 1                 ; The current system number, as calculated in TT111 when
+                        ; finding the nearest system in the galaxy
+
+.L04A0
+
+ SKIP 1                 ; ???
 
 .L04A1
 

@@ -16203,7 +16203,7 @@ ENDMACRO
 .PDL1
 
  LDA (SC),Y
- CMP L049F
+ CMP systemNumber
  BNE PD2
  LDA (SC2),Y
 

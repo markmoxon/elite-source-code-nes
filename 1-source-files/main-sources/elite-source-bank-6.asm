@@ -3453,7 +3453,7 @@ ENDIF
  PHA
  TXA
  PHA
- JSR KeepPPUTablesAt0
+ JSR WSCAN
  LDA nmiTimer
  PHA
  LDA nmiTimerLo
@@ -3482,7 +3482,7 @@ ENDIF
  JSR subm_AC1D_b3
  PLA
  STA L045F
- JSR KeepPPUTablesAt0
+ JSR WSCAN
  PLA
  STA nmiTimerHi
  PLA
@@ -4075,7 +4075,7 @@ ENDIF
 
 .subm_A4A5
 
- JSR KeepPPUTablesAt0
+ JSR WSCAN
  LDA ECM
  BEQ CA4B4
 
@@ -4486,14 +4486,14 @@ ENDIF
  TAX
  LDA #6
  JSR subm_A917
- JSR KeepPPUTablesAt0
+ JSR WSCAN
  LDX language
  LDA LACC6,X
  LDY LACCA,X
  TAX
  LDA #5
  JSR subm_A917
- JSR KeepPPUTablesAt0
+ JSR WSCAN
  LDX language
  LDA LACCE,X
  LDY LACD2,X
@@ -6512,7 +6512,7 @@ ENDIF
 .loop_CB88E
 
  PHA
- JSR KeepPPUTablesAt0
+ JSR WSCAN
  PLA
  JSR subm_B786
  SEC
@@ -7334,7 +7334,7 @@ ENDIF
  INY
  LDA LBE4B,Y
  BPL loop_CBCF4
- STY L049F
+ STY systemNumber
  LDA #$8D
  STA L00D6
  JSR subm_8926_b0
@@ -7377,7 +7377,7 @@ ENDIF
 
 .CBD5A
 
- JSR KeepPPUTablesAt0
+ JSR WSCAN
  LDY LASCT
  LDA LBE2C,Y
  ASL A
