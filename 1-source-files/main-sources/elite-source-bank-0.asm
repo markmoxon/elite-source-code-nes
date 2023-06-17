@@ -11817,7 +11817,7 @@ ENDIF
 
 .likeTT112
 
- LDA QQ15,X             ; Copy the X-th byte in QQ15 to the X-th byte in QQ2,
+ LDA QQ15,X             ; Copy the X-th byte in QQ15 to the X-th byte in QQ2
  STA QQ2,X
 
  DEX                    ; Decrement the counter
@@ -11846,14 +11846,14 @@ ENDIF
 ;
 ;       Name: subm_EQSHP1
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Equipment
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
 .subm_EQSHP1
 
- LDA #20
+ LDA #20                ; Move the text cursor to column 2 on row 20
  STA YC
  LDA #2
  STA XC
@@ -11872,13 +11872,14 @@ ENDIF
  STA K+2
 
  JSR subm_B9C1_b4
+
  JMP subm_A4A5_b6
 
 ; ******************************************************************************
 ;
 ;       Name: subm_EQSHP2
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Equipment
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -11887,95 +11888,150 @@ ENDIF
 
  LDX #2
  STX fontBitPlane
+
  LDX XX13
- JSR subm_EQSHP3+2
+ JSR PrintEquipment+2
+
  LDX #1
  STX fontBitPlane
+
  RTS
 
 ; ******************************************************************************
 ;
-;       Name: subm_EQSHP3
+;       Name: PrintEquipment
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Equipment
+;    Summary: Print an inventory listing for a specified item
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   XX13                The item number + 1 (i.e. 1 for fuel)
+;
+;   Q                   The highest item number on sale + 1
+;
+; Other entry points:
+;
+;   PrintEquipment+2    Print the item number in X
 ;
 ; ******************************************************************************
 
-.subm_EQSHP3
+.PrintEquipment
 
- LDX XX13
+ LDX XX13               ; Set X to the item number to print
 
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- STX XX13
- TXA
- CLC
- ADC #2
- LDX Q
- CPX #$0C
- BCC CA3E7
+ STX XX13               ; Store the item number in XX13, in case we entered the
+                        ; routine at PrintEquipment+2
+
+ TXA                    ; Set A = X + 2
+ CLC                    ;
+ ADC #2                 ; So the first item (item 1) will be on row 3, and so on
+
+ LDX Q                  ; If Q >= 12, set A = A - 1 so we move everything up the
+ CPX #12                ; screen by one line when the highest item number on
+ BCC preq1              ; sale is at least 11
  SEC
  SBC #1
 
-.CA3E7
+.preq1
 
- STA YC
- LDA #1
+ STA YC                 ; Move the text cursor to row A
+
+ LDA #1                 ; Move the text cursor to column 1
  STA XC
- LDA L04A9
- AND #2
- BNE CA3F7
+
+ LDA L04A9              ; If bit 1 of L04A9 is clear, print a space
+ AND #%00000010
+ BNE preq2
  JSR TT162
 
-.CA3F7
+.preq2
 
- JSR TT162
- LDA XX13
- CLC
- ADC #$68
+ JSR TT162              ; Print a space
+
+ LDA XX13               ; Print recursive token 104 + XX13, which will be in the
+ CLC                    ; range 105 ("FUEL") to 116 ("GALACTIC HYPERSPACE ")
+ ADC #104               ; so this prints the current item's name
  JSR TT27_b2
- JSR subm_D17F
- LDA XX13
- CMP #1
- BNE CA43F
- LDA #$20
+
+ JSR subm_D17F          ; ???
+
+ LDA XX13               ; If the current item number in XX13 is not 1, then it
+ CMP #1                 ; is not the fuel level, so jump to preq3 to skip the
+ BNE preq3              ; following (which prints the fuel level)
+
+ LDA #' '               ; Print a space
  JSR TT27_b2
- LDA #$28
+
+ LDA #'('               ; Print an open bracket
  JSR TT27_b2
- LDX QQ14
- SEC
- LDA #0
- JSR pr2+2
- LDA #$C3
+
+ LDX QQ14               ; Set X to the current fuel level * 10
+
+ SEC                    ; Set the C flag so the call to pr2+2 prints a decimal
+                        ; point
+
+ LDA #0                 ; Set the number of digits to 0 for the call to pr2+2,
+                        ; so the number is not padded with spaces
+
+ JSR pr2+2              ; Print the fuel level with a decimal point and no
+                        ; padding
+
+ LDA #195               ; Print recursive token 35 ("LIGHT YEARS")
  JSR TT27_b2
- LDA #$29
+
+ LDA #')'               ; Print a closing bracket
  JSR TT27_b2
- LDA L04A9
- AND #4
- BNE CA43F
- LDA XX13
- JSR prxm3
- SEC
- LDA #5
- JSR TT11
- LDA #$20
+
+ LDA L04A9              ; If bit 2 of L04A9 is set, jump to preq3 to skip the
+ AND #%00000100         ; following (which prints the price)
+ BNE preq3
+
+                        ; Bit 2 of L04A9 is clear, so now we print the price
+
+ LDA XX13               ; Call prx-3 to set (Y X) to the price of the item with
+ JSR prx-3              ; number XX13 - 1 (as XX13 contains the item number + 1)
+
+ SEC                    ; Set the C flag so we will print a decimal point when
+                        ; we print the price
+
+ LDA #5                 ; Print the number in (Y X) to 5 digits, left-padding
+ JSR TT11               ; with spaces and including a decimal point, which will
+                        ; be the correct price for this item as (Y X) contains
+                        ; the price * 10, so the trailing zero will go after the
+                        ; decimal point (i.e. 5250 will be printed as 525.0)
+
+ LDA #' '               ; Print a space
  JMP TT27_b2
 
-.CA43F
+.preq3
 
- LDA #$20
+ LDA #' '               ; Print a space
  JSR TT27_b2
- LDA XC
- CMP #$18
- BNE CA43F
- LDA XX13
- JSR prxm3
- SEC
- LDA #6
- JSR TT11
- JMP TT162
+
+ LDA XC                 ; Loop back to print another space until XC = 24, so
+ CMP #24                ; so this tabs the text cursor to column 24
+ BNE preq3
+
+ LDA XX13               ; Call prx-3 to set (Y X) to the price of the item with
+ JSR prx-3              ; number XX13 - 1 (as XX13 contains the item number + 1)
+
+ SEC                    ; Set the C flag so we will print a decimal point when
+                        ; we print the price
+
+ LDA #6                 ; Print the number in (Y X) to 6 digits, left-padding
+ JSR TT11               ; with spaces and including a decimal point, which will
+                        ; be the correct price for this item as (Y X) contains
+                        ; the price * 10, so the trailing zero will go after the
+                        ; decimal point (i.e. 5250 will be printed as 525.0)
+
+ JMP TT162              ; Print a space and return from the subroutine using a
+                        ; tail call
 
 ; ******************************************************************************
 ;
@@ -11988,10 +12044,12 @@ ENDIF
 
 .subm_EQSHP4
 
- JSR subm_EQSHP3
+ JSR PrintEquipment
+
  LDA XX13
  SEC
  SBC #1
+
  BNE CA464
  LDA #1
 
@@ -12002,9 +12060,13 @@ ENDIF
 .CA466
 
  JSR subm_EQSHP2
+
  JSR subm_A4A5_b6
+
  JSR subm_8980
+
  JSR subm_D8C5
+
  JMP CA4DB
 
 ; ******************************************************************************
@@ -12018,18 +12080,22 @@ ENDIF
 
 .subm_EQSHP5
 
- JSR subm_EQSHP3
+ JSR PrintEquipment
+
  LDA XX13
  CLC
  ADC #1
+
  CMP Q
  BNE CA485
+
  LDA Q
  SBC #1
 
 .CA485
 
  STA XX13
+
  JMP CA466
 
 ; ******************************************************************************
@@ -12054,50 +12120,77 @@ ENDIF
 ;       Name: EQSHP
 ;       Type: Subroutine
 ;   Category: Equipment
-;    Summary: ???
+;    Summary: Show the Equip Ship screen
+;
+; ------------------------------------------------------------------------------
+;
+; Other entry points:
+;
+;   err                 Beep, pause and go to the docking bay (i.e. show the
+;                       Status Mode screen)
+;
+;   pres                Given an item number A with the item name in recursive
+;                       token Y, show an error to say that the item is already
+;                       present, refund the cost of the item, and then beep and
+;                       exit to the docking bay (i.e. show the Status Mode
+;                       screen)
 ;
 ; ******************************************************************************
 
 .EQSHP
 
- LDA #$B9
+ LDA #$B9               ; Change to view $B9 and move the text cursor to row 0
  JSR ChangeViewRow0
 
  LDX language           ; Move the text cursor to the correct column for the
  LDA tabEquipShip,X     ; Equip Ship title in the chosen language
  STA XC
 
- LDA #$CF
+ LDA #207               ; Print recursive token 47 ("EQUIP") on the top row
  JSR NLIN3
- LDA #$80
- STA QQ17
- LDA tek
- CLC
- ADC #3
- CMP #$0C
- BCC CA4AF
- LDA #$0E
 
-.CA4AF
+ LDA #%10000000         ; Set bit 7 of QQ17 to switch to Sentence Case, with the
+ STA QQ17               ; next letter in capitals
 
- STA Q
- STA QQ25
- INC Q
- LDA #$46
- SEC
- SBC QQ14
+ LDA tek                ; Fetch the tech level of the current system from tek
+ CLC                    ; and add 3 (the tech level is stored as 0-14, so A is
+ ADC #3                 ; now set to between 3 and 17)
 
- LDX #1                 ; START HERE
+ CMP #12                ; If A >= 12 then set A = 14, so A is now set to between
+ BCC P%+4               ; 3 and 14
+ LDA #14
 
-.loop_CA4BE
+ STA Q                  ; Set QQ25 = A (so QQ25 is in the range 3-14 and
+ STA QQ25               ; represents number of the most advanced item available
+ INC Q                  ; in this system, which we can pass to gnum below when
+                        ; asking which item we want to buy)
+                        ;
+                        ; Set Q = A + 1 (so Q is in the range 4-15 and contains
+                        ; QQ25 + 1, i.e. the highest item number on sale + 1)
 
- JSR subm_EQSHP3+2
- LDX XX13
+ LDA #70                ; Set A = 70 - QQ14, where QQ14 contains the current
+ SEC                    ; fuel in light years * 10, so this leaves the amount
+ SBC QQ14               ; of fuel we need to fill 'er up (in light years * 10)
+
+ LDX #1                 ; We are now going to work our way through the equipment
+                        ; price list at PRXS, printing out the equipment that is
+                        ; available at this station, so set a counter in X,
+                        ; starting at 1, to hold the number of the current item
+                        ; plus 1 (so the item number in X loops through 1-13)
+
+.EQL1
+
+ JSR PrintEquipment+2   ; ???
+
+ LDX XX13               ; Increment the current item number in XX13
  INX
- CPX Q
- BCC loop_CA4BE
- LDX #1
+
+ CPX Q                  ; If X < Q, loop back up to print the next item on the
+ BCC EQL1               ; list of equipment available at this station
+
+ LDX #1                 ; ???
  STX XX13
+
  JSR subm_EQSHP2
  JSR dn
  JSR subm_EB86
@@ -12109,7 +12202,7 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA controller1Up
+ LDA controller1Up      ; ???
  BPL CA4F0
  JMP subm_EQSHP4
 
@@ -12135,18 +12228,24 @@ ENDIF
  LDA XX13
  SEC
  SBC #1
- PHA
- JSR eq
- BCS CA51D
- PLA
- JSR subm_8980
+
+ PHA                    ; While preserving the value in A, call eq to subtract
+ JSR eq                 ; the price of the item we want to buy (which is in A)
+ BCS CA51D              ; from our cash pot, but only if we have enough cash in
+ PLA                    ; the pot. If we don't have enough cash, exit to the
+                        ; docking bay (i.e. show the Status Mode screen) ???
+
+ JSR subm_8980          ; ???
  JMP CA4DB
 
 .CA51D
 
  PLA
- BNE et0
- PHA
+
+ BNE et0                ; If A is not 0 (i.e. the item we've just bought is not
+                        ; fuel), skip to et0
+
+ PHA                    ; ???
  LDA QQ14
  CLC
  ADC #1
@@ -12154,7 +12253,7 @@ ENDIF
  BCC CA531
  LDY #$69
  PLA
- JMP CA58A
+ JMP pres
 
 .CA531
 
@@ -12163,84 +12262,145 @@ ENDIF
 
 .et0
 
- CMP #1
- BNE CA548
- LDX NOMSL
- INX
- LDY #$7C
- CPX #5
- BCS CA58A
- STX NOMSL
- LDA #1
+ CMP #1                 ; If A is not 1 (i.e. the item we've just bought is not
+ BNE et1                ; a missile), skip to et1
 
-.CA548
+ LDX NOMSL              ; Fetch the current number of missiles from NOMSL into X
 
- LDY #$6B
- CMP #2
- BNE CA558
- LDX #$25
- CPX CRGO
- BEQ CA58A
- STX CRGO
+ INX                    ; Increment X to the new number of missiles
 
-.CA558
+ LDY #124               ; Set Y to recursive token 124 ("ALL")
 
- CMP #3
- BNE CA565
- INY
- LDX ECM
- BNE CA58A
- DEC ECM
+ CPX #5                 ; If buying this missile would give us 5 missiles, this
+ BCS pres               ; is more than the maximum of 4 missiles that we can
+                        ; fit, so jump to pres to show the error "All Present",
+                        ; beep and exit to the docking bay (i.e. show the Status
+                        ; Mode screen)
 
-.CA565
+ STX NOMSL              ; Otherwise update the number of missiles in NOMSL
 
- CMP #4
- BNE CA573
- JSR qv
- LDA #$18
- JMP refund
+ LDA #1                 ; Set A to 1 as the call to msblob will have overwritten
+                        ; the original value, and we still need it set
+                        ; correctly so we can continue through the conditional
+                        ; statements for all the other equipment
 
- LDA #4
+.et1
 
-.CA573
+ LDY #107               ; Set Y to recursive token 107 ("LARGE CARGO{sentence
+                        ; case} BAY")
 
- CMP #5
- BNE CA57F
- JSR qv
- LDA #$8F
- JMP refund
+ CMP #2                 ; If A is not 2 (i.e. the item we've just bought is not
+ BNE et2                ; a large cargo bay), skip to et2
 
-.CA57F
+ LDX #37                ; If our current cargo capacity in CRGO is 37, then we
+ CPX CRGO               ; already have a large cargo bay fitted, so jump to pres
+ BEQ pres               ; to show the error "Large Cargo Bay Present", beep and
+                        ; exit to the docking bay (i.e. show the Status Mode
+                        ; screen)
 
- LDY #$6F
- CMP #6
- BNE CA5E6
- LDX BST
- BEQ ed9
+ STX CRGO               ; Otherwise we just scored ourselves a large cargo bay,
+                        ; so update our current cargo capacity in CRGO to 37
 
-.CA58A
+.et2
 
- STY K
- PHA
+ CMP #3                 ; If A is not 3 (i.e. the item we've just bought is not
+ BNE et3                ; an E.C.M. system), skip to et3
+
+ INY                    ; Increment Y to recursive token 108 ("E.C.M.SYSTEM")
+
+ LDX ECM                ; If we already have an E.C.M. fitted (i.e. ECM is
+ BNE pres               ; non-zero), jump to pres to show the error "E.C.M.
+                        ; System Present", beep and exit to the docking bay
+                        ; (i.e. show the Status Mode screen)
+
+ DEC ECM                ; Otherwise we just took delivery of a brand new E.C.M.
+                        ; system, so set ECM to $FF (as ECM was 0 before the DEC
+                        ; instruction)
+
+.et3
+
+ CMP #4                 ; If A is not 4 (i.e. the item we've just bought is not
+ BNE et4                ; an extra pulse laser), skip to et4
+
+ JSR qv                 ; Print a menu listing the four views, with a "View ?"
+                        ; prompt, and ask for a view number, which is returned
+                        ; in X (which now contains 0-3)
+
+ LDA #POW+9             ; Call refund with A set to the power of the new pulse
+ JMP refund             ; laser to install the new laser and process a refund if
+                        ; we already have a laser fitted to this view, returning
+                        ; from the subroutine using a tail call ???
+
+ LDA #4                 ; Set A to 4 as we just overwrote the original value,
+                        ; and we still need it set correctly so we can continue
+                        ; through the conditional statements for all the other
+                        ; equipment
+
+.et4
+
+ CMP #5                 ; If A is not 5 (i.e. the item we've just bought is not
+ BNE et5                ; an extra beam laser), skip to et5
+
+ JSR qv                 ; Print a menu listing the four views, with a "View ?"
+                        ; prompt, and ask for a view number, which is returned
+                        ; in X (which now contains 0-3)
+
+ LDA #POW+128           ; Call refund with A set to the power of the new beam
+ JMP refund             ; laser to install the new laser and process a refund if
+                        ; we already have a laser fitted to this view, returning
+                        ; from the subroutine using a tail call
+
+.et5
+
+ LDY #111               ; Set Y to recursive token 107 ("FUEL SCOOPS")
+
+ CMP #6                 ; If A is not 6 (i.e. the item we've just bought is not
+ BNE et6                ; a fuel scoop), skip to et6
+
+ LDX BST                ; If we already have fuel scoops fitted (i.e. BST is
+ BEQ ed9                ; zero), jump to ed9, otherwise fall through into pres
+                        ; to show the error "Fuel Scoops Present", beep and
+                        ; exit to the docking bay (i.e. show the Status Mode
+                        ; screen)
+
+.pres
+
+                        ; If we get here we need to show an error to say that
+                        ; the item whose name is in recursive token Y is already
+                        ; present, and then process a refund for the cost of
+                        ; item number A
+
+ STY K                  ; Store the item's name in K
+
+ PHA                    ; ???
  JSR WSCAN
  PLA
- JSR prx
- JSR MCASH
- LDA #2
+
+ JSR prx                ; Call prx to set (Y X) to the price of equipment item
+                        ; number A
+
+ JSR MCASH              ; Add (Y X) cash to the cash pot in CASH, as the station
+                        ; already took the money for this item in the JSR eq
+                        ; instruction above, but we can't fit the item, so need
+                        ; our money back
+
+ LDA #2                 ; Move the text cursor to column 2 on row 17
  STA XC
- LDA #$11
+ LDA #17
  STA YC
- LDA K
- JSR spc
- LDA #$1F
+
+ LDA K                  ; Print the recursive token in K (the item's name)
+ JSR spc                ; followed by a space
+
+ LDA #31                ; Print recursive token 145 ("PRESENT")
  JSR TT27_b2
 
-.loop_CA5A9
+.err
 
- JSR TT162
+ JSR TT162              ; ???
  LDA XC
  CMP #$1F
- BNE loop_CA5A9
+ BNE err
  JSR BOOP
  JSR subm_8980
  LDY #$28
@@ -12261,84 +12421,132 @@ ENDIF
  JSR subm_8980
  JMP CA4DB
 
-.CA5DA
+.presS
 
- JMP CA58A
+ JMP pres
 
  JSR subm_8980
  JMP CA4DB
 
 .ed9
 
- DEC BST
+ DEC BST                ; We just bought a shiny new fuel scoop, so set BST to
+                        ; $FF (as BST was 0 before the jump to ed9 above)
 
-.CA5E6
+.et6
 
- INY
- CMP #7
- BNE CA5F3
- LDX ESCP
- BNE CA58A
- DEC ESCP
+ INY                    ; Increment Y to recursive token 112 ("E.C.M.SYSTEM")
 
-.CA5F3
+ CMP #7                 ; If A is not 7 (i.e. the item we've just bought is not
+ BNE et7                ; an escape pod), skip to et7
 
- INY
- CMP #8
- BNE CA602
- LDX BOMB
- BNE CA58A
- LDX #$7F
- STX BOMB
+ LDX ESCP               ; If we already have an escape pod fitted (i.e. ESCP is
+ BNE pres               ; non-zero), jump to pres to show the error "Escape Pod
+                        ; Present", beep and exit to the docking bay (i.e. show
+                        ; the Status Mode screen)
 
-.CA602
+ DEC ESCP               ; Otherwise we just bought an escape pod, so set ESCP
+                        ; to $FF (as ESCP was 0 before the DEC instruction)
 
- INY
- CMP #9
- BNE CA60F
- LDX ENGY
- BNE CA5DA
- INC ENGY
+.et7
 
-.CA60F
+ INY                    ; Increment Y to recursive token 113 ("ENERGY BOMB")
 
- INY
- CMP #$0A
- BNE CA61C
- LDX DKCMP
- BNE CA5DA
- DEC DKCMP
+ CMP #8                 ; If A is not 8 (i.e. the item we've just bought is not
+ BNE et8                ; an energy bomb), skip to et8
 
-.CA61C
+ LDX BOMB               ; If we already have an energy bomb fitted (i.e. BOMB
+ BNE pres               ; is non-zero), jump to pres to show the error "Energy
+                        ; Bomb Present", beep and exit to the docking bay (i.e.
+                        ; show the Status Mode screen)
 
- INY
- CMP #$0B
- BNE CA629
- LDX GHYP
- BNE CA5DA
- DEC GHYP
+ LDX #$7F               ; Otherwise we just bought an energy bomb, so set BOMB
+ STX BOMB               ; to $7F
 
-.CA629
+.et8
 
- INY
- CMP #$0C
- BNE CA636
- JSR qv
- LDA #$97
- JMP refund
+ INY                    ; Increment Y to recursive token 114 ("ENERGY UNIT")
 
-.CA636
+ CMP #9                 ; If A is not 9 (i.e. the item we've just bought is not
+ BNE etA                ; an energy unit), skip to etA
 
- INY
- CMP #$0D
- BNE CA643
- JSR qv
- LDA #$32
- JMP refund
+ LDX ENGY               ; If we already have an energy unit fitted (i.e. ENGY is
+ BNE presS              ; non-zero), jump to presS to show the error "Energy Unit
+                        ; Present", beep and exit to the docking bay (i.e. show
+                        ; the Status Mode screen)
 
-.CA643
+ INC ENGY               ; Otherwise we just picked up an energy unit, so set
+                        ; ENGY to 1 (as ENGY was 0 before the INC instruction)
 
- JSR CA649
+.etA
+
+ INY                    ; Increment Y to recursive token 115 ("DOCKING
+                        ; COMPUTERS")
+
+ CMP #10                ; If A is not 10 (i.e. the item we've just bought is not
+ BNE etB                ; a docking computer), skip to etB
+
+ LDX DKCMP              ; If we already have a docking computer fitted (i.e.
+ BNE presS              ; DKCMP is non-zero), jump to presS to show the error
+                        ; "Docking Computer Present", beep and exit to the
+                        ; docking bay (i.e. show the Status Mode screen)
+
+ DEC DKCMP              ; Otherwise we just got hold of a docking computer, so
+                        ; set DKCMP to $FF (as DKCMP was 0 before the DEC
+                        ; instruction)
+
+.etB
+
+ INY                    ; Increment Y to recursive token 116 ("GALACTIC
+                        ; HYPERSPACE ")
+
+ CMP #11                ; If A is not 11 (i.e. the item we've just bought is not
+ BNE et9                ; a galactic hyperdrive), skip to et9
+
+ LDX GHYP               ; If we already have a galactic hyperdrive fitted (i.e.
+ BNE presS              ; GHYP is non-zero), jump to presS to show the error
+                        ; "Galactic Hyperspace Present", beep and exit to the
+                        ; docking bay (i.e. show the Status Mode screen)
+
+ DEC GHYP               ; Otherwise we just splashed out on a galactic
+                        ; hyperdrive, so set GHYP to $FF (as GHYP was 0 before
+                        ; the DEC instruction)
+
+.et9
+
+ INY                    ; Increment Y to recursive token 117 ("MILITARY  LASER")
+
+ CMP #12                ; If A is not 12 (i.e. the item we've just bought is not
+ BNE et10               ; a military laser), skip to et10
+
+ JSR qv                 ; Print a menu listing the four views, with a "View ?"
+                        ; prompt, and ask for a view number, which is returned
+                        ; in X (which now contains 0-3)
+
+ LDA #Armlas            ; Call refund with A set to the power of the new
+ JMP refund             ; military laser to install the new laser and process a
+                        ; refund if we already have a laser fitted to this view,
+                        ; returning from the subroutine using a tail call
+
+.et10
+
+ INY                    ; Increment Y to recursive token 118 ("MINING  LASER")
+
+ CMP #13                ; If A is not 13 (i.e. the item we've just bought is not
+ BNE et11               ; a mining laser), skip to et11
+
+ JSR qv                 ; Print a menu listing the four views, with a "View ?"
+                        ; prompt, and ask for a view number, which is returned
+                        ; in X (which now contains 0-3)
+
+ LDA #Mlas              ; Call refund with A set to the power of the new mining
+ JMP refund             ; laser to install the new laser and process a refund if
+                        ; we already have a laser fitted to this view, returning
+                        ; from the subroutine using a tail call
+
+.et11
+
+ JSR CA649              ; ???
  JMP CA466
 
 .CA649
@@ -12346,7 +12554,8 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- JSR dn
+ JSR dn                 ; ???
+
  JMP BEEP_b7
 
 ; ******************************************************************************
@@ -12403,14 +12612,12 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: prxm3
+;       Name: prx-3
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
-
-.prxm3
 
  SEC
  SBC #1
