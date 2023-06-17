@@ -11060,7 +11060,7 @@ ENDIF
  STA YC
  LDA LA169,X
  STA XC
- JMP CA89A
+ JMP PCASH
 
 ; ******************************************************************************
 ;
@@ -12328,8 +12328,10 @@ ENDIF
 
  LDA #POW+9             ; Call refund with A set to the power of the new pulse
  JMP refund             ; laser to install the new laser and process a refund if
-                        ; we already have a laser fitted to this view, returning
-                        ; from the subroutine using a tail call ???
+                        ; we already have a laser fitted to this view
+                        ;
+                        ; The refund routine jumps back to EQSHP, so this also
+                        ; redisplays the Equip Ship screen
 
  LDA #4                 ; Set A to 4 as we just overwrote the original value,
                         ; and we still need it set correctly so we can continue
@@ -12347,8 +12349,10 @@ ENDIF
 
  LDA #POW+128           ; Call refund with A set to the power of the new beam
  JMP refund             ; laser to install the new laser and process a refund if
-                        ; we already have a laser fitted to this view, returning
-                        ; from the subroutine using a tail call
+                        ; we already have a laser fitted to this view
+                        ;
+                        ; The refund routine jumps back to EQSHP, so this also
+                        ; redisplays the Equip Ship screen
 
 .et5
 
@@ -12525,8 +12529,10 @@ ENDIF
 
  LDA #Armlas            ; Call refund with A set to the power of the new
  JMP refund             ; military laser to install the new laser and process a
-                        ; refund if we already have a laser fitted to this view,
-                        ; returning from the subroutine using a tail call
+                        ; refund if we already have a laser fitted to this view
+                        ;
+                        ; The refund routine jumps back to EQSHP, so this also
+                        ; redisplays the Equip Ship screen
 
 .et10
 
@@ -12541,8 +12547,10 @@ ENDIF
 
  LDA #Mlas              ; Call refund with A set to the power of the new mining
  JMP refund             ; laser to install the new laser and process a refund if
-                        ; we already have a laser fitted to this view, returning
-                        ; from the subroutine using a tail call
+                        ; we already have a laser fitted to this view
+                        ;
+                        ; The refund routine jumps back to EQSHP, so this also
+                        ; redisplays the Equip Ship screen
 
 .et11
 
@@ -12562,86 +12570,137 @@ ENDIF
 ;
 ;       Name: dn
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print the amount of cash and beep
+;
+; ------------------------------------------------------------------------------
+;
+; Print the amount of money in the cash pot, then make a short, high beep and
+; delay for 1 second.
 ;
 ; ******************************************************************************
 
 .dn
 
- LDA #$11
+ LDA #17                ; Move the text cursor to column 2 on row 17
  STA YC
  LDA #2
  STA XC
- JMP CA89A
+
+ JMP PCASH              ; Jump to PCASH to print recursive token 119
+                        ; ("CASH:{cash} CR{crlf}"), followed by a space, and
+                        ; return from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: eq
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Equipment
+;    Summary: Subtract the price of equipment from the cash pot
+;
+; ------------------------------------------------------------------------------
+;
+; If we have enough cash, subtract the price of a specified piece of equipment
+; from our cash pot and return from the subroutine. If we don't have enough
+; cash, exit to the docking bay (i.e. show the Status Mode screen).
+;
+; Arguments:
+;
+;   A                   The item number of the piece of equipment (0-11) as
+;                       shown in the table at PRXS
 ;
 ; ******************************************************************************
 
 .eq
 
- JSR prx
- JSR LCASH
- BCS c
- LDA #$11
+ JSR prx                ; Call prx to set (Y X) to the price of equipment item
+                        ; number A
+
+ JSR LCASH              ; Subtract (Y X) cash from the cash pot, but only if
+                        ; we have enough cash
+
+ BCS c                  ; If the C flag is set then we did have enough cash for
+                        ; the transaction, so jump to c to return from the
+                        ; subroutine (as c contains an RTS)
+
+ LDA #17                ; Move the text cursor to column 2 on row 17
  STA YC
  LDA #2
  STA XC
- LDA #$C5
- JSR prq
- JSR BOOP
- LDY #$14
+
+ LDA #197               ; Otherwise we don't have enough cash to buy this piece
+ JSR prq                ; of equipment, so print recursive token 37 ("CASH")
+                        ; followed by a question mark
+
+ JSR BOOP               ; Call the BOOP routine to make a low, long beep to
+                        ; indicate that we don't have enough cash
+
+ LDY #20                ; We now print 21 spaces, so set a counter in Y
 
 .loop_CA681
 
- JSR TT162
- DEY
- BPL loop_CA681
- JSR subm_8980
- LDY #$28
+ JSR TT162              ; Print a space
+
+ DEY                    ; Decrement the loop counter
+
+ BPL loop_CA681         ; Loop back until we have printed 21 spaces
+
+ JSR subm_8980          ; ???
+
+ LDY #40                ; Delay for 40 vertical syncs (40/50 = 0.8 seconds)
  JSR DELAY
- JSR dn
- CLC
- RTS
 
-; ******************************************************************************
-;
-;       Name: prx-3
-;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
-;
-; ******************************************************************************
+ JSR dn                 ; ???
 
- SEC
- SBC #1
+ CLC                    ; Clear the C flag to indicate that we didn't make the
+                        ; purchase
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: prx
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Equipment
+;    Summary: Return the price of a piece of equipment
+;
+; ------------------------------------------------------------------------------
+;
+; This routine returns the price of equipment as listed in the table at PRXS.
+;
+; Arguments:
+;
+;   A                   The item number of the piece of equipment (0-13) as
+;                       shown in the table at PRXS
+;
+; Returns:
+;
+;   (Y X)               The item price in Cr * 10 (Y = high byte, X = low byte)
+;
+; Other entry points:
+;
+;   prx-3               Return the price of the item with number A - 1
+;
+;   c                   Contains an RTS
 ;
 ; ******************************************************************************
 
+ SEC                    ; Decrement A (for when this routine is called via
+ SBC #1                 ; prx-3)
+
 .prx
 
- ASL A
- TAY
- LDX PRXS,Y
- LDA PRXS+1,Y
- TAY
+ ASL A                  ; Set Y = A * 2, so it can act as an index into the
+ TAY                    ; PRXS table, which has two bytes per entry
+
+ LDX PRXS,Y             ; Fetch the low byte of the price into X
+
+ LDA PRXS+1,Y           ; Fetch the high byte of the price into A and transfer
+ TAY                    ; it to X, so the price is now in (Y X)
 
 .c
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -12850,61 +12909,111 @@ ENDIF
 ;
 ;       Name: refund
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Equipment
+;    Summary: Install a new laser, processing a refund if applicable
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The power of the new laser to be fitted
+;
+;   X                   The view number for fitting the new laser
+;
+; Returns:
+;
+;   A                   A is preserved
+;
+;   X                   X is preserved
 ;
 ; ******************************************************************************
 
 .refund
 
- STA T1
- LDA LASER,X
- BEQ CA79E
- LDY #4
- CMP #$18
- BEQ CA793
- LDY #5
- CMP #$8F
- BEQ CA793
- LDY #$0C
- CMP #$97
- BEQ CA793
- LDY #$0D
+ STA T1                 ; Store A in T1 so we can retrieve it later
 
-.CA793
+ LDA LASER,X            ; If there is no laser in view X (i.e. the laser power
+ BEQ ref3               ; is zero), jump to ref3 to skip the refund code
 
- STX ZZ
- TYA
- JSR prx
- JSR MCASH
- LDX ZZ
+ LDY #4                 ; If the current laser has power #POW (pulse laser),
+ CMP #POW+9             ; jump to ref1 with Y = 4 (the item number of a pulse
+ BEQ ref1               ; laser in the table at PRXS)
 
-.CA79E
+ LDY #5                 ; If the current laser has power #POW+128 (beam laser),
+ CMP #POW+128           ; jump to ref1 with Y = 5 (the item number of a beam
+ BEQ ref1               ; laser in the table at PRXS)
 
- LDA T1
- STA LASER,X
- JSR BEEP_b7
- JMP EQSHP
+ LDY #12                ; If the current laser has power #Armlas (military
+ CMP #Armlas            ; laser), jump to ref1 with Y = 12 (the item number of a
+ BEQ ref1               ; military laser in the table at PRXS)
 
- RTS
+ LDY #13                ; Otherwise this is a mining laser, so fall through into
+                        ; ref1 with Y = 13 (the item number of a mining laser in
+                        ; the table at PRXS)
+
+.ref1
+
+                        ; We now want to refund the laser of type Y that we are
+                        ; exchanging for the new laser
+
+ STX ZZ                 ; Store the view number in ZZ so we can retrieve it
+                        ; later
+
+ TYA                    ; Copy the laser type to be refunded from Y to A
+
+ JSR prx                ; Call prx to set (Y X) to the price of equipment item
+                        ; number A
+
+ JSR MCASH              ; Call MCASH to add (Y X) to the cash pot
+
+ LDX ZZ                 ; Retrieve the view number from ZZ
+
+.ref3
+
+                        ; Finally, we install the new laser
+
+ LDA T1                 ; Retrieve the new laser's power from T1 into A
+
+ STA LASER,X            ; Set the laser view to the new laser's power
+
+ JSR BEEP_b7            ; Call the BEEP subroutine to make a short, high beep
+
+ JMP EQSHP              ; Jump back to the EQSHP routine (which called this
+                        ; routine using a JMP), to redisplay the Equip Ship
+                        ; screen
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: PRXS
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Equipment
+;    Summary: Equipment prices
+;
+; ------------------------------------------------------------------------------
+;
+; Equipment prices are stored as 10 * the actual value, so we can support prices
+; with fractions of credits (0.1 Cr). This is used for the price of fuel only.
 ;
 ; ******************************************************************************
 
 .PRXS
 
- EQUB 2                                       ; A7AA: 02          .
- EQUB   0, $2C,   1, $A0, $0F, $70, $17, $A0  ; A7AB: 00 2C 01... .,.
- EQUB $0F, $10, $27, $82, $14, $10            ; A7B3: 0F 10 27... ..'
- EQUB $27, $28, $23                           ; A7B9: 27 28 23    '(#
- EQUB $98, $3A, $D0,   7, $50, $C3, $60, $EA  ; A7BC: 98 3A D0... .:.
- EQUB $40, $1F                                ; A7C4: 40 1F       @.
+ EQUW 2                 ; 0  Fuel                         0.2 Cr (per 0.1 LY)
+ EQUW 300               ; 1  Missile                     30.0 Cr
+ EQUW 4000              ; 2  Large Cargo Bay            400.0 Cr
+ EQUW 6000              ; 3  E.C.M. System              600.0 Cr
+ EQUW 4000              ; 4  Extra Pulse Lasers         400.0 Cr
+ EQUW 10000             ; 5  Extra Beam Lasers         1000.0 Cr
+ EQUW 5250              ; 6  Fuel Scoops                525.0 Cr
+ EQUW 10000             ; 7  Escape Pod                1000.0 Cr
+ EQUW 9000              ; 8  Energy Bomb                900.0 Cr
+ EQUW 15000             ; 9  Energy Unit               1500.0 Cr
+ EQUW 2000              ; 10 Docking Computer           200.0 Cr
+ EQUW 50000             ; 11 Galactic Hyperspace       5000.0 Cr
+ EQUW 60000             ; 12 Extra Military Lasers     6000.0 Cr
+ EQUW 8000              ; 13 Extra Mining Lasers        800.0 Cr
 
 ; ******************************************************************************
 ;
@@ -12917,162 +13026,262 @@ ENDIF
 
 .hyp1_cpl
 
- LDX #5
+ LDX #5                 ; We now want to copy the seeds for the selected system
+                        ; from safehouse into QQ15, where we store the seeds for
+                        ; the selected system, so set up a counter in X for
+                        ; copying six bytes (for three 16-bit seeds)
 
 .loop_CA7C8
 
- LDA safehouse,X
- STA QQ15,X
- DEX
- BPL loop_CA7C8
+ LDA safehouse,X        ; Copy the X-th byte in safehouse to the X-th byte in
+ STA QQ15,X             ; QQ15
+
+ DEX                    ; Decrement the counter
+
+ BPL loop_CA7C8         ; Loop back until we have copied all six bytes
 
 ; ******************************************************************************
 ;
 ;       Name: cpl
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print the selected system name
+;  Deep dive: Generating system names
+;             Galaxy and system seeds
+;
+; ------------------------------------------------------------------------------
+;
+; Print control code 3 (the selected system name, i.e. the one in the crosshairs
+; in the Short-range Chart).
 ;
 ; ******************************************************************************
 
 .cpl
 
- LDX #5
+ LDX #5                 ; First we need to back up the seeds in QQ15, so set up
+                        ; a counter in X to cover three 16-bit seeds (i.e.
+                        ; 6 bytes)
 
-.loop_CA7D2
+.TT53
 
- LDA QQ15,X
+ LDA QQ15,X             ; Copy byte X from QQ15 to QQ19
  STA QQ19,X
- DEX
- BPL loop_CA7D2
- LDY #3
- BIT QQ15
- BVS CA7E1
- DEY
 
-.CA7E1
+ DEX                    ; Decrement the loop counter
 
- STY T
+ BPL TT53               ; Loop back for the next byte to back up
 
-.loop_CA7E3
+ LDY #3                 ; Step 1: Now that the seeds are backed up, we can
+                        ; start the name-generation process. We will either
+                        ; need to loop three or four times, so for now set
+                        ; up a counter in Y to loop four times
+
+ BIT QQ15               ; Check bit 6 of s0_lo, which is stored in QQ15
+
+ BVS P%+3               ; If bit 6 is set then skip over the next instruction
+
+ DEY                    ; Bit 6 is clear, so we only want to loop three times,
+                        ; so decrement the loop counter in Y
+
+ STY T                  ; Store the loop counter in T
+
+.TT55
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA QQ15+5
- AND #$1F
- BEQ CA7FB
- ORA #$80
- JSR TT27_b2
+ LDA QQ15+5             ; Step 2: Load s2_hi, which is stored in QQ15+5, and
+ AND #%00011111         ; extract bits 0-4 by AND'ing with %11111
 
-.CA7FB
+ BEQ P%+7               ; If all those bits are zero, then skip the following
+                        ; two instructions to go to step 3
 
- JSR TT54
- DEC T
- BPL loop_CA7E3
- LDX #5
+ ORA #%10000000         ; We now have a number in the range 1-31, which we can
+                        ; easily convert into a two-letter token, but first we
+                        ; need to add 128 (or set bit 7) to get a range of
+                        ; 129-159
 
-.loop_CA804
+ JSR TT27_b2            ; Print the two-letter token in A
 
- LDA QQ19,X
+ JSR TT54               ; Step 3: twist the seeds in QQ15
+
+ DEC T                  ; Decrement the loop counter
+
+ BPL TT55               ; Loop back for the next two letters
+
+ LDX #5                 ; We have printed the system name, so we can now
+                        ; restore the seeds we backed up earlier. Set up a
+                        ; counter in X to cover three 16-bit seeds (i.e. 6
+                        ; bytes)
+
+.TT56
+
+ LDA QQ19,X             ; Copy byte X from QQ19 to QQ15
  STA QQ15,X
- DEX
- BPL loop_CA804
- RTS
+
+ DEX                    ; Decrement the loop counter
+
+ BPL TT56               ; Loop back for the next byte to restore
+
+ RTS                    ; Once all the seeds are restored, return from the
+                        ; subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: cmn
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print the commander's name
+;
+; ------------------------------------------------------------------------------
+;
+; Print control code 4 (the commander's name).
+;
+; Other entry points:
+;
+;   cmn-1               Contains an RTS
 ;
 ; ******************************************************************************
 
 .cmn
 
- LDY #0
+ LDY #0                 ; Set up a counter in Y, starting from 0
 
-.loop_CA80F
+.QUL4
 
- LDA NAME,Y
- CMP #$20
- BEQ CA81E
- JSR DASC_b2
- INY
- CPY #7
- BNE loop_CA80F
+ LDA NAME,Y             ; The commander's name is stored at NAME, so load the
+                        ; Y-th character from NAME
 
-.CA81E
+ CMP #' '               ; If we have found a space, then we have reached the end
+ BEQ ypl-1              ; of the name, return from the subroutine (ypl-1 points
+                        ; to the RTS below)
 
- RTS
+ JSR DASC_b2            ; Print the character we just loaded
+
+ INY                    ; Increment the loop counter
+
+ CPY #7                 ; Loop back for the next character until we have either
+ BNE QUL4               ; found a carriage return or have printed seven
+                        ; characters
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: ypl
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print the current system name
+;
+; ------------------------------------------------------------------------------
+;
+; Print control code 2 (the current system name).
+;
+; Other entry points:
+;
+;   ypl-1               Contains an RTS
 ;
 ; ******************************************************************************
 
 .ypl
 
- BIT MJ
- BMI CA839
- JSR TT62
- JSR cpl
+ BIT MJ                 ; Check the mis-jump flag at MJ, and if bit 7 is set
+ BMI ypl16              ; then we are in witchspace, and witchspace doesn't have
+                        ; a system name, so jump to ypl16 to return from the
+                        ; subroutine
+
+ JSR TT62               ; Call TT62 below to swap the three 16-bit seeds in
+                        ; QQ2 and QQ15 (before the swap, QQ2 contains the seeds
+                        ; for the current system, while QQ15 contains the seeds
+                        ; for the selected system)
+
+ JSR cpl                ; Call cpl to print out the system name for the seeds
+                        ; in QQ15 (which now contains the seeds for the current
+                        ; system)
+
+                        ; Now we fall through into the TT62 subroutine, which
+                        ; will swap QQ2 and QQ15 once again, so everything goes
+                        ; back into the right place, and the RTS at the end of
+                        ; TT62 will return from the subroutine
 
 .TT62
 
- LDX #5
+ LDX #5                 ; Set up a counter in X for the three 16-bit seeds we
+                        ; want to swap (i.e. 6 bytes)
 
-.loop_CA82C
+.TT78
 
- LDA QQ15,X
+ LDA QQ15,X             ; Swap byte X between QQ2 and QQ15
  LDY QQ2,X
  STA QQ2,X
  STY QQ15,X
- DEX
- BPL loop_CA82C
 
-.CA839
+ DEX                    ; Decrement the loop counter
 
- RTS
+ BPL TT78               ; Loop back for the next byte to swap
+
+.ypl16
+
+ RTS                    ; Once all bytes are swapped, return from the
+                        ; subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: tal
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print the current galaxy number
+;
+; ------------------------------------------------------------------------------
+;
+; Print control code 1 (the current galaxy number, right-aligned to width 3).
 ;
 ; ******************************************************************************
 
 .tal
 
- CLC
- LDX GCNT
- INX
- JMP pr2
+ CLC                    ; We don't want to print the galaxy number with a
+                        ; decimal point, so clear the C flag for pr2 to take as
+                        ; an argument
+
+ LDX GCNT               ; Load the current galaxy number from GCNT into X
+
+ INX                    ; Add 1 to the galaxy number, as the galaxy numbers
+                        ; are 0-7 internally, but we want to display them as
+                        ; galaxy 1 through 8
+
+ JMP pr2                ; Jump to pr2, which prints the number in X to a width
+                        ; of 3 figures, left-padding with spaces to a width of
+                        ; 3, and return from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: fwl
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print fuel and cash levels
+;
+; ------------------------------------------------------------------------------
+;
+; Print control code 5 ("FUEL: ", fuel level, " LIGHT YEARS", newline, "CASH:",
+; control code 0).
+;
+; Other entry points:
+;
+;   PCASH               Print the amount of cash only
 ;
 ; ******************************************************************************
 
 .fwl
 
- LDA L04A9
+ LDA L04A9              ; ???
  AND #2
  BNE CA87D
- LDA #$69
- JSR TT68
- JSR subm_A8A2
+
+ LDA #105               ; Print recursive token 105 ("FUEL") followed by a
+ JSR TT68               ; colon
+
+ JSR subm_A8A2          ; ???
  LDA L04A9
  AND #4
  BEQ CA85B
@@ -13080,12 +13289,19 @@ ENDIF
 
 .CA85B
 
- LDX QQ14
- SEC
- JSR pr2
- LDA #$C3
- JSR plf
- LDA #$C5
+ LDX QQ14               ; Load the current fuel level from QQ14
+
+ SEC                    ; We want to print the fuel level with a decimal point,
+                        ; so set the C flag for pr2 to take as an argument
+
+ JSR pr2                ; Call pr2, which prints the number in X to a width of
+                        ; 3 figures (i.e. in the format x.x, which will always
+                        ; be exactly 3 characters as the maximum fuel is 7.0)
+
+ LDA #195               ; Print recursive token 35 ("LIGHT YEARS") followed by
+ JSR plf                ; a newline
+
+ LDA #197               ; ???
  JSR TT68
  LDA L04A9
  AND #4
@@ -13100,7 +13316,7 @@ ENDIF
 
 .CA87D
 
- LDA #$69
+ LDA #105
  JSR PrintTokenAndColon
  JSR TT162
  LDX QQ14
@@ -13113,13 +13329,16 @@ ENDIF
  LDA #0
  BEQ CA89C
 
-.CA89A
+.PCASH
 
- LDA #$77
+ LDA #119               ; Set A = 119 so we print recursive token 119 below
 
 .CA89C
 
- JMP spc
+ JMP spc                ; Print recursive token 119 ("CASH:" then control code
+                        ; 0, which prints cash levels, then " CR" and newline),
+                        ; followed by a space, and return from the subroutine
+                        ; using a tail call
 
 ; ******************************************************************************
 ;
@@ -13165,29 +13384,49 @@ ENDIF
 ;
 ;       Name: csh
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print the current amount of cash
+;
+; ------------------------------------------------------------------------------
+;
+; Print control code 0 (the current amount of cash, right-aligned to width 9,
+; followed by " CR" and a newline).
 ;
 ; ******************************************************************************
 
 .csh
 
- LDX #3
+ LDX #3                 ; We are going to use the BPRNT routine to print out
+                        ; the current amount of cash, which is stored as a
+                        ; 32-bit number at location CASH. BPRNT prints out
+                        ; the 32-bit number stored in K, so before we call
+                        ; BPRNT, we need to copy the four bytes from CASH into
+                        ; K, so first we set up a counter in X for the 4 bytes
 
-.loop_CA8AD
+.pc1
 
- LDA CASH,X
+ LDA CASH,X             ; Copy byte X from CASH to K
  STA K,X
- DEX
- BPL loop_CA8AD
- LDA #$0B
- STA U
- SEC
- JSR BPRNT
- LDA #$E2
+
+ DEX                    ; Decrement the loop counter
+
+ BPL pc1                ; Loop back for the next byte to copy
+
+ LDA #11                ; We want to print the cash amount using up to 11 digits
+ STA U                  ; (including the decimal point), so store this in U
+                        ; for BRPNT to take as an argument
+
+ SEC                    ; We want to print the cash amount with a decimal point,
+                        ; so set the C flag for BRPNT to take as an argument
+
+ JSR BPRNT              ; Print the amount of cash to 9 digits with a decimal
+                        ; point
+
+ LDA #226               ; Print recursive token 66 (" CR")
  JSR TT27_b2
- JSR TT162
- JMP TT162
+
+ JSR TT162              ; Print two newlines and return from the subroutine
+ JMP TT162              ; using a tail call
 
 ; ******************************************************************************
 ;
