@@ -2049,7 +2049,7 @@ ENDIF
  PLA
  PHA
  TAX
- LDA L03EF,X
+ LDA phaseFlags,X
  AND #$20
  BNE CA9CC
  LDA #$10
@@ -2059,7 +2059,7 @@ ENDIF
  JSR SendBuffersToPPU
  PLA
  TAX
- LDA L03EF,X
+ LDA phaseFlags,X
  AND #$20
  BNE CA9CE
  JSR subm_D946
@@ -2125,8 +2125,8 @@ ENDIF
  JSR subm_D977
  JSR subm_D8C5
  LDA #$50
- STA L00CD
- STA L00CE
+ STA phaseL00CD
+ STA phaseL00CD+1
  LDA QQ11
  STA QQ11a
  LDA tileNumber
@@ -2351,8 +2351,8 @@ ENDIF
  LDA #0
  STA ppuNametableAddr
  LDA #$28
- STA L03EF
- STA L03F0
+ STA phaseFlags
+ STA phaseFlags+1
  LDA #4
  STA tileNumber1
  STA tileNumber1+1
@@ -4929,9 +4929,9 @@ IF _NTSC
                         ; the MMC1 mapper to map bank 7 into $C000 instead)
 
  EQUW Interrupts+$4000  ; Vector to the IRQ/BRK handler in case this bank is
-                        ; loaded into $C000 during start-up (the handler contains
-                        ; an RTI so the interrupt is processed but has no
-                        ; effect)
+                        ; loaded into $C000 during start-up (the handler
+                        ; contains an RTI so the interrupt is processed but has
+                        ; no effect)
 
 ELIF _PAL
 

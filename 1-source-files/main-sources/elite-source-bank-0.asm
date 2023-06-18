@@ -2189,8 +2189,8 @@ ENDIF
  BNE MA24
 
  LDA MSTG               ; If MSTG = $FF then there is no target lock, so jump to
- BMI MA64S              ; MA64 via MA64S to skip the following (also skipping the
-                        ; checks for the energy bomb)
+ BMI MA64S              ; MA64 via MA64S to skip the following (also skipping
+                        ; the checks for the energy bomb)
 
  JSR FRMIS              ; The "fire missile" key is being pressed and we have
                         ; a missile lock, so call the FRMIS routine to fire
@@ -2368,8 +2368,7 @@ ENDIF
 
  AND #%11101111         ; LASCT will be set to 0 for beam lasers, and to the
  STA LASCT              ; laser power AND %11101111 for pulse lasers, which
-                        ; comes to 10 ??? (as pulse lasers have a power of 15). See
-                        ; MA23 below for more on laser pulsing and LASCT
+                        ; comes to comes to ???
 
 .MA3
 
@@ -2416,9 +2415,9 @@ ENDIF
 
  LDX drawingPhase
 
- LDA L03EF,X
+ LDA phaseFlags,X
  ORA #$40
- STA L03EF,X
+ STA phaseFlags,X
 
  RTS
 
@@ -2897,8 +2896,8 @@ ENDIF
  STA L00CC
  LDA #$6C
  STA L00D8
- STA L00CD
- STA L00CE
+ STA phaseL00CD
+ STA phaseL00CD+1
  LDX #$25
  LDA QQ11
  AND #$40
@@ -2978,8 +2977,8 @@ ENDIF
  JSR DrawBoxEdges
  JSR CopyNameBuffer0To1
  LDA #$C4
- STA L03EF
- STA L03F0
+ STA phaseFlags
+ STA phaseFlags+1
  LDA tileNumber
  STA L00D2
  RTS
@@ -7000,7 +6999,7 @@ ENDIF
  SEC                    ; progress
  ROL TP
 
- JSR BRIS_0             ; Call BRIS to clear the screen, display "INCOMING
+ JSR BRIS_b0            ; Call BRIS to clear the screen, display "INCOMING
                         ; MESSAGE" and wait for 2 seconds
 
  JSR ZINF               ; Call ZINF to reset the INWK ship workspace
@@ -7105,7 +7104,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: BRIS_0
+;       Name: BRIS_b0
 ;       Type: Subroutine
 ;   Category: Missions
 ;    Summary: Clear the screen, display "INCOMING MESSAGE" and wait for 2
@@ -7113,7 +7112,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.BRIS_0
+.BRIS_b0
 
  LDA #216               ; Print extended token 216 ("{clear screen}{tab 6}{move
  JSR DETOK_b2           ; to row 10, white, lower case}{white}{all caps}INCOMING
@@ -12475,9 +12474,9 @@ ENDIF
  BNE etA                ; an energy unit), skip to etA
 
  LDX ENGY               ; If we already have an energy unit fitted (i.e. ENGY is
- BNE presS              ; non-zero), jump to presS to show the error "Energy Unit
-                        ; Present", beep and exit to the docking bay (i.e. show
-                        ; the Status Mode screen)
+ BNE presS              ; non-zero), jump to presS to show the error "Energy
+                        ; Unit Present", beep and exit to the docking bay
+                        ; (i.e. show the Status Mode screen)
 
  INC ENGY               ; Otherwise we just picked up an energy unit, so set
                         ; ENGY to 1 (as ENGY was 0 before the INC instruction)
@@ -13371,14 +13370,15 @@ ENDIF
 ;
 ;       Name: ypls
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print the current system name
 ;
 ; ******************************************************************************
 
 .ypls
 
- JMP ypl
+ JMP ypl                ; Jump to ypl to print the current system name and
+                        ; return from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -13432,188 +13432,277 @@ ENDIF
 ;
 ;       Name: plf
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print a text token followed by a newline
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The text token to be printed
 ;
 ; ******************************************************************************
 
 .plf
 
- JSR TT27_b2
- JMP TT67
+ JSR TT27_b2            ; Print the text token in A
+
+ JMP TT67               ; Jump to TT67 to print a newline and return from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: TT68
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print a text token followed by a colon
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The text token to be printed
 ;
 ; ******************************************************************************
 
 .TT68
 
- JSR TT27_b2
+ JSR TT27_b2            ; Print the text token in A and fall through into TT73
+                        ; to print a colon
 
 ; ******************************************************************************
 ;
 ;       Name: TT73
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print a colon
 ;
 ; ******************************************************************************
 
 .TT73
 
- LDA #':'
- JMP TT27_b2
+ LDA #':'               ; Print a colon, returning from the subroutine using a
+ JMP TT27_b2            ; tail call
 
 ; ******************************************************************************
 ;
 ;       Name: tals
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print the current galaxy number
 ;
 ; ******************************************************************************
 
 .tals
 
- JMP tal
+ JMP tal                ; Jump to tal to print the current galaxy number and
+                        ; return from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: TT27_0
+;       Name: PrintCtrlCode
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print a control code (in the range 0 to 9)
 ;
 ; ******************************************************************************
 
-.TT27_0
+.PrintCtrlCode
 
- TXA
- BEQ csh
- DEX
- BEQ tals
- DEX
- BEQ ypls
- DEX
- BNE CA8E8
- JMP cpl
+ TXA                    ; Copy the token number from X to A. We can then keep
+                        ; decrementing X and testing it against zero, while
+                        ; keeping the original token number intact in A; this
+                        ; effectively implements a switch statement on the
+                        ; value of the token
 
-.CA8E8
+ BEQ csh                ; If token = 0, this is control code 0 (current amount
+                        ; of cash and newline), so jump to csh to print the
+                        ; amount of cash and return from the subroutine using
+                        ; a tail call
 
- DEX
- BNE CA8EE
- JMP cmn
+ DEX                    ; If token = 1, this is control code 1 (current galaxy
+ BEQ tals               ; number), so jump to tal via tals to print the galaxy
+                        ; number and return from the subroutine using a tail
+                        ; call
 
-.CA8EE
+ DEX                    ; If token = 2, this is control code 2 (current system
+ BEQ ypls               ; name), so jump to ypl via ypls to print the current
+                        ; system name  and return from the subroutine using a
+                        ; tail call
 
- DEX
- BEQ fwls
- DEX
- BNE CA8F9
- LDA #$80
- STA QQ17
+ DEX                    ; If token > 3, skip the following instruction
+ BNE P%+5
 
-.loop_CA8F8
+ JMP cpl                ; This token is control code 3 (selected system name)
+                        ; so jump to cpl to print the selected system name 
+                        ; and return from the subroutine using a tail call
 
- RTS
+ DEX                    ; If token <> 4, skip the following instruction
+ BNE P%+5
 
-.CA8F9
+ JMP cmn                ; This token is control code 4 (commander name) so jump
+                        ; to cmn to print the commander name and return from the
+                        ; subroutine using a tail call
 
- DEX
- BEQ loop_CA8F8
- DEX
- BNE CA902
- STX QQ17
- RTS
+ DEX                    ; If token = 5, this is control code 5 (fuel, newline,
+ BEQ fwls               ; cash, newline), so jump to fwl via fwls to print the
+                        ; fuel level and return from the subroutine using a tail
+                        ; call
 
-.CA902
+ DEX                    ; If token > 6, skip the following three instructions
+ BNE ptok2
 
- JSR TT73
- LDA L04A9
- AND #2
- BNE CA911
- LDA #$16
+ LDA #%10000000         ; This token is control code 6 (switch to Sentence
+ STA QQ17               ; Case), so set bit 7 of QQ17 to switch to Sentence Case
+
+.ptok1
+
+ RTS                    ; Return from the subroutine
+
+.ptok2
+
+ DEX                    ; If token = 7, this is control code 7 (beep), so jump
+ BEQ ptok1              ; to ptok1 to return from the subroutine
+
+ DEX                    ; If token > 8, jump to ptok3
+ BNE ptok3
+
+ STX QQ17               ; This is control code 8, so set QQ17 = 0 to switch to
+                        ; ALL CAPS (we know X is zero as we just passed through
+                        ; a BNE)
+
+ RTS                    ; Return from the subroutine
+
+.ptok3
+
+                        ; If we get here then token > 8, so this is control code
+                        ; 9 (print a colon then tab to column 22 or 23)
+
+ JSR TT73               ; Print a colon
+
+ LDA L04A9              ; If bit 1 of L04A9 is set, jump to ptok4 to move the
+ AND #%00000010         ; text cursor to column 23
+ BNE ptok4
+
+ LDA #22                ; Bit 1 of L04A9 is clear, so move the text cursor to
+ STA XC                 ; column 22
+
+ RTS                    ; Return from the subroutine
+
+.ptok4
+
+ LDA #23                ; Move the text cursor to column 23
  STA XC
- RTS
 
-.CA911
-
- LDA #$17
- STA XC
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: fwls
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print fuel and cash levels
 ;
 ; ******************************************************************************
 
 .fwls
 
- JMP fwl
+ JMP fwl                ; Jump to fwl to print the fuel and cash levels, and
+                        ; return from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: SOS1
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Universe
+;    Summary: Update the missile indicators, set up the planet data block
+;
+; ------------------------------------------------------------------------------
+;
+; Update the missile indicators, and set up a data block for the planet, but
+; only setting the pitch and roll counters to 127 (no damping).
 ;
 ; ******************************************************************************
 
 .SOS1
 
- JSR msblob
- LDA #$7F
- STA INWK+29
+ JSR msblob             ; Reset the dashboard's missile indicators so none of
+                        ; them are targeted
+
+ LDA #127               ; Set the pitch and roll counters to 127 (no damping
+ STA INWK+29            ; so the planet's rotation doesn't slow down)
  STA INWK+30
- LDA tek
- AND #2
- ORA #$80
- JMP NWSHP
+
+ LDA tek                ; Set A = 128 or 130 depending on bit 1 of the system's
+ AND #%00000010         ; tech level in tek
+ ORA #%10000000
+
+ JMP NWSHP              ; Add a new planet to our local bubble of universe,
+                        ; with the planet type defined by A (128 is a planet
+                        ; with an equator and meridian, 130 is a planet with
+                        ; a crater)
 
 ; ******************************************************************************
 ;
 ;       Name: SOLAR
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Universe
+;    Summary: Set up various aspects of arriving in a new system
+;
+; ------------------------------------------------------------------------------
+;
+; Halve our legal status, update the missile indicators, and set up data blocks
+; and slots for the planet and sun.
 ;
 ; ******************************************************************************
 
 .SOLAR
 
- LDA TRIBBLE
- BEQ CA94C
- LDA #0
- STA QQ20
- JSR DORND
- AND #$0F
- ADC TRIBBLE
- ORA #4
- ROL A
+ LDA TRIBBLE            ; If we have no Trumbles in the hold, skip to nobirths
+ BEQ nobirths
+
+                        ; If we get here then we have Trumbles in the hold, so
+                        ; this is where they breed (though we never get here in
+                        ; the Master version as the number of Trumbles is always
+                        ; zero)
+
+ LDA #0                 ; Trumbles eat food during the hyperspace journey, so
+ STA QQ20               ; zero the amount of food in the hold
+
+ JSR DORND              ; Take the number of Trumbles from TRIBBLE(1 0), add a
+ AND #15                ; random number between 4 and 15, and double the result,
+ ADC TRIBBLE            ; storing the resulting number in TRIBBLE(1 0)
+ ORA #4                 ;
+ ROL A                  ; We start with the low byte
  STA TRIBBLE
- ROL TRIBBLE+1
- BPL CA94C
- ROR TRIBBLE+1
 
-.CA94C
+ ROL TRIBBLE+1          ; And then do the high byte
 
- LSR FIST
- JSR ZINF
- LDA QQ15+1
- AND #3
- ADC #3
- STA INWK+8
- LDX QQ15+2
+ BPL P%+5               ; If bit 7 of the high byte is set, then rotate the high
+ ROR TRIBBLE+1          ; byte back to the right, so the number of Trumbles is
+                        ; always positive
+
+.nobirths
+
+ LSR FIST               ; Halve our legal status in FIST, making us less bad,
+                        ; and moving bit 0 into the C flag (so every time we
+                        ; arrive in a new system, our legal status improves a
+                        ; bit)
+
+ JSR ZINF               ; Call ZINF to reset the INWK ship workspace, which
+                        ; doesn't affect the C flag
+
+ LDA QQ15+1             ; Fetch s0_hi
+
+ AND #%00000011         ; Extract bits 0-1 (which also help to determine the
+                        ; economy), which will be between 0 and 3
+
+ ADC #3                 ; Add 3 + C, to get a result between 3 and 7, clearing
+                        ; the C flag in the process
+
+ STA INWK+8             ; Store the result in z_sign in byte #6
+
+ LDX QQ15+2             ; ???
  CPX #$80
  ROR A
  STA INWK+2
@@ -13622,192 +13711,293 @@ ENDIF
  CPX #$80
  ROR A
  STA INWK+5
- JSR SOS1
- LDA QQ15+3
- AND #7
- ORA #$81
+
+ JSR SOS1               ; Call SOS1 to set up the planet's data block and add it
+                        ; to FRIN, where it will get put in the first slot as
+                        ; it's the first one to be added to our local bubble of
+                        ; this new system's universe
+
+ LDA QQ15+3             ; Fetch s1_hi, extract bits 0-2, set bits 0 and 7 and
+ AND #%00000111         ; store in z_sign, so the sun is behind us at a distance
+ ORA #%10000001         ; of 1 to 7
  STA INWK+8
- LDA QQ15+5
- AND #3
- STA INWK+2
- STA INWK+1
- LDA #0
+
+ LDA QQ15+5             ; Fetch s2_hi, extract bits 0-1 and store in x_sign and
+ AND #%00000011         ; y_sign, so the sun is either dead centre in our rear
+ STA INWK+2             ; laser crosshairs, or off to the top left by a distance
+ STA INWK+1             ; of 1 or 2 when we look out the back
+
+ LDA #0                 ; Set the pitch and roll counters to 0 (no rotation)
  STA INWK+29
  STA INWK+30
- STA FRIN+1
+
+ STA FRIN+1             ; ???
  STA SSPR
- LDA #$81
- JSR NWSHP
+
+ LDA #129               ; Set A = 129, the ship type for the sun
+
+ JSR NWSHP              ; Call NWSHP to set up the sun's data block and add it
+                        ; to FRIN, where it will get put in the second slot as
+                        ; it's the second one to be added to our local bubble
+                        ; of this new system's universe
 
 ; ******************************************************************************
 ;
 ;       Name: NWSTARS
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Stardust
+;    Summary: Initialise the stardust field
+;
+; ------------------------------------------------------------------------------
+;
+; This routine is called when the space view is initialised in routine LOOK1.
 ;
 ; ******************************************************************************
 
 .NWSTARS
 
- LDA QQ11
- ORA DLY
- BNE WPSHPS
+ LDA QQ11               ; If this is not a space view (QQ11 > 0), or it is a
+ ORA DLY                ; space view and we have an in-flight message on-screen
+ BNE WPSHPS             ; (DLY > 0), jump to WPSHPS to skip the initialisation
+                        ; of the SX, SY and SZ tables
 
 ; ******************************************************************************
 ;
 ;       Name: nWq
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Stardust
+;    Summary: Create a random cloud of stardust
+;
+; ------------------------------------------------------------------------------
+;
+; Create a random cloud of stardust containing the correct number of dust
+; particles, i.e. NOSTM of them, which is 3 in witchspace and 18 (#NOST) in
+; normal space. Also clears the scanner and initialises the LSO block.
+;
+; This is called by the DEATH routine when it displays our untimely demise.
 ;
 ; ******************************************************************************
 
 .nWq
 
- LDA frameCounter
+ LDA frameCounter       ; ???
  CLC
  ADC RAND
  STA RAND
  LDA frameCounter
  STA RAND+1
- LDY NOSTM
 
-.CA9A4
+ LDY NOSTM              ; Set Y to the current number of stardust particles, so
+                        ; we can use it as a counter through all the stardust
+
+.SAL4
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- JSR DORND
- ORA #8
- STA SZ,Y
- STA ZZ
- JSR DORND
- ORA #$10
- AND #$F8
- STA SX,Y
- JSR DORND
- STA SY,Y
- STA SXL,Y
+ JSR DORND              ; Set A and X to random numbers
+
+ ORA #8                 ; Set A so that it's at least 8
+
+ STA SZ,Y               ; Store A in the Y-th particle's z_hi coordinate at
+                        ; SZ+Y, so the particle appears in front of us
+
+ STA ZZ                 ; Set ZZ to the particle's z_hi coordinate
+
+ JSR DORND              ; Set A and X to random numbers
+
+ ORA #%00010000         ; ???
+ AND #%11111000
+
+ STA SX,Y               ; Store A in the Y-th particle's x_hi coordinate at
+                        ; SX+Y, so the particle appears in front of us
+
+ JSR DORND              ; Set A and X to random numbers
+
+ STA SY,Y               ; Store A in the Y-th particle's y_hi coordinate at
+                        ; SY+Y, so the particle appears in front of us
+
+ STA SXL,Y              ; ???
  STA SYL,Y
  STA SZL,Y
- DEY
- BNE CA9A4
+
+ DEY                    ; Decrement the counter to point to the next particle of
+                        ; stardust
+
+ BNE SAL4               ; Loop back to SAL4 until we have randomised all the
+                        ; stardust particles
+
+                        ; Fall through into WPSHPS to clear the scanner and
+                        ; reset the LSO block
 
 ; ******************************************************************************
 ;
 ;       Name: WPSHPS
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Dashboard
+;    Summary: Set all ships to be hidden from the screen
 ;
 ; ******************************************************************************
 
 .WPSHPS
 
- LDX #0
+ LDX #0                 ; Set up a counter in X to work our way through all the
+                        ; ship slots in FRIN
 
-.CA9D9
+.WSL1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA FRIN,X
- BEQ CA9FD
- BMI CA9FA
- STA TYPE
- JSR GINF
- LDY #$1F
- LDA (XX19),Y
- AND #$B7
- STA (XX19),Y
+ LDA FRIN,X             ; Fetch the ship type in slot X
 
-.CA9FA
+ BEQ WS2                ; If the slot contains 0 then it is empty and we have
+                        ; checked all the slots (as they are always shuffled
+                        ; down in the main loop to close up and gaps), so jump
+                        ; to WS2 as we are done
 
- INX
- BNE CA9D9
+ BMI WS1                ; If the slot contains a ship type with bit 7 set, then
+                        ; it contains the planet or the sun, so jump down to WS1
+                        ; to skip this slot, as the planet and sun don't appear
+                        ; on the scanner
 
-.CA9FD
+ STA TYPE               ; Store the ship type in TYPE
 
- LDX #0
- RTS
+ JSR GINF               ; Call GINF to get the address of the data block for
+                        ; ship slot X and store it in INF
 
-.loop_CAA00
+ LDY #31                ; Clear bits 3 and 6 in the ship's byte #31, which
+ LDA (INF),Y            ; stops drawing the ship on-screen (bit 3), and stops
+ AND #%10110111         ; any lasers firing (bit 6)
+ STA (INF),Y
 
- DEX
- RTS
+.WS1
+
+ INX                    ; Increment X to point to the next ship slot
+
+ BNE WSL1               ; Loop back up to process the next slot (this BNE is
+                        ; effectively a JMP as X will never be zero)
+
+.WS2
+
+ LDX #0                 ; Set X = 0 so the routine returns this value ???
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: SHD
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Flight
+;    Summary: Charge a shield and drain some energy from the energy banks
+;
+; ------------------------------------------------------------------------------
+;
+; Charge up a shield, and if it needs charging, drain some energy from the
+; energy banks.
+;
+; Arguments:
+;
+;   X                   The value of the shield to recharge
 ;
 ; ******************************************************************************
 
+ DEX                    ; Increment the shield value so that it doesn't go past
+                        ; a maximum of 255
+
+ RTS                    ; Return from the subroutine
+
 .SHD
 
- INX
- BEQ loop_CAA00
+ INX                    ; Increment the shield value
+
+ BEQ SHD-2              ; If the shield value is 0 then this means it was 255
+                        ; before, which is the maximum value, so jump to SHD-2
+                        ; to bring it back down to 258 and return
+
+                        ; Otherwise fall through into DENGY to drain our energy
+                        ; to pay for all this shield charging
 
 ; ******************************************************************************
 ;
 ;       Name: DENGY
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Flight
+;    Summary: Drain some energy from the energy banks
+;
+; ------------------------------------------------------------------------------
+;
+; Returns:
+;
+;   Z flag              Set if we have no energy left, clear otherwise
 ;
 ; ******************************************************************************
 
 .DENGY
 
- DEC ENERGY
- PHP
- BNE CAA0E
- INC ENERGY
+ DEC ENERGY             ; Decrement the energy banks in ENERGY
 
-.CAA0E
+ PHP                    ; Save the flags on the stack
 
- PLP
- RTS
+ BNE paen2              ; If the energy levels are not yet zero, skip the
+                        ; following instruction
 
-.loop_CAA10
+ INC ENERGY             ; The minimum allowed energy level is 1, and we just
+                        ; reached 0, so increment ENERGY back to 1
 
- LDA #$F0
- STA ySprite13
- RTS
+.paen2
+
+ PLP                    ; Restore the flags from the stack, so we return with
+                        ; the Z flag from the DEC instruction above
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: COMPAS
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Dashboard
+;    Summary: Update the compass
 ;
 ; ******************************************************************************
 
+.comp1
+
+ LDA #240               ; Hide sprite 13 (the compass dot) by moving it to
+ STA ySprite13          ; y-coordinate 240, off the bottom of the screen
+
+ RTS                    ; Return from the subroutine
+
 .COMPAS
 
- LDA MJ
- BNE loop_CAA10
- LDA SSPR
- BNE SP1
- JSR SPS1
- JMP SP2
+ LDA MJ                 ; If we are in witchspace (i.e. MJ is non-zero), jump up
+ BNE comp1              ; to comp1 to hide the compass dot
+
+ LDA SSPR               ; If we are inside the space station safe zone, jump to
+ BNE SP1                ; SP1 to draw the space station on the compass
+
+ JSR SPS1               ; Otherwise we need to draw the planet on the compass,
+                        ; so first call SPS1 to calculate the vector to the
+                        ; planet and store it in XX15
+
+ JMP SP2                ; Jump to SP2 to draw XX15 on the compass, returning
+                        ; from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: SP1
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Dashboard
+;    Summary: Draw the space station on the compass
 ;
 ; ******************************************************************************
 
 .SP1
 
- JSR SPS4
+ JSR SPS4               ; Call SPS4 to calculate the vector to the space station
+                        ; and store it in XX15
+
+                        ; Fall through into SP2 to draw XX15 on the compass
 
 ; ******************************************************************************
 ;
@@ -14598,8 +14788,8 @@ ENDIF
  LDA #2
  STA boxEdge2
  LDA #$50
- STA L00CD
- STA L00CE
+ STA phaseL00CD
+ STA phaseL00CD+1
  LDA BOMB
  BPL CADAA
  JSR HideHiddenColour
@@ -17801,8 +17991,8 @@ ENDIF
  JSR TT66
  JSR CopyNameBuffer0To1
  LDA #$50
- STA L00CD
- STA L00CE
+ STA phaseL00CD
+ STA phaseL00CD+1
  JSR subm_A9D1_b3
 
 .CBE17
@@ -17856,7 +18046,7 @@ ENDIF
  LDX #8
  STX L00CC
  LDA #$74
- STA L00CD
+ STA phaseL00CD
  RTS
 
 ; ******************************************************************************
@@ -18194,9 +18384,9 @@ IF _NTSC
                         ; the MMC1 mapper to map bank 7 into $C000 instead)
 
  EQUW Interrupts+$4000  ; Vector to the IRQ/BRK handler in case this bank is
-                        ; loaded into $C000 during start-up (the handler contains
-                        ; an RTI so the interrupt is processed but has no
-                        ; effect)
+                        ; loaded into $C000 during start-up (the handler
+                        ; contains an RTI so the interrupt is processed but has
+                        ; no effect)
 
 ELIF _PAL
 

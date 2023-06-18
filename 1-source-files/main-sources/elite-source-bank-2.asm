@@ -7050,8 +7050,8 @@ ENDMACRO
 ; in the table below), or all of the time (bit 7 is set, i.e. a value of $8x in
 ; the table below).
 ;
-; In other words, Teorge has an extended description override description that is
-; always shown, while the rest only appear when mission 1 is in progress.
+; In other words, Teorge has an extended description override description that
+; is always shown, while the rest only appear when mission 1 is in progress.
 ;
 ; The three variables work as follows:
 ;
@@ -10112,8 +10112,8 @@ ENDMACRO
 ; in the table below), or all of the time (bit 7 is set, i.e. a value of $8x in
 ; the table below).
 ;
-; In other words, Teorge has an extended description override description that is
-; always shown, while the rest only appear when mission 1 is in progress.
+; In other words, Teorge has an extended description override description that
+; is always shown, while the rest only appear when mission 1 is in progress.
 ;
 ; The three variables work as follows:
 ;
@@ -16309,7 +16309,7 @@ ENDMACRO
 
 .TT27S
 
- JMP TT27_b0            ; ???
+ JMP PrintCtrlCode_b0   ; ???
 
 .TT27
 
@@ -17701,9 +17701,9 @@ IF _NTSC
                         ; the MMC1 mapper to map bank 7 into $C000 instead)
 
  EQUW Interrupts+$4000  ; Vector to the IRQ/BRK handler in case this bank is
-                        ; loaded into $C000 during start-up (the handler contains
-                        ; an RTI so the interrupt is processed but has no
-                        ; effect)
+                        ; loaded into $C000 during start-up (the handler
+                        ; contains an RTI so the interrupt is processed but has
+                        ; no effect)
 
 ELIF _PAL
 

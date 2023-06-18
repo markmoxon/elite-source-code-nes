@@ -147,7 +147,7 @@ IF NOT(_BANK = 0)
  MVS5               = $8A14
  DemoShips          = $9522
  BR1                = $A379
- TT27_0             = $A8D9
+ PrintCtrlCode      = $A8D9
  ZINF               = $AE03
  MAS4               = $B1CA
  subm_B1D4          = $B1D4
@@ -1072,13 +1072,11 @@ ENDIF
 
  SKIP 1                 ; ???
 
-.L00CD
+.phaseL00CD
 
- SKIP 1                 ; ???
+ SKIP 1                 ; ??? Phase 0
 
-.L00CE
-
- SKIP 1                 ; ???
+ SKIP 1                 ; ??? Phase 1
 
 .L00CF
 
@@ -1126,13 +1124,17 @@ ENDIF
                         ;
                         ;   * Non-zero = do send palette data
 
-.L00DB
+.phaseL00DB
 
- SKIP 2                 ; ???
+ SKIP 1                 ; ??? Phase 0
 
-.L00DD
+ SKIP 1                 ; ??? Phase 1
 
- SKIP 2                 ; ???
+.phaseL00DD
+
+ SKIP 1                 ; ??? Phase 0
+
+ SKIP 1                 ; ??? Phase 1
 
 .pallettePhasex8
 
@@ -3267,13 +3269,11 @@ ORG $0200
 
  SKIP 1                 ; ???
 
-.L03EF
+.phaseFlags
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Phase flags for phase 0
 
-.L03F0
-
- SKIP 1                 ; ???
+ SKIP 1                 ; Phase flags for phase 1
 
 .frameCounter
 
@@ -4220,21 +4220,27 @@ ENDIF
 
  SKIP 1                 ; ???
 
-.L04BE
+.phaseL04BE
 
- SKIP 2                 ; ???
+ SKIP 1                 ; ??? Phase 0
 
-.L04C0
+ SKIP 1                 ; ??? Phase 1
 
- SKIP 2                 ; ???
+.phaseL04C0
+
+ SKIP 1                 ; ??? Phase 0
+
+ SKIP 1                 ; ??? Phase 1
 
 .L04C2
 
  SKIP 4                 ; ???
 
-.L04C6
+.phaseL04C6
 
- SKIP 2                 ; ???
+ SKIP 1                 ; ??? Phase 0
+
+ SKIP 1                 ; ??? Phase 1
 
 .SX
 
