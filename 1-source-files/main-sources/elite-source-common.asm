@@ -65,6 +65,19 @@
  COU = 32               ; Ship type for a Cougar
  DOD = 33               ; Ship type for a Dodecahedron ("Dodo") space station
 
+ JL = ESC               ; Junk is defined as starting from the escape pod
+
+ JH = SHU+2             ; Junk is defined as ending before the Cobra Mk III
+                        ;
+                        ; So junk is defined as the following: escape pod,
+                        ; alloy plate, cargo canister, asteroid, splinter,
+                        ; Shuttle or Transporter
+
+ PACK = SH3             ; The first of the eight pack-hunter ships, which tend
+                        ; to spawn in groups. With the default value of PACK the
+                        ; pack-hunters are the Sidewinder, Mamba, Krait, Adder,
+                        ; Gecko, Cobra Mk I, Worm and Cobra Mk III (pirate)
+
  POW = 15               ; Pulse laser power
 
  Mlas = 50              ; Mining laser power
@@ -4104,13 +4117,10 @@ ENDIF
 
  SKIP 1                 ; ???
 
-.L04A2
+.spasto
 
- SKIP 1                 ; ???
-
-.L04A3
-
- SKIP 1                 ; ???
+ SKIP 2                 ; Contains the address of the ship blueprint of the
+                        ; space station (which can be a Coriolis or Dodo)
 
 .QQ18Lo
 

@@ -412,11 +412,10 @@ ENDIF
  CMP #2                 ; ???
  BNE C80F0
 
- LDA L04A2
- STA XX0
-
- LDA L04A3
- STA XX0+1
+ LDA spasto             ; Copy the address of the space station's ship blueprint
+ STA XX0                ; from spasto(1 0) to XX0(1 0), which we set up in NWSPS
+ LDA spasto+1           ; when calculating the correct station type (Coriolis or
+ STA XX0+1              ; Dodo)
 
  LDY #4
  BNE C80FC
@@ -14003,224 +14002,402 @@ ENDIF
 ;
 ;       Name: SP2
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Dashboard
+;    Summary: Draw a dot on the compass, given the planet/station vector
+;
+; ------------------------------------------------------------------------------
+;
+; Draw a dot on the compass to represent the planet or station, whose normalised
+; vector is in XX15.
+;
+;   XX15 to XX15+2      The normalised vector to the planet or space station,
+;                       stored as x in XX15, y in XX15+1 and z in XX15+2
 ;
 ; ******************************************************************************
 
 .SP2
 
- LDA XX15
- JSR SPS2
- TXA
- CLC
- ADC #$DC
- STA xSprite13
- LDA Y1
- JSR SPS2
- STX T
+ LDA XX15               ; Set A to the x-coordinate of the planet or station to
+                        ; show on the compass, which will be in the range -96 to
+                        ; +96 as the vector has been normalised
+
+ JSR SPS2               ; Set (Y X) = A / 10, so X will be from -9 to +9, which
+                        ; is the x-offset from the centre of the compass of the
+                        ; dot we want to draw. Returns with the C flag clear
+
+ TXA                    ; Set the x-coordinate of sprite 13 (the compass dot) to
+ CLC                    ; 220 + X, as 220 is the pixel x-coordinate of the
+ ADC #220               ; centre of the compass, and X is in the range -9 to +9,
+ STA xSprite13          ; so the dot is in the x-coordinate range 211 to 229 ???
+
+ LDA XX15+1             ; Set A to the y-coordinate of the planet or station to
+                        ; show on the compass, which will be in the range -96 to
+                        ; +96 as the vector has been normalised
+
+ JSR SPS2               ; Set (Y X) = A / 10, so X will be from -9 to +9, which
+                        ; is the y-offset from the centre of the compass of the
+                        ; dot we want to draw. Returns with the C flag clear
+
+                        ; We now set the y-coordinate of sprite 13 (the compass
+                        ; dot) to either 186 - X (NTSC) or 192 - X (PAL), as 186
+                        ; or 192 is the pixel y-coordinate of the centre of the
+                        ; compass, and X is in the range -9 to +9, so the dot is
+                        ; in the y-coordinate range 177 to 195 (NTSC) or 183 to
+                        ; 201 (PAL) ???
+
+ STX T                  ; Set T = X for use in the calculation below
 
 IF _NTSC
 
- LDA #$BA
+ LDA #186               ; Set A to the pixel y-coordinate of the compass centre
 
 ELIF _PAL
 
- LDA #$C0
+ LDA #192               ; Set A to the pixel y-coordinate of the compass centre
 
 ENDIF
 
- SEC
+ SEC                    ; Set the y-coordinate of sprite 13 to A - X
  SBC T
  STA ySprite13
- LDA #$F7
- LDX X2
- BPL CAA4C
- LDA #$F6
 
-.CAA4C
+ LDA #247               ; Set A to 247, which is the tile number that contains a
+                        ; full dot in green, for when the planet or station in
+                        ; the compass is in front of us
 
- STA tileSprite13
- RTS
+ LDX XX15+2             ; If the z-coordinate of the XX15 vector is positive,
+ BPL P%+4               ; skip the following instruction
+
+ LDA #246               ; The z-coordinate of XX15 is negative, so the planet or
+                        ; station is behind us and the compass dot should be
+                        ; hollow and yellow, so set A to 246, which is the tile
+                        ; number for the hollow yellow dot
+
+ STA tileSprite13       ; Set the tile number for sprite 13 to A, so we draw the
+                        ; correct compass dot
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: SPS4
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Geometry)
+;    Summary: Calculate the vector to the space station
+;
+; ------------------------------------------------------------------------------
+;
+; Calculate the vector between our ship and the space station and store it in
+; XX15.
 ;
 ; ******************************************************************************
 
 .SPS4
 
- LDX #8
+ LDX #8                 ; First we need to copy the space station's coordinates
+                        ; into K3, so set a counter to copy the first 9 bytes
+                        ; (the 3-byte x, y and z coordinates) from the station's
+                        ; data block at K% + NI% into K3
 
-.loop_CAA52
+.SPL1
 
- LDA K%+42,X
- STA K3,X
- DEX
- BPL loop_CAA52
- JMP TAS2
+ LDA K%+NIK%,X          ; Copy the X-th byte from the station's data block at
+ STA K3,X               ; K% + NIK% to the X-th byte of K3
+
+ DEX                    ; Decrement the loop counter
+
+ BPL SPL1               ; Loop back to SPL1 until we have copied all 9 bytes
+
+ JMP TAS2               ; Call TAS2 to build XX15 from K3, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: OOPS
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Flight
+;    Summary: Take some damage
+;
+; ------------------------------------------------------------------------------
+;
+; We just took some damage, so reduce the shields if we have any, or reduce the
+; energy levels and potentially take some damage to the cargo if we don't.
+;
+; Arguments:
+;
+;   A                   The amount of damage to take
+;
+;   INF                 The address of the ship block for the ship that attacked
+;                       us, or the ship that we just ran into
 ;
 ; ******************************************************************************
 
 .OOPS
 
- STA T
- LDX #0
- LDY #8
- LDA (XX19),Y
- BMI CAA79
- LDA FSH
- SBC T
- BCC CAA72
- STA FSH
- RTS
+ STA T                  ; Store the amount of damage in T
 
-.CAA72
+ LDX #0                 ; Fetch byte #8 (z_sign) for the ship attacking us, and
+ LDY #8                 ; set X = 0
+ LDA (INF),Y
 
- LDX #0
+ BMI OO1                ; If A is negative, then we got hit in the rear, so jump
+                        ; to OO1 to process damage to the aft shield
+
+ LDA FSH                ; Otherwise the forward shield was damaged, so fetch the
+ SBC T                  ; shield strength from FSH and subtract the damage in T
+
+ BCC OO2                ; If the C flag is clear then this amount of damage was
+                        ; too much for the shields, so jump to OO2 to set the
+                        ; shield level to 0 and start taking damage directly
+                        ; from the energy banks
+
+ STA FSH                ; Store the new value of the forward shield in FSH
+
+ RTS                    ; Return from the subroutine
+
+.OO2
+
+ LDX #0                ; Set the forward shield to 0
  STX FSH
- BCC CAA89
 
-.CAA79
+ BCC OO3                ; Jump to OO3 to start taking damage directly from the
+                        ; energy banks (this BCC is effectively a JMP as the C
+                        ; flag is clear, as we jumped to OO2 with a BCC)
 
- LDA ASH
- SBC T
- BCC CAA84
- STA ASH
- RTS
+.OO1
 
-.CAA84
+ LDA ASH                ; The aft shield was damaged, so fetch the shield
+ SBC T                  ; strength from ASH and subtract the damage in T
 
- LDX #0
+ BCC OO5                ; If the C flag is clear then this amount of damage was
+                        ; too much for the shields, so jump to OO5 to set the
+                        ; shield level to 0 and start taking damage directly
+                        ; from the energy banks
+
+ STA ASH                ; Store the new value of the aft shield in ASH
+
+ RTS                    ; Return from the subroutine
+
+.OO5
+
+ LDX #0                ; Set the forward shield to 0
  STX ASH
 
-.CAA89
+.OO3
 
- ADC ENERGY
- STA ENERGY
- BEQ CAA93
- BCS CAA96
+ ADC ENERGY             ; A is negative and contains the amount by which the
+ STA ENERGY             ; damage overwhelmed the shields, so this drains the
+                        ; energy banks by that amount (and because the energy
+                        ; banks are shown over four indicators rather than one,
+                        ; but with the same value range of 0-255, energy will
+                        ; appear to drain away four times faster than the
+                        ; shields did)
 
-.CAA93
+ BEQ P%+4               ; If we have just run out of energy, skip the next
+                        ; instruction to jump straight to our death
 
- JMP DEATH
+ BCS P%+5               ; If the C flag is set, then subtracting the damage from
+                        ; the energy banks didn't underflow, so we had enough
+                        ; energy to survive, and we can skip the next
+                        ; instruction to make a sound and take some damage
 
-.CAA96
+ JMP DEATH              ; Otherwise our energy levels are either 0 or negative,
+                        ; and in either case that means we jump to our DEATH,
+                        ; returning from the subroutine using a tail call
 
- JSR EXNO3
- JMP OUCH
+ JSR EXNO3              ; We didn't die, so call EXNO3 to make the sound of a
+                        ; collision
+
+ JMP OUCH               ; And jump to OUCH to take damage and return from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: NWSPS
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Universe
+;    Summary: Add a new space station to our local bubble of universe
 ;
 ; ******************************************************************************
 
 .NWSPS
 
- LDX #$81
- STX INWK+32
- LDX #0
+ LDX #%10000001         ; Set the AI flag in byte #32 to %10000001 (hostile,
+ STX INWK+32            ; no AI, has an E.C.M.)
+
+ LDX #0                 ; Set pitch counter to 0 (no pitch, roll only)
  STX INWK+30
- STX NEWB
- STX FRIN+1
- DEX
- STX INWK+29
- LDX #$0A
+
+ STX NEWB               ; Set NEWB to %00000000, though this gets overridden by
+                        ; the default flags from E% in NWSHP below
+
+ STX FRIN+1             ; Set the second slot in the FRIN table to 0, so when we
+                        ; fall through into NWSHP below, the new station that
+                        ; gets created will go into slot FRIN+1, as this will be
+                        ; the first empty slot that the routine finds
+
+ DEX                    ; Set roll counter to 255 (maximum roll with no
+ STX INWK+29            ; damping)
+
+ LDX #10                ; Call NwS1 to flip the sign of nosev_x_hi (byte #10)
  JSR NwS1
- JSR NwS1
- JSR NwS1
- LDA #2
- JSR NWSHP
- LDX XX21+2
- LDY XX21+3
- LDA tek
- CMP #$0A
- BCC CAACF
- LDX XX21+64
- LDY XX21+65
 
-.CAACF
+ JSR NwS1               ; And again to flip the sign of nosev_y_hi (byte #12)
 
- STX L04A2
- STY L04A3
- JMP subm_AC5C_b3
+ JSR NwS1               ; And again to flip the sign of nosev_z_hi (byte #14)
 
-; ******************************************************************************
-;
-;       Name: NW2
-;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
-;
-; ******************************************************************************
+ LDA #SST               ; Set A to the space station type, and fall through
+                        ; into NWSHP to finish adding the space station to the
+                        ; universe
 
-.NW2
+ JSR NWSHP              ; Call NWSHP to add the space station to the universe
 
- STA FRIN,X
- TAX
- LDA #0
- STA INWK+33
- JMP CAB86
+ LDX XX21+2*SST-2       ; Set (Y X) to the address of the Coriolis station's
+ LDY XX21+2*SST-1       ; ship blueprint
+
+ LDA tek                ; If the system's tech level in tek is less than 10,
+ CMP #10                ; jump to notadodo, so tech levels 0 to 9 have Coriolis
+ BCC notadodo           ; stations, while 10 and above will have Dodo stations
+
+ LDX XX21+2*DOD-2       ; Set (Y X) to the address of the Dodo station's ship
+ LDY XX21+2*DOD-1       ; blueprint
+
+.notadodo
+
+ STX spasto             ; Store the address of the space station in spasto(1 0)
+ STY spasto+1           ; so we spawn the correct type of station in part 4 of
+                        ; the main flight loop
+
+ JMP subm_AC5C_b3       ; Jump to subm_AC5C, returning from the subroutine using
+                        ; a tail call ???
 
 ; ******************************************************************************
 ;
 ;       Name: NWSHP
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Universe
+;    Summary: Add a new ship to our local bubble of universe
+;
+; ------------------------------------------------------------------------------
+;
+; This creates a new block of ship data in the K% workspace, allocates a new
+; block in the ship line heap at WP, adds the new ship's type into the first
+; empty slot in FRIN, and adds a pointer to the ship data into UNIV. If there
+; isn't enough free memory for the new ship, it isn't added.
+;
+; Arguments:
+;
+;   A                   The type of the ship to add (see variable XX21 for a
+;                       list of ship types)
+;
+; Returns:
+;
+;   C flag              Set if the ship was successfully added, clear if it
+;                       wasn't (as there wasn't enough free memory)
+;
+;   INF                 Points to the new ship's data block in K%
 ;
 ; ******************************************************************************
 
+.NW2
+
+ STA FRIN,X             ; Store the ship type in the X-th byte of FRIN, so the
+                        ; this slot is now shown as occupied in the index table
+
+ TAX                    ; Copy the ship type into X
+
+ LDA #0
+ STA INWK+33
+
+ JMP NW8
+
 .NWSHP
 
- STA T
+ STA T                  ; Store the ship type in location T
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDX #0
+ LDX #0                 ; Before we can add a new ship, we need to check
+                        ; whether we have an empty slot we can put it in. To do
+                        ; this, we need to loop through all the slots to look
+                        ; for an empty one, so set a counter in X that starts
+                        ; from the first slot at 0. When ships are killed, then
+                        ; the slots are shuffled down by the KILLSHP routine, so
+                        ; the first empty slot will always come after the last
+                        ; filled slot. This allows us to tack the new ship's
+                        ; data block and ship line heap onto the end of the
+                        ; existing ship data and heap, as shown in the memory
+                        ; map below
 
-.loop_CAAF4
+.NWL1
 
- LDA FRIN,X
- BEQ CAB00
- INX
- CPX #8
- BCC loop_CAAF4
+ LDA FRIN,X             ; Load the ship type for the X-th slot
 
-.loop_CAAFE
+ BEQ NW1                ; If it is zero, then this slot is empty and we can use
+                        ; it for our new ship, so jump down to NW1
 
- CLC
- RTS
+ INX                    ; Otherwise increment X to point to the next slot
 
-.CAB00
+ CPX #NOSH              ; If we haven't reached the last slot yet, loop back up
+ BCC NWL1               ; to NWL1 to check the next slot (note that this means
+                        ; only slots from 0 to #NOSH - 1 are populated by this
+                        ; routine, but there is one more slot reserved in FRIN,
+                        ; which is used to identify the end of the slot list
+                        ; when shuffling the slots down in the KILLSHP routine)
 
- JSR GINF
- LDA T
- BMI NW2
- ASL A
+.NW3
+
+ CLC                    ; Otherwise we don't have an empty slot, so we can't
+ RTS                    ; add a new ship, so clear the C flag to indicate that
+                        ; we have not managed to create the new ship, and return
+                        ; from the subroutine
+
+.NW1
+
+                        ; If we get here, then we have found an empty slot at
+                        ; index X, so we can go ahead and create our new ship.
+                        ; We do that by creating a ship data block at INWK and,
+                        ; when we are done, copying the block from INWK into
+                        ; the K% workspace (specifically, to INF)
+
+ JSR GINF               ; Get the address of the data block for ship slot X
+                        ; (which is in workspace K%) and store it in INF
+
+ LDA T                  ; If the type of ship that we want to create is
+ BMI NW2                ; negative, then this indicates a planet or sun, so
+                        ; jump down to NW2, as the next section sets up a ship
+                        ; data block, which doesn't apply to planets and suns,
+                        ; as they don't have things like shields, missiles,
+                        ; vertices and edges
+
+                        ; This is a ship, so first we need to set up various
+                        ; pointers to the ship blueprint we will need. The
+                        ; blueprints for each ship type in Elite are stored
+                        ; in a table at location XX21, so refer to the comments
+                        ; on that variable for more details on the data we're
+                        ; about to access
+
+ ASL A                  ; Set Y = ship type * 2
  TAY
- LDA XX21-1,Y
- BEQ loop_CAAFE
- STA XX0+1
- LDA XX21-2,Y
- STA XX0
- STX SC2
+
+ LDA XX21-1,Y           ; The ship blueprints at XX21 start with a lookup
+                        ; table that points to the individual ship blueprints,
+                        ; so this fetches the high byte of this particular ship
+                        ; type's blueprint
+
+ BEQ NW3                ; If the high byte is 0 then this is not a valid ship
+                        ; type, so jump to NW3 to clear the C flag and return
+                        ; from the subroutine
+
+ STA XX0+1              ; This is a valid ship type, so store the high byte in
+                        ; XX0+1
+
+ LDA XX21-2,Y           ; Fetch the low byte of this particular ship type's
+ STA XX0                ; blueprint and store it in XX0, so XX0(1 0) now
+                        ; contains the address of this ship's blueprint
+
+ STX SC2                ; ???
  LDX T
  LDA #0
  STA INWK+33
@@ -14258,179 +14435,316 @@ ENDIF
 
 .NW6
 
- LDY #$0E
- JSR GetShipBlueprint   ; Set A to the Y-th byte from the current ship blueprint
+ LDY #14                ; Fetch ship blueprint byte #14, which contains the
+ JSR GetShipBlueprint   ; ship's energy, and store it in byte #35
  STA INWK+35
- LDY #$13
- JSR GetShipBlueprint   ; Set A to the Y-th byte from the current ship blueprint
- AND #7
- STA INWK+31
- LDA T
- STA FRIN,X
- TAX
- BMI CAB86
- CPX #$0F
- BEQ gangbang
- CPX #3
- BCC NW7
- CPX #$0B
- BCS NW7
+
+ LDY #19                ; Fetch ship blueprint byte #19, which contains the
+ JSR GetShipBlueprint   ; number of missiles and laser power, and AND with %111
+ AND #%00000111         ; to extract the number of missiles before storing in
+ STA INWK+31            ; byte #31
+
+ LDA T                  ; Restore the ship type we stored above
+
+ STA FRIN,X             ; Store the ship type in the X-th byte of FRIN, so the
+                        ; this slot is now shown as occupied in the index table
+
+ TAX                    ; Copy the ship type into X
+
+ BMI NW8                ; If the ship type is negative (planet or sun), then
+                        ; jump to NW8 to skip the following instructions
+
+ CPX #HER               ; If the ship type is a rock hermit, jump to gangbang
+ BEQ gangbang           ; to increase the junk count
+
+ CPX #JL                ; If JL <= X < JH, i.e. the type of ship we killed in X
+ BCC NW7                ; is junk (escape pod, alloy plate, cargo canister,
+ CPX #JH                ; asteroid, splinter, Shuttle or Transporter), then keep
+ BCS NW7                ; going, otherwise jump to NW7
 
 .gangbang
 
- INC JUNK
+ INC JUNK               ; We're adding junk, so increase the junk counter
 
 .NW7
 
- INC MANY,X
- LDY T
- JSR GetDefaultNEWB     ; Set A to the default NEWB flags for ship type Y
- AND #$6F
- ORA NEWB
- STA NEWB
- AND #4
- BEQ CAB86
+ INC MANY,X             ; Increment the total number of ships of type X
+
+ LDY T                  ; Restore the ship type we stored above
+
+ JSR GetDefaultNEWB     ; Fetch the E% byte for this ship to get the default
+                        ; settings for the ship's NEWB flags
+
+ AND #%01101111         ; Zero bits 4 and 7 (so the new ship is not docking, has
+                        ; not been scooped, and has not just docked)
+
+ ORA NEWB               ; Apply the result to the ship's NEWB flags, which sets
+ STA NEWB               ; bits 0-3 and 5-6 in NEWB if they are set in the E%
+                        ; byte
+
+ AND #4                 ; ???
+ BEQ NW8
+
  LDA L0300
  ORA #$80
  STA L0300
 
-.CAB86
+.NW8
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDY #$25
+ LDY #NI%-1             ; The final step is to copy the new ship's data block
+                        ; from INWK to INF, so set up a counter for NI% bytes
+                        ; in Y
 
-.loop_CAB95
+.NWL3
 
- LDA XX1,Y
- STA (XX19),Y
- DEY
- BPL loop_CAB95
+ LDA INWK,Y             ; Load the Y-th byte of INWK and store in the Y-th byte
+ STA (INF),Y            ; of the workspace pointed to by INF
+
+ DEY                    ; Decrement the loop counter
+
+ BPL NWL3               ; Loop back for the next byte until we have copied them
+                        ; all over
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- SEC
- RTS
+ SEC                    ; We have successfully created our new ship, so set the
+                        ; C flag to indicate success
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: NwS1
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Universe
+;    Summary: Flip the sign and double an INWK byte
+;
+; ------------------------------------------------------------------------------
+;
+; Flip the sign of the INWK byte at offset X, and increment X by 2. This is
+; used by the space station creation routine at NWSPS.
+;
+; Arguments:
+;
+;   X                   The offset of the INWK byte to be flipped
+;
+; Returns:
+;
+;   X                   X is incremented by 2
 ;
 ; ******************************************************************************
 
 .NwS1
 
- LDA XX1,X
- EOR #$80
- STA XX1,X
+ LDA INWK,X             ; Load the X-th byte of INWK into A and flip bit 7,
+ EOR #%10000000         ; storing the result back in the X-th byte of INWK
+ STA INWK,X
+
+ INX                    ; Add 2 to X
  INX
- INX
- RTS
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: KS3
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Universe
+;    Summary: Set the SLSP ship heap pointer after shuffling ship slots
+;
+; ------------------------------------------------------------------------------
+;
+; The final part of the KILLSHP routine, called after we have shuffled the ship
+; slots and sorted out our missiles. This simply sets SLSP to the new bottom of
+; the ship heap space.
+;
+; Arguments:
+;
+;   P(1 0)              Points to the ship line heap of the ship in the last
+;                       occupied slot (i.e. it points to the bottom of the
+;                       descending heap)
 ;
 ; ******************************************************************************
 
 .KS3
 
- RTS
+                        ; There is no ship heap in the NES version of Elite, so
+                        ; this routine does nothing
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: KS1
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Universe
+;    Summary: Remove the current ship from our local bubble of universe
+;
+; ------------------------------------------------------------------------------
+;
+; Part 12 of the main flight loop calls this routine to remove the ship that is
+; currently being analysed by the flight loop. Once the ship is removed, it
+; jumps back to MAL1 to re-join the main flight loop, with X pointing to the
+; same slot that we just cleared (and which now contains the next ship in the
+; local bubble of universe).
+;
+; Arguments:
+;
+;   XX0                 The address of the blueprint for this ship
+;
+;   INF                 The address of the data block for this ship
 ;
 ; ******************************************************************************
 
 .KS1
 
- LDX XSAV
- JSR KILLSHP
- LDX XSAV
- RTS
+ LDX XSAV               ; Store the current ship's slot number in XSAV
+
+ JSR KILLSHP            ; Call KILLSHP to remove the ship in slot X from our
+                        ; local bubble of universe
+
+ LDX XSAV               ; Restore the current ship's slot number from XSAV,
+                        ; which now points to the next ship in the bubble
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: KS4
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Universe
+;    Summary: Remove the space station and replace it with the sun
 ;
 ; ******************************************************************************
 
 .KS4
 
- JSR ZINF
- LDA #0
- STA FRIN+1
- STA SSPR
- LDA #6
+ JSR ZINF               ; Call ZINF to reset the INWK ship workspace
+
+ LDA #0                 ; Set A = 0 so we can zero the following flags
+
+ STA FRIN+1             ; Set the second slot in the FRIN table to 0, which
+                        ; sets this slot to empty, so when we call NWSHP below
+                        ; the new sun that gets created will go into FRIN+1
+
+ STA SSPR               ; Set the "space station present" flag to 0, as we are
+                        ; no longer in the space station's safe zone
+
+ LDA #6                 ; Set the sun's y_sign to 6
  STA INWK+5
- LDA #$81
- JSR NWSHP
- JMP subm_AC5C_b3
+
+ LDA #129               ; Set A = 129, the ship type for the sun
+
+ JSR NWSHP              ; Call NWSHP to set up the sun's data block and add it
+                        ; to FRIN, where it will get put in the second slot as
+                        ; we just cleared out the second slot, and the first
+                        ; slot is already taken by the planet
+
+ JMP subm_AC5C_b3       ; ???
 
 ; ******************************************************************************
 ;
 ;       Name: KS2
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Universe
+;    Summary: Check the local bubble for missiles with target lock
+;
+; ------------------------------------------------------------------------------
+;
+; Check the local bubble of universe to see if there are any missiles with
+; target lock in the vicinity. If there are, then check their targets; if we
+; just removed their target in the KILLSHP routine, then switch off their AI so
+; they just drift in space, otherwise update their targets to reflect the newly
+; shuffled slot numbers.
+;
+; This is called from KILLSHP once the slots have been shuffled down, following
+; the removal of a ship.
+;
+; Arguments:
+;
+;   XX4                 The slot number of the ship we removed just before
+;                       calling this routine
 ;
 ; ******************************************************************************
 
 .KS2
 
- LDX #$FF
+ LDX #$FF               ; We want to go through the ships in our local bubble
+                        ; and pick out all the missiles, so set X to $FF to
+                        ; use as a counter
 
-.CABD7
+.KSL4
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- INX
- LDA FRIN,X
- BEQ KS3
- CMP #1
- BNE CABD7
- TXA
- ASL A
- TAY
+ INX                    ; Increment the counter (so it starts at 0 on the first
+                        ; iteration)
+
+ LDA FRIN,X             ; If slot X is empty, loop round again until it isn't,
+ BEQ KS3                ; at which point A contains the ship type in that slot
+
+ CMP #MSL               ; If the slot does not contain a missile, loop back to
+ BNE KSL4               ; KSL4 to check the next slot
+
+                        ; We have found a slot containing a missile, so now we
+                        ; want to check whether it has target lock
+
+ TXA                    ; Set Y = X * 2 and fetch the Y-th address from UNIV
+ ASL A                  ; and store it in SC and SC+1 - in other words, set
+ TAY                    ; SC(1 0) to point to the missile's ship data block
  LDA UNIV,Y
  STA SC
  LDA UNIV+1,Y
  STA SC+1
- LDY #$20
+
+ LDY #32                ; Fetch byte #32 from the missile's ship data (AI)
  LDA (SC),Y
- BPL CABD7
- AND #$7F
- LSR A
- CMP XX4
- BCC CABD7
- BEQ CAC13
- SBC #1
- ASL A
- ORA #$80
- STA (SC),Y
- BNE CABD7
 
-.CAC13
+ BPL KSL4               ; If bit 7 of byte #32 is clear, then the missile is
+                        ; dumb and has no AI, so loop back to KSL4 to move on
+                        ; to the next slot
 
- LDA #0
- STA (SC),Y
- BEQ CABD7
+ AND #%01111111         ; Otherwise this missile has AI, so clear bit 7 and
+ LSR A                  ; shift right to set the C flag to the missile's "is
+                        ; locked" flag, and A to the target's slot number
+
+ CMP XX4                ; If this missile's target is less than XX4, then the
+ BCC KSL4               ; target's slot isn't being shuffled down, so jump to
+                        ; KSL4 to move on to the next slot
+
+ BEQ KS6                ; If this missile was locked onto the ship that we just
+                        ; removed in KILLSHP, jump to KS6 to stop the missile
+                        ; from continuing to hunt it down
+
+ SBC #1                 ; Otherwise this missile is locked and has AI enabled,
+                        ; and its target will have moved down a slot, so
+                        ; subtract 1 from the target number (we know C is set
+                        ; from the BCC above)
+
+ ASL A                  ; Shift the target number left by 1, so it's in bits
+                        ; 1-6 once again, and also set bit 0 to 1, as the C
+                        ; flag is still set, so this makes sure the missile is
+                        ; still set to being locked
+
+ ORA #%10000000         ; Set bit 7, so the missile's AI is enabled
+
+ STA (SC),Y             ; Update the missile's AI flag to the value in A
+
+ BNE KSL4               ; Loop back to KSL4 to move on to the next slot (this
+                        ; BNE is effectively a JMP as A will never be zero)
+
+.KS6
+
+ LDA #0                 ; The missile's target lock just got removed, so set the
+ STA (SC),Y             ; AI flag to 0 to make it dumb and not locked
+
+ BEQ KSL4               ; Loop back to KSL4 to move on to the next slot (this
+                        ; BEQ is effectively a JMP as A is always zero)
 
 ; ******************************************************************************
 ;
@@ -14459,100 +14773,171 @@ ENDIF
 ;
 ;       Name: KILLSHP
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Universe
+;    Summary: Remove a ship from our local bubble of universe
+;
+; ------------------------------------------------------------------------------
+;
+; Remove the ship in slot X from our local bubble of universe. This happens
+; when we kill a ship, collide with a ship and destroy it, or when a ship moves
+; outside our local bubble.
+;
+; We also use this routine when we move out of range of the space station, in
+; which case we replace it with the sun.
+;
+; When removing a ship, this creates a gap in the ship slots at FRIN, so we
+; shuffle all the later slots down to close the gap. We also shuffle the ship
+; data blocks at K% and ship line heap at WP, to reclaim all the memory that
+; the removed ship used to occupy.
+;
+; Arguments:
+;
+;   X                   The slot number of the ship to remove
+;
+;   XX0                 The address of the blueprint for the ship to remove
+;
+;   INF                 The address of the data block for the ship to remove
 ;
 ; ******************************************************************************
 
 .KILLSHP
 
- STX XX4
- JSR subm_BAF3_b1
+ STX XX4                ; Store the slot number of the ship to remove in XX4
+
+ JSR subm_BAF3_b1       ; ???
  LDX XX4
- LDA MSTG
- CMP XX4
- BNE CAC3E
- LDY #$6C
- JSR ABORT
- LDA #$C8
- JSR MESS
 
-.CAC3E
+ LDA MSTG               ; Check whether this slot matches the slot number in
+ CMP XX4                ; MSTG, which is the target of our missile lock
 
- LDY XX4
- LDX FRIN,Y
- CPX #2
- BNE CAC4A
+ BNE KS5                ; If our missile is not locked on this ship, jump to KS5
+
+ LDY #$6C               ; Otherwise we need to remove our missile lock, so call
+ JSR ABORT              ; ABORT to disarm the missile and update the missile
+                        ; indicators on the dashboard to green/cyan (Y = $6C)
+                        ; ???
+
+ LDA #200               ; Print recursive token 40 ("TARGET LOST") as an
+ JSR MESS               ; in-flight message
+
+.KS5
+
+ LDY XX4                ; Restore the slot number of the ship to remove into Y
+
+ LDX FRIN,Y             ; Fetch the contents of the slot, which contains the
+                        ; ship type
+
+ CPX #SST               ; If this is the space station, then jump to KS4 to
+ BNE CAC4A              ; replace the space station with the sun
  JMP KS4
 
 .CAC4A
 
- CPX #$1F
- BNE CAC59
- LDA TP
- ORA #2
- STA TP
- INC TALLY+1
+ CPX #CON               ; Did we just kill the Constrictor from mission 1? If
+ BNE lll                ; not, jump to lll
 
-.CAC59
+ LDA TP                 ; We just killed the Constrictor from mission 1, so set
+ ORA #%00000010         ; bit 1 of TP to indicate that we have successfully
+ STA TP                 ; completed mission 1
 
- CPX #$0F
- BEQ blacksuspenders
- CPX #3
- BCC CAC68
- CPX #$0B
- BCS CAC68
+ INC TALLY+1            ; Award 256 kill points for killing the Constrictor
+
+.lll
+
+ CPX #HER               ; Did we just kill a rock hermit? If we did, jump to
+ BEQ blacksuspenders    ; blacksuspenders to decrease the junk count
+
+ CPX #JL                ; If JL <= X < JH, i.e. the type of ship we killed in X
+ BCC KS7                ; is junk (escape pod, alloy plate, cargo canister,
+ CPX #JH                ; asteroid, splinter, Shuttle or Transporter), then keep
+ BCS KS7                ; going, otherwise jump to KS7
 
 .blacksuspenders
 
- DEC JUNK
+ DEC JUNK               ; We just killed junk, so decrease the junk counter
 
-.CAC68
+.KS7
 
- DEC MANY,X
- LDX XX4
+ DEC MANY,X             ; Decrease the number of this type of ship in our little
+                        ; bubble, which is stored in MANY+X (where X is the ship
+                        ; type)
+
+ LDX XX4                ; Restore the slot number of the ship to remove into X
 
 .KSL1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- INX
- LDA FRIN,X
- STA L0369,X
- BNE CAC86
- JMP KS2
+ INX                    ; On entry, X points to the empty slot we want to
+                        ; shuffle the next ship into (the destination), so
+                        ; this increment points X to the next slot - i.e. the
+                        ; source slot we want to shuffle down
 
-.CAC86
+ LDA FRIN,X             ; Copy the contents of the source slot into the
+ STA FRIN-1,X           ; destination slot
 
- TXA
- ASL A
- TAY
- LDA UNIV,Y
- STA SC
+ BNE P%+5               ; If the slot we just shuffled down is not empty, then
+                        ; skip the following instruction
+
+ JMP KS2                ; The source slot is empty and we are done shuffling,
+                        ; so jump to KS2 to move on to processing missiles
+
+ TXA                    ; Set Y = X * 2 so it can act as an index into the
+ ASL A                  ; two-byte lookup table at UNIV, which contains the
+ TAY                    ; addresses of the ship data blocks. In this case we are
+                        ; multiplying X by 2, and X contains the source ship's
+                        ; slot number so Y is now an index for the source ship's
+                        ; entry in UNIV
+
+ LDA UNIV,Y             ; Set SC(1 0) to the address of the data block for the
+ STA SC                 ; source ship
  LDA UNIV+1,Y
  STA SC+1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDY #$29
+                        ; We have now set up our variables as follows:
+                        ;
+                        ;   SC(1 0) points to the source's ship data block
+                        ;
+                        ;   INF(1 0) points to the destination's ship data block
+                        ;
+                        ;   P(1 0) points to the destination's line heap
+                        ;
+                        ; so let's start copying data from the source to the
+                        ; destination
 
-.loop_CACA2
+ LDY #41                ; We are going to be using Y as a counter for the 42
+                        ; bytes of ship data we want to copy from the source
+                        ; to the destination, so we set it to 41 to start things
+                        ; off, and will decrement Y for each byte we copy
 
- LDA (SC),Y
- STA (XX19),Y
- DEY
- BPL loop_CACA2
- LDA SC
- STA XX19
- LDA SC+1
+.KSL2
+
+ LDA (SC),Y             ; Copy the Y-th byte of the source to the Y-th byte of
+ STA (INF),Y            ; the destination
+
+ DEY                    ; Decrement the counter
+
+ BPL KSL2               ; Loop back to KSL2 to copy the next byte until we have
+                        ; copied the whole block
+
+                        ; We have now shuffled the ship's slot and the ship's
+                        ; data block, so we only have the heap data itself to do
+
+ LDA SC                 ; First, we copy SC into INF, so when we loop round
+ STA INF                ; again, INF will correctly point to the destination for
+ LDA SC+1               ; the next iteration
  STA INF+1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- JMP KSL1
+ JMP KSL1               ; We have now shuffled everything down one slot, so
+                        ; jump back up to KSL1 to see if there is another slot
+                        ; that needs shuffling down
 
 ; ******************************************************************************
 ;
