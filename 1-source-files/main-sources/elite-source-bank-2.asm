@@ -17679,7 +17679,7 @@ ENDMACRO
 ;
 ;       Name: Vectors
 ;       Type: Variable
-;   Category: Text
+;   Category: Utility routines
 ;    Summary: Vectors and padding at the end of the ROM bank
 ;
 ; ******************************************************************************
