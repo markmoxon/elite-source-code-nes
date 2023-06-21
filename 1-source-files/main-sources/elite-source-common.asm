@@ -159,7 +159,7 @@ IF NOT(_BANK = 0)
  subm_8980          = $8980
  MVS5               = $8A14
  DemoShips          = $9522
- BR1                = $A379
+ StartAfterLoad     = $A379
  PrintCtrlCode      = $A8D9
  ZINF               = $AE03
  MAS4               = $B1CA
@@ -329,7 +329,7 @@ IF NOT(_BANK = 6)
  DIALS              = $A2C3
  subm_A4A5          = $A4A5
  subm_A5AB          = $A5AB
- subm_B459          = $B459
+ SVE                = $B459
 
  IF _NTSC
 
@@ -2943,13 +2943,27 @@ ORG $0200
                         ; pirates from continually appearing, and ensures that
                         ; there's a delay between spawnings
 
-.L0393
+.DLY
 
- SKIP 1                 ; ???
+ SKIP 1                 ; In-flight message delay
+                        ;
+                        ; This counter is used to keep an in-flight message up
+                        ; for a specified time before it gets removed. The value
+                        ; in DLY is decremented each time we start another
+                        ; iteration of the main game loop at TT100
 
-.L0394
+.de
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Equipment destruction flag
+                        ;
+                        ;   * Bit 1 denotes whether or not the in-flight message
+                        ;     about to be shown by the MESS routine is about
+                        ;     destroyed equipment:
+                        ;
+                        ;     * 0 = the message is shown normally
+                        ;
+                        ;     * 1 = the string " DESTROYED" gets added to the
+                        ;       end of the message
 
 .L0395
 
@@ -3755,14 +3769,15 @@ ORG $0200
 
  SKIP 4                 ; Temporary storage, used in a number of places
 
-.DLY
+.demoInProgress
 
- SKIP 1                 ; In-flight message delay
+ SKIP 1                 ; A flag to determine whether we are playing the demo:
                         ;
-                        ; This counter is used to keep an in-flight message up
-                        ; for a specified time before it gets removed. The value
-                        ; in DLY is decremented each time we start another
-                        ; iteration of the main game loop at TT100
+                        ;   * 0 = we are not playing the demo
+                        ;
+                        ;   * Non-zero = we are initialising or playing the demo
+                        ;
+                        ;   * Bit 7 set = we are initialising the demo
 
 .L045E
 
@@ -3933,9 +3948,10 @@ ENDIF
                         ; LL145 (the flag is used in places like BLINE to swap
                         ; them back)
 
-.L0480
+.distaway
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Used to store the nearest distance of the rotating
+                        ; ship on the title screen
 
 .XSAV2
 

@@ -9858,14 +9858,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B459_b6
+;       Name: SVE_b6
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: Call the subm_B459 routine in ROM bank 6
+;   Category: Save and load
+;    Summary: Call the SVE routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.subm_B459_b6
+.SVE_b6
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -9873,7 +9873,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR subm_B459          ; Call subm_B459, now that it is paged into memory
+ JSR SVE                ; Call SVE, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -10112,14 +10112,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: BR1_b0
+;       Name: StartAfterLoad_b0
 ;       Type: Subroutine
 ;   Category: Start and end
-;    Summary: Call the BR1 routine in ROM bank 0
+;    Summary: Call the StartAfterLoad routine in ROM bank 0
 ;
 ; ******************************************************************************
 
-.BR1_b0
+.StartAfterLoad_b0
 
  LDA currentBank        ; If ROM bank 0 is already paged into memory, jump to
  CMP #0                 ; bank26
@@ -10130,7 +10130,7 @@ ENDIF
  LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
 
- JSR BR1                ; Call BR1, now that it is paged into memory
+ JSR StartAfterLoad     ; Call StartAfterLoad, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -10138,8 +10138,9 @@ ENDIF
 
 .bank26
 
- JMP BR1                ; Call BR1, which is already paged into memory, and
-                        ; return from the subroutine using a tail call
+ JMP StartAfterLoad     ; Call StartAfterLoad, which is already paged into
+                        ; memory, and return from the subroutine using a tail
+                        ; call
 
 ; ******************************************************************************
 ;
@@ -10366,15 +10367,15 @@ ENDIF
 ;
 ; Other entry points:
 ;
-;   CLYNS+8             Don't zero L0393 and L0394
+;   CLYNS+8             Don't zero DLY and de
 ;
 ; ******************************************************************************
 
 .CLYNS
 
  LDA #0
- STA L0393
- STA L0394
+ STA DLY
+ STA de
 
  LDA #$FF
  STA DTW2

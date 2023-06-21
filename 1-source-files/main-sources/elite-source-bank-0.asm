@@ -319,14 +319,14 @@ ENDIF
  LDA COK                ; If bit 7 of COK is set, then cheat mode has been
  BMI EN6                ; applied, so jump to EN6
 
- LDA CASH+1
+ LDA CASH+1             ; ???
  BEQ EN6
 
  LDA TP                 ; If bit 4 of TP is set, then the Tribbles mission has
  AND #%00010000         ; already been completed, so jump to EN6
  BNE EN6
 
- JMP TBRIEF
+ JMP TBRIEF             ; ???
 
 .EN6
 
@@ -1155,10 +1155,10 @@ ENDIF
                         ; a fugitive if we just shot the sheriff, but won't
                         ; affect our status if the enemy wasn't a copper
 
- LDA MJ                 ; If we already have an in-flight message on-screen (in
- ORA DLY                ; which case DLY > 0), or we are in witchspace (in
- BNE KS1S               ; which case MJ > 0), jump to KS1S to skip showing an
-                        ; on-screen bounty for this kill
+ LDA MJ                 ; If we are in witchspace (in which case MJ > 0) or 
+ ORA demoInProgress     ; demoInProgress > 0 (in which case we are playing the
+ BNE KS1S               ; demo), jump to KS1S to skip showing an on-screen
+                        ; bounty for this kill
 
  LDY #10                ; Fetch byte #10 of the ship's blueprint, which is the
  JSR GetShipBlueprint   ; low byte of the bounty awarded when this ship is
@@ -1218,7 +1218,7 @@ ENDIF
 
 .subm_8334
 
- DEC L0393
+ DEC DLY
  BMI C835B
  BEQ C8341
  JSR LASLI2
@@ -1246,7 +1246,7 @@ ENDIF
 
  LDA QQ11
  BNE subm_8334
- DEC L0393
+ DEC DLY
  BMI C835B
  BEQ C835B
  JSR LASLI2
@@ -1255,7 +1255,7 @@ ENDIF
 .C835B
 
  LDA #0
- STA L0393
+ STA DLY
 
 .MA16
 
@@ -1539,7 +1539,7 @@ ENDIF
 
 .MA93
 
- LDA DLY                ; ???
+ LDA demoInProgress     ; ???
  BEQ C8436
  LDA JUNK
  CLC
@@ -6183,7 +6183,7 @@ ENDIF
 
  DEC NOMSL              ; Reduce the number of missiles we have by 1
 
- LDA DLY
+ LDA demoInProgress
  BEQ C9235
  LDA #$93
  LDY #$0A
@@ -7173,8 +7173,10 @@ ENDIF
  STA ENGY
  LDA #$8F
  STA LASER
- LDA #$FF
- STA DLY
+
+ LDA #$FF               ; Set demoInProgress = $FF to indicate that we are
+ STA demoInProgress     ; playing the demo
+
  JSR SOLAR
  LDA #0
  STA DELTA
@@ -7183,7 +7185,9 @@ ENDIF
  STA QQ12
  STA VIEW
  JSR TT66
- LSR DLY
+
+ LSR demoInProgress     ; Clear bit 7 of demoInProgress
+
  JSR CopyNameBuffer0To1
  JSR subm_F139
  JSR subm_BE48
@@ -11787,14 +11791,18 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: BR1
+;       Name: StartAfterLoad
 ;       Type: Subroutine
 ;   Category: Start and end
-;    Summary: Start the game
+;    Summary: Start the game following a commander file load
+;
+; ------------------------------------------------------------------------------
+;
+; This routine is very similar to the BR1 routine.
 ;
 ; ******************************************************************************
 
-.BR1
+.StartAfterLoad
 
  JSR ping               ; Set the target system coordinates (QQ9, QQ10) to the
                         ; current system coordinates (QQ0, QQ1) we just loaded
@@ -11809,19 +11817,14 @@ ENDIF
                         ; current system, so set up a counter in X for copying
                         ; 6 bytes (for three 16-bit seeds)
 
-                        ; The label below is called likeTT112 because this code
-                        ; is almost identical to the TT112 loop in the hyp1
-                        ; routine
-
-.likeTT112
+.stal1
 
  LDA QQ15,X             ; Copy the X-th byte in QQ15 to the X-th byte in QQ2
  STA QQ2,X
 
  DEX                    ; Decrement the counter
 
- BPL likeTT112          ; Loop back to likeTT112 if we still have more bytes to
-                        ; copy
+ BPL stal1              ; Loop back to stal1 if we still have more bytes to copy
 
  INX                    ; Set X = 0 (as we ended the above loop with X = $FF)
 
@@ -13755,9 +13758,9 @@ ENDIF
 
 .NWSTARS
 
- LDA QQ11               ; If this is not a space view (QQ11 > 0), or it is a
- ORA DLY                ; space view and we have an in-flight message on-screen
- BNE WPSHPS             ; (DLY > 0), jump to WPSHPS to skip the initialisation
+ LDA QQ11               ; If this is not a space view (in which case QQ11 > 0),
+ ORA demoInProgress     ; or demoInProgress > 0 (in which case we are playing
+ BNE WPSHPS             ; the demo), jump to WPSHPS to skip the initialisation
                         ; of the SX, SY and SZ tables
 
 ; ******************************************************************************
@@ -14021,29 +14024,29 @@ ENDIF
                         ; show on the compass, which will be in the range -96 to
                         ; +96 as the vector has been normalised
 
- JSR SPS2               ; Set (Y X) = A / 10, so X will be from -9 to +9, which
+ JSR SPS2               ; Set X = A / 16, so X will be from -6 to +6, which
                         ; is the x-offset from the centre of the compass of the
                         ; dot we want to draw. Returns with the C flag clear
 
  TXA                    ; Set the x-coordinate of sprite 13 (the compass dot) to
  CLC                    ; 220 + X, as 220 is the pixel x-coordinate of the
- ADC #220               ; centre of the compass, and X is in the range -9 to +9,
- STA xSprite13          ; so the dot is in the x-coordinate range 211 to 229 ???
+ ADC #220               ; centre of the compass, and X is in the range -6 to +6,
+ STA xSprite13          ; so the dot is in the x-coordinate range 214 to 226 ???
 
  LDA XX15+1             ; Set A to the y-coordinate of the planet or station to
                         ; show on the compass, which will be in the range -96 to
                         ; +96 as the vector has been normalised
 
- JSR SPS2               ; Set (Y X) = A / 10, so X will be from -9 to +9, which
-                        ; is the y-offset from the centre of the compass of the
+ JSR SPS2               ; Set X = A / 16, so X will be from -6 to +6, which
+                        ; is the x-offset from the centre of the compass of the
                         ; dot we want to draw. Returns with the C flag clear
 
                         ; We now set the y-coordinate of sprite 13 (the compass
                         ; dot) to either 186 - X (NTSC) or 192 - X (PAL), as 186
                         ; or 192 is the pixel y-coordinate of the centre of the
-                        ; compass, and X is in the range -9 to +9, so the dot is
-                        ; in the y-coordinate range 177 to 195 (NTSC) or 183 to
-                        ; 201 (PAL) ???
+                        ; compass, and X is in the range -6 to +6, so the dot is
+                        ; in the y-coordinate range 180 to 192 (NTSC) or 186 to
+                        ; 198 (PAL) ???
 
  STX T                  ; Set T = X for use in the calculation below
 
@@ -15322,7 +15325,9 @@ ENDIF
 
  ASL A                  ; This sets A to 0
 
- STA DLY                ; Set DLY to 0 ???
+ STA demoInProgress     ; Set demoInProgress to 0 to reset the demo flag, so if
+                        ; we are starting the game after playing the demo, the
+                        ; flag will be set correctly
 
  STA BETA               ; Reset BETA (pitch angle alpha) to 0
 
@@ -15450,7 +15455,7 @@ ENDIF
 ;
 ;   A                   The y-coordinate of the centre of the screen (i.e. half
 ;                       the screen height)
-
+;
 ; ******************************************************************************
 
 .SetScreenHeight
@@ -15617,27 +15622,6 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_AE84
-;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
-;
-; ******************************************************************************
-
-.subm_AE84
-
- LDA nmiTimerLo
- STA RAND
- LDA K%+6
- STA RAND+1
- LDA L0307
- STA RAND+3
- LDA QQ12
- BEQ TT100
- JMP MLOOP
-
-; ******************************************************************************
-;
 ;       Name: Main game loop (Part 2 of 6)
 ;       Type: Subroutine
 ;   Category: Main loop
@@ -15668,6 +15652,16 @@ ENDIF
 
 .TT100
 
+ LDA nmiTimerLo         ; ???
+ STA RAND
+ LDA K%+6
+ STA RAND+1
+ LDA L0307
+ STA RAND+3
+ LDA QQ12
+ BEQ P%+5
+ JMP MLOOP
+
  JSR M%                 ; Call M% to iterate through the main flight loop
 
  DEC MCNT               ; Decrement the main loop counter in MCNT
@@ -15696,9 +15690,9 @@ ENDIF
                         ; time it will either be an asteroid (98.5% chance) or,
                         ; very rarely, a cargo canister (1.5% chance)
 
- LDA MJ                 ; If we already have an in-flight message on-screen (in
- ORA DLY                ; which case DLY > 0), or we are in witchspace (in
- BNE ytq                ; which case MJ > 0), jump down to MLOOP (via ytq above)
+ LDA MJ                 ; If we are in witchspace (in which case MJ > 0) or 
+ ORA demoInProgress     ; demoInProgress > 0 (in which case we are playing the
+ BNE ytq                ; demo), jump down to MLOOP (via ytq above)
 
  JSR DORND              ; Set A and X to random numbers
 
@@ -16250,7 +16244,7 @@ ENDIF
 
 .CB055
 
- LDX DLY
+ LDX demoInProgress
  BEQ CB05C
  AND #$7F
 
@@ -16299,7 +16293,8 @@ ENDIF
 
  JSR TT102              ; Call TT102 to process the key pressed in A
 
- JMP subm_AE84          ; ???
+ JMP TT100              ; Otherwise jump to TT100 to restart the main loop from
+                        ; the start
 
 ; ******************************************************************************
 ;
@@ -16318,16 +16313,33 @@ ENDIF
 ;
 ;       Name: TT102
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Keyboard
+;    Summary: Process function key, save key, hyperspace and chart key presses
+;
+; ------------------------------------------------------------------------------
+;
+; Process function key presses, plus "@" (save commander), "H" (hyperspace),
+; "D" (show distance to system) and "O" (move chart cursor back to current
+; system). We can also pass cursor position deltas in X and Y to indicate that
+;
+; Arguments:
+;
+;
+;   X                   The amount to move the crosshairs in the x-axis
+;
+;   Y                   The amount to move the crosshairs in the y-axis
+;
+; Other entry points:
+;
+;   T95                 Print the distance to the selected system
 ;
 ; ******************************************************************************
 
 .TT102
 
- CMP #0
+ CMP #0                 ; ???
  BNE P%+5
- JMP CB16A
+ JMP HME1
 
  CMP #3
  BNE P%+5
@@ -16351,14 +16363,14 @@ ENDIF
 
 .CB0A6
 
- CMP #$23
+ CMP #$23               ; ???
  BNE TT92
  JSR subm_9D09
  JMP TT25
 
 .TT92
 
- CMP #8
+ CMP #8                 ; ???
  BNE P%+5
  JMP TT213
 
@@ -16366,7 +16378,7 @@ ENDIF
  BNE P%+5
  JMP TT167
 
- CMP #1
+ CMP #1                 ; ???
  BNE fvw
  LDX QQ12
  BEQ fvw
@@ -16375,7 +16387,7 @@ ENDIF
 
 .fvw
 
- CMP #$11
+ CMP #$11               ; ???
  BNE CB119
  LDX QQ12
  BNE CB119
@@ -16449,19 +16461,21 @@ ENDIF
 
 .CB137
 
- BIT QQ12
- BPL LABEL_3
- CMP #5
+ BIT QQ12               ; If bit 7 of QQ12 is clear (i.e. we are not docked, but
+ BPL LABEL_3            ; in space), jump to LABEL_3 to skip the following checks
+                        ; for the save commander file key press
+
+ CMP #5                 ; ???
  BNE P%+5
  JMP EQSHP
 
- CMP #6
+ CMP #6                 ; ???
  BNE LABEL_3
- JMP subm_B459_b6
+ JMP SVE_b6
 
 .LABEL_3
 
- CMP #$16
+ CMP #$16               ; ???
  BNE P%+5
  JMP subm_9E51
 
@@ -16469,48 +16483,58 @@ ENDIF
  BNE P%+5
  JMP hyp
 
-                        ; START HERE
-
- CMP #$27
- BNE CB16A
+ CMP #$27               ; ???
+ BNE HME1
  LDA QQ22+1
- BNE CB1A5
+ BNE t95
+
  LDA QQ11
  AND #$0E
  CMP #$0C
- BNE CB1A5
- JMP HME2
+ BNE t95
 
-.CB16A
+ JMP HME2               ; Jump to HME2 to let us search for a system, returning
+                        ; from the subroutine using a tail call
 
- STA T1
- LDA QQ11
+.HME1
+
+ STA T1                 ; Store A (the key that's been pressed) in T1
+
+ LDA QQ11               ; ???
  AND #$0E
  CMP #$0C
- BNE CB18D
+ BNE TT107
  LDA QQ22+1
- BNE CB18D
- LDA T1
- CMP #$26
- BNE CB18A
- JSR ping
+ BNE TT107
+
+ LDA T1                 ; Restore the original value of A (the key that's been
+                        ; pressed) from T1
+
+ CMP #$26               ; ???
+ BNE ee2
+
+ JSR ping               ; Set the target system to the current system (which
+                        ; will move the location in (QQ9, QQ10) to the current
+                        ; home system
 
 .CB181
 
- ASL L0395
+ ASL L0395              ; ???
  LSR L0395
  JMP subm_9D09
 
-.CB18A
+.ee2
 
- JSR TT16
+ JSR TT16               ; Call TT16 to move the crosshairs by the amount in X
+                        ; and Y, which were passed to this subroutine as
+                        ; arguments
 
-.CB18D
+.TT107
 
- LDA QQ22+1
- BEQ CB1A5
+ LDA QQ22+1             ; ???
+ BEQ t95
  DEC QQ22
- BNE CB1A5
+ BNE t95
  LDA #5
  STA QQ22
  DEC QQ22+1
@@ -16522,75 +16546,123 @@ ENDIF
 
  JMP TT18
 
-.CB1A5
+.t95
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: BAD
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Status
+;    Summary: Calculate how bad we have been
+;
+; ------------------------------------------------------------------------------
+;
+; Work out how bad we are from the amount of contraband in our hold. The
+; formula is:
+;
+;   (slaves + narcotics) * 2 + firearms
+;
+; so slaves and narcotics are twice as illegal as firearms. The value in FIST
+; (our legal status) is set to at least this value whenever we launch from a
+; space station, and a FIST of 50 or more gives us fugitive status, so leaving a
+; station carrying 25 tonnes of slaves/narcotics, or 50 tonnes of firearms
+; across multiple trips, is enough to make us a fugitive.
+;
+; Returns:
+;
+;   A                   A value that determines how bad we are from the amount
+;                       of contraband in our hold
 ;
 ; ******************************************************************************
 
 .BAD
 
- LDA QQ20+3
- CLC
- ADC QQ20+6
- ASL A
- ADC QQ20+10
- RTS
+ LDA QQ20+3             ; Set A to the number of tonnes of slaves in the hold
+
+ CLC                    ; Clear the C flag so we can do addition without the
+                        ; C flag affecting the result
+
+ ADC QQ20+6             ; Add the number of tonnes of narcotics in the hold
+
+ ASL A                  ; Double the result and add the number of tonnes of
+ ADC QQ20+10            ; firearms in the hold
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: FAROF
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Geometry)
+;    Summary: Compare x_hi, y_hi and z_hi with 224
+;
+; ------------------------------------------------------------------------------
+;
+; Compare x_hi, y_hi and z_hi with 224, and set the C flag if all three <= 224,
+; otherwise clear the C flag.
+;
+; Returns:
+;
+;   C flag              Set if x_hi <= 224 and y_hi <= 224 and z_hi <= 224
+;
+;                       Clear otherwise (i.e. if any one of them are bigger than
+;                       224)
 ;
 ; ******************************************************************************
 
 .FAROF
 
- LDA INWK+2
+ LDA INWK+2             ; ???
  ORA INWK+5
  ORA INWK+8
  ASL A
- BNE CB1C8
- LDA #$E0
+ BNE faro2
+
+ LDA #224
+
  CMP INWK+1
- BCC CB1C7
+ BCC faro1
  CMP INWK+4
- BCC CB1C7
+ BCC faro1
  CMP INWK+7
 
-.CB1C7
+.faro1
 
  RTS
 
-.CB1C8
+.faro2
 
  CLC
+
  RTS
 
 ; ******************************************************************************
 ;
 ;       Name: MAS4
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Geometry)
+;    Summary: Calculate a cap on the maximum distance to a ship
+;
+; ------------------------------------------------------------------------------
+;
+; Logical OR the value in A with the high bytes of the ship's position (x_hi,
+; y_hi and z_hi).
+;
+; Returns:
+;
+;   A                   A OR x_hi OR y_hi OR z_hi
 ;
 ; ******************************************************************************
 
 .MAS4
 
- ORA INWK+1
+ ORA INWK+1             ; OR A with x_hi, y_hi and z_hi
  ORA INWK+4
  ORA INWK+7
- RTS
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -16634,18 +16706,27 @@ ENDIF
 ;       Name: DEATH
 ;       Type: Subroutine
 ;   Category: Start and end
-;    Summary: ???
+;    Summary: Display the death screen
+;
+; ------------------------------------------------------------------------------
+;
+; We have been killed, so display the chaos of our destruction above a "GAME
+; OVER" sign, and clean up the mess ready for the next attempt.
 ;
 ; ******************************************************************************
 
 .DEATH
 
- JSR WaitResetSound
- JSR EXNO3
- JSR RES2
+ JSR WaitResetSound     ; ???
+
+ JSR EXNO3              ; Make the sound of us dying
+
+ JSR RES2               ; Reset a number of flight variables and workspaces
+
+ ASL DELTA              ; Divide our speed in DELTA by 4
  ASL DELTA
- ASL DELTA
- LDA #0
+
+ LDA #0                 ; ???
  STA boxEdge1
  STA boxEdge2
  STA L03EE
@@ -16677,8 +16758,11 @@ ENDIF
  STA L0374,Y
  DEY
  BNE loop_CB22F
- JSR nWq
- JSR DORND
+
+ JSR nWq                ; Create a cloud of stardust containing the correct
+                        ; number of dust particles (i.e. NOSTM of them)
+
+ JSR DORND              ; ???
  AND #$87
  STA ALPHA
  AND #7
@@ -16689,69 +16773,128 @@ ENDIF
  EOR #$80
  STA ALP2+1
 
-.CB24D
+.D1
 
- JSR Ze
- LSR A
- LSR A
- STA XX1
- LDY #0
- STY QQ11
- STY INWK+1
+ JSR Ze                 ; Call Ze to initialise INWK to a potentially hostile
+                        ; ship, and set A and X to random values
+
+ LSR A                  ; Set A = A / 4, so A is now between 0 and 63, and
+ LSR A                  ; store in byte #0 (x_lo)
+ STA INWK
+
+ LDY #0                 ; Set the following to 0: the current view in QQ11
+ STY QQ11               ; (space view), x_hi, y_hi, z_hi and the AI flag (no AI
+ STY INWK+1             ; or E.C.M. and not hostile)
  STY INWK+4
  STY INWK+7
  STY INWK+32
- DEY
- STY MCNT
- EOR #$2A
- STA INWK+3
- ORA #$50
- STA INWK+6
- TXA
- AND #$8F
- STA INWK+29
- LDY #$40
- STY LASCT
- SEC
- ROR A
- AND #$87
- STA INWK+30
- LDX #5
- LDA XX21+7
- BEQ CB285
- BCC CB285
- DEX
 
-.CB285
+ DEY                    ; Set Y = 255
 
- JSR fq1
- JSR DORND
- AND #$80
- LDY #$1F
- STA (XX19),Y
- LDA FRIN+6
- BEQ CB24D
- LDA #8
- STA DELTA
- LDA #$0C
+ STY MCNT               ; Reset the main loop counter to 255, so all timer-based
+                        ; calls will be stopped
+
+ EOR #%00101010         ; Flip bits 1, 3 and 5 in A (x_lo) to get another number
+ STA INWK+3             ; between 48 and 63, and store in byte #3 (y_lo)
+
+ ORA #%01010000         ; Set bits 4 and 6 of A to bump it up to between 112 and
+ STA INWK+6             ; 127, and store in byte #6 (z_lo)
+
+ TXA                    ; Set A to the random number in X and keep bits 0-3 and
+ AND #%10001111         ; the bit 7 to get a number between -15 and +15, and
+ STA INWK+29            ; store in byte #29 (roll counter) to give our ship a
+                        ; gentle roll with damping
+
+ LDY #64                ; Set the laser count to 64 to act as a counter in the
+ STY LASCT              ; D2 loop below, so this setting determines how long the
+                        ; death animation lasts (it's 64 * 2 iterations of the
+                        ; main flight loop)
+
+ SEC                    ; Set the C flag
+
+ ROR A                  ; This sets A to a number between 0 and +7, which we
+ AND #%10000111         ; store in byte #30 (the pitch counter) to give our ship
+ STA INWK+30            ; a very gentle downwards pitch with damping
+
+ LDX #OIL               ; Set X to #OIL, the ship type for a cargo canister
+
+ LDA XX21-1+2*PLT       ; Fetch the byte from location XX21 - 1 + 2 * PLT, which
+                        ; equates to XX21 + 7 (the high byte of the address of
+                        ; SHIP_PLATE), which seems a bit odd. It might make more
+                        ; sense to do LDA (XX21-2+2*PLT) as this would fetch the
+                        ; first byte of the alloy plate's blueprint (which
+                        ; determines what happens when alloys are destroyed),
+                        ; but there aren't any brackets, so instead this always
+                        ; returns $D0, which is never zero, so the following
+                        ; BEQ is never true. (If the brackets were there, then
+                        ; we could stop plates from spawning on death by setting
+                        ; byte #0 of the blueprint to 0... but then scooping
+                        ; plates wouldn't give us alloys, so who knows what this
+                        ; is all about?)
+
+ BEQ D3                 ; If A = 0, jump to D3 to skip the following instruction
+
+ BCC D3                 ; If the C flag is clear, which will be random following
+                        ; the above call to Ze, jump to D3 to skip the following
+                        ; instruction
+
+ DEX                    ; Decrement X, which sets it to #PLT, the ship type for
+                        ; an alloy plate
+
+.D3
+
+ JSR fq1                ; Call fq1 with X set to #OIL or #PLT, which adds a new
+                        ; cargo canister or alloy plate to our local bubble of
+                        ; universe and points it away from us with double DELTA
+                        ; speed (i.e. 6, as DELTA was set to 3 by the call to
+                        ; RES2 above). INF is set to point to the new arrival's
+                        ; ship data block in K%
+
+ JSR DORND              ; Set A and X to random numbers and extract bit 7 from A
+ AND #%10000000
+
+ LDY #31                ; Store this in byte #31 of the ship's data block, so it
+ STA (INF),Y            ; has a 50% chance of marking our new arrival as being
+                        ; killed (so it will explode)
+
+ LDA FRIN+6             ; The call we made to RES2 before we entered the loop at
+ BEQ D1                 ; D1 will have reset all the ship slots at FRIN, so this
+                        ; checks to see if the seventh slot is empty, and if it
+                        ; is we loop back to D1 to add another canister, until
+                        ; we have added seven of them ???
+
+ LDA #8                 ; Set our speed in DELTA to 8, so the camera moves
+ STA DELTA              ; forward slowly
+
+ LDA #12                ; ???
  STA L00B5
- LDA #$92
- LDY #$78
+
+ LDA #146
+ LDY #120
  JSR subm_B77A
+
  JSR HideSprites5To63
- LDA #$1E
+
+ LDA #30
  STA LASCT
 
-.loop_CB2AD
+.D2
 
- JSR ChangeDrawingPhase
+ JSR ChangeDrawingPhase ; ???
  JSR subm_MA23
  JSR subm_BED2_b6
  LDA #$CC
  JSR subm_D977
- DEC LASCT
- BNE loop_CB2AD
- JMP DEATH2
+
+ DEC LASCT              ; Decrement the counter in LASCT, which we set above,
+                        ; so for each loop around D2, we decrement LASCT by 5
+                        ; (the main loop decrements it by 4, and this one makes
+                        ; it 5)
+
+ BNE D2                 ; Loop back to call the main flight loop again, until we
+                        ; have called it 127 times
+
+ JMP DEATH2             ; Jump to DEATH2 to reset and restart the game
 
 ; ******************************************************************************
 ;
@@ -16787,22 +16930,35 @@ ENDIF
 ;
 ;       Name: DEATH2
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Start and end
+;    Summary: Reset most of the game and restart from the title screen
+;
+; ------------------------------------------------------------------------------
+;
+; This routine is called following death, and when the game is quit by pressing
+; ESCAPE when paused.
 ;
 ; ******************************************************************************
 
 .DEATH2
 
- LDX #$FF
- TXS
- INX
+ LDX #$FF               ; Set the stack pointer to $01FF, which is the standard
+ TXS                    ; location for the 6502 stack, so this instruction
+                        ; effectively resets the stack
+
+ INX                    ; ???
  STX L0470
- JSR RES2
- LDA #5
+
+ JSR RES2               ; Reset a number of flight variables and workspaces
+                        ; and fall through into the entry code for the game
+                        ; to restart from the title screen
+
+ LDA #5                 ; ???
  JSR subm_E909
- JSR ResetKeyLogger
- JSR subm_F3BC
+
+ JSR U%                 ; Call U% to clear the key logger
+
+ JSR subm_F3BC          ; ???
  LDA controller1Select
  AND controller1Start
  AND controller1A
@@ -16813,7 +16969,7 @@ ENDIF
  BNE CB355
  LDA #0
  PHA
- JSR BR1_Part2
+ JSR BR1
  LDA #$FF
  STA QQ11
  LDA L03EE
@@ -16834,7 +16990,7 @@ ENDIF
 
 .CB341
 
- JSR BR1_Part2
+ JSR BR1
  LDA #$FF
  STA QQ11
  JSR WSCAN
@@ -16851,7 +17007,7 @@ ENDIF
 ;
 ;       Name: subm_B358
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Start and end
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -16860,61 +17016,96 @@ ENDIF
 
  LDX #$FF
  TXS
- JSR BR1_Part2
+ JSR BR1
 
 ; ******************************************************************************
 ;
 ;       Name: BAY
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Status
+;    Summary: Go to the docking bay (i.e. show the Status Mode screen)
+;
+; ------------------------------------------------------------------------------
+;
+; We end up here after the start-up process (load commander etc.), as well as
+; after a successful save, an escape pod launch, a successful docking, the end
+; of a cargo sell, and various errors (such as not having enough cash, entering
+; too many items when buying, trying to fit an item to your ship when you
+; already have it, running out of cargo space, and so on).
 ;
 ; ******************************************************************************
 
 .BAY
 
- JSR ClearTiles_b3
- LDA #$FF
- STA QQ12
- LDA #3
- JMP FRCE
+ JSR ClearTiles_b3      ; ???
+
+ LDA #$FF               ; Set QQ12 = $FF (the docked flag) to indicate that we
+ STA QQ12               ; are docked
+
+ LDA #3                 ; Jump into the main loop at FRCE, setting the key
+ JMP FRCE               ; that's "pressed" to show the Status Mode screen ???
 
 ; ******************************************************************************
 ;
-;       Name: BR1_Part2
+;       Name: BR1
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Start and end
+;    Summary: Start the game
 ;
 ; ******************************************************************************
 
-.BR1_Part2
+.BR1
 
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- JSR subm_B8FE_b6
+ JSR subm_B8FE_b6       ; ???
+
  JSR WaitResetSound
- JSR ping
- JSR TT111
- JSR jmp
- LDX #5
 
-.loop_CB37E
+ JSR ping               ; Set the target system coordinates (QQ9, QQ10) to the
+                        ; current system coordinates (QQ0, QQ1) we just loaded
 
- LDA QQ15,X
+ JSR TT111              ; Select the system closest to galactic coordinates
+                        ; (QQ9, QQ10)
+
+ JSR jmp                ; Set the current system to the selected system
+
+ LDX #5                 ; We now want to copy the seeds for the selected system
+                        ; in QQ15 into QQ2, where we store the seeds for the
+                        ; current system, so set up a counter in X for copying
+                        ; 6 bytes (for three 16-bit seeds)
+
+                        ; The label below is called likeTT112 because this code
+                        ; is almost identical to the TT112 loop in the hyp1
+                        ; routine
+
+.likeTT112
+
+ LDA QQ15,X             ; Copy the X-th byte in QQ15 to the X-th byte in QQ2
  STA QQ2,X
- DEX
- BPL loop_CB37E
- INX
- STX EV
- LDA QQ3
- STA QQ28
- LDA QQ5
- STA tek
- LDA QQ4
- STA gov
- RTS
+
+ DEX                    ; Decrement the counter
+
+ BPL likeTT112          ; Loop back to likeTT112 if we still have more bytes to
+                        ; copy
+
+ INX                    ; Set X = 0 (as we ended the above loop with X = $FF)
+
+ STX EV                 ; Set EV, the extra vessels spawning counter, to 0, as
+                        ; we are entering a new system with no extra vessels
+                        ; spawned
+
+ LDA QQ3                ; Set the current system's economy in QQ28 to the
+ STA QQ28               ; selected system's economy from QQ3
+
+ LDA QQ5                ; Set the current system's tech level in tek to the
+ STA tek                ; selected system's economy from QQ5
+
+ LDA QQ4                ; Set the current system's government in gov to the
+ STA gov                ; selected system's government from QQ4
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -16946,110 +17137,147 @@ ENDIF
 ;
 ;       Name: TITLE
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Start and end
+;    Summary: Display a title screen with a rotating ship and prompt
+;
+; ------------------------------------------------------------------------------
+;
+; Display the title screen, with a rotating ship and a text token at the bottom
+; of the screen.
+;
+; Arguments:
+;
+;   X                   The type of the ship to show (see variable XX21 for a
+;                       list of ship types)
+;
+;   Y                   The distance to show the ship rotating, once it has
+;                       finished moving towards us
 ;
 ; ******************************************************************************
 
 .TITLE
 
- STY L0480
- STX TYPE
- JSR RESET
- JSR ResetKeyLogger
+ STY distaway           ; Store the ship distance in distaway
+
+ STX TYPE               ; Store the ship type in location TYPE
+
+ JSR RESET              ; Reset our ship so we can use it for the rotating
+                        ; title ship
+
+ JSR U%                 ; Call U% to clear the key logger
 
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA #$60
- STA INWK+14
- LDA #$37
- STA INWK+7
- LDX #$7F
+ LDA #96                ; Set nosev_z hi = 96 (96 is the value of unity in the
+ STA INWK+14            ; rotation vector)
+
+ LDA #55                ; Set A = 55 as the distance that the ship starts at
+
+ STA INWK+7             ; Set z_hi, the high byte of the ship's z-coordinate,
+                        ; to 96, which is the distance at which the rotating
+                        ; ship starts out before coming towards us
+
+ LDX #127               ; Set roll counter = 127, so don't dampen the roll
  STX INWK+29
- STX INWK+30
- INX
- STX QQ17
- LDA TYPE
+
+ STX INWK+30            ; Set pitch counter = 127, so don't dampen the pitch
+
+ INX                    ; Set QQ17 to 128 (so bit 7 is set) to switch to
+ STX QQ17               ; Sentence Case, with the next letter printing in upper
+                        ; case
+
+ LDA TYPE               ; Set up a new ship, using the ship type in TYPE
  JSR NWSHP
- JSR subm_BAF3_b1
- LDA #$0C
- STA CNT2
- LDA #5
- STA MCNT
- LDY #0
+
+.awe
+
+ JSR subm_BAF3_b1       ; ???
+
+ LDA #12                ; Set CNT2 = 12 as the outer loop counter for the loop
+ STA CNT2               ; starting at TLL2
+
+ LDA #5                 ; Set the main loop counter in MCNT to 5, to act as the
+ STA MCNT               ; inner loop counter for the loop starting at TLL2
+
+ LDY #0                 ; ???
  STY DELTA
  LDA #1
  JSR subm_B39D
  LDA #7
  STA YP
 
-.loop_CB3F9
+.titl1
 
  LDA #$19
  STA XP
 
-.loop_CB3FE
+.TLL2
 
- LDA INWK+7
- CMP #1
- BEQ CB406
- DEC INWK+7
+ LDA INWK+7             ; If z_hi (the ship's distance) is 1, jump to TL1 to
+ CMP #1                 ; skip the following decrement
+ BEQ TL1
 
-.CB406
+ DEC INWK+7             ; Decrement the ship's distance, to bring the ship
+                        ; a bit closer to us
 
- JSR subm_B426
- BCS CB422
+.TL1
+
+ JSR titl5          ; ???
+
+ BCS titl3
  DEC XP
- BNE loop_CB3FE
+ BNE TLL2
  DEC YP
- BNE loop_CB3F9
+ BNE titl1
 
-.loop_CB415
+.titl2
 
  LDA INWK+7
  CMP #$37
- BCS CB424
+ BCS titl4
  INC INWK+7
- JSR subm_B426
- BCC loop_CB415
 
-.CB422
+ JSR titl5
+
+ BCC titl2
+
+.titl3
 
  SEC
  RTS
 
-.CB424
+.titl4
 
  CLC
  RTS
 
-; ******************************************************************************
-;
-;       Name: subm_B426
-;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
-;
-; ******************************************************************************
+.titl5
 
-.subm_B426
+                        ; We call this part of the code as a subroutine from
+                        ; above
 
- JSR MVEIT3
- LDX L0480
- STX INWK+6
- LDA MCNT
+ JSR MVEIT3             ; ???
+
+ LDX distaway           ; Set z_lo to the distance value we passed to the
+ STX INWK+6             ; routine, so this is the closest the ship gets to us
+
+ LDA MCNT               ; ???
  AND #3
- LDA #0
- STA XX1
- STA INWK+3
+
+ LDA #0                 ; Set x_lo = 0, so the ship remains in the screen centre
+ STA INWK
+
+ STA INWK+3             ; Set y_lo = 0, so the ship remains in the screen centre
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- JSR subm_D96F
- INC MCNT
- LDA controller1A
+ JSR subm_D96F          ; ???
+
+ INC MCNT               ; ???
+
+ LDA controller1A       ; ???
  ORA controller1Start
  ORA controller1Select
  BMI CB457
@@ -17081,8 +17309,16 @@ ENDIF
 ;
 ;       Name: ZERO
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Utility routines
+;    Summary: Reset the local bubble of universe and ship status
+;
+; ------------------------------------------------------------------------------
+;
+; This resets the following workspaces to zero:
+;
+;   * WP workspace variables from FRIN to de, which include the ship slots for
+;     the local bubble of universe, and various flight and ship status
+;     variables, including the MANY block
 ;
 ; ******************************************************************************
 
@@ -17091,143 +17327,272 @@ ENDIF
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDX #$2B
- LDA #0
+ LDX #(de-FRIN+1)       ; We're going to zero the WP workspace variables from
+                        ; FRIN to de, so set a counter in X for the correct
+                        ; number of bytes
 
-.loop_CB472
+ LDA #0                 ; Set A = 0 so we can zero the variables
 
- STA FRIN-1,X
- DEX
- BNE loop_CB472
- LDX #$21
+.ZEL
 
-.loop_CB47A
+ STA FRIN-1,X           ; Zero byte X-1 of FRIN to de
 
- STA MANY,X
- DEX
- BPL loop_CB47A
+ DEX                    ; Decrement the loop counter
+
+ BNE ZEL                ; Loop back to zero the next variable until we have done
+                        ; them all from FRIN to FRIN+42
+
+ LDX #NTY               ; We're now going to zero the NTY bytes in the MANY
+                        ; block, so set a counter in X for the correct number of
+                        ; bytes
+
+.ZEL2
+
+ STA MANY,X             ; Zero the X-th byte of MANY
+
+ DEX                    ; Decrement the loop counter
+
+ BPL ZEL2               ; Loop back to zero the next variable until we have done
+                        ; them all from MANY to MANY+33
 
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: ResetKeyLogger
+;       Name: U%
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Keyboard
+;    Summary: Clear the key logger
+;
+; ------------------------------------------------------------------------------
+;
+; Returns:
+;
+;   A                   A is set to 0
 ;
 ; ******************************************************************************
 
-.ResetKeyLogger
+.U%
 
- LDX #6
- LDA #0
- STA L0081
+ LDX #6                 ; We want to clear the 6 key logger locations from
+                        ; KY1 to KY6, so set a counter in X
 
-.loop_CB48A
+ LDA #0                 ; Set A to 0, as this means "key not pressed" in the
+                        ; key logger at KL
 
- STA KL,X
- DEX
- BPL loop_CB48A
- RTS
+ STA L0081              ; ???
+
+.DKL3
+
+ STA KL,X               ; Store 0 in the X-th byte of the key logger
+
+ DEX                    ; Decrement the counter
+
+ BPL DKL3               ; Loop back for the next key, until we have cleared from
+                        ; KL to KL+6 (i.e. KY1 through KY6)
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: MAS1
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Geometry)
+;    Summary: Add an orientation vector coordinate to an INWK coordinate
+;  Deep dive: The space station safe zone
+;
+; ------------------------------------------------------------------------------
+;
+; Add a doubled nosev vector coordinate, e.g. (nosev_y_hi nosev_y_lo) * 2, to
+; an INWK coordinate, e.g. (x_sign x_hi x_lo), storing the result in the INWK
+; coordinate. The axes used in each side of the addition are specified by the
+; arguments X and Y.
+;
+; In the comments below, we document the routine as if we are doing the
+; following, i.e. if X = 0 and Y = 11:
+;
+;   (x_sign x_hi x_lo) = (x_sign x_hi x_lo) + (nosev_y_hi nosev_y_lo) * 2
+;
+; as that way the variable names in the comments contain "x" and "y" to match
+; the registers that specify the vector axis to use.
+;
+; Arguments:
+;
+;   X                   The coordinate to add, as follows:
+;
+;                         * If X = 0, add (x_sign x_hi x_lo)
+;                         * If X = 3, add (y_sign y_hi y_lo)
+;                         * If X = 6, add (z_sign z_hi z_lo)
+;
+;   Y                   The vector to add, as follows:
+;
+;                         * If Y = 9,  add (nosev_x_hi nosev_x_lo)
+;                         * If Y = 11, add (nosev_y_hi nosev_y_lo)
+;                         * If Y = 13, add (nosev_z_hi nosev_z_lo)
+;
+; Returns:
+;
+;   A                   The highest byte of the result with the sign cleared
+;                       (e.g. |x_sign| when X = 0, etc.)
+;
+; Other entry points:
+;
+;   MA9                 Contains an RTS
 ;
 ; ******************************************************************************
 
 .MAS1
 
- LDA XX1,Y
+ LDA INWK,Y             ; Set K(2 1) = (nosev_y_hi nosev_y_lo) * 2
  ASL A
  STA K+1
  LDA INWK+1,Y
  ROL A
  STA K+2
- LDA #0
- ROR A
+
+ LDA #0                 ; Set K+3 bit 7 to the C flag, so the sign bit of the
+ ROR A                  ; above result goes into K+3
  STA K+3
- JSR MVT3
- STA INWK+2,X
- LDY K+1
- STY XX1,X
+
+ JSR MVT3               ; Add (x_sign x_hi x_lo) to K(3 2 1)
+
+ STA INWK+2,X           ; Store the sign of the result in x_sign
+
+ LDY K+1                ; Store K(2 1) in (x_hi x_lo)
+ STY INWK,X
  LDY K+2
  STY INWK+1,X
- AND #$7F
- RTS
 
-; ******************************************************************************
-;
-;       Name: m
-;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
-;
-; ******************************************************************************
+ AND #%01111111         ; Set A to the sign byte with the sign cleared,
+                        ; i.e. |x_sign| when X = 0
 
-.m
+.MA9
 
- LDA #0
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: MAS2
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Geometry)
+;
+; ------------------------------------------------------------------------------
+;
+; Given a value in Y that points to the start of a ship data block as an offset
+; from K%, calculate the following:
+;
+;   A = A OR x_sign OR y_sign OR z_sign
+;
+; and clear the sign bit of the result. The K% workspace contains the ship data
+; blocks, so the offset in Y must be 0 or a multiple of NI% (as each block in
+; K% contains NI% bytes).
+;
+; The result effectively contains a maximum cap of the three values (though it
+; might not be one of the three input values - it's just guaranteed to be
+; larger than all of them).
+;
+; If Y = 0 and A = 0, then this calculates the maximum cap of the highest byte
+; containing the distance to the planet, as K%+2 = x_sign, K%+5 = y_sign and
+; K%+8 = z_sign (the first slot in the K% workspace represents the planet).
+;
+; Arguments:
+;
+;   Y                   The offset from K% for the start of the ship data block
+;                       to use
+;
+; Returns:
+;
+;   A                   A OR K%+2+Y OR K%+5+Y OR K%+8+Y, with bit 7 cleared
+;
+; Other entry points:
+;
+;   m                   Do not include A in the calculation
 ;
 ; ******************************************************************************
 
+.m
+
+ LDA #0                 ; Set A = 0 and fall through into MAS2 to calculate the
+                        ; OR of the three bytes at K%+2+Y, K%+5+Y and K%+8+Y
+
 .MAS2
 
- ORA K%+2,Y
+ ORA K%+2,Y             ; Set A = A OR x_sign OR y_sign OR z_sign
  ORA K%+5,Y
  ORA K%+8,Y
- AND #$7F
- RTS
+
+ AND #%01111111         ; Clear bit 7 in A
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: MAS3
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate A = x_hi^2 + y_hi^2 + z_hi^2 in the K% block
+;
+; ------------------------------------------------------------------------------
+;
+; Given a value in Y that points to the start of a ship data block as an offset
+; from K%, calculate the following:
+;
+;   A = x_hi^2 + y_hi^2 + z_hi^2
+;
+; returning A = $FF if the calculation overflows a one-byte result. The K%
+; workspace contains the ship data blocks, so the offset in Y must be 0 or a
+; multiple of NI% (as each block in K% contains NI% bytes).
+;
+; Arguments:
+;
+;   Y                   The offset from K% for the start of the ship data block
+;                       to use
+;
+; Returns
+;
+;   A                   A = x_hi^2 + y_hi^2 + z_hi^2
+;
+;                       A = $FF if the calculation overflows a one-byte result
 ;
 ; ******************************************************************************
 
 .MAS3
 
- LDA K%+1,Y
+ LDA K%+1,Y             ; Set (A P) = x_hi * x_hi
  JSR SQUA2
- STA R
- LDA K%+4,Y
+
+ STA R                  ; Store A (high byte of result) in R
+
+ LDA K%+4,Y             ; Set (A P) = y_hi * y_hi
  JSR SQUA2
- ADC R
- BCS CB4EB
- STA R
+
+ ADC R                  ; Add A (high byte of second result) to R
+
+ BCS MA30               ; If the addition of the two high bytes caused a carry
+                        ; (i.e. they overflowed), jump to MA30 to return A = $FF
+
+ STA R                  ; Store A (sum of the two high bytes) in R
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA K%+7,Y
+ LDA K%+7,Y             ; Set (A P) = z_hi * z_hi
  JSR SQUA2
- ADC R
- BCC CB4ED
 
-.CB4EB
+ ADC R                  ; Add A (high byte of third result) to R, so R now
+                        ; contains the sum of x_hi^2 + y_hi^2 + z_hi^2
 
- LDA #$FF
+ BCC P%+4               ; If there is no carry, skip the following instruction
+                        ; to return straight from the subroutine
 
-.CB4ED
+.MA30
 
- RTS
+ LDA #$FF               ; The calculation has overflowed, so set A = $FF
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -17327,76 +17692,171 @@ ENDIF
 ;
 ;       Name: SPS2
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Arithmetic)
+;    Summary: Calculate X = A / 16
+;
+; ------------------------------------------------------------------------------
+;
+; Calculate the following, where A is a signed 8-bit integer and the result is a
+; signed 16-bit integer:
+;
+;   X = A / 16
+;
+; Returns:
+;
+;   C flag              The C flag is cleared
 ;
 ; ******************************************************************************
 
 .SPS2
 
- TAY
- AND #$7F
+ TAY                    ; Copy the argument A to Y, so we can check its sign
+                        ; below
+
+ AND #%01111111         ; Clear the sign bit of the argument A
+
+ LSR A                  ; Set A = A / 16
  LSR A
  LSR A
  LSR A
- LSR A
- ADC #0
- CPY #$80
- BCC CB542
- EOR #$FF
+
+ ADC #0                 ; Round the result up to the nearest integer by adding
+                        ; the bit we just shifted off the right (which went into
+                        ; the C flag)
+
+ CPY #%10000000         ; If Y is positive (i.e. the original argument was
+ BCC LL163              ; positive), jump to LL163
+
+ EOR #$FF               ; Negate A using two's complement
  ADC #0
 
-.CB542
+.LL163
 
- TAX
- RTS
+ TAX                    ; Copy the result in A to X
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: subm_B544
+;       Name: SPS3
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Geometry)
+;    Summary: Copy a space coordinate from the K% block into K3
+;
+; ------------------------------------------------------------------------------
+;
+; Copy one of the planet's coordinates into the corresponding location in the
+; temporary variable K3. The high byte and absolute value of the sign byte are
+; copied into the first two K3 bytes, and the sign of the sign byte is copied
+; into the highest K3 byte.
+;
+; The comments below are written for copying the planet's x-coordinate into
+; K3(2 1 0).
+;
+; Arguments:
+;
+;   X                   Determines which coordinate to copy, and to where:
+;
+;                         * X = 0 copies (x_sign, x_hi) into K3(2 1 0)
+;
+;                         * X = 3 copies (y_sign, y_hi) into K3(5 4 3)
+;
+;                         * X = 6 copies (z_sign, z_hi) into K3(8 7 6)
 ;
 ; ******************************************************************************
 
-.subm_B544
+.SPS3
 
- LDA K%+1,X
+ LDA K%+1,X             ; Copy x_hi into K3+X
  STA K3,X
- LDA K%+2,X
+
+ LDA K%+2,X             ; Set A = Y = x_sign
  TAY
- AND #$7F
- STA XX2+1,X
- TYA
- AND #$80
- STA XX2+2,X
- RTS
+
+ AND #%01111111         ; Set K3+1 = |x_sign|
+ STA K3+1,X
+
+ TYA                    ; Set K3+2 = the sign of x_sign
+ AND #%10000000
+ STA K3+2,X
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: SPS1
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Geometry)
+;    Summary: Calculate the vector to the planet and store it in XX15
+;
+; ------------------------------------------------------------------------------
+;
+; Other entry points:
+;
+;   SPS1+1              A BRK instruction
 ;
 ; ******************************************************************************
 
 .SPS1
 
- LDX #0
- JSR subm_B544
- LDX #3
- JSR subm_B544
- LDX #6
- JSR subm_B544
+ LDX #0                 ; Copy the two high bytes of the planet's x-coordinate
+ JSR SPS3               ; into K3(2 1 0), separating out the sign bit into K3+2
+
+ LDX #3                 ; Copy the two high bytes of the planet's y-coordinate
+ JSR SPS3               ; into K3(5 4 3), separating out the sign bit into K3+5
+
+ LDX #6                 ; Copy the two high bytes of the planet's z-coordinate
+ JSR SPS3               ; into K3(8 7 6), separating out the sign bit into K3+8
+
+                        ; Fall through into TAS2 to build XX15 from K3
 
 ; ******************************************************************************
 ;
 ;       Name: TAS2
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Maths (Geometry)
+;    Summary: Normalise the three-coordinate vector in K3
+;
+; ------------------------------------------------------------------------------
+;
+; Normalise the vector in K3, which has 16-bit values and separate sign bits,
+; and store the normalised version in XX15 as a signed 8-bit vector.
+;
+; A normalised vector (also known as a unit vector) has length 1, so this
+; routine takes an existing vector in K3 and scales it so the length of the
+; new vector is 1. This is used in two places: when drawing the compass, and
+; when applying AI tactics to ships.
+;
+; We do this in two stages. This stage shifts the 16-bit vector coordinates in
+; K3 to the left as far as they will go without losing any bits off the end, so
+; we can then take the high bytes and use them as the most accurate 8-bit vector
+; to normalise. Then the next stage (in routine NORM) does the normalisation.
+;
+; Arguments:
+;
+;   K3(2 1 0)           The 16-bit x-coordinate as (x_sign x_hi x_lo), where
+;                       x_sign is just bit 7
+;
+;   K3(5 4 3)           The 16-bit y-coordinate as (y_sign y_hi y_lo), where
+;                       y_sign is just bit 7
+;
+;   K3(8 7 6)           The 16-bit z-coordinate as (z_sign z_hi z_lo), where
+;                       z_sign is just bit 7
+;
+; Returns:
+;
+;   XX15                The normalised vector, with:
+;
+;                         * The x-coordinate in XX15
+;
+;                         * The y-coordinate in XX15+1
+;
+;                         * The z-coordinate in XX15+2
+;
+; Other entry points:
+;
+;   TA2                 Calculate the length of the vector in XX15 (ignoring the
+;                       low coordinates), returning it in Q
 ;
 ; ******************************************************************************
 
@@ -17405,49 +17865,70 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA K3
- ORA XX2+3
- ORA XX2+6
- ORA #1
- STA XX2+9
- LDA XX2+1
- ORA XX2+4
- ORA XX2+7
+ LDA K3                 ; OR the three low bytes and 1 to get a byte that has
+ ORA K3+3               ; a 1 wherever any of the three low bytes has a 1
+ ORA K3+6               ; (as well as always having bit 0 set), and store in
+ ORA #1                 ; K3+9
+ STA K3+9
 
-.loop_CB583
+ LDA K3+1               ; OR the three high bytes to get a byte in A that has a
+ ORA K3+4               ; 1 wherever any of the three high bytes has a 1
+ ORA K3+7
 
- ASL XX2+9
- ROL A
- BCS CB596
- ASL K3
- ROL XX2+1
- ASL XX2+3
- ROL XX2+4
- ASL XX2+6
- ROL XX2+7
- BCC loop_CB583
+                        ; (A K3+9) now has a 1 wherever any of the 16-bit
+                        ; values in K3 has a 1
+.TAL2
+
+ ASL K3+9               ; Shift (A K3+9) to the left, so bit 7 of the high byte
+ ROL A                  ; goes into the C flag
+
+ BCS CB596              ; If the left shift pushed a 1 out of the end, then we
+                        ; know that at least one of the coordinates has a 1 in
+                        ; this position, so jump to TA2 as we can't shift the
+                        ; values in K3 any further to the left
+
+ ASL K3                 ; Shift K3(1 0), the x-coordinate, to the left
+ ROL K3+1
+
+ ASL K3+3               ; Shift K3(4 3), the y-coordinate, to the left
+ ROL K3+4
+
+ ASL K3+6               ; Shift K3(6 7), the z-coordinate, to the left
+ ROL K3+7
+
+ BCC TAL2               ; Jump back to TAL2 to do another shift left (this BCC
+                        ; is effectively a JMP as we know bit 7 of K3+7 is not a
+                        ; 1, as otherwise bit 7 of A would have been a 1 and we
+                        ; would have taken the BCS above)
 
 .CB596
 
- LSR XX2+1
- LSR XX2+4
- LSR XX2+7
+ LSR K3+1              ; ???
+ LSR K3+4
+ LSR K3+7
 
 .TA2
 
- LDA XX2+1
- LSR A
- ORA XX2+2
- STA XX15
- LDA XX2+4
- LSR A
- ORA XX2+5
- STA Y1
- LDA XX2+7
- LSR A
- ORA XX2+8
- STA X2
- JMP NORM
+ LDA K3+1               ; Fetch the high byte of the x-coordinate from our left-
+ LSR A                  ; shifted K3, shift it right to clear bit 7, stick the
+ ORA K3+2               ; sign bit in there from the x_sign part of K3, and
+ STA XX15               ; store the resulting signed 8-bit x-coordinate in XX15
+
+ LDA K3+4               ; Fetch the high byte of the y-coordinate from our left-
+ LSR A                  ; shifted K3, shift it right to clear bit 7, stick the
+ ORA K3+5               ; sign bit in there from the y_sign part of K3, and
+ STA XX15+1             ; store the resulting signed 8-bit y-coordinate in
+                        ; XX15+1
+
+ LDA K3+7               ; Fetch the high byte of the z-coordinate from our left-
+ LSR A                  ; shifted K3, shift it right to clear bit 7, stick the
+ ORA K3+8               ; sign bit in there from the z_sign part of K3, and
+ STA XX15+2             ; store the resulting signed 8-bit  z-coordinate in
+                        ; XX15+2
+
+ JMP NORM               ; Now we have a signed 8-bit version of the vector K3 in
+                        ; XX15, so jump to NORM to normalise it, returning from
+                        ; the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -17460,14 +17941,14 @@ ENDIF
 
 .WARP
 
- LDA DLY
+ LDA demoInProgress     ; Fast-forward in demo starts game
  BEQ CB5BF
  JSR ResetShipStatus
  JMP subm_B358
 
 .CB5BF
 
- LDA auto
+ LDA auto               ; Fast-forward on docking computer insta-docks
  AND SSPR
  BEQ CB5CA
  JMP GOIN
@@ -17668,15 +18149,18 @@ ENDIF
 ;
 ;       Name: DOKEY
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Keyboard
+;    Summary: Scan for the seven primary flight controls
+;  Deep dive: The key logger
+;             The docking computer
 ;
 ; ******************************************************************************
 
 .DOKEY
 
- JSR SetKeyLogger_b6
- LDA auto
+ JSR SetKeyLogger_b6    ; ???
+
+ LDA auto               ; ???
  BNE CB6BA
 
 .CB6B0
@@ -17692,114 +18176,199 @@ ENDIF
 
 .CB6BA
 
- LDA SSPR
+ LDA SSPR               ; ???
  BNE CB6C8
+
  STA auto
  JSR WaitResetSound
  JMP CB6B0
 
 .CB6C8
 
- JSR ZINF
- LDA #$60
+ JSR ZINF               ; Call ZINF to reset the INWK ship workspace
+
+ LDA #96                ; Set nosev_z_hi = 96
  STA INWK+14
- ORA #$80
+
+ ORA #%10000000         ; Set sidev_x_hi = -96
  STA INWK+22
- STA TYPE
- LDA DELTA
+
+ STA TYPE               ; Set the ship type to -96, so the negative value will
+                        ; let us check in the DOCKIT routine whether this is our
+                        ; ship that is activating its docking computer, rather
+                        ; than an NPC ship docking
+
+ LDA DELTA              ; Set the ship speed to DELTA (our speed)
  STA INWK+27
- JSR DOCKIT
- LDA INWK+27
- CMP #$16
- BCC CB6E4
- LDA #$16
 
-.CB6E4
+ JSR DOCKIT             ; Call DOCKIT to calculate the docking computer's moves
+                        ; and update INWK with the results
 
- STA DELTA
- LDA #$FF
- LDX #0
- LDY INWK+28
- BEQ CB6F5
- BMI CB6F2
- LDX #1
+                        ; We now "press" the relevant flight keys, depending on
+                        ; the results from DOCKIT, starting with the pitch keys
 
-.CB6F2
+ LDA INWK+27            ; Fetch the updated ship speed from byte #27 into A
 
- STA KL,X
+ CMP #22                ; If A < 22, skip the next instruction
+ BCC P%+4
 
-.CB6F5
+ LDA #22                ; Set A = 22, so the maximum speed during docking is 22
 
- LDA #$80
- LDX #2
- ASL INWK+29
- BEQ CB712
- BCC CB701
- LDX #3
+ STA DELTA              ; Update DELTA to the new value in A
 
-.CB701
+ LDA #$FF               ; Set A = $FF, which we can insert into the key logger
+                        ; to "fake" the docking computer working the keyboard
 
- BIT INWK+29
- BPL CB70C
- LDA #$40
- STA JSTX
- LDA #0
+ LDX #0                 ; Set X = 0, so we "press" KY1 below ("?", slow down)
 
-.CB70C
+ LDY INWK+28            ; If the updated acceleration in byte #28 is zero, skip
+ BEQ DK11               ; to DK11
 
- STA KL,X
- LDA JSTX
+ BMI P%+4               ; If the updated acceleration is negative, skip the
+                        ; following instruction
 
-.CB712
+ LDX #1                 ; Set X = 1, so we "press" KY+1, i.e. KY2, with the
+                        ; next instruction (speed up) ???
 
- STA JSTX
- LDA #$80
- LDX #4
- ASL INWK+30
- BEQ CB727
- BCS CB721
- LDX #5
+ STA KL,X               ; Store $FF in either KY1 or KY2 to "press" the relevant
+                        ; key, depending on whether the updated acceleration is
+                        ; negative (in which case we "press" KY1, "?", to slow
+                        ; down) or positive (in which case we "press" KY2,
+                        ; Space, to speed up)
 
-.CB721
+.DK11
 
- STA KL,X
- LDA JSTY
+                        ; We now "press" the relevant roll keys, depending on
+                        ; the results from DOCKIT
 
-.CB727
+ LDA #128               ; Set A = 128, which indicates no change in roll when
+                        ; stored in JSTX (i.e. the centre of the roll indicator)
 
- STA JSTY
- LDX JSTX
- LDA #$0E
- LDY KY3
- BEQ CB737
- JSR BUMP2
+ LDX #2                 ; Set X = 2, so we "press" KL+2, i.e. KY3 below
+                        ; ("<", increase roll) ???
 
-.CB737
+ ASL INWK+29            ; Shift ship byte #29 left, which shifts bit 7 of the
+                        ; updated roll counter (i.e. the roll direction) into
+                        ; the C flag
 
- LDY KY4
- BEQ CB73F
- JSR REDU2
+ BEQ DK12               ; If the remains of byte #29 is zero, then the updated
+                        ; roll counter is zero, so jump to DK12 set JSTX to 128,
+                        ; to indicate there's no change in the roll
 
-.CB73F
+ BCC P%+4               ; If the C flag is clear, skip the following instruction
 
- STX JSTX
- LDA #$0E
- LDX JSTY
- LDY KY5
- BEQ CB74F
- JSR REDU2
+ LDX #3                 ; The C flag is set, i.e. the direction of the updated
+                        ; roll counter is negative, so set X to 3 so we
+                        ; "press" KY+3. i.e. KY4, below (">", decrease roll) ???
 
-.CB74F
+ BIT INWK+29            ; We shifted the updated roll counter to the left above,
+ BPL DK14               ; so this tests bit 6 of the original value, and if it
+                        ; is clear (i.e. the magnitude is less than 64), jump to
+                        ; DK14 to "press" the key and leave JSTX unchanged
 
- LDY KY6
- BEQ CB757
- JSR BUMP2
+ LDA #64                ; The magnitude of the updated roll is 64 or more, so
+ STA JSTX               ; set JSTX to 64 (so the roll decreases at half the
+                        ; maximum rate)
 
-.CB757
+ LDA #0                 ; And set A = 0 so we do not "press" any keys (so if the
+                        ; docking computer needs to make a serious roll, it does
+                        ; so by setting JSTX directly rather than by "pressing"
+                        ; a key)
 
- STX JSTY
- LDA auto
+.DK14
+
+ STA KL,X               ; Store A in either KY3 or KY4, depending on whether
+                        ; the updated roll rate is increasing (KY3) or
+                        ; decreasing (KY4)
+
+ LDA JSTX               ; Fetch A from JSTX so the next instruction has no
+                        ; effect
+
+.DK12
+
+ STA JSTX               ; Store A in JSTX to update the current roll rate
+
+                        ; We now "press" the relevant pitch keys, depending on
+                        ; the results from DOCKIT
+
+ LDA #128               ; Set A = 128, which indicates no change in pitch when
+                        ; stored in JSTX (i.e. the centre of the pitch
+                        ; indicator)
+
+ LDX #4                 ; Set X = 4, so we "press" KY+4, i.e. KY5, below
+                        ; ("X", decrease pitch) ???
+
+ ASL INWK+30            ; Shift ship byte #30 left, which shifts bit 7 of the
+                        ; updated pitch counter (i.e. the pitch direction) into
+                        ; the C flag
+
+ BEQ DK13               ; If the remains of byte #30 is zero, then the updated
+                        ; pitch counter is zero, so jump to DK13 set JSTY to
+                        ; 128, to indicate there's no change in the pitch
+
+ BCS P%+4               ; If the C flag is set, skip the following instruction
+
+ LDX #5                 ; Set X = 5, so we "press" KY+5, i.e. KY6, with the next
+                        ; instruction ("S", increase pitch) ???
+
+ STA KL,X               ; Store 128 in either KY5 or KY6 to "press" the relevant
+                        ; key, depending on whether the pitch direction is
+                        ; negative (in which case we "press" KY5, "X", to
+                        ; decrease the pitch) or positive (in which case we
+                        ; "press" KY6, "S", to increase the pitch)
+
+ LDA JSTY               ; Fetch A from JSTY so the next instruction has no
+                        ; effect
+
+.DK13
+
+ STA JSTY               ; Store A in JSTY to update the current pitch rate
+
+ LDX JSTX               ; Set X = JSTX, the current roll rate (as shown in the
+                        ; RL indicator on the dashboard)
+
+ LDA #14                ; Set A to 14, which is the amount we want to alter the
+                        ; roll rate by if the roll keys are being pressed
+
+ LDY KY3                ; If the "<" key is not being pressed, skip the next
+ BEQ P%+5               ; instruction
+
+ JSR BUMP2              ; The "<" key is being pressed, so call the BUMP2
+                        ; routine to increase the roll rate in X by A
+
+ LDY KY4                ; If the ">" key is not being pressed, skip the next
+ BEQ P%+5               ; instruction
+
+ JSR REDU2              ; The "<" key is being pressed, so call the REDU2
+                        ; routine to decrease the roll rate in X by A, taking
+                        ; the keyboard auto re-centre setting into account
+
+ STX JSTX               ; Store the updated roll rate in JSTX
+
+ LDA #14                ; Set A to 15, which is the amount we want to alter the
+                        ; roll rate by if the pitch keys are being pressed
+
+ LDX JSTY               ; Set X = JSTY, the current pitch rate (as shown in the
+                        ; DC indicator on the dashboard)
+
+ LDY KY5                ; If the "X" key is not being pressed, skip the next
+ BEQ P%+5               ; instruction
+
+ JSR REDU2              ; The "X" key is being pressed, so call the REDU2
+                        ; routine to decrease the pitch rate in X by A, taking
+                        ; the keyboard auto re-centre setting into account
+
+ LDY KY6                ; If the "S" key is not being pressed, skip the next
+ BEQ P%+5               ; instruction
+
+ JSR BUMP2              ; The "S" key is being pressed, so call the BUMP2
+                        ; routine to increase the pitch rate in X by A
+
+ STX JSTY               ; Store the updated roll rate in JSTY
+
+ LDA auto               ; ???
  BNE CB777
+
  LDX #$80
  LDA KY3
  ORA KY4
@@ -17829,7 +18398,7 @@ ENDIF
 .subm_B77A
 
  PHA
- STY L0393
+ STY DLY
  LDA #$C0
  STA DTW4
  LDA #0
@@ -17855,7 +18424,7 @@ ENDIF
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDY #$0A
- STY L0393
+ STY DLY
  LDA #$C0
  STA DTW4
  LDA #0
@@ -17892,9 +18461,10 @@ ENDIF
 
 .CB7E8
 
- LDA L0394
+ LDA de
  BEQ CB7F2
- LDA #$FD
+
+ LDA #253
  JSR TT27_b2
 
 .CB7F2
@@ -17925,7 +18495,7 @@ ENDIF
  STA L0584,X
  DEX
  BNE loop_CB818
- STX L0394
+ STX de
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -18009,10 +18579,10 @@ ENDIF
  BCS CB8A9
  LDA QQ20,X
  BEQ CB8A9
- LDA L0393
+ LDA DLY
  BNE CB8A9
  LDY #3
- STY L0394
+ STY de
  STA QQ20,X
  CPX #$11
  BCS CB89A
@@ -19134,8 +19704,8 @@ ENDIF
  LDA #0
  STA DTW6
  STA LAS2
- STA L0393
- STA L0394
+ STA DLY
+ STA de
  LDA #1
  STA XC
  STA YC
@@ -19232,8 +19802,10 @@ ENDIF
 .CBF91
 
  JSR subm_B9E2_b3
- LDA DLY
- BMI CBFA1
+
+ LDA demoInProgress     ; If bit 7 of demoInProgress is set then we are
+ BMI CBFA1              ; initialising the demo
+
  LDA QQ11
  BPL CBFA1
  CMP QQ11a

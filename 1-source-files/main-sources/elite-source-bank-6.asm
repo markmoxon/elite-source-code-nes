@@ -5526,14 +5526,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B459
+;       Name: SVE
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B459
+.SVE
 
  LDA #$BB
  JSR TT66_b0
@@ -6492,7 +6492,7 @@ ENDIF
  STA NAME,X
  DEX
  BPL loop_CB87B
- JSR BR1_b0
+ JSR StartAfterLoad_b0
  PLA
  RTS
 
