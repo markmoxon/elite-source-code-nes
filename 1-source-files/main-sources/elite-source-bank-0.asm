@@ -15505,7 +15505,7 @@ ENDIF
 .ss
 
  CPX NOMSL              ; If the counter is equal to the number of missiles,
- BEQ SAL8               ; jump down to SQL8 to draw the remaining missiles, as
+ BEQ SAL8               ; jump down to SAL8 to draw the remaining missiles, as
                         ; the rest of them are present and should be drawn in
                         ; black
 
