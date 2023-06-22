@@ -20715,18 +20715,23 @@ ENDMACRO
 ;
 ;       Name: TT66
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Utility routines
+;    Summary: Clear the screen and set the current view type
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The type of the new current view (see QQ11 for a list of
+;                       view types)
 ;
 ; ******************************************************************************
 
 .TT66
 
- STA QQ11
+ STA QQ11               ; Set the current view type in QQ11 to A
 
-.TTX66K
-
- LDA QQ11a
+ LDA QQ11a              ; ???
  ORA QQ11
  BMI CBEC4
  LDA QQ11
@@ -20742,16 +20747,28 @@ ENDMACRO
  LDX #0
  STX L046D
  JSR SetDrawingPhase
- LDA #$80
+
+ LDA #%10000000         ; Set bit 7 of QQ17 to switch to Sentence Case
  STA QQ17
- STA DTW2
- STA DTW1
+
+ STA DTW2               ; Set bit 7 of DTW2 to indicate we are not currently
+                        ; printing a word
+
+ STA DTW1               ; ???
+
  LDA #0
  STA DTW6
- STA LAS2
- STA DLY
- STA de
- LDA #1
+
+ STA LAS2               ; Set LAS2 = 0 to stop any laser pulsing
+
+ STA DLY                ; Set the delay in DLY to 0, to indicate that we are
+                        ; no longer showing an in-flight message, so any new
+                        ; in-flight messages will be shown instantly
+
+ STA de                 ; Clear de, the flag that appends " DESTROYED" to the
+                        ; end of the next text token, so that it doesn't
+
+ LDA #1                 ; ???
  STA XC
  STA YC
  JSR subm_AFCD_b3
