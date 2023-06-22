@@ -7282,14 +7282,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_EA8D
+;       Name: ScaleController
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_EA8D
+.ScaleController
 
  LDA controller1B
  BNE CEAA7
@@ -7298,20 +7298,20 @@ ENDIF
  ASL A
  ASL A
  ASL A
- STA L04BA
+ STA controller1Leftx8
  LDA controller1Right
  ASL A
  ASL A
  ASL A
  ASL A
- STA L04BB
+ STA controller1Rightx8
  RTS
 
 .CEAA7
 
  LDA #0
- STA L04BA
- STA L04BB
+ STA controller1Leftx8
+ STA controller1Rightx8
  RTS
 
 ; ******************************************************************************
@@ -7327,7 +7327,7 @@ ENDIF
 .UpdateJoystick
 
  LDA QQ11a
- BNE subm_EA8D
+ BNE ScaleController
  LDX JSTX
  LDA #8
  STA addr4
