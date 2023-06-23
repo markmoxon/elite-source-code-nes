@@ -833,7 +833,7 @@ ENDIF
                         ;   $8D = 
                         ;   $92 = 
                         ;   $93 = 
-                        ;   $95 = 
+                        ;   $95 = Trumble mission screen
                         ;   $96 = Data on System (TT25, TRADEMODE)
                         ;   $97 = Inventory
                         ;   $98 = Status Mode

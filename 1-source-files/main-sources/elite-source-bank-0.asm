@@ -2597,276 +2597,424 @@ ENDIF
 ;
 ;       Name: SetAXTo15 (Unused)
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Utility routines
+;    Summary: An unused routine that sets A and X to 15
 ;
 ; ******************************************************************************
 
 .SetAXTo15
 
- LDA #$0F
- TAX
- RTS
+ LDA #15                ; Set A = 15
+
+ TAX                    ; Set X = 15
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: PrintCombatRank
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print the current combat rank
+;
+; ------------------------------------------------------------------------------
+;
+; This routine is based on part of the STATUS routine from the original source,
+; so I have kept the original st3 and st4 labels.
 ;
 ; ******************************************************************************
 
 .PrintCombatRank
 
- LDA #$10
+ LDA #16                ; ???
  JSR TT68
+
  LDA L04A9
  AND #1
- BEQ C87CE
- JSR TT162
+ BEQ P%+5
 
-.C87CE
+ JSR TT162              ; Print a newline
 
- LDA TALLY+1
- BNE C8806
- TAX
- LDX TALLY
+ LDA TALLY+1            ; Fetch the high byte of the kill tally, and if it is
+ BNE st4                ; not zero, then we have more than 256 kills, so jump
+                        ; to st4 to work out whether we are Competent,
+                        ; Dangerous, Deadly or Elite
+
+                        ; Otherwise we have fewer than 256 kills, so we are one
+                        ; of Harmless, Mostly Harmless, Poor, Average or Above
+                        ; Average
+
+ TAX                    ; Set X to 0 (as A is 0)
+
+ LDX TALLY              ; ???
  CPX #0
  ADC #0
  CPX #2
  ADC #0
  CPX #8
  ADC #0
- CPX #$18
+ CPX #24
  ADC #0
- CPX #$2C
+ CPX #44
  ADC #0
- CPX #$82
+ CPX #130
  ADC #0
  TAX
 
-.C87F0
+.st3
 
  TXA
  PHA
+
  LDA L04A9
  AND #5
- BEQ C87FF
- JSR TT162
- JSR TT162
+ BEQ P%+8
 
-.C87FF
+ JSR TT162              ; Print two newlines
+ JSR TT162
 
  PLA
- CLC
- ADC #$15
- JMP plf
 
-.C8806
+ CLC                    ; Print recursive token 135 + A, which will be in the
+ ADC #21                ; range 136 ("HARMLESS") to 144 ("---- E L I T E ----")
+ JMP plf                ; followed by a newline, returning from the subroutine
+                        ; using a tail call
 
- LDX #9
- CMP #$19
- BCS C87F0
- DEX
- CMP #$0A
- BCS C87F0
- DEX
- CMP #2
- BCS C87F0
- DEX
- BNE C87F0
+.st4
+
+                        ; We call this from above with the high byte of the
+                        ; kill tally in A, which is non-zero, and want to return
+                        ; with the following in X, depending on our rating:
+                        ;
+                        ;   Competent = 6
+                        ;   Dangerous = 7
+                        ;   Deadly    = 8
+                        ;   Elite     = 9
+                        ;
+                        ; The high bytes of the top tier ratings are as follows,
+                        ; so this a relatively simple calculation:
+                        ;
+                        ;   Competent       = 1 to 2
+                        ;   Dangerous       = 2 to 9
+                        ;   Deadly          = 10 to 24
+                        ;   Elite           = 25 and up
+
+ LDX #9                 ; Set X to 9 for an Elite rating
+
+ CMP #25                ; If A >= 25, jump to st3 to print out our rating, as we
+ BCS st3                ; are Elite
+
+ DEX                    ; Decrement X to 8 for a Deadly rating
+
+ CMP #10                ; If A >= 10, jump to st3 to print out our rating, as we
+ BCS st3                ; are Deadly
+
+ DEX                    ; Decrement X to 7 for a Dangerous rating
+
+ CMP #2                 ; If A >= 2, jump to st3 to print out our rating, as we
+ BCS st3                ; are Dangerous
+
+ DEX                    ; Decrement X to 6 for a Competent rating
+
+ BNE st3                ; Jump to st3 to print out our rating, as we are
+                        ; Competent (this BNE is effectively a JMP as A will
+                        ; never be zero)
 
 ; ******************************************************************************
 ;
-;       Name: subm_8819
+;       Name: PrintLegalStatus
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print the current legal status (clean, offender or fugitive)
 ;
 ; ******************************************************************************
 
-.subm_8819
+.PrintLegalStatus
 
- LDA #$7D
- JSR spc
- LDA #$13
- LDY FIST
- BEQ C8829
- CPY #$28
- ADC #1
+ LDA #125               ; Print recursive token 125 ("LEGAL STATUS:) followed
+ JSR spc                ; by a space
 
-.C8829
+ LDA #19                ; Set A to token 133 ("CLEAN")
 
- JMP plf
+ LDY FIST               ; Fetch our legal status, and if it is 0, we are clean,
+ BEQ st5                ; so jump to st5 to print "Clean"
+
+ CPY #40                ; Set the C flag if Y >= 40, so C is set if we have
+                        ; a legal status of 40+ (i.e. we are a fugitive)
+
+ ADC #1                 ; Add 1 + C to A, so if C is not set (i.e. we have a
+                        ; legal status between 1 and 49) then A is set to token
+                        ; 134 ("OFFENDER"), and if C is set (i.e. we have a
+                        ; legal status of 50+) then A is set to token 135
+                        ; ("FUGITIVE")
+
+.st5
+
+ JMP plf                ; Print the text token in A (which contains our legal
+                        ; status) followed by a newline, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: STATUS
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Status
+;    Summary: Show the Status Mode screen
+;  Deep dive: Combat rank
 ;
 ; ******************************************************************************
 
 .wearedocked
 
- LDA #$CD
- JSR DETOK_b2
- JSR TT67
- JMP C885F
+                        ; We call this from STATUS below if we are docked
+
+ LDA #205               ; Print extended token 205 ("DOCKED") and return from
+ JSR DETOK_b2           ; the subroutine using a tail call
+
+ JSR TT67               ; Print a newline
+
+ JMP st6+3              ; Jump down to st6+3, to print recursive token 125 and
+                        ; continue to the rest of the Status Mode screen
 
 .STATUS
 
- LDA #$98
- JSR ChangeViewRow0
- JSR subm_9D09
- LDA #7
+ LDA #$98               ; Set the current view type in QQ11 to $98 (Status Mode
+ JSR ChangeViewRow0     ; screen) and move the text cursor to row 0
+
+ JSR subm_9D09          ; ???
+
+ LDA #7                 ; Move the text cursor to column 7
  STA XC
- LDA #$7E
- JSR NLIN3
- JSR GetStatusCondition
+
+ LDA #126               ; Print recursive token 126, which prints the top
+ JSR NLIN3              ; four lines of the Status Mode screen:
+                        ;
+                        ;         COMMANDER {commander name}
+                        ;
+                        ;
+                        ;   Present System      : {current system name}
+                        ;   Hyperspace System   : {selected system name}
+                        ;   Condition           :
+                        ;
+                        ; and draw a horizontal line at pixel row 19 to box
+                        ; in the title
+
+ JSR GetStatusCondition ; ???
  STX L0471
- LDA #$E6
- DEX
+
+ LDA #230               ; Start off by setting A to token 70 ("GREEN")
+
+ DEX                    ; ???
  BMI wearedocked
- BEQ C885C
- LDY ENERGY
- CPY #$80
- ADC #1
 
-.C885C
+ BEQ st6                ; So if X = 0, there are no ships in the vicinity, so
+                        ; jump to st6 to print "Green" for our ship's condition
 
- JSR plf
+ LDY ENERGY             ; Otherwise we have ships in the vicinity, so we load
+                        ; our energy levels into Y
 
-.C885F
+ CPY #128               ; Set the C flag if Y >= 128, so C is set if we have
+                        ; more than half of our energy banks charged
 
- LDA L04A9
+ ADC #1                 ; Add 1 + C to A, so if C is not set (i.e. we have low
+                        ; energy levels) then A is set to token 231 ("RED"),
+                        ; and if C is set (i.e. we have healthy energy levels)
+                        ; then A is set to token 232 ("YELLOW")
+
+.st6
+
+ JSR plf                ; Print the text token in A (which contains our ship's
+                        ; condition) followed by a newline
+
+ LDA L04A9              ; ???
  AND #4
- BEQ C8874
- JSR subm_8819
- JSR PrintCombatRank
- LDA #5
- JSR plf
- JMP C887F
+ BEQ stat1
 
-.C8874
+ JSR PrintLegalStatus   ; Print the current legal status
 
- JSR PrintCombatRank
- LDA #5
- JSR plf
- JSR subm_8819
+ JSR PrintCombatRank    ; Print the current combat rank
 
-.C887F
+ LDA #5                 ; Print control code 5, which prints the next
+ JSR plf                ; two lines of the Status Mode screen:
+                        ;
+                        ;   Fuel: {fuel level} Light Years
+                        ;   Cash: {cash} Cr
+                        ;
+                        ; followed by a newline
 
- LDA #$12
- JSR PrintTokenCrTab
- INC YC
- LDA ESCP
- BEQ C8890
- LDA #$70
- JSR PrintTokenCrTab
+ JMP stat2              ; Jump to stat2 to skip the following
 
-.C8890
+.stat1
 
- LDA BST
- BEQ C889A
- LDA #$6F
- JSR PrintTokenCrTab
+ JSR PrintCombatRank    ; Print the current combat rank
 
-.C889A
+ LDA #5                 ; Print control code 5, which prints the next
+ JSR plf                ; two lines of the Status Mode screen:
+                        ;
+                        ;   Fuel: {fuel level} Light Years
+                        ;   Cash: {cash} Cr
+                        ;
+                        ; followed by a newline
 
- LDA ECM
- BEQ C88A4
- LDA #$6C
- JSR PrintTokenCrTab
+ JSR PrintLegalStatus   ; Print the current legal status
 
-.C88A4
+.stat2
 
- LDA #$71
- STA XX4
+ LDA #18                ; Print recursive token 132, which prints the next bit
+ JSR PrintTokenCrTab    ; of the Status Mode screen:
+                        ;
+                        ;   EQUIPMENT:
+                        ;
+                        ; followed by a newline and the correct indent for
+                        ; Status Mode entries in the chosen language
 
-.loop_C88A8
+ INC YC                 ; Move the text cursor down one row
 
- TAY
- LDX L034F,Y
- BEQ C88B1
- JSR PrintTokenCrTab
+ LDA ESCP               ; If we don't have an escape pod fitted (i.e. ESCP is
+ BEQ P%+7               ; zero), skip the following two instructions
 
-.C88B1
+ LDA #112               ; We do have an escape pod fitted, so print recursive
+ JSR PrintTokenCrTab    ; token 112 ("ESCAPE POD"), followed by a newline and
+                        ; the correct indent for Status Mode entries in the
+                        ; chosen language
 
- INC XX4
+ LDA BST                ; If we don't have fuel scoops fitted, skip the
+ BEQ P%+7               ; following two instructions
+
+ LDA #111               ; We do have fuel scoops fitted, so print recursive
+ JSR PrintTokenCrTab    ; token 111 ("FUEL SCOOPS"), followed by a newline and
+                        ; the correct indent for Status Mode entries in the
+                        ; chosen language
+
+ LDA ECM                ; If we don't have an E.C.M. fitted, skip the following
+ BEQ P%+7               ; two instructions
+
+ LDA #108               ; We do have an E.C.M. fitted, so print recursive token
+ JSR PrintTokenCrTab    ; 108 ("E.C.M.SYSTEM"), followed by a newline and the
+                        ; correct indent for Status Mode entries in the chosen
+                        ; language
+
+ LDA #113               ; We now cover the four pieces of equipment whose flags
+ STA XX4                ; are stored in BOMB through BOMB+3, and whose names
+                        ; correspond with text tokens 113 through 116:
+                        ;
+                        ;   BOMB+0 = BOMB  = token 113 = Energy bomb
+                        ;   BOMB+1 = ENGY  = token 114 = Energy unit
+                        ;   BOMB+2 = DKCMP = token 115 = Docking computer
+                        ;   BOMB+3 = GHYP  = token 116 = Galactic hyperdrive
+                        ;
+                        ; We can print these out using a loop, so we set XX4 to
+                        ; 113 as a counter (and we also set A as well, to pass
+                        ; through to plf2)
+
+.stqv
+
+ TAY                    ; Fetch byte BOMB+0 through BOMB+4 for values of XX4
+ LDX BOMB-113,Y         ; from 113 through 117
+
+ BEQ P%+5               ; If it is zero then we do not own that piece of
+                        ; equipment, so skip the next instruction
+
+ JSR PrintTokenCrTab    ; Print the recursive token in A from 113 ("ENERGY
+                        ; BOMB") through 116 ("GALACTIC HYPERSPACE "), followed
+                        ; by a newline and the correct indent for Status Mode
+                        ; entries in the chosen language
+
+ INC XX4                ; Increment the counter (and A as well)
  LDA XX4
- CMP #$75
- BCC loop_C88A8
- LDX #0
 
-.C88BB
+ CMP #117               ; If A < 117, loop back up to stqv to print the next
+ BCC stqv               ; piece of equipment
 
- STX CNT
- LDY LASER,X
- BEQ C88FE
- LDA L04A9
+ LDX #0                 ; Now to print our ship's lasers, so set a counter in X
+                        ; to count through the four views (0 = front, 1 = rear,
+                        ; 2 = left, 3 = right)
+
+.st
+
+ STX CNT                ; Store the view number in CNT
+
+ LDY LASER,X            ; Fetch the laser power for view X, and if we do not
+ BEQ st1                ; have a laser fitted to that view, jump to st1 to move
+                        ; on to the next one
+
+ LDA L04A9              ; ???
  AND #4
  BNE C88D0
- TXA
- CLC
- ADC #$60
+
+ TXA                    ; Print recursive token 96 + X, which will print from 96
+ CLC                    ; ("FRONT") through to 99 ("RIGHT"), followed by a space
+ ADC #96
  JSR spc
 
 .C88D0
 
- LDA #$67
- LDX CNT
- LDY LASER,X
- CPY #$8F
- BNE C88DD
- LDA #$68
+ LDA #103               ; Set A to token 103 ("PULSE LASER")
 
-.C88DD
+ LDX CNT                ; Retrieve the view number from CNT that we stored above
 
- CPY #$97
- BNE C88E3
- LDA #$75
+ LDY LASER,X            ; Set Y = the laser power for view X
 
-.C88E3
+ CPY #128+POW           ; If the laser power for view X is not #POW+128 (beam
+ BNE P%+4               ; laser), skip the next LDA instruction
 
- CPY #$32
- BNE C88E9
- LDA #$76
+ LDA #104               ; This sets A = 104 if the laser in view X is a beam
+                        ; laser (token 104 is "BEAM LASER")
 
-.C88E9
+ CPY #Armlas            ; If the laser power for view X is not #Armlas (military
+ BNE P%+4               ; laser), skip the next LDA instruction
 
- JSR TT27_b2
- LDA L04A9
+ LDA #117               ; This sets A = 117 if the laser in view X is a military
+                        ; laser (token 117 is "MILITARY  LASER")
+
+ CPY #Mlas              ; If the laser power for view X is not #Mlas (mining
+ BNE P%+4               ; laser), skip the next LDA instruction
+
+ LDA #118               ; This sets A = 118 if the laser in view X is a mining
+                        ; laser (token 118 is "MINING  LASER")
+
+ JSR TT27_b2            ; Print the text token in A (which contains our legal
+                        ; status)
+
+ LDA L04A9              ; ???
  AND #4
  BEQ C88FB
- LDA CNT
- CLC
- ADC #$60
+
+ LDA CNT                ; Retrieve the view number from CNT that we stored above
+
+ CLC                    ; Print recursive token 96 + A, which will print from 96
+ ADC #96                ; ("FRONT") through to 99 ("RIGHT"), followed by a space
  JSR PrintSpaceAndToken
 
 .C88FB
 
- JSR PrintCrTab
+ JSR PrintCrTab         ; Print a newline and the correct indent for Status Mode
+                        ; entries in the chosen language
 
-.C88FE
+.st1
 
- LDX CNT
- INX
- CPX #4
- BCC C88BB
- LDA #$18
+ LDX CNT                ; Increment the counter in X and CNT to point to the
+ INX                    ; next view
+
+ CPX #4                 ; If this isn't the last of the four views, jump back up
+ BCC st                 ; to st to print out the next one
+
+ LDA #24                ; ???
  STA XC
+
  LDX language
- LDA C897C,X
+ LDA L897C,X
  STA YC
+
  JSR subm_B882_b4
+
  LDA S
  ORA #$80
  CMP systemFlag
  STA systemFlag
+
  BEQ C8923
+
  JSR subm_EB8C
 
 .C8923
@@ -2944,7 +3092,16 @@ ENDIF
  JSR subm_F126
  JMP C8955
 
-.C897C
+; ******************************************************************************
+;
+;       Name: L897C
+;       Type: Variable
+;   Category: Text
+;    Summary: ???
+;
+; ******************************************************************************
+
+.L897C
 
  PHP
  PHP
@@ -2986,44 +3143,57 @@ ENDIF
 ;
 ;       Name: PrintTokenCrTab
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print a token, a newline and the correct indent for Status Mode
+;             entries in the chosen language
 ;
 ; ******************************************************************************
 
 .PrintTokenCrTab
 
- JSR TT27_b2
+ JSR TT27_b2            ; Print the token in A
+
+                        ; Fall through into PrintCrTab to print a newline and
+                        ; the correct indent for the chosen language
 
 ; ******************************************************************************
 ;
 ;       Name: PrintCrTab
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print a newline and the correct indent for Status Mode entries in
+;             the chosen language
 ;
 ; ******************************************************************************
 
 .PrintCrTab
 
- JSR TT67
- LDX language
- LDA L89B4,X
+ JSR TT67               ; Print a newline
+
+ LDX language           ; Move the text cursor to the correct column for the
+ LDA tabStatusMode,X    ; Status Mode entry in the chosen language
  STA XC
- RTS
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: L89B4
+;       Name: tabStatusMode
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: The tab stop for Status Mode entries for each language
 ;
 ; ******************************************************************************
 
-.L89B4
+.tabStatusMode
 
- EQUB 3, 3, 1, 3                              ; 89B4: 03 03 01... ...
+ EQUB 3                 ; English
+
+ EQUB 3                 ; German
+
+ EQUB 1                 ; French
+
+ EQUB 3                 ; There is no fourth language, so this byte is ignored
 
 ; ******************************************************************************
 ;
@@ -6941,30 +7111,34 @@ ENDIF
 
  JSR ClearTiles_b3      ; ???
 
- LDA #$95
- JSR TT66
+ LDA #$95               ; Clear the top part of the screen, draw a white border,
+ JSR TT66               ; and set the current view type in QQ11 to $95 (Mission
+                        ; briefing)
 
- LDA TP
- ORA #$10
+ LDA TP                 ; Set bit 4 of TP to indicate that mission 3 has been
+ ORA #%00010000         ; triggered
  STA TP
 
- LDA #$C7
- JSR DETOK_b2
+ LDA #199               ; Print extended token 199, which is the briefing for
+ JSR DETOK_b2           ; the Trumbles mission
 
- JSR subm_8926
+ JSR subm_8926          ; ???
 
- JSR YESNO
+ JSR YESNO              ; Call YESNO to wait until either "Y" or "N" is pressed
 
- CMP #1
- BNE BAYSTEP
+ CMP #1                 ; If "N" was pressed, then the mission was not accepted,
+ BNE BAYSTEP            ; jump to BAYSTEP to go to the docking bay (i.e. show
+                        ; the Status Mode screen)
 
- LDY #$C3
- LDX #$50
+ LDY #HI(50000)         ; Otherwise the mission was accepted, so subtract
+ LDX #LO(50000)         ; 50,000 CR from the cash pot to pay for the Trumble
  JSR LCASH
 
- INC TRIBBLE
+ INC TRIBBLE            ; Increment the number of Trumbles from 0 to 1, so they
+                        ; start breeding
 
- JMP BAY
+ JMP BAY                ; Go to the docking bay (i.e. show the Status Mode
+                        ; screen)
 
 ; ******************************************************************************
 ;
@@ -7769,7 +7943,7 @@ ENDIF
 ;       Name: tabDataOnSystem
 ;       Type: Variable
 ;   Category: Text
-;    Summary: The column for the Data on System title for each language
+;    Summary: The tab stop for the Data on System title for each language
 ;
 ; ******************************************************************************
 
@@ -9246,7 +9420,7 @@ ENDIF
 ;       Name: tabShortRange
 ;       Type: Variable
 ;   Category: Text
-;    Summary: The column for the Short-range Chart title for each language
+;    Summary: The tab stop for the Short-range Chart title for each language
 ;
 ; ******************************************************************************
 
@@ -10749,7 +10923,7 @@ ENDIF
 ;       Name: rowMarketPrice
 ;       Type: Variable
 ;   Category: Text
-;    Summary: The column for the Market Prices title for each language
+;    Summary: The row for the Market Prices title for each language
 ;
 ; ******************************************************************************
 
@@ -12104,7 +12278,7 @@ ENDIF
 ;       Name: tabEquipShip
 ;       Type: Variable
 ;   Category: Text
-;    Summary: The column for the Equip Ship title for each language
+;    Summary: The tab stop for the Equip Ship title for each language
 ;
 ; ******************************************************************************
 
@@ -13018,28 +13192,29 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: hyp1_cpl
+;       Name: SetCurrentSeeds
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Universe
+;    Summary: Set the seeds for the selected system in QQ15 to the seeds in the
+;             safehouse
 ;
 ; ******************************************************************************
 
-.hyp1_cpl
+.SetCurrentSeeds
 
  LDX #5                 ; We now want to copy the seeds for the selected system
                         ; from safehouse into QQ15, where we store the seeds for
                         ; the selected system, so set up a counter in X for
                         ; copying six bytes (for three 16-bit seeds)
 
-.loop_CA7C8
+.safe1
 
  LDA safehouse,X        ; Copy the X-th byte in safehouse to the X-th byte in
  STA QQ15,X             ; QQ15
 
  DEX                    ; Decrement the counter
 
- BPL loop_CA7C8         ; Loop back until we have copied all six bytes
+ BPL safe1              ; Loop back until we have copied all six bytes
 
 ; ******************************************************************************
 ;
@@ -13304,6 +13479,7 @@ ENDIF
 
  LDA #197               ; ???
  JSR TT68
+
  LDA L04A9
  AND #4
  BNE CA879
@@ -13323,9 +13499,11 @@ ENDIF
  LDX QQ14
  SEC
  JSR pr2
- LDA #$C3
+
+ LDA #195
  JSR plf
- LDA #$C5
+
+ LDA #197
  JSR TT68
  LDA #0
  BEQ CA89C
@@ -16462,8 +16640,8 @@ ENDIF
 .CB137
 
  BIT QQ12               ; If bit 7 of QQ12 is clear (i.e. we are not docked, but
- BPL LABEL_3            ; in space), jump to LABEL_3 to skip the following checks
-                        ; for the save commander file key press
+ BPL LABEL_3            ; in space), jump to LABEL_3 to skip the following
+                        ; checks for the save commander file key press
 
  CMP #5                 ; ???
  BNE P%+5
@@ -18445,7 +18623,7 @@ ENDIF
  PLA                    ; Restore A from the stack
 
  CMP #250               ; If this is not token 250 (the hyperspace countdown),
- BNE CB7DF              ; jump to CB7DF to print the token in A
+ BNE mess1              ; jump to mess1 to print the token in A
 
                         ; This is token 250, so now we print the hyperspace
                         ; countdown
@@ -18464,10 +18642,12 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- JSR hyp1_cpl           ; Print the selected system ???
+ JSR SetCurrentSeeds    ; Set the seeds for the selected system in QQ15 to the
+                        ; seeds in the safehouse
 
  LDA #3                 ; Set A = 3 so we print the hyperspace countdown with
                         ; three digits
+
  CLC                    ; Clear the C flag so we print the hyperspace countdown
                         ; without a decimal point
 
@@ -18480,7 +18660,7 @@ ENDIF
  JMP CB7E8              ; Jump to CB7E8 to skip the following, as we have
                         ; already printed the message
 
-.CB7DF
+.mess1
 
  PHA                    ; Store A on the stack so we can restore it after the
                         ; following
@@ -20607,8 +20787,8 @@ ENDMACRO
                         ; of %11111110 (AI enabled, hostile, no E.C.M.)
 
  BCC sfrm1              ; The C flag will be set if the call to SFS1-2 was a
-                        ; success, so if it's clear, jump to sfrm1 to return from
-                        ; the subroutine
+                        ; success, so if it's clear, jump to sfrm1 to return
+                        ; from the subroutine
 
  LDA #120               ; Print recursive token 120 ("INCOMING MISSILE") as an
  JSR MESS               ; in-flight message
@@ -20707,9 +20887,9 @@ ENDMACRO
 
 .EXNO
 
- LDY #10                ; Call the NOISE routine with Y = 10 to make the sound of
- JMP NOISE              ; us making a hit or kill and return from the subroutine
-                        ; using a tail call
+ LDY #10                ; Call the NOISE routine with Y = 10 to make the sound
+ JMP NOISE              ; of us making a hit or kill and return from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;

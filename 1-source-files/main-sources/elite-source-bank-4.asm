@@ -2432,7 +2432,7 @@ ENDIF
 
 .subm_B882
 
- LDA TALLY+1
+ LDA TALLY+1            ; See PrintCombatRank
  BNE CB8A6
  LDX TALLY
  CPX #0
