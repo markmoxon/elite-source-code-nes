@@ -16410,8 +16410,8 @@ ENDMACRO
 
 .TT42
 
- TAX                    ; ???
- LDA CHARTABLE,X
+ TAX                    ; Convert the character in A into lower case by looking
+ LDA lowerCase,X        ; up the lower case ASCII value from the lowerCase table
 
 .TT44
 
@@ -17654,14 +17654,14 @@ ENDMACRO
 
 ; ******************************************************************************
 ;
-;       Name: CHARTABLE
+;       Name: lowerCase
 ;       Type: Variable
 ;   Category: Text
-;    Summary: ???
+;    Summary: Lookup table for converting letters to lower case
 ;
 ; ******************************************************************************
 
-.CHARTABLE
+.lowerCase
 
  FOR I%, 0, 31
 

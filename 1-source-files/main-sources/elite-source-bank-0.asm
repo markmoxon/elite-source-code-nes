@@ -19012,10 +19012,10 @@ ENDMACRO
  ITEM 19,  -2, 't',   6, %00000001   ;  0 = Food
  ITEM 20,  -1, 't',  10, %00000011   ;  1 = Textiles
  ITEM 65,  -3, 't',   2, %00000111   ;  2 = Radioactives
- ITEM 40,  -5, 't', 226, %00011111   ;  3 = Slaves
- ITEM 83,  -5, 't', 251, %00001111   ;  4 = Liquor/Wines
+ ITEM 40,  -5, 't', 226, %00011111   ;  3 = Robot Slaves (Slaves in original)
+ ITEM 83,  -5, 't', 251, %00001111   ;  4 = Beverages (Liquor/Wines in original)
  ITEM 196,  8, 't',  54, %00000011   ;  5 = Luxuries
- ITEM 235, 29, 't',   8, %01111000   ;  6 = Narcotics
+ ITEM 235, 29, 't',   8, %01111000   ;  6 = Rare Species (Narcotics in original)
  ITEM 154, 14, 't',  56, %00000011   ;  7 = Computers
  ITEM 117,  6, 't',  40, %00000111   ;  8 = Machinery
  ITEM 78,   1, 't',  17, %00011111   ;  9 = Alloys

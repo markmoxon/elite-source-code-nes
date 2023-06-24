@@ -3739,51 +3739,70 @@ ENDIF
 
  LDA drawingPhase
  BNE CA331
- LDA #$72
+
+ LDA #$72               ; Set SC(1 0) = $72E2
  STA SC+1
  LDA #$E2
  STA SC
+
  LDA #0
  STA K
  LDA #$FF
  STA K+1
+
  LDA QQ14
  JSR DILX+2
+
  LDA #8
  STA K
  LDA #$FF
  STA K+1
- LDA FSH
- JSR DILX
- LDA ASH
- JSR DILX
+
+ LDA FSH                ; Draw the forward shield indicator using a range of
+ JSR DILX               ; 0-255, and increment SC to point to the next indicator
+                        ; (the aft shield)
+
+ LDA ASH                ; Draw the aft shield indicator using a range of 0-255,
+ JSR DILX               ; and increment SC to point to the next indicator (the
+                        ; fuel level)
+
  LDA ENERGY
  JSR DILX
+
  LDA #0
  STA K
  LDA #$18
  STA K+1
- LDA CABTMP
- JSR DILX
- LDA GNTMP
- JSR DILX
+
+ LDA CABTMP             ; Draw the cabin temperature indicator using a range of
+ JSR DILX               ; 0-255, and increment SC to point to the next indicator
+                        ; (the laser temperature)
+
+ LDA GNTMP              ; Draw the laser temperature indicator using a range of
+ JSR DILX               ; 0-255, and increment SC to point to the next indicator
+                        ; (the altitude)
+
  LDA #$73
  STA SC+1
  LDA #$7C
  STA SC
+
  LDA #0
  STA K
  LDA #$FF
  STA K+1
+
  LDA DELTA
  LSR A
  ADC DELTA
  JSR DILX+2
+
  LDA #8
  STA K
  LDA #$FF
  STA K+1
- LDA ALTIT
+
+ LDA ALTIT              ; Draw the altitude indicator using a range of 0-255
  JSR DILX
 
 .CA331

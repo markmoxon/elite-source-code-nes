@@ -10754,33 +10754,41 @@ ENDIF
 ;       Name: NLIN3
 ;       Type: Subroutine
 ;   Category: Drawing lines
-;    Summary: ???
+;    Summary: Print a title and draw a screen-wide horizontal line on tile row 2
+;             to box it in
 ;
 ; ******************************************************************************
 
 .NLIN3
 
- PHA
+ PHA                    ; Move the text cursor to row 0
  LDA #0
  STA YC
  PLA
- JSR TT27_b2
+
+ JSR TT27_b2            ; Print the text token in A
+
+                        ; Fall through into NLIN4 to draw a horizontal line at
+                        ; pixel row 19
 
 ; ******************************************************************************
 ;
 ;       Name: NLIN4
 ;       Type: Subroutine
 ;   Category: Drawing lines
-;    Summary: ???
+;    Summary: Draw a horizontal line on tile row 2 to box in a title
 ;
 ; ******************************************************************************
 
 .NLIN4
 
- LDA #4
- BNE NLIN2
+ LDA #4                 ; Set A = 4, though this has no effect other than making
+                        ; the BNE work, as NLIN2 overwrites this value
 
- LDA #1
+ BNE NLIN2              ; Jump to NLIN2 to draw the line, (this BNE is
+                        ; effectively a JMP as A is never zero)
+
+ LDA #1                 ; These instructions appear to be unused
  STA YC
  LDA #4
 
@@ -10788,8 +10796,8 @@ ENDIF
 ;
 ;       Name: NLIN2
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing lines
+;    Summary: Draw a horizontal line on tile row 2 to box in a title
 ;
 ; ******************************************************************************
 
@@ -10798,16 +10806,24 @@ ENDIF
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDY #1
- LDA #3
+ LDY #1                 ; We now draw a horizontal line into the namespace
+                        ; buffer starting at column 1, so set Y as a counter for
+                        ; the column number
 
-.loop_CF484
+ LDA #3                 ; Set A to tile 3 so we draw the line as a horizontal
+                        ; line that's three pixels thick
 
- STA nameBuffer0+2*32,Y
- INY
- CPY #$20
- BNE loop_CF484
- RTS
+.nlin1
+
+ STA nameBuffer0+2*32,Y ; Set the Y-th tile on row 2 of namespace buffer 0 to
+                        ; to tile 3
+
+ INY                    ; Increment the column counter
+
+ CPY #32                ; Keep drawing tile 3 along row 2 until we have drawn
+ BNE nlin1              ; column 31
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
