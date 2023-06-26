@@ -4825,472 +4825,822 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LOIN
+;       Name: LOIN (Part 1 of 7)
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing lines
+;    Summary: Draw a line: Calculate the line gradient in the form of deltas
+;  Deep dive: Bresenham's line algorithm
+;
+; ------------------------------------------------------------------------------
+;
+; This routine draws a line from (X1, Y1) to (X2, Y2). It has multiple stages.
+; This stage calculates the line deltas.
+;
+; Arguments:
+;
+;   X1                  The screen x-coordinate of the start of the line
+;
+;   Y1                  The screen y-coordinate of the start of the line
+;
+;   X2                  The screen x-coordinate of the end of the line
+;
+;   Y2                  The screen y-coordinate of the end of the line
 ;
 ; ******************************************************************************
 
 .LOIN
 
- STY YSAV
+ STY YSAV               ; Store Y into YSAV, so we can preserve it across the
+                        ; call to this subroutine
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA #$80
- STA S
- ASL A
+ LDA #128               ; Set S = 128, which is the starting point for the
+ STA S                  ; slope error (representing half a pixel)
+
+ ASL A                  ; Set SWAP = 0, as %10000000 << 1 = 0
  STA SWAP
- LDA X2
- SBC XX15
- BCS CDC30
- EOR #$FF
- ADC #1
 
-.CDC30
+ LDA X2                 ; Set A = X2 - X1
+ SBC X1                 ;       = delta_x
+                        ;
+                        ; This subtraction works as the ASL A above sets the C
+                        ; flag
 
- STA P
- SEC
- LDA Y2
- SBC Y1
- BCS CDC3D
- EOR #$FF
- ADC #1
+ BCS LI1                ; If X2 > X1 then A is already positive and we can skip
+                        ; the next three instructions
 
-.CDC3D
+ EOR #%11111111         ; Negate the result in A by flipping all the bits and
+ ADC #1                 ; adding 1, i.e. using two's complement to make it
+                        ; positive
 
- STA Q
- CMP P
- BCC CDC46
- JMP CDE20
+.LI1
 
-.CDC46
+ STA P                  ; Store A in P, so P = |X2 - X1|, or |delta_x|
 
- LDX XX15
- CPX X2
- BCC CDC5E
- DEC SWAP
- LDA X2
- STA XX15
+ SEC                    ; Set the C flag, ready for the subtraction below
+
+ LDA Y2                 ; Set A = Y2 - Y1
+ SBC Y1                 ;       = delta_y
+                        ;
+                        ; This subtraction works as we either set the C flag
+                        ; above, or we skipped that SEC instruction with a BCS
+
+ BCS LI2                ; If Y2 > Y1 then A is already positive and we can skip
+                        ; the next two instructions
+
+ EOR #%11111111         ; Negate the result in A by flipping all the bits and
+ ADC #1                 ; adding 1, i.e. using two's complement to make it
+                        ; positive
+
+.LI2
+
+ STA Q                  ; Store A in Q, so Q = |Y2 - Y1|, or |delta_y|
+
+ CMP P                  ; If Q < P, jump to STPX to step along the x-axis, as
+ BCC STPX               ; the line is closer to being horizontal than vertical
+
+ JMP STPY               ; Otherwise Q >= P so jump to STPY to step along the
+                        ; y-axis, as the line is closer to being vertical than
+                        ; horizontal
+
+; ******************************************************************************
+;
+;       Name: LOIN (Part 2 of 7)
+;       Type: Subroutine
+;   Category: Drawing lines
+;    Summary: Draw a line: Line has a shallow gradient, step right along x-axis
+;  Deep dive: Bresenham's line algorithm
+;
+; ------------------------------------------------------------------------------
+;
+; This routine draws a line from (X1, Y1) to (X2, Y2). It has multiple stages.
+; If we get here, then:
+;
+;   * |delta_y| < |delta_x|
+;
+;   * The line is closer to being horizontal than vertical
+;
+;   * We are going to step right along the x-axis
+;
+;   * We potentially swap coordinates to make sure X1 < X2
+;
+; ******************************************************************************
+
+.STPX
+
+ LDX X1                 ; Set X = X1
+
+ CPX X2                 ; If X1 < X2, jump down to LI3, as the coordinates are
+ BCC LI3                ; already in the order that we want
+
+ DEC SWAP               ; Otherwise decrement SWAP from 0 to $FF, to denote that
+                        ; we are swapping the coordinates around
+
+ LDA X2                 ; Swap the values of X1 and X2
+ STA X1
  STX X2
- TAX
- LDA Y2
+
+ TAX                    ; Set X = X1
+
+ LDA Y2                 ; Swap the values of Y1 and Y2
  LDY Y1
  STA Y1
  STY Y2
 
-.CDC5E
+.LI3
 
- LDX Q
- BEQ CDC84
- LDA logL,X
- LDX P
- SEC
- SBC logL,X
- BMI CDC88
- LDX Q
- LDA log,X
+                        ; By this point we know the line is horizontal-ish and
+                        ; X1 < X2, so we're going from left to right as we go
+                        ; from X1 to X2
+
+                        ; The following section calculates:
+                        ;
+                        ;   Q = Q / P
+                        ;     = |delta_y| / |delta_x|
+                        ;
+                        ; using the log tables at logL and log to calculate:
+                        ;
+                        ;   A = log(Q) - log(P)
+                        ;     = log(|delta_y|) - log(|delta_x|)
+                        ;
+                        ; by first subtracting the low bytes of the logarithms
+                        ; from the table at LogL, and then subtracting the high
+                        ; bytes from the table at log, before applying the
+                        ; antilog to get the result of the division and putting
+                        ; it in Q
+
+ LDX Q                  ; Set X = |delta_y|
+
+ BEQ LIlog7             ; If |delta_y| = 0, jump to LIlog7 to return 0 as the
+                        ; result of the division
+
+ LDA logL,X             ; Set A = log(Q) - log(P)
+ LDX P                  ;       = log(|delta_y|) - log(|delta_x|)
+ SEC                    ;
+ SBC logL,X             ; by first subtracting the low bytes of log(Q) - log(P)
+
+ BMI LIlog4             ; If A > 127, jump to LIlog4
+
+ LDX Q                  ; And then subtracting the high bytes of log(Q) - log(P)
+ LDA log,X              ; so now A contains the high byte of log(Q) - log(P)
  LDX P
  SBC log,X
- BCS CDC80
- TAX
- LDA antilog,X
- JMP CDC98
 
-.CDC80
+ BCS LIlog5             ; If the subtraction fitted into one byte and didn't
+                        ; underflow, then log(Q) - log(P) < 256, so we jump to
+                        ; LIlog5 to return a result of 255
 
- LDA #$FF
- BNE CDC98
+ TAX                    ; Otherwise we set A to the A-th entry from the antilog
+ LDA antilog,X          ; table so the result of the division is now in A
 
-.CDC84
+ JMP LIlog6             ; Jump to LIlog6 to return the result
 
- LDA #0
- BEQ CDC98
+.LIlog5
 
-.CDC88
+ LDA #255               ; The division is very close to 1, so set A to the
+ BNE LIlog6             ; closest possible answer to 256, i.e. 255, and jump to
+                        ; LIlog6 to return the result (this BNE is effectively a
+                        ; JMP as A is never zero)
 
- LDX Q
- LDA log,X
+.LIlog7
+
+ LDA #0                 ; The numerator in the division is 0, so set A to 0 and
+ BEQ LIlog6             ; jump to LIlog6 to return the result (this BEQ is
+                        ; effectively a JMP as A is always zero)
+
+.LIlog4
+
+ LDX Q                  ; Subtract the high bytes of log(Q) - log(P) so now A
+ LDA log,X              ; contains the high byte of log(Q) - log(P)
  LDX P
  SBC log,X
- BCS CDC80
- TAX
- LDA antilogODD,X
 
-.CDC98
+ BCS LIlog5             ; If the subtraction fitted into one byte and didn't
+                        ; underflow, then log(Q) - log(P) < 256, so we jump to
+                        ; LIlog5 to return a result of 255
 
- STA Q
- LDA P
- CLC
- ADC #1
- STA P
- LDY Y1
+ TAX                    ; Otherwise we set A to the A-th entry from the
+ LDA antilogODD,X       ; antilogODD so the result of the division is now in A
+
+.LIlog6
+
+ STA Q                  ; Store the result of the division in Q, so we have:
+                        ;
+                        ;   Q = |delta_y| / |delta_x|
+
+ LDA P                  ; Set P = P + 1
+ CLC                    ;      = |delta_x| + 1
+ ADC #1                 ;
+ STA P                  ; We will use P as the x-axis counter, and we add 1 so
+                        ; we can skip the first pixel plot if the line is being
+                        ; drawn with swapped coordinates ???
+
+ LDY Y1                 ; If Y1 >= Y2, skip the following instruction
  CPY Y2
- BCS CDCAA
- JMP CDD62
+ BCS P%+5
 
-.CDCAA
+ JMP DOWN               ; Y1 < Y2, so jump to DOWN, as we need to draw the line
+                        ; to the right and down
 
- LDA XX15
- LSR A
- LSR A
- LSR A
- CLC
- ADC yLookupLo,Y
- STA SC2
- LDA nameBufferHi
- ADC yLookupHi,Y
- STA SC2+1
- TYA
- AND #7
- TAY
- LDA XX15
- AND #7
- TAX
- LDA TWOS,X
+; ******************************************************************************
+;
+;       Name: LOIN (Part 3 of 7)
+;       Type: Subroutine
+;   Category: Drawing lines
+;    Summary: Draw a shallow line going right and up or left and down
+;  Deep dive: Bresenham's line algorithm
+;
+; ******************************************************************************
 
-.CDCC8
+ LDA X1                 ; Set SC2(1 0) = yLookup(Y) + X1 * 8
+ LSR A                  ;
+ LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
+ LSR A                  ; to convert the pixel y-coordinate in Y into the number
+ CLC                    ; of the first tile on the row containing the pixel
+ ADC yLookupLo,Y        ;
+ STA SC2                ; Adding nameBufferHi and X1 * 8 therefore sets SC2(1 0)
+ LDA nameBufferHi       ; to the address of the entry in the nametable buffer
+ ADC yLookupHi,Y        ; that contains the tile number for the tile containing
+ STA SC2+1              ; the pixel at (X1, Y), i.e. the line we are drawing
 
- STA R
+ TYA                    ; Set Y = Y mod 8, which is the pixel row within the
+ AND #7                 ; character block at which we want to draw the start of
+ TAY                    ; our line (as each character block has 8 rows)
 
-.CDCCA
+ LDA X1                 ; Set X = X1 mod 8, which is the horizontal pixel number
+ AND #7                 ; within the character block where the line starts (as
+ TAX                    ; each pixel line in the character block is 8 pixels
+                        ; wide)
+
+ LDA TWOS,X             ; Fetch a 1-pixel byte from TWOS where pixel X is set
+
+.loin1
+
+ STA R                  ; Store the pixel byte in R
+
+.loin2
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDX #0
- LDA (SC2,X)
- BNE CDCE5
- LDA tileNumber
- BEQ CDD32
- STA (SC2,X)
- INC tileNumber
+ LDX #0                 ; If the nametable buffer entry is non-zero for the tile
+ LDA (SC2,X)            ; containing the pixel that we want to draw, then a tile
+ BNE loin3              ; has already been allocated to this entry, so skip the
+                        ; following
 
-.CDCE5
+ LDA tileNumber         ; If tileNumber is zero then we have run out of tiles to
+ BEQ loin7              ; use for drawing lines and pixels, so jump to loin7 to
+                        ; move on to the next pixel in the line
 
- LDX pattBufferHiDiv8
- STX SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
+ STA (SC2,X)            ; Otherwise tileNumber contains the number of the next
+                        ; available tile for drawing, so allocate this tile to
+                        ; cover the pixel that we want to draw by setting the
+                        ; nametable entry to the tile number we just fetched
+
+ INC tileNumber         ; Increment tileNumber to point to the next available
+                        ; tile for drawing, so it can be added to the nametable
+                        ; the next time we need to draw lines or pixels into a
+                        ; tile
+
+.loin3
+
+ LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 tileNumber) * 8
+ STX SC+1               ;             = (pattBufferHi 0) + tileNumber * 8
+ ASL A                  ;
+ ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
+ ASL A                  ; tile number tileNumber (as each tile contains 8 bytes
+ ROL SC+1               ; of pattern data), which means SC(1 0) points to the
+ ASL A                  ; pattern data for the tile containing the line we are
+ ROL SC+1               ; drawing
  STA SC
- CLC
 
-.loop_CDCF5
+ CLC                    ; Clear the C flag for the additions below
 
- LDA R
- ORA (SC),Y
- STA (SC),Y
- DEC P
- BEQ CDD51
- LDA S
+.loin4
+
+                        ; We now loop along the line from left to right, using P
+                        ; as a decreasing counter, and at each count we plot a
+                        ; single pixel using the pixel mask in R
+
+ LDA R                  ; Fetch the pixel byte from R
+
+ ORA (SC),Y             ; Store R into screen memory at SC(1 0), using OR logic
+ STA (SC),Y             ; so it merges with whatever is already on-screen
+
+ DEC P                  ; Decrement the x-coordinate counter in P
+
+ BEQ loin9              ; If we have just reached the right end of the line,
+                        ; jump to loin9 to return from the subroutine
+
+ LDA S                  ; Set S = S + Q to update the slope error
  ADC Q
  STA S
- BCC CDD0A
- DEY
- BMI CDD18
 
-.CDD0A
+ BCC loin5              ; If the addition didn't overflow, jump to loin5 to skip
+                        ; the following
 
- LSR R
- BNE loop_CDCF5
- LDA #$80
- INC SC2
- BNE CDCC8
- INC SC2+1
- BNE CDCC8
+ DEY                    ; Otherwise we just overflowed, so decrement Y to move
+                        ; to the pixel line above
 
-.CDD18
+ BMI loin6              ; If Y is negative we need to move up into the character
+                        ; block above, so jump to loin6 to decrement the screen
+                        ; address accordingly (jumping back to loin1 afterwards)
 
- LDA SC2
- SBC #$20
- STA SC2
- BCS CDD22
+.loin5
+
+ LSR R                  ; Shift the single pixel in R to the right to step along
+                        ; the x-axis, so the next pixel we plot will be at the
+                        ; next x-coordinate along
+
+ BNE loin4              ; If we the pixel didn't fall out of the right end of R
+                        ; (as the pixel byte is still non-zero) then loop back
+                        ; to loin4
+
+ LDA #%10000000         ; Set a pixel byte in A with the leftmost pixel set, as
+                        ; we need to move to the next character block along
+
+ INC SC2                ; Increment SC2(1 0) to point to the next tile number to
+ BNE loin1              ; the right in the nametable buffer and jump up to loin1
+ INC SC2+1              ; to fetch the tile details for the new nametable entry
+ BNE loin1
+
+.loin6
+
+ LDA SC2                ; If we get here then we need to move up into the
+ SBC #32                ; character block above, so we subtract 32 from SC2(1 0)
+ STA SC2                ; to get the tile number on the row above (as there are
+ BCS P%+4               ; 32 tiles on each row)
  DEC SC2+1
 
-.CDD22
+ LDY #7                 ; Set the pixel line in Y to the last line in the new
+                        ; character block
 
- LDY #7
- LSR R
- BNE CDCCA
- LDA #$80
- INC SC2
- BNE CDCC8
- INC SC2+1
- BNE CDCC8
+ LSR R                  ; Shift the single pixel in R to the right to step along
+                        ; the x-axis, so the next pixel we plot will be at the
+                        ; next x-coordinate along
 
-.CDD32
+ BNE loin2              ; If the pixel didn't fall out of the right end of R,
+                        ; then the pixel byte is still non-zero, so loop back
+                        ; to loin2
 
- DEC P
- BEQ CDD51
- CLC
+ LDA #%10000000         ; Set a pixel byte in A with the leftmost pixel set, as
+                        ; we need to move to the next character block along
+
+ INC SC2                ; Increment SC2(1 0) to point to the next tile number to
+ BNE loin1              ; the right in the nametable buffer and jump up to loin1
+ INC SC2+1              ; to fetch the tile details for the new nametable entry
+ BNE loin1
+
+.loin7
+
+ DEC P                  ; Decrement the x-coordinate counter in P
+
+ BEQ loin9              ; If we have just reached the right end of the line,
+                        ; jump to loin9 to return from the subroutine
+
+ CLC                    ; Set S = S + Q to update the slope error
  LDA S
  ADC Q
  STA S
- BCC CDD42
- DEY
- BMI CDD18
 
-.CDD42
+ BCC loin8              ; If the addition didn't overflow, jump to loin8 to skip
+                        ; the following
 
- LSR R
- BNE CDD32
- LDA #$80
- INC SC2
- BNE CDD4E
- INC SC2+1
+ DEY                    ; Otherwise we just overflowed, so decrement Y to move
+                        ; to the pixel line above
 
-.CDD4E
+ BMI loin6              ; If Y is negative we need to move up into the character
+                        ; block above, so jump to loin6 to move to the previous
+                        ; row of nametable entries (jumping back to loin1
+                        ; afterwards)
 
- JMP CDCC8
+.loin8
 
-.CDD51
+ LSR R                  ; Shift the single pixel in R to the right to step along
+                        ; the x-axis, so the next pixel we plot will be at the
+                        ; next x-coordinate along
 
- LDY YSAV
+ BNE loin7              ; If the pixel didn't fall out of the right end of R,
+                        ; then the pixel byte is still non-zero, so loop back
+                        ; to loin7
 
- SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
-                        ; the PPU to use nametable 0 and pattern table 0
+ LDA #%10000000         ; Set a pixel byte in A with the leftmost pixel set, as
+                        ; we need to move to the next character block along
 
- CLC
- RTS
+ INC SC2                ; Increment SC2(1 0) to point to the next tile number to
+ BNE P%+4               ; the right in the nametable buffer and jump up to loin1
+ INC SC2+1              ; to fetch the tile details for the new nametable entry
+ JMP loin1
 
-.CDD62
+.loin9
 
- LDA XX15
- LSR A
- LSR A
- LSR A
- CLC
- ADC yLookupLo,Y
- STA SC2
- LDA nameBufferHi
- ADC yLookupHi,Y
- STA SC2+1
- TYA
- AND #7
- TAY
- LDA XX15
- AND #7
- TAX
- LDA TWOS,X
-
-.CDD80
-
- STA R
-
-.CDD82
+ LDY YSAV               ; Restore Y from YSAV, so that it's preserved
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDX #0
- LDA (SC2,X)
- BNE CDD9D
- LDA tileNumber
- BEQ CDDEE
- STA (SC2,X)
- INC tileNumber
+ CLC                    ; Clear the C flag for the routine to return
 
-.CDD9D
+ RTS                    ; Return from the subroutine
 
- LDX pattBufferHiDiv8
- STX SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
+; ******************************************************************************
+;
+;       Name: LOIN (Part 4 of 7)
+;       Type: Subroutine
+;   Category: Drawing lines
+;    Summary: Draw a shallow line going right and down or left and up
+;  Deep dive: Bresenham's line algorithm
+;
+; ******************************************************************************
+
+.DOWN
+
+ LDA X1                 ; Set SC2(1 0) = yLookup(Y) + X1 * 8
+ LSR A                  ;
+ LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
+ LSR A                  ; to convert the pixel y-coordinate in Y into the number
+ CLC                    ; of the first tile on the row containing the pixel
+ ADC yLookupLo,Y        ;
+ STA SC2                ; Adding nameBufferHi and X1 * 8 therefore sets SC2(1 0)
+ LDA nameBufferHi       ; to the address of the entry in the nametable buffer
+ ADC yLookupHi,Y        ; that contains the tile number for the tile containing
+ STA SC2+1              ; the pixel at (X1, Y), i.e. the line we are drawing
+
+ TYA                    ; Set Y = Y mod 8, which is the pixel row within the
+ AND #7                 ; character block at which we want to draw the start of
+ TAY                    ; our line (as each character block has 8 rows)
+
+ LDA X1                 ; Set X = X1 mod 8, which is the horizontal pixel number
+ AND #7                 ; within the character block where the line starts (as
+ TAX                    ; each pixel line in the character block is 8 pixels
+                        ; wide)
+
+ LDA TWOS,X             ; Fetch a 1-pixel byte from TWOS where pixel X is set
+
+.loin10
+
+ STA R                  ; Store the pixel byte in R
+
+.loin11
+
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
+
+ LDX #0                 ; If the nametable buffer entry is non-zero for the tile
+ LDA (SC2,X)            ; containing the pixel that we want to draw, then a tile
+ BNE loin12             ; has already been allocated to this entry, so skip the
+                        ; following
+
+ LDA tileNumber         ; If tileNumber is zero then we have run out of tiles to
+ BEQ loin16             ; use for drawing lines and pixels, so jump to loin16 to
+                        ; move on to the next pixel in the line
+
+ STA (SC2,X)            ; Otherwise tileNumber contains the number of the next
+                        ; available tile for drawing, so allocate this tile to
+                        ; cover the pixel that we want to draw by setting the
+                        ; nametable entry to the tile number we just fetched
+
+ INC tileNumber         ; Increment tileNumber to point to the next available
+                        ; tile for drawing, so it can be added to the nametable
+                        ; the next time we need to draw lines or pixels into a
+                        ; tile
+
+.loin12
+
+ LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 tileNumber) * 8
+ STX SC+1               ;             = (pattBufferHi 0) + tileNumber * 8
+ ASL A                  ;
+ ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
+ ASL A                  ; tile number tileNumber (as each tile contains 8 bytes
+ ROL SC+1               ; of pattern data), which means SC(1 0) points to the
+ ASL A                  ; pattern data for the tile containing the line we are
+ ROL SC+1               ; drawing
  STA SC
- CLC
 
-.loop_CDDAD
+ CLC                    ; Clear the C flag for the additions below
 
- LDA R
- ORA (SC),Y
- STA (SC),Y
- DEC P
- BEQ CDD51
+.loin13
+
+                        ; We now loop along the line from left to right, using P
+                        ; as a decreasing counter, and at each count we plot a
+                        ; single pixel using the pixel mask in R
+
+ LDA R                  ; Fetch the pixel byte from R
+
+ ORA (SC),Y             ; Store R into screen memory at SC(1 0), using OR logic
+ STA (SC),Y             ; so it merges with whatever is already on-screen
+
+ DEC P                  ; Decrement the x-coordinate counter in P
+
+ BEQ loin9              ; If we have just reached the right end of the line,
+                        ; jump to loin9 to return from the subroutine
+
+ LDA S                  ; Set S = S + Q to update the slope error
+ ADC Q
+ STA S
+
+ BCC loin14             ; If the addition didn't overflow, jump to loin14 to
+                        ; skip the following
+
+ INY                    ; Otherwise we just overflowed, so increment Y to move
+                        ; to the pixel line below
+
+ CPY #8                 ; If Y = 8 then we have just gone past the bottom of the
+ BEQ loin15             ; character block, so jump to loin15 to move to the next
+                        ; row of nametable entries (jumping back to loin10
+                        ; afterwards)
+
+.loin14
+
+ LSR R                  ; Shift the single pixel in R to the right to step along
+                        ; the x-axis, so the next pixel we plot will be at the
+                        ; next x-coordinate along
+
+ BNE loin13             ; If we the pixel didn't fall out of the right end of R
+                        ; (as the pixel byte is still non-zero) then loop back
+                        ; to loin13
+
+ LDA #%10000000         ; Set a pixel byte in A with the leftmost pixel set, as
+                        ; we need to move to the next character block along
+
+ INC SC2                ; Increment SC2(1 0) to point to the next tile number to
+ BNE loin10             ; the right in the nametable buffer and jump up to
+ INC SC2+1              ; loin10 to fetch the tile details for the new nametable
+ JMP loin10             ; entry
+
+.loin15
+
+                        ; If we get here then the C flag is set, as we jumped
+                        ; using a BEQ, so the ADC #31 below actually adds 32
+
+ LDA SC2                ; If we get here then we need to move down into the
+ ADC #31                ; character block above, so we add 32 to SC2(1 0)
+ STA SC2                ; to get the tile number on the row above (as there are
+ BCC P%+4               ; 32 tiles on each row)
+ INC SC2+1
+
+ LDY #0                 ; Set the pixel line in Y to the first line in the new
+                        ; character block
+
+ LSR R                  ; Shift the single pixel in R to the right to step along
+                        ; the x-axis, so the next pixel we plot will be at the
+                        ; next x-coordinate along
+
+ BNE loin11             ; If the pixel didn't fall out of the right end of R,
+                        ; then the pixel byte is still non-zero, so loop back
+                        ; to loin11
+
+ LDA #%10000000         ; Set a pixel byte in A with the leftmost pixel set, as
+                        ; we need to move to the next character block along
+
+ INC SC2                ; Increment SC2(1 0) to point to the next tile number to
+ BNE loin10             ; the right in the nametable buffer and jump up to
+ INC SC2+1              ; loin10 to fetch the tile details for the new nametable
+ JMP loin10             ; entry
+
+.loin16
+
+ DEC P                  ; Decrement the x-coordinate counter in P
+
+ BEQ loin19
+
+ CLC                    ; Set S = S + Q to update the slope error
  LDA S
  ADC Q
  STA S
- BCC CDDC4
- INY
- CPY #8
- BEQ CDDD3
 
-.CDDC4
+ BCC loin17             ; If the addition didn't overflow, jump to loin17 to
+                        ; skip the following
 
- LSR R
- BNE loop_CDDAD
- LDA #$80
- INC SC2
- BNE CDD80
- INC SC2+1
- JMP CDD80
+ INY                    ; Otherwise we just overflowed, so increment Y to move
+                        ; to the pixel line below
 
-.CDDD3
+ CPY #8                 ; If Y = 8 then we have just gone past the bottom of the
+ BEQ loin15             ; character block, so jump to loin15 to move to the next
+                        ; row of nametable entries (jumping back to loin10
+                        ; afterwards)
 
- LDA SC2
- ADC #$1F
- STA SC2
- BCC CDDDD
- INC SC2+1
+.loin17
 
-.CDDDD
+ LSR R                  ; Shift the single pixel in R to the right to step along
+                        ; the x-axis, so the next pixel we plot will be at the
+                        ; next x-coordinate along
 
- LDY #0
- LSR R
- BNE CDD82
- LDA #$80
- INC SC2
- BNE CDD80
- INC SC2+1
- JMP CDD80
+ BNE loin16             ; If the pixel didn't fall out of the right end of R,
+                        ; then the pixel byte is still non-zero, so loop back
+                        ; to loin16
 
-.CDDEE
+ LDA #%10000000         ; Set a pixel byte in A with the leftmost pixel set, as
+                        ; we need to move to the next character block along
 
- DEC P
- BEQ CDE1C
- CLC
- LDA S
- ADC Q
- STA S
- BCC CDE00
- INY
- CPY #8
- BEQ CDDD3
+ INC SC2                ; Increment SC2(1 0) to point to the next tile number to
+ BNE P%+4               ; the right in the nametable buffer and jump up to
+ INC SC2+1              ; loin10 to fetch the tile details for the new nametable
+ JMP loin10             ; entry
 
-.CDE00
-
- LSR R
- BNE CDDEE
- LDA #$80
- INC SC2
- BNE CDE0C
- INC SC2+1
-
-.CDE0C
-
- JMP CDD80
-
-.loop_CDE0F
+.loin18
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
-.CDE1C
+.loin19
 
- LDY YSAV
- CLC
- RTS
+ LDY YSAV               ; Restore Y from YSAV, so that it's preserved
 
-.CDE20
+ CLC                    ; Clear the C flag for the routine to return
 
- LDY Y1
+ RTS                    ; Return from the subroutine
+
+; ******************************************************************************
+;
+;       Name: LOIN (Part 5 of 7)
+;       Type: Subroutine
+;   Category: Drawing lines
+;    Summary: Draw a line: Line has a steep gradient, step up along y-axis
+;  Deep dive: Bresenham's line algorithm
+;
+; ------------------------------------------------------------------------------
+;
+; This routine draws a line from (X1, Y1) to (X2, Y2). It has multiple stages.
+; If we get here, then:
+;
+;   * |delta_y| >= |delta_x|
+;
+;   * The line is closer to being vertical than horizontal
+;
+;   * We are going to step up along the y-axis
+;
+;   * We potentially swap coordinates to make sure Y1 >= Y2
+;
+; ******************************************************************************
+
+.STPY
+
+ LDY Y1                 ; Set A = Y = Y1
  TYA
- LDX XX15
- CPY Y2
- BEQ loop_CDE0F
- BCS CDE3C
- DEC SWAP
- LDA X2
- STA XX15
+
+ LDX X1                 ; Set X = X1
+
+ CPY Y2                 ; If Y1 = Y2, jump up to loin18 to return from the
+ BEQ loin18              ; subroutine as there is no line to draw
+
+ BCS LI15               ; If Y1 > Y2, jump down to LI15, as the coordinates are
+                        ; already in the order that we want
+
+ DEC SWAP               ; Otherwise decrement SWAP from 0 to $FF, to denote that
+                        ; we are swapping the coordinates around
+
+ LDA X2                 ; Swap the values of X1 and X2
+ STA X1
  STX X2
- TAX
- LDA Y2
+
+ TAX                    ; Set X = X1
+
+ LDA Y2                 ; Swap the values of Y1 and Y2
  STA Y1
  STY Y2
- TAY
 
-.CDE3C
+ TAY                    ; Set Y = A = Y1
 
- LDX P
- BEQ CDE62
- LDA logL,X
- LDX Q
- SEC
- SBC logL,X
- BMI CDE66
- LDX P
- LDA log,X
+.LI15
+
+                        ; By this point we know the line is vertical-ish and
+                        ; Y1 >= Y2, so we're going from top to bottom as we go
+                        ; from Y1 to Y2
+
+                        ; The following section calculates:
+                        ;
+                        ;   P = P / Q
+                        ;     = |delta_x| / |delta_y|
+                        ;
+                        ; using the log tables at logL and log to calculate:
+                        ;
+                        ;   A = log(P) - log(Q)
+                        ;     = log(|delta_x|) - log(|delta_y|)
+                        ;
+                        ; by first subtracting the low bytes of the logarithms
+                        ; from the table at LogL, and then subtracting the high
+                        ; bytes from the table at log, before applying the
+                        ; antilog to get the result of the division and putting
+                        ; it in P
+
+ LDX P                  ; Set X = |delta_x|
+
+ BEQ LIfudge            ; If |delta_x| = 0, jump to LIfudge to return 0 as the
+                        ; result of the division
+
+ LDA logL,X             ; Set A = log(P) - log(Q)
+ LDX Q                  ;       = log(|delta_x|) - log(|delta_y|)
+ SEC                    ;
+ SBC logL,X             ; by first subtracting the low bytes of log(P) - log(Q)
+
+ BMI LIloG              ; If A > 127, jump to LIloG
+
+ LDX P                  ; And then subtracting the high bytes of log(P) - log(Q)
+ LDA log,X              ; so now A contains the high byte of log(P) - log(Q)
  LDX Q
  SBC log,X
- BCS CDE5E
- TAX
- LDA antilog,X
- JMP CDE76
 
-.CDE5E
+ BCS LIlog3             ; If the subtraction fitted into one byte and didn't
+                        ; underflow, then log(P) - log(Q) < 256, so we jump to
+                        ; LIlog3 to return a result of 255
 
- LDA #$FF
- BNE CDE76
+ TAX                    ; Otherwise we set A to the A-th entry from the antilog
+ LDA antilog,X          ; table so the result of the division is now in A
 
-.CDE62
+ JMP LIlog2             ; Jump to LIlog2 to return the result
 
- LDA #0
- BEQ CDE76
+.LIlog3
 
-.CDE66
+ LDA #255               ; The division is very close to 1, so set A to the
+ BNE LIlog2             ; closest possible answer to 256, i.e. 255, and jump to
+                        ; LIlog2 to return the result (this BNE is effectively a
+                        ; JMP as A is never zero)
 
- LDX P
- LDA log,X
+.LIfudge
+
+ LDA #0                 ; Set A = 0 and jump to LIlog2 to return 0 as the result
+ BEQ LIlog2             ; (this BNE is effectively a JMP as A is always zero)
+
+.LIloG
+
+ LDX P                  ; Subtract the high bytes of log(P) - log(Q) so now A
+ LDA log,X              ; contains the high byte of log(P) - log(Q)
  LDX Q
  SBC log,X
- BCS CDE5E
- TAX
- LDA antilogODD,X
 
-.CDE76
+ BCS LIlog3             ; If the subtraction fitted into one byte and didn't
+                        ; underflow, then log(P) - log(Q) < 256, so we jump to
+                        ; LIlog3 to return a result of 255
 
- STA P
- LDA XX15
- LSR A
- LSR A
- LSR A
- CLC
- ADC yLookupLo,Y
- STA SC2
- LDA nameBufferHi
- ADC yLookupHi,Y
- STA SC2+1
- TYA
- AND #7
- TAY
- SEC
- LDA X2
- SBC XX15
- LDA XX15
- AND #7
- TAX
- LDA TWOS,X
- STA R
- LDX Q
- INX
- BCS CDEDD
- JMP CDFAA
+ TAX                    ; Otherwise we set A to the A-th entry from the
+ LDA antilogODD,X       ; antilogODD so the result of the division is now in A
+
+.LIlog2
+
+ STA P                  ; Store the result of the division in P, so we have:
+                        ;
+                        ;   P = |delta_x| / |delta_y|
+
+ LDA X1                 ; Set SC2(1 0) = yLookup(Y) + X1 * 8
+ LSR A                  ;
+ LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
+ LSR A                  ; to convert the pixel y-coordinate in Y into the number
+ CLC                    ; of the first tile on the row containing the pixel
+ ADC yLookupLo,Y        ;
+ STA SC2                ; Adding nameBufferHi and X1 * 8 therefore sets SC2(1 0)
+ LDA nameBufferHi       ; to the address of the entry in the nametable buffer
+ ADC yLookupHi,Y        ; that contains the tile number for the tile containing
+ STA SC2+1              ; the pixel at (X1, Y), i.e. the line we are drawing
+
+ TYA                    ; Set Y = Y mod 8, which is the pixel row within the
+ AND #7                 ; character block at which we want to draw the start of
+ TAY                    ; our line (as each character block has 8 rows)
+
+ SEC                    ; Set A = X2 - X1
+ LDA X2                 ;
+ SBC X1                 ; This sets the C flag when X1 <= X2
+
+ LDA X1                 ; Set X = X1 mod 8, which is the horizontal pixel number
+ AND #7                 ; within the character block where the line starts (as
+ TAX                    ; each pixel line in the character block is 8 pixels
+                        ; wide)
+
+ LDA TWOS,X             ; Fetch a 1-pixel byte from TWOS where pixel X is set
+
+ STA R                  ; Store the pixel byte in R
+
+ LDX Q                  ; Set X = Q + 1
+ INX                    ;       = |delta_y| + 1
+                        ;
+                        ; We add 1 so we can skip the first pixel plot if the
+                        ; line is being drawn with swapped coordinates
+
+ BCS loin24             ; If X1 <= X2 (which we calculated above) then jump to
+                        ; loin24 to draw the line to the left and up
+
+ JMP loin36             ; If we get here then X1 > X2, so jump to loin36, as we
+                        ; need to draw the line to the left and down
 
 ; ******************************************************************************
 ;
-;       Name: subm_DEA5
+;       Name: LOIN (Part 6 of 7)
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing lines
+;    Summary: Draw a steep line going up and left or down and right
+;  Deep dive: Bresenham's line algorithm
 ;
 ; ******************************************************************************
 
-.subm_DEA5
+.loin20
 
  LDY YSAV
  CLC
  RTS
 
-.CDEA9
+.loin21
 
  LDX pattBufferHiDiv8
  STX SC+1
@@ -5304,31 +5654,31 @@ ENDIF
  CLC
  LDX Q
 
-.loop_CDEBB
+.loin22
 
  LDA R
  STA (SC),Y
  DEX
- BEQ subm_DEA5
+ BEQ loin20
  LDA S
  ADC P
  STA S
- BCC CDECE
+ BCC loin23
  LSR R
- BCS CDF35
+ BCS loin28
 
-.CDECE
+.loin23
 
  DEY
- BPL loop_CDEBB
+ BPL loin22
  LDY #7
  LDA SC2
  SBC #$1F
  STA SC2
- BCS CDEDD
+ BCS loin24
  DEC SC2+1
 
-.CDEDD
+.loin24
 
  STX Q
 
@@ -5337,14 +5687,14 @@ ENDIF
 
  LDX #0
  LDA (SC2,X)
- BNE CDEFD
+ BNE loin25
  LDA tileNumber
- BEQ CDF4F
+ BEQ loin29
  STA (SC2,X)
  INC tileNumber
- JMP CDEA9
+ JMP loin21
 
-.CDEFD
+.loin25
 
  LDX pattBufferHiDiv8
  STX SC+1
@@ -5358,82 +5708,77 @@ ENDIF
  CLC
  LDX Q
 
-.loop_CDF0F
+.loin26
 
  LDA R
  ORA (SC),Y
  STA (SC),Y
  DEX
- BEQ subm_DEA5
+ BEQ loin20
  LDA S
  ADC P
  STA S
- BCC CDF24
+ BCC loin27
  LSR R
- BCS CDF35
+ BCS loin28
 
-.CDF24
+.loin27
 
  DEY
- BPL loop_CDF0F
+ BPL loin26
  LDY #7
  LDA SC2
  SBC #$1F
  STA SC2
- BCS CDEDD
+ BCS loin24
  DEC SC2+1
- BNE CDEDD
+ BNE loin24
 
-.CDF35
+.loin28
 
  ROR R
  INC SC2
- BNE CDF3D
+ BNE P%+4
  INC SC2+1
 
-.CDF3D
-
  DEY
- BPL CDEDD
+ BPL loin24
  LDY #7
  LDA SC2
  SBC #$1F
  STA SC2
- BCS CDEDD
+ BCS loin24
  DEC SC2+1
- JMP CDEDD
+ JMP loin24
 
-.CDF4F
+.loin29
 
  LDX Q
 
-.loop_CDF51
+.loin30
 
  DEX
- BEQ CDF72
+ BEQ loin32
  LDA S
  ADC P
  STA S
- BCC CDF60
+ BCC loin31
  LSR R
- BCS CDF35
+ BCS loin28
 
-.CDF60
+.loin31
 
  DEY
- BPL loop_CDF51
+ BPL loin30
  LDY #7
  LDA SC2
  SBC #$1F
  STA SC2
- BCS CDF6F
+ BCS P%+4
  DEC SC2+1
+ JMP loin24
 
-.CDF6F
-
- JMP CDEDD
-
-.CDF72
+.loin32
 
  LDY YSAV
  CLC
@@ -5441,14 +5786,15 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_DF76
+;       Name: LOIN (Part 7 of 7)
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing lines
+;    Summary: Draw a steep line going up and right or down and left
+;  Deep dive: Bresenham's line algorithm
 ;
 ; ******************************************************************************
 
-.subm_DF76
+.loin33
 
  LDX pattBufferHiDiv8
  STX SC+1
@@ -5462,31 +5808,31 @@ ENDIF
  CLC
  LDX Q
 
-.loop_CDF88
+.loin34
 
  LDA R
  STA (SC),Y
  DEX
- BEQ CDF72
+ BEQ loin32
  LDA S
  ADC P
  STA S
- BCC CDF9B
+ BCC loin35
  ASL R
- BCS CE003
+ BCS loin39
 
-.CDF9B
+.loin35
 
  DEY
- BPL loop_CDF88
+ BPL loin34
  LDY #7
  LDA SC2
  SBC #$1F
  STA SC2
- BCS CDFAA
+ BCS loin36
  DEC SC2+1
 
-.CDFAA
+.loin36
 
  STX Q
 
@@ -5495,14 +5841,14 @@ ENDIF
 
  LDX #0
  LDA (SC2,X)
- BNE CDFCA
+ BNE loin37
  LDA tileNumber
- BEQ CE01F
+ BEQ loin40
  STA (SC2,X)
  INC tileNumber
- JMP subm_DF76
+ JMP loin33
 
-.CDFCA
+.loin37
 
  LDX pattBufferHiDiv8
  STX SC+1
@@ -5516,89 +5862,84 @@ ENDIF
  CLC
  LDX Q
 
-.loop_CDFDC
+.loin38
 
  LDA R
  ORA (SC),Y
  STA (SC),Y
  DEX
- BEQ CE046
+ BEQ loin44
  LDA S
  ADC P
  STA S
  BCC CDFF1
  ASL R
- BCS CE003
+ BCS loin39
 
 .CDFF1
 
  DEY
- BPL loop_CDFDC
+ BPL loin38
  LDY #7
  LDA SC2
  SBC #$1F
  STA SC2
- BCS CDFAA
+ BCS loin36
  DEC SC2+1
- JMP CDFAA
+ JMP loin36
 
-.CE003
+.loin39
 
  ROL R
  LDA SC2
- BNE CE00B
+ BNE P%+4
  DEC SC2+1
-
-.CE00B
 
  DEC SC2
  DEY
- BPL CDFAA
+ BPL loin36
  LDY #7
  LDA SC2
  SBC #$1F
  STA SC2
- BCS CDFAA
+ BCS loin36
  DEC SC2+1
- JMP CDFAA
+ JMP loin36
 
-.CE01F
+.loin40
 
  LDX Q
 
-.loop_CE021
+.loin41
 
  DEX
- BEQ CE042
+ BEQ loin43
  LDA S
  ADC P
  STA S
- BCC CE030
+ BCC loin42
  ASL R
- BCS CE003
+ BCS loin39
 
-.CE030
+.loin42
 
  DEY
- BPL loop_CE021
+ BPL loin41
  LDY #7
  LDA SC2
  SBC #$1F
  STA SC2
- BCS CE03F
+ BCS P%+4
  DEC SC2+1
+ JMP loin36
 
-.CE03F
-
- JMP CDFAA
-
-.CE042
+.loin43
 
  LDY YSAV
  CLC
  RTS
 
-.CE046
+.loin44
 
  LDY YSAV
  CLC
