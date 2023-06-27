@@ -5033,9 +5033,8 @@ ENDIF
  LDA P                  ; Set P = P + 1
  CLC                    ;      = |delta_x| + 1
  ADC #1                 ;
- STA P                  ; We will use P as the x-axis counter, and we add 1 so
-                        ; we can skip the first pixel plot if the line is being
-                        ; drawn with swapped coordinates ???
+ STA P                  ; We will use P as the x-axis counter, and we add 1 to
+                        ; ensure we include the pixel at each end
 
  LDY Y1                 ; If Y1 >= Y2, skip the following instruction
  CPY Y2
@@ -5129,10 +5128,10 @@ ENDIF
  ORA (SC),Y             ; Store R into screen memory at SC(1 0), using OR logic
  STA (SC),Y             ; so it merges with whatever is already on-screen
 
- DEC P                  ; Decrement the x-coordinate counter in P
+ DEC P                  ; Decrement the x-axis counter in P
 
- BEQ loin9              ; If we have just reached the right end of the line,
-                        ; jump to loin9 to return from the subroutine
+ BEQ loin9              ; If we have just reached the end of the line along the
+                        ; x-axis, jump to loin9 to return from the subroutine
 
  LDA S                  ; Set S = S + Q to update the slope error
  ADC Q
@@ -5154,8 +5153,8 @@ ENDIF
                         ; the x-axis, so the next pixel we plot will be at the
                         ; next x-coordinate along
 
- BNE loin4              ; If we the pixel didn't fall out of the right end of R
-                        ; (as the pixel byte is still non-zero) then loop back
+ BNE loin4              ; If the pixel didn't fall out of the right end of R,
+                        ; then the pixel byte is still non-zero, so loop back
                         ; to loin4
 
  LDA #%10000000         ; Set a pixel byte in A with the leftmost pixel set, as
@@ -5191,14 +5190,17 @@ ENDIF
  INC SC2                ; Increment SC2(1 0) to point to the next tile number to
  BNE loin1              ; the right in the nametable buffer and jump up to loin1
  INC SC2+1              ; to fetch the tile details for the new nametable entry
- BNE loin1
+ BNE loin1              ; (this BNE is effectively a JMP as the high byte of
+                        ; SC2(1 0) will never be zero as the nametable buffers
+                        ; start at address $7000, so the high byte is always at
+                        ; least $70)
 
 .loin7
 
- DEC P                  ; Decrement the x-coordinate counter in P
+ DEC P                  ; Decrement the x-axis counter in P
 
- BEQ loin9              ; If we have just reached the right end of the line,
-                        ; jump to loin9 to return from the subroutine
+ BEQ loin9              ; If we have just reached the end of the line along the
+                        ; x-axis, jump to loin9 to return from the subroutine
 
  CLC                    ; Set S = S + Q to update the slope error
  LDA S
@@ -5332,10 +5334,10 @@ ENDIF
  ORA (SC),Y             ; Store R into screen memory at SC(1 0), using OR logic
  STA (SC),Y             ; so it merges with whatever is already on-screen
 
- DEC P                  ; Decrement the x-coordinate counter in P
+ DEC P                  ; Decrement the x-axis counter in P
 
- BEQ loin9              ; If we have just reached the right end of the line,
-                        ; jump to loin9 to return from the subroutine
+ BEQ loin9              ; If we have just reached the end of the line along the
+                        ; x-axis, jump to loin9 to return from the subroutine
 
  LDA S                  ; Set S = S + Q to update the slope error
  ADC Q
@@ -5358,8 +5360,8 @@ ENDIF
                         ; the x-axis, so the next pixel we plot will be at the
                         ; next x-coordinate along
 
- BNE loin13             ; If we the pixel didn't fall out of the right end of R
-                        ; (as the pixel byte is still non-zero) then loop back
+ BNE loin13             ; If the pixel didn't fall out of the right end of R,
+                        ; then the pixel byte is still non-zero, so loop back
                         ; to loin13
 
  LDA #%10000000         ; Set a pixel byte in A with the leftmost pixel set, as
@@ -5372,7 +5374,10 @@ ENDIF
 
 .loin15
 
-                        ; If we get here then the C flag is set, as we jumped
+                        ; If we get here then we have just gone past the bottom
+                        ; of the character block
+                        ;
+                        ; At this point the C flag is set, as we jumped here
                         ; using a BEQ, so the ADC #31 below actually adds 32
 
  LDA SC2                ; If we get here then we need to move down into the
@@ -5402,7 +5407,12 @@ ENDIF
 
 .loin16
 
- DEC P                  ; Decrement the x-coordinate counter in P
+                        ; If we get here then we have run out of tiles to
+                        ; allocate to the line drawing, so we continue with the
+                        ; same calculations, but don't actually draw anything in
+                        ; this character block
+
+ DEC P                  ; Decrement the x-axis counter in P
 
  BEQ loin19
 
@@ -5636,153 +5646,304 @@ ENDIF
 
 .loin20
 
- LDY YSAV
- CLC
- RTS
+ LDY YSAV               ; Restore Y from YSAV, so that it's preserved
+
+ CLC                    ; Clear the C flag for the routine to return
+
+ RTS                    ; Return from the subroutine
 
 .loin21
 
- LDX pattBufferHiDiv8
- STX SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
+                        ; If we get here then we are drawing our line in a new
+                        ; tile in the nametable buffer, so it won't contain any
+                        ; pre-existing content
+
+ LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 tileNumber) * 8
+ STX SC+1               ;             = (pattBufferHi 0) + tileNumber * 8
+ ASL A                  ;
+ ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
+ ASL A                  ; tile number tileNumber (as each tile contains 8 bytes
+ ROL SC+1               ; of pattern data), which means SC(1 0) points to the
+ ASL A                  ; pattern data for the tile containing the line we are
+ ROL SC+1               ; drawing
  STA SC
- CLC
- LDX Q
+
+ CLC                    ; Clear the C flag for the additions below
+
+ LDX Q                  ; Set X to the value of the x-axis counter
 
 .loin22
 
- LDA R
- STA (SC),Y
- DEX
- BEQ loin20
- LDA S
+ LDA R                  ; Fetch the pixel byte from R
+
+ STA (SC),Y             ; Store R into screen memory at SC(1 0) - we don't need
+                        ; to merge it with whatever is there, as we just started
+                        ; drawing in a new tile
+
+ DEX                    ; Decrement the y-coordinate counter in X
+
+ BEQ loin20             ; If we have just reached the end of the line along the
+                        ; y-axis, jump to loin20 to return from the subroutine
+
+ LDA S                  ; Set S = S + P to update the slope error
  ADC P
  STA S
- BCC loin23
- LSR R
- BCS loin28
+
+ BCC loin23             ; If the addition didn't overflow, jump to loin23 to
+                        ; skip the following
+
+ LSR R                  ; Shift the single pixel in R to the right to step along
+                        ; the x-axis, so the next pixel we plot will be at the
+                        ; next x-coordinate along
+
+ BCS loin28             ; If the pixel fell out of the right end of R into the
+                        ; C flag, then jump to loin28 to rotate it into the left
+                        ; end and move right by a character block
 
 .loin23
 
- DEY
- BPL loin22
- LDY #7
- LDA SC2
- SBC #$1F
+ DEY                    ; Decrement Y to point to move to the pixel line above
+
+ BPL loin22             ; If Y is still positive then we have not yet gone past
+                        ; the top of the character block, so jump to loin22 to
+                        ; draw the next pixel
+
+                        ; Otherwise we just gone past the top of the current
+                        ; character block, so we need to move up into the
+                        ; character block above by setting Y and SC2(1 0)
+
+ LDY #7                 ; Set Y to point to the bottom pixel row of the block
+                        ; above
+
+                        ; If we get here then the C flag is clear, as we either
+                        ; jumped to loin23 using a BCC, or we passed through a
+                        ; BCS to get to loin23, so the SBC #31 below actually
+                        ; subtracts 32
+
+ LDA SC2                ; Subtract 32 from SC2(1 0) to get the tile number on 
+ SBC #31                ; the row above (as there are 32 tiles on each row)
  STA SC2
  BCS loin24
  DEC SC2+1
 
+                        ; Fall through into loin24 to fetch the correct tile
+                        ; number for the new character block and continue
+                        ; drawing
+
 .loin24
 
- STX Q
+                        ; This is the entry point for this part (we jump here
+                        ; from part 5 when the line is steep and X1 <= X2)
+                        ;
+                        ; We jump here with X containing the y-axis counter,
+                        ; i.e. the number of steps we need to take along the
+                        ; y-axis when drawing the line
+
+ STX Q                  ; Store the updated y-axis counter in Q
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDX #0
- LDA (SC2,X)
- BNE loin25
- LDA tileNumber
- BEQ loin29
- STA (SC2,X)
- INC tileNumber
- JMP loin21
+ LDX #0                 ; If the nametable buffer entry is non-zero for the tile
+ LDA (SC2,X)            ; containing the pixel that we want to draw, then a tile
+ BNE loin25             ; has already been allocated to this entry, so skip the
+                        ; following
+
+ LDA tileNumber         ; If tileNumber is zero then we have run out of tiles to
+ BEQ loin29             ; use for drawing lines and pixels, so jump to loin29 to
+                        ; keep going with the line-drawing calculations, but
+                        ; without drawing anything in this tile
+
+ STA (SC2,X)            ; Otherwise tileNumber contains the number of the next
+                        ; available tile for drawing, so allocate this tile to
+                        ; cover the pixel that we want to draw by setting the
+                        ; nametable entry to the tile number we just fetched
+
+ INC tileNumber         ; Increment tileNumber to point to the next available
+                        ; tile for drawing, so it can be added to the nametable
+                        ; the next time we need to draw lines or pixels into a
+                        ; tile
+
+ JMP loin21             ; Jump to loin21 to calculate the pattern buffer address
+                        ; for the new tile and continue drawing
 
 .loin25
 
- LDX pattBufferHiDiv8
- STX SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
+                        ; If we get here then we are drawing our line in a tile
+                        ; that was already in the nametable buffer, so it might
+                        ; contain pre-existing content
+
+ LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 tileNumber) * 8
+ STX SC+1               ;             = (pattBufferHi 0) + tileNumber * 8
+ ASL A                  ;
+ ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
+ ASL A                  ; tile number tileNumber (as each tile contains 8 bytes
+ ROL SC+1               ; of pattern data), which means SC(1 0) points to the
+ ASL A                  ; pattern data for the tile containing the line we are
+ ROL SC+1               ; drawing
  STA SC
- CLC
- LDX Q
+
+ CLC                    ; Clear the C flag for the additions below
+
+ LDX Q                  ; Set X to the value of the x-axis counter
 
 .loin26
 
- LDA R
- ORA (SC),Y
- STA (SC),Y
- DEX
- BEQ loin20
- LDA S
+                        ; We now loop along the line from left to right, using P
+                        ; as a decreasing counter, and at each count we plot a
+                        ; single pixel using the pixel mask in R
+
+ LDA R                  ; Fetch the pixel byte from R
+
+ ORA (SC),Y             ; Store R into screen memory at SC(1 0), using OR logic
+ STA (SC),Y             ; so it merges with whatever is already on-screen
+
+ DEX                    ; Decrement the y-coordinate counter in X
+
+ BEQ loin20             ; If we have just reached the end of the line along the
+                        ; y-axis, jump to loin20 to return from the subroutine
+
+ LDA S                  ; Set S = S + P to update the slope error
  ADC P
  STA S
- BCC loin27
- LSR R
- BCS loin28
+
+ BCC loin27             ; If the addition didn't overflow, jump to loin27 to
+                        ; skip the following
+
+ LSR R                  ; Shift the single pixel in R to the right to step along
+                        ; the x-axis, so the next pixel we plot will be at the
+                        ; next x-coordinate along
+
+ BCS loin28             ; If the pixel fell out of the right end of R into the
+                        ; C flag, then jump to loin28 to rotate it into the left
+                        ; end and move right by a character block
 
 .loin27
 
- DEY
- BPL loin26
- LDY #7
- LDA SC2
- SBC #$1F
- STA SC2
- BCS loin24
- DEC SC2+1
- BNE loin24
+ DEY                    ; Decrement Y to point to move to the pixel line above
+
+ BPL loin26             ; If Y is still positive then we have not yet gone past
+                        ; the top of the character block, so jump to loin26 to
+                        ; draw the next pixel
+
+                        ; Otherwise we just gone past the top of the current
+                        ; character block, so we need to move up into the
+                        ; character block above by setting Y and SC2(1 0)
+
+ LDY #7                 ; Set Y to point to the bottom pixel row of the block
+                        ; above
+
+                        ; If we get here then the C flag is clear, as we either
+                        ; jumped to loin27 using a BCC, or we passed through a
+                        ; BCS to get to loin27, so the SBC #31 below actually
+                        ; subtracts 32
+
+ LDA SC2                ; Subtract 32 from SC2(1 0) to get the tile number on 
+ SBC #31                ; the row above (as there are 32 tiles on each row) and
+ STA SC2                ; jump to loin24 to fetch the correct tile number for
+ BCS loin24             ; the new character block and continue drawing (this
+ DEC SC2+1              ; BNE is effectively a JMP as the high byte of SC2(1 0)
+ BNE loin24             ; will never be zero (the nametable buffers start at
+                        ; address $7000, so the high byte is at least $70)
 
 .loin28
 
- ROR R
- INC SC2
- BNE P%+4
+                        ; If we get here, then we just shifted the pixel out of
+                        ; the right end of R, so we now need to put it back into
+                        ; the left end of R and move to the right by one
+                        ; character block
+
+ ROR R                  ; We only reach here via a BCS, so this rotates a 1 into
+                        ; the left end of R and clears the C flag
+
+ INC SC2                ; Increment SC2(1 0) to point to the next tile number to
+ BNE P%+4               ; the right in the nametable buffer
  INC SC2+1
 
- DEY
- BPL loin24
- LDY #7
- LDA SC2
- SBC #$1F
- STA SC2
- BCS loin24
+ DEY                    ; Decrement Y to point to move to the pixel line above
+
+ BPL loin24             ; If Y is still positive then we have not yet gone past
+                        ; the top of the character block, so jump to loin24 to
+                        ; draw the next pixel
+
+ LDY #7                 ; Set Y to point to the bottom pixel row of the block
+                        ; above
+
+ LDA SC2                ; Subtract 32 from SC2(1 0) to get the tile number on 
+ SBC #31                ; the row above (as there are 32 tiles on each row) and
+ STA SC2                ; jump to loin24 to fetch the correct tile number for
+ BCS loin24             ; the new character block and continue drawing
  DEC SC2+1
  JMP loin24
+                        
 
 .loin29
 
- LDX Q
+                        ; If we get here then we have run out of tiles to
+                        ; allocate to the line drawing, so we continue with the
+                        ; same calculations, but don't actually draw anything in
+                        ; this character block
+
+ LDX Q                  ; Set X to the value of the x-axis counter
 
 .loin30
 
- DEX
- BEQ loin32
- LDA S
+ DEX                    ; Decrement the x-axis counter in X
+
+ BEQ loin32             ; If we have just reached the end of the line along the
+                        ; x-axis, jump to loin32 to return from the subroutine
+
+ LDA S                  ; Set S = S + P to update the slope error
  ADC P
  STA S
- BCC loin31
- LSR R
- BCS loin28
+
+ BCC loin31             ; If the addition didn't overflow, jump to loin31 to
+                        ; skip the following
+
+ LSR R                  ; Shift the single pixel in R to the right to step along
+                        ; the x-axis, so the next pixel we plot will be at the
+                        ; next x-coordinate along
+
+ BCS loin28             ; If the pixel fell out of the right end of R into the
+                        ; C flag, then jump to loin28 to rotate it into the left
+                        ; end and move right by a character block
 
 .loin31
 
- DEY
- BPL loin30
- LDY #7
- LDA SC2
- SBC #$1F
+ DEY                    ; Decrement Y to point to move to the pixel line above
+
+ BPL loin30             ; If Y is still positive then we have not yet gone past
+                        ; the top of the character block, so jump to loin30 to
+                        ; draw the next pixel
+
+                        ; Otherwise we just gone past the top of the current
+                        ; character block, so we need to move up into the
+                        ; character block above by setting Y and SC2(1 0)
+
+ LDY #7                 ; Set Y to point to the bottom pixel row of the block
+                        ; above
+
+                        ; If we get here then the C flag is clear, as we either
+                        ; jumped to loin31 using a BCC, or we passed through a
+                        ; BCS to get to loin31, so the SBC #31 below actually
+                        ; subtracts 32
+
+ LDA SC2                ; Subtract 32 from SC2(1 0) to get the tile number on 
+ SBC #31                ; the row above (as there are 32 tiles on each row)
  STA SC2
  BCS P%+4
  DEC SC2+1
- JMP loin24
+
+ JMP loin24             ; Jump to loin24 to fetch the correct tile number for
+                        ; the new character block and continue drawing
 
 .loin32
 
- LDY YSAV
- CLC
- RTS
+ LDY YSAV               ; Restore Y from YSAV, so that it's preserved
+
+ CLC                    ; Clear the C flag for the routine to return
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -5796,154 +5957,299 @@ ENDIF
 
 .loin33
 
- LDX pattBufferHiDiv8
- STX SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
+ LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 tileNumber) * 8
+ STX SC+1               ;             = (pattBufferHi 0) + tileNumber * 8
+ ASL A                  ;
+ ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
+ ASL A                  ; tile number tileNumber (as each tile contains 8 bytes
+ ROL SC+1               ; of pattern data), which means SC(1 0) points to the
+ ASL A                  ; pattern data for the tile containing the line we are
+ ROL SC+1               ; drawing
  STA SC
- CLC
- LDX Q
+
+ CLC                    ; Clear the C flag for the additions below
+
+ LDX Q                  ; Set X to the value of the x-axis counter
 
 .loin34
 
- LDA R
- STA (SC),Y
- DEX
- BEQ loin32
- LDA S
+ LDA R                  ; Fetch the pixel byte from R
+
+ STA (SC),Y             ; Store R into screen memory at SC(1 0) - we don't need
+                        ; to merge it with whatever is there, as we just started
+                        ; drawing in a new tile
+
+ DEX                    ; Decrement the y-coordinate counter in X
+
+ BEQ loin32             ; If we have just reached the end of the line along the
+                        ; y-axis, jump to loin32 to return from the subroutine
+
+ LDA S                  ; Set S = S + P to update the slope error
  ADC P
  STA S
- BCC loin35
- ASL R
- BCS loin39
+
+ BCC loin35             ; If the addition didn't overflow, jump to loin35 to
+                        ; skip the following
+
+ ASL R                  ; Shift the single pixel in R to the left to step along
+                        ; the x-axis, so the next pixel we plot will be at the
+                        ; next x-coordinate along
+
+ BCS loin40             ; If the pixel fell out of the left end of R into the
+                        ; C flag, then jump to loin40 to rotate it into the
+                        ; left end and move left by a character block
 
 .loin35
 
- DEY
- BPL loin34
- LDY #7
- LDA SC2
- SBC #$1F
+ DEY                    ; Decrement Y to point to move to the pixel line above
+
+ BPL loin34             ; If Y is still positive then we have not yet gone past
+                        ; the top of the character block, so jump to loin34 to
+                        ; draw the next pixel
+
+                        ; Otherwise we just gone past the top of the current
+                        ; character block, so we need to move up into the
+                        ; character block above by setting Y and SC2(1 0)
+
+ LDY #7                 ; Set Y to point to the bottom pixel row of the block
+                        ; above
+
+                        ; If we get here then the C flag is clear, as we either
+                        ; jumped to loin35 using a BCC, or we passed through a
+                        ; BCS to get to loin35, so the SBC #31 below actually
+                        ; subtracts 32
+
+ LDA SC2                ; Subtract 32 from SC2(1 0) to get the tile number on 
+ SBC #31                ; the row above (as there are 32 tiles on each row)
  STA SC2
  BCS loin36
  DEC SC2+1
 
+                        ; Fall through into loin36 to fetch the correct tile
+                        ; number for the new character block and continue
+                        ; drawing
+
 .loin36
 
- STX Q
+                        ; This is the entry point for this part (we jump here
+                        ; from part 5 when the line is steep and X1 > X2)
+                        ;
+                        ; We jump here with X containing the y-axis counter,
+                        ; i.e. the number of steps we need to take along the
+                        ; y-axis when drawing the line
+
+ STX Q                  ; Store the updated y-axis counter in Q
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDX #0
- LDA (SC2,X)
- BNE loin37
- LDA tileNumber
- BEQ loin40
- STA (SC2,X)
- INC tileNumber
- JMP loin33
+ LDX #0                 ; If the nametable buffer entry is non-zero for the tile
+ LDA (SC2,X)            ; containing the pixel that we want to draw, then a tile
+ BNE loin37             ; has already been allocated to this entry, so skip the
+                        ; following
+
+ LDA tileNumber         ; If tileNumber is zero then we have run out of tiles to
+ BEQ loin41             ; use for drawing lines and pixels, so jump to loin41 to
+                        ; keep going with the line-drawing calculations, but
+                        ; without drawing anything in this tile
+
+ STA (SC2,X)            ; Otherwise tileNumber contains the number of the next
+                        ; available tile for drawing, so allocate this tile to
+                        ; cover the pixel that we want to draw by setting the
+                        ; nametable entry to the tile number we just fetched
+
+ INC tileNumber         ; Increment tileNumber to point to the next available
+                        ; tile for drawing, so it can be added to the nametable
+                        ; the next time we need to draw lines or pixels into a
+                        ; tile
+
+ JMP loin33             ; Jump to loin33 to calculate the pattern buffer address
+                        ; for the new tile and continue drawing
 
 .loin37
 
- LDX pattBufferHiDiv8
- STX SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
+                        ; If we get here then we are drawing our line in a tile
+                        ; that was already in the nametable buffer, so it might
+                        ; contain pre-existing content
+
+ LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 tileNumber) * 8
+ STX SC+1               ;             = (pattBufferHi 0) + tileNumber * 8
+ ASL A                  ;
+ ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
+ ASL A                  ; tile number tileNumber (as each tile contains 8 bytes
+ ROL SC+1               ; of pattern data), which means SC(1 0) points to the
+ ASL A                  ; pattern data for the tile containing the line we are
+ ROL SC+1               ; drawing
  STA SC
- CLC
- LDX Q
+
+ CLC                    ; Clear the C flag for the additions below
+
+ LDX Q                  ; Set X to the value of the x-axis counter
 
 .loin38
 
- LDA R
- ORA (SC),Y
- STA (SC),Y
- DEX
- BEQ loin44
- LDA S
+                        ; We now loop along the line from right to left, using P
+                        ; as a decreasing counter, and at each count we plot a
+                        ; single pixel using the pixel mask in R
+
+ LDA R                  ; Fetch the pixel byte from R
+
+ ORA (SC),Y             ; Store R into screen memory at SC(1 0), using OR logic
+ STA (SC),Y             ; so it merges with whatever is already on-screen
+
+ DEX                    ; Decrement the y-coordinate counter in X
+
+ BEQ loin45             ; If we have just reached the end of the line along the
+                        ; y-axis, jump to loin45 to return from the subroutine
+
+ LDA S                  ; Set S = S + P to update the slope error
  ADC P
  STA S
- BCC CDFF1
- ASL R
- BCS loin39
 
-.CDFF1
+ BCC loin39             ; If the addition didn't overflow, jump to loin39 to
+                        ; skip the following
 
- DEY
- BPL loin38
- LDY #7
- LDA SC2
- SBC #$1F
- STA SC2
- BCS loin36
- DEC SC2+1
- JMP loin36
+ ASL R                  ; Shift the single pixel in R to the left to step along
+                        ; the x-axis, so the next pixel we plot will be at the
+                        ; next x-coordinate along
+
+ BCS loin40             ; If the pixel fell out of the left end of R into the
+                        ; C flag, then jump to loin40 to rotate it into the
+                        ; left end and move left by a character block
 
 .loin39
 
- ROL R
- LDA SC2
- BNE P%+4
- DEC SC2+1
+ DEY                    ; Decrement Y to point to move to the pixel line above
 
- DEC SC2
- DEY
- BPL loin36
- LDY #7
- LDA SC2
- SBC #$1F
- STA SC2
- BCS loin36
+ BPL loin38             ; If Y is still positive then we have not yet gone past
+                        ; the top of the character block, so jump to loin38 to
+                        ; draw the next pixel
+
+                        ; Otherwise we just gone past the top of the current
+                        ; character block, so we need to move up into the
+                        ; character block above by setting Y and SC2(1 0)
+
+ LDY #7                 ; Set Y to point to the bottom pixel row of the block
+                        ; above
+
+                        ; If we get here then the C flag is clear, as we either
+                        ; jumped to loin39 using a BCC, or we passed through a
+                        ; BCS to get to loin39, so the SBC #31 below actually
+                        ; subtracts 32
+
+ LDA SC2                ; Subtract 32 from SC2(1 0) to get the tile number on 
+ SBC #31                ; the row above (as there are 32 tiles on each row) and
+ STA SC2                ; jump to loin36 to fetch the correct tile number for
+ BCS loin36             ; the new character block and continue drawing
  DEC SC2+1
  JMP loin36
 
 .loin40
 
- LDX Q
+                        ; If we get here, then we just shifted the pixel out of
+                        ; the left end of R, so we now need to put it back into
+                        ; the right end of R and move to the left by one
+                        ; character block
 
-.loin41
+ ROL R                  ; We only reach here via a BCS, so this rotates a 1 into
+                        ; the right end of R and clears the C flag
 
- DEX
- BEQ loin43
- LDA S
- ADC P
- STA S
- BCC loin42
- ASL R
- BCS loin39
+ LDA SC2                ; Decrement SC2(1 0) to point to the next tile number to
+ BNE P%+4               ; the left in the nametable buffer
+ DEC SC2+1
+ DEC SC2
 
-.loin42
+ DEY                    ; Decrement Y to point to move to the pixel line above
 
- DEY
- BPL loin41
- LDY #7
- LDA SC2
- SBC #$1F
- STA SC2
- BCS P%+4
+ BPL loin36             ; If Y is still positive then we have not yet gone past
+                        ; the top of the character block, so jump to loin36 to
+                        ; draw the next pixel
+
+ LDY #7                 ; Set Y to point to the bottom pixel row of the block
+                        ; above
+
+ LDA SC2                ; Subtract 32 from SC2(1 0) to get the tile number on 
+ SBC #31                ; the row above (as there are 32 tiles on each row) and
+ STA SC2                ; jump to loin36 to fetch the correct tile number for
+ BCS loin36             ; the new character block and continue drawing
  DEC SC2+1
  JMP loin36
 
+.loin41
+
+                        ; If we get here then we have run out of tiles to
+                        ; allocate to the line drawing, so we continue with the
+                        ; same calculations, but don't actually draw anything in
+                        ; this character block
+
+ LDX Q
+
+.loin42
+
+ DEX                    ; Decrement the x-axis counter in X
+
+ BEQ loin44             ; If we have just reached the end of the line along the
+                        ; x-axis, jump to loin44 to return from the subroutine
+
+ LDA S                  ; Set S = S + P to update the slope error
+ ADC P
+ STA S
+
+ BCC loin43             ; If the addition didn't overflow, jump to loin43 to
+                        ; skip the following
+
+ ASL R                  ; Shift the single pixel in R to the left to step along
+                        ; the x-axis, so the next pixel we plot will be at the
+                        ; next x-coordinate along
+
+ BCS loin40             ; If the pixel fell out of the left end of R into the
+                        ; C flag, then jump to loin40 to rotate it into the
+                        ; left end and move left by a character block
+
 .loin43
 
- LDY YSAV
- CLC
- RTS
+ DEY                    ; Decrement Y to point to move to the pixel line above
+
+ BPL loin42             ; If Y is still positive then we have not yet gone past
+                        ; the top of the character block, so jump to loin42 to
+                        ; draw the next pixel
+
+                        ; Otherwise we just gone past the top of the current
+                        ; character block, so we need to move up into the
+                        ; character block above by setting Y and SC2(1 0)
+
+ LDY #7                 ; Set Y to point to the bottom pixel row of the block
+                        ; above
+
+                        ; If we get here then the C flag is clear, as we either
+                        ; jumped to loin43 using a BCC, or we passed through a
+                        ; BCS to get to loin43, so the SBC #31 below actually
+                        ; subtracts 32
+
+ LDA SC2                ; Subtract 32 from SC2(1 0) to get the tile number on 
+ SBC #31                ; the row above (as there are 32 tiles on each row)
+ STA SC2
+ BCS P%+4
+ DEC SC2+1
+
+ JMP loin36             ; Jump to loin36 to fetch the correct tile number for
+                        ; the new character block and continue drawing
 
 .loin44
 
- LDY YSAV
- CLC
- RTS
+ LDY YSAV               ; Restore Y from YSAV, so that it's preserved
+
+ CLC                    ; Clear the C flag for the routine to return
+
+ RTS                    ; Return from the subroutine
+
+.loin45
+
+ LDY YSAV               ; Restore Y from YSAV, so that it's preserved
+
+ CLC                    ; Clear the C flag for the routine to return
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
