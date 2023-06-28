@@ -5120,12 +5120,12 @@ ENDIF
 
 .loin3
 
- LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 tileNumber) * 8
- STX SC+1               ;             = (pattBufferHi 0) + tileNumber * 8
+ LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
+ STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number tileNumber (as each tile contains 8 bytes
- ROL SC+1               ; of pattern data), which means SC(1 0) points to the
+ ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the line we are
  ROL SC+1               ; drawing
  STA SC
@@ -5337,12 +5337,12 @@ ENDIF
 
 .loin12
 
- LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 tileNumber) * 8
- STX SC+1               ;             = (pattBufferHi 0) + tileNumber * 8
+ LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
+ STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number tileNumber (as each tile contains 8 bytes
- ROL SC+1               ; of pattern data), which means SC(1 0) points to the
+ ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the line we are
  ROL SC+1               ; drawing
  STA SC
@@ -5699,12 +5699,12 @@ ENDIF
                         ; tile in the nametable buffer, so it won't contain any
                         ; pre-existing content
 
- LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 tileNumber) * 8
- STX SC+1               ;             = (pattBufferHi 0) + tileNumber * 8
+ LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
+ STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number tileNumber (as each tile contains 8 bytes
- ROL SC+1               ; of pattern data), which means SC(1 0) points to the
+ ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the line we are
  ROL SC+1               ; drawing
  STA SC
@@ -5814,12 +5814,12 @@ ENDIF
                         ; that was already in the nametable buffer, so it might
                         ; contain pre-existing content
 
- LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 tileNumber) * 8
- STX SC+1               ;             = (pattBufferHi 0) + tileNumber * 8
+ LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
+ STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number tileNumber (as each tile contains 8 bytes
- ROL SC+1               ; of pattern data), which means SC(1 0) points to the
+ ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the line we are
  ROL SC+1               ; drawing
  STA SC
@@ -6009,12 +6009,12 @@ ENDIF
 
 .loin33
 
- LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 tileNumber) * 8
- STX SC+1               ;             = (pattBufferHi 0) + tileNumber * 8
+ LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
+ STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number tileNumber (as each tile contains 8 bytes
- ROL SC+1               ; of pattern data), which means SC(1 0) points to the
+ ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the line we are
  ROL SC+1               ; drawing
  STA SC
@@ -6124,12 +6124,12 @@ ENDIF
                         ; that was already in the nametable buffer, so it might
                         ; contain pre-existing content
 
- LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 tileNumber) * 8
- STX SC+1               ;             = (pattBufferHi 0) + tileNumber * 8
+ LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
+ STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number tileNumber (as each tile contains 8 bytes
- ROL SC+1               ; of pattern data), which means SC(1 0) points to the
+ ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the line we are
  ROL SC+1               ; drawing
  STA SC
@@ -6379,243 +6379,448 @@ ENDIF
  LDY YSAV
  RTS
 
-.CE0B4
-
- JMP CE2A6
-
- LDY YSAV
-
-.loop_CE0B9
-
- RTS
-
 ; ******************************************************************************
 ;
-;       Name: HLOIN
+;       Name: HLOIN (Part 1 of 5)
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing lines
+;    Summary: Draw a horizontal line from (X1, Y1) to (X2, Y1)
+;
+; ------------------------------------------------------------------------------
+;
+; Returns:
+;
+;   Y                   Y is preserved
 ;
 ; ******************************************************************************
+
+.hlin1
+
+ JMP hlin23             ; Jump to hlin23 to ???
+
+ LDY YSAV               ; Restore Y from YSAV, so that it's preserved
+
+.hlin2
+
+ RTS                    ; Return from the subroutine
 
 .HLOIN
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- STY YSAV
- LDX XX15
- CPX X2
- BEQ loop_CE0B9
- BCC CE0D8
- LDA X2
- STA XX15
+ STY YSAV               ; Store Y into YSAV, so we can preserve it across the
+                        ; call to this subroutine
+
+ LDX X1                 ; Set X = X1
+
+ CPX X2                 ; If X1 = X2 then the start and end points are the same,
+ BEQ hlin2              ; so return from the subroutine (as hlin2 contains
+                        ; an RTS)
+
+ BCC hlin3              ; If X1 < X2, jump to hlin3 to skip the following code,
+                        ; as (X1, Y1) is already the left point
+
+ LDA X2                 ; Swap the values of X1 and X2, so we know that (X1, Y1)
+ STA X1                 ; is on the left and (X2, Y1) is on the right
  STX X2
- TAX
 
-.CE0D8
+ TAX                    ; Set X = X1
 
- DEC X2
- TXA
- LSR A
- LSR A
- LSR A
- CLC
- ADC yLookupLo,Y
- STA SC2
- LDA nameBufferHi
- ADC yLookupHi,Y
- STA SC2+1
- TYA
- AND #7
- TAY
- TXA
- AND #$F8
- STA T
- LDA X2
- AND #$F8
- SEC
- SBC T
- BEQ CE0B4
- LSR A
- LSR A
- LSR A
- STA R
+.hlin3
 
- SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
-                        ; the PPU to use nametable 0 and pattern table 0
+ DEC X2                 ; Decrement X2 so we do not draw a pixel at the end
+                        ; point
 
- LDX #0
- LDA (SC2,X)
- BNE CE123
- LDA tileNumber
- BEQ CE120
- STA (SC2,X)
- INC tileNumber
- JMP CE163
+ TXA                    ; Set SC2(1 0) = yLookup(Y) + X1 * 8
+ LSR A                  ;
+ LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
+ LSR A                  ; to convert the pixel y-coordinate in Y into the number
+ CLC                    ; of the first tile on the row containing the pixel
+ ADC yLookupLo,Y        ;
+ STA SC2                ; Adding nameBufferHi and X1 * 8 therefore sets SC2(1 0)
+ LDA nameBufferHi       ; to the address of the entry in the nametable buffer
+ ADC yLookupHi,Y        ; that contains the tile number for the tile containing
+ STA SC2+1              ; the pixel at (X1, Y), i.e. the line we are drawing
 
-.CE120
+ TYA                    ; Set Y = Y mod 8, which is the pixel row within the
+ AND #7                 ; character block at which we want to draw the start of
+ TAY                    ; our line (as each character block has 8 rows)
+                        ;
+                        ; As we are drawing a horizontal line, we do not need to
+                        ; vary the value of Y, as we will always want to draw on
+                        ; the same pixel row within each character block
 
- JMP CE17E
+ TXA                    ; Set T = X1 with bits 0-2 cleared
+ AND #%11111000         ;
+ STA T                  ; Each character block contains 8 pixel rows, so to get
+                        ; the address of the first byte in the character block
+                        ; that we need to draw into, as an offset from the start
+                        ; of the row, we clear bits 0-2
+                        ;
+                        ; T is therefore the offset within the row of the start
+                        ; of the line at x-coordinate X1
 
-.CE123
+ LDA X2                 ; Set A = X2 with bits 0-2 cleared
+ AND #%11111000         ;
+ SEC                    ; A is therefore the offset within the row of the end
+                        ; of the line at x-coordinate X2
 
- CMP #$3C
- BCS CE163
- CMP #$25
- BCC CE120
- LDX pattBufferHiDiv8
- STX L00BD
- ASL A
- ROL L00BD
- ASL A
- ROL L00BD
- ASL A
- ROL L00BD
- STA L00BC
- LDA tileNumber
- BEQ CE120
- LDX #0
- STA (SC2,X)
- INC tileNumber
- LDX pattBufferHiDiv8
- STX SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- STA SC
- STY T
- LDY #7
+ SBC T                  ; Set A = A - T
+                        ;
+                        ; So A contains the width of the line in terms of pixel
+                        ; bytes (which is the same as the number of character
+                        ; blocks that the line spans, less 1 and multiplied by
+                        ; 8)
 
-.loop_CE157
+ BEQ hlin1              ; If the line starts and ends in the same character
+                        ; block then A will be zero, so jump to hlin23 via hlin1
+                        ; to ???
 
- LDA (L00BC),Y
- STA (SC),Y
- DEY
- BPL loop_CE157
- LDY T
- JMP CE172
+ LSR A                  ; Otherwise set R = A / 8
+ LSR A                  ;
+ LSR A                  ; So R contains the number of character blocks that the
+ STA R                  ; line spans, less 1 (so R = 0 means it spans one block,
+                        ; R = 1 means it spans two blocks, and so on)
 
-.CE163
+; ******************************************************************************
+;
+;       Name: HLOIN (Part 2 of 5)
+;       Type: Subroutine
+;   Category: Drawing lines
+;    Summary: Draw the left end of the line
+;
+; ******************************************************************************
 
- LDX pattBufferHiDiv8
- STX SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- STA SC
-
-.CE172
-
- LDA XX15
- AND #7
- TAX
- LDA TWFR,X
- EOR (SC),Y
- STA (SC),Y
-
-.CE17E
-
- INC SC2
- BNE CE184
- INC SC2+1
-
-.CE184
-
- LDX R
- DEX
- BNE CE18C
- JMP CE22B
-
-.CE18C
-
- STX R
-
-.CE18E
+                        ; We now start the drawing process, beginning with the
+                        ; left end of the line, whose nametable entry is in
+                        ; SC2(1 0)
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDX #0
- LDA (SC2,X)
- BEQ CE1C7
- CMP #$3C
- BCC CE1E4
- LDX pattBufferHiDiv8
- STX SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- ASL A
+ LDX #0                 ; If the nametable buffer entry is non-zero for the tile
+ LDA (SC2,X)            ; containing the pixel that we want to draw, then a tile
+ BNE hlin5              ; has already been allocated to this entry, so skip the
+                        ; following
+
+ LDA tileNumber         ; If tileNumber is zero then we have run out of tiles to
+ BEQ hlin4              ; use for drawing lines and pixels, so jump to hlin9 via
+                        ; hlin4 to move on to the next character block to the
+                        ; right, as we don't have enough dynamic tiles to draw
+                        ; the left end of the line
+
+ STA (SC2,X)            ; Otherwise tileNumber contains the number of the next
+                        ; available tile for drawing, so allocate this tile to
+                        ; cover the pixels that we want to draw by setting the
+                        ; nametable entry to the tile number we just fetched
+
+ INC tileNumber         ; Increment tileNumber to point to the next available
+                        ; dynamic tile for drawing, so it can be used the next
+                        ; time we need to draw lines or pixels into a tile
+
+ JMP hlin7              ; Jump to hlin7 to draw the line, starting by drawing
+                        ; the left end into the newly allocated tile number in A
+
+.hlin4
+
+ JMP hlin9              ; Jump to hlin9 to move right by one character block
+                        ; without drawing anything
+
+.hlin5
+
+                        ; If we get here then A contains the tile number that's
+                        ; already allocated to this part of the line in the
+                        ; nametable buffer
+
+ CMP #60                ; If A >= 60, then the tile that's already allocated is
+ BCS hlin7              ; one of the tiles we have reserved for dynamic drawing,
+                        ; so jump to hlin7 to draw the line, starting by drawing
+                        ; the left end into the tile number in A
+
+ CMP #37                ; If A < 37, then the tile that's already allocated is
+ BCC hlin4              ; one of the icon bar tiles, so jump to hlin9 via hlin4
+                        ; to move right by one character block without drawing
+                        ; anything, as we can't draw on the icon bar
+
+                        ; If we get here then 37 <= A <= 59, so the tile that's
+                        ; already allocated is one of the pre-rendered tiles
+                        ; containing horizontal and vertical line patterns
+                        ;
+                        ; We don't want to draw over the top of the pre-rendered
+                        ; patterns as that will break them, so instead we make a
+                        ; copy of the pre-rendered tile's pattern in a newly
+                        ; allocated dynamic tile, and then draw our line into
+                        ; the dynamic tile, thus preserving what's already shown
+                        ; on-screen while still drawing our new line
+
+ LDX pattBufferHiDiv8   ; Set SC3(1 0) = (pattBufferHiDiv8 A) * 8
+ STX SC3+1              ;              = (pattBufferHi A) + A * 8
+ ASL A                  ;
+ ROL SC3+1              ; So SC3(1 0) is the address in the pattern buffer for
+ ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ROL SC3+1              ; pattern data), which means SC3(1 0) points to the
+ ASL A                  ; pattern data for the tile containing the pre-rendered
+ ROL SC3+1              ; pattern that we want to copy
+ STA SC3
+
+ LDA tileNumber         ; If tileNumber is zero then we have run out of dynamic
+ BEQ hlin4              ; tiles for drawing lines and pixels, so jump to hlin9
+                        ; via hlin4 to move right by one character block without
+                        ; drawing anything, as we don't have enough dynamic
+                        ; tiles to draw the left end of the line
+
+ LDX #0                 ; Otherwise tileNumber contains the number of the next
+ STA (SC2,X)            ; available tile for drawing, so allocate this tile to
+                        ; contain the pre-rendered tile that we want to copy by
+                        ; setting the nametable entry to the tile number we just
+                        ; fetched
+
+ INC tileNumber         ; Increment tileNumber to point to the next available
+                        ; dynamic tile for drawing, so it can be used the next
+                        ; time we need to draw lines or pixels into a tile
+
+ LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
+ STX SC+1               ;             = (pattBufferHi 0) + A * 8
+ ASL A                  ;
+ ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
+ ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ROL SC+1               ; pattern data), which means SC(1 0) points to the
+ ASL A                  ; pattern data for the tile we just fetched
  ROL SC+1
  STA SC
- LDA #$FF
- EOR (SC),Y
- STA (SC),Y
 
-.CE1BA
+                        ; We now have a new dynamic tile in SC(1 0) into which
+                        ; we can draw the left end of our line, so we now need
+                        ; to copy the pattern of the pre-rendered tile that we
+                        ; want to draw on top of
+                        ;
+                        ; Each pattern is made up of eight bytes, so we simply
+                        ; need to copy eight bytes from SC3(1 0) to SC(1 0)
 
- INC SC2
- BNE CE1C0
+ STY T                  ; Store Y in T so we can retrieve it after the following
+                        ; loop
+
+ LDY #7                 ; We now copy eight bytes from SC3(1 0) to SC(1 0), so
+                        ; set a counter in Y
+
+.hlin6
+
+ LDA (SC3),Y            ; Copy the Y-th byte of SC3(1 0) to the Y-th byte of
+ STA (SC),Y             ; SC(1 0)
+
+ DEY                    ; Decrement the counter
+
+ BPL hlin6              ; Loop back until we have copied all eight bytes
+
+ LDY T                  ; Restore the value of Y from before the loop, so it
+                        ; once again contains the pixel row offset within the
+                        ; each character block for the line we are drawing
+
+ JMP hlin8              ; Jump to hlin8 to draw the left end of the line into
+                        ; the tile that we just copied
+
+.hlin7
+
+                        ; If we get here then we have either allocated a new
+                        ; tile number for the line, or the tile number already
+                        ; allocated to this part of the line is >= 60, which is
+                        ; a dynamic tile into which we can draw
+                        ;
+                        ; In either case the tile number is in A
+
+ LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
+ STX SC+1               ;             = (pattBufferHi 0) + A * 8
+ ASL A                  ;
+ ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
+ ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ROL SC+1               ; pattern data), which means SC(1 0) points to the
+ ASL A                  ; pattern data for the tile containing the line we are
+ ROL SC+1               ; drawing
+ STA SC
+
+.hlin8
+
+                        ; We now draw the left end of our horizontal line
+
+ LDA X1                 ; Set X = X1 mod 8, which is the horizontal pixel number
+ AND #7                 ; within the character block where the line starts (as
+ TAX                    ; each pixel line in the character block is 8 pixels
+                        ; wide)
+
+ LDA TWFR,X             ; Fetch a ready-made byte with X pixels filled in at the
+                        ; right end of the byte (so the filled pixels start at
+                        ; point X and go all the way to the end of the byte),
+                        ; which is the shape we want for the left end of the
+                        ; line
+
+ EOR (SC),Y             ; Store this into the pattern buffer at SC(1 0), using
+ STA (SC),Y             ; EOR logic so it merges with whatever is already
+                        ; on-screen, so we have now drawn the line's left cap
+
+.hlin9
+
+ INC SC2                ; Increment SC2(1 0) to point to the next tile number to
+ BNE P%+4               ; the right in the nametable buffer
  INC SC2+1
 
-.CE1C0
+ LDX R                  ; Fetch the number of character blocks in which we need
+                        ; to draw, which we stored in R above
 
- DEC R
- BNE CE18E
- JMP CE22B
+ DEX                    ; If R = 1, then we only have the right cap to draw, so
+ BNE hlin10             ; jump to hlin17 to draw the right end of the line
+ JMP hlin17
 
-.CE1C7
+.hlin10
 
- TYA
- CLC
- ADC #$25
- STA (SC2,X)
- JMP CE1BA
+ STX R                  ; Otherwise we haven't reached the right end of the line
+                        ; yet, so decrement R as we have just drawn one block
 
-.loop_CE1D0
+; ******************************************************************************
+;
+;       Name: HLOIN (Part 3 of 5)
+;       Type: Subroutine
+;   Category: Drawing lines
+;    Summary: Draw the middle part of the line
+;
+; ******************************************************************************
 
- TYA
+                        ; We now draw the middle part of the line (i.e. the part
+                        ; between the left and right caps)
+
+.hlin11
+
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
+
+ LDX #0                 ; If the nametable buffer entry is zero for the tile
+ LDA (SC2,X)            ; containing the pixel that we want to draw, then a tile
+ BEQ hlin13             ; has not yet been allocated to this entry, so jump to
+                        ; hlin13 to allocate a new dynamic tile
+
+                        ; If we get here then A contains the tile number that's
+                        ; already allocated to this part of the line in the
+                        ; nametable buffer
+
+ CMP #60                ; If A < 60, then the tile that's already allocated is
+ BCC hlin15             ; either an icon bar tile, or one of the pre-rendered
+                        ; tiles containing horizontal and vertical line
+                        ; patterns, so jump to hlin15 to ???
+
+                        ; If we get here then the tile number already allocated
+                        ; to this part of the line is >= 60, which is a dynamic
+                        ; tile into which we can draw
+                        ;
+                        ; The tile number is in A
+
+ LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
+ STX SC+1               ;             = (pattBufferHi 0) + A * 8
+ ASL A                  ;
+ ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
+ ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ROL SC+1               ; pattern data), which means SC(1 0) points to the
+ ASL A                  ; pattern data for the tile containing the line we are
+ ROL SC+1               ; drawing
+ STA SC
+
+ LDA #%11111111         ; Set A to a pixel byte containing eight pixels in a row
+
+ EOR (SC),Y             ; Store this into the pattern buffer at SC(1 0), using
+ STA (SC),Y             ; EOR logic so it merges with whatever is already
+                        ; on-screen, so we have now drawn one character block
+                        ; of the middle portion of the line
+
+.hlin12
+
+ INC SC2                ; Increment SC2(1 0) to point to the next tile number to
+ BNE P%+4               ; the right in the nametable buffer
+ INC SC2+1
+
+ DEC R                  ; Decrement the number of character blocks in which we
+                        ; need to draw, as we have just drawn one block
+
+ BNE hlin11             ; If there are still more character blocks to draw, loop
+                        ; back to hlin11 to draw the next one
+
+ JMP hlin17             ; Otherwise we have finished drawing the middle portion
+                        ; of the line, so jump to hlin17 to draw the right end
+                        ; of the line
+
+.hlin13
+
+                        ; If we get here then there is no dynamic tile allocated
+                        ; to the part of the line we want to draw, so we can use
+                        ; one of the pre-rendered tiles that contains an 8-pixel
+                        ; horizontal line on the correct pixel row
+                        ;
+                        ; We jump here with X = 0
+
+ TYA                    ; Set A = Y + 37
+ CLC                    ;
+ ADC #37                ; Tiles 37 to 44 contain pre-rendered patterns as follows:
+                        ;
+                        ;   * Tile 37 has a horizontal line on pixel row 0
+                        ;   * Tile 37 has a horizontal line on pixel row 1
+                        ;
+                        ;   * Tile 44 has a horizontal line on pixel row 7
+                        ;
+                        ; So A contains the pre-rendered tile number that
+                        ; contains an 8-pixel line on pixel row Y, and as Y
+                        ; contains the offset of the pixel row for the line we
+                        ; are drawing, this means A contains the correct tile
+                        ; number for this part of the line
+
+ STA (SC2,X)            ; Allocate this tile number by setting the nametable
+                        ; entry to A
+
+ JMP hlin12             ; Jump up to hlin12 to move on to the next character
+                        ; block to the right
+
+.hlin14
+
+ TYA                    ; ???
  EOR #$FF
  ADC #$33
  STA (SC2,X)
- INC SC2
- BNE CE1DD
+
+ INC SC2                ; Increment SC2(1 0) to point to the next tile number to
+ BNE P%+4               ; the right in the nametable buffer
  INC SC2+1
 
-.CE1DD
-
  DEC R
- BNE CE18E
- JMP CE22B
+ BNE hlin11
+ JMP hlin17
 
-.CE1E4
+.hlin15
+
+                        ; If we get here then A <= 59, so the tile that's
+                        ; already allocated is either an icon bar tile, or one
+                        ; of the pre-rendered tiles containing horizontal and
+                        ; vertical line patterns
 
  STA SC
  TYA
  ADC SC
  CMP #$32
- BEQ loop_CE1D0
+ BEQ hlin14
+
  LDA tileNumber
- BEQ CE1BA
- INC tileNumber
+ BEQ hlin12
+
+ INC tileNumber         ; Increment tileNumber to point to the next available
+                        ; dynamic tile for drawing, so it can be used the next
+                        ; time we need to draw lines or pixels into a tile
+
  STA (SC2,X)
  LDX pattBufferHiDiv8
- STX L00BD
+ STX SC3+1
  ASL A
- ROL L00BD
+ ROL SC3+1
  ASL A
- ROL L00BD
+ ROL SC3+1
  ASL A
- ROL L00BD
- STA L00BC
+ ROL SC3+1
+ STA SC3
  LDA SC
  LDX pattBufferHiDiv8
  STX SC+1
@@ -6629,53 +6834,236 @@ ENDIF
  STY T
  LDY #7
 
-.loop_CE219
+.hlin16
 
  LDA (SC),Y
- STA (L00BC),Y
+ STA (SC3),Y
  DEY
- BPL loop_CE219
+ BPL hlin16
  LDY T
  LDA #$FF
- EOR (L00BC),Y
- STA (L00BC),Y
- JMP CE1BA
+ EOR (SC3),Y
+ STA (SC3),Y
+ JMP hlin12
 
-.CE22B
+; ******************************************************************************
+;
+;       Name: HLOIN (Part 4 of 5)
+;       Type: Subroutine
+;   Category: Drawing lines
+;    Summary: Draw the right end of the line
+;
+; ******************************************************************************
+
+.hlin17
+
+                        ; We now finish off the drawing process with the right
+                        ; end of the line
+
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
+
+ LDX #0                 ; If the nametable buffer entry is non-zero for the tile
+ LDA (SC2,X)            ; containing the pixel that we want to draw, then a tile
+ BNE hlin19             ; has already been allocated to this entry, so skip the
+                        ; following
+
+ LDA tileNumber         ; If tileNumber is zero then we have run out of tiles to
+ BEQ hlin18             ; use for drawing lines and pixels, so jump to hlin30
+                        ; via hlin18 to return from the subroutine, as we don't
+                        ; have enough dynamic tiles to draw the right end of the
+                        ; line
+
+ STA (SC2,X)            ; Otherwise tileNumber contains the number of the next
+                        ; available tile for drawing, so allocate this tile to
+                        ; cover the pixels that we want to draw by setting the
+                        ; nametable entry to the tile number we just fetched
+
+ INC tileNumber         ; Increment tileNumber to point to the next available
+                        ; dynamic tile for drawing, so it can be used the next
+                        ; time we need to draw lines or pixels into a tile
+
+ JMP hlin21             ; Jump to hlin21 to draw the right end of the line into
+                        ; the newly allocated tile number in A
+
+.hlin18
+
+ JMP hlin30             ; Jump to hlin30 to return from the subroutine
+
+.hlin19
+
+                        ; If we get here then A contains the tile number that's
+                        ; already allocated to this part of the line in the
+                        ; nametable buffer
+
+ CMP #60                ; If A >= 60, then the tile that's already allocated is
+ BCS hlin21             ; oneof the tiles we have reserved for dynamic drawing,
+                        ; so jump to hlin21 to draw the right end of the line
+
+ CMP #37                ; If A < 37, then the tile that's already allocated is
+ BCC hlin18             ; one of the icon bar tiles, so jump to hlin30 via
+                        ; hlin18 to return from the subroutine, as we can't draw
+                        ; on the icon bar
+
+                        ; If we get here then 37 <= A <= 59, so the tile that's
+                        ; already allocated is one of the pre-rendered tiles
+                        ; containing horizontal and vertical line patterns
+                        ;
+                        ; We don't want to draw over the top of the pre-rendered
+                        ; patterns as that will break them, so instead we make a
+                        ; copy of the pre-rendered tile's pattern in a newly
+                        ; allocated dynamic tile, and then draw our line into
+                        ; the dynamic tile, thus preserving what's already shown
+                        ; on-screen while still drawing our new line
+
+ LDX pattBufferHiDiv8   ; Set SC3(1 0) = (pattBufferHiDiv8 A) * 8
+ STX SC3+1              ;              = (pattBufferHi A) + A * 8
+ ASL A                  ;
+ ROL SC3+1              ; So SC3(1 0) is the address in the pattern buffer for
+ ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ROL SC3+1              ; pattern data), which means SC3(1 0) points to the
+ ASL A                  ; pattern data for the tile containing the pre-rendered
+ ROL SC3+1              ; pattern that we want to copy
+ STA SC3
+
+ LDA tileNumber         ; If tileNumber is zero then we have run out of dynamic
+ BEQ hlin18             ; tiles for drawing lines and pixels, so jump to hlin30
+                        ; via hlin18 to return from the subroutine, as we don't
+                        ; have enough dynamic tiles to draw the right end of the
+                        ; line
+
+ LDX #0                 ; Otherwise tileNumber contains the number of the next
+ STA (SC2,X)            ; available tile for drawing, so allocate this tile to
+                        ; contain the pre-rendered tile that we want to copy by
+                        ; setting the nametable entry to the tile number we just
+                        ; fetched
+
+ INC tileNumber         ; Increment tileNumber to point to the next available
+                        ; dynamic tile for drawing, so it can be used the next
+                        ; time we need to draw lines or pixels into a tile
+
+ LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
+ STX SC+1               ;             = (pattBufferHi 0) + A * 8
+ ASL A                  ;
+ ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
+ ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ROL SC+1               ; pattern data), which means SC(1 0) points to the
+ ASL A                  ; pattern data for the tile we just fetched
+ ROL SC+1
+ STA SC
+
+                        ; We now have a new dynamic tile in SC(1 0) into which
+                        ; we can draw the right end of our line, so we now need
+                        ; to copy the pattern of the pre-rendered tile that we
+                        ; want to draw on top of
+                        ;
+                        ; Each pattern is made up of eight bytes, so we simply
+                        ; need to copy eight bytes from SC3(1 0) to SC(1 0)
+
+ STY T                  ; Store Y in T so we can retrieve it after the following
+                        ; loop
+
+ LDY #7                 ; We now copy eight bytes from SC3(1 0) to SC(1 0), so
+                        ; set a counter in Y
+.hlin20
+
+ LDA (SC3),Y            ; Copy the Y-th byte of SC3(1 0) to the Y-th byte of
+ STA (SC),Y             ; SC(1 0)
+
+ DEY                    ; Decrement the counter
+
+ BPL hlin20             ; Loop back until we have copied all eight bytes
+
+ LDY T                  ; Restore the value of Y from before the loop, so it
+                        ; once again contains the pixel row offset within the
+                        ; each character block for the line we are drawing
+
+ JMP hlin22             ; Jump to hlin22 to draw the right end of the line into
+                        ; the tile that we just copied
+
+.hlin21
+
+                        ; If we get here then we have either allocated a new
+                        ; tile number for the line, or the tile number already
+                        ; allocated to this part of the line is >= 60, which is
+                        ; a dynamic tile into which we can draw
+                        ;
+                        ; In either case the tile number is in A
+
+ LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
+ STX SC+1               ;             = (pattBufferHi 0) + A * 8
+ ASL A                  ;
+ ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
+ ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ROL SC+1               ; pattern data), which means SC(1 0) points to the
+ ASL A                  ; pattern data for the tile containing the line we are
+ ROL SC+1               ; drawing
+ STA SC
+
+.hlin22
+
+                        ; We now draw the right end of our horizontal line
+
+ LDA X2                 ; Set X = X2 mod 8, which is the horizontal pixel number
+ AND #7                 ; within the character block where the line ends (as
+ TAX                    ; each pixel line in the character block is 8 pixels
+                        ; wide)
+
+ LDA TWFL,X             ; Fetch a ready-made byte with X pixels filled in at the
+                        ; left end of the byte (so the filled pixels start at
+                        ; the left edge and go up to point X), which is the
+                        ; shape we want for the right end of the line
+
+ JMP hlin29             ; Jump to hlin29 to poke the pixel byte into the pattern
+                        ; buffer
+
+; ******************************************************************************
+;
+;       Name: HLOIN (Part 5 of 5)
+;       Type: Subroutine
+;   Category: Drawing lines
+;    Summary: Draw the line when it's all within one character block
+;
+; ******************************************************************************
+
+.hlin23
+
+                        ; If we get here then the line starts and ends in the
+                        ; same character block
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDX #0
  LDA (SC2,X)
- BNE CE24C
+ BNE hlin25
  LDA tileNumber
- BEQ CE249
+ BEQ hlin24
  STA (SC2,X)
  INC tileNumber
- JMP CE28C
+ JMP hlin27
 
-.CE249
+.hlin24
 
- JMP CE32E
+ JMP hlin30
 
-.CE24C
+.hlin25
 
- CMP #$3C
- BCS CE28C
- CMP #$25
- BCC CE249
+ CMP #60
+ BCS hlin27
+ CMP #37
+ BCC hlin24
  LDX pattBufferHiDiv8
- STX L00BD
+ STX SC3+1
  ASL A
- ROL L00BD
+ ROL SC3+1
  ASL A
- ROL L00BD
+ ROL SC3+1
  ASL A
- ROL L00BD
- STA L00BC
+ ROL SC3+1
+ STA SC3
  LDA tileNumber
- BEQ CE249
+ BEQ hlin24
  LDX #0
  STA (SC2,X)
  INC tileNumber
@@ -6691,95 +7079,16 @@ ENDIF
  STY T
  LDY #7
 
-.loop_CE280
+.hlin26
 
- LDA (L00BC),Y
+ LDA (SC3),Y
  STA (SC),Y
  DEY
- BPL loop_CE280
+ BPL hlin26
  LDY T
- JMP CE29B
+ JMP hlin28
 
-.CE28C
-
- LDX pattBufferHiDiv8
- STX SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- STA SC
-
-.CE29B
-
- LDA X2
- AND #7
- TAX
- LDA TWFL,X
- JMP CE32A
-
-.CE2A6
-
- SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
-                        ; the PPU to use nametable 0 and pattern table 0
-
- LDX #0
- LDA (SC2,X)
- BNE CE2C7
- LDA tileNumber
- BEQ CE2C4
- STA (SC2,X)
- INC tileNumber
- JMP CE307
-
-.CE2C4
-
- JMP CE32E
-
-.CE2C7
-
- CMP #$3C
- BCS CE307
- CMP #$25
- BCC CE2C4
- LDX pattBufferHiDiv8
- STX L00BD
- ASL A
- ROL L00BD
- ASL A
- ROL L00BD
- ASL A
- ROL L00BD
- STA L00BC
- LDA tileNumber
- BEQ CE2C4
- LDX #0
- STA (SC2,X)
- INC tileNumber
- LDX pattBufferHiDiv8
- STX SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- STA SC
- STY T
- LDY #7
-
-.loop_CE2FB
-
- LDA (L00BC),Y
- STA (SC),Y
- DEY
- BPL loop_CE2FB
- LDY T
- JMP CE316
-
-.CE307
+.hlin27
 
  LDX pattBufferHiDiv8
  STX SC+1
@@ -6791,7 +7100,7 @@ ENDIF
  ROL SC+1
  STA SC
 
-.CE316
+.hlin28
 
  LDA XX15
  AND #7
@@ -6804,18 +7113,19 @@ ENDIF
  LDA TWFL,X
  AND T
 
-.CE32A
+.hlin29
 
  EOR (SC),Y
  STA (SC),Y
 
-.CE32E
+.hlin30
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDY YSAV
- RTS
+ LDY YSAV               ; Restore Y from YSAV, so that it's preserved
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -6902,19 +7212,19 @@ ENDIF
 
 .CE3B7
 
- CMP #$3C
+ CMP #60
  BCS CE3F7
- CMP #$25
+ CMP #37
  BCC CE3B4
  LDX pattBufferHiDiv8
- STX L00BD
+ STX SC3+1
  ASL A
- ROL L00BD
+ ROL SC3+1
  ASL A
- ROL L00BD
+ ROL SC3+1
  ASL A
- ROL L00BD
- STA L00BC
+ ROL SC3+1
+ STA SC3
  LDA tileNumber
  BEQ CE3B4
  LDX #0
@@ -6934,7 +7244,7 @@ ENDIF
 
 .loop_CE3EB
 
- LDA (L00BC),Y
+ LDA (SC3),Y
  STA (SC),Y
  DEY
  BPL loop_CE3EB
@@ -7005,7 +7315,7 @@ ENDIF
  LDX #0
  LDA (SC2,X)
  BEQ CE4AA
- CMP #$3C
+ CMP #60
  BCC CE4B4
  LDX pattBufferHiDiv8
  STX SC+1
@@ -7070,14 +7380,14 @@ ENDIF
  INC tileNumber
  STA (SC2,X)
  LDX pattBufferHiDiv8
- STX L00BD
+ STX SC3+1
  ASL A
- ROL L00BD
+ ROL SC3+1
  ASL A
- ROL L00BD
+ ROL SC3+1
  ASL A
- ROL L00BD
- STA L00BC
+ ROL SC3+1
+ STA SC3
  LDA SC
  LDX pattBufferHiDiv8
  STX SC+1
@@ -7096,7 +7406,7 @@ ENDIF
 
  LDA (SC),Y
  ORA TWOS,X
- STA (L00BC),Y
+ STA (SC3),Y
  DEY
  BPL loop_CE4E4
  BMI CE4B1
