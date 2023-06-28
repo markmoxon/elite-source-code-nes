@@ -8668,7 +8668,7 @@ ENDMACRO
  LDA L05F1
  JSR EDGES-2
  BCS CAE46
- JSR subm_E0BA
+ JSR HLOIN
 
 .CAE46
 
@@ -8676,7 +8676,7 @@ ENDMACRO
  LDA L05F0
  JSR EDGES-2
  BCS CAE52
- JSR subm_E0BA
+ JSR HLOIN
 
 .CAE52
 
@@ -8684,7 +8684,7 @@ ENDMACRO
  LDA L05EF
  JSR EDGES-2
  BCS CAE5E
- JSR subm_E0BA
+ JSR HLOIN
 
 .CAE5E
 
@@ -8692,7 +8692,7 @@ ENDMACRO
  LDA L05EE
  JSR EDGES-2
  BCS CAE6A
- JSR subm_E0BA
+ JSR HLOIN
 
 .CAE6A
 
@@ -8700,7 +8700,7 @@ ENDMACRO
  LDA L05ED
  JSR EDGES-2
  BCS CAE76
- JSR subm_E0BA
+ JSR HLOIN
 
 .CAE76
 
@@ -8708,7 +8708,7 @@ ENDMACRO
  LDA L05EC
  JSR EDGES-2
  BCS CAE82
- JSR subm_E0BA
+ JSR HLOIN
 
 .CAE82
 
@@ -8716,7 +8716,7 @@ ENDMACRO
  LDA L05EB
  JSR EDGES-2
  BCS CAE8E
- JSR subm_E0BA
+ JSR HLOIN
 
 .CAE8E
 
@@ -8724,7 +8724,7 @@ ENDMACRO
  LDA L05EA
  JSR EDGES-2
  BCS CAE9A
- JMP subm_E0BA
+ JMP HLOIN
 
 .CAE9A
 
@@ -9251,13 +9251,13 @@ ENDMACRO
  LDA XX15
  CMP X2
  BCS CB04C
- JMP subm_E0BA
+ JMP HLOIN
 
 .CB056
 
  LDA #0
  STA XX15
- JMP subm_E0BA
+ JMP HLOIN
 
 ; ******************************************************************************
 ;
@@ -9282,7 +9282,7 @@ ENDMACRO
  CMP XX15
  BEQ CB04C
  BCC CB04C
- JMP subm_E0BA
+ JMP HLOIN
 
 ; ******************************************************************************
 ;
@@ -11159,7 +11159,9 @@ ENDMACRO
  LDA #$7F
  LDX #$0C
  JSR HAS3
+
 .HA2
+
  LDX TGT
  INX
  CPX #4
@@ -11168,17 +11170,31 @@ ENDMACRO
  AND #7
  ORA #4
  LDY #0
+
 .loop_CB5B2
+
  JSR HAS2
  CLC
  ADC #$0A
  BCS CB5BE
  CMP #$F8
  BCC loop_CB5B2
+
 .CB5BE
+
  RTS
 
+; ******************************************************************************
+;
+;       Name: HAS2
+;       Type: Subroutine
+;   Category: Ship hangar
+;    Summary: Draw a hangar background line from left to right
+;
+; ******************************************************************************
+
 .HAS2
+
  STA S
  STY YSAV
  LSR A
@@ -11193,7 +11209,9 @@ ENDMACRO
  LDA S
  AND #7
  STA T
+
 .CB5D9
+
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
  LDX #0
@@ -11210,7 +11228,9 @@ ENDMACRO
  STA SC
  LDY #0
  LDX T
+
 .loop_CB5FF
+
  LDA (SC),Y
  AND TWOS,X
  BNE CB62A
@@ -11223,11 +11243,14 @@ ENDMACRO
  JMP CB61C
 
 .CB615
+
  LDA T
  CLC
  ADC #$34
  STA (SC2,X)
+
 .CB61C
+
  LDA SC2
  CLC
  ADC #$20
@@ -11237,11 +11260,13 @@ ENDMACRO
  JMP CB5D9
 
 .CB62A
+
  LDA S
  LDY YSAV
  RTS
 
 .HAL3
+
  STX R
  STY YSAV
  LSR A
@@ -11256,9 +11281,12 @@ ENDMACRO
  TYA
  AND #7
  TAY
+
 .CB647
+
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
+
  LDX #0
  LDA (SC2,X)
  BEQ CB699
@@ -11274,7 +11302,9 @@ ENDMACRO
  LDA (SC),Y
  BEQ CB685
  LDA #$80
+
 .loop_CB66F
+
  STA T
  AND (SC),Y
  BNE CB67C
@@ -11284,6 +11314,7 @@ ENDMACRO
  JMP loop_CB66F
 
 .CB67C
+
  LDA T
  ORA (SC),Y
  STA (SC),Y
@@ -11291,9 +11322,12 @@ ENDMACRO
  RTS
 
 .CB685
+
  LDA #$FF
  STA (SC),Y
+
 .loop_CB689
+
  DEC R
  BEQ CB696
  INC SC2
@@ -11302,15 +11336,27 @@ ENDMACRO
  JMP CB647
 
 .CB696
+
  LDY YSAV
  RTS
 
 .CB699
+
  TYA
  CLC
  ADC #$25
  STA (SC2,X)
  JMP loop_CB689
+
+; ******************************************************************************
+;
+;       Name: HAS3
+;       Type: Subroutine
+;   Category: Ship hangar
+;    Summary: Draw a hangar background line from right to left
+;
+; ******************************************************************************
+
 .HAS3
 
  STX R
@@ -11327,9 +11373,12 @@ ENDMACRO
  TYA
  AND #7
  TAY
+
 .CB6BA
+
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
+
  LDX #0
  LDA (SC2,X)
  BEQ CB70B
@@ -11345,7 +11394,9 @@ ENDMACRO
  LDA (SC),Y
  BEQ CB6F8
  LDA #1
+
 .loop_CB6E2
+
  STA T
  AND (SC),Y
  BNE CB6EF
@@ -11355,27 +11406,36 @@ ENDMACRO
  JMP loop_CB6E2
 
 .CB6EF
+
  LDA T
  ORA (SC),Y
  STA (SC),Y
+
 .loop_CB6F5
+
  LDY YSAV
  RTS
 
 .CB6F8
+
  LDA #$FF
  STA (SC),Y
+
 .loop_CB6FC
+
  DEC R
  BEQ loop_CB6F5
  LDA SC2
  BNE CB706
  DEC SC2+1
+
 .CB706
+
  DEC SC2
  JMP CB6BA
 
 .CB70B
+
  TYA
  CLC
  ADC #$25
@@ -12177,7 +12237,7 @@ ENDMACRO
 
 .CB969
 
- LDA #$F0
+ LDA #240
  STA ySprite0,Y
  STA ySprite1,Y
  STA ySprite2,Y

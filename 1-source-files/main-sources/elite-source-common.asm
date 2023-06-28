@@ -93,6 +93,9 @@
  X = 128                ; The centre x-coordinate of the space view
  Y = 72                 ; The centre y-coordinate of the space view
 
+ RE = $3E               ; The obfuscation byte used to hide the recursive tokens
+                        ; table from crackers viewing the binary code
+
  VE = $57               ; The obfuscation byte used to hide the extended tokens
                         ; table from crackers viewing the binary code
 

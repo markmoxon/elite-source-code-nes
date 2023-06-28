@@ -4936,7 +4936,11 @@ ENDIF
  BCC LI3                ; already in the order that we want
 
  DEC SWAP               ; Otherwise decrement SWAP from 0 to $FF, to denote that
-                        ; we are swapping the coordinates around
+                        ; we are swapping the coordinates around (though note
+                        ; that we don't use this value anywhere, as in the
+                        ; original versions of Elite it is used to omit the
+                        ; first pixel of each line, which we don't have to do
+                        ; in the NES version as it doesn't use EOR plotting)
 
  LDA X2                 ; Swap the values of X1 and X2
  STA X1
@@ -5050,6 +5054,17 @@ ENDIF
 ;   Category: Drawing lines
 ;    Summary: Draw a shallow line going right and up or left and down
 ;  Deep dive: Bresenham's line algorithm
+;
+; ------------------------------------------------------------------------------
+;
+; This routine draws a line from (X1, Y1) to (X2, Y2). It has multiple stages.
+; If we get here, then:
+;
+;   * The line is going right and up (no swap) or left and down (swap)
+;
+;   * X1 < X2 and Y1 > Y2
+;
+;   * Draw from (X1, Y1) at bottom left to (X2, Y2) at top right
 ;
 ; ******************************************************************************
 
@@ -5254,6 +5269,17 @@ ENDIF
 ;   Category: Drawing lines
 ;    Summary: Draw a shallow line going right and down or left and up
 ;  Deep dive: Bresenham's line algorithm
+;
+; ------------------------------------------------------------------------------
+;
+; This routine draws a line from (X1, Y1) to (X2, Y2). It has multiple stages.
+; If we get here, then:
+;
+;   * The line is going right and down (no swap) or left and up (swap)
+;
+;   * X1 < X2 and Y1 <= Y2
+;
+;   * Draw from (X1, Y1) at top left to (X2, Y2) at bottom right
 ;
 ; ******************************************************************************
 
@@ -5500,7 +5526,11 @@ ENDIF
                         ; already in the order that we want
 
  DEC SWAP               ; Otherwise decrement SWAP from 0 to $FF, to denote that
-                        ; we are swapping the coordinates around
+                        ; we are swapping the coordinates around (though note
+                        ; that we don't use this value anywhere, as in the
+                        ; original versions of Elite it is used to omit the
+                        ; first pixel of each line, which we don't have to do
+                        ; in the NES version as it doesn't use EOR plotting)
 
  LDA X2                 ; Swap the values of X1 and X2
  STA X1
@@ -5625,8 +5655,8 @@ ENDIF
  LDX Q                  ; Set X = Q + 1
  INX                    ;       = |delta_y| + 1
                         ;
-                        ; We add 1 so we can skip the first pixel plot if the
-                        ; line is being drawn with swapped coordinates
+                        ; We will use Q as the y-axis counter, and we add 1 to
+                        ; ensure we include the pixel at each end
 
  BCS loin24             ; If X1 <= X2 (which we calculated above) then jump to
                         ; loin24 to draw the line to the left and up
@@ -5641,6 +5671,17 @@ ENDIF
 ;   Category: Drawing lines
 ;    Summary: Draw a steep line going up and left or down and right
 ;  Deep dive: Bresenham's line algorithm
+;
+; ------------------------------------------------------------------------------
+;
+; This routine draws a line from (X1, Y1) to (X2, Y2). It has multiple stages.
+; If we get here, then:
+;
+;   * The line is going up and left (no swap) or down and right (swap)
+;
+;   * X1 < X2 and Y1 >= Y2
+;
+;   * Draw from (X1, Y1) at top left to (X2, Y2) at bottom right
 ;
 ; ******************************************************************************
 
@@ -5952,6 +5993,17 @@ ENDIF
 ;   Category: Drawing lines
 ;    Summary: Draw a steep line going up and right or down and left
 ;  Deep dive: Bresenham's line algorithm
+;
+; ------------------------------------------------------------------------------
+;
+; This routine draws a line from (X1, Y1) to (X2, Y2). It has multiple stages.
+; If we get here, then:
+;
+;   * The line is going up and right (no swap) or down and left (swap)
+;
+;   * X1 >= X2 and Y1 >= Y2
+;
+;   * Draw from (X1, Y1) at bottom left to (X2, Y2) at top right
 ;
 ; ******************************************************************************
 
@@ -6339,14 +6391,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_E0BA
+;       Name: HLOIN
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_E0BA
+.HLOIN
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -6485,16 +6537,7 @@ ENDIF
 
  STX R
 
-; ******************************************************************************
-;
-;       Name: subm_E18E
-;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
-;
-; ******************************************************************************
-
-.subm_E18E
+.CE18E
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -6526,7 +6569,7 @@ ENDIF
 .CE1C0
 
  DEC R
- BNE subm_E18E
+ BNE CE18E
  JMP CE22B
 
 .CE1C7
@@ -6550,7 +6593,7 @@ ENDIF
 .CE1DD
 
  DEC R
- BNE subm_E18E
+ BNE CE18E
  JMP CE22B
 
 .CE1E4
@@ -11761,7 +11804,7 @@ ENDIF
 ;
 ;       Name: UnpackToRAM
 ;       Type: Subroutine
-;   Category: Drawing images
+;   Category: Utility routines
 ;    Summary: Unpack compressed image data to RAM
 ;
 ; ------------------------------------------------------------------------------
@@ -11900,7 +11943,7 @@ ENDIF
 ;
 ;       Name: UnpackToPPU
 ;       Type: Subroutine
-;   Category: Drawing images
+;   Category: Utility routines
 ;    Summary: Unpack compressed image data and send it to the PPU
 ;
 ; ******************************************************************************

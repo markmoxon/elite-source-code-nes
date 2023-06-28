@@ -6745,13 +6745,13 @@ ENDIF
  BCC CB9B9
  BEQ CB9B9
  TAY
- JSR subm_E0BA
+ JSR HLOIN
  INC X2
  LDA K+1
  CLC
  ADC Yx1M2
  TAY
- JSR subm_E0BA
+ JSR HLOIN
  INC X2
  JMP CB9B9
 
@@ -6827,7 +6827,7 @@ ENDIF
  INC XX15
  LDY Y1
  BEQ CBA56
- JSR subm_E0BA
+ JSR HLOIN
  INC X2
 
 .CBA56
@@ -6837,7 +6837,7 @@ ENDIF
  LDY Y2
  CPY Yx2M1
  BCS CBA16
- JMP subm_E0BA
+ JMP HLOIN
 
 ; ******************************************************************************
 ;
