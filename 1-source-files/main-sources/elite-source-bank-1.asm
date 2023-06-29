@@ -8651,7 +8651,7 @@ ENDMACRO
  CMP #$F8
  BCS CAE26
  JSR CAEE8
- JSR subm_E04A
+ JSR FillCharacterBlock
 
 .CAE26
 

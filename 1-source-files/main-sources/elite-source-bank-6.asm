@@ -6817,13 +6817,13 @@ ENDIF
 .CBA3A
 
  STA Y2
- JSR subm_E33E
+ JSR DrawVerticalLine
  LDA K+2
  SEC
  SBC K
  BCC CBA16
  STA XX15
- JSR subm_E33E
+ JSR DrawVerticalLine
  INC XX15
  LDY Y1
  BEQ CBA56

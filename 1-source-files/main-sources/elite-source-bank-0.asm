@@ -16471,8 +16471,7 @@ ENDIF
 
  JSR TT102              ; Call TT102 to process the key pressed in A
 
- JMP TT100              ; Otherwise jump to TT100 to restart the main loop from
-                        ; the start
+ JMP TT100              ; Jump to TT100 to restart the main loop from the start
 
 ; ******************************************************************************
 ;
