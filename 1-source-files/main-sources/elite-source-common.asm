@@ -831,11 +831,11 @@ ENDIF
                         ;
                         ;   0   = Space view, Title screen
                         ;   1   = Loading ship on Title screen
-                        ;   $10 = 
-                        ;   $8B = 
-                        ;   $8D = 
-                        ;   $92 = 
-                        ;   $93 = 
+                        ;   $10 = ???
+                        ;   $8B = ???
+                        ;   $8D = ???
+                        ;   $92 = ???
+                        ;   $93 = ???
                         ;   $95 = Trumble mission screen
                         ;   $96 = Data on System (TT25, TRADEMODE)
                         ;   $97 = Inventory
@@ -845,10 +845,10 @@ ENDIF
                         ;   $B9 = Equip Ship
                         ;   $BA = Market Prices/Buy Cargo/Sell Cargo
                         ;   $BB = Save and load
-                        ;   $C4 = 
-                        ;   $CF = 
+                        ;   $C4 = ???
+                        ;   $CF = ???
                         ;   $DF = Start screen
-                        ;   $FF = 
+                        ;   $FF = ???
                         ;
                         ; STA: 0, $8B, $97, $9D, $BB, $DF, $FF
                         ; TT66: 0, $8D, $93, $95, $9C, $BB, $C4, $CF
@@ -4560,6 +4560,651 @@ MACRO SETUP_PPU_FOR_ICON_BAR
                         ;   * Clear the C flag
 
 .skip
+
+ENDMACRO
+
+; ******************************************************************************
+;
+;       Name: ITEM
+;       Type: Macro
+;   Category: Market
+;    Summary: Macro definition for the market prices table
+;  Deep dive: Market item prices and availability
+;
+; ------------------------------------------------------------------------------
+;
+; The following macro is used to build the market prices table:
+;
+;   ITEM price, factor, units, quantity, mask
+;
+; It inserts an item into the market prices table at QQ23. See the deep dive on
+; "Market item prices and availability" for more information on how the market
+; system works.
+;
+; Arguments:
+;
+;   price               Base price
+;
+;   factor              Economic factor
+;
+;   units               Units: "t", "g" or "k"
+;
+;   quantity            Base quantity
+;
+;   mask                Fluctuations mask
+;
+; ******************************************************************************
+
+MACRO ITEM price, factor, units, quantity, mask
+
+ IF factor < 0
+  s = 1 << 7
+ ELSE
+  s = 0
+ ENDIF
+
+ IF units = 't'
+  u = 0
+ ELIF units = 'k'
+  u = 1 << 5
+ ELSE
+  u = 1 << 6
+ ENDIF
+
+ e = ABS(factor)
+
+ EQUB price
+ EQUB s + u + e
+ EQUB quantity
+ EQUB mask
+
+ENDMACRO
+
+; ******************************************************************************
+;
+;       Name: VERTEX
+;       Type: Macro
+;   Category: Drawing ships
+;    Summary: Macro definition for adding vertices to ship blueprints
+;  Deep dive: Ship blueprints
+;
+; ------------------------------------------------------------------------------
+;
+; The following macro is used to build the ship blueprints:
+;
+;   VERTEX x, y, z, face1, face2, face3, face4, visibility
+;
+; See the deep dive on "Ship blueprints" for details of how vertices are stored
+; in the ship blueprints, and the deep dive on "Drawing ships" for information
+; on how vertices are used to draw 3D wireframe ships.
+;
+; Arguments:
+;
+;   x                   The vertex's x-coordinate
+;
+;   y                   The vertex's y-coordinate
+;
+;   z                   The vertex's z-coordinate
+;
+;   face1               The number of face 1 associated with this vertex
+;
+;   face2               The number of face 2 associated with this vertex
+;
+;   face3               The number of face 3 associated with this vertex
+;
+;   face4               The number of face 4 associated with this vertex
+;
+;   visibility          The visibility distance, beyond which the vertex is not
+;                       shown
+;
+; ******************************************************************************
+
+MACRO VERTEX x, y, z, face1, face2, face3, face4, visibility
+
+ IF x < 0
+  s_x = 1 << 7
+ ELSE
+  s_x = 0
+ ENDIF
+
+ IF y < 0
+  s_y = 1 << 6
+ ELSE
+  s_y = 0
+ ENDIF
+
+ IF z < 0
+  s_z = 1 << 5
+ ELSE
+  s_z = 0
+ ENDIF
+
+ s = s_x + s_y + s_z + visibility
+ f1 = face1 + (face2 << 4)
+ f2 = face3 + (face4 << 4)
+ ax = ABS(x)
+ ay = ABS(y)
+ az = ABS(z)
+
+ EQUB ax, ay, az, s, f1, f2
+
+ENDMACRO
+
+; ******************************************************************************
+;
+;       Name: EDGE
+;       Type: Macro
+;   Category: Drawing ships
+;    Summary: Macro definition for adding edges to ship blueprints
+;  Deep dive: Ship blueprints
+;
+; ------------------------------------------------------------------------------
+;
+; The following macro is used to build the ship blueprints:
+;
+;   EDGE vertex1, vertex2, face1, face2, visibility
+;
+; See the deep dive on "Ship blueprints" for details of how edges are stored
+; in the ship blueprints, and the deep dive on "Drawing ships" for information
+; on how edges are used to draw 3D wireframe ships.
+;
+; Arguments:
+;
+;   vertex1             The number of the vertex at the start of the edge
+;
+;   vertex1             The number of the vertex at the end of the edge
+;
+;   face1               The number of face 1 associated with this edge
+;
+;   face2               The number of face 2 associated with this edge
+;
+;   visibility          The visibility distance, beyond which the edge is not
+;                       shown
+;
+; ******************************************************************************
+
+MACRO EDGE vertex1, vertex2, face1, face2, visibility
+
+ f = face1 + (face2 << 4)
+ EQUB visibility, f, vertex1 << 2, vertex2 << 2
+
+ENDMACRO
+
+; ******************************************************************************
+;
+;       Name: FACE
+;       Type: Macro
+;   Category: Drawing ships
+;    Summary: Macro definition for adding faces to ship blueprints
+;  Deep dive: Ship blueprints
+;
+; ------------------------------------------------------------------------------
+;
+; The following macro is used to build the ship blueprints:
+;
+;   FACE normal_x, normal_y, normal_z, visibility
+;
+; See the deep dive on "Ship blueprints" for details of how faces are stored
+; in the ship blueprints, and the deep dive on "Drawing ships" for information
+; on how faces are used to draw 3D wireframe ships.
+;
+; Arguments:
+;
+;   normal_x            The face normal's x-coordinate
+;
+;   normal_y            The face normal's y-coordinate
+;
+;   normal_z            The face normal's z-coordinate
+;
+;   visibility          The visibility distance, beyond which the edge is always
+;                       shown
+;
+; ******************************************************************************
+
+MACRO FACE normal_x, normal_y, normal_z, visibility
+
+ IF normal_x < 0
+  s_x = 1 << 7
+ ELSE
+  s_x = 0
+ ENDIF
+
+ IF normal_y < 0
+  s_y = 1 << 6
+ ELSE
+  s_y = 0
+ ENDIF
+
+ IF normal_z < 0
+  s_z = 1 << 5
+ ELSE
+  s_z = 0
+ ENDIF
+
+ s = s_x + s_y + s_z + visibility
+ ax = ABS(normal_x)
+ ay = ABS(normal_y)
+ az = ABS(normal_z)
+
+ EQUB s, ax, ay, az
+
+ENDMACRO
+
+; ******************************************************************************
+;
+;       Name: EJMP
+;       Type: Macro
+;   Category: Text
+;    Summary: Macro definition for jump tokens in the extended token table
+;  Deep dive: Extended text tokens
+;
+; ------------------------------------------------------------------------------
+;
+; The following macro is used when building the extended token table:
+;
+;   EJMP n              Insert a jump to address n in the JMTB table
+;
+; See the deep dive on "Printing extended text tokens" for details on how jump
+; tokens are stored in the extended token table.
+;
+; Arguments:
+;
+;   n                   The jump number to insert into the table
+;
+; ******************************************************************************
+
+MACRO EJMP n
+
+ EQUB n EOR VE
+
+ENDMACRO
+
+; ******************************************************************************
+;
+;       Name: ECHR
+;       Type: Macro
+;   Category: Text
+;    Summary: Macro definition for characters in the extended token table
+;  Deep dive: Extended text tokens
+;
+; ------------------------------------------------------------------------------
+;
+; The following macro is used when building the extended token table:
+;
+;   ECHR 'x'            Insert ASCII character "x"
+;
+; To include an apostrophe, use a backtick character, as in ECHR '`'.
+;
+; See the deep dive on "Printing extended text tokens" for details on how
+; characters are stored in the extended token table.
+;
+; Arguments:
+;
+;   'x'                 The character to insert into the table
+;
+; ******************************************************************************
+
+MACRO ECHR x
+
+ IF x = '`'
+  EQUB 39 EOR VE
+ ELSE
+  EQUB x EOR VE
+ ENDIF
+
+ENDMACRO
+
+; ******************************************************************************
+;
+;       Name: ETOK
+;       Type: Macro
+;   Category: Text
+;    Summary: Macro definition for recursive tokens in the extended token table
+;  Deep dive: Extended text tokens
+;
+; ------------------------------------------------------------------------------
+;
+; The following macro is used when building the extended token table:
+;
+;   ETOK n              Insert extended recursive token [n]
+;
+; See the deep dive on "Printing extended text tokens" for details on how
+; recursive tokens are stored in the extended token table.
+;
+; Arguments:
+;
+;   n                   The number of the recursive token to insert into the
+;                       table, in the range 129 to 214
+;
+; ******************************************************************************
+
+MACRO ETOK n
+
+ EQUB n EOR VE
+
+ENDMACRO
+
+; ******************************************************************************
+;
+;       Name: ETWO
+;       Type: Macro
+;   Category: Text
+;    Summary: Macro definition for two-letter tokens in the extended token table
+;  Deep dive: Extended text tokens
+;
+; ------------------------------------------------------------------------------
+;
+; The following macro is used when building the extended token table:
+;
+;   ETWO 'x', 'y'       Insert two-letter token "xy"
+;
+; The newline token can be entered using ETWO '-', '-'.
+;
+; See the deep dive on "Printing extended text tokens" for details on how
+; two-letter tokens are stored in the extended token table.
+;
+; Arguments:
+;
+;   'x'                 The first letter of the two-letter token to insert into
+;                       the table
+;
+;   'y'                 The second letter of the two-letter token to insert into
+;                       the table
+;
+; ******************************************************************************
+
+MACRO ETWO t, k
+
+ IF t = '-' AND k = '-' : EQUB 215 EOR VE : ENDIF
+ IF t = 'A' AND k = 'B' : EQUB 216 EOR VE : ENDIF
+ IF t = 'O' AND k = 'U' : EQUB 217 EOR VE : ENDIF
+ IF t = 'S' AND k = 'E' : EQUB 218 EOR VE : ENDIF
+ IF t = 'I' AND k = 'T' : EQUB 219 EOR VE : ENDIF
+ IF t = 'I' AND k = 'L' : EQUB 220 EOR VE : ENDIF
+ IF t = 'E' AND k = 'T' : EQUB 221 EOR VE : ENDIF
+ IF t = 'S' AND k = 'T' : EQUB 222 EOR VE : ENDIF
+ IF t = 'O' AND k = 'N' : EQUB 223 EOR VE : ENDIF
+ IF t = 'L' AND k = 'O' : EQUB 224 EOR VE : ENDIF
+ IF t = 'N' AND k = 'U' : EQUB 225 EOR VE : ENDIF
+ IF t = 'T' AND k = 'H' : EQUB 226 EOR VE : ENDIF
+ IF t = 'N' AND k = 'O' : EQUB 227 EOR VE : ENDIF
+
+ IF t = 'A' AND k = 'L' : EQUB 228 EOR VE : ENDIF
+ IF t = 'L' AND k = 'E' : EQUB 229 EOR VE : ENDIF
+ IF t = 'X' AND k = 'E' : EQUB 230 EOR VE : ENDIF
+ IF t = 'G' AND k = 'E' : EQUB 231 EOR VE : ENDIF
+ IF t = 'Z' AND k = 'A' : EQUB 232 EOR VE : ENDIF
+ IF t = 'C' AND k = 'E' : EQUB 233 EOR VE : ENDIF
+ IF t = 'B' AND k = 'I' : EQUB 234 EOR VE : ENDIF
+ IF t = 'S' AND k = 'O' : EQUB 235 EOR VE : ENDIF
+ IF t = 'U' AND k = 'S' : EQUB 236 EOR VE : ENDIF
+ IF t = 'E' AND k = 'S' : EQUB 237 EOR VE : ENDIF
+ IF t = 'A' AND k = 'R' : EQUB 238 EOR VE : ENDIF
+ IF t = 'M' AND k = 'A' : EQUB 239 EOR VE : ENDIF
+ IF t = 'I' AND k = 'N' : EQUB 240 EOR VE : ENDIF
+ IF t = 'D' AND k = 'I' : EQUB 241 EOR VE : ENDIF
+ IF t = 'R' AND k = 'E' : EQUB 242 EOR VE : ENDIF
+ IF t = 'A' AND k = '?' : EQUB 243 EOR VE : ENDIF
+ IF t = 'E' AND k = 'R' : EQUB 244 EOR VE : ENDIF
+ IF t = 'A' AND k = 'T' : EQUB 245 EOR VE : ENDIF
+ IF t = 'E' AND k = 'N' : EQUB 246 EOR VE : ENDIF
+ IF t = 'B' AND k = 'E' : EQUB 247 EOR VE : ENDIF
+ IF t = 'R' AND k = 'A' : EQUB 248 EOR VE : ENDIF
+ IF t = 'L' AND k = 'A' : EQUB 249 EOR VE : ENDIF
+ IF t = 'V' AND k = 'E' : EQUB 250 EOR VE : ENDIF
+ IF t = 'T' AND k = 'I' : EQUB 251 EOR VE : ENDIF
+ IF t = 'E' AND k = 'D' : EQUB 252 EOR VE : ENDIF
+ IF t = 'O' AND k = 'R' : EQUB 253 EOR VE : ENDIF
+ IF t = 'Q' AND k = 'U' : EQUB 254 EOR VE : ENDIF
+ IF t = 'A' AND k = 'N' : EQUB 255 EOR VE : ENDIF
+
+ENDMACRO
+
+; ******************************************************************************
+;
+;       Name: ERND
+;       Type: Macro
+;   Category: Text
+;    Summary: Macro definition for random tokens in the extended token table
+;  Deep dive: Extended text tokens
+;
+; ------------------------------------------------------------------------------
+;
+; The following macro is used when building the extended token table:
+;
+;   ERND n              Insert recursive token [n]
+;
+;                         * Tokens 0-123 get stored as n + 91
+;
+; See the deep dive on "Printing extended text tokens" for details on how
+; random tokens are stored in the extended token table.
+;
+; Arguments:
+;
+;   n                   The number of the random token to insert into the
+;                       table, in the range 0 to 37
+;
+; ******************************************************************************
+
+MACRO ERND n
+
+ EQUB (n + 91) EOR VE
+
+ENDMACRO
+
+; ******************************************************************************
+;
+;       Name: TOKN
+;       Type: Macro
+;   Category: Text
+;    Summary: Macro definition for standard tokens in the extended token table
+;  Deep dive: Printing text tokens
+;
+; ------------------------------------------------------------------------------
+;
+; The following macro is used when building the recursive token table:
+;
+;   TOKN n              Insert recursive token [n]
+;
+;                         * Tokens 0-95 get stored as n + 160
+;
+;                         * Tokens 128-145 get stored as n - 114
+;
+;                         * Tokens 96-127 get stored as n
+;
+; See the deep dive on "Printing text tokens" for details on how recursive
+; tokens are stored in the recursive token table.
+;
+; Arguments:
+;
+;   n                   The number of the recursive token to insert into the
+;                       table, in the range 0 to 145
+;
+; ******************************************************************************
+
+MACRO TOKN n
+
+ IF n >= 0 AND n <= 95
+  t = n + 160
+ ELIF n >= 128
+  t = n - 114
+ ELSE
+  t = n
+ ENDIF
+
+ EQUB t EOR VE
+
+ENDMACRO
+
+; ******************************************************************************
+;
+;       Name: CHAR
+;       Type: Macro
+;   Category: Text
+;    Summary: Macro definition for characters in the recursive token table
+;  Deep dive: Printing text tokens
+;
+; ------------------------------------------------------------------------------
+;
+; The following macro is used when building the recursive token table:
+;
+;   CHAR 'x'            Insert ASCII character "x"
+;
+; To include an apostrophe, use a backtick character, as in CHAR '`'.
+;
+; See the deep dive on "Printing text tokens" for details on how characters are
+; stored in the recursive token table.
+;
+; Arguments:
+;
+;   'x'                 The character to insert into the table
+;
+; ******************************************************************************
+
+MACRO CHAR x
+
+ IF x = '`'
+   EQUB 39 EOR RE
+ ELSE
+   EQUB x EOR RE
+ ENDIF
+
+ENDMACRO
+
+; ******************************************************************************
+;
+;       Name: TWOK
+;       Type: Macro
+;   Category: Text
+;    Summary: Macro definition for two-letter tokens in the token table
+;  Deep dive: Printing text tokens
+;
+; ------------------------------------------------------------------------------
+;
+; The following macro is used when building the recursive token table:
+;
+;   TWOK 'x', 'y'       Insert two-letter token "xy"
+;
+; See the deep dive on "Printing text tokens" for details on how two-letter
+; tokens are stored in the recursive token table.
+;
+; Arguments:
+;
+;   'x'                 The first letter of the two-letter token to insert into
+;                       the table
+;
+;   'y'                 The second letter of the two-letter token to insert into
+;                       the table
+;
+; ******************************************************************************
+
+MACRO TWOK t, k
+
+ IF t = 'A' AND k = 'L' : EQUB 128 EOR RE : ENDIF
+ IF t = 'L' AND k = 'E' : EQUB 129 EOR RE : ENDIF
+ IF t = 'X' AND k = 'E' : EQUB 130 EOR RE : ENDIF
+ IF t = 'G' AND k = 'E' : EQUB 131 EOR RE : ENDIF
+ IF t = 'Z' AND k = 'A' : EQUB 132 EOR RE : ENDIF
+ IF t = 'C' AND k = 'E' : EQUB 133 EOR RE : ENDIF
+ IF t = 'B' AND k = 'I' : EQUB 134 EOR RE : ENDIF
+ IF t = 'S' AND k = 'O' : EQUB 135 EOR RE : ENDIF
+ IF t = 'U' AND k = 'S' : EQUB 136 EOR RE : ENDIF
+ IF t = 'E' AND k = 'S' : EQUB 137 EOR RE : ENDIF
+ IF t = 'A' AND k = 'R' : EQUB 138 EOR RE : ENDIF
+ IF t = 'M' AND k = 'A' : EQUB 139 EOR RE : ENDIF
+ IF t = 'I' AND k = 'N' : EQUB 140 EOR RE : ENDIF
+ IF t = 'D' AND k = 'I' : EQUB 141 EOR RE : ENDIF
+ IF t = 'R' AND k = 'E' : EQUB 142 EOR RE : ENDIF
+ IF t = 'A' AND k = '?' : EQUB 143 EOR RE : ENDIF
+ IF t = 'E' AND k = 'R' : EQUB 144 EOR RE : ENDIF
+ IF t = 'A' AND k = 'T' : EQUB 145 EOR RE : ENDIF
+ IF t = 'E' AND k = 'N' : EQUB 146 EOR RE : ENDIF
+ IF t = 'B' AND k = 'E' : EQUB 147 EOR RE : ENDIF
+ IF t = 'R' AND k = 'A' : EQUB 148 EOR RE : ENDIF
+ IF t = 'L' AND k = 'A' : EQUB 149 EOR RE : ENDIF
+ IF t = 'V' AND k = 'E' : EQUB 150 EOR RE : ENDIF
+ IF t = 'T' AND k = 'I' : EQUB 151 EOR RE : ENDIF
+ IF t = 'E' AND k = 'D' : EQUB 152 EOR RE : ENDIF
+ IF t = 'O' AND k = 'R' : EQUB 153 EOR RE : ENDIF
+ IF t = 'Q' AND k = 'U' : EQUB 154 EOR RE : ENDIF
+ IF t = 'A' AND k = 'N' : EQUB 155 EOR RE : ENDIF
+ IF t = 'T' AND k = 'E' : EQUB 156 EOR RE : ENDIF
+ IF t = 'I' AND k = 'S' : EQUB 157 EOR RE : ENDIF
+ IF t = 'R' AND k = 'I' : EQUB 158 EOR RE : ENDIF
+ IF t = 'O' AND k = 'N' : EQUB 159 EOR RE : ENDIF
+
+ENDMACRO
+
+; ******************************************************************************
+;
+;       Name: CONT
+;       Type: Macro
+;   Category: Text
+;    Summary: Macro definition for control codes in the recursive token table
+;  Deep dive: Printing text tokens
+;
+; ------------------------------------------------------------------------------
+;
+; The following macro is used when building the recursive token table:
+;
+;   CONT n              Insert control code token {n}
+;
+; See the deep dive on "Printing text tokens" for details on how characters are
+; stored in the recursive token table.
+;
+; Arguments:
+;
+;   n                   The control code to insert into the table
+;
+; ******************************************************************************
+
+MACRO CONT n
+
+ EQUB n EOR RE
+
+ENDMACRO
+
+; ******************************************************************************
+;
+;       Name: RTOK
+;       Type: Macro
+;   Category: Text
+;    Summary: Macro definition for recursive tokens in the recursive token table
+;  Deep dive: Printing text tokens
+;
+; ------------------------------------------------------------------------------
+;
+; The following macro is used when building the recursive token table:
+;
+;   RTOK n              Insert recursive token [n]
+;
+;                         * Tokens 0-95 get stored as n + 160
+;
+;                         * Tokens 128-145 get stored as n - 114
+;
+;                         * Tokens 96-127 get stored as n
+;
+; See the deep dive on "Printing text tokens" for details on how recursive
+; tokens are stored in the recursive token table.
+;
+; Arguments:
+;
+;   n                   The number of the recursive token to insert into the
+;                       table, in the range 0 to 145
+;
+; ******************************************************************************
+
+MACRO RTOK n
+
+ IF n >= 0 AND n <= 95
+  t = n + 160
+ ELIF n >= 128
+  t = n - 114
+ ELSE
+  t = n
+ ENDIF
+
+ EQUB t EOR RE
 
 ENDMACRO
 

@@ -2762,7 +2762,7 @@ ENDIF
  BMI upsc1              ; If cycleCount is negative, skip the following
                         ; instruction
 
- JSR subm_D07C          ; ???
+ JSR ClearBuffers       ; ???
 
 .upsc1
 
@@ -2886,14 +2886,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_D07C
+;       Name: ClearBuffers
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Utility routines
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_D07C
+.ClearBuffers
 
  LDA cycleCount+1
  BEQ CD0D0
@@ -2921,10 +2921,10 @@ ENDIF
  PHA
 
  LDX #0
- JSR ClearPartOfBuffer
+ JSR ClearBuffersPhase
 
  LDX #1
- JSR ClearPartOfBuffer
+ JSR ClearBuffersPhase
 
  PLA                    ; Retore addr7(1 0) and addr6(1 0) from the stack
  STA addr6+1
@@ -3278,7 +3278,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: ClearPartOfBuffer
+;       Name: ClearBuffersPhase
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
@@ -3304,7 +3304,7 @@ ENDIF
 
  JMP CD37E
 
-.ClearPartOfBuffer
+.ClearBuffersPhase
 
  LDA cycleCount+1
  BEQ CD2B3
@@ -3507,7 +3507,7 @@ ENDIF
 ;
 ;       Name: FillMemory
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Utility routines
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -3967,7 +3967,7 @@ ENDIF
 ;
 ;       Name: FillMemory32Bytes
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Utility routines
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -4044,7 +4044,7 @@ ENDIF
 ;
 ;       Name: ClearMemory
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Utility routines
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -4305,7 +4305,7 @@ ENDIF
 ;
 ;       Name: ChangeDrawingPhase
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing tiles
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -4322,7 +4322,7 @@ ENDIF
 ;
 ;       Name: SetDrawingPhase
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing tiles
 ;    Summary: ???
 ;
 ; ******************************************************************************
