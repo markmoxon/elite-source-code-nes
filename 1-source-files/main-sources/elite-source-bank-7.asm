@@ -740,311 +740,407 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: ADD_CYCLES_CLC
-;       Type: Macro
-;   Category: Drawing tiles
-;    Summary: Add a specifed number to the cycle count
-;
-; ******************************************************************************
-
-MACRO ADD_CYCLES_CLC cycles
-
- CLC                    ; Clear the C flag for the addition below
-
- LDA cycleCount         ; Add cycles to cycleCount(1 0)
- ADC #LO(cycles)
- STA cycleCount
- LDA cycleCount+1
- ADC #HI(cycles)
- STA cycleCount+1
-
-ENDMACRO
-
-; ******************************************************************************
-;
-;       Name: ADD_CYCLES
-;       Type: Macro
-;   Category: Drawing tiles
-;    Summary: Add a specifed number to the cycle count
-;
-; ******************************************************************************
-
-MACRO ADD_CYCLES cycles
-
- LDA cycleCount         ; Add cycles to cycleCount(1 0)
- ADC #LO(cycles)
- STA cycleCount
- LDA cycleCount+1
- ADC #HI(cycles)
- STA cycleCount+1
-
-ENDMACRO
-
-; ******************************************************************************
-;
-;       Name: SUBTRACT_CYCLES
-;       Type: Macro
-;   Category: Drawing tiles
-;    Summary: Subtract a specifed number from the cycle count
-;
-; ******************************************************************************
-
-MACRO SUBTRACT_CYCLES cycles
-
- SEC                    ; Subtract cycles from cycleCount(1 0)
- LDA cycleCount
- SBC #LO(cycles)
- STA cycleCount
- LDA cycleCount+1
- SBC #HI(cycles)
- STA cycleCount+1
-
-ENDMACRO
-
-; ******************************************************************************
-;
-;       Name: subm_C582
+;       Name: SendIconBarToPPU
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing tiles
+;    Summary: Send the nametable entries for the icon bar to the PPU
 ;
 ; ******************************************************************************
 
-.subm_C582
+.SendIconBarToPPU
 
  SUBTRACT_CYCLES 2131   ; Subtract 2131 from the cycle count
 
- LDX addr1
- STX addr5
- LDA addr1+1
- CLC
- ADC #$70
- STA addr5+1
- LDA addr1+1
- ADC #$20
- STA PPU_ADDR
- STX PPU_ADDR
- LDY #0
+ LDX iconBarOffset      ; Set X to the low byte of iconBarOffset(1 0), to use in
+                        ; the following calculations
 
-.loop_CC5A6
+ STX addr5              ; Set addr5(1 0) = nameBuffer0 + iconBarOffset(1 0)
+ LDA iconBarOffset+1    ;
+ CLC                    ; So addr5(1 0) points to the tile entry in nametable
+ ADC #HI(nameBuffer0)   ; buffer 0 for the start of the icon bar (the addition
+ STA addr5+1            ; works because the low byte of nameBuffer0 is 0)
 
- LDA (addr5),Y
- STA PPU_DATA
- INY
- CPY #$40
- BNE loop_CC5A6
- LDA addr1+1
- ADC #$23
- STA PPU_ADDR
- STX PPU_ADDR
- LDY #0
+ LDA iconBarOffset+1    ; Set (A X) = PPU_NAME_0 + iconBarOffset(1 0)
+ ADC #HI(PPU_NAME_0)    ;
+                        ; The addition works because the low byte of PPU_NAME_0
+                        ; is 0
 
-.loop_CC5BC
+ STA PPU_ADDR           ; Set PPU_ADDR = (A X)
+ STX PPU_ADDR           ;              = PPU_NAME_0 + iconBarOffset(1 0)
+                        ;
+                        ; So PPU_ADDR points to the tile entry in the PPU's
+                        ; nametable 0 for the start of the icon bar
 
- LDA (addr5),Y
- STA PPU_DATA
- INY
- CPY #$40
- BNE loop_CC5BC
- LDA L00D7
- BMI CC5CD
- JMP subm_C630
+ LDY #0                 ; We now send the nametable entries for the icon bar to
+                        ; the PPU's nametable 0, so set a counter in Y
 
-.CC5CD
+.ibar1
 
- STA L00D3
- JMP subm_C6C6
+ LDA (addr5),Y          ; Send the Y-th nametable entry from addr5(1 0) to the
+ STA PPU_DATA           ; PPU
+
+ INY                    ; Increment the loop counter
+
+ CPY #2*32              ; Loop back until we have sent 2 rows of 32 tiles
+ BNE ibar1
+
+ LDA iconBarOffset+1    ; Set (A X) = PPU_NAME_1 + iconBarOffset(1 0)
+ ADC #HI(PPU_NAME_1-1)  ;
+                        ; The addition works because the low byte of PPU_NAME_1
+                        ; is 0 and because the C flag is set (as we just passed
+                        ; through the BNE above)
+
+ STA PPU_ADDR           ; Set PPU_ADDR = (A X)
+ STX PPU_ADDR           ;              = PPU_NAME_1 + iconBarOffset(1 0)
+                        ;
+                        ; So PPU_ADDR points to the tile entry in the PPU's
+                        ; nametable 1 for the start of the icon bar
+
+ LDY #0                 ; We now send the nametable entries for the icon bar to
+                        ; the PPU's nametable 1, so set a counter in Y
+
+.ibar2
+
+ LDA (addr5),Y          ; Send the Y-th nametable entry from addr5(1 0) to the
+ STA PPU_DATA           ; PPU
+
+ INY                    ; Increment the loop counter
+
+ CPY #2*32              ; Loop back until we have sent 2 rows of 32 tiles
+ BNE ibar2
+
+ LDA L00D7              ; If bit 7 of L00D7 is set, jump to ibar3 ???
+ BMI ibar3
+
+ JMP SendPatternsToPPU  ; Bit 7 of L00D7 is clear, so jump to SendPatternsToPPU
+                        ; to send more patterns to the PPU, returning from the
+                        ; subroutine using a tail call ???
+
+.ibar3
+
+ STA patternCounter     ; Set bit 7 of patternCounter, so patternCounter = 128
+
+ JMP subm_C6C6          ; Jump to subm_C6C6, returning from the subroutine using
+                        ; a tail call ???
 
 ; ******************************************************************************
 ;
-;       Name: subm_C5D2
+;       Name: SendPattern0ToPPU
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing tiles
+;    Summary: Sends patterns for four tiles to the PPU ???
 ;
 ; ******************************************************************************
 
-.subm_C5D2
+.SendPattern0ToPPU
 
  SUBTRACT_CYCLES 666    ; Subtract 666 from the cycle count
 
- BMI CC5E4
- JMP CC5F3
+ BMI patt1              ; If the result is negative, jump to patt1 to skip
+                        ; sending the patterns, as we have run out of cycles
 
-.CC5E4
+ JMP patt2              ; The result is still positive, so jump to patt2 to send
+                        ; the patterns, as we have got enough cycles left
+
+.patt1
 
  ADD_CYCLES 623         ; Add 623 to the cycle count
 
- JMP SendBuffersToPPU-1 ; Return from the subroutine (as SendBuffersToPPU-1
-                        ; contains an RTS)
+ JMP RTS1               ; Return from the subroutine (as RTS1 contains an RTS)
 
-.CC5F3
+.patt2
 
- LDA #0
+ LDA #0                 ; Set the low byte of addr5(1 0) to 0
  STA addr5
- LDA L00D3
- ASL A
- ASL A
+
+ LDA patternCounter     ; Set Y = patternCounter * 8
+ ASL A                  ;
+ ASL A                  ; And set the C flag to the overflow bit
  ASL A
  TAY
- LDA #1
- ROL A
- STA addr4
- TYA
- ADC #$50
- TAX
- LDA addr4
+
+ LDA #%00000001         ; Set addr4 = %0000001C
+ ROL A                  ;
+ STA addr4              ; And clear the C flag (as it gets set to bit 7 of A)
+                        ;
+                        ; So we now have the following:
+                        ;
+                        ;   (addr4 Y) = (2 0) + patternCounter * 8
+                        ;             = $0200 + patternCounter * 8
+                        ;
+                        ;   Y = LO($0200 + patternCounter * 8)
+                        ;
+                        ;   addr4 = HI($0200 + patternCounter * 8)
+
+ TYA                    ; Set (A X) = (addr4 Y) + $50
+ ADC #$50               ;           = $0200 + patternCounter * 8 + $50
+ TAX                    ;           = $0250 + patternCounter * 8
+                        ;
+                        ; Starting with the low bytes
+
+ LDA addr4              ; And then the high bytes
  ADC #0
- STA PPU_ADDR
- STX PPU_ADDR
- LDA L00D6
- ADC addr4
- STA addr5+1
- LDX #$20
 
-.loop_CC618
+ STA PPU_ADDR           ; Set PPU_ADDR = (A X)
+ STX PPU_ADDR           ;              = $0250 + patternCounter * 8
+                        ;
+                        ; So PPU_ADDR points to pattern 74 + patternCounter in
+                        ; the PPU
 
- LDA (addr5),Y
+ LDA L00D6              ; Set the high byte of addr5(1 0) = L00D6 + addr4
+ ADC addr4              ;
+ STA addr5+1            ; So addr5(1 0) = (L00D6+addr4 0)
+                        ;
+                        ; L00D6 = $81, $8D or $81 + L0464 << 2
+                        ; That's in ROM???
+
+ LDX #32                ; We now send 32 bytes to the PPU, which equates to four
+                        ; tile patterns (as each tile pattern contains eight
+                        ; bytes)
+                        ;
+                        ; We send 32 pattern bytes, starting from the Y-th byte
+                        ; of addr5(1 0), which corresponds to pattern number
+                        ; patternCounter from addr5(1 0)
+
+.patt3
+
+ LDA (addr5),Y          ; Send the Y-th byte from addr5(1 0) to the PPU
  STA PPU_DATA
- INY
- DEX
- BEQ CC624
- JMP loop_CC618
 
-.CC624
+ INY                    ; Increment the index in Y to point to the next byte
+                        ; from addr5(1 0)
 
- LDA L00D3
- CLC
+ DEX                    ; Decrement the loop counter
+
+ BEQ patt4              ; If the loop counter is now zero, jump to patt4 to exit
+                        ; the loop
+
+ JMP patt3              ; Loop back to send the next byte
+
+.patt4
+
+ LDA patternCounter     ; Add 4 to patternCounter, as we just sent four tile
+ CLC                    ; patterns
  ADC #4
- STA L00D3
- BPL subm_C5D2
- JMP subm_C6C6
+ STA patternCounter
+
+ BPL SendPattern0ToPPU  ; If patternCounter < 128, loop back to the start of the
+                        ; routine to send another four pattern tiles
+
+ JMP subm_C6C6          ; Jump to subm_C6C6, returning from the subroutine using
+                        ; a tail call ???
 
 ; ******************************************************************************
 ;
-;       Name: subm_C630
+;       Name: SendPatternsToPPU
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing tiles
 ;    Summary: ???
 ;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   Set to patternCounter or L00D7 (where 0 < A < 128)
+;
 ; ******************************************************************************
 
-.subm_C630
+.SendPatternsToPPU
 
- ASL A
- BMI subm_C5D2
+ ASL A                  ; If bit 6 of A is set, then 64 < A < 128, so jump to
+ BMI SendPattern0ToPPU  ; SendPattern0ToPPU
+
+                        ; Both bit 6 and bit 7 of A are clear, so 0 < A < 64
 
  SUBTRACT_CYCLES 1297   ; Subtract 1297 from the cycle count
 
- BMI CC645
- JMP CC654
+ BMI patn1              ; If the result is negative, jump to patn1 to skip
+                        ; sending the patterns, as we have run out of cycles
 
-.CC645
+ JMP patn2              ; The result is still positive, so jump to patn2 to send
+                        ; the patterns, as we have got enough cycles left
+
+.patn1
 
  ADD_CYCLES 1251        ; Add 1251 to the cycle count
 
- JMP SendBuffersToPPU-1 ; Return from the subroutine (as SendBuffersToPPU-1
-                        ; contains an RTS)
+ JMP RTS1               ; Return from the subroutine (as RTS1 contains an RTS)
 
-.CC654
+.patn2
 
- LDA #0
+ LDA #0                 ; Set the low byte of addr5(1 0) to 0
  STA addr5
- LDA L00D3
- ASL A
- ASL A
+
+ LDA patternCounter     ; Set Y = patternCounter * 8
+ ASL A                  ;
+ ASL A                  ; And set the C flag to the overflow bit
  ASL A
  TAY
- LDA #0
- ROL A
- STA addr4
- TYA
- ADC #$50
- TAX
- LDA addr4
+
+ LDA #%00000000         ; Set addr4 = %0000000C
+ ROL A                  ;
+ STA addr4              ; And clear the C flag (as it gets set to bit 7 of A)
+                        ;
+                        ; So we now have the following:
+                        ;
+                        ;   (addr4 Y) = (0 0) + patternCounter * 8
+                        ;             = patternCounter * 8
+                        ;
+                        ;   Y = LO(patternCounter * 8)
+                        ;
+                        ;   addr4 = HI(patternCounter * 8)
+
+ TYA                    ; Set (A X) = (addr4 Y) + $50
+ ADC #$50               ;           = $0050 + patternCounter * 8
+ TAX                    ;
+                        ; Starting with the low bytes
+
+ LDA addr4              ; And then the high bytes
  ADC #0
- STA PPU_ADDR
- STX PPU_ADDR
- LDA L00D6
- ADC addr4
- STA addr5+1
- LDX #$20
 
-.loop_CC679
+ STA PPU_ADDR           ; Set PPU_ADDR = (A X)
+ STX PPU_ADDR           ;              = $0050 + patternCounter * 8
+                        ;
+                        ; So PPU_ADDR points to pattern 10 + patternCounter in
+                        ; the PPU's pattern table 0
 
- LDA (addr5),Y
+ LDA L00D6              ; Set the high byte of addr5(1 0) = L00D6 + addr4
+ ADC addr4              ;
+ STA addr5+1            ; So addr5(1 0) = (L00D6+addr4 0)
+                        ;
+                        ; L00D6 = $81, $8D or $81 + L0464 << 2
+                        ; That's in ROM???
+
+ LDX #32                ; We now send 32 bytes to the PPU, which equates to four
+                        ; tile patterns (as each tile pattern contains eight
+                        ; bytes)
+                        ;
+                        ; We send 32 pattern bytes, starting from the Y-th byte
+                        ; of addr5(1 0), which corresponds to pattern number
+                        ; patternCounter from addr5(1 0)
+
+.patn3
+
+ LDA (addr5),Y          ; Send the Y-th byte from addr5(1 0) to the PPU
  STA PPU_DATA
- INY
- DEX
- BEQ CC685
- JMP loop_CC679
 
-.CC685
+ INY                    ; Increment the index in Y to point to the next byte
+                        ; from addr5(1 0)
 
- LDA #0
+ DEX                    ; Decrement the loop counter
+
+ BEQ patn4              ; If the loop counter is now zero, jump to patn4 to exit
+                        ; the loop
+
+ JMP patn3              ; Loop back to send the next byte
+
+.patn4
+
+ LDA #0                 ; Set the low byte of addr5(1 0) to 0
  STA addr5
- LDA L00D3
- ASL A
- ASL A
+
+ LDA patternCounter     ; Set Y = patternCounter * 8
+ ASL A                  ;
+ ASL A                  ; And set the C flag to the overflow bit
  ASL A
  TAY
- LDA #0
- ROL A
- STA addr4
- TYA
- ADC #$50
- TAX
- LDA addr4
+
+ LDA #%00000000         ; Set addr4 = %0000000C
+ ROL A                  ;
+ STA addr4              ; And clear the C flag (as it gets set to bit 7 of A)
+                        ;
+                        ; So we now have the following:
+                        ;
+                        ;   (addr4 Y) = (0 0) + patternCounter * 8
+                        ;             = patternCounter * 8
+                        ;
+                        ;   Y = LO(patternCounter * 8)
+                        ;
+                        ;   addr4 = HI(patternCounter * 8)
+
+ TYA                    ; Set (A X) = (addr4 Y) + $1050
+ ADC #$50               ;           = $1050 + patternCounter * 8
+ TAX                    ;
+                        ; Starting with the low bytes
+
+ LDA addr4              ; And then the high bytes
  ADC #$10
- STA PPU_ADDR
- STX PPU_ADDR
- LDA L00D6
- ADC addr4
- STA addr5+1
- LDX #$20
 
-.loop_CC6AA
+ STA PPU_ADDR           ; Set PPU_ADDR = (A X)
+ STX PPU_ADDR           ;              = $1050 + patternCounter * 8
+                        ;
+                        ; So PPU_ADDR points to pattern 10 + patternCounter in
+                        ; the PPU's pattern table 1
 
- LDA (addr5),Y
+ LDA L00D6              ; Set the high byte of addr5(1 0) = L00D6 + addr4
+ ADC addr4              ;
+ STA addr5+1            ; So addr5(1 0) = (L00D6+addr4 0)
+                        ;
+                        ; L00D6 = $81, $8D or $81 + L0464 << 2
+                        ; That's in ROM???
+
+ LDX #32                ; We now send 32 bytes to the PPU, which equates to four
+                        ; tile patterns (as each tile pattern contains eight
+                        ; bytes)
+                        ;
+                        ; We send 32 pattern bytes, starting from the Y-th byte
+                        ; of addr5(1 0), which corresponds to pattern number
+                        ; patternCounter from addr5(1 0)
+
+.patn5
+
+ LDA (addr5),Y          ; Send the Y-th byte from addr5(1 0) to the PPU
  STA PPU_DATA
- INY
- DEX
- BEQ CC6B6
- JMP loop_CC6AA
 
-.CC6B6
+ INY                    ; Increment the index in Y to point to the next byte
+                        ; from addr5(1 0)
 
- LDA L00D3
- CLC
+ DEX                    ; Decrement the loop counter
+
+ BEQ patn6              ; If the loop counter is now zero, jump to patn6 to exit
+                        ; the loop
+
+ JMP patn5              ; Loop back to send the next byte
+
+.patn6
+
+ LDA patternCounter     ; Add 4 to patternCounter, as we just sent four tile
+ CLC                    ; patterns
  ADC #4
- STA L00D3
- JMP subm_C630
+ STA patternCounter
+
+ JMP SendPatternsToPPU  ; Loop back to the start of the routine to send another
+                        ; four pattern tiles to both PPU pattern tables
 
 ; ******************************************************************************
 ;
-;       Name: subm_C6C0
+;       Name: SendPatternsToPPU1
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing tiles
+;    Summary: Send the pattern table entries to the PPU (this is a jump so we
+;             can call this routine using a branch instruction)
 ;
 ; ******************************************************************************
 
-.subm_C6C0
+.SendPatternsToPPU1
 
- JMP subm_C630
+ JMP SendPatternsToPPU
 
 ; ******************************************************************************
 ;
-;       Name: subm_C6C3
+;       Name: SendIconBarToPPU1
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing tiles
+;    Summary: Send the nametable entries for the icon bar to the PPU (this is a
+;             jump so we can call this routine using a branch instruction)
 ;
 ; ******************************************************************************
 
-.subm_C6C3
+.SendIconBarToPPU1
 
- JMP subm_C582
+ JMP SendIconBarToPPU   ; Jump to SendIconBarToPPU to send the nametable
+                        ; entries for the icon bar to the PPU, returning from
+                        ; the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -1052,6 +1148,12 @@ ENDMACRO
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
+;
+; ------------------------------------------------------------------------------
+;
+; Other entry points:
+;
+;   RTS1                Contains an RTS
 ;
 ; ******************************************************************************
 
@@ -1061,25 +1163,27 @@ ENDMACRO
  LDA phaseFlags,X
 
  AND #%00010000         ; If bit 4 of A is clear, return from the subroutine
- BEQ SendBuffersToPPU-1 ; (as SendBuffersToPPU-1 contains an RTS)
+ BEQ RTS1               ; (as RTS1 contains an RTS)
 
  SUBTRACT_CYCLES 42     ; Subtract 42 from the cycle count
 
  BMI CC6E1
- JMP CC6F0
+
+ JMP CC6F0              ; Jump to subm_C849 via CC6F0
 
 .CC6E1
 
  ADD_CYCLES 65521       ; Add 65521 to the cycle count (i.e. subtract 15)
 
- JMP SendBuffersToPPU-1 ; Return from the subroutine (as SendBuffersToPPU-1
-                        ; contains an RTS)
+ JMP RTS1               ; Return from the subroutine (as RTS1 contains an RTS)
 
 .CC6F0
 
  JMP subm_C849
 
- RTS
+.RTS1
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -1088,19 +1192,21 @@ ENDMACRO
 ;   Category: ???
 ;    Summary: ???
 ;
-; ------------------------------------------------------------------------------
-;
-; Other entry points:
-;
-;   SendBuffersToPPU-1  Contains an RTS
-;
 ; ******************************************************************************
 
 .SendBuffersToPPU
 
- LDA L00D3
- BEQ subm_C6C3
- BPL subm_C6C0
+ LDA patternCounter     ; If patternCounter is zero, jump to SendIconBarToPPU
+ BEQ SendIconBarToPPU1  ; via SendIconBarToPPU1 to send the nametable entries
+                        ; for the icon bar to the PPU, returning from the
+                        ; subroutine using a tail call
+
+ BPL SendPatternsToPPU1 ; If 0 < patternCounter < 128, jump to SendPatternsToPPU
+                        ; via SendPatternsToPPU1, returning from the subroutine
+                        ; using a tail call
+
+                        ; If we get here then patternCounter >= 128
+
  LDX otherPhase
  LDA phaseFlags,X
  AND #$10
@@ -1137,7 +1243,7 @@ ENDMACRO
  LDA phaseFlags,X
 
  ASL A                  ; If bit 6 of A is clear, return from the subroutine
- BPL SendBuffersToPPU-1 ; (as SendBuffersToPPU-1 contains an RTS)
+ BPL RTS1               ; (as RTS1 contains an RTS)
 
  LDY phaseL00CD,X
  AND #8
@@ -1273,22 +1379,18 @@ ENDMACRO
 
 ; ******************************************************************************
 ;
-;       Name: subm_C836
+;       Name: Add4subm_CBDD
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_C836
+.Add4subm_CBDD
 
  ADD_CYCLES_CLC 4       ; Add 4 to the cycle count
 
- JMP CCBDD
-
-.CC846
-
- JMP CCA2E
+ JMP subm_CBDD
 
 ; ******************************************************************************
 ;
@@ -1298,6 +1400,10 @@ ENDMACRO
 ;    Summary: ???
 ;
 ; ******************************************************************************
+
+.CC846
+
+ JMP CCA2E
 
 .subm_C849
 
@@ -1310,8 +1416,7 @@ ENDMACRO
 
  ADD_CYCLES 141         ; Add 141 to the cycle count
 
- JMP SendBuffersToPPU-1 ; Return from the subroutine (as SendBuffersToPPU-1
-                        ; contains an RTS)
+ JMP RTS1               ; Return from the subroutine (as RTS1 contains an RTS)
 
 .CC86A
 
@@ -1333,7 +1438,7 @@ ENDMACRO
  STA L00C9
  SEC
  SBC temp1
- BCS subm_C836
+ BCS Add4subm_CBDD
  LDX ppuCtrlCopy
  BEQ CC893
  CMP #$BF
@@ -1547,7 +1652,7 @@ ENDMACRO
  STA phaseL04BE,X
  LDA L00C9
  STA tileNumber4,X
- JMP CCBBC
+ JMP subm_CBBC
 
 .CCA1B
 
@@ -1717,8 +1822,7 @@ ENDMACRO
  LDA L00C9
  STA tileNumber4,X
 
- JMP SendBuffersToPPU-1 ; Return from the subroutine (as SendBuffersToPPU-1
-                        ; contains an RTS)
+ JMP RTS1               ; Return from the subroutine (as RTS1 contains an RTS)
 
 ; ******************************************************************************
 ;
@@ -1744,8 +1848,7 @@ ENDMACRO
 
  ADD_CYCLES 176         ; Add 176 to the cycle count
 
- JMP SendBuffersToPPU-1 ; Return from the subroutine (as SendBuffersToPPU-1
-                        ; contains an RTS)
+ JMP RTS1               ; Return from the subroutine (as RTS1 contains an RTS)
 
 .CCB6A
 
@@ -1775,46 +1878,72 @@ ENDMACRO
 
 ; ******************************************************************************
 ;
-;       Name: subm_CB9C
+;       Name: Add58Cycles
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_CB9C
+.Add58Cycles
 
  ADD_CYCLES_CLC 58      ; Add 58 to the cycle count
 
- JMP SendBuffersToPPU-1 ; Return from the subroutine (as SendBuffersToPPU-1
-                        ; contains an RTS)
+ JMP RTS1               ; Return from the subroutine (as RTS1 contains an RTS)
 
-.CCBAC
+; ******************************************************************************
+;
+;       Name: Add53subm_CB42
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
+
+.Add53subm_CB42
 
  ADD_CYCLES_CLC 53      ; Add 53 to the cycle count
 
  JMP subm_CB42
 
-.CCBBC
+; ******************************************************************************
+;
+;       Name: subm_CBBC
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
+
+.subm_CBBC
 
  SUBTRACT_CYCLES 109    ; Subtract 109 from the cycle count
 
  BMI CCBCE
- JMP CCBDD
+
+ JMP subm_CBDD
 
 .CCBCE
 
  ADD_CYCLES 68          ; Add 68 to the cycle count
 
- JMP SendBuffersToPPU-1 ; Return from the subroutine (as SendBuffersToPPU-1
-                        ; contains an RTS)
+ JMP RTS1               ; Return from the subroutine (as RTS1 contains an RTS)
 
-.CCBDD
+; ******************************************************************************
+;
+;       Name: subm_CBDD
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
+
+.subm_CBDD
 
  LDX otherPhase
  LDA phaseFlags,X
  ASL A
- BPL subm_CB9C
+ BPL Add58Cycles
  LDY phaseL00CD,X
  AND #8
  BEQ CCBED
@@ -1827,7 +1956,7 @@ ENDMACRO
  STA L00CF
  SEC
  SBC temp1
- BCS CCBAC
+ BCS Add53subm_CB42
  LDY phaseL00DD,X
  LDA phaseL04C0,X
  STA addr5+1
@@ -2005,8 +2134,7 @@ ENDMACRO
  LDA addr5+1
  STA phaseL04C0,X
 
- JMP SendBuffersToPPU-1 ; Return from the subroutine (as SendBuffersToPPU-1
-                        ; contains an RTS)
+ JMP RTS1               ; Return from the subroutine (as RTS1 contains an RTS)
 
 ; ******************************************************************************
 ;

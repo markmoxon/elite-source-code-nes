@@ -2215,17 +2215,19 @@ ENDIF
 .DrawTitleScreen
 
  JSR subm_D933
- LDA #2
- STA addr1+1
- LDA #$80
- STA addr1
 
- LDA #$3F
+ LDA #HI(20*32)         ; Set iconBarOffset(1 0) = 20*32
+ STA iconBarOffset+1
+ LDA #LO(20*32)
+ STA iconBarOffset
+
+ LDA #$3F               ; Set PPU_ADDR = $3F00
  STA PPU_ADDR
  LDA #$00
  STA PPU_ADDR
 
  LDA #$0F
+
  LDX #$1F
 
 .loop_CAAD5
@@ -2234,7 +2236,7 @@ ENDIF
  DEX
  BPL loop_CAAD5
 
- LDA #$20
+ LDA #$20               ; Set PPU_ADDR = $2000
  STA PPU_ADDR
  LDA #$00
  STA PPU_ADDR
@@ -2410,20 +2412,23 @@ ENDIF
 
 .CAC08
 
- LDA #2
- STA addr1+1
- LDA #$80
- STA addr1
- LDA QQ11
- BPL CAC1C
- LDA #3
- STA addr1+1
- LDA #$60
- STA addr1
+ LDA #HI(20*32)         ; Set iconBarOffset(1 0) = 20*32
+ STA iconBarOffset+1
+ LDA #LO(20*32)
+ STA iconBarOffset
+
+ LDA QQ11               ; If bit 7 of the view number is clear, jump to CAC1C to
+ BPL CAC1C              ; keep this value of iconBarOffset
+
+ LDA #HI(27*32)         ; Set iconBarOffset(1 0) = 27*32
+ STA iconBarOffset+1
+ LDA #LO(27*32)         ; So the icon bar is on row 20 if bit 7 of the view
+ STA iconBarOffset      ; number is clear (so there is a dashboard), and it's on
+                        ; row 27 is bit 7 is set (so there is no dashboard)
 
 .CAC1C
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -2442,16 +2447,20 @@ ENDIF
  BNE CAC1C
  STY L0464
  JSR subm_ACEB
- LDA #2
- STA addr1+1
- LDA #$80
- STA addr1
- LDA QQ11
- BPL CAC3E
- LDA #3
- STA addr1+1
- LDA #$60
- STA addr1
+
+ LDA #HI(20*32)         ; Set iconBarOffset(1 0) = 20*32
+ STA iconBarOffset+1
+ LDA #LO(20*32)
+ STA iconBarOffset
+
+ LDA QQ11               ; If bit 7 of the view number is clear, jump to CAC3E to
+ BPL CAC3E              ; keep this value of iconBarOffset
+
+ LDA #HI(27*32)         ; Set iconBarOffset(1 0) = 27*32
+ STA iconBarOffset+1    ;
+ LDA #LO(27*32)         ; So the icon bar is on row 20 if bit 7 of the view
+ STA iconBarOffset      ; number is clear (so there is a dashboard), and it's on
+                        ; row 27 is bit 7 is set (so there is no dashboard)
 
 .CAC3E
 
@@ -2461,14 +2470,14 @@ ENDIF
  ADC #$81
  STA L00D6
  LDX #0
- STX L00D3
+ STX patternCounter
 
 .loop_CAC4B
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA L00D3
+ LDA patternCounter
  BPL loop_CAC4B
 
 ; ******************************************************************************
@@ -2484,27 +2493,37 @@ ENDIF
 
  LDA L0464
  JSR subm_AE18
- LDA QQ11
- AND #$40
- BNE CAC85
+
+ LDA QQ11               ; If bit 6 of the view number is set, then there is no
+ AND #%01000000         ; icon bar, so jump to CAC85 to return from the
+ BNE CAC85              ; subroutine ???
+
  JSR subm_ABE7
- LDA #$80
+
+ LDA #%10000000         ; Set bit 7 of L00D7
  STA L00D7
- ASL A
- STA L00D3
+
+ ASL A                  ; Set patternCounter = 0 and set the C flag
+ STA patternCounter
 
 .loop_CAC72
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA L00D3
- BPL loop_CAC72
- ASL L00D7
+ LDA patternCounter     ; Loop back to keep the PPU configured in this way until
+ BPL loop_CAC72         ; bit 7 of patternCounter gets set in the NMI handler
+                        ;
+                        ; This happens when the icon bar's nametable entries
+                        ; have been sent to the PPU, so this loop keeps the PPU
+                        ; configured to use nametable 0 and pattern table 0
+                        ; until the icon bar nametable entries have been sent
+
+ ASL L00D7              ; Set L00D7 = 0 and set the C flag
 
 .CAC85
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -2624,7 +2643,7 @@ ENDIF
  AND #$40
  BNE CACEA
  LDX #0
- STX L00D3
+ STX patternCounter
 
 .CACEA
 
