@@ -2396,7 +2396,7 @@ ENDIF
  LDA QQ11
  CMP #$BA
  BNE CAC08
- LDA L0464
+ LDA iconBarType
  CMP #3
  BEQ CABFA
  JSR Set_K_K3_XC_YC
@@ -2445,7 +2445,7 @@ ENDIF
  LDA QQ11
  AND #$40
  BNE CAC1C
- STY L0464
+ STY iconBarType
  JSR subm_ACEB
 
  LDA #HI(20*32)         ; Set iconBarOffset(1 0) = 20*32
@@ -2464,21 +2464,31 @@ ENDIF
 
 .CAC3E
 
- LDA L0464
- ASL A
- ASL A
- ADC #$81
- STA L00D6
- LDX #0
- STX patternCounter
+ LDA iconBarType        ; Set iconBarImageHi to the high byte of the correct
+ ASL A                  ; icon bar image block for the current icon bar type,
+ ASL A                  ; which we can calculate like this:
+ ADC #HI(iconBarImage0) ;
+ STA iconBarImageHi     ;   HI(iconBarImage0) + 4 * iconBarType
+                        ;
+                        ; as each icon bar image block contains $0400 bytes,
+                        ; and iconBarType is the icon bar type, 0 to 4
+
+ LDX #0                 ; Set barPatternCounter = 0 so the NMI handler sends the
+ STX barPatternCounter  ; icon bar's nametable and pattern data to the PPU
 
 .loop_CAC4B
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA patternCounter
- BPL loop_CAC4B
+ LDA barPatternCounter  ; Loop back to keep the PPU configured in this way until
+ BPL loop_CAC4B         ; barPatternCounter is set to 128
+                        ;
+                        ; This happens when the NMI handler has finished sending
+                        ; all the icon bar's nametable and pattern data to
+                        ; the PPU, so this loop keeps the PPU configured to use
+                        ; nametable 0 and pattern table 0 until the icon bar
+                        ; nametable and pattern data have all been sent
 
 ; ******************************************************************************
 ;
@@ -2491,7 +2501,7 @@ ENDIF
 
 .subm_AC5C
 
- LDA L0464
+ LDA iconBarType
  JSR subm_AE18
 
  LDA QQ11               ; If bit 6 of the view number is set, then there is no
@@ -2500,26 +2510,31 @@ ENDIF
 
  JSR subm_ABE7
 
- LDA #%10000000         ; Set bit 7 of L00D7
- STA L00D7
+ LDA #%10000000         ; Set bit 7 of skipBarPatternsPPU, so the NMI handler
+ STA skipBarPatternsPPU ; only sends the nametable entries and not the tile
+                        ; patterns
 
- ASL A                  ; Set patternCounter = 0 and set the C flag
- STA patternCounter
+ ASL A                  ; Set barPatternCounter = 0, so the NMI handler sends
+ STA barPatternCounter  ; icon bar data to the PPU
 
 .loop_CAC72
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA patternCounter     ; Loop back to keep the PPU configured in this way until
- BPL loop_CAC72         ; bit 7 of patternCounter gets set in the NMI handler
+ LDA barPatternCounter  ; Loop back to keep the PPU configured in this way until
+ BPL loop_CAC72         ; barPatternCounter is set to 128
                         ;
-                        ; This happens when the icon bar's nametable entries
-                        ; have been sent to the PPU, so this loop keeps the PPU
-                        ; configured to use nametable 0 and pattern table 0
-                        ; until the icon bar nametable entries have been sent
+                        ; This happens when the NMI handler has finished sending
+                        ; all the icon bar's nametable entries to the PPU, so
+                        ; this loop keeps the PPU configured to use nametable 0
+                        ; and pattern table 0 until the icon bar nametable
+                        ; entries have been sent
 
- ASL L00D7              ; Set L00D7 = 0 and set the C flag
+ ASL skipBarPatternsPPU ; Set skipBarPatternsPPU = 0, so the NMI handler goes
+                        ; back to sending both nametable entries and tile
+                        ; patterns for the icon bar (when barPatternCounter is
+                        ; non-zero)
 
 .CAC85
 
@@ -2634,16 +2649,22 @@ ENDIF
  ASL A
  ASL A
  STA L0461
- LDA L0464
- ASL A
- ASL A
- ADC #$81
- STA L00D6
+
+ LDA iconBarType        ; Set iconBarImageHi to the high byte of the correct
+ ASL A                  ; icon bar image block for the current icon bar type,
+ ASL A                  ; which we can calculate like this:
+ ADC #HI(iconBarImage0) ;
+ STA iconBarImageHi     ;   HI(iconBarImage0) + 4 * iconBarType
+                        ;
+                        ; as each icon bar image block contains $0400 bytes,
+                        ; and iconBarType is the icon bar type, 0 to 4
+
  LDA QQ11
  AND #$40
  BNE CACEA
- LDX #0
- STX patternCounter
+
+ LDX #0                 ; Set barPatternCounter = 0 so the NMI handler sends the
+ STX barPatternCounter  ; icon bar's nametable and pattern data to the PPU
 
 .CACEA
 
@@ -2721,7 +2742,7 @@ ENDIF
 
 .subm_AD2A
 
- LDA L0464
+ LDA iconBarType
  ASL A
  ASL A
  ASL A
@@ -2913,13 +2934,13 @@ ENDIF
 
  TAY
  BMI subm_AE18_ADBC
- STA L0464
+ STA iconBarType
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
  JSR subm_AD2A
- LDA L0464
+ LDA iconBarType
  BEQ CAEAB
  CMP #1
  BEQ CAE42
@@ -3034,7 +3055,7 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA L0464
+ LDA iconBarType
  ASL A
  ASL A
  ASL A
