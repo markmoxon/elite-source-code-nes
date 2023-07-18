@@ -827,9 +827,8 @@ ENDIF
  STA barPatternCounter  ; Set barPatternCounter = 128 so the NMI handler does
                         ; not send any more icon bar data to the PPU
 
- JMP ConsiderNextStage  ; Jump to ConsiderNextStage to move on to the next stage
-                        ; if there are enough free cycles, returning from the
-                        ; subroutine using a tail call
+ JMP ConsiderSendTiles  ; Jump to ConsiderSendTiles to start sending tiles to
+                        ; the PPU, but only if there are enough free cycles
 
 ; ******************************************************************************
 ;
@@ -886,21 +885,8 @@ ENDIF
                         ;
                         ;   (addr4 Y) = (2 0) + (barPatternCounter mod 64) * 8
                         ;             = $0200 + (barPatternCounter mod 64) * 8
-
- TYA                    ; Set (A X) = (addr4 Y) + $50
- ADC #$50               ;           = $0250 + (barPatternCounter mod 64) * 8
- TAX                    ;
-                        ; Starting with the low bytes
-
- LDA addr4              ; And then the high bytes
- ADC #0
-
-                        ; So we now have the following:
-                        ;
-                        ;   (A X) = $0250 + (barPatternCounter mod 64) * 8
-                        ;         = 74 * 8 + (barPatternCounter mod 64) * 8
-                        ;         = (74 + barPatternCounter mod 64) * 8
-                        ;         = (10 + 64 + barPatternCounter mod 64) * 8
+                        ;             = 64 * 8 + (barPatternCounter mod 64) * 8
+                        ;             = (64 + barPatternCounter mod 64) * 8
                         ;
                         ; We only call this routine when this is true:
                         ;
@@ -912,17 +898,25 @@ ENDIF
                         ;
                         ; So we if we substitute this into the above, we get:
                         ;
-                        ;   (A X) = (10 + 64 + barPatternCounter mod 64) * 8
-                        ;         = (10 + barPatternCounter) * 8
+                        ;   (addr4 Y) = (10 + 64 + barPatternCounter mod 64) * 8
+                        ;             = barPatternCounter * 8
+
+ TYA                    ; Set (A X) = (addr4 Y) + PPU_PATT_0 + $50
+ ADC #$50               ;           = PPU_PATT_0 + $50 + barPatternCounter * 8
+ TAX                    ;
+                        ; Starting with the low bytes
+
+ LDA addr4              ; And then the high bytes (this works because we know
+ ADC #HI(PPU_PATT_0)    ; the low byte of PPU_PATT_0 is 0)
 
  STA PPU_ADDR           ; Set PPU_ADDR = (A X)
- STX PPU_ADDR           ;              = (10 + barPatternCounter) * 8
-                        ;              = $0000 + (10 + barPatternCounter) * 8
+ STX PPU_ADDR           ;           = PPU_PATT_0 + $50 + barPatternCounter * 8
+                        ;           = PPU_PATT_0 + (10 + barPatternCounter) * 8
                         ;
                         ; So PPU_ADDR points to a pattern in PPU pattern table
-                        ; 0, which is at address $0000 in the PPU
+                        ; 0, which is at address PPU_PATT_0 in the PPU
                         ; 
-                        ; It points to pattern 10 when barPatternCounter = 0,
+                        ; So it points to pattern 10 when barPatternCounter = 0,
                         ; and points to patterns 10 to 137 as barPatternCounter
                         ; increments from 0 to 127
 
@@ -984,9 +978,8 @@ ENDIF
  BPL BarPatternsHiToPPU ; If barPatternCounter < 128, loop back to the start of
                         ; the routine to send another four pattern tiles
 
- JMP ConsiderNextStage  ; Jump to ConsiderNextStage to move on to the next stage
-                        ; if there are enough free cycles, returning from the
-                        ; subroutine using a tail call
+ JMP ConsiderSendTiles  ; Jump to ConsiderSendTiles to start sending tiles to
+                        ; the PPU, but only if there are enough free cycles
 
 ; ******************************************************************************
 ;
@@ -1059,22 +1052,22 @@ ENDIF
                         ;
                         ;   (addr4 Y) = barPatternCounter * 8
 
- TYA                    ; Set (A X) = (addr4 Y) + $50
- ADC #$50               ;           = $0050 + barPatternCounter * 8
+ TYA                    ; Set (A X) = (addr4 Y) + PPU_PATT_0 + $50
+ ADC #$50               ;           = PPU_PATT_0 + $50 + barPatternCounter * 8
  TAX                    ;
                         ; Starting with the low bytes
 
- LDA addr4              ; And then the high bytes
- ADC #0
+ LDA addr4              ; And then the high bytes (this works because we know
+ ADC #HI(PPU_PATT_0)    ; the low byte of PPU_PATT_0 is 0)
 
  STA PPU_ADDR           ; Set PPU_ADDR = (A X)
- STX PPU_ADDR           ;              = $0050 + barPatternCounter * 8
-                        ;              = (10 + barPatternCounter) * 8
+ STX PPU_ADDR           ;           = PPU_PATT_0 + $50 + barPatternCounter * 8
+                        ;           = PPU_PATT_0 + (10 + barPatternCounter) * 8
                         ;
                         ; So PPU_ADDR points to a pattern in PPU pattern table
-                        ; 0, which is at address $0000 in the PPU
+                        ; 0, which is at address PPU_PATT_0 in the PPU
                         ; 
-                        ; It points to pattern 10 when barPatternCounter = 0,
+                        ; So it points to pattern 10 when barPatternCounter = 0,
                         ; and points to patterns 10 to 137 as barPatternCounter
                         ; increments from 0 to 127
 
@@ -1140,22 +1133,22 @@ ENDIF
                         ;
                         ;   (addr4 Y) = barPatternCounter * 8
 
- TYA                    ; Set (A X) = (addr4 Y) + $1050
- ADC #$50               ;           = $1050 + barPatternCounter * 8
+ TYA                    ; Set (A X) = (addr4 Y) + PPU_PATT_1 + $50
+ ADC #$50               ;           = PPU_PATT_1 + $50 + barPatternCounter * 8
  TAX                    ;
                         ; Starting with the low bytes
 
- LDA addr4              ; And then the high bytes
- ADC #$10
+ LDA addr4              ; And then the high bytes (this works because we know
+ ADC #HI(PPU_PATT_1)    ; the low byte of PPU_PATT_1 is 0)
 
  STA PPU_ADDR           ; Set PPU_ADDR = (A X)
- STX PPU_ADDR           ;              = $1050 + barPatternCounter * 8
-                        ;              = $1000 + (10 + barPatternCounter) * 8
+ STX PPU_ADDR           ;           = PPU_PATT_1 + $50 + barPatternCounter * 8
+                        ;           = PPU_PATT_1 + (10 + barPatternCounter) * 8
                         ;
                         ; So PPU_ADDR points to a pattern in PPU pattern table
-                        ; 1, which is at address $1000 in the PPU
+                        ; 1, which is at address PPU_PATT_1 in the PPU
                         ; 
-                        ; It points to pattern 10 when barPatternCounter = 0,
+                        ; So it points to pattern 10 when barPatternCounter = 0,
                         ; and points to patterns 10 to 137 as barPatternCounter
                         ; increments from 0 to 127
 
@@ -1244,7 +1237,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: ConsiderNextStage
+;       Name: ConsiderSendTiles
 ;       Type: Subroutine
 ;   Category: Drawing tiles
 ;    Summary: If there are enough free cycles, move on to the next stage of
@@ -1258,7 +1251,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.ConsiderNextStage
+.ConsiderSendTiles
 
  LDX otherPhase         ; Set A to the phase flags for the other phase ???
  LDA phaseFlags,X
@@ -1275,7 +1268,7 @@ ENDIF
 
  JMP next2              ; The result is positive, so we have enough cycles to
                         ; keep sending PPU data in this VBlank, so jump to
-                        ; TilePatternsToPPU via next2 to move on to the next
+                        ; SendTilesToPPU via next2 to move on to the next
                         ; stage of sending tile patterns to the PPU
 
 .next1
@@ -1286,7 +1279,7 @@ ENDIF
 
 .next2
 
- JMP TilePatternsToPPU  ; Jump to TilePatternsToPPU to move on to the next stage
+ JMP SendTilesToPPU     ; Jump to SendTilesToPPU to move on to the next stage
                         ; of sending tile patterns to the PPU
 
 .RTS1
@@ -1297,7 +1290,7 @@ ENDIF
 ;
 ;       Name: SendBuffersToPPU
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing tiles
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -1319,7 +1312,7 @@ ENDIF
 
  LDX otherPhase
  LDA phaseFlags,X
- AND #$10
+ AND #%00010000
  BEQ sbuf7
 
  SUBTRACT_CYCLES 56     ; Subtract 56 from the cycle count
@@ -1327,14 +1320,17 @@ ENDIF
  TXA
  EOR #1
  TAY
+
  LDA phaseFlags,Y
- AND #$A0
+ AND #%10100000
  ORA L00F6
- CMP #$81
+ CMP #%10000001
  BNE sbuf2
+
  LDA tileNumber0,X
  BNE sbuf1
- LDA #$FF
+
+ LDA #255
 
 .sbuf1
 
@@ -1346,7 +1342,7 @@ ENDIF
 
 .sbuf2
 
- JMP TilePatternsToPPU
+ JMP SendTilesToPPU
 
 .sbuf3
 
@@ -1372,7 +1368,7 @@ ENDIF
 
 .sbuf5
 
- JMP TilePatternsToPPU
+ JMP SendTilesToPPU
 
 .sbuf6
 
@@ -1385,7 +1381,7 @@ ENDIF
  EOR palettePhase
  STA palettePhase
  JSR SetPaletteForPhase
- JMP TilePatternsToPPU
+ JMP SendTilesToPPU
 
 .sbuf7
 
@@ -1436,36 +1432,65 @@ ENDIF
 ;
 ;       Name: subm_C7D2
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing tiles
 ;    Summary: ???
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The current value of otherPhase
 ;
 ; ******************************************************************************
 
 .subm_C7D2
 
- TXA
+ TXA                    ; Set otherPhasex8 = X << 3
+ ASL A                  ;                  = otherPhase * 8
  ASL A
  ASL A
- ASL A
- STA pallettePhasex8
- LSR A
- ORA #$20
- STA ppuNametableAddr+1
- LDA #$10
- STA L00E0
- LDA #0
- STA ppuNametableAddr
+ STA otherPhasex8
+
+ LSR A                  ; Set A = otherPhase << 2
+                        ;
+                        ; So A = 0 or 4 (%100), depending on the current value
+                        ; of otherPhase
+
+ ORA #HI(PPU_NAME_0)    ; Set the high byte of ppuNametableAddr(1 0) to
+ STA ppuNametableAddr+1 ; HI(PPU_NAME_0) + A, which will be HI(PPU_NAME_0) or
+                        ; HI(PPU_NAME_0) + 4, depending on the current value of
+                        ; otherPhase
+
+ LDA #HI(PPU_PATT_1)    ; Set ppuPatternTableHi to point to the high byte of
+ STA ppuPatternTableHi  ; pattern table 1 in the PPU
+
+ LDA #0                 ; Zero the low byte of ppuNametableAddr(1 0), so we end
+ STA ppuNametableAddr   ; up with ppuNametableAddr(1 0) set to:
+                        ;
+                        ;   * PPU_NAME_0 ($2000) when otherPhase = 0
+                        ;
+                        ;   * PPU_NAME_1 ($2400) when otherPhase = 1
+                        ;
+                        ; So ppuNametableAddr(1 0) points to the PPU nametable
+                        ; for this phase
+
  LDA L00CC
  STA tileNumber3,X
+
  STA tileNumber2,X
+
  LDA L00D2
  STA tileNumber4,X
+
  STA tileNumber1,X
+
  LDA phaseFlags,X
- ORA #$10
+ ORA #%00010000
  STA phaseFlags,X
+
  LDA #0
  STA addr4
+
  LDA tileNumber4,X
  ASL A
  ROL addr4
@@ -1473,12 +1498,15 @@ ENDIF
  ROL addr4
  ASL A
  STA phaseL00DB,X
+
  LDA addr4
  ROL A
  ADC pattBufferHiAddr,X
  STA phaseL04BE,X
+
  LDA #0
  STA addr4
+
  LDA tileNumber3,X
  ASL A
  ROL addr4
@@ -1487,60 +1515,63 @@ ENDIF
  ASL A
  STA phaseL00DD,X
  ROL addr4
+
  LDA addr4
  ADC nameBufferHiAddr,X
  STA phaseL04C0,X
+
  LDA ppuNametableAddr+1
  SEC
  SBC nameBufferHiAddr,X
  STA phaseL04C6,X
- JMP TilePatternsToPPU
+
+ JMP SendTilesToPPU
 
 ; ******************************************************************************
 ;
-;       Name: TilePatternsToPPU
+;       Name: SendTilesToPPU (Part 1 of 5)
 ;       Type: Subroutine
 ;   Category: Drawing tiles
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.CCBDD
+.tpat1
 
  ADD_CYCLES_CLC 4       ; Add 4 to the cycle count
 
- JMP subm_CBDD
+ JMP SendNametableNow
 
-.CC846
+.tpat2
 
- JMP CCA2E
+ JMP tpat21
 
-.TilePatternsToPPU
+.SendTilesToPPU
 
  SUBTRACT_CYCLES 182    ; Subtract 182 from the cycle count
 
- BMI CC85B              ; If the result is negative, jump to CC85B to stop
+ BMI tpat3              ; If the result is negative, jump to tpat3 to stop
                         ; sending PPU data in this VBlank, as we have run out of
                         ; cycles (we will pick up where we left off in the next
                         ; VBlank)
 
- JMP CC86A              ; The result is positive, so we have enough cycles to
-                        ; keep sending PPU data in this VBlank, so jump to CC86A
+ JMP tpat4              ; The result is positive, so we have enough cycles to
+                        ; keep sending PPU data in this VBlank, so jump to tpat4
                         ; to ???
 
-.CC85B
+.tpat3
 
  ADD_CYCLES 141         ; Add 141 to the cycle count
 
  JMP RTS1               ; Return from the subroutine (as RTS1 contains an RTS)
 
-.CC86A
+.tpat4
 
  LDA tileNumber0,X
- BNE CC870
+ BNE tpat5
  LDA #$FF
 
-.CC870
+.tpat5
 
  STA temp1
  LDA ppuNametableAddr+1
@@ -1554,13 +1585,13 @@ ENDIF
  STA L00C9
  SEC
  SBC temp1
- BCS CCBDD
+ BCS tpat1
  LDX ppuCtrlCopy
- BEQ CC893
+ BEQ tpat6
  CMP #$BF
- BCC CC846
+ BCC tpat2
 
-.CC893
+.tpat6
 
  LDA L00C9
  LDX #0
@@ -1574,47 +1605,58 @@ ENDIF
  ROL addr4
  ASL A
  TAX
- LDA addr4
- ROL A
- ADC L00E0
+
+ LDA addr4              ; Set A = ppuPatternTableHi + addr4 * 2
+ ROL A                  ;       = $10 + addr4 * 2
+ ADC ppuPatternTableHi
+
  STA PPU_ADDR
  STA addr4+1
  TXA
- ADC pallettePhasex8
+ ADC otherPhasex8
  STA PPU_ADDR
  STA addr4
- JMP CC8D0
+ JMP tpat9
 
-.CC8BB
+; ******************************************************************************
+;
+;       Name: SendTilesToPPU (Part 2 of 5)
+;       Type: Subroutine
+;   Category: Drawing tiles
+;    Summary: ???
+;
+; ******************************************************************************
+
+.tpat7
 
  INC dataForPPU+1
 
  SUBTRACT_CYCLES 27     ; Subtract 27 from the cycle count
 
- JMP CC925
+ JMP tpat13
 
-.CC8CD
+.tpat8
 
- JMP CC9EB
+ JMP tpat17
 
-.CC8D0
+.tpat9
 
  LDX L00C9
 
-.CC8D2
+.tpat10
 
  SUBTRACT_CYCLES 400    ; Subtract 400 from the cycle count
 
- BMI CC8E4
- JMP CC8F3
+ BMI tpat11
+ JMP tpat12
 
-.CC8E4
+.tpat11
 
  ADD_CYCLES 359         ; Add 359 to the cycle count
 
- JMP CCB30
+ JMP tpat30
 
-.CC8F3
+.tpat12
 
  LDA (dataForPPU),Y
  STA PPU_DATA
@@ -1640,9 +1682,9 @@ ENDIF
  LDA (dataForPPU),Y
  STA PPU_DATA
  INY
- BEQ CC8BB
+ BEQ tpat7
 
-.CC925
+.tpat13
 
  LDA addr4
  CLC
@@ -1656,7 +1698,7 @@ ENDIF
  STA PPU_ADDR
  INX
  CPX temp1
- BCS CC8CD
+ BCS tpat8
  LDA (dataForPPU),Y
  STA PPU_DATA
  INY
@@ -1681,49 +1723,9 @@ ENDIF
  LDA (dataForPPU),Y
  STA PPU_DATA
  INY
- BEQ CC9D8
+ BEQ tpat16
 
-.CC971
-
- LDA addr4
- ADC #$10
- STA addr4
- LDA addr4+1
- ADC #0
- STA addr4+1
- STA PPU_ADDR
- LDA addr4
- STA PPU_ADDR
- INX
- CPX temp1
- BCS CC9FB
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- BEQ CCA1B
-
-.CC9BC
+.tpat14
 
  LDA addr4
  ADC #$10
@@ -1736,29 +1738,69 @@ ENDIF
  STA PPU_ADDR
  INX
  CPX temp1
- BCS CCA08
- JMP CC8D2
+ BCS tpat18
+ LDA (dataForPPU),Y
+ STA PPU_DATA
+ INY
+ LDA (dataForPPU),Y
+ STA PPU_DATA
+ INY
+ LDA (dataForPPU),Y
+ STA PPU_DATA
+ INY
+ LDA (dataForPPU),Y
+ STA PPU_DATA
+ INY
+ LDA (dataForPPU),Y
+ STA PPU_DATA
+ INY
+ LDA (dataForPPU),Y
+ STA PPU_DATA
+ INY
+ LDA (dataForPPU),Y
+ STA PPU_DATA
+ INY
+ LDA (dataForPPU),Y
+ STA PPU_DATA
+ INY
+ BEQ tpat20
 
-.CC9D8
+.tpat15
+
+ LDA addr4
+ ADC #$10
+ STA addr4
+ LDA addr4+1
+ ADC #0
+ STA addr4+1
+ STA PPU_ADDR
+ LDA addr4
+ STA PPU_ADDR
+ INX
+ CPX temp1
+ BCS tpat19
+ JMP tpat10
+
+.tpat16
 
  INC dataForPPU+1
 
  SUBTRACT_CYCLES 29     ; Subtract 29 from the cycle count
 
  CLC
- JMP CC971
+ JMP tpat14
 
-.CC9EB
+.tpat17
 
  ADD_CYCLES_CLC 224     ; Add 224 to the cycle count
 
- JMP CCA08
+ JMP tpat19
 
-.CC9FB
+.tpat18
 
  ADD_CYCLES_CLC 109     ; Add 109 to the cycle count
 
-.CCA08
+.tpat19
 
  STX L00C9
  NOP
@@ -1768,18 +1810,29 @@ ENDIF
  STA phaseL04BE,X
  LDA L00C9
  STA tileNumber4,X
- JMP subm_CBBC
 
-.CCA1B
+ JMP SendNametableToPPU ; Jump to SendNametableToPPU to start sending the tile
+                        ; nametable to the PPU
+
+.tpat20
 
  INC dataForPPU+1
 
  SUBTRACT_CYCLES 29     ; Subtract 29 from the cycle count
 
  CLC
- JMP CC9BC
+ JMP tpat15
 
-.CCA2E
+; ******************************************************************************
+;
+;       Name: SendTilesToPPU (Part 3 of 5)
+;       Type: Subroutine
+;   Category: Drawing tiles
+;    Summary: ???
+;
+; ******************************************************************************
+
+.tpat21
 
  LDA L00C9
  LDX #0
@@ -1793,52 +1846,54 @@ ENDIF
  ROL addr4
  ASL A
  TAX
- LDA addr4
- ROL A
- ADC L00E0
+
+ LDA addr4              ; Set A = ppuPatternTableHi + addr4 * 2
+ ROL A                  ;       = $10 + addr4 * 2
+ ADC ppuPatternTableHi
+
  STA PPU_ADDR
  STA addr4+1
  TXA
- ADC pallettePhasex8
+ ADC otherPhasex8
  STA PPU_ADDR
  STA addr4
- JMP CCA68
+ JMP tpat23
 
 ; ******************************************************************************
 ;
-;       Name: subm_CA56
+;       Name: SendTilesToPPU (Part 4 of 5)
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing tiles
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_CA56
+.tpat22
 
  INC dataForPPU+1
 
  SUBTRACT_CYCLES 27     ; Subtract 27 from the cycle count
 
- JMP CCABD
+ JMP tpat27
 
-.CCA68
+.tpat23
 
  LDX L00C9
 
-.CCA6A
+.tpat24
 
  SUBTRACT_CYCLES 266    ; Subtract 266 from the cycle count
 
- BMI CCA7C
- JMP CCA8B
+ BMI tpat25
+ JMP tpat26
 
-.CCA7C
+.tpat25
 
  ADD_CYCLES 225         ; Add 225 to the cycle count
 
- JMP CCB30
+ JMP tpat30
 
-.CCA8B
+.tpat26
 
  LDA (dataForPPU),Y
  STA PPU_DATA
@@ -1864,9 +1919,9 @@ ENDIF
  LDA (dataForPPU),Y
  STA PPU_DATA
  INY
- BEQ subm_CA56
+ BEQ tpat22
 
-.CCABD
+.tpat27
 
  LDA addr4
  CLC
@@ -1902,9 +1957,9 @@ ENDIF
  LDA (dataForPPU),Y
  STA PPU_DATA
  INY
- BEQ CCB1D
+ BEQ tpat29
 
-.CCB04
+.tpat28
 
  LDA addr4
  ADC #$10
@@ -1917,18 +1972,27 @@ ENDIF
  STA PPU_ADDR
  INX
  INX
- JMP CCA6A
+ JMP tpat24
 
-.CCB1D
+.tpat29
 
  INC dataForPPU+1
 
  SUBTRACT_CYCLES 29     ; Subtract 29 from the cycle count
 
  CLC
- JMP CCB04
+ JMP tpat28
 
-.CCB30
+; ******************************************************************************
+;
+;       Name: SendTilesToPPU (Part 5 of 5)
+;       Type: Subroutine
+;   Category: Drawing tiles
+;    Summary: ???
+;
+; ******************************************************************************
+
+.tpat30
 
  STX L00C9
  LDX otherPhase
@@ -1944,7 +2008,7 @@ ENDIF
 ;
 ;       Name: subm_CB42
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing tiles
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -1994,85 +2058,65 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: Add58Cycles
+;       Name: SendNametableToPPU
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing tiles
+;    Summary: Send the tile nametable to the PPU if there are enough cycles left
+;             in the current VBlank
+;
+; ------------------------------------------------------------------------------
+;
+; Other entry points:
+;
+;   SendNametableNow    Send the nametable without checking the cycle count
 ;
 ; ******************************************************************************
 
-.Add58Cycles
+.snam1
 
  ADD_CYCLES_CLC 58      ; Add 58 to the cycle count
 
  JMP RTS1               ; Return from the subroutine (as RTS1 contains an RTS)
 
-; ******************************************************************************
-;
-;       Name: Add53subm_CB42
-;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
-;
-; ******************************************************************************
-
-.Add53subm_CB42
+.snam2
 
  ADD_CYCLES_CLC 53      ; Add 53 to the cycle count
 
  JMP subm_CB42
 
-; ******************************************************************************
-;
-;       Name: subm_CBBC
-;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
-;
-; ******************************************************************************
-
-.subm_CBBC
+.SendNametableToPPU
 
  SUBTRACT_CYCLES 109    ; Subtract 109 from the cycle count
 
- BMI CCBCE
+ BMI snam3
 
- JMP subm_CBDD
+ JMP SendNametableNow
 
-.CCBCE
+.snam3
 
  ADD_CYCLES 68          ; Add 68 to the cycle count
 
  JMP RTS1               ; Return from the subroutine (as RTS1 contains an RTS)
 
-; ******************************************************************************
-;
-;       Name: subm_CBDD
-;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
-;
-; ******************************************************************************
-
-.subm_CBDD
+.SendNametableNow
 
  LDX otherPhase
  LDA phaseFlags,X
  ASL A
- BPL Add58Cycles
+ BPL snam1
  LDY phaseL00CD,X
  AND #8
- BEQ CCBED
+ BEQ snam4
  LDY #$80
 
-.CCBED
+.snam4
 
  STY temp1
  LDA tileNumber3,X
  STA L00CF
  SEC
  SBC temp1
- BCS Add53subm_CB42
+ BCS snam2
  LDY phaseL00DD,X
  LDA phaseL04C0,X
  STA dataForPPU+1
@@ -2083,38 +2127,20 @@ ENDIF
  LDA #0
  STA dataForPPU
 
-.CCC0D
+.snam5
 
  SUBTRACT_CYCLES 393    ; Subtract 393 from the cycle count
 
- BMI subm_CC1F
- JMP SendToPPU1
+ BMI snam6
+ JMP snam7
 
-; ******************************************************************************
-;
-;       Name: subm_CC1F
-;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
-;
-; ******************************************************************************
-
-.subm_CC1F
+.snam6
 
  ADD_CYCLES 349         ; Add 349 to the cycle count
 
- JMP CCD26
+ JMP snam10
 
-; ******************************************************************************
-;
-;       Name: SendToPPU1
-;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
-;
-; ******************************************************************************
-
-.SendToPPU1
+.snam7
 
  LDA (dataForPPU),Y
  STA PPU_DATA
@@ -2212,23 +2238,24 @@ ENDIF
  LDA (dataForPPU),Y
  STA PPU_DATA
  INY
- BEQ CCD09
+ BEQ snam9
  LDA L00CF
  ADC #3
  STA L00CF
  CMP temp1
- BCS CCCFD
- JMP CCC0D
+ BCS snam8
+ JMP snam5
 
-.CCCFD
+.snam8
 
  STA tileNumber3,X
  STY phaseL00DD,X
  LDA dataForPPU+1
  STA phaseL04C0,X
+
  JMP subm_CB42
 
-.CCD09
+.snam9
 
  INC dataForPPU+1
 
@@ -2239,10 +2266,10 @@ ENDIF
  ADC #4
  STA L00CF
  CMP temp1
- BCS CCCFD
- JMP CCC0D
+ BCS snam8
+ JMP snam5
 
-.CCD26
+.snam10
 
  LDA L00CF
  STA tileNumber3,X
@@ -3355,11 +3382,20 @@ ENDIF
  BNE loop_CD183
  RTS
 
+; ******************************************************************************
+;
+;       Name: subm_D19C
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
+
  LDX #0
- JSR CD19C
+ JSR subm_D19C
  LDX #1
 
-.CD19C
+.subm_D19C
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -3369,7 +3405,7 @@ ENDIF
  AND #$20
  BNE CD1B8
  JSR CD1C8
- JMP CD19C
+ JMP subm_D19C
 
 .CD1B8
 
@@ -4560,7 +4596,7 @@ ENDIF
  EOR #1
  TAX
  JSR SetDrawingPhase
- JMP CD19C
+ JMP subm_D19C
 
 ; ******************************************************************************
 ;
@@ -4721,7 +4757,7 @@ ENDIF
  LDA tileNumber
  STA tileNumber0
  STA tileNumber0+1
- LDA #$58
+ LDA #88
  STA L00CC
  LDA #$64
  STA phaseL00CD

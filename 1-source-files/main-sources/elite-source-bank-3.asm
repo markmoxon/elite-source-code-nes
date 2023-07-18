@@ -1853,9 +1853,9 @@ ENDIF
 
  JSR subm_AC86
 
- LDA #HI($1000+16*0)    ; Set PPU_ADDR to the address of pattern #0 in pattern
- STA PPU_ADDR           ; table 1
- LDA #LO($1000+16*0)
+ LDA #HI(PPU_PATT_1+16*0)   ; Set PPU_ADDR to the address of pattern #0 in
+ STA PPU_ADDR               ; pattern table 1
+ LDA #LO(PPU_PATT_1+16*0)
  STA PPU_ADDR
 
  LDY #0
@@ -1870,9 +1870,9 @@ ENDIF
  DEX
  BNE loop_CA8B3
 
- LDA #HI($1000+16*255)  ; Set PPU_ADDR to the address of pattern #255 in pattern
- STA PPU_ADDR           ; table 1
- LDA #LO($1000+16*255)
+ LDA #HI(PPU_PATT_1+16*255) ; Set PPU_ADDR to the address of pattern #255 in
+ STA PPU_ADDR               ; pattern table 1
+ LDA #LO(PPU_PATT_1+16*255)
  STA PPU_ADDR
 
  LDA #0
@@ -2345,9 +2345,9 @@ ENDIF
  STA drawingPhase
  STA palettePhase
  LDA #$10
- STA L00E0
+ STA ppuPatternTableHi
  LDA #0
- STA pallettePhasex8
+ STA otherPhasex8
  LDA #$20
  STA ppuNametableAddr+1
  LDA #0
