@@ -1872,7 +1872,7 @@ ENDIF
 
  LDA QQ11
  BNE C853A
- JSR ChangeDrawingPhase
+ JSR ChangeDrawingPlane
 
 .C853A
 
@@ -2379,7 +2379,7 @@ ENDIF
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA drawingPhase       ; ???
+ LDA drawingBitplane    ; ???
  BNE C872A
 
  LDA L046D
@@ -2403,7 +2403,7 @@ ENDIF
 
 .C8733
 
- LDA #$88
+ LDA #%10001000
  JSR subm_D977
 
  JSR COMPAS
@@ -2412,11 +2412,11 @@ ENDIF
 
  JSR DIALS_b6
 
- LDX drawingPhase
+ LDX drawingBitplane
 
- LDA phaseFlags,X
- ORA #$40
- STA phaseFlags,X
+ LDA bitPlaneFlags,X    ; Set bit 6 of the flags for the drawing bitplane
+ ORA #%01000000
+ STA bitPlaneFlags,X
 
  RTS
 
@@ -3002,7 +3002,7 @@ ENDIF
  LDA #24                ; ???
  STA XC
 
- LDX language
+ LDX chosenLanguage
  LDA L897C,X
  STA YC
 
@@ -3040,11 +3040,11 @@ ENDIF
 .C892E
 
  LDA #0
- STA L00CC
- LDA #$6C
- STA L00D8
- STA phaseL00CD
- STA phaseL00CD+1
+ STA nameTileNumber
+ LDA #108
+ STA nameTileEnd2
+ STA nameTileEnd1
+ STA nameTileEnd1+1
  LDX #$25
  LDA QQ11
  AND #$40
@@ -3053,7 +3053,7 @@ ENDIF
 
 .C8944
 
- STX L00D2
+ STX pattTileNumber
  JSR DrawBoxEdges
  JSR CopyNameBuffer0To1
  LDA QQ11
@@ -3084,7 +3084,7 @@ ENDIF
 
  STX L045F
  LDA tileNumber
- STA L00D2
+ STA pattTileNumber
  RTS
 
 .C8976
@@ -3103,10 +3103,7 @@ ENDIF
 
 .L897C
 
- PHP
- PHP
- ASL A
- PHP
+ EQUB 8, 8, 10, 8
 
 ; ******************************************************************************
 ;
@@ -3120,23 +3117,29 @@ ENDIF
 .subm_8980
 
  JSR subm_D8C5
+
  LDA #0
- STA L00CC
- LDA #$64
- STA L00D8
- LDA #$25
- STA L00D2
+ STA nameTileNumber
+
+ LDA #100
+ STA nameTileEnd2
+
+ LDA #37
+ STA pattTileNumber
 
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
  JSR DrawBoxEdges
  JSR CopyNameBuffer0To1
- LDA #$C4
- STA phaseFlags
- STA phaseFlags+1
+
+ LDA #%11000100         ; Set bits 2, 6 and 7 of both bitplane flags
+ STA bitPlaneFlags
+ STA bitPlaneFlags+1
+
  LDA tileNumber
- STA L00D2
+ STA pattTileNumber
+
  RTS
 
 ; ******************************************************************************
@@ -3170,7 +3173,7 @@ ENDIF
 
  JSR TT67               ; Print a newline
 
- LDX language           ; Move the text cursor to the correct column for the
+ LDX chosenLanguage     ; Move the text cursor to the correct column for the
  LDA tabStatusMode,X    ; Status Mode entry in the chosen language
  STA XC
 
@@ -6784,7 +6787,7 @@ ENDIF
 .C9345
 
  JSR subm_B1D1
- JSR ChangeDrawingPhase
+ JSR ChangeDrawingPlane
  LDA XP
  AND #$0F
  ORA #$60
@@ -7434,7 +7437,7 @@ ENDIF
 
 .loop_C95E7
 
- JSR ChangeDrawingPhase
+ JSR ChangeDrawingPlane
  JSR subm_MA23
  JSR subm_D975
  LDA L0465
@@ -7962,7 +7965,7 @@ ENDIF
 ;       Name: PrintTokenAndColon
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Print a character followed by a colon, drawing in both bit planes
+;    Summary: Print a character followed by a colon, drawing in both bitplanes
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -7976,14 +7979,14 @@ ENDIF
 
  JSR TT27_b2            ; Print the character in A
 
- LDA #3                 ; Set the font bit plane to print in both planes 1 and 2
- STA fontBitPlane
+ LDA #3                 ; Set the font bitplane to print in both planes 1 and 2
+ STA fontBitplane
 
  LDA #':'               ; Print a colon
  JSR TT27_b2
 
- LDA #1                 ; Set the font bit plane to plane 1
- STA fontBitPlane
+ LDA #1                 ; Set the font bitplane to plane 1
+ STA fontBitplane
 
  RTS                    ; Return from the subroutine
 
@@ -8026,7 +8029,7 @@ ENDIF
  JSR TT111              ; Select the system closest to galactic coordinates
                         ; (QQ9, QQ10)
 
- LDX language           ; Move the text cursor to the correct column for the
+ LDX chosenLanguage     ; Move the text cursor to the correct column for the
  LDA tabDataOnSystem,X  ; Data on System title in the chosen language
  STA XC
 
@@ -9454,7 +9457,7 @@ ENDIF
  LDA #$9C
  JSR TT66
 
- LDX language           ; Move the text cursor to the correct column for the
+ LDX chosenLanguage     ; Move the text cursor to the correct column for the
  LDA tabShortRange,X    ; Short-range Chart title in the chosen language
  STA XC
 
@@ -10971,7 +10974,7 @@ ENDIF
 
  JSR TT163              ; Print the column headers for the prices table
 
- LDX language           ; Move the text cursor to the correct row for the Market
+ LDX chosenLanguage     ; Move the text cursor to the correct row for the Market
  LDA rowMarketPrice,X   ; Prices title in the chosen language
  STA YC
 
@@ -11188,15 +11191,15 @@ ENDIF
 
  TAY
  LDX #2
- STX fontBitPlane
+ STX fontBitplane
  CLC
- LDX language
+ LDX chosenLanguage
  ADC rowMarketPrice,X
  STA YC
  TYA
  JSR TT151
  LDX #1
- STX fontBitPlane
+ STX fontBitplane
  RTS
 
 ; ******************************************************************************
@@ -11212,7 +11215,7 @@ ENDIF
 
  TAY
  CLC
- LDX language
+ LDX chosenLanguage
  ADC rowMarketPrice,X
  STA YC
  TYA
@@ -11231,7 +11234,7 @@ ENDIF
 
  LDA #$80
  STA QQ17
- LDX language
+ LDX chosenLanguage
  LDA LA16D,X
  STA YC
  LDA LA169,X
@@ -12062,13 +12065,13 @@ ENDIF
 .subm_EQSHP2
 
  LDX #2
- STX fontBitPlane
+ STX fontBitplane
 
  LDX XX13
  JSR PrintEquipment+2
 
  LDX #1
- STX fontBitPlane
+ STX fontBitplane
 
  RTS
 
@@ -12317,7 +12320,7 @@ ENDIF
  LDA #$B9               ; Change to view $B9 and move the text cursor to row 0
  JSR ChangeViewRow0
 
- LDX language           ; Move the text cursor to the correct column for the
+ LDX chosenLanguage     ; Move the text cursor to the correct column for the
  LDA tabEquipShip,X     ; Equip Ship title in the chosen language
  STA XC
 
@@ -12929,7 +12932,7 @@ ENDIF
 
  JSR TT162
  LDA XC
- LDX language
+ LDX chosenLanguage
  CMP LA6D8,X
  BNE loop_CA6C8
  PLA
@@ -12961,10 +12964,10 @@ ENDIF
 .subm_A6DC
 
  LDA #2
- STA fontBitPlane
+ STA fontBitplane
  JSR subm_A6A8
  LDA #1
- STA fontBitPlane
+ STA fontBitplane
  TYA
  PHA
  JSR subm_8980
@@ -13012,17 +13015,17 @@ ENDIF
  DEY
  BNE loop_CA706
  LDA #2
- STA fontBitPlane
+ STA fontBitplane
  JSR subm_A6A8
  LDA #1
- STA fontBitPlane
+ STA fontBitplane
  LDA #$0B
  STA XC
  STA K+2
  LDA #7
  STA YC
  STA K+3
- LDX language
+ LDX chosenLanguage
  LDA LA6F2,X
  STA K
  LDA #6
@@ -15211,12 +15214,12 @@ ENDIF
 
 .YESNO
 
- LDA fontBitPlane       ; Store the current font bit plane value on the stack,
+ LDA fontBitplane       ; Store the current font bitplane value on the stack,
  PHA                    ; so we can restore it when we return from the
                         ; subroutine
 
- LDA #2                 ; Set the font bit plane to %10 ???
- STA fontBitPlane
+ LDA #2                 ; Set the font bitplane to %10 ???
+ STA fontBitplane
 
  LDA #1                 ; Push a value of 1 onto the stack, so the following
  PHA                    ; prints extended token 1 ("YES")
@@ -15270,8 +15273,8 @@ ENDIF
  TAX                    ; will be 1 for "YES" or 2 for "NO", giving us our
                         ; result to return
 
- PLA                    ; Restore the font bit plane value that we stored on the
- STA fontBitPlane       ; stack so it's unchanged by the routine
+ PLA                    ; Restore the font bitplane value that we stored on the
+ STA fontBitplane       ; stack so it's unchanged by the routine
 
  TXA                    ; Copy X to A, so we return the result in both A and X
 
@@ -15468,15 +15471,17 @@ ENDIF
 .RES2
 
  SEI                    ; ???
- LDA #1
- STA L00F6
- LDA #1
+
+ LDA #1                 ; Set enableBitplanes to 1 so the game starts to use
+ STA enableBitplanes    ; two different bitplanes when displaying the screen
+
+ LDA #1                 ; ???
  STA boxEdge1
  LDA #2
  STA boxEdge2
- LDA #$50
- STA phaseL00CD
- STA phaseL00CD+1
+ LDA #80
+ STA nameTileEnd1
+ STA nameTileEnd1+1
  LDA BOMB
  BPL CADAA
  JSR HideHiddenColour
@@ -16920,11 +16925,11 @@ ENDIF
  STA QQ11
  STA QQ11a
  LDA tileNumber
- STA L00D2
- LDA #$74
- STA L00D8
+ STA pattTileNumber
+ LDA #116
+ STA nameTileEnd2
  LDX #8
- STX L00CC
+ STX nameTileNumber
  LDA #$68
  JSR SetScreenHeight
  LDY #8
@@ -17057,7 +17062,7 @@ ENDIF
 
 .D2
 
- JSR ChangeDrawingPhase ; ???
+ JSR ChangeDrawingPlane ; ???
  JSR subm_MA23
  JSR subm_BED2_b6
  LDA #$CC
@@ -17096,7 +17101,7 @@ ENDIF
  JSR subm_B906_b6
  JSR subm_F3AB
  LDA #1
- STA fontBitPlane
+ STA fontBitplane
  LDX #$FF
  STX QQ11a
  TXS
@@ -17303,11 +17308,11 @@ ENDIF
  STA QQ11a
  STA L045F
  LDA tileNumber
- STA L00D2
- LDA #$50
- STA L00D8
+ STA pattTileNumber
+ LDA #80
+ STA nameTileEnd2
  LDX #8
- STX L00CC
+ STX nameTileNumber
  RTS
 
 ; ******************************************************************************
@@ -20601,9 +20606,9 @@ ENDIF
  LDA #0
  JSR TT66
  JSR CopyNameBuffer0To1
- LDA #$50
- STA phaseL00CD
- STA phaseL00CD+1
+ LDA #80
+ STA nameTileEnd1
+ STA nameTileEnd1+1
  JSR subm_A9D1_b3
 
 ; ******************************************************************************
@@ -20671,16 +20676,22 @@ ENDIF
 
  LDA #$FF
  STA L045F
+
  LDA #$2C
  STA visibleColour
+
  LDA tileNumber
- STA L00D2
- LDA #$50
- STA L00D8
+ STA pattTileNumber
+
+ LDA #80
+ STA nameTileEnd2
+
  LDX #8
- STX L00CC
- LDA #$74
- STA phaseL00CD
+ STX nameTileNumber
+
+ LDA #116
+ STA nameTileEnd1
+
  RTS
 
 ; ******************************************************************************
@@ -20868,7 +20879,7 @@ ENDIF
  STA L00B5
  LDX #0
  STX L046D
- JSR SetDrawingPhase
+ JSR SetDrawingBitplane
 
  LDA #%10000000         ; Set bit 7 of QQ17 to switch to Sentence Case
  STA QQ17
@@ -20998,14 +21009,14 @@ ENDIF
 .CBFA1
 
  JSR DrawBoxTop
- LDX language
+ LDX chosenLanguage
  LDA QQ11
  BEQ CBFBF
  CMP #1
  BNE CBFD8
  LDA #0
  STA YC
- LDX language
+ LDX chosenLanguage
  LDA LC0DF,X
  STA XC
  LDA #$1E

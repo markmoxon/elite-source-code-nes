@@ -489,41 +489,41 @@ ENDIF
  SKIP 1                 ; Contains the colour to use for pixels that are hidden
                         ; in palette 0, e.g. $0F for black
                         ;
-                        ; See the SetPaletteForPhase routine for details
+                        ; See the SetPaletteForPlane routine for details
 
 .visibleColour
 
  SKIP 1                 ; Contains the colour to use for pixels that are visible
                         ; in palette 0, e.g. $2C for cyan
                         ;
-                        ; See the SetPaletteForPhase routine for details
+                        ; See the SetPaletteForPlane routine for details
 
 .paletteColour2
 
  SKIP 1                 ; Contains the colour to use for palette entry 2 in the
                         ; current (non-space) view
                         ;
-                        ; See the SetPaletteForPhase routine for details
+                        ; See the SetPaletteForPlane routine for details
 
 .paletteColour3
 
  SKIP 1                 ; Contains the colour to use for palette entry 3 in the
                         ; current (non-space) view
                         ;
-                        ; See the SetPaletteForPhase routine for details
+                        ; See the SetPaletteForPlane routine for details
 
-.fontBitPlane
+.fontBitplane
 
  SKIP 1                 ; When printing a character in CHPR, this defines which
-                        ; bit planes to draw from the font images in fontImage,
+                        ; bitplanes to draw from the font images in fontImage,
                         ; as each character in the font contains two separate
                         ; characters
                         ;
-                        ;   * %01 = draw bit plane 1 (monochrome)
+                        ;   * %01 = draw bitplane 1 (monochrome)
                         ;
-                        ;   * %10 = draw bit plane 2 (monochrome)
+                        ;   * %10 = draw bitplane 2 (monochrome)
                         ;
-                        ;   * %11 = draw both bit planes (four-colour)
+                        ;   * %11 = draw both bitplanes (four-colour)
 
 .nmiTimer
 
@@ -1031,7 +1031,8 @@ ENDIF
 
 .tileNumber
 
- SKIP 1                 ; Contains the current tile number to draw into ???
+ SKIP 1                 ; Contains the number of the dynamic tile that we can
+                        ; draw into next (or 0 if there are no free tiles) ???
 
 .pattBufferHiDiv8
 
@@ -1056,69 +1057,120 @@ ENDIF
 
  SKIP 1                 ; ???
 
-.drawingPhase
+.drawingBitplane
 
- SKIP 1                 ; Flipped manually by calling ChangeDrawingPhase,
+ SKIP 1                 ; Flipped manually by calling ChangeDrawingPlane,
                         ; controls whether we are showing nametable/palette
-                        ; buffer 0 or 1 (and which tile number is chosen from
-                        ; the following)
+                        ; buffer 0 or 1
 
-.tileNumber0
+.nextTileNumber
 
- SKIP 1                 ; A tile number, for phase 0
+ SKIP 1                 ; A copy of the number of the dynamic tile that we can
+                        ; draw into draw into next (or 0 if there are no free
+                        ; tiles) in bitplane 0 ???
+                        ;
+                        ; Copied from tileNumber
 
- SKIP 1                 ; A tile number, for phase 1
+ SKIP 1                 ; A copy of the number of the dynamic tile that we can
+                        ; draw into draw into next (or 0 if there are no free
+                        ; tiles) in bitplane 1 ???
+                        ;
+                        ; Copied from tileNumber
 
-.tileNumber1
+.pattTileNumber2
 
- SKIP 1                 ; A tile number, for phase 0
+ SKIP 1                 ; The number of the tile for which we are currently
+                        ; sending pattetn data to the PPU in bitplane 0 ???
+                        ;
+                        ; Can be 0, 4, 37, 60, tileNumber
+                        ;
+                        ; Copied from pattTileNumber1
 
- SKIP 1                 ; A tile number, for phase 1
+ SKIP 1                 ; The number of the tile for which we are currently
+                        ; sending pattetn data to the PPU in bitplane 1 ???
+                        ;
+                        ; Can be 0, 4, 37, 60, tileNumber
+                        ;
+                        ; Copied from pattTileNumber1
 
-.tileNumber2
+.nameTileNumber2
 
- SKIP 1                 ; A tile number, for phase 0
+ SKIP 1                 ; The number of the tile for which we are currently
+                        ; clearing nametable entries in the PPU in bitplane 0
+                        ; ???
+                        ;
+                        ; Copied from nameTileNumber1
 
- SKIP 1                 ; A tile number, for phase 1
+ SKIP 1                 ; The number of the tile for which we are currently
+                        ; clearing nametable entries in the PPU in bitplane 1
+                        ; ???
+                        ;
+                        ; Copied from nameTileNumber1
 
-.tileNumber3
+.nameTileNumber1
 
- SKIP 1                 ; A tile number, for phase 0
+ SKIP 1                 ; The number of the tile for which we are currently
+                        ; sending nametable entries to the PPU in bitplane 0 ???
 
- SKIP 1                 ; A tile number, for phase 1
+ SKIP 1                 ; The number of the tile for which we are currently
+                        ; sending nametable entries to the PPU in bitplane 1 ???
 
 .L00C9
 
  SKIP 1                 ; ???
 
-.tileNumber4
+.pattTileNumber1
 
- SKIP 1                 ; A tile number, for phase 0
+ SKIP 1                 ; The number of the tile for which we are currently
+                        ; sending pattetn data to the PPU in bitplane 0 ???
+                        ;
+                        ; Can be 0, 4, 37, 60, tileNumber
 
- SKIP 1                 ; A tile number, for phase 1
+ SKIP 1                 ; The number of the tile for which we are currently
+                        ; sending pattetn data to the PPU in bitplane 1 ???
+                        ;
+                        ; Can be 0, 4, 37, 60, tileNumber
 
-.L00CC
+.nameTileNumber
 
- SKIP 1                 ; ??? 0, 8, 40, 88
+ SKIP 1                 ; A temporary variable used to store the number of
+                        ; the tile (divided by 8) for which we are currently
+                        ; clearing nametable entries in the PPU, but with a
+                        ; maximum value applied ???
+                        ;
+                        ; Can be 0, 8, 40, 88
+                        ; = tiles 8, 64, 320, 704
 
-.phaseL00CD
+.nameTileEnd1
 
- SKIP 1                 ; ??? Phase 0
+ SKIP 1                 ; An end tile number for bitplane 0, divided by 8
+                        ;
+                        ; Can be 80, 100, 108, 116
+                        ; = tiles 640, 800, 864, 928
 
- SKIP 1                 ; ??? Phase 1
+ SKIP 1                 ; An end tile number for bitplane 1, divided by 8
+                        ;
+                        ; Can be 80, 100, 108, 116
+                        ; = tiles 640, 800, 864, 928
 
-.L00CF
+.nameTileCounter
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Counts tiles as they are written in batches of 32
+                        ; to the PPU nametable in NMI handler ???
+                        ;
+                        ; Contains tile number divided by 8 (so counts up 4
+                        ; for every 32 tiles
 
 .cycleCount
 
  SKIP 2                 ; Counts the number of CPU cycles left in the current
                         ; VBlank in the NMI handler
 
-.L00D2
+.pattTileNumber
 
- SKIP 1                 ; ???
+ SKIP 1                 ; ??? A tile number for sending patterns to the PPU
+                        ;
+                        ; Can be 0, 4, 37, 60, tileNumber
 
 .barPatternCounter
 
@@ -1174,9 +1226,12 @@ ENDIF
                         ; of skipBarPatternsPPU is clear, both the nametable
                         ; entries and tile patterns will be sent
 
-.L00D8
+.nameTileEnd2
 
- SKIP 1                 ; ???
+ SKIP 1                 ; An end tile number, divided by 8
+                        ;
+                        ; Can be 80, 100, 108, 116, copied from nameTileEnd1
+                        ; = tiles 640, 800, 864, 928
 
 .L00D9
 
@@ -1191,21 +1246,29 @@ ENDIF
                         ;
                         ;   * Non-zero = do send palette data
 
-.phaseL00DB
+.pattTileBuffLo
 
- SKIP 1                 ; ??? Phase 0
+ SKIP 1                 ; (pattTileBuffHi pattTileBuffLo) contains the address
+                        ; of the pattern buffer for pattTileNumber1 in bitplane
+                        ; 0
 
- SKIP 1                 ; ??? Phase 1
+ SKIP 1                 ; (pattTileBuffHi+1 pattTileBuffLo+1) contains the
+                        ; address of the pattern buffer for pattTileNumber1 in
+                        ; bitplane 1 ???
 
-.phaseL00DD
+.nameTileBuffLo
 
- SKIP 1                 ; ??? Phase 0
+ SKIP 1                 ; (nameTileBuffHi nameTileBuffLo) contains the address
+                        ; of the nametable buffer for nameTileNumber1 in bitplane
+                        ; 0
 
- SKIP 1                 ; ??? Phase 1
+ SKIP 1                 ; (nameTileBuffHi+1 nameTileBuffLo+1) contains the
+                        ; address of the nametable buffer for nameTileNumber1 in
+                        ; bitplane 1 ???
 
-.otherPhasex8
+.nmiBitplanex8
 
- SKIP 1                 ; Set to otherPhase << 3
+ SKIP 1                 ; Set to nmiBitplane * 8
 
 .ppuPatternTableHi
 
@@ -1221,19 +1284,19 @@ ENDIF
 
  SKIP 2                 ; Address of the current pattern buffer:
                         ;
-                        ;   * $6000 when drawingPhase = 0
-                        ;   * $6800 when drawingPhase = 1
+                        ;   * $6000 when drawingBitplane = 0
+                        ;   * $6800 when drawingBitplane = 1
 
 .ppuNametableAddr
 
  SKIP 2                 ; Address of the current PPU nametable:
                         ;
-                        ;   * $2000 when drawingPhase = 0
-                        ;   * $2400 when drawingPhase = 1
+                        ;   * $2000 when drawingBitplane = 0
+                        ;   * $2400 when drawingBitplane = 1
 
-.drawingPhaseDebug
+.drawingPlaneDebug
 
- SKIP 1                 ; Set to 0 when drawing phase changes, never read ???
+ SKIP 1                 ; Set to 0 when drawing bitplane changes, never read ???
 
 .nameBufferHi
 
@@ -1244,9 +1307,11 @@ ENDIF
 
  SKIP 1                 ; Set to 0 in S%, never used again ???
 
-.temp1
+.nameTileEnd
 
- SKIP 1                 ; Temporary variable, used in bank 7 ???
+ SKIP 1                 ; An end tile number, possibly no/8 ???
+                        ;
+                        ; Can be 80, 100, 108, 116
 
 .setupPPUForIconBar
 
@@ -1274,22 +1339,31 @@ ENDIF
 
  SKIP 2                 ; ???
 
-.palettePhase
+.paletteBitplane
 
  SKIP 1                 ; 0 or 1, flips every NMI, controls palette switching
                         ; for space view in NMI routine ???
 
-.otherPhase
+.nmiBitplane
 
- SKIP 1                 ; 0 or 1, flipped in subm_CB42 ???
+ SKIP 1                 ; The bitplane that is being processed in the NMI
+                        ; handler during VBlank, 0 or 1
+                        ;
+                        ; Flipped in subm_CB42 ???
 
 .ppuCtrlCopy
 
  SKIP 1                 ; Contains a copy of PPU_CTRL
 
-.L00F6
+.enableBitplanes
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A flag to control whether two different bitplanes are
+                        ; implemented when drawing the screen, so smooth vector
+                        ; graphics can be shown
+                        ;
+                        ;   * 0 = bitplanes are disabled (for the start screen)
+                        ;
+                        ;   * 1 = bitplanes are enabled (for the main game)
 
 .currentBank
 
@@ -3356,11 +3430,42 @@ ORG $0200
 
  SKIP 1                 ; ???
 
-.phaseFlags
+.bitPlaneFlags
 
- SKIP 1                 ; Phase flags for phase 0
+ SKIP 1                 ; Flags for bitplane 0: ???
+                        ;
+                        ;   * Bit 3 overrides the number of the end tile to send
+                        ;     to the PPU nametable in SendBuffersToPPU:
+                        ;      
+                        ;     0 = set the end tile number to nameTileEnd1,X
+                        ;     1 = set the end tile number to 128
+                        ;
+                        ;     Set to 1 in DrawTitleScreen, for example
+                        ;
+                        ;   * Bit 4 indicates whether we have already started
+                        ;     sending tile data for this bitplane to the PPU in
+                        ;     a previous VBlank:
+                        ;
+                        ;     0 = we have not started sending tile data
+                        ;     1 = we have already started sending tile data in a
+                        ;         previous VBlank
+                        ;
+                        ;   * Bit 5 is set and all others cleared in subm_CB42
+                        ;    
+                        ;   * Bit 6 is set for the drawing bitplane in main
+                        ;     flight loop part 3 after the dials are updated,
+                        ;     and in DrawTitleScreen
+                        ;      
+                        ;     0 = stop sending tile data in the NMI handler if
+                        ;         we get to sbuf3 ???
+                        ;     1 = do send data in sbuf3
+                        ;
+                        ;   * Bit 7 is set for both bitplanes in subm_8980
+                        ;      
+                        ;     0 = 
+                        ;     1 = 
 
- SKIP 1                 ; Phase flags for phase 1
+ SKIP 1                 ; Flags for bitplane 1 (see above)
 
 .frameCounter
 
@@ -4224,9 +4329,13 @@ ENDIF
  SKIP 1                 ; Gets set to the high byte of the address of the text
                         ; token table used by the DETOK routine (TKN1)
 
-.language
+.chosenLanguage
 
- SKIP 1                 ; The language chosen (English, German, French) ???
+ SKIP 1                 ; The language that was chosen on the start screen:
+                        ;
+                        ;   * 0 = English
+                        ;   * 1 = German
+                        ;   * 2 = French
 
 .L04A9
 
@@ -4312,27 +4421,37 @@ ENDIF
 
  SKIP 1                 ; ???
 
-.phaseL04BE
+.pattTileBuffHi
 
- SKIP 1                 ; ??? Phase 0
+ SKIP 1                 ; (pattTileBuffHi pattTileBuffLo) contains the address
+                        ; of the pattern buffer for pattTileNumber1 in bitplane
+                        ; 0
 
- SKIP 1                 ; ??? Phase 1
+ SKIP 1                 ; (pattTileBuffHi+1 pattTileBuffLo+1) contains the
+                        ; address of the pattern buffer for pattTileNumber1 in
+                        ; bitplane 1 ???
 
-.phaseL04C0
+.nameTileBuffHi
 
- SKIP 1                 ; ??? Phase 0
+ SKIP 1                 ; (nameTileBuffHi nameTileBuffLo) contains the address
+                        ; of the nametable buffer for nameTileNumber1 in bitplane
+                        ; 0
 
- SKIP 1                 ; ??? Phase 1
+ SKIP 1                 ; (nameTileBuffHi+1 nameTileBuffLo+1) contains the
+                        ; address of the nametable buffer for nameTileNumber1 in
+                        ; bitplane 1 ???
 
 .L04C2
 
  SKIP 4                 ; ???
 
-.phaseL04C6
+.ppuToBuffNameHi
 
- SKIP 1                 ; ??? Phase 0
+ SKIP 1                 ; Add this to a PPU nametable address to get the
+                        ; nametable buffer address (high byte) in bitplane 0 ???
 
- SKIP 1                 ; ??? Phase 1
+ SKIP 1                 ; Add this to a PPU nametable address to get the
+                        ; nametable buffer address (high byte) in bitplane 1 ???
 
 .SX
 

@@ -1889,9 +1889,9 @@ ENDIF
  LDX #1
  JSR subm_A972
  LDX #0
- STX palettePhase
- STX otherPhase
- JSR SetDrawingPhase
+ STX paletteBitplane
+ STX nmiBitplane
+ JSR SetDrawingBitplane
  JSR subm_D946
  LDA QQ11
  STA QQ11a
@@ -2007,12 +2007,12 @@ ENDIF
 
 .subm_A972
 
- STX drawingPhase
- STX otherPhase
- STX palettePhase
+ STX drawingBitplane
+ STX nmiBitplane
+ STX paletteBitplane
 
  LDA #0
- STA L00CC
+ STA nameTileNumber
 
  LDA QQ11
  CMP #$DF
@@ -2027,14 +2027,16 @@ ENDIF
 
 .CA988
 
- STA L00D2
+ STA pattTileNumber
  LDA tileNumber
- STA tileNumber0,X
- LDA #$C4
+ STA nextTileNumber,X
+
+ LDA #%11000100
  JSR subm_D977
+
  JSR CA99B
  LDA tileNumber
- STA tileNumber1,X
+ STA pattTileNumber2,X
  RTS
 
 .CA99B
@@ -2049,18 +2051,20 @@ ENDIF
  PLA
  PHA
  TAX
- LDA phaseFlags,X
- AND #$20
+ LDA bitPlaneFlags,X
+ AND #%00100000
  BNE CA9CC
+
  LDA #$10
  STA cycleCount+1
  LDA #0
  STA cycleCount
+
  JSR SendBuffersToPPU
  PLA
  TAX
- LDA phaseFlags,X
- AND #$20
+ LDA bitPlaneFlags,X
+ AND #%00100000
  BNE CA9CE
  JSR subm_D946
  JMP CA99B
@@ -2111,32 +2115,36 @@ ENDIF
 
  JSR subm_AC86
  LDA #0
- STA L00CC
- LDA #$25
- STA L00D2
+ STA nameTileNumber
+ LDA #37
+ STA pattTileNumber
  LDA tileNumber
- STA tileNumber0
- STA tileNumber0+1
- LDA #$54
+ STA nextTileNumber
+ STA nextTileNumber+1
+
+ LDA #%01010100
  LDX #0
  PLA
  JSR subm_D977
- INC drawingPhase
+
+ INC drawingBitplane
+
  JSR subm_D977
+
  JSR subm_D8C5
- LDA #$50
- STA phaseL00CD
- STA phaseL00CD+1
+ LDA #80
+ STA nameTileEnd1
+ STA nameTileEnd1+1
  LDA QQ11
  STA QQ11a
  LDA tileNumber
- STA tileNumber1
- STA tileNumber1+1
+ STA pattTileNumber2
+ STA pattTileNumber2+1
  LDA #0
  LDX #0
- STX palettePhase
- STX otherPhase
- JSR SetDrawingPhase
+ STX paletteBitplane
+ STX nmiBitplane
+ JSR SetDrawingBitplane
  LDA QQ11
  AND #$40
  BNE CAA3B
@@ -2341,29 +2349,32 @@ ENDIF
  LDA #2
  STA OAM_DMA
  LDA #0
- STA otherPhase
- STA drawingPhase
- STA palettePhase
+ STA nmiBitplane
+ STA drawingBitplane
+ STA paletteBitplane
  LDA #$10
  STA ppuPatternTableHi
  LDA #0
- STA otherPhasex8
+ STA nmiBitplanex8
+
  LDA #$20
  STA ppuNametableAddr+1
  LDA #0
  STA ppuNametableAddr
- LDA #$28
- STA phaseFlags
- STA phaseFlags+1
+
+ LDA #%00101000         ; Set bits 3 and 6 of both bitplane flags
+ STA bitPlaneFlags      ; Bit 6 means tiles up to 128 are sent to the PPU
+ STA bitPlaneFlags+1
+
  LDA #4
- STA tileNumber1
- STA tileNumber1+1
- STA tileNumber2
- STA tileNumber2+1
- STA tileNumber4
- STA tileNumber4+1
- STA tileNumber3
- STA tileNumber3+1
+ STA pattTileNumber2
+ STA pattTileNumber2+1
+ STA nameTileNumber2
+ STA nameTileNumber2+1
+ STA pattTileNumber1
+ STA pattTileNumber1+1
+ STA nameTileNumber1
+ STA nameTileNumber1+1
 
  LDA #$0F               ; Set hiddenColour to $0F, which is black, so this hides
  STA hiddenColour       ; any pixels that use the hidden colour in palette 0
@@ -4228,7 +4239,7 @@ ENDIF
 
  LDA XX3
  LDY XX3+3
- LDA palettePhase
+ LDA paletteBitplane
  BNE CB5EF
  STA XX3+1
  STY XX3+2
@@ -4693,7 +4704,7 @@ ENDIF
 
 .subm_B9E2
 
- LDX language
+ LDX chosenLanguage
  LDA LB9DA,X
  STA V
  LDA LB9DE,X

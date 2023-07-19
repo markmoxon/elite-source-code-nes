@@ -3737,7 +3737,7 @@ ENDIF
 
 .DIALS
 
- LDA drawingPhase
+ LDA drawingBitplane
  BNE CA331
 
  LDA #$72               ; Set SC(1 0) = $72E2
@@ -4414,7 +4414,7 @@ ENDIF
  JSR subm_A761
  PLA
  BNE CA6D3
- LDX language
+ LDX chosenLanguage
  LDA LACAE,X
  LDY LACB2,X
  TAX
@@ -4424,10 +4424,10 @@ ENDIF
  STA QQ11
  JSR subm_AFCD_b3
  LDA #$25
- STA L00D2
+ STA pattTileNumber
  JSR subm_A761
  LDA #$3C
- STA L00D2
+ STA pattTileNumber
  JMP DemoShips_b0
 
 .CA6D3
@@ -4485,7 +4485,7 @@ ENDIF
 
  ADC #$3A
  STA K5
- LDX language
+ LDX chosenLanguage
  LDA LACB6,X
  LDY LACBA,X
  TAX
@@ -4499,21 +4499,21 @@ ENDIF
 
 .CA72F
 
- LDX language
+ LDX chosenLanguage
  LDA LACBE,X
  LDY LACC2,X
  TAX
  LDA #6
  JSR subm_A917
  JSR WSCAN
- LDX language
+ LDX chosenLanguage
  LDA LACC6,X
  LDY LACCA,X
  TAX
  LDA #5
  JSR subm_A917
  JSR WSCAN
- LDX language
+ LDX chosenLanguage
  LDA LACCE,X
  LDY LACD2,X
  TAX
@@ -4532,11 +4532,14 @@ ENDIF
 .subm_A761
 
  JSR subm_D8C5
- LDA #$FE
+
+ LDA #254
  STA tileNumber
- LDA #$C8
- STA phaseFlags
- STA phaseFlags+1
+
+ LDA #%11001000         ; Set bits 3, 6 and 7 of both bitplane flags
+ STA bitPlaneFlags
+ STA bitPlaneFlags+1
+
  RTS
 
 ; ******************************************************************************
@@ -4841,7 +4844,7 @@ ENDIF
  STA L0402
  JSR subm_AC5C_b3
  LDA #40
- STA L00CC
+ STA nameTileNumber
  LDA #$A0
  STA L03FC
  JSR CA96E
@@ -4891,7 +4894,7 @@ ENDIF
 
 .CA984
 
- JSR ChangeDrawingPhase
+ JSR ChangeDrawingPlane
  JSR subm_AAE5
  JSR subm_D975
  LDA L0465
@@ -5562,7 +5565,7 @@ ENDIF
  STY L03EE
  STY QQ17
  STY YC
- LDX language
+ LDX chosenLanguage
  LDA LB42C,X
  STA XC
  LDA LB430,X
@@ -5572,7 +5575,7 @@ ENDIF
  JSR subm_B44C
  LDA #$BB
  STA QQ11
- LDX language
+ LDX chosenLanguage
  LDA LB436,X
  STA V
  LDA LB439,X
@@ -6073,10 +6076,10 @@ ENDIF
 .subm_B6BB
 
  LDX #2
- STX fontBitPlane
+ STX fontBitplane
  JSR subm_B659
  LDX #1
- STX fontBitPlane
+ STX fontBitplane
  RTS
 
 ; ******************************************************************************
@@ -6108,7 +6111,7 @@ ENDIF
 .subm_B6D0
 
  LDX #2
- STX fontBitPlane
+ STX fontBitplane
  LDX #$0B
  STX XC
  PHA
@@ -6119,7 +6122,7 @@ ENDIF
  PLA
  JSR subm_B68B
  LDX #1
- STX fontBitPlane
+ STX fontBitplane
  RTS
 
 ; ******************************************************************************
@@ -6713,7 +6716,7 @@ ENDIF
  TAX
  LDA LBA06,X
  STA visibleColour
- JSR ChangeDrawingPhase
+ JSR ChangeDrawingPlane
  LDA XP
  AND #$1F
  STA STP
@@ -6934,13 +6937,13 @@ ENDIF
 
  TAX
  STY YSAV
- LDA fontBitPlane
+ LDA fontBitplane
  PHA
  LDA QQ11
  AND #$20
  BEQ CBADB
  LDA #1
- STA fontBitPlane
+ STA fontBitplane
 
 .CBADB
 
@@ -7001,7 +7004,7 @@ ENDIF
 
  TAX
  PLA
- STA fontBitPlane
+ STA fontBitplane
  LDY YSAV
  TXA
  RTS
@@ -7060,7 +7063,7 @@ ENDIF
  LDA COK
  BMI CBBB0
  INY
- LDX language
+ LDX chosenLanguage
 
 .loop_CBB79
 
@@ -7543,7 +7546,7 @@ ENDIF
  LDA LBE48,Y
  STA TKN1Hi
  LDA LBE4B,Y
- STA language
+ STA chosenLanguage
  LDA LBE4F,Y
  STA L04A9
  LDA LBE34,Y

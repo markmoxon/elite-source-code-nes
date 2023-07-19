@@ -14360,7 +14360,7 @@ ENDIF
  LDA V+1
  PHA
 
- LDY language           ; Set Y to the chosen language
+ LDY chosenLanguage     ; Set Y to the chosen language
 
  LDA RUTOK_LO,Y         ; Set V(1 0) to the address of the RUTOK table for ths
  STA V                  ; chosen language
@@ -15501,11 +15501,11 @@ ENDIF
  JSR subm_8980_b0       ; ???
  JSR subm_D8C5
  LDA tileNumber
- STA L00D2
- LDA #$28
- STA L00D8
+ STA pattTileNumber
+ LDA #40
+ STA nameTileEnd2
  LDX #8
- STX L00CC
+ STX nameTileNumber
 
 .loop_CB392
 
@@ -15770,7 +15770,7 @@ ENDIF
  BPL PD1                ; not docked, jump to PD1 to show the standard "goat
                         ; soup" description
 
- LDX language           ; ???
+ LDX chosenLanguage     ; ???
  LDA RUPLA_LO,X
  STA SC
  LDA RUPLA_HI,X
@@ -16852,14 +16852,14 @@ ENDIF
  AND #%00110000         ; CB6A9
  BEQ CB6A9
 
- LDY fontBitPlane       ; If we are drawing in bit plane 1 only, jump to CB6A4
+ LDY fontBitplane       ; If we are drawing in bitplane 1 only, jump to CB6A4
  CPY #1
  BEQ CB6A4
 
  AND #%00100000         ; If bit 5 of the view number is clear, jump to CB6A9
  BEQ CB6A9
 
- CPY #2                 ; If we are drawing in both bit planes (as Y is neither
+ CPY #2                 ; If we are drawing in both bitplanes (as Y is neither
  BNE CB6A9              ; 1 or 2), jump to CB6A9
 
  LDA K3
@@ -16870,7 +16870,7 @@ ENDIF
 
 .CB6A4
 
-                        ; If we get here then we are drawing in bit plane 1 only
+                        ; If we get here then we are drawing in bitplane 1 only
 
  LDA K3
  JMP CB7CF
@@ -16878,7 +16878,7 @@ ENDIF
 .CB6A9
 
                         ; If we get here then either bit 5 or bit 6 of the view
-                        ; number are clear, or we are drawing in both bit planes
+                        ; number are clear, or we are drawing in both bitplanes
 
  LDA K3                 ; If the character to print in K3 is not a space, jump
  CMP #' '               ; to CB6B2 with the character in A
@@ -16939,7 +16939,7 @@ ENDIF
  STA (SC),Y
  STA (SC2),Y
  INC tileNumber
- LDY fontBitPlane
+ LDY fontBitplane
  DEY
  BEQ CB772
  DEY
