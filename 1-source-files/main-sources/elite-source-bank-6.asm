@@ -4537,8 +4537,8 @@ ENDIF
  STA tileNumber
 
  LDA #%11001000         ; Set bits 3, 6 and 7 of both bitplane flags
- STA bitPlaneFlags
- STA bitPlaneFlags+1
+ STA bitplaneFlags
+ STA bitplaneFlags+1
 
  RTS
 

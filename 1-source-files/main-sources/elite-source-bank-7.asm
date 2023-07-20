@@ -943,7 +943,7 @@ ENDIF
                         ; So dataForPPU(1 0) + Y points to the pattern within
                         ; the icon bar's image data that corresponds to pattern
                         ; number barPatternCounter, so this is the data that we
-                        ; want to send to the PPU using LDA (dataForPPU),Y below
+                        ; want to send to the PPU
 
  LDX #32                ; We now send 32 bytes to the PPU, which equates to four
                         ; tile patterns (as each tile pattern contains eight
@@ -1087,7 +1087,7 @@ ENDIF
                         ; So dataForPPU(1 0) + Y points to the pattern within
                         ; the icon bar's image data that corresponds to pattern
                         ; number barPatternCounter, so this is the data that we
-                        ; want to send to the PPU using LDA (dataForPPU),Y below
+                        ; want to send to the PPU
 
  LDX #32                ; We now send 32 bytes to the PPU, which equates to four
                         ; tile patterns (as each tile pattern contains eight
@@ -1168,7 +1168,7 @@ ENDIF
                         ; So dataForPPU(1 0) + Y points to the pattern within
                         ; the icon bar's image data that corresponds to pattern
                         ; number barPatternCounter, so this is the data that we
-                        ; want to send to the PPU using LDA (dataForPPU),Y below
+                        ; want to send to the PPU
 
  LDX #32                ; We now send 32 bytes to the PPU, which equates to four
                         ; tile patterns (as each tile pattern contains eight
@@ -1254,7 +1254,7 @@ ENDIF
 .ConsiderSendTiles
 
  LDX nmiBitplane        ; Set A to the bitplane flags for the NMI bitplane
- LDA bitPlaneFlags,X
+ LDA bitplaneFlags,X
 
  AND #%00010000         ; If bit 4 of A is clear, return from the subroutine
  BEQ RTS1               ; (as RTS1 contains an RTS)
@@ -1268,7 +1268,7 @@ ENDIF
 
  JMP next2              ; The result is positive, so we have enough cycles to
                         ; keep sending PPU data in this VBlank, so jump to
-                        ; SendTilesToPPU via next2 to move on to the next
+                        ; SendPatternsToPPU via next2 to move on to the next
                         ; stage of sending tile patterns to the PPU
 
 .next1
@@ -1279,7 +1279,7 @@ ENDIF
 
 .next2
 
- JMP SendTilesToPPU     ; Jump to SendTilesToPPU to move on to the next stage
+ JMP SendPatternsToPPU  ; Jump to SendPatternsToPPU to move on to the next stage
                         ; of sending tile patterns to the PPU
 
 .RTS1
@@ -1322,7 +1322,7 @@ ENDIF
 ; ******************************************************************************
 
  LDX nmiBitplane        ; Set A to the bitplane flags for the NMI bitplane
- LDA bitPlaneFlags,X
+ LDA bitplaneFlags,X
 
  AND #%00010000         ; If bit 4 is clear, then we have not already started
  BEQ sbuf7              ; sending tile data to the PPU in a previous VBlank, so
@@ -1338,14 +1338,14 @@ ENDIF
  EOR #1                 ; bitplane to the NMI bitplane
  TAY
 
- LDA bitPlaneFlags,Y    ; Set A to the bitplane flags for the opposite plane
+ LDA bitplaneFlags,Y    ; Set A to the bitplane flags for the opposite plane
                         ; to the NMI bitplane
 
  AND #%10100000         ; If bitplanes are enabled, and bit 7 is set and bit 5
  ORA enableBitplanes    ; is clear in the flags for the opposite bitplane, keep
  CMP #%10000001         ; going to check whether we have tiles to send,
- BNE sbuf2              ; otherwise jump to SendTilesToPPU via sbuf2 to continue
-                        ; sending tiles to the PPU
+ BNE sbuf2              ; otherwise jump to SendPatternsToPPU via sbuf2 to
+                        ; continue sending tiles to the PPU
 
                         ; If we get here then bitplanes are enabled, bit 7 is
                         ; set and bit 5 is clear in the flags for the opposite
@@ -1371,22 +1371,22 @@ ENDIF
 
                         ; If we get here then we have finished sending pattern
                         ; data to the PPU, so we now move on to the nametable
-                        ; entries by jumping to SendTilesToPPU after adjusting
-                        ; the cycle count
+                        ; entries by jumping to SendPatternsToPPU after
+                        ; adjusting the cycle count
 
  SUBTRACT_CYCLES 32     ; Subtract 32 from the cycle count
 
 .sbuf2
 
- JMP SendTilesToPPU     ; Jump to SendTilesToPPU to continue sending tile data
-                        ; to the PPU
+ JMP SendPatternsToPPU  ; Jump to SendPatternsToPPU to continue sending tile
+                        ; data to the PPU
 
 .sbuf3
 
                         ; If we get here then we still have pattern data to send
                         ; to the PPU
 
- LDA bitPlaneFlags,X    ; Set A to the bitplane flags for the NMI bitplane
+ LDA bitplaneFlags,X    ; Set A to the bitplane flags for the NMI bitplane
 
  ASL A                  ; Shift A left by one place, so bit 7 becomes bit 6 of
                         ; the original flags, and so on
@@ -1394,7 +1394,7 @@ ENDIF
  BPL RTS1               ; If bit 6 of the bitplane flags is clear, return from
                         ; the subroutine (as RTS1 contains an RTS)
 
- LDY nameTileEnd1,X     ; Set Y to the number of the last tile we need to send
+ LDY lastTileNumber,X   ; Set Y to the number of the last tile we need to send
                         ; for this bitplane
 
  AND #%00001000         ; If bit 3 of the bitplane flags is set, set Y = 128
@@ -1404,7 +1404,7 @@ ENDIF
 .sbuf4
 
  TYA                    ; Set A = Y - nameTileNumber1
- SEC                    ;       = nameTileEnd1 - nameTileNumber1
+ SEC                    ;       = lastTileNumber - nameTileNumber1
  SBC nameTileNumber1,X  ;
                         ; So this is the number of tiles for which we have to
                         ; send nametable entries, as nameTileNumber1 is the
@@ -1418,8 +1418,8 @@ ENDIF
 
 .sbuf5
 
- JMP SendTilesToPPU     ; Jump to SendTilesToPPU to continue sending tile data
-                        ; to the PPU
+ JMP SendPatternsToPPU  ; Jump to SendPatternsToPPU to continue sending tile
+                        ; data to the PPU
 
 .sbuf6
 
@@ -1435,8 +1435,8 @@ ENDIF
  JSR SetPaletteForPlane ; Set either background palette 0 or sprite palette 1,
                         ; according to the palette bitplane and view type
 
- JMP SendTilesToPPU     ; Jump to SendTilesToPPU to continue sending tile data
-                        ; to the PPU
+ JMP SendPatternsToPPU  ; Jump to SendPatternsToPPU to continue sending tile
+                        ; data to the PPU
 
 ; ******************************************************************************
 ;
@@ -1452,7 +1452,7 @@ ENDIF
 
  SUBTRACT_CYCLES 298    ; Subtract 298 from the cycle count
 
- LDA bitPlaneFlags      ; If bit 7 is set and bit 5 is clear in the flags for
+ LDA bitplaneFlags      ; If bit 7 is set and bit 5 is clear in the flags for
  AND #%10100000         ; bitplane 0, keep going to process bitplane 0,
  CMP #%10000000         ; otherwise jump to sbuf8 to consider bitplane 1
  BNE sbuf8
@@ -1468,7 +1468,7 @@ ENDIF
 
 .sbuf8
 
- LDA bitPlaneFlags+1    ; If bit 7 is set and bit 5 is clear in the flags for
+ LDA bitplaneFlags+1    ; If bit 7 is set and bit 5 is clear in the flags for
  AND #%10100000         ; bitplane 1, jump to sbuf10 to process bitplane 1
  CMP #%10000000
  BEQ sbuf10
@@ -1500,8 +1500,8 @@ ENDIF
                         ; update the cycle count and skip the following two
                         ; instructions
 
- STX paletteBitplane    ; Set the palette bitplane to the same as the NMI bit
-                        ; plane
+ STX paletteBitplane    ; Set the palette bitplane to be the same as the NMI
+                        ; bitplane
 
  JSR SetPaletteForPlane ; Set either background palette 0 or sprite palette 1,
                         ; according to the palette bitplane and view type
@@ -1563,9 +1563,9 @@ ENDIF
 
  STA pattTileNumber2,X
 
- LDA bitPlaneFlags,X    ; Set bit 4 in the bitplane flags to indicate that we
+ LDA bitplaneFlags,X    ; Set bit 4 in the bitplane flags to indicate that we
  ORA #%00010000         ; are now sending tile data to the PPU in the NMI
- STA bitPlaneFlags,X    ; handler (so we can detect this if we have to split
+ STA bitplaneFlags,X    ; handler (so we can detect this if we have to split
                         ; the process across multiple VBlanks/calls to the NMI
                         ; handler)
 
@@ -1606,55 +1606,55 @@ ENDIF
  SBC nameBufferHiAddr,X
  STA ppuToBuffNameHi,X
 
- JMP SendTilesToPPU
+ JMP SendPatternsToPPU
 
 ; ******************************************************************************
 ;
-;       Name: SendTilesToPPU (Part 1 of 5)
+;       Name: SendPatternsToPPU (Part 1 of 5)
 ;       Type: Subroutine
 ;   Category: Drawing tiles
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.tpat1
+.spat1
 
  ADD_CYCLES_CLC 4       ; Add 4 to the cycle count
 
  JMP SendNametableNow
 
-.tpat2
+.spat2
 
- JMP tpat21
+ JMP spat21
 
-.SendTilesToPPU
+.SendPatternsToPPU
 
  SUBTRACT_CYCLES 182    ; Subtract 182 from the cycle count
 
- BMI tpat3              ; If the result is negative, jump to tpat3 to stop
+ BMI spat3              ; If the result is negative, jump to spat3 to stop
                         ; sending PPU data in this VBlank, as we have run out of
                         ; cycles (we will pick up where we left off in the next
                         ; VBlank)
 
- JMP tpat4              ; The result is positive, so we have enough cycles to
-                        ; keep sending PPU data in this VBlank, so jump to tpat4
+ JMP spat4              ; The result is positive, so we have enough cycles to
+                        ; keep sending PPU data in this VBlank, so jump to spat4
                         ; to ???
 
-.tpat3
+.spat3
 
  ADD_CYCLES 141         ; Add 141 to the cycle count
 
  JMP RTS1               ; Return from the subroutine (as RTS1 contains an RTS)
 
-.tpat4
+.spat4
 
  LDA nextTileNumber,X
- BNE tpat5
+ BNE spat5
  LDA #255
 
-.tpat5
+.spat5
 
- STA nameTileEnd
+ STA lastTile
  LDA ppuNametableAddr+1
  SEC
  SBC nameBufferHiAddr,X
@@ -1665,14 +1665,14 @@ ENDIF
  LDA pattTileNumber1,X
  STA L00C9
  SEC
- SBC nameTileEnd
- BCS tpat1
+ SBC lastTile
+ BCS spat1
  LDX ppuCtrlCopy
- BEQ tpat6
+ BEQ spat6
  CMP #$BF
- BCC tpat2
+ BCC spat2
 
-.tpat6
+.spat6
 
  LDA L00C9
  LDX #0
@@ -1697,75 +1697,55 @@ ENDIF
  ADC nmiBitplanex8
  STA PPU_ADDR
  STA addr4
- JMP tpat9
+ JMP spat9
 
 ; ******************************************************************************
 ;
-;       Name: SendTilesToPPU (Part 2 of 5)
+;       Name: SendPatternsToPPU (Part 2 of 5)
 ;       Type: Subroutine
 ;   Category: Drawing tiles
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.tpat7
+.spat7
 
  INC dataForPPU+1
 
  SUBTRACT_CYCLES 27     ; Subtract 27 from the cycle count
 
- JMP tpat13
+ JMP spat13
 
-.tpat8
+.spat8
 
- JMP tpat17
+ JMP spat17
 
-.tpat9
+.spat9
 
  LDX L00C9
 
-.tpat10
+.spat10
 
  SUBTRACT_CYCLES 400    ; Subtract 400 from the cycle count
 
- BMI tpat11
- JMP tpat12
+ BMI spat11
+ JMP spat12
 
-.tpat11
+.spat11
 
  ADD_CYCLES 359         ; Add 359 to the cycle count
 
- JMP tpat30
+ JMP spat30
 
-.tpat12
+.spat12
 
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- BEQ tpat7
+ SEND_DATA_TO_PPU 8     ; Send 8 bytes from dataForPPU to the PPU, starting at
+                        ; index Y and updating Y to point to the byte after the
+                        ; block that is sent
 
-.tpat13
+ BEQ spat7
+
+.spat13
 
  LDA addr4
  CLC
@@ -1778,35 +1758,16 @@ ENDIF
  LDA addr4
  STA PPU_ADDR
  INX
- CPX nameTileEnd
- BCS tpat8
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- BEQ tpat16
+ CPX lastTile
+ BCS spat8
 
-.tpat14
+ SEND_DATA_TO_PPU 8     ; Send 8 bytes from dataForPPU to the PPU, starting at
+                        ; index Y and updating Y to point to the byte after the
+                        ; block that is sent
+
+ BEQ spat16
+
+.spat14
 
  LDA addr4
  ADC #$10
@@ -1818,35 +1779,16 @@ ENDIF
  LDA addr4
  STA PPU_ADDR
  INX
- CPX nameTileEnd
- BCS tpat18
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- BEQ tpat20
+ CPX lastTile
+ BCS spat18
 
-.tpat15
+ SEND_DATA_TO_PPU 8     ; Send 8 bytes from dataForPPU to the PPU, starting at
+                        ; index Y and updating Y to point to the byte after the
+                        ; block that is sent
+
+ BEQ spat20
+
+.spat15
 
  LDA addr4
  ADC #$10
@@ -1858,30 +1800,30 @@ ENDIF
  LDA addr4
  STA PPU_ADDR
  INX
- CPX nameTileEnd
- BCS tpat19
- JMP tpat10
+ CPX lastTile
+ BCS spat19
+ JMP spat10
 
-.tpat16
+.spat16
 
  INC dataForPPU+1
 
  SUBTRACT_CYCLES 29     ; Subtract 29 from the cycle count
 
  CLC
- JMP tpat14
+ JMP spat14
 
-.tpat17
+.spat17
 
  ADD_CYCLES_CLC 224     ; Add 224 to the cycle count
 
- JMP tpat19
+ JMP spat19
 
-.tpat18
+.spat18
 
  ADD_CYCLES_CLC 109     ; Add 109 to the cycle count
 
-.tpat19
+.spat19
 
  STX L00C9
  NOP
@@ -1895,25 +1837,25 @@ ENDIF
  JMP SendNametableToPPU ; Jump to SendNametableToPPU to start sending the tile
                         ; nametable to the PPU
 
-.tpat20
+.spat20
 
  INC dataForPPU+1
 
  SUBTRACT_CYCLES 29     ; Subtract 29 from the cycle count
 
  CLC
- JMP tpat15
+ JMP spat15
 
 ; ******************************************************************************
 ;
-;       Name: SendTilesToPPU (Part 3 of 5)
+;       Name: SendPatternsToPPU (Part 3 of 5)
 ;       Type: Subroutine
 ;   Category: Drawing tiles
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.tpat21
+.spat21
 
  LDA L00C9
  LDX #0
@@ -1938,71 +1880,51 @@ ENDIF
  ADC nmiBitplanex8
  STA PPU_ADDR
  STA addr4
- JMP tpat23
+ JMP spat23
 
 ; ******************************************************************************
 ;
-;       Name: SendTilesToPPU (Part 4 of 5)
+;       Name: SendPatternsToPPU (Part 4 of 5)
 ;       Type: Subroutine
 ;   Category: Drawing tiles
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.tpat22
+.spat22
 
  INC dataForPPU+1
 
  SUBTRACT_CYCLES 27     ; Subtract 27 from the cycle count
 
- JMP tpat27
+ JMP spat27
 
-.tpat23
+.spat23
 
  LDX L00C9
 
-.tpat24
+.spat24
 
  SUBTRACT_CYCLES 266    ; Subtract 266 from the cycle count
 
- BMI tpat25
- JMP tpat26
+ BMI spat25
+ JMP spat26
 
-.tpat25
+.spat25
 
  ADD_CYCLES 225         ; Add 225 to the cycle count
 
- JMP tpat30
+ JMP spat30
 
-.tpat26
+.spat26
 
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- BEQ tpat22
+ SEND_DATA_TO_PPU 8     ; Send 8 bytes from dataForPPU to the PPU, starting at
+                        ; index Y and updating Y to point to the byte after the
+                        ; block that is sent
 
-.tpat27
+ BEQ spat22
+
+.spat27
 
  LDA addr4
  CLC
@@ -2014,33 +1936,14 @@ ENDIF
  STA PPU_ADDR
  LDA addr4
  STA PPU_ADDR
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- BEQ tpat29
 
-.tpat28
+ SEND_DATA_TO_PPU 8     ; Send 8 bytes from dataForPPU to the PPU, starting at
+                        ; index Y and updating Y to point to the byte after the
+                        ; block that is sent
+
+ BEQ spat29
+
+.spat28
 
  LDA addr4
  ADC #$10
@@ -2053,27 +1956,27 @@ ENDIF
  STA PPU_ADDR
  INX
  INX
- JMP tpat24
+ JMP spat24
 
-.tpat29
+.spat29
 
  INC dataForPPU+1
 
  SUBTRACT_CYCLES 29     ; Subtract 29 from the cycle count
 
  CLC
- JMP tpat28
+ JMP spat28
 
 ; ******************************************************************************
 ;
-;       Name: SendTilesToPPU (Part 5 of 5)
+;       Name: SendPatternsToPPU (Part 5 of 5)
 ;       Type: Subroutine
 ;   Category: Drawing tiles
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.tpat30
+.spat30
 
  STX L00C9
  LDX nmiBitplane
@@ -2098,7 +2001,7 @@ ENDIF
 
  LDX nmiBitplane        ; Set bit 5 and clear all other bits in the bitplane
  LDA #%00100000         ; flags for the NMI bitplane
- STA bitPlaneFlags,X
+ STA bitplaneFlags,X
 
  SUBTRACT_CYCLES 227    ; Subtract 227 from the cycle count
 
@@ -2129,7 +2032,7 @@ ENDIF
 
  TAX                    ; Set X to the newly flipped NMI bitplane
 
- LDA bitPlaneFlags,X    ; If bit 7 is set and bit 5 is clear in the flags for
+ LDA bitplaneFlags,X    ; If bit 7 is set and bit 5 is clear in the flags for
  AND #%10100000         ; the new NMI bitplane, jump to CCB80 to update the
  CMP #%10000000         ; cycle count and return from the subroutine
  BEQ CCB80
@@ -2196,21 +2099,21 @@ ENDIF
 .SendNametableNow
 
  LDX nmiBitplane
- LDA bitPlaneFlags,X
+ LDA bitplaneFlags,X
  ASL A
  BPL snam1
- LDY nameTileEnd1,X
+ LDY lastTileNumber,X
  AND #8
  BEQ snam4
  LDY #$80
 
 .snam4
 
- STY nameTileEnd
+ STY lastTile
  LDA nameTileNumber1,X
  STA nameTileCounter
  SEC
- SBC nameTileEnd
+ SBC lastTile
  BCS snam2
  LDY nameTileBuffLo,X
  LDA nameTileBuffHi,X
@@ -2237,107 +2140,15 @@ ENDIF
 
 .snam7
 
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
- LDA (dataForPPU),Y
- STA PPU_DATA
- INY
+ SEND_DATA_TO_PPU 32    ; Send 32 bytes from dataForPPU to the PPU, starting at
+                        ; index Y and updating Y to point to the byte after the
+                        ; block that is sent
+
  BEQ snam9
  LDA nameTileCounter
  ADC #3
  STA nameTileCounter
- CMP nameTileEnd
+ CMP lastTile
  BCS snam8
  JMP snam5
 
@@ -2360,7 +2171,7 @@ ENDIF
  CLC
  ADC #4
  STA nameTileCounter
- CMP nameTileEnd
+ CMP lastTile
  BCS snam8
  JMP snam5
 
@@ -3125,10 +2936,14 @@ ENDIF
  ADC #$00
  STA cycleCount+1
 
- BMI upsc1              ; If cycleCount is negative, skip the following
-                        ; instruction
+ BMI upsc1              ; If the result is negative, jump to upsc1 to stop
+                        ; sending PPU data in this VBlank, as we have run out of
+                        ; cycles (we will pick up where we left off in the next
+                        ; VBlank)
 
- JSR ClearBuffers       ; ???
+ JSR ClearBuffers       ; The result is positive, so we have enough cycles to
+                        ; keep sending PPU data in this VBlank, so call
+                        ; ClearBuffers to reset the buffers for both bitplanes
 
 .upsc1
 
@@ -3496,7 +3311,7 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA bitPlaneFlags,X
+ LDA bitplaneFlags,X
  BEQ CD1C7
  AND #%00100000
  BNE CD1B8
@@ -3507,7 +3322,7 @@ ENDIF
 
  JSR CD1C8
  LDA #0
- STA bitPlaneFlags,X
+ STA bitplaneFlags,X
  LDA pattTileNumber
  STA tileNumber
  JMP DrawBoxTop
@@ -3525,9 +3340,9 @@ ENDIF
  CPY frameCounter
  BNE CD1C8
  LDY SC
- CPY nameTileEnd2
+ CPY maxTileNumber
  BCC CD1DE
- LDY nameTileEnd2
+ LDY maxTileNumber
 
 .CD1DE
 
@@ -3685,7 +3500,7 @@ ENDIF
  LDA cycleCount+1
  BEQ CD2B3
 
- LDA bitPlaneFlags,X
+ LDA bitplaneFlags,X
  BIT LD2A3
  BEQ CD2A4
 
@@ -3707,9 +3522,9 @@ ENDIF
 
  LDA nameTileNumber2,X
  LDY nameTileNumber1,X
- CPY nameTileEnd2
+ CPY maxTileNumber
  BCC CD2FF
- LDY nameTileEnd2
+ LDY maxTileNumber
 
 .CD2FF
 
@@ -3884,537 +3699,68 @@ ENDIF
 ;       Name: FillMemory
 ;       Type: Subroutine
 ;   Category: Utility routines
-;    Summary: ???
+;    Summary: Fill a block of memory with a specified value
+;
+; ------------------------------------------------------------------------------
+;
+; This routine is not called directly. Instead an entry point is calculated in
+; the ClearMemory routine as an offset backwards from the end of the
+; FillMemory32Bytes routine, such that jumping to this entry point will fill a
+; specified number of bytes (anywhere from 1 to 256).
+;
+; Arguments:
+;
+;   addr6(1 0)          The base address of the block of memory to fill
+;
+;   Y                   The index into addr6(1 0) from which to fill
+;
+;   A                   The value to fill
+;
+; Returns:
+;
+;   Y                   The index in Y is updated to point to the byte after the
+;                       filled block
 ;
 ; ******************************************************************************
 
 .FillMemory
 
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
+ FILL_MEMORY 224        ; Fill the 224-byte block of memory at addr6(1 0) + Y
+                        ; with A
+
+                        ; Falling through into FillMemory32Bytes to fill another
+                        ; 32 bytes, bringing the total to 256
 
 ; ******************************************************************************
 ;
 ;       Name: FillMemory32Bytes
 ;       Type: Subroutine
 ;   Category: Utility routines
-;    Summary: ???
+;    Summary: Fill a 32-byte block of memory with a specified value
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   addr6(1 0)          The base address of the block of memory to fill
+;
+;   Y                   The index into addr6(1 0) from which to fill
+;
+;   A                   The value to fill
+;
+; Returns:
+;
+;   Y                   The index in Y is updated to point to the byte after the
+;                       filled block
 ;
 ; ******************************************************************************
 
 .FillMemory32Bytes
 
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- RTS
+ FILL_MEMORY 32         ; Fill the 32-byte block of memory at addr6(1 0) + Y
+                        ; with A
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -4620,24 +3966,13 @@ ENDIF
  SBC #8
  BCC CD8B7
  STA addr7
+
  LDA #0
  LDY #0
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
- STA (addr6),Y
- INY
+
+ FILL_MEMORY 8          ; Fill the 8-byte block of memory at addr6(1 0) + Y
+                        ; with A
+
  LDA addr6
  CLC
  ADC #8
@@ -4669,11 +4004,11 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA bitPlaneFlags
+ LDA bitplaneFlags
  AND #%01000000
  BNE subm_D8C5
 
- LDA bitPlaneFlags+1
+ LDA bitplaneFlags+1
  AND #%01000000
  BNE subm_D8C5
 
@@ -4861,12 +4196,12 @@ ENDIF
  STA nameTileNumber
 
  LDA #100
- STA nameTileEnd1
- STA nameTileEnd1+1
+ STA lastTileNumber
+ STA lastTileNumber+1
 
  LDA #%11000100         ; Set bits 2, 6 and 7 of both bitplane flags
- STA bitPlaneFlags
- STA bitPlaneFlags+1
+ STA bitplaneFlags
+ STA bitplaneFlags+1
 
  JMP subm_D8C5
 
@@ -4917,73 +4252,35 @@ ENDIF
  STA nextTileNumber,X
 
  PLA
- STA bitPlaneFlags,X
+ STA bitplaneFlags,X
 
  RTS
 
 ; ******************************************************************************
 ;
-;       Name: SendToPPU2
+;       Name: SendMissilesToPPU
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.SendToPPU2
+.SendMissilesToPPU
 
  LDY #0
- LDA (SC),Y
- STA PPU_DATA
- INY
- LDA (SC),Y
- STA PPU_DATA
- INY
- LDA (SC),Y
- STA PPU_DATA
- INY
- LDA (SC),Y
- STA PPU_DATA
- INY
- LDA (SC),Y
- STA PPU_DATA
- INY
- LDA (SC),Y
- STA PPU_DATA
- INY
- LDA (SC),Y
- STA PPU_DATA
- INY
- LDA (SC),Y
- STA PPU_DATA
- INY
- LDA (SC),Y
- STA PPU_DATA
- INY
- LDA (SC),Y
- STA PPU_DATA
- INY
- LDA (SC),Y
- STA PPU_DATA
- INY
- LDA (SC),Y
- STA PPU_DATA
- INY
- LDA (SC),Y
- STA PPU_DATA
- INY
- LDA (SC),Y
- STA PPU_DATA
- INY
- LDA (SC),Y
- STA PPU_DATA
- INY
- LDA (SC),Y
- STA PPU_DATA
- INY
+
+ FOR I%, 1, 16
+
+  LDA (SC),Y            ; Send the Y-th byte of SC(1 0) to the PPU
+  STA PPU_DATA
+
+  INY                   ; Increment the index in Y
+
+ NEXT
+
  LDA SC
  CLC
- ADC #$10
+ ADC #16
  STA SC
  BCC CD9F3
  INC SC+1
@@ -4991,7 +4288,7 @@ ENDIF
 .CD9F3
 
  DEX
- BNE SendToPPU2
+ BNE SendMissilesToPPU
  RTS
 
 ; ******************************************************************************
@@ -11316,8 +10613,8 @@ ENDIF
 .subm_F139
 
  LDA #116
- STA nameTileEnd1
- STA nameTileEnd1+1
+ STA lastTileNumber
+ STA lastTileNumber+1
 
 ; ******************************************************************************
 ;

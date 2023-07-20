@@ -11523,7 +11523,7 @@ ENDIF
  LDA #0
  STA pattTileNumber
  LDA #80
- STA nameTileEnd2
+ STA maxTileNumber
  JMP subm_F2CE
 
 ; ******************************************************************************

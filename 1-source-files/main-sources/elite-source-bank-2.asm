@@ -15503,7 +15503,7 @@ ENDIF
  LDA tileNumber
  STA pattTileNumber
  LDA #40
- STA nameTileEnd2
+ STA maxTileNumber
  LDX #8
  STX nameTileNumber
 

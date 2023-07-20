@@ -2414,9 +2414,9 @@ ENDIF
 
  LDX drawingBitplane
 
- LDA bitPlaneFlags,X    ; Set bit 6 of the flags for the drawing bitplane
+ LDA bitplaneFlags,X    ; Set bit 6 of the flags for the drawing bitplane
  ORA #%01000000
- STA bitPlaneFlags,X
+ STA bitplaneFlags,X
 
  RTS
 
@@ -3042,9 +3042,9 @@ ENDIF
  LDA #0
  STA nameTileNumber
  LDA #108
- STA nameTileEnd2
- STA nameTileEnd1
- STA nameTileEnd1+1
+ STA maxTileNumber
+ STA lastTileNumber
+ STA lastTileNumber+1
  LDX #$25
  LDA QQ11
  AND #$40
@@ -3122,7 +3122,7 @@ ENDIF
  STA nameTileNumber
 
  LDA #100
- STA nameTileEnd2
+ STA maxTileNumber
 
  LDA #37
  STA pattTileNumber
@@ -3134,8 +3134,8 @@ ENDIF
  JSR CopyNameBuffer0To1
 
  LDA #%11000100         ; Set bits 2, 6 and 7 of both bitplane flags
- STA bitPlaneFlags
- STA bitPlaneFlags+1
+ STA bitplaneFlags
+ STA bitplaneFlags+1
 
  LDA tileNumber
  STA pattTileNumber
@@ -15480,8 +15480,8 @@ ENDIF
  LDA #2
  STA boxEdge2
  LDA #80
- STA nameTileEnd1
- STA nameTileEnd1+1
+ STA lastTileNumber
+ STA lastTileNumber+1
  LDA BOMB
  BPL CADAA
  JSR HideHiddenColour
@@ -16927,7 +16927,7 @@ ENDIF
  LDA tileNumber
  STA pattTileNumber
  LDA #116
- STA nameTileEnd2
+ STA maxTileNumber
  LDX #8
  STX nameTileNumber
  LDA #$68
@@ -17310,7 +17310,7 @@ ENDIF
  LDA tileNumber
  STA pattTileNumber
  LDA #80
- STA nameTileEnd2
+ STA maxTileNumber
  LDX #8
  STX nameTileNumber
  RTS
@@ -20607,8 +20607,8 @@ ENDIF
  JSR TT66
  JSR CopyNameBuffer0To1
  LDA #80
- STA nameTileEnd1
- STA nameTileEnd1+1
+ STA lastTileNumber
+ STA lastTileNumber+1
  JSR subm_A9D1_b3
 
 ; ******************************************************************************
@@ -20684,13 +20684,13 @@ ENDIF
  STA pattTileNumber
 
  LDA #80
- STA nameTileEnd2
+ STA maxTileNumber
 
  LDX #8
  STX nameTileNumber
 
  LDA #116
- STA nameTileEnd1
+ STA lastTileNumber
 
  RTS
 

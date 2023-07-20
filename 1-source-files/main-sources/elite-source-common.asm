@@ -1141,14 +1141,16 @@ ENDIF
                         ; Can be 0, 8, 40, 88
                         ; = tiles 8, 64, 320, 704
 
-.nameTileEnd1
+.lastTileNumber
 
- SKIP 1                 ; An end tile number for bitplane 0, divided by 8
+ SKIP 1                 ; The last tile number to send to bitplane 0, divided
+                        ; by 8
                         ;
                         ; Can be 80, 100, 108, 116
                         ; = tiles 640, 800, 864, 928
 
- SKIP 1                 ; An end tile number for bitplane 1, divided by 8
+ SKIP 1                 ; The last tile number to send to bitplane 1, divided
+                        ; by 8
                         ;
                         ; Can be 80, 100, 108, 116
                         ; = tiles 640, 800, 864, 928
@@ -1226,11 +1228,14 @@ ENDIF
                         ; of skipBarPatternsPPU is clear, both the nametable
                         ; entries and tile patterns will be sent
 
-.nameTileEnd2
+.maxTileNumber
 
- SKIP 1                 ; An end tile number, divided by 8
+ SKIP 1                 ; A maximum value for the last tile number to send to
+                        ; the PPU, divided by 8
                         ;
-                        ; Can be 80, 100, 108, 116, copied from nameTileEnd1
+                        ; i.e. var = min(nameTileNumber1, maxTileNumber)
+                        ;
+                        ; Can be 80, 100, 108, 116, copied from lastTileNumber
                         ; = tiles 640, 800, 864, 928
 
 .L00D9
@@ -1307,9 +1312,16 @@ ENDIF
 
  SKIP 1                 ; Set to 0 in S%, never used again ???
 
-.nameTileEnd
+.lastTile
 
- SKIP 1                 ; An end tile number, possibly no/8 ???
+ SKIP 1                 ; The last tile number to send to the PPU, divided by 8
+                        ; and potentialls overwritten by the flags
+                        ;
+                        ; This variable is used internally by the
+                        ; SendPatternsToPPU and SendNametableToPPU routines, and
+                        ; is set as follows:
+                        ;
+                        ; lastTile = (bitplaneFlag 3 set) ? 128 : lastTileNumber
                         ;
                         ; Can be 80, 100, 108, 116
 
@@ -3430,15 +3442,15 @@ ORG $0200
 
  SKIP 1                 ; ???
 
-.bitPlaneFlags
+.bitplaneFlags
 
  SKIP 1                 ; Flags for bitplane 0: ???
                         ;
-                        ;   * Bit 3 overrides the number of the end tile to send
-                        ;     to the PPU nametable in SendBuffersToPPU:
+                        ;   * Bit 3 overrides the number of the last tile to
+                        ;     send to the PPU nametable in SendBuffersToPPU:
                         ;      
-                        ;     0 = set the end tile number to nameTileEnd1,X
-                        ;     1 = set the end tile number to 128
+                        ;     0 = set the last tile number to lastTileNumber,X
+                        ;     1 = set the last tile number to 128
                         ;
                         ;     Set to 1 in DrawTitleScreen, for example
                         ;
@@ -4703,6 +4715,19 @@ ENDIF
 ;    Summary: If the PPU has started drawing the icon bar, configure the PPU to
 ;             use nametable 0 and pattern table 0
 ;
+; ------------------------------------------------------------------------------
+;
+; The following macro is used to ensure the game switches to the correct PPU
+; nametable and pattern table for drawing the icon bar:
+;
+;   SETUP_PPU_FOR_ICON_BAR
+;
+; It checks whether the PPU has started drawing the icon bar (which it does
+; using sprite 0), and if it has it switches the PPU to nametable 0 and pattern
+; table 0, as that's where the icon bar tiles live.
+;
+; There are no arguments.
+;
 ; ******************************************************************************
 
 MACRO SETUP_PPU_FOR_ICON_BAR
@@ -5400,6 +5425,18 @@ ENDMACRO
 ;   Category: Drawing tiles
 ;    Summary: Add a specifed number to the cycle count
 ;
+; ------------------------------------------------------------------------------
+;
+; The following macro is used to add cycles to the cycle count:
+;
+;   ADD_CYCLES_CLC cycles
+;
+; The cycle count is stored in the variable cycleCount.
+;
+; Arguments:
+;
+;   cycles              The number of cycles to add to the cycle count
+;
 ; ******************************************************************************
 
 MACRO ADD_CYCLES_CLC cycles
@@ -5422,6 +5459,21 @@ ENDMACRO
 ;   Category: Drawing tiles
 ;    Summary: Add a specifed number to the cycle count
 ;
+; ------------------------------------------------------------------------------
+;
+; The following macro is used to add cycles to the cycle count:
+;
+;   ADD_CYCLES cycles
+;
+; The cycle count is stored in the variable cycleCount. This macro assumes that
+; the C flag is clear.
+;
+; Arguments:
+;
+;   cycles              The number of cycles to add to the cycle count
+;
+;   C flag              Must be clear for the addition to work
+;
 ; ******************************************************************************
 
 MACRO ADD_CYCLES cycles
@@ -5442,6 +5494,18 @@ ENDMACRO
 ;   Category: Drawing tiles
 ;    Summary: Subtract a specifed number from the cycle count
 ;
+; ------------------------------------------------------------------------------
+;
+; The following macro is used to subtract cycles from the cycle count:
+;
+;   SUBTRACT_CYCLES cycles
+;
+; The cycle count is stored in the variable cycleCount.
+;
+; Arguments:
+;
+;   cycles              The number of cycles to subtract from the cycle count
+;
 ; ******************************************************************************
 
 MACRO SUBTRACT_CYCLES cycles
@@ -5453,6 +5517,96 @@ MACRO SUBTRACT_CYCLES cycles
  LDA cycleCount+1
  SBC #HI(cycles)
  STA cycleCount+1
+
+ENDMACRO
+
+; ******************************************************************************
+;
+;       Name: FILL_MEMORY
+;       Type: Macro
+;   Category: Drawing tiles
+;    Summary: Fill memory with the specified number of bytes
+;
+; ------------------------------------------------------------------------------
+;
+; The following macro is used to fill a block of memory with the same value:
+;
+;   FILL_MEMORY byte_count
+;
+; It writes the value A into byte_count bytes, starting at the Y-th byte of the
+; memory block at addresss addr6(1 0). It also updates the index in Y to point
+; to the byte after the block that is filled.
+;
+; Arguments:
+;
+;   byte_count          The number of bytes to fill
+;
+;   addr6(1 0)          The base address of the block of memory to fill
+;
+;   Y                   The index into addr6(1 0) from which to fill
+;
+;   A                   The value to fill
+;
+; Returns:
+;
+;   Y                   The index in Y is updated to point to the byte after the
+;                       filled block
+;
+; ******************************************************************************
+
+MACRO FILL_MEMORY byte_count
+
+ FOR I%, 1, byte_count
+
+  STA (addr6),Y         ; Write A to the Y-th byte of addr6(1 0)
+
+  INY                   ; Increment the index in Y
+
+ NEXT
+
+ENDMACRO
+
+; ******************************************************************************
+;
+;       Name: SEND_DATA_TO_PPU
+;       Type: Macro
+;   Category: Drawing tiles
+;    Summary: Send a specified block of memory to the PPU
+;
+; ------------------------------------------------------------------------------
+;
+; The following macro is used to send bytes to the PPU:
+;
+;   SEND_DATA_TO_PPU byte_count
+;
+; It sends a block of byte_count bytes from memory to the PPU, starting with the
+; Y-th byte of the data block at address dataForPPU(1 0). It also updates the
+; index in Y to point to the byte after the block that is sent.
+;
+; Arguments:
+;
+;   byte_count          The number of bytes to send to the PPU
+;
+;   Y                   The index into dataForPPU(1 0) from which to start
+;                       sending data
+;
+; Returns:
+;
+;   Y                   The index in Y is updated to point to the byte after the
+;                       block that is sent
+;
+; ******************************************************************************
+
+MACRO SEND_DATA_TO_PPU byte_count
+
+ FOR I%, 1, byte_count
+
+  LDA (dataForPPU),Y    ; Send the Y-th byte of dataForPPU(1 0) to the PPU
+  STA PPU_DATA
+
+  INY                   ; Increment the index in Y
+
+ NEXT
 
 ENDMACRO
 
