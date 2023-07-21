@@ -740,7 +740,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: BarNametableToPPU
+;       Name: SendBarNamesToPPU
 ;       Type: Subroutine
 ;   Category: Drawing tiles
 ;    Summary: Send the nametable entries for the icon bar to the PPU
@@ -751,7 +751,7 @@ ENDIF
 ; 
 ; ******************************************************************************
 
-.BarNametableToPPU
+.SendBarNamesToPPU
 
  SUBTRACT_CYCLES 2131   ; Subtract 2131 from the cycle count
 
@@ -817,9 +817,9 @@ ENDIF
  BMI ibar3              ; the pattern data to the PPU, so jump to ibar3 to skip
                         ; the following
 
- JMP BarPatternsToPPU   ; Bit 7 of skipBarPatternsPPU is clear, we do want to
+ JMP SendBarPattsToPPU  ; Bit 7 of skipBarPatternsPPU is clear, we do want to
                         ; send the icon bar's pattern data to the PPU, so jump
-                        ; to BarPatternsToPPU to do just that, returning from
+                        ; to SendBarPattsToPPU to do just that, returning from
                         ; the subroutine using a tail call
 
 .ibar3
@@ -832,11 +832,11 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: BarPatternsHiToPPU
+;       Name: SendBarPatts2ToPPU
 ;       Type: Subroutine
 ;   Category: Drawing tiles
-;    Summary: Send tile pattern data 64-127 for the icon bar to the PPU, split
-;             across multiple calls to the NMI handler if required
+;    Summary: Send pattern data for tiles 64-127 for the icon bar to the PPU,
+;             split across multiple calls to the NMI handler if required
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -845,7 +845,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.BarPatternsHiToPPU
+.SendBarPatts2ToPPU
 
  SUBTRACT_CYCLES 666    ; Subtract 666 from the cycle count
 
@@ -975,7 +975,7 @@ ENDIF
  ADC #4
  STA barPatternCounter
 
- BPL BarPatternsHiToPPU ; If barPatternCounter < 128, loop back to the start of
+ BPL SendBarPatts2ToPPU ; If barPatternCounter < 128, loop back to the start of
                         ; the routine to send another four pattern tiles
 
  JMP ConsiderSendTiles  ; Jump to ConsiderSendTiles to start sending tiles to
@@ -983,17 +983,17 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: BarPatternsToPPU
+;       Name: SendBarPattsToPPU
 ;       Type: Subroutine
 ;   Category: Drawing tiles
-;    Summary: Send pattern data for the icon bar to the PPU, split across
-;             multiple calls to the NMI handler if required
+;    Summary: Send pattern data for tiles 0-127 for the icon bar to the PPU,
+;             split across multiple calls to the NMI handler if required
 ;
 ; ------------------------------------------------------------------------------
 ;
 ; Pattern data for icon bar patterns 0 to 63 is sent to both pattern table 0 and
 ; 1 in the PPU, while pattern data for icon bar patterns 64 to 127 is sent to
-; pattern table 0 only (the latter is done via the BarPatternsHiToPPU routine).
+; pattern table 0 only (the latter is done via the SendBarPatts2ToPPU routine).
 ;
 ; Arguments:
 ;
@@ -1004,10 +1004,10 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.BarPatternsToPPU
+.SendBarPattsToPPU
 
  ASL A                  ; If bit 6 of A is set, then 64 < A < 128, so jump to
- BMI BarPatternsHiToPPU ; BarPatternsHiToPPU to send patterns 64 to 127 to
+ BMI SendBarPatts2ToPPU ; SendBarPatts2ToPPU to send patterns 64 to 127 to
                         ; pattern table 0 in the PPU
 
                         ; If we get here then both bit 6 and bit 7 of A are
@@ -1200,12 +1200,12 @@ ENDIF
  ADC #4
  STA barPatternCounter
 
- JMP BarPatternsToPPU   ; Loop back to the start of the routine to send another
+ JMP SendBarPattsToPPU  ; Loop back to the start of the routine to send another
                         ; four pattern tiles to both PPU pattern tables
 
 ; ******************************************************************************
 ;
-;       Name: BarPatternsToPPU1
+;       Name: SendBarPattsToPPUS
 ;       Type: Subroutine
 ;   Category: Drawing tiles
 ;    Summary: Send the tile pattern data for the icon bar to the PPU (this is a
@@ -1213,15 +1213,15 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.BarPatternsToPPU1
+.SendBarPattsToPPUS
 
- JMP BarPatternsToPPU   ; Jump to BarPatternsToPPU to send the tile pattern data
-                        ; for the icon bar to the PPU, returning from the
+ JMP SendBarPattsToPPU  ; Jump to SendBarPattsToPPU to send the tile pattern
+                        ; data for the icon bar to the PPU, returning from the
                         ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: BarNametableToPPU1
+;       Name: SendBarNamesToPPUS
 ;       Type: Subroutine
 ;   Category: Drawing tiles
 ;    Summary: Send the nametable entries for the icon bar to the PPU (this is a
@@ -1229,9 +1229,9 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.BarNametableToPPU1
+.SendBarNamesToPPUS
 
- JMP BarNametableToPPU  ; Jump to BarNametableToPPU to send the nametable
+ JMP SendBarNamesToPPU  ; Jump to SendBarNamesToPPU to send the nametable
                         ; entries for the icon bar to the PPU, returning from
                         ; the subroutine using a tail call
 
@@ -1299,13 +1299,13 @@ ENDIF
 .SendBuffersToPPU
 
  LDA barPatternCounter  ; If barPatternCounter = 0, then we need to send the
- BEQ BarNametableToPPU1 ; nametable entries for the icon bar to the PPU, so
-                        ; jump to BarNametableToPPU via BarNametableToPPU1,
+ BEQ SendBarNamesToPPUS ; nametable entries for the icon bar to the PPU, so
+                        ; jump to SendBarNamesToPPU via SendBarNamesToPPUS,
                         ; returning from the subroutine using a tail call
 
- BPL BarPatternsToPPU1  ; If 0 < barPatternCounter < 128, then we need to send
+ BPL SendBarPattsToPPUS ; If 0 < barPatternCounter < 128, then we need to send
                         ; the pattern data for the icon bar to the PPU, so
-                        ; jump to BarPatternsToPPU via BarPatternsToPPU1,
+                        ; jump to SendBarPattsToPPU via SendBarPattsToPPUS,
                         ; returning from the subroutine using a tail call
 
                         ; If we get here then barPatternCounter >= 128, so we
@@ -1395,10 +1395,10 @@ ENDIF
                         ; the subroutine (as RTS1 contains an RTS)
 
  LDY lastTileNumber,X   ; Set Y to the number of the last tile we need to send
-                        ; for this bitplane
+                        ; for this bitplane, divided by 8
 
- AND #%00001000         ; If bit 3 of the bitplane flags is set, set Y = 128
- BEQ sbuf4
+ AND #%00001000         ; If bit 2 of the bitplane flags is set (as A was
+ BEQ sbuf4              ; shifted left above), set Y = 128
  LDY #128
 
 .sbuf4
@@ -1406,13 +1406,15 @@ ENDIF
  TYA                    ; Set A = Y - nameTileNumber1
  SEC                    ;       = lastTileNumber - nameTileNumber1
  SBC nameTileNumber1,X  ;
-                        ; So this is the number of tiles for which we have to
-                        ; send nametable entries, as nameTileNumber1 is the
+                        ; So this is the number of tiles for which we still have
+                        ; to send nametable entries, as nameTileNumber1 is the
                         ; number of the tile for which we are currently sending
-                        ; nametable entries to the PPU
+                        ; nametable entries to the PPU, divided by 8
 
- CMP #48                ; If A < 48, jump to sbuf6 to flip the palette bitplane
- BCC sbuf6              ; before sending the next batch of tiles ???
+ CMP #48                ; If A < 48, then we have fewer than 48 * 8 = 384
+ BCC sbuf6              ; nametable entries to send, so jump to sbuf6 to flip
+                        ; the palette bitplane before sending the next batch of
+                        ; tiles ???
 
  SUBTRACT_CYCLES 60     ; Subtract 60 from the cycle count
 
@@ -1423,14 +1425,17 @@ ENDIF
 
 .sbuf6
 
- LDA ppuCtrlCopy        ; If PPU_CTRL is zero, then ??? so jump to sbuf5 to skip
- BEQ sbuf5              ; the following bitplane flip
+ LDA ppuCtrlCopy        ; If ppuCtrlCopy is zero then we are not worried about
+ BEQ sbuf5              ; keeping PPU writes within VBlank, so jump to sbuf5 to
+                        ; skip the following bitplane flip and crack on with
+                        ; sending data to the PPU
 
  SUBTRACT_CYCLES 134    ; Subtract 134 from the cycle count
 
  LDA enableBitplanes    ; If bitplanes are enabled, then enableBitplanes = 1,
- EOR paletteBitplane    ; so this flips paletteBitplane between 0 and 1, but
- STA paletteBitplane    ; only when bitplanes are enabled
+ EOR paletteBitplane    ; so this flips paletteBitplane between 0 and 1 when
+ STA paletteBitplane    ; bitplanes are enabled, and does nothing when they
+                        ; aren't
 
  JSR SetPaletteForPlane ; Set either background palette 0 or sprite palette 1,
                         ; according to the palette bitplane and view type
@@ -1524,21 +1529,29 @@ ENDIF
 
 .SetupTilesForPPU
 
- TXA                    ; Set nmiBitplanex8 = X << 3
+ TXA                    ; Set nmiBitplane8 = X << 3
  ASL A                  ;                  = nmiBitplane * 8
- ASL A
- ASL A
- STA nmiBitplanex8
+ ASL A                  ;
+ ASL A                  ; So nmiBitplane has the following values:
+ STA nmiBitplane8       ;
+                        ;   * 0 when nmiBitplane is 0
+                        ;
+                        ;   * 8 when nmiBitplane is 1
 
  LSR A                  ; Set A = nmiBitplane << 2
                         ;
-                        ; So A = 0 or 4 (%100), depending on the current value
-                        ; of nmiBitplane
+                        ; So A has the following values:
+                        ;
+                        ;   * 0 when nmiBitplane is 0
+                        ;
+                        ;   * 4 when nmiBitplane is 1
 
  ORA #HI(PPU_NAME_0)    ; Set the high byte of ppuNametableAddr(1 0) to
- STA ppuNametableAddr+1 ; HI(PPU_NAME_0) + A, which will be HI(PPU_NAME_0) or
-                        ; HI(PPU_NAME_0) + 4, depending on the current value of
-                        ; nmiBitplane
+ STA ppuNametableAddr+1 ; HI(PPU_NAME_0) + A, which will be:
+                        ;
+                        ;   * HI(PPU_NAME_0)         when nmiBitplane is 0
+                        ;
+                        ;   * HI(PPU_NAME_0) + $04   when nmiBitplane is 1
 
  LDA #HI(PPU_PATT_1)    ; Set ppuPatternTableHi to point to the high byte of
  STA ppuPatternTableHi  ; pattern table 1 in the PPU
@@ -1546,74 +1559,104 @@ ENDIF
  LDA #0                 ; Zero the low byte of ppuNametableAddr(1 0), so we end
  STA ppuNametableAddr   ; up with ppuNametableAddr(1 0) set to:
                         ;
-                        ;   * PPU_NAME_0 ($2000) when nmiBitplane = 0
+                        ;   * PPU_NAME_0 ($2000)     when nmiBitplane = 0
                         ;
-                        ;   * PPU_NAME_1 ($2400) when nmiBitplane = 1
+                        ;   * PPU_NAME_1 ($2400)     when nmiBitplane = 1
                         ;
-                        ; So ppuNametableAddr(1 0) points to the PPU nametable
-                        ; for this bitplane
+                        ; So ppuNametableAddr(1 0) points to the correct PPU
+                        ; nametable address for this bitplane
 
- LDA nameTileNumber
- STA nameTileNumber1,X
+ LDA nameTileNumber     ; Set nameTileNumber1 for this bitplane to the value of
+ STA nameTileNumber1,X  ; nameTileNumber, which contains the number of the
+                        ; first tile to send to the PPU nametable
 
- STA nameTileNumber2,X
+ STA nameTileNumber2,X  ; Set nameTileNumber2 for this bitplane to the same
+                        ; value
 
- LDA pattTileNumber
- STA pattTileNumber1,X
+ LDA pattTileNumber     ; Set pattTileNumber1 for this bitplane to the value of
+ STA pattTileNumber1,X  ; pattTileNumber, which contains the number of the
+                        ; first tile to send to the PPU pattern table
 
- STA pattTileNumber2,X
+ STA pattTileNumber2,X  ; Set pattTileNumber2 for this bitplane to the same
+                        ; value
 
  LDA bitplaneFlags,X    ; Set bit 4 in the bitplane flags to indicate that we
  ORA #%00010000         ; are now sending tile data to the PPU in the NMI
- STA bitplaneFlags,X    ; handler (so we can detect this if we have to split
-                        ; the process across multiple VBlanks/calls to the NMI
-                        ; handler)
+ STA bitplaneFlags,X    ; handler (so we can detect this in the next VBlank if
+                        ; we have to split the process across multiple VBlanks)
 
- LDA #0
- STA addr4
+ LDA #0                 ; Set (addr4 A) to pattTileNumber1 for this bitplane, 
+ STA addr4              ; which we just set to the number of the first tile to
+ LDA pattTileNumber1,X  ; send to the PPU pattern table
 
- LDA pattTileNumber1,X
- ASL A
- ROL addr4
- ASL A
- ROL addr4
- ASL A
- STA pattTileBuffLo,X
+ ASL A                  ; Set (addr4 A) = (pattBufferHiAddr 0) + (addr4 A) * 8
+ ROL addr4              ;               = pattBufferX + pattTileNumber1 * 8
+ ASL A                  ;
+ ROL addr4              ; Starting with the low bytes
+ ASL A                  ;
+                        ; In the above, pattBufferX is either pattBuffer0 or
+                        ; pattBuffer1, depending on the bitplane in X, as these
+                        ; are the values stored in the pattBufferHiAddr variable
 
- LDA addr4
- ROL A
- ADC pattBufferHiAddr,X
- STA pattTileBuffHi,X
+ STA pattTileBuffLo,X   ; Store the low byte in pattTileBuffLo for this bitplane
 
- LDA #0
- STA addr4
+ LDA addr4              ; We now add the high bytes, storing the result in
+ ROL A                  ; pattTileBuffHi for this bitplane
+ ADC pattBufferHiAddr,X ;
+ STA pattTileBuffHi,X   ; So we now have the following for this bitplane:
+                        ;
+                        ;   (pattTileBuffHi pattTileBuffLo) = 
+                        ;                      pattBufferX + pattTileNumber1 * 8
+                        ;
+                        ; which points to the data for tile pattTileNumber1 in
+                        ; the pattern buffer for bitplane X
 
- LDA nameTileNumber1,X
- ASL A
- ROL addr4
- ASL A
- ROL addr4
- ASL A
- STA nameTileBuffLo,X
- ROL addr4
+ LDA #0                 ; Set (addr4 A) to nameTileNumber1 for this bitplane, 
+ STA addr4              ; which we just set to the number of the first tile to
+ LDA nameTileNumber1,X  ; send to the PPU nametable
 
- LDA addr4
- ADC nameBufferHiAddr,X
- STA nameTileBuffHi,X
+ ASL A                  ; Set (addr4 A) = (nameBufferHiAddr 0) + (addr4 A) * 8
+ ROL addr4              ;               = nameBufferX + nameTileNumber1 * 8
+ ASL A                  ;
+ ROL addr4              ; Starting with the low bytes
+ ASL A                  ;
+                        ; In the above, pattBufferX is either pattBuffer0 or
+                        ; pattBuffer1, depending on the bitplane in X, as these
+                        ; are the values stored in the pattBufferHiAddr variable
 
- LDA ppuNametableAddr+1
- SEC
- SBC nameBufferHiAddr,X
- STA ppuToBuffNameHi,X
+ STA nameTileBuffLo,X   ; Store the low byte in nameTileBuffLo for this bitplane
 
- JMP SendPatternsToPPU
+ ROL addr4              ; We now add the high bytes, storing the result in
+ LDA addr4              ; nameTileBuffHi for this bitplane
+ ADC nameBufferHiAddr,X ;
+ STA nameTileBuffHi,X   ; So we now have the following for this bitplane:
+                        ;
+                        ;   (nameTileBuffHi nameTileBuffLo) = 
+                        ;                      nameBufferX + nameTileNumber1 * 8
+                        ;
+                        ; which points to the data for tile nameTileNumber1 in
+                        ; the nametable buffer for bitplane X
+
+ LDA ppuNametableAddr+1 ; Set the high byte of the following calculation:
+ SEC                    ;
+ SBC nameBufferHiAddr,X ;   (ppuToBuffNameHi 0) = (ppuNametableAddr+1 0)
+ STA ppuToBuffNameHi,X  ;                          - (nameBufferHiAddr 0)
+                        ;
+                        ; So ppuToBuffNameHi for this bitplane contains a high
+                        ; byte that we can add to a nametable buffer address to
+                        ; get the corresponding address in the PPU nametable
+
+ JMP SendPatternsToPPU  ; Now that we have set up all the variables needed, we
+                        ; can jump to SendPatternsToPPU to move on to the next
+                        ; stage of sending tile patterns to the PPU
 
 ; ******************************************************************************
 ;
-;       Name: SendPatternsToPPU (Part 1 of 5)
+;       Name: SendPatternsToPPU (Part 1 of 6)
 ;       Type: Subroutine
 ;   Category: Drawing tiles
-;    Summary: ???
+;    Summary: Calculate how many tile patterns we need to send and jump to the
+;             most efficient routine for sending them
 ;
 ; ******************************************************************************
 
@@ -1621,11 +1664,13 @@ ENDIF
 
  ADD_CYCLES_CLC 4       ; Add 4 to the cycle count
 
- JMP SendNametableNow
+ JMP SendNametableNow   ; Jump to SendNametableNow to start sending nametable
+                        ; entries to the PPU immediately
 
 .spat2
 
- JMP spat21
+ JMP spat21             ; Jump down to part 4 to start sending pattern data
+                        ; until we run out of cycles
 
 .SendPatternsToPPU
 
@@ -1638,7 +1683,7 @@ ENDIF
 
  JMP spat4              ; The result is positive, so we have enough cycles to
                         ; keep sending PPU data in this VBlank, so jump to spat4
-                        ; to ???
+                        ; to start sending tile pattern data to the PPU
 
 .spat3
 
@@ -1648,38 +1693,105 @@ ENDIF
 
 .spat4
 
- LDA nextTileNumber,X
- BNE spat5
- LDA #255
+ LDA nextTileNumber,X   ; Set A to the next free tile number for the current
+                        ; bitplane, which is effectively the number of the first
+                        ; unused tile as we have stopped drawing into new tiles
+                        ; at this point
+
+ BNE spat5              ; If it it zero (i.e. we have no free tiles), then set
+ LDA #255               ; A to 255, so we can use A as an upper limit
 
 .spat5
 
- STA lastTile
- LDA ppuNametableAddr+1
- SEC
- SBC nameBufferHiAddr,X
- STA ppuToBuffNameHi,X
- LDY pattTileBuffLo,X
- LDA pattTileBuffHi,X
- STA dataForPPU+1
- LDA pattTileNumber1,X
- STA L00C9
- SEC
- SBC lastTile
- BCS spat1
- LDX ppuCtrlCopy
- BEQ spat6
- CMP #$BF
- BCC spat2
+ STA lastTile           ; Store the result in lastTile, as we want to stop
+                        ; sending tiles once we have reached the unused tiles
+
+ LDA ppuNametableAddr+1 ; Set the high byte of the following calculation:
+ SEC                    ;
+ SBC nameBufferHiAddr,X ;   (ppuToBuffNameHi 0) = (ppuNametableAddr+1 0)
+ STA ppuToBuffNameHi,X  ;                          - (nameBufferHiAddr 0)
+                        ;
+                        ; So ppuToBuffNameHi for this bitplane contains a high
+                        ; byte that we can add to a PPU nametable addredd to get
+                        ; the corresponding address in the nametable buffer
+
+ LDY pattTileBuffLo,X   ; Set Y to the low byte of the address of the pattern
+                        ; buffer for pattTileNumber1 in bitplane X (i.e. the
+                        ; address of the next tile we want to send)
+                        ;
+                        ; We can use this as an index when copying data from
+                        ; the pattern buffer, as we know the pattern buffers
+                        ; start on page boundaries, so the low byte of the
+                        ; address of the the start of each buffer is zero
+
+ LDA pattTileBuffHi,X   ; Set the high byte of dataForPPU(1 0) to the high byte
+ STA dataForPPU+1       ; of the pattern buffer for this bitplane, as we want
+                        ; to copy data from the pattern buffer to the PPU
+
+ LDA pattTileNumber1,X  ; Set A to the number of the next tile we want to send
+                        ; from the pattern buffer for this bitplane
+
+ STA pattTileCounter    ; Store the number in pattTileCounter, so we can keep
+                        ; track of which tile we are sending
+
+ SEC                    ; Set A = A - lastTile
+ SBC lastTile           ;       = pattTileCounter - lastTile
+
+ BCS spat1              ; If pattTileCounter >= lastTile then we have already
+                        ; sent all the tile patterns (right up to the last
+                        ; tile), so jump to spat1 to move on to sending the
+                        ; nametable entries
+
+ LDX ppuCtrlCopy        ; If ppuCtrlCopy is zero then we are not worried about
+ BEQ spat6              ; keeping PPU writes within VBlank, so jump to spat6 to
+                        ; skip the following and crack on with sending as much
+                        ; pattern data as we can to the PPU
+
+                        ; The above subtraction underflowed, as it cleared the C
+                        ; flag, so the result in A is a negative number and we
+                        ; should interpret $BF in the following as a signed
+                        ; integer, -65
+
+ CMP #$BF               ; If A < $BF
+ BCC spat2              ;
+                        ; i.e. pattTileCounter - lastTile < -65
+                        ;      lastTile - pattTileCounter > 65
+                        ;
+                        ; Then we have 65 or more patterns to sent to the PPU,
+                        ; so jump to part 4 (via spat2) to send them until we
+                        ; run out of cycles, without bothering to check for the
+                        ; last tile (as we have more tiles to send than we can
+                        ; fit into one VBlank)
+                        ;
+                        ; Otherwise we have 64 or fewer tile patterns to send,
+                        ; so fall througn into part 2 to send them one tile at a
+                        ; time, checking each one is the last tile yo see if
+                        ; it's the last tile
+
+; ******************************************************************************
+;
+;       Name: SendPatternsToPPU (Part 2 of 6)
+;       Type: Subroutine
+;   Category: Drawing tiles
+;    Summary: Configure variables for sending data to the PPU one tile at a time
+;             with checks
+;
+; ******************************************************************************
 
 .spat6
 
- LDA L00C9
+ LDA pattTileCounter    ; Set (addr4 A) = pattTileCounter
  LDX #0
  STX addr4
- STX dataForPPU
- ASL A
- ROL addr4
+
+ STX dataForPPU         ; Zero the low byte of dataForPPU(1 0)
+                        ;
+                        ; We set the high byte in part 1, so dataForPPU(1 0) now
+                        ; contains the address of the pattern buffer for this
+                        ; bitplane
+
+ ASL A                  ; Set (addr4 X) = (addr4 A) << 4
+ ROL addr4              ;               = pattTileCounter * 16
  ASL A
  ROL addr4
  ASL A
@@ -1687,137 +1799,214 @@ ENDIF
  ASL A
  TAX
 
- LDA addr4              ; Set A = ppuPatternTableHi + addr4 * 2
- ROL A                  ;       = $10 + addr4 * 2
- ADC ppuPatternTableHi
+ LDA addr4              ; Set (A X) = (ppuPatternTableHi 0) + (addr4 X)
+ ROL A                  ;         = (ppuPatternTableHi 0) + pattTileCounter * 16
+ ADC ppuPatternTableHi  ;
+                        ; ppuPatternTableHi contains the high byte of the
+                        ; address of the PPU pattern table to which we send
+                        ; dynamic tile patterns; it contains HI(PPU_PATT_1),
+                        ; so (A X) now contains the address in PPU pattern
+                        ; table 1 for tile number pattTileCounter (as there are
+                        ; 16 bytes in the pattern table for each tile)
 
- STA PPU_ADDR
- STA addr4+1
- TXA
- ADC nmiBitplanex8
- STA PPU_ADDR
- STA addr4
- JMP spat9
+                        ; We now set both PPU_ADDR and addr4(1 0) to the
+                        ; following:
+                        ;
+                        ;   * (A X)         when nmiBitplane is 0
+                        ;
+                        ;   * (A X) + 8     when nmiBitplane is 1
+                        ;
+                        ; We add 8 in the second example to point the address to
+                        ; bitplane 1, as the PPU interleaves each tile pattern
+                        ; as 8 bytes of one bitplane followed by 8 bytes of the
+                        ; other bitplane, so bitplane 1's data always appears 8
+                        ; bytes after the corresponding bitplane 0 data
+
+ STA PPU_ADDR           ; Set the high byte of PPU_ADDR to A
+
+ STA addr4+1            ; Set the high byte of addr4 to A
+
+ TXA                    ; Set A = X + nmiBitplane8
+ ADC nmiBitplane8       ;       = X + nmiBitplane * 8
+                        ;
+                        ; So we add 8 to the low byte when we are writing to
+                        ; bit plane 1, otherwise we leave the low byte alone
+
+ STA PPU_ADDR           ; Set the low byte of PPU_ADDR to A
+
+ STA addr4              ; Set the high byte of addr4 to A
+
+                        ; So PPU_ADDR and addr4(1 0) both contain the PPU
+                        ; address to which we should send our pattern data for
+                        ; this bitplane
+
+ JMP spat9              ; Jump into part 3 to send pattern data to the PPU
 
 ; ******************************************************************************
 ;
-;       Name: SendPatternsToPPU (Part 2 of 5)
+;       Name: SendPatternsToPPU (Part 3 of 6)
 ;       Type: Subroutine
 ;   Category: Drawing tiles
-;    Summary: ???
+;    Summary: Send pattern data to the PPU for one tile at a time, checking
+;             after each one to see if is the last tile
 ;
 ; ******************************************************************************
 
 .spat7
 
- INC dataForPPU+1
+ INC dataForPPU+1       ; Increment the high byte of dataForPPU(1 0) to point to
+                        ; the start of the next page in memory
 
  SUBTRACT_CYCLES 27     ; Subtract 27 from the cycle count
 
- JMP spat13
+ JMP spat13             ; Jump down to spat13 to continue sending data to the
+                        ; PPU
 
 .spat8
 
- JMP spat17
+ JMP spat17             ; Jump down to spat17 to move on to sending nametable
+                        ; entries to the PPU
 
 .spat9
 
- LDX L00C9
+                        ; This is the entry point for part 3
+
+ LDX pattTileCounter    ; We will now work our way through tiles, sending data
+                        ; each one, so set a counter in X that starts with the
+                        ; number of the next tile to send to the PPU
 
 .spat10
 
  SUBTRACT_CYCLES 400    ; Subtract 400 from the cycle count
 
- BMI spat11
- JMP spat12
+ BMI spat11             ; If the result is negative, jump to spat11 to stop
+                        ; sending PPU data in this VBlank, as we have run out of
+                        ; cycles (we will pick up where we left off in the next
+                        ; VBlank)
+
+ JMP spat12             ; The result is positive, so we have enough cycles to
+                        ; keep sending PPU data in this VBlank, so jump to
+                        ; spat12 to send pattern data to the PPU
 
 .spat11
 
  ADD_CYCLES 359         ; Add 359 to the cycle count
 
- JMP spat30
+ JMP spat30             ; Jump to part 6 to save progress for use in the next
+                        ; VBlank and return from the subroutine
 
 .spat12
 
+                        ; If we get here then we send pattern data to the PPU
+
  SEND_DATA_TO_PPU 8     ; Send 8 bytes from dataForPPU to the PPU, starting at
                         ; index Y and updating Y to point to the byte after the
                         ; block that is sent
 
- BEQ spat7
+ BEQ spat7              ; If Y = 0 then the next byte is in the next page in
+                        ; memory, so jump to spat7 to point dataForPPU(1 0) at
+                        ; the start of this next page, before returning here
 
 .spat13
 
- LDA addr4
- CLC
- ADC #$10
- STA addr4
- LDA addr4+1
- ADC #0
- STA addr4+1
+ LDA addr4              ; Set the following:
+ CLC                    ;
+ ADC #16                ;   PPU_ADDR = addr4(1 0) + 16
+ STA addr4              ;
+ LDA addr4+1            ;   addr4(1 0) = addr4(1 0) + 16
+ ADC #0                 ;
+ STA addr4+1            ; So PPU_ADDR and addr4(1 0) both point to the next
+ STA PPU_ADDR           ; tile's pattern in the PPU for this bitplane, as each
+ LDA addr4              ; tile has 16 bytes of pattern data (8 in each bitplane)
  STA PPU_ADDR
- LDA addr4
- STA PPU_ADDR
- INX
- CPX lastTile
- BCS spat8
+
+ INX                    ; Increment the tile number in X
+
+ CPX lastTile           ; If we have reached the last tile, jump to spat19 (via
+ BCS spat8              ; spat8 and spat17) to move on to sending the nametable
+                        ; entries
 
  SEND_DATA_TO_PPU 8     ; Send 8 bytes from dataForPPU to the PPU, starting at
                         ; index Y and updating Y to point to the byte after the
                         ; block that is sent
 
- BEQ spat16
+ BEQ spat16             ; If Y = 0 then the next byte is in the next page in
+                        ; memory, so jump to spat16 to point dataForPPU(1 0) at
+                        ; the start of this next page, before returning here
+                        ; with the C flag clear, ready for the next addition
 
 .spat14
 
- LDA addr4
- ADC #$10
- STA addr4
- LDA addr4+1
- ADC #0
- STA addr4+1
- STA PPU_ADDR
- LDA addr4
- STA PPU_ADDR
- INX
- CPX lastTile
- BCS spat18
+ LDA addr4              ; Set the following:
+ ADC #16                ;
+ STA addr4              ;   PPU_ADDR = addr4(1 0) + 16
+ LDA addr4+1            ; 
+ ADC #0                 ;   addr4(1 0) = addr4(1 0) + 16
+ STA addr4+1            ;
+ STA PPU_ADDR           ; The addition works because the C flag is clear, either
+ LDA addr4              ; because we passed through the BCS above, or because we
+ STA PPU_ADDR           ; jumped to spat16 and back
+                        ;
+                        ; So PPU_ADDR and addr4(1 0) both point to the next
+                        ; tile's pattern in the PPU for this bitplane, as each
+                        ; tile has 16 bytes of pattern data (8 in each bitplane)
+
+ INX                    ; Increment the tile number in X
+
+ CPX lastTile           ; If we have reached the last tile, jump to spat19 (via
+ BCS spat18             ; spat18) to move on to sending the nametable entries
 
  SEND_DATA_TO_PPU 8     ; Send 8 bytes from dataForPPU to the PPU, starting at
                         ; index Y and updating Y to point to the byte after the
                         ; block that is sent
 
- BEQ spat20
+ BEQ spat20             ; If Y = 0 then the next byte is in the next page in
+                        ; memory, so jump to spat20 to point dataForPPU(1 0) at
+                        ; the start of this next page, before returning here
+                        ; with the C flag clear, ready for the next addition
 
 .spat15
 
- LDA addr4
- ADC #$10
- STA addr4
- LDA addr4+1
- ADC #0
- STA addr4+1
- STA PPU_ADDR
- LDA addr4
- STA PPU_ADDR
- INX
- CPX lastTile
- BCS spat19
- JMP spat10
+ LDA addr4              ; Set the following:
+ ADC #16                ;
+ STA addr4              ;   PPU_ADDR = addr4(1 0) + 16
+ LDA addr4+1            ; 
+ ADC #0                 ;   addr4(1 0) = addr4(1 0) + 16
+ STA addr4+1            ;
+ STA PPU_ADDR           ; The addition works because the C flag is clear, either
+ LDA addr4              ; because we passed through the BCS above, or because we
+ STA PPU_ADDR           ; jumped to spat20 and back
+                        ;
+                        ; So PPU_ADDR and addr4(1 0) both point to the next
+                        ; tile's pattern in the PPU for this bitplane, as each
+                        ; tile has 16 bytes of pattern data (8 in each bitplane)
+
+ INX                    ; Increment the tile number in X
+
+ CPX lastTile           ; If we have reached the last tile, jump to spat19 to
+ BCS spat19             ; move on to sending the nametable entries
+
+ JMP spat10             ; Otherwise we still have patterns to send, so jump back
+                        ; to spat10 to check the cycle count and potentially
+                        ; send the next batch
 
 .spat16
 
- INC dataForPPU+1
+ INC dataForPPU+1       ; Increment the high byte of dataForPPU(1 0) to point to
+                        ; the start of the next page in memory
 
  SUBTRACT_CYCLES 29     ; Subtract 29 from the cycle count
 
- CLC
- JMP spat14
+ CLC                    ; Clear the C flag so the addition works at spat14
+
+ JMP spat14             ; Jump up to spat14 to continue sending data to the PPU
 
 .spat17
 
  ADD_CYCLES_CLC 224     ; Add 224 to the cycle count
 
- JMP spat19
+ JMP spat19             ; Jump to spat19 to move on to sending nametable entries
+                        ; to the PPU
 
 .spat18
 
@@ -1825,44 +2014,73 @@ ENDIF
 
 .spat19
 
- STX L00C9
- NOP
- LDX nmiBitplane
- STY pattTileBuffLo,X
- LDA dataForPPU+1
+                        ; If we get here then we have sent the last tile's
+                        ; pattern data, so we now move on to sending the
+                        ; nametable entries to the PPU
+                        ;
+                        ; Before jumping to SendNametableToPPU, we need to store
+                        ; the following variables, so they can be picked up by
+                        ; the new routine:
+                        ;
+                        ;   * (pattTileBuffHi pattTileBuffLo)
+                        ;
+                        ;   * pattTileNumber1
+                        ;
+                        ; Incidentally, these are the same variables that we
+                        ; save when storing progress for the next VBlank, which
+                        ; makes sense
+
+ STX pattTileCounter    ; Store X in pattTileCounter to use below
+
+ NOP                    ; This looks like code that has been disabled
+
+ LDX nmiBitplane        ; Set (pattTileBuffHi pattTileBuffLo) for this bitplane
+ STY pattTileBuffLo,X   ; to dataForPPU(1 0) + Y (which is the address of the
+ LDA dataForPPU+1       ; next byte of data to be sent from the pattern buffer)
  STA pattTileBuffHi,X
- LDA L00C9
- STA pattTileNumber1,X
+
+ LDA pattTileCounter    ; Set pattTileNumber1 for this bitplane to the value of
+ STA pattTileNumber1,X  ; X we stored above (which is the number / 8 of the next
+                        ; tile to be sent from the pattern buffer)
 
  JMP SendNametableToPPU ; Jump to SendNametableToPPU to start sending the tile
                         ; nametable to the PPU
 
 .spat20
 
- INC dataForPPU+1
+ INC dataForPPU+1       ; Increment the high byte of dataForPPU(1 0) to point to
+                        ; the start of the next page in memory
 
  SUBTRACT_CYCLES 29     ; Subtract 29 from the cycle count
 
- CLC
- JMP spat15
+ CLC                    ; Clear the C flag so the addition works at spat15
+
+ JMP spat15             ; Jump up to spat14 to continue sending data to the PPU
 
 ; ******************************************************************************
 ;
-;       Name: SendPatternsToPPU (Part 3 of 5)
+;       Name: SendPatternsToPPU (Part 4 of 6)
 ;       Type: Subroutine
 ;   Category: Drawing tiles
-;    Summary: ???
+;    Summary: Configure variables for sending data to the PPU until we run out
+;             of cycles
 ;
 ; ******************************************************************************
 
 .spat21
 
- LDA L00C9
+ LDA pattTileCounter    ; Set (addr4 A) = pattTileCounter
  LDX #0
  STX addr4
- STX dataForPPU
- ASL A
- ROL addr4
+
+ STX dataForPPU         ; Zero the low byte of dataForPPU(1 0)
+                        ;
+                        ; We set the high byte in part 1, so dataForPPU(1 0) now
+                        ; contains the address of the pattern buffer for this
+                        ; bitplane
+
+ ASL A                  ; Set (addr4 X) = (addr4 A) << 4
+ ROL addr4              ;               = pattTileCounter * 16
  ASL A
  ROL addr4
  ASL A
@@ -1870,185 +2088,267 @@ ENDIF
  ASL A
  TAX
 
- LDA addr4              ; Set A = ppuPatternTableHi + addr4 * 2
- ROL A                  ;       = $10 + addr4 * 2
- ADC ppuPatternTableHi
+ LDA addr4              ; Set (A X) = (ppuPatternTableHi 0) + (addr4 X)
+ ROL A                  ;         = (ppuPatternTableHi 0) + pattTileCounter * 16
+ ADC ppuPatternTableHi  ;
+                        ; ppuPatternTableHi contains the high byte of the
+                        ; address of the PPU pattern table to which we send
+                        ; dynamic tile patterns; it contains HI(PPU_PATT_1),
+                        ; so (A X) now contains the address in PPU pattern
+                        ; table 1 for tile number pattTileCounter (as there are
+                        ; 16 bytes in the pattern table for each tile)
 
- STA PPU_ADDR
- STA addr4+1
- TXA
- ADC nmiBitplanex8
- STA PPU_ADDR
- STA addr4
- JMP spat23
+                        ; We now set both PPU_ADDR and addr4(1 0) to the
+                        ; following:
+                        ;
+                        ;   * (A X)         when nmiBitplane is 0
+                        ;
+                        ;   * (A X) + 8     when nmiBitplane is 1
+                        ;
+                        ; We add 8 in the second example to point the address to
+                        ; bitplane 1, as the PPU interleaves each tile pattern
+                        ; as 8 bytes of one bitplane followed by 8 bytes of the
+                        ; other bitplane, so bitplane 1's data always appears 8
+                        ; bytes after the corresponding bitplane 0 data
+
+ STA PPU_ADDR           ; Set the high byte of PPU_ADDR to A
+
+ STA addr4+1            ; Set the high byte of addr4 to A
+
+ TXA                    ; Set A = X + nmiBitplane8
+ ADC nmiBitplane8       ;       = X + nmiBitplane * 8
+                        ;
+                        ; So we add 8 to the low byte when we are writing to
+                        ; bit plane 1, otherwise we leave the low byte alone
+
+ STA PPU_ADDR           ; Set the low byte of PPU_ADDR to A
+
+ STA addr4              ; Set the high byte of addr4 to A
+
+                        ; So PPU_ADDR and addr4(1 0) both contain the PPU
+                        ; address to which we should send our pattern data for
+                        ; this bitplane
+
+ JMP spat23             ; Jump into part 5 to send pattern data to the PPU
 
 ; ******************************************************************************
 ;
-;       Name: SendPatternsToPPU (Part 4 of 5)
+;       Name: SendPatternsToPPU (Part 5 of 6)
 ;       Type: Subroutine
 ;   Category: Drawing tiles
-;    Summary: ???
+;    Summary: Send pattern data to the PPU for two tiles at a time, until we run
+;             out of cycles (and without checking for the last tile)
 ;
 ; ******************************************************************************
 
 .spat22
 
- INC dataForPPU+1
+ INC dataForPPU+1       ; Increment the high byte of dataForPPU(1 0) to point to
+                        ; the start of the next page in memory
 
  SUBTRACT_CYCLES 27     ; Subtract 27 from the cycle count
 
- JMP spat27
+ JMP spat27             ; Jump down to spat27 to continue sending data to the
+                        ; PPU
 
 .spat23
 
- LDX L00C9
+                        ; This is the entry point for part 5
+
+ LDX pattTileCounter    ; We will now work our way through tiles, sending data
+                        ; each one, so set a counter in X that starts with the
+                        ; number of the next tile to send to the PPU
 
 .spat24
 
  SUBTRACT_CYCLES 266    ; Subtract 266 from the cycle count
 
- BMI spat25
- JMP spat26
+ BMI spat25             ; If the result is negative, jump to spat25 to stop
+                        ; sending PPU data in this VBlank, as we have run out of
+                        ; cycles (we will pick up where we left off in the next
+                        ; VBlank)
+
+ JMP spat26             ; The result is positive, so we have enough cycles to
+                        ; keep sending PPU data in this VBlank, so jump to
+                        ; spat26 to send pattern data to the PPU
 
 .spat25
 
  ADD_CYCLES 225         ; Add 225 to the cycle count
 
- JMP spat30
+ JMP spat30             ; Jump to part 6 to save progress for use in the next
+                        ; VBlank and return from the subroutine
 
 .spat26
 
+                        ; If we get here then we send pattern data to the PPU
+
  SEND_DATA_TO_PPU 8     ; Send 8 bytes from dataForPPU to the PPU, starting at
                         ; index Y and updating Y to point to the byte after the
                         ; block that is sent
 
- BEQ spat22
+ BEQ spat22             ; If Y = 0 then the next byte is in the next page in
+                        ; memory, so jump to spat22 to point dataForPPU(1 0) at
+                        ; the start of this next page, before returning here
 
 .spat27
 
- LDA addr4
- CLC
- ADC #$10
- STA addr4
- LDA addr4+1
- ADC #0
- STA addr4+1
- STA PPU_ADDR
- LDA addr4
+ LDA addr4              ; Set the following:
+ CLC                    ;
+ ADC #16                ;   PPU_ADDR = addr4(1 0) + 16
+ STA addr4              ;
+ LDA addr4+1            ;   addr4(1 0) = addr4(1 0) + 16
+ ADC #0                 ;
+ STA addr4+1            ; So PPU_ADDR and addr4(1 0) both point to the next
+ STA PPU_ADDR           ; tile's pattern in the PPU for this bitplane, as each
+ LDA addr4              ; tile has 16 bytes of pattern data (8 in each bitplane)
  STA PPU_ADDR
 
  SEND_DATA_TO_PPU 8     ; Send 8 bytes from dataForPPU to the PPU, starting at
                         ; index Y and updating Y to point to the byte after the
                         ; block that is sent
 
- BEQ spat29
+ BEQ spat29             ; If Y = 0 then the next byte is in the next page in
+                        ; memory, so jump to spat29 to point dataForPPU(1 0) at
+                        ; the start of this next page, before returning here
+                        ; with the C flag clear, ready for the next addition
 
 .spat28
 
- LDA addr4
- ADC #$10
- STA addr4
- LDA addr4+1
- ADC #0
- STA addr4+1
- STA PPU_ADDR
- LDA addr4
- STA PPU_ADDR
- INX
- INX
- JMP spat24
+ LDA addr4              ; Set the following:
+ ADC #16                ;
+ STA addr4              ;   PPU_ADDR = addr4(1 0) + 16
+ LDA addr4+1            ; 
+ ADC #0                 ;   addr4(1 0) = addr4(1 0) + 16
+ STA addr4+1            ;
+ STA PPU_ADDR           ; The addition works because the C flag is clear, either
+ LDA addr4              ; because we passed through the BCS above, or because we
+ STA PPU_ADDR           ; jumped to spat29 and back
+                        ;
+                        ; So PPU_ADDR and addr4(1 0) both point to the next
+                        ; tile's pattern in the PPU for this bitplane, as each
+                        ; tile has 16 bytes of pattern data (8 in each bitplane)
+
+ INX                    ; Increment the tile number in X twice, as we just sent
+ INX                    ; data for two tiles
+
+ JMP spat24             ; Loop back to spat24 to check the cycle count and
+                        ; potentially send the next batch
 
 .spat29
 
- INC dataForPPU+1
+ INC dataForPPU+1       ; Increment the high byte of dataForPPU(1 0) to point to
+                        ; the start of the next page in memory
 
  SUBTRACT_CYCLES 29     ; Subtract 29 from the cycle count
 
- CLC
- JMP spat28
+ CLC                    ; Clear the C flag so the addition works at spat15
+
+ JMP spat28             ; Jump up to spat28 to continue sending data to the PPU
 
 ; ******************************************************************************
 ;
-;       Name: SendPatternsToPPU (Part 5 of 5)
+;       Name: SendPatternsToPPU (Part 6 of 6)
 ;       Type: Subroutine
 ;   Category: Drawing tiles
-;    Summary: ???
+;    Summary: Save progress for use in the next VBlank and return from the
+;             subroutine
 ;
 ; ******************************************************************************
 
 .spat30
 
- STX L00C9
- LDX nmiBitplane
- STY pattTileBuffLo,X
- LDA dataForPPU+1
- STA pattTileBuffHi,X
- LDA L00C9
- STA pattTileNumber1,X
+                        ; We now store the following variables, so they can be
+                        ; picked up when we return in the next VBlank:
+                        ;
+                        ;   * (pattTileBuffHi pattTileBuffLo)
+                        ;
+                        ;   * pattTileNumber1
+
+ STX pattTileCounter    ; Store X in pattTileCounter to use below
+
+ LDX nmiBitplane        ; Set (pattTileBuffHi pattTileBuffLo) for this bitplane
+ STY pattTileBuffLo,X   ; to dataForPPU(1 0) + Y (which is the address of the
+ LDA dataForPPU+1       ; next byte of data to be sent from the pattern buffer
+ STA pattTileBuffHi,X   ; in the next VBlank)
+
+ LDA pattTileCounter    ; Set pattTileNumber1 for this bitplane to the value of
+ STA pattTileNumber1,X  ; X we stored above (which is the number / 8 of the next
+                        ; tile to be sent from the pattern buffer in the next
+                        ; VBlank)
 
  JMP RTS1               ; Return from the subroutine (as RTS1 contains an RTS)
 
 ; ******************************************************************************
 ;
-;       Name: subm_CB42
+;       Name: SendOtherBitplane
 ;       Type: Subroutine
 ;   Category: Drawing tiles
-;    Summary: ???
+;    Summary: Check whether we should send another bitplane to the PPU
 ;
 ; ******************************************************************************
 
-.subm_CB42
+.SendOtherBitplane
 
  LDX nmiBitplane        ; Set bit 5 and clear all other bits in the bitplane
- LDA #%00100000         ; flags for the NMI bitplane
- STA bitplaneFlags,X
+ LDA #%00100000         ; flags for the NMI bitplane, to indicate that we have
+ STA bitplaneFlags,X    ; finished sending data to the PPU for this bitplane
 
  SUBTRACT_CYCLES 227    ; Subtract 227 from the cycle count
 
- BMI CCB5B              ; If the result is negative, jump to CCB5B to stop
+ BMI obit1              ; If the result is negative, jump to obit1 to stop
                         ; sending PPU data in this VBlank, as we have run out of
                         ; cycles (we will pick up where we left off in the next
                         ; VBlank)
 
- JMP CCB6A              ; The result is positive, so we have enough cycles to
-                        ; keep sending PPU data in this VBlank, so jump to CCB6A
-                        ; to ???
+ JMP obit2              ; The result is positive, so we have enough cycles to
+                        ; keep sending PPU data in this VBlank, so jump to obit2
+                        ; to check whether we should send this bitplane to the
+                        ; PPU
 
-.CCB5B
+.obit1
 
  ADD_CYCLES 176         ; Add 176 to the cycle count
 
  JMP RTS1               ; Return from the subroutine (as RTS1 contains an RTS)
 
-.CCB6A
+.obit2
 
- TXA                    ; Flip the NMI bitplane between 0 and 1
- EOR #1
+ TXA                    ; Flip the NMI bitplane between 0 and 1, to it's the
+ EOR #1                 ; opposite bitplane to the one we just sent
  STA nmiBitplane
 
  CMP paletteBitplane    ; If the NMI bitplane is now different to the palette
- BNE CCB8E              ; bitplane, jump to CCB8E to update the cycle count
-                        ; and return from the subroutine
+ BNE obit4              ; bitplane, jump to obit4 to update the cycle count
+                        ; and return from the subroutine, as we already sent
+                        ; the bitplane that's showing on-screen
+
+                        ; If we get here then the new NMI bitplane is the one
+                        ; showing on-screen, so we should check whether we
+                        ; need to send it to the PPU
 
  TAX                    ; Set X to the newly flipped NMI bitplane
 
  LDA bitplaneFlags,X    ; If bit 7 is set and bit 5 is clear in the flags for
- AND #%10100000         ; the new NMI bitplane, jump to CCB80 to update the
- CMP #%10000000         ; cycle count and return from the subroutine
- BEQ CCB80
+ AND #%10100000         ; the new NMI bitplane, then we will already have sent
+ CMP #%10000000         ; data for this bitplane (as this condition will have
+ BEQ obit3              ; been met in part 3 of SendBuffersToPPU), so jump to
+                        ; obit3 to update the cycle count and return from the
+                        ; subroutine without sending any more data to the PPU
 
-                        ; If we get here then ???
+                        ; If we get here then the new bitplane will not have
+                        ; already been sent to the PPU, so we send it now
 
  JMP SetupTilesForPPU   ; Jump to SetupTilesForPPU to set up the variables for
                         ; sending tile data to the PPU
 
-.CCB80
+.obit3
 
  ADD_CYCLES_CLC 151     ; Add 151 to the cycle count
 
  RTS                    ; Return from the subroutine
 
-.CCB8E
+.obit4
 
  ADD_CYCLES_CLC 163     ; Add 163 to the cycle count
 
@@ -2080,15 +2380,22 @@ ENDIF
 
  ADD_CYCLES_CLC 53      ; Add 53 to the cycle count
 
- JMP subm_CB42
+ JMP SendOtherBitplane  ; Jump to SendOtherBitplane to consider sending the
+                        ; other bitplane to the PPU, if required
 
 .SendNametableToPPU
 
  SUBTRACT_CYCLES 109    ; Subtract 109 from the cycle count
 
- BMI snam3
+ BMI snam3              ; If the result is negative, jump to snam3 to stop
+                        ; sending PPU data in this VBlank, as we have run out of
+                        ; cycles (we will pick up where we left off in the next
+                        ; VBlank)
 
- JMP SendNametableNow
+ JMP SendNametableNow   ; The result is positive, so we have enough cycles to
+                        ; keep sending PPU data in this VBlank, so jump to
+                        ; SendNametableNow to start sending nametable data to
+                        ; the PPU
 
 .snam3
 
@@ -2098,45 +2405,103 @@ ENDIF
 
 .SendNametableNow
 
- LDX nmiBitplane
+ LDX nmiBitplane        ; Set A to the bitplane flags for the NMI bitplane
  LDA bitplaneFlags,X
- ASL A
- BPL snam1
- LDY lastTileNumber,X
- AND #8
- BEQ snam4
- LDY #$80
+
+ ASL A                  ; Shift A left by one place, so bit 7 becomes bit 6 of
+                        ; the original flags, and so on
+
+ BPL snam1              ; If bit 6 of the bitplane flags is clear, jump to snam1
+                        ; to return from the subroutine
+
+ LDY lastTileNumber,X   ; Set Y to the number of the last tile we need to send
+                        ; for this bitplane, divided by 8
+
+ AND #%00001000         ; If bit 2 of the bitplane flags is set (as A was
+ BEQ snam4              ; shifted left above), set Y = 128
+ LDY #128
 
 .snam4
 
- STY lastTile
- LDA nameTileNumber1,X
- STA nameTileCounter
- SEC
- SBC lastTile
- BCS snam2
- LDY nameTileBuffLo,X
- LDA nameTileBuffHi,X
- STA dataForPPU+1
- CLC
- ADC ppuToBuffNameHi,X
- STA PPU_ADDR
- STY PPU_ADDR
- LDA #0
- STA dataForPPU
+ STY lastTile           ; Store Y in lastTile, as we want to stop sending
+                        ; nametable entries when we reach this tile
+
+ LDA nameTileNumber1,X  ; Set A to the number of the next tile we want to send
+                        ; from the nametable buffer for this bitplane, divided
+                        ; by 8 (we divide by 8 because there are 1024 entries in
+                        ; each nametable, which doesn't fit into one byte, so we
+                        ; divide by 8 so the maximum counter value is 128)
+
+ STA nameTileCounter    ; Store the number in nameTileCounter, so we can keep
+                        ; track of which tile we are sending (so nameTileCounter
+                        ; contains the current tile number, divided by 8)
+
+ SEC                    ; Set A = A - lastTile
+ SBC lastTile           ;       = nameTileCounter - lastTile
+
+ BCS snam2              ; If nameTileCounter >= lastTile then we have already
+                        ; sent all the nametable entries (right up to the last
+                        ; tile), so jump to snam2 to consider sending the other
+                        ; bitplane
+
+ LDY nameTileBuffLo,X   ; Set Y to the low byte of the address of the nametable
+                        ; buffer for nameTileNumber1 in bitplane X (i.e. the
+                        ; address of the next tile we want to send)
+                        ;
+                        ; We can use this as an index when copying data from
+                        ; the nametable buffer, as we know the nametable buffers
+                        ; start on page boundaries, so the low byte of the
+                        ; address of the the start of each buffer is zero
+
+ LDA nameTileBuffHi,X   ; Set the high byte of dataForPPU(1 0) to the high byte
+ STA dataForPPU+1       ; of the nametable buffer for this bitplane, as we want
+                        ; to copy data from the nametable buffer to the PPU
+
+ CLC                    ; Set the high byte of the following calculation:
+ ADC ppuToBuffNameHi,X  ;
+                        ;   (A 0) = (nameTileBuffHi 0) + (ppuToBuffNameHi 0)
+                        ;
+                        ; (ppuToBuffNameHi 0) for this bitplane contains a high
+                        ; byte that we can add to a nametable buffer address to
+                        ; get the corresponding address in the PPU nametable, so
+                        ; this sets (A 0) to the high byte of the correct PPU
+                        ; nametable address for this tile
+                        ;
+                        ; We already set Y as the low byte above, so we now have
+                        ; the full PPU address in (A Y)
+
+ STA PPU_ADDR           ; Set PPU_ADDR = (A Y)
+ STY PPU_ADDR           ;
+                        ; So PPU_ADDR points to the address in the PPU to which
+                        ; we send the nametable data
+
+ LDA #0                 ; Set the low byte of dataForPPU(1 0) to 0, so that
+ STA dataForPPU         ; dataForPPU(1 0) points to the start of the nametable
+                        ; buffer, and dataForPPU(1 0) + Y therefore points to
+                        ; the nametable entry for tile nameTileNumber1 
 
 .snam5
 
  SUBTRACT_CYCLES 393    ; Subtract 393 from the cycle count
 
- BMI snam6
- JMP snam7
+ BMI snam6              ; If the result is negative, jump to snam6 to stop
+                        ; sending PPU data in this VBlank, as we have run out of
+                        ; cycles (we will pick up where we left off in the next
+                        ; VBlank)
+
+                        ; If we get here then the result is positive, so the C
+                        ; flag will be set as the subtraction didn't underflow
+
+ JMP snam7              ; The result is positive, so we have enough cycles to
+                        ; keep sending PPU data in this VBlank, so jump to snam7
+                        ; to do just that
 
 .snam6
 
  ADD_CYCLES 349         ; Add 349 to the cycle count
 
- JMP snam10
+ JMP snam10             ; Jump to snam10 to save progress for use in the next
+                        ; VBlank and return from the subroutine
 
 .snam7
 
@@ -2144,44 +2509,94 @@ ENDIF
                         ; index Y and updating Y to point to the byte after the
                         ; block that is sent
 
- BEQ snam9
- LDA nameTileCounter
- ADC #3
- STA nameTileCounter
- CMP lastTile
- BCS snam8
- JMP snam5
+ BEQ snam9              ; If Y = 0 then the next byte is in the next page in
+                        ; memory, so jump to snam9 to point dataForPPU(1 0) at
+                        ; the start of this next page, before looping back to
+                        ; snam5 to potentially send the next batch
+
+                        ; We got here by jumping to snam7 from above, which we
+                        ; did with the C flag set, so the ADC #3 below actually
+                        ; adds 4
+
+ LDA nameTileCounter    ; Add 4 to nameTileCounter, as we just sent 4 * 8 = 32
+ ADC #3                 ; nametable entries (and nameTileCounter counts the tile
+ STA nameTileCounter    ; number, divided by 8)
+
+ CMP lastTile           ; If nameTileCounter >= lastTile then we have reached
+ BCS snam8              ; the last tile, so jump to snam8 to update the
+                        ; variables and jump to SendOtherBitplane to consider
+                        ; sending the other bitplane
+
+ JMP snam5              ; Otherwise we still have nametable entries to send, so
+                        ; loop back to snam5 to check the cycles and send the
+                        ; next batch
 
 .snam8
 
- STA nameTileNumber1,X
- STY nameTileBuffLo,X
- LDA dataForPPU+1
- STA nameTileBuffHi,X
+                        ; If we get here then we have sent the last nametable
+                        ; entry, so we now move on to ???
+                        ;
+                        ; Before jumping to SendOtherBitplane, we need to store
+                        ; the following variables, so they can be picked up by
+                        ; the new routine:
+                        ;
+                        ;   * (nameTileBuffHi nameTileBuffLo)
+                        ;
+                        ;   * nameTileNumber1
+                        ;
+                        ; Incidentally, these are the same variables that we
+                        ; save when storing progress for the next VBlank, which
+                        ; makes sense
 
- JMP subm_CB42
+ STA nameTileNumber1,X  ; Set nameTileNumber1 for this bitplane to the value of
+                        ; nameTileCounter, which we stored in A before jumping
+                        ; here
+
+ STY nameTileBuffLo,X   ; Set (nameTileBuffHi nameTileBuffLo) for this bitplane
+ LDA dataForPPU+1       ; to dataForPPU(1 0) + Y (which is the address of the
+ STA nameTileBuffHi,X   ; next byte of data to be sent from the nametable
+                        ; buffer)
+
+ JMP SendOtherBitplane  ; Jump to SendOtherBitplane to consider sending the
+                        ; other bitplane to the PPU, if required
 
 .snam9
 
- INC dataForPPU+1
+ INC dataForPPU+1       ; Increment the high byte of dataForPPU(1 0) to point to
+                        ; the start of the next page in memory
 
  SUBTRACT_CYCLES 26     ; Subtract 26 from the cycle count
 
- LDA nameTileCounter
- CLC
- ADC #4
+ LDA nameTileCounter    ; Add 4 to nameTileCounter, as we just sent 4 * 8 = 32
+ CLC                    ; nametable entries (and nameTileCounter counts the tile
+ ADC #4                 ; number, divided by 8)
  STA nameTileCounter
- CMP lastTile
- BCS snam8
- JMP snam5
+
+ CMP lastTile           ; If nameTileCounter >= lastTile then we have reached
+ BCS snam8              ; the last tile, so jump to snam8 to update the
+                        ; variables and jump to SendOtherBitplane to consider
+                        ; sending the other bitplane
+
+ JMP snam5              ; Otherwise we still have nametable entries to send, so
+                        ; loop back to snam5 to check the cycles and send the
+                        ; next batch
 
 .snam10
 
- LDA nameTileCounter
- STA nameTileNumber1,X
- STY nameTileBuffLo,X
- LDA dataForPPU+1
- STA nameTileBuffHi,X
+                        ; We now store the following variables, so they can be
+                        ; picked up when we return in the next VBlank:
+                        ;
+                        ;   * (nameTileBuffHi nameTileBuffLo)
+                        ;
+                        ;   * nameTileNumber1
+
+ LDA nameTileCounter    ; Set nameTileNumber1 for this bitplane to the number
+ STA nameTileNumber1,X  ; of the tile to send next, in nameTileCounter
+
+ STY nameTileBuffLo,X   ; Set (nameTileBuffHi nameTileBuffLo) for this bitplane
+ LDA dataForPPU+1       ; to dataForPPU(1 0) + Y (which is the address of the
+ STA nameTileBuffHi,X   ; next byte of data to be sent from the nametable
+                        ; buffer)
 
  JMP RTS1               ; Return from the subroutine (as RTS1 contains an RTS)
 

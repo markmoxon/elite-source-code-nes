@@ -1080,14 +1080,14 @@ ENDIF
 .pattTileNumber2
 
  SKIP 1                 ; The number of the tile for which we are currently
-                        ; sending pattetn data to the PPU in bitplane 0 ???
+                        ; sending pattern data to the PPU in bitplane 0 ???
                         ;
                         ; Can be 0, 4, 37, 60, tileNumber
                         ;
                         ; Copied from pattTileNumber1
 
  SKIP 1                 ; The number of the tile for which we are currently
-                        ; sending pattetn data to the PPU in bitplane 1 ???
+                        ; sending pattern data to the PPU in bitplane 1 ???
                         ;
                         ; Can be 0, 4, 37, 60, tileNumber
                         ;
@@ -1096,38 +1096,47 @@ ENDIF
 .nameTileNumber2
 
  SKIP 1                 ; The number of the tile for which we are currently
-                        ; clearing nametable entries in the PPU in bitplane 0
-                        ; ???
+                        ; clearing nametable entries in the PPU in bitplane 0,
+                        ; divided by 8 ???
                         ;
                         ; Copied from nameTileNumber1
 
  SKIP 1                 ; The number of the tile for which we are currently
-                        ; clearing nametable entries in the PPU in bitplane 1
-                        ; ???
+                        ; clearing nametable entries in the PPU in bitplane 1,
+                        ; divided by 8 ???
                         ;
                         ; Copied from nameTileNumber1
 
 .nameTileNumber1
 
  SKIP 1                 ; The number of the tile for which we are currently
-                        ; sending nametable entries to the PPU in bitplane 0 ???
+                        ; sending nametable entries to the PPU in bitplane 0,
+                        ; divided by 8 ???
 
  SKIP 1                 ; The number of the tile for which we are currently
-                        ; sending nametable entries to the PPU in bitplane 1 ???
+                        ; sending nametable entries to the PPU in bitplane 1,
+                        ; divided by 8 ???
 
-.L00C9
+.pattTileCounter
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Counts tiles as they are written in the PPU pattern
+                        ; table in the NMI handler ???
+                        ;
+                        ; Contains the tile number divided by 8 (so counts up 4
+                        ; for every 32 tiles
+                        ;
+                        ; This variable is used internally by the
+                        ; SendPatternsToPPU routine
 
 .pattTileNumber1
 
  SKIP 1                 ; The number of the tile for which we are currently
-                        ; sending pattetn data to the PPU in bitplane 0 ???
+                        ; sending pattern data to the PPU in bitplane 0 ???
                         ;
                         ; Can be 0, 4, 37, 60, tileNumber
 
  SKIP 1                 ; The number of the tile for which we are currently
-                        ; sending pattetn data to the PPU in bitplane 1 ???
+                        ; sending pattern data to the PPU in bitplane 1 ???
                         ;
                         ; Can be 0, 4, 37, 60, tileNumber
 
@@ -1157,11 +1166,18 @@ ENDIF
 
 .nameTileCounter
 
- SKIP 1                 ; Counts tiles as they are written in batches of 32
-                        ; to the PPU nametable in NMI handler ???
+ SKIP 1                 ; Counts tiles as they are written to the PPU nametable
+                        ; in the NMI handler ???
                         ;
                         ; Contains tile number divided by 8 (so counts up 4
                         ; for every 32 tiles
+                        ;
+                        ; We divide by 8 because there are 1024 entries in
+                        ; each nametable, which doesn't fit into one byte, so we
+                        ; divide by 8 so the maximum counter value is 128
+                        ;
+                        ; This variable is used internally by the
+                        ; SendNametableToPPU routine
 
 .cycleCount
 
@@ -1271,7 +1287,7 @@ ENDIF
                         ; address of the nametable buffer for nameTileNumber1 in
                         ; bitplane 1 ???
 
-.nmiBitplanex8
+.nmiBitplane8
 
  SKIP 1                 ; Set to nmiBitplane * 8
 
@@ -1314,8 +1330,8 @@ ENDIF
 
 .lastTile
 
- SKIP 1                 ; The last tile number to send to the PPU, divided by 8
-                        ; and potentialls overwritten by the flags
+ SKIP 1                 ; The last tile number to send to the PPU, potentially
+                        ; potentially overwritten by the flags
                         ;
                         ; This variable is used internally by the
                         ; SendPatternsToPPU and SendNametableToPPU routines, and
@@ -1361,7 +1377,7 @@ ENDIF
  SKIP 1                 ; The bitplane that is being processed in the NMI
                         ; handler during VBlank, 0 or 1
                         ;
-                        ; Flipped in subm_CB42 ???
+                        ; Flipped in SendOtherBitplane ???
 
 .ppuCtrlCopy
 
@@ -3446,13 +3462,15 @@ ORG $0200
 
  SKIP 1                 ; Flags for bitplane 0: ???
                         ;
-                        ;   * Bit 3 overrides the number of the last tile to
+                        ;   * Bit 2 overrides the number of the last tile to
                         ;     send to the PPU nametable in SendBuffersToPPU:
                         ;      
                         ;     0 = set the last tile number to lastTileNumber,X
                         ;     1 = set the last tile number to 128
                         ;
-                        ;     Set to 1 in DrawTitleScreen, for example
+                        ;  * Bit 3 ???
+                        
+                        ;     Set to 1 in DrawTitleScreen
                         ;
                         ;   * Bit 4 indicates whether we have already started
                         ;     sending tile data for this bitplane to the PPU in
@@ -3462,8 +3480,17 @@ ORG $0200
                         ;     1 = we have already started sending tile data in a
                         ;         previous VBlank
                         ;
-                        ;   * Bit 5 is set and all others cleared in subm_CB42
-                        ;    
+                        ;   * Bit 5 is set and all others cleared in SendOtherBitplane
+                        ;
+                        ;     Set to 1 in DrawTitleScreen
+                        ;
+                        ;     Tested as "bit 7 is set and bit 5 is clear" a lot
+                        ;
+                        ;     0 = we have not finished sending data to the PPU
+                        ;         for this bitplane ???
+                        ;     1 = we have finished sending data to the PPU for
+                        ;         this bitplane ???
+                        ;
                         ;   * Bit 6 is set for the drawing bitplane in main
                         ;     flight loop part 3 after the dials are updated,
                         ;     and in DrawTitleScreen
@@ -3474,6 +3501,8 @@ ORG $0200
                         ;
                         ;   * Bit 7 is set for both bitplanes in subm_8980
                         ;      
+                        ;     Tested as "bit 7 is set and bit 5 is clear" a lot
+                        ;
                         ;     0 = 
                         ;     1 = 
 
@@ -4459,11 +4488,13 @@ ENDIF
 
 .ppuToBuffNameHi
 
- SKIP 1                 ; Add this to a PPU nametable address to get the
-                        ; nametable buffer address (high byte) in bitplane 0 ???
+ SKIP 1                 ; Add this to a nametable buffer address to get the
+                        ; corresponding PPU nametable address (high byte) in
+                        ; bitplane 0 ???
 
- SKIP 1                 ; Add this to a PPU nametable address to get the
-                        ; nametable buffer address (high byte) in bitplane 1 ???
+ SKIP 1                 ; Add this to a nametable buffer address to get the
+                        ; corresponding PPU nametable address (high byte) in
+                        ; bitplane 1 ???
 
 .SX
 

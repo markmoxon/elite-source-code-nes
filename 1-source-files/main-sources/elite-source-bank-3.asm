@@ -2355,15 +2355,15 @@ ENDIF
  LDA #$10
  STA ppuPatternTableHi
  LDA #0
- STA nmiBitplanex8
+ STA nmiBitplane8
 
  LDA #$20
  STA ppuNametableAddr+1
  LDA #0
  STA ppuNametableAddr
 
- LDA #%00101000         ; Set bits 3 and 6 of both bitplane flags
- STA bitplaneFlags      ; Bit 6 means tiles up to 128 are sent to the PPU
+ LDA #%00101000         ; Set bits 3 and 5 of both bitplane flags
+ STA bitplaneFlags
  STA bitplaneFlags+1
 
  LDA #4
