@@ -1889,7 +1889,7 @@ ENDIF
  LDX #1
  JSR subm_A972
  LDX #0
- STX paletteBitplane
+ STX hiddenBitPlane
  STX nmiBitplane
  JSR SetDrawingBitplane
  JSR subm_D946
@@ -2009,7 +2009,7 @@ ENDIF
 
  STX drawingBitplane
  STX nmiBitplane
- STX paletteBitplane
+ STX hiddenBitPlane
 
  LDA #0
  STA nameTileNumber
@@ -2142,7 +2142,7 @@ ENDIF
  STA pattTileNumber2+1
  LDA #0
  LDX #0
- STX paletteBitplane
+ STX hiddenBitPlane
  STX nmiBitplane
  JSR SetDrawingBitplane
  LDA QQ11
@@ -2351,7 +2351,7 @@ ENDIF
  LDA #0
  STA nmiBitplane
  STA drawingBitplane
- STA paletteBitplane
+ STA hiddenBitPlane
  LDA #$10
  STA ppuPatternTableHi
  LDA #0
@@ -4239,7 +4239,7 @@ ENDIF
 
  LDA XX3
  LDY XX3+3
- LDA paletteBitplane
+ LDA hiddenBitPlane
  BNE CB5EF
  STA XX3+1
  STY XX3+2

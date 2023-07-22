@@ -1311,6 +1311,9 @@ ENDIF
                         ; If we get here then barPatternCounter >= 128, so we
                         ; do not need to send any icon bar data to the PPU
 
+                        ; Fall through into part 2 to look at sending tile data
+                        ; to the PPU for the rest of the screen
+
 ; ******************************************************************************
 ;
 ;       Name: SendBuffersToPPU (Part 2 of 3)
@@ -1412,9 +1415,9 @@ ENDIF
                         ; nametable entries to the PPU, divided by 8
 
  CMP #48                ; If A < 48, then we have fewer than 48 * 8 = 384
- BCC sbuf6              ; nametable entries to send, so jump to sbuf6 to flip
-                        ; the palette bitplane before sending the next batch of
-                        ; tiles ???
+ BCC sbuf6              ; nametable entries to send, so jump to sbuf6 to swap
+                        ; the hidden and visible bitplanes before sending the
+                        ; next batch of tiles ???
 
  SUBTRACT_CYCLES 60     ; Subtract 60 from the cycle count
 
@@ -1432,13 +1435,15 @@ ENDIF
 
  SUBTRACT_CYCLES 134    ; Subtract 134 from the cycle count
 
- LDA enableBitplanes    ; If bitplanes are enabled, then enableBitplanes = 1,
- EOR paletteBitplane    ; so this flips paletteBitplane between 0 and 1 when
- STA paletteBitplane    ; bitplanes are enabled, and does nothing when they
-                        ; aren't
+ LDA enableBitplanes    ; If bitplanes are enabled then enableBitplanes will be
+ EOR hiddenBitPlane     ; 1, so this flips hiddenBitPlane between 0 and 1 when
+ STA hiddenBitPlane     ; bitplanes are enabled, and does nothing when they
+                        ; aren't (so it effectively swaps the hidden and visible
+                        ; bitplanes)
 
- JSR SetPaletteForPlane ; Set either background palette 0 or sprite palette 1,
-                        ; according to the palette bitplane and view type
+ JSR SetPaletteForView  ; Set the correct background and sprite palettes for
+                        ; the current view and (if this is the space view) the
+                        ; hidden bit plane
 
  JMP SendPatternsToPPU  ; Jump to SendPatternsToPPU to continue sending tile
                         ; data to the PPU
@@ -1462,7 +1467,7 @@ ENDIF
  CMP #%10000000         ; otherwise jump to sbuf8 to consider bitplane 1
  BNE sbuf8
 
- NOP                    ; This looks like code that has been disabled
+ NOP                    ; This looks like code that has been removed
  NOP
  NOP
  NOP
@@ -1505,11 +1510,17 @@ ENDIF
                         ; update the cycle count and skip the following two
                         ; instructions
 
- STX paletteBitplane    ; Set the palette bitplane to be the same as the NMI
-                        ; bitplane
+ STX hiddenBitPlane     ; Set the hidden bitplane to be the same as the NMI
+                        ; bitplane, so the rest of the NMI handler update the
+                        ; hidden bitplane (we only want to update the hidden
+                        ; bitplane, to avoid messing up the screen)
 
- JSR SetPaletteForPlane ; Set either background palette 0 or sprite palette 1,
-                        ; according to the palette bitplane and view type
+ JSR SetPaletteForView  ; Set the correct background and sprite palettes for
+                        ; the current view and (if this is the space view) the
+                        ; hidden bitplane
+
+                        ; Fall through into SetupTilesForPPU to set up the
+                        ; variables for sending tile data to the PPU
 
 ; ******************************************************************************
 ;
@@ -1764,7 +1775,7 @@ ENDIF
                         ; fit into one VBlank)
                         ;
                         ; Otherwise we have 64 or fewer tile patterns to send,
-                        ; so fall througn into part 2 to send them one tile at a
+                        ; so fall through into part 2 to send them one tile at a
                         ; time, checking each one is the last tile yo see if
                         ; it's the last tile
 
@@ -2032,7 +2043,7 @@ ENDIF
 
  STX pattTileCounter    ; Store X in pattTileCounter to use below
 
- NOP                    ; This looks like code that has been disabled
+ NOP                    ; This looks like code that has been removed
 
  LDX nmiBitplane        ; Set (pattTileBuffHi pattTileBuffLo) for this bitplane
  STY pattTileBuffLo,X   ; to dataForPPU(1 0) + Y (which is the address of the
@@ -2318,14 +2329,18 @@ ENDIF
  EOR #1                 ; opposite bitplane to the one we just sent
  STA nmiBitplane
 
- CMP paletteBitplane    ; If the NMI bitplane is now different to the palette
+ CMP hiddenBitPlane     ; If the NMI bitplane is now different to the hidden
  BNE obit4              ; bitplane, jump to obit4 to update the cycle count
                         ; and return from the subroutine, as we already sent
-                        ; the bitplane that's showing on-screen
+                        ; the bitplane that's hidden (we only want to update
+                        ; the hidden bitplane, to avoid messing up the screen)
 
-                        ; If we get here then the new NMI bitplane is the one
-                        ; showing on-screen, so we should check whether we
-                        ; need to send it to the PPU
+                        ; If we get here then the new NMI bitplane is the same
+                        ; as the bitplane that's hidden, so we should check
+                        ; whether we need to send it to the PPU (this might
+                        ; happen if the value of hiddenBitPlane changes while
+                        ; we are still sending data to the PPU across multiple
+                        ; calls to the NMI handler)
 
  TAX                    ; Set X to the newly flipped NMI bitplane
 
@@ -3004,16 +3019,16 @@ ENDIF
 
 IF _NTSC
 
- LDA #$1A               ; Set cycleCount = 6797 ($1A8D)
+ LDA #HI(6797)          ; Set cycleCount = 6797
  STA cycleCount+1
- LDA #$8D
+ LDA #LO(6797)
  STA cycleCount
 
 ELIF _PAL
 
- LDA #$1D               ; Set cycleCount = 7433 ($1D09)
+ LDA #HI(7433)          ; Set cycleCount = 7433
  STA cycleCount+1
- LDA #$09
+ LDA #LO(7433)
  STA cycleCount
 
 ENDIF
@@ -3129,30 +3144,36 @@ ENDIF
                         ;   * Bit 6 clear = do not intensify blues
                         ;   * Bit 7 clear = do not intensify reds
 
+                        ; Fall through into SetPaletteForView to set the correct
+                        ; palette for the current view
+
 ; ******************************************************************************
 ;
-;       Name: SetPaletteForPlane
+;       Name: SetPaletteForView
 ;       Type: Subroutine
 ;   Category: Drawing tiles
-;    Summary: Set either background palette 0 or sprite palette 1, according to
-;             the palette bitplane and view type
+;    Summary: Set the correct background and sprite palettes for the current
+;             view and (if this is the space view) the hidden bit plane
 ;
 ; ******************************************************************************
 
-.SetPaletteForPlane
+.SetPaletteForView
 
  LDA QQ11a              ; Set A to the current view (or the old view that is
                         ; still being shown, if we are in the process of
                         ; changing view)
 
- BNE paph2              ; If this is not the space view, jump to paph2
+ BNE palv2              ; If this is not the space view, jump to palv2
 
                         ; If we get here then this is the space view
 
  LDY visibleColour      ; Set Y to the colour to use for visible pixels
 
- LDA paletteBitplane    ; If paletteBitplane is non-zero (i.e. 1), jump to paph1
- BNE paph1
+ LDA hiddenBitPlane     ; If hiddenBitPlane is non-zero (i.e. 1), jump to palv1
+ BNE palv1              ; to hide pixels in bitplane 1
+
+                        ; If we get here then hiddenBitPlane = 0, so now we hide
+                        ; pixels in bitplane 0 and show pixels in bitplane 1
 
  LDA #$3F               ; Set PPU_ADDR = $3F01, so it points to background
  STA PPU_ADDR           ; palette 0 in the PPU
@@ -3165,14 +3186,16 @@ ENDIF
  STY PPU_DATA           ;
  STY PPU_DATA           ;   * Colour 0 = background (black)
                         ;
-                        ;   * Colour 1 = hidden colour
+                        ;   * Colour 1 = hidden colour (bitplane 0)
                         ;
-                        ;   * Colour 2 = visible colour
+                        ;   * Colour 2 = visible colour (bitplane 1)
                         ;
                         ;   * Colour 3 = visible colour
                         ;
-                        ; So pixels in colour 1 will be invisible, while pixels
-                        ; in colour 2 will be visible
+                        ; So pixels in bitplane 0 will be hidden, while
+                        ; pixels in bitplane 1 will be visible
+                        ;
+                        ; i.e. pixels in the hiddenBitPlane will be hidden
 
  LDA #$00               ; Change the PPU address away from the palette entries
  STA PPU_ADDR           ; to prevent the palette being corrupted
@@ -3181,7 +3204,10 @@ ENDIF
 
  RTS                    ; Return from the subroutine
 
-.paph1
+.palv1
+
+                        ; If we get here then hiddenBitPlane = 1, so now we hide
+                        ; pixels in bitplane 1 and show pixels in bitplane 0
 
  LDA #$3F               ; Set PPU_ADDR = $3F01, so it points to background
  STA PPU_ADDR           ; palette 0 in the PPU
@@ -3194,14 +3220,16 @@ ENDIF
  STA PPU_DATA           ;
  STY PPU_DATA           ;   * Colour 0 = background (black)
                         ;
-                        ;   * Colour 1 = visible colour
+                        ;   * Colour 1 = visible colour (bitplane 0)
                         ;
-                        ;   * Colour 2 = hidden colour
+                        ;   * Colour 2 = hidden colour (bitplane 1)
                         ;
                         ;   * Colour 3 = visible colour
                         ;
-                        ; So pixels in colour 1 will be visible, while pixels
-                        ; in colour 2 will be invisible
+                        ; So pixels in bitplane 0 will be visible, while
+                        ; pixels in bitplane 1 will be hidden
+                        ;
+                        ; i.e. pixels in the hiddenBitPlane will be hidden
 
  LDA #$00               ; Change the PPU address away from the palette entries
  STA PPU_ADDR           ; to prevent the palette being corrupted
@@ -3210,12 +3238,12 @@ ENDIF
 
  RTS                    ; Return from the subroutine
 
-.paph2
+.palv2
 
                         ; If we get here then this is not the space view
 
- CMP #$98               ; If this is the Status Mode screen, jump to paph3
- BEQ paph3
+ CMP #$98               ; If this is the Status Mode screen, jump to palv3
+ BEQ palv3
 
                         ; If we get here then this is not the space view or the
                         ; Status Mode screen
@@ -3242,7 +3270,7 @@ ENDIF
 
  RTS                    ; Return from the subroutine
 
-.paph3
+.palv3
 
                         ; If we get here then this is the Status Mode screen
 
@@ -3341,7 +3369,7 @@ ENDIF
                         ; to the PPU to update the screen
 
  JSR SetPPURegisters    ; Set PPU_CTRL, PPU_ADDR and PPU_SCROLL for the current
-                        ; palette bitplane
+                        ; hidden bitplane
 
  LDA cycleCount         ; Add 100 ($0064) to cycleCount
  CLC
@@ -3388,7 +3416,7 @@ ENDIF
 .SetPPURegisters
 
  LDX #%10010000         ; Set X to use as the value of PPU_CTRL for when
-                        ; paletteBitplane is 1:
+                        ; hiddenBitPlane is 1:
                         ; 
                         ;   * Bits 0-1    = base nametable address %00 ($2000)
                         ;   * Bit 2 clear = increment PPU_ADDR by 1 each time
@@ -3398,11 +3426,11 @@ ENDIF
                         ;   * Bit 6 clear = use PPU 0 (the only option on a NES)
                         ;   * Bit 7 set   = enable VBlank NMI generation
 
- LDA paletteBitplane    ; If paletteBitplane is non-zero, skip the following
- BNE resp1
+ LDA hiddenBitPlane     ; If hiddenBitPlane is non-zero (i.e. 1), skip the
+ BNE resp1              ; following
 
  LDX #%10010001         ; Set X to use as the value of PPU_CTRL for when
-                        ; paletteBitplane is 0:
+                        ; hiddenBitPlane is 0:
                         ; 
                         ;   * Bits 0-1    = base nametable address %01 ($2400)
                         ;   * Bit 2 clear = increment PPU_ADDR by 1 each time
@@ -3414,13 +3442,20 @@ ENDIF
 
 .resp1
 
- STX PPU_CTRL           ; Configure the PPU with the correct value of PPU_CTRL
-                        ; for the current palette bitplane
+ STX PPU_CTRL           ; Configure the PPU with the above value of PPU_CTRL,
+                        ; according to the hidden bitplane, so we set:
+                        ;
+                        ;   * Nametable 0 when hiddenBitPlane = 1
+                        ;
+                        ;   * Nametable 1 when hiddenBitPlane = 0
+                        ;
+                        ; This makes sure that the screen shows the nametable for
+                        ; the visible bitplane, and not the hidden bitplane
 
  STX ppuCtrlCopy        ; Store a copy of PPU_CTRL in ppuCtrlCopy
 
- LDA #$20               ; If paletteBitplane = 0 then set A = $24, otherwise set
- LDX paletteBitplane    ; A = $20, to use as the high byte of the PPU_ADDR
+ LDA #$20               ; If hiddenBitPlane = 0 then set A = $24, otherwise set
+ LDX hiddenBitPlane     ; A = $20, to use as the high byte of the PPU_ADDR
  BNE resp2              ; address
  LDA #$24
 
@@ -3429,9 +3464,12 @@ ENDIF
  STA PPU_ADDR           ; Set PPU_ADDR to point to the nametable address that we
  LDA #$00               ; just configured:
  STA PPU_ADDR           ;
-                        ;   * $2000 (nametable 0) when paletteBitplane = 0
+                        ;   * $2000 (nametable 0) when hiddenBitPlane = 1
                         ;
-                        ;   * $2400 (nametable 1) when paletteBitplane = 1
+                        ;   * $2400 (nametable 1) when hiddenBitPlane = 0
+                        ;
+                        ; So we now flush the pipeline for the nametable that we
+                        ; are showing on-screen, to avoid any corruption
 
  LDA PPU_DATA           ; Read from PPU_DATA eight times to clear the pipeline
  LDA PPU_DATA           ; and reset the internal PPU read buffer
@@ -3485,43 +3523,49 @@ ENDIF
 ;
 ;       Name: ClearBuffers
 ;       Type: Subroutine
-;   Category: Utility routines
+;   Category: Drawing tiles
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
 .ClearBuffers
 
- LDA cycleCount+1
- BEQ CD0D0
+ LDA cycleCount+1       ; If the high byte of cycleCount(1 0) is zero, then the
+ BEQ cbuf3              ; cycle count is 255 or less, so jump to cbuf3 to skip
+                        ; the buffer clearing, as we have run out of cycles (we
+                        ; will pick up where we left off in the next VBlank)
 
  SUBTRACT_CYCLES 363    ; Subtract 363 from the cycle count
 
- BMI CD092
- JMP CD0A1
+ BMI cbuf1              ; If the result is negative, jump to cbuf1 to skip the
+                        ; buffer clearing, as we have run out of cycles (we
+                        ; will pick up where we left off in the next VBlank)
 
-.CD092
+ JMP cbuf2              ; The result is positive, so we have enough cycles to
+                        ; clear the buffers, so jump to cbuf2 to do just that
+
+.cbuf1
 
  ADD_CYCLES 318         ; Add 318 to the cycle count
 
- JMP CD0D0
+ JMP cbuf3              ; Jump to cbuf3 to skip the buffer clearing
 
-.CD0A1
+.cbuf2
 
- LDA addr7              ; Store addr7(1 0) and addr6(1 0) on the stack
- PHA
- LDA addr7+1
+ LDA addr7              ; Store addr7(1 0) and addr6(1 0) on the stack, so we
+ PHA                    ; can use them in the ClearPlaneBuffers routine and can
+ LDA addr7+1            ; restore their original values afterwards
  PHA
  LDA addr6
  PHA
  LDA addr6+1
  PHA
 
- LDX #0
- JSR ClearPlaneBuffers
+ LDX #0                 ; Call ClearPlaneBuffers with X = 0 to clear the buffers
+ JSR ClearPlaneBuffers  ; for bitplane 0
 
- LDX #1
- JSR ClearPlaneBuffers
+ LDX #1                 ; Call ClearPlaneBuffers with X = 1 to clear the buffers
+ JSR ClearPlaneBuffers  ; for bitplane 1
 
  PLA                    ; Retore addr7(1 0) and addr6(1 0) from the stack
  STA addr6+1
@@ -3534,29 +3578,41 @@ ENDIF
 
  ADD_CYCLES_CLC 238     ; Add 238 to the cycle count
 
-.CD0D0
+.cbuf3
+
+                        ; This part of the routine repeats the code in cbuf5
+                        ; until we run out of cycles, though as cbuf5 only
+                        ; contains NOPs, this doesn't achieve anything other
+                        ; than running down the cycle counter (perhaps it's
+                        ; designed to even out each call to the NMI handler,
+                        ; or is just left over from development)
 
  SUBTRACT_CYCLES 32     ; Subtract 32 from the cycle count
 
- BMI CD0E2
- JMP CD0F1
+ BMI cbuf4              ; If the result is negative, jump to cbuf4 to return
+                        ; from the subroutine, as we have run out of cycles
 
-.CD0E2
+ JMP cbuf5              ; The result is positive, so we have enough cycles to
+                        ; continue, so jump to cbuf5
 
- ADD_CYCLES 65527       ; Add 65527 to the cycle count (i.e. subtract 9)
+.cbuf4
 
- JMP CD0F7
+ ADD_CYCLES 65527       ; Add 65527 to the cycle count (i.e. subtract 9) ???
 
-.CD0F1
+ JMP cbuf6              ; Jump to cbuf6 to return from the subroutine
 
+.cbuf5
+
+ NOP                    ; This looks like code that has been removed
  NOP
  NOP
- NOP
- JMP CD0D0
 
-.CD0F7
+ JMP cbuf3              ; Jump back to cbuf3 to check the cycle count and keep
+                        ; running the above until the cycle count runs out
 
- RTS
+.cbuf6
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -3886,14 +3942,14 @@ ENDIF
 ;
 ;       Name: ClearPlaneBuffers
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing tiles
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
 .CD2A4
 
- NOP
+ NOP                    ; This looks like code that has been removed
  NOP
 
 .CD2A6
@@ -3998,7 +4054,7 @@ ENDIF
 
 .CD359
 
- NOP
+ NOP                    ; This looks like code that has been removed
  NOP
  NOP
  NOP
@@ -4019,7 +4075,7 @@ ENDIF
 
 .CD37B
 
- NOP
+ NOP                    ; This looks like code that has been removed
  NOP
  NOP
 
@@ -4043,7 +4099,8 @@ ENDIF
  STY addr7
  CMP addr7
  BCS CD36D
- NOP
+
+ NOP                    ; This looks like code that has been removed
 
  LDY #0
  STY addr6+1
@@ -4097,10 +4154,11 @@ ENDIF
 
 .CD3FC
 
+ NOP                    ; This looks like code that has been removed
  NOP
  NOP
  NOP
- NOP
+
  RTS
 
 .CD401
@@ -11652,7 +11710,7 @@ ENDIF
  JSR subm_F126          ; Call subm_F126, now that it is paged into memory
 
  LDX #1
- STX paletteBitplane
+ STX hiddenBitPlane
  RTS
 
 ; ******************************************************************************
@@ -11813,7 +11871,7 @@ ENDIF
  STA nmiTimer
  STA nmiTimerLo
  STA nmiTimerHi
- STA paletteBitplane
+ STA hiddenBitPlane
  STA nmiBitplane
  STA drawingBitplane
  LDA #$FF
