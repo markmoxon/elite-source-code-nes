@@ -206,14 +206,14 @@ ENDIF
 ;
 ; The NEWB flags are as follows:
 ;
-;    * Bit 0: Trader flag (0 = not a trader, 1 = trader)
-;    * Bit 1: Bounty hunter flag (0 = not a bounty hunter, 1 = bounty hunter)
-;    * Bit 2: Hostile flag (0 = not hostile, 1 = hostile)
-;    * Bit 3: Pirate flag (0 = not a pirate, 1 = pirate)
-;    * Bit 4: Docking flag (0 = not docking, 1 = docking)
-;    * Bit 5: Innocent bystander (0 = normal, 1 = innocent bystander)
-;    * Bit 6: Cop flag (0 = not a cop, 1 = cop)
-;    * Bit 7: For spawned ships: ship been scooped or has docked
+;   * Bit 0: Trader flag (0 = not a trader, 1 = trader)
+;   * Bit 1: Bounty hunter flag (0 = not a bounty hunter, 1 = bounty hunter)
+;   * Bit 2: Hostile flag (0 = not hostile, 1 = hostile)
+;   * Bit 3: Pirate flag (0 = not a pirate, 1 = pirate)
+;   * Bit 4: Docking flag (0 = not docking, 1 = docking)
+;   * Bit 5: Innocent bystander (0 = normal, 1 = innocent bystander)
+;   * Bit 6: Cop flag (0 = not a cop, 1 = cop)
+;   * Bit 7: For spawned ships: ship been scooped or has docked
 ;             For blueprints: this ship type has an escape pod fitted
 ;
 ; See the deep dive on "Advanced tactics with the NEWB flags" for details of
