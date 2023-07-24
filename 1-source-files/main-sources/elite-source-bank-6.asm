@@ -3460,7 +3460,7 @@ ENDIF
  PHA
  LDA nmiTimerHi
  PHA
- JSR subm_D8C5
+ JSR ScreenUpdateIsDone
  LDA L045F
  PHA
  LDA iconBarType
@@ -4531,7 +4531,7 @@ ENDIF
 
 .subm_A761
 
- JSR subm_D8C5
+ JSR ScreenUpdateIsDone
 
  LDA #254
  STA tileNumber
@@ -5562,7 +5562,7 @@ ENDIF
  LDA #$8B
  STA QQ11
  LDY #0
- STY L03EE
+ STY autoPlayDemo
  STY QQ17
  STY YC
  LDX chosenLanguage
@@ -6094,8 +6094,8 @@ ENDIF
 .subm_B6C7
 
  PHA
- JSR subm_8980_b0
- JSR subm_D8C5
+ JSR SendScreenToPPU_b0
+ JSR ScreenUpdateIsDone
  PLA
  RTS
 
@@ -6275,7 +6275,7 @@ ELIF _PAL
  LSR A
  BCC LB7AB
  ORA #$80
- 
+
 .LB7AB
 
  LSR A
@@ -6289,7 +6289,7 @@ ELIF _PAL
  LSR A
  BCC LB7B9
  ORA #$80
- 
+
 .LB7B9
 
  STA SC2
@@ -6697,7 +6697,7 @@ ENDIF
 
 .LL164
 
- JSR subm_D8C5
+ JSR ScreenUpdateIsDone
  JSR HideStardust
  JSR HideSprites59To62
  JSR subm_EBED
@@ -6763,7 +6763,7 @@ ENDIF
  JSR subm_D975
  DEC XP
  BNE CB999
- JMP subm_D8C5
+ JMP ScreenUpdateIsDone
 
 ; ******************************************************************************
 ;
@@ -7260,7 +7260,7 @@ ENDIF
  STA iconBarImageHi     ; for icon bar type 0 (docked)
 
  LDY #0
- STY L03EE
+ STY autoPlayDemo
  JSR subm_BDFC
  LDA #$CF
  JSR TT66_b0
@@ -7520,7 +7520,7 @@ ENDIF
  DEC V+1
  BNE CBDE2
  JSR CBDF9
- JMP subm_BF41_b5
+ JMP SetDemoAutoPlay_b5
 
 .CBDF9
 

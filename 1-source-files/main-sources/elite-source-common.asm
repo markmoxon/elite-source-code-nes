@@ -164,7 +164,7 @@
 IF NOT(_BANK = 0)
 
  subm_8926          = $8926
- subm_8980          = $8980
+ SendScreenToPPU    = $8980
  MVS5               = $8A14
  DemoShips          = $9522
  StartAfterLoad     = $A379
@@ -271,7 +271,7 @@ IF NOT(_BANK = 3)
  iconBarImage4      = $9100
  subm_A730          = $A730
  subm_A775          = $A775
- subm_A7B7          = $A7B7
+ SetupView          = $A7B7
  subm_A972          = $A972
  subm_A9D1          = $A9D1
  DrawTitleScreen    = $AABC
@@ -320,7 +320,7 @@ IF NOT(_BANK = 5)
 
  SetSystemImage     = $BED7
  GetSystemImage     = $BEEA
- subm_BF41          = $BF41
+ SetDemoAutoPlay    = $BF41
 
 ENDIF
 
@@ -1204,7 +1204,7 @@ ENDIF
                         ;             of four patterns (32 bytes), split across
                         ;             multiple NMI calls, until we have send all
                         ;             32 tile patterns and the value is 128
-                        ;             
+                        ;
                         ;   * 128 = do not send any tiles
 
 .iconBarOffset
@@ -1349,7 +1349,7 @@ ENDIF
 .showUserInterface
 
  SKIP 1                 ; Bit 7 set means display the user interface (so we only
-                        ; clear it for the game over screen) 
+                        ; clear it for the game over screen)
 
 .addr4
 
@@ -3475,9 +3475,16 @@ ORG $0200
 
  SKIP 1                 ; ???
 
-.L03EE
+.autoPlayDemo
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Controls whether to play the demo automatically (which
+                        ; happens after it is left idle for a while)
+                        ;
+                        ;   * Bit 7 clear = do not play the demo automatically
+                        ;
+                        ;   * Bit 7 set = play the demo automatically using
+                        ;                 the controller key presses in the
+                        ;                 autoplayKeys table
 
 .bitplaneFlags
 
@@ -3491,7 +3498,7 @@ ORG $0200
                         ;
                         ;   * Bit 2 overrides the number of the last tile to
                         ;     send to the PPU nametable in SendBuffersToPPU:
-                        ;      
+                        ;
                         ;     * 0 = set the last tile number to lastTileNumber
                         ;           for this bitplane
                         ;
@@ -3505,7 +3512,7 @@ ORG $0200
                         ;
                         ;     * 1 = clear this bitplane's buffer once it has
                         ;           been sent to the PPU
-                        ;      
+                        ;
                         ;     For example, this is set to 1 in DrawTitleScreen
                         ;     as it is a static screen, while the space view has
                         ;     this bit set so the buffers are cleared after each
@@ -3538,7 +3545,7 @@ ORG $0200
                         ;   * Bit 6 determines whether to keep sending tile data
                         ;     for this bitplane if the other bitplane is also
                         ;     waiting to be sent
-                        ;      
+                        ;
                         ;     * 0 = stop sending tile data in the NMI handler if
                         ;           the other bitplane is waiting to be sent, so
                         ;           we effectively defer to the other bitplane
@@ -5511,7 +5518,7 @@ ENDMACRO
 ;
 ;       Name: ADD_CYCLES_CLC
 ;       Type: Macro
-;   Category: Drawing tiles
+;   Category: Drawing the screen
 ;    Summary: Add a specifed number to the cycle count
 ;
 ; ------------------------------------------------------------------------------
@@ -5545,7 +5552,7 @@ ENDMACRO
 ;
 ;       Name: ADD_CYCLES
 ;       Type: Macro
-;   Category: Drawing tiles
+;   Category: Drawing the screen
 ;    Summary: Add a specifed number to the cycle count
 ;
 ; ------------------------------------------------------------------------------
@@ -5580,7 +5587,7 @@ ENDMACRO
 ;
 ;       Name: SUBTRACT_CYCLES
 ;       Type: Macro
-;   Category: Drawing tiles
+;   Category: Drawing the screen
 ;    Summary: Subtract a specifed number from the cycle count
 ;
 ; ------------------------------------------------------------------------------
@@ -5613,7 +5620,7 @@ ENDMACRO
 ;
 ;       Name: FILL_MEMORY
 ;       Type: Macro
-;   Category: Drawing tiles
+;   Category: Drawing the screen
 ;    Summary: Fill memory with the specified number of bytes
 ;
 ; ------------------------------------------------------------------------------
@@ -5659,7 +5666,7 @@ ENDMACRO
 ;
 ;       Name: SEND_DATA_TO_PPU
 ;       Type: Macro
-;   Category: Drawing tiles
+;   Category: Drawing the screen
 ;    Summary: Send a specified block of memory to the PPU
 ;
 ; ------------------------------------------------------------------------------

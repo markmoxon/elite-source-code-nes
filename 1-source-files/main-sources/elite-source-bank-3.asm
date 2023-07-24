@@ -1015,14 +1015,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: dialsImage
+;       Name: dialImage
 ;       Type: Variable
 ;   Category: Drawing images
 ;    Summary: Packed image data for the dashboard and dials
 ;
 ; ******************************************************************************
 
-.dialsImage
+.dialImage
 
  EQUB $32, $17, $3F, $05, $21, $07, $E8, $C0
  EQUB $FC, $E8, $D1, $83, $21, $07, $98, $00
@@ -1687,14 +1687,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_A7B7
+;       Name: SetupView
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Utility routines
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_A7B7
+.SetupView
 
  JSR WSCAN
  LDA ppuCtrlCopy
@@ -1777,7 +1777,8 @@ ENDIF
  BEQ CA8A2
  STA systemFlag
 
- JSR subm_A95D
+ JSR SendDialImageToPPU ; Unpack the image for the dashboard and dials and send
+                        ; it to the PPU
 
  JMP CA8A2
 
@@ -1802,7 +1803,7 @@ ENDIF
  LDA #LO(fontImage)
  STA SC
 
- JSR subm_A909
+ JSR SendPattern0ToPPU
 
  LDA QQ11
  CMP #$DF
@@ -1917,14 +1918,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_A909
+;       Name: SendPattern0ToPPU
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing the screen
+;    Summary: Send a pattern to bitplane 0 in the PPU and zeroes to bitplane 1
 ;
 ; ******************************************************************************
 
-.subm_A909
+.SendPattern0ToPPU
 
  LDY #0
 
@@ -1974,23 +1975,24 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_A95D
+;       Name: SendDialImageToPPU
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing the screen
+;    Summary: Unpack the image for the dashboard and dials and send it to the
+;             PPU
 ;
 ; ******************************************************************************
 
-.subm_A95D
+.SendDialImageToPPU
 
  LDA #HI(16*69)         ; Set PPU_ADDR to the address of pattern #69 in pattern
  STA PPU_ADDR           ; table 0
  LDA #LO(16*69)
  STA PPU_ADDR
 
- LDA #HI(dialsImage)    ; Set V(1 0) = dialsImage
+ LDA #HI(dialImage)     ; Set V(1 0) = dialImage
  STA V+1                ;
- LDA #LO(dialsImage)    ; So we can unpack the image data for the dashboard and
+ LDA #LO(dialImage)     ; So we can unpack the image data for the dashboard and
  STA V                  ; dials into pattern #69 onwards in pattern table 0
 
  JMP UnpackToPPU        ; Unpack the image data to the PPU, returning from the
@@ -2090,7 +2092,7 @@ ENDIF
 .subm_A9D1
 
  PHA
- JSR subm_D8C5
+ JSR ScreenUpdateIsDone
  LDA QQ11
  CMP #$96
  BNE CA9E1
@@ -2131,7 +2133,7 @@ ENDIF
 
  JSR subm_D977
 
- JSR subm_D8C5
+ JSR ScreenUpdateIsDone
  LDA #80
  STA lastTileNumber
  STA lastTileNumber+1
@@ -2310,7 +2312,7 @@ ENDIF
  STA ySprite0,Y
  INY
  BNE loop_CAB33
- JSR subm_A95D
+ JSR SendDialImageToPPU
 
 IF _NTSC
 
@@ -4336,7 +4338,7 @@ ENDIF
  BEQ CB66D
  LDA L0473
  BMI CB66D
- JSR subm_D8C5
+ JSR ScreenUpdateIsDone
  JSR WSCAN
  JSR subm_B57F
  DEC updatePaletteInNMI

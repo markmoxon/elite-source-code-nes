@@ -1155,7 +1155,7 @@ ENDIF
                         ; a fugitive if we just shot the sheriff, but won't
                         ; affect our status if the enemy wasn't a copper
 
- LDA MJ                 ; If we are in witchspace (in which case MJ > 0) or 
+ LDA MJ                 ; If we are in witchspace (in which case MJ > 0) or
  ORA demoInProgress     ; demoInProgress > 0 (in which case we are playing the
  BNE KS1S               ; demo), jump to KS1S to skip showing an on-screen
                         ; bounty for this kill
@@ -2521,7 +2521,7 @@ ENDIF
 ;
 ;       Name: HideHiddenColour
 ;       Type: Subroutine
-;   Category: Drawing tiles
+;   Category: Drawing the screen
 ;    Summary: Set the hidden colour to black, so that pixels in this colour in
 ;             palette 0 are invisible
 ;
@@ -3059,7 +3059,7 @@ ENDIF
  LDA QQ11
  CMP QQ11a
  BEQ C8976
- JSR subm_A7B7_b3
+ JSR SetupView_b3
 
 .C8955
 
@@ -3107,16 +3107,16 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_8980
+;       Name: SendScreenToPPU
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_8980
+.SendScreenToPPU
 
- JSR subm_D8C5
+ JSR ScreenUpdateIsDone
 
  LDA #0
  STA nameTileNumber
@@ -3131,6 +3131,7 @@ ENDIF
                         ; the PPU to use nametable 0 and pattern table 0
 
  JSR DrawBoxEdges
+
  JSR CopyNameBuffer0To1
 
  LDA #%11000100         ; Set bits 2, 6 and 7 of both bitplane flags
@@ -3140,7 +3141,7 @@ ENDIF
  LDA tileNumber
  STA pattTileNumber
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -4071,7 +4072,7 @@ ENDIF
 
  JSR MVEIT              ; Call MVEIT to move the Cobra in space
 
- JSR subm_D96F          ; ???
+ JSR DrawShipInNewPlane ; ???
 
  DEC INWK+32            ; Decrement the counter in byte #32
 
@@ -4233,7 +4234,7 @@ ENDIF
  JSR DETOK_b2           ; PLANET"), which will print on-screen as the left align
                         ; code disables justified text
 
- JMP subm_8980          ; ???
+ JMP SendScreenToPPU    ; ???
 
 .HME5
 
@@ -4258,7 +4259,7 @@ ENDIF
 .C8CAF
 
  JSR CLYNS
- JMP subm_8980
+ JMP SendScreenToPPU
 
 ; ******************************************************************************
 ;
@@ -7213,7 +7214,7 @@ ENDIF
  STX INWK+30            ; Set the ship's pitch counter to a positive pitch that
                         ; doesn't dampen
 
- JSR subm_D96F          ; ???
+ JSR DrawShipInNewPlane ; ???
 
  JSR MVEIT              ; Call MVEIT to rotate the ship in space
 
@@ -7253,7 +7254,7 @@ ENDIF
                         ; so the ship moves up the screen (as space coordinates
                         ; have the y-axis going up)
 
- JSR subm_D96F          ; ???
+ JSR DrawShipInNewPlane ; ???
 
  JSR MVEIT              ; Call MVEIT to move and rotate the ship in space
 
@@ -10540,7 +10541,7 @@ ENDIF
  LDA #202               ; Print token 42 ("RANGE") followed by a question mark
  JSR prq
 
- JMP subm_8980          ; ???
+ JMP SendScreenToPPU    ; ???
 
 ; ******************************************************************************
 ;
@@ -11095,8 +11096,8 @@ ENDIF
  LDA QQ29
 
  JSR subm_A130
- JSR subm_8980
- JSR subm_D8C5
+ JSR SendScreenToPPU
+ JSR ScreenUpdateIsDone
  JMP CA036
 
 .CA09B
@@ -12241,9 +12242,9 @@ ENDIF
 
  JSR subm_A4A5_b6
 
- JSR subm_8980
+ JSR SendScreenToPPU
 
- JSR subm_D8C5
+ JSR ScreenUpdateIsDone
 
  JMP CA4DB
 
@@ -12413,7 +12414,7 @@ ENDIF
  PLA                    ; the pot. If we don't have enough cash, exit to the
                         ; docking bay (i.e. show the Status Mode screen) ???
 
- JSR subm_8980          ; ???
+ JSR SendScreenToPPU    ; ???
  JMP CA4DB
 
 .CA51D
@@ -12584,7 +12585,7 @@ ENDIF
  CMP #$1F
  BNE err
  JSR BOOP
- JSR subm_8980
+ JSR SendScreenToPPU
  LDY #$28
  JSR DELAY
  LDA #6
@@ -12600,14 +12601,14 @@ ENDIF
  BNE loop_CA5C5
  JSR dn
  JSR subm_A4A5_b6
- JSR subm_8980
+ JSR SendScreenToPPU
  JMP CA4DB
 
 .presS
 
  JMP pres
 
- JSR subm_8980
+ JSR SendScreenToPPU
  JMP CA4DB
 
 .ed9
@@ -12823,7 +12824,7 @@ ENDIF
 
  BPL loop_CA681         ; Loop back until we have printed 21 spaces
 
- JSR subm_8980          ; ???
+ JSR SendScreenToPPU    ; ???
 
  LDY #40                ; Delay for 40 vertical syncs (40/50 = 0.8 seconds)
  JSR DELAY
@@ -12970,8 +12971,8 @@ ENDIF
  STA fontBitplane
  TYA
  PHA
- JSR subm_8980
- JSR subm_D8C5
+ JSR SendScreenToPPU
+ JSR ScreenUpdateIsDone
  PLA
  TAY
  RTS
@@ -13031,7 +13032,7 @@ ENDIF
  LDA #6
  STA K+1
  JSR subm_B2BC_b3
- JSR subm_8980
+ JSR SendScreenToPPU
  LDY #0
 
 .CA737
@@ -13717,7 +13718,7 @@ ENDIF
  BNE P%+5
 
  JMP cpl                ; This token is control code 3 (selected system name)
-                        ; so jump to cpl to print the selected system name 
+                        ; so jump to cpl to print the selected system name
                         ; and return from the subroutine using a tail call
 
  DEX                    ; If token <> 4, skip the following instruction
@@ -15873,7 +15874,7 @@ ENDIF
                         ; time it will either be an asteroid (98.5% chance) or,
                         ; very rarely, a cargo canister (1.5% chance)
 
- LDA MJ                 ; If we are in witchspace (in which case MJ > 0) or 
+ LDA MJ                 ; If we are in witchspace (in which case MJ > 0) or
  ORA demoInProgress     ; demoInProgress > 0 (in which case we are playing the
  BNE ytq                ; demo), jump down to MLOOP (via ytq above)
 
@@ -16611,7 +16612,7 @@ ENDIF
  LDA QQ11
  BEQ CB118
  JSR CLYNS
- JSR subm_8980
+ JSR SendScreenToPPU
 
 .CB118
 
@@ -16911,7 +16912,7 @@ ENDIF
  LDA #0                 ; ???
  STA boxEdge1
  STA boxEdge2
- STA L03EE
+ STA autoPlayDemo
  LDA #$C4
  JSR TT66
  JSR subm_BED2_b6
@@ -16920,7 +16921,7 @@ ENDIF
  LDA #0
  STA L045F
  LDA #$C4
- JSR subm_A7B7_b3
+ JSR SetupView_b3
  LDA #0
  STA QQ11
  STA QQ11a
@@ -17154,7 +17155,7 @@ ENDIF
  JSR BR1
  LDA #$FF
  STA QQ11
- LDA L03EE
+ LDA autoPlayDemo
  BEQ CB32C
  JSR subm_F362
 
@@ -17455,7 +17456,7 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- JSR subm_D96F          ; ???
+ JSR DrawShipInNewPlane ; ???
 
  INC MCNT               ; ???
 
@@ -18996,7 +18997,7 @@ ENDIF
  LDA #2                 ; Set z_hi = 1, so (z_hi z_lo) = 256
  STA INWK+7
 
- JSR subm_D96F          ; ???
+ JSR DrawShipInNewPlane ; ???
  INC MCNT
 
  JMP MVEIT              ; Call MVEIT to move and rotate the ship in space,
@@ -19249,7 +19250,7 @@ ENDIF
 
  LDY #15                ; Set A to byte #15 from the current ship blueprint,
  JSR GetShipBlueprint   ; which contains the ship's maximum speed
-   
+
  CMP INWK+27            ; If A >= the ship's current speed, skip the following
  BCS P%+4               ; instruction as the speed is already in the correct
                         ; range
@@ -20588,7 +20589,7 @@ ENDIF
  LDA #0
  JSR TT66
  JSR CopyNameBuffer0To1
- JSR subm_A7B7_b3
+ JSR SetupView_b3
  JMP ResetStardust
 
 ; ******************************************************************************
@@ -20873,7 +20874,7 @@ ENDIF
 
 .CBEC4
 
- JSR subm_D8C5
+ JSR ScreenUpdateIsDone
  JSR ClearTiles_b3
  LDA #$10
  STA L00B5

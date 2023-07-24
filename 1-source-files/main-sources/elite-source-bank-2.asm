@@ -15498,8 +15498,8 @@ ENDIF
 
 .PAUSE
 
- JSR subm_8980_b0       ; ???
- JSR subm_D8C5
+ JSR SendScreenToPPU_b0 ; ???
+ JSR ScreenUpdateIsDone
  LDA tileNumber
  STA pattTileNumber
  LDA #40
@@ -15616,7 +15616,7 @@ ENDIF
 
 .PAUSE2
 
- JSR subm_8980_b0       ; ???
+ JSR SendScreenToPPU_b0 ; ???
 
 .loop_CB3C4
 
