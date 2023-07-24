@@ -1359,13 +1359,15 @@ ENDIF
 
  SKIP 2                 ; An address pointing to data that we send to the PPU
 
-.addr7
+.clearBlockSize
 
- SKIP 2                 ; ???
+ SKIP 2                 ; The size of the block of memory to clear, for example
+                        ; when clearing the buffers
 
-.addr6
+.clearAddress
 
- SKIP 2                 ; ???
+ SKIP 2                 ; The address of a block of memory to clear, for example
+                        ; when clearing the buffers
 
 .hiddenBitPlane
 
@@ -5630,16 +5632,16 @@ ENDMACRO
 ;   FILL_MEMORY byte_count
 ;
 ; It writes the value A into byte_count bytes, starting at the Y-th byte of the
-; memory block at addresss addr6(1 0). It also updates the index in Y to point
-; to the byte after the block that is filled.
+; memory block at addresss clearAddress(1 0). It also updates the index in Y to
+; point to the byte after the block that is filled.
 ;
 ; Arguments:
 ;
 ;   byte_count          The number of bytes to fill
 ;
-;   addr6(1 0)          The base address of the block of memory to fill
+;   clearAddress(1 0)   The base address of the block of memory to fill
 ;
-;   Y                   The index into addr6(1 0) from which to fill
+;   Y                   The index into clearAddress(1 0) from which to fill
 ;
 ;   A                   The value to fill
 ;
@@ -5654,7 +5656,7 @@ MACRO FILL_MEMORY byte_count
 
  FOR I%, 1, byte_count
 
-  STA (addr6),Y         ; Write A to the Y-th byte of addr6(1 0)
+  STA (clearAddress),Y  ; Write A to the Y-th byte of clearAddress(1 0)
 
   INY                   ; Increment the index in Y
 
