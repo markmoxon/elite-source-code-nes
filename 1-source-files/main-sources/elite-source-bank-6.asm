@@ -3460,7 +3460,11 @@ ENDIF
  PHA
  LDA nmiTimerHi
  PHA
- JSR ScreenUpdateIsDone
+
+ JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
+                        ; sent to the PPU, so the screen is fully updated and
+                        ; there is no more data waiting to be sent to the PPU
+
  LDA L045F
  PHA
  LDA iconBarType
@@ -4531,7 +4535,9 @@ ENDIF
 
 .subm_A761
 
- JSR ScreenUpdateIsDone
+ JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
+                        ; sent to the PPU, so the screen is fully updated and
+                        ; there is no more data waiting to be sent to the PPU
 
  LDA #254
  STA tileNumber
@@ -6095,7 +6101,11 @@ ENDIF
 
  PHA
  JSR SendScreenToPPU_b0
- JSR ScreenUpdateIsDone
+
+ JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
+                        ; sent to the PPU, so the screen is fully updated and
+                        ; there is no more data waiting to be sent to the PPU
+
  PLA
  RTS
 
@@ -6697,7 +6707,10 @@ ENDIF
 
 .LL164
 
- JSR ScreenUpdateIsDone
+ JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
+                        ; sent to the PPU, so the screen is fully updated and
+                        ; there is no more data waiting to be sent to the PPU
+
  JSR HideStardust
  JSR HideSprites59To62
  JSR subm_EBED
@@ -6763,7 +6776,11 @@ ENDIF
  JSR subm_D975
  DEC XP
  BNE CB999
- JMP ScreenUpdateIsDone
+
+ JMP WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
+                        ; sent to the PPU, so the screen is fully updated and
+                        ; there is no more data waiting to be sent to the PPU,
+                        ; and return from the subroutine using a tail call
 
 ; ******************************************************************************
 ;

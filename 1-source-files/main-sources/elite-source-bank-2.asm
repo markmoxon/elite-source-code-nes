@@ -15499,8 +15499,12 @@ ENDIF
 .PAUSE
 
  JSR SendScreenToPPU_b0 ; ???
- JSR ScreenUpdateIsDone
- LDA tileNumber
+
+ JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
+                        ; sent to the PPU, so the screen is fully updated and
+                        ; there is no more data waiting to be sent to the PPU
+
+ LDA tileNumber         ; ???
  STA pattTileNumber
  LDA #40
  STA maxTileNumber

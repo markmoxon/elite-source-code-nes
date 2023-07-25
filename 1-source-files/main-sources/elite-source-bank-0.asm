@@ -3116,7 +3116,9 @@ ENDIF
 
 .SendScreenToPPU
 
- JSR ScreenUpdateIsDone
+ JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
+                        ; sent to the PPU, so the screen is fully updated and
+                        ; there is no more data waiting to be sent to the PPU
 
  LDA #0
  STA nameTileNumber
@@ -11097,7 +11099,11 @@ ENDIF
 
  JSR subm_A130
  JSR SendScreenToPPU
- JSR ScreenUpdateIsDone
+
+ JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
+                        ; sent to the PPU, so the screen is fully updated and
+                        ; there is no more data waiting to be sent to the PPU
+
  JMP CA036
 
 .CA09B
@@ -12244,7 +12250,9 @@ ENDIF
 
  JSR SendScreenToPPU
 
- JSR ScreenUpdateIsDone
+ JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
+                        ; sent to the PPU, so the screen is fully updated and
+                        ; there is no more data waiting to be sent to the PPU
 
  JMP CA4DB
 
@@ -12972,7 +12980,11 @@ ENDIF
  TYA
  PHA
  JSR SendScreenToPPU
- JSR ScreenUpdateIsDone
+
+ JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
+                        ; sent to the PPU, so the screen is fully updated and
+                        ; there is no more data waiting to be sent to the PPU
+
  PLA
  TAY
  RTS
@@ -20874,7 +20886,10 @@ ENDIF
 
 .CBEC4
 
- JSR ScreenUpdateIsDone
+ JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
+                        ; sent to the PPU, so the screen is fully updated and
+                        ; there is no more data waiting to be sent to the PPU
+
  JSR ClearTiles_b3
  LDA #$10
  STA L00B5

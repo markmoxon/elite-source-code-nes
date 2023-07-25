@@ -2587,7 +2587,8 @@ ENDIF
 .snam8
 
                         ; If we get here then we have sent the last nametable
-                        ; entry, so we now move on to ???
+                        ; entry, so we now move on to considering whether to
+                        ; send the other bitplane to the PPU, if required
                         ;
                         ; Before jumping to SendOtherBitplane, we need to store
                         ; the following variables, so they can be picked up by
@@ -2657,85 +2658,112 @@ ENDIF
 ;
 ;       Name: CopyNameBuffer0To1
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing the screen
+;    Summary: Copy the contents of nametable buffer 0 to nametable buffer 1
+;             and set the next free tile number for both bitplanes
 ;
 ; ******************************************************************************
 
 .CopyNameBuffer0To1
 
- LDY #0
- LDX #$10
+ LDY #0                 ; Set Y = 0 so we can use it as an index starting at 0,
+                        ; and then counting down from 255 to 0
 
-.CCD38
+ LDX #16                ; The following loop also updates a counter in X that
+                        ; counts down from 16 to 1 and back to 16 again, but it
+                        ; isn't used anywhere, so presumably this is left over
+                        ; from some functionality that was later removed
 
- LDA nameBuffer0,Y
- STA nameBuffer1,Y
- LDA nameBuffer0+8*32,Y
- STA nameBuffer1+8*32,Y
- LDA nameBuffer0+16*32,Y
- STA nameBuffer1+16*32,Y
- LDA nameBuffer0+24*32,Y
- STA nameBuffer1+24*32,Y
+.copy1
+
+ LDA nameBuffer0,Y      ; Copy the Y-th byte of nametable buffer 0 to nametable
+ STA nameBuffer1,Y      ; buffer 1, so this copies the first 256 bytes as Y
+                        ; counts down
+
+ LDA nameBuffer0+256,Y  ; Copy byte 256, and bytes 511 to 255 into nametable
+ STA nameBuffer1+256,Y  ; buffer 1 as Y counts down
+
+ LDA nameBuffer0+512,Y  ; Copy byte 512, and bytes 767 to 511 into nametable
+ STA nameBuffer1+512,Y  ; buffer 1 as Y counts down
+
+ LDA nameBuffer0+768,Y  ; Copy byte 768, and bytes 1023 to 769 into nametable
+ STA nameBuffer1+768,Y  ; buffer 1 as Y counts down
 
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- DEX
- BNE CCD58
- LDX #$10
+ DEX                    ; Decrement the counter in X, wrapping it back up to 16
+ BNE copy2              ; when it reaches 0
+ LDX #16
 
-.CCD58
+.copy2
 
- DEY
- BNE CCD38
- LDA tileNumber
- STA nextTileNumber
+ DEY                    ; Decrement the index counter in Y
+
+ BNE copy1              ; Loop back to copy1 to copy the next four bytes, until
+                        ; we have copied the whole buffer
+
+ LDA tileNumber         ; Set the next free tile number for both bitplanes to
+ STA nextTileNumber     ; the current value of tileNumber ???
  STA nextTileNumber+1
- RTS
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: DrawBoxTop
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Utility routines
+;    Summary: Draw the top edge of the box along the top of the screen in
+;             nametable buffer 0
 ;
 ; ******************************************************************************
 
 .DrawBoxTop
 
- LDY #1
- LDA #3
+ LDY #1                 ; Set Y as an index into the nametable, as we want to
+                        ; draw the top bar from column 1 to 31
 
-.loop_CCD66
+ LDA #3                 ; Set A = 3 as the tile number to use for the top of the
+                        ; box (it's a three-pixel high horizontal bar)
 
- STA nameBuffer0,Y
- INY
- CPY #$20
- BNE loop_CCD66
- RTS
+.boxt1
+
+ STA nameBuffer0,Y      ; Set the Y-th entry in nametable 0 to tile 3
+
+ INY                    ; Increment the column counter
+
+ CPY #32                ; Loop back until we have drawn in columns 1 through 31
+ BNE boxt1
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: DrawBoxEdges
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Utility routines
+;    Summary: Draw the left and right edges of the box along the sides of the
+;             screen, into the nametable buffer for the drawing bitplane
 ;
 ; ******************************************************************************
 
 .DrawBoxEdges
 
- LDX drawingBitplane
- BNE CCDF2
+ LDX drawingBitplane    ; If the drawing bitplane is set to 1, jump to boxe1 to
+ BNE boxe1              ; draw the box edges in bitplane 1
 
- LDA boxEdge1
+                        ; Otherwise we draw the box edges in bitplane 0
 
- STA nameBuffer0+1
- STA nameBuffer0+1*32+1
- STA nameBuffer0+2*32+1
- STA nameBuffer0+3*32+1
+ LDA boxEdge1           ; Set A to the tile number for the left edge of the box,
+                        ; which will either be tile 1 for the normal view (a
+                        ; three-pixel wide vertical bar along the right edge of
+                        ; the tile), or tile 0 (blank) for the death screen
+
+ STA nameBuffer0+1      ; Write this tile into column 1 on rows 0 to 19 in
+ STA nameBuffer0+1*32+1 ; nametable buffer 0 to draw the left edge of the box
+ STA nameBuffer0+2*32+1 ; (column 1 is the left edge because the screen is
+ STA nameBuffer0+3*32+1 ; scrolled horizontally by one block)
  STA nameBuffer0+4*32+1
  STA nameBuffer0+5*32+1
  STA nameBuffer0+6*32+1
@@ -2753,12 +2781,15 @@ ENDIF
  STA nameBuffer0+18*32+1
  STA nameBuffer0+19*32+1
 
- LDA boxEdge2
+ LDA boxEdge2           ; Set A to the tile number for the right edge of the
+                        ; box, which will either be tile 2 for the normal view
+                        ; (a three-pixel wide vertical bar along the left edge
+                        ; of the tile), or tile 0 (blank) for the death screen
 
- STA nameBuffer0
- STA nameBuffer0+1*32
- STA nameBuffer0+2*32
- STA nameBuffer0+3*32
+ STA nameBuffer0        ; Write this tile into column 0 on rows 0 to 19 in
+ STA nameBuffer0+1*32   ; nametable buffer 0 to draw the right edge of the box
+ STA nameBuffer0+2*32   ; (column 0 is the right edge because the screen is
+ STA nameBuffer0+3*32   ; scrolled horizontally by one block)
  STA nameBuffer0+4*32
  STA nameBuffer0+5*32
  STA nameBuffer0+6*32
@@ -2776,16 +2807,19 @@ ENDIF
  STA nameBuffer0+18*32
  STA nameBuffer0+19*32
 
- RTS
+ RTS                    ; Return from the subroutine
 
-.CCDF2
+.boxe1
 
- LDA boxEdge1
+ LDA boxEdge1           ; Set A to the tile number for the left edge of the box,
+                        ; which will either be tile 1 for the normal view (a
+                        ; three-pixel wide vertical bar along the right edge of
+                        ; the tile), or tile 0 (blank) for the death screen
 
- STA nameBuffer1+1
- STA nameBuffer1+1*32+1
- STA nameBuffer1+2*32+1
- STA nameBuffer1+3*32+1
+ STA nameBuffer1+1      ; Write this tile into column 1 on rows 0 to 19 in
+ STA nameBuffer1+1*32+1 ; nametable buffer 1 to draw the left edge of the box
+ STA nameBuffer1+2*32+1 ; (column 1 is the left edge because the screen is
+ STA nameBuffer1+3*32+1 ; scrolled horizontally by one block)
  STA nameBuffer1+4*32+1
  STA nameBuffer1+5*32+1
  STA nameBuffer1+6*32+1
@@ -2803,12 +2837,15 @@ ENDIF
  STA nameBuffer1+18*32+1
  STA nameBuffer1+19*32+1
 
- LDA boxEdge2
+ LDA boxEdge2           ; Set A to the tile number for the right edge of the
+                        ; box, which will either be tile 2 for the normal view
+                        ; (a three-pixel wide vertical bar along the left edge
+                        ; of the tile), or tile 0 (blank) for the death screen
 
- STA nameBuffer1
- STA nameBuffer1+1*32
- STA nameBuffer1+2*32
- STA nameBuffer1+3*32
+ STA nameBuffer1        ; Write this tile into column 0 on rows 0 to 19 in
+ STA nameBuffer1+1*32   ; nametable buffer 1 to draw the right edge of the box
+ STA nameBuffer1+2*32   ; (column 0 is the right edge because the screen is
+ STA nameBuffer1+3*32   ; scrolled horizontally by one block)
  STA nameBuffer1+4*32
  STA nameBuffer1+5*32
  STA nameBuffer1+6*32
@@ -2829,7 +2866,7 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -3527,7 +3564,12 @@ ENDIF
  LDA PPU_DATA
 
  LDA #8                 ; Set the horizontal scroll to 8, so the leftmost tile
- STA PPU_SCROLL         ; on each row is not visible ???
+ STA PPU_SCROLL         ; on each row is scrolled around to the right side
+                        ;
+                        ; This means that in terms of tiles, column 1 is the
+                        ; left edge of the screen, then columns 2 to 31 form the
+                        ; body of the screen, and column 0 is the right edge of
+                        ; the screen
 
  LDA #0                 ; Set the vertical scroll to 0
  STA PPU_SCROLL
@@ -3595,7 +3637,8 @@ ENDIF
 
  ADD_CYCLES 318         ; Add 318 to the cycle count
 
- JMP cbuf3              ; Jump to cbuf3 to skip the buffer clearing
+ JMP cbuf3              ; Jump to cbuf3 to skip the buffer clearing and return
+                        ; from the subroutine
 
 .cbuf2
 
@@ -3615,7 +3658,7 @@ ENDIF
  JSR ClearPlaneBuffers  ; for bitplane 1
 
  PLA                    ; Retore clearBlockSize(1 0) and clearAddress(1 0) from
- STA clearAddress+1     ;  the stack
+ STA clearAddress+1     ; the stack
  PLA
  STA clearAddress
  PLA
@@ -3988,23 +4031,50 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LD2A3
+;       Name: flagsForClearing
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing the screen
+;    Summary: A bitplane mask to control how bitplane buffer clearing works in
+;             the ClearPlaneBuffers routine
 ;
 ; ******************************************************************************
 
-.LD2A3
+.flagsForClearing
 
- EQUB %00110000
+ EQUB %00110000         ; The bitplane flags with ones in this byte must be
+                        ; clear for the clearing process in ClearPlaneBuffers
+                        ; to be activated
+                        ;
+                        ; So this configuration means that clearing will only be
+                        ; attempted on bitplanes where:
+                        ;
+                        ;   * We are in the process of sending this bitplane's
+                        ;     data to the PPU (bit 4 is set)
+                        ;
+                        ;   * We have already sent all the data to the PPU for
+                        ;     this bitplane (bit 5 is set)
+                        ;
+                        ; If both bitplane flags are clear, then the buffers are
+                        ; not cleared
+                        ;
+                        ; Note that this is separate from bit 3, which controls
+                        ; whether clearing is enabled and which overrides the
+                        ; above (bit 2 must be set for any clearing to take
+                        ; place)
 
 ; ******************************************************************************
 ;
-;       Name: ClearPlaneBuffers
+;       Name: ClearPlaneBuffers (Part 1 of 2)
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: Clear the nametable and pattern buffers of data that has already
+;             been sent to the PPU, starting with the nametable buffer
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The bitplane to clear
 ;
 ; ******************************************************************************
 
@@ -4019,155 +4089,266 @@ ENDIF
 
 .pbuf3
 
- RTS
-
-.CD2B4
-
- ADD_CYCLES_CLC 126     ; Add 126 to the cycle count
-
- JMP pbuf12
-
-.ClearPlaneBuffers
-
- LDA cycleCount+1
- BEQ pbuf3
-
- LDA bitplaneFlags,X
- BIT LD2A3
- BEQ pbuf1
-
- AND #%00001000
- BEQ pbuf2
-
- SUBTRACT_CYCLES 213    ; Subtract 213 from the cycle count
-
- BMI pbuf4
- JMP pbuf5
+ RTS                    ; Return from the subroutine
 
 .pbuf4
 
- ADD_CYCLES 153         ; Add 153 to the cycle count
+ ADD_CYCLES_CLC 126     ; Add 126 to the cycle count
 
- JMP pbuf3
+ JMP pbuf13             ; Jump to pbuf13 in part 2 to consider clearing the
+                        ; pattern buffer
+
+.ClearPlaneBuffers
+
+ LDA cycleCount+1       ; If the high byte of cycleCount(1 0) is zero, then the
+ BEQ pbuf3              ; cycle count is 255 or less, so jump to pbuf3 to skip
+                        ; the buffer clearing, as we have run out of cycles (we
+                        ; will pick up where we left off in the next VBlank)
+
+ LDA bitplaneFlags,X    ; If both bits 4 and 5 of the current bitplane flags are
+ BIT flagsForClearing   ; clear, then we are not currently sending tile data to
+ BEQ pbuf1              ; the PPU for this bitplane, and we have not already
+                        ; sent the data, so we do not need to clear this
+                        ; bitplane as we only do so after sending its data to
+                        ; the PPU, which we are not currently doing
+
+ AND #%00001000         ; If bit 3 of the of the current bitplane flags is
+ BEQ pbuf2              ; clear, then this bitplane is configured not to be
+                        ; cleared after it has been sent to the PPU, so jump to
+                        ; pbuf2 to return from the subroutine withough clearing
+                        ; the buffers
+
+                        ; If we get here then we are either in the process of
+                        ; sending this bitplane's data to the PPU, or we have
+                        ; already sent it, and the bitplane is configured to be
+                        ; cleared
+                        ;
+                        ; If we have already sent the data to the PPU, then we
+                        ; no longer need it, so we need to clear the buffers so
+                        ; they are blank and ready to be drawn for the next
+                        ; frame
+                        ;
+                        ; If we are still in the process of sending this
+                        ; bitplane's data to the PPU, then we can clear the
+                        ; buffers up to the point where we have sent the data,
+                        ; as we don't need to keep any data that we have sent
+                        ;
+                        ; The following routine clears the buffers from the
+                        ; first tile we sent, up to the tile numbers given by
+                        ; nameTileNumber1 and pattTileNumber1, which will work
+                        ; in both cases, whether or not we have finished sending
+                        ; all the data to the PPU
+
+ SUBTRACT_CYCLES 213    ; Subtract 213 from the cycle count
+
+ BMI pbuf5              ; If the result is negative, jump to pbuf5 to skip the
+                        ; buffer clearing, as we have run out of cycles (we
+                        ; will pick up where we left off in the next VBlank)
+
+ JMP pbuf6              ; The result is positive, so we have enough cycles to
+                        ; clear the buffers, so jump to pbuf6 to do just that
 
 .pbuf5
 
- LDA nameTileNumber2,X
- LDY nameTileNumber1,X
- CPY maxTileNumber
- BCC pbuf6
- LDY maxTileNumber
+ ADD_CYCLES 153         ; Add 153 to the cycle count
+
+ JMP pbuf3              ; Jump to pbuf3 to skip the buffer clearing and return
+                        ; from the subroutine
 
 .pbuf6
 
- STY clearBlockSize
- CMP clearBlockSize
- BCS CD2B4
+ LDA nameTileNumber2,X  ; Set A to nameTileNumber2 for this bitplane, which we
+                        ; set to the original value of nameTileNumber back in
+                        ; SetupTilesForPPU, so A now contains the number of the
+                        ; first tile, divided by 8, that we sent to the PPU
+                        ; nametable for this bitplane (and therefore it contains
+                        ; the number of the first tile we need to clear, divided
+                        ; by 8)
 
- LDY #0
- STY clearAddress+1
- ASL A
- ROL clearAddress+1
- ASL A
- ROL clearAddress+1
- ASL A
- STA clearAddress
- LDA clearAddress+1
- ROL A
- ADC nameBufferHiAddr,X
- STA clearAddress+1
+ LDY nameTileNumber1,X  ; Set Y to nameTileNumber1 for this bitplane, which we
+                        ; used in SendNametableToPPU to keep track of the
+                        ; current tile number as we sent them to the PPU
+                        ; nametable, so this contains the number of the last
+                        ; tile, divided by 8, that we sent to the PPU nametable
+                        ; for this bitplane
 
- LDA #0
- ASL clearBlockSize
- ROL A
- ASL clearBlockSize
- ROL A
- ASL clearBlockSize
- ROL A
- ADC nameBufferHiAddr,X
- STA clearBlockSize+1
-
- LDA clearBlockSize
- SEC
- SBC clearAddress
- STA clearBlockSize
- LDA clearBlockSize+1
- SBC clearAddress+1
- BCC pbuf7
- STA clearBlockSize+1
- ORA clearBlockSize
- BEQ pbuf8
- JSR ClearMemory
- LDA clearAddress+1
- SEC
- SBC nameBufferHiAddr,X
- LSR A
- ROR clearAddress
- LSR A
- ROR clearAddress
- LSR A
- LDA clearAddress
- ROR A
- CMP nameTileNumber2,X
- BCC pbuf11
- STA nameTileNumber2,X
- JMP pbuf12
+ CPY maxTileNumber      ; If Y >= maxTileNumber then set Y = maxTileNumber, so
+ BCC pbuf7              ; Y has a maximum value of maxTileNumber
+ LDY maxTileNumber
 
 .pbuf7
 
- NOP                    ; This looks like code that has been removed
- NOP
- NOP
- NOP
+ STY clearBlockSize     ; Set clearBlockSize to the number of the last tile we
+                        ; need to clear, divided by 8
+
+ CMP clearBlockSize     ; If A >= clearBlockSize, then the first tile we need to
+ BCS pbuf4              ; clear is after the last tile we need to clear, which
+                        ; means there are no nametable tiles to clear, so jump
+                        ; to pbuf4 to move on to clearing the pattern buffer in
+                        ; part 2
+
+ LDY #0                 ; Set clearAddress(1 0) = (nameBufferHiAddr 0) + A * 8
+ STY clearAddress+1     ;                  = (nameBufferHiAddr 0) + first tile
+ ASL A                  ;
+ ROL clearAddress+1     ; So clearAddress(1 0) contains the address of the first
+ ASL A                  ; tile we sent in this bitplane's nametable buffer
+ ROL clearAddress+1
+ ASL A
+ STA clearAddress
+ LDA clearAddress+1
+ ROL A
+ ADC nameBufferHiAddr,X
+ STA clearAddress+1
+
+ LDA #0                 ; Set clearBlockSize(1 0) = (0 clearBlockSize) * 8
+ ASL clearBlockSize     ;                           + (nameBufferHiAddr 0)
+ ROL A                  ;                  = (nameBufferHiAddr 0) + last tile
+ ASL clearBlockSize     ;
+ ROL A                  ; So clearBlockSize(1 0) points to the address of the
+ ASL clearBlockSize     ; last tile we sent in this bitplane's nametable buffer
+ ROL A
+ ADC nameBufferHiAddr,X
+ STA clearBlockSize+1
+
+ LDA clearBlockSize     ; Set clearBlockSize(1 0)
+ SEC                    ;        = clearBlockSize(1 0) - clearAddress(1 0)
+ SBC clearAddress       ;
+ STA clearBlockSize     ; So clearBlockSize(1 0) contains the number of tiles we
+ LDA clearBlockSize+1   ; sent to this bitplane's nametable buffer
+ SBC clearAddress+1
+ BCC pbuf8
+ STA clearBlockSize+1
+
+                        ; By this point, clearBlockSize(1 0) contains the number
+                        ; of tiles we sent to this bitplane's nametable buffer,
+                        ; so it contains the number of nametable entries we need
+                        ; to clear
+                        ;
+                        ; Also, clearAddress(1 0) contains the address of the
+                        ; first we sent in this bitplane's nametable buffer
+
+ ORA clearBlockSize     ; If both the high and low bytes of clearBlockSize(1 0)
+ BEQ pbuf9              ; are zero, then there are no tiles to clear, so jump to
+                        ; pbuf9 and on to part 2 to consider clearing the
+                        ; pattern buffer
+
+ JSR ClearMemory        ; Call ClearMemory to zero clearBlockSize(1 0) nametable
+                        ; entries from address clearAddress(1 0) onwards
+                        ;
+                        ; If we run out of cycles in the current VBlank, then
+                        ; this may not clear the whole block, so it updates
+                        ; clearBlockSize(1 0) and clearAddress(1 0) as it clears
+                        ; so we can pick it up in the next VBlank
+
+ LDA clearAddress+1     ; Set (A clearAddress)
+ SEC                    ;     = clearAddress(1 0) - (nameBufferHiAddr 0)
+ SBC nameBufferHiAddr,X
+
+ LSR A                  ; Set A to the bottom byte of (A clearAddress) / 8
+ ROR clearAddress       ;
+ LSR A                  ; This effectively reverses the calculation we did above,
+ ROR clearAddress       ; so A contains the number of the next tile we need to
+ LSR A                  ; clear, as returned by ClearMemory, divided by 8
+ LDA clearAddress       ;
+ ROR A                  ; We only need to take the low byte, as we know the high
+                        ; byte will be zero after this many shifts, as that's
+                        ; how we built the value of clearAddress(1 0) above
+
+ CMP nameTileNumber2,X  ; If A >= nameTileNumber2 then we did manage to clear
+ BCC pbuf12             ; some nametable entries in ClearMemory, so update the
+ STA nameTileNumber2,X  ; value of nameTileNumber2 with the new first tile
+                        ; number so the next call to this routine will pick up
+                        ; where we left off
+
+ JMP pbuf13             ; Jump to pbuf13 in part 2 to consider clearing the
+                        ; pattern buffer
 
 .pbuf8
 
- ADD_CYCLES_CLC 28      ; Add 28 to the cycle count
-
- JMP pbuf12
+ NOP                    ; This looks like code that has been removed
+ NOP
+ NOP
+ NOP
 
 .pbuf9
 
- ADD_CYCLES_CLC 126     ; Add 126 to the cycle count
+ ADD_CYCLES_CLC 28      ; Add 28 to the cycle count
+
+ JMP pbuf13             ; Jump to pbuf13 in part 2 to consider clearing the
+                        ; pattern buffer
 
 .pbuf10
 
- RTS
+ ADD_CYCLES_CLC 126     ; Add 126 to the cycle count
 
 .pbuf11
 
- NOP                    ; This looks like code that has been removed
- NOP
- NOP
+ RTS                    ; Return from the subroutine
+
+; ******************************************************************************
+;
+;       Name: ClearPlaneBuffers (Part 2 of 2)
+;       Type: Subroutine
+;   Category: Drawing the screen
+;    Summary: Clear the pattern buffer of data that has already been sent to the
+;             PPU for the current bitplane
+;
+; ******************************************************************************
 
 .pbuf12
 
- SUBTRACT_CYCLES 187    ; Subtract 187 from the cycle count
-
- BMI pbuf13
- JMP pbuf14
+ NOP                    ; This looks like code that has been removed
+ NOP
+ NOP
 
 .pbuf13
 
- ADD_CYCLES 146         ; Add 146 to the cycle count
+ SUBTRACT_CYCLES 187    ; Subtract 187 from the cycle count
 
- JMP pbuf10
+ BMI pbuf14             ; If the result is negative, jump to pbuf14 to skip the
+                        ; pattern buffer clearing, as we have run out of cycles
+                        ; (we will pick up where we left off in the next VBlank)
+
+ JMP pbuf15             ; The result is positive, so we have enough cycles to
+                        ; clear the pattern buffer, so jump to pbuf15 to do just
+                        ; that
 
 .pbuf14
 
- LDA pattTileNumber2,X
- LDY pattTileNumber1,X
- STY clearBlockSize
- CMP clearBlockSize
- BCS pbuf9
+ ADD_CYCLES 146         ; Add 146 to the cycle count
+
+ JMP pbuf11             ; Jump to pbuf11 to return from the subroutine
+
+.pbuf15
+
+ LDA pattTileNumber2,X  ; Set A to pattTileNumber2 for this bitplane, which we
+                        ; set to the original value of pattTileNumber back in
+                        ; SetupTilesForPPU, so A now contains the number of the
+                        ; first tile, that we sent to the PPU pattern table for
+                        ; this bitplane (and therefore it contains the number of
+                        ; the first pattern we need to clear)
+
+ LDY pattTileNumber1,X  ; Set Y to pattTileNumber1 for this bitplane, which we
+                        ; used in SendPatternsToPPU to keep track of the current
+                        ; tile number as we sent them to the PPU pattern table,
+                        ; so this contains the number of the last tile that we
+                        ; sent to the PPU pattern table for this bitplane
+
+ STY clearBlockSize     ; Set clearBlockSize to the number of the last tile we
+                        ; need to clear
+
+ CMP clearBlockSize     ; If A >= clearBlockSize, then the first tile we need to
+ BCS pbuf10             ; clear is after the last tile we need to clear, which
+                        ; means there are no nametable tiles to clear, so jump
+                        ; to pbuf10 to return from the subroutine
 
  NOP                    ; This looks like code that has been removed
 
- LDY #0
- STY clearAddress+1
- ASL A
- ROL clearAddress+1
- ASL A
+ LDY #0                 ; Set clearAddress(1 0) = (pattBufferHiAddr 0) + A * 8
+ STY clearAddress+1     ;                  = (pattBufferHiAddr 0) + first tile
+ ASL A                  ;
+ ROL clearAddress+1     ; So clearAddress(1 0) contains the address of the first
+ ASL A                  ; tile we sent in this bitplane's pattern buffer
  ROL clearAddress+1
  ASL A
  STA clearAddress
@@ -4176,57 +4357,66 @@ ENDIF
  ADC pattBufferHiAddr,X
  STA clearAddress+1
 
- LDA #0
- ASL clearBlockSize
- ROL A
- ASL clearBlockSize
- ROL A
- ASL clearBlockSize
+ LDA #0                 ; Set clearBlockSize(1 0) = (0 clearBlockSize) * 8
+ ASL clearBlockSize     ;                           + (pattBufferHiAddr 0)
+ ROL A                  ;                  = (pattBufferHiAddr 0) + last tile
+ ASL clearBlockSize     ;
+ ROL A                  ; So clearBlockSize(1 0) points to the address of the
+ ASL clearBlockSize     ; last tile we sent in this bitplane's pattern buffer
  ROL A
  ADC pattBufferHiAddr,X
  STA clearBlockSize+1
- LDA clearBlockSize
- SEC
- SBC clearAddress
- STA clearBlockSize
- LDA clearBlockSize+1
+
+ LDA clearBlockSize     ; Set clearBlockSize(1 0)
+ SEC                    ;        = clearBlockSize(1 0) - clearAddress(1 0)
+ SBC clearAddress       ;
+ STA clearBlockSize     ; So clearBlockSize(1 0) contains the number of tiles we
+ LDA clearBlockSize+1   ; sent to this bitplane's pattern buffer
  SBC clearAddress+1
- BCC pbuf15
+ BCC pbuf16
  STA clearBlockSize+1
  ORA clearBlockSize
- BEQ pbuf16
+ BEQ pbuf17
 
- JSR ClearMemory
+ JSR ClearMemory        ; Call ClearMemory to zero clearBlockSize(1 0) pattern
+                        ; buffer bytes from address clearAddress(1 0) onwards
 
- LDA clearAddress+1
- SEC
+ LDA clearAddress+1     ; Set (A clearAddress)
+ SEC                    ;     = clearAddress(1 0) - (pattBufferHiAddr 0)
  SBC pattBufferHiAddr,X
- LSR A
- ROR clearAddress
- LSR A
- ROR clearAddress
- LSR A
- LDA clearAddress
- ROR A
- CMP pattTileNumber2,X
- BCC pbuf15
- STA pattTileNumber2,X
- RTS
 
-.pbuf15
+ LSR A                  ; Set A to the bottom byte of (A clearAddress) / 8
+ ROR clearAddress       ;
+ LSR A                  ; This effectively reverses the calculation we did above,
+ ROR clearAddress       ; so A contains the number of the next pattern byte we
+ LSR A                  ; need to clear, as returned by ClearMemory
+ LDA clearAddress       ;
+ ROR A                  ; We only need to take the low byte, as we know the high
+                        ; byte will be zero after this many shifts, as that's
+                        ; how we built the value of clearAddress(1 0) above
+
+ CMP pattTileNumber2,X  ; If A >= pattTileNumber2 then we did manage to clear
+ BCC pbuf16             ; some pattern bytes in ClearMemory, so update the
+ STA pattTileNumber2,X  ; value of pattTileNumber2 with the new first tile
+                        ; number so the next call to this routine will pick up
+                        ; where we left off
+
+ RTS                    ; Return from the subroutine
+
+.pbuf16
 
  NOP                    ; This looks like code that has been removed
  NOP
  NOP
  NOP
 
- RTS
+ RTS                    ; Return from the subroutine
 
-.pbuf16
+.pbuf17
 
  ADD_CYCLES_CLC 35      ; Add 35 to the cycle count
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -4310,16 +4500,31 @@ ENDIF
 ;       Name: ClearMemory
 ;       Type: Subroutine
 ;   Category: Utility routines
-;    Summary: ???
+;    Summary: Clear a block of memory, split across multiple calls if required
 ;
 ; ------------------------------------------------------------------------------
 ;
+; This routine clears a block of memory, but only if there are enough cycles in
+; the cycle count. If it runs out of cycles, it will pick up where it left off
+; when called again.
+;
 ; Arguments:
 ;
-;   clearBlockSize      The size of the block to clear (16-bit), must be a
-;                       multiple of 8 bytes
+;   clearAddress        The address of the block to clear
 ;
-;   clearAddress        The address of the block to clear (16-bit)
+;   clearBlockSize      The size of the block to clear as a 16-bit number, must
+;                       be a multiple of 8 bytes
+;
+; Returns:
+;
+;   clearAddress        The address of the next byte to clear in the block,
+;                       ready for the next call (if the whole block was not
+;                       cleared)
+;
+;   clearBlockSize      The size of the block, reduced by the number of bytes
+;                       cleared in the current call, so it's ready for the next
+;                       call (this will be 0 if this call cleared the whole
+;                       block)
 ;
 ; ******************************************************************************
 
@@ -4759,7 +4964,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: ScreenUpdateIsDone
+;       Name: WaitForPPUToFinish
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Wait until the NMI handler has finished updating both bitplanes,
@@ -4767,18 +4972,18 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.ScreenUpdateIsDone
+.WaitForPPUToFinish
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDA bitplaneFlags      ; Keep looping back to the start of the routine until
  AND #%01000000         ; bit 6 of the bitplane flags for bitplane 0 is clear,
- BNE ScreenUpdateIsDone ; which means that bitplane 0 is defering to bitplane 1
+ BNE WaitForPPUToFinish ; which means that bitplane 0 is defering to bitplane 1
 
  LDA bitplaneFlags+1    ; Do the same for bitplane 1
  AND #%01000000
- BNE ScreenUpdateIsDone
+ BNE WaitForPPUToFinish
 
  RTS                    ; We get here when both bitplanes are set to defer,
                         ; which means the screen has finished refreshing and
@@ -4965,10 +5170,12 @@ ENDIF
 
 .subm_D951
 
- JSR ScreenUpdateIsDone
+ JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
+                        ; sent to the PPU, so the screen is fully updated and
+                        ; there is no more data waiting to be sent to the PPU
 
- LDA tileNumber
- STA nextTileNumber
+ LDA tileNumber         ; Set nextTileNumber to the number of the next free tile
+ STA nextTileNumber     ; for use in the NMI handler
  STA nextTileNumber+1
 
  LDA #88
@@ -4982,7 +5189,10 @@ ENDIF
  STA bitplaneFlags
  STA bitplaneFlags+1
 
- JMP ScreenUpdateIsDone
+ JMP WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
+                        ; sent to the PPU, so the screen is fully updated and
+                        ; there is no more data waiting to be sent to the PPU,
+                        ; and return from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
