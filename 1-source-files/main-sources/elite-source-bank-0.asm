@@ -20786,7 +20786,9 @@ ENDIF
 
 .EXNO2
 
- JSR IncreaseTally      ; ???
+ JSR IncreaseTally      ; Add double the fractional kill count to the fractional
+                        ; and low bytes of our tally, setting the C flag if the
+                        ; addition overflowed
 
  BCC davidscockup       ; If there is no carry, jump straight to EXNO3 to skip
                         ; the following three instructions

@@ -126,8 +126,8 @@ ENDIF
  LDX #$FF
  TXS
 
- LDX #0
- STX startupDebug
+ LDX #0                 ; Set startupDebug = 0 (though this value is never read,
+ STX startupDebug       ; so this has no effect)
 
  LDA #%00010000
  STA PPU_CTRL
@@ -253,7 +253,7 @@ ENDIF
 
  JSR DrawTitleScreen_b3
 
- JSR ResetDrawingPlane
+ JSR SetDrawingPlaneTo0
 
  JSR ResetBuffers
 
@@ -3870,60 +3870,72 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_D19C
+;       Name: ClearDrawingPlane
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing the screen
+;    Summary: Clear the nametable and pattern buffers for the newly flipped
+;             drawing plane
 ;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The bitplane to clear
+;
+
 ; ******************************************************************************
 
- LDX #0
- JSR subm_D19C
- LDX #1
+ LDX #0                 ; This code is never called, but it provides an entry
+ JSR ClearDrawingPlane  ; point for clearing both bitplanes, which would have
+ LDX #1                 ; been useful during development
 
-.subm_D19C
+.ClearDrawingPlane
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDA bitplaneFlags,X
- BEQ CD1C7
+ BEQ cdra2
+
  AND #%00100000
- BNE CD1B8
- JSR CD1C8
- JMP subm_D19C
+ BNE cdra1
 
-.CD1B8
+ JSR cdra3
 
- JSR CD1C8
+ JMP ClearDrawingPlane
+
+.cdra1
+
+ JSR cdra3
+
  LDA #0
  STA bitplaneFlags,X
  LDA pattTileNumber
  STA tileNumber
  JMP DrawBoxTop
 
-.CD1C7
+.cdra2
 
  RTS
 
-.CD1C8
+.cdra3
 
  LDY frameCounter
  LDA nameTileNumber1,X
  STA SC
  LDA nameTileNumber2,X
  CPY frameCounter
- BNE CD1C8
+ BNE cdra3
  LDY SC
  CPY maxTileNumber
- BCC CD1DE
+ BCC cdra4
  LDY maxTileNumber
 
-.CD1DE
+.cdra4
 
  STY SC
  CMP SC
- BCS CD239
+ BCS cdra6
  STY nameTileNumber2,X
  LDY #0
  STY clearAddress+1
@@ -3947,7 +3959,7 @@ ENDIF
  ADC nameBufferHiAddr,X
  STA SC+1
 
-.CD20B
+.cdra5
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -3958,28 +3970,28 @@ ENDIF
  STA clearBlockSize
  LDA SC+1
  SBC clearAddress+1
- BCC CD239
+ BCC cdra6
  STA clearBlockSize+1
  ORA clearBlockSize
- BEQ CD239
+ BEQ cdra6
  LDA #3
  STA cycleCount+1
  LDA #$16
  STA cycleCount
  JSR ClearMemory
- JMP CD20B
+ JMP cdra5
 
-.CD239
+.cdra6
 
  LDY frameCounter
  LDA pattTileNumber1,X
  STA SC
  LDA pattTileNumber2,X
  CPY frameCounter
- BNE CD239
+ BNE cdra6
  LDY SC
  CMP SC
- BCS CD2A2
+ BCS cdra8
  STY pattTileNumber2,X
  LDY #0
  STY clearAddress+1
@@ -4003,7 +4015,7 @@ ENDIF
  ADC pattBufferHiAddr,X
  STA SC+1
 
-.CD274
+.cdra7
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -4014,18 +4026,20 @@ ENDIF
  STA clearBlockSize
  LDA SC+1
  SBC clearAddress+1
- BCC CD239
+ BCC cdra6
  STA clearBlockSize+1
  ORA clearBlockSize
- BEQ CD2A2
+ BEQ cdra8
  LDA #3
  STA cycleCount+1
  LDA #$16
  STA cycleCount
- JSR ClearMemory
- JMP CD274
 
-.CD2A2
+ JSR ClearMemory
+
+ JMP cdra7
+
+.cdra8
 
  RTS
 
@@ -4995,64 +5009,83 @@ ENDIF
 ;       Name: ChangeDrawingPlane
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: Flip the drawing bitplane
 ;
 ; ******************************************************************************
 
 .ChangeDrawingPlane
 
- LDA drawingBitplane
- EOR #1
+ LDA drawingBitplane    ; Set X to the opposite bitplane to the current drawing
+ EOR #1                 ; bitplane
  TAX
 
- JSR SetDrawingBitplane
+ JSR SetDrawingBitplane ; Set X as the new drawing bitplane, so this effectively
+                        ; flips the drawing bitplane between 0 and 1
 
- JMP subm_D19C
+ JMP ClearDrawingPlane  ; Jump to ClearDrawingPlane to clear the buffers for the
+                        ; new drawing bitplane, returning from the subroutine
+                        ; using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: SetDrawingBitplane
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: Set the drawing bitplane to a specified value
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The new value of the drawing bitplane
 ;
 ; ******************************************************************************
 
 .SetDrawingBitplane
 
- STX drawingBitplane
+ STX drawingBitplane    ; Set the drawing bitplane to X
 
- LDA nextTileNumber,X
- STA tileNumber
+ LDA nextTileNumber,X   ; Set the next free tile number in tileNumber to the
+ STA tileNumber         ; next free tile number for the new bitplane
 
- LDA nameBufferHiAddr,X
- STA nameBufferHi
+ LDA nameBufferHiAddr,X ; Set the high byte of the nametable buffer for the new
+ STA nameBufferHi       ; bitplane in nameBufferHiAddr
 
- LDA #0
- STA pattBufferAddr
+ LDA #0                 ; Set the low byte of pattBufferAddr(1 0) to zero (we
+ STA pattBufferAddr     ; will set the high byte in SetPatternBuffer below
 
- STA drawingPlaneDebug
+ STA drawingPlaneDebug  ; Set drawingPlaneDebug = 0 (though this value is never
+                        ; read, so this has no effect)
+
+                        ; Fall through into SetPatternBuffer to set the high
+                        ; bytes of the patten buffer address variables
 
 ; ******************************************************************************
 ;
 ;       Name: SetPatternBuffer
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing the screen
+;    Summary: Set the high byte of the pattern buffer address variables
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The bitplane whose pattern address we should use
 ;
 ; ******************************************************************************
 
 .SetPatternBuffer
 
- LDA pattBufferHiAddr,X
- STA pattBufferAddr+1
+ LDA pattBufferHiAddr,X ; Set the high byte of pattBufferAddr(1 0) to the
+ STA pattBufferAddr+1   ; correct address for the pattern buffer for bitplane X
 
- LSR A
- LSR A
+ LSR A                  ; Set pattBufferHiDiv8 to the high byte of the pattern
+ LSR A                  ; buffer address, divided by 8
  LSR A
  STA pattBufferHiDiv8
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -9796,8 +9829,20 @@ ENDIF
 ;
 ;       Name: IncreaseTally
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Status
+;    Summary: Add the kill count to the fractional and low bytes of our combat
+;             rank tally following a kill
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The type of the ship that was killed
+;
+;
+; Returns:
+;
+;   C flag              If set, the addition overflowed
 ;
 ; ******************************************************************************
 
@@ -9812,18 +9857,30 @@ ENDIF
  LDA #1                 ; Page ROM bank 1 into memory at $8000
  JSR SetBank
 
- LDA KWL%-1,X
- ASL A
+                        ; Ihe fractional kill count is taken from the KWL%
+                        ; table, according to the ship's type (we look up the
+                        ; X-1-th value from KWL% because ship types start at 1
+                        ; rather than 0)
+
+ LDA KWL%-1,X           ; Double the fractional kill count and push the low byte
+ ASL A                  ; onto the stack
  PHA
- LDA KWH%-1,X
- ROL A
+
+ LDA KWH%-1,X           ; Double the integer kill count and put the high byte
+ ROL A                  ; in Y
  TAY
- PLA
- ADC TALLYL
- STA TALLYL
- TYA
- ADC TALLY
- STA TALLY
+
+ PLA                    ; Add the doubled fractional kill count to our tally,
+ ADC TALLYL             ; starting by adding the fractional bytes:
+ STA TALLYL             ;
+                        ;   TALLYL = TALLYL + fractional kill count
+
+ TYA                    ; And then we add the low byte of TALLY(1 0):
+ ADC TALLY              ;
+ STA TALLY              ;   TALLY = TALLY + carry + integer kill count
+
+                        ; Fall through into ResetBankP to reset the ROM bank to
+                        ; the value we stored on the stack
 
 ; ******************************************************************************
 ;
@@ -12700,14 +12757,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: ResetDrawingPlane
+;       Name: SetDrawingPlaneTo0
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.ResetDrawingPlane
+.SetDrawingPlaneTo0
 
  LDX #0
  JSR SetDrawingBitplane

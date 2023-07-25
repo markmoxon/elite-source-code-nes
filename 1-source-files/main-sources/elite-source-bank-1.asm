@@ -278,6 +278,9 @@ ENDIF
 ; Each fraction is stored as the numerator in a fraction with a denominator of
 ; 256, so 149 represents 149 / 256 = 0.58203125 points.
 ;
+; Note that in the NES version, the kill count is doubled before it is added to
+; the kill tally.
+;
 ; ******************************************************************************
 
 .KWL%
@@ -331,6 +334,9 @@ ENDIF
 ; everything you kill; in the Master version, it's more sophisticated.
 ;
 ; The fractional part is stored in the KWL% table.
+;
+; Note that in the NES version, the kill count is doubled before it is added to
+; the kill tally.
 ;
 ; ******************************************************************************
 
