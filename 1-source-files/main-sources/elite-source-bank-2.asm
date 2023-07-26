@@ -15505,11 +15505,11 @@ ENDIF
                         ; there is no more data waiting to be sent to the PPU
 
  LDA tileNumber         ; ???
- STA pattTileNumber
+ STA firstPatternTile
  LDA #40
  STA maxTileNumber
  LDX #8
- STX nameTileNumber
+ STX firstNametableTile
 
 .loop_CB392
 

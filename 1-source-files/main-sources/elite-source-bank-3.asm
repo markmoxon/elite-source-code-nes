@@ -2014,7 +2014,7 @@ ENDIF
  STX hiddenBitPlane
 
  LDA #0
- STA nameTileNumber
+ STA firstNametableTile
 
  LDA QQ11
  CMP #$DF
@@ -2029,7 +2029,7 @@ ENDIF
 
 .CA988
 
- STA pattTileNumber
+ STA firstPatternTile
  LDA tileNumber
  STA nextTileNumber,X
 
@@ -2038,7 +2038,7 @@ ENDIF
 
  JSR CA99B
  LDA tileNumber
- STA pattTileNumber2,X
+ STA clearingPattTile,X
  RTS
 
 .CA99B
@@ -2121,9 +2121,9 @@ ENDIF
 
  JSR subm_AC86
  LDA #0
- STA nameTileNumber
+ STA firstNametableTile
  LDA #37
- STA pattTileNumber
+ STA firstPatternTile
  LDA tileNumber
  STA nextTileNumber
  STA nextTileNumber+1
@@ -2147,8 +2147,8 @@ ENDIF
  LDA QQ11
  STA QQ11a
  LDA tileNumber
- STA pattTileNumber2
- STA pattTileNumber2+1
+ STA clearingPattTile
+ STA clearingPattTile+1
  LDA #0
  LDX #0
  STX hiddenBitPlane
@@ -2376,14 +2376,14 @@ ENDIF
  STA bitplaneFlags+1
 
  LDA #4
- STA pattTileNumber2
- STA pattTileNumber2+1
- STA nameTileNumber2
- STA nameTileNumber2+1
- STA pattTileNumber1
- STA pattTileNumber1+1
- STA nameTileNumber1
- STA nameTileNumber1+1
+ STA clearingPattTile
+ STA clearingPattTile+1
+ STA clearingNameTile
+ STA clearingNameTile+1
+ STA sendingPattTile
+ STA sendingPattTile+1
+ STA sendingNameTile
+ STA sendingNameTile+1
 
  LDA #$0F               ; Set hiddenColour to $0F, which is black, so this hides
  STA hiddenColour       ; any pixels that use the hidden colour in palette 0

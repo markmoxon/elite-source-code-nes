@@ -4428,10 +4428,10 @@ ENDIF
  STA QQ11
  JSR subm_AFCD_b3
  LDA #$25
- STA pattTileNumber
+ STA firstPatternTile
  JSR subm_A761
  LDA #$3C
- STA pattTileNumber
+ STA firstPatternTile
  JMP DemoShips_b0
 
 .CA6D3
@@ -4850,7 +4850,7 @@ ENDIF
  STA L0402
  JSR subm_AC5C_b3
  LDA #40
- STA nameTileNumber
+ STA firstNametableTile
  LDA #$A0
  STA L03FC
  JSR CA96E

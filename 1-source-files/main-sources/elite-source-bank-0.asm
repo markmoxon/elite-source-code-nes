@@ -3040,7 +3040,7 @@ ENDIF
 .C892E
 
  LDA #0
- STA nameTileNumber
+ STA firstNametableTile
  LDA #108
  STA maxTileNumber
  STA lastTileNumber
@@ -3053,7 +3053,7 @@ ENDIF
 
 .C8944
 
- STX pattTileNumber
+ STX firstPatternTile
  JSR DrawBoxEdges
  JSR CopyNameBuffer0To1
  LDA QQ11
@@ -3084,7 +3084,7 @@ ENDIF
 
  STX L045F
  LDA tileNumber
- STA pattTileNumber
+ STA firstPatternTile
  RTS
 
 .C8976
@@ -3121,13 +3121,13 @@ ENDIF
                         ; there is no more data waiting to be sent to the PPU
 
  LDA #0
- STA nameTileNumber
+ STA firstNametableTile
 
  LDA #100
  STA maxTileNumber
 
  LDA #37
- STA pattTileNumber
+ STA firstPatternTile
 
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -3141,7 +3141,7 @@ ENDIF
  STA bitplaneFlags+1
 
  LDA tileNumber
- STA pattTileNumber
+ STA firstPatternTile
 
  RTS                    ; Return from the subroutine
 
@@ -16938,11 +16938,11 @@ ENDIF
  STA QQ11
  STA QQ11a
  LDA tileNumber
- STA pattTileNumber
+ STA firstPatternTile
  LDA #116
  STA maxTileNumber
  LDX #8
- STX nameTileNumber
+ STX firstNametableTile
  LDA #$68
  JSR SetScreenHeight
  LDY #8
@@ -17321,11 +17321,11 @@ ENDIF
  STA QQ11a
  STA L045F
  LDA tileNumber
- STA pattTileNumber
+ STA firstPatternTile
  LDA #80
  STA maxTileNumber
  LDX #8
- STX nameTileNumber
+ STX firstNametableTile
  RTS
 
 ; ******************************************************************************
@@ -20694,13 +20694,13 @@ ENDIF
  STA visibleColour
 
  LDA tileNumber
- STA pattTileNumber
+ STA firstPatternTile
 
  LDA #80
  STA maxTileNumber
 
  LDX #8
- STX nameTileNumber
+ STX firstNametableTile
 
  LDA #116
  STA lastTileNumber
