@@ -3935,52 +3935,54 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_A39F
+;       Name: SetEquipmentSprite
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing sprites
+;    Summary: Set up a sprite for a specific bit of equipment to show on our
+;             Cobra Mk III on the Equip Ship screen
 ;
 ; ******************************************************************************
 
-.subm_A39F
+.SetEquipmentSprite
 
  LDA #0
 
 ; ******************************************************************************
 ;
-;       Name: subm_A3A1
+;       Name: SetLaserSprite
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing sprites
+;    Summary: Set up a sprite for a specific laser to show on our Cobra Mk III
+;             on the Equip Ship screen
 ;
 ; ******************************************************************************
 
-.subm_A3A1
+.SetLaserSprite
 
  STA V
  STX V+1
 
 .CA3A5
 
- LDA LA3F5+3,Y
+ LDA equipSprites+3,Y
  AND #$FC
  TAX
- LDA LA3F5+3,Y
+ LDA equipSprites+3,Y
  AND #3
  STA T
- LDA LA3F5,Y
+ LDA equipSprites,Y
  AND #$C0
  ORA T
  STA attrSprite0,X
- LDA LA3F5,Y
+ LDA equipSprites,Y
  AND #$3F
  CLC
  ADC #$8C
  ADC V
  STA tileSprite0,X
- LDA LA3F5+1,Y
+ LDA equipSprites+1,Y
  STA xSprite0,X
- LDA LA3F5+2,Y
+ LDA equipSprites+2,Y
  STA ySprite0,X
  INY
  INY
@@ -3992,14 +3994,15 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_A3DE
+;       Name: GetLaserSprite
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing sprites
+;    Summary: Calculate the offset into the equipSprites table for a specific
+;             laser's sprite
 ;
 ; ******************************************************************************
 
-.subm_A3DE
+.GetLaserSprite
 
  LDA #0
  CPX #$97
@@ -4026,14 +4029,15 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LA3F5
+;       Name: equipSprites
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Equipment
+;    Summary: Lookup table for the sprites that show the equipment fitted to our
+;             Cobra Mk III on the Equip Ship screen
 ;
 ; ******************************************************************************
 
-.LA3F5
+.equipSprites
 
 IF _NTSC
 
@@ -4089,52 +4093,42 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_A4A5
+;       Name: DrawEquipment
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Equipment
+;    Summary: Draw the equipment fitted to our Cobra Mk III on the Equip Ship
+;             screen
 ;
 ; ******************************************************************************
 
-.subm_A4A5
+.DrawEquipment
 
  JSR WSCAN
  LDA ECM
  BEQ CA4B4
 
-; ******************************************************************************
-;
-;       Name: subm_A4AD
-;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
-;
-; ******************************************************************************
-
-.subm_A4AD
-
  LDY #0
  LDX #3
- JSR subm_A39F
+ JSR SetEquipmentSprite
 
 .CA4B4
 
  LDX LASER
  BEQ CA4C6
- JSR subm_A3DE
+ JSR GetLaserSprite
  LDY #$0C
  LDX #2
- JSR subm_A3A1
+ JSR SetLaserSprite
  JMP CA4C6
 
 .CA4C6
 
  LDX LASER+1
  BEQ CA4D8
- JSR subm_A3DE
+ JSR GetLaserSprite
  LDY #$24
  LDX #1
- JSR subm_A3A1
+ JSR SetLaserSprite
  JMP CA4D8
 
 .CA4D8
@@ -4143,17 +4137,17 @@ ENDIF
  BEQ CA4F5
  CPX #$97
  BEQ CA4EE
- JSR subm_A3DE
+ JSR GetLaserSprite
  LDY #$14
  LDX #2
- JSR subm_A3A1
+ JSR SetLaserSprite
  JMP CA4F5
 
 .CA4EE
 
  LDY #$28
  LDX #2
- JSR subm_A39F
+ JSR SetEquipmentSprite
 
 .CA4F5
 
@@ -4161,17 +4155,17 @@ ENDIF
  BEQ CA512
  CPX #$97
  BEQ CA50B
- JSR subm_A3DE
+ JSR GetLaserSprite
  LDY #$1C
  LDX #2
- JSR subm_A3A1
+ JSR SetLaserSprite
  JMP CA512
 
 .CA50B
 
  LDY #$30
  LDX #2
- JSR subm_A39F
+ JSR SetEquipmentSprite
 
 .CA512
 
@@ -4179,7 +4173,7 @@ ENDIF
  BEQ CA51E
  LDY #$38
  LDX #2
- JSR subm_A39F
+ JSR SetEquipmentSprite
 
 .CA51E
 
@@ -4189,14 +4183,14 @@ ENDIF
  BNE CA530
  LDY #$48
  LDX #2
- JSR subm_A39F
+ JSR SetEquipmentSprite
  JMP CA537
 
 .CA530
 
  LDY #$40
  LDX #4
- JSR subm_A39F
+ JSR SetEquipmentSprite
 
 .CA537
 
@@ -4204,25 +4198,25 @@ ENDIF
  BEQ CA56C
  LDY #$50
  LDX #2
- JSR subm_A39F
+ JSR SetEquipmentSprite
  LDA NOMSL
  LSR A
  BEQ CA56C
  LDY #$58
  LDX #2
- JSR subm_A39F
+ JSR SetEquipmentSprite
  LDA NOMSL
  CMP #2
  BEQ CA56C
  LDY #$60
  LDX #2
- JSR subm_A39F
+ JSR SetEquipmentSprite
  LDA NOMSL
  CMP #4
  BNE CA56C
  LDY #$68
  LDX #2
- JSR subm_A39F
+ JSR SetEquipmentSprite
 
 .CA56C
 
@@ -4230,7 +4224,7 @@ ENDIF
  BEQ CA578
  LDY #$70
  LDX #3
- JSR subm_A39F
+ JSR SetEquipmentSprite
 
 .CA578
 
@@ -4239,7 +4233,7 @@ ENDIF
  BNE CA586
  LDY #$7C
  LDX #2
- JSR subm_A39F
+ JSR SetEquipmentSprite
 
 .CA586
 
@@ -4247,7 +4241,7 @@ ENDIF
  BEQ CA592
  LDY #$84
  LDX #1
- JSR subm_A39F
+ JSR SetEquipmentSprite
 
 .CA592
 
@@ -4255,7 +4249,7 @@ ENDIF
  BEQ CA59E
  LDY #$88
  LDX #8
- JSR subm_A39F
+ JSR SetEquipmentSprite
 
 .CA59E
 
@@ -4263,7 +4257,7 @@ ENDIF
  BEQ CA5AA
  LDY #$A8
  LDX #2
- JSR subm_A39F
+ JSR SetEquipmentSprite
 
 .CA5AA
 
@@ -4542,9 +4536,16 @@ ENDIF
  LDA #254
  STA tileNumber
 
- LDA #%11001000         ; Set bits 3, 6 and 7 of both bitplane flags
- STA bitplaneFlags
- STA bitplaneFlags+1
+ LDA #%11001000         ; Set both bitplane flags as follows:
+ STA bitplaneFlags      ;
+ STA bitplaneFlags+1    ;   * Bit 2 clear = last tile to send is lastTileNumber
+                        ;   * Bit 3 set   = clear buffers after sending data
+                        ;   * Bit 4 clear = we've not started sending data yet
+                        ;   * Bit 5 clear = we have not yet sent all the data
+                        ;   * Bit 6 set   = send both pattern and nametable data
+                        ;   * Bit 7 set   = send data to the PPU
+                        ;
+                        ; Bits 0 and 1 are ignored and are always clear
 
  RTS
 
@@ -4900,9 +4901,9 @@ ENDIF
 
 .CA984
 
- JSR ChangeDrawingPlane
+ JSR FlipDrawingPlane
  JSR subm_AAE5
- JSR subm_D975
+ JSR SendDrawPlaneToPPU
  LDA L0465
  BEQ CA995
  JSR subm_B1D4_b0
@@ -5311,227 +5312,277 @@ ENDIF
 
 .LAC6F
 
- EQUB 3                                       ; AC6F: 03          .
+ EQUB 3
 
 .LAC70
 
- EQUB $35                                     ; AC70: 35          5
+ EQUB $35
 
 .LAC71
 
- EQUB $58                                     ; AC71: 58          X
+ EQUB $58
 
 .LAC72
 
- EQUB $68                                     ; AC72: 68          h
+ EQUB $68
 
 .LAC73
 
- EQUB $02, $17, $00, $00, $00, $28, $68, $06  ; AC73: 02 17 00... ...
- EQUB $00, $00, $27, $07, $00, $00, $00, $28  ; AC7B: 00 00 27... ..'
- EQUB $48, $46, $06, $00, $26, $08, $00, $00  ; AC83: 48 46 06... HF.
- EQUB $00, $47, $04, $24, $00, $00, $02, $26  ; AC8B: 00 47 04... .G.
- EQUB $68, $00, $00                           ; AC93: 68 00 00    h..
+ EQUB $02, $17, $00, $00, $00, $28, $68, $06
+ EQUB $00, $00, $27, $07, $00, $00, $00, $28
+ EQUB $48, $46, $06, $00, $26, $08, $00, $00
+ EQUB $00, $47, $04, $24, $00, $00, $02, $26
+ EQUB $68, $00, $00
 
 .NOFX
 
- EQUB 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3      ; AC96: 01 02 03... ...
+ EQUB 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3
 
 .NOFY
 
- EQUB 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3      ; ACA2: 00 00 00... ...
+ EQUB 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3
 
 .LACAE
 
- EQUB $D6, $76, $26, $D6                      ; ACAE: D6 76 26... .v&
+ EQUB $D6, $76, $26, $D6
 
 .LACB2
 
- EQUB $AC, $AF, $AE, $AC                      ; ACB2: AC AF AE... ...
+ EQUB $AC, $AF, $AE, $AC
 
 .LACB6
 
- EQUB $54, $F4, $A4, $54                      ; ACB6: 54 F4 A4... T..
+ EQUB $54, $F4, $A4, $54
 
 .LACBA
 
- EQUB $AD, $AF, $AE, $AD                      ; ACBA: AD AF AE... ...
+ EQUB $AD, $AF, $AE, $AD
 
 .LACBE
 
- EQUB $C6, $C6, $C6, $C6                      ; ACBE: C6 C6 C6... ...
+ EQUB $C6, $C6, $C6, $C6
 
 .LACC2
 
- EQUB $B0, $B0, $B0, $B0                      ; ACC2: B0 B0 B0... ...
+ EQUB $B0, $B0, $B0, $B0
 
 .LACC6
 
- EQUB $98, $98, $98, $98                      ; ACC6: 98 98 98... ...
+ EQUB $98, $98, $98, $98
 
 .LACCA
 
- EQUB $B1, $B1, $B1, $B1                      ; ACCA: B1 B1 B1... ...
+ EQUB $B1, $B1, $B1, $B1
 
 .LACCE
 
- EQUS $55, $55, $55, $55                      ; ACCE: 55 55 55... UUU
+ EQUS $55, $55, $55, $55
 
 .LACD2
 
- EQUB $B2, $B2, $B2, $B2                      ; ACD2: B2 B2 B2... ...
+ EQUB $B2, $B2, $B2, $B2
 
 IF _NTSC
 
- EQUS "   NTSC EMULATION      --- E L # T "
- EQUS "E ---  (C)BELL & BRABEN 1991       "
+ EQUS "   NTSC EMULATION    "
+ EQUS "  --- E L # T E ---  "
+ EQUS "(C)BELL & BRABEN 1991"
 
 ELIF _PAL
 
- EQUS " IMAGINEER PRESENTS    --- E L # T "
- EQUS "E ---  (C)BRABEN & BELL 1991       "
+ EQUS " IMAGINEER PRESENTS  "
+ EQUS "  --- E L # T E ---  "
+ EQUS "(C)BRABEN & BELL 1991"
 
 ENDIF
 
- EQUS "              PREPARE FOR PRACTICE "   ; AD1C: 20 20 20...
- EQUS "COMBAT SEQUENCE...... CONGRATULATIO"   ; AD3F: 43 4F 4D... COM
- EQUS "NS! YOUCOMPLETED  THE COMBAT IN "      ; AD62: 4E 53 21... NS!
- EQUB $83, $82                                ; AD82: 83 82       ..
- EQUS "  MIN  "                               ; AD84: 20 20 4D...   M
- EQUB $81, $80                                ; AD8B: 81 80       ..
- EQUS " SEC.                      YOU BEGI"   ; AD8D: 20 53 45...  SE
- EQUS "N YOUR CAREERDOCKED AT  THE PLANETL"   ; ADB0: 4E 20 59... N Y
- EQUS "AVE WITH 100 CREDITS3 MISSILES AND "   ; ADD3: 41 56 45... AVE
- EQUS "A FULLTANK OF FUEL.        GOOD LUC"   ; ADF6: 41 20 46... A F
- EQUS "K, COMMANDER!"
+ EQUS "                     "
+ EQUS "PREPARE FOR PRACTICE "
+ EQUS "COMBAT SEQUENCE......"
+ EQUS " CONGRATULATIONS! YOU"
+ EQUS "COMPLETED  THE COMBAT"
+ EQUS " IN "
+ EQUB $83, $82
+ EQUS "  MIN  "
+ EQUB $81, $80
+ EQUS " SEC. "
+ EQUS "                     "
+ EQUS "YOU BEGIN YOUR CAREER"
+ EQUS "DOCKED AT  THE PLANET"
+ EQUS "LAVE WITH 100 CREDITS"
+ EQUS "3 MISSILES AND A FULL"
+ EQUS "TANK OF FUEL.        "
+ EQUS "GOOD LUCK, COMMANDER!"
 
 IF _NTSC
 
- EQUS "   NTSC EMULATION     "
- EQUS " --- E L # T E ---  (C)BELL & BRABE"   ; AE3C: 20 2D 2D...  --
- EQUS "N 1991                      PREPARE"   ; AE5F: 4E 20 31... N 1
+ EQUS "   NTSC EMULATION    "
+ EQUS "  --- E L # T E ---  "
+ EQUS "(C)BELL & BRABEN 1991"
 
 ELIF _PAL
 
- EQUS " IMAGINEER PRESENTE   "
- EQUS " --- E L # T E ---  (C)BRABEN & BEL"   ; AE3C: 20 2D 2D...  --
- EQUS "L 1991                      PREPARE"   ; AE5F: 4E 20 31... N 1
+ EQUS " IMAGINEER PRESENTE  "
+ EQUS "  --- E L # T E ---  "
+ EQUS "(C)BRABEN & BELL 1991"
 
 ENDIF
 
- EQUS "Z-VOUS  A  LASIMULATION DU COMBAT! "   ; AE82: 5A 2D 56... Z-V
- EQUS "FELICITATIONS! VOTRECOMBAT EST TERM"   ; AEA5: 46 45 4C... FEL
- EQUS "INE EN   "                             ; AEC8: 49 4E 45... INE
- EQUB $83, $82                                ; AED1: 83 82       ..
- EQUS "  MIN  "                               ; AED3: 20 20 4D...   M
- EQUB $81, $80                                ; AEDA: 81 80       ..
- EQUS " SEC.                        VOUS C"   ; AEDC: 20 53 45...  SE
- EQUS "OMMENCEZ VOTRECOURS  SUR LA PLANETE"   ; AEFF: 4F 4D 4D... OMM
- EQUS "LAVE AVEC 100 CREDITSET TROIS MISSI"   ; AF22: 4C 41 56... LAV
- EQUS "LES.        BONNE CHANCE         CO"   ; AF45: 4C 45 53... LES
- EQUS "MMANDANT!"
+ EQUS "                     "
+ EQUS " PREPAREZ-VOUS  A  LA"
+ EQUS "SIMULATION DU COMBAT!"
+ EQUS " FELICITATIONS! VOTRE"
+ EQUS "COMBAT EST TERMINE EN"
+ EQUS "   "
+ EQUB $83, $82
+ EQUS "  MIN  "
+ EQUB $81, $80
+ EQUS " SEC.  "
+ EQUS "                     "
+ EQUS " VOUS COMMENCEZ VOTRE"
+ EQUS "COURS  SUR LA PLANETE"
+ EQUS "LAVE AVEC 100 CREDITS"
+ EQUS "ET TROIS MISSILES.   "
+ EQUS "     BONNE CHANCE    "
+ EQUS "     COMMANDANT!     "
 
 IF _NTSC
 
- EQUS "        NTSC EMULATION    "   ; AF68: 4D 4D 41... MMA
- EQUS "  --- E L # T E ---  (C)BELL & BRAB"   ; AF8B: 20 20 2D...   -
- EQUS "EN 1991                     RUSTEN "   ; AFAE: 45 4E 20... EN
+ EQUS "   NTSC EMULATION    "
+ EQUS "  --- E L # T E ---  "
+ EQUS "(C)BELL & BRABEN 1991"
 
 ELIF _PAL
 
- EQUS "        IMAGINEER ZEIGT   "   ; AF68: 4D 4D 41... MMA
- EQUS "  --- E L # T E ---  (C)BRABEN & BE"   ; AF8B: 20 20 2D...   -
- EQUS "LL 1991                     RUSTEN "   ; AFAE: 45 4E 20... EN
+ EQUS "   IMAGINEER ZEIGT   "
+ EQUS "  --- E L # T E ---  "
+ EQUS "(C)BRABEN & BELL 1991"
 
 ENDIF
 
- EQUS " SIE  SICH ZUMPROBEKAMPF..........."   ; AFD1: 20 53 49...  SI
- EQUS " BRAVO! SIE HABEN DENKAMPF  GEWONNE"   ; AFF4: 20 42 52...  BR
- EQUS "N  ZEIT  "                             ; B017: 4E 20 20... N
- EQUB $83, $82                                ; B020: 83 82       ..
- EQUS "  MIN  "                               ; B022: 20 20 4D...   M
- EQUB $81, $80                                ; B029: 81 80       ..
- EQUS "  SEK.                         SIE "   ; B02B: 20 20 53...   S
- EQUS " BEGINNEN  IHREKARRIERE  IM DOCK DE"   ; B04E: 20 42 45...  BE
- EQUS "SPLANETS LAVE MIT DREIRAKETEN, 100 "   ; B071: 53 50 4C... SPL
- EQUS "CR,  UNDEINEM VOLLEN TANK.   VIEL G"   ; B094: 43 52 2C... CR,
- EQUS "LUCK,COMMANDER!ORIGINAL GAME AND NE"   ; B0B7: 4C 55 43... LUC
- EQUS "SCONVERSION  BY  DAVIDBRABEN  AND #"   ; B0DA: 53 43 4F... SCO
- EQUS "AN BELL.                     DEVELO"   ; B0FD: 41 4E 20... AN
- EQUS "PED USING  PDS.HANDLED BY MARJACQ. "   ; B120: 50 45 44... PED
- EQUS "                      ARTWORK   BY "   ; B143: 20 20 20...
- EQUS " EUROCOMDEVELOPMENTS LTD.          "   ; B166: 20 45 55...  EU
- EQUS "               MUSIC & SOUNDS  CODE"   ; B189: 20 20 20...
- EQUS "DBY  DAVID  WHITTAKER.             "   ; B1AC: 44 42 59... DBY
- EQUS "        MUSIC BY  AIDAN  BELLAND  J"   ; B1CF: 20 20 20...
- EQUS "OHANN  STRAUSS.                    "   ; B1F2: 4F 48 41... OHA
- EQUS " TESTERS=CHRIS JORDAN,SAM AND JADE "   ; B215: 20 54 45...  TE
- EQUS "BRIANT, R AND M CHADWICK.    ELITE "   ; B238: 42 52 49... BRI
- EQUS "LOGO DESIGN BY PHILIP CASTLE.      "   ; B25B: 4C 4F 47... LOG
- EQUS "                      GAME TEXT TRA"   ; B27E: 20 20 20...
- EQUS "NSLATERSUBI SOFT,            SUSANN"   ; B2A1: 4E 53 4C... NSL
- EQUS "E DIECK,       IMOGEN  RIDLER.     "   ; B2C4: 45 20 44... E D
- EQUS " STORED COMMANDERS"                    ; B2E7: 20 53 54...  ST
- EQUB $0C, $0C, $0C,   6,   0                 ; B2F9: 0C 0C 0C... ...
- EQUS "                    STORED"            ; B2FE: 20 20 20...
- EQUB $0C                                     ; B318: 0C          .
- EQUS "                    POSITIONS"         ; B319: 20 20 20...
- EQUB $0C, $0C, $0C, $0C, $0C, $0C, $0C       ; B336: 0C 0C 0C... ...
- EQUS "CURRENT"                               ; B33D: 43 55 52... CUR
- EQUB $0C                                     ; B344: 0C          .
- EQUS "POSITION"                              ; B345: 50 4F 53... POS
- EQUB 0                                       ; B34D: 00          .
- EQUS "GESPEICHERTE KOMMANDANTEN"             ; B34E: 47 45 53... GES
- EQUB $0C, $0C, $0C,   6,   0                 ; B367: 0C 0C 0C... ...
- EQUS "                    GESP."             ; B36C: 20 20 20...
- EQUB $0C                                     ; B385: 0C          .
- EQUS "                   POSITIONEN"         ; B386: 20 20 20...
- EQUB $0C, $0C, $0C, $0C, $0C, $0C, $0C       ; B3A3: 0C 0C 0C... ...
- EQUS "GEGENW."                               ; B3AA: 47 45 47... GEG
- EQUB $0C                                     ; B3B1: 0C          .
- EQUS "POSITION"                              ; B3B2: 50 4F 53... POS
- EQUB 0                                       ; B3BA: 00          .
- EQUS "COMMANDANTS SAUVEGARDES"               ; B3BB: 43 4F 4D... COM
- EQUB $0C, $0C, $0C,   6,   0                 ; B3D2: 0C 0C 0C... ...
- EQUS "                    POSITIONS"         ; B3D7: 20 20 20...
- EQUB $0C                                     ; B3F4: 0C          .
- EQUS "                  SAUVEGARD<ES"        ; B3F5: 20 20 20...
- EQUB $0C, $0C, $0C, $0C, $0C, $0C, $0C       ; B413: 0C 0C 0C... ...
- EQUS "POSITION"                              ; B41A: 50 4F 53... POS
- EQUB $0C                                     ; B422: 0C          .
- EQUS "ACTUELLE"                              ; B423: 41 43 54... ACT
- EQUB 0                                       ; B42B: 00          .
+ EQUS "                     "
+ EQUS "RUSTEN  SIE  SICH ZUM"
+ EQUS "PROBEKAMPF..........."
+ EQUS " BRAVO! SIE HABEN DEN"
+ EQUS "KAMPF  GEWONNEN  ZEIT"
+ EQUS "  "
+ EQUB $83, $82
+ EQUS "  MIN  "
+ EQUB $81, $80
+ EQUS "  SEK.  "
+ EQUS "                     "
+ EQUS "  SIE  BEGINNEN  IHRE"
+ EQUS "KARRIERE  IM DOCK DES"
+ EQUS "PLANETS LAVE MIT DREI"
+ EQUS "RAKETEN, 100 CR,  UND"
+ EQUS "EINEM VOLLEN TANK.   "
+ EQUS "VIEL GLUCK,COMMANDER!"
+
+ EQUS "ORIGINAL GAME AND NES"
+ EQUS "CONVERSION  BY  DAVID"
+ EQUS "BRABEN  AND #AN BELL."
+ EQUS "                     "
+ EQUS "DEVELOPED USING  PDS."
+ EQUS "HANDLED BY MARJACQ.  "
+ EQUS "                     "
+ EQUS "ARTWORK   BY  EUROCOM"
+ EQUS "DEVELOPMENTS LTD.    "
+ EQUS "                     "
+ EQUS "MUSIC & SOUNDS  CODED"
+ EQUS "BY  DAVID  WHITTAKER."
+ EQUS "                     "
+ EQUS "MUSIC BY  AIDAN  BELL"
+ EQUS "AND  JOHANN  STRAUSS."
+ EQUS "                     "
+ EQUS "TESTERS=CHRIS JORDAN,"
+ EQUS "SAM AND JADE BRIANT, "
+ EQUS "R AND M CHADWICK.    "
+ EQUS "ELITE LOGO DESIGN BY "
+ EQUS "PHILIP CASTLE.       "
+ EQUS "                     "
+ EQUS "GAME TEXT TRANSLATERS"
+ EQUS "UBI SOFT,            "
+ EQUS "SUSANNE DIECK,       "
+ EQUS "IMOGEN  RIDLER.      "
+
+; ******************************************************************************
+;
+;       Name: LB2E7
+;       Type: Subroutine
+;   Category: Text
+;    Summary: ???
+;
+; ******************************************************************************
+
+.LB2E7
+
+ EQUS "STORED COMMANDERS"
+ EQUB $0C, $0C, $0C,   6,   0
+ EQUS "                    STORED"
+ EQUB $0C
+ EQUS "                    POSITIONS"
+ EQUB $0C, $0C, $0C, $0C, $0C, $0C, $0C
+ EQUS "CURRENT"
+ EQUB $0C
+ EQUS "POSITION"
+ EQUB 0
+
+.LB34E
+
+ EQUS "GESPEICHERTE KOMMANDANTEN"
+ EQUB $0C, $0C, $0C,   6,   0
+ EQUS "                    GESP."
+ EQUB $0C
+ EQUS "                   POSITIONEN"
+ EQUB $0C, $0C, $0C, $0C, $0C, $0C, $0C
+ EQUS "GEGENW."
+ EQUB $0C
+ EQUS "POSITION"
+ EQUB 0
+
+.LB3BB
+
+ EQUS "COMMANDANTS SAUVEGARDES"
+ EQUB $0C, $0C, $0C,   6,   0
+ EQUS "                    POSITIONS"
+ EQUB $0C
+ EQUS "                  SAUVEGARD<ES"
+ EQUB $0C, $0C, $0C, $0C, $0C, $0C, $0C
+ EQUS "POSITION"
+ EQUB $0C
+ EQUS "ACTUELLE"
+ EQUB 0
 
 .LB42C
 
- EQUB 8, 4, 4, 5                              ; B42C: 08 04 04... ...
+ EQUB 8, 4, 4, 5
 
 .LB430
 
- EQUB $E8, $4E, $BB                           ; B430: E8 4E BB    .N.
+ EQUB $E8, $4E, $BB
 
 .LB433
 
- EQUB $B2, $B3, $B3                           ; B433: B2 B3 B3    ...
+ EQUB $B2, $B3, $B3
 
 .LB436
 
- EQUB $FE, $6C, $D7                           ; B436: FE 6C D7    .l.
+ EQUB $FE, $6C, $D7
 
 .LB439
 
- EQUB $B2, $B3, $B3                           ; B439: B2 B3 B3    ...
+ EQUB $B2, $B3, $B3
 
 .LB43C
 
- EQUB $68, $6A, $69, $6A, $69, $6A, $69, $6A  ; B43C: 68 6A 69... hji
- EQUB $6B, $6A, $69, $6A, $69, $6A, $6C, $00  ; B444: 6B 6A 69... kji
+ EQUB $68, $6A, $69, $6A, $69, $6A, $69, $6A
+ EQUB $6B, $6A, $69, $6A, $69, $6A, $6C, $00
 
 ; ******************************************************************************
 ;
 ;       Name: subm_B44C
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Text
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -6729,7 +6780,7 @@ ENDIF
  TAX
  LDA LBA06,X
  STA visibleColour
- JSR ChangeDrawingPlane
+ JSR FlipDrawingPlane
  LDA XP
  AND #$1F
  STA STP
@@ -6773,7 +6824,7 @@ ENDIF
 
 .CB9FB
 
- JSR subm_D975
+ JSR SendDrawPlaneToPPU
  DEC XP
  BNE CB999
 

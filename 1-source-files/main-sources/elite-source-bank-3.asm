@@ -1848,7 +1848,16 @@ ENDIF
 
 .CA89F
 
- JSR SendMissilesToPPU
+ JSR SendMissilesToPPU      ; Send X batches of 16 bytes from SC(1 0) to the PPU
+                            ;
+                            ; We only get here with the following values:
+                            ;
+                            ;   SC(1 0) = missileImage
+                            ;
+                            ;   X = 4
+                            ;
+                            ; So this sends 16 * 4 = 64 bytes from missileImage
+                            ; to the PPU
 
 .CA8A2
 
@@ -2034,7 +2043,7 @@ ENDIF
  STA nextTileNumber,X
 
  LDA #%11000100
- JSR subm_D977
+ JSR SetDrawPlaneFlags
 
  JSR CA99B
  LDA tileNumber
@@ -2053,9 +2062,10 @@ ENDIF
  PLA
  PHA
  TAX
- LDA bitplaneFlags,X
- AND #%00100000
- BNE CA9CC
+
+ LDA bitplaneFlags,X    ; If bit 5 is set in the flags for bitplane X, then we
+ AND #%00100000         ; have already sent all the data to the PPU for this
+ BNE CA9CC              ; bitplane, so jump to CA9CC
 
  LDA #$10
  STA cycleCount+1
@@ -2065,9 +2075,11 @@ ENDIF
  JSR SendBuffersToPPU
  PLA
  TAX
- LDA bitplaneFlags,X
- AND #%00100000
- BNE CA9CE
+
+ LDA bitplaneFlags,X    ; If bit 5 is set in the flags for bitplane X, then we
+ AND #%00100000         ; have already sent all the data to the PPU for this
+ BNE CA9CE              ; bitplane, so jump to CA9CE
+
  JSR subm_D946
  JMP CA99B
 
@@ -2131,11 +2143,11 @@ ENDIF
  LDA #%01010100
  LDX #0
  PLA
- JSR subm_D977
+ JSR SetDrawPlaneFlags
 
  INC drawingBitplane
 
- JSR subm_D977
+ JSR SetDrawPlaneFlags
 
  JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
                         ; sent to the PPU, so the screen is fully updated and
@@ -2371,9 +2383,16 @@ ENDIF
  LDA #0
  STA ppuNametableAddr
 
- LDA #%00101000         ; Set bits 3 and 5 of both bitplane flags
- STA bitplaneFlags
- STA bitplaneFlags+1
+ LDA #%00101000         ; Set both bitplane flags as follows:
+ STA bitplaneFlags      ;
+ STA bitplaneFlags+1    ;   * Bit 2 clear = last tile to send is lastTileNumber
+                        ;   * Bit 3 set   = clear buffers after sending data
+                        ;   * Bit 4 clear = we've not started sending data yet
+                        ;   * Bit 5 set   = we have already sent all the data
+                        ;   * Bit 6 clear = only send pattern data to the PPU
+                        ;   * Bit 7 clear = do not send data to the PPU
+                        ;
+                        ; Bits 0 and 1 are ignored and are always clear
 
  LDA #4
  STA clearingPattTile
@@ -4744,14 +4763,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_BA23_BA11
+;       Name: HideSightSprites
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing sprites
+;    Summary: Hide the sprites for the laser sights in the space view
 ;
 ; ******************************************************************************
 
-.subm_BA23_BA11
+.HideSightSprites
 
  LDA #$F0
  STA ySprite5
@@ -4763,18 +4782,19 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_BA23
+;       Name: SetSightSprites
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing sprites
+;    Summary: Set up the sprites for the laser sights in the space view,
+;             according to the lasers fitted
 ;
 ; ******************************************************************************
 
-.subm_BA23
+.SetSightSprites
 
  LDY VIEW
  LDA LASER,Y
- BEQ subm_BA23_BA11
+ BEQ HideSightSprites
  CMP #$18
  BNE CBA32
  JMP CBAC6

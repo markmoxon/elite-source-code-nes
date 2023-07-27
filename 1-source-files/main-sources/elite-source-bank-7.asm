@@ -1253,11 +1253,16 @@ ENDIF
 
 .ConsiderSendTiles
 
- LDX nmiBitplane        ; Set A to the bitplane flags for the NMI bitplane
- LDA bitplaneFlags,X
+ LDX nmiBitplane        ; Set X to the current NMI bitplane (i.e. the bitplane
+                        ; for which we are sending data to the PPU in the NMI
+                        ; handler)
 
- AND #%00010000         ; If bit 4 of A is clear, return from the subroutine
- BEQ RTS1               ; (as RTS1 contains an RTS)
+ LDA bitplaneFlags,X    ; Set A to the bitplane flags for the NMI bitplane
+
+ AND #%00010000         ; If bit 4 of A is clear, then we are not currently in
+ BEQ RTS1               ; the process of sending tile data to the PPU for this
+                        ; bitplane, so return from the subroutine (as RTS1
+                        ; contains an RTS)
 
  SUBTRACT_CYCLES 42     ; Subtract 42 from the cycle count
 
@@ -1324,12 +1329,16 @@ ENDIF
 ;
 ; ******************************************************************************
 
- LDX nmiBitplane        ; Set A to the bitplane flags for the NMI bitplane
- LDA bitplaneFlags,X
+ LDX nmiBitplane        ; Set X to the current NMI bitplane (i.e. the bitplane
+                        ; for which we are sending data to the PPU in the NMI
+                        ; handler)
 
- AND #%00010000         ; If bit 4 is clear, then we have not already started
- BEQ sbuf7              ; sending tile data to the PPU in a previous VBlank, so
-                        ; jump to sbuf7 to start sending tile data in part 3
+ LDA bitplaneFlags,X    ; Set A to the bitplane flags for the NMI bitplane
+
+ AND #%00010000         ; If bit 4 of A is clear, then we are not currently in
+ BEQ sbuf7              ; the process of sending tile data to the PPU for this
+                        ; bitplane, so jump to sbuf7 in part 3 to start sending
+                        ; tile data
 
                         ; If we get here then we are already in the process of
                         ; sending tile data to the PPU, split across multiple
@@ -1347,16 +1356,30 @@ ENDIF
                         ; to the NMI bitplane
 
  AND #%10100000         ; If bitplanes are enabled then enableBitplanes = 1, so
- ORA enableBitplanes    ; if they are enabled, and it is not the case that bit 7
- CMP #%10000001         ; is set and bit 5 is clear in the flags for the
- BNE sbuf2              ; opposite bitplane, then this means we do not need to
-                        ; send the other bitplane to the PPU, so jump to
-                        ; SendPatternsToPPU via sbuf2 to continue sending tiles
-                        ; for this bitplane to the PPU
+ ORA enableBitplanes    ; this jumps to sbuf2 if any of the following are true
+ CMP #%10000001         ; for the opposite bitplane:
+ BNE sbuf2              ;
+                        ;   * Bitplanes are disabled
+                        ;
+                        ;   * Bit 5 is set (we have already sent all the data
+                        ;     to the PPU for the opposite bitplane)
+                        ;
+                        ;   * Bit 7 is clear (do not send data to the PPU for
+                        ;     the opposite bitplane)
+                        ;
+                        ; If any of these are true, we jump to SendPatternsToPPU
+                        ; via sbuf2 to continue sending tiles to the PPU for the
+                        ; current bitplane
 
-                        ; If we get here then bitplanes are enabled, and we need
-                        ; to send the other bitplane to the PPU as well as the
-                        ; rest of this bitplane
+                        ; If we get here then the following are true:
+                        ;
+                        ;   * Bitplanes are enabled
+                        ;
+                        ;   * We have not sent all the data for the opposite
+                        ;     bitplane to the PPU
+                        ;
+                        ;   * The opposite bitplane is configured to be sent to
+                        ;     the PPU
 
  LDA nextTileNumber,X   ; Set A to the next free tile number for this bitplane
 
@@ -1389,11 +1412,21 @@ ENDIF
 
 .sbuf3
 
-                        ; If we get here then we are in the process of sending
-                        ; tile data for this bitplane to the PPU, we still have
-                        ; pattern data to send to the PPU for this bitplane, and
-                        ; we will need to send the other bitplane to the PPU
-                        ; when we are done
+                        ; If we get here then the following are true:
+                        ;
+                        ;   * Bitplanes are enabled
+                        ;
+                        ;   * We have not sent all the data for the opposite
+                        ;     bitplane to the PPU
+                        ;
+                        ;   * The opposite bitplane is configured to be sent to
+                        ;     the PPU
+                        ;
+                        ;   * We are in the process of sending data for the
+                        ;     current bitplane to the PPU
+                        ;
+                        ;   * We still have pattern data to send to the PPU for
+                        ;     this bitplane
 
  LDA bitplaneFlags,X    ; Set A to the bitplane flags for the NMI bitplane
 
@@ -1401,18 +1434,23 @@ ENDIF
                         ; the original flags, and so on
 
  BPL RTS1               ; If bit 6 of the bitplane flags is clear, then this
-                        ; bitplane is configured to stop sending data if the
-                        ; other bitplane is also configured to send, which is
-                        ; the case, so we stop sending data for this bitplane
-                        ; by returning from the subroutine (as RTS1 contains an
-                        ; RTS)
+                        ; bitplane is only configured to send pattern data and
+                        ; not nametable data, and to stop sending the pattern
+                        ; data if the other bitplane is ready to be sent
+                        ;
+                        ; This is is the case here as we only jump to sbuf3 if
+                        ; the other bitplane is configured to send data to the
+                        ; PPU, so we stop sending the pattern data for this
+                        ; bitplane by returning from the subroutine (as RTS1
+                        ; contains an RTS)
 
  LDY lastTileNumber,X   ; Set Y to the number of the last tile we need to send
                         ; for this bitplane, divided by 8
 
  AND #%00001000         ; If bit 2 of the bitplane flags is set (as A was
- BEQ sbuf4              ; shifted left above), set Y = 128
- LDY #128
+ BEQ sbuf4              ; shifted left above), set Y = 128 to override the last
+ LDY #128               ; tile number with 128, which means send all tiles (as
+                        ; 128 * 8 = 1024 and 1024 is the buffer size)
 
 .sbuf4
 
@@ -1480,13 +1518,24 @@ ENDIF
 
  SUBTRACT_CYCLES 298    ; Subtract 298 from the cycle count
 
- LDA bitplaneFlags      ; If it is not the case that bit 7 is set and bit 5 is
- AND #%10100000         ; clear in the flags for bitplane 0, then that means
- CMP #%10000000         ; either bitplane 0 is not configured to be sent to the
- BNE sbuf8              ; PPU (bit 7 is clear) or it is configured to be sent
-                        ; but we have already sent all of it (bit 5 is set),
-                        ; so in either case we jump to sbuf8 to consider sending
-                        ; bitplane 1 instead
+ LDA bitplaneFlags      ; Set A to the bitplane flags for bitplane 0
+
+ AND #%10100000         ; This jumps to sbuf8 if any of the following are true
+ CMP #%10000000         ; for bitplane 0:
+ BNE sbuf8              ;
+                        ;   * Bit 5 is set (we have already sent all the data
+                        ;     to the PPU for bitplane 0)
+                        ;
+                        ;   * Bit 7 is clear (do not send data to the PPU for
+                        ;     bitplane 0)
+                        ;
+                        ; If any of these are true, we jump to sbuf8 to consider
+                        ; sending bitplane 1 instead
+
+                        ; If we get here then we have not already send all the
+                        ; data to the PPU for bitplane 0, and bitplane 0 is
+                        ; configured to be sent, so we start sending data for
+                        ; bitplane 0 to the PPU
 
  NOP                    ; This looks like code that has been removed
  NOP
@@ -1499,11 +1548,18 @@ ENDIF
 
 .sbuf8
 
- LDA bitplaneFlags+1    ; If bit 7 is set and bit 5 is clear in the flags for
- AND #%10100000         ; bitplane 1, then bitplane 1 is configured to be sent
- CMP #%10000000         ; to the PPU (bit 7 is set) and we have not already sent
- BEQ sbuf10             ; all of it (bit 5 is clear), so jump to sbuf10 to
-                        ; process sending bitplane 1
+ LDA bitplaneFlags+1    ; Set A to the bitplane flags for bitplane 1
+
+ AND #%10100000         ; This jumps to sbuf10 if both of the following are true
+ CMP #%10000000         ; for bitplane 1:
+ BEQ sbuf10             ;
+                        ;   * Bit 5 is clear (we have not already sent all the
+                        ;     data to the PPU for bitplane 1)
+                        ;
+                        ;   * Bit 7 is set (send data to the PPU for bitplane 1)
+                        ;
+                        ; If both of these are true then jump to sbuf10 to start
+                        ; sending data for bitplane 1 to the PPU
 
                         ; If we get here then we don't need to send either
                         ; bitplane to the PPU, so we update the cycle count and
@@ -2339,9 +2395,22 @@ ENDIF
 
 .SendOtherBitplane
 
- LDX nmiBitplane        ; Set bit 5 and clear all other bits in the bitplane
- LDA #%00100000         ; flags for the NMI bitplane, to indicate that we have
- STA bitplaneFlags,X    ; finished sending data to the PPU for this bitplane
+ LDX nmiBitplane        ; Set X to the current NMI bitplane (i.e. the bitplane
+                        ; for which we have been sending data to the PPU)
+
+ LDA #%00100000         ; Set the NMI bitplane flags as follows:
+ STA bitplaneFlags,X    ;
+                        ;   * Bit 2 clear = last tile to send is lastTileNumber
+                        ;   * Bit 3 clear = don't clear buffers after sending
+                        ;   * Bit 4 clear = we've not started sending data yet
+                        ;   * Bit 5 set   = we have already sent all the data
+                        ;   * Bit 6 clear = only send pattern data to the PPU
+                        ;   * Bit 7 clear = do not send data to the PPU
+                        ;
+                        ; Bits 0 and 1 are ignored and are always clear
+                        ;
+                        ; So this indicates that we have finished sending data
+                        ; to the PPU for this bitplane
 
  SUBTRACT_CYCLES 227    ; Subtract 227 from the cycle count
 
@@ -2382,17 +2451,24 @@ ENDIF
 
  TAX                    ; Set X to the newly flipped NMI bitplane
 
- LDA bitplaneFlags,X    ; If bit 7 is set and bit 5 is clear in the flags for
- AND #%10100000         ; the new NMI bitplane, then bitplane X is already
- CMP #%10000000         ; configured to be sent to the PPU (bit 7 is set) and
- BEQ obit3              ; we have not already sent all of it (bit 5 is clear),
-                        ; so this can be picked up in the next VBlank, so jump
-                        ; to obit3 to update the cycle count and return from
-                        ; the subroutine without sending any more tile data to
-                        ; the PPU in this VBlank
+ LDA bitplaneFlags,X    ; Set A to the bitplane flags for the newly flipped NMI
+                        ; bitplane
+
+ AND #%10100000         ; This jumps to obit3 if both of the following are true
+ CMP #%10000000         ; for bitplane 1:
+ BEQ obit3              ;
+                        ;   * Bit 5 is clear (we have not already sent all the
+                        ;     data to the PPU for the bitplane)
+                        ;
+                        ;   * Bit 7 is set (send data to the PPU for the
+                        ;     bitplane)
+                        ;
+                        ; If both of these are true then jump to obit3 to update
+                        ; the cycle count and return from the subroutine without
+                        ; sending any more tile data to the PPU in this VBlank
 
                         ; If we get here then the new bitplane is not configured
-                        ; to be sent to the PPU, , so we send it now
+                        ; to be sent to the PPU, so we send it now ???
 
  JMP SetupTilesForPPU   ; Jump to SetupTilesForPPU to set up the variables for
                         ; sending tile data to the PPU
@@ -2460,21 +2536,27 @@ ENDIF
 
 .SendNametableNow
 
- LDX nmiBitplane        ; Set A to the bitplane flags for the NMI bitplane
- LDA bitplaneFlags,X
+ LDX nmiBitplane        ; Set X to the current NMI bitplane (i.e. the bitplane
+                        ; for which we are sending data to the PPU in the NMI
+                        ; handler)
+
+ LDA bitplaneFlags,X    ; Set A to the bitplane flags for the NMI bitplane
 
  ASL A                  ; Shift A left by one place, so bit 7 becomes bit 6 of
                         ; the original flags, and so on
 
- BPL snam1              ; If bit 6 of the bitplane flags is clear, jump to snam1
-                        ; to return from the subroutine
+ BPL snam1              ; If bit 6 of the bitplane flags is clear, then this
+                        ; bitplane is only configured to send pattern data and
+                        ; not nametable data, so jump to snam1 to return from
+                        ; the subroutine
 
  LDY lastTileNumber,X   ; Set Y to the number of the last tile we need to send
                         ; for this bitplane, divided by 8
 
  AND #%00001000         ; If bit 2 of the bitplane flags is set (as A was
- BEQ snam4              ; shifted left above), set Y = 128
- LDY #128
+ BEQ snam4              ; shifted left above), set Y = 128 to override the last
+ LDY #128               ; tile number with 128, which means send all tiles (as
+                        ; 128 * 8 = 1024 and 1024 is the buffer size)
 
 .snam4
 
@@ -2746,7 +2828,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Utility routines
 ;    Summary: Draw the left and right edges of the box along the sides of the
-;             screen, into the nametable buffer for the drawing bitplane
+;             screen, drawing into the nametable buffer for the drawing bitplane
 ;
 ; ******************************************************************************
 
@@ -3881,7 +3963,7 @@ ENDIF
 ; ------------------------------------------------------------------------------
 ;
 ; This routine is only called when we have just flipped the drawing plane
-; between 0 and 1 in the ChangeDrawingPlane routine.
+; between 0 and 1 in the FlipDrawingPlane routine.
 ;
 ; Arguments:
 ;
@@ -3900,9 +3982,9 @@ ENDIF
 
  LDA bitplaneFlags,X    ; If the flags for the new drawing bitplane are zero
  BEQ cdra2              ; then the bitplane's buffers are already clear (as we
-                        ; zero the flags in cdra1 following a successful
-                        ; clearance), so jump to cdra2 to return from the
-                        ; subroutine
+                        ; will have zeroed the flags in cdra1 following a
+                        ; successful clearance), so jump to cdra2 to return
+                        ; from the subroutine
 
  AND #%00100000         ; If bit 5 of the bitplane flags is set, then we have
  BNE cdra1              ; already sent all the data to the PPU for this
@@ -3926,8 +4008,16 @@ ENDIF
                         ; the PPU for this bitplane, so call cdra3 below to
                         ; clear out all remaining buffer space for this bitplane
 
- LDA #0                 ; Zero the flags for the new drawing bitplane to
- STA bitplaneFlags,X    ; indicate that the bitplane is clear
+ LDA #0                 ; Set the new drawing bitplane flags as follows:
+ STA bitplaneFlags,X    ;
+                        ;   * Bit 2 clear = last tile to send is lastTileNumber
+                        ;   * Bit 3 clear = don't clear buffers after sending
+                        ;   * Bit 4 clear = we've not started sending data yet
+                        ;   * Bit 5 clear = we have not yet sent all the data
+                        ;   * Bit 6 clear = only send pattern data to the PPU
+                        ;   * Bit 7 clear = do not send data to the PPU
+                        ;
+                        ; Bits 0 and 1 are ignored and are always clear
 
  LDA firstPatternTile   ; Set the next free tile number in tileNumber to the
  STA tileNumber         ; value of firstPatternTile, which contains the number
@@ -4268,11 +4358,16 @@ ENDIF
                         ; will pick up where we left off in the next VBlank)
 
  LDA bitplaneFlags,X    ; If both bits 4 and 5 of the current bitplane flags are
- BIT flagsForClearing   ; clear, then we are not currently sending tile data to
- BEQ pbuf1              ; the PPU for this bitplane, and we have not already
-                        ; sent the data, so we do not need to clear this
-                        ; bitplane as we only do so after sending its data to
-                        ; the PPU, which we are not currently doing
+ BIT flagsForClearing   ; clear, then this means:
+ BEQ pbuf1              ; 
+                        ;   * Bit 4 clear = we've not started sending data yet
+                        ;   * Bit 5 clear = we have not yet sent all the data
+                        ;
+                        ; So we are not currently sending tile data to the PPU
+                        ; for this bitplane, and we have not already sent the
+                        ; data, so we do not need to clear this bitplane as we
+                        ; only do so after sending its data to the PPU, which
+                        ; we are not currently doing
 
  AND #%00001000         ; If bit 3 of the of the current bitplane flags is
  BEQ pbuf2              ; clear, then this bitplane is configured not to be
@@ -5153,28 +5248,34 @@ ENDIF
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDA bitplaneFlags      ; Keep looping back to the start of the routine until
- AND #%01000000         ; bit 6 of the bitplane flags for bitplane 0 is clear,
- BNE WaitForPPUToFinish ; which means that bitplane 0 is defering to bitplane 1
+ AND #%01000000         ; bit 6 of the bitplane flags for bitplane 0 is clear
+ BNE WaitForPPUToFinish
 
  LDA bitplaneFlags+1    ; Do the same for bitplane 1
  AND #%01000000
  BNE WaitForPPUToFinish
 
- RTS                    ; We get here when both bitplanes are set to defer,
-                        ; which means the screen has finished refreshing and
-                        ; there is no longer any screen data that needs sending
-                        ; to the PPU, so we can return from the subroutine
+                        ; We get here when both bitplanes have bit 6 clear,
+                        ; which means neither bitplane is configured to send
+                        ; nametable data to the PPU
+                        ;
+                        ; This means the screen has finished refreshing and
+                        ; there is no longer any nametable data that needs
+                        ; sending to the PPU, so we can return from the
+                        ; subroutine
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: ChangeDrawingPlane
+;       Name: FlipDrawingPlane
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Flip the drawing bitplane
 ;
 ; ******************************************************************************
 
-.ChangeDrawingPlane
+.FlipDrawingPlane
 
  LDA drawingBitplane    ; Set X to the opposite bitplane to the current drawing
  EOR #1                 ; bitplane
@@ -5379,9 +5480,16 @@ ENDIF
  STA lastTileNumber
  STA lastTileNumber+1
 
- LDA #%11000100         ; Set bits 2, 6 and 7 of both bitplane flags
- STA bitplaneFlags
- STA bitplaneFlags+1
+ LDA #%11000100         ; Set both bitplane flags as follows:
+ STA bitplaneFlags      ;
+ STA bitplaneFlags+1    ;   * Bit 2 set   = send tiles until the end of buffer
+                        ;   * Bit 3 clear = don't clear buffers after sending
+                        ;   * Bit 4 clear = we've not started sending data yet
+                        ;   * Bit 5 clear = we have not yet sent all the data
+                        ;   * Bit 6 set   = send both pattern and nametable data
+                        ;   * Bit 7 set   = send data to the PPU
+                        ;
+                        ; Bits 0 and 1 are ignored and are always clear
 
  JMP WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
                         ; sent to the PPU, so the screen is fully updated and
@@ -5393,66 +5501,105 @@ ENDIF
 ;       Name: DrawShipInNewPlane
 ;       Type: Subroutine
 ;   Category: Drawing ships
-;    Summary: ???
+;    Summary: Flip the drawing bitplane and draw the current ship in the newly
+;             flipped bitplane
 ;
 ; ******************************************************************************
 
 .DrawShipInNewPlane
 
- JSR ChangeDrawingPlane
- JSR LL9_b1
+ JSR FlipDrawingPlane   ; Flip the drawing bitplane
+
+ JSR LL9_b1             ; Draw the current ship into the newly flipped drawing
+                        ; bitplane
+
+                        ; Fall through into SendDrawPlaneToPPU to send the
+                        ; drawing bitplane to the PPU
 
 ; ******************************************************************************
 ;
-;       Name: subm_D975
+;       Name: SendDrawPlaneToPPU
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing the screen
+;    Summary: Configure the drawing bitplane to be sent to the PPU after drawing
+;             the box edges and setting the next free tile number
 ;
 ; ******************************************************************************
 
-.subm_D975
+.SendDrawPlaneToPPU
 
- LDA #%11001000         ; Set bits 3, 6 and 7 of the drawing bitplane flags
+ LDA #%11001000         ; Set A so we set the drawing bitplane flags in
+                        ; SetDrawPlaneFlags as follows:
+                        ;
+                        ;   * Bit 2 clear = last tile to send is lastTileNumber
+                        ;   * Bit 3 set   = clear buffers after sending data
+                        ;   * Bit 4 clear = we've not started sending data yet
+                        ;   * Bit 5 clear = we have not yet sent all the data
+                        ;   * Bit 6 set   = send both pattern and nametable data
+                        ;   * Bit 7 set   = send data to the PPU
+                        ;
+                        ; Bits 0 and 1 are ignored and are always clear
+
+                        ; Fall through into SetDrawPlaneFlags to set the
+                        ; bitplane flags, draw the box edges and set the next
+                        ; free tile number
 
 ; ******************************************************************************
 ;
-;       Name: subm_D977
+;       Name: SetDrawPlaneFlags
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing the screen
+;    Summary: Set the drawing bitplane flags to the specified value, draw the
+;             box edges and set the next free tile number
 ;
 ; ******************************************************************************
 
-.subm_D977
+.SetDrawPlaneFlags
 
- PHA
+ PHA                    ; Store A on the stack, so we can retrieve them below
+                        ; when setting the new drawing bitplane flags
 
- JSR DrawBoxEdges
+ JSR DrawBoxEdges       ; Draw the left and right edges of the box along the
+                        ; sides of the screen, drawing into the nametable buffer
+                        ; for the drawing bitplane
 
- LDX drawingBitplane
- LDA tileNumber
- STA nextTileNumber,X
+ LDX drawingBitplane    ; Set X to the drawing bitplane
 
- PLA
- STA bitplaneFlags,X
+ LDA tileNumber         ; Set the next free tile number for the drawing bitplane
+ STA nextTileNumber,X   ; to the next free tile number in tileNumber
 
- RTS
+ PLA                    ; Retrieve A from the stack and set it as the value of
+ STA bitplaneFlags,X    ; the drawing bitplane flags
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: SendMissilesToPPU
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing the screen
+;    Summary: Send X batches of 16 bytes from SC(1 0) to the PPU
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The number of batches of 16 bytes to send to the PPU
+;
+;   SC(1 0)             The address of the data to send
 ;
 ; ******************************************************************************
 
 .SendMissilesToPPU
 
- LDY #0
+ LDY #0                 ; Set Y as an index counter for the following block,
+                        ; which sends 16 bytes of data from SC(1 0) to the PPU,
+                        ; using Y as an index that starts at 0 and increments
+                        ; after each byte
+                        ;
+                        ; We repeat this process for X iterations
 
- FOR I%, 1, 16
+ FOR I%, 0, 15
 
   LDA (SC),Y            ; Send the Y-th byte of SC(1 0) to the PPU
   STA PPU_DATA
@@ -5461,18 +5608,22 @@ ENDIF
 
  NEXT
 
- LDA SC
- CLC
- ADC #16
+ LDA SC                 ; Set SC(1 0) = SC(1 0) + 16
+ CLC                    ;
+ ADC #16                ; Starting with the low bytes
  STA SC
- BCC CD9F3
+
+ BCC smis1              ; And then the high bytes
  INC SC+1
 
-.CD9F3
+.smis1
 
- DEX
- BNE SendMissilesToPPU
- RTS
+ DEX                    ; Decrement the block counter in X
+
+ BNE SendMissilesToPPU  ; Loop back to the start of the subroutine until we have
+                        ; sent X batches of 16 bytes
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -5688,7 +5839,7 @@ ENDIF
  LDA #LO(nameBuffer1+1*32+1)
  STA SC2
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -10458,14 +10609,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_BA23_b3
+;       Name: SetSightSprites_b3
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: Call the subm_BA23 routine in ROM bank 3
+;   Category: Drawing sprites
+;    Summary: Call the SetSightSprites routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.subm_BA23_b3
+.SetSightSprites_b3
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -10473,7 +10624,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR subm_BA23          ; Call subm_BA23, now that it is paged into memory
+ JSR SetSightSprites    ; Call SetSightSprites, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -10797,14 +10948,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_A4A5_b6
+;       Name: DrawEquipment_b6
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: Call the subm_A4A5 routine in ROM bank 6
+;   Category: Equipment
+;    Summary: Call the DrawEquipment routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.subm_A4A5_b6
+.DrawEquipment_b6
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -10812,7 +10963,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR subm_A4A5          ; Call subm_A4A5, now that it is paged into memory
+ JSR DrawEquipment      ; Call DrawEquipment, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning

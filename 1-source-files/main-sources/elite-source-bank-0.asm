@@ -1872,7 +1872,7 @@ ENDIF
 
  LDA QQ11
  BNE C853A
- JSR ChangeDrawingPlane
+ JSR FlipDrawingPlane
 
 .C853A
 
@@ -2395,7 +2395,7 @@ ENDIF
 
 .C872A
 
- JSR subm_D975
+ JSR SendDrawPlaneToPPU
 
  JSR COMPAS
 
@@ -2404,7 +2404,7 @@ ENDIF
 .C8733
 
  LDA #%10001000
- JSR subm_D977
+ JSR SetDrawPlaneFlags
 
  JSR COMPAS
 
@@ -2414,9 +2414,9 @@ ENDIF
 
  LDX drawingBitplane
 
- LDA bitplaneFlags,X    ; Set bit 6 of the flags for the drawing bitplane
- ORA #%01000000
- STA bitplaneFlags,X
+ LDA bitplaneFlags,X    ; Set bit 6 of the flags for the drawing bitplane, so
+ ORA #%01000000         ; we send both nametable and pattern table data for
+ STA bitplaneFlags,X    ; bitplane X to the PPU in the NMI handler
 
  RTS
 
@@ -3054,7 +3054,11 @@ ENDIF
 .C8944
 
  STX firstPatternTile
- JSR DrawBoxEdges
+
+ JSR DrawBoxEdges       ; Draw the left and right edges of the box along the
+                        ; sides of the screen, drawing into the nametable buffer
+                        ; for the drawing bitplane
+
  JSR CopyNameBuffer0To1
  LDA QQ11
  CMP QQ11a
@@ -3132,13 +3136,22 @@ ENDIF
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- JSR DrawBoxEdges
+ JSR DrawBoxEdges       ; Draw the left and right edges of the box along the
+                        ; sides of the screen, drawing into the nametable buffer
+                        ; for the drawing bitplane
 
  JSR CopyNameBuffer0To1
 
- LDA #%11000100         ; Set bits 2, 6 and 7 of both bitplane flags
- STA bitplaneFlags
- STA bitplaneFlags+1
+ LDA #%11000100         ; Set both bitplane flags as follows:
+ STA bitplaneFlags      ;
+ STA bitplaneFlags+1    ;   * Bit 2 set   = send tiles until the end of buffer
+                        ;   * Bit 3 clear = don't clear buffers after sending
+                        ;   * Bit 4 clear = we've not started sending data yet
+                        ;   * Bit 5 clear = we have not yet sent all the data
+                        ;   * Bit 6 set   = send both pattern and nametable data
+                        ;   * Bit 7 set   = send data to the PPU
+                        ;
+                        ; Bits 0 and 1 are ignored and are always clear
 
  LDA tileNumber
  STA firstPatternTile
@@ -6790,7 +6803,7 @@ ENDIF
 .C9345
 
  JSR subm_B1D1
- JSR ChangeDrawingPlane
+ JSR FlipDrawingPlane
  LDA XP
  AND #$0F
  ORA #$60
@@ -6843,7 +6856,7 @@ ENDIF
 
 .C93AC
 
- JSR subm_D975
+ JSR SendDrawPlaneToPPU
  DEC YP
  DEC XP
  BNE C9345
@@ -7416,7 +7429,7 @@ ENDIF
  LDA #0
  STA nmiTimerLo
  STA nmiTimerHi
- JSR subm_BA23_b3
+ JSR SetSightSprites_b3
  LSR L0300
  JSR subm_AC5C_b3
  LDA L0306
@@ -7440,9 +7453,9 @@ ENDIF
 
 .loop_C95E7
 
- JSR ChangeDrawingPlane
+ JSR FlipDrawingPlane
  JSR subm_MA23
- JSR subm_D975
+ JSR SendDrawPlaneToPPU
  LDA L0465
  JSR subm_B1D4
  DEC LASCT
@@ -12058,7 +12071,7 @@ ENDIF
 
  JSR subm_B9C1_b4
 
- JMP subm_A4A5_b6
+ JMP DrawEquipment_b6
 
 ; ******************************************************************************
 ;
@@ -12246,7 +12259,7 @@ ENDIF
 
  JSR subm_EQSHP2
 
- JSR subm_A4A5_b6
+ JSR DrawEquipment_b6
 
  JSR SendScreenToPPU
 
@@ -12608,7 +12621,7 @@ ENDIF
  CMP #$1F
  BNE loop_CA5C5
  JSR dn
- JSR subm_A4A5_b6
+ JSR DrawEquipment_b6
  JSR SendScreenToPPU
  JMP CA4DB
 
@@ -16996,9 +17009,9 @@ ENDIF
  STA INWK+6             ; 127, and store in byte #6 (z_lo)
 
  TXA                    ; Set A to the random number in X and keep bits 0-3 and
- AND #%10001111         ; the bit 7 to get a number between -15 and +15, and
- STA INWK+29            ; store in byte #29 (roll counter) to give our ship a
-                        ; gentle roll with damping
+ AND #%10001111         ; the sign in bit 7 to get a number between -15 and +15,
+ STA INWK+29            ; and store in byte #29 (roll counter) to give our ship
+                        ; a gentle roll with damping
 
  LDY #64                ; Set the laser count to 64 to act as a counter in the
  STY LASCT              ; D2 loop below, so this setting determines how long the
@@ -17075,11 +17088,11 @@ ENDIF
 
 .D2
 
- JSR ChangeDrawingPlane ; ???
+ JSR FlipDrawingPlane  ; ???
  JSR subm_MA23
  JSR subm_BED2_b6
- LDA #$CC
- JSR subm_D977
+ LDA #%11001100
+ JSR SetDrawPlaneFlags
 
  DEC LASCT              ; Decrement the counter in LASCT, which we set above,
                         ; so for each loop around D2, we decrement LASCT by 5
@@ -20674,7 +20687,7 @@ ENDIF
 
  JSR WSCAN              ; Call WSCAN to wait for the vertical sync
 
- JSR subm_BA23_b3       ; ???
+ JSR SetSightSprites_b3 ; ???
 
 ; ******************************************************************************
 ;
