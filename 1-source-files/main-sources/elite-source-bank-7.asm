@@ -9202,7 +9202,7 @@ ENDIF
 ;
 ;       Name: MoveIconBarPointer
 ;       Type: Subroutine
-;   Category: Drawing sprites
+;   Category: Icon bar
 ;    Summary: Move the sprites that make up the icon bar pointer
 ;
 ; ******************************************************************************
@@ -10025,7 +10025,7 @@ ENDIF
 ;
 ;       Name: SetupPPUForIconBar
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: Icon bar
 ;    Summary: If the PPU has started drawing the icon bar, configure the PPU to
 ;             use nametable 0 and pattern table 0, while preserving A
 ;
