@@ -106,7 +106,7 @@
 ;
 ;       Name: Interrupts
 ;       Type: Subroutine
-;   Category: Text
+;   Category: Start and end
 ;    Summary: The IRQ and NMI handler while the MMC1 mapper reset routine is
 ;             still running
 ;
@@ -153,7 +153,7 @@ ENDIF
 ;
 ;       Name: systemCount
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Universe
 ;    Summary: The number of system images in the systemOffset table
 ;
 ; ******************************************************************************
@@ -166,7 +166,7 @@ ENDIF
 ;
 ;       Name: systemOffset
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Universe
 ;    Summary: Offset to the data for each of the 15 system images
 ;
 ; ******************************************************************************
@@ -193,7 +193,7 @@ ENDIF
 ;
 ;       Name: systemImage0
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Universe
 ;    Summary: Packed image data for system image 0
 ;
 ; ******************************************************************************
@@ -340,7 +340,7 @@ ENDIF
 ;
 ;       Name: systemImage1
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Universe
 ;    Summary: Packed image data for system image 1
 ;
 ; ******************************************************************************
@@ -478,7 +478,7 @@ ENDIF
 ;
 ;       Name: systemImage2
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Universe
 ;    Summary: Packed image data for system image 2
 ;
 ; ******************************************************************************
@@ -675,7 +675,7 @@ ENDIF
 ;
 ;       Name: systemImage3
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Universe
 ;    Summary: Packed image data for system image 3
 ;
 ; ******************************************************************************
@@ -842,7 +842,7 @@ ENDIF
 ;
 ;       Name: systemImage4
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Universe
 ;    Summary: Packed image data for system image 4
 ;
 ; ******************************************************************************
@@ -968,7 +968,7 @@ ENDIF
 ;
 ;       Name: systemImage5
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Universe
 ;    Summary: Packed image data for system image 5
 ;
 ; ******************************************************************************
@@ -1113,7 +1113,7 @@ ENDIF
 ;
 ;       Name: systemImage6
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Universe
 ;    Summary: Packed image data for system image 6
 ;
 ; ******************************************************************************
@@ -1253,7 +1253,7 @@ ENDIF
 ;
 ;       Name: systemImage7
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Universe
 ;    Summary: Packed image data for system image 7
 ;
 ; ******************************************************************************
@@ -1404,7 +1404,7 @@ ENDIF
 ;
 ;       Name: systemImage8
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Universe
 ;    Summary: Packed image data for system image 8
 ;
 ; ******************************************************************************
@@ -1518,7 +1518,7 @@ ENDIF
 ;
 ;       Name: systemImage9
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Universe
 ;    Summary: Packed image data for system image 9
 ;
 ; ******************************************************************************
@@ -1651,7 +1651,7 @@ ENDIF
 ;
 ;       Name: systemImage10
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Universe
 ;    Summary: Packed image data for system image 10
 ;
 ; ******************************************************************************
@@ -1800,7 +1800,7 @@ ENDIF
 ;
 ;       Name: systemImage11
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Universe
 ;    Summary: Packed image data for system image 11
 ;
 ; ******************************************************************************
@@ -1943,7 +1943,7 @@ ENDIF
 ;
 ;       Name: systemImage12
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Universe
 ;    Summary: Packed image data for system image 12
 ;
 ; ******************************************************************************
@@ -2102,7 +2102,7 @@ ENDIF
 ;
 ;       Name: systemImage13
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Universe
 ;    Summary: Packed image data for system image 13
 ;
 ; ******************************************************************************
@@ -2251,7 +2251,7 @@ ENDIF
 ;
 ;       Name: systemImage14
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Universe
 ;    Summary: Packed image data for system image 14
 ;
 ; ******************************************************************************
@@ -2375,7 +2375,7 @@ ENDIF
 ;
 ;       Name: Copyright message
 ;       Type: Variable
-;   Category: Copy protection
+;   Category: Text
 ;    Summary: A copyright message buried in the code, complete with typo
 ;
 ; ******************************************************************************
@@ -2421,7 +2421,7 @@ ENDIF
 ;
 ;       Name: SetSystemImage
 ;       Type: Subroutine
-;   Category: Drawing images
+;   Category: Universe
 ;    Summary: Fetch the background image and foreground sprite for the current
 ;             system image and send them to the pattern buffers and PPU
 ;
@@ -2461,7 +2461,7 @@ ENDIF
 ;
 ;       Name: GetSystemImage
 ;       Type: Subroutine
-;   Category: Drawing images
+;   Category: Universe
 ;    Summary: Fetch the background image for the current system and store it in
 ;             the pattern buffers
 ;

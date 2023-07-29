@@ -106,7 +106,7 @@
 ;
 ;       Name: Interrupts
 ;       Type: Subroutine
-;   Category: Text
+;   Category: Start and end
 ;    Summary: The IRQ and NMI handler while the MMC1 mapper reset routine is
 ;             still running
 ;
@@ -153,7 +153,7 @@ ENDIF
 ;
 ;       Name: Copyright and version message
 ;       Type: Variable
-;   Category: Copy protection
+;   Category: Text
 ;    Summary: A copyright and version message buried in the code
 ;
 ; ******************************************************************************
@@ -901,14 +901,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: barNames
+;       Name: barNames0
 ;       Type: Variable
 ;   Category: Icon bar
-;    Summary: Nametable entries for the five icon bar types
+;    Summary: Nametable entries for icon bar 0 (docked)
 ;
 ; ******************************************************************************
 
-.barNames
+.barNames0
 
  EQUB $09, $0B, $0C, $06, $0D, $0E, $0F, $10
  EQUB $06, $11, $12, $13, $14, $06, $15, $16
@@ -919,6 +919,17 @@ ENDIF
  EQUB $24, $35, $26, $36, $37, $38, $39, $26
  EQUB $25, $27, $24, $25, $26, $25, $27, $29
 
+; ******************************************************************************
+;
+;       Name: barNames1
+;       Type: Variable
+;   Category: Icon bar
+;    Summary: Nametable entries for icon bar 1 (flight)
+;
+; ******************************************************************************
+
+.barNames1
+
  EQUB $09, $0B, $0C, $06, $0D, $0E, $0F, $10
  EQUB $06, $11, $12, $13, $14, $15, $16, $17
  EQUB $18, $19, $1A, $1B, $08, $1C, $1D, $06
@@ -927,6 +938,17 @@ ENDIF
  EQUB $26, $30, $31, $32, $33, $26, $34, $35
  EQUB $36, $37, $26, $38, $39, $3A, $3B, $26
  EQUB $3C, $3D, $3E, $3F, $26, $40, $27, $29
+
+; ******************************************************************************
+;
+;       Name: barNames2
+;       Type: Variable
+;   Category: Icon bar
+;    Summary: Nametable entries for icon bar 2 (charts)
+;
+; ******************************************************************************
+
+.barNames2
 
  EQUB $09, $0B, $0C, $06, $0D, $0E, $0F, $10
  EQUB $06, $11, $12, $13, $14, $06, $15, $16
@@ -937,6 +959,17 @@ ENDIF
  EQUB $24, $36, $26, $37, $38, $39, $3A, $26
  EQUB $3B, $3C, $3D, $3E, $26, $3F, $27, $29
 
+; ******************************************************************************
+;
+;       Name: barNames3
+;       Type: Variable
+;   Category: Icon bar
+;    Summary: Nametable entries for icon bar 3 (pause options)
+;
+; ******************************************************************************
+
+.barNames3
+
  EQUB $09, $0B, $0C, $0D, $0E, $0F, $10, $11
  EQUB $06, $12, $08, $13, $14, $06, $15, $16
  EQUB $17, $18, $0D, $19, $1A, $1B, $1C, $06
@@ -945,6 +978,17 @@ ENDIF
  EQUB $26, $30, $27, $24, $31, $26, $32, $33
  EQUB $34, $35, $26, $2C, $36, $37, $38, $26
  EQUB $39, $3A, $3B, $3C, $26, $32, $33, $29
+
+; ******************************************************************************
+;
+;       Name: barNames4
+;       Type: Variable
+;   Category: Icon bar
+;    Summary: Nametable entries for icon bar 4 (title screen copyright message)
+;
+; ******************************************************************************
+
+.barNames4
 
  EQUB $0A, $05, $08, $0C, $0D, $0E, $0F, $10
  EQUB $11, $12, $13, $14, $15, $16, $08, $17
@@ -959,7 +1003,7 @@ ENDIF
 ;
 ;       Name: dashNametable
 ;       Type: Variable
-;   Category: ???
+;   Category: Dashboard
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -1007,7 +1051,7 @@ ENDIF
 ;
 ;       Name: dashImage
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Dashboard
 ;    Summary: Packed image data for the dashboard
 ;
 ; ******************************************************************************
@@ -1284,7 +1328,7 @@ ENDIF
 ;
 ;       Name: cobraImage
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Equipment
 ;    Summary: Packed image data for the Cobra Mk III shown on the Equip Ship
 ;             screen
 ;
@@ -1456,7 +1500,7 @@ ENDIF
 ;
 ;       Name: missileImage
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Equipment
 ;    Summary: Image data for the missiles shown on the Equip Ship screen
 ;
 ; ******************************************************************************
@@ -1476,7 +1520,7 @@ ENDIF
 ;
 ;       Name: eliteLogo
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Save and load
 ;    Summary: Packed image data for the small Elite logo shown on the save/load
 ;             screen
 ;
@@ -1562,7 +1606,7 @@ ENDIF
 ;
 ;       Name: eliteLogoBall
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Start and end
 ;    Summary: Packed image data for the ball at the bottom of the large Elite
 ;             logo shown on the start screen
 ;
@@ -1679,7 +1723,7 @@ ENDIF
 ;
 ;       Name: SetupView
 ;       Type: Subroutine
-;   Category: Utility routines
+;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -2175,7 +2219,7 @@ ENDIF
  LDA LAA5C,X
  CMP L03F2
  STA L03F2
- JSR subm_B57F
+ JSR GetViewPalettes
  DEC updatePaletteInNMI
  JSR WSCAN
  INC updatePaletteInNMI
@@ -2772,51 +2816,48 @@ ENDIF
 
 .DrawIconBar
 
-                        ; We start by setting V(1 0) to the address in the
+                        ; We start by setting V(1 0) to the address of the
                         ; barNames table that corresponds to the current icon
-                        ; bar type, as barNames contains the nametable entries
-                        ; we need to put in the nametable buffer for this icon
-                        ; bar type
-
- LDA iconBarType        ; Set Y = iconBarType << 6
- ASL A                  ;
- ASL A                  ; So Y is as follows:
- ASL A                  ;
- ASL A                  ;   * 0                        when iconBarType = 0 or 4
- ASL A                  ;
- ASL A                  ;   * iconBarType * 64         when iconBarType = 1 to 3
- TAY                    ;
-                        ; And the C flag is as follows:
+                        ; bar type (i.e. barNames0 to barNames4)
                         ;
-                        ;   * 0                        when iconBarType = 0 to 3
-                        ;   
-                        ;   * 1                        when iconBarType = 4
+                        ; This contains the nametable entries we need to put in
+                        ; the nametable buffer to show this icon bar type on
+                        ; the screen
 
- BNE dbar1              ; If Y is non-zero (when iconBarType = 1 to 3), jump to
-                        ; dbar1 to set A = HI(barNames)
+ LDA iconBarType        ; Set (C Y) = iconBarType << 6
+ ASL A                  ;           = iconBarType * 64
+ ASL A
+ ASL A
+ ASL A
+ ASL A
+ ASL A
+ TAY
 
- LDA #HI(barNames)-1    ; Otherwise Y is zero (when iconBarType = 0 or 4) so set
- BNE dbar2              ; A = HI(barNames) - 1 and jump to dbar2 to skip the
+ BNE dbar1              ; If Y is non-zero (i.e. iconBarType = 1 to 3), jump to
+                        ; dbar1 to set A = HI(barNames0)
+
+ LDA #HI(barNames0)-1   ; Otherwise Y is zero (i.e. iconBarType = 0 or 4) so set
+ BNE dbar2              ; A = HI(barNames0) - 1 and jump to dbar2 to skip the
                         ; following (this BNE is effectively a JMP as A is never
                         ; zero)
 
 .dbar1
 
- LDA #HI(barNames)      ; Set A = HI(barNames) for when iconBarType = 1 to 3
+ LDA #HI(barNames0)     ; Set A = HI(barNames0) for when iconBarType = 1 to 3
 
 .dbar2
 
                         ; When we get here, we have A set as follows:
                         ;
-                        ;   * HI(barNames) - 1         when iconBarType = 0 or 4
+                        ;   * HI(barNames0) - 1        when iconBarType = 0 or 4
                         ;
-                        ;   * HI(barNames)             when iconBarType = 1 to 3
+                        ;   * HI(barNames0)            when iconBarType = 1 to 3
 
  DEY                    ; Decrement Y, so Y is now:
                         ;
-                        ;   * $FF                      when iconBarType = 0 or 4
+                        ;   * $FF                     when iconBarType = 0 or 4
                         ;
-                        ;   * iconBarType * 64 - 1     when iconBarType = 1 to 3
+                        ;   * iconBarType * 64 - 1    when iconBarType = 1 to 3
 
  STY V                  ; Set V(1 0) = (A 0) + (C 0) + Y
  ADC #0                 ;
@@ -2824,42 +2865,52 @@ ENDIF
                         ;
                         ;   * When iconBarType = 0:
                         ;
-                        ;       (HI(barNames)-1 0) + (0 0) + $FF
-                        ;     = (HI(barNames)-1 0) + (1 0) - 1
-                        ;     = (HI(barNames) 0) - 1
-                        ;     = (HI(barNames) 0) + iconBarType * 64 - 1
+                        ;       (HI(barNames0)-1 0) + (0 0) + $FF
+                        ;       (HI(barNames0)-1 0) + $FF
+                        ;     = (HI(barNames0)-1 0) + (1 0) - 1
+                        ;     = (HI(barNames0) 0) - 1
+                        ;     = (HI(barNames0) 0) + iconBarType * 64 - 1
                         ;
                         ;   * When iconBarType = 1 to 3
                         ;
-                        ;       (HI(barNames) 0) + (0 0) + iconBarType * 64 - 1
-                        ;     = (HI(barNames) 0) + iconBarType * 64 - 1
+                        ;       (HI(barNames0) 0) + (0 0) + iconBarType * 64 - 1
+                        ;     = (HI(barNames0) 0) + iconBarType * 64 - 1
                         ;
                         ;   * When iconBarType = 4
                         ;
-                        ;       (HI(barNames-1 0) + (1 0) + $FF
-                        ;     = (HI(barNames-1 0) + (1 0) + (1 0) - 1
-                        ;     = (HI(barNames) 0) + (1 0) - 1
-                        ;     = (HI(barNames) 0) + 4 * 64 - 1
-                        ;     = (HI(barNames) 0) + iconBarType * 64 - 1
+                        ;       (HI(barNames0-1 0) + (1 0) + $FF
+                        ;     = (HI(barNames0-1 0) + (1 0) + (1 0) - 1
+                        ;     = (HI(barNames0) 0) + (1 0) - 1
+                        ;     = (HI(barNames0) 0) + 4 * 64 - 1
+                        ;     = (HI(barNames0) 0) + iconBarType * 64 - 1
                         ;
                         ; In other words, V(1 0) is as follows, for all the icon
                         ; bar types:
                         ;
-                        ;   V(1 0) = (HI(barNames) 0) + iconBarType * 64 - 1
+                        ;   V(1 0) = (HI(barNames0) 0) + iconBarType * 64 - 1
                         ;
-                        ; and because barNames is on a page boundary, we know
-                        ; that LO(barNames) = 0, so:
+                        ; and because barNames0 is on a page boundary, we know
+                        ; that LO(barNames0) = 0, so:
                         ;
-                        ;   (HI(barNames) 0) = (HI(barNames) LO(barNames))
-                        ;                    = barNames(1 0)
+                        ;   (HI(barNames0) 0) = (HI(barNames0) LO(barNames0))
+                        ;                     = barNames0(1 0)
                         ;
                         ; So we have:
                         ;
-                        ;   V(1 0) = barNames(1 0) + iconBarType * 64 - 1
+                        ;   V(1 0) = barNames0(1 0) + iconBarType * 64 - 1
                         ;
-                        ; As barNames contains 64 bytes for each icon bar type,
-                        ; V(1 0) is therefore the address of the 64-byte block
-                        ; in barNames for the current icon bar, minus 1
+                        ; barNames0 through barNames4 each contain 64 bytes, for
+                        ; the two rows of 32 tiles that make up the icon bar,
+                        ; and they are one after the other in memory, so V(1 0)
+                        ; therefore contains the address of the relevant table
+                        ; for the current icon bar's nametable entries (i.e.
+                        ; barNames0 to barNames4), minus 1
+                        ;
+                        ; Let's refer to the relevant table from barNames0 to
+                        ; barNames4 as barNames, to make things simpler, so we
+                        ; have the following:
+                        ;
+                        ;   V(1 0) = barNames - 1
 
                         ; Next, we set SC(1 0) and SC2(1 0) to the addresses in
                         ; the two nametable buffers for the icon bar, so we can
@@ -2901,21 +2952,22 @@ ENDIF
 
                         ; By this point, we have the following:
                         ;
-                        ;   * V(1 0) is the address of the icon bar's 64-byte
-                        ;     block in barNames, minus 1
+                        ;   * V(1 0) is the address of the icon bar's nametable
+                        ;     table (from barNames0 to barNames4), minus 1,
+                        ;     i.e. V(1 0) = barNames - 1
                         ;
-                        ;   * SC(1 0) is the address of the icon bar entries in
-                        ;     nametable buffer 0
+                        ;   * SC(1 0) is the address of the nametable entries
+                        ;     for the on-screen icon bar in nametable buffer 0
                         ;
-                        ;   * SC2(1 0) is the address of the icon bar entries in
-                        ;     nametable buffer 1
+                        ;   * SC2(1 0) is the address of the nametable entries
+                        ;     for the on-screen icon bar in nametable buffer 1
                         ;
                         ; So to draw the icon bar on-screen, we need to copy the
                         ; nametable entries from V(1 0) to both SC(1 0) and
                         ; SC2(1 0)
 
  LDY #63                ; Set Y as an index, which will count down from 63 to 1,
-                        ; so we copy bytes 0 to 62 in barNames to bytes 1 to 63
+                        ; so we copy bytes 0 to 62 in V(1 0) to bytes 1 to 63
                         ; in the nametable buffers
                         ;
                         ; We do this in two stages purely so we can clip in a
@@ -2950,10 +3002,15 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
-                        ; By this point we have copied bytes 0 to 62 in barNames
-                        ; to bytes 1 to 63 in the nametable buffers, which
-                        ; covers almost all of the two rows of 32 characters
-                        ; that make up the icon bar
+                        ; By this point we have copied bytes 0 to 62 in V(1 0)
+                        ; to bytes 1 to 63 in the nametable buffers, and because
+                        ; V(1 0) = barNames - 1, this means we have copied
+                        ; bytes 1 to 63 from the relevant barNames table to the
+                        ; nametable buffers
+                        ;
+                        ; This covers almost all of the two rows of 3 characters
+                        ; that make up the icon bar, but it is one short, as we
+                        ; aren't done yet
                         ;
                         ; Because the horizontal scroll in PPU_SCROLL is set to
                         ; 8, the leftmost tile on each row is scrolled around to
@@ -2967,17 +3024,17 @@ ENDIF
                         ; of the top row of the icon bar) and column 0 on row 1
                         ; (for the end of the bottom row of the icon bar)
 
- LDY #32                ; Copy byte 32 from V(1 0) to byte 0 of SC(1 0) and
- LDA (V),Y              ; SC2(1 0), i.e. byte 31 from barNames for this icon bar
- LDY #0                 ; type, so this fixes the tile in column 0 on row 0, at
- STA (SC),Y             ; the end of the top row of the icon bar
- STA (SC2),Y
+ LDY #32                ; Copy byte 32 from V(1 0), i.e. byte 31 of barNames,
+ LDA (V),Y              ; to byte 0 of SC(1 0) and SC2(1 0), which moves the
+ LDY #0                 ; tile at the end of the first row of the icon bar into
+ STA (SC),Y             ; column 0 on row 0 (for the end of the top row of the
+ STA (SC2),Y            ; icon bar on-screen)
 
- LDY #64                ; Copy byte 64 from V(1 0) to byte 32 of SC(1 0) and
- LDA (V),Y              ; SC2(1 0), i.e. byte 63 from barNames for this icon bar
- LDY #32                ; type, so this fixes the tile in column 0 on row 1, at
- STA (SC),Y             ; the end of the bottom row of the icon bar
- STA (SC2),Y
+ LDY #64                ; Copy byte 64 from V(1 0), i.e. byte 63 of barNames,
+ LDA (V),Y              ; to byte 32 of SC(1 0) and SC2(1 0), which moves the
+ LDY #32                ; tile at the end of the second row of the icon bar into
+ STA (SC),Y             ; column 0 on row 1 (for the end of the bottom row of
+ STA (SC2),Y            ; the icon bar on-screen)
 
  RTS                    ; Return from the subroutine
 
@@ -3396,7 +3453,7 @@ ENDIF
 
 .subm_AFAB
 
- LDA barNames+3*64+14,Y
+ LDA barNames3+14,Y
  STA (SC),Y
  STA (SC2),Y
  STY T
@@ -3404,7 +3461,7 @@ ENDIF
  CLC
  ADC #$20
  TAY
- LDA barNames+3*64+14,Y
+ LDA barNames3+14,Y
  STA (SC),Y
  STA (SC2),Y
  LDY T
@@ -4072,14 +4129,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: ClearTiles
+;       Name: ClearScreen
 ;       Type: Subroutine
-;   Category: Utility routines
+;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.ClearTiles
+.ClearScreen
 
  LDA #0
  STA SC+1
@@ -4183,14 +4240,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LB3DF
+;       Name: viewPalettes
 ;       Type: Variable
-;   Category: ???
+;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.LB3DF
+.viewPalettes
 
  EQUB $0F, $2C, $0F, $2C ; B3DF: 0F 2C 0F... .,.
  EQUB $0F, $28, $00, $1A ; B3E3: 0F 28 00... .(.
@@ -4283,14 +4340,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LB53F
+;       Name: paletteColours
 ;       Type: Variable
-;   Category: ???
+;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.LB53F
+.paletteColours
 
  EQUB $0F, $0F, $0F, $0F ; B53F: 0F 0F 0F... ...
  EQUB $0F, $0F, $0F, $0F ; B543: 0F 0F 0F... ...
@@ -4311,14 +4368,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B57F
+;       Name: GetViewPalettes
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B57F
+.GetViewPalettes
 
  LDA QQ11a
  AND #$0F
@@ -4334,9 +4391,9 @@ ENDIF
  ASL A
  ASL A
  ROL SC+1
- ADC #$DF
+ ADC #LO(viewPalettes)
  STA SC
- LDA #$B3
+ LDA #HI(viewPalettes)
  ADC SC+1
  STA SC+1
  LDY #$20
@@ -4394,32 +4451,32 @@ ENDIF
 ;
 ;       Name: subm_B5F6
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
 .subm_B5F6
 
- JSR subm_B5F9
+ JSR GetPaletteColours
 
 ; ******************************************************************************
 ;
-;       Name: subm_B5F9
+;       Name: GetPaletteColours
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B5F9
+.GetPaletteColours
 
  LDX #$1F
 
 .loop_CB5FB
 
  LDY XX3,X
- LDA LB53F,Y
+ LDA paletteColours,Y
  STA XX3,X
  DEX
  BNE loop_CB5FB
@@ -4481,15 +4538,15 @@ ENDIF
                         ; there is no more data waiting to be sent to the PPU
 
  JSR WSCAN
- JSR subm_B57F
+ JSR GetViewPalettes
  DEC updatePaletteInNMI
- JSR subm_B5F9
+ JSR GetPaletteColours
  JSR WSCAN-3
- JSR subm_B5F9
+ JSR GetPaletteColours
  JSR WSCAN-3
- JSR subm_B5F9
+ JSR GetPaletteColours
  JSR WSCAN-3
- JSR subm_B5F9
+ JSR GetPaletteColours
  JSR WSCAN-3
  INC updatePaletteInNMI
 
@@ -4511,18 +4568,18 @@ ENDIF
 .subm_B673
 
  JSR WSCAN
- JSR subm_B57F
+ JSR GetViewPalettes
  JSR subm_B5F6
- JSR subm_B5F9
+ JSR GetPaletteColours
  DEC updatePaletteInNMI
  JSR WSCAN-3
- JSR subm_B57F
+ JSR GetViewPalettes
  JSR subm_B5F6
  JSR WSCAN-3
- JSR subm_B57F
- JSR subm_B5F9
+ JSR GetViewPalettes
+ JSR GetPaletteColours
  JSR WSCAN-3
- JSR subm_B57F
+ JSR GetViewPalettes
  JSR CB607
  JSR WSCAN
  INC updatePaletteInNMI
@@ -4838,14 +4895,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B9E2
+;       Name: SetViewAttribs
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B9E2
+.SetViewAttribs
 
  LDX chosenLanguage
  LDA LB9DA,X

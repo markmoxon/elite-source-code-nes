@@ -33,6 +33,10 @@
 ;
 ; ******************************************************************************
 
+ Q% = _REMOVE_CHECKSUMS ; Set Q% to TRUE to max out the default commander, FALSE
+                        ; for the standard default commander (this is set to
+                        ; TRUE if checksums are disabled, just for convenience)
+
  NOST = 20              ; The number of stardust particles in normal space (this
                         ; goes down to 3 in witchspace)
 
@@ -285,10 +289,10 @@ IF NOT(_BANK = 3)
  subm_B248          = $B248
  subm_B2BC          = $B2BC
  subm_B2FB          = $B2FB
- ClearTiles         = $B341
+ ClearScreen        = $B341
  subm_B63D          = $B63D
  subm_B673          = $B673
- subm_B9E2          = $B9E2
+ SetViewAttribs     = $B9E2
  SetSightSprites    = $BA23
 
 ENDIF
@@ -348,7 +352,7 @@ IF NOT(_BANK = 6)
 
   subm_B88C         = $B88C
   subm_B8FE         = $B8FE
-  subm_B906         = $B90D
+  JAMESON           = $B90D
   subm_B919         = $B919
   LL164             = $B980
   subm_BA17         = $BA17
@@ -363,7 +367,7 @@ IF NOT(_BANK = 6)
 
   subm_B88C         = $B89B
   subm_B8FE         = $B90D
-  subm_B906         = $B91C
+  JAMESON           = $B91C
   subm_B919         = $B928
   LL164             = $B98F
   subm_BA17         = $BA26
@@ -3475,7 +3479,7 @@ ORG $0200
 
 .L03DE
 
- SKIP 1                 ; ???
+ SKIP 1                 ; ??? SVC, but is this used?
 
 .QQ21
 

@@ -106,7 +106,7 @@
 ;
 ;       Name: Interrupts
 ;       Type: Subroutine
-;   Category: Text
+;   Category: Start and end
 ;    Summary: The IRQ and NMI handler while the MMC1 mapper reset routine is
 ;             still running
 ;
@@ -7128,7 +7128,7 @@ ENDIF
 
 .TBRIEF
 
- JSR ClearTiles_b3      ; ???
+ JSR ClearScreen_b3     ; ???
 
  LDA #$95               ; Clear the top part of the screen, draw a white border,
  JSR TT66               ; and set the current view type in QQ11 to $95 (Mission
@@ -7658,7 +7658,7 @@ ENDIF
 ;
 ;       Name: ChangeViewRow0
 ;       Type: Subroutine
-;   Category: Utility routines
+;   Category: Drawing the screen
 ;    Summary: Clear the screen, set the current view type and move the cursor to
 ;             row 0
 ;
@@ -9710,7 +9710,7 @@ ENDIF
 ;
 ;       Name: DrawChartSystem
 ;       Type: Subroutine
-;   Category: Drawing sprites
+;   Category: Charts
 ;    Summary: Draw system blobs on short-range chart
 ;
 ; ------------------------------------------------------------------------------
@@ -15655,7 +15655,7 @@ ENDIF
 ;
 ;       Name: SetScreenHeight
 ;       Type: Subroutine
-;   Category: Utility routines
+;   Category: Drawing the screen
 ;    Summary: Set the screen height variables to the specified height
 ;
 ; ------------------------------------------------------------------------------
@@ -17124,7 +17124,7 @@ ENDIF
  LDA #$34
  STA L030A
  JSR ResetSoundL045E
- JSR subm_B906_b6
+ JSR JAMESON_b6
  JSR subm_F3AB
  LDA #1
  STA fontBitplane
@@ -17245,7 +17245,7 @@ ENDIF
 
 .BAY
 
- JSR ClearTiles_b3      ; ???
+ JSR ClearScreen_b3     ; ???
 
  LDA #$FF               ; Set QQ12 = $FF (the docked flag) to indicate that we
  STA QQ12               ; are docked
@@ -20641,7 +20641,7 @@ ENDIF
 ;
 ;       Name: ResetStardust
 ;       Type: Subroutine
-;   Category: Drawing sprites
+;   Category: Stardust
 ;    Summary: Hide the sprites for the stardust
 ;
 ; ******************************************************************************
@@ -20876,7 +20876,7 @@ ENDIF
 ;
 ;       Name: TT66
 ;       Type: Subroutine
-;   Category: Utility routines
+;   Category: Drawing the screen
 ;    Summary: Clear the screen and set the current view type
 ;
 ; ------------------------------------------------------------------------------
@@ -20905,7 +20905,8 @@ ENDIF
                         ; sent to the PPU, so the screen is fully updated and
                         ; there is no more data waiting to be sent to the PPU
 
- JSR ClearTiles_b3
+ JSR ClearScreen_b3     ; ???
+
  LDA #$10
  STA L00B5
  LDX #0
@@ -20973,7 +20974,7 @@ ENDIF
 
 .loop_CBF34
 
- JMP subm_B9E2_b3
+ JMP SetViewAttribs_b3
 
 .CBF37
 
@@ -21027,7 +21028,7 @@ ENDIF
 
 .CBF91
 
- JSR subm_B9E2_b3
+ JSR SetViewAttribs_b3
 
  LDA demoInProgress     ; If bit 7 of demoInProgress is set then we are
  BMI CBFA1              ; initialising the demo

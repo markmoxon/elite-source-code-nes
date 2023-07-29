@@ -106,7 +106,7 @@
 ;
 ;       Name: Interrupts
 ;       Type: Subroutine
-;   Category: Text
+;   Category: Start and end
 ;    Summary: The IRQ and NMI handler while the MMC1 mapper reset routine is
 ;             still running
 ;
@@ -153,7 +153,7 @@ ENDIF
 ;
 ;       Name: faceCount
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: The number of commander face images in the faceOffset table
 ;
 ; ******************************************************************************
@@ -166,7 +166,7 @@ ENDIF
 ;
 ;       Name: faceOffset
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Offset to the data for each of the 14 commander face images
 ;
 ; ******************************************************************************
@@ -192,7 +192,7 @@ ENDIF
 ;
 ;       Name: faceImage0
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander face image 0
 ;
 ; ******************************************************************************
@@ -251,7 +251,7 @@ ENDIF
 ;
 ;       Name: faceImage1
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander face image 1
 ;
 ; ******************************************************************************
@@ -309,7 +309,7 @@ ENDIF
 ;
 ;       Name: faceImage2
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander face image 2
 ;
 ; ******************************************************************************
@@ -367,7 +367,7 @@ ENDIF
 ;
 ;       Name: faceImage3
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander face image 3
 ;
 ; ******************************************************************************
@@ -428,7 +428,7 @@ ENDIF
 ;
 ;       Name: faceImage4
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander face image 4
 ;
 ; ******************************************************************************
@@ -490,7 +490,7 @@ ENDIF
 ;
 ;       Name: faceImage5
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander face image 5
 ;
 ; ******************************************************************************
@@ -551,7 +551,7 @@ ENDIF
 ;
 ;       Name: faceImage6
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander face image 6
 ;
 ; ******************************************************************************
@@ -612,7 +612,7 @@ ENDIF
 ;
 ;       Name: faceImage7
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander face image 7
 ;
 ; ******************************************************************************
@@ -673,7 +673,7 @@ ENDIF
 ;
 ;       Name: faceImage8
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander face image 8
 ;
 ; ******************************************************************************
@@ -732,7 +732,7 @@ ENDIF
 ;
 ;       Name: faceImage9
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander face image 9
 ;
 ; ******************************************************************************
@@ -792,7 +792,7 @@ ENDIF
 ;
 ;       Name: faceImage10
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander face image 10
 ;
 ; ******************************************************************************
@@ -855,7 +855,7 @@ ENDIF
 ;
 ;       Name: faceImage11
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander face image 11
 ;
 ; ******************************************************************************
@@ -914,7 +914,7 @@ ENDIF
 ;
 ;       Name: faceImage12
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander face image 12
 ;
 ; ******************************************************************************
@@ -975,7 +975,7 @@ ENDIF
 ;
 ;       Name: faceImage13
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander face image 13
 ;
 ; ******************************************************************************
@@ -1036,7 +1036,7 @@ ENDIF
 ;
 ;       Name: headCount
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: The number of commander headshot images in the headOffset table
 ;
 ; ******************************************************************************
@@ -1049,7 +1049,7 @@ ENDIF
 ;
 ;       Name: headOffset
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Offset to the data for each of the 14 commander headshot images
 ;
 ; ******************************************************************************
@@ -1075,7 +1075,7 @@ ENDIF
 ;
 ;       Name: headImage0
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander headshot image 0
 ;
 ; ******************************************************************************
@@ -1134,7 +1134,7 @@ ENDIF
 ;
 ;       Name: headImage1
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander headshot image 1
 ;
 ; ******************************************************************************
@@ -1194,7 +1194,7 @@ ENDIF
 ;
 ;       Name: headImage2
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander headshot image 2
 ;
 ; ******************************************************************************
@@ -1252,7 +1252,7 @@ ENDIF
 ;
 ;       Name: headImage3
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander headshot image 3
 ;
 ; ******************************************************************************
@@ -1315,7 +1315,7 @@ ENDIF
 ;
 ;       Name: headImage4
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander headshot image 4
 ;
 ; ******************************************************************************
@@ -1378,7 +1378,7 @@ ENDIF
 ;
 ;       Name: headImage5
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander headshot image 5
 ;
 ; ******************************************************************************
@@ -1439,7 +1439,7 @@ ENDIF
 ;
 ;       Name: headImage6
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander headshot image 6
 ;
 ; ******************************************************************************
@@ -1499,7 +1499,7 @@ ENDIF
 ;
 ;       Name: headImage7
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander headshot image 7
 ;
 ; ******************************************************************************
@@ -1559,7 +1559,7 @@ ENDIF
 ;
 ;       Name: headImage8
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander headshot image 8
 ;
 ; ******************************************************************************
@@ -1618,7 +1618,7 @@ ENDIF
 ;
 ;       Name: headImage9
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander headshot image 9
 ;
 ; ******************************************************************************
@@ -1679,7 +1679,7 @@ ENDIF
 ;
 ;       Name: headImage10
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander headshot image 10
 ;
 ; ******************************************************************************
@@ -1744,7 +1744,7 @@ ENDIF
 ;
 ;       Name: headImage11
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander headshot image 11
 ;
 ; ******************************************************************************
@@ -1803,7 +1803,7 @@ ENDIF
 ;
 ;       Name: headImage12
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander headshot image 12
 ;
 ; ******************************************************************************
@@ -1866,7 +1866,7 @@ ENDIF
 ;
 ;       Name: headImage13
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for commander headshot image 13
 ;
 ; ******************************************************************************
@@ -1932,7 +1932,7 @@ ENDIF
 ;
 ;       Name: glassesImage
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Packed image data for the glasses that the commander can wear
 ;
 ; ******************************************************************************
@@ -1960,7 +1960,7 @@ ENDIF
 ;
 ;       Name: eliteLogoBig
 ;       Type: Variable
-;   Category: Drawing images
+;   Category: Start and end
 ;    Summary: Packed image data for the big Elite logo shown on the start screen
 ;
 ; ******************************************************************************
@@ -2386,7 +2386,7 @@ ENDIF
 ;
 ;       Name: LB7AC
 ;       Type: Variable
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -2512,7 +2512,7 @@ ENDIF
 ;
 ;       Name: GetCmdrImage
 ;       Type: Subroutine
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: Fetch the group 2 image for the current system and store it in the
 ;             pattern buffers
 ;
@@ -2578,7 +2578,7 @@ ENDIF
 ;
 ;       Name: SetCmdrImage
 ;       Type: Subroutine
-;   Category: Drawing images
+;   Category: Status
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -2621,7 +2621,7 @@ ENDIF
 ;
 ;       Name: subm_B96B
 ;       Type: Subroutine
-;   Category: Drawing images
+;   Category: Start and end
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -2764,7 +2764,7 @@ ENDIF
 ;
 ;       Name: subm_B9F9
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************

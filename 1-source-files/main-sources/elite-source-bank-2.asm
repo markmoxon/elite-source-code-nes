@@ -106,7 +106,7 @@
 ;
 ;       Name: Interrupts
 ;       Type: Subroutine
-;   Category: Text
+;   Category: Start and end
 ;    Summary: The IRQ and NMI handler while the MMC1 mapper reset routine is
 ;             still running
 ;

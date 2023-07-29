@@ -106,7 +106,7 @@
 ;
 ;       Name: Interrupts
 ;       Type: Subroutine
-;   Category: Text
+;   Category: Start and end
 ;    Summary: The IRQ and NMI handler while the MMC1 mapper reset routine is
 ;             still running
 ;
@@ -2380,78 +2380,212 @@ ENDIF
 
  EQUW L8D7A_1
  EQUW L8D7A_2
-
- EQUB $D6, $8D, $E4, $8D  ; 8D7A: BA 8D C8... ...
- EQUB $F2, $8D, $00, $8E, $0E, $8E, $1C, $8E  ; 8D82: F2 8D 00... ...
- EQUB $2A, $8E, $38, $8E, $46, $8E, $54, $8E  ; 8D8A: 2A 8E 38... *.8
- EQUB $62, $8E, $70, $8E, $7E, $8E, $8C, $8E  ; 8D92: 62 8E 70... b.p
- EQUB $9A, $8E, $A8, $8E, $B6, $8E, $C4, $8E  ; 8D9A: 9A 8E A8... ...
- EQUB $D2, $8E, $E0, $8E, $EE, $8E, $FC, $8E  ; 8DA2: D2 8E E0... ...
- EQUB $0A, $8F, $18, $8F, $26, $8F, $34, $8F  ; 8DAA: 0A 8F 18... ...
- EQUB $42, $8F, $50, $8F, $5E, $8F, $6C, $8F  ; 8DB2: 42 8F 50... B.P
+ EQUW L8D7A_3
+ EQUW L8D7A_4
+ EQUW L8D7A_5
+ EQUW L8D7A_6
+ EQUW L8D7A_7
+ EQUW L8D7A_8
+ EQUW L8D7A_9
+ EQUW L8D7A_10
+ EQUW L8D7A_11
+ EQUW L8D7A_12
+ EQUW L8D7A_13
+ EQUW L8D7A_14
+ EQUW L8D7A_15
+ EQUW L8D7A_16
+ EQUW L8D7A_17
+ EQUW L8D7A_18
+ EQUW L8D7A_19
+ EQUW L8D7A_20
+ EQUW L8D7A_21
+ EQUW L8D7A_22
+ EQUW L8D7A_23
+ EQUW L8D7A_24
+ EQUW L8D7A_25
+ EQUW L8D7A_26
+ EQUW L8D7A_27
+ EQUW L8D7A_28
+ EQUW L8D7A_29
+ EQUW L8D7A_30
+ EQUW L8D7A_31
+ EQUW L8D7A_32
 
 .L8D7A_1
 
- EQUB $3C, $03, $04, $00, $02, $00, $30, $00  ; 8DBA: 3C 03 04... <..
+ EQUB $3C, $03, $04, $00, $02, $00, $30, $00
  EQUB $01, $0A, $00, $05, $00, $63
 
 .L8D7A_2
 
- EQUB $16, $04  ; 8DC2: 01 0A 00... ...
- EQUB $A8, $00, $04, $00, $70, $00, $FF, $63  ; 8DCA: A8 00 04... ...
- EQUB $0C, $02, $00, $00, $19, $19, $AC, $03  ; 8DD2: 0C 02 00... ...
- EQUB $1C, $00, $30, $00, $01, $63, $06, $02  ; 8DDA: 1C 00 30... ..0
- EQUB $FF, $00, $05, $63, $2C, $00, $00, $00  ; 8DE2: FF 00 05... ...
- EQUB $70, $00, $00, $63, $0C, $01, $00, $00  ; 8DEA: 70 00 00... p..
- EQUB $09, $63, $57, $02, $02, $00, $B0, $00  ; 8DF2: 09 63 57... .cW
- EQUB $FF, $63, $08, $01, $00, $00, $0A, $02  ; 8DFA: FF 63 08... .c.
- EQUB $18, $00, $01, $00, $30, $FF, $FF, $0A  ; 8E02: 18 00 01... ...
- EQUB $0C, $01, $00, $00, $0D, $02, $28, $00  ; 8E0A: 0C 01 00... ...
- EQUB $01, $00, $70, $FF, $FF, $0A, $0C, $01  ; 8E12: 01 00 70... ..p
- EQUB $00, $00, $19, $1C, $00, $01, $06, $00  ; 8E1A: 00 00 19... ...
- EQUB $70, $00, $01, $63, $06, $02, $00, $00  ; 8E22: 70 00 01... p..
- EQUB $5A, $09, $14, $00, $01, $00, $30, $00  ; 8E2A: 5A 09 14... Z..
- EQUB $FF, $63, $00, $0B, $00, $00, $46, $28  ; 8E32: FF 63 00... .c.
- EQUB $02, $00, $01, $00, $30, $00, $FF, $00  ; 8E3A: 02 00 01... ...
- EQUB $08, $06, $00, $03, $0E, $03, $6C, $00  ; 8E42: 08 06 00... ...
- EQUB $21, $00, $B0, $00, $FF, $63, $0C, $02  ; 8E4A: 21 00 B0... !..
- EQUB $00, $00, $13, $0F, $08, $00, $01, $00  ; 8E52: 00 00 13... ...
- EQUB $30, $00, $FF, $00, $0C, $03, $00, $02  ; 8E5A: 30 00 FF... 0..
- EQUB $AA, $78, $1F, $00, $01, $00, $30, $00  ; 8E62: AA 78 1F... .x.
- EQUB $01, $00, $01, $08, $00, $0A, $59, $02  ; 8E6A: 01 00 01... ...
- EQUB $4F, $00, $29, $00, $B0, $FF, $01, $FF  ; 8E72: 4F 00 29... O.)
- EQUB $00, $09, $00, $00, $19, $05, $82, $01  ; 8E7A: 00 09 00... ...
- EQUB $29, $00, $B0, $FF, $FF, $FF, $08, $02  ; 8E82: 29 00 B0... )..
- EQUB $00, $00, $22, $05, $82, $01, $29, $00  ; 8E8A: 00 00 22... .."
- EQUB $B0, $FF, $FF, $FF, $08, $03, $00, $00  ; 8E92: B0 FF FF... ...
- EQUB $0F, $63, $B0, $00, $20, $00, $70, $00  ; 8E9A: 0F 63 B0... .c.
- EQUB $FF, $63, $08, $02, $00, $00, $0D, $63  ; 8EA2: FF 63 08... .c.
- EQUB $8F, $01, $31, $00, $30, $00, $FF, $63  ; 8EAA: 8F 01 31... ..1
- EQUB $10, $02, $00, $00, $18, $05, $FF, $01  ; 8EB2: 10 02 00... ...
- EQUB $31, $00, $30, $00, $FF, $63, $10, $03  ; 8EBA: 31 00 30... 1.0
- EQUB $00, $00, $46, $03, $42, $03, $29, $00  ; 8EC2: 00 00 46... ..F
- EQUB $B0, $00, $FF, $FF, $0C, $06, $00, $00  ; 8ECA: B0 00 FF... ...
- EQUB $0C, $02, $57, $00, $14, $00, $B0, $00  ; 8ED2: 0C 02 57... ..W
- EQUB $FF, $63, $0C, $01, $00, $00, $82, $46  ; 8EDA: FF 63 0C... .c.
- EQUB $0F, $00, $01, $00, $B0, $00, $01, $00  ; 8EE2: 0F 00 01... ...
- EQUB $01, $07, $00, $05, $82, $46, $00, $00  ; 8EEA: 01 07 00... ...
- EQUB $01, $00, $B0, $00, $FF, $00, $01, $07  ; 8EF2: 01 00 B0... ...
- EQUB $00, $05, $19, $05, $82, $01, $29, $00  ; 8EFA: 00 05 19... ...
- EQUB $B0, $FF, $FF, $FF, $0E, $02, $00, $00  ; 8F02: B0 FF FF... ...
- EQUB $AA, $78, $1F, $00, $01, $00, $30, $00  ; 8F0A: AA 78 1F... .x.
- EQUB $01, $00, $01, $08, $00, $0A, $14, $03  ; 8F12: 01 00 01... ...
- EQUB $08, $00, $01, $00, $30, $00, $FF, $FF  ; 8F1A: 08 00 01... ...
- EQUB $00, $02, $00, $00, $01, $00, $00, $00  ; 8F22: 00 02 00... ...
- EQUB $00, $00, $30, $00, $00, $00, $0D, $00  ; 8F2A: 00 00 30... ..0
- EQUB $00, $00, $19, $05, $82, $01, $29, $00  ; 8F32: 00 00 19... ...
- EQUB $B0, $FF, $FF, $FF, $0F, $02, $00, $00  ; 8F3A: B0 FF FF... ...
- EQUB $0B, $04, $42, $00, $08, $00, $B0, $00  ; 8F42: 0B 04 42... ..B
- EQUB $01, $63, $08, $01, $00, $02, $96, $1C  ; 8F4A: 01 63 08... .c.
- EQUB $00, $01, $06, $00, $70, $00, $01, $63  ; 8F52: 00 01 06... ...
- EQUB $06, $02, $00, $00, $96, $1C, $00, $01  ; 8F5A: 06 02 00... ...
- EQUB $06, $00, $70, $00, $01, $63, $06, $02  ; 8F62: 06 00 70... ..p
- EQUB $00, $00, $14, $02, $28, $00, $01, $00  ; 8F6A: 00 00 14... ...
- EQUB $70, $FF, $FF, $0A, $00, $02, $00, $00  ; 8F72: 70 FF FF... p..
+ EQUB $16, $04
+ EQUB $A8, $00, $04, $00, $70, $00, $FF, $63
+ EQUB $0C, $02, $00, $00
+
+.L8D7A_3
+
+ EQUB $19, $19, $AC, $03
+ EQUB $1C, $00, $30, $00, $01, $63, $06, $02
+ EQUB $FF, $00
+
+.L8D7A_4
+
+ EQUB $05, $63, $2C, $00, $00, $00
+ EQUB $70, $00, $00, $63, $0C, $01, $00, $00
+
+.L8D7A_5
+
+ EQUB $09, $63, $57, $02, $02, $00, $B0, $00
+ EQUB $FF, $63, $08, $01, $00, $00
+
+.L8D7A_6
+
+ EQUB $0A, $02
+ EQUB $18, $00, $01, $00, $30, $FF, $FF, $0A
+ EQUB $0C, $01, $00, $00
+
+.L8D7A_7
+
+ EQUB $0D, $02, $28, $00
+ EQUB $01, $00, $70, $FF, $FF, $0A, $0C, $01
+ EQUB $00, $00
+
+.L8D7A_8
+
+ EQUB $19, $1C, $00, $01, $06, $00
+ EQUB $70, $00, $01, $63, $06, $02, $00, $00
+
+.L8D7A_9
+
+ EQUB $5A, $09, $14, $00, $01, $00, $30, $00
+ EQUB $FF, $63, $00, $0B, $00, $00
+
+.L8D7A_10
+
+ EQUB $46, $28
+ EQUB $02, $00, $01, $00, $30, $00, $FF, $00
+ EQUB $08, $06, $00, $03
+
+.L8D7A_11
+
+ EQUB $0E, $03, $6C, $00
+ EQUB $21, $00, $B0, $00, $FF, $63, $0C, $02
+ EQUB $00, $00
+
+.L8D7A_12
+
+ EQUB $13, $0F, $08, $00, $01, $00
+ EQUB $30, $00, $FF, $00, $0C, $03, $00, $02
+
+.L8D7A_13
+
+ EQUB $AA, $78, $1F, $00, $01, $00, $30, $00
+ EQUB $01, $00, $01, $08, $00, $0A
+
+.L8D7A_14
+
+ EQUB $59, $02
+ EQUB $4F, $00, $29, $00, $B0, $FF, $01, $FF
+ EQUB $00, $09, $00, $00
+
+.L8D7A_15
+
+ EQUB $19, $05, $82, $01
+ EQUB $29, $00, $B0, $FF, $FF, $FF, $08, $02
+ EQUB $00, $00
+
+.L8D7A_16
+
+ EQUB $22, $05, $82, $01, $29, $00
+ EQUB $B0, $FF, $FF, $FF, $08, $03, $00, $00
+
+.L8D7A_17
+
+ EQUB $0F, $63, $B0, $00, $20, $00, $70, $00
+ EQUB $FF, $63, $08, $02, $00, $00
+
+.L8D7A_18
+
+ EQUB $0D, $63
+ EQUB $8F, $01, $31, $00, $30, $00, $FF, $63
+ EQUB $10, $02, $00, $00
+
+.L8D7A_19
+
+ EQUB $18, $05, $FF, $01
+ EQUB $31, $00, $30, $00, $FF, $63, $10, $03
+ EQUB $00, $00
+
+.L8D7A_20
+
+ EQUB $46, $03, $42, $03, $29, $00
+ EQUB $B0, $00, $FF, $FF, $0C, $06, $00, $00
+
+.L8D7A_21
+
+ EQUB $0C, $02, $57, $00, $14, $00, $B0, $00
+ EQUB $FF, $63, $0C, $01, $00, $00
+
+.L8D7A_22
+
+ EQUB $82, $46
+ EQUB $0F, $00, $01, $00, $B0, $00, $01, $00
+ EQUB $01, $07, $00, $05
+
+.L8D7A_23
+
+ EQUB $82, $46, $00, $00
+ EQUB $01, $00, $B0, $00, $FF, $00, $01, $07
+ EQUB $00, $05
+
+.L8D7A_24
+
+ EQUB $19, $05, $82, $01, $29, $00
+ EQUB $B0, $FF, $FF, $FF, $0E, $02, $00, $00
+
+.L8D7A_25
+
+ EQUB $AA, $78, $1F, $00, $01, $00, $30, $00
+ EQUB $01, $00, $01, $08, $00, $0A
+
+.L8D7A_26
+
+ EQUB $14, $03
+ EQUB $08, $00, $01, $00, $30, $00, $FF, $FF
+ EQUB $00, $02, $00, $00
+
+.L8D7A_27
+
+ EQUB $01, $00, $00, $00
+ EQUB $00, $00, $30, $00, $00, $00, $0D, $00
+ EQUB $00, $00
+
+.L8D7A_28
+
+ EQUB $19, $05, $82, $01, $29, $00
+ EQUB $B0, $FF, $FF, $FF, $0F, $02, $00, $00
+
+.L8D7A_29
+
+ EQUB $0B, $04, $42, $00, $08, $00, $B0, $00
+ EQUB $01, $63, $08, $01, $00, $02
+
+.L8D7A_30
+
+ EQUB $96, $1C
+ EQUB $00, $01, $06, $00, $70, $00, $01, $63
+ EQUB $06, $02, $00, $00
+
+.L8D7A_31
+
+ EQUB $96, $1C, $00, $01
+ EQUB $06, $00, $70, $00, $01, $63, $06, $02
+ EQUB $00, $00
+
+.L8D7A_32
+
+ EQUB $14, $02, $28, $00, $01, $00
+ EQUB $70, $FF, $FF, $0A, $00, $02, $00, $00
 
 ; ******************************************************************************
 ;
@@ -2466,12 +2600,21 @@ ENDIF
 
  EQUW L8F7A_1
  EQUW L8F7A_2
-
- EQUB $BE, $8F, $C3, $8F  ; 8F7A: 9C 8F A6... ...
- EQUB $D4, $8F, $DA, $8F, $DF, $8F, $E4, $8F  ; 8F82: D4 8F DA... ...
- EQUB $E6, $8F, $F1, $8F, $F8, $8F, $FA, $8F  ; 8F8A: E6 8F F1... ...
- EQUB $00, $90, $0A, $90, $0C, $90, $16, $90  ; 8F92: 00 90 0A... ...
- EQUB $1D, $90
+ EQUW L8F7A_3
+ EQUW L8F7A_4
+ EQUW L8F7A_5
+ EQUW L8F7A_6
+ EQUW L8F7A_7
+ EQUW L8F7A_8
+ EQUW L8F7A_9
+ EQUW L8F7A_10
+ EQUW L8F7A_11
+ EQUW L8F7A_12
+ EQUW L8F7A_13
+ EQUW L8F7A_14
+ EQUW L8F7A_15
+ EQUW L8F7A_16
+ EQUW L8F7A_17
 
 .L8F7A_1
 
@@ -2483,19 +2626,76 @@ ENDIF
  EQUB $03, $05, $07, $09  ; 8FA2: 03 01 00... ...
  EQUB $0A, $0C, $0E, $0E, $0E, $0C, $0C, $0A  ; 8FAA: 0A 0C 0E... ...
  EQUB $0A, $09, $09, $07, $06, $05, $04, $03  ; 8FB2: 0A 09 09... ...
- EQUB $02, $02, $01, $FF, $02, $06, $08, $00  ; 8FBA: 02 02 01... ...
- EQUB $FF, $06, $08, $0A, $0B, $0C, $0B, $0A  ; 8FC2: FF 06 08... ...
+ EQUB $02, $02, $01, $FF
+
+.L8F7A_3
+
+ EQUB $02, $06, $08, $00  ; 8FBA: 02 02 01... ...
+ EQUB $FF
+
+.L8F7A_4
+
+ EQUB $06, $08, $0A, $0B, $0C, $0B, $0A  ; 8FC2: FF 06 08... ...
  EQUB $09, $08, $07, $06, $05, $04, $03, $02  ; 8FCA: 09 08 07... ...
- EQUB $01, $FF, $01, $03, $06, $08, $0C, $80  ; 8FD2: 01 FF 01... ...
- EQUB $01, $04, $09, $0D, $80, $01, $04, $07  ; 8FDA: 01 04 09... ...
- EQUB $09, $FF, $09, $80, $0E, $0C, $0B, $09  ; 8FE2: 09 FF 09... ...
- EQUB $07, $05, $04, $03, $02, $01, $FF, $0C  ; 8FEA: 07 05 04... ...
- EQUB $00, $00, $0C, $00, $00, $FF, $0B, $80  ; 8FF2: 00 00 0C... ...
- EQUB $0A, $0B, $0C, $0D, $0C, $80, $0C, $0A  ; 8FFA: 0A 0B 0C... ...
+ EQUB $01, $FF
+
+.L8F7A_5
+
+ EQUB $01, $03, $06, $08, $0C, $80  ; 8FD2: 01 FF 01... ...
+
+.L8F7A_6
+
+ EQUB $01, $04, $09, $0D, $80
+
+.L8F7A_7
+
+ EQUB $01, $04, $07  ; 8FDA: 01 04 09... ...
+ EQUB $09, $FF
+
+.L8F7A_8
+
+ EQUB $09, $80
+
+.L8F7A_9
+
+ EQUB $0E, $0C, $0B, $09  ; 8FE2: 09 FF 09... ...
+ EQUB $07, $05, $04, $03, $02, $01, $FF
+
+.L8F7A_10
+
+ EQUB $0C  ; 8FEA: 07 05 04... ...
+ EQUB $00, $00, $0C, $00, $00, $FF
+
+.L8F7A_11
+
+ EQUB $0B, $80  ; 8FF2: 00 00 0C... ...
+
+.L8F7A_12
+
+ EQUB $0A, $0B, $0C, $0D, $0C, $80
+
+.L8F7A_13
+
+ EQUB $0C, $0A  ; 8FFA: 0A 0B 0C... ...
  EQUB $09, $07, $05, $04, $03, $02, $01, $FF  ; 9002: 09 07 05... ...
- EQUB $00, $FF, $04, $05, $06, $06, $05, $04  ; 900A: 00 FF 04... ...
- EQUB $03, $02, $01, $FF, $06, $05, $04, $03  ; 9012: 03 02 01... ...
- EQUB $02, $01, $FF, $0C, $0A, $09, $07, $05  ; 901A: 02 01 FF... ...
+
+.L8F7A_14
+
+ EQUB $00, $FF
+
+.L8F7A_15
+
+ EQUB $04, $05, $06, $06, $05, $04  ; 900A: 00 FF 04... ...
+ EQUB $03, $02, $01, $FF
+
+.L8F7A_16
+
+ EQUB $06, $05, $04, $03  ; 9012: 03 02 01... ...
+ EQUB $02, $01, $FF
+
+.L8F7A_17
+
+ EQUB $0C, $0A, $09, $07, $05  ; 901A: 02 01 FF... ...
  EQUB $05, $04, $04, $03, $03, $02, $02, $01  ; 9022: 05 04 04... ...
  EQUB $01, $FF                                ; 902A: 01 FF       ..
 
@@ -3958,7 +4158,7 @@ ENDIF
 ;
 ;       Name: SetEquipmentSprite
 ;       Type: Subroutine
-;   Category: Drawing sprites
+;   Category: Equipment
 ;    Summary: Set up a sprite for a specific bit of equipment to show on our
 ;             Cobra Mk III on the Equip Ship screen
 ;
@@ -3972,7 +4172,7 @@ ENDIF
 ;
 ;       Name: SetLaserSprite
 ;       Type: Subroutine
-;   Category: Drawing sprites
+;   Category: Equipment
 ;    Summary: Set up a sprite for a specific laser to show on our Cobra Mk III
 ;             on the Equip Ship screen
 ;
@@ -4017,7 +4217,7 @@ ENDIF
 ;
 ;       Name: GetLaserSprite
 ;       Type: Subroutine
-;   Category: Drawing sprites
+;   Category: Equipment
 ;    Summary: Calculate the offset into the equipSprites table for a specific
 ;             laser's sprite
 ;
@@ -6307,7 +6507,7 @@ ENDIF
 
 .loop_CB77B
 
- LDA LB89C,X
+ LDA NA2%,X
  STA BUF,X
  DEX
  BPL loop_CB77B
@@ -6626,28 +6826,119 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LB89C
+;       Name: NA2%
 ;       Type: Variable
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.LB89C
+.NA2%
 
- EQUB $4A, $41, $4D, $45, $53, $4F, $4E, $01  ; B89C: 4A 41 4D... JAM
- EQUB $00, $14, $AD, $00, $00, $03, $E8, $46  ; B8A4: 00 14 AD... ...
- EQUB $00, $00, $18, $00, $00, $00, $16, $00  ; B8AC: 00 00 18... ...
- EQUB $00, $00, $00, $00, $00, $00, $00, $00  ; B8B4: 00 00 00... ...
- EQUB $00, $00, $00, $00, $00, $00, $00, $00  ; B8BC: 00 00 00... ...
- EQUB $00, $00, $00, $00, $00, $00, $00, $00  ; B8C4: 00 00 00... ...
- EQUB $00, $00, $03, $00, $10, $0F, $11, $00  ; B8CC: 00 00 03... ...
- EQUB $03, $1C, $0E, $00, $00, $0A, $00, $11  ; B8D4: 03 1C 0E... ...
- EQUB $3A, $07, $09, $08, $00, $00, $00, $00  ; B8DC: 3A 07 09... :..
- EQUB $80, $4A, $5A, $48, $02, $53, $B7, $AA  ; B8E4: 80 4A 5A... .JZ
- EQUB $27, $03, $00, $00, $00, $00, $00, $00  ; B8EC: 27 03 00... '..
- EQUB $00, $00, $00, $00, $00, $00, $00, $00  ; B8F4: 00 00 00... ...
- EQUB $00, $00                                ; B8FC: 00 00       ..
+ EQUS "JAMESON"         ; The current commander name, which defaults to JAMESON
+ EQUB 1
+
+ EQUB 0                 ; TP = Mission status, #0
+
+ EQUB 20                ; QQ0 = Current system X-coordinate (Lave), #1
+ EQUB 173               ; QQ1 = Current system Y-coordinate (Lave), #2
+
+IF Q%
+ EQUD &00CA9A3B         ; CASH = Amount of cash (100,000,000 Cr), #9-12
+ELSE
+ EQUD &E8030000         ; CASH = Amount of cash (100 Cr), #9-12
+ENDIF
+
+ EQUB 70                ; QQ14 = Fuel level, #13
+
+ EQUB 0                 ; COK = Competition flags, #14
+
+ EQUB 0                 ; GCNT = Galaxy number, 0-7, #15
+
+ EQUB POW+9+(128 AND Q%)  ; LASER = Front laser, #16
+
+ EQUB (POW+9+128) AND Q%  ; LASER+1 = Rear laser, #17
+
+ EQUW 0                 ; These bytes appear to be unused (they were originally
+                        ; used for up/down lasers, but they were dropped),
+                        ; #20-21
+
+ EQUB 22+(15 AND Q%)    ; CRGO = Cargo capacity, #22
+
+ EQUB 0                 ; QQ20+0  = Amount of food in cargo hold, #23
+ EQUB 0                 ; QQ20+1  = Amount of textiles in cargo hold, #24
+ EQUB 0                 ; QQ20+2  = Amount of radioactives in cargo hold, #25
+ EQUB 0                 ; QQ20+3  = Amount of slaves in cargo hold, #26
+ EQUB 0                 ; QQ20+4  = Amount of liquor/Wines in cargo hold, #27
+ EQUB 0                 ; QQ20+5  = Amount of luxuries in cargo hold, #28
+ EQUB 0                 ; QQ20+6  = Amount of narcotics in cargo hold, #29
+ EQUB 0                 ; QQ20+7  = Amount of computers in cargo hold, #30
+ EQUB 0                 ; QQ20+8  = Amount of machinery in cargo hold, #31
+ EQUB 0                 ; QQ20+9  = Amount of alloys in cargo hold, #32
+ EQUB 0                 ; QQ20+10 = Amount of firearms in cargo hold, #33
+ EQUB 0                 ; QQ20+11 = Amount of furs in cargo hold, #34
+ EQUB 0                 ; QQ20+12 = Amount of minerals in cargo hold, #35
+ EQUB 0                 ; QQ20+13 = Amount of gold in cargo hold, #36
+ EQUB 0                 ; QQ20+14 = Amount of platinum in cargo hold, #37
+ EQUB 0                 ; QQ20+15 = Amount of gem-stones in cargo hold, #38
+ EQUB 0                 ; QQ20+16 = Amount of alien items in cargo hold, #39
+
+ EQUB Q%                ; ECM = E.C.M. system, #40
+
+ EQUB Q%                ; BST = Fuel scoops ("barrel status"), #41
+
+ EQUB Q% AND 127        ; BOMB = Energy bomb, #42
+
+ EQUB Q% AND 1          ; ENGY = Energy/shield level, #43
+
+ EQUB Q%                ; DKCMP = Docking computer, #44
+
+ EQUB Q%                ; GHYP = Galactic hyperdrive, #45
+
+ EQUB Q%                ; ESCP = Escape pod, #46
+
+ EQUW 0                 ; TRIBBLE = Number of Trumbles in the cargo hold, #???
+
+ EQUB 0                 ; TALLYL = Combat rank fraction, #???
+
+ EQUB 3+(Q% AND 1)      ; NOMSL = Number of missiles, #51
+
+ EQUB 0                 ; FIST = Legal status ("fugitive/innocent status"), #52
+
+ EQUB 16                ; AVL+0  = Market availability of food, #53
+ EQUB 15                ; AVL+1  = Market availability of textiles, #54
+ EQUB 17                ; AVL+2  = Market availability of radioactives, #55
+ EQUB 0                 ; AVL+3  = Market availability of slaves, #56
+ EQUB 3                 ; AVL+4  = Market availability of liquor/Wines, #57
+ EQUB 28                ; AVL+5  = Market availability of luxuries, #58
+ EQUB 14                ; AVL+6  = Market availability of narcotics, #59
+ EQUB 0                 ; AVL+7  = Market availability of computers, #60
+ EQUB 0                 ; AVL+8  = Market availability of machinery, #61
+ EQUB 10                ; AVL+9  = Market availability of alloys, #62
+ EQUB 0                 ; AVL+10 = Market availability of firearms, #63
+ EQUB 17                ; AVL+11 = Market availability of furs, #64
+ EQUB 58                ; AVL+12 = Market availability of minerals, #65
+ EQUB 7                 ; AVL+13 = Market availability of gold, #66
+ EQUB 9                 ; AVL+14 = Market availability of platinum, #67
+ EQUB 8                 ; AVL+15 = Market availability of gem-stones, #68
+ EQUB 0                 ; AVL+16 = Market availability of alien items, #69
+
+ EQUB 0                 ; QQ26 = Random byte that changes for each visit to a
+                        ; system, for randomising market prices, #70
+
+ EQUW 0                 ; TALLY = Number of kills, #71-72
+
+ EQUB 128               ; SVC = Save count, #73
+
+ EQUW $5A4A             ; QQ21 = Seed s0 for system 0, galaxy 0 (Tibedied), #3-4
+ EQUW $0248             ; QQ21 = Seed s1 for system 0, galaxy 0 (Tibedied), #5-6
+ EQUW $B753             ; QQ21 = Seed s2 for system 0, galaxy 0 (Tibedied), #7-8
+
+ EQUB $AA, $27, $03     ; ???
+ EQUD 0
+ EQUD 0
+ EQUD 0
+ EQUD 0
 
 ; ******************************************************************************
 ;
@@ -6660,33 +6951,33 @@ ENDIF
 
 .subm_B8FE
 
- JSR subm_B906
- LDX #$4F
+ JSR JAMESON
+ LDX #79
 
 .loop_CB903
 
- LDA nameBuffer1+1023,X
- STA L0395,X
+ LDA L7800-1,X
+ STA NAME-1,X
  DEX
  BNE loop_CB903
  RTS
 
 ; ******************************************************************************
 ;
-;       Name: subm_B906
+;       Name: JAMESON
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B906
+.JAMESON
 
- LDY #$5E
+ LDY #94
 
 .loop_CB90F
 
- LDA LB89C,Y
+ LDA NA2%,Y
  STA L7800,Y
  DEY
  BPL loop_CB90F
@@ -7338,7 +7629,7 @@ ENDIF
 ;
 ;       Name: StartScreen
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Start and end
 ;    Summary: ???
 ;
 ; ******************************************************************************
