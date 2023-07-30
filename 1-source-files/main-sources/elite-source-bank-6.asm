@@ -3724,9 +3724,9 @@ ENDIF
 
  CMP #$34
  BNE CA1C0
- LDA L03EC
+ LDA DNOIZ
  EOR #$FF
- STA L03EC
+ STA DNOIZ
  JMP CA21D
 
 .CA1C0
@@ -3773,18 +3773,18 @@ ENDIF
 
  CMP #$31
  BNE CA20B
- LDA L03EB
+ LDA JSTGY
  EOR #$FF
- STA L03EB
+ STA JSTGY
  JMP CA21D
 
 .CA20B
 
  CMP #$32
  BNE CA21A
- LDA L03EA
+ LDA DAMP
  EOR #$FF
- STA L03EA
+ STA DAMP
  JMP CA21D
 
 .CA21A
@@ -6932,7 +6932,7 @@ ENDIF
  EQUB 0                 ; QQ26 = Random byte that changes for each visit to a
                         ; system, for randomising market prices, #61
 
- EQUW 0                 ; TALLY = Number of kills, #62-63
+ EQUW 20000 AND Q%      ; TALLY = Number of kills, #62-63
 
  EQUB 128               ; SVC = Save count (not used), #64 ???
 

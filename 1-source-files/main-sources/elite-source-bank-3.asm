@@ -2317,7 +2317,7 @@ ENDIF
 
 .ResetScreen
 
- JSR WaitFor3xVBlank
+ JSR WaitFor3xVBlank    ; Wait for three VBlanks to pass
 
  LDA #HI(20*32)         ; Set iconBarOffset(1 0) = 20*32
  STA iconBarOffset+1
@@ -2353,7 +2353,9 @@ ENDIF
  STA PPU_DATA
  DEY
  BNE CAAEB
- JSR WaitFor3xVBlank
+
+ JSR WaitFor3xVBlank    ; Wait for three VBlanks to pass
+
  LDA #0
  DEX
  BNE CAAEB
@@ -2439,7 +2441,9 @@ ENDIF
  STA attrSprite3
  LDA #3
  STA attrSprite4
- JSR WaitFor3xVBlank
+
+ JSR WaitFor3xVBlank    ; Wait for three VBlanks to pass
+
  LDA #0
  STA OAM_ADDR
  LDA #2
@@ -2490,7 +2494,8 @@ ENDIF
  STA QQ11a
  LDA #$FF
  STA L0473
- JSR WaitFor3xVBlank
+
+ JSR WaitFor3xVBlank    ; Wait for three VBlanks to pass
 
  LDA #%10010000         ; Set A to use as the new value for PPU_CTRL below
 
@@ -3140,14 +3145,14 @@ ENDIF
 
 .subm_AE18_ADE0
 
- LDA L03EB
+ LDA JSTGY
  BEQ CADEA
  LDY #2
  JSR subm_AF9A
 
 .CADEA
 
- LDA L03EA
+ LDA DAMP
  BEQ CADF4
  LDY #4
  JSR subm_AF96
@@ -3161,7 +3166,7 @@ ENDIF
 
 .CADFE
 
- LDA L03EC
+ LDA DNOIZ
  BMI CAE08
  LDY #9
  JSR subm_AF96

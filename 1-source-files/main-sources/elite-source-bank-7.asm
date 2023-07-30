@@ -158,19 +158,23 @@ ENDIF
                         ;   * Bit 6 clear = do not intensify blues
                         ;   * Bit 7 clear = do not intensify reds
 
+                        ; We now wait for three VBlanks to pass to ensure that 
+                        ; the PPU has stabilised after starting up
+
 .sper1
 
- LDA PPU_STATUS         ; Wait for three VBlanks to ensure that the PPU has
- BPL sper1              ; stabilised after starting up
+ LDA PPU_STATUS         ; Wait for the first VBlank to pass, which will set bit
+ BPL sper1              ; 7 of PPU_STATUS (and reading PPU_STATUS clears bit 7,
+                        ; ready for the next VBlank)
 
 .sper2
 
- LDA PPU_STATUS         ; This is the wait for the second VBlank
+ LDA PPU_STATUS         ; Wait for the second VBlank to pass
  BPL sper2
 
 .sper3
 
- LDA PPU_STATUS         ; This is the wait for the third VBlank
+ LDA PPU_STATUS         ; Wait for the third VBlank to pass
  BPL sper3
 
  LDA #$00               ; Set K%(1 0) = $3C00 ???
@@ -260,21 +264,22 @@ ENDIF
 
  LDA PPU_STATUS         ; Read the PPU_STATUS register, which clear the VBlank
                         ; latch in bit 7, so the following loops will wait for
-                        ; three VBlanks
+                        ; three VBlanks in total
 
 .resv1
 
- LDA PPU_STATUS         ; Wait for three VBlanks to ensure that the PPU has
- BPL resv1              ; stabilised after the above reset
+ LDA PPU_STATUS         ; Wait for the first VBlank to pass, which will set bit
+ BPL resv1              ; 7 of PPU_STATUS (and reading PPU_STATUS clears bit 7,
+                        ; ready for the next VBlank)
 
 .resv2
 
- LDA PPU_STATUS         ; This is the wait for the second VBlank
+ LDA PPU_STATUS         ; Wait for the second VBlank to pass
  BPL resv2
 
 .resv3
 
- LDA PPU_STATUS         ; This is the wait for the third VBlank
+ LDA PPU_STATUS         ; Wait for the third VBlank to pass
  BPL resv3
 
                         ; We now zero the RAM in the NES, as follows:
@@ -330,26 +335,27 @@ ENDIF
  BNE resv5              ; Loop back until we have zeroed three pages of memory
                         ; from $0300 to $05FF
 
- JSR SetupMMC1
+ JSR SetupMMC1          ; Configure the MMC1 mapper and page ROM bank 0 into
+                        ; memory at $8000
 
- JSR ResetSoundL045E
+ JSR ResetSoundL045E    ; ???
 
- LDA #%10000000
+ LDA #%10000000         ; Set A = 0 and set the C flag
  ASL A
 
- JSR ResetScreen_b3
+ JSR ResetScreen_b3     ; Reset the screen setup ???
 
- JSR SetDrawingPlaneTo0
+ JSR SetDrawingPlaneTo0 ; Set the drawing bitplane to 0
 
- JSR ResetBuffers
+ JSR ResetBuffers       ; Reset the pattern and nametable buffers
 
- LDA #0
+ LDA #00000000          ; Set DTW6 = %00000000 so lower case is not enabled
  STA DTW6
 
- LDA #$FF
- STA DTW2
+ LDA #%11111111         ; Set DTW2 = %11111111 to denote that we are not
+ STA DTW2               ; currently printing a word
 
- LDA #$FF
+ LDA #%11111111         ; Set DTW8 = %11111111 to denote ???
  STA DTW8
 
 ; ******************************************************************************
@@ -357,105 +363,124 @@ ENDIF
 ;       Name: SetBank0
 ;       Type: Subroutine
 ;   Category: Utility routines
-;    Summary: Page bank 0 into memory at $8000
+;    Summary: Page ROM bank 0 into memory at $8000
 ;
 ; ******************************************************************************
 
 .SetBank0
 
- LDA #0
- JMP SetBank
+ LDA #0                 ; Page ROM bank 0 into memory at $8000 and return from
+ JMP SetBank            ; the subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: SetNonZeroBank
 ;       Type: Subroutine
 ;   Category: Utility routines
-;    Summary: Page a specified bank into memory at $8000, but only if it is
+;    Summary: Page a specified ROM bank into memory at $8000, but only if it is
 ;             non-zero
 ;
 ; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
-;   A                   The number of the bank to page into memory at $8000
+;   A                   The number of the ROM bank to page into memory at $8000
 ;
 ; ******************************************************************************
 
 .SetNonZeroBank
 
- CMP currentBank
- BNE SetBank
+ CMP currentBank        ; If the ROM bank number in A is non-zero, jump to
+ BNE SetBank            ; SetBank to page bank A into memory, returning from the
+                        ; subroutine using a tail call
 
- RTS
+ RTS                    ; Otherwise return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: ResetBank
 ;       Type: Subroutine
 ;   Category: Utility routines
-;    Summary: Retrieve a bank number from the stack and page that bank into
+;    Summary: Retrieve a ROM bank number from the stack and page that bank into
 ;             memory at $8000
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   Stack               The number of the ROM bank to page into memory at $8000
 ;
 ; ******************************************************************************
 
 .ResetBank
 
- PLA
+ PLA                    ; Retrieve the ROM bank number from the stack into A
+
+                        ; Fall through into SetBank to page ROM bank A into
+                        ; memory at $8000
 
 ; ******************************************************************************
 ;
 ;       Name: SetBank
 ;       Type: Subroutine
 ;   Category: Utility routines
-;    Summary: Page a specified bank into memory at $8000
+;    Summary: Page a specified ROM bank into memory at $8000
 ;
 ; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
-;   A                   The number of the bank to page into memory at $8000
+;   A                   The number of the ROM bank to page into memory at $8000
 ;
 ; ******************************************************************************
 
 .SetBank
 
- DEC runningSetBank
+ DEC runningSetBank     ; Decrement runningSetBank from 0 to $FF to denote that
+                        ; we are in the process of switching ROM banks
+                        ;
+                        ; This will disable the call to PlayMusic in the NMI
+                        ; handler, which instead will increment runningSetBank
+                        ; each time it is called
 
- STA currentBank
+ STA currentBank        ; Store the number of the new ROM bank in currentBank
 
- STA $FFFF
+ STA $FFFF              ; Set the MMC1 PRG bank register (which is mapped to
+ LSR A                  ; $C000-$DFFF) to the ROM bank number in A, to map the
+ STA $FFFF              ; specified ROM bank into memory at $8000
+ LSR A                  ;
+ STA $FFFF              ; Bit 4 of the ROM bank number will be zero, as A is in
+ LSR A                  ; the range 0 to 7, which also ensures that CHR-RAM is
+ STA $FFFF              ; enabled
  LSR A
  STA $FFFF
- LSR A
- STA $FFFF
- LSR A
- STA $FFFF
- LSR A
- STA $FFFF
 
- INC runningSetBank
+ INC runningSetBank     ; Increment runningSetBank again
 
- BNE CC0CA
+ BNE sban1              ; If runningSetBank is non-zero, then this means the NMI
+                        ; handler was called while we were switching the ROM
+                        ; bank, in which case PlayMusic won't have been called
+                        ; in the NMI handler, so jump to sban1 to call the
+                        ; PlayMusic routine now instead
 
- RTS
+ RTS                    ; Return from the subroutine
 
-.CC0CA
+.sban1
 
- LDA #0
- STA runningSetBank
+ LDA #0                 ; Set runningSetBank = 0 so the NMI handler knows we are
+ STA runningSetBank     ; no longer switching ROM banks
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
 
- TXA
+ TXA                    ; Store X and Y on the stack
  PHA
  TYA
  PHA
 
- JSR PlayMusic_b6
+ JSR PlayMusic_b6       ; Call the PlayMusic routine to play background music
 
- PLA
+ PLA                    ; Retrieve X and Y from the stack
  TAY
  PLA
  TAX
@@ -468,40 +493,50 @@ ENDIF
 ;
 ;       Name: LC0DF
 ;       Type: Variable
-;   Category: ???
+;   Category: Text
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
 .LC0DF
 
- EQUB   6,   6,   7,   7
+ EQUB 6, 6, 7, 7
 
 ; ******************************************************************************
 ;
 ;       Name: LC0E3
 ;       Type: Variable
-;   Category: ???
+;   Category: Text
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
 .LC0E3
 
- EQUB $0B,   9, $0D, $0A
+ EQUB 11, 9, 13, 10
 
 IF _NTSC
 
- EQUB $20, $20, $20, $20                      ; C0DF: 06 06 07... ...
- EQUB $10,   0, $C4, $ED, $5E, $E5, $22, $E5  ; C0EB: 10 00 C4... ...
- EQUB $22,   0,   0, $ED, $5E, $E5, $22,   9  ; C0F3: 22 00 00... "..
- EQUB $68,   0,   0,   0,   0                 ; C0FB: 68 00 00... h..
+ EQUB $20, $20, $20     ; These bytes appear to be unused
+ EQUB $20, $10, $00
+ EQUB $C4, $ED, $5E
+ EQUB $E5, $22, $E5
+ EQUB $22, $00, $00
+ EQUB $ED, $5E, $E5
+ EQUB $22, $09, $68
+ EQUB $00, $00, $00
+ EQUB $00
 
 ELIF _PAL
 
- EQUB $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
- EQUB $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
- EQUB $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
+ EQUB $FF, $FF, $FF     ; These bytes appear to be unused
+ EQUB $FF, $FF, $FF
+ EQUB $FF, $FF, $FF
+ EQUB $FF, $FF, $FF
+ EQUB $FF, $FF, $FF
+ EQUB $FF, $FF, $FF
+ EQUB $FF, $FF, $FF
+ EQUB $FF, $FF, $FF
  EQUB $FF
 
 ENDIF
@@ -3319,7 +3354,7 @@ ENDIF
 
 .inmi2
 
- INC runningSetBank     ; Set runningSetBank = 0 by incrementing it from $FF
+ INC runningSetBank     ; Increment runningSetBank
 
  LDA nmiStoreA          ; Restore the values of A, X and Y that we stored at
  LDX nmiStoreX          ; the start of the NMI handler
@@ -5498,30 +5533,46 @@ ENDIF
 ;
 ;       Name: WaitFor3xVBlank
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Utility routines
+;    Summary: Wait for three VBlanks to pass
 ;
 ; ******************************************************************************
 
 .WaitFor3xVBlank
 
- LDA PPU_STATUS
+ LDA PPU_STATUS         ; Read the PPU_STATUS register, which clear the VBlank
+                        ; latch in bit 7, so the following loops will wait for
+                        ; three VBlanks in total
 
-.loop_CD936
+.wait1
 
- LDA PPU_STATUS
- BPL loop_CD936
+ LDA PPU_STATUS         ; Wait for the first VBlank to pass, which will set bit
+ BPL wait1              ; 7 of PPU_STATUS (and reading PPU_STATUS clears bit 7,
+                        ; ready for the next VBlank)
 
-.loop_CD93B
+.wait2
 
- LDA PPU_STATUS
- BPL loop_CD93B
+ LDA PPU_STATUS         ; Wait for the second VBlank to pass
+ BPL wait2
 
-.CD940
+                        ; Fall through into WaitForVBlank to wait for the third
+                        ; VBlank before returning from the subroutine
 
- LDA PPU_STATUS
- BPL CD940
- RTS
+; ******************************************************************************
+;
+;       Name: WaitForVBlank
+;       Type: Subroutine
+;   Category: Utility routines
+;    Summary: Wait for the next VBlank to pass
+;
+; ******************************************************************************
+
+.WaitForVBlank
+
+ LDA PPU_STATUS         ; Wait for the next VBlank to pass
+ BPL WaitForVBlank
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -5534,13 +5585,17 @@ ENDIF
 
 .subm_D946
 
- TXA
+ TXA                    ; Store X on the stack, so we can retrieve it below
  PHA
- JSR CD940
- JSR PlayMusic_b6
- PLA
+
+ JSR WaitForVBlank      ; Wait for the next VBlank to pass
+
+ JSR PlayMusic_b6       ; ???
+
+ PLA                    ; Restore X from the stack
  TAX
- RTS
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -9665,7 +9720,7 @@ ENDIF
  LDA #4
  STA addr4
  LDX JSTY
- LDA L03EB
+ LDA JSTGY
  BMI CEAFB
  LDA controller1Down,Y
  BPL CEAEF
@@ -10033,7 +10088,7 @@ ENDIF
 
 .NOISE
 
- LDA L03EC
+ LDA DNOIZ
  BPL CEC2E
  LDX noiseLookup1,Y
  CPX #3
@@ -12893,11 +12948,11 @@ ENDIF
 .subm_F3AB
 
  LDA #0
- STA L03EB
+ STA JSTGY
  STA L03ED
  LDA #$FF
- STA L03EA
- STA L03EC
+ STA DAMP
+ STA DNOIZ
  RTS
 
 ; ******************************************************************************
@@ -13160,44 +13215,73 @@ ENDIF
 ;       Name: SetDrawingPlaneTo0
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: Set the drawing bitplane to 0
 ;
 ; ******************************************************************************
 
 .SetDrawingPlaneTo0
 
- LDX #0
+ LDX #0                 ; Set the drawing bitplane to 0
  JSR SetDrawingBitplane
- RTS
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: ResetBuffers
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing the screen
+;    Summary: Reset the pattern and nametable buffers
+;
+; ------------------------------------------------------------------------------
+;
+; The pattern buffers are in a continuous block of memory as follows:
+;
+;   * pattBuffer0 ($6000 to $67FF)
+;   * pattBuffer1 ($6800 to $6FFF)
+;   * nameBuffer0 ($7000 to $73BF)
+;   * attrBuffer0 ($73C0 to $73FF)
+;   * nameBuffer1 ($7400 to $77BF)
+;   * attrBuffer1 ($77C0 to $77FF)
+;
+; This covers $1800 bytes (24 pages of memory), and this routine zeroes the
+; whole lot.
 ;
 ; ******************************************************************************
 
 .ResetBuffers
 
- LDA #$60
- STA SC2+1
- LDA #0
+ LDA #HI(pattBuffer0)   ; Set SC2(1 0) to pattBuffer0, the address of the first
+ STA SC2+1              ; of the buffers we want to clear
+ LDA #Lo(pattBuffer0)
  STA SC2
- LDY #0
- LDX #$18
- LDA #0
 
-.CF4A1
+ LDY #0                 ; Set Y as a byte counter that we can use as an index
+                        ; into each page of memory as we clear them
 
- STA (SC2),Y
- INY
- BNE CF4A1
- INC SC2+1
- DEX
- BNE CF4A1
- RTS
+ LDX #$18               ; We want to zero memory from $6000 to $7800, so set a
+                        ; page counter in X to count each page of memory as we
+                        ; clear them
+
+ LDA #0                 ; We are going to clear the buffers by filling them with
+                        ; zeroes, so set A = 0 so we can poke it into memory
+
+.rbuf1
+
+ STA (SC2),Y            ; Zero the Y-th byte of SC2(1 0)
+
+ INY                    ; Increment the byte counter
+
+ BNE rbuf1              ; Loop back until we have zeroed a full page of memory
+
+ INC SC2+1              ; Increment the high byte of SC2(1 0) so it points to
+                        ; the next page in memory
+
+ DEX                    ; Decrement the page counter in X
+
+ BNE rbuf1              ; Loop back until we have zeroed all X pages of memory
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -15561,7 +15645,7 @@ ENDIF
  STA T
  LDA auto
  BNE CFA22
- LDA L03EA
+ LDA DAMP
  BEQ loop_CFA15
 
 .CFA22
@@ -16126,69 +16210,82 @@ ENDIF
 ;
 ;       Name: SetupMMC1
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Utility routines
+;    Summary: Configure the MMC1 mapper and page ROM bank 0 into memory at $8000
 ;
 ; ******************************************************************************
 
 .SetupMMC1
 
- LDA #$0E
- STA $9FFF
- LSR A
- STA $9FFF
- LSR A
- STA $9FFF
- LSR A
- STA $9FFF
- LSR A
- STA $9FFF
- LDA #0
- STA $BFFF
- LSR A
- STA $BFFF
- LSR A
- STA $BFFF
- LSR A
- STA $BFFF
- LSR A
- STA $BFFF
- LDA #0
- STA $DFFF
- LSR A
- STA $DFFF
- LSR A
- STA $DFFF
- LSR A
- STA $DFFF
- LSR A
- STA $DFFF
- JMP SetBank0
+ LDA #%00001110         ; Set the MMC1 Control register (which is mapped to
+ STA $9FFF              ; $8000-$9FFF) as follows:
+ LSR A                  ;
+ STA $9FFF              ;   * Bit 0 clear, Bit 1 set = Vertical mirroring (which
+ LSR A                  ;     overrides the horizontal mirroring set in the iNES
+ STA $9FFF              ;     header)
+ LSR A                  ;
+ STA $9FFF              ;   * Bits 2,3 set = PRG ROM bank mode 3 = fix ROM bank
+ LSR A                  ;     7 at $C000 and switch 16K ROM banks at $8000
+ STA $9FFF              ;
+                        ;   * Bit 4 clear = CHR ROM bank mode 0 = switch 8K at
+                        ;     a time
 
-; ******************************************************************************
-;
-;       Name: LFBCB
-;       Type: Variable
-;   Category: ???
-;    Summary: ???
-;
-; ******************************************************************************
+ LDA #0                 ; Set the MMC1 CHR bank 0 register (which is mapped to
+ STA $BFFF              ; $A000-$BFFF) to map CHR-ROM to $0000, though this has
+ LSR A                  ; no effect as we have no CHR-ROM (we have CHR-RAM
+ STA $BFFF              ; instead, which is always mapped to $6000-$7FFF)
+ LSR A
+ STA $BFFF
+ LSR A
+ STA $BFFF
+ LSR A
+ STA $BFFF
+
+ LDA #0                 ; Set the MMC1 CHR bank 1 register (which is mapped to
+ STA $DFFF              ; $C000-$DFFF) to map CHR-ROM to $1000, though this has
+ LSR A                  ; no effect as we have no CHR-ROM (we have CHR-RAM
+ STA $DFFF              ; instead, which is always mapped to $6000-$7FFF)
+ LSR A
+ STA $DFFF
+ LSR A
+ STA $DFFF
+ LSR A
+ STA $DFFF
+
+ JMP SetBank0           ; Page ROM bank 0 into memory at $8000, returning from
+                        ; the subroutine using a tail call
 
 IF _NTSC
 
- EQUB $F5, $F5, $F5, $F5, $F6, $F6, $F6, $F6  ; FBCB: F5 F5 F5... ...
- EQUB $F7, $F7, $F7, $F7, $F7, $F8, $F8, $F8  ; FBD3: F7 F7 F7... ...
- EQUB $F8, $F9, $F9, $F9, $F9, $F9, $FA, $FA  ; FBDB: F8 F9 F9... ...
- EQUB $FA, $FA, $FA, $FB, $FB, $FB, $FB, $FB  ; FBE3: FA FA FA... ...
- EQUB $FC, $FC, $FC, $FC, $FC, $FD, $FD, $FD  ; FBEB: FC FC FC... ...
- EQUB $FD, $FD, $FD, $FE, $FE, $FE, $FE, $FE  ; FBF3: FD FD FD... ...
- EQUB $FF, $FF, $FF, $FF, $FF
+ EQUB $F5, $F5, $F5     ; These bytes appear to be unused
+ EQUB $F5, $F6, $F6
+ EQUB $F6, $F6, $F7
+ EQUB $F7, $F7, $F7
+ EQUB $F7, $F8, $F8
+ EQUB $F8, $F8, $F9
+ EQUB $F9, $F9, $F9
+ EQUB $F9, $FA, $FA
+ EQUB $FA, $FA, $FA
+ EQUB $FB, $FB, $FB
+ EQUB $FB, $FB, $FC
+ EQUB $FC, $FC, $FC
+ EQUB $FC, $FD, $FD
+ EQUB $FD, $FD, $FD
+ EQUB $FD, $FE, $FE
+ EQUB $FE, $FE, $FE
+ EQUB $FF, $FF, $FF
+ EQUB $FF, $FF
 
 ELIF _PAL
 
- EQUB $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
- EQUB $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
- EQUB $FF, $FF, $FF, $FF, $FF, $FF
+ EQUB $FF, $FF, $FF     ; These bytes appear to be unused
+ EQUB $FF, $FF, $FF
+ EQUB $FF, $FF, $FF
+ EQUB $FF, $FF, $FF
+ EQUB $FF, $FF, $FF
+ EQUB $FF, $FF, $FF
+ EQUB $FF, $FF, $FF
+ EQUB $FF
 
 ENDIF
 

@@ -1490,8 +1490,22 @@ ENDIF
 
 .runningSetBank
 
- SKIP 1                 ; Set to $FF if we are inside the SetBank routine when
-                        ; the NMI interrupts, 0 otherwise
+ SKIP 1                 ; A flag that records whether we are in the process of
+                        ; switching ROM banks in the SetBank routine when the
+                        ; NMI handler is called
+                        ;
+                        ;   * 0 = we are not in the process of switching ROM
+                        ;         banks
+                        ;
+                        ;   * Non-zero = we are not in the process of switching
+                        ;                ROM banks
+                        ;
+                        ; This is used to control whether the NMI handler calls
+                        ; the PlayMusic routine to play background music, as
+                        ; this can only happen if we are not in the middle of
+                        ; switching ROM banks (if we are, then PlayMusic is
+                        ; called once the bank-switching is done - see the
+                        ; SetBank routine for details)
 
 .L00F9
 
@@ -3530,23 +3544,23 @@ ORG $0200
 
 .L03E9
 
- SKIP 1                 ; ???
+ SKIP 1                 ; ??? Unused?
 
-.L03EA
+.DAMP
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Damping config option
 
-.L03EB
+.JSTGY
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Flip up-down (y-axis)
 
-.L03EC
+.DNOIZ
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Disable sound
 
 .L03ED
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Disable music
 
 .autoPlayDemo
 
@@ -4212,6 +4226,9 @@ ENDIF
 .scanController2
 
  SKIP 1                 ; If non-zero, scan controller 2 ???
+                        ;
+                        ; Toggled between 0 and 1 by the "one or two pilots"
+                        ; configuration icon
 
 .JSTX
 
