@@ -69,7 +69,7 @@
 ;
 ; This reset routine is therefore called when the NES starts up, whatever the
 ; bank configuration ends up being. It then switches ROM bank 7 to $C000 and
-; jumps into bank 7 at the game's entry point S%, which starts the game.
+; jumps into bank 7 at the game's entry point BEGIN, which starts the game.
 ;
 ; ******************************************************************************
 
@@ -86,7 +86,7 @@
                         ;
                         ;   * Fetches the contents of address $C006, which
                         ;     contains the high byte of the JMP destination
-                        ;     below, i.e. the high byte of S%, which is $C0
+                        ;     below, i.e. the high byte of BEGIN, which is $C0
                         ;
                         ;   * Adds 1, to give $C1
                         ;
@@ -100,7 +100,7 @@
                         ; bank at $8000 to be switched, so this instruction
                         ; ensures that bank 7 is present
 
- JMP S%                 ; Jump to S% in bank 7 to start the game
+ JMP BEGIN              ; Jump to BEGIN in bank 7 to start the game
 
 ; ******************************************************************************
 ;

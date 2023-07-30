@@ -69,7 +69,7 @@
 ;
 ; This reset routine is therefore called when the NES starts up, whatever the
 ; bank configuration ends up being. It then switches ROM bank 7 to $C000 and
-; jumps into bank 7 at the game's entry point S%, which starts the game.
+; jumps into bank 7 at the game's entry point BEGIN, which starts the game.
 ;
 ; ******************************************************************************
 
@@ -86,7 +86,7 @@
                         ;
                         ;   * Fetches the contents of address $C006, which
                         ;     contains the high byte of the JMP destination
-                        ;     below, i.e. the high byte of S%, which is $C0
+                        ;     below, i.e. the high byte of BEGIN, which is $C0
                         ;
                         ;   * Adds 1, to give $C1
                         ;
@@ -100,7 +100,7 @@
                         ; bank at $8000 to be switched, so this instruction
                         ; ensures that bank 7 is present
 
- JMP S%                 ; Jump to S% in bank 7 to start the game
+ JMP BEGIN              ; Jump to BEGIN in bank 7 to start the game
 
 ; ******************************************************************************
 ;
@@ -1733,12 +1733,36 @@ ENDIF
  JSR WSCAN
  LDA ppuCtrlCopy
  PHA
- LDA #0
- STA ppuCtrlCopy
- STA PPU_CTRL
- STA setupPPUForIconBar
- LDA #0
- STA PPU_MASK
+
+ LDA #%00000000         ; Set A to use as the new value for PPU_CTRL below
+
+ STA ppuCtrlCopy        ; Store the new value of PPU_CTRL in ppuCtrlCopy so we
+                        ; can check its value without having to access the PPU
+
+ STA PPU_CTRL           ; Configure the PPU by setting PPU_CTRL as follows:
+                        ;
+                        ;   * Bits 0-1    = base nametable address %00 ($2000)
+                        ;   * Bit 2 clear = increment PPU_ADDR by 1 each time
+                        ;   * Bit 3 clear = sprite pattern table is at $0000
+                        ;   * Bit 4 clear = background pattern table is at $0000
+                        ;   * Bit 5 clear = sprites are 8x8 pixels
+                        ;   * Bit 6 clear = use PPU 0 (the only option on a NES)
+                        ;   * Bit 7 clear = disable VBlank NMI generation
+
+ STA setupPPUForIconBar ; Clear bit 7 of setupPPUForIconBar so we do nothing
+                        ; when the PPU starts drawing the icon bar
+
+ LDA #%00000000         ; Configure the PPU by setting PPU_MASK as follows:
+ STA PPU_MASK           ;
+                        ;   * Bit 0 clear = normal colour (not monochrome)
+                        ;   * Bit 1 clear = hide leftmost 8 pixels of background
+                        ;   * Bit 2 clear = hide sprites in leftmost 8 pixels
+                        ;   * Bit 3 clear = hide background
+                        ;   * Bit 4 clear = hide sprites
+                        ;   * Bit 5 clear = do not intensify greens
+                        ;   * Bit 6 clear = do not intensify blues
+                        ;   * Bit 7 clear = do not intensify reds
+
  LDA QQ11
  CMP #$B9
  BNE CA7D4
@@ -1907,7 +1931,7 @@ ENDIF
 
 .loop_CA8B3
 
- LDA LAA6C,Y
+ LDA boxEdgeImages,Y
  STA PPU_DATA
  INY
  DEX
@@ -1953,9 +1977,14 @@ ENDIF
 .CA8FE
 
  STA showUserInterface
+
  PLA
- STA ppuCtrlCopy
+
+ STA ppuCtrlCopy        ; Store the new value of PPU_CTRL in ppuCtrlCopy so we
+                        ; can check its value without having to access the PPU
+
  STA PPU_CTRL
+
  JMP subm_B673_b3
 
 ; ******************************************************************************
@@ -2236,46 +2265,59 @@ ENDIF
 
 .LAA5C
 
- EQUB   0,   2, $0A, $0A ; AA5C: 00 02 0A... ...
- EQUB   0, $0A,   6,   8 ; AA60: 00 0A 06... ...
- EQUB   8,   5,   1,   7 ; AA64: 08 05 01... ...
- EQUB   3,   4,   0,   9 ; AA68: 03 04 00... ...
-
-.LAA6C
-
- EQUB   0,   0,   0,   0 ; AA6C: 00 00 00... ...
- EQUB   0,   0,   0,   0 ; AA70: 00 00 00... ...
- EQUB   0,   0,   0,   0 ; AA74: 00 00 00... ...
- EQUB   0,   0,   0,   0 ; AA78: 00 00 00... ...
- EQUB   0,   0,   0,   0 ; AA7C: 00 00 00... ...
- EQUB   0,   0,   0,   0 ; AA80: 00 00 00... ...
- EQUB   3,   3,   3,   3 ; AA84: 03 03 03... ...
- EQUB   3,   3,   3,   3 ; AA88: 03 03 03... ...
- EQUB   0,   0,   0,   0 ; AA8C: 00 00 00... ...
- EQUB   0,   0,   0,   0 ; AA90: 00 00 00... ...
- EQUB $C0, $C0, $C0, $C0 ; AA94: C0 C0 C0... ...
- EQUB $C0, $C0, $C0, $C0 ; AA98: C0 C0 C0... ...
- EQUB   0,   0,   0,   0 ; AA9C: 00 00 00... ...
- EQUB   0,   0,   0,   0 ; AAA0: 00 00 00... ...
- EQUB   0,   0,   0, $FF ; AAA4: 00 00 00... ...
- EQUB $FF, $FF,   0,   0 ; AAA8: FF FF 00... ...
- EQUB   0,   0,   0,   0 ; AAAC: 00 00 00... ...
- EQUB   0,   0,   0,   0 ; AAB0: 00 00 00... ...
- EQUB $0F, $1F, $1F, $DF ; AAB4: 0F 1F 1F... ...
- EQUB $DF, $BF, $BF, $BF ; AAB8: DF BF BF... ...
+ EQUB   0,   2, $0A, $0A
+ EQUB   0, $0A,   6,   8
+ EQUB   8,   5,   1,   7
+ EQUB   3,   4,   0,   9
 
 ; ******************************************************************************
 ;
-;       Name: DrawTitleScreen
+;       Name: boxEdgeImages
+;       Type: Variable
+;   Category: Drawing the screen
+;    Summary: Patterns for tiles 0 to 4
+;
+; ******************************************************************************
+
+.boxEdgeImages
+
+ EQUB   0,   0,   0,   0
+ EQUB   0,   0,   0,   0
+ EQUB   0,   0,   0,   0
+ EQUB   0,   0,   0,   0
+
+ EQUB   0,   0,   0,   0
+ EQUB   0,   0,   0,   0
+ EQUB   3,   3,   3,   3
+ EQUB   3,   3,   3,   3
+
+ EQUB   0,   0,   0,   0
+ EQUB   0,   0,   0,   0
+ EQUB $C0, $C0, $C0, $C0
+ EQUB $C0, $C0, $C0, $C0
+
+ EQUB   0,   0,   0,   0
+ EQUB   0,   0,   0,   0
+ EQUB   0,   0,   0, $FF
+ EQUB $FF, $FF,   0,   0
+
+ EQUB   0,   0,   0,   0
+ EQUB   0,   0,   0,   0
+ EQUB $0F, $1F, $1F, $DF
+ EQUB $DF, $BF, $BF, $BF
+
+; ******************************************************************************
+;
+;       Name: ResetScreen
 ;       Type: Subroutine
 ;   Category: Start and end
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.DrawTitleScreen
+.ResetScreen
 
- JSR subm_D933
+ JSR WaitFor3xVBlank
 
  LDA #HI(20*32)         ; Set iconBarOffset(1 0) = 20*32
  STA iconBarOffset+1
@@ -2311,7 +2353,7 @@ ENDIF
  STA PPU_DATA
  DEY
  BNE CAAEB
- JSR subm_D933
+ JSR WaitFor3xVBlank
  LDA #0
  DEX
  BNE CAAEB
@@ -2327,7 +2369,7 @@ ENDIF
 
 .loop_CAB0F
 
- LDA LAA6C,Y
+ LDA boxEdgeImages,Y
  STA PPU_DATA
  INY
  DEX
@@ -2341,7 +2383,7 @@ ENDIF
 
 .loop_CAB27
 
- LDA LAA6C,Y
+ LDA boxEdgeImages,Y
  STA PPU_DATA
  INY
  DEX
@@ -2397,7 +2439,7 @@ ENDIF
  STA attrSprite3
  LDA #3
  STA attrSprite4
- JSR subm_D933
+ JSR WaitFor3xVBlank
  LDA #0
  STA OAM_ADDR
  LDA #2
@@ -2448,11 +2490,24 @@ ENDIF
  STA QQ11a
  LDA #$FF
  STA L0473
- JSR subm_D933
- LDA #$90
- STA ppuCtrlCopy
- STA PPU_CTRL
- RTS
+ JSR WaitFor3xVBlank
+
+ LDA #%10010000         ; Set A to use as the new value for PPU_CTRL below
+
+ STA ppuCtrlCopy        ; Store the new value of PPU_CTRL in ppuCtrlCopy so we
+                        ; can check its value without having to access the PPU
+
+ STA PPU_CTRL           ; Configure the PPU by setting PPU_CTRL as follows:
+                        ;
+                        ;   * Bits 0-1    = base nametable address %00 ($2000)
+                        ;   * Bit 2 clear = increment PPU_ADDR by 1 each time
+                        ;   * Bit 3 clear = sprite pattern table is at $0000
+                        ;   * Bit 4 set   = background pattern table is at $1000
+                        ;   * Bit 5 clear = sprites are 8x8 pixels
+                        ;   * Bit 6 clear = use PPU 0 (the only option on a NES)
+                        ;   * Bit 7 set   = enable VBlank NMI generation
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;

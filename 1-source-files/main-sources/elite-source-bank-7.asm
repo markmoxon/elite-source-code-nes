@@ -71,7 +71,7 @@ ENDIF
 ;
 ; This reset routine is therefore called when the NES starts up, whatever the
 ; bank configuration ends up being. It then switches ROM bank 7 to $C000 and
-; jumps into bank 7 at the game's entry point S%, which starts the game.
+; jumps into bank 7 at the game's entry point BEGIN, which starts the game.
 ;
 ; We need to give a different label to this version of the reset routine so we
 ; can assemble bank 7 at the same time as banks 0 to 6, to enable the lower
@@ -92,7 +92,7 @@ ENDIF
                         ;
                         ;   * Fetches the contents of address $C006, which
                         ;     contains the high byte of the JMP destination
-                        ;     below, i.e. the high byte of S%, which is $C0
+                        ;     below, i.e. the high byte of BEGIN, which is $C0
                         ;
                         ;   * Adds 1, to give $C1
                         ;
@@ -106,152 +106,238 @@ ENDIF
                         ; bank at $8000 to be switched, so this instruction
                         ; ensures that bank 7 is present
 
- JMP S%                 ; Jump to S% in bank 7 to start the game
+ JMP BEGIN              ; Jump to BEGIN in bank 7 to start the game
 
 ; ******************************************************************************
 ;
-;       Name: S%
+;       Name: BEGIN
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Start and end
+;    Summary: Run through the NES initialisation process, reset the variables
+;             and start the game
 ;
 ; ******************************************************************************
 
-.S%
+.BEGIN
 
- SEI
+ SEI                    ; Disable interrupts
 
- CLD
+ CLD                    ; Clear the decimal flag, so we're not in decimal mode
+                        ; (this has no effect on the NES, as BCD mode is
+                        ; disabled in the 2A03 CPU, but we do this to ensure
+                        ; compatibility with 6502-based debuggers)
 
- LDX #$FF
- TXS
+ LDX #$FF               ; Set the stack pointer to $01FF, which is the standard
+ TXS                    ; location for the 6502 stack, so this instruction
+                        ; effectively resets the stack
 
  LDX #0                 ; Set startupDebug = 0 (though this value is never read,
  STX startupDebug       ; so this has no effect)
 
- LDA #%00010000
- STA PPU_CTRL
+ LDA #%00010000         ; Configure the PPU by setting PPU_CTRL as follows:
+ STA PPU_CTRL           ;
+                        ;   * Bits 0-1    = base nametable address %00 ($2000)
+                        ;   * Bit 2 clear = increment PPU_ADDR by 1 each time
+                        ;   * Bit 3 clear = sprite pattern table is at $0000
+                        ;   * Bit 4 set   = background pattern table is at $1000
+                        ;   * Bit 5 clear = sprites are 8x8 pixels
+                        ;   * Bit 6 clear = use PPU 0 (the only option on a NES)
+                        ;   * Bit 7 clear = disable VBlank NMI generation
 
- STA ppuCtrlCopy
+ STA ppuCtrlCopy        ; Store the new value of PPU_CTRL in ppuCtrlCopy so we
+                        ; can check its value without having to access the PPU
 
- LDA #0
- STA PPU_MASK
+ LDA #%00000000         ; Configure the PPU by setting PPU_MASK as follows:
+ STA PPU_MASK           ;
+                        ;   * Bit 0 clear = normal colour (not monochrome)
+                        ;   * Bit 1 clear = hide leftmost 8 pixels of background
+                        ;   * Bit 2 clear = hide sprites in leftmost 8 pixels
+                        ;   * Bit 3 clear = hide background
+                        ;   * Bit 4 clear = hide sprites
+                        ;   * Bit 5 clear = do not intensify greens
+                        ;   * Bit 6 clear = do not intensify blues
+                        ;   * Bit 7 clear = do not intensify reds
 
 .sper1
 
- LDA PPU_STATUS
- BPL sper1
+ LDA PPU_STATUS         ; Wait for three VBlanks to ensure that the PPU has
+ BPL sper1              ; stabilised after starting up
 
 .sper2
 
- LDA PPU_STATUS
+ LDA PPU_STATUS         ; This is the wait for the second VBlank
  BPL sper2
 
 .sper3
 
- LDA PPU_STATUS
+ LDA PPU_STATUS         ; This is the wait for the third VBlank
  BPL sper3
 
- LDA #$00
+ LDA #$00               ; Set K%(1 0) = $3C00 ???
  STA K%
  LDA #$3C
  STA K%+1
 
 .CC035
 
- LDX #$FF
- TXS
+ LDX #$FF               ; Set the stack pointer to $01FF, which is the standard
+ TXS                    ; location for the 6502 stack, so this instruction
+                        ; effectively resets the stack
 
- JSR ResetVariables
+ JSR ResetVariables     ; Reset all the RAM (in both the NES and cartridge), as
+                        ; it is in an undefined state when the NES is switched
+                        ; on, initialise all the game's variables, and switch to
+                        ; ROM bank 0
 
- JMP ShowStartScreen
+ JMP ShowStartScreen    ; Jump to ShowStartScreen in bank 0 to show the start
+                        ; screen and start the game
 
 ; ******************************************************************************
 ;
 ;       Name: ResetVariables
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Start and end
+;    Summary: Reset all the RAM (in both the NES and cartridge), initialise all
+;             the game's variables, and switch to ROM bank 0
 ;
 ; ******************************************************************************
 
 .ResetVariables
 
- LDA #0
- STA PPU_CTRL
+ LDA #%00000000         ; Configure the PPU by setting PPU_CTRL as follows:
+ STA PPU_CTRL           ;
+                        ;   * Bits 0-1    = base nametable address %00 ($2000)
+                        ;   * Bit 2 clear = increment PPU_ADDR by 1 each time
+                        ;   * Bit 3 clear = sprite pattern table is at $0000
+                        ;   * Bit 4 clear = background pattern table is at $0000
+                        ;   * Bit 5 clear = sprites are 8x8 pixels
+                        ;   * Bit 6 clear = use PPU 0 (the only option on a NES)
+                        ;   * Bit 7 clear = disable VBlank NMI generation
 
- STA ppuCtrlCopy
+ STA ppuCtrlCopy        ; Store the new value of PPU_CTRL in ppuCtrlCopy so we
+                        ; can check its value without having to access the PPU
 
- STA PPU_MASK
+ STA PPU_MASK           ; Configure the PPU by setting PPU_MASK as follows:
+                        ;
+                        ;   * Bit 0 clear = normal colour (not monochrome)
+                        ;   * Bit 1 clear = hide leftmost 8 pixels of background
+                        ;   * Bit 2 clear = hide sprites in leftmost 8 pixels
+                        ;   * Bit 3 clear = hide background
+                        ;   * Bit 4 clear = hide sprites
+                        ;   * Bit 5 clear = do not intensify greens
+                        ;   * Bit 6 clear = do not intensify blues
+                        ;   * Bit 7 clear = do not intensify reds
 
- STA setupPPUForIconBar
+ STA setupPPUForIconBar ; Clear bit 7 of setupPPUForIconBar so we do nothing
+                        ; when the PPU starts drawing the icon bar
 
- LDA #$40
+ LDA #%01000000
  STA JOY2
 
- INC $C006
+ INC $C006              ; Reset the MMC1 mapper, which we can do by writing a
+                        ; value with bit 7 set into any address in ROM space
+                        ; (i.e. any address from $8000 to $FFFF)
+                        ;
+                        ; The INC instruction does this in a more efficient
+                        ; manner than an LDA/STA pair, as it:
+                        ;
+                        ;   * Fetches the contents of address $C006, which
+                        ;     contains the high byte of the JMP destination
+                        ;     in the JMP BEGIN instruction, i.e. the high byte
+                        ;     of BEGIN, which is $C0
+                        ;
+                        ;   * Adds 1, to give $C1
+                        ;
+                        ;   * Writes the value $C1 back to address $C006
+                        ;
+                        ; $C006 is in the ROM space and $C1 has bit 7 set, so
+                        ; the INC does all that is required to reset the mapper,
+                        ; in fewer cycles and bytes than an LDA/STA pair
+                        ;
+                        ; Resetting MMC1 maps bank 7 to $C000 and enables the
+                        ; bank at $8000 to be switched, so this instruction
+                        ; ensures that bank 7 is present
 
- LDA PPU_STATUS
+ LDA PPU_STATUS         ; Read the PPU_STATUS register, which clear the VBlank
+                        ; latch in bit 7, so the following loops will wait for
+                        ; three VBlanks
 
 .resv1
 
- LDA PPU_STATUS
- BPL resv1
+ LDA PPU_STATUS         ; Wait for three VBlanks to ensure that the PPU has
+ BPL resv1              ; stabilised after the above reset
 
 .resv2
 
- LDA PPU_STATUS
+ LDA PPU_STATUS         ; This is the wait for the second VBlank
  BPL resv2
 
 .resv3
 
- LDA PPU_STATUS
+ LDA PPU_STATUS         ; This is the wait for the third VBlank
  BPL resv3
 
- LDA #0
- TAX
+                        ; We now zero the RAM in the NES, as follows:
+                        ;
+                        ;   * Zero page from $0000 to $00FF
+                        ;
+                        ;   * The rest of RAM from $0300 to $05FF
+                        ;
+                        ; This clears all of the NES's built-in RAM except for
+                        ; page 1, which is used for the stack
+
+ LDA #0                 ; Set A to zero so we can poke it into memory
+
+ TAX                    ; Set X to 0 to use as an index counter as we loop
+                        ; through zero page
 
 .resv4
 
- STA ZP,X
+ STA ZP,X               ; Zero the X-th byte of zero page at ZP
 
- INX
+ INX                    ; Increment the byte counter
 
- BNE resv4
+ BNE resv4              ; Loop back until we have zeroed the whole of zero page
+                        ; from $0000 to $00FF
 
- LDA #3
+ LDA #$03               ; Set SC(1 0) = $0300
  STA SC+1
- LDA #0
+ LDA #$00
  STA SC
 
- TXA
+ TXA                    ; Set A = 0 once again so we can poke it into memory
 
- LDX #3
+ LDX #3                 ; We now zero three pages of memory at $0300, $0400 and
+                        ; $0500, so set a page counter in X
 
- TAY
+ TAY                    ; Set Y = 0 to use as an index counter for each page of
+                        ; memory
 
 .resv5
 
- STA (SC),Y
+ STA (SC),Y             ; Zero the Y-th byte of the page at SC(1 0)
 
- INY
+ INY                    ; Increment the byte counter
 
- BNE resv5
+ BNE resv5              ; Loop back until we have zeroed the whole page of
+                        ; memory at SC(1 0)
 
- INC SC+1
+ INC SC+1               ; Increment the high byte of SC(1 0) so it points at the
+                        ; next page of memory
 
- DEX
+ DEX                    ; Decrement the page counter
 
- BNE resv5
+ BNE resv5              ; Loop back until we have zeroed three pages of memory
+                        ; from $0300 to $05FF
 
  JSR SetupMMC1
 
  JSR ResetSoundL045E
 
- LDA #$80
+ LDA #%10000000
  ASL A
 
- JSR DrawTitleScreen_b3
+ JSR ResetScreen_b3
 
  JSR SetDrawingPlaneTo0
 
@@ -3300,7 +3386,7 @@ ENDIF
  LDA #$02               ; Write $02 to OAM_DMA to upload 256 bytes of sprite
  STA OAM_DMA            ; data from the sprite buffer at $02xx into the PPU
 
- LDA #%00000000         ; Set PPU_MASK as follows:
+ LDA #%00000000         ; Configure the PPU by setting PPU_MASK as follows:
  STA PPU_MASK           ;
                         ;   * Bit 0 clear = normal colour (not monochrome)
                         ;   * Bit 1 clear = hide leftmost 8 pixels of background
@@ -3557,7 +3643,7 @@ ENDIF
 
 .upsc1
 
- LDA #%00011110         ; Set PPU_MASK as follows:
+ LDA #%00011110         ; Configure the PPU by setting PPU_MASK as follows:
  STA PPU_MASK           ;
                         ;   * Bit 0 clear = normal colour (i.e. not monochrome)
                         ;   * Bit 1 set   = show leftmost 8 pixels of background
@@ -3619,7 +3705,8 @@ ENDIF
                         ; This makes sure that the screen shows the nametable
                         ; for the visible bitplane, and not the hidden bitplane
 
- STX ppuCtrlCopy        ; Store a copy of PPU_CTRL in ppuCtrlCopy
+ STX ppuCtrlCopy        ; Store the new value of PPU_CTRL in ppuCtrlCopy so we
+                        ; can check its value without having to access the PPU
 
  LDA #$20               ; If hiddenBitPlane = 0 then set A = $24, otherwise set
  LDX hiddenBitPlane     ; A = $20, to use as the high byte of the PPU_ADDR
@@ -3685,7 +3772,8 @@ ENDIF
 
  STA PPU_CTRL           ; Update PPU_CTRL to set nametable 0 and pattern table 0
 
- STA ppuCtrlCopy        ; Store the new value of PPU_CTRL in ppuCtrlCopy
+ STA ppuCtrlCopy        ; Store the new value of PPU_CTRL in ppuCtrlCopy so we
+                        ; can check its value without having to access the PPU
 
  CLC                    ; Clear the C flag
 
@@ -5408,14 +5496,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_D933
+;       Name: WaitFor3xVBlank
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_D933
+.WaitFor3xVBlank
 
  LDA PPU_STATUS
 
@@ -11901,14 +11989,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: DrawTitleScreen_b3
+;       Name: ResetScreen_b3
 ;       Type: Subroutine
 ;   Category: Start and end
-;    Summary: Call the DrawTitleScreen routine in ROM bank 3
+;    Summary: Call the ResetScreen routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.DrawTitleScreen_b3
+.ResetScreen_b3
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -11916,7 +12004,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR DrawTitleScreen    ; Call DrawTitleScreen, now that it is paged into memory
+ JSR ResetScreen        ; Call ResetScreen, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning

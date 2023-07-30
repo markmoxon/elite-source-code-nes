@@ -69,7 +69,7 @@
 ;
 ; This reset routine is therefore called when the NES starts up, whatever the
 ; bank configuration ends up being. It then switches ROM bank 7 to $C000 and
-; jumps into bank 7 at the game's entry point S%, which starts the game.
+; jumps into bank 7 at the game's entry point BEGIN, which starts the game.
 ;
 ; ******************************************************************************
 
@@ -86,7 +86,7 @@
                         ;
                         ;   * Fetches the contents of address $C006, which
                         ;     contains the high byte of the JMP destination
-                        ;     below, i.e. the high byte of S%, which is $C0
+                        ;     below, i.e. the high byte of BEGIN, which is $C0
                         ;
                         ;   * Adds 1, to give $C1
                         ;
@@ -100,7 +100,7 @@
                         ; bank at $8000 to be switched, so this instruction
                         ; ensures that bank 7 is present
 
- JMP S%                 ; Jump to S% in bank 7 to start the game
+ JMP BEGIN              ; Jump to BEGIN in bank 7 to start the game
 
 ; ******************************************************************************
 ;
@@ -13139,7 +13139,7 @@ ENDIF
  LDA LASER,X            ; If there is no laser in view X (i.e. the laser power
  BEQ ref3               ; is zero), jump to ref3 to skip the refund code
 
- LDY #4                 ; If the current laser has power #POW (pulse laser),
+ LDY #4                 ; If the current laser has power #POW + 9 (pulse laser),
  CMP #POW+9             ; jump to ref1 with Y = 4 (the item number of a pulse
  BEQ ref1               ; laser in the table at PRXS)
 
@@ -17130,7 +17130,11 @@ ENDIF
  STA fontBitplane
  LDX #$FF
  STX QQ11a
- TXS
+
+ TXS                    ; Set the stack pointer to $01FF, which is the standard
+                        ; location for the 6502 stack, so this instruction
+                        ; effectively resets the stack
+
  JSR RESET
  JSR StartScreen_b6
 
@@ -17222,8 +17226,10 @@ ENDIF
 
 .subm_B358
 
- LDX #$FF
- TXS
+ LDX #$FF               ; Set the stack pointer to $01FF, which is the standard
+ TXS                    ; location for the 6502 stack, so this instruction
+                        ; effectively resets the stack
+
  JSR BR1
 
 ; ******************************************************************************

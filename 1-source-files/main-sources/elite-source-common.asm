@@ -82,7 +82,9 @@
                         ; pack-hunters are the Sidewinder, Mamba, Krait, Adder,
                         ; Gecko, Cobra Mk I, Worm and Cobra Mk III (pirate)
 
- POW = 15               ; Pulse laser power
+ POW = 15               ; Pulse laser power in the NES version is POW + 9,
+                        ; rather than just POW in the other versions (all other
+                        ; lasers are the same)
 
  Mlas = 50              ; Mining laser power
 
@@ -278,7 +280,7 @@ IF NOT(_BANK = 3)
  SetupView          = $A7B7
  subm_A972          = $A972
  subm_A9D1          = $A9D1
- DrawTitleScreen    = $AABC
+ ResetScreen        = $AABC
  subm_AC1D          = $AC1D
  subm_AC5C          = $AC5C
  subm_AE18          = $AE18
@@ -1349,7 +1351,7 @@ ENDIF
  SKIP 1                 ; High byte of the address of the PPU pattern table to
                         ; which we send dynamic tile patterns
                         ;
-                        ; This is set to HI(PPU_PATT_1) in DrawTitleScreen and
+                        ; This is set to HI(PPU_PATT_1) in ResetScreen and
                         ; doesn't change again, so it always points to pattern
                         ; table 1 in the PPU, as that's the only pattern table
                         ; we use for storing dynamic tiles
@@ -1400,8 +1402,15 @@ ENDIF
 
 .setupPPUForIconBar
 
- SKIP 1                 ; Bit 7 set means we set nametable 0 and palette table 0
-                        ; when the PPU starts drawing the icon bar
+ SKIP 1                 ; Controls whether we force the nametable and pattern
+                        ; table to 0 when the PPU starts drawing the icon bar
+                        ;
+                        ;   * Bit 7 clear = do nothing when the PPU starts
+                        ;                   drawing the icon bar
+                        ;
+                        ;   * Bit 7 set = configure the PPU to display nametable
+                        ;                 0 and pattern table 0 when the PPU
+                        ;                 starts drawing the icon bar
 
 .showUserInterface
 
@@ -1461,7 +1470,8 @@ ENDIF
 
 .ppuCtrlCopy
 
- SKIP 1                 ; Contains a copy of PPU_CTRL
+ SKIP 1                 ; Contains a copy of PPU_CTRL, so we can check the PPU
+                        ; configuration without having to access the PPU
 
 .enableBitplanes
 
@@ -3477,9 +3487,13 @@ ORG $0200
                         ;
                         ; You can see the rating calculation in STATUS
 
-.L03DE
+.SVC
 
- SKIP 1                 ; ??? SVC, but is this used?
+ SKIP 1                 ; The save count
+                        ;
+                        ; This is not used in the NES version of Elite (it is
+                        ; used to keep track of the number of saves in the
+                        ; original version)
 
 .QQ21
 
