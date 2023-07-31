@@ -2558,8 +2558,8 @@ ENDIF
                         ; V(1 0) as we go
                         ;
                         ; SC(1 0) is pattBuffer0 + pictureTile * 8, so this
-                        ; unpacks the data from tile number pictureTile in
-                        ; into pattern buffer 0
+                        ; unpacks the headshot pattern data into pattern buffer
+                        ; 0, starting from pattern pictureTile
 
  LDA SC2                ; Set SC(1 0) = SC2(1 0)
  STA SC                 ;             = pattBuffer1 + pictureTile * 8
@@ -2570,8 +2570,8 @@ ENDIF
                         ; V(1 0) as we go
                         ;
                         ; SC(1 0) is pattBuffer1 + pictureTile * 8, so this
-                        ; unpacks the data from tile number pictureTile in
-                        ; into pattern buffer 1
+                        ; unpacks the headshot pattern data into pattern buffer
+                        ; 1, starting from pattern pictureTile
 
  RTS                    ; Return from the subroutine
 
@@ -2635,60 +2635,78 @@ ENDIF
  LDA #LO(bigLogoImage)  ; So we can unpack the image data for the big Elite logo
  STA V                  ; into the pattern buffers
 
- LDA tileNumber
- TAY
- STY K+2
+ LDA tileNumber         ; Set K+2 to the next free tile number, to send to the
+ TAY                    ; DrawLogoNames routine below as the pattern number of
+ STY K+2                ; the start of the big logo data
 
- ASL A
- STA SC
-
- LDA #0
- ROL A
+ ASL A                  ; Set SC(1 0) = pattBuffer0 + tileNumber * 8
+ STA SC                 ;
+ LDA #LO(pattBuffer0)   ; So this contains the pattern in pattern buffer 0 that
+ ROL A                  ; corresponds to the next free file in tileNumber
  ASL SC
  ROL A
  ASL SC
  ROL A
- ADC #$60
+ ADC #HI(pattBuffer0)
  STA SC+1
 
- ADC #8
- STA SC2+1
+ ADC #8                 ; Set SC2(1 0) = SC(1 0) + (8 0)
+ STA SC2+1              ;
+ LDA SC                 ; Pattern buffer 0 consists of 8 pages of memory and is
+ STA SC2                ; followed by pattern buffer 1, so this sets SC2(1 0) to
+                        ; the pattern in pattern buffer 1 that corresponds to
+                        ; the next free file in tileNumber
 
- LDA SC
- STA SC2
+ JSR UnpackToRAM        ; Unpack the data at V(1 0) into SC(1 0), updating
+                        ; V(1 0) as we go
+                        ;
+                        ; SC(1 0) is pattBuffer0 + tileNumber * 8, so this
+                        ; unpacks the big logo pattern data into pattern buffer
+                        ; 0, starting from pattern tileNumber
 
- JSR UnpackToRAM
-
- LDA SC2
- STA SC
+ LDA SC2                ; Set SC(1 0) = SC2(1 0)
+ STA SC                 ;             = pattBuffer1 + pictureTile * 8
  LDA SC2+1
  STA SC+1
 
- JSR UnpackToRAM
+ JSR UnpackToRAM        ; Unpack the data at V(1 0) into SC(1 0), updating
+                        ; V(1 0) as we go
+                        ;
+                        ; SC(1 0) is pattBuffer0 + tileNumber * 8, so this
+                        ; unpacks the big logo pattern data into pattern buffer
+                        ; 0, starting from pattern tileNumber
 
  LDA #HI(bigLogoNames)  ; Set V(1 0) = bigLogoNames
  STA V+1
  LDA #LO(bigLogoNames)
  STA V
 
- LDA #$18
+ LDA #24                ; Set K = 24 to send to DrawLogoNames below
  STA K
- LDA #$14
+
+ LDA #20                ; Set K = 20 to send to DrawLogoNames below
  STA K+1
 
- LDA #1
- STA YC
+ LDA #1                 ; Move the text cursor to column 5 on row 1 for the call
+ STA YC                 ; to DrawLogoNames
  LDA #5
  STA XC
 
- JSR DrawLogoNames
+ JSR DrawLogoNames      ; Call DrawLogoNames with the following arguments:
+                        ;
+                        ;   * K = 24
+                        ;   * K+1 = 20
+                        ;   * K+2 = pattern number of big logo data
+                        ;   * (XC, YC) = (5, 1)
+                        ;
+                        ; ???
 
- LDA tileNumber
- CLC
- ADC #$D0
+ LDA tileNumber         ; The big logo takes up 208 tiles, so add 208 to the
+ CLC                    ; next free tile number in tileNumber, as we just used
+ ADC #208               ; up that many tiles
  STA tileNumber
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -2696,6 +2714,22 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Start and end
 ;    Summary: Set the nametable buffer entries for the big Elite logo
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   K                   ???
+;
+;   K+1                 ???
+;
+;   K+2                 ???
+;
+;   Y                   ???
+;
+;   XC                  ???
+;
+;   YC                  ???
 ;
 ; ******************************************************************************
 
@@ -2861,7 +2895,7 @@ ENDIF
 
  ADC K+2
 
- STA tileSprite0,X
+ STA patternSprite0,X
 
  LDA S
  STA attrSprite0,X

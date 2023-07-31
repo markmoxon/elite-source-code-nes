@@ -133,7 +133,9 @@
  PPU_PATT_0 = $0000
  PPU_PATT_1 = $1000
  PPU_NAME_0 = $2000
+ PPU_ATTR_0 = $23C0
  PPU_NAME_1 = $2400
+ PPU_ATTR_1 = $27C0
 
 ; ******************************************************************************
 ;
@@ -1364,15 +1366,15 @@ ENDIF
 
  SKIP 2                 ; Address of the current pattern buffer:
                         ;
-                        ;   * $6000 when drawingBitplane = 0
-                        ;   * $6800 when drawingBitplane = 1
+                        ;   * pattBuffer0 ($6000) when drawingBitplane = 0
+                        ;   * pattBuffer1 ($6800) when drawingBitplane = 1
 
 .ppuNametableAddr
 
  SKIP 2                 ; Address of the current PPU nametable:
                         ;
-                        ;   * $2000 when drawingBitplane = 0
-                        ;   * $2400 when drawingBitplane = 1
+                        ;   * PPU_NAME_0 ($2000) when drawingBitplane = 0
+                        ;   * PPU_NAME_1 ($2400) when drawingBitplane = 1
 
 .drawingPlaneDebug
 
@@ -1574,7 +1576,7 @@ ENDIF
 ;
 ;   * The sprite's screen coordinates in (x, y)
 ;
-;   * The number of the tile in VRAM that is plotted on-screen for this sprite
+;   * The number of the pattern that is drawn on-screen for this sprite
 ;
 ;   * The sprite's attributes, which are:
 ;
@@ -1595,9 +1597,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 0
 
-.tileSprite0
+.patternSprite0
 
- SKIP 1                 ; Tile number for sprite 0
+ SKIP 1                 ; Pattern number for sprite 0
 
 .attrSprite0
 
@@ -1611,9 +1613,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 1
 
-.tileSprite1
+.patternSprite1
 
- SKIP 1                 ; Tile number for sprite 1
+ SKIP 1                 ; Pattern number for sprite 1
 
 .attrSprite1
 
@@ -1627,9 +1629,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 2
 
-.tileSprite2
+.patternSprite2
 
- SKIP 1                 ; Tile number for sprite 2
+ SKIP 1                 ; Pattern number for sprite 2
 
 .attrSprite2
 
@@ -1643,9 +1645,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 3
 
-.tileSprite3
+.patternSprite3
 
- SKIP 1                 ; Tile number for sprite 3
+ SKIP 1                 ; Pattern number for sprite 3
 
 .attrSprite3
 
@@ -1659,9 +1661,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 4
 
-.tileSprite4
+.patternSprite4
 
- SKIP 1                 ; Tile number for sprite 4
+ SKIP 1                 ; Pattern number for sprite 4
 
 .attrSprite4
 
@@ -1675,9 +1677,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 5
 
-.tileSprite5
+.patternSprite5
 
- SKIP 1                 ; Tile number for sprite 5
+ SKIP 1                 ; Pattern number for sprite 5
 
 .attrSprite5
 
@@ -1691,9 +1693,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 6
 
-.tileSprite6
+.patternSprite6
 
- SKIP 1                 ; Tile number for sprite 6
+ SKIP 1                 ; Pattern number for sprite 6
 
 .attrSprite6
 
@@ -1707,9 +1709,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 7
 
-.tileSprite7
+.patternSprite7
 
- SKIP 1                 ; Tile number for sprite 7
+ SKIP 1                 ; Pattern number for sprite 7
 
 .attrSprite7
 
@@ -1723,9 +1725,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 8
 
-.tileSprite8
+.patternSprite8
 
- SKIP 1                 ; Tile number for sprite 8
+ SKIP 1                 ; Pattern number for sprite 8
 
 .attrSprite8
 
@@ -1739,9 +1741,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 9
 
-.tileSprite9
+.patternSprite9
 
- SKIP 1                 ; Tile number for sprite 9
+ SKIP 1                 ; Pattern number for sprite 9
 
 .attrSprite9
 
@@ -1755,9 +1757,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 10
 
-.tileSprite10
+.patternSprite10
 
- SKIP 1                 ; Tile number for sprite 10
+ SKIP 1                 ; Pattern number for sprite 10
 
 .attrSprite10
 
@@ -1771,9 +1773,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 11
 
-.tileSprite11
+.patternSprite11
 
- SKIP 1                 ; Tile number for sprite 11
+ SKIP 1                 ; Pattern number for sprite 11
 
 .attrSprite11
 
@@ -1787,9 +1789,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 12
 
-.tileSprite12
+.patternSprite12
 
- SKIP 1                 ; Tile number for sprite 12
+ SKIP 1                 ; Pattern number for sprite 12
 
 .attrSprite12
 
@@ -1803,9 +1805,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 13
 
-.tileSprite13
+.patternSprite13
 
- SKIP 1                 ; Tile number for sprite 13
+ SKIP 1                 ; Pattern number for sprite 13
 
 .attrSprite13
 
@@ -1819,9 +1821,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 14
 
-.tileSprite14
+.patternSprite14
 
- SKIP 1                 ; Tile number for sprite 14
+ SKIP 1                 ; Pattern number for sprite 14
 
 .attrSprite14
 
@@ -1835,9 +1837,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 15
 
-.tileSprite15
+.patternSprite15
 
- SKIP 1                 ; Tile number for sprite 15
+ SKIP 1                 ; Pattern number for sprite 15
 
 .attrSprite15
 
@@ -1851,9 +1853,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 16
 
-.tileSprite16
+.patternSprite16
 
- SKIP 1                 ; Tile number for sprite 16
+ SKIP 1                 ; Pattern number for sprite 16
 
 .attrSprite16
 
@@ -1867,9 +1869,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 17
 
-.tileSprite17
+.patternSprite17
 
- SKIP 1                 ; Tile number for sprite 17
+ SKIP 1                 ; Pattern number for sprite 17
 
 .attrSprite17
 
@@ -1883,9 +1885,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 18
 
-.tileSprite18
+.patternSprite18
 
- SKIP 1                 ; Tile number for sprite 18
+ SKIP 1                 ; Pattern number for sprite 18
 
 .attrSprite18
 
@@ -1899,9 +1901,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 19
 
-.tileSprite19
+.patternSprite19
 
- SKIP 1                 ; Tile number for sprite 19
+ SKIP 1                 ; Pattern number for sprite 19
 
 .attrSprite19
 
@@ -1915,9 +1917,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 20
 
-.tileSprite20
+.patternSprite20
 
- SKIP 1                 ; Tile number for sprite 20
+ SKIP 1                 ; Pattern number for sprite 20
 
 .attrSprite20
 
@@ -1931,9 +1933,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 21
 
-.tileSprite21
+.patternSprite21
 
- SKIP 1                 ; Tile number for sprite 21
+ SKIP 1                 ; Pattern number for sprite 21
 
 .attrSprite21
 
@@ -1947,9 +1949,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 22
 
-.tileSprite22
+.patternSprite22
 
- SKIP 1                 ; Tile number for sprite 22
+ SKIP 1                 ; Pattern number for sprite 22
 
 .attrSprite22
 
@@ -1963,9 +1965,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 23
 
-.tileSprite23
+.patternSprite23
 
- SKIP 1                 ; Tile number for sprite 23
+ SKIP 1                 ; Pattern number for sprite 23
 
 .attrSprite23
 
@@ -1979,9 +1981,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 24
 
-.tileSprite24
+.patternSprite24
 
- SKIP 1                 ; Tile number for sprite 24
+ SKIP 1                 ; Pattern number for sprite 24
 
 .attrSprite24
 
@@ -1995,9 +1997,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 25
 
-.tileSprite25
+.patternSprite25
 
- SKIP 1                 ; Tile number for sprite 25
+ SKIP 1                 ; Pattern number for sprite 25
 
 .attrSprite25
 
@@ -2011,9 +2013,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 26
 
-.tileSprite26
+.patternSprite26
 
- SKIP 1                 ; Tile number for sprite 26
+ SKIP 1                 ; Pattern number for sprite 26
 
 .attrSprite26
 
@@ -2027,9 +2029,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 27
 
-.tileSprite27
+.patternSprite27
 
- SKIP 1                 ; Tile number for sprite 27
+ SKIP 1                 ; Pattern number for sprite 27
 
 .attrSprite27
 
@@ -2043,9 +2045,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 28
 
-.tileSprite28
+.patternSprite28
 
- SKIP 1                 ; Tile number for sprite 28
+ SKIP 1                 ; Pattern number for sprite 28
 
 .attrSprite28
 
@@ -2059,9 +2061,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 29
 
-.tileSprite29
+.patternSprite29
 
- SKIP 1                 ; Tile number for sprite 29
+ SKIP 1                 ; Pattern number for sprite 29
 
 .attrSprite29
 
@@ -2075,9 +2077,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 30
 
-.tileSprite30
+.patternSprite30
 
- SKIP 1                 ; Tile number for sprite 30
+ SKIP 1                 ; Pattern number for sprite 30
 
 .attrSprite30
 
@@ -2091,9 +2093,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 31
 
-.tileSprite31
+.patternSprite31
 
- SKIP 1                 ; Tile number for sprite 31
+ SKIP 1                 ; Pattern number for sprite 31
 
 .attrSprite31
 
@@ -2107,9 +2109,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 32
 
-.tileSprite32
+.patternSprite32
 
- SKIP 1                 ; Tile number for sprite 32
+ SKIP 1                 ; Pattern number for sprite 32
 
 .attrSprite32
 
@@ -2123,9 +2125,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 33
 
-.tileSprite33
+.patternSprite33
 
- SKIP 1                 ; Tile number for sprite 33
+ SKIP 1                 ; Pattern number for sprite 33
 
 .attrSprite33
 
@@ -2139,9 +2141,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 34
 
-.tileSprite34
+.patternSprite34
 
- SKIP 1                 ; Tile number for sprite 34
+ SKIP 1                 ; Pattern number for sprite 34
 
 .attrSprite34
 
@@ -2155,9 +2157,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 35
 
-.tileSprite35
+.patternSprite35
 
- SKIP 1                 ; Tile number for sprite 35
+ SKIP 1                 ; Pattern number for sprite 35
 
 .attrSprite35
 
@@ -2171,9 +2173,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 36
 
-.tileSprite36
+.patternSprite36
 
- SKIP 1                 ; Tile number for sprite 36
+ SKIP 1                 ; Pattern number for sprite 36
 
 .attrSprite36
 
@@ -2187,9 +2189,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 37
 
-.tileSprite37
+.patternSprite37
 
- SKIP 1                 ; Tile number for sprite 37
+ SKIP 1                 ; Pattern number for sprite 37
 
 .attrSprite37
 
@@ -2203,9 +2205,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 38
 
-.tileSprite38
+.patternSprite38
 
- SKIP 1                 ; Tile number for sprite 38
+ SKIP 1                 ; Pattern number for sprite 38
 
 .attrSprite38
 
@@ -2219,9 +2221,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 39
 
-.tileSprite39
+.patternSprite39
 
- SKIP 1                 ; Tile number for sprite 39
+ SKIP 1                 ; Pattern number for sprite 39
 
 .attrSprite39
 
@@ -2235,9 +2237,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 40
 
-.tileSprite40
+.patternSprite40
 
- SKIP 1                 ; Tile number for sprite 40
+ SKIP 1                 ; Pattern number for sprite 40
 
 .attrSprite40
 
@@ -2251,9 +2253,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 41
 
-.tileSprite41
+.patternSprite41
 
- SKIP 1                 ; Tile number for sprite 41
+ SKIP 1                 ; Pattern number for sprite 41
 
 .attrSprite41
 
@@ -2267,9 +2269,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 42
 
-.tileSprite42
+.patternSprite42
 
- SKIP 1                 ; Tile number for sprite 42
+ SKIP 1                 ; Pattern number for sprite 42
 
 .attrSprite42
 
@@ -2283,9 +2285,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 43
 
-.tileSprite43
+.patternSprite43
 
- SKIP 1                 ; Tile number for sprite 43
+ SKIP 1                 ; Pattern number for sprite 43
 
 .attrSprite43
 
@@ -2299,9 +2301,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 44
 
-.tileSprite44
+.patternSprite44
 
- SKIP 1                 ; Tile number for sprite 44
+ SKIP 1                 ; Pattern number for sprite 44
 
 .attrSprite44
 
@@ -2315,9 +2317,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 45
 
-.tileSprite45
+.patternSprite45
 
- SKIP 1                 ; Tile number for sprite 45
+ SKIP 1                 ; Pattern number for sprite 45
 
 .attrSprite45
 
@@ -2331,9 +2333,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 46
 
-.tileSprite46
+.patternSprite46
 
- SKIP 1                 ; Tile number for sprite 46
+ SKIP 1                 ; Pattern number for sprite 46
 
 .attrSprite46
 
@@ -2347,9 +2349,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 47
 
-.tileSprite47
+.patternSprite47
 
- SKIP 1                 ; Tile number for sprite 47
+ SKIP 1                 ; Pattern number for sprite 47
 
 .attrSprite47
 
@@ -2363,9 +2365,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 48
 
-.tileSprite48
+.patternSprite48
 
- SKIP 1                 ; Tile number for sprite 48
+ SKIP 1                 ; Pattern number for sprite 48
 
 .attrSprite48
 
@@ -2379,9 +2381,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 49
 
-.tileSprite49
+.patternSprite49
 
- SKIP 1                 ; Tile number for sprite 49
+ SKIP 1                 ; Pattern number for sprite 49
 
 .attrSprite49
 
@@ -2395,9 +2397,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 50
 
-.tileSprite50
+.patternSprite50
 
- SKIP 1                 ; Tile number for sprite 50
+ SKIP 1                 ; Pattern number for sprite 50
 
 .attrSprite50
 
@@ -2411,9 +2413,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 51
 
-.tileSprite51
+.patternSprite51
 
- SKIP 1                 ; Tile number for sprite 51
+ SKIP 1                 ; Pattern number for sprite 51
 
 .attrSprite51
 
@@ -2427,9 +2429,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 52
 
-.tileSprite52
+.patternSprite52
 
- SKIP 1                 ; Tile number for sprite 52
+ SKIP 1                 ; Pattern number for sprite 52
 
 .attrSprite52
 
@@ -2443,9 +2445,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 53
 
-.tileSprite53
+.patternSprite53
 
- SKIP 1                 ; Tile number for sprite 53
+ SKIP 1                 ; Pattern number for sprite 53
 
 .attrSprite53
 
@@ -2459,9 +2461,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 54
 
-.tileSprite54
+.patternSprite54
 
- SKIP 1                 ; Tile number for sprite 54
+ SKIP 1                 ; Pattern number for sprite 54
 
 .attrSprite54
 
@@ -2475,9 +2477,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 55
 
-.tileSprite55
+.patternSprite55
 
- SKIP 1                 ; Tile number for sprite 55
+ SKIP 1                 ; Pattern number for sprite 55
 
 .attrSprite55
 
@@ -2491,9 +2493,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 56
 
-.tileSprite56
+.patternSprite56
 
- SKIP 1                 ; Tile number for sprite 56
+ SKIP 1                 ; Pattern number for sprite 56
 
 .attrSprite56
 
@@ -2507,9 +2509,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 57
 
-.tileSprite57
+.patternSprite57
 
- SKIP 1                 ; Tile number for sprite 57
+ SKIP 1                 ; Pattern number for sprite 57
 
 .attrSprite57
 
@@ -2523,9 +2525,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 58
 
-.tileSprite58
+.patternSprite58
 
- SKIP 1                 ; Tile number for sprite 58
+ SKIP 1                 ; Pattern number for sprite 58
 
 .attrSprite58
 
@@ -2539,9 +2541,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 59
 
-.tileSprite59
+.patternSprite59
 
- SKIP 1                 ; Tile number for sprite 59
+ SKIP 1                 ; Pattern number for sprite 59
 
 .attrSprite59
 
@@ -2555,9 +2557,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 60
 
-.tileSprite60
+.patternSprite60
 
- SKIP 1                 ; Tile number for sprite 60
+ SKIP 1                 ; Pattern number for sprite 60
 
 .attrSprite60
 
@@ -2571,9 +2573,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 61
 
-.tileSprite61
+.patternSprite61
 
- SKIP 1                 ; Tile number for sprite 61
+ SKIP 1                 ; Pattern number for sprite 61
 
 .attrSprite61
 
@@ -2587,9 +2589,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 62
 
-.tileSprite62
+.patternSprite62
 
- SKIP 1                 ; Tile number for sprite 62
+ SKIP 1                 ; Pattern number for sprite 62
 
 .attrSprite62
 
@@ -2603,9 +2605,9 @@ ORG $0200
 
  SKIP 1                 ; Screen y-coordinate for sprite 63
 
-.tileSprite63
+.patternSprite63
 
- SKIP 1                 ; Tile number for sprite 63
+ SKIP 1                 ; Pattern number for sprite 63
 
 .attrSprite63
 

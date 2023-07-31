@@ -12228,7 +12228,7 @@ ENDIF
  AND #7
  CLC
  ADC #$DB
- STA tileSprite2,Y
+ STA patternSprite2,Y
  LDA attrSprite0,Y
  AND #3
  STA attrSprite2,Y
@@ -12302,7 +12302,7 @@ ENDIF
  AND #7
  CLC
  ADC #$DB
- STA tileSprite2,Y
+ STA patternSprite2,Y
  LDA attrSprite0,Y
  ORA #$E0
  STA attrSprite2,Y
@@ -12481,7 +12481,7 @@ ENDIF
 
  STA ySprite58,Y
  LDA #$F5
- STA tileSprite58,Y
+ STA patternSprite58,Y
 
 .CBB8D
 
@@ -12628,7 +12628,7 @@ ENDIF
  ADC #0
  CPX #$90
  ADC #0
- STA tileSprite37,Y
+ STA patternSprite37,Y
 
  LDA X1                 ; Fetch the x-coordinate offset into A
 

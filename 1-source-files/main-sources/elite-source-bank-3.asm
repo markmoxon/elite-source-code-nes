@@ -1695,8 +1695,8 @@ ENDIF
  BNE loop_CA786
 
  LDA #$CB
- STA tileSprite11
- STA tileSprite12
+ STA patternSprite11
+ STA patternSprite12
  LDA #3
  STA attrSprite11
  STA attrSprite12
@@ -1708,7 +1708,7 @@ ENDIF
 .loop_CA7A5
 
  LDA #$DA
- STA tileSprite0,Y
+ STA patternSprite0,Y
  LDA #0
  STA attrSprite0,Y
  INY
@@ -1836,7 +1836,8 @@ ENDIF
  BEQ CA8A2
  STA systemFlag
 
- JSR SendDashImageToPPU ; Unpack dashboard image and send it to the PPU
+ JSR SendDashImageToPPU ; Unpack the dashboard image and send it to patterns 69
+                        ; to 255 in pattern table 0 in the PPU
 
  JMP CA8A2
 
@@ -2050,7 +2051,8 @@ ENDIF
 ;       Name: SendDashImageToPPU
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: Unpack the image for the dashboard and send it to the PPU
+;    Summary: Unpack the dashboard image and send it to patterns 69 to 255 in
+;             pattern table 0 in the PPU
 ;
 ; ******************************************************************************
 
@@ -2064,7 +2066,7 @@ ENDIF
  LDA #HI(dashImage)     ; Set V(1 0) = dashImage
  STA V+1                ;
  LDA #LO(dashImage)     ; So we can unpack the image data for the dashboard into
- STA V                  ; into pattern #69 onwards in pattern table 0
+ STA V                  ; into patterns 69 to 255 in pattern table 0
 
  JMP UnpackToPPU        ; Unpack the image data to the PPU, returning from the
                         ; subroutine using a tail call
@@ -2276,34 +2278,51 @@ ENDIF
 ;       Name: boxEdgeImages
 ;       Type: Variable
 ;   Category: Drawing the screen
-;    Summary: Patterns for tiles 0 to 4
+;    Summary: Image data for patterns 0 to 4
+;
+; ------------------------------------------------------------------------------
+;
+; This table contains image data for patterns 0 to 4, which are as follows:
+;
+;   * 0 is the blank tile (all black)
+;
+;   * 1 contains a vertical bar down the right edge of the pattern (for the
+;     left box edge)
+;
+;   * 2 contains a vertical bar down the left edge of the pattern (for the
+;     right box edge)
+;
+;   * 3 contains a horizontal along the lower-middle of the pattern (for the
+;     top box edge)
+;
+;   * 4 contains the first pattern for the top-left corner of the icon bar
 ;
 ; ******************************************************************************
 
 .boxEdgeImages
 
- EQUB   0,   0,   0,   0
- EQUB   0,   0,   0,   0
- EQUB   0,   0,   0,   0
- EQUB   0,   0,   0,   0
+ EQUB $00, $00, $00, $00
+ EQUB $00, $00, $00, $00
+ EQUB $00, $00, $00, $00
+ EQUB $00, $00, $00, $00
 
- EQUB   0,   0,   0,   0
- EQUB   0,   0,   0,   0
- EQUB   3,   3,   3,   3
- EQUB   3,   3,   3,   3
+ EQUB $00, $00, $00, $00
+ EQUB $00, $00, $00, $00
+ EQUB $03, $03, $03, $03
+ EQUB $03, $03, $03, $03
 
- EQUB   0,   0,   0,   0
- EQUB   0,   0,   0,   0
+ EQUB $00, $00, $00, $00
+ EQUB $00, $00, $00, $00
  EQUB $C0, $C0, $C0, $C0
  EQUB $C0, $C0, $C0, $C0
 
- EQUB   0,   0,   0,   0
- EQUB   0,   0,   0,   0
- EQUB   0,   0,   0, $FF
- EQUB $FF, $FF,   0,   0
+ EQUB $00, $00, $00, $00
+ EQUB $00, $00, $00, $00
+ EQUB $00, $00, $00, $FF
+ EQUB $FF, $FF, $00, $00
 
- EQUB   0,   0,   0,   0
- EQUB   0,   0,   0,   0
+ EQUB $00, $00, $00, $00
+ EQUB $00, $00, $00, $00
  EQUB $0F, $1F, $1F, $DF
  EQUB $DF, $BF, $BF, $BF
 
@@ -2312,7 +2331,8 @@ ENDIF
 ;       Name: ResetScreen
 ;       Type: Subroutine
 ;   Category: Start and end
-;    Summary: ???
+;    Summary: Reset the screen by clearing down the PPU, setting all colours to
+;             black, and resetting the screen-related variables
 ;
 ; ******************************************************************************
 
@@ -2321,137 +2341,277 @@ ENDIF
  JSR WaitFor3xVBlank    ; Wait for three VBlanks to pass
 
  LDA #HI(20*32)         ; Set iconBarOffset(1 0) = 20*32
- STA iconBarOffset+1
- LDA #LO(20*32)
+ STA iconBarOffset+1    ;
+ LDA #LO(20*32)         ; So the icon bar is on row 20
  STA iconBarOffset
 
- LDA #$3F               ; Set PPU_ADDR = $3F00
- STA PPU_ADDR
+                        ; We now want to set all the colours in all the palettes
+                        ; to black, to hide anything that's on-screen
+
+ LDA #$3F               ; Set PPU_ADDR = $3F00, so it points to the background
+ STA PPU_ADDR           ; colour palette entry in the PPU
  LDA #$00
  STA PPU_ADDR
 
- LDA #$0F
+ LDA #$0F               ; Set A to $0F, which is the HSV value for black
 
- LDX #$1F
+ LDX #31                ; There are 32 bytes in the background and sprite
+                        ; palettes in the PPU, so set a loop counter in X to
+                        ; count through them all
 
-.loop_CAAD5
+.rscr1
 
- STA PPU_DATA
- DEX
- BPL loop_CAAD5
+ STA PPU_DATA           ; Send A to the PPU to set palette entry X to black
 
- LDA #$20               ; Set PPU_ADDR = $2000
+ DEX                    ; Decrement the loop counter
+
+ BPL rscr1              ; Loop back until we have set all the palette entries to
+                        ; black
+
+                        ; We now want to reset both PPU nametables to show blank
+                        ; tiles (i.e. tile 0), so nothing is shown on-screen
+                        ;
+                        ; The two nametables and associated attribute tables are
+                        ; structured like this in the PPU:
+                        ;
+                        ;   * PPU_NAME_0 ($2000 to $23BF)
+                        ;   * PPU_ATTR_0 ($23C0 to $23FF)
+                        ;   * PPU_NAME_1 ($2400 to $27BF)
+                        ;   * PPU_ATTR_1 ($27C0 to $27FF)
+                        ;
+                        ; Each nametable/attribute table consists of 1024 bytes
+                        ; (i.e. four pages of 256 bytes), and because the tables
+                        ; are consecutive in PPU memory, we can zero the whole
+                        ; lot by sending eight pages of zeroes to the PPU, 
+                        ; tarting at the start of nametable 0 at PPU_NAME_0
+
+ LDA #HI(PPU_NAME_0)    ; Set PPU_ADDR to PPU_NAME_0, so it points to nametable
+ STA PPU_ADDR           ; 0 in the PPU
+ LDA #LO(PPU_NAME_0)
  STA PPU_ADDR
- LDA #$00
- STA PPU_ADDR
 
- LDA #0
- LDX #8
- LDY #0
+ LDA #0                 ; Set A = 0 so we can send it to the PPU to fill both
+                        ; PPU nametables with blank tiles
 
-.CAAEB
+ LDX #8                 ; We want to zero 8 pages of 256 bytes, so set a page
+                        ; counter in X
 
- STA PPU_DATA
- DEY
- BNE CAAEB
+ LDY #0                 ; Set Y as a byte counter to count through each of the
+                        ; 256 bytes in a page of memory
+
+.rscr2
+
+ STA PPU_DATA           ; Zero the next entry in the nametable
+
+ DEY                    ; Decrement the byte counter
+
+ BNE rscr2              ; Loop back until we have zeroed a whole page
 
  JSR WaitFor3xVBlank    ; Wait for three VBlanks to pass
 
- LDA #0
- DEX
- BNE CAAEB
- LDA #$F5
+ LDA #0                 ; Set A = 0 again, as it gets changed by WaitFor3xVBlank
+
+ DEX                    ; Decrement the page counter
+
+ BNE rscr2              ; Loop back until we have zeroed 8 pages of nametable in
+                        ; the PPU
+
+ LDA #%11110101         ; ???
  STA L03F2
- STA systemFlag
- LDA #$00
+
+ STA systemFlag         ; Set the system image number to 5 (bits 0-3) and ???
+
+                        ; We now send patterns 0 to 4 to the PPU, to set up the
+                        ; blank tile (pattern 0), the three box edges (patterns
+                        ; 1 to 3) and the top-left corner of the icon bar
+                        ; (pattern 4)
+                        ;
+                        ; We do this for both pattern tables
+
+ LDA #HI(PPU_PATT_0)    ; Set PPU_ADDR to PPU_PATT_0, so it points to pattern
+ STA PPU_ADDR           ; table 0 in the PPU
+ LDA #LO(PPU_PATT_0)
  STA PPU_ADDR
- LDA #$00
+
+ LDY #0                 ; Set Y to use as an index counter as we work through
+                        ; the boxEdgeImages table and send its data to the PPU
+
+ LDX #80                ; The boxEdgeImages table contains five patterns with 16
+                        ; bytes per pattern, so that'a a total of 80 bytes to
+                        ; send to the PPU, so set X as a byte counter
+
+.rscr3
+
+ LDA boxEdgeImages,Y    ; Send the Y-th entry from the boxEdgeImages table to
+ STA PPU_DATA           ; the PPU
+
+ INY                    ; Increment the index into the boxEdgeImages table to
+                        ; point at the next byte
+
+ DEX                    ; Decrement the byte counter
+
+ BNE rscr3              ; Loop back until we have sent all 80 bytes to the PPU
+
+ LDA #HI(PPU_PATT_1)    ; Set PPU_ADDR to PPU_PATT_1, so it points to pattern
+ STA PPU_ADDR           ; table 1 in the PPU
+ LDA #LO(PPU_PATT_1)
  STA PPU_ADDR
- LDY #0
- LDX #$50
 
-.loop_CAB0F
+ LDY #0                 ; Set Y to use as an index counter as we work through
+                        ; the boxEdgeImages table and send its data to the PPU
 
- LDA boxEdgeImages,Y
- STA PPU_DATA
- INY
- DEX
- BNE loop_CAB0F
- LDA #$10
- STA PPU_ADDR
- LDA #$00
- STA PPU_ADDR
- LDY #0
- LDX #$50
+ LDX #80                ; The boxEdgeImages table contains five patterns with 16
+                        ; bytes per pattern, so that'a a total of 80 bytes to
+                        ; send to the PPU, so set X as a byte counter
 
-.loop_CAB27
+.rscr4
 
- LDA boxEdgeImages,Y
- STA PPU_DATA
- INY
- DEX
- BNE loop_CAB27
- LDY #0
+ LDA boxEdgeImages,Y    ; Send the Y-th entry from the boxEdgeImages table to
+ STA PPU_DATA           ; the PPU
 
-.loop_CAB33
+ INY                    ; Increment the index into the boxEdgeImages table to
+                        ; point at the next byte
 
- LDA #$F0
+ DEX                    ; Decrement the byte counter
+
+ BNE rscr4              ; Loop back until we have sent all 80 bytes to the PPU
+
+                        ; We now reset the sprite buffer by setting all 64
+                        ; sprites as follows:
+                        ;
+                        ;   * Set the coordinates to (0, 240), which is just
+                        ;     below the bottom of the screen, so the sprite is
+                        ;     hidden from view
+                        ;
+                        ;   * Set the pattern number to 254 ???
+                        ;
+                        ;   * Set the attributes so the sprite uses palette 3,
+                        ;     is shown in front of the background, and is not
+                        ;     flipped in either direction
+
+ LDY #0                 
+
+.rscr5
+
+ LDA #240               ; Set the y-coordinate for this sprite to 240, to move
+ STA ySprite0,Y         ; it off the bottom of the screen
+
+ INY                    ; Increment Y to point to the second byte for this
+                        ; sprite, i.e. patternSprite0,Y
+
+ LDA #254               ; Set the pattern number for this sprite to 254
  STA ySprite0,Y
- INY
- LDA #$FE
- STA ySprite0,Y
- INY
- LDA #3
- STA ySprite0,Y
- INY
- LDA #0
- STA ySprite0,Y
- INY
- BNE loop_CAB33
 
- JSR SendDashImageToPPU ; Unpack dashboard image and send it to the PPU
+ INY                    ; Increment Y to point to the third byte for this
+                        ; sprite, i.e. attrSprite0,Y
 
- LDA #157+YPAL
- STA ySprite0
- LDA #$FE
- STA tileSprite0
- LDA #$F8
- STA xSprite0
- LDA #$23
- STA attrSprite0
- LDA #$FB
- STA tileSprite1
- STA tileSprite2
- LDA #$FD
- STA tileSprite3
- STA tileSprite4
- LDA #3
- STA attrSprite1
- LDA #$43
- STA attrSprite2
- LDA #$43
- STA attrSprite3
- LDA #3
- STA attrSprite4
+ LDA #%00000011         ; Set the attributes for this sprite as follows:
+ STA ySprite0,Y         ;
+                        ;     * Bits 0-1    = sprite palette 3
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 clear = do not flip horizontally
+                        ;     * Bit 7 clear = do not flip vertically
+
+ INY                    ; Increment Y to point to the fourth byte for this
+                        ; sprite, i.e. xSprite0,Y
+
+ LDA #0                 ; Set the x-coordinate for this sprite to 0
+ STA ySprite0,Y
+
+ INY                    ; Increment Y to point to the first byte for the next
+                        ; sprite
+ BNE rscr5
+
+ JSR SendDashImageToPPU ; Unpack the dashboard image and send it to patterns 69
+                        ; to 255 in pattern table 0 in the PPU
+
+                        ; We now set up sprite 0, which is used to detect when
+                        ; the PPU starts drawing the icon bar, so this places
+                        ; the sprite at the right side of the screen, just
+                        ; above the icon bar, so when the PPU gets to this part
+                        ; of the screen, it will set the sprite 0 collision flag
+                        ; which we can then detect
+
+ LDA #157+YPAL          ; Set sprite 0 as follows:
+ STA ySprite0           ;
+ LDA #254               ;   * Set the coordinates to (248, 157)
+ STA patternSprite0     ;
+ LDA #248               ;   * Set the pattern number to 254
+ STA xSprite0           ;
+ LDA #%00100011         ;   * Set the attributes as follows:
+ STA attrSprite0        ;
+                        ;     * Bits 0-1    = sprite palette 3
+                        ;     * Bit 5 set   = show behind background
+                        ;     * Bit 6 clear = do not flip horizontally
+                        ;     * Bit 7 clear = do not flip vertically
+
+                        ; We now set sprites 1 to 4 so they contain the four
+                        ; corners of the icon bar pointer:
+                        ;
+                        ;   * Sprite 1 = top-left corner
+                        ;   * Sprite 2 = top-right corner
+                        ;   * Sprite 3 = bottom-left corner
+                        ;   * Sprite 4 = bottom-right corner
+
+ LDA #251               ; Set sprites 1 and 2 to use pattern 251
+ STA patternSprite1
+ STA patternSprite2
+
+ LDA #253               ; Set sprites 3 and 4 to use pattern 253
+ STA patternSprite3
+ STA patternSprite4
+
+ LDA #%00000011         ; Set the attributes for sprite 1 as follows:
+ STA attrSprite1        ;
+                        ;     * Bits 0-1    = sprite palette 3
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 clear = do not flip horizontally
+                        ;     * Bit 7 clear = do not flip vertically
+
+ LDA #%01000011         ; Set the attributes for sprite 2 as follows:
+ STA attrSprite2        ;
+                        ;     * Bits 0-1    = sprite palette 3
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 set   = flip horizontally
+                        ;     * Bit 7 clear = do not flip vertically
+
+ LDA #%01000011         ; Set the attributes for sprite 3 as follows:
+ STA attrSprite3        ;
+                        ;     * Bits 0-1    = sprite palette 3
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 set   = flip horizontally
+                        ;     * Bit 7 clear = do not flip vertically
+
+ LDA #%00000011         ; Set the attributes for sprite 4 as follows:
+ STA attrSprite4        ;
+                        ;     * Bits 0-1    = sprite palette 3
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 clear = do not flip horizontally
+                        ;     * Bit 7 clear = do not flip vertically
 
  JSR WaitFor3xVBlank    ; Wait for three VBlanks to pass
 
- LDA #0
- STA OAM_ADDR
- LDA #2
- STA OAM_DMA
- LDA #0
+ LDA #0                 ; Write 0 to OAM_ADDR so we can use OAM_DMA to send
+ STA OAM_ADDR           ; sprite data to the PPU
+
+ LDA #$02               ; Write $02 to OAM_DMA to upload 256 bytes of sprite
+ STA OAM_DMA            ; data from the sprite buffer at $02xx into the PPU
+
+ LDA #0                 ; Reset all the bitplanes to 0
  STA nmiBitplane
  STA drawingBitplane
  STA hiddenBitPlane
- LDA #$10
- STA ppuPatternTableHi
- LDA #0
+
+ LDA #HI(PPU_PATT_1)    ; Set ppuPatternTableHi to the high byte of PPU pattern
+ STA ppuPatternTableHi  ; table 1, which is the table we use for drawing
+                        ; dyanamic tiles
+
+ LDA #0                 ; Set nmiBitplane8 to 8 * nmiBitplane, which is 0
  STA nmiBitplane8
 
- LDA #$20
- STA ppuNametableAddr+1
- LDA #0
+ LDA #HI(PPU_NAME_0)    ; Set ppuNametableAddr(1 0) to the address of pattern
+ STA ppuNametableAddr+1 ; table 0 in the PPU
+ LDA #LO(PPU_NAME_0)
  STA ppuNametableAddr
 
  LDA #%00101000         ; Set both bitplane flags as follows:
@@ -2465,26 +2625,28 @@ ENDIF
                         ;
                         ; Bits 0 and 1 are ignored and are always clear
 
- LDA #4
- STA clearingPattTile
- STA clearingPattTile+1
- STA clearingNameTile
+ LDA #4                 ; Set the number of the first and last tiles to send
+ STA clearingPattTile   ; from the PPU to 4, which is the first tile after the
+ STA clearingPattTile+1 ; blank tile (tile 0) and the box edges (tiles 1 to 3),
+ STA clearingNameTile   ; which are the only fixed tiles in both bitplanes
  STA clearingNameTile+1
  STA sendingPattTile
  STA sendingPattTile+1
  STA sendingNameTile
  STA sendingNameTile+1
 
- LDA #$0F               ; Set hiddenColour to $0F, which is black, so this hides
- STA hiddenColour       ; any pixels that use the hidden colour in palette 0
-
- STA visibleColour
- STA paletteColour2
+ LDA #$0F               ; Set the hidden and visible colours to $0F, which is
+ STA hiddenColour       ; the HSV value for black, and do the same for the
+ STA visibleColour      ; colours to use for palette entries 2 and 3 in the
+ STA paletteColour2     ; non-space views
  STA paletteColour3
- LDA #0
- STA updatePaletteInNMI
- STA QQ11a
- LDA #$FF
+
+ LDA #0                 ; Configure the NMI handler not to send palette data to
+ STA updatePaletteInNMI ; the PPU
+
+ STA QQ11a              ; Set the new view number to 0 (the space view)
+
+ LDA #$FF               ; ???
  STA L0473
 
  JSR WaitFor3xVBlank    ; Wait for three VBlanks to pass
@@ -4483,8 +4645,9 @@ ENDIF
 
 .CB607
 
- LDA #$0F               ; Set hiddenColour to $0F, which is black, so this hides
- STA hiddenColour       ; any pixels that use the hidden colour in palette 0
+ LDA #$0F               ; Set hiddenColour to $0F, which is the HSV value for
+ STA hiddenColour       ; black, so this hides any pixels that use the hidden
+                        ; colour in palette 0
 
  LDA QQ11a
  BPL CB627
@@ -4985,11 +5148,11 @@ ENDIF
  STA attrSprite7
  STA attrSprite5
  LDY #$CF
- STY tileSprite5
- STY tileSprite6
+ STY patternSprite5
+ STY patternSprite6
  INY
- STY tileSprite7
- STY tileSprite8
+ STY patternSprite7
+ STY patternSprite8
  LDA #$76
  STA xSprite5
  LDA #$86
@@ -5019,10 +5182,10 @@ ENDIF
  LDA #$C3
  STA attrSprite8
  LDA #$D1
- STA tileSprite5
- STA tileSprite6
- STA tileSprite7
- STA tileSprite8
+ STA patternSprite5
+ STA patternSprite6
+ STA patternSprite7
+ STA patternSprite8
  LDA #$76
  STA xSprite5
  STA xSprite7
@@ -5047,11 +5210,11 @@ ENDIF
  STA attrSprite6
  STA attrSprite7
  STA attrSprite8
- STY tileSprite5
- STY tileSprite6
+ STY patternSprite5
+ STY patternSprite6
  INY
- STY tileSprite7
- STY tileSprite8
+ STY patternSprite7
+ STY patternSprite8
  LDA #$72
  STA xSprite5
  LDA #$8A
@@ -5081,10 +5244,10 @@ ENDIF
  LDA #$C2
  STA attrSprite8
  LDA #$CE
- STA tileSprite5
- STA tileSprite6
- STA tileSprite7
- STA tileSprite8
+ STA patternSprite5
+ STA patternSprite6
+ STA patternSprite7
+ STA patternSprite8
  LDA #$7A
  STA xSprite5
  STA xSprite7
