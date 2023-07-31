@@ -358,7 +358,7 @@ extract_image(bank_data4[start: end], 1, "../1-source-files/images/other-images/
 
 start = 0x9760 - 0x8000
 end = 0x9FA1 - 0x8000
-extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "dialsImage", palette=7, pixel_width=160, data_is_packed=True)
+extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "dashImage", palette=7, pixel_width=160, data_is_packed=True)
 
 start = 0x9FA1 - 0x8000
 end = 0xA493 - 0x8000
