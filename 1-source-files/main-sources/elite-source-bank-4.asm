@@ -1958,14 +1958,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: eliteLogoBig
+;       Name: bigLogoImage
 ;       Type: Variable
 ;   Category: Start and end
 ;    Summary: Packed image data for the big Elite logo shown on the start screen
 ;
 ; ******************************************************************************
 
-.eliteLogoBig
+.bigLogoImage
 
  EQUB $08, $40, $90, $68, $54, $21, $26, $59
  EQUB $DA, $21, $2E, $04, $80, $40, $A0, $D0
@@ -2312,14 +2312,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LB5CC
+;       Name: bigLogoNames
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Start and end
+;    Summary: Nametable entries for the big Elite logo on the start screen
 ;
 ; ******************************************************************************
 
-.LB5CC
+.bigLogoNames
 
  EQUB $01, $02, $00, $00, $00, $00, $00, $00
  EQUB $00, $00, $00, $00, $00, $00, $00, $00
@@ -2384,14 +2384,15 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LB7AC
+;       Name: smallLogoName
 ;       Type: Variable
 ;   Category: Save and load
-;    Summary: ???
+;    Summary: Nametable entries for the small Elite logo on the save and load
+;             screen
 ;
 ; ******************************************************************************
 
-.LB7AC
+.smallLogoName
 
  EQUB $01, $00, $00, $00, $00, $02, $03, $00
  EQUB $04, $05, $00, $00, $00, $06, $07, $00
@@ -2423,14 +2424,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B882
+;       Name: GetRankHeadshot
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Status
+;    Summary: Get the correct headshot number for the current combat rank
 ;
 ; ******************************************************************************
 
-.subm_B882
+.GetRankHeadshot
 
  LDA TALLY+1            ; See PrintCombatRank
  BNE CB8A6
@@ -2619,18 +2620,19 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B96B
+;       Name: DrawBigLogo
 ;       Type: Subroutine
 ;   Category: Start and end
-;    Summary: ???
+;    Summary: Set the pattern and nametable buffer entries for the big Elite
+;             logo
 ;
 ; ******************************************************************************
 
-.subm_B96B
+.DrawBigLogo
 
- LDA #HI(eliteLogoBig)  ; Set V(1 0) = eliteLogoBig
+ LDA #HI(bigLogoImage)  ; Set V(1 0) = bigLogoImage
  STA V+1                ;
- LDA #LO(eliteLogoBig)  ; So we can unpack the image data for the big Elite logo
+ LDA #LO(bigLogoImage)  ; So we can unpack the image data for the big Elite logo
  STA V                  ; into the pattern buffers
 
  LDA tileNumber
@@ -2664,9 +2666,9 @@ ENDIF
 
  JSR UnpackToRAM
 
- LDA #HI(LB5CC)         ; Set V(1 0) = LB5CC
+ LDA #HI(bigLogoNames)  ; Set V(1 0) = bigLogoNames
  STA V+1
- LDA #LO(LB5CC)
+ LDA #LO(bigLogoNames)
  STA V
 
  LDA #$18
@@ -2679,7 +2681,7 @@ ENDIF
  LDA #5
  STA XC
 
- JSR subm_B9C1
+ JSR DrawLogoNames
 
  LDA tileNumber
  CLC
@@ -2690,21 +2692,21 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B9C1
+;       Name: DrawLogoNames
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Start and end
+;    Summary: Set the nametable buffer entries for the big Elite logo
 ;
 ; ******************************************************************************
 
-.subm_B9C1
+.DrawLogoNames
 
  LDA #$20
  SEC
  SBC K
  STA ZZ
 
- JSR subm_DBD8
+ JSR GetNameIndexForRow
 
  LDA SC
  CLC
@@ -2762,14 +2764,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B9F9
+;       Name: DrawSmallLogo
 ;       Type: Subroutine
 ;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B9F9
+.DrawSmallLogo
 
  LDA #1
  STA XC
@@ -2792,9 +2794,9 @@ ENDIF
  LSR A
  STA K+3
 
- LDA #HI(LB7AC)         ; Set V(1 0) = LB7AC
+ LDA #HI(smallLogoName) ; Set V(1 0) = smallLogoName
  STA V+1
- LDA #LO(LB7AC)
+ LDA #LO(smallLogoName)
  STA V
 
  LDA #1
@@ -2815,16 +2817,7 @@ ENDIF
  ASL A
  ASL A
 
-IF _NTSC
-
- ADC #6
-
-ELIF _PAL
-
- ADC #$C
-
-ENDIF
-
+ ADC #6+YPAL
  STA SC+1
  TYA
  ADC SC+1

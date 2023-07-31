@@ -6884,9 +6884,10 @@ ENDIF
 
 .CA8F8
 
- JMP HideSprites59To62  ; ???
+ JMP HideExplosionBurst ; Hide the four sprites that make up the explosion burst
+                        ; and return from the subroutine using a tail call
 
- EQUB 0, 2
+ EQUB 0, 2              ; These bytes appear to be unused
 
 .DOEXP
 
@@ -6983,8 +6984,9 @@ ENDIF
                         ; This part of the routine actually draws the explosion
                         ; cloud
 
- JSR HideSprites59To62  ; ???
- LDA L040A
+ JSR HideExplosionBurst ; Hide the four sprites that make up the explosion burst
+
+ LDA L040A              ; ???
  STA Q
  LDA L002B
 
@@ -12139,7 +12141,7 @@ ENDIF
 
 .CB9C8
 
- ADC #$7C
+ ADC #124
  STA SC2
  LDA INWK+7
  LSR A
@@ -12152,15 +12154,7 @@ ENDIF
 
 .CB9D8
 
-IF _NTSC
-
- ADC #$C7
-
-ELIF _PAL
-
- ADC #$CD
-
-ENDIF
+ ADC #199+YPAL
 
  STA SC2+1
  LDA INWK+4
@@ -12249,19 +12243,9 @@ ENDIF
  CLC
  ADC SC2+1
 
-IF _NTSC
-
- CMP #$DC
+ CMP #220+YPAL
  BCC CBA75
- LDA #$DC
-
-ELIF _PAL
-
- CMP #$E2
- BCC CBA75
- LDA #$E2
-
-ENDIF
+ LDA #220+YPAL
 
 .CBA75
 
@@ -12493,15 +12477,7 @@ ENDIF
 
 .CBB83
 
-IF _NTSC
-
- ADC #$0A
-
-ELIF _PAL
-
- ADC #$10
-
-ENDIF
+ ADC #10+YPAL
 
  STA ySprite58,Y
  LDA #$F5
@@ -12690,15 +12666,7 @@ ENDIF
  LDA Yx1M2
  SBC T
 
-IF _NTSC
-
- ADC #$0A
-
-ELIF _PAL
-
- ADC #$10
-
-ENDIF
+ ADC #10+YPAL
 
  STA ySprite37,Y
  LDY T1

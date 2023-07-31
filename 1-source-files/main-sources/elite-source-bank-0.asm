@@ -3006,7 +3006,7 @@ ENDIF
  LDA L897C,X
  STA YC
 
- JSR subm_B882_b4
+ JSR GetRankHeadshot_b4
 
  LDA S
  ORA #$80
@@ -4018,15 +4018,7 @@ ENDIF
  TYA
  CLC
 
-IF _NTSC
-
- ADC #$AA
-
-ELIF _PAL
-
- ADC #$B0
-
-ENDIF
+ ADC #170+YPAL
 
  STA ySprite0,X
  RTS
@@ -7345,14 +7337,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: DemoShips
+;       Name: PlayDemo
 ;       Type: Subroutine
 ;   Category: Demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.DemoShips
+.PlayDemo
 
  JSR RES2
  JSR subm_B8FE_b6
@@ -7384,7 +7376,7 @@ ENDIF
  JSR CopyNameBuffer0To1
  JSR subm_F139
  JSR subm_BE48
- JSR subm_F39A
+ JSR SeedRandomNumbers
  JSR subm_95FC
  LDA #6
  STA INWK+30
@@ -9375,7 +9367,7 @@ ENDIF
 ;
 ;       Name: DrawCrosshairs
 ;       Type: Subroutine
-;   Category: Drawing sprites
+;   Category: Charts
 ;    Summary: Draw a set of moveable crosshairs as a square reticle
 ;
 ; ******************************************************************************
@@ -9404,15 +9396,7 @@ ENDIF
  TYA
  CLC
 
-IF _NTSC
-
- ADC #$0A
-
-ELIF _PAL
-
- ADC #$10
-
-ENDIF
+ ADC #10+YPAL
 
  STA ySprite0,X
 
@@ -9422,7 +9406,7 @@ ENDIF
 ;
 ;       Name: HideCrosshairs
 ;       Type: Subroutine
-;   Category: Drawing sprites
+;   Category: Charts
 ;    Summary: Hide the moveable crosshairs (i.e. the square reticle)
 ;
 ; ******************************************************************************
@@ -9738,15 +9722,7 @@ ENDIF
  LDA K4
  CLC
 
-IF _NTSC
-
- ADC #$0A
-
-ELIF _PAL
-
- ADC #$10
-
-ENDIF
+ ADC #10+YPAL
 
  STA ySprite38,Y
  LDA #$D5
@@ -11659,8 +11635,10 @@ ENDIF
 
  LDA QQ11               ; ???
  BNE CA26C
- JSR HideScannerSprites
- JSR LL164_b6
+
+ JSR ClearScanner       ; Remove all ships from the scanner and hide the scanner sprites
+
+ JSR LL164_b6           ; ???
  JMP CA26F
 
 .CA26C
@@ -12069,7 +12047,7 @@ ENDIF
  LDA #0
  STA K+2
 
- JSR subm_B9C1_b4
+ JSR DrawLogoNames_b4
 
  JMP DrawEquipment_b6
 
@@ -12157,7 +12135,7 @@ ENDIF
  ADC #104               ; so this prints the current item's name
  JSR TT27_b2
 
- JSR subm_D17F          ; ???
+ JSR WaitForIconBarPPU  ; Wait until the PPU starts drawing the icon bar
 
  LDA XX13               ; If the current item number in XX13 is not 1, then it
  CMP #1                 ; is not the fuel level, so jump to preq3 to skip the
@@ -14257,15 +14235,7 @@ ENDIF
 
  STX T                  ; Set T = X for use in the calculation below
 
-IF _NTSC
-
- LDA #186               ; Set A to the pixel y-coordinate of the compass centre
-
-ELIF _PAL
-
- LDA #192               ; Set A to the pixel y-coordinate of the compass centre
-
-ENDIF
+ LDA #186+YPAL          ; Set A to the pixel y-coordinate of the compass centre
 
  SEC                    ; Set the y-coordinate of sprite 13 to A - X
  SBC T
@@ -15573,8 +15543,10 @@ ENDIF
 
  LDA QQ11a              ; ???
  BMI CAE00
- JSR HideSprites59To62
- JSR HideScannerSprites
+
+ JSR HideExplosionBurst ; Hide the four sprites that make up the explosion burst
+
+ JSR ClearScanner       ; Remove all ships from the scanner and hide the scanner sprites
 
 .CAE00
 
@@ -17186,7 +17158,7 @@ ENDIF
  STA QQ11
  LDA autoPlayDemo
  BEQ CB32C
- JSR subm_F362
+ JSR SetupDemoUniverse
 
 .CB32C
 
@@ -20903,7 +20875,8 @@ ENDIF
  BMI CBEC4
  LDA QQ11
  BPL CBEC4
- JSR HideScannerSprites
+
+ JSR ClearScanner       ; Remove all ships from the scanner and hide the scanner sprites
 
 .CBEC4
 

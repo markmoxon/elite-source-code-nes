@@ -16928,7 +16928,7 @@ ENDIF
 
 .CB6DF
 
- JSR subm_DBD8
+ JSR GetNameIndexForRow
  LDY XC
  DEY
  LDA (SC),Y
@@ -17072,7 +17072,7 @@ ENDIF
 
 .CB7BF
 
- JSR subm_DBD8
+ JSR GetNameIndexForRow
  LDY XC
  DEC XC
  LDA #0
@@ -17083,7 +17083,7 @@ ENDIF
 .CB7CF
 
  PHA
- JSR subm_DBD8
+ JSR GetNameIndexForRow
  PLA
  CMP #$20
  BEQ CB7E5

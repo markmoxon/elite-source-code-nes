@@ -235,7 +235,7 @@ ENDIF
  STA setupPPUForIconBar ; Clear bit 7 of setupPPUForIconBar so we do nothing
                         ; when the PPU starts drawing the icon bar
 
- LDA #%01000000
+ LDA #%01000000         ; ???
  STA JOY2
 
  INC $C006              ; Reset the MMC1 mapper, which we can do by writing a
@@ -3137,14 +3137,15 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: HideSprites59To62
+;       Name: HideExplosionBurst
 ;       Type: Subroutine
-;   Category: Drawing sprites
-;    Summary: Hide sprites 59 to 62
+;   Category: Drawing ships
+;    Summary: Hide the four sprites that make up the explosion burst that
+;             flashes up when a ship explodes
 ;
 ; ******************************************************************************
 
-.HideSprites59To62
+.HideExplosionBurst
 
  LDX #4                 ; Set X = 4 so we hide four sprites
 
@@ -3156,41 +3157,56 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: HideScannerSprites
+;       Name: ClearScanner
 ;       Type: Subroutine
 ;   Category: Dashboard
-;    Summary: ???
+;    Summary: Remove all ships from the scanner and hide the scanner sprites
 ;
 ; ******************************************************************************
 
-.HideScannerSprites
+.ClearScanner
 
- LDX #0
+ LDX #0                 ; Set up a counter in X to work our way through all the
+                        ; ship slots in FRIN
 
-.loop_CCEA7
+.csca1
 
- LDA FRIN,X
- BEQ CCEBC
- BMI CCEB9
- JSR GINF
- LDY #$1F
- LDA (XX19),Y
- AND #$EF
- STA (XX19),Y
+ LDA FRIN,X             ; Fetch the ship type in slot X
 
-.CCEB9
+ BEQ csca3              ; If the slot contains 0 then it is empty and we have
+                        ; checked all the slots (as they are always shuffled
+                        ; down in the main loop to close up and gaps), so jump
+                        ; to csca3WS2 as we are done
 
- INX
- BNE loop_CCEA7
+ BMI csca2              ; If the slot contains a ship type with bit 7 set, then
+                        ; it contains the planet or the sun, so jump down to
+                        ; csca2 to skip this slot, as the planet and sun don't
+                        ; appear on the scanner
 
-.CCEBC
+ JSR GINF               ; Call GINF to get the address of the data block for
+                        ; ship slot X and store it in INF
+
+ LDY #31                ; Clear bit 4 in the ship's byte #31, which hides it
+ LDA (INF),Y            ; from the scanner
+ AND #%11101111
+ STA (INF),Y
+
+.csca2
+
+ INX                    ; Increment X to point to the next ship slot
+
+ BNE csca1              ; Loop back up to process the next slot (this BNE is
+                        ; effectively a JMP as X will never be zero)
+
+.csca3
 
  LDY #44                ; Set Y so we start hiding from sprite 44 / 4 = 11
 
  LDX #27                ; Set X = 27 so we hide 27 sprites
 
                         ; Fall through into HideSprites to hide 27 sprites
-                        ; from sprite 11 onwards (i.e. 11 to 37)
+                        ; from sprite 11 onwards (i.e. the scanner sprites from
+                        ; 11 to 37)
 
 ; ******************************************************************************
 ;
@@ -4054,26 +4070,29 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_D17F
+;       Name: WaitForIconBarPPU
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing the screen
+;    Summary: Wait until the PPU starts drawing the icon bar
 ;
 ; ******************************************************************************
 
-.subm_D17F
+.WaitForIconBarPPU
 
- LDA setupPPUForIconBar
- BEQ subm_D17F
+ LDA setupPPUForIconBar ; Loop back to the start until setupPPUForIconBar is
+ BEQ WaitForIconBarPPU  ; non-zero, at which point the SETUP_PPU_FOR_ICON_BAR
+                        ; macro and SetupPPUForIconBar routine are checking to
+                        ; see whether the icon bar is being drawn by the PPU
 
-.loop_CD183
+.wbar1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA setupPPUForIconBar
- BNE loop_CD183
- RTS
+ LDA setupPPUForIconBar ; Loop back until setupPPUForIconBar is zero, at which
+ BNE wbar1              ; point the icon bar is being drawn by the PPU
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -5578,7 +5597,7 @@ ENDIF
 ;
 ;       Name: subm_D946
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -5601,7 +5620,7 @@ ENDIF
 ;
 ;       Name: subm_D951
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -5937,14 +5956,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_DBD8
+;       Name: GetNameIndexForRow
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing the screen
+;    Summary: Get the index into the nametable buffer for a given character row
 ;
 ; ******************************************************************************
 
-.subm_DBD8
+.GetNameIndexForRow
 
  LDA #0
  STA SC+1
@@ -8912,7 +8931,7 @@ ENDIF
 ;
 ;       Name: MSBAR
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Dashboard
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -8921,7 +8940,7 @@ ENDIF
 
  TYA
  PHA
- LDY LE5AB,X
+ LDY missileNametable,X
  PLA
  STA nameBuffer0+22*32,Y
  LDY #0
@@ -8929,16 +8948,16 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LE5AB
+;       Name: missileNametable
 ;       Type: Variable
-;   Category: ???
+;   Category: Dashboard
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.LE5AB
+.missileNametable
 
- EQUB $00, $5F, $5E, $3F, $3E                 ; E5AB: 00 5F 5E... ._^
+ EQUB $00, $5F, $5E, $3F, $3E
 
 ; ******************************************************************************
 ;
@@ -9277,7 +9296,7 @@ ENDIF
 ;
 ;       Name: subm_E8DE
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Icon bar
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -9352,15 +9371,12 @@ ENDIF
 
 .MoveIconBarPointer
 
-IF _NTSC
-
  DEC L0467
 
-ELIF _PAL
+IF _PAL
 
- DEC $0468
  BNE CE928
- LSR $045F
+ LSR PAL_EXTRA
 
 .CE928
 
@@ -9467,16 +9483,7 @@ ENDIF
  LDA L0461
  CLC
 
-IF _NTSC
-
- ADC #$0B
-
-ELIF _PAL
-
- ADC #$11
-
-ENDIF
-
+ ADC #$0B+YPAL
  STA ySprite1
  STA ySprite2
  LDA L0460
@@ -9494,16 +9501,7 @@ ENDIF
  LDA L0461
  CLC
 
-IF _NTSC
-
- ADC #$13
-
-ELIF _PAL
-
- ADC #$19
-
-ENDIF
-
+ ADC #$13+YPAL
  STA ySprite4
  STA ySprite3
  LDA L0460
@@ -9518,16 +9516,7 @@ ENDIF
  LDA L0461
  CLC
 
-IF _NTSC
-
- ADC #8
-
-ELIF _PAL
-
- ADC #$E
-
-ENDIF
-
+ ADC #8+YPAL
  STA ySprite1
  STA ySprite2
  LDA L0460
@@ -9545,16 +9534,7 @@ ENDIF
  LDA L0461
  CLC
 
-IF _NTSC
-
- ADC #$10
-
-ELIF _PAL
-
- ADC #$16
-
-ENDIF
-
+ ADC #$10+YPAL
  STA ySprite4
  STA ySprite3
 
@@ -9593,40 +9573,34 @@ IF _NTSC
 
 .CEA73
 
+ELIF _PAL
+
+ LDA L0468
+ BNE CEA80
+ STA PAL_EXTRA
+ BEQ CEA7E
+
+.CEA80
+
+ LDA #$28
+ STA L0467
+ LDA PAL_EXTRA
+ BNE CEA73
+ INC PAL_EXTRA
+ BNE CEA7E
+
+.CEA73
+
+ LSR PAL_EXTRA
+
+ENDIF
+
  LDA L0460
  LSR A
  LSR A
  TAY
  LDA (L00BE),Y
  STA L0465
-
-ELIF _PAL
-
- LDA $0469
- BNE CEA80
- STA $045F
- BEQ CEA7E
-
-.CEA80
-
- LDA #$28
- STA $0468
- LDA $045F
- BNE CEA73
- INC $045F
- BNE CEA7E
-
-.CEA73
-
- LSR $045F
- LDA $0461
- LSR A
- LSR A
- TAY
- LDA ($BE),Y
- STA $0466
-
-ENDIF
 
 .CEA7E
 
@@ -9761,7 +9735,7 @@ ENDIF
 ;
 ;       Name: subm_EB0D
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Keyboard
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -9784,7 +9758,7 @@ ENDIF
 ;
 ;       Name: subm_EB19
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Keyboard
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -9814,10 +9788,12 @@ ENDIF
 ;
 ;       Name: LEB27
 ;       Type: Variable
-;   Category: ???
+;   Category: Icon bar
 ;    Summary: ???
 ;
 ; ******************************************************************************
+
+.LEB27
 
  EQUB $01, $02, $03, $04, $05, $06, $07, $23  ; EB27: 01 02 03... ...
  EQUB $08, $00, $00, $0C, $00, $00, $00, $00  ; EB2F: 08 00 00... ...
@@ -10629,14 +10605,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B9F9_b4
+;       Name: DrawSmallLogo_b4
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: Call the subm_B9F9 routine in ROM bank 4
+;   Category: Start and end
+;    Summary: Call the DrawSmallLogo routine in ROM bank 4
 ;
 ; ******************************************************************************
 
-.subm_B9F9_b4
+.DrawSmallLogo_b4
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -10644,7 +10620,7 @@ ENDIF
  LDA #4                 ; Page ROM bank 4 into memory at $8000
  JSR SetBank
 
- JSR subm_B9F9          ; Call subm_B9F9, now that it is paged into memory
+ JSR DrawSmallLogo      ; Call DrawSmallLogo, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -10652,14 +10628,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B96B_b4
+;       Name: DrawBigLogo_b4
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: Call the subm_B96B routine in ROM bank 4
+;   Category: Start and end
+;    Summary: Call the DrawBigLogo routine in ROM bank 4
 ;
 ; ******************************************************************************
 
-.subm_B96B_b4
+.DrawBigLogo_b4
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -10667,7 +10643,7 @@ ENDIF
  LDA #4                 ; Page ROM bank 4 into memory at $8000
  JSR SetBank
 
- JSR subm_B96B          ; Call subm_B96B, now that it is paged into memory
+ JSR DrawBigLogo        ; Call DrawBigLogo, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -10829,20 +10805,20 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: DemoShips_b0
+;       Name: PlayDemo_b0
 ;       Type: Subroutine
 ;   Category: Demo
-;    Summary: Call the SpawnDemoShips routine in ROM bank 0
+;    Summary: Call the PlayDemo routine in ROM bank 0
 ;
 ; ******************************************************************************
 
-.DemoShips_b0
+.PlayDemo_b0
 
  LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
 
- JMP DemoShips          ; Call DemoShips, which is already paged into memory,
-                        ; and return from the subroutine using a tail call
+ JMP PlayDemo           ; Call PlayDemo, which is already paged into memory, and
+                        ; return from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -10999,14 +10975,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B9C1_b4
+;       Name: DrawLogoNames_b4
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: Call the subm_B9C1 routine in ROM bank 4
+;   Category: Start and end
+;    Summary: Call the DrawLogoNames routine in ROM bank 4
 ;
 ; ******************************************************************************
 
-.subm_B9C1_b4
+.DrawLogoNames_b4
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -11014,7 +10990,7 @@ ENDIF
  LDA #4                 ; Page ROM bank 4 into memory at $8000
  JSR SetBank
 
- JSR subm_B9C1          ; Call subm_B9C1, now that it is paged into memory
+ JSR DrawLogoNames      ; Call DrawLogoNames, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -11068,14 +11044,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B882_b4
+;       Name: GetRankHeadshot_b4
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: Call the subm_B882 routine in ROM bank 4
+;   Category: Status
+;    Summary: Call the GetRankHeadshot routine in ROM bank 4
 ;
 ; ******************************************************************************
 
-.subm_B882_b4
+.GetRankHeadshot_b4
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -11083,7 +11059,7 @@ ENDIF
  LDA #4                 ; Page ROM bank 4 into memory at $8000
  JSR SetBank
 
- JSR subm_B882          ; Call subm_B882, now that it is paged into memory
+ JSR GetRankHeadshot    ; Call GetRankHeadshot, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -12745,7 +12721,7 @@ ENDIF
 ;
 ;       Name: CLYNS
 ;       Type: Subroutine
-;   Category: Utility routines
+;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ------------------------------------------------------------------------------
@@ -12881,14 +12857,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_F362
+;       Name: SetupDemoUniverse
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_F362
+.SetupDemoUniverse
 
  LDY #$0C
  JSR DELAY
@@ -12917,14 +12893,15 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_F39A
+;       Name: SeedRandomNumbers
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Demo
+;    Summary: Set the random number seeds to a known value so the random numbers
+;             generated are always the same when we run the demo
 ;
 ; ******************************************************************************
 
-.subm_F39A
+.SeedRandomNumbers
 
  LDA #$75
  STA RAND

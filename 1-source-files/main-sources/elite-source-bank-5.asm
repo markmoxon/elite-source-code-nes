@@ -2563,7 +2563,9 @@ ENDIF
  LDA #5                 ; Set a bunch of L046x variables ???
  JSR subm_E909
 
- JSR subm_F362          ; Set a bunch of ZP variables, including RAND ???
+ JSR SetupDemoUniverse  ; Configure the universe for the demo, which includes
+                        ; setting the random number seeds to a known value so
+                        ; the demo always runs in the same way
 
  LDX chosenLanguage     ; Set addr2(1 0) to the chosen language's entry from
  LDA addrLo,X           ; the addrLo and addrHi tables

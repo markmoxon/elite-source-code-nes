@@ -1518,7 +1518,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: eliteLogo
+;       Name: smallLogoImage
 ;       Type: Variable
 ;   Category: Save and load
 ;    Summary: Packed image data for the small Elite logo shown on the save/load
@@ -1526,7 +1526,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.eliteLogo
+.smallLogoImage
 
  EQUB $00, $22, $80, $C0, $E0, $F0, $F8, $A0
  EQUB $80, $40, $22, $20, $10, $32, $08, $04
@@ -1604,15 +1604,15 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: eliteLogoBall
+;       Name: logoBallImage
 ;       Type: Variable
 ;   Category: Start and end
-;    Summary: Packed image data for the ball at the bottom of the large Elite
-;             logo shown on the start screen
+;    Summary: Packed image data for the ball at the bottom of the big Elite logo
+;             shown on the start screen
 ;
 ; ******************************************************************************
 
-.eliteLogoBall
+.logoBallImage
 
  EQUB $35, $51, $38, $3F, $11, $0B, $03, $21
  EQUB $0C, $02, $21, $0E, $04, $20, $40, $00
@@ -1816,10 +1816,11 @@ ENDIF
  LDA #LO(16*69)
  STA PPU_ADDR
 
- LDA #HI(eliteLogo)     ; Set V(1 0) = eliteLogo
- STA V+1                ;
- LDA #LO(eliteLogo)     ; So we can unpack the image data for the small Elite
- STA V                  ; logo into pattern #69 onwards in pattern table 0
+ LDA #HI(smallLogoImage)    ; Set V(1 0) = smallLogoImage
+ STA V+1                    ;
+ LDA #LO(smallLogoImage)    ; So we can unpack the image data for the small
+ STA V                      ; Elite logo into pattern #69 onwards in pattern
+                            ; table 0
 
  LDA #3                 ; Set A = 3 so we only unpack the image data when
                         ; systemFlag does not equal 3
@@ -1871,9 +1872,9 @@ ENDIF
  LDA #LO(16*227)
  STA PPU_ADDR
 
- LDA #HI(eliteLogoBall) ; Set V(1 0) = eliteLogoBall
+ LDA #HI(logoBallImage) ; Set V(1 0) = logoBallImage
  STA V+1                ;
- LDA #LO(eliteLogoBall) ; So we can unpack the image data for the ball at the
+ LDA #LO(logoBallImage) ; So we can unpack the image data for the ball at the
  STA V                  ; bottom of the big Elite logo into pattern #227 onwards
                         ; in pattern table 0
 
@@ -2410,16 +2411,7 @@ ENDIF
 
  JSR SendDashImageToPPU ; Unpack dashboard image and send it to the PPU
 
-IF _NTSC
-
- LDA #$9D
-
-ELIF _PAL
-
- LDA #$A3
-
-ENDIF
-
+ LDA #157+YPAL
  STA ySprite0
  LDA #$FE
  STA tileSprite0
@@ -2690,15 +2682,7 @@ ENDIF
  STA xSprite0
  LDY #$12
 
-IF _NTSC
-
- LDX #$9D
-
-ELIF _PAL
-
- LDX #$A3
-
-ENDIF
+ LDX #157+YPAL
 
  LDA QQ11
  BPL CACCC
@@ -2710,30 +2694,11 @@ ENDIF
 .CACA8
 
  LDY #$19
-
-IF _NTSC
-
- LDX #$D5
-
-ELIF _PAL
-
- LDX #$DB
-
-ENDIF
-
+ LDX #213+YPAL
  CMP #$B9
  BNE CACB7
 
-IF _NTSC
-
- LDX #$96
-
-ELIF _PAL
-
- LDX #$9C
-
-ENDIF
-
+ LDX #150+YPAL
  LDA #$F8
  STA xSprite0
 
@@ -2744,31 +2709,14 @@ ENDIF
  CMP #$0F
  BNE CACC1
 
-IF _NTSC
-
- LDX #$A6
-
-ELIF _PAL
-
- LDX #$AC
-
-ENDIF
+ LDX #166+YPAL
 
 .CACC1
 
  CMP #$0D
  BNE CACCC
 
-IF _NTSC
-
- LDX #$AD
-
-ELIF _PAL
-
- LDX #$B3
-
-ENDIF
-
+ LDX #173+YPAL
  LDA #$F8
  STA xSprite0
 
@@ -3328,20 +3276,12 @@ ENDIF
  ASL A
  ASL A
 
-IF _NTSC
-
- ADC #$27
-
-ELIF _PAL
-
- ADC #$46
-
-ENDIF
-
+ ADC #LO(LEB27)
  STA L00BE
- LDA #$EB
+ LDA #HI(LEB27)
  ADC #0
  STA L00BF
+
  RTS
 
 .CAEE5
@@ -4065,7 +4005,7 @@ ENDIF
 
 .subm_B2A9
 
- JSR subm_DBD8
+ JSR GetNameIndexForRow
  LDA SC
  CLC
  ADC XC
@@ -4140,7 +4080,7 @@ ENDIF
 
 .subm_B2FB
 
- JSR subm_DBD8
+ JSR GetNameIndexForRow
  LDA SC
  CLC
  ADC XC
@@ -4993,7 +4933,7 @@ ENDIF
 ;
 ;       Name: HideSightSprites
 ;       Type: Subroutine
-;   Category: Drawing sprites
+;   Category: Flight
 ;    Summary: Hide the sprites for the laser sights in the space view
 ;
 ; ******************************************************************************
@@ -5012,7 +4952,7 @@ ENDIF
 ;
 ;       Name: SetSightSprites
 ;       Type: Subroutine
-;   Category: Drawing sprites
+;   Category: Flight
 ;    Summary: Set up the sprites for the laser sights in the space view,
 ;             according to the lasers fitted
 ;
@@ -5058,27 +4998,13 @@ ENDIF
  STA xSprite7
  STA xSprite8
 
-IF _NTSC
-
- LDA #$53
+ LDA #$53+YPAL
  STA ySprite5
  STA ySprite6
- LDA #$4B
+ LDA #$4B+YPAL
  STA ySprite7
- LDA #$5B
+ LDA #$5B+YPAL
  STA ySprite8
-
-ELIF _PAL
-
- LDA #$59
- STA ySprite5
- STA ySprite6
- LDA #$51
- STA ySprite7
- LDA #$61
- STA ySprite8
-
-ENDIF
 
  RTS
 
@@ -5104,25 +5030,12 @@ ENDIF
  STA xSprite6
  STA xSprite8
 
-IF _NTSC
-
- LDA #$4B
+ LDA #$4B+YPAL
  STA ySprite5
  STA ySprite6
- LDA #$5B
+ LDA #$5B+YPAL
  STA ySprite7
  STA ySprite8
-
-ELIF _PAL
-
- LDA #$51
- STA ySprite5
- STA ySprite6
- LDA #$61
- STA ySprite7
- STA ySprite8
-
-ENDIF
 
  RTS
 
@@ -5147,27 +5060,13 @@ ENDIF
  STA xSprite7
  STA xSprite8
 
-IF _NTSC
-
- LDA #$53
+ LDA #$53+YPAL
  STA ySprite5
  STA ySprite6
- LDA #$47
+ LDA #$47+YPAL
  STA ySprite7
- LDA #$5F
+ LDA #$5F+YPAL
  STA ySprite8
-
-ELIF _PAL
-
- LDA #$59
- STA ySprite5
- STA ySprite6
- LDA #$4D
- STA ySprite7
- LDA #$65
- STA ySprite8
-
-ENDIF
 
  RTS
 
@@ -5193,25 +5092,12 @@ ENDIF
  STA xSprite6
  STA xSprite8
 
-IF _NTSC
-
- LDA #$4B
+ LDA #$4B+YPAL
  STA ySprite5
  STA ySprite6
- LDA #$5B
+ LDA #$5B+YPAL
  STA ySprite7
  STA ySprite8
-
-ELIF _PAL
-
- LDA #$51
- STA ySprite5
- STA ySprite6
- LDA #$61
- STA ySprite7
- STA ySprite8
-
-ENDIF
 
  RTS
 

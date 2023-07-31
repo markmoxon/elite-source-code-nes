@@ -108,6 +108,10 @@
  LL = 29                ; The length of lines (in characters) of justified text
                         ; in the extended tokens system
 
+ YPAL = 6 AND _PAL      ; A margin of 6 pixels that is applied to a number of
+                        ; y-coordinates for the PAL version only (as the PAL
+                        ; version has a taller screen than NTSC)
+
 ; ******************************************************************************
 ;
 ; NES PPU registers
@@ -172,7 +176,7 @@ IF NOT(_BANK = 0)
  subm_8926          = $8926
  SendScreenToPPU    = $8980
  MVS5               = $8A14
- DemoShips          = $9522
+ PlayDemo           = $9522
  StartAfterLoad     = $A379
  PrintCtrlCode      = $A8D9
  ZINF               = $AE03
@@ -307,12 +311,12 @@ ENDIF
 
 IF NOT(_BANK = 4)
 
- subm_B882          = $B882
+ GetRankHeadshot    = $B882
  GetCmdrImage       = $B8F9
  SetCmdrImage       = $B93C
- subm_B96B          = $B96B
- subm_B9C1          = $B9C1
- subm_B9F9          = $B9F9
+ DrawBigLogo        = $B96B
+ DrawLogoNames      = $B9C1
+ DrawSmallLogo      = $B9F9
 
 ENDIF
 
