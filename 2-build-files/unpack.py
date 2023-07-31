@@ -354,7 +354,7 @@ extract_image(bank_data4[start: end], 1, "../1-source-files/images/other-images/
 
 start = 0xAB1C - 0x8000
 end = 0xB5CC - 0x8000
-extract_image(bank_data4[start: end], 1, "../1-source-files/images/other-images/", "eliteLogoBig", palette=7, pixel_width=48, data_is_packed=True)
+extract_image(bank_data4[start: end], 1, "../1-source-files/images/other-images/", "bigLogoImage", palette=7, pixel_width=48, data_is_packed=True)
 
 start = 0x9760 - 0x8000
 end = 0x9FA1 - 0x8000
@@ -366,11 +366,11 @@ extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/
 
 start = 0xA4D3 - 0x8000
 end = 0xA730 - 0x8000
-extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "eliteLogo", palette=7, pixel_width=40, data_is_packed=True)
+extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "smallLogoImage", palette=7, pixel_width=40, data_is_packed=True)
 
 start = 0xA71B - 0x8000
 end = 0xA730 - 0x8000
-extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "eliteLogoBall", palette=7, pixel_width=16, data_is_packed=True)
+extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "logoBallImage", palette=7, pixel_width=16, data_is_packed=True)
 
 start = 0xA493 - 0x8000
 end = 0xA4D3 - 0x8000
