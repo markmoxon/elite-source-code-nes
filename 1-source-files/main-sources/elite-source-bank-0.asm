@@ -2418,23 +2418,24 @@ ENDIF
  ORA #%01000000         ; we send both nametable and pattern table data for
  STA bitplaneFlags,X    ; bitplane X to the PPU in the NMI handler
 
- RTS
+ RTS                    ; Return from the subroutine
 
 .C874C
 
- CMP #$98
+ CMP #$98               ; ???
  BNE C876F
 
- JSR GetStatusCondition
+ JSR GetStatusCondition ; Set X to our ship's status condition
 
- CPX L0471
- BEQ C875B
+ CPX previousCondition  ; If our condition hasn't changed, jump to C875B to skip
+ BEQ C875B              ; the following instruction
 
- JSR STATUS
+ JSR STATUS             ; Call STATUS to refresh the Status Mode screen, so our
+                        ; status updates on-screen
 
 .C875B
 
- LDX L0471
+ LDX previousCondition  ; ???
  CPX #3
  BNE C876A
 
@@ -2451,7 +2452,7 @@ ENDIF
 
 .C876F
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -2626,10 +2627,10 @@ ENDIF
 
 .PrintCombatRank
 
- LDA #16                ; ???
- JSR TT68
+ LDA #16                ; Print recursive token 130 ("RATING:") followed by
+ JSR TT68               ; a colon
 
- LDA L04A9
+ LDA L04A9              ; ???
  AND #1
  BEQ P%+5
 
@@ -2646,34 +2647,56 @@ ENDIF
 
  TAX                    ; Set X to 0 (as A is 0)
 
- LDX TALLY              ; ???
- CPX #0
+ LDX TALLY              ; Set X to the low byte of the kill tally
+
+ CPX #0                 ; Increment A if X >= 0
  ADC #0
- CPX #2
+
+ CPX #2                 ; Increment A if X >= 2
  ADC #0
- CPX #8
+
+ CPX #8                 ; Increment A if X >= 8
  ADC #0
- CPX #24
+
+ CPX #24                ; Increment A if X >= 24
  ADC #0
- CPX #44
+
+ CPX #44                ; Increment A if X >= 44
  ADC #0
- CPX #130
+
+ CPX #130               ; Increment A if X >= 130
  ADC #0
- TAX
+
+ TAX                    ; Set X to A, which will be as follows:
+                        ;
+                        ;   * 1 (Harmless)        when TALLY = 0 or 1
+                        ;
+                        ;   * 2 (Mostly Harmless) when TALLY = 2 to 7
+                        ;
+                        ;   * 3 (Poor)            when TALLY = 8 to 23
+                        ;
+                        ;   * 4 (Average)         when TALLY = 24 to 43
+                        ;
+                        ;   * 5 (Above Average)   when TALLY = 44 to 129
+                        ;
+                        ;   * 6 (Competent)       when TALLY = 130 to 255
+                        ;
+                        ; Note that the Competent range also covers kill counts
+                        ; from 256 to 511, but those are covered by st4 below
 
 .st3
 
- TXA
+ TXA                    ; Store the combat rank in X on the stack
  PHA
 
- LDA L04A9
+ LDA L04A9              ; ???
  AND #5
  BEQ P%+8
 
  JSR TT162              ; Print two newlines
  JSR TT162
 
- PLA
+ PLA                    ; Set A to the combat rank we stored on the stack above
 
  CLC                    ; Print recursive token 135 + A, which will be in the
  ADC #21                ; range 136 ("HARMLESS") to 144 ("---- E L I T E ----")
@@ -2799,13 +2822,15 @@ ENDIF
                         ; and draw a horizontal line at pixel row 19 to box
                         ; in the title
 
- JSR GetStatusCondition ; ???
- STX L0471
+ JSR GetStatusCondition ; Set X to our ship's status condition
+
+ STX previousCondition  ; Store the status condition in previousCondition, so
+                        ; we keep an eye on changes in our condition
 
  LDA #230               ; Start off by setting A to token 70 ("GREEN")
 
- DEX                    ; ???
- BMI wearedocked
+ DEX                    ; If the status condition in X is 0, then we are docked,
+ BMI wearedocked        ; so jump to wearedocked
 
  BEQ st6                ; So if X = 0, there are no ships in the vicinity, so
                         ; jump to st6 to print "Green" for our ship's condition
@@ -12020,36 +12045,40 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_EQSHP1
+;       Name: DrawCobraMkIII
 ;       Type: Subroutine
 ;   Category: Equipment
-;    Summary: ???
+;    Summary: Draw the Cobra Mk III on the Equip Ship screen
 ;
 ; ******************************************************************************
 
-.subm_EQSHP1
+.DrawCobraMkIII
 
- LDA #20                ; Move the text cursor to column 2 on row 20
- STA YC
+ LDA #20                ; Set XC and YC so the call to DrawImageNames draws the
+ STA YC                 ; Cobra Mk III at text column 2 on row 20
  LDA #2
  STA XC
 
- LDA #$1A
- STA K
- LDA #5
- STA K+1
+ LDA #26                ; Set K = 26 so the call to DrawImageNames draws 26
+ STA K                  ; tiles in each row
 
- LDA #$B7
- STA V+1
- LDA #$EC
+ LDA #5                 ; Set K+1 = 5 so the call to DrawImageNames draws 5 rows
+ STA K+1                ; of tiles
+
+ LDA #HI(cobraNames)    ; Set V(1 0) = cobraNames, so the call to DrawImageNames
+ STA V+1                ; draws the Cobra Mk III
+ LDA #LO(cobraNames)
  STA V
 
- LDA #0
- STA K+2
+ LDA #0                 ; Set K+2 = 0, so the call to DrawImageNames copies the
+ STA K+2                ; entries directly from cobraNames to the nametable
+                        ; buffer without adding an offset
 
- JSR DrawLogoNames_b4
+ JSR DrawImageNames_b4  ; Draw the Cobra Mk III at text column 2 on row 20
 
- JMP DrawEquipment_b6
+ JMP DrawEquipment_b6   ; Draw the currently fitted equipment onto the Cobra Mk
+                        ; III image, returning from the subroutine using a tail
+                        ; call
 
 ; ******************************************************************************
 ;
@@ -12237,7 +12266,8 @@ ENDIF
 
  JSR subm_EQSHP2
 
- JSR DrawEquipment_b6
+ JSR DrawEquipment_b6   ; Draw the currently fitted equipment onto the Cobra Mk
+                        ; III image
 
  JSR SendScreenToPPU
 
@@ -12372,7 +12402,7 @@ ENDIF
  JSR subm_EQSHP2
  JSR dn
  JSR subm_EB86
- JSR subm_EQSHP1
+ JSR DrawCobraMkIII
  JSR subm_8926
 
 .CA4DB
@@ -12599,7 +12629,10 @@ ENDIF
  CMP #$1F
  BNE loop_CA5C5
  JSR dn
- JSR DrawEquipment_b6
+
+ JSR DrawEquipment_b6   ; Draw the currently fitted equipment onto the Cobra Mk
+                        ; III image
+
  JSR SendScreenToPPU
  JMP CA4DB
 
@@ -16594,7 +16627,7 @@ ENDIF
 
  LDA #1
  JSR WSCAN
- JSR subm_8021_b6
+ JSR ChooseMusic_b6
  LDA #$FF
  BNE CB10B
 
@@ -17097,7 +17130,7 @@ ENDIF
  STA L030A
  JSR ResetSoundL045E
  JSR JAMESON_b6
- JSR subm_F3AB
+ JSR ResetOptions
  LDA #1
  STA fontBitplane
  LDX #$FF
@@ -17108,7 +17141,7 @@ ENDIF
                         ; effectively resets the stack
 
  JSR RESET
- JSR StartScreen_b6
+ JSR ChooseLanguage_b6
 
 ; ******************************************************************************
 ;
@@ -17130,7 +17163,7 @@ ENDIF
  TXS                    ; location for the 6502 stack, so this instruction
                         ; effectively resets the stack
 
- INX                    ; ???
+ INX                    ; Set L0470 = 0 ???
  STX L0470
 
  JSR RES2               ; Reset a number of flight variables and workspaces
@@ -17138,54 +17171,79 @@ ENDIF
                         ; to restart from the title screen
 
  LDA #5                 ; ???
- JSR subm_E909
+ JSR SetL0460Vars
 
  JSR U%                 ; Call U% to clear the key logger
 
- JSR subm_F3BC          ; ???
- LDA controller1Select
- AND controller1Start
- AND controller1A
+ JSR DrawTitleScreen    ; Draw the title screen with the rotating ships,
+                        ; returning when a key is pressed
+
+ LDA controller1Select  ; If Select, Start, A and B are all pressed at the same
+ AND controller1Start   ; time on controller 1, jump to dead2 to show the
+ AND controller1A       ; credits scrolltext
  AND controller1B
- BNE CB341
- LDA controller1Select
- ORA controller2Select
- BNE CB355
- LDA #0
+ BNE dead2
+
+ LDA controller1Select  ; If Select is pressed on either controller, jump to
+ ORA controller2Select  ; dead3 to start the game straight away, skipping the
+ BNE dead3              ; demo
+
+                        ; If we get here then we start the game
+
+ LDA #0                 ; Store 0 on the stack ???
  PHA
- JSR BR1
- LDA #$FF
+
+ JSR BR1                ; Reset a number of variables, ready to start a new game
+
+ LDA #$FF               ; ???
  STA QQ11
+
  LDA autoPlayDemo
- BEQ CB32C
+ BEQ dead1
+
  JSR SetupDemoUniverse
 
-.CB32C
+.dead1
 
  JSR WSCAN
+
  LDA #4
- JSR subm_8021_b6
+ JSR ChooseMusic_b6
+
  LDA L0305
  CLC
  ADC #6
  STA L0305
+
  PLA
+
  JMP subm_A5AB_b6
 
-.CB341
+.dead2
 
- JSR BR1
+                        ; If we get here then we show the credits scrolltext
+
+ JSR BR1                ; Reset a number of variables, ready to start a new game
+
  LDA #$FF
  STA QQ11
  JSR WSCAN
+
  LDA #4
- JSR subm_8021_b6
+ JSR ChooseMusic_b6
+
  LDA #2
  JMP subm_A5AB_b6
 
-.CB355
+.dead3
 
- JSR subm_B63D_b3
+                        ; If we get here then we start the game without playing
+                        ; the demo
+
+ JSR subm_B63D_b3       ; ??? Something to do with palettes
+
+                        ; Fall through into subm_B358 to reset the stack and go
+                        ; to the docking bay (i.e. show the Status Mode screen)
 
 ; ******************************************************************************
 ;
@@ -17202,7 +17260,10 @@ ENDIF
  TXS                    ; location for the 6502 stack, so this instruction
                         ; effectively resets the stack
 
- JSR BR1
+ JSR BR1                ; Reset a number of variables, ready to start a new game
+
+                        ; Fall through into the BAY routine to go to the docking
+                        ; bay (i.e. show the Status Mode screen)
 
 ; ******************************************************************************
 ;
@@ -17236,7 +17297,7 @@ ENDIF
 ;       Name: BR1
 ;       Type: Subroutine
 ;   Category: Start and end
-;    Summary: Start the game
+;    Summary: Reset a number of variables, ready to start a new game
 ;
 ; ******************************************************************************
 

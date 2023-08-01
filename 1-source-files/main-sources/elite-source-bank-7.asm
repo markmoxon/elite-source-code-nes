@@ -5958,56 +5958,111 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: GetNameIndexForRow
+;       Name: GetRowNameAddress
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: Get the index into the nametable buffer for a given character row
+;    Summary: Get the addresses in the nametable buffers for the start of a
+;             given character row
 ;
 ; ------------------------------------------------------------------------------
 ;
+; This routine returns the index of the start of a text row in the nametable
+; buffers. Character row 0 (i.e. YC = 0) is mapped to the second row on-screen,
+; as the first row is taken up by the box edge.
+;
+; It's also worth noting that the first column in the nametable is column 1, not
+; column 0, as the screen has a horizontal scroll of 8, so the leftmost tile
+; on each row is scrolled around to the right side. This means that in terms of
+; tiles, column 1 is the left edge of the screen, then columns 2 to 31 form the
+; body of the screen, and column 0 is the right edge of the screen.
+;
 ; Arguments:
 ;
-;   XC                  ???
+;   YC                  The text row
 ;
-;   YC                  ???
+;
+; Returns:
+;
+;   SC(1 0)             The address in nametable buffer 0 for the start of the
+;                       row
+;
+;   SC2(1 0)            The address in nametable buffer 1 for the start of the
+;                       row
 ;
 ; ******************************************************************************
 
-.GetNameIndexForRow
+.GetRowNameAddress
 
- LDA #0
- STA SC+1
- LDA YC
- BEQ CDBFE
- LDA YC
- CLC
- ADC #1
- ASL A
- ASL A
- ASL A
- ASL A
- ROL SC+1
- SEC
- ROL A
- ROL SC+1
- STA SC
- STA SC2
- LDA SC+1
- ADC #$70
- STA SC+1
- ADC #4
- STA SC2+1
- RTS
+ LDA #0                 ; Set SC+1 = 0, for use at the top byte of SC(1 0) in
+ STA SC+1               ; the calculation below
 
-.CDBFE
+ LDA YC                 ; If YC = 0, then we need to return the address of the
+ BEQ grow1              ; start of the top character row (i.e. the second row
+                        ; on-screen), so jump to grow1
 
- LDA #HI(nameBuffer0+1*32+1)    ; Set SC(1 0) to the address of the second tile
- STA SC+1                       ; on tile row 1 in nametable buffer 0
+ LDA YC                 ; Set A = YC + 1
+ CLC                    ;
+ ADC #1                 ; So this is the nametable row number for text row YC,
+                        ; as nametable row 0 is taken up by the top box edge
+
+ ASL A                  ; Set SC(1 0) = (SC+1 A) << 5 + 1
+ ASL A                  ;             = (0 A) << 5 + 1
+ ASL A                  ;             = (YC + 1) * 32 + 1
+ ASL A                  ;
+ ROL SC+1               ; This sets SC(1 0) to the offset within the nametable
+ SEC                    ; of the start of the relevant row, as there are 32
+ ROL A                  ; tiles on each row
+ ROL SC+1               ;
+ STA SC                 ; The YC + 1 part skips the top on-screen row to start
+                        ; just below the top box edge, and the final + 1 takes
+                        ; care of the horizontal scrolling, which makes the
+                        ; first column number 1 rather than 0
+                        ;
+                        ; The final ROL SC+1 also clears the C flag, as we know
+                        ; bits 1 to 7 of SC+1 were clear before the rotation
+
+ STA SC2                ; Set the low byte of SC2(1 0) to the low byte of
+                        ; SC(1 0), as the the addresses of the two nametable
+                        ; buffers only differ in the high bytes
+
+ LDA SC+1               ; Set SC(1 0) = SC(1 0) + nameBuffer0
+ ADC #HI(nameBuffer0)   ;
+ STA SC+1               ; So SC(1 0) now points to the row's address in
+                        ; nametable buffer 0 (this addition works because we
+                        ; know that the C flag is clear and the low byte of
+                        ; nameBuffer0 is zero)
+                        ;
+                        ; This addition will never overflow, as we know SC+1 is
+                        ; in the range 0 to 3, so this also clears the C flag
+
+                        ; Each nametable buffer is 1024 bytes in size, which is
+                        ; four pages of 256 bytes, and nametable buffer 1 is
+                        ; straight after nametable buffer 0 in memory, so we can
+                        ; calculate the row's address in nametable buffer 1 in
+                        ; SC2(1 0) by simply adding 4 to the high byte
+
+ ADC #4                 ; Set SC2(1 0) = SC(1 0) + (4 0)
+ STA SC2+1              ;
+                        ; So SC2(1 0) now points to the row's address in
+                        ; nametable buffer 1 (this addition works because we
+                        ; know that the C flag is clear
+
+ RTS                    ; Return from the subroutine
+
+.grow1
+
+                        ; If we get here then we want to return the address of
+                        ; the top character row (as YC = ), which is actually
+                        ; the second on-screen row (row 1), as the first row is
+                        ; taken up by the top of the box
+
+ LDA #HI(nameBuffer0+1*32+1)    ; Set SC(1 0) to the address of the tile in
+ STA SC+1                       ; column 1 on tile row 1 in nametable buffer 0
  LDA #LO(nameBuffer0+1*32+1)
  STA SC
 
- LDA #HI(nameBuffer1+1*32+1)    ; Set SC2(1 0) to the address of the second tile
- STA SC2+1                      ; on tile row 1 in nametable buffer 1
+ LDA #HI(nameBuffer1+1*32+1)    ; Set SC(1 0) to the address of the tile in
+ STA SC2+1                      ; column 1 on tile row 1 in nametable buffer 1
  LDA #LO(nameBuffer1+1*32+1)
  STA SC2
 
@@ -8950,7 +9005,7 @@ ENDIF
 
  TYA
  PHA
- LDY missileNametable,X
+ LDY missileNames,X
  PLA
  STA nameBuffer0+22*32,Y
  LDY #0
@@ -8958,14 +9013,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: missileNametable
+;       Name: missileNames
 ;       Type: Variable
 ;   Category: Dashboard
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.missileNametable
+.missileNames
 
  EQUB $00, $5F, $5E, $3F, $3E
 
@@ -9343,14 +9398,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_E909
+;       Name: SetL0460Vars
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_E909
+.SetL0460Vars
 
  ASL A
  ASL A
@@ -10458,14 +10513,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_8021_b6
+;       Name: ChooseMusic_b6
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: Call the subm_8021 routine in ROM bank 6
+;    Summary: Call the ChooseMusic routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.subm_8021_b6
+.ChooseMusic_b6
 
  PHA                    ; ???
  JSR WSCAN
@@ -10476,7 +10531,7 @@ ENDIF
 
  AND #$7F
 
- LDX L03ED
+ LDX disableMusic
  BMI subm_ECE2-1
 
  STA ASAV               ; Store the value of A so we can retrieve it below
@@ -10492,7 +10547,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR subm_8021          ; Call subm_8021, now that it is paged into memory
+ JSR ChooseMusic        ; Call ChooseMusic, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -10502,7 +10557,8 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JMP subm_8021          ; ???
+ JMP ChooseMusic        ; Call ChooseMusic, which is already paged into memory,
+                        ; and return from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -10538,7 +10594,8 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JMP subm_89D1          ; ???
+ JMP subm_89D1          ; Call subm_89D1, which is already paged into memory,
+                        ; and return from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -10792,14 +10849,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: StartScreen_b6
+;       Name: ChooseLanguage_b6
 ;       Type: Subroutine
 ;   Category: Start and end
-;    Summary: Call the StartScreen routine in ROM bank 6
+;    Summary: Call the ChooseLanguage routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.StartScreen_b6
+.ChooseLanguage_b6
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -10807,7 +10864,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR StartScreen        ; Call StartScreen, now that it is paged into memory
+ JSR ChooseLanguage     ; Call ChooseLanguage, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -10985,14 +11042,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: DrawLogoNames_b4
+;       Name: DrawImageNames_b4
 ;       Type: Subroutine
-;   Category: Start and end
-;    Summary: Call the DrawLogoNames routine in ROM bank 4
+;   Category: Utility routines
+;    Summary: Call the DrawImageNames routine in ROM bank 4
 ;
 ; ******************************************************************************
 
-.DrawLogoNames_b4
+.DrawImageNames_b4
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -11000,7 +11057,7 @@ ENDIF
  LDA #4                 ; Page ROM bank 4 into memory at $8000
  JSR SetBank
 
- JSR DrawLogoNames      ; Call DrawLogoNames, now that it is paged into memory
+ JSR DrawImageNames     ; Call DrawImageNames, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -12820,50 +12877,88 @@ ENDIF
 ;       Name: GetStatusCondition
 ;       Type: Subroutine
 ;   Category: Status
-;    Summary: ???
+;    Summary: Calculate our ship's status condition
+;
+; ------------------------------------------------------------------------------
+;
+; Returns:
+;
+;   statusCondition     Our ship's status condition:
+;
+;                         * 0 = Docked
+;
+;                         * 1 = Green
+;
+;                         * 2 = Yellow
+;
+;                         * 3 = Red
+;
+;   X                   Also contains the status condition
 ;
 ; ******************************************************************************
 
 .GetStatusCondition
 
- LDX #0
- LDY QQ12
- BNE CF355
- INX
- LDY JUNK
- LDA FRIN+2,Y
- BEQ CF355
- INX
- LDY L0472
- CPY #3
- BEQ subm_F359
- LDA ENERGY
- BMI CF355
+ LDX #0                 ; We start with a status condition of 0, which means
+                        ; there is nothing to worry about
 
-.loop_CF354
+ LDY QQ12               ; Fetch the docked status from QQ12, and if we are
+ BNE cond2              ; docked, jump to cond2 to return 0 ("Docked") as our
+                        ; status condition
 
- INX
+ INX                    ; We are in space, so increment X to 1 ("Green")
 
-.CF355
+ LDY JUNK               ; Set Y to the number of junk items in our local bubble
+                        ; of universe (where junk is asteroids, canisters,
+                        ; escape pods and so on)
 
- STX L0472
- RTS
+ LDA FRIN+2,Y           ; The ship slots at FRIN are ordered with the first two
+                        ; slots reserved for the planet and sun/space station,
+                        ; and then any ships, so if the slot at FRIN+2+Y is not
+                        ; empty (i.e. is non-zero), then that means the number
+                        ; of non-asteroids in the vicinity is at least 1
 
-; ******************************************************************************
-;
-;       Name: subm_F359
-;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
-;
-; ******************************************************************************
+ BEQ cond2              ; So if X = 0, there are no ships in the vicinity, so
+                        ; jump to cond2 to store 1 ("Green") as our status
+                        ; condition
 
-.subm_F359
+ INX                    ; Otherwise there are non-asteroids in the vicinity, so
+                        ; increment X to 2 ("Yellow")
 
- LDA ENERGY
- CMP #$A0
- BCC loop_CF354
- BCS CF355
+ LDY statusCondition    ; If the previous condition in statusCondition was 3
+ CPY #3                 ; ("Red"), then jump to cond3
+ BEQ cond3
+
+ LDA ENERGY             ; If our energy levels are 128 or greater, jump to cond2
+ BMI cond2              ; to store 2 ("Yellow") as our status condition
+
+.cond1
+
+                        ; If we get here then either our energy levels are less
+                        ; than 128, or our previous condition was "Red" and our
+                        ; energy levels are less than 160
+                        ;
+                        ; So once our energy levels are low enough to trigger a
+                        ; "Red" status, it stays that way until our energy
+                        ; levels recover to a higher level
+
+ INX                    ; Increment X to 3 ("Red")
+
+.cond2
+
+ STX statusCondition    ; Store our new status condition in statusCondition
+
+ RTS                    ; Return from the subroutine
+
+.cond3
+
+ LDA ENERGY             ; If our energy levels are less than 160, jump to cond1
+ CMP #160               ; to return a "Red" status condition
+ BCC cond1
+
+ BCS cond2              ; Jump to cond2 to return a "Yellow" status condition
+                        ; (this BCS is effectively a JMP as we just passed
+                        ; through a BCC)
 
 ; ******************************************************************************
 ;
@@ -12896,7 +12991,7 @@ ENDIF
  STA L0309
  LDA #$34
  STA L030A
- JSR subm_F3AB
+ JSR ResetOptions
  LDA #0
  STA K%+6
  STA K%
@@ -12925,18 +13020,18 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_F3AB
+;       Name: ResetOptions
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Start and end
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_F3AB
+.ResetOptions
 
  LDA #0
  STA JSTGY
- STA L03ED
+ STA disableMusic
  LDA #$FF
  STA DAMP
  STA DNOIZ
@@ -12944,18 +13039,18 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_F3BC
+;       Name: DrawTitleScreen
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Start and end
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_F3BC
+.DrawTitleScreen
 
  JSR subm_B63D_b3
  LDA #0
- JSR subm_8021_b6
+ JSR ChooseMusic_b6
  JSR HideSprites5To63
  LDA #$FF
  STA QQ11a
@@ -12974,10 +13069,10 @@ ENDIF
 .loop_CF3DC
 
  STY L03FC
- LDA LF415,Y
+ LDA titleShipType,Y
  BEQ loop_CF3DA
  TAX
- LDA LF422,Y
+ LDA titleShipDist,Y
  TAY
  LDA #6
  JSR TITLE
@@ -13003,30 +13098,30 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LF415
+;       Name: titleShipType
 ;       Type: Variable
-;   Category: ???
+;   Category: Start and end
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.LF415
+.titleShipType
 
- EQUB $0B, $13, $14, $19, $1D, $15, $12, $1B  ; F415: 0B 13 14... ...
- EQUB $0A,   1, $11, $10,   0                 ; F41D: 0A 01 11... ...
+ EQUB $0B, $13, $14, $19, $1D, $15, $12, $1B
+ EQUB $0A,   1, $11, $10,   0
 
 ; ******************************************************************************
 ;
-;       Name: LF422
+;       Name: titleShipDist
 ;       Type: Variable
-;   Category: ???
+;   Category: Start and end
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.LF422
+.titleShipDist
 
- EQUB $64, $0A, $0A, $1E, $B4, $0A, $28, $5A  ; F422: 64 0A 0A... d..
+ EQUB $64, $0A, $0A, $1E, $B4, $0A, $28, $5A
  EQUB $0A, $46, $28, $0A
 
 ; ******************************************************************************

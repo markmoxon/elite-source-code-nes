@@ -16928,7 +16928,7 @@ ENDIF
 
 .CB6DF
 
- JSR GetNameIndexForRow
+ JSR GetRowNameAddress
  LDY XC
  DEY
  LDA (SC),Y
@@ -17072,7 +17072,7 @@ ENDIF
 
 .CB7BF
 
- JSR GetNameIndexForRow
+ JSR GetRowNameAddress
  LDY XC
  DEC XC
  LDA #0
@@ -17083,7 +17083,7 @@ ENDIF
 .CB7CF
 
  PHA
- JSR GetNameIndexForRow
+ JSR GetRowNameAddress
  PLA
  CMP #$20
  BEQ CB7E5

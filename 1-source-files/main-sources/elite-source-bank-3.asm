@@ -1001,14 +1001,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: dashNametable
+;       Name: dashNames
 ;       Type: Variable
 ;   Category: Dashboard
-;    Summary: ???
+;    Summary: Nametable entries for the dashboard
 ;
 ; ******************************************************************************
 
-.dashNametable
+.dashNames
 
  EQUB $45, $46, $47, $48, $47, $49, $4A, $4B
  EQUB $4C, $4D, $4E, $4F, $4D, $4C, $4D, $4E
@@ -1636,7 +1636,7 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA dashNametable-1,Y
+ LDA dashNames-1,Y
 
  STA nameBuffer0+22*32,Y
  STA nameBuffer1+22*32,Y
@@ -3269,7 +3269,7 @@ ENDIF
 
 .CADF4
 
- LDA L03ED
+ LDA disableMusic
  BPL CADFE
  LDY #7
  JSR subm_AF9A
@@ -4167,7 +4167,7 @@ ENDIF
 
 .subm_B2A9
 
- JSR GetNameIndexForRow
+ JSR GetRowNameAddress
  LDA SC
  CLC
  ADC XC
@@ -4242,7 +4242,7 @@ ENDIF
 
 .subm_B2FB
 
- JSR GetNameIndexForRow
+ JSR GetRowNameAddress
  LDA SC
  CLC
  ADC XC

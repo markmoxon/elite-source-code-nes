@@ -160,7 +160,7 @@ ENDIF
 
 .subm_800C
 
- JMP subm_8021
+ JMP ChooseMusic
 
 ; ******************************************************************************
 ;
@@ -242,14 +242,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_8021
+;       Name: ChooseMusic
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_8021
+.ChooseMusic
 
  TAY
  JSR ResetSound
@@ -3679,9 +3679,9 @@ ENDIF
 
  CMP #$33
  BNE CA1E1
- LDA L03ED
+ LDA disableMusic
  EOR #$FF
- STA L03ED
+ STA disableMusic
  BPL CA1D4
  JSR ResetSound_b6
  JMP CA21D
@@ -3691,7 +3691,7 @@ ENDIF
  LDA L045E
  BEQ CA1DE
  AND #$7F
- JSR subm_8021_b6
+ JSR ChooseMusic_b6
 
 .CA1DE
 
@@ -3982,7 +3982,9 @@ ENDIF
  STA ySprite10
  LDA #$CE
  STA xSprite10
- JSR GetStatusCondition
+
+ JSR GetStatusCondition ; Set X to our ship's status condition (0 to 3)
+
  LDA LA386,X
  STA attrSprite10
  LDA LA38A,X
@@ -4245,8 +4247,8 @@ ENDIF
 ;       Name: DrawEquipment
 ;       Type: Subroutine
 ;   Category: Equipment
-;    Summary: Draw the equipment fitted to our Cobra Mk III on the Equip Ship
-;             screen
+;    Summary: Draw the currently fitted equipment onto the Cobra Mk III image on
+;             the Equip Ship screen
 ;
 ; ******************************************************************************
 
@@ -6337,7 +6339,7 @@ ENDIF
  CLC
  ADC #6
  STA YC
- JSR GetNameIndexForRow
+ JSR GetRowNameAddress
  LDA SC
  CLC
  ADC XC
@@ -6373,32 +6375,65 @@ ENDIF
  EQUB $92, $96, $12, $80, $D4, $ED, $00, $00  ; B738: 92 96 12... ...
  EQUB $25, $2D, $24, $01, $A9, $DB, $00, $00  ; B740: 25 2D 24... %-$
 
+; ******************************************************************************
+;
+;       Name: LB748
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
+
 .LB748
 
- EQUB 0                                       ; B748: 00          .
+ EQUW $7900
+ EQUW $7949
+ EQUW $7992
+ EQUW $79DB
+ EQUW $7A24
+ EQUW $7A6D
+ EQUW $7AB6
+ EQUW $7AFF
 
-.LB749
-
- EQUB $79, $49, $79, $92, $79, $DB, $79, $24  ; B749: 79 49 79... yIy
- EQUB $7A, $6D, $7A, $B6, $7A, $FF, $7A       ; B751: 7A 6D 7A... zmz
+; ******************************************************************************
+;
+;       Name: LB758
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .LB758
 
- EQUB $48                                     ; B758: 48          H
+ EQUW $7B48
+ EQUW $7B91
+ EQUW $7BDA
+ EQUW $7C23
+ EQUW $7C6C
+ EQUW $7CB5
+ EQUW $7CFE
+ EQUW $7D47
 
-.LB759
-
- EQUB $7B, $91, $7B, $DA, $7B, $23, $7C, $6C  ; B759: 7B 91 7B... {.{
- EQUB $7C, $B5, $7C, $FE, $7C, $47, $7D       ; B761: 7C B5 7C... |.|
+; ******************************************************************************
+;
+;       Name: LB768
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .LB768
 
- EQUB $90                                     ; B768: 90          .
-
-.LB769
-
- EQUB $7D, $D9, $7D, $22, $7E, $6B, $7E, $B4  ; B769: 7D D9 7D... }.}
- EQUB $7E, $FD, $7E, $46, $7F, $8F, $7F       ; B771: 7E FD 7E... ~.~
+ EQUW $7D90
+ EQUW $7DD9
+ EQUW $7E22
+ EQUW $7E6B
+ EQUW $7EB4
+ EQUW $7EFD
+ EQUW $7F46
+ EQUW $7F8F
 
 ; ******************************************************************************
 ;
@@ -6628,11 +6663,11 @@ ENDIF
  STA Q
  LDA LB768,X
  STA S
- LDA LB749,X
+ LDA LB748+1,X
  STA SC+1
- LDA LB759,X
+ LDA LB758+1,X
  STA R
- LDA LB769,X
+ LDA LB768+1,X
  STA T
  RTS
 
@@ -7550,21 +7585,21 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: StartScreen
+;       Name: ChooseLanguage
 ;       Type: Subroutine
 ;   Category: Start and end
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.StartScreen
+.ChooseLanguage
 
  LDA #HI(iconBarImage0) ; Set iconBarImageHi to the high byte of the image data
  STA iconBarImageHi     ; for icon bar type 0 (docked)
 
  LDY #0
  STY autoPlayDemo
- JSR subm_BDFC
+ JSR SetLanguage
  LDA #$CF
  JSR TT66_b0
 
@@ -7648,7 +7683,7 @@ ENDIF
 
 .loop_CBCF4
 
- JSR subm_BDFC
+ JSR SetLanguage
  LDA LBE2C,Y
  STA XC
  LDA LBE30,Y
@@ -7809,28 +7844,37 @@ ENDIF
 
  INC T
  LDA S
- BPL CBDF9
+ BPL SetChosenLanguage
  DEC V
  BNE CBDE2
  DEC V+1
  BNE CBDE2
- JSR CBDF9
+ JSR SetChosenLanguage
  JMP SetDemoAutoPlay_b5
-
-.CBDF9
-
- LDY LASCT
 
 ; ******************************************************************************
 ;
-;       Name: subm_BDFC
+;       Name: SetChosenLanguage
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_BDFC
+.SetChosenLanguage
+
+ LDY LASCT
+
+; ******************************************************************************
+;
+;       Name: SetLanguage
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
+
+.SetLanguage
 
  LDA LBE3F,Y
  STA QQ18Lo

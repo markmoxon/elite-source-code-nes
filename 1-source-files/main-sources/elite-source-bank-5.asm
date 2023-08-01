@@ -2561,7 +2561,7 @@ ENDIF
 .SetDemoAutoPlay
 
  LDA #5                 ; Set a bunch of L046x variables ???
- JSR subm_E909
+ JSR SetL0460Vars
 
  JSR SetupDemoUniverse  ; Configure the universe for the demo, which includes
                         ; setting the random number seeds to a known value so

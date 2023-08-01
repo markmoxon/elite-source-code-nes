@@ -2317,6 +2317,14 @@ ENDIF
 ;   Category: Start and end
 ;    Summary: Nametable entries for the big Elite logo on the start screen
 ;
+; ------------------------------------------------------------------------------
+;
+; This table contains nametable entries for the big logo, stored as offsets
+; within the pattern data in bigLogoImage (so $01 refers to the first pattern in
+; bigLogoImage, $02 the second pattern in bigLogoImage, and so on).
+;
+; A value of $00 indicates the background pattern.
+;
 ; ******************************************************************************
 
 .bigLogoNames
@@ -2402,6 +2410,19 @@ ENDIF
  EQUB $00, $1B, $1C, $1D, $1E, $1F, $00, $00
  EQUB $00, $00, $20, $21, $22, $00, $00, $00
  EQUB $00, $00, $00, $23, $00, $00, $00, $00
+
+; ******************************************************************************
+;
+;       Name: cobraNames
+;       Type: Variable
+;   Category: Save and load
+;    Summary: Nametable entries for the Cobra Mk III shown on the Equip Ship
+;             screen
+;
+; ******************************************************************************
+
+.cobraNames
+
  EQUB $00, $00, $00, $00, $45, $46, $47, $48
  EQUB $49, $00, $00, $00, $00, $00, $4A, $4B
  EQUB $4C, $4D, $4E, $4F, $50, $51, $52, $53
@@ -2427,87 +2448,170 @@ ENDIF
 ;       Name: GetRankHeadshot
 ;       Type: Subroutine
 ;   Category: Status
-;    Summary: Get the correct headshot number for the current combat rank
+;    Summary: Get the correct headshot number for the current combat rank and
+;             status condition
+;
+; ------------------------------------------------------------------------------
+;
+; Returns:
+;
+;   S                   The headshot number for the current combat rank and
+;                       status condition, in the range 0 to headCount - 1 (13)
 ;
 ; ******************************************************************************
 
 .GetRankHeadshot
 
- LDA TALLY+1            ; See PrintCombatRank
- BNE CB8A6
- LDX TALLY
- CPX #0
+ LDA TALLY+1            ; Fetch the high byte of the kill tally, and if it is
+ BNE rank1              ; not zero, then we have more than 256 kills, so jump
+                        ; to rank1 to work out whether we are Competent,
+                        ; Dangerous, Deadly or Elite
+
+ LDX TALLY              ; Set X to the low byte of the kill tally
+
+ CPX #0                 ; Increment A if X >= 0
  ADC #0
- CPX #2
+
+ CPX #2                 ; Increment A if X >= 2
  ADC #0
- CPX #8
+
+ CPX #8                 ; Increment A if X >= 8
  ADC #0
- CPX #$18
+
+ CPX #24                ; Increment A if X >= 24
  ADC #0
- CPX #$2C
+
+ CPX #44                ; Increment A if X >= 44
  ADC #0
- CPX #$82
+
+ CPX #130               ; Increment A if X >= 130
  ADC #0
- TAX
- JMP CB8B7
 
-.CB8A6
+ TAX                    ; Set X to A, which will be as follows:
+                        ;
+                        ;   * 1 (Harmless)        when TALLY = 0 or 1
+                        ;
+                        ;   * 2 (Mostly Harmless) when TALLY = 2 to 7
+                        ;
+                        ;   * 3 (Poor)            when TALLY = 8 to 23
+                        ;
+                        ;   * 4 (Average)         when TALLY = 24 to 43
+                        ;
+                        ;   * 5 (Above Average)   when TALLY = 44 to 129
+                        ;
+                        ;   * 6 (Competent)       when TALLY = 130 to 255
+                        ;
+                        ; Note that the Competent range also covers kill counts
+                        ; from 256 to 511, but those are covered by rank1 below
 
- LDX #9
- CMP #$19
- BCS CB8B7
- DEX
- CMP #$0A
- BCS CB8B7
- DEX
- CMP #2
- BCS CB8B7
- DEX
+ JMP rank2              ; Jump to rank2
 
-.CB8B7
+.rank1
 
- DEX
- TXA
- STA S
- ASL A
- ADC S
- STA S
- LDX L0471
- BEQ CB8C6
- DEX
+                        ; We call this from above with the high byte of the
+                        ; kill tally in A, which is non-zero, and want to return
+                        ; with the following in X, depending on our rating:
+                        ;
+                        ;   Competent = 6
+                        ;   Dangerous = 7
+                        ;   Deadly    = 8
+                        ;   Elite     = 9
+                        ;
+                        ; The high bytes of the top tier ratings are as follows,
+                        ; so this a relatively simple calculation:
+                        ;
+                        ;   Competent       = 1 to 2
+                        ;   Dangerous       = 2 to 9
+                        ;   Deadly          = 10 to 24
+                        ;   Elite           = 25 and up
 
-.CB8C6
+ LDX #9                 ; Set X to 9 for an Elite rating
 
- TXA
- CLC
- ADC S
- TAX
- LDA LB8DB,X
- CMP headCount
- BCC CB8D8
- LDA headCount
- SBC #1
+ CMP #25                ; If A >= 25, jump to rank2 to get the headshot, as we
+ BCS rank2              ; are Elite
 
-.CB8D8
+ DEX                    ; Decrement X to 8 for a Deadly rating
 
- STA S
- RTS
+ CMP #10                ; If A >= 10, jump to rank2 to get the headshot, as we
+ BCS rank2              ; are Deadly
+
+ DEX                    ; Decrement X to 7 for a Dangerous rating
+
+ CMP #2                 ; If A >= 2, jump to rank2 to get the headshot, as we
+ BCS rank2              ; are Dangerous
+
+ DEX                    ; Decrement X to 6 for a Competent rating
+
+.rank2
+
+                        ; By the time we get here, X contains our combat rank,
+                        ; from 1 for harmless to 9 for Elite
+
+ DEX                    ; Decrement our rank in X into the range 0 to 8
+
+ TXA                    ; Set S = X + X * 2
+ STA S                  ;       = 3 * X
+ ASL A                  ;       = 3 * rank
+ ADC S                  ;
+ STA S                  ; The addition works because the ASL A clears the C flag
+                        ; as we know bit 7 of A is clear (as A <= 8)
+
+ LDX previousCondition  ; Set X to our ship's condition (0 to 3)
+
+ BEQ rank3              ; If our ship's status condition is non-zero, then we
+ DEX                    ; are in space, so decrement X, so we get a value of X
+                        ; as follows:
+                        ;
+                        ;   * 0 for docked and green conditions
+                        ;
+                        ;   * 1 for yellow
+                        ;
+                        ;   * 2 for red
+
+.rank3
+
+ TXA                    ; Set X = S + X
+ CLC                    ;       = 3 * rank + condition
+ ADC S                  ;
+ TAX                    ; where rank is in the range 0 to 8, and condition is
+                        ; in the range 0 to 2
+
+ LDA headShotsByRank,X  ; Set A to the correct headshot for this rank and this
+                        ; condition
+
+ CMP headCount          ; If A = headCount or more, which is hard-coded to 14,
+ BCC rank4              ; then set A = headCount - 1 (i.e. 13)
+ LDA headCount          ;
+ SBC #1                 ; The subtraction works because we know the C flag is
+                        ; set as we pass through a CSS to get to the SBC
+
+.rank4
+
+ STA S                  ; Store the headshot number in S
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: LB8DB
+;       Name: headShotsByRank
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Status
+;    Summary: Lookup table for headshots by rank and status condition
 ;
 ; ******************************************************************************
 
-.LB8DB
+.headShotsByRank
 
- EQUB   0,   1,   2,   3,   4,   5,   6,   6  ; B8DB: 00 01 02... ...
- EQUB   7,   8,   8,   8,   9,   9,   9, $0A  ; B8E3: 07 08 08... ...
- EQUB $0A, $0A, $0B, $0B, $0B, $0C, $0C, $0C  ; B8EB: 0A 0A 0B... ...
- EQUB $0D, $0D, $0D, $0E, $0E, $0E            ; B8F3: 0D 0D 0D... ...
+ EQUB  0,  1,  2        ; Harmless        (docked/green, yellow, red)
+ EQUB  3,  4,  5        ; Mostly Harmless (docked/green, yellow, red)
+ EQUB  6,  6,  7        ; Poor            (docked/green, yellow, red)
+ EQUB  8,  8,  8        ; Average
+ EQUB  9,  9,  9        ; Above Average
+ EQUB 10, 10, 10        ; Competent
+ EQUB 11, 11, 11        ; Dangerous
+ EQUB 12, 12, 12        ; Deadly
+ EQUB 13, 13, 13        ; Elite
+ EQUB 14, 14, 14        ; Unused
 
 ; ******************************************************************************
 ;
@@ -2636,7 +2740,7 @@ ENDIF
  STA V                  ; into the pattern buffers
 
  LDA tileNumber         ; Set K+2 to the next free tile number, to send to the
- TAY                    ; DrawLogoNames routine below as the pattern number of
+ TAY                    ; DrawImageNames routine below as the pattern number of
  STY K+2                ; the start of the big logo data
 
  ASL A                  ; Set SC(1 0) = pattBuffer0 + tileNumber * 8
@@ -2676,23 +2780,23 @@ ENDIF
                         ; unpacks the big logo pattern data into pattern buffer
                         ; 0, starting from pattern tileNumber
 
- LDA #HI(bigLogoNames)  ; Set V(1 0) = bigLogoNames
- STA V+1
+ LDA #HI(bigLogoNames)  ; Set V(1 0) = bigLogoNames, so the call to
+ STA V+1                ; DrawImageNames draws the big Elite logo
  LDA #LO(bigLogoNames)
  STA V
 
- LDA #24                ; Set K = 24 to send to DrawLogoNames below
- STA K
+ LDA #24                ; Set K = 24 so the call to DrawImageNames draws 26
+ STA K                  ; tiles in each row
 
- LDA #20                ; Set K = 20 to send to DrawLogoNames below
- STA K+1
+ LDA #20                ; Set K+1 = 20 so the call to DrawImageNames draws 20
+ STA K+1                ; rows of tiles
 
- LDA #1                 ; Move the text cursor to column 5 on row 1 for the call
- STA YC                 ; to DrawLogoNames
+ LDA #1                 ; Set XC and YC so the call to DrawImageNames draws the
+ STA YC                 ; big logo at text column 5 on row 1
  LDA #5
  STA XC
 
- JSR DrawLogoNames      ; Call DrawLogoNames with the following arguments:
+ JSR DrawImageNames     ; Call DrawImageNames with the following arguments:
                         ;
                         ;   * K = 24
                         ;   * K+1 = 20
@@ -2710,91 +2814,130 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: DrawLogoNames
+;       Name: DrawImageNames
 ;       Type: Subroutine
-;   Category: Start and end
-;    Summary: Set the nametable buffer entries for the big Elite logo
+;   Category: Utility routines
+;    Summary: Set the nametable buffer entries for the specified image
 ;
 ; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
-;   K                   ???
+;   K                   The number of columns in the image (i.e. the number of
+;                       tiles in each row of the image)
 ;
-;   K+1                 ???
+;   K+1                 The number of tile rows in the image
 ;
-;   K+2                 ???
+;   K+2                 The pattern number of the start of the image pattern
+;                       data in the pattern table
 ;
-;   Y                   ???
+;   V(1 0)              The address of the nametable entry table for the image
 ;
-;   XC                  ???
+;   XC                  The text column of the top-left corner of the image
 ;
-;   YC                  ???
+;   YC                  The text row of the top-left corner of the image
 ;
 ; ******************************************************************************
 
-.DrawLogoNames
+.DrawImageNames
 
- LDA #$20
- SEC
- SBC K
- STA ZZ
+ LDA #32                ; Set ZZ = 32 - K
+ SEC                    ;
+ SBC K                  ; As there are 32 nametable entries on each screen row,
+ STA ZZ                 ; this gives us a number we can add to the address of
+                        ; the nametable entry for the last tile on a row, to
+                        ; give us the address of the nametable entry for the
+                        ; first tile on the next row of the image
 
- JSR GetNameIndexForRow
+ JSR GetRowNameAddress  ; Get the addresses in the nametable buffers for the
+                        ; start of character row YC, as follows:
+                        ;
+                        ;   SC(1 0) = the address in nametable buffer 0
+                        ;
+                        ;   SC2(1 0) = the address in nametable buffer 1
 
- LDA SC
- CLC
- ADC XC
+ LDA SC                 ; Set SC(1 0) = SC(1 0) + XC
+ CLC                    ;
+ ADC XC                 ; So SC(1 0) contains the address in nametable buffer 0
+ STA SC                 ; of the text charater at column XC on row YC, which is
+                        ; where we want to draw the image
+
+                        ; We now loop through the nametable entry table, copying
+                        ; tile numbers from the table to the nametable buffers,
+                        ; row by row
+
+ LDY #0                 ; Set a tile counter in Y to increment as we draw each
+                        ; tile, starting with Y = 0 for the first tile at the
+                        ; start of the first row
+
+.dimg1
+
+ LDX K                  ; Set X to the number of tiles in each row of the image,
+                        ; so we can use it as a column counter as we move along
+                        ; each row
+
+.dimg2
+
+ LDA (V),Y              ; Fetch the Y-th byte from the nametable entry table for
+                        ; the image we want to draw
+                        ;
+                        ; This contains the pattern number for this tile, as an
+                        ; offset from the start of the pattern data for this
+                        ; image, which we already stored in the pattern buffer
+                        ; at pattern number K+2
+                        ;
+                        ; So the pattern number for this tile within the pattern
+                        ; buffer will be A + K+2
+
+ BEQ dimg3              ; If it is zero, then this is a background tile, so skip
+                        ; the following two instructions to keep A as zero
+
+ CLC                    ; Set A = A + K+2
+ ADC K+2                ;
+                        ; So A contains the pattern number in the pattern
+                        ; buffer, which is what we want to store in the
+                        ; nametable buffer
+
+.dimg3
+
+ STA (SC),Y             ; Store the pattern number in the Y-th entry in the
+                        ; nametable buffer
+
+ INY                    ; Increment the tile number to move to the next tile
+
+ BNE dimg4              ; If Y increments from 255 to zero, increment the high
+ INC V+1                ; bytes of V(1 0) and SC(1 0) to point to the next page
+ INC SC+1               ; in memory
+
+.dimg4
+
+ DEX                    ; Decrement the column counter for this row
+
+ BNE dimg2              ; Loop back to dimg2 to draw the next tile, until we
+                        ; have drawn all the tiles in this row
+
+                        ; At this point SC(1 0) + Y is the address of the last
+                        ; tile on the row we just drew, so adding ZZ to this
+                        ; address (which we set to 32 - K above) updates
+                        ; SC(1 0) + Y to the address of the first tile on the
+                        ; next row in the image
+
+ LDA SC                 ; Set SC(1 0) = SC(1 0) + ZZ
+ CLC                    ;
+ ADC ZZ                 ; Starting with the low bytes
  STA SC
 
- LDY #0
-
-.CB9D4
-
- LDX K
-
-.loop_CB9D6
-
- LDA (V),Y
- BEQ CB9DD
-
- CLC
- ADC K+2
-
-.CB9DD
-
- STA (SC),Y
-
- INY
-
- BNE CB9E6
-
- INC V+1
-
+ BCC dimg5              ; And then the high bytes
  INC SC+1
 
-.CB9E6
+.dimg5
 
- DEX
+ DEC K+1                ; Decrement the number of rows in K+1
 
- BNE loop_CB9D6
+ BNE dimg1              ; Loop back to dimg1 until we have drawn all the rows in
+                        ; the image
 
- LDA SC
- CLC
- ADC ZZ
- STA SC
-
- BCC CB9F4
-
- INC SC+1
-
-.CB9F4
-
- DEC K+1
-
- BNE CB9D4
-
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;

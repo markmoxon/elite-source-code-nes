@@ -313,11 +313,12 @@ ENDIF
 
 IF NOT(_BANK = 4)
 
+ cobraNames         = $B7EC
  GetRankHeadshot    = $B882
  GetCmdrImage       = $B8F9
  SetCmdrImage       = $B93C
  DrawBigLogo        = $B96B
- DrawLogoNames      = $B9C1
+ DrawImageNames     = $B9C1
  DrawSmallLogo      = $B9F9
 
 ENDIF
@@ -345,7 +346,7 @@ ENDIF
 IF NOT(_BANK = 6)
 
  ResetSound         = $8012
- subm_8021          = $8021
+ ChooseMusic        = $8021
  PlayMusic          = $811E
  subm_89D1          = $89D1
  subm_A082          = $A082
@@ -367,7 +368,7 @@ IF NOT(_BANK = 6)
   subm_BA63         = $BA63
   ChangeCmdrName    = $BB37
   SetKeyLogger      = $BBDE
-  StartScreen       = $BC83
+  ChooseLanguage    = $BC83
   subm_BE52         = $BE52
   subm_BED2         = $BED2
 
@@ -382,7 +383,7 @@ IF NOT(_BANK = 6)
   subm_BA63         = $BA72
   ChangeCmdrName    = $BB46
   SetKeyLogger      = $BBED
-  StartScreen       = $BC92
+  ChooseLanguage    = $BC92
   subm_BE52         = $BE6D
   subm_BED2         = $BEED
 
@@ -3564,7 +3565,7 @@ ORG $0200
 
  SKIP 1                 ; Disable sound
 
-.L03ED
+.disableMusic
 
  SKIP 1                 ; Disable music
 
@@ -4213,11 +4214,11 @@ ENDIF
 
  SKIP 1                 ; ???
 
-.L0471
+.previousCondition
 
  SKIP 1                 ; ???
 
-.L0472
+.statusCondition
 
  SKIP 1                 ; ???
 
