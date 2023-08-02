@@ -1783,7 +1783,7 @@ ENDIF
 
  CMP #$98
  BNE CA7F0
- JSR SetCmdrImage_b4
+ JSR GetCmdrImage_b4
  JMP CA8A2
 
 .CA7F0
@@ -1802,7 +1802,7 @@ ENDIF
  STA SC
 
  LDA #$F5
- STA systemFlag
+ STA imageFlags
  LDX #4
  JMP CA89F
 
@@ -1823,7 +1823,7 @@ ENDIF
                             ; table 0
 
  LDA #3                 ; Set A = 3 so we only unpack the image data when
-                        ; systemFlag does not equal 3
+                        ; imageFlags does not equal 3
 
  BNE CA891              ; Jump to CA891 to unpack the image data (this BNE is
                         ; effectivelt a JMP as A is never zero)
@@ -1832,9 +1832,9 @@ ENDIF
 
  LDA #0
 
- CMP systemFlag
+ CMP imageFlags
  BEQ CA8A2
- STA systemFlag
+ STA imageFlags
 
  JSR SendDashImageToPPU ; Unpack the dashboard image and send it to patterns 69
                         ; to 255 in pattern table 0 in the PPU
@@ -1846,9 +1846,9 @@ ENDIF
  LDA #$24
  STA L00D9
  LDA #1
- CMP systemFlag
+ CMP imageFlags
  BEQ CA8A2
- STA systemFlag
+ STA imageFlags
 
  LDA #HI(16*68)         ; Set PPU_ADDR to the address of pattern #68 in pattern
  STA PPU_ADDR           ; table 0
@@ -1895,28 +1895,28 @@ ENDIF
  STA V                  ; image into pattern #69 onwards in pattern table 0
 
  LDA #2                 ; Set A = 2 so we only unpack the image data when
-                        ; systemFlag does not equal 2
+                        ; imageFlags does not equal 2
 
 .CA891
 
- CMP systemFlag
+ CMP imageFlags
  BEQ CA8A2
- STA systemFlag
+ STA imageFlags
  JSR UnpackToPPU
  JMP CA8A2
 
 .CA89F
 
- JSR SendMissilesToPPU      ; Send X batches of 16 bytes from SC(1 0) to the PPU
-                            ;
-                            ; We only get here with the following values:
-                            ;
-                            ;   SC(1 0) = missileImage
-                            ;
-                            ;   X = 4
-                            ;
-                            ; So this sends 16 * 4 = 64 bytes from missileImage
-                            ; to the PPU
+ JSR SendMissilesToPPU  ; Send X batches of 16 bytes from SC(1 0) to the PPU
+                        ;
+                        ; We only get here with the following values:
+                        ;
+                        ;   SC(1 0) = missileImage
+                        ;
+                        ;   X = 4
+                        ;
+                        ; So this sends 16 * 4 = 64 bytes from missileImage to
+                        ; the PPU
 
 .CA8A2
 
@@ -1952,7 +1952,9 @@ ENDIF
  STA PPU_DATA
  DEX
  BNE loop_CA8CB
- JSR subm_D946
+
+ JSR PlayMusicAtVBlank  ; Wait for the next VBlank and play the background music
+
  LDX #0
  JSR subm_A972
  LDX #1
@@ -1961,7 +1963,9 @@ ENDIF
  STX hiddenBitPlane
  STX nmiBitplane
  JSR SetDrawingBitplane
- JSR subm_D946
+
+ JSR PlayMusicAtVBlank  ; Wait for the next VBlank and play the background music
+
  LDA QQ11
  STA QQ11a
  AND #$40
@@ -2144,7 +2148,8 @@ ENDIF
  AND #%00100000         ; have already sent all the data to the PPU for this
  BNE CA9CE              ; bitplane, so jump to CA9CE
 
- JSR subm_D946
+ JSR PlayMusicAtVBlank  ; Wait for the next VBlank and play the background music
+
  JMP CA99B
 
 .CA9CC
@@ -2154,7 +2159,8 @@ ENDIF
 
 .CA9CE
 
- JMP subm_D946
+ JMP PlayMusicAtVBlank  ; Wait for the next VBlank and play the background
+                        ; music, returning from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -2183,7 +2189,9 @@ ENDIF
 
  CMP #$98
  BNE CA9E8
- JSR GetCmdrImage_b4
+
+ JSR GetHeadshot_b4     ; Fetch the headshot image for the commander and store it in the
+                        ; pattern buffers, starting at tile number pictureTile
 
 .CA9E8
 
@@ -2419,7 +2427,7 @@ ENDIF
  LDA #%11110101         ; ???
  STA L03F2
 
- STA systemFlag         ; Set the system image number to 5 (bits 0-3) and ???
+ STA imageFlags         ; Set the system image number to 5 (bits 0-3) and ???
 
                         ; We now send patterns 0 to 4 to the PPU, to set up the
                         ; blank tile (pattern 0), the three box edges (patterns
@@ -2890,7 +2898,7 @@ ENDIF
  ROL A
  ASL A
  ASL A
- STA L0461
+ STA yIconBarPointer
 
  LDA iconBarType        ; Set iconBarImageHi to the high byte of the correct
  ASL A                  ; icon bar image block for the current icon bar type,
@@ -3432,17 +3440,16 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA iconBarType
+ LDA iconBarType        ; Set barButtons(1 0) = iconBarButtons
+ ASL A                  ;                       + iconBarType * 16
  ASL A
  ASL A
  ASL A
- ASL A
-
- ADC #LO(LEB27)
- STA L00BE
- LDA #HI(LEB27)
+ ADC #LO(iconBarButtons)
+ STA barButtons
+ LDA #HI(iconBarButtons)
  ADC #0
- STA L00BF
+ STA barButtons+1
 
  RTS
 
@@ -5103,166 +5110,264 @@ ENDIF
 
 .HideSightSprites
 
- LDA #$F0
- STA ySprite5
- STA ySprite6
+ LDA #240               ; Set A to the y-coordinate that's just below the bottom
+                        ; of the screen, so we can hide the sight sprites by
+                        ; moving them off-screen
+
+ STA ySprite5           ; Set the y-coordinates for the five laser sight sprites
+ STA ySprite6           ; to 240, to move them off-screen
  STA ySprite7
  STA ySprite8
  STA ySprite9
- RTS
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: SetSightSprites
+;       Name: SIGHT
 ;       Type: Subroutine
 ;   Category: Flight
-;    Summary: Set up the sprites for the laser sights in the space view,
-;             according to the lasers fitted
+;    Summary: Draw the laser crosshairs
 ;
 ; ******************************************************************************
 
-.SetSightSprites
+.SIGHT
 
- LDY VIEW
+ LDY VIEW               ; Fetch the laser power for the current view
  LDA LASER,Y
- BEQ HideSightSprites
- CMP #$18
- BNE CBA32
- JMP CBAC6
 
-.CBA32
+ BEQ HideSightSprites   ; If it is zero (i.e. there is no laser fitted to this
+                        ; view), jump to HideSightSprites to hide the sight
+                        ; sprites and return from the subroutine using a tail
+                        ; call
 
- CMP #$8F
- BNE CBA39
- JMP CBB08
+ CMP #POW+9             ; If the laser power in A is not equal to a pulse laser,
+ BNE sigh1              ; jump to sigh1 to process the other laser types
 
-.CBA39
+ JMP sigh4              ; The laser is a pulse laser, so jump to sigh4 to draw
+                        ; the sights for a pulse laser
 
- CMP #$97
- BNE CBA83
- LDA #$80
- STA attrSprite8
- LDA #$40
- STA attrSprite6
- LDA #0
- STA attrSprite7
- STA attrSprite5
- LDY #$CF
- STY patternSprite5
+.sigh1
+
+ CMP #POW+128           ; If the laser power in A is not equal to a beam laser,
+ BNE sigh2              ; jump to sigh2 to process the other laser types
+
+ JMP sigh5              ; The laser is a beam laser, so jump to sigh4 to draw
+                        ; the sights for a beam laser
+
+.sigh2
+
+ CMP #Armlas            ; If the laser power in A is not equal to a military
+ BNE sigh3              ; laser, jump to sigh3 to draw the sights for a mining
+                        ; laser
+
+                        ; The laser is a military laser, so we draw the military
+                        ; laser sights with a sprite for each of the left,
+                        ; right, top and bottom sights
+
+ LDA #%10000000         ; Set the attributes for sprite 8 (for the bottom sight)
+ STA attrSprite8        ; as follows:
+                        ;
+                        ;     * Bits 0-1    = sprite palette 0
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 clear = do not flip horizontally
+                        ;     * Bit 7 set   = flip vertically
+
+ LDA #%01000000         ; Set the attributes for sprite 6 (for the right sight)
+ STA attrSprite6        ; as follows:
+                        ;
+                        ;     * Bits 0-1    = sprite palette 0
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 set   = flip horizontally
+                        ;     * Bit 7 clear = do not flip vertically
+
+ LDA #%00000000         ; Set the attributes for sprites 5 and 7 (for the left
+ STA attrSprite7        ; and top sights respectively) as follows:
+ STA attrSprite5        ;
+                        ;     * Bits 0-1    = sprite palette 0
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 clear = do not flip horizontally
+                        ;     * Bit 7 clear = do not flip vertically
+
+ LDY #207               ; Set the pattern number for sprites 5 and 6 to 207,
+ STY patternSprite5     ; for the left and right sights respectively
  STY patternSprite6
- INY
- STY patternSprite7
- STY patternSprite8
- LDA #$76
- STA xSprite5
- LDA #$86
- STA xSprite6
- LDA #$7E
- STA xSprite7
- STA xSprite8
 
- LDA #$53+YPAL
+ INY                    ; Set the pattern number for sprites 7 and 8 to 208,
+ STY patternSprite7     ; for the top and bottom sights respectively
+ STY patternSprite8
+
+ LDA #118               ; Position the sprites as follows:
+ STA xSprite5           ;
+ LDA #134               ;   * Sprite 5 at (118, 83) for the left sight
+ STA xSprite6           ;   * Sprite 6 at (134, 83) for the right sight
+ LDA #126               ;   * Sprite 7 at (126, 75) for the top sight
+ STA xSprite7           ;   * Sprite 8 at (126, 91) for the bottom sight
+ STA xSprite8
+ LDA #83+YPAL
  STA ySprite5
  STA ySprite6
- LDA #$4B+YPAL
+ LDA #75+YPAL
  STA ySprite7
- LDA #$5B+YPAL
+ LDA #91+YPAL
  STA ySprite8
 
- RTS
+ RTS                    ; Return from the subroutine
 
-.CBA83
+.sigh3
 
- LDA #3
- STA attrSprite5
- LDA #$43
- STA attrSprite6
- LDA #$83
- STA attrSprite7
- LDA #$C3
- STA attrSprite8
- LDA #$D1
+                        ; The laser is a mining laser, so we draw the mining
+                        ; laser sights with a sprite for each of the top-left,
+                        ; top-right, bottom-left and and bottom-right sights
+
+ LDA #%00000011         ; Set the attributes for sprite 5 (for the top-left
+ STA attrSprite5        ; sight) as follows:
+                        ;
+                        ;     * Bits 0-1    = sprite palette 3
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 clear = do not flip horizontally
+                        ;     * Bit 7 clear = do not flip vertically
+
+ LDA #%01000011         ; Set the attributes for sprite 6 (for the top-right
+ STA attrSprite6        ; sight) as follows:
+                        ;
+                        ;     * Bits 0-1    = sprite palette 3
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 set   = flip horizontally
+                        ;     * Bit 7 clear = do not flip vertically
+
+ LDA #%10000011         ; Set the attributes for sprite 7 (for the bottom-left
+ STA attrSprite7        ; sight) as follows:
+                        ;
+                        ;     * Bits 0-1    = sprite palette 3
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 clear = do not flip horizontally
+                        ;     * Bit 7 set   = flip vertically
+
+ LDA #%11000011         ; Set the attributes for sprite 8 (for the bottom-right
+ STA attrSprite8        ; sight) as follows:
+                        ;
+                        ;     * Bits 0-1    = sprite palette 0
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 set   = flip horizontally
+                        ;     * Bit 7 set   = flip vertically
+
+ LDA #209               ; Set the pattern number for all four sprites to 209
  STA patternSprite5
  STA patternSprite6
  STA patternSprite7
  STA patternSprite8
- LDA #$76
- STA xSprite5
- STA xSprite7
- LDA #$86
- STA xSprite6
- STA xSprite8
 
- LDA #$4B+YPAL
+ LDA #118               ; Position the sprites as follows:
+ STA xSprite5           ;
+ STA xSprite7           ;   * Sprite 5 at (118, 75) for the top-left sight
+ LDA #134               ;   * Sprite 6 at (134, 75) for the top-right sight
+ STA xSprite6           ;   * Sprite 7 at (118, 91) for the bottom-left sight
+ STA xSprite8           ;   * Sprite 8 at (134, 91) for the bottom-right sight
+ LDA #75+YPAL
  STA ySprite5
  STA ySprite6
- LDA #$5B+YPAL
+ LDA #91+YPAL
  STA ySprite7
  STA ySprite8
 
- RTS
+ RTS                    ; Return from the subroutine
 
-.CBAC6
+.sigh4
 
- LDA #1
- LDY #$CC
- STA attrSprite5
- STA attrSprite6
- STA attrSprite7
- STA attrSprite8
- STY patternSprite5
- STY patternSprite6
- INY
- STY patternSprite7
+                        ; The laser is a pulse laser, so we draw the pulse laser
+                        ; sights with a sprite for each of the left, right, top
+                        ; and bottom sights
+
+ LDA #%00000001         ; Set the attributes for all four sprites as follows:
+ LDY #$CC               ;
+ STA attrSprite5        ;     * Bits 0-1    = sprite palette 1
+ STA attrSprite6        ;     * Bit 5 clear = show in front of background
+ STA attrSprite7        ;     * Bit 6 clear = do not flip horizontally
+ STA attrSprite8        ;     * Bit 7 clear = do not flip vertically
+
+ STY patternSprite5     ; Set the pattern number for sprites 5 and 6 to 204,
+ STY patternSprite6     ; for the left and right sights respectively
+
+ INY                    ; Set the pattern number for sprites 7 and 8 to 205,
+ STY patternSprite7     ; for the top and bottom sights respectively
  STY patternSprite8
- LDA #$72
- STA xSprite5
- LDA #$8A
- STA xSprite6
- LDA #$7E
- STA xSprite7
- STA xSprite8
 
- LDA #$53+YPAL
+ LDA #114               ; Position the sprites as follows:
+ STA xSprite5           ;
+ LDA #138               ;   * Sprite 5 at (118, 83) for the left sight
+ STA xSprite6           ;   * Sprite 6 at (134, 83) for the right sight
+ LDA #126               ;   * Sprite 7 at (126, 75) for the top sight
+ STA xSprite7           ;   * Sprite 8 at (126, 91) for the bottom sight
+ STA xSprite8
+ LDA #83+YPAL
  STA ySprite5
  STA ySprite6
- LDA #$47+YPAL
+ LDA #71+YPAL
  STA ySprite7
- LDA #$5F+YPAL
+ LDA #95+YPAL
  STA ySprite8
 
- RTS
+ RTS                    ; Return from the subroutine
 
-.CBB08
+.sigh5
 
- LDA #2
- STA attrSprite5
- LDA #$42
- STA attrSprite6
- LDA #$82
- STA attrSprite7
- LDA #$C2
- STA attrSprite8
- LDA #$CE
+                        ; The laser is a beam laser, so we draw the beam laser
+                        ; sights with a sprite for each of the top-left,
+                        ; top-right, bottom-left and and bottom-right sights
+
+ LDA #%00000010         ; Set the attributes for sprite 5 (for the top-left
+ STA attrSprite5        ; sight) as follows:
+                        ;
+                        ;     * Bits 0-1    = sprite palette 2
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 clear = do not flip horizontally
+                        ;     * Bit 7 clear = do not flip vertically
+
+ LDA #%01000010         ; Set the attributes for sprite 6 (for the top-right
+ STA attrSprite6        ; sight) as follows:
+                        ;
+                        ;     * Bits 0-1    = sprite palette 2
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 set   = flip horizontally
+                        ;     * Bit 7 clear = do not flip vertically
+
+ LDA #%10000010         ; Set the attributes for sprite 7 (for the bottom-left
+ STA attrSprite7        ; sight) as follows:
+                        ;
+                        ;     * Bits 0-1    = sprite palette 2
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 clear = do not flip horizontally
+                        ;     * Bit 7 set   = flip vertically
+
+ LDA #%11000010         ; Set the attributes for sprite 8 (for the bottom-right
+ STA attrSprite8        ; sight) as follows:
+                        ;
+                        ;     * Bits 0-1    = sprite palette 2
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 set   = flip horizontally
+                        ;     * Bit 7 set   = flip vertically
+
+ LDA #206               ; Set the pattern number for all four sprites to 206
  STA patternSprite5
  STA patternSprite6
  STA patternSprite7
  STA patternSprite8
- LDA #$7A
- STA xSprite5
- STA xSprite7
- LDA #$82
- STA xSprite6
- STA xSprite8
 
- LDA #$4B+YPAL
+ LDA #122               ; Position the sprites as follows:
+ STA xSprite5           ;
+ STA xSprite7           ;   * Sprite 5 at (122, 75) for the top-left sight
+ LDA #130               ;   * Sprite 6 at (130, 75) for the top-right sight
+ STA xSprite6           ;   * Sprite 7 at (122, 91) for the bottom-left sight
+ STA xSprite8           ;   * Sprite 8 at (130, 91) for the bottom-right sight
+ LDA #75+YPAL
  STA ySprite5
  STA ySprite6
- LDA #$5B+YPAL
+ LDA #91+YPAL
  STA ySprite7
  STA ySprite8
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;

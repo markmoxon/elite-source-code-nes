@@ -480,7 +480,8 @@ ENDIF
  TYA
  PHA
 
- JSR PlayMusic_b6       ; Call the PlayMusic routine to play background music
+ JSR PlayMusic_b6       ; Call the PlayMusic routine to play the background
+                        ; music
 
  PLA                    ; Retrieve X and Y from the stack
  TAY
@@ -3362,7 +3363,8 @@ ENDIF
  BNE inmi2              ; routine, then runningSetBank will be $FF, so jump to
                         ; inmi2 to skip the call to PlayMusic
 
- JSR PlayMusic_b6       ; Play any background music that might be in progress
+ JSR PlayMusic_b6       ; Call the PlayMusic routine to play the background
+                        ; music
 
  LDA nmiStoreA          ; Restore the values of A, X and Y that we stored at
  LDX nmiStoreX          ; the start of the NMI handler
@@ -5597,37 +5599,44 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_D946
+;       Name: PlayMusicAtVBlank
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Wait for the next VBlank and play the background music
+;
+; ------------------------------------------------------------------------------
+;
+; Returns:
+;
+;   X                   X is preserved
 ;
 ; ******************************************************************************
 
-.subm_D946
+.PlayMusicAtVBlank
 
  TXA                    ; Store X on the stack, so we can retrieve it below
  PHA
 
  JSR WaitForVBlank      ; Wait for the next VBlank to pass
 
- JSR PlayMusic_b6       ; ???
+ JSR PlayMusic_b6       ; Call the PlayMusic routine to play the background
+                        ; music
 
- PLA                    ; Restore X from the stack
+ PLA                    ; Restore X from the stack so it is unchanged
  TAX
 
  RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: subm_D951
+;       Name: Send88To100ToPPU
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_D951
+.Send88To100ToPPU
 
  JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
                         ; sent to the PPU, so the screen is fully updated and
@@ -6313,7 +6322,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
- LDA X1                 ; Set SC2(1 0) = yLookup(Y) + X1 * 8
+ LDA X1                 ; Set SC2(1 0) = (nameBufferHi 0) + yLookup(Y) + X1 * 8
  LSR A                  ;
  LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
  LSR A                  ; to convert the pixel y-coordinate in Y into the number
@@ -6530,7 +6539,7 @@ ENDIF
 
 .DOWN
 
- LDA X1                 ; Set SC2(1 0) = yLookup(Y) + X1 * 8
+ LDA X1                 ; Set SC2(1 0) = (nameBufferHi 0) + yLookup(Y) + X1 * 8
  LSR A                  ;
  LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
  LSR A                  ; to convert the pixel y-coordinate in Y into the number
@@ -6869,7 +6878,7 @@ ENDIF
                         ;
                         ;   P = |delta_x| / |delta_y|
 
- LDA X1                 ; Set SC2(1 0) = yLookup(Y) + X1 * 8
+ LDA X1                 ; Set SC2(1 0) = (nameBufferHi 0) + yLookup(Y) + X1 * 8
  LSR A                  ;
  LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
  LSR A                  ; to convert the pixel y-coordinate in Y into the number
@@ -7549,79 +7558,131 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: FillCharacterBlock
+;       Name: FillPatternWithSun
 ;       Type: Subroutine
-;   Category: Drawing lines
-;    Summary: ???
+;   Category: Drawing suns
+;    Summary: Fill a pattern with sunlight, silhouetting any existing content
+;             against the sun
+;
+; ------------------------------------------------------------------------------
+;
+; This routine fills a row of whole character blocks with sunlight, turning any
+; existing content into a black silhouette on the cyan sun. It effectively fills
+; the character blocks containing the horizontal pixel line (P, Y) to (P+1, Y).
+;
+; Arguments:
+;
+;   P                   A pixel x-coordinate in the character block from which
+;                       we start the fill
+;
+;   P+1                 A pixel x-coordinate in the character block where we
+;                       finish the fill
+;
+;   Y                   A pixel y-coordinate on the character row to fill
+;
+; Returns:
+;
+;   Y                   Y is preserved
 ;
 ; ******************************************************************************
 
-.FillCharacterBlock
+.FillPatternWithSun
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- STY YSAV
- LDA P
- LSR A
- LSR A
- LSR A
- CLC
- ADC yLookupLo,Y
- STA SC2
- LDA nameBufferHi
- ADC yLookupHi,Y
- STA SC2+1
- LDA P+1
- SEC
- SBC P
+ STY YSAV               ; Store Y in YSAV so we can retrieve it below
+
+ LDA P                  ; Set SC2(1 0) = (nameBufferHi 0) + yLookup(Y) + P * 8
+ LSR A                  ;
+ LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
+ LSR A                  ; to convert the pixel y-coordinate in Y into the number
+ CLC                    ; of the first tile on the row containing the pixel
+ ADC yLookupLo,Y        ;
+ STA SC2                ; Adding nameBufferHi and P * 8 therefore sets SC2(1 0)
+ LDA nameBufferHi       ; to the address of the entry in the nametable buffer
+ ADC yLookupHi,Y        ; that contains the tile number for the tile containing
+ STA SC2+1              ; the pixel at (P, Y)
+
+ LDA P+1                ; Set Y = (P+1 - P) * 8 - 1
+ SEC                    ;
+ SBC P                  ; So Y is the number of tiles we need to fill in the row
  LSR A
  LSR A
  LSR A
  TAY
  DEY
 
-.CE075
+.fill1
 
- LDA (SC2),Y
- BNE CE083
- LDA #$33
- STA (SC2),Y
- DEY
- BPL CE075
- LDY YSAV
- RTS
+ LDA (SC2),Y            ; If the nametable entry for the Y-th tile is non-zero,
+ BNE fill2              ; then there is already something there, so jump to
+                        ; fill2 to fill this tile using EOR logic (so the pixels
+                        ; that are already there are still visible against the
+                        ; sun, as black pixels on the sun's cyan background)
 
-.CE083
+ LDA #51                ; Otherwise the nametable entry is zero, which is just
+ STA (SC2),Y            ; the background, so set this tile to pattern 51
 
- STY T
- LDY pattBufferHiDiv8
- STY SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- STA SC
+ DEY                    ; Decrement the tile counter in Y
+
+ BPL fill1              ; Loop back until we have filled the entire row of tiles
+
+ LDY YSAV               ; Retrieve the value of Y we stored above
+
+ RTS                    ; Return from the subroutine
+
+.fill2
+
+                        ; If we get here then A contains the pattern number of
+                        ; the non-empty tile that we want to fill, so we now
+                        ; need to fill that pattern in the pattern buffer while
+                        ; keeping the existing content
+
+ STY T                  ; Store Y in T so we can retrieve it below
+
+ LDY pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
+ STY SC+1               ;             = (pattBufferHiAddr A*8)
+ ASL A                  ;
+ ROL SC+1               ; This is the address of pattern number A in the current
+ ASL A                  ; pattern buffer, as each pattern in the buffer consists
+ ROL SC+1               ; of eight bytes
+ ASL A                  ;
+ ROL SC+1               ; So this is the address of the pattern for the tile
+ STA SC                 ; that we want to fill, so now to fill it
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDY #7
+ LDY #7                 ; We now loop through each pixel row within this tile's
+                        ; pattern, filling the whole pattern with cyan, but
+                        ; EOR'ing with the pattern that is already there so it
+                        ; is still visible against the sun, as black pixels on
+                        ; the sun's cyan background
 
-.loop_CE0A3
+.fill3
 
- LDA #$FF
+ LDA #%11111111         ; Invert the Y-th pixel row by EOR'ing with %11111111
  EOR (SC),Y
  STA (SC),Y
- DEY
- BPL loop_CE0A3
- LDY T
- DEY
- BPL CE075
- LDY YSAV
- RTS
+
+ DEY                    ; Decrement Y to point to the pixel line above
+
+ BPL fill3              ; Loop back until we have filled all 8 pixel lines in
+                        ; the pattern
+
+ LDY T                  ; Retrieve the value of Y we stored above, so it now
+                        ; contains the tile counter from the loop at fill1
+
+ DEY                    ; Decrement the tile counter in Y, as we just filled a
+                        ; tile
+
+ BPL fill1              ; If there are still more tiles to fill on this row,
+                        ; loop back to fill1 to continue filling them
+
+ LDY YSAV               ; Retrieve the value of Y we stored above
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -7676,7 +7737,7 @@ ENDIF
  DEC X2                 ; Decrement X2 so we do not draw a pixel at the end
                         ; point
 
- TXA                    ; Set SC2(1 0) = yLookup(Y) + X1 * 8
+ TXA                    ; Set SC2(1 0) = (nameBufferHi 0) + yLookup(Y) + X1 * 8
  LSR A                  ;
  LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
  LSR A                  ; to convert the pixel y-coordinate in Y into the number
@@ -9369,61 +9430,73 @@ ENDIF
 .subm_E8DE
 
  LDA controller1Start
- AND #$C0
- CMP #$40
+ AND #%11000000
+ CMP #%01000000
  BNE CE8EE
- LDA #$50
- STA L0465
+
+ LDA #80
+ STA pointerButton
  BNE CE8FA
 
 .CE8EE
 
- LDA L0465
- CMP #$50
+ LDA pointerButton
+ CMP #80
  BEQ CE8FA
 
 .CE8F5
 
  LDA #0
- STA L0465
+ STA pointerButton
 
 .CE8FA
 
- LDA #$F0
- STA ySprite1
- STA ySprite2
+ LDA #240               ; Set A to the y-coordinate that's just below the bottom
+                        ; of the screen, so we can hide the icon bar pointer
+                        ; sprites by moving them off-screen
+
+ STA ySprite1           ; Set the y-coordinates for the four icon bar pointer
+ STA ySprite2           ; sprites to 240, to move them off-screen
  STA ySprite3
  STA ySprite4
- RTS
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: SetL0460Vars
+;       Name: SetIconBarPointer
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Icon bar
+;    Summary: Set the icon bar pointer to a specific position
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The button number on which to position the pointer
 ;
 ; ******************************************************************************
 
-.SetL0460Vars
+.SetIconBarPointer
 
- ASL A
- ASL A
- STA L0460
- LDX #0
+ ASL A                  ; Set xIconBarPointer =  A * 4
+ ASL A                  ;
+ STA xIconBarPointer    ; As xIconBarPointer contains the x-coordinate of the
+                        ; icon bar pointer, incrementing by 4 for each button
 
- STX L0463
- STX L0462
+ LDX #0                 ; Zero all the pointer timer and movement variables so
+ STX pointerPosition    ; the pointer is static and in the correct position
+ STX pointerDirection
  STX L0468
- STX L0467
+ STX pointerTimer
 
 IF _PAL
 
- STX PAL_EXTRA
+ STX pointerTimerOn     ; Zero the PAL-specific pointer timer variable
 
 ENDIF
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -9436,47 +9509,55 @@ ENDIF
 
 .MoveIconBarPointer
 
- DEC L0467
+ DEC pointerTimer
 
 IF _PAL
 
  BNE CE928
- LSR PAL_EXTRA
+ LSR pointerTimerOn
 
 .CE928
 
 ENDIF
 
  BPL CE925
- INC L0467
+ INC pointerTimer
 
 .CE925
 
- DEC L0463
+ DEC pointerPosition
  BPL CE92D
- INC L0463
+ INC pointerPosition
 
 .CE92D
 
  LDA L0473
  BMI CE8F5
+
  LDA L045F
  BEQ subm_E8DE
- LDA L0462
+
+ LDA pointerDirection
  CLC
- ADC L0460
- STA L0460
+ ADC xIconBarPointer
+ STA xIconBarPointer
+
  AND #3
  BNE CE98D
+
  LDA #0
- STA L0462
- LDA L0463
+ STA pointerDirection
+
+ LDA pointerPosition
  BNE CE98D
+
  LDA controller1B
  ORA scanController2
  BPL CE98D
+
  LDX controller1Left
  BMI CE964
+
  LDA #0
  STA controller1Left
  JMP CE972
@@ -9484,122 +9565,149 @@ ENDIF
 .CE964
 
  LDA #$FF
- CPX #$80
+
+ CPX #%10000000
  BNE CE96F
- LDX #$0C
- STX L0463
+
+ LDX #12
+ STX pointerPosition
 
 .CE96F
 
- STA L0462
+ STA pointerDirection
 
 .CE972
 
  LDX controller1Right
  BMI CE97F
+
  LDA #0
  STA controller1Right
+
  JMP CE98D
 
 .CE97F
 
  LDA #1
- CPX #$80
+
+ CPX #%10000000
  BNE CE98A
- LDX #$0C
- STX L0463
+
+ LDX #12
+ STX pointerPosition
 
 .CE98A
 
- STA L0462
+ STA pointerDirection
 
 .CE98D
 
- LDA L0460
+ LDA xIconBarPointer
  BPL CE999
+
  LDA #0
- STA L0462
+ STA pointerDirection
+
  BEQ CE9A4
 
 .CE999
 
- CMP #$2D
+ CMP #45
  BCC CE9A4
+
  LDA #0
- STA L0462
- LDA #$2C
+ STA pointerDirection
+
+ LDA #44
 
 .CE9A4
 
- STA L0460
- LDA L0460
+ STA xIconBarPointer
+
+ LDA xIconBarPointer
  AND #3
- ORA L0462
+ ORA pointerDirection
  BNE CEA04
+
  LDA controller1B
  BMI CEA04
+
  LDA controller1B
  BMI CEA04
+
  LDA controller1Select
  BNE CEA04
- LDA #$FB
+
+ LDA #251
  STA patternSprite1
  STA patternSprite2
- LDA L0461
+
+ LDA yIconBarPointer
  CLC
 
- ADC #$0B+YPAL
+ ADC #11+YPAL
  STA ySprite1
  STA ySprite2
- LDA L0460
+
+ LDA xIconBarPointer
  ASL A
  ASL A
- ADC L0460
+ ADC xIconBarPointer
  ADC #6
  STA xSprite4
+
  ADC #1
  STA xSprite1
- ADC #$0D
+
+ ADC #13
  STA xSprite2
+
  ADC #1
  STA xSprite3
- LDA L0461
- CLC
 
- ADC #$13+YPAL
+ LDA yIconBarPointer
+ CLC
+ ADC #19+YPAL
  STA ySprite4
  STA ySprite3
- LDA L0460
+
+ LDA xIconBarPointer
  BNE CEA40
+
  JMP CEA40
 
 .CEA04
 
- LDA #$FC
+ LDA #252
  STA patternSprite1
  STA patternSprite2
- LDA L0461
+
+ LDA yIconBarPointer
  CLC
 
  ADC #8+YPAL
  STA ySprite1
  STA ySprite2
- LDA L0460
+
+ LDA xIconBarPointer
  ASL A
  ASL A
- ADC L0460
+ ADC xIconBarPointer
  ADC #6
  STA xSprite4
+
  ADC #1
  STA xSprite1
- ADC #$0D
+
+ ADC #13
  STA xSprite2
+
  ADC #1
  STA xSprite3
- LDA L0461
- CLC
 
- ADC #$10+YPAL
+ LDA yIconBarPointer
+ CLC
+ ADC #16+YPAL
  STA ySprite4
  STA ySprite3
 
@@ -9610,25 +9718,28 @@ ENDIF
  ORA controller1Up
  ORA controller1Down
  BPL CEA53
+
  LDA #0
  STA L0468
 
 .CEA53
 
  LDA controller1Select
- AND #$F0
- CMP #$80
+ AND #%11110000
+ CMP #%10000000
  BEQ CEA73
+
  LDA controller1B
- AND #$C0
- CMP #$80
+ AND #%11000000
+ CMP #%10000000
  BNE CEA6A
- LDA #$1E
+
+ LDA #30
  STA L0468
 
 .CEA6A
 
- CMP #$40
+ CMP #%01000000
  BNE CEA7E
 
 IF _NTSC
@@ -9642,39 +9753,44 @@ ELIF _PAL
 
  LDA L0468
  BNE CEA80
- STA PAL_EXTRA
+
+ STA pointerTimerOn
  BEQ CEA7E
 
 .CEA80
 
- LDA #$28
- STA L0467
- LDA PAL_EXTRA
+ LDA #40
+ STA pointerTimer
+
+ LDA pointerTimerOn
  BNE CEA73
- INC PAL_EXTRA
+
+ INC pointerTimerOn
  BNE CEA7E
 
 .CEA73
 
- LSR PAL_EXTRA
+ LSR pointerTimerOn
 
 ENDIF
 
- LDA L0460
- LSR A
+ LDA xIconBarPointer    ; Set Y to the button number that the icon bar pointer
+ LSR A                  ; is over
  LSR A
  TAY
- LDA (L00BE),Y
- STA L0465
+
+ LDA (barButtons),Y     ; Set pointerButton to the Y-th entry from the button
+ STA pointerButton      ; table for this icon bar
 
 .CEA7E
 
  LDA controller1Start
- AND #$C0
- CMP #$40
+ AND #%11000000
+ CMP #%01000000
  BNE CEA8C
- LDA #$50
- STA L0465
+
+ LDA #80
+ STA pointerButton
 
 .CEA8C
 
@@ -9693,18 +9809,21 @@ ENDIF
 
  LDA controller1B
  BNE CEAA7
+
  LDA controller1Left
  ASL A
  ASL A
  ASL A
  ASL A
  STA controller1Leftx8
+
  LDA controller1Right
  ASL A
  ASL A
  ASL A
  ASL A
  STA controller1Rightx8
+
  RTS
 
 .CEAA7
@@ -9712,6 +9831,7 @@ ENDIF
  LDA #0
  STA controller1Leftx8
  STA controller1Rightx8
+
  RTS
 
 ; ******************************************************************************
@@ -9851,23 +9971,82 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LEB27
+;       Name: iconBarButtons
 ;       Type: Variable
 ;   Category: Icon bar
-;    Summary: ???
+;    Summary: A list of button numbers for each icon bar type
 ;
 ; ******************************************************************************
 
-.LEB27
+.iconBarButtons
 
- EQUB $01, $02, $03, $04, $05, $06, $07, $23  ; EB27: 01 02 03... ...
- EQUB $08, $00, $00, $0C, $00, $00, $00, $00  ; EB2F: 08 00 00... ...
- EQUB $11, $02, $03, $04, $15, $16, $17, $18  ; EB37: 11 02 03... ...
- EQUB $19, $1A, $1B, $0C, $00, $00, $00, $00  ; EB3F: 19 1A 1B... ...
- EQUB $01, $02, $24, $23, $15, $26, $27, $16  ; EB47: 01 02 24... ..$
- EQUB $29, $17, $1B, $0C, $00, $00, $00, $00  ; EB4F: 29 17 1B... )..
- EQUB $31, $32, $33, $34, $35, $00, $00, $00  ; EB57: 31 32 33... 123
- EQUB $00, $00, $00, $3C, $00, $00, $00, $00  ; EB5F: 00 00 00... ...
+                        ; Icon bar 0 (docked)
+
+ EQUB $01               ; Launch
+ EQUB $02               ; Market Price
+ EQUB $03               ; Status Mode
+ EQUB $04               ; Charts
+ EQUB $05               ; Equip Ship
+ EQUB $06               ; Save and load
+ EQUB $07               ; Change commander name (only on save screen)
+ EQUB $23               ; Data on System
+ EQUB $08               ; Inventory
+ EQUB $00               ; (blank)
+ EQUB $00               ; (blank)
+ EQUB $0C               ; Fast forward
+
+ EQUD $00
+
+                        ; Icon bar 1 (flight)
+
+ EQUB $11               ; Docking computer
+ EQUB $02               ; Market Price
+ EQUB $03               ; Status Mode
+ EQUB $04               ; Charts
+ EQUB $15               ; Front space view (and rear, left, right)
+ EQUB $16               ; Hyperspace (only when system is selected)
+ EQUB $17               ; E.C.M. (if fitted)
+ EQUB $18               ; Target missile
+ EQUB $19               ; Fire targetted missile
+ EQUB $1A               ; Energy bomb (if fitted)
+ EQUB $1B               ; Escape capsule (if fitted)
+ EQUB $0C               ; Fast forward
+
+ EQUD $00
+
+                        ; Icon bar 2 (charts)
+
+ EQUB $01               ; Launch
+ EQUB $02               ; Market Price
+ EQUB $24               ; Switch chart range (long, short)
+ EQUB $23               ; Data on System
+ EQUB $15               ; Front space view (only in flight)
+ EQUB $26               ; Return pointer to current system
+ EQUB $27               ; Search for system
+ EQUB $16               ; Hyperspace (only when system is selected)
+ EQUB $29               ; Galactic Hyperspace (if fitted)
+ EQUB $17               ; E.C.M. (if fitted)
+ EQUB $1B               ; Escape capsule (if fitted)
+ EQUB $0C               ; Fast forward
+
+ EQUD $00
+
+                        ; Icon bar 3 (pause options)
+
+ EQUB $31               ; Direction of y-axis
+ EQUB $32               ; Damping toggle
+ EQUB $33               ; Music toggle
+ EQUB $34               ; Sound toggle
+ EQUB $35               ; Number of pilots
+ EQUB $00               ; (blank)
+ EQUB $00               ; (blank)
+ EQUB $00               ; (blank)
+ EQUB $00               ; (blank)
+ EQUB $00               ; (blank)
+ EQUB $00               ; (blank)
+ EQUB $3C               ; Restart
+
+ EQUD $00
 
 ; ******************************************************************************
 ;
@@ -10425,7 +10604,7 @@ ENDIF
 
 .subm_ECE2
 
- LDA L0465
+ LDA pointerButton
  BEQ subm_ECE2-1
 
 ; ******************************************************************************
@@ -10641,7 +10820,8 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR ResetSound         ; Call ResetSound, now that it is paged into memory
+ JSR ResetSoundS        ; Call ResetSound via ResetSoundS, now that it is paged
+                        ; into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -10795,14 +10975,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetSightSprites_b3
+;       Name: SIGHT_b3
 ;       Type: Subroutine
 ;   Category: Drawing sprites
-;    Summary: Call the SetSightSprites routine in ROM bank 3
+;    Summary: Call the SIGHT routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.SetSightSprites_b3
+.SIGHT_b3
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -10810,7 +10990,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR SetSightSprites    ; Call SetSightSprites, now that it is paged into memory
+ JSR SIGHT              ; Call SIGHT, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -11520,29 +11700,6 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetCmdrImage_b4
-;       Type: Subroutine
-;   Category: Status
-;    Summary: Call the SetCmdrImage routine in ROM bank 4
-;
-; ******************************************************************************
-
-.SetCmdrImage_b4
-
- LDA currentBank        ; Fetch the number of the ROM bank that is currently
- PHA                    ; paged into memory at $8000 and store it on the stack
-
- LDA #4                 ; Page ROM bank 4 into memory at $8000
- JSR SetBank
-
- JSR SetCmdrImage       ; Call SetCmdrImage, now that it is paged into memory
-
- JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
-                        ; page that bank back into memory at $8000, returning
-                        ; from the subroutine using a tail call
-
-; ******************************************************************************
-;
 ;       Name: GetCmdrImage_b4
 ;       Type: Subroutine
 ;   Category: Status
@@ -11559,6 +11716,29 @@ ENDIF
  JSR SetBank
 
  JSR GetCmdrImage       ; Call GetCmdrImage, now that it is paged into memory
+
+ JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
+                        ; page that bank back into memory at $8000, returning
+                        ; from the subroutine using a tail call
+
+; ******************************************************************************
+;
+;       Name: GetHeadshot_b4
+;       Type: Subroutine
+;   Category: Status
+;    Summary: Call the GetHeadshot routine in ROM bank 4
+;
+; ******************************************************************************
+
+.GetHeadshot_b4
+
+ LDA currentBank        ; Fetch the number of the ROM bank that is currently
+ PHA                    ; paged into memory at $8000 and store it on the stack
+
+ LDA #4                 ; Page ROM bank 4 into memory at $8000
+ JSR SetBank
+
+ JSR GetHeadshot        ; Call GetHeadshot, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning

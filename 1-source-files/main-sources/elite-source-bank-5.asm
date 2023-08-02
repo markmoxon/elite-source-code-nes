@@ -2511,9 +2511,9 @@ ENDIF
 
 .gsys1
 
- TXA                    ; Set systemFlag to %1100xxxx where X is %xxxx
+ TXA                    ; Set imageFlags to %1100xxxx where X is %xxxx
  ORA #%11000000
- STA systemFlag
+ STA imageFlags
 
  TXA                    ; Set X = X * 2 so we can use it as an index into the
  ASL A                  ; table of 16-bit addresses at systemOffset
@@ -2560,8 +2560,8 @@ ENDIF
 
 .SetDemoAutoPlay
 
- LDA #5                 ; Set a bunch of L046x variables ???
- JSR SetL0460Vars
+ LDA #5                 ; Set the icon par pointer to button 5 (which is the
+ JSR SetIconBarPointer  ; sixth button of 12, just before the halfway point)
 
  JSR SetupDemoUniverse  ; Configure the universe for the demo, which includes
                         ; setting the random number seeds to a known value so
@@ -2573,10 +2573,10 @@ ENDIF
  LDA addrHi,X
  STA addr2+1
 
- LDA #0                 ; ???
+ LDA #0                 ; Set L04BC = 0???
  STA L04BC
 
- STA L04BD
+ STA L04BD              ; Set L04BD = 0???
 
  LDX #%10000000         ; Set bit 7 of autoPlayDemo so the NMI handler will play
  STX autoPlayDemo       ; the demo automatically using the controller key

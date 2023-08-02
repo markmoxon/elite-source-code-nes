@@ -8489,7 +8489,10 @@ ENDIF
  CMP #$F8
  BCS CAE26
  JSR CAEE8
- JSR FillCharacterBlock
+
+ JSR FillPatternWithSun ; Fill the character blocks containing the horizontal
+                        ; line (P, Y) to (P+1, Y) with sunlight, silhouetting
+                        ; any existing content against the sun
 
 .CAE26
 

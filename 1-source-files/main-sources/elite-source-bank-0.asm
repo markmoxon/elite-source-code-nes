@@ -1230,7 +1230,7 @@ ENDIF
 
 .C8344
 
- JSR subm_D951
+ JSR Send88To100ToPPU
  JMP MA16
 
 ; ******************************************************************************
@@ -3035,8 +3035,8 @@ ENDIF
 
  LDA S
  ORA #$80
- CMP systemFlag
- STA systemFlag
+ CMP imageFlags
+ STA imageFlags
 
  BEQ C8923
 
@@ -7446,7 +7446,9 @@ ENDIF
  LDA #0
  STA nmiTimerLo
  STA nmiTimerHi
- JSR SetSightSprites_b3
+
+ JSR SIGHT_b3           ; Draw the laser crosshairs
+
  LSR L0300
  JSR subm_AC5C_b3
  LDA L0306
@@ -7473,7 +7475,7 @@ ENDIF
  JSR FlipDrawingPlane
  JSR subm_MA23
  JSR SendDrawPlaneToPPU
- LDA L0465
+ LDA pointerButton
  JSR subm_B1D4
  DEC LASCT
  BNE loop_C95E7
@@ -9833,7 +9835,7 @@ ENDIF
  LDA #$0C
  JSR DASC_b2
  JSR TT146
- JSR subm_D951
+ JSR Send88To100ToPPU
 
 .subm_9D35
 
@@ -11086,7 +11088,7 @@ ENDIF
 
 .CA06E
 
- LDA L0465
+ LDA pointerButton
  BEQ CA036
  JSR subm_B1D1
  BCS CA036
@@ -11203,7 +11205,7 @@ ENDIF
 ;
 ;       Name: subm_A130
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Market
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -11227,7 +11229,7 @@ ENDIF
 ;
 ;       Name: subm_A147
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Market
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -11246,7 +11248,7 @@ ENDIF
 ;
 ;       Name: subm_A155
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Market
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -12424,7 +12426,7 @@ ENDIF
 
  LDA controller1A
  BMI CA508
- LDA L0465
+ LDA pointerButton
  BEQ CA4DB
  JSR subm_B1D4
  BCS CA4DB
@@ -13105,12 +13107,12 @@ ENDIF
 
  LDA controller1A
  BMI CA775
- LDA L0465
+ LDA pointerButton
  BEQ CA737
  CMP #$50
  BNE CA775
  LDA #0
- STA L0465
+ STA pointerButton
  JSR subm_A166_b6
  JMP CA737
 
@@ -13150,7 +13152,7 @@ ENDIF
  LDA LASER,X            ; If there is no laser in view X (i.e. the laser power
  BEQ ref3               ; is zero), jump to ref3 to skip the refund code
 
- LDY #4                 ; If the current laser has power #POW + 9 (pulse laser),
+ LDY #4                 ; If the current laser has power #POW+9 (pulse laser),
  CMP #POW+9             ; jump to ref1 with Y = 4 (the item number of a pulse
  BEQ ref1               ; laser in the table at PRXS)
 
@@ -13497,11 +13499,13 @@ ENDIF
  LDA #105               ; Print recursive token 105 ("FUEL") followed by a
  JSR TT68               ; colon
 
- JSR subm_A8A2          ; ???
- LDA L04A9
+ JSR Print2Newlines     ; Print two newlines
+
+ LDA L04A9              ; ???
  AND #4
  BEQ CA85B
- JSR subm_A8A2
+
+ JSR Print2Newlines     ; Print two newlines
 
 .CA85B
 
@@ -13523,7 +13527,7 @@ ENDIF
  LDA L04A9
  AND #4
  BNE CA879
- JSR subm_A8A2
+ JSR Print2Newlines     ; Print two newlines
  JSR TT162
 
 .CA879
@@ -13561,29 +13565,32 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_A89F
+;       Name: Print4Newlines
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print four newlines
 ;
 ; ******************************************************************************
 
-.subm_A89F
+.Print4Newlines
 
- JSR subm_A8A2
+ JSR Print2Newlines     ; Print two newlines
+
+                        ; Fall through into Print2Newlines to print another two
+                        ; newlines
 
 ; ******************************************************************************
 ;
-;       Name: subm_A8A2
+;       Name: Print2Newlines
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print two newlines
 ;
 ; ******************************************************************************
 
-.subm_A8A2
+.Print2Newlines
 
- JSR TT162
+ JSR TT162              ; Print two newlines
  JMP TT162
 
 ; ******************************************************************************
@@ -14961,26 +14968,31 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_AC19
+;       Name: CopyShipDataToINWK
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Universe
+;    Summary: Copy the ship's data block from INF to INWK
 ;
 ; ******************************************************************************
 
-.subm_AC19
+.CopyShipDataToINWK
 
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDY #$25
+ LDY #NI%-1             ; There are NI% bytes in each ship data block (and in
+                        ; the INWK workspace, so we set a counter in Y so we can
+                        ; loop through them
 
-.loop_CAC1E
+.cink1
 
- LDA (XX19),Y
- STA XX1,Y
- DEY
- BPL loop_CAC1E
+ LDA (INF),Y            ; Load the Y-th byte of INF and store it in the Y-th
+ STA INWK,Y             ; byte of INWK
+
+ DEY                    ; Decrement the loop counter
+
+ BPL cink1              ; Loop back for the next byte until we have copied the
+                        ; last byte from INF to INWK
 
 ; ******************************************************************************
 ;
@@ -15266,7 +15278,7 @@ ENDIF
  PHA                    ; so this will be "YES" (token 1) or "NO" (token 2)
  JSR DETOK_b2
 
- JSR subm_D951          ; ???
+ JSR Send88To100ToPPU          ; ???
 
  LDA controller1A       ; If "A" is being pressed on the controller, jump to
  BMI yeno3              ; to record the choice
@@ -15311,14 +15323,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_AD25
+;       Name: ReadDirectionalPad
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Keyboard
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_AD25
+.ReadDirectionalPad
 
  LDA QQ11
  BNE CAD2E
@@ -16476,7 +16488,7 @@ ENDIF
 
 .CB070
 
- JSR subm_AD25
+ JSR ReadDirectionalPad
 
 ; ******************************************************************************
 ;
@@ -16888,7 +16900,7 @@ ENDIF
 
 .subm_B1D1
 
- LDA L0465
+ LDA pointerButton
 
 ; ******************************************************************************
 ;
@@ -16904,7 +16916,7 @@ ENDIF
  CMP #$50
  BNE CB1E2
  LDA #0
- STA L0465
+ STA pointerButton
  JSR subm_A166_b6
  SEC
  RTS
@@ -17170,8 +17182,8 @@ ENDIF
                         ; and fall through into the entry code for the game
                         ; to restart from the title screen
 
- LDA #5                 ; ???
- JSR SetL0460Vars
+ LDA #5                 ; Set the icon par pointer to button 5 (which is the
+ JSR SetIconBarPointer  ; sixth button of 12, just before the halfway point)
 
  JSR U%                 ; Call U% to clear the key logger
 
@@ -18363,7 +18375,9 @@ ENDIF
  BEQ CB6A7
  BMI CB686
  JSR GINF
- JSR subm_AC19
+
+ JSR CopyShipDataToINWK ; Copy the ship's data block from INF to INWK
+
  LDX XSAV
  JMP CB672
 
@@ -18865,7 +18879,7 @@ ENDIF
  BNE loop_CB862
  LDA QQ11
  BEQ CB839
- JMP subm_D951
+ JMP Send88To100ToPPU
 
 ; ******************************************************************************
 ;
@@ -20726,7 +20740,7 @@ ENDIF
 
  JSR WSCAN              ; Call WSCAN to wait for the vertical sync
 
- JSR SetSightSprites_b3 ; ???
+ JSR SIGHT_b3           ; Draw the laser crosshairs
 
 ; ******************************************************************************
 ;

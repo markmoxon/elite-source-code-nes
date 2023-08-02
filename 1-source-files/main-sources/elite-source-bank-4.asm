@@ -2615,15 +2615,15 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: GetCmdrImage
+;       Name: GetHeadshot
 ;       Type: Subroutine
 ;   Category: Status
-;    Summary: Fetch the group 2 image for the current system and store it in the
-;             pattern buffers
+;    Summary: Fetch the headshot image for the commander and store it in the
+;             pattern buffers, starting at tile number pictureTile
 ;
 ; ******************************************************************************
 
-.GetCmdrImage
+.GetHeadshot
 
  LDA #0                 ; Set (SC+1 A) = (0 pictureTile)
  STA SC+1               ;              = pictureTile
@@ -2646,7 +2646,7 @@ ENDIF
  ADC #HI(pattBuffer0)   ;             = pattBuffer0 + pictureTile * 8
  STA SC+1
 
- LDA systemFlag         ; ???
+ LDA imageFlags         ; ???
  ASL A
  TAX
 
@@ -2681,20 +2681,20 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetCmdrImage
+;       Name: GetCmdrImage
 ;       Type: Subroutine
 ;   Category: Status
-;    Summary: ???
+;    Summary: Fetch the headshot image for the commander and store it in the
+;             pattern buffers, and send the face and glasses images to the PPU
 ;
 ; ******************************************************************************
 
-.SetCmdrImage
+.GetCmdrImage
 
- JSR GetCmdrImage       ; Fetch the group 2 image for the current system and
-                        ; store it in the pattern buffers, starting at tile
-                        ; number pictureTile
+ JSR GetHeadshot        ; Fetch the headshot image for the commander and store it in the
+                        ; pattern buffers, starting at tile number pictureTile
 
- LDA systemFlag         ; ???
+ LDA imageFlags         ; ???
  ASL A
  TAX
 
@@ -2796,14 +2796,7 @@ ENDIF
  LDA #5
  STA XC
 
- JSR DrawImageNames     ; Call DrawImageNames with the following arguments:
-                        ;
-                        ;   * K = 24
-                        ;   * K+1 = 20
-                        ;   * K+2 = pattern number of big logo data
-                        ;   * (XC, YC) = (5, 1)
-                        ;
-                        ; ???
+ JSR DrawImageNames     ; Draw the big Elite logo at text column 5 on row 1
 
  LDA tileNumber         ; The big logo takes up 208 tiles, so add 208 to the
  CLC                    ; next free tile number in tileNumber, as we just used
@@ -2944,43 +2937,52 @@ ENDIF
 ;       Name: DrawSmallLogo
 ;       Type: Subroutine
 ;   Category: Save and load
-;    Summary: ???
+;    Summary: Set the sprite buffer entries for the small Elite logo
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   CNT                 Number of the first free sprite that we can use for
+;                       drawing the logo
 ;
 ; ******************************************************************************
 
 .DrawSmallLogo
 
- LDA #1
+ LDA #1                 ; Set XC = 1 so we draw the logo on text row 1
  STA XC
 
- ASL A
+ ASL A                  ; Set YC = 1 so we draw the logo on text column 2
  STA YC
 
- LDX #8
+ LDX #8                 ; Set K = 8 so we draw 8 tiles in each row
  STX K
- STX K+1
 
- LDX #6
- LDY #6
+ STX K+1                ; Set K+1 = 8 so we draw 8 rows in total
 
- LDA #$43
- STA K+2
+ LDX #6                 ; Set X = 6 ???
 
- LDA CNT
+ LDY #6                 ; Set Y = 6 ???
+
+ LDA #67                ; Set K+2 = 67 as the pattern number of the first
+ STA K+2                ; pattern for the small logo
+
+ LDA CNT                ; Set K+3 = CNT / 4 ???
  LSR A
  LSR A
  STA K+3
 
- LDA #HI(smallLogoName) ; Set V(1 0) = smallLogoName
- STA V+1
+ LDA #HI(smallLogoName) ; Set V(1 0) = smallLogoName to we draw the small
+ STA V+1                ; Elite logo in the following
  LDA #LO(smallLogoName)
  STA V
 
- LDA #1
+ LDA #1                 ; Set S = 1
  STA S
 
- LDA XC
- ASL A
+ LDA XC                 ; Set SC = XC * 8 + X
+ ASL A                  ;        = XC * 8 + 6
  ASL A
  ASL A
  ADC #0
@@ -2989,28 +2991,30 @@ ENDIF
  ADC SC
  STA SC
 
- LDA YC
+ LDA YC                 ; Set SC+1 = YC * 8 + 6 + Y
+ ASL A                  ;          = YC * 8 + 6 + 6
  ASL A
  ASL A
- ASL A
-
  ADC #6+YPAL
  STA SC+1
  TYA
  ADC SC+1
  STA SC+1
 
- LDA K+3
- ASL A
- ASL A
- TAX
+ LDA K+3                ; Set X = K+3 * 4
+ ASL A                  ;       = CNT / 4 * 4
+ ASL A                  ;
+ TAX                    ; So X contains the number of the first sprite we can
+                        ; use, rounded down to the nearest multiple of 4
 
- LDA K+1
- STA T
+ LDA K+1                ; Set T = K+1 to use as a counter for each row in the
+ STA T                  ; logo
 
- LDY #0
+ LDY #0                 ; Set a tile counter in Y to increment as we draw each
+                        ; tile, starting with Y = 0 for the first tile at the
+                        ; start of the first row
 
-.CBA47
+.drsm1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -3021,32 +3025,32 @@ ENDIF
  LDA K
  STA ZZ
 
-.CBA5C
+.drsm2
 
  LDA (V),Y
 
  INY
 
- BNE CBA63
+ BNE drsm3
 
  INC V+1
 
-.CBA63
+.drsm3
 
  CMP #0
- BEQ CBA82
+ BEQ drsm4
 
  ADC K+2
 
- STA patternSprite0,X
+ STA patternSprite0,X   ; Set the pattern for sprite X to A
 
- LDA S
+ LDA S                  ; Set the attributes for sprite X to S
  STA attrSprite0,X
 
- LDA SC2
+ LDA SC2                ; Set the x-coordinate for sprite X to SC2
  STA xSprite0,X
 
- LDA SC+1
+ LDA SC+1               ; Set the y-coordinate for sprite X to SC+1
  STA ySprite0,X
 
  TXA
@@ -3057,7 +3061,7 @@ ENDIF
 
  TAX
 
-.CBA82
+.drsm4
 
  LDA SC2
  CLC
@@ -3066,19 +3070,20 @@ ENDIF
 
  DEC ZZ
 
- BNE CBA5C
+ BNE drsm2
 
  LDA SC+1
  ADC #8
  STA SC+1
 
- DEC T
+ DEC T                  ; Decrement the number of rows in T
 
- BNE CBA47
+ BNE drsm1              ; Loop back to drsm1 until we have drawn all the rows in
+                        ; the image
 
 .CBA97
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;

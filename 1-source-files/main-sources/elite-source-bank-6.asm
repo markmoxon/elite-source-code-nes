@@ -151,100 +151,114 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_800C
+;       Name: ChooseMusicS
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Sound
+;    Summary: A jump table entry at the start of bank 6 for the ChooseMusic
+;             routine
 ;
 ; ******************************************************************************
 
-.subm_800C
+.ChooseMusicS
 
- JMP ChooseMusic
+ JMP ChooseMusic        ; Jump to the ChooseMusic routine, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: subm_800F
+;       Name: PlayMusicS
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Sound
+;    Summary: A jump table entry at the start of bank 6 for the PlayMusic
+;             routine
 ;
 ; ******************************************************************************
 
-.subm_800F
+.PlayMusicS
 
- JMP PlayMusic
+ JMP PlayMusic          ; Jump to the PlayMusic routine, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: ResetSound
+;       Name: ResetSoundS
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Sound
+;    Summary: A jump table entry at the start of bank 6 for the ResetSound
+;             routine
 ;
 ; ******************************************************************************
 
-.ResetSound
+.ResetSoundS
 
- JMP DoResetSound
+ JMP ResetSound         ; Jump to the ResetSound routine, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: subm_8015
+;       Name: subm_80E5S
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Sound
+;    Summary: A jump table entry at the start of bank 6 for the subm_80E5
+;             routine
 ;
 ; ******************************************************************************
 
-.subm_8015
+.subm_80E5S
 
- JMP subm_80E5
+ JMP subm_80E5          ; Jump to the subm_80E5 routine, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: subm_8018
+;       Name: subm_895AS
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Sound
+;    Summary: A jump table entry at the start of bank 6 for the subm_895A
+;             routine
 ;
 ; ******************************************************************************
 
-.subm_8018
+.subm_895AS
 
- JMP subm_895A
+ JMP subm_895A          ; Jump to the subm_895A routine, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: subm_801B
+;       Name: subm_89DCS
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Sound
+;    Summary: A jump table entry at the start of bank 6 for the subm_89DC
+;             routine
 ;
 ; ******************************************************************************
 
-.subm_801B
+.subm_89DCS
 
- JMP subm_89DC
+ JMP subm_89DC          ; Jump to the subm_89DC routine, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: subm_801E
+;       Name: subm_8A53S
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Sound
+;    Summary: A jump table entry at the start of bank 6 for the subm_8A53
+;             routine
 ;
 ; ******************************************************************************
 
-.subm_801E
+.subm_8A53S
 
- JMP subm_8A53
+ JMP subm_8A53          ; Jump to the subm_8A53 routine, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: ChooseMusic
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -252,7 +266,7 @@ ENDIF
 .ChooseMusic
 
  TAY
- JSR ResetSound
+ JSR ResetSoundS
  LDA #0
  CLC
 
@@ -368,14 +382,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: DoResetSound
+;       Name: ResetSound
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.DoResetSound
+.ResetSound
 
  LDA #0
  STA L0301
@@ -403,8 +417,8 @@ ENDIF
 ;
 ;       Name: PlayMusic
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Sound
+;    Summary: Play the background music
 ;
 ; ******************************************************************************
 
@@ -756,7 +770,7 @@ ENDIF
  STY L030D
  PLA
  PLA
- JMP ResetSound
+ JMP ResetSoundS
 
 .C8332
 
@@ -1094,7 +1108,7 @@ ENDIF
  STY L030D
  PLA
  PLA
- JMP ResetSound
+ JMP ResetSoundS
 
 .C852D
 
@@ -1389,7 +1403,7 @@ ENDIF
  STY L030D
  PLA
  PLA
- JMP ResetSound
+ JMP ResetSoundS
 
 .C86EC
 
@@ -1638,7 +1652,7 @@ ENDIF
  STY L030D
  PLA
  PLA
- JMP ResetSound
+ JMP ResetSoundS
 
 .C885B
 
@@ -5041,11 +5055,11 @@ ENDIF
 
  LDA controller1A
  BMI CA97F
- LDA L0465
+ LDA pointerButton
  CMP #$0C
  BNE CA984
  LDA #0
- STA L0465
+ STA pointerButton
 
 .CA97F
 
@@ -5057,7 +5071,7 @@ ENDIF
  JSR FlipDrawingPlane
  JSR subm_AAE5
  JSR SendDrawPlaneToPPU
- LDA L0465
+ LDA pointerButton
  BEQ CA995
  JSR subm_B1D4_b0
 
@@ -5921,7 +5935,7 @@ ENDIF
 
 .subm_B52B
 
- LDX L0465
+ LDX pointerButton
  BEQ CB53B
  PHA
  CPX #7
@@ -5941,9 +5955,9 @@ ENDIF
  LDA COK
  BMI CB558
  LDA #0
- STA L0465
+ STA pointerButton
  JSR ChangeCmdrName_b6
- LDA L0465
+ LDA pointerButton
  BEQ CB553
  CMP #7
  BEQ CB53D
@@ -5951,7 +5965,7 @@ ENDIF
 .CB553
 
  LDA #6
- STA L0465
+ STA pointerButton
 
 .CB558
 
@@ -7235,7 +7249,7 @@ ENDIF
  STA INWK+5,Y
  LDA #$0C
  JSR CHPR_b2
- JSR subm_D951
+ JSR Send88To100ToPPU
  CLC
  RTS
 
@@ -7296,7 +7310,7 @@ ENDIF
  PHA
  JSR CHPR_b2
  DEC XC
- JSR subm_D951
+ JSR Send88To100ToPPU
  SEC
  LDA controller1A
  BMI CBB2A
@@ -7304,7 +7318,7 @@ ENDIF
  PLA
  LDX controller1B
  BMI CBADC
- LDX L0465
+ LDX pointerButton
  BNE CBB33
  LDX controller1Leftx8
  BMI CBB26
@@ -7434,7 +7448,7 @@ ENDIF
 .CBBB0
 
  JSR CLYNS
- JMP subm_D951
+ JMP Send88To100ToPPU
 
 .CBBB6
 
@@ -7574,8 +7588,8 @@ ENDIF
  CMP #$80
  ROR KY7
  LDX #0
- LDA L0465
- STX L0465
+ LDA pointerButton
+ STX pointerButton
  STA L0081
  PLA
  TAY

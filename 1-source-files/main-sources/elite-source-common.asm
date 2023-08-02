@@ -301,7 +301,7 @@ IF NOT(_BANK = 3)
  subm_B63D          = $B63D
  subm_B673          = $B673
  SetViewAttribs     = $B9E2
- SetSightSprites    = $BA23
+ SIGHT              = $BA23
 
 ENDIF
 
@@ -315,8 +315,8 @@ IF NOT(_BANK = 4)
 
  cobraNames         = $B7EC
  GetRankHeadshot    = $B882
- GetCmdrImage       = $B8F9
- SetCmdrImage       = $B93C
+ GetHeadshot        = $B8F9
+ GetCmdrImage       = $B93C
  DrawBigLogo        = $B96B
  DrawImageNames     = $B9C1
  DrawSmallLogo      = $B9F9
@@ -345,7 +345,7 @@ ENDIF
 
 IF NOT(_BANK = 6)
 
- ResetSound         = $8012
+ ResetSoundS        = $8012
  ChooseMusic        = $8021
  PlayMusic          = $811E
  subm_89D1          = $89D1
@@ -1067,13 +1067,10 @@ ENDIF
  SKIP 2                 ; Typically contains an address that's used alongside
                         ; SC(1 0)???
 
-.L00BE
+.barButtons
 
- SKIP 1                 ; ???
-
-.L00BF
-
- SKIP 1                 ; ???
+ SKIP 2                 ; The address of the list of button numbers in the
+                        ; iconBarButtons table for the current icon bar
 
 .drawingBitplane
 
@@ -1508,7 +1505,7 @@ ENDIF
                         ;                ROM banks
                         ;
                         ; This is used to control whether the NMI handler calls
-                        ; the PlayMusic routine to play background music, as
+                        ; the PlayMusic routine to play the background music, as
                         ; this can only happen if we are not in the middle of
                         ; switching ROM banks (if we are, then PlayMusic is
                         ; called once the bank-switching is done - see the
@@ -4125,13 +4122,19 @@ ORG $0200
 
 .L045E
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Sound-related, looks like bits 0-6 are the number of
+                        ; the new tune we need to change to in ChooseMusic,
+                        ; bit 7 set means we need to change to this tune ???
 
 IF _PAL
 
-.PAL_EXTRA
+.pointerTimerOn
 
- SKIP 1
+ SKIP 1                 ; A flag to denote whether pointerTimer is non-zero:
+                        ;
+                        ;   * 0 = pointerTimer is zero
+                        ;
+                        ;   * 1 = pointerTimer is non-zero
 
 ENDIF
 
@@ -4139,21 +4142,38 @@ ENDIF
 
  SKIP 1                 ; ???
 
-.L0460
+.xIconBarPointer
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The x-coordinate of the icon bar pointer
+                        ;
+                        ; Each of the 12 buttons on the bar is positioned at an
+                        ; interval of 4, so the buttons have x-coordinates of
+                        ; of 0, 4, 8 and so on, up to 44 for the rightmost
+                        ; button
 
-.L0461
+.yIconBarPointer
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The y-coordinate of the icon bar pointer
+                        ;
+                        ; This is either 148 (when the dashboard is visible) or
+                        ; 204 (when there is no dashboard and the icon bar is
+                        ; along the bottom of the screen)
 
-.L0462
+.pointerDirection
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The direction in which the icon bar pointer is moving:
+                        ;
+                        ;   * 0 = pointer is not moving
+                        ;
+                        ;   * 1 = pointer is moving to the right
+                        ;
+                        ;   * $FF = pointer is moving to the left
 
-.L0463
+.pointerPosition
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The position of the icon bar pointer as it moves
+                        ; between icons, counting down from 12 (at the start of
+                        ; the move) to 0 (at the end of the move)
 
 .iconBarType
 
@@ -4165,17 +4185,19 @@ ENDIF
                         ;   * 3 = pause options
                         ;   * 4 = title screen copyright message
 
-.L0465
+.pointerButton
 
  SKIP 1                 ; ???
 
 .L0466
 
- SKIP 1                 ; ???
+ SKIP 1                 ; ??? Unused
 
-.L0467
+.pointerTimer
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A timer that starts counting down when B is released
+                        ; when moving the icon bar pointer, so that a double-tap
+                        ; on B can be interpreted as a selection
 
 .L0468
 
@@ -4374,9 +4396,9 @@ ENDIF
 
  SKIP 1                 ; Temporary storage, used in a number of places
 
-.systemFlag
+.imageFlags
 
- SKIP 1                 ; Contains a new generated value for current system:
+ SKIP 1                 ; Contains data for the system and commander images:
                         ;
                         ;   * Bits 0-3 contain system image number from bank 5
                         ;   * Bits 6 and 7 are set in bank 5 routine ???
