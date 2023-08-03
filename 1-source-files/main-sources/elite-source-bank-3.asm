@@ -1620,14 +1620,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_A730
+;       Name: DrawDashNames
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Dashboard
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_A730
+.DrawDashNames
 
  LDY #7*32
 
@@ -1670,14 +1670,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_A775
+;       Name: ResetScanner
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Dashboard
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_A775
+.ResetScanner
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -1956,9 +1956,9 @@ ENDIF
  JSR PlayMusicAtVBlank  ; Wait for the next VBlank and play the background music
 
  LDX #0
- JSR subm_A972
+ JSR SendBitplaneToPPU
  LDX #1
- JSR subm_A972
+ JSR SendBitplaneToPPU
  LDX #0
  STX hiddenBitPlane
  STX nmiBitplane
@@ -2077,14 +2077,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_A972
+;       Name: SendBitplaneToPPU
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_A972
+.SendBitplaneToPPU
 
  STX drawingBitplane
  STX nmiBitplane
@@ -2164,14 +2164,18 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_A9D1
+;       Name: SetupSpaceView
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing the screen
 ;    Summary: ???
 ;
+; ------------------------------------------------------------------------------
+;
+; sets up scren mode, loads commander/system images... but it only seems
+; to be called when changing space view, so most of the code is never run ???
 ; ******************************************************************************
 
-.subm_A9D1
+.SetupSpaceView
 
  PHA
 
@@ -2256,7 +2260,7 @@ ENDIF
  LDA QQ11
  AND #$0F
  TAX
- LDA LAA5C,X
+ LDA paletteForView,X
  CMP L03F2
  STA L03F2
  JSR GetViewPalettes
@@ -2267,17 +2271,17 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LAA5C
+;       Name: paletteForView
 ;       Type: Variable
-;   Category: ???
+;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.LAA5C
+.paletteForView
 
- EQUB   0,   2, $0A, $0A
- EQUB   0, $0A,   6,   8
+ EQUB   0,   2,  10,  10
+ EQUB   0,  10,   6,   8
  EQUB   8,   5,   1,   7
  EQUB   3,   4,   0,   9
 
@@ -4551,7 +4555,7 @@ ENDIF
  TAX
  LDA #0
  STA SC+1
- LDA LAA5C,X
+ LDA paletteForView,X
  LDY #0
  STY SC+1
  ASL A
@@ -4587,13 +4591,13 @@ ENDIF
  EOR #$0C
  AND #$1C
  TAX
- LDA LB6A5,X
+ LDA systemPalettes,X
  STA XX3+20
- LDA LB6A6,X
+ LDA systemPalettes+1,X
  STA XX3+21
- LDA LB6A7,X
+ LDA systemPalettes+2,X
  STA XX3+22
- LDA LB6A8,X
+ LDA systemPalettes+3,X
  STA XX3+23
 
 .CB5DB
@@ -4758,326 +4762,557 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LB6A5
+;       Name: systemPalettes
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Universe
+;    Summary: Palettes for the system images
 ;
 ; ******************************************************************************
 
-.LB6A5
+.systemPalettes
 
- EQUB $0F                ; B6A5: 0F          .
-
-.LB6A6
-
- EQUB $25                ; B6A6: 25          %
-
-.LB6A7
-
- EQUB $16                ; B6A7: 16          .
-
-.LB6A8
-
- EQUB $15, $0F, $35, $16 ; B6A8: 15 0F 35... ..5
- EQUB $25, $0F, $34, $04 ; B6AC: 25 0F 34... %.4
- EQUB $14, $0F, $27, $28 ; B6B0: 14 0F 27... ..'
- EQUB $17, $0F, $29, $2C ; B6B4: 17 0F 29... ..)
- EQUB $19, $0F, $2A, $1B ; B6B8: 19 0F 2A... ..*
- EQUB $0A, $0F, $32, $21 ; B6BC: 0A 0F 32... ..2
- EQUB $02, $0F, $2C, $22 ; B6C0: 02 0F 2C... ..,
- EQUB $1C, $18, $00      ; B6C4: 1C 18 00    ...
+ EQUB $0F, $25, $16, $15
+ EQUB $0F, $35, $16, $25
+ EQUB $0F, $34, $04, $14
+ EQUB $0F, $27, $28, $17
+ EQUB $0F, $29, $2C, $19
+ EQUB $0F, $2A, $1B, $0A
+ EQUB $0F, $32, $21, $02
+ EQUB $0F, $2C, $22, $1C
 
 ; ******************************************************************************
 ;
-;       Name: LB6C7
+;       Name: viewAttrCount
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Status
+;    Summary: The number of sets of view attributes in the viewAttrOffset table
 ;
 ; ******************************************************************************
 
-.LB6C7
+.viewAttrCount
 
- EQUB $32                ; B6C7: 32          2
-
-.LB6C8
-
- EQUB $00, $56, $00, $77 ; B6C8: 00 56 00... .V.
- EQUB $00, $8B, $00, $A6 ; B6CC: 00 8B 00... ...
- EQUB $00, $C1, $00, $DA ; B6D0: 00 C1 00... ...
- EQUB $00, $EF, $00, $04 ; B6D4: 00 EF 00... ...
- EQUB $01, $19, $01, $2F ; B6D8: 01 19 01... ...
- EQUB $01, $55, $01, $77 ; B6DC: 01 55 01... .U.
- EQUB $01, $9A, $01, $B7 ; B6E0: 01 9A 01... ...
- EQUB $01, $D6, $01, $F4 ; B6E4: 01 D6 01... ...
- EQUB $01, $25, $02, $57 ; B6E8: 01 25 02... .%.
- EQUB $02, $89, $02, $96 ; B6EC: 02 89 02... ...
- EQUB $02, $A5, $02, $B5 ; B6F0: 02 A5 02... ...
- EQUB $02, $CC, $02, $31 ; B6F4: 02 CC 02... ...
- EQUB $3F, $27, $0F, $21 ; B6F8: 3F 27 0F... ?'.
- EQUB $33, $07, $21, $33 ; B6FC: 33 07 21... 3.!
- EQUB $07, $21, $33, $07 ; B700: 07 21 33... .!3
- EQUB $21, $33, $07, $FF ; B704: 21 33 07... !3.
- EQUB $BF, $23, $AF, $22 ; B708: BF 23 AF... .#.
- EQUB $AB, $AE, $77, $99 ; B70C: AB AE 77... ..w
- EQUB $25, $AA, $5A, $32 ; B710: 25 AA 5A... %.Z
- EQUB $07, $09, $25, $0A ; B714: 07 09 25... ..%
- EQUB $21, $0F, $3F, $31 ; B718: 21 0F 3F... !.?
- EQUB $3F, $27, $0F, $21 ; B71C: 3F 27 0F... ?'.
- EQUB $33, $07, $21, $33 ; B720: 33 07 21... 3.!
- EQUB $07, $21, $33, $07 ; B724: 07 21 33... .!3
- EQUB $21, $33, $07, $12 ; B728: 21 33 07... !3.
- EQUB $26, $AF, $77, $DD ; B72C: 26 AF 77... &.w
- EQUB $25, $AA, $5A, $32 ; B730: 25 AA 5A... %.Z
- EQUB $07, $0D, $24, $0F ; B734: 07 0D 24... ..$
- EQUB $32, $0E, $05, $3F ; B738: 32 0E 05... 2..
- EQUB $18, $77, $27, $55 ; B73C: 18 77 27... .w'
- EQUB $77, $27, $55, $77 ; B740: 77 27 55... w'U
- EQUB $27, $55, $77, $27 ; B744: 27 55 77... 'Uw
- EQUB $55, $77, $27, $55 ; B748: 55 77 27... Uw'
- EQUB $18, $28, $0F, $3F ; B74C: 18 28 0F... .(.
- EQUB $18, $77, $27, $55 ; B750: 18 77 27... .w'
- EQUB $77, $27, $55, $77 ; B754: 77 27 55... w'U
- EQUB $27, $55, $77, $27 ; B758: 27 55 77... 'Uw
- EQUB $55, $77, $27, $55 ; B75C: 55 77 27... Uw'
- EQUB $15, $22, $BF, $EF ; B760: 15 22 BF... .".
- EQUB $25, $0F, $22, $0B ; B764: 25 0F 22... %."
- EQUB $21, $0E, $3F, $31 ; B768: 21 0E 3F... !.?
- EQUB $3F, $27, $0F, $21 ; B76C: 3F 27 0F... ?'.
- EQUB $33, $07, $73, $27 ; B770: 33 07 73... 3.s
- EQUB $50, $77, $27, $55 ; B774: 50 77 27... Pw'
- EQUB $77, $27, $55, $77 ; B778: 77 27 55... w'U
- EQUB $27, $55, $F7, $FD ; B77C: 27 55 F7... 'U.
- EQUB $14, $FE, $F5, $28 ; B780: 14 FE F5... ...
- EQUB $0F, $3F, $31, $3F ; B784: 0F 3F 31... .?1
- EQUB $27, $0F, $21, $33 ; B788: 27 0F 21... '.!
- EQUB $07, $21, $33, $07 ; B78C: 07 21 33... .!3
- EQUB $21, $33, $07, $21 ; B790: 21 33 07... !3.
- EQUB $33, $07, $21, $33 ; B794: 33 07 21... 3.!
- EQUB $07, $21, $33, $07 ; B798: 07 21 33... .!3
- EQUB $28, $0F, $3F, $28 ; B79C: 28 0F 3F... (.?
- EQUB $AF, $77, $27, $55 ; B7A0: AF 77 27... .w'
- EQUB $77, $27, $55, $77 ; B7A4: 77 27 55... w'U
- EQUB $27, $55, $77, $27 ; B7A8: 27 55 77... 'Uw
- EQUB $55, $77, $27, $55 ; B7AC: 55 77 27... Uw'
- EQUB $18, $28, $0F, $3F ; B7B0: 18 28 0F... .(.
- EQUB $28, $AF, $77, $27 ; B7B4: 28 AF 77... (.w
- EQUB $5A, $77, $27, $55 ; B7B8: 5A 77 27... Zw'
- EQUB $77, $27, $55, $77 ; B7BC: 77 27 55... w'U
- EQUB $27, $55, $77, $27 ; B7C0: 27 55 77... 'Uw
- EQUB $55, $18, $28, $0F ; B7C4: 55 18 28... U.(
- EQUB $3F, $28, $AF, $77 ; B7C8: 3F 28 AF... ?(.
- EQUB $27, $55, $77, $27 ; B7CC: 27 55 77... 'Uw
- EQUB $55, $77, $27, $55 ; B7D0: 55 77 27... Uw'
- EQUB $77, $27, $55, $77 ; B7D4: 77 27 55... w'U
- EQUB $27, $55, $18, $28 ; B7D8: 27 55 18... 'U.
- EQUB $0F, $3F, $28, $5F ; B7DC: 0F 3F 28... .?(
- EQUB $77, $27, $55, $77 ; B7E0: 77 27 55... w'U
- EQUB $27, $55, $77, $27 ; B7E4: 27 55 77... 'Uw
- EQUB $55, $77, $27, $55 ; B7E8: 55 77 27... Uw'
- EQUB $BB, $27, $AA, $FB ; B7EC: BB 27 AA... .'.
- EQUB $27, $FA, $18, $3F ; B7F0: 27 FA 18... '..
- EQUB $23, $0F, $25, $5F ; B7F4: 23 0F 25... #.%
- EQUB $21, $33, $00, $21 ; B7F8: 21 33 00... !3.
- EQUB $04, $45, $24, $55 ; B7FC: 04 45 24... .E$
- EQUB $21, $33, $02, $54 ; B800: 21 33 02... !3.
- EQUB $55, $99, $22, $AA ; B804: 55 99 22... U."
- EQUB $21, $33, $00, $21 ; B808: 21 33 00... !3.
- EQUB $04, $22, $55, $99 ; B80C: 04 22 55... ."U
- EQUB $22, $AA, $F7, $27 ; B810: 22 AA F7... "..
- EQUB $F5, $1F, $11, $28 ; B814: F5 1F 11... ...
- EQUB $0F, $3F, $23, $0F ; B818: 0F 3F 23... .?#
- EQUB $4F, $24, $5F, $21 ; B81C: 4F 24 5F... O$_
- EQUB $33, $02, $25, $55 ; B820: 33 02 25... 3.%
- EQUB $21, $33, $00, $40 ; B824: 21 33 00... !3.
- EQUB $54, $55, $99, $22 ; B828: 54 55 99... TU.
- EQUB $AA, $21, $33, $00 ; B82C: AA 21 33... .!3
- EQUB $21, $04, $45, $55 ; B830: 21 04 45... !.E
- EQUB $99, $22, $AA, $1F ; B834: 99 22 AA... .".
- EQUB $19, $28, $0F, $3F ; B838: 19 28 0F... .(.
- EQUB $23, $0F, $25, $5F ; B83C: 23 0F 25... #.%
- EQUB $21, $33, $00, $21 ; B840: 21 33 00... !3.
- EQUB $04, $45, $24, $55 ; B844: 04 45 24... .E$
- EQUB $21, $33, $00, $22 ; B848: 21 33 00... !3.
- EQUB $50, $55, $99, $22 ; B84C: 50 55 99... PU.
- EQUB $AA, $21, $33, $00 ; B850: AA 21 33... .!3
- EQUB $21, $04, $22, $55 ; B854: 21 04 22... !."
- EQUB $99, $22, $AA, $1F ; B858: 99 22 AA... .".
- EQUB $1F, $12, $3F, $23 ; B85C: 1F 12 3F... ..?
- EQUB $AF, $25, $5F, $BB ; B860: AF 25 5F... .%_
- EQUB $22, $AA, $22, $5A ; B864: 22 AA 22... "."
- EQUB $23, $55, $BB, $AA ; B868: 23 55 BB... #U.
- EQUB $22, $A5, $22, $55 ; B86C: 22 A5 22... "."
- EQUB $02, $FB, $24, $FA ; B870: 02 FB 24... ..$
- EQUB $FF, $02, $16, $22 ; B874: FF 02 16... ...
- EQUB $F0, $1F, $19, $3F ; B878: F0 1F 19... ...
- EQUB $25, $AF, $23, $5F ; B87C: 25 AF 23... %.#
- EQUB $BB, $AA, $6A, $23 ; B880: BB AA 6A... ..j
- EQUB $5A, $22, $55, $BB ; B884: 5A 22 55... Z"U
- EQUB $22, $AA, $65, $22 ; B888: 22 AA 65... ".e
- EQUB $55, $02, $FB, $24 ; B88C: 55 02 FB... U..
- EQUB $FA, $FF, $02, $16 ; B890: FA FF 02... ...
- EQUB $22, $F0, $1F, $11 ; B894: 22 F0 1F... "..
- EQUB $28, $0F, $3F, $23 ; B898: 28 0F 3F... (.?
- EQUB $AF, $6F, $24, $5F ; B89C: AF 6F 24... .o$
- EQUB $BB, $23, $AA, $5A ; B8A0: BB 23 AA... .#.
- EQUB $56, $22, $55, $BB ; B8A4: 56 22 55... V"U
- EQUB $AA, $6A, $56, $22 ; B8A8: AA 6A 56... .jV
- EQUB $55, $22, $05, $FB ; B8AC: 55 22 05... U".
- EQUB $24, $FA, $FF, $02 ; B8B0: 24 FA FF... $..
- EQUB $16, $02, $1F, $19 ; B8B4: 16 02 1F... ...
- EQUB $3F, $18, $73, $22 ; B8B8: 3F 18 73... ?.s
- EQUB $50, $22, $A0, $60 ; B8BC: 50 22 A0... P".
- EQUB $22, $50, $77, $00 ; B8C0: 22 50 77... "Pw
- EQUB $99, $22, $AA, $66 ; B8C4: 99 22 AA... .".
- EQUB $22, $55, $73, $22 ; B8C8: 22 55 73... "Us
- EQUB $50, $22, $AA, $66 ; B8CC: 50 22 AA... P".
- EQUB $22, $55, $77, $55 ; B8D0: 22 55 77... "Uw
- EQUB $99, $22, $AA, $66 ; B8D4: 99 22 AA... .".
- EQUB $22, $55, $33, $37 ; B8D8: 22 55 33... "U3
- EQUB $05, $09, $22, $AA ; B8DC: 05 09 22... .."
- EQUB $A6, $22, $A5, $F3 ; B8E0: A6 22 A5... .".
- EQUB $22, $F0, $24, $FA ; B8E4: 22 F0 24... ".$
- EQUB $19, $3F, $18, $73 ; B8E8: 19 3F 18... .?.
- EQUB $22, $50, $22, $A0 ; B8EC: 22 50 22... "P"
- EQUB $60, $22, $50, $77 ; B8F0: 60 22 50... `"P
- EQUB $00, $99, $22, $AA ; B8F4: 00 99 22... .."
- EQUB $66, $22, $55, $73 ; B8F8: 66 22 55... f"U
- EQUB $22, $50, $22, $AA ; B8FC: 22 50 22... "P"
- EQUB $66, $22, $55, $77 ; B900: 66 22 55... f"U
- EQUB $55, $99, $22, $AA ; B904: 55 99 22... U."
- EQUB $66, $22, $55, $33 ; B908: 66 22 55... f"U
- EQUB $37, $05, $09, $8A ; B90C: 37 05 09... 7..
- EQUB $AA, $A6, $22, $A5 ; B910: AA A6 22... .."
- EQUB $F3, $22, $F0, $F8 ; B914: F3 22 F0... .".
- EQUB $23, $FA, $19, $3F ; B918: 23 FA 19... #..
- EQUB $18, $73, $22, $50 ; B91C: 18 73 22... .s"
- EQUB $22, $A0, $60, $22 ; B920: 22 A0 60... ".`
- EQUB $50, $77, $00, $99 ; B924: 50 77 00... Pw.
- EQUB $22, $AA, $66, $22 ; B928: 22 AA 66... ".f
- EQUB $55, $73, $22, $50 ; B92C: 55 73 22... Us"
- EQUB $22, $AA, $66, $22 ; B930: 22 AA 66... ".f
- EQUB $55, $77, $55, $99 ; B934: 55 77 55... UwU
- EQUB $22, $AA, $66, $22 ; B938: 22 AA 66... ".f
- EQUB $55, $33, $37, $05 ; B93C: 55 33 37... U37
- EQUB $09, $8A, $AA, $A6 ; B940: 09 8A AA... ...
- EQUB $22, $A5, $F3, $22 ; B944: 22 A5 F3... "..
- EQUB $F0, $F8, $23, $FA ; B948: F0 F8 23... ..#
- EQUB $19, $3F, $AF, $27 ; B94C: 19 3F AF... .?.
- EQUB $5F, $FB, $FA, $26 ; B950: 5F FB FA... _..
- EQUB $F5, $1F, $1F, $1A ; B954: F5 1F 1F... ...
- EQUB $28, $0F, $3F, $23 ; B958: 28 0F 3F... (.?
- EQUB $AF, $25, $5F, $FB ; B95C: AF 25 5F... .%_
- EQUB $22, $FA, $25, $F5 ; B960: 22 FA 25... ".%
- EQUB $1F, $1F, $1A, $28 ; B964: 1F 1F 1A... ...
- EQUB $0F, $3F, $22, $AF ; B968: 0F 3F 22... .?"
- EQUB $6F, $25, $5F, $FB ; B96C: 6F 25 5F... o%_
- EQUB $FA, $F6, $25, $F5 ; B970: FA F6 25... ..%
- EQUB $1F, $1F, $1A, $28 ; B974: 1F 1F 1A... ...
- EQUB $0F, $3F, $31, $3F ; B978: 0F 3F 31... .?1
- EQUB $27, $0F, $21, $33 ; B97C: 27 0F 21... '.!
- EQUB $07, $21, $33, $07 ; B980: 07 21 33... .!3
- EQUB $21, $33, $07, $21 ; B984: 21 33 07... !3.
- EQUB $33, $07, $21, $33 ; B988: 33 07 21... 3.!
- EQUB $07, $18, $28, $0F ; B98C: 07 18 28... ..(
- EQUB $3F, $31, $3F, $27 ; B990: 3F 31 3F... ?1?
- EQUB $0F, $21, $33, $07 ; B994: 0F 21 33... .!3
- EQUB $21, $33, $07, $21 ; B998: 21 33 07... !3.
- EQUB $33, $07, $21, $33 ; B99C: 33 07 21... 3.!
- EQUB $07, $F3, $27, $F0 ; B9A0: 07 F3 27... ..'
- EQUB $FB, $27, $5A, $28 ; B9A4: FB 27 5A... .'Z
- EQUB $0F, $3F           ; B9A8: 0F 3F       .?
+ EQUW 24
 
 ; ******************************************************************************
 ;
-;       Name: LB9AA
+;       Name: viewAttrOffset
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Status
+;    Summary: Offset to the data for each of the 24 sets of view attributes
 ;
 ; ******************************************************************************
 
-.LB9AA
+.viewAttrOffset
 
- EQUB $00, $01, $16, $04 ; B9AA: 00 01 16... ...
- EQUB $05, $02, $0A, $13 ; B9AE: 05 02 0A... ...
- EQUB $0D, $09, $06, $10 ; B9B2: 0D 09 06... ...
- EQUB $03, $03, $02, $17 ; B9B6: 03 03 02... ...
+ EQUW viewAttributes0 - viewAttrCount
+ EQUW viewAttributes1 - viewAttrCount
+ EQUW viewAttributes2 - viewAttrCount
+ EQUW viewAttributes3 - viewAttrCount
+ EQUW viewAttributes4 - viewAttrCount
+ EQUW viewAttributes5 - viewAttrCount
+ EQUW viewAttributes6 - viewAttrCount
+ EQUW viewAttributes7 - viewAttrCount
+ EQUW viewAttributes8 - viewAttrCount
+ EQUW viewAttributes9 - viewAttrCount
+ EQUW viewAttributes10 - viewAttrCount
+ EQUW viewAttributes11 - viewAttrCount
+ EQUW viewAttributes12 - viewAttrCount
+ EQUW viewAttributes13 - viewAttrCount
+ EQUW viewAttributes14 - viewAttrCount
+ EQUW viewAttributes15 - viewAttrCount
+ EQUW viewAttributes16 - viewAttrCount
+ EQUW viewAttributes17 - viewAttrCount
+ EQUW viewAttributes18 - viewAttrCount
+ EQUW viewAttributes19 - viewAttrCount
+ EQUW viewAttributes20 - viewAttrCount
+ EQUW viewAttributes21 - viewAttrCount
+ EQUW viewAttributes22 - viewAttrCount
+ EQUW viewAttributes23 - viewAttrCount
 
 ; ******************************************************************************
 ;
-;       Name: LB9BA
+;       Name: viewAttributes0
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Status
+;    Summary: Packed view attribute data for attribute set 0
 ;
 ; ******************************************************************************
 
-.LB9BA
+.viewAttributes0
 
- EQUB $00, $01, $16, $04 ; B9BA: 00 01 16... ...
- EQUB $05, $02, $0B, $14 ; B9BE: 05 02 0B... ...
- EQUB $0E, $09, $07, $11 ; B9C2: 0E 09 07... ...
- EQUB $03, $03, $02, $02 ; B9C6: 03 03 02... ...
+ EQUB $31, $3F, $27, $0F, $21, $33, $07, $21
+ EQUB $33, $07, $21, $33, $07, $21, $33, $07
+ EQUB $FF, $BF, $23, $AF, $22, $AB, $AE, $77
+ EQUB $99, $25, $AA, $5A, $32, $07, $09, $25
+ EQUB $0A, $21, $0F, $3F
 
 ; ******************************************************************************
 ;
-;       Name: LB9CA
+;       Name: viewAttributes1
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Status
+;    Summary: Packed view attribute data for attribute set 1
 ;
 ; ******************************************************************************
 
-.LB9CA
+.viewAttributes1
 
- EQUB $00, $01, $16, $04 ; B9CA: 00 01 16... ...
- EQUB $05, $02, $0C, $15 ; B9CE: 05 02 0C... ...
- EQUB $0F, $09, $08, $12 ; B9D2: 0F 09 08... ...
- EQUB $03, $03, $02, $17 ; B9D6: 03 03 02... ...
+ EQUB $31, $3F, $27, $0F, $21, $33, $07, $21
+ EQUB $33, $07, $21, $33, $07, $21, $33, $07
+ EQUB $12, $26, $AF, $77, $DD, $25, $AA, $5A
+ EQUB $32, $07, $0D, $24, $0F, $32, $0E, $05
+ EQUB $3F
 
 ; ******************************************************************************
 ;
-;       Name: LB9DA
+;       Name: viewAttributes2
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Status
+;    Summary: Packed view attribute data for attribute set 2
 ;
 ; ******************************************************************************
 
-.LB9DA
+.viewAttributes2
 
- EQUB $AA, $BA, $CA, $AA ; B9DA: AA BA CA... ...
+ EQUB $18, $77, $27, $55, $77, $27, $55, $77
+ EQUB $27, $55, $77, $27, $55, $77, $27, $55
+ EQUB $18, $28, $0F, $3F
 
 ; ******************************************************************************
 ;
-;       Name: LB9DE
+;       Name: viewAttributes3
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Status
+;    Summary: Packed view attribute data for attribute set 3
 ;
 ; ******************************************************************************
 
-.LB9DE
+.viewAttributes3
 
- EQUB $B9, $B9, $B9, $B9 ; B9DE: B9 B9 B9... ...
+ EQUB $18, $77, $27, $55, $77, $27, $55, $77
+ EQUB $27, $55, $77, $27, $55, $77, $27, $55
+ EQUB $15, $22, $BF, $EF, $25, $0F, $22, $0B
+ EQUB $21, $0E, $3F
 
 ; ******************************************************************************
 ;
-;       Name: SetViewAttribs
+;       Name: viewAttributes4
+;       Type: Variable
+;   Category: Status
+;    Summary: Packed view attribute data for attribute set 4
+;
+; ******************************************************************************
+
+.viewAttributes4
+
+ EQUB $31, $3F, $27, $0F, $21, $33, $07, $73
+ EQUB $27, $50, $77, $27, $55, $77, $27, $55
+ EQUB $77, $27, $55, $F7, $FD, $14, $FE, $F5
+ EQUB $28, $0F, $3F
+
+; ******************************************************************************
+;
+;       Name: viewAttributes5
+;       Type: Variable
+;   Category: Status
+;    Summary: Packed view attribute data for attribute set 5
+;
+; ******************************************************************************
+
+.viewAttributes5
+
+ EQUB $31, $3F, $27, $0F, $21, $33, $07, $21
+ EQUB $33, $07, $21, $33, $07, $21, $33, $07
+ EQUB $21, $33, $07, $21, $33, $07, $28, $0F
+ EQUB $3F
+
+; ******************************************************************************
+;
+;       Name: viewAttributes6
+;       Type: Variable
+;   Category: Status
+;    Summary: Packed view attribute data for attribute set 6
+;
+; ******************************************************************************
+
+.viewAttributes6
+
+ EQUB $28, $AF, $77, $27, $55, $77, $27, $55
+ EQUB $77, $27, $55, $77, $27, $55, $77, $27
+ EQUB $55, $18, $28, $0F, $3F
+
+; ******************************************************************************
+;
+;       Name: viewAttributes7
+;       Type: Variable
+;   Category: Status
+;    Summary: Packed view attribute data for attribute set 7
+;
+; ******************************************************************************
+
+.viewAttributes7
+
+ EQUB $28, $AF, $77, $27, $5A, $77, $27, $55
+ EQUB $77, $27, $55, $77, $27, $55, $77, $27
+ EQUB $55, $18, $28, $0F, $3F
+
+; ******************************************************************************
+;
+;       Name: viewAttributes8
+;       Type: Variable
+;   Category: Status
+;    Summary: Packed view attribute data for attribute set 8
+;
+; ******************************************************************************
+
+.viewAttributes8
+
+ EQUB $28, $AF, $77, $27, $55, $77, $27, $55
+ EQUB $77, $27, $55, $77, $27, $55, $77, $27
+ EQUB $55, $18, $28, $0F, $3F
+
+; ******************************************************************************
+;
+;       Name: viewAttributes9
+;       Type: Variable
+;   Category: Status
+;    Summary: Packed view attribute data for attribute set 9
+;
+; ******************************************************************************
+
+.viewAttributes9
+
+ EQUB $28, $5F, $77, $27, $55, $77, $27, $55
+ EQUB $77, $27, $55, $77, $27, $55, $BB, $27
+ EQUB $AA, $FB, $27, $FA, $18, $3F
+
+; ******************************************************************************
+;
+;       Name: viewAttributes10
+;       Type: Variable
+;   Category: Status
+;    Summary: Packed view attribute data for attribute set 10
+;
+; ******************************************************************************
+
+.viewAttributes10
+
+ EQUB $23, $0F, $25, $5F, $21, $33, $00, $21
+ EQUB $04, $45, $24, $55, $21, $33, $02, $54
+ EQUB $55, $99, $22, $AA, $21, $33, $00, $21
+ EQUB $04, $22, $55, $99, $22, $AA, $F7, $27
+ EQUB $F5, $1F, $11, $28, $0F, $3F
+
+; ******************************************************************************
+;
+;       Name: viewAttributes11
+;       Type: Variable
+;   Category: Status
+;    Summary: Packed view attribute data for attribute set 11
+;
+; ******************************************************************************
+
+.viewAttributes11
+
+ EQUB $23, $0F, $4F, $24, $5F, $21, $33, $02
+ EQUB $25, $55, $21, $33, $00, $40, $54, $55
+ EQUB $99, $22, $AA, $21, $33, $00, $21, $04
+ EQUB $45, $55, $99, $22, $AA, $1F, $19, $28
+ EQUB $0F, $3F
+
+; ******************************************************************************
+;
+;       Name: viewAttributes12
+;       Type: Variable
+;   Category: Status
+;    Summary: Packed view attribute data for attribute set 12
+;
+; ******************************************************************************
+
+.viewAttributes12
+
+ EQUB $23, $0F, $25, $5F, $21, $33, $00, $21
+ EQUB $04, $45, $24, $55, $21, $33, $00, $22
+ EQUB $50, $55, $99, $22, $AA, $21, $33, $00
+ EQUB $21, $04, $22, $55, $99, $22, $AA, $1F
+ EQUB $1F, $12, $3F
+
+; ******************************************************************************
+;
+;       Name: viewAttributes13
+;       Type: Variable
+;   Category: Status
+;    Summary: Packed view attribute data for attribute set 13
+;
+; ******************************************************************************
+
+.viewAttributes13
+
+ EQUB $23, $AF, $25, $5F, $BB, $22, $AA, $22
+ EQUB $5A, $23, $55, $BB, $AA, $22, $A5, $22
+ EQUB $55, $02, $FB, $24, $FA, $FF, $02, $16
+ EQUB $22, $F0, $1F, $19, $3F
+
+; ******************************************************************************
+;
+;       Name: viewAttributes14
+;       Type: Variable
+;   Category: Status
+;    Summary: Packed view attribute data for attribute set 14
+;
+; ******************************************************************************
+
+.viewAttributes14
+
+ EQUB $25, $AF, $23, $5F, $BB, $AA, $6A, $23
+ EQUB $5A, $22, $55, $BB, $22, $AA, $65, $22
+ EQUB $55, $02, $FB, $24, $FA, $FF, $02, $16
+ EQUB $22, $F0, $1F, $11, $28, $0F, $3F
+
+; ******************************************************************************
+;
+;       Name: viewAttributes15
+;       Type: Variable
+;   Category: Status
+;    Summary: Packed view attribute data for attribute set 15
+;
+; ******************************************************************************
+
+.viewAttributes15
+
+ EQUB $23, $AF, $6F, $24, $5F, $BB, $23, $AA
+ EQUB $5A, $56, $22, $55, $BB, $AA, $6A, $56
+ EQUB $22, $55, $22, $05, $FB, $24, $FA, $FF
+ EQUB $02, $16, $02, $1F, $19, $3F
+
+; ******************************************************************************
+;
+;       Name: viewAttributes16
+;       Type: Variable
+;   Category: Status
+;    Summary: Packed view attribute data for attribute set 16
+;
+; ******************************************************************************
+
+.viewAttributes16
+
+ EQUB $18, $73, $22, $50, $22, $A0, $60, $22
+ EQUB $50, $77, $00, $99, $22, $AA, $66, $22
+ EQUB $55, $73, $22, $50, $22, $AA, $66, $22
+ EQUB $55, $77, $55, $99, $22, $AA, $66, $22
+ EQUB $55, $33, $37, $05, $09, $22, $AA, $A6
+ EQUB $22, $A5, $F3, $22, $F0, $24, $FA, $19
+ EQUB $3F
+
+; ******************************************************************************
+;
+;       Name: viewAttributes17
+;       Type: Variable
+;   Category: Status
+;    Summary: Packed view attribute data for attribute set 17
+;
+; ******************************************************************************
+
+.viewAttributes17
+
+ EQUB $18, $73, $22, $50, $22, $A0, $60, $22
+ EQUB $50, $77, $00, $99, $22, $AA, $66, $22
+ EQUB $55, $73, $22, $50, $22, $AA, $66, $22
+ EQUB $55, $77, $55, $99, $22, $AA, $66, $22
+ EQUB $55, $33, $37, $05, $09, $8A, $AA, $A6
+ EQUB $22, $A5, $F3, $22, $F0, $F8, $23, $FA
+ EQUB $19, $3F
+
+; ******************************************************************************
+;
+;       Name: viewAttributes18
+;       Type: Variable
+;   Category: Status
+;    Summary: Packed view attribute data for attribute set 18
+;
+; ******************************************************************************
+
+.viewAttributes18
+
+ EQUB $18, $73, $22, $50, $22, $A0, $60, $22
+ EQUB $50, $77, $00, $99, $22, $AA, $66, $22
+ EQUB $55, $73, $22, $50, $22, $AA, $66, $22
+ EQUB $55, $77, $55, $99, $22, $AA, $66, $22
+ EQUB $55, $33, $37, $05, $09, $8A, $AA, $A6
+ EQUB $22, $A5, $F3, $22, $F0, $F8, $23, $FA
+ EQUB $19, $3F
+
+; ******************************************************************************
+;
+;       Name: viewAttributes19
+;       Type: Variable
+;   Category: Status
+;    Summary: Packed view attribute data for attribute set 19
+;
+; ******************************************************************************
+
+.viewAttributes19
+
+ EQUB $AF, $27, $5F, $FB, $FA, $26, $F5, $1F
+ EQUB $1F, $1A, $28, $0F, $3F
+
+; ******************************************************************************
+;
+;       Name: viewAttributes20
+;       Type: Variable
+;   Category: Status
+;    Summary: Packed view attribute data for attribute set 20
+;
+; ******************************************************************************
+
+.viewAttributes20
+
+ EQUB $23, $AF, $25, $5F, $FB, $22, $FA, $25
+ EQUB $F5, $1F, $1F, $1A, $28, $0F, $3F
+
+; ******************************************************************************
+;
+;       Name: viewAttributes21
+;       Type: Variable
+;   Category: Status
+;    Summary: Packed view attribute data for attribute set 21
+;
+; ******************************************************************************
+
+.viewAttributes21
+
+ EQUB $22, $AF, $6F, $25, $5F, $FB, $FA, $F6
+ EQUB $25, $F5, $1F, $1F, $1A, $28, $0F, $3F
+
+; ******************************************************************************
+;
+;       Name: viewAttributes22
+;       Type: Variable
+;   Category: Status
+;    Summary: Packed view attribute data for attribute set 22
+;
+; ******************************************************************************
+
+.viewAttributes22
+
+ EQUB $31, $3F, $27, $0F, $21, $33, $07, $21
+ EQUB $33, $07, $21, $33, $07, $21, $33, $07
+ EQUB $21, $33, $07, $18, $28, $0F, $3F
+
+; ******************************************************************************
+;
+;       Name: viewAttributes23
+;       Type: Variable
+;   Category: Status
+;    Summary: Packed view attribute data for attribute set 23
+;
+; ******************************************************************************
+
+.viewAttributes23
+
+ EQUB $31, $3F, $27, $0F, $21, $33, $07, $21
+ EQUB $33, $07, $21, $33, $07, $21, $33, $07
+ EQUB $F3, $27, $F0, $FB, $27, $5A, $28, $0F
+ EQUB $3F
+
+; ******************************************************************************
+;
+;       Name: viewAttributes_EN
+;       Type: Variable
+;   Category: Drawing the screen
+;    Summary: The view attributes lookup table for English
+;
+; ******************************************************************************
+
+.viewAttributes_EN
+
+ EQUB $00, $01, $16, $04, $05, $02, $0A, $13
+ EQUB $0D, $09, $06, $10, $03, $03, $02, $17
+
+; ******************************************************************************
+;
+;       Name: viewAttributes_DE
+;       Type: Variable
+;   Category: Drawing the screen
+;    Summary: The view attributes lookup table for German
+;
+; ******************************************************************************
+
+.viewAttributes_DE
+
+ EQUB $00, $01, $16, $04, $05, $02, $0B, $14
+ EQUB $0E, $09, $07, $11, $03, $03, $02, $02
+
+; ******************************************************************************
+;
+;       Name: viewAttributes_FR
+;       Type: Variable
+;   Category: Drawing the screen
+;    Summary: The view attributes lookup table for French
+;
+; ******************************************************************************
+
+.viewAttributes_FR
+
+ EQUB $00, $01, $16, $04, $05, $02, $0C, $15
+ EQUB $0F, $09, $08, $12, $03, $03, $02, $17
+
+; ******************************************************************************
+;
+;       Name: viewAttributesLo
+;       Type: Variable
+;   Category: Drawing the screen
+;    Summary: The low byte of the view attributes lookup table for each language
+;
+; ******************************************************************************
+
+.viewAttributesLo
+
+ EQUB LO(viewAttributes_EN)     ; English
+
+ EQUB LO(viewAttributes_DE)     ; German
+
+ EQUB LO(viewAttributes_FR)     ; French
+
+ EQUB LO(viewAttributes_EN)     ; There is no fourth language, so this byte is
+                                ; ignored
+
+; ******************************************************************************
+;
+;       Name: viewAttributesHi
+;       Type: Variable
+;   Category: Drawing the screen
+;    Summary: The high byte of the view attributes lookup table for each
+;             language
+;
+; ******************************************************************************
+
+.viewAttributesHi
+
+ EQUB HI(viewAttributes_EN)     ; English
+
+ EQUB HI(viewAttributes_DE)     ; German
+
+ EQUB HI(viewAttributes_FR)     ; French
+
+ EQUB HI(viewAttributes_EN)     ; There is no fourth language, so this byte is
+                                ; ignored
+
+; ******************************************************************************
+;
+;       Name: SetViewAttrs
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.SetViewAttribs
+.SetViewAttrs
 
  LDX chosenLanguage
- LDA LB9DA,X
+ LDA viewAttributesLo,X
  STA V
- LDA LB9DE,X
+ LDA viewAttributesHi,X
  STA V+1
  LDA QQ11
  AND #$0F
@@ -5085,11 +5320,11 @@ ENDIF
  LDA (V),Y
  ASL A
  TAX
- LDA LB6C7,X
- ADC #$C5
+ LDA viewAttrOffset,X
+ ADC #LO(viewAttrCount)
  STA V
- LDA LB6C8,X
- ADC #$B6
+ LDA viewAttrOffset+1,X
+ ADC #HI(viewAttrCount)
  STA V+1
 
  LDA #HI(attrBuffer0)   ; Set SC(1 0) to the address of attribute buffer 0

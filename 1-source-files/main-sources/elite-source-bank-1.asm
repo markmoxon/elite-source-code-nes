@@ -3727,9 +3727,9 @@ ENDIF
  LDY #30                ; Set the ship's pitch counter in byte #30 to 0, to stop
  STA (INF),Y            ; the ship from pitching
 
- JSR subm_BAED          ; ???
+ JSR RemoveFromScanner  ; ???
  LDA #$12
- STA L002B
+ STA INWK+34
  LDY #$25
  JSR DORND
  STA (INF),Y
@@ -6923,7 +6923,7 @@ ENDIF
 
  STA Q                  ; Store the distance to the explosion in Q
 
- LDA L002B              ; ???
+ LDA INWK+34            ; ???
 
  ADC #4                 ; Add 4 to the cloud counter, so it ticks onwards every
                         ; we redraw it
@@ -6931,7 +6931,7 @@ ENDIF
  BCS EX2                ; If the addition overflowed, jump up to EX2 to update
                         ; the explosion flags and return from the subroutine
 
- STA L002B
+ STA INWK+34
  JSR DVID4
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
@@ -6974,7 +6974,7 @@ ENDIF
 
  LDA INWK+7
  BEQ PTCLS
- LDY L002B
+ LDY INWK+34
  CPY #$18
  BCS PTCLS
  JMP PTCLS2
@@ -6988,7 +6988,7 @@ ENDIF
 
  LDA L040A              ; ???
  STA Q
- LDA L002B
+ LDA INWK+34
 
  BPL P%+4               ; If the cloud counter < 128, then we are in the first
                         ; half of the cloud's existence, so skip the next
@@ -8490,7 +8490,7 @@ ENDIF
  BCS CAE26
  JSR CAEE8
 
- JSR FillPatternWithSun ; Fill the character blocks containing the horizontal
+ JSR DrawSunRowOfBlocks ; Draw the character blocks containing the horizontal
                         ; line (P, Y) to (P+1, Y) with sunlight, silhouetting
                         ; any existing content against the sun
 
@@ -8583,28 +8583,28 @@ ENDIF
  ADC #7
  TAY
  LDA L05F1
- JSR subm_B039
+ JSR DrawSunEdgeLeft
  DEY
  LDA L05F0
- JSR subm_B039
+ JSR DrawSunEdgeLeft
  DEY
  LDA L05EF
- JSR subm_B039
+ JSR DrawSunEdgeLeft
  DEY
  LDA L05EE
- JSR subm_B039
+ JSR DrawSunEdgeLeft
  DEY
  LDA L05ED
- JSR subm_B039
+ JSR DrawSunEdgeLeft
  DEY
  LDA L05EC
- JSR subm_B039
+ JSR DrawSunEdgeLeft
  DEY
  LDA L05EB
- JSR subm_B039
+ JSR DrawSunEdgeLeft
  DEY
  LDA L05EA
- JMP subm_B039
+ JMP DrawSunEdgeLeft
 
 .CAEE8
 
@@ -8618,28 +8618,28 @@ ENDIF
  ADC #7
  TAY
  LDA L05F1
- JSR subm_B05D
+ JSR DrawSunEdgeRight
  DEY
  LDA L05F0
- JSR subm_B05D
+ JSR DrawSunEdgeRight
  DEY
  LDA L05EF
- JSR subm_B05D
+ JSR DrawSunEdgeRight
  DEY
  LDA L05EE
- JSR subm_B05D
+ JSR DrawSunEdgeRight
  DEY
  LDA L05ED
- JSR subm_B05D
+ JSR DrawSunEdgeRight
  DEY
  LDA L05EB
- JSR subm_B05D
+ JSR DrawSunEdgeRight
  DEY
  LDA L05EB
- JSR subm_B05D
+ JSR DrawSunEdgeRight
  DEY
  LDA L05EA
- JMP subm_B05D
+ JMP DrawSunEdgeRight
 
 .CAF35
 
@@ -9063,14 +9063,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B039
+;       Name: DrawSunEdgeLeft
 ;       Type: Subroutine
 ;   Category: Drawing suns
-;    Summary: ??? called from sun part 2
+;    Summary: Draw part of the left edge of the sun
 ;
 ; ******************************************************************************
 
-.subm_B039
+.DrawSunEdgeLeft
 
  LDX P                  ; ???
  STX X2
@@ -9102,14 +9102,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B05D
+;       Name: DrawSunEdgeRight
 ;       Type: Subroutine
 ;   Category: Drawing suns
-;    Summary: ??? called from sun part 2
+;    Summary: Draw part of the right edge of the sun
 ;
 ; ******************************************************************************
 
-.subm_B05D
+.DrawSunEdgeRight
 
  CLC                    ; ???
  ADC YY
@@ -11666,8 +11666,12 @@ ENDIF
  STA RAT2               ; Set RAT2 = %10000000, so the yaw calls in HAL5 below
                         ; are negative
 
- LDA #$B                ; Set the ship line heap pointer in INWK(35 34) to point
- STA INWK+34            ; to $0B00
+ LDA #$B                ; This instruction is left over from the other versions
+ STA INWK+34            ; of Elite, which store the ship line heap pointer in
+                        ; INWK(34 33), but the NEW version doesn't have a ship
+                        ; line heap, so this instruction has no effect (INWK+34
+                        ; is reused in NES Elite for the ship's explosion cloud
+                        ; counter, but that is ignored by the hangar code)
 
  JSR DORND              ; We now perform a random number of small angle (3.6
  STA XSAV               ; degree) rotations to spin the ship on the deck while
@@ -12093,16 +12097,16 @@ ENDIF
  BNE CB974
  LDX TYPE
  BMI CB974
- LDA L002A
+ LDA INWK+33
  BEQ CB974
  TAX
  ASL A
- ADC L002A
+ ADC INWK+33
  ASL A
  ASL A
  ADC #$2C
  TAY
- LDA L037E,X
+ LDA scannerAttrs,X
  STA attrSprite0,Y
  LDA INWK+1
  CMP INWK+4
@@ -12317,40 +12321,40 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_BAED
+;       Name: RemoveFromScanner
 ;   Category: Dashboard
-;   Category: Drawing ships
-;    Summary: ??? Called from LL9 part 1
+;   Category: Dashboard
+;    Summary: Remove a ship from the scanner
 ;
 ; ******************************************************************************
 
-.subm_BAED
+.RemoveFromScanner
 
  LDA #0                 ; ???
- LDY #$21
+ LDY #33
  STA (INF),Y
 
 ; ******************************************************************************
 ;
-;       Name: subm_BAF3
+;       Name: HideFromScanner
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Dashboard
+;    Summary: Hide a ship from the scanner
 ;
 ; ******************************************************************************
 
-.subm_BAF3
+.HideFromScanner
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDX L002A              ; ???
+ LDX INWK+33            ; ???
  BEQ CBB23
  LDA #0
- STA L0374,X
+ STA scannerFlags,X
  TXA
  ASL A
- ADC L002A
+ ADC INWK+33
  ASL A
  ASL A
  TAX
@@ -12364,7 +12368,7 @@ ENDIF
 .CBB1F
 
  LDA #0
- STA L002A
+ STA INWK+33
 
 .CBB23
 
@@ -12390,7 +12394,7 @@ ENDIF
 
  LDA L040A
  STA Q
- LDA L002B
+ LDA INWK+34
 
  BPL P%+4               ; If the cloud counter < 128, then we are in the first
                         ; half of the cloud's existence, so skip the next

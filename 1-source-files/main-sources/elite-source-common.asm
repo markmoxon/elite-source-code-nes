@@ -246,7 +246,7 @@ IF NOT(_BANK = 1)
  HALL               = $B738
  TIDY               = $B85C
  SCAN               = $B975
- subm_BAF3          = $BAF3
+ HideFromScanner    = $BAF3
 
 ENDIF
 
@@ -281,11 +281,11 @@ IF NOT(_BANK = 3)
  iconBarImage2      = $8900
  iconBarImage3      = $8D00
  iconBarImage4      = $9100
- subm_A730          = $A730
- subm_A775          = $A775
+ DrawDashNames      = $A730
+ ResetScanner       = $A775
  SetupView          = $A7B7
- subm_A972          = $A972
- subm_A9D1          = $A9D1
+ SendBitplaneToPPU  = $A972
+ SetupSpaceView     = $A9D1
  ResetScreen        = $AABC
  subm_AC1D          = $AC1D
  subm_AC5C          = $AC5C
@@ -300,7 +300,7 @@ IF NOT(_BANK = 3)
  ClearScreen        = $B341
  subm_B63D          = $B63D
  subm_B673          = $B673
- SetViewAttribs     = $B9E2
+ SetViewAttrs       = $B9E2
  SIGHT              = $BA23
 
 ENDIF
@@ -438,7 +438,7 @@ ENDIF
 
 .INWK
 
- SKIP 33                ; The zero-page internal workspace for the current ship
+ SKIP 36                ; The zero-page internal workspace for the current ship
                         ; data block
                         ;
                         ; As operations on zero page locations are faster and
@@ -453,18 +453,6 @@ ENDIF
                         ; what each of the bytes in the INWK data block
                         ; represents
 
-.L002A
-
- SKIP 1                 ; Normally INWK+33 (ship heap lo), reused in NES ???
-
-.L002B
-
- SKIP 1                 ; Normally INWK+34 (ship heap hi), reused in NES ???
-
-.L002C
-
- SKIP 1                 ; INWK+35 energy level
-
 .NEWB
 
  SKIP 1                 ; The ship's "new byte flags" (or NEWB flags)
@@ -478,9 +466,7 @@ ENDIF
                         ; in the deep dive on "Advanced tactics with the NEWB
                         ; flags"
 
-.L002E
-
- SKIP 1                 ; Unused ??? INWK+37
+ SKIP 1                 ; This byte appears to be unused
 
 .P
 
@@ -3084,11 +3070,11 @@ ORG $0200
                         ;   * Shuttle
                         ;   * Transporter
 
-.L0374
+.scannerFlags
 
  SKIP 10                ; ???
 
-.L037E
+.scannerAttrs
 
  SKIP 10                ; ???
 
@@ -4716,9 +4702,9 @@ ENDIF
 
  SKIP 1                 ; ???
 
-.L0585
+.messageBuffer
 
- SKIP 32                ; ???
+ SKIP 32                ; A buffer for the in-flight message text
 
 .SXL
 

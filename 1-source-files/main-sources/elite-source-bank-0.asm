@@ -1221,7 +1221,7 @@ ENDIF
  DEC DLY
  BMI C835B
  BEQ C8341
- JSR subm_B83A
+ JSR PrintMessage
  JMP C8344
 
 .C8341
@@ -1230,7 +1230,7 @@ ENDIF
 
 .C8344
 
- JSR Send88To100ToPPU
+ JSR SendMessageToPPU
  JMP MA16
 
 ; ******************************************************************************
@@ -1249,7 +1249,7 @@ ENDIF
  DEC DLY
  BMI C835B
  BEQ C835B
- JSR subm_B83A
+ JSR PrintMessage
  JMP MA16
 
 .C835B
@@ -4241,7 +4241,7 @@ ENDIF
                         ; If we get here then the selected system name and the
                         ; entered search term did not match
 
- JSR subm_B831          ; ???
+ JSR DisableJustifyText ; Turn off justified text
 
  JSR TT20               ; We want to move on to the next system, so call TT20
                         ; to twist the three 16-bit seeds in QQ15
@@ -4273,8 +4273,9 @@ ENDIF
                         ; If we get here then we have found a match for the
                         ; entered search
 
- JSR subm_B831          ; ???
- JSR CLYNS
+ JSR DisableJustifyText ; Turn off justified text
+
+ JSR CLYNS              ; ???
  LDA #0
  STA DTW8
 
@@ -7219,7 +7220,7 @@ ENDIF
  JSR NWSHP              ; Add a new Constrictor to the local bubble (in this
                         ; case, the briefing screen)
 
- JSR subm_BAF3_b1       ; ???
+ JSR HideFromScanner_b1 ; ???
 
  LDA #1                 ; Move the text cursor to column 1
  STA XC
@@ -7400,7 +7401,7 @@ ENDIF
 
  JSR CopyNameBuffer0To1
  JSR subm_F139
- JSR subm_BE48
+ JSR SetupDemoView
  JSR SeedRandomNumbers
  JSR subm_95FC
  LDA #6
@@ -9835,7 +9836,7 @@ ENDIF
  LDA #$0C
  JSR DASC_b2
  JSR TT146
- JSR Send88To100ToPPU
+ JSR SendMessageToPPU
 
 .subm_9D35
 
@@ -14628,7 +14629,7 @@ ENDIF
 
 .loop_CAB25
 
- LDA L0374,Y
+ LDA scannerFlags,Y
  BEQ CAB2F
  DEY
  BNE loop_CAB25
@@ -14637,7 +14638,7 @@ ENDIF
 .CAB2F
 
  LDA #$FF
- STA L0374,Y
+ STA scannerFlags,Y
  STY INWK+33
  TYA
  ASL A
@@ -14647,7 +14648,7 @@ ENDIF
  TAY
  TXA
  LDX INWK+33
- STA L037E,X
+ STA scannerAttrs,X
 
 .CAB43
 
@@ -15029,7 +15030,7 @@ ENDIF
 
  STX XX4                ; Store the slot number of the ship to remove in XX4
 
- JSR subm_BAF3_b1       ; ???
+ JSR HideFromScanner_b1 ; ???
  LDX XX4
 
  LDA MSTG               ; Check whether this slot matches the slot number in
@@ -15278,7 +15279,7 @@ ENDIF
  PHA                    ; so this will be "YES" (token 1) or "NO" (token 2)
  JSR DETOK_b2
 
- JSR Send88To100ToPPU          ; ???
+ JSR SendMessageToPPU   ; ???
 
  LDA controller1A       ; If "A" is being pressed on the controller, jump to
  BMI yeno3              ; to record the choice
@@ -16445,11 +16446,11 @@ ENDIF
  BEQ CB04C
  LDY CABTMP
  CPY #$E0
- BCS subm_B039
+ BCS CB039
  LSR A
  LSR A
 
-.subm_B039
+.CB039
 
  STA T
  JSR DORND
@@ -16980,7 +16981,7 @@ ENDIF
 
 .loop_CB22F
 
- STA L0374,Y
+ STA scannerFlags,Y
  DEY
  BNE loop_CB22F
 
@@ -17451,7 +17452,7 @@ ENDIF
 
 .awe
 
- JSR subm_BAF3_b1       ; ???
+ JSR HideFromScanner_b1 ; ???
 
  LDA #12                ; Set CNT2 = 12 as the outer loop counter for the loop
  STA CNT2               ; starting at TLL2
@@ -18808,7 +18809,7 @@ ENDIF
 .loop_CB818
 
  LDA BUF-1,X
- STA L0584,X
+ STA messageBuffer-1,X
  DEX
  BNE loop_CB818
 
@@ -18817,37 +18818,43 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
-                        ; Fall through into subm_B831 to reset DTW4 and DTW5 ???
+                        ; Fall through into DisableJustifyText to reset DTW4 and
+                        ; DTW5 to turn off justified text
 
 ; ******************************************************************************
 ;
-;       Name: subm_B831
+;       Name: DisableJustifyText
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Turn off justified text
 ;
 ; ******************************************************************************
 
-.subm_B831
+.DisableJustifyText
 
- LDA #0
- STA DTW4
- STA DTW5
+ LDA #0                 ; Set DTW4 = %00000000  (do not justify text, print
+ STA DTW4               ; buffer on carriage return)
 
-.CB839
+ STA DTW5               ; Set DTW5 = 0 (reset line buffer size)
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: subm_B83A
+;       Name: PrintMessage
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print an in-flight message
+;
+; ------------------------------------------------------------------------------
+;
+; Other entry points:
+;
+;   PrintMessage-1      Contains an RTS
 ;
 ; ******************************************************************************
 
-.subm_B83A
+.PrintMessage
 
  LDA L00B5
  LDX QQ11
@@ -18872,14 +18879,14 @@ ENDIF
 
 .loop_CB862
 
- LDA L0585,Y
+ LDA messageBuffer,Y
  JSR CHPR_b2
  INY
  CPY L0584
  BNE loop_CB862
  LDA QQ11
- BEQ CB839
- JMP Send88To100ToPPU
+ BEQ PrintMessage-1
+ JMP SendMessageToPPU
 
 ; ******************************************************************************
 ;
@@ -20576,7 +20583,7 @@ ENDIF
 
 .LQ
 
- JSR subm_BDED          ; ???
+ JSR SetNewSpaceView    ; ???
 
  JMP NWSTARS            ; Set up a new stardust field and return from the
                         ; subroutine using a tail call
@@ -20591,7 +20598,7 @@ ENDIF
  CPX VIEW               ; If the current view is already of type X, jump to LO2
  BEQ LO2                ; to return from the subroutine (as LO2 contains an RTS)
 
- JSR subm_BE03          ; ???
+ JSR ChangeSpaceView    ; ???
 
  JSR FLIP               ; Swap the x- and y-coordinates of all the stardust
                         ; particles and redraw the stardust field
@@ -20652,14 +20659,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_BDED
+;       Name: SetNewSpaceView
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Flight
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_BDED
+.SetNewSpaceView
 
  LDA #$48
  JSR SetScreenHeight
@@ -20672,14 +20679,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_BE03
+;       Name: ChangeSpaceView
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Flight
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_BE03
+.ChangeSpaceView
 
  STX VIEW
  LDA #0
@@ -20688,7 +20695,7 @@ ENDIF
  LDA #80
  STA lastTileNumber
  STA lastTileNumber+1
- JSR subm_A9D1_b3
+ JSR SetupSpaceView_b3
 
 ; ******************************************************************************
 ;
@@ -20744,14 +20751,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_BE48
+;       Name: SetupDemoView
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_BE48
+.SetupDemoView
 
  LDA #$FF
  STA L045F
@@ -21018,17 +21025,17 @@ ENDIF
  LDA QQ11a
  BPL CBF2B
  JSR subm_EB86
- JSR subm_A775_b3
+ JSR ResetScanner_b3
 
 .CBF2B
 
- JSR subm_A730_b3
+ JSR DrawDashNames_b3
  JSR msblob
  JMP CBF91
 
 .loop_CBF34
 
- JMP SetViewAttribs_b3
+ JMP SetViewAttrs_b3
 
 .CBF37
 
@@ -21082,7 +21089,7 @@ ENDIF
 
 .CBF91
 
- JSR SetViewAttribs_b3
+ JSR SetViewAttrs_b3
 
  LDA demoInProgress     ; If bit 7 of demoInProgress is set then we are
  BMI CBFA1              ; initialising the demo
@@ -21116,7 +21123,7 @@ ENDIF
  LDA L04A9
  AND #2
  BNE CBFE2
- JSR subm_BFED
+ JSR PrintSpaceViewName
  JSR TT162
  LDA #$AF
 
@@ -21137,23 +21144,32 @@ ENDIF
 
  LDA #$AF
  JSR spc
- JSR subm_BFED
+ JSR PrintSpaceViewName
  JMP CBFD8
 
 ; ******************************************************************************
 ;
-;       Name: subm_BFED
+;       Name: PrintSpaceViewName
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print the name of the current space view
 ;
 ; ******************************************************************************
 
-.subm_BFED
+.PrintSpaceViewName
 
- LDA VIEW
- ORA #$60
- JMP TT27_b2
+ LDA VIEW               ; Load the current view into A:
+                        ;
+                        ;   0 = front
+                        ;   1 = rear
+                        ;   2 = left
+                        ;   3 = right
+
+ ORA #$60               ; OR with $60 so we get a value of $60 to $63 (96 to 99)
+
+ JMP TT27_b2            ; Print recursive token 96 to 99, which will be in the
+                        ; range "FRONT" to "RIGHT", returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
