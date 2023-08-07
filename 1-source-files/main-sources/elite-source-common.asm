@@ -869,6 +869,10 @@ ENDIF
                         ; TT66: 0, $8D, $93, $95, $9C, $BB, $C4, $CF
                         ; ChangeViewRow0: $96, $97, $98, $B9, $BA
                         ; subm_B39D: 0, 1, $10, $92
+                        ;
+                        ; First nibble of view number:
+                        ;
+                        ;   xx1x = load font using subm_B18E_b3 (Ax, Bx, Ex, Fx)
 
 .QQ11a
 
@@ -1013,9 +1017,11 @@ ENDIF
                         ; of the in-flight message in MESS, so it can be erased
                         ; from the screen at the correct time
 
-.L00B5
+.messYC
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Used to specify the text row of the in-flight message
+                        ; in MESS, so it can be shown at a different positions
+                        ; in different views
 
 .newzp
 
@@ -3072,11 +3078,13 @@ ORG $0200
 
 .scannerFlags
 
- SKIP 10                ; ???
+ SKIP 10                ; ??? Bytes 1-8 contain flags for ships on scanner
+                        ; Bytes 0 and 9 are unused
 
 .scannerAttrs
 
- SKIP 10                ; ???
+ SKIP 10                ; ??? Bytes 1-8 contain attributes for ships on scanner
+                        ; Bytes 0 and 9 are unused
 
 .auto
 
@@ -5740,6 +5748,9 @@ ENDMACRO
 
 MACRO FILL_MEMORY byte_count
 
+                        ; We do the following code byte_count times, so we write
+                        ; a total of byte_count bytes into memory
+
  FOR I%, 1, byte_count
 
   STA (clearAddress),Y  ; Write A to the Y-th byte of clearAddress(1 0)
@@ -5782,6 +5793,9 @@ ENDMACRO
 ; ******************************************************************************
 
 MACRO SEND_DATA_TO_PPU byte_count
+
+                        ; We do the following code byte_count times, so we send
+                        ; a total of byte_count bytes from memory to the PPU
 
  FOR I%, 1, byte_count
 

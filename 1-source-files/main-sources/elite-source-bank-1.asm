@@ -12391,7 +12391,12 @@ ENDIF
 
  STA ySprite11,X        ; Hide the three scanner sprites for ship number X, so
  STA ySprite12,X        ; the current ship is no longer shown on the scanner
- STA ySprite13,X
+ STA ySprite13,X        ; (the first ship on the scanner, ship number 1, uses
+                        ; the three sprites at 14, 15 and 16 in the buffer, and
+                        ; each sprite has four bytes in the buffer, so we can
+                        ; get the sprite numbers by adding X, which contains the
+                        ; offset within the sprite buffer, to the addresses of
+                        ; sprites 11, 12 and 13)
 
 .hide1
 

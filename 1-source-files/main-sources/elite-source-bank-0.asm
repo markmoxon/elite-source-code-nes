@@ -17097,10 +17097,10 @@ ENDIF
  LDA #8                 ; Set our speed in DELTA to 8, so the camera moves
  STA DELTA              ; forward slowly
 
- LDA #12                ; ???
- STA L00B5
+ LDA #12                ; Set the text row for in-flight messages in the space
+ STA messYC             ; view to row 12
 
- LDA #146
+ LDA #146               ; ???
  LDY #120
  JSR subm_B77A
 
@@ -18861,16 +18861,22 @@ ENDIF
 
 .PrintMessage
 
- LDA L00B5
- LDX QQ11
- BEQ CB845
- JSR CLYNS+8
- LDA #$17
+ LDA messYC             ; Set A to the current row for in-flight messages
+
+ LDX QQ11               ; If this is the space view, jump to CB845 to skip the
+ BEQ CB845              ; following and leave A with this value, so we print the
+                        ; in-flight message on the row specified in messYC
+
+ JSR CLYNS+8            ; ???
+
+ LDA #$17               ; Set A to 23, so we print the in-flight message on row
+                        ; 23 for all views other than the space view
 
 .CB845
 
- STA YC
- LDX #0
+ STA YC                 ; Move the text cursor to the row in A
+
+ LDX #0                 ; ???
  STX QQ17
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
@@ -20957,28 +20963,35 @@ ENDIF
 
  STA QQ11               ; Set the current view type in QQ11 to A
 
- LDA QQ11a              ; ???
- ORA QQ11
- BMI CBEC4
- LDA QQ11
- BPL CBEC4
+ LDA QQ11a              ; If bit 7 is set in either QQ11 or QQ11a, then jump to
+ ORA QQ11               ; scrn1 to skip clearing the scanner ???
+ BMI scrn1
+
+ LDA QQ11               ; If bit 7 of QQ11 is clear, then we are switching to
+ BPL scrn1              ; the space view, so we will be showing the scanner and
+                        ; there is no need to clear it, so jump to scrn1 to skip
+                        ; clearing the scanner
 
  JSR ClearScanner       ; Remove all ships from the scanner and hide the scanner
                         ; sprites
 
-.CBEC4
+.scrn1
 
  JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
                         ; sent to the PPU, so the screen is fully updated and
                         ; there is no more data waiting to be sent to the PPU
 
- JSR ClearScreen_b3     ; ???
+ JSR ClearScreen_b3     ; Clear the screen by zeroing patterns #66 to #255 in
+                        ; both pattern buffer, and clearing both nametable
+                        ; buffers to the background tile
 
- LDA #$10
- STA L00B5
- LDX #0
+ LDA #16                ; Set the text row for in-flight messages in the space
+ STA messYC             ; view to row 16
+
+ LDX #0                 ; ???
  STX L046D
- JSR SetDrawingBitplane
+
+ JSR SetDrawingBitplane ; Set the drawing bitplane to bitplane 0
 
  LDA #%10000000         ; Set bit 7 of QQ17 to switch to Sentence Case
  STA QQ17
@@ -20988,7 +21001,7 @@ ENDIF
 
  STA DTW1               ; ???
 
- LDA #0
+ LDA #%00000000         ; Set DTW6 = %00000000 to disable lower case
  STA DTW6
 
  STA LAS2               ; Set LAS2 = 0 to stop any laser pulsing
@@ -21000,74 +21013,96 @@ ENDIF
  STA de                 ; Clear de, the flag that appends " DESTROYED" to the
                         ; end of the next text token, so that it doesn't
 
- LDA #1                 ; ???
+ LDA #1                 ; Move the text cursor to column 1 on row 1
  STA XC
  STA YC
- JSR SetViewPatterns_b3
- LDA QQ11
- LDX #$FF
- AND #$40
- BNE CBF19
- LDX #4
- LDA QQ11
- CMP #1
- BEQ CBF19
- LDX #2
- LDA QQ11
- AND #$0E
- CMP #$0C
- BEQ CBF19
- LDX #1
- LDA QQ12
- BEQ CBF19
- LDX #0
 
-.CBF19
+ JSR SetViewPatterns_b3 ; Load the patterns for the view we are changing to ???
 
- LDA QQ11
- BMI CBF37
+ LDA QQ11               ; If bit 6 of the new view type in QQ11 is set, jump to
+ LDX #$FF               ; scrn2 with X = $FF
+ AND #%01000000
+ BNE scrn2
+
+ LDX #4                 ; If the new view type in QQ11 is 1 (we are loading a
+ LDA QQ11               ; ship on the title screen), then jump to scrn2 with
+ CMP #1                 ; X = 4
+ BEQ scrn2
+
+ LDX #2                 ; If the new view type in QQ11 is %110x (i.e. 12 or 13,
+ LDA QQ11               ; the Short-range Chart or Long-range Chart), jump to
+ AND #%00001110         ; scrn2 with X = 2
+ CMP #%00001100
+ BEQ scrn2
+
+ LDX #1                 ; If the new view type in QQ11 is 0 (the space view),
+ LDA QQ12               ; jump to scrn2 with X = 1
+ BEQ scrn2
+
+ LDX #0                 ; Otherwise fall through into scrn2 with X = 0
+
+.scrn2
+
+ LDA QQ11               ; If bit 7 of the new view type in QQ11 is set, jump to
+ BMI scrn5              ; scrn5
+
  TXA
  JSR SetupIconBar_b3
+
  LDA QQ11a
- BPL CBF2B
+ BPL scrn3
+
  JSR subm_EB86
+
  JSR ResetScanner_b3
 
-.CBF2B
+.scrn3
 
  JSR DrawDashNames_b3
+
  JSR msblob
- JMP CBF91
 
-.loop_CBF34
+ JMP scrn8
 
- JMP SetViewAttrs_b3
+.scrn4
 
-.CBF37
+ JMP SetViewAttrs_b3    ; Set up attribute buffer 0 for the chosen view,
+                        ; returning from the subroutine using a tail call
+
+.scrn5
+
+                        ; If we get here then bit 7 of the new view type in QQ11
+                        ; is set
 
  TXA
  JSR SetupIconBar_b3
+
  LDA QQ11
  CMP #$C4
- BEQ loop_CBF34
+ BEQ scrn4
+
  LDA QQ11
  CMP #$8D
- BEQ CBF54
+ BEQ scrn6
+
  CMP #$CF
- BEQ CBF54
+ BEQ scrn6
+
  AND #$10
- BEQ CBF54
+ BEQ scrn6
+
  LDA #$42
  JSR subm_B0E1_b3
 
-.CBF54
+.scrn6
 
  LDA QQ11
  AND #$20
- BEQ CBF5D
+ BEQ scrn7
+
  JSR subm_B18E_b3
 
-.CBF5D
+.scrn7
 
  LDA #1
 
@@ -21091,53 +21126,58 @@ ENDIF
 
  LDA QQ11
  AND #$40
- BNE CBF91
+ BNE scrn8
 
-.CBF91
+.scrn8
 
- JSR SetViewAttrs_b3
+ JSR SetViewAttrs_b3    ; Set up attribute buffer 0 for the chosen view
+
+                        ; The six instructions between here and scrn9 have no
+                        ; effect, as we always end up at scrn9 and don't take
+                        ; any notice of the flags
 
  LDA demoInProgress     ; If bit 7 of demoInProgress is set then we are
- BMI CBFA1              ; initialising the demo
+ BMI scrn9              ; initialising the demo, so jump to scrn9
 
- LDA QQ11
- BPL CBFA1
- CMP QQ11a
- BEQ CBFA1
+ LDA QQ11               ; If bit 7 of the new view type in QQ11 is clear, jump
+ BPL scrn9              ; scrn9
 
-.CBFA1
+ CMP QQ11a              ; If the view we are switching from in QQ11a is 0 (the
+ BEQ scrn9              ; space view), jump to scrn9
+
+.scrn9
 
  JSR DrawBoxTop
  LDX chosenLanguage
  LDA QQ11
- BEQ CBFBF
+ BEQ scrn10
  CMP #1
- BNE CBFD8
+ BNE scrn12
  LDA #0
  STA YC
  LDX chosenLanguage
  LDA LC0DF,X
  STA XC
  LDA #$1E
- BNE CBFD5
+ BNE scrn11
 
-.CBFBF
+.scrn10
 
  STA YC
  LDA LC0E3,X
  STA XC
  LDA L04A9
  AND #2
- BNE CBFE2
+ BNE scrn13
  JSR PrintSpaceViewName
  JSR TT162
  LDA #$AF
 
-.CBFD5
+.scrn11
 
  JSR TT27_b2
 
-.CBFD8
+.scrn12
 
  LDX #1
  STX XC
@@ -21146,12 +21186,12 @@ ENDIF
  STX QQ17
  RTS
 
-.CBFE2
+.scrn13
 
  LDA #$AF
  JSR spc
  JSR PrintSpaceViewName
- JMP CBFD8
+ JMP scrn12
 
 ; ******************************************************************************
 ;
