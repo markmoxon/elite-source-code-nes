@@ -14528,10 +14528,10 @@ ENDIF
 
  TAX                    ; Copy the ship type into X
 
- LDA #0                 ; ???
- STA INWK+33
+ LDA #0                 ; Zero the ship's number on the scanner so that it
+ STA INWK+33            ; doesn't appear on the scanner
 
- JMP NW8
+ JMP NW8                ; Jump down to NW8 to continue setting up the new ship
 
 .NWSHP
 
@@ -14620,9 +14620,12 @@ ENDIF
                         ; contains the address of this ship's blueprint
 
  STX SC2                ; ???
+
  LDX T
- LDA #0
- STA INWK+33
+
+ LDA #0                 ; Zero the ship's number on the scanner so that it
+ STA INWK+33            ; doesn't appear on the scanner
+
  LDA scacol,X
  BMI CAB43
  TAX
