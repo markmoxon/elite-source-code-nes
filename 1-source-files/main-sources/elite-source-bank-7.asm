@@ -9641,8 +9641,8 @@ ENDIF
  BNE CEA04
 
  LDA #251
- STA patternSprite1
- STA patternSprite2
+ STA tileSprite1
+ STA tileSprite2
 
  LDA yIconBarPointer
  CLC
@@ -9681,8 +9681,8 @@ ENDIF
 .CEA04
 
  LDA #252
- STA patternSprite1
- STA patternSprite2
+ STA tileSprite1
+ STA tileSprite2
 
  LDA yIconBarPointer
  CLC
@@ -10979,7 +10979,7 @@ ENDIF
 ;
 ;       Name: SIGHT_b3
 ;       Type: Subroutine
-;   Category: Drawing sprites
+;   Category: Flight
 ;    Summary: Call the SIGHT routine in ROM bank 3
 ;
 ; ******************************************************************************
@@ -11226,7 +11226,7 @@ ENDIF
 ;
 ;       Name: DrawImageNames_b4
 ;       Type: Subroutine
-;   Category: Utility routines
+;   Category: Drawing the screen
 ;    Summary: Call the DrawImageNames routine in ROM bank 4
 ;
 ; ******************************************************************************
@@ -11496,14 +11496,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_AFCD_b3
+;       Name: SetViewPatterns_b3
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: Call the subm_AFCD routine in ROM bank 3
+;    Summary: Call the SetViewPatterns routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.subm_AFCD_b3
+.SetViewPatterns_b3
 
  LDA currentBank        ; If ROM bank 3 is already paged into memory, jump to
  CMP #3                 ; bank10
@@ -11514,7 +11514,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR subm_AFCD          ; Call subm_AFCD, now that it is paged into memory
+ JSR SetViewPatterns    ; Call SetViewPatterns, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -11522,8 +11522,9 @@ ENDIF
 
 .bank10
 
- JMP subm_AFCD          ; Call subm_AFCD, which is already paged into memory,
-                        ; and return from the subroutine using a tail call
+ JMP SetViewPatterns    ; Call SetViewPatterns, which is already paged into
+                        ; memory, and return from the subroutine using a tail
+                        ; call
 
 ; ******************************************************************************
 ;
@@ -12149,14 +12150,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_AE18_b3
+;       Name: SetupIconBar_b3
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: Call the subm_AE18 routine in ROM bank 3
+;   Category: Icon bar
+;    Summary: Call the SetupIconBar routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.subm_AE18_b3
+.SetupIconBar_b3
 
  STA ASAV               ; Store the value of A so we can retrieve it below
 
@@ -12171,7 +12172,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR subm_AE18          ; Call subm_AE18, now that it is paged into memory
+ JSR SetupIconBar       ; Call SetupIconBar, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -12181,7 +12182,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JMP subm_AE18          ; Call subm_AE18, which is already paged into memory,
+ JMP SetupIconBar       ; Call SetupIconBar, which is already paged into memory,
                         ; and return from the subroutine using a tail call
 
 ; ******************************************************************************
@@ -13800,135 +13801,256 @@ ENDIF
 ;
 ; ------------------------------------------------------------------------------
 ;
-; UnpackToRAM copies data from V(1 0) to SC(1 0)
-; Fetch byte from V(1 0) and increment V(1 0), say byte is $xx
-;   >= $40 store byte as is and move on to next
-;   = $x0 store byte as is and move on to next
-;   = $3F stop and return from subroutine - end of decompression
-;   >= $20, jump to CF572
-;           >= $30 jump to CF589 to copy next $0x bytes from V(1 0) as they
-;                  are, incrementing V(1 0) as we go
-;           >= $20 fetch next byte and store it for $0x bytes
-;   >= $10, jump to CF56E to store $FF for $0x bytes
-;   < $10, store 0 for $0x bytes
+; This routine unpacks compressed data into RAM. The data is typically nametable
+; or pattern data that is unpacked into the nametable or pattern buffers.
 ;
-; $00 = unchanged
-; $0x = store 0 for $0x bytes
-; $10 = unchanged
-; $1x = store $FF for $0x bytes
-; $20 = unchanged
-; $2x = store next byte for $0x bytes
-; $30 = unchanged
-; $3x = store next $0x bytes unchanged
-; $40 and above = unchanged
+; UnpackToRAM reads packed data from V(1 0) and writes unpacked data to SC(1 0)
+; by fetching bytes one at a time from V(1 0), incrementing V(1 0) after each
+; fetch, and unpacking and writing the data to SC(1 0) as it goes.
+;
+; If we fetch byte $xx from V(1 0), then we unpack it as follows:
+;
+;   * If $xx >= $40, output byte $xx as it is and move on to the next byte
+;
+;   * If $xx = $x0, output byte $x0 as it is and move on to the next byte
+;
+;   * If $xx = $3F, stop and return from the subroutine, as we have finished
+;
+;   * If $xx >= $20, jump to upac6 to do the following:
+;
+;     * If $xx >= $30, jump to upac7 to output the next $0x bytes from V(1 0) as
+;                      they are, incrementing V(1 0) as we go
+;
+;     * If $xx >= $20, fetch the next byte from V(1 0), increment V(1 0), and
+;                      output the fetched byte for $0x bytes
+;
+;   * If $xx >= $10, jump to upac5 to output $FF for $0x bytes
+;
+;   * If $xx < $10, output 0 for $0x bytes
+;
+; In summary, this is how each byte gets unpacked:
+;
+;   $00 = unchanged
+;   $0x = output 0 for $0x bytes
+;   $10 = unchanged
+;   $1x = output $FF for $0x bytes
+;   $20 = unchanged
+;   $2x = output the next byte for $0x bytes
+;   $30 = unchanged
+;   $3x = output the next $0x bytes unchanged
+;   $40 and above = unchanged
 ;
 ; ******************************************************************************
 
 .UnpackToRAM
 
- LDY #0
+ LDY #0                 ; We work our way through the packed data at SC(1 0), so
+                        ; set an index counter in Y, starting from the first
+                        ; data byte at offset zero
 
-.CF52F
+.upac1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDX #0
- LDA (V,X)
- INC V
- BNE CF546
+ LDX #0                 ; Set X = 0, so we can use a LDA (V,X) instruction below
+                        ; to fetch the next data byte from V(1 0), as the 6502
+                        ; doesn't have a LDA (V) instruction
+
+ LDA (V,X)              ; Set A to the byte of packed data at V(1 0), which is
+                        ; the next byte of data to unpack
+                        ;
+                        ; As X = 0, this instruction is effectively LDA (V),
+                        ; which isn't a valid 6502 instruction on its own
+
+ INC V                  ; Increment V(1 0) to point to the next byte of packed
+ BNE upac2              ; data
  INC V+1
 
-.CF546
+.upac2
 
- CMP #$40
- BCS CF5A4
- TAX
- AND #$0F
- BEQ CF5A3
- CPX #$3F
- BEQ CF5AE
- TXA
- CMP #$20
- BCS CF572
- CMP #$10
- AND #$0F
- TAX
- BCS CF56E
- LDA #0
+ CMP #$40               ; If A >= $40, jump to unpac12 to output the data in A
+ BCS upac12             ; as it is, and move on to the next byte
 
-.CF561
+                        ; If we get here then we know that the data byte in A is
+                        ; of the form $0x, $1x, $2x or $3x
 
- STA (SC),Y
- INY
- BNE CF568
- INC SC+1
+ TAX                    ; Store the packed data byte in X so we can retrieve it
+                        ; below
 
-.CF568
+ AND #$0F               ; If the data byte in A is in the format $x0, jump to
+ BEQ upac11             ; upac11 to output the data in X as it is, and move on
+                        ; to the next byte
 
- DEX
- BNE CF561
- JMP CF52F
+ CPX #$3F               ; If the data byte in X is $3F, then this indicates we
+ BEQ upac13             ; have reached the end of the packed data, so jump to
+                        ; upac13 to return from the subroutine, as we are done
 
-.CF56E
+ TXA                    ; Set A back to the unpacked data byte, which we stored
+                        ; in X above
 
- LDA #$FF
- BNE CF561
+ CMP #$20               ; If A >= $20, jump to upac6 to process values of $2x
+ BCS upac6              ; and $3x (as we already processed values above $40)
 
-.CF572
+                        ; If we get here then we know that the data byte in A is
+                        ; of the form $0x or $1x (and not $x0)
 
- LDX #0
- CMP #$30
- BCS CF589
- AND #$0F
- STA T
- LDA (V,X)
- LDX T
- INC V
- BNE CF561
+ CMP #$10               ; If A >= $10, set the C flag
+
+ AND #$0F               ; Set X to the lower nibble of A, so it contains the
+ TAX                    ; number of zeroes or $FF bytes that we need to output
+                        ; when the data byte is $0x or $1x
+
+ BCS upac5              ; If the data byte in A was >= $10, then we know that A
+                        ; is of the form $1x, so jump to upac5 to output the
+                        ; number of $FF bytes specified in X
+
+                        ; If we get here then we know that A is of the form
+                        ; $0x, so we need to output the number of zero bytes
+                        ; specified in X
+
+ LDA #0                 ; Set A as the byte to write to SC(1 0), so we output
+                        ; zeroes
+
+.upac3
+
+                        ; This loop writes byte A to SC(1 0), X times
+
+ STA (SC),Y             ; Write the byte in A to SC(1 0)
+
+ INY                    ; Increment Y to point to the next data byte
+
+ BNE upac4              ; If Y has now wrapped round to zero, loop back to upac1
+                        ; to unpack the next data byte
+
+ INC SC+1               ; Otherwise Y is now zero, so increment the high byte of
+                        ; SC(1 0) to point to the next page, so that SC(1 0) + Y
+                        ; still points to the next data byte
+
+.upac4
+
+ DEX                    ; Decrement the byte counter in X
+
+ BNE upac3              ; Loop back to upac3 to write the byte in A again, until
+                        ; we have written it X times
+
+ JMP upac1              ; Jump back to upac1 to unpack the next byte
+
+.upac5
+
+                        ; If we get here then we know that A is of the form
+                        ; $1x, so we need to output the number of $FF bytes
+                        ; specified in X
+
+ LDA #$FF               ; Set A as the byte to write to SC(1 0), so we output
+                        ; $FF
+
+ BNE upac3              ; Jump to the loop at upac3 to output $FF to SC(1 0),
+                        ; X times (this BNE is effectively a JMP as A is never
+                        ; zero)
+
+.upac6
+
+                        ; If we get here then we know that the data byte in A is
+                        ; of the form $2x or $3x (and not $x0)
+
+ LDX #0                 ; Set X = 0, so we can use a LDA (V,X) instruction below
+                        ; to fetch the next data byte from V(1 0), as the 6502
+                        ; doesn't have a LDA (V) instruction
+
+ CMP #$30               ; If A >= $30 then jump to upac7 to process bytes in the
+ BCS upac7              ; for $3x
+
+                        ; If we get here then we know that the data byte in A is
+                        ; of the form $2x (and not $x0)
+
+ AND #$0F               ; Set T to the lower nibble of A, so it contains the
+ STA T                  ; number of times that we need to output the byte
+                        ; following the $2x data byte
+
+ LDA (V,X)              ; Set A to the byte of packed data at V(1 0), which is
+                        ; the next byte of data to unpack, i.e. the byte that we
+                        ; need to write X times
+                        ;
+                        ; As X = 0, this instruction is effectively LDA (V),
+                        ; which isn't a valid 6502 instruction on its own
+
+ LDX T                  ; Set X to the number of times we need to output the
+                        ; byte in A
+
+ INC V                  ; Increment V(1 0) to point to the next data byte (as we
+ BNE upac3              ; just read the one after the $2x data byte), and jump
+ INC V+1                ; to the loop in upac3 to output the byte in A, X times
+ JMP upac3
+
+.upac7
+
+                        ; If we get here then we know that the data byte in A is
+                        ; of the form $3x (and not $x0), and we jump here with
+                        ; X set to 0
+
+ AND #$0F               ; Set T to the lower nibble of A, so it contains the
+ STA T                  ; number of unchanged bytes that we need to output
+                        ; following the $3x data byte
+
+.upac8
+
+ LDA (V,X)              ; Set A to the byte of packed data at V(1 0), which is
+                        ; the next byte of data to unpack
+                        ;
+                        ; As X = 0, this instruction is effectively LDA (V),
+                        ; which isn't a valid 6502 instruction on its own
+
+ INC V                  ; Increment V(1 0) to point to the next data byte (as we
+ BNE upac9              ; just read the one after the $2x data byte)
  INC V+1
- JMP CF561
 
-.CF589
+                        ; We now loop T times, outputting the next data byte on
+                        ; each iteration, so we end up writing the next T bytes
+                        ; unchanged
 
- AND #$0F
- STA T
+.upac9
 
-.loop_CF58D
+ STA (SC),Y             ; Write the unpacked data in A to the Y-th byte of
+                        ; SC(1 0)
 
- LDA (V,X)
- INC V
- BNE CF595
- INC V+1
+ INY                    ; Increment Y to point to the next data byte
 
-.CF595
+ BNE upac10             ; If Y has now wrapped round to zero, increment the
+ INC SC+1               ; high byte of SC(1 0) to point to the next page, so
+                        ; that SC(1 0) + Y still points to the next data byte
 
- STA (SC),Y
- INY
- BNE CF59C
- INC SC+1
+.upac10
 
-.CF59C
+ DEC T                  ; Decrement the loop counter in T
 
- DEC T
- BNE loop_CF58D
- JMP CF52F
+ BNE upac8              ; Loop back until we have copied the next T bytes
+                        ; unchanged from V(1 0) to SC(1 0)
 
-.CF5A3
+ JMP upac1              ; Jump back to upac1 to unpack the next byte
 
- TXA
+.upac11
 
-.CF5A4
+ TXA                    ; Set A back to the unpacked data byte, which we stored
+                        ; in X before jumping here
 
- STA (SC),Y
- INY
- BNE CF52F
- INC SC+1
- JMP CF52F
+.upac12
 
-.CF5AE
+ STA (SC),Y             ; Write the unpacked data in A to the Y-th byte of
+                        ; SC(1 0)
 
- RTS
+ INY                    ; Increment Y to point to the next data byte
+
+ BNE upac1              ; If Y has now wrapped round to zero, loop back to upac1
+                        ; to unpack the next data byte
+
+ INC SC+1               ; Otherwise Y is now zero, so increment the high byte of
+ JMP upac1              ; SC(1 0) to point to the next page, so that SC(1 0) + Y
+                        ; still points to the next data byte
+
+.upac13
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -13937,92 +14059,170 @@ ENDIF
 ;   Category: Utility routines
 ;    Summary: Unpack compressed image data and send it to the PPU
 ;
+; ------------------------------------------------------------------------------
+;
+; This routine unpacks compressed data and sends it straight to the PPU. The
+; data is typically nametable or pattern data that is unpacked into the PPU's
+; nametable or pattern tables.
+;
+; The algorithm is described in the UnpackToRAM routine.
+;
 ; ******************************************************************************
 
 .UnpackToPPU
 
- LDY #0
+ LDY #0                 ; We work our way through the packed data at SC(1 0), so
+                        ; set an index counter in Y, starting from the first
+                        ; data byte at offset zero
 
-.CF5B1
+.upak1
 
- LDA (V),Y
- INY
- BNE CF5B8
- INC V+1
+ LDA (V),Y              ; Set A to the Y-th byte of packed data at V(1 0), which
+                        ; is the next byte of data to unpack
 
-.CF5B8
+ INY                    ; Increment Y to point to the next byte of packed data
 
- CMP #$40
- BCS CF605
- TAX
- AND #$0F
- BEQ CF604
- CPX #$3F
- BEQ CF60B
- TXA
- CMP #$20
- BCS CF5E0
- CMP #$10
- AND #$0F
- TAX
- BCS CF5DC
- LDA #0
+ BNE upak2              ; If Y has now wrapped round to zero, increment the
+ INC V+1                ; high byte of V(1 0) to point to the next page, so
+                        ; that V(1 0) + Y still points to the next data byte
 
-.CF5D3
+.upak2
 
- STA PPU_DATA
- DEX
- BNE CF5D3
- JMP CF5B1
+ CMP #$40               ; If A >= $40, jump to upak10 to send the data in A
+ BCS upak10             ; as it is, and move on to the next byte
 
-.CF5DC
+ TAX                    ; Store the packed data byte in X so we can retrieve it
+                        ; below
 
- LDA #$FF
- BNE CF5D3
+ AND #$0F               ; If the data byte in A is in the format $x0, jump to
+ BEQ upak9              ; upak9 to send the data in X as it is, and move on
+                        ; to the next byte
 
-.CF5E0
+ CPX #$3F               ; If the data byte in X is $3F, then this indicates we
+ BEQ upak11             ; have reached the end of the packed data, so jump to
+                        ; upak11 to return from the subroutine, as we are done
 
- CMP #$30
- BCS CF5F1
- AND #$0F
- TAX
- LDA (V),Y
- INY
- BNE CF5D3
- INC V+1
- JMP CF5D3
+ TXA                    ; Set A back to the unpacked data byte, which we stored
+                        ; in X above
 
-.CF5F1
+ CMP #$20               ; If A >= $20, jump to upak5 to process values of $2x
+ BCS upak5              ; and $3x (as we already processed values above $40)
 
- AND #$0F
- TAX
+                        ; If we get here then we know that the data byte in A is
+                        ; of the form $0x or $1x (and not $x0)
 
-.loop_CF5F4
+ CMP #$10               ; If A >= $10, set the C flag
 
- LDA (V),Y
- INY
- BNE CF5FB
- INC V+1
+ AND #$0F               ; Set X to the lower nibble of A, so it contains the
+ TAX                    ; number of zeroes or $FF bytes that we need to send
+                        ; when the data byte is $0x or $1x
 
-.CF5FB
+ BCS upak4              ; If the data byte in A was >= $10, then we know that A
+                        ; is of the form $1x, so jump to upak4 to send the
+                        ; number of $FF bytes specified in X
 
- STA PPU_DATA
- DEX
- BNE loop_CF5F4
- JMP CF5B1
+                        ; If we get here then we know that A is of the form
+                        ; $0x, so we need to send the number of zero bytes
+                        ; specified in X
 
-.CF604
+ LDA #0                 ; Set A as the byte to write to the PPU, so we send
+                        ; zeroes
 
- TXA
+.upak3
 
-.CF605
+                        ; This loop sends byte A to the PPU, X times
 
- STA PPU_DATA
- JMP CF5B1
+ STA PPU_DATA           ; Send the byte in A to the PPU
 
-.CF60B
+ DEX                    ; Decrement the byte counter in X
 
- RTS
+ BNE upak3              ; Loop back to upak3 to send the byte in A again, until
+                        ; we have sent it X times
+
+ JMP upak1              ; Jump back to upak1 to unpack the next byte
+
+.upak4
+
+                        ; If we get here then we know that A is of the form
+                        ; $1x, so we need to send the number of $FF bytes
+                        ; specified in X
+
+ LDA #$FF               ; Set A as the byte to send to the PPU
+
+ BNE upak3              ; Jump to the loop at upak3 to send $FF to the PPU,
+                        ; X times (this BNE is effectively a JMP as A is never
+                        ; zero)
+
+.upak5
+
+                        ; If we get here then we know that the data byte in A is
+                        ; of the form $2x or $3x (and not $x0)
+
+ CMP #$30               ; If A >= $30 then jump to upak6 to process bytes in the
+ BCS upak6              ; for $3x
+
+ AND #$0F               ; Set X to the lower nibble of A, so it contains the
+ TAX                    ; number of times that we need to send the byte
+                        ; following the $2x data byte
+
+ LDA (V),Y              ; Set A to the Y-th byte of packed data at V(1 0), which
+                        ; is the next byte of data to unpack, i.e. the byte that
+                        ; we need to write X times
+
+ INY                    ; Increment Y to point to the next byte of packed data
+
+ BNE upak3              ; If Y has now wrapped round to zero, increment the
+ INC V+1                ; high byte of V(1 0) to point to the next page, so
+ JMP upak3              ; that V(1 0) + Y still points to the next data byte,
+                        ; and jump to the loop in upak3 to send the byte in A,
+                        ; X times
+
+.upak6
+
+                        ; If we get here then we know that the data byte in A is
+                        ; of the form $3x (and not $x0), and we jump here with
+                        ; X set to 0
+
+ AND #$0F               ; Set X to the lower nibble of A, so it contains the
+ TAX                    ; number of unchanged bytes that we need to send
+                        ; following the $3x data byte
+
+.upak7
+
+ LDA (V),Y              ; Set A to the Y-th byte of packed data at V(1 0), which
+                        ; is the next byte of data to unpack
+
+ INY                    ; Increment Y to point to the next byte of packed data
+
+ BNE upak8              ; If Y has now wrapped round to zero, increment the
+ INC V+1                ; high byte of V(1 0) to point to the next page, so
+                        ; that V(1 0) + Y still points to the next data byte
+
+.upak8
+
+ STA PPU_DATA           ; Send the unpacked data in A to the PPU
+
+ DEX                    ; Decrement the byte counter in X
+
+ BNE upak7              ; Loop back to upak7 to send the next byte, until we
+                        ; have sent the next X bytes
+
+ JMP upak1              ; Jump back to upak1 to unpack the next byte
+
+.upak9
+
+ TXA                    ; Set A back to the unpacked data byte, which we stored
+                        ; in X before jumping here
+
+.upak10
+
+ STA PPU_DATA           ; Send the byte in A to the PPU
+
+ JMP upak1              ; Jump back to upak1 to unpack the next byte
+
+.upak11
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;

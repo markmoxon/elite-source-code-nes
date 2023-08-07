@@ -3319,7 +3319,7 @@ ENDIF
 .subm_9FD0
 
  LDA #$68
- STA patternSprite8
+ STA tileSprite8
  LDA #0
  STA attrSprite8
  LDA #$CB
@@ -3336,7 +3336,7 @@ ENDIF
  ADC #90+YPAL
  STA ySprite8
  LDA #$69
- STA patternSprite9
+ STA tileSprite9
  LDA #0
  STA attrSprite9
  LDA #$D3
@@ -3353,7 +3353,7 @@ ENDIF
  ADC #$5A+YPAL
  STA ySprite9
  LDA #$6A
- STA patternSprite10
+ STA tileSprite10
  LDA #0
  STA attrSprite10
  LDA #$DB
@@ -3383,7 +3383,7 @@ ENDIF
 .subm_A02B
 
  LDA #$6B
- STA patternSprite11
+ STA tileSprite11
  LDA #2
  STA attrSprite11
  LDA #$C3
@@ -3413,7 +3413,7 @@ ENDIF
 .subm_A04A
 
  LDA #$6C
- STA patternSprite12
+ STA tileSprite12
  LDA #2
  STA attrSprite12
  LDA #$E3
@@ -3591,7 +3591,7 @@ ENDIF
 .CA136
 
  LDA K+2
- STA patternSprite0,Y
+ STA tileSprite0,Y
  LDA S
  STA attrSprite0,Y
  LDA SC2
@@ -4002,7 +4002,7 @@ ENDIF
  LDA LA386,X
  STA attrSprite10
  LDA LA38A,X
- STA patternSprite10
+ STA tileSprite10
  LDA QQ12
  BNE CA368
  LDA MSTG
@@ -4030,7 +4030,7 @@ ENDIF
 .CA371
 
  LDA #$F8
- STA patternSprite9
+ STA tileSprite9
  LDA #1
  STA attrSprite9
  LDA #$7E
@@ -4144,7 +4144,7 @@ ENDIF
  CLC
  ADC #$8C
  ADC V
- STA patternSprite0,X
+ STA tileSprite0,X
  LDA equipSprites+1,Y
  STA xSprite0,X
  LDA equipSprites+2,Y
@@ -4443,7 +4443,8 @@ ENDIF
  LDA QQ11
  BNE CA5B6
 
- JSR ClearScanner       ; Remove all ships from the scanner and hide the scanner sprites
+ JSR ClearScanner       ; Remove all ships from the scanner and hide the scanner
+                        ; sprites
 
  JMP CA614
 
@@ -4480,7 +4481,7 @@ ENDIF
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDA #$D2
- STA patternSprite0,Y
+ STA tileSprite0,Y
  TXA
  LSR A
  ROR A
@@ -4587,7 +4588,7 @@ ENDIF
  JSR subm_A917
  LDA #0
  STA QQ11
- JSR subm_AFCD_b3
+ JSR SetViewPatterns_b3
  LDA #$25
  STA firstPatternTile
  JSR subm_A761
@@ -5819,7 +5820,7 @@ ENDIF
  STA attrSprite0,Y
  LDA LB43C,X
  BEQ CB4C6
- STA patternSprite0,Y
+ STA tileSprite0,Y
  LDA #$53
  STA xSprite0,Y
  LDA T
@@ -5836,7 +5837,9 @@ ENDIF
 
 .CB4C6
 
- STY CNT
+ STY CNT                ; Set CNT to the offset in the sprite buffer of the
+                        ; next free sprite
+
  LDY #7
 
 .loop_CB4CA
@@ -6150,7 +6153,7 @@ ENDIF
  STY YSAV2
  LDY CNT
  LDA #$6D
- STA patternSprite0,Y
+ STA tileSprite0,Y
  LDA XC
  ASL A
  ASL A
@@ -7772,7 +7775,7 @@ ENDIF
  LDA #$F0
  STA ySprite5,Y
  LDA #$FF
- STA patternSprite5,Y
+ STA tileSprite5,Y
  LDA #$20
  STA attrSprite5,Y
  TXA

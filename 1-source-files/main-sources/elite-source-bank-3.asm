@@ -1695,8 +1695,8 @@ ENDIF
  BNE loop_CA786
 
  LDA #$CB
- STA patternSprite11
- STA patternSprite12
+ STA tileSprite11
+ STA tileSprite12
  LDA #3
  STA attrSprite11
  STA attrSprite12
@@ -1708,7 +1708,7 @@ ENDIF
 .loop_CA7A5
 
  LDA #$DA
- STA patternSprite0,Y
+ STA tileSprite0,Y
  LDA #0
  STA attrSprite0,Y
  INY
@@ -1826,7 +1826,7 @@ ENDIF
                         ; imageFlags does not equal 3
 
  BNE CA891              ; Jump to CA891 to unpack the image data (this BNE is
-                        ; effectivelt a JMP as A is never zero)
+                        ; effectively a JMP as A is never zero)
 
 .CA82A
 
@@ -2194,8 +2194,9 @@ ENDIF
  CMP #$98
  BNE CA9E8
 
- JSR GetHeadshot_b4     ; Fetch the headshot image for the commander and store it in the
-                        ; pattern buffers, starting at tile number pictureTile
+ JSR GetHeadshot_b4     ; Fetch the headshot image for the commander and store
+                        ; it in the pattern buffers, starting at tile number
+                        ; pictureTile
 
 .CA9E8
 
@@ -2509,9 +2510,9 @@ ENDIF
  STA ySprite0,Y         ; it off the bottom of the screen
 
  INY                    ; Increment Y to point to the second byte for this
-                        ; sprite, i.e. patternSprite0,Y
+                        ; sprite, i.e. tileSprite0,Y
 
- LDA #254               ; Set the pattern number for this sprite to 254
+ LDA #254               ; Set the tile pattern number for this sprite to 254
  STA ySprite0,Y
 
  INY                    ; Increment Y to point to the third byte for this
@@ -2547,8 +2548,8 @@ ENDIF
  LDA #157+YPAL          ; Set sprite 0 as follows:
  STA ySprite0           ;
  LDA #254               ;   * Set the coordinates to (248, 157)
- STA patternSprite0     ;
- LDA #248               ;   * Set the pattern number to 254
+ STA tileSprite0        ;
+ LDA #248               ;   * Set the tile pattern number to 254
  STA xSprite0           ;
  LDA #%00100011         ;   * Set the attributes as follows:
  STA attrSprite0        ;
@@ -2565,13 +2566,13 @@ ENDIF
                         ;   * Sprite 3 = bottom-left corner
                         ;   * Sprite 4 = bottom-right corner
 
- LDA #251               ; Set sprites 1 and 2 to use pattern 251
- STA patternSprite1
- STA patternSprite2
+ LDA #251               ; Set sprites 1 and 2 to use tile pattern 251
+ STA tileSprite1
+ STA tileSprite2
 
- LDA #253               ; Set sprites 3 and 4 to use pattern 253
- STA patternSprite3
- STA patternSprite4
+ LDA #253               ; Set sprites 3 and 4 to use tile pattern 253
+ STA tileSprite3
+ STA tileSprite4
 
  LDA #%00000011         ; Set the attributes for sprite 1 as follows:
  STA attrSprite1        ;
@@ -2800,7 +2801,7 @@ ENDIF
 .subm_AC5C
 
  LDA iconBarType
- JSR subm_AE18
+ JSR SetupIconBar
 
  LDA QQ11               ; If bit 6 of the view number is set, then there is no
  AND #%01000000         ; icon bar, so jump to CAC85 to return from the
@@ -3222,14 +3223,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_AE18_ADBC
+;       Name: SetupIconBar_ADBC
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Icon bar
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_AE18_ADBC
+.SetupIconBar_ADBC
 
  LDA #HI(nameBuffer0+27*32) ; Set SC(1 0) to the address of the first tile on
  STA SC+1                   ; tile row 27 in nametable buffer 0
@@ -3258,14 +3259,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_AE18_ADE0
+;       Name: SetupIconBar_ADE0
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Icon bar
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_AE18_ADE0
+.SetupIconBar_ADE0
 
  LDA JSTGY
  BEQ CADEA
@@ -3310,17 +3311,17 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_AE18
+;       Name: SetupIconBar
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Icon bar
+;    Summary: Set up the icons on the icon bar to show all available options
 ;
 ; ******************************************************************************
 
-.subm_AE18
+.SetupIconBar
 
  TAY
- BMI subm_AE18_ADBC
+ BMI SetupIconBar_ADBC
  STA iconBarType
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
@@ -3334,7 +3335,7 @@ ENDIF
  CMP #1
  BEQ CAE42
  CMP #3
- BEQ subm_AE18_ADE0
+ BEQ SetupIconBar_ADE0
  CMP #2
  BNE CAE15
  JMP CAEE5
@@ -3512,7 +3513,7 @@ ENDIF
 ;
 ;       Name: subm_AF2E
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Icon bar
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -3546,7 +3547,7 @@ ENDIF
 ;
 ;       Name: subm_AF5B
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Icon bar
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -3588,7 +3589,7 @@ ENDIF
 ;
 ;       Name: subm_AF96
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Icon bar
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -3602,7 +3603,7 @@ ENDIF
 ;
 ;       Name: subm_AF9A
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Icon bar
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -3619,7 +3620,7 @@ ENDIF
 ;
 ;       Name: subm_AFAB
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Icon bar
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -3642,14 +3643,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_AFCD_AFC3
+;       Name: SetViewPatterns_AFC3
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_AFCD_AFC3
+.SetViewPatterns_AFC3
 
  LDX #4
  STX tileNumber
@@ -3657,14 +3658,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_AFCD_AFC8
+;       Name: SetViewPatterns_AFC8
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_AFCD_AFC8
+.SetViewPatterns_AFC8
 
  LDX #$25
  STX tileNumber
@@ -3672,20 +3673,20 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_AFCD
+;       Name: SetViewPatterns
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_AFCD
+.SetViewPatterns
 
  LDA QQ11
  CMP #$CF
- BEQ subm_AFCD_AFC3
+ BEQ SetViewPatterns_AFC3
  CMP #$10
- BEQ subm_AFCD_AFC8
+ BEQ SetViewPatterns_AFC8
  LDX #$42
  LDA QQ11
  BMI CAFDF
@@ -5436,13 +5437,13 @@ ENDIF
                         ;     * Bit 6 clear = do not flip horizontally
                         ;     * Bit 7 clear = do not flip vertically
 
- LDY #207               ; Set the pattern number for sprites 5 and 6 to 207,
- STY patternSprite5     ; for the left and right sights respectively
- STY patternSprite6
+ LDY #207               ; Set the tile pattern number for sprites 5 and 6 to
+ STY tileSprite5        ; 207, for the left and right sights respectively
+ STY tileSprite6
 
- INY                    ; Set the pattern number for sprites 7 and 8 to 208,
- STY patternSprite7     ; for the top and bottom sights respectively
- STY patternSprite8
+ INY                    ; Set the tile pattern number for sprites 7 and 8 to
+ STY tileSprite7        ; 208, for the top and bottom sights respectively
+ STY tileSprite8
 
  LDA #118               ; Position the sprites as follows:
  STA xSprite5           ;
@@ -5499,11 +5500,11 @@ ENDIF
                         ;     * Bit 6 set   = flip horizontally
                         ;     * Bit 7 set   = flip vertically
 
- LDA #209               ; Set the pattern number for all four sprites to 209
- STA patternSprite5
- STA patternSprite6
- STA patternSprite7
- STA patternSprite8
+ LDA #209               ; Set the tile pattern number for all four sprites to
+ STA tileSprite5        ; 209
+ STA tileSprite6
+ STA tileSprite7
+ STA tileSprite8
 
  LDA #118               ; Position the sprites as follows:
  STA xSprite5           ;
@@ -5533,12 +5534,12 @@ ENDIF
  STA attrSprite7        ;     * Bit 6 clear = do not flip horizontally
  STA attrSprite8        ;     * Bit 7 clear = do not flip vertically
 
- STY patternSprite5     ; Set the pattern number for sprites 5 and 6 to 204,
- STY patternSprite6     ; for the left and right sights respectively
+ STY tileSprite5        ; Set the tile pattern number for sprites 5 and 6 to
+ STY tileSprite6        ; 204, for the left and right sights respectively
 
- INY                    ; Set the pattern number for sprites 7 and 8 to 205,
- STY patternSprite7     ; for the top and bottom sights respectively
- STY patternSprite8
+ INY                    ; Set the tile pattern number for sprites 7 and 8 to
+ STY tileSprite7        ; 205, for the top and bottom sights respectively
+ STY tileSprite8
 
  LDA #114               ; Position the sprites as follows:
  STA xSprite5           ;
@@ -5595,11 +5596,11 @@ ENDIF
                         ;     * Bit 6 set   = flip horizontally
                         ;     * Bit 7 set   = flip vertically
 
- LDA #206               ; Set the pattern number for all four sprites to 206
- STA patternSprite5
- STA patternSprite6
- STA patternSprite7
- STA patternSprite8
+ LDA #206               ; Set the tile pattern number for all four sprites to
+ STA tileSprite5        ; 206
+ STA tileSprite6
+ STA tileSprite7
+ STA tileSprite8
 
  LDA #122               ; Position the sprites as follows:
  STA xSprite5           ;

@@ -9403,7 +9403,7 @@ ENDIF
 .DrawCrosshairs
 
  LDA #$F8
- STA patternSprite15
+ STA tileSprite15
 
  LDA #1
  STA attrSprite15
@@ -9756,7 +9756,7 @@ ENDIF
  LDA #$D5
  CLC
  ADC K
- STA patternSprite38,Y
+ STA tileSprite38,Y
  LDA #2
  STA attrSprite38,Y
 
@@ -11664,7 +11664,8 @@ ENDIF
  LDA QQ11               ; ???
  BNE CA26C
 
- JSR ClearScanner       ; Remove all ships from the scanner and hide the scanner sprites
+ JSR ClearScanner       ; Remove all ships from the scanner and hide the scanner
+                        ; sprites
 
  JSR LL164_b6           ; ???
  JMP CA26F
@@ -14294,8 +14295,8 @@ ENDIF
                         ; hollow and yellow, so set A to 246, which is the tile
                         ; number for the hollow yellow dot
 
- STA patternSprite13    ; Set the pattern number for sprite 13 to A, so we draw
-                        ; the correct compass dot
+ STA tileSprite13       ; Set the tile number for sprite 13 to A, so we draw the
+                        ; compass dot using the correct pattern
 
  RTS                    ; Return from the subroutine
 
@@ -15592,7 +15593,8 @@ ENDIF
 
  JSR HideExplosionBurst ; Hide the four sprites that make up the explosion burst
 
- JSR ClearScanner       ; Remove all ships from the scanner and hide the scanner sprites
+ JSR ClearScanner       ; Remove all ships from the scanner and hide the scanner
+                        ; sprites
 
 .CAE00
 
@@ -20727,7 +20729,7 @@ ENDIF
                         ; sprite buffer has four bytes of data)
 
  LDA #210               ; Set the sprite to use pattern number 210 ???
- STA patternSprite0,Y
+ STA tileSprite0,Y
 
  TXA                    ; ???
  LSR A
@@ -20958,7 +20960,8 @@ ENDIF
  LDA QQ11
  BPL CBEC4
 
- JSR ClearScanner       ; Remove all ships from the scanner and hide the scanner sprites
+ JSR ClearScanner       ; Remove all ships from the scanner and hide the scanner
+                        ; sprites
 
 .CBEC4
 
@@ -20997,7 +21000,7 @@ ENDIF
  LDA #1                 ; ???
  STA XC
  STA YC
- JSR subm_AFCD_b3
+ JSR SetViewPatterns_b3
  LDA QQ11
  LDX #$FF
  AND #$40
@@ -21021,7 +21024,7 @@ ENDIF
  LDA QQ11
  BMI CBF37
  TXA
- JSR subm_AE18_b3
+ JSR SetupIconBar_b3
  LDA QQ11a
  BPL CBF2B
  JSR subm_EB86
@@ -21040,7 +21043,7 @@ ENDIF
 .CBF37
 
  TXA
- JSR subm_AE18_b3
+ JSR SetupIconBar_b3
  LDA QQ11
  CMP #$C4
  BEQ loop_CBF34
