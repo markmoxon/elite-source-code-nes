@@ -4015,58 +4015,80 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: Unused copy of WSCAN
+;       Name: WaitForNextFrame
 ;       Type: Subroutine
 ;   Category: Utility routines
-;    Summary: An unused copy of WSCAN that waits for the next VBlank, but
-;             without checking if the PPU has started drawing the icon bar
+;    Summary: Wait until the frame counter increments (i.e. the next VBlank)
 ;
 ; ******************************************************************************
+
+.WaitForNextFrame
 
  LDA frameCounter       ; Set A to the frame counter, which increments with each
                         ; call to the NMI handler
 
-.wscn1
+.wfrm1
 
- CMP frameCounter       ; Loop back to wscn1 until the frame counter changes,
- BEQ wscn1              ; which will happen when the NMI handler is called again
-                        ; (i.e. at the next VBlank)
+ CMP frameCounter       ; Loop back to wfrm1 until the frame counter changes,
+ BEQ wfrm1              ; which will happen when the NMI handler has been called
+                        ; again (i.e. at the next VBlank)
 
  RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: WSCAN
+;       Name: WaitFor2NMIs
 ;       Type: Subroutine
 ;   Category: Utility routines
-;    Summary: Wait until the next NMI interrupt (i.e. the next VBlank)
+;    Summary: Wait until two NMI interrupts have passed (i.e. the next two
+;             VBlanks)
 ;
 ; ------------------------------------------------------------------------------
 ;
-; Other entry points:
+; Returns:
 ;
-;   WSCAN-3             Wait until two NMI interrupts have passed
+;   A                   A is preserved
 ;
 ; ******************************************************************************
 
- JSR WSCAN              ; Call WSCAN to wait for the next NMI interrupt, then
-                        ; fall through into WSCAN to wait for the next one
+.WaitFor2NMIs
 
-.WSCAN
+ JSR WaitForNMI         ; Call WaitForNMI to wait for the next NMI interrupt
+
+                        ; Fall through into WaitForNMI to wait for the second
+                        ; NMI interrupt
+
+; ******************************************************************************
+;
+;       Name: WaitForNMI
+;       Type: Subroutine
+;   Category: Utility routines
+;    Summary: Wait until the next NMI interrupt has passed (i.e. the next
+;             VBlank)
+;
+; ------------------------------------------------------------------------------
+;
+; Returns:
+;
+;   A                   A is preserved
+;
+; ******************************************************************************
+
+.WaitForNMI
 
  PHA                    ; Store A on the stack to preserve it
 
  LDX frameCounter       ; Set X to the frame counter, which increments with each
                         ; call to the NMI handler
 
-.WSCAN1
+.wnmi1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- CPX frameCounter       ; Loop back to WSCAN1 until the frame counter changes,
- BEQ WSCAN1             ; which will happen when the NMI handler is called again
-                        ; (i.e. at the next VBlank)
+ CPX frameCounter       ; Loop back to wnmi1 until the frame counter changes,
+ BEQ wnmi1              ; which will happen when the NMI handler has been called
+                        ; again (i.e. at the next VBlank)
 
  PLA                    ; Retrieve A from the stack so that it's preserved
 
@@ -10105,7 +10127,7 @@ ENDIF
 ;
 ;       Name: subm_EB86
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -10120,7 +10142,7 @@ ENDIF
 ;
 ;       Name: subm_EB8C
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -10162,7 +10184,7 @@ ENDIF
 
 .DELAY
 
- JSR WSCAN
+ JSR WaitForNMI
  DEY
  BNE DELAY
  RTS
@@ -10199,7 +10221,7 @@ ENDIF
 ;
 ;       Name: subm_EBB1
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -10207,14 +10229,14 @@ ENDIF
 .subm_EBB1
 
  LDX #0
- JSR CEBCF
+ JSR subm_EBCF
 
 .loop_CEBB6
 
  LDX #1
- JSR CEBCF
+ JSR subm_EBCF
  LDX #2
- BNE CEBCF
+ BNE subm_EBCF
 
 ; ******************************************************************************
 ;
@@ -10229,13 +10251,22 @@ ENDIF
 
  LDX noiseLookup1,Y
  CPX #3
- BCC CEBCF
+ BCC subm_EBCF
  BNE loop_CEBB6
  LDX #0
- JSR CEBCF
+ JSR subm_EBCF
  LDX #2
 
-.CEBCF
+; ******************************************************************************
+;
+;       Name: subm_EBCF
+;       Type: Subroutine
+;   Category: Sound
+;    Summary: ???
+;
+; ******************************************************************************
+
+.subm_EBCF
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -10633,14 +10664,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: Set_K_K3_XC_YC
+;       Name: DrawSomething
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing sprites
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.Set_K_K3_XC_YC
+.DrawSomething
 
  LDA #2
  STA K
@@ -10655,7 +10686,7 @@ ENDIF
  STA YC
  LDX #7
  LDY #7
- JMP subm_A0F8_b6
+ JMP DrawSpriteImage_b6
 
 ; ******************************************************************************
 ;
@@ -10692,7 +10723,7 @@ ENDIF
 .ChooseMusic_b6
 
  PHA                    ; ???
- JSR WSCAN
+ JSR WaitForNMI
  PLA
 
  ORA #$80
@@ -10777,7 +10808,7 @@ ENDIF
 
 .WaitResetSound
 
- JSR WSCAN
+ JSR WaitForNMI
 
 ; ******************************************************************************
 ;
@@ -11258,14 +11289,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_A0F8_b6
+;       Name: DrawSpriteImage_b6
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: Call the subm_A0F8 routine in ROM bank 6
+;   Category: Drawing sprites
+;    Summary: Call the DrawSpriteImage routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.subm_A0F8_b6
+.DrawSpriteImage_b6
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -11273,7 +11304,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR subm_A0F8          ; Call subm_A0F8, now that it is paged into memory
+ JSR DrawSpriteImage    ; Call DrawSpriteImage, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning

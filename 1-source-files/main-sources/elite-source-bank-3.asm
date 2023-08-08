@@ -1757,7 +1757,7 @@ ENDIF
 
 .SetupView
 
- JSR WSCAN
+ JSR WaitForNMI
  LDA ppuCtrlCopy
  PHA
 
@@ -2263,7 +2263,7 @@ ENDIF
  LDA QQ11
  AND #$40
  BNE CAA3B
- JSR WSCAN
+ JSR WaitForNMI
  LDA #$80
  STA showUserInterface
 
@@ -2283,7 +2283,7 @@ ENDIF
  STA L03F2
  JSR GetViewPalettes
  DEC updatePaletteInNMI
- JSR WSCAN
+ JSR WaitForNMI
  INC updatePaletteInNMI
  RTS
 
@@ -2715,7 +2715,7 @@ ENDIF
  LDA iconBarType
  CMP #3
  BEQ CABFA
- JSR Set_K_K3_XC_YC
+ JSR DrawSomething
  JMP CAC08
 
 .CABFA
@@ -4106,7 +4106,7 @@ ENDIF
  STA K+3
  LDX #0
  LDY #0
- JSR subm_A0F8_b6
+ JSR DrawSpriteImage_b6
  DEC XC
  DEC YC
  INC K
@@ -4631,7 +4631,7 @@ NEXT
  LDA QQ11a
  BEQ CB5DE
  CMP #$98
- BEQ CB607
+ BEQ subm_B607
  CMP #$96
  BNE CB5DB
  LDA QQ15
@@ -4653,7 +4653,7 @@ NEXT
 
 .CB5DB
 
- JMP CB607
+ JMP subm_B607
 
 .CB5DE
 
@@ -4705,7 +4705,16 @@ NEXT
  DEX
  BNE loop_CB5FB
 
-.CB607
+; ******************************************************************************
+;
+;       Name: subm_B607
+;       Type: Subroutine
+;   Category: Drawing the screen
+;    Summary: ???
+;
+; ******************************************************************************
+
+.subm_B607
 
  LDA #$0F               ; Set hiddenColour to $0F, which is the HSV value for
  STA hiddenColour       ; black, so this hides any pixels that use the hidden
@@ -4762,17 +4771,17 @@ NEXT
                         ; sent to the PPU, so the screen is fully updated and
                         ; there is no more data waiting to be sent to the PPU
 
- JSR WSCAN
+ JSR WaitForNMI
  JSR GetViewPalettes
  DEC updatePaletteInNMI
  JSR GetPaletteColours
- JSR WSCAN-3
+ JSR WaitFor2NMIs
  JSR GetPaletteColours
- JSR WSCAN-3
+ JSR WaitFor2NMIs
  JSR GetPaletteColours
- JSR WSCAN-3
+ JSR WaitFor2NMIs
  JSR GetPaletteColours
- JSR WSCAN-3
+ JSR WaitFor2NMIs
  INC updatePaletteInNMI
 
 .CB66D
@@ -4792,21 +4801,21 @@ NEXT
 
 .subm_B673
 
- JSR WSCAN
+ JSR WaitForNMI
  JSR GetViewPalettes
  JSR subm_B5F6
  JSR GetPaletteColours
  DEC updatePaletteInNMI
- JSR WSCAN-3
+ JSR WaitFor2NMIs
  JSR GetViewPalettes
  JSR subm_B5F6
- JSR WSCAN-3
+ JSR WaitFor2NMIs
  JSR GetViewPalettes
  JSR GetPaletteColours
- JSR WSCAN-3
+ JSR WaitFor2NMIs
  JSR GetViewPalettes
- JSR CB607
- JSR WSCAN
+ JSR subm_B607
+ JSR WaitForNMI
  INC updatePaletteInNMI
  LSR L0473
  RTS

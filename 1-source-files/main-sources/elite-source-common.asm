@@ -350,7 +350,7 @@ IF NOT(_BANK = 6)
  PlayMusic          = $811E
  subm_89D1          = $89D1
  subm_A082          = $A082
- subm_A0F8          = $A0F8
+ DrawSpriteImage    = $A0F8
  subm_A166          = $A166
  DIALS              = $A2C3
  DrawEquipment      = $A4A5
@@ -3522,6 +3522,13 @@ ORG $0200
                         ;
                         ; See the deep dives on "Galaxy and system seeds" and
                         ; "Twisting the system seeds" for more details
+
+ NT% = QQ21 + 6 + 2 - TP    ; This sets the variable NT% to the size of the current
+                        ; commander data block, which starts at TP and ends at
+                        ; QQ21+6 (inclusive), i.e. with the last checksum byte
+
+ PRINT "NT% = &", NT%
+
 .NOSTM
 
  SKIP 1                 ; The number of stardust particles shown on screen,
@@ -4888,16 +4895,71 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: L7800
+;       Name: currentPosition
 ;       Type: Variable
-;   Category: ???
-;    Summary: Commander file?
+;   Category: Save and load
+;    Summary: The current commander file (or "position")
 ;
 ; ******************************************************************************
 
-.L7800
+.currentPosition
 
- SKIP 2048
+ SKIP 256
+
+; ******************************************************************************
+;
+;       Name: savedPositions0
+;       Type: Variable
+;   Category: Save and load
+;    Summary: The eight slots for saving positions, split into three for copy
+;             protection (this is the first part)
+;
+; ******************************************************************************
+
+.savedPositions0
+
+ SKIP 8 * 73
+
+; ******************************************************************************
+;
+;       Name: savedPositions1
+;       Type: Variable
+;   Category: Save and load
+;    Summary: The eight slots for saving positions, split into three for copy
+;             protection (this is the second part)
+;
+; ******************************************************************************
+
+.savedPositions1
+
+ SKIP 8 * 73
+
+; ******************************************************************************
+;
+;       Name: savedPositions2
+;       Type: Variable
+;   Category: Save and load
+;    Summary: The eight slots for saving positions, split into three for copy
+;             protection (this is the third part)
+;
+; ******************************************************************************
+
+.savedPositions2
+
+ SKIP 8 * 73
+
+; ******************************************************************************
+;
+;       Name: L7FD8
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
+
+.L7FD8
+
+ SKIP 40
 
 ; ******************************************************************************
 ;

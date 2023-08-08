@@ -9176,7 +9176,7 @@ ENDIF
 
 .C9B28
 
- JSR WSCAN
+ JSR WaitForNMI
 
  PLA                    ; Store the y-delta in QQ19+3 and fetch the current
  STA QQ19+3             ; y-coordinate of the crosshairs from QQ10 into A, ready
@@ -11041,7 +11041,7 @@ ENDIF
 .CA01C
 
  JSR subm_EB86
- JSR Set_K_K3_XC_YC
+ JSR DrawSomething
  JMP subm_8926
 
 .CA025
@@ -11689,7 +11689,7 @@ ENDIF
 
  JSR hyp1               ; Jump straight to the system at (QQ9, QQ10)
 
- JSR WSCAN              ; ???
+ JSR WaitForNMI         ; ???
 
  JSR RES2               ; Reset a number of flight variables and workspaces
 
@@ -11781,7 +11781,7 @@ ENDIF
 
  JSR subm_F454          ; ???
 
- JSR WSCAN
+ JSR WaitForNMI
 
  INC INWK+8             ; Increment z_sign ready for the call to SOS, so the
                         ; planet appears at a z_sign of 1 in front of us when
@@ -11817,7 +11817,7 @@ ENDIF
 
  JSR NWSTARS            ; ???
 
- JSR WSCAN
+ JSR WaitForNMI
 
  LDX #4
  STX VIEW
@@ -12589,7 +12589,7 @@ ENDIF
  STY K                  ; Store the item's name in K
 
  PHA                    ; ???
- JSR WSCAN
+ JSR WaitForNMI
  PLA
 
  JSR prx                ; Call prx to set (Y X) to the price of equipment item
@@ -16644,7 +16644,7 @@ ENDIF
 .CB0FA
 
  LDA #1
- JSR WSCAN
+ JSR WaitForNMI
  JSR ChooseMusic_b6
  LDA #$FF
  BNE CB10B
@@ -17223,7 +17223,7 @@ ENDIF
 
 .dead1
 
- JSR WSCAN
+ JSR WaitForNMI
 
  LDA #4
  JSR ChooseMusic_b6
@@ -17245,7 +17245,7 @@ ENDIF
 
  LDA #$FF
  STA QQ11
- JSR WSCAN
+ JSR WaitForNMI
 
  LDA #4
  JSR ChooseMusic_b6
@@ -18226,7 +18226,7 @@ ENDIF
  BCS CB5DF
  JSR subm_B5F8
  BCS CB5DF
- JSR WSCAN
+ JSR WaitForNMI
  JSR subm_B665
 
 .CB5DF
@@ -18260,7 +18260,7 @@ ENDIF
 
 .subm_B5F8
 
- JSR WSCAN
+ JSR WaitForNMI
  JSR subm_B665
 
 ; ******************************************************************************
@@ -20614,7 +20614,7 @@ ENDIF
  JSR FLIP               ; Swap the x- and y-coordinates of all the stardust
                         ; particles and redraw the stardust field
 
- JMP WSCAN              ; ???
+ JMP WaitForNMI         ; ???
 
 ; ******************************************************************************
 ;
@@ -20756,7 +20756,7 @@ ENDIF
 
  BNE rest1              ; Loop back until we have hidden X sprites
 
- JSR WSCAN              ; Call WSCAN to wait for the vertical sync
+ JSR WaitForNMI
 
  JSR SIGHT_b3           ; Draw the laser crosshairs
 
