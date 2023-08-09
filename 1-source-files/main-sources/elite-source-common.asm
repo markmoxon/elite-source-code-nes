@@ -175,8 +175,8 @@
 
 IF NOT(_BANK = 0)
 
- subm_8926          = $8926
- SendScreenToPPU    = $8980
+ DrawViewInNMI      = $8926
+ DrawScreenInNMI    = $8980
  MVS5               = $8A14
  PlayDemo           = $9522
  StartAfterLoad     = $A379
@@ -295,7 +295,7 @@ IF NOT(_BANK = 3)
  subm_B18E          = $B18E
  subm_B219          = $B219
  subm_B248          = $B248
- subm_B2BC          = $B2BC
+ DrawPopupBox       = $B2BC
  subm_B2FB          = $B2FB
  ClearScreen        = $B341
  subm_B63D          = $B63D
@@ -871,7 +871,7 @@ ENDIF
                         ;
                         ; STA: 0, $8B, $97, $9D, $BB, $DF, $FF
                         ; TT66: 0, $8D, $93, $95, $9C, $BB, $C4, $CF
-                        ; ChangeViewRow0: $96, $97, $98, $B9, $BA
+                        ; ChangeView: $96, $97, $98, $B9, $BA
                         ; subm_B39D: 0, 1, $10, $92
 
 .QQ11a

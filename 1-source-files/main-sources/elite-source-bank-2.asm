@@ -15498,7 +15498,7 @@ ENDIF
 
 .PAUSE
 
- JSR SendScreenToPPU_b0 ; ???
+ JSR DrawScreenInNMI_b0 ; ???
 
  JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
                         ; sent to the PPU, so the screen is fully updated and
@@ -15620,7 +15620,7 @@ ENDIF
 
 .PAUSE2
 
- JSR SendScreenToPPU_b0 ; ???
+ JSR DrawScreenInNMI_b0 ; ???
 
 .loop_CB3C4
 

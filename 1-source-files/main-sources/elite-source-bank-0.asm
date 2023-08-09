@@ -1209,14 +1209,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_8334
+;       Name: Main flight loop (Part 3a of 16)
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Main loop
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_8334
+.C8334
 
  DEC DLY
  BMI C835B
@@ -1230,22 +1230,13 @@ ENDIF
 
 .C8344
 
- JSR SendMessageToPPU
+ JSR DrawMessageInNMI
  JMP MA16
 
-; ******************************************************************************
-;
-;       Name: subm_MA23
-;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
-;
-; ******************************************************************************
-
-.subm_MA23
+.FlightLoop4To16
 
  LDA QQ11
- BNE subm_8334
+ BNE C8334
  DEC DLY
  BMI C835B
  BEQ C835B
@@ -1297,7 +1288,8 @@ ENDIF
  LDA FRIN
  BEQ C8390
 
- JSR MAL1
+ JSR MAL1               ; Call parts 4 to 12 of the main flight loop to analyse
+                        ; and update all the ships in the bubble
 
 .C8390
 
@@ -1308,7 +1300,8 @@ ENDIF
  LDA FRIN,X
  BEQ C839D
 
- JSR MAL1
+ JSR MAL1               ; Call parts 4 to 12 of the main flight loop to analyse
+                        ; and update all the ships in the bubble
 
  JMP loop_C8392
 
@@ -1326,7 +1319,8 @@ ENDIF
 
 .C83AB
 
- JSR MAL1
+ JSR MAL1               ; Call parts 4 to 12 of the main flight loop to analyse
+                        ; and update all the ships in the bubble
 
 ; ******************************************************************************
 ;
@@ -2371,7 +2365,7 @@ ENDIF
 
 .MA3
 
- JSR subm_MA23          ; ???
+ JSR FlightLoop4To16    ; ???
 
  LDA QQ11
  BNE C874C
@@ -2395,7 +2389,7 @@ ENDIF
 
 .C872A
 
- JSR SendDrawPlaneToPPU
+ JSR DrawBitplaneInNMI
 
  JSR COMPAS
 
@@ -2802,7 +2796,7 @@ ENDIF
 .STATUS
 
  LDA #$98               ; Set the current view type in QQ11 to $98 (Status Mode
- JSR ChangeViewRow0     ; screen) and move the text cursor to row 0
+ JSR ChangeView         ; screen) and move the text cursor to row 0
 
  JSR subm_9D09          ; ???
 
@@ -3028,7 +3022,7 @@ ENDIF
  STA XC
 
  LDX chosenLanguage
- LDA L897C,X
+ LDA rowHeadshot,X
  STA YC
 
  JSR GetRankHeadshot_b4
@@ -3048,14 +3042,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_8926
+;       Name: DrawViewInNMI
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_8926
+.DrawViewInNMI
 
  LDA tileNumber
  BNE C892E
@@ -3123,27 +3117,33 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: L897C
+;       Name: rowHeadshot
 ;       Type: Variable
 ;   Category: Text
-;    Summary: ???
+;    Summary: The row for the headshot on the Status Mode page
 ;
 ; ******************************************************************************
 
-.L897C
+.rowHeadshot
 
- EQUB 8, 8, 10, 8
+ EQUB 8                 ; English
+
+ EQUB 8                 ; German
+
+ EQUB 10                ; French
+
+ EQUB 8                 ; There is no fourth language, so this byte is ignored
 
 ; ******************************************************************************
 ;
-;       Name: SendScreenToPPU
+;       Name: DrawScreenInNMI
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.SendScreenToPPU
+.DrawScreenInNMI
 
  JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
                         ; sent to the PPU, so the screen is fully updated and
@@ -4104,7 +4104,7 @@ ENDIF
 
  JSR MVEIT              ; Call MVEIT to move the Cobra in space
 
- JSR DrawShipInNewPlane ; ???
+ JSR DrawShipInBitplane ; ???
 
  DEC INWK+32            ; Decrement the counter in byte #32
 
@@ -4266,7 +4266,7 @@ ENDIF
  JSR DETOK_b2           ; PLANET"), which will print on-screen as the left align
                         ; code disables justified text
 
- JMP SendScreenToPPU    ; ???
+ JMP DrawScreenInNMI    ; ???
 
 .HME5
 
@@ -4292,7 +4292,7 @@ ENDIF
 .C8CAF
 
  JSR CLYNS
- JMP SendScreenToPPU
+ JMP DrawScreenInNMI
 
 ; ******************************************************************************
 ;
@@ -6820,7 +6820,7 @@ ENDIF
 
 .C9345
 
- JSR subm_B1D1
+ JSR CheckForPause-3
  JSR FlipDrawingPlane
  LDA XP
  AND #$0F
@@ -6874,7 +6874,7 @@ ENDIF
 
 .C93AC
 
- JSR SendDrawPlaneToPPU
+ JSR DrawBitplaneInNMI
  DEC YP
  DEC XP
  BNE C9345
@@ -7011,7 +7011,7 @@ ENDIF
 
  JSR DETOK_b2           ; Print the extended token in A
 
- JSR subm_8926          ; ???
+ JSR DrawViewInNMI      ; ???
 
  JMP BAY                ; Jump to BAY to go to the docking bay (i.e. show the
                         ; Status Mode screen) and return from the subroutine
@@ -7159,7 +7159,7 @@ ENDIF
  LDA #199               ; Print extended token 199, which is the briefing for
  JSR DETOK_b2           ; the Trumbles mission
 
- JSR subm_8926          ; ???
+ JSR DrawViewInNMI      ; ???
 
  JSR YESNO              ; Call YESNO to wait until either "Y" or "N" is pressed
 
@@ -7247,7 +7247,7 @@ ENDIF
  STX INWK+30            ; Set the ship's pitch counter to a positive pitch that
                         ; doesn't dampen
 
- JSR DrawShipInNewPlane ; ???
+ JSR DrawShipInBitplane ; ???
 
  JSR MVEIT              ; Call MVEIT to rotate the ship in space
 
@@ -7287,7 +7287,7 @@ ENDIF
                         ; so the ship moves up the screen (as space coordinates
                         ; have the y-axis going up)
 
- JSR DrawShipInNewPlane ; ???
+ JSR DrawShipInBitplane ; ???
 
  JSR MVEIT              ; Call MVEIT to move and rotate the ship in space
 
@@ -7403,7 +7403,7 @@ ENDIF
  JSR subm_F139
  JSR SetupDemoView
  JSR SeedRandomNumbers
- JSR subm_95FC
+ JSR SetupDemoShip
  LDA #6
  STA INWK+30
  LDA #$18
@@ -7411,12 +7411,12 @@ ENDIF
  LDA #$12
  JSR NWSHP
  LDA #$0A
- JSR subm_95E4
+ JSR RunFlightLoops
  LDA #$92
  STA K%+114
  LDA #1
  STA K%+112
- JSR subm_95FC
+ JSR SetupDemoShip
  LDA #6
  STA INWK+30
  ASL INWK+2
@@ -7425,8 +7425,8 @@ ENDIF
  LDA #$13
  JSR NWSHP
  LDA #6
- JSR subm_95E4
- JSR subm_95FC
+ JSR RunFlightLoops
+ JSR SetupDemoShip
  LDA #6
  STA INWK+30
  ASL INWK+2
@@ -7437,11 +7437,11 @@ ENDIF
  LDA #$11
  JSR NWSHP
  LDA #5
- JSR subm_95E4
+ JSR RunFlightLoops
  LDA #$C0
  STA K%+198
  LDA #$0B
- JSR subm_95E4
+ JSR RunFlightLoops
  LDA #$32
  STA nmiTimer
  LDA #0
@@ -7460,22 +7460,22 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_95E4
+;       Name: RunFlightLoops
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_95E4
+.RunFlightLoops
 
  STA LASCT
 
 .loop_C95E7
 
  JSR FlipDrawingPlane
- JSR subm_MA23
- JSR SendDrawPlaneToPPU
+ JSR FlightLoop4To16
+ JSR DrawBitplaneInNMI
  LDA pointerButton
  JSR CheckForPause
  DEC LASCT
@@ -7484,14 +7484,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_95FC
+;       Name: SetupDemoShip
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_95FC
+.SetupDemoShip
 
  JSR ZINF
  LDA #$60
@@ -7676,7 +7676,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: ChangeViewRow0
+;       Name: ChangeView
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Clear the screen, set the current view type and move the cursor to
@@ -7691,7 +7691,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.ChangeViewRow0
+.ChangeView
 
  JSR TT66               ; Clear the screen and set the current view type
 
@@ -8060,7 +8060,7 @@ ENDIF
 .TT25
 
  LDA #$96               ; Change to view $96 and move the text cursor to row 0
- JSR ChangeViewRow0
+ JSR ChangeView
 
  JSR TT111              ; Select the system closest to galactic coordinates
                         ; (QQ9, QQ10)
@@ -8476,7 +8476,7 @@ ENDIF
  LDY #7
  JSR subm_B219_b3
 
- JMP subm_8926
+ JMP DrawViewInNMI
 
 ; ******************************************************************************
 ;
@@ -8574,7 +8574,7 @@ ENDIF
  STA K
  LDA #$0E
  STA K+1
- JSR subm_B2BC_b3
+ JSR DrawPopupBox_b3
 
  LDA QQ9                ; Set QQ19 to the selected system's x-coordinate
  STA QQ19
@@ -8591,7 +8591,7 @@ ENDIF
  STA QQ11
  LDA #$8F
  STA Yx2M1
- JMP subm_8926
+ JMP DrawViewInNMI
 
 ; ******************************************************************************
 ;
@@ -9050,7 +9050,7 @@ ENDIF
 .TT213
 
  LDA #$97               ; Set the current view type in QQ11 to $97 (Inventory
- JSR ChangeViewRow0     ; screen) and move the text cursor to row 0
+ JSR ChangeView         ; screen) and move the text cursor to row 0
 
  LDA #11                ; Move the text cursor to column 11 to print the screen
  STA XC                 ; title
@@ -9716,7 +9716,7 @@ ENDIF
 
  LDA #$8F               ; ???
  STA Yx2M1
- JMP subm_8926
+ JMP DrawViewInNMI
 
 ; ******************************************************************************
 ;
@@ -9836,7 +9836,16 @@ ENDIF
  LDA #$0C
  JSR DASC_b2
  JSR TT146
- JSR SendMessageToPPU
+ JSR DrawMessageInNMI
+
+; ******************************************************************************
+;
+;       Name: subm_9D35
+;       Type: Subroutine
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
 
 .subm_9D35
 
@@ -10560,7 +10569,7 @@ ENDIF
  LDA #202               ; Print token 42 ("RANGE") followed by a question mark
  JSR prq
 
- JMP SendScreenToPPU    ; ???
+ JMP DrawScreenInNMI    ; ???
 
 ; ******************************************************************************
 ;
@@ -10979,7 +10988,7 @@ ENDIF
  BEQ TT167-3            ; Inventory screen, so the icon bar button toggles
                         ; between the two
 
- JSR ChangeViewRow0     ; We are not already showing the Market Price screen,
+ JSR ChangeView         ; We are not already showing the Market Price screen,
                         ; so that's what we do now, starting by changing the
                         ; view to type $BA and moving the cursor to row 0
 
@@ -11042,7 +11051,7 @@ ENDIF
 
  JSR subm_EB86
  JSR DrawSomething
- JMP subm_8926
+ JMP DrawViewInNMI
 
 .CA025
 
@@ -11091,7 +11100,7 @@ ENDIF
 
  LDA pointerButton
  BEQ CA036
- JSR subm_B1D1
+ JSR CheckForPause-3
  BCS CA036
  RTS
 
@@ -11115,7 +11124,7 @@ ENDIF
  LDA QQ29
 
  JSR subm_A130
- JSR SendScreenToPPU
+ JSR DrawScreenInNMI
 
  JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
                         ; sent to the PPU, so the screen is fully updated and
@@ -12273,7 +12282,7 @@ ENDIF
  JSR DrawEquipment_b6   ; Draw the currently fitted equipment onto the Cobra Mk
                         ; III image
 
- JSR SendScreenToPPU
+ JSR DrawScreenInNMI
 
  JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
                         ; sent to the PPU, so the screen is fully updated and
@@ -12352,7 +12361,7 @@ ENDIF
 .EQSHP
 
  LDA #$B9               ; Change to view $B9 and move the text cursor to row 0
- JSR ChangeViewRow0
+ JSR ChangeView
 
  LDX chosenLanguage     ; Move the text cursor to the correct column for the
  LDA tabEquipShip,X     ; Equip Ship title in the chosen language
@@ -12407,7 +12416,7 @@ ENDIF
  JSR dn
  JSR subm_EB86
  JSR DrawCobraMkIII
- JSR subm_8926
+ JSR DrawViewInNMI
 
 .CA4DB
 
@@ -12447,7 +12456,7 @@ ENDIF
  PLA                    ; the pot. If we don't have enough cash, exit to the
                         ; docking bay (i.e. show the Status Mode screen) ???
 
- JSR SendScreenToPPU    ; ???
+ JSR DrawScreenInNMI    ; ???
  JMP CA4DB
 
 .CA51D
@@ -12618,7 +12627,7 @@ ENDIF
  CMP #$1F
  BNE err
  JSR BOOP
- JSR SendScreenToPPU
+ JSR DrawScreenInNMI
  LDY #$28
  JSR DELAY
  LDA #6
@@ -12637,14 +12646,14 @@ ENDIF
  JSR DrawEquipment_b6   ; Draw the currently fitted equipment onto the Cobra Mk
                         ; III image
 
- JSR SendScreenToPPU
+ JSR DrawScreenInNMI
  JMP CA4DB
 
 .presS
 
  JMP pres
 
- JSR SendScreenToPPU
+ JSR DrawScreenInNMI
  JMP CA4DB
 
 .ed9
@@ -12860,7 +12869,7 @@ ENDIF
 
  BPL loop_CA681         ; Loop back until we have printed 21 spaces
 
- JSR SendScreenToPPU    ; ???
+ JSR DrawScreenInNMI    ; ???
 
  LDY #40                ; Delay for 40 vertical syncs (40/50 = 0.8 seconds)
  JSR DELAY
@@ -12935,14 +12944,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_A6A8
+;       Name: PrintLaserView
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Text
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_A6A8
+.PrintLaserView
 
  LDA #$0C
  STA XC
@@ -12951,11 +12960,14 @@ ENDIF
  CLC
  ADC #8
  STA YC
- JSR TT162
+
+ JSR TT162              ; Print a space
+
  LDA L04A9
  AND #6
  BNE CA6C0
- JSR TT162
+
+ JSR TT162              ; Print a space
 
 .CA6C0
 
@@ -12967,10 +12979,11 @@ ENDIF
 
 .loop_CA6C8
 
- JSR TT162
+ JSR TT162              ; Print a space
+
  LDA XC
  LDX chosenLanguage
- CMP LA6D8,X
+ CMP tabLaserView,X
  BNE loop_CA6C8
  PLA
  TAY
@@ -12978,36 +12991,43 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LA6D8
+;       Name: tabLaserView
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: The tab stop at the right end of the laser view when printing
+;             spaces after the view name
 ;
 ; ******************************************************************************
 
-.LA6D8
+.tabLaserView
 
- EQUB $15, $15, $16, $15                      ; A6D8: 15 15 16... ...
+ EQUB 21                ; English
+
+ EQUB 21                ; German
+
+ EQUB 22                ; French
+
+ EQUB 21                ; There is no fourth language, so this byte is ignored
 
 ; ******************************************************************************
 ;
-;       Name: subm_A6DC
+;       Name: HighlightLaserView
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Text
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_A6DC
+.HighlightLaserView
 
  LDA #2
  STA fontBitplane
- JSR subm_A6A8
+ JSR PrintLaserView
  LDA #1
  STA fontBitplane
  TYA
  PHA
- JSR SendScreenToPPU
+ JSR DrawScreenInNMI
 
  JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
                         ; sent to the PPU, so the screen is fully updated and
@@ -13019,16 +13039,23 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LA6F2
+;       Name: popupWidth
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Equipment
+;    Summary: The width of the popup that shows the views available for
+;             installing lasers in the Equipment screen
 ;
 ; ******************************************************************************
 
-.LA6F2
+.popupWidth
 
- EQUB $0A, $0A, $0B, $0A                      ; A6F2: 0A 0A 0B... ...
+ EQUB 10                ; English
+
+ EQUB 10                ; German
+
+ EQUB 11                ; French
+
+ EQUB 10                ; There is no fourth language, so this byte is ignored
 
 ; ******************************************************************************
 ;
@@ -13052,12 +13079,12 @@ ENDIF
 
 .loop_CA706
 
- JSR subm_A6A8
+ JSR PrintLaserView
  DEY
  BNE loop_CA706
  LDA #2
  STA fontBitplane
- JSR subm_A6A8
+ JSR PrintLaserView
  LDA #1
  STA fontBitplane
  LDA #$0B
@@ -13067,12 +13094,12 @@ ENDIF
  STA YC
  STA K+3
  LDX chosenLanguage
- LDA LA6F2,X
+ LDA popupWidth,X
  STA K
  LDA #6
  STA K+1
- JSR subm_B2BC_b3
- JSR SendScreenToPPU
+ JSR DrawPopupBox_b3
+ JSR DrawScreenInNMI
  LDY #0
 
 .CA737
@@ -13082,20 +13109,20 @@ ENDIF
 
  LDA controller1Up
  BPL CA74A
- JSR subm_A6A8
+ JSR PrintLaserView
  DEY
  BPL CA747
  LDY #3
 
 .CA747
 
- JSR subm_A6DC
+ JSR HighlightLaserView
 
 .CA74A
 
  LDA controller1Down
  BPL CA75C
- JSR subm_A6A8
+ JSR PrintLaserView
  INY
  CPY #4
  BNE CA759
@@ -13103,7 +13130,7 @@ ENDIF
 
 .CA759
 
- JSR subm_A6DC
+ JSR HighlightLaserView
 
 .CA75C
 
@@ -15283,7 +15310,7 @@ ENDIF
  PHA                    ; so this will be "YES" (token 1) or "NO" (token 2)
  JSR DETOK_b2
 
- JSR SendMessageToPPU   ; ???
+ JSR DrawMessageInNMI   ; ???
 
  LDA controller1A       ; If "A" is being pressed on the controller, jump to
  BMI yeno3              ; to record the choice
@@ -16664,7 +16691,7 @@ ENDIF
  LDA QQ11
  BEQ CB118
  JSR CLYNS
- JSR SendScreenToPPU
+ JSR DrawScreenInNMI
 
 .CB118
 
@@ -16901,29 +16928,30 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B1D1
-;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
-;
-; ******************************************************************************
-
-.subm_B1D1
-
- LDA pointerButton
-
-; ******************************************************************************
-;
 ;       Name: CheckForPause
 ;       Type: Subroutine
 ;   Category: Keyboard
-;    Summary: ???
+;    Summary: Pause the game if the pause button is pressed
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The button number to check to see if it is the pause
+;                       button
+;
+; Other entry points:
+;
+;   CheckForPause-3     Check the value of pointerButton to see if the pause
+;                       button is under the icon bar pointer
 ;
 ; ******************************************************************************
 
+ LDA pointerButton
+
 .CheckForPause
 
- CMP #$50
+ CMP #80
  BNE CB1E2
  LDA #0
  STA pointerButton
@@ -17116,7 +17144,7 @@ ENDIF
 .D2
 
  JSR FlipDrawingPlane  ; ???
- JSR subm_MA23
+ JSR FlightLoop4To16
  JSR subm_BED2_b6
  LDA #%11001100
  JSR SetDrawPlaneFlags
@@ -17542,7 +17570,7 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- JSR DrawShipInNewPlane ; ???
+ JSR DrawShipInBitplane ; ???
 
  INC MCNT               ; ???
 
@@ -18901,7 +18929,7 @@ ENDIF
  BNE loop_CB862
  LDA QQ11
  BEQ PrintMessage-1
- JMP SendMessageToPPU
+ JMP DrawMessageInNMI
 
 ; ******************************************************************************
 ;
@@ -19097,7 +19125,7 @@ ENDIF
  LDA #2                 ; Set z_hi = 1, so (z_hi z_lo) = 256
  STA INWK+7
 
- JSR DrawShipInNewPlane ; ???
+ JSR DrawShipInBitplane ; ???
  INC MCNT
 
  JMP MVEIT              ; Call MVEIT to move and rotate the ship in space,

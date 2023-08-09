@@ -5663,15 +5663,15 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SendMessageToPPU
+;       Name: DrawMessageInNMI
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: Send the portion of the screen that contains the in-flight message
-;             to the PPU (i.e. tile rows 22 to 24)
+;    Summary: Configure the NMI to send the portion of the screen that contains
+;             the in-flight message to the PPU (i.e. tile rows 22 to 24)
 ;
 ; ******************************************************************************
 
-.SendMessageToPPU
+.DrawMessageInNMI
 
  JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
                         ; sent to the PPU, so the screen is fully updated and
@@ -5707,7 +5707,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: DrawShipInNewPlane
+;       Name: DrawShipInBitplane
 ;       Type: Subroutine
 ;   Category: Drawing ships
 ;    Summary: Flip the drawing bitplane and draw the current ship in the newly
@@ -5715,27 +5715,27 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.DrawShipInNewPlane
+.DrawShipInBitplane
 
  JSR FlipDrawingPlane   ; Flip the drawing bitplane
 
  JSR LL9_b1             ; Draw the current ship into the newly flipped drawing
                         ; bitplane
 
-                        ; Fall through into SendDrawPlaneToPPU to send the
-                        ; drawing bitplane to the PPU
+                        ; Fall through into DrawBitplaneInNMI to configure the
+                        ; NMI to send the drawing bitplane to the PPU
 
 ; ******************************************************************************
 ;
-;       Name: SendDrawPlaneToPPU
+;       Name: DrawBitplaneInNMI
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: Configure the drawing bitplane to be sent to the PPU after drawing
-;             the box edges and setting the next free tile number
+;    Summary: Configure the NMI to send the drawing bitplane to the PPU after
+;             drawing the box edges and setting the next free tile number
 ;
 ; ******************************************************************************
 
-.SendDrawPlaneToPPU
+.DrawBitplaneInNMI
 
  LDA #%11001000         ; Set A so we set the drawing bitplane flags in
                         ; SetDrawPlaneFlags as follows:
@@ -11463,14 +11463,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B2BC_b3
+;       Name: DrawPopupBox_b3
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: Call the subm_B2BC routine in ROM bank 3
+;   Category: Drawing the screen
+;    Summary: Call the DrawPopupBox routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.subm_B2BC_b3
+.DrawPopupBox_b3
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -11478,7 +11478,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR subm_B2BC          ; Call subm_B2BC, now that it is paged into memory
+ JSR DrawPopupBox       ; Call DrawPopupBox, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -12485,14 +12485,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SendScreenToPPU_b0
+;       Name: DrawScreenInNMI_b0
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: Call the SendScreenToPPU routine in ROM bank 0
+;    Summary: Call the DrawScreenInNMI routine in ROM bank 0
 ;
 ; ******************************************************************************
 
-.SendScreenToPPU_b0
+.DrawScreenInNMI_b0
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -12500,7 +12500,7 @@ ENDIF
  LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
 
- JSR SendScreenToPPU    ; Call SendScreenToPPU, now that it is paged into memory
+ JSR DrawScreenInNMI    ; Call DrawScreenInNMI, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -12963,14 +12963,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_8926_b0
+;       Name: DrawViewInNMI_b0
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: Call the subm_8926 routine in ROM bank 0
+;    Summary: Call the DrawViewInNMI routine in ROM bank 0
 ;
 ; ******************************************************************************
 
-.subm_8926_b0
+.DrawViewInNMI_b0
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -12978,7 +12978,7 @@ ENDIF
  LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
 
- JSR subm_8926          ; Call subm_8926, now that it is paged into memory
+ JSR DrawViewInNMI      ; Call DrawViewInNMI, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
