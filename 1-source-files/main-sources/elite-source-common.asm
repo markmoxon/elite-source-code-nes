@@ -183,10 +183,10 @@ IF NOT(_BANK = 0)
  PrintCtrlCode      = $A8D9
  ZINF               = $AE03
  MAS4               = $B1CA
- subm_B1D4          = $B1D4
+ CheckForPause      = $B1D4
  ShowStartScreen    = $B2C3
  DEATH2             = $B2EF
- subm_B358          = $B358
+ StartGame          = $B358
  subm_B39D          = $B39D
  TITLE              = $B3BC
  PAS1               = $B8F7
@@ -287,7 +287,7 @@ IF NOT(_BANK = 3)
  SendBitplaneToPPU  = $A972
  SetupSpaceView     = $A9D1
  ResetScreen        = $AABC
- subm_AC1D          = $AC1D
+ ShowIconBar        = $AC1D
  subm_AC5C          = $AC5C
  SetupIconBar       = $AE18
  SetViewPatterns    = $AFCD
@@ -351,7 +351,7 @@ IF NOT(_BANK = 6)
  subm_89D1          = $89D1
  subm_A082          = $A082
  DrawSpriteImage    = $A0F8
- subm_A166          = $A166
+ PauseGame          = $A166
  DIALS              = $A2C3
  DrawEquipment      = $A4A5
  subm_A5AB          = $A5AB
@@ -359,8 +359,8 @@ IF NOT(_BANK = 6)
 
  IF _NTSC
 
-  subm_B88C         = $B88C
-  subm_B8FE         = $B8FE
+  SaveAllToBuffer   = $B88C
+  LoadCurrentCmdr   = $B8FE
   JAMESON           = $B90D
   subm_B919         = $B919
   LL164             = $B980
@@ -374,8 +374,8 @@ IF NOT(_BANK = 6)
 
  ELIF _PAL
 
-  subm_B88C         = $B89B
-  subm_B8FE         = $B90D
+  SaveAllToBuffer   = $B89B
+  LoadCurrentCmdr   = $B90D
   JAMESON           = $B91C
   subm_B919         = $B928
   LL164             = $B98F
@@ -838,29 +838,33 @@ ENDIF
 
  SKIP 1                 ; The number of the current view:
                         ;
-                        ;   0   = Space view, Title screen
-                        ;   1   = Loading ship on Title screen
-                        ;   $10 = ???
-                        ;   $8B = ???
-                        ;   $8D = ???
-                        ;   $92 = ???
-                        ;   $93 = ???
-                        ;   $95 = Trumble mission screen
-                        ;   $96 = Data on System (TT25, TRADEMODE)
-                        ;   $97 = Inventory
-                        ;   $98 = Status Mode
-                        ;   $9C = Short-range Chart
-                        ;   $9D = Long-range Chart
-                        ;   $B9 = Equip Ship
-                        ;   $BA = Market Prices/Buy Cargo/Sell Cargo
-                        ;   $BB = Save and load
-                        ;   $C4 = ???
-                        ;   $CF = ???
-                        ;   $DF = Start screen
-                        ;   $FF = ???
+                        ;   0  = $x0 = Space view
+                        ;   1  = $x1 = Title screen
+                        ;   2  = $x2 = ???
+                        ;   3  = $x3 = ???
+                        ;   4  = $x4 = Game Over screen
+                        ;   5  = $x5 = Trumble mission screen
+                        ;   6  = $x6 = Data on System (TT25, TRADEMODE)
+                        ;   7  = $x7 = Inventory
+                        ;   8  = $x8 = Status Mode
+                        ;   9  = $x9 = Equip Ship
+                        ;   10 = $xA = Market Prices/Buy Cargo/Sell Cargo
+                        ;   11 = $xB = Save and load
+                        ;   12 = $xC = Short-range Chart
+                        ;   13 = $xD = Long-range Chart
+                        ;   14 = $xE = Unused ???
+                        ;   15 = $xF = Start screen
                         ;
-                        ;   * Bit 6 clear = there is an icon bar? (0 to $BF)
-                        ;     Bit 6 set   = there is no icon bar? ($C0 and up)
+                        ;   * Bits 0-3 = view number (see above)
+                        ;
+                        ;   * Bit 4 clear = do not load the subm_B0E1 font ???
+                        ;     Bit 4 set   = load the subm_B0E1 font
+                        ;
+                        ;   * Bit 5 clear = do not load the subm_B18E font ???
+                        ;     Bit 5 set   = load the subm_B18E font
+                        ;
+                        ;   * Bit 6 clear = there is an icon bar
+                        ;     Bit 6 set   = no icon bar (rows 27-28 are blank)
                         ;
                         ;   * Bit 7 clear = icon bar on row 20 (dashboard)
                         ;     Bit 7 set   = icon bar on row 27 (no dashboard)
@@ -869,14 +873,10 @@ ENDIF
                         ; TT66: 0, $8D, $93, $95, $9C, $BB, $C4, $CF
                         ; ChangeViewRow0: $96, $97, $98, $B9, $BA
                         ; subm_B39D: 0, 1, $10, $92
-                        ;
-                        ; First nibble of view number:
-                        ;
-                        ;   xx1x = load font using subm_B18E_b3 (Ax, Bx, Ex, Fx)
 
 .QQ11a
 
- SKIP 1                 ; Can be 0, $FF or QQ11
+ SKIP 1                 ; Contains the old view number when changing views
                         ;
                         ; When we change view, QQ11 gets set to the new view
                         ; number straight away while QQ11a stays set to the old
@@ -3523,12 +3523,6 @@ ORG $0200
                         ; See the deep dives on "Galaxy and system seeds" and
                         ; "Twisting the system seeds" for more details
 
- NT% = QQ21 + 6 + 2 - TP    ; This sets the variable NT% to the size of the current
-                        ; commander data block, which starts at TP and ends at
-                        ; QQ21+6 (inclusive), i.e. with the last checksum byte
-
- PRINT "NT% = &", NT%
-
 .NOSTM
 
  SKIP 1                 ; The number of stardust particles shown on screen,
@@ -4188,7 +4182,10 @@ ENDIF
 
 .pointerButton
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The button number from the iconBarButtons table for
+                        ; the button under the icon bar pointer
+                        ;
+                        ; Set to 80 if Start is pressed to pause the game
 
 .L0466
 

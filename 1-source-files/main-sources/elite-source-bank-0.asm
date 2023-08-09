@@ -7373,7 +7373,7 @@ ENDIF
 .PlayDemo
 
  JSR RES2
- JSR subm_B8FE_b6
+ JSR LoadCurrentCmdr_b6
  LDA #0
  STA QQ14
  STA CASH
@@ -7477,7 +7477,7 @@ ENDIF
  JSR subm_MA23
  JSR SendDrawPlaneToPPU
  LDA pointerButton
- JSR subm_B1D4
+ JSR CheckForPause
  DEC LASCT
  BNE loop_C95E7
  RTS
@@ -12430,7 +12430,7 @@ ENDIF
  BMI CA508
  LDA pointerButton
  BEQ CA4DB
- JSR subm_B1D4
+ JSR CheckForPause
  BCS CA4DB
  RTS
 
@@ -13115,7 +13115,7 @@ ENDIF
  BNE CA775
  LDA #0
  STA pointerButton
- JSR subm_A166_b6
+ JSR PauseGame_b6
  JMP CA737
 
 .CA775
@@ -16501,6 +16501,7 @@ ENDIF
 ;       Name: Main game loop (Part 6 of 6)
 ;       Type: Subroutine
 ;   Category: Main loop
+;    Summary: Process non-flight key presses (icon bar selections)
 ;  Deep dive: Program flow of the main game loop
 ;
 ; ------------------------------------------------------------------------------
@@ -16508,9 +16509,12 @@ ENDIF
 ; This is the second half of the minimal game loop, which we iterate when we are
 ; docked. This section covers the following:
 ;
+;   * Process icon bar selections
 ;
-; It also support joining the main loop with a key already "pressed", so we can
+; It also supports joining the main loop with a key already "pressed", so we can
 ; jump into the main game loop to perform a specific action. In practice, this
+; is used when we enter the docking bay in BAY to display the Status Mode
+; screen.
 ;
 ; Other entry points:
 ;
@@ -16668,7 +16672,7 @@ ENDIF
 
 .CB119
 
- JSR subm_B1D4
+ JSR CheckForPause
  CMP #$15
  BNE CB137
  LDA QQ12
@@ -16910,20 +16914,20 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B1D4
+;       Name: CheckForPause
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Keyboard
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B1D4
+.CheckForPause
 
  CMP #$50
  BNE CB1E2
  LDA #0
  STA pointerButton
- JSR subm_A166_b6
+ JSR PauseGame_b6
  SEC
  RTS
 
@@ -17260,19 +17264,19 @@ ENDIF
 
  JSR subm_B63D_b3       ; ??? Something to do with palettes
 
-                        ; Fall through into subm_B358 to reset the stack and go
+                        ; Fall through into StartGame to reset the stack and go
                         ; to the docking bay (i.e. show the Status Mode screen)
 
 ; ******************************************************************************
 ;
-;       Name: subm_B358
+;       Name: StartGame
 ;       Type: Subroutine
 ;   Category: Start and end
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B358
+.StartGame
 
  LDX #$FF               ; Set the stack pointer to $01FF, which is the standard
  TXS                    ; location for the 6502 stack, so this instruction
@@ -17324,7 +17328,7 @@ ENDIF
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- JSR subm_B8FE_b6       ; ???
+ JSR LoadCurrentCmdr_b6 ; ???
 
  JSR WaitResetSound
 
@@ -18209,7 +18213,7 @@ ENDIF
  LDA demoInProgress     ; Fast-forward in demo starts game
  BEQ CB5BF
  JSR ResetShipStatus
- JMP subm_B358
+ JMP StartGame
 
 .CB5BF
 
@@ -18435,7 +18439,7 @@ ENDIF
  LDX L0081
  CPX #$40
  BNE CB6B9
- JMP subm_A166_b6
+ JMP PauseGame_b6
 
 .CB6B9
 
@@ -20963,14 +20967,21 @@ ENDIF
 
  STA QQ11               ; Set the current view type in QQ11 to A
 
- LDA QQ11a              ; If bit 7 is set in either QQ11 or QQ11a, then jump to
- ORA QQ11               ; scrn1 to skip clearing the scanner ???
- BMI scrn1
+ LDA QQ11a              ; If bit 7 is set in either QQ11 or QQ11a, then either
+ ORA QQ11               ; there is no dashboard in either view, or it is being
+ BMI scrn1              ; added or removed, so jump to scrn1 to skip clearing
+                        ; the existing scanner, as we don't need to worry about
+                        ; preserving it
 
- LDA QQ11               ; If bit 7 of QQ11 is clear, then we are switching to
- BPL scrn1              ; the space view, so we will be showing the scanner and
-                        ; there is no need to clear it, so jump to scrn1 to skip
-                        ; clearing the scanner
+ LDA QQ11               ; If bit 7 of QQ11 is clear, then bit 7 must be clear in
+ BPL scrn1              ; both QQ11 and QQ11a as we didn't take the branch
+                        ; above, so we are switching between views that both
+                        ; have dashboards, so jump to scrn1 to skip clearing the
+                        ; scanner as we want to retain it
+
+                        ; Strangely, we can naver get here, as we take the first
+                        ; branch above when bit 7 of QQ11 is set, and we take
+                        ; the second branch when bit 7 of QQ11 is clear ???
 
  JSR ClearScanner       ; Remove all ships from the scanner and hide the scanner
                         ; sprites
@@ -21017,52 +21028,64 @@ ENDIF
  STA XC
  STA YC
 
- JSR SetViewPatterns_b3 ; Load the patterns for the view we are changing to ???
+ JSR SetViewPatterns_b3 ; Load the patterns for the new view that we setting up
+                        ; ???
 
- LDA QQ11               ; If bit 6 of the new view type in QQ11 is set, jump to
- LDX #$FF               ; scrn2 with X = $FF
- AND #%01000000
+                        ; We now set X to the type of icon bar to show in the
+                        ; new view
+
+ LDA QQ11               ; If bit 6 of the new view in QQ11 is set then it
+ LDX #$FF               ; doesn't have an icon bar, so jump to scrn2 with
+ AND #%01000000         ; X = $FF to hide the icon bar on row 27
  BNE scrn2
 
- LDX #4                 ; If the new view type in QQ11 is 1 (we are loading a
- LDA QQ11               ; ship on the title screen), then jump to scrn2 with
- CMP #1                 ; X = 4
+ LDX #4                 ; If the new view in QQ11 is 1, then we are on the title
+ LDA QQ11               ; screen, so jump to scrn2 with X = 4 so we show the
+ CMP #1                 ; copyright message in the icon bar
  BEQ scrn2
 
- LDX #2                 ; If the new view type in QQ11 is %110x (i.e. 12 or 13,
- LDA QQ11               ; the Short-range Chart or Long-range Chart), jump to
- AND #%00001110         ; scrn2 with X = 2
- CMP #%00001100
+ LDX #2                 ; If the new view in QQ11 is %0000110x (i.e. 12 or 13,
+ LDA QQ11               ; which are the Short-range Chart and Long-range Chart),
+ AND #%00001110         ; jump to scrn2 with X = 2 to show the icon bar for the
+ CMP #%00001100         ; charts
  BEQ scrn2
 
- LDX #1                 ; If the new view type in QQ11 is 0 (the space view),
- LDA QQ12               ; jump to scrn2 with X = 1
+ LDX #1                 ; If we are not docked (QQ12 = 0), jump to scrn2 with
+ LDA QQ12               ; X = 1 to show the flight icon bar
  BEQ scrn2
 
- LDX #0                 ; Otherwise fall through into scrn2 with X = 0
+ LDX #0                 ; Otherwise fall through into scrn2 with X = 0 to show
+                        ; the docked icon bar
 
 .scrn2
 
- LDA QQ11               ; If bit 7 of the new view type in QQ11 is set, jump to
- BMI scrn5              ; scrn5
+ LDA QQ11               ; If bit 7 of the new view in QQ11 is set then there is
+ BMI scrn5              ; no dashboard, so jump to scrn5 to show the icon bar
+                        ; type with type X on row 27
 
- TXA
+                        ; If we get here then the new view has the dashboard, so
+                        ; we initialise it if required
+
+ TXA                    ; Show the icon bar with type X
  JSR SetupIconBar_b3
 
- LDA QQ11a
- BPL scrn3
+ LDA QQ11a              ; If bit 7 of the old view in QQ11a is clear, then the
+ BPL scrn3              ; old view has a dashboard, so jump to scrn3 to skip the
+                        ; following two instructions, as we don't need to
+                        ; initialise the dashboard
 
- JSR subm_EB86
+ JSR subm_EB86          ; ??? Something to do with palettes and hiding sprites
 
- JSR ResetScanner_b3
+ JSR ResetScanner_b3    ; ??? Reset the scanner sprites
 
 .scrn3
 
- JSR DrawDashNames_b3
+ JSR DrawDashNames_b3   ; Draw the dashboard into the nametable buffers for
+                        ; both bitplanes
 
- JSR msblob
+ JSR msblob             ; Display the dashboard's missile indicators in black
 
- JMP scrn8
+ JMP scrn8              ; Jump to scrn8 to continue setting up the view
 
 .scrn4
 
@@ -21071,41 +21094,52 @@ ENDIF
 
 .scrn5
 
-                        ; If we get here then bit 7 of the new view type in QQ11
-                        ; is set
+                        ; If we get here then there is no dashboard in the new
+                        ; view
 
- TXA
+ TXA                    ; Show the icon bar with type X
  JSR SetupIconBar_b3
 
- LDA QQ11
- CMP #$C4
- BEQ scrn4
+ LDA QQ11               ; If the new view is the Game Over screen (i.e. QQ11 is
+ CMP #$C4               ; 4 with bits 6 and 7 set to indicate there is no icon
+ BEQ scrn4              ; bar), jump to scrn4 to set up attribute buffer 0 and
+                        ; return from the subroutine
 
- LDA QQ11
- CMP #$8D
- BEQ scrn6
+ LDA QQ11               ; If the new view is the Long-range Chart (i.e. QQ11 is
+ CMP #$8D               ; 13 with bit 7 set to put the icon bar on row 27 at the
+ BEQ scrn6              ; bottom of the screen), jump to scrn6 to skip loading
+                        ; the ??? font
 
- CMP #$CF
- BEQ scrn6
+ CMP #$CF               ; If the new view is the start screen (i.e. QQ11 is 15
+ BEQ scrn6              ; with bits 6 and 7 set to indicate there is no icon
+                        ; bar), jump to scrn6 to skip loading the ??? font
 
- AND #$10
- BEQ scrn6
+ AND #%00010000         ; If bit 4 of the new view in QQ11 is clear, jump to
+ BEQ scrn6              ; scrn6 to skip loading the ??? font
 
- LDA #$42
+                        ; If we get here then the new view we are setting up is
+                        ; not the Game Over screen, the Long-range Chart or the
+                        ; start screen, and bit 4 of QQ11 is set
+
+ LDA #66                ; Load a font ???
  JSR subm_B0E1_b3
 
 .scrn6
 
- LDA QQ11
- AND #$20
+ LDA QQ11               ; If bit 5 of the new view in QQ11 is clear, jump to
+ AND #%00100000         ; scrn7 to skip loading the ??? font
  BEQ scrn7
 
- JSR subm_B18E_b3
+ JSR subm_B18E_b3       ; Load a font ???
 
 .scrn7
 
- LDA #1
+                        ; The new view doesn't have a dashboard, so now we draw
+                        ; the left and right edges of the box on the rows where
+                        ; the dashboard would be, overwriting the edges of the
+                        ; dashboard from the old view (if it had one)
 
+ LDA #1                 ; Draw the left edge of the box on rows 20 to 26
  STA nameBuffer0+20*32+1
  STA nameBuffer0+21*32+1
  STA nameBuffer0+22*32+1
@@ -21114,8 +21148,7 @@ ENDIF
  STA nameBuffer0+25*32+1
  STA nameBuffer0+26*32+1
 
- LDA #2
-
+ LDA #2                 ; Draw the right edge of the box on rows 20 to 26
  STA nameBuffer0+20*32
  STA nameBuffer0+21*32
  STA nameBuffer0+22*32
@@ -21124,9 +21157,11 @@ ENDIF
  STA nameBuffer0+25*32
  STA nameBuffer0+26*32
 
- LDA QQ11
- AND #$40
- BNE scrn8
+ LDA QQ11               ; If bit 6 of the new view in QQ11 is set, then there is
+ AND #%01000000         ; no icon bar, so jump to scrn8... which has no effect,
+ BNE scrn8              ; as that's the next instruction anyway, so presumably
+                        ; this was left behind after deleting the code that
+                        ; would be skipped
 
 .scrn8
 
@@ -21139,33 +21174,52 @@ ENDIF
  LDA demoInProgress     ; If bit 7 of demoInProgress is set then we are
  BMI scrn9              ; initialising the demo, so jump to scrn9
 
- LDA QQ11               ; If bit 7 of the new view type in QQ11 is clear, jump
+ LDA QQ11               ; If bit 7 of the new view in QQ11 is clear, jump to
  BPL scrn9              ; scrn9
 
  CMP QQ11a              ; If the view we are switching from in QQ11a is 0 (the
- BEQ scrn9              ; space view), jump to scrn9
+ BEQ scrn9              ; space view), jump to scrn9... which has no effect,
+                        ; as that's the next instruction anyway, so presumably
+                        ; this was left behind after deleting the code that
+                        ; would be skipped
 
 .scrn9
 
- JSR DrawBoxTop
- LDX chosenLanguage
- LDA QQ11
+ JSR DrawBoxTop         ; Draw the top edge of the box along the top of the
+                        ; screen in nametable buffer 0
+
+ LDX chosenLanguage     ; Set X to the chosen language
+
+ LDA QQ11               ; If this is the space view (QQ11 = 0), jump to scrn10
  BEQ scrn10
- CMP #1
- BNE scrn12
- LDA #0
+
+ CMP #1                 ; If this is not the title screen (QQ11 = 1), jump to
+ BNE scrn12             ; scrn12
+
+                        ; If we get here then the new view is the title screen
+
+ LDA #0                 ; Move the text cursor to row 0
  STA YC
- LDX chosenLanguage
- LDA LC0DF,X
+
+ LDX chosenLanguage     ; Move the text cursor to the correct column for the
+ LDA tabTitleScreen,X   ; title screen in the chosen language
  STA XC
- LDA #$1E
- BNE scrn11
+
+ LDA #30                ; Set A = 30 so we print two-letter token 144 when we
+                        ; jump to scrn11 ("--- E L I T E ---")
+
+ BNE scrn11             ; Jump to scrn11 to print the token (this BNE is
+                        ; effectively a JMP as A is never zero)
 
 .scrn10
 
- STA YC
- LDA LC0E3,X
+                        ; If we get here then the new view is the space view
+
+ STA YC                 ; ???
+
+ LDA tabSpaceView,X
  STA XC
+
  LDA L04A9
  AND #2
  BNE scrn13
@@ -21175,9 +21229,12 @@ ENDIF
 
 .scrn11
 
- JSR TT27_b2
+ JSR TT27_b2            ; Print the text token in A
 
 .scrn12
+
+                        ; If we get here then the new view is not the space view
+                        ; or title screen
 
  LDX #1
  STX XC

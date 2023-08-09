@@ -16852,7 +16852,7 @@ ENDIF
 
  INC XC
 
- LDA QQ11               ; If bits 5 and 6 of the view number are clear, jump to
+ LDA QQ11               ; If bits 4 and 5 of the view number are clear, jump to
  AND #%00110000         ; CB6A9
  BEQ CB6A9
 
@@ -16863,8 +16863,14 @@ ENDIF
  AND #%00100000         ; If bit 5 of the view number is clear, jump to CB6A9
  BEQ CB6A9
 
+                        ; If we get here then bit 5 of the view number is set
+                        ; and we are not drawing in bitplane 1 only (i.e. we
+                        ; are definitely drawing in bitplane 0)
+
  CPY #2                 ; If we are drawing in both bitplanes (as Y is neither
  BNE CB6A9              ; 1 or 2), jump to CB6A9
+
+                        ; If we get here then we are drawing in bitplane 0 only
 
  LDA K3
  CLC
@@ -16875,6 +16881,7 @@ ENDIF
 .CB6A4
 
                         ; If we get here then we are drawing in bitplane 1 only
+                        ; and bit 4 and/or 5 of the view number is set
 
  LDA K3
  JMP CB7CF

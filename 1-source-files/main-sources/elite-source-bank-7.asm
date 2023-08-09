@@ -494,29 +494,41 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LC0DF
+;       Name: tabTitleScreen
 ;       Type: Variable
 ;   Category: Text
-;    Summary: ???
+;    Summary: The tab stop for the title screen's title for each language
 ;
 ; ******************************************************************************
 
-.LC0DF
+.tabTitleScreen
 
- EQUB 6, 6, 7, 7
+ EQUB 6                 ; English
+
+ EQUB 6                 ; German
+
+ EQUB 7                 ; French
+
+ EQUB 7                 ; There is no fourth language, so this byte is ignored
 
 ; ******************************************************************************
 ;
-;       Name: LC0E3
+;       Name: tabSpaceView
 ;       Type: Variable
 ;   Category: Text
-;    Summary: ???
+;    Summary: The tab stop for the space view name for each language
 ;
 ; ******************************************************************************
 
-.LC0E3
+.tabSpaceView
 
- EQUB 11, 9, 13, 10
+ EQUB 11                ; English
+
+ EQUB 9                 ; German
+
+ EQUB 13                ; French
+
+ EQUB 10                ; There is no fourth language, so this byte is ignored
 
 IF _NTSC
 
@@ -9994,71 +10006,71 @@ ENDIF
 
                         ; Icon bar 0 (docked)
 
- EQUB $01               ; Launch
- EQUB $02               ; Market Price
- EQUB $03               ; Status Mode
- EQUB $04               ; Charts
- EQUB $05               ; Equip Ship
- EQUB $06               ; Save and load
- EQUB $07               ; Change commander name (only on save screen)
- EQUB $23               ; Data on System
- EQUB $08               ; Inventory
- EQUB $00               ; (blank)
- EQUB $00               ; (blank)
- EQUB $0C               ; Fast forward
+ EQUB  1                ; Launch
+ EQUB  2                ; Market Price
+ EQUB  3                ; Status Mode
+ EQUB  4                ; Charts
+ EQUB  5                ; Equip Ship
+ EQUB  6                ; Save and load
+ EQUB  7                ; Change commander name (only on save screen)
+ EQUB 35                ; Data on System
+ EQUB  8                ; Inventory
+ EQUB  0                ; (blank)
+ EQUB  0                ; (blank)
+ EQUB 12                ; Fast forward
 
- EQUD $00
+ EQUD  0
 
                         ; Icon bar 1 (flight)
 
- EQUB $11               ; Docking computer
- EQUB $02               ; Market Price
- EQUB $03               ; Status Mode
- EQUB $04               ; Charts
- EQUB $15               ; Front space view (and rear, left, right)
- EQUB $16               ; Hyperspace (only when system is selected)
- EQUB $17               ; E.C.M. (if fitted)
- EQUB $18               ; Target missile
- EQUB $19               ; Fire targetted missile
- EQUB $1A               ; Energy bomb (if fitted)
- EQUB $1B               ; Escape capsule (if fitted)
- EQUB $0C               ; Fast forward
+ EQUB 17                ; Docking computer
+ EQUB  2                ; Market Price
+ EQUB  3                ; Status Mode
+ EQUB  4                ; Charts
+ EQUB 21                ; Front space view (and rear, left, right)
+ EQUB 22                ; Hyperspace (only when system is selected)
+ EQUB 23                ; E.C.M. (if fitted)
+ EQUB 24                ; Target missile
+ EQUB 25                ; Fire targetted missile
+ EQUB 26                ; Energy bomb (if fitted)
+ EQUB 27                ; Escape capsule (if fitted)
+ EQUB 12                ; Fast forward
 
- EQUD $00
+ EQUD  0
 
                         ; Icon bar 2 (charts)
 
- EQUB $01               ; Launch
- EQUB $02               ; Market Price
- EQUB $24               ; Switch chart range (long, short)
- EQUB $23               ; Data on System
- EQUB $15               ; Front space view (only in flight)
- EQUB $26               ; Return pointer to current system
- EQUB $27               ; Search for system
- EQUB $16               ; Hyperspace (only when system is selected)
- EQUB $29               ; Galactic Hyperspace (if fitted)
- EQUB $17               ; E.C.M. (if fitted)
- EQUB $1B               ; Escape capsule (if fitted)
- EQUB $0C               ; Fast forward
+ EQUB  1                ; Launch
+ EQUB  2                ; Market Price
+ EQUB 36                ; Switch chart range (long, short)
+ EQUB 35                ; Data on System
+ EQUB 21                ; Front space view (only in flight)
+ EQUB 38                ; Return pointer to current system
+ EQUB 39                ; Search for system
+ EQUB 22                ; Hyperspace (only when system is selected)
+ EQUB 41                ; Galactic Hyperspace (if fitted)
+ EQUB 23                ; E.C.M. (if fitted)
+ EQUB 27                ; Escape capsule (if fitted)
+ EQUB 12                ; Fast forward
 
- EQUD $00
+ EQUD  0
 
                         ; Icon bar 3 (pause options)
 
- EQUB $31               ; Direction of y-axis
- EQUB $32               ; Damping toggle
- EQUB $33               ; Music toggle
- EQUB $34               ; Sound toggle
- EQUB $35               ; Number of pilots
- EQUB $00               ; (blank)
- EQUB $00               ; (blank)
- EQUB $00               ; (blank)
- EQUB $00               ; (blank)
- EQUB $00               ; (blank)
- EQUB $00               ; (blank)
- EQUB $3C               ; Restart
+ EQUB 49                ; Direction of y-axis
+ EQUB 50                ; Damping toggle
+ EQUB 51                ; Music toggle
+ EQUB 52                ; Sound toggle
+ EQUB 53                ; Number of pilots
+ EQUB  0                ; (blank)
+ EQUB  0                ; (blank)
+ EQUB  0                ; (blank)
+ EQUB  0                ; (blank)
+ EQUB  0                ; (blank)
+ EQUB  0                ; (blank)
+ EQUB 60                ; Restart
 
- EQUD $00
+ EQUD  0
 
 ; ******************************************************************************
 ;
@@ -10592,6 +10604,10 @@ ENDIF
 ;
 ;   Stack               The number of the bank to page into memory at $8000
 ;
+; Other entry points:
+;
+;   RTS4                Contains an RTS
+;
 ; ******************************************************************************
 
 .ResetBankP
@@ -10606,11 +10622,13 @@ ENDIF
  PLP                    ; Restore the processor flags, so we return the correct
                         ; Z and N flags for the value of A
 
+.RTS4
+
  RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: subm_ECE2
+;       Name: CheckPauseButton
 ;       Type: Subroutine
 ;   Category: ???
 ;    Summary: ???
@@ -10619,21 +10637,20 @@ ENDIF
 ;
 ; Other entry points:
 ;
-;   subm_ECE2-1         Contains an RTS
 ;
 ; ******************************************************************************
 
-.subm_ECE2
+.CheckPauseButton
 
  LDA pointerButton
- BEQ subm_ECE2-1
+ BEQ RTS4
 
 ; ******************************************************************************
 ;
-;       Name: subm_B1D4_b0
+;       Name: CheckForPause_b0
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: Call the subm_B1D4 routine in ROM bank 0
+;   Category: Keyboard
+;    Summary: Call the CheckForPause routine in ROM bank 0
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -10643,7 +10660,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.subm_B1D4_b0
+.CheckForPause_b0
 
  STA ASAV               ; Store the value of A so we can retrieve it below
 
@@ -10655,7 +10672,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR subm_B1D4          ; Call subm_B1D4, now that it is paged into memory
+ JSR CheckForPause      ; Call CheckForPause, now that it is paged into memory
 
  JMP ResetBankP         ; Jump to ResetBankP to retrieve the bank number we
                         ; stored above, page it back into memory and set the
@@ -10732,7 +10749,7 @@ ENDIF
  AND #$7F
 
  LDX disableMusic
- BMI subm_ECE2-1
+ BMI RTS4
 
  STA ASAV               ; Store the value of A so we can retrieve it below
 
@@ -10942,14 +10959,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B88C_b6
+;       Name: SaveAllToBuffer_b6
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: Call the subm_B88C routine in ROM bank 6
+;   Category: Save and load
+;    Summary: Call the SaveAllToBuffer routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.subm_B88C_b6
+.SaveAllToBuffer_b6
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -10957,7 +10974,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR subm_B88C          ; Call subm_B88C, now that it is paged into memory
+ JSR SaveAllToBuffer    ; Call SaveAllToBuffer, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -11375,19 +11392,19 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B358_b0
+;       Name: StartGame_b0
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: Switch to ROM bank 0 and call the subm_B358 routine
+;   Category: Start and end
+;    Summary: Switch to ROM bank 0 and call the StartGame routine
 ;
 ; ******************************************************************************
 
-.subm_B358_b0
+.StartGame_b0
 
  LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
 
- JMP subm_B358          ; Call subm_B358, which is now paged into memory, and
+ JMP StartGame          ; Call StartGame, which is now paged into memory, and
                         ; return from the subroutine using a tail call
 
 ; ******************************************************************************
@@ -11897,14 +11914,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_A166_b6
+;       Name: PauseGame_b6
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: Call the subm_A166 routine in ROM bank 6
+;   Category: Keyboard
+;    Summary: Call the PauseGame routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.subm_A166_b6
+.PauseGame_b6
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -11912,7 +11929,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR subm_A166          ; Call subm_A166, now that it is paged into memory
+ JSR PauseGame          ; Call PauseGame, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -11966,14 +11983,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B8FE_b6
+;       Name: LoadCurrentCmdr_b6
 ;       Type: Subroutine
 ;   Category: ???
-;    Summary: Call the subm_B8FE routine in ROM bank 6
+;    Summary: Call the LoadCurrentCmdr routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.subm_B8FE_b6
+.LoadCurrentCmdr_b6
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -11981,7 +11998,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR subm_B8FE          ; Call subm_B8FE, now that it is paged into memory
+ JSR LoadCurrentCmdr    ; Call LoadCurrentCmdr, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -12206,14 +12223,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_AC1D_b3
+;       Name: ShowIconBar_b3
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: Call the subm_AC1D routine in ROM bank 3
+;   Category: Icon bar
+;    Summary: Call the ShowIconBar routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.subm_AC1D_b3
+.ShowIconBar_b3
 
  STA ASAV               ; Store the value of A so we can retrieve it below
 
@@ -12228,7 +12245,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR subm_AC1D          ; Call subm_AC1D, now that it is paged into memory
+ JSR ShowIconBar        ; Call ShowIconBar, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -12238,7 +12255,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JMP subm_AC1D          ; Call subm_AC1D, which is already paged into memory,
+ JMP ShowIconBar          ; Call ShowIconBar, which is already paged into memory,
                         ; and return from the subroutine using a tail call
 
 ; ******************************************************************************

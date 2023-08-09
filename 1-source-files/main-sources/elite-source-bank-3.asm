@@ -2748,14 +2748,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_AC1D
+;       Name: ShowIconBar
 ;       Type: Subroutine
 ;   Category: Icon bar
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_AC1D
+.ShowIconBar
 
  TAY
  LDA QQ11
@@ -3338,6 +3338,24 @@ ENDIF
 ;   Category: Icon bar
 ;    Summary: Set up the icons on the icon bar to show all available options
 ;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The type of the icon bar to set up:
+;
+;                         * 0 = Docked
+;
+;                         * 1 = Flight
+;
+;                         * 2 = Charts
+;
+;                         * 3 = Pause options
+;
+;                         * 4 = Title screen copyright message
+;
+;                         * $FF = Hide the icon bar on row 27
+;
 ; ******************************************************************************
 
 .SetupIconBar
@@ -3873,7 +3891,7 @@ ENDIF
 ;       Name: subm_B0E1
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Load font patterns ???
+;    Summary: Load font patterns when bit 4 of view number is set
 ;
 ; ******************************************************************************
 

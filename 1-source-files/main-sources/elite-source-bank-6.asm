@@ -3621,14 +3621,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_A166
+;       Name: PauseGame
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Keyboard
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_A166
+.PauseGame
 
  TYA
  PHA
@@ -3653,7 +3653,7 @@ ENDIF
  LDA #$FF
  STA L045F
  LDA #3
- JSR subm_AC1D_b3
+ JSR ShowIconBar_b3
 
 .CA18B
 
@@ -3664,7 +3664,7 @@ ENDIF
  CMP #$50
  BNE CA1B1
  PLA
- JSR subm_AC1D_b3
+ JSR ShowIconBar_b3
  PLA
  STA L045F
  JSR WaitForNMI
@@ -4661,7 +4661,7 @@ ENDIF
 
  JSR subm_A917
  JSR subm_B63D_b3
- JMP subm_B358_b0
+ JMP StartGame_b0
 
 .CA72F
 
@@ -5074,7 +5074,7 @@ ENDIF
  JSR SendDrawPlaneToPPU
  LDA pointerButton
  BEQ CA995
- JSR subm_B1D4_b0
+ JSR CheckForPause_b0
 
 .CA995
 
@@ -5675,17 +5675,30 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LB2E7
+;       Name: saveHeader1_EN
 ;       Type: Subroutine
 ;   Category: Text
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.LB2E7
+.saveHeader1_EN
 
  EQUS "STORED COMMANDERS"
- EQUB $0C, $0C, $0C,   6,   0
+ EQUB $0C, $0C, $0C,   6
+ EQUB 0
+
+; ******************************************************************************
+;
+;       Name: saveHeader2_EN
+;       Type: Subroutine
+;   Category: Text
+;    Summary: ???
+;
+; ******************************************************************************
+
+.saveHeader2_EN
+
  EQUS "                    STORED"
  EQUB $0C
  EQUS "                    POSITIONS"
@@ -5695,10 +5708,32 @@ ENDIF
  EQUS "POSITION"
  EQUB 0
 
-.LB34E
+; ******************************************************************************
+;
+;       Name: saveHeader1_DE
+;       Type: Subroutine
+;   Category: Text
+;    Summary: ???
+;
+; ******************************************************************************
+
+.saveHeader1_DE
 
  EQUS "GESPEICHERTE KOMMANDANTEN"
- EQUB $0C, $0C, $0C,   6,   0
+ EQUB $0C, $0C, $0C,   6
+ EQUB 0
+
+; ******************************************************************************
+;
+;       Name: saveHeader2_DE
+;       Type: Subroutine
+;   Category: Text
+;    Summary: ???
+;
+; ******************************************************************************
+
+.saveHeader2_DE
+
  EQUS "                    GESP."
  EQUB $0C
  EQUS "                   POSITIONEN"
@@ -5708,10 +5743,32 @@ ENDIF
  EQUS "POSITION"
  EQUB 0
 
-.LB3BB
+; ******************************************************************************
+;
+;       Name: saveHeader1_FR
+;       Type: Subroutine
+;   Category: Text
+;    Summary: ???
+;
+; ******************************************************************************
+
+.saveHeader1_FR
 
  EQUS "COMMANDANTS SAUVEGARDES"
- EQUB $0C, $0C, $0C,   6,   0
+ EQUB $0C, $0C, $0C,   6
+ EQUB 0
+
+; ******************************************************************************
+;
+;       Name: saveHeader2_FR
+;       Type: Subroutine
+;   Category: Text
+;    Summary: ???
+;
+; ******************************************************************************
+
+.saveHeader2_FR
+
  EQUS "                    POSITIONS"
  EQUB $0C
  EQUS "                  SAUVEGARD<ES"
@@ -5721,41 +5778,106 @@ ENDIF
  EQUS "ACTUELLE"
  EQUB 0
 
-.LB42C
+; ******************************************************************************
+;
+;       Name: tabSaveHeader
+;       Type: Variable
+;   Category: Text
+;    Summary: ???
+;
+; ******************************************************************************
 
- EQUB 8, 4, 4, 5
+.tabSaveHeader
 
-.LB430
+ EQUB 8
+ EQUB 4
+ EQUB 4
+ EQUB 5
 
- EQUB $E8, $4E, $BB
+; ******************************************************************************
+;
+;       Name: saveHeader1Lo
+;       Type: Variable
+;   Category: Text
+;    Summary: ???
+;
+; ******************************************************************************
 
-.LB433
+.saveHeader1Lo
 
- EQUB $B2, $B3, $B3
+ EQUB LO(saveHeader1_EN)
+ EQUB LO(saveHeader1_DE)
+ EQUB LO(saveHeader1_FR)
 
-.LB436
+; ******************************************************************************
+;
+;       Name: saveHeader1Hi
+;       Type: Variable
+;   Category: Text
+;    Summary: ???
+;
+; ******************************************************************************
 
- EQUB $FE, $6C, $D7
+.saveHeader1Hi
 
-.LB439
+ EQUB HI(saveHeader1_EN)
+ EQUB HI(saveHeader1_DE)
+ EQUB HI(saveHeader1_FR)
 
- EQUB $B2, $B3, $B3
+; ******************************************************************************
+;
+;       Name: saveHeader2Lo
+;       Type: Variable
+;   Category: Text
+;    Summary: ???
+;
+; ******************************************************************************
 
-.LB43C
+.saveHeader2Lo
+
+ EQUB LO(saveHeader2_EN)
+ EQUB LO(saveHeader2_DE)
+ EQUB LO(saveHeader2_FR)
+
+; ******************************************************************************
+;
+;       Name: saveHeader2Hi
+;       Type: Variable
+;   Category: Text
+;    Summary: ???
+;
+; ******************************************************************************
+
+.saveHeader2Hi
+
+ EQUB HI(saveHeader2_EN)
+ EQUB HI(saveHeader2_DE)
+ EQUB HI(saveHeader2_FR)
+
+; ******************************************************************************
+;
+;       Name: saveSlotTiles
+;       Type: Variable
+;   Category: Save and load
+;    Summary: ???
+;
+; ******************************************************************************
+
+.saveSlotTiles
 
  EQUB $68, $6A, $69, $6A, $69, $6A, $69, $6A
  EQUB $6B, $6A, $69, $6A, $69, $6A, $6C, $00
 
 ; ******************************************************************************
 ;
-;       Name: subm_B44C
+;       Name: PrintSaveHeader
 ;       Type: Subroutine
 ;   Category: Text
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B44C
+.PrintSaveHeader
 
  LDY #0
 
@@ -5791,21 +5913,21 @@ ENDIF
  STY QQ17
  STY YC
  LDX chosenLanguage
- LDA LB42C,X
+ LDA tabSaveHeader,X
  STA XC
- LDA LB430,X
+ LDA saveHeader1Lo,X
  STA V
- LDA LB433,X
+ LDA saveHeader1Hi,X
  STA V+1
- JSR subm_B44C
+ JSR PrintSaveHeader
  LDA #$BB
  STA QQ11
  LDX chosenLanguage
- LDA LB436,X
+ LDA saveHeader2Lo,X
  STA V
- LDA LB439,X
+ LDA saveHeader2Hi,X
  STA V+1
- JSR subm_B44C
+ JSR PrintSaveHeader
  JSR NLIN4
  JSR subm_EB86
  LDY #$14
@@ -5818,7 +5940,7 @@ ENDIF
 
  LDA #$22
  STA attrSprite0,Y
- LDA LB43C,X
+ LDA saveSlotTiles,X
  BEQ CB4C6
  STA tileSprite0,Y
  LDA #$53
@@ -5861,7 +5983,7 @@ ENDIF
 
  CMP #8
  BEQ CB4E7
- JSR subm_B659
+ JSR PrintSaveName
 
 .CB4E7
 
@@ -5869,7 +5991,7 @@ ENDIF
  ADC #1
  CMP #9
  BCC loop_CB4E0
- JSR subm_B6BB
+ JSR HighlightSaveName
  JSR subm_8926_b0
  LDA #9
 
@@ -5889,7 +6011,7 @@ ENDIF
 
  LDX controller1Leftx8
  BPL CB50F
- JSR subm_B659
+ JSR PrintSaveName
  CMP #9
  BEQ CB50A
  LDA #0
@@ -5901,13 +6023,13 @@ ENDIF
 
 .CB50C
 
- JMP subm_B577
+ JMP MoveSaveHighlight
 
 .CB50F
 
  LDX controller1Rightx8
  BPL CB525
- JSR subm_B659
+ JSR PrintSaveName
  CMP #9
  BEQ CB520
  LDA #0
@@ -5944,7 +6066,7 @@ ENDIF
  CPX #7
  BEQ CB53D
  TXA
- JSR subm_B1D4_b0
+ JSR CheckForPause_b0
  PLA
  RTS
 
@@ -6012,24 +6134,24 @@ ENDIF
 .subm_B569
 
  LDA #9
- JSR subm_B6BB
- JSR subm_B6C7
+ JSR HighlightSaveName
+ JSR UpdateSaveScreen
  JSR subm_B55B
  JMP subm_B4F6
 
 ; ******************************************************************************
 ;
-;       Name: subm_B577
+;       Name: MoveSaveHighlight
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B577
+.MoveSaveHighlight
 
- JSR subm_B6BB
- JSR subm_B6C7
+ JSR HighlightSaveName
+ JSR UpdateSaveScreen
  JSR subm_B55B
 
 .CB580
@@ -6041,11 +6163,11 @@ ENDIF
  BPL CB598
  CMP #0
  BEQ CB598
- JSR subm_B659
+ JSR PrintSaveName
  SEC
  SBC #1
- JSR subm_B6BB
- JSR subm_B6C7
+ JSR HighlightSaveName
+ JSR UpdateSaveScreen
 
 .CB598
 
@@ -6053,24 +6175,24 @@ ENDIF
  BPL CB5AD
  CMP #7
  BCS CB5AD
- JSR subm_B659
+ JSR PrintSaveName
  CLC
  ADC #1
- JSR subm_B6BB
- JSR subm_B6C7
+ JSR HighlightSaveName
+ JSR UpdateSaveScreen
 
 .CB5AD
 
  LDX controller1Leftx8
  BPL CB5B8
- JSR subm_B659
+ JSR PrintSaveName
  JMP CB5CB
 
 .CB5B8
 
  LDX controller1Rightx8
  BPL CB5C5
- JSR subm_B659
+ JSR PrintSaveName
  LDA #4
  JMP subm_B569
 
@@ -6083,7 +6205,7 @@ ENDIF
 .CB5CB
 
  JSR subm_B6D0
- JSR subm_B6C7
+ JSR UpdateSaveScreen
  JSR subm_B55B
 
 .CB5D4
@@ -6099,7 +6221,7 @@ ENDIF
  SEC
  SBC #1
  JSR subm_B6D0
- JSR subm_B6C7
+ JSR UpdateSaveScreen
 
 .CB5EC
 
@@ -6111,7 +6233,7 @@ ENDIF
  CLC
  ADC #1
  JSR subm_B6D0
- JSR subm_B6C7
+ JSR UpdateSaveScreen
 
 .CB601
 
@@ -6121,7 +6243,7 @@ ENDIF
  BNE CB618
  JSR subm_B6E8
  LDA #9
- JSR subm_B854
+ JSR SaveToSlot
  JSR subm_AC5C_b3
  JMP subm_B569
 
@@ -6130,8 +6252,8 @@ ENDIF
  LDX controller1Rightx8
  BPL CB626
  JSR subm_B6E8
- JSR subm_B854
- JMP subm_B577
+ JSR SaveToSlot
+ JMP MoveSaveHighlight
 
 .CB626
 
@@ -6178,16 +6300,16 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B659
+;       Name: PrintSaveName
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B659
+.PrintSaveName
 
- JSR subm_B786
+ JSR SaveToBuffer
  PHA
  CMP #8
  BCC CB680
@@ -6227,14 +6349,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B68B
+;       Name: PrintBufferName
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B68B
+.PrintBufferName
 
  PHA
  LDY #0
@@ -6275,32 +6397,32 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B6BB
+;       Name: HighlightSaveName
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B6BB
+.HighlightSaveName
 
  LDX #2
  STX fontBitplane
- JSR subm_B659
+ JSR PrintSaveName
  LDX #1
  STX fontBitplane
  RTS
 
 ; ******************************************************************************
 ;
-;       Name: subm_B6C7
+;       Name: UpdateSaveScreen
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B6C7
+.UpdateSaveScreen
 
  PHA
  JSR SendScreenToPPU_b0
@@ -6333,7 +6455,7 @@ ENDIF
  ADC #6
  STA YC
  PLA
- JSR subm_B68B
+ JSR PrintBufferName
  LDX #1
  STX fontBitplane
  RTS
@@ -6374,14 +6496,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LB708
+;       Name: saveChecksums
 ;       Type: Variable
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.LB708
+.saveChecksums
 
  EQUB $4A, $5A, $48, $02, $53, $B7, $00, $00  ; B708: 4A 5A 48... JZH
  EQUB $94, $B4, $90, $04, $A6, $6F, $00, $00  ; B710: 94 B4 90... ...
@@ -6480,14 +6602,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B786
+;       Name: SaveToBuffer
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B786
+.SaveToBuffer
 
  PHA
 
@@ -6498,7 +6620,7 @@ ENDIF
  BEQ CB7E7
  CMP #8
  BEQ loop_CB779
- JSR subm_B833
+ JSR GetSaveSlotAddress
  LDY #72
 
 .CB797
@@ -6585,7 +6707,7 @@ ENDIF
 
 .loop_CB7D9
 
- LDA LB708,Y
+ LDA saveChecksums,Y
  STA BUF+73,X
  INY
  INX
@@ -6626,20 +6748,20 @@ ENDIF
  STA BUF+7
  PLA
  PHA
- JSR subm_B854
+ JSR SaveToSlot
  PLA
  RTS
 
 ; ******************************************************************************
 ;
-;       Name: subm_B818
+;       Name: ResetSaveSlots
 ;       Type: Subroutine
 ;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B818
+.ResetSaveSlots
 
  LDX #7
 
@@ -6647,7 +6769,7 @@ ENDIF
 
  TXA
  PHA
- JSR subm_B833
+ JSR GetSaveSlotAddress
  LDY #$0A
  LDA #1
  STA (SC),Y
@@ -6663,14 +6785,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B833
+;       Name: GetSaveSlotAddress
 ;       Type: Subroutine
 ;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B833
+.GetSaveSlotAddress
 
  ASL A                  ; Set X = A * 2
  TAX
@@ -6692,19 +6814,19 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B854
+;       Name: SaveToSlot
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B854
+.SaveToSlot
 
  PHA
  CMP #9
  BEQ CB879
- JSR subm_B833
+ JSR GetSaveSlotAddress
  LDA BUF+7
  AND #$7F
  STA BUF+7
@@ -6739,17 +6861,6 @@ ENDIF
  PLA
  RTS
 
-; ******************************************************************************
-;
-;       Name: subm_B878
-;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
-;
-; ******************************************************************************
-
-.subm_B878
-
  PHA
 
 .CB879
@@ -6769,14 +6880,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B88C
+;       Name: SaveAllToBuffer
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B88C
+.SaveAllToBuffer
 
  LDA #7
 
@@ -6785,7 +6896,7 @@ ENDIF
  PHA
  JSR WaitForNMI
  PLA
- JSR subm_B786
+ JSR SaveToBuffer
  SEC
  SBC #1
  BPL loop_CB88E
@@ -6917,14 +7028,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B8FE
+;       Name: LoadCurrentCmdr
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B8FE
+.LoadCurrentCmdr
 
  JSR JAMESON
  LDX #79
@@ -7063,7 +7174,7 @@ ENDIF
 
 .CB999
 
- JSR subm_ECE2
+ JSR CheckPauseButton
  JSR DORND
  AND #$0F
  TAX
@@ -7732,11 +7843,11 @@ ENDIF
  ORA controller1Start
  ORA controller1A
  BMI CBD3E
- JSR subm_B818
+ JSR ResetSaveSlots
 
 .CBD3E
 
- JSR subm_B88C_b6
+ JSR SaveAllToBuffer_b6
  LDA #$80
  STA S
 
