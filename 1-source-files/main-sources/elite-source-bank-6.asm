@@ -8027,18 +8027,24 @@ ENDIF
  STA QQ18Lo
  LDA LBE42,Y
  STA QQ18Hi
+
  LDA LBE45,Y
  STA TKN1Lo
  LDA LBE48,Y
  STA TKN1Hi
+
  LDA LBE4B,Y
  STA chosenLanguage
+
  LDA LBE4F,Y
  STA L04A9
+
  LDA LBE34,Y
  STA L00F9
+
  LDA LBE38,Y
  STA L03FD
+
  RTS
 
 ; ******************************************************************************

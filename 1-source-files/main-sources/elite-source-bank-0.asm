@@ -6802,7 +6802,10 @@ ENDIF
 
  LDA #0
  JSR subm_B39D
- JSR HideSprites5To63
+
+ JSR HideMostSprites    ; Hide all sprites except for sprite 0 and the icon bar
+                        ; pointer
+
  LDY #$0C
  JSR NOISE
  LDA #$80
@@ -14322,8 +14325,8 @@ ENDIF
                         ; hollow and yellow, so set A to 246, which is the tile
                         ; number for the hollow yellow dot
 
- STA tileSprite13       ; Set the tile number for sprite 13 to A, so we draw the
-                        ; compass dot using the correct pattern
+ STA tileSprite13       ; Set the tile pattern number for sprite 13 to A, so we
+                        ; draw the compass dot using the correct pattern
 
  RTS                    ; Return from the subroutine
 
@@ -17136,7 +17139,8 @@ ENDIF
  LDY #120
  JSR subm_B77A
 
- JSR HideSprites5To63
+ JSR HideMostSprites    ; Hide all sprites except for sprite 0 and the icon bar
+                        ; pointer
 
  LDA #30
  STA LASCT
@@ -21007,9 +21011,9 @@ ENDIF
                         ; have dashboards, so jump to scrn1 to skip clearing the
                         ; scanner as we want to retain it
 
-                        ; Strangely, we can naver get here, as we take the first
+                        ; Strangely, we can never get here, as we take the first
                         ; branch above when bit 7 of QQ11 is set, and we take
-                        ; the second branch when bit 7 of QQ11 is clear ???
+                        ; the second branch when bit 7 of QQ11 is clear
 
  JSR ClearScanner       ; Remove all ships from the scanner and hide the scanner
                         ; sprites
@@ -21027,7 +21031,7 @@ ENDIF
  LDA #16                ; Set the text row for in-flight messages in the space
  STA messYC             ; view to row 16
 
- LDX #0                 ; ???
+ LDX #0                 ; Set L046D = 0 ???
  STX L046D
 
  JSR SetDrawingBitplane ; Set the drawing bitplane to bitplane 0
@@ -21038,7 +21042,7 @@ ENDIF
  STA DTW2               ; Set bit 7 of DTW2 to indicate we are not currently
                         ; printing a word
 
- STA DTW1               ; ???
+ STA DTW1               ; Set bit 7 of DTW1 to indicate ???
 
  LDA #%00000000         ; Set DTW6 = %00000000 to disable lower case
  STA DTW6
@@ -21056,8 +21060,7 @@ ENDIF
  STA XC
  STA YC
 
- JSR SetViewPatterns_b3 ; Load the patterns for the new view that we setting up
-                        ; ???
+ JSR SetViewPatterns_b3 ; Load the patterns for the new view
 
                         ; We now set X to the type of icon bar to show in the
                         ; new view
@@ -21104,7 +21107,8 @@ ENDIF
 
  JSR subm_EB86          ; ??? Something to do with palettes and hiding sprites
 
- JSR ResetScanner_b3    ; ??? Reset the scanner sprites
+ JSR ResetScanner_b3    ; Reset the sprites used for drawing ships on the
+                        ; scanner
 
 .scrn3
 
@@ -21219,10 +21223,11 @@ ENDIF
  LDX chosenLanguage     ; Set X to the chosen language
 
  LDA QQ11               ; If this is the space view (QQ11 = 0), jump to scrn10
- BEQ scrn10
+ BEQ scrn10             ; to print the view name at the top of the screen
 
  CMP #1                 ; If this is not the title screen (QQ11 = 1), jump to
- BNE scrn12             ; scrn12
+ BNE scrn12             ; scrn12 to skip printing a title at the top of the
+                        ; screen
 
                         ; If we get here then the new view is the title screen
 
@@ -21233,27 +21238,35 @@ ENDIF
  LDA tabTitleScreen,X   ; title screen in the chosen language
  STA XC
 
- LDA #30                ; Set A = 30 so we print two-letter token 144 when we
+ LDA #30                ; Set A = 30 so we print recursive token 144 when we
                         ; jump to scrn11 ("--- E L I T E ---")
 
- BNE scrn11             ; Jump to scrn11 to print the token (this BNE is
-                        ; effectively a JMP as A is never zero)
+ BNE scrn11             ; Jump to scrn11 to print ("--- E L I T E ---") at the
+                        ; top of the screen (this BNE is effectively a JMP as
+                        ; A is never zero)
 
 .scrn10
 
                         ; If we get here then the new view is the space view
+                        ; and we jumped here with A = 0
 
- STA YC                 ; ???
+ STA YC                 ; Move the text cursor to row 0
 
- LDA tabSpaceView,X
- STA XC
+ LDA tabSpaceView,X     ; Move the text cursor to the correct column for the
+ STA XC                 ; space view name in the chosen language
 
- LDA L04A9
- AND #2
- BNE scrn13
- JSR PrintSpaceViewName
- JSR TT162
- LDA #$AF
+ LDA L04A9              ; If bit 1 of L04A9 is set, jump to scrn13 to print the
+ AND #%00000010         ; view name after the view noun (so we print "ANSICHT
+ BNE scrn13             ; VORN" and "ANSICHT HINTEN" instead of "FRONT VIEW"
+                        ; and "REAR VIEW", for example)
+
+ JSR PrintSpaceViewName ; Print the name of the current space view (i.e.
+                        ; "FRONT", "REAR", "LEFT" or "RIGHT")
+
+ JSR TT162              ; Print a space
+
+ LDA #175               ; Set A = 175 so the next instruction prints recursive
+                        ; token 15 ("VIEW ")
 
 .scrn11
 
@@ -21261,22 +21274,27 @@ ENDIF
 
 .scrn12
 
-                        ; If we get here then the new view is not the space view
-                        ; or title screen
-
- LDX #1
+ LDX #1                 ; Move the text cursor to column 1 on row 1
  STX XC
  STX YC
- DEX
+
+ DEX                    ; Set QQ17 = 0 to switch to ALL CAPS
  STX QQ17
- RTS
+
+ RTS                    ; Return from the subroutine
 
 .scrn13
 
- LDA #$AF
+                        ; If we get here then we want to print the view name
+                        ; after the view noun
+
+ LDA #175               ; Print recursive token 15 ("VIEW ") followed by a space
  JSR spc
- JSR PrintSpaceViewName
- JMP scrn12
+
+ JSR PrintSpaceViewName ; Print the name of the current space view (i.e.
+                        ; "FRONT", "REAR", "LEFT" or "RIGHT")
+
+ JMP scrn12             ; Jump back to scrn12 to finish off
 
 ; ******************************************************************************
 ;

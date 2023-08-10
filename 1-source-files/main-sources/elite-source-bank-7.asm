@@ -10090,19 +10090,22 @@ ENDIF
 
  LDY #152               ; Set Y so we start hiding from sprite 152 / 4 = 38
 
-                        ; Fall through into HideSprites1 to hide NOSTM+1 sprites
-                        ; from sprite 38 onwards (i.e. 38 to 58 in normal space
-                        ; when NOSTM is 20, or 38 to 41 in witchspace when NOSTM
-                        ; is 3)
+                        ; Fall through into HideSpritesPlus1 to hide NOSTM+1
+                        ; sprites from sprite 38 onwards (i.e. 38 to 58 in
+                        ; normal space when NOSTM is 20, or 38 to 41 in
+                        ; witchspace when NOSTM is 3)
 
 ; ******************************************************************************
 ;
-;       Name: HideSprites1
+;       Name: HideSpritesPlus1
 ;       Type: Subroutine
 ;   Category: Drawing sprites
 ;    Summary: Hide X + 1 sprites from sprite Y / 4 onwards
 ;
 ; ------------------------------------------------------------------------------
+;
+; This routine is similar to HideSprites, except it hides X + 1 sprites rather
+; than X sprites.
 ;
 ; Arguments:
 ;
@@ -10112,7 +10115,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.HideSprites1
+.HideSpritesPlus1
 
  LDA #240               ; Set A to the y-coordinate that's just below the bottom
                         ; of the screen, so we can hide the required sprites by
@@ -10147,8 +10150,8 @@ ENDIF
 .subm_EB86
 
  LDA QQ11a              ; If QQ11 = QQ11a, then we are not currently changing
- CMP QQ11               ; view, so jump to HideSprites5To63 to hide sprites 5
- BEQ HideSprites5To63   ; to 63
+ CMP QQ11               ; view, so jump to HideMostSprites to hide all sprites
+ BEQ HideMostSprites    ; except for sprite 0 and the icon bar pointer
 
 ; ******************************************************************************
 ;
@@ -10165,14 +10168,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: HideSprites5To63
+;       Name: HideMostSprites
 ;       Type: Subroutine
 ;   Category: Drawing sprites
-;    Summary: Hide sprites 5 to 63
+;    Summary: Hide all sprites except for sprite 0 and the icon bar pointer
 ;
 ; ******************************************************************************
 
-.HideSprites5To63
+.HideMostSprites
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -10181,9 +10184,12 @@ ENDIF
 
  LDY #20                ; Set Y so we start hiding from sprite 20 / 4 = 5
 
- BNE HideSprites1       ; Jump to HideSprites1 to hide 59 sprites from sprite
-                        ; 5 onwards (i.e. 5 to 63), returning from the
-                        ; subroutine using a tail call
+ BNE HideSpritesPlus1   ; Jump to HideSpritesPlus1 to hide 59 sprites from
+                        ; sprite 5 onwards (i.e. sprites 5 to 63, which only
+                        ; leaves sprite 0 and the icon bar pointer sprites 1 to
+                        ; 4)
+                        ;
+                        ; We return from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -13273,7 +13279,10 @@ ENDIF
  JSR subm_B63D_b3
  LDA #0
  JSR ChooseMusic_b6
- JSR HideSprites5To63
+
+ JSR HideMostSprites    ; Hide all sprites except for sprite 0 and the icon bar
+                        ; pointer
+
  LDA #$FF
  STA QQ11a
  LDA #1
