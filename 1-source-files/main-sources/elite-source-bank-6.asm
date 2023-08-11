@@ -3324,7 +3324,7 @@ ENDIF
  STA attrSprite8
  LDA #$CB
  STA xSprite8
- LDA L04A9
+ LDA languageNumber
  AND #4
  BEQ C9FE8
  LDA #$10
@@ -3341,7 +3341,7 @@ ENDIF
  STA attrSprite9
  LDA #$D3
  STA xSprite9
- LDA L04A9
+ LDA languageNumber
  AND #4
  BEQ CA006
  LDA #$10
@@ -3358,7 +3358,7 @@ ENDIF
  STA attrSprite10
  LDA #$DB
  STA xSprite10
- LDA L04A9
+ LDA languageNumber
  AND #4
  BEQ CA024
  LDA #$10
@@ -3388,7 +3388,7 @@ ENDIF
  STA attrSprite11
  LDA #$C3
  STA xSprite11
- LDA L04A9
+ LDA languageNumber
  AND #4
  BEQ CA043
  LDA #$10
@@ -3418,7 +3418,7 @@ ENDIF
  STA attrSprite12
  LDA #$E3
  STA xSprite12
- LDA L04A9
+ LDA languageNumber
  AND #4
  BEQ CA062
  LDA #$10
@@ -4015,7 +4015,7 @@ ENDIF
  AND #8
  BNE CA36E
  LDY #$6C
- JSR subm_A38E
+ JSR MSBAR_b6
 
 .CA368
 
@@ -4025,7 +4025,7 @@ ENDIF
 
 .CA36E
 
- JSR subm_A38E
+ JSR MSBAR_b6
 
 .CA371
 
@@ -4044,7 +4044,7 @@ ENDIF
 ;
 ;       Name: conditionAttrs
 ;       Type: Variable
-;   Category: Status
+;   Category: Dashboard
 ;    Summary: Sprite attributes for the status condition indicator on the
 ;             dashboard
 ;
@@ -4064,7 +4064,7 @@ ENDIF
 ;
 ;       Name: conditionTiles
 ;       Type: Variable
-;   Category: Status
+;   Category: Dashboard
 ;    Summary: Sprite tile numbers attributes for the status condition indicator
 ;             on the dashboard
 ;
@@ -4082,18 +4082,18 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_A38E
+;       Name: MSBAR_b6
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Dashboard
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_A38E
+.MSBAR_b6
 
  TYA
  PHA
- LDY LA39A,X
+ LDY missileNames_b6,X
  PLA
  STA nameBuffer0+704,Y
  LDY #0
@@ -4101,14 +4101,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LA39A
+;       Name: missileNames_b6
 ;       Type: Variable
-;   Category: ???
+;   Category: Dashboard
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.LA39A
+.missileNames_b6
 
  EQUB $00, $5F, $5E, $3F, $3E                 ; A39A: 00 5F 5E... ._^
 
@@ -4594,7 +4594,7 @@ ENDIF
  JSR subm_A761
  PLA
  BNE CA6D3
- LDX chosenLanguage
+ LDX languageIndex
  LDA LACAE,X
  LDY LACB2,X
  TAX
@@ -4665,7 +4665,7 @@ ENDIF
 
  ADC #$3A
  STA K5
- LDX chosenLanguage
+ LDX languageIndex
  LDA LACB6,X
  LDY LACBA,X
  TAX
@@ -4679,21 +4679,21 @@ ENDIF
 
 .CA72F
 
- LDX chosenLanguage
+ LDX languageIndex
  LDA LACBE,X
  LDY LACC2,X
  TAX
  LDA #6
  JSR subm_A917
  JSR WaitForNMI
- LDX chosenLanguage
+ LDX languageIndex
  LDA LACC6,X
  LDY LACCA,X
  TAX
  LDA #5
  JSR subm_A917
  JSR WaitForNMI
- LDX chosenLanguage
+ LDX languageIndex
  LDA LACCE,X
  LDY LACD2,X
  TAX
@@ -5419,7 +5419,7 @@ ENDIF
  JSR subm_AAC0
  STX XX15+4
  STA XX15+5
- JSR CLIP_b1
+ JSR CLIP_LOIN_b1
  LDY YP
  JMP CAAEA
 
@@ -5929,7 +5929,7 @@ ENDIF
  STY autoPlayDemo
  STY QQ17
  STY YC
- LDX chosenLanguage
+ LDX languageIndex
  LDA tabSaveHeader,X
  STA XC
  LDA saveHeader1Lo,X
@@ -5939,7 +5939,7 @@ ENDIF
  JSR PrintSaveHeader
  LDA #$BB
  STA QQ11
- LDX chosenLanguage
+ LDX languageIndex
  LDA saveHeader2Lo,X
  STA V
  LDA saveHeader2Hi,X
@@ -7548,7 +7548,7 @@ ENDIF
  LDA COK
  BMI CBBB0
  INY
- LDX chosenLanguage
+ LDX languageIndex
 
 .loop_CBB79
 
@@ -7842,7 +7842,7 @@ ENDIF
  INC XC
  INC XC
  INY
- LDA LBE4B,Y
+ LDA languageIndexes,Y
  BPL loop_CBCF4
  STY systemNumber
 
@@ -8003,49 +8003,60 @@ ENDIF
 ;
 ;       Name: SetChosenLanguage
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Start and end
+;    Summary: Set various global variables according to the language chosen on
+;             the start screeen
 ;
 ; ******************************************************************************
 
 .SetChosenLanguage
 
- LDY LASCT
+ LDY LASCT              ; Set Y to the language choice, which gets stored in
+                        ; LASCT by the ChooseLanguage routine
+
+                        ; Fall through to set the language chosen in Y
 
 ; ******************************************************************************
 ;
 ;       Name: SetLanguage
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Start and end
+;    Summary: Set various global variables for a specified language
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   Y                   The number of the language choice to set
 ;
 ; ******************************************************************************
 
 .SetLanguage
 
- LDA LBE3F,Y
- STA QQ18Lo
- LDA LBE42,Y
+ LDA tokensLo,Y         ; Set (QQ18Hi QQ18Lo) to the language's entry from the
+ STA QQ18Lo             ; (tokensHi tokensLo) table
+ LDA tokensHi,Y
  STA QQ18Hi
 
- LDA LBE45,Y
- STA TKN1Lo
- LDA LBE48,Y
+ LDA extendedTokensLo,Y ; Set (TKN1Hi TKN1Lo) to the language's entry from the
+ STA TKN1Lo             ; the (extendedTokensHi extendedTokensLo) table
+ LDA extendedTokensHi,Y
  STA TKN1Hi
 
- LDA LBE4B,Y
- STA chosenLanguage
+ LDA languageIndexes,Y  ; Set languageIndex to the language's index from the
+ STA languageIndex      ; languageIndexes table
 
- LDA LBE4F,Y
- STA L04A9
+ LDA languageNumbers,Y  ; Set languageNumber to the language's flags from the
+ STA languageNumber     ; languageNumbers table
 
- LDA LBE34,Y
- STA L00F9
+ LDA notUsedLang,Y      ; Set notUsed to the language's setting from the
+ STA notUsed            ; notUsedLang table (this variable is never read and
+                        ; appears to be unused)
 
- LDA LBE38,Y
- STA L03FD
+ LDA decimalPointLang,Y ; Set decimalPoint to the language's decimal point
+ STA decimalPoint       ; character from the decimalPointLang table
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -8058,119 +8069,299 @@ ENDIF
 
 .LBE2C
 
- EQUB $02, $0C, $16, $11                      ; BE2C: 02 0C 16... ...
-
-.LBE30
-
- EQUB $17, $18, $17, $18                      ; BE30: 17 18 17... ...
-
-.LBE34
-
- EQUB $5B, $60, $60, $60                      ; BE34: 5B 60 60... [``
-
-.LBE38
-
- EQUB $2E, $2E, $2C, $2E                      ; BE38: 2E 2E 2C... ..,
-
-.LBE3C
-
- EQUB $06, $06, $07                           ; BE3C: 06 06 07    ...
-
-.LBE3F
-
- EQUB $CF, $9C, $4D                           ; BE3F: CF 9C 4D    ..M
-
-.LBE42
-
- EQUB $A3, $A7, $AC                           ; BE42: A3 A7 AC    ...
-
-.LBE45
-
- EQUB $0C, $FD, $2C                           ; BE45: 0C FD 2C    ..,
-
-.LBE48
-
- EQUB $80, $8D, $9A                           ; BE48: 80 8D 9A    ...
-
-.LBE4B
-
- EQUB $00, $01, $02, $FF                      ; BE4B: 00 01 02... ...
-
-.LBE4F
-
- EQUB $01, $02, $04                           ; BE4F: 01 02 04    ...
+ EQUB $02, $0C, $16, $11
 
 ; ******************************************************************************
 ;
-;       Name: subm_BE52
-;       Type: Subroutine
+;       Name: LBE2C
+;       Type: Variable
 ;   Category: ???
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_BE52
+.LBE30
 
- LDA QQ15+1
- AND #7
+ EQUB $17, $18, $17, $18
+
+; ******************************************************************************
+;
+;       Name: notUsedLang
+;       Type: Variable
+;   Category: Text
+;    Summary: This value is used to set the notUsed variable for the chosen
+;             language, but it is never read so this appears to be unused
+;
+; ******************************************************************************
+
+.notUsedLang
+
+ EQUB $5B               ; English
+
+ EQUB $60               ; German
+
+ EQUB $60               ; French
+
+ EQUB $60               ; There is no fourth language, so this byte is ignored
+
+; ******************************************************************************
+;
+;       Name: decimalPointLang
+;       Type: Variable
+;   Category: Text
+;    Summary: ???
+;
+; ******************************************************************************
+
+.decimalPointLang
+
+ EQUB '.'               ; English
+
+ EQUB '.'               ; German
+
+ EQUB ','               ; French
+
+ EQUB '.'               ; There is no fourth language, so this byte is ignored
+
+; ******************************************************************************
+;
+;       Name: LBE3C
+;       Type: Variable
+;   Category: ???
+;    Summary: ???
+;
+; ******************************************************************************
+
+.LBE3C
+
+ EQUB $06, $06, $07                           ; BE3C: 06 06 07    ...
+
+; ******************************************************************************
+;
+;       Name: tokensLo
+;       Type: Variable
+;   Category: Text
+;    Summary: Low byte of the text token table for the chosen language
+;
+; ******************************************************************************
+
+.tokensLo
+
+ EQUB LO(QQ18)          ; English
+
+ EQUB LO(QQ18_DE)       ; German
+
+ EQUB LO(QQ18_FR)       ; French
+
+; ******************************************************************************
+;
+;       Name: tokensHi
+;       Type: Variable
+;   Category: Text
+;    Summary: High byte of the text token table for the chosen language
+;
+; ******************************************************************************
+
+.tokensHi
+
+ EQUB HI(QQ18)          ; English
+
+ EQUB HI(QQ18_DE)       ; German
+
+ EQUB HI(QQ18_FR)       ; French
+
+; ******************************************************************************
+;
+;       Name: extendedTokensLo
+;       Type: Variable
+;   Category: Text
+;    Summary: Low byte of the extended text token table for the chosen language
+;
+; ******************************************************************************
+
+.extendedTokensLo
+
+ EQUB LO(TKN1)          ; English
+
+ EQUB LO(TKN1_DE)       ; German
+
+ EQUB LO(TKN1_FR)       ; French
+
+; ******************************************************************************
+;
+;       Name: extendedTokensHi
+;       Type: Variable
+;   Category: Text
+;    Summary: High byte of the extended text token table for the chosen language
+;
+; ******************************************************************************
+
+.extendedTokensHi
+
+ EQUB HI(TKN1)          ; English
+
+ EQUB HI(TKN1_DE)       ; German
+
+ EQUB HI(TKN1_FR)       ; French
+
+; ******************************************************************************
+;
+;       Name: languageIndexes
+;       Type: Variable
+;   Category: Text
+;    Summary: The index of the chosen language for looking up values from
+;             language-indexed tables
+;
+; ******************************************************************************
+
+.languageIndexes
+
+ EQUB 0                 ; English
+
+ EQUB 1                 ; German
+
+ EQUB 2                 ; French
+
+ EQUB $FF               ; There is no fourth language, so this byte is ignored
+
+; ******************************************************************************
+;
+;       Name: languageNumbers
+;       Type: Variable
+;   Category: Text
+;    Summary: The language number for the chosen language, as a set bit within
+;             a flag byte
+;
+; ******************************************************************************
+
+.languageNumbers
+
+ EQUB %00000001         ; English
+
+ EQUB %00000010         ; German
+
+ EQUB %00000100         ; French
+
+; ******************************************************************************
+;
+;       Name: TT24
+;       Type: Subroutine
+;   Category: Universe
+;    Summary: Calculate system data from the system seeds
+;  Deep dive: Generating system data
+;             Galaxy and system seeds
+;
+; ------------------------------------------------------------------------------
+;
+; Calculate system data from the seeds in QQ15 and store them in the relevant
+; locations. Specifically, this routine calculates the following from the three
+; 16-bit seeds in QQ15 (using only s0_hi, s1_hi and s1_lo):
+;
+;   QQ3 = economy (0-7)
+;   QQ4 = government (0-7)
+;   QQ5 = technology level (0-14)
+;   QQ6 = population * 10 (1-71)
+;   QQ7 = productivity (96-62480)
+;
+; The ranges of the various values are shown in brackets. Note that the radius
+; and type of inhabitant are calculated on-the-fly in the TT25 routine when
+; the system data gets displayed, so they aren't calculated here.
+;
+; ******************************************************************************
+
+.TT24
+
+ LDA QQ15+1             ; Fetch s0_hi and extract bits 0-2 to determine the
+ AND #%00000111         ; system's economy, and store in QQ3
  STA QQ3
- LDA QQ15+2
+
+ LDA QQ15+2             ; Fetch s1_lo and extract bits 3-5 to determine the
+ LSR A                  ; system's government, and store in QQ4
  LSR A
  LSR A
- LSR A
- AND #7
+ AND #%00000111
  STA QQ4
- LSR A
- BNE CBE6E
- LDA QQ3
- ORA #2
+
+ LSR A                  ; If government isn't anarchy or feudal, skip to TT77,
+ BNE TT77               ; as we need to fix the economy of anarchy and feudal
+                        ; systems so they can't be rich
+
+ LDA QQ3                ; Set bit 1 of the economy in QQ3 to fix the economy
+ ORA #%00000010         ; for anarchy and feudal governments
  STA QQ3
 
-.CBE6E
+.TT77
 
- LDA QQ3
- EOR #7
- CLC
- STA QQ5
- LDA QQ15+3
- AND #3
+ LDA QQ3                ; Now to work out the tech level, which we do like this:
+ EOR #%00000111         ;
+ CLC                    ;   flipped_economy + (s1_hi AND %11) + (government / 2)
+ STA QQ5                ;
+                        ; or, in terms of memory locations:
+                        ;
+                        ;   QQ5 = (QQ3 EOR %111) + (QQ15+3 AND %11) + (QQ4 / 2)
+                        ;
+                        ; We start by setting QQ5 = QQ3 EOR %111
+
+ LDA QQ15+3             ; We then take the first 2 bits of s1_hi (QQ15+3) and
+ AND #%00000011         ; add it into QQ5
  ADC QQ5
  STA QQ5
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA QQ4
- LSR A
- ADC QQ5
+ LDA QQ4                ; And finally we add QQ4 / 2 and store the result in
+ LSR A                  ; QQ5, using LSR then ADC to divide by 2, which rounds
+ ADC QQ5                ; up the result for odd-numbered government types
  STA QQ5
- ASL A
- ASL A
- ADC QQ3
- ADC QQ4
- ADC #1
- STA QQ6
- LDA QQ3
- EOR #7
- ADC #3
- STA P
- LDA QQ4
- ADC #4
- STA Q
- JSR MULTU
- LDA QQ6
- STA Q
- JSR MULTU
+
+ ASL A                  ; Now to work out the population, like so:
+ ASL A                  ;
+ ADC QQ3                ;   (tech level * 4) + economy + government + 1
+ ADC QQ4                ;
+ ADC #1                 ; or, in terms of memory locations:
+ STA QQ6                ;
+                        ;   QQ6 = (QQ5 * 4) + QQ3 + QQ4 + 1
+
+ LDA QQ3                ; Finally, we work out productivity, like this:
+ EOR #%00000111         ;
+ ADC #3                 ;  (flipped_economy + 3) * (government + 4)
+ STA P                  ;                        * population
+ LDA QQ4                ;                        * 8
+ ADC #4                 ;
+ STA Q                  ; or, in terms of memory locations:
+ JSR MULTU              ;
+                        ;   QQ7 = (QQ3 EOR %111 + 3) * (QQ4 + 4) * QQ6 * 8
+                        ;
+                        ; We do the first step by setting P to the first
+                        ; expression in brackets and Q to the second, and
+                        ; calling MULTU, so now (A P) = P * Q. The highest this
+                        ; can be is 10 * 11 (as the maximum values of economy
+                        ; and government are 7), so the high byte of the result
+                        ; will always be 0, so we actually have:
+                        ;
+                        ;   P = P * Q
+                        ;     = (flipped_economy + 3) * (government + 4)
+
+ LDA QQ6                ; We now take the result in P and multiply by the
+ STA Q                  ; population to get the productivity, by setting Q to
+ JSR MULTU              ; the population from QQ6 and calling MULTU again, so
+                        ; now we have:
+                        ;
+                        ;   (A P) = P * population
+
+ ASL P                  ; Next we multiply the result by 8, as a 16-bit number,
+ ROL A                  ; so we shift both bytes to the left three times, using
+ ASL P                  ; the C flag to carry bits from bit 7 of the low byte
+ ROL A                  ; into bit 0 of the high byte
  ASL P
  ROL A
- ASL P
- ROL A
- ASL P
- ROL A
- STA QQ7+1
- LDA P
+
+ STA QQ7+1              ; Finally, we store the productivity in two bytes, with
+ LDA P                  ; the low byte in QQ7 and the high byte in QQ7+1
  STA QQ7
- RTS
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;

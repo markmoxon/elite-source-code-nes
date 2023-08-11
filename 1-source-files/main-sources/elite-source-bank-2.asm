@@ -14360,7 +14360,7 @@ ENDIF
  LDA V+1
  PHA
 
- LDY chosenLanguage     ; Set Y to the chosen language
+ LDY languageIndex      ; Set Y to the chosen language
 
  LDA RUTOK_LO,Y         ; Set V(1 0) to the address of the RUTOK table for ths
  STA V                  ; chosen language
@@ -15774,7 +15774,7 @@ ENDIF
  BPL PD1                ; not docked, jump to PD1 to show the standard "goat
                         ; soup" description
 
- LDX chosenLanguage     ; ???
+ LDX languageIndex      ; ???
  LDA RUPLA_LO,X
  STA SC
  LDA RUPLA_HI,X
@@ -16239,7 +16239,7 @@ ENDIF
  BEQ TT49               ; If the character is null, we've reached the end of
                         ; this token, so jump to TT49
 
- INY                    ; Increment character pointer and loop back round for
+ INY                    ; Increment character pointer and loop back around for
  BNE TT51               ; the next character in this token, assuming Y hasn't
                         ; yet wrapped around to 0
 
@@ -17251,23 +17251,49 @@ ENDIF
 ;       Name: lowerCase
 ;       Type: Variable
 ;   Category: Text
-;    Summary: Lookup table for converting letters to lower case
+;    Summary: Lookup table for converting ASCII characters to lower case
+;             characters in the game's text font
 ;
 ; ******************************************************************************
 
 .lowerCase
 
- FOR I%, 0, 31
+ EQUB  0,  1,  2,  3    ; Control codes map to themselves
+ EQUB  4,  5,  6,  7
+ EQUB  8,  9, 10, 11
+ EQUB 12, 13, 14, 15
+ EQUB 16, 17, 18, 19
+ EQUB 20, 21, 22, 23
+ EQUB 24, 25, 26, 27
+ EQUB 28, 29, 30, 31
 
-  EQUB I%               ; Control codes map to themselves
+ EQUS " !$/$%&'()*+,"   ; These punctuation characters map to themselves apart
+ EQUS "-./0123456789"   ; from the following (ASCII on left, NES on right):
+ EQUS ":;%*>?`"         ;
+                        ;   " -> $
+                        ;   # -> /
+                        ;   < -> %
+                        ;   = -> *
+                        ;   @ -> `
 
- NEXT
+ EQUS "abcdefghijklm"   ; Capital letters map to their lower case equivalents
+ EQUS "nopqrstuvwxyz"
 
- EQUS " !$/$%&'()*+,-./0123456789:;%*>?`abcdef"
- EQUS "ghijklmnopqrstuvwxyz{|};+`abcdefghijklm"
- EQUS "nopqrstuvwxyz{|}~"
+ EQUS "{|};+`"          ; These punctuation characters map to themselves apart
+                        ; from the following (ASCII on left, NES on right):
+                        ;
+                        ;   [ -> {
+                        ;   ; -> |
+                        ;   ] -> }
+                        ;   ^ to ;
+                        ;   _ to +
 
- EQUB 127
+ EQUS "abcdefghijklm"   ; Lower case characters map to themselves
+ EQUS "nopqrstuvwxyz"
+
+ EQUS "{|}~"            ; These punctuation characters map to themselves
+
+ EQUB 127               ; Control codes map to themselves
 
 ; ******************************************************************************
 ;

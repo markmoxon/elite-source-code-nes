@@ -2746,7 +2746,7 @@ ENDIF
 
  ASL A                  ; Set SC(1 0) = pattBuffer0 + tileNumber * 8
  STA SC                 ;
- LDA #LO(pattBuffer0)   ; So this contains the pattern in pattern buffer 0 that
+ LDA #LO(pattBuffer0)   ; So this points to the pattern in pattern buffer 0 that
  ROL A                  ; corresponds to the next free file in tileNumber
  ASL SC
  ROL A

@@ -2070,26 +2070,50 @@ ENDIF
 
 .CA90B
 
-                        ; We do the following eight times, so it sends bitplane
-                        ; 0 of the pattern to the PPU
+                        ; We repeat the following code eight times, so it sends
+                        ; all eight bytes of the pattern in bitplane 0 to the
+                        ; PPU
 
- FOR I%, 0, 7
+ LDA (SC),Y             ; Send the Y-th byte of SC(1 0) to the PPU and increment
+ STA PPU_DATA           ; the index in Y
+ INY
 
-  LDA (SC),Y            ; Send the Y-th byte of SC(1 0) to the PPU
-  STA PPU_DATA
+ LDA (SC),Y             ; Send the Y-th byte of SC(1 0) to the PPU and increment
+ STA PPU_DATA           ; the index in Y
+ INY
 
-  INY                   ; Increment the index in Y
+ LDA (SC),Y             ; Send the Y-th byte of SC(1 0) to the PPU and increment
+ STA PPU_DATA           ; the index in Y
+ INY
 
- NEXT
+ LDA (SC),Y             ; Send the Y-th byte of SC(1 0) to the PPU and increment
+ STA PPU_DATA           ; the index in Y
+ INY
+
+ LDA (SC),Y             ; Send the Y-th byte of SC(1 0) to the PPU and increment
+ STA PPU_DATA           ; the index in Y
+ INY
+
+ LDA (SC),Y             ; Send the Y-th byte of SC(1 0) to the PPU and increment
+ STA PPU_DATA           ; the index in Y
+ INY
+
+ LDA (SC),Y             ; Send the Y-th byte of SC(1 0) to the PPU and increment
+ STA PPU_DATA           ; the index in Y
+ INY
+
+ LDA (SC),Y             ; Send the Y-th byte of SC(1 0) to the PPU and increment
+ STA PPU_DATA           ; the index in Y
+ INY
 
  BNE CA93F
  INC SC+1
 
 .CA93F
 
- LDA #0                 ; Send the pattern's second bitplane to the PPU, so
- STA PPU_DATA           ; bitplane 1 is made up of zeroes
- STA PPU_DATA
+ LDA #0                 ; Send the pattern's second bitplane to the PPU, so all
+ STA PPU_DATA           ; eight bytes of the pattern in bitplane 1 are set to
+ STA PPU_DATA           ; zero
  STA PPU_DATA
  STA PPU_DATA
  STA PPU_DATA
@@ -3925,128 +3949,216 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B0E1
+;       Name: SetInvertedFont
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Load font patterns when bit 4 of view number is set
+;    Summary: Load the font into pattern buffer 0, and the inverted font into
+;             pattern buffer 1 (if this is a save and load screen)
+;
+; ------------------------------------------------------------------------------
+;
+; Pattern buffer 0 contains the font, while pattern buffer 1 either contains the
+; inverted font (for the save and load screen) or a set of filled blocks (for
+; all other screens).
+;
+; This is called with A = 66, so this load the font into patterns #66 to #160.
+;
+; Arguments:
+;
+;   A                   The pattern number to start at when loading the font
+;                       patterns into the pattern buffers
 ;
 ; ******************************************************************************
 
-.subm_B0E1
+.SetInvertedFont
 
- STA SC
- SEC
- SBC #$20
+ STA SC                 ; Set SC to the pattern number where we need to load the
+                        ; font patterns
+
+ SEC                    ; Set L00D9 = A - 32 ???
+ SBC #32
  STA L00D9
- LDA SC
- CLC
- ADC #$5F
- STA tileNumber
- LDX #0
- LDA QQ11
- CMP #$BB
- BNE CB0F8
- DEX
 
-.CB0F8
+ LDA SC                 ; Set tileNumber = SC + 95
+ CLC                    ;
+ ADC #95                ; There are 95 characters in the font, and we are about
+ STA tileNumber         ; to load them at pattern number SC in the buffers, so
+                        ; this sets the next free tile number in tileNumber to
+                        ; the tile after the 95 font patterns we are loading
+                        ;
+                        ; The font pattern data at fontImage actually contains
+                        ; 96 characters, but we ignore the last one, which is
+                        ; full of random noise
 
- STX T
- LDA #0
- ASL SC
- ROL A
- ASL SC
+ LDX #0                 ; Set X = 0 to use in the font inversion logic below
+
+ LDA QQ11               ; If this is not the save and load screen with bits 4
+ CMP #$BB               ; and 5 set, jump to ifon1 to skip the following
+ BNE ifon1              ; instruction
+
+ DEX                    ; This is the save and load screen with bits 4 and 5
+                        ; set (so the save screen is on-screen and the headers
+                        ; have been drawn), so set X = $FF to use in the font
+                        ; inversion logic below
+
+.ifon1
+
+ STX T                  ; Set T = X, so we have the following:
+                        ;
+                        ;   * T = $FF if is the save and load screen with bits
+                        ;         4 and 5 set (so the save screen is on-screen
+                        ;         and the headers have been drawn)
+                        ;
+                        ;   * T = 0 for all other screens
+                        ;
+                        ; This is used to invert the font characters below
+
+ LDA #0                 ; Set SC2(1 0) = pattBuffer0 + SC * 8
+ ASL SC                 ;
+ ROL A                  ; So this points to the pattern in pattern buffer 0 that
+ ASL SC                 ; corresponds to tile number SC
  ROL A
  ASL SC
  ROL A
  ADC #HI(pattBuffer0)
  STA SC2+1
- ADC #8
- STA SC+1
- LDA SC
- STA SC2
 
- LDA #HI(fontImage)     ; Set V(1 0) = fontImage
- STA V+1
+ ADC #8                 ; Set SC(1 0) = SC2(1 0) + (8 0)
+ STA SC+1               ;
+ LDA SC                 ; Pattern buffer 0 consists of 8 pages of memory and is
+ STA SC2                ; followed by pattern buffer 1, so this sets SC(1 0) to
+                        ; the pattern in pattern buffer 1 that corresponds to
+                        ; tile number SC
+
+ LDA #HI(fontImage)     ; Set V(1 0) = fontImage, so we copy the font patterns
+ STA V+1                ; to the pattern buffers in the following
  LDA #LO(fontImage)
  STA V
 
- LDX #$5F
- LDY #0
+ LDX #95                ; There are 95 characters in the game font, so set a
+                        ; character counter in X to count down from 95 to 1
 
-.CB11D
+ LDY #0                 ; Set Y to use as an index counter as we copy the font
+                        ; to the pattern buffers
+
+.ifon2
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA (V),Y
- STA (SC2),Y
- AND T
- EOR T
+                        ; We repeat the following code eight times, so it sends
+                        ; all eight bytes of this character's font pattern to
+                        ; both pattern buffers
+                        ;
+                        ; In each of the following, the font character is copied
+                        ; into pattern buffer 0 unchanged, but when the same
+                        ; character is copied into pattern buffer 0, the
+                        ; following transformation is applied:
+                        ;
+                        ;   AND T
+                        ;   EOR T
+                        ;
+                        ; T is 0, unless this is the save and load screen, in
+                        ; which case T is $FF
+                        ;
+                        ; When T = 0, we have A AND 0 EOR 0, which is $FF, so
+                        ; pattern buffer 1 gets filled with set pixels
+                        ;
+                        ; When Y = $FF, we have A AND $FF EOR $FF, which is the
+                        ; same as A EOR $FF, which is the value in A inverted,
+                        ; so pattern buffer 1 gets filled with the font, but
+                        ; with black characters on a filled background
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the font to pattern
+ STA (SC2),Y            ; buffer 0, and copy the same pattern to pattern buffer
+ AND T                  ; 1, either as a row of eight filled pixels or as an
+ EOR T                  ; inverted font, and increment the index in Y
  STA (SC),Y
  INY
- LDA (V),Y
- STA (SC2),Y
- AND T
- EOR T
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the font to pattern
+ STA (SC2),Y            ; buffer 0, and copy the same pattern to pattern buffer
+ AND T                  ; 1, either as a white block or as an inverted font, and
+ EOR T                  ; increment the index in Y
  STA (SC),Y
  INY
- LDA (V),Y
- STA (SC2),Y
- AND T
- EOR T
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the font to pattern
+ STA (SC2),Y            ; buffer 0, and copy the same pattern to pattern buffer
+ AND T                  ; 1, either as a white block or as an inverted font, and
+ EOR T                  ; increment the index in Y
  STA (SC),Y
  INY
- LDA (V),Y
- STA (SC2),Y
- AND T
- EOR T
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the font to pattern
+ STA (SC2),Y            ; buffer 0, and copy the same pattern to pattern buffer
+ AND T                  ; 1, either as a white block or as an inverted font, and
+ EOR T                  ; increment the index in Y
  STA (SC),Y
  INY
- LDA (V),Y
- STA (SC2),Y
- AND T
- EOR T
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the font to pattern
+ STA (SC2),Y            ; buffer 0, and copy the same pattern to pattern buffer
+ AND T                  ; 1, either as a white block or as an inverted font, and
+ EOR T                  ; increment the index in Y
  STA (SC),Y
  INY
- LDA (V),Y
- STA (SC2),Y
- AND T
- EOR T
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the font to pattern
+ STA (SC2),Y            ; buffer 0, and copy the same pattern to pattern buffer
+ AND T                  ; 1, either as a white block or as an inverted font, and
+ EOR T                  ; increment the index in Y
  STA (SC),Y
  INY
- LDA (V),Y
- STA (SC2),Y
- AND T
- EOR T
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the font to pattern
+ STA (SC2),Y            ; buffer 0, and copy the same pattern to pattern buffer
+ AND T                  ; 1, either as a white block or as an inverted font, and
+ EOR T                  ; increment the index in Y
  STA (SC),Y
  INY
- LDA (V),Y
- STA (SC2),Y
- AND T
- EOR T
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the font to pattern
+ STA (SC2),Y            ; buffer 0, and copy the same pattern to pattern buffer
+ AND T                  ; 1, either as a white block or as an inverted font, and
+ EOR T                  ; increment the index in Y
  STA (SC),Y
  INY
- BNE CB18A
- INC V+1
- INC SC2+1
+
+ BNE ifon3              ; If we just incremented Y back around to 0, then
+ INC V+1                ; increment the high bytes of V(1 0), SC(1 0) and
+ INC SC2+1              ; SC2(1 0) to point to the next page in memory
  INC SC+1
 
-.CB18A
+.ifon3
 
- DEX
- BNE CB11D
- RTS
+ DEX                    ; Decrement the character counter in X
+
+ BNE ifon2              ; Loop back until we have copied all 95 characters to
+                        ; the pattern buffers
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: subm_B18E
+;       Name: SetFont
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Load font patterns ???
+;    Summary: Load the font into pattern buffer 1, and a set of filled blocks
+;             into pattern buffer 0, from patterns #161 onwards
+;
+; ------------------------------------------------------------------------------
+;
+; Pattern buffer 1 contains the font, while pattern buffer 0 either contains a
+; set of filled blocks, both from pattern #161 onwards.
+;
+; If this is the save and load screen, we load the first 70 characters into
+; patterns #161 to #230, while for all other views we load all 95 characters
+; into patterns #161 to #255.
 ;
 ; ******************************************************************************
 
-.subm_B18E
+.SetFont
 
  LDA #HI(pattBuffer0+8*161) ; Set SC(1 0) to the address of pattern #161 in
  STA SC2+1                  ; pattern buffer 0
@@ -4058,81 +4170,109 @@ ENDIF
  LDA #LO(pattBuffer1+8*161)
  STA SC
 
- LDX #$5F
- LDA QQ11
- CMP #$BB
- BNE CB1A8
- LDX #$46
+ LDX #95                ; There are 95 characters in the game font, so set a
+                        ; character counter in X to count down from 95 to 1
+                        ;
+                        ; The font pattern data at fontImage actually contains
+                        ; 96 characters, but we ignore the last one, which is
+                        ; full of random noise
 
-.CB1A8
+ LDA QQ11               ; If this is not the save and load screen with bits 4
+ CMP #$BB               ; and 5 set, jump to font1 to skip the following
+ BNE font1              ; instruction
 
- TXA
- CLC
- ADC tileNumber
- STA tileNumber
+ LDX #70                ; This is the save and load screen with bits 4 and 5
+                        ; set (so the save screen is on-screen and the headers
+                        ; have been drawn), so set X = 70 so that we only copy
+                        ; 70 characters from the font
 
- LDA #HI(fontImage)     ; Set V(1 0) = fontImage
- STA V+1
+.font1
+
+ TXA                    ; Set tileNumber = tileNumber + X
+ CLC                    ;
+ ADC tileNumber         ; We are about to copy X character patterns for the
+ STA tileNumber         ; font, so this sets the next free tile number in
+                        ; tileNumber to the pattern that is X patterns after
+                        ; its current value ???
+
+ LDA #HI(fontImage)     ; Set V(1 0) = fontImage, so we copy the font patterns
+ STA V+1                ; to the pattern buffers in the following
  LDA #LO(fontImage)
  STA V
 
- LDY #0
+ LDY #0                 ; Set Y to use as an index counter as we copy the font
+                        ; to the pattern buffers
 
-.CB1B8
+.font2
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA (V),Y
- STA (SC),Y
- LDA #$FF
- STA (SC2),Y
+                        ; We repeat the following code eight times, so it sends
+                        ; all eight bytes of this character's font pattern to
+                        ; both pattern buffers
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the font to pattern
+ STA (SC),Y             ; buffer 1, set the Y-th pattern byte in pattern buffer
+ LDA #$FF               ; 0 to a row of eight set pixels, and increment the
+ STA (SC2),Y            ; index in Y
  INY
- LDA (V),Y
- STA (SC),Y
- LDA #$FF
- STA (SC2),Y
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the font to pattern
+ STA (SC),Y             ; buffer 1, set the Y-th pattern byte in pattern buffer
+ LDA #$FF               ; 0 to a row of eight set pixels, and increment the
+ STA (SC2),Y            ; index in Y
  INY
- LDA (V),Y
- STA (SC),Y
- LDA #$FF
- STA (SC2),Y
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the font to pattern
+ STA (SC),Y             ; buffer 1, set the Y-th pattern byte in pattern buffer
+ LDA #$FF               ; 0 to a row of eight set pixels, and increment the
+ STA (SC2),Y            ; index in Y
  INY
- LDA (V),Y
- STA (SC),Y
- LDA #$FF
- STA (SC2),Y
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the font to pattern
+ STA (SC),Y             ; buffer 1, set the Y-th pattern byte in pattern buffer
+ LDA #$FF               ; 0 to a row of eight set pixels, and increment the
+ STA (SC2),Y            ; index in Y
  INY
- LDA (V),Y
- STA (SC),Y
- LDA #$FF
- STA (SC2),Y
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the font to pattern
+ STA (SC),Y             ; buffer 1, set the Y-th pattern byte in pattern buffer
+ LDA #$FF               ; 0 to a row of eight set pixels, and increment the
+ STA (SC2),Y            ; index in Y
  INY
- LDA (V),Y
- STA (SC),Y
- LDA #$FF
- STA (SC2),Y
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the font to pattern
+ STA (SC),Y             ; buffer 1, set the Y-th pattern byte in pattern buffer
+ LDA #$FF               ; 0 to a row of eight set pixels, and increment the
+ STA (SC2),Y            ; index in Y
  INY
- LDA (V),Y
- STA (SC),Y
- LDA #$FF
- STA (SC2),Y
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the font to pattern
+ STA (SC),Y             ; buffer 1, set the Y-th pattern byte in pattern buffer
+ LDA #$FF               ; 0 to a row of eight set pixels, and increment the
+ STA (SC2),Y            ; index in Y
  INY
- LDA (V),Y
- STA (SC),Y
- LDA #$FF
- STA (SC2),Y
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the font to pattern
+ STA (SC),Y             ; buffer 1, set the Y-th pattern byte in pattern buffer
+ LDA #$FF               ; 0 to a row of eight set pixels, and increment the
+ STA (SC2),Y            ; index in Y
  INY
- BNE CB215
- INC V+1
- INC SC+1
+
+ BNE font3              ; If we just incremented Y back around to 0, then
+ INC V+1                ; increment the high bytes of V(1 0), SC(1 0) and
+ INC SC+1               ; SC2(1 0) to point to the next page in memory
  INC SC2+1
 
-.CB215
+.font3
 
- DEX
- BNE CB1B8
- RTS
+ DEX                    ; Decrement the character counter in X
+
+ BNE font2              ; Loop back until we have copied all 95 characters to
+                        ; the pattern buffers
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -5433,7 +5573,7 @@ NEXT
 
 .SetViewAttrs
 
- LDX chosenLanguage     ; Set X to the chosen language
+ LDX languageIndex      ; Set X to the index of the chosen language
 
  LDA viewAttributesLo,X ; Set V(1 0) = viewAttributes_EN, _FR or _DE, according
  STA V                  ; to the chosen labguage

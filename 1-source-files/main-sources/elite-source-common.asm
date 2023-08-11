@@ -258,6 +258,12 @@ ENDIF
 
 IF NOT(_BANK = 2)
 
+ TKN1               = $800C
+ TKN1_DE            = $8DFD
+ TKN1_FR            = $9A2C
+ QQ18               = $A3CF
+ QQ18_DE            = $A79C
+ QQ18_FR            = $AC4D
  DETOK              = $B0EF
  DTS                = $B187
  PDESC              = $B3E8
@@ -291,8 +297,8 @@ IF NOT(_BANK = 3)
  subm_AC5C          = $AC5C
  SetupIconBar       = $AE18
  SetViewPatterns    = $AFCD
- subm_B0E1          = $B0E1
- subm_B18E          = $B18E
+ SetInvertedFont    = $B0E1
+ SetFont            = $B18E
  subm_B219          = $B219
  subm_B248          = $B248
  DrawPopupBox       = $B2BC
@@ -369,7 +375,7 @@ IF NOT(_BANK = 6)
   ChangeCmdrName    = $BB37
   SetKeyLogger      = $BBDE
   ChooseLanguage    = $BC83
-  subm_BE52         = $BE52
+  TT24              = $BE52
   subm_BED2         = $BED2
 
  ELIF _PAL
@@ -384,7 +390,7 @@ IF NOT(_BANK = 6)
   ChangeCmdrName    = $BB46
   SetKeyLogger      = $BBED
   ChooseLanguage    = $BC92
-  subm_BE52         = $BE6D
+  TT24              = $BE6D
   subm_BED2         = $BEED
 
  ENDIF
@@ -857,11 +863,11 @@ ENDIF
                         ;
                         ;   * Bits 0-3 = view number (see above)
                         ;
-                        ;   * Bit 4 clear = do not load the subm_B0E1 font ???
-                        ;     Bit 4 set   = load the subm_B0E1 font
+                        ;   * Bit 4 clear = do not load the inverted font
+                        ;     Bit 4 set   = load the inverted font
                         ;
-                        ;   * Bit 5 clear = do not load the subm_B18E font ???
-                        ;     Bit 5 set   = load the subm_B18E font
+                        ;   * Bit 5 clear = do not load the normal font ???
+                        ;     Bit 5 set   = load the normal font
                         ;
                         ;   * Bit 6 clear = there is an icon bar
                         ;     Bit 6 set   = no icon bar (rows 27-28 are blank)
@@ -873,6 +879,22 @@ ENDIF
                         ; TT66: 0, $8D, $93, $95, $9C, $BB, $C4, $CF
                         ; ChangeView: $96, $97, $98, $B9, $BA
                         ; subm_B39D: 0, 1, $10, $92
+                        ;
+                        ; $00, $10
+                        ; $01
+                        ; $92
+                        ; $93
+                        ; $C4
+                        ; $95
+                        ; $96
+                        ; $97
+                        ; $98
+                        ; $B9
+                        ; $BA
+                        ; $8B, $BB
+                        ; $9C
+                        ; $8D, $9D
+                        ; $CF, $DF, $FF
 
 .QQ11a
 
@@ -1303,7 +1325,7 @@ ENDIF
 
 .L00D9
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Contains the pattern number of the font - 32 ???
 
 .updatePaletteInNMI
 
@@ -1503,9 +1525,10 @@ ENDIF
                         ; called once the bank-switching is done - see the
                         ; SetBank routine for details)
 
-.L00F9
+.notUsed
 
- SKIP 1                 ; ???
+ SKIP 1                 ; This appears to be unused, though it is set in the
+                        ; SetLanguage routine
 
 .addr2
 
@@ -3306,7 +3329,7 @@ ORG $0200
                         ; stored as galaxy 0 internally
                         ;
                         ; The galaxy number increases by one every time a
-                        ; galactic hyperdrive is used, and wraps back round to
+                        ; galactic hyperdrive is used, and wraps back around to
                         ; the start after eight galaxies
 
 .LASER
@@ -3727,9 +3750,9 @@ ORG $0200
 
  SKIP 1                 ; ???
 
-.L03FD
+.decimalPoint
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The decimal point character for the chosen language
 
 .L03FE
 
@@ -4531,17 +4554,27 @@ ENDIF
  SKIP 1                 ; Gets set to the high byte of the address of the text
                         ; token table used by the DETOK routine (TKN1)
 
-.chosenLanguage
+.languageIndex
 
- SKIP 1                 ; The language that was chosen on the start screen:
+ SKIP 1                 ; The language that was chosen on the start screen as an
+                        ; index into the various lookup tables:
                         ;
                         ;   * 0 = English
+                        ;
                         ;   * 1 = German
+                        ;
                         ;   * 2 = French
 
-.L04A9
+.languageNumber
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The language that was chosen on the start screen as a
+                        ; number:
+                        ;
+                        ;   * 1 = Bit 0 set = English
+                        ;
+                        ;   * 2 = Bit 1 set = German
+                        ;
+                        ;   * 4 = Bit 2 set = French
 
 .controller1Down
 

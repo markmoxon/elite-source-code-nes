@@ -2441,7 +2441,7 @@ ENDIF
 
 .C876A
 
- LDA LF333,X
+ LDA alertColours,X
  STA visibleColour
 
 .C876F
@@ -2624,7 +2624,7 @@ ENDIF
  LDA #16                ; Print recursive token 130 ("RATING:") followed by
  JSR TT68               ; a colon
 
- LDA L04A9              ; ???
+ LDA languageNumber     ; ???
  AND #1
  BEQ P%+5
 
@@ -2683,7 +2683,7 @@ ENDIF
  TXA                    ; Store the combat rank in X on the stack
  PHA
 
- LDA L04A9              ; ???
+ LDA languageNumber     ; ???
  AND #5
  BEQ P%+8
 
@@ -2845,7 +2845,7 @@ ENDIF
  JSR plf                ; Print the text token in A (which contains our ship's
                         ; condition) followed by a newline
 
- LDA L04A9              ; ???
+ LDA languageNumber     ; ???
  AND #4
  BEQ stat1
 
@@ -2957,7 +2957,7 @@ ENDIF
  BEQ st1                ; have a laser fitted to that view, jump to st1 to move
                         ; on to the next one
 
- LDA L04A9              ; ???
+ LDA languageNumber     ; ???
  AND #4
  BNE C88D0
 
@@ -2995,7 +2995,7 @@ ENDIF
  JSR TT27_b2            ; Print the text token in A (which contains our legal
                         ; status)
 
- LDA L04A9              ; ???
+ LDA languageNumber     ; ???
  AND #4
  BEQ C88FB
 
@@ -3021,7 +3021,7 @@ ENDIF
  LDA #24                ; ???
  STA XC
 
- LDX chosenLanguage
+ LDX languageIndex
  LDA rowHeadshot,X
  STA YC
 
@@ -3214,7 +3214,7 @@ ENDIF
 
  JSR TT67               ; Print a newline
 
- LDX chosenLanguage     ; Move the text cursor to the correct column for the
+ LDX languageIndex      ; Move the text cursor to the correct column for the
  LDA tabStatusMode,X    ; Status Mode entry in the chosen language
  STA XC
 
@@ -3985,8 +3985,8 @@ ENDIF
                         ; so loop back to TT35 (via the JMP TT35 instruction
                         ; below) to print the next digit
 
- LDA L03FD              ; Otherwise the C flag is set, so print the decimal
- JSR DASC_b2            ; point ???
+ LDA decimalPoint       ; Otherwise the C flag is set, so print the correct
+ JSR DASC_b2            ; decimal point character for the chosen language
 
  JMP TT35               ; Loop back to TT35 to print the next digit
 
@@ -8068,7 +8068,7 @@ ENDIF
  JSR TT111              ; Select the system closest to galactic coordinates
                         ; (QQ9, QQ10)
 
- LDX chosenLanguage     ; Move the text cursor to the correct column for the
+ LDX languageIndex      ; Move the text cursor to the correct column for the
  LDA tabDataOnSystem,X  ; Data on System title in the chosen language
  STA XC
 
@@ -8082,7 +8082,7 @@ ENDIF
                         ; paragraph break, otherwise just move the cursor down
                         ; a line
 
- LDA L04A9              ; ???
+ LDA languageNumber     ; ???
  AND #%00000110
  BEQ dsys1
 
@@ -8150,7 +8150,7 @@ ENDIF
                         ;   QQ3 bit 2 = 0 prints token 8 ("INDUSTRIAL")
                         ;   QQ3 bit 2 = 1 prints token 9 ("AGRICULTURAL")
 
- LDA L04A9              ; ???
+ LDA languageNumber     ; ???
  AND #%00000100
  BEQ dsys3
 
@@ -8255,7 +8255,7 @@ ENDIF
 
  JSR TTX69              ; Print a paragraph break and set Sentence Case
 
- LDA L04A9              ; ???
+ LDA languageNumber     ; ???
  AND #%00000101
  BEQ dsys6
 
@@ -8288,7 +8288,7 @@ ENDIF
  LDA #198               ; Print recursive token 38 (" BILLION"), followed by a
  JSR TT60               ; paragraph break and Sentence Case
 
- LDA L04A9              ; ???
+ LDA languageNumber     ; ???
  AND #%00000010
  BNE dsys8
 
@@ -8381,9 +8381,10 @@ ENDIF
                         ;
                         ; storing the result in QQ19 so we can use it later
 
- LDA L04A9              ; If bit 2 of L04A9 is set, jump to TT75 to print the
- AND #%00000100         ; species and then the third adjective, e.g. "Rodents
- BNE TT75               ; Furry"
+ LDA languageNumber     ; If bit 2 of languageNumber is set, then the chosen
+ AND #%00000100         ; language is French, so jump to TT75 to print the
+ BNE TT75               ; species and then the third adjective, e.g. "Rodents
+                        ; Furry"
 
  LDA QQ15+5             ; Now for the second adjective, so shift s2_hi so we get
  LSR A                  ; A = bits 5-7 of s2_hi
@@ -8444,7 +8445,7 @@ ENDIF
 
 .TT76
 
- LDA L04A9              ; ???
+ LDA languageNumber     ; ???
  AND #%00000010
  BNE dsys10
 
@@ -9000,7 +9001,7 @@ ENDIF
  JSR TT11               ; Call TT11 to print the number of Trumbles in (Y X),
                         ; with no decimal point
 
- LDA L04A9              ; ???
+ LDA languageNumber     ; ???
  AND #4
  BNE C9A99
 
@@ -9010,7 +9011,7 @@ ENDIF
  ADC #111
  JSR DETOK_b2
 
- LDA L04A9              ; ???
+ LDA languageNumber     ; ???
  AND #2
  BEQ C9A99
 
@@ -9488,7 +9489,7 @@ ENDIF
  LDA #$9C
  JSR TT66
 
- LDX chosenLanguage     ; Move the text cursor to the correct column for the
+ LDX languageIndex      ; Move the text cursor to the correct column for the
  LDA tabShortRange,X    ; Short-range Chart title in the chosen language
  STA XC
 
@@ -10196,7 +10197,10 @@ ENDIF
                         ; 256 in coordinate terms, the width of the galaxy
                         ; would be 1024 in the units we store in QQ8
 
- JMP subm_BE52_b6       ; ???
+ JMP TT24_b6            ; Call TT24 to calculate system data from the seeds in
+                        ; QQ15 and store them in the relevant locations, so our
+                        ; new selected system is fully set up, and return from
+                        ; the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -11006,7 +11010,7 @@ ENDIF
 
  JSR TT163              ; Print the column headers for the prices table
 
- LDX chosenLanguage     ; Move the text cursor to the correct row for the Market
+ LDX languageIndex      ; Move the text cursor to the correct row for the Market
  LDA rowMarketPrice,X   ; Prices title in the chosen language
  STA YC
 
@@ -11229,7 +11233,7 @@ ENDIF
  LDX #2
  STX fontBitplane
  CLC
- LDX chosenLanguage
+ LDX languageIndex
  ADC rowMarketPrice,X
  STA YC
  TYA
@@ -11251,7 +11255,7 @@ ENDIF
 
  TAY
  CLC
- LDX chosenLanguage
+ LDX languageIndex
  ADC rowMarketPrice,X
  STA YC
  TYA
@@ -11270,7 +11274,7 @@ ENDIF
 
  LDA #$80
  STA QQ17
- LDX chosenLanguage
+ LDX languageIndex
  LDA LA16D,X
  STA YC
  LDA LA169,X
@@ -11429,7 +11433,7 @@ ENDIF
  LDA #$80               ; ???
  STA L0395
  JSR subm_AC5C_b3
- JSR subm_BE52_b6
+ JSR TT24_b6
 
  LDA QQ3                ; Set the current system's economy in QQ28 to the
  STA QQ28               ; selected system's economy from QQ3
@@ -12166,8 +12170,8 @@ ENDIF
  LDA #1                 ; Move the text cursor to column 1
  STA XC
 
- LDA L04A9              ; If bit 1 of L04A9 is clear, print a space
- AND #%00000010
+ LDA languageNumber     ; If bit 1 of languageNumber is clear, then the chosen
+ AND #%00000010         ; language is German, so print a space
  BNE preq2
  JSR TT162
 
@@ -12209,11 +12213,13 @@ ENDIF
  LDA #')'               ; Print a closing bracket
  JSR TT27_b2
 
- LDA L04A9              ; If bit 2 of L04A9 is set, jump to preq3 to skip the
- AND #%00000100         ; following (which prints the price)
- BNE preq3
+ LDA languageNumber     ; If bit 2 of languageNumber is set then this is French,
+ AND #%00000100         ; so jump to preq3 to skip the following (which prints
+ BNE preq3              ; the price)
 
-                        ; Bit 2 of L04A9 is clear, so now we print the price
+                        ; Bit 2 of languageNumber is clear, so the chosen
+                        ; language is English or German, so now we print the
+                        ; price
 
  LDA XX13               ; Call prx-3 to set (Y X) to the price of the item with
  JSR prx-3              ; number XX13 - 1 (as XX13 contains the item number + 1)
@@ -12366,7 +12372,7 @@ ENDIF
  LDA #$B9               ; Change to view $B9 and move the text cursor to row 0
  JSR ChangeView
 
- LDX chosenLanguage     ; Move the text cursor to the correct column for the
+ LDX languageIndex      ; Move the text cursor to the correct column for the
  LDA tabEquipShip,X     ; Equip Ship title in the chosen language
  STA XC
 
@@ -12966,7 +12972,7 @@ ENDIF
 
  JSR TT162              ; Print a space
 
- LDA L04A9
+ LDA languageNumber
  AND #6
  BNE CA6C0
 
@@ -12985,7 +12991,7 @@ ENDIF
  JSR TT162              ; Print a space
 
  LDA XC
- LDX chosenLanguage
+ LDX languageIndex
  CMP tabLaserView,X
  BNE loop_CA6C8
  PLA
@@ -13096,7 +13102,7 @@ ENDIF
  LDA #7
  STA YC
  STA K+3
- LDX chosenLanguage
+ LDX languageIndex
  LDA popupWidth,X
  STA K
  LDA #6
@@ -13524,7 +13530,7 @@ ENDIF
 
 .fwl
 
- LDA L04A9              ; ???
+ LDA languageNumber     ; ???
  AND #2
  BNE CA87D
 
@@ -13533,7 +13539,7 @@ ENDIF
 
  JSR Print2Newlines     ; Print two newlines
 
- LDA L04A9              ; ???
+ LDA languageNumber     ; ???
  AND #4
  BEQ CA85B
 
@@ -13556,7 +13562,7 @@ ENDIF
  LDA #197               ; ???
  JSR TT68
 
- LDA L04A9
+ LDA languageNumber
  AND #4
  BNE CA879
  JSR Print2Newlines     ; Print two newlines
@@ -13839,12 +13845,13 @@ ENDIF
 
  JSR TT73               ; Print a colon
 
- LDA L04A9              ; If bit 1 of L04A9 is set, jump to ptok4 to move the
- AND #%00000010         ; text cursor to column 23
- BNE ptok4
+ LDA languageNumber     ; If bit 1 of languageNumber is set, then the chosen
+ AND #%00000010         ; language is German, so jump to ptok4 to move the text
+ BNE ptok4              ; cursor to column 23
 
- LDA #22                ; Bit 1 of L04A9 is clear, so move the text cursor to
- STA XC                 ; column 22
+ LDA #22                ; Bit 1 of languageNumber is clear, so the chosen
+ STA XC                 ; language is English or French, so move the text cursor
+                        ; to column 22
 
  RTS                    ; Return from the subroutine
 
@@ -21144,25 +21151,27 @@ ENDIF
 
  CMP #$CF               ; If the new view is the start screen (i.e. QQ11 is 15
  BEQ scrn6              ; with bits 6 and 7 set to indicate there is no icon
-                        ; bar), jump to scrn6 to skip loading the ??? font
+                        ; bar), jump to scrn6 to skip loading the inverted font
 
  AND #%00010000         ; If bit 4 of the new view in QQ11 is clear, jump to
- BEQ scrn6              ; scrn6 to skip loading the ??? font
+ BEQ scrn6              ; scrn6 to skip loading the inverted font
 
                         ; If we get here then the new view we are setting up is
                         ; not the Game Over screen, the Long-range Chart or the
                         ; start screen, and bit 4 of QQ11 is set
 
- LDA #66                ; Load a font ???
- JSR subm_B0E1_b3
+ LDA #66                ; Load the inverted font into both pattern buffers, from
+ JSR SetInvertedFont_b3 ; pattern #66 to #160
 
 .scrn6
 
  LDA QQ11               ; If bit 5 of the new view in QQ11 is clear, jump to
- AND #%00100000         ; scrn7 to skip loading the ??? font
+ AND #%00100000         ; scrn7 to skip loading the font
  BEQ scrn7
 
- JSR subm_B18E_b3       ; Load a font ???
+ JSR SetFont_b3         ; Load the font into pattern buffer 1, and a set of
+                        ; filled blocks into pattern buffer 0, from pattern #161
+                        ; onwards
 
 .scrn7
 
@@ -21220,7 +21229,7 @@ ENDIF
  JSR DrawBoxTop         ; Draw the top edge of the box along the top of the
                         ; screen in nametable buffer 0
 
- LDX chosenLanguage     ; Set X to the chosen language
+ LDX languageIndex      ; Set X to the index of the chosen language
 
  LDA QQ11               ; If this is the space view (QQ11 = 0), jump to scrn10
  BEQ scrn10             ; to print the view name at the top of the screen
@@ -21234,7 +21243,7 @@ ENDIF
  LDA #0                 ; Move the text cursor to row 0
  STA YC
 
- LDX chosenLanguage     ; Move the text cursor to the correct column for the
+ LDX languageIndex      ; Move the text cursor to the correct column for the
  LDA tabTitleScreen,X   ; title screen in the chosen language
  STA XC
 
@@ -21255,10 +21264,11 @@ ENDIF
  LDA tabSpaceView,X     ; Move the text cursor to the correct column for the
  STA XC                 ; space view name in the chosen language
 
- LDA L04A9              ; If bit 1 of L04A9 is set, jump to scrn13 to print the
- AND #%00000010         ; view name after the view noun (so we print "ANSICHT
- BNE scrn13             ; VORN" and "ANSICHT HINTEN" instead of "FRONT VIEW"
-                        ; and "REAR VIEW", for example)
+ LDA languageNumber     ; If bit 1 of languageNumber is set, then the chosen
+ AND #%00000010         ; language is Geman, so jump to scrn13 to print the view
+ BNE scrn13             ; name after the view noun (so we print "ANSICHT VORN"
+                        ; and "ANSICHT HINTEN" instead of "FRONT VIEW" and "REAR
+                        ; VIEW", for example)
 
  JSR PrintSpaceViewName ; Print the name of the current space view (i.e.
                         ; "FRONT", "REAR", "LEFT" or "RIGHT")
