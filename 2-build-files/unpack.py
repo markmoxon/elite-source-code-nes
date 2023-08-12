@@ -408,8 +408,9 @@ extract_image(bank_data7[start: end], 1, "../1-source-files/images/other-images/
 # The font is stored as interleaved PPU tile format
 # With one set of characters in colour 1 and another in colour 2
 # We can save this as two images, with different palettes, to expose the letters
+# There are 95 characters in the font - the last pattern in bitplane 0 is unused
 
 start = 0xFCE8 - 0xC000
 end = 0xFFE0 - 0xC000
-extract_image(bank_data7[start: end], 1, "../1-source-files/images/other-images/", "fontImage0", palette=8, pixel_width=64, data_is_packed=False)
+extract_image(bank_data7[start: end - 8], 1, "../1-source-files/images/other-images/", "fontImage0", palette=8, pixel_width=64, data_is_packed=False)
 extract_image(bank_data7[start: end], 1, "../1-source-files/images/other-images/", "fontImage1", palette=9, pixel_width=64, data_is_packed=False)
