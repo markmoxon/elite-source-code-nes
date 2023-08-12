@@ -4574,20 +4574,40 @@ ENDIF
  LDA #0                 ; We are going to zero the tiles to clear the patterns,
                         ; so set A = 0 so we can poke it into memory
 
-                        ; We do the following eight times, so it clears one
-                        ; whole pattern of eight bytes
+                        ; We repeat the following code eight times, so it clears
+                        ; one whole pattern of eight bytes
 
-FOR I%, 0, 7
+ STA (SC),Y             ; Zero the Y-th pattern byte in SC(1 0) and SC2(1 0), to
+ STA (SC2),Y            ; clear both pattern buffer 0 and 1, and increment the
+ INY                    ; byte counter in Y
 
- STA (SC),Y             ; Zero the Y-th pattern byte in SC(1 0), in pattern
-                        ; buffer 0
+ STA (SC),Y             ; Zero the Y-th pattern byte in SC(1 0) and SC2(1 0), to
+ STA (SC2),Y            ; clear both pattern buffer 0 and 1, and increment the
+ INY                    ; byte counter in Y
 
- STA (SC2),Y            ; Zero the Y-th pattern byte in SC2(1 0), in pattern
-                        ; buffer 1
+ STA (SC),Y             ; Zero the Y-th pattern byte in SC(1 0) and SC2(1 0), to
+ STA (SC2),Y            ; clear both pattern buffer 0 and 1, and increment the
+ INY                    ; byte counter in Y
 
- INY                    ; Increment the byte counter
+ STA (SC),Y             ; Zero the Y-th pattern byte in SC(1 0) and SC2(1 0), to
+ STA (SC2),Y            ; clear both pattern buffer 0 and 1, and increment the
+ INY                    ; byte counter in Y
 
-NEXT
+ STA (SC),Y             ; Zero the Y-th pattern byte in SC(1 0) and SC2(1 0), to
+ STA (SC2),Y            ; clear both pattern buffer 0 and 1, and increment the
+ INY                    ; byte counter in Y
+
+ STA (SC),Y             ; Zero the Y-th pattern byte in SC(1 0) and SC2(1 0), to
+ STA (SC2),Y            ; clear both pattern buffer 0 and 1, and increment the
+ INY                    ; byte counter in Y
+
+ STA (SC),Y             ; Zero the Y-th pattern byte in SC(1 0) and SC2(1 0), to
+ STA (SC2),Y            ; clear both pattern buffer 0 and 1, and increment the
+ INY                    ; byte counter in Y
+
+ STA (SC),Y             ; Zero the Y-th pattern byte in SC(1 0) and SC2(1 0), to
+ STA (SC2),Y            ; clear both pattern buffer 0 and 1, and increment the
+ INY                    ; byte counter in Y
 
  BNE clsc2              ; If Y is non-zero then jump to clsc2 to skip the
                         ; following

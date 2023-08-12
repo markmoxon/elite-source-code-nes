@@ -270,8 +270,8 @@ ENDIF
 ;
 ; This figure contains the fractional part of the points that are added to the
 ; combat rank in TALLY when destroying a ship of this type. This is different to
-; the other BBC versions, where you always get a single combat point for
-; everything you kill; in the Master version, it's more sophisticated.
+; the original BBC Micro versions, where you always get a single combat point
+; for everything you kill; in the Master version, it's more sophisticated.
 ;
 ; The integral part is stored in the KWH% table.
 ;
@@ -330,8 +330,8 @@ ENDIF
 ;
 ; This figure contains the integer part of the points that are added to the
 ; combat rank in TALLY when destroying a ship of this type. This is different to
-; the other BBC versions, where you always get a single combat point for
-; everything you kill; in the Master version, it's more sophisticated.
+; the original BBC Micro versions, where you always get a single combat point
+; for everything you kill; in the Master version, it's more sophisticated.
 ;
 ; The fractional part is stored in the KWL% table.
 ;
@@ -10867,9 +10867,9 @@ ENDIF
  BEQ KILL2              ; round to the other side, jump to KILL2 to recycle this
                         ; particle and re-join at STC2 with the new particle
                         ;
-                        ; In the other BBC versions, this test simply checks
-                        ; whether |x_hi| >= 116, but this version using newzp
-                        ; doesn't hard-code the screen width, so this is
+                        ; In the original BBC Micro versions, this test simply
+                        ; checks whether |x_hi| >= 116, but this version using
+                        ; newzp doesn't hard-code the screen width, so this is
                         ; presumably a change that was introduced to support
                         ; the different screen sizes of the other platforms
 

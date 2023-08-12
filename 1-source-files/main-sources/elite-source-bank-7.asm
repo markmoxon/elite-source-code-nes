@@ -1013,16 +1013,16 @@ ENDIF
                         ; 7 and 6 left out of A and discard them, so this is the
                         ; same as (barPatternCounter AND %00111111) * 8
 
- LDA #%00000001         ; Set addr4 = %0000001C
+ LDA #%00000001         ; Set addr = %0000001C
  ROL A                  ;
- STA addr4              ; And clear the C flag (as it gets set to bit 7 of A)
+ STA addr               ; And clear the C flag (as it gets set to bit 7 of A)
                         ;
                         ; So we now have the following:
                         ;
-                        ;   (addr4 Y) = (2 0) + (barPatternCounter mod 64) * 8
-                        ;             = $0200 + (barPatternCounter mod 64) * 8
-                        ;             = 64 * 8 + (barPatternCounter mod 64) * 8
-                        ;             = (64 + barPatternCounter mod 64) * 8
+                        ;   (addr Y) = (2 0) + (barPatternCounter mod 64) * 8
+                        ;            = $0200 + (barPatternCounter mod 64) * 8
+                        ;            = 64 * 8 + (barPatternCounter mod 64) * 8
+                        ;            = (64 + barPatternCounter mod 64) * 8
                         ;
                         ; We only call this routine when this is true:
                         ;
@@ -1034,15 +1034,15 @@ ENDIF
                         ;
                         ; So we if we substitute this into the above, we get:
                         ;
-                        ;   (addr4 Y) = (10 + 64 + barPatternCounter mod 64) * 8
-                        ;             = barPatternCounter * 8
+                        ;   (addr Y) = (10 + 64 + barPatternCounter mod 64) * 8
+                        ;            = barPatternCounter * 8
 
- TYA                    ; Set (A X) = (addr4 Y) + PPU_PATT_0 + $50
+ TYA                    ; Set (A X) = (addr Y) + PPU_PATT_0 + $50
  ADC #$50               ;           = PPU_PATT_0 + $50 + barPatternCounter * 8
  TAX                    ;
                         ; Starting with the low bytes
 
- LDA addr4              ; And then the high bytes (this works because we know
+ LDA addr               ; And then the high bytes (this works because we know
  ADC #HI(PPU_PATT_0)    ; the low byte of PPU_PATT_0 is 0)
 
  STA PPU_ADDR           ; Set PPU_ADDR = (A X)
@@ -1056,20 +1056,20 @@ ENDIF
                         ; and points to patterns 10 to 137 as barPatternCounter
                         ; increments from 0 to 127
 
- LDA iconBarImageHi     ; Set dataForPPU(1 0) = (iconBarImageHi 0) + (addr4 0)
- ADC addr4              ;
+ LDA iconBarImageHi     ; Set dataForPPU(1 0) = (iconBarImageHi 0) + (addr 0)
+ ADC addr               ;
  STA dataForPPU+1       ; We know from above that:
                         ;
-                        ;   (addr4 Y) = $0200 + (barPatternCounter mod 64) * 8
-                        ;             = 64 * 8 + (barPatternCounter mod 64) * 8
-                        ;             = (64 + barPatternCounter mod 64) * 8
-                        ;             = barPatternCounter * 8
+                        ;   (addr Y) = $0200 + (barPatternCounter mod 64) * 8
+                        ;            = 64 * 8 + (barPatternCounter mod 64) * 8
+                        ;            = (64 + barPatternCounter mod 64) * 8
+                        ;            = barPatternCounter * 8
                         ;
                         ; So this means that:
                         ;
                         ;   dataForPPU(1 0) + Y
-                        ;           = (iconBarImageHi 0) + (addr4 0) + Y
-                        ;           = (iconBarImageHi 0) + (addr4 Y)
+                        ;           = (iconBarImageHi 0) + (addr 0) + Y
+                        ;           = (iconBarImageHi 0) + (addr Y)
                         ;           = (iconBarImageHi 0) + barPatternCounter * 8
                         ;
                         ; We know that (iconBarImageHi 0) points to the current
@@ -1180,20 +1180,20 @@ ENDIF
                         ; out of A and discard them, but because we know that
                         ; 0 < barPatternCounter < 64, this has no effect
 
- LDA #%00000000         ; Set addr4 = %0000000C
+ LDA #%00000000         ; Set addr = %0000000C
  ROL A                  ;
- STA addr4              ; And clear the C flag (as it gets set to bit 7 of A)
+ STA addr               ; And clear the C flag (as it gets set to bit 7 of A)
                         ;
                         ; So we now have the following:
                         ;
-                        ;   (addr4 Y) = barPatternCounter * 8
+                        ;   (addr Y) = barPatternCounter * 8
 
- TYA                    ; Set (A X) = (addr4 Y) + PPU_PATT_0 + $50
+ TYA                    ; Set (A X) = (addr Y) + PPU_PATT_0 + $50
  ADC #$50               ;           = PPU_PATT_0 + $50 + barPatternCounter * 8
  TAX                    ;
                         ; Starting with the low bytes
 
- LDA addr4              ; And then the high bytes (this works because we know
+ LDA addr               ; And then the high bytes (this works because we know
  ADC #HI(PPU_PATT_0)    ; the low byte of PPU_PATT_0 is 0)
 
  STA PPU_ADDR           ; Set PPU_ADDR = (A X)
@@ -1207,13 +1207,13 @@ ENDIF
                         ; and points to patterns 10 to 137 as barPatternCounter
                         ; increments from 0 to 127
 
- LDA iconBarImageHi     ; Set dataForPPU(1 0) = (iconBarImageHi 0) + (addr4 0)
- ADC addr4              ;
+ LDA iconBarImageHi     ; Set dataForPPU(1 0) = (iconBarImageHi 0) + (addr 0)
+ ADC addr               ;
  STA dataForPPU+1       ; This means that:
                         ;
                         ;   dataForPPU(1 0) + Y
-                        ;           = (iconBarImageHi 0) + (addr4 0) + Y
-                        ;           = (iconBarImageHi 0) + (addr4 Y)
+                        ;           = (iconBarImageHi 0) + (addr 0) + Y
+                        ;           = (iconBarImageHi 0) + (addr Y)
                         ;           = (iconBarImageHi 0) + barPatternCounter * 8
                         ;
                         ; We know that (iconBarImageHi 0) points to the current
@@ -1261,20 +1261,20 @@ ENDIF
                         ; out of A and discard them, but because we know that
                         ; 0 < barPatternCounter < 64, this has no effect
 
- LDA #%00000000         ; Set addr4 = %0000000C
+ LDA #%00000000         ; Set addr = %0000000C
  ROL A                  ;
- STA addr4              ; And clear the C flag (as it gets set to bit 7 of A)
+ STA addr               ; And clear the C flag (as it gets set to bit 7 of A)
                         ;
                         ; So we now have the following:
                         ;
-                        ;   (addr4 Y) = barPatternCounter * 8
+                        ;   (addr Y) = barPatternCounter * 8
 
- TYA                    ; Set (A X) = (addr4 Y) + PPU_PATT_1 + $50
+ TYA                    ; Set (A X) = (addr Y) + PPU_PATT_1 + $50
  ADC #$50               ;           = PPU_PATT_1 + $50 + barPatternCounter * 8
  TAX                    ;
                         ; Starting with the low bytes
 
- LDA addr4              ; And then the high bytes (this works because we know
+ LDA addr               ; And then the high bytes (this works because we know
  ADC #HI(PPU_PATT_1)    ; the low byte of PPU_PATT_1 is 0)
 
  STA PPU_ADDR           ; Set PPU_ADDR = (A X)
@@ -1288,13 +1288,13 @@ ENDIF
                         ; and points to patterns 10 to 137 as barPatternCounter
                         ; increments from 0 to 127
 
- LDA iconBarImageHi     ; Set dataForPPU(1 0) = (iconBarImageHi 0) + (addr4 0)
- ADC addr4              ;
+ LDA iconBarImageHi     ; Set dataForPPU(1 0) = (iconBarImageHi 0) + (addr 0)
+ ADC addr               ;
  STA dataForPPU+1       ; This means that:
                         ;
                         ;   dataForPPU(1 0) + Y
-                        ;           = (iconBarImageHi 0) + (addr4 0) + Y
-                        ;           = (iconBarImageHi 0) + (addr4 Y)
+                        ;           = (iconBarImageHi 0) + (addr 0) + Y
+                        ;           = (iconBarImageHi 0) + (addr Y)
                         ;           = (iconBarImageHi 0) + barPatternCounter * 8
                         ;
                         ; We know that (iconBarImageHi 0) points to the current
@@ -1826,14 +1826,14 @@ ENDIF
  STA bitplaneFlags,X    ; handler (so we can detect this in the next VBlank if
                         ; we have to split the process across multiple VBlanks)
 
- LDA #0                 ; Set (addr4 A) to sendingPattTile for this bitplane,
- STA addr4              ; which we just set to the number of the first tile to
+ LDA #0                 ; Set (addr A) to sendingPattTile for this bitplane,
+ STA addr               ; which we just set to the number of the first tile to
  LDA sendingPattTile,X  ; send to the PPU pattern table
 
- ASL A                  ; Set (addr4 A) = (pattBufferHiAddr 0) + (addr4 A) * 8
- ROL addr4              ;               = pattBufferX + sendingPattTile * 8
+ ASL A                  ; Set (addr A) = (pattBufferHiAddr 0) + (addr A) * 8
+ ROL addr               ;              = pattBufferX + sendingPattTile * 8
  ASL A                  ;
- ROL addr4              ; Starting with the low bytes
+ ROL addr               ; Starting with the low bytes
  ASL A                  ;
                         ; In the above, pattBufferX is either pattBuffer0 or
                         ; pattBuffer1, depending on the bitplane in X, as these
@@ -1841,7 +1841,7 @@ ENDIF
 
  STA pattTileBuffLo,X   ; Store the low byte in pattTileBuffLo for this bitplane
 
- LDA addr4              ; We now add the high bytes, storing the result in
+ LDA addr               ; We now add the high bytes, storing the result in
  ROL A                  ; pattTileBuffHi for this bitplane
  ADC pattBufferHiAddr,X ;
  STA pattTileBuffHi,X   ; So we now have the following for this bitplane:
@@ -1852,14 +1852,14 @@ ENDIF
                         ; which points to the data for tile sendingPattTile in
                         ; the pattern buffer for bitplane X
 
- LDA #0                 ; Set (addr4 A) to sendingNameTile for this bitplane,
- STA addr4              ; which we just set to the number of the first tile to
+ LDA #0                 ; Set (addr A) to sendingNameTile for this bitplane,
+ STA addr               ; which we just set to the number of the first tile to
  LDA sendingNameTile,X  ; send to the PPU nametable
 
- ASL A                  ; Set (addr4 A) = (nameBufferHiAddr 0) + (addr4 A) * 8
- ROL addr4              ;               = nameBufferX + sendingNameTile * 8
+ ASL A                  ; Set (addr A) = (nameBufferHiAddr 0) + (addr A) * 8
+ ROL addr               ;              = nameBufferX + sendingNameTile * 8
  ASL A                  ;
- ROL addr4              ; Starting with the low bytes
+ ROL addr               ; Starting with the low bytes
  ASL A                  ;
                         ; In the above, pattBufferX is either pattBuffer0 or
                         ; pattBuffer1, depending on the bitplane in X, as these
@@ -1867,8 +1867,8 @@ ENDIF
 
  STA nameTileBuffLo,X   ; Store the low byte in nameTileBuffLo for this bitplane
 
- ROL addr4              ; We now add the high bytes, storing the result in
- LDA addr4              ; nameTileBuffHi for this bitplane
+ ROL addr               ; We now add the high bytes, storing the result in
+ LDA addr               ; nameTileBuffHi for this bitplane
  ADC nameBufferHiAddr,X ;
  STA nameTileBuffHi,X   ; So we now have the following for this bitplane:
                         ;
@@ -2021,9 +2021,9 @@ ENDIF
 
 .spat6
 
- LDA pattTileCounter    ; Set (addr4 A) = pattTileCounter
+ LDA pattTileCounter    ; Set (addr A) = pattTileCounter
  LDX #0
- STX addr4
+ STX addr
 
  STX dataForPPU         ; Zero the low byte of dataForPPU(1 0)
                         ;
@@ -2031,16 +2031,16 @@ ENDIF
                         ; contains the address of the pattern buffer for this
                         ; bitplane
 
- ASL A                  ; Set (addr4 X) = (addr4 A) << 4
- ROL addr4              ;               = pattTileCounter * 16
+ ASL A                  ; Set (addr X) = (addr A) << 4
+ ROL addr               ;              = pattTileCounter * 16
  ASL A
- ROL addr4
+ ROL addr
  ASL A
- ROL addr4
+ ROL addr
  ASL A
  TAX
 
- LDA addr4              ; Set (A X) = (ppuPatternTableHi 0) + (addr4 X)
+ LDA addr               ; Set (A X) = (ppuPatternTableHi 0) + (addr X)
  ROL A                  ;         = (ppuPatternTableHi 0) + pattTileCounter * 16
  ADC ppuPatternTableHi  ;
                         ; ppuPatternTableHi contains the high byte of the
@@ -2050,7 +2050,7 @@ ENDIF
                         ; table 1 for tile number pattTileCounter (as there are
                         ; 16 bytes in the pattern table for each tile)
 
-                        ; We now set both PPU_ADDR and addr4(1 0) to the
+                        ; We now set both PPU_ADDR and addr(1 0) to the
                         ; following:
                         ;
                         ;   * (A X)         when nmiBitplane is 0
@@ -2065,7 +2065,7 @@ ENDIF
 
  STA PPU_ADDR           ; Set the high byte of PPU_ADDR to A
 
- STA addr4+1            ; Set the high byte of addr4 to A
+ STA addr+1             ; Set the high byte of addr to A
 
  TXA                    ; Set A = X + nmiBitplane8
  ADC nmiBitplane8       ;       = X + nmiBitplane * 8
@@ -2075,9 +2075,9 @@ ENDIF
 
  STA PPU_ADDR           ; Set the low byte of PPU_ADDR to A
 
- STA addr4              ; Set the high byte of addr4 to A
+ STA addr               ; Set the high byte of addr to A
 
-                        ; So PPU_ADDR and addr4(1 0) both contain the PPU
+                        ; So PPU_ADDR and addr(1 0) both contain the PPU
                         ; address to which we should send our pattern data for
                         ; this bitplane
 
@@ -2150,15 +2150,15 @@ ENDIF
 
 .spat13
 
- LDA addr4              ; Set the following:
+ LDA addr               ; Set the following:
  CLC                    ;
- ADC #16                ;   PPU_ADDR = addr4(1 0) + 16
- STA addr4              ;
- LDA addr4+1            ;   addr4(1 0) = addr4(1 0) + 16
+ ADC #16                ;   PPU_ADDR = addr(1 0) + 16
+ STA addr               ;
+ LDA addr+1             ;   addr(1 0) = addr(1 0) + 16
  ADC #0                 ;
- STA addr4+1            ; So PPU_ADDR and addr4(1 0) both point to the next
+ STA addr+1             ; So PPU_ADDR and addr(1 0) both point to the next
  STA PPU_ADDR           ; tile's pattern in the PPU for this bitplane, as each
- LDA addr4              ; tile has 16 bytes of pattern data (8 in each bitplane)
+ LDA addr               ; tile has 16 bytes of pattern data (8 in each bitplane)
  STA PPU_ADDR
 
  INX                    ; Increment the tile number in X
@@ -2178,17 +2178,17 @@ ENDIF
 
 .spat14
 
- LDA addr4              ; Set the following:
+ LDA addr               ; Set the following:
  ADC #16                ;
- STA addr4              ;   PPU_ADDR = addr4(1 0) + 16
- LDA addr4+1            ;
- ADC #0                 ;   addr4(1 0) = addr4(1 0) + 16
- STA addr4+1            ;
+ STA addr               ;   PPU_ADDR = addr(1 0) + 16
+ LDA addr+1             ;
+ ADC #0                 ;   addr(1 0) = addr(1 0) + 16
+ STA addr+1             ;
  STA PPU_ADDR           ; The addition works because the C flag is clear, either
- LDA addr4              ; because we passed through the BCS above, or because we
+ LDA addr               ; because we passed through the BCS above, or because we
  STA PPU_ADDR           ; jumped to spat16 and back
                         ;
-                        ; So PPU_ADDR and addr4(1 0) both point to the next
+                        ; So PPU_ADDR and addr(1 0) both point to the next
                         ; tile's pattern in the PPU for this bitplane, as each
                         ; tile has 16 bytes of pattern data (8 in each bitplane)
 
@@ -2208,17 +2208,17 @@ ENDIF
 
 .spat15
 
- LDA addr4              ; Set the following:
+ LDA addr               ; Set the following:
  ADC #16                ;
- STA addr4              ;   PPU_ADDR = addr4(1 0) + 16
- LDA addr4+1            ;
- ADC #0                 ;   addr4(1 0) = addr4(1 0) + 16
- STA addr4+1            ;
+ STA addr               ;   PPU_ADDR = addr(1 0) + 16
+ LDA addr+1             ;
+ ADC #0                 ;   addr(1 0) = addr(1 0) + 16
+ STA addr+1             ;
  STA PPU_ADDR           ; The addition works because the C flag is clear, either
- LDA addr4              ; because we passed through the BCS above, or because we
+ LDA addr               ; because we passed through the BCS above, or because we
  STA PPU_ADDR           ; jumped to spat20 and back
                         ;
-                        ; So PPU_ADDR and addr4(1 0) both point to the next
+                        ; So PPU_ADDR and addr(1 0) both point to the next
                         ; tile's pattern in the PPU for this bitplane, as each
                         ; tile has 16 bytes of pattern data (8 in each bitplane)
 
@@ -2310,9 +2310,9 @@ ENDIF
 
 .spat21
 
- LDA pattTileCounter    ; Set (addr4 A) = pattTileCounter
+ LDA pattTileCounter    ; Set (addr A) = pattTileCounter
  LDX #0
- STX addr4
+ STX addr
 
  STX dataForPPU         ; Zero the low byte of dataForPPU(1 0)
                         ;
@@ -2320,16 +2320,16 @@ ENDIF
                         ; contains the address of the pattern buffer for this
                         ; bitplane
 
- ASL A                  ; Set (addr4 X) = (addr4 A) << 4
- ROL addr4              ;               = pattTileCounter * 16
+ ASL A                  ; Set (addr X) = (addr A) << 4
+ ROL addr               ;              = pattTileCounter * 16
  ASL A
- ROL addr4
+ ROL addr
  ASL A
- ROL addr4
+ ROL addr
  ASL A
  TAX
 
- LDA addr4              ; Set (A X) = (ppuPatternTableHi 0) + (addr4 X)
+ LDA addr               ; Set (A X) = (ppuPatternTableHi 0) + (addr X)
  ROL A                  ;         = (ppuPatternTableHi 0) + pattTileCounter * 16
  ADC ppuPatternTableHi  ;
                         ; ppuPatternTableHi contains the high byte of the
@@ -2339,7 +2339,7 @@ ENDIF
                         ; table 1 for tile number pattTileCounter (as there are
                         ; 16 bytes in the pattern table for each tile)
 
-                        ; We now set both PPU_ADDR and addr4(1 0) to the
+                        ; We now set both PPU_ADDR and addr(1 0) to the
                         ; following:
                         ;
                         ;   * (A X)         when nmiBitplane is 0
@@ -2354,7 +2354,7 @@ ENDIF
 
  STA PPU_ADDR           ; Set the high byte of PPU_ADDR to A
 
- STA addr4+1            ; Set the high byte of addr4 to A
+ STA addr+1             ; Set the high byte of addr to A
 
  TXA                    ; Set A = X + nmiBitplane8
  ADC nmiBitplane8       ;       = X + nmiBitplane * 8
@@ -2364,9 +2364,9 @@ ENDIF
 
  STA PPU_ADDR           ; Set the low byte of PPU_ADDR to A
 
- STA addr4              ; Set the high byte of addr4 to A
+ STA addr               ; Set the high byte of addr to A
 
-                        ; So PPU_ADDR and addr4(1 0) both contain the PPU
+                        ; So PPU_ADDR and addr(1 0) both contain the PPU
                         ; address to which we should send our pattern data for
                         ; this bitplane
 
@@ -2434,15 +2434,15 @@ ENDIF
 
 .spat27
 
- LDA addr4              ; Set the following:
+ LDA addr               ; Set the following:
  CLC                    ;
- ADC #16                ;   PPU_ADDR = addr4(1 0) + 16
- STA addr4              ;
- LDA addr4+1            ;   addr4(1 0) = addr4(1 0) + 16
+ ADC #16                ;   PPU_ADDR = addr(1 0) + 16
+ STA addr               ;
+ LDA addr+1             ;   addr(1 0) = addr(1 0) + 16
  ADC #0                 ;
- STA addr4+1            ; So PPU_ADDR and addr4(1 0) both point to the next
+ STA addr+1             ; So PPU_ADDR and addr(1 0) both point to the next
  STA PPU_ADDR           ; tile's pattern in the PPU for this bitplane, as each
- LDA addr4              ; tile has 16 bytes of pattern data (8 in each bitplane)
+ LDA addr               ; tile has 16 bytes of pattern data (8 in each bitplane)
  STA PPU_ADDR
 
  SEND_DATA_TO_PPU 8     ; Send 8 bytes from dataForPPU to the PPU, starting at
@@ -2456,17 +2456,17 @@ ENDIF
 
 .spat28
 
- LDA addr4              ; Set the following:
+ LDA addr               ; Set the following:
  ADC #16                ;
- STA addr4              ;   PPU_ADDR = addr4(1 0) + 16
- LDA addr4+1            ;
- ADC #0                 ;   addr4(1 0) = addr4(1 0) + 16
- STA addr4+1            ;
+ STA addr               ;   PPU_ADDR = addr(1 0) + 16
+ LDA addr+1             ;
+ ADC #0                 ;   addr(1 0) = addr(1 0) + 16
+ STA addr+1             ;
  STA PPU_ADDR           ; The addition works because the C flag is clear, either
- LDA addr4              ; because we passed through the BCS above, or because we
+ LDA addr               ; because we passed through the BCS above, or because we
  STA PPU_ADDR           ; jumped to spat29 and back
                         ;
-                        ; So PPU_ADDR and addr4(1 0) both point to the next
+                        ; So PPU_ADDR and addr(1 0) both point to the next
                         ; tile's pattern in the PPU for this bitplane, as each
                         ; tile has 16 bytes of pattern data (8 in each bitplane)
 
@@ -3359,7 +3359,7 @@ ENDIF
 
  JSR AutoPlayDemo       ; Bit 7 of autoPlayDemo is set, so call AutoPlayDemo to
                         ; automatically play the demo using the controller key
-                        ; presses in the autoplayKeys table
+                        ; presses in the autoplayKeys tables
 
 .inmi1
 
@@ -9198,14 +9198,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LE5B0_EN
+;       Name: autoplayKeys_EN
 ;       Type: Variable
 ;   Category: Demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.LE5B0_EN
+.autoplayKeys_EN
 
 IF _NTSC
 
@@ -9230,14 +9230,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LE602_DE
+;       Name: autoplayKeys_DE
 ;       Type: Variable
 ;   Category: Demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.LE602_DE
+.autoplayKeys_DE
 
 IF _NTSC
 
@@ -9262,14 +9262,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LE653_FR
+;       Name: autoplayKeys_FR
 ;       Type: Variable
 ;   Category: Demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.LE653_FR
+.autoplayKeys_FR
 
 IF _NTSC
 
@@ -9294,14 +9294,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: autoplayKeys
+;       Name: autoplayKeys_ALL
 ;       Type: Variable
 ;   Category: Demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.autoplayKeys
+.autoplayKeys_ALL
 
  EQUB $89, $10, $03, $88, $28, $19, $C2, $00  ; E6A4: 89 10 03... ...
  EQUB $A5, $00, $9F, $9F, $22, $16, $83, $10  ; E6AC: A5 00 9F... ...
@@ -9372,8 +9372,8 @@ ENDIF
 ;       Name: AutoPlayDemo
 ;       Type: Subroutine
 ;   Category: Demo
-;    Summary: Automatically play the demo using the control key pressed in the
-;             autoplayKeys table
+;    Summary: Automatically play the demo using the key presses from the
+;             autoplayKeys tables
 ;
 ; ******************************************************************************
 
@@ -9397,11 +9397,11 @@ ENDIF
  LDX L04BD
  BNE CE83F
  LDY #0
- LDA (addr2),Y
+ LDA (autoplayKeys),Y
  BMI CE878
  STA L04BC
  INY
- LDA (addr2),Y
+ LDA (autoplayKeys),Y
  SEC
  TAX
 
@@ -9411,10 +9411,10 @@ ENDIF
 
 .CE837
 
- ADC addr2
- STA addr2
+ ADC autoplayKeys
+ STA autoplayKeys
  BCC CE83F
- INC addr2+1
+ INC autoplayKeys+1
 
 .CE83F
 
@@ -9464,20 +9464,20 @@ ENDIF
  BEQ CE8D1
  PHA
  INY
- LDA (addr2),Y
+ LDA (autoplayKeys),Y
  STA L04BC
  INY
- LDA (addr2),Y
- STA addr4
+ LDA (autoplayKeys),Y
+ STA addr
  INY
- LDA (addr2),Y
- STA addr4+1
+ LDA (autoplayKeys),Y
+ STA addr+1
  LDY #0
  LDX #1
  PLA
  CMP #8
  BCS CE8AC
- LDA (addr4),Y
+ LDA (addr),Y
  BNE CE83F
 
 .CE8A7
@@ -9489,7 +9489,7 @@ ENDIF
 .CE8AC
 
  BNE CE8B4
- LDA (addr4),Y
+ LDA (addr),Y
  BEQ CE83F
  BNE CE8A7
 
@@ -9497,14 +9497,14 @@ ENDIF
 
  CMP #$10
  BCS CE8BE
- LDA (addr4),Y
+ LDA (addr),Y
  BMI CE83F
  BPL CE8A7
 
 .CE8BE
 
  BNE CE8C7
- LDA (addr4),Y
+ LDA (addr),Y
  BMI CE8A7
  JMP CE83F
 
@@ -9518,10 +9518,10 @@ ENDIF
 
 .CE8D1
 
- LDA #HI(autoplayKeys)
- STA addr2+1
- LDA #LO(autoplayKeys)
- STA addr2
+ LDA #HI(autoplayKeys_ALL)
+ STA autoplayKeys+1
+ LDA #LO(autoplayKeys_ALL)
+ STA autoplayKeys
  RTS
 
 .CE8DA
@@ -9961,7 +9961,7 @@ ENDIF
  BNE ScaleController
  LDX JSTX
  LDA #8
- STA addr4
+ STA addr
  LDY scanController2
  BNE CEAC5
  LDA controller1B
@@ -9988,7 +9988,7 @@ ENDIF
 .CEADB
 
  LDA #4
- STA addr4
+ STA addr
  LDX JSTY
  LDA JSTGY
  BMI CEAFB
@@ -10040,7 +10040,7 @@ ENDIF
 
  TXA
  CLC
- ADC addr4
+ ADC addr
  TAX
  BCC CEB16
  LDX #$FF
@@ -10063,7 +10063,7 @@ ENDIF
 
  TXA
  SEC
- SBC addr4
+ SBC addr
  TAX
  BCS CEB22
  LDX #1
@@ -16908,35 +16908,35 @@ ENDIF
 
 .lineImage
 
- EQUB $FF, $00, $00, $00, $00, $00, $00, $00  ; FC00: FF 00 00... ...
- EQUB $00, $FF, $00, $00, $00, $00, $00, $00  ; FC08: 00 FF 00... ...
- EQUB $00, $00, $FF, $00, $00, $00, $00, $00  ; FC10: 00 00 FF... ...
- EQUB $00, $00, $00, $FF, $00, $00, $00, $00  ; FC18: 00 00 00... ...
- EQUB $00, $00, $00, $00, $FF, $00, $00, $00  ; FC20: 00 00 00... ...
- EQUB $00, $00, $00, $00, $00, $FF, $00, $00  ; FC28: 00 00 00... ...
- EQUB $00, $00, $00, $00, $00, $00, $FF, $00  ; FC30: 00 00 00... ...
- EQUB $00, $00, $00, $00, $00, $00, $00, $FF  ; FC38: 00 00 00... ...
- EQUB $00, $00, $00, $00, $00, $00, $FF, $FF  ; FC40: 00 00 00... ...
- EQUB $00, $00, $00, $00, $00, $FF, $FF, $FF  ; FC48: 00 00 00... ...
- EQUB $00, $00, $00, $00, $FF, $FF, $FF, $FF  ; FC50: 00 00 00... ...
- EQUB $00, $00, $00, $FF, $FF, $FF, $FF, $FF  ; FC58: 00 00 00... ...
- EQUB $00, $00, $FF, $FF, $FF, $FF, $FF, $FF  ; FC60: 00 00 FF... ...
- EQUB $00, $FF, $FF, $FF, $FF, $FF, $FF, $FF  ; FC68: 00 FF FF... ...
- EQUB $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF  ; FC70: FF FF FF... ...
- EQUB $80, $80, $80, $80, $80, $80, $80, $80  ; FC78: 80 80 80... ...
- EQUB $40, $40, $40, $40, $40, $40, $40, $40  ; FC80: 40 40 40... @@@
- EQUB $20, $20, $20, $20, $20, $20, $20, $20  ; FC88: 20 20 20...
- EQUB $10, $10, $10, $10, $10, $10, $10, $10  ; FC90: 10 10 10... ...
- EQUB $08, $08, $08, $08, $08, $08, $08, $08  ; FC98: 08 08 08... ...
- EQUB $04, $04, $04, $04, $04, $04, $04, $04  ; FCA0: 04 04 04... ...
- EQUB $02, $02, $02, $02, $02, $02, $02, $02  ; FCA8: 02 02 02... ...
- EQUB $01, $01, $01, $01, $01, $01, $01, $01  ; FCB0: 01 01 01... ...
- EQUB $00, $00, $00, $00, $00, $FF, $FF, $FF  ; FCB8: 00 00 00... ...
- EQUB $FF, $FF, $FF, $00, $00, $00, $00, $00  ; FCC0: FF FF FF... ...
- EQUB $00, $00, $00, $00, $00, $C0, $C0, $C0  ; FCC8: 00 00 00... ...
- EQUB $C0, $C0, $C0, $00, $00, $00, $00, $00  ; FCD0: C0 C0 C0... ...
- EQUB $00, $00, $00, $00, $00, $03, $03, $03  ; FCD8: 00 00 00... ...
- EQUB $03, $03, $03, $00, $00, $00, $00, $00  ; FCE0: 03 03 03... ...
+ EQUB $FF, $00, $00, $00, $00, $00, $00, $00
+ EQUB $00, $FF, $00, $00, $00, $00, $00, $00
+ EQUB $00, $00, $FF, $00, $00, $00, $00, $00
+ EQUB $00, $00, $00, $FF, $00, $00, $00, $00
+ EQUB $00, $00, $00, $00, $FF, $00, $00, $00
+ EQUB $00, $00, $00, $00, $00, $FF, $00, $00
+ EQUB $00, $00, $00, $00, $00, $00, $FF, $00
+ EQUB $00, $00, $00, $00, $00, $00, $00, $FF
+ EQUB $00, $00, $00, $00, $00, $00, $FF, $FF
+ EQUB $00, $00, $00, $00, $00, $FF, $FF, $FF
+ EQUB $00, $00, $00, $00, $FF, $FF, $FF, $FF
+ EQUB $00, $00, $00, $FF, $FF, $FF, $FF, $FF
+ EQUB $00, $00, $FF, $FF, $FF, $FF, $FF, $FF
+ EQUB $00, $FF, $FF, $FF, $FF, $FF, $FF, $FF
+ EQUB $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
+ EQUB $80, $80, $80, $80, $80, $80, $80, $80
+ EQUB $40, $40, $40, $40, $40, $40, $40, $40
+ EQUB $20, $20, $20, $20, $20, $20, $20, $20
+ EQUB $10, $10, $10, $10, $10, $10, $10, $10
+ EQUB $08, $08, $08, $08, $08, $08, $08, $08
+ EQUB $04, $04, $04, $04, $04, $04, $04, $04
+ EQUB $02, $02, $02, $02, $02, $02, $02, $02
+ EQUB $01, $01, $01, $01, $01, $01, $01, $01
+ EQUB $00, $00, $00, $00, $00, $FF, $FF, $FF
+ EQUB $FF, $FF, $FF, $00, $00, $00, $00, $00
+ EQUB $00, $00, $00, $00, $00, $C0, $C0, $C0
+ EQUB $C0, $C0, $C0, $00, $00, $00, $00, $00
+ EQUB $00, $00, $00, $00, $00, $03, $03, $03
+ EQUB $03, $03, $03, $00, $00, $00, $00, $00
 
 ; ******************************************************************************
 ;
@@ -17046,18 +17046,35 @@ ENDIF
 
 IF _NTSC
 
- EQUB $00, $8D, $06, $20, $A9, $4C, $00, $C0
+ EQUB $00, $8D, $06     ; These bytes appear to be unused
+ EQUB $20, $A9, $4C
+ EQUB $00, $C0, $45
+ EQUB $4C, $20, $20
+ EQUB $20, $20, $20
+ EQUB $20, $20, $20
+ EQUB $20, $20, $20
+ EQUB $20, $20, $20
+ EQUB $00, $00, $00
+ EQUB $00, $38, $04
+ EQUB $01, $07, $9C
+ EQUB $2A
 
 ELIF _PAL
 
- EQUB $FF, $FF, $FF, $FF, $FF, $4C, $00, $C0
+ EQUB $FF, $FF, $FF     ; These bytes appear to be unused
+ EQUB $FF, $FF, $4C
+ EQUB $00, $C0, $45
+ EQUB $4C, $20, $20
+ EQUB $20, $20, $20
+ EQUB $20, $20, $20
+ EQUB $20, $20, $20
+ EQUB $20, $20, $20
+ EQUB $00, $00, $00
+ EQUB $00, $38, $04
+ EQUB $01, $07, $9C
+ EQUB $2A
 
 ENDIF
-
- EQUB $45, $4C, $20, $20, $20, $20, $20, $20
- EQUB $20, $20, $20, $20, $20, $20, $20, $20
- EQUB $00, $00, $00, $00, $38, $04, $01, $07
- EQUB $9C, $2A
 
 ; ******************************************************************************
 ;

@@ -297,50 +297,50 @@ ENDIF
  STA L0306
  LDA L9160,X
  STA L0310
- STA L00FE
+ STA soundAddr
  LDA L9161,X
  STA L0311
- STA L00FF
- LDA (L00FE),Y
+ STA soundAddr+1
+ LDA (soundAddr),Y
  STA L030E
  INY
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  STA L030F
  LDA L9162,X
  STA L0323
- STA L00FE
+ STA soundAddr
  LDA L9163,X
  STA L0324
- STA L00FF
+ STA soundAddr+1
  DEY
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  STA L0321
  INY
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  STA L0322
  LDA L9164,X
  STA L0336
- STA L00FE
+ STA soundAddr
  LDA L9165,X
  STA L0337
- STA L00FF
+ STA soundAddr+1
  DEY
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  STA L0334
  INY
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  STA L0335
  LDA L9166,X
  STA L0349
- STA L00FE
+ STA soundAddr
  LDA L9167,X
  STA L034A
- STA L00FF
+ STA soundAddr+1
  DEY
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  STA L0347
  INY
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  STA L0348
  STY L0316
  STY L0329
@@ -515,9 +515,9 @@ ENDIF
 .C819D
 
  LDA L030E
- STA L00FE
+ STA soundAddr
  LDA L030F
- STA L00FF
+ STA soundAddr+1
  LDA #0
  STA L0318
  STA L0320
@@ -525,11 +525,11 @@ ENDIF
 .C81AF
 
  LDY #0
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  TAY
- INC L00FE
+ INC soundAddr
  BNE C81BA
- INC L00FF
+ INC soundAddr+1
 
 .C81BA
 
@@ -576,9 +576,9 @@ ENDIF
 
 .C8206
 
- LDA L00FE
+ LDA soundAddr
  STA L030E
- LDA L00FF
+ LDA soundAddr+1
  STA L030F
  LDA L0315
  STA L0316
@@ -592,24 +592,24 @@ ENDIF
  LDA L0312
  CLC
  ADC L0310
- STA L00FE
+ STA soundAddr
  LDA L0313
  ADC L0311
- STA L00FF
+ STA soundAddr+1
  LDA L0312
  ADC #2
  STA L0312
  TYA
  ADC L0313
  STA L0313
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  INY
- ORA (L00FE),Y
+ ORA (soundAddr),Y
  BNE C8258
  LDA L0310
- STA L00FE
+ STA soundAddr
  LDA L0311
- STA L00FF
+ STA soundAddr+1
  LDA #2
  STA L0312
  LDA #0
@@ -617,22 +617,22 @@ ENDIF
 
 .C8258
 
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  TAX
  DEY
- LDA (L00FE),Y
- STA L00FE
- STX L00FF
+ LDA (soundAddr),Y
+ STA soundAddr
+ STX soundAddr+1
  JMP C81AF
 
 .C8265
 
  CMP #$F6
  BNE C8277
- LDA (L00FE),Y
- INC L00FE
+ LDA (soundAddr),Y
+ INC soundAddr
  BNE C8271
- INC L00FF
+ INC soundAddr+1
 
 .C8271
 
@@ -643,10 +643,10 @@ ENDIF
 
  CMP #$F7
  BNE C828C
- LDA (L00FE),Y
- INC L00FE
+ LDA (soundAddr),Y
+ INC soundAddr
  BNE C8283
- INC L00FF
+ INC soundAddr+1
 
 .C8283
 
@@ -658,11 +658,11 @@ ENDIF
 
  CMP #$FA
  BNE C829E
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  STA L0317
- INC L00FE
+ INC soundAddr
  BNE C829B
- INC L00FF
+ INC soundAddr+1
 
 .C829B
 
@@ -686,10 +686,10 @@ ENDIF
 
  CMP #$FD
  BNE C82C3
- LDA (L00FE),Y
- INC L00FE
+ LDA (soundAddr),Y
+ INC soundAddr
  BNE C82BD
- INC L00FF
+ INC soundAddr+1
 
 .C82BD
 
@@ -700,10 +700,10 @@ ENDIF
 
  CMP #$FB
  BNE C82D5
- LDA (L00FE),Y
- INC L00FE
+ LDA (soundAddr),Y
+ INC soundAddr
  BNE C82CF
- INC L00FF
+ INC soundAddr+1
 
 .C82CF
 
@@ -714,10 +714,10 @@ ENDIF
 
  CMP #$FC
  BNE C82E7
- LDA (L00FE),Y
- INC L00FE
+ LDA (soundAddr),Y
+ INC soundAddr
  BNE C82E1
- INC L00FF
+ INC soundAddr+1
 
 .C82E1
 
@@ -728,34 +728,34 @@ ENDIF
 
  CMP #$F5
  BNE C8311
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  TAX
  STA L0310
  INY
- LDA (L00FE),Y
- STX L00FE
- STA L00FF
+ LDA (soundAddr),Y
+ STX soundAddr
+ STA soundAddr+1
  STA L0311
  LDA #2
  STA L0312
  DEY
  STY L0313
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  TAX
  INY
- LDA (L00FE),Y
- STA L00FF
- STX L00FE
+ LDA (soundAddr),Y
+ STA soundAddr+1
+ STX soundAddr
  JMP C81AF
 
 .C8311
 
  CMP #$F4
  BNE C8326
- LDA (L00FE),Y
- INC L00FE
+ LDA (soundAddr),Y
+ INC soundAddr
  BNE C831D
- INC L00FF
+ INC soundAddr+1
 
 .C831D
 
@@ -791,14 +791,14 @@ ENDIF
  BEQ C836A
  LDX L031F
  LDA L902C,X
- STA L00FE
+ STA soundAddr
  LDA L9040,X
- STA L00FF
+ STA soundAddr+1
  LDY #0
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  STA L031D
  LDY L031C
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  BMI C8362
  DEC L031E
  BPL C8362
@@ -816,16 +816,16 @@ ENDIF
 
  LDX L031A
  LDA L9119,X
- STA L00FE
+ STA soundAddr
  LDA L9121,X
- STA L00FF
+ STA soundAddr+1
  LDY L0319
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  CMP #$80
  BNE C8387
  LDY #0
  STY L0319
- LDA (L00FE),Y
+ LDA (soundAddr),Y
 
 .C8387
 
@@ -853,9 +853,9 @@ ENDIF
 .C8398
 
  LDA L0321
- STA L00FE
+ STA soundAddr
  LDA L0322
- STA L00FF
+ STA soundAddr+1
  LDA #0
  STA L032B
  STA L0333
@@ -863,11 +863,11 @@ ENDIF
 .C83AA
 
  LDY #0
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  TAY
- INC L00FE
+ INC soundAddr
  BNE C83B5
- INC L00FF
+ INC soundAddr+1
 
 .C83B5
 
@@ -914,9 +914,9 @@ ENDIF
 
 .C8401
 
- LDA L00FE
+ LDA soundAddr
  STA L0321
- LDA L00FF
+ LDA soundAddr+1
  STA L0322
  LDA L0328
  STA L0329
@@ -930,24 +930,24 @@ ENDIF
  LDA L0325
  CLC
  ADC L0323
- STA L00FE
+ STA soundAddr
  LDA L0326
  ADC L0324
- STA L00FF
+ STA soundAddr+1
  LDA L0325
  ADC #2
  STA L0325
  TYA
  ADC L0326
  STA L0326
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  INY
- ORA (L00FE),Y
+ ORA (soundAddr),Y
  BNE C8453
  LDA L0323
- STA L00FE
+ STA soundAddr
  LDA L0324
- STA L00FF
+ STA soundAddr+1
  LDA #2
  STA L0325
  LDA #0
@@ -955,22 +955,22 @@ ENDIF
 
 .C8453
 
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  TAX
  DEY
- LDA (L00FE),Y
- STA L00FE
- STX L00FF
+ LDA (soundAddr),Y
+ STA soundAddr
+ STX soundAddr+1
  JMP C83AA
 
 .C8460
 
  CMP #$F6
  BNE C8472
- LDA (L00FE),Y
- INC L00FE
+ LDA (soundAddr),Y
+ INC soundAddr
  BNE C846C
- INC L00FF
+ INC soundAddr+1
 
 .C846C
 
@@ -981,10 +981,10 @@ ENDIF
 
  CMP #$F7
  BNE C8487
- LDA (L00FE),Y
- INC L00FE
+ LDA (soundAddr),Y
+ INC soundAddr
  BNE C847E
- INC L00FF
+ INC soundAddr+1
 
 .C847E
 
@@ -996,11 +996,11 @@ ENDIF
 
  CMP #$FA
  BNE C8499
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  STA L032A
- INC L00FE
+ INC soundAddr
  BNE C8496
- INC L00FF
+ INC soundAddr+1
 
 .C8496
 
@@ -1024,10 +1024,10 @@ ENDIF
 
  CMP #$FD
  BNE C84BE
- LDA (L00FE),Y
- INC L00FE
+ LDA (soundAddr),Y
+ INC soundAddr
  BNE C84B8
- INC L00FF
+ INC soundAddr+1
 
 .C84B8
 
@@ -1038,10 +1038,10 @@ ENDIF
 
  CMP #$FB
  BNE C84D0
- LDA (L00FE),Y
- INC L00FE
+ LDA (soundAddr),Y
+ INC soundAddr
  BNE C84CA
- INC L00FF
+ INC soundAddr+1
 
 .C84CA
 
@@ -1052,10 +1052,10 @@ ENDIF
 
  CMP #$FC
  BNE C84E2
- LDA (L00FE),Y
- INC L00FE
+ LDA (soundAddr),Y
+ INC soundAddr
  BNE C84DC
- INC L00FF
+ INC soundAddr+1
 
 .C84DC
 
@@ -1066,34 +1066,34 @@ ENDIF
 
  CMP #$F5
  BNE C850C
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  TAX
  STA L0323
  INY
- LDA (L00FE),Y
- STX L00FE
- STA L00FF
+ LDA (soundAddr),Y
+ STX soundAddr
+ STA soundAddr+1
  STA L0324
  LDA #2
  STA L0325
  DEY
  STY L0326
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  TAX
  INY
- LDA (L00FE),Y
- STA L00FF
- STX L00FE
+ LDA (soundAddr),Y
+ STA soundAddr+1
+ STX soundAddr
  JMP C83AA
 
 .C850C
 
  CMP #$F4
  BNE C8521
- LDA (L00FE),Y
- INC L00FE
+ LDA (soundAddr),Y
+ INC soundAddr
  BNE C8518
- INC L00FF
+ INC soundAddr+1
 
 .C8518
 
@@ -1129,14 +1129,14 @@ ENDIF
  BEQ C8565
  LDX L0332
  LDA L902C,X
- STA L00FE
+ STA soundAddr
  LDA L9040,X
- STA L00FF
+ STA soundAddr+1
  LDY #0
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  STA L0330
  LDY L032F
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  BMI C855D
  DEC L0331
  BPL C855D
@@ -1154,16 +1154,16 @@ ENDIF
 
  LDX L032D
  LDA L9119,X
- STA L00FE
+ STA soundAddr
  LDA L9121,X
- STA L00FF
+ STA soundAddr+1
  LDY L032C
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  CMP #$80
  BNE C8582
  LDY #0
  STY L032C
- LDA (L00FE),Y
+ LDA (soundAddr),Y
 
 .C8582
 
@@ -1191,18 +1191,18 @@ ENDIF
 .C8593
 
  LDA L0334
- STA L00FE
+ STA soundAddr
  LDA L0335
- STA L00FF
+ STA soundAddr+1
 
 .C859D
 
  LDY #0
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  TAY
- INC L00FE
+ INC soundAddr
  BNE C85A8
- INC L00FF
+ INC soundAddr+1
 
 .C85A8
 
@@ -1237,9 +1237,9 @@ ENDIF
 
 .C85E4
 
- LDA L00FE
+ LDA soundAddr
  STA L0334
- LDA L00FF
+ LDA soundAddr+1
  STA L0335
  LDA L033B
  STA L033C
@@ -1253,24 +1253,24 @@ ENDIF
  LDA L0338
  CLC
  ADC L0336
- STA L00FE
+ STA soundAddr
  LDA L0339
  ADC L0337
- STA L00FF
+ STA soundAddr+1
  LDA L0338
  ADC #2
  STA L0338
  TYA
  ADC L0339
  STA L0339
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  INY
- ORA (L00FE),Y
+ ORA (soundAddr),Y
  BNE C8636
  LDA L0336
- STA L00FE
+ STA soundAddr
  LDA L0337
- STA L00FF
+ STA soundAddr+1
  LDA #2
  STA L0338
  LDA #0
@@ -1278,22 +1278,22 @@ ENDIF
 
 .C8636
 
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  TAX
  DEY
- LDA (L00FE),Y
- STA L00FE
- STX L00FF
+ LDA (soundAddr),Y
+ STA soundAddr
+ STX soundAddr+1
  JMP C859D
 
 .C8643
 
  CMP #$F6
  BNE C8655
- LDA (L00FE),Y
- INC L00FE
+ LDA (soundAddr),Y
+ INC soundAddr
  BNE C864F
- INC L00FF
+ INC soundAddr+1
 
 .C864F
 
@@ -1304,10 +1304,10 @@ ENDIF
 
  CMP #$F7
  BNE C866A
- LDA (L00FE),Y
- INC L00FE
+ LDA (soundAddr),Y
+ INC soundAddr
  BNE C8661
- INC L00FF
+ INC soundAddr+1
 
 .C8661
 
@@ -1333,10 +1333,10 @@ ENDIF
 
  CMP #$FB
  BNE C868F
- LDA (L00FE),Y
- INC L00FE
+ LDA (soundAddr),Y
+ INC soundAddr
  BNE C8689
- INC L00FF
+ INC soundAddr+1
 
 .C8689
 
@@ -1347,10 +1347,10 @@ ENDIF
 
  CMP #$FC
  BNE C86A1
- LDA (L00FE),Y
- INC L00FE
+ LDA (soundAddr),Y
+ INC soundAddr
  BNE C869B
- INC L00FF
+ INC soundAddr+1
 
 .C869B
 
@@ -1361,34 +1361,34 @@ ENDIF
 
  CMP #$F5
  BNE C86CB
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  TAX
  STA L0336
  INY
- LDA (L00FE),Y
- STX L00FE
- STA L00FF
+ LDA (soundAddr),Y
+ STX soundAddr
+ STA soundAddr+1
  STA L0337
  LDA #2
  STA L0338
  DEY
  STY L0339
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  TAX
  INY
- LDA (L00FE),Y
- STA L00FF
- STX L00FE
+ LDA (soundAddr),Y
+ STA soundAddr+1
+ STX soundAddr
  JMP C859D
 
 .C86CB
 
  CMP #$F4
  BNE C86E0
- LDA (L00FE),Y
- INC L00FE
+ LDA (soundAddr),Y
+ INC soundAddr
  BNE C86D7
- INC L00FF
+ INC soundAddr+1
 
 .C86D7
 
@@ -1431,16 +1431,16 @@ ENDIF
 
  LDX L0340
  LDA L9119,X
- STA L00FE
+ STA soundAddr
  LDA L9121,X
- STA L00FF
+ STA soundAddr+1
  LDY L033F
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  CMP #$80
  BNE C871A
  LDY #0
  STY L033F
- LDA (L00FE),Y
+ LDA (soundAddr),Y
 
 .C871A
 
@@ -1468,19 +1468,19 @@ ENDIF
 .C872B
 
  LDA L0347
- STA L00FE
+ STA soundAddr
  LDA L0348
- STA L00FF
+ STA soundAddr+1
  STA L0359
 
 .C8738
 
  LDY #0
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  TAY
- INC L00FE
+ INC soundAddr
  BNE C8743
- INC L00FF
+ INC soundAddr+1
 
 .C8743
 
@@ -1514,9 +1514,9 @@ ENDIF
 
  LDA #$FF
  STA L0359
- LDA L00FE
+ LDA soundAddr
  STA L0347
- LDA L00FF
+ LDA soundAddr+1
  STA L0348
  LDA L034E
  STA L034F
@@ -1530,24 +1530,24 @@ ENDIF
  LDA L034B
  CLC
  ADC L0349
- STA L00FE
+ STA soundAddr
  LDA L034C
  ADC L034A
- STA L00FF
+ STA soundAddr+1
  LDA L034B
  ADC #2
  STA L034B
  TYA
  ADC L034C
  STA L034C
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  INY
- ORA (L00FE),Y
+ ORA (soundAddr),Y
  BNE C87C9
  LDA L0349
- STA L00FE
+ STA soundAddr
  LDA L034A
- STA L00FF
+ STA soundAddr+1
  LDA #2
  STA L034B
  LDA #0
@@ -1555,22 +1555,22 @@ ENDIF
 
 .C87C9
 
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  TAX
  DEY
- LDA (L00FE),Y
- STA L00FE
- STX L00FF
+ LDA (soundAddr),Y
+ STA soundAddr
+ STX soundAddr+1
  JMP C8738
 
 .C87D6
 
  CMP #$F6
  BNE C87E8
- LDA (L00FE),Y
- INC L00FE
+ LDA (soundAddr),Y
+ INC soundAddr
  BNE C87E2
- INC L00FF
+ INC soundAddr+1
 
 .C87E2
 
@@ -1581,10 +1581,10 @@ ENDIF
 
  CMP #$F7
  BNE C87FD
- LDA (L00FE),Y
- INC L00FE
+ LDA (soundAddr),Y
+ INC soundAddr
  BNE C87F4
- INC L00FF
+ INC soundAddr+1
 
 .C87F4
 
@@ -1610,34 +1610,34 @@ ENDIF
 
  CMP #$F5
  BNE C883A
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  TAX
  STA L0349
  INY
- LDA (L00FE),Y
- STX L00FE
- STA L00FF
+ LDA (soundAddr),Y
+ STX soundAddr
+ STA soundAddr+1
  STA L034A
  LDA #2
  STA L034B
  DEY
  STY L034C
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  TAX
  INY
- LDA (L00FE),Y
- STA L00FF
- STX L00FE
+ LDA (soundAddr),Y
+ STA soundAddr+1
+ STX soundAddr
  JMP C8738
 
 .C883A
 
  CMP #$F4
  BNE C884F
- LDA (L00FE),Y
- INC L00FE
+ LDA (soundAddr),Y
+ INC soundAddr
  BNE C8846
- INC L00FF
+ INC soundAddr+1
 
 .C8846
 
@@ -1664,14 +1664,14 @@ ENDIF
  BEQ C8892
  LDX L0358
  LDA L902C,X
- STA L00FE
+ STA soundAddr
  LDA L9040,X
- STA L00FF
+ STA soundAddr+1
  LDY #0
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  STA L0356
  LDY L0355
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  BMI C888B
  DEC L0357
  BPL C888B
@@ -1689,16 +1689,16 @@ ENDIF
 
  LDX L0353
  LDA L9119,X
- STA L00FE
+ STA soundAddr
  LDA L9121,X
- STA L00FF
+ STA soundAddr+1
  LDY L0352
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  CMP #$80
  BNE C88AF
  LDY #0
  STY L0352
- LDA (L00FE),Y
+ LDA (soundAddr),Y
 
 .C88AF
 
@@ -1757,14 +1757,14 @@ ENDIF
  LDA #0
  STA L0302
  LDA L8D7A,Y
- STA L00FE
+ STA soundAddr
  LDA L8D7A+1,Y
- STA L00FF
+ STA soundAddr+1
  LDY #$0D
 
 .loop_C896D
 
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  STA L040B,Y
  DEY
  BPL loop_C896D
@@ -1783,13 +1783,13 @@ ENDIF
  TAY
  LDA L8F7A,Y
  STA L0447
- STA L00FE
+ STA soundAddr
  LDA L8F7A+1,Y
  STA L0448
- STA L00FF
+ STA soundAddr+1
  LDY #0
  STY L041D
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  ORA L0411
  STA SQ1_VOL
  LDA #0
@@ -1839,14 +1839,14 @@ ENDIF
  LDA #0
  STA L0303
  LDA L8D7A,Y
- STA L00FE
+ STA soundAddr
  LDA L8D7A+1,Y
- STA L00FF
+ STA soundAddr+1
  LDY #$0D
 
 .loop_C89EF
 
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  STA L041F,Y
  DEY
  BPL loop_C89EF
@@ -1865,13 +1865,13 @@ ENDIF
  TAY
  LDA L8F7A,Y
  STA L0449
- STA L00FE
+ STA soundAddr
  LDA L8F7A+1,Y
  STA L044A
- STA L00FF
+ STA soundAddr+1
  LDY #0
  STY L0431
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  ORA L0425
  STA SQ2_VOL
  LDA #0
@@ -1901,14 +1901,14 @@ ENDIF
  LDA #0
  STA L0304
  LDA L8D7A,Y
- STA L00FE
+ STA soundAddr
  LDA L8D7A+1,Y
- STA L00FF
+ STA soundAddr+1
  LDY #$0D
 
 .loop_C8A66
 
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  STA L0433,Y
  DEY
  BPL loop_C8A66
@@ -1927,13 +1927,13 @@ ENDIF
  TAY
  LDA L8F7A,Y
  STA L044B
- STA L00FE
+ STA soundAddr
  LDA L8F7A+1,Y
  STA L044C
- STA L00FF
+ STA soundAddr+1
  LDY #0
  STY L0445
- LDA (L00FE),Y
+ LDA (soundAddr),Y
  ORA L0439
  STA NOISE_VOL
  LDA #0
@@ -2011,15 +2011,15 @@ ENDIF
  STA L041E
  LDY L041D
  LDA L0447
- STA L00FE
+ STA soundAddr
  LDA L0448
- STA L00FF
- LDA (L00FE),Y
+ STA soundAddr+1
+ LDA (soundAddr),Y
  BPL C8B2F
  CMP #$80
  BNE C8B39
  LDY #0
- LDA (L00FE),Y
+ LDA (soundAddr),Y
 
 .C8B2F
 
@@ -2147,15 +2147,15 @@ ENDIF
  STA L0432
  LDY L0431
  LDA L0449
- STA L00FE
+ STA soundAddr
  LDA L044A
- STA L00FF
- LDA (L00FE),Y
+ STA soundAddr+1
+ LDA (soundAddr),Y
  BPL C8C16
  CMP #$80
  BNE C8C20
  LDY #0
- LDA (L00FE),Y
+ LDA (soundAddr),Y
 
 .C8C16
 
@@ -2281,15 +2281,15 @@ ENDIF
  STA L0446
  LDY L0445
  LDA L044B
- STA L00FE
+ STA soundAddr
  LDA L044C
- STA L00FF
- LDA (L00FE),Y
+ STA soundAddr+1
+ LDA (soundAddr),Y
  BPL C8CF7
  CMP #$80
  BNE C8D01
  LDY #0
- LDA (L00FE),Y
+ LDA (soundAddr),Y
 
 .C8CF7
 
@@ -7626,7 +7626,7 @@ ENDIF
  PHA
  LDX #5
  LDA #0
- STA L0081
+ STA pressedButton
 
 .loop_CBBE6
 
@@ -7723,10 +7723,10 @@ ENDIF
  LDX #0
  LDA pointerButton
  STX pointerButton
- STA L0081
+ STA pressedButton
  PLA
  TAY
- LDA L0081
+ LDA pressedButton
  TAX
  RTS
 

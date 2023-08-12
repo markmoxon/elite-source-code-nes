@@ -759,9 +759,10 @@ ENDIF
 
  SKIP 4                 ; Temporary storage, used in a number of places
 
-.L0081
+.pressedButton
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The button number of the icon bar button that has been
+                        ; pressed, or 0 if nothing has been pressed
 
 .QQ15
 
@@ -1073,13 +1074,13 @@ ENDIF
 
 .SC2
 
- SKIP 2                 ; Typically contains an address that's used alongside
-                        ; SC(1 0)???
+ SKIP 2                 ; Temporary storage, typically used to store an address
+                        ; when writing data to the PPU or into the buffers
 
 .SC3
 
- SKIP 2                 ; Typically contains an address that's used alongside
-                        ; SC(1 0)???
+ SKIP 2                 ; Temporary storage, used to store an address in the
+                        ; pattern buffers when drawing horizontal lines
 
 .barButtons
 
@@ -1362,7 +1363,11 @@ ENDIF
 
 .nmiBitplane8
 
- SKIP 1                 ; Set to nmiBitplane * 8
+ SKIP 1                 ; Used when sending patterns to the PPU to calculate the
+                        ; address offset of bitplanes 0 and 1
+                        ;
+                        ; Gets set to nmiBitplane * 8 to given an offset of 0
+                        ; for bitplane 0 and an offset of 8 for bitplane 1
 
 .ppuPatternTableHi
 
@@ -1435,9 +1440,10 @@ ENDIF
  SKIP 1                 ; Bit 7 set means display the user interface (so we only
                         ; clear it for the game over screen)
 
-.addr4
+.addr
 
- SKIP 2                 ; An address within the PPU to be poked to ???
+ SKIP 2                 ; Temporary storage, used in a number of places to hold
+                        ; an address
 
 .dataForPPU
 
@@ -1481,10 +1487,8 @@ ENDIF
 
 .nmiBitplane
 
- SKIP 1                 ; The bitplane that is being processed in the NMI
-                        ; handler during VBlank - 0 or 1
-                        ;
-                        ; Flipped in SendOtherBitplane ???
+ SKIP 1                 ; The number of the bitplane (0 or 1) that is currently
+                        ; being processed in the NMI handler during VBlank
 
 .ppuCtrlCopy
 
@@ -1530,25 +1534,20 @@ ENDIF
  SKIP 1                 ; This appears to be unused, though it is set in the
                         ; SetLanguage routine
 
-.addr2
+.autoplayKeys
 
- SKIP 2                 ; An address within the PPU to be poked to ???
+ SKIP 2                 ; The address of the table containing the key presses to
+                        ; apply when autoplaying the demo
+                        ;
+                        ; The address is taken from the chosen languages's
+                        ; (autoplayKeysHi autoplayKeysLo) variable 
 
-.L00FC
+ SKIP 2                 ; These bytes appear to be unused
 
- SKIP 1                 ; ???
+.soundAddr
 
-.L00FD
-
- SKIP 1                 ; ???
-
-.L00FE
-
- SKIP 1                 ; ???
-
-.L00FF
-
- SKIP 1                 ; ???
+ SKIP 2                 ; Temporary storage, used in a number of places in the
+                        ; sound routines to hold an address
 
  PRINT "Zero page variables from ", ~ZP, " to ", ~P%
 
@@ -5840,14 +5839,15 @@ ENDMACRO
 
 MACRO FILL_MEMORY byte_count
 
-                        ; We do the following code byte_count times, so we write
-                        ; a total of byte_count bytes into memory
-
  FOR I%, 1, byte_count
 
   STA (clearAddress),Y  ; Write A to the Y-th byte of clearAddress(1 0)
 
   INY                   ; Increment the index in Y
+
+                        ; Repeat the above code so that we run it byte_count
+                        ; times, so write a total of byte_count bytes into
+                        ; memory
 
  NEXT
 
@@ -5886,15 +5886,16 @@ ENDMACRO
 
 MACRO SEND_DATA_TO_PPU byte_count
 
-                        ; We do the following code byte_count times, so we send
-                        ; a total of byte_count bytes from memory to the PPU
-
  FOR I%, 1, byte_count
 
   LDA (dataForPPU),Y    ; Send the Y-th byte of dataForPPU(1 0) to the PPU
   STA PPU_DATA
 
   INY                   ; Increment the index in Y
+
+                        ; Repeat the above code so that we run it byte_count
+                        ; times, so we send a total of byte_count bytes from
+                        ; memory to the PPU
 
  NEXT
 

@@ -2567,11 +2567,11 @@ ENDIF
                         ; setting the random number seeds to a known value so
                         ; the demo always runs in the same way
 
- LDX languageIndex      ; Set addr2(1 0) to the chosen language's entry from
- LDA addrLo,X           ; the addrLo and addrHi tables
- STA addr2
- LDA addrHi,X
- STA addr2+1
+ LDX languageIndex      ; Set autoplayKeys(1 0) to the chosen language's entry
+ LDA autoplayKeysLo,X   ; from the (autoplayKeysHi autoplayKeysLo) tables
+ STA autoplayKeys
+ LDA autoplayKeysHi,X
+ STA autoplayKeys+1
 
  LDA #0                 ; Set L04BC = 0???
  STA L04BC
@@ -2580,47 +2580,49 @@ ENDIF
 
  LDX #%10000000         ; Set bit 7 of autoPlayDemo so the NMI handler will play
  STX autoPlayDemo       ; the demo automatically using the controller key
-                        ; presses in the autoplayKeys table
+                        ; presses in the autoplayKeys tables
 
  RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: addrLo
+;       Name: autoplayKeysLo
 ;       Type: Variable
 ;   Category: Demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.addrLo
+.autoplayKeysLo
 
- EQUB LO(LE5B0_EN)      ; English
+ EQUB LO(autoplayKeys_EN)       ; English
 
- EQUB LO(LE602_DE)      ; German
+ EQUB LO(autoplayKeys_DE)       ; German
 
- EQUB LO(LE653_FR)      ; French
+ EQUB LO(autoplayKeys_FR)       ; French
 
- EQUB LO(LE5B0_EN)      ; There is no fourth language, so this byte is ignored
+ EQUB LO(autoplayKeys_EN)       ; There is no fourth language, so this byte is
+                                ; ignored
 
 ; ******************************************************************************
 ;
-;       Name: addrHi
+;       Name: autoplayKeysHi
 ;       Type: Variable
 ;   Category: Demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.addrHi
+.autoplayKeysHi
 
- EQUB HI(LE5B0_EN)      ; English
+ EQUB HI(autoplayKeys_EN)       ; English
 
- EQUB HI(LE602_DE)      ; German
+ EQUB HI(autoplayKeys_DE)       ; German
 
- EQUB HI(LE653_FR)      ; French
+ EQUB HI(autoplayKeys_FR)       ; French
 
- EQUB HI(LE5B0_EN)      ; There is no fourth language, so this byte is ignored
+ EQUB HI(autoplayKeys_EN)       ; There is no fourth language, so this byte is
+                                ; ignored
 
 ; ******************************************************************************
 ;

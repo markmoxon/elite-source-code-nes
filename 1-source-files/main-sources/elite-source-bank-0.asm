@@ -2142,7 +2142,7 @@ ENDIF
 
 .MA4
 
- LDA L0081              ; ???
+ LDA pressedButton      ; ???
  CMP #$18
  BNE MA25
 
@@ -15347,7 +15347,7 @@ ENDIF
 .yeno3
 
  LDA #0                 ; ???
- STA L0081
+ STA pressedButton
 
  STA controller1A       ; Reset the key logger for the controller "A" button as
                         ; we have consumed the key press
@@ -15411,7 +15411,7 @@ ENDIF
 
 .CAD52
 
- LDA L0081
+ LDA pressedButton
  RTS
 
 ; ******************************************************************************
@@ -17691,7 +17691,7 @@ ENDIF
  LDA #0                 ; Set A to 0, as this means "key not pressed" in the
                         ; key logger at KL
 
- STA L0081              ; ???
+ STA pressedButton      ; ???
 
 .DKL3
 
@@ -18475,7 +18475,7 @@ ENDIF
 
 .CB6B0
 
- LDX L0081
+ LDX pressedButton
  CPX #$40
  BNE CB6B9
  JMP PauseGame_b6
