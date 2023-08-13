@@ -1040,7 +1040,7 @@ ENDIF
  SEC                    ; now been killed
  ROR INWK+31
 
- JSR subm_F25A          ; ???
+ JSR RemoveFromScanner_b1  ; ???
 
  LDA LAS                ; Did we kill the asteroid using mining lasers? If not,
  CMP #Mlas              ; jump to nosp, otherwise keep going
@@ -1221,7 +1221,7 @@ ENDIF
  DEC DLY
  BMI C835B
  BEQ C8341
- JSR PrintMessage
+ JSR PrintFlightMessage
  JMP C8344
 
 .C8341
@@ -1240,7 +1240,7 @@ ENDIF
  DEC DLY
  BMI C835B
  BEQ C835B
- JSR PrintMessage
+ JSR PrintFlightMessage
  JMP MA16
 
 .C835B
@@ -2798,7 +2798,7 @@ ENDIF
  LDA #$98               ; Set the current view type in QQ11 to $98 (Status Mode
  JSR ChangeView         ; screen) and move the text cursor to row 0
 
- JSR subm_9D09          ; ???
+ JSR PrintChartMessage  ; ???
 
  LDA #7                 ; Move the text cursor to column 7
  STA XC
@@ -3022,10 +3022,10 @@ ENDIF
  STA XC
 
  LDX languageIndex
- LDA rowHeadshot,X
+ LDA yHeadshot,X
  STA YC
 
- JSR GetRankHeadshot_b4
+ JSR GetHeadshotType_b4
 
  LDA S
  ORA #$80
@@ -3038,7 +3038,7 @@ ENDIF
 
 .C8923
 
- JSR subm_A082_b6
+ JSR DrawFaceImage_b6
 
 ; ******************************************************************************
 ;
@@ -3112,19 +3112,19 @@ ENDIF
 
 .C8976
 
- JSR subm_F126
+ JSR SetupView2
  JMP C8955
 
 ; ******************************************************************************
 ;
-;       Name: rowHeadshot
+;       Name: yHeadshot
 ;       Type: Variable
 ;   Category: Text
-;    Summary: The row for the headshot on the Status Mode page
+;    Summary: The text row for the headshot on the Status Mode page
 ;
 ; ******************************************************************************
 
-.rowHeadshot
+.yHeadshot
 
  EQUB 8                 ; English
 
@@ -3215,21 +3215,21 @@ ENDIF
  JSR TT67               ; Print a newline
 
  LDX languageIndex      ; Move the text cursor to the correct column for the
- LDA tabStatusMode,X    ; Status Mode entry in the chosen language
+ LDA xStatusMode,X      ; Status Mode entry in the chosen language
  STA XC
 
  RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: tabStatusMode
+;       Name: xStatusMode
 ;       Type: Variable
 ;   Category: Text
-;    Summary: The tab stop for Status Mode entries for each language
+;    Summary: The text column for the Status Mode entries for each language
 ;
 ; ******************************************************************************
 
-.tabStatusMode
+.xStatusMode
 
  EQUB 3                 ; English
 
@@ -4180,7 +4180,7 @@ ENDIF
  STA INWK+5,Y
  DEY
  BPL loop_C8C3A
- JSR subm_BA63_b6
+ JSR GetName_b6
  LDA INWK+5
  CMP #$0D
  BEQ C8CAF
@@ -6394,7 +6394,7 @@ ENDIF
  BEQ C9235
  LDA #$93
  LDY #$0A
- JSR subm_B77A
+ JSR PrintMessage
  LDA #$19
  STA nmiTimer
  LDA nmiTimerLo
@@ -6872,7 +6872,7 @@ ENDIF
 
 .C93A6
 
- JSR subm_BA17_b6
+ JSR DrawLaunchBoxes_b6
  JMP C9359
 
 .C93AC
@@ -7403,7 +7403,7 @@ ENDIF
  LSR demoInProgress     ; Clear bit 7 of demoInProgress
 
  JSR CopyNameBuffer0To1
- JSR subm_F139
+ JSR SetupSpaceView2
  JSR SetupDemoView
  JSR SeedRandomNumbers
  JSR SetupDemoShip
@@ -7982,14 +7982,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: tabDataOnSystem
+;       Name: xDataOnSystem
 ;       Type: Variable
 ;   Category: Text
-;    Summary: The tab stop for the Data on System title for each language
+;    Summary: The text column for the Data on System title for each language
 ;
 ; ******************************************************************************
 
-.tabDataOnSystem
+.xDataOnSystem
 
  EQUB 9                 ; English
 
@@ -8069,7 +8069,7 @@ ENDIF
                         ; (QQ9, QQ10)
 
  LDX languageIndex      ; Move the text cursor to the correct column for the
- LDA tabDataOnSystem,X  ; Data on System title in the chosen language
+ LDA xDataOnSystem,X    ; Data on System title in the chosen language
  STA XC
 
  LDA #163               ; Print recursive token 3 ("DATA ON {selected system
@@ -8478,7 +8478,7 @@ ENDIF
 
  LDX #8
  LDY #7
- JSR subm_B219_b3
+ JSR DrawSystemImage_b3
 
  JMP DrawViewInNMI
 
@@ -9124,7 +9124,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
- JMP subm_9D09          ; ???
+ JMP PrintChartMessage  ; ???
 
 .TT16
 
@@ -9452,14 +9452,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: tabShortRange
+;       Name: xShortRange
 ;       Type: Variable
 ;   Category: Text
-;    Summary: The tab stop for the Short-range Chart title for each language
+;    Summary: The text column for the Short-range Chart title for each language
 ;
 ; ******************************************************************************
 
-.tabShortRange
+.xShortRange
 
  EQUB 7                 ; English
 
@@ -9490,7 +9490,7 @@ ENDIF
  JSR TT66
 
  LDX languageIndex      ; Move the text cursor to the correct column for the
- LDA tabShortRange,X    ; Short-range Chart title in the chosen language
+ LDA xShortRange,X      ; Short-range Chart title in the chosen language
  STA XC
 
  LDA #190               ; Print recursive token 30 ("SHORT RANGE CHART") on the
@@ -9802,51 +9802,72 @@ ENDIF
 ;
 ;       Name: subm_9D03
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Universe
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
 .subm_9D03
 
- JSR TT111
+ JSR TT111              ; Select the system closest to galactic coordinates
+                        ; (QQ9, QQ10)
+
  JMP subm_9D35
 
 ; ******************************************************************************
 ;
-;       Name: subm_9D09
+;       Name: PrintChartMessage
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: Print a message, but on the chart screens only
 ;
 ; ******************************************************************************
 
-.subm_9D09
+.PrintChartMessage
 
- LDA L0395
- BMI C9D60
- JSR TT111
- LDA QQ11
- AND #$0E
- CMP #$0C
+ LDA L0395              ; ???
+ BMI subm_9D60
+
+ JSR TT111              ; Select the system closest to galactic coordinates
+                        ; (QQ9, QQ10)
+
+ LDA QQ11               ; If the view in QQ11 is not %0000110x (i.e. 12 or 13,
+ AND #%00001110         ; which are the Short-range Chart and Long-range Chart),
+ CMP #%00001100         ; jump to subm_9D35
  BNE subm_9D35
- JSR TT103
- LDA #0
+
+ JSR TT103              ; Draw small crosshairs at coordinates (QQ9, QQ10),
+                        ; which will draw the crosshairs at our current home
+                        ; system
+
+ LDA #0                 ; Set QQ17 = 0 to switch to ALL CAPS
  STA QQ17
- JSR CLYNS
- JSR cpl
- LDA #$80
- STA QQ17
- LDA #$0C
+
+ JSR CLYNS              ; ???
+
+ JSR cpl                ; Call cpl to print out the system name for the seeds
+                        ; in QQ15
+
+ LDA #%10000000         ; Set bit 7 of QQ17 to switch standard tokens to
+ STA QQ17               ; Sentence Case
+
+ LDA #12                ; ???
  JSR DASC_b2
- JSR TT146
- JSR DrawMessageInNMI
+
+ JSR TT146              ; If the distance to this system is non-zero, print
+                        ; "DISTANCE", then the distance, "LIGHT YEARS" and a
+                        ; paragraph break, otherwise just move the cursor down
+                        ; a line
+
+ JSR DrawMessageInNMI   ; ???
+
+                        ; Falll through into subm_9D35 to ???
 
 ; ******************************************************************************
 ;
 ;       Name: subm_9D35
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Universe
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -9885,7 +9906,16 @@ ENDIF
  BPL C9D6A
  JMP subm_AC5C_b3
 
-.C9D60
+; ******************************************************************************
+;
+;       Name: subm_9D60
+;       Type: Subroutine
+;   Category: Universe
+;    Summary: ???
+;
+; ******************************************************************************
+
+.subm_9D60
 
  LDX #5
 
@@ -10959,14 +10989,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: rowMarketPrice
+;       Name: yMarketPrice
 ;       Type: Variable
 ;   Category: Text
-;    Summary: The row for the Market Prices title for each language
+;    Summary: The text row for the Market Prices title for each language
 ;
 ; ******************************************************************************
 
-.rowMarketPrice
+.yMarketPrice
 
  EQUB 4                 ; English
 
@@ -11011,7 +11041,7 @@ ENDIF
  JSR TT163              ; Print the column headers for the prices table
 
  LDX languageIndex      ; Move the text cursor to the correct row for the Market
- LDA rowMarketPrice,X   ; Prices title in the chosen language
+ LDA yMarketPrice,X     ; Prices title in the chosen language
  STA YC
 
  LDA #0                 ; We're going to loop through all the available market
@@ -11234,7 +11264,7 @@ ENDIF
  STX fontBitplane
  CLC
  LDX languageIndex
- ADC rowMarketPrice,X
+ ADC yMarketPrice,X
  STA YC
  TYA
  JSR TT151
@@ -11256,7 +11286,7 @@ ENDIF
  TAY
  CLC
  LDX languageIndex
- ADC rowMarketPrice,X
+ ADC yMarketPrice,X
  STA YC
  TYA
  JMP TT151
@@ -11275,37 +11305,49 @@ ENDIF
  LDA #$80
  STA QQ17
  LDX languageIndex
- LDA LA16D,X
+ LDA yCash,X
  STA YC
- LDA LA169,X
+ LDA xCash,X
  STA XC
  JMP PCASH
 
 ; ******************************************************************************
 ;
-;       Name: LA169
+;       Name: xCash
 ;       Type: Variable
 ;   Category: Text
-;    Summary: ???
+;    Summary: The text column for the cash on the Market Prices page
 ;
 ; ******************************************************************************
 
-.LA169
+.xCash
 
- EQUB 5, 5, 3, 5
+ EQUB 5                 ; English
+
+ EQUB 5                 ; German
+
+ EQUB 3                 ; French
+
+ EQUB 5                 ; There is no fourth language, so this byte is ignored
 
 ; ******************************************************************************
 ;
-;       Name: LA16D
+;       Name: yCash
 ;       Type: Variable
 ;   Category: Text
-;    Summary: ???
+;    Summary: The text row for the headshot on the Status Mode page
 ;
 ; ******************************************************************************
 
-.LA16D
+.yCash
 
- EQUB $16, $17, $16, $16
+ EQUB 22                ; English
+
+ EQUB 23                ; German
+
+ EQUB 22                ; French
+
+ EQUB 22                ; There is no fourth language, so this byte is ignored
 
 ; ******************************************************************************
 ;
@@ -12330,14 +12372,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: tabEquipShip
+;       Name: xEquipShip
 ;       Type: Variable
 ;   Category: Text
-;    Summary: The tab stop for the Equip Ship title for each language
+;    Summary: The text column for the Equip Ship title for each language
 ;
 ; ******************************************************************************
 
-.tabEquipShip
+.xEquipShip
 
  EQUB 12                ; English
 
@@ -12373,7 +12415,7 @@ ENDIF
  JSR ChangeView
 
  LDX languageIndex      ; Move the text cursor to the correct column for the
- LDA tabEquipShip,X     ; Equip Ship title in the chosen language
+ LDA xEquipShip,X       ; Equip Ship title in the chosen language
  STA XC
 
  LDA #207               ; Print recursive token 47 ("EQUIP") on the top row
@@ -12939,8 +12981,8 @@ ENDIF
 ;
 ;       Name: subm_A6A1
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Equipment
+;    Summary: ??? Unused, could be a test run-off from prx for fixing prices?
 ;
 ; ******************************************************************************
 
@@ -12992,7 +13034,7 @@ ENDIF
 
  LDA XC
  LDX languageIndex
- CMP tabLaserView,X
+ CMP xLaserView,X
  BNE loop_CA6C8
  PLA
  TAY
@@ -13000,15 +13042,15 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: tabLaserView
+;       Name: xLaserView
 ;       Type: Variable
 ;   Category: Text
-;    Summary: The tab stop at the right end of the laser view when printing
+;    Summary: The text column of the right end of the laser view when printing
 ;             spaces after the view name
 ;
 ; ******************************************************************************
 
-.tabLaserView
+.xLaserView
 
  EQUB 21                ; English
 
@@ -16637,7 +16679,7 @@ ENDIF
 
  CMP #$23               ; ???
  BNE TT92
- JSR subm_9D09
+ JSR PrintChartMessage
  JMP TT25
 
 .TT92
@@ -16793,7 +16835,7 @@ ENDIF
 
  ASL L0395              ; ???
  LSR L0395
- JMP subm_9D09
+ JMP PrintChartMessage
 
 .ee2
 
@@ -17144,7 +17186,7 @@ ENDIF
 
  LDA #146               ; ???
  LDY #120
- JSR subm_B77A
+ JSR PrintMessage
 
  JSR HideMostSprites    ; Hide all sprites except for sprite 0 and the icon bar
                         ; pointer
@@ -17419,7 +17461,7 @@ ENDIF
 ;
 ;       Name: subm_B39D
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -17428,7 +17470,7 @@ ENDIF
 
  JSR TT66
  JSR CopyNameBuffer0To1
- JSR subm_F126
+ JSR SetupView2
  LDA #0
  STA QQ11
  STA QQ11a
@@ -18296,7 +18338,7 @@ ENDIF
 ;
 ;       Name: subm_B5F8
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Flight
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -18310,7 +18352,7 @@ ENDIF
 ;
 ;       Name: subm_B5FE
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Flight
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -18698,14 +18740,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B77A
+;       Name: PrintMessage
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Text
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B77A
+.PrintMessage
 
  PHA
  STY DLY
@@ -18715,7 +18757,7 @@ ENDIF
  STA DTW5
  PLA
  JSR ex_b2
- JMP CB7F2
+ JMP subm_B7F2
 
 ; ******************************************************************************
 ;
@@ -18789,8 +18831,8 @@ ENDIF
  JSR TT11               ; Print the hyperspace countdown with 3 digits and no
                         ; decimal point
 
- JMP CB7E8              ; Jump to CB7E8 to skip the following, as we have
-                        ; already printed the message
+ JMP mes9+3             ; Jump to mes9+3 to skip the following and not print 
+                        ; the message in A, as we havealready printed it
 
 .mess1
 
@@ -18816,21 +18858,35 @@ ENDIF
 ; Print a text token, followed by " DESTROYED" if the destruction flag is set
 ; (for when a piece of equipment is destroyed).
 ;
+; Other entry points:
+;
+;   mes9+3              Don't print the text token, just print " DESTROYED"
+;                       where applicable
+;
 ; ******************************************************************************
 
 .mes9
 
  JSR TT27_b2            ; Call TT27 to print the text token in A
 
-.CB7E8
-
- LDA de                 ; If de is zero, then jump to CB7F2 to skip the
- BEQ CB7F2              ; following, as we don't need to print " DESTROYED"
+ LDA de                 ; If de is zero, then jump to subm_B7F2 to skip the
+ BEQ subm_B7F2          ; following, as we don't need to print " DESTROYED"
 
  LDA #253               ; Print recursive token 93 (" DESTROYED")
  JSR TT27_b2
 
-.CB7F2
+                        ; Fall through into subm_B7F2 to ???
+
+; ******************************************************************************
+;
+;       Name: subm_B7F2
+;       Type: Subroutine
+;   Category: Text
+;    Summary: ???
+;
+; ******************************************************************************
+
+.subm_B7F2
 
  LDA #$20               ; ???
  SEC
@@ -18876,6 +18932,12 @@ ENDIF
 ;   Category: Text
 ;    Summary: Turn off justified text
 ;
+; ------------------------------------------------------------------------------
+;
+; Other entry points:
+;
+;   RTS5                Contains an RTS
+;
 ; ******************************************************************************
 
 .DisableJustifyText
@@ -18885,24 +18947,20 @@ ENDIF
 
  STA DTW5               ; Set DTW5 = 0 (reset line buffer size)
 
+.RTS5
+
  RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: PrintMessage
+;       Name: PrintFlightMessage
 ;       Type: Subroutine
 ;   Category: Text
 ;    Summary: Print an in-flight message
 ;
-; ------------------------------------------------------------------------------
-;
-; Other entry points:
-;
-;   PrintMessage-1      Contains an RTS
-;
 ; ******************************************************************************
 
-.PrintMessage
+.PrintFlightMessage
 
  LDA messYC             ; Set A to the current row for in-flight messages
 
@@ -18939,7 +18997,7 @@ ENDIF
  CPY L0584
  BNE loop_CB862
  LDA QQ11
- BEQ PrintMessage-1
+ BEQ RTS5
  JMP DrawMessageInNMI
 
 ; ******************************************************************************
@@ -21244,7 +21302,7 @@ ENDIF
  STA YC
 
  LDX languageIndex      ; Move the text cursor to the correct column for the
- LDA tabTitleScreen,X   ; title screen in the chosen language
+ LDA xTitleScreen,X     ; title screen in the chosen language
  STA XC
 
  LDA #30                ; Set A = 30 so we print recursive token 144 when we
@@ -21261,7 +21319,7 @@ ENDIF
 
  STA YC                 ; Move the text cursor to row 0
 
- LDA tabSpaceView,X     ; Move the text cursor to the correct column for the
+ LDA xSpaceView,X       ; Move the text cursor to the correct column for the
  STA XC                 ; space view name in the chosen language
 
  LDA languageNumber     ; If bit 1 of languageNumber is set, then the chosen

@@ -3457,14 +3457,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_A082
+;       Name: DrawFaceImage
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Status
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_A082
+.DrawFaceImage
 
  LDX #6
  LDY #8
@@ -3843,16 +3843,7 @@ ENDIF
  LDA Q
  JMP CA238
 
-; ******************************************************************************
-;
-;       Name: subm_A281
-;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
-;
-; ******************************************************************************
-
-.subm_A281
+.CA281
 
  LDY #0
  BEQ CA29F
@@ -5794,14 +5785,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: tabSaveHeader
+;       Name: xSaveHeader
 ;       Type: Variable
 ;   Category: Text
-;    Summary: ???
+;    Summary: The text column for the save and load headers for each language
 ;
 ; ******************************************************************************
 
-.tabSaveHeader
+.xSaveHeader
 
  EQUB 8                 ; English
 
@@ -5816,7 +5807,8 @@ ENDIF
 ;       Name: saveHeader1Lo
 ;       Type: Variable
 ;   Category: Text
-;    Summary: ???
+;    Summary: Lookup table for the low byte of the address of the saveHeader1
+;             text for the chosen language
 ;
 ; ******************************************************************************
 
@@ -5831,7 +5823,8 @@ ENDIF
 ;       Name: saveHeader1Hi
 ;       Type: Variable
 ;   Category: Text
-;    Summary: ???
+;    Summary: Lookup table for the high byte of the address of the saveHeader1
+;             text for the chosen language
 ;
 ; ******************************************************************************
 
@@ -5846,7 +5839,8 @@ ENDIF
 ;       Name: saveHeader2Lo
 ;       Type: Variable
 ;   Category: Text
-;    Summary: ???
+;    Summary: Lookup table for the low byte of the address of the saveHeader2
+;             text for the chosen language
 ;
 ; ******************************************************************************
 
@@ -5861,7 +5855,8 @@ ENDIF
 ;       Name: saveHeader2Hi
 ;       Type: Variable
 ;   Category: Text
-;    Summary: ???
+;    Summary: Lookup table for the high byte of the address of the saveHeader2
+;             text for the chosen language
 ;
 ; ******************************************************************************
 
@@ -5930,7 +5925,7 @@ ENDIF
  STY QQ17
  STY YC
  LDX languageIndex
- LDA tabSaveHeader,X
+ LDA xSaveHeader,X
  STA XC
  LDA saveHeader1Lo,X
  STA V
@@ -7266,9 +7261,9 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_BA17
+;       Name: DrawLaunchBoxes
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Flight
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -7277,7 +7272,7 @@ ENDIF
 
  RTS
 
-.subm_BA17
+.DrawLaunchBoxes
 
  LDA K+2
  CLC
@@ -7329,14 +7324,15 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_BA63
+;       Name: GetName
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Keyboard
+;    Summary: Get a name from the keyboard for searching the galaxy or changing
+;             commander name
 ;
 ; ******************************************************************************
 
-.subm_BA63
+.GetName
 
  LDY #0
 
@@ -7351,7 +7347,7 @@ ENDIF
 
  PHA
  PLA
- JSR subm_BACB
+ JSR ChangeLetter
  BCS CBA9C
  CMP #$1B
  BEQ CBAAF
@@ -7411,14 +7407,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_BACB
+;       Name: ChangeLetter
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Keyopard
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_BACB
+.ChangeLetter
 
  TAX
  STY YSAV
@@ -7523,7 +7519,7 @@ ENDIF
  STA INWK+5,Y
  DEY
  BPL loop_CBB46
- JSR subm_BA63
+ JSR GetName
  LDA INWK+5
  CMP #$0D
  BEQ CBBB0
@@ -7831,9 +7827,9 @@ ENDIF
 .loop_CBCF4
 
  JSR SetLanguage
- LDA LBE2C,Y
+ LDA xLanguage,Y
  STA XC
- LDA LBE30,Y
+ LDA yLanguage,Y
  STA YC
  LDA #0
  STA DTW8
@@ -7891,7 +7887,7 @@ ENDIF
 
  JSR WaitForNMI
  LDY LASCT
- LDA LBE2C,Y
+ LDA xLanguage,Y
  ASL A
  ASL A
  ASL A
@@ -7919,11 +7915,11 @@ ENDIF
  CPY #$20
  BNE loop_CBD6C
  LDX LASCT
- LDA LBE3C,X
+ LDA languageLength,X
  ASL A
  ASL A
  TAY
- LDA LBE30,X
+ LDA yLanguage,X
  ASL A
  ASL A
  ASL A
@@ -8060,29 +8056,41 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LBE2C
+;       Name: xLanguage
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: The text column for the language buttons on the start screen
 ;
 ; ******************************************************************************
 
-.LBE2C
+.xLanguage
 
- EQUB $02, $0C, $16, $11
+ EQUB 2                 ; English
+
+ EQUB 12                ; German
+
+ EQUB 22                ; French
+
+ EQUB 17                ; There is no fourth language, so this byte is ignored
 
 ; ******************************************************************************
 ;
-;       Name: LBE2C
+;       Name: yLanguage
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: The text row for the language buttons on the start screen
 ;
 ; ******************************************************************************
 
-.LBE30
+.yLanguage
 
- EQUB $17, $18, $17, $18
+ EQUB 23                ; English
+
+ EQUB 24                ; German
+
+ EQUB 23                ; French
+
+ EQUB 24                ; There is no fourth language, so this byte is ignored
 
 ; ******************************************************************************
 ;
@@ -8125,16 +8133,20 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LBE3C
+;       Name: languageLength
 ;       Type: Variable
-;   Category: ???
-;    Summary: ???
+;   Category: Text
+;    Summary: The length of each language name
 ;
 ; ******************************************************************************
 
-.LBE3C
+.languageLength
 
- EQUB $06, $06, $07                           ; BE3C: 06 06 07    ...
+ EQUB 6                 ; English
+
+ EQUB 6                 ; German
+
+ EQUB 7                 ; French
 
 ; ******************************************************************************
 ;
@@ -8367,7 +8379,7 @@ ENDIF
 ;
 ;       Name: subm_BED2
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************

@@ -2445,7 +2445,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: GetRankHeadshot
+;       Name: GetHeadshotType
 ;       Type: Subroutine
 ;   Category: Status
 ;    Summary: Get the correct headshot number for the current combat rank and
@@ -2460,7 +2460,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.GetRankHeadshot
+.GetHeadshotType
 
  LDA TALLY+1            ; Fetch the high byte of the kill tally, and if it is
  BNE rank1              ; not zero, then we have more than 256 kills, so jump

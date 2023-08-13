@@ -12322,7 +12322,7 @@ ENDIF
 ; ******************************************************************************
 ;
 ;       Name: RemoveFromScanner
-;   Category: Dashboard
+;       Type: Subroutine
 ;   Category: Dashboard
 ;    Summary: Remove a ship from the scanner
 ;

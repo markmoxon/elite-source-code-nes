@@ -299,7 +299,7 @@ IF NOT(_BANK = 3)
  SetViewPatterns    = $AFCD
  SetInvertedFont    = $B0E1
  SetFont            = $B18E
- subm_B219          = $B219
+ DrawSystemImage    = $B219
  subm_B248          = $B248
  DrawPopupBox       = $B2BC
  subm_B2FB          = $B2FB
@@ -320,7 +320,7 @@ ENDIF
 IF NOT(_BANK = 4)
 
  cobraNames         = $B7EC
- GetRankHeadshot    = $B882
+ GetHeadshotType    = $B882
  GetHeadshot        = $B8F9
  GetCmdrImage       = $B93C
  DrawBigLogo        = $B96B
@@ -355,7 +355,7 @@ IF NOT(_BANK = 6)
  ChooseMusic        = $8021
  PlayMusic          = $811E
  subm_89D1          = $89D1
- subm_A082          = $A082
+ DrawFaceImage      = $A082
  DrawSpriteImage    = $A0F8
  PauseGame          = $A166
  DIALS              = $A2C3
@@ -370,8 +370,8 @@ IF NOT(_BANK = 6)
   JAMESON           = $B90D
   subm_B919         = $B919
   LL164             = $B980
-  subm_BA17         = $BA17
-  subm_BA63         = $BA63
+  DrawLaunchBoxes   = $BA17
+  GetName           = $BA63
   ChangeCmdrName    = $BB37
   SetKeyLogger      = $BBDE
   ChooseLanguage    = $BC83
@@ -385,8 +385,8 @@ IF NOT(_BANK = 6)
   JAMESON           = $B91C
   subm_B919         = $B928
   LL164             = $B98F
-  subm_BA17         = $BA26
-  subm_BA63         = $BA72
+  DrawLaunchBoxes   = $BA26
+  GetName           = $BA72
   ChangeCmdrName    = $BB46
   SetKeyLogger      = $BBED
   ChooseLanguage    = $BC92
@@ -847,7 +847,7 @@ ENDIF
                         ;
                         ;   0  = $x0 = Space view
                         ;   1  = $x1 = Title screen
-                        ;   2  = $x2 = ???
+                        ;   2  = $x2 = Rotating ship view (debrief screen)
                         ;   3  = $x3 = ???
                         ;   4  = $x4 = Game Over screen
                         ;   5  = $x5 = Trumble mission screen
@@ -879,7 +879,7 @@ ENDIF
                         ; STA: 0, $8B, $97, $9D, $BB, $DF, $FF
                         ; TT66: 0, $8D, $93, $95, $9C, $BB, $C4, $CF
                         ; ChangeView: $96, $97, $98, $B9, $BA
-                        ; subm_B39D: 0, 1, $10, $92
+                        ; subm_B39D: 0, 1, $10, $92 (BRIEF)
                         ;
                         ; $00, $10
                         ; $01
@@ -4977,18 +4977,7 @@ ENDIF
 
  SKIP 8 * 73
 
-; ******************************************************************************
-;
-;       Name: L7FD8
-;       Type: Variable
-;   Category: ???
-;    Summary: ???
-;
-; ******************************************************************************
-
-.L7FD8
-
- SKIP 40
+ SKIP 40                ; These bytes appear to be unused
 
 ; ******************************************************************************
 ;
