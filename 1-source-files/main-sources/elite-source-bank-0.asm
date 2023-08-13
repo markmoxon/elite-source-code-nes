@@ -6390,12 +6390,14 @@ ENDIF
 
  DEC NOMSL              ; Reduce the number of missiles we have by 1
 
- LDA demoInProgress
+ LDA demoInProgress     ; ???
  BEQ C9235
- LDA #$93
- LDY #$0A
- JSR PrintMessage
- LDA #$19
+
+ LDA #147               ; Print recursive token 146 ("60 SECOND PENALTY") in
+ LDY #10                ; the middle of the screen and leave it there for 10
+ JSR PrintMessage       ; ticks of the DLY counter
+
+ LDA #$19               ; ???
  STA nmiTimer
  LDA nmiTimerLo
  CLC
@@ -7008,11 +7010,9 @@ ENDIF
  ORA #%00000100         ; but plans have not yet been picked up
  STA TP
 
- LDA #11                ; Set A = 11 so the call to BRP prints extended token 11
-                        ; (the initial contact at the start of mission 2, asking
-                        ; us to head for Ceerdi for a mission briefing)
-
- JSR DETOK_b2           ; Print the extended token in A
+ LDA #11                ; Print extended token 11, which is the initial contact
+ JSR DETOK_b2           ; at the start of mission 2, asking us to head for
+                        ; Ceerdi for a mission briefing
 
  JSR DrawViewInNMI      ; ???
 
@@ -7236,7 +7236,8 @@ ENDIF
  LDA #$50               ; ???
  STA INWK+6
  JSR subm_EB8C
- LDA #$92
+
+ LDA #$92               ; Set view $92 ???
  JSR subm_B39D
 
  LDA #64                ; Set the main loop counter to 64, so the ship rotates
@@ -7304,7 +7305,7 @@ ENDIF
  INC INWK+7             ; Increment z_hi, to keep the ship at the same distance
                         ; as we just incremented z_lo past 255
 
- LDA #$93               ; ???
+ LDA #$93               ; Set view $93 ???
  JSR TT66
 
  LDA #10                ; Set A = 10 so the call to BRP prints extended token 10
@@ -17184,9 +17185,9 @@ ENDIF
  LDA #12                ; Set the text row for in-flight messages in the space
  STA messYC             ; view to row 12
 
- LDA #146               ; ???
- LDY #120
- JSR PrintMessage
+ LDA #146               ; Print recursive token 146 ("{all caps}GAME OVER") in
+ LDY #120               ; the middle of the screen and leave it there for 120
+ JSR PrintMessage       ; ticks of the DLY counter
 
  JSR HideMostSprites    ; Hide all sprites except for sprite 0 and the icon bar
                         ; pointer
@@ -18743,21 +18744,37 @@ ENDIF
 ;       Name: PrintMessage
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: ???
+;    Summary: Print a message in the middle of the screen (used for "GAME OVER"
+;             and demo missile messages only)
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The text token to be printed
+;
+;   Y                   The length of time to leave the message on-screen
 ;
 ; ******************************************************************************
 
 .PrintMessage
 
- PHA
- STY DLY
- LDA #$C0
- STA DTW4
- LDA #0
- STA DTW5
- PLA
- JSR ex_b2
- JMP subm_B7F2
+ PHA                    ; Store A on the stack so we can restore it after the
+                        ; following
+
+ STY DLY                ; Set the message delay in DLY to Y
+
+ LDA #%11000000         ; Set the DTW4 flag to %11000000 (justify text, buffer
+ STA DTW4               ; entire token including carriage returns)
+
+ LDA #0                 ; Set DTW5 = 0, which sets the size of the justified
+ STA DTW5               ; text buffer at BUF to zero
+
+ PLA                    ; Restore A from the stack
+
+ JSR ex_b2              ; Print the recursive token in A
+
+ JMP subm_B7F2          ; Jump to subm_B7F2 to ???
 
 ; ******************************************************************************
 ;
@@ -18875,46 +18892,58 @@ ENDIF
  LDA #253               ; Print recursive token 93 (" DESTROYED")
  JSR TT27_b2
 
-                        ; Fall through into subm_B7F2 to ???
+                        ; Fall through into subm_B7F2 to centre the message
+                        ; on-screen ???
 
 ; ******************************************************************************
 ;
 ;       Name: subm_B7F2
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: ???
-;
+;    Summary: Centre a message on-screen ???
 ; ******************************************************************************
 
 .subm_B7F2
 
- LDA #$20               ; ???
- SEC
- SBC DTW5
- BCS CB801
+ LDA #32                ; Set A = 32 - DTW5
+ SEC                    ;
+ SBC DTW5               ; Where DTW5 is the size of the justified text buffer at
+                        ; BUF
 
- LDA #$1F
- STA DTW5
+ BCS CB801              ; If the subtraction didn't underflow, jump to CB801
 
- LDA #2
+ LDA #31                ; The subraction underflowed, so DTW5 > 32, so set DTW5
+ STA DTW5               ; to 31, which is the maximum size of the 
+
+ LDA #2                 ; ???
 
 .CB801
 
- LSR A
- STA messXC
+ LSR A                  ; Set A = (32 - DTW5) / 2
+                        ;
+                        ; so A now contains the column number we need to print
+                        ; our message at for it to be centred on-screen (as
+                        ; there are 32 columns)
+
+ STA messXC             ; Store A in messXC, so when we erase the message via
+                        ; the branch to me1 above, messXC will tell us where to
+                        ; print it
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDX DTW5
  STX L0584
+
  INX
 
 .loop_CB818
 
  LDA BUF-1,X
  STA messageBuffer-1,X
+
  DEX
+
  BNE loop_CB818
 
  STX de

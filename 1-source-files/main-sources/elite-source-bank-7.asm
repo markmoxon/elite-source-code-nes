@@ -13527,28 +13527,44 @@ ENDIF
 ;
 ;       Name: subm_F454
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
+;
+; ------------------------------------------------------------------------------
+;
+; Returns:
+;
+;   A                   A is preserved
 ;
 ; ******************************************************************************
 
 .subm_F454
 
- PHA
- LDA NAME+7
- BMI CF463
- CLC
+ PHA                    ; Store A on the stack so we can retrieve it below
+
+ LDA NAME+7             ; If bit 7 of NAME+7 (the byte after the commander's
+ BMI CF463              ; name) has bit 7 set, jump to CF463 to skip the
+                        ; following and leave it alone
+
+ CLC                    ; Set A = A + 1
  ADC #1
- CMP #$64
+
+ CMP #100               ; If A < 100, skip the following instruction
  BCC CF463
- LDA #0
+
+ LDA #0                 ; Set A = 0, so A goes from zero to 100 and around back
+                        ; to zero again
 
 .CF463
 
- ORA #$80
- STA NAME+7
- PLA
- RTS
+ ORA #%10000000         ; Set bit 7 of A so the next call to this routine does
+                        ; nothing
+
+ STA NAME+7             ; Store the value of A in NAME+7
+
+ PLA                    ; Retrieve the value of A we stored on the stack above
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;

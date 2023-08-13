@@ -847,8 +847,8 @@ ENDIF
                         ;
                         ;   0  = $x0 = Space view
                         ;   1  = $x1 = Title screen
-                        ;   2  = $x2 = Rotating ship view (debrief screen)
-                        ;   3  = $x3 = ???
+                        ;   2  = $x2 = Mission 1 rotating ship briefing screen
+                        ;   3  = $x3 = Mission 1 text briefing screen
                         ;   4  = $x4 = Game Over screen
                         ;   5  = $x5 = Trumble mission screen
                         ;   6  = $x6 = Data on System (TT25, TRADEMODE)
@@ -879,7 +879,7 @@ ENDIF
                         ; STA: 0, $8B, $97, $9D, $BB, $DF, $FF
                         ; TT66: 0, $8D, $93, $95, $9C, $BB, $C4, $CF
                         ; ChangeView: $96, $97, $98, $B9, $BA
-                        ; subm_B39D: 0, 1, $10, $92 (BRIEF)
+                        ; subm_B39D: 0, 1, $10, $92
                         ;
                         ; $00, $10
                         ; $01
