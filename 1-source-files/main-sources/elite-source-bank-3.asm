@@ -1838,7 +1838,7 @@ ENDIF
  BEQ CA83A
  CMP #$96
  BNE CA7E6
- JSR SetSystemImage_b5
+ JSR GetSystemImage_b5
  JMP CA8A2
 
 .CA7E6
@@ -2262,7 +2262,7 @@ ENDIF
  LDA QQ11
  CMP #$96
  BNE CA9E1
- JSR GetSystemImage_b5
+ JSR GetSystemBack_b5
  JMP CA9E8
 
 .CA9E1
@@ -4279,8 +4279,8 @@ ENDIF
 ;       Name: DrawSystemImage
 ;       Type: Subroutine
 ;   Category: Universe
-;    Summary: Draw the coloured foreground of the system image as a sprite, in
-;             front of the greyscale background image
+;    Summary: Draw the system image as a coloured foreground in front of a
+;             greyscale background
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -4295,24 +4295,50 @@ ENDIF
 
 .DrawSystemImage
 
+                        ; The system image is made up of two layers:
+                        ;
+                        ;   * A greyscale background that's displayed using the
+                        ;     nametable tiles, whose patterns are extracted into
+                        ;     the pattern buffers by the GetSystemBack routine
+                        ;
+                        ;   * A colourful foreground that's displayed as a set
+                        ;     of sprites, whose patterns are sent to the PPU
+                        ;     by the GetSystemImage routine, from pattern #69
+                        ;     onwards
+                        ;
+                        ; We start by drawing the background into the nametable
+                        ; buffers
+
  STX K                  ; Set K = X, so we can pass the number of columns in the
-                        ; image to DrawSpriteImage below
+                        ; image to DrawBackground and DrawSpriteImage below
 
  STY K+1                ; Set K+1 = Y, so we can pass the number of rows in the
-                        ; image to DrawSpriteImage below
+                        ; image to DrawBackground and DrawSpriteImage below
 
  LDA tileNumber         ; Set pictureTile to the number of the next free tile in
- STA pictureTile        ; tileNumber, so we can use it to set K+2 below
+ STA pictureTile        ; tileNumber
+                        ;
+                        ; We use this when setting K+2 below, so the call to
+                        ; DrawBackground displays the tiles at pictureTile, and
+                        ; it's also used to specify where to load the system
+                        ; image data when we call GetSystemImage from
+                        ; SetupViewInPPU when showing the Data on System screen
 
- CLC                    ; Add 56 to tileNumber, as we are about to use 56 tiles
+ CLC                    ; Add 56 to tileNumber, as we are going to use 56 tiles
  ADC #56                ; for the system image (7 rows of 8 tiles)
  STA tileNumber
 
  LDA pictureTile        ; Set K+2 to the value we stored above, so K+2 is the
- STA K+2                ; number of the first pattern to use for the sprite
-                        ; image
+ STA K+2                ; number of the first pattern to use for the system
+                        ; image's greyscale background
 
- JSR DrawBackground_b3  ; ???
+ JSR DrawBackground_b3  ; Draw the background by writing the the nametable
+                        ; buffer entries for the greyscale part of the system
+                        ; image (this is the image that is extracted into the
+                        ; pattern buffers by the GetSystemBack routine)
+
+                        ; Now that the background is drawn, we move on to the
+                        ; sprite-based foreground
 
  LDA #69                ; Set K+2 = 69, so we draw the system image using
  STA K+2                ; pattern #69 onwards
@@ -4353,7 +4379,7 @@ ENDIF
 ;       Name: DrawImageFrame
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: Draw a frame around the system image or commander headshot
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -4365,6 +4391,8 @@ ENDIF
 ;
 ;   K                   The number of tiles to draw, minus 1 (so we draw K - 1
 ;                       tiles)
+;
+;   K+1                 The number of rows to draw
 ;
 ;   SC(1 0)             The address in nametable buffer 0 for the start of the
 ;                       row, less 1 (we draw from SC(1 0) + 1 onwards)
@@ -4395,55 +4423,67 @@ ENDIF
  STA (SC),Y             ; frame to pattern #62
  STA (SC2),Y
 
- DEC K+1
+ DEC K+1                ; Decrement the number of rows to draw, as we have just
+                        ; drawn one
 
- JMP CB276
+ JMP fram2              ; Jump to fram2to start drawing the sides of the frame
 
-.CB263
+.fram1
 
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA #1
- LDY #0
+ LDA #1                 ; Set the tile at the start of the row (at offset 0) to
+ LDY #0                 ; pattern #1, to draw the left edge of the frame
  STA (SC),Y
  STA (SC2),Y
 
- LDA #2
- LDY K
+ LDA #2                 ; Set the tile at the end of the row (at offset K) to
+ LDY K                  ; pattern #2, to draw the right edge of the frame
  STA (SC),Y
  STA (SC2),Y
 
-.CB276
+.fram2
 
- LDA SC
- CLC
- ADC #32
- STA SC
+ LDA SC                 ; Set SC(1 0) = SC(1 0) + 32
+ CLC                    ;
+ ADC #32                ; Starting with the low bytes
+ STA SC                 ;
+                        ; So SC(1 0) now points at the next row down (as there
+                        ; are 32 tiles on each row)
 
- STA SC2
- BCC CB285
- INC SC+1
+ STA SC2                ; Set SC2(1 0) = SC2(1 0) + 32
+                        ;
+                        ; Starting with the low bytes
+                        ;
+                        ; So SC2(1 0) now points at the next row down (as there
+                        ; are 32 tiles on each row)
+
+ BCC fram3              ; If the above addition overflowed, increment the high
+ INC SC+1               ; high bytes of SC(1 0) and SC2(1 0) accordingly
  INC SC2+1
 
-.CB285
+.fram3
 
- DEC K+1
- BNE CB263
+ DEC K+1                ; Decrement the number of rows to draw, as we have just
+                        ; moved down a row
 
- LDY #0
- LDA #65
+ BNE fram1              ; Loop back to fram1 to draw the frame edges, until we
+                        ; have drawn the correct number of rows (i.e. K+1 - 1)
+
+ LDY #0                 ; Set the tile at the bottom-left corner of the picture
+ LDA #65                ; frame to pattern #65
  STA (SC),Y
  STA (SC2),Y
 
- LDA #61
+ LDA #61                ; Draw the top edge of the frame using pattern #61
  JSR DrawRowOfTiles
 
- LDA #63
- STA (SC),Y
+ LDA #63                ; Set the tile at the bottom-right corner of the picture
+ STA (SC),Y             ; frame to pattern #63
  STA (SC2),Y
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -4609,6 +4649,25 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: ???
 ;
+; ------------------------------------------------------------------------------
+;
+; We draw an image background using tile patterns with incremental pattern
+; numbers, as the image's patterns have already been sent to the pattern buffers
+; one after the other.
+;
+; Arguments:
+;
+;   K                   The number of columns in the image (i.e. the number of
+;                       tiles in each row of the image)
+;
+;   K+1                 The number of tile rows in the image
+;
+;   K+2                 The pattern number of the start of the image pattern
+;                       data in the pattern table
+;
+;   K+3                 Number of the first free sprite in the sprite buffer,
+;                       where we can build the sprites to make up the image
+;
 ; ******************************************************************************
 
 .DrawBackground
@@ -4634,46 +4693,66 @@ ENDIF
                         ; So SC2(1 0) contains the address in nametable buffer 1
                         ; of the text charater at column XC on row YC
 
- BCC CB30D              ; If the above addition overflowed, then increment the
+ BCC back1              ; If the above addition overflowed, then increment the
  INC SC+1               ; high bytes of SC(1 0) and SC2(1 0) accordingly
  INC SC2+1
 
-.CB30D
+.back1
 
- LDX K+1
+ LDX K+1                ; Set X = K+1 to use as a counter for each row in the
+                        ; image
 
-.CB30F
+.back2
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDY #0
- LDA K+2
+ LDY #0                 ; Set Y as a tile index as we work through the tiles in
+                        ; the image
 
-.loop_CB320
+ LDA K+2                ; Set A to the pattern number of the first tile in K+2
 
- STA (SC2),Y
- STA (SC),Y
- CLC
- ADC #1
- INY
- CPY K
- BNE loop_CB320
- STA K+2
- LDA SC
- CLC
- ADC #$20
- STA SC
- STA SC2
- BCC CB33D
- INC SC+1
+.back3
+
+ STA (SC2),Y            ; Set the Y-th nametable entry in both nametable buffers
+ STA (SC),Y             ; to the tile pattern number in A
+
+ CLC                    ; Increment A so we fill the background with incremental
+ ADC #1                 ; pattern numbers
+
+ INY                    ; Increment the index counter
+
+ CPY K                  ; Loop back until we have drawn K - 1 tiles
+ BNE back3
+
+ STA K+2                ; Update K+2 to the pattern number of the next tile
+
+ LDA SC                 ; Set SC(1 0) = SC(1 0) + 32
+ CLC                    ;
+ ADC #32                ; Starting with the low bytes
+ STA SC                 ;
+                        ; So SC(1 0) now points at the next row down (as there
+                        ; are 32 tiles on each row)
+
+ STA SC2                ; Set SC2(1 0) = SC2(1 0) + 32
+                        ;
+                        ; Starting with the low bytes
+                        ;
+                        ; So SC2(1 0) now points at the next row down (as there
+                        ; are 32 tiles on each row)
+
+ BCC back4              ; If the above addition overflowed, increment the high
+ INC SC+1               ; high bytes of SC(1 0) and SC2(1 0) accordingly
  INC SC2+1
 
-.CB33D
+.back4
 
- DEX
- BNE CB30F
- RTS
+ DEX                    ; Decrement the number of rows to draw, as we have just
+                        ; moved down a row
+
+ BNE back2              ; Loop back until we have drawn all X rows in the image
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;

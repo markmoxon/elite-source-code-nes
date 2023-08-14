@@ -2419,7 +2419,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetSystemImage
+;       Name: GetSystemImage
 ;       Type: Subroutine
 ;   Category: Universe
 ;    Summary: Fetch the background image and foreground sprite for the current
@@ -2434,11 +2434,11 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.SetSystemImage
+.GetSystemImage
 
- JSR GetSystemImage     ; Fetch the first two sections of the system image data
-                        ; for the current system, which contains the background
-                        ; tiles for the image, and store it in the pattern
+ JSR GetSystemBack      ; Fetch the first two sections of the system image data
+                        ; for the current system, which contain the background
+                        ; tiles for the image, and store them in the pattern
                         ; buffers, starting at tile number pictureTile
 
  LDA #HI(16*69)         ; Set PPU_ADDR to the address of pattern #69 in pattern
@@ -2459,7 +2459,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: GetSystemImage
+;       Name: GetSystemBack
 ;       Type: Subroutine
 ;   Category: Universe
 ;    Summary: Fetch the background image for the current system and store it in
@@ -2474,7 +2474,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.GetSystemImage
+.GetSystemBack
 
  LDA #0                 ; Set (SC+1 A) = (0 pictureTile)
  STA SC+1               ;              = pictureTile

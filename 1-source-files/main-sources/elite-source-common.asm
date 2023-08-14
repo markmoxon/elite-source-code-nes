@@ -337,8 +337,8 @@ ENDIF
 
 IF NOT(_BANK = 5)
 
- SetSystemImage     = $BED7
- GetSystemImage     = $BEEA
+ GetSystemImage     = $BED7
+ GetSystemBack      = $BEEA
  SetDemoAutoPlay    = $BF41
 
 ENDIF

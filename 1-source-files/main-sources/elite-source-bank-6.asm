@@ -3312,7 +3312,7 @@ ENDIF
 ;       Name: DrawGlasses
 ;       Type: Subroutine
 ;   Category: Status
-;    Summary: ???
+;    Summary: Draw a pair of dark glasses on the commander image
 ;
 ; ******************************************************************************
 
@@ -3460,88 +3460,134 @@ ENDIF
 ;       Name: DrawCmdrImage
 ;       Type: Subroutine
 ;   Category: Status
-;    Summary: Draw the face of the commander image as a sprite, in front of the
-;             headshot image
+;    Summary: Draw the commander image as a coloured face image in front of a
+;             greyscale headshot image, with optional dark glasses
 ;
 ; ******************************************************************************
 
 .DrawCmdrImage
 
- LDX #6
- LDY #8
+                        ; The commander image is made up of two layers:
+                        ;
+                        ;   * A greyscale headshot (i.e. the head and shoulders)
+                        ;     that's displayed as a background using the
+                        ;     nametable tiles, whose patterns are extracted into
+                        ;     the pattern buffers by the GetHeadshot routine
+                        ;
+                        ;   * A colourful face that's displayed in the
+                        ;     foreground as a set of sprites, whose patterns are
+                        ;     sent to the PPU by the GetCmdrImage routine, from
+                        ;     pattern #69 onwards
+                        ;
+                        ; We start by drawing the background into the nametable
+                        ; buffers
 
- STX K
- STY K+1
+ LDX #6                 ; Set X = 6 to use as the number of columns in the image
 
- LDA tileNumber
- STA pictureTile
+ LDY #8                 ; Set Y = 8 to use as the number of rows in the image
 
- CLC
- ADC #48
+ STX K                  ; Set K = X, so we can pass the number of columns in the
+                        ; image to DrawBackground below
+
+ STY K+1                ; Set K+1 = Y, so we can pass the number of rows in the
+                        ; image to DrawBackground below
+
+ LDA tileNumber         ; Set pictureTile to the number of the next free tile in
+ STA pictureTile        ; tileNumber
+                        ;
+                        ; We use this when setting K+2 below, so the call to
+                        ; DrawBackground displays the tiles at pictureTile, and
+                        ; it's also used to specify where to load the system
+                        ; image data when we call GetCmdrImage from
+                        ; SetupViewInPPU when showing the Status screen
+
+ CLC                    ; Add 48 to tileNumber, as we are going to use 48 tiles
+ ADC #48                ; for the system image (8 rows of 6 tiles)
  STA tileNumber
 
- LDX pictureTile
- STX K+2
+ LDX pictureTile        ; Set K+2 to the value we stored above, so K+2 is the
+ STX K+2                ; number of the first pattern to use for the commander
+                        ; image's greyscale headshot
 
- JSR DrawBackground_b3
+ JSR DrawBackground_b3  ; Draw the background by writing the the nametable
+                        ; buffer entries for the greyscale part of the commander
+                        ; image (this is the image that is extracted into the
+                        ; pattern buffers by the GetHeadshot routine)
 
- LDA #5
- STA K
+                        ; Now that the background is drawn, we move on to the
+                        ; sprite-based foreground, which contains the face image
 
- LDA #7
- STA K+1
+ LDA #5                 ; Set K = 5, so we can pass the number of columns in the
+ STA K                  ; image to DrawSpriteImage below
 
- LDA #69
- STA K+2
+ LDA #7                 ; Set K+1 = 7, so we can pass the number of rows in the
+ STA K+1                ; image to DrawSpriteImage below
 
- LDA #20
- STA K+3
+ LDA #69                ; Set K+2 = 69, so we draw the face image using
+ STA K+2                ; pattern #69 onwards
 
- LDX #4
- LDY #0
- JSR DrawSpriteImage_b6
+ LDA #20                ; Set K+3 = 20, so we build the image from sprite 20
+ STA K+3                ; onwards
 
- LDA FIST
- CMP #40
- BCC CA0BD
+ LDX #4                 ; Set X = 4 so we draw the image four pixels into the
+                        ; (XC, YC) character block along the x-axis
 
- JSR DrawGlasses
+ LDY #0                 ; Set Y = 0 so we draw the image at the top of the
+                        ; (XC, YC) character block along the y-axis
 
-.CA0BD
+ JSR DrawSpriteImage_b6 ; Draw the face image from sprites, using pattern #69
+                        ; onwards
 
- LDA CASH
- BNE CA0DA
+                        ; Next, we draw a pair of smooth-criminal dark glasses
+                        ; in front of the face if we have got a criminal record
 
- LDA CASH+1
+ LDA FIST               ; If our legal status in FIST is less than 40, then we
+ CMP #40                ; aren't bad enough for shades, so jump to cmdr1 to skip
+ BCC cmdr1              ; the following instruction
+
+ JSR DrawGlasses        ; Draw a pair of dark glasses in front of the face
+
+.cmdr1
+
+                        ; We now embellish the commander image if we are rich
+                        ;
+                        ; Note that the CASH amount is stored as a big-endian
+                        ; four-byte number with the most significant byte first,
+                        ; i.e. as CASH(0 1 2 3)
+
+ LDA CASH               ; If CASH >= &01000000 (1,677,721.6 CR), jump to cmdr2
+ BNE cmdr2
+
+ LDA CASH+1             ; If CASH >= &00990000 (1,002,700.8 CR), jump to cmdr2
  CMP #$99
- BCS CA0DA
+ BCS cmdr2
 
- CMP #0
- BNE CA0DD
+ CMP #0                 ; If CASH >= &00010000 (i.e. 6,553.6 CR), jump to cmdr3
+ BNE cmdr3
 
  LDA CASH+2
 
  CMP #$4F
- BCS CA0DD
+ BCS cmdr3
 
  CMP #$28
- BCC CA0E3
+ BCC cmdr5
 
- BCS CA0E0
+ BCS cmdr4
 
-.CA0DA
+.cmdr2
 
- JSR subm_A069
+ JSR subm_A069          ; Extremely rich
 
-.CA0DD
+.cmdr3
 
- JSR subm_A02B
+ JSR subm_A02B          ; Very rich
 
-.CA0E0
+.cmdr4
 
- JSR subm_A04A
+ JSR subm_A04A          ; Quite rich
 
-.CA0E3
+.cmdr5
 
  LDX XC
  DEX
