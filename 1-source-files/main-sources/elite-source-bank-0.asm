@@ -808,7 +808,7 @@ ENDIF
 
 .GOIN
 
- JSR WaitResetSound     ; ???
+ JSR ResetMusicAfterNMI ; ???
 
                         ; If we arrive here, we just docked successfully
 
@@ -1270,7 +1270,7 @@ ENDIF
  LDA Yx1M2
  STA K+3
  STA K+1
- JSR subm_B919_b6
+ JSR DrawLightning_b6
 
  DEC ECMA               ; Decrement the E.C.M. countdown timer, and if it has
  BNE MA66               ; reached zero, keep going, otherwise skip to MA66
@@ -2796,7 +2796,7 @@ ENDIF
 .STATUS
 
  LDA #$98               ; Set the current view type in QQ11 to $98 (Status Mode
- JSR ChangeView         ; screen) and move the text cursor to row 0
+ JSR ChangeToView       ; screen) and move the text cursor to row 0
 
  JSR PrintChartMessage  ; ???
 
@@ -3034,11 +3034,11 @@ ENDIF
 
  BEQ C8923
 
- JSR subm_EB8C
+ JSR HideMostSprites2
 
 .C8923
 
- JSR DrawFaceImage_b6
+ JSR DrawCmdrImage_b6
 
 ; ******************************************************************************
 ;
@@ -3082,7 +3082,7 @@ ENDIF
  LDA QQ11
  CMP QQ11a
  BEQ C8976
- JSR SetupView_b3
+ JSR SetupViewInPPU_b3
 
 .C8955
 
@@ -3112,7 +3112,7 @@ ENDIF
 
 .C8976
 
- JSR SetupView2
+ JSR SetupViewInPPU2
  JMP C8955
 
 ; ******************************************************************************
@@ -3998,7 +3998,7 @@ ENDIF
 ;
 ;       Name: DrawPitchRollBars
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Dashboard
 ;    Summary: ???
 ;
 ; ------------------------------------------------------------------------------
@@ -6803,7 +6803,7 @@ ENDIF
 .LAUN
 
  LDA #0
- JSR subm_B39D
+ JSR SetViewInPPUNMI
 
  JSR HideMostSprites    ; Hide all sprites except for sprite 0 and the icon bar
                         ; pointer
@@ -6868,7 +6868,7 @@ ENDIF
  BCS C93BC
  LDA STP
  PHA
- JSR subm_B919_b6
+ JSR DrawLightning_b6
  PLA
  STA STP
 
@@ -6892,7 +6892,7 @@ ENDIF
  STA K+1
  LDA STP
  PHA
- JSR subm_B919_b6
+ JSR DrawLightning_b6
  PLA
  STA STP
  JMP C9359
@@ -7039,7 +7039,7 @@ ENDIF
 
  JSR DETOK_b2           ; Print the extended token in A
 
- JSR subm_B63D_b3       ; ???
+ JSR FetchPalettes1_b3  ; ???
 
 .BAYSTEP
 
@@ -7235,10 +7235,10 @@ ENDIF
 
  LDA #$50               ; ???
  STA INWK+6
- JSR subm_EB8C
+ JSR HideMostSprites2
 
  LDA #$92               ; Set view $92 ???
- JSR subm_B39D
+ JSR SetViewInPPUNMI
 
  LDA #64                ; Set the main loop counter to 64, so the ship rotates
  STA MCNT               ; for 64 iterations through MVEIT
@@ -7332,7 +7332,7 @@ ENDIF
  JSR DETOK_b2           ; to row 10, white, lower case}{white}{all caps}INCOMING
                         ; MESSAGE"
 
- JSR subm_F2BD          ; ???
+ JSR DrawViewInNMI2     ; ???
 
  LDY #100               ; Delay for 100 vertical syncs (100/50 = 2 seconds) and
  JMP DELAY              ; return from the subroutine using a tail call
@@ -7404,7 +7404,7 @@ ENDIF
  LSR demoInProgress     ; Clear bit 7 of demoInProgress
 
  JSR CopyNameBuffer0To1
- JSR SetupSpaceView2
+ JSR SetupViewInNMI2
  JSR SetupDemoView
  JSR SeedRandomNumbers
  JSR SetupDemoShip
@@ -7680,7 +7680,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: ChangeView
+;       Name: ChangeToView
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Clear the screen, set the current view type and move the cursor to
@@ -7695,7 +7695,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.ChangeView
+.ChangeToView
 
  JSR TT66               ; Clear the screen and set the current view type
 
@@ -8064,7 +8064,7 @@ ENDIF
 .TT25
 
  LDA #$96               ; Change to view $96 and move the text cursor to row 0
- JSR ChangeView
+ JSR ChangeToView
 
  JSR TT111              ; Select the system closest to galactic coordinates
                         ; (QQ9, QQ10)
@@ -8464,7 +8464,7 @@ ENDIF
 
  JSR PDESC_b2           ; Call PDESC to print the system's extended description
 
- JSR subm_EB8C          ; ???
+ JSR HideMostSprites2   ; ???
 
  LDA #22                ; Move the text cursor to column 22
  STA XC
@@ -8515,7 +8515,7 @@ ENDIF
                         ; is 128 pixels high, starting on row 24 and ending on
                         ; row 151
 
- JSR subm_EB8C          ; ???
+ JSR HideMostSprites2   ; ???
 
  JSR TT14               ; Call TT14 to draw a circle with crosshairs at the
                         ; current system's galactic coordinates
@@ -8983,8 +8983,9 @@ ENDIF
 
 .zebra
 
- JMP subm_F2BD          ; There are no Trumbles in the hold, so call subm_F2BD
-                        ; and return from the subroutine using a tail call ???
+ JMP DrawViewInNMI2     ; There are no Trumbles in the hold, so call
+                        ; DrawViewInNMI2 and return from the subroutine using a
+                        ; tail call ???
 
                         ; If we get here then we have Trumbles in the hold, so
                         ; we print out the number (though we never get here in
@@ -9055,7 +9056,7 @@ ENDIF
 .TT213
 
  LDA #$97               ; Set the current view type in QQ11 to $97 (Inventory
- JSR ChangeView         ; screen) and move the text cursor to row 0
+ JSR ChangeToView       ; screen) and move the text cursor to row 0
 
  LDA #11                ; Move the text cursor to column 11 to print the screen
  STA XC                 ; title
@@ -9497,7 +9498,7 @@ ENDIF
  LDA #190               ; Print recursive token 30 ("SHORT RANGE CHART") on the
  JSR NLIN3              ; top row
 
- JSR subm_EB86          ; ???
+ JSR HideMostSprites1   ; ???
 
  JSR TT14               ; Call TT14 to draw a circle with crosshairs at the
                         ; current system's galactic coordinates
@@ -11026,7 +11027,7 @@ ENDIF
  BEQ TT167-3            ; Inventory screen, so the icon bar button toggles
                         ; between the two
 
- JSR ChangeView         ; We are not already showing the Market Price screen,
+ JSR ChangeToView       ; We are not already showing the Market Price screen,
                         ; so that's what we do now, starting by changing the
                         ; view to type $BA and moving the cursor to row 0
 
@@ -11087,7 +11088,7 @@ ENDIF
 
 .CA01C
 
- JSR subm_EB86
+ JSR HideMostSprites1
  JSR DrawSomething
  JMP DrawViewInNMI
 
@@ -11202,7 +11203,7 @@ ENDIF
  JSR GC2
  JSR LCASH
  BCC CA12D
- JSR subm_F454
+ JSR UpdateSaveCount
  LDY #$1C
  JSR NOISE
  LDY QQ29
@@ -11225,7 +11226,7 @@ ENDIF
  BCS CA12D
  LDA QQ20,Y
  BEQ CA12D
- JSR subm_F454
+ JSR UpdateSaveCount
  SEC
  SBC #1
  STA QQ20,Y
@@ -11688,7 +11689,7 @@ ENDIF
  JSR subm_AC5C_b3
  LDY #$1E
  JSR NOISE
- JMP CA28A
+ JMP subm_A28A
 
 ; ******************************************************************************
 ;
@@ -11706,7 +11707,7 @@ ENDIF
 
 .TT18
 
- JSR WaitResetSound     ; ???
+ JSR ResetMusicAfterNMI ; ???
 
  LDA QQ14               ; Subtract the distance to the selected system (in QQ8)
  SEC                    ; from the amount of fuel in our tank (in QQ14) into A
@@ -11756,7 +11757,16 @@ ENDIF
                         ; and set up data blocks and slots for the planet and
                         ; sun
 
-.CA28A
+; ******************************************************************************
+;
+;       Name: subm_A28A
+;       Type: Subroutine
+;   Category: Flight
+;    Summary: ???
+;
+; ******************************************************************************
+
+.subm_A28A
 
  LDA QQ11               ; ???
  BEQ CA2B9
@@ -11838,7 +11848,7 @@ ENDIF
 
  JSR RES2               ; Reset a number of flight variables and workspaces
 
- JSR subm_F454          ; ???
+ JSR UpdateSaveCount    ; ???
 
  JSR WaitForNMI
 
@@ -12307,7 +12317,7 @@ ENDIF
 ;
 ;       Name: subm_EQSHP4
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Equipment
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -12346,7 +12356,7 @@ ENDIF
 ;
 ;       Name: subm_EQSHP5
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Equipment
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -12413,7 +12423,7 @@ ENDIF
 .EQSHP
 
  LDA #$B9               ; Change to view $B9 and move the text cursor to row 0
- JSR ChangeView
+ JSR ChangeToView
 
  LDX languageIndex      ; Move the text cursor to the correct column for the
  LDA xEquipShip,X       ; Equip Ship title in the chosen language
@@ -12466,7 +12476,7 @@ ENDIF
 
  JSR subm_EQSHP2
  JSR dn
- JSR subm_EB86
+ JSR HideMostSprites1
  JSR DrawCobraMkIII
  JSR DrawViewInNMI
 
@@ -12497,7 +12507,7 @@ ENDIF
 
 .CA508
 
- JSR subm_F454
+ JSR UpdateSaveCount
  LDA XX13
  SEC
  SBC #1
@@ -13113,7 +13123,7 @@ ENDIF
 ;
 ;       Name: qv
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Equipment
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -16735,7 +16745,7 @@ ENDIF
 
 .CB106
 
- JSR WaitResetSound
+ JSR ResetMusicAfterNMI
  LDA #0
 
 .CB10B
@@ -17033,7 +17043,7 @@ ENDIF
 
 .DEATH
 
- JSR WaitResetSound     ; ???
+ JSR ResetMusicAfterNMI ; ???
 
  JSR EXNO3              ; Make the sound of us dying
 
@@ -17048,13 +17058,13 @@ ENDIF
  STA autoPlayDemo
  LDA #$C4
  JSR TT66
- JSR subm_BED2_b6
+ JSR ClearDashEdge_b6   ; Clear the right edge of the dashboard ???
  JSR CopyNameBuffer0To1
- JSR subm_EB86
+ JSR HideMostSprites1
  LDA #0
  STA L045F
  LDA #$C4
- JSR SetupView_b3
+ JSR SetupViewInPPU_b3
  LDA #0
  STA QQ11
  STA QQ11a
@@ -17197,9 +17207,9 @@ ENDIF
 
 .D2
 
- JSR FlipDrawingPlane  ; ???
+ JSR FlipDrawingPlane   ; ???
  JSR FlightLoop4To16
- JSR subm_BED2_b6
+ JSR ClearDashEdge_b6   ; Clear the right edge of the dashboard ???
  LDA #%11001100
  JSR SetDrawPlaneFlags
 
@@ -17232,7 +17242,7 @@ ENDIF
  STA L0309
  LDA #$34
  STA L030A
- JSR ResetSoundL045E
+ JSR ResetMusic
  JSR JAMESON_b6
  JSR ResetOptions
  LDA #1
@@ -17344,7 +17354,7 @@ ENDIF
                         ; If we get here then we start the game without playing
                         ; the demo
 
- JSR subm_B63D_b3       ; ??? Something to do with palettes
+ JSR FetchPalettes1_b3  ; ??? Something to do with palettes
 
                         ; Fall through into StartGame to reset the stack and go
                         ; to the docking bay (i.e. show the Status Mode screen)
@@ -17412,7 +17422,7 @@ ENDIF
 
  JSR LoadCurrentCmdr_b6 ; ???
 
- JSR WaitResetSound
+ JSR ResetMusicAfterNMI
 
  JSR ping               ; Set the target system coordinates (QQ9, QQ10) to the
                         ; current system coordinates (QQ0, QQ1) we just loaded
@@ -17460,18 +17470,18 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B39D
+;       Name: SetViewInPPUNMI
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B39D
+.SetViewInPPUNMI
 
  JSR TT66
  JSR CopyNameBuffer0To1
- JSR SetupView2
+ JSR SetupViewInPPU2
  LDA #0
  STA QQ11
  STA QQ11a
@@ -17554,7 +17564,7 @@ ENDIF
  LDY #0                 ; ???
  STY DELTA
  LDA #1
- JSR subm_B39D
+ JSR SetViewInPPUNMI
  LDA #7
  STA YP
 
@@ -18285,7 +18295,7 @@ ENDIF
 ;
 ;       Name: WARP
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Flight
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -18443,7 +18453,7 @@ ENDIF
 ;
 ;       Name: subm_B665
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Flight
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -18533,7 +18543,7 @@ ENDIF
  BNE CB6C8
 
  STA auto
- JSR WaitResetSound
+ JSR ResetMusicAfterNMI
  JMP CB6B0
 
 .CB6C8
@@ -20724,7 +20734,7 @@ ENDIF
 
 .LQ
 
- JSR SetNewSpaceView    ; ???
+ JSR ChangeToSpaceView  ; ???
 
  JMP NWSTARS            ; Set up a new stardust field and return from the
                         ; subroutine using a tail call
@@ -20739,7 +20749,7 @@ ENDIF
  CPX VIEW               ; If the current view is already of type X, jump to LO2
  BEQ LO2                ; to return from the subroutine (as LO2 contains an RTS)
 
- JSR ChangeSpaceView    ; ???
+ JSR SwitchSpaceView    ; ???
 
  JSR FLIP               ; Swap the x- and y-coordinates of all the stardust
                         ; particles and redraw the stardust field
@@ -20800,14 +20810,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetNewSpaceView
+;       Name: ChangeToSpaceView
 ;       Type: Subroutine
 ;   Category: Flight
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.SetNewSpaceView
+.ChangeToSpaceView
 
  LDA #$48
  JSR SetScreenHeight
@@ -20815,19 +20825,19 @@ ENDIF
  LDA #0
  JSR TT66
  JSR CopyNameBuffer0To1
- JSR SetupView_b3
+ JSR SetupViewInPPU_b3
  JMP ResetStardust
 
 ; ******************************************************************************
 ;
-;       Name: ChangeSpaceView
+;       Name: SwitchSpaceView
 ;       Type: Subroutine
 ;   Category: Flight
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.ChangeSpaceView
+.SwitchSpaceView
 
  STX VIEW
  LDA #0
@@ -20836,7 +20846,7 @@ ENDIF
  LDA #80
  STA lastTileNumber
  STA lastTileNumber+1
- JSR SetupSpaceView_b3
+ JSR SetupViewInNMI_b3
 
 ; ******************************************************************************
 ;
@@ -21199,7 +21209,7 @@ ENDIF
                         ; following two instructions, as we don't need to
                         ; initialise the dashboard
 
- JSR subm_EB86          ; ??? Something to do with palettes and hiding sprites
+ JSR HideMostSprites1   ; ??? Something to do with palettes and hiding sprites
 
  JSR ResetScanner_b3    ; Reset the sprites used for drawing ships on the
                         ; scanner

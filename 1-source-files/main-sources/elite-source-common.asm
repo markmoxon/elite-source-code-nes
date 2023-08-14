@@ -187,7 +187,7 @@ IF NOT(_BANK = 0)
  ShowStartScreen    = $B2C3
  DEATH2             = $B2EF
  StartGame          = $B358
- subm_B39D          = $B39D
+ SetViewInPPUNMI    = $B39D
  TITLE              = $B3BC
  PAS1               = $B8F7
  TT66               = $BEB5
@@ -289,9 +289,9 @@ IF NOT(_BANK = 3)
  iconBarImage4      = $9100
  DrawDashNames      = $A730
  ResetScanner       = $A775
- SetupView          = $A7B7
+ SetupViewInPPU     = $A7B7
  SendBitplaneToPPU  = $A972
- SetupSpaceView     = $A9D1
+ SetupViewInNMI     = $A9D1
  ResetScreen        = $AABC
  ShowIconBar        = $AC1D
  subm_AC5C          = $AC5C
@@ -300,12 +300,12 @@ IF NOT(_BANK = 3)
  SetInvertedFont    = $B0E1
  SetFont            = $B18E
  DrawSystemImage    = $B219
- subm_B248          = $B248
+ DrawImageFrame     = $B248
  DrawPopupBox       = $B2BC
- subm_B2FB          = $B2FB
+ DrawBackground     = $B2FB
  ClearScreen        = $B341
- subm_B63D          = $B63D
- subm_B673          = $B673
+ FetchPalettes1     = $B63D
+ FetchPalettes2     = $B673
  SetViewAttrs       = $B9E2
  SIGHT              = $BA23
 
@@ -351,11 +351,11 @@ ENDIF
 
 IF NOT(_BANK = 6)
 
- ResetSoundS        = $8012
+ StopMusicS         = $8012
  ChooseMusic        = $8021
  PlayMusic          = $811E
- subm_89D1          = $89D1
- DrawFaceImage      = $A082
+ MakeNoise          = $89D1
+ DrawCmdrImage      = $A082
  DrawSpriteImage    = $A0F8
  PauseGame          = $A166
  DIALS              = $A2C3
@@ -368,7 +368,7 @@ IF NOT(_BANK = 6)
   SaveAllToBuffer   = $B88C
   LoadCurrentCmdr   = $B8FE
   JAMESON           = $B90D
-  subm_B919         = $B919
+  DrawLightning     = $B919
   LL164             = $B980
   DrawLaunchBoxes   = $BA17
   GetName           = $BA63
@@ -376,14 +376,14 @@ IF NOT(_BANK = 6)
   SetKeyLogger      = $BBDE
   ChooseLanguage    = $BC83
   TT24              = $BE52
-  subm_BED2         = $BED2
+  ClearDashEdge     = $BED2
 
  ELIF _PAL
 
   SaveAllToBuffer   = $B89B
   LoadCurrentCmdr   = $B90D
   JAMESON           = $B91C
-  subm_B919         = $B928
+  DrawLightning     = $B928
   LL164             = $B98F
   DrawLaunchBoxes   = $BA26
   GetName           = $BA72
@@ -391,7 +391,7 @@ IF NOT(_BANK = 6)
   SetKeyLogger      = $BBED
   ChooseLanguage    = $BC92
   TT24              = $BE6D
-  subm_BED2         = $BEED
+  ClearDashEdge     = $BEED
 
  ENDIF
 
@@ -878,8 +878,8 @@ ENDIF
                         ;
                         ; STA: 0, $8B, $97, $9D, $BB, $DF, $FF
                         ; TT66: 0, $8D, $93, $95, $9C, $BB, $C4, $CF
-                        ; ChangeView: $96, $97, $98, $B9, $BA
-                        ; subm_B39D: 0, 1, $10, $92
+                        ; ChangeToView: $96, $97, $98, $B9, $BA
+                        ; SetViewInPPUNMI: 0, 1, $10, $92
                         ;
                         ; $00, $10
                         ; $01
@@ -3257,11 +3257,17 @@ ORG $0200
 
 .NAME
 
- SKIP 8                 ; The current commander name
+ SKIP 7                 ; The current commander name
                         ;
-                        ; The commander name can be up to 7 characters (the DFS
-                        ; limit for filenames), and is terminated by a carriage
-                        ; return
+                        ; The commander name can be up to 7 characters long
+
+.SVC
+
+ SKIP 1                 ; The save count
+                        ;
+                        ; This is not used in the NES version of Elite (it is
+                        ; used to keep track of the number of saves in the
+                        ; original version)
 
 .TP
 
@@ -3521,13 +3527,7 @@ ORG $0200
                         ;
                         ; You can see the rating calculation in STATUS
 
-.SVC
-
- SKIP 1                 ; The save count
-                        ;
-                        ; This is not used in the NES version of Elite (it is
-                        ; used to keep track of the number of saves in the
-                        ; original version)
+ SKIP 1                 ; ???
 
 .QQ21
 

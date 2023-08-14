@@ -181,17 +181,17 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: ResetSoundS
+;       Name: StopMusicS
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: A jump table entry at the start of bank 6 for the ResetSound
+;    Summary: A jump table entry at the start of bank 6 for the StopMusic
 ;             routine
 ;
 ; ******************************************************************************
 
-.ResetSoundS
+.StopMusicS
 
- JMP ResetSound         ; Jump to the ResetSound routine, returning from the
+ JMP StopMusic          ; Jump to the StopMusic routine, returning from the
                         ; subroutine using a tail call
 
 ; ******************************************************************************
@@ -266,7 +266,7 @@ ENDIF
 .ChooseMusic
 
  TAY
- JSR ResetSoundS
+ JSR StopMusicS
  LDA #0
  CLC
 
@@ -363,7 +363,7 @@ ENDIF
 ;
 ;       Name: subm_80E5
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -382,14 +382,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: ResetSound
+;       Name: StopMusic
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.ResetSound
+.StopMusic
 
  LDA #0
  STA L0301
@@ -467,7 +467,7 @@ ENDIF
 ;
 ;       Name: subm_816D
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -501,7 +501,7 @@ ENDIF
 ;
 ;       Name: subm_8197
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -770,7 +770,7 @@ ENDIF
  STY L030D
  PLA
  PLA
- JMP ResetSoundS
+ JMP StopMusicS
 
 .C8332
 
@@ -780,7 +780,7 @@ ENDIF
 ;
 ;       Name: subm_8334
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -839,7 +839,7 @@ ENDIF
 ;
 ;       Name: subm_8392
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -1108,7 +1108,7 @@ ENDIF
  STY L030D
  PLA
  PLA
- JMP ResetSoundS
+ JMP StopMusicS
 
 .C852D
 
@@ -1118,7 +1118,7 @@ ENDIF
 ;
 ;       Name: subm_852F
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -1177,7 +1177,7 @@ ENDIF
 ;
 ;       Name: subm_858D
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -1403,7 +1403,7 @@ ENDIF
  STY L030D
  PLA
  PLA
- JMP ResetSoundS
+ JMP StopMusicS
 
 .C86EC
 
@@ -1413,7 +1413,7 @@ ENDIF
 ;
 ;       Name: subm_86EE
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -1454,7 +1454,7 @@ ENDIF
 ;
 ;       Name: subm_8725
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -1652,7 +1652,7 @@ ENDIF
  STY L030D
  PLA
  PLA
- JMP ResetSoundS
+ JMP StopMusicS
 
 .C885B
 
@@ -1713,7 +1713,7 @@ ENDIF
 ;
 ;       Name: L88BC
 ;       Type: Variable
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -1745,7 +1745,7 @@ ENDIF
 ;
 ;       Name: subm_895A
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -1805,14 +1805,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_89D1
+;       Name: MakeNoise
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_89D1
+.MakeNoise
 
  DEX
  BMI C89D9
@@ -1827,7 +1827,7 @@ ENDIF
 ;
 ;       Name: subm_89DC
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -1889,7 +1889,7 @@ ENDIF
 ;
 ;       Name: subm_8A53
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -1951,7 +1951,7 @@ ENDIF
 ;
 ;       Name: subm_8AC8
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -1967,7 +1967,7 @@ ENDIF
 ;
 ;       Name: subm_8AD4
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -2103,7 +2103,7 @@ ENDIF
 ;
 ;       Name: subm_8BBB
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -2239,7 +2239,7 @@ ENDIF
 ;
 ;       Name: subm_8CA2
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -2363,7 +2363,7 @@ ENDIF
 ;
 ;       Name: subm_8D64
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -2385,7 +2385,7 @@ ENDIF
 ;
 ;       Name: L8D7A
 ;       Type: Variable
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -2605,7 +2605,7 @@ ENDIF
 ;
 ;       Name: L8F7A
 ;       Type: Variable
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -2717,7 +2717,7 @@ ENDIF
 ;
 ;       Name: L902C
 ;       Type: Variable
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -2732,7 +2732,7 @@ ENDIF
 ;
 ;       Name: L9040
 ;       Type: Variable
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -2772,7 +2772,7 @@ ENDIF
 ;
 ;       Name: L9119
 ;       Type: Variable
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -2785,7 +2785,7 @@ ENDIF
 ;
 ;       Name: L9121
 ;       Type: Variable
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -2805,7 +2805,7 @@ ENDIF
 ;
 ;       Name: L915F
 ;       Type: Variable
-;   Category: ???
+;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -3309,14 +3309,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_9FD0
+;       Name: DrawGlasses
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Status
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_9FD0
+.DrawGlasses
 
  LDA #$68
  STA tileSprite8
@@ -3375,7 +3375,7 @@ ENDIF
 ;
 ;       Name: subm_A02B
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Status
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -3405,7 +3405,7 @@ ENDIF
 ;
 ;       Name: subm_A04A
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Status
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -3435,7 +3435,7 @@ ENDIF
 ;
 ;       Name: subm_A069
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Status
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -3453,61 +3453,80 @@ ENDIF
  LDX #$0B
  LDY #$31
  LDA #2
- JMP CA0FA
+ JMP DrawSpriteImage+2
 
 ; ******************************************************************************
 ;
-;       Name: DrawFaceImage
+;       Name: DrawCmdrImage
 ;       Type: Subroutine
 ;   Category: Status
-;    Summary: ???
+;    Summary: Draw the face of the commander image as a sprite, in front of the
+;             headshot image
 ;
 ; ******************************************************************************
 
-.DrawFaceImage
+.DrawCmdrImage
 
  LDX #6
  LDY #8
+
  STX K
  STY K+1
+
  LDA tileNumber
  STA pictureTile
+
  CLC
- ADC #$30
+ ADC #48
  STA tileNumber
+
  LDX pictureTile
  STX K+2
- JSR subm_B2FB_b3
+
+ JSR DrawBackground_b3
+
  LDA #5
  STA K
+
  LDA #7
  STA K+1
- LDA #$45
+
+ LDA #69
  STA K+2
- LDA #$14
+
+ LDA #20
  STA K+3
+
  LDX #4
  LDY #0
  JSR DrawSpriteImage_b6
+
  LDA FIST
- CMP #$28
+ CMP #40
  BCC CA0BD
- JSR subm_9FD0
+
+ JSR DrawGlasses
 
 .CA0BD
 
  LDA CASH
  BNE CA0DA
+
  LDA CASH+1
  CMP #$99
  BCS CA0DA
+
  CMP #0
  BNE CA0DD
+
  LDA CASH+2
+
  CMP #$4F
  BCS CA0DD
+
  CMP #$28
  BCC CA0E3
+
  BCS CA0E0
 
 .CA0DA
@@ -3527,97 +3546,173 @@ ENDIF
  LDX XC
  DEX
  STX XC
+
  LDX YC
  DEX
  STX YC
+
  LDA #7
  STA K
- LDA #$0A
+
+ LDA #10
  STA K+1
- JMP subm_B248_b3
+
+ JMP DrawImageFrame_b3
 
 ; ******************************************************************************
 ;
 ;       Name: DrawSpriteImage
 ;       Type: Subroutine
 ;   Category: Drawing sprites
-;    Summary: Draw an image using sprites with sequential tiles
+;    Summary: Draw an image out of sprites using patterns in sequential tiles in
+;             the pattern buffer
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   K                   The number of columns in the image (i.e. the number of
+;                       tiles in each row of the image)
+;
+;   K+1                 The number of tile rows in the image
+;
+;   K+2                 The pattern number of the start of the image pattern
+;                       data in the pattern table
+;
+;   K+3                 Number of the first free sprite in the sprite buffer,
+;                       where we can build the sprites to make up the image
+;
+;   XC                  The text column of the top-left corner of the image
+;
+;   YC                  The text row of the top-left corner of the image
+;
+;   X                   The pixel x-coordinate of the top-left corner of the
+;                       image within the text block at (XC, YC)
+;
+;   Y                   The pixel y-coordinate of the top-left corner of the
+;                       image within the text block at (XC, YC)
+;
+; Other entry points:
+;
+;   DrawSpriteImage+2   Set the attributes for the sprites in the image to A
 ;
 ; ******************************************************************************
 
 .DrawSpriteImage
 
- LDA #1
+ LDA #%00000001         ; Set S to use as the attribute for each of the sprites
+ STA S                  ; in the image, so each sprite is set as follows:
+                        ;
+                        ;     * Bits 0-1    = sprite palette 1
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 clear = do not flip horizontally
+                        ;     * Bit 7 clear = do not flip vertically
 
-.CA0FA
-
- STA S
- LDA XC
- ASL A
- ASL A
- ASL A
- ADC #0
- STA SC
- TXA
+ LDA XC                 ; Set SC = XC * 8 + X
+ ASL A                  ;        = XC * 8 + 6
+ ASL A                  ;
+ ASL A                  ; So SC is the pixel x-coordinate of the top-left corner
+ ADC #0                 ; of the image we want to draw, as each text character in
+ STA SC                 ; XC is 8 pixels wide and X contains the x-coordinate
+ TXA                    ; within the character block
  ADC SC
  STA SC
- LDA YC
- ASL A
- ASL A
- ASL A
 
- ADC #6+YPAL
- STA SC+1
- TYA
+ LDA YC                 ; Set SC+1 = YC * 8 + 6 + Y
+ ASL A                  ;          = YC * 8 + 6 + 6
+ ASL A                  ;
+ ASL A                  ; So SC+1 is the pixel y-coordinate of the top-left
+ ADC #6+YPAL            ; corner of the image we want to draw, as each text row
+ STA SC+1               ; in YC is 8 pixels high and Y contains the y-coordinate
+ TYA                    ; within the character block
  ADC SC+1
  STA SC+1
- LDA K+3
- ASL A
- ASL A
- TAY
- LDA K+2
- LDX K+1
- STX T
 
-.CA123
+ LDA K+3                ; Set Y = K+3 * 4
+ ASL A                  ;
+ ASL A                  ; So Y contains the offset of the first free sprite's
+ TAY                    ; four-byte block in the sprite buffer, as each sprite
+                        ; consists of four bytes, so this is now the offset
+                        ; within the sprite buffer of the first sprite we can
+                        ; use to build the sprite image
+
+ LDA K+2                ; Set A to the pattern number of the first tile in K+2
+
+ LDX K+1                ; Set T = K+1 to use as a counter for each row in the
+ STX T                  ; image
+
+.drsi1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDX SC
- STX SC2
- LDX K
+ LDX SC                 ; Set SC2 to the pixel x-coordinate for the start of
+ STX SC2                ; each row, so we can use it to move along the row as we
+                        ; draw the sprite image
 
-.CA136
+ LDX K                  ; Set X to the number of tiles in each row of the image
+                        ; (in K), so we can use it as a counter as we move along
+                        ; the row
 
- LDA K+2
- STA tileSprite0,Y
- LDA S
- STA attrSprite0,Y
- LDA SC2
+.drsi2
+
+ LDA K+2                ; Set the tile pattern for sprite Y to K+2, which is
+ STA tileSprite0,Y      ; the pattern number in the PPU's pattern table to use
+                        ; for this part of the image
+
+ LDA S                  ; Set the attributes for sprite Y to S, which we set
+ STA attrSprite0,Y      ; above as follows:
+                        ;
+                        ;     * Bits 0-1    = sprite palette 1
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 clear = do not flip horizontally
+                        ;     * Bit 7 clear = do not flip vertically
+
+ LDA SC2                ; Set the x-coordinate for sprite Y to SC2
  STA xSprite0,Y
- CLC
- ADC #8
- STA SC2
- LDA SC+1
+
+ CLC                    ; Set SC2 = SC2 + 8
+ ADC #8                 ;
+ STA SC2                ; So SC2 contains the x-coordinate of the next tile
+                        ; along the row
+
+ LDA SC+1               ; Set the y-coordinate for sprite Y to SC+1
  STA ySprite0,Y
- TYA
- CLC
- ADC #4
- BCS CA165
- TAY
- INC K+2
- DEX
- BNE CA136
- LDA SC+1
- ADC #8
- STA SC+1
- DEC T
- BNE CA123
 
-.CA165
+ TYA                    ; Add 4 to the sprite number in Y, to move on to the
+ CLC                    ; next sprite in the sprite buffer (as each sprite
+ ADC #4                 ; consists of four bytes of data)
 
- RTS
+ BCS drsi3              ; If the addition overflowed, then we have reached the
+                        ; end of the sprite buffer, so jump to drsi3 to return
+                        ; from the subroutine, as we have run out of sprites
+
+ TAY                    ; Otherwise set Y to the offset of the next sprite in
+                        ; the sprite buffer
+
+ INC K+2                ; Increment the tile counter in K+2 to point to the next
+                        ; tile patterm
+
+ DEX                    ; Decrement the tile counter in X as we have just drawn
+                        ; a tile
+
+ BNE drsi2              ; If X is non-zero then we still have more tiles to
+                        ; draw on the current row, so jump back to drsi2 to draw
+                        ; the next one
+
+ LDA SC+1               ; Otherwise we have reached the end of this row, so add
+ ADC #8                 ; 8 to SC+1 to move the y-coordinate down to the next
+ STA SC+1               ; tile row (as each tile row is 8 pixels high)
+
+ DEC T                  ; Decrement the number of rows in T as we just finished
+                        ; drawing a row
+
+ BNE drsi1              ; Loop back to drsi1 until we have drawn all the rows in
+                        ; the image
+
+.drsi3
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -3697,7 +3792,7 @@ ENDIF
  EOR #$FF
  STA disableMusic
  BPL CA1D4
- JSR ResetSound_b6
+ JSR StopMusic_b6
  JMP CA21D
 
 .CA1D4
@@ -3760,7 +3855,7 @@ ENDIF
 ;
 ;       Name: DILX
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Dashboard
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -3906,7 +4001,7 @@ ENDIF
 ;
 ;       Name: DIALS
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Dashboard
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -4437,7 +4532,7 @@ ENDIF
 ;
 ;       Name: subm_A5AB
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -4455,7 +4550,7 @@ ENDIF
 
 .CA5B6
 
- JSR subm_B63D_b3
+ JSR FetchPalettes1_b3
  LDY #$14
  STY NOSTM
  STY RAND+1
@@ -4507,7 +4602,7 @@ ENDIF
  STA LASER
  STA QQ12
  LDA #$10
- JSR subm_B39D_b0
+ JSR SetViewInPPUNMI_b0
  LDA #$FF
  STA L045F
  LDA #$F0
@@ -4665,7 +4760,7 @@ ENDIF
 .CA726
 
  JSR subm_A917
- JSR subm_B63D_b3
+ JSR FetchPalettes1_b3
  JMP StartGame_b0
 
 .CA72F
@@ -4695,7 +4790,7 @@ ENDIF
 ;
 ;       Name: subm_A761
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -4726,7 +4821,7 @@ ENDIF
 ;
 ;       Name: GRIDSET
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Demo
 ;    Summary: ???
 ;
 ; ------------------------------------------------------------------------------
@@ -4815,7 +4910,7 @@ ENDIF
 ;
 ;       Name: GRS1
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -4883,7 +4978,7 @@ ENDIF
 ;
 ;       Name: subm_A86C
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -4928,7 +5023,7 @@ ENDIF
 ;
 ;       Name: subm_A8AC
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -5007,7 +5102,7 @@ ENDIF
 ;
 ;       Name: subm_A917
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -5094,7 +5189,7 @@ ENDIF
 ;
 ;       Name: subm_A9A2
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -5302,7 +5397,7 @@ ENDIF
 ;
 ;       Name: subm_AAC0
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -5341,7 +5436,7 @@ ENDIF
 ;
 ;       Name: subm_AAE5
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -5418,7 +5513,7 @@ ENDIF
 ;
 ;       Name: LTDEF
 ;       Type: Variable
-;   Category: ???
+;   Category: Demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -5478,7 +5573,7 @@ ENDIF
 ;
 ;       Name: LAC6F
 ;       Type: Variable
-;   Category: ???
+;   Category: Demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -5941,7 +6036,7 @@ ENDIF
  STA V+1
  JSR PrintSaveHeader
  JSR NLIN4
- JSR subm_EB86
+ JSR HideMostSprites1
  LDY #$14
 
  LDA #$39+YPAL
@@ -6011,7 +6106,7 @@ ENDIF
 ;
 ;       Name: subm_B4F6
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -6065,7 +6160,7 @@ ENDIF
 ;
 ;       Name: subm_B52B
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -6114,7 +6209,7 @@ ENDIF
 ;
 ;       Name: subm_B55B
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -6138,7 +6233,7 @@ ENDIF
 ;
 ;       Name: subm_B569
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -6277,7 +6372,7 @@ ENDIF
 ;
 ;       Name: subm_B62C
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -6450,7 +6545,7 @@ ENDIF
 ;
 ;       Name: subm_B6D0
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -6476,7 +6571,7 @@ ENDIF
 ;
 ;       Name: subm_B6E8
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -6490,7 +6585,14 @@ ENDIF
  CLC
  ADC #6
  STA YC
- JSR GetRowNameAddress
+
+ JSR GetRowNameAddress  ; Get the addresses in the nametable buffers for the
+                        ; start of character row YC, as follows:
+                        ;
+                        ;   SC(1 0) = the address in nametable buffer 0
+                        ;
+                        ;   SC2(1 0) = the address in nametable buffer 1
+
  LDA SC
  CLC
  ADC XC
@@ -6590,7 +6692,7 @@ ENDIF
 ;
 ;       Name: subm_B778
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -6730,9 +6832,9 @@ ENDIF
 
 .CB7E7
 
- LDA NAME+7
+ LDA SVC
  AND #$7F
- STA NAME+7
+ STA SVC
  LDX #$4E
 
 .loop_CB7F1
@@ -6918,7 +7020,7 @@ ENDIF
 ;
 ;       Name: NA2%
 ;       Type: Variable
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -6927,7 +7029,7 @@ ENDIF
 
  EQUS "JAMESON"         ; The current commander name, which defaults to JAMESON
 
- EQUB 1                 ; ???
+ EQUB 1                 ; SVC = Save count, stored in NAME terminator
 
  EQUB 0                 ; TP = Mission status, #0
 
@@ -7023,7 +7125,7 @@ ENDIF
 
  EQUW 20000 AND Q%      ; TALLY = Number of kills, #62-63
 
- EQUB 128               ; SVC = Save count (not used), #64 ???
+ EQUB 128               ; ??? #64
 
  EQUW $5A4A             ; QQ21 = Seed s0 for system 0, galaxy 0 (Tibedied), #65
  EQUW $0248             ; QQ21 = Seed s1 for system 0, galaxy 0 (Tibedied), #67
@@ -7064,7 +7166,7 @@ ENDIF
 ;
 ;       Name: JAMESON
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -7083,14 +7185,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B919
+;       Name: DrawLightning
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Flight
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B919
+.DrawLightning
 
  LDA K+1
  LSR A
@@ -7161,7 +7263,7 @@ ENDIF
 ;
 ;       Name: LL164
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Flight
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -7249,7 +7351,7 @@ ENDIF
 ;
 ;       Name: LBA06
 ;       Type: Variable
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -7499,7 +7601,7 @@ ENDIF
 ;
 ;       Name: ChangeCmdrName
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -7611,7 +7713,7 @@ ENDIF
 ;
 ;       Name: SetKeyLogger
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Keyboard
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -8377,36 +8479,38 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_BED2
+;       Name: ClearDashEdge
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: Clear the right edge of the dashboard
 ;
 ; ******************************************************************************
 
-.subm_BED2
+.ClearDashEdge
 
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA #0
- STA nameBuffer0+640
- STA nameBuffer0+672
- STA nameBuffer0+704
- STA nameBuffer0+736
- STA nameBuffer0+768
- STA nameBuffer0+800
- STA nameBuffer0+832
- STA nameBuffer0+864
- STA nameBuffer1+640
- STA nameBuffer1+672
- STA nameBuffer1+704
- STA nameBuffer1+736
- STA nameBuffer1+768
- STA nameBuffer1+800
- STA nameBuffer1+832
- STA nameBuffer1+864
- RTS
+ LDA #0                 ; Clear the right edge of the box on rows 20 to 27 in
+ STA nameBuffer0+20*32  ; nametable buffer 0
+ STA nameBuffer0+21*32
+ STA nameBuffer0+22*32
+ STA nameBuffer0+23*32
+ STA nameBuffer0+24*32
+ STA nameBuffer0+25*32
+ STA nameBuffer0+26*32
+ STA nameBuffer0+27*32
+
+ STA nameBuffer1+20*32  ; Clear the right edge of the box on rows 20 to 27 in
+ STA nameBuffer1+21*32  ; nametable buffer 1
+ STA nameBuffer1+22*32
+ STA nameBuffer1+23*32
+ STA nameBuffer1+24*32
+ STA nameBuffer1+25*32
+ STA nameBuffer1+26*32
+ STA nameBuffer1+27*32
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;

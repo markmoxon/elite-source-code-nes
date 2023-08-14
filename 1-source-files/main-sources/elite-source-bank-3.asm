@@ -1783,14 +1783,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetupView
+;       Name: SetupViewInPPU
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.SetupView
+.SetupViewInPPU
 
  JSR WaitForNMI
  LDA ppuCtrlCopy
@@ -2053,7 +2053,7 @@ ENDIF
 
  STA PPU_CTRL
 
- JMP subm_B673_b3
+ JMP FetchPalettes2_b3
 
 ; ******************************************************************************
 ;
@@ -2239,7 +2239,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetupSpaceView
+;       Name: SetupViewInNMI
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: ???
@@ -2251,7 +2251,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.SetupSpaceView
+.SetupViewInNMI
 
  PHA
 
@@ -2330,7 +2330,7 @@ ENDIF
 
  LDA L0473
  BPL CAA43
- JMP subm_B673_b3
+ JMP FetchPalettes2_b3
 
 .CAA43
 
@@ -4279,57 +4279,124 @@ ENDIF
 ;       Name: DrawSystemImage
 ;       Type: Subroutine
 ;   Category: Universe
-;    Summary: ???
+;    Summary: Draw the coloured foreground of the system image as a sprite, in
+;             front of the greyscale background image
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The number of columns in the image (i.e. the number of
+;                       tiles in each row of the image)
+;
+;   Y                   The number of tile rows in the image
 ;
 ; ******************************************************************************
 
 .DrawSystemImage
 
- STX K
- STY K+1
- LDA tileNumber
- STA pictureTile
- CLC
- ADC #$38
+ STX K                  ; Set K = X, so we can pass the number of columns in the
+                        ; image to DrawSpriteImage below
+
+ STY K+1                ; Set K+1 = Y, so we can pass the number of rows in the
+                        ; image to DrawSpriteImage below
+
+ LDA tileNumber         ; Set pictureTile to the number of the next free tile in
+ STA pictureTile        ; tileNumber, so we can use it to set K+2 below
+
+ CLC                    ; Add 56 to tileNumber, as we are about to use 56 tiles
+ ADC #56                ; for the system image (7 rows of 8 tiles)
  STA tileNumber
- LDA pictureTile
- STA K+2
- JSR subm_B2FB_b3
- LDA #$45
- STA K+2
- LDA #8
- STA K+3
- LDX #0
- LDY #0
- JSR DrawSpriteImage_b6
- DEC XC
- DEC YC
- INC K
- INC K+1
- INC K+1
+
+ LDA pictureTile        ; Set K+2 to the value we stored above, so K+2 is the
+ STA K+2                ; number of the first pattern to use for the sprite
+                        ; image
+
+ JSR DrawBackground_b3  ; ???
+
+ LDA #69                ; Set K+2 = 69, so we draw the system image using
+ STA K+2                ; pattern #69 onwards
+
+ LDA #8                 ; Set K+3 = 8, so we build the image from sprite 8
+ STA K+3                ; onwards
+
+ LDX #0                 ; Set X and Y to zero, so we draw the system image at
+ LDY #0                 ; (XC, YC), without any indents
+
+ JSR DrawSpriteImage_b6 ; Draw the system image from sprites, using pattern #69
+                        ; onwards
+
+                        ; We now draw a frame around the system image we just
+                        ; drew, so we set up the variables so the DrawImageFrame
+                        ; can do just that
+
+ DEC XC                 ; We just drew the image at (XC, YC), so decrement them
+ DEC YC                 ; both so we can pass (XC, YC) to the DrawImageFrame
+                        ; routine to draw a frame around the image, with the
+                        ; top-left corner one block up and left from the image
+                        ; corner
+
+ INC K                  ; Increment the number of columns in K to pass to the
+                        ; DrawImageFrame routine, so we draw a frame that's the
+                        ; correct width (DrawImageFrame expects K to be the
+                        ; frame width minus 1)
+
+ INC K+1                ; Increment K+1 twice so the DrawImageFrame will draw a
+ INC K+1                ; frame that is the height of the image, plus two rows
+                        ; for the top and bottom of the frame
+
+                        ; Fall through into DrawImageFrame to draw the frame
+                        ; around the system image
 
 ; ******************************************************************************
 ;
-;       Name: subm_B248
+;       Name: DrawImageFrame
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing the screen
 ;    Summary: ???
 ;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   XC                  The tile column for the top-left corner of the frame
+;
+;   YC                  The tile row for the top-left corner of the frame
+;
+;   K                   The number of tiles to draw, minus 1 (so we draw K - 1
+;                       tiles)
+;
+;   SC(1 0)             The address in nametable buffer 0 for the start of the
+;                       row, less 1 (we draw from SC(1 0) + 1 onwards)
+;
+;   SC2(1 0)            The address in nametable buffer 1 for the start of the
+;                       row, less 1 (we draw from SC2(1 0) + 1 onwards)
+;
 ; ******************************************************************************
 
-.subm_B248
+.DrawImageFrame
 
- JSR subm_B2A9
- LDY #0
- LDA #$40
+ JSR GetNameAddress     ; Get the addresses in the nametable buffers for the
+                        ; tile at text coordinate (XC, YC), as follows:
+                        ;
+                        ;   SC(1 0) = the address in nametable buffer 0
+                        ;
+                        ;   SC2(1 0) = the address in nametable buffer 1
+
+ LDY #0                 ; Set the tile at the top-left corner of the picture
+ LDA #64                ; frame to pattern #64
  STA (SC),Y
  STA (SC2),Y
- LDA #$3C
- JSR subm_B29D
- LDA #$3E
- STA (SC),Y
+
+ LDA #60                ; Draw the top edge of the frame using pattern #60
+ JSR DrawRowOfTiles
+
+ LDA #62                ; Set the tile at the top-right corner of the picture
+ STA (SC),Y             ; frame to pattern #62
  STA (SC2),Y
+
  DEC K+1
+
  JMP CB276
 
 .CB263
@@ -4341,6 +4408,7 @@ ENDIF
  LDY #0
  STA (SC),Y
  STA (SC2),Y
+
  LDA #2
  LDY K
  STA (SC),Y
@@ -4350,8 +4418,9 @@ ENDIF
 
  LDA SC
  CLC
- ADC #$20
+ ADC #32
  STA SC
+
  STA SC2
  BCC CB285
  INC SC+1
@@ -4361,63 +4430,119 @@ ENDIF
 
  DEC K+1
  BNE CB263
+
  LDY #0
- LDA #$41
+ LDA #65
  STA (SC),Y
  STA (SC2),Y
- LDA #$3D
- JSR subm_B29D
- LDA #$3F
+
+ LDA #61
+ JSR DrawRowOfTiles
+
+ LDA #63
  STA (SC),Y
  STA (SC2),Y
+
  RTS
 
 ; ******************************************************************************
 ;
-;       Name: subm_B29D
+;       Name: DrawRowOfTiles
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing the screen
+;    Summary: Draw a row of tiles into the nametable buffer
+;
+; ------------------------------------------------------------------------------
+;
+; This routine effectively draws K tiles at SC(1 0) and SC2(1 0), but omitting
+; the first tile.
+
+; Arguments:
+;
+;   A                   The pattern number to use for the row of tiles
+;
+;   K                   The number of tiles to draw, minus 1 (so we draw K - 1
+;                       tiles)
+;
+;   SC(1 0)             The address in nametable buffer 0 for the start of the
+;                       row, less 1 (we draw from SC(1 0) + 1 onwards)
+;
+;   SC2(1 0)            The address in nametable buffer 1 for the start of the
+;                       row, less 1 (we draw from SC2(1 0) + 1 onwards)
 ;
 ; ******************************************************************************
 
-.subm_B29D
+.DrawRowOfTiles
 
- LDY #1
+ LDY #1                 ; We start drawing from SC(1 0) + 1, so set an index
+                        ; counter in Y
 
-.loop_CB29F
+.drow1
 
- STA (SC),Y
- STA (SC2),Y
- INY
- CPY K
- BNE loop_CB29F
- RTS
+ STA (SC),Y             ; Draw the pattern in A into the Y-th nametable entry
+ STA (SC2),Y            ; in both the nametable buffers
+
+ INY                    ; Increment the index counter
+
+ CPY K                  ; Loop back until we have drawn K - 1 tiles
+ BNE drow1
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: subm_B2A9
+;       Name: GetNameAddress
 ;       Type: Subroutine
-;   Category: ???
-;    Summary: ???
+;   Category: Drawing the screen
+;    Summary: Get the addresses in the nametable buffers for a given tile
+;
+; ------------------------------------------------------------------------------
+
+; Arguments:
+;
+;   XC                  The tile column
+;
+;   YC                  The tile row
+;
+;
+; Returns:
+;
+;   SC(1 0)             The address in nametable buffer 0 for the tile
+;
+;   SC2(1 0)            The address in nametable buffer 1 for the tile
 ;
 ; ******************************************************************************
 
-.subm_B2A9
+.GetNameAddress
 
- JSR GetRowNameAddress
- LDA SC
- CLC
- ADC XC
- STA SC
- STA SC2
- BCC CB2BB
- INC SC+1
+ JSR GetRowNameAddress  ; Get the addresses in the nametable buffers for the
+                        ; start of character row YC, as follows:
+                        ;
+                        ;   SC(1 0) = the address in nametable buffer 0
+                        ;
+                        ;   SC2(1 0) = the address in nametable buffer 1
+
+ LDA SC                 ; Set SC(1 0) = SC(1 0) + XC
+ CLC                    ;
+ ADC XC                 ; Starting with the low bytes
+ STA SC                 ;
+                        ; So SC(1 0) contains the address in nametable buffer 0
+                        ; of the text charater at column XC on row YC
+
+ STA SC2                ; Set SC2(1 0) = SC2(1 0) + XC
+                        ;
+                        ; Starting with the low bytes
+                        ;
+                        ; So SC2(1 0) contains the address in nametable buffer 1
+                        ; of the text charater at column XC on row YC
+
+ BCC nadd1              ; If the above addition overflowed, then increment the
+ INC SC+1               ; high bytes of SC(1 0) and SC2(1 0) accordingly
  INC SC2+1
 
-.CB2BB
+.nadd1
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -4434,9 +4559,17 @@ ENDIF
  STA XC
  LDA K+3
  STA YC
- JSR subm_B2A9
+
+ JSR GetNameAddress     ; Get the addresses in the nametable buffers for the
+                        ; tile at text coordinate (XC, YC), as follows:
+                        ;
+                        ;   SC(1 0) = the address in nametable buffer 0
+                        ;
+                        ;   SC2(1 0) = the address in nametable buffer 1
+
  LDA #$3D
- JSR subm_B29D
+ JSR DrawRowOfTiles
+
  LDX K+1
  JMP CB2E3
 
@@ -4467,27 +4600,42 @@ ENDIF
  DEX
  BNE CB2D1
  LDA #$3C
- JMP subm_B29D
+ JMP DrawRowOfTiles
 
 ; ******************************************************************************
 ;
-;       Name: subm_B2FB
+;       Name: DrawBackground
 ;       Type: Subroutine
-;   Category: ???
+;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B2FB
+.DrawBackground
 
- JSR GetRowNameAddress
- LDA SC
- CLC
- ADC XC
- STA SC
- STA SC2
- BCC CB30D
- INC SC+1
+ JSR GetRowNameAddress  ; Get the addresses in the nametable buffers for the
+                        ; start of character row YC, as follows:
+                        ;
+                        ;   SC(1 0) = the address in nametable buffer 0
+                        ;
+                        ;   SC2(1 0) = the address in nametable buffer 1
+
+ LDA SC                 ; Set SC(1 0) = SC(1 0) + XC
+ CLC                    ;
+ ADC XC                 ; Starting with the low bytes
+ STA SC                 ;
+                        ; So SC(1 0) contains the address in nametable buffer 0
+                        ; of the text charater at column XC on row YC
+
+ STA SC2                ; Set SC2(1 0) = SC2(1 0) + XC
+                        ;
+                        ; Starting with the low bytes
+                        ;
+                        ; So SC2(1 0) contains the address in nametable buffer 1
+                        ; of the text charater at column XC on row YC
+
+ BCC CB30D              ; If the above addition overflowed, then increment the
+ INC SC+1               ; high bytes of SC(1 0) and SC2(1 0) accordingly
  INC SC2+1
 
 .CB30D
@@ -4976,14 +5124,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B63D
+;       Name: FetchPalettes1
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B63D
+.FetchPalettes1
 
  LDA QQ11a
  CMP #$FF
@@ -5016,14 +5164,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B673
+;       Name: FetchPalettes2
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_B673
+.FetchPalettes2
 
  JSR WaitForNMI
  JSR GetViewPalettes

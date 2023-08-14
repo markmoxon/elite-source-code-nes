@@ -15481,7 +15481,7 @@ ENDIF
  JSR DETOK              ; to row 10, white, lower case}{white}{all caps}INCOMING
                         ; MESSAGE"
 
- JSR subm_F2BD          ; ???
+ JSR DrawViewInNMI2     ; ???
 
  LDY #100               ; Delay for 100 vertical syncs (100/50 = 2 seconds) and
  JMP DELAY              ; return from the subroutine using a tail call
@@ -16935,7 +16935,13 @@ ENDIF
 
 .CB6DF
 
- JSR GetRowNameAddress
+ JSR GetRowNameAddress  ; Get the addresses in the nametable buffers for the
+                        ; start of character row YC, as follows:
+                        ;
+                        ;   SC(1 0) = the address in nametable buffer 0
+                        ;
+                        ;   SC2(1 0) = the address in nametable buffer 1
+
  LDY XC
  DEY
  LDA (SC),Y
@@ -17079,7 +17085,13 @@ ENDIF
 
 .CB7BF
 
- JSR GetRowNameAddress
+ JSR GetRowNameAddress  ; Get the addresses in the nametable buffers for the
+                        ; start of character row YC, as follows:
+                        ;
+                        ;   SC(1 0) = the address in nametable buffer 0
+                        ;
+                        ;   SC2(1 0) = the address in nametable buffer 1
+
  LDY XC
  DEC XC
  LDA #0
@@ -17090,7 +17102,14 @@ ENDIF
 .CB7CF
 
  PHA
- JSR GetRowNameAddress
+
+ JSR GetRowNameAddress  ; Get the addresses in the nametable buffers for the
+                        ; start of character row YC, as follows:
+                        ;
+                        ;   SC(1 0) = the address in nametable buffer 0
+                        ;
+                        ;   SC2(1 0) = the address in nametable buffer 1
+
  PLA
  CMP #$20
  BEQ CB7E5
