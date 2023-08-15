@@ -1401,7 +1401,7 @@ ENDIF
 
  LDA MCNT               ; Fetch the main loop counter and calculate MCNT mod 32,
  AND #31                ; jumping to MA93 if it is on-zero (so the following
- BNE MA93               ; code only runs every 32 iterations of the main loop
+ BNE MA93               ; code only runs every 32 iterations of the main loop)
 
  LDA SSPR               ; If we are inside the space station safe zone, jump to
  BNE MA23S              ; MA23S to skip the following, as we already have a
@@ -2425,24 +2425,33 @@ ENDIF
  BEQ C875B              ; the following instruction
 
  JSR STATUS             ; Call STATUS to refresh the Status Mode screen, so our
-                        ; status updates on-screen
+                        ; status updates to show the new condition
 
 .C875B
 
- LDX previousCondition  ; ???
- CPX #3
- BNE C876A
+ LDX previousCondition  ; Set X to the previous status condition
 
- LDA frameCounter
- AND #$20
- BNE C876A
+ CPX #3                 ; If the previous status condition was not red, jump to
+ BNE C876A              ; C876A to show the alert colour for the previous
+                        ; condition
 
- INX
+ LDA frameCounter       ; If frameCounter div 32 is odd (which will happen half
+ AND #32                ; the time, and for 32 frames in a row), jump to C876A
+ BNE C876A              ; to skip the following
+
+                        ; We get here if the previous condition was red, but
+                        ; only for every other block of 32 frames, so this
+                        ; flashes the commander image background on and off with
+                        ; a period of 32 frames
+
+ INX                    ; Increment X to 4, which will make the background of
+                        ; the commander image flash between the top two alert
+                        ; colours (i.e. light red and dark red)
 
 .C876A
 
- LDA alertColours,X
- STA visibleColour
+ LDA alertColours,X     ; Change the palette so the visible colour is set to the
+ STA visibleColour      ; alert colour for our status condition
 
 .C876F
 
@@ -2625,7 +2634,7 @@ ENDIF
  JSR TT68               ; a colon
 
  LDA languageNumber     ; ???
- AND #1
+ AND #%00000001
  BEQ P%+5
 
  JSR TT162              ; Print a newline
@@ -2684,7 +2693,7 @@ ENDIF
  PHA
 
  LDA languageNumber     ; ???
- AND #5
+ AND #%00000101
  BEQ P%+8
 
  JSR TT162              ; Print two newlines
@@ -2845,8 +2854,8 @@ ENDIF
  JSR plf                ; Print the text token in A (which contains our ship's
                         ; condition) followed by a newline
 
- LDA languageNumber     ; ???
- AND #4
+ LDA languageNumber     ; If bit 2 of languageNumber is clear then the chosen
+ AND #%00000100         ; language is not French, so ???
  BEQ stat1
 
  JSR PrintLegalStatus   ; Print the current legal status
@@ -2957,8 +2966,8 @@ ENDIF
  BEQ st1                ; have a laser fitted to that view, jump to st1 to move
                         ; on to the next one
 
- LDA languageNumber     ; ???
- AND #4
+ LDA languageNumber     ; If bit 2 of languageNumber is set then the chosen
+ AND #%00000100         ; language is French, so ???
  BNE C88D0
 
  TXA                    ; Print recursive token 96 + X, which will print from 96
@@ -2995,8 +3004,8 @@ ENDIF
  JSR TT27_b2            ; Print the text token in A (which contains our legal
                         ; status)
 
- LDA languageNumber     ; ???
- AND #4
+ LDA languageNumber     ; If bit 2 of languageNumber is clear then the chosen
+ AND #%00000100         ; language is not French, so ???
  BEQ C88FB
 
  LDA CNT                ; Retrieve the view number from CNT that we stored above
@@ -8151,8 +8160,8 @@ ENDIF
                         ;   QQ3 bit 2 = 0 prints token 8 ("INDUSTRIAL")
                         ;   QQ3 bit 2 = 1 prints token 9 ("AGRICULTURAL")
 
- LDA languageNumber     ; ???
- AND #%00000100
+ LDA languageNumber     ; If bit 2 of languageNumber is clear then the chosen
+ AND #%00000100         ; language is not French, so ???
  BEQ dsys3
 
  LDA #162               ; Print recursive token 2 ("GOVERNMENT") followed by
@@ -9003,8 +9012,8 @@ ENDIF
  JSR TT11               ; Call TT11 to print the number of Trumbles in (Y X),
                         ; with no decimal point
 
- LDA languageNumber     ; ???
- AND #4
+ LDA languageNumber     ; If bit 2 of languageNumber is set then the chosen
+ AND #%00000100         ; language is French, so ???
  BNE C9A99
 
  JSR DORND              ; Print out a random extended token from 111 to 114, all
@@ -9014,7 +9023,7 @@ ENDIF
  JSR DETOK_b2
 
  LDA languageNumber     ; ???
- AND #2
+ AND #%00000010
  BEQ C9A99
 
  LDA TRIBBLE
@@ -11089,7 +11098,7 @@ ENDIF
 .CA01C
 
  JSR HideMostSprites1
- JSR DrawSomething
+ JSR DrawInventoryIcon
  JMP DrawViewInNMI
 
 .CA025
@@ -12266,9 +12275,9 @@ ENDIF
  LDA #')'               ; Print a closing bracket
  JSR TT27_b2
 
- LDA languageNumber     ; If bit 2 of languageNumber is set then this is French,
- AND #%00000100         ; so jump to preq3 to skip the following (which prints
- BNE preq3              ; the price)
+ LDA languageNumber     ; If bit 2 of languageNumber is set then the chosen
+ AND #%00000100         ; language is French, so jump to preq3 to skip the
+ BNE preq3              ; following (which prints the price)
 
                         ; Bit 2 of languageNumber is clear, so the chosen
                         ; language is English or German, so now we print the
@@ -13026,7 +13035,7 @@ ENDIF
  JSR TT162              ; Print a space
 
  LDA languageNumber
- AND #6
+ AND #%00000110
  BNE CA6C0
 
  JSR TT162              ; Print a space
@@ -13584,7 +13593,7 @@ ENDIF
 .fwl
 
  LDA languageNumber     ; ???
- AND #2
+ AND #%00000010
  BNE CA87D
 
  LDA #105               ; Print recursive token 105 ("FUEL") followed by a
@@ -13592,8 +13601,8 @@ ENDIF
 
  JSR Print2Newlines     ; Print two newlines
 
- LDA languageNumber     ; ???
- AND #4
+ LDA languageNumber     ; If bit 2 of languageNumber is clear then the chosen
+ AND #%00000100         ; language is not French, so ???
  BEQ CA85B
 
  JSR Print2Newlines     ; Print two newlines
@@ -13615,9 +13624,10 @@ ENDIF
  LDA #197               ; ???
  JSR TT68
 
- LDA languageNumber
- AND #4
+ LDA languageNumber     ; If bit 2 of languageNumber is set then the chosen
+ AND #%00000100         ; language is French, so ???
  BNE CA879
+
  JSR Print2Newlines     ; Print two newlines
  JSR TT162
 
@@ -17292,16 +17302,16 @@ ENDIF
                         ; returning when a key is pressed
 
  LDA controller1Select  ; If Select, Start, A and B are all pressed at the same
- AND controller1Start   ; time on controller 1, jump to dead2 to show the
- AND controller1A       ; credits scrolltext
+ AND controller1Start   ; time on controller 1, jump to dead2 to skip the demo
+ AND controller1A       ; and show the credits scrolltext instead
  AND controller1B
  BNE dead2
 
  LDA controller1Select  ; If Select is pressed on either controller, jump to
- ORA controller2Select  ; dead3 to start the game straight away, skipping the
- BNE dead3              ; demo
+ ORA controller2Select  ; dead3 to skip the demo and start the game straight
+ BNE dead3              ; away
 
-                        ; If we get here then we start the game
+                        ; If we get here then we start the demo
 
  LDA #0                 ; Store 0 on the stack ???
  PHA
@@ -17340,6 +17350,7 @@ ENDIF
 
  LDA #$FF
  STA QQ11
+
  JSR WaitForNMI
 
  LDA #4

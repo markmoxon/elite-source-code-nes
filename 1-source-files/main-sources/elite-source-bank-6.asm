@@ -3318,142 +3318,214 @@ ENDIF
 
 .DrawGlasses
 
- LDA #$68
- STA tileSprite8
- LDA #0
- STA attrSprite8
- LDA #$CB
+ LDA #104               ; Set the tile pattern number for sprite 8 to 104, which
+ STA tileSprite8        ; is the left part of the dark glasses
+
+ LDA #%00000000         ; Set the attributes for sprite 8 as follows:
+ STA attrSprite8        ;
+                        ;     * Bits 0-1    = sprite palette 0
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 clear = do not flip horizontally
+                        ;     * Bit 7 clear = do not flip vertically
+
+ LDA #203               ; Set the x-coordinate for sprite 8 to 203
  STA xSprite8
- LDA languageNumber
- AND #4
- BEQ C9FE8
- LDA #$10
 
-.C9FE8
+ LDA languageNumber     ; If bit 2 of languageNumber is clear then the chosen
+ AND #%00000100         ; language is not French, so jump to glas1 with A = 0
+ BEQ glas1
 
- CLC
+ LDA #16                ; The chosen language is French, so the commander image
+                        ; is 16 pixels lower down the screen, so set A = 16 to
+                        ; add to the y-coordinate of the glasses
 
- ADC #90+YPAL
+.glas1
+
+ CLC                    ; Set the y-coordinate for sprite 8 to 90, plus the
+ ADC #90+YPAL           ; margin we just set in A
  STA ySprite8
- LDA #$69
- STA tileSprite9
- LDA #0
- STA attrSprite9
- LDA #$D3
+
+ LDA #105               ; Set the tile pattern number for sprite 9 to 105, which
+ STA tileSprite9        ; is the middle part of the dark glasses
+
+ LDA #%00000000         ; Set the attributes for sprite 9 as follows:
+ STA attrSprite9        ;
+                        ;     * Bits 0-1    = sprite palette 0
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 clear = do not flip horizontally
+                        ;     * Bit 7 clear = do not flip vertically
+
+ LDA #211               ; Set the x-coordinate for sprite 9 to 211
  STA xSprite9
- LDA languageNumber
- AND #4
- BEQ CA006
- LDA #$10
 
-.CA006
+ LDA languageNumber     ; If bit 2 of languageNumber is clear then the chosen
+ AND #%00000100         ; language is not French, so jump to glas2 with A = 0
+ BEQ glas2
 
- CLC
+ LDA #16                ; The chosen language is French, so the commander image
+                        ; is 16 pixels lower down the screen, so set A = 16 to
+                        ; add to the y-coordinate of the glasses
 
- ADC #$5A+YPAL
+.glas2
+
+ CLC                    ; Set the y-coordinate for sprite 9 to 90, plus the
+ ADC #90+YPAL           ; margin we just set in A
  STA ySprite9
- LDA #$6A
- STA tileSprite10
- LDA #0
- STA attrSprite10
- LDA #$DB
+
+ LDA #106               ; Set the tile pattern number for sprite 10 to 106,
+ STA tileSprite10       ; which is the right part of the dark glasses
+
+ LDA #%00000000         ; Set the attributes for sprite 10 as follows:
+ STA attrSprite10       ;
+                        ;     * Bits 0-1    = sprite palette 0
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 clear = do not flip horizontally
+                        ;     * Bit 7 clear = do not flip vertically
+
+ LDA #219               ; Set the x-coordinate for sprite 10 to 219
  STA xSprite10
- LDA languageNumber
- AND #4
- BEQ CA024
- LDA #$10
 
-.CA024
+ LDA languageNumber     ; If bit 2 of languageNumber is clear then the chosen
+ AND #%00000100         ; language is not French, so jump to glas3 with A = 0
+ BEQ glas3
 
- CLC
+ LDA #16                ; The chosen language is French, so the commander image
+                        ; is 16 pixels lower down the screen, so set A = 16 to
+                        ; add to the y-coordinate of the glasses
 
- ADC #$5A+YPAL
+.glas3
+
+ CLC                    ; Set the y-coordinate for sprite 10 to 90, plus the
+ ADC #90+YPAL           ; margin we just set in A
  STA ySprite10
- RTS
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: subm_A02B
+;       Name: DrawRightEarring
 ;       Type: Subroutine
 ;   Category: Status
-;    Summary: ???
+;    Summary: Draw an earring in the commander's right ear (i.e. on the left
+;             side of the commander image
 ;
 ; ******************************************************************************
 
-.subm_A02B
+.DrawRightEarring
 
- LDA #$6B
- STA tileSprite11
- LDA #2
- STA attrSprite11
- LDA #$C3
+ LDA #107               ; Set the tile pattern number for sprite 11 to 107,
+ STA tileSprite11       ; which is the right earring
+
+ LDA #%00000010         ; Set the attributes for sprite 11 as follows:
+ STA attrSprite11       ;
+                        ;     * Bits 0-1    = sprite palette 2
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 clear = do not flip horizontally
+                        ;     * Bit 7 clear = do not flip vertically
+
+ LDA #195               ; Set the x-coordinate for sprite 11 to 195
  STA xSprite11
- LDA languageNumber
- AND #4
- BEQ CA043
- LDA #$10
 
-.CA043
+ LDA languageNumber     ; If bit 2 of languageNumber is clear then the chosen
+ AND #%00000100         ; language is not French, so jump to earr1 with A = 0
+ BEQ earr1
 
- CLC
+ LDA #16                ; The chosen language is French, so the commander image
+                        ; is 16 pixels lower down the screen, so set A = 16 to
+                        ; add to the y-coordinate of the earring
 
- ADC #$62+YPAL
+.earr1
+
+ CLC                    ; Set the y-coordinate for sprite 11 to 98, plus the
+ ADC #98+YPAL           ; margin we just set in A
  STA ySprite11
- RTS
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: subm_A04A
+;       Name: DrawLeftEarring
 ;       Type: Subroutine
 ;   Category: Status
-;    Summary: ???
+;    Summary: Draw an earring in the commander's left ear (i.e. on the right
+;             side of the commander image
 ;
 ; ******************************************************************************
 
-.subm_A04A
+.DrawLeftEarring
 
- LDA #$6C
- STA tileSprite12
- LDA #2
- STA attrSprite12
- LDA #$E3
+ LDA #108               ; Set the tile pattern number for sprite 12 to 108,
+ STA tileSprite12       ; which is the left earring
+
+ LDA #%00000010         ; Set the attributes for sprite 12 as follows:
+ STA attrSprite12       ;
+                        ;     * Bits 0-1    = sprite palette 2
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 clear = do not flip horizontally
+                        ;     * Bit 7 clear = do not flip vertically
+
+ LDA #227               ; Set the x-coordinate for sprite 12 to 227
  STA xSprite12
- LDA languageNumber
- AND #4
- BEQ CA062
- LDA #$10
 
-.CA062
+ LDA languageNumber     ; If bit 2 of languageNumber is clear then the chosen
+ AND #%00000100         ; language is not French, so jump to earl1 with A = 0
+ BEQ earl1
 
- CLC
+ LDA #16                ; The chosen language is French, so the commander image
+                        ; is 16 pixels lower down the screen, so set A = 16 to
+                        ; add to the y-coordinate of the earring
 
- ADC #$62+YPAL
+.earl1
+
+ CLC                    ; Set the y-coordinate for sprite 12 to 98, plus the
+ ADC #98+YPAL           ; margin we just set in A
  STA ySprite12
- RTS
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: subm_A069
+;       Name: DrawMedallion
 ;       Type: Subroutine
 ;   Category: Status
-;    Summary: ???
+;    Summary: Draw a medallion on the commander image
 ;
 ; ******************************************************************************
 
-.subm_A069
+.DrawMedallion
 
- LDA #3
- STA K
- LDA #2
- STA K+1
- LDA #$6F
- STA K+2
- LDA #$0F
- STA K+3
- LDX #$0B
- LDY #$31
- LDA #2
- JMP DrawSpriteImage+2
+                        ; We draw the medallion image from sprites with
+                        ; sequential patterns, so first we configure the
+                        ; variables to pass to the DrawSpriteImage routine
+
+ LDA #3                 ; Set K = 5, to pass as the number of columns in the
+ STA K                  ; image to DrawSpriteImage below
+
+ LDA #2                 ; Set K+1 = 2, to pass as the number of rows in the
+ STA K+1                ; image to DrawSpriteImage below
+
+ LDA #111               ; Set K+2 = 111, so we draw the medallion using pattern
+ STA K+2                ; #111 onwards
+
+ LDA #15                ; Set K+3 = 15, so we build the image from sprite 15
+ STA K+3                ; onwards
+
+ LDX #11                ; Set X = 11 so we draw the image 11 pixels into the
+                        ; (XC, YC) character block along the x-axis
+
+ LDY #49                ; Set Y = 49 so we draw the image 49 pixels into the
+                        ; (XC, YC) character block along the y-axis
+
+ LDA #%00000010         ; Set the attributes for the sprites we create in the
+                        ; DrawSpriteImage routine as follows:
+                        ;
+                        ;     * Bits 0-1    = sprite palette 2
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 clear = do not flip horizontally
+                        ;     * Bit 7 clear = do not flip vertically
+
+ JMP DrawSpriteImage+2  ; Draw the medallion image from sprites, using pattern
+                        ; #111 onwards and the sprite attributes in A
 
 ; ******************************************************************************
 ;
@@ -3461,13 +3533,14 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Status
 ;    Summary: Draw the commander image as a coloured face image in front of a
-;             greyscale headshot image, with optional dark glasses
+;             greyscale headshot image, with optional embellishments
 ;
 ; ******************************************************************************
 
 .DrawCmdrImage
 
-                        ; The commander image is made up of two layers:
+                        ; The commander image is made up of two layers and some
+                        ; optional embellishments:
                         ;
                         ;   * A greyscale headshot (i.e. the head and shoulders)
                         ;     that's displayed as a background using the
@@ -3478,6 +3551,11 @@ ENDIF
                         ;     foreground as a set of sprites, whose patterns are
                         ;     sent to the PPU by the GetCmdrImage routine, from
                         ;     pattern #69 onwards
+                        ;
+                        ;   * A pair of dark glasses (if we are a fugitive)
+                        ;
+                        ;   * Left and right earrings and a medallion, depending
+                        ;     on how rich we are
                         ;
                         ; We start by drawing the background into the nametable
                         ; buffers
@@ -3516,11 +3594,15 @@ ENDIF
 
                         ; Now that the background is drawn, we move on to the
                         ; sprite-based foreground, which contains the face image
+                        ;
+                        ; We draw the face image from sprites with sequential
+                        ; patterns, so now we configure the variables to pass
+                        ; to the DrawSpriteImage routine
 
- LDA #5                 ; Set K = 5, so we can pass the number of columns in the
+ LDA #5                 ; Set K = 5, to pass as the number of columns in the
  STA K                  ; image to DrawSpriteImage below
 
- LDA #7                 ; Set K+1 = 7, so we can pass the number of rows in the
+ LDA #7                 ; Set K+1 = 7, to pass as the number of rows in the
  STA K+1                ; image to DrawSpriteImage below
 
  LDA #69                ; Set K+2 = 69, so we draw the face image using
@@ -3542,14 +3624,17 @@ ENDIF
                         ; in front of the face if we have got a criminal record
 
  LDA FIST               ; If our legal status in FIST is less than 40, then we
- CMP #40                ; aren't bad enough for shades, so jump to cmdr1 to skip
- BCC cmdr1              ; the following instruction
+ CMP #40                ; are either clean or an offender, so jump to cmdr1 to
+ BCC cmdr1              ; skip the following instruction, as we aren't bad
+                        ; enough to wear shades
 
- JSR DrawGlasses        ; Draw a pair of dark glasses in front of the face
+ JSR DrawGlasses        ; If we get here then we are a fugitive, so draw a pair
+                        ; of dark glasses in front of the face
 
 .cmdr1
 
-                        ; We now embellish the commander image if we are rich
+                        ; We now embellish the commander image, depending on how
+                        ; much cash we have
                         ;
                         ; Note that the CASH amount is stored as a big-endian
                         ; four-byte number with the most significant byte first,
@@ -3562,48 +3647,58 @@ ENDIF
  CMP #$99
  BCS cmdr2
 
- CMP #0                 ; If CASH >= &00010000 (i.e. 6,553.6 CR), jump to cmdr3
+ CMP #0                 ; If CASH >= &00010000 (6,553.6 CR), jump to cmdr3
  BNE cmdr3
 
- LDA CASH+2
-
+ LDA CASH+2             ; If CASH >= &00004F00 (2,022.4 CR), jump to cmdr3
  CMP #$4F
  BCS cmdr3
 
- CMP #$28
+ CMP #$28               ; If CASH < &00002800 (1,024.0 CR), jump to cmdr5
  BCC cmdr5
 
- BCS cmdr4
+ BCS cmdr4              ; Jump to cmdr4 (this BCS is effectively a JMP as we
+                        ; just passed through a BCC)
 
 .cmdr2
 
- JSR subm_A069          ; Extremely rich
+ JSR DrawMedallion      ; If we get here then we have more than 1,002,700.8 CR,
+                        ; so call DrawMedallion to draw a medallion on the
+                        ; commander image
 
 .cmdr3
 
- JSR subm_A02B          ; Very rich
+ JSR DrawRightEarring   ; If we get here then we have more than 2,022.4 CR, so
+                        ; call DrawLeftEarring to draw an earring in the
+                        ; commander's right ear (i.e. on the left side of the
+                        ; commander image
 
 .cmdr4
 
- JSR subm_A04A          ; Quite rich
-
+ JSR DrawLeftEarring    ; If we get here then we have more than 1,024.0 CR, so
+                        ; call DrawRightEarring to draw an earring in the
+                        ; commander's left ear (i.e. on the right side of the
+                        ; commander image
 .cmdr5
 
- LDX XC
- DEX
- STX XC
-
- LDX YC
- DEX
+ LDX XC                 ; We just drew the image at (XC, YC), so decrement them
+ DEX                    ; both so we can pass (XC, YC) to the DrawImageFrame
+ STX XC                 ; routine to draw a frame around the image, with the
+ LDX YC                 ; top-left corner one block up and left from the image
+ DEX                    ; corner
  STX YC
 
- LDA #7
- STA K
+ LDA #7                 ; Set K = 7 to pass to the DrawImageFrame routine as the
+ STA K                  ; frame width minus 1, so the frame is eight tiles wide,
+                        ; to cover the image which is six tiles wide
 
- LDA #10
- STA K+1
+ LDA #10                ; Set K+1 = 10 to pass to the DrawImageFrame routine as
+ STA K+1                ; the frame height, so the frame is ten tiles high,
+                        ; to cover the image which is eight tiles high
 
- JMP DrawImageFrame_b3
+ JMP DrawImageFrame_b3  ; Call DrawImageFrame to draw a frame around the
+                        ; commander image, returning from the subroutine using a
+                        ; tail call
 
 ; ******************************************************************************
 ;

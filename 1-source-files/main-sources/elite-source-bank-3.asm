@@ -2774,7 +2774,7 @@ ENDIF
  LDA iconBarType
  CMP #3
  BEQ CABFA
- JSR DrawSomething
+ JSR DrawInventoryIcon
  JMP CAC08
 
 .CABFA
@@ -4339,6 +4339,10 @@ ENDIF
 
                         ; Now that the background is drawn, we move on to the
                         ; sprite-based foreground
+                        ;
+                        ; We draw the foreground image from sprites with
+                        ; sequential patterns, so now we configure the variables
+                        ; to pass to the DrawSpriteImage routine
 
  LDA #69                ; Set K+2 = 69, so we draw the system image using
  STA K+2                ; pattern #69 onwards
@@ -4371,7 +4375,7 @@ ENDIF
  INC K+1                ; frame that is the height of the image, plus two rows
                         ; for the top and bottom of the frame
 
-                        ; Fall through into DrawImageFrame to draw the frame
+                        ; Fall through into DrawImageFrame to draw a frame
                         ; around the system image
 
 ; ******************************************************************************
