@@ -5531,14 +5531,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_D908
+;       Name: CopySmallBlock
 ;       Type: Subroutine
 ;   Category: Utility routines
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_D908
+.CopySmallBlock
 
  LDY #0
 
@@ -5556,14 +5556,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_D919
+;       Name: CopyLargeBlock
 ;       Type: Subroutine
 ;   Category: Utility routines
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_D919
+.CopyLargeBlock
 
  LDY #0
  INC V
@@ -9531,14 +9531,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_E8DE
+;       Name: SetPointerButton
 ;       Type: Subroutine
 ;   Category: Icon bar
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_E8DE
+.SetPointerButton
 
  LDA controller1Start
  AND #%11000000
@@ -9646,7 +9646,7 @@ ENDIF
  BMI CE8F5
 
  LDA L045F
- BEQ subm_E8DE
+ BEQ SetPointerButton
 
  LDA pointerDirection
  CLC
@@ -9971,13 +9971,13 @@ ENDIF
 
  LDA controller1Right,Y
  BPL CEACD
- JSR subm_EB19
+ JSR DecreaseX
 
 .CEACD
 
  LDA controller1Left,Y
  BPL CEAD5
- JSR subm_EB0D
+ JSR IncreaseX
 
 .CEAD5
 
@@ -9994,7 +9994,7 @@ ENDIF
  BMI CEAFB
  LDA controller1Down,Y
  BPL CEAEF
- JSR subm_EB19
+ JSR DecreaseX
 
 .CEAEF
 
@@ -10003,7 +10003,7 @@ ENDIF
 
 .loop_CEAF4
 
- JSR subm_EB0D
+ JSR IncreaseX
 
 .CEAF7
 
@@ -10014,7 +10014,7 @@ ENDIF
 
  LDA controller1Up,Y
  BPL CEB03
- JSR subm_EB19
+ JSR DecreaseX
 
 .CEB03
 
@@ -10029,14 +10029,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_EB0D
+;       Name: IncreaseX
 ;       Type: Subroutine
 ;   Category: Keyboard
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_EB0D
+.IncreaseX
 
  TXA
  CLC
@@ -10052,14 +10052,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_EB19
+;       Name: DecreaseX
 ;       Type: Subroutine
 ;   Category: Keyboard
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_EB19
+.DecreaseX
 
  TXA
  SEC
@@ -10319,29 +10319,30 @@ ENDIF
 
 .EXNO3
 
- LDY #$0D
+ LDY #13
  BNE NOISE
 
 ; ******************************************************************************
 ;
-;       Name: subm_EBB1
+;       Name: FlushSoundChannels
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_EBB1
+.FlushSoundChannels
 
  LDX #0
- JSR subm_EBCF
+ JSR FlushSoundChannel
 
 .loop_CEBB6
 
  LDX #1
- JSR subm_EBCF
+ JSR FlushSoundChannel
+
  LDX #2
- BNE subm_EBCF
+ BNE FlushSoundChannel
 
 ; ******************************************************************************
 ;
@@ -10354,31 +10355,36 @@ ENDIF
 
 .ECBLB
 
- LDX noiseLookup1,Y
+ LDX soundLookup1,Y
+
  CPX #3
- BCC subm_EBCF
+ BCC FlushSoundChannel
+
  BNE loop_CEBB6
+
  LDX #0
- JSR subm_EBCF
+ JSR FlushSoundChannel
+
  LDX #2
 
 ; ******************************************************************************
 ;
-;       Name: subm_EBCF
+;       Name: FlushSoundChannel
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_EBCF
+.FlushSoundChannel
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDA #0
- STA L0478,X
- LDA #$1A
+ STA soundPriority,X
+
+ LDA #26
  BNE CEC2B
 
 ; ******************************************************************************
@@ -10397,31 +10403,32 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_EBE9
+;       Name: MakeScoopSound
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_EBE9
+.MakeScoopSound
 
  LDY #1
  BNE NOISE
 
 ; ******************************************************************************
 ;
-;       Name: subm_EBED
+;       Name: HyperspaceSound
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Make the hyperspace sound
 ;
 ; ******************************************************************************
 
-.subm_EBED
+.HyperspaceSound
 
- JSR subm_EBB1
- LDY #$15
+ JSR FlushSoundChannels
+
+ LDY #21
 
 ; ******************************************************************************
 ;
@@ -10436,7 +10443,7 @@ ENDIF
 
  LDA DNOIZ
  BPL CEC2E
- LDX noiseLookup1,Y
+ LDX soundLookup1,Y
  CPX #3
  BCC CEC0A
  TYA
@@ -10453,14 +10460,14 @@ ENDIF
 
  LDA L0302,X
  BEQ CEC17
- LDA noiseLookup2,Y
- CMP L0478,X
+ LDA soundLookup2,Y
+ CMP soundPriority,X
  BCC CEC2E
 
 .CEC17
 
- LDA noiseLookup2,Y
- STA L0478,X
+ LDA soundLookup2,Y
+ STA soundPriority,X
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -10480,14 +10487,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: noiseLookup1
+;       Name: soundLookup1
 ;       Type: Variable
 ;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.noiseLookup1
+.soundLookup1
 
  EQUB 2, 1, 1, 1, 1, 0, 0, 1, 2, 2, 2, 2, 3   ; EC3C: 02 01 01... ...
  EQUB 2, 2, 0, 0, 0, 0, 0, 2, 3, 3, 2, 1, 2   ; EC49: 02 02 00... ...
@@ -10495,14 +10502,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: noiseLookup2
+;       Name: soundLookup2
 ;       Type: Variable
 ;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.noiseLookup2
+.soundLookup2
 
  EQUB $80, $82, $C0, $21, $21, $10, $10, $41  ; EC5C: 80 82 C0... ...
  EQUB $82, $32, $84, $20, $C0, $60, $40, $80  ; EC64: 82 32 84... .2.
@@ -12549,14 +12556,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_AC5C_b3
+;       Name: UpdateIconBar_b3
 ;       Type: Subroutine
 ;   Category: Icon bar
-;    Summary: Call the subm_AC5C routine in ROM bank 3
+;    Summary: Call the UpdateIconBar routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.subm_AC5C_b3
+.UpdateIconBar_b3
 
  LDA currentBank        ; If ROM bank 3 is already paged into memory, jump to
  CMP #3                 ; bank20
@@ -12567,7 +12574,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR subm_AC5C          ; Call subm_AC5C, now that it is paged into memory
+ JSR UpdateIconBar          ; Call UpdateIconBar, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -12575,7 +12582,7 @@ ENDIF
 
 .bank20
 
- JMP subm_AC5C          ; Call subm_AC5C, which is already paged into memory,
+ JMP UpdateIconBar          ; Call UpdateIconBar, which is already paged into memory,
                         ; and return from the subroutine using a tail call
 
 ; ******************************************************************************
@@ -13087,14 +13094,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_F2CE
+;       Name: SetupHangarInPPU
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_F2CE
+.SetupHangarInPPU
 
  LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank

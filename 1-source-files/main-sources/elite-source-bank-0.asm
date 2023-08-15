@@ -739,7 +739,7 @@ ENDIF
  ADC #208               ; which will be in the range 48 ("FOOD") to 64 ("ALIEN
  JSR MESS               ; ITEMS"), so this prints the scooped item's name
 
- JSR subm_EBE9          ; ???
+ JSR MakeScoopSound     ; ???
 
  ASL NEWB               ; The item has now been scooped, so set bit 7 of its
  SEC                    ; NEWB flags to indicate this
@@ -1364,7 +1364,7 @@ ENDIF
 
  JSR HideHiddenColour   ; ???
 
- JSR subm_AC5C_b3
+ JSR UpdateIconBar_b3
 
 .MA77
 
@@ -1687,7 +1687,7 @@ ENDIF
 
  BCS MA23               ; ???
 
- JSR subm_EBE9
+ JSR MakeScoopSound
 
  JSR subm_9D35
 
@@ -2189,7 +2189,7 @@ ENDIF
                         ; a missile lock, so call the FRMIS routine to fire
                         ; the missile
 
- JSR subm_AC5C_b3       ; ???
+ JSR UpdateIconBar_b3   ; ???
 
 .MA64S
 
@@ -4071,7 +4071,7 @@ ENDIF
  JSR NOISE
  LDA #0
  STA ESCP
- JSR subm_AC5C_b3
+ JSR UpdateIconBar_b3
  LDA QQ11
  BNE C8BFF
 
@@ -7455,7 +7455,7 @@ ENDIF
  JSR SIGHT_b3           ; Draw the laser crosshairs
 
  LSR L0300
- JSR subm_AC5C_b3
+ JSR UpdateIconBar_b3
  LDA L0306
  STA L0305
  LDA #$10
@@ -9156,7 +9156,7 @@ ENDIF
  BPL C9B15
  TYA
  PHA
- JSR subm_AC5C_b3
+ JSR UpdateIconBar_b3
  PLA
  TAY
 
@@ -9906,7 +9906,7 @@ ENDIF
  STX L0395
  ASL A
  BPL C9D6A
- JMP subm_AC5C_b3
+ JMP UpdateIconBar_b3
 
 ; ******************************************************************************
 ;
@@ -10367,7 +10367,7 @@ ENDIF
                         ; to 5, so setting QQ22 to 15 here makes the first tick
                         ; of the hyperspace counter longer than subsequent ticks
 
- JMP subm_AC5C_b3       ; ???
+ JMP UpdateIconBar_b3   ; ???
 
 ; ******************************************************************************
 ;
@@ -10416,7 +10416,7 @@ ENDIF
  STX FIST               ; Changing galaxy also clears our criminal record, so
                         ; set our legal status in FIST to 0 ("clean")
 
- JSR subm_AC5C_b3       ; ???
+ JSR UpdateIconBar_b3   ; ???
 
  LDA #1
  JSR wW2
@@ -11476,7 +11476,7 @@ ENDIF
 
  LDA #$80               ; ???
  STA L0395
- JSR subm_AC5C_b3
+ JSR UpdateIconBar_b3
  JSR TT24_b6
 
  LDA QQ3                ; Set the current system's economy in QQ28 to the
@@ -11686,7 +11686,7 @@ ENDIF
                         ; witchspace (normal space has a maximum of 18)
 
  JSR subm_9D03          ; ???
- JSR subm_AC5C_b3
+ JSR UpdateIconBar_b3
  LDY #$1E
  JSR NOISE
  JMP subm_A28A
@@ -11732,7 +11732,7 @@ ENDIF
 
 .CA26C
 
- JSR subm_EBED
+ JSR HyperspaceSound
 
 .CA26F
 
@@ -14580,8 +14580,7 @@ ENDIF
  STY spasto+1           ; so we spawn the correct type of station in part 4 of
                         ; the main flight loop
 
- JMP subm_AC5C_b3       ; Jump to subm_AC5C, returning from the subroutine using
-                        ; a tail call ???
+ JMP UpdateIconBar_b3   ; ???
 
 ; ******************************************************************************
 ;
@@ -14959,7 +14958,7 @@ ENDIF
                         ; we just cleared out the second slot, and the first
                         ; slot is already taken by the planet
 
- JMP subm_AC5C_b3       ; ???
+ JMP UpdateIconBar_b3   ; ???
 
 ; ******************************************************************************
 ;
@@ -15323,7 +15322,7 @@ ENDIF
  LDX NOMSL              ; Call MSBAR to update the leftmost indicator in the
  JSR MSBAR              ; dashboard's missile bar, which returns with Y = 0
 
- JMP subm_AC5C_b3       ; ???
+ JMP UpdateIconBar_b3   ; ???
 
 .msbpars
 
@@ -16580,7 +16579,7 @@ ENDIF
  CMP #$80
  ROR A
  STA L0300
- JSR subm_AC5C_b3
+ JSR UpdateIconBar_b3
 
 .CB070
 
@@ -19118,7 +19117,7 @@ ENDIF
                         ; or "DOCKING COMPUTERS") as an in-flight message,
                         ; followed by " DESTROYED"
 
- JMP subm_AC5C_b3       ; ???
+ JMP UpdateIconBar_b3   ; ???
 
 .out
 

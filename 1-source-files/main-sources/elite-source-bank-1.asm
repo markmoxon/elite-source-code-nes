@@ -11535,7 +11535,7 @@ ENDIF
  STA firstPatternTile
  LDA #80
  STA maxTileNumber
- JMP subm_F2CE
+ JMP SetupHangarInPPU
 
 ; ******************************************************************************
 ;

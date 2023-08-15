@@ -2759,14 +2759,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_ABE7
+;       Name: SetIconBarPosition
 ;       Type: Subroutine
 ;   Category: Icon bar
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_ABE7
+.SetIconBarPosition
 
  LDA QQ11
  CMP #$BA
@@ -2867,14 +2867,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_AC5C
+;       Name: UpdateIconBar
 ;       Type: Subroutine
 ;   Category: Icon bar
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_AC5C
+.UpdateIconBar
 
  LDA iconBarType
  JSR SetupIconBar
@@ -2883,7 +2883,7 @@ ENDIF
  AND #%01000000         ; icon bar, so jump to CAC85 to return from the
  BNE CAC85              ; subroutine ???
 
- JSR subm_ABE7
+ JSR SetIconBarPosition
 
  LDA #%10000000         ; Set bit 7 of skipBarPatternsPPU, so the NMI handler
  STA skipBarPatternsPPU ; only sends the nametable entries and not the tile

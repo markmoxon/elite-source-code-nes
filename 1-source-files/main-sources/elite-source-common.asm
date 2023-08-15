@@ -294,7 +294,7 @@ IF NOT(_BANK = 3)
  SetupViewInNMI     = $A9D1
  ResetScreen        = $AABC
  ShowIconBar        = $AC1D
- subm_AC5C          = $AC5C
+ UpdateIconBar      = $AC5C
  SetupIconBar       = $AE18
  SetViewPatterns    = $AFCD
  SetInvertedFont    = $B0E1
@@ -4303,7 +4303,7 @@ ENDIF
                         ; rate, 128 means pitch is not changing, and 255 means
                         ; pitch is increasing at the maximum rate
 
-.L0478
+.soundPriority
 
  SKIP 3                 ; ???
 
