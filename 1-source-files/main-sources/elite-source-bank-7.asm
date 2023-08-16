@@ -12103,14 +12103,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LoadCurrentCmdr_b6
+;       Name: ResetCommander_b6
 ;       Type: Subroutine
 ;   Category: Save and load
-;    Summary: Call the LoadCurrentCmdr routine in ROM bank 6
+;    Summary: Call the ResetCommander routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.LoadCurrentCmdr_b6
+.ResetCommander_b6
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -12118,7 +12118,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR LoadCurrentCmdr    ; Call LoadCurrentCmdr, now that it is paged into memory
+ JSR ResetCommander     ; Call ResetCommander, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -13380,19 +13380,25 @@ ENDIF
 ;       Name: ResetOptions
 ;       Type: Subroutine
 ;   Category: Start and end
-;    Summary: ???
+;    Summary: Reset the game options to their default values
 ;
 ; ******************************************************************************
 
 .ResetOptions
 
- LDA #0
- STA JSTGY
- STA disableMusic
- LDA #$FF
- STA DAMP
- STA DNOIZ
- RTS
+ LDA #0                 ; Configure the joystick Y-channel to the default
+ STA JSTGY              ; direction (i.e. not reversed) by setting JSTGY to 0
+
+ STA disableMusic       ; Configure music to be enabled by default by setting
+                        ; disableMusic to 0
+
+ LDA #$FF               ; Configure damping to be enabled by default by setting
+ STA DAMP               ; DAMP to $FF
+
+ STA DNOIZ              ; Configure sound to be enabled by default by setting
+                        ; DNOIZ to $FF
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;

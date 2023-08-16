@@ -366,7 +366,7 @@ IF NOT(_BANK = 6)
  IF _NTSC
 
   SaveAllToBuffer   = $B88C
-  LoadCurrentCmdr   = $B8FE
+  ResetCommander    = $B8FE
   JAMESON           = $B90D
   DrawLightning     = $B919
   LL164             = $B980
@@ -381,7 +381,7 @@ IF NOT(_BANK = 6)
  ELIF _PAL
 
   SaveAllToBuffer   = $B89B
-  LoadCurrentCmdr   = $B90D
+  ResetCommander    = $B90D
   JAMESON           = $B91C
   DrawLightning     = $B928
   LL164             = $B98F
@@ -843,7 +843,11 @@ ENDIF
 
 .QQ11
 
- SKIP 1                 ; The number of the current view:
+ SKIP 1                 ; This contains the number of the current view (or, if
+                        ; we are changing views, the number of the view we are
+                        ; changing to)
+                        ;
+                        ; The low nibble contains the view type, as follows:
                         ;
                         ;   0  = $x0 = Space view
                         ;   1  = $x1 = Title screen
@@ -859,43 +863,90 @@ ENDIF
                         ;   11 = $xB = Save and load
                         ;   12 = $xC = Short-range Chart
                         ;   13 = $xD = Long-range Chart
-                        ;   14 = $xE = Unused ???
+                        ;   14 = $xE = Unused
                         ;   15 = $xF = Start screen
                         ;
-                        ;   * Bits 0-3 = view number (see above)
+                        ; The high nibble contains four configuration bits, as
+                        ; follows:
                         ;
                         ;   * Bit 4 clear = do not load the inverted font
                         ;     Bit 4 set   = load the inverted font
                         ;
-                        ;   * Bit 5 clear = do not load the normal font ???
+                        ;   * Bit 5 clear = do not load the normal font
                         ;     Bit 5 set   = load the normal font
                         ;
-                        ;   * Bit 6 clear = there is an icon bar
+                        ;   * Bit 6 clear = icon bar
                         ;     Bit 6 set   = no icon bar (rows 27-28 are blank)
                         ;
-                        ;   * Bit 7 clear = icon bar on row 20 (dashboard)
-                        ;     Bit 7 set   = icon bar on row 27 (no dashboard)
+                        ;   * Bit 7 clear = dashboard (icon bar on row 20)
+                        ;     Bit 7 set   = no dashboard (icon bar on row 27)
                         ;
-                        ; STA: 0, $8B, $97, $9D, $BB, $DF, $FF
-                        ; TT66: 0, $8D, $93, $95, $9C, $BB, $C4, $CF
-                        ; ChangeToView: $96, $97, $98, $B9, $BA
-                        ; SetViewInPPUNMI: 0, 1, $10, $92
                         ;
-                        ; $00, $10
-                        ; $01
-                        ; $92
-                        ; $93
-                        ; $C4
-                        ; $95
-                        ; $96
-                        ; $97
-                        ; $98
-                        ; $B9
-                        ; $BA
-                        ; $8B, $BB
-                        ; $9C
-                        ; $8D, $9D
-                        ; $CF, $DF, $FF
+                        ; All but four views have the same configuration every
+                        ; time the view is shown, but there are four views whose
+                        ; configuration can be different
+                        ;
+                        ; The complete list of view types is as follows:
+                        ;
+                        ;   $00 = Space view
+                        ;         Neither font loaded, dashboard
+                        ;
+                        ;   $10 = Space view
+                        ;         Inverted font loaded, dashboard
+                        ;
+                        ;   $01 = Title screen
+                        ;         Neither font loaded, dashboard
+                        ;
+                        ;   $92 = Mission 1 rotating ship briefing screen
+                        ;         Inverted font loaded, no dashboard
+                        ;
+                        ;   $93 = Mission 1 text briefing screen
+                        ;         Inverted font loaded, no dashboard
+                        ;
+                        ;   $C4 = Game Over screen
+                        ;         Neither font loaded, no dashboard or icon bar
+                        ;
+                        ;   $95 = Trumble mission briefing
+                        ;         Inverted font loaded, no dashboard
+                        ;
+                        ;   $96 = Data on System (TT25, TRADEMODE)
+                        ;         Inverted font loaded, no dashboard
+                        ;
+                        ;   $97 = Inventory
+                        ;         Inverted font loaded, no dashboard
+                        ;
+                        ;   $98 = Status Mode
+                        ;         Inverted font loaded, no dashboard
+                        ;
+                        ;   $B9 = Equip Ship
+                        ;         Both fonts loaded, no dashboard
+                        ;
+                        ;   $BA = Market Prices/Buy Cargo/Sell Cargo
+                        ;         Both fonts loaded, no dashboard
+                        ;
+                        ;   $8B = Save and load
+                        ;         Neither font loaded, no dashboard
+                        ;
+                        ;   $BB = Save and load
+                        ;         Both fonts loaded, no dashboard
+                        ;
+                        ;   $9C = Short-range Chart
+                        ;         Inverted font loaded, no dashboard
+                        ;
+                        ;   $8D = Long-range Chart
+                        ;         Neither font loaded, no dashboard
+                        ;
+                        ;   $9D = Long-range Chart
+                        ;         Inverted font loaded, no dashboard
+                        ;
+                        ;   $CF = Start screen
+                        ;         Neither font loaded, no dashboard or icon bar
+                        ;
+                        ;   $DF = Start screen
+                        ;         Inverted font loaded, no dashboard or icon bar
+                        ;
+                        ;   $FF = Start screen
+                        ;         Both fonts loaded, no dashboard or icon bar
 
 .QQ11a
 
@@ -1529,10 +1580,10 @@ ENDIF
                         ; called once the bank-switching is done - see the
                         ; SetBank routine for details)
 
-.notUsed
+.characterEnd
 
- SKIP 1                 ; This appears to be unused, though it is set in the
-                        ; SetLanguage routine
+ SKIP 1                 ; The number of the character beyond the end of the
+                        ; printable character set for the chosen language
 
 .autoplayKeys
 
@@ -3569,19 +3620,35 @@ ORG $0200
 
 .DAMP
 
- SKIP 1                 ; Damping config option
+ SKIP 1                 ; Keyboard damping configuration setting
+                        ;
+                        ;   * 0 = damping is disabled
+                        ;
+                        ;   * $FF = damping is enabled (default)
 
 .JSTGY
 
- SKIP 1                 ; Flip up-down (y-axis)
+ SKIP 1                 ; Reverse joystick Y-channel configuration setting
+                        ;
+                        ;   * 0 = standard Y-channel (default)
+                        ;
+                        ;   * $FF = reversed Y-channel
 
 .DNOIZ
 
- SKIP 1                 ; Disable sound
+ SKIP 1                 ; Sound on/off configuration setting
+                        ;
+                        ;   * 0 = sound is off
+                        ;
+                        ;   * $FF = sound is on (default)
 
 .disableMusic
 
- SKIP 1                 ; Disable music
+ SKIP 1                 ; Music on/off configuration setting
+                        ;
+                        ;   * 0 = music is on (default)
+                        ;
+                        ;   * Non-zero = sound is off
 
 .autoPlayDemo
 

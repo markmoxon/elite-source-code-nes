@@ -7160,9 +7160,8 @@ ENDIF
 
  JSR ClearScreen_b3     ; ???
 
- LDA #$95               ; Clear the top part of the screen, draw a white border,
- JSR TT66               ; and set the current view type in QQ11 to $95 (Mission
-                        ; briefing)
+ LDA #$95               ; Clear the screen and and set the view type in QQ11 to
+ JSR TT66               ; $95 (Trumble mission briefing)
 
  LDA TP                 ; Set bit 4 of TP to indicate that mission 3 has been
  ORA #%00010000         ; triggered
@@ -7314,8 +7313,8 @@ ENDIF
  INC INWK+7             ; Increment z_hi, to keep the ship at the same distance
                         ; as we just incremented z_lo past 255
 
- LDA #$93               ; Set view $93 ???
- JSR TT66
+ LDA #$93               ; Clear the screen and and set the view type in QQ11 to
+ JSR TT66               ; $93 (Mission 1 text briefing screen)
 
  LDA #10                ; Set A = 10 so the call to BRP prints extended token 10
                         ; (the briefing for mission 1 where we find out all
@@ -7386,7 +7385,10 @@ ENDIF
 .PlayDemo
 
  JSR RES2
- JSR LoadCurrentCmdr_b6
+
+ JSR ResetCommander_b6  ; Reset the current commander and current position to
+                        ; the default "JAMESON" commander
+
  LDA #0
  STA QQ14
  STA CASH
@@ -7408,7 +7410,9 @@ ENDIF
  STA ALP1
  STA QQ12
  STA VIEW
- JSR TT66
+
+ JSR TT66               ; Clear the screen and and set the view type in QQ11 to
+                        ; $00 (Space view with neither font loaded)
 
  LSR demoInProgress     ; Clear bit 7 of demoInProgress
 
@@ -8503,9 +8507,8 @@ ENDIF
 
 .TT22
 
- LDA #$8D               ; Clear the top part of the screen, draw a white border,
- JSR TT66               ; and set the current view type in QQ11 to $8D (Long-
-                        ; range Chart)
+ LDA #$8D               ; Clear the screen and and set the view type in QQ11 to
+ JSR TT66               ; $8D (Long-range Chart)
 
  LDA #77                ; Set the screen height variables for a screen height of
  JSR SetScreenHeight    ; 154 (i.e. 2 * 77)
@@ -9497,8 +9500,8 @@ ENDIF
  LDA #$C7
  STA Yx2M1
 
- LDA #$9C
- JSR TT66
+ LDA #$9C               ; Clear the screen and and set the view type in QQ11 to
+ JSR TT66               ; $9C (Short-range Chart)
 
  LDX languageIndex      ; Move the text cursor to the correct column for the
  LDA xShortRange,X      ; Short-range Chart title in the chosen language
@@ -12431,8 +12434,8 @@ ENDIF
 
 .EQSHP
 
- LDA #$B9               ; Change to view $B9 and move the text cursor to row 0
- JSR ChangeToView
+ LDA #$B9               ; Clear the screen and and set the view type in QQ11 to
+ JSR ChangeToView       ; $B9 (Equip Ship)
 
  LDX languageIndex      ; Move the text cursor to the correct column for the
  LDA xEquipShip,X       ; Equip Ship title in the chosen language
@@ -17065,8 +17068,10 @@ ENDIF
  STA boxEdge1
  STA boxEdge2
  STA autoPlayDemo
- LDA #$C4
- JSR TT66
+
+ LDA #$C4               ; Clear the screen and and set the view type in QQ11 to
+ JSR TT66               ; $95 (Game Over screen)
+
  JSR ClearDashEdge_b6   ; Clear the right edge of the dashboard ???
  JSR CopyNameBuffer0To1
  JSR HideMostSprites1
@@ -17245,17 +17250,26 @@ ENDIF
 
  LDA #$FF
  STA L0307
+
  LDA #$80
  STA L0308
+
  LDA #$1B
  STA L0309
+
  LDA #$34
  STA L030A
+
  JSR ResetMusic
- JSR JAMESON_b6
- JSR ResetOptions
+
+ JSR JAMESON_b6         ; Set the current position to the default "JAMESON"
+                        ; commander
+
+ JSR ResetOptions       ; Reset the game options to their default values
+
  LDA #1
  STA fontBitplane
+
  LDX #$FF
  STX QQ11a
 
@@ -17263,8 +17277,12 @@ ENDIF
                         ; location for the 6502 stack, so this instruction
                         ; effectively resets the stack
 
- JSR RESET
- JSR ChooseLanguage_b6
+ JSR RESET              ; Call RESET to initialise most of the game variables
+
+ JSR ChooseLanguage_b6  ; Show the start screen and process the language choice
+
+                        ; Fall through into DEATH2 to show the title screen and
+                        ; start the game
 
 ; ******************************************************************************
 ;
@@ -17430,9 +17448,10 @@ ENDIF
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- JSR LoadCurrentCmdr_b6 ; ???
+ JSR ResetCommander_b6  ; Reset the current commander and current position to
+                        ; the default "JAMESON" commander
 
- JSR ResetMusicAfterNMI
+ JSR ResetMusicAfterNMI ; ???
 
  JSR ping               ; Set the target system coordinates (QQ9, QQ10) to the
                         ; current system coordinates (QQ0, QQ1) we just loaded
@@ -20832,8 +20851,10 @@ ENDIF
  LDA #$48
  JSR SetScreenHeight
  STX VIEW
- LDA #0
- JSR TT66
+
+ LDA #$00               ; Clear the screen and and set the view type in QQ11 to
+ JSR TT66               ; $00 (Space view with neither font loaded)
+
  JSR CopyNameBuffer0To1
  JSR SetupViewInPPU_b3
  JMP ResetStardust
@@ -20850,8 +20871,10 @@ ENDIF
 .SwitchSpaceView
 
  STX VIEW
- LDA #0
- JSR TT66
+
+ LDA #$00               ; Clear the screen and and set the view type in QQ11 to
+ JSR TT66               ; $00 (Space view with neither font loaded)
+
  JSR CopyNameBuffer0To1
  LDA #80
  STA lastTileNumber

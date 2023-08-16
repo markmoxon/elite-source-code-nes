@@ -14582,8 +14582,9 @@ ENDIF
                         ; If we get here then this is not a jump token and
                         ; extended tokens are enabled
 
- CMP $00F9              ; ???
- BCC DTS
+ CMP characterEnd       ; If A < characterEnd then this is a printable character
+ BCC DTS                ; in the chosen language, so jump down to DTS to print
+                        ; it
 
  CMP #129               ; If A < 129, so A is in the range 91-128, jump down to
  BCC DT6                ; DT6 to print a randomised token from the MTIN table
@@ -15528,8 +15529,8 @@ ENDIF
  LDA #0                 ; Set the ship's AI flag to 0 (no AI) so it doesn't get
  STA INWK+31            ; any ideas of its own
 
- LDA #$93               ; Clear the top part of the screen, draw a white border,
- JSR TT66_b0            ; and set the current view type in QQ11 to ???
+ LDA #$93               ; Clear the screen and and set the view type in QQ11 to
+ JSR TT66_b0            ; $93 (Mission 1 text briefing screen)
 
                         ; Fall through into MT23 to move to row 10, switch to
                         ; white text, and switch to lower case when printing

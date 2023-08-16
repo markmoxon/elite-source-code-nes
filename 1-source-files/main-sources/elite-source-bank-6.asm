@@ -5263,7 +5263,7 @@ ENDIF
  STA firstNametableTile
  LDA #$A0
  STA L03FC
- JSR CA96E
+ JSR subm_A96E
  PLA
  STA LASCT
 
@@ -5273,7 +5273,7 @@ ENDIF
  STA L03FC
  JSR subm_A9A2
  JSR GRIDSET
- JSR CA96E
+ JSR subm_A96E
  DEC LASCT
  BNE loop_CA93C
  LDA #4
@@ -5284,7 +5284,7 @@ ENDIF
  LDA #$17
  STA L03FC
  JSR subm_A9A2
- JSR CA96E
+ JSR subm_A96E
  DEC LASCT
  BNE loop_CA954
  LDA #0
@@ -5293,7 +5293,16 @@ ENDIF
  STA visibleColour
  RTS
 
-.CA96E
+; ******************************************************************************
+;
+;       Name: subm_A96E
+;       Type: Subroutine
+;   Category: Demo
+;    Summary: ???
+;
+; ******************************************************************************
+
+.subm_A96E
 
  LDA controller1A
  BMI CA97F
@@ -5323,7 +5332,7 @@ ENDIF
  SEC
  SBC L0402
  STA L03FC
- BCS CA96E
+ BCS subm_A96E
  RTS
 
 ; ******************************************************************************
@@ -6152,8 +6161,9 @@ ENDIF
 
 .SVE
 
- LDA #$BB
- JSR TT66_b0
+ LDA #$BB               ; Clear the screen and and set the view type in QQ11 to
+ JSR TT66_b0            ; $BB (Save and load, both fonts loaded)
+
  LDA #$8B
  STA QQ11
  LDY #0
@@ -7162,7 +7172,7 @@ ENDIF
 ;       Name: NA2%
 ;       Type: Variable
 ;   Category: Save and load
-;    Summary: ???
+;    Summary: The data block for the default commander
 ;
 ; ******************************************************************************
 
@@ -7170,7 +7180,8 @@ ENDIF
 
  EQUS "JAMESON"         ; The current commander name, which defaults to JAMESON
 
- EQUB 1                 ; SVC = Save count, stored in NAME terminator
+ EQUB 1                 ; SVC = Save count, which is stored in the terminator
+                        ; byte for the commander name
 
  EQUB 0                 ; TP = Mission status, #0
 
@@ -7272,57 +7283,71 @@ ENDIF
  EQUW $0248             ; QQ21 = Seed s1 for system 0, galaxy 0 (Tibedied), #67
  EQUW $B753             ; QQ21 = Seed s2 for system 0, galaxy 0 (Tibedied), #69
 
- EQUB $AA               ; #71 ???
- EQUB $27               ; #72 ???
- EQUB $03               ; #73 ???
+ EQUB $AA               ; ??? #71
+ EQUB $27               ; ??? #72
+ EQUB $03               ; ??? #73
 
- EQUD 0                 ; These bytes appear to be unused
+ EQUD 0                 ; These bytes appear to be unused, #74-#85
  EQUD 0
  EQUD 0
  EQUD 0
 
 ; ******************************************************************************
 ;
-;       Name: LoadCurrentCmdr
+;       Name: ResetCommander
 ;       Type: Subroutine
 ;   Category: Save and load
-;    Summary: ???
+;    Summary: Reset the current commander and current position to the default
+;             "JAMESON" commander
 ;
 ; ******************************************************************************
 
-.LoadCurrentCmdr
+.ResetCommander
 
- JSR JAMESON
- LDX #79
+ JSR JAMESON            ; Set the current position to the default "JAMESON"
+                        ; commander
 
-.loop_CB903
+ LDX #79                ; We want to copy 78 bytes from the current position at
+                        ; currentPosition to the current commander at NAME, so
+                        ; set a byte counter in X (which counts down from 79 to
+                        ; 1 as we copy bytes 78 to 0)
 
- LDA currentPosition-1,X
- STA NAME-1,X
- DEX
- BNE loop_CB903
- RTS
+.resc1
+
+ LDA currentPosition-1,X    ; Copy byte X-1 from currentPosition to byte X-1 of
+ STA NAME-1,X               ; NAME
+
+ DEX                    ; Decrement the byte counter
+
+ BNE resc1              ; Loop back until we have copied all 78 bytes
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: JAMESON
 ;       Type: Subroutine
 ;   Category: Save and load
-;    Summary: ???
+;    Summary: Set the current position to the default "JAMESON" commander
 ;
 ; ******************************************************************************
 
 .JAMESON
 
- LDY #94
+ LDY #94                ; We want to copy 94 bytes from the default commander
+                        ; at NA2% to the current position at currentPosition, so
+                        ; set a byte counter in Y
 
-.loop_CB90F
+.jame1
 
- LDA NA2%,Y
- STA currentPosition,Y
- DEY
- BPL loop_CB90F
- RTS
+ LDA NA2%,Y             ; Copy the Y-th byte of NA2% to the Y-th byte of
+ STA currentPosition,Y  ; currentPosition
+
+ DEY                    ; Decrement the byte counter
+
+ BPL jame1              ; Loop back until we have copied all 94 bytes
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -7983,11 +8008,14 @@ ENDIF
  LDA #HI(iconBarImage0) ; Set iconBarImageHi to the high byte of the image data
  STA iconBarImageHi     ; for icon bar type 0 (docked)
 
- LDY #0
- STY autoPlayDemo
- JSR SetLanguage
- LDA #$CF
- JSR TT66_b0
+ LDY #0                 ; Clear bit 7 of autoPlayDemo so we do not play the demo
+ STY autoPlayDemo       ; automatically (so the player plays the demo instead)
+
+ JSR SetLanguage        ; Set the global variables for language 0 (English) to
+                        ; use as a default (as Y = 0)
+
+ LDA #$CF               ; Clear the screen and and set the view type in QQ11 to
+ JSR TT66_b0            ; $CF (Start screen, neither font loaded)
 
  LDA #HI(iconBarImage3) ; Set iconBarImageHi to the high byte of the image data
  STA iconBarImageHi     ; for icon bar type 3 (pause options)
@@ -7996,6 +8024,7 @@ ENDIF
  STA YC
  LDA #7
  STA XC
+
  LDA #3
 
 IF _PAL
@@ -8006,13 +8035,17 @@ ENDIF
 
  LDA #$DF
  STA QQ11
+
  JSR DrawBigLogo_b4
+
  LDA #$24
  STA L00D9
+
  LDA #$15
  STA YC
  LDA #$0A
  STA XC
+
  LDA #6
 
 IF _PAL
@@ -8024,6 +8057,7 @@ ENDIF
  INC YC
  LDA #3
  STA XC
+
  LDA #9
 
 IF _PAL
@@ -8036,12 +8070,15 @@ ENDIF
  STA YC
  LDA #3
  STA XC
+
  LDA #$0C
  JSR DETOK_b2
+
  LDA #$1A
  STA YC
  LDA #6
  STA XC
+
  LDA #7
 
 IF _PAL
@@ -8051,59 +8088,77 @@ IF _PAL
 ENDIF
 
  LDY #2
+
  LDA #$E5
 
 .loop_CBCDA
 
  STA nameBuffer0+896,Y
+
  INY
+
  CPY #$20
  BNE loop_CBCDA
+
  LDA #2
  STA nameBuffer0+864
  STA nameBuffer0+896
+
  LDA #1
  STA nameBuffer0+865
  STA nameBuffer0+897
+
  LDY #0
 
 .loop_CBCF4
 
  JSR SetLanguage
+
  LDA xLanguage,Y
  STA XC
  LDA yLanguage,Y
  STA YC
+
  LDA #0
  STA DTW8
+
  LDA #4
  JSR DETOK_b2
+
  INC XC
  INC XC
+
  INY
+
  LDA languageIndexes,Y
+
  BPL loop_CBCF4
+
  STY systemNumber
 
  LDA #HI(iconBarImage3) ; Set iconBarImageHi to the high byte of the image data
  STA iconBarImageHi     ; for icon bar type 3 (pause options)
 
  JSR DrawViewInNMI_b0
+
  LDA controller1Left
  AND controller1Up
  AND controller1Select
  AND controller1B
  BPL CBD3E
+
  LDA controller1Right
  ORA controller1Down
  ORA controller1Start
  ORA controller1A
  BMI CBD3E
+
  JSR ResetSaveSlots
 
 .CBD3E
 
  JSR SaveAllToBuffer_b6
+
  LDA #$80
  STA S
 
@@ -8118,17 +8173,22 @@ ELIF _PAL
 ENDIF
 
  STA T
+
  LDA K%+1
  STA V+1
+
  LDA #0
  STA V
+
  STA Q
+
  LDA K%
  STA LASCT
 
 .CBD5A
 
  JSR WaitForNMI
+
  LDY LASCT
  LDA xLanguage,Y
  ASL A
@@ -8136,61 +8196,77 @@ ENDIF
  ASL A
  ADC #0
  TAX
+
  CLC
+
  LDY #0
 
 .loop_CBD6C
 
  LDA #$F0
  STA ySprite5,Y
+
  LDA #$FF
  STA tileSprite5,Y
+
  LDA #$20
  STA attrSprite5,Y
+
  TXA
  STA xSprite5,Y
+
  ADC #8
  TAX
+
  INY
  INY
  INY
  INY
+
  CPY #$20
  BNE loop_CBD6C
+
  LDX LASCT
  LDA languageLength,X
  ASL A
  ASL A
  TAY
+
  LDA yLanguage,X
  ASL A
  ASL A
  ASL A
-
  ADC #6+YPAL
 
 .loop_CBD9B
 
  STA ySprite5,Y
+
  DEY
  DEY
  DEY
  DEY
+
  BPL loop_CBD9B
+
  LDA controller1Start
  AND #$C0
  CMP #$40
  BNE CBDAF
+
  LSR S
 
 .CBDAF
 
  LDX LASCT
+
  LDA controller1Left
  AND #$C0
  CMP #$40
  BNE CBDC1
+
  DEX
+
  LDA K%+1
  STA V+1
 
@@ -8200,26 +8276,33 @@ ENDIF
  AND #$C0
  CMP #$40
  BNE CBDD0
+
  INX
+
  LDA K%+1
  STA V+1
 
 .CBDD0
 
  TXA
+
  BPL CBDD5
+
  LDA #0
 
 .CBDD5
 
  CMP #3
  BCC CBDDB
+
  LDA #2
 
 .CBDDB
 
  STA LASCT
+
  DEC T
+
  BEQ CBDE5
 
 .CBDE2
@@ -8229,13 +8312,18 @@ ENDIF
 .CBDE5
 
  INC T
+
  LDA S
  BPL SetChosenLanguage
+
  DEC V
  BNE CBDE2
+
  DEC V+1
  BNE CBDE2
+
  JSR SetChosenLanguage
+
  JMP SetDemoAutoPlay_b5
 
 ; ******************************************************************************
@@ -8288,9 +8376,8 @@ ENDIF
  LDA languageNumbers,Y  ; Set languageNumber to the language's flags from the
  STA languageNumber     ; languageNumbers table
 
- LDA notUsedLang,Y      ; Set notUsed to the language's setting from the
- STA notUsed            ; notUsedLang table (this variable is never read and
-                        ; appears to be unused)
+ LDA characterEndLang,Y ; Set characterEnd to the end of the language's
+ STA characterEnd       ; character set from the characterEndLang table
 
  LDA decimalPointLang,Y ; Set decimalPoint to the language's decimal point
  STA decimalPoint       ; character from the decimalPointLang table
@@ -8337,30 +8424,30 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: notUsedLang
+;       Name: characterEndLang
 ;       Type: Variable
 ;   Category: Text
-;    Summary: This value is used to set the notUsed variable for the chosen
-;             language, but it is never read so this appears to be unused
+;    Summary: The number of the character beyond the end of the printable
+;             character set in each language
 ;
 ; ******************************************************************************
 
-.notUsedLang
+.characterEndLang
 
- EQUB $5B               ; English
+ EQUB 91                ; English
 
- EQUB $60               ; German
+ EQUB 96                ; German
 
- EQUB $60               ; French
+ EQUB 96                ; French
 
- EQUB $60               ; There is no fourth language, so this byte is ignored
+ EQUB 96                ; There is no fourth language, so this byte is ignored
 
 ; ******************************************************************************
 ;
 ;       Name: decimalPointLang
 ;       Type: Variable
 ;   Category: Text
-;    Summary: ???
+;    Summary: The decimal point character to use for each language
 ;
 ; ******************************************************************************
 
