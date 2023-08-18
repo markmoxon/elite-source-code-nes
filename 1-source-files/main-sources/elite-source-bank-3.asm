@@ -5234,6 +5234,7 @@ ENDIF
  LDA QQ11a
  CMP #$FF
  BEQ CB66D
+
  LDA L0473
  BMI CB66D
 
@@ -5245,21 +5246,36 @@ ENDIF
                         ; next VBlank)
 
  JSR GetViewPalettes
+
  DEC updatePaletteInNMI
+
  JSR GetPaletteColours
- JSR WaitFor2NMIs
+
+ JSR WaitFor2NMIs       ; Wait until two NMI interrupts have passed (i.e. the
+                        ; next two VBlanks)
+
  JSR GetPaletteColours
- JSR WaitFor2NMIs
+
+ JSR WaitFor2NMIs       ; Wait until two NMI interrupts have passed (i.e. the
+                        ; next two VBlanks)
+
  JSR GetPaletteColours
- JSR WaitFor2NMIs
+
+ JSR WaitFor2NMIs       ; Wait until two NMI interrupts have passed (i.e. the
+                        ; next two VBlanks)
+
  JSR GetPaletteColours
- JSR WaitFor2NMIs
+
+ JSR WaitFor2NMIs       ; Wait until two NMI interrupts have passed (i.e. the
+                        ; next two VBlanks)
+
  INC updatePaletteInNMI
 
 .CB66D
 
  LDA #$FF
  STA L0473
+
  RTS
 
 ; ******************************************************************************
@@ -5277,16 +5293,28 @@ ENDIF
                         ; next VBlank)
 
  JSR GetViewPalettes
+
  JSR subm_B5F6
+
  JSR GetPaletteColours
+
  DEC updatePaletteInNMI
- JSR WaitFor2NMIs
+
+ JSR WaitFor2NMIs       ; Wait until two NMI interrupts have passed (i.e. the
+                        ; next two VBlanks)
+
  JSR GetViewPalettes
  JSR subm_B5F6
- JSR WaitFor2NMIs
+
+ JSR WaitFor2NMIs       ; Wait until two NMI interrupts have passed (i.e. the
+                        ; next two VBlanks)
+
  JSR GetViewPalettes
  JSR GetPaletteColours
- JSR WaitFor2NMIs
+
+ JSR WaitFor2NMIs       ; Wait until two NMI interrupts have passed (i.e. the
+                        ; next two VBlanks)
+
  JSR GetViewPalettes
  JSR subm_B607
 
@@ -5294,7 +5322,9 @@ ENDIF
                         ; next VBlank)
 
  INC updatePaletteInNMI
+
  LSR L0473
+
  RTS
 
 ; ******************************************************************************

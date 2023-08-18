@@ -12210,14 +12210,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_A5AB_b6
+;       Name: ShowScrollText_b6
 ;       Type: Subroutine
 ;   Category: Demo
-;    Summary: Call the subm_A5AB routine in ROM bank 6
+;    Summary: Call the ShowScrollText routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.subm_A5AB_b6
+.ShowScrollText_b6
 
  STA ASAV               ; Store the value of A so we can retrieve it below
 
@@ -12232,7 +12232,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR subm_A5AB          ; Call subm_A5AB, now that it is paged into memory
+ JSR ShowScrollText     ; Call ShowScrollText, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -12242,8 +12242,9 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JMP subm_A5AB          ; Call subm_A5AB, which is already paged into memory,
-                        ; and return from the subroutine using a tail call
+ JMP ShowScrollText     ; Call ShowScrollText, which is already paged into
+                        ; memory, and return from the subroutine using a tail
+                        ; call
 
 ; ******************************************************************************
 ;
@@ -13383,58 +13384,74 @@ ENDIF
 ;       Name: SetupDemoUniverse
 ;       Type: Subroutine
 ;   Category: Demo
-;    Summary: ???
+;    Summary: Initialise the local bubble of univers for the demo
 ;
 ; ******************************************************************************
 
 .SetupDemoUniverse
 
- LDY #$0C
- JSR DELAY
- LDA #0
- CLC
- ADC #0
- STA frameCounter
- STA nmiTimer
+ LDY #12                ; Wait until 12 NMI interrupts have passed (i.e. the
+ JSR DELAY              ; next 12 VBlanks)
+
+ LDA #0                 ; Set A = 0
+ CLC                    ;
+ ADC #0                 ; The ADC has no effect, so presumably it was left over
+                        ; from a previous version of the code
+
+ STA frameCounter       ; Reset the frame counter to zero
+
+ STA nmiTimer           ; Set the NMI timer to zero
  STA nmiTimerLo
  STA nmiTimerHi
- STA hiddenBitPlane
+
+ STA hiddenBitPlane     ; Set the hidden, NMI and drawing bitplanes to 0
  STA nmiBitplane
  STA drawingBitplane
- LDA #$FF
+
+ LDA #$FF               ; Set L0307 = $FF ???
  STA L0307
- LDA #$80
+
+ LDA #$80               ; Set L0308 = $80 ???
  STA L0308
- LDA #$1B
+
+ LDA #$1B               ; Set L0309 = $1B ???
  STA L0309
- LDA #$34
+
+ LDA #$34               ; Set L030A = $34 ???
  STA L030A
- JSR ResetOptions
- LDA #0
+
+ JSR ResetOptions       ; Reset the game options to their default values
+
+ LDA #0                 ; Set K%+6 = 0 ???
  STA K%+6
- STA K%
+
+ STA K%                 ; Set K% = 0 ???
+
+                        ; Fall through into FixRandomNumbers to set the random
+                        ; number seeds to a known state
 
 ; ******************************************************************************
 ;
-;       Name: SeedRandomNumbers
+;       Name: FixRandomNumbers
 ;       Type: Subroutine
 ;   Category: Demo
-;    Summary: Set the random number seeds to a known value so the random numbers
+;    Summary: Fix the random number seeds to a known value so the random numbers
 ;             generated are always the same when we run the demo
 ;
 ; ******************************************************************************
 
-.SeedRandomNumbers
+.FixRandomNumbers
 
- LDA #$75
- STA RAND
+ LDA #$75               ; Set the random number seeds to a known state, so the
+ STA RAND               ; demo plays out in the same way every time
  LDA #$0A
  STA RAND+1
  LDA #$2A
  STA RAND+2
  LDX #$E6
  STX RAND+3
- RTS
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;

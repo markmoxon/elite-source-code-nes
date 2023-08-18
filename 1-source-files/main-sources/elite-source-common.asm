@@ -360,7 +360,7 @@ IF NOT(_BANK = 6)
  PauseGame          = $A166
  DIALS              = $A2C3
  DrawEquipment      = $A4A5
- subm_A5AB          = $A5AB
+ ShowScrollText     = $A5AB
  SVE                = $B459
 
  IF _NTSC
