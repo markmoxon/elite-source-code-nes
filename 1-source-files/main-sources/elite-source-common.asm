@@ -365,7 +365,7 @@ IF NOT(_BANK = 6)
 
  IF _NTSC
 
-  SaveAllToBuffer   = $B88C
+  UpdateSaveSlots   = $B88C
   ResetCommander    = $B8FE
   JAMESON           = $B90D
   DrawLightning     = $B919
@@ -380,7 +380,7 @@ IF NOT(_BANK = 6)
 
  ELIF _PAL
 
-  SaveAllToBuffer   = $B89B
+  UpdateSaveSlots   = $B89B
   ResetCommander    = $B90D
   JAMESON           = $B91C
   DrawLightning     = $B928
@@ -851,15 +851,15 @@ ENDIF
                         ;
                         ;   0  = $x0 = Space view
                         ;   1  = $x1 = Title screen
-                        ;   2  = $x2 = Mission 1 rotating ship briefing screen
-                        ;   3  = $x3 = Mission 1 text briefing screen
+                        ;   2  = $x2 = Mission 1 rotating ship briefing
+                        ;   3  = $x3 = Mission 1 text briefing
                         ;   4  = $x4 = Game Over screen
-                        ;   5  = $x5 = Trumble mission screen
-                        ;   6  = $x6 = Data on System (TT25, TRADEMODE)
+                        ;   5  = $x5 = Trumble mission briefing
+                        ;   6  = $x6 = Data on System
                         ;   7  = $x7 = Inventory
                         ;   8  = $x8 = Status Mode
                         ;   9  = $x9 = Equip Ship
-                        ;   10 = $xA = Market Prices/Buy Cargo/Sell Cargo
+                        ;   10 = $xA = Market Price
                         ;   11 = $xB = Save and load
                         ;   12 = $xC = Short-range Chart
                         ;   13 = $xD = Long-range Chart
@@ -881,12 +881,12 @@ ENDIF
                         ;   * Bit 7 clear = dashboard (icon bar on row 20)
                         ;     Bit 7 set   = no dashboard (icon bar on row 27)
                         ;
+                        ; Most views have the same configuration every time
+                        ; the view is shown, but $x0 (space view), $xB (Save and
+                        ; load), $xD (Long-range Chart) and $xF (Start screen)
+                        ; can have different configurations at different times
                         ;
-                        ; All but four views have the same configuration every
-                        ; time the view is shown, but there are four views whose
-                        ; configuration can be different
-                        ;
-                        ; The complete list of view types is as follows:
+                        ; The complete list of view types is therefore:
                         ;
                         ;   $00 = Space view
                         ;         Neither font loaded, dashboard
@@ -897,10 +897,10 @@ ENDIF
                         ;   $01 = Title screen
                         ;         Neither font loaded, dashboard
                         ;
-                        ;   $92 = Mission 1 rotating ship briefing screen
+                        ;   $92 = Mission 1 rotating ship briefing
                         ;         Inverted font loaded, no dashboard
                         ;
-                        ;   $93 = Mission 1 text briefing screen
+                        ;   $93 = Mission 1 text briefing
                         ;         Inverted font loaded, no dashboard
                         ;
                         ;   $C4 = Game Over screen
@@ -909,7 +909,7 @@ ENDIF
                         ;   $95 = Trumble mission briefing
                         ;         Inverted font loaded, no dashboard
                         ;
-                        ;   $96 = Data on System (TT25, TRADEMODE)
+                        ;   $96 = Data on System
                         ;         Inverted font loaded, no dashboard
                         ;
                         ;   $97 = Inventory
@@ -921,7 +921,7 @@ ENDIF
                         ;   $B9 = Equip Ship
                         ;         Both fonts loaded, no dashboard
                         ;
-                        ;   $BA = Market Prices/Buy Cargo/Sell Cargo
+                        ;   $BA = Market Price
                         ;         Both fonts loaded, no dashboard
                         ;
                         ;   $8B = Save and load
@@ -1552,7 +1552,7 @@ ENDIF
                         ; implemented when drawing the screen, so smooth vector
                         ; graphics can be shown
                         ;
-                        ;   * 0 = bitplanes are disabled (for the start screen)
+                        ;   * 0 = bitplanes are disabled (for the Start screen)
                         ;
                         ;   * 1 = bitplanes are enabled (for the main game)
 
@@ -1588,7 +1588,7 @@ ENDIF
 .autoplayKeys
 
  SKIP 2                 ; The address of the table containing the key presses to
-                        ; apply when autoplaying the demo
+                        ; apply when auto-playing the demo
                         ;
                         ; The address is taken from the chosen languages's
                         ; (autoplayKeysHi autoplayKeysLo) variable 
@@ -4622,7 +4622,7 @@ ENDIF
 
 .languageIndex
 
- SKIP 1                 ; The language that was chosen on the start screen as an
+ SKIP 1                 ; The language that was chosen on the Start screen as an
                         ; index into the various lookup tables:
                         ;
                         ;   * 0 = English
@@ -4633,7 +4633,7 @@ ENDIF
 
 .languageNumber
 
- SKIP 1                 ; The language that was chosen on the start screen as a
+ SKIP 1                 ; The language that was chosen on the Start screen as a
                         ; number:
                         ;
                         ;   * 1 = Bit 0 set = English

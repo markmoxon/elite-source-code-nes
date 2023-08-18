@@ -177,10 +177,14 @@ ENDIF
  LDA PPU_STATUS         ; Wait for the third VBlank to pass
  BPL sper3
 
- LDA #$00               ; Set K%(1 0) = $3C00 ???
- STA K%
- LDA #$3C
- STA K%+1
+ LDA #0                 ; Set K% = 0 (English) to set as the default highlighted
+ STA K%                 ; language on the Start screen (see the ChooseLanguage
+                        ; routine)
+
+ LDA #60                ; Set K%+1 = 60 to use as the value of the third counter
+ STA K%+1               ; when deciding how long to wait on the Start screen
+                        ; before auto-playing the demo (see the ChooseLanguage
+                        ; routine)
 
 .CC035
 
@@ -1734,7 +1738,7 @@ ENDIF
                         ; we tested above
 
  LDA enableBitplanes    ; If enableBitplanes = 0 then bitplanes are not enabled
- BEQ sbuf9              ; (we must be on the start screen), so jump to sbuf9 to
+ BEQ sbuf9              ; (we must be on the Start screen), so jump to sbuf9 to
                         ; update the cycle count and skip the following two
                         ; instructions
 
@@ -4065,7 +4069,8 @@ ENDIF
 
 .WaitFor2NMIs
 
- JSR WaitForNMI         ; Call WaitForNMI to wait for the next NMI interrupt
+ JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
+                        ; next VBlank)
 
                         ; Fall through into WaitForNMI to wait for the second
                         ; NMI interrupt
@@ -5534,57 +5539,97 @@ ENDIF
 ;       Name: CopySmallBlock
 ;       Type: Subroutine
 ;   Category: Utility routines
-;    Summary: ???
+;    Summary: Copy a small number of pages in memory
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   V(1 0)              Source address
+;
+;   SC(1 0)             Destination address
+;
+;   X                   Number of pages of memory to copy
 ;
 ; ******************************************************************************
 
 .CopySmallBlock
 
- LDY #0
+ LDY #0                 ; Set an index counter in Y
 
-.CD90A
+.cops1
 
- LDA (V),Y
+ LDA (V),Y              ; Copy the Y-th byte from V(1 0) to SC(1 0)
  STA (SC),Y
- DEY
- BNE CD90A
- INC V+1
- INC SC+1
- DEX
- BNE CD90A
- RTS
+
+ DEY                    ; Decrement the index counter
+
+ BNE cops1              ; Loop back until we have copied a whole page of bytes
+
+ INC V+1                ; Increment the high bytes of V(1 0) and SC(1 0) to
+ INC SC+1               ; point to the next page in memory
+
+ DEX                    ; Decrement the page counter
+
+ BNE cops1              ; Loop back until we have copied X pages of memory
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: CopyLargeBlock
 ;       Type: Subroutine
 ;   Category: Utility routines
-;    Summary: ???
+;    Summary: Copy a large number of pages in memory
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   SC2(1 0)            Source address
+;
+;   SC(1 0)             Destination address
+;
+;   V                   The number of pages top copy in each set
+;
+;   V+1                 The number of sets, so we copy V * V+1 pages
+;
+;   X                   Number of pages of memory to copy
 ;
 ; ******************************************************************************
 
 .CopyLargeBlock
 
- LDY #0
- INC V
- INC V+1
+ LDY #0                 ; Set an index counter in Y
 
-.CD91F
+ INC V                  ; Increment the page counter in V so we can use a BNE
+                        ; below to copy V pages
 
- LDA (SC2),Y
+ INC V+1                ; Increment the page counter in V+1 so we can use a BNE
+                        ; below to copy V+1 sets of V pages
+
+.copl1
+
+ LDA (SC2),Y            ; Copy the Y-th byte from SC2(1 0) to SC(1 0)
  STA (SC),Y
- INY
- BNE CD92A
- INC SC+1
- INC SC2+1
 
-.CD92A
+ INY                    ; Increment the index counter
 
- DEC V
- BNE CD91F
- DEC V+1
- BNE CD91F
- RTS
+ BNE copl2              ; If we haven't reached the end of the page, jump to
+                        ; copl2 to skip the following
+
+ INC SC+1               ; Increment the high bytes of SC(1 0) and SC2(1 0) to
+ INC SC2+1              ; point to the next page in memory
+
+.copl2
+
+ DEC V                  ; Loop back to repeat the above until we have copied V
+ BNE copl1              ; pages
+
+ DEC V+1                ; Loop back to repeat the above until we have copied V+1
+ BNE copl1              ; sets of V pages
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -9540,10 +9585,10 @@ ENDIF
 
 .SetPointerButton
 
- LDA controller1Start
- AND #%11000000
- CMP #%01000000
- BNE CE8EE
+ LDA controller1Start   ; If the Start button on controller 1 was being held
+ AND #%11000000         ; down (bit 6 is set) but is no longer being held down
+ CMP #%01000000         ; (bit 7 is clear) then keep going, otherwise jump to
+ BNE CE8EE              ; CE8EE
 
  LDA #80
  STA pointerButton
@@ -9895,10 +9940,10 @@ ENDIF
 
 .CEA7E
 
- LDA controller1Start
- AND #%11000000
- CMP #%01000000
- BNE CEA8C
+ LDA controller1Start   ; If the Start button on controller 1 was being held
+ AND #%11000000         ; down (bit 6 is set) but is no longer being held down
+ CMP #%01000000         ; (bit 7 is clear) then keep going, otherwise jump to
+ BNE CEA8C              ; CEA8C
 
  LDA #80
  STA pointerButton
@@ -10230,7 +10275,7 @@ ENDIF
 ;       Name: HideMostSprites1
 ;       Type: Subroutine
 ;   Category: Drawing sprites
-;    Summary: ???
+;    Summary: Fetch the palettes if we are changing view and hide all sprites
 ;
 ; ******************************************************************************
 
@@ -10240,18 +10285,21 @@ ENDIF
  CMP QQ11               ; view, so jump to HideMostSprites to hide all sprites
  BEQ HideMostSprites    ; except for sprite 0 and the icon bar pointer
 
+                        ; Otherwise fall through into HideMostSprites2 to fetch
+                        ; the palettes and then hide all the sprites ???
+
 ; ******************************************************************************
 ;
 ;       Name: HideMostSprites2
 ;       Type: Subroutine
 ;   Category: Drawing sprites
-;    Summary: ???
+;    Summary: Fetch the palettes and hide all sprites
 ;
 ; ******************************************************************************
 
 .HideMostSprites2
 
- JSR FetchPalettes1_b3
+ JSR FetchPalettes1_b3  ; ???
 
 ; ******************************************************************************
 ;
@@ -10283,16 +10331,28 @@ ENDIF
 ;       Name: DELAY
 ;       Type: Subroutine
 ;   Category: Utility routines
-;    Summary: ???
+;    Summary: Wait until a specified number of NMI interrupts have passed (i.e.
+;             a specified number of VBlanks)
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   Y                   The number of NMI interrupts to wait for
 ;
 ; ******************************************************************************
 
 .DELAY
 
- JSR WaitForNMI
- DEY
- BNE DELAY
- RTS
+ JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
+                        ; next VBlank)
+
+ DEY                    ; Decrement the counter in Y
+
+ BNE DELAY              ; If Y isn't yet at zero, jump back to DELAY to wait
+                        ; for another NMI interrupt
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -10857,8 +10917,8 @@ ENDIF
 
 .ChooseMusic_b6
 
- PHA                    ; ???
- JSR WaitForNMI
+ PHA                    ; Wait until the next NMI interrupt has passed (i.e. the
+ JSR WaitForNMI         ; next VBlank), preserving the value in A via the stack
  PLA
 
  ORA #$80
@@ -10943,7 +11003,8 @@ ENDIF
 
 .ResetMusicAfterNMI
 
- JSR WaitForNMI
+ JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
+                        ; next VBlank)
 
 ; ******************************************************************************
 ;
@@ -11077,14 +11138,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SaveAllToBuffer_b6
+;       Name: UpdateSaveSlots_b6
 ;       Type: Subroutine
 ;   Category: Save and load
-;    Summary: Call the SaveAllToBuffer routine in ROM bank 6
+;    Summary: Call the UpdateSaveSlots routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.SaveAllToBuffer_b6
+.UpdateSaveSlots_b6
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -11092,7 +11153,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR SaveAllToBuffer    ; Call SaveAllToBuffer, now that it is paged into memory
+ JSR UpdateSaveSlots    ; Call UpdateSaveSlots, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -13418,8 +13479,9 @@ ENDIF
  JSR HideMostSprites    ; Hide all sprites except for sprite 0 and the icon bar
                         ; pointer
 
- LDA #$FF
- STA QQ11a
+ LDA #$FF               ; Set the old view type in QQ11a to $FF (Start screen
+ STA QQ11a              ; both fonts loaded)
+
  LDA #1
  STA scanController2
  LDA #$32
@@ -14423,67 +14485,123 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: FAROF2
+;       Name: CalculateDistance
 ;       Type: Subroutine
 ;   Category: Maths (Geometry)
-;    Summary: ???
+;    Summary: Compare x_hi, y_hi and z_hi with A
+;
+; ------------------------------------------------------------------------------
+;
+; Calculate the distance from the origin to the point (x, y, z) and compare it
+; with the argument A, clearing the C flag if the distance is < A, or setting
+; the C flag if the distance is >= A.
+;
+; Returns:
+;
+;   C flag              Clear if the distance to (x, y, z) < A
+;
+;                       Set if the distance to (x, y, z) >= A
 ;
 ; ******************************************************************************
 
-.FAROF2
+.CalculateDistance
 
- STA T
+ STA T                  ; Store the value that we want to compare x, y z with
+                        ; in T
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA INWK+2
- ORA INWK+5
- ORA INWK+8
- ASL A
- BNE CF658
- LDA INWK+7
+ LDA INWK+2             ; If any of x_sign, y_sign or z_sign are non-zero
+ ORA INWK+5             ; (ignoring the sign in bit 7), then jump to farr3 to
+ ORA INWK+8             ; return the C flag set, to indicate that A is smaller
+ ASL A                  ; than x, y, z
+ BNE farr3
+
+ LDA INWK+7             ; Set K+2 = z_hi / 2
  LSR A
  STA K+2
- LDA INWK+1
+
+ LDA INWK+1             ; Set K = x_hi / 2
  LSR A
  STA K
- LDA INWK+4
- LSR A
- STA K+1
- CMP K
- BCS CF639
- LDA K
 
-.CF639
+ LDA INWK+4             ; Set K+1 = y_hi / 2
+ LSR A                  ;
+ STA K+1                ; This also sets A = K+1
 
- CMP K+2
- BCS CF63F
- LDA K+2
+                        ; From this point on we are only working with the high
+                        ; bytes, so to make things easier to follow, let's just
+                        ; refer to x_hi, y_hi and z_hi as x, y and z, so:
+                        ;
+                        ;   K   = x / 2
+                        ;   K+1 = y / 2
+                        ;   K+2 = z / 2
 
-.CF63F
+ CMP K                  ; If A >= K, jump to farr1 to skip the next instruction
+ BCS farr1
 
- STA SC
- LDA K
- CLC
- ADC K+1
- ADC K+2
- SEC
+ LDA K                  ; Set A = K, so A = max(K, K+1)
+
+.farr1
+
+ CMP K+2                ; If A >= K+2, jump to farr2 to skip the next
+ BCS farr2              ; instruction
+
+ LDA K+2                ; Set A = K+2, so A = max(A, K+2)
+                        ;                   = max(K, K+1, K+2)
+
+.farr2
+
+ STA SC                 ; Set SC = A
+                        ;        = max(K, K+1, K+2)
+                        ;        = max(x / 2, y / 2, z / 2)
+                        ;        = max(x, y, z) / 2
+
+ LDA K                  ; Set SC+1 = (K + K+1 + K+2 - SC) / 4
+ CLC                    ;          = (x/2 + y/2 + z/2 - max(x, y, z) / 2) / 4
+ ADC K+1                ;          = (x + y + z - max(x, y, z)) / 8
+ ADC K+2                ;
+ SEC                    ; 
  SBC SC
  LSR A
  LSR A
  STA SC+1
- LSR A
- LSR A
- ADC SC+1
- ADC SC
- CMP T
- RTS
 
-.CF658
+ LSR A                  ; Set A = (SC+1 / 4) + SC+1 + SC
+ LSR A                  ;       = 5/4 * SC+1 + SC
+ ADC SC+1               ;       = 5 * (x + y + z - max(x, y, z)) / (8 * 4)
+ ADC SC                 ;          + max(x, y, z) / 2
+                        ;
+                        ; If h is the longest of x, y, z, and a and b are the
+                        ; other two sides, then we have:
+                        ;
+                        ;   max(x, y, z) = h
+                        ;
+                        ;   x + y + z - max(x, y, z) = a + b + h - h
+                        ;                            = a + b
+                        ;
+                        ; So:
+                        ;
+                        ;   A = 5 * (a + b) / (8 * 4) + h / 2
+                        ;     = 5/32 * a + 5/32 * b + 1/2 * h
+                        ;
+                        ; Presumably this estimates the length of the (x, y, z),
+                        ; i.e. |x y z|, in some way, though I don't understand
+                        ; how
 
- SEC
- RTS
+ CMP T                  ; If A < T, C will be clear, otherwise C will be set
+                        ;
+                        ; So the C flag is clear if |x y z| <  argument A
+                        ;                  set   if |x y z| >= argument A
+
+ RTS                    ; Return from the subroutine
+
+.farr3
+
+ SEC                    ; Set the C flag to indicate A < x and A < y and A < z
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;

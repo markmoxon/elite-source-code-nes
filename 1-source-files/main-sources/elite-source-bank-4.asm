@@ -1961,7 +1961,7 @@ ENDIF
 ;       Name: bigLogoImage
 ;       Type: Variable
 ;   Category: Start and end
-;    Summary: Packed image data for the big Elite logo shown on the start screen
+;    Summary: Packed image data for the big Elite logo shown on the Start screen
 ;
 ; ******************************************************************************
 
@@ -2315,7 +2315,7 @@ ENDIF
 ;       Name: bigLogoNames
 ;       Type: Variable
 ;   Category: Start and end
-;    Summary: Nametable entries for the big Elite logo on the start screen
+;    Summary: Nametable entries for the big Elite logo on the Start screen
 ;
 ; ------------------------------------------------------------------------------
 ;
