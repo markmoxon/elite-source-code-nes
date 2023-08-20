@@ -6813,7 +6813,7 @@ ENDIF
 .LAUN
 
  LDA #$00               ; Clear the screen and and set the view type in QQ11 to
- JSR SetViewInPPUNMI    ; $00 (Space view with neither font loaded)
+ JSR ChangeToViewNMI    ; $00 (Space view with neither font loaded)
 
  JSR HideMostSprites    ; Hide all sprites except for sprite 0 and the icon bar
                         ; pointer
@@ -7249,7 +7249,7 @@ ENDIF
  JSR HideMostSprites2
 
  LDA #$92               ; Clear the screen and and set the view type in QQ11 to
- JSR SetViewInPPUNMI    ; $92 (Mission 1 rotating ship briefing)
+ JSR ChangeToViewNMI    ; $92 (Mission 1 rotating ship briefing)
 
  LDA #64                ; Set the main loop counter to 64, so the ship rotates
  STA MCNT               ; for 64 iterations through MVEIT
@@ -8252,6 +8252,7 @@ ENDIF
  JSR TT68               ; colon
 
  LDA QQ15+5             ; Set A = QQ15+5
+
  LDX QQ15+3             ; Set X = QQ15+3
 
  AND #%00001111         ; Set Y = (A AND %1111) + 11
@@ -8594,7 +8595,7 @@ ENDIF
  STA K
  LDA #$0E
  STA K+1
- JSR DrawPopupBox_b3
+ JSR DrawSmallBox_b3
 
  LDA QQ9                ; Set QQ19 to the selected system's x-coordinate
  STA QQ19
@@ -13182,7 +13183,7 @@ ENDIF
  STA K
  LDA #6
  STA K+1
- JSR DrawPopupBox_b3
+ JSR DrawSmallBox_b3
  JSR DrawScreenInNMI
  LDY #0
 
@@ -14515,7 +14516,7 @@ ENDIF
 
 .OO5
 
- LDX #0                ; Set the forward shield to 0
+ LDX #0                 ; Set the forward shield to 0
  STX ASH
 
 .OO3
@@ -17538,14 +17539,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetViewInPPUNMI
+;       Name: ChangeToViewNMI
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.SetViewInPPUNMI
+.ChangeToViewNMI
 
  JSR TT66
  JSR CopyNameBuffer0To1
@@ -17637,7 +17638,7 @@ ENDIF
  STY DELTA
 
  LDA #$01               ; Clear the screen and and set the view type in QQ11 to
- JSR SetViewInPPUNMI    ; $01 (Title screen)
+ JSR ChangeToViewNMI    ; $01 (Title screen)
 
  LDA #7
  STA YP

@@ -187,7 +187,7 @@ IF NOT(_BANK = 0)
  ShowStartScreen    = $B2C3
  DEATH2             = $B2EF
  StartGame          = $B358
- SetViewInPPUNMI    = $B39D
+ ChangeToViewNMI    = $B39D
  TITLE              = $B3BC
  PAS1               = $B8F7
  TT66               = $BEB5
@@ -301,7 +301,7 @@ IF NOT(_BANK = 3)
  SetFont            = $B18E
  DrawSystemImage    = $B219
  DrawImageFrame     = $B248
- DrawPopupBox       = $B2BC
+ DrawSmallBox       = $B2BC
  DrawBackground     = $B2FB
  ClearScreen        = $B341
  FetchPalettes1     = $B63D
@@ -5050,7 +5050,7 @@ ENDIF
 ;
 ;       Name: SETUP_PPU_FOR_ICON_BAR
 ;       Type: Macro
-;   Category: Icon bar
+;   Category: PPU
 ;    Summary: If the PPU has started drawing the icon bar, configure the PPU to
 ;             use nametable 0 and pattern table 0
 ;

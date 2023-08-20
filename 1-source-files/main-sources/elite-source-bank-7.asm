@@ -882,7 +882,7 @@ ENDIF
 ;
 ;       Name: SendBarNamesToPPU
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: Send the nametable entries for the icon bar to the PPU
 ;
 ; ------------------------------------------------------------------------------
@@ -974,7 +974,7 @@ ENDIF
 ;
 ;       Name: SendBarPatts2ToPPU
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: Send pattern data for tiles 64-127 for the icon bar to the PPU,
 ;             split across multiple calls to the NMI handler if required
 ;
@@ -1125,7 +1125,7 @@ ENDIF
 ;
 ;       Name: SendBarPattsToPPU
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: Send pattern data for tiles 0-127 for the icon bar to the PPU,
 ;             split across multiple calls to the NMI handler if required
 ;
@@ -1347,7 +1347,7 @@ ENDIF
 ;
 ;       Name: SendBarPattsToPPUS
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: Send the tile pattern data for the icon bar to the PPU (this is a
 ;             jump so we can call this routine using a branch instruction)
 ;
@@ -1363,7 +1363,7 @@ ENDIF
 ;
 ;       Name: SendBarNamesToPPUS
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: Send the nametable entries for the icon bar to the PPU (this is a
 ;             jump so we can call this routine using a branch instruction)
 ;
@@ -1379,7 +1379,7 @@ ENDIF
 ;
 ;       Name: ConsiderSendTiles
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: If there are enough free cycles, move on to the next stage of
 ;             sending tile patterns to the PPU
 ;
@@ -1435,7 +1435,7 @@ ENDIF
 ;
 ;       Name: SendBuffersToPPU (Part 1 of 3)
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: Send the icon bar nametable and palette data to the PPU, if it has
 ;             changed, before moving on to tile data in part 2
 ;
@@ -1463,7 +1463,7 @@ ENDIF
 ;
 ;       Name: SendBuffersToPPU (Part 2 of 3)
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: If we are already sending tile data to the PPU, pick up where we
 ;             left off, otherwise jump to part 3 to check for new data to send
 ;
@@ -1640,7 +1640,7 @@ ENDIF
 ;
 ;       Name: SendBuffersToPPU (Part 3 of 3)
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: If we need to send tile nametable and pattern data to the PPU for
 ;             either bitplane, start doing just that
 ;
@@ -1758,7 +1758,7 @@ ENDIF
 ;
 ;       Name: SetupTilesForPPU
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: Set up the variables needed to send the tile nametable and pattern
 ;             data to the PPU
 ;
@@ -1899,7 +1899,7 @@ ENDIF
 ;
 ;       Name: SendPatternsToPPU (Part 1 of 6)
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: Calculate how many tile patterns we need to send and jump to the
 ;             most efficient routine for sending them
 ;
@@ -2017,7 +2017,7 @@ ENDIF
 ;
 ;       Name: SendPatternsToPPU (Part 2 of 6)
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: Configure variables for sending data to the PPU one tile at a time
 ;             with checks
 ;
@@ -2091,7 +2091,7 @@ ENDIF
 ;
 ;       Name: SendPatternsToPPU (Part 3 of 6)
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: Send pattern data to the PPU for one tile at a time, checking
 ;             after each one to see if is the last tile
 ;
@@ -2306,7 +2306,7 @@ ENDIF
 ;
 ;       Name: SendPatternsToPPU (Part 4 of 6)
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: Configure variables for sending data to the PPU until we run out
 ;             of cycles
 ;
@@ -2380,7 +2380,7 @@ ENDIF
 ;
 ;       Name: SendPatternsToPPU (Part 5 of 6)
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: Send pattern data to the PPU for two tiles at a time, until we run
 ;             out of cycles (and without checking for the last tile)
 ;
@@ -2495,7 +2495,7 @@ ENDIF
 ;
 ;       Name: SendPatternsToPPU (Part 6 of 6)
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: Save progress for use in the next VBlank and return from the
 ;             subroutine
 ;
@@ -2528,7 +2528,7 @@ ENDIF
 ;
 ;       Name: SendOtherBitplane
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: Check whether we should send another bitplane to the PPU
 ;
 ; ******************************************************************************
@@ -2629,7 +2629,7 @@ ENDIF
 ;
 ;       Name: SendNametableToPPU
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: Send the tile nametable to the PPU if there are enough cycles left
 ;             in the current VBlank
 ;
@@ -3624,7 +3624,7 @@ ENDIF
 ;
 ;       Name: SendPalettesToPPU
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: Send the palette data from XX3 to the PPU
 ;
 ; ******************************************************************************
@@ -3671,7 +3671,7 @@ ENDIF
 ;
 ;       Name: UpdateScreen
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: Update the screen with the contents of the buffers
 ;
 ; ------------------------------------------------------------------------------
@@ -3731,7 +3731,7 @@ ENDIF
 ;
 ;       Name: SetPPURegisters
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: Set PPU_CTRL, PPU_ADDR and PPU_SCROLL for the current palette
 ;             bitplane
 ;
@@ -3822,7 +3822,7 @@ ENDIF
 ;
 ;       Name: SetPPUTablesTo0
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: Set nametable 0 and pattern table 0 for drawing the icon bar
 ;
 ; ******************************************************************************
@@ -4115,7 +4115,7 @@ ENDIF
 ;
 ;       Name: WaitForIconBarPPU
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: Wait until the PPU starts drawing the icon bar
 ;
 ; ******************************************************************************
@@ -5421,7 +5421,7 @@ ENDIF
 ;
 ;       Name: WaitForPPUToFinish
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: Wait until the NMI handler has finished updating both bitplanes,
 ;             so the screen is no longer refreshing
 ;
@@ -5831,7 +5831,7 @@ ENDIF
 ;
 ;       Name: SendMissilesToPPU
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: Send X batches of 16 bytes from SC(1 0) to the PPU
 ;
 ; ------------------------------------------------------------------------------
@@ -10581,7 +10581,7 @@ ENDIF
 ;
 ;       Name: SetupPPUForIconBar
 ;       Type: Subroutine
-;   Category: Icon bar
+;   Category: PPU
 ;    Summary: If the PPU has started drawing the icon bar, configure the PPU to
 ;             use nametable 0 and pattern table 0, while preserving A
 ;
@@ -11643,14 +11643,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: DrawPopupBox_b3
+;       Name: DrawSmallBox_b3
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: Call the DrawPopupBox routine in ROM bank 3
+;    Summary: Call the DrawSmallBox routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.DrawPopupBox_b3
+.DrawSmallBox_b3
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -11658,7 +11658,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR DrawPopupBox       ; Call DrawPopupBox, now that it is paged into memory
+ JSR DrawSmallBox       ; Call DrawSmallBox, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -12011,14 +12011,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetViewInPPUNMI_b0
+;       Name: ChangeToViewNMI_b0
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: Call the SetViewInPPUNMI routine in ROM bank 0
+;    Summary: Call the ChangeToViewNMI routine in ROM bank 0
 ;
 ; ******************************************************************************
 
-.SetViewInPPUNMI_b0
+.ChangeToViewNMI_b0
 
  STA ASAV               ; Store the value of A so we can retrieve it below
 
@@ -12033,7 +12033,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR SetViewInPPUNMI    ; Call SetViewInPPUNMI, now that it is paged into memory
+ JSR ChangeToViewNMI    ; Call ChangeToViewNMI, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -12043,7 +12043,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JMP SetViewInPPUNMI    ; Call SetViewInPPUNMI, which is already paged into
+ JMP ChangeToViewNMI    ; Call ChangeToViewNMI, which is already paged into
                         ; memory, and return from the subroutine using a tail
                         ; call
 
@@ -12513,7 +12513,7 @@ ENDIF
 ;
 ;       Name: SetupViewInPPU2
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -12527,7 +12527,7 @@ ENDIF
 ;
 ;       Name: SetupViewInPPU_b3
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: Call the SetupViewInPPU routine in ROM bank 3
 ;
 ; ******************************************************************************
@@ -12605,7 +12605,7 @@ ENDIF
 ;
 ;       Name: SendBitplaneToPPU_b3
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: Call the SendBitplaneToPPU routine in ROM bank 3
 ;
 ; ******************************************************************************
@@ -12654,7 +12654,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR UpdateIconBar          ; Call UpdateIconBar, now that it is paged into memory
+ JSR UpdateIconBar      ; Call UpdateIconBar, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -12662,8 +12662,9 @@ ENDIF
 
 .bank20
 
- JMP UpdateIconBar          ; Call UpdateIconBar, which is already paged into memory,
-                        ; and return from the subroutine using a tail call
+ JMP UpdateIconBar      ; Call UpdateIconBar, which is already paged into
+                        ; memory, and return from the subroutine using a tail
+                        ; call
 
 ; ******************************************************************************
 ;
@@ -13176,7 +13177,7 @@ ENDIF
 ;
 ;       Name: SetupHangarInPPU
 ;       Type: Subroutine
-;   Category: Drawing the screen
+;   Category: PPU
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -16332,8 +16333,8 @@ ENDIF
 
 .LL29new
 
- SBC Q
- SEC
+ SBC Q                  ; This is also part of the inline LL31 routine
+ SEC                    ; calculation above
  ROL R
  BCS LL31new
  LDA R

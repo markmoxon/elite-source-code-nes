@@ -4760,7 +4760,7 @@ ENDIF
  STA QQ12
 
  LDA #$10               ; Clear the screen and and set the view type in QQ11 to
- JSR SetViewInPPUNMI_b0 ; $10 (Space view with inverted font loaded)
+ JSR ChangeToViewNMI_b0 ; $10 (Space view with inverted font loaded)
 
  LDA #$FF
  STA L045F

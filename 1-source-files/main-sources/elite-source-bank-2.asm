@@ -15070,7 +15070,7 @@ ENDIF
 ;       Name: MT9
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Clear the screen and set the current view type to 1
+;    Summary: Clear the screen and show the Trumble mission briefing
 ;  Deep dive: Extended text tokens
 ;
 ; ------------------------------------------------------------------------------
@@ -15088,11 +15088,9 @@ ENDIF
  LDA #1                 ; Move the text cursor to column 1
  STA XC
 
- LDA #$95               ; ???
-
- JMP TT66_b0            ; Jump to TT66 to clear the screen and set the current
-                        ; view type to 1, returning from the subroutine using a
-                        ; tail call
+ LDA #$95               ; Clear the screen and and set the view type in QQ11 to
+ JMP TT66_b0            ; $95 (Trumble mission briefing), returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
