@@ -64,11 +64,12 @@
 ;     to $C000 when it starts up via the JMP ($FFFC), irrespective of which
 ;     ROM bank is mapped to $C000.
 ;
-;   * We put the same reset routine at the start of every ROM bank, so the same
-;     routine gets run, whichever ROM bank is mapped to $C000.
+;   * We put the same reset routine (this routine, ResetMMC1) at the start of
+;     every ROM bank, so the same routine gets run, whichever ROM bank is mapped
+;     to $C000.
 ;
-; This reset routine is therefore called when the NES starts up, whatever the
-; bank configuration ends up being. It then switches ROM bank 7 to $C000 and
+; This ResetMMC1 routine is therefore called when the NES starts up, whatever
+; the bank configuration ends up being. It then switches ROM bank 7 to $C000 and
 ; jumps into bank 7 at the game's entry point BEGIN, which starts the game.
 ;
 ; ******************************************************************************
@@ -2573,10 +2574,11 @@ ENDIF
  LDA autoplayKeysHi,X
  STA autoplayKeys+1
 
- LDA #0                 ; Set L04BC = 0???
- STA L04BC
+ LDA #0                 ; Set autoplayKey = 0 to reset the current key being
+ STA autoplayKey        ; "pressed" in the auto-play
 
- STA L04BD              ; Set L04BD = 0???
+ STA demoLoopCounter    ; Set demoLoopCounter = 0 so the demo loop counter
+                        ; starts from the beginning
 
  LDX #%10000000         ; Set bit 7 of autoPlayDemo so the NMI handler will play
  STX autoPlayDemo       ; the demo automatically using the controller key
@@ -2589,7 +2591,8 @@ ENDIF
 ;       Name: autoplayKeysLo
 ;       Type: Variable
 ;   Category: Demo
-;    Summary: ???
+;    Summary: Low byte of the address of the auto-play key table for each
+;             language
 ;
 ; ******************************************************************************
 
@@ -2609,7 +2612,8 @@ ENDIF
 ;       Name: autoplayKeysHi
 ;       Type: Variable
 ;   Category: Demo
-;    Summary: ???
+;    Summary: High byte of the address of the auto-play key table for each
+;             language
 ;
 ; ******************************************************************************
 

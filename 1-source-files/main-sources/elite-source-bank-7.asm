@@ -66,10 +66,11 @@ ENDIF
 ;     to $C000 when it starts up via the JMP ($FFFC), irrespective of which
 ;     ROM bank is mapped to $C000.
 ;
-;   * We put the same reset routine at the start of every ROM bank, so the same
-;     routine gets run, whichever ROM bank is mapped to $C000.
+;   * We put the same reset routine (this routine, ResetMMC1) at the start of
+;     every ROM bank, so the same routine gets run, whichever ROM bank is mapped
+;     to $C000.
 ;
-; This reset routine is therefore called when the NES starts up, whatever the
+; This ResetMMC1 routine is therefore called when the NES starts up, whatever
 ; bank configuration ends up being. It then switches ROM bank 7 to $C000 and
 ; jumps into bank 7 at the game's entry point BEGIN, which starts the game.
 ;
@@ -9439,12 +9440,12 @@ ENDIF
 
 .CE822
 
- LDX L04BD
+ LDX demoLoopCounter
  BNE CE83F
  LDY #0
  LDA (autoplayKeys),Y
  BMI CE878
- STA L04BC
+ STA autoplayKey
  INY
  LDA (autoplayKeys),Y
  SEC
@@ -9464,8 +9465,8 @@ ENDIF
 .CE83F
 
  DEX
- STX L04BD
- LDA L04BC
+ STX demoLoopCounter
+ LDA autoplayKey
  ASL controller1Right
  LSR A
  ROR controller1Right
@@ -9500,7 +9501,7 @@ ENDIF
 .CE87F
 
  LDA #0
- STA L04BC
+ STA autoplayKey
  BEQ CE835
 
 .CE886
@@ -9510,7 +9511,7 @@ ENDIF
  PHA
  INY
  LDA (autoplayKeys),Y
- STA L04BC
+ STA autoplayKey
  INY
  LDA (autoplayKeys),Y
  STA addr

@@ -64,11 +64,12 @@
 ;     to $C000 when it starts up via the JMP ($FFFC), irrespective of which
 ;     ROM bank is mapped to $C000.
 ;
-;   * We put the same reset routine at the start of every ROM bank, so the same
-;     routine gets run, whichever ROM bank is mapped to $C000.
+;   * We put the same reset routine (this routine, ResetMMC1) at the start of
+;     every ROM bank, so the same routine gets run, whichever ROM bank is mapped
+;     to $C000.
 ;
-; This reset routine is therefore called when the NES starts up, whatever the
-; bank configuration ends up being. It then switches ROM bank 7 to $C000 and
+; This ResetMMC1 routine is therefore called when the NES starts up, whatever
+; the bank configuration ends up being. It then switches ROM bank 7 to $C000 and
 ; jumps into bank 7 at the game's entry point BEGIN, which starts the game.
 ;
 ; ******************************************************************************
@@ -6082,7 +6083,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Text
 ;    Summary: Lookup table for the low byte of the address of the saveHeader1
-;             text for the chosen language
+;             text for each language
 ;
 ; ******************************************************************************
 
@@ -6098,7 +6099,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Text
 ;    Summary: Lookup table for the high byte of the address of the saveHeader1
-;             text for the chosen language
+;             text for each language
 ;
 ; ******************************************************************************
 
@@ -6114,7 +6115,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Text
 ;    Summary: Lookup table for the low byte of the address of the saveHeader2
-;             text for the chosen language
+;             text for each language
 ;
 ; ******************************************************************************
 
@@ -6130,7 +6131,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Text
 ;    Summary: Lookup table for the high byte of the address of the saveHeader2
-;             text for the chosen language
+;             text for each language
 ;
 ; ******************************************************************************
 
@@ -7456,7 +7457,7 @@ ENDIF
  LDA K+2
  SEC
  SBC K
- STA XX15
+ STA X1
  LDA K3
  STA Y1
  LDY #7
@@ -7466,13 +7467,15 @@ ENDIF
  JSR DORND
  STA Q
  LDA K+1
- JSR FMLTU
+
+ JSR FMLTU              ; Set A = A * Q / 256
+
  CLC
  ADC K3
  SEC
  SBC XX2+1
  STA Y2
- LDA XX15
+ LDA X1
  CLC
  ADC STP
  STA X2
@@ -7480,7 +7483,7 @@ ENDIF
  LDA SWAP
  BNE CB96E
  LDA X2
- STA XX15
+ STA X1
  LDA Y2
  STA Y1
 
@@ -7718,7 +7721,10 @@ ENDIF
  STA INWK+5,Y
  LDA #$0C
  JSR CHPR_b2
- JSR DrawMessageInNMI
+
+ JSR DrawMessageInNMI   ; Configure the NMI to display the message that we just
+                        ; printed
+
  CLC
  RTS
 
@@ -7781,7 +7787,10 @@ ENDIF
  PHA
  JSR CHPR_b2
  DEC XC
- JSR DrawMessageInNMI
+
+ JSR DrawMessageInNMI   ; Configure the NMI to display the message that we just
+                        ; printed
+
  SEC
  LDA controller1A
  BMI CBB2A
@@ -7848,7 +7857,10 @@ ENDIF
 
 .ChangeCmdrName
 
- JSR CLYNS
+ JSR CLYNS              ; Clear the bottom three text rows of the upper screen,
+                        ; and move the text cursor to column 1 on row 21, i.e.
+                        ; the start of the top row of the three bottom rows
+
  INC YC
  LDA #8
  JSR DETOK_b2
@@ -7918,8 +7930,13 @@ ENDIF
 
 .CBBB0
 
- JSR CLYNS
- JMP DrawMessageInNMI
+ JSR CLYNS              ; Clear the bottom three text rows of the upper screen,
+                        ; and move the text cursor to column 1 on row 21, i.e.
+                        ; the start of the top row of the three bottom rows
+
+ JMP DrawMessageInNMI   ; Configure the NMI to display the message that we just
+                        ; printed, returning from the subroutine using a tail
+                        ; call
 
 .CBBB6
 
@@ -8705,7 +8722,7 @@ ENDIF
 ;       Name: tokensLo
 ;       Type: Variable
 ;   Category: Text
-;    Summary: Low byte of the text token table for the chosen language
+;    Summary: Low byte of the text token table for each language
 ;
 ; ******************************************************************************
 
@@ -8722,7 +8739,7 @@ ENDIF
 ;       Name: tokensHi
 ;       Type: Variable
 ;   Category: Text
-;    Summary: High byte of the text token table for the chosen language
+;    Summary: High byte of the text token table for each language
 ;
 ; ******************************************************************************
 
@@ -8739,7 +8756,7 @@ ENDIF
 ;       Name: extendedTokensLo
 ;       Type: Variable
 ;   Category: Text
-;    Summary: Low byte of the extended text token table for the chosen language
+;    Summary: Low byte of the extended text token table for each language
 ;
 ; ******************************************************************************
 
@@ -8756,7 +8773,7 @@ ENDIF
 ;       Name: extendedTokensHi
 ;       Type: Variable
 ;   Category: Text
-;    Summary: High byte of the extended text token table for the chosen language
+;    Summary: High byte of the extended text token table for each language
 ;
 ; ******************************************************************************
 
@@ -8793,8 +8810,8 @@ ENDIF
 ;       Name: languageNumbers
 ;       Type: Variable
 ;   Category: Text
-;    Summary: The language number for the chosen language, as a set bit within
-;             a flag byte
+;    Summary: The language number for each language, as a set bit within a flag
+;             byte
 ;
 ; ******************************************************************************
 

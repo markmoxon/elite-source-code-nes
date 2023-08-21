@@ -64,11 +64,12 @@
 ;     to $C000 when it starts up via the JMP ($FFFC), irrespective of which
 ;     ROM bank is mapped to $C000.
 ;
-;   * We put the same reset routine at the start of every ROM bank, so the same
-;     routine gets run, whichever ROM bank is mapped to $C000.
+;   * We put the same reset routine (this routine, ResetMMC1) at the start of
+;     every ROM bank, so the same routine gets run, whichever ROM bank is mapped
+;     to $C000.
 ;
-; This reset routine is therefore called when the NES starts up, whatever the
-; bank configuration ends up being. It then switches ROM bank 7 to $C000 and
+; This ResetMMC1 routine is therefore called when the NES starts up, whatever
+; the bank configuration ends up being. It then switches ROM bank 7 to $C000 and
 ; jumps into bank 7 at the game's entry point BEGIN, which starts the game.
 ;
 ; ******************************************************************************
@@ -3470,7 +3471,8 @@ ENDIF
 
  LDA QQ22+1
  BNE CAE60
- LDA L0395
+
+ LDA selectedSystemFlag
  ASL A
  BMI CAE65
 
@@ -3594,7 +3596,7 @@ ENDIF
 
 .CAF0C
 
- LDA L0395
+ LDA selectedSystemFlag
  ASL A
  BMI CAF17
 
@@ -5100,19 +5102,31 @@ ENDIF
  BEQ CB5DE
  CMP #$98
  BEQ subm_B607
- CMP #$96
- BNE CB5DB
- LDA QQ15
- EOR QQ15+5
- EOR QQ15+2
- LSR A
- LSR A
- EOR #$0C
- AND #$1C
- TAX
- LDA systemPalettes,X
- STA XX3+20
- LDA systemPalettes+1,X
+
+ CMP #$96               ; If this is not the Data on System view ($96), jump to
+ BNE CB5DB              ; CB5DB
+
+                        ; This is the Data on System view, so we set the palette
+                        ; according to the system's seeds
+
+ LDA QQ15               ; Set A to the EOR of the s0_lo, s2_hi and s1_lo seeds
+ EOR QQ15+5             ; for the current system, shifted right by two places
+ EOR QQ15+2             ; and with bits 2 and 3 flipped
+ LSR A                  ;
+ LSR A                  ; This gives us a number that varies between each system
+ EOR #%00001100         ; that we can use to choose one of the eight system
+                        ; palettes
+
+ AND #%00011100         ; Restrict the result in A to multiples of 4 between 0
+ TAX                    ; and 28 and set X to the result
+                        ;
+                        ; We can now use X as an index into the systemPalettes
+                        ; table, as there are eight palettes in the table, each
+                        ; of which takes up four bytes
+
+ LDA systemPalettes,X   ; Set the four bytes at XX3+20 to the palette entry from
+ STA XX3+20             ; the systemPalettes table that corresponds to the
+ LDA systemPalettes+1,X ; current system
  STA XX3+21
  LDA systemPalettes+2,X
  STA XX3+22
@@ -5338,14 +5352,21 @@ ENDIF
 
 .systemPalettes
 
- EQUB $0F, $25, $16, $15
- EQUB $0F, $35, $16, $25
- EQUB $0F, $34, $04, $14
- EQUB $0F, $27, $28, $17
- EQUB $0F, $29, $2C, $19
- EQUB $0F, $2A, $1B, $0A
- EQUB $0F, $32, $21, $02
- EQUB $0F, $2C, $22, $1C
+ EQUB $0F, $25, $16, $15    ; Palette 0, as used for Lave
+
+ EQUB $0F, $35, $16, $25    ; Palette 1, as used for Diso
+
+ EQUB $0F, $34, $04, $14    ; Palette 2, as used for Zaonce
+
+ EQUB $0F, $27, $28, $17    ; Palette 3, as used for Leesti
+
+ EQUB $0F, $29, $2C, $19    ; Palette 4, as used for Onrira
+
+ EQUB $0F, $2A, $1B, $0A    ; Palette 5, as used for Reorte
+
+ EQUB $0F, $32, $21, $02    ; Palette 6, as used for Uszaa
+
+ EQUB $0F, $2C, $22, $1C    ; Palette 7, as used for Orerve
 
 ; ******************************************************************************
 ;

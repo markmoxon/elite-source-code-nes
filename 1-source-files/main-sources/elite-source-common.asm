@@ -3302,9 +3302,16 @@ ORG $0200
                         ;     * 1 = the string " DESTROYED" gets added to the
                         ;       end of the message
 
-.L0395
+.selectedSystemFlag
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Flags for the currently selected system
+                        ;
+                        ;   * Bit 6 is set when we can hyperspace to the
+                        ;     currently selected system, clear otherwise
+                        ;
+                        ;   * Bit 7 is set when when there is a currently
+                        ;     selected system, clear otherwise (such as when we
+                        ;     are moving the crosshairs between systems)
 
 .NAME
 
@@ -4186,9 +4193,11 @@ ORG $0200
 
  SKIP 6                 ; Temporary storage, used in a number of places
 
-.L0453
+.selectedSystem
 
- SKIP 6                 ; ???
+ SKIP 6                 ; The three 16-bit seeds for the selected system, i.e.
+                        ; the one we most recently snapped the crosshairs to
+                        ; in a chart view
 
 .K2
 
@@ -4714,11 +4723,11 @@ ENDIF
 
  SKIP 1                 ; ???
 
-.L04BC
+.autoplayKey
 
  SKIP 1                 ; ???
 
-.L04BD
+.demoLoopCounter
 
  SKIP 1                 ; ???
 

@@ -64,11 +64,12 @@
 ;     to $C000 when it starts up via the JMP ($FFFC), irrespective of which
 ;     ROM bank is mapped to $C000.
 ;
-;   * We put the same reset routine at the start of every ROM bank, so the same
-;     routine gets run, whichever ROM bank is mapped to $C000.
+;   * We put the same reset routine (this routine, ResetMMC1) at the start of
+;     every ROM bank, so the same routine gets run, whichever ROM bank is mapped
+;     to $C000.
 ;
-; This reset routine is therefore called when the NES starts up, whatever the
-; bank configuration ends up being. It then switches ROM bank 7 to $C000 and
+; This ResetMMC1 routine is therefore called when the NES starts up, whatever
+; the bank configuration ends up being. It then switches ROM bank 7 to $C000 and
 ; jumps into bank 7 at the game's entry point BEGIN, which starts the game.
 ;
 ; ******************************************************************************
@@ -798,6 +799,9 @@ ENDIF
 
  LDA XX15+2             ; Set A to the z-axis of the vector
 
+                        ; This version of Elite omits check 3 (which would check
+                        ; the sign of the z-axis)
+
  CMP #89                ; 4. If z-axis < 89, jump to MA62 to fail docking, as
  BCC MA62               ; we are not in the 22.0 degree safe cone of approach
 
@@ -1212,40 +1216,73 @@ ENDIF
 ;       Name: Main flight loop (Part 3a of 16)
 ;       Type: Subroutine
 ;   Category: Main loop
-;    Summary: ???
+;    Summary: Display in-flight messages, call parts 4 to 12 of the main flight
+;             loop for each slot, and fall through into parts 13 to 16
 ;
 ; ******************************************************************************
 
-.C8334
+.main1
 
- DEC DLY
- BMI C835B
- BEQ C8341
- JSR PrintFlightMessage
- JMP C8344
+ DEC DLY                ; Decrement the delay counter in DLY, which is used to
+                        ; control how long flight messages remain on-screen
 
-.C8341
+ BMI main4              ; If DLY is now negative, jump to main4 to set DLY to
+                        ; zero and skip the following, as there is no flight
+                        ; message to display
 
- JSR CLYNS
+ BEQ main2              ; DLY is now zero so it must have been non-zero before
+                        ; we decremented it, so jump to main2 to remove the
+                        ; flight message from the screen, as its timer has run
+                        ; down
 
-.C8344
+                        ; DLY is non-zero, so we need to redraw any flight
+                        ; messages we may have, so they remain on-screen while
+                        ; DLY is still ticking down
 
- JSR DrawMessageInNMI
- JMP MA16
+ JSR PrintFlightMessage ; Print the current in-flight message, if there is one
+
+ JMP main3              ; Jump to main3 to display the message we just printed
+                        ; and continue with the rest of the main loop
+
+.main2
+
+ JSR CLYNS              ; Clear the bottom three text rows of the upper screen,
+                        ; and move the text cursor to column 1 on row 21, i.e.
+                        ; the start of the top row of the three bottom rows
+
+.main3
+
+ JSR DrawMessageInNMI   ; Configure the NMI to display the in-flight message
+                        ; that we just printed
+
+ JMP MA16               ; Jump to MA16 to skip the following and continue with
+                        ; the rest of the main loop
 
 .FlightLoop4To16
 
- LDA QQ11
- BNE C8334
- DEC DLY
- BMI C835B
- BEQ C835B
- JSR PrintFlightMessage
- JMP MA16
+ LDA QQ11               ; If this is not the space view, jump to main1 to
+ BNE main1              ; print the flight message for non-space views,
+                        ; rejoining the main subroutine at MA16 below
 
-.C835B
+ DEC DLY                ; Decrement the delay counter in DLY, which is used to
+                        ; control how long flight messages remain on-screen
 
- LDA #0
+ BMI main4              ; If DLY is now 0 or negative, jump to main4 to set DLY
+ BEQ main4              ; to zero and skip the following, as there is no flight
+                        ; message to display
+
+                        ; DLY is non-zero, so we need to redraw any flight
+                        ; messages we may have, so they remain on-screen while
+                        ; DLY is still ticking down
+
+ JSR PrintFlightMessage ; Print the current flight message, if there is one
+
+ JMP MA16               ; Jump to MA16 to skip the following and continue with
+                        ; the rest of the main loop
+
+.main4
+
+ LDA #0                 ; Set DLY to 0 so that it doesn't decrement below zero
  STA DLY
 
 .MA16
@@ -1263,14 +1300,21 @@ ENDIF
  LDA ECMA               ; If an E.C.M is going off (ours or an opponent's) then
  BEQ MA66               ; keep going, otherwise skip to MA66
 
- LDA #$80
+ LDA #128               ; Set K+2 = 128 to send to the call to DrawLightning ???
  STA K+2
- LDA #$7F
+
+ LDA #127               ; Set K = 127 to send to the call to DrawLightning ???
  STA K
- LDA Yx1M2
- STA K+3
- STA K+1
- JSR DrawLightning_b6
+
+ LDA Yx1M2              ; Set K+3 to the y-coordinate of the centre of the
+ STA K+3                ; screen in Yx1M2, to send to the call to DrawLightning
+                        ; ???
+
+ STA K+1                ; Set K+1 to the y-coordinate of the centre of the
+                        ; screen in Yx1M2, to send to the call to DrawLightning
+                        ; ???
+
+ JSR DrawLightning_b6   ; Draw the lightning effect of the E.C.M. going off
 
  DEC ECMA               ; Decrement the E.C.M. countdown timer, and if it has
  BNE MA66               ; reached zero, keep going, otherwise skip to MA66
@@ -1283,44 +1327,56 @@ ENDIF
 
 .MA66
 
- LDX #0
+ LDX #0                 ; We are about to work our way through all the ships in
+                        ; the bubble, calling MAL1 (parts 4 to 12 of the main
+                        ; flight loop) for each of them, so set X as a ship slot
+                        ; counter
 
- LDA FRIN
- BEQ C8390
+ LDA FRIN               ; If slot 0 is empty, jump to main5 to move on to the
+ BEQ main5              ; next slot
 
- JSR MAL1               ; Call parts 4 to 12 of the main flight loop to analyse
-                        ; and update all the ships in the bubble
+ JSR MAL1               ; Call parts 4 to 12 of the main flight loop to update
+                        ; the ship in slot 0
 
-.C8390
+.main5
 
- LDX #2
+ LDX #2                 ; We deal with the sun/space station in slot 1 below, so
+                        ; we now skip to slot 2 by setting X accordingly
 
-.loop_C8392
+.main6
 
- LDA FRIN,X
- BEQ C839D
+ LDA FRIN,X             ; If slot X is empty then we have reached the last slot,
+ BEQ main7              ; so jump to main7 to stop updating the slots
 
- JSR MAL1               ; Call parts 4 to 12 of the main flight loop to analyse
-                        ; and update all the ships in the bubble
+ JSR MAL1               ; Call parts 4 to 12 of the main flight loop to update
+                        ; the ship in slot X
 
- JMP loop_C8392
+ JMP main6              ; Loop back until we have updated all the ship slots
 
-.C839D
+.main7
 
- LDX #1
+ LDX #1                 ; We now process the sun/space station in slot 1, so we
+                        ; set X as the slot number
 
- LDA FRIN+1
- BEQ MA18
+ LDA FRIN+1             ; If slot 1 is empty then there is no sun or space
+ BEQ MA18               ; station (which can happen in witchspace), so jump to
+                        ; part 13 of the main loop as we are done updating the
+                        ; ship slots
 
- BPL C83AB
+ BPL main8              ; If bit 7 of the ship type is clear, then this is the
+                        ; space station rather than the sun, so jump to main8
+                        ; to skip the following
 
- LDY #0
- STY SSPR
+ LDY #0                 ; Set the "space station present" flag to 0, as we are
+ STY SSPR               ; no longer in the space station's safe zone
 
-.C83AB
+.main8
 
- JSR MAL1               ; Call parts 4 to 12 of the main flight loop to analyse
-                        ; and update all the ships in the bubble
+ JSR MAL1               ; Call parts 4 to 12 of the main flight loop to update
+                        ; the sun or space station in slot 2
+
+                        ; Fall through into part 13 to continue working through
+                        ; the main flight loop
 
 ; ******************************************************************************
 ;
@@ -1689,7 +1745,7 @@ ENDIF
 
  JSR MakeScoopSound
 
- JSR subm_9D35
+ JSR SetSelectionFlags
 
  LDA #160               ; Set A to token 160 ("FUEL SCOOPS ON")
 
@@ -2365,9 +2421,11 @@ ENDIF
 
 .MA3
 
- JSR FlightLoop4To16    ; ???
+ JSR FlightLoop4To16    ; Display in-flight messages, call parts 4 to 12 of the
+                        ; main flight loop for each ship slot, and finish off
+                        ; with parts 13 to 16 of the main flight loop
 
- LDA QQ11
+ LDA QQ11               ; ???
  BNE C874C
 
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
@@ -2807,7 +2865,7 @@ ENDIF
  LDA #$98               ; Clear the screen and and set the view type in QQ11 to
  JSR ChangeToView       ; $98 (Status Mode)
 
- JSR PrintChartMessage  ; ???
+ JSR SetSelectedSystem  ; ???
 
  LDA #7                 ; Move the text cursor to column 7
  STA XC
@@ -4180,7 +4238,7 @@ ENDIF
                         ; last token calls MT26, which puts the entered search
                         ; term in INWK+5 and the term length in Y
 
- LDY #9
+ LDY #9                 ; ???
  STY L0483
  LDA #$41
 
@@ -4301,8 +4359,11 @@ ENDIF
 
 .C8CAF
 
- JSR CLYNS
- JMP DrawScreenInNMI
+ JSR CLYNS              ; Clear the bottom three text rows of the upper screen,
+                        ; and move the text cursor to column 1 on row 21, i.e.
+                        ; the start of the top row of the three bottom rows
+
+ JMP DrawScreenInNMI    ; ???
 
 ; ******************************************************************************
 ;
@@ -8789,10 +8850,10 @@ ENDIF
  JSR TT15               ; Draw the set of crosshairs defined in QQ19, at the
                         ; exact coordinates as this is the Short-range Chart
 
- LDA QQ14               ; ???
- LSR A
- LSR A
- LSR A
+ LDA QQ14               ; Set K = QQ14 + (QQ14 / 32)
+ LSR A                  ;
+ LSR A                  ; So K is the circle's radius, based on the fuel level
+ LSR A                  ; in QQ14 ???
  LSR A
  LSR A
  ADC QQ14
@@ -8812,11 +8873,11 @@ ENDIF
                         ; Otherwise this is the Long-range Chart, so we draw the
                         ; crosshairs and circle for that view instead
 
- LDA QQ14               ; ??? Scaling, similar to TT103
- LSR A
- LSR A
- STA K
- LSR A
+ LDA QQ14               ; Set K = QQ14/4 - QQ14/16
+ LSR A                  ;       = 0.1875 * QQ14
+ LSR A                  ;
+ STA K                  ; So K scales the fuel level in QQ14 to act as the
+ LSR A                  ; circle's radius ???
  LSR A
  STA T1
  LDA K
@@ -8824,19 +8885,28 @@ ENDIF
  SBC T1
  STA K
 
- LDA QQ0
- LSR A
+                        ; We now set the pixel coordinates of the crosshairs in
+                        ; QQ9 and QQ9+1 so they fit into the chart, with a
+                        ; 31-pixel margin on the left and an 8-pixel margin at
+                        ; the top (to which we will add another 24 pixels below)
+                        ;
+                        ; The Long-range Chart is twice as wide as it is high,
+                        ; so we need to scale the y-coordinate in QQ19+1 by an
+                        ; extra division by 2 when compared to the x-coordinate
+
+ LDA QQ0                ; Set QQ19 = 31 + QQ9 - (QQ9 / 4)
+ LSR A                  ;          = 31 + 0.75 * QQ9
  LSR A
  STA T1
  LDA QQ0
  SEC
  SBC T1
  CLC
- ADC #$1F
+ ADC #31
  STA QQ19
 
- LDA QQ1
- LSR A
+ LDA QQ1                ; Set QQ19+1 = 8 + (QQ10 - (QQ10 / 4)) / 2
+ LSR A                  ;            = 8 + 0.375 * QQ10
  LSR A
  STA T1
  LDA QQ1
@@ -9145,7 +9215,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
- JMP PrintChartMessage  ; ???
+ JMP SetSelectedSystem  ; This doesn't appear to be used
 
 .TT16
 
@@ -9162,24 +9232,40 @@ ENDIF
  TXA                    ; Push the change in X onto the stack (let's call this
  PHA                    ; the x-delta)
 
- BNE C9B03              ; ???
- TYA
- BEQ C9B15
+ BNE mvcr1              ; If the x-delta is non-zero, jump to mvcr1 to update
+                        ; the icon bar if required
 
-.C9B03
+ TYA                    ; If the y-delta is zero, then the crosshairs are not
+ BEQ mvcr2              ; moving, so jump to mvcr2 to skip the following,
+                        ; otherwise keep going to update the icon bar if
+                        ; required
 
- LDX #0
- LDA L0395
- STX L0395
- ASL A
- BPL C9B15
- TYA
- PHA
- JSR UpdateIconBar_b3
+.mvcr1
+
+                        ; If we get here then the crosshairs are on the move
+
+ LDX #%00000000         ; Set X to use as the new value of selectedSystemFlag
+                        ; below
+
+ LDA selectedSystemFlag ; Set A to the value of selectedSystemFlag
+
+ STX selectedSystemFlag ; Clear bits 6 and 7 of selectedSystemFlag to indicate
+                        ; that there is no currently selected system
+
+ ASL A                  ; If bit 6 of selectedSystemFlag was previously clear,
+ BPL mvcr2              ; then before the crosshairs moved we weren't locked
+                        ; onto a system that we could hyperspace to, so the
+                        ; hyperspace button wouldn't have been showing on the
+                        ; icon bar, so jump to mvcr2 to skip the following as
+                        ; we don't need to update the icon bar
+
+ TYA                    ; Update the icon bar to remove the hyperspace button
+ PHA                    ; now that the crosshairs are no longer pointing to
+ JSR UpdateIconBar_b3   ; that system, preserving Y across the subroutine call
  PLA
  TAY
 
-.C9B15
+.mvcr2
 
  DEY                    ; Negate the change in Y and push it onto the stack
  TYA                    ; (let's call this the y-delta)
@@ -9257,35 +9343,45 @@ ENDIF
  CMP #$9C               ; If this is the Short-range Chart screen, jump to TT105
  BEQ TT105
 
- LDA QQ9                ; ??? Scaling, similar to TT14
- LSR A
+                        ; We now set the pixel coordinates of the crosshairs in
+                        ; QQ9 and QQ9+1 so they fit into the chart, with a
+                        ; 31-pixel margin on the left and a 32-pixel margin at
+                        ; the top, for the chart title
+                        ;
+                        ; The Long-range Chart is twice as wide as it is high,
+                        ; so we need to scale the y-coordinate in QQ19+1 by an
+                        ; extra division by 2 when compared to the x-coordinate
+
+ LDA QQ9                ; Set QQ19 = 31 + QQ9 - (QQ9 / 4)
+ LSR A                  ;          = 31 + 0.75 * QQ9
  LSR A
  STA T1
  LDA QQ9
  SEC
  SBC T1
  CLC
- ADC #$1F
+ ADC #31
  STA QQ19
 
- LDA QQ10
+ LDA QQ10               ; Set QQ19+1 = 32 + (QQ10 - (QQ10 / 4)) / 2
+ LSR A                  ;            = 32 + 0.375 * QQ10
  LSR A
- LSR A
- STA T1
+ STA T1                 
  LDA QQ10
  SEC
  SBC T1
  LSR A
  CLC
- ADC #$20
+ ADC #32
  STA QQ19+1
 
- LDA #4                 ; Set QQ19+2 to 4 denote crosshairs of size 4
- STA QQ19+2
+ LDA #4                 ; Set QQ19+2 to 4 denote crosshairs of size 4 (though
+ STA QQ19+2             ; this is ignored by DrawCrosshairs, which always draws
+                        ; the crosshairs as a single-tile square reticle)
 
- JMP DrawCrosshairs     ; Jump to TT15 to draw crosshairs of size 4 at the
-                        ; crosshairs coordinates, returning from the subroutine
-                        ; using a tail call
+ JMP DrawCrosshairs     ; Jump to TT15 to draw a square reticle at the
+                        ; crosshairs coordinates, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -9424,37 +9520,53 @@ ENDIF
 ;   Category: Charts
 ;    Summary: Draw a set of moveable crosshairs as a square reticle
 ;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   QQ19                The pixel x-coordinate of the centre of the crosshairs
+;
+;   QQ19+1              The pixel y-coordinate of the centre of the crosshairs
+;
 ; ******************************************************************************
 
 .DrawCrosshairs
 
- LDA #$F8
- STA tileSprite15
+ LDA #248               ; Set the tile pattern number for sprite 15 to 248,
+ STA tileSprite15       ; which contains a one-tile square outline that we can
+                        ; use as a square reticle to implement crosshairs on the
+                        ; chart
 
- LDA #1
+ LDA #%00000001         ; Set the attributes for sprite 15 as follows:
  STA attrSprite15
+                        ;     * Bits 0-1    = sprite palette 1
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 clear = do not flip horizontally
+                        ;     * Bit 7 clear = do not flip vertically
 
- LDA QQ19
- STA SC2
+ LDA QQ19               ; Set SC2 to the pixel x-coordinate of the centre of the
+ STA SC2                ; crosshairs
 
- LDY QQ19+1
- LDA #$0F
- ASL A
- ASL A
- TAX
+ LDY QQ19+1             ; Set Y to the pixel y-coordinate of the centre of the
+                        ; crosshairs
 
- LDA SC2
- SEC
- SBC #4
- STA xSprite0,X
- TYA
- CLC
+ LDA #15                ; Set X = 15 * 4, so X is the index of sprite 15 within
+ ASL A                  ; the sprite buffer, as each sprite takes up four bytes
+ ASL A                  ; (in other words, xSprite0 + X and ySprite0 + X are the
+ TAX                    ; addresses of the x- and y-coordinates of sprite 15 in
+                        ; the sprite buffer)
 
- ADC #10+YPAL
+ LDA SC2                ; Set the pixel x-coordinate of sprite 15 to SC2 - 4
+ SEC                    ;
+ SBC #4                 ; So the centre of the square reticle in sprite 15 is at
+ STA xSprite0,X         ; x-coordinate SC2, as the reticle is eight pixels wide
 
- STA ySprite0,X
+ TYA                    ; Set the pixel y-coordinate of sprite 15 to Y + 10
+ CLC                    ;
+ ADC #10+YPAL           ; So the reticle is drawn 10 pixels below the coordinate
+ STA ySprite0,X         ; in the QQ19+1 argument ???
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -9822,41 +9934,51 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_9D03
+;       Name: SelectNearbySystem
 ;       Type: Subroutine
 ;   Category: Universe
-;    Summary: ???
+;    Summary: Set the current system to the nearest system and update the
+;             selected system flags accordingly
 ;
 ; ******************************************************************************
 
-.subm_9D03
+.SelectNearbySystem
 
  JSR TT111              ; Select the system closest to galactic coordinates
                         ; (QQ9, QQ10)
 
- JMP subm_9D35
+ JMP SetSelectionFlags  ; Jump to SetSelectionFlags to set the selected system
+                        ; flags for the new system and update the icon bar if
+                        ; required
 
 ; ******************************************************************************
 ;
-;       Name: PrintChartMessage
+;       Name: SetSelectedSystem
 ;       Type: Subroutine
-;   Category: Text
-;    Summary: Print a message, but on the chart screens only
+;   Category: Universe
+;    Summary: Set the selected system to the nearest system, if we don't already
+;             have a selected system
 ;
 ; ******************************************************************************
 
-.PrintChartMessage
+.SetSelectedSystem
 
- LDA L0395              ; ???
- BMI subm_9D60
+ LDA selectedSystemFlag ; If bit 7 of selectedSystemFlag is set, then we already
+ BMI SetCurrentSystem   ; have a selected system, so jump to SetCurrentSystem
+                        ; to ensure we keep using this system as our selected
+                        ; system, returning from the subroutine using a tail
+                        ; call
+
+                        ; If we get here then we do not already have a selected
+                        ; system, so now we set it up
 
  JSR TT111              ; Select the system closest to galactic coordinates
                         ; (QQ9, QQ10)
 
  LDA QQ11               ; If the view in QQ11 is not %0000110x (i.e. 12 or 13,
  AND #%00001110         ; which are the Short-range Chart and Long-range Chart),
- CMP #%00001100         ; jump to subm_9D35
- BNE subm_9D35
+ CMP #%00001100         ; jump to pchm1 to skip the following as we don't need
+ BNE pchm1              ; to update the message on the chart view
 
  JSR TT103              ; Draw small crosshairs at coordinates (QQ9, QQ10),
                         ; which will draw the crosshairs at our current home
@@ -9865,7 +9987,9 @@ ENDIF
  LDA #0                 ; Set QQ17 = 0 to switch to ALL CAPS
  STA QQ17
 
- JSR CLYNS              ; ???
+ JSR CLYNS              ; Clear the bottom three text rows of the upper screen,
+                        ; and move the text cursor to column 1 on row 21, i.e.
+                        ; the start of the top row of the three bottom rows
 
  JSR cpl                ; Call cpl to print out the system name for the seeds
                         ; in QQ15
@@ -9873,7 +9997,7 @@ ENDIF
  LDA #%10000000         ; Set bit 7 of QQ17 to switch standard tokens to
  STA QQ17               ; Sentence Case
 
- LDA #12                ; ???
+ LDA #12                ; Print a newline
  JSR DASC_b2
 
  JSR TT146              ; If the distance to this system is non-zero, print
@@ -9881,76 +10005,138 @@ ENDIF
                         ; paragraph break, otherwise just move the cursor down
                         ; a line
 
- JSR DrawMessageInNMI   ; ???
+ JSR DrawMessageInNMI   ; Configure the NMI to display the updated message that
+                        ; we just printed, showing the current system name and
+                        ; distance
 
-                        ; Falll through into subm_9D35 to ???
+.pchm1
+
+                        ; Falll through into SetSelectionFlags to set the
+                        ; selected system flags for the new system
 
 ; ******************************************************************************
 ;
-;       Name: subm_9D35
+;       Name: SetSelectionFlags
 ;       Type: Subroutine
 ;   Category: Universe
-;    Summary: ???
+;    Summary: Set the selected system flags for the currently selected system
+;             and update the icon bar if required
 ;
 ; ******************************************************************************
 
-.subm_9D35
+.SetSelectionFlags
 
- LDA QQ8+1
- BNE C9D51
- LDA QQ8
- BNE C9D46
- LDA MJ
- BEQ C9D51
- BNE C9D4D
+ LDA QQ8+1              ; If the high byte of the distance to the selected
+ BNE ssel3              ; system in QQ18(1 0) is non-zero, then it is a long way
+                        ; from us, so jump to ssel3 to set the selected system
+                        ; flags to indicate we can't hyperspace there
 
-.C9D46
+ LDA QQ8                ; If the low byte of the distance to the selected
+ BNE ssel1              ; system in QQ18(1 0) is non-zero, then jump to ssel1
+                        ; to check whether we have enough fuel to hyperspace
+                        ; there
 
- CMP QQ14
- BEQ C9D4D
- BCS C9D51
+                        ; If we get here then QQ18(1 0) is zero, so the selected
+                        ; system is the same as the current system
 
-.C9D4D
+ LDA MJ                 ; If MJ is zero then we are not in witchspace, so jump
+ BEQ ssel3              ; to ssel3 to set the selected system flags to indicate
+                        ; we can't hyperspace to the selected system (as it is
+                        ; the same as the current system)
 
- LDA #$C0
- BNE C9D53
+ BNE ssel2              ; MJ is non-zero so we are in witchspace, so jump to
+                        ; ssel2 to set the selected system flags to indicate we
+                        ; can hyperspace to the selected system (as we are in
+                        ; the middle of nowhere without a current system)
 
-.C9D51
+.ssel1
 
- LDA #$80
+ CMP QQ14               ; If the distance to the selected system is equal to the
+ BEQ ssel2              ; fuel level in QQ14, jump to ssel2 to set the selected
+                        ; system flags to indicate we can hyperspace to the
+                        ; selected system
 
-.C9D53
+ BCS ssel3              ; If the distance to the selected system is greater than
+                        ; the fuel level in QQ14, jump to ssel3 to set the
+                        ; selected system flags to indicate we can't hyperspace
+                        ; to the selected system (as we don't have enough fuel)
 
- TAX
- EOR L0395
- STX L0395
- ASL A
- BPL C9D6A
- JMP UpdateIconBar_b3
+                        ; If we get here then the distance to the selected
+                        ; system is less than the fuel level in QQ14, so fall
+                        ; through into ssel2 to set the selected system flags to
+                        ; indicate we can hyperspace to the selected system
+
+.ssel2
+
+ LDA #%11000000         ; Set A so we set bits 6 and 7 of the selected system
+                        ; flags below to indicate that a system is selected and
+                        ; we can hyperspace to it
+
+ BNE ssel4              ; Jump to ssel4 to skip the following instruction (this
+                        ; BNE is effectively a JMP as A is never zero)
+
+.ssel3
+
+ LDA #%10000000         ; Set A so we set bit 7 and clear bit 6 of the selected
+                        ; system flags below to indicate that a system is
+                        ; selected but we can't hyperspace to it
+
+.ssel4
+
+ TAX                    ; Copy A into X so we can set selectedSystemFlag to this
+                        ; value below
+
+ EOR selectedSystemFlag ; Flip bit 7 and possibly bit 6 in selectedSystemFlag
+                        ; and keep the result in A
+
+ STX selectedSystemFlag ; Set selectedSystemFlag to X
+
+ ASL A                  ; If bit 6 of the EOR result in A is clear, then the
+ BPL RTS6               ; state of bit 6 did not changed in the update above, so
+                        ; we don't need to update the icon bar to show or hide
+                        ; the hyperspave button, so return from the subroutine
+                        ; (as RTS6 contains an RTS)
+
+ JMP UpdateIconBar_b3   ; Otherwise the newly selected system has a different
+                        ; "can we hyperspace here?" status to the previous
+                        ; selected system, so we need to update the icon bar to
+                        ; either hide or show the hyperspace button, returning
+                        ; from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: subm_9D60
+;       Name: SetCurrentSystem
 ;       Type: Subroutine
 ;   Category: Universe
-;    Summary: ???
+;    Summary: Set the seeds for the selected system to the system that we last
+;             snapped the crosshairs to
+;
+; ------------------------------------------------------------------------------
+;
+; Other entry points:
+;
+;   RTS6                Contains an RTS
 ;
 ; ******************************************************************************
 
-.subm_9D60
+.SetCurrentSystem
 
- LDX #5
+ LDX #5                 ; Set up a counter in X to copy six bytes (for three
+                        ; 16-bit numbers)
 
-.loop_C9D62
+.ssys1
 
- LDA L0453,X
- STA QQ15,X
- DEX
- BPL loop_C9D62
+ LDA selectedSystem,X   ; Copy the X-th byte in selectedSystem to the X-th byte
+ STA QQ15,X             ; in QQ15, to set the selected system to the previous
+                        ; system that we snapped the crosshairs to
 
-.C9D6A
+ DEX                    ; Decrement the counter
 
- RTS
+ BPL ssys1              ; Loop back until we have copied all six seeds
+
+.RTS6
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -10113,8 +10299,9 @@ ENDIF
 
 .TT137
 
- LDA QQ19,X             ; Copy the X-th byte in QQ19 to the X-th byte in L0453
- STA L0453,X            ; ???
+ LDA QQ19,X             ; Copy the X-th byte in QQ19 to the X-th byte in
+ STA selectedSystem,X   ; selectedSystem so we can easily change the selected
+                        ; system back to the system we just found
 
  STA QQ15,X             ; Copy the X-th byte in QQ19 to the X-th byte in QQ15
 
@@ -10330,12 +10517,17 @@ ENDIF
 
  RTS                    ; The count is non-zero, so return from the subroutine
 
- LDA L0395              ; ???
- ASL A
- BMI C9E61
- RTS
+ LDA selectedSystemFlag ; If bit 6 of selectedSystemFlag is set, then we can
+ ASL A                  ; hyperspace to the currently selected system, so jump
+ BMI hyps1              ; to hyps1 to skip the following instruction and keep
+                        ; going
 
-.C9E61
+ RTS                    ; Bit 6 of selectedSystemFlag is clear, so we can't
+                        ; hyperspace to the currently selected system (we may
+                        ; not have enough fuel, or it might be the same as the
+                        ; current system), so return from the subroutine
+
+.hyps1
 
  LDX #5                 ; We now want to copy those seeds into safehouse, so we
                         ; so set a counter in X to copy 6 bytes
@@ -10619,8 +10811,11 @@ ENDIF
 
 .TT147
 
- JSR CLYNS              ; ???
- LDA #189
+ JSR CLYNS              ; Clear the bottom three text rows of the upper screen,
+                        ; and move the text cursor to column 1 on row 21, i.e.
+                        ; the start of the top row of the three bottom rows
+
+ LDA #189               ; Print token 29 ("HYPERSPACE ")
  JSR TT27_b2
 
  JSR TT162              ; Print a space
@@ -11493,10 +11688,17 @@ ENDIF
                         ; we are entering a new system with no extra vessels
                         ; spawned
 
- LDA #$80               ; ???
- STA L0395
- JSR UpdateIconBar_b3
- JSR TT24_b6
+ LDA #%10000000         ; Set bit 7 and clear bit 6 of selectedSystemFlag, to
+ STA selectedSystemFlag ; indicate that there is a currently selected system
+                        ; but we can't hyperspace to it (because it is the same
+                        ; as the currently selected system)
+
+ JSR UpdateIconBar_b3   ; Update the icon bar to remove the hyperspace button
+                        ; if present
+
+ JSR TT24_b6            ; Call TT24 to calculate system data from the seeds in
+                        ; QQ15 and store them in the relevant locations, so our
+                        ; new selected system is fully set up
 
  LDA QQ3                ; Set the current system's economy in QQ28 to the
  STA QQ28               ; selected system's economy from QQ3
@@ -11704,9 +11906,13 @@ ENDIF
  STA NOSTM              ; to 3, so there are fewer bits of stardust in
                         ; witchspace (normal space has a maximum of 18)
 
- JSR subm_9D03          ; ???
- JSR UpdateIconBar_b3
- LDY #$1E
+ JSR SelectNearbySystem ; Set the current system to the nearest system to
+                        ; (QQ9, QQ10) and update the selected system flags
+                        ; accordingly
+
+ JSR UpdateIconBar_b3   ; Update the icon bar to show the hyperspace icon
+
+ LDY #$1E               ; ???
  JSR NOISE
  JMP subm_A28A
 
@@ -15396,7 +15602,8 @@ ENDIF
  PHA                    ; so this will be "YES" (token 1) or "NO" (token 2)
  JSR DETOK_b2
 
- JSR DrawMessageInNMI   ; ???
+ JSR DrawMessageInNMI   ; Configure the NMI to display the YES/NO message that
+                        ; we just printed
 
  LDA controller1A       ; If "A" is being pressed on the controller, jump to
  BMI yeno3              ; to record the choice
@@ -15571,8 +15778,8 @@ ENDIF
  JSR ZERO               ; Reset the ship slots for the local bubble of universe,
                         ; and various flight and ship status variables
 
- LDA #0                 ; ???
- STA L0395
+ LDA #%00000000         ; Clear bits 6 and 7 of selectedSystemFlag to indicate
+ STA selectedSystemFlag ; that there is no currently selected system
 
  LDX #6                 ; Set up a counter for zeroing BETA through BETA+6
 
@@ -16713,7 +16920,7 @@ ENDIF
 
  CMP #$23               ; ???
  BNE TT92
- JSR PrintChartMessage
+ JSR SetSelectedSystem
  JMP TT25
 
 .TT92
@@ -16728,10 +16935,18 @@ ENDIF
 
  CMP #1                 ; ???
  BNE fvw
- LDX QQ12
- BEQ fvw
- JSR subm_9D03
- JMP TT110
+
+ LDX QQ12               ; If QQ12 is zero then we are not docked, so jump to fvw
+ BEQ fvw                ; as we can't launch from the station if we are already
+                        ; in space
+
+ JSR SelectNearbySystem ; Set the current system to the nearest system to
+                        ; (QQ9, QQ10), which will be the system we are currently
+                        ; docked at, and update the selected system flags
+                        ; accordingly
+
+ JMP TT110              ; Jump to TT110 to launch our ship, returning from the
+                        ; subroutine using a tail call
 
 .fvw
 
@@ -16779,7 +16994,11 @@ ENDIF
  STA auto
  LDA QQ11
  BEQ CB118
- JSR CLYNS
+
+ JSR CLYNS              ; Clear the bottom three text rows of the upper screen,
+                        ; and move the text cursor to column 1 on row 21, i.e.
+                        ; the start of the top row of the three bottom rows
+
  JSR DrawScreenInNMI
 
 .CB118
@@ -16870,9 +17089,13 @@ ENDIF
 
 .CB181
 
- ASL L0395              ; ???
- LSR L0395
- JMP PrintChartMessage
+ ASL selectedSystemFlag ; Clear bit 7 of selectedSystemFlag to indicate that
+ LSR selectedSystemFlag ; there is no currently selected system, so the call to
+                        ; SetSelectedSystem selects the system in (QQ9, QQ10)
+
+ JMP SetSelectedSystem  ; Jump to SetSelectedSystem to update the message on
+                        ; the chart that shows the current system, returning
+                        ; from the subroutine using a tail call
 
 .ee2
 
@@ -17247,7 +17470,11 @@ ENDIF
 .D2
 
  JSR FlipDrawingPlane   ; ???
- JSR FlightLoop4To16
+
+ JSR FlightLoop4To16    ; Display in-flight messages, call parts 4 to 12 of the
+                        ; main flight loop for each ship slot, and finish off
+                        ; with parts 13 to 16 of the main flight loop
+
  JSR ClearDashEdge_b6   ; Clear the right edge of the dashboard ???
  LDA #%11001100
  JSR SetDrawPlaneFlags
@@ -19116,7 +19343,10 @@ ENDIF
  BNE loop_CB862
  LDA QQ11
  BEQ RTS5
- JMP DrawMessageInNMI
+
+ JMP DrawMessageInNMI   ; Configure the NMI to display the message that we just
+                        ; printed, returning from the subroutine using a tail
+                        ; call
 
 ; ******************************************************************************
 ;
