@@ -83,13 +83,16 @@ def unpack_data(input_data, filename, index, data_is_packed):
     return unpacked_data, index
 
 
-def png_pixel(colour, palette):
+def png_pixel(colour, palette, transparent):
     if colour == 0:
-        return [0, 0, 0, 255]
+        if transparent:
+            return [0, 0, 0, 0]
+        else:
+            return [0, 0, 0, 255]
     return palettes[palette][colour - 1]
 
 
-def png_8_pixel_row(byte_0, byte_1, palette):
+def png_8_pixel_row(byte_0, byte_1, palette, transparent):
     row = []
     if byte_0 == -1 and byte_1 == -1:
         for i in range(0, 8):
@@ -101,7 +104,7 @@ def png_8_pixel_row(byte_0, byte_1, palette):
             byte_1 = 0
         for i in range(0, 8):
             pixel = ((byte_0 & (1 << i)) + ((byte_1 & (1 << i)) << 1)) >> i
-            row = png_pixel(pixel, palette) + row
+            row = png_pixel(pixel, palette, transparent) + row
     return row
 
 
@@ -109,15 +112,15 @@ def png_full_pixel_row_ram(y, pixel_width, data_0, data_1, palette):
     row = []
     start_byte = (y // 8) * pixel_width + (y % 8)
     for i in range(start_byte, start_byte + pixel_width, 8):
-        row = row + png_8_pixel_row(pad_with_black(data_0, i), pad_with_black(data_1, i), palette)
+        row = row + png_8_pixel_row(pad_with_black(data_0, i), pad_with_black(data_1, i), palette, transparent=False)
     return row
 
 
-def png_full_pixel_row_ppu(y, pixel_width, data, palette):
+def png_full_pixel_row_ppu(y, pixel_width, data, palette, transparent):
     row = []
     start_byte = (y // 8) * pixel_width * 2 + (y % 8)
     for i in range(start_byte, start_byte + (pixel_width * 2), 16):
-        row = row + png_8_pixel_row(pad_with_black(data, i), pad_with_black(data, i + 8), palette)
+        row = row + png_8_pixel_row(pad_with_black(data, i), pad_with_black(data, i + 8), palette, transparent)
     return row
 
 
@@ -127,7 +130,7 @@ def pad_with_black(data, i):
     return -1
 
 
-def create_png_from_ppu_data(unpacked_data, output_path_pngs, pixel_width, palette):
+def create_png_from_ppu_data(unpacked_data, output_path_pngs, pixel_width, palette, transparent):
     pixel_height = int(0.5 * len(unpacked_data) / (pixel_width / 8))
 
     if pixel_height != 8 * (pixel_height // 8):
@@ -137,7 +140,7 @@ def create_png_from_ppu_data(unpacked_data, output_path_pngs, pixel_width, palet
 
     png_array = []
     for i in range(0, pixel_height):
-        pixel_row = png_full_pixel_row_ppu(i, pixel_width, unpacked_data, palette)
+        pixel_row = png_full_pixel_row_ppu(i, pixel_width, unpacked_data, palette, transparent)
         png_array.append(pixel_row)
 
     png.from_array(png_array, 'RGBA').save(output_path_pngs + "_ppu.png")
@@ -159,7 +162,7 @@ def create_png_from_ram_data(unpacked_data_0, unpacked_data_1, output_path_pngs,
     png.from_array(png_array, 'RGBA').save(output_path_pngs + "_ram.png")
 
 
-def extract_image(input_data, sections, output_folder, input_file, palette, pixel_width, data_is_packed):
+def extract_image(input_data, sections, output_folder, input_file, palette, pixel_width, data_is_packed, transparent):
     print("\nExtracting image: " + input_file)
 
     output_path_pngs = output_folder + "pngs/" + input_file
@@ -183,54 +186,40 @@ def extract_image(input_data, sections, output_folder, input_file, palette, pixe
         print("More sections detected")
 
     if sections == 1:
-        create_png_from_ppu_data(unpacked_data_0, output_path_pngs, pixel_width, palette)
+        create_png_from_ppu_data(unpacked_data_0, output_path_pngs, pixel_width, palette, transparent)
 
     if sections >= 2:
         if sections >= 4:
             # For multiple-section images, RAM is always greyscale
-            create_png_from_ram_data(unpacked_data_0, unpacked_data_1, output_path_pngs, pixel_width, 1)
+            create_png_from_ram_data(unpacked_data_0, unpacked_data_1, output_path_pngs, pixel_width, 8)
         else:
             create_png_from_ram_data(unpacked_data_0, unpacked_data_1, output_path_pngs, pixel_width, palette)
 
     if sections >= 4:
-        create_png_from_ppu_data(unpacked_data_2 + unpacked_data_3, output_path_pngs, pixel_width, palette)
+        for palette in range(0, 8):
+            create_png_from_ppu_data(unpacked_data_2 + unpacked_data_3, output_path_pngs + "_p" + str(palette), pixel_width, palette, transparent)
 
 
 # Main loop
 
 # Palettes used to create PNGs
+# For the 8 system palettes see .systemPalettes in source
 
 palettes = [
-    [[255,   0,   0, 255], [  0, 255,   0, 255], [  0,   0, 255, 255]],        # 0 RGB
-    [[173, 173, 173, 255], [102, 102, 102, 255], [255, 254, 255, 255]],        # 1 Grey palette for system image backgrounds (RAM)
-    [[234, 158,  34, 255], [188, 190,   0, 255], [153,  78,   0, 255]],        # 2 Palette for Leesti foreground sprite (PPU)
-    [[254, 196, 234, 255], [181,  49,  32, 255], [254, 110, 204, 255]],        # 3 Palette for Diso foreground sprite (PPU)
-    [[ 92, 228,  48, 255], [  0, 143,  50, 255], [  0,  82,   0, 255]],        # 4 Palette for Reorte foreground sprite (PPU)
-    [[254, 110, 204, 255], [181,  49,  32, 255], [183,  30, 123, 255]],        # 5 Palette for Lave foreground sprite (PPU)
-    [[188, 190,   0, 255], [173, 173, 173, 255], [255, 254, 255, 255]],        # 6 Palette for commander headshot background (RAM)
-    [[153,  78,   0, 255], [234, 158,  34, 255], [247, 216, 165, 255]],        # 7 Palette for commander face foreground sprite (PPU)
-    [[255, 255, 255, 255], [  0,   0,   0, 255], [255, 255, 255, 255]],        # 8 Only show colour 1
-    [[0,     0,   0, 255], [255, 255, 255, 255], [255, 255, 255, 255]],        # 9 Only show colour 2
-]
-
-# Palettes to use for colour foreground sprite in system images
-
-system_image_palettes = [
-    1,
-    1,
-    1,
-    1,
-    5,      # 4 Lave
-    1,
-    1,
-    1,
-    3,      # 8 Diso
-    4,      # 9 Reorte
-    2,      # 10 Leesti
-    1,
-    1,
-    1,
-    1
+    [[254, 110, 204, 255], [181,  49,  32, 255], [183,  30, 123, 255]],        # 0  System palette 0 for system image foreground sprite (PPU), e.g. Lave
+    [[254, 196, 234, 255], [181,  49,  32, 255], [254, 110, 204, 255]],        # 1  System palette 1 for system image foreground sprite (PPU), e.g. Diso
+    [[251, 194, 255, 255], [ 92,   0, 126, 255], [160,  26, 204, 255]],        # 2  System palette 2 for system image foreground sprite (PPU), e.g. Zaonce
+    [[234, 158,  34, 255], [188, 190,   0, 255], [153,  78,   0, 255]],        # 3  System palette 3 for system image foreground sprite (PPU), e.g. Leesti
+    [[136, 216,   0, 255], [ 75, 205, 222, 255], [ 56, 135,   0, 255]],        # 4  System palette 4 for system image foreground sprite (PPU), e.g. Onrira
+    [[ 92, 228,  48, 255], [  0, 143,  50, 255], [  0,  82,   0, 255]],        # 5  System palette 5 for system image foreground sprite (PPU), e.g. Reorte
+    [[211, 210, 255, 255], [100, 176, 255, 255], [ 20,  18, 167, 255]],        # 6  System palette 6 for system image foreground sprite (PPU), e.g. Uszaa
+    [[ 72, 205, 222, 255], [146, 144, 255, 255], [  0, 124, 141, 255]],        # 7  System palette 7 for system image foreground sprite (PPU), e.g. Orerve
+    [[173, 173, 173, 255], [102, 102, 102, 255], [255, 254, 255, 255]],        # 8  Grey palette for system image backgrounds (RAM)
+    [[255,   0,   0, 255], [  0, 255,   0, 255], [  0,   0, 255, 255]],        # 9  RGB (useful for debugging)
+    [[188, 190,   0, 255], [173, 173, 173, 255], [255, 254, 255, 255]],        # 10 Palette for commander headshot background (RAM)
+    [[153,  78,   0, 255], [234, 158,  34, 255], [247, 216, 165, 255]],        # 11 Palette for commander face foreground sprite (PPU)
+    [[255, 255, 255, 255], [  0,   0,   0, 255], [255, 255, 255, 255]],        # 12 Only show colour 1 in the font character set
+    [[0,     0,   0, 255], [255, 255, 255, 255], [255, 255, 255, 255]],        # 13 Only show colour 2 in the font character set
 ]
 
 # faceOffset entries from bank 4
@@ -323,7 +312,7 @@ bank_file.close()
 for i in range(0, 14):
     start = face_offsets[i] + 0x0C
     end = face_offsets[i + 1] + 0x0C
-    extract_image(bank_data4[start: end], 1, "../1-source-files/images/face-images/", "faceImage" + str(i), palette=7, pixel_width=40, data_is_packed=True)
+    extract_image(bank_data4[start: end], 1, "../1-source-files/images/commander-images/", "faceImage" + str(i), palette=11, pixel_width=40, data_is_packed=True, transparent=True)
 
 # Headshot images have two sections per image, one image per headshot
 # Each section is stored as a 1-bpp pattern buffer for unpacking into RAM
@@ -332,7 +321,7 @@ for i in range(0, 14):
 for i in range(0, 14):
     start = head_offsets[i] + 0x151A
     end = head_offsets[i + 1] + 0x151A
-    extract_image(bank_data4[start: end], 2, "../1-source-files/images/headshot-images/", "headImage" + str(i), palette=6, pixel_width=48, data_is_packed=True)
+    extract_image(bank_data4[start: end], 2, "../1-source-files/images/commander-images/", "headImage" + str(i), palette=10, pixel_width=48, data_is_packed=True, transparent=False)
 
 # System images have four sections per image, two images per system
 # First two sections are as for headshots: each is in 1-bpp pattern buffer format
@@ -341,8 +330,7 @@ for i in range(0, 14):
 for i in range(0, 15):
     start = system_offsets[i] + 0x0C
     end = system_offsets[i + 1] + 0x0C
-    palette = system_image_palettes[i]
-    extract_image(bank_data5[start: end], 4, "../1-source-files/images/system-images/", "systemImage" + str(i), palette, pixel_width=64, data_is_packed=True)
+    extract_image(bank_data5[start: end], 4, "../1-source-files/images/system-images/", "systemImage" + str(i), palette=0, pixel_width=64, data_is_packed=True, transparent=True)
 
 # Other images all have one section per image
 # Stored as interleaved PPU tile format
@@ -350,51 +338,51 @@ for i in range(0, 15):
 
 start = 0xAA9F - 0x8000
 end = 0xAB1C - 0x8000
-extract_image(bank_data4[start: end], 1, "../1-source-files/images/other-images/", "glassesImage", palette=7, pixel_width=24, data_is_packed=True)
+extract_image(bank_data4[start: end], 1, "../1-source-files/images/other-images/", "glassesImage", palette=11, pixel_width=24, data_is_packed=True, transparent=False)
 
 start = 0xAB1C - 0x8000
 end = 0xB5CC - 0x8000
-extract_image(bank_data4[start: end], 1, "../1-source-files/images/other-images/", "bigLogoImage", palette=7, pixel_width=48, data_is_packed=True)
+extract_image(bank_data4[start: end], 1, "../1-source-files/images/other-images/", "bigLogoImage", palette=11, pixel_width=48, data_is_packed=True, transparent=False)
 
 start = 0x9760 - 0x8000
 end = 0x9FA1 - 0x8000
-extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "dashImage", palette=7, pixel_width=160, data_is_packed=True)
+extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "dashImage", palette=11, pixel_width=160, data_is_packed=True, transparent=False)
 
 start = 0x9FA1 - 0x8000
 end = 0xA493 - 0x8000
-extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "cobraImage", palette=7, pixel_width=40, data_is_packed=True)
+extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "cobraImage", palette=11, pixel_width=40, data_is_packed=True, transparent=False)
 
 start = 0xA4D3 - 0x8000
 end = 0xA730 - 0x8000
-extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "smallLogoImage", palette=7, pixel_width=40, data_is_packed=True)
+extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "smallLogoImage", palette=11, pixel_width=40, data_is_packed=True, transparent=False)
 
 start = 0xA71B - 0x8000
 end = 0xA730 - 0x8000
-extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "logoBallImage", palette=7, pixel_width=16, data_is_packed=True)
+extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "logoBallImage", palette=11, pixel_width=16, data_is_packed=True, transparent=False)
 
 start = 0xA493 - 0x8000
 end = 0xA4D3 - 0x8000
-extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "missileImage", palette=7, pixel_width=16, data_is_packed=False)
+extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "missileImage", palette=11, pixel_width=16, data_is_packed=False, transparent=False)
 
 start = 0x8100 - 0x8000
 end = 0x8500 - 0x8000
-extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "iconBarImage0", palette=7, pixel_width=256, data_is_packed=False)
+extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "iconBarImage0", palette=11, pixel_width=256, data_is_packed=False, transparent=False)
 
 start = 0x8500 - 0x8000
 end = 0x8900 - 0x8000
-extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "iconBarImage1", palette=7, pixel_width=256, data_is_packed=False)
+extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "iconBarImage1", palette=11, pixel_width=256, data_is_packed=False, transparent=False)
 
 start = 0x8900 - 0x8000
 end = 0x8D00 - 0x8000
-extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "iconBarImage2", palette=7, pixel_width=256, data_is_packed=False)
+extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "iconBarImage2", palette=11, pixel_width=256, data_is_packed=False, transparent=False)
 
 start = 0x8D00 - 0x8000
 end = 0x9100 - 0x8000
-extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "iconBarImage3", palette=7, pixel_width=256, data_is_packed=False)
+extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "iconBarImage3", palette=11, pixel_width=256, data_is_packed=False, transparent=False)
 
 start = 0x9100 - 0x8000
 end = 0x9500 - 0x8000
-extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "iconBarImage4", palette=7, pixel_width=256, data_is_packed=False)
+extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "iconBarImage4", palette=11, pixel_width=256, data_is_packed=False, transparent=False)
 
 # The lines image is stored as interleaved PPU tile format
 # With one set of lines in colour 1 and another in colour 2
@@ -402,8 +390,8 @@ extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/
 
 start = 0xFC00 - 0xC000
 end = 0xFCE8 - 0xC000
-extract_image(bank_data7[start: end], 1, "../1-source-files/images/other-images/", "lineImage0", palette=8, pixel_width=120, data_is_packed=False)
-extract_image(bank_data7[start: end], 1, "../1-source-files/images/other-images/", "lineImage1", palette=9, pixel_width=120, data_is_packed=False)
+extract_image(bank_data7[start: end], 1, "../1-source-files/images/other-images/", "lineImage0", palette=12, pixel_width=120, data_is_packed=False, transparent=False)
+extract_image(bank_data7[start: end], 1, "../1-source-files/images/other-images/", "lineImage1", palette=13, pixel_width=120, data_is_packed=False, transparent=False)
 
 # The font is stored as interleaved PPU tile format
 # With one set of characters in colour 1 and another in colour 2
@@ -412,5 +400,5 @@ extract_image(bank_data7[start: end], 1, "../1-source-files/images/other-images/
 
 start = 0xFCE8 - 0xC000
 end = 0xFFE0 - 0xC000
-extract_image(bank_data7[start: end - 8], 1, "../1-source-files/images/other-images/", "fontImage0", palette=8, pixel_width=64, data_is_packed=False)
-extract_image(bank_data7[start: end], 1, "../1-source-files/images/other-images/", "fontImage1", palette=9, pixel_width=64, data_is_packed=False)
+extract_image(bank_data7[start: end - 8], 1, "../1-source-files/images/other-images/", "fontImage0", palette=12, pixel_width=64, data_is_packed=False, transparent=False)
+extract_image(bank_data7[start: end], 1, "../1-source-files/images/other-images/", "fontImage1", palette=13, pixel_width=64, data_is_packed=False, transparent=False)
