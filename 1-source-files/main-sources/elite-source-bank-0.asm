@@ -812,7 +812,8 @@ ENDIF
 
 .GOIN
 
- JSR ResetMusicAfterNMI ; ???
+ JSR ResetMusicAfterNMI ; Wait for the next NMI before resetting the current
+                        ; tune to 0 (no tune) and stopping the music
 
                         ; If we arrive here, we just docked successfully
 
@@ -8102,7 +8103,7 @@ ENDIF
  LDA #':'               ; Print a colon
  JSR TT27_b2
 
- LDA #1                 ; Set the font bitplane to plane 1
+ LDA #1                 ; Set the font bitplane to print in plane 1
  STA fontBitplane
 
  RTS                    ; Return from the subroutine
@@ -11476,16 +11477,20 @@ ENDIF
 .subm_A130
 
  TAY
- LDX #2
+
+ LDX #2                 ; Set the font bitplane to print in plane 2
  STX fontBitplane
+
  CLC
  LDX languageIndex
  ADC yMarketPrice,X
  STA YC
  TYA
  JSR TT151
- LDX #1
+
+ LDX #1                 ; Set the font bitplane to print in plane 1
  STX fontBitplane
+
  RTS
 
 ; ******************************************************************************
@@ -11932,7 +11937,8 @@ ENDIF
 
 .TT18
 
- JSR ResetMusicAfterNMI ; ???
+ JSR ResetMusicAfterNMI ; Wait for the next NMI before resetting the current
+                        ; tune to 0 (no tune) and stopping the music
 
  LDA QQ14               ; Subtract the distance to the selected system (in QQ8)
  SEC                    ; from the amount of fuel in our tank (in QQ14) into A
@@ -12393,13 +12399,13 @@ ENDIF
 
 .subm_EQSHP2
 
- LDX #2
+ LDX #2                 ; Set the font bitplane to print in plane 2
  STX fontBitplane
 
  LDX XX13
  JSR PrintEquipment+2
 
- LDX #1
+ LDX #1                 ; Set the font bitplane to print in plane 1
  STX fontBitplane
 
  RTS
@@ -13311,11 +13317,14 @@ ENDIF
 
 .HighlightLaserView
 
- LDA #2
+ LDA #2                 ; Set the font bitplane to print in plane 2
  STA fontBitplane
+
  JSR PrintLaserView
- LDA #1
+
+ LDA #1                 ; Set the font bitplane to print in plane 1
  STA fontBitplane
+
  TYA
  PHA
  JSR DrawScreenInNMI
@@ -13326,6 +13335,7 @@ ENDIF
 
  PLA
  TAY
+
  RTS
 
 ; ******************************************************************************
@@ -13373,11 +13383,15 @@ ENDIF
  JSR PrintLaserView
  DEY
  BNE loop_CA706
- LDA #2
+
+ LDA #2                 ; Set the font bitplane to print in plane 2
  STA fontBitplane
+
  JSR PrintLaserView
- LDA #1
+
+ LDA #1                 ; Set the font bitplane to print in plane 1
  STA fontBitplane
+
  LDA #$0B
  STA XC
  STA K+2
@@ -15583,7 +15597,7 @@ ENDIF
  PHA                    ; so we can restore it when we return from the
                         ; subroutine
 
- LDA #2                 ; Set the font bitplane to %10 ???
+ LDA #2                 ; Set the font bitplane to print in plane 2
  STA fontBitplane
 
  LDA #1                 ; Push a value of 1 onto the stack, so the following
@@ -16986,8 +17000,10 @@ ENDIF
 
 .CB106
 
- JSR ResetMusicAfterNMI
- LDA #0
+ JSR ResetMusicAfterNMI ; Wait for the next NMI before resetting the current
+                        ; tune to 0 (no tune) and stopping the music
+
+ LDA #0                 ; ???
 
 .CB10B
 
@@ -17298,7 +17314,8 @@ ENDIF
 
 .DEATH
 
- JSR ResetMusicAfterNMI ; ???
+ JSR ResetMusicAfterNMI ; Wait for the next NMI before resetting the current
+                        ; tune to 0 (no tune) and stopping the music
 
  JSR EXNO3              ; Make the sound of us dying
 
@@ -17500,26 +17517,26 @@ ENDIF
 
 .ShowStartScreen
 
- LDA #$FF               ; ???
+ LDA #$FF               ; Set L0307 = $FF ???
  STA L0307
 
- LDA #$80
+ LDA #$80               ; Set L0308 = $80 ???
  STA L0308
 
- LDA #$1B
+ LDA #$1B               ; Set L0309 = $1B ???
  STA L0309
 
- LDA #$34
+ LDA #$34               ; Set L030A = $34 ???
  STA L030A
 
- JSR ResetMusic
+ JSR ResetMusic         ; Reset the current tune to 0 and stop the music
 
  JSR JAMESON_b6         ; Set the current position to the default "JAMESON"
                         ; commander
 
  JSR ResetOptions       ; Reset the game options to their default values
 
- LDA #1                 ; ???
+ LDA #1                 ; Set the font bitplane to print in plane 1
  STA fontBitplane
 
  LDX #$FF               ; Set the old view type in QQ11a to $FF (Start screen
@@ -17718,7 +17735,8 @@ ENDIF
  JSR ResetCommander_b6  ; Reset the current commander and current position to
                         ; the default "JAMESON" commander
 
- JSR ResetMusicAfterNMI ; ???
+ JSR ResetMusicAfterNMI ; Wait for the next NMI before resetting the current
+                        ; tune to 0 (no tune) and stopping the music
 
  JSR ping               ; Set the target system coordinates (QQ9, QQ10) to the
                         ; current system coordinates (QQ0, QQ1) we just loaded
@@ -17803,8 +17821,7 @@ ENDIF
 ;
 ; ------------------------------------------------------------------------------
 ;
-; Display the title screen, with a rotating ship and a text token at the bottom
-; of the screen.
+; Display the title screen, with a selection of rotating ships.
 ;
 ; Arguments:
 ;
@@ -17813,6 +17830,11 @@ ENDIF
 ;
 ;   Y                   The distance to show the ship rotating, once it has
 ;                       finished moving towards us
+;
+; Returns:
+;
+;   C flag              If a key is being pressed on one of the controllers,
+;                       the C flag is set
 ;
 ; ******************************************************************************
 
@@ -18849,8 +18871,11 @@ ENDIF
  BNE CB6C8
 
  STA auto
- JSR ResetMusicAfterNMI
- JMP CB6B0
+
+ JSR ResetMusicAfterNMI ; Wait for the next NMI before resetting the current
+                        ; tune to 0 (no tune) and stopping the music
+
+ JMP CB6B0              ; ???
 
 .CB6C8
 

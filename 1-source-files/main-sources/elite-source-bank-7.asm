@@ -187,7 +187,19 @@ ENDIF
                         ; before auto-playing the demo (see the ChooseLanguage
                         ; routine)
 
-.CC035
+                        ; Fall through into ResetToStartScreen to reset memory
+                        ; and show the start screen
+
+; ******************************************************************************
+;
+;       Name: ResetToStartScreen
+;       Type: Subroutine
+;   Category: Start and end
+;    Summary: Reset the stack and the game's variables and show the start screen
+;
+; ******************************************************************************
+
+.ResetToStartScreen
 
  LDX #$FF               ; Set the stack pointer to $01FF, which is the standard
  TXS                    ; location for the 6502 stack, so this instruction
@@ -6463,13 +6475,13 @@ ENDIF
 ;
 ; ******************************************************************************
 
- LDA X1                 ; Set SC2(1 0) = (nameBufferHi 0) + yLookup(Y) + X1 * 8
+ LDA X1                 ; Set SC2(1 0) = (nameBufferHi 0) + yLookup(Y) + X1 / 8
  LSR A                  ;
  LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
  LSR A                  ; to convert the pixel y-coordinate in Y into the number
  CLC                    ; of the first tile on the row containing the pixel
  ADC yLookupLo,Y        ;
- STA SC2                ; Adding nameBufferHi and X1 * 8 therefore sets SC2(1 0)
+ STA SC2                ; Adding nameBufferHi and X1 / 8 therefore sets SC2(1 0)
  LDA nameBufferHi       ; to the address of the entry in the nametable buffer
  ADC yLookupHi,Y        ; that contains the tile number for the tile containing
  STA SC2+1              ; the pixel at (X1, Y), i.e. the line we are drawing
@@ -6680,13 +6692,13 @@ ENDIF
 
 .DOWN
 
- LDA X1                 ; Set SC2(1 0) = (nameBufferHi 0) + yLookup(Y) + X1 * 8
+ LDA X1                 ; Set SC2(1 0) = (nameBufferHi 0) + yLookup(Y) + X1 / 8
  LSR A                  ;
  LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
  LSR A                  ; to convert the pixel y-coordinate in Y into the number
  CLC                    ; of the first tile on the row containing the pixel
  ADC yLookupLo,Y        ;
- STA SC2                ; Adding nameBufferHi and X1 * 8 therefore sets SC2(1 0)
+ STA SC2                ; Adding nameBufferHi and X1 / 8 therefore sets SC2(1 0)
  LDA nameBufferHi       ; to the address of the entry in the nametable buffer
  ADC yLookupHi,Y        ; that contains the tile number for the tile containing
  STA SC2+1              ; the pixel at (X1, Y), i.e. the line we are drawing
@@ -7019,13 +7031,13 @@ ENDIF
                         ;
                         ;   P = |delta_x| / |delta_y|
 
- LDA X1                 ; Set SC2(1 0) = (nameBufferHi 0) + yLookup(Y) + X1 * 8
+ LDA X1                 ; Set SC2(1 0) = (nameBufferHi 0) + yLookup(Y) + X1 / 8
  LSR A                  ;
  LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
  LSR A                  ; to convert the pixel y-coordinate in Y into the number
  CLC                    ; of the first tile on the row containing the pixel
  ADC yLookupLo,Y        ;
- STA SC2                ; Adding nameBufferHi and X1 * 8 therefore sets SC2(1 0)
+ STA SC2                ; Adding nameBufferHi and X1 / 8 therefore sets SC2(1 0)
  LDA nameBufferHi       ; to the address of the entry in the nametable buffer
  ADC yLookupHi,Y        ; that contains the tile number for the tile containing
  STA SC2+1              ; the pixel at (X1, Y), i.e. the line we are drawing
@@ -7878,13 +7890,13 @@ ENDIF
  DEC X2                 ; Decrement X2 so we do not draw a pixel at the end
                         ; point
 
- TXA                    ; Set SC2(1 0) = (nameBufferHi 0) + yLookup(Y) + X1 * 8
+ TXA                    ; Set SC2(1 0) = (nameBufferHi 0) + yLookup(Y) + X1 / 8
  LSR A                  ;
  LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
  LSR A                  ; to convert the pixel y-coordinate in Y into the number
  CLC                    ; of the first tile on the row containing the pixel
  ADC yLookupLo,Y        ;
- STA SC2                ; Adding nameBufferHi and X1 * 8 therefore sets SC2(1 0)
+ STA SC2                ; Adding nameBufferHi and X1 / 8 therefore sets SC2(1 0)
  LDA nameBufferHi       ; to the address of the entry in the nametable buffer
  ADC yLookupHi,Y        ; that contains the tile number for the tile containing
  STA SC2+1              ; the pixel at (X1, Y), i.e. the line we are drawing
@@ -9078,121 +9090,195 @@ ENDIF
 ;       Name: PIXEL
 ;       Type: Subroutine
 ;   Category: Drawing pixels
-;    Summary: ???
+;    Summary: Draw a 1-pixel dot
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The screen x-coordinate of the point to draw
+;
+;   A                   The screen y-coordinate of the point to draw
+;
+; Returns:
+;
+;   Y                   Y is preserved
+;
+; Other entry points:
+;
+;   pixl2               Restore the value of Y and return from the subroutine
 ;
 ; ******************************************************************************
 
 .PIXEL
 
- STX SC2
- STY T1
- TAY
- TXA
- LSR A
- LSR A
- LSR A
- CLC
- ADC yLookupLo,Y
- STA SC
- LDA nameBufferHi
- ADC yLookupHi,Y
- STA SC+1
+ STX SC2                ; Set SC2 to the pixel's x-coordinate in X
+
+ STY T1                 ; Store Y in T1 so we can retrieve it at the end of the
+                        ; subroutine
+
+ TAY                    ; Set Y to the pixel's y-coordinate
+
+ TXA                    ; Set SC(1 0) = (nameBufferHi 0) + yLookup(Y) + X / 8
+ LSR A                  ;
+ LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
+ LSR A                  ; to convert the pixel y-coordinate in Y into the number
+ CLC                    ; of the first tile on the row containing the pixel
+ ADC yLookupLo,Y        ;
+ STA SC                 ; Adding nameBufferHi and X / 8 therefore sets SC(1 0)
+ LDA nameBufferHi       ; to the address of the entry in the nametable buffer
+ ADC yLookupHi,Y        ; that contains the tile number for the tile containing
+ STA SC+1               ; the pixel at (X, Y), i.e. the line we are drawing
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDX #0
- LDA (SC,X)
- BNE CE521
- LDA tileNumber
- BEQ CE540
- STA (SC,X)
- INC tileNumber
+ LDX #0                 ; If the nametable buffer entry is non-zero for the tile
+ LDA (SC,X)             ; containing the pixel that we want to draw, then a tile
+ BNE pixl1              ; has already been allocated to this entry, so skip the
+                        ; following
 
-.CE521
+ LDA tileNumber         ; If tileNumber is zero then we have run out of tiles to
+ BEQ pixl2              ; use for drawing lines and pixels, so jump to pixl2 to
+                        ; return from the subroutine, as we can't draw the pixel
 
- LDX pattBufferHiDiv8
- STX SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
+ STA (SC,X)             ; Otherwise tileNumber contains the number of the next
+                        ; available tile for drawing, so allocate this tile to
+                        ; cover the pixel that we want to draw by setting the
+                        ; nametable entry to the tile number we just fetched
+
+ INC tileNumber         ; Increment tileNumber to point to the next available
+                        ; tile for drawing, so it can be added to the nametable
+                        ; the next time we need to draw lines or pixels into a
+                        ; tile
+
+.pixl1
+
+ LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
+ STX SC+1               ;             = (pattBufferHi 0) + A * 8
+ ASL A                  ;
+ ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
+ ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ROL SC+1               ; pattern data), which means SC(1 0) points to the
+ ASL A                  ; pattern data for the tile containing the line we are
+ ROL SC+1               ; drawing
  STA SC
- TYA
- AND #7
- TAY
- LDA SC2
- AND #7
- TAX
- LDA TWOS,X
- ORA (SC),Y
- STA (SC),Y
 
-.CE540
+ TYA                    ; Set Y = Y mod 8, which is the pixel row within the
+ AND #7                 ; character block at which we want to draw the start of
+ TAY                    ; our line (as each character block has 8 rows)
 
- LDY T1
- RTS
+ LDA SC2                ; Set X = X mod 8, which is the horizontal pixel number
+ AND #7                 ; within the character block where the line starts (as
+ TAX                    ; each pixel line in the character block is 8 pixels
+                        ; wide, and we set SC2 to the x-coordinate above)
+
+ LDA TWOS,X             ; Fetch a 1-pixel byte from TWOS where pixel X is set
+
+ ORA (SC),Y             ; Store the pixel byte into screen memory at SC(1 0),
+ STA (SC),Y             ; using OR logic so it merges with whatever is already
+                        ; on-screen
+
+.pixl2
+
+ LDY T1                 ; Restore the value of Y from T1 so it is preserved
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: DrawDash
 ;       Type: Subroutine
 ;   Category: Drawing pixels
-;    Summary: ???
+;    Summary: Draw a 2-pixel dash
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The screen x-coordinate of the dash to draw
+;
+;   A                   The screen y-coordinate of the dash to draw
+;
+; Returns:
+;
+;   Y                   Y is preserved
 ;
 ; ******************************************************************************
 
 .DrawDash
 
- STX SC2
- STY T1
- TAY
- TXA
- LSR A
- LSR A
- LSR A
- CLC
- ADC yLookupLo,Y
- STA SC
- LDA nameBufferHi
- ADC yLookupHi,Y
- STA SC+1
+ STX SC2                ; Set SC2 to the pixel's x-coordinate in X
+
+ STY T1                 ; Store Y in T1 so we can retrieve it at the end of the
+                        ; subroutine
+
+ TAY                    ; Set Y to the pixel's y-coordinate
+
+ TXA                    ; Set SC(1 0) = (nameBufferHi 0) + yLookup(Y) + X / 8
+ LSR A                  ;
+ LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
+ LSR A                  ; to convert the pixel y-coordinate in Y into the number
+ CLC                    ; of the first tile on the row containing the pixel
+ ADC yLookupLo,Y        ;
+ STA SC                 ; Adding nameBufferHi and X / 8 therefore sets SC(1 0)
+ LDA nameBufferHi       ; to the address of the entry in the nametable buffer
+ ADC yLookupHi,Y        ; that contains the tile number for the tile containing
+ STA SC+1               ; the pixel at (X, Y), i.e. the line we are drawing
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDX #0
- LDA (SC,X)
- BNE CE574
- LDA tileNumber
- BEQ CE540
- STA (SC,X)
- INC tileNumber
+ LDX #0                 ; If the nametable buffer entry is non-zero for the tile
+ LDA (SC,X)             ; containing the pixel that we want to draw, then a tile
+ BNE dash1              ; has already been allocated to this entry, so skip the
+                        ; following
 
-.CE574
+ LDA tileNumber         ; If tileNumber is zero then we have run out of tiles to
+ BEQ pixl2              ; use for drawing lines and pixels, so jump to pixl2 to
+                        ; return from the subroutine, as we can't draw the dash
 
- LDX #$0C
- STX SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
+ STA (SC,X)             ; Otherwise tileNumber contains the number of the next
+                        ; available tile for drawing, so allocate this tile to
+                        ; cover the pixel that we want to draw by setting the
+                        ; nametable entry to the tile number we just fetched
+
+ INC tileNumber         ; Increment tileNumber to point to the next available
+                        ; tile for drawing, so it can be added to the nametable
+                        ; the next time we need to draw lines or pixels into a
+                        ; tile
+
+.dash1
+
+ LDX #HI(pattBuffer0)/8 ; Set SC(1 0) = (pattBuffer0/8 A) * 8
+ STX SC+1               ;             = (pattBufferHi 0) + A * 8
+ ASL A                  ;
+ ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
+ ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ROL SC+1               ; pattern data), which means SC(1 0) points to the
+ ASL A                  ; pattern data for the tile containing the line we are
+ ROL SC+1               ; drawing
  STA SC
- TYA
- AND #7
- TAY
- LDA SC2
- AND #7
- TAX
- LDA TWOS2,X
- ORA (SC),Y
- STA (SC),Y
- LDY T1
- RTS
+
+ TYA                    ; Set Y = Y mod 8, which is the pixel row within the
+ AND #7                 ; character block at which we want to draw the start of
+ TAY                    ; our line (as each character block has 8 rows)
+
+ LDA SC2                ; Set X = X mod 8, which is the horizontal pixel number
+ AND #7                 ; within the character block where the line starts (as
+ TAX                    ; each pixel line in the character block is 8 pixels
+                        ; wide, and we set SC2 to the x-coordinate above)
+
+ LDA TWOS2,X            ; Fetch a 2-pixel byte from TWOS2 where pixels X and X+1
+                        ; are set
+
+ ORA (SC),Y             ; Store the dash byte into screen memory at SC(1 0),
+ STA (SC),Y             ; using OR logic so it merges with whatever is already
+                        ; on-screen
+
+ LDY T1                 ; Restore the value of Y from T1 so it is preserved
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -10914,6 +11000,12 @@ ENDIF
 ;   Category: Sound
 ;    Summary: Call the ChooseMusic routine in ROM bank 6
 ;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The number of the tune to choose
+;
 ; ******************************************************************************
 
 .ChooseMusic_b6
@@ -10922,13 +11014,15 @@ ENDIF
  JSR WaitForNMI         ; next VBlank), preserving the value in A via the stack
  PLA
 
- ORA #$80
- STA L045E
+ ORA #%10000000         ; Set bit 7 of the tune number and store in newTune to
+ STA newTune            ; indicate that we are now in the process of changing to
+                        ; this tune
 
- AND #$7F
+ AND #%01111111         ; Clear bit 7 to set A to the tune number once again
 
- LDX disableMusic
- BMI RTS4
+ LDX disableMusic       ; If music is disabled then bit 7 of disableMusic will
+ BMI RTS4               ; be set, so jump to RTS4 to return from the subroutine
+                        ; as we can't choose a new tune if music is disabled
 
  STA ASAV               ; Store the value of A so we can retrieve it below
 
@@ -10998,7 +11092,8 @@ ENDIF
 ;       Name: ResetMusicAfterNMI
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Wait for the next NMI before resetting the current tune to 0 and
+;             stopping the music
 ;
 ; ******************************************************************************
 
@@ -11007,19 +11102,25 @@ ENDIF
  JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
                         ; next VBlank)
 
+                        ; Fall through into ResetMusic to reset the current tune
+                        ; to 0 and stop the music
+
 ; ******************************************************************************
 ;
 ;       Name: ResetMusic
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Reset the current tune to 0 and stop the music
 ;
 ; ******************************************************************************
 
 .ResetMusic
 
- LDA #0
- STA L045E
+ LDA #0                 ; Set newTune to to indicate that we have no tune
+ STA newTune            ; selected (as bits 0-6 are zero) and we are not in the
+                        ; process of changing tunes (as bit 7 is clear)
+
+                        ; Fall through into StopMusic_b6 to stop the music
 
 ; ******************************************************************************
 ;
@@ -13485,14 +13586,16 @@ ENDIF
 ;       Name: DrawTitleScreen
 ;       Type: Subroutine
 ;   Category: Start and end
-;    Summary: ???
+;    Summary: Draw a sequence of rotating ships on-screen while checking for
+;             button presses on the controllers
 ;
 ; ******************************************************************************
 
 .DrawTitleScreen
 
- JSR FetchPalettes1_b3
- LDA #0
+ JSR FetchPalettes1_b3  ; ???
+
+ LDA #0                 ; Set the music to tune 0 (no music)
  JSR ChooseMusic_b6
 
  JSR HideMostSprites    ; Hide all sprites except for sprite 0 and the icon bar
@@ -13501,75 +13604,147 @@ ENDIF
  LDA #$FF               ; Set the old view type in QQ11a to $FF (Start screen
  STA QQ11a              ; both fonts loaded)
 
- LDA #1
- STA scanController2
- LDA #$32
- STA nmiTimer
- LDA #0
- STA nmiTimerLo
- STA nmiTimerHi
+ LDA #1                 ; Set scanController2 = 1 so we scan both controllers,
+ STA scanController2    ; so the game can be started by pressing a key on either
+                        ; controller while the ships are rotating on-screen
 
-.loop_CF3DA
+ LDA #50                ; Set the NMI timer, which decrements each VBlank, to 50
+ STA nmiTimer           ; so it counts down to zero and back up to 50 again
 
- LDY #0
+ LDA #0                 ; Set (nmiTimerHi nmiTimerLo) = 0 so we can time how
+ STA nmiTimerLo         ; long to show the rotating ships before switching back
+ STA nmiTimerHi         ; to the Start screen
 
-.loop_CF3DC
+.dtit1
 
- STY L03FC
- LDA titleShipType,Y
- BEQ loop_CF3DA
- TAX
- LDA titleShipDist,Y
- TAY
- LDA #6
- JSR TITLE
- BCS CF411
- LDY L03FC
- INY
- LDA nmiTimerHi
- CMP #1
- BCC loop_CF3DC
- LSR scanController2
- JSR ResetMusicAfterNMI
- JSR FetchPalettes1_b3
- LDA languageIndex
- STA K%
- LDA #5
- STA K%+1
- JMP CC035
+ LDY #0                 ; We are about to start running through a list of ships
+                        ; to display on the title screen, so set a ship counter
+                        ; in Y
 
-.CF411
+.dtit2
 
- JSR ResetMusicAfterNMI
- RTS
+ STY L03FC              ; Store the ship counter in L03FC so we can retrieve it
+                        ; below
+
+ LDA titleShipType,Y    ; Set A to the ship type of the ship we want to display,
+                        ; from the Y-th entry in the titleShipType table
+
+ BEQ dtit1              ; If the ship type is zero then we have already worked
+                        ; our way through the list, so jump back to dtit1 to
+                        ; start from the beginning of the list again
+
+ TAX                    ; Store the ship type in X
+
+ LDA titleShipDist,Y    ; Set Y to the distance of the ship we want to display,
+ TAY                    ; from the Y-th entry in the titleShipDist table
+
+ LDA #6                 ; Call TITLE to draw the ship type in X, starting with
+ JSR TITLE              ; it far away, and bringing it to a distance of Y (the
+                        ; argument in A is ignored)
+
+ BCS dtit3              ; If a button was pressed while the ship was being shown
+                        ; on-screen, TITLE will return with the C flag set, in
+                        ; which case jump to dtit3 to stop the music and return
+                        ; from the subroutine
+
+ LDY L03FC              ; Restore the ship counter that we stored above and put
+ INY                    ; it into Y
+
+ LDA nmiTimerHi         ; If the high byte of (nmiTimerHi nmiTimerLo) is still 0
+ CMP #1                 ; then jump back to dtit2 to show the next ship
+ BCC dtit2
+
+                        ; If we get here then the NMI timer has run down to the
+                        ; point where (nmiTimerHi nmiTimerLo) is >= 256, which
+                        ; means we have shown the title screen for at least
+                        ; 50 * 256 VBlanks, as each tick of nmiTimerLo happens
+                        ; when the nmiTimer has counted down from 50 VBlanks,
+                        ; and each tick happens once every VBlank
+                        ;
+                        ; On the PAL NES, VBlank happens 50 times a second, so
+                        ; this means the title screen has been showing for 256
+                        ; seconds, or about 4 minutes and 16 seconds
+                        ;
+                        ; On the NTSC NES, VBlank happens 60 times a second, so
+                        ; this means the title screen has been showing for 213
+                        ; seconds, or about 3 minutes and 33 seconds
+
+ LSR scanController2    ; Set scanController2 = 0 so we no longer scan both
+                        ; controllers
+
+ JSR ResetMusicAfterNMI ; Wait for the next NMI before resetting the current
+                        ; tune to 0 (no tune) and stopping the music
+
+ JSR FetchPalettes1_b3  ; ???
+
+ LDA languageIndex      ; Set K% to the index of the currently selected
+ STA K%                 ; language, so when we show the start screen, the
+                        ; correct language is highlighted
+
+ LDA #5                 ; Set K%+1 = 5 to use as the value of the third counter
+ STA K%+1               ; when deciding how long to wait on the Start screen
+                        ; before auto-playing the demo
+
+ JMP ResetToStartScreen ; Reset the stack and the game's variables and show the
+                        ; start screen, returning from the subroutine using a
+                        ; tail call
+
+.dtit3
+
+ JSR ResetMusicAfterNMI ; Wait for the next NMI before resetting the current
+                        ; tune to 0 (no tune) and stopping the music
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: titleShipType
 ;       Type: Variable
 ;   Category: Start and end
-;    Summary: ???
+;    Summary: The types of ship to show rotating on the title screen
 ;
 ; ******************************************************************************
 
 .titleShipType
 
- EQUB $0B, $13, $14, $19, $1D, $15, $12, $1B
- EQUB $0A,   1, $11, $10,   0
+ EQUB 11                ; Cobra Mk III
+ EQUB 19                ; Krait
+ EQUB 20                ; Adder
+ EQUB 25                ; Asp Mk II
+ EQUB 29                ; Thargoid
+ EQUB 21                ; Gecko
+ EQUB 18                ; Mamba
+ EQUB 27                ; Fer-de-lance
+ EQUB 10                ; Transporter
+ EQUB  1                ; Missile
+ EQUB 17                ; Sidewinder
+ EQUB 16                ; Viper
+
+ EQUB 0
 
 ; ******************************************************************************
 ;
 ;       Name: titleShipDist
 ;       Type: Variable
 ;   Category: Start and end
-;    Summary: ???
+;    Summary: The distances at which to show the rotating title screen ships
 ;
 ; ******************************************************************************
 
 .titleShipDist
 
- EQUB $64, $0A, $0A, $1E, $B4, $0A, $28, $5A
- EQUB $0A, $46, $28, $0A
+ EQUB 100               ; Cobra Mk III
+ EQUB 10                ; Krait
+ EQUB 10                ; Adder
+ EQUB 30                ; Asp Mk II
+ EQUB 180               ; Thargoid
+ EQUB 10                ; Gecko
+ EQUB 40                ; Mamba
+ EQUB 90                ; Fer-de-lance
+ EQUB 10                ; Transporter
+ EQUB 70                ; Missile
+ EQUB 40                ; Sidewinder
+ EQUB 10                ; Viper
 
 ; ******************************************************************************
 ;

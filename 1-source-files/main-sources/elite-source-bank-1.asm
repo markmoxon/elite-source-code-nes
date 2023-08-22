@@ -12640,8 +12640,8 @@ ENDIF
 ;
 ; ------------------------------------------------------------------------------
 ;
-; Draw a point (X1, Y1) from the middle of the screen with a size determined by
-; a distance value. Used to draw stardust particles.
+; Draw a stardust particle sprite at point (X1, Y1) from the middle of the
+; screen with a size determined by a distance value.
 ;
 ; Arguments:
 ;
@@ -12652,26 +12652,49 @@ ENDIF
 ;
 ;   ZZ                  The distance of the point (further away = smaller point)
 ;
+;   Y                   The number of the stardust particle (1 to 20)
+;
 ; ******************************************************************************
 
 .PIXEL2
 
- STY T1                 ; ???
- TYA
- ASL A
- ASL A
- TAY
- LDA #$D2
- LDX ZZ
- CPX #$18
+ STY T1                 ; Store Y in T1 so we can retrieve it at the end of the
+                        ; subroutine
+
+ TYA                    ; Set Y = Y * 4
+ ASL A                  ;
+ ASL A                  ; So Y can be used as an index into the sprite buffer,
+ TAY                    ; starting with sprite 38 for stardust particle 1, up to
+                        ; sprite 57 for stardust particle 20
+
+ LDA #210               ; Set A = 210 to use as the pattern tile number for the
+                        ; largest particle of stardust (the stardust particle
+                        ; patterns run from pattern #210 to #214, decreasing in
+                        ; size as the number increases)
+
+ LDX ZZ                 ; If ZZ >= 24, increment A
+ CPX #24
  ADC #0
- CPX #$30
+
+ CPX #48                ; If ZZ >= 48, increment A
  ADC #0
- CPX #$70
+
+ CPX #112               ; If ZZ >= 112, increment A
  ADC #0
- CPX #$90
+
+ CPX #144               ; If ZZ >= 144, increment A
  ADC #0
- STA tileSprite37,Y
+
+                        ; So by this point A is 210 for the closest stardust,
+                        ; then 211, 212, 213 or 214 for smaller and smaller
+                        ; particles as they move further away
+
+                        ; The C flag is clear at this point, which affects the
+                        ; SBC #3 below
+
+ STA tileSprite37,Y     ; By this point A is the correct pattern number for the
+                        ; distance of the stardust particle, so set the tile
+                        ; pattern number for sprite 37 + Y to this pattern
 
  LDA X1                 ; Fetch the x-coordinate offset into A
 
@@ -12679,20 +12702,31 @@ ENDIF
                         ; to skip the following negation
 
  EOR #%01111111         ; The x-coordinate offset is negative, so flip all the
- CLC                    ; bits apart from the sign bit and add 1, to negate
- ADC #1                 ; it to a positive number, i.e. A is now |X1|
+ CLC                    ; bits apart from the sign bit and add 1, to convert it
+ ADC #1                 ; from a sign-magnitude number to a signed number
 
 .PX21
 
- EOR #$80               ; ???
- SBC #3
- CMP #$F4
- BCS CBC49
- STA xSprite37,Y
- LDA Y1
- AND #$7F
- CMP Yx1M2
- BCS CBC49
+ EOR #%10000000         ; Set A = X1 + 127 - 4
+ SBC #3                 ;
+                        ; So X is now the offset converted to an x-coordinate,
+                        ; centred on x-coordinate 127, less a margin of 4
+                        ;
+                        ; We know that the C flag is clear at this point, so the
+                        ; SBC #3 actually subtracts 4
+
+ CMP #244               ; If A >= 244 then the stardust particle is off-screen,
+ BCS stpx1              ; so jump to stpx1 to hide the particle's sprite and
+                        ; return from the subroutine
+
+ STA xSprite37,Y        ; Set the stardust particle's sprite x-coordinate to A
+
+ LDA Y1                 ; Fetch the y-coordinate offset into A and clear the
+ AND #%01111111         ; sign bit, so A = |Y1|
+
+ CMP Yx1M2              ; If A >= Yx1M2 then the stardust particle is off the
+ BCS stpx1              ; bottom of the screen, so jump to stpx1 to hide the
+                        ; particle's sprite and return from the subroutine
 
  LDA Y1                 ; Fetch the y-coordinate offset into A
 
@@ -12700,26 +12734,35 @@ ENDIF
                         ; to skip the following negation
 
  EOR #%01111111         ; The y-coordinate offset is negative, so flip all the
- ADC #1                 ; bits apart from the sign bit and subtract 1, to negate
-                        ; it to a positive number, i.e. A is now |Y1|
+ ADC #1                 ; bits apart from the sign bit and add 1, to convert it
+                        ; from a sign-magnitude number to a signed number
 
 .PX22
 
- STA T                  ; ???
- LDA Yx1M2
- SBC T
+ STA T                  ; Set A = Yx1M2 - Y1 + 10
+ LDA Yx1M2              ;
+ SBC T                  ; So if Y is positive we display the point up from the
+ ADC #10+YPAL           ; centre at y-coordinate Yx1M2, while a negative Y means
+                        ; down from the centre
 
- ADC #10+YPAL
+ STA ySprite37,Y        ; Set the stardust particle's sprite y-coordinate to A
 
- STA ySprite37,Y
- LDY T1
- RTS
+ LDY T1                 ; Restore the value of Y from T1 so it is preserved
 
-.CBC49
- LDA #$F0
- STA ySprite37,Y
- LDY T1
- RTS
+ RTS                    ; Return from the subroutine
+
+.stpx1
+
+                        ; If we get here then we do not want to show the
+                        ; stardust particle on-screen
+
+ LDA #240               ; Hide the stardist particle's sprite by setting its
+ STA ySprite37,Y        ; y-coordinate to 240, which is off the bottom of the
+                        ; screen
+
+ LDY T1                 ; Restore the value of Y from T1 so it is preserved
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;

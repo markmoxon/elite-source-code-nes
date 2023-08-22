@@ -524,9 +524,9 @@ ENDIF
                         ; as each character in the font contains two separate
                         ; characters
                         ;
-                        ;   * %01 = draw bitplane 1 (monochrome)
+                        ;   * %01 = draw in bitplane 1 (monochrome)
                         ;
-                        ;   * %10 = draw bitplane 2 (monochrome)
+                        ;   * %10 = draw in bitplane 2 (monochrome)
                         ;
                         ;   * %11 = draw both bitplanes (four-colour)
 
@@ -4213,11 +4213,16 @@ ORG $0200
                         ;
                         ;   * Bit 7 set = we are initialising the demo
 
-.L045E
+.newTune
 
- SKIP 1                 ; Sound-related, looks like bits 0-6 are the number of
-                        ; the new tune we need to change to in ChooseMusic,
-                        ; bit 7 set means we need to change to this tune ???
+ SKIP 1                 ; The number of the new tune when choosing the
+                        ; background music
+                        ;
+                        ;   * Bits 0-6 = the tune number (1-4)
+                        ;                0 indicates no tune is selected
+                        ;
+                        ;   * Bit 7 set = we are still in the process of
+                        ;                 changing to this tune
 
 IF _PAL
 
