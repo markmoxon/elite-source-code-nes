@@ -12093,9 +12093,10 @@ ENDIF
 
 .SCAN
 
- LDA QQ11               ; ???
- BNE CB974
- LDX TYPE
+ LDA QQ11               ; If this is not the space view (i.e. QQ11 is non-zero)
+ BNE CB974              ; then jump to CB974???
+
+ LDX TYPE               ; ???
  BMI CB974
  LDA INWK+33
  BEQ CB974
@@ -12707,10 +12708,10 @@ ENDIF
 
 .PX21
 
- EOR #%10000000         ; Set A = X1 + 127 - 4
+ EOR #%10000000         ; Set A = X1 + 128 - 4
  SBC #3                 ;
                         ; So X is now the offset converted to an x-coordinate,
-                        ; centred on x-coordinate 127, less a margin of 4
+                        ; centred on x-coordinate 128, less a margin of 4
                         ;
                         ; We know that the C flag is clear at this point, so the
                         ; SBC #3 actually subtracts 4

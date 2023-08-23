@@ -1787,7 +1787,7 @@ ENDIF
 ;       Name: SetupViewInPPU
 ;       Type: Subroutine
 ;   Category: PPU
-;    Summary: ???
+;    Summary: Configure the PPU for the view type in QQ11
 ;
 ; ******************************************************************************
 
@@ -1796,8 +1796,8 @@ ENDIF
  JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
                         ; next VBlank)
 
- LDA ppuCtrlCopy
- PHA
+ LDA ppuCtrlCopy        ; Store the value of ppuCtrlCopy on the stack so we can
+ PHA                    ; restore it at the end of the subroutine
 
  LDA #%00000000         ; Set A to use as the new value for PPU_CTRL below
 
@@ -1828,56 +1828,83 @@ ENDIF
                         ;   * Bit 6 clear = do not intensify blues
                         ;   * Bit 7 clear = do not intensify reds
 
- LDA QQ11
- CMP #$B9
- BNE CA7D4
- JMP CA87D
+ LDA QQ11               ; If the view type in QQ11 is not $B9 (Equip Ship),
+ CMP #$B9               ; jump to svip1 to keep checking for view types
+ BNE svip1
 
-.CA7D4
+ JMP svip7              ; Jump to svip7 to set up the Equip Ship screen
 
- CMP #$9D
- BEQ CA83A
- CMP #$DF
- BEQ CA83A
- CMP #$96
- BNE CA7E6
- JSR GetSystemImage_b5
- JMP CA8A2
+.svip1
 
-.CA7E6
+ CMP #$9D               ; If the view type in QQ11 is $9D (Long-range Chart with
+ BEQ svip6              ; the inverted font loaded), jump to svip6
 
- CMP #$98
- BNE CA7F0
- JSR GetCmdrImage_b4
- JMP CA8A2
+ CMP #$DF               ; If the view type in QQ11 is $DF (Start screen with the
+ BEQ svip6              ; inverted font loaded), jump to svip6
 
-.CA7F0
+ CMP #$96               ; If the view type in QQ11 is not $96 (Data on System),
+ BNE svip2              ; jump to svip2 to keep checking for view types
 
- CMP #$BA
- BNE CA810
+                        ; If we get here then this is the Data on System screen
+
+ JSR GetSystemImage_b5  ; This is the Data on System view, so fetch the
+                        ; background image and foreground sprite for the current
+                        ; system image and send them to the pattern buffers and
+                        ; PPU
+
+ JMP svip10             ; Jump to svip10 to finish off setting up the view
+
+.svip2
+
+ CMP #$98               ; If the view type in QQ11 is not $98 (Status Mode),
+ BNE svip3              ; jump to svip3 to keep checking for view types
+
+                        ; If we get here then this is the Status Mode screen
+
+ JSR GetCmdrImage_b4    ; This is the Status Mode view, so fetch the headshot
+                        ; image for the commander and store it in the pattern
+                        ; buffers, and send the face and glasses images to the
+                        ; PPU
+
+ JMP svip10             ; Jump to svip10 to finish off setting up the view
+
+.svip3
+
+ CMP #$BA               ; If the view type in QQ11 is not $BA (Market Price),
+ BNE svip4              ; jump to svip4 to keep checking for view types
+
+                        ; If we get here then this is the Market Price screen
 
  LDA #HI(16*69)         ; Set PPU_ADDR to the address of pattern #69 in pattern
- STA PPU_ADDR           ; table 0
+ STA PPU_ADDR           ; table 0, so we load the missile image here
  LDA #LO(16*69)
  STA PPU_ADDR
 
- LDA #HI(missileImage)  ; Set SC(1 0) = missileImage
- STA SC+1
+ LDA #HI(missileImage)  ; Set SC(1 0) = missileImage so we send the missile
+ STA SC+1               ; image to the PPU ???
  LDA #LO(missileImage)
  STA SC
 
- LDA #$F5
+ LDA #245               ; Set imageFlags = 245 ???
  STA imageFlags
- LDX #4
- JMP CA89F
 
-.CA810
+ LDX #4                 ; Set X = 4 so we send four batches of 16 bytes to the
+                        ; PPU in the call to SendMissilesToPPU below
 
- CMP #$BB
- BNE CA82A
+ JMP svip9              ; Jump to svip9 to send the missile image to the PPU and
+                        ; finish off setting up the view
+
+.svip4
+
+ CMP #$BB               ; If the view type in QQ11 is not $BB (Save and load
+ BNE svip5              ; with both fonts loaded), jump to svip5 to keep
+                        ; checking for view types
+
+                        ; If we get here then this is the Save and load screen
+                        ; with both fonts loaded
 
  LDA #HI(16*69)         ; Set PPU_ADDR to the address of pattern #69 in pattern
- STA PPU_ADDR           ; table 0
+ STA PPU_ADDR           ; table 0, so we load the small logo image here
  LDA #LO(16*69)
  STA PPU_ADDR
 
@@ -1887,52 +1914,81 @@ ENDIF
  STA V                      ; Elite logo into pattern #69 onwards in pattern
                             ; table 0
 
- LDA #3                 ; Set A = 3 so we only unpack the image data when
-                        ; imageFlags does not equal 3
+ LDA #3                 ; Set A = 3 so we only unpack the image data below when
+                        ; imageFlags does not equal 3 (i.e. if we haven't
+                        ; already unpacked the small logo image)
 
- BNE CA891              ; Jump to CA891 to unpack the image data (this BNE is
+ BNE svip8              ; Jump to svip8 to unpack the image data (this BNE is
                         ; effectively a JMP as A is never zero)
 
-.CA82A
+.svip5
 
- LDA #0
+                        ; If we get here then this not one of these views:
+                        ;
+                        ;   * Equip Ship
+                        ;   * Long-range Chart with the inverted font loaded
+                        ;   * Start screen with the inverted font loaded
+                        ;   * Data on System
+                        ;   * Status Mode
+                        ;   * Market Price
+                        ;   * Save and load with both fonts loaded
+                        ;
+                        ; so now we load the dashboard image, if we haven't
+                        ; already
 
- CMP imageFlags
- BEQ CA8A2
- STA imageFlags
+ LDA #0                 ; Set A = 0 to set as the new value of imageFlags below
+
+ CMP imageFlags         ; If imageFlags = 0 then we have already unpacked the
+ BEQ svip10             ; dashboard image, so jump to svip10 to finish off
+                        ; setting up the view without loading the dashboard
+                        ; image again
+
+ STA imageFlags         ; Set imageFlags = 0 to denote that we have loaded the
+                        ; dashboard image
 
  JSR SendDashImageToPPU ; Unpack the dashboard image and send it to patterns 69
                         ; to 255 in pattern table 0 in the PPU
 
- JMP CA8A2
+ JMP svip10             ; Jump to svip10 to finish off setting up the view
 
-.CA83A
+.svip6
+
+                        ; If we get here then QQ11 is $9D (Long-range Chart with
+                        ; the inverted font loaded) or $DF (Start screen with the
+                        ; inverted font loaded)
 
  LDA #36                ; Set L00D9 = 36 ???
  STA L00D9
 
- LDA #1
- CMP imageFlags
- BEQ CA8A2
- STA imageFlags
+ LDA #1                 ; Set A = 1 to set as the new value of imageFlags below
+
+ CMP imageFlags         ; If imageFlags = 1 then we have already loaded the font
+ BEQ svip10             ; image, so jump to svip10 to finish off setting up the
+                        ; view without loading the font image again
+
+ STA imageFlags         ; Set imageFlags = 1 to denote that we have loaded the
+                        ; font image
 
  LDA #HI(16*68)         ; Set PPU_ADDR to the address of pattern #68 in pattern
  STA PPU_ADDR           ; table 0
  LDA #LO(16*68)
  STA PPU_ADDR
 
- LDX #$5F
+ LDX #95                ; Set X = 95 so the call to SendFontImageToPPU sends 95
+                        ; font patterns to bitplane 0 in the PPU
 
- LDA #HI(fontImage)     ; Set SC(1 0) = fontImage
- STA SC+1
+ LDA #HI(fontImage)     ; Set SC(1 0) = fontImage so we send the font image in
+ STA SC+1               ; the call to SendFontImageToPPU
  LDA #LO(fontImage)
  STA SC
 
- JSR SendPattern0ToPPU
+ JSR SendFontImageToPPU ; Send the 95 font patterns to bitplane 0 in the PPU and
+                        ; send zeroes to bitplane 1
 
- LDA QQ11
- CMP #$DF
- BNE CA8A2
+ LDA QQ11               ; If the view type in QQ11 is not $DF (Start screen with
+ CMP #$DF               ; the inverted font loaded), then jump to svip10 to
+ BNE svip10             ; finish off setting up the view without loading the
+                        ; logo ball image
 
  LDA #HI(16*227)        ; Set PPU_ADDR to the address of pattern #227 in pattern
  STA PPU_ADDR           ; table 0
@@ -1945,10 +2001,13 @@ ENDIF
  STA V                  ; bottom of the big Elite logo into pattern #227 onwards
                         ; in pattern table 0
 
- JSR UnpackToPPU
- JMP CA8A2
+ JSR UnpackToPPU        ; Unpack the image data to the PPU
 
-.CA87D
+ JMP svip10             ; Jump to svip10 to finish off setting up the view
+
+.svip7
+
+                        ; If we get here then this is the Equip Ship screen
 
  LDA #HI(16*69)         ; Set PPU_ADDR to the address of pattern #69 in pattern
  STA PPU_ADDR           ; table 0
@@ -1963,15 +2022,23 @@ ENDIF
  LDA #2                 ; Set A = 2 so we only unpack the image data when
                         ; imageFlags does not equal 2
 
-.CA891
+.svip8
 
- CMP imageFlags
- BEQ CA8A2
- STA imageFlags
- JSR UnpackToPPU
- JMP CA8A2
+                        ; If we get here then A determines which image we should
+                        ; be loading (the Cobra Mk III image when A = 2, or the
+                        ; small logo image when A = 3)
 
-.CA89F
+ CMP imageFlags         ; If imageFlags = A then we have already loaded the
+ BEQ svip10             ; image specified in A
+
+ STA imageFlags         ; Set imageFlags = A to denote that we have loaded the
+                        ; relevant image
+
+ JSR UnpackToPPU        ; Unpack the image data to the PPU
+
+ JMP svip10             ; Jump to svip10 to finish off setting up the view
+
+.svip9
 
  JSR SendMissilesToPPU  ; Send X batches of 16 bytes from SC(1 0) to the PPU
                         ;
@@ -1984,96 +2051,149 @@ ENDIF
                         ; So this sends 16 * 4 = 64 bytes from missileImage to
                         ; the PPU
 
-.CA8A2
+.svip10
 
- JSR SetupSprite0
+                        ; We have finished setting up any view-specific images
+                        ; and settings, so now we finish off with some settings
+                        ; that apply to all views
+
+ JSR SetupSprite0       ; Set the coordinates of sprite 0 so we can detect when
+                        ; the PPU starts to draw the icon bar
+
+                        ; We now send patterns 0 to 4 to the PPU, which contain
+                        ; the box edges
 
  LDA #HI(PPU_PATT_1+16*0)   ; Set PPU_ADDR to the address of pattern #0 in
  STA PPU_ADDR               ; pattern table 1
  LDA #LO(PPU_PATT_1+16*0)
  STA PPU_ADDR
 
- LDY #0
+ LDY #0                 ; We are about to send a batch of bytes to the PPU, so
+                        ; set an index counter in Y
 
- LDX #$50
+ LDX #80                ; There are 80 bytes of pattern data in the five tile
+                        ; patterns (5 * 16 bytes), so set a byte counter in X
 
-.loop_CA8B3
+.svip11
 
- LDA boxEdgeImages,Y
+ LDA boxEdgeImages,Y    ; Send the Y-th byte from boxEdgeImages to the PPU
  STA PPU_DATA
- INY
- DEX
- BNE loop_CA8B3
+
+ INY                    ; Increment the index counter in Y
+
+ DEX                    ; Decrement the byte counter in X
+
+ BNE svip11             ; Loop back until we have sent all 80 bytes to the PPU
+
+                        ; We now zero pattern #255 in pattern table 1 so it is
+                        ; a full block of background colour
 
  LDA #HI(PPU_PATT_1+16*255) ; Set PPU_ADDR to the address of pattern #255 in
  STA PPU_ADDR               ; pattern table 1
  LDA #LO(PPU_PATT_1+16*255)
  STA PPU_ADDR
 
- LDA #0
- LDX #$10
+ LDA #0                 ; We are going to zero the pattern, so set A = 0 to send
+                        ; to the PPU
 
-.loop_CA8CB
+ LDX #16                ; There are 16 bytes in a pattern, so set a byte counter
+                        ; in X
 
- STA PPU_DATA
- DEX
- BNE loop_CA8CB
+.svip12
 
- JSR PlayMusicAtVBlank  ; Wait for the next VBlank and play the background music
+ STA PPU_DATA           ; Send a zero the PPU
 
- LDX #0
- JSR SendBitplaneToPPU
- LDX #1
- JSR SendBitplaneToPPU
- LDX #0
- STX hiddenBitPlane
- STX nmiBitplane
- JSR SetDrawingBitplane
+ DEX                    ; Decrement the byte counter in X
+
+ BNE svip12             ; Loop back until we have sent all 16 zeroes to the PPU
 
  JSR PlayMusicAtVBlank  ; Wait for the next VBlank and play the background music
 
- LDA QQ11
- STA QQ11a
+ LDX #0                 ; Configure bitplane 0 to be sent to the PPU in the NMI,
+ JSR SendBitplaneToPPU  ; so the patterns and nametables will be sent to the PPU
+                        ; during the next few VBlanks
 
- AND #$40
- BEQ CA8FC
- LDA QQ11
- CMP #$DF
- BEQ CA8FC
- LDA #0
- BEQ CA8FE
+ LDX #1                 ; Configure bitplane 1 to be sent to the PPU in the NMI
+ JSR SendBitplaneToPPU  ; so the patterns and nametables will be sent to the PPU
+                        ; during the next few VBlanks
 
-.CA8FC
+ LDX #0                 ; Hide bitplane 0, so:
+ STX hiddenBitPlane     ;
+                        ;   * Colour %01 (1) is the hidden colour (black)
+                        ;   * Colour %10 (2) is the visible colour (cyan)
 
- LDA #$80
+ STX nmiBitplane        ; Set nmiBitplane = 0 so bitplane 0 is the first to be
+                        ; sent in the NMI handler
 
-.CA8FE
+ JSR SetDrawingBitplane ; Set the drawing bitplane to bitplane 0
 
- STA showUserInterface
+ JSR PlayMusicAtVBlank  ; Wait for the next VBlank and play the background music
 
- PLA
+ LDA QQ11               ; Set the old view number in QQ11a to the new view
+ STA QQ11a              ; number in QQ11, to denote that we have now changed
+                        ; view to the view in QQ11
 
- STA ppuCtrlCopy        ; Store the new value of PPU_CTRL in ppuCtrlCopy so we
-                        ; can check its value without having to access the PPU
+ AND #%01000000         ; If bit 6 of the view number is clear, then there is an
+ BEQ svip13             ; icon bar, so jump to svip13 to set showUserInterface
+                        ; to denote there is a user interface
 
- STA PPU_CTRL
+ LDA QQ11               ; If the view type in QQ11 is $DF (Start screen with the
+ CMP #$DF               ; inverted font loaded), jump to svip13 to set
+ BEQ svip13             ; showUserInterface to denote there is a user interface
 
- JMP FetchPalettes2_b3
+                        ; If we get here then there is no user interface and
+                        ; and this is not the Start screen with the inverted
+                        ; font loaded ???
+
+ LDA #0                 ; Clear bit 7 of A so we can set showUserInterface to
+ BEQ svip14             ; denote that there is no user interface, and jump
+                        ; to svip14 to set the value (this BEQ is effectively
+                        ; a JMP as A is always zero)
+
+.svip13
+
+ LDA #%10000000         ; Set bit 7 of A so we can set showUserInterface to
+                        ; denote that there is a user interface
+
+.svip14
+
+ STA showUserInterface  ; Set showUserInterface to the value of A that we just
+                        ; set for the view
+
+ PLA                    ; Restore the copy of ppuCtrlCopy that we put on the
+ STA ppuCtrlCopy        ; stack so it's preserved across the call to the
+                        ; subroutine
+
+ STA PPU_CTRL           ; Set PPU_CTRL to the copy we made, so it's also
+                        ; preserved across the call
+
+ JMP FetchPalettes2_b3  ; ???, returning from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: SendPattern0ToPPU
+;       Name: SendFontImageToPPU
 ;       Type: Subroutine
 ;   Category: PPU
-;    Summary: Send a pattern to bitplane 0 in the PPU and zeroes to bitplane 1
+;    Summary: Send a font to the PPU as a set of patterns in bitplane 0 and
+;             zeroes in bitplane 1
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The number of tile patterns to send to the PPU
+;
+;   SC(1 0)             The address of the data in the pattern buffer to send to
+;                       the PPU
 ;
 ; ******************************************************************************
 
-.SendPattern0ToPPU
+.SendFontImageToPPU
 
- LDY #0
+ LDY #0                 ; We are about to send a batch of bytes to the PPU, so
+                        ; set an index counter in Y
 
-.CA90B
+.sppu1
 
                         ; We repeat the following code eight times, so it sends
                         ; all eight bytes of the pattern in bitplane 0 to the
@@ -2111,10 +2231,10 @@ ENDIF
  STA PPU_DATA           ; the index in Y
  INY
 
- BNE CA93F
- INC SC+1
+ BNE sppu2              ; If Y just wrapped around to zero, increment the high
+ INC SC+1               ; byte of SC(1 0) to point to the next page in memory
 
-.CA93F
+.sppu2
 
  LDA #0                 ; Send the pattern's second bitplane to the PPU, so all
  STA PPU_DATA           ; eight bytes of the pattern in bitplane 1 are set to
@@ -2126,9 +2246,12 @@ ENDIF
  STA PPU_DATA
  STA PPU_DATA
 
- DEX
- BNE CA90B
- RTS
+ DEX                    ; Decrement the pattern counter in X
+
+ BNE sppu1              ; Loop back to send the next pattern to the PPU until we
+                        ; have sent X patterns
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -2160,7 +2283,14 @@ ENDIF
 ;       Name: SendBitplaneToPPU
 ;       Type: Subroutine
 ;   Category: PPU
-;    Summary: ???
+;    Summary: Configure a bitplane to be sent to the PPU in the NMI
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The number of the bitplane to configure to be sent to
+;                       the PPU in the NMI handler
 ;
 ; ******************************************************************************
 
@@ -2289,7 +2419,9 @@ ENDIF
 
 .CA9F2
 
- JSR SetupSprite0
+ JSR SetupSprite0       ; Set the coordinates of sprite 0 so we can detect when
+                        ; the PPU starts to draw the icon bar
+
  LDA #0
  STA firstNametableTile
  LDA #37

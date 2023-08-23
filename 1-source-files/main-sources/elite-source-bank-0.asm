@@ -1261,9 +1261,10 @@ ENDIF
 
 .FlightLoop4To16
 
- LDA QQ11               ; If this is not the space view, jump to main1 to
- BNE main1              ; print the flight message for non-space views,
-                        ; rejoining the main subroutine at MA16 below
+ LDA QQ11               ; If this is not the space view (i.e. QQ11 is non-zero),
+ BNE main1              ; jump to main1 to print the flight message for
+                        ; non-space views, rejoining the main subroutine at MA16
+                        ; below
 
  DEC DLY                ; Decrement the delay counter in DLY, which is used to
                         ; control how long flight messages remain on-screen
@@ -1775,7 +1776,7 @@ ENDIF
 
 .MA23
 
- LDA QQ11               ; If this is not a space view (i.e. QQ11 is non-zero)
+ LDA QQ11               ; If this is not the space view (i.e. QQ11 is non-zero)
  BNE MA232              ; then jump to MA232 to return from the main flight loop
                         ; (as MA232 is an RTS)
 
@@ -2692,9 +2693,10 @@ ENDIF
  LDA #16                ; Print recursive token 130 ("RATING:") followed by
  JSR TT68               ; a colon
 
- LDA languageNumber     ; ???
- AND #%00000001
- BEQ P%+5
+ LDA languageNumber     ; If bit 0 of languageNumber is clear then the chosen
+ AND #%00000001         ; language is not English, so skip the following
+ BEQ P%+5               ; instruction (as the screen has a different layout in
+                        ; the other languages)
 
  JSR TT162              ; Print a newline
 
@@ -2751,9 +2753,10 @@ ENDIF
  TXA                    ; Store the combat rank in X on the stack
  PHA
 
- LDA languageNumber     ; ???
- AND #%00000101
- BEQ P%+8
+ LDA languageNumber     ; If bits 0 and 2 of languageNumber are clear then the
+ AND #%00000101         ; chosen language is not English or French, so skip
+ BEQ P%+8               ; the following two instructions (as the screen has a
+                        ; different layout in German)
 
  JSR TT162              ; Print two newlines
  JSR TT162
@@ -2866,7 +2869,8 @@ ENDIF
  LDA #$98               ; Clear the screen and and set the view type in QQ11 to
  JSR ChangeToView       ; $98 (Status Mode)
 
- JSR SetSelectedSystem  ; ???
+ JSR SetSelectedSystem  ; Set the selected system to the nearest system, if we
+                        ; don't already have a selected system
 
  LDA #7                 ; Move the text cursor to column 7
  STA XC
@@ -2914,8 +2918,9 @@ ENDIF
                         ; condition) followed by a newline
 
  LDA languageNumber     ; If bit 2 of languageNumber is clear then the chosen
- AND #%00000100         ; language is not French, so ???
- BEQ stat1
+ AND #%00000100         ; language is not French, so jump to stat1 to skip the
+ BEQ stat1              ; following (as the screen has a different layout in
+                        ; French)
 
  JSR PrintLegalStatus   ; Print the current legal status
 
@@ -3026,15 +3031,16 @@ ENDIF
                         ; on to the next one
 
  LDA languageNumber     ; If bit 2 of languageNumber is set then the chosen
- AND #%00000100         ; language is French, so ???
- BNE C88D0
+ AND #%00000100         ; language is French, so jump to stat3 to skip the
+ BNE stat3              ; following (as the screen has a different layout in
+                        ; French)
 
  TXA                    ; Print recursive token 96 + X, which will print from 96
  CLC                    ; ("FRONT") through to 99 ("RIGHT"), followed by a space
  ADC #96
  JSR spc
 
-.C88D0
+.stat3
 
  LDA #103               ; Set A to token 103 ("PULSE LASER")
 
@@ -3064,8 +3070,9 @@ ENDIF
                         ; status)
 
  LDA languageNumber     ; If bit 2 of languageNumber is clear then the chosen
- AND #%00000100         ; language is not French, so ???
- BEQ C88FB
+ AND #%00000100         ; language is not French, so jump to stat4 to skip the
+ BEQ stat4              ; following (as the screen has a different layout in
+                        ; French)
 
  LDA CNT                ; Retrieve the view number from CNT that we stored above
 
@@ -3073,7 +3080,7 @@ ENDIF
  ADC #96                ; ("FRONT") through to 99 ("RIGHT"), followed by a space
  JSR PrintSpaceAndToken
 
-.C88FB
+.stat4
 
  JSR PrintCrTab         ; Print a newline and the correct indent for Status Mode
                         ; entries in the chosen language
@@ -3086,27 +3093,39 @@ ENDIF
  CPX #4                 ; If this isn't the last of the four views, jump back up
  BCC st                 ; to st to print out the next one
 
- LDA #24                ; ???
+ LDA #24                ; Move the text cursor to column 24
  STA XC
 
- LDX languageIndex
- LDA yHeadshot,X
+ LDX languageIndex      ; Move the text cursor to the correct row for the
+ LDA yHeadshot,X        ; commander image in the chosen language
  STA YC
 
- JSR GetHeadshotType_b4
+ JSR GetHeadshotType_b4 ; Set S to the headshot number for the current combat
+                        ; rank and status condition, in the range 0 to 13
 
- LDA S
- ORA #$80
- CMP imageFlags
- STA imageFlags
+ LDA S                  ; Set A = 128 + S, which will be in the range 128 to
+ ORA #%10000000         ; 141
 
- BEQ C8923
+ CMP imageFlags         ; Set the flags according to whether imageFlags already
+                        ; has this value
 
- JSR HideMostSprites2
+ STA imageFlags         ; Set imageFlags to A
 
-.C8923
+ BEQ stat5              ; If imageFlags already had this value, jump to stat5
+                        ; to skip the following instruction
 
- JSR DrawCmdrImage_b6
+ JSR HideMostSprites2   ; Fetch the palettes and hide all sprites, so the view
+                        ; doesn't get corrupted as we load the commander image
+                        ; sprites
+
+.stat5
+
+ JSR DrawCmdrImage_b6   ; Draw the commander image as a coloured face image in
+                        ; front of a greyscale headshot image, with optional
+                        ; embellishments
+
+                        ; Fall through into DrawViewInNMI to draw the updated
+                        ; view
 
 ; ******************************************************************************
 ;
@@ -3155,15 +3174,20 @@ ENDIF
 .C8955
 
  LDX #$FF
- LDA QQ11
- CMP #$95
+
+ LDA QQ11               ; If the view type in QQ11 is $95 (Trumble mission
+ CMP #$95               ; briefing), jump to C896C to ???
  BEQ C896C
- CMP #$DF
- BEQ C896C
- CMP #$92
- BEQ C896C
- CMP #$93
- BEQ C896C
+
+ CMP #$DF               ; If the view type in QQ11 is $DF (Start screen with
+ BEQ C896C              ; the inverted font loaded), jump to C896C to ???
+
+ CMP #$92               ; If the view type in QQ11 is $92 (Mission 1 rotating
+ BEQ C896C              ; ship briefing), jump to C896C to ???
+
+ CMP #$93               ; If the view type in QQ11 is $93 (Mission 1 text
+ BEQ C896C              ; briefing), jump to C896C to ???
+
  ASL A
  BPL C896E
 
@@ -8867,9 +8891,9 @@ ENDIF
 
 .TT14
 
- LDA QQ11               ; If the current view is the Short-range Chart, which
- CMP #$9C               ; is view type $9C, then jump up to TT126 to draw the
- BEQ TT126              ; crosshairs and circle for that view
+ LDA QQ11               ; If the view type in QQ11 is $9C (Short-range Chart),
+ CMP #$9C               ; jump up to TT126 to draw the crosshairs and circle for
+ BEQ TT126              ; that view
 
                         ; Otherwise this is the Long-range Chart, so we draw the
                         ; crosshairs and circle for that view instead
@@ -9273,11 +9297,11 @@ ENDIF
  EOR #$FF
  PHA
 
- LDA QQ11               ; ???
- CMP #$9C
+ LDA QQ11               ; If the view type in QQ11 is $9C (Short-range Chart),
+ CMP #$9C               ; jump up to C9B28 to ???
  BEQ C9B28
 
- PLA
+ PLA                    ; ???
  TAX
  PLA
  ASL A
@@ -9341,8 +9365,9 @@ ENDIF
 
  LDA QQ11               ; Fetch the current view type into A
 
- CMP #$9C               ; If this is the Short-range Chart screen, jump to TT105
- BEQ TT105
+ CMP #$9C               ; If the view type in QQ11 is $9C (Short-range Chart),
+ BEQ TT105              ; jump to TT105 to draw the correct crosshairs for that
+                        ; chart
 
                         ; We now set the pixel coordinates of the crosshairs in
                         ; QQ9 and QQ9+1 so they fit into the chart, with a
@@ -11298,6 +11323,8 @@ ENDIF
 ;
 ; ******************************************************************************
 
+.BuyAndSellCargo
+
  LDA QQ12
  BNE CA028
 
@@ -11919,7 +11946,8 @@ ENDIF
 
  LDY #$1E               ; ???
  JSR NOISE
- JMP subm_A28A
+
+ JMP SetWitchspaceView
 
 ; ******************************************************************************
 ;
@@ -11991,58 +12019,67 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_A28A
+;       Name: SetWitchspaceView
 ;       Type: Subroutine
-;   Category: Flight
-;    Summary: ???
+;   Category: Drawing the screen
+;    Summary: Update the current view for witchspace
 ;
 ; ******************************************************************************
 
-.subm_A28A
+.SetWitchspaceView
 
- LDA QQ11               ; ???
- BEQ CA2B9
+ LDA QQ11               ; If this is the space view (i.e. QQ11 is zero), jump to
+ BEQ witc5              ; witc5 to set the current space view type to 4 and show
+                        ; the front space view
 
- LDA QQ11
- AND #$0E
- CMP #$0C
- BNE CA2A2
+ LDA QQ11               ; If the view in QQ11 is not %0000110x (i.e. 12 or 13,
+ AND #%00001110         ; which are the Short-range Chart and Long-range Chart),
+ CMP #%00001100         ; jump to witc2 to keep checking for other view types
+ BNE witc2
 
- LDA QQ11
- CMP #$9C
- BNE CA29F
+ LDA QQ11               ; If the view type in QQ11 is not $9C (Short-range
+ CMP #$9C               ; Chart), then this must be the Long-range Chart, so
+ BNE witc1              ; jump to TT22 via witc1 to show the Long-range Chart
 
- JMP TT23
+ JMP TT23               ; Otherwise this is the Short-range Chart, so jump to
+                        ; TT23 to show the Short-range Chart, returning from the
+                        ; subroutine using a tail call
 
-.CA29F
+.witc1
 
- JMP TT22
+ JMP TT22               ; This is the Long-range Chart, so jump to TT22 to show
+                        ; it, returning from the subroutine using a tail call
 
-.CA2A2
+.witc2
 
- LDA QQ11
- CMP #$97
- BNE CA2AB
- JMP TT213
+ LDA QQ11               ; If the view type in QQ11 is not $97 (Inventory), then
+ CMP #$97               ; jump to witc3 to keep checking for other view types
+ BNE witc3
 
-.CA2AB
+ JMP TT213              ; This is the Inventory screen, so jump to TT213 to show
+                        ; it, returning from the subroutine using a tail call
 
- CMP #$BA
- BNE CA2B6
+.witc3
 
- LDA #$97               ; Set the view type in QQ11 to $97 (Inventory)
- STA QQ11
+ CMP #$BA               ; If the view type in QQ11 is not $BA (Market Price),
+ BNE witc4              ; then jump to witc4 to display the Status Mode screen
 
- JMP TT167
+ LDA #$97               ; Set the view type in QQ11 to $97 (Inventory), so the
+ STA QQ11               ; call to TT167 toggles this to the Market Price screen
 
-.CA2B6
+ JMP TT167              ; Jump to TT167 to show the Market Price screen,
+                        ; returning from the subroutine using a tail call
 
- JMP STATUS
+.witc4
 
-.CA2B9
+ JMP STATUS             ; Jump to STATUS to display the Status Mode screen,
+                        ; returning from the subroutine using a tail call
 
- LDX #4
- STX VIEW
+.witc5
+
+ LDX #4                 ; If we get here then this is the space view, so set the
+ STX VIEW               ; current space view to 4 to denote witchspace and fall
+                        ; through into TT110 to show the front space view
 
 ; ******************************************************************************
 ;
@@ -15673,6 +15710,7 @@ ENDIF
 
  LDA QQ11
  BNE CAD2E
+
  JSR DOKEY
  TXA
  RTS
@@ -21575,19 +21613,17 @@ ENDIF
  TXA                    ; Show the icon bar with type X
  JSR SetupIconBar_b3
 
- LDA QQ11               ; If the new view is the Game Over screen (i.e. QQ11 is
- CMP #$C4               ; 4 with bits 6 and 7 set to indicate there is no icon
- BEQ scrn4              ; bar), jump to scrn4 to set up attribute buffer 0 and
-                        ; return from the subroutine
+ LDA QQ11               ; If the view type in QQ11 is $C4 (Game Over screen),
+ CMP #$C4               ; jump to scrn4 to set up attribute buffer 0 and
+ BEQ scrn4              ; return from the subroutine
 
- LDA QQ11               ; If the new view is the Long-range Chart (i.e. QQ11 is
- CMP #$8D               ; 13 with bit 7 set to put the icon bar on row 27 at the
- BEQ scrn6              ; bottom of the screen), jump to scrn6 to skip loading
-                        ; the ??? font
+ LDA QQ11               ; If the view type in QQ11 is $8D (Long-range Chart),
+ CMP #$8D               ; jump to scrn6 to skip loading the inverted font
+ BEQ scrn6
 
- CMP #$CF               ; If the new view is the Start screen (i.e. QQ11 is 15
- BEQ scrn6              ; with bits 6 and 7 set to indicate there is no icon
-                        ; bar), jump to scrn6 to skip loading the inverted font
+ CMP #$CF               ; If the view type in QQ11 is $8D (Start screen with
+ BEQ scrn6              ; neither font loaded), jump to scrn6 to skip loading
+                        ; the inverted font
 
  AND #%00010000         ; If bit 4 of the new view in QQ11 is clear, jump to
  BEQ scrn6              ; scrn6 to skip loading the inverted font
@@ -21602,12 +21638,12 @@ ENDIF
 .scrn6
 
  LDA QQ11               ; If bit 5 of the new view in QQ11 is clear, jump to
- AND #%00100000         ; scrn7 to skip loading the font
+ AND #%00100000         ; scrn7 to skip loading the normal font
  BEQ scrn7
 
- JSR SetFont_b3         ; Load the font into pattern buffer 1, and a set of
-                        ; filled blocks into pattern buffer 0, from pattern #161
-                        ; onwards
+ JSR SetFont_b3         ; Load the normal font into pattern buffer 1, and a set
+                        ; of filled blocks into pattern buffer 0, from pattern
+                        ; #161 onwards
 
 .scrn7
 

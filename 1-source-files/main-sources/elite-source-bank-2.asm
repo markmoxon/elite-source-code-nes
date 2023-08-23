@@ -16929,8 +16929,9 @@ ENDIF
 
 .CB6D8
 
- LDA QQ11
- BNE CB6DF
+ LDA QQ11               ; If this is not the space view (i.e. QQ11 is non-zero)
+ BNE CB6DF              ; then jump to CB6DF to skip the following instruction
+
  JMP CB83E
 
 .CB6DF
