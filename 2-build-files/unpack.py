@@ -362,7 +362,7 @@ extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/
 
 start = 0xA493 - 0x8000
 end = 0xA4D3 - 0x8000
-extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "missileImage", palette=11, pixel_width=16, data_is_packed=False, transparent=False)
+extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "inventoryIcon", palette=11, pixel_width=16, data_is_packed=False, transparent=False)
 
 start = 0x8100 - 0x8000
 end = 0x8500 - 0x8000
