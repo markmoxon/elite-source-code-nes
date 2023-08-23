@@ -3103,8 +3103,8 @@ ENDIF
  JSR GetHeadshotType_b4 ; Set S to the headshot number for the current combat
                         ; rank and status condition, in the range 0 to 13
 
- LDA S                  ; Set A = 128 + S, which will be in the range 128 to
- ORA #%10000000         ; 141
+ LDA S                  ; Set A to %1000xxxx where %xxxx is the headshot number
+ ORA #%10000000         ; in the range 0 to 13
 
  CMP imageFlags         ; Set the flags according to whether imageFlags already
                         ; has this value
@@ -3124,15 +3124,15 @@ ENDIF
                         ; front of a greyscale headshot image, with optional
                         ; embellishments
 
-                        ; Fall through into DrawViewInNMI to draw the updated
-                        ; view
+                        ; Fall through into DrawViewInNMI to configure the NMI
+                        ; handler to draw the view
 
 ; ******************************************************************************
 ;
 ;       Name: DrawViewInNMI
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: Configure the NMI handler to draw the view
 ;
 ; ******************************************************************************
 
@@ -3231,7 +3231,7 @@ ENDIF
 ;       Name: DrawScreenInNMI
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: Configure the NMI handler to draw the screen
 ;
 ; ******************************************************************************
 
@@ -4358,7 +4358,8 @@ ENDIF
  JSR DETOK_b2           ; PLANET"), which will print on-screen as the left align
                         ; code disables justified text
 
- JMP DrawScreenInNMI    ; ???
+ JMP DrawScreenInNMI    ; Configure the NMI handler to draw the screen,
+                        ; returning from the subroutine using a tail call
 
 .HME5
 
@@ -4388,7 +4389,8 @@ ENDIF
                         ; and move the text cursor to column 1 on row 21, i.e.
                         ; the start of the top row of the three bottom rows
 
- JMP DrawScreenInNMI    ; ???
+ JMP DrawScreenInNMI    ; Configure the NMI handler to draw the screen,
+                        ; returning from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -7112,7 +7114,7 @@ ENDIF
  JSR DETOK_b2           ; at the start of mission 2, asking us to head for
                         ; Ceerdi for a mission briefing
 
- JSR DrawViewInNMI      ; ???
+ JSR DrawViewInNMI      ; Configure the NMI handler to draw the view
 
  JMP BAY                ; Jump to BAY to go to the docking bay (i.e. show the
                         ; Status Mode screen) and return from the subroutine
@@ -7259,7 +7261,7 @@ ENDIF
  LDA #199               ; Print extended token 199, which is the briefing for
  JSR DETOK_b2           ; the Trumbles mission
 
- JSR DrawViewInNMI      ; ???
+ JSR DrawViewInNMI      ; Configure the NMI handler to draw the view
 
  JSR YESNO              ; Call YESNO to wait until either "Y" or "N" is pressed
 
@@ -7332,7 +7334,8 @@ ENDIF
 
  LDA #$50               ; ???
  STA INWK+6
- JSR HideMostSprites2
+
+ JSR HideMostSprites2   ; Fetch the palettes and hide all sprites
 
  LDA #$92               ; Clear the screen and and set the view type in QQ11 to
  JSR ChangeToViewNMI    ; $92 (Mission 1 rotating ship briefing)
@@ -7429,7 +7432,8 @@ ENDIF
  JSR DETOK_b2           ; to row 10, white, lower case}{white}{all caps}INCOMING
                         ; MESSAGE"
 
- JSR DrawViewInNMI2     ; ???
+ JSR DrawViewInNMI2     ; Hide all sprites and configure the NMI handler to draw
+                        ; the view
 
  LDY #100               ; Delay for 100 vertical syncs (100/50 = 2 seconds) and
  JMP DELAY              ; return from the subroutine using a tail call
@@ -8567,7 +8571,7 @@ ENDIF
 
  JSR PDESC_b2           ; Call PDESC to print the system's extended description
 
- JSR HideMostSprites2   ; ???
+ JSR HideMostSprites2   ; Fetch the palettes and hide all sprites
 
  LDA #22                ; Move the text cursor to column 22
  STA XC
@@ -8584,7 +8588,8 @@ ENDIF
  LDY #7
  JSR DrawSystemImage_b3
 
- JMP DrawViewInNMI
+ JMP DrawViewInNMI      ; Configure the NMI handler to draw the view, returning
+                        ; from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -8617,7 +8622,7 @@ ENDIF
                         ; is 128 pixels high, starting on row 24 and ending on
                         ; row 151
 
- JSR HideMostSprites2   ; ???
+ JSR HideMostSprites2   ; Fetch the palettes and hide all sprites
 
  JSR TT14               ; Call TT14 to draw a circle with crosshairs at the
                         ; current system's galactic coordinates
@@ -8701,7 +8706,8 @@ ENDIF
  LDA #$8F               ; ???
  STA Yx2M1
 
- JMP DrawViewInNMI
+ JMP DrawViewInNMI      ; Configure the NMI handler to draw the view, returning
+                        ; from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -9098,8 +9104,9 @@ ENDIF
 .zebra
 
  JMP DrawViewInNMI2     ; There are no Trumbles in the hold, so call
-                        ; DrawViewInNMI2 and return from the subroutine using a
-                        ; tail call ???
+                        ; DrawViewInNMI2 to hide all sprites and configure the
+                        ; NMI handler to draw the view, returning from the
+                        ; subroutine using a tail call
 
                         ; If we get here then we have Trumbles in the hold, so
                         ; we print out the number (though we never get here in
@@ -9656,7 +9663,8 @@ ENDIF
  LDA #190               ; Print recursive token 30 ("SHORT RANGE CHART") on the
  JSR NLIN3              ; top row
 
- JSR HideMostSprites1   ; ???
+ JSR HideMostSprites1   ; Hide all sprites, after first fetching the palettes
+                        ; if we are changing view
 
  JSR TT14               ; Call TT14 to draw a circle with crosshairs at the
                         ; current system's galactic coordinates
@@ -9880,7 +9888,9 @@ ENDIF
 
  LDA #$8F               ; ???
  STA Yx2M1
- JMP DrawViewInNMI
+
+ JMP DrawViewInNMI      ; Configure the NMI handler to draw the view, returning
+                        ; from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -10497,6 +10507,30 @@ ENDIF
 
 ; ******************************************************************************
 ;
+;       Name: GalacticHyperdrive
+;       Type: Subroutine
+;   Category: Flight
+;    Summary: If we are in space and the countdown has ended, activate the
+;             galactic hyperdrive
+;
+; ******************************************************************************
+
+.GalacticHyperdrive
+
+ LDA QQ12               ; If we are docked (QQ12 = $FF) then jump to dockEd to
+ BNE dockEd             ; print an error message and return from the subroutine
+                        ; using a tail call (as we can't hyperspace when docked)
+
+ LDA QQ22+1             ; Fetch QQ22+1, which contains the number that's shown
+                        ; on-screen during hyperspace countdown
+
+ BEQ Ghy                ; If the countdown is zero, then the galactic hyperdrive
+                        ; has been activated, so jump to Ghy to process it
+
+ RTS                    ; Otherwise return from the subroutine
+
+; ******************************************************************************
+;
 ;       Name: hyp
 ;       Type: Subroutine
 ;   Category: Flight
@@ -10504,18 +10538,11 @@ ENDIF
 ;
 ; ------------------------------------------------------------------------------
 ;
-; Called when "H" or CTRL-H is pressed during flight. Checks the following:
+; Called when the hyperspace icon is chosen during flight. Checks the following:
 ;
 ;   * We are in space
 ;
 ;   * We are not already in a hyperspace countdown
-;
-; If CTRL is being held down, we jump to Ghy to engage the galactic hyperdrive,
-; otherwise we check that:
-;
-;   * The selected system is not the current system
-;
-;   * We have enough fuel to make the jump
 ;
 ; and if all the pre-jump checks are passed, we print the destination on-screen
 ; and start the countdown.
@@ -10523,14 +10550,6 @@ ENDIF
 ; ******************************************************************************
 
 .hyp
-
- LDA QQ12               ; ???
- BNE dockEd
- LDA QQ22+1
- BEQ Ghy
- RTS
-
-.subm_9E51
 
  LDA QQ12               ; If we are docked (QQ12 = $FF) then jump to dockEd to
  BNE dockEd             ; print an error message and return from the subroutine
@@ -10849,7 +10868,8 @@ ENDIF
  LDA #202               ; Print token 42 ("RANGE") followed by a question mark
  JSR prq
 
- JMP DrawScreenInNMI    ; ???
+ JMP DrawScreenInNMI    ; Configure the NMI handler to draw the screen,
+                        ; returning from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -11325,246 +11345,405 @@ ENDIF
 
 .BuyAndSellCargo
 
- LDA QQ12
- BNE CA028
+ LDA QQ12               ; If we are docked (QQ12 = $FF) then jump to sell3 to
+ BNE sell3              ; show the buy/sell screen
 
-.CA01C
+.sell1
 
- JSR HideMostSprites1
- JSR DrawInventoryIcon
- JMP DrawViewInNMI
+                        ; If we get here then we are in space, so we just
+                        ; display the view as we can't buy or sell cargo in
+                        ; space
 
-.CA025
+ JSR HideMostSprites1   ; Hide all sprites, after first fetching the palettes
+                        ; if we are changing view
 
- JMP CA0F4
+ JSR DrawInventoryIcon  ; Draw the inventory icon on top of the second button
+                        ; in the icon bar
 
-.CA028
+ JMP DrawViewInNMI      ; Configure the NMI to update the view on-screen,
+                        ; returning from the subroutine using a tail call
 
- LDA #0
- STA QQ29
- JSR subm_A130
- JSR subm_A155
- JSR CA01C
+.sell2
 
-.CA036
+ JMP sell13             ; Jump to sell13 to process the left button being
+                        ; pressed
+
+.sell3
+
+ LDA #0                 ; We're going to highlight the current market item and
+ STA QQ29               ; let the player move the highlight up and down, so use
+                        ; QQ29 to denote the number of the currently selected
+                        ; item, starting with item 0 at the top of the list
+
+ JSR HighlightSaleItem  ; Highlight the name, price and availability of market
+                        ; item 0 on the correct row for the chosen language
+
+ JSR PrintCash          ; Print our cash levels in the correct place for the
+                        ; chosen language
+
+ JSR sell1              ; Call sell1 above to clear the screen and update the
+                        ; view
+
+.sell4
 
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA controller1B
- BMI CA06E
- LDA controller1Up
- ORA controller1Down
- BEQ CA04E
- LDA controller1Left
- ORA controller1Right
- BNE CA06E
+ LDA controller1B       ; If the B button is being pressed, jump to sell6
+ BMI sell6
 
-.CA04E
+ LDA controller1Up      ; If neither of the up or down buttons are being
+ ORA controller1Down    ; pressed, jump to sell5
+ BEQ sell5
 
- LDA controller1Up
- AND #$F0
- CMP #$F0
- BEQ CA079
- LDA controller1Down
- AND #$F0
- CMP #$F0
- BEQ CA09B
- LDA controller1Leftx8
- CMP #$F0
- BEQ CA025
- LDA controller1Rightx8
- CMP #$F0
- BEQ CA0B3
+ LDA controller1Left    ; If neither of the left or right buttons are being
+ ORA controller1Right   ; pressed, jump to sell6
+ BNE sell6
 
-.CA06E
+.sell5
 
- LDA pointerButton
- BEQ CA036
- JSR CheckForPause-3
- BCS CA036
- RTS
+                        ; If we get here then at least one of the direction
+                        ; buttons is being pressed
 
-.CA079
+ LDA controller1Up      ; If the up button is being pressed and has been held
+ AND #%11110000         ; down for at least four VBlanks, jump to sell7
+ CMP #%11110000
+ BEQ sell7
 
- LDA QQ29
- JSR subm_A147
- LDA QQ29
- SEC
- SBC #1
+ LDA controller1Down    ; If the down button is being pressed and has been held
+ AND #%11110000         ; down for at least four VBlanks, jump to sell10
+ CMP #%11110000
+ BEQ sell10
 
- BPL CA089
- LDA #0
+ LDA controller1Leftx8  ; If the left button is being pressed and has been held
+ CMP #%11110000         ; down for at least four VBlanks, jump to sell13 via 
+ BEQ sell2              ; sell2
 
-.CA089
+ LDA controller1Rightx8 ; If the right button is being pressed and has been held
+ CMP #%11110000         ; down for at least four VBlanks, jump to sell12
+ BEQ sell12
 
- STA QQ29
+.sell6
 
-.CA08C
+                        ; If we get here then either the B button is being
+                        ; pressed or no directional buttons are being pressed
 
- LDA QQ29
+ LDA pointerButton      ; If the icon bar pointer is over a blank button on the
+ BEQ sell4              ; icon bar, loop back to sell4 to keep listening for
+                        ; button presses
 
- JSR subm_A130
- JSR DrawScreenInNMI
+ JSR CheckForPause-3    ; Check the value of pointerButton to see if the pause
+                        ; button is under the icon bar pointer
+
+ BCS sell4              ; If the C flag is set then the pause button has been
+                        ; pressed and the options menu has been processed, so
+                        ; loop back to sell4 to keep listening for button
+                        ; presses ???
+
+ RTS                    ; Otherwise return from the subroutine
+
+.sell7
+
+                        ; If we get here then the up button is being pressed
+
+ LDA QQ29               ; Set A to the number of the currently selected item in
+                        ; QQ29
+
+ JSR PrintMarketItem    ; Print the name, price and availability of market item
+                        ; item A on the correct row for the chosen language, to
+                        ; remove the highlight from the currrent item
+
+ LDA QQ29               ; Set A = QQ29 - 1
+ SEC                    ;
+ SBC #1                 ; So A is the number of the item above the currently
+                        ; selected item
+
+ BPL sell8              ; If A is negative, set A = 0, so 0 is the minimum value
+ LDA #0                 ; of A (so we can't move the highlight off the top of
+                        ; the list of items)
+
+.sell8
+
+ STA QQ29               ; Store the updated item number in QQ29
+
+.sell9
+
+ LDA QQ29               ; Set A to the number of the currently selected item in
+                        ; QQ29 (we do this so we can jump here)
+
+ JSR HighlightSaleItem  ; Highlight the name, price and availability of market
+                        ; item A on the correct row for the chosen language
+
+ JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen
 
  JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
                         ; sent to the PPU, so the screen is fully updated and
                         ; there is no more data waiting to be sent to the PPU
 
- JMP CA036
+ JMP sell4              ; Jump back to sell4 to keep listening for button
+                        ; presses
 
-.CA09B
+.sell10
 
- LDA QQ29
- JSR subm_A147
+                        ; If we get here then the down button is being pressed
 
- LDA QQ29
- CLC
- ADC #1
+ LDA QQ29               ; Set A to the number of the currently selected item in
+                        ; QQ29
 
- CMP #$11
- BNE CA0AD
- LDA #$10
+ JSR PrintMarketItem    ; Print the name, price and availability of market item
+                        ; item A on the correct row for the chosen language, to
+                        ; remove the highlight from the currrent item
 
-.CA0AD
+ LDA QQ29               ; Set A = QQ29 + 1
+ CLC                    ;
+ ADC #1                 ; So A is the number of the item below the currently
+                        ; selected item
 
- STA QQ29
- JMP CA08C
+ CMP #17                ; If A = 17, set A = 16, so 16 is the maximum value of
+ BNE sell11             ; A (so we can't move the highlight off the bottom of
+ LDA #16                ; the list of items)
 
-.CA0B3
+.sell11
 
- LDA #1
- JSR tnpr
- BCS CA12D
- LDY QQ29
- LDA AVL,Y
- BEQ CA12D
- LDA QQ24
+ STA QQ29               ; Store the updated item number in QQ29
+
+ JMP sell9              ; Jump up to sell9 to highlight the newly selected item
+                        ; and go back to listening for button presses
+
+.sell12
+
+                        ; If we get here then the right button is being pressed,
+                        ; so we process buying an item
+
+ LDA #1                 ; Call tnpr with the selecred market item in QQ29 and
+ JSR tnpr               ; A set to 1, to work out whether we have room in the
+                        ; hold for the selected item (A is preserved by this
+                        ; call, and the C flag contains the result)
+
+ BCS sell14             ; If the C flag is set then we have no room in the hold
+                        ; for the selected item, so jump to sell4 via sell14 to
+                        ; abort the sale and keep listening for button presses
+
+ LDY QQ29               ; Fetch the currently selected market item number from
+                        ; QQ29 into Y
+
+ LDA AVL,Y              ; Set A to the number of available units of the market
+                        ; item in Y
+
+ BEQ sell14             ; If there are no units available, jump to sell4 via
+                        ; sell14 to abort the sale and keep listening for button
+                        ; presses
+
+ LDA QQ24               ; Set P to the item's price / 4
  STA P
- LDA #0
- JSR GC2
- JSR LCASH
- BCC CA12D
- JSR UpdateSaveCount
- LDY #$1C
- JSR NOISE
- LDY QQ29
- LDA AVL,Y
- SEC
- SBC #1
- STA AVL,Y
- LDA QQ20,Y
- CLC
- ADC #1
- STA QQ20,Y
- JSR subm_A155
- JMP CA08C
 
-.CA0F4
+ LDA #0                 ; Set A = 0, so (A P) contains the item's price / 4
 
- LDY QQ29
- LDA AVL,Y
- CMP #$63
- BCS CA12D
- LDA QQ20,Y
- BEQ CA12D
- JSR UpdateSaveCount
- SEC
- SBC #1
+ JSR GC2                ; Call GC2 to calculate:
+                        ;
+                        ;   (Y X) = (A P) * 4
+                        ;
+                        ; which will be the total price of this transaction, as
+                        ; (A P) contains the item's price / 4
+
+ JSR LCASH              ; Subtract (Y X) cash from the cash pot in CASH
+
+ BCC sell14             ; If the C flag is clear, we didn't have enough cash,
+                        ; so jump to sell4 via sell14 to abort the sale and keep
+                        ; listening for button presses
+
+ JSR UpdateSaveCount    ; Update the save counter for the current commander
+
+ LDY #$1C               ; Make a trill noise to indicate that we have bought
+ JSR NOISE              ; something
+
+ LDY QQ29               ; Fetch the currently selected market item number from
+                        ; QQ29 into Y
+
+ LDA AVL,Y              ; Set A to the number of available units of the market
+                        ; item in Y
+
+ SEC                    ; Subtract 1 from the market availability, as we just
+ SBC #1                 ; bought one unit
+ STA AVL,Y
+
+ LDA QQ20,Y             ; Set A to the number of units of this item that we
+                        ; already have in the hold
+
+ CLC                    ; Add 1 to the number of units and update the number in
+ ADC #1                 ; the hold
  STA QQ20,Y
- LDA AVL,Y
- CLC
+
+ JSR PrintCash          ; Print our cash levels in the correct place for the
+                        ; chosen language
+
+ JMP sell9              ; Jump up to sell9 to update the highlighted item with
+                        ; the new availability and go back to listening for
+                        ; button presses
+
+.sell13
+
+                        ; If we get here then the left button is being pressed,
+                        ; so we process selling an item
+
+ LDY QQ29               ; Fetch the currently selected market item number from
+                        ; QQ29 into Y
+
+ LDA AVL,Y              ; If there are 99 or more units available on the market,
+ CMP #99                ; then the market is already saturated, so jump to sell4
+ BCS sell14             ; via sell14 to abort the sale and keep listening for
+                        ; button presses
+
+ LDA QQ20,Y             ; Set A to the number of units of this item that we
+                        ; already have in the hold
+
+ BEQ sell14             ; If we don't have any items of this type in the hold,
+                        ; jump to sell4 via sell14 to abort the sale and keep
+                        ; listening for button presses
+
+ JSR UpdateSaveCount    ; Update the save counter for the current commander
+
+ SEC                    ; Subtract 1 from the number of units and update the
+ SBC #1                 ; number in the hold
+ STA QQ20,Y
+
+ LDA AVL,Y              ; Add 1 to the market availability, as we just sold
+ CLC                    ; one unit into the market
  ADC #1
  STA AVL,Y
- LDA QQ24
+
+ LDA QQ24               ; Set P to the item's price / 4
  STA P
- LDA #0
- JSR GC2
- JSR MCASH
- JSR subm_A155
 
- LDY #3
- JSR NOISE
+ LDA #0                 ; Set A = 0, so (A P) contains the item's price / 4
 
- JMP CA08C
+ JSR GC2                ; Call GC2 to calculate:
+                        ;
+                        ;   (Y X) = (A P) * 4
+                        ;
+                        ; which will be the total price of this transaction, as
+                        ; (A P) contains the item's price / 4
 
-.CA12D
+ JSR MCASH              ; Add (Y X) cash to the cash pot in CASH
 
- JMP CA036
+ JSR PrintCash          ; Print our cash levels in the correct place for the
+                        ; chosen language
+
+ LDY #3                 ; Make a beep sound to indicate that we have made a
+ JSR NOISE              ; sale
+
+ JMP sell9              ; Jump up to sell9 to update the highlighted item with
+                        ; the new availability and go back to listening for
+                        ; button presses
+
+.sell14
+
+ JMP sell4              ; Jump up to sell4 to keep listening for button presses
 
 ; ******************************************************************************
 ;
-;       Name: subm_A130
+;       Name: HighlightSaleItem
 ;       Type: Subroutine
 ;   Category: Market
-;    Summary: ???
+;    Summary: Highlight the name, price and availability of a market item on the
+;             correct row for the chosen language
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The item number of the market item to dsplay
 ;
 ; ******************************************************************************
 
-.subm_A130
+.HighlightSaleItem
 
- TAY
+ TAY                    ; Set Y to the market item number
 
  LDX #2                 ; Set the font bitplane to print in plane 2
  STX fontBitplane
 
- CLC
- LDX languageIndex
- ADC yMarketPrice,X
+ CLC                    ; Move the text cursor to the row for this market item,
+ LDX languageIndex      ; starting from item 0 at the top, on the correct row
+ ADC yMarketPrice,X     ; for the chosen language
  STA YC
- TYA
- JSR TT151
+
+ TYA                    ; Call TT151 to print the item name, market price and
+ JSR TT151              ; availability of the current item, and set QQ24 to the
+                        ; item's price / 4, QQ25 to the quantity available and
+                        ; QQ19+1 to byte #1 from the market prices table for
+                        ; this item
 
  LDX #1                 ; Set the font bitplane to print in plane 1
  STX fontBitplane
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: subm_A147
+;       Name: PrintMarketItem
 ;       Type: Subroutine
 ;   Category: Market
-;    Summary: ???
+;    Summary: Print the name, price and availability of a market item on the
+;             correct row for the chosen language
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The item number of the market item to dsplay
 ;
 ; ******************************************************************************
 
-.subm_A147
+.PrintMarketItem
 
- TAY
- CLC
- LDX languageIndex
- ADC yMarketPrice,X
+ TAY                    ; Set Y to the market item number
+
+ CLC                    ; Move the text cursor to the row for this market item,
+ LDX languageIndex      ; starting from item 0 at the top, on the correct row
+ ADC yMarketPrice,X     ; for the chosen language
  STA YC
- TYA
- JMP TT151
+
+ TYA                    ; Call TT151 to print the item name, market price and
+ JMP TT151              ; availability of the current item, and set QQ24 to the
+                        ; item's price / 4, QQ25 to the quantity available and
+                        ; QQ19+1 to byte #1 from the market prices table for
+                        ; this item
+                        ;
+                        ; When done, return from the subroutine using a tail
+                        ; call
 
 ; ******************************************************************************
 ;
-;       Name: subm_A155
+;       Name: PrintCash
 ;       Type: Subroutine
 ;   Category: Market
-;    Summary: ???
+;    Summary: Print our cash levels in the correct place for the chosen language
 ;
 ; ******************************************************************************
 
-.subm_A155
+.PrintCash
 
- LDA #$80
- STA QQ17
- LDX languageIndex
- LDA yCash,X
+ LDA #%10000000         ; Set bit 7 of QQ17 to switch standard tokens to
+ STA QQ17               ; Sentence Case
+
+ LDX languageIndex      ; Move the text cursor to the correct row for the chosen
+ LDA yCash,X            ; language, as given in the yCash table
  STA YC
- LDA xCash,X
- STA XC
- JMP PCASH
+
+ LDA xCash,X            ; Move the text cursor to the correct column for the
+ STA XC                 ; chosen, as given in the xCash table
+
+ JMP PCASH              ; Jump to PCASH to print recursive token 119
+                        ; ("CASH:{cash} CR{crlf}"), followed by a space, and
+                        ; return from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: xCash
 ;       Type: Variable
 ;   Category: Text
-;    Summary: The text column for the cash on the Market Price page
+;    Summary: The text column for our cash levels on the Market Price page
 ;
 ; ******************************************************************************
 
@@ -11583,7 +11762,7 @@ ENDIF
 ;       Name: yCash
 ;       Type: Variable
 ;   Category: Text
-;    Summary: The text row for the headshot on the Status Mode page
+;    Summary: The text row for the cash levels on the Market Price page
 ;
 ; ******************************************************************************
 
@@ -12118,7 +12297,7 @@ ENDIF
 
  JSR RES2               ; Reset a number of flight variables and workspaces
 
- JSR UpdateSaveCount    ; ???
+ JSR UpdateSaveCount    ; Update the save counter for the current commander
 
  JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
                         ; next VBlank)
@@ -12616,7 +12795,7 @@ ENDIF
  JSR DrawEquipment_b6   ; Draw the currently fitted equipment onto the Cobra Mk
                         ; III image
 
- JSR DrawScreenInNMI
+ JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen
 
  JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
                         ; sent to the PPU, so the screen is fully updated and
@@ -12748,9 +12927,13 @@ ENDIF
 
  JSR subm_EQSHP2
  JSR dn
- JSR HideMostSprites1
- JSR DrawCobraMkIII
- JSR DrawViewInNMI
+
+ JSR HideMostSprites1   ; Hide all sprites, after first fetching the palettes
+                        ; if we are changing view
+
+ JSR DrawCobraMkIII     ; ???
+
+ JSR DrawViewInNMI      ; Configure the NMI handler to draw the view
 
 .CA4DB
 
@@ -12779,8 +12962,9 @@ ENDIF
 
 .CA508
 
- JSR UpdateSaveCount
- LDA XX13
+ JSR UpdateSaveCount    ; Update the save counter for the current commander
+
+ LDA XX13               ; ???
  SEC
  SBC #1
 
@@ -12790,8 +12974,9 @@ ENDIF
  PLA                    ; the pot. If we don't have enough cash, exit to the
                         ; docking bay (i.e. show the Status Mode screen) ???
 
- JSR DrawScreenInNMI    ; ???
- JMP CA4DB
+ JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen
+
+ JMP CA4DB              ; ???
 
 .CA51D
 
@@ -12961,7 +13146,9 @@ ENDIF
  CMP #$1F
  BNE err
  JSR BOOP
- JSR DrawScreenInNMI
+
+ JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen
+
  LDY #$28
  JSR DELAY
  LDA #6
@@ -12980,15 +13167,17 @@ ENDIF
  JSR DrawEquipment_b6   ; Draw the currently fitted equipment onto the Cobra Mk
                         ; III image
 
- JSR DrawScreenInNMI
- JMP CA4DB
+ JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen
+
+ JMP CA4DB              ; ???
 
 .presS
 
  JMP pres
 
- JSR DrawScreenInNMI
- JMP CA4DB
+ JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen
+
+ JMP CA4DB              ; ???
 
 .ed9
 
@@ -13203,7 +13392,7 @@ ENDIF
 
  BPL loop_CA681         ; Loop back until we have printed 21 spaces
 
- JSR DrawScreenInNMI    ; ???
+ JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen
 
  LDY #40                ; Delay for 40 vertical syncs (40/50 = 0.8 seconds)
  JSR DELAY
@@ -13364,7 +13553,8 @@ ENDIF
 
  TYA
  PHA
- JSR DrawScreenInNMI
+
+ JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen
 
  JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
                         ; sent to the PPU, so the screen is fully updated and
@@ -13441,7 +13631,9 @@ ENDIF
  LDA #6
  STA K+1
  JSR DrawSmallBox_b3
- JSR DrawScreenInNMI
+
+ JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen
+
  LDY #0
 
 .CA737
@@ -15613,7 +15805,7 @@ ENDIF
 ;
 ;       Name: YESNO
 ;       Type: Subroutine
-;   Category: Keyboard
+;   Category: Controllers
 ;    Summary: Display "YES" or "NO" and wait until one is chosen
 ;
 ; ------------------------------------------------------------------------------
@@ -15701,7 +15893,7 @@ ENDIF
 ;
 ;       Name: ReadDirectionalPad
 ;       Type: Subroutine
-;   Category: Keyboard
+;   Category: Controllers
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -16920,14 +17112,10 @@ ENDIF
 ;
 ;       Name: TT102
 ;       Type: Subroutine
-;   Category: Keyboard
-;    Summary: Process function key, save key, hyperspace and chart key presses
+;   Category: Controllers
+;    Summary: Process icon bar controller choices
 ;
 ; ------------------------------------------------------------------------------
-;
-; Process function key presses, plus "@" (save commander), "H" (hyperspace),
-; "D" (show distance to system) and "O" (move chart cursor back to current
-; system). We can also pass cursor position deltas in X and Y to indicate that
 ;
 ; Arguments:
 ;
@@ -17053,7 +17241,7 @@ ENDIF
                         ; and move the text cursor to column 1 on row 21, i.e.
                         ; the start of the top row of the three bottom rows
 
- JSR DrawScreenInNMI
+ JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen
 
 .CB118
 
@@ -17099,13 +17287,13 @@ ENDIF
 
 .LABEL_3
 
- CMP #$16               ; ???
- BNE P%+5
- JMP subm_9E51
-
- CMP #$29
+ CMP #22                ; ???
  BNE P%+5
  JMP hyp
+
+ CMP #41
+ BNE P%+5
+ JMP GalacticHyperdrive
 
  CMP #$27               ; ???
  BNE HME1
@@ -17302,7 +17490,7 @@ ENDIF
 ;
 ;       Name: CheckForPause
 ;       Type: Subroutine
-;   Category: Keyboard
+;   Category: Controllers
 ;    Summary: Pause the game if the pause button is pressed
 ;
 ; ------------------------------------------------------------------------------
@@ -17311,6 +17499,14 @@ ENDIF
 ;
 ;   A                   The button number to check to see if it is the pause
 ;                       button
+;
+; Returns:
+;
+;   C flag              The status of the pause button on the icon bar:
+;
+;                         * Clear if the pause button is not being pressed
+;
+;                         * Set if the pause button is being pressed
 ;
 ; Other entry points:
 ;
@@ -17372,7 +17568,10 @@ ENDIF
 
  JSR ClearDashEdge_b6   ; Clear the right edge of the dashboard ???
  JSR CopyNameBuffer0To1
- JSR HideMostSprites1
+
+ JSR HideMostSprites1   ; Hide all sprites, after first fetching the palettes
+                        ; if we are changing view
+
  LDA #0
  STA L045F
  LDA #$C4
@@ -18087,7 +18286,7 @@ ENDIF
 ;
 ;       Name: U%
 ;       Type: Subroutine
-;   Category: Keyboard
+;   Category: Controllers
 ;    Summary: Clear the key logger
 ;
 ; ------------------------------------------------------------------------------
@@ -18878,7 +19077,7 @@ ENDIF
 ;
 ;       Name: DOKEY
 ;       Type: Subroutine
-;   Category: Keyboard
+;   Category: Controllers
 ;    Summary: Scan for the seven primary flight controls
 ;  Deep dive: The key logger
 ;             The docking computer
@@ -19587,7 +19786,7 @@ ENDIF
 ;
 ;       Name: PAS1
 ;       Type: Subroutine
-;   Category: Keyboard
+;   Category: Controllers
 ;    Summary: Display a rotating ship at space coordinates (0, 100, 256)
 ;
 ; ******************************************************************************
@@ -21586,7 +21785,8 @@ ENDIF
                         ; following two instructions, as we don't need to
                         ; initialise the dashboard
 
- JSR HideMostSprites1   ; ??? Something to do with palettes and hiding sprites
+ JSR HideMostSprites1   ; Hide all sprites, after first fetching the palettes
+                        ; if we are changing view
 
  JSR ResetScanner_b3    ; Reset the sprites used for drawing ships on the
                         ; scanner

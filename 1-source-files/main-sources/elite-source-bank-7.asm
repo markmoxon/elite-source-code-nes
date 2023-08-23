@@ -3964,7 +3964,7 @@ ENDIF
 ;
 ;       Name: ReadControllers
 ;       Type: Subroutine
-;   Category: Keyboard
+;   Category: Controllers
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -3985,7 +3985,7 @@ ENDIF
 ;
 ;       Name: ScanButtons
 ;       Type: Subroutine
-;   Category: Keyboard
+;   Category: Controllers
 ;    Summary: ???
 ;
 ; ------------------------------------------------------------------------------
@@ -5842,10 +5842,11 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SendMissilesToPPU
+;       Name: SendInventoryToPPU
 ;       Type: Subroutine
 ;   Category: PPU
-;    Summary: Send X batches of 16 bytes from SC(1 0) to the PPU
+;    Summary: Send X batches of 16 bytes from SC(1 0) to the PPU, for sending
+;             the inventory icon bar image
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -5857,7 +5858,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.SendMissilesToPPU
+.SendInventoryToPPU
 
  LDY #0                 ; Set Y as an index counter for the following block,
                         ; which sends 16 bytes of data from SC(1 0) to the PPU,
@@ -5946,7 +5947,7 @@ ENDIF
 
  DEX                    ; Decrement the block counter in X
 
- BNE SendMissilesToPPU  ; Loop back to the start of the subroutine until we have
+ BNE SendInventoryToPPU ; Loop back to the start of the subroutine until we have
                         ; sent X batches of 16 bytes
 
  RTS                    ; Return from the subroutine
@@ -10043,7 +10044,7 @@ ENDIF
 ;
 ;       Name: ScaleController
 ;       Type: Subroutine
-;   Category: Keyboard
+;   Category: Controllers
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -10081,7 +10082,7 @@ ENDIF
 ;
 ;       Name: UpdateJoystick
 ;       Type: Subroutine
-;   Category: Keyboard
+;   Category: Controllers
 ;    Summary: Update the values of JSTX and JSTY with the values from the
 ;             controller
 ;
@@ -10163,7 +10164,7 @@ ENDIF
 ;
 ;       Name: IncreaseX
 ;       Type: Subroutine
-;   Category: Keyboard
+;   Category: Controllers
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -10186,7 +10187,7 @@ ENDIF
 ;
 ;       Name: DecreaseX
 ;       Type: Subroutine
-;   Category: Keyboard
+;   Category: Controllers
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -10362,7 +10363,8 @@ ENDIF
 ;       Name: HideMostSprites1
 ;       Type: Subroutine
 ;   Category: Drawing sprites
-;    Summary: Fetch the palettes if we are changing view and hide all sprites
+;    Summary: Hide all sprites, after first fetching the palettes if we are
+;             changing view
 ;
 ; ******************************************************************************
 
@@ -10373,7 +10375,7 @@ ENDIF
  BEQ HideMostSprites    ; except for sprite 0 and the icon bar pointer
 
                         ; Otherwise fall through into HideMostSprites2 to fetch
-                        ; the palettes and then hide all the sprites ???
+                        ; the palettes and then hide all the sprites
 
 ; ******************************************************************************
 ;
@@ -10386,7 +10388,7 @@ ENDIF
 
 .HideMostSprites2
 
- JSR FetchPalettes1_b3  ; ???
+ JSR FetchPalettes1_b3  ; Fetch the palettes ???
 
 ; ******************************************************************************
 ;
@@ -10877,7 +10879,7 @@ ENDIF
 ;
 ;       Name: CheckPauseButton
 ;       Type: Subroutine
-;   Category: Keyboard
+;   Category: Controllers
 ;    Summary: Pause the game if the icon bar pointer is not over a blank button
 ;             and the pause button is pressed
 ;
@@ -10896,7 +10898,7 @@ ENDIF
 ;
 ;       Name: CheckForPause_b0
 ;       Type: Subroutine
-;   Category: Keyboard
+;   Category: Controllers
 ;    Summary: Call the CheckForPause routine in ROM bank 0
 ;
 ; ------------------------------------------------------------------------------
@@ -11954,7 +11956,7 @@ ENDIF
 ;
 ;       Name: PAS1_b0
 ;       Type: Subroutine
-;   Category: Keyboard
+;   Category: Controllers
 ;    Summary: Call the PAS1 routine in ROM bank 0
 ;
 ; ******************************************************************************
@@ -12092,7 +12094,7 @@ ENDIF
 ;
 ;       Name: GetName_b6
 ;       Type: Subroutine
-;   Category: Keyboard
+;   Category: Controllers
 ;    Summary: Call the GetName routine in ROM bank 6
 ;
 ; ******************************************************************************
@@ -12199,7 +12201,7 @@ ENDIF
 ;
 ;       Name: PauseGame_b6
 ;       Type: Subroutine
-;   Category: Keyboard
+;   Category: Controllers
 ;    Summary: Call the PauseGame routine in ROM bank 6
 ;
 ; ******************************************************************************
@@ -12222,7 +12224,7 @@ ENDIF
 ;
 ;       Name: SetKeyLogger_b6
 ;       Type: Subroutine
-;   Category: Keyboard
+;   Category: Controllers
 ;    Summary: Call the SetKeyLogger routine in ROM bank 6
 ;
 ; ******************************************************************************
@@ -13244,13 +13246,14 @@ ENDIF
 ;       Name: DrawViewInNMI2
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: Hide all sprites and configure the NMI handler to draw the view
 ;
 ; ******************************************************************************
 
 .DrawViewInNMI2
 
- JSR HideMostSprites1
+ JSR HideMostSprites1   ; Hide all sprites, after first fetching the palettes
+                        ; if we are changing view
 
 ; ******************************************************************************
 ;

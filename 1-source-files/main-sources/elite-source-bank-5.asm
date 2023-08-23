@@ -2512,8 +2512,8 @@ ENDIF
 
 .gsys1
 
- TXA                    ; Set imageFlags to %1100xxxx where X is %xxxx
- ORA #%11000000
+ TXA                    ; Set imageFlags to %1100xxxx where %xxxx is the system
+ ORA #%11000000         ; number in the range 0 to 14
  STA imageFlags
 
  TXA                    ; Set X = X * 2 so we can use it as an index into the

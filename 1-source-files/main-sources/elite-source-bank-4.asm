@@ -2647,9 +2647,11 @@ ENDIF
  ADC #HI(pattBuffer0)   ;             = pattBuffer0 + pictureTile * 8
  STA SC+1
 
- LDA imageFlags         ; ???
- ASL A
- TAX
+ LDA imageFlags         ; The value of imageFlags was set in the STATUS routine
+ ASL A                  ; to %1000xxxx, where %xxxx is the headshot number (in
+ TAX                    ; the range 0 to 13), so set X to this number * 2, so
+                        ; we can use it as an index into the headOffset table,
+                        ; which has two bytes per entry
 
  LDA headOffset,X       ; Set V(1 0) = headOffset for image X + headCount
  CLC                    ;
@@ -2696,9 +2698,11 @@ ENDIF
                         ; it in the pattern buffers, starting at tile number
                         ; pictureTile
 
- LDA imageFlags         ; ???
- ASL A
- TAX
+ LDA imageFlags         ; The value of imageFlags was set in the STATUS routine
+ ASL A                  ; to %1000xxxx, where %xxxx is the headshot number (in
+ TAX                    ; the range 0 to 13), so set X to this number * 2, so
+                        ; we can use it as an index into the headOffset table,
+                        ; which has two bytes per entry
 
  CLC                    ; Set V(1 0) = faceOffset for image X + faceCount
  LDA faceOffset,X       ;

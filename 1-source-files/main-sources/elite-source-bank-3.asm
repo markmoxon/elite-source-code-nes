@@ -1499,14 +1499,15 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: missileImage
+;       Name: inventoryIcon
 ;       Type: Variable
 ;   Category: Equipment
-;    Summary: Image data for the missiles shown on the Equip Ship screen
+;    Summary: Image data for the inventory icon shown on the icon bar in the
+;             Market Price screen
 ;
 ; ******************************************************************************
 
-.missileImage
+.inventoryIcon
 
  EQUB $00, $00, $00, $06, $0F, $16, $10, $16
  EQUB $00, $00, $06, $1F, $3F, $3F, $3F, $39
@@ -1880,16 +1881,16 @@ ENDIF
  LDA #LO(16*69)
  STA PPU_ADDR
 
- LDA #HI(missileImage)  ; Set SC(1 0) = missileImage so we send the missile
- STA SC+1               ; image to the PPU ???
- LDA #LO(missileImage)
+ LDA #HI(inventoryIcon) ; Set SC(1 0) = inventoryIcon so we send the inventory
+ STA SC+1               ; icon bar image to the PPU
+ LDA #LO(inventoryIcon)
  STA SC
 
  LDA #245               ; Set imageFlags = 245 ???
  STA imageFlags
 
  LDX #4                 ; Set X = 4 so we send four batches of 16 bytes to the
-                        ; PPU in the call to SendMissilesToPPU below
+                        ; PPU in the call to SendInventoryToPPU below
 
  JMP svip9              ; Jump to svip9 to send the missile image to the PPU and
                         ; finish off setting up the view
@@ -2040,16 +2041,16 @@ ENDIF
 
 .svip9
 
- JSR SendMissilesToPPU  ; Send X batches of 16 bytes from SC(1 0) to the PPU
+ JSR SendInventoryToPPU ; Send X batches of 16 bytes from SC(1 0) to the PPU
                         ;
                         ; We only get here with the following values:
                         ;
-                        ;   SC(1 0) = missileImage
+                        ;   SC(1 0) = inventoryIcon
                         ;
                         ;   X = 4
                         ;
-                        ; So this sends 16 * 4 = 64 bytes from missileImage to
-                        ; the PPU
+                        ; So this sends 16 * 4 = 64 bytes from inventoryIcon to
+                        ; the PPU, which sends the inventory icon bar image
 
 .svip10
 

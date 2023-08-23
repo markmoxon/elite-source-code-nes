@@ -15481,7 +15481,8 @@ ENDIF
  JSR DETOK              ; to row 10, white, lower case}{white}{all caps}INCOMING
                         ; MESSAGE"
 
- JSR DrawViewInNMI2     ; ???
+ JSR DrawViewInNMI2     ; Hide all sprites and configure the NMI handler to draw
+                        ; the view
 
  LDY #100               ; Delay for 100 vertical syncs (100/50 = 2 seconds) and
  JMP DELAY              ; return from the subroutine using a tail call
@@ -15498,7 +15499,7 @@ ENDIF
 
 .PAUSE
 
- JSR DrawScreenInNMI_b0 ; ???
+ JSR DrawScreenInNMI_b0 ; Configure the NMI handler to draw the screen
 
  JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
                         ; sent to the PPU, so the screen is fully updated and
@@ -15608,19 +15609,14 @@ ENDIF
 ;
 ;       Name: PAUSE2
 ;       Type: Subroutine
-;   Category: Keyboard
+;   Category: Controllers
 ;    Summary: Wait until a key is pressed, ignoring any existing key press
-;
-; ------------------------------------------------------------------------------
-;
-; Returns:
-;
 ;
 ; ******************************************************************************
 
 .PAUSE2
 
- JSR DrawScreenInNMI_b0 ; ???
+ JSR DrawScreenInNMI_b0 ; Configure the NMI handler to draw the screen
 
 .loop_CB3C4
 
