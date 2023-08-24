@@ -15071,7 +15071,8 @@ ENDIF
 ;       Name: MT9
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Clear the screen and show the Trumble mission briefing
+;    Summary: Clear the screen and set the cire type for a text-based mission
+;    briefing
 ;  Deep dive: Extended text tokens
 ;
 ; ------------------------------------------------------------------------------
@@ -15090,7 +15091,7 @@ ENDIF
  STA XC
 
  LDA #$95               ; Clear the screen and and set the view type in QQ11 to
- JMP TT66_b0            ; $95 (Trumble mission briefing), returning from the
+ JMP TT66_b0            ; $95 (Text-based mission briefing), returning from the
                         ; subroutine using a tail call
 
 ; ******************************************************************************
@@ -15481,8 +15482,8 @@ ENDIF
  JSR DETOK              ; to row 10, white, lower case}{white}{all caps}INCOMING
                         ; MESSAGE"
 
- JSR DrawViewInNMI2     ; Hide all sprites and configure the NMI handler to draw
-                        ; the view
+ JSR UpdateViewWithFade ; Update the view, fading the screen to black first if
+                        ; required
 
  LDY #100               ; Delay for 100 vertical syncs (100/50 = 2 seconds) and
  JMP DELAY              ; return from the subroutine using a tail call
@@ -15507,10 +15508,13 @@ ENDIF
 
  LDA tileNumber         ; ???
  STA firstPatternTile
- LDA #40
- STA maxTileNumber
- LDX #8
- STX firstNametableTile
+
+ LDA #40                ; Tell the NMI handler to send nametable entries up to
+ STA maxNameTileNumber  ; tile 40 * 8 = 320 (i.e. up to the end of tile row 10)
+
+ LDX #8                 ; Tell the NMI handler to send nametable entries from
+ STX firstNametableTile ; tile 8 * 8 = 64 onwards (i.e. from the start of tile
+                        ; row 2)
 
 .loop_CB392
 
@@ -15530,7 +15534,7 @@ ENDIF
  STA INWK+31            ; any ideas of its own
 
  LDA #$93               ; Clear the screen and and set the view type in QQ11 to
- JSR TT66_b0            ; $93 (Mission 1 text briefing)
+ JSR TT66_b0            ; $93 (Mission 1 briefing: ship and text)
 
                         ; Fall through into MT23 to move to row 10, switch to
                         ; white text, and switch to lower case when printing

@@ -1785,14 +1785,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetupViewInPPU
+;       Name: SendViewToPPU
 ;       Type: Subroutine
 ;   Category: PPU
 ;    Summary: Configure the PPU for the view type in QQ11
 ;
 ; ******************************************************************************
 
-.SetupViewInPPU
+.SendViewToPPU
 
  JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
                         ; next VBlank)
@@ -2102,7 +2102,7 @@ ENDIF
 
 .svip12
 
- STA PPU_DATA           ; Send a zero the PPU
+ STA PPU_DATA           ; Send a zero to the PPU
 
  DEX                    ; Decrement the byte counter in X
 
@@ -2168,7 +2168,9 @@ ENDIF
  STA PPU_CTRL           ; Set PPU_CTRL to the copy we made, so it's also
                         ; preserved across the call
 
- JMP FetchPalettes2_b3  ; ???, returning from the subroutine using a tail call
+ JMP FadeToColour_b3    ; Reverse-fade the screen from black to full colour over
+                        ; the next four VBlanks, returning from the subroutine
+                        ; using a tail call
 
 ; ******************************************************************************
 ;
@@ -2284,7 +2286,7 @@ ENDIF
 ;       Name: SendBitplaneToPPU
 ;       Type: Subroutine
 ;   Category: PPU
-;    Summary: Configure a bitplane to be sent to the PPU in the NMI
+;    Summary: Send a bitplane to the PPU immediately
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -2301,8 +2303,8 @@ ENDIF
  STX nmiBitplane
  STX hiddenBitPlane
 
- LDA #0
- STA firstNametableTile
+ LDA #0                 ; Tell the NMI handler to send nametable entries from
+ STA firstNametableTile ; tile 0 onwards
 
  LDA QQ11
  CMP #$DF
@@ -2378,75 +2380,110 @@ ENDIF
 ;       Name: SetupViewInNMI
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: Setup the view and configure the NMI to send both bitplanes to the
+;             PPU during VBlank
 ;
 ; ------------------------------------------------------------------------------
 ;
-; sets up scren mode, loads commander/system images... but it only seems
-; to be called when changing space view, so most of the code is never run ???
+; This routine is only ever called with the following bitplane flags in A:
+;
+;   * Bit 2 clear = last tile to send is lastTileNumber
+;   * Bit 3 clear = don't clear buffers after sending
+;   * Bit 4 clear = we've not started sending data yet
+;   * Bit 5 clear = we have not yet sent all the data
+;   * Bit 6 set   = send both pattern and nametable data
+;   * Bit 7 set   = send data to the PPU
+;
+; Bits 0 and 1 are ignored and are always clear.
+;
+; This routine therefore configures the NMI to send both bitplanes to the PPU.
+;
+; Arguments:
+;
+;   A                   The bitplane flags to set for the drawing bitplane
 ;
 ; ******************************************************************************
 
 .SetupViewInNMI
 
- PHA
+ PHA                    ; Store the bitplane flags on the stack so we can
+                        ; retrieve them later
 
  JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
                         ; sent to the PPU, so the screen is fully updated and
                         ; there is no more data waiting to be sent to the PPU
 
- LDA QQ11
- CMP #$96
- BNE CA9E1
- JSR GetSystemBack_b5
- JMP CA9E8
+ LDA QQ11               ; If the view type in QQ11 is not $96 (Data on System),
+ CMP #$96               ; jump to svin1 to keep checking for view types
+ BNE svin1
 
-.CA9E1
+                        ; If we get here then this is the Data on System screen
 
- CMP #$98
- BNE CA9E8
+ JSR GetSystemBack_b5   ; Fetch the background image for the current system and
+                        ; store it in the pattern buffers
+
+ JMP svin2              ; Jump to svin2 to continue setting up the view
+
+.svin1
+
+ CMP #$98               ; If the view type in QQ11 is not $98 (Status Mode),
+ BNE svin2              ; jump to svin2 to keep checking for view types
+
+                        ; If we get here then this is the Status Mode screen
 
  JSR GetHeadshot_b4     ; Fetch the headshot image for the commander and store
                         ; it in the pattern buffers, starting at tile number
                         ; pictureTile
 
-.CA9E8
+.svin2
 
- LDA QQ11
- AND #$40
- BEQ CA9F2
+ LDA QQ11               ; If bit 6 of the view number is clear, then there is an
+ AND #%01000000         ; icon bar, so jump to svin3 to skip the following
+ BEQ svin3              ; instruction
+
  LDA #0
- STA showUserInterface
+ STA showUserInterface  ; There is no icon bar, so set showUserInterface to 0 to
+                        ; indicate that there is no user interface
 
-.CA9F2
+.svin3
 
  JSR SetupSprite0       ; Set the coordinates of sprite 0 so we can detect when
                         ; the PPU starts to draw the icon bar
 
- LDA #0
- STA firstNametableTile
- LDA #37
- STA firstPatternTile
- LDA tileNumber
- STA nextTileNumber
- STA nextTileNumber+1
+ LDA #0                 ; Tell the NMI handler to send nametable entries from
+ STA firstNametableTile ; tile 0 onwards
 
- LDA #%01010100
- LDX #0
- PLA
- JSR SetDrawPlaneFlags
+ LDA #37                ; Tell the NMI handler to send pattern entries from
+ STA firstPatternTile   ; pattern 37 in the buffer
 
- INC drawingBitplane
+ LDA tileNumber         ; Tell the NMI handler to send patterns up to the tile
+ STA nextTileNumber     ; number in tileNumber, so that's all the tiles up to
+ STA nextTileNumber+1   ; the next free tile
 
- JSR SetDrawPlaneFlags
+ LDA #%01010100         ; This instruction has no effect as we are about to pull
+                        ; the value of A from the stack
+
+ LDX #0                 ; This instruction has no effect as the call to
+                        ; SetDrawPlaneFlags overwrites X with the value of the
+                        ; drawing bitplane
+
+ PLA                    ; Retrieve the bitplane flags that were passed to this
+                        ; routine and which we stored on the stack above
+
+ JSR SetDrawPlaneFlags  ; Set the bitplane flags to A for the current drawing
+                        ; bitplane, which is bitplane 0 at this point ???
+
+ INC drawingBitplane    ; Increment drawingBitplane to 1
+
+ JSR SetDrawPlaneFlags  ; Set the bitplane flags to A for bitplane 1
 
  JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
                         ; sent to the PPU, so the screen is fully updated and
                         ; there is no more data waiting to be sent to the PPU
 
- LDA #80
- STA lastTileNumber
- STA lastTileNumber+1
+ LDA #80                ; Tell the PPU to send nametable entries up to tile
+ STA lastTileNumber     ; 80 * 8 = 640 (i.e. to the end of tile row 19) in both
+ STA lastTileNumber+1   ; bitplanes
 
  LDA QQ11
  STA QQ11a
@@ -2461,21 +2498,25 @@ ENDIF
  JSR SetDrawingBitplane
  LDA QQ11
  AND #$40
- BNE CAA3B
+ BNE svin4
 
  JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
                         ; next VBlank)
 
- LDA #$80
+ LDA #%10000000
  STA showUserInterface
 
-.CAA3B
+.svin4
 
- LDA L0473
- BPL CAA43
- JMP FetchPalettes2_b3
+ LDA screenFadedToBlack ; If bit 7 of screenFadedToBlack is clear then the
+ BPL svin5              ; screen is visible and has not been faded to black, so
+                        ; jump to svin5 to ???
 
-.CAA43
+ JMP FadeToColour_b3    ; Reverse-fade the screen from black to full colour over
+                        ; the next four VBlanks, returning from the subroutine
+                        ; using a tail call
+
+.svin5
 
  LDA QQ11
  AND #$0F
@@ -2483,13 +2524,17 @@ ENDIF
  LDA paletteForView,X
  CMP L03F2
  STA L03F2
- JSR GetViewPalettes
+
+ JSR GetViewPalettes    ; Get the palette for the view type in QQ11a and store
+                        ; it in a table at XX3
+
  DEC updatePaletteInNMI
 
  JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
                         ; next VBlank)
 
  INC updatePaletteInNMI
+
  RTS
 
 ; ******************************************************************************
@@ -2882,8 +2927,8 @@ ENDIF
  STA QQ11a              ; Set the old view type in QQ11a to $00 (Space view with
                         ; neither font loaded)
 
- LDA #$FF               ; ???
- STA L0473
+ LDA #$FF               ; Set bit 7 of screenFadedToBlack to indicate that we
+ STA screenFadedToBlack ; have faded the screen to black
 
  JSR WaitFor3xVBlank    ; Wait for three VBlanks to pass
 
@@ -4470,7 +4515,7 @@ ENDIF
                         ; DrawBackground displays the tiles at pictureTile, and
                         ; it's also used to specify where to load the system
                         ; image data when we call GetSystemImage from
-                        ; SetupViewInPPU when showing the Data on System screen
+                        ; SendViewToPPU when showing the Data on System screen
 
  CLC                    ; Add 56 to tileNumber, as we are going to use 56 tiles
  ADC #56                ; for the system image (7 rows of 8 tiles)
@@ -5167,38 +5212,65 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: paletteColours
+;       Name: fadeColours
 ;       Type: Variable
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: Lookup table that converts a NES colour to the same colour but
+;             with a smaller brightness value
+;
+; ------------------------------------------------------------------------------
+;
+; Colours on the NES are stored as hue and value, using an HSV model but without
+; the saturation. Specifically the hue (i.e. blue, red etc.) is stored in the
+; lower nibble, while the value (i.e. the brightness) is stored in bits 4 and 5
+; of the upper nibble. Bits 6 and 7 are unused and are always zero.
+;
+; This means that given a colour value in hexadecimal, it is in the form &vh
+; where v is the value (brightness) and h is the hue. We can therefore alter the
+; brightness of a colour by increasing or decreasing the upper nibble between
+; 0 and 3, with &0h being the darkest and &3h being the brightest.
+;
+; The NES only supports 54 of the 64 possible colours in this scheme, with
+; colours &vE and &vF all being black, as well as $0D. The convention is to use
+; $0F for all these variants of black.
+;
+; Given a colour &vh, the table entry at fadeColours + &vh contains the same
+; colour but with a reduced brightness in &v. Specifically, it returns the
+; colour with a brightness of &v - 1. We can therefore use this table to fade a
+; colour to black, which will take up to four steps depending on the brightness
+; of the starting colour. See the FadeColours routine for an example.
 ;
 ; ******************************************************************************
 
-.paletteColours
+.fadeColours
 
- EQUB $0F, $0F, $0F, $0F ; B53F: 0F 0F 0F... ...
- EQUB $0F, $0F, $0F, $0F ; B543: 0F 0F 0F... ...
- EQUB $0F, $0F, $0F, $0F ; B547: 0F 0F 0F... ...
- EQUB $0F, $0F, $0F, $0F ; B54B: 0F 0F 0F... ...
- EQUB $00, $01, $02, $03 ; B54F: 00 01 02... ...
- EQUB $04, $05, $06, $07 ; B553: 04 05 06... ...
- EQUB $08, $09, $0A, $0B ; B557: 08 09 0A... ...
- EQUB $0C, $0F, $0F, $0F ; B55B: 0C 0F 0F... ...
- EQUB $10, $11, $12, $13 ; B55F: 10 11 12... ...
- EQUB $14, $15, $16, $17 ; B563: 14 15 16... ...
- EQUB $18, $19, $1A, $1B ; B567: 18 19 1A... ...
- EQUB $1C, $0F, $0F, $0F ; B56B: 1C 0F 0F... ...
- EQUB $20, $21, $22, $23 ; B56F: 20 21 22...  !"
- EQUB $24, $25, $26, $27 ; B573: 24 25 26... $%&
- EQUB $28, $29, $2A, $2B ; B577: 28 29 2A... ()*
- EQUB $2C, $0F, $0F, $0F ; B57B: 2C 0F 0F... ,..
+ EQUB $0F, $0F, $0F, $0F    ; Fade colours with value &0v to black ($0F)
+ EQUB $0F, $0F, $0F, $0F
+ EQUB $0F, $0F, $0F, $0F
+ EQUB $0F, $0F, $0F, $0F
+
+ EQUB $00, $01, $02, $03    ; Fade colours with value &1v to &0v
+ EQUB $04, $05, $06, $07
+ EQUB $08, $09, $0A, $0B
+ EQUB $0C, $0F, $0F, $0F
+
+ EQUB $10, $11, $12, $13    ; Fade colours with value &2v to &1v
+ EQUB $14, $15, $16, $17
+ EQUB $18, $19, $1A, $1B
+ EQUB $1C, $0F, $0F, $0F
+
+ EQUB $20, $21, $22, $23    ; Fade colours with value &3v to &2v
+ EQUB $24, $25, $26, $27
+ EQUB $28, $29, $2A, $2B
+ EQUB $2C, $0F, $0F, $0F
 
 ; ******************************************************************************
 ;
 ;       Name: GetViewPalettes
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: Get the palette for the view type in QQ11a and store it in a table
+;             at XX3
 ;
 ; ******************************************************************************
 
@@ -5234,7 +5306,7 @@ ENDIF
  LDA QQ11a
  BEQ CB5DE
  CMP #$98
- BEQ subm_B607
+ BEQ SetPaletteColours
 
  CMP #$96               ; If this is not the Data on System view ($96), jump to
  BNE CB5DB              ; CB5DB
@@ -5268,7 +5340,7 @@ ENDIF
 
 .CB5DB
 
- JMP subm_B607
+ JMP SetPaletteColours
 
 .CB5DE
 
@@ -5288,102 +5360,136 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_B5F6
+;       Name: FadeColoursTwice
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: Fade the screen colours towards black twice
 ;
 ; ******************************************************************************
 
-.subm_B5F6
+.FadeColoursTwice
 
- JSR GetPaletteColours
+ JSR FadeColours        ; Call FadeColours to fade the screen colours towards
+                        ; black
+
+                        ; Fall through into FadeColours to fade the screen
+                        ; colours a second time
 
 ; ******************************************************************************
 ;
-;       Name: GetPaletteColours
+;       Name: FadeColours
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: Fade the screen colours towards black
 ;
 ; ******************************************************************************
 
-.GetPaletteColours
+.FadeColours
 
- LDX #31
+                        ; We are about to go through 31 entries in the colour
+                        ; palette at XX3, fading each colour in turn (and
+                        ; ignoring the first entry, which is already black)
 
-.loop_CB5FB
+ LDX #31                ; Set an index counter in X
 
- LDY XX3,X
- LDA paletteColours,Y
- STA XX3,X
+.fade1
 
- DEX
+ LDY XX3,X              ; Set Y to the X-th colour from the palette
 
- BNE loop_CB5FB
+ LDA fadeColours,Y      ; Fetch a faded version of colour Y from the fadeColours
+ STA XX3,X              ; table and store it back in the same location in XX3
+
+ DEX                    ; Decrement the counter in X
+
+ BNE fade1              ; Loop back until we haved faded all 31 colours
+
+                        ; Fall through into SetPaletteColours to set the view's
+                        ; palette to the now-faded colours from the XX3 table
 
 ; ******************************************************************************
 ;
-;       Name: subm_B607
+;       Name: SetPaletteColours
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: Set the view's palette from the entries in the XX3 palette table
 ;
 ; ******************************************************************************
 
-.subm_B607
+.SetPaletteColours
 
  LDA #$0F               ; Set hiddenColour to $0F, which is the HSV value for
  STA hiddenColour       ; black, so this hides any pixels that use the hidden
                         ; colour in palette 0
 
- LDA QQ11a
- BPL CB627
- CMP #$C4
- BEQ CB627
- CMP #$98
- BEQ CB62D
- LDA XX3+21
- STA visibleColour
+                        ; In the following we check the view type in QQ11a,
+                        ; which contains the old view (if we are changing views)
+                        ; or the current view (if we aren't changing views)
+                        ;
+                        ; This ensures that we set the palette for the old view
+                        ; so that it fades away correctly when changing views
+
+ LDA QQ11a              ; If the old view type in QQ11a has bit 7 clear, then it
+ BPL pale1              ; has a dashboard, so jump to pale1
+
+ CMP #$C4               ; If the old view type in QQ11a is $C4 (Game Over
+ BEQ pale1              ; screen), jump to pale1
+
+ CMP #$98               ; If the old view type in QQ11a is $98 (Status Mode),
+ BEQ pale2              ; jump to pale2
+
+ LDA XX3+21             ; Set the palette to entries 21 to 23 from the XX3 table
+ STA visibleColour      ; ???
  LDA XX3+22
  STA paletteColour2
  LDA XX3+23
  STA paletteColour3
- RTS
 
-.CB627
+ RTS                    ; Return from the subroutine
 
- LDA XX3+3
- STA visibleColour
- RTS
+.pale1
 
-.CB62D
+                        ; If we get here then the view either has a dashboard or
+                        ; it is the Game Over screen
 
- LDA XX3+1
- STA visibleColour
+ LDA XX3+3              ; Set the visible colour to entry 3 from the XX3 table
+ STA visibleColour      ; ???
+
+ RTS                    ; Return from the subroutine
+
+.pale2
+
+                        ; If we get here then the view is the Status Mode
+
+ LDA XX3+1              ; Set the palette to entries 1 to 3 from the XX3 table
+ STA visibleColour      ; ???
  LDA XX3+2
  STA paletteColour2
  LDA XX3+3
  STA paletteColour3
- RTS
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: FetchPalettes1
+;       Name: FadeToBlack
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: Fade the screen to black over the next four VBlanks
 ;
 ; ******************************************************************************
 
-.FetchPalettes1
+.FadeToBlack
 
- LDA QQ11a
- CMP #$FF
- BEQ CB66D
+ LDA QQ11a              ; If the old view type in QQ11a is $FF (Start screen
+ CMP #$FF               ; with both fonts loaded) then jump to ftob1 to skip the
+ BEQ ftob1              ; fading process, so we don't fade the Start screen
 
- LDA L0473
- BMI CB66D
+ LDA screenFadedToBlack ; If bit 7 of screenFadedToBlack is set then we have
+ BMI ftob1              ; already faded the screen to black, so jump to ftob1 to
+                        ; skip the fading process
+
+                        ; If we get here then we want to fade the screen to
+                        ; black
 
  JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
                         ; sent to the PPU, so the screen is fully updated and
@@ -5392,87 +5498,118 @@ ENDIF
  JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
                         ; next VBlank)
 
- JSR GetViewPalettes
+ JSR GetViewPalettes    ; Get the palette for the view type in QQ11a and store
+                        ; it in a table at XX3
 
- DEC updatePaletteInNMI
+ DEC updatePaletteInNMI ; Decrement updatePaletteInNMI to a non-zero value so we
+                        ; do send palette data from XX3 to the PPU during NMI,
+                        ; which will ensure the screen updates with the colours
+                        ; as we fade to black
 
- JSR GetPaletteColours
-
- JSR WaitFor2NMIs       ; Wait until two NMI interrupts have passed (i.e. the
-                        ; next two VBlanks)
-
- JSR GetPaletteColours
-
- JSR WaitFor2NMIs       ; Wait until two NMI interrupts have passed (i.e. the
-                        ; next two VBlanks)
-
- JSR GetPaletteColours
+ JSR FadeColours        ; Fade the screen colours one step towards black
 
  JSR WaitFor2NMIs       ; Wait until two NMI interrupts have passed (i.e. the
                         ; next two VBlanks)
 
- JSR GetPaletteColours
+ JSR FadeColours        ; Fade the screen colours a second step towards black
 
  JSR WaitFor2NMIs       ; Wait until two NMI interrupts have passed (i.e. the
                         ; next two VBlanks)
 
- INC updatePaletteInNMI
+ JSR FadeColours        ; Fade the screen colours a third step towards black
 
-.CB66D
+ JSR WaitFor2NMIs       ; Wait until two NMI interrupts have passed (i.e. the
+                        ; next two VBlanks)
 
- LDA #$FF
- STA L0473
+ JSR FadeColours        ; Fade the screen colours a fourth and final step
+                        ; towards black, which is guaranteed to fade the screen
+                        ; all the way to black as each colour only has four
+                        ; brightness levels (stored as the value part of the
+                        ; colour in bits 4 and 5)
 
- RTS
+ JSR WaitFor2NMIs       ; Wait until two NMI interrupts have passed (i.e. the
+                        ; next two VBlanks)
+
+ INC updatePaletteInNMI ; Increment updatePaletteInNMI back to the value it had
+                        ; before we decremented it above
+
+.ftob1
+
+ LDA #$FF               ; Set bit 7 of screenFadedToBlack to indicate that we
+ STA screenFadedToBlack ; have faded the screen to black
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: FetchPalettes2
+;       Name: FadeToColour
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: Reverse-fade the screen from black to full colour over the next
+;             four VBlanks
 ;
 ; ******************************************************************************
 
-.FetchPalettes2
+.FadeToColour
 
  JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
                         ; next VBlank)
 
- JSR GetViewPalettes
+ JSR GetViewPalettes    ; Get the palette for the view type in QQ11a and store
+                        ; it in a table at XX3
 
- JSR subm_B5F6
+ JSR FadeColoursTwice   ; Fade the screen colours two steps towards black
 
- JSR GetPaletteColours
+ JSR FadeColours        ; Fade the screen colours a third step towards black, so
+                        ; the palette in XX3 is now one step brighter than full
+                        ; black (as it takes four steps to fully black-out the
+                        ; normal palette)
 
- DEC updatePaletteInNMI
-
- JSR WaitFor2NMIs       ; Wait until two NMI interrupts have passed (i.e. the
-                        ; next two VBlanks)
-
- JSR GetViewPalettes
- JSR subm_B5F6
-
- JSR WaitFor2NMIs       ; Wait until two NMI interrupts have passed (i.e. the
-                        ; next two VBlanks)
-
- JSR GetViewPalettes
- JSR GetPaletteColours
+ DEC updatePaletteInNMI ; Decrement updatePaletteInNMI to a non-zero value so we
+                        ; do send palette data from XX3 to the PPU during NMI,
+                        ; which will ensure the screen updates with the colours
+                        ; as we reverse the back to full colour
 
  JSR WaitFor2NMIs       ; Wait until two NMI interrupts have passed (i.e. the
                         ; next two VBlanks)
 
- JSR GetViewPalettes
- JSR subm_B607
+ JSR GetViewPalettes    ; Get the palette for the view type in QQ11a and store
+                        ; it in a table at XX3
+
+ JSR FadeColoursTwice   ; Fade the screen colours two steps towards black, so
+                        ; the palette in XX3 is now two steps brighter than full
+                        ; black
+
+ JSR WaitFor2NMIs       ; Wait until two NMI interrupts have passed (i.e. the
+                        ; next two VBlanks)
+
+ JSR GetViewPalettes    ; Get the palette for the view type in QQ11a and store
+                        ; it in a table at XX3
+
+ JSR FadeColours        ; Fade the screen colours one step towards black, so the
+                        ; palette in XX3 is now three steps brighter than full
+                        ; black
+
+ JSR WaitFor2NMIs       ; Wait until two NMI interrupts have passed (i.e. the
+                        ; next two VBlanks)
+
+ JSR GetViewPalettes    ; Get the palette for the view type in QQ11a and store
+                        ; it in a table at XX3
+
+ JSR SetPaletteColours  ; Set the view's palette from the entries in the XX3
+                        ; palette table, so the screen is now at full brightness
+                        ; once again
 
  JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
                         ; next VBlank)
 
- INC updatePaletteInNMI
+ INC updatePaletteInNMI ; Increment updatePaletteInNMI back to the value it had
+                        ; before we decremented it above
 
- LSR L0473
+ LSR screenFadedToBlack ; Clear bit 7 of screenFadedToBlack to indicate that the
+                        ; screen has faded back up to full colour
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;

@@ -2867,7 +2867,7 @@ ENDIF
 .STATUS
 
  LDA #$98               ; Clear the screen and and set the view type in QQ11 to
- JSR ChangeToView       ; $98 (Status Mode)
+ JSR SetNewViewType     ; $98 (Status Mode)
 
  JSR SetSelectedSystem  ; Set the selected system to the nearest system, if we
                         ; don't already have a selected system
@@ -3114,9 +3114,8 @@ ENDIF
  BEQ stat5              ; If imageFlags already had this value, jump to stat5
                         ; to skip the following instruction
 
- JSR HideMostSprites2   ; Fetch the palettes and hide all sprites, so the view
-                        ; doesn't get corrupted as we load the commander image
-                        ; sprites
+ JSR FadeAndHideSprites ; Fade the screen to black and hide all sprites, so we
+                        ; can update the screen while it's blacked-out
 
 .stat5
 
@@ -3124,19 +3123,18 @@ ENDIF
                         ; front of a greyscale headshot image, with optional
                         ; embellishments
 
-                        ; Fall through into DrawViewInNMI to configure the NMI
-                        ; handler to draw the view
+                        ; Fall through into UpdateView to update the view
 
 ; ******************************************************************************
 ;
-;       Name: DrawViewInNMI
+;       Name: UpdateView
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: Configure the NMI handler to draw the view
+;    Summary: Update the view
 ;
 ; ******************************************************************************
 
-.DrawViewInNMI
+.UpdateView
 
  LDA tileNumber
  BNE C892E
@@ -3145,12 +3143,16 @@ ENDIF
 
 .C892E
 
- LDA #0
- STA firstNametableTile
- LDA #108
- STA maxTileNumber
- STA lastTileNumber
- STA lastTileNumber+1
+ LDA #0                 ; Tell the NMI handler to send nametable entries from
+ STA firstNametableTile ; tile 0 onwards
+
+ LDA #108               ; Tell the NMI handler to send nametable entries up to
+ STA maxNameTileNumber  ; tile 108 * 8 = 864 (i.e. up to the end of tile row 26)
+
+ STA lastTileNumber     ; Tell the PPU to send nametable entries up to tile
+ STA lastTileNumber+1   ; 108 * 8 = 864 (i.e. to the end of tile row 26) in both
+                        ; bitplanes
+
  LDX #$25
  LDA QQ11
  AND #$40
@@ -3169,7 +3171,7 @@ ENDIF
  LDA QQ11
  CMP QQ11a
  BEQ C8976
- JSR SetupViewInPPU_b3
+ JSR SendViewToPPU_b3
 
 .C8955
 
@@ -3204,7 +3206,10 @@ ENDIF
 
 .C8976
 
- JSR SetupViewInPPU2
+ JSR UpdateScreen       ; Update the screen by sending data to the PPU, either
+                        ; immediately or during VBlank, depending on whether
+                        ; the screen is visible
+
  JMP C8955
 
 ; ******************************************************************************
@@ -3241,14 +3246,14 @@ ENDIF
                         ; sent to the PPU, so the screen is fully updated and
                         ; there is no more data waiting to be sent to the PPU
 
- LDA #0
- STA firstNametableTile
+ LDA #0                 ; Tell the NMI handler to send nametable entries from
+ STA firstNametableTile ; tile 0 onwards
 
- LDA #100
- STA maxTileNumber
+ LDA #100               ; Tell the NMI handler to send nametable entries up to
+ STA maxNameTileNumber  ; tile 100 * 8 = 800 (i.e. up to the end of tile row 24)
 
- LDA #37
- STA firstPatternTile
+ LDA #37                ; Tell the NMI handler to send pattern entries from
+ STA firstPatternTile   ; pattern 37 in the buffer
 
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -6901,7 +6906,7 @@ ENDIF
 .LAUN
 
  LDA #$00               ; Clear the screen and and set the view type in QQ11 to
- JSR ChangeToViewNMI    ; $00 (Space view with neither font loaded)
+ JSR ChangeToView       ; $00 (Space view with neither font loaded)
 
  JSR HideMostSprites    ; Hide all sprites except for sprite 0 and the icon bar
                         ; pointer
@@ -7114,7 +7119,7 @@ ENDIF
  JSR DETOK_b2           ; at the start of mission 2, asking us to head for
                         ; Ceerdi for a mission briefing
 
- JSR DrawViewInNMI      ; Configure the NMI handler to draw the view
+ JSR UpdateView         ; Update the view
 
  JMP BAY                ; Jump to BAY to go to the docking bay (i.e. show the
                         ; Status Mode screen) and return from the subroutine
@@ -7139,7 +7144,7 @@ ENDIF
 
  JSR DETOK_b2           ; Print the extended token in A
 
- JSR FetchPalettes1_b3  ; ???
+ JSR FadeToBlack_b3     ; Fade the screen to black over the next four VBlanks
 
 .BAYSTEP
 
@@ -7252,7 +7257,7 @@ ENDIF
  JSR ClearScreen_b3     ; ???
 
  LDA #$95               ; Clear the screen and and set the view type in QQ11 to
- JSR TT66               ; $95 (Trumble mission briefing)
+ JSR TT66               ; $95 (Text-based mission briefing)
 
  LDA TP                 ; Set bit 4 of TP to indicate that mission 3 has been
  ORA #%00010000         ; triggered
@@ -7261,7 +7266,7 @@ ENDIF
  LDA #199               ; Print extended token 199, which is the briefing for
  JSR DETOK_b2           ; the Trumbles mission
 
- JSR DrawViewInNMI      ; Configure the NMI handler to draw the view
+ JSR UpdateView         ; Update the view
 
  JSR YESNO              ; Call YESNO to wait until either "Y" or "N" is pressed
 
@@ -7335,10 +7340,11 @@ ENDIF
  LDA #$50               ; ???
  STA INWK+6
 
- JSR HideMostSprites2   ; Fetch the palettes and hide all sprites
+ JSR FadeAndHideSprites ; Fade the screen to black and hide all sprites, so we
+                        ; can update the screen while it's blacked-out
 
  LDA #$92               ; Clear the screen and and set the view type in QQ11 to
- JSR ChangeToViewNMI    ; $92 (Mission 1 rotating ship briefing)
+ JSR ChangeToView       ; $92 (Mission 1 briefing: rotating ship)
 
  LDA #64                ; Set the main loop counter to 64, so the ship rotates
  STA MCNT               ; for 64 iterations through MVEIT
@@ -7406,7 +7412,7 @@ ENDIF
                         ; as we just incremented z_lo past 255
 
  LDA #$93               ; Clear the screen and and set the view type in QQ11 to
- JSR TT66               ; $93 (Mission 1 text briefing)
+ JSR TT66               ; $93 (Mission 1 briefing: ship and text)
 
  LDA #10                ; Set A = 10 so the call to BRP prints extended token 10
                         ; (the briefing for mission 1 where we find out all
@@ -7432,8 +7438,8 @@ ENDIF
  JSR DETOK_b2           ; to row 10, white, lower case}{white}{all caps}INCOMING
                         ; MESSAGE"
 
- JSR DrawViewInNMI2     ; Hide all sprites and configure the NMI handler to draw
-                        ; the view
+ JSR UpdateViewWithFade ; Update the view, fading the screen to black first if
+                        ; required
 
  LDY #100               ; Delay for 100 vertical syncs (100/50 = 2 seconds) and
  JMP DELAY              ; return from the subroutine using a tail call
@@ -7510,7 +7516,10 @@ ENDIF
  LSR demoInProgress     ; Clear bit 7 of demoInProgress
 
  JSR CopyNameBuffer0To1
- JSR SetupViewInNMI2
+
+ JSR SetupFullViewInNMI ; Configure the PPU to send tiles for a full screen
+                        ; (no dashboard) during VBlank
+
  JSR SetupDemoView
  JSR FixRandomNumbers
  JSR SetupDemoShip
@@ -7786,7 +7795,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: ChangeToView
+;       Name: SetNewViewType
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Clear the screen, set the current view type and move the cursor to
@@ -7801,7 +7810,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.ChangeToView
+.SetNewViewType
 
  JSR TT66               ; Clear the screen and set the current view type
 
@@ -8170,7 +8179,7 @@ ENDIF
 .TT25
 
  LDA #$96               ; Clear the screen and and set the view type in QQ11 to
- JSR ChangeToView       ; $96 (Data on System)
+ JSR SetNewViewType     ; $96 (Data on System)
 
  JSR TT111              ; Select the system closest to galactic coordinates
                         ; (QQ9, QQ10)
@@ -8571,7 +8580,8 @@ ENDIF
 
  JSR PDESC_b2           ; Call PDESC to print the system's extended description
 
- JSR HideMostSprites2   ; Fetch the palettes and hide all sprites
+ JSR FadeAndHideSprites ; Fade the screen to black and hide all sprites, so we
+                        ; can update the screen while it's blacked-out
 
  LDA #22                ; Move the text cursor to column 22
  STA XC
@@ -8588,8 +8598,8 @@ ENDIF
  LDY #7
  JSR DrawSystemImage_b3
 
- JMP DrawViewInNMI      ; Configure the NMI handler to draw the view, returning
-                        ; from the subroutine using a tail call
+ JMP UpdateView         ; Update the view, returning from the subroutine using
+                        ; a tail call
 
 ; ******************************************************************************
 ;
@@ -8622,7 +8632,8 @@ ENDIF
                         ; is 128 pixels high, starting on row 24 and ending on
                         ; row 151
 
- JSR HideMostSprites2   ; Fetch the palettes and hide all sprites
+ JSR FadeAndHideSprites ; Fade the screen to black and hide all sprites, so we
+                        ; can update the screen while it's blacked-out
 
  JSR TT14               ; Call TT14 to draw a circle with crosshairs at the
                         ; current system's galactic coordinates
@@ -8706,8 +8717,8 @@ ENDIF
  LDA #$8F               ; ???
  STA Yx2M1
 
- JMP DrawViewInNMI      ; Configure the NMI handler to draw the view, returning
-                        ; from the subroutine using a tail call
+ JMP UpdateView         ; Update the view, returning from the subroutine using
+                        ; a tail call
 
 ; ******************************************************************************
 ;
@@ -9103,10 +9114,9 @@ ENDIF
 
 .zebra
 
- JMP DrawViewInNMI2     ; There are no Trumbles in the hold, so call
-                        ; DrawViewInNMI2 to hide all sprites and configure the
-                        ; NMI handler to draw the view, returning from the
-                        ; subroutine using a tail call
+ JMP UpdateViewWithFade ; There are no Trumbles in the hold, so update the view,
+                        ; fading the screen to black first if required, and
+                        ; return from the subroutine using a tail call
 
                         ; If we get here then we have Trumbles in the hold, so
                         ; we print out the number (though we never get here in
@@ -9177,7 +9187,7 @@ ENDIF
 .TT213
 
  LDA #$97               ; Clear the screen and and set the view type in QQ11 to
- JSR ChangeToView       ; $97 (Inventory)
+ JSR SetNewViewType     ; $97 (Inventory)
 
  LDA #11                ; Move the text cursor to column 11 to print the screen
  STA XC                 ; title
@@ -9663,8 +9673,9 @@ ENDIF
  LDA #190               ; Print recursive token 30 ("SHORT RANGE CHART") on the
  JSR NLIN3              ; top row
 
- JSR HideMostSprites1   ; Hide all sprites, after first fetching the palettes
-                        ; if we are changing view
+ JSR SetScreenForUpdate ; Get the screen ready for updating by hiding all
+                        ; sprites, after fading the screen to black if we are
+                        ; changing view
 
  JSR TT14               ; Call TT14 to draw a circle with crosshairs at the
                         ; current system's galactic coordinates
@@ -9889,8 +9900,8 @@ ENDIF
  LDA #$8F               ; ???
  STA Yx2M1
 
- JMP DrawViewInNMI      ; Configure the NMI handler to draw the view, returning
-                        ; from the subroutine using a tail call
+ JMP UpdateView         ; Update the view, returning from the subroutine using
+                        ; a tail call
 
 ; ******************************************************************************
 ;
@@ -11288,7 +11299,7 @@ ENDIF
  BEQ TT167-3            ; Inventory screen, so the icon bar button toggles
                         ; between the two
 
- JSR ChangeToView       ; We are not already showing the Market Price screen,
+ JSR SetNewViewType     ; We are not already showing the Market Price screen,
                         ; so that's what we do now, by clearing the screen and
                         ; setting the view type in QQ11 to $BA (Market Price)
 
@@ -11354,14 +11365,15 @@ ENDIF
                         ; display the view as we can't buy or sell cargo in
                         ; space
 
- JSR HideMostSprites1   ; Hide all sprites, after first fetching the palettes
-                        ; if we are changing view
+ JSR SetScreenForUpdate ; Get the screen ready for updating by hiding all
+                        ; sprites, after fading the screen to black if we are
+                        ; changing view
 
  JSR DrawInventoryIcon  ; Draw the inventory icon on top of the second button
                         ; in the icon bar
 
- JMP DrawViewInNMI      ; Configure the NMI to update the view on-screen,
-                        ; returning from the subroutine using a tail call
+ JMP UpdateView         ; Update the view, returning from the subroutine using
+                        ; a tail call
 
 .sell2
 
@@ -12874,7 +12886,7 @@ ENDIF
 .EQSHP
 
  LDA #$B9               ; Clear the screen and and set the view type in QQ11 to
- JSR ChangeToView       ; $B9 (Equip Ship)
+ JSR SetNewViewType     ; $B9 (Equip Ship)
 
  LDX languageIndex      ; Move the text cursor to the correct column for the
  LDA xEquipShip,X       ; Equip Ship title in the chosen language
@@ -12928,12 +12940,13 @@ ENDIF
  JSR subm_EQSHP2
  JSR dn
 
- JSR HideMostSprites1   ; Hide all sprites, after first fetching the palettes
-                        ; if we are changing view
+ JSR SetScreenForUpdate ; Get the screen ready for updating by hiding all
+                        ; sprites, after fading the screen to black if we are
+                        ; changing view
 
  JSR DrawCobraMkIII     ; ???
 
- JSR DrawViewInNMI      ; Configure the NMI handler to draw the view
+ JSR UpdateView         ; Update the view
 
 .CA4DB
 
@@ -16089,9 +16102,11 @@ ENDIF
  STA boxEdge1
  LDA #2
  STA boxEdge2
- LDA #80
- STA lastTileNumber
- STA lastTileNumber+1
+
+ LDA #80                ; Tell the PPU to send nametable entries up to tile
+ STA lastTileNumber     ; 80 * 8 = 640 (i.e. to the end of tile row 19) in both
+ STA lastTileNumber+1   ; bitplanes
+
  LDA BOMB
  BPL CADAA
  JSR HideHiddenColour
@@ -17569,13 +17584,14 @@ ENDIF
  JSR ClearDashEdge_b6   ; Clear the right edge of the dashboard ???
  JSR CopyNameBuffer0To1
 
- JSR HideMostSprites1   ; Hide all sprites, after first fetching the palettes
-                        ; if we are changing view
+ JSR SetScreenForUpdate ; Get the screen ready for updating by hiding all
+                        ; sprites, after fading the screen to black if we are
+                        ; changing view
 
  LDA #0
  STA L045F
  LDA #$C4
- JSR SetupViewInPPU_b3
+ JSR SendViewToPPU_b3
 
  LDA #$00               ; Set the view type in QQ11 to $00 (Space view with
  STA QQ11               ; neither font loaded)
@@ -17585,10 +17601,14 @@ ENDIF
 
  LDA tileNumber
  STA firstPatternTile
- LDA #116
- STA maxTileNumber
- LDX #8
- STX firstNametableTile
+
+ LDA #116               ; Tell the NMI handler to send nametable entries up to
+ STA maxNameTileNumber  ; tile 116 * 8 = 800 (i.e. up to the end of tile row 28)
+
+ LDX #8                 ; Tell the NMI handler to send nametable entries from
+ STX firstNametableTile ; tile 8 * 8 = 64 onwards (i.e. from the start of tile
+                        ; row 2)
+
  LDA #$68
  JSR SetScreenHeight
  LDY #8
@@ -17902,7 +17922,7 @@ ENDIF
                         ; If we get here then we start the game without playing
                         ; the demo
 
- JSR FetchPalettes1_b3  ; ???
+ JSR FadeToBlack_b3     ; Fade the screen to black over the next four VBlanks
 
                         ; Fall through into StartGame to reset the stack and go
                         ; to the docking bay (i.e. show the Status Mode screen)
@@ -18021,18 +18041,21 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: ChangeToViewNMI
+;       Name: ChangeToView
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.ChangeToViewNMI
+.ChangeToView
 
  JSR TT66
  JSR CopyNameBuffer0To1
- JSR SetupViewInPPU2
+
+ JSR UpdateScreen       ; Update the screen by sending data to the PPU, either
+                        ; immediately or during VBlank, depending on whether
+                        ; the screen is visible
 
  LDA #$00               ; Set the view type in QQ11 to $00 (Space view with
  STA QQ11               ; neither font loaded)
@@ -18043,11 +18066,15 @@ ENDIF
  STA L045F
  LDA tileNumber
  STA firstPatternTile
- LDA #80
- STA maxTileNumber
- LDX #8
- STX firstNametableTile
- RTS
+
+ LDA #80                ; Tell the NMI handler to send nametable entries up to
+ STA maxNameTileNumber  ; tile 80 * 8 = 640 (i.e. up to the end of tile row 19)
+
+ LDX #8                 ; Tell the NMI handler to send nametable entries from
+ STX firstNametableTile ; tile 8 * 8 = 64 onwards (i.e. from the start of tile
+                        ; row 2)
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -18124,7 +18151,7 @@ ENDIF
  STY DELTA
 
  LDA #$01               ; Clear the screen and and set the view type in QQ11 to
- JSR ChangeToViewNMI    ; $01 (Title screen)
+ JSR ChangeToView       ; $01 (Title screen)
 
  LDA #7
  STA YP
@@ -21305,7 +21332,7 @@ ENDIF
 
 .LQ
 
- JSR ChangeToSpaceView  ; ???
+ JSR SendSpaceViewToPPU ; ???
 
  JMP NWSTARS            ; Set up a new stardust field and return from the
                         ; subroutine using a tail call
@@ -21381,24 +21408,26 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: ChangeToSpaceView
+;       Name: SendSpaceViewToPPU
 ;       Type: Subroutine
-;   Category: Flight
+;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.ChangeToSpaceView
+.SendSpaceViewToPPU
 
- LDA #$48
+ LDA #$48               ; ???
  JSR SetScreenHeight
  STX VIEW
 
  LDA #$00               ; Clear the screen and and set the view type in QQ11 to
  JSR TT66               ; $00 (Space view with neither font loaded)
 
- JSR CopyNameBuffer0To1
- JSR SetupViewInPPU_b3
+ JSR CopyNameBuffer0To1 ; ???
+
+ JSR SendViewToPPU_b3
+
  JMP ResetStardust
 
 ; ******************************************************************************
@@ -21418,9 +21447,11 @@ ENDIF
  JSR TT66               ; $00 (Space view with neither font loaded)
 
  JSR CopyNameBuffer0To1
- LDA #80
- STA lastTileNumber
- STA lastTileNumber+1
+
+ LDA #80                ; Tell the PPU to send nametable entries up to tile
+ STA lastTileNumber     ; 80 * 8 = 640 (i.e. to the end of tile row 19) in both
+ STA lastTileNumber+1   ; bitplanes
+
  JSR SetupViewInNMI_b3
 
 ; ******************************************************************************
@@ -21496,16 +21527,18 @@ ENDIF
  LDA tileNumber
  STA firstPatternTile
 
- LDA #80
- STA maxTileNumber
+ LDA #80                ; Tell the NMI handler to send nametable entries up to
+ STA maxNameTileNumber  ; tile 80 * 8 = 640 (i.e. up to the end of tile row 19)
 
- LDX #8
- STX firstNametableTile
+ LDX #8                 ; Tell the NMI handler to send nametable entries from
+ STX firstNametableTile ; tile 8 * 8 = 64 onwards (i.e. from the start of tile
+                        ; row 2)
 
- LDA #116
- STA lastTileNumber
+ LDA #116               ; Tell the NMI handler to send nametable entries up to
+ STA lastTileNumber     ; tile 116 * 8 = 800 (i.e. up to the end of tile row 28)
+                        ; in bitplane 0
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -21785,8 +21818,9 @@ ENDIF
                         ; following two instructions, as we don't need to
                         ; initialise the dashboard
 
- JSR HideMostSprites1   ; Hide all sprites, after first fetching the palettes
-                        ; if we are changing view
+ JSR SetScreenForUpdate ; Get the screen ready for updating by hiding all
+                        ; sprites, after fading the screen to black if we are
+                        ; changing view
 
  JSR ResetScanner_b3    ; Reset the sprites used for drawing ships on the
                         ; scanner

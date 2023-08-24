@@ -3365,8 +3365,10 @@ ELIF _PAL
 
 ENDIF
 
- JSR UpdateScreen       ; Update the screen by copying the nametable and pattern
-                        ; data for the relevant tiles to the PPU
+ JSR SendScreenToPPU    ; Update the screen by sending the nametable and pattern
+                        ; data from the buffers to the PPU, configuring the PPU
+                        ; registers accordinaly, and clearing the buffers if
+                        ; required
 
  JSR ReadControllers    ; Read the buttons on the controllers
 
@@ -3677,12 +3679,12 @@ ENDIF
 
  SUBTRACT_CYCLES 559    ; Subtract 559 from the cycle count
 
- JMP UpdateScreen+4     ; Return to UpdateScreen to continue with the next
+ JMP SendScreenToPPU+4  ; Return to SendScreenToPPU to continue with the next
                         ; instruction following the call to this routine
 
 ; ******************************************************************************
 ;
-;       Name: UpdateScreen
+;       Name: SendScreenToPPU
 ;       Type: Subroutine
 ;   Category: PPU
 ;    Summary: Update the screen with the contents of the buffers
@@ -3691,12 +3693,12 @@ ENDIF
 ;
 ; Other entry points:
 ;
-;   UpdateScreen+4      Re-entry point following the call to SendPalettesToPPU
+;   SendScreenToPPU+4   Re-entry point following the call to SendPalettesToPPU
 ;                       at the start of the routine
 ;
 ; ******************************************************************************
 
-.UpdateScreen
+.SendScreenToPPU
 
  LDA updatePaletteInNMI ; If updatePaletteInNMI is non-zero, then jump up to
  BNE SendPalettesToPPU  ; SendPalettesToPPU to send the palette data in XX3 to
@@ -4268,14 +4270,14 @@ ENDIF
  LDY SC                 ; Set Y to the number of the last tile divided by 8,
                         ; which we fetched above
 
- CPY maxTileNumber      ; If Y >= maxTileNumber then set Y = maxTileNumber, so
- BCC cdra4              ; Y has a maximum value of maxTileNumber
- LDY maxTileNumber
+ CPY maxNameTileNumber  ; If Y >= maxNameTileNumber then set Y to the value of
+ BCC cdra4              ; maxNameTileNumber, so Y is capped to a maximum value
+ LDY maxNameTileNumber  ; of maxNameTileNumber
 
 .cdra4
 
  STY SC                 ; Set SC to the number of the last tile, capped by the
-                        ; maximum value in maxTileNumber
+                        ; maximum value in maxNameTileNumber, so
 
  CMP SC                 ; If A >= SC then the first tile we need to clear is
  BCS cdra6              ; after the last tile we need to clear, which means
@@ -4631,9 +4633,9 @@ ENDIF
                         ; So this contains the number of the last tile we need
                         ; to clear in the nametable buffer, divided by 8
 
- CPY maxTileNumber      ; If Y >= maxTileNumber then set Y = maxTileNumber, so
- BCC pbuf7              ; Y has a maximum value of maxTileNumber
- LDY maxTileNumber
+ CPY maxNameTileNumber  ; If Y >= maxNameTileNumber then set Y to the value of
+ BCC pbuf7              ; maxNameTileNumber, so Y is capped to a maximum value
+ LDY maxNameTileNumber  ; of maxNameTileNumber
 
 .pbuf7
 
@@ -5739,13 +5741,13 @@ ENDIF
  STA nextTileNumber     ; for use in the NMI handler
  STA nextTileNumber+1
 
- LDA #88                ; Tell the PPU to start sending nametable entries from
- STA firstNametableTile ; tile 88 * 8 = 704 onwards (i.e. from the start of row
-                        ; tile row 22)
+ LDA #88                ; Tell the NMI handler to send nametable entries from
+ STA firstNametableTile ; tile 88 * 8 = 704 onwards (i.e. from the start of tile
+                        ; row 22)
 
- LDA #100               ; Tell the PPU to send nametable entries up to tile
- STA lastTileNumber     ; 100 * 8 = 800 (i.e. to the end of tile row 24)
- STA lastTileNumber+1
+ LDA #100               ; Tell the NMI handler to send nametable entries up to
+ STA lastTileNumber     ; tile 100 * 8 = 800 (i.e. up to the end of tile row 24)
+ STA lastTileNumber+1   ; in both bitplanes
 
  LDA #%11000100         ; Set both bitplane flags as follows:
  STA bitplaneFlags      ;
@@ -9775,8 +9777,9 @@ ENDIF
 
 .CE92D
 
- LDA L0473
- BMI CE8F5
+ LDA screenFadedToBlack ; If bit 7 of screenFadedToBlack is set then we have
+ BMI CE8F5              ; already faded the screen to black, so jump to CE8F5
+                        ; to ???
 
  LDA L045F
  BEQ SetPointerButton
@@ -10360,35 +10363,35 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: HideMostSprites1
+;       Name: SetScreenForUpdate
 ;       Type: Subroutine
 ;   Category: Drawing sprites
-;    Summary: Hide all sprites, after first fetching the palettes if we are
-;             changing view
+;    Summary: Get the screen ready for updating by hiding all sprites, after
+;             fading the screen to black if we are changing view
 ;
 ; ******************************************************************************
 
-.HideMostSprites1
+.SetScreenForUpdate
 
  LDA QQ11a              ; If QQ11 = QQ11a, then we are not currently changing
  CMP QQ11               ; view, so jump to HideMostSprites to hide all sprites
  BEQ HideMostSprites    ; except for sprite 0 and the icon bar pointer
 
-                        ; Otherwise fall through into HideMostSprites2 to fetch
-                        ; the palettes and then hide all the sprites
+                        ; Otherwise fall through into FadeAndHideSprites to fade
+                        ; the screen to black and hide all the sprites
 
 ; ******************************************************************************
 ;
-;       Name: HideMostSprites2
+;       Name: FadeAndHideSprites
 ;       Type: Subroutine
 ;   Category: Drawing sprites
-;    Summary: Fetch the palettes and hide all sprites
+;    Summary: Fade the screen to black and hide all sprites
 ;
 ; ******************************************************************************
 
-.HideMostSprites2
+.FadeAndHideSprites
 
- JSR FetchPalettes1_b3  ; Fetch the palettes ???
+ JSR FadeToBlack_b3     ; Fade the screen to black over the next four VBlanks
 
 ; ******************************************************************************
 ;
@@ -11219,14 +11222,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: FetchPalettes1_b3
+;       Name: FadeToBlack_b3
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: Call the FetchPalettes1 routine in ROM bank 3
+;    Summary: Call the FadeToBlack routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.FetchPalettes1_b3
+.FadeToBlack_b3
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -11234,7 +11237,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR FetchPalettes1     ; Call FetchPalettes1, now that it is paged into memory
+ JSR FadeToBlack        ; Call FadeToBlack, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -11724,14 +11727,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: FetchPalettes2_b3
+;       Name: FadeToColour_b3
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: Call the FetchPalettes2 routine in ROM bank 3
+;    Summary: Call the FadeToColour routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.FetchPalettes2_b3
+.FadeToColour_b3
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -11739,7 +11742,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR FetchPalettes2     ; Call FetchPalettes2, now that it is paged into memory
+ JSR FadeToColour       ; Call FadeToColour, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -12115,14 +12118,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: ChangeToViewNMI_b0
+;       Name: ChangeToView_b0
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: Call the ChangeToViewNMI routine in ROM bank 0
+;    Summary: Call the ChangeToView routine in ROM bank 0
 ;
 ; ******************************************************************************
 
-.ChangeToViewNMI_b0
+.ChangeToView_b0
 
  STA ASAV               ; Store the value of A so we can retrieve it below
 
@@ -12137,7 +12140,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR ChangeToViewNMI    ; Call ChangeToViewNMI, now that it is paged into memory
+ JSR ChangeToView       ; Call ChangeToView, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -12147,7 +12150,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JMP ChangeToViewNMI    ; Call ChangeToViewNMI, which is already paged into
+ JMP ChangeToView       ; Call ChangeToView, which is already paged into
                         ; memory, and return from the subroutine using a tail
                         ; call
 
@@ -12615,28 +12618,38 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetupViewInPPU2
+;       Name: UpdateScreen
 ;       Type: Subroutine
 ;   Category: PPU
-;    Summary: ???
+;    Summary: Update the screen by sending data to the PPU, either immediately
+;             or during VBlank, depending on whether the screen is visible
 ;
 ; ******************************************************************************
 
-.SetupViewInPPU2
+.UpdateScreen
 
- LDA L0473
- BPL SetupViewInNMI2
+ LDA screenFadedToBlack ; If bit 7 of screenFadedToBlack is clear then the
+ BPL SetupFullViewInNMI ; screen is visible and has not been faded to black, so
+                        ; we need to send the view to the PPU in the NMI handler
+                        ; to avoid corrupting the screen, so jump to
+                        ; SetupFullViewInNMI to configure the NMI handler
+                        ; accordingly
+
+                        ; Otherwise the screen has been faded to black, so we
+                        ; can fall through into SendViewToPPU to send the view
+                        ; straight to the PPU without having to restrict
+                        ; ourselves to VBlank
 
 ; ******************************************************************************
 ;
-;       Name: SetupViewInPPU_b3
+;       Name: SendViewToPPU_b3
 ;       Type: Subroutine
 ;   Category: PPU
-;    Summary: Call the SetupViewInPPU routine in ROM bank 3
+;    Summary: Call the SendViewToPPU routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.SetupViewInPPU_b3
+.SendViewToPPU_b3
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -12644,7 +12657,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR SetupViewInPPU     ; Call SetupViewInPPU, now that it is paged into memory
+ JSR SendViewToPPU      ; Call SendViewToPPU, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -12652,18 +12665,23 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetupViewInNMI2
+;       Name: SetupFullViewInNMI
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: Configure the PPU to send tiles for a full screen (no dashboard)
+;             during VBlank
 ;
 ; ******************************************************************************
 
-.SetupViewInNMI2
+.SetupFullViewInNMI
 
- LDA #116
- STA lastTileNumber
- STA lastTileNumber+1
+ LDA #116               ; Tell the PPU to send nametable entries up to tile
+ STA lastTileNumber     ; 116 * 8 = 928 (i.e. to the end of tile row 28) in both
+ STA lastTileNumber+1   ; bitplanes
+
+                        ; Fall through into SetupViewInNMI_b3 to setup the view
+                        ; and configure the NMI to send both bitplanes to the
+                        ; PPU during VBlank
 
 ; ******************************************************************************
 ;
@@ -12676,7 +12694,17 @@ ENDIF
 
 .SetupViewInNMI_b3
 
- LDA #$C0               ; Set A = $C0 ???
+ LDA #%11000000         ; Set A to the bitplane flags to set for the drawing
+                        ; bitplane in the call to SetupViewInNMI below:
+                        ;
+                        ;   * Bit 2 clear = last tile to send is lastTileNumber
+                        ;   * Bit 3 clear = don't clear buffers after sending
+                        ;   * Bit 4 clear = we've not started sending data yet
+                        ;   * Bit 5 clear = we have not yet sent all the data
+                        ;   * Bit 6 set   = send both pattern and nametable data
+                        ;   * Bit 7 set   = send data to the PPU
+                        ;
+                        ; Bits 0 and 1 are ignored and are always clear
 
  STA ASAV               ; Store the value of A so we can retrieve it below
 
@@ -13243,28 +13271,32 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: DrawViewInNMI2
+;       Name: UpdateViewWithFade
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: Hide all sprites and configure the NMI handler to draw the view
+;    Summary: Fade the screen to black, if required, hide all sprites and update
+;             the view
 ;
 ; ******************************************************************************
 
-.DrawViewInNMI2
+.UpdateViewWithFade
 
- JSR HideMostSprites1   ; Hide all sprites, after first fetching the palettes
-                        ; if we are changing view
+ JSR SetScreenForUpdate ; Get the screen ready for updating by hiding all
+                        ; sprites, after fading the screen to black if we are
+                        ; changing view
+
+                        ; Fall through into UpdateView to update the view
 
 ; ******************************************************************************
 ;
-;       Name: DrawViewInNMI_b0
+;       Name: UpdateView_b0
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: Call the DrawViewInNMI routine in ROM bank 0
+;    Summary: Call the UpdateView routine in ROM bank 0
 ;
 ; ******************************************************************************
 
-.DrawViewInNMI_b0
+.UpdateView_b0
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -13272,7 +13304,7 @@ ENDIF
  LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
 
- JSR DrawViewInNMI      ; Call DrawViewInNMI, now that it is paged into memory
+ JSR UpdateView         ; Call UpdateView, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -13280,21 +13312,23 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetupHangarInPPU
+;       Name: UpdateHangarView
 ;       Type: Subroutine
 ;   Category: PPU
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.SetupHangarInPPU
+.UpdateHangarView
 
  LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
 
  JSR CopyNameBuffer0To1
 
- JSR SetupViewInPPU2    ; Call SetupViewInPPU2, now that it is paged into memory
+ JSR UpdateScreen       ; Update the screen by sending data to the PPU, either
+                        ; immediately or during VBlank, depending on whether
+                        ; the screen is visible
 
  LDX #1
  STX hiddenBitPlane
@@ -13596,7 +13630,7 @@ ENDIF
 
 .DrawTitleScreen
 
- JSR FetchPalettes1_b3  ; ???
+ JSR FadeToBlack_b3     ; Fade the screen to black over the next four VBlanks
 
  LDA #0                 ; Set the music to tune 0 (no music)
  JSR ChooseMusic_b6
@@ -13678,7 +13712,7 @@ ENDIF
  JSR ResetMusicAfterNMI ; Wait for the next NMI before resetting the current
                         ; tune to 0 (no tune) and stopping the music
 
- JSR FetchPalettes1_b3  ; ???
+ JSR FadeToBlack_b3     ; Fade the screen to black over the next four VBlanks
 
  LDA languageIndex      ; Set K% to the index of the currently selected
  STA K%                 ; language, so when we show the start screen, the
