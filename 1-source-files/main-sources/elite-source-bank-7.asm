@@ -1069,9 +1069,9 @@ ENDIF
                         ; So PPU_ADDR points to a pattern in PPU pattern table
                         ; 0, which is at address PPU_PATT_0 in the PPU
                         ;
-                        ; So it points to pattern 10 when barPatternCounter = 0,
-                        ; and points to patterns 10 to 137 as barPatternCounter
-                        ; increments from 0 to 127
+                        ; So it points to pattern 10 when barPatternCounter is
+                        ; zero, and points to patterns 10 to 137 as
+                        ; barPatternCounter increments from 0 to 127
 
  LDA iconBarImageHi     ; Set dataForPPU(1 0) = (iconBarImageHi 0) + (addr 0)
  ADC addr               ;
@@ -1220,9 +1220,9 @@ ENDIF
                         ; So PPU_ADDR points to a pattern in PPU pattern table
                         ; 0, which is at address PPU_PATT_0 in the PPU
                         ;
-                        ; So it points to pattern 10 when barPatternCounter = 0,
-                        ; and points to patterns 10 to 137 as barPatternCounter
-                        ; increments from 0 to 127
+                        ; So it points to pattern 10 when barPatternCounter is
+                        ; zero, and points to patterns 10 to 137 as
+                        ; barPatternCounter increments from 0 to 127
 
  LDA iconBarImageHi     ; Set dataForPPU(1 0) = (iconBarImageHi 0) + (addr 0)
  ADC addr               ;
@@ -1301,9 +1301,9 @@ ENDIF
                         ; So PPU_ADDR points to a pattern in PPU pattern table
                         ; 1, which is at address PPU_PATT_1 in the PPU
                         ;
-                        ; So it points to pattern 10 when barPatternCounter = 0,
-                        ; and points to patterns 10 to 137 as barPatternCounter
-                        ; increments from 0 to 127
+                        ; So it points to pattern 10 when barPatternCounter is
+                        ; zero, and points to patterns 10 to 137 as
+                        ; barPatternCounter increments from 0 to 127
 
  LDA iconBarImageHi     ; Set dataForPPU(1 0) = (iconBarImageHi 0) + (addr 0)
  ADC addr               ;
@@ -2942,7 +2942,7 @@ ENDIF
                         ; we have copied the whole buffer
 
  LDA tileNumber         ; Set the next free tile number for both bitplanes to
- STA nextTileNumber     ; the current value of tileNumber ???
+ STA nextTileNumber     ; the next free tile number in tileNumber
  STA nextTileNumber+1
 
  RTS                    ; Return from the subroutine
@@ -5717,7 +5717,7 @@ ENDIF
  JSR PlayMusic_b6       ; Call the PlayMusic routine to play the background
                         ; music
 
- PLA                    ; Restore X from the stack so it is unchanged
+ PLA                    ; Restore X from the stack so it is preserved
  TAX
 
  RTS                    ; Return from the subroutine
@@ -5738,8 +5738,8 @@ ENDIF
                         ; sent to the PPU, so the screen is fully updated and
                         ; there is no more data waiting to be sent to the PPU
 
- LDA tileNumber         ; Set nextTileNumber to the number of the next free tile
- STA nextTileNumber     ; for use in the NMI handler
+ LDA tileNumber         ; Set the next free tile number for both bitplanes to
+ STA nextTileNumber     ; the next free tile number in tileNumber
  STA nextTileNumber+1
 
  LDA #88                ; Tell the NMI handler to send nametable entries from
@@ -10958,7 +10958,7 @@ ENDIF
                         ; image to DrawSpriteImage below
 
  LDA #69                ; Set K+2 = 69, so we draw the inventory icon image
- STA K+2                ; using pattern #69 onwards
+ STA K+2                ; using pattern 69 onwards
 
  LDA #8                 ; Set K+3 = 8, so we build the image from sprite 8
  STA K+3                ; onwards
@@ -13320,24 +13320,34 @@ ENDIF
 ;       Name: UpdateHangarView
 ;       Type: Subroutine
 ;   Category: PPU
-;    Summary: ???
+;    Summary: Update the hangar view on-screen by sending the data to the PPU,
+;             either immediately or during VBlank
 ;
 ; ******************************************************************************
 
 .UpdateHangarView
 
- LDA #0                 ; Page ROM bank 0 into memory at $8000
- JSR SetBank
+ LDA #0                 ; Page ROM bank 0 into memory at $8000 (this isn't
+ JSR SetBank            ; strictly necessarily as this routine gets jumped to
+                        ; from the end of the HALL routine in bank 1, which
+                        ; itself is only called via HALL_b1, so the latter will
+                        ; revert to bank 0 following the RTS below and none of
+                        ; the following calls are to bank 0)
 
- JSR CopyNameBuffer0To1
+ JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
+                        ; buffer 1 and set the next free tile number for both
+                        ; bitplanes
 
  JSR UpdateScreen       ; Update the screen by sending data to the PPU, either
                         ; immediately or during VBlank, depending on whether
                         ; the screen is visible
 
- LDX #1
- STX hiddenBitPlane
- RTS
+ LDX #1                 ; Hide bitplane 1, so:
+ STX hiddenBitPlane     ;
+                        ;   * Colour %01 (1) is the visible colour (cyan)
+                        ;   * Colour %10 (2) is the hidden colour (black)
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;

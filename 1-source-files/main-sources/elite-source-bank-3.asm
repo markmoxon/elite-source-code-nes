@@ -1876,7 +1876,7 @@ ENDIF
 
                         ; If we get here then this is the Market Price screen
 
- LDA #HI(16*69)         ; Set PPU_ADDR to the address of pattern #69 in pattern
+ LDA #HI(16*69)         ; Set PPU_ADDR to the address of pattern 69 in pattern
  STA PPU_ADDR           ; table 0, so we load the missile image here
  LDA #LO(16*69)
  STA PPU_ADDR
@@ -1904,7 +1904,7 @@ ENDIF
                         ; If we get here then this is the Save and load screen
                         ; with both fonts loaded
 
- LDA #HI(16*69)         ; Set PPU_ADDR to the address of pattern #69 in pattern
+ LDA #HI(16*69)         ; Set PPU_ADDR to the address of pattern 69 in pattern
  STA PPU_ADDR           ; table 0, so we load the small logo image here
  LDA #LO(16*69)
  STA PPU_ADDR
@@ -1912,7 +1912,7 @@ ENDIF
  LDA #HI(smallLogoImage)    ; Set V(1 0) = smallLogoImage
  STA V+1                    ;
  LDA #LO(smallLogoImage)    ; So we can unpack the image data for the small
- STA V                      ; Elite logo into pattern #69 onwards in pattern
+ STA V                      ; Elite logo into pattern 69 onwards in pattern
                             ; table 0
 
  LDA #3                 ; Set A = 3 so we only unpack the image data below when
@@ -1973,7 +1973,7 @@ ENDIF
  STA imageSentToPPU     ; Set imageSentToPPU = 1 to denote that we have sent the
                         ; font image to the PPU
 
- LDA #HI(16*68)         ; Set PPU_ADDR to the address of pattern #68 in pattern
+ LDA #HI(16*68)         ; Set PPU_ADDR to the address of pattern 68 in pattern
  STA PPU_ADDR           ; table 0
  LDA #LO(16*68)
  STA PPU_ADDR
@@ -1994,7 +1994,7 @@ ENDIF
  BNE svip10             ; finish off setting up the view without loading the
                         ; logo ball image
 
- LDA #HI(16*227)        ; Set PPU_ADDR to the address of pattern #227 in pattern
+ LDA #HI(16*227)        ; Set PPU_ADDR to the address of pattern 227 in pattern
  STA PPU_ADDR           ; table 0
  LDA #LO(16*227)
  STA PPU_ADDR
@@ -2002,7 +2002,7 @@ ENDIF
  LDA #HI(logoBallImage) ; Set V(1 0) = logoBallImage
  STA V+1                ;
  LDA #LO(logoBallImage) ; So we can unpack the image data for the ball at the
- STA V                  ; bottom of the big Elite logo into pattern #227 onwards
+ STA V                  ; bottom of the big Elite logo into pattern 227 onwards
                         ; in pattern table 0
 
  JSR UnpackToPPU        ; Unpack the image data to the PPU
@@ -2013,7 +2013,7 @@ ENDIF
 
                         ; If we get here then this is the Equip Ship screen
 
- LDA #HI(16*69)         ; Set PPU_ADDR to the address of pattern #69 in pattern
+ LDA #HI(16*69)         ; Set PPU_ADDR to the address of pattern 69 in pattern
  STA PPU_ADDR           ; table 0
  LDA #LO(16*69)
  STA PPU_ADDR
@@ -2021,7 +2021,7 @@ ENDIF
  LDA #HI(cobraImage)    ; Set V(1 0) = cobraImage
  STA V+1                ;
  LDA #LO(cobraImage)    ; So we can unpack the image data for the Cobra Mk III
- STA V                  ; image into pattern #69 onwards in pattern table 0
+ STA V                  ; image into pattern 69 onwards in pattern table 0
 
  LDA #2                 ; Set A = 2 so we only unpack the image data when
                         ; imageSentToPPU does not equal 2, i.e. if we have not
@@ -2068,7 +2068,7 @@ ENDIF
                         ; We now send patterns 0 to 4 to the PPU, which contain
                         ; the box edges
 
- LDA #HI(PPU_PATT_1+16*0)   ; Set PPU_ADDR to the address of pattern #0 in
+ LDA #HI(PPU_PATT_1+16*0)   ; Set PPU_ADDR to the address of pattern 0 in
  STA PPU_ADDR               ; pattern table 1
  LDA #LO(PPU_PATT_1+16*0)
  STA PPU_ADDR
@@ -2090,10 +2090,10 @@ ENDIF
 
  BNE svip11             ; Loop back until we have sent all 80 bytes to the PPU
 
-                        ; We now zero pattern #255 in pattern table 1 so it is
+                        ; We now zero pattern 255 in pattern table 1 so it is
                         ; a full block of background colour
 
- LDA #HI(PPU_PATT_1+16*255) ; Set PPU_ADDR to the address of pattern #255 in
+ LDA #HI(PPU_PATT_1+16*255) ; Set PPU_ADDR to the address of pattern 255 in
  STA PPU_ADDR               ; pattern table 1
  LDA #LO(PPU_PATT_1+16*255)
  STA PPU_ADDR
@@ -2272,7 +2272,7 @@ ENDIF
 
 .SendDashImageToPPU
 
- LDA #HI(16*69)         ; Set PPU_ADDR to the address of pattern #69 in pattern
+ LDA #HI(16*69)         ; Set PPU_ADDR to the address of pattern 69 in pattern
  STA PPU_ADDR           ; table 0
  LDA #LO(16*69)
  STA PPU_ADDR
@@ -2303,29 +2303,37 @@ ENDIF
 
 .SendBitplaneToPPU
 
- STX drawingBitplane
- STX nmiBitplane
- STX hiddenBitPlane
+ STX drawingBitplane    ; Set the drawing bitplane and the NMI bitplane to the
+ STX nmiBitplane        ; argument in X, so all the following operations apply
+                        ; to the specified bitplane
+
+ STX hiddenBitPlane     ; Hide bitplane X so it isn't visible on-screen while
+                        ; we do the following
 
  LDA #0                 ; Tell the NMI handler to send nametable entries from
  STA firstNametableTile ; tile 0 onwards
 
- LDA QQ11
- CMP #$DF
- BNE CA986
+ LDA QQ11               ; If the view type in QQ11 is not $DF (Start screen with
+ CMP #$DF               ; the inverted font loaded), then jump to sbit1 to skip
+ BNE sbit1              ; the following and start sending pattern data from
+                        ; pattern 37 onwards
 
- LDA #4
- BNE CA988
+ LDA #4                 ; This is the Start screen with the inverted font
+ BNE sbit2              ; loaded, so set A = 4 so we start sending pattern data
+                        ; from pattern 4 onwards
 
-.CA986
+.sbit1
 
- LDA #$25
+ LDA #37                ; So set A = 37 so we start sending pattern data from
+                        ; pattern 37 onwards
 
-.CA988
+.sbit2
 
- STA firstPatternTile
- LDA tileNumber
- STA nextTileNumber,X
+ STA firstPatternTile   ; Tell the NMI handler to send pattern entries from
+                        ; pattern A in the buffer
+
+ LDA tileNumber         ; Set the next free tile number for the drawing bitplane
+ STA nextTileNumber,X   ; to the next free tile number in tileNumber
 
  LDA #%11000100         ; Set the bitplane flags for the drawing bitplane to the
  JSR SetDrawPlaneFlags  ; following:
@@ -2342,51 +2350,90 @@ ENDIF
                         ; This configures the NMI to send nametable and pattern
                         ; data for the drawing bitplane to the PPU during VBlank
 
- JSR CA99B
- LDA tileNumber
- STA clearingPattTile,X
- RTS
+ JSR SendDataNowToPPU   ; Send the drawing bitplane buffers to the PPU
+                        ; immediately, without trying to squeeze it into VBlanks
 
-.CA99B
+ LDA tileNumber         ; Set clearingPattTile for the drawing bitplane to the
+ STA clearingPattTile,X ; number of the first free tile, so the NMI can start to
+                        ; clear tiles from this point now that they have been
+                        ; sent to the PPU pattern table
 
- TXA
+ RTS                    ; Return from the subroutine
+
+; ******************************************************************************
+;
+;       Name: SendDataNowToPPU
+;       Type: Subroutine
+;   Category: PPU
+;    Summary: Send the specified bitplane buffers to the PPU immediately,
+;             without trying to squeeze it into VBlanks
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The number of the bitplane to send
+;
+; Returns:
+;
+;   X                   X is preserved
+;
+; ******************************************************************************
+
+.SendDataNowToPPU
+
+ TXA                    ; Store the bitplane in X on the stack
  PHA
- LDA #$3F
- STA cycleCount+1
- LDA #$FF
+
+ LDA #HI(16383)         ; Set cycleCount = 16383 so the call to SendBuffersToPPU
+ STA cycleCount+1       ; runs for as long as possible without quitting early
+ LDA #LO(16383)         ; (we are not in the NMI handler, so we don't need to
+ STA cycleCount         ; count cycles, so this just ensures that the
+                        ; cycle-counting checks are not triggered where
+                        ; possible)
+
+ JSR SendBuffersToPPU   ; Send the nametable and palette buffers to the PPU for
+                        ; bitplane X, as configured in the bitplane flags
+
+ PLA                    ; Set X to the bitplane number we stored on the stack
+ PHA                    ; above, leaving the value on the stack so we can still
+ TAX                    ; restore it at the end of the routine
+
+ LDA bitplaneFlags,X    ; If bit 5 is set in the flags for bitplane X, then we
+ AND #%00100000         ; have now sent all the data to the PPU for this
+ BNE sdat1              ; bitplane, so jump to sdat1 to return from the
+                        ; subroutine
+
+ LDA #HI(4096)          ; Otherwise the large cycle count above wasn't long
+ STA cycleCount+1       ; enough to send all the data to the PPU, so set
+ LDA #LO(4096)          ; cycleCount to 4096 to have another go
  STA cycleCount
- JSR SendBuffersToPPU
- PLA
- PHA
+
+ JSR SendBuffersToPPU   ; Send the nametable and palette buffers to the PPU for
+                        ; bitplane X, as configured in the bitplane flags
+
+ PLA                    ; Retrieve the bitplane number from the stack
  TAX
 
  LDA bitplaneFlags,X    ; If bit 5 is set in the flags for bitplane X, then we
- AND #%00100000         ; have already sent all the data to the PPU for this
- BNE CA9CC              ; bitplane, so jump to CA9CC
+ AND #%00100000         ; have now sent all the data to the PPU for this
+ BNE sdat2              ; bitplane, so jump to sdat2 to return from the
+                        ; subroutine
 
- LDA #$10
- STA cycleCount+1
- LDA #0
- STA cycleCount
-
- JSR SendBuffersToPPU
- PLA
- TAX
-
- LDA bitplaneFlags,X    ; If bit 5 is set in the flags for bitplane X, then we
- AND #%00100000         ; have already sent all the data to the PPU for this
- BNE CA9CE              ; bitplane, so jump to CA9CE
+                        ; Otherwise we still haven't sent all the data to the
+                        ; PPU, so we play the background music and repeat the
+                        ; above
 
  JSR PlayMusicAtVBlank  ; Wait for the next VBlank and play the background music
 
- JMP CA99B
+ JMP SendDataNowToPPU   ; Loop back to keep sending data to the PPU
 
-.CA9CC
+.sdat1
 
- PLA
+ PLA                    ; Retrieve the bitplane number from the stack
  TAX
 
-.CA9CE
+.sdat2
 
  JMP PlayMusicAtVBlank  ; Wait for the next VBlank and play the background
                         ; music, returning from the subroutine using a tail call
@@ -2472,9 +2519,9 @@ ENDIF
  LDA #37                ; Tell the NMI handler to send pattern entries from
  STA firstPatternTile   ; pattern 37 in the buffer
 
- LDA tileNumber         ; Tell the NMI handler to send patterns up to the tile
- STA nextTileNumber     ; number in tileNumber, so that's all the tiles up to
- STA nextTileNumber+1   ; the next free tile
+ LDA tileNumber         ; Set the next free tile number for both bitplanes to
+ STA nextTileNumber     ; the next free tile number in tileNumber
+ STA nextTileNumber+1
 
  LDA #%01010100         ; This instruction has no effect as we are about to pull
                         ; the value of A from the stack
@@ -2508,8 +2555,12 @@ ENDIF
  STA clearingPattTile
  STA clearingPattTile+1
  LDA #0
- LDX #0
- STX hiddenBitPlane
+
+ LDX #0                 ; Hide bitplane 0, so:
+ STX hiddenBitPlane     ;
+                        ;   * Colour %01 (1) is the hidden colour (black)
+                        ;   * Colour %10 (2) is the visible colour (cyan)
+
  STX nmiBitplane
  JSR SetDrawingBitplane
  LDA QQ11
@@ -2999,8 +3050,9 @@ ENDIF
  LDA #LO(20*32)
  STA iconBarOffset
 
- LDA QQ11               ; If bit 7 of the view number is clear, jump to CAC1C to
- BPL CAC1C              ; keep this value of iconBarOffset
+ LDA QQ11               ; If bit 7 of the view type in QQ11 is clear then there
+ BPL CAC1C              ; is a dashboard, so jump to CAC1C to keep this value of
+                        ; iconBarOffset
 
  LDA #HI(27*32)         ; Set iconBarOffset(1 0) = 27*32
  STA iconBarOffset+1
@@ -3035,8 +3087,9 @@ ENDIF
  LDA #LO(20*32)
  STA iconBarOffset
 
- LDA QQ11               ; If bit 7 of the view number is clear, jump to CAC3E to
- BPL CAC3E              ; keep this value of iconBarOffset
+ LDA QQ11               ; If bit 7 of the view type in QQ11 is clear then there
+ BPL CAC3E              ; is a dashboard, so jump to CAC3E to keep this value of
+                        ; iconBarOffset
 
  LDA #HI(27*32)         ; Set iconBarOffset(1 0) = 27*32
  STA iconBarOffset+1    ;
@@ -3137,61 +3190,100 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA #248
- STA xSprite0
- LDY #18
-
- LDX #157+YPAL
-
- LDA QQ11
- BPL CACCC
-
- CMP #$C4
- BNE CACA8
-
- LDX #240
- BNE CACCC
-
-.CACA8
-
- LDY #25
- LDX #213+YPAL
-
- CMP #$B9
- BNE CACB7
-
- LDX #150+YPAL
- LDA #248
+ LDA #248               ; Set the x-coordinate of sprite 0 to 248
  STA xSprite0
 
-.CACB7
+                        ; We now set X and Y depending on the type of view, as
+                        ; follows:
+                        ;
+                        ;   * X is the pixel y-coordinate of sprite 0, which is
+                        ;     positioned just above the icon bar
+                        ;
+                        ;   * Y is the row containing the top part of the icon
+                        ;     bar pointer
 
- LDA QQ11
- AND #$0F
- CMP #$0F
- BNE CACC1
+ LDY #18                ; Set Y = 18
 
- LDX #166+YPAL
+ LDX #157+YPAL          ; Set X = 157
 
-.CACC1
+ LDA QQ11               ; If bit 7 of the view type in QQ11 is clear then there
+ BPL sets4              ; is a dashboard, so jump to sets4 with X = 157 and
+                        ; Y = 18
 
- CMP #$0D
- BNE CACCC
+ CMP #$C4               ; If the view type in QQ11 is not $C4 (Game Over screen)
+ BNE sets1              ; then jump to sets1 to keep checking the view type
 
- LDX #173+YPAL
- LDA #248
- STA xSprite0
+ LDX #240               ; This is the Game Over screen, so jump to sets 4 with
+ BNE sets4              ; X = 240 and Y = 18 (this BNE is effectivelty a JMP as
+                        ; X is never zero)
 
-.CACCC
+.sets1
 
- STX ySprite0
+ LDY #25                ; Set Y = 25
 
- TYA
- SEC
- ROL A
- ASL A
- ASL A
- STA yIconBarPointer
+ LDX #213+YPAL          ; Set X = 213
+
+ CMP #$B9               ; If the view type in QQ11 is not $B9 (Equip Ship) then
+ BNE sets2              ; jump to sets2 to keep checking the view type
+
+ LDX #150+YPAL          ; This is the Equip Ship screen, so set X = 150
+
+ LDA #248               ; Set the x-coordinate of sprite 0 to 248 (though we
+ STA xSprite0           ; already did this above, so perhaps this is left over
+                        ; code from development)
+
+.sets2
+
+ LDA QQ11               ; If the view type in QQ11 is not $xF (the Start screen
+ AND #$0F               ; in any of its font configurations), jump to sets3 to
+ CMP #$0F               ; keep checking the view type
+ BNE sets3
+
+ LDX #166+YPAL          ; This is the Start screen, so set X = 166
+
+.sets3
+
+ CMP #$0D               ; If the view type in QQ11 is not $xD (the Long-range or
+ BNE sets4              ; Short-range Chart), jump to sets4 to use the current
+                        ; values of X and Y
+
+ LDX #173+YPAL          ; This is a chart screen, so set X = 173
+
+ LDA #248               ; Set the x-coordinate of sprite 0 to 248 (though we
+ STA xSprite0           ; already did this above, so perhaps this is left over
+                        ; code from development)
+
+.sets4
+
+                        ; We get here with X and Y set as follows:
+                        ;
+                        ;   * X = 157, Y = 18 if there is a dashboard
+                        ;   * X = 240, Y = 18 if this is the Game Over screen
+                        ;   * X = 150, Y = 25 if this is the Equip Ship screen
+                        ;   * X = 166, Y = 25 if this is the Start screen
+                        ;   * X = 173, Y = 25 if this is a chart screen
+                        ;   * X = 213, Y = 25 otherwise
+                        ;
+                        ; In all cases the x-coordinate of sprite 0 is 248
+
+ STX ySprite0           ; Set the y-coordinate of sprite 0 to X
+                        ;
+                        ; This means that sprite 0 is at these coordinates:
+                        ;
+                        ;   * (248, 157) if there is a dashboard
+                        ;   * (248, 240) if this is the Game Over screen
+                        ;   * (248, 150) if this is the Equip Ship screen
+                        ;   * (248, 166) if this is the Start screen
+                        ;   * (248, 173) if this is a chart screen
+                        ;   * (248, 213) otherwise
+
+ TYA                    ; Set the y-coordinate of the icon bar pointer in
+ SEC                    ; yIconBarPointer to Y * 8 + %100, which is either
+ ROL A                  ; 148 or 204 (when Y is 18 or 25)
+ ASL A                  ;
+ ASL A                  ; This means the icon bar pointer is at y-coordinate
+ STA yIconBarPointer    ; 148 when there is a dashboard or this is the Game Over
+                        ; screen, and it's at y-coordinate 204 otherwise
 
  LDA iconBarType        ; Set iconBarImageHi to the high byte of the correct
  ASL A                  ; icon bar image block for the current icon bar type,
@@ -3202,16 +3294,17 @@ ENDIF
                         ; as each icon bar image block contains $0400 bytes,
                         ; and iconBarType is the icon bar type, 0 to 4
 
- LDA QQ11
- AND #$40
- BNE CACEA
+ LDA QQ11               ; If bit 6 of the view number is set, then there is no
+ AND #%01000000         ; icon bar, so jump to sets5 to skip the following
+ BNE sets5              ; instruction
 
- LDX #0                 ; Set barPatternCounter = 0 so the NMI handler sends the
- STX barPatternCounter  ; icon bar's nametable and pattern data to the PPU
+ LDX #0                 ; If we get here then there is an icon bar, so set
+ STX barPatternCounter  ; barPatternCounter = 0 so the NMI handler sends the
+                        ; icon bar's nametable and pattern data to the PPU
 
-.CACEA
+.sets5
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -3388,9 +3481,10 @@ ENDIF
                         ; write the nametable entries there to draw the icon bar
                         ; on-screen
 
- LDA QQ11               ; If bit 7 of the view number in QQ11 is set then the
- BMI dbar3              ; icon bar is on row 27, at the bottom of the screen, so
-                        ; jump to dbar3 to set SC(1 0) and SC2(1 0) accordingly
+ LDA QQ11               ; If bit 7 of the view type in QQ11 is set then there
+ BMI dbar3              ; is no dashboard and the icon bar is at the bottom of
+                        ; the screen, so jump to dbar3 to set SC(1 0) and
+                        ; SC2(1 0) accordingly
 
  LDA #HI(nameBuffer0+20*32) ; Set SC(1 0) to the address of the first tile on
  STA SC+1                   ; tile row 20 in nametable buffer 0
@@ -4010,12 +4104,12 @@ ENDIF
  LDA #LO(lineImage)
  STA V
 
- LDA #HI(pattBuffer0+8*37)  ; Set SC(1 0) to the address of pattern #37 in
+ LDA #HI(pattBuffer0+8*37)  ; Set SC(1 0) to the address of pattern 37 in
  STA SC+1                   ; pattern buffer 0
  LDA #LO(pattBuffer0+8*37)
  STA SC
 
- LDA #HI(pattBuffer1+8*37)  ; Set SC2(1 0) to the address of pattern #37 in
+ LDA #HI(pattBuffer1+8*37)  ; Set SC2(1 0) to the address of pattern 37 in
  STA SC2+1                  ; pattern buffer 1
  LDA #LO(pattBuffer1+8*37)
  STA SC2
@@ -4169,7 +4263,7 @@ ENDIF
 ; inverted font (for the save and load screen) or a set of filled blocks (for
 ; all other screens).
 ;
-; This is called with A = 66, so this load the font into patterns #66 to #160.
+; This is called with A = 66, so this load the font into patterns 66 to 160.
 ;
 ; Arguments:
 ;
@@ -4353,27 +4447,27 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Text
 ;    Summary: Load the font into pattern buffer 1, and a set of filled blocks
-;             into pattern buffer 0, from patterns #161 onwards
+;             into pattern buffer 0, from pattern 161 onwards
 ;
 ; ------------------------------------------------------------------------------
 ;
 ; Pattern buffer 1 contains the font, while pattern buffer 0 either contains a
-; set of filled blocks, both from pattern #161 onwards.
+; set of filled blocks, both from pattern 161 onwards.
 ;
 ; If this is the save and load screen, we load the first 70 characters into
-; patterns #161 to #230, while for all other views we load all 95 characters
-; into patterns #161 to #255.
+; patterns 161 to 230, while for all other views we load all 95 characters
+; into patterns 161 to 255.
 ;
 ; ******************************************************************************
 
 .SetFont
 
- LDA #HI(pattBuffer0+8*161) ; Set SC(1 0) to the address of pattern #161 in
+ LDA #HI(pattBuffer0+8*161) ; Set SC(1 0) to the address of pattern 161 in
  STA SC2+1                  ; pattern buffer 0
  LDA #LO(pattBuffer0+8*161)
  STA SC2
 
- LDA #HI(pattBuffer1+8*161) ; Set SC(1 0) to the address of pattern #161 in
+ LDA #HI(pattBuffer1+8*161) ; Set SC(1 0) to the address of pattern 161 in
  STA SC+1                   ; pattern buffer 1
  LDA #LO(pattBuffer1+8*161)
  STA SC
@@ -4511,7 +4605,7 @@ ENDIF
                         ;
                         ;   * A colourful foreground that's displayed as a set
                         ;     of sprites, whose patterns are sent to the PPU
-                        ;     by the GetSystemImage routine, from pattern #69
+                        ;     by the GetSystemImage routine, from pattern 69
                         ;     onwards
                         ;
                         ; We start by drawing the background into the nametable
@@ -4553,7 +4647,7 @@ ENDIF
                         ; to pass to the DrawSpriteImage routine
 
  LDA #69                ; Set K+2 = 69, so we draw the system image using
- STA K+2                ; pattern #69 onwards
+ STA K+2                ; pattern 69 onwards
 
  LDA #8                 ; Set K+3 = 8, so we build the image from sprite 8
  STA K+3                ; onwards
@@ -4561,7 +4655,7 @@ ENDIF
  LDX #0                 ; Set X and Y to zero, so we draw the system image at
  LDY #0                 ; (XC, YC), without any indents
 
- JSR DrawSpriteImage_b6 ; Draw the system image from sprites, using pattern #69
+ JSR DrawSpriteImage_b6 ; Draw the system image from sprites, using pattern 69
                         ; onwards
 
                         ; We now draw a frame around the system image we just
@@ -4624,15 +4718,15 @@ ENDIF
                         ;   SC2(1 0) = the address in nametable buffer 1
 
  LDY #0                 ; Set the tile at the top-left corner of the picture
- LDA #64                ; frame to pattern #64
+ LDA #64                ; frame to pattern 64
  STA (SC),Y
  STA (SC2),Y
 
- LDA #60                ; Draw the top edge of the frame using pattern #60
+ LDA #60                ; Draw the top edge of the frame using pattern 60
  JSR DrawRowOfTiles
 
  LDA #62                ; Set the tile at the top-right corner of the picture
- STA (SC),Y             ; frame to pattern #62
+ STA (SC),Y             ; frame to pattern 62
  STA (SC2),Y
 
  DEC K+1                ; Decrement the number of rows to draw, as we have just
@@ -4646,12 +4740,12 @@ ENDIF
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDA #1                 ; Set the tile at the start of the row (at offset 0) to
- LDY #0                 ; pattern #1, to draw the left edge of the frame
+ LDY #0                 ; pattern 1, to draw the left edge of the frame
  STA (SC),Y
  STA (SC2),Y
 
  LDA #2                 ; Set the tile at the end of the row (at offset K) to
- LDY K                  ; pattern #2, to draw the right edge of the frame
+ LDY K                  ; pattern 2, to draw the right edge of the frame
  STA (SC),Y
  STA (SC2),Y
 
@@ -4684,15 +4778,15 @@ ENDIF
                         ; have drawn the correct number of rows (i.e. K+1 - 1)
 
  LDY #0                 ; Set the tile at the bottom-left corner of the picture
- LDA #65                ; frame to pattern #65
+ LDA #65                ; frame to pattern 65
  STA (SC),Y
  STA (SC2),Y
 
- LDA #61                ; Draw the top edge of the frame using pattern #61
+ LDA #61                ; Draw the top edge of the frame using pattern 61
  JSR DrawRowOfTiles
 
  LDA #63                ; Set the tile at the bottom-right corner of the picture
- STA (SC),Y             ; frame to pattern #63
+ STA (SC),Y             ; frame to pattern 63
  STA (SC2),Y
 
  RTS                    ; Return from the subroutine
@@ -4971,7 +5065,7 @@ ENDIF
 ;       Name: ClearScreen
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: Clear the screen by clearing patterns #66 to #255 in both pattern
+;    Summary: Clear the screen by clearing patterns 66 to 255 in both pattern
 ;             buffers, and clearing both nametable buffers to the background
 ;
 ; ******************************************************************************
@@ -4980,7 +5074,7 @@ ENDIF
 
  LDA #0                 ; Set SC(1 0) = 66 * 8
  STA SC+1               ;
- LDA #66                ; We use this to calculate the address of pattern #66 in
+ LDA #66                ; We use this to calculate the address of pattern 66 in
  ASL A                  ; the pattern buffers below
  ROL SC+1
  ASL A
@@ -4992,17 +5086,17 @@ ENDIF
  STA SC2                ; Set SC2(1 0) = pattBuffer1 + SC(1 0)
  LDA SC+1               ;              = pattBuffer1 + 66 * 8
  ADC #HI(pattBuffer1)   ;
- STA SC2+1              ; So SC2(1 0) contains the address of pattern #66 in
+ STA SC2+1              ; So SC2(1 0) contains the address of pattern 66 in
                         ; pattern buffer 1, as each pattern in the buffer
                         ; contains eight bytes
 
  LDA SC+1               ; Set SC(1 0) = pattBuffer0 + SC(1 0)
  ADC #HI(pattBuffer0)   ;             = pattBuffer0 + 66 * 8
  STA SC+1               ;
-                        ; So SC2(1 0) contains the address of pattern #66 in
+                        ; So SC2(1 0) contains the address of pattern 66 in
                         ; pattern buffer 0
 
- LDX #66                ; We want to zero patterns #66 onwards, so set a counter
+ LDX #66                ; We want to zero pattern 66 onwards, so set a counter
                         ; in X to count the tile number, starting from 66
 
  LDY #0                 ; Set Y to use as a byte index as we zero 8 bytes for
@@ -5065,7 +5159,7 @@ ENDIF
                         ; whole pattern
 
  BNE clsc1              ; Loop back to clsc1 to keep clearing patterns until we
-                        ; have cleared patterns #66 through #255
+                        ; have cleared patterns 66 through 255
 
                         ; We have cleared the pattern buffers, so now to clear
                         ; the nametable buffers

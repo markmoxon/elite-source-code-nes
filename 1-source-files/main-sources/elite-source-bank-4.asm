@@ -2712,11 +2712,11 @@ ENDIF
  ADC #HI(faceCount)
  STA V+1
 
- LDA #HI(16*69)         ; Set PPU_ADDR to the address of pattern #69 in pattern
+ LDA #HI(16*69)         ; Set PPU_ADDR to the address of pattern 69 in pattern
  STA PPU_ADDR           ; table 0
  LDA #LO(16*69)         ;
  STA PPU_ADDR           ; So we can unpack the image data for the relevant face
-                        ; image into pattern #69 onwards in pattern table 0
+                        ; image into pattern 69 onwards in pattern table 0
 
  JSR UnpackToPPU        ; Unpack the image data to the PPU
 

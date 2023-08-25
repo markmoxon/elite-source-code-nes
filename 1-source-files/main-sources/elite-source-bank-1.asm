@@ -11402,11 +11402,11 @@ ENDIF
  LDA #$00               ; Clear the screen and and set the view type in QQ11 to
  JSR TT66_b0            ; $00 (Space view with neither font loaded)
 
- LDA frameCounter       ; ???
- STA RAND+1
- LDA #$86
- STA RAND+3
- LDA QQ0
+ LDA frameCounter       ; Set the random number seeds to a fairly random state
+ STA RAND+1             ; that's based on the frame counter (which increments
+ LDA #$86               ; every VBlank, so will be pretty random), the current
+ STA RAND+3             ; system's galactic x-coordinate (QQ0), the high byte
+ LDA QQ0                ; of our combat rank (TALLY+1), and a fixed number $86
  STA RAND
  LDA TALLY+1
  STA RAND+2
@@ -11530,14 +11530,17 @@ ENDIF
  STY HANGFLAG           ; Store Y in HANGFLAG to specify whether there are
                         ; multiple ships in the hangar
 
- JSR HANGER             ; ???
- LDA #0
- STA firstPatternTile
+ JSR HANGER             ; Call HANGER to draw the hangar background
+
+ LDA #0                 ; Tell the NMI handler to send pattern entries from
+ STA firstPatternTile   ; pattern 0 in the buffer
 
  LDA #80                ; Tell the NMI handler to send nametable entries up to
  STA maxNameTileNumber  ; tile 80 * 8 = 640 (i.e. up to the end of tile row 19)
 
- JMP UpdateHangarView   ; ???
+ JMP UpdateHangarView   ; Update the hangar view on-screen by sending the data
+                        ; to the PPU, returning from the subroutine using a tail
+                        ; call
 
 ; ******************************************************************************
 ;
@@ -12672,7 +12675,7 @@ ENDIF
 
  LDA #210               ; Set A = 210 to use as the pattern tile number for the
                         ; largest particle of stardust (the stardust particle
-                        ; patterns run from pattern #210 to #214, decreasing in
+                        ; patterns run from pattern 210 to 214, decreasing in
                         ; size as the number increases)
 
  LDX ZZ                 ; If ZZ >= 24, increment A

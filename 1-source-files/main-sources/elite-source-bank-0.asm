@@ -3181,7 +3181,10 @@ ENDIF
                         ; sides of the screen, drawing into the nametable buffer
                         ; for the drawing bitplane
 
- JSR CopyNameBuffer0To1
+ JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
+                        ; buffer 1 and set the next free tile number for both
+                        ; bitplanes
+
  LDA QQ11
  CMP QQ11a
  BEQ C8976
@@ -3276,7 +3279,9 @@ ENDIF
                         ; sides of the screen, drawing into the nametable buffer
                         ; for the drawing bitplane
 
- JSR CopyNameBuffer0To1
+ JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
+                        ; buffer 1 and set the next free tile number for both
+                        ; bitplanes
 
  LDA #%11000100         ; Set both bitplane flags as follows:
  STA bitplaneFlags      ;
@@ -7529,7 +7534,9 @@ ENDIF
 
  LSR demoInProgress     ; Clear bit 7 of demoInProgress
 
- JSR CopyNameBuffer0To1
+ JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
+                        ; buffer 1 and set the next free tile number for both
+                        ; bitplanes
 
  JSR SetupFullViewInNMI ; Configure the PPU to send tiles for a full screen
                         ; (no dashboard) during VBlank
@@ -17596,7 +17603,10 @@ ENDIF
  JSR TT66               ; $95 (Game Over screen)
 
  JSR ClearDashEdge_b6   ; Clear the right edge of the dashboard ???
- JSR CopyNameBuffer0To1
+
+ JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
+                        ; buffer 1 and set the next free tile number for both
+                        ; bitplanes
 
  JSR SetScreenForUpdate ; Get the screen ready for updating by hiding all
                         ; sprites, after fading the screen to black if we are
@@ -17623,9 +17633,10 @@ ENDIF
  STX firstNametableTile ; tile 8 * 8 = 64 onwards (i.e. from the start of tile
                         ; row 2)
 
- LDA #$68
- JSR SetScreenHeight
- LDY #8
+ LDA #104               ; Set the screen height variables for a screen height of
+ JSR SetScreenHeight    ; 208 (i.e. 2 * 104)
+
+ LDY #8                 ; ???
  LDA #1
 
 .loop_CB22F
@@ -17777,8 +17788,8 @@ ENDIF
                         ;
                         ; Bits 0 and 1 are ignored and are always clear
                         ;
-                        ; This configures the NMI to send the drawing bitplane
-                        ; to the PPU during VBlank
+                        ; This configures the NMI to send nametable and pattern
+                        ; data for the drawing bitplane to the PPU during VBlank
 
  DEC LASCT              ; Decrement the counter in LASCT, which we set above,
                         ; so for each loop around D2, we decrement LASCT by 5
@@ -18078,7 +18089,10 @@ ENDIF
 .ChangeToView
 
  JSR TT66
- JSR CopyNameBuffer0To1
+
+ JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
+                        ; buffer 1 and set the next free tile number for both
+                        ; bitplanes
 
  JSR UpdateScreen       ; Update the screen by sending data to the PPU, either
                         ; immediately or during VBlank, depending on whether
@@ -21359,7 +21373,7 @@ ENDIF
 
 .LQ
 
- JSR SetSpaceView       ; ???
+ JSR SendSpaceViewToPPU ; ???
 
  JMP NWSTARS            ; Set up a new stardust field and return from the
                         ; subroutine using a tail call
@@ -21374,7 +21388,7 @@ ENDIF
  CPX VIEW               ; If the current view is already of type X, jump to LO2
  BEQ LO2                ; to return from the subroutine (as LO2 contains an RTS)
 
- JSR SwitchSpaceView    ; ???
+ JSR SetSpaceViewInNMI  ; ???
 
  JSR FLIP               ; Swap the x- and y-coordinates of all the stardust
                         ; particles and redraw the stardust field
@@ -21435,51 +21449,89 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetSpaceView
+;       Name: SendSpaceViewToPPU
+;       Type: Subroutine
+;   Category: PPU
+;    Summary: ???
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The space view to set:
+;
+;                         * 0 = front
+;
+;                         * 1 = rear
+;
+;                         * 2 = left
+;
+;                         * 3 = right
+;
+;                         * 4 = witchspace
+;
+; ******************************************************************************
+
+.SendSpaceViewToPPU
+
+ LDA #72                ; Set the screen height variables for a screen height of
+ JSR SetScreenHeight    ; 144 (i.e. 2 * 72)
+
+ STX VIEW               ; Set the current space view to X
+
+ LDA #$00               ; Clear the screen and and set the view type in QQ11 to
+ JSR TT66               ; $00 (Space view with neither font loaded)
+
+ JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
+                        ; buffer 1 and set the next free tile number for both
+                        ; bitplanes
+
+ JSR SendViewToPPU_b3   ; Configure the PPU for the view type in QQ11
+
+ JMP ResetStardust      ; Hide the sprites for the stardust and return from the
+                        ; subroutine using a tail call
+
+; ******************************************************************************
+;
+;       Name: SetSpaceViewInNMI
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: ???
 ;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The space view to set:
+;
+;                         * 0 = front
+;
+;                         * 1 = rear
+;
+;                         * 2 = left
+;
+;                         * 3 = right
+;
+;                         * 4 = witchspace
+;
 ; ******************************************************************************
 
-.SetSpaceView
+.SetSpaceViewInNMI
 
- LDA #$48               ; ???
- JSR SetScreenHeight
- STX VIEW
+ STX VIEW               ; Set the current space view to X
 
  LDA #$00               ; Clear the screen and and set the view type in QQ11 to
  JSR TT66               ; $00 (Space view with neither font loaded)
 
- JSR CopyNameBuffer0To1 ; ???
-
- JSR SendViewToPPU_b3
-
- JMP ResetStardust
-
-; ******************************************************************************
-;
-;       Name: SwitchSpaceView
-;       Type: Subroutine
-;   Category: Flight
-;    Summary: ???
-;
-; ******************************************************************************
-
-.SwitchSpaceView
-
- STX VIEW
-
- LDA #$00               ; Clear the screen and and set the view type in QQ11 to
- JSR TT66               ; $00 (Space view with neither font loaded)
-
- JSR CopyNameBuffer0To1
+ JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
+                        ; buffer 1 and set the next free tile number for both
+                        ; bitplanes
 
  LDA #80                ; Tell the PPU to send nametable entries up to tile
  STA lastTileNumber     ; 80 * 8 = 640 (i.e. to the end of tile row 19) in both
  STA lastTileNumber+1   ; bitplanes
 
- JSR SetupViewInNMI_b3
+ JSR SetupViewInNMI_b3  ; ???
 
 ; ******************************************************************************
 ;
@@ -21764,7 +21816,7 @@ ENDIF
                         ; sent to the PPU, so the screen is fully updated and
                         ; there is no more data waiting to be sent to the PPU
 
- JSR ClearScreen_b3     ; Clear the screen by zeroing patterns #66 to #255 in
+ JSR ClearScreen_b3     ; Clear the screen by zeroing patterns 66 to 255 in
                         ; both pattern buffer, and clearing both nametable
                         ; buffers to the background tile
 
@@ -21894,7 +21946,7 @@ ENDIF
                         ; Start screen, and bit 4 of QQ11 is set
 
  LDA #66                ; Load the inverted font into both pattern buffers, from
- JSR SetInvertedFont_b3 ; pattern #66 to #160
+ JSR SetInvertedFont_b3 ; pattern 66 to 160
 
 .scrn6
 

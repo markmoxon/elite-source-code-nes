@@ -2442,11 +2442,11 @@ ENDIF
                         ; tiles for the image, and store them in the pattern
                         ; buffers, starting at tile number pictureTile
 
- LDA #HI(16*69)         ; Set PPU_ADDR to the address of pattern #69 in pattern
+ LDA #HI(16*69)         ; Set PPU_ADDR to the address of pattern 69 in pattern
  STA PPU_ADDR           ; table 0
  LDA #LO(16*69)         ;
  STA PPU_ADDR           ; So we can unpack the rest of the system image data
-                        ; into pattern #69 onwards in pattern table 0, so we can
+                        ; into pattern 69 onwards in pattern table 0, so we can
                         ; display it as a foreground sprite on top of the
                         ; background tiles that we just unpacked
 
