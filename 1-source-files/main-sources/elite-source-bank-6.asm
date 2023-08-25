@@ -5353,8 +5353,10 @@ ENDIF
  BNE loop_CA954
  LDA #0
  STA L0402
- LDA #$2C
+
+ LDA #$2C               ; Set the visible colour to cyan ($2C)
  STA visibleColour
+
  RTS
 
 ; ******************************************************************************

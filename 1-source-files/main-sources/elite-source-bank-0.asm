@@ -7835,7 +7835,7 @@ ENDIF
 
 .SetNewViewType
 
- JSR TT66               ; Clear the screen and set the current view type
+ JSR TT66               ; Clear the screen and set the current view type to A
 
  LDA #0                 ; Move the text cursor to row 0
  STA YC
@@ -17626,7 +17626,7 @@ ENDIF
                         ; neither font loaded)
 
  LDA tileNumber         ; Tell the NMI handler to send pattern entries from the
- STA firstPatternTile   ; first free tile number
+ STA firstPatternTile   ; first free tile number ???
 
  LDA #116               ; Tell the NMI handler to send nametable entries up to
  STA maxNameTileNumber  ; tile 116 * 8 = 800 (i.e. up to the end of tile row 28)
@@ -21611,16 +21611,16 @@ ENDIF
 ;       Name: SetupSpaceView
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: Set up the NMI variables for the space view
 ;
 ; ******************************************************************************
 
 .SetupSpaceView
 
- LDA #$FF
+ LDA #$FF               ; Set L045F = $FF ???
  STA L045F
 
- LDA #$2C
+ LDA #$2C               ; Set the visible colour to cyan ($2C)
  STA visibleColour
 
  LDA tileNumber         ; Tell the NMI handler to send pattern entries from the

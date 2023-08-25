@@ -4076,63 +4076,60 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetViewPatterns_AFC3
-;       Type: Subroutine
-;   Category: Drawing the screen
-;    Summary: ???
-;
-; ******************************************************************************
-
-.SetViewPatterns_AFC3
-
- LDX #4
- STX tileNumber
- RTS
-
-; ******************************************************************************
-;
-;       Name: SetViewPatterns_AFC8
-;       Type: Subroutine
-;   Category: Drawing the screen
-;    Summary: ???
-;
-; ******************************************************************************
-
-.SetViewPatterns_AFC8
-
- LDX #$25
- STX tileNumber
- RTS
-
-; ******************************************************************************
-;
 ;       Name: SetViewPatterns
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: Copy the patterns for horizontal line, vertical line and block
+;             images into the pattern buffers, depending on the view
 ;
 ; ******************************************************************************
 
+.vpat1
+
+ LDX #4                 ; This is the Start screen with neither font loaded, so
+ STX tileNumber         ; set tileNumber to 4
+
+ RTS                    ; Return from the subroutine without copying anything to
+                        ; the pattern buffers
+
+.vpat2
+
+ LDX #37                ; This is the Space view with the inverted font loaded,
+ STX tileNumber         ; so set tileNumber to 37
+
+ RTS                    ; Return from the subroutine without copying anything to
+                        ; the pattern buffers
+
 .SetViewPatterns
 
- LDA QQ11
- CMP #$CF
- BEQ SetViewPatterns_AFC3
+ LDA QQ11               ; If the view type in QQ11 is $CF (Start screen with
+ CMP #$CF               ; neither font loaded), jump to vpat1 to set tileNumber
+ BEQ vpat1              ; to 4 and return from the subroutine
 
- CMP #$10
- BEQ SetViewPatterns_AFC8
+ CMP #$10               ; If the view type in QQ11 is $10 (Space view with the
+ BEQ vpat2              ; inverted font loaded), jump to vpat2 to set tileNumber
+                        ; to 37 and return from the subroutine
 
- LDX #$42
- LDA QQ11
- BMI CAFDF
- LDX #$3C
+ LDX #66                ; Set X = 66 to use as the value of tileNumber when
+                        ; there is no dashboard
 
-.CAFDF
+ LDA QQ11               ; If bit 7 of the view type in QQ11 is set then there
+ BMI vpat3              ; is no dashboard, so jump to vpat3 to keep X = 66
 
- STX tileNumber
+ LDX #60                ; There is a dashboard, so set X = 60 to use as the
+                        ; value of tileNumber
 
- LDA #HI(lineImage)     ; Set V(1 0) = lineImage
- STA V+1
+.vpat3
+
+ STX tileNumber         ; Set tileNumber to the value we set in X, so tileNumber
+                        ; is 66 when there is no dashboard, or 60 when there is
+                        ;
+                        ; We now load the image data for the horizontal line,
+                        ; vertical line and block images, starting at pattern 37
+                        ; and ending at the pattern in tileNumber (60 or 66)
+
+ LDA #HI(lineImage)     ; Set V(1 0) = lineImage so we copy the pattern data for
+ STA V+1                ; the line images into the pattern buffers below
  LDA #LO(lineImage)
  STA V
 
@@ -4146,140 +4143,179 @@ ENDIF
  LDA #LO(pattBuffer1+8*37)
  STA SC2
 
- LDY #0
- LDX #$25
+ LDY #0                 ; We are about to copy data into the pattern buffers,
+                        ; so set an index counter in Y
 
-.CAFFD
+ LDX #37                ; We are copying the image data into patterns 37 to 60,
+                        ; so set a pattern counter in X
+
+.vpat4
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA (V),Y
- STA (SC),Y
- STA (SC2),Y
+                        ; We repeat the following code eight times, so it copies
+                        ; eight bytes of each pattern into both pattern buffers
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the line image table
+ STA (SC),Y             ; into pattern buffers 0 and 1, and increment the index
+ STA (SC2),Y            ; in Y
  INY
- LDA (V),Y
- STA (SC),Y
- STA (SC2),Y
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the line image table
+ STA (SC),Y             ; into pattern buffers 0 and 1, and increment the index
+ STA (SC2),Y            ; in Y
  INY
- LDA (V),Y
- STA (SC),Y
- STA (SC2),Y
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the line image table
+ STA (SC),Y             ; into pattern buffers 0 and 1, and increment the index
+ STA (SC2),Y            ; in Y
  INY
- LDA (V),Y
- STA (SC),Y
- STA (SC2),Y
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the line image table
+ STA (SC),Y             ; into pattern buffers 0 and 1, and increment the index
+ STA (SC2),Y            ; in Y
  INY
- LDA (V),Y
- STA (SC),Y
- STA (SC2),Y
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the line image table
+ STA (SC),Y             ; into pattern buffers 0 and 1, and increment the index
+ STA (SC2),Y            ; in Y
  INY
- LDA (V),Y
- STA (SC),Y
- STA (SC2),Y
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the line image table
+ STA (SC),Y             ; into pattern buffers 0 and 1, and increment the index
+ STA (SC2),Y            ; in Y
  INY
- LDA (V),Y
- STA (SC),Y
- STA (SC2),Y
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the line image table
+ STA (SC),Y             ; into pattern buffers 0 and 1, and increment the index
+ STA (SC2),Y            ; in Y
  INY
- LDA (V),Y
- STA (SC),Y
- STA (SC2),Y
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the line image table
+ STA (SC),Y             ; into pattern buffers 0 and 1, and increment the index
+ STA (SC2),Y            ; in Y
  INY
- BNE CB04A
- INC V+1
- INC SC+1
+
+ BNE vpat5              ; If we just incremented Y back around to 0, then
+ INC V+1                ; increment the high bytes of V(1 0), SC(1 0) and
+ INC SC+1               ; SC2(1 0) to point to the next page in memory
  INC SC2+1
 
-.CB04A
+.vpat5
 
- INX
- CPX #$3C
- BNE CAFFD
+ INX                    ; Increment the pattern counter in X
 
-.CB04F
+ CPX #60                ; Loop back until we have copied patterns 37 to 59
+ BNE vpat4
+
+.vpat6
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- CPX tileNumber
- BEQ CB0B4
- LDA (V),Y
- STA (SC2),Y
- LDA #0
+ CPX tileNumber         ; If the pattern counter in X matches tileNumber, jump
+ BEQ vpat8              ; to vpat8 to exit the following loop
+
+                        ; Otherwise we keep copying tiles until X matches
+                        ; tileNumber
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the line image table
+ STA (SC2),Y            ; into pattern buffer 1, zero the Y-th byte of pattern
+ LDA #0                 ; buffer 0, and increment the index
  STA (SC),Y
  INY
- LDA (V),Y
- STA (SC2),Y
- LDA #0
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the line image table
+ STA (SC2),Y            ; into pattern buffer 1, zero the Y-th byte of pattern
+ LDA #0                 ; buffer 0, and increment the index
  STA (SC),Y
  INY
- LDA (V),Y
- STA (SC2),Y
- LDA #0
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the line image table
+ STA (SC2),Y            ; into pattern buffer 1, zero the Y-th byte of pattern
+ LDA #0                 ; buffer 0, and increment the index
  STA (SC),Y
  INY
- LDA (V),Y
- STA (SC2),Y
- LDA #0
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the line image table
+ STA (SC2),Y            ; into pattern buffer 1, zero the Y-th byte of pattern
+ LDA #0                 ; buffer 0, and increment the index
  STA (SC),Y
  INY
- LDA (V),Y
- STA (SC2),Y
- LDA #0
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the line image table
+ STA (SC2),Y            ; into pattern buffer 1, zero the Y-th byte of pattern
+ LDA #0                 ; buffer 0, and increment the index
  STA (SC),Y
  INY
- LDA (V),Y
- STA (SC2),Y
- LDA #0
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the line image table
+ STA (SC2),Y            ; into pattern buffer 1, zero the Y-th byte of pattern
+ LDA #0                 ; buffer 0, and increment the index
  STA (SC),Y
  INY
- LDA (V),Y
- STA (SC2),Y
- LDA #0
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the line image table
+ STA (SC2),Y            ; into pattern buffer 1, zero the Y-th byte of pattern
+ LDA #0                 ; buffer 0, and increment the index
  STA (SC),Y
  INY
- LDA (V),Y
- STA (SC2),Y
- LDA #0
+
+ LDA (V),Y              ; Copy the Y-th pattern byte from the line image table
+ STA (SC2),Y            ; into pattern buffer 1, zero the Y-th byte of pattern
+ LDA #0                 ; buffer 0, and increment the index
  STA (SC),Y
  INY
- BNE CB0B0
- INC V+1
- INC SC+1
+
+ BNE vpat7              ; If we just incremented Y back around to 0, then
+ INC V+1                ; increment the high bytes of V(1 0), SC(1 0) and
+ INC SC+1               ; SC2(1 0) to point to the next page in memory
  INC SC2+1
 
-.CB0B0
+.vpat7
 
- INX
- JMP CB04F
+ INX                    ; Increment the pattern counter in X
 
-.CB0B4
+ JMP vpat6              ; Loop back to copy more patterns, if required
+
+.vpat8
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA #0
- LDX #$30
+                        ; Finally, we reset the next six patterns (i.e. the ones
+                        ; from tileNumber onwards), so we need to zero 48 bytes,
+                        ; as there are eight bytes in each pattern
+                        ;
+                        ; We keep using the index in Y, as it already points to
+                        ; the correct place in the buffers
 
-.loop_CB0C5
+ LDA #0                 ; Set A = 0 so we can zero the pattern buffers
 
- STA (SC2),Y
+ LDX #48                ; Set X as a byte counter
+
+.vpat9
+
+ STA (SC2),Y            ; Zero the Y-th byte of both pattern buffers
  STA (SC),Y
- INY
- BNE CB0D0
- INC SC2+1
- INC SC+1
 
-.CB0D0
+ INY                    ; Increment the index counter
 
- DEX
- BNE loop_CB0C5
+ BNE vpat10             ; If we just incremented Y back around to 0, then
+ INC SC2+1              ; increment the high bytes of SC(1 0) and SC2(1 0)
+ INC SC+1               ; to point to the next page in memory
+
+.vpat10
+
+ DEX                    ; Decrement the byte counter
+
+ BNE vpat9              ; Loop back until we have zeroed all 48 bytes
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -5262,94 +5298,94 @@ ENDIF
 
 .viewPalettes
 
- EQUB $0F, $2C, $0F, $2C ; B3DF: 0F 2C 0F... .,.
- EQUB $0F, $28, $00, $1A ; B3E3: 0F 28 00... .(.
- EQUB $0F, $10, $00, $16 ; B3E7: 0F 10 00... ...
- EQUB $0F, $10, $00, $1C ; B3EB: 0F 10 00... ...
- EQUB $0F, $38, $2A, $15 ; B3EF: 0F 38 2A... .8*
- EQUB $0F, $1C, $22, $28 ; B3F3: 0F 1C 22... .."
- EQUB $0F, $16, $28, $27 ; B3F7: 0F 16 28... ..(
- EQUB $0F, $15, $20, $25 ; B3FB: 0F 15 20... ..
- EQUB $0F, $38, $38, $38 ; B3FF: 0F 38 38... .88
- EQUB $0F, $10, $06, $1A ; B403: 0F 10 06... ...
- EQUB $0F, $22, $00, $28 ; B407: 0F 22 00... .".
- EQUB $0F, $10, $00, $1C ; B40B: 0F 10 00... ...
- EQUB $0F, $38, $10, $15 ; B40F: 0F 38 10... .8.
- EQUB $0F, $10, $0F, $1C ; B413: 0F 10 0F... ...
- EQUB $0F, $06, $28, $25 ; B417: 0F 06 28... ..(
- EQUB $0F, $15, $20, $25 ; B41B: 0F 15 20... ..
- EQUB $0F, $2C, $0F, $2C ; B41F: 0F 2C 0F... .,.
- EQUB $0F, $28, $00, $1A ; B423: 0F 28 00... .(.
- EQUB $0F, $10, $00, $16 ; B427: 0F 10 00... ...
- EQUB $0F, $10, $00, $3A ; B42B: 0F 10 00... ...
- EQUB $0F, $38, $10, $15 ; B42F: 0F 38 10... .8.
- EQUB $0F, $1C, $10, $28 ; B433: 0F 1C 10... ...
- EQUB $0F, $06, $10, $27 ; B437: 0F 06 10... ...
- EQUB $0F, $00, $10, $25 ; B43B: 0F 00 10... ...
- EQUB $0F, $2C, $0F, $2C ; B43F: 0F 2C 0F... .,.
- EQUB $0F, $10, $1A, $28 ; B443: 0F 10 1A... ...
- EQUB $0F, $10, $00, $16 ; B447: 0F 10 00... ...
- EQUB $0F, $10, $00, $1C ; B44B: 0F 10 00... ...
- EQUB $0F, $38, $2A, $15 ; B44F: 0F 38 2A... .8*
- EQUB $0F, $1C, $22, $28 ; B453: 0F 1C 22... .."
- EQUB $0F, $06, $28, $27 ; B457: 0F 06 28... ..(
- EQUB $0F, $15, $20, $25 ; B45B: 0F 15 20... ..
- EQUB $0F, $2C, $0F, $2C ; B45F: 0F 2C 0F... .,.
- EQUB $0F, $20, $28, $25 ; B463: 0F 20 28... . (
- EQUB $0F, $10, $00, $16 ; B467: 0F 10 00... ...
- EQUB $0F, $10, $00, $1C ; B46B: 0F 10 00... ...
- EQUB $0F, $38, $2A, $15 ; B46F: 0F 38 2A... .8*
- EQUB $0F, $1C, $22, $28 ; B473: 0F 1C 22... .."
- EQUB $0F, $06, $28, $27 ; B477: 0F 06 28... ..(
- EQUB $0F, $15, $20, $25 ; B47B: 0F 15 20... ..
- EQUB $0F, $28, $10, $06 ; B47F: 0F 28 10... .(.
- EQUB $0F, $10, $00, $1A ; B483: 0F 10 00... ...
- EQUB $0F, $0C, $1C, $2C ; B487: 0F 0C 1C... ...
- EQUB $0F, $10, $00, $1C ; B48B: 0F 10 00... ...
- EQUB $0F, $0C, $1C, $2C ; B48F: 0F 0C 1C... ...
- EQUB $0F, $18, $28, $38 ; B493: 0F 18 28... ..(
- EQUB $0F, $25, $35, $25 ; B497: 0F 25 35... .%5
- EQUB $0F, $15, $20, $25 ; B49B: 0F 15 20... ..
- EQUB $0F, $2A, $00, $06 ; B49F: 0F 2A 00... .*.
- EQUB $0F, $20, $00, $2A ; B4A3: 0F 20 00... . .
- EQUB $0F, $10, $00, $20 ; B4A7: 0F 10 00... ...
- EQUB $0F, $10, $00, $1C ; B4AB: 0F 10 00... ...
- EQUB $0F, $38, $2A, $15 ; B4AF: 0F 38 2A... .8*
- EQUB $0F, $27, $28, $17 ; B4B3: 0F 27 28... .'(
- EQUB $0F, $06, $28, $27 ; B4B7: 0F 06 28... ..(
- EQUB $0F, $15, $20, $25 ; B4BB: 0F 15 20... ..
- EQUB $0F, $28, $0F, $25 ; B4BF: 0F 28 0F... .(.
- EQUB $0F, $10, $06, $1A ; B4C3: 0F 10 06... ...
- EQUB $0F, $10, $0F, $1A ; B4C7: 0F 10 0F... ...
- EQUB $0F, $10, $00, $1C ; B4CB: 0F 10 00... ...
- EQUB $0F, $38, $2A, $15 ; B4CF: 0F 38 2A... .8*
- EQUB $0F, $18, $28, $38 ; B4D3: 0F 18 28... ..(
- EQUB $0F, $06, $2C, $2C ; B4D7: 0F 06 2C... ..,
- EQUB $0F, $15, $20, $25 ; B4DB: 0F 15 20... ..
- EQUB $0F, $1C, $10, $30 ; B4DF: 0F 1C 10... ...
- EQUB $0F, $20, $00, $2A ; B4E3: 0F 20 00... . .
- EQUB $0F, $2A, $00, $06 ; B4E7: 0F 2A 00... .*.
- EQUB $0F, $10, $00, $1C ; B4EB: 0F 10 00... ...
- EQUB $0F, $0F, $10, $30 ; B4EF: 0F 0F 10... ...
- EQUB $0F, $17, $27, $37 ; B4F3: 0F 17 27... ..'
- EQUB $0F, $0F, $28, $38 ; B4F7: 0F 0F 28... ..(
- EQUB $0F, $15, $25, $25 ; B4FB: 0F 15 25... ..%
- EQUB $0F, $1C, $2C, $3C ; B4FF: 0F 1C 2C... ..,
- EQUB $0F, $38, $11, $11 ; B503: 0F 38 11... .8.
- EQUB $0F, $16, $00, $20 ; B507: 0F 16 00... ...
- EQUB $0F, $2B, $00, $25 ; B50B: 0F 2B 00... .+.
- EQUB $0F, $10, $1A, $25 ; B50F: 0F 10 1A... ...
- EQUB $0F, $08, $18, $27 ; B513: 0F 08 18... ...
- EQUB $0F, $0F, $28, $38 ; B517: 0F 0F 28... ..(
- EQUB $0F, $00, $10, $30 ; B51B: 0F 00 10... ...
- EQUB $0F, $2C, $0F, $2C ; B51F: 0F 2C 0F... .,.
- EQUB $0F, $10, $28, $1A ; B523: 0F 10 28... ..(
- EQUB $0F, $10, $00, $16 ; B527: 0F 10 00... ...
- EQUB $0F, $10, $00, $1C ; B52B: 0F 10 00... ...
- EQUB $0F, $38, $2A, $15 ; B52F: 0F 38 2A... .8*
- EQUB $0F, $1C, $22, $28 ; B533: 0F 1C 22... .."
- EQUB $0F, $06, $28, $27 ; B537: 0F 06 28... ..(
- EQUB $0F, $15, $20, $25 ; B53B: 0F 15 20... ..
+ EQUB $0F, $2C, $0F, $2C
+ EQUB $0F, $28, $00, $1A
+ EQUB $0F, $10, $00, $16
+ EQUB $0F, $10, $00, $1C
+ EQUB $0F, $38, $2A, $15
+ EQUB $0F, $1C, $22, $28
+ EQUB $0F, $16, $28, $27
+ EQUB $0F, $15, $20, $25
+ EQUB $0F, $38, $38, $38
+ EQUB $0F, $10, $06, $1A
+ EQUB $0F, $22, $00, $28
+ EQUB $0F, $10, $00, $1C
+ EQUB $0F, $38, $10, $15
+ EQUB $0F, $10, $0F, $1C
+ EQUB $0F, $06, $28, $25
+ EQUB $0F, $15, $20, $25
+ EQUB $0F, $2C, $0F, $2C
+ EQUB $0F, $28, $00, $1A
+ EQUB $0F, $10, $00, $16
+ EQUB $0F, $10, $00, $3A
+ EQUB $0F, $38, $10, $15
+ EQUB $0F, $1C, $10, $28
+ EQUB $0F, $06, $10, $27
+ EQUB $0F, $00, $10, $25
+ EQUB $0F, $2C, $0F, $2C
+ EQUB $0F, $10, $1A, $28
+ EQUB $0F, $10, $00, $16
+ EQUB $0F, $10, $00, $1C
+ EQUB $0F, $38, $2A, $15
+ EQUB $0F, $1C, $22, $28
+ EQUB $0F, $06, $28, $27
+ EQUB $0F, $15, $20, $25
+ EQUB $0F, $2C, $0F, $2C
+ EQUB $0F, $20, $28, $25
+ EQUB $0F, $10, $00, $16
+ EQUB $0F, $10, $00, $1C
+ EQUB $0F, $38, $2A, $15
+ EQUB $0F, $1C, $22, $28
+ EQUB $0F, $06, $28, $27
+ EQUB $0F, $15, $20, $25
+ EQUB $0F, $28, $10, $06
+ EQUB $0F, $10, $00, $1A
+ EQUB $0F, $0C, $1C, $2C
+ EQUB $0F, $10, $00, $1C
+ EQUB $0F, $0C, $1C, $2C
+ EQUB $0F, $18, $28, $38
+ EQUB $0F, $25, $35, $25
+ EQUB $0F, $15, $20, $25
+ EQUB $0F, $2A, $00, $06
+ EQUB $0F, $20, $00, $2A
+ EQUB $0F, $10, $00, $20
+ EQUB $0F, $10, $00, $1C
+ EQUB $0F, $38, $2A, $15
+ EQUB $0F, $27, $28, $17
+ EQUB $0F, $06, $28, $27
+ EQUB $0F, $15, $20, $25
+ EQUB $0F, $28, $0F, $25
+ EQUB $0F, $10, $06, $1A
+ EQUB $0F, $10, $0F, $1A
+ EQUB $0F, $10, $00, $1C
+ EQUB $0F, $38, $2A, $15
+ EQUB $0F, $18, $28, $38
+ EQUB $0F, $06, $2C, $2C
+ EQUB $0F, $15, $20, $25
+ EQUB $0F, $1C, $10, $30
+ EQUB $0F, $20, $00, $2A
+ EQUB $0F, $2A, $00, $06
+ EQUB $0F, $10, $00, $1C
+ EQUB $0F, $0F, $10, $30
+ EQUB $0F, $17, $27, $37
+ EQUB $0F, $0F, $28, $38
+ EQUB $0F, $15, $25, $25
+ EQUB $0F, $1C, $2C, $3C
+ EQUB $0F, $38, $11, $11
+ EQUB $0F, $16, $00, $20
+ EQUB $0F, $2B, $00, $25
+ EQUB $0F, $10, $1A, $25
+ EQUB $0F, $08, $18, $27
+ EQUB $0F, $0F, $28, $38
+ EQUB $0F, $00, $10, $30
+ EQUB $0F, $2C, $0F, $2C
+ EQUB $0F, $10, $28, $1A
+ EQUB $0F, $10, $00, $16
+ EQUB $0F, $10, $00, $1C
+ EQUB $0F, $38, $2A, $15
+ EQUB $0F, $1C, $22, $28
+ EQUB $0F, $06, $28, $27
+ EQUB $0F, $15, $20, $25
 
 ; ******************************************************************************
 ;
@@ -5417,11 +5453,13 @@ ENDIF
 
 .GetViewPalettes
 
- LDA QQ11a
- AND #$0F
+ LDA QQ11a              ; Set X to the old view number in the lower nibble of
+ AND #%00001111         ; QQ11a
  TAX
- LDA #0
- STA SC+1
+
+ LDA #0                 ; Set SC+1 = 0, though this is superfluous as we do the
+ STA SC+1               ; the same thing just below
+
  LDA paletteForView,X
  LDY #0
  STY SC+1
