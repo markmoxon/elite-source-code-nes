@@ -2534,7 +2534,7 @@ ENDIF
                         ; routine and which we stored on the stack above
 
  JSR SetDrawPlaneFlags  ; Set the bitplane flags to A for the current drawing
-                        ; bitplane, which is bitplane 0 at this point ???
+                        ; bitplane, which must be bitplane 0 at this point ???
 
  INC drawingBitplane    ; Increment drawingBitplane to 1
 
@@ -2548,36 +2548,43 @@ ENDIF
  STA lastTileNumber     ; 80 * 8 = 640 (i.e. to the end of tile row 19) in both
  STA lastTileNumber+1   ; bitplanes
 
- LDA QQ11
- STA QQ11a
+ LDA QQ11               ; Set the old view number in QQ11a to the new view
+ STA QQ11a              ; number in QQ11, to denote that we have now changed
+                        ; view to the view in QQ11
 
- LDA tileNumber
- STA clearingPattTile
- STA clearingPattTile+1
- LDA #0
+ LDA tileNumber         ; Set clearingPattTile for both bitplanes to the number
+ STA clearingPattTile   ; of the first free tile, so we start to clear tiles
+ STA clearingPattTile+1 ; from that point once they have been sent to the PPU
+                        ; pattern table
+
+ LDA #0                 ; Set A = 0, though this has no effect as we don't use
+                        ; it
 
  LDX #0                 ; Hide bitplane 0, so:
  STX hiddenBitPlane     ;
                         ;   * Colour %01 (1) is the hidden colour (black)
                         ;   * Colour %10 (2) is the visible colour (cyan)
 
- STX nmiBitplane
- JSR SetDrawingBitplane
- LDA QQ11
- AND #$40
- BNE svin4
+ STX nmiBitplane        ; Set nmiBitplane = 0 so bitplane 0 is the first to be
+                        ; sent in the NMI handler
+
+ JSR SetDrawingBitplane ; Set the drawing bitplane to bitplane 0
+
+ LDA QQ11               ; If bit 6 of the view number is set, then there is no
+ AND #%01000000         ; icon bar, so jump to svin4 to skip the following
+ BNE svin4              ; instructions
 
  JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
                         ; next VBlank)
 
- LDA #%10000000
- STA showUserInterface
+ LDA #%10000000         ; Set bit 7 of showUserInterface to denote that there is
+ STA showUserInterface  ; a user interface
 
 .svin4
 
  LDA screenFadedToBlack ; If bit 7 of screenFadedToBlack is clear then the
  BPL svin5              ; screen is visible and has not been faded to black, so
-                        ; jump to svin5 to ???
+                        ; jump to svin5 to update the screen without fading it
 
  JMP FadeToColour_b3    ; Reverse-fade the screen from black to full colour over
                         ; the next four VBlanks, returning from the subroutine
@@ -2585,40 +2592,63 @@ ENDIF
 
 .svin5
 
- LDA QQ11
- AND #$0F
+ LDA QQ11               ; Set X to the new view number in the lower nibble of
+ AND #%00001111         ; QQ11
  TAX
- LDA paletteForView,X
- CMP L03F2
- STA L03F2
+
+ LDA paletteForView,X   ; Set A to the palette number used by the view from the
+ CMP screenReset        ; paletteForView table, compare it to screenReset, set
+ STA screenReset        ; the processor flags accordingly, and store the palette
+                        ; number in screenReset
+                        ;
+                        ; This has no effect, as screenReset is not read
+                        ; anywhere and neither the value of A nor the processor
+                        ; flags are used in the following
 
  JSR GetViewPalettes    ; Get the palette for the view type in QQ11a and store
                         ; it in a table at XX3
 
- DEC updatePaletteInNMI
+ DEC updatePaletteInNMI ; Decrement updatePaletteInNMI to a non-zero value so we
+                        ; do send palette data from XX3 to the PPU during NMI,
+                        ; which will ensure the screen updates with the colours
+                        ; as we fade to black
 
  JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
-                        ; next VBlank)
+                        ; next VBlank) so we know the palette data has been sent
+                        ; to the PPU
 
- INC updatePaletteInNMI
+ INC updatePaletteInNMI ; Increment updatePaletteInNMI back to the value it had
+                        ; before we decremented it above
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: paletteForView
 ;       Type: Variable
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: Palette numbers for each view
 ;
 ; ******************************************************************************
 
 .paletteForView
 
- EQUB   0,   2,  10,  10
- EQUB   0,  10,   6,   8
- EQUB   8,   5,   1,   7
- EQUB   3,   4,   0,   9
+ EQUB  0                ; Space view
+ EQUB  2                ; Title screen
+ EQUB 10                ; Mission 1 briefing: rotating ship
+ EQUB 10                ; Mission 1 briefing: ship and text
+ EQUB  0                ; Game Over screen
+ EQUB 10                ; Text-based mission briefing
+ EQUB  6                ; Data on System
+ EQUB  8                ; Inventory
+ EQUB  8                ; Status Mode
+ EQUB  5                ; Equip Ship
+ EQUB  1                ; Market Price
+ EQUB  7                ; Save and load
+ EQUB  3                ; Short-range Chart
+ EQUB  4                ; Long-range Chart
+ EQUB  0                ; Unused
+ EQUB  9                ; Start screen
 
 ; ******************************************************************************
 ;
@@ -2763,9 +2793,11 @@ ENDIF
  BNE rscr2              ; Loop back until we have zeroed 8 pages of nametable in
                         ; the PPU
 
- LDA #245               ; Set imageSentToPPU = 245 to denote that we have sent
- STA L03F2              ; the inventory icon image to the PPU, and store this in
- STA imageSentToPPU     ; L03F2 too ???
+ LDA #245               ; Set screenReset = 245, though this is not used
+ STA screenReset        ; anywhere, so this has no effect on anything
+
+ STA imageSentToPPU     ; Set imageSentToPPU = 245 to denote that we have sent
+                        ; the inventory icon image to the PPU
 
                         ; We now send patterns 0 to 4 to the PPU, to set up the
                         ; blank tile (pattern 0), the three box edges (patterns

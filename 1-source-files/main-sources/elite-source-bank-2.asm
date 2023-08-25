@@ -15506,8 +15506,8 @@ ENDIF
                         ; sent to the PPU, so the screen is fully updated and
                         ; there is no more data waiting to be sent to the PPU
 
- LDA tileNumber         ; ???
- STA firstPatternTile
+ LDA tileNumber         ; Tell the NMI handler to send pattern entries from the
+ STA firstPatternTile   ; first free tile number ???
 
  LDA #40                ; Tell the NMI handler to send nametable entries up to
  STA maxNameTileNumber  ; tile 40 * 8 = 320 (i.e. up to the end of tile row 10)

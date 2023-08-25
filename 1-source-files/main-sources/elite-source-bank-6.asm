@@ -4737,28 +4737,45 @@ ENDIF
  STA SY,Y
  DEY
  BNE CA5C5
- LDX #$14
- LDY #$98
+
+ LDX #NOST              ; Set X to the maximum number of stardust particles, so
+                        ; we loop through all the particles of stardust in the
+                        ; following
+
+ LDY #152               ; Set Y to the starting index in the sprite buffer, so
+                        ; we start configuring from sprite 152 / 4 = 38 (as each
+                        ; sprite in the buffer consists of four bytes)
 
 .CA5EF
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA #$D2
- STA tileSprite0,Y
- TXA
- LSR A
- ROR A
- ROR A
- AND #$E1
- STA attrSprite0,Y
+ LDA #210               ; Set the sprite to use pattern number 210 for the
+ STA tileSprite0,Y      ; largest particle of stardust (the stardust particle
+                        ; patterns run from pattern 210 to 214, decreasing in
+                        ; size as the number increases)
+
+ TXA                    ; Take the particle number, which is between 1 and 20
+ LSR A                  ; (as NOST is 20), and rotate it around from %76543210
+ ROR A                  ; to %10xxxxx3 (where x indicates a zero), storing the
+ ROR A                  ; result as the sprite attribute
+ AND #%11100001         ;
+ STA attrSprite0,Y      ; This sets the flip horizontally and flip vertically
+                        ; attributes to bits 0 and 1 of the particle number, and
+                        ; the palette to bit 3 of the particle number, so the
+                        ; reset stardust particles have a variety of reflections
+                        ; and palettes
+
+ INY                    ; Add 4 to Y so it points to the next sprite's data in
+ INY                    ; the sprite buffer
  INY
  INY
- INY
- INY
- DEX
- BNE CA5EF
+
+ DEX                    ; Decrement the loop counter in X
+
+ BNE CA5EF              ; Loop back until we have configured 20 sprites
+
  JSR STARS_b1
 
 .CA614
@@ -4861,11 +4878,15 @@ ENDIF
  STA QQ11               ; neither font loaded)
 
  JSR SetViewPatterns_b3
- LDA #$25
- STA firstPatternTile
+
+ LDA #37                ; Tell the NMI handler to send pattern entries from
+ STA firstPatternTile   ; pattern 37 in the buffer
+
  JSR subm_A761
- LDA #$3C
- STA firstPatternTile
+
+ LDA #60                ; Tell the NMI handler to send pattern entries from
+ STA firstPatternTile   ; pattern 60 in the buffer
+
  JMP PlayDemo_b0
 
 .CA6D3
