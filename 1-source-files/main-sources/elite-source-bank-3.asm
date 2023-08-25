@@ -1886,8 +1886,8 @@ ENDIF
  LDA #LO(inventoryIcon)
  STA SC
 
- LDA #245               ; Set imageFlags = 245 ???
- STA imageFlags
+ LDA #245               ; Set imageSentToPPU = 245 to denote that we have sent
+ STA imageSentToPPU     ; the inventory icon image to the PPU
 
  LDX #4                 ; Set X = 4 so we send four batches of 16 bytes to the
                         ; PPU in the call to SendInventoryToPPU below
@@ -1916,8 +1916,8 @@ ENDIF
                             ; table 0
 
  LDA #3                 ; Set A = 3 so we only unpack the image data below when
-                        ; imageFlags does not equal 3 (i.e. if we haven't
-                        ; already unpacked the small logo image)
+                        ; imageSentToPPU does not equal 3 (i.e. if we haven't
+                        ; already sent the small logo image to the PPU)
 
  BNE svip8              ; Jump to svip8 to unpack the image data (this BNE is
                         ; effectively a JMP as A is never zero)
@@ -1937,15 +1937,16 @@ ENDIF
                         ; so now we load the dashboard image, if we haven't
                         ; already
 
- LDA #0                 ; Set A = 0 to set as the new value of imageFlags below
+ LDA #0                 ; Set A = 0 to set as the new value of imageSentToPPU
+                        ; below
 
- CMP imageFlags         ; If imageFlags = 0 then we have already unpacked the
- BEQ svip10             ; dashboard image, so jump to svip10 to finish off
-                        ; setting up the view without loading the dashboard
-                        ; image again
+ CMP imageSentToPPU     ; If imageSentToPPU = 0 then we have already sent the
+ BEQ svip10             ; dashboard image to the PPU, so jump to svip10 to
+                        ; finish off setting up the view without sending the
+                        ; dashboard image again
 
- STA imageFlags         ; Set imageFlags = 0 to denote that we have loaded the
-                        ; dashboard image
+ STA imageSentToPPU     ; Set imageSentToPPU = 0 to denote that we have sent the
+                        ; dashboard image to the PPU
 
  JSR SendDashImageToPPU ; Unpack the dashboard image and send it to patterns 69
                         ; to 255 in pattern table 0 in the PPU
@@ -1955,20 +1956,22 @@ ENDIF
 .svip6
 
                         ; If we get here then QQ11 is $9D (Long-range Chart with
-                        ; the inverted font loaded) or $DF (Start screen with the
-                        ; inverted font loaded)
+                        ; the inverted font loaded) or $DF (Start screen with
+                        ; the inverted font loaded)
 
  LDA #36                ; Set L00D9 = 36 ???
  STA L00D9
 
- LDA #1                 ; Set A = 1 to set as the new value of imageFlags below
+ LDA #1                 ; Set A = 1 to set as the new value of imageSentToPPU
+                        ; below
 
- CMP imageFlags         ; If imageFlags = 1 then we have already loaded the font
- BEQ svip10             ; image, so jump to svip10 to finish off setting up the
-                        ; view without loading the font image again
+ CMP imageSentToPPU     ; If imageSentToPPU = 1 then we have already sent the
+ BEQ svip10             ; font image to the PPU, so jump to svip10 to finish off
+                        ; setting up the view without sending the font image
+                        ; again
 
- STA imageFlags         ; Set imageFlags = 1 to denote that we have loaded the
-                        ; font image
+ STA imageSentToPPU     ; Set imageSentToPPU = 1 to denote that we have sent the
+                        ; font image to the PPU
 
  LDA #HI(16*68)         ; Set PPU_ADDR to the address of pattern #68 in pattern
  STA PPU_ADDR           ; table 0
@@ -2021,7 +2024,8 @@ ENDIF
  STA V                  ; image into pattern #69 onwards in pattern table 0
 
  LDA #2                 ; Set A = 2 so we only unpack the image data when
-                        ; imageFlags does not equal 2
+                        ; imageSentToPPU does not equal 2, i.e. if we have not
+                        ; already sent the Cobra image to the PPU
 
 .svip8
 
@@ -2029,11 +2033,11 @@ ENDIF
                         ; be loading (the Cobra Mk III image when A = 2, or the
                         ; small logo image when A = 3)
 
- CMP imageFlags         ; If imageFlags = A then we have already loaded the
- BEQ svip10             ; image specified in A
+ CMP imageSentToPPU     ; If imageSentToPPU = A then we have already sent the
+ BEQ svip10             ; image specified in A to the PPU
 
- STA imageFlags         ; Set imageFlags = A to denote that we have loaded the
-                        ; relevant image
+ STA imageSentToPPU     ; Set imageSentToPPU = A to denote that we have sent the
+                        ; relevant image to the PPU
 
  JSR UnpackToPPU        ; Unpack the image data to the PPU
 
@@ -2323,8 +2327,20 @@ ENDIF
  LDA tileNumber
  STA nextTileNumber,X
 
- LDA #%11000100
- JSR SetDrawPlaneFlags
+ LDA #%11000100         ; Set the bitplane flags for the drawing bitplane to the
+ JSR SetDrawPlaneFlags  ; following:
+                        ;
+                        ;   * Bit 2 set   = send tiles until the end of buffer
+                        ;   * Bit 3 clear = don't clear buffers after sending
+                        ;   * Bit 4 clear = we've not started sending data yet
+                        ;   * Bit 5 clear = we have not yet sent all the data
+                        ;   * Bit 6 set   = send both pattern and nametable data
+                        ;   * Bit 7 set   = send data to the PPU
+                        ;
+                        ; Bits 0 and 1 are ignored and are always clear
+                        ;
+                        ; This configures the NMI to send nametable and pattern
+                        ; data for the drawing bitplane to the PPU during VBlank
 
  JSR CA99B
  LDA tileNumber
@@ -2696,10 +2712,9 @@ ENDIF
  BNE rscr2              ; Loop back until we have zeroed 8 pages of nametable in
                         ; the PPU
 
- LDA #%11110101         ; ???
- STA L03F2
-
- STA imageFlags         ; Set the system image number to 5 (bits 0-3) and ???
+ LDA #245               ; Set imageSentToPPU = 245 to denote that we have sent
+ STA L03F2              ; the inventory icon image to the PPU, and store this in
+ STA imageSentToPPU     ; L03F2 too ???
 
                         ; We now send patterns 0 to 4 to the PPU, to set up the
                         ; blank tile (pattern 0), the three box edges (patterns

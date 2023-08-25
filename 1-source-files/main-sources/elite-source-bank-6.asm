@@ -3760,8 +3760,8 @@ ENDIF
  ASL A                  ;        = XC * 8 + 6
  ASL A                  ;
  ASL A                  ; So SC is the pixel x-coordinate of the top-left corner
- ADC #0                 ; of the image we want to draw, as each text character in
- STA SC                 ; XC is 8 pixels wide and X contains the x-coordinate
+ ADC #0                 ; of the image we want to draw, as each text character
+ STA SC                 ; in XC is 8 pixels wide and X contains the x-coordinate
  TXA                    ; within the character block
  ADC SC
  STA SC
@@ -3866,7 +3866,7 @@ ENDIF
 ;
 ;       Name: PauseGame
 ;       Type: Subroutine
-;   Category: Controllers
+;   Category: Icon bar
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -5698,7 +5698,7 @@ ENDIF
  JSR subm_AAC0
  STX XX15+4
  STA XX15+5
- JSR CLIP_LOIN_b1
+ JSR LOIN_b1
  LDY YP
  JMP CAAEA
 
@@ -6412,7 +6412,7 @@ ENDIF
 ;
 ;       Name: WaitForNoDirection
 ;       Type: Subroutine
-;   Category: Save and load
+;   Category: Controllers
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -7692,7 +7692,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: GetName
+;       Name: InputName
 ;       Type: Subroutine
 ;   Category: Controllers
 ;    Summary: Get a name from the keyboard for searching the galaxy or changing
@@ -7700,7 +7700,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.GetName
+.InputName
 
  LDY #0
 
@@ -7899,7 +7899,7 @@ ENDIF
  STA INWK+5,Y
  DEY
  BPL loop_CBB46
- JSR GetName
+ JSR InputName
  LDA INWK+5
  CMP #$0D
  BEQ CBBB0
@@ -8393,9 +8393,10 @@ ENDIF
 
                         ; We now highlight the currently selected language name
                         ; on-screen by creating eight sprites containing a white
-                        ; block, initially creating them off-screen, before moving
-                        ; the correct number of sprites behind the currently
-                        ; selected name, so each letter in the name is highlighted
+                        ; block, initially creating them off-screen, before
+                        ; moving the correct number of sprites behind the
+                        ; currently selected name, so each letter in the name
+                        ; is highlighted
 
  LDY LASCT              ; Set Y to the currently highlighted language in LASCT
 

@@ -2512,9 +2512,10 @@ ENDIF
 
 .gsys1
 
- TXA                    ; Set imageFlags to %1100xxxx where %xxxx is the system
- ORA #%11000000         ; number in the range 0 to 14
- STA imageFlags
+ TXA                    ; Set imageSentToPPU to %1100xxxx where %xxxx is the
+ ORA #%11000000         ; system number in the range 0 to 14, to indicate that
+ STA imageSentToPPU     ; we have unpacked the system background image into the
+                        ; buffers
 
  TXA                    ; Set X = X * 2 so we can use it as an index into the
  ASL A                  ; table of 16-bit addresses at systemOffset

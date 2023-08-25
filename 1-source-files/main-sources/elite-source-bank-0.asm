@@ -2457,8 +2457,20 @@ ENDIF
 
 .C8733
 
- LDA #%10001000
- JSR SetDrawPlaneFlags
+ LDA #%10001000         ; Set the bitplane flags for the drawing bitplane to the
+ JSR SetDrawPlaneFlags  ; following:
+                        ;
+                        ;   * Bit 2 clear = last tile to send is lastTileNumber
+                        ;   * Bit 3 set   = clear buffers after sending data
+                        ;   * Bit 4 clear = we've not started sending data yet
+                        ;   * Bit 5 clear = we have not yet sent all the data
+                        ;   * Bit 6 clear = only send pattern data to the PPU
+                        ;   * Bit 7 set   = send data to the PPU
+                        ;
+                        ; Bits 0 and 1 are ignored and are always clear
+                        ;
+                        ; This configures the NMI to send pattern data for the
+                        ; drawing bitplane to the PPU during VBlank
 
  JSR COMPAS
 
@@ -3106,13 +3118,15 @@ ENDIF
  LDA S                  ; Set A to %1000xxxx where %xxxx is the headshot number
  ORA #%10000000         ; in the range 0 to 13
 
- CMP imageFlags         ; Set the flags according to whether imageFlags already
-                        ; has this value
+ CMP imageSentToPPU     ; Set the processor flags according to whether
+                        ; imageSentToPPU already has this value
 
- STA imageFlags         ; Set imageFlags to A
+ STA imageSentToPPU     ; Set imageSentToPPU to A
 
- BEQ stat5              ; If imageFlags already had this value, jump to stat5
-                        ; to skip the following instruction
+ BEQ stat5              ; If imageSentToPPU already had this value then we are
+                        ; already showing this image on-screen, so jump to stat5
+                        ; to skip the following instruction as there's no need
+                        ; to fade the screen out when the image isn't changing
 
  JSR FadeAndHideSprites ; Fade the screen to black and hide all sprites, so we
                         ; can update the screen while it's blacked-out
@@ -4277,7 +4291,7 @@ ENDIF
  STA INWK+5,Y
  DEY
  BPL loop_C8C3A
- JSR GetName_b6
+ JSR InputName_b6
  LDA INWK+5
  CMP #$0D
  BEQ C8CAF
@@ -7530,7 +7544,7 @@ ENDIF
  LDA #$12
  JSR NWSHP
  LDA #$0A
- JSR RunFlightLoops
+ JSR RunDemoFlightLoop
  LDA #$92
  STA K%+114
  LDA #1
@@ -7544,7 +7558,7 @@ ENDIF
  LDA #$13
  JSR NWSHP
  LDA #6
- JSR RunFlightLoops
+ JSR RunDemoFlightLoop
  JSR SetupDemoShip
  LDA #6
  STA INWK+30
@@ -7556,11 +7570,11 @@ ENDIF
  LDA #$11
  JSR NWSHP
  LDA #5
- JSR RunFlightLoops
+ JSR RunDemoFlightLoop
  LDA #$C0
  STA K%+198
  LDA #$0B
- JSR RunFlightLoops
+ JSR RunDemoFlightLoop
  LDA #$32
  STA nmiTimer
  LDA #0
@@ -7579,14 +7593,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: RunFlightLoops
+;       Name: RunDemoFlightLoop
 ;       Type: Subroutine
 ;   Category: Demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.RunFlightLoops
+.RunDemoFlightLoop
 
  STA LASCT
 
@@ -13810,7 +13824,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetCurrentSeeds
+;       Name: SetSelectedSeeds
 ;       Type: Subroutine
 ;   Category: Universe
 ;    Summary: Set the seeds for the selected system in QQ15 to the seeds in the
@@ -13818,7 +13832,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.SetCurrentSeeds
+.SetSelectedSeeds
 
  LDX #5                 ; We now want to copy the seeds for the selected system
                         ; from safehouse into QQ15, where we store the seeds for
@@ -16190,7 +16204,7 @@ ENDIF
 ;
 ;       Name: ZINF
 ;       Type: Subroutine
-;   Category: Utility routines
+;   Category: Universe
 ;    Summary: Reset the INWK workspace and orientation vectors
 ;  Deep dive: Orientation vectors
 ;
@@ -17451,12 +17465,12 @@ ENDIF
  ASL A                  ; and z is greater that 224
  BNE faro2
 
- LDA #224               ; If x_hi > 224, jump to faro1 to return the C flag clear
- CMP INWK+1
+ LDA #224               ; If x_hi > 224, jump to faro1 to return the C flag
+ CMP INWK+1             ; clear
  BCC faro1
 
- CMP INWK+4             ; If y_hi > 224, jump to faro1 to return the C flag clear
- BCC faro1
+ CMP INWK+4             ; If y_hi > 224, jump to faro1 to return the C flag
+ BCC faro1              ; clear
 
  CMP INWK+7             ; If z_hi > 224, clear the C flag, otherwise set it
 
@@ -17505,7 +17519,7 @@ ENDIF
 ;
 ;       Name: CheckForPause
 ;       Type: Subroutine
-;   Category: Controllers
+;   Category: Icon bar
 ;    Summary: Pause the game if the pause button is pressed
 ;
 ; ------------------------------------------------------------------------------
@@ -17750,8 +17764,21 @@ ENDIF
                         ; with parts 13 to 16 of the main flight loop
 
  JSR ClearDashEdge_b6   ; Clear the right edge of the dashboard ???
- LDA #%11001100
- JSR SetDrawPlaneFlags
+
+ LDA #%11001100         ; Set the bitplane flags for the drawing bitplane to the
+ JSR SetDrawPlaneFlags  ; following:
+                        ;
+                        ;   * Bit 2 set   = send tiles until the end of buffer
+                        ;   * Bit 3 set   = clear buffers after sending data
+                        ;   * Bit 4 clear = we've not started sending data yet
+                        ;   * Bit 5 clear = we have not yet sent all the data
+                        ;   * Bit 6 set   = send both pattern and nametable data
+                        ;   * Bit 7 set   = send data to the PPU
+                        ;
+                        ; Bits 0 and 1 are ignored and are always clear
+                        ;
+                        ; This configures the NMI to send the drawing bitplane
+                        ; to the PPU during VBlank
 
  DEC LASCT              ; Decrement the counter in LASCT, which we set above,
                         ; so for each loop around D2, we decrement LASCT by 5
@@ -18610,9 +18637,9 @@ ENDIF
                         ; are too far from the planet in the z-direction to
                         ; bump into a space station
 
- LDA #100               ; Call CalculateDistance to compare x, y and z with 100,
- JSR CalculateDistance  ; which will clear the C flag if the distance to the
-                        ; point is < 100, or set the C flag if it is >= 100
+ LDA #100               ; Call FAROF2 to compare x, y and z with 100, which will
+ JSR FAROF2             ; clear the C flag if the distance to the point is < 100
+                        ; or set the C flag if it is >= 100
 
  BCS MA23S2             ; Jump to MA23S2 if the distance to point (x, y, z) is
                         ; >= 100 (i.e. we must be near enough to the planet to
@@ -19438,7 +19465,7 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- JSR SetCurrentSeeds    ; Set the seeds for the selected system in QQ15 to the
+ JSR SetSelectedSeeds   ; Set the seeds for the selected system in QQ15 to the
                         ; seeds in the safehouse
 
  LDA #3                 ; Set A = 3 so we print the hyperspace countdown with
@@ -21332,7 +21359,7 @@ ENDIF
 
 .LQ
 
- JSR SendSpaceViewToPPU ; ???
+ JSR SetSpaceView       ; ???
 
  JMP NWSTARS            ; Set up a new stardust field and return from the
                         ; subroutine using a tail call
@@ -21408,14 +21435,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SendSpaceViewToPPU
+;       Name: SetSpaceView
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.SendSpaceViewToPPU
+.SetSpaceView
 
  LDA #$48               ; ???
  JSR SetScreenHeight

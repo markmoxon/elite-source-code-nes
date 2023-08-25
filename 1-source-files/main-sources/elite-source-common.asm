@@ -371,7 +371,7 @@ IF NOT(_BANK = 6)
   DrawLightning     = $B919
   LL164             = $B980
   DrawLaunchBoxes   = $BA17
-  GetName           = $BA63
+  InputName         = $BA63
   ChangeCmdrName    = $BB37
   SetKeyLogger      = $BBDE
   ChooseLanguage    = $BC83
@@ -386,7 +386,7 @@ IF NOT(_BANK = 6)
   DrawLightning     = $B928
   LL164             = $B98F
   DrawLaunchBoxes   = $BA26
-  GetName           = $BA72
+  InputName         = $BA72
   ChangeCmdrName    = $BB46
   SetKeyLogger      = $BBED
   ChooseLanguage    = $BC92
@@ -4475,12 +4475,34 @@ ENDIF
 
  SKIP 1                 ; Temporary storage, used in a number of places
 
-.imageFlags
+.imageSentToPPU
 
- SKIP 1                 ; Contains data for the system and commander images:
+ SKIP 1                 ; Records when images have been sent to the PPU or
+                        ; unpacked into the buffers, so we don't repeat the
+                        ; process unnecessarily
                         ;
-                        ;   * Bits 0-3 contain system image number from bank 5
-                        ;   * Bits 6 and 7 are set in bank 5 routine ???
+                        ;   * 0 = dashboard image has been sent to the PPU
+                        ;
+                        ;   * 1 = font image has been sent to the PPU
+                        ;
+                        ;   * 2 = Cobra Mk III image has been sent to the PPU
+                        ;         for the Equip Ship screen
+                        ;
+                        ;   * 3 = the small Elite logo has been sent to the PPU
+                        ;         for the Save and load screen
+                        ;
+                        ;   * 245 = the inventory icon image has been sent to
+                        ;           the PPU for the Market Price screen
+                        ;
+                        ;   * %1000xxxx = the headshot image has been sent to
+                        ;                 the PPU for the Status Mode screen,
+                        ;                 where %xxxx is the headshot number
+                        ;                 (0-13)
+                        ;
+                        ;   * %1100xxxx = the system background image has been
+                        ;                 unpacked into the buffers for the Data
+                        ;                 on System screen, where %xxxx is the
+                        ;                 system image number (0-14)
 
 .gov
 
@@ -4923,7 +4945,7 @@ ENDIF
 ;
 ;       Name: pattBuffer0
 ;       Type: Variable
-;   Category: Drawing lines
+;   Category: Drawing the screen
 ;    Summary: Pattern buffer for colour 0 (1 bit per pixel)
 ;
 ; ******************************************************************************
@@ -4938,7 +4960,7 @@ ENDIF
 ;
 ;       Name: pattBuffer1
 ;       Type: Variable
-;   Category: Drawing lines
+;   Category: Drawing the screen
 ;    Summary: Pattern buffer for colour 1 (1 bit per pixel)
 ;
 ; ******************************************************************************
@@ -4951,14 +4973,23 @@ ENDIF
 ;
 ;       Name: nameBuffer0
 ;       Type: Variable
-;   Category: Drawing lines
-;    Summary: Buffer for nametable and attribute table 0
+;   Category: Drawing the screen
+;    Summary: Buffer for nametable 0
 ;
 ; ******************************************************************************
 
 .nameBuffer0
 
  SKIP 30 * 32           ; 30 rows of 32 tile numbers
+
+; ******************************************************************************
+;
+;       Name: attrBuffer0
+;       Type: Variable
+;   Category: Drawing the screen
+;    Summary: Buffer for attribute table 0
+;
+; ******************************************************************************
 
 .attrBuffer0
 
@@ -4968,7 +4999,7 @@ ENDIF
 ;
 ;       Name: nameBuffer1
 ;       Type: Variable
-;   Category: Drawing lines
+;   Category: Drawing the screen
 ;    Summary: Buffer for nametable and attribute table 1
 ;
 ; ******************************************************************************
@@ -4976,6 +5007,15 @@ ENDIF
 .nameBuffer1
 
  SKIP 30 * 32           ; 30 rows of 32 tile numbers
+
+; ******************************************************************************
+;
+;       Name: attrBuffer1
+;       Type: Variable
+;   Category: Drawing the screen
+;    Summary: Buffer for attribute table 1
+;
+; ******************************************************************************
 
 .attrBuffer1
 
