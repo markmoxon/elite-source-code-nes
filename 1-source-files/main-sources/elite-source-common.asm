@@ -296,7 +296,7 @@ IF NOT(_BANK = 3)
  ShowIconBar        = $AC1D
  UpdateIconBar      = $AC5C
  SetupIconBar       = $AE18
- SetViewPatterns    = $AFCD
+ SetLinePatterns    = $AFCD
  SetInvertedFont    = $B0E1
  SetFont            = $B18E
  DrawSystemImage    = $B219
@@ -1144,63 +1144,45 @@ ENDIF
                         ; controls whether we are showing nametable/palette
                         ; buffer 0 or 1
 
-.nextTileNumber
+.lastPatternTile
 
- SKIP 1                 ; The number of the dynamic tile that we can draw into
-                        ; next (or 0 if there are no free tiles) for bitplane 0
-                        ;
-                        ; This variable determines which tiles the NMI handler
-                        ; sends to the PPU for bitplane 0
-                        ;
-                        ; It is similar to tileNumber, except it controls the
-                        ; NMI handler's sending of data, while tileNumber is
-                        ; typically used in the drawing stage
+ SKIP 1                 ; The number of the last pattern entry to send from
+                        ; pattern buffer 0 to bitplane 0 of the PPU pattern
+                        ; table in the NMI handler
 
- SKIP 1                 ; The number of the dynamic tile that we can draw into
-                        ; next (or 0 if there are no free tiles) for bitplane 1
-                        ;
-                        ; This variable determines which tiles the NMI handler
-                        ; sends to the PPU for bitplane 0
-                        ;
-                        ; It is similar to tileNumber, except it controls the
-                        ; NMI handler's sending of data, while tileNumber is
-                        ; typically used in the drawing stage
+ SKIP 1                 ; The number of the last pattern entry to send from
+                        ; pattern buffer 1 to bitplane 1 of the PPU pattern
+                        ; table in the NMI handler
 
 .clearingPattTile
 
- SKIP 1                 ; The number of the last tile for which we need to send
-                        ; pattern data to the PPU in the NMI handler for
-                        ; bitplane 0
+ SKIP 1                 ; The number of the first tile to clear in pattern
+                        ; buffer 0 when the NMI handler clears tiles
                         ;
-                        ; This variable is used to store tile numbers, so the
-                        ; buffers can be cleared across multiple calls to the
-                        ; NMI handler when their data has been sent to the PPU
+                        ; This variable is saved by the NMI handler so the
+                        ; buffers can be cleared across multiple VBlanks
 
- SKIP 1                 ; The number of the last tile for which we need to send
-                        ; pattern data to the PPU in the NMI handler for
-                        ; bitplane 1
+ SKIP 1                 ; The number of the first tile to clear in pattern
+                        ; buffer 1 when the NMI handler clears tiles
                         ;
-                        ; This variable is used to store tile numbers, so the
-                        ; buffers can be cleared across multiple calls to the
-                        ; NMI handler when their data has been sent to the PPU
+                        ; This variable is saved by the NMI handler so the
+                        ; buffers can be cleared across multiple VBlanks
 
 .clearingNameTile
 
- SKIP 1                 ; The number of the last tile for which we need to send
-                        ; pattern data to the PPU in the NMI handler for
-                        ; bitplane 0, divided by 8
+ SKIP 1                 ; The number of the first tile to clear in nametable
+                        ; buffer 0 when the NMI handler clears tiles, divided
+                        ; by 8
                         ;
-                        ; This variable is used to store tile numbers, so the
-                        ; buffers can be cleared across multiple calls to the
-                        ; NMI handler when their data has been sent to the PPU
+                        ; This variable is saved by the NMI handler so the
+                        ; buffers can be cleared across multiple VBlanks
 
- SKIP 1                 ; The number of the last tile for which we need to send
-                        ; pattern data to the PPU in the NMI handler for
-                        ; bitplane 1, divided by 8
+ SKIP 1                 ; The number of the first tile to clear in nametable
+                        ; buffer 1 when the NMI handler clears tiles, divided
+                        ; by 8
                         ;
-                        ; This variable is used to store tile numbers, so the
-                        ; buffers can be cleared across multiple calls to the
-                        ; NMI handler when their data has been sent to the PPU
+                        ; This variable is saved by the NMI handler so the
+                        ; buffers can be cleared across multiple VBlanks
 
 .sendingNameTile
 
@@ -1209,18 +1191,16 @@ ENDIF
                         ; 0 (or the number of the first tile to send if none
                         ; have been sent), divided by 8
                         ;
-                        ; This variable is used to store tile numbers, so the
-                        ; data can be sent from the buffers to the PPU across
-                        ; multiple calls to the NMI handler
+                        ; This variable is saved by the NMI handler so the
+                        ; buffers can be cleared across multiple VBlanks
 
  SKIP 1                 ; The number of the most recent tile that was sent to
                         ; the PPU nametable by the NMI handler for bitplane
                         ; 1 (or the number of the first tile to send if none
                         ; have been sent), divided by 8
                         ;
-                        ; This variable is used to store tile numbers, so the
-                        ; data can be sent from the buffers to the PPU across
-                        ; multiple calls to the NMI handler
+                        ; This variable is saved by the NMI handler so the
+                        ; buffers can be cleared across multiple VBlanks
 
 .pattTileCounter
 
@@ -1237,18 +1217,16 @@ ENDIF
                         ; 0 (or the number of the first tile to send if none
                         ; have been sent)
                         ;
-                        ; This variable is used to store tile numbers, so the
-                        ; data can be sent from the buffers to the PPU across
-                        ; multiple calls to the NMI handler
+                        ; This variable is saved by the NMI handler so the
+                        ; buffers can be cleared across multiple VBlanks
 
  SKIP 1                 ; The number of the most recent tile that was sent to
                         ; the PPU pattern table by the NMI handler for bitplane
                         ; 1 (or the number of the first tile to send if none
                         ; have been sent)
                         ;
-                        ; This variable is used to store tile numbers, so the
-                        ; data can be sent from the buffers to the PPU across
-                        ; multiple calls to the NMI handler
+                        ; This variable is saved by the NMI handler so the
+                        ; buffers can be cleared across multiple VBlanks
 
 .firstNametableTile
 
@@ -1257,13 +1235,15 @@ ENDIF
                         ; (potentially for both bitplanes, if both are
                         ; configured to be sent)
 
-.lastTileNumber
+.lastNameTile
 
- SKIP 1                 ; The number of the last tile to send to the PPU in
-                        ; the NMI handler for bitplane 0, divided by 8
+ SKIP 1                 ; The number of the last nametable buffer entry to send
+                        ; to the PPU nametable table in the NMI handler for
+                        ; bitplane 0, divided by 8
 
- SKIP 1                 ; The number of the last tile to send to the PPU in
-                        ; the NMI handler for bitplane 1, divided by 8
+ SKIP 1                 ; The number of the last nametable buffer entry to send
+                        ; to the PPU nametable table in the NMI handler for
+                        ; bitplane 1, divided by 8
 
 .nameTileCounter
 
@@ -1345,10 +1325,11 @@ ENDIF
                         ; of skipBarPatternsPPU is clear, both the nametable
                         ; entries and tile patterns will be sent
 
-.maxNameTileNumber
+.maxNameTileToClear
 
- SKIP 1                 ; A maximum value for the last tile number to send to
-                        ; the PPU's nametable, divided by 8
+ SKIP 1                 ; The tile number at which the NMI handler should stop
+                        ; clearing tiles in the nametable buffers during its
+                        ; clearing cycle
 
 .L00D9
 
@@ -1441,11 +1422,16 @@ ENDIF
  SKIP 1                 ; The last tile number to send to the PPU, potentially
                         ; potentially overwritten by the flags
                         ;
-                        ; This variable is used internally by the
-                        ; SendPatternsToPPU and SendNametableToPPU routines, and
-                        ; is set as follows:
+                        ; This variable is used internally by the NMI handler,
+                        ; and is set as follows in SendNametableToPPU:
                         ;
-                        ; lastTile = (bitplaneFlag 3 set) ? 128 : lastTileNumber
+                        ;   lastTile
+                        ;       = (bitplaneFlag 3 set) ? 128 : lastNameTile
+                        ;
+                        ; and like this in SendPatternsToPPU:
+                        ;
+                        ;   lastTile
+                        ;       = (bitplaneFlag 3 set) ? 128 : lastPatternTile
 
 .setupPPUForIconBar
 
@@ -3655,8 +3641,10 @@ ORG $0200
                         ;   * Bit 2 overrides the number of the last tile to
                         ;     send to the PPU nametable in SendBuffersToPPU:
                         ;
-                        ;     * 0 = set the last tile number to lastTileNumber
-                        ;           for this bitplane
+                        ;     * 0 = set the last tile number to lastNameTile or
+                        ;           lastPatternTile for this bitplane (when
+                        ;           sending nametable and pattern entries
+                        ;           respectively)
                         ;
                         ;     * 1 = set the last tile number to 128 (which means
                         ;           tile 8 * 128 = 1024)

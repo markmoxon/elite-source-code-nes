@@ -11535,8 +11535,9 @@ ENDIF
  LDA #0                 ; Tell the NMI handler to send pattern entries from
  STA firstPatternTile   ; pattern 0 in the buffer
 
- LDA #80                ; Tell the NMI handler to send nametable entries up to
- STA maxNameTileNumber  ; tile 80 * 8 = 640 (i.e. up to the end of tile row 19)
+ LDA #80                ; Tell the NMI handler to only clear nametable entries
+ STA maxNameTileToClear ; up to tile 80 * 8 = 640 (i.e. up to the end of tile
+                        ; row 19)
 
  JMP UpdateHangarView   ; Update the hangar view on-screen by sending the data
                         ; to the PPU, returning from the subroutine using a tail

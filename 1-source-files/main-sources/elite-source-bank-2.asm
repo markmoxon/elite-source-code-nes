@@ -15507,10 +15507,12 @@ ENDIF
                         ; there is no more data waiting to be sent to the PPU
 
  LDA tileNumber         ; Tell the NMI handler to send pattern entries from the
- STA firstPatternTile   ; first free tile number ???
+ STA firstPatternTile   ; first free tile onwards, so we don't waste time
+                        ; resending the static tiles we have already sent
 
- LDA #40                ; Tell the NMI handler to send nametable entries up to
- STA maxNameTileNumber  ; tile 40 * 8 = 320 (i.e. up to the end of tile row 10)
+ LDA #40                ; Tell the NMI handler to only clear nametable entries
+ STA maxNameTileToClear ; up to tile 40 * 8 = 320 (i.e. up to the end of tile
+                        ; row 10)
 
  LDX #8                 ; Tell the NMI handler to send nametable entries from
  STX firstNametableTile ; tile 8 * 8 = 64 onwards (i.e. from the start of tile

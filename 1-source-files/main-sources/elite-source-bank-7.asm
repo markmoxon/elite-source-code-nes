@@ -513,7 +513,7 @@ ENDIF
 ;
 ;       Name: xTitleScreen
 ;       Type: Variable
-;   Category: Text
+;   Category: Start and end
 ;    Summary: The text column for the title screen's title for each language
 ;
 ; ******************************************************************************
@@ -532,7 +532,7 @@ ENDIF
 ;
 ;       Name: xSpaceView
 ;       Type: Variable
-;   Category: Text
+;   Category: Flight
 ;    Summary: The text column for the space view name for each language
 ;
 ; ******************************************************************************
@@ -1534,7 +1534,8 @@ ENDIF
                         ;   * The opposite bitplane is configured to be sent to
                         ;     the PPU
 
- LDA nextTileNumber,X   ; Set A to the next free tile number for this bitplane
+ LDA lastPatternTile,X  ; Set A to the number of the last pattern number to send
+                        ; for this bitplane
 
  BNE sbuf1              ; If it it zero (i.e. we have no free tiles), then set
  LDA #255               ; A to 255, so we can use A as an upper limit
@@ -1542,7 +1543,7 @@ ENDIF
 .sbuf1
 
  CMP sendingPattTile,X  ; If A >= sendingPattTile, then the number of the last
- BEQ sbuf3              ; free tile is bigger than the number of the tile for
+ BEQ sbuf3              ; tile to send is bigger than the number of the tile for
  BCS sbuf3              ; which we are currently sending pattern data to the PPU
                         ; for this bitplane, which means there is still some
                         ; pattern data to send before we have processed all the
@@ -1597,7 +1598,7 @@ ENDIF
                         ; bitplane by returning from the subroutine (as RTS1
                         ; contains an RTS)
 
- LDY lastTileNumber,X   ; Set Y to the number of the last tile we need to send
+ LDY lastNameTile,X     ; Set Y to the number of the last tile we need to send
                         ; for this bitplane, divided by 8
 
  AND #%00001000         ; If bit 2 of the bitplane flags is set (as A was
@@ -1608,7 +1609,7 @@ ENDIF
 .sbuf4
 
  TYA                    ; Set A = Y - sendingNameTile
- SEC                    ;       = lastTileNumber - sendingNameTile
+ SEC                    ;       = lastNameTile - sendingNameTile
  SBC sendingNameTile,X  ;
                         ; So this is the number of tiles for which we still have
                         ; to send nametable entries, as sendingNameTile is the
@@ -1952,10 +1953,8 @@ ENDIF
 
 .spat4
 
- LDA nextTileNumber,X   ; Set A to the next free tile number for the current
-                        ; bitplane, which is effectively the number of the first
-                        ; unused tile as we have stopped drawing into new tiles
-                        ; at this point
+ LDA lastPatternTile,X  ; Set A to the number of the last pattern number to send
+                        ; for this bitplane
 
  BNE spat5              ; If it it zero (i.e. we have no free tiles), then set
  LDA #255               ; A to 255, so we can use A as an upper limit
@@ -1963,7 +1962,7 @@ ENDIF
 .spat5
 
  STA lastTile           ; Store the result in lastTile, as we want to stop
-                        ; sending tiles once we have reached the unused tiles
+                        ; sending tiles once we have reached this tile
 
  LDA ppuNametableAddr+1 ; Set the high byte of the following calculation:
  SEC                    ;
@@ -2554,7 +2553,7 @@ ENDIF
 
  LDA #%00100000         ; Set the NMI bitplane flags as follows:
  STA bitplaneFlags,X    ;
-                        ;   * Bit 2 clear = last tile to send is lastTileNumber
+                        ;   * Bit 2 clear = send tiles up to configured numbers
                         ;   * Bit 3 clear = don't clear buffers after sending
                         ;   * Bit 4 clear = we've not started sending data yet
                         ;   * Bit 5 set   = we have already sent all the data
@@ -2704,7 +2703,7 @@ ENDIF
                         ; not nametable data, so jump to snam1 to return from
                         ; the subroutine
 
- LDY lastTileNumber,X   ; Set Y to the number of the last tile we need to send
+ LDY lastNameTile,X     ; Set Y to the number of the last tile we need to send
                         ; for this bitplane, divided by 8
 
  AND #%00001000         ; If bit 2 of the bitplane flags is set (as A was
@@ -2941,9 +2940,9 @@ ENDIF
  BNE copy1              ; Loop back to copy1 to copy the next four bytes, until
                         ; we have copied the whole buffer
 
- LDA tileNumber         ; Set the next free tile number for both bitplanes to
- STA nextTileNumber     ; the next free tile number in tileNumber
- STA nextTileNumber+1
+ LDA tileNumber         ; Tell the NMI handler to send pattern entries up to the
+ STA lastPatternTile    ; first free tile, for both bitplanes
+ STA lastPatternTile+1
 
  RTS                    ; Return from the subroutine
 
@@ -4211,7 +4210,7 @@ ENDIF
 
  LDA #0                 ; Set the new drawing bitplane flags as follows:
  STA bitplaneFlags,X    ;
-                        ;   * Bit 2 clear = last tile to send is lastTileNumber
+                        ;   * Bit 2 clear = send tiles up to configured numbers
                         ;   * Bit 3 clear = don't clear buffers after sending
                         ;   * Bit 4 clear = we've not started sending data yet
                         ;   * Bit 5 clear = we have not yet sent all the data
@@ -4248,18 +4247,15 @@ ENDIF
                         ; VBlank by the NMI handler
 
  LDA sendingNameTile,X  ; Set SC to sendingNameTile for this bitplane, which
- STA SC                 ; contains number of the last tile that was sent to the
-                        ; PPU nametable by the NMI handler, divided by 8
+ STA SC                 ; contains the number of the last tile that was sent to
+                        ; the PPU nametable by the NMI handler, divided by 8
                         ;
                         ; So this contains the number of the last tile we need
                         ; to clear in the nametable buffer, divided by 8
 
  LDA clearingNameTile,X ; Set A to clearingNameTile for this bitplane, which
-                        ; contains the number of the first tile that was sent
-                        ; to the PPU nametable by the NMI handler, divided by 8
-                        ;
-                        ; So this contains the number of the first tile we need
-                        ; to clear in the nametable buffer, divided by 8
+                        ; contains the number of the first tile we need to
+                        ; clear in the nametable buffer, divided by 8
 
  CPY frameCounter       ; If the frame counter has incremented since we fetched
  BNE cdra3              ; it above, then the tile numbers we just fetched might
@@ -4271,14 +4267,14 @@ ENDIF
  LDY SC                 ; Set Y to the number of the last tile divided by 8,
                         ; which we fetched above
 
- CPY maxNameTileNumber  ; If Y >= maxNameTileNumber then set Y to the value of
- BCC cdra4              ; maxNameTileNumber, so Y is capped to a maximum value
- LDY maxNameTileNumber  ; of maxNameTileNumber
+ CPY maxNameTileToClear ; If Y >= maxNameTileToClear then set Y to the value of
+ BCC cdra4              ; maxNameTileToClear, so Y is capped to a maximum value
+ LDY maxNameTileToClear ; of maxNameTileToClear
 
 .cdra4
 
  STY SC                 ; Set SC to the number of the last tile, capped by the
-                        ; maximum value in maxNameTileNumber, so
+                        ; maximum value in maxNameTileToClear
 
  CMP SC                 ; If A >= SC then the first tile we need to clear is
  BCS cdra6              ; after the last tile we need to clear, which means
@@ -4376,17 +4372,14 @@ ENDIF
                         ; VBlank by the NMI handler
 
  LDA sendingPattTile,X  ; Set SC to sendingPattTile for this bitplane, which
- STA SC                 ; contains number of the last tile that was sent to the
-                        ; PPU pattern table by the NMI handler
+ STA SC                 ; contains the number of the last tile that was sent to
+                        ; the PPU pattern table by the NMI handler
                         ;
                         ; So this contains the number of the last tile we need
                         ; to clear in the pattern buffer
 
  LDA clearingPattTile,X ; Set A to clearingPattTile for this bitplane, which
-                        ; contains the number of the first tile that was sent
-                        ; to the PPU pattern table by the NMI handler
-                        ;
-                        ; So this contains the number of the first tile we need
+                        ; contains the number of the first tile we need
                         ; to clear in the pattern buffer
 
  CPY frameCounter       ; If the frame counter has incremented since we fetched
@@ -4615,14 +4608,9 @@ ENDIF
 
 .pbuf6
 
- LDA clearingNameTile,X ; Set A to clearingNameTile for this bitplane, which we
-                        ; set to the original value of firstNametableTile back
-                        ; in SendTilesToPPU, so A now contains the number of
-                        ; the first tile, divided by 8, that we sent to the PPU
-                        ; nametable for this bitplane
-                        ;
-                        ; So this contains the number of the first tile we need
-                        ; to clear in the nametable buffer, divided by 8
+ LDA clearingNameTile,X ; Set A to clearingNameTile for this bitplane, which
+                        ; contains the number of the first tile we need to
+                        ; clear in the nametable buffer, divided by 8
 
  LDY sendingNameTile,X  ; Set Y to sendingNameTile for this bitplane, which we
                         ; used in SendNametableToPPU to keep track of the
@@ -4634,9 +4622,9 @@ ENDIF
                         ; So this contains the number of the last tile we need
                         ; to clear in the nametable buffer, divided by 8
 
- CPY maxNameTileNumber  ; If Y >= maxNameTileNumber then set Y to the value of
- BCC pbuf7              ; maxNameTileNumber, so Y is capped to a maximum value
- LDY maxNameTileNumber  ; of maxNameTileNumber
+ CPY maxNameTileToClear ; If Y >= maxNameTileToClear then set Y to the value of
+ BCC pbuf7              ; maxNameTileToClear, so Y is capped to a maximum value
+ LDY maxNameTileToClear ; of maxNameTileToClear
 
 .pbuf7
 
@@ -4786,13 +4774,8 @@ ENDIF
 
 .pbuf15
 
- LDA clearingPattTile,X ; Set A to clearingPattTile for this bitplane, which we
-                        ; set to the original value of firstPatternTile back in
-                        ; SendTilesToPPU, so A now contains the number of the
-                        ; first tile, that we sent to the PPU pattern table for
-                        ; this bitplane
-                        ;
-                        ; So this contains the number of the first tile we need
+ LDA clearingPattTile,X ; Set A to clearingPattTile for this bitplane, which
+                        ; contains the number of the first tile we need
                         ; to clear in the pattern buffer
 
  LDY sendingPattTile,X  ; Set Y to sendingPattTile for this bitplane, which we
@@ -5508,8 +5491,9 @@ ENDIF
 
  STX drawingBitplane    ; Set the drawing bitplane to X
 
- LDA nextTileNumber,X   ; Set the next free tile number in tileNumber to the
- STA tileNumber         ; next free tile number for the new bitplane
+ LDA lastPatternTile,X  ; Set the next free tile number in tileNumber to the
+ STA tileNumber         ; number of the last pattern tile that was sent to the
+                        ; PPU for the new bitplane
 
  LDA nameBufferHiAddr,X ; Set the high byte of the nametable buffer for the new
  STA nameBufferHi       ; bitplane in nameBufferHiAddr
@@ -5738,21 +5722,21 @@ ENDIF
                         ; sent to the PPU, so the screen is fully updated and
                         ; there is no more data waiting to be sent to the PPU
 
- LDA tileNumber         ; Set the next free tile number for both bitplanes to
- STA nextTileNumber     ; the next free tile number in tileNumber
- STA nextTileNumber+1
+ LDA tileNumber         ; Tell the NMI handler to send pattern entries up to the
+ STA lastPatternTile    ; first free tile, for both bitplanes
+ STA lastPatternTile+1
 
  LDA #88                ; Tell the NMI handler to send nametable entries from
  STA firstNametableTile ; tile 88 * 8 = 704 onwards (i.e. from the start of tile
                         ; row 22)
 
  LDA #100               ; Tell the NMI handler to send nametable entries up to
- STA lastTileNumber     ; tile 100 * 8 = 800 (i.e. up to the end of tile row 24)
- STA lastTileNumber+1   ; in both bitplanes
+ STA lastNameTile       ; tile 100 * 8 = 800 (i.e. up to the end of tile row 24)
+ STA lastNameTile+1     ; in both bitplanes
 
  LDA #%11000100         ; Set both bitplane flags as follows:
  STA bitplaneFlags      ;
- STA bitplaneFlags+1    ;   * Bit 2 set   = send tiles until the end of buffer
+ STA bitplaneFlags+1    ;   * Bit 2 set   = send tiles up to end of the buffer
                         ;   * Bit 3 clear = don't clear buffers after sending
                         ;   * Bit 4 clear = we've not started sending data yet
                         ;   * Bit 5 clear = we have not yet sent all the data
@@ -5801,7 +5785,7 @@ ENDIF
  LDA #%11001000         ; Set A so we set the drawing bitplane flags in
                         ; SetDrawPlaneFlags as follows:
                         ;
-                        ;   * Bit 2 clear = last tile to send is lastTileNumber
+                        ;   * Bit 2 clear = send tiles up to configured numbers
                         ;   * Bit 3 set   = clear buffers after sending data
                         ;   * Bit 4 clear = we've not started sending data yet
                         ;   * Bit 5 clear = we have not yet sent all the data
@@ -5838,8 +5822,8 @@ ENDIF
 
  LDX drawingBitplane    ; Set X to the drawing bitplane
 
- LDA tileNumber         ; Set the next free tile number for the drawing bitplane
- STA nextTileNumber,X   ; to the next free tile number in tileNumber
+ LDA tileNumber         ; Tell the NMI handler to send pattern entries up to the
+ STA lastPatternTile,X  ; first free tile, for the drawing bitplane in X
 
  PLA                    ; Retrieve A from the stack and set it as the value of
  STA bitplaneFlags,X    ; the drawing bitplane flags
@@ -11823,14 +11807,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetViewPatterns_b3
+;       Name: SetLinePatterns_b3
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: Call the SetViewPatterns routine in ROM bank 3
+;    Summary: Call the SetLinePatterns routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.SetViewPatterns_b3
+.SetLinePatterns_b3
 
  LDA currentBank        ; If ROM bank 3 is already paged into memory, jump to
  CMP #3                 ; bank10
@@ -11841,7 +11825,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR SetViewPatterns    ; Call SetViewPatterns, now that it is paged into memory
+ JSR SetLinePatterns    ; Call SetLinePatterns, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -11849,7 +11833,7 @@ ENDIF
 
 .bank10
 
- JMP SetViewPatterns    ; Call SetViewPatterns, which is already paged into
+ JMP SetLinePatterns    ; Call SetLinePatterns, which is already paged into
                         ; memory, and return from the subroutine using a tail
                         ; call
 
@@ -12681,8 +12665,8 @@ ENDIF
 .SetupFullViewInNMI
 
  LDA #116               ; Tell the PPU to send nametable entries up to tile
- STA lastTileNumber     ; 116 * 8 = 928 (i.e. to the end of tile row 28) in both
- STA lastTileNumber+1   ; bitplanes
+ STA lastNameTile       ; 116 * 8 = 928 (i.e. to the end of tile row 28) in both
+ STA lastNameTile+1     ; bitplanes
 
                         ; Fall through into SetupViewInNMI_b3 to setup the view
                         ; and configure the NMI to send both bitplanes to the
@@ -12702,7 +12686,7 @@ ENDIF
  LDA #%11000000         ; Set A to the bitplane flags to set for the drawing
                         ; bitplane in the call to SetupViewInNMI below:
                         ;
-                        ;   * Bit 2 clear = last tile to send is lastTileNumber
+                        ;   * Bit 2 clear = send tiles up to configured numbers
                         ;   * Bit 3 clear = don't clear buffers after sending
                         ;   * Bit 4 clear = we've not started sending data yet
                         ;   * Bit 5 clear = we have not yet sent all the data

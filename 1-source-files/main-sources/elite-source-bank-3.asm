@@ -2332,13 +2332,13 @@ ENDIF
  STA firstPatternTile   ; Tell the NMI handler to send pattern entries from
                         ; pattern A in the buffer
 
- LDA tileNumber         ; Set the next free tile number for the drawing bitplane
- STA nextTileNumber,X   ; to the next free tile number in tileNumber
+ LDA tileNumber         ; Tell the NMI handler to send pattern entries up to the
+ STA lastPatternTile,X  ; first free tile, for the drawing bitplane in X
 
  LDA #%11000100         ; Set the bitplane flags for the drawing bitplane to the
  JSR SetDrawPlaneFlags  ; following:
                         ;
-                        ;   * Bit 2 set   = send tiles until the end of buffer
+                        ;   * Bit 2 set   = send tiles up to end of the buffer
                         ;   * Bit 3 clear = don't clear buffers after sending
                         ;   * Bit 4 clear = we've not started sending data yet
                         ;   * Bit 5 clear = we have not yet sent all the data
@@ -2354,9 +2354,11 @@ ENDIF
                         ; immediately, without trying to squeeze it into VBlanks
 
  LDA tileNumber         ; Set clearingPattTile for the drawing bitplane to the
- STA clearingPattTile,X ; number of the first free tile, so the NMI can start to
-                        ; clear tiles from this point now that they have been
-                        ; sent to the PPU pattern table
+ STA clearingPattTile,X ; number of the first free tile, so the NMI handler only clears
+                        ; tiles from this point onwards
+                        ;
+                        ; This ensures that the tiles that we just sent to the
+                        ; PPU don't get cleared out by the NMI handler
 
  RTS                    ; Return from the subroutine
 
@@ -2450,7 +2452,7 @@ ENDIF
 ;
 ; This routine is only ever called with the following bitplane flags in A:
 ;
-;   * Bit 2 clear = last tile to send is lastTileNumber
+;   * Bit 2 clear = send tiles up to configured numbers
 ;   * Bit 3 clear = don't clear buffers after sending
 ;   * Bit 4 clear = we've not started sending data yet
 ;   * Bit 5 clear = we have not yet sent all the data
@@ -2519,9 +2521,9 @@ ENDIF
  LDA #37                ; Tell the NMI handler to send pattern entries from
  STA firstPatternTile   ; pattern 37 in the buffer
 
- LDA tileNumber         ; Set the next free tile number for both bitplanes to
- STA nextTileNumber     ; the next free tile number in tileNumber
- STA nextTileNumber+1
+ LDA tileNumber         ; Tell the NMI handler to send pattern entries up to the
+ STA lastPatternTile    ; first free tile, for both bitplanes
+ STA lastPatternTile+1
 
  LDA #%01010100         ; This instruction has no effect as we are about to pull
                         ; the value of A from the stack
@@ -2545,17 +2547,20 @@ ENDIF
                         ; there is no more data waiting to be sent to the PPU
 
  LDA #80                ; Tell the PPU to send nametable entries up to tile
- STA lastTileNumber     ; 80 * 8 = 640 (i.e. to the end of tile row 19) in both
- STA lastTileNumber+1   ; bitplanes
+ STA lastNameTile       ; 80 * 8 = 640 (i.e. to the end of tile row 19) in both
+ STA lastNameTile+1     ; bitplanes
 
  LDA QQ11               ; Set the old view number in QQ11a to the new view
  STA QQ11a              ; number in QQ11, to denote that we have now changed
                         ; view to the view in QQ11
 
  LDA tileNumber         ; Set clearingPattTile for both bitplanes to the number
- STA clearingPattTile   ; of the first free tile, so we start to clear tiles
- STA clearingPattTile+1 ; from that point once they have been sent to the PPU
-                        ; pattern table
+ STA clearingPattTile   ; of the first free tile, so the NMI handler only clears
+ STA clearingPattTile+1 ; tiles from this point onwards
+                        ;
+                        ; This ensures that the tiles that have already been
+                        ; sent to the PPU above don't get cleared out by the NMI
+                        ; handler
 
  LDA #0                 ; Set A = 0, though this has no effect as we don't use
                         ; it
@@ -2994,7 +2999,7 @@ ENDIF
 
  LDA #%00101000         ; Set both bitplane flags as follows:
  STA bitplaneFlags      ;
- STA bitplaneFlags+1    ;   * Bit 2 clear = last tile to send is lastTileNumber
+ STA bitplaneFlags+1    ;   * Bit 2 clear = send tiles up to configured numbers
                         ;   * Bit 3 set   = clear buffers after sending data
                         ;   * Bit 4 clear = we've not started sending data yet
                         ;   * Bit 5 set   = we have already sent all the data
@@ -3007,10 +3012,10 @@ ENDIF
  STA clearingPattTile   ; from the PPU to 4, which is the first tile after the
  STA clearingPattTile+1 ; blank tile (tile 0) and the box edges (tiles 1 to 3),
  STA clearingNameTile   ; which are the only fixed tiles in both bitplanes
- STA clearingNameTile+1
- STA sendingPattTile
- STA sendingPattTile+1
- STA sendingNameTile
+ STA clearingNameTile+1 ;
+ STA sendingPattTile    ; This ensures that both buffers are almost entirely
+ STA sendingPattTile+1  ; cleared out by the NMI, as we set bit 3 in the
+ STA sendingNameTile    ; bitplane flags above
  STA sendingNameTile+1
 
  LDA #$0F               ; Set the hidden and visible colours to $0F, which is
@@ -4076,7 +4081,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetViewPatterns
+;       Name: SetLinePatterns
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Copy the patterns for horizontal line, vertical line and block
@@ -4100,7 +4105,7 @@ ENDIF
  RTS                    ; Return from the subroutine without copying anything to
                         ; the pattern buffers
 
-.SetViewPatterns
+.SetLinePatterns
 
  LDA QQ11               ; If the view type in QQ11 is $CF (Start screen with
  CMP #$CF               ; neither font loaded), jump to vpat1 to set tileNumber

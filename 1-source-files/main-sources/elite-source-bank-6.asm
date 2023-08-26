@@ -4877,7 +4877,8 @@ ENDIF
  LDA #$00               ; Set the view type in QQ11 to $00 (Space view with
  STA QQ11               ; neither font loaded)
 
- JSR SetViewPatterns_b3
+ JSR SetLinePatterns_b3 ; Load the line patterns for the new view into the
+                        ; pattern buffers
 
  LDA #37                ; Tell the NMI handler to send pattern entries from
  STA firstPatternTile   ; pattern 37 in the buffer
@@ -5008,7 +5009,7 @@ ENDIF
 
  LDA #%11001000         ; Set both bitplane flags as follows:
  STA bitplaneFlags      ;
- STA bitplaneFlags+1    ;   * Bit 2 clear = last tile to send is lastTileNumber
+ STA bitplaneFlags+1    ;   * Bit 2 clear = send tiles up to configured numbers
                         ;   * Bit 3 set   = clear buffers after sending data
                         ;   * Bit 4 clear = we've not started sending data yet
                         ;   * Bit 5 clear = we have not yet sent all the data
@@ -5993,7 +5994,7 @@ ENDIF
 ;
 ;       Name: saveHeader1_EN
 ;       Type: Subroutine
-;   Category: Text
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -6008,7 +6009,7 @@ ENDIF
 ;
 ;       Name: saveHeader2_EN
 ;       Type: Subroutine
-;   Category: Text
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -6028,7 +6029,7 @@ ENDIF
 ;
 ;       Name: saveHeader1_DE
 ;       Type: Subroutine
-;   Category: Text
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -6043,7 +6044,7 @@ ENDIF
 ;
 ;       Name: saveHeader2_DE
 ;       Type: Subroutine
-;   Category: Text
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -6063,7 +6064,7 @@ ENDIF
 ;
 ;       Name: saveHeader1_FR
 ;       Type: Subroutine
-;   Category: Text
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -6078,7 +6079,7 @@ ENDIF
 ;
 ;       Name: saveHeader2_FR
 ;       Type: Subroutine
-;   Category: Text
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -6098,7 +6099,7 @@ ENDIF
 ;
 ;       Name: xSaveHeader
 ;       Type: Variable
-;   Category: Text
+;   Category: Save and load
 ;    Summary: The text column for the save and load headers for each language
 ;
 ; ******************************************************************************
@@ -6117,7 +6118,7 @@ ENDIF
 ;
 ;       Name: saveHeader1Lo
 ;       Type: Variable
-;   Category: Text
+;   Category: Save and load
 ;    Summary: Lookup table for the low byte of the address of the saveHeader1
 ;             text for each language
 ;
@@ -6133,7 +6134,7 @@ ENDIF
 ;
 ;       Name: saveHeader1Hi
 ;       Type: Variable
-;   Category: Text
+;   Category: Save and load
 ;    Summary: Lookup table for the high byte of the address of the saveHeader1
 ;             text for each language
 ;
@@ -6149,7 +6150,7 @@ ENDIF
 ;
 ;       Name: saveHeader2Lo
 ;       Type: Variable
-;   Category: Text
+;   Category: Save and load
 ;    Summary: Lookup table for the low byte of the address of the saveHeader2
 ;             text for each language
 ;
@@ -6165,7 +6166,7 @@ ENDIF
 ;
 ;       Name: saveHeader2Hi
 ;       Type: Variable
-;   Category: Text
+;   Category: Save and load
 ;    Summary: Lookup table for the high byte of the address of the saveHeader2
 ;             text for each language
 ;
@@ -6195,7 +6196,7 @@ ENDIF
 ;
 ;       Name: PrintSaveHeader
 ;       Type: Subroutine
-;   Category: Text
+;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -8677,7 +8678,7 @@ ENDIF
 ;
 ;       Name: xLanguage
 ;       Type: Variable
-;   Category: Text
+;   Category: Start and end
 ;    Summary: The text column for the language buttons on the Start screen
 ;
 ; ******************************************************************************
@@ -8696,7 +8697,7 @@ ENDIF
 ;
 ;       Name: yLanguage
 ;       Type: Variable
-;   Category: Text
+;   Category: Start and end
 ;    Summary: The text row for the language buttons on the Start screen
 ;
 ; ******************************************************************************

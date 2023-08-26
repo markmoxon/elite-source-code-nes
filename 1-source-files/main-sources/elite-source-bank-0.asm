@@ -2460,7 +2460,7 @@ ENDIF
  LDA #%10001000         ; Set the bitplane flags for the drawing bitplane to the
  JSR SetDrawPlaneFlags  ; following:
                         ;
-                        ;   * Bit 2 clear = last tile to send is lastTileNumber
+                        ;   * Bit 2 clear = send tiles up to configured numbers
                         ;   * Bit 3 set   = clear buffers after sending data
                         ;   * Bit 4 clear = we've not started sending data yet
                         ;   * Bit 5 clear = we have not yet sent all the data
@@ -2690,7 +2690,7 @@ ENDIF
 ;
 ;       Name: PrintCombatRank
 ;       Type: Subroutine
-;   Category: Text
+;   Category: Status
 ;    Summary: Print the current combat rank
 ;
 ; ------------------------------------------------------------------------------
@@ -2824,7 +2824,7 @@ ENDIF
 ;
 ;       Name: PrintLegalStatus
 ;       Type: Subroutine
-;   Category: Text
+;   Category: Status
 ;    Summary: Print the current legal status (clean, offender or fugitive)
 ;
 ; ******************************************************************************
@@ -3160,11 +3160,12 @@ ENDIF
  LDA #0                 ; Tell the NMI handler to send nametable entries from
  STA firstNametableTile ; tile 0 onwards
 
- LDA #108               ; Tell the NMI handler to send nametable entries up to
- STA maxNameTileNumber  ; tile 108 * 8 = 864 (i.e. up to the end of tile row 26)
+ LDA #108               ; Tell the NMI handler to only clear nametable entries
+ STA maxNameTileToClear ; up to tile 108 * 8 = 864 (i.e. up to the end of tile
+                        ; row 26)
 
- STA lastTileNumber     ; Tell the PPU to send nametable entries up to tile
- STA lastTileNumber+1   ; 108 * 8 = 864 (i.e. to the end of tile row 26) in both
+ STA lastNameTile       ; Tell the PPU to send nametable entries up to tile
+ STA lastNameTile+1     ; 108 * 8 = 864 (i.e. to the end of tile row 26) in both
                         ; bitplanes
 
  LDX #$25
@@ -3219,9 +3220,10 @@ ENDIF
  STX L045F
 
  LDA tileNumber         ; Tell the NMI handler to send pattern entries from the
- STA firstPatternTile   ; first free tile number ???
+ STA firstPatternTile   ; first free tile onwards, so we don't waste time
+                        ; resending the static tiles we have already sent
 
- RTS
+ RTS                    ; Return from the subroutine
 
 .C8976
 
@@ -3235,7 +3237,7 @@ ENDIF
 ;
 ;       Name: yHeadshot
 ;       Type: Variable
-;   Category: Text
+;   Category: Status
 ;    Summary: The text row for the headshot on the Status Mode page
 ;
 ; ******************************************************************************
@@ -3268,8 +3270,9 @@ ENDIF
  LDA #0                 ; Tell the NMI handler to send nametable entries from
  STA firstNametableTile ; tile 0 onwards
 
- LDA #100               ; Tell the NMI handler to send nametable entries up to
- STA maxNameTileNumber  ; tile 100 * 8 = 800 (i.e. up to the end of tile row 24)
+ LDA #100               ; Tell the NMI handler to only clear nametable entries
+ STA maxNameTileToClear ; up to tile 100 * 8 = 800 (i.e. up to the end of tile
+                        ; row 24)
 
  LDA #37                ; Tell the NMI handler to send pattern entries from
  STA firstPatternTile   ; pattern 37 in the buffer
@@ -3287,7 +3290,7 @@ ENDIF
 
  LDA #%11000100         ; Set both bitplane flags as follows:
  STA bitplaneFlags      ;
- STA bitplaneFlags+1    ;   * Bit 2 set   = send tiles until the end of buffer
+ STA bitplaneFlags+1    ;   * Bit 2 set   = send tiles up to end of the buffer
                         ;   * Bit 3 clear = don't clear buffers after sending
                         ;   * Bit 4 clear = we've not started sending data yet
                         ;   * Bit 5 clear = we have not yet sent all the data
@@ -3297,7 +3300,8 @@ ENDIF
                         ; Bits 0 and 1 are ignored and are always clear
 
  LDA tileNumber         ; Tell the NMI handler to send pattern entries from the
- STA firstPatternTile   ; first free tile number ???
+ STA firstPatternTile   ; first free tile onwards, so we don't waste time
+                        ; resending the static tiles we have already sent
 
  RTS                    ; Return from the subroutine
 
@@ -3342,7 +3346,7 @@ ENDIF
 ;
 ;       Name: xStatusMode
 ;       Type: Variable
-;   Category: Text
+;   Category: Status
 ;    Summary: The text column for the Status Mode entries for each language
 ;
 ; ******************************************************************************
@@ -8123,7 +8127,7 @@ ENDIF
 ;
 ;       Name: xDataOnSystem
 ;       Type: Variable
-;   Category: Text
+;   Category: Universe
 ;    Summary: The text column for the Data on System title for each language
 ;
 ; ******************************************************************************
@@ -8172,7 +8176,7 @@ ENDIF
 ;
 ;       Name: radiusText
 ;       Type: Variable
-;   Category: Text
+;   Category: Universe
 ;    Summary: The text string "RADIUS" for use in the Data on System screen
 ;
 ; ******************************************************************************
@@ -9248,18 +9252,20 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: PrintCharacterSetC
+;       Name: PrintCharacter
 ;       Type: Subroutine
 ;   Category: Text
 ;    Summary: Print a character and set the C flag
 ;
 ; ******************************************************************************
 
-.PrintCharacterSetC
+.PrintCharacter
 
- JSR DASC_b2
- SEC
- RTS
+ JSR DASC_b2            ; Print the character in A
+
+ SEC                    ; Set the C flag
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -9654,7 +9660,7 @@ ENDIF
 ;
 ;       Name: xShortRange
 ;       Type: Variable
-;   Category: Text
+;   Category: Charts
 ;    Summary: The text column for the Short-range Chart title for each language
 ;
 ; ******************************************************************************
@@ -11288,7 +11294,7 @@ ENDIF
 ;
 ;       Name: yMarketPrice
 ;       Type: Variable
-;   Category: Text
+;   Category: Market
 ;    Summary: The text row for the Market Price title for each language
 ;
 ; ******************************************************************************
@@ -11777,7 +11783,7 @@ ENDIF
 ;
 ;       Name: xCash
 ;       Type: Variable
-;   Category: Text
+;   Category: Market
 ;    Summary: The text column for our cash levels on the Market Price page
 ;
 ; ******************************************************************************
@@ -11796,7 +11802,7 @@ ENDIF
 ;
 ;       Name: yCash
 ;       Type: Variable
-;   Category: Text
+;   Category: Market
 ;    Summary: The text row for the cash levels on the Market Price page
 ;
 ; ******************************************************************************
@@ -12871,7 +12877,7 @@ ENDIF
 ;
 ;       Name: xEquipShip
 ;       Type: Variable
-;   Category: Text
+;   Category: Equipment
 ;    Summary: The text column for the Equip Ship title for each language
 ;
 ; ******************************************************************************
@@ -13505,7 +13511,7 @@ ENDIF
 ;
 ;       Name: PrintLaserView
 ;       Type: Subroutine
-;   Category: Text
+;   Category: Equipment
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -13552,7 +13558,7 @@ ENDIF
 ;
 ;       Name: xLaserView
 ;       Type: Variable
-;   Category: Text
+;   Category: Equipment
 ;    Summary: The text column of the right end of the laser view when printing
 ;             spaces after the view name
 ;
@@ -13572,7 +13578,7 @@ ENDIF
 ;
 ;       Name: HighlightLaserView
 ;       Type: Subroutine
-;   Category: Text
+;   Category: Equipment
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -16127,8 +16133,8 @@ ENDIF
  STA boxEdge2
 
  LDA #80                ; Tell the PPU to send nametable entries up to tile
- STA lastTileNumber     ; 80 * 8 = 640 (i.e. to the end of tile row 19) in both
- STA lastTileNumber+1   ; bitplanes
+ STA lastNameTile       ; 80 * 8 = 640 (i.e. to the end of tile row 19) in both
+ STA lastNameTile+1     ; bitplanes
 
  LDA BOMB
  BPL CADAA
@@ -17626,10 +17632,12 @@ ENDIF
                         ; neither font loaded)
 
  LDA tileNumber         ; Tell the NMI handler to send pattern entries from the
- STA firstPatternTile   ; first free tile number ???
+ STA firstPatternTile   ; first free tile onwards, so we don't waste time
+                        ; resending the static tiles we have already sent
 
- LDA #116               ; Tell the NMI handler to send nametable entries up to
- STA maxNameTileNumber  ; tile 116 * 8 = 800 (i.e. up to the end of tile row 28)
+ LDA #116               ; Tell the NMI handler to only clear nametable entries
+ STA maxNameTileToClear ; up to tile 116 * 8 = 800 (i.e. up to the end of tile
+                        ; row 28)
 
  LDX #8                 ; Tell the NMI handler to send nametable entries from
  STX firstNametableTile ; tile 8 * 8 = 64 onwards (i.e. from the start of tile
@@ -17781,7 +17789,7 @@ ENDIF
  LDA #%11001100         ; Set the bitplane flags for the drawing bitplane to the
  JSR SetDrawPlaneFlags  ; following:
                         ;
-                        ;   * Bit 2 set   = send tiles until the end of buffer
+                        ;   * Bit 2 set   = send tiles up to end of the buffer
                         ;   * Bit 3 set   = clear buffers after sending data
                         ;   * Bit 4 clear = we've not started sending data yet
                         ;   * Bit 5 clear = we have not yet sent all the data
@@ -18109,10 +18117,12 @@ ENDIF
  STA L045F
 
  LDA tileNumber         ; Tell the NMI handler to send pattern entries from the
- STA firstPatternTile   ; first free tile number ???
+ STA firstPatternTile   ; first free tile onwards, so we don't waste time
+                        ; resending the static tiles we have already sent
 
- LDA #80                ; Tell the NMI handler to send nametable entries up to
- STA maxNameTileNumber  ; tile 80 * 8 = 640 (i.e. up to the end of tile row 19)
+ LDA #80                ; Tell the NMI handler to only clear nametable entries
+ STA maxNameTileToClear ; up to tile 80 * 8 = 640 (i.e. up to the end of tile
+                        ; row 19)
 
  LDX #8                 ; Tell the NMI handler to send nametable entries from
  STX firstNametableTile ; tile 8 * 8 = 64 onwards (i.e. from the start of tile
@@ -21532,8 +21542,8 @@ ENDIF
                         ; bitplanes
 
  LDA #80                ; Tell the PPU to send nametable entries up to tile
- STA lastTileNumber     ; 80 * 8 = 640 (i.e. to the end of tile row 19) in both
- STA lastTileNumber+1   ; bitplanes
+ STA lastNameTile       ; 80 * 8 = 640 (i.e. to the end of tile row 19) in both
+ STA lastNameTile+1     ; bitplanes
 
  JSR SetupViewInNMI_b3  ; Setup the view and configure the NMI to send both
                         ; bitplanes to the PPU during VBlank
@@ -21624,17 +21634,19 @@ ENDIF
  STA visibleColour
 
  LDA tileNumber         ; Tell the NMI handler to send pattern entries from the
- STA firstPatternTile   ; first free tile number ???
+ STA firstPatternTile   ; first free tile onwards, so we don't waste time
+                        ; resending the static tiles we have already sent
 
- LDA #80                ; Tell the NMI handler to send nametable entries up to
- STA maxNameTileNumber  ; tile 80 * 8 = 640 (i.e. up to the end of tile row 19)
+ LDA #80                ; Tell the NMI handler to only clear nametable entries
+ STA maxNameTileToClear ; up to tile 80 * 8 = 640 (i.e. up to the end of tile
+                        ; row 19)
 
  LDX #8                 ; Tell the NMI handler to send nametable entries from
  STX firstNametableTile ; tile 8 * 8 = 64 onwards (i.e. from the start of tile
                         ; row 2)
 
  LDA #116               ; Tell the NMI handler to send nametable entries up to
- STA lastTileNumber     ; tile 116 * 8 = 800 (i.e. up to the end of tile row 28)
+ STA lastNameTile       ; tile 116 * 8 = 800 (i.e. up to the end of tile row 28)
                         ; in bitplane 0
 
  RTS                    ; Return from the subroutine
@@ -21872,7 +21884,8 @@ ENDIF
  STA XC
  STA YC
 
- JSR SetViewPatterns_b3 ; Load the patterns for the new view
+ JSR SetLinePatterns_b3 ; Load the line patterns for the new view into the
+                        ; pattern buffers
 
                         ; We now set X to the type of icon bar to show in the
                         ; new view
