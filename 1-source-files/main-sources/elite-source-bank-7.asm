@@ -13338,7 +13338,7 @@ ENDIF
 ;       Name: CLYNS
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: Clear the bottom two text rows of the visible screen
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -13350,63 +13350,78 @@ ENDIF
 
 .CLYNS
 
- LDA #0
- STA DLY
- STA de
+ LDA #0                 ; Set the delay in DLY to 0, to indicate that we are
+ STA DLY                ; no longer showing an in-flight message, so any new
+                        ; in-flight messages will be shown instantly
 
- LDA #$FF
- STA DTW2
- LDA #$80
- STA QQ17
- LDA #$16
- STA YC
- LDA #1
+ STA de                 ; Clear de, the flag that appends " DESTROYED" to the
+                        ; end of the next text token, so that it doesn't
+
+ LDA #%11111111         ; Set DTW2 = %11111111 to denote that we are not
+ STA DTW2               ; currently printing a word
+
+ LDA #%10000000         ; Set bit 7 of QQ17 to switch standard tokens to
+ STA QQ17               ; Sentence Case
+
+ LDA #22                ; Move the text cursor to row 22, near the bottom of
+ STA YC                 ; the screen
+
+ LDA #1                 ; Move the text cursor to column 1
  STA XC
- LDA firstPatternTile
+
+ LDA firstPatternTile   ; ???
  STA tileNumber
+
  LDA QQ11
- BPL CF332
+ BPL clyn2
+
  LDA #$72
  STA SC+1
  LDA #$E0
  STA SC
+
  LDA #$76
  STA SC2+1
  LDA #$E0
  STA SC2
- LDX #2
 
-.loop_CF311
+ LDX #2                 ; We want to clear three text rows, so set a counter in
+                        ; X for 2 rows
+
+.CLYL
 
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDY #2
+
  LDA #0
 
-.loop_CF318
+.EE2
 
  STA (SC),Y
  STA (SC2),Y
  INY
  CPY #$1F
- BNE loop_CF318
+ BNE EE2
+
  LDA SC
  ADC #$1F
  STA SC
  STA SC2
- BCC CF32F
+ BCC clyn1
+
  INC SC+1
  INC SC2+1
 
-.CF32F
+.clyn1
 
  DEX
- BNE loop_CF311
+ BNE CLYL
 
-.CF332
+.clyn2
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
