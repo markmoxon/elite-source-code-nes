@@ -1838,10 +1838,10 @@ ENDIF
 .svip1
 
  CMP #$9D               ; If the view type in QQ11 is $9D (Long-range Chart with
- BEQ svip6              ; the inverted font loaded), jump to svip6
+ BEQ svip6              ; font loaded in bitplane 0), jump to svip6
 
  CMP #$DF               ; If the view type in QQ11 is $DF (Start screen with the
- BEQ svip6              ; inverted font loaded), jump to svip6
+ BEQ svip6              ; font loaded in bitplane 0), jump to svip6
 
  CMP #$96               ; If the view type in QQ11 is not $96 (Data on System),
  BNE svip2              ; jump to svip2 to keep checking for view types
@@ -1898,11 +1898,11 @@ ENDIF
 .svip4
 
  CMP #$BB               ; If the view type in QQ11 is not $BB (Save and load
- BNE svip5              ; with both fonts loaded), jump to svip5 to keep
-                        ; checking for view types
+ BNE svip5              ; with font loaded in both bitplanes), jump to svip5 to
+                        ; keep checking for view types
 
                         ; If we get here then this is the Save and load screen
-                        ; with both fonts loaded
+                        ; with font loaded in both bitplanes
 
  LDA #HI(16*69)         ; Set PPU_ADDR to the address of pattern 69 in pattern
  STA PPU_ADDR           ; table 0, so we load the small logo image here
@@ -1927,12 +1927,12 @@ ENDIF
                         ; If we get here then this not one of these views:
                         ;
                         ;   * Equip Ship
-                        ;   * Long-range Chart with the inverted font loaded
-                        ;   * Start screen with the inverted font loaded
+                        ;   * Long-range Chart with font loaded in bitplane 0
+                        ;   * Start screen with font loaded in bitplane 0
                         ;   * Data on System
                         ;   * Status Mode
                         ;   * Market Price
-                        ;   * Save and load with both fonts loaded
+                        ;   * Save and load with font loaded in both bitplanes
                         ;
                         ; so now we load the dashboard image, if we haven't
                         ; already
@@ -1956,8 +1956,8 @@ ENDIF
 .svip6
 
                         ; If we get here then QQ11 is $9D (Long-range Chart with
-                        ; the inverted font loaded) or $DF (Start screen with
-                        ; the inverted font loaded)
+                        ; font loaded in bitplane 0) or $DF (Start screen with
+                        ; font loaded in bitplane 0)
 
  LDA #36                ; Set L00D9 = 36 ???
  STA L00D9
@@ -1979,7 +1979,9 @@ ENDIF
  STA PPU_ADDR
 
  LDX #95                ; Set X = 95 so the call to SendFontImageToPPU sends 95
-                        ; font patterns to bitplane 0 in the PPU
+                        ; font patterns to bitplane 0 in the PPU (though the
+                        ; 95th character is full of random junk, so presumably
+                        ; it isn't used)
 
  LDA #HI(fontImage)     ; Set SC(1 0) = fontImage so we send the font image in
  STA SC+1               ; the call to SendFontImageToPPU
@@ -1990,7 +1992,7 @@ ENDIF
                         ; send zeroes to bitplane 1
 
  LDA QQ11               ; If the view type in QQ11 is not $DF (Start screen with
- CMP #$DF               ; the inverted font loaded), then jump to svip10 to
+ CMP #$DF               ; font loaded in bitplane 0), then jump to svip10 to
  BNE svip10             ; finish off setting up the view without loading the
                         ; logo ball image
 
@@ -2142,13 +2144,13 @@ ENDIF
  BEQ svip13             ; icon bar, so jump to svip13 to set showUserInterface
                         ; to denote there is a user interface
 
- LDA QQ11               ; If the view type in QQ11 is $DF (Start screen with the
- CMP #$DF               ; inverted font loaded), jump to svip13 to set
+ LDA QQ11               ; If the view type in QQ11 is $DF (Start screen with
+ CMP #$DF               ; font loaded in bitplane 0), jump to svip13 to set
  BEQ svip13             ; showUserInterface to denote there is a user interface
 
                         ; If we get here then there is no user interface and
-                        ; and this is not the Start screen with the inverted
-                        ; font loaded ???
+                        ; and this is not the Start screen with the font loaded
+                        ; in bitplane 0 ???
 
  LDA #0                 ; Clear bit 7 of A so we can set showUserInterface to
  BEQ svip14             ; denote that there is no user interface, and jump
@@ -2314,12 +2316,12 @@ ENDIF
  STA firstNametableTile ; tile 0 onwards
 
  LDA QQ11               ; If the view type in QQ11 is not $DF (Start screen with
- CMP #$DF               ; the inverted font loaded), then jump to sbit1 to skip
+ CMP #$DF               ; font loaded in bitplane 0), then jump to sbit1 to skip
  BNE sbit1              ; the following and start sending pattern data from
                         ; pattern 37 onwards
 
- LDA #4                 ; This is the Start screen with the inverted font
- BNE sbit2              ; loaded, so set A = 4 so we start sending pattern data
+ LDA #4                 ; This is the Start screen with font loaded in bitplane
+ BNE sbit2              ; 0, so set A = 4 so we start sending pattern data
                         ; from pattern 4 onwards
 
 .sbit1
@@ -3028,7 +3030,7 @@ ENDIF
  STA updatePaletteInNMI ; the PPU
 
  STA QQ11a              ; Set the old view type in QQ11a to $00 (Space view with
-                        ; neither font loaded)
+                        ; no font loaded)
 
  LDA #$FF               ; Set bit 7 of screenFadedToBlack to indicate that we
  STA screenFadedToBlack ; have faded the screen to black
@@ -4091,15 +4093,15 @@ ENDIF
 
 .vpat1
 
- LDX #4                 ; This is the Start screen with neither font loaded, so
- STX tileNumber         ; set tileNumber to 4
+ LDX #4                 ; This is the Start screen with no font loaded, so set
+ STX tileNumber         ; tileNumber to 4
 
  RTS                    ; Return from the subroutine without copying anything to
                         ; the pattern buffers
 
 .vpat2
 
- LDX #37                ; This is the Space view with the inverted font loaded,
+ LDX #37                ; This is the Space view with font loaded in bitplane 0,
  STX tileNumber         ; so set tileNumber to 37
 
  RTS                    ; Return from the subroutine without copying anything to
@@ -4107,13 +4109,13 @@ ENDIF
 
 .SetLinePatterns
 
- LDA QQ11               ; If the view type in QQ11 is $CF (Start screen with
- CMP #$CF               ; neither font loaded), jump to vpat1 to set tileNumber
- BEQ vpat1              ; to 4 and return from the subroutine
+ LDA QQ11               ; If the view type in QQ11 is $CF (Start screen with no
+ CMP #$CF               ; font loaded), jump to vpat1 to set tileNumber to 4
+ BEQ vpat1              ; and return from the subroutine
 
- CMP #$10               ; If the view type in QQ11 is $10 (Space view with the
- BEQ vpat2              ; inverted font loaded), jump to vpat2 to set tileNumber
-                        ; to 37 and return from the subroutine
+ CMP #$10               ; If the view type in QQ11 is $10 (Space view with
+ BEQ vpat2              ; font loaded in bitplane 0), jump to vpat2 to set
+                        ; tileNumber to 37 and return from the subroutine
 
  LDX #66                ; Set X = 66 to use as the value of tileNumber when
                         ; there is no dashboard
@@ -4324,19 +4326,20 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetInvertedFont
+;       Name: LoadFontPlane0
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Load the font into pattern buffer 0, and the inverted font into
-;             pattern buffer 1 (if this is a save and load screen)
+;    Summary: Load the font into pattern buffer 0, and a set of filled blocks or
+;             an inverted font into pattern buffer 1, from pattern 66 to 160
 ;
 ; ------------------------------------------------------------------------------
 ;
-; Pattern buffer 0 contains the font, while pattern buffer 1 either contains the
-; inverted font (for the save and load screen) or a set of filled blocks (for
-; all other screens).
+; Pattern buffer 0 contains the font, while pattern buffer 1 contains either a
+; set of filled blocks, or if the view type in QQ11 is $BB (Save and load with
+; font loaded in both bitplanes), pattern buffer 1 contains an inverted font,
+; i.e. black letters on a white background.
 ;
-; This is called with A = 66, so this load the font into patterns 66 to 160.
+; This is called with A = 66, so this loads the fonts from pattern 66 to 160.
 ;
 ; Arguments:
 ;
@@ -4345,7 +4348,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.SetInvertedFont
+.LoadFontPlane0
 
  STA SC                 ; Set SC to the pattern number where we need to load the
                         ; font patterns
@@ -4367,13 +4370,12 @@ ENDIF
 
  LDX #0                 ; Set X = 0 to use in the font inversion logic below
 
- LDA QQ11               ; If this is not the save and load screen with bits 4
- CMP #$BB               ; and 5 set, jump to ifon1 to skip the following
- BNE ifon1              ; instruction
+ LDA QQ11               ; If the view type in QQ11 is not $BB (Save and load
+ CMP #$BB               ; with font loaded in both bitplanes), jump to ifon1
+ BNE ifon1              ; to skip the following instruction
 
- DEX                    ; This is the save and load screen with bits 4 and 5
-                        ; set (so the save screen is on-screen and the headers
-                        ; have been drawn), so set X = $FF to use in the font
+ DEX                    ; This is the save and load screen with font loaded in
+                        ; both bitplanes, so set X = $FF to use in the font
                         ; inversion logic below
 
 .ifon1
@@ -4439,7 +4441,7 @@ ENDIF
                         ; When T = 0, we have A AND 0 EOR 0, which is $FF, so
                         ; pattern buffer 1 gets filled with set pixels
                         ;
-                        ; When Y = $FF, we have A AND $FF EOR $FF, which is the
+                        ; When T = $FF, we have A AND $FF EOR $FF, which is the
                         ; same as A EOR $FF, which is the value in A inverted,
                         ; so pattern buffer 1 gets filled with the font, but
                         ; with black characters on a filled background
@@ -4516,11 +4518,11 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetFont
+;       Name: LoadFontPlane1
 ;       Type: Subroutine
 ;   Category: Text
 ;    Summary: Load the font into pattern buffer 1, and a set of filled blocks
-;             into pattern buffer 0, from pattern 161 onwards
+;             into pattern buffer 0, from pattern 161 to 255
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -4533,7 +4535,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.SetFont
+.LoadFontPlane1
 
  LDA #HI(pattBuffer0+8*161) ; Set SC(1 0) to the address of pattern 161 in
  STA SC2+1                  ; pattern buffer 0
@@ -4552,14 +4554,13 @@ ENDIF
                         ; 96 characters, but we ignore the last one, which is
                         ; full of random noise
 
- LDA QQ11               ; If this is not the save and load screen with bits 4
- CMP #$BB               ; and 5 set, jump to font1 to skip the following
- BNE font1              ; instruction
+ LDA QQ11               ; If the view type in QQ11 is not $BB (Save and load
+ CMP #$BB               ; with font loaded in both bitplanes), jump to font1
+ BNE font1              ; to skip the following instruction
 
- LDX #70                ; This is the save and load screen with bits 4 and 5
-                        ; set (so the save screen is on-screen and the headers
-                        ; have been drawn), so set X = 70 so that we only copy
-                        ; 70 characters from the font
+ LDX #70                ; This is the save and load screen with font loaded in
+                        ; both bitplanes, so set X = 70 so that we only copy 70
+                        ; characters from the font
 
 .font1
 
@@ -5664,9 +5665,9 @@ ENDIF
 
 .FadeToBlack
 
- LDA QQ11a              ; If the old view type in QQ11a is $FF (Start screen
- CMP #$FF               ; with both fonts loaded) then jump to ftob1 to skip the
- BEQ ftob1              ; fading process, so we don't fade the Start screen
+ LDA QQ11a              ; If the old view type in QQ11a is $FF (Segue screen
+ CMP #$FF               ; from Title screen to Demo) then jump to ftob1 to skip
+ BEQ ftob1              ; the fading process, as the screen is already faded
 
  LDA screenFadedToBlack ; If bit 7 of screenFadedToBlack is set then we have
  BMI ftob1              ; already faded the screen to black, so jump to ftob1 to

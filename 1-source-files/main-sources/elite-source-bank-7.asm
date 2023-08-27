@@ -10404,7 +10404,8 @@ ENDIF
                         ; leaves sprite 0 and the icon bar pointer sprites 1 to
                         ; 4)
                         ;
-                        ; We return from the subroutine using a tail call
+                        ; We return from the subroutine using a tail call (this
+                        ; BNE is effectively a JMP as Y is never zero)
 
 ; ******************************************************************************
 ;
@@ -11885,14 +11886,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetInvertedFont_b3
+;       Name: LoadFontPlane0_b3
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Call the SetInvertedFont routine in ROM bank 3
+;    Summary: Call the LoadFontPlane0 routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.SetInvertedFont_b3
+.LoadFontPlane0_b3
 
  STA ASAV               ; Store the value of A so we can retrieve it below
 
@@ -11907,7 +11908,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR SetInvertedFont    ; Call SetInvertedFont, now that it is paged into memory
+ JSR LoadFontPlane0     ; Call LoadFontPlane0, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -11917,20 +11918,20 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JMP SetInvertedFont    ; Call SetInvertedFont, which is already paged into
+ JMP LoadFontPlane0     ; Call LoadFontPlane0, which is already paged into
                         ; memory, and return from the subroutine using a tail
                         ; call
 
 ; ******************************************************************************
 ;
-;       Name: SetFont_b3
+;       Name: LoadFontPlane1_b3
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Call the SetFont routine in ROM bank 3
+;    Summary: Call the LoadFontPlane1 routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.SetFont_b3
+.LoadFontPlane1_b3
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -11938,7 +11939,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR SetFont            ; Call SetFont, now that it is paged into memory
+ JSR LoadFontPlane1     ; Call LoadFontPlane1, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -13637,8 +13638,8 @@ ENDIF
  JSR HideMostSprites    ; Hide all sprites except for sprite 0 and the icon bar
                         ; pointer
 
- LDA #$FF               ; Set the old view type in QQ11a to $FF (Start screen
- STA QQ11a              ; with both fonts loaded)
+ LDA #$FF               ; Set the old view type in QQ11a to $FF (Segue screen
+ STA QQ11a              ; from Title screen to Demo)
 
  LDA #1                 ; Set scanController2 = 1 so we scan both controllers,
  STA scanController2    ; so the game can be started by pressing a key on either
@@ -14185,14 +14186,15 @@ ENDIF
                         ; from the subroutine with the C flag set (as PL21S-1
                         ; contains an RTS)
 
- LDA K                  ; Set K4(1 0) = (X K) + Yx1M2
- ADC Yx1M2              ;             = Yx1M2 - y / z
+ LDA K                  ; Set K4(1 0) = (X K) + halfScreenHeight
+ ADC halfScreenHeight   ;             = halfScreenHeight - y / z
  STA K4                 ;
                         ; first doing the low bytes
 
- TXA                    ; And then the high bytes. Yx1M2 is the y-coordinate of
- ADC #0                 ; the centre of the space view, so this converts the
- STA K4+1               ; space x-coordinate into a screen y-coordinate
+ TXA                    ; And then the high bytes. halfScreenHeight is the
+ ADC #0                 ; y-coordinate of the centre of the space view, so this
+ STA K4+1               ; converts the space x-coordinate into a screen
+                        ; y-coordinate
 
  CLC                    ; Clear the C flag to indicate success
 

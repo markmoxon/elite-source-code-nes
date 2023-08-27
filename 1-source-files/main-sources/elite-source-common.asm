@@ -297,8 +297,8 @@ IF NOT(_BANK = 3)
  UpdateIconBar      = $AC5C
  SetupIconBar       = $AE18
  SetLinePatterns    = $AFCD
- SetInvertedFont    = $B0E1
- SetFont            = $B18E
+ LoadFontPlane0     = $B0E1
+ LoadFontPlane1     = $B18E
  DrawSystemImage    = $B219
  DrawImageFrame     = $B248
  DrawSmallBox       = $B2BC
@@ -869,11 +869,13 @@ ENDIF
                         ; The high nibble contains four configuration bits, as
                         ; follows:
                         ;
-                        ;   * Bit 4 clear = do not load the inverted font
-                        ;     Bit 4 set   = load the inverted font
+                        ;   * Bit 4 clear = do not load the font into bitplane 0
+                        ;     Bit 4 set   = load the font into bitplane 0 from
+                        ;                   pattern 66 to 160
                         ;
-                        ;   * Bit 5 clear = do not load the normal font
-                        ;     Bit 5 set   = load the normal font
+                        ;   * Bit 5 clear = do not load the font into bitplane 1
+                        ;     Bit 5 set   = load the font into bitplane 1 from
+                        ;                   pattern 161 to 255
                         ;
                         ;   * Bit 6 clear = icon bar
                         ;     Bit 6 set   = no icon bar (rows 27-28 are blank)
@@ -886,67 +888,78 @@ ENDIF
                         ; load), $xD (Long-range Chart) and $xF (Start screen)
                         ; can have different configurations at different times
                         ;
+                        ; Note that view $FF is an exception, as no fonts are
+                        ; loaded for this view (it represents the blank view
+                        ; between the end of the Title screen and the start of
+                        ; the demo scroll text)
+                        ;
+                        ; Also, view $BB (Save and load with font loaded in both
+                        ; bitplanes) loads an inverted font into bitplane 1 from
+                        ; pattern 66 to 160, as well as the normal fonts
+                        ;
                         ; The complete list of view types is therefore:
                         ;
                         ;   $00 = Space view
-                        ;         Neither font loaded, dashboard
+                        ;         No font loaded, dashboard
                         ;
                         ;   $10 = Space view
-                        ;         Inverted font loaded, dashboard
+                        ;         Font loaded in bitplane 0, dashboard
                         ;
                         ;   $01 = Title screen
-                        ;         Neither font loaded, dashboard
+                        ;         No font loaded, dashboard
                         ;
                         ;   $92 = Mission 1 briefing: rotating ship
-                        ;         Inverted font loaded, no dashboard
+                        ;         Font loaded in bitplane 0, no dashboard
                         ;
                         ;   $93 = Mission 1 briefing: ship and text
-                        ;         Inverted font loaded, no dashboard
+                        ;         Font loaded in bitplane 0, no dashboard
                         ;
                         ;   $C4 = Game Over screen
-                        ;         Neither font loaded, no dashboard or icon bar
+                        ;         No font loaded, no dashboard or icon bar
                         ;
                         ;   $95 = Text-based mission briefing
-                        ;         Inverted font loaded, no dashboard
+                        ;         Font loaded in bitplane 0, no dashboard
                         ;
                         ;   $96 = Data on System
-                        ;         Inverted font loaded, no dashboard
+                        ;         Font loaded in bitplane 0, no dashboard
                         ;
                         ;   $97 = Inventory
-                        ;         Inverted font loaded, no dashboard
+                        ;         Font loaded in bitplane 0, no dashboard
                         ;
                         ;   $98 = Status Mode
-                        ;         Inverted font loaded, no dashboard
+                        ;         Font loaded in bitplane 0, no dashboard
                         ;
                         ;   $B9 = Equip Ship
-                        ;         Both fonts loaded, no dashboard
+                        ;         Font loaded in both bitplanes, no dashboard
                         ;
                         ;   $BA = Market Price
-                        ;         Both fonts loaded, no dashboard
+                        ;         Font loaded in both bitplanes, no dashboard
                         ;
                         ;   $8B = Save and load
-                        ;         Neither font loaded, no dashboard
+                        ;         No font loaded, no dashboard
                         ;
                         ;   $BB = Save and load
-                        ;         Both fonts loaded, no dashboard
+                        ;         Font loaded in both bitplanes, inverted font
+                        ;         loaded in bitplane 1, no dashboard
                         ;
                         ;   $9C = Short-range Chart
-                        ;         Inverted font loaded, no dashboard
+                        ;         Font loaded in bitplane 0, no dashboard
                         ;
                         ;   $8D = Long-range Chart
-                        ;         Neither font loaded, no dashboard
+                        ;         No font loaded, no dashboard
                         ;
                         ;   $9D = Long-range Chart
-                        ;         Inverted font loaded, no dashboard
+                        ;         Font loaded in bitplane 0, no dashboard
                         ;
                         ;   $CF = Start screen
-                        ;         Neither font loaded, no dashboard or icon bar
+                        ;         No font loaded, no dashboard or icon bar
                         ;
                         ;   $DF = Start screen
-                        ;         Inverted font loaded, no dashboard or icon bar
+                        ;         Font loaded in bitplane 0, no dashboard or
+                        ;         icon bar
                         ;
-                        ;   $FF = Start screen
-                        ;         Both fonts loaded, no dashboard or icon bar
+                        ;   $FF = Segue screen from Title screen to Demo
+                        ;         No font loaded, no dashboard or icon bar
 
 .QQ11a
 
@@ -1071,19 +1084,21 @@ ENDIF
  SKIP 1                 ; Temporary storage, used to store the original argument
                         ; in A in the logarithmic FMLTU and LL28 routines
 
-.Yx1M2
+.halfScreenHeight
 
- SKIP 1                 ; Height of screen for text-based views ???
+ SKIP 1                 ; Half the height of the drawable part of the screen in
+                        ; pixels (can be 72, 77 or 104 pixels)
 
-.Yx2M2
+.screenHeight
 
- SKIP 1                 ; Contains 2 x Yx1M2 ???
+ SKIP 1                 ; The height of the drawable part of the screen in
+                        ; pixels (can be 144, 154 or 208 pixels)
 
 .Yx2M1
 
- SKIP 1                 ; This is used to store the number of pixel rows in the
-                        ; space view, which is also the y-coordinate of the
-                        ; bottom pixel row of the space view
+ SKIP 1                 ; The height of the drawable part of the screen in
+                        ; pixels minus 1, often used when calculating the
+                        ; y-coordinate of the bottom pixel row of the space view
 
 .messXC
 

@@ -4785,7 +4785,7 @@ ENDIF
  STA QQ12
 
  LDA #$10               ; Clear the screen and and set the view type in QQ11 to
- JSR ChangeToView_b0    ; $10 (Space view with inverted font loaded)
+ JSR ChangeToView_b0    ; $10 (Space view with font loaded in bitplane 0)
 
  LDA #$FF
  STA L045F
@@ -4875,7 +4875,7 @@ ENDIF
  JSR DrawScrollText
 
  LDA #$00               ; Set the view type in QQ11 to $00 (Space view with
- STA QQ11               ; neither font loaded)
+ STA QQ11               ; no font loaded)
 
  JSR SetLinePatterns_b3 ; Load the line patterns for the new view into the
                         ; pattern buffers
@@ -6229,10 +6229,10 @@ ENDIF
 .SVE
 
  LDA #$BB               ; Clear the screen and and set the view type in QQ11 to
- JSR TT66_b0            ; $BB (Save and load with both fonts loaded)
+ JSR TT66_b0            ; $BB (Save and load with font loaded in both bitplanes)
 
  LDA #$8B               ; Set the view type in QQ11 to $8B (Save and load with
- STA QQ11               ; neither font loaded)
+ STA QQ11               ; no font loaded)
 
  LDY #0
  STY autoPlayDemo
@@ -6248,7 +6248,7 @@ ENDIF
  JSR PrintSaveHeader
 
  LDA #$BB               ; Set the view type in QQ11 to $BB (Save and load with
- STA QQ11               ; both fonts loaded)
+ STA QQ11               ; font loaded in both bitplanes)
 
  LDX languageIndex
  LDA saveHeader2Lo,X
@@ -7611,7 +7611,7 @@ ENDIF
  SEC
  SBC #$14
  STA K+1
- LDA Yx1M2
+ LDA halfScreenHeight
  SBC K+1
  BCC CB9B9
  BEQ CB9B9
@@ -7620,7 +7620,7 @@ ENDIF
  INC X2
  LDA K+1
  CLC
- ADC Yx1M2
+ ADC halfScreenHeight
  TAY
  JSR HLOIN
  INC X2
@@ -8153,7 +8153,7 @@ ENDIF
 ;   K%+1                The value of the third counter (we start the demo on
 ;                       auto-play once all three counters have run down without
 ;                       a choice being made)
-
+;
 ; ******************************************************************************
 
 .ChooseLanguage
@@ -8168,7 +8168,7 @@ ENDIF
                         ; (English) as Y = 0, so English is the default language
 
  LDA #$CF               ; Clear the screen and and set the view type in QQ11 to
- JSR TT66_b0            ; $CF (Start screen, neither font loaded)
+ JSR TT66_b0            ; $CF (Start screen with no font loaded)
 
  LDA #HI(iconBarImage3) ; Set iconBarImageHi to the high byte of the image data
  STA iconBarImageHi     ; for icon bar type 3 (pause options)
@@ -8189,8 +8189,8 @@ IF _PAL
 
 ENDIF
 
- LDA #$DF               ; Set the view type in QQ11 to $FF (Start screen with
- STA QQ11               ; both fonts loaded)
+ LDA #$DF               ; Set the view type in QQ11 to $DF (Start screen with
+ STA QQ11               ; font loaded in both bitplanes)
 
  JSR DrawBigLogo_b4     ; Set the pattern and nametable buffer entries for the
                         ; big Elite logo

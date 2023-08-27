@@ -5330,8 +5330,8 @@ ENDIF
 
                         ; This gets called from below when y_sign is negative
 
- LDA Yx1M2              ; Calculate Yx1M2 + (U R), starting with the low bytes
- CLC
+ LDA halfScreenHeight   ; Calculate halfScreenHeight + (U R), starting with the
+ CLC                    ; low bytes
  ADC R
 
  STA XX3,X              ; Store the low byte of the result in the X-th byte of
@@ -5373,10 +5373,11 @@ ENDIF
                         ; the x-coordinate above. Again, we convert the
                         ; coordinate by adding or subtracting the y-coordinate
                         ; of the centre of the screen, which is in the variable
-                        ; Yx1M2, but this time we do the opposite, as a positive
-                        ; projected y-coordinate, i.e. up the space y-axis and
-                        ; up the screen, converts to a low y-coordinate, which
-                        ; is the opposite way round to the x-coordinates
+                        ; halfScreenHeight, but this time we do the opposite, as
+                        ; a positive projected y-coordinate, i.e. up the space
+                        ; y-axis and up the screen, converts to a low
+                        ; y-coordinate, which is the opposite way round to the
+                        ; x-coordinates
 
  PLA                    ; Restore the heap pointer from the stack into X
  TAX
@@ -5386,11 +5387,11 @@ ENDIF
                         ; increment it so it does point to the next free byte
 
  LDA XX15+5             ; If y_sign is negative, jump up to LL70, which will
- BMI LL70               ; store Yx1M2 + (U R) on the XX3 heap and return by
-                        ; jumping down to LL50 below
+ BMI LL70               ; store halfScreenHeight + (U R) on the XX3 heap and
+                        ; return by jumping down to LL50 below
 
- LDA Yx1M2              ; Calculate Yx1M2 - (U R), starting with the low bytes
- SEC
+ LDA halfScreenHeight   ; Calculate halfScreenHeight - (U R), starting with the
+ SEC                    ; low bytes
  SBC R
 
  STA XX3,X              ; Store the low byte of the result in the X-th byte of
@@ -5958,8 +5959,8 @@ ENDIF
                         ; flag set, as the line doesn't fit on-screen
 
  LDA XX15+2             ; If y1_lo < y-coordinate of screen bottom (which is in
- CMP Yx2M2              ; the variable Yx2M1), clear the C flag, otherwise set
-                        ; it
+ CMP screenHeight       ; the variable screenHeight), clear the C flag,
+                        ; otherwise set it
 
  LDA XX15+3             ; Set XX12+2 = y1_hi - (1 - C), so:
  SBC #0                 ;
@@ -5972,8 +5973,8 @@ ENDIF
                         ; the screen, i.e. if y1_lo is on-screen
 
  LDA XX12               ; If y2_lo < y-coordinate of screen bottom (which is in
- CMP Yx2M2              ; the variable Yx2M1), clear the C flag, otherwise set
-                        ; it
+ CMP screenHeight       ; the variable screenHeight), clear the C flag,
+                        ; otherwise set it
 
  LDA XX12+1             ; Set XX12+2 = y2_hi - (1 - C), so:
  SBC #0                 ;
@@ -6200,9 +6201,9 @@ ENDIF
  BNE LL137              ; set, as the line doesn't fit on-screen
 
  LDA XX15+2             ; If y1_lo > y-coordinate of the bottom of the screen
- CMP Yx2M2              ; (which is in the variable Yx2M1), jump to LL137 to
- BCS LL137              ; return from the subroutine with the C flag set, as the
-                        ; line doesn't fit on-screen
+ CMP screenHeight       ; (which is in the variable screenHeight), jump to LL137
+ BCS LL137              ; to return from the subroutine with the C flag set, as
+                        ; the line doesn't fit on-screen
 
 .LLX117
 
@@ -6250,7 +6251,7 @@ ENDIF
  TAY                    ; the call to this subroutine
 
  LDA X2                 ; ???
- CMP Yx2M2
+ CMP screenHeight
  BCS CA7A8
 
 .loop_CA79C
@@ -6504,9 +6505,9 @@ ENDIF
 
 .LL135
 
- LDA XX15+2             ; Set (S R) = (y1_hi y1_lo) - screen height in Yx2M2
+ LDA XX15+2             ; Set (S R) = (y1_hi y1_lo) - screen height
  SEC                    ;
- SBC Yx2M2              ; starting with the low bytes
+ SBC screenHeight       ; starting with the low bytes
  STA R
 
  LDA XX15+3             ; And then subtracting the high bytes
@@ -11400,7 +11401,7 @@ ENDIF
 .HALL
 
  LDA #$00               ; Clear the screen and and set the view type in QQ11 to
- JSR TT66_b0            ; $00 (Space view with neither font loaded)
+ JSR TT66_b0            ; $00 (Space view with no font loaded)
 
  LDA frameCounter       ; Set the random number seeds to a fairly random state
  STA RAND+1             ; that's based on the frame counter (which increments
@@ -12731,8 +12732,8 @@ ENDIF
  LDA Y1                 ; Fetch the y-coordinate offset into A and clear the
  AND #%01111111         ; sign bit, so A = |Y1|
 
- CMP Yx1M2              ; If A >= Yx1M2 then the stardust particle is off the
- BCS stpx1              ; bottom of the screen, so jump to stpx1 to hide the
+ CMP halfScreenHeight   ; If A >= halfScreenHeight then the stardust particle
+ BCS stpx1              ; is off the screen, so jump to stpx1 to hide the
                         ; particle's sprite and return from the subroutine
 
  LDA Y1                 ; Fetch the y-coordinate offset into A
@@ -12746,11 +12747,11 @@ ENDIF
 
 .PX22
 
- STA T                  ; Set A = Yx1M2 - Y1 + 10
- LDA Yx1M2              ;
+ STA T                  ; Set A = halfScreenHeight - Y1 + 10
+ LDA halfScreenHeight   ;
  SBC T                  ; So if Y is positive we display the point up from the
- ADC #10+YPAL           ; centre at y-coordinate Yx1M2, while a negative Y means
-                        ; down from the centre
+ ADC #10+YPAL           ; centre at y-coordinate halfScreenHeight, while a
+                        ; negative Y means down from the centre
 
  STA ySprite37,Y        ; Set the stardust particle's sprite y-coordinate to A
 

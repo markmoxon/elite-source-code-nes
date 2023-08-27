@@ -1308,13 +1308,13 @@ ENDIF
  LDA #127               ; Set K = 127 to send to the call to DrawLightning ???
  STA K
 
- LDA Yx1M2              ; Set K+3 to the y-coordinate of the centre of the
- STA K+3                ; screen in Yx1M2, to send to the call to DrawLightning
-                        ; ???
+ LDA halfScreenHeight   ; Set K+3 to the y-coordinate of the centre of the
+ STA K+3                ; screen in halfScreenHeight, to send to the call to
+                        ; DrawLightning ???
 
  STA K+1                ; Set K+1 to the y-coordinate of the centre of the
-                        ; screen in Yx1M2, to send to the call to DrawLightning
-                        ; ???
+                        ; screen in halfScreenHeight, to send to the call to
+                        ; DrawLightning ???
 
  JSR DrawLightning_b6   ; Draw the lightning effect of the E.C.M. going off
 
@@ -3200,7 +3200,7 @@ ENDIF
  BEQ C896C
 
  CMP #$DF               ; If the view type in QQ11 is $DF (Start screen with
- BEQ C896C              ; the inverted font loaded), jump to C896C to ???
+ BEQ C896C              ; font loaded in bitplane 0), jump to C896C to ???
 
  CMP #$92               ; If the view type in QQ11 is $92 (Mission 1 rotating
  BEQ C896C              ; ship briefing), jump to C896C to ???
@@ -6931,7 +6931,7 @@ ENDIF
 .LAUN
 
  LDA #$00               ; Clear the screen and and set the view type in QQ11 to
- JSR ChangeToView       ; $00 (Space view with neither font loaded)
+ JSR ChangeToView       ; $00 (Space view with no font loaded)
 
  JSR HideMostSprites    ; Hide all sprites except for sprite 0 and the icon bar
                         ; pointer
@@ -6940,7 +6940,7 @@ ENDIF
  JSR NOISE
  LDA #$80
  STA K+2
- LDA Yx1M2
+ LDA halfScreenHeight
  STA K+3
  LDA #$50
  STA XP
@@ -7056,9 +7056,9 @@ ENDIF
 
  AND #7                 ; Restrict A to a random value in the range 0 to 7
 
- ADC Yx1M2              ; Set LASY to two pixels above the centre of the
- SBC #2                 ; screen (Yx1M2), plus our random number, so the laser
- STA LASY               ; dances above and below the centre point
+ ADC halfScreenHeight   ; Set LASY to two pixels above the centre of the
+ SBC #2                 ; screen (in halfScreenHeight), plus our random number,
+ STA LASY               ; so the laser dances above and below the centre point
 
  JSR DORND              ; Set A and X to random numbers
 
@@ -7536,7 +7536,7 @@ ENDIF
  STA VIEW
 
  JSR TT66               ; Clear the screen and and set the view type in QQ11 to
-                        ; $00 (Space view with neither font loaded)
+                        ; $00 (Space view with no font loaded)
 
  LSR demoInProgress     ; Clear bit 7 of demoInProgress
 
@@ -8739,7 +8739,7 @@ ENDIF
  JSR TT103              ; ???
 
  LDA #$9D               ; Set the view type in QQ11 to $00 (Long-range Chart
- STA QQ11               ; with inverted font loaded)
+ STA QQ11               ; with font loaded in bitplane 0)
 
  LDA #$8F               ; ???
  STA Yx2M1
@@ -16300,7 +16300,7 @@ ENDIF
 
 .SetScreenHeight
 
- STA Yx1M2              ; Store the half-screen height in Yx1M2
+ STA halfScreenHeight   ; Store the half-screen height in halfScreenHeight
 
  ASL A                  ; Double the half-screen height in A to get the full
                         ; screen height, while setting the C flag to bit 7 of
@@ -16309,17 +16309,17 @@ ENDIF
                         ; This routine is only ever called with A set to either
                         ; 72 or 77, so the C flag is never set
 
- STA Yx2M2              ; Store the full screen height in Yx2M2
+ STA screenHeight       ; Store the full screen height in screenHeight
 
  SBC #0                 ; Set the value of Yx2M1 as follows:
  STA Yx2M1              ;
-                        ;   * If the C flag is set: Yx2M1 = Yx2M2
+                        ;   * If the C flag is set: Yx2M1 = screenHeight
                         ;
-                        ;   * If the C flag is clear: Yx2M1 = Yx2M2 - 1
+                        ;   * If the C flag is clear: Yx2M1 = screenHeight - 1
                         ;
                         ; This routine is only ever called with A set to either
                         ; 72 or 77, so the C flag is never set, so we always set
-                        ; Yx2M1 = Yx2M2 - 1
+                        ; Yx2M1 = screenHeight - 1
 
  RTS                    ; Return from the subroutine
 
@@ -17625,11 +17625,11 @@ ENDIF
  LDA #$C4
  JSR SendViewToPPU_b3
 
- LDA #$00               ; Set the view type in QQ11 to $00 (Space view with
- STA QQ11               ; neither font loaded)
+ LDA #$00               ; Set the view type in QQ11 to $00 (Space view with no
+ STA QQ11               ; font loaded)
 
  STA QQ11a              ; Set the old view type in QQ11a to $00 (Space view with
-                        ; neither font loaded)
+                        ; no font loaded)
 
  LDA tileNumber         ; Tell the NMI handler to send pattern entries from the
  STA firstPatternTile   ; first free tile onwards, so we don't waste time
@@ -17678,8 +17678,8 @@ ENDIF
  LSR A                  ; store in byte #0 (x_lo)
  STA INWK
 
- LDY #$00               ; Set the view type in QQ11 to $00 (Space view with
- STY QQ11               ; neither font loaded)
+ LDY #$00               ; Set the view type in QQ11 to $00 (Space view with no
+ STY QQ11               ; font loaded)
 
  STY INWK+1             ; Set the following to 0: x_hi, y_hi, z_hi and the AI
  STY INWK+4             ; flag (no AI or E.C.M. and not hostile)
@@ -17844,8 +17844,8 @@ ENDIF
  LDA #1                 ; Set the font bitplane to print in plane 1
  STA fontBitplane
 
- LDX #$FF               ; Set the old view type in QQ11a to $FF (Start screen
- STX QQ11a              ; with both fonts loaded)
+ LDX #$FF               ; Set the old view type in QQ11a to $FF (Segue screen
+ STX QQ11a              ; from Title screen to Demo)
 
  TXS                    ; Set the stack pointer to $01FF, which is the standard
                         ; location for the 6502 stack, so this instruction
@@ -17882,8 +17882,6 @@ ENDIF
  STX L0470
 
  JSR RES2               ; Reset a number of flight variables and workspaces
-                        ; and fall through into the entry code for the game
-                        ; to restart from the title screen
 
  LDA #5                 ; Set the icon par pointer to button 5 (which is the
  JSR SetIconBarPointer  ; sixth button of 12, just before the halfway point)
@@ -17911,8 +17909,8 @@ ENDIF
 
  JSR BR1                ; Reset a number of variables, ready to start a new game
 
- LDA #$FF               ; Set the view type in QQ11 to $FF (Start screen with
- STA QQ11               ; both fonts loaded)
+ LDA #$FF               ; Set the view type in QQ11 to $FF (Segue screen from
+ STA QQ11               ; Title screen to Demo)
 
  LDA autoPlayDemo       ; If autoPlayDemo is zero then the demo is not being
  BEQ dead1              ; autplayed, so jump to dead1 to skip the following
@@ -17948,8 +17946,8 @@ ENDIF
 
  JSR BR1                ; Reset a number of variables, ready to start a new game
 
- LDA #$FF               ; Set the view type in QQ11 to $FF (Start screen with
- STA QQ11               ; both fonts loaded)
+ LDA #$FF               ; Set the view type in QQ11 to $FF (Segue screen from
+ STA QQ11               ; Title screen to Demo)
 
  JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
                         ; next VBlank)
@@ -18108,11 +18106,11 @@ ENDIF
                         ; immediately or during VBlank, depending on whether
                         ; the screen is visible
 
- LDA #$00               ; Set the view type in QQ11 to $00 (Space view with
- STA QQ11               ; neither font loaded)
+ LDA #$00               ; Set the view type in QQ11 to $00 (Space view with no
+ STA QQ11               ; font loaded)
 
  STA QQ11a              ; Set the old view type in QQ11a to $00 (Space view with
-                        ; neither font loaded)
+                        ; no font loaded)
 
  STA L045F
 
@@ -21493,7 +21491,7 @@ ENDIF
  STX VIEW               ; Set the current space view to X
 
  LDA #$00               ; Clear the screen and and set the view type in QQ11 to
- JSR TT66               ; $00 (Space view with neither font loaded)
+ JSR TT66               ; $00 (Space view with no font loaded)
 
  JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
                         ; buffer 1 and set the next free tile number for both
@@ -21535,7 +21533,7 @@ ENDIF
  STX VIEW               ; Set the current space view to X
 
  LDA #$00               ; Clear the screen and and set the view type in QQ11 to
- JSR TT66               ; $00 (Space view with neither font loaded)
+ JSR TT66               ; $00 (Space view with no font loaded)
 
  JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
                         ; buffer 1 and set the next free tile number for both
@@ -21959,27 +21957,38 @@ ENDIF
  TXA                    ; Show the icon bar with type X
  JSR SetupIconBar_b3
 
+                        ; The next two comparisons aren't necessary as both $C4
+                        ; and $8D have bit 4 clear, so they would be caught by
+                        ; the AND #%00010000 below anyway, but there's no harm
+                        ; in being explicit, I guess
+
  LDA QQ11               ; If the view type in QQ11 is $C4 (Game Over screen),
  CMP #$C4               ; jump to scrn4 to set up attribute buffer 0 and
  BEQ scrn4              ; return from the subroutine
 
  LDA QQ11               ; If the view type in QQ11 is $8D (Long-range Chart),
- CMP #$8D               ; jump to scrn6 to skip loading the inverted font
- BEQ scrn6
+ CMP #$8D               ; jump to scrn6 to skip loading the font into pattern
+ BEQ scrn6              ; buffer 0
 
- CMP #$CF               ; If the view type in QQ11 is $8D (Start screen with
- BEQ scrn6              ; neither font loaded), jump to scrn6 to skip loading
-                        ; the inverted font
+ CMP #$CF               ; If the view type in QQ11 is $CF (Start screen with
+ BEQ scrn6              ; no font loaded), jump to scrn6 to skip loading
+                        ; the font into pattern buffer 0
 
  AND #%00010000         ; If bit 4 of the new view in QQ11 is clear, jump to
- BEQ scrn6              ; scrn6 to skip loading the inverted font
+ BEQ scrn6              ; scrn6 to skip loading the font into pattern buffer 0
 
                         ; If we get here then the new view we are setting up is
                         ; not the Game Over screen, the Long-range Chart or the
                         ; Start screen, and bit 4 of QQ11 is set
 
- LDA #66                ; Load the inverted font into both pattern buffers, from
- JSR SetInvertedFont_b3 ; pattern 66 to 160
+ LDA #66                ; Load the font into pattern buffer 0, and a set of
+ JSR LoadFontPlane0_b3  ; filled blocks into pattern buffer 1, from pattern 66
+                        ; to 160
+                        ;
+                        ; If the view type in QQ11 is $BB (Save and load with
+                        ; font loaded in both bitplanes), then this also loads
+                        ; an inverted font into pattern buffer 1, from pattern
+                        ; 66 to 160
 
 .scrn6
 
@@ -21987,9 +21996,9 @@ ENDIF
  AND #%00100000         ; scrn7 to skip loading the normal font
  BEQ scrn7
 
- JSR SetFont_b3         ; Load the normal font into pattern buffer 1, and a set
-                        ; of filled blocks into pattern buffer 0, from pattern
-                        ; #161 onwards
+ JSR LoadFontPlane1_b3  ; Load the font into pattern buffer 1, and a set of
+                        ; filled blocks into pattern buffer 0, from pattern 161
+                        ; to 255
 
 .scrn7
 
