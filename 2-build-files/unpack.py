@@ -185,6 +185,10 @@ def extract_image(input_data, sections, output_folder, input_file, palette, pixe
     else:
         print("More sections detected")
 
+    if sections == 0:
+        # For one-bit-per-pixel pattern buffer format, so fill bitplane 1 with zeroes
+        create_png_from_ram_data(unpacked_data_0, [0] * len(unpacked_data_0), output_path_pngs, pixel_width, palette)
+
     if sections == 1:
         create_png_from_ppu_data(unpacked_data_0, output_path_pngs, pixel_width, palette, transparent)
 
@@ -384,21 +388,15 @@ start = 0x9100 - 0x8000
 end = 0x9500 - 0x8000
 extract_image(bank_data3[start: end], 1, "../1-source-files/images/other-images/", "iconBarImage4", palette=11, pixel_width=256, data_is_packed=False, transparent=False)
 
-# The lines image is stored as interleaved PPU tile format
-# With one set of lines in colour 1 and another in colour 2
-# We can save this as two images, with different palettes, to expose the lines
+# The lines image is stored as a 1bpp pattern buffer image
 
 start = 0xFC00 - 0xC000
 end = 0xFCE8 - 0xC000
-extract_image(bank_data7[start: end], 1, "../1-source-files/images/other-images/", "lineImage0", palette=12, pixel_width=120, data_is_packed=False, transparent=False)
-extract_image(bank_data7[start: end], 1, "../1-source-files/images/other-images/", "lineImage1", palette=13, pixel_width=120, data_is_packed=False, transparent=False)
+extract_image(bank_data7[start: end], 0, "../1-source-files/images/other-images/", "lineImage", palette=12, pixel_width=120, data_is_packed=False, transparent=False)
 
-# The font is stored as interleaved PPU tile format
-# With one set of characters in colour 1 and another in colour 2
-# We can save this as two images, with different palettes, to expose the letters
-# There are 95 characters in the font - the last pattern in bitplane 0 is unused
+# The font image is stored as a 1bpp pattern buffer image
+# There are 94 characters in the font
 
 start = 0xFCE8 - 0xC000
-end = 0xFFE0 - 0xC000
-extract_image(bank_data7[start: end - 8], 1, "../1-source-files/images/other-images/", "fontImage0", palette=12, pixel_width=64, data_is_packed=False, transparent=False)
-extract_image(bank_data7[start: end], 1, "../1-source-files/images/other-images/", "fontImage1", palette=13, pixel_width=64, data_is_packed=False, transparent=False)
+end = 0xFFD8 - 0xC000
+extract_image(bank_data7[start: end], 0, "../1-source-files/images/other-images/", "fontImage", palette=12, pixel_width=64, data_is_packed=False, transparent=False)
