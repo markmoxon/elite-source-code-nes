@@ -2125,7 +2125,7 @@ ENDIF
                         ; during the next few VBlanks
 
  LDX #0                 ; Hide bitplane 0, so:
- STX hiddenBitPlane     ;
+ STX hiddenBitplane     ;
                         ;   * Colour %01 (1) is the hidden colour (black)
                         ;   * Colour %10 (2) is the visible colour (cyan)
 
@@ -2309,7 +2309,7 @@ ENDIF
  STX nmiBitplane        ; argument in X, so all the following operations apply
                         ; to the specified bitplane
 
- STX hiddenBitPlane     ; Hide bitplane X so it isn't visible on-screen while
+ STX hiddenBitplane     ; Hide bitplane X so it isn't visible on-screen while
                         ; we do the following
 
  LDA #0                 ; Tell the NMI handler to send nametable entries from
@@ -2568,7 +2568,7 @@ ENDIF
                         ; it
 
  LDX #0                 ; Hide bitplane 0, so:
- STX hiddenBitPlane     ;
+ STX hiddenBitplane     ;
                         ;   * Colour %01 (1) is the hidden colour (black)
                         ;   * Colour %10 (2) is the visible colour (cyan)
 
@@ -2635,6 +2635,10 @@ ENDIF
 ;       Type: Variable
 ;   Category: Drawing the screen
 ;    Summary: Palette numbers for each view
+;
+; ------------------------------------------------------------------------------
+;
+; These palette numbers refer to the palettes in the viewPalettes table.
 ;
 ; ******************************************************************************
 
@@ -2985,7 +2989,7 @@ ENDIF
  LDA #0                 ; Reset all the bitplanes to 0
  STA nmiBitplane
  STA drawingBitplane
- STA hiddenBitPlane
+ STA hiddenBitplane
 
  LDA #HI(PPU_PATT_1)    ; Set ppuPatternTableHi to the high byte of PPU pattern
  STA ppuPatternTableHi  ; table 1, which is the table we use for drawing
@@ -4969,16 +4973,29 @@ ENDIF
 ;       Name: DrawSmallBox
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: Draw a small box, typically used for popups or outlines
 ;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   K                   The width of the box to draw in tiles
+;
+;   K+1                 The height of the box to draw in tiles
+;
+;   K+2                 The text row on which to draw the small box
+;
+;   K+3                 The text column on which to draw the small box
+
 ; ******************************************************************************
 
 .DrawSmallBox
 
- LDA K+2
- STA XC
- LDA K+3
- STA YC
+ LDA K+2                ; Set the text cursor in XC to column K+2, to pass to
+ STA XC                 ; GetNameAddress below
+
+ LDA K+3                ; Set the text cursor in YC to row K+3, to pass to
+ STA YC                 ; GetNameAddress below
 
  JSR GetNameAddress     ; Get the addresses in the nametable buffers for the
                         ; tile at text coordinate (XC, YC), as follows:
@@ -4986,41 +5003,66 @@ ENDIF
                         ;   SC(1 0) = the address in nametable buffer 0
                         ;
                         ;   SC2(1 0) = the address in nametable buffer 1
+                        ;
+                        ; So these point to the address in the nametable buffer
+                        ; of the top-left corner of the box
 
- LDA #$3D
- JSR DrawRowOfTiles
+ LDA #61                ; Draw a row of K tiles using pattern 61, which contains
+ JSR DrawRowOfTiles     ; a thick horizontal line along the bottom of the
+                        ; pattern, so this draws the top of the box
 
- LDX K+1
- JMP CB2E3
+ LDX K+1                ; Set X to the number of rows in the box we want to draw
+                        ; from K+1, to use as a counter for the height of the
+                        ; box
 
-.CB2D1
+ JMP sbox2              ; Jump into the loop below at sbox2
+
+.sbox1
 
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA SC
- CLC
- ADC #$20
+ LDA SC                 ; Add 32 to SC(1 0) to move down to the next row in
+ CLC                    ; nametable buffer 0, starting with the low byte
+ ADC #32
  STA SC
- STA SC2
- BCC CB2E3
- INC SC+1
+
+ STA SC2                ; Update the low byte of SC2(1 0) as well to move down
+                        ; in nametable buffer 1 too
+
+ BCC sbox2              ; If the addition overflowed, increment the high bytes
+ INC SC+1               ; as well
  INC SC2+1
 
-.CB2E3
+.sbox2
 
- LDA #1
- LDY #0
- STA (SC),Y
- STA (SC2),Y
- LDA #2
- LDY K
- STA (SC),Y
- STA (SC2),Y
- DEX
- BNE CB2D1
- LDA #$3C
- JMP DrawRowOfTiles
+ LDA #1                 ; We draw the left edge of the box using pattern 1,
+                        ; which contains a thick vertical line along the right
+                        ; edge of the pattern, so set A = 1 to poke into the
+                        ; nametable
+
+ LDY #0                 ; Draw the left edge of the box at the address in
+ STA (SC),Y             ; SC(1 0) and SC2(1 0), which draws it in both
+ STA (SC2),Y            ; nametable buffers
+
+ LDA #2                 ; We draw the right edge of the box using pattern 2,
+                        ; which contains a thick vertical line along the left
+                        ; edge of the pattern, so set A = 2 to poke into the
+                        ; nametable
+
+ LDY K                  ; Draw the left edge of the box at the address in
+ STA (SC),Y             ; SC(1 0) and SC2(1 0) + K, which draws it K blocks to
+ STA (SC2),Y            ; the right of the left edge in both nametable buffers
+
+ DEX                    ; Decrement the row counter in X
+
+ BNE sbox1              ; Loop back to draw the left and right edges for the
+                        ; next row
+
+ LDA #60                ; Draw a row of K tiles using pattern 61, which contains
+ JMP DrawRowOfTiles     ; a thick horizontal line along the top of the pattern,
+                        ; so this draws the bottom of the box, returning from
+                        ; the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -5298,13 +5340,13 @@ ENDIF
 ;       Name: viewPalettes
 ;       Type: Variable
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: The palettes to use for the different views
 ;
 ; ******************************************************************************
 
 .viewPalettes
 
- EQUB $0F, $2C, $0F, $2C
+ EQUB $0F, $2C, $0F, $2C    ; Palette 0: Space view, Game Over screen
  EQUB $0F, $28, $00, $1A
  EQUB $0F, $10, $00, $16
  EQUB $0F, $10, $00, $1C
@@ -5312,7 +5354,8 @@ ENDIF
  EQUB $0F, $1C, $22, $28
  EQUB $0F, $16, $28, $27
  EQUB $0F, $15, $20, $25
- EQUB $0F, $38, $38, $38
+
+ EQUB $0F, $38, $38, $38    ; Palette 1: Market Price
  EQUB $0F, $10, $06, $1A
  EQUB $0F, $22, $00, $28
  EQUB $0F, $10, $00, $1C
@@ -5320,7 +5363,8 @@ ENDIF
  EQUB $0F, $10, $0F, $1C
  EQUB $0F, $06, $28, $25
  EQUB $0F, $15, $20, $25
- EQUB $0F, $2C, $0F, $2C
+
+ EQUB $0F, $2C, $0F, $2C    ; Palette 2: Title screen
  EQUB $0F, $28, $00, $1A
  EQUB $0F, $10, $00, $16
  EQUB $0F, $10, $00, $3A
@@ -5328,7 +5372,8 @@ ENDIF
  EQUB $0F, $1C, $10, $28
  EQUB $0F, $06, $10, $27
  EQUB $0F, $00, $10, $25
- EQUB $0F, $2C, $0F, $2C
+
+ EQUB $0F, $2C, $0F, $2C    ; Palette 3: Short-range Chart
  EQUB $0F, $10, $1A, $28
  EQUB $0F, $10, $00, $16
  EQUB $0F, $10, $00, $1C
@@ -5336,7 +5381,8 @@ ENDIF
  EQUB $0F, $1C, $22, $28
  EQUB $0F, $06, $28, $27
  EQUB $0F, $15, $20, $25
- EQUB $0F, $2C, $0F, $2C
+
+ EQUB $0F, $2C, $0F, $2C    ; Palette 4: Long-range Chart
  EQUB $0F, $20, $28, $25
  EQUB $0F, $10, $00, $16
  EQUB $0F, $10, $00, $1C
@@ -5344,7 +5390,8 @@ ENDIF
  EQUB $0F, $1C, $22, $28
  EQUB $0F, $06, $28, $27
  EQUB $0F, $15, $20, $25
- EQUB $0F, $28, $10, $06
+
+ EQUB $0F, $28, $10, $06    ; Palette 5: Equip Ship
  EQUB $0F, $10, $00, $1A
  EQUB $0F, $0C, $1C, $2C
  EQUB $0F, $10, $00, $1C
@@ -5352,7 +5399,8 @@ ENDIF
  EQUB $0F, $18, $28, $38
  EQUB $0F, $25, $35, $25
  EQUB $0F, $15, $20, $25
- EQUB $0F, $2A, $00, $06
+
+ EQUB $0F, $2A, $00, $06    ; Palette 6: Data on System
  EQUB $0F, $20, $00, $2A
  EQUB $0F, $10, $00, $20
  EQUB $0F, $10, $00, $1C
@@ -5360,7 +5408,8 @@ ENDIF
  EQUB $0F, $27, $28, $17
  EQUB $0F, $06, $28, $27
  EQUB $0F, $15, $20, $25
- EQUB $0F, $28, $0F, $25
+
+ EQUB $0F, $28, $0F, $25    ; Palette 7: Save and load
  EQUB $0F, $10, $06, $1A
  EQUB $0F, $10, $0F, $1A
  EQUB $0F, $10, $00, $1C
@@ -5368,7 +5417,8 @@ ENDIF
  EQUB $0F, $18, $28, $38
  EQUB $0F, $06, $2C, $2C
  EQUB $0F, $15, $20, $25
- EQUB $0F, $1C, $10, $30
+
+ EQUB $0F, $1C, $10, $30    ; Palette 8: Inventory, Status Mode
  EQUB $0F, $20, $00, $2A
  EQUB $0F, $2A, $00, $06
  EQUB $0F, $10, $00, $1C
@@ -5376,7 +5426,8 @@ ENDIF
  EQUB $0F, $17, $27, $37
  EQUB $0F, $0F, $28, $38
  EQUB $0F, $15, $25, $25
- EQUB $0F, $1C, $2C, $3C
+
+ EQUB $0F, $1C, $2C, $3C    ; Palette 9: Start screen
  EQUB $0F, $38, $11, $11
  EQUB $0F, $16, $00, $20
  EQUB $0F, $2B, $00, $25
@@ -5384,7 +5435,8 @@ ENDIF
  EQUB $0F, $08, $18, $27
  EQUB $0F, $0F, $28, $38
  EQUB $0F, $00, $10, $30
- EQUB $0F, $2C, $0F, $2C
+
+ EQUB $0F, $2C, $0F, $2C    ; Palette 10: Mission briefings
  EQUB $0F, $10, $28, $1A
  EQUB $0F, $10, $00, $16
  EQUB $0F, $10, $00, $1C
@@ -5466,35 +5518,53 @@ ENDIF
  LDA #0                 ; Set SC+1 = 0, though this is superfluous as we do the
  STA SC+1               ; the same thing just below
 
- LDA paletteForView,X
- LDY #0
- STY SC+1
- ASL A
+ LDA paletteForView,X   ; Set A to the palette number to load for view X
+
+ LDY #0                 ; Set SC+1 = 0 for use as the high byte in the address
+ STY SC+1               ; we are about to construct
+
+ ASL A                  ; Set (SC+1 A) = A * 32
  ASL A
  ASL A
  ASL A
  ASL A
  ROL SC+1
- ADC #LO(viewPalettes)
- STA SC
- LDA #HI(viewPalettes)
- ADC SC+1
- STA SC+1
- LDY #$20
 
-.loop_CB5A2
+ ADC #LO(viewPalettes)  ; Set SC(1 0) = (SC+1 A) + viewPalettes
+ STA SC                 ;             = viewPalettes + 32 * A
+ LDA #HI(viewPalettes)  ;
+ ADC SC+1               ; As each of the palettes in the viewPalettes table
+ STA SC+1               ; consists of 32 bytes, this sets SC(1 0) to the address
+                        ; of the A-th palette in the table, which is the palette
+                        ; that corresponds to the view type in QQ11a that we
+                        ; fetched above
 
- LDA (SC),Y
- STA XX3,Y
- DEY
- BPL loop_CB5A2
- LDA QQ11a
- BEQ CB5DE
- CMP #$98
- BEQ SetPaletteColours
+ LDY #32                ; We now want to copy the 32 bytes from the selected
+                        ; palette into the palette table at XX3, so set an index
+                        ; counter in Y
 
- CMP #$96               ; If this is not the Data on System view ($96), jump to
- BNE CB5DB              ; CB5DB
+.gpal1
+
+ LDA (SC),Y             ; Copy the Y-th byte from SC(1 0) to the Y-th byte of
+ STA XX3,Y              ; the table at XX3
+
+ DEY                    ; Decrement the index counter
+
+ BPL gpal1              ; Loop back until we have copied all 32 bytes to XX3
+
+ LDA QQ11a              ; If the old view type in QQ11a is $00 (Space view with
+ BEQ gpal3              ; no font loaded), jump to gpal3 to set the visible and
+                        ; hidden colours
+
+ CMP #$98               ; If the old view type in QQ11a is $98 (Status Mode),
+ BEQ SetPaletteColours  ; jump to SetPaletteColours to set the view's palette
+                        ; from the entries in the XX3 palette table, returning
+                        ; from the subroutine using a tail call
+
+ CMP #$96               ; If the old view type in QQ11a is not $96 (Data on
+ BNE gpal2              ; System), jump to SetPaletteColours via gpal2 to set
+                        ; the view's palette from the entries in the XX3 palette
+                        ; table, returning from the subroutine using a tail call
 
                         ; This is the Data on System view, so we set the palette
                         ; according to the system's seeds
@@ -5523,25 +5593,46 @@ ENDIF
  LDA systemPalettes+3,X
  STA XX3+23
 
-.CB5DB
+.gpal2
 
- JMP SetPaletteColours
+ JMP SetPaletteColours  ; Jump to SetPaletteColours to set the view's palette
+                        ; from the entries in the XX3 palette table, returning
+                        ; from the subroutine using a tail call
 
-.CB5DE
+.gpal3
 
- LDA XX3
- LDY XX3+3
- LDA hiddenBitPlane
- BNE CB5EF
- STA XX3+1
- STY XX3+2
- RTS
+                        ; If we get here then the old view type in QQ11a is $00
+                        ; (Space view with no font loaded), so we now set the
+                        ; hidden and visible colours
 
-.CB5EF
+ LDA XX3                ; Set A to the background colour in the first palette
+                        ; entry (which will be black)
 
- STY XX3+1
- STA XX3+2
- RTS
+ LDY XX3+3              ; Set Y to the foreground colour in the last palette
+                        ; entry (which will be cyan)
+
+ LDA hiddenBitplane     ; If the hidden bitplane is 1, jump to gpal4
+ BNE gpal4
+
+ STA XX3+1              ; The hidden bitplane is 0, so set the second colour to
+ STY XX3+2              ; black and the third colour to cyan, so:
+                        ;
+                        ;   * Colour %01 (1) is the hidden colour (black)
+                        ;
+                        ;   * Colour %10 (2) is the visible colour (cyan)
+
+ RTS                    ; Return from the subroutine
+
+.gpal4
+
+ STY XX3+1              ; The hidden bitplane is 1, so set the second colour to
+ STA XX3+2              ; cyan and the third colour to black
+                        ;
+                        ;   * Colour %01 (1) is the visible colour (cyan)
+                        ;
+                        ;   * Colour %10 (2) is the hidden colour (black)
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;

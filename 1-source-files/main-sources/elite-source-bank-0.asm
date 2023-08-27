@@ -3150,12 +3150,15 @@ ENDIF
 
 .UpdateView
 
- LDA tileNumber
- BNE C892E
- LDA #$FF
- STA tileNumber
+ LDA tileNumber         ; If tileNumber = 0, set tileNumber = 255
+ BNE upvw1              ;
+ LDA #255               ; This ensures that the call to CopyNameBuffer0To1 below
+ STA tileNumber         ; tells the NMI handler to send pattern entries up to
+                        ; the first free tile, or to send tiles up to the very
+                        ; end if we have run out of free tiles (which is when
+                        ; tileNumber is zero)
 
-.C892E
+.upvw1
 
  LDA #0                 ; Tell the NMI handler to send nametable entries from
  STA firstNametableTile ; tile 0 onwards
@@ -3168,56 +3171,78 @@ ENDIF
  STA lastNameTile+1     ; 108 * 8 = 864 (i.e. to the end of tile row 26) in both
                         ; bitplanes
 
- LDX #$25
- LDA QQ11
- AND #$40
- BEQ C8944
- LDX #4
+ LDX #37                ; Set X = 37 to use as the first pattern tile for when
+                        ; there is an icon bar
 
-.C8944
+ LDA QQ11               ; If bit 6 of the view number is clear, then there is an
+ AND #%01000000         ; icon bar, so jump to upvw2 to skip the following
+ BEQ upvw2              ; instruction
 
- STX firstPatternTile
+ LDX #4                 ; Set X = 4 to use as the first pattern tile for when
+                        ; there is no icon bar
+
+.upvw2
+
+ STX firstPatternTile   ; Tell the NMI handler to send pattern entries from
+                        ; pattern X in the buffer (i.e. from pattern 4 if there
+                        ; is no icon bar, or from pattern 37 if there is an
+                        ; icon bar)
 
  JSR DrawBoxEdges       ; Draw the left and right edges of the box along the
                         ; sides of the screen, drawing into the nametable buffer
                         ; for the drawing bitplane
 
  JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
-                        ; buffer 1 and set the next free tile number for both
-                        ; bitplanes
+                        ; buffer and tell the NMI handler to send pattern
+                        ; entries up to the first free tile
 
- LDA QQ11
- CMP QQ11a
- BEQ C8976
- JSR SendViewToPPU_b3
+ LDA QQ11               ; If the new view in QQ11 is the same as the old view in
+ CMP QQ11a              ; QQ11a, then jump to upvw6 to call UpdateScreen before
+ BEQ upvw6              ; jumping back to upvw3 (which will either call
+                        ; SendViewToPPU to update the view straight away, if
+                        ; it's been faded to black, otherwise it will call
+                        ; SetupFullViewInNMI to update the view in VBlank, to
+                        ; prevent screen corruption)
 
-.C8955
+ JSR SendViewToPPU_b3   ; Otherwise the view is changing, so it has already been
+                        ; faded out and we can call SendViewToPPU to update the
+                        ; view straight away without caring about screen
+                        ; corruption
 
- LDX #$FF
+.upvw3
+
+ LDX #$FF               ; Set X = $FF to use as the value of L045F below
 
  LDA QQ11               ; If the view type in QQ11 is $95 (Trumble mission
- CMP #$95               ; briefing), jump to C896C to ???
- BEQ C896C
+ CMP #$95               ; briefing), jump to upvw4 to set L045F = 0
+ BEQ upvw4
 
  CMP #$DF               ; If the view type in QQ11 is $DF (Start screen with
- BEQ C896C              ; font loaded in bitplane 0), jump to C896C to ???
+ BEQ upvw4              ; font loaded in bitplane 0), jump to upvw4 to set
+                        ; L045F = 0
 
  CMP #$92               ; If the view type in QQ11 is $92 (Mission 1 rotating
- BEQ C896C              ; ship briefing), jump to C896C to ???
+ BEQ upvw4              ; ship briefing), jump to upvw4 to to set L045F = 0
 
  CMP #$93               ; If the view type in QQ11 is $93 (Mission 1 text
- BEQ C896C              ; briefing), jump to C896C to ???
+ BEQ upvw4              ; briefing), jump to upvw4 to to set L045F = 0
 
- ASL A
- BPL C896E
+ ASL A                  ; If bit 6 of the view type in QQ11 is clear, then there
+ BPL upvw5              ; is an icon bar, so jump to upvw5 to set L045F = $FF
 
-.C896C
+.upvw4
 
- LDX #0
+ LDX #0                 ; Set X = 0 to use as the value of L045F below
 
-.C896E
+.upvw5
 
- STX L045F
+ STX L045F              ; Set L045F to X, so we set L045F to:
+                        ;
+                        ;   * 0 if the view is a mission briefing, or the Start
+                        ;     screen with font loaded in bitplane 0, or has no
+                        ;     icon bar
+                        ;
+                        ;   * $FF otherwise ???
 
  LDA tileNumber         ; Tell the NMI handler to send pattern entries from the
  STA firstPatternTile   ; first free tile onwards, so we don't waste time
@@ -3225,13 +3250,13 @@ ENDIF
 
  RTS                    ; Return from the subroutine
 
-.C8976
+.upvw6
 
  JSR UpdateScreen       ; Update the screen by sending data to the PPU, either
                         ; immediately or during VBlank, depending on whether
                         ; the screen is visible
 
- JMP C8955
+ JMP upvw3              ; Jump back to upvw3 to continue updating the view
 
 ; ******************************************************************************
 ;
@@ -3285,8 +3310,8 @@ ENDIF
                         ; for the drawing bitplane
 
  JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
-                        ; buffer 1 and set the next free tile number for both
-                        ; bitplanes
+                        ; buffer and tell the NMI handler to send pattern
+                        ; entries up to the first free tile
 
  LDA #%11000100         ; Set both bitplane flags as follows:
  STA bitplaneFlags      ;
@@ -7541,8 +7566,8 @@ ENDIF
  LSR demoInProgress     ; Clear bit 7 of demoInProgress
 
  JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
-                        ; buffer 1 and set the next free tile number for both
-                        ; bitplanes
+                        ; buffer and tell the NMI handler to send pattern
+                        ; entries up to the first free tile
 
  JSR SetupFullViewInNMI ; Configure the PPU to send tiles for a full screen
                         ; (no dashboard) during VBlank
@@ -17613,8 +17638,8 @@ ENDIF
  JSR ClearDashEdge_b6   ; Clear the right edge of the dashboard ???
 
  JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
-                        ; buffer 1 and set the next free tile number for both
-                        ; bitplanes
+                        ; buffer and tell the NMI handler to send pattern
+                        ; entries up to the first free tile
 
  JSR SetScreenForUpdate ; Get the screen ready for updating by hiding all
                         ; sprites, after fading the screen to black if we are
@@ -18092,15 +18117,22 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: ???
 ;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The type of the new view
+;
 ; ******************************************************************************
 
 .ChangeToView
 
- JSR TT66
+ JSR TT66               ; Clear the screen and and set the view type in QQ11 to
+                        ; the value of A
 
  JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
-                        ; buffer 1 and set the next free tile number for both
-                        ; bitplanes
+                        ; buffer and tell the NMI handler to send pattern
+                        ; entries up to the first free tile
 
  JSR UpdateScreen       ; Update the screen by sending data to the PPU, either
                         ; immediately or during VBlank, depending on whether
@@ -21494,8 +21526,8 @@ ENDIF
  JSR TT66               ; $00 (Space view with no font loaded)
 
  JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
-                        ; buffer 1 and set the next free tile number for both
-                        ; bitplanes
+                        ; buffer and tell the NMI handler to send pattern
+                        ; entries up to the first free tile
 
  JSR SendViewToPPU_b3   ; Configure the PPU for the view type in QQ11
 
@@ -21536,8 +21568,8 @@ ENDIF
  JSR TT66               ; $00 (Space view with no font loaded)
 
  JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
-                        ; buffer 1 and set the next free tile number for both
-                        ; bitplanes
+                        ; buffer and tell the NMI handler to send pattern
+                        ; entries up to the first free tile
 
  LDA #80                ; Tell the PPU to send nametable entries up to tile
  STA lastNameTile       ; 80 * 8 = 640 (i.e. to the end of tile row 19) in both

@@ -1638,8 +1638,8 @@ ENDIF
  SUBTRACT_CYCLES 134    ; Subtract 134 from the cycle count
 
  LDA enableBitplanes    ; If bitplanes are enabled then enableBitplanes will be
- EOR hiddenBitPlane     ; 1, so this flips hiddenBitPlane between 0 and 1 when
- STA hiddenBitPlane     ; bitplanes are enabled, and does nothing when they
+ EOR hiddenBitplane     ; 1, so this flips hiddenBitplane between 0 and 1 when
+ STA hiddenBitplane     ; bitplanes are enabled, and does nothing when they
                         ; aren't (so it effectively swaps the hidden and visible
                         ; bitplanes)
 
@@ -1740,7 +1740,7 @@ ENDIF
                         ; If we get here then we are about to start sending tile
                         ; data to the PPU for bitplane X, so we set nmiBitplane
                         ; to X (so the NMI handler sends data to the PPU for
-                        ; that bitplane), and we also set hiddenBitPlane to X,
+                        ; that bitplane), and we also set hiddenBitplane to X,
                         ; so that the bitplane we are updating is hidden from
                         ; view (and the other bitplane is shown on-screen)
                         ;
@@ -1756,7 +1756,7 @@ ENDIF
                         ; update the cycle count and skip the following two
                         ; instructions
 
- STX hiddenBitPlane     ; Set the hidden bitplane to be the same as the NMI
+ STX hiddenBitplane     ; Set the hidden bitplane to be the same as the NMI
                         ; bitplane, so the rest of the NMI handler update the
                         ; hidden bitplane (we only want to update the hidden
                         ; bitplane, to avoid messing up the screen)
@@ -2589,7 +2589,7 @@ ENDIF
  EOR #1                 ; opposite bitplane to the one we just sent
  STA nmiBitplane
 
- CMP hiddenBitPlane     ; If the NMI bitplane is now different to the hidden
+ CMP hiddenBitplane     ; If the NMI bitplane is now different to the hidden
  BNE obit4              ; bitplane, jump to obit4 to update the cycle count
                         ; and return from the subroutine, as we already sent
                         ; the bitplane that's hidden (we only want to update
@@ -2598,7 +2598,7 @@ ENDIF
                         ; If we get here then the new NMI bitplane is the same
                         ; as the bitplane that's hidden, so we should send it
                         ; to the PPU (this might happen if the value of
-                        ; hiddenBitPlane changes while we are still sending
+                        ; hiddenBitplane changes while we are still sending
                         ; data to the PPU across multiple calls to the NMI
                         ; handler) ???
 
@@ -3508,10 +3508,10 @@ ENDIF
 
  LDY visibleColour      ; Set Y to the colour to use for visible pixels
 
- LDA hiddenBitPlane     ; If hiddenBitPlane is non-zero (i.e. 1), jump to palv1
+ LDA hiddenBitplane     ; If hiddenBitplane is non-zero (i.e. 1), jump to palv1
  BNE palv1              ; to hide pixels in bitplane 1
 
-                        ; If we get here then hiddenBitPlane = 0, so now we hide
+                        ; If we get here then hiddenBitplane = 0, so now we hide
                         ; pixels in bitplane 0 and show pixels in bitplane 1
 
  LDA #$3F               ; Set PPU_ADDR = $3F01, so it points to background
@@ -3534,7 +3534,7 @@ ENDIF
                         ; So pixels in bitplane 0 will be hidden, while
                         ; pixels in bitplane 1 will be visible
                         ;
-                        ; i.e. pixels in the hiddenBitPlane will be hidden
+                        ; i.e. pixels in the hiddenBitplane will be hidden
 
  LDA #$00               ; Change the PPU address away from the palette entries
  STA PPU_ADDR           ; to prevent the palette being corrupted
@@ -3545,7 +3545,7 @@ ENDIF
 
 .palv1
 
-                        ; If we get here then hiddenBitPlane = 1, so now we hide
+                        ; If we get here then hiddenBitplane = 1, so now we hide
                         ; pixels in bitplane 1 and show pixels in bitplane 0
 
  LDA #$3F               ; Set PPU_ADDR = $3F01, so it points to background
@@ -3568,7 +3568,7 @@ ENDIF
                         ; So pixels in bitplane 0 will be visible, while
                         ; pixels in bitplane 1 will be hidden
                         ;
-                        ; i.e. pixels in the hiddenBitPlane will be hidden
+                        ; i.e. pixels in the hiddenBitplane will be hidden
 
  LDA #$00               ; Change the PPU address away from the palette entries
  STA PPU_ADDR           ; to prevent the palette being corrupted
@@ -3755,7 +3755,7 @@ ENDIF
 .SetPPURegisters
 
  LDX #%10010000         ; Set X to use as the value of PPU_CTRL for when
-                        ; hiddenBitPlane is 1:
+                        ; hiddenBitplane is 1:
                         ;
                         ;   * Bits 0-1    = base nametable address %00 ($2000)
                         ;   * Bit 2 clear = increment PPU_ADDR by 1 each time
@@ -3765,11 +3765,11 @@ ENDIF
                         ;   * Bit 6 clear = use PPU 0 (the only option on a NES)
                         ;   * Bit 7 set   = enable VBlank NMI generation
 
- LDA hiddenBitPlane     ; If hiddenBitPlane is non-zero (i.e. 1), skip the
+ LDA hiddenBitplane     ; If hiddenBitplane is non-zero (i.e. 1), skip the
  BNE resp1              ; following
 
  LDX #%10010001         ; Set X to use as the value of PPU_CTRL for when
-                        ; hiddenBitPlane is 0:
+                        ; hiddenBitplane is 0:
                         ;
                         ;   * Bits 0-1    = base nametable address %01 ($2400)
                         ;   * Bit 2 clear = increment PPU_ADDR by 1 each time
@@ -3784,9 +3784,9 @@ ENDIF
  STX PPU_CTRL           ; Configure the PPU with the above value of PPU_CTRL,
                         ; according to the hidden bitplane, so we set:
                         ;
-                        ;   * Nametable 0 when hiddenBitPlane = 1
+                        ;   * Nametable 0 when hiddenBitplane = 1
                         ;
-                        ;   * Nametable 1 when hiddenBitPlane = 0
+                        ;   * Nametable 1 when hiddenBitplane = 0
                         ;
                         ; This makes sure that the screen shows the nametable
                         ; for the visible bitplane, and not the hidden bitplane
@@ -3794,8 +3794,8 @@ ENDIF
  STX ppuCtrlCopy        ; Store the new value of PPU_CTRL in ppuCtrlCopy so we
                         ; can check its value without having to access the PPU
 
- LDA #$20               ; If hiddenBitPlane = 0 then set A = $24, otherwise set
- LDX hiddenBitPlane     ; A = $20, to use as the high byte of the PPU_ADDR
+ LDA #$20               ; If hiddenBitplane = 0 then set A = $24, otherwise set
+ LDX hiddenBitplane     ; A = $20, to use as the high byte of the PPU_ADDR
  BNE resp2              ; address
  LDA #$24
 
@@ -3804,9 +3804,9 @@ ENDIF
  STA PPU_ADDR           ; Set PPU_ADDR to point to the nametable address that we
  LDA #$00               ; just configured:
  STA PPU_ADDR           ;
-                        ;   * $2000 (nametable 0) when hiddenBitPlane = 1
+                        ;   * $2000 (nametable 0) when hiddenBitplane = 1
                         ;
-                        ;   * $2400 (nametable 1) when hiddenBitPlane = 0
+                        ;   * $2400 (nametable 1) when hiddenBitplane = 0
                         ;
                         ; So we now flush the pipeline for the nametable that we
                         ; are showing on-screen, to avoid any corruption
@@ -13320,15 +13320,14 @@ ENDIF
                         ; the following calls are to bank 0)
 
  JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
-                        ; buffer 1 and set the next free tile number for both
-                        ; bitplanes
+                        ; buffer
 
  JSR UpdateScreen       ; Update the screen by sending data to the PPU, either
                         ; immediately or during VBlank, depending on whether
                         ; the screen is visible
 
  LDX #1                 ; Hide bitplane 1, so:
- STX hiddenBitPlane     ;
+ STX hiddenBitplane     ;
                         ;   * Colour %01 (1) is the visible colour (cyan)
                         ;   * Colour %10 (2) is the hidden colour (black)
 
@@ -13544,7 +13543,7 @@ ENDIF
  STA nmiTimerLo
  STA nmiTimerHi
 
- STA hiddenBitPlane     ; Set the hidden, NMI and drawing bitplanes to 0
+ STA hiddenBitplane     ; Set the hidden, NMI and drawing bitplanes to 0
  STA nmiBitplane
  STA drawingBitplane
 
