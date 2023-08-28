@@ -1957,10 +1957,15 @@ ENDIF
 
                         ; If we get here then QQ11 is $9D (Long-range Chart with
                         ; font loaded in bitplane 0) or $DF (Start screen with
-                        ; font loaded in bitplane 0)
+                        ; font loaded in bitplane 0), so now we load the font
+                        ; images, starting at pattern 68 in the PPU
 
- LDA #36                ; Set L00D9 = 36 ???
- STA L00D9
+ LDA #36                ; Set asciiToPattern = 36, so we add 36 to an ASCII code
+ STA asciiToPattern     ; in the CHPR routine to get the pattern number in the
+                        ; PPU of the corresponding character image (as we are
+                        ; about to load the font at pattern 68, and the font
+                        ; starts with a space character, which is ASCII 32, and
+                        ; 32 + 36 = 68)
 
  LDA #1                 ; Set A = 1 to set as the new value of imageSentToPPU
                         ; below
@@ -2334,7 +2339,7 @@ ENDIF
  STA firstPatternTile   ; Tell the NMI handler to send pattern entries from
                         ; pattern A in the buffer
 
- LDA tileNumber         ; Tell the NMI handler to send pattern entries up to the
+ LDA firstFreeTile      ; Tell the NMI handler to send pattern entries up to the
  STA lastPatternTile,X  ; first free tile, for the drawing bitplane in X
 
  LDA #%11000100         ; Set the bitplane flags for the drawing bitplane to the
@@ -2355,9 +2360,9 @@ ENDIF
  JSR SendDataNowToPPU   ; Send the drawing bitplane buffers to the PPU
                         ; immediately, without trying to squeeze it into VBlanks
 
- LDA tileNumber         ; Set clearingPattTile for the drawing bitplane to the
- STA clearingPattTile,X ; number of the first free tile, so the NMI handler only clears
-                        ; tiles from this point onwards
+ LDA firstFreeTile      ; Set clearingPattTile for the drawing bitplane to the
+ STA clearingPattTile,X ; number of the first free tile, so the NMI handler only
+                        ; clears tiles from this point onwards
                         ;
                         ; This ensures that the tiles that we just sent to the
                         ; PPU don't get cleared out by the NMI handler
@@ -2523,7 +2528,7 @@ ENDIF
  LDA #37                ; Tell the NMI handler to send pattern entries from
  STA firstPatternTile   ; pattern 37 in the buffer
 
- LDA tileNumber         ; Tell the NMI handler to send pattern entries up to the
+ LDA firstFreeTile      ; Tell the NMI handler to send pattern entries up to the
  STA lastPatternTile    ; first free tile, for both bitplanes
  STA lastPatternTile+1
 
@@ -2556,7 +2561,7 @@ ENDIF
  STA QQ11a              ; number in QQ11, to denote that we have now changed
                         ; view to the view in QQ11
 
- LDA tileNumber         ; Set clearingPattTile for both bitplanes to the number
+ LDA firstFreeTile      ; Set clearingPattTile for both bitplanes to the number
  STA clearingPattTile   ; of the first free tile, so the NMI handler only clears
  STA clearingPattTile+1 ; tiles from this point onwards
                         ;
@@ -4098,7 +4103,7 @@ ENDIF
 .vpat1
 
  LDX #4                 ; This is the Start screen with no font loaded, so set
- STX tileNumber         ; tileNumber to 4
+ STX firstFreeTile      ; firstFreeTile to 4
 
  RTS                    ; Return from the subroutine without copying anything to
                         ; the pattern buffers
@@ -4106,7 +4111,7 @@ ENDIF
 .vpat2
 
  LDX #37                ; This is the Space view with font loaded in bitplane 0,
- STX tileNumber         ; so set tileNumber to 37
+ STX firstFreeTile      ; so set firstFreeTile to 37
 
  RTS                    ; Return from the subroutine without copying anything to
                         ; the pattern buffers
@@ -4114,30 +4119,30 @@ ENDIF
 .SetLinePatterns
 
  LDA QQ11               ; If the view type in QQ11 is $CF (Start screen with no
- CMP #$CF               ; font loaded), jump to vpat1 to set tileNumber to 4
+ CMP #$CF               ; font loaded), jump to vpat1 to set firstFreeTile to 4
  BEQ vpat1              ; and return from the subroutine
 
  CMP #$10               ; If the view type in QQ11 is $10 (Space view with
  BEQ vpat2              ; font loaded in bitplane 0), jump to vpat2 to set
-                        ; tileNumber to 37 and return from the subroutine
+                        ; firstFreeTile to 37 and return from the subroutine
 
- LDX #66                ; Set X = 66 to use as the value of tileNumber when
+ LDX #66                ; Set X = 66 to use as the value of firstFreeTile when
                         ; there is no dashboard
 
  LDA QQ11               ; If bit 7 of the view type in QQ11 is set then there
  BMI vpat3              ; is no dashboard, so jump to vpat3 to keep X = 66
 
  LDX #60                ; There is a dashboard, so set X = 60 to use as the
-                        ; value of tileNumber
+                        ; value of firstFreeTile
 
 .vpat3
 
- STX tileNumber         ; Set tileNumber to the value we set in X, so tileNumber
-                        ; is 66 when there is no dashboard, or 60 when there is
+ STX firstFreeTile      ; Set firstFreeTile to the value we set in X, so it is
+                        ; 66 when there is no dashboard, or 60 when there is
                         ;
                         ; We now load the image data for the horizontal line,
                         ; vertical line and block images, starting at pattern 37
-                        ; and ending at the pattern in tileNumber (60 or 66)
+                        ; and ending at the pattern in firstFreeTile (60 or 66)
 
  LDA #HI(lineImage)     ; Set V(1 0) = lineImage so we copy the pattern data for
  STA V+1                ; the line images into the pattern buffers below
@@ -4225,11 +4230,11 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- CPX tileNumber         ; If the pattern counter in X matches tileNumber, jump
- BEQ vpat8              ; to vpat8 to exit the following loop
+ CPX firstFreeTile      ; If the pattern counter in X matches firstFreeTile,
+ BEQ vpat8              ; jump to vpat8 to exit the following loop
 
                         ; Otherwise we keep copying tiles until X matches
-                        ; tileNumber
+                        ; firstFreeTile
 
  LDA (V),Y              ; Copy the Y-th pattern byte from the line image table
  STA (SC2),Y            ; into pattern buffer 1, zero the Y-th byte of pattern
@@ -4296,8 +4301,8 @@ ENDIF
                         ; the PPU to use nametable 0 and pattern table 0
 
                         ; Finally, we reset the next six patterns (i.e. the ones
-                        ; from tileNumber onwards), so we need to zero 48 bytes,
-                        ; as there are eight bytes in each pattern
+                        ; from firstFreeTile onwards), so we need to zero 48
+                        ; bytes, as there are eight bytes in each pattern
                         ;
                         ; We keep using the index in Y, as it already points to
                         ; the correct place in the buffers
@@ -4357,16 +4362,20 @@ ENDIF
  STA SC                 ; Set SC to the pattern number where we need to load the
                         ; font patterns
 
- SEC                    ; Set L00D9 = A - 32 ???
- SBC #32
- STA L00D9
+ SEC                    ; Set asciiToPattern = A - ASCII code for space
+ SBC #' '               ;                    = start pattern - ASCII for space
+ STA asciiToPattern     ;
+                        ; The font we load into bitplane 0 starts with a space
+                        ; at character 0, so asciiToPattern is the number we
+                        ; need to add to an ASCII code to get the corresponding
+                        ; character pattern
 
- LDA SC                 ; Set tileNumber = SC + 95
+ LDA SC                 ; Set firstFreeTile = SC + 95
  CLC                    ;
  ADC #95                ; There are 95 characters in the font, and we are about
- STA tileNumber         ; to load them at pattern number SC in the buffers, so
-                        ; this sets the next free tile number in tileNumber to
-                        ; the tile after the 95 font patterns we are loading
+ STA firstFreeTile      ; to load them at pattern number SC in the buffers, so
+                        ; this sets the next free tile number in firstFreeTile
+                        ; to the tile after the 95 font patterns we are loading
                         ;
                         ; The font pattern data at fontImage actually contains
                         ; 96 characters, but we ignore the last one, which is
@@ -4568,12 +4577,13 @@ ENDIF
 
 .font1
 
- TXA                    ; Set tileNumber = tileNumber + X
+ TXA                    ; Set firstFreeTile = firstFreeTile + X
  CLC                    ;
- ADC tileNumber         ; We are about to copy X character patterns for the
- STA tileNumber         ; font, so this sets the next free tile number in
-                        ; tileNumber to the pattern that is X patterns after
-                        ; its current value ???
+ ADC firstFreeTile      ; We are about to copy X character patterns for the
+ STA firstFreeTile      ; font, so this sets the next free tile number in
+                        ; firstFreeTile to the pattern that is X patterns after
+                        ; its current value, i.e. just after the font we are
+                        ; copying
 
  LDA #HI(fontImage)     ; Set V(1 0) = fontImage, so we copy the font patterns
  STA V+1                ; to the pattern buffers in the following
@@ -4695,8 +4705,8 @@ ENDIF
  STY K+1                ; Set K+1 = Y, so we can pass the number of rows in the
                         ; image to DrawBackground and DrawSpriteImage below
 
- LDA tileNumber         ; Set pictureTile to the number of the next free tile in
- STA pictureTile        ; tileNumber
+ LDA firstFreeTile      ; Set pictureTile to the number of the next free tile in
+ STA pictureTile        ; firstFreeTile
                         ;
                         ; We use this when setting K+2 below, so the call to
                         ; DrawBackground displays the tiles at pictureTile, and
@@ -4704,9 +4714,9 @@ ENDIF
                         ; image data when we call GetSystemImage from
                         ; SendViewToPPU when showing the Data on System screen
 
- CLC                    ; Add 56 to tileNumber, as we are going to use 56 tiles
- ADC #56                ; for the system image (7 rows of 8 tiles)
- STA tileNumber
+ CLC                    ; Add 56 to firstFreeTile, as we are going to use 56
+ ADC #56                ;  tilesfor the system image (7 rows of 8 tiles)
+ STA firstFreeTile
 
  LDA pictureTile        ; Set K+2 to the value we stored above, so K+2 is the
  STA K+2                ; number of the first pattern to use for the system

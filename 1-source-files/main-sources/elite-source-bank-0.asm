@@ -3150,13 +3150,13 @@ ENDIF
 
 .UpdateView
 
- LDA tileNumber         ; If tileNumber = 0, set tileNumber = 255
+ LDA firstFreeTile      ; If firstFreeTile = 0, set firstFreeTile = 255
  BNE upvw1              ;
  LDA #255               ; This ensures that the call to CopyNameBuffer0To1 below
- STA tileNumber         ; tells the NMI handler to send pattern entries up to
+ STA firstFreeTile      ; tells the NMI handler to send pattern entries up to
                         ; the first free tile, or to send tiles up to the very
                         ; end if we have run out of free tiles (which is when
-                        ; tileNumber is zero)
+                        ; firstFreeTile is zero)
 
 .upvw1
 
@@ -3211,40 +3211,50 @@ ENDIF
 
 .upvw3
 
- LDX #$FF               ; Set X = $FF to use as the value of L045F below
+ LDX #$FF               ; Set X = $FF to use as the value of showIconBarPointer
+                        ; below (i.e. show the icon bar pointer)
 
  LDA QQ11               ; If the view type in QQ11 is $95 (Trumble mission
- CMP #$95               ; briefing), jump to upvw4 to set L045F = 0
- BEQ upvw4
+ CMP #$95               ; briefing), jump to upvw4 to set showIconBarPointer to
+ BEQ upvw4              ; 0 (i.e. hide the icon bar pointer)
 
  CMP #$DF               ; If the view type in QQ11 is $DF (Start screen with
  BEQ upvw4              ; font loaded in bitplane 0), jump to upvw4 to set
-                        ; L045F = 0
+                        ; showIconBarPointer to 0 (i.e. hide the icon bar
+                        ; pointer)
 
  CMP #$92               ; If the view type in QQ11 is $92 (Mission 1 rotating
- BEQ upvw4              ; ship briefing), jump to upvw4 to to set L045F = 0
+ BEQ upvw4              ; ship briefing), jump to upvw4 to to set
+                        ; showIconBarPointer to 0 (i.e. hide the icon bar
+                        ; pointer)
 
  CMP #$93               ; If the view type in QQ11 is $93 (Mission 1 text
- BEQ upvw4              ; briefing), jump to upvw4 to to set L045F = 0
+ BEQ upvw4              ; briefing), jump to upvw4 to to set showIconBarPointer
+                        ; to 0 (i.e. hide the icon bar pointer)
 
  ASL A                  ; If bit 6 of the view type in QQ11 is clear, then there
- BPL upvw5              ; is an icon bar, so jump to upvw5 to set L045F = $FF
+ BPL upvw5              ; is an icon bar, so jump to upvw5 to set
+                        ; showIconBarPointer to $FF (i.e. show the icon bar
+                        ; pointer)
 
 .upvw4
 
- LDX #0                 ; Set X = 0 to use as the value of L045F below
+ LDX #0                 ; Set X = 0 to use as the value of showIconBarPointer
+                        ; below (i.e. hide the icon bar pointer)
 
 .upvw5
 
- STX L045F              ; Set L045F to X, so we set L045F to:
+ STX showIconBarPointer ; Set showIconBarPointer to X, so we set it as follows:
                         ;
                         ;   * 0 if the view is a mission briefing, or the Start
                         ;     screen with font loaded in bitplane 0, or has no
-                        ;     icon bar
+                        ;     icon bar (in which case we hide the icon bar
+                        ;     pointer)
                         ;
-                        ;   * $FF otherwise ???
+                        ;   * $FF otherwise (in which case we show the icon bar
+                        ;     pointer)
 
- LDA tileNumber         ; Tell the NMI handler to send pattern entries from the
+ LDA firstFreeTile      ; Tell the NMI handler to send pattern entries from the
  STA firstPatternTile   ; first free tile onwards, so we don't waste time
                         ; resending the static tiles we have already sent
 
@@ -3324,7 +3334,7 @@ ENDIF
                         ;
                         ; Bits 0 and 1 are ignored and are always clear
 
- LDA tileNumber         ; Tell the NMI handler to send pattern entries from the
+ LDA firstFreeTile      ; Tell the NMI handler to send pattern entries from the
  STA firstPatternTile   ; first free tile onwards, so we don't waste time
                         ; resending the static tiles we have already sent
 
@@ -17645,8 +17655,9 @@ ENDIF
                         ; sprites, after fading the screen to black if we are
                         ; changing view
 
- LDA #0
- STA L045F
+ LDA #0                 ; Set showIconBarPointer to 0 to indicate that we should
+ STA showIconBarPointer ; hide the icon bar pointer
+
  LDA #$C4
  JSR SendViewToPPU_b3
 
@@ -17656,7 +17667,7 @@ ENDIF
  STA QQ11a              ; Set the old view type in QQ11a to $00 (Space view with
                         ; no font loaded)
 
- LDA tileNumber         ; Tell the NMI handler to send pattern entries from the
+ LDA firstFreeTile      ; Tell the NMI handler to send pattern entries from the
  STA firstPatternTile   ; first free tile onwards, so we don't waste time
                         ; resending the static tiles we have already sent
 
@@ -18144,9 +18155,10 @@ ENDIF
  STA QQ11a              ; Set the old view type in QQ11a to $00 (Space view with
                         ; no font loaded)
 
- STA L045F
+ STA showIconBarPointer ; Set showIconBarPointer to 0 to indicate that we should
+                        ; hide the icon bar pointer
 
- LDA tileNumber         ; Tell the NMI handler to send pattern entries from the
+ LDA firstFreeTile      ; Tell the NMI handler to send pattern entries from the
  STA firstPatternTile   ; first free tile onwards, so we don't waste time
                         ; resending the static tiles we have already sent
 
@@ -21657,13 +21669,13 @@ ENDIF
 
 .SetupSpaceView
 
- LDA #$FF               ; Set L045F = $FF ???
- STA L045F
+ LDA #$FF               ; Set showIconBarPointer = $FF to indicate that we
+ STA showIconBarPointer ; should show the icon bar pointer
 
  LDA #$2C               ; Set the visible colour to cyan ($2C)
  STA visibleColour
 
- LDA tileNumber         ; Tell the NMI handler to send pattern entries from the
+ LDA firstFreeTile      ; Tell the NMI handler to send pattern entries from the
  STA firstPatternTile   ; first free tile onwards, so we don't waste time
                         ; resending the static tiles we have already sent
 

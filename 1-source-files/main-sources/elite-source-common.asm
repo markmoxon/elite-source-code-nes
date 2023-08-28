@@ -871,7 +871,8 @@ ENDIF
                         ;
                         ;   * Bit 4 clear = do not load the font into bitplane 0
                         ;     Bit 4 set   = load the font into bitplane 0 from
-                        ;                   pattern 66 to 160
+                        ;                   pattern 66 to 160 (or 68 to 162 for
+                        ;                   views $9D and $DF)
                         ;
                         ;   * Bit 5 clear = do not load the font into bitplane 1
                         ;     Bit 5 set   = load the font into bitplane 1 from
@@ -895,7 +896,10 @@ ENDIF
                         ;
                         ; Also, view $BB (Save and load with font loaded in both
                         ; bitplanes) loads an inverted font into bitplane 1 from
-                        ; pattern 66 to 160, as well as the normal fonts
+                        ; pattern 66 to 160, as well as the normal fonts, and
+                        ; views $9D (Long-range Chart) and $DF (Start screen)
+                        ; load the bitplane 0 font at pattern 68 onmwards,
+                        ; rather than 66
                         ;
                         ; The complete list of view types is therefore:
                         ;
@@ -1123,9 +1127,9 @@ ENDIF
                         ; register, used in the bank-switching routines in
                         ; bank 7
 
-.tileNumber
+.firstFreeTile
 
- SKIP 1                 ; Contains the number of the dynamic tile that we can
+ SKIP 1                 ; Contains the number of the first free tile that we can
                         ; draw into next (or 0 if there are no free tiles)
                         ;
                         ; This variable is typically used to control the
@@ -1346,9 +1350,10 @@ ENDIF
                         ; clearing tiles in the nametable buffers during its
                         ; clearing cycle
 
-.L00D9
+.asciiToPattern
 
- SKIP 1                 ; Contains the pattern number of the font - 32 ???
+ SKIP 1                 ; The number to add to an ASCII code to get the pattern
+                        ; number in the PPU of the corresponding character image
 
 .updatePaletteInNMI
 
@@ -4215,9 +4220,13 @@ IF _PAL
 
 ENDIF
 
-.L045F
+.showIconBarPointer
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Controls whether to show the icon bar pointer
+                        ;
+                        ;   * 0 = do not show the icon bar pointer
+                        ;
+                        ;   * $FF = show the icon bar pointer
 
 .xIconBarPointer
 

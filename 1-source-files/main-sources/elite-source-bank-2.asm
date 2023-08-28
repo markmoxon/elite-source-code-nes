@@ -15506,7 +15506,7 @@ ENDIF
                         ; sent to the PPU, so the screen is fully updated and
                         ; there is no more data waiting to be sent to the PPU
 
- LDA tileNumber         ; Tell the NMI handler to send pattern entries from the
+ LDA firstFreeTile      ; Tell the NMI handler to send pattern entries from the
  STA firstPatternTile   ; first free tile onwards, so we don't waste time
                         ; resending the static tiles we have already sent
 
@@ -16952,13 +16952,13 @@ ENDIF
 
 .CB6E9
 
- LDA tileNumber
+ LDA firstFreeTile
  BEQ CB75B
  CMP #$FF
  BEQ CB75B
  STA (SC),Y
  STA (SC2),Y
- INC tileNumber
+ INC firstFreeTile
  LDY fontBitplane
  DEY
  BEQ CB772
@@ -17120,7 +17120,7 @@ ENDIF
 .loop_CB7D8
 
  CLC
- ADC L00D9
+ ADC asciiToPattern
 
 .loop_CB7DB
 
@@ -17216,10 +17216,10 @@ ENDIF
  DEY
  LDA (SC),Y
  BNE CB7F3
- LDA tileNumber
+ LDA firstFreeTile
  BEQ CB8A3
  STA (SC),Y
- INC tileNumber
+ INC firstFreeTile
  LDX pattBufferHiDiv8
  STX SC+1
  ASL A
