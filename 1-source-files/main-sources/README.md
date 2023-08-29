@@ -4,19 +4,19 @@ This folder contains the annotated source code for the NES version of Elite.
 
 * [elite-source-bank-0.asm](elite-source-bank-0.asm) contains the source for ROM bank 0
 
-* [elite-source-bank-0.asm](elite-source-bank-1.asm) contains the source for ROM bank 1
+* [elite-source-bank-1.asm](elite-source-bank-1.asm) contains the source for ROM bank 1
 
-* [elite-source-bank-0.asm](elite-source-bank-2.asm) contains the source for ROM bank 2
+* [elite-source-bank-2.asm](elite-source-bank-2.asm) contains the source for ROM bank 2
 
-* [elite-source-bank-0.asm](elite-source-bank-3.asm) contains the source for ROM bank 3
+* [elite-source-bank-3.asm](elite-source-bank-3.asm) contains the source for ROM bank 3
 
-* [elite-source-bank-0.asm](elite-source-bank-4.asm) contains the source for ROM bank 4
+* [elite-source-bank-4.asm](elite-source-bank-4.asm) contains the source for ROM bank 4
 
-* [elite-source-bank-0.asm](elite-source-bank-5.asm) contains the source for ROM bank 5
+* [elite-source-bank-5.asm](elite-source-bank-5.asm) contains the source for ROM bank 5
 
-* [elite-source-bank-0.asm](elite-source-bank-6.asm) contains the source for ROM bank 6
+* [elite-source-bank-6.asm](elite-source-bank-6.asm) contains the source for ROM bank 6
 
-* [elite-source-bank-0.asm](elite-source-bank-7.asm) contains the source for ROM bank 7
+* [elite-source-bank-7.asm](elite-source-bank-7.asm) contains the source for ROM bank 7
 
 * [elite-source-common.asm](elite-source-common.asm) contains common source code that is shared across all eight banks
 
