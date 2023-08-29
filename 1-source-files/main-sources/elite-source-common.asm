@@ -3209,7 +3209,7 @@ ORG $0200
                         ;   * 1 = rear
                         ;   * 2 = left
                         ;   * 3 = right
-                        ;   * 4 = witchspace (for a mis-jump)
+                        ;   * 4 = generating a new space view
 
 .LASCT
 

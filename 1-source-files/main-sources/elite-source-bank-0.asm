@@ -12202,7 +12202,7 @@ ENDIF
  LDY #$1E               ; ???
  JSR NOISE
 
- JMP SetWitchspaceView
+ JMP RedrawCurrentView
 
 ; ******************************************************************************
 ;
@@ -12274,14 +12274,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetWitchspaceView
+;       Name: RedrawCurrentView
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: Update the current view for witchspace
+;    Summary: Update the current view when we arrive in a new system
 ;
 ; ******************************************************************************
 
-.SetWitchspaceView
+.RedrawCurrentView
 
  LDA QQ11               ; If this is the space view (i.e. QQ11 is zero), jump to
  BEQ witc5              ; witc5 to set the current space view type to 4 and show
@@ -12333,8 +12333,10 @@ ENDIF
 .witc5
 
  LDX #4                 ; If we get here then this is the space view, so set the
- STX VIEW               ; current space view to 4 to denote witchspace and fall
-                        ; through into TT110 to show the front space view
+ STX VIEW               ; current space view to 4 to denote that we are
+                        ; generating a new space view and fall through into
+                        ; TT110 to show the front space view (at which point
+                        ; VIEW will change to 0)
 
 ; ******************************************************************************
 ;
@@ -12415,8 +12417,8 @@ ENDIF
  JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
                         ; next VBlank)
 
- LDX #4
- STX VIEW
+ LDX #4                 ; Set the current space view to 4, which indicates that
+ STX VIEW               ; we are in the process of generating a new space view
 
 .NLUNCH
 
@@ -21523,7 +21525,7 @@ ENDIF
 ;
 ;                         * 3 = right
 ;
-;                         * 4 = witchspace
+;                         * 4 = generating a new space view
 ;
 ; ******************************************************************************
 
@@ -21568,7 +21570,7 @@ ENDIF
 ;
 ;                         * 3 = right
 ;
-;                         * 4 = witchspace
+;                         * 4 = generating a new space view
 ;
 ; ******************************************************************************
 
