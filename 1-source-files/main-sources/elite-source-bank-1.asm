@@ -10967,79 +10967,185 @@ ENDIF
 
 ; ******************************************************************************
 ;
+;       Name: yHangarFloor
+;       Type: Variable
+;   Category: Ship hangar
+;    Summary: Pixel y-coordinates for the four horizontal lines that make up the
+;             floor of the ship hangar
+;
+; ******************************************************************************
+
+.yHangarFloor
+
+ EQUB 80
+ EQUB 88
+ EQUB 98
+ EQUB 120
+
+; ******************************************************************************
+;
 ;       Name: HANGER
 ;       Type: Subroutine
 ;   Category: Ship hangar
 ;    Summary: Display the ship hangar
 ;
+; ------------------------------------------------------------------------------
+;
+; This routine is called after the ships in the hangar have been drawn, so all
+; it has to do is draw the hangar's background.
+;
+; The hangar background is made up of two parts:
+;
+;   * The hangar floor consists of four screen-wide horizontal lines at the
+;     y-coordinates given in the yHangarFloor table, which are close together at
+;     the horizon and further apart as the eye moves down and towards us, giving
+;     the hangar a simple sense of perspective
+;
+;   * The back wall of the hangar consists of equally spaced vertical lines
+;     that join the horizon to the top of the screen
+;
+; The ships in the hangar have already been drawn by this point, so the lines
+; are drawn so they don't overlap anything that's already there, which makes
+; them look like they are behind and below the ships. This is achieved by
+; drawing the lines in from the screen edges until they bump into something
+; already on-screen. For the horizontal lines, when there are multiple ships in
+; the hangar, this also means drawing lines between the ships, as well as in
+; from each side.
+;
 ; ******************************************************************************
-
-.CB575
-
- EQUB $50, $58          ; ???
- EQUB $62, $78
 
 .HANGER
 
- LDX #0                 ; ???
+                        ; We start by drawing the floor
 
-.CB57B
+ LDX #0                 ; We are going to work our way through the four lines in
+                        ; the hangar floor, so 
 
- STX TGT
- LDA CB575,X
- TAY
- LDA #8
- LDX #$1C
- JSR HAL3
- LDA #$F0
- LDX #$1C
- JSR HAS3
- LDA HANGFLAG
- BEQ HA2
- LDA #$80
- LDX #$0C
- JSR HAL3
- LDA #$7F
- LDX #$0C
- JSR HAS3
+.hang1
 
-.HA2
+ STX TGT                ; Store the line number in TGT so we can retrieve it
+                        ; later
 
- LDX TGT
- INX
- CPX #4
- BNE CB57B
- JSR DORND
- AND #7
- ORA #4
- LDY #0
+ LDA yHangarFloor,X     ; Set Y to the pixel y-coordinate of the line, from the
+ TAY                    ; yHangarFloor table
 
-.loop_CB5B2
+ LDA #8                 ; Set A = 8 so the call to HAL3 draws a horizontal line
+                        ; that starts at pixel x-coordinate 8 (i.e. just inside
+                        ; the left box edge surrounding the view)
 
- JSR HAS2
- CLC
- ADC #$0A
- BCS CB5BE
- CMP #$F8
- BCC loop_CB5B2
+ LDX #28                ; Set X = 28 so the call to HAL3 draws a horizontal line
+                        ; of up to 28 blocks (i.e. almost the full screen width)
 
-.CB5BE
+ JSR HAL3               ; Call HAL3 to draw a line from the left edge of the
+                        ; screen, going right until we bump into something
+                        ; already on-screen, at which point it stops drawing
 
- RTS
+ LDA #240               ; Set A = 240 so the call to HAS3 draws a horizontal
+                        ; line that starts at pixel x-coordinate 240 (i.e. just
+                        ; inside the right box edge surrounding the view)
+
+ LDX #28                ; Set X = 28 so the call to HAS3 draws a horizontal line
+                        ; of up to 28 blocks (i.e. almost the full screen width)
+
+ JSR HAS3               ; Draw a horizontal line from the right edge of the
+                        ; screen, going left until we bump into something
+                        ; already on-screen, at which point stop drawing
+
+ LDA HANGFLAG           ; Fetch the value of HANGFLAG, which gets set to 0 in
+                        ; the HALL routine above if there is only one ship
+
+ BEQ hang2              ; If HANGFLAG is zero, jump to hang2 to skip the
+                        ; following as there is only one ship in the hangar
+
+                        ; If we get here then there are multiple ships in the
+                        ; hangar, so we also need to draw the horizontal line in
+                        ; the gap between the ships
+
+ LDA #128               ; Set A = 128 so the call to HAL3 draws a horizontal
+                        ; line that starts at pixel x-coordinate 128 (i.e.
+                        ; from halfway across the screen)
+
+ LDX #12                ; Set X = 12 so the call to HAL3 draws a horizontal line
+                        ; of up to 12 blocks, which will be enough to draw
+                        ; between the ships
+
+ JSR HAL3               ; Call HAL3 to draw a line from the halfway point across
+                        ; the right half of the screen, going right until we
+                        ; bump into something already on-screen, at which point
+                        ; it stops drawing
+
+ LDA #127               ; Set A = 127 so the call to HAS3 draws a horizontal
+                        ; line that starts at pixel x-coordinate 127 (i.e.
+                        ; just before the halfway point)
+
+ LDX #12                ; Set X = 12 so the call to HAL3 draws a horizontal line
+                        ; of up to 12 blocks, which will be enough to draw
+                        ; between the ships
+
+ JSR HAS3               ; Draw a horizontal line from the right edge of the
+                        ; screen, going left until we bump into something
+                        ; already on-screen, at which point stop drawing
+
+.hang2
+
+                        ; We have finished threading our horizontal line behind
+                        ; the ships already on-screen, so now for the next line
+
+ LDX TGT                ; Set X to the number of the floor line we are drawing
+
+ INX                    ; Increment X to move on to the next floor line
+
+ CPX #4                 ; Loop back to hang1 to draw the next floor line until
+ BNE hang1              ; we have drawn all four
+
+                        ; The floor is done, so now we move on to the back wall
+
+ JSR DORND              ; Set A to a random number between 0 and 7, with bit 2
+ AND #7                 ; set, to give a random number in the range 4 to 7,
+ ORA #4                 ; which we use as the x-coordinate of the first vertical
+                        ; line in the hangar wall
+
+ LDY #0                 ; Set Y = 0 so the call to DrawHangarWallLine starts
+                        ; drawing the wall lines in the first tile of the screen
+                        ; row, at the left edge of the screen
+
+.hang3
+
+ JSR DrawHangarWallLine ; Draw a vertical wall line at x-coordinate A
+
+ CLC                    ; Add 10 to A 
+ ADC #10
+
+ BCS hang4              ; If adding 10 made the addition overflow then we have
+                        ; fallen off the right edge of the screen, so jump to
+                        ; hang4 to return from the subroutine
+
+ CMP #248               ; Loop back until we have drawn lines all the way to the
+ BCC hang3              ; right edge of the screen, not going further than an
+                        ; x-coordinate of 247
+
+.hang4
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: HAS2
+;       Name: DrawHangarWallLine
 ;       Type: Subroutine
 ;   Category: Ship hangar
-;    Summary: Draw a hangar background line from left to right
+;    Summary: Draw a vertical hangar wall line from top to bottom, stopping when
+;             it bumps into existing on-screen content
 ;
 ; ******************************************************************************
 
-.HAS2
+.DrawHangarWallLine
 
- STA S
- STY YSAV
+ STA S                  ; Store A in S so we can retrieve it when returning
+                        ; from the subroutine
+
+ STY YSAV               ; Store Y in YSAV so we can retrieve it when returning
+                        ; from the subroutine
+
  LSR A
  LSR A
  LSR A
@@ -11104,92 +11210,183 @@ ENDIF
 
 .CB62A
 
- LDA S
- LDY YSAV
- RTS
+ LDA S                  ; Retrieve the value of A we stored above, so A is
+                        ; preserved
+
+ LDY YSAV               ; Retrieve the value of Y we stored above, so Y is
+                        ; preserved
+
+ RTS                    ; Return from the subroutine
+
+; ******************************************************************************
+;
+;       Name: HAL3
+;       Type: Subroutine
+;   Category: Ship hangar
+;    Summary: Draw a hangar background line from left to right, stopping when it
+;             bumps into existing on-screen content
+;
+; ******************************************************************************
 
 .HAL3
 
- STX R
- STY YSAV
- LSR A
- LSR A
- LSR A
- CLC
- ADC yLookupLo,Y
- STA SC2
- LDA nameBufferHi
- ADC yLookupHi,Y
- STA SC2+1
- TYA
- AND #7
- TAY
+ STX R                  ; Set R to the line width in X
 
-.CB647
+ STY YSAV               ; Store Y in YSAV so we can retrieve it below
+
+ LSR A                  ; Set SC2(1 0) = (nameBufferHi 0) + yLookup(Y) + A / 8
+ LSR A                  ;
+ LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
+ CLC                    ; to convert the pixel y-coordinate in Y into the number
+ ADC yLookupLo,Y        ; of the first tile on the row containing the pixel
+ STA SC2                ;
+ LDA nameBufferHi       ; Adding nameBufferHi and A / 8 therefore sets SC2(1 0)
+ ADC yLookupHi,Y        ; to the address of the entry in the nametable buffer
+ STA SC2+1              ; that contains the tile number for the tile containing
+                        ; the pixel at (A, Y), i.e. the start of the line we are
+                        ; drawing
+
+ TYA                    ; Set Y = Y mod 8, which is the pixel row within the
+ AND #7                 ; character block at which we want to draw the start of
+ TAY                    ; our line (as each character block has 8 rows)
+                        ;
+                        ; As we are drawing a horizontal line, we do not need to
+                        ; vary the value of Y, as we will always want to draw on
+                        ; the same pixel row within each character block
+
+.hanl1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDX #0
- LDA (SC2,X)
- BEQ CB699
- LDX pattBufferHiDiv8
- STX SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
+ LDX #0                 ; If the nametable buffer entry is zero for the tile
+ LDA (SC2,X)            ; containing the pixels that we want to draw, then a
+ BEQ hanl7              ; tile has not yet been allocated to this entry, so jump
+                        ; to hanl7 to allocate a new dynamic tile
+
+ LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
+ STX SC+1               ;             = (pattBufferHi 0) + A * 8
+ ASL A                  ;
+ ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
+ ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ROL SC+1               ; pattern data), which means SC(1 0) points to the
+ ASL A                  ; pattern data for the tile containing the line we are
+ ROL SC+1               ; drawing
  STA SC
- LDA (SC),Y
- BEQ CB685
- LDA #$80
 
-.loop_CB66F
+ LDA (SC),Y             ; If the pattern data where we want to draw the line is
+ BEQ hanl4              ; zero, then there is nothing currently on-screen at
+                        ; this point, so jump to hanl4 to draw a full 8-pixel
+                        ; line into the pattern data for this tile
 
- STA T
- AND (SC),Y
- BNE CB67C
- LDA T
- SEC
+                        ; There is something on-screen where we want to draw our
+                        ; line, so we now draw the line until it bumps into
+                        ; what's already on-screen, so the floor line goes right
+                        ; up to the edge of the ship in the hangar
+
+ LDA #%10000000         ; Set A to a pixel byte containing one set pixel at the
+                        ; left end of the 8-pixel row, which we can extend to
+                        ; the right by one pixel each time until it meets the
+                        ; edge of the on-screen ship
+
+.hanl2
+
+ STA T                  ; Store the current pixel pattern in T
+
+ AND (SC),Y             ; We now work out whether the pixel pattern in A would
+                        ; overlap with the edge of the on-screen ship, which we
+                        ; do by AND'ing the pixel pattern with the on-screen
+                        ; pixel pattern in SC+Y, so if there are any pixels in
+                        ; both the pixel pattern and on-screen, they will be set
+                        ; in the result
+
+ BNE hanl3              ; If the result is non-zero then our pixel pattern in A
+                        ; does indeed overlap with the on-screen ship, so this
+                        ; is the pattern we want, so jump to hanl3 to draw it
+
+                        ; If we get here then our pixel pattern in A does not
+                        ; overlap with the on-screen ship, so we need to extend
+                        ; our pattern to the right by one pixel and try again
+
+ LDA T                  ; Shift the whole pixel pattern to the right by one
+ SEC                    ; pixel, shifting a set pixel into the left end (bit 7)
  ROR A
- JMP loop_CB66F
 
-.CB67C
+ JMP hanl2              ; Jump back to hanl2 to check whether our extended pixel
+                        ; pattern has reached the edge of the ship yet
 
- LDA T
- ORA (SC),Y
- STA (SC),Y
- LDY YSAV
- RTS
+.hanl3
 
-.CB685
+ LDA T                  ; Draw our pixel pattern into the pattern buffer, using
+ ORA (SC),Y             ; OR logic so it overwrites what's already there and
+ STA (SC),Y             ; merges into the existing ship edge
 
- LDA #$FF
- STA (SC),Y
+ LDY YSAV               ; Retrieve the value of Y we stored above, so Y is
+                        ; preserved
 
-.loop_CB689
+ RTS                    ; Return from the subroutine
 
- DEC R
- BEQ CB696
- INC SC2
- BNE CB647
- INC SC2+1
- JMP CB647
+.hanl4
 
-.CB696
+                        ; If we get here then we can draw a full 8-pixel wide
+                        ; horizontal line into the pattern data for the current
+                        ; tile, as there is nothing there already
 
- LDY YSAV
- RTS
+ LDA #%11111111         ; Set A to a pixel byte containing eight pixels in a row
 
-.CB699
+ STA (SC),Y             ; Store the 8-pixel line in the Y-th entry in the
+                        ; pattern buffer
 
- TYA
- CLC
- ADC #$25
- STA (SC2,X)
- JMP loop_CB689
+.hanl5
+
+ DEC R                  ; Decrement the line width in R
+
+ BEQ hanl6              ; If we have drawn all R blocks, jump to hanl6 to return
+                        ; from the subroutine
+
+ INC SC2                ; Increment SC2(1 0) to point to the next nametable
+ BNE hanl1              ; entry and jump back to hanl1 to draw the next block of
+ INC SC2+1              ; the horizontal line
+ JMP hanl1
+
+.hanl6
+
+ LDY YSAV               ; Retrieve the value of Y we stored above, so Y is
+                        ; preserved
+
+ RTS                    ; Return from the subroutine
+
+.hanl7
+
+                        ; If we get here then there is no dynamic tile allocated
+                        ; to the part of the line we want to draw, so we can use
+                        ; one of the pre-rendered tiles that contains an 8-pixel
+                        ; horizontal line on the correct pixel row
+                        ;
+                        ; We jump here with X = 0
+
+ TYA                    ; Set A = Y + 37
+ CLC                    ;
+ ADC #37                ; Tiles 37 to 44 contain pre-rendered patterns as
+                        ; follows:
+                        ;
+                        ;   * Tile 37 has a horizontal line on pixel row 0
+                        ;   * Tile 38 has a horizontal line on pixel row 1
+                        ;     ...
+                        ;   * Tile 43 has a horizontal line on pixel row 6
+                        ;   * Tile 44 has a horizontal line on pixel row 7
+                        ;
+                        ; So A contains the pre-rendered tile number that
+                        ; contains an 8-pixel line on pixel row Y, and as Y
+                        ; contains the offset of the pixel row for the line we
+                        ; are drawing, this means A contains the correct tile
+                        ; number for this part of the line
+
+ STA (SC2,X)            ; Display the pre-rendered tile on-screen by setting
+                        ; the nametable entry to A
+
+ JMP hanl5              ; Jump up to hanl5 to move on to the next character
+                        ; block to the right
 
 ; ******************************************************************************
 ;
