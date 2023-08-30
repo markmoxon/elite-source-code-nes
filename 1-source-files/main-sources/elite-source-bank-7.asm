@@ -8895,7 +8895,8 @@ ENDIF
  STY T                  ; Set A = R + Y
  LDA R                  ;       = pixels to left draw + current pixel row
  ADC T                  ;
-                        ; So A contains ???
+                        ; So A contains the total number of pixels left to draw
+                        ; in our line
 
  SBC #7                 ; At this point the C flag is clear, as the above
                         ; addition won't overflow, so this sets A = R + Y - 8
