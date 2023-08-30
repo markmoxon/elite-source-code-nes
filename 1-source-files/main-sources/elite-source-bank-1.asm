@@ -8004,10 +8004,10 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SUN (Part 1 of 4)
+;       Name: SUN (Part 1 of 2)
 ;       Type: Subroutine
 ;   Category: Drawing suns
-;    Summary: Draw the sun: Set up all the variables needed
+;    Summary: Set up all the variables needed to draw the sun
 ;  Deep dive: Drawing the sun
 ;
 ; ------------------------------------------------------------------------------
@@ -8037,14 +8037,23 @@ ENDIF
                         ; $FF, for when the new sun's centre is off the bottom
                         ; of the screen (so we don't need to draw its bottom
                         ; half)
+                        ;
+                        ; This happens when the y-coordinate of the centre of
+                        ; the sun is bigger than the y-coordinate of the bottom
+                        ; of the space view
 
- TXA                    ; Negate X using two's complement, so X = ~X + 1
- EOR #%11111111         ;
- CLC                    ; We do this because X is negative at this point, as it
- ADC #1                 ; is calculated as 191 - the y-coordinate of the sun's
- CMP K                  ; centre, and the centre is off the bottom of the
- BCS PL40               ; screen, past 191. So we negate it to make it positive
- TAX                    ; ???
+ TXA                    ; Negate X using two's complement, so A = ~X + 1
+ EOR #%11111111
+ CLC
+ ADC #1
+
+ CMP K                  ; If A >= K then the centre of the sun is further
+ BCS PL40               ; off-screen than the radius of the sun in K, which
+                        ; means the sun is too far away from the screen to be
+                        ; visible and there is nothing to draw, to jump to PL40
+                        ; to return from the subroutine
+
+ TAX                    ; Set X to the negated value in A, so X = ~X + 1
 
 .PLF17
 
@@ -8058,20 +8067,25 @@ ENDIF
 
 .SUN
 
- LDA frameCounter       ; ???
- STA RAND
+ LDA frameCounter       ; Set the random number seed to a fairly random state
+ STA RAND               ; that's based on the frame counter (which increments
+                        ; every VBlank, so will be pretty random)
 
  JSR CHKON              ; Call CHKON to check whether any part of the new sun's
                         ; circle appears on-screen, and if it does, set P(2 1)
                         ; to the maximum y-coordinate of the new sun on-screen
 
- BCS PL40               ; ???
+ BCS PL40               ; If CHKON set the C flag then the new sun's circle does
+                        ; not appear on-screen, which means there is nothing to
+                        ; draw, so jump to PL40 to return from the subroutine
 
  LDA #0                 ; Set A = 0
 
  LDX K                  ; Set X = K = radius of the new sun
 
- BEQ PL40               ; ???
+ BEQ PL40               ; If the radius of the new sun is zero then there is
+                        ; nothing to draw, so jump to PL40 to return from the
+                        ; subroutine
 
  CPX #96                ; If X >= 96, set the C flag and rotate it into bit 0
  ROL A                  ; of A, otherwise rotate a 0 into bit 0
@@ -8105,13 +8119,15 @@ ENDIF
                         ; y-coordinate of the new sun on-screen
 
  LDA Yx2M1              ; Set Y to the y-coordinate of the bottom of the space
-                        ; view, i.e. 191
+                        ; view
 
  LDX P+2                ; If P+2 is non-zero, the maximum y-coordinate is off
- BNE PLF2               ; the bottom of the screen, so skip to PLF2 with A = 191
+ BNE PLF2               ; the bottom of the screen, so skip to PLF2 with A set
+                        ; to the y-coordinate of the bottom of the space view
 
  CMP P+1                ; If A < P+1, the maximum y-coordinate is underneath the
- BCC PLF2               ; dashboard, so skip to PLF2 with A = 191
+ BCC PLF2               ; dashboard, so skip to PLF2 with A set to the
+                        ; y-coordinate of the bottom of the space view
 
  LDA P+1                ; Set A = P+1, the low byte of the maximum y-coordinate
                         ; of the sun on-screen
@@ -8181,14 +8197,14 @@ ENDIF
  STA K2
 
                         ; By the time we get here, the variables should be set
-                        ; up as shown in the header for part 3 below
+                        ; up as shown in the header for the PLFL subroutine
 
 ; ******************************************************************************
 ;
-;       Name: SUN (Part 2 of 4)
+;       Name: SUN (Part 2 of 2)
 ;       Type: Subroutine
 ;   Category: Drawing suns
-;    Summary: Draw the sun: Start from bottom of screen and erase the old sun
+;    Summary: Draw the new sun
 ;  Deep dive: Drawing the sun
 ;
 ; ------------------------------------------------------------------------------
@@ -8198,470 +8214,883 @@ ENDIF
 ;
 ; ******************************************************************************
 
- LDA XX2                ; ???
- STA YY
- LDA XX2+1
+ LDA K3                 ; Set YY(1 0) to the pixel x-coordinate of the centre
+ STA YY                 ; of the new sun, from K3(1 0)
+ LDA K3+1
  STA YY+1
- LDY TGT
- LDA #0
- STA L05EB
- STA L05EC
- STA L05ED
- STA L05EE
- STA L05EF
- STA L05F0
- STA L05F1
- TYA
- TAX
- AND #$F8
- TAY
- LDA V+1
- BNE CAD1D
- TXA
- AND #7
- BEQ CAD04
- CMP #2
- BCC CACFA
- BEQ CACF0
- CMP #4
- BCC CACE6
- BEQ CACDC
- CMP #6
- BCC CACD2
- BEQ CACC8
 
-.CACBE
+ LDY TGT                ; Set Y to the maximum y-coordinate of the sun on the
+                        ; screen (i.e. the bottom of the sun), which we set up
+                        ; in part 1
 
- JSR CAF35
- STA L05F1
- DEC V
- BEQ CAD2C
+ LDA #0                 ; Set the sub width variables to zero, so we can use
+ STA sunWidth1          ; them below to store the widths of the sun on each
+ STA sunWidth2          ; pixel row within each tile row
+ STA sunWidth3
+ STA sunWidth4
+ STA sunWidth5
+ STA sunWidth6
+ STA sunWidth7
 
-.CACC8
+ TYA                    ; Set A to the maximum y-coordinate of the sun, so we
+                        ; can apply the first AND below
 
- JSR CAF35
- STA L05F0
- DEC V
- BEQ CAD3B
+ TAX                    ; Set X to the maximum y-coordinate of the sun, so we
+                        ; can apply the second AND below
 
-.CACD2
+ AND #%11111000         ; Each tile row contains 8 pixel rows, so to get the
+ TAY                    ; y-coordinate of the first row of pixels in the tile
+                        ; row, we clear bits 0-2, so Y now contains the pixel
+                        ; y-coordinate of the top pixel row in the tile row
+                        ; containing the bottom of the sun
 
- JSR CAF35
- STA L05EF
- DEC V
- BEQ CAD4A
+ LDA V+1                ; If V+1 is non-zero then we are doing the top half of
+ BNE dsun11             ; the new sun, so jump down to dsun11 to work our way
+                        ; upwards from the centre towards the top of the sun
 
-.CACDC
+                        ; If we get here then we are drawing the bottom half of
+                        ; of the sun, so we work our way up from the bottom by
+                        ; decrementing V for each pixel line, as V contains the
+                        ; vertical distance between the line we're drawing and
+                        ; the centre of the new sun, and it starts out pointing
+                        ; to the bottom of the sun
 
- JSR CAF35
- STA L05EE
- DEC V
- BEQ CAD59
+ TXA                    ; Set A = X mod 8, which is the pixel row within the
+ AND #7                 ; tile row of the bottom of the sun
 
-.CACE6
+ BEQ dsun8              ; If A = 0 then the bottom of the sun is only in the top
+                        ; pixel row of the tile row, so jump to dsun8 to
+                        ; calculate the sun's width on one pixel row
 
- JSR CAF35
- STA L05ED
- DEC V
- BEQ CAD68
+ CMP #2                 ; If A = 1, jump to dsun7 to calculate the sun's width
+ BCC dsun7              ; on two pixel rows
 
-.CACF0
+ BEQ dsun6              ; If A = 2, jump tp dsun6 to calculate the sun's width
+                        ; on three pixel rows
 
- JSR CAF35
- STA L05EC
- DEC V
- BEQ CAD77
+ CMP #4                 ; If A = 3, jump tp dsun5 to calculate the sun's width
+ BCC dsun5              ; on four pixel rows
 
-.CACFA
+ BEQ dsun4              ; If A = 4, jump tp dsun4 to calculate the sun's width
+                        ; on five pixel rows
 
- JSR CAF35
- STA L05EB
- DEC V
- BEQ CAD1B
+ CMP #6                 ; If A = 5, jump tp dsun3 to calculate the sun's width
+ BCC dsun3              ; on six pixel rows
 
-.CAD04
+ BEQ dsun2              ; If A = 6, jump tp dsun2 to calculate the sun's width
+                        ; on seven pixel rows
 
- JSR CAF35
- STA L05EA
- DEC V
- BEQ CAD19
- JSR CADC6
- TYA
+                        ; If we get here then A = 7, so keep going to calculate
+                        ; the sun's width on all eight pixel rows, starting from
+                        ; row 7 at the bottom of the tile row, all the way up to
+                        ; pixel row 0 at the top of the tile row
+
+.dsun1
+
+ JSR PLFL               ; Call PLFL to set A to the half-width of the new sun on
+                        ; the sun line given in V
+
+ STA sunWidth7          ; Store the half-width of pixel row 7 in sunWidth7
+
+ DEC V                  ; Decrement V, the height of the sun that we use to work
+                        ; out the width, so this makes the line get wider, as we
+                        ; move up towards the sun's centre
+
+ BEQ dsun12             ; If V is zero then we have reached the centre, so jump
+                        ; to dsun12 to start working our way up from the centre,
+                        ; incrementing V instead
+
+.dsun2
+
+ JSR PLFL               ; Call PLFL to set A to the half-width of the new sun on
+                        ; the sun line given in V
+
+ STA sunWidth6          ; Store the half-width of pixel row 6 in sunWidth6
+
+ DEC V                  ; Decrement V, the height of the sun that we use to work
+                        ; out the width, so this makes the line get wider, as we
+                        ; move up towards the sun's centre
+
+ BEQ dsun13             ; If V is zero then we have reached the centre, so jump
+                        ; to dsun13 to start working our way up from the centre,
+                        ; incrementing V for the rest of this tile row
+
+.dsun3
+
+ JSR PLFL               ; Call PLFL to set A to the half-width of the new sun on
+                        ; the sun line given in V
+
+ STA sunWidth5          ; Store the half-width of pixel row 5 in sunWidth5
+
+ DEC V                  ; Decrement V, the height of the sun that we use to work
+                        ; out the width, so this makes the line get wider, as we
+                        ; move up towards the sun's centre
+
+ BEQ dsun14             ; If V is zero then we have reached the centre, so jump
+                        ; to dsun14 to start working our way up from the centre,
+                        ; incrementing V for the rest of this tile row
+
+.dsun4
+
+ JSR PLFL               ; Call PLFL to set A to the half-width of the new sun on
+                        ; the sun line given in V
+
+ STA sunWidth4          ; Store the half-width of pixel row 4 in sunWidth4
+
+ DEC V                  ; Decrement V, the height of the sun that we use to work
+                        ; out the width, so this makes the line get wider, as we
+                        ; move up towards the sun's centre
+
+ BEQ dsun15             ; If V is zero then we have reached the centre, so jump
+                        ; to dsun15 to start working our way up from the centre,
+                        ; incrementing V for the rest of this tile row
+
+.dsun5
+
+ JSR PLFL               ; Call PLFL to set A to the half-width of the new sun on
+                        ; the sun line given in V
+
+ STA sunWidth3          ; Store the half-width of pixel row 3 in sunWidth3
+
+ DEC V                  ; Decrement V, the height of the sun that we use to work
+                        ; out the width, so this makes the line get wider, as we
+                        ; move up towards the sun's centre
+
+ BEQ dsun16             ; If V is zero then we have reached the centre, so jump
+                        ; to dsun16 to start working our way up from the centre,
+                        ; incrementing V for the rest of this tile row
+
+.dsun6
+
+ JSR PLFL               ; Call PLFL to set A to the half-width of the new sun on
+                        ; the sun line given in V
+
+ STA sunWidth2          ; Store the half-width of pixel row 2 in sunWidth2
+
+ DEC V                  ; Decrement V, the height of the sun that we use to work
+                        ; out the width, so this makes the line get wider, as we
+                        ; move up towards the sun's centre
+
+ BEQ dsun17             ; If V is zero then we have reached the centre, so jump
+                        ; to dsun17 to start working our way up from the centre,
+                        ; incrementing V for the rest of this tile row
+
+.dsun7
+
+ JSR PLFL               ; Call PLFL to set A to the half-width of the new sun on
+                        ; the sun line given in V
+
+ STA sunWidth1          ; Store the half-width of pixel row 1 in sunWidth1
+
+ DEC V                  ; Decrement V, the height of the sun that we use to work
+                        ; out the width, so this makes the line get wider, as we
+                        ; move up towards the sun's centre
+
+ BEQ dsun10             ; If V is zero then we have reached the centre, so jump
+                        ; to dsun18 via dsun10 to start working our way up from
+                        ; the centre, incrementing V for the rest of this tile
+                        ; row
+
+.dsun8
+
+ JSR PLFL               ; Call PLFL to set A to the half-width of the new sun on
+                        ; the sun line given in V
+
+ STA sunWidth0          ; Store the half-width of pixel row 0 in sunWidth0
+
+ DEC V                  ; Decrement V, the height of the sun that we use to work
+                        ; out the width, so this makes the line get wider, as we
+                        ; move up towards the sun's centre
+
+ BEQ dsun9              ; If V is zero then we have reached the centre, so jump
+                        ; to dsun19 via dsun9 to start working our way up from
+                        ; the centre, incrementing V for the rest of this tile
+                        ; row
+
+ JSR dsun28             ; Call dsun28 to draw all eight lines for this tile row
+
+ TYA                    ; Set Y = Y - 8 to move up a tile row
  SEC
  SBC #8
  TAY
- BCS CACBE
- RTS
 
-.CAD19
+ BCS dsun1              ; If the subtraction didn't underflow, then Y is still
+                        ; positive and is therefore still on-screen, so loop
+                        ; back to dsun1 to keep drawing pixel rows
 
- BEQ CAD95
+ RTS                    ; Otherwise we have reached the top of the screen, so
+                        ; return from the subroutine as we are done drawing
 
-.CAD1B
+.dsun9
 
- BEQ CAD86
+ BEQ dsun19             ; Jump down to dsun19 (this is only used to enable us to
+                        ; use a BEQ dsun9 above)
 
-.CAD1D
+.dsun10
 
- JSR CAF35
- STA L05F1
- LDX V
- INX
- STX V
- CPX K
- BCS CADA3
+ BEQ dsun18             ; Jump down to dsun18 (this is only used to enable us to
+                        ; use a BEQ dsun10 above)
 
-.CAD2C
+.dsun11
 
- JSR CAF35
- STA L05F0
- LDX V
- INX
- STX V
- CPX K
- BCS CADA8
+                        ; If we get here then we are drawing the top half of the
+                        ; sun, so we increment V for each pixel line as we move
+                        ; up the screen
 
-.CAD3B
+ JSR PLFL               ; Call PLFL to set A to the half-width of the new sun on
+                        ; the sun line given in V
 
- JSR CAF35
- STA L05EF
- LDX V
- INX
- STX V
- CPX K
- BCS CADAD
+ STA sunWidth7          ; Store the half-width of pixel row 7 in sunWidth7
 
-.CAD4A
+ LDX V                  ; Increment V, the height of the sun that we use to work
+ INX                    ; out the width, so this makes the line get less wide,
+ STX V                  ; as we move up and away from the sun's centre
 
- JSR CAF35
- STA L05EE
- LDX V
- INX
- STX V
- CPX K
- BCS CADB2
+ CPX K                  ; If V >= K then we have reached the top of the sun (as
+ BCS dsun21             ; K is the sun's radius, so there are K pixel lines in
+                        ; each half of the sun), so jump to dsun21 to draw the
+                        ; lines that we have calculated so far for this tile row
 
-.CAD59
+.dsun12
 
- JSR CAF35
- STA L05ED
- LDX V
- INX
- STX V
- CPX K
- BCS CADB7
+ JSR PLFL               ; Call PLFL to set A to the half-width of the new sun on
+                        ; the sun line given in V
 
-.CAD68
+ STA sunWidth6          ; Store the half-width of pixel row 6 in sunWidth6
 
- JSR CAF35
- STA L05EC
- LDX V
- INX
- STX V
- CPX K
- BCS CADBC
+ LDX V                  ; Increment V, the height of the sun that we use to work
+ INX                    ; out the width, so this makes the line get less wide,
+ STX V                  ; as we move up and away from the sun's centre
 
-.CAD77
+ CPX K                  ; If V >= K then we have reached the top of the sun (as
+ BCS dsun22             ; K is the sun's radius, so there are K pixel lines in
+                        ; each half of the sun), so jump to dsun22 to draw the
+                        ; lines that we have calculated so far for this tile row
 
- JSR CAF35
- STA L05EB
- LDX V
- INX
- STX V
- CPX K
- BCS CADC1
+.dsun13
 
-.CAD86
+ JSR PLFL               ; Call PLFL to set A to the half-width of the new sun on
+                        ; the sun line given in V
 
- JSR CAF35
- STA L05EA
- LDX V
- INX
- STX V
- CPX K
- BCS CADC6
+ STA sunWidth5          ; Store the half-width of pixel row 5 in sunWidth5
 
-.CAD95
+ LDX V                  ; Increment V, the height of the sun that we use to work
+ INX                    ; out the width, so this makes the line get less wide,
+ STX V                  ; as we move up and away from the sun's centre
 
- JSR CADC6
- TYA
+ CPX K                  ; If V >= K then we have reached the top of the sun (as
+ BCS dsun23             ; K is the sun's radius, so there are K pixel lines in
+                        ; each half of the sun), so jump to dsun23 to draw the
+                        ; lines that we have calculated so far for this tile row
+
+.dsun14
+
+ JSR PLFL               ; Call PLFL to set A to the half-width of the new sun on
+                        ; the sun line given in V
+
+ STA sunWidth4          ; Store the half-width of pixel row 4 in sunWidth4
+
+ LDX V                  ; Increment V, the height of the sun that we use to work
+ INX                    ; out the width, so this makes the line get less wide,
+ STX V                  ; as we move up and away from the sun's centre
+
+ CPX K                  ; If V >= K then we have reached the top of the sun (as
+ BCS dsun24             ; K is the sun's radius, so there are K pixel lines in
+                        ; each half of the sun), so jump to dsun24 to draw the
+                        ; lines that we have calculated so far for this tile row
+
+.dsun15
+
+ JSR PLFL               ; Call PLFL to set A to the half-width of the new sun on
+                        ; the sun line given in V
+
+ STA sunWidth3          ; Store the half-width of pixel row 3 in sunWidth3
+
+ LDX V                  ; Increment V, the height of the sun that we use to work
+ INX                    ; out the width, so this makes the line get less wide,
+ STX V                  ; as we move up and away from the sun's centre
+
+ CPX K                  ; If V >= K then we have reached the top of the sun (as
+ BCS dsun25             ; K is the sun's radius, so there are K pixel lines in
+                        ; each half of the sun), so jump to dsun25 to draw the
+                        ; lines that we have calculated so far for this tile row
+
+.dsun16
+
+ JSR PLFL               ; Call PLFL to set A to the half-width of the new sun on
+                        ; the sun line given in V
+
+ STA sunWidth2          ; Store the half-width of pixel row 2 in sunWidth2
+
+ LDX V                  ; Increment V, the height of the sun that we use to work
+ INX                    ; out the width, so this makes the line get less wide,
+ STX V                  ; as we move up and away from the sun's centre
+
+ CPX K                  ; If V >= K then we have reached the top of the sun (as
+ BCS dsun26             ; K is the sun's radius, so there are K pixel lines in
+                        ; each half of the sun), so jump to dsun26 to draw the
+                        ; lines that we have calculated so far for this tile row
+
+.dsun17
+
+ JSR PLFL               ; Call PLFL to set A to the half-width of the new sun on
+                        ; the sun line given in V
+
+ STA sunWidth1          ; Store the half-width of pixel row 1 in sunWidth1
+
+ LDX V                  ; Increment V, the height of the sun that we use to work
+ INX                    ; out the width, so this makes the line get less wide,
+ STX V                  ; as we move up and away from the sun's centre
+
+ CPX K                  ; If V >= K then we have reached the top of the sun (as
+ BCS dsun27             ; K is the sun's radius, so there are K pixel lines in
+                        ; each half of the sun), so jump to dsun27 to draw the
+                        ; lines that we have calculated so far for this tile row
+
+.dsun18
+
+ JSR PLFL               ; Call PLFL to set A to the half-width of the new sun on
+                        ; the sun line given in V
+
+ STA sunWidth0          ; Store the half-width of pixel row 0 in sunWidth0
+
+ LDX V                  ; Increment V, the height of the sun that we use to work
+ INX                    ; out the width, so this makes the line get less wide,
+ STX V                  ; as we move up and away from the sun's centre
+
+ CPX K                  ; If V >= K then we have reached the top of the sun (as
+ BCS dsun28             ; K is the sun's radius, so there are K pixel lines in
+                        ; each half of the sun), so jump to dsun28 to draw the
+                        ; lines that we have calculated so far for this tile row
+
+.dsun19
+
+ JSR dsun28             ; Call dsun28 to draw all eight lines for this tile row
+
+ TYA                    ; Set Y = Y - 8 to move up a tile row
  SEC
  SBC #8
  TAY
- BCC CADA2
- JMP CAD1D
 
-.CADA2
+ BCC dsun20             ; If the subtraction underflowed, then Y is negative
+                        ; and is therefore off the top of the screen, so jump to
+                        ; dsun20 to return from the subroutine
 
- RTS
+ JMP dsun11             ; Otherwise we still have work to do, so jump up to
+                        ; dsun11 to keep working our way up the top half of the
+                        ; sun
 
-.CADA3
+.dsun20
 
- LDA #0
- STA L05F0
+ RTS                    ; Return from the subroutine
 
-.CADA8
+.dsun21
 
- LDA #0
- STA L05EF
-
-.CADAD
-
- LDA #0
- STA L05EE
-
-.CADB2
+                        ; If we jump here then we have reached the top of the
+                        ; sun and only need to draw pixel row 7 in the current
+                        ; tile row, so we zero sunWidth0 through sunWidth6
 
  LDA #0
- STA L05ED
+ STA sunWidth6
 
-.CADB7
+.dsun22
 
- LDA #0
- STA L05EC
-
-.CADBC
-
- LDA #0
- STA L05EB
-
-.CADC1
+                        ; If we jump here then we have reached the top of the
+                        ; sun and need to draw pixel rows 6 and 7 in the current
+                        ; tile row, so we zero sunWidth0 through sunWidth5
 
  LDA #0
- STA L05EA
+ STA sunWidth5
 
-.CADC6
+.dsun23
 
- LDA L05EA
- CMP L05EB
- BCC CADD1
- LDA L05EB
+                        ; If we jump here then we have reached the top of the
+                        ; sun and need to draw pixel rows 5 to 7 in the current
+                        ; tile row, so we zero sunWidth0 through sunWidth4
 
-.CADD1
+ LDA #0
+ STA sunWidth4
 
- CMP L05EC
- BCC CADD9
- LDA L05EC
+.dsun24
 
-.CADD9
+                        ; If we jump here then we have reached the top of the
+                        ; sun and need to draw pixel rows 4 to 7 in the current
+                        ; tile row, so we zero sunWidth0 through sunWidth3
 
- CMP L05ED
- BCC CADE1
- LDA L05EC
+ LDA #0
+ STA sunWidth3
 
-.CADE1
+.dsun25
 
- CMP L05EE
- BCC CADE9
- LDA L05EE
+                        ; If we jump here then we have reached the top of the
+                        ; sun and need to draw pixel rows 3 to 7 in the current
+                        ; tile row, so we zero sunWidth0 through sunWidth2
 
-.CADE9
+ LDA #0
+ STA sunWidth2
 
- CMP L05EF
- BCC CADF1
- LDA L05EF
+.dsun26
 
-.CADF1
+                        ; If we jump here then we have reached the top of the
+                        ; sun and need to draw pixel rows 2 to 7 in the current
+                        ; tile row, so we zero sunWidth0 through sunWidth1
 
- CMP L05F0
- BCC CADF9
- LDA L05F0
+ LDA #0
+ STA sunWidth1
 
-.CADF9
+.dsun27
 
- CMP L05F1
- BCC CAE03
- LDA L05F1
- BEQ CAE29
+                        ; If we jump here then we have reached the top of the
+                        ; sun and need to draw pixel rows 1 to 7 in the current
+                        ; tile row, so we zero sunWidth0
 
-.CAE03
+ LDA #0
+ STA sunWidth0
 
- JSR EDGES
- BCS CAE29
- LDA X2
- AND #$F8
- STA P+1
- LDA XX15
- ADC #7
- BCS CAE29
- AND #$F8
- CMP P+1
- BCS CAE29
- STA P
- CMP #$F8
- BCS CAE26
- JSR CAEE8
+                        ; So by this point sunWidth0 through sunWidth7 are set
+                        ; up with the correct widths that we need to draw on
+                        ; each pixel row of the current tile row, with some of
+                        ; them possibly set to zero
 
- JSR DrawSunRowOfBlocks ; Draw the character blocks containing the horizontal
-                        ; line (P, Y) to (P+1, Y) with sunlight, silhouetting
-                        ; any existing content against the sun
+                        ; We now fall through into dsun28 to draw these eight
+                        ; pixel rows and return from the subroutine
 
-.CAE26
+.dsun28
 
- JMP CAE9B
+                        ; If we jump here with a branch instruction or fall
+                        ; through from above, then we have reached the top of
+                        ; the sun and need to draw pixel rows 0 to 7 in the
+                        ; current tile row, and then we are done drawing
+                        ;
+                        ; If we call this code as a subroutine using JSR dsun28
+                        ; then we need to draw pixel rows 0 to 7 in the current
+                        ; tile row, and when we return from the call we keep
+                        ; drawing rows
+                        ;
+                        ; In either case, we now need to draw all eight rows
+                        ; before returning from the subroutine
+                        ;
+                        ; We start by finding the smallest width out of
+                        ; sunWidth0 through sunWidth7
 
-.CAE29
+ LDA sunWidth0          ; Set A to sunWidth0 as our starting point
+
+ CMP sunWidth1          ; If A >= sunWidth1 then set A = sunWidth1, so this sets
+ BCC dsun29             ; A = min(A, sunWidth1)
+ LDA sunWidth1
+
+.dsun29
+
+ CMP sunWidth2          ; If A >= sunWidth2 then set A = sunWidth2, so this sets
+ BCC dsun30             ; A = min(A, sunWidth2)
+ LDA sunWidth2
+
+.dsun30
+
+ CMP sunWidth3          ; If A >= sunWidth3 then set A = sunWidth3, so this sets
+ BCC dsun31             ; A = min(A, sunWidth3)
+ LDA sunWidth2
+
+.dsun31
+
+ CMP sunWidth4          ; If A >= sunWidth4 then set A = sunWidth4, so this sets
+ BCC dsun32             ; A = min(A, sunWidth4)
+ LDA sunWidth4
+
+.dsun32
+
+ CMP sunWidth5          ; If A >= sunWidth5 then set A = sunWidth5, so this sets
+ BCC dsun33             ; A = min(A, sunWidth5)
+ LDA sunWidth5
+
+.dsun33
+
+ CMP sunWidth6          ; If A >= sunWidth6 then set A = sunWidth6, so this sets
+ BCC dsun34             ; A = min(A, sunWidth6)
+ LDA sunWidth6
+
+.dsun34
+
+ CMP sunWidth7          ; If A >= sunWidth7 then set A = sunWidth7, so this sets
+ BCC dsun35             ; A = min(A, sunWidth7)
+ LDA sunWidth7
+
+                        ; So by this point A = min(sunWidth0 to sunWidth7), and
+                        ; we can now check to see if we can save time by drawing
+                        ; a portion of this tile row out of filled blocks
+
+ BEQ dsun37             ; If A = 0 then at least one of the pixel rows needs to
+                        ; be left blank, so we can't draw the row using filled
+                        ; blocks, so jump to dsun37 to draw the tile row one
+                        ; pixel row at a time
+
+.dsun35
+
+ JSR EDGES              ; Call EDGES to calculate X1 and X2 for the horizontal
+                        ; line centred on YY(1 0) and with half-width A, clipped
+                        ; to fit on-screen if necessary, so this gives us the
+                        ; coordinates of the smallest pixel row in the tile row
+                        ; that we want to draw
+
+ BCS dsun37             ; If the C flag is set, then the smallest pixel row
+                        ; is off-screen, so jump to dsun37 to draw the tile row
+                        ; one pixel row at a time, as there is at least one
+                        ; pixel row in the tile row that doesn't need drawing
+
+                        ; If we get here then every pixel row in the tile row
+                        ; fits on-screen and contains some sun pixels, so we
+                        ; can now work out how to draw this row using filled
+                        ; tiles where possible
+                        ;
+                        ; We do this by breaking the line up into a tile at the
+                        ; left end of the row, a tile at the right end of the
+                        ; row, and a set of filled tiles in the middle
+                        ;
+                        ; We set P and P+1 to the pixel coordinates of the block
+                        ; of filled tiles in the middle
+
+ LDA X2                 ; Set P+1 to the x-coordinate of the right end of the
+ AND #%11111000         ; smallest sun line by clearing bits 0-2 of X2, giving
+ STA P+1                ; P+1 = (X2 div 8) * 8
+                        ;
+                        ; This gives us what we want as each tile is 8 pixels
+                        ; wide
+
+ LDA X1                 ; Now to calculate the x-coordinate of the left end of
+ ADC #7                 ; the filled tiles, so set A = X1 + 7 (we know the C
+                        ; flag is clear for the addition as we just passed
+                        ; through a BCS)
+
+ BCS dsun37             ; If the addition overflowed, then this addition pushes
+                        ; us past the right edge of the screen, so jump to
+                        ; dsun37 to draw the tile row one pixel row at a time as
+                        ; there isn't any room for filled tiles
+
+ AND #%11111000         ; Clear bits 0-2 of A to give us the x-coordinate of the
+                        ; left end of the set of filled tiles
+
+ CMP P+1                ; If A >= P+1 then there is no room for any filled as
+ BCS dsun37             ; the entire line fits into one tile, so jump to dsun37
+                        ; to draw the tile row one pixel row at a time
+
+ STA P                  ; Otherwise we now have valid values for the
+                        ; x-coordinate range of the filled blocks in the
+                        ; middle of the row, so store A in P so the coordinate
+                        ; range is from P to P+1
+
+ CMP #248               ; If A >= 248 then we only have room for one block on
+ BCS dsun36             ; this row, and it's at the right edge of the screen,
+                        ; so jump to dsun36 to skip the following two
+                        ; instructions and just draw the tile at the ??? end of
+                        ; the row
+
+ JSR dsun47             ; Call dsun47 to draw the tile at the ??? end of this
+                        ; tile row
+
+ JSR DrawSunRowOfBlocks ; Draw the tiles containing the horizontal line (P, Y)
+                        ; to (P+1, Y) with filled blocks, silhouetting any
+                        ; existing content against the sun
+
+.dsun36
+
+ JMP dsun46             ; Jump to dsun46 to draw the tile at the ??? end of this
+                        ; tile row, returning from the subroutine using a tail
+                        ; call as we have now drawn the middle of the row, plus
+                        ; both ends
+
+.dsun37
+
+                        ; If we get here then we draw the current tile row one
+                        ; pixel row at a time
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
- TYA
- CLC
- ADC #7
- TAY
- LDA L05F1
- JSR EDGES-2
- BCS CAE46
- JSR HLOIN
 
-.CAE46
+ TYA                    ; Set Y = Y + 7
+ CLC                    ;
+ ADC #7                 ; We draw the lines from row 7 up the screen to row 0,
+ TAY                    ; so this sets Y to the pixel y-coordinate of row 7
 
- DEY
- LDA L05F0
- JSR EDGES-2
- BCS CAE52
- JSR HLOIN
+ LDA sunWidth7          ; Call EDGES-2 to calculate X1 and X2 for the horizontal
+ JSR EDGES-2            ; line centred on YY(1 0) and with half-width sunWidth7,
+                        ; which is the pixel line for row 7 in the tile row
+                        ;
+                        ; Calling EDGES-2 will set the C flag if A = 0, which
+                        ; isn't the case for a straight call to EDGES
 
-.CAE52
+ BCS dsun38             ; If the C flag is set then either A = 0 (in which case
+                        ; there is no sun line on this pixel row), or the line
+                        ; does not fit on-screen, so in either case skip the
+                        ; following instruction and move on to the next pixel
+                        ; row
 
- DEY
- LDA L05EF
- JSR EDGES-2
- BCS CAE5E
- JSR HLOIN
+ JSR HLOIN              ; Draw a horizontal line from (X1, Y) to (X2, Y) to draw
+                        ; pixel row 7 of the sun on this tile row, using EOR
+                        ; logic so anything already on-screen appears as a
+                        ; silhouette in front of the sun
 
-.CAE5E
+.dsun38
 
- DEY
- LDA L05EE
- JSR EDGES-2
- BCS CAE6A
- JSR HLOIN
+ DEY                    ; Decrement the pixel y-coordinate in Y to row 6 in the
+                        ; tile row
 
-.CAE6A
+ LDA sunWidth6          ; Call EDGES-2 to calculate X1 and X2 for the horizontal
+ JSR EDGES-2            ; line centred on YY(1 0) and with half-width sunWidth6,
+                        ; which is the pixel line for row 6 in the tile row
+                        ;
+                        ; Calling EDGES-2 will set the C flag if A = 0, which
+                        ; isn't the case for a straight call to EDGES
 
- DEY
- LDA L05ED
- JSR EDGES-2
- BCS CAE76
- JSR HLOIN
+ BCS dsun39             ; If the C flag is set then either A = 0 (in which case
+                        ; there is no sun line on this pixel row), or the line
+                        ; does not fit on-screen, so in either case skip the
+                        ; following instruction and move on to the next pixel
+                        ; row
 
-.CAE76
+ JSR HLOIN              ; Draw a horizontal line from (X1, Y) to (X2, Y) to draw
+                        ; pixel row 6 of the sun on this tile row, using EOR
+                        ; logic so anything already on-screen appears as a
+                        ; silhouette in front of the sun
 
- DEY
- LDA L05EC
- JSR EDGES-2
- BCS CAE82
- JSR HLOIN
+.dsun39
 
-.CAE82
+ DEY                    ; Decrement the pixel y-coordinate in Y to row 5 in the
+                        ; tile row
 
- DEY
- LDA L05EB
- JSR EDGES-2
- BCS CAE8E
- JSR HLOIN
+ LDA sunWidth5          ; Call EDGES-2 to calculate X1 and X2 for the horizontal
+ JSR EDGES-2            ; line centred on YY(1 0) and with half-width sunWidth5,
+                        ; which is the pixel line for row 5 in the tile row
+                        ;
+                        ; Calling EDGES-2 will set the C flag if A = 0, which
+                        ; isn't the case for a straight call to EDGES
+ BCS dsun40             ; If the C flag is set then either A = 0 (in which case
+                        ; there is no sun line on this pixel row), or the line
+                        ; does not fit on-screen, so in either case skip the
+                        ; following instruction and move on to the next pixel
+                        ; row
 
-.CAE8E
+ JSR HLOIN              ; Draw a horizontal line from (X1, Y) to (X2, Y) to draw
+                        ; pixel row 5 of the sun on this tile row, using EOR
+                        ; logic so anything already on-screen appears as a
+                        ; silhouette in front of the sun
 
- DEY
- LDA L05EA
- JSR EDGES-2
- BCS CAE9A
- JMP HLOIN
+.dsun40
 
-.CAE9A
+ DEY                    ; Decrement the pixel y-coordinate in Y to row 4 in the
+                        ; tile row
 
- RTS
+ LDA sunWidth4          ; Call EDGES-2 to calculate X1 and X2 for the horizontal
+ JSR EDGES-2            ; line centred on YY(1 0) and with half-width sunWidth4,
+                        ; which is the pixel line for row 4 in the tile row
+                        ;
+                        ; Calling EDGES-2 will set the C flag if A = 0, which
+                        ; isn't the case for a straight call to EDGES
+ BCS dsun41             ; If the C flag is set then either A = 0 (in which case
+                        ; there is no sun line on this pixel row), or the line
+                        ; does not fit on-screen, so in either case skip the
+                        ; following instruction and move on to the next pixel
+                        ; row
 
-.CAE9B
+ JSR HLOIN              ; Draw a horizontal line from (X1, Y) to (X2, Y) to draw
+                        ; pixel row 4 of the sun on this tile row, using EOR
+                        ; logic so anything already on-screen appears as a
+                        ; silhouette in front of the sun
+
+.dsun41
+
+ DEY                    ; Decrement the pixel y-coordinate in Y to row 3 in the
+                        ; tile row
+
+ LDA sunWidth3          ; Call EDGES-2 to calculate X1 and X2 for the horizontal
+ JSR EDGES-2            ; line centred on YY(1 0) and with half-width sunWidth3,
+                        ; which is the pixel line for row 3 in the tile row
+                        ;
+                        ; Calling EDGES-2 will set the C flag if A = 0, which
+                        ; isn't the case for a straight call to EDGES
+ BCS dsun42             ; If the C flag is set then either A = 0 (in which case
+                        ; there is no sun line on this pixel row), or the line
+                        ; does not fit on-screen, so in either case skip the
+                        ; following instruction and move on to the next pixel
+                        ; row
+
+ JSR HLOIN              ; Draw a horizontal line from (X1, Y) to (X2, Y) to draw
+                        ; pixel row 3 of the sun on this tile row, using EOR
+                        ; logic so anything already on-screen appears as a
+                        ; silhouette in front of the sun
+
+.dsun42
+
+ DEY                    ; Decrement the pixel y-coordinate in Y to row 2 in the
+                        ; tile row
+
+ LDA sunWidth2          ; Call EDGES-2 to calculate X1 and X2 for the horizontal
+ JSR EDGES-2            ; line centred on YY(1 0) and with half-width sunWidth2,
+                        ; which is the pixel line for row 2 in the tile row
+                        ;
+                        ; Calling EDGES-2 will set the C flag if A = 0, which
+                        ; isn't the case for a straight call to EDGES
+ BCS dsun43             ; If the C flag is set then either A = 0 (in which case
+                        ; there is no sun line on this pixel row), or the line
+                        ; does not fit on-screen, so in either case skip the
+                        ; following instruction and move on to the next pixel
+                        ; row
+
+ JSR HLOIN              ; Draw a horizontal line from (X1, Y) to (X2, Y) to draw
+                        ; pixel row 2 of the sun on this tile row, using EOR
+                        ; logic so anything already on-screen appears as a
+                        ; silhouette in front of the sun
+
+.dsun43
+
+ DEY                    ; Decrement the pixel y-coordinate in Y to row 1 in the
+                        ; tile row
+
+ LDA sunWidth1          ; Call EDGES-2 to calculate X1 and X2 for the horizontal
+ JSR EDGES-2            ; line centred on YY(1 0) and with half-width sunWidth1,
+                        ; which is the pixel line for row 1 in the tile row
+                        ;
+                        ; Calling EDGES-2 will set the C flag if A = 0, which
+                        ; isn't the case for a straight call to EDGES
+ BCS dsun44             ; If the C flag is set then either A = 0 (in which case
+                        ; there is no sun line on this pixel row), or the line
+                        ; does not fit on-screen, so in either case skip the
+                        ; following instruction and move on to the next pixel
+                        ; row
+
+ JSR HLOIN              ; Draw a horizontal line from (X1, Y) to (X2, Y) to draw
+                        ; pixel row 1 of the sun on this tile row, using EOR
+                        ; logic so anything already on-screen appears as a
+                        ; silhouette in front of the sun
+
+.dsun44
+
+ DEY                    ; Decrement the pixel y-coordinate in Y to row 0 in the
+                        ; tile row
+
+ LDA sunWidth0          ; Call EDGES-2 to calculate X1 and X2 for the horizontal
+ JSR EDGES-2            ; line centred on YY(1 0) and with half-width sunWidth0,
+                        ; which is the pixel line for row 0 in the tile row
+                        ;
+                        ; Calling EDGES-2 will set the C flag if A = 0, which
+                        ; isn't the case for a straight call to EDGES
+ BCS dsun45             ; If the C flag is set then either A = 0 (in which case
+                        ; there is no sun line on this pixel row), or the line
+                        ; does not fit on-screen, so in either case skip the
+                        ; following instruction and return from the subroutine
+                        ; as we are done
+
+ JMP HLOIN              ; Draw a horizontal line from (X1, Y) to (X2, Y) to draw
+                        ; pixel row 0 of the sun on this tile row, using EOR
+                        ; logic so anything already on-screen appears as a
+                        ; silhouette in front of the sun, and return from the
+                        ; subroutine using a tail call as we have now drawn all
+                        ; the lines in this row
+
+.dsun45
+
+ RTS                    ; Return from the subroutine
+
+.dsun46
+
+                        ; If we get here then we need to draw the tile at the
+                        ; left end of the current tile row ???
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDX P
- BEQ CAE9A
- TYA
- CLC
- ADC #7
- TAY
- LDA L05F1
+ LDX P                  ; Set X to P, the x-coordinate of the left end of middle
+                        ; part of the sun row (so this is one block to the right
+                        ; of the leftmost tile)
+
+ BEQ dsun45             ; If X = 0 then the leftmost tile is off the left of the
+                        ; screen, so jump to dsun45 to return from the
+                        ; subroutine
+
+ TYA                    ; Set Y = Y + 7
+ CLC                    ;
+ ADC #7                 ; We draw the lines from row 7 up the screen to row 0,
+ TAY                    ; so this sets Y to the pixel y-coordinate of row 7
+
+ LDA sunWidth7          ; Draw a pixel byte at the left end of the row
+ JSR DrawSunEdgeLeft
+
+ DEY                    ; Decrement the pixel y-coordinate in Y to row 6 in the
+                        ; tile row
+
+ LDA sunWidth6
  JSR DrawSunEdgeLeft
  DEY
- LDA L05F0
+ LDA sunWidth5
  JSR DrawSunEdgeLeft
  DEY
- LDA L05EF
+ LDA sunWidth4
  JSR DrawSunEdgeLeft
  DEY
- LDA L05EE
+ LDA sunWidth3
  JSR DrawSunEdgeLeft
  DEY
- LDA L05ED
+ LDA sunWidth2
  JSR DrawSunEdgeLeft
  DEY
- LDA L05EC
+ LDA sunWidth1
  JSR DrawSunEdgeLeft
  DEY
- LDA L05EB
- JSR DrawSunEdgeLeft
- DEY
- LDA L05EA
+ LDA sunWidth0
  JMP DrawSunEdgeLeft
 
-.CAEE8
+.dsun47
+
+                        ; If we get here then we need to draw the tile at the
+                        ; right end of the current tile row
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDX P+1
- STX XX15
+ STX X1
+
  TYA
  CLC
  ADC #7
  TAY
- LDA L05F1
+
+ LDA sunWidth7
  JSR DrawSunEdgeRight
  DEY
- LDA L05F0
+ LDA sunWidth6
  JSR DrawSunEdgeRight
  DEY
- LDA L05EF
+ LDA sunWidth5
  JSR DrawSunEdgeRight
  DEY
- LDA L05EE
+ LDA sunWidth4
  JSR DrawSunEdgeRight
  DEY
- LDA L05ED
+ LDA sunWidth3
  JSR DrawSunEdgeRight
  DEY
- LDA L05EB
+ LDA sunWidth1
  JSR DrawSunEdgeRight
  DEY
- LDA L05EB
+ LDA sunWidth1
  JSR DrawSunEdgeRight
  DEY
- LDA L05EA
+ LDA sunWidth0
  JMP DrawSunEdgeRight
-
-.CAF35
-
- SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
-                        ; the PPU to use nametable 0 and pattern table 0
-
- STY Y1
 
 ; ******************************************************************************
 ;
-;       Name: SUN (Part 3 of 4)
+;       Name: PLFL
 ;       Type: Subroutine
 ;   Category: Drawing suns
-;    Summary: Draw the sun: Continue to move up the screen, drawing the new sun
+;    Summary: Draw the sun: ???
 ;  Deep dive: Drawing the sun
 ;
 ; ------------------------------------------------------------------------------
 ;
-; This part draws the new sun. By the time we get to this point, the following
-; variables should have been set up by parts 1 and 2:
+; This part calculate the sun's width on a given pixel row.
+;
+; Arguments:
 ;
 ;   V                   As we draw lines for the new sun, V contains the
 ;                       vertical distance between the line we're drawing and the
@@ -8692,9 +9121,20 @@ ENDIF
 ;
 ;   Y                   The y-coordinate of the bottom row of the new sun
 ;
+;
+; Returns:
+;
+;   A                   The half-width of the sun on the line specified in V
+;
 ; ******************************************************************************
 
 .PLFL
+
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
+
+ STY Y1                 ; Store Y in Y1, so we can restore it after the call to
+                        ; LL5
 
  LDA V                  ; Set (T P) = V * V
  JSR SQUA2              ;           = V^2
@@ -8734,32 +9174,13 @@ ENDIF
                         ; So A now contains the half-width of the sun on row
                         ; V, plus a random variation based on the fringe size
 
- BCC RTS2               ; ???
+ BCC RTS2               ; If the above addition did not overflow then
 
  LDA #255               ; The above overflowed, so set the value of A to 255
 
                         ; So A contains the half-width of the new sun on pixel
                         ; line Y, changed by a random amount within the size of
                         ; the sun's fringe
-
-; ******************************************************************************
-;
-;       Name: SUN (Part 4 of 4)
-;       Type: Subroutine
-;   Category: Drawing suns
-;    Summary: Draw the sun: Continue to the top of the screen, erasing old sun
-;  Deep dive: Drawing the sun
-;
-; ------------------------------------------------------------------------------
-;
-; This part erases any remaining traces of the old sun, now that we have drawn
-; all the way to the top of the new sun.
-;
-; Other entry points:
-;
-;   RTS2                Contains an RTS
-;
-; ******************************************************************************
 
 .RTS2
 
@@ -8998,27 +9419,44 @@ ENDIF
 ;
 ; Other entry points:
 ;
-;   EDGES-2             ???
+;   EDGES-2             Return the C flag set if argument A is 0
 ;
 ; ******************************************************************************
 
 .ED3
 
- BPL ED1                ; ???
- LDA #0
- STA X1
- CLC
- RTS
+ BPL ED1                ; We jump here with the status flags set to the result
+                        ; of the high byte of this subtraction, and only if the
+                        ; high byte is non-zero:
+                        ;
+                        ;   (A X1) = YY(1 0) - argument A
+                        ;
+                        ; If the result of the subtraction is positive and
+                        ; non-zero then the coordinate is not on-screen, so jump
+                        ; to ED1 to return the C flag set
+
+ LDA #0                 ; The result of the subtraction is negative, so we have
+ STA X1                 ; have gone past the left edge of the screen, so we clip
+                        ; the x-coordinate in X1 to 0
+
+ CLC                    ; Clear the C flag to indicate that the clipped line
+                        ; fits on-screen
+
+ RTS                    ; Return from the subroutine
 
 .ED1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- SEC
- RTS
+ SEC                    ; Set the C flag to indicate that the line does not fit
+                        ; on-screen
 
- BEQ ED1
+ RTS                    ; Return from the subroutine
+
+ BEQ ED1                ; If we call the routine at EDGES-2, this checks whether
+                        ; the argument in A is zero, and if it is, it jumps to
+                        ; ED1 to return the C flag set
 
 .EDGES
 
@@ -9055,11 +9493,14 @@ ENDIF
  LDA YY+1               ; And then subtracting the high bytes
  SBC #0
 
- BNE ED3                ; If the high byte subtraction is non-zero, then skip
-                        ; to ED3
+ BNE ED3                ; If the high byte of the subtraction is non-zero, then
+                        ; jump to ED3 to return a failure if the subtraction has
+                        ; taken us off the left edge of the screen
 
- LDA X1                 ; ???
- CMP X2
+ LDA X1                 ; Set the C flag if X1 >= X2, clear it if X1 < X2
+ CMP X2                 ;
+                        ; So this sets the C flag if the line doesn't fit on
+                        ; the screen
 
  RTS                    ; Return from the subroutine
 
@@ -9068,7 +9509,7 @@ ENDIF
 ;       Name: DrawSunEdgeLeft
 ;       Type: Subroutine
 ;   Category: Drawing suns
-;    Summary: Draw part of the left edge of the sun
+;    Summary: Draw the tile on the left end of a sun row
 ;
 ; ******************************************************************************
 
@@ -9079,7 +9520,7 @@ ENDIF
  EOR #$FF
  SEC
  ADC YY
- STA XX15
+ STA X1
  LDA YY+1
  ADC #$FF
  BEQ CB04D
@@ -9091,7 +9532,7 @@ ENDIF
 
 .CB04D
 
- LDA XX15
+ LDA X1
  CMP X2
  BCS CB04C
  JMP HLOIN
@@ -9099,7 +9540,7 @@ ENDIF
 .CB056
 
  LDA #0
- STA XX15
+ STA X1
  JMP HLOIN
 
 ; ******************************************************************************
@@ -9107,7 +9548,7 @@ ENDIF
 ;       Name: DrawSunEdgeRight
 ;       Type: Subroutine
 ;   Category: Drawing suns
-;    Summary: Draw part of the right edge of the sun
+;    Summary: Draw the tile on the right end of a sun row
 ;
 ; ******************************************************************************
 
@@ -9122,7 +9563,7 @@ ENDIF
  BMI CB04C
  LDA #$FD
  STA X2
- CMP XX15
+ CMP X1
  BEQ CB04C
  BCC CB04C
  JMP HLOIN

@@ -4721,8 +4721,10 @@ ENDIF
  LDY #$14
  STY NOSTM
  STY RAND+1
- LDA frameCounter
- STA RAND
+
+ LDA frameCounter       ; Set the random number seed to a fairly random state
+ STA RAND               ; that's based on the frame counter (which increments
+                        ; every VBlank, so will be pretty random)
 
 .CA5C5
 
