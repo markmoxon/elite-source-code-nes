@@ -8007,7 +8007,7 @@ ENDIF
 ;       Name: SUN (Part 1 of 2)
 ;       Type: Subroutine
 ;   Category: Drawing suns
-;    Summary: Set up all the variables needed to draw the sun
+;    Summary: Draw the sun: Set up all the variables needed to draw the sun
 ;  Deep dive: Drawing the sun
 ;
 ; ------------------------------------------------------------------------------
@@ -8204,7 +8204,8 @@ ENDIF
 ;       Name: SUN (Part 2 of 2)
 ;       Type: Subroutine
 ;   Category: Drawing suns
-;    Summary: Draw the new sun
+;    Summary: Draw the sun: Starting from the bottom of the sun, draw the new
+;             sun line by line
 ;  Deep dive: Drawing the sun
 ;
 ; ------------------------------------------------------------------------------
@@ -8780,11 +8781,10 @@ ENDIF
 
  CMP #248               ; If A >= 248 then we only have room for one block on
  BCS dsun36             ; this row, and it's at the right edge of the screen,
-                        ; so jump to dsun36 to skip the following two
-                        ; instructions and just draw the tile at the ??? end of
-                        ; the row
+                        ; so jump to dsun36 to skip the right and middle tiles
+                        ; and just draw the tile at the left end of the row
 
- JSR dsun47             ; Call dsun47 to draw the tile at the ??? end of this
+ JSR dsun47             ; Call dsun47 to draw the tile at the right end of this
                         ; tile row
 
  JSR DrawSunRowOfBlocks ; Draw the tiles containing the horizontal line (P, Y)
@@ -8793,7 +8793,7 @@ ENDIF
 
 .dsun36
 
- JMP dsun46             ; Jump to dsun46 to draw the tile at the ??? end of this
+ JMP dsun46             ; Jump to dsun46 to draw the tile at the left end of this
                         ; tile row, returning from the subroutine using a tail
                         ; call as we have now drawn the middle of the row, plus
                         ; both ends
@@ -8993,14 +8993,14 @@ ENDIF
 .dsun46
 
                         ; If we get here then we need to draw the tile at the
-                        ; left end of the current tile row ???
+                        ; left end of the current tile row
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDX P                  ; Set X to P, the x-coordinate of the left end of middle
-                        ; part of the sun row (so this is one block to the right
-                        ; of the leftmost tile)
+ LDX P                  ; Set X to P, the x-coordinate of the left end of the
+                        ; middle part of the sun row (which is the same as the
+                        ; x-coordinate just to the right of the leftmost tile)
 
  BEQ dsun45             ; If X = 0 then the leftmost tile is off the left of the
                         ; screen, so jump to dsun45 to return from the
@@ -9011,32 +9011,51 @@ ENDIF
  ADC #7                 ; We draw the lines from row 7 up the screen to row 0,
  TAY                    ; so this sets Y to the pixel y-coordinate of row 7
 
- LDA sunWidth7          ; Draw a pixel byte at the left end of the row
- JSR DrawSunEdgeLeft
+ LDA sunWidth7          ; Draw a pixel byte for the left edge of the sun at the
+ JSR DrawSunEdgeLeft    ; left end of pixel row 7
 
  DEY                    ; Decrement the pixel y-coordinate in Y to row 6 in the
                         ; tile row
 
- LDA sunWidth6
- JSR DrawSunEdgeLeft
- DEY
- LDA sunWidth5
- JSR DrawSunEdgeLeft
- DEY
- LDA sunWidth4
- JSR DrawSunEdgeLeft
- DEY
- LDA sunWidth3
- JSR DrawSunEdgeLeft
- DEY
- LDA sunWidth2
- JSR DrawSunEdgeLeft
- DEY
- LDA sunWidth1
- JSR DrawSunEdgeLeft
- DEY
- LDA sunWidth0
- JMP DrawSunEdgeLeft
+ LDA sunWidth6          ; Draw a pixel byte for the left edge of the sun at the
+ JSR DrawSunEdgeLeft    ; left end of pixel row 6
+
+ DEY                    ; Decrement the pixel y-coordinate in Y to row 5 in the
+                        ; tile row
+
+ LDA sunWidth5          ; Draw a pixel byte for the left edge of the sun at the
+ JSR DrawSunEdgeLeft    ; left end of pixel row 5
+
+ DEY                    ; Decrement the pixel y-coordinate in Y to row 4 in the
+                        ; tile row
+
+ LDA sunWidth4          ; Draw a pixel byte for the left edge of the sun at the
+ JSR DrawSunEdgeLeft    ; left end of pixel row 4
+
+ DEY                    ; Decrement the pixel y-coordinate in Y to row 3 in the
+                        ; tile row
+
+ LDA sunWidth3          ; Draw a pixel byte for the left edge of the sun at the
+ JSR DrawSunEdgeLeft    ; left end of pixel row 3
+
+ DEY                    ; Decrement the pixel y-coordinate in Y to row 2 in the
+                        ; tile row
+
+ LDA sunWidth2          ; Draw a pixel byte for the left edge of the sun at the
+ JSR DrawSunEdgeLeft    ; left end of pixel row 2
+
+ DEY                    ; Decrement the pixel y-coordinate in Y to row 1 in the
+                        ; tile row
+
+ LDA sunWidth1          ; Draw a pixel byte for the left edge of the sun at the
+ JSR DrawSunEdgeLeft    ; left end of pixel row 1
+
+ DEY                    ; Decrement the pixel y-coordinate in Y to row 0 in the
+                        ; tile row
+
+ LDA sunWidth0          ; Draw a pixel byte for the left edge of the sun at the
+ JMP DrawSunEdgeLeft    ; left end of pixel row 0 and return from the subroutine
+                        ; using a tail call
 
 .dsun47
 
@@ -9046,44 +9065,75 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDX P+1
- STX X1
+ LDX P+1                ; Set X1 to P+1, the x-coordinate of the right end of
+ STX X1                 ; the middle part of the sun row (which is the same as
+                        ; x-coordinate of the left end of the rightmost tile)
 
- TYA
- CLC
- ADC #7
- TAY
+ TYA                    ; Set Y = Y + 7
+ CLC                    ;
+ ADC #7                 ; We draw the lines from row 7 up the screen to row 0,
+ TAY                    ; so this sets Y to the pixel y-coordinate of row 7
 
- LDA sunWidth7
- JSR DrawSunEdgeRight
- DEY
- LDA sunWidth6
- JSR DrawSunEdgeRight
- DEY
- LDA sunWidth5
- JSR DrawSunEdgeRight
- DEY
- LDA sunWidth4
- JSR DrawSunEdgeRight
- DEY
- LDA sunWidth3
- JSR DrawSunEdgeRight
- DEY
- LDA sunWidth1
- JSR DrawSunEdgeRight
- DEY
- LDA sunWidth1
- JSR DrawSunEdgeRight
- DEY
- LDA sunWidth0
- JMP DrawSunEdgeRight
+ LDA sunWidth7          ; Draw a pixel byte for the right edge of the sun at the
+ JSR DrawSunEdgeRight   ; right end of pixel row 7
+
+ DEY                    ; Decrement the pixel y-coordinate in Y to row 6 in the
+                        ; tile row
+
+ LDA sunWidth6          ; Draw a pixel byte for the right edge of the sun at the
+ JSR DrawSunEdgeRight   ; right end of pixel row 6
+
+ DEY                    ; Decrement the pixel y-coordinate in Y to row 5 in the
+                        ; tile row
+
+ LDA sunWidth5          ; Draw a pixel byte for the right edge of the sun at the
+ JSR DrawSunEdgeRight   ; right end of pixel row 5
+
+ DEY                    ; Decrement the pixel y-coordinate in Y to row 4 in the
+                        ; tile row
+
+ LDA sunWidth4          ; Draw a pixel byte for the right edge of the sun at the
+ JSR DrawSunEdgeRight   ; right end of pixel row 4
+
+ DEY                    ; Decrement the pixel y-coordinate in Y to row 3 in the
+                        ; tile row
+
+ LDA sunWidth3          ; Draw a pixel byte for the right edge of the sun at the
+ JSR DrawSunEdgeRight   ; right end of pixel row 3
+
+ DEY                    ; Decrement the pixel y-coordinate in Y to row 2 in the
+                        ; tile row
+
+ LDA sunWidth1          ; Draw a pixel byte for the right edge of the sun at the
+ JSR DrawSunEdgeRight   ; right end of pixel row 2
+                        ;
+                        ; This appears to be a bug (though one you would be
+                        ; hard-pressed to detect from looking at the screen), as
+                        ; we should probably be loading sunWidth2 here, not
+                        ; sunWidth1
+                        ;
+                        ; As it stands, on each tile row of the sun, the right
+                        ; edge always has matching lines on pixel rows 1 and 2
+
+ DEY                    ; Decrement the pixel y-coordinate in Y to row 1 in the
+                        ; tile row
+
+ LDA sunWidth1          ; Draw a pixel byte for the right edge of the sun at the
+ JSR DrawSunEdgeRight   ; right end of pixel row 1
+
+ DEY                    ; Decrement the pixel y-coordinate in Y to row 0 in the
+                        ; tile row
+
+ LDA sunWidth0          ; Draw a pixel byte for the right edge of the sun at the
+ JMP DrawSunEdgeRight   ; right end of pixel row 0 and return from the subroutine
+                        ; using a tail call
 
 ; ******************************************************************************
 ;
 ;       Name: PLFL
 ;       Type: Subroutine
 ;   Category: Drawing suns
-;    Summary: Draw the sun: ???
+;    Summary: Calculate the sun's width on a given pixel row
 ;  Deep dive: Drawing the sun
 ;
 ; ------------------------------------------------------------------------------
@@ -9413,8 +9463,6 @@ ENDIF
 ;
 ;   X1, X2              The x-coordinates of the clipped line
 ;
-;   LSO+Y               If the line doesn't fit, LSO+Y is set to 0
-;
 ;   Y                   Y is preserved
 ;
 ; Other entry points:
@@ -9509,38 +9557,79 @@ ENDIF
 ;       Name: DrawSunEdgeLeft
 ;       Type: Subroutine
 ;   Category: Drawing suns
-;    Summary: Draw the tile on the left end of a sun row
+;    Summary: Draw a sun line in the tile on the left end of a sun row
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The half-width of the sun line
+;
+;   Y                   The number of the pixel row of the sun line within the
+;                       tile row (0-7)
+;
+;   P                   The pixel x-coordinate of the start of the middle
+;                       section of the sun line (i.e. the x-coordinate just to
+;                       the right of the leftmost tile)
+;
+;   YY(1 0)             The centre x-coordinate of the sun
+;
+; Other entry points:
+;
+;   RTS7                Contains an RTS
+;
+;   DrawSunEdge         Draw a sun line from (X1, Y) to (X2, Y) 
 ;
 ; ******************************************************************************
 
 .DrawSunEdgeLeft
 
- LDX P                  ; ???
- STX X2
- EOR #$FF
- SEC
- ADC YY
- STA X1
+ LDX P                  ; Set X2 to P, which contains the x-coordinate just to
+ STX X2                 ; the right of the leftmost tile
+                        ;
+                        ; We can use this as the x-coordinate of the right end
+                        ; of the line that we want to draw in the leftmost tile
+
+ EOR #$FF               ; Use two's complement to set X1 = YY(1 0) - A
+ SEC                    ;
+ ADC YY                 ; So X1 contains the x-coordinate of the left end of the
+ STA X1                 ; sun line
  LDA YY+1
  ADC #$FF
- BEQ CB04D
- BMI CB056
 
-.CB04C
+ BEQ DrawSunEdge        ; If the high byte of the result is zero, then the left
+                        ; end of the line is on-screen, so jump to DrawSunEdge
+                        ; to draw the sun line from (X1, Y) to (X2, Y)
 
- RTS
+ BMI sunl1              ; If the high byte of the result is negative, then the
+                        ; left end of the line is off the left edge of the
+                        ; screen, so jump to sunl1 to draw a clipped sun line
+                        ; from (0, Y) to (X2, Y)
 
-.CB04D
+                        ; Otherwise the line is off-screen, so return from the
+                        ; subroutine without drawing anything
 
- LDA X1
- CMP X2
- BCS CB04C
- JMP HLOIN
+.RTS7
 
-.CB056
+ RTS                    ; Return from the subroutine
 
- LDA #0
- STA X1
+.DrawSunEdge
+
+ LDA X1                 ; If X1 >= X2 then the left end of the line is to the
+ CMP X2                 ; right of the right end of the line, so these are not
+ BCS RTS7               ; valid line coordinates and we jump to RTS7 to return
+                        ; from the subroutine without drawing anything
+
+ JMP HLOIN              ; Otherwise draw the sun line from (X1, Y) to (X2, Y)
+                        ; and return from the subroutine using a tail call
+
+.sunl1
+
+                        ; If we get here then we need to clip the left end of
+                        ; the line to fit on-screen
+
+ LDA #0                 ; Draw a clipped the sun line from (0, Y) to (X2, Y)
+ STA X1                 ; and return from the subroutine using a tail call
  JMP HLOIN
 
 ; ******************************************************************************
@@ -9548,25 +9637,60 @@ ENDIF
 ;       Name: DrawSunEdgeRight
 ;       Type: Subroutine
 ;   Category: Drawing suns
-;    Summary: Draw the tile on the right end of a sun row
+;    Summary: Draw a sun line in the tile on the right end of a sun row
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The half-width of the sun line
+;
+;   Y                   The number of the pixel row of the sun line within the
+;                       tile row (0-7)
+;
+;   X1                  The pixel x-coordinate of the rightmost tile on the sun
+;                       line
+;
+;   YY(1 0)             The centre x-coordinate of the sun
 ;
 ; ******************************************************************************
 
 .DrawSunEdgeRight
 
- CLC                    ; ???
- ADC YY
- STA X2
- LDA YY+1
+ CLC                    ; Set X1 = YY(1 0) + A
+ ADC YY                 ;
+ STA X2                 ; So X2 contains the x-coordinate of the right end of
+ LDA YY+1               ; the sun line
  ADC #0
- BEQ CB04D
- BMI CB04C
- LDA #$FD
- STA X2
- CMP X1
- BEQ CB04C
- BCC CB04C
- JMP HLOIN
+
+                        ; X1 is already set to the x-coordinate of the rightmost
+                        ; tile, so the line we need to draw is from (X1, Y) to
+                        ; (X2, Y)
+
+ BEQ DrawSunEdge        ; If the high byte of the result is zero, then the right
+                        ; end of the line is on-screen, so jump to DrawSunEdge
+                        ; to draw the sun line from (X1, Y) to (X2, Y)
+
+ BMI RTS7               ; If the high byte of the result is negative, then the
+                        ; right end of the line is off the left edge of the
+                        ; screen, so the line is not on-screen and we jump to
+                        ; RTS7 to return from the subroutine (as RTS7 contains
+                        ; an RTS)
+
+                        ; If we get here then the right end of the line is past
+                        ; the right edge of the screen, so we need to clip the
+                        ; right end of the line to fit on-screen
+
+ LDA #253               ; Set X2 = 253 so the line is clipped to the right edge
+ STA X2                 ; of the screen
+
+ CMP X1                 ; If X2 <= X1 then the right end of the line is to the
+ BEQ RTS7               ; left of the left end of the line, so these are not
+ BCC RTS7               ; valid line coordinates and we jump to RTS7 to return
+                        ; from the subroutine without drawing anything
+
+ JMP HLOIN              ; Otherwise draw the sun line from (X1, Y) to (X2, Y)
+                        ; and return from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
