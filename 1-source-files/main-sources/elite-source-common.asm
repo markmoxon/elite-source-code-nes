@@ -3601,9 +3601,11 @@ ORG $0200
 
  SKIP 1                 ; ???
 
-.L03E9
+.priceDebug
 
- SKIP 1                 ; ??? Unused?
+ SKIP 1                 ; This is only referenced by some disabled test code in
+                        ; the prx routine, where it was presumably used for
+                        ; testing different equipment prices
 
 .DAMP
 

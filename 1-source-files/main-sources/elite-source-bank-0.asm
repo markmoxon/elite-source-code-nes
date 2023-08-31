@@ -12866,7 +12866,16 @@ ENDIF
 
  STA XX13
 
-.CA466
+; ******************************************************************************
+;
+;       Name: subm_A466
+;       Type: Subroutine
+;   Category: Equipment
+;    Summary: ???
+;
+; ******************************************************************************
+
+.subm_A466
 
  JSR subm_EQSHP2
 
@@ -12879,7 +12888,7 @@ ENDIF
                         ; sent to the PPU, so the screen is fully updated and
                         ; there is no more data waiting to be sent to the PPU
 
- JMP CA4DB
+ JMP equi1
 
 ; ******************************************************************************
 ;
@@ -12908,7 +12917,7 @@ ENDIF
 
  STA XX13
 
- JMP CA466
+ JMP subm_A466
 
 ; ******************************************************************************
 ;
@@ -12946,6 +12955,8 @@ ENDIF
 ;                       present, refund the cost of the item, and then beep and
 ;                       exit to the docking bay (i.e. show the Status Mode
 ;                       screen)
+;
+;   equi1               ???
 ;
 ; ******************************************************************************
 
@@ -13004,42 +13015,44 @@ ENDIF
  STX XX13
 
  JSR subm_EQSHP2
- JSR dn
+
+ JSR dn                 ; Print the amount of money we have left in the cash pot
 
  JSR SetScreenForUpdate ; Get the screen ready for updating by hiding all
                         ; sprites, after fading the screen to black if we are
                         ; changing view
 
- JSR DrawCobraMkIII     ; ???
+ JSR DrawCobraMkIII     ; Draw the Cobra Mk III that we embellish with our fitted
+                        ; equipment
 
  JSR UpdateView         ; Update the view
 
-.CA4DB
+.equi1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDA controller1Up      ; ???
- BPL CA4F0
+ BPL equi2
  JMP subm_EQSHP4
 
-.CA4F0
+.equi2
 
  LDA controller1Down
- BPL CA4F8
+ BPL equi3
  JMP subm_EQSHP5
 
-.CA4F8
+.equi3
 
  LDA controller1A
- BMI CA508
+ BMI equi4
  LDA pointerButton
- BEQ CA4DB
+ BEQ equi1
  JSR CheckForPause
- BCS CA4DB
+ BCS equi1
  RTS
 
-.CA508
+.equi4
 
  JSR UpdateSaveCount    ; Update the save counter for the current commander
 
@@ -13049,15 +13062,15 @@ ENDIF
 
  PHA                    ; While preserving the value in A, call eq to subtract
  JSR eq                 ; the price of the item we want to buy (which is in A)
- BCS CA51D              ; from our cash pot, but only if we have enough cash in
+ BCS equi5              ; from our cash pot, but only if we have enough cash in
  PLA                    ; the pot. If we don't have enough cash, exit to the
                         ; docking bay (i.e. show the Status Mode screen) ???
 
  JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen
 
- JMP CA4DB              ; ???
+ JMP equi1              ; ???
 
-.CA51D
+.equi5
 
  PLA
 
@@ -13069,12 +13082,12 @@ ENDIF
  CLC
  ADC #1
  CMP #$47
- BCC CA531
+ BCC equi6
  LDY #$69
  PLA
  JMP pres
 
-.CA531
+.equi6
 
  STA QQ14
  PLA
@@ -13235,28 +13248,30 @@ ENDIF
  LDA #$11
  STA YC
 
-.loop_CA5C5
+.equi7
 
  JSR TT162
  LDA XC
  CMP #$1F
- BNE loop_CA5C5
- JSR dn
+ BNE equi7
+
+ JSR dn                 ; Print the amount of money we have left in the cash pot
 
  JSR DrawEquipment_b6   ; Draw the currently fitted equipment onto the Cobra Mk
                         ; III image
 
  JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen
 
- JMP CA4DB              ; ???
+ JMP equi1              ; ???
 
-.presS
+.equi8
 
- JMP pres
+ JMP pres               ; Jump to pres to show an error, beep and exit to the
+                        ; docking bay (i.e. show the Status Mode screen)
 
  JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen
 
- JMP CA4DB              ; ???
+ JMP equi1              ; ???
 
 .ed9
 
@@ -13301,9 +13316,9 @@ ENDIF
  BNE etA                ; an energy unit), skip to etA
 
  LDX ENGY               ; If we already have an energy unit fitted (i.e. ENGY is
- BNE presS              ; non-zero), jump to presS to show the error "Energy
-                        ; Unit Present", beep and exit to the docking bay
-                        ; (i.e. show the Status Mode screen)
+ BNE equi8              ; non-zero), jump to pres via equi8 to show the error
+                        ; "Energy Unit Present", beep and exit to the docking
+                        ; bay (i.e. show the Status Mode screen)
 
  INC ENGY               ; Otherwise we just picked up an energy unit, so set
                         ; ENGY to 1 (as ENGY was 0 before the INC instruction)
@@ -13317,8 +13332,8 @@ ENDIF
  BNE etB                ; a docking computer), skip to etB
 
  LDX DKCMP              ; If we already have a docking computer fitted (i.e.
- BNE presS              ; DKCMP is non-zero), jump to presS to show the error
-                        ; "Docking Computer Present", beep and exit to the
+ BNE equi8              ; DKCMP is non-zero), jump to pres via equi8 to show the
+                        ; error "Docking Computer Present", beep and exit to the
                         ; docking bay (i.e. show the Status Mode screen)
 
  DEC DKCMP              ; Otherwise we just got hold of a docking computer, so
@@ -13334,9 +13349,9 @@ ENDIF
  BNE et9                ; a galactic hyperdrive), skip to et9
 
  LDX GHYP               ; If we already have a galactic hyperdrive fitted (i.e.
- BNE presS              ; GHYP is non-zero), jump to presS to show the error
-                        ; "Galactic Hyperspace Present", beep and exit to the
-                        ; docking bay (i.e. show the Status Mode screen)
+ BNE equi8              ; GHYP is non-zero), jump to pres via equi8 to show the
+                        ; error "Galactic Hyperspace Present", beep and exit to
+                        ; the docking bay (i.e. show the Status Mode screen)
 
  DEC GHYP               ; Otherwise we just splashed out on a galactic
                         ; hyperdrive, so set GHYP to $FF (as GHYP was 0 before
@@ -13380,29 +13395,25 @@ ENDIF
 
 .et11
 
- JSR CA649              ; ???
- JMP CA466
+ JSR equi9              ; ???
 
-.CA649
+ JMP subm_A466
+
+.equi9
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- JSR dn                 ; ???
+ JSR dn                 ; Print the amount of money we have left in the cash pot
 
- JMP BEEP_b7
+ JMP BEEP_b7            ; ???
 
 ; ******************************************************************************
 ;
 ;       Name: dn
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Print the amount of cash and beep
-;
-; ------------------------------------------------------------------------------
-;
-; Print the amount of money in the cash pot, then make a short, high beep and
-; delay for 1 second.
+;    Summary: Print the amount of money we have left in the cash pot
 ;
 ; ******************************************************************************
 
@@ -13463,20 +13474,20 @@ ENDIF
 
  LDY #20                ; We now print 21 spaces, so set a counter in Y
 
-.loop_CA681
+.eqeq1
 
  JSR TT162              ; Print a space
 
  DEY                    ; Decrement the loop counter
 
- BPL loop_CA681         ; Loop back until we have printed 21 spaces
+ BPL eqeq1              ; Loop back until we have printed 21 spaces
 
  JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen
 
  LDY #40                ; Delay for 40 vertical syncs (40/50 = 0.8 seconds)
  JSR DELAY
 
- JSR dn                 ; ???
+ JSR dn                 ; Print the amount of money we have left in the cash pot
 
  CLC                    ; Clear the C flag to indicate that we didn't make the
                         ; purchase
@@ -13528,21 +13539,10 @@ ENDIF
 
  RTS                    ; Return from the subroutine
 
-; ******************************************************************************
-;
-;       Name: subm_A6A1
-;       Type: Subroutine
-;   Category: Equipment
-;    Summary: ??? Unused, could be a test run-off from prx for fixing prices?
-;
-; ******************************************************************************
-
-.subm_A6A1
-
- LDX L03E9
- LDA #0
- TAY
- RTS
+ LDX priceDebug         ; This code is never run, but it looks like it might
+ LDA #0                 ; have been used to override the price of equipment
+ TAY                    ; during testing, as it sets (Y X) to (0 priceDebug)
+ RTS                    ; before returning from the subroutine
 
 ; ******************************************************************************
 ;
@@ -13567,11 +13567,11 @@ ENDIF
 
  LDA languageNumber
  AND #%00000110
- BNE CA6C0
+ BNE lasv1
 
  JSR TT162              ; Print a space
 
-.CA6C0
+.lasv1
 
  PLA
  PHA
@@ -13579,14 +13579,14 @@ ENDIF
  ADC #$60
  JSR TT27_b2
 
-.loop_CA6C8
+.lasv2
 
  JSR TT162              ; Print a space
 
  LDA XC
  LDX languageIndex
  CMP xLaserView,X
- BNE loop_CA6C8
+ BNE lasv2
  PLA
  TAY
  RTS
@@ -19604,6 +19604,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Text
 ;    Summary: Centre a message on-screen ???
+;
 ; ******************************************************************************
 
 .subm_B7F2

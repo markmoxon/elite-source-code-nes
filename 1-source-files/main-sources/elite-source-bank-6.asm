@@ -4360,158 +4360,544 @@ ENDIF
 ;       Name: SetEquipmentSprite
 ;       Type: Subroutine
 ;   Category: Equipment
-;    Summary: Set up a sprite for a specific bit of equipment to show on our
-;             Cobra Mk III on the Equip Ship screen
+;    Summary: Set up the sprites in the sprite buffer for a specific bit of
+;             equipment to show on our Cobra Mk III on the Equip Ship screen
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The number of sprites to set up for the equipment
+;
+;   Y                   The offset into the equipSprites table where we can find
+;                       the data for the first sprite to set up for this piece
+;                       of equipment (i.e. the equipment sprite number * 4)
 ;
 ; ******************************************************************************
 
 .SetEquipmentSprite
 
- LDA #0
+ LDA #0                 ; Set A = 0 to set as the laser offset in SetLaserSprite
+                        ; so we just draw the equipment's sprites
+
+                        ; Fall through into SetLaserSprite to draw the sprites
+                        ; for the equipment specified in Y
 
 ; ******************************************************************************
 ;
 ;       Name: SetLaserSprite
 ;       Type: Subroutine
 ;   Category: Equipment
-;    Summary: Set up a sprite for a specific laser to show on our Cobra Mk III
-;             on the Equip Ship screen
+;    Summary: Set up the sprites in the sprite buffer for a specific laser to
+;             show on our Cobra Mk III on the Equip Ship screen
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The pattern number for the first sprite for this type of
+;                       laser, minus 0:
+;
+;                           * 0 (for pattern 140) for the mining laser
+;
+;                           * 4 (for pattern 144) for the beam laser
+;
+;                           * 8 (for pattern 148) for the pulse laser
+;
+;                           * 12 (for pattern 152) for the military laser
+;
+;                       This routine is used to set up equipment sprites for all
+;                       types of equipment, so this should be set to 0 for
+;                       setting up non-laser sprites
+;
+;   X                   The number of sprites to set up for the equipment
+;
+;   Y                   The offset into the equipSprites table where we can find
+;                       the data for the first sprite to set up for this piece
+;                       of equipment (i.e. the equipment sprite number * 4)
 ;
 ; ******************************************************************************
 
 .SetLaserSprite
 
- STA V
- STX V+1
+ STA V                  ; Set V to the sprite offset (which is only used for
+                        ; laser sprites)
 
-.CA3A5
+ STX V+1                ; Set V+1 to the number of sprites to set up
 
- LDA equipSprites+3,Y
- AND #$FC
- TAX
- LDA equipSprites+3,Y
- AND #3
- STA T
- LDA equipSprites,Y
- AND #$C0
- ORA T
- STA attrSprite0,X
- LDA equipSprites,Y
- AND #$3F
- CLC
- ADC #$8C
- ADC V
- STA tileSprite0,X
- LDA equipSprites+1,Y
- STA xSprite0,X
- LDA equipSprites+2,Y
- STA ySprite0,X
+.slas1
+
+ LDA equipSprites+3,Y   ; Extract the offset into the sprite buffer of the
+ AND #%11111100         ; sprite we need to set up, which is in bits 2 to 7 of
+ TAX                    ; byte #3 for this piece of equipment in the
+                        ; equipSprites table, and store it in X
+                        ;
+                        ; Because bits 0 and 1 are cleared, the offset is a
+                        ; multiple of four, which means we can use X as an
+                        ; index into the sprite buffer as each sprite in the
+                        ; sprite buffer takes up four bytes
+                        ;
+                        ; In other words, to set up this sprite in the sprite
+                        ; buffer, we need to write the sprite's configuration
+                        ; into xSprite0 + X, ySprite0 + X, tileSprite0 + X and
+                        ; attrSprite0 + X
+
+ LDA equipSprites+3,Y   ; Extract the palette number to use for this sprite,
+ AND #%00000011         ; which is in bits 0 to 1 of byte #3 for this piece of
+ STA T                  ; equipment in the equipSprites table
+
+ LDA equipSprites,Y     ; Extract the vertical and horizontal flip flags from
+ AND #%11000000         ; bits 7 and 6 of byte #0 for this piece of equipment
+                        ; in the equipSprites table, into A
+
+ ORA T                  ; Set bits 0 and 1 of A to the palette number that we
+                        ; extracted into T above
+
+ STA attrSprite0,X      ; Set the attributes for our sprite as follows:
+                        ;
+                        ;     * Bits 0-1 = sprite palette in T
+                        ;     * Bit 5 clear = show in front of background
+                        ;     * Bit 6 = bit 6 from byte #3 in equipSprites
+                        ;     * Bit 7 = bit 7 from byte #3 in equipSprites
+                        ;
+                        ; So the sprite's attributes are set correctly
+
+ LDA equipSprites,Y     ; Extract the sprite's tile pattern number from bits 0
+ AND #%00111111         ; to 5 of byte #0 for this piece of equipment in the
+ CLC                    ; equipSprites table and add 140
+ ADC #140
+
+ ADC V                  ; If this is a laser sprite then V will be the offset
+                        ; that we add to 140 to get the correct pattern for the
+                        ; specific laser type, so we also add this to A (if this
+                        ; is not a laser then V will be 0)
+
+ STA tileSprite0,X      ; Set the tile pattern number for our sprite to the
+                        ; result in A
+
+ LDA equipSprites+1,Y   ; Set our sprite's x-coordinate to byte #1 for this
+ STA xSprite0,X         ; piece of equipment in the equipSprites table
+
+ LDA equipSprites+2,Y   ; Set our sprite's y-coordinate to byte #2 for this
+ STA ySprite0,X         ; piece of equipment in the equipSprites table
+
+ INY                    ; Increment the index in Y to point to the next entry
+ INY                    ; in the equipSprites table, in case there are any more
+ INY                    ; sprites to set up
  INY
- INY
- INY
- INY
- DEC V+1
- BNE CA3A5
- RTS
+
+ DEC V+1                ; Decrement the sprite counter in V+1
+
+ BNE slas1              ; Loop back to set up the next sprite until we have set
+                        ; up V+1 sprites for this piece of equipment
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: GetLaserSprite
+;       Name: GetLaserPattern
 ;       Type: Subroutine
 ;   Category: Equipment
-;    Summary: Calculate the offset into the equipSprites table for a specific
-;             laser's sprite
+;    Summary: Get the pattern number for a specific laser's equipment sprite
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The laser power
+;
+; Returns:
+;
+;   A                   The pattern number for the first sprite for this type of
+;                       laser, minus 140, so we return:
+;
+;                           * 0 (for pattern 140) for the mining laser
+;
+;                           * 4 (for pattern 144) for the beam laser
+;
+;                           * 8 (for pattern 148) for the pulse laser
+;
+;                           * 12 (for pattern 152) for the military laser
 ;
 ; ******************************************************************************
 
-.GetLaserSprite
+.GetLaserPattern
 
- LDA #0
- CPX #$97
- BEQ CA3F2
- CPX #$8F
- BEQ CA3EF
- CPX #$32
- BNE CA3EE
- LDA #8
+ LDA #0                 ; Set A to the return value for pattern 140 (for the
+                        ; mining laser)
 
-.CA3EE
+ CPX #Armlas            ; If the laser power in X is equal to a military laser,
+ BEQ glsp3              ; jump to glsp3 to the return value for pattern 152
 
- RTS
+ CPX #POW+128           ; If the laser power in X is equal to a beam laser,
+ BEQ glsp2              ; jump to glsp2 to the return value for pattern 144
 
-.CA3EF
+ CPX #Mlas              ; If the laser power in X is equal to a mining laser,
+ BNE glsp1              ; jump to glsp2 to the return value for pattern 140
 
- LDA #4
- RTS
+ LDA #8                 ; If we get here then this must be a pulse laser, so
+                        ; set A to the return value for pattern 148
 
-.CA3F2
+.glsp1
 
- LDA #$0C
- RTS
+ RTS                    ; Return from the subroutine
+
+.glsp2
+
+ LDA #4                 ; This is a beam laser, so set A to the return value for
+                        ; pattern 145
+
+ RTS                    ; Return from the subroutine
+
+.glsp3
+
+ LDA #12                ; This is a military laser, so set A to the return value
+                        ; for pattern 152
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: equipSprites
 ;       Type: Variable
 ;   Category: Equipment
-;    Summary: Lookup table for the sprites that show the equipment fitted to our
-;             Cobra Mk III on the Equip Ship screen
+;    Summary: Sprite configuration data for the sprites that show the equipment
+;             fitted to our Cobra Mk III on the Equip Ship screen
+;
+; ------------------------------------------------------------------------------
+;
+; Each equipment sprite is described by four entries in the table, as follows:
+;
+;   * Byte #0: %vhyyyyyy, where:
+;
+;       * %v is the vertical flip flag (0 = no flip, 1 = flip vertically)
+;
+;       * %h is the horizontal flip flag (0 = no flip, 1 = flip horizontally)
+;
+;       * %yyyyyy is the sprite's tile pattern number, which is added to 140 to
+;         give the final pattern number
+;
+;   * Byte #1: Pixel x-coordinate of the sprite's position on the Cobra Mk III
+;
+;   * Byte #2: Pixel y-coordinate of the sprite's position on the Cobra Mk III
+;
+;   * Byte #3: %xxxxxxyy, where:
+;
+;       * %xxxxxx00 is the offset of the sprite to use in the sprite buffer
+;
+;       * %yy is the sprite palette (0 to 3)
 ;
 ; ******************************************************************************
 
 .equipSprites
 
-IF _NTSC
+                        ; Equipment sprite 0: E.C.M. (1 of 3)
 
- EQUB $1F, $55, $B6, $14, $20, $9C, $9C, $18
- EQUB $21, $9C, $A4, $1C, $07, $44, $A1, $20
- EQUB $0A, $AB, $AC, $24, $09, $14, $C6, $28
- EQUB $09, $7C, $AA, $2C, $49, $74, $C6, $30
- EQUB $49, $DC, $AA, $34, $87, $44, $CE, $74
- EQUB $15, $10, $C6, $28, $15, $79, $AA, $2C
- EQUB $55, $76, $C6, $30, $55, $DE, $AA, $34
- EQUB $1E, $A7, $B9, $3D, $5E, $AF, $B9, $41
- EQUB $1A, $4F, $C4, $AC, $1B, $4F, $C4, $B1
- EQUB $1A, $38, $C4, $44, $1B, $38, $C4, $49
- EQUB $00, $1D, $BB, $4D, $01, $D0, $B0, $51
- EQUB $40, $6C, $BB, $55, $41, $88, $B0, $59
- EQUB $00, $16, $C0, $5D, $01, $D6, $AF, $61
- EQUB $40, $73, $C0, $65, $41, $82, $AF, $69
- EQUB $17, $40, $CE, $6C, $18, $48, $CE, $70
- EQUB $19, $44, $CE, $3A, $02, $99, $B8, $78
- EQUB $42, $BC, $B8, $7C, $1C, $4F, $B2, $80
- EQUB $03, $34, $AC, $84, $04, $3C, $AC, $88
- EQUB $05, $34, $B4, $8C, $06, $3C, $B4, $90
- EQUB $44, $B2, $9C, $94, $43, $BA, $9C, $98
- EQUB $46, $B2, $A4, $9C, $45, $BA, $A4, $A0
- EQUB $1D, $40, $BE, $A6, $5D, $4A, $BE, $AA
+ EQUB %00011111         ; v = 0, h = 0, tile pattern = 31
+ EQUB 85                ; x-coordinate = 85
+ EQUB 182 + YPAL        ; y-coordinate = 182
+ EQUB %00010100         ; sprite number = 5, sprite palette = 0
+                        
+                        ; Equipment sprite 1: E.C.M. (2 of 3)
 
-ELIF _PAL
+ EQUB %00100000         ; v = 0, h = 0, tile pattern = 32
+ EQUB 156               ; x-coordinate = 156
+ EQUB 156 + YPAL        ; y-coordinate = 156
+ EQUB %00011000         ; sprite number = 6, sprite palette = 0
+                        
+                        ; Equipment sprite 2: E.C.M. (3 of 3)
 
- EQUB $1F, $55, $BC, $14, $20, $9C, $A2, $18
- EQUB $21, $9C, $AA, $1C, $07, $44, $A7, $20
- EQUB $0A, $AB, $B2, $24, $09, $14, $CC, $28
- EQUB $09, $7C, $B0, $2C, $49, $74, $CC, $30
- EQUB $49, $DC, $B0, $34, $87, $44, $D4, $74
- EQUB $15, $10, $CC, $28, $15, $79, $B0, $2C
- EQUB $55, $76, $CC, $30, $55, $DE, $B0, $34
- EQUB $1E, $A7, $BF, $3D, $5E, $AF, $BF, $41
- EQUB $1A, $4F, $CA, $AC, $1B, $4F, $CA, $B1
- EQUB $1A, $38, $CA, $44, $1B, $38, $CA, $49
- EQUB $00, $1D, $C1, $4D, $01, $D0, $B6, $51
- EQUB $40, $6C, $C1, $55, $41, $88, $B6, $59
- EQUB $00, $16, $C6, $5D, $01, $D6, $B5, $61
- EQUB $40, $73, $C6, $65, $41, $82, $B5, $69
- EQUB $17, $40, $D4, $6C, $18, $48, $D4, $70
- EQUB $19, $44, $D4, $3A, $02, $99, $BE, $78
- EQUB $42, $BC, $BE, $7C, $1C, $4F, $B8, $80
- EQUB $03, $34, $B2, $84, $04, $3C, $B2, $88
- EQUB $05, $34, $BA, $8C, $06, $3C, $BA, $90
- EQUB $44, $B2, $A2, $94, $43, $BA, $A2, $98
- EQUB $46, $B2, $AA, $9C, $45, $BA, $AA, $A0
- EQUB $1D, $40, $C4, $A6, $5D, $4A, $C4, $AA
+ EQUB %00100001         ; v = 0, h = 0, tile pattern = 33
+ EQUB 156               ; x-coordinate = 156
+ EQUB 164 + YPAL        ; y-coordinate = 164
+ EQUB %00011100         ; sprite number = 7, sprite palette = 0
+                        
+                        ; Equipment sprite 3: Front laser (1 of 2)
 
-ENDIF
+ EQUB %00000111         ; v = 0, h = 0, tile pattern = 7
+ EQUB 68                ; x-coordinate = 68
+ EQUB 161 + YPAL        ; y-coordinate = 161
+ EQUB %00100000         ; sprite number = 8, sprite palette = 0
+                        
+                        ; Equipment sprite 4: Front laser (2 of 2)
+
+ EQUB %00001010         ; v = 0, h = 0, tile pattern = 10
+ EQUB 171               ; x-coordinate = 171
+ EQUB 172 + YPAL        ; y-coordinate = 172
+ EQUB %00100100         ; sprite number = 9, sprite palette = 0
+                        
+                        ; Equipment sprite 5: Left laser (1 of 2), non-military
+
+ EQUB %00001001         ; v = 0, h = 0, tile pattern = 9
+ EQUB 20                ; x-coordinate = 20
+ EQUB 198 + YPAL        ; y-coordinate = 198
+ EQUB %00101000         ; sprite number = 10, sprite palette = 0
+                        
+                        ; Equipment sprite 6: Left laser (2 of 2), non-military
+
+ EQUB %00001001         ; v = 0, h = 0, tile pattern = 9
+ EQUB 124               ; x-coordinate = 124
+ EQUB 170 + YPAL        ; y-coordinate = 170
+ EQUB %00101100         ; sprite number = 11, sprite palette = 0
+                        
+                        ; Equipment sprite 7: Right laser (1 of 2), non-military
+
+ EQUB %01001001         ; v = 0, h = 1, tile pattern = 9
+ EQUB 116               ; x-coordinate = 116
+ EQUB 198 + YPAL        ; y-coordinate = 198
+ EQUB %00110000         ; sprite number = 12, sprite palette = 0
+                        
+                        ; Equipment sprite 8: Right laser (2 of 2), non-military
+
+ EQUB %01001001         ; v = 0, h = 1, tile pattern = 9
+ EQUB 220               ; x-coordinate = 220
+ EQUB 170 + YPAL        ; y-coordinate = 170
+ EQUB %00110100         ; sprite number = 13, sprite palette = 0
+                        
+                        ; Equipment sprite 9: Rear laser (1 of 1)
+
+ EQUB %10000111         ; v = 1, h = 0, tile pattern = 7
+ EQUB 68                ; x-coordinate = 68
+ EQUB 206 + YPAL        ; y-coordinate = 206
+ EQUB %01110100         ; sprite number = 29, sprite palette = 0
+                        
+                        ; Equipment sprite 10: Left military laser (1 of 2)
+
+ EQUB %00010101         ; v = 0, h = 0, tile pattern = 21
+ EQUB 16                ; x-coordinate = 16
+ EQUB 198 + YPAL        ; y-coordinate = 198
+ EQUB %00101000         ; sprite number = 10, sprite palette = 0
+                        
+                        ; Equipment sprite 11: Left military laser (2 of 2)
+
+ EQUB %00010101         ; v = 0, h = 0, tile pattern = 21
+ EQUB 121               ; x-coordinate = 121
+ EQUB 170 + YPAL        ; y-coordinate = 170
+ EQUB %00101100         ; sprite number = 11, sprite palette = 0
+                        
+                        ; Equipment sprite 12: Right military laser (1 of 2)
+
+ EQUB %01010101         ; v = 0, h = 1, tile pattern = 21
+ EQUB 118               ; x-coordinate = 118
+ EQUB 198 + YPAL        ; y-coordinate = 198
+ EQUB %00110000         ; sprite number = 12, sprite palette = 0
+                        
+                        ; Equipment sprite 13: Right military laser (2 of 2)
+
+ EQUB %01010101         ; v = 0, h = 1, tile pattern = 21
+ EQUB 222               ; x-coordinate = 222
+ EQUB 170 + YPAL        ; y-coordinate = 170
+ EQUB %00110100         ; sprite number = 13, sprite palette = 0
+                        
+                        ; Equipment sprite 14: Fuel scoops (1 of 2)
+
+ EQUB %00011110         ; v = 0, h = 0, tile pattern = 30
+ EQUB 167               ; x-coordinate = 167
+ EQUB 185 + YPAL        ; y-coordinate = 185
+ EQUB %00111101         ; sprite number = 15, sprite palette = 1
+                        
+                        ; Equipment sprite 15: Fuel scoops (2 of 2)
+
+ EQUB %01011110         ; v = 0, h = 1, tile pattern = 30
+ EQUB 175               ; x-coordinate = 175
+ EQUB 185 + YPAL        ; y-coordinate = 185
+ EQUB %01000001         ; sprite number = 16, sprite palette = 1
+                        
+                        ; Equipment sprite 16: Naval energy unit (1 of 2)
+
+ EQUB %00011010         ; v = 0, h = 0, tile pattern = 26
+ EQUB 79                ; x-coordinate = 79
+ EQUB 196 + YPAL        ; y-coordinate = 196
+ EQUB %10101100         ; sprite number = 43, sprite palette = 0
+                        
+                        ; Equipment sprite 17: Naval energy unit (2 of 2)
+
+ EQUB %00011011         ; v = 0, h = 0, tile pattern = 27
+ EQUB 79                ; x-coordinate = 79
+ EQUB 196 + YPAL        ; y-coordinate = 196
+ EQUB %10110001         ; sprite number = 44, sprite palette = 1
+                        
+                        ; Equipment sprite 18: Standard energy unit (1 of 2)
+
+ EQUB %00011010         ; v = 0, h = 0, tile pattern = 26
+ EQUB 56                ; x-coordinate = 56
+ EQUB 196 + YPAL        ; y-coordinate = 196
+ EQUB %01000100         ; sprite number = 17, sprite palette = 0
+                        
+                        ; Equipment sprite 19: Standard energy unit (2 of 2)
+
+ EQUB %00011011         ; v = 0, h = 0, tile pattern = 27
+ EQUB 56                ; x-coordinate = 56
+ EQUB 196 + YPAL        ; y-coordinate = 196
+ EQUB %01001001         ; sprite number = 18, sprite palette = 1
+                        
+                        ; Equipment sprite 20: Missile 1 (1 of 2)
+
+ EQUB %00000000         ; v = 0, h = 0, tile pattern = 0
+ EQUB 29                ; x-coordinate = 29
+ EQUB 187 + YPAL        ; y-coordinate = 187
+ EQUB %01001101         ; sprite number = 19, sprite palette = 1
+                        
+                        ; Equipment sprite 21: Missile 1 (2 of 2)
+
+ EQUB %00000001         ; v = 0, h = 0, tile pattern = 1
+ EQUB 208               ; x-coordinate = 208
+ EQUB 176 + YPAL        ; y-coordinate = 176
+ EQUB %01010001         ; sprite number = 20, sprite palette = 1
+                        
+                        ; Equipment sprite 22: Missile 2 (1 of 2)
+
+ EQUB %01000000         ; v = 0, h = 1, tile pattern = 0
+ EQUB 108               ; x-coordinate = 108
+ EQUB 187 + YPAL        ; y-coordinate = 187
+ EQUB %01010101         ; sprite number = 21, sprite palette = 1
+                        
+                        ; Equipment sprite 23: Missile 2 (2 of 2)
+
+ EQUB %01000001         ; v = 0, h = 1, tile pattern = 1
+ EQUB 136               ; x-coordinate = 136
+ EQUB 176 + YPAL        ; y-coordinate = 176
+ EQUB %01011001         ; sprite number = 22, sprite palette = 1
+                        
+                        ; Equipment sprite 24: Missile 3 (1 of 2)
+
+ EQUB %00000000         ; v = 0, h = 0, tile pattern = 0
+ EQUB 22                ; x-coordinate = 22
+ EQUB 192 + YPAL        ; y-coordinate = 192
+ EQUB %01011101         ; sprite number = 23, sprite palette = 1
+                        
+                        ; Equipment sprite 25: Missile 3 (2 of 2)
+
+ EQUB %00000001         ; v = 0, h = 0, tile pattern = 1
+ EQUB 214               ; x-coordinate = 214
+ EQUB 175 + YPAL        ; y-coordinate = 175
+ EQUB %01100001         ; sprite number = 24, sprite palette = 1
+                        
+                        ; Equipment sprite 26: Missile 4 (1 of 2)
+
+ EQUB %01000000         ; v = 0, h = 1, tile pattern = 0
+ EQUB 115               ; x-coordinate = 115
+ EQUB 192 + YPAL        ; y-coordinate = 192
+ EQUB %01100101         ; sprite number = 25, sprite palette = 1
+                        
+                        ; Equipment sprite 27: Missile 4 (2 of 2)
+
+ EQUB %01000001         ; v = 0, h = 1, tile pattern = 1
+ EQUB 130               ; x-coordinate = 130
+ EQUB 175 + YPAL        ; y-coordinate = 175
+ EQUB %01101001         ; sprite number = 26, sprite palette = 1
+                        
+                        ; Equipment sprite 28: Energy bomb (1 of 3)
+
+ EQUB %00010111         ; v = 0, h = 0, tile pattern = 23
+ EQUB 64                ; x-coordinate = 64
+ EQUB 206 + YPAL        ; y-coordinate = 206
+ EQUB %01101100         ; sprite number = 27, sprite palette = 0
+                        
+                        ; Equipment sprite 29: Energy bomb (2 of 3)
+
+ EQUB %00011000         ; v = 0, h = 0, tile pattern = 24
+ EQUB 72                ; x-coordinate = 72
+ EQUB 206 + YPAL        ; y-coordinate = 206
+ EQUB %01110000         ; sprite number = 28, sprite palette = 0
+                        
+                        ; Equipment sprite 30: Energy bomb (3 of 3)
+
+ EQUB %00011001         ; v = 0, h = 0, tile pattern = 25
+ EQUB 68                ; x-coordinate = 68
+ EQUB 206 + YPAL        ; y-coordinate = 206
+ EQUB %00111010         ; sprite number = 14, sprite palette = 2
+                        
+                        ; Equipment sprite 31: Large cargo bay (1 of 2)
+
+ EQUB %00000010         ; v = 0, h = 0, tile pattern = 2
+ EQUB 153               ; x-coordinate = 153
+ EQUB 184 + YPAL        ; y-coordinate = 184
+ EQUB %01111000         ; sprite number = 30, sprite palette = 0
+                        
+                        ; Equipment sprite 32: Large cargo bay (2 of 2)
+
+ EQUB %01000010         ; v = 0, h = 1, tile pattern = 2
+ EQUB 188               ; x-coordinate = 188
+ EQUB 184 + YPAL        ; y-coordinate = 184
+ EQUB %01111100         ; sprite number = 31, sprite palette = 0
+                        
+                        ; Equipment sprite 33: Escape pod (1 of 1)
+
+ EQUB %00011100         ; v = 0, h = 0, tile pattern = 28
+ EQUB 79                ; x-coordinate = 79
+ EQUB 178 + YPAL        ; y-coordinate = 178
+ EQUB %10000000         ; sprite number = 32, sprite palette = 0
+                        
+                        ; Equipment sprite 34: Docking computer (1 of 8)
+
+ EQUB %00000011         ; v = 0, h = 0, tile pattern = 3
+ EQUB 52                ; x-coordinate = 52
+ EQUB 172 + YPAL        ; y-coordinate = 172
+ EQUB %10000100         ; sprite number = 33, sprite palette = 0
+                        
+                        ; Equipment sprite 35: Docking computer (2 of 8)
+
+ EQUB %00000100         ; v = 0, h = 0, tile pattern = 4
+ EQUB 60                ; x-coordinate = 60
+ EQUB 172 + YPAL        ; y-coordinate = 172
+ EQUB %10001000         ; sprite number = 34, sprite palette = 0
+                        
+                        ; Equipment sprite 36: Docking computer (3 of 8)
+
+ EQUB %00000101         ; v = 0, h = 0, tile pattern = 5
+ EQUB 52                ; x-coordinate = 52
+ EQUB 180 + YPAL        ; y-coordinate = 180
+ EQUB %10001100         ; sprite number = 35, sprite palette = 0
+                        
+                        ; Equipment sprite 37: Docking computer (4 of 8)
+
+ EQUB %00000110         ; v = 0, h = 0, tile pattern = 6
+ EQUB 60                ; x-coordinate = 60
+ EQUB 180 + YPAL        ; y-coordinate = 180
+ EQUB %10010000         ; sprite number = 36, sprite palette = 0
+                        
+                        ; Equipment sprite 38: Docking computer (5 of 8)
+
+ EQUB %01000100         ; v = 0, h = 1, tile pattern = 4
+ EQUB 178               ; x-coordinate = 178
+ EQUB 156 + YPAL        ; y-coordinate = 156
+ EQUB %10010100         ; sprite number = 37, sprite palette = 0
+                        
+                        ; Equipment sprite 39: Docking computer (6 of 8)
+
+ EQUB %01000011         ; v = 0, h = 1, tile pattern = 3
+ EQUB 186               ; x-coordinate = 186
+ EQUB 156 + YPAL        ; y-coordinate = 156
+ EQUB %10011000         ; sprite number = 38, sprite palette = 0
+                        
+                        ; Equipment sprite 40: Docking computer (7 of 8)
+
+ EQUB %01000110         ; v = 0, h = 1, tile pattern = 6
+ EQUB 178               ; x-coordinate = 178
+ EQUB 164 + YPAL        ; y-coordinate = 164
+ EQUB %10011100         ; sprite number = 39, sprite palette = 0
+                        
+                        ; Equipment sprite 41: Docking computer (8 of 8)
+
+ EQUB %01000101         ; v = 0, h = 1, tile pattern = 5
+ EQUB 186               ; x-coordinate = 186
+ EQUB 164 + YPAL        ; y-coordinate = 164
+ EQUB %10100000         ; sprite number = 40, sprite palette = 0
+                        
+                        ; Equipment sprite 42: Galactic hyperdrive (1 of 2)
+
+ EQUB %00011101         ; v = 0, h = 0, tile pattern = 29
+ EQUB 64                ; x-coordinate = 64
+ EQUB 190 + YPAL        ; y-coordinate = 190
+ EQUB %10100110         ; sprite number = 41, sprite palette = 2
+                        
+                        ; Equipment sprite 43: Galactic hyperdrive (1 of 2)
+
+ EQUB %01011101         ; v = 0, h = 1, tile pattern = 29
+ EQUB 74                ; x-coordinate = 74
+ EQUB 190 + YPAL        ; y-coordinate = 190
+ EQUB %10101010         ; sprite number = 42, sprite palette = 2
 
 ; ******************************************************************************
 ;
@@ -4528,164 +4914,323 @@ ENDIF
  JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
                         ; next VBlank)
 
- LDA ECM
- BEQ CA4B4
+ LDA ECM                ; If we do not have E.C.M. fitted, jump to dreq1 to move
+ BEQ dreq1              ; on to the next piece of equipment
 
- LDY #0
- LDX #3
- JSR SetEquipmentSprite
+ LDY #0                 ; Set Y = 0 so we set up the sprites using data from
+                        ; sprite 0 onwards in the equipSprites table
 
-.CA4B4
+ LDX #3                 ; Set X = 3 so we draw three sprites, i.e. equipment
+                        ; sprites 0 to 2 from the equipSprites table
 
- LDX LASER
- BEQ CA4C6
- JSR GetLaserSprite
- LDY #$0C
- LDX #2
- JSR SetLaserSprite
- JMP CA4C6
+ JSR SetEquipmentSprite ; Set up the sprites in the sprite buffer to show the
+                        ; E.C.M. on our Cobra Mk III
 
-.CA4C6
+.dreq1
 
- LDX LASER+1
- BEQ CA4D8
- JSR GetLaserSprite
- LDY #$24
- LDX #1
- JSR SetLaserSprite
- JMP CA4D8
+ LDX LASER              ; If we do not have a laser fitted to the front view,
+ BEQ dreq2              ; jump to dreq2 to move on to the next piece of
+                        ; equipment
 
-.CA4D8
+ JSR GetLaserPattern    ; Set A to the pattern number of the laser's equipment
+                        ; sprite for the type of laser fitted, to pass to the
+                        ; SetLaserSprite routine
 
- LDX LASER+2
- BEQ CA4F5
- CPX #$97
- BEQ CA4EE
- JSR GetLaserSprite
- LDY #$14
- LDX #2
- JSR SetLaserSprite
- JMP CA4F5
+ LDY #3 * 4             ; Set Y = 3 * 4 so we set up the sprites using data
+                        ; from sprite 3 onwards in the equipSprites table
 
-.CA4EE
+ LDX #2                 ; Set X = 2 so we draw two sprites, i.e. equipment
+                        ; sprites 3 and 4 from the equipSprites table
 
- LDY #$28
- LDX #2
- JSR SetEquipmentSprite
+ JSR SetLaserSprite     ; Set up the sprites in the sprite buffer to show the
+                        ; front view laser on our Cobra Mk III
 
-.CA4F5
+ JMP dreq2              ; This instruction has no effect (presumably it is left
+                        ; over from code that was later removed)
 
- LDX LASER+3
- BEQ CA512
- CPX #$97
- BEQ CA50B
- JSR GetLaserSprite
- LDY #$1C
- LDX #2
- JSR SetLaserSprite
- JMP CA512
+.dreq2
 
-.CA50B
+ LDX LASER+1            ; If we do not have a laser fitted to the rear view,
+ BEQ dreq3              ; jump to dreq3 to move on to the next piece of
+                        ; equipment
 
- LDY #$30
- LDX #2
- JSR SetEquipmentSprite
+ JSR GetLaserPattern    ; Set A to the pattern number of the laser's equipment
+                        ; sprite for the type of laser fitted, to pass to the
+                        ; SetLaserSprite routine
 
-.CA512
+ LDY #9 * 4             ; Set Y = 9 * 4 so we set up the sprites using data
+                        ; from sprite 9 onwards in the equipSprites table
 
- LDA BST
- BEQ CA51E
- LDY #$38
- LDX #2
- JSR SetEquipmentSprite
+ LDX #1                 ; Set X = 1 so we draw one sprite, i.e. equipment
+                        ; sprite 9 from the equipSprites table
 
-.CA51E
+ JSR SetLaserSprite     ; Set up the sprites in the sprite buffer to show the
+                        ; rear view laser on our Cobra Mk III
 
- LDA ENGY
- BEQ CA537
- LSR A
- BNE CA530
- LDY #$48
- LDX #2
- JSR SetEquipmentSprite
- JMP CA537
+ JMP dreq3              ; This instruction has no effect (presumably it is left
+                        ; over from code that was later removed)
 
-.CA530
+.dreq3
 
- LDY #$40
- LDX #4
- JSR SetEquipmentSprite
+ LDX LASER+2            ; If we do not have a laser fitted to the left view,
+ BEQ dreq5              ; jump to dreq5 to move on to the next piece of
+                        ; equipment
 
-.CA537
+ CPX #Armlas            ; If the laser fitted to the left view is a military
+ BEQ dreq4              ; laser, jump to dreq4 to show the laser using
+                        ; equipment sprites 10 and 11
 
- LDA NOMSL
- BEQ CA56C
- LDY #$50
- LDX #2
- JSR SetEquipmentSprite
- LDA NOMSL
- LSR A
- BEQ CA56C
- LDY #$58
- LDX #2
- JSR SetEquipmentSprite
- LDA NOMSL
- CMP #2
- BEQ CA56C
- LDY #$60
- LDX #2
- JSR SetEquipmentSprite
- LDA NOMSL
- CMP #4
- BNE CA56C
- LDY #$68
- LDX #2
- JSR SetEquipmentSprite
+ JSR GetLaserPattern    ; Set A to the pattern number of the laser's equipment
+                        ; sprite for the type of laser fitted, to pass to the
+                        ; SetLaserSprite routine
 
-.CA56C
+ LDY #5 * 4             ; Set Y = 5 * 4 so we set up the sprites using data
+                        ; from sprite 5 onwards in the equipSprites table
 
- LDA BOMB
- BEQ CA578
- LDY #$70
- LDX #3
- JSR SetEquipmentSprite
+ LDX #2                 ; Set X = 2 so we draw two sprites, i.e. equipment
+                        ; sprites 5 and 6 from the equipSprites table
 
-.CA578
+ JSR SetLaserSprite     ; Set up the sprites in the sprite buffer to show the
+                        ; left view laser on our Cobra Mk III
 
- LDA CRGO
- CMP #$25
- BNE CA586
- LDY #$7C
- LDX #2
- JSR SetEquipmentSprite
+ JMP dreq5              ; Jump to dreq5 to move on to the next piece of
+                        ; equipment
 
-.CA586
+.dreq4
 
- LDA ESCP
- BEQ CA592
- LDY #$84
- LDX #1
- JSR SetEquipmentSprite
+ LDY #10 * 4            ; Set Y = 10 * 4 so we set up the sprites using data
+                        ; from sprite 10 onwards in the equipSprites table
 
-.CA592
+ LDX #2                 ; Set X = 2 so we draw two sprites, i.e. equipment
+                        ; sprites 10 and 11 from the equipSprites table
 
- LDA DKCMP
- BEQ CA59E
- LDY #$88
- LDX #8
- JSR SetEquipmentSprite
+ JSR SetEquipmentSprite ; Set up the sprites in the sprite buffer to show the
+                        ; left view military laser on our Cobra Mk III
 
-.CA59E
+.dreq5
 
- LDA GHYP
- BEQ CA5AA
- LDY #$A8
- LDX #2
- JSR SetEquipmentSprite
+ LDX LASER+3            ; If we do not have a laser fitted to the right view,
+ BEQ dreq7              ; jump to dreq7 to move on to the next piece of
+                        ; equipment
 
-.CA5AA
+ CPX #Armlas            ; If the laser fitted to the left view is a military
+ BEQ dreq6              ; laser, jump to dreq6 to show the laser using
+                        ; equipment sprites 12 and 13
 
- RTS
+ JSR GetLaserPattern    ; Set A to the pattern number of the laser's equipment
+                        ; sprite for the type of laser fitted, to pass to the
+                        ; SetLaserSprite routine
+
+ LDY #7 * 4             ; Set Y = 7 * 4 so we set up the sprites using data
+                        ; from sprite 7 onwards in the equipSprites table
+
+ LDX #2                 ; Set X = 2 so we draw two sprites, i.e. equipment
+                        ; sprites 7 and 8 from the equipSprites table
+
+ JSR SetLaserSprite     ; Set up the sprites in the sprite buffer to show the
+                        ; right view laser on our Cobra Mk III
+
+ JMP dreq7              ; Jump to dreq7 to move on to the next piece of
+                        ; equipment
+
+.dreq6
+
+ LDY #12 * 4            ; Set Y = 12 * 4 so we set up the sprites using data
+                        ; from sprite 12 onwards in the equipSprites table
+
+ LDX #2                 ; Set X = 2 so we draw two sprites, i.e. equipment
+                        ; sprites 12 and 13 from the equipSprites table
+
+ JSR SetEquipmentSprite ; Set up the sprites in the sprite buffer to show the
+                        ; right view military laser on our Cobra Mk III
+
+.dreq7
+
+ LDA BST                ; If we do not have fuel scoops fitted, jump to dreq8 to
+ BEQ dreq8              ; move on to the next piece of equipment
+
+ LDY #14 * 4            ; Set Y = 14 * 4 so we set up the sprites using data
+                        ; from sprite 14 onwards in the equipSprites table
+
+ LDX #2                 ; Set X = 2 so we draw two sprites, i.e. equipment
+                        ; sprites 14 and 15 from the equipSprites table
+
+ JSR SetEquipmentSprite ; Set up the sprites in the sprite buffer to show the
+                        ; fuel scoops on our Cobra Mk III
+
+.dreq8
+
+ LDA ENGY               ; If we do not have an energy unit fitted, jump to
+ BEQ dreq10             ; dreq10 to move on to the next piece of equipment
+
+ LSR A                  ; If ENGY is 2 or more, then we have the naval energy
+ BNE dreq9              ; unit fitted, to jump to dreq9 to display the four
+                        ; sprites for the naval version
+
+ LDY #18 * 4            ; Set Y = 18 * 4 so we set up the sprites using data
+                        ; from sprite 18 onwards in the equipSprites table
+
+ LDX #2                 ; Set X = 2 so we draw two sprites, i.e. equipment
+                        ; sprites 18 and 19 from the equipSprites table
+
+ JSR SetEquipmentSprite ; Set up the sprites in the sprite buffer to show the
+                        ; standard energy unit on our Cobra Mk III
+
+ JMP dreq10             ; Jump to dreq10 to move on to the next piece of
+                        ; equipment
+
+.dreq9
+
+                        ; The naval energy unit consists of the two sprites
+                        ; for the standard energy unit (sprites 18 and 19),
+                        ; plus two extra sprites (16 and 17)
+
+ LDY #16 * 4            ; Set Y = 16 * 4 so we set up the sprites using data
+                        ; from sprite 16 onwards in the equipSprites table
+
+ LDX #4                 ; Set X = 4 so we draw four sprites, i.e. equipment
+                        ; sprites 16 to 19 from the equipSprites table
+
+ JSR SetEquipmentSprite ; Set up the sprites in the sprite buffer to show the
+                        ; naval energy unit on our Cobra Mk III
+
+.dreq10
+
+ LDA NOMSL              ; If we do not have any missiles fitted, jump to dreq11
+ BEQ dreq11             ; to move on to the next piece of equipment
+
+                        ; We start by setting up the sprites for missile 2
+
+ LDY #20 * 4            ; Set Y = 20 * 4 so we set up the sprites using data
+                        ; from sprite 20 onwards in the equipSprites table
+
+ LDX #2                 ; Set X = 2 so we draw two sprites, i.e. equipment
+                        ; sprites 20 and 21 from the equipSprites table
+
+ JSR SetEquipmentSprite ; Set up the sprites in the sprite buffer to show the
+                        ; first missile on our Cobra Mk III
+
+ LDA NOMSL              ; If the number of missiles in NOMSL is 1, jump to
+ LSR A                  ; dreq11 to move on to the next piece of equipment
+ BEQ dreq11
+
+                        ; We now set up the sprites for missile 2
+
+ LDY #22 * 4            ; Set Y = 22 * 4 so we set up the sprites using data
+                        ; from sprite 22 onwards in the equipSprites table
+
+ LDX #2                 ; Set X = 2 so we draw two sprites, i.e. equipment
+                        ; sprites 22 and 23 from the equipSprites table
+
+ JSR SetEquipmentSprite ; Set up the sprites in the sprite buffer to show the
+                        ; second missile on our Cobra Mk III
+
+ LDA NOMSL              ; If the number of missiles in NOMSL is 2, jump to
+ CMP #2                 ; dreq11 to move on to the next piece of equipment
+ BEQ dreq11
+
+                        ; We now set up the sprites for missile 3
+
+ LDY #24 * 4            ; Set Y = 24 * 4 so we set up the sprites using data
+                        ; from sprite 24 onwards in the equipSprites table
+
+ LDX #2                 ; Set X = 2 so we draw two sprites, i.e. equipment
+                        ; sprites 24 and 25 from the equipSprites table
+
+ JSR SetEquipmentSprite ; Set up the sprites in the sprite buffer to show the
+                        ; third missile on our Cobra Mk III
+
+ LDA NOMSL              ; If the number of missiles in NOMSL is not 4, then it
+ CMP #4                 ; must be 3, so jump to dreq11 to move on to the next
+ BNE dreq11             ; piece of equipment
+
+                        ; We now set up the sprites for missile 4
+
+ LDY #26 * 4            ; Set Y = 26 * 4 so we set up the sprites using data
+                        ; from sprite 26 onwards in the equipSprites table
+
+ LDX #2                 ; Set X = 2 so we draw two sprites, i.e. equipment
+                        ; sprites 26 and 27 from the equipSprites table
+
+ JSR SetEquipmentSprite ; Set up the sprites in the sprite buffer to show the
+                        ; fourth missile on our Cobra Mk III
+
+.dreq11
+
+ LDA BOMB               ; If we do not have an energy bomb fitted, jump to
+ BEQ dreq12             ; dreq12 to move on to the next piece of equipment
+
+ LDY #28 * 4            ; Set Y = 28 * 4 so we set up the sprites using data
+                        ; from sprite 28 onwards in the equipSprites table
+
+ LDX #3                 ; Set X = 3 so we draw three sprites, i.e. equipment
+                        ; sprites 28 to 30 from the equipSprites table
+
+ JSR SetEquipmentSprite ; Set up the sprites in the sprite buffer to show the
+                        ; energy bomb on our Cobra Mk III
+
+.dreq12
+
+ LDA CRGO               ; If we do not have a large cargo bay fitted (i.e. our
+ CMP #37                ; cargo capacity in CRGO is not the larger capacity of
+ BNE dreq13             ; 37), jump to dreq13 to move on to the next piece of
+                        ; equipment
+
+ LDY #31 * 4            ; Set Y = 31 * 4 so we set up the sprites using data
+                        ; from sprite 31 onwards in the equipSprites table
+
+ LDX #2                 ; Set X = 2 so we draw two sprites, i.e. equipment
+                        ; sprites 31 and 32 from the equipSprites table
+
+ JSR SetEquipmentSprite ; Set up the sprites in the sprite buffer to show the
+                        ; large cargo bay on our Cobra Mk III
+
+.dreq13
+
+ LDA ESCP               ; If we do not have an escape pod fitted, jump to
+ BEQ dreq14             ; dreq14 to move on to the next piece of equipment
+
+ LDY #33 * 4            ; Set Y = 33 * 4 so we set up the sprites using data
+                        ; from sprite 33 onwards in the equipSprites table
+
+ LDX #1                 ; Set X = 1 so we draw one sprite, i.e. equipment
+                        ; sprite 33 from the equipSprites table
+
+ JSR SetEquipmentSprite ; Set up the sprites in the sprite buffer to show the
+                        ; escape pod on our Cobra Mk III
+
+.dreq14
+
+ LDA DKCMP              ; If we do not have a docking computer fitted, jump to
+ BEQ dreq15             ; dreq15 to move on to the next piece of equipment
+
+ LDY #34 * 4            ; Set Y = 34 * 4 so we set up the sprites using data
+                        ; from sprite 34 onwards in the equipSprites table
+
+ LDX #8                 ; Set X = 8 so we draw eight sprites, i.e. equipment
+                        ; sprites 34 to 41 from the equipSprites table
+
+ JSR SetEquipmentSprite ; Set up the sprites in the sprite buffer to show the
+                        ; docking computer on our Cobra Mk III
+
+.dreq15
+
+ LDA GHYP               ; If we do not have a galactic hyperdrive fitted, jump to
+ BEQ dreq16             ; dreq16 to return from the subroutine, as we have now
+                        ; drawn all our equipment
+
+ LDY #42 * 4            ; Set Y = 42 * 4 so we set up the sprites using data
+                        ; from sprite 24 onwards in the equipSprites table
+
+ LDX #2                 ; Set X = 2 so we draw two sprites, i.e. equipment
+                        ; sprites 42 and 43 from the equipSprites table
+
+ JSR SetEquipmentSprite ; Set up the sprites in the sprite buffer to show the
+                        ; galactic hyperdrive on our Cobra Mk III
+
+.dreq16
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
