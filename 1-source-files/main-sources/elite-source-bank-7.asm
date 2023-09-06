@@ -377,6 +377,9 @@ ENDIF
  LDA #%11111111         ; Set DTW8 = %11111111 to denote ???
  STA DTW8
 
+                        ; Fall through into SetBank0 to page ROM bank 0 into
+                        ; memory
+
 ; ******************************************************************************
 ;
 ;       Name: SetBank0

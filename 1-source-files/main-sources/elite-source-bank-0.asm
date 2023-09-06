@@ -11504,19 +11504,25 @@ ENDIF
                         ; If we get here then either the B button is being
                         ; pressed or no directional buttons are being pressed
 
- LDA pointerButton      ; If the icon bar pointer is over a blank button on the
- BEQ sell4              ; icon bar, loop back to sell4 to keep listening for
-                        ; button presses
+ LDA pointerButton      ; If pointerButton = 0 then nothing has been chosen on
+ BEQ sell4              ; the icon bar (if it had, pointerButton would contain
+                        ; the number of the chosen icon bar button), so loop
+                        ; back to sell4 to keep listening for button presses
 
- JSR CheckForPause-3    ; Check the value of pointerButton to see if the pause
-                        ; button is under the icon bar pointer
+                        ; If we get here then either a choice has been made on
+                        ; the icon bar during NMI and the number of the icon bar
+                        ; button is in pointerButton, or the Start button has
+                        ; been pressed and pointerButton is 80
 
- BCS sell4              ; If the C flag is set then the pause button has been
-                        ; pressed and the options menu has been processed, so
-                        ; loop back to sell4 to keep listening for button
-                        ; presses ???
+ JSR CheckForPause-3    ; If the Start button has been pressed then process the
+                        ; pause menu and set the C flag, otherwise clear it
 
- RTS                    ; Otherwise return from the subroutine
+ BCS sell4              ; If it was the pause button, loop back to sell4 to pick
+                        ; up where we left off and keep listening for button
+                        ; presses
+
+ RTS                    ; Otherwise a choice has been made from the icon bar, so
+                        ; return from the subroutine
 
 .sell7
 
@@ -11550,7 +11556,8 @@ ENDIF
  JSR HighlightSaleItem  ; Highlight the name, price and availability of market
                         ; item A on the correct row for the chosen language
 
- JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen
+ JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen, so the
+                        ; screen gets updated
 
  JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
                         ; sent to the PPU, so the screen is fully updated and
@@ -12684,32 +12691,33 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_EQSHP2
+;       Name: HighlightEquipment
 ;       Type: Subroutine
 ;   Category: Equipment
-;    Summary: ???
+;    Summary: Highlight an item of equipment on the Equip Ship screen
 ;
 ; ******************************************************************************
 
-.subm_EQSHP2
+.HighlightEquipment
 
  LDX #2                 ; Set the font bitplane to print in plane 2
  STX fontBitplane
 
- LDX XX13
- JSR PrintEquipment+2
+ LDX XX13               ; Set X to the item number to print
+
+ JSR PrintEquipment+2   ; Print the name and price for the equipment item in X
 
  LDX #1                 ; Set the font bitplane to print in plane 1
  STX fontBitplane
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: PrintEquipment
 ;       Type: Subroutine
 ;   Category: Equipment
-;    Summary: Print an inventory listing for a specified item
+;    Summary: Print the name and price for a specified item of equipment
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -12844,80 +12852,105 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_EQSHP4
+;       Name: MoveEquipmentUp
 ;       Type: Subroutine
 ;   Category: Equipment
-;    Summary: ???
+;    Summary: Move the currently selected item up the list of equipment
 ;
 ; ******************************************************************************
 
-.subm_EQSHP4
+.MoveEquipmentUp
 
- JSR PrintEquipment
+ JSR PrintEquipment     ; Print the name and price for the equipment item in
+                        ; XX13
 
- LDA XX13
- SEC
+ LDA XX13               ; Set A = XX13 - 1, so A contains the item number above
+ SEC                    ; the currently selected item in the equipment list
  SBC #1
 
- BNE CA464
- LDA #1
+ BNE equp1              ; If XX13 is non-zero then we have not just tried to
+                        ; move off the top of the list, so jump to equp1 to skip
+                        ; the following instruction
 
-.CA464
+ LDA #1                 ; Set A = 1 to set the currently selected item to the
+                        ; first item in the list, so we don't go past the top
+                        ; of the list
 
- STA XX13
+.equp1
+
+ STA XX13               ; Store the new item number in XX13, so we move up the
+                        ; equipment list
+
+                        ; Fall through into UpdateEquipment to highlight the
+                        ; newly chosen item of equipment, update the Cobra Mk
+                        ; III, redraw the screen and rejoin the main EQSHP
+                        ; routine to continue checking for button presses
 
 ; ******************************************************************************
 ;
-;       Name: subm_A466
+;       Name: UpdateEquipment
 ;       Type: Subroutine
 ;   Category: Equipment
-;    Summary: ???
+;    Summary: Highlight the newly chosen item of equipment, update the Cobra Mk
+;             III, redraw the screen and rejoin the main EQSHP routine
 ;
 ; ******************************************************************************
 
-.subm_A466
+.UpdateEquipment
 
- JSR subm_EQSHP2
+ JSR HighlightEquipment ; Highlight the item of equipment in XX13
 
  JSR DrawEquipment_b6   ; Draw the currently fitted equipment onto the Cobra Mk
                         ; III image
 
- JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen
+ JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen, so the
+                        ; screen gets updated
 
  JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
                         ; sent to the PPU, so the screen is fully updated and
                         ; there is no more data waiting to be sent to the PPU
 
- JMP equi1
+ JMP equi1              ; Rejoin the main EQSHP routine at equi1 to continue
+                        ; checking for button presses
 
 ; ******************************************************************************
 ;
-;       Name: subm_EQSHP5
+;       Name: MoveEquipmentDown
 ;       Type: Subroutine
 ;   Category: Equipment
-;    Summary: ???
+;    Summary: Move the currently selected item down the list of equipment
 ;
 ; ******************************************************************************
 
-.subm_EQSHP5
+.MoveEquipmentDown
 
- JSR PrintEquipment
+ JSR PrintEquipment     ; Print the name and price for the equipment item in
+                        ; XX13
 
- LDA XX13
- CLC
+ LDA XX13               ; Set A = XX13 + 1, so A contains the item number below
+ CLC                    ; the currently selected item in the equipment list
  ADC #1
 
- CMP Q
- BNE CA485
+ CMP Q                  ; If A has not reached Q, which contains the number of
+ BNE eqdn1              ; items in the list plus 1, then we have not fallen off
+                        ; the bottom of the list, so jump to eqdn1 to skip the
+                        ; following
 
- LDA Q
- SBC #1
+ LDA Q                  ; Set A = Q - 1 to set the currently selected item to
+ SBC #1                 ; the bottom item in the list, so we don't go past the
+                        ; bottom of the list (the subtraction works because we
+                        ; just passed through a BNE, so the comparison was
+                        ; equal which sets the C flag)
 
-.CA485
+.eqdn1
 
- STA XX13
+ STA XX13               ; Store the new item number in XX13, so we move down the
+                        ; equipment list
 
- JMP subm_A466
+ JMP UpdateEquipment    ; Jump up to UpdateEquipment to highlight the newly
+                        ; chosen item of equipment, update the Cobra Mk III,
+                        ; redraw the screen and rejoin the main EQSHP routine to
+                        ; continue checking for button presses
 
 ; ******************************************************************************
 ;
@@ -12956,7 +12989,8 @@ ENDIF
 ;                       exit to the docking bay (i.e. show the Status Mode
 ;                       screen)
 ;
-;   equi1               ???
+;   equi1               A re-entry point into the key-pressing loop, used when
+;                       processing key presses in subroutines
 ;
 ; ******************************************************************************
 
@@ -13003,7 +13037,7 @@ ENDIF
 
 .EQL1
 
- JSR PrintEquipment+2   ; ???
+ JSR PrintEquipment+2   ; Print the name and price for the equipment item in X
 
  LDX XX13               ; Increment the current item number in XX13
  INX
@@ -13011,10 +13045,10 @@ ENDIF
  CPX Q                  ; If X < Q, loop back up to print the next item on the
  BCC EQL1               ; list of equipment available at this station
 
- LDX #1                 ; ???
- STX XX13
+ LDX #1                 ; Set XX13 = 1 to pass to the HighlightEquipment routine
+ STX XX13               ; so we highlight the first item on the list (Fuel)
 
- JSR subm_EQSHP2
+ JSR HighlightEquipment ; Highlight the item of equipment in XX13, i.e. Fuel
 
  JSR dn                 ; Print the amount of money we have left in the cash pot
 
@@ -13027,38 +13061,62 @@ ENDIF
 
  JSR UpdateView         ; Update the view
 
+                        ; The Equip Ship view is now on-screen, so we move on to
+                        ; checking for key presses
+
 .equi1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA controller1Up      ; ???
- BPL equi2
- JMP subm_EQSHP4
+ LDA controller1Up      ; If the up button has not been pressed, jump to equi2
+ BPL equi2              ; to keep checking for other buttons
+
+ JMP MoveEquipmentUp    ; Move the currently selected item up the list of
+                        ; equipment and rejoin the loop by jumping up to equi1
+                        ; to keep checking for other buttons
 
 .equi2
 
- LDA controller1Down
- BPL equi3
- JMP subm_EQSHP5
+ LDA controller1Down    ; If the down button has not been pressed, jump to equi3
+ BPL equi3              ; to keep checking for other buttons
+
+ JMP MoveEquipmentDown  ; Move the currently selected item down the list of
+                        ; equipment and rejoin the loop by jumping up to equi1
+                        ; to keep checking for other buttons
 
 .equi3
 
- LDA controller1A
- BMI equi4
- LDA pointerButton
- BEQ equi1
- JSR CheckForPause
- BCS equi1
- RTS
+ LDA controller1A       ; If the A button has been pressed, jump to equi4 to
+ BMI equi4              ; process a purchase
+
+ LDA pointerButton      ; If pointerButton = 0 then nothing has been chosen on
+ BEQ equi1              ; the icon bar (if it had, pointerButton would contain
+                        ; the number of the chosen icon bar button), so loop
+                        ; back to equi1 to keep checking for button presses
+
+                        ; If we get here then either a choice has been made on
+                        ; the icon bar during NMI and the number of the icon bar
+                        ; button is in pointerButton, or the Start button has
+                        ; been pressed to pause the game and pointerButton is 80
+
+ JSR CheckForPause      ; If the Start button has been pressed then process the
+                        ; pause menu and set the C flag, otherwise clear it
+
+ BCS equi1              ; If it was the pause button, loop back to equi1 to pick
+                        ; up where we left off and keep checking for button
+                        ; presses
+
+ RTS                    ; Otherwise a choice has been made from the icon bar, so
+                        ; return from the subroutine
 
 .equi4
 
  JSR UpdateSaveCount    ; Update the save counter for the current commander
 
- LDA XX13               ; ???
- SEC
- SBC #1
+ LDA XX13               ; Set A = XX13 - 1, so A contains the item number of
+ SEC                    ; the currently selected item, less 1, which will be the
+ SBC #1                 ; actual number of the item we want to buy
 
  PHA                    ; While preserving the value in A, call eq to subtract
  JSR eq                 ; the price of the item we want to buy (which is in A)
@@ -13066,13 +13124,15 @@ ENDIF
  PLA                    ; the pot. If we don't have enough cash, exit to the
                         ; docking bay (i.e. show the Status Mode screen) ???
 
- JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen
+ JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen, so the
+                        ; screen gets updated
 
- JMP equi1              ; ???
+ JMP equi1              ; Loop back up to equi1 to keep checking for button
+                        ; presses 
 
 .equi5
 
- PLA
+ PLA                    ; ???
 
  BNE et0                ; If A is not 0 (i.e. the item we've just bought is not
                         ; fuel), skip to et0
@@ -13239,7 +13299,8 @@ ENDIF
  BNE err
  JSR BOOP
 
- JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen
+ JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen, so the
+                        ; screen gets updated
 
  LDY #$28
  JSR DELAY
@@ -13260,7 +13321,8 @@ ENDIF
  JSR DrawEquipment_b6   ; Draw the currently fitted equipment onto the Cobra Mk
                         ; III image
 
- JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen
+ JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen, so the
+                        ; screen gets updated
 
  JMP equi1              ; ???
 
@@ -13269,7 +13331,8 @@ ENDIF
  JMP pres               ; Jump to pres to show an error, beep and exit to the
                         ; docking bay (i.e. show the Status Mode screen)
 
- JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen
+ JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen, so the
+                        ; screen gets updated
 
  JMP equi1              ; ???
 
@@ -13397,7 +13460,7 @@ ENDIF
 
  JSR equi9              ; ???
 
- JMP subm_A466
+ JMP UpdateEquipment
 
 .equi9
 
@@ -13482,7 +13545,8 @@ ENDIF
 
  BPL eqeq1              ; Loop back until we have printed 21 spaces
 
- JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen
+ JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen, so the
+                        ; screen gets updated
 
  LDY #40                ; Delay for 40 vertical syncs (40/50 = 0.8 seconds)
  JSR DELAY
@@ -13549,55 +13613,76 @@ ENDIF
 ;       Name: PrintLaserView
 ;       Type: Subroutine
 ;   Category: Equipment
-;    Summary: ???
+;    Summary: Print the name of a laser view in the laser-buying popup, filled
+;             to the right by the correct number of spaces to fill the popup
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   Y                   The number of the laser view:
+;
+;                         * 0 = front
+;                         * 1 = rear
+;                         * 2 = left
+;                         * 3 = right
+;
+; Returns:
+;
+;   Y                   Y is preserved
 ;
 ; ******************************************************************************
 
 .PrintLaserView
 
- LDA #$0C
+ LDA #12                ; Move the text cursor to column 12
  STA XC
- TYA
- PHA
- CLC
- ADC #8
+
+ TYA                    ; Store Y on the stack so we can retrieve it at the end
+ PHA                    ; of the subroutine
+
+ CLC                    ; Move the text cursor to row Y + 8, so we print the
+ ADC #8                 ; view on row 8 (front) to 11 (right)
  STA YC
 
  JSR TT162              ; Print a space
 
- LDA languageNumber
- AND #%00000110
- BNE lasv1
+ LDA languageNumber     ; If either bit 1 or bit 2 of languageNumber is set then
+ AND #%00000110         ; the chosen language is German or French, so jump to
+ BNE lasv1              ; lasv1 to skip the following
 
- JSR TT162              ; Print a space
+ JSR TT162              ; The chosen language is English, so print a space
 
 .lasv1
 
- PLA
- PHA
- CLC
- ADC #$60
+ PLA                    ; Set A to the argument Y, which we stored on the stack
+ PHA                    ; above
+
+ CLC                    ; Print recursive token 96 + A, which will print from 96
+ ADC #96                ; ("FRONT") through to 99 ("RIGHT")
  JSR TT27_b2
 
 .lasv2
 
  JSR TT162              ; Print a space
 
- LDA XC
- LDX languageIndex
- CMP xLaserView,X
- BNE lasv2
- PLA
- TAY
- RTS
+ LDA XC                 ; Keep printing spaces until we reach the column given
+ LDX languageIndex      ; in the xLaserView table for the chosen language, so we
+ CMP xLaserView,X       ; blank out the rest of the line to the edge of the
+ BNE lasv2              ; popup (so the popup covers what's underneath it)
+
+ PLA                    ; Retrieve Y from the stack so it is unchanged by the
+ TAY                    ; subroutine call
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: xLaserView
 ;       Type: Variable
 ;   Category: Equipment
-;    Summary: The text column of the right end of the laser view when printing
-;             spaces after the view name
+;    Summary: The text column of the right edge of the laser-buying popup, so
+;             the popup gets filled with spaces and covers what's underneath it
 ;
 ; ******************************************************************************
 
@@ -13616,7 +13701,22 @@ ENDIF
 ;       Name: HighlightLaserView
 ;       Type: Subroutine
 ;   Category: Equipment
-;    Summary: ???
+;    Summary: Highlight 
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   Y                   The number of the laser view:
+;
+;                         * 0 = front
+;                         * 1 = rear
+;                         * 2 = left
+;                         * 3 = right
+;
+; Returns:
+;
+;   Y                   Y is preserved
 ;
 ; ******************************************************************************
 
@@ -13625,24 +13725,26 @@ ENDIF
  LDA #2                 ; Set the font bitplane to print in plane 2
  STA fontBitplane
 
- JSR PrintLaserView
+ JSR PrintLaserView     ; Print the name of the laser view specified in Y at the
+                        ; correct on-screen position for the popup menu
 
  LDA #1                 ; Set the font bitplane to print in plane 1
  STA fontBitplane
 
- TYA
- PHA
+ TYA                    ; Store Y on the stack so we can retrieve it at the end
+ PHA                    ; of the subroutine
 
- JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen
+ JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen, so the
+                        ; screen gets updated
 
  JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
                         ; sent to the PPU, so the screen is fully updated and
                         ; there is no more data waiting to be sent to the PPU
 
- PLA
- TAY
+ PLA                    ; Retrieve Y from the stack so it is unchanged by the
+ TAY                    ; subroutine call
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -13669,7 +13771,13 @@ ENDIF
 ;       Name: qv
 ;       Type: Subroutine
 ;   Category: Equipment
-;    Summary: ???
+;    Summary: Print a popup menu of the four space views, for buying lasers
+;
+; ------------------------------------------------------------------------------
+;
+; Returns:
+;
+;   X                   The chosen view number (0-3)
 ;
 ; ******************************************************************************
 
@@ -13678,91 +13786,170 @@ ENDIF
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA controller1Leftx8
- ORA controller1Rightx8
+ LDA controller1Leftx8  ; If the left button, right button or A button is being
+ ORA controller1Rightx8 ; pressed, loop back to qv until they are released
  ORA controller1A
  BMI qv
- LDY #3
 
-.loop_CA706
+ LDY #3                 ; We now print a popup menu showing all four views, so
+                        ; set a view counter in Y, starting with view 3 (right)
 
- JSR PrintLaserView
- DEY
- BNE loop_CA706
+.vpop1
+
+ JSR PrintLaserView     ; Print the name of the laser view specified in Y at the
+                        ; correct on-screen position for the popup menu
+
+ DEY                    ; Decrement the view counter in Y
+
+ BNE vpop1              ; Loop back to print the next view until we have printed
+                        ; all four view names in the popup
+
+                        ; Next, we highlight the first view (front) as by this
+                        ; point Y = 0
 
  LDA #2                 ; Set the font bitplane to print in plane 2
  STA fontBitplane
 
- JSR PrintLaserView
+ JSR PrintLaserView     ; Print the name of the laser view specified in Y at the
+                        ; correct on-screen position for the popup menu
 
  LDA #1                 ; Set the font bitplane to print in plane 1
  STA fontBitplane
 
- LDA #$0B
+                        ; We now draw a box around the list of views to make it
+                        ; look like a popup menu
+
+ LDA #11                ; Move the text cursor to column 11
  STA XC
- STA K+2
- LDA #7
+
+ STA K+2                ; Set K+2 = 11 to pass to DrawSmallBox as the text row
+                        ; on which to draw the top-left corner of the small box
+
+ LDA #7                 ; Move the text cursor to row 7
  STA YC
- STA K+3
- LDX languageIndex
- LDA popupWidth,X
- STA K
- LDA #6
- STA K+1
- JSR DrawSmallBox_b3
 
- JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen
+ STA K+3                ; Set K+3 = 7 to pass to DrawSmallBox as the text column
+                        ; on which to draw the top-left corner of the small box
 
- LDY #0
+ LDX languageIndex      ; Set K to the correct width for the laser view popup in
+ LDA popupWidth,X       ; the chosen language, to pass to DrawSmallBox as the
+ STA K                  ; width of the small box
 
-.CA737
+ LDA #6                 ; Set K+1 = 6 to pass to DrawSmallBox as the height of
+ STA K+1                ; the small box
+
+ JSR DrawSmallBox_b3    ; Draw a box around the popup, with the top-left corner
+                        ; at (7, 11), a height of 6 rows, and the correct width
+                        ; for the chosen language
+
+ JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen, so the
+                        ; screen gets updated
+
+                        ; The popup menu is now on-screen, so now we manage the
+                        ; process of making a choice
+
+ LDY #0                 ; We use Y to keep track of the highlighted view, which
+                        ; we set to the front view above, so set Y = 0 to
+                        ; reflect this
+
+.vpop2
 
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA controller1Up
- BPL CA74A
- JSR PrintLaserView
- DEY
- BPL CA747
- LDY #3
+ LDA controller1Up      ; If the up button is not being pressed, jump to vpop4
+ BPL vpop4              ; to move on to the next button check
 
-.CA747
+                        ; If we get here then we need to move the highlight up
+                        ; the menu, wrapping around if we go off the top
 
- JSR HighlightLaserView
+ JSR PrintLaserView     ; Print the name of the laser view specified in Y at the
+                        ; correct on-screen position for the popup menu, to
+                        ; remove the highlight from the current selection
 
-.CA74A
+ DEY                    ; Decrement Y to move the number of the selected view up
+                        ; the menu
 
- LDA controller1Down
- BPL CA75C
- JSR PrintLaserView
- INY
- CPY #4
- BNE CA759
- LDY #0
+ BPL vpop3              ; If the view number is positive when we have not gone
+                        ; off the top of the menu, so jump to vpop3 to skip the
+                        ; following instruction
 
-.CA759
+ LDY #3                 ; We just moved past the top of the menu, so set Y to 3
+                        ; to move the selection to the bottom entry in the menu
+                        ; (the right view)
 
- JSR HighlightLaserView
+.vpop3
 
-.CA75C
+ JSR HighlightLaserView ; Highlight the Y-th entry in the popup menu, to reflect
+                        ; the new choice
 
- LDA controller1A
- BMI CA775
- LDA pointerButton
- BEQ CA737
- CMP #$50
- BNE CA775
- LDA #0
- STA pointerButton
- JSR PauseGame_b6
- JMP CA737
+.vpop4
 
-.CA775
+ LDA controller1Down    ; If the down button is not being pressed, jump to vpop6
+ BPL vpop6              ; to move on to the next button check
 
- TYA
- TAX
- RTS
+                        ; If we get here then we need to move the highlight down
+                        ; the menu, wrapping around if we go off the bottom
+
+ JSR PrintLaserView     ; Print the name of the laser view specified in Y at the
+                        ; correct on-screen position for the popup menu, to
+                        ; remove the highlight from the current selection
+
+ INY                    ; Increment Y to move the number of the selected view
+                        ; down the menu
+
+ CPY #4                 ; If Y is not 4 then we have not gone off the bottom of
+ BNE vpop5              ; the menu, so jump to vpop5 to skip the following
+                        ; instruction
+
+ LDY #0                 ; We just moved past the bottom of the menu, so set Y to
+                        ; 0 to move the selection to the top entry in the menu
+                        ; (the front view)
+
+.vpop5
+
+ JSR HighlightLaserView ; Highlight the Y-th entry in the popup menu, to reflect
+                        ; the new choice
+
+.vpop6
+
+ LDA controller1A       ; If the A button is being pressed, jump to vpop7 to
+ BMI vpop7              ; return the highlighted view as the chosen laser view
+
+ LDA pointerButton      ; If pointerButton = 0 then nothing has been chosen on
+ BEQ vpop2              ; the icon bar (if it had, pointerButton would contain
+                        ; the number of the chosen icon bar button), so loop
+                        ; back to vpop2 to keep processing the popup keys
+
+                        ; If we get here then either a choice has been made on
+                        ; the icon bar during NMI and the number of the icon bar
+                        ; button is in pointerButton, or the Start button has
+                        ; been pressed and pointerButton is 80
+
+ CMP #80                ; If pointerButton = 80 then the Start button has been
+ BNE vpop7              ; pressed to pause the game, so if this is not the case,
+                        ; then a different icon bar option has been chosen, so
+                        ; jump to vpop7 to return from the subroutine and abort
+                        ; the laser purchase
+
+                        ; If we get here then pointerButton = 80, which means
+                        ; the Start button has been pressed to pause the game
+
+ LDA #0                 ; Set pointerButton = 0 to clear the pause button press
+ STA pointerButton      ; so we don't simply re-enter the pause when we resume 
+
+ JSR PauseGame_b6       ; Pause the game and process choices from the pause menu
+                        ; until the game is unpaused by another press of Start
+
+ JMP vpop2              ; Jump back to vpop2 to pick up where we left off and go
+                        ; back to processing the popup choice
+
+.vpop7
+
+ TYA                    ; Copy the number of the highlighted laser view from Y
+ TAX                    ; into X, so we can return the choice in X
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -15454,7 +15641,7 @@ ENDIF
 ;
 ; Part 12 of the main flight loop calls this routine to remove the ship that is
 ; currently being analysed by the flight loop. Once the ship is removed, it
-; jumps back to MAL1 to re-join the main flight loop, with X pointing to the
+; jumps back to MAL1 to rejoin the main flight loop, with X pointing to the
 ; same slot that we just cleared (and which now contains the next ship in the
 ; local bubble of universe).
 ;
@@ -17322,7 +17509,8 @@ ENDIF
                         ; and move the text cursor to column 1 on row 21, i.e.
                         ; the start of the top row of the three bottom rows
 
- JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen
+ JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen, so the
+                        ; screen gets updated
 
 .CB118
 
@@ -17572,46 +17760,60 @@ ENDIF
 ;       Name: CheckForPause
 ;       Type: Subroutine
 ;   Category: Icon bar
-;    Summary: Pause the game if the pause button is pressed
+;    Summary: Pause the game if the pause button (Start) is pressed
 ;
 ; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
 ;   A                   The button number to check to see if it is the pause
-;                       button
+;                       button (a value of 80 indicates the pause button)
 ;
 ; Returns:
 ;
-;   C flag              The status of the pause button on the icon bar:
+;   C flag              The status of the pause button:
 ;
 ;                         * Clear if the pause button is not being pressed
 ;
-;                         * Set if the pause button is being pressed
+;                         * Set if the pause button is being pressed, in which
+;                           case we return from the subroutine after pausing the
+;                           the game, processing any choices from the icon bar,
+;                           and unpausing the game when Start is pressed again
 ;
 ; Other entry points:
 ;
-;   CheckForPause-3     Check the value of pointerButton to see if the pause
-;                       button is under the icon bar pointer
+;   CheckForPause-3     Set A to pointerButton so we check whether the pause
+;                       button is being pressed
 ;
 ; ******************************************************************************
 
- LDA pointerButton
+ LDA pointerButton      ; Set A to the number of the icon bar button under the
+                        ; icon bar pointer (for when this routine is called via
+                        ; the CheckForPause-3 entry point)
 
 .CheckForPause
 
- CMP #80
- BNE CB1E2
- LDA #0
- STA pointerButton
- JSR PauseGame_b6
- SEC
- RTS
+ CMP #80                ; If pointerButton = 80 then the Start button has been
+ BNE cpse1              ; pressed to pause the game, so if this is not the case,
+                        ; jump to cpse1 to return from the subroutine with the
+                        ; C flag clear and without pausing
 
-.CB1E2
+ LDA #0                 ; Set pointerButton = 0 to clear the pause button press
+ STA pointerButton      ; so we don't simply re-enter the pause when we resume 
 
- CLC
- RTS
+ JSR PauseGame_b6       ; Pause the game and process choices from the pause menu
+                        ; until the game is unpaused by another press of Start
+
+ SEC                    ; Set the C flag to indicate that the game was paused
+
+ RTS                    ; Return from the subroutine
+
+.cpse1
+
+ CLC                    ; Clear the C flag to indicate that the game was not
+                        ; paused
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -19219,8 +19421,9 @@ ENDIF
 .CB6B0
 
  LDX pressedButton
- CPX #$40
+ CPX #64
  BNE CB6B9
+
  JMP PauseGame_b6
 
 .CB6B9
@@ -21412,11 +21615,8 @@ ENDIF
 ;   X                   The space view to set:
 ;
 ;                         * 0 = front
-;
 ;                         * 1 = rear
-;
 ;                         * 2 = left
-;
 ;                         * 3 = right
 ;
 ; Other entry points:

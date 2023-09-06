@@ -2685,7 +2685,7 @@ ENDIF
 ;   * 2 contains a vertical bar down the left edge of the pattern (for the
 ;     right box edge)
 ;
-;   * 3 contains a horizontal along the lower-middle of the pattern (for the
+;   * 3 contains a horizontal bar along the lower-middle of the pattern (for the
 ;     top box edge)
 ;
 ;   * 4 contains the first pattern for the top-left corner of the icon bar
@@ -4993,9 +4993,11 @@ ENDIF
 ;
 ;   K+1                 The height of the box to draw in tiles
 ;
-;   K+2                 The text row on which to draw the small box
+;   K+2                 The text row on which to draw the top-left corner of the
+;                       small box
 ;
-;   K+3                 The text column on which to draw the small box
+;   K+3                 The text column on which to draw the top-left corner of
+;                       the small box
 
 ; ******************************************************************************
 
