@@ -517,7 +517,7 @@ ENDIF
                         ;
                         ; See the SetPaletteForView routine for details
 
-.fontBitplane
+.fontForPrinting
 
  SKIP 1                 ; When printing a character in CHPR, this defines which
                         ; bitplanes to draw from the font images in fontImage,
@@ -964,6 +964,17 @@ ENDIF
                         ;
                         ;   $FF = Segue screen from Title screen to Demo
                         ;         No font loaded, no dashboard or icon bar
+                        ;
+                        ; In terms of fonts, then, these are the only options:
+                        ;
+                        ;   * No font is loaded
+                        ;
+                        ;   * The font is loaded in bitplane 0
+                        ;
+                        ;   * The font is loaded in both bitplanes
+                        ;
+                        ;   * The font is loaded in both bitplanes and the
+                        ;     inverted font is loaded into bitplane 1
 
 .QQ11a
 
@@ -4839,9 +4850,9 @@ ENDIF
                         ; are in our local bubble, which is the same as saying
                         ; "space station present"
 
-.L0584
+.messageLength
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The length of the message stored in the message buffer
 
 .messageBuffer
 

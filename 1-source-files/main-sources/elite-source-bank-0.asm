@@ -2710,7 +2710,7 @@ ENDIF
  BEQ P%+5               ; instruction (as the screen has a different layout in
                         ; the other languages)
 
- JSR TT162              ; Print a newline
+ JSR TT162              ; Print a space
 
  LDA TALLY+1            ; Fetch the high byte of the kill tally, and if it is
  BNE st4                ; not zero, then we have more than 256 kills, so jump
@@ -2770,7 +2770,7 @@ ENDIF
  BEQ P%+8               ; the following two instructions (as the screen has a
                         ; different layout in German)
 
- JSR TT162              ; Print two newlines
+ JSR TT162              ; Print two spaces
  JSR TT162
 
  PLA                    ; Set A to the combat rank we stored on the stack above
@@ -8196,14 +8196,14 @@ ENDIF
 
  JSR TT27_b2            ; Print the character in A
 
- LDA #3                 ; Set the font bitplane to print in both planes 1 and 2
- STA fontBitplane
+ LDA #3                 ; Set the font to 3 (i.e. neither of the loaded fonts)
+ STA fontForPrinting
 
  LDA #':'               ; Print a colon
  JSR TT27_b2
 
- LDA #1                 ; Set the font bitplane to print in plane 1
- STA fontBitplane
+ LDA #1                 ; Set the font to 1 (i.e. the font in bitplane 0)
+ STA fontForPrinting
 
  RTS                    ; Return from the subroutine
 
@@ -11743,8 +11743,8 @@ ENDIF
 
  TAY                    ; Set Y to the market item number
 
- LDX #2                 ; Set the font bitplane to print in plane 2
- STX fontBitplane
+ LDX #2                 ; Set the font to 2 (i.e. the font in bitplane 1)
+ STX fontForPrinting
 
  CLC                    ; Move the text cursor to the row for this market item,
  LDX languageIndex      ; starting from item 0 at the top, on the correct row
@@ -11757,8 +11757,8 @@ ENDIF
                         ; QQ19+1 to byte #1 from the market prices table for
                         ; this item
 
- LDX #1                 ; Set the font bitplane to print in plane 1
- STX fontBitplane
+ LDX #1                 ; Set the font to 1 (i.e. the font in bitplane 0)
+ STX fontForPrinting
 
  RTS                    ; Return from the subroutine
 
@@ -12700,15 +12700,15 @@ ENDIF
 
 .HighlightEquipment
 
- LDX #2                 ; Set the font bitplane to print in plane 2
- STX fontBitplane
+ LDX #2                 ; Set the font to 2 (i.e. the font in bitplane 1)
+ STX fontForPrinting
 
  LDX XX13               ; Set X to the item number to print
 
  JSR PrintEquipment+2   ; Print the name and price for the equipment item in X
 
- LDX #1                 ; Set the font bitplane to print in plane 1
- STX fontBitplane
+ LDX #1                 ; Set the font to 1 (i.e. the font in bitplane 0)
+ STX fontForPrinting
 
  RTS                    ; Return from the subroutine
 
@@ -12760,10 +12760,11 @@ ENDIF
  LDA #1                 ; Move the text cursor to column 1
  STA XC
 
- LDA languageNumber     ; If bit 1 of languageNumber is clear, then the chosen
- AND #%00000010         ; language is German, so print a space
- BNE preq2
- JSR TT162
+ LDA languageNumber     ; If bit 1 of languageNumber is set then the chosen
+ AND #%00000010         ; language is French, so jump to preq2 to skip the
+ BNE preq2              ; following
+
+ JSR TT162              ; Print a space
 
 .preq2
 
@@ -12980,9 +12981,6 @@ ENDIF
 ;
 ; Other entry points:
 ;
-;   err                 Beep, pause and go to the docking bay (i.e. show the
-;                       Status Mode screen)
-;
 ;   pres                Given an item number A with the item name in recursive
 ;                       token Y, show an error to say that the item is already
 ;                       present, refund the cost of the item, and then beep and
@@ -13114,15 +13112,25 @@ ENDIF
 
  JSR UpdateSaveCount    ; Update the save counter for the current commander
 
- LDA XX13               ; Set A = XX13 - 1, so A contains the item number of
- SEC                    ; the currently selected item, less 1, which will be the
+ LDA XX13               ; Set A = XX13 - 1, so A contains the item number of the
+ SEC                    ; currently selected item, less 1, which will be the
  SBC #1                 ; actual number of the item we want to buy
 
- PHA                    ; While preserving the value in A, call eq to subtract
- JSR eq                 ; the price of the item we want to buy (which is in A)
- BCS equi5              ; from our cash pot, but only if we have enough cash in
- PLA                    ; the pot. If we don't have enough cash, exit to the
-                        ; docking bay (i.e. show the Status Mode screen) ???
+ PHA                    ; Store the value of A on the stack, so we can retrieve
+                        ; it after the call to eq
+
+ JSR eq                 ; Call eq to subtract the price of the item we want to
+                        ; buy (which is in A) from our cash pot
+
+ BCS equi5              ; If we had enough cash to make the purchase, then the C
+                        ; flag will be set by eq, so jump to equi5 with the
+                        ; original value of A still on the stack
+
+                        ; If we get here then we didn't have enough cash to make
+                        ; the purchase
+
+ PLA                    ; Retrieve the value of A from the stack, so A contains
+                        ; the number of the item we couldn't afford
 
  JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen, so the
                         ; screen gets updated
@@ -13132,25 +13140,42 @@ ENDIF
 
 .equi5
 
- PLA                    ; ???
+                        ; If we get here then we just successfully bought an item
+                        ; of equipment
+
+ PLA                    ; Retrieve the value of A from the stack, so A contains
+                        ; the number of the item we just bought
 
  BNE et0                ; If A is not 0 (i.e. the item we've just bought is not
                         ; fuel), skip to et0
 
- PHA                    ; ???
- LDA QQ14
- CLC
+ PHA                    ; Store the value of A on the stack, so we can retrieve
+                        ; it after the following calculation
+
+ LDA QQ14               ; Fetch our current fuel level from Q114 into A
+
+ CLC                    ; Increment our fuel level in A
  ADC #1
- CMP #$47
- BCC equi6
- LDY #$69
- PLA
- JMP pres
+
+ CMP #71                ; If A < 71 then the tank is not overflowing, so jump to
+ BCC equi6              ; equi6 to store the updated fuel level
+
+ LDY #105               ; Set Y to recursive token 105 ("FUEL") to display as
+                        ; the error in the call to pres
+
+ PLA                    ; Restore A from the stack
+
+ JMP pres               ; Jump to pres to show the error "Fuel Present", beep
+                        ; and exit to the docking bay (i.e. show the Status Mode
+                        ; screen)
 
 .equi6
 
- STA QQ14
- PLA
+ STA QQ14               ; Update the fuel level in QQ14 to the value in A, as we
+                        ; have just bought some fuel
+
+ PLA                    ; Restore A from the stack, so it once again contains
+                        ; the number of the item we are buying
 
 .et0
 
@@ -13291,30 +13316,38 @@ ENDIF
  LDA #31                ; Print recursive token 145 ("PRESENT")
  JSR TT27_b2
 
-.err
+.equi7
 
- JSR TT162              ; ???
- LDA XC
- CMP #$1F
- BNE err
- JSR BOOP
+ JSR TT162              ; Print a space
+
+ LDA XC                 ; If the text cursor is not in column 31, loop back to
+ CMP #31                ; equi7 to keep printing spaces until it reaches column
+ BNE equi7              ; 31 at the right end of the screen, so we clear up to
+                        ; the end of the line containing the error message
+
+ JSR BOOP               ; Call the BOOP routine to make a low, long beep to
+                        ; indicate an error
 
  JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen, so the
                         ; screen gets updated
 
- LDY #$28
- JSR DELAY
- LDA #6
+ LDY #40                ; Wait until 40 NMI interrupts have passed (i.e. the
+ JSR DELAY              ; next 40 VBlanks)
+
+ LDA #6                 ; Move the text cursor to column 6
  STA XC
- LDA #$11
+
+ LDA #17                ; Move the text cursor to row 17
  STA YC
 
-.equi7
+.equi8
 
- JSR TT162
- LDA XC
- CMP #$1F
- BNE equi7
+ JSR TT162              ; Print a space
+
+ LDA XC                 ; If the text cursor is not in column 31, loop back to
+ CMP #31                ; equi8 to keep printing spaces until it reaches column
+ BNE equi8              ; 31 at the right end of the screen, so we clear the
+                        ; whole line containing the error message
 
  JSR dn                 ; Print the amount of money we have left in the cash pot
 
@@ -13324,9 +13357,10 @@ ENDIF
  JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen, so the
                         ; screen gets updated
 
- JMP equi1              ; ???
+ JMP equi1              ; Loop back up to equi1 to keep checking for button
+                        ; presses 
 
-.equi8
+.equi9
 
  JMP pres               ; Jump to pres to show an error, beep and exit to the
                         ; docking bay (i.e. show the Status Mode screen)
@@ -13334,7 +13368,8 @@ ENDIF
  JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen, so the
                         ; screen gets updated
 
- JMP equi1              ; ???
+ JMP equi1              ; Loop back up to equi1 to keep checking for button
+                        ; presses 
 
 .ed9
 
@@ -13379,7 +13414,7 @@ ENDIF
  BNE etA                ; an energy unit), skip to etA
 
  LDX ENGY               ; If we already have an energy unit fitted (i.e. ENGY is
- BNE equi8              ; non-zero), jump to pres via equi8 to show the error
+ BNE equi9              ; non-zero), jump to pres via equi9 to show the error
                         ; "Energy Unit Present", beep and exit to the docking
                         ; bay (i.e. show the Status Mode screen)
 
@@ -13395,7 +13430,7 @@ ENDIF
  BNE etB                ; a docking computer), skip to etB
 
  LDX DKCMP              ; If we already have a docking computer fitted (i.e.
- BNE equi8              ; DKCMP is non-zero), jump to pres via equi8 to show the
+ BNE equi9              ; DKCMP is non-zero), jump to pres via equi9 to show the
                         ; error "Docking Computer Present", beep and exit to the
                         ; docking bay (i.e. show the Status Mode screen)
 
@@ -13412,7 +13447,7 @@ ENDIF
  BNE et9                ; a galactic hyperdrive), skip to et9
 
  LDX GHYP               ; If we already have a galactic hyperdrive fitted (i.e.
- BNE equi8              ; GHYP is non-zero), jump to pres via equi8 to show the
+ BNE equi9              ; GHYP is non-zero), jump to pres via equi9 to show the
                         ; error "Galactic Hyperspace Present", beep and exit to
                         ; the docking bay (i.e. show the Status Mode screen)
 
@@ -13458,18 +13493,24 @@ ENDIF
 
 .et11
 
- JSR equi9              ; ???
+ JSR equi10             ; Call equi10 below to print the amount of money we have
+                        ; left and make a short, high beep to indicate that the
+                        ; transaction was successful
 
- JMP UpdateEquipment
+ JMP UpdateEquipment    ; Jump up to UpdateEquipment to highlight the newly
+                        ; bought item of equipment, update the Cobra Mk III,
+                        ; redraw the screen and rejoin the main EQSHP routine to
+                        ; continue checking for button presses
 
-.equi9
+.equi10
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
  JSR dn                 ; Print the amount of money we have left in the cash pot
 
- JMP BEEP_b7            ; ???
+ JMP BEEP_b7            ; Call the BEEP subroutine to make a short, high beep
+                        ; and return from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -13509,6 +13550,13 @@ ENDIF
 ;   A                   The item number of the piece of equipment (0-11) as
 ;                       shown in the table at PRXS
 ;
+; Returns:
+;
+;   C flag              The status of the transaction:
+;
+;                         * Clear if we didn't have enough cash for the purchase
+;
+;                         * Set if we did have enough cash for the purchase
 ; ******************************************************************************
 
 .eq
@@ -13722,14 +13770,14 @@ ENDIF
 
 .HighlightLaserView
 
- LDA #2                 ; Set the font bitplane to print in plane 2
- STA fontBitplane
+ LDA #2                 ; Set the font to 2 (i.e. the font in bitplane 1)
+ STA fontForPrinting
 
  JSR PrintLaserView     ; Print the name of the laser view specified in Y at the
                         ; correct on-screen position for the popup menu
 
- LDA #1                 ; Set the font bitplane to print in plane 1
- STA fontBitplane
+ LDA #1                 ; Set the font to 1 (i.e. the font in bitplane 0)
+ STA fontForPrinting
 
  TYA                    ; Store Y on the stack so we can retrieve it at the end
  PHA                    ; of the subroutine
@@ -13807,14 +13855,14 @@ ENDIF
                         ; Next, we highlight the first view (front) as by this
                         ; point Y = 0
 
- LDA #2                 ; Set the font bitplane to print in plane 2
- STA fontBitplane
+ LDA #2                 ; Set the font to 2 (i.e. the font in bitplane 1)
+ STA fontForPrinting
 
  JSR PrintLaserView     ; Print the name of the laser view specified in Y at the
                         ; correct on-screen position for the popup menu
 
- LDA #1                 ; Set the font bitplane to print in plane 1
- STA fontBitplane
+ LDA #1                 ; Set the font to 1 (i.e. the font in bitplane 0)
+ STA fontForPrinting
 
                         ; We now draw a box around the list of views to make it
                         ; look like a popup menu
@@ -14321,22 +14369,23 @@ ENDIF
 
 .fwl
 
- LDA languageNumber     ; ???
- AND #%00000010
- BNE CA87D
+ LDA languageNumber     ; If bit 1 of languageNumber is set then the chosen
+ AND #%00000010         ; language is French, so jump to fuel3 to print the fuel
+ BNE fuel3              ; and cash levels with different indents, to cater for
+                        ; the difference in language
 
  LDA #105               ; Print recursive token 105 ("FUEL") followed by a
  JSR TT68               ; colon
 
- JSR Print2Newlines     ; Print two newlines
+ JSR Print2Spaces       ; Print two spaces
 
  LDA languageNumber     ; If bit 2 of languageNumber is clear then the chosen
- AND #%00000100         ; language is not French, so ???
- BEQ CA85B
+ AND #%00000100         ; language is not French, so jump to fuel1 to skip the
+ BEQ fuel1              ; following
 
- JSR Print2Newlines     ; Print two newlines
+ JSR Print2Spaces       ; Print two spaces
 
-.CA85B
+.fuel1
 
  LDX QQ14               ; Load the current fuel level from QQ14
 
@@ -14350,78 +14399,97 @@ ENDIF
  LDA #195               ; Print recursive token 35 ("LIGHT YEARS") followed by
  JSR plf                ; a newline
 
- LDA #197               ; ???
+ LDA #197               ; Print recursive token 37 ("CASH") followed by a colon
  JSR TT68
 
  LDA languageNumber     ; If bit 2 of languageNumber is set then the chosen
- AND #%00000100         ; language is French, so ???
- BNE CA879
+ AND #%00000100         ; language is French, so jump to fuel2 to skip the
+ BNE fuel2              ; following two insteuctions
 
- JSR Print2Newlines     ; Print two newlines
- JSR TT162
+ JSR Print2Spaces       ; Print two spaces
 
-.CA879
+ JSR TT162              ; Print a space
 
- LDA #0
- BEQ CA89C
+.fuel2
 
-.CA87D
+ LDA #0                 ; Set A = 0 so we print recursive token 0 at fuel4,
+                        ; which prints control code 0 (current amount of cash
+                        ; and newline)
 
- LDA #105
+ BEQ fuel4              ; Jump to fuel4 to print the token in A (this BNE is
+                        ; effectively a JMP as A is always zero)
+
+.fuel3
+
+                        ; If we get here then the chosen language is French
+
+ LDA #105               ; Print recursive token 105 ("FUEL") followed by a colon
  JSR PrintTokenAndColon
- JSR TT162
- LDX QQ14
- SEC
- JSR pr2
 
- LDA #195
- JSR plf
+ JSR TT162              ; Print a space
 
- LDA #197
+ LDX QQ14               ; Load the current fuel level from QQ14
+
+ SEC                    ; We want to print the fuel level with a decimal point,
+                        ; so set the C flag for pr2 to take as an argument
+
+ JSR pr2                ; Call pr2, which prints the number in X to a width of
+                        ; 3 figures (i.e. in the format x.x, which will always
+                        ; be exactly 3 characters as the maximum fuel is 7.0)
+
+ LDA #195               ; Print recursive token 35 ("LIGHT YEARS") followed by
+ JSR plf                ; a newline
+
+ LDA #197               ; Print recursive token 37 ("CASH") followed by a colon
  JSR TT68
- LDA #0
- BEQ CA89C
+
+ LDA #0                 ; Set A = 0 so we print recursive token 0 at fuel4,
+                        ; which prints control code 0 (current amount of cash
+                        ; and newline)
+
+ BEQ fuel4              ; Jump to fuel4 to print the token in A (this BNE is
+                        ; effectively a JMP as A is always zero)
 
 .PCASH
 
  LDA #119               ; Set A = 119 so we print recursive token 119 below
+                        ; ("CASH:" then control code 0, which prints cash
+                        ; levels, then " CR" and newline)
 
-.CA89C
+.fuel4
 
- JMP spc                ; Print recursive token 119 ("CASH:" then control code
-                        ; 0, which prints cash levels, then " CR" and newline),
-                        ; followed by a space, and return from the subroutine
-                        ; using a tail call
+ JMP spc                ; Print the recursive token in A and return from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: Print4Newlines
+;       Name: Print4Spaces
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Print four newlines
+;    Summary: Print four spaces
 ;
 ; ******************************************************************************
 
-.Print4Newlines
+.Print4Spaces
 
- JSR Print2Newlines     ; Print two newlines
+ JSR Print2Spaces       ; Print two spaces
 
-                        ; Fall through into Print2Newlines to print another two
+                        ; Fall through into Print2Spaces to print another two
                         ; newlines
 
 ; ******************************************************************************
 ;
-;       Name: Print2Newlines
+;       Name: Print2Spaces
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Print two newlines
+;    Summary: Print two spaces
 ;
 ; ******************************************************************************
 
-.Print2Newlines
+.Print2Spaces
 
- JSR TT162              ; Print two newlines
- JMP TT162
+ JSR TT162              ; Print two spaces, returning from the subroutin using a
+ JMP TT162              ; tail call
 
 ; ******************************************************************************
 ;
@@ -14482,8 +14550,8 @@ ENDIF
  LDA #226               ; Print recursive token 66 (" CR")
  JSR TT27_b2
 
- JSR TT162              ; Print two newlines and return from the subroutine
- JMP TT162              ; using a tail call
+ JSR TT162              ; Print two spaces and return from the subroutine using
+ JMP TT162              ; a tail call
 
 ; ******************************************************************************
 ;
@@ -16088,12 +16156,12 @@ ENDIF
 
 .YESNO
 
- LDA fontBitplane       ; Store the current font bitplane value on the stack,
+ LDA fontForPrinting    ; Store the current font bitplane value on the stack,
  PHA                    ; so we can restore it when we return from the
                         ; subroutine
 
- LDA #2                 ; Set the font bitplane to print in plane 2
- STA fontBitplane
+ LDA #2                 ; Set the font to 2 (i.e. the font in bitplane 1)
+ STA fontForPrinting
 
  LDA #1                 ; Push a value of 1 onto the stack, so the following
  PHA                    ; prints extended token 1 ("YES")
@@ -16149,7 +16217,7 @@ ENDIF
                         ; result to return
 
  PLA                    ; Restore the font bitplane value that we stored on the
- STA fontBitplane       ; stack so it's unchanged by the routine
+ STA fontForPrinting    ; stack so it's unchanged by the routine
 
  TXA                    ; Copy X to A, so we return the result in both A and X
 
@@ -18081,8 +18149,8 @@ ENDIF
 
  JSR ResetOptions       ; Reset the game options to their default values
 
- LDA #1                 ; Set the font bitplane to print in plane 1
- STA fontBitplane
+ LDA #1                 ; Set the font to 1 (i.e. the font in bitplane 0)
+ STA fontForPrinting
 
  LDX #$FF               ; Set the old view type in QQ11a to $FF (Segue screen
  STX QQ11a              ; from Title screen to Demo)
@@ -19673,14 +19741,17 @@ ENDIF
  LDA #%11000000         ; Set the DTW4 flag to %11000000 (justify text, buffer
  STA DTW4               ; entire token including carriage returns)
 
- LDA #0                 ; Set DTW5 = 0, which sets the size of the justified
- STA DTW5               ; text buffer at BUF to zero
+ LDA #0                 ; Set DTW5 = 0, to reset the size of the message in the
+ STA DTW5               ; text buffer at BUF
 
  PLA                    ; Restore A from the stack
 
  JSR ex_b2              ; Print the recursive token in A
 
- JMP subm_B7F2          ; Jump to subm_B7F2 to ???
+ JMP StoreMessage       ; Jump to StoreMessage to copy the message from the
+                        ; justified text buffer in BUF into the message buffer
+                        ; at messageBuffer, returning ffom the subroutine using
+                        ; a tail call
 
 ; ******************************************************************************
 ;
@@ -19792,45 +19863,67 @@ ENDIF
 
  JSR TT27_b2            ; Call TT27 to print the text token in A
 
- LDA de                 ; If de is zero, then jump to subm_B7F2 to skip the
- BEQ subm_B7F2          ; following, as we don't need to print " DESTROYED"
+ LDA de                 ; If de is zero, then jump to StoreMessage to skip the
+ BEQ StoreMessage       ; following, as we don't need to print " DESTROYED"
 
  LDA #253               ; Print recursive token 93 (" DESTROYED")
  JSR TT27_b2
 
-                        ; Fall through into subm_B7F2 to centre the message
-                        ; on-screen ???
+                        ; Fall through into StoreMessage to copy the message
+                        ; from the justified text buffer in BUF into the
+                        ; message buffer at messageBuffer
 
 ; ******************************************************************************
 ;
-;       Name: subm_B7F2
+;       Name: StoreMessage
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Centre a message on-screen ???
+;    Summary: Copy a message from the justified text buffer at BUF into the
+;             message buffer
 ;
 ; ******************************************************************************
 
-.subm_B7F2
+.StoreMessage
 
  LDA #32                ; Set A = 32 - DTW5
  SEC                    ;
  SBC DTW5               ; Where DTW5 is the size of the justified text buffer at
-                        ; BUF
+                        ; BUF, so A contains the number of characters remaining
+                        ; if we print the message buffer on one line (as each
+                        ; line contains 32 characters)
 
- BCS CB801              ; If the subtraction didn't underflow, jump to CB801
+ BCS smes1              ; If the subtraction didn't underflow, then the message
+                        ; in the message buffer will fit on one line, so jump to
+                        ; smes1 with the remaining number of characters in A
 
- LDA #31                ; The subraction underflowed, so DTW5 > 32, so set DTW5
- STA DTW5               ; to 31, which is the maximum size of the 
-
- LDA #2                 ; ???
-
-.CB801
-
- LSR A                  ; Set A = (32 - DTW5) / 2
+                        ; The subraction underflowed, so the message will not
+                        ; fit on one line
                         ;
-                        ; so A now contains the column number we need to print
-                        ; our message at for it to be centred on-screen (as
-                        ; there are 32 columns)
+                        ; In this case we just print as many characters as we
+                        ; can and truncate the message at the end of the line
+
+ LDA #31                ; Set the size of the message buffer in DTW5 to 31,
+ STA DTW5               ; which is the maximum size of a one-line message
+
+ LDA #2                 ; Set A = 2 so the message will be printed in column 1
+                        ; on the left of the screen
+
+.smes1
+
+                        ; When we get here, A contains the number of characters
+                        ; remaining if we were to print the message on one line
+                        ; of the screen
+
+ LSR A                  ; Set A = A / 2
+                        ;
+                        ; So A now contains half the amount of free space left
+                        ; if we print the message on one line, which is the
+                        ; amount of space on each side of the message when it is
+                        ; centred on the line
+                        ;
+                        ; In other words, this is the column number where we
+                        ; need to print our message for it to be centred
+                        ; on-screen
 
  STA messXC             ; Store A in messXC, so when we erase the message via
                         ; the branch to me1 above, messXC will tell us where to
@@ -19839,34 +19932,41 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDX DTW5
- STX L0584
+ LDX DTW5               ; Set the size of the message in the message buffer to
+ STX messageLength      ; the size of the justified text buffer, as we are about
+                        ; to copy from one to the other
 
- INX
+ INX                    ; Set X as a character counter so we can loop through
+                        ; message and copy it one character at a time (we
+                        ; increment it so X is at least 1, to make the following
+                        ; loop work)
 
-.loop_CB818
+.smes2
 
- LDA BUF-1,X
- STA messageBuffer-1,X
+ LDA BUF-1,X            ; Copy the character number X - 1 from BUF into
+ STA messageBuffer-1,X  ; messageBuffer
 
- DEX
+ DEX                    ; Decrement the character counter
 
- BNE loop_CB818
+ BNE smes2              ; Loop back until we have copied all X characters
 
- STX de
+ STX de                 ; Zero de, the flag that appends " DESTROYED" to the
+                        ; end of the next text token, so that it doesn't append
+                        ; it to the next message
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
                         ; Fall through into DisableJustifyText to reset DTW4 and
-                        ; DTW5 to turn off justified text
+                        ; DTW5 to turn off justified text and reset the
+                        ; justified text buffer
 
 ; ******************************************************************************
 ;
 ;       Name: DisableJustifyText
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Turn off justified text
+;    Summary: Turn off justified text and reset the justified text buffer
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -19878,10 +19978,11 @@ ENDIF
 
 .DisableJustifyText
 
- LDA #0                 ; Set DTW4 = %00000000  (do not justify text, print
+ LDA #0                 ; Set DTW4 = %00000000 (do not justify text, print
  STA DTW4               ; buffer on carriage return)
 
- STA DTW5               ; Set DTW5 = 0 (reset line buffer size)
+ STA DTW5               ; Set DTW5 = 0, to reset the size of the message in the
+                        ; text buffer at BUF
 
 .RTS5
 
@@ -19900,40 +20001,50 @@ ENDIF
 
  LDA messYC             ; Set A to the current row for in-flight messages
 
- LDX QQ11               ; If this is the space view, jump to CB845 to skip the
- BEQ CB845              ; following and leave A with this value, so we print the
+ LDX QQ11               ; If this is the space view, jump to fmes1 to skip the
+ BEQ fmes1              ; following and leave A with this value, so we print the
                         ; in-flight message on the row specified in messYC
 
- JSR CLYNS+8            ; ???
+ JSR CLYNS+8            ; Clear the bottom two text rows of the visible screen,
+                        ; but without resetting the in-flight message timer
 
- LDA #$17               ; Set A to 23, so we print the in-flight message on row
+ LDA #23                ; Set A to 23, so we print the in-flight message on row
                         ; 23 for all views other than the space view
 
-.CB845
+.fmes1
 
  STA YC                 ; Move the text cursor to the row in A
 
- LDX #0                 ; ???
+ LDX #0                 ; Set QQ17 = 0 to switch to ALL CAPS
  STX QQ17
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA messXC
- STA XC
- LDA messXC
- STA XC
- LDY #0
+ LDA messXC             ; Move the text cursor to column messXC, which we set
+ STA XC                 ; to the text column of the current in-flight message
+                        ; when we called MESS to display it
 
-.loop_CB862
+ LDA messXC             ; This appears to be an unnecessary duplicate of the
+ STA XC                 ; above
 
- LDA messageBuffer,Y
- JSR CHPR_b2
- INY
- CPY L0584
- BNE loop_CB862
- LDA QQ11
- BEQ RTS5
+ LDY #0                 ; We now work through the message one character at a
+                        ; time, so set a character counter in Y
+
+.fmes2
+
+ LDA messageBuffer,Y    ; Fetch the Y-th character from the message buffer
+
+ JSR CHPR_b2            ; Print the character
+
+ INY                    ; Increment the character counter in Y
+
+ CPY messageLength      ; Loop back until we have printed all the characters in
+ BNE fmes2              ; the buffer, whose size is in messageLength
+
+ LDA QQ11               ; If this is the space view, jump to RTS5 to return from
+ BEQ RTS5               ; the subroutine, as the NMI handler will take care of
+                        ; updating the screen when we next flip bitplanes
 
  JMP DrawMessageInNMI   ; Configure the NMI to display the message that we just
                         ; printed, returning from the subroutine using a tail

@@ -7088,7 +7088,7 @@ ENDIF
 
 .CB5CB
 
- JSR PrintPositionName
+ JSR HighlightPosition
  JSR UpdateSaveScreen
  JSR WaitForNoDirection
 
@@ -7104,7 +7104,7 @@ ENDIF
  JSR ClearPositionName
  SEC
  SBC #1
- JSR PrintPositionName
+ JSR HighlightPosition
  JSR UpdateSaveScreen
 
 .CB5EC
@@ -7116,7 +7116,7 @@ ENDIF
  JSR ClearPositionName
  CLC
  ADC #1
- JSR PrintPositionName
+ JSR HighlightPosition
  JSR UpdateSaveScreen
 
 .CB601
@@ -7290,13 +7290,13 @@ ENDIF
 
 .HighlightSaveName
 
- LDX #2                 ; Set the font bitplane to print in plane 2
- STX fontBitplane
+ LDX #2                 ; Set the font to 2 (i.e. the font in bitplane 1)
+ STX fontForPrinting
 
  JSR PrintSaveName
 
- LDX #1                 ; Set the font bitplane to print in plane 1
- STX fontBitplane
+ LDX #1                 ; Set the font to 1 (i.e. the font in bitplane 0)
+ STX fontForPrinting
 
  RTS
 
@@ -7323,17 +7323,17 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: PrintPositionName
+;       Name: HighlightPosition
 ;       Type: Subroutine
 ;   Category: Save and load
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.PrintPositionName
+.HighlightPosition
 
- LDX #2                 ; Set the font bitplane to print in plane 2
- STX fontBitplane
+ LDX #2                 ; Set the font to 2 (i.e. the font in bitplane 1)
+ STX fontForPrinting
 
  LDX #$0B
  STX XC
@@ -7345,8 +7345,8 @@ ENDIF
  PLA
  JSR PrintBufferName
 
- LDX #1                 ; Set the font bitplane to print in plane 1
- STX fontBitplane
+ LDX #1                 ; Set the font to 1 (i.e. the font in bitplane 0)
+ STX fontForPrinting
 
  RTS
 
@@ -8363,14 +8363,14 @@ ENDIF
 
  TAX
  STY YSAV
- LDA fontBitplane
+ LDA fontForPrinting
  PHA
  LDA QQ11
  AND #$20
  BEQ CBADB
 
- LDA #1                 ; Set the font bitplane to print in plane 1
- STA fontBitplane
+ LDA #1                 ; Set the font to 1 (i.e. the font in bitplane 0)
+ STA fontForPrinting
 
 .CBADB
 
@@ -8436,7 +8436,7 @@ ENDIF
 
  TAX
  PLA
- STA fontBitplane
+ STA fontForPrinting
  LDY YSAV
  TXA
  RTS
@@ -8873,7 +8873,12 @@ ENDIF
                         ; of $FF in the languageIndexes table, so we only print
                         ; names for languages 0, 1 and 2)
 
- STY systemNumber       ; Set systemNumber = 3 ???
+ STY systemNumber       ; Set the current system number in systemNumber to 3,
+                        ; though this doesn't appear to be used anywhere (this
+                        ; normally stores the current system number for use in
+                        ; the PDESC routine for printing extended system
+                        ; descriptions, but it gets reset before we get that
+                        ; far, so this appears to have no effect)
 
  LDA #HI(iconBarImage3) ; Set iconBarImageHi to the high byte of the image data
  STA iconBarImageHi     ; for icon bar type 3 (pause options)

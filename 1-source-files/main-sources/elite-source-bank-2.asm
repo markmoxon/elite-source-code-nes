@@ -14619,13 +14619,15 @@ ENDIF
                         ; TKN2, which is at TKN2 + X + 1, and fall through into
                         ; DTS to print it
 
- CMP #$3F               ; ???
- BEQ DTM-1
+ CMP #'?'               ; If the second letter of the token is a question mark
+ BEQ DTM-1              ; then this is a one-letter token, so just return from
+                        ; the subroutine without printing (as DTM-1 contains an
+                        ; RTS)
 
 .DTS
 
- BIT DTW1               ; ???
- BPL DT5
+ BIT DTW1               ; If bit 7 of DTW1 is clear then ???, so jump to DT5 to
+ BPL DT5                ; print the character in upper case
 
  BIT DTW6               ; If bit 7 of DTW6 is set, then lower case has been
  BMI DT10               ; enabled by jump token 13, {lower case}, so jump to
@@ -14638,13 +14640,18 @@ ENDIF
 
 .DT10
 
- BIT DTW8               ; ???
- BPL DT5
- STX SC
- TAX
- LDA lowerCase,X
- LDX SC
- AND DTW8
+ BIT DTW8               ; If bit 7 of DTW8 is clear then ???, so jump to DT5 to
+ BPL DT5                ; print the character in upper case
+
+ STX SC                 ; Store X in SC so we can retrieve it below
+
+ TAX                    ; Convert the character in A into lower case by looking
+ LDA lowerCase,X        ; up the lower case ASCII value from the lowerCase table
+
+ LDX SC                 ; Restore the value of X that we stored in SC
+
+ AND DTW8               ; Convert the character to upper case if DTW8 is
+                        ; %11011111 (i.e. after a {single cap} token)
 
 .DT5
 
@@ -15071,7 +15078,7 @@ ENDIF
 ;       Name: MT9
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Clear the screen and set the cire type for a text-based mission
+;    Summary: Clear the screen and set the view type for a text-based mission
 ;    briefing
 ;  Deep dive: Extended text tokens
 ;
@@ -15081,7 +15088,7 @@ ENDIF
 ;
 ;   * XC = 1 (tab to column 1)
 ;
-; before calling TT66 to clear the screen and set the view type to 1.
+; before calling TT66 to clear the screen and set the view type to $95.
 ;
 ; ******************************************************************************
 
@@ -15761,7 +15768,7 @@ ENDIF
 ;
 ; Arguments:
 ;
-;   ZZ                  The system number (0-255)
+;   systemNumber        The system number (0-255)
 ;
 ; ******************************************************************************
 
@@ -15776,24 +15783,36 @@ ENDIF
  BPL PD1                ; not docked, jump to PD1 to show the standard "goat
                         ; soup" description
 
- LDX languageIndex      ; ???
- LDA RUPLA_LO,X
- STA SC
- LDA RUPLA_HI,X
+ LDX languageIndex      ; Set X to the index of the chosen language
+
+ LDA RUPLA_LO,X         ; Set SC(1 0) to the address of the RUPLA table for the
+ STA SC                 ; chosen language, minus 1 (i.e. RUPLA-1, RUPLA_DE-1
+ LDA RUPLA_HI,X         ; or RUPLA_FR-1)
  STA SC+1
- LDA RUGAL_LO,X
- STA SC2
- LDA RUGAL_HI,X
+
+ LDA RUGAL_LO,X         ; Set SC2(1 0) to the address of the RUGAL table for the
+ STA SC2                ; chosen language, minus 1 (i.e. RUGAL-1, RUGAL_DE-1
+ LDA RUGAL_HI,X         ; or RUGAL_FR-1)
  STA SC2+1
 
- LDY NRU,X
+ LDY NRU,X              ; Set Y as a loop counter as we work our way through the
+                        ; system numbers in RUPLA, starting at the value of NRU
+                        ; for the chosen language (which is the number of entries
+                        ; in RUPLA) and working our way down to 1
 
 .PDL1
 
- LDA (SC),Y
- CMP systemNumber
- BNE PD2
- LDA (SC2),Y
+ LDA (SC),Y             ; Fetch the Y-th byte from RUPLA-1 into A (we use
+                        ; RUPLA-1 because Y is looping from NRU to 1)
+
+ CMP systemNumber       ; If A doesn't match the system whose description we
+ BNE PD2                ; are printing (in systemNumber), jump to PD2 to keep
+                        ; looping through the system numbers in RUPLA
+
+                        ; If we get here we have found a match for this system
+                        ; number in RUPLA
+
+ LDA (SC2),Y            ; Fetch the Y-th byte from RUGAL-1 into A
 
  AND #%01111111         ; Extract bits 0-6 of A
 
@@ -15801,8 +15820,10 @@ ENDIF
  BNE PD2                ; number, jump to PD2 to keep looping through the system
                         ; numbers in RUPLA
 
- LDA (SC2),Y            ; ???
- BMI PD3
+ LDA (SC2),Y            ; Fetch the Y-th byte from RUGAL-1 into A, once again
+
+ BMI PD3                ; If bit 7 is set, jump to PD3 to print the extended
+                        ; token in A from the second table in RUTOK
 
  LDA TP                 ; Fetch bit 0 of TP into the C flag, and skip to PD1 if
  LSR A                  ; it is clear (i.e. if mission 1 is not in progress) to
@@ -15897,7 +15918,10 @@ ENDIF
 
 .TT27S
 
- JMP PrintCtrlCode_b0   ; ???
+ JMP PrintCtrlCode_b0   ; We jump here from below if the character to print is
+                        ; in the range 0 to 9, so jump to PrintCtrlCode to print
+                        ; the control code and return from the subroutine using
+                        ; a tail call
 
 .TT27
 
@@ -15918,8 +15942,8 @@ ENDIF
                         ; (128-159) or a recursive token (160-255), so jump
                         ; to TT43 to process tokens
 
- CMP #$0A
- BCC TT27S
+ CMP #10                ; If token < 10 then this is a control code, so jump to
+ BCC TT27S              ; PrintCtrlCode via TT27S to print it
 
  CMP #96                ; By this point, token is either 7, or in 10-127.
  BCS ex                 ; Check token number in A and if token >= 96, then the
@@ -15954,12 +15978,8 @@ ENDIF
  BVS TT44               ; either it is bit 6 that is set, or some other flag in
                         ; QQ17 is set (bits 0-5). So check whether bit 6 is set.
                         ; If it is, then ALL CAPS has been set (as bit 7 is
-                        ; clear) but bit 6 is still indicating that the next
-                        ; character should be printed in lower case, so we need
-                        ; to fix this. We do this with a jump to TT44, which
-                        ; will print this character in upper case and clear bit
-                        ; 6, so the flags are consistent with ALL CAPS going
-                        ; forward ???
+                        ; clear), so jump to TT26 via TT44 to print the
+                        ; character in upper case
 
                         ; If we get here, some other flag is set in QQ17 (one
                         ; of bits 0-5 is set), which shouldn't happen in this
@@ -16379,27 +16399,28 @@ ENDIF
  CMP #'('               ;   * Carriage return
  BEQ DA8                ;   * Hyphen
  CMP #10                ;
- BEQ DA8                ; then skip the following instructions
- CMP #12
- BEQ DA8
- CMP #'-'
+ BEQ DA8                ; then jump to DA8 to skip the following instructions
+ CMP #12                ; and set bit 6 of QQ17 to print the next letter in
+ BEQ DA8                ; upper case (so these characters don't act like the
+ CMP #'-'               ; initial capital letter in Sentence Case, for example)
  BEQ DA8
 
- LDA QQ17               ; ???
- ORA #$40
+ LDA QQ17               ; Set bit 6 of QQ17 so we print the next letter in
+ ORA #%01000000         ; lower case
  STA QQ17
 
  INX                    ; Increment X to 0, so DTW2 gets set to %00000000 below
 
- BEQ CB53C
+ BEQ dasc1              ; Jump to dasc1 to skip the following (this BEQ is
+                        ; effectively a JMP as X is always zero)
 
 .DA8
 
- LDA QQ17               ; ???
- AND #$BF
+ LDA QQ17               ; Clear bit 6 of QQ17 so we print the next letter in
+ AND #%10111111         ; upper case
  STA QQ17
 
-.CB53C
+.dasc1
 
  STX DTW2               ; Store X in DTW2, so DTW2 is now:
                         ;
@@ -16565,7 +16586,13 @@ ENDIF
 
  INC DTW5               ; Increment the buffer size in DTW5
 
- LDA #' '               ; ???
+ LDA #' '               ; Set A to the ASCII for space
+                        ;
+                        ; This instruction has no effect because A already
+                        ; contains ASCII " ". This is because the last character
+                        ; that is tested in the above loop is at position SC,
+                        ; which we know contains a space, so we know A contains
+                        ; a space character when the loop finishes
 
                         ; We've now shifted the line to the right by 1 from
                         ; position SC onwards, so SC and SC+1 both contain
@@ -16710,7 +16737,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: CHPR
+;       Name: CHPR (Part 1 of 6)
 ;       Type: Subroutine
 ;   Category: Text
 ;    Summary: Print a character at the text cursor by poking into screen memory
@@ -16751,30 +16778,33 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.R5
+.chpr1
 
- JMP CB75B
+ JMP chpr17             ; Jump to chpr17 to restore the registers and return
+                        ; from the subroutine
 
-.CB627
+.chpr2
 
- LDA #2
+ LDA #2                 ; Move the text cursor to row 2
  STA YC
- LDA K3
- JMP CB652
 
-.RR4S
+ LDA K3                 ; Set A to the character to be printed
 
- JMP CB75B
+ JMP chpr4              ; Jump to chpr4 to print the character in A
 
-.TT67X
+.chpr3
 
- LDA #12                ; Set A to a carriage return character
+ JMP chpr17             ; Jump to chpr17 to restore the registers and return
+                        ; from the subroutine
 
-                        ; Fall through into CHPR to print the newline
+ LDA #12                ; This instruction is never called, but it would set A
+                        ; to a carriage return character and fall through into
+                        ; CHPR to print the newline
 
 .CHPR
 
  STA K3                 ; Store the A register in K3 so we can retrieve it below
+                        ; (so K3 contains the number of the character to print)
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -16787,21 +16817,21 @@ ENDIF
                         ; flags
 
  CPY #255               ; If QQ17 = 255 then printing is disabled, so jump to
- BEQ RR4S               ; RR4S (via the JMP in RR4S) to restore the registers
+ BEQ chpr3              ; chpr17 (via the JMP in chpr3) to restore the registers
                         ; and return from the subroutine using a tail call
 
-.CB652
+.chpr4
 
- CMP #7                 ; If this is a beep character (A = 7), jump to R5,
- BEQ R5                 ; which will emit the beep, restore the registers and
+ CMP #7                 ; If this is a beep character (A = 7), jump to chpr1,
+ BEQ chpr1              ; which will emit the beep, restore the registers and
                         ; return from the subroutine
 
- CMP #32                ; If this is an ASCII character (A >= 32), jump to RR1
- BCS RR1                ; below, which will print the character, restore the
+ CMP #32                ; If this is an ASCII character (A >= 32), jump to chpr6
+ BCS chpr6              ; below, which will print the character, restore the
                         ; registers and return from the subroutine
 
  CMP #10                ; If this is control code 10 (line feed) then jump to
- BEQ RRX1               ; RRX1, which will move down a line, restore the
+ BEQ chpr5              ; chpr5, which will move down a line, restore the
                         ; registers and return from the subroutine
 
  LDX #1                 ; If we get here, then this is control code 11-13, of
@@ -16812,104 +16842,201 @@ ENDIF
                         ; bit by setting XC = 1, and we then fall through into
                         ; the line feed routine that's used by control code 10
 
-.RRX1
+.chpr5
 
  CMP #13                ; If this is control code 13 (carriage return) then jump
- BEQ RR4S               ; to RR4 (via the JMP in RR4S) to restore the registers
-                        ; and return from the subroutine using a tail call
+ BEQ chpr3              ; to chpr17 (via the JMP in chpr3) to restore the
+                        ; registers and return from the subroutine using a tail
+                        ; call
 
  INC YC                 ; Increment the text cursor y-coordinate to move it
                         ; down one row
 
- BNE RR4S               ; Jump to RR4 to restore the registers and return from
-                        ; the subroutine using a tail call (this BNE is
-                        ; effectively a JMP as Y will never be zero)
+ BNE chpr3              ; Jump to chpr17 via chpr3 to restore the registers and
+                        ; return from the subroutine using a tail call (this BNE
+                        ; is effectively a JMP as Y will never be zero)
 
-.RR1
+.chpr6
 
                         ; If we get here, then the character to print is an
                         ; ASCII character in the range 32-95
 
- LDX XC
- CPX #$1F
- BCC CB676
- LDX #1
- STX XC
- INC YC
+ LDX XC                 ; If the text cursor is on a column of 30 or less, then
+ CPX #31                ; we have space to print the character on the current
+ BCC chpr7              ; row, so jump to chpr7 to skip the following
 
-.CB676
+ LDX #1                 ; The text cursor has moved off the right end of the
+ STX XC                 ; current line, so move the cursor back to column 1 and
+ INC YC                 ; down to the next row
 
- LDX YC
- CPX #$1B
- BCC CB67F
- JMP CB627
+.chpr7
 
-.CB67F
+ LDX YC                 ; If the text cursor is on row 26 or less, then the
+ CPX #27                ; cursor is on-screen, so jump to chpr8 to skip the
+ BCC chpr8              ; following instruction
 
- CMP #$7F
- BNE CB686
- JMP CB7BF
+ JMP chpr2              ; The cursor is off the bottom of the screen, so jump to
+                        ; chpr2 to move the cursor up to row 2 before printing
+                        ; the character
 
-.CB686
+.chpr8
 
- INC XC
+ CMP #127               ; If the character to print is not ASCII 127, then jump
+ BNE chpr9              ; to chpr9 to skip the following instruction
 
- LDA QQ11               ; If bits 4 and 5 of the view number are clear, jump to
- AND #%00110000         ; CB6A9
- BEQ CB6A9
+ JMP chpr21             ; Jump to chpr21 to delete the character to the left of
+                        ; the text cursor
 
- LDY fontBitplane       ; If we are drawing in bitplane 1 only, jump to CB6A4
- CPY #1
- BEQ CB6A4
+; ******************************************************************************
+;
+;       Name: CHPR (Part 2 of 6)
+;       Type: Subroutine
+;   Category: Text
+;    Summary: Jump to the right part of the routine depending on whether the
+;             font pattern we need is already loaded
+;
+; ******************************************************************************
 
- AND #%00100000         ; If bit 5 of the view number is clear, jump to CB6A9
- BEQ CB6A9
+.chpr9
 
-                        ; If we get here then bit 5 of the view number is set
-                        ; and we are not drawing in bitplane 1 only (i.e. we
-                        ; are definitely drawing in bitplane 0)
+                        ; Now to actually print the character
 
- CPY #2                 ; If we are drawing in both bitplanes (as Y is neither
- BNE CB6A9              ; 1 or 2), jump to CB6A9
+ INC XC                 ; Once we print the character, we want to move the text
+                        ; cursor to the right, so we do this by incrementing
+                        ; XC. Note that this doesn't have anything to do
+                        ; with the actual printing below, we're just updating
+                        ; the cursor so it's in the right position following
+                        ; the print
 
-                        ; If we get here then we are drawing in bitplane 0 only
+                        ; Before printing, we need to sort out which fonts are
+                        ; loaded, which will depend on the view type
 
- LDA K3
- CLC
- ADC #$5F
+ LDA QQ11               ; If bits 4 and 5 of the view number are clear, then no
+ AND #%00110000         ; font is loaded, so jump to chpr11 to print the
+ BEQ chpr11             ; character by copying the relevant font pattern into
+                        ; the pattern buffers, as it is not already loaded
 
- JMP CB7CF
+                        ; If we get here then we know that at least one of bits
+                        ; 4 and 5 is set in QQ11, which means the font is loaded
+                        ; in bitplane 0
 
-.CB6A4
+ LDY fontForPrinting    ; If fontForPrinting = 1, jump to chpr10 to print the
+ CPY #1                 ; character using a character from the font in bitplane
+ BEQ chpr10             ; 0, as we know this is loaded
 
-                        ; If we get here then we are drawing in bitplane 1 only
-                        ; and bit 4 and/or 5 of the view number is set
+                        ; If we get here we know that fontForPrinting is 2 or 3
 
- LDA K3
- JMP CB7CF
+ AND #%00100000         ; If bit 5 of the view number in QQ11 is clear, then the
+ BEQ chpr11             ; font is not loaded into bitplane 1, so jump to chpr11
+                        ; to print the character by copying the relevant font
+                        ; pattern into the pattern buffers, as it is not already
+                        ; loaded
 
-.CB6A9
+                        ; If we get here then bit 5 of the view number in QQ11
+                        ; is set, so we know that the font is loaded in both
+                        ; bitplanes
+                        ;
+                        ; We also know that fontForPrinting = 2 or 3
 
-                        ; If we get here then either bit 5 or bit 6 of the view
-                        ; number are clear, or we are drawing in both bitplanes
+ CPY #2                 ; If fontForPrinting = 3, jump to chpr11 to print the
+ BNE chpr11             ; character by copying the relevant font pattern into
+                        ; the pattern buffers, as it is not already loaded
+
+                        ; If we get here then fontForPrinting = 2 and the font
+                        ; is loaded into bitplane 1, so we can use that for our
+                        ; character
+
+ LDA K3                 ; Set A to the character to be printed
+
+ CLC                    ; Set A = A + 95
+ ADC #95                ;
+                        ; The font in bitplane 1 is loaded into pattern 161,
+                        ; which is 95 more than the font in bitplane 0 at
+                        ; pattern 66, so this points A to the correct character
+                        ; number in bitplane 1
+
+ JMP chpr22             ; Jump to chpr22 to print the character using a font
+                        ; that has already been loaded
+
+.chpr10
+
+                        ; If we get here then fontForPrinting = 1 and the font
+                        ; is loaded into bitplane 0, so we can use that for our
+                        ; character
+
+ LDA K3                 ; Set A to the character to be printed
+
+ JMP chpr22             ; Jump to chpr22 to print the character using a font
+                        ; that has already been loaded
+
+; ******************************************************************************
+;
+;       Name: CHPR (Part 3 of 6)
+;       Type: Subroutine
+;   Category: Text
+;    Summary: Print a character into to the pattern buffers to draw the character
+;             on-screen
+;
+; ******************************************************************************
+
+.chpr11
+
+                        ; If we get here then at least one of these is true:
+                        ;
+                        ;   * No font is loaded
+                        ;
+                        ;   * fontForPrinting = 2 or 3
+                        ;     The font is loaded in bitplane 0 only (so there is
+                        ;     no font in bitplane 1)
+                        ;
+                        ;   * fontForPrinting = 3
+                        ;
+                        ; In all cases, we need to draw the pattern for the
+                        ; character directly into the relevant pattern buffer,
+                        ; as it isn't already available in a loaded font
 
  LDA K3                 ; If the character to print in K3 is not a space, jump
- CMP #' '               ; to CB6B2 with the character in A
- BNE CB6B2
+ CMP #' '               ; to chpr12 to skip the following instruction
+ BNE chpr12
 
- JMP CB75B              ; We are printing a space, so jump to CB75B to return
+ JMP chpr17             ; We are printing a space, so jump to chpr17 to return
                         ; from the subroutine
 
-.CB6B2
+.chpr12
 
  TAY                    ; Set Y to the character to print
+                        ;
+                        ; Let's call the character number chr
 
- CLC
- ADC #$FD
+                        ; We now want to calculate the address of the pattern
+                        ; data for this character in the fontImage table, which
+                        ; contains the font images in ASCII order, starting from
+                        ; the space character (which maps to ASCII 32)
+                        ;
+                        ; There are eight bytes in each character's pattern, so
+                        ; the address we are after is therefore:
+                        ;
+                        ;   fontImage + (chr - 32) * 8
+                        ;
+                        ; This calculation is optimised below to take advantage
+                        ; of the fact that LO(fontImage) = $E8 = 29 * 8, so:
+                        ;
+                        ;   fontImage + (chr - 32) * 8
+                        ; = HI(fontImage) * 256 + LO(fontImage) + (chr - 32) * 8
+                        ; = HI(fontImage) * 256 + (29 * 8) + (chr - 32) * 8
+                        ; = HI(fontImage) * 256 + (29 + chr - 32) * 8
+                        ; = HI(fontImage) * 256 + (chr - 3) * 8
+                        ;
+                        ; So that is what we calculate below
 
- LDX #0
- STX P+2
- ASL A
+ CLC                    ; Set A = A - 3
+ ADC #$FD               ;       = chr - 3
+                        ;
+                        ; This could also be done using SEC and SBC #3
+
+ LDX #0                 ; Set P(2 1) = A * 8
+ STX P+2                ;            = (chr - 3) * 8
+ ASL A                  ;            = chr * 8 - 24
  ROL P+2
  ASL A
  ROL P+2
@@ -16917,26 +17044,34 @@ ENDIF
  ROL P+2
  ADC #0
  STA P+1
- LDA P+2
- ADC #$FC
- STA P+2
 
- LDA #0
- STA SC+1
+ LDA P+2                ; Set P(2 1) = P(2 1) + HI(fontImage) * 256
+ ADC #HI(fontImage)     ;            = HI(fontImage) * 256 + (chr - 3) * 8
+ STA P+2                ;
+                        ;
+                        ; So P(2 1) is the address of the pattern data for the
+                        ; character that we want to print
 
- LDA YC
- BNE CB6D8
+ LDA #0                 ; Set SC+1 = 0 (though this is never used as SC+1 is
+ STA SC+1               ; overwritten again before it is used)
 
- JMP CB8A6
+ LDA YC                 ; If the text cursor is not on row 0, jump to chpr13 to
+ BNE chpr13             ; skip the following instruction
 
-.CB6D8
+ JMP chpr31             ; The text cursor is on row 0, so jump to chpr31 to set
+                        ; SC(1 0) to the correct address in the nametable buffer
+                        ; and return to chpr15 below to draw the character
+
+.chpr13
 
  LDA QQ11               ; If this is not the space view (i.e. QQ11 is non-zero)
- BNE CB6DF              ; then jump to CB6DF to skip the following instruction
+ BNE chpr14             ; then jump to chpr14 to skip the following instruction
 
- JMP CB83E
+ JMP chpr28             ; This is the space view with no font loaded, so jump to
+                        ; chpr28 to draw the character on-screen, merging the
+                        ; text with whatever is already there
 
-.CB6DF
+.chpr14
 
  JSR GetRowNameAddress  ; Get the addresses in the nametable buffers for the
                         ; start of character row YC, as follows:
@@ -16945,148 +17080,234 @@ ENDIF
                         ;
                         ;   SC2(1 0) = the address in nametable buffer 1
 
- LDY XC
+ LDY XC                 ; Set Y to the column of the text cursor - 1
  DEY
- LDA (SC),Y
- BEQ CB6E9
 
-.CB6E9
+ LDA (SC),Y             ; This has no effect, as chpr15 is the next label and
+ BEQ chpr15             ; neither A nor the status flags are read before being
+                        ; overwritten, but it checks whether the nametable entry
+                        ; for the character we want to draw is empty (and then
+                        ; does nothing if it is)
 
- LDA firstFreeTile
- BEQ CB75B
- CMP #$FF
- BEQ CB75B
- STA (SC),Y
- STA (SC2),Y
- INC firstFreeTile
- LDY fontBitplane
+.chpr15
+
+ LDA firstFreeTile      ; If firstFreeTile is zero then we have run out of tiles
+ BEQ chpr17             ; to use for drawing characters, so jump to chpr17 to
+                        ; return from the subroutine without printing anything
+
+ CMP #255               ; If firstFreeTile = 255 then we have run out of tiles
+ BEQ chpr17             ; to use for drawing characters, so jump to chpr17 to
+                        ; return from the subroutine without printing anything
+
+ STA (SC),Y             ; Otherwise firstFreeTile contains the number of the
+ STA (SC2),Y            ; next available tile for drawing, so allocate this
+                        ; tile to cover the character that we want to draw by
+                        ; setting the nametable entry in both buffers to the
+                        ; tile number we just fetched
+
+ INC firstFreeTile      ; Increment firstFreeTile to point to the next available
+                        ; tile for drawing, so it can be added to the nametable
+                        ; the next time we need to draw into a tile
+
+ LDY fontForPrinting    ; If fontForPrinting = 1, jump to chpr18
  DEY
- BEQ CB772
- DEY
- BNE CB702
- JMP CB784
+ BEQ chpr18
 
-.CB702
+ DEY                    ; If fontForPrinting = 2, jump to chpr16
+ BNE chpr16
 
- TAY
- LDX #$0C
- STX SC2+1
- ASL A
- ROL SC2+1
- ASL A
- ROL SC2+1
- ASL A
- ROL SC2+1
+ JMP chpr19             ; Otherwise fontForPrinting = 3, so jump to chpr19
+
+.chpr16
+
+                        ; If we get here then fontForPrinting = 2 and we need to
+                        ; copy the pattern data for this character from the
+                        ; address in P(2 1) into both pattern buffers 0 and 1
+
+ TAY                    ; Set Y to the character to print
+
+ LDX #HI(pattBuffer0)/8 ; Set SC2(1 0) = (pattBuffer0/8 A) * 8
+ STX SC2+1              ;              = (pattBufferHi 0) + A * 8
+ ASL A                  ;
+ ROL SC2+1              ; So SC2(1 0) is the address in the pattern buffer for
+ ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ROL SC2+1              ; pattern data), which means SC2(1 0) points to the
+ ASL A                  ; pattern data for the tile containing the character
+ ROL SC2+1              ; we are drawing in pattern buffer 0
  STA SC2
- TYA
- LDX #$0D
- STX SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
+
+ TYA                    ; Set A back to the character to print
+
+ LDX #HI(pattBuffer1)/8 ; Set SC(1 0) = (pattBuffer1/8 A) * 8
+ STX SC+1               ;             = (pattBufferHi 0) + A * 8
+ ASL A                  ;
+ ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
+ ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ROL SC+1               ; pattern data), which means SC(1 0) points to the
+ ASL A                  ; pattern data for the tile containing the character
+ ROL SC+1               ; we are drawing in pattern buffer 1
  STA SC
- LDY #0
- LDA (P+1),Y
- STA (SC),Y
- STA (SC2),Y
- INY
- LDA (P+1),Y
- STA (SC),Y
- STA (SC2),Y
- INY
- LDA (P+1),Y
- STA (SC),Y
- STA (SC2),Y
- INY
- LDA (P+1),Y
- STA (SC),Y
- STA (SC2),Y
- INY
- LDA (P+1),Y
- STA (SC),Y
- STA (SC2),Y
- INY
- LDA (P+1),Y
- STA (SC),Y
- STA (SC2),Y
- INY
- LDA (P+1),Y
- STA (SC),Y
- STA (SC2),Y
- INY
- LDA (P+1),Y
- STA (SC2),Y
- STA (SC),Y
 
-.CB75B
+                        ; We now copy the pattern data for this character from
+                        ; the address in P(2 1) to the pattern buffer addresses
+                        ; in SC(1 0) and SC2(1 0)
 
- LDY YSAV2
- LDX XSAV2
+ LDY #0                 ; We want to copy eight bytes of pattern data, as each
+                        ; character has eight rows of eight pixels, so set a
+                        ; byte index counter in Y
+
+                        ; We repeat the following code eight times, so it copies
+                        ; one whole pattern of eight bytes
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ STA (SC),Y             ; byte of the pattern buffers in SC(1 0) and SC2(1 0),
+ STA (SC2),Y            ; and increment the byte counter in Y
+ INY                    
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ STA (SC),Y             ; byte of the pattern buffers in SC(1 0) and SC2(1 0),
+ STA (SC2),Y            ; and increment the byte counter in Y
+ INY                    
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ STA (SC),Y             ; byte of the pattern buffers in SC(1 0) and SC2(1 0),
+ STA (SC2),Y            ; and increment the byte counter in Y
+ INY                    
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ STA (SC),Y             ; byte of the pattern buffers in SC(1 0) and SC2(1 0),
+ STA (SC2),Y            ; and increment the byte counter in Y
+ INY                    
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ STA (SC),Y             ; byte of the pattern buffers in SC(1 0) and SC2(1 0),
+ STA (SC2),Y            ; and increment the byte counter in Y
+ INY                    
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ STA (SC),Y             ; byte of the pattern buffers in SC(1 0) and SC2(1 0),
+ STA (SC2),Y            ; and increment the byte counter in Y
+ INY                    
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ STA (SC),Y             ; byte of the pattern buffers in SC(1 0) and SC2(1 0),
+ STA (SC2),Y            ; and increment the byte counter in Y
+ INY                    
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ STA (SC2),Y            ; byte of the pattern buffers in SC(1 0) and SC2(1 0)
+ STA (SC),Y           
+
+.chpr17
+
+ LDY YSAV2              ; We're done printing, so restore the values of the
+ LDX XSAV2              ; X and Y registers that we saved above
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA K3
- CLC
- RTS
+ LDA K3                 ; Restore the value of the A register that we saved
+                        ; above
 
-.CB772
+ CLC                    ; Clear the C flag, so everything is back to how it was
 
- LDX #$0C
- STX SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- STA SC
- JMP CB793
+ RTS                    ; Return from the subroutine
 
-.CB784
+.chpr18
 
- LDX #$0D
- STX SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
+                        ; If we get here then fontForPrinting = 1 and we need to
+                        ; copy the pattern data for this character from the
+                        ; address in P(2 1) into pattern buffer 0
+
+ LDX #HI(pattBuffer0)/8 ; Set SC(1 0) = (pattBuffer0/8 A) * 8
+ STX SC+1               ;             = (pattBufferHi 0) + A * 8
+ ASL A                  ;
+ ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
+ ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ROL SC+1               ; pattern data), which means SC(1 0) points to the
+ ASL A                  ; pattern data for the tile containing the character
+ ROL SC+1               ; we are drawing in pattern buffer 0
  STA SC
 
-.CB793
+ JMP chpr20             ; Jump to chpr20 to draw the pattern we need for our
+                        ; text character into the pattern buffer
 
- LDY #0
- LDA (P+1),Y
- STA (SC),Y
- INY
- LDA (P+1),Y
- STA (SC),Y
- INY
- LDA (P+1),Y
- STA (SC),Y
- INY
- LDA (P+1),Y
- STA (SC),Y
- INY
- LDA (P+1),Y
- STA (SC),Y
- INY
- LDA (P+1),Y
- STA (SC),Y
- INY
- LDA (P+1),Y
- STA (SC),Y
- INY
- LDA (P+1),Y
- STA (SC),Y
- JMP CB75B
+.chpr19
 
-.CB7BF
+                        ; If we get here then fontForPrinting = 3 and we need to
+                        ; copy the pattern data for this character from the
+                        ; address in P(2 1) into pattern buffer 1
+
+ LDX #HI(pattBuffer1)/8 ; Set SC(1 0) = (pattBuffer1/8 A) * 8
+ STX SC+1               ;             = (pattBufferHi 0) + A * 8
+ ASL A                  ;
+ ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
+ ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ROL SC+1               ; pattern data), which means SC(1 0) points to the
+ ASL A                  ; pattern data for the tile containing the character
+ ROL SC+1               ; we are drawing in pattern buffer 1
+ STA SC
+
+.chpr20
+
+                        ; We now copy the pattern data for this character from
+                        ; the address in P(2 1) to the pattern buffer address
+                        ; in SC(1 0)
+
+ LDY #0                 ; We want to copy eight bytes of pattern data, as each
+                        ; character has eight rows of eight pixels, so set a
+                        ; byte index counter in Y
+
+                        ; We repeat the following code eight times, so it copies
+                        ; one whole pattern of eight bytes
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ STA (SC),Y             ; byte of the pattern buffer in SC(1 0), and increment
+ INY                    ; the byte counter in Y
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ STA (SC),Y             ; byte of the pattern buffer in SC(1 0), and increment
+ INY                    ; the byte counter in Y
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ STA (SC),Y             ; byte of the pattern buffer in SC(1 0), and increment
+ INY                    ; the byte counter in Y
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ STA (SC),Y             ; byte of the pattern buffer in SC(1 0), and increment
+ INY                    ; the byte counter in Y
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ STA (SC),Y             ; byte of the pattern buffer in SC(1 0), and increment
+ INY                    ; the byte counter in Y
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ STA (SC),Y             ; byte of the pattern buffer in SC(1 0), and increment
+ INY                    ; the byte counter in Y
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ STA (SC),Y             ; byte of the pattern buffer in SC(1 0), and increment
+ INY                    ; the byte counter in Y
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ STA (SC),Y             ; byte of the pattern buffer in SC(1 0)
+
+ JMP chpr17             ; Jump to chpr17 to return from the subroutine, as we
+                        ; are done printing this character
+
+; ******************************************************************************
+;
+;       Name: CHPR (Part 4 of 6)
+;       Type: Subroutine
+;   Category: Text
+;    Summary: Process the delete character
+;
+; ******************************************************************************
+
+.chpr21
+
+                        ; If we get here then we are printing ASCII 127, which
+                        ; is the delete character
 
  JSR GetRowNameAddress  ; Get the addresses in the nametable buffers for the
                         ; start of character row YC, as follows:
@@ -17095,16 +17316,47 @@ ENDIF
                         ;
                         ;   SC2(1 0) = the address in nametable buffer 1
 
- LDY XC
- DEC XC
- LDA #0
- STA (SC),Y
- STA (SC2),Y
- JMP CB75B
+ LDY XC                 ; Set Y to the text column of the text cursor, which
+                        ; points to the character we want to delete (as we are
+                        ; printing a delete character there)
 
-.CB7CF
+ DEC XC                 ; Decrement XC to move the text cursor left by one
+                        ; place, as we are deleting a character
 
- PHA
+ LDA #0                 ; Zero the Y-th nametable entry in nametable buffer 0
+ STA (SC),Y             ; for the Y-th character on row YC, which deletes the
+                        ; character that was there
+
+ STA (SC2),Y            ; Zero the Y-th nametable entry in nametable buffer 1
+                        ; for the Y-th character on row YC, which deletes the
+                        ; character that was there
+
+ JMP chpr17             ; Jump to chpr17 to return from the subroutine, as we
+                        ; are done printing this character
+
+; ******************************************************************************
+;
+;       Name: CHPR (Part 5 of 6)
+;       Type: Subroutine
+;   Category: Text
+;    Summary: Print the character using a font that has already been loaded
+;
+; ******************************************************************************
+
+.chpr22
+
+                        ; If we get here then one of these is true:
+                        ;
+                        ;   * The font is loaded in both bitplanes
+                        ;     fontForPrinting = 2
+                        ;     A = character number + 95
+                        ;
+                        ;   * The font is loaded in bitplane0
+                        ;     fontForPrinting = 1
+                        ;     A = character number
+
+ PHA                    ; Store A on the stack to we can retrieve it after the
+                        ; call to GetRowNameAddress
 
  JSR GetRowNameAddress  ; Get the addresses in the nametable buffers for the
                         ; start of character row YC, as follows:
@@ -17113,160 +17365,261 @@ ENDIF
                         ;
                         ;   SC2(1 0) = the address in nametable buffer 1
 
- PLA
- CMP #$20
- BEQ CB7E5
+ PLA                    ; Retrieve the character number we stored on the stack
+                        ; above
 
-.loop_CB7D8
+ CMP #' '               ; If we are printing a space, jump to chpr25
+ BEQ chpr25
 
- CLC
- ADC asciiToPattern
+.chpr23
 
-.loop_CB7DB
+ CLC                    ; Convert the ASCII number in A to the pattern number in
+ ADC asciiToPattern     ; the PPU of the corresponding character image, by
+                        ; adding asciiToPattern (which gets set when the view
+                        ; is set up)
 
- LDY XC
+.chpr24
+
+ LDY XC                 ; Set Y to the column of the text cursor - 1
  DEY
- STA (SC),Y
- STA (SC2),Y
- JMP CB75B
 
-.CB7E5
+ STA (SC),Y             ; Set the Y-th nametable entry in nametable buffer 0
+                        ; for the Y-th character on row YC, to the tile pattern
+                        ; number for our character from the loaded font
 
- LDY QQ11
- CPY #$9D
- BEQ CB7EF
- CPY #$DF
- BNE loop_CB7D8
+ STA (SC2),Y            ; Set the Y-th nametable entry in nametable buffer 1
+                        ; for the Y-th character on row YC, to the tile pattern
+                        ; number for our character from the loaded font
 
-.CB7EF
+ JMP chpr17             ; Jump to chpr17 to return from the subroutine, as we
+                        ; are done printing this character
 
- LDA #0
- BEQ loop_CB7DB
+.chpr25
 
-.CB7F3
+ LDY QQ11               ; If the view type in QQ11 is $9D (Long-range
+ CPY #$9D               ; Chart), then jump to chpr26 to set A = 0 ???
+ BEQ chpr26
 
- LDX pattBufferHiDiv8
- STX SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
+ CPY #$DF               ; If the view type in QQ11 is not $DF (Start screen with
+ BNE chpr23             ; font loaded in bitplane 0), jump to chpr23 to convert
+                        ; the ASCII number in A to the pattern number
+
+.chpr26
+
+ LDA #0                 ; This is either the Long-range Chart or the Start
+                        ; screen with the font loaded in bitplane 0, so set
+                        ; A = 0 so ???
+
+ BEQ chpr24             ; Jump up to chpr24 to draw the character (this BEQ is
+                        ; effectively a JMP as A is always zero)
+
+; ******************************************************************************
+;
+;       Name: CHPR (Part 6 of 6)
+;       Type: Subroutine
+;   Category: Text
+;    Summary: Print a character in the space view when there is no font loaded,
+;             merging the text with whatever is already on-screen
+;
+; ******************************************************************************
+
+.chpr27
+
+                        ; We jump here from below when the tile we are drawing
+                        ; into is not empty
+
+ LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
+ STX SC+1               ;             = (pattBufferHi 0) + A * 8
+ ASL A                  ;
+ ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
+ ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ROL SC+1               ; pattern data), which means SC(1 0) points to the
+ ASL A                  ; pattern data for the tile containing the character
+ ROL SC+1               ; we are drawing
  STA SC
- LDY #0
- LDA (P+1),Y
- ORA (SC),Y
- STA (SC),Y
- INY
- LDA (P+1),Y
- ORA (SC),Y
- STA (SC),Y
- INY
- LDA (P+1),Y
- ORA (SC),Y
- STA (SC),Y
- INY
- LDA (P+1),Y
- ORA (SC),Y
- STA (SC),Y
- INY
- LDA (P+1),Y
- ORA (SC),Y
- STA (SC),Y
- INY
- LDA (P+1),Y
- ORA (SC),Y
- STA (SC),Y
- INY
- LDA (P+1),Y
- ORA (SC),Y
- STA (SC),Y
- INY
- LDA (P+1),Y
- ORA (SC),Y
- STA (SC),Y
- JMP CB75B
 
-.CB83E
+                        ; We now copy the pattern data for this character from
+                        ; the address in P(2 1) to the pattern buffer address
+                        ; in SC(1 0), using OR logic to merge the character with
+                        ; the existing contents of the tile
 
- LDA #0
- STA SC+1
- LDA YC
- BNE CB848
- LDA #$FF
+ LDY #0                 ; We want to copy eight bytes of pattern data, as each
+                        ; character has eight rows of eight pixels, so set a
+                        ; byte index counter in Y
 
-.CB848
+                        ; We repeat the following code eight times, so it copies
+                        ; one whole pattern of eight bytes
 
- CLC
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ ORA (SC),Y             ; byte of the pattern buffer in SC(1 0), OR'ing the byte
+ STA (SC),Y             ; with the existing contents of the pattern buffer, and
+ INY                    ; increment the byte counter in Y
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ ORA (SC),Y             ; byte of the pattern buffer in SC(1 0), OR'ing the byte
+ STA (SC),Y             ; with the existing contents of the pattern buffer, and
+ INY                    ; increment the byte counter in Y
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ ORA (SC),Y             ; byte of the pattern buffer in SC(1 0), OR'ing the byte
+ STA (SC),Y             ; with the existing contents of the pattern buffer, and
+ INY                    ; increment the byte counter in Y
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ ORA (SC),Y             ; byte of the pattern buffer in SC(1 0), OR'ing the byte
+ STA (SC),Y             ; with the existing contents of the pattern buffer, and
+ INY                    ; increment the byte counter in Y
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ ORA (SC),Y             ; byte of the pattern buffer in SC(1 0), OR'ing the byte
+ STA (SC),Y             ; with the existing contents of the pattern buffer, and
+ INY                    ; increment the byte counter in Y
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ ORA (SC),Y             ; byte of the pattern buffer in SC(1 0), OR'ing the byte
+ STA (SC),Y             ; with the existing contents of the pattern buffer, and
+ INY                    ; increment the byte counter in Y
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ ORA (SC),Y             ; byte of the pattern buffer in SC(1 0), OR'ing the byte
+ STA (SC),Y             ; with the existing contents of the pattern buffer, and
+ INY                    ; increment the byte counter in Y
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ ORA (SC),Y             ; byte of the pattern buffer in SC(1 0), OR'ing the byte
+ STA (SC),Y             ; with the existing contents of the pattern buffer
+
+ JMP chpr17             ; Jump to chpr17 to return from the subroutine, as we
+                        ; are done printing this character
+
+.chpr28
+
+                        ; If we get here then this is the space view with no
+                        ; font loaded, and we have set up P(2 1) to point to the
+                        ; pattern data for the character we want to draw
+
+ LDA #0                 ; Set SC+1 = 0 to act as the high byte of SC(1 0) in the
+ STA SC+1               ; calculation below
+
+ LDA YC                 ; Set A to the current text cursor row
+
+ BNE chpr29             ; If the cursor is in row 0, set A = 255 so the value
+ LDA #255               ; of A + 1 is 0 in the calculation below
+
+.chpr29
+
+ CLC                    ; Set (SC+1 A) = (A + 1) * 16
  ADC #1
  ASL A
  ASL A
  ASL A
  ASL A
  ROL SC+1
- SEC
- ROL A
- STA SC
- LDA SC+1
- ROL A
+
+ SEC                    ; Set SC(1 0) = (nameBufferHi 0) + (SC+1 A) * 2 + 1
+ ROL A                  ;             = (nameBufferHi 0) + (A + 1) * 32 + 1
+ STA SC                 ;
+ LDA SC+1               ; So SC(1 0) points to the entry in the nametable buffer
+ ROL A                  ; for the start of the row below the text cursor, plus 1
  ADC nameBufferHi
  STA SC+1
- LDY XC
+
+ LDY XC                 ; Set Y to the column of the text cursor, minus one
  DEY
- LDA (SC),Y
- BNE CB7F3
- LDA firstFreeTile
- BEQ CB8A3
- STA (SC),Y
- INC firstFreeTile
- LDX pattBufferHiDiv8
- STX SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
- ASL A
- ROL SC+1
+
+                        ; So SC(1 0) + Y now points to the nametable entry of
+                        ; the tile where we want to draw our character
+
+ LDA (SC),Y             ; If the nametable entry for the tile is not empty, then
+ BNE chpr27             ; jump up to chpr27 to draw our character into the
+                        ; existing pattern for this tile
+
+ LDA firstFreeTile      ; If firstFreeTile is zero then we have run out of tiles
+ BEQ chpr30             ; to use for drawing characters, so jump to chpr17 via
+                        ; chpr30 to return from the subroutine without printing
+                        ; anything
+
+ STA (SC),Y             ; Otherwise firstFreeTile contains the number of the
+                        ; next available tile for drawing, so allocate this
+                        ; tile to cover the character that we want to draw by
+                        ; setting the nametable entry to the tile number we just
+                        ; fetched
+
+ INC firstFreeTile      ; Increment firstFreeTile to point to the next available
+                        ; tile for drawing, so it can be added to the nametable
+                        ; the next time we need to draw into a tile
+
+ LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
+ STX SC+1               ;             = (pattBufferHi 0) + A * 8
+ ASL A                  ;
+ ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
+ ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ROL SC+1               ; pattern data), which means SC(1 0) points to the
+ ASL A                  ; pattern data for the tile containing the character
+ ROL SC+1               ; we are drawing
  STA SC
- LDY #0
- LDA (P+1),Y
- STA (SC),Y
- INY
- LDA (P+1),Y
- STA (SC),Y
- INY
- LDA (P+1),Y
- STA (SC),Y
- INY
- LDA (P+1),Y
- STA (SC),Y
- INY
- LDA (P+1),Y
- STA (SC),Y
- INY
- LDA (P+1),Y
- STA (SC),Y
- INY
- LDA (P+1),Y
- STA (SC),Y
- INY
- LDA (P+1),Y
- STA (SC),Y
 
-.CB8A3
+                        ; We now copy the pattern data for this character from
+                        ; the address in P(2 1) to the pattern buffer address
+                        ; in SC(1 0)
 
- JMP CB75B
+ LDY #0                 ; We want to copy eight bytes of pattern data, as each
+                        ; character has eight rows of eight pixels, so set a
+                        ; byte index counter in Y
 
-.CB8A6
+                        ; We repeat the following code eight times, so it copies
+                        ; one whole pattern of eight bytes
 
- LDA #$21
- STA SC
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ STA (SC),Y             ; byte of the pattern buffer in SC(1 0), and increment
+ INY                    ; the byte counter in Y
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ STA (SC),Y             ; byte of the pattern buffer in SC(1 0), and increment
+ INY                    ; the byte counter in Y
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ STA (SC),Y             ; byte of the pattern buffer in SC(1 0), and increment
+ INY                    ; the byte counter in Y
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ STA (SC),Y             ; byte of the pattern buffer in SC(1 0), and increment
+ INY                    ; the byte counter in Y
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ STA (SC),Y             ; byte of the pattern buffer in SC(1 0), and increment
+ INY                    ; the byte counter in Y
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ STA (SC),Y             ; byte of the pattern buffer in SC(1 0), and increment
+ INY                    ; the byte counter in Y
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ STA (SC),Y             ; byte of the pattern buffer in SC(1 0), and increment
+ INY                    ; the byte counter in Y
+
+ LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
+ STA (SC),Y             ; byte of the pattern buffer in SC(1 0)
+
+.chpr30
+
+ JMP chpr17             ; Jump to chpr17 to return from the subroutine, as we
+                        ; are done printing this character
+
+.chpr31
+
+                        ; If we get here then this is the space view and the
+                        ; text cursor is on row 0
+
+ LDA #33                ; Set SC(1 0) to the address of tile 33 in the nametable
+ STA SC                 ; buffer, which is the first tile on row 1
  LDA nameBufferHi
  STA SC+1
- LDY XC
+
+ LDY XC                 ; Set Y to the column of the text cursor - 1
  DEY
- JMP CB6E9
+
+ JMP chpr15             ; Jump up to chpr15 to continue drawing the character
 
 ; ******************************************************************************
 ;
