@@ -15797,8 +15797,8 @@ ENDIF
 
  LDY NRU,X              ; Set Y as a loop counter as we work our way through the
                         ; system numbers in RUPLA, starting at the value of NRU
-                        ; for the chosen language (which is the number of entries
-                        ; in RUPLA) and working our way down to 1
+                        ; for the chosen language (which is the number of
+                        ; entries in RUPLA) and working our way down to 1
 
 .PDL1
 
@@ -16974,7 +16974,7 @@ ENDIF
 ;       Name: CHPR (Part 3 of 6)
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Print a character into to the pattern buffers to draw the character
+;    Summary: Draw a character into to the pattern buffers to show the character
 ;             on-screen
 ;
 ; ******************************************************************************

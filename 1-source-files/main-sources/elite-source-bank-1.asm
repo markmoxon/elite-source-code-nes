@@ -8793,10 +8793,10 @@ ENDIF
 
 .dsun36
 
- JMP dsun46             ; Jump to dsun46 to draw the tile at the left end of this
-                        ; tile row, returning from the subroutine using a tail
-                        ; call as we have now drawn the middle of the row, plus
-                        ; both ends
+ JMP dsun46             ; Jump to dsun46 to draw the tile at the left end of
+                        ; this tile row, returning from the subroutine using a 
+                        ; tail call as we have now drawn the middle of the row,
+                        ; plus both ends
 
 .dsun37
 
@@ -9125,8 +9125,8 @@ ENDIF
                         ; tile row
 
  LDA sunWidth0          ; Draw a pixel byte for the right edge of the sun at the
- JMP DrawSunEdgeRight   ; right end of pixel row 0 and return from the subroutine
-                        ; using a tail call
+ JMP DrawSunEdgeRight   ; right end of pixel row 0 and return from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;

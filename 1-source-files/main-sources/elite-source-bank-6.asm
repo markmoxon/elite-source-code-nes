@@ -5215,9 +5215,9 @@ ENDIF
 
 .dreq15
 
- LDA GHYP               ; If we do not have a galactic hyperdrive fitted, jump to
- BEQ dreq16             ; dreq16 to return from the subroutine, as we have now
-                        ; drawn all our equipment
+ LDA GHYP               ; If we do not have a galactic hyperdrive fitted, jump
+ BEQ dreq16             ; to dreq16 to return from the subroutine, as we have
+                        ; now drawn all our equipment
 
  LDY #42 * 4            ; Set Y = 42 * 4 so we set up the sprites using data
                         ; from sprite 24 onwards in the equipSprites table
