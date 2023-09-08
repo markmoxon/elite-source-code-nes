@@ -4338,17 +4338,20 @@ ENDIF
 ;       Name: LoadFontPlane0
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Load the font into pattern buffer 0, and a set of filled blocks or
-;             an inverted font into pattern buffer 1, from pattern 66 to 160
+;    Summary: Load the font into the pattern buffer from pattern 66 to 160
 ;
 ; ------------------------------------------------------------------------------
 ;
-; Pattern buffer 0 contains the font, while pattern buffer 1 contains either a
-; set of filled blocks, or if the view type in QQ11 is $BB (Save and load with
-; font loaded in both bitplanes), pattern buffer 1 contains an inverted font,
-; i.e. black letters on a white background.
+; This routine fills the pattern buffer from pattern 66 to 160 with the font in
+; colour 1 on a colour 0 background (typically a white or cyan font on a black
+; background).
 ;
-; This is called with A = 66, so this loads the fonts from pattern 66 to 160.
+; If the view type in QQ11 is $BB (Save and load with font loaded in both
+; bitplanes), then the font is in colour 1 on a colour 2 background (which is a
+; grey font on a red background).
+;
+; This is always called with A = 66, so it always loads the fonts from pattern
+; 66 to 160.
 ;
 ; Arguments:
 ;
@@ -4395,9 +4398,8 @@ ENDIF
 
  STX T                  ; Set T = X, so we have the following:
                         ;
-                        ;   * T = $FF if is the save and load screen with bits
-                        ;         4 and 5 set (so the save screen is on-screen
-                        ;         and the headers have been drawn)
+                        ;   * T = $FF if QQ11 is $BB (Save and load screen with
+                        ;         font loaded in both bitplanes)
                         ;
                         ;   * T = 0 for all other screens
                         ;
@@ -4442,7 +4444,7 @@ ENDIF
                         ;
                         ; In each of the following, the font character is copied
                         ; into pattern buffer 0 unchanged, but when the same
-                        ; character is copied into pattern buffer 0, the
+                        ; character is copied into pattern buffer 1, the
                         ; following transformation is applied:
                         ;
                         ;   AND T
@@ -4451,13 +4453,18 @@ ENDIF
                         ; T is 0, unless this is the save and load screen, in
                         ; which case T is $FF
                         ;
-                        ; When T = 0, we have A AND 0 EOR 0, which is $FF, so
-                        ; pattern buffer 1 gets filled with set pixels
+                        ; When T = 0, we have A AND 0 EOR 0, which is 0, so
+                        ; pattern buffer 1 gets filled with zeroes, and as
+                        ; pattern buffer 0 contains the font, this means the
+                        ; pattern buffer contains the font in colour 1 on a
+                        ; colour 0 background (i.e. a black background)
                         ;
                         ; When T = $FF, we have A AND $FF EOR $FF, which is the
                         ; same as A EOR $FF, which is the value in A inverted,
                         ; so pattern buffer 1 gets filled with the font, but
-                        ; with black characters on a filled background
+                        ; with ones for the background and zeroes for the
+                        ; foreground, which means the pattern buffer contains
+                        ; the font in colour 2 on a colour 1 background
 
  LDA (V),Y              ; Copy the Y-th pattern byte from the font to pattern
  STA (SC2),Y            ; buffer 0, and copy the same pattern to pattern buffer
@@ -4534,17 +4541,17 @@ ENDIF
 ;       Name: LoadFontPlane1
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Load the font into pattern buffer 1, and a set of filled blocks
-;             into pattern buffer 0, from pattern 161 to 255
+;    Summary: Load the font into the pattern buffer from pattern 161 to 255
 ;
 ; ------------------------------------------------------------------------------
 ;
-; Pattern buffer 1 contains the font, while pattern buffer 0 either contains a
-; set of filled blocks, both from pattern 161 onwards.
+; This routine fills the pattern buffer from pattern 161 to 255 with the font in
+; colour 3 on a colour 1 background (which is typically a green font on a grey
+; background that can be used for drawing inverted text in menu selections).
 ;
-; If this is the save and load screen, we load the first 70 characters into
-; patterns 161 to 230, while for all other views we load all 95 characters
-; into patterns 161 to 255.
+; If the view type in QQ11 is $BB (Save and load with font loaded in both
+; bitplanes), then only the first 70 characters of the font are loaded, into
+; patterns 161 to 230.
 ;
 ; ******************************************************************************
 

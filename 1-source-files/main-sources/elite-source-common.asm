@@ -898,7 +898,7 @@ ENDIF
                         ; bitplanes) loads an inverted font into bitplane 1 from
                         ; pattern 66 to 160, as well as the normal fonts, and
                         ; views $9D (Long-range Chart) and $DF (Start screen)
-                        ; load the bitplane 0 font at pattern 68 onmwards,
+                        ; load the bitplane 0 font at pattern 68 onwards,
                         ; rather than 66
                         ;
                         ; The complete list of view types is therefore:
