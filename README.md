@@ -4,7 +4,9 @@
 
 ![Screenshot of Elite on the NES](https://www.bbcelite.com/images/github/nes-station.png)
 
-This repository contains buildable source code for Elite on the NES. It is a work in progress; the end goal is to have every single line documented and (for the most part) explained.
+This repository contains buildable source code for Elite on the NES. It is a work in progress; here's a link to the [current state of the documented source code](1-source-files/main-sources).
+
+The project's end goal is to have every single line documented and (for the most part) explained.
 
 It is a companion to the [bbcelite.com website](https://www.bbcelite.com).
 
