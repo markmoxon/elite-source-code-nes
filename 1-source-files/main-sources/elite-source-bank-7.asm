@@ -12190,14 +12190,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LoadFontPlane0_b3
+;       Name: LoadNormalFont_b3
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Call the LoadFontPlane0 routine in ROM bank 3
+;    Summary: Call the LoadNormalFont routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.LoadFontPlane0_b3
+.LoadNormalFont_b3
 
  STA ASAV               ; Store the value of A so we can retrieve it below
 
@@ -12212,7 +12212,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR LoadFontPlane0     ; Call LoadFontPlane0, now that it is paged into memory
+ JSR LoadNormalFont     ; Call LoadNormalFont, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -12222,20 +12222,20 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JMP LoadFontPlane0     ; Call LoadFontPlane0, which is already paged into
+ JMP LoadNormalFont     ; Call LoadNormalFont, which is already paged into
                         ; memory, and return from the subroutine using a tail
                         ; call
 
 ; ******************************************************************************
 ;
-;       Name: LoadFontPlane1_b3
+;       Name: LoadHighFont_b3
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Call the LoadFontPlane1 routine in ROM bank 3
+;    Summary: Call the LoadHighFont routine in ROM bank 3
 ;
 ; ******************************************************************************
 
-.LoadFontPlane1_b3
+.LoadHighFont_b3
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -12243,7 +12243,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- JSR LoadFontPlane1     ; Call LoadFontPlane1, now that it is paged into memory
+ JSR LoadHighFont       ; Call LoadHighFont, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning

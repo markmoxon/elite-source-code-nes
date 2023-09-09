@@ -16747,6 +16747,16 @@ ENDIF
 ; Print a character at the text cursor (XC, YC), do a beep, print a newline,
 ; or delete left (backspace).
 ;
+; If the relevant font is already loaded into the pattern buffers, then this is
+; used as the tile pattern for the character, otherwise the pattern for the
+; character being printed is extracted from the fontImage table and into the
+; pattern buffer.
+;
+; For fontStyle = 3, the pattern is always extracted from the fontImage table,
+; as it has different colour text (colour 3) than the normal font. This is used
+; when printing characters into 2x2 attribute blocks where printing the normal
+; font would result in the wrong colour text being shown.
+;
 ; Arguments:
 ;
 ;   A                   The character to be printed. Can be one of the
@@ -16765,6 +16775,15 @@ ENDIF
 ;   XC                  Contains the text column to print at (the x-coordinate)
 ;
 ;   YC                  Contains the line number to print on (the y-coordinate)
+;
+;   fontStyle           Determines the font style:
+;
+;                         * 1 = normal font
+;                        
+;                         * 2 = highlight font
+;                        
+;                         * 3 = green text on a black background (colour 3 on
+;                               background colour 0)
 ;
 ; Returns:
 ;
@@ -16899,8 +16918,6 @@ ENDIF
 
 .chpr9
 
-                        ; Now to actually print the character
-
  INC XC                 ; Once we print the character, we want to move the text
                         ; cursor to the right, so we do this by incrementing
                         ; XC. Note that this doesn't have anything to do
@@ -16908,61 +16925,65 @@ ENDIF
                         ; the cursor so it's in the right position following
                         ; the print
 
-                        ; Before printing, we need to sort out which fonts are
-                        ; loaded, which will depend on the view type
+                        ; Before printing, we need to work out whether the font
+                        ; we need is already loaded into the pattern buffers,
+                        ; which will depend on the view type
 
- LDA QQ11               ; If bits 4 and 5 of the view number are clear, then no
- AND #%00110000         ; font is loaded, so jump to chpr11 to print the
+ LDA QQ11               ; If bits 4 and 5 of the view type are clear, then no
+ AND #%00110000         ; fonts are loaded, so jump to chpr11 to print the
  BEQ chpr11             ; character by copying the relevant font pattern into
-                        ; the pattern buffers, as it is not already loaded
+                        ; the pattern buffers
 
                         ; If we get here then we know that at least one of bits
-                        ; 4 and 5 is set in QQ11, which means the font is loaded
-                        ; in bitplane 0
-
- LDY fontForPrinting    ; If fontForPrinting = 1, jump to chpr10 to print the
- CPY #1                 ; character using a character from the font in bitplane
- BEQ chpr10             ; 0, as we know this is loaded
-
-                        ; If we get here we know that fontForPrinting is 2 or 3
-
- AND #%00100000         ; If bit 5 of the view number in QQ11 is clear, then the
- BEQ chpr11             ; font is not loaded into bitplane 1, so jump to chpr11
-                        ; to print the character by copying the relevant font
-                        ; pattern into the pattern buffers, as it is not already
+                        ; 4 and 5 is set in QQ11, which means the normal font is
                         ; loaded
 
-                        ; If we get here then bit 5 of the view number in QQ11
-                        ; is set, so we know that the font is loaded in both
-                        ; bitplanes
+ LDY fontStyle          ; If fontStyle = 1, then we want to print text using the
+ CPY #1                 ; normal font, so jump to chpr10 to use the normal font
+ BEQ chpr10             ; in the pattern buffers, as we know the normal font is
+                        ; loaded
+
+                        ; If we get here we know that fontStyle is 2 or 3
+
+ AND #%00100000         ; If bit 5 of the view type in QQ11 is clear, then the
+ BEQ chpr11             ; highlight font is not loaded, so jump to chpr11 to
+                        ; print the character by copying the relevant font
+                        ; pattern into the pattern buffers
+
+                        ; If we get here then bit 5 of the view type in QQ11
+                        ; is set, so we know that both the normal and highlight
+                        ; fonts are loaded
                         ;
-                        ; We also know that fontForPrinting = 2 or 3
+                        ; We also know that fontStyle = 2 or 3
 
- CPY #2                 ; If fontForPrinting = 3, jump to chpr11 to print the
- BNE chpr11             ; character by copying the relevant font pattern into
-                        ; the pattern buffers, as it is not already loaded
+ CPY #2                 ; If fontStyle = 3, then we want to print the character
+ BNE chpr11             ; in green text on a black background (so we can't use
+                        ; the normal font as that's in colour 1 on black and we
+                        ; need to print in colour 3 on black), so jump to chpr11
+                        ; to print the character by copying the relevant font
+                        ; pattern into the pattern buffers
 
-                        ; If we get here then fontForPrinting = 2 and the font
-                        ; is loaded into bitplane 1, so we can use that for our
-                        ; character
+                        ; If we get here then fontStyle = 2, so we want to print
+                        ; text using the highlight font and we know it is
+                        ; loaded, so we can go ahead and use the loaded font for
+                        ; our character
 
  LDA K3                 ; Set A to the character to be printed
 
  CLC                    ; Set A = A + 95
  ADC #95                ;
-                        ; The font in bitplane 1 is loaded into pattern 161,
-                        ; which is 95 more than the font in bitplane 0 at
-                        ; pattern 66, so this points A to the correct character
-                        ; number in bitplane 1
+                        ; The highlight font is loaded into pattern 161, which
+                        ; is 95 more than the normal font at pattern 66, so this
+                        ; points A to the correct character number in the
+                        ; highlight font
 
  JMP chpr22             ; Jump to chpr22 to print the character using a font
                         ; that has already been loaded
 
 .chpr10
 
-                        ; If we get here then fontForPrinting = 1 and the font
-                        ; is loaded into bitplane 0, so we can use that for our
-                        ; character
+                        ; If we get here then fontStyle = 1 and the highlight
+                        ; font is loaded, so we can use that for our character
 
  LDA K3                 ; Set A to the character to be printed
 
@@ -16985,11 +17006,11 @@ ENDIF
                         ;
                         ;   * No font is loaded
                         ;
-                        ;   * fontForPrinting = 2 or 3
-                        ;     The font is loaded in bitplane 0 only (so there is
-                        ;     no font in bitplane 1)
+                        ;   * fontStyle = 2 (so we want to print highlighted
+                        ;     text) but the highlight font is not loaded
                         ;
-                        ;   * fontForPrinting = 3
+                        ;   * fontStyle = 3 (so we want to print text in colour
+                        ;     3 on background colour 0)
                         ;
                         ; In all cases, we need to draw the pattern for the
                         ; character directly into the relevant pattern buffer,
@@ -17067,8 +17088,8 @@ ENDIF
  LDA QQ11               ; If this is not the space view (i.e. QQ11 is non-zero)
  BNE chpr14             ; then jump to chpr14 to skip the following instruction
 
- JMP chpr28             ; This is the space view with no font loaded, so jump to
-                        ; chpr28 to draw the character on-screen, merging the
+ JMP chpr28             ; This is the space view with no fonts loaded, so jump
+                        ; to chpr28 to draw the character on-screen, merging the
                         ; text with whatever is already there
 
 .chpr14
@@ -17109,18 +17130,18 @@ ENDIF
                         ; tile for drawing, so it can be added to the nametable
                         ; the next time we need to draw into a tile
 
- LDY fontForPrinting    ; If fontForPrinting = 1, jump to chpr18
+ LDY fontStyle          ; If fontStyle = 1, jump to chpr18
  DEY
  BEQ chpr18
 
- DEY                    ; If fontForPrinting = 3, jump to chpr16
+ DEY                    ; If fontStyle = 3, jump to chpr16
  BNE chpr16
 
- JMP chpr19             ; Otherwise fontForPrinting = 2, so jump to chpr19
+ JMP chpr19             ; Otherwise fontStyle = 2, so jump to chpr19
 
 .chpr16
 
-                        ; If we get here then fontForPrinting = 3 and we need to
+                        ; If we get here then fontStyle = 3 and we need to
                         ; copy the pattern data for this character from the
                         ; address in P(2 1) into both pattern buffers 0 and 1
 
@@ -17215,7 +17236,7 @@ ENDIF
 
 .chpr18
 
-                        ; If we get here then fontForPrinting = 1 and we need to
+                        ; If we get here then fontStyle = 1 and we need to
                         ; copy the pattern data for this character from the
                         ; address in P(2 1) into pattern buffer 0
 
@@ -17234,7 +17255,7 @@ ENDIF
 
 .chpr19
 
-                        ; If we get here then fontForPrinting = 2 and we need to
+                        ; If we get here then fontStyle = 2 and we need to
                         ; copy the pattern data for this character from the
                         ; address in P(2 1) into pattern buffer 1
 
@@ -17347,12 +17368,12 @@ ENDIF
 
                         ; If we get here then one of these is true:
                         ;
-                        ;   * The font is loaded in both bitplanes
-                        ;     fontForPrinting = 2
+                        ;   * The normal and highlight fonts are loaded
+                        ;     fontStyle = 2
                         ;     A = character number + 95
                         ;
-                        ;   * The font is loaded in bitplane 0
-                        ;     fontForPrinting = 1
+                        ;   * The normal font is loaded
+                        ;     fontStyle = 1
                         ;     A = character number
 
  PHA                    ; Store A on the stack to we can retrieve it after the
@@ -17396,19 +17417,24 @@ ENDIF
 
 .chpr25
 
- LDY QQ11               ; If the view type in QQ11 is $9D (Long-range
- CPY #$9D               ; Chart), then jump to chpr26 to set A = 0 ???
- BEQ chpr26
+                        ; If we get here then we are printing a space
+
+ LDY QQ11               ; If the view type in QQ11 is $9D (Long-range Chart with
+ CPY #$9D               ; the normal font loaded), jump to chpr26 to use pattern
+ BEQ chpr26             ; 0 as the space character
 
  CPY #$DF               ; If the view type in QQ11 is not $DF (Start screen with
- BNE chpr23             ; font loaded in bitplane 0), jump to chpr23 to convert
+ BNE chpr23             ; the normal font loaded), jump to chpr23 to convert
                         ; the ASCII number in A to the pattern number
 
 .chpr26
 
- LDA #0                 ; This is either the Long-range Chart or the Start
-                        ; screen with the font loaded in bitplane 0, so set
-                        ; A = 0 so ???
+ LDA #0                 ; This is either view $9D (Long-range Chart) or $DF
+                        ; (Start screen), and in both these views the normal
+                        ; font is loaded directly into the PPU at a different
+                        ; pattern number to the other views, so we set A = 0 to
+                        ; use as the space character, as that is always a blank
+                        ; tile
 
  BEQ chpr24             ; Jump up to chpr24 to draw the character (this BEQ is
                         ; effectively a JMP as A is always zero)
@@ -17418,8 +17444,8 @@ ENDIF
 ;       Name: CHPR (Part 6 of 6)
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Print a character in the space view when there is no font loaded,
-;             merging the text with whatever is already on-screen
+;    Summary: Print a character in the space view when the relevant font is not
+;             loaded, merging the text with whatever is already on-screen
 ;
 ; ******************************************************************************
 

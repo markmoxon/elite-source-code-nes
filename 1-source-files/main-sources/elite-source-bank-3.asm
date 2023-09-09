@@ -1838,10 +1838,10 @@ ENDIF
 .svip1
 
  CMP #$9D               ; If the view type in QQ11 is $9D (Long-range Chart with
- BEQ svip6              ; font loaded in bitplane 0), jump to svip6
+ BEQ svip6              ; the normal font loaded), jump to svip6
 
  CMP #$DF               ; If the view type in QQ11 is $DF (Start screen with the
- BEQ svip6              ; font loaded in bitplane 0), jump to svip6
+ BEQ svip6              ; normal font loaded), jump to svip6
 
  CMP #$96               ; If the view type in QQ11 is not $96 (Data on System),
  BNE svip2              ; jump to svip2 to keep checking for view types
@@ -1927,8 +1927,8 @@ ENDIF
                         ; If we get here then this not one of these views:
                         ;
                         ;   * Equip Ship
-                        ;   * Long-range Chart with font loaded in bitplane 0
-                        ;   * Start screen with font loaded in bitplane 0
+                        ;   * Long-range Chart with the normal font loaded
+                        ;   * Start screen with the normal font loaded
                         ;   * Data on System
                         ;   * Status Mode
                         ;   * Market Price
@@ -1956,8 +1956,8 @@ ENDIF
 .svip6
 
                         ; If we get here then QQ11 is $9D (Long-range Chart with
-                        ; font loaded in bitplane 0) or $DF (Start screen with
-                        ; font loaded in bitplane 0), so now we load the font
+                        ; the normal font loaded) or $DF (Start screen with
+                        ; the normal font loaded), so now we load the font
                         ; images, starting at pattern 68 in the PPU
 
  LDA #36                ; Set asciiToPattern = 36, so we add 36 to an ASCII code
@@ -1984,20 +1984,20 @@ ENDIF
  STA PPU_ADDR
 
  LDX #95                ; Set X = 95 so the call to SendFontImageToPPU sends 95
-                        ; font patterns to bitplane 0 in the PPU (though the
-                        ; 95th character is full of random junk, so presumably
-                        ; it isn't used)
+                        ; font patterns to the PPU as a colour 1 font on a black
+                        ; background (though the 95th character is full of
+                        ; random junk, so it never gets used)
 
  LDA #HI(fontImage)     ; Set SC(1 0) = fontImage so we send the font image in
  STA SC+1               ; the call to SendFontImageToPPU
  LDA #LO(fontImage)
  STA SC
 
- JSR SendFontImageToPPU ; Send the 95 font patterns to bitplane 0 in the PPU and
-                        ; send zeroes to bitplane 1
+ JSR SendFontImageToPPU ; Send the 95 font patterns to the PPU as a colour 1
+                        ; font on a black background
 
  LDA QQ11               ; If the view type in QQ11 is not $DF (Start screen with
- CMP #$DF               ; font loaded in bitplane 0), then jump to svip10 to
+ CMP #$DF               ; the normal font loaded), then jump to svip10 to
  BNE svip10             ; finish off setting up the view without loading the
                         ; logo ball image
 
@@ -2141,21 +2141,21 @@ ENDIF
 
  JSR PlayMusicAtVBlank  ; Wait for the next VBlank and play the background music
 
- LDA QQ11               ; Set the old view number in QQ11a to the new view
- STA QQ11a              ; number in QQ11, to denote that we have now changed
-                        ; view to the view in QQ11
+ LDA QQ11               ; Set the old view type in QQ11a to the new view type in
+ STA QQ11a              ; QQ11, to denote that we have now changed view to the
+                        ; view in QQ11
 
- AND #%01000000         ; If bit 6 of the view number is clear, then there is an
+ AND #%01000000         ; If bit 6 of the view type is clear, then there is an
  BEQ svip13             ; icon bar, so jump to svip13 to set showUserInterface
                         ; to denote there is a user interface
 
  LDA QQ11               ; If the view type in QQ11 is $DF (Start screen with
- CMP #$DF               ; font loaded in bitplane 0), jump to svip13 to set
+ CMP #$DF               ; the normal font loaded), jump to svip13 to set
  BEQ svip13             ; showUserInterface to denote there is a user interface
 
                         ; If we get here then there is no user interface and
-                        ; and this is not the Start screen with the font loaded
-                        ; in bitplane 0 ???
+                        ; and this is not the Start screen with the normal font
+                        ; loaded ???
 
  LDA #0                 ; Clear bit 7 of A so we can set showUserInterface to
  BEQ svip14             ; denote that there is no user interface, and jump
@@ -2188,8 +2188,8 @@ ENDIF
 ;       Name: SendFontImageToPPU
 ;       Type: Subroutine
 ;   Category: PPU
-;    Summary: Send a font to the PPU as a set of patterns in bitplane 0 and
-;             zeroes in bitplane 1
+;    Summary: Send a font to the PPU as a colour 1 font on a colour 0 background
+;             (i.e. colour 1 on black)
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -2210,8 +2210,13 @@ ENDIF
 .sppu1
 
                         ; We repeat the following code eight times, so it sends
-                        ; all eight bytes of the pattern in bitplane 0 to the
+                        ; all eight bytes of the pattern into bitplane 0 to the
                         ; PPU
+                        ;
+                        ; Bitplane 0 is used for bit 0 of the colour number, and
+                        ; we send zeroes to bitplane 1 below, which is used for
+                        ; bit 1 of the colour number, so the result is a pattern
+                        ; with the font in colour 1 on background colour 0
 
  LDA (SC),Y             ; Send the Y-th byte of SC(1 0) to the PPU and increment
  STA PPU_DATA           ; the index in Y
@@ -2252,7 +2257,7 @@ ENDIF
 
  LDA #0                 ; Send the pattern's second bitplane to the PPU, so all
  STA PPU_DATA           ; eight bytes of the pattern in bitplane 1 are set to
- STA PPU_DATA           ; zero
+ STA PPU_DATA           ; zero (so bit 1 of the colour number is zero)
  STA PPU_DATA
  STA PPU_DATA
  STA PPU_DATA
@@ -2321,7 +2326,7 @@ ENDIF
  STA firstNametableTile ; tile 0 onwards
 
  LDA QQ11               ; If the view type in QQ11 is not $DF (Start screen with
- CMP #$DF               ; font loaded in bitplane 0), then jump to sbit1 to skip
+ CMP #$DF               ; the normal font loaded), then jump to sbit1 to skip
  BNE sbit1              ; the following and start sending pattern data from
                         ; pattern 37 onwards
 
@@ -2509,7 +2514,7 @@ ENDIF
 
 .svin2
 
- LDA QQ11               ; If bit 6 of the view number is clear, then there is an
+ LDA QQ11               ; If bit 6 of the view type is clear, then there is an
  AND #%01000000         ; icon bar, so jump to svin3 to skip the following
  BEQ svin3              ; instruction
 
@@ -2557,9 +2562,9 @@ ENDIF
  STA lastNameTile       ; 80 * 8 = 640 (i.e. to the end of tile row 19) in both
  STA lastNameTile+1     ; bitplanes
 
- LDA QQ11               ; Set the old view number in QQ11a to the new view
- STA QQ11a              ; number in QQ11, to denote that we have now changed
-                        ; view to the view in QQ11
+ LDA QQ11               ; Set the old view type in QQ11a to the new view type
+ STA QQ11a              ; in QQ11, to denote that we have now changed view to
+                        ; the view in QQ11
 
  LDA firstFreeTile      ; Set clearingPattTile for both bitplanes to the number
  STA clearingPattTile   ; of the first free tile, so the NMI handler only clears
@@ -2582,7 +2587,7 @@ ENDIF
 
  JSR SetDrawingBitplane ; Set the drawing bitplane to bitplane 0
 
- LDA QQ11               ; If bit 6 of the view number is set, then there is no
+ LDA QQ11               ; If bit 6 of the view type is set, then there is no
  AND #%01000000         ; icon bar, so jump to svin4 to skip the following
  BNE svin4              ; instructions
 
@@ -2604,8 +2609,8 @@ ENDIF
 
 .svin5
 
- LDA QQ11               ; Set X to the new view number in the lower nibble of
- AND #%00001111         ; QQ11
+ LDA QQ11               ; Set X to the new view type in the lower nibble of QQ11
+ AND #%00001111
  TAX
 
  LDA paletteForView,X   ; Set A to the palette number used by the view from the
@@ -3039,7 +3044,7 @@ ENDIF
  STA updatePaletteInNMI ; the PPU
 
  STA QQ11a              ; Set the old view type in QQ11a to $00 (Space view with
-                        ; no font loaded)
+                        ; no fonts loaded)
 
  LDA #$FF               ; Set bit 7 of screenFadedToBlack to indicate that we
  STA screenFadedToBlack ; have faded the screen to black
@@ -3187,7 +3192,7 @@ ENDIF
  LDA iconBarType
  JSR SetupIconBar
 
- LDA QQ11               ; If bit 6 of the view number is set, then there is no
+ LDA QQ11               ; If bit 6 of the view type is set, then there is no
  AND #%01000000         ; icon bar, so jump to CAC85 to return from the
  BNE CAC85              ; subroutine ???
 
@@ -3342,7 +3347,7 @@ ENDIF
                         ; as each icon bar image block contains $0400 bytes,
                         ; and iconBarType is the icon bar type, 0 to 4
 
- LDA QQ11               ; If bit 6 of the view number is set, then there is no
+ LDA QQ11               ; If bit 6 of the view type is set, then there is no
  AND #%01000000         ; icon bar, so jump to sets5 to skip the following
  BNE sets5              ; instruction
 
@@ -4102,7 +4107,7 @@ ENDIF
 
 .vpat1
 
- LDX #4                 ; This is the Start screen with no font loaded, so set
+ LDX #4                 ; This is the Start screen with no fonts loaded, so set
  STX firstFreeTile      ; firstFreeTile to 4
 
  RTS                    ; Return from the subroutine without copying anything to
@@ -4110,7 +4115,7 @@ ENDIF
 
 .vpat2
 
- LDX #37                ; This is the Space view with font loaded in bitplane 0,
+ LDX #37                ; This is the Space view with the normal font loaded,
  STX firstFreeTile      ; so set firstFreeTile to 37
 
  RTS                    ; Return from the subroutine without copying anything to
@@ -4123,7 +4128,7 @@ ENDIF
  BEQ vpat1              ; and return from the subroutine
 
  CMP #$10               ; If the view type in QQ11 is $10 (Space view with
- BEQ vpat2              ; font loaded in bitplane 0), jump to vpat2 to set
+ BEQ vpat2              ; the normal font loaded), jump to vpat2 to set
                         ; firstFreeTile to 37 and return from the subroutine
 
  LDX #66                ; Set X = 66 to use as the value of firstFreeTile when
@@ -4335,10 +4340,11 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LoadFontPlane0
+;       Name: LoadNormalFont
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Load the font into the pattern buffer from pattern 66 to 160
+;    Summary: Load the normal font into the pattern buffer from pattern 66 to
+;             160
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -4348,7 +4354,7 @@ ENDIF
 ;
 ; If the view type in QQ11 is $BB (Save and load with font loaded in both
 ; bitplanes), then the font is in colour 1 on a colour 2 background (which is a
-; grey font on a red background).
+; grey font on a red background in that view's palette).
 ;
 ; This is always called with A = 66, so it always loads the fonts from pattern
 ; 66 to 160.
@@ -4360,7 +4366,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.LoadFontPlane0
+.LoadNormalFont
 
  STA SC                 ; Set SC to the pattern number where we need to load the
                         ; font patterns
@@ -4368,8 +4374,8 @@ ENDIF
  SEC                    ; Set asciiToPattern = A - ASCII code for space
  SBC #' '               ;                    = start pattern - ASCII for space
  STA asciiToPattern     ;
-                        ; The font we load into bitplane 0 starts with a space
-                        ; at character 0, so asciiToPattern is the number we
+                        ; The font that we load starts with a space character as
+                        ; the first entry, so asciiToPattern is the number we
                         ; need to add to an ASCII code to get the corresponding
                         ; character pattern
 
@@ -4538,16 +4544,17 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LoadFontPlane1
+;       Name: LoadHighFont
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Load the font into the pattern buffer from pattern 161 to 255
+;    Summary: Load the highlight font into the pattern buffer from pattern 161
+;             to 255
 ;
 ; ------------------------------------------------------------------------------
 ;
 ; This routine fills the pattern buffer from pattern 161 to 255 with the font in
 ; colour 3 on a colour 1 background (which is typically a green font on a grey
-; background that can be used for drawing inverted text in menu selections).
+; background that can be used for drawing highlighted text in menu selections).
 ;
 ; If the view type in QQ11 is $BB (Save and load with font loaded in both
 ; bitplanes), then only the first 70 characters of the font are loaded, into
@@ -4555,7 +4562,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.LoadFontPlane1
+.LoadHighFont
 
  LDA #HI(pattBuffer0+8*161) ; Set SC(1 0) to the address of pattern 161 in
  STA SC2+1                  ; pattern buffer 0
@@ -5530,7 +5537,7 @@ ENDIF
 
 .GetViewPalettes
 
- LDA QQ11a              ; Set X to the old view number in the lower nibble of
+ LDA QQ11a              ; Set X to the old view type in the lower nibble of
  AND #%00001111         ; QQ11a
  TAX
 
@@ -5572,7 +5579,7 @@ ENDIF
  BPL gpal1              ; Loop back until we have copied all 32 bytes to XX3
 
  LDA QQ11a              ; If the old view type in QQ11a is $00 (Space view with
- BEQ gpal3              ; no font loaded), jump to gpal3 to set the visible and
+ BEQ gpal3              ; no fonts loaded), jump to gpal3 to set the visible and
                         ; hidden colours
 
  CMP #$98               ; If the old view type in QQ11a is $98 (Status Mode),
@@ -5621,7 +5628,7 @@ ENDIF
 .gpal3
 
                         ; If we get here then the old view type in QQ11a is $00
-                        ; (Space view with no font loaded), so we now set the
+                        ; (Space view with no fonts loaded), so we now set the
                         ; hidden and visible colours
 
  LDA XX3                ; Set A to the background colour in the first palette
@@ -6469,8 +6476,8 @@ ENDIF
  LDA viewAttributesHi,X
  STA V+1
 
- LDA QQ11               ; Set Y to the lower nibble of the view number, which is
- AND #$0F               ; the view number with the flags stripped off (so it's
+ LDA QQ11               ; Set Y to the lower nibble of the view type, which is
+ AND #$0F               ; the view type with the flags stripped off (so it's
  TAY                    ; in the range 0 to 15)
 
  LDA (V),Y              ; Set X to the Y-th entry from the viewAttributes_XX

@@ -297,8 +297,8 @@ IF NOT(_BANK = 3)
  UpdateIconBar      = $AC5C
  SetupIconBar       = $AE18
  SetLinePatterns    = $AFCD
- LoadFontPlane0     = $B0E1
- LoadFontPlane1     = $B18E
+ LoadNormalFont     = $B0E1
+ LoadHighFont       = $B18E
  DrawSystemImage    = $B219
  DrawImageFrame     = $B248
  DrawSmallBox       = $B2BC
@@ -517,18 +517,20 @@ ENDIF
                         ;
                         ; See the SetPaletteForView routine for details
 
-.fontForPrinting
+.fontStyle
 
- SKIP 1                 ; When printing a character in CHPR, this defines which
-                        ; bitplanes to draw from the font images in fontImage,
-                        ; as each character in the font contains two separate
-                        ; characters
+ SKIP 1                 ; The font style to use when printing text:
                         ;
-                        ;   * %01 = draw in bitplane 1 (monochrome)
+                        ;   * 1 = normal font
                         ;
-                        ;   * %10 = draw in bitplane 2 (monochrome)
+                        ;   * 2 = highlight font
                         ;
-                        ;   * %11 = draw both bitplanes (four-colour)
+                        ;   * 3 = green text on a black background (colour 3 on
+                        ;         background colour 0)
+                        ;
+                        ; Style 3 is used when printing characters into 2x2
+                        ; attribute blocks where printing the normal font would
+                        ; result in the wrong colour text being shown
 
 .nmiTimer
 
@@ -843,11 +845,11 @@ ENDIF
 
 .QQ11
 
- SKIP 1                 ; This contains the number of the current view (or, if
-                        ; we are changing views, the number of the view we are
+ SKIP 1                 ; This contains the type of the current view (or, if
+                        ; we are changing views, the type of the view we are
                         ; changing to)
                         ;
-                        ; The low nibble contains the view type, as follows:
+                        ; The low nibble determines the view, as follows:
                         ;
                         ;   0  = $x0 = Space view
                         ;   1  = $x1 = Title screen
@@ -869,14 +871,14 @@ ENDIF
                         ; The high nibble contains four configuration bits, as
                         ; follows:
                         ;
-                        ;   * Bit 4 clear = do not load the font into bitplane 0
-                        ;     Bit 4 set   = load the font into bitplane 0 from
-                        ;                   pattern 66 to 160 (or 68 to 162 for
-                        ;                   views $9D and $DF)
+                        ;   * Bit 4 clear = do not load the normal font
+                        ;     Bit 4 set   = load the normal font into patterns
+                        ;                   66 to 160 (or 68 to 162 for views
+                        ;                   $9D and $DF)
                         ;
-                        ;   * Bit 5 clear = do not load the font into bitplane 1
-                        ;     Bit 5 set   = load the font into bitplane 1 from
-                        ;                   pattern 161 to 255
+                        ;   * Bit 5 clear = do not load the highlight font
+                        ;     Bit 5 set   = load the highlight font into
+                        ;                   patterns 161 to 255
                         ;
                         ;   * Bit 6 clear = icon bar
                         ;     Bit 6 set   = no icon bar (rows 27-28 are blank)
@@ -884,105 +886,114 @@ ENDIF
                         ;   * Bit 7 clear = dashboard (icon bar on row 20)
                         ;     Bit 7 set   = no dashboard (icon bar on row 27)
                         ;
+                        ; The normal font is colour 1 on background colour 0
+                        ; (typically white or cyan on black)
+                        ;
+                        ; The highlight font is colour 3 on background colour 1
+                        ; (typically green on white)
+                        ;
                         ; Most views have the same configuration every time
                         ; the view is shown, but $x0 (space view), $xB (Save and
                         ; load), $xD (Long-range Chart) and $xF (Start screen)
                         ; can have different configurations at different times
                         ;
                         ; Note that view $FF is an exception, as no fonts are
-                        ; loaded for this view (it represents the blank view
-                        ; between the end of the Title screen and the start of
-                        ; the demo scroll text)
+                        ; loaded for this view, despite bits 4 and 5 being set
+                        ; (this view represents the blank screen between the end
+                        ; of the Title screen and the start of the demo scroll
+                        ; text)
                         ;
-                        ; Also, view $BB (Save and load with font loaded in both
-                        ; bitplanes) loads an inverted font into bitplane 1 from
-                        ; pattern 66 to 160, as well as the normal fonts, and
-                        ; views $9D (Long-range Chart) and $DF (Start screen)
-                        ; load the bitplane 0 font at pattern 68 onwards,
-                        ; rather than 66
+                        ; Also, view $BB (Save and load with normal and
+                        ; highlight fonts loaded) displays the normal font as
+                        ; colour 1 on background colour 2 (white on red)
+                        ;
+                        ; Finally, views $9D (Long-range Chart) and $DF (Start
+                        ; screen) load the normal font into patterns 68 to 162,
+                        ; rather than 66 to 160
                         ;
                         ; The complete list of view types is therefore:
                         ;
                         ;   $00 = Space view
-                        ;         No font loaded, dashboard
+                        ;         No fonts loaded, dashboard
                         ;
                         ;   $10 = Space view
-                        ;         Font loaded in bitplane 0, dashboard
+                        ;         Normal font loaded, dashboard
                         ;
                         ;   $01 = Title screen
-                        ;         No font loaded, dashboard
+                        ;         No fonts loaded, dashboard
                         ;
                         ;   $92 = Mission 1 briefing: rotating ship
-                        ;         Font loaded in bitplane 0, no dashboard
+                        ;         Normal font loaded, no dashboard
                         ;
                         ;   $93 = Mission 1 briefing: ship and text
-                        ;         Font loaded in bitplane 0, no dashboard
+                        ;         Normal font loaded, no dashboard
                         ;
                         ;   $C4 = Game Over screen
-                        ;         No font loaded, no dashboard or icon bar
+                        ;         No fonts loaded, no dashboard or icon bar
                         ;
                         ;   $95 = Text-based mission briefing
-                        ;         Font loaded in bitplane 0, no dashboard
+                        ;         Normal font loaded, no dashboard
                         ;
                         ;   $96 = Data on System
-                        ;         Font loaded in bitplane 0, no dashboard
+                        ;         Normal font loaded, no dashboard
                         ;
                         ;   $97 = Inventory
-                        ;         Font loaded in bitplane 0, no dashboard
+                        ;         Normal font loaded, no dashboard
                         ;
                         ;   $98 = Status Mode
-                        ;         Font loaded in bitplane 0, no dashboard
+                        ;         Normal font loaded, no dashboard
                         ;
                         ;   $B9 = Equip Ship
-                        ;         Font loaded in both bitplanes, no dashboard
+                        ;         Normal and highlight fonts loaded, no
+                        ;         dashboard
                         ;
                         ;   $BA = Market Price
-                        ;         Font loaded in both bitplanes, no dashboard
+                        ;         Normal and highlight fonts loaded, no
+                        ;         dashboard
                         ;
                         ;   $8B = Save and load
-                        ;         No font loaded, no dashboard
+                        ;         No fonts loaded, no dashboard
                         ;
                         ;   $BB = Save and load
-                        ;         Font loaded in both bitplanes, inverted font
-                        ;         loaded in bitplane 1, no dashboard
+                        ;         Normal and highlight fonts loaded, special
+                        ;         colours for the normal font, no dashboard
                         ;
                         ;   $9C = Short-range Chart
-                        ;         Font loaded in bitplane 0, no dashboard
+                        ;         Normal font loaded, no dashboard
                         ;
                         ;   $8D = Long-range Chart
-                        ;         No font loaded, no dashboard
+                        ;         No fonts loaded, no dashboard
                         ;
                         ;   $9D = Long-range Chart
-                        ;         Font loaded in bitplane 0, no dashboard
+                        ;         Normal font loaded, no dashboard
                         ;
                         ;   $CF = Start screen
-                        ;         No font loaded, no dashboard or icon bar
+                        ;         No fonts loaded, no dashboard or icon bar
                         ;
                         ;   $DF = Start screen
-                        ;         Font loaded in bitplane 0, no dashboard or
-                        ;         icon bar
+                        ;         Normal font loaded, no dashboard or icon bar
                         ;
                         ;   $FF = Segue screen from Title screen to Demo
-                        ;         No font loaded, no dashboard or icon bar
+                        ;         No fonts loaded, no dashboard or icon bar
                         ;
                         ; In terms of fonts, then, these are the only options:
                         ;
                         ;   * No font is loaded
                         ;
-                        ;   * The font is loaded in bitplane 0
+                        ;   * The normal font is loaded
                         ;
-                        ;   * The font is loaded in both bitplanes
+                        ;   * The normal and highlight fonts are loaded
                         ;
-                        ;   * The font is loaded in both bitplanes and the
-                        ;     inverted font is loaded into bitplane 1
+                        ;   * The normal and highlight fonts are loaded, with
+                        ;     special colours for the normal font
 
 .QQ11a
 
- SKIP 1                 ; Contains the old view number when changing views
+ SKIP 1                 ; Contains the old view type when changing views
                         ;
                         ; When we change view, QQ11 gets set to the new view
                         ; number straight away while QQ11a stays set to the old
-                        ; view number, only updating to the new view number once
+                        ; view type, only updating to the new view type once
                         ; the new view has appeared
 
 .ZZ

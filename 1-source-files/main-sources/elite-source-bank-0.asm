@@ -3174,7 +3174,7 @@ ENDIF
  LDX #37                ; Set X = 37 to use as the first pattern tile for when
                         ; there is an icon bar
 
- LDA QQ11               ; If bit 6 of the view number is clear, then there is an
+ LDA QQ11               ; If bit 6 of the view type is clear, then there is an
  AND #%01000000         ; icon bar, so jump to upvw2 to skip the following
  BEQ upvw2              ; instruction
 
@@ -3219,7 +3219,7 @@ ENDIF
  BEQ upvw4              ; 0 (i.e. hide the icon bar pointer)
 
  CMP #$DF               ; If the view type in QQ11 is $DF (Start screen with
- BEQ upvw4              ; font loaded in bitplane 0), jump to upvw4 to set
+ BEQ upvw4              ; the normal font loaded), jump to upvw4 to set
                         ; showIconBarPointer to 0 (i.e. hide the icon bar
                         ; pointer)
 
@@ -3247,7 +3247,7 @@ ENDIF
  STX showIconBarPointer ; Set showIconBarPointer to X, so we set it as follows:
                         ;
                         ;   * 0 if the view is a mission briefing, or the Start
-                        ;     screen with font loaded in bitplane 0, or has no
+                        ;     screen with the normal font loaded, or has no
                         ;     icon bar (in which case we hide the icon bar
                         ;     pointer)
                         ;
@@ -6966,7 +6966,7 @@ ENDIF
 .LAUN
 
  LDA #$00               ; Clear the screen and and set the view type in QQ11 to
- JSR ChangeToView       ; $00 (Space view with no font loaded)
+ JSR ChangeToView       ; $00 (Space view with no fonts loaded)
 
  JSR HideMostSprites    ; Hide all sprites except for sprite 0 and the icon bar
                         ; pointer
@@ -7571,7 +7571,7 @@ ENDIF
  STA VIEW
 
  JSR TT66               ; Clear the screen and and set the view type in QQ11 to
-                        ; $00 (Space view with no font loaded)
+                        ; $00 (Space view with no fonts loaded)
 
  LSR demoInProgress     ; Clear bit 7 of demoInProgress
 
@@ -8182,9 +8182,18 @@ ENDIF
 ;       Name: PrintTokenAndColon
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Print a character followed by a colon, drawing in both bitplanes
+;    Summary: Print a character followed by a colon, ensuring that the colon is
+;             always drawn in colour 3 on a black background
 ;
 ; ------------------------------------------------------------------------------
+;
+; The colon is printed using font style 3. This draws the colon in colour 3 on
+; background colour 0 (i.e. green on black), but without using the normal font.
+;
+; This ensures that the colon will be drawn in green when the colon's tile falls
+; within a 2x2 attribute block that's set to draw white text (i.e. where colour
+; 1 is white). This happens in the Status Mode screen in French, and in the Data
+; on System screen.
 ;
 ; Arguments:
 ;
@@ -8196,14 +8205,14 @@ ENDIF
 
  JSR TT27_b2            ; Print the character in A
 
- LDA #3                 ; Set the font to 3 (i.e. neither of the loaded fonts)
- STA fontForPrinting
+ LDA #3                 ; Set the font style to green text on a black background
+ STA fontStyle          ; (colour 3 on background colour 0)
 
  LDA #':'               ; Print a colon
  JSR TT27_b2
 
- LDA #1                 ; Set the font to 1 (i.e. the font in bitplane 0)
- STA fontForPrinting
+ LDA #1                 ; Set the font style to print in the normal font
+ STA fontStyle
 
  RTS                    ; Return from the subroutine
 
@@ -8265,7 +8274,9 @@ ENDIF
  BEQ dsys1
 
  LDA #194               ; Print recursive token 34 ("ECONOMY") followed by
- JSR PrintTokenAndColon ; colon
+ JSR PrintTokenAndColon ; colon, ensuring that the colon is printed in green
+                        ; despite being in a 2x2 attribute block set for white
+                        ; text
 
  JMP dsys2              ; Jump to dsys2 to print the economy type
 
@@ -8333,7 +8344,9 @@ ENDIF
  BEQ dsys3
 
  LDA #162               ; Print recursive token 2 ("GOVERNMENT") followed by
- JSR PrintTokenAndColon ; colon
+ JSR PrintTokenAndColon ; colon, ensuring that the colon is printed in green
+                        ; despite being in a 2x2 attribute block set for white
+                        ; text
 
  JMP dsys4              ; Jump to dsys4 to print the government type
 
@@ -8439,7 +8452,9 @@ ENDIF
  BEQ dsys6
 
  LDA #192               ; Print recursive token 32 ("POPULATION") followed by a
- JSR PrintTokenAndColon ; colon
+ JSR PrintTokenAndColon ; colon, ensuring that the colon is printed in green
+                        ; despite being in a 2x2 attribute block set for white
+                        ; text
 
  JMP dsys7              ; Jump to dsys7 to print the population
 
@@ -8774,7 +8789,7 @@ ENDIF
  JSR TT103              ; ???
 
  LDA #$9D               ; Set the view type in QQ11 to $00 (Long-range Chart
- STA QQ11               ; with font loaded in bitplane 0)
+ STA QQ11               ; with the normal font loaded)
 
  LDA #$8F               ; ???
  STA Yx2M1
@@ -8903,7 +8918,7 @@ ENDIF
  BCC TT87               ; won't spill out of the bottom of the screen
 
  LDX QQ11               ; A >= 152, so we need to check whether this will fit in
-                        ; this view, so fetch the view number
+                        ; this view, so fetch the view type
 
  CPX #$9C               ; If this is the Short-range Chart then the y-coordinate
  BEQ TT87               ; is fine, so skip to TT87
@@ -11743,8 +11758,8 @@ ENDIF
 
  TAY                    ; Set Y to the market item number
 
- LDX #2                 ; Set the font to 2 (i.e. the font in bitplane 1)
- STX fontForPrinting
+ LDX #2                 ; Set the font style to print in the highlight font
+ STX fontStyle
 
  CLC                    ; Move the text cursor to the row for this market item,
  LDX languageIndex      ; starting from item 0 at the top, on the correct row
@@ -11757,8 +11772,8 @@ ENDIF
                         ; QQ19+1 to byte #1 from the market prices table for
                         ; this item
 
- LDX #1                 ; Set the font to 1 (i.e. the font in bitplane 0)
- STX fontForPrinting
+ LDX #1                 ; Set the font style to print in the normal font
+ STX fontStyle
 
  RTS                    ; Return from the subroutine
 
@@ -12700,15 +12715,15 @@ ENDIF
 
 .HighlightEquipment
 
- LDX #2                 ; Set the font to 2 (i.e. the font in bitplane 1)
- STX fontForPrinting
+ LDX #2                 ; Set the font style to print in the highlight font
+ STX fontStyle
 
  LDX XX13               ; Set X to the item number to print
 
  JSR PrintEquipment+2   ; Print the name and price for the equipment item in X
 
- LDX #1                 ; Set the font to 1 (i.e. the font in bitplane 0)
- STX fontForPrinting
+ LDX #1                 ; Set the font style to print in the normal font
+ STX fontStyle
 
  RTS                    ; Return from the subroutine
 
@@ -13770,14 +13785,14 @@ ENDIF
 
 .HighlightLaserView
 
- LDA #2                 ; Set the font to 2 (i.e. the font in bitplane 1)
- STA fontForPrinting
+ LDA #2                 ; Set the font style to print in the highlight font
+ STA fontStyle
 
  JSR PrintLaserView     ; Print the name of the laser view specified in Y at the
                         ; correct on-screen position for the popup menu
 
- LDA #1                 ; Set the font to 1 (i.e. the font in bitplane 0)
- STA fontForPrinting
+ LDA #1                 ; Set the font style to print in the normal font
+ STA fontStyle
 
  TYA                    ; Store Y on the stack so we can retrieve it at the end
  PHA                    ; of the subroutine
@@ -13855,14 +13870,14 @@ ENDIF
                         ; Next, we highlight the first view (front) as by this
                         ; point Y = 0
 
- LDA #2                 ; Set the font to 2 (i.e. the font in bitplane 1)
- STA fontForPrinting
+ LDA #2                 ; Set the font style to print in the highlight font
+ STA fontStyle
 
  JSR PrintLaserView     ; Print the name of the laser view specified in Y at the
                         ; correct on-screen position for the popup menu
 
- LDA #1                 ; Set the font to 1 (i.e. the font in bitplane 0)
- STA fontForPrinting
+ LDA #1                 ; Set the font style to print in the normal font
+ STA fontStyle
 
                         ; We now draw a box around the list of views to make it
                         ; look like a popup menu
@@ -14012,7 +14027,7 @@ ENDIF
 ;
 ;   A                   The power of the new laser to be fitted
 ;
-;   X                   The view number for fitting the new laser
+;   X                   The view number for fitting the new laser (0-3)
 ;
 ; Returns:
 ;
@@ -14404,7 +14419,7 @@ ENDIF
 
  LDA languageNumber     ; If bit 2 of languageNumber is set then the chosen
  AND #%00000100         ; language is French, so jump to fuel2 to skip the
- BNE fuel2              ; following two insteuctions
+ BNE fuel2              ; following two instructions
 
  JSR Print2Spaces       ; Print two spaces
 
@@ -14423,8 +14438,10 @@ ENDIF
 
                         ; If we get here then the chosen language is French
 
- LDA #105               ; Print recursive token 105 ("FUEL") followed by a colon
- JSR PrintTokenAndColon
+ LDA #105               ; Print recursive token 105 ("FUEL") followed by a
+ JSR PrintTokenAndColon ; colon, ensuring that the colon is printed in green
+                        ; despite being in a 2x2 attribute block set for white
+                        ; text
 
  JSR TT162              ; Print a space
 
@@ -16156,12 +16173,11 @@ ENDIF
 
 .YESNO
 
- LDA fontForPrinting    ; Store the current font bitplane value on the stack,
- PHA                    ; so we can restore it when we return from the
-                        ; subroutine
+ LDA fontStyle          ; Store the current font style on the stack, so we can
+ PHA                    ; restore it when we return from the subroutine
 
- LDA #2                 ; Set the font to 2 (i.e. the font in bitplane 1)
- STA fontForPrinting
+ LDA #2                 ; Set the font style to print in the highlight font
+ STA fontStyle
 
  LDA #1                 ; Push a value of 1 onto the stack, so the following
  PHA                    ; prints extended token 1 ("YES")
@@ -16216,8 +16232,8 @@ ENDIF
  TAX                    ; will be 1 for "YES" or 2 for "NO", giving us our
                         ; result to return
 
- PLA                    ; Restore the font bitplane value that we stored on the
- STA fontForPrinting    ; stack so it's unchanged by the routine
+ PLA                    ; Restore the font style that we stored on the stack
+ STA fontStyle          ; so it's unchanged by the routine
 
  TXA                    ; Copy X to A, so we return the result in both A and X
 
@@ -17937,7 +17953,7 @@ ENDIF
  STA QQ11               ; font loaded)
 
  STA QQ11a              ; Set the old view type in QQ11a to $00 (Space view with
-                        ; no font loaded)
+                        ; no fonts loaded)
 
  LDA firstFreeTile      ; Tell the NMI handler to send pattern entries from the
  STA firstPatternTile   ; first free tile onwards, so we don't waste time
@@ -18149,8 +18165,8 @@ ENDIF
 
  JSR ResetOptions       ; Reset the game options to their default values
 
- LDA #1                 ; Set the font to 1 (i.e. the font in bitplane 0)
- STA fontForPrinting
+ LDA #1                 ; Set the font style to print in the normal font
+ STA fontStyle
 
  LDX #$FF               ; Set the old view type in QQ11a to $FF (Segue screen
  STX QQ11a              ; from Title screen to Demo)
@@ -18425,7 +18441,7 @@ ENDIF
  STA QQ11               ; font loaded)
 
  STA QQ11a              ; Set the old view type in QQ11a to $00 (Space view with
-                        ; no font loaded)
+                        ; no fonts loaded)
 
  STA showIconBarPointer ; Set showIconBarPointer to 0 to indicate that we should
                         ; hide the icon bar pointer
@@ -21849,7 +21865,7 @@ ENDIF
  STX VIEW               ; Set the current space view to X
 
  LDA #$00               ; Clear the screen and and set the view type in QQ11 to
- JSR TT66               ; $00 (Space view with no font loaded)
+ JSR TT66               ; $00 (Space view with no fonts loaded)
 
  JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
                         ; buffer and tell the NMI handler to send pattern
@@ -21891,7 +21907,7 @@ ENDIF
  STX VIEW               ; Set the current space view to X
 
  LDA #$00               ; Clear the screen and and set the view type in QQ11 to
- JSR TT66               ; $00 (Space view with no font loaded)
+ JSR TT66               ; $00 (Space view with no fonts loaded)
 
  JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
                         ; buffer and tell the NMI handler to send pattern
@@ -22329,7 +22345,7 @@ ENDIF
  BEQ scrn6              ; buffer 0
 
  CMP #$CF               ; If the view type in QQ11 is $CF (Start screen with
- BEQ scrn6              ; no font loaded), jump to scrn6 to skip loading
+ BEQ scrn6              ; no fonts loaded), jump to scrn6 to skip loading
                         ; the font into pattern buffer 0
 
  AND #%00010000         ; If bit 4 of the new view in QQ11 is clear, jump to
@@ -22340,7 +22356,7 @@ ENDIF
                         ; Start screen, and bit 4 of QQ11 is set
 
  LDA #66                ; Load the font into pattern buffer 0, and a set of
- JSR LoadFontPlane0_b3  ; filled blocks into pattern buffer 1, from pattern 66
+ JSR LoadNormalFont_b3  ; filled blocks into pattern buffer 1, from pattern 66
                         ; to 160
                         ;
                         ; If the view type in QQ11 is $BB (Save and load with
@@ -22354,7 +22370,7 @@ ENDIF
  AND #%00100000         ; scrn7 to skip loading the normal font
  BEQ scrn7
 
- JSR LoadFontPlane1_b3  ; Load the font into pattern buffer 1, and a set of
+ JSR LoadHighFont_b3    ; Load the font into pattern buffer 1, and a set of
                         ; filled blocks into pattern buffer 0, from pattern 161
                         ; to 255
 
