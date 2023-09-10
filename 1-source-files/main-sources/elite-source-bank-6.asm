@@ -5812,7 +5812,11 @@ ENDIF
 
  CMP Q
  BCS CA8EF
- JSR LL28
+
+ JSR LL28               ; Call LL28 to calculate:
+                        ;
+                        ;   R = 256 * A / Q
+
  LSR R
  LDA #$48
  CLC
@@ -5936,9 +5940,15 @@ ENDIF
 
 .CA984
 
- JSR FlipDrawingPlane
+ JSR FlipDrawingPlane   ; Flip the drawing bitplane so we draw into the bitplane
+                        ; that isn't visible on-screen
+
  JSR subm_AAE5
- JSR DrawBitplaneInNMI
+
+ JSR DrawBitplaneInNMI  ; Configure the NMI to send the drawing bitplane to the
+                        ; PPU after drawing the box edges and setting the next
+                        ; free tile number
+
  LDA pointerButton
  BEQ CA995
  JSR CheckForPause_b0
@@ -6176,7 +6186,11 @@ ENDIF
  BCS CAAD7
  EOR #$FF
  ADC #1
- JSR LL28
+
+ JSR LL28               ; Call LL28 to calculate:
+                        ;
+                        ;   R = 256 * A / Q
+
  LDA #$80
  SEC
  SBC R
@@ -6187,7 +6201,10 @@ ENDIF
 
 .CAAD7
 
- JSR LL28
+ JSR LL28               ; Call LL28 to calculate:
+                        ;
+                        ;   R = 256 * A / Q
+
  LDA R
  CLC
  ADC #$80
@@ -6676,9 +6693,11 @@ ENDIF
 
 .saveHeader1Lo
 
- EQUB LO(saveHeader1_EN)
- EQUB LO(saveHeader1_DE)
- EQUB LO(saveHeader1_FR)
+ EQUB LO(saveHeader1_EN)    ; English
+
+ EQUB LO(saveHeader1_DE)    ; German
+
+ EQUB LO(saveHeader1_FR)    ; French
 
 ; ******************************************************************************
 ;
@@ -6692,9 +6711,11 @@ ENDIF
 
 .saveHeader1Hi
 
- EQUB HI(saveHeader1_EN)
- EQUB HI(saveHeader1_DE)
- EQUB HI(saveHeader1_FR)
+ EQUB HI(saveHeader1_EN)    ; English
+
+ EQUB HI(saveHeader1_DE)    ; German
+
+ EQUB HI(saveHeader1_FR)    ; French
 
 ; ******************************************************************************
 ;
@@ -6708,9 +6729,11 @@ ENDIF
 
 .saveHeader2Lo
 
- EQUB LO(saveHeader2_EN)
- EQUB LO(saveHeader2_DE)
- EQUB LO(saveHeader2_FR)
+ EQUB LO(saveHeader2_EN)    ; English
+
+ EQUB LO(saveHeader2_DE)    ; German
+
+ EQUB LO(saveHeader2_FR)    ; French
 
 ; ******************************************************************************
 ;
@@ -6724,9 +6747,11 @@ ENDIF
 
 .saveHeader2Hi
 
- EQUB HI(saveHeader2_EN)
- EQUB HI(saveHeader2_DE)
- EQUB HI(saveHeader2_FR)
+ EQUB HI(saveHeader2_EN)    ; English
+
+ EQUB HI(saveHeader2_DE)    ; German
+
+ EQUB HI(saveHeader2_FR)    ; French
 
 ; ******************************************************************************
 ;
@@ -8114,73 +8139,151 @@ ENDIF
                         ; sent to the PPU, so the screen is fully updated and
                         ; there is no more data waiting to be sent to the PPU
 
- JSR HideStardust       ; ???
+ JSR HideStardust       ; Hide the stardust sprites
 
  JSR HideExplosionBurst ; Hide the four sprites that make up the explosion burst
 
- JSR HyperspaceSound
- LDA #$80
- STA K+2
- LDA #$48
- STA K+3
- LDA #$40
- STA XP
+ JSR HyperspaceSound    ; Make the hyperspace sound
 
-.CB999
+ LDA #128               ; This value is not used in the following, so this has
+ STA K+2                ; no effect
 
- JSR CheckPauseButton
- JSR DORND
- AND #$0F
+ LDA #72                ; This value is not used in the following, so this has
+ STA K+3                ; no effect
+
+ LDA #64                ; Set XP to use as a counter for the duration of the
+ STA XP                 ; hyperspace effect, so we run the following loop 64
+                        ; times
+
+                        ; We now draw 64 frames of hyperspace effect, looping
+                        ; back to hype1 for each new frame
+
+.hype1
+
+ JSR CheckPauseButton   ; Check whether the pause button has been pressed or an
+                        ; icon bar button has been chosen, and process pause or
+                        ; unpause if a pause-related button has been pressed
+
+ JSR DORND              ; Set X to a random number between 0 and 15
+ AND #15
  TAX
- LDA hyperspaceColour,X
- STA visibleColour
- JSR FlipDrawingPlane
- LDA XP
- AND #$1F
- STA STP
- LDA #8
- STA XX15
- LDA #$F8
- STA X2
 
-.CB9B9
+ LDA hyperspaceColour,X ; Set the visible colour to entry number X from the
+ STA visibleColour      ; hyperspaceColour table, so this sets the hyperspace
+                        ; colour randomly to one of the colours in the table
+
+ JSR FlipDrawingPlane   ; Flip the drawing bitplane so we draw into the bitplane
+                        ; that isn't visible on-screen
+
+ LDA XP                 ; Set STP = XP mod 32
+ AND #31                ;
+ STA STP                ; So over the course of the 64 iterations around the
+                        ; loop, STP starts at 0, then counts down from 31 to 0,
+                        ; and then counts down from 31 to 1 again
+                        ;
+                        ; The higher the value of STP, the closer together the
+                        ; lines in the hyperspace effect, so this makes the
+                        ; lines move further away as the effect progresses,
+                        ; giving a feeling of moving through hyperspace
+
+ LDA #8                 ; Set X1 = 8 so we draw horizontal lines from
+ STA X1                 ; x-coordinate 8 on the left of the screen
+
+ LDA #248               ; Set X2 = 248 so we draw horizontal lines to
+ STA X2                 ; x-coordinate 248 on the right of the screen
+
+                        ; We now draw the lines in the hyperspace effect (with
+                        ; lines in the top half of the screen and the same
+                        ; lines, reflected, in the bottom half), looping back
+                        ; to hype2 for each new line
+                        ;
+                        ; STP gets incremented by 16 for each line, so STP is
+                        ; set to the starting point (in the range 0 to 31), plus
+                        ; 16 for the first line, plus 32 for the second line,
+                        ; and so on until we get to 90, at which point we stop
+                        ; drawing lines for this frame
+                        ;
+                        ; As STP increases, the lines get closer to the middle
+                        ; of the screen, so this loop draws the lines, starting
+                        ; with the lines furthest from the centre and working in
+                        ; towards the ccntre
+
+.hype2
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA STP
- CLC
- ADC #$10
+ LDA STP                ; Set STP = STP + 16
+ CLC                    ;
+ ADC #16                ; And set A to the new value of STP
  STA STP
- CMP #$5A
- BCS CB9FB
- STA Q
- LDA #8
- JSR LL28
- LDA R
- SEC
- SBC #$14
+
+ CMP #90                ; If A >= 90, jump to hype3 to move on to the next frame
+ BCS hype3              ; (so we stop drawing lines in this frame)
+
+ STA Q                  ; Set Q to the new value of STP
+
+ LDA #8                 ; Set A = 8 to use in the following division
+
+ JSR LL28               ; Call LL28 to calculate:
+                        ;
+                        ;   R = 256 * A / Q
+                        ;     = 256 * 8 / STP
+                        ;     = 2048 / STP
+
+ LDA R                  ; Set K+1 = R - 20
+ SEC                    ;         = (2048 / STP) - 20
+ SBC #20
  STA K+1
- LDA halfScreenHeight
- SBC K+1
- BCC CB9B9
- BEQ CB9B9
- TAY
- JSR HLOIN
- INC X2
- LDA K+1
- CLC
- ADC halfScreenHeight
- TAY
- JSR HLOIN
- INC X2
- JMP CB9B9
 
-.CB9FB
+                        ; K+1 contains the vertical distance of this line from
+                        ; the centre of the screen (i.e. the laser sights), so
+                        ; we now draw this line twice, once above the centre and
+                        ; once below the centre, so the lines in the top and
+                        ; bottom parts of the screen are mirrored
 
- JSR DrawBitplaneInNMI
- DEC XP
- BNE CB999
+ LDA halfScreenHeight   ; Set A = halfScreenHeight - K+1
+ SBC K+1                ;
+                        ; So A is the y-coordinate of the line in the top half
+                        ; of the screen
+
+ BCC hype2              ; If A <= 0 then the line is off the top of the screen,
+ BEQ hype2              ; so jump to hype2 to move on to the next line
+
+ TAY                    ; Set Y = A, to use as the y-coordinate for this line
+                        ; in the hyperspace effect
+
+ JSR HLOIN              ; Draw a horizontal line from (X1, Y) to (X2, Y)
+
+ INC X2                 ; The HLOIN routine decrements X2, so increment it back
+                        ; to its original value
+
+ LDA K+1                ; Set A = halfScreenHeight + K+1
+ CLC                    ;
+ ADC halfScreenHeight   ; So A is the y-coordinate of the line in the bottom
+                        ; half of the screen
+
+ TAY                    ; Set Y = A, to use as the y-coordinate for this line
+                        ; in the hyperspace effect
+
+ JSR HLOIN              ; Draw a horizontal line from (X1, Y) to (X2, Y)
+
+ INC X2                 ; The HLOIN routine decrements X2, so increment it back
+                        ; to its original value
+
+ JMP hype2              ; Loop back to hype2 to draw the next horizontal line
+                        ; in this iteration
+
+.hype3
+
+ JSR DrawBitplaneInNMI  ; Configure the NMI to send the drawing bitplane to the
+                        ; PPU after drawing the box edges and setting the next
+                        ; free tile number
+
+ DEC XP                 ; Decrement the effects counter in XP
+
+ BNE hype1              ; Loop back to hype1 to keep drawing the hyperspace
+                        ; effect until the counter runs down to 0
 
  JMP WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
                         ; sent to the PPU, so the screen is fully updated and
@@ -8192,14 +8295,14 @@ ENDIF
 ;       Name: hyperspaceColour
 ;       Type: Variable
 ;   Category: Flight
-;    Summary: ???
+;    Summary: The different colours that can be used for the hyperspace effect
 ;
 ; ******************************************************************************
 
 .hyperspaceColour
 
- EQUB $06, $0F, $38, $2A, $23, $25, $22, $11  ; BA06: 06 0F 38... ..8
- EQUB $1A, $00, $26, $2C, $20, $13, $0F, $00  ; BA0E: 1A 00 26... ..&
+ EQUB $06, $0F, $38, $2A, $23, $25, $22, $11
+ EQUB $1A, $00, $26, $2C, $20, $13, $0F, $00
 
 ; ******************************************************************************
 ;
@@ -8252,7 +8355,9 @@ ENDIF
  INC XX15
  LDY Y1
  BEQ CBA56
- JSR HLOIN
+
+ JSR HLOIN              ; Draw a horizontal line from (X1, Y) to (X2, Y)
+
  INC X2
 
 .CBA56
@@ -8354,7 +8459,7 @@ ENDIF
 ;
 ;       Name: ChangeLetter
 ;       Type: Subroutine
-;   Category: Keyopard
+;   Category: Controllers
 ;    Summary: ???
 ;
 ; ******************************************************************************

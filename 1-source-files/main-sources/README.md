@@ -10,9 +10,9 @@ This folder contains the annotated source code for the NES version of Elite.
 
 * [elite-source-bank-3.asm](elite-source-bank-3.asm) contains the source for ROM bank 3 (icon bar images and routines, fonts, palettes, views, other images)
 
-* [elite-source-bank-4.asm](elite-source-bank-4.asm) contains the source for ROM bank 4 (commander images, associated routines)
+* [elite-source-bank-4.asm](elite-source-bank-4.asm) contains the source for ROM bank 4 (commander images and associated routines, other images)
 
-* [elite-source-bank-5.asm](elite-source-bank-5.asm) contains the source for ROM bank 5 (system images, associated routines)
+* [elite-source-bank-5.asm](elite-source-bank-5.asm) contains the source for ROM bank 5 (system images and associated routines)
 
 * [elite-source-bank-6.asm](elite-source-bank-6.asm) contains the source for ROM bank 6 (sound, music, scroll text, save and load)
 

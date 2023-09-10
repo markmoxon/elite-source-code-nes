@@ -2518,9 +2518,8 @@ ENDIF
  AND #%01000000         ; icon bar, so jump to svin3 to skip the following
  BEQ svin3              ; instruction
 
- LDA #0
- STA showUserInterface  ; There is no icon bar, so set showUserInterface to 0 to
-                        ; indicate that there is no user interface
+ LDA #0                 ; There is no icon bar, so set showUserInterface to 0 to
+ STA showUserInterface  ; indicate that there is no user interface
 
 .svin3
 
@@ -2888,7 +2887,8 @@ ENDIF
                         ;     is shown in front of the background, and is not
                         ;     flipped in either direction
 
- LDY #0                 
+ LDY #0                 ; We are about to loop through the sprite buffer, so set
+                        ; a byte index in Y
 
 .rscr5
 
@@ -4904,7 +4904,7 @@ ENDIF
 ;
 ; This routine effectively draws K tiles at SC(1 0) and SC2(1 0), but omitting
 ; the first tile.
-
+;
 ; Arguments:
 ;
 ;   A                   The pattern number to use for the row of tiles
@@ -5012,7 +5012,7 @@ ENDIF
 ;
 ;   K+3                 The text column on which to draw the top-left corner of
 ;                       the small box
-
+;
 ; ******************************************************************************
 
 .DrawSmallBox

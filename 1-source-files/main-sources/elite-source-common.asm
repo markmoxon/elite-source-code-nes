@@ -3615,13 +3615,20 @@ ORG $0200
 
  SKIP 1                 ; ???
 
-.L03E7
+.unusedVariable
 
- SKIP 1                 ; ???
+ SKIP 1                 ; This variable is zeroed in RES2 but is never read
 
-.L03E8
+.chargeDockingFee
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Records whether we have been charged a docking fee, so
+                        ; we don't get charged twice:
+                        ;
+                        ;   * 0 = we have not been charged a docking fee
+                        ;
+                        ;   * Non-zero = we have been charged a docking fee
+                        ;
+                        ; The docking fee is 5.0 credits
 
 .priceDebug
 
@@ -3835,13 +3842,7 @@ ORG $0200
 
  SKIP 1                 ; The decimal point character for the chosen language
 
-.L03FE
-
- SKIP 1                 ; ???
-
-.L03FF
-
- SKIP 1                 ; ???
+ SKIP 2                 ; These bytes appear to be unused
 
 .LAS
 
@@ -4302,9 +4303,7 @@ ENDIF
                         ;
                         ; Set to 80 if Start is pressed to pause the game
 
-.L0466
-
- SKIP 1                 ; ??? Unused
+ SKIP 1                 ; This byte appears to be unused
 
 .pointerTimer
 
@@ -4365,9 +4364,7 @@ ENDIF
                         ;
                         ;   * Bit 7 set = screen has been faded to black
 
-.L0474
-
- SKIP 1                 ; ???
+ SKIP 1                 ; This byte appears to be unused
 
 .scanController2
 
@@ -4412,9 +4409,7 @@ ENDIF
 
  SKIP 1                 ; The y-coordinate of the tip of the laser line
 
-.L047D
-
- SKIP 1                 ; ???
+ SKIP 1                 ; This byte appears to be unused
 
 .ALTIT
 
@@ -4639,9 +4634,7 @@ ENDIF
  SKIP 1                 ; The current system number, as calculated in TT111 when
                         ; finding the nearest system in the galaxy
 
-.L04A0
-
- SKIP 1                 ; ???
+ SKIP 1                 ; This byte appears to be unused
 
 .L04A1
 
@@ -4798,9 +4791,7 @@ ENDIF
                         ; the PPU from bitplane 1 (i.e. for tile number
                         ; sendingNameTile in bitplane 1)
 
-.L04C2
-
- SKIP 4                 ; ???
+ SKIP 4                 ; These bytes appear to be unused
 
 .ppuToBuffNameHi
 

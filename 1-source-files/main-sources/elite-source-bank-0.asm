@@ -1924,7 +1924,9 @@ ENDIF
 
  LDA QQ11
  BNE C853A
- JSR FlipDrawingPlane
+
+ JSR FlipDrawingPlane   ; Flip the drawing bitplane so we draw into the bitplane
+                        ; that isn't visible on-screen
 
 .C853A
 
@@ -2449,7 +2451,9 @@ ENDIF
 
 .C872A
 
- JSR DrawBitplaneInNMI
+ JSR DrawBitplaneInNMI  ; Configure the NMI to send the drawing bitplane to the
+                        ; PPU after drawing the box edges and setting the next
+                        ; free tile number
 
  JSR COMPAS
 
@@ -5297,12 +5301,12 @@ ENDIF
                         ; losing cargo or dying (if the latter, we don't come
                         ; back from this subroutine)
 
- LDY #$0B               ; ???
- JSR NOISE
+ LDY #11                ; Call the NOISE routine with Y = 11 to make the sound
+ JSR NOISE              ; of us being hit by lasers
 
 .C8EFF
 
- LDA INWK+7
+ LDA INWK+7             ; ???
  CMP #3
  BCS C8F18
  JSR DORND
@@ -6971,27 +6975,34 @@ ENDIF
  JSR HideMostSprites    ; Hide all sprites except for sprite 0 and the icon bar
                         ; pointer
 
- LDY #$0C
- JSR NOISE
- LDA #$80
+ LDY #12                ; Call the NOISE routine with Y = 12 to make the sound
+ JSR NOISE              ; of the ship launching from the station ???
+
+ LDA #128
  STA K+2
+
  LDA halfScreenHeight
  STA K+3
- LDA #$50
+
+ LDA #80
  STA XP
- LDA #$70
+
+ LDA #112
  STA YP
 
  LDY #4                 ; Wait until four NMI interrupts have passed (i.e. the
  JSR DELAY              ; next four VBlanks)
 
- LDY #$18
+ LDY #24
  JSR NOISE
 
 .C9345
 
  JSR CheckForPause-3
- JSR FlipDrawingPlane
+
+ JSR FlipDrawingPlane   ; Flip the drawing bitplane so we draw into the bitplane
+                        ; that isn't visible on-screen
+
  LDA XP
  AND #$0F
  ORA #$60
@@ -7013,7 +7024,11 @@ ENDIF
  BCS C9359
  STA Q
  LDA #8
- JSR LL28
+
+ JSR LL28               ; Call LL28 to calculate:
+                        ;
+                        ;   R = 256 * A / Q
+
  LDA R
  SEC
  SBC #$14
@@ -7044,11 +7059,15 @@ ENDIF
 
 .C93AC
 
- JSR DrawBitplaneInNMI
+ JSR DrawBitplaneInNMI  ; Configure the NMI to send the drawing bitplane to the
+                        ; PPU after drawing the box edges and setting the next
+                        ; free tile number
+
  DEC YP
  DEC XP
  BNE C9345
- LDY #$17
+
+ LDY #23
  JMP NOISE
 
 .C93BC
@@ -7654,9 +7673,15 @@ ENDIF
 
 .loop_C95E7
 
- JSR FlipDrawingPlane
+ JSR FlipDrawingPlane   ; Flip the drawing bitplane so we draw into the bitplane
+                        ; that isn't visible on-screen
+
  JSR FlightLoop4To16
- JSR DrawBitplaneInNMI
+
+ JSR DrawBitplaneInNMI  ; Configure the NMI to send the drawing bitplane to the
+                        ; PPU after drawing the box edges and setting the next
+                        ; free tile number
+
  LDA pointerButton
  JSR CheckForPause
  DEC LASCT
@@ -16483,10 +16508,13 @@ ENDIF
 
  STA MCNT               ; Reset MCNT (the main loop counter) to 0
 
- STA LAS                ; Set LAS to 0 ???
+ STA LAS                ; Set LAS to 0, to switch off laser pulsing
 
- STA L03E7              ; ???
- STA L03E8
+ STA unusedVariable     ; Set unusedVariable to 0 (this is never read, so this
+                        ; has no effect)
+
+ STA chargeDockingFee   ; Set chargeDockingFee to 0 so the docking fee is marked
+                        ; as being not already paid
 
  LDA #3                 ; Reset DELTA (speed) to 3
  STA DELTA
@@ -17550,20 +17578,40 @@ ENDIF
  BNE CB106
  LDA SSPR
  BEQ CB119
- LDA DKCMP
- ORA L03E8
- BNE CB0FA
- LDY #0
- LDX #$32
- JSR LCASH
- BCS CB0F2
- JMP BOOP
+
+ LDA DKCMP              ; If we have a docking computer fitted (DKCMP is
+ ORA chargeDockingFee   ; non-zero) or we have already been charged a docking
+ BNE CB0FA              ; fee (chargeDockingFee is non-zero), then jump to
+                        ; CB0FA to skip charging a docking fee
+
+                        ; Otherwise we do not have a docking computer fitted
+                        ; or we have not yet been charged a docking fee, so
+                        ; now we charge the docking fee
+
+ LDY #0                 ; Set (Y X) = 50, so the docking fee is 5.0 credits
+ LDX #50
+
+ JSR LCASH              ; Subtract (Y X) cash from the cash pot, but only if
+                        ; we have enough cash
+
+ BCS CB0F2              ; If the C flag is set then we did have enough cash for
+                        ; the transaction, so jump to CB0F2 to skip the
+                        ; following instruction
+
+                        ; If we get here then we don't have enough cash for the
+                        ; docking fee, so ???
+
+ JMP BOOP               ; Call the BOOP routine to make a long, low beep, and
+                        ; return from the subroutine using a tail call
 
 .CB0F2
 
- DEC L03E8
- LDA #0
- JSR MESS
+ DEC chargeDockingFee   ; Set chargeDockingFee to $FF so we don't charge another
+                        ; docking fee
+
+ LDA #0                 ; Pring control code 0 (current amount of cash and
+ JSR MESS               ; newline) as an in-flight message, to show our balance
+                        ; after the docking fee has been paind
 
 .CB0FA
 
@@ -17572,7 +17620,7 @@ ENDIF
  JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
                         ; next VBlank)
 
- JSR ChooseMusic_b6
+ JSR ChooseMusic_b6     ; ???
  LDA #$FF
  BNE CB10B
 
@@ -18102,7 +18150,8 @@ ENDIF
 
 .D2
 
- JSR FlipDrawingPlane   ; ???
+ JSR FlipDrawingPlane   ; Flip the drawing bitplane so we draw into the bitplane
+                        ; that isn't visible on-screen
 
  JSR FlightLoop4To16    ; Display in-flight messages, call parts 4 to 12 of the
                         ; main flight loop for each ship slot, and finish off
