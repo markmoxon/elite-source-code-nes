@@ -9826,7 +9826,7 @@ ENDIF
                         ; by checking the low byte of the result in X against
                         ; Yx2M1, and returning the C flag from this comparison.
                         ; The value in Yx2M1 is the y-coordinate of the bottom
-                        ; pixel row of the space view, or 191, so this does the
+                        ; pixel row of the space view, so this does the
                         ; following:
                         ;
                         ;   * The C flag is set if coordinate (A X) is below the

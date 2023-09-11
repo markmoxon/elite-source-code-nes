@@ -10895,8 +10895,11 @@ ENDIF
 ; 10 = us making a hit or kill (EXNO)
 ; 11 = us being hit by lasers (TACTICS 6)
 ; 12 = first launch sound (LAUN)
+; 19 = escape pod launching (ESCAPE)
 ; 23 = third launch sound (LAUN)
 ; 24 = second launch sound (LAUN)
+; 29 = first mis-jump sound (MJP)
+; 30 = second mis-jump sound (MJP)
 ;
 ; ******************************************************************************
 
