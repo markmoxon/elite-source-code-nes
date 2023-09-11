@@ -10806,7 +10806,7 @@ ENDIF
 
 .ECBLB
 
- LDX soundLookup1,Y
+ LDX soundChannel,Y
 
  CPX #3
  BCC FlushSoundChannel
@@ -10833,7 +10833,7 @@ ENDIF
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDA #0
- STA soundPriority,X
+ STA channelPriority,X
 
  LDA #26
  BNE CEC2B
@@ -10894,9 +10894,9 @@ ENDIF
 ; 9 = missile launch (FRMIS, SFRMIS)
 ; 10 = us making a hit or kill (EXNO)
 ; 11 = us being hit by lasers (TACTICS 6)
-; 12 = launch start (LAUN)
-; 23 = launch end (LAUN)
-; 24 = launch middle (LAUN)
+; 12 = first launch sound (LAUN)
+; 23 = third launch sound (LAUN)
+; 24 = second launch sound (LAUN)
 ;
 ; ******************************************************************************
 
@@ -10904,7 +10904,7 @@ ENDIF
 
  LDA DNOIZ
  BPL CEC2E
- LDX soundLookup1,Y
+ LDX soundChannel,Y
  CPX #3
  BCC CEC0A
  TYA
@@ -10921,14 +10921,14 @@ ENDIF
 
  LDA L0302,X
  BEQ CEC17
- LDA soundLookup2,Y
- CMP soundPriority,X
+ LDA soundPriority,Y
+ CMP channelPriority,X
  BCC CEC2E
 
 .CEC17
 
- LDA soundLookup2,Y
- STA soundPriority,X
+ LDA soundPriority,Y
+ STA channelPriority,X
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -10948,35 +10948,92 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: soundLookup1
+;       Name: soundChannel
 ;       Type: Variable
 ;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.soundLookup1
+.soundChannel
 
- EQUB 2, 1, 1, 1, 1, 0, 0, 1, 2, 2, 2, 2, 3
- EQUB 2, 2, 0, 0, 0, 0, 0, 2, 3, 3, 2, 1, 2
- EQUB 0, 2, 0, 1, 0, 0
+ EQUB 2                 ; Sound  0
+ EQUB 1                 ; Sound  1
+ EQUB 1                 ; Sound  2
+ EQUB 1                 ; Sound  3
+ EQUB 1                 ; Sound  4
+ EQUB 0                 ; Sound  5
+ EQUB 0                 ; Sound  6
+ EQUB 1                 ; Sound  7
+ EQUB 2                 ; Sound  8
+ EQUB 2                 ; Sound  9
+ EQUB 2                 ; Sound 10
+ EQUB 2                 ; Sound 11
+ EQUB 3                 ; Sound 12
+ EQUB 2                 ; Sound 13
+ EQUB 2                 ; Sound 14
+ EQUB 0                 ; Sound 15
+ EQUB 0                 ; Sound 16
+ EQUB 0                 ; Sound 17
+ EQUB 0                 ; Sound 18
+ EQUB 0                 ; Sound 19
+ EQUB 2                 ; Sound 20
+ EQUB 3                 ; Sound 21
+ EQUB 3                 ; Sound 22
+ EQUB 2                 ; Sound 23
+ EQUB 1                 ; Sound 24
+ EQUB 2                 ; Sound 25
+ EQUB 0                 ; Sound 26
+ EQUB 2                 ; Sound 27
+ EQUB 0                 ; Sound 28
+ EQUB 1                 ; Sound 29
+ EQUB 0                 ; Sound 30
+ EQUB 0                 ; Sound 31
 
 ; ******************************************************************************
 ;
-;       Name: soundLookup2
+;       Name: soundPriority
 ;       Type: Variable
 ;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.soundLookup2
+.soundPriority
 
- EQUB $80, $82, $C0, $21, $21, $10, $10, $41
- EQUB $82, $32, $84, $20, $C0, $60, $40, $80
- EQUB $80, $80, $80, $90, $84, $33, $33, $20
- EQUB $C0, $18, $10, $10, $10, $10, $10, $60
- EQUB $60
+ EQUB 128               ; Sound  0
+ EQUB 130               ; Sound  1
+ EQUB 192               ; Sound  2
+ EQUB  33               ; Sound  3
+ EQUB  33               ; Sound  4
+ EQUB  16               ; Sound  5
+ EQUB  16               ; Sound  6
+ EQUB  65               ; Sound  7
+ EQUB 130               ; Sound  8
+ EQUB  50               ; Sound  9
+ EQUB 132               ; Sound 10
+ EQUB  32               ; Sound 11
+ EQUB 192               ; Sound 12
+ EQUB  96               ; Sound 13
+ EQUB  64               ; Sound 14
+ EQUB 128               ; Sound 15
+ EQUB 128               ; Sound 16
+ EQUB 128               ; Sound 17
+ EQUB 128               ; Sound 18
+ EQUB 144               ; Sound 19
+ EQUB 132               ; Sound 20
+ EQUB  51               ; Sound 21
+ EQUB  51               ; Sound 22
+ EQUB  32               ; Sound 23
+ EQUB 192               ; Sound 24
+ EQUB  24               ; Sound 25
+ EQUB  16               ; Sound 26
+ EQUB  16               ; Sound 27
+ EQUB  16               ; Sound 28
+ EQUB  16               ; Sound 29
+ EQUB  16               ; Sound 30
+ EQUB  96               ; Sound 31
+ EQUB  96               ; Sound 32
 
 ; ******************************************************************************
 ;
@@ -12105,14 +12162,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: DrawLaunchBoxes_b6
+;       Name: DrawLaunchBox_b6
 ;       Type: Subroutine
 ;   Category: Flight
-;    Summary: Call the DrawLaunchBoxes routine in ROM bank 6
+;    Summary: Call the DrawLaunchBox routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.DrawLaunchBoxes_b6
+.DrawLaunchBox_b6
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -12120,7 +12177,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR DrawLaunchBoxes    ; Call DrawLaunchBoxes, now that it is paged into memory
+ JSR DrawLaunchBox      ; Call DrawLaunchBox, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -13995,8 +14052,8 @@ ENDIF
 
 .dtit2
 
- STY L03FC              ; Store the ship counter in L03FC so we can retrieve it
-                        ; below
+ STY tempVar            ; Store the ship counter in tempVar so we can retrieve
+                        ; it below
 
  LDA titleShipType,Y    ; Set A to the ship type of the ship we want to display,
                         ; from the Y-th entry in the titleShipType table
@@ -14019,8 +14076,10 @@ ENDIF
                         ; which case jump to dtit3 to stop the music and return
                         ; from the subroutine
 
- LDY L03FC              ; Restore the ship counter that we stored above and put
- INY                    ; it into Y
+ LDY tempVar            ; Restore the ship counter that we stored above
+
+ INY                    ; Increment the ship counter in Y to point to the next
+                        ; ship in the list
 
  LDA nmiTimerHi         ; If the high byte of (nmiTimerHi nmiTimerLo) is still 0
  CMP #1                 ; then jump back to dtit2 to show the next ship

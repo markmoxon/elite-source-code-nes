@@ -6975,115 +6975,222 @@ ENDIF
  JSR HideMostSprites    ; Hide all sprites except for sprite 0 and the icon bar
                         ; pointer
 
- LDY #12                ; Call the NOISE routine with Y = 12 to make the sound
- JSR NOISE              ; of the ship launching from the station ???
+ LDY #12                ; Call the NOISE routine with Y = 12 to make the first
+ JSR NOISE              ; sound of the ship launching from the station
 
- LDA #128
- STA K+2
+ LDA #128               ; Set K+2 = 128 to send to DrawLaunchBox and
+ STA K+2                ; DrawLightning as ???
 
- LDA halfScreenHeight
- STA K+3
+ LDA halfScreenHeight   ; Set K+3 to half the screen height to send to
+ STA K+3                ; DrawLaunchBox and DrawLightning as ???
 
- LDA #80
- STA XP
+ LDA #80                ; Set XP to use as a counter for the duration of the
+ STA XP                 ; hyperspace effect, so we run the following loop 80
+                        ; times
 
- LDA #112
- STA YP
+ LDA #112               ; Set YP to use as a counter for when we show the
+ STA YP                 ; lightning effect at the end of the tunnel, which we
+                        ; show when YP < 100 (so we wait until 13 frames have
+                        ; passed before drawing the lightning)
+                        ;
+                        ; Also, at the start of each frame, we keep subtracting
+                        ; 16 from STP until STP < YP, and only then do we start
+                        ; drawing boxes and, possibly, the lightning
 
  LDY #4                 ; Wait until four NMI interrupts have passed (i.e. the
  JSR DELAY              ; next four VBlanks)
 
- LDY #24
- JSR NOISE
+ LDY #24                ; Call the NOISE routine with Y = 24 to make the second
+ JSR NOISE              ; sound of the ship launching from the station
 
-.C9345
+.laun1
 
- JSR CheckForPause-3
+ JSR CheckForPause-3    ; Check whether the pause button has been pressed or an
+                        ; icon bar button has been chosen, and process pause or
+                        ; unpause if a pause-related button has been pressed
 
  JSR FlipDrawingPlane   ; Flip the drawing bitplane so we draw into the bitplane
                         ; that isn't visible on-screen
 
- LDA XP
- AND #$0F
- ORA #$60
- STA STP
- LDA #$80
- STA L03FC
+ LDA XP                 ; Set STP = 96 + (XP mod 16)
+ AND #15                ;
+ ORA #96                ;
+ STA STP                ; So over the course of the 80 iterations around the
+                        ; loop, STP starts at 96, then counts down from 112 to
+                        ; 96, and keeps repeating this countdown until XP is
+                        ; zero and STP is 96
+                        ;
+                        ; The higher the value of STP, the closer together the
+                        ; lines in the tunnel, so this makes the tunnel lines
+                        ; move further away as the animation progresses, giving
+                        ; a feeling of moving forwards through the tunnel
 
-.C9359
+ LDA #%10000000         ; Set bit 7 of tempVar so we can detect when we are on
+ STA tempVar            ; the first iteration of the laun2 loop
+
+                        ; We now draw the boxes in the launch tunnel effect,
+                        ; looping back to hype2 for each new line
+                        ;
+                        ; STP gets decremented by 16 for each box, so STP is
+                        ; set to the starting point (in the range 96 to 112),
+                        ; and gets decremented by 16 for each box until it is
+                        ; negative
+                        ;
+                        ; As STP decreases, the boxes get bigger, so this loop
+                        ; draws the boxes from the smallest in the middle and
+                        ; working out towards the edges
+
+.laun2
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA STP
- SEC
- SBC #$10
- BMI C93AC
- STA STP
- CMP YP
- BCS C9359
- STA Q
- LDA #8
+ LDA STP                ; Set STP = STP + 16
+ SEC                    ;
+ SBC #16                ; And set A to the new value of STP
+
+ BMI laun4              ; If STP is now negative, then jump to laun4 to move on
+                        ; to the next frame, so we dtop drawing boxes in this
+                        ; frame
+
+ STA STP                ; Update STP with the new value
+
+ CMP YP                 ; If STP >= YP, jump to laun2 to keep reducing STP until
+ BCS laun2              ; STP < YP
+
+ STA Q                  ; Set Q to the new value of STP
+
+                        ; We now calculate how far the top edge of this box is
+                        ; from the centre of the screen in a vertical direction,
+                        ; with the result being boxes that are closer together,
+                        ; the closer they are to the centre
+                        ;
+                        ; We space out the boxes using a reciprocal algorithm,
+                        ; where the distance of line n from the centre is
+                        ; proportional to 1/n, so the boxes get spaced roughly
+                        ; in the proportions of 1/2, 1/3, 1/4, 1/5 and so on, so
+                        ; the boxes bunch closer together as n increases
+                        ;
+                        ; STP also includes the iteration number, modded so it
+                        ; runs from 15 to 0, so over the course of the animation
+                        ; the boxes move away from the centre line, as the
+                        ; iteration decreases and the value of R below increases
+
+ LDA #8                 ; Set A = 8 to use in the following division
 
  JSR LL28               ; Call LL28 to calculate:
                         ;
                         ;   R = 256 * A / Q
+                        ;     = 256 * 8 / STP
+                        ;
+                        ; So R is the vertical distance of the current box top
+                        ; top from the centre of the screen
+                        ;
+                        ; The maximum value of STP is 112 - 16 = 96, and the
+                        ; minimum is 0 (the latter being enforced by the
+                        ; comparison above), so R ranges from 21 to 255
 
- LDA R
- SEC
- SBC #$14
- CMP #$54
- BCS C93AC
- STA K+1
- LSR A
- ADC K+1
+ LDA R                  ; Set A = R - 20
+ SEC                    ;
+ SBC #20                ; This sets the range of values in A to 1 to 235
+
+                        ; We can now use A as the vertical distance of this
+                        ; box top from the centre of the screen, to give us an
+                        ; effect where the boxes spread out as they get away
+                        ; from the centre, and which move away from the centre
+                        ; as the animation progesses, with the movement being
+                        ; bigger the further away the box
+
+ CMP #84                ; If A >= 84, jump to laun4 to move on to the next frame
+ BCS laun4              ; as the box is outside the edges of the screen (so we
+                        ; can stop drawing lines in this frame as we have now
+                        ; drawn them all)
+
+ STA K+1                ; Set K+1 = A to send to DrawLaunchBox and DrawLightning
+                        ; as ???
+
+ LSR A                  ; Set K = 1.5 * K+1 to send to DrawLaunchBox and
+ ADC K+1                ; DrawLightning as ???
  STA K
- ASL L03FC
- BCC C93A6
- LDA YP
- CMP #$64
- BCS C93A6
- LDA K+1
- CMP #$48
- BCS C93BC
- LDA STP
- PHA
- JSR DrawLightning_b6
- PLA
+
+ ASL tempVar            ; Set the C flag to bit 7 of tempVar and zero tempVar
+                        ; (as we know that only bit 7 of tempVar is set before
+                        ; the shift)
+
+ BCC laun3              ; If the C flag is clear then this is not the first
+                        ; iteration of the laun2 loop for this frame, so jump to
+                        ; laun3 to draw the box, skipping the lightning (so we
+                        ; only draw the lightning on the first iteration of
+                        ; laun2 for this frame
+
+                        ; If we get here then this is the first iteration of the
+                        ; laun2 loop for this frame, so we consider drawing the
+                        ; lightning effect at the end of the tunnel
+
+ LDA YP                 ; If YP >= 100, jump to laun3 to skip drawing the
+ CMP #100               ; lightning as the tunnel exit is too small to contain
+ BCS laun3              ; the lightning effect
+
+ LDA K+1                ; If K+1 >= 72, jump to laun5 to draw the lightning but
+ CMP #72                ; without drawing any boxes, as the first box (which is
+ BCS laun5              ; the smallest) doesn't fit on-screen
+
+ LDA STP                ; Store the value of STP on the stack so we can retrieve
+ PHA                    ; it after the call to DrawLightning (as DrawLightning
+                        ; corrupts the value of STP)
+
+ JSR DrawLightning_b6   ; Call DrawLightning to draw the lightning effect at the
+                        ; end of the tunnel
+
+ PLA                    ; Restore the value of STP that we stored on the stack
  STA STP
 
-.C93A6
+.laun3
 
- JSR DrawLaunchBoxes_b6
- JMP C9359
+ JSR DrawLaunchBox_b6   ; Draw the launch box specified by the value of STP
 
-.C93AC
+ JMP laun2              ; Loop back to laun2 to draw the next box
+
+.laun4
 
  JSR DrawBitplaneInNMI  ; Configure the NMI to send the drawing bitplane to the
                         ; PPU after drawing the box edges and setting the next
                         ; free tile number
 
- DEC YP
- DEC XP
- BNE C9345
+ DEC YP                 ; Decrement the lightning counter in YP
 
- LDY #23
- JMP NOISE
+ DEC XP                 ; Decrement the frame counter in XP
 
-.C93BC
+ BNE laun1              ; Loop back to laun1 to draw the next frame of the
+                        ; animation, until the frame counter runs down to 0
 
- LDA #$48
+ LDY #23                ; Call the NOISE routine with Y = 23 to make the third
+ JMP NOISE              ; sound of the ship launching from the station,
+                        ; returning from the subroutine using a tail call
+
+.laun5
+
+                        ; We call this from the first iteration of the loop in
+                        ; this frame, and when K+1 >= 72, which means that the
+                        ; first box in this frame (which will be the smallest)
+                        ; is too big for the screen, so we just draw the
+                        ; lightning effect and don't draw any boxes
+
+ LDA #72                ; Set K+1 = 72 to pass to DrawLightning
  STA K+1
- LDA STP
- PHA
- JSR DrawLightning_b6
- PLA
+
+ LDA STP                ; Store the value of STP on the stack so we can retrieve
+ PHA                    ; it after the call to DrawLightning (as DrawLightning
+                        ; corrupts the value of STP)
+
+ JSR DrawLightning_b6   ; Call DrawLightning to draw the lightning effect
+
+ PLA                    ; Restore the value of STP that we stored on the stack
  STA STP
- JMP C9359
 
-.C93CC
+ JMP laun2              ; Loop back to laun2 to draw the next box
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;

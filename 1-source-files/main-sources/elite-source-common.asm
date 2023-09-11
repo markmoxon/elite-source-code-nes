@@ -370,7 +370,7 @@ IF NOT(_BANK = 6)
   JAMESON           = $B90D
   DrawLightning     = $B919
   LL164             = $B980
-  DrawLaunchBoxes   = $BA17
+  DrawLaunchBox     = $BA17
   InputName         = $BA63
   ChangeCmdrName    = $BB37
   SetKeyLogger      = $BBDE
@@ -385,7 +385,7 @@ IF NOT(_BANK = 6)
   JAMESON           = $B91C
   DrawLightning     = $B928
   LL164             = $B98F
-  DrawLaunchBoxes   = $BA26
+  DrawLaunchBox     = $BA26
   InputName         = $BA72
   ChangeCmdrName    = $BB46
   SetKeyLogger      = $BBED
@@ -3846,9 +3846,9 @@ ORG $0200
  SKIP 1                 ; The y-coordinate of the current character as we
                         ; construct the lines for the Star Wars scroll text
 
-.L03FC
+.tempVar
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Temporary storage, used in various places
 
 .decimalPoint
 
@@ -4420,7 +4420,7 @@ ENDIF
                         ; rate, 128 means pitch is not changing, and 255 means
                         ; pitch is increasing at the maximum rate
 
-.soundPriority
+.channelPriority
 
  SKIP 3                 ; ???
 
