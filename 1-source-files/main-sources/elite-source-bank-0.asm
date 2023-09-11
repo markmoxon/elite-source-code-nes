@@ -16477,7 +16477,7 @@ ENDIF
 .CADAA
 
  LDA #NOST              ; Reset NOSTM, the number of stardust particles, to the
- STA NOSTM              ; maximum allowed (18)
+ STA NOSTM              ; maximum allowed (20)
 
  LDX #$FF               ; Reset MSTG, the missile target, to $FF (no target)
  STX MSTG
@@ -17914,14 +17914,15 @@ ENDIF
 ;
 ; Other entry points:
 ;
-;   CheckForPause-3     Set A to pointerButton so we check whether the pause
-;                       button is being pressed
+;   CheckForPause-3     Set A to the number of the icon bar button in
+;                       pointerButton so we check whether the pause button is
+;                       being pressed
 ;
 ; ******************************************************************************
 
- LDA pointerButton      ; Set A to the number of the icon bar button under the
-                        ; icon bar pointer (for when this routine is called via
-                        ; the CheckForPause-3 entry point)
+ LDA pointerButton      ; Set A to the number of the icon bar button that has
+                        ; been chosen from the icon bar (for when this routine
+                        ; is called via the CheckForPause-3 entry point)
 
 .CheckForPause
 

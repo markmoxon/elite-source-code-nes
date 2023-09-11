@@ -3192,12 +3192,6 @@ ORG $0200
                         ; which is displayed as one notch on the dashboard bar
                         ;
                         ; We get higher temperatures closer to the sun
-                        ;
-                        ; CABTMP shares a location with MANY, but that's OK as
-                        ; MANY+0 would contain the number of ships of type 0,
-                        ; and as there is no ship type 0 (they start at 1), the
-                        ; byte at MANY+0 is not used for storing a ship type
-                        ; and can be used for the cabin temperature instead
 
 .LAS2
 
@@ -3218,10 +3212,10 @@ ORG $0200
                         ;
                         ;   * 0 = missile is not looking for a target, or it
                         ;     already has a target lock (indicator is not
-                        ;     yellow/white)
+                        ;     flashing red)
                         ;
                         ;   * Non-zero = missile is currently looking for a
-                        ;     target (indicator is yellow/white)
+                        ;     target (indicator is flashing red)
 
 .VIEW
 
@@ -3244,6 +3238,14 @@ ORG $0200
                         ;
                         ;   * 10 for a pulse laser
                         ;
+                        ; It gets decremented by 2 on each iteration round the
+                        ; main game loop and is set to a non-zero value for
+                        ; pulse lasers only
+                        ;
+                        ; The laser only fires when the value of LASCT hits
+                        ; zero, so for pulse lasers with a value of 10, that
+                        ; means the laser fires once every four iterations
+                        ; round the main game loop (LASCT = 10, 6, 2, 0)
                         ;
                         ; In comparison, beam lasers fire continuously as the
                         ; value of LASCT is always 0
@@ -3258,12 +3260,11 @@ ORG $0200
 
 .HFX
 
- SKIP 1                 ; A flag that toggles the hyperspace colour effect
-                        ;
-                        ;   * 0 = no colour effect
-                        ;
-                        ;   * Non-zero = hyperspace colour effect enabled
-                        ;
+ SKIP 1                 ; This flag is unused in this version of Elite. In the
+                        ; other versions, setting HFX to a non-zero value makes
+                        ; the hyperspace rings multi-coloured, but the NES
+                        ; has a different hyperspace effect, so this variable is
+                        ; not used
 
 .EV
 
@@ -3346,6 +3347,11 @@ ORG $0200
                         ;     * %01 = Mission in progress, plans not picked up
                         ;     * %10 = Mission in progress, plans picked up
                         ;     * %11 = Mission complete
+                        ;
+                        ;   * Bit 4 = Trumble mission status
+                        ;
+                        ;     * %0 = Trumbles not yet offered
+                        ;     * %1 = Trumbles accepted or declined
 
 .QQ0
 
@@ -3402,6 +3408,10 @@ ORG $0200
  SKIP 4                 ; The specifications of the lasers fitted to each of the
                         ; four space views:
                         ;
+                        ;   * Byte #0 = front view
+                        ;   * Byte #1 = rear view
+                        ;   * Byte #2 = left view
+                        ;   * Byte #3 = right view
                         ;
                         ; For each of the views:
                         ;
@@ -3413,6 +3423,8 @@ ORG $0200
                         ;     * Bits 0-6 contain the laser's power
                         ;
                         ;     * Bit 7 determines whether or not the laser pulses
+                        ;       (0 = pulse or mining laser) or is always on
+                        ;       (1 = beam or military laser)
 
 .CRGO
 
@@ -3565,29 +3577,28 @@ ORG $0200
                         ; 16-bit number TALLY(1 0) - so the high byte is in
                         ; TALLY+1 and the low byte in TALLY
                         ;
-                        ; If the high byte in TALLY+1 is 0 then we have between
-                        ; 0 and 255 kills, so our rank is Harmless, Mostly
-                        ; Harmless, Poor, Average or Above Average, according to
-                        ; the value of the low byte in TALLY:
+                        ; There is also a fractional part of the kill count,
+                        ; which is stored in TALLYL
                         ;
-                        ;   Harmless        = %00000000 to %00000011 = 0 to 3
-                        ;   Mostly Harmless = %00000100 to %00000111 = 4 to 7
-                        ;   Poor            = %00001000 to %00001111 = 8 to 15
-                        ;   Average         = %00010000 to %00011111 = 16 to 31
-                        ;   Above Average   = %00100000 to %11111111 = 32 to 255
+                        ; The NES version calculates the combat rank differently
+                        ; to the other versions of Elite. The combat status is
+                        ; given by the number of kills in TALLY(1 0), as
+                        ; follows:
                         ;
-                        ; If the high byte in TALLY+1 is non-zero then we are
-                        ; Competent, Dangerous, Deadly or Elite, according to
-                        ; the high byte in TALLY+1:
+                        ;   * Harmless        when TALLY(1 0) = 0 or 1
+                        ;   * Mostly Harmless when TALLY(1 0) = 2 to 7
+                        ;   * Poor            when TALLY(1 0) = 8 to 23
+                        ;   * Average         when TALLY(1 0) = 24 to 43
+                        ;   * Above Average   when TALLY(1 0) = 44 to 129
+                        ;   * Competent       when TALLY(1 0) = 130 to 511
+                        ;   * Dangerous       when TALLY(1 0) = 512 to 2559
+                        ;   * Deadly          when TALLY(1 0) = 2560 to 6399
+                        ;   * Elite           when TALLY(1 0) = 6400 or more
                         ;
-                        ;   Competent       = 1           = 256 to 511 kills
-                        ;   Dangerous       = 2 to 9      = 512 to 2559 kills
-                        ;   Deadly          = 10 to 24    = 2560 to 6399 kills
-                        ;   Elite           = 25 and up   = 6400 kills and up
-                        ;
-                        ; You can see the rating calculation in STATUS
+                        ; You can see the rating calculation in the
+                        ; PrintCombatRank subroutine
 
- SKIP 1                 ; ???
+ SKIP 1                 ; This byte appears to be unused
 
 .QQ21
 
@@ -3608,7 +3619,7 @@ ORG $0200
 .NOSTM
 
  SKIP 1                 ; The number of stardust particles shown on screen,
-                        ; which is 18 (#NOST) for normal space, and 3 for
+                        ; which is 20 (#NOST) for normal space, and 3 for
                         ; witchspace
 
 .L03E6
@@ -3749,7 +3760,8 @@ ORG $0200
 
 .frameCounter
 
- SKIP 1                 ; Increments every VBlank ???
+ SKIP 1                 ; The frame counter, which increments every VBlank at
+                        ; the start of the NMI handler
 
 .screenReset
 
@@ -3864,7 +3876,7 @@ ORG $0200
                         ;   * 1-8 = the slot number of the ship that our
                         ;           missile is locked onto
 
-.L0402
+.L0402                  ; ???
 
  SKIP 1
 
@@ -4298,10 +4310,21 @@ ENDIF
 
 .pointerButton
 
- SKIP 1                 ; The button number from the iconBarButtons table for
-                        ; the button under the icon bar pointer
+ SKIP 1                 ; The number of the icon bar button that's just been
+                        ; selected
                         ;
-                        ; Set to 80 if Start is pressed to pause the game
+                        ;   * 0 means no button has been selected
+                        ;
+                        ;   * A button number from the iconBarButtons table
+                        ;     means that button has been selected by pressing
+                        ;     Select on that button (or the B button has been
+                        ;     tapped twice)
+                        ;
+                        ;   * 80 means the Start has been pressed to pause the
+                        ;     game
+                        ;
+                        ; This variable is set in the NMI handler, so the
+                        ; selection is recorded in the background
 
  SKIP 1                 ; This byte appears to be unused
 
@@ -4795,13 +4818,13 @@ ENDIF
 
 .ppuToBuffNameHi
 
- SKIP 1                 ; Add this to a nametable buffer address to get the
-                        ; corresponding PPU nametable address (high byte) in
-                        ; bitplane 0 ???
+ SKIP 1                 ; A high byte that we can add to an address in nametable
+                        ; buffer 0 to get the corresponding address in the PPU
+                        ; nametable
 
- SKIP 1                 ; Add this to a nametable buffer address to get the
-                        ; corresponding PPU nametable address (high byte) in
-                        ; bitplane 1 ???
+ SKIP 1                 ; A high byte that we can add to an address in nametable
+                        ; buffer 1 to get the corresponding address in the PPU
+                        ; nametable
 
 .SX
 
@@ -4888,35 +4911,43 @@ ENDIF
 
 .sunWidth0
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The half-width of the sun on pixel row 0 in the tile
+                        ; row that is currently being drawn
 
 .sunWidth1
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The half-width of the sun on pixel row 1 in the tile
+                        ; row that is currently being drawn
 
 .sunWidth2
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The half-width of the sun on pixel row 2 in the tile
+                        ; row that is currently being drawn
 
 .sunWidth3
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The half-width of the sun on pixel row 3 in the tile
+                        ; row that is currently being drawn
 
 .sunWidth4
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The half-width of the sun on pixel row 4 in the tile
+                        ; row that is currently being drawn
 
 .sunWidth5
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The half-width of the sun on pixel row 5 in the tile
+                        ; row that is currently being drawn
 
 .sunWidth6
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The half-width of the sun on pixel row 6 in the tile
+                        ; row that is currently being drawn
 
 .sunWidth7
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The half-width of the sun on pixel row 7 in the tile
+                        ; row that is currently being drawn
 
 .L05F2
 

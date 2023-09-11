@@ -5263,7 +5263,7 @@ ENDIF
 
  JSR FadeToBlack_b3     ; Fade the screen to black over the next four VBlanks
 
- LDY #$14
+ LDY #20
  STY NOSTM
  STY RAND+1
 
@@ -8206,7 +8206,7 @@ ENDIF
                         ; As STP increases, the lines get closer to the middle
                         ; of the screen, so this loop draws the lines, starting
                         ; with the lines furthest from the centre and working in
-                        ; towards the ccntre
+                        ; towards the centre
 
 .hype2
 
@@ -8223,24 +8223,53 @@ ENDIF
 
  STA Q                  ; Set Q to the new value of STP
 
+                        ; We now calculate how far this horizontal line is from
+                        ; the centre of the screen in a vertical direction, with
+                        ; the result being lines that are closer together, the
+                        ; closer they are to the centre
+                        ;
+                        ; We space out the lines using a reciprocal algorithm,
+                        ; where the distance of line n from the centre is
+                        ; proportional to 1/n, so the lines get spaced roughly
+                        ; in the proportions of 1/2, 1/3, 1/4, 1/5 and so on, so
+                        ; the lines bunch closer together as n increases
+                        ;
+                        ; STP also includes the iteration number, modded so it
+                        ; runs from 31 to 0, so over the course of the animation
+                        ; the lines move away from the centre line, as the
+                        ; iteration decreases and the value of R below increases
+
  LDA #8                 ; Set A = 8 to use in the following division
 
  JSR LL28               ; Call LL28 to calculate:
                         ;
                         ;   R = 256 * A / Q
                         ;     = 256 * 8 / STP
-                        ;     = 2048 / STP
+                        ;
+                        ; So R is the vertical distance of the current line from
+                        ; the centre of the screen
+                        ;
+                        ; The minimum value of STP is 16 and the maximum is 89
+                        ; (the latter being enforced by the comparison above),
+                        ; so R ranges from 128 to 23
 
  LDA R                  ; Set K+1 = R - 20
- SEC                    ;         = (2048 / STP) - 20
- SBC #20
+ SEC                    ;
+ SBC #20                ; This sets the range of values in K+1 to 108 to 3
  STA K+1
 
-                        ; K+1 contains the vertical distance of this line from
-                        ; the centre of the screen (i.e. the laser sights), so
-                        ; we now draw this line twice, once above the centre and
+                        ; We can now use K+1 as the vertical distance of this
+                        ; line from the centre of the screen, to give us an
+                        ; effect where the horizontal lines spread out as they
+                        ; get away from the centre, and which move away from the
+                        ; centre as the animation progesses, with the movement
+                        ; being bigger the further away the line
+                        ;
+                        ; We now draw this line twice, once above the centre and
                         ; once below the centre, so the lines in the top and
-                        ; bottom parts of the screen are mirrored
+                        ; bottom parts of the screen are mirrored, and the
+                        ; overall effect is of hyperspacing forwards, sandwiched
+                        ; between two horizontal planes, one above and one below
 
  LDA halfScreenHeight   ; Set A = halfScreenHeight - K+1
  SBC K+1                ;
