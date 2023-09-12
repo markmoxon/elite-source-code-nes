@@ -2004,13 +2004,13 @@ ENDIF
  BPL C856B
 
  LDA #$B0
- JSR CheckDistances+2
+ JSR CheckJumpSafety+2
 
  JMP C856E
 
 .C856B
 
- JSR CheckDistances
+ JSR CheckJumpSafety
 
 .C856E
 
@@ -12560,9 +12560,9 @@ ENDIF
 
  STA QQ12               ; Set QQ12 = 0 to indicate that we are not docked
 
- LDA allowInSystemJump  ; Set bit 7 of allowInSystemJump ???
- ORA #%10000000
- STA allowInSystemJump
+ LDA allowInSystemJump  ; Set bit 7 of allowInSystemJump to prevent us from
+ ORA #%10000000         ; being able to do an in-system jump, as you can't jump
+ STA allowInSystemJump  ; when you're in the space station's safe zone
 
  JSR ResetShipStatus    ; Reset the ship's speed, hyperspace counter, laser
                         ; temperature, shields and energy banks
@@ -16061,14 +16061,23 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: CopyShipDataToINWK
+;       Name: RemoveShip
 ;       Type: Subroutine
 ;   Category: Universe
-;    Summary: Copy the ship's data block from INF to INWK
+;    Summary: Fetch a ship data block and remove that ship from our local bubble
+;             of universe
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The slot number of the ship to remove
+;
+;   INF                 The address of the data block for the ship to remove
 ;
 ; ******************************************************************************
 
-.CopyShipDataToINWK
+.RemoveShip
 
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -16086,6 +16095,9 @@ ENDIF
 
  BPL cink1              ; Loop back for the next byte until we have copied the
                         ; last byte from INF to INWK
+
+                        ; Fall through into KILLSHP to remove the ship from our
+                        ; local bubble of universe
 
 ; ******************************************************************************
 ;
@@ -18402,8 +18414,8 @@ ENDIF
  TXS                    ; location for the 6502 stack, so this instruction
                         ; effectively resets the stack
 
- INX                    ; Set chartToShow = 0 ???
- STX chartToShow
+ INX                    ; Set chartToShow = 0 so the chart icon on the icon bar
+ STX chartToShow        ; shows the Short-range Chart
 
  JSR RES2               ; Reset a number of flight variables and workspaces
 
@@ -19506,21 +19518,21 @@ ENDIF
 
 .warp2
 
- JSR FastForwardJump    ; Do an in-system (faat-forward) jump and run the
+ JSR FastForwardJump    ; Do an in-system (fast-forward) jump and run the
                         ; distance checks
 
  BCS warp3              ; If the C flag is set then we are too close to the
                         ; planet or sun for any more jumps, so jump to warp3
                         ; to stop jumping
 
- JSR FastForwardJump    ; Do a second in-system (faat-forward) jump and run the
+ JSR FastForwardJump    ; Do a second in-system (fast-forward) jump and run the
                         ; distance checks
 
  BCS warp3              ; If the C flag is set then we are too close to the
                         ; planet or sun for any more jumps, so jump to warp3
                         ; to stop jumping
 
- JSR FastForwardJump    ; Do a third in-system (faat-forward) jump and run the
+ JSR FastForwardJump    ; Do a third in-system (fast-forward) jump and run the
                         ; distance checks
 
  BCS warp3              ; If the C flag is set then we are too close to the
@@ -19530,7 +19542,7 @@ ENDIF
  JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
                         ; next VBlank)
 
- JSR InSystemJump       ; Do a fourth in-system jump (faat-forward) without
+ JSR InSystemJump       ; Do a fourth in-system jump (fast-forward) without
                         ; doing the distance checks
 
 .warp3
@@ -19566,7 +19578,7 @@ ENDIF
 ;       Name: FastForwardJump
 ;       Type: Subroutine
 ;   Category: Flight
-;    Summary: Try to do an in-system jump
+;    Summary: Perform an in-system jump
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -19574,11 +19586,11 @@ ENDIF
 ;
 ;   C flag              The status at the end of the jump:
 ;
-;                         * Clear if the jump ends with us nowhere near the
-;                           planet or sun
+;                         * Clear if the jump ends with us being far enough away
+;                           from the planet or sun to do another jump
 ;
 ;                         * Set if the jump ends with us being too close to the
-;                           planet or sun
+;                           planet or sun to do another jump
 ;
 ; ******************************************************************************
 
@@ -19589,164 +19601,351 @@ ENDIF
 
  JSR InSystemJump       ; Call InSystemJump to do an in-system jump
 
-                        ; Fall through into CheckDistances to work out if we are
-                        ; close to the planet or sun, returning the result in
-                        ; the C flag accordingly
+                        ; Fall through into CheckJumpSafety to work out if we
+                        ; are too close to the planet or sun to do another
+                        ; in-system jump, returning the result in the C flag
+                        ; accordingly
 
 ; ******************************************************************************
 ;
-;       Name: CheckDistances
+;       Name: CheckJumpSafety
 ;       Type: Subroutine
 ;   Category: Flight
-;    Summary: Check the distance to the planet and sun
+;    Summary: Check whether we are far enough away from the planet and sun to be
+;             able to do an in-system (fast-forward) jump
 ;
 ; ------------------------------------------------------------------------------
 ;
+; This routine checks how far away from the planet and sun we would be if we
+; were to do an in-system jump. If we are too close to either object after doing
+; a jump, then the C flag is set, otherwise it is clear.
+;
+; The distance check is only done in the forward direction; if the planet or
+; sun is behind us, then it is deemed safe to do a jump.
+;
+; By default, this routine checks distances against a value of 64 (which is the
+; distance of an in-system jump). Arbitrary distances can be checked via the
+; entry point at CheckJumpSafety+2.
+;
+; Returns:
+;
+;   C flag              Results of the safety check:
+;
+;                         * Clear if we are not close to the planet or sun and
+;                           can do an in-system jump
+;
+;                         * Set if we are too close to the planet or sun to do
+;                           an in-system jump
+;
 ; Other entry points:
 ;
-;   CheckDistances+2
+;   CheckJumpSafety+2    Check the distances against the value in A
 ;
 ; ******************************************************************************
 
-.CheckDistances
+.CheckJumpSafety
 
- LDA #$80
+ LDA #128               ; Set A = 128, to use as the default distance to check
+                        ; our proximity against
 
- LSR A
- STA T
- LDY #0
- JSR cdis1
- BCS cdis7
- LDA SSPR
- BNE cdis7
- LDY #$2A
+ LSR A                  ; Set T = A / 2
+ STA T                  ;
+                        ; So the value of T is set as follows:
+                        ;
+                        ;   * T = 64 if we call the routine via CheckJumpSafety
+                        ;
+                        ;   * T = A / 2 if we call the routine via the entry
+                        ;     point at CheckJumpSafety+2
+                        ;
+                        ; T is the value that we check the distances against
+                        ; to determine whether we are too close to the planet
+                        ; or sun
+
+ LDY #0                 ; Set Y as the offset in K% to the first ship data
+                        ; block, i.e. the planet
+
+ JSR cdis1              ; Call cdis1 below to check our distance from the planet
+
+ BCS cdis7              ; If the C flag is set then we are deemed close to the
+                        ; planet, so there is no need to check the sun, so jump
+                        ; to cdis7 to return from the subroutine with the C flag
+                        ; set
+
+ LDA SSPR               ; If SSPR is non-zero then we are inside the space
+ BNE cdis7              ; station's safe zone, so we can't be too close to the
+                        ; sun, so jump to cdis7 return from the subroutine with
+                        ; the C flag clear (we know this is the case as we just
+                        ; passed through a BCS)
+
+                        ; If we get here then we have checked the distance to
+                        ; the planet and we are not close to it, so now we check
+                        ; our distance from the sun
+
+ LDY #NIK%              ; Set Y as the offset in K% to the second ship data
+                        ; block, i.e. the sun (this can't be the space station
+                        ; as we know we aren't in the safe zone)
 
 .cdis1
 
- LDA K%+2,Y
- ORA K%+5,Y
- ASL A
- BNE cdis5
- LDA K%+8,Y
- LSR A
- BNE cdis5
- LDA K%+7,Y
- ROR A
- SEC
- SBC #$20
- BCS cdis2
- EOR #$FF
- ADC #1
+                        ; In the following, K%+Y points to the ship data block
+                        ; for the object we are measuring the distance to (i.e.
+                        ; the planet or sun)
+                        ;
+                        ; To make things easier to follow, let's refer to this
+                        ; object as the planet, with the planet's centre being
+                        ; at (x, y, z), where each coordinate is of the form
+                        ; (x_sign x_hi x_lo)
+
+ LDA K%+2,Y             ; If either of x_sign or y_sign are non-zero (ignoring
+ ORA K%+5,Y             ; the sign in bit 7), then jump to cdis5 to return with
+ ASL A                  ; the C flag clear, as the planet is a long way away
+ BNE cdis5              ; to the sides or above/below us
+
+ LDA K%+8,Y             ; If z_sign is negative (i.e. bit 7 is set), or z_sign
+ LSR A                  ; is positive and z_sign > 1, then jump to cdis5 to
+ BNE cdis5              ; return with the C flag clear, as the planet is either
+                        ; behind us, or it's a long way in front of us
+
+                        ; The above sets the C flag to bit 0 of z_sign
+
+ LDA K%+7,Y             ; Set A = (z_sign z_hi) / 2 - 32
+ ROR A                  ;
+ SEC                    ; This result will fit into one byte because we know
+ SBC #32                ; bits 1 to 7 of z_sign are clear
+                        ;
+                        ; As we know the rest of z_sign is empty, let's just
+                        ; simplify this to:
+                        ;
+                        ;   A = (z_hi / 2) - 32
+                        ;     = (z_hi - 64) / 2
+
+ BCS cdis2              ; If the above subtraction didn't underflow, jump to
+                        ; cdis2 to skip the following
+
+ EOR #$FF               ; The subtraction underflowed so A is negative, so make
+ ADC #1                 ; A positive using two's complement (which will work as
+                        ; we know the C flag is clear as we just passed through
+                        ; a BCS)
+                        ;
+                        ; We therefore have A = |(z_hi - 64) / 2|
 
 .cdis2
 
- STA K+2
- LDA K%+1,Y
+ STA K+2                ; Set K+2 = |(z_hi - 64) / 2|
+
+ LDA K%+1,Y             ; Set K = x_hi / 2
  LSR A
  STA K
- LDA K%+4,Y
- LSR A
- STA K+1
- CMP K
+
+ LDA K%+4,Y             ; Set K+1 = y_hi / 2
+ LSR A                  ;
+ STA K+1                ; This also sets A = K+1
+
+                        ; From this point on we are only working with the high
+                        ; bytes, so to make things easier to follow, let's just
+                        ; refer to x_hi, y_hi and z_hi as x, y and z, so:
+                        ;
+                        ;   K   = x / 2
+                        ;   K+1 = y / 2
+                        ;   K+2 = (z - 64) / 2
+                        ;
+                        ; The following algorithm is the same as the FAROF2
+                        ; routine, so this measures the distance from our ship
+                        ; to the point (x, y, z - 64), which is where (x, y, z)
+                        ; will be if we jump forward by a distance of z_hi = 64
+                        ;
+                        ; In other words, the following checks the distance from
+                        ; our ship to the planet if we were to do an in-system
+                        ; jump forwards
+
+ CMP K                  ; If A >= K, jump to cdis3 to skip the next instruction
  BCS cdis3
- LDA K
+
+ LDA K                  ; Set A = K, so A = max(K, K+1)
 
 .cdis3
 
- CMP K+2
- BCS cdis4
- LDA K+2
+ CMP K+2                ; If A >= K+2, jump to cdis4 to skip the next
+ BCS cdis4              ; instruction
+
+ LDA K+2                ; Set A = K+2, so A = max(A, K+2)
+                        ;                   = max(K, K+1, K+2)
 
 .cdis4
 
- STA SC
- LDA K
- CLC
- ADC K+1
- ADC K+2
- SEC
+ STA SC                 ; Set SC = A
+                        ;        = max(K, K+1, K+2)
+                        ;        = max(x / 2, y / 2, z / 2)
+                        ;        = max(x, y, z) / 2
+
+ LDA K                  ; Set SC+1 = (K + K+1 + K+2 - SC) / 4
+ CLC                    ;          = (x/2 + y/2 + z/2 - max(x, y, z) / 2) / 4
+ ADC K+1                ;          = (x + y + z - max(x, y, z)) / 8
+ ADC K+2                ;
+ SEC                    ; 
  SBC SC
  LSR A
  LSR A
  STA SC+1
- LSR A
- LSR A
- ADC SC+1
- ADC SC
- CMP T
- BCC cdis6
+
+ LSR A                  ; Set A = (SC+1 / 4) + SC+1 + SC
+ LSR A                  ;       = 5/4 * SC+1 + SC
+ ADC SC+1               ;       = 5 * (x + y + z - max(x, y, z)) / (8 * 4)
+ ADC SC                 ;          + max(x, y, z) / 2
+                        ;
+                        ; If h is the longest of x, y, z, and a and b are the
+                        ; other two sides, then we have:
+                        ;
+                        ;   max(x, y, z) = h
+                        ;
+                        ;   x + y + z - max(x, y, z) = a + b + h - h
+                        ;                            = a + b
+                        ;
+                        ; So:
+                        ;
+                        ;   A = 5 * (a + b) / (8 * 4) + h / 2
+                        ;     = 5/32 * a + 5/32 * b + 1/2 * h
+                        ;
+                        ; Presumably this estimates the length of the (x, y, z),
+                        ; i.e. |x y z|, in some way, though I don't understand
+                        ; how
+
+ CMP T                  ; If A < T, C will be clear, otherwise C will be set
+                        ;
+                        ; So the C flag is clear if |x y z| <  argument A
+                        ;                  set   if |x y z| >= argument A
+
+ BCC cdis6              ; If the C flag is clear then |x y z| <  argument A,
+                        ; which means we are close to the planet, so jump to
+                        ; cdis6 to return with the C flag set to indicate this
+
+                        ; Otherwise |x y z| >= argument A, which means we are
+                        ; not close to the planet, so fall through into cdis5
+                        ; to return with the C flag clear to indicate this
 
 .cdis5
 
- CLC
- RTS
+ CLC                    ; Set the C flag to indicate that we are not close to
+                        ; the planet and can do an in-system jump
+
+ RTS                    ; Return from the subroutine
 
 .cdis6
 
- SEC
+ SEC                    ; Set the C flag to indicate that we are too close to
+                        ; the planet to do an in-system jump
 
 .cdis7
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: InSystemJump
 ;       Type: Subroutine
 ;   Category: Flight
-;    Summary: Perform an in-system jump
+;    Summary: Perform an in-system (fast-forward) jump
+;
+; ------------------------------------------------------------------------------
+;
+; This routine performs an in-system jump by subtracting 64 from z_hi for the
+; planet and sun, and removing all other ships from the bubble. This is the same
+; as our ship moving forwards in space by z_hi = 64, and leaving all the other
+; ships behind.
 ;
 ; ******************************************************************************
 
 .InSystemJump
 
- LDY #$20
+ LDY #32                ; We start by charging the shields and energy banks 32
+                        ; times, so set a loop counter in Y
 
-.loop_CB667
+.jump1
 
- JSR ChargeShields
- DEY
- BNE loop_CB667
- LDX #0
- STX GNTMP
+ JSR ChargeShields      ; Charge the shields and energy banks
 
-.CB672
+ DEY                    ; Decrement the loop counter
 
- STX XSAV
- LDA FRIN,X
- BEQ CB6A7
- BMI CB686
- JSR GINF
+ BNE jump1              ; Loop back to charge the shields until we have done it
+                        ; 32 times
 
- JSR CopyShipDataToINWK ; Copy the ship's data block from INF to INWK
+                        ; We now move the sun and planet backwards in space and
+                        ; remove everything else from the ship slots, to make it
+                        ; appear as if we have jumped forward, leaving
+                        ; everything else behind
 
- LDX XSAV
- JMP CB672
+ LDX #0                 ; We are about to loop through the ship slots, moving
+                        ; everything backwards so we appear to jump forwards in
+                        ; space, so set X = 0 to use as the slot number
 
-.CB686
+ STX GNTMP              ; Set GNTMP = 0 to cool the lasers down completely
 
- JSR GINF
- LDA #$80
- STA S
- LSR A
- STA R
- LDY #7
- LDA (XX19),Y
+.jump2
+
+ STX XSAV               ; Store the slot number in XSAV so we can retrieve it
+                        ; below
+
+ LDA FRIN,X             ; Load the ship type for the X-th slot
+
+ BEQ jump4              ; If the slot contains 0 then it is empty and we have
+                        ; processed all the slots (as they are always shuffled
+                        ; down in the main loop to close up and gaps), so jump
+                        ; to jump4 as we are done
+
+ BMI jump3              ; If the slot contains a ship type with bit 7 set, then
+                        ; it contains the planet or the sun, so jump down to
+                        ; jump3 to move the planet or sun in space
+
+                        ; If we get here then this is not the planet or sun, so
+                        ; we now remove this ship from our local bubble of
+                        ; universe
+
+ JSR GINF               ; Call GINF to get the address of the data block for
+                        ; ship slot X and store it in INF
+
+ JSR RemoveShip         ; Fetch the ship's data block and remove the ship from
+                        ; our local bubble of universe
+
+ LDX XSAV               ; Set X to the slot counter that we stored in XSAV above
+
+ JMP jump2              ; Loop back to process the next slot
+
+.jump3
+
+ JSR GINF               ; Call GINF to get the address of the data block for
+                        ; ship slot X and store it in INF
+
+ LDA #$80               ; Set (S R) = -64
+ STA S                  ;
+ LSR A                  ; This is a sign-magnitude number, with bit 7 of S set
+ STA R                  ; and R = 128 / 2 = 64
+
+ LDY #7                 ; Set P = z_hi from the ship's data block
+ LDA (INF),Y
  STA P
- INY
- LDA (XX19),Y
- JSR ADD
- STA (XX19),Y
- DEY
- TXA
- STA (XX19),Y
- LDX XSAV
- INX
- BNE CB672
 
-.CB6A7
+ INY                    ; Set A = z_sign from the ship's data block
+ LDA (INF),Y
 
- RTS
+ JSR ADD                ; Set (A X) = (A P) + (S R)
+                        ;           = (z_sign z_hi) - 64
+
+ STA (INF),Y            ; Store the result in (z_sign z_hi) in the ship's data
+ DEY                    ; block, so the object moves backwards by a distance of
+ TXA                    ; z_hi = 64 (which is the distance of an in-system jump)
+ STA (INF),Y
+
+ LDX XSAV               ; Set X to the slot counter that we stored in XSAV above
+
+ INX                    ; Increment X to point to the next ship slot
+
+ BNE jump2              ; Loop back to process the next slot (this BNE is
+                        ; effectively a JMP as we will exit the above loop well
+                        ; before X wraps around to 0
+
+.jump4
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
