@@ -292,78 +292,78 @@ ENDIF
 
 .loop_C8034
 
- STA L030E,Y
- STA L0321,Y
- STA L0334,Y
- STA L0347,Y
+ STA soundVar0E,Y
+ STA soundVar21,Y
+ STA soundVar34,Y
+ STA soundVar47,Y
  DEY
  BPL loop_C8034
  TAY
  LDA L915F,X
- STA L0305
- STA L0306
+ STA soundVar05
+ STA soundVar06
  LDA L9160,X
- STA L0310
+ STA soundVar10
  STA soundAddr
  LDA L9161,X
- STA L0311
+ STA soundVar11
  STA soundAddr+1
  LDA (soundAddr),Y
- STA L030E
+ STA soundVar0E
  INY
  LDA (soundAddr),Y
- STA L030F
+ STA soundVar0F
  LDA L9162,X
- STA L0323
+ STA soundVar23
  STA soundAddr
  LDA L9163,X
- STA L0324
+ STA soundVar24
  STA soundAddr+1
  DEY
  LDA (soundAddr),Y
- STA L0321
+ STA soundVar21
  INY
  LDA (soundAddr),Y
- STA L0322
+ STA soundVar22
  LDA L9164,X
- STA L0336
+ STA soundVar36
  STA soundAddr
  LDA L9165,X
- STA L0337
+ STA soundVar37
  STA soundAddr+1
  DEY
  LDA (soundAddr),Y
- STA L0334
+ STA soundVar34
  INY
  LDA (soundAddr),Y
- STA L0335
+ STA soundVar35
  LDA L9166,X
- STA L0349
+ STA soundVar49
  STA soundAddr
  LDA L9167,X
- STA L034A
+ STA soundVar4A
  STA soundAddr+1
  DEY
  LDA (soundAddr),Y
- STA L0347
+ STA soundVar47
  INY
  LDA (soundAddr),Y
- STA L0348
- STY L0316
- STY L0329
- STY L033C
- STY L034F
+ STA soundVar48
+ STY soundVar16
+ STY soundVar29
+ STY soundVar3C
+ STY soundVar4F
  INY
- STY L0312
- STY L0325
- STY L0338
- STY L034B
+ STY soundVar12
+ STY soundVar25
+ STY soundVar38
+ STY soundVar4B
  LDX #0
- STX L030C
+ STX soundVar0C
  DEX
- STX L030B
- STX L030D
- INC L0301
+ STX soundVar0B
+ STX soundVar0D
+ INC soundVar01
  RTS
 
 ; ******************************************************************************
@@ -377,11 +377,11 @@ ENDIF
 
 .subm_80E5
 
- LDA L030D
+ LDA soundVar0D
  BEQ C80F2
- LDA L0301
+ LDA soundVar01
  BNE C80F2
- INC L0301
+ INC soundVar01
 
 .C80F2
 
@@ -399,15 +399,15 @@ ENDIF
 .StopMusic
 
  LDA #0
- STA L0301
- STA L0302
- STA L0303
- STA L0304
+ STA soundVar01
+ STA soundVar02
+ STA soundVar03
+ STA soundVar04
  TAX
 
 .loop_C8102
 
- STA L035A,X
+ STA soundVar5A,X
  INX
  CPX #$10
  BNE loop_C8102
@@ -433,37 +433,37 @@ ENDIF
 
  JSR subm_816D
  JSR subm_8AC8
- LDA L0301
+ LDA soundVar01
  BEQ C816C
- LDA L0302
+ LDA soundVar02
  BNE C813F
- LDA L035A
+ LDA soundVar5A
  STA SQ1_VOL
- LDA L0318
+ LDA soundVar18
  BNE C813F
- LDA L035C
+ LDA soundVar5C
  STA SQ1_LO
 
 .C813F
 
- LDA L0303
+ LDA soundVar03
  BNE C8155
- LDA L035E
+ LDA soundVar5E
  STA SQ2_VOL
- LDA L032B
+ LDA soundVar2B
  BNE C8155
- LDA L0360
+ LDA soundVar60
  STA SQ2_LO
 
 .C8155
 
- LDA L0364
+ LDA soundVar64
  STA TRI_LO
- LDA L0304
+ LDA soundVar04
  BNE C816C
- LDA L0366
+ LDA soundVar66
  STA NOISE_VOL
- LDA L0368
+ LDA soundVar68
  STA NOISE_LO
 
 .C816C
@@ -481,16 +481,16 @@ ENDIF
 
 .subm_816D
 
- LDA L0301
+ LDA soundVar01
  BNE C8173
  RTS
 
 .C8173
 
- LDA L0305
+ LDA soundVar05
  CLC
- ADC L030B
- STA L030B
+ ADC soundVar0B
+ STA soundVar0B
  BCC C818B
  JSR subm_8197
  JSR subm_8392
@@ -515,19 +515,19 @@ ENDIF
 
 .subm_8197
 
- DEC L0316
+ DEC soundVar16
  BEQ C819D
  RTS
 
 .C819D
 
- LDA L030E
+ LDA soundVar0E
  STA soundAddr
- LDA L030F
+ LDA soundVar0F
  STA soundAddr+1
  LDA #0
- STA L0318
- STA L0320
+ STA soundVar18
+ STA soundVar20
 
 .C81AF
 
@@ -545,50 +545,50 @@ ENDIF
  CMP #$60
  BCC C81C9
  ADC #$A0
- STA L0315
+ STA soundVar15
  JMP C81AF
 
 .C81C9
 
  CLC
- ADC L030C
+ ADC soundVar0C
  CLC
- ADC L0314
+ ADC soundVar14
  ASL A
  TAY
  LDA L88BC,Y
- STA L031B
- STA L035C
+ STA soundVar1B
+ STA soundVar5C
  LDA L88BC+1,Y
- STA L035D
- LDX L0302
+ STA soundVar5D
+ LDX soundVar02
  BNE C81F6
- LDX L0318
+ LDX soundVar18
  STX SQ1_SWEEP
- LDX L035C
+ LDX soundVar5C
  STX SQ1_LO
  STA SQ1_HI
 
 .C81F6
 
  LDA #1
- STA L031C
- LDA L031D
- STA L031E
+ STA soundVar1C
+ LDA soundVar1D
+ STA soundVar1E
 
 .C8201
 
  LDA #$FF
- STA L0320
+ STA soundVar20
 
 .C8206
 
  LDA soundAddr
- STA L030E
+ STA soundVar0E
  LDA soundAddr+1
- STA L030F
- LDA L0315
- STA L0316
+ STA soundVar0F
+ LDA soundVar15
+ STA soundVar16
  RTS
 
 .C8217
@@ -596,31 +596,31 @@ ENDIF
  LDY #0
  CMP #$FF
  BNE C8265
- LDA L0312
+ LDA soundVar12
  CLC
- ADC L0310
+ ADC soundVar10
  STA soundAddr
- LDA L0313
- ADC L0311
+ LDA soundVar13
+ ADC soundVar11
  STA soundAddr+1
- LDA L0312
+ LDA soundVar12
  ADC #2
- STA L0312
+ STA soundVar12
  TYA
- ADC L0313
- STA L0313
+ ADC soundVar13
+ STA soundVar13
  LDA (soundAddr),Y
  INY
  ORA (soundAddr),Y
  BNE C8258
- LDA L0310
+ LDA soundVar10
  STA soundAddr
- LDA L0311
+ LDA soundVar11
  STA soundAddr+1
  LDA #2
- STA L0312
+ STA soundVar12
  LDA #0
- STA L0313
+ STA soundVar13
 
 .C8258
 
@@ -643,7 +643,7 @@ ENDIF
 
 .C8271
 
- STA L031F
+ STA soundVar1F
  JMP C81AF
 
 .C8277
@@ -657,8 +657,8 @@ ENDIF
 
 .C8283
 
- STA L031A
- STY L0319
+ STA soundVar1A
+ STY soundVar19
  JMP C81AF
 
 .C828C
@@ -666,7 +666,7 @@ ENDIF
  CMP #$FA
  BNE C829E
  LDA (soundAddr),Y
- STA L0317
+ STA soundVar17
  INC soundAddr
  BNE C829B
  INC soundAddr+1
@@ -680,7 +680,7 @@ ENDIF
  CMP #$F8
  BNE C82AA
  LDA #$30
- STA L035A
+ STA soundVar5A
  JMP C8206
 
 .C82AA
@@ -700,7 +700,7 @@ ENDIF
 
 .C82BD
 
- STA L0318
+ STA soundVar18
  JMP C81AF
 
 .C82C3
@@ -714,7 +714,7 @@ ENDIF
 
 .C82CF
 
- STA L030C
+ STA soundVar0C
  JMP C81AF
 
 .C82D5
@@ -728,7 +728,7 @@ ENDIF
 
 .C82E1
 
- STA L0314
+ STA soundVar14
  JMP C81AF
 
 .C82E7
@@ -737,16 +737,16 @@ ENDIF
  BNE C8311
  LDA (soundAddr),Y
  TAX
- STA L0310
+ STA soundVar10
  INY
  LDA (soundAddr),Y
  STX soundAddr
  STA soundAddr+1
- STA L0311
+ STA soundVar11
  LDA #2
- STA L0312
+ STA soundVar12
  DEY
- STY L0313
+ STY soundVar13
  LDA (soundAddr),Y
  TAX
  INY
@@ -766,15 +766,15 @@ ENDIF
 
 .C831D
 
- STA L0305
- STA L0306
+ STA soundVar05
+ STA soundVar06
  JMP C81AF
 
 .C8326
 
  CMP #$FE
  BNE C8332
- STY L030D
+ STY soundVar0D
  PLA
  PLA
  JMP StopMusicS
@@ -794,52 +794,52 @@ ENDIF
 
 .subm_8334
 
- LDA L0320
+ LDA soundVar20
  BEQ C836A
- LDX L031F
+ LDX soundVar1F
  LDA L902C,X
  STA soundAddr
  LDA L9040,X
  STA soundAddr+1
  LDY #0
  LDA (soundAddr),Y
- STA L031D
- LDY L031C
+ STA soundVar1D
+ LDY soundVar1C
  LDA (soundAddr),Y
  BMI C8362
- DEC L031E
+ DEC soundVar1E
  BPL C8362
- LDX L031D
- STX L031E
- INC L031C
+ LDX soundVar1D
+ STX soundVar1E
+ INC soundVar1C
 
 .C8362
 
  AND #$0F
- ORA L0317
- STA L035A
+ ORA soundVar17
+ STA soundVar5A
 
 .C836A
 
- LDX L031A
+ LDX soundVar1A
  LDA L9119,X
  STA soundAddr
  LDA L9121,X
  STA soundAddr+1
- LDY L0319
+ LDY soundVar19
  LDA (soundAddr),Y
  CMP #$80
  BNE C8387
  LDY #0
- STY L0319
+ STY soundVar19
  LDA (soundAddr),Y
 
 .C8387
 
- INC L0319
+ INC soundVar19
  CLC
- ADC L031B
- STA L035C
+ ADC soundVar1B
+ STA soundVar5C
  RTS
 
 ; ******************************************************************************
@@ -853,19 +853,19 @@ ENDIF
 
 .subm_8392
 
- DEC L0329
+ DEC soundVar29
  BEQ C8398
  RTS
 
 .C8398
 
- LDA L0321
+ LDA soundVar21
  STA soundAddr
- LDA L0322
+ LDA soundVar22
  STA soundAddr+1
  LDA #0
- STA L032B
- STA L0333
+ STA soundVar2B
+ STA soundVar33
 
 .C83AA
 
@@ -883,50 +883,50 @@ ENDIF
  CMP #$60
  BCC C83C4
  ADC #$A0
- STA L0328
+ STA soundVar28
  JMP C83AA
 
 .C83C4
 
  CLC
- ADC L030C
+ ADC soundVar0C
  CLC
- ADC L0327
+ ADC soundVar27
  ASL A
  TAY
  LDA L88BC,Y
- STA L032E
- STA L0360
+ STA soundVar2E
+ STA soundVar60
  LDA L88BC+1,Y
- STA L0361
- LDX L0303
+ STA soundVar61
+ LDX soundVar03
  BNE C83F1
- LDX L032B
+ LDX soundVar2B
  STX SQ2_SWEEP
- LDX L0360
+ LDX soundVar60
  STX SQ2_LO
  STA SQ2_HI
 
 .C83F1
 
  LDA #1
- STA L032F
- LDA L0330
- STA L0331
+ STA soundVar2F
+ LDA soundVar30
+ STA soundVar31
 
 .C83FC
 
  LDA #$FF
- STA L0333
+ STA soundVar33
 
 .C8401
 
  LDA soundAddr
- STA L0321
+ STA soundVar21
  LDA soundAddr+1
- STA L0322
- LDA L0328
- STA L0329
+ STA soundVar22
+ LDA soundVar28
+ STA soundVar29
  RTS
 
 .C8412
@@ -934,31 +934,31 @@ ENDIF
  LDY #0
  CMP #$FF
  BNE C8460
- LDA L0325
+ LDA soundVar25
  CLC
- ADC L0323
+ ADC soundVar23
  STA soundAddr
- LDA L0326
- ADC L0324
+ LDA soundVar26
+ ADC soundVar24
  STA soundAddr+1
- LDA L0325
+ LDA soundVar25
  ADC #2
- STA L0325
+ STA soundVar25
  TYA
- ADC L0326
- STA L0326
+ ADC soundVar26
+ STA soundVar26
  LDA (soundAddr),Y
  INY
  ORA (soundAddr),Y
  BNE C8453
- LDA L0323
+ LDA soundVar23
  STA soundAddr
- LDA L0324
+ LDA soundVar24
  STA soundAddr+1
  LDA #2
- STA L0325
+ STA soundVar25
  LDA #0
- STA L0326
+ STA soundVar26
 
 .C8453
 
@@ -981,7 +981,7 @@ ENDIF
 
 .C846C
 
- STA L0332
+ STA soundVar32
  JMP C83AA
 
 .C8472
@@ -995,8 +995,8 @@ ENDIF
 
 .C847E
 
- STA L032D
- STY L032C
+ STA soundVar2D
+ STY soundVar2C
  JMP C83AA
 
 .C8487
@@ -1004,7 +1004,7 @@ ENDIF
  CMP #$FA
  BNE C8499
  LDA (soundAddr),Y
- STA L032A
+ STA soundVar2A
  INC soundAddr
  BNE C8496
  INC soundAddr+1
@@ -1018,7 +1018,7 @@ ENDIF
  CMP #$F8
  BNE C84A5
  LDA #$30
- STA L035E
+ STA soundVar5E
  JMP C8401
 
 .C84A5
@@ -1038,7 +1038,7 @@ ENDIF
 
 .C84B8
 
- STA L032B
+ STA soundVar2B
  JMP C83AA
 
 .C84BE
@@ -1052,7 +1052,7 @@ ENDIF
 
 .C84CA
 
- STA L030C
+ STA soundVar0C
  JMP C83AA
 
 .C84D0
@@ -1066,7 +1066,7 @@ ENDIF
 
 .C84DC
 
- STA L0327
+ STA soundVar27
  JMP C83AA
 
 .C84E2
@@ -1075,16 +1075,16 @@ ENDIF
  BNE C850C
  LDA (soundAddr),Y
  TAX
- STA L0323
+ STA soundVar23
  INY
  LDA (soundAddr),Y
  STX soundAddr
  STA soundAddr+1
- STA L0324
+ STA soundVar24
  LDA #2
- STA L0325
+ STA soundVar25
  DEY
- STY L0326
+ STY soundVar26
  LDA (soundAddr),Y
  TAX
  INY
@@ -1104,15 +1104,15 @@ ENDIF
 
 .C8518
 
- STA L0305
- STA L0306
+ STA soundVar05
+ STA soundVar06
  JMP C83AA
 
 .C8521
 
  CMP #$FE
  BNE C852D
- STY L030D
+ STY soundVar0D
  PLA
  PLA
  JMP StopMusicS
@@ -1132,52 +1132,52 @@ ENDIF
 
 .subm_852F
 
- LDA L0333
+ LDA soundVar33
  BEQ C8565
- LDX L0332
+ LDX soundVar32
  LDA L902C,X
  STA soundAddr
  LDA L9040,X
  STA soundAddr+1
  LDY #0
  LDA (soundAddr),Y
- STA L0330
- LDY L032F
+ STA soundVar30
+ LDY soundVar2F
  LDA (soundAddr),Y
  BMI C855D
- DEC L0331
+ DEC soundVar31
  BPL C855D
- LDX L0330
- STX L0331
- INC L032F
+ LDX soundVar30
+ STX soundVar31
+ INC soundVar2F
 
 .C855D
 
  AND #$0F
- ORA L032A
- STA L035E
+ ORA soundVar2A
+ STA soundVar5E
 
 .C8565
 
- LDX L032D
+ LDX soundVar2D
  LDA L9119,X
  STA soundAddr
  LDA L9121,X
  STA soundAddr+1
- LDY L032C
+ LDY soundVar2C
  LDA (soundAddr),Y
  CMP #$80
  BNE C8582
  LDY #0
- STY L032C
+ STY soundVar2C
  LDA (soundAddr),Y
 
 .C8582
 
- INC L032C
+ INC soundVar2C
  CLC
- ADC L032E
- STA L0360
+ ADC soundVar2E
+ STA soundVar60
  RTS
 
 ; ******************************************************************************
@@ -1191,15 +1191,15 @@ ENDIF
 
 .subm_858D
 
- DEC L033C
+ DEC soundVar3C
  BEQ C8593
  RTS
 
 .C8593
 
- LDA L0334
+ LDA soundVar34
  STA soundAddr
- LDA L0335
+ LDA soundVar35
  STA soundAddr+1
 
 .C859D
@@ -1218,38 +1218,38 @@ ENDIF
  CMP #$60
  BCC C85B7
  ADC #$A0
- STA L033B
+ STA soundVar3B
  JMP C859D
 
 .C85B7
 
  CLC
- ADC L030C
+ ADC soundVar0C
  CLC
- ADC L033A
+ ADC soundVar3A
  ASL A
  TAY
  LDA L88BC,Y
- STA L0341
- STA L0364
+ STA soundVar41
+ STA soundVar64
  LDA L88BC+1,Y
- LDX L0364
+ LDX soundVar64
  STX TRI_LO
  STA TRI_HI
- STA L0365
- LDA L0345
- STA L0342
+ STA soundVar65
+ LDA soundVar45
+ STA soundVar42
  LDA #$81
  STA TRI_LINEAR
 
 .C85E4
 
  LDA soundAddr
- STA L0334
+ STA soundVar34
  LDA soundAddr+1
- STA L0335
- LDA L033B
- STA L033C
+ STA soundVar35
+ LDA soundVar3B
+ STA soundVar3C
  RTS
 
 .C85F5
@@ -1257,31 +1257,31 @@ ENDIF
  LDY #0
  CMP #$FF
  BNE C8643
- LDA L0338
+ LDA soundVar38
  CLC
- ADC L0336
+ ADC soundVar36
  STA soundAddr
- LDA L0339
- ADC L0337
+ LDA soundVar39
+ ADC soundVar37
  STA soundAddr+1
- LDA L0338
+ LDA soundVar38
  ADC #2
- STA L0338
+ STA soundVar38
  TYA
- ADC L0339
- STA L0339
+ ADC soundVar39
+ STA soundVar39
  LDA (soundAddr),Y
  INY
  ORA (soundAddr),Y
  BNE C8636
- LDA L0336
+ LDA soundVar36
  STA soundAddr
- LDA L0337
+ LDA soundVar37
  STA soundAddr+1
  LDA #2
- STA L0338
+ STA soundVar38
  LDA #0
- STA L0339
+ STA soundVar39
 
 .C8636
 
@@ -1304,7 +1304,7 @@ ENDIF
 
 .C864F
 
- STA L0345
+ STA soundVar45
  JMP C859D
 
 .C8655
@@ -1318,8 +1318,8 @@ ENDIF
 
 .C8661
 
- STA L0340
- STY L033F
+ STA soundVar40
+ STY soundVar3F
  JMP C859D
 
 .C866A
@@ -1327,7 +1327,7 @@ ENDIF
  CMP #$F8
  BNE C8676
  LDA #1
- STA L0342
+ STA soundVar42
  JMP C85E4
 
 .C8676
@@ -1347,7 +1347,7 @@ ENDIF
 
 .C8689
 
- STA L030C
+ STA soundVar0C
  JMP C859D
 
 .C868F
@@ -1361,7 +1361,7 @@ ENDIF
 
 .C869B
 
- STA L033A
+ STA soundVar3A
  JMP C859D
 
 .C86A1
@@ -1370,16 +1370,16 @@ ENDIF
  BNE C86CB
  LDA (soundAddr),Y
  TAX
- STA L0336
+ STA soundVar36
  INY
  LDA (soundAddr),Y
  STX soundAddr
  STA soundAddr+1
- STA L0337
+ STA soundVar37
  LDA #2
- STA L0338
+ STA soundVar38
  DEY
- STY L0339
+ STY soundVar39
  LDA (soundAddr),Y
  TAX
  INY
@@ -1399,15 +1399,15 @@ ENDIF
 
 .C86D7
 
- STA L0305
- STA L0306
+ STA soundVar05
+ STA soundVar06
  JMP C859D
 
 .C86E0
 
  CMP #$FE
  BNE C86EC
- STY L030D
+ STY soundVar0D
  PLA
  PLA
  JMP StopMusicS
@@ -1427,34 +1427,34 @@ ENDIF
 
 .subm_86EE
 
- LDA L0342
+ LDA soundVar42
  BEQ C86FD
- DEC L0342
+ DEC soundVar42
  BNE C86FD
  LDA #0
  STA TRI_LINEAR
 
 .C86FD
 
- LDX L0340
+ LDX soundVar40
  LDA L9119,X
  STA soundAddr
  LDA L9121,X
  STA soundAddr+1
- LDY L033F
+ LDY soundVar3F
  LDA (soundAddr),Y
  CMP #$80
  BNE C871A
  LDY #0
- STY L033F
+ STY soundVar3F
  LDA (soundAddr),Y
 
 .C871A
 
- INC L033F
+ INC soundVar3F
  CLC
- ADC L0341
- STA L0364
+ ADC soundVar41
+ STA soundVar64
  RTS
 
 ; ******************************************************************************
@@ -1468,17 +1468,17 @@ ENDIF
 
 .subm_8725
 
- DEC L034F
+ DEC soundVar4F
  BEQ C872B
  RTS
 
 .C872B
 
- LDA L0347
+ LDA soundVar47
  STA soundAddr
- LDA L0348
+ LDA soundVar48
  STA soundAddr+1
- STA L0359
+ STA soundVar59
 
 .C8738
 
@@ -1496,16 +1496,16 @@ ENDIF
  CMP #$60
  BCC C8752
  ADC #$A0
- STA L034E
+ STA soundVar4E
  JMP C8738
 
 .C8752
 
  AND #$0F
- STA L0354
- STA L0368
+ STA soundVar54
+ STA soundVar68
  LDY #0
- LDX L0304
+ LDX soundVar04
  BNE C8767
  STA NOISE_LO
  STY NOISE_HI
@@ -1513,20 +1513,20 @@ ENDIF
 .C8767
 
  LDA #1
- STA L0355
- LDA L0356
- STA L0357
+ STA soundVar55
+ LDA soundVar56
+ STA soundVar57
 
 .C8772
 
  LDA #$FF
- STA L0359
+ STA soundVar59
  LDA soundAddr
- STA L0347
+ STA soundVar47
  LDA soundAddr+1
- STA L0348
- LDA L034E
- STA L034F
+ STA soundVar48
+ LDA soundVar4E
+ STA soundVar4F
  RTS
 
 .C8788
@@ -1534,31 +1534,31 @@ ENDIF
  LDY #0
  CMP #$FF
  BNE C87D6
- LDA L034B
+ LDA soundVar4B
  CLC
- ADC L0349
+ ADC soundVar49
  STA soundAddr
- LDA L034C
- ADC L034A
+ LDA soundVar4C
+ ADC soundVar4A
  STA soundAddr+1
- LDA L034B
+ LDA soundVar4B
  ADC #2
- STA L034B
+ STA soundVar4B
  TYA
- ADC L034C
- STA L034C
+ ADC soundVar4C
+ STA soundVar4C
  LDA (soundAddr),Y
  INY
  ORA (soundAddr),Y
  BNE C87C9
- LDA L0349
+ LDA soundVar49
  STA soundAddr
- LDA L034A
+ LDA soundVar4A
  STA soundAddr+1
  LDA #2
- STA L034B
+ STA soundVar4B
  LDA #0
- STA L034C
+ STA soundVar4C
 
 .C87C9
 
@@ -1581,7 +1581,7 @@ ENDIF
 
 .C87E2
 
- STA L0358
+ STA soundVar58
  JMP C8738
 
 .C87E8
@@ -1595,8 +1595,8 @@ ENDIF
 
 .C87F4
 
- STA L0353
- STY L0352
+ STA soundVar53
+ STY soundVar52
  JMP C8738
 
 .C87FD
@@ -1604,7 +1604,7 @@ ENDIF
  CMP #$F8
  BNE C8809
  LDA #$30
- STA L0366
+ STA soundVar66
  JMP C8772
 
 .C8809
@@ -1619,16 +1619,16 @@ ENDIF
  BNE C883A
  LDA (soundAddr),Y
  TAX
- STA L0349
+ STA soundVar49
  INY
  LDA (soundAddr),Y
  STX soundAddr
  STA soundAddr+1
- STA L034A
+ STA soundVar4A
  LDA #2
- STA L034B
+ STA soundVar4B
  DEY
- STY L034C
+ STY soundVar4C
  LDA (soundAddr),Y
  TAX
  INY
@@ -1648,15 +1648,15 @@ ENDIF
 
 .C8846
 
- STA L0305
- STA L0306
+ STA soundVar05
+ STA soundVar06
  JMP C8738
 
 .C884F
 
  CMP #$FE
  BNE C885B
- STY L030D
+ STY soundVar0D
  PLA
  PLA
  JMP StopMusicS
@@ -1667,53 +1667,53 @@ ENDIF
 
 .C885D
 
- LDA L0359
+ LDA soundVar59
  BEQ C8892
- LDX L0358
+ LDX soundVar58
  LDA L902C,X
  STA soundAddr
  LDA L9040,X
  STA soundAddr+1
  LDY #0
  LDA (soundAddr),Y
- STA L0356
- LDY L0355
+ STA soundVar56
+ LDY soundVar55
  LDA (soundAddr),Y
  BMI C888B
- DEC L0357
+ DEC soundVar57
  BPL C888B
- LDX L0356
- STX L0357
- INC L0355
+ LDX soundVar56
+ STX soundVar57
+ INC soundVar55
 
 .C888B
 
  AND #$0F
  ORA #$30
- STA L0366
+ STA soundVar66
 
 .C8892
 
- LDX L0353
+ LDX soundVar53
  LDA L9119,X
  STA soundAddr
  LDA L9121,X
  STA soundAddr+1
- LDY L0352
+ LDY soundVar52
  LDA (soundAddr),Y
  CMP #$80
  BNE C88AF
  LDY #0
- STY L0352
+ STY soundVar52
  LDA (soundAddr),Y
 
 .C88AF
 
- INC L0352
+ INC soundVar52
  CLC
- ADC L0354
+ ADC soundVar54
  AND #$0F
- STA L0368
+ STA soundVar68
  RTS
 
 ; ******************************************************************************
@@ -1762,7 +1762,7 @@ ENDIF
  ASL A
  TAY
  LDA #0
- STA L0302
+ STA soundVar02
  LDA L8D7A,Y
  STA soundAddr
  LDA L8D7A+1,Y
@@ -1772,42 +1772,42 @@ ENDIF
 .loop_C896D
 
  LDA (soundAddr),Y
- STA L040B,Y
+ STA soundVar6B,Y
  DEY
  BPL loop_C896D
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA L0416
- STA L041E
- LDA L0418
- STA L041C
- LDA L040C
- STA L041B
- LDA L0415
+ LDA soundVar76
+ STA soundVar7E
+ LDA soundVar78
+ STA soundVar7C
+ LDA soundVar6C
+ STA soundVar7B
+ LDA soundVar75
  ASL A
  TAY
  LDA L8F7A,Y
- STA L0447
+ STA soundVarA7
  STA soundAddr
  LDA L8F7A+1,Y
- STA L0448
+ STA soundVarA8
  STA soundAddr+1
  LDY #0
- STY L041D
+ STY soundVar7D
  LDA (soundAddr),Y
- ORA L0411
+ ORA soundVar71
  STA SQ1_VOL
  LDA #0
  STA SQ1_SWEEP
- LDA L040D
- STA L0419
+ LDA soundVar6D
+ STA soundVar79
  STA SQ1_LO
- LDA L040E
- STA L041A
+ LDA soundVar6E
+ STA soundVar7A
  STA SQ1_HI
- INC L0302
+ INC soundVar02
  RTS
 
 ; ******************************************************************************
@@ -1844,7 +1844,7 @@ ENDIF
  ASL A
  TAY
  LDA #0
- STA L0303
+ STA soundVar03
  LDA L8D7A,Y
  STA soundAddr
  LDA L8D7A+1,Y
@@ -1854,42 +1854,42 @@ ENDIF
 .loop_C89EF
 
  LDA (soundAddr),Y
- STA L041F,Y
+ STA soundVar7F,Y
  DEY
  BPL loop_C89EF
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA L042A
- STA L0432
- LDA L042C
- STA L0430
- LDA L0420
- STA L042F
- LDA L0429
+ LDA soundVar8A
+ STA soundVar92
+ LDA soundVar8C
+ STA soundVar90
+ LDA soundVar80
+ STA soundVar8F
+ LDA soundVar89
  ASL A
  TAY
  LDA L8F7A,Y
- STA L0449
+ STA soundVarA9
  STA soundAddr
  LDA L8F7A+1,Y
- STA L044A
+ STA soundVarAA
  STA soundAddr+1
  LDY #0
- STY L0431
+ STY soundVar91
  LDA (soundAddr),Y
- ORA L0425
+ ORA soundVar85
  STA SQ2_VOL
  LDA #0
  STA SQ2_SWEEP
- LDA L0421
- STA L042D
+ LDA soundVar81
+ STA soundVar8D
  STA SQ2_LO
- LDA L0422
- STA L042E
+ LDA soundVar82
+ STA soundVar8E
  STA SQ2_HI
- INC L0303
+ INC soundVar03
  RTS
 
 ; ******************************************************************************
@@ -1906,7 +1906,7 @@ ENDIF
  ASL A
  TAY
  LDA #0
- STA L0304
+ STA soundVar04
  LDA L8D7A,Y
  STA soundAddr
  LDA L8D7A+1,Y
@@ -1916,42 +1916,42 @@ ENDIF
 .loop_C8A66
 
  LDA (soundAddr),Y
- STA L0433,Y
+ STA soundVar93,Y
  DEY
  BPL loop_C8A66
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA L043E
- STA L0446
- LDA L0440
- STA L0444
- LDA L0434
- STA L0443
- LDA L043D
+ LDA soundVar9E
+ STA soundVarA6
+ LDA soundVarA0
+ STA soundVarA4
+ LDA soundVar94
+ STA soundVarA3
+ LDA soundVar9D
  ASL A
  TAY
  LDA L8F7A,Y
- STA L044B
+ STA soundVarAB
  STA soundAddr
  LDA L8F7A+1,Y
- STA L044C
+ STA soundVarAC
  STA soundAddr+1
  LDY #0
- STY L0445
+ STY soundVarA5
  LDA (soundAddr),Y
- ORA L0439
+ ORA soundVar99
  STA NOISE_VOL
  LDA #0
  STA NOISE_VOL+1
- LDA L0435
+ LDA soundVar95
  AND #$0F
- STA L0441
+ STA soundVarA1
  STA NOISE_LO
  LDA #0
  STA NOISE_HI
- INC L0304
+ INC soundVar04
  RTS
 
 ; ******************************************************************************
@@ -1981,45 +1981,45 @@ ENDIF
 
 .subm_8AD4
 
- LDA L0302
+ LDA soundVar02
  BNE C8ADA
  RTS
 
 .C8ADA
 
- LDA L040B
+ LDA soundVar6B
  BNE C8B08
- LDX L0417
+ LDX soundVar77
  BNE C8B08
- LDA L0301
+ LDA soundVar01
  BEQ C8AFF
- LDA L035A
+ LDA soundVar5A
  STA SQ1_VOL
- LDA L035C
+ LDA soundVar5C
  STA SQ1_LO
- LDA L035D
+ LDA soundVar5D
  STA SQ1_HI
- STX L0302
+ STX soundVar02
  RTS
 
 .C8AFF
 
  LDA #$30
  STA SQ1_VOL
- STX L0302
+ STX soundVar02
  RTS
 
 .C8B08
 
- DEC L040B
- DEC L041E
+ DEC soundVar6B
+ DEC soundVar7E
  BNE C8B39
- LDA L0416
- STA L041E
- LDY L041D
- LDA L0447
+ LDA soundVar76
+ STA soundVar7E
+ LDY soundVar7D
+ LDA soundVarA7
  STA soundAddr
- LDA L0448
+ LDA soundVarA8
  STA soundAddr+1
  LDA (soundAddr),Y
  BPL C8B2F
@@ -2030,76 +2030,76 @@ ENDIF
 
 .C8B2F
 
- ORA L0411
+ ORA soundVar71
  STA SQ1_VOL
  INY
- STY L041D
+ STY soundVar7D
 
 .C8B39
 
- LDA L041B
+ LDA soundVar7B
  BNE C8B6C
- LDA L0417
+ LDA soundVar77
  BNE C8B49
- LDA L0414
+ LDA soundVar74
  BNE C8B49
  RTS
 
 .C8B49
 
- DEC L0414
- LDA L040C
- STA L041B
- LDA L040D
- LDX L0412
+ DEC soundVar74
+ LDA soundVar6C
+ STA soundVar7B
+ LDA soundVar6D
+ LDX soundVar72
  BEQ C8B5D
- ADC L0307
+ ADC soundVar07
 
 .C8B5D
 
- STA L0419
+ STA soundVar79
  STA SQ1_LO
- LDA L040E
- STA L041A
+ LDA soundVar6E
+ STA soundVar7A
  STA SQ1_HI
 
 .C8B6C
 
- DEC L041B
- LDA L0418
+ DEC soundVar7B
+ LDA soundVar78
  BEQ C8B7C
- DEC L041C
+ DEC soundVar7C
  BNE C8BBA
- STA L041C
+ STA soundVar7C
 
 .C8B7C
 
- LDA L0413
+ LDA soundVar73
  BEQ C8BBA
  BMI C8B9F
- LDA L0419
+ LDA soundVar79
  SEC
- SBC L040F
- STA L0419
+ SBC soundVar6F
+ STA soundVar79
  STA SQ1_LO
- LDA L041A
- SBC L0410
+ LDA soundVar7A
+ SBC soundVar70
  AND #3
- STA L041A
+ STA soundVar7A
  STA SQ1_HI
  RTS
 
 .C8B9F
 
- LDA L0419
+ LDA soundVar79
  CLC
- ADC L040F
- STA L0419
+ ADC soundVar6F
+ STA soundVar79
  STA SQ1_LO
- LDA L041A
- ADC L0410
+ LDA soundVar7A
+ ADC soundVar70
  AND #3
- STA L041A
+ STA soundVar7A
  STA SQ1_HI
 
 .C8BBA
@@ -2117,45 +2117,45 @@ ENDIF
 
 .subm_8BBB
 
- LDA L0303
+ LDA soundVar03
  BNE C8BC1
  RTS
 
 .C8BC1
 
- LDA L041F
+ LDA soundVar7F
  BNE C8BEF
- LDX L042B
+ LDX soundVar8B
  BNE C8BEF
- LDA L0301
+ LDA soundVar01
  BEQ C8BE6
- LDA L035E
+ LDA soundVar5E
  STA SQ2_VOL
- LDA L0360
+ LDA soundVar60
  STA SQ2_LO
- LDA L0361
+ LDA soundVar61
  STA SQ2_HI
- STX L0303
+ STX soundVar03
  RTS
 
 .C8BE6
 
  LDA #$30
  STA SQ2_VOL
- STX L0303
+ STX soundVar03
  RTS
 
 .C8BEF
 
- DEC L041F
- DEC L0432
+ DEC soundVar7F
+ DEC soundVar92
  BNE C8C20
- LDA L042A
- STA L0432
- LDY L0431
- LDA L0449
+ LDA soundVar8A
+ STA soundVar92
+ LDY soundVar91
+ LDA soundVarA9
  STA soundAddr
- LDA L044A
+ LDA soundVarAA
  STA soundAddr+1
  LDA (soundAddr),Y
  BPL C8C16
@@ -2166,76 +2166,76 @@ ENDIF
 
 .C8C16
 
- ORA L0425
+ ORA soundVar85
  STA SQ2_VOL
  INY
- STY L0431
+ STY soundVar91
 
 .C8C20
 
- LDA L042F
+ LDA soundVar8F
  BNE C8C53
- LDA L042B
+ LDA soundVar8B
  BNE C8C30
- LDA L0428
+ LDA soundVar88
  BNE C8C30
  RTS
 
 .C8C30
 
- DEC L0428
- LDA L0420
- STA L042F
- LDA L0421
- LDX L0426
+ DEC soundVar88
+ LDA soundVar80
+ STA soundVar8F
+ LDA soundVar81
+ LDX soundVar86
  BEQ C8C44
- ADC L0307
+ ADC soundVar07
 
 .C8C44
 
- STA L042D
+ STA soundVar8D
  STA SQ2_LO
- LDA L0422
- STA L042E
+ LDA soundVar82
+ STA soundVar8E
  STA SQ2_HI
 
 .C8C53
 
- DEC L042F
- LDA L042C
+ DEC soundVar8F
+ LDA soundVar8C
  BEQ C8C63
- DEC L0430
+ DEC soundVar90
  BNE C8CA1
- STA L0430
+ STA soundVar90
 
 .C8C63
 
- LDA L0427
+ LDA soundVar87
  BEQ C8CA1
  BMI C8C86
- LDA L042D
+ LDA soundVar8D
  SEC
- SBC L0423
- STA L042D
+ SBC soundVar83
+ STA soundVar8D
  STA SQ2_LO
- LDA L042E
- SBC L0424
+ LDA soundVar8E
+ SBC soundVar84
  AND #3
- STA L042E
+ STA soundVar8E
  STA SQ2_HI
  RTS
 
 .C8C86
 
- LDA L042D
+ LDA soundVar8D
  CLC
- ADC L0423
- STA L042D
+ ADC soundVar83
+ STA soundVar8D
  STA SQ2_LO
- LDA L042E
- ADC L0424
+ LDA soundVar8E
+ ADC soundVar84
  AND #3
- STA L042E
+ STA soundVar8E
  STA SQ2_HI
 
 .C8CA1
@@ -2253,43 +2253,43 @@ ENDIF
 
 .subm_8CA2
 
- LDA L0304
+ LDA soundVar04
  BNE C8CA8
  RTS
 
 .C8CA8
 
- LDA L0433
+ LDA soundVar93
  BNE C8CD0
- LDX L043F
+ LDX soundVar9F
  BNE C8CD0
- LDA L0301
+ LDA soundVar01
  BEQ C8CC7
- LDA L0366
+ LDA soundVar66
  STA NOISE_VOL
- LDA L0368
+ LDA soundVar68
  STA NOISE_LO
- STX L0304
+ STX soundVar04
  RTS
 
 .C8CC7
 
  LDA #$30
  STA NOISE_VOL
- STX L0304
+ STX soundVar04
  RTS
 
 .C8CD0
 
- DEC L0433
- DEC L0446
+ DEC soundVar93
+ DEC soundVarA6
  BNE C8D01
- LDA L043E
- STA L0446
- LDY L0445
- LDA L044B
+ LDA soundVar9E
+ STA soundVarA6
+ LDY soundVarA5
+ LDA soundVarAB
  STA soundAddr
- LDA L044C
+ LDA soundVarAC
  STA soundAddr+1
  LDA (soundAddr),Y
  BPL C8CF7
@@ -2300,66 +2300,66 @@ ENDIF
 
 .C8CF7
 
- ORA L0439
+ ORA soundVar99
  STA NOISE_VOL
  INY
- STY L0445
+ STY soundVarA5
 
 .C8D01
 
- LDA L0443
+ LDA soundVarA3
  BNE C8D2D
- LDA L043F
+ LDA soundVar9F
  BNE C8D11
- LDA L043C
+ LDA soundVar9C
  BNE C8D11
  RTS
 
 .C8D11
 
- DEC L043C
- LDA L0434
- STA L0443
- LDA L0435
- LDX L043A
+ DEC soundVar9C
+ LDA soundVar94
+ STA soundVarA3
+ LDA soundVar95
+ LDX soundVar9A
  BEQ C8D27
- ADC L0307
+ ADC soundVar07
  AND #$0F
 
 .C8D27
 
- STA L0441
+ STA soundVarA1
  STA NOISE_LO
 
 .C8D2D
 
- DEC L0443
- LDA L0440
+ DEC soundVarA3
+ LDA soundVarA0
  BEQ C8D3D
- DEC L0444
+ DEC soundVarA4
  BNE C8D63
- STA L0444
+ STA soundVarA4
 
 .C8D3D
 
- LDA L043B
+ LDA soundVar9B
  BEQ C8D63
  BMI C8D54
- LDA L0441
+ LDA soundVarA1
  SEC
- SBC L0437
+ SBC soundVar97
  AND #$0F
- STA L0441
+ STA soundVarA1
  STA NOISE_LO
  RTS
 
 .C8D54
 
- LDA L0441
+ LDA soundVarA1
  CLC
- ADC L0437
+ ADC soundVar97
  AND #$0F
- STA L0441
+ STA soundVarA1
  STA NOISE_LO
 
 .C8D63
@@ -2377,15 +2377,15 @@ ENDIF
 
 .subm_8D64
 
- LDA L0307
+ LDA soundVar07
  AND #$48
  ADC #$38
  ASL A
  ASL A
- ROL L030A
- ROL L0309
- ROL L0308
- ROL L0307
+ ROL soundVar0A
+ ROL soundVar09
+ ROL soundVar08
+ ROL soundVar07
  RTS
 
 ; ******************************************************************************

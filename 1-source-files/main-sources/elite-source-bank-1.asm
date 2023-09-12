@@ -6963,7 +6963,7 @@ ENDIF
 
 .LABEL_1
 
- STA L040A              ; Store the cloud size in byte #0 of the ship line heap
+ STA cloudSize          ; Store the cloud size in byte #0 of the ship line heap
                         ; ???
 
  LDA INWK+31            ; Clear bit 6 of the ship's byte #31 to denote that the
@@ -6988,7 +6988,7 @@ ENDIF
 
  JSR HideExplosionBurst ; Hide the four sprites that make up the explosion burst
 
- LDA L040A              ; ???
+ LDA cloudSize          ; ???
  STA Q
  LDA INWK+34
 
@@ -13331,7 +13331,7 @@ ENDIF
  LDY #0                 ; ???
  STY burstSpriteIndex
 
- LDA L040A
+ LDA cloudSize
  STA Q
  LDA INWK+34
 

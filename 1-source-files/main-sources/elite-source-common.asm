@@ -2708,425 +2708,425 @@ ORG $0200
                         ;
                         ; We can can only do a jump if both bits are clear
 
-.L0301
+.soundVar01
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0302
+.soundVar02
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0303
+.soundVar03
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0304
+.soundVar04
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0305
+.soundVar05
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0306
+.soundVar06
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0307
+.soundVar07
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0308
+.soundVar08
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0309
+.soundVar09
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L030A
+.soundVar0A
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L030B
+.soundVar0B
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L030C
+.soundVar0C
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L030D
+.soundVar0D
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L030E
+.soundVar0E
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L030F
+.soundVar0F
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0310
+.soundVar10
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0311
+.soundVar11
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0312
+.soundVar12
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0313
+.soundVar13
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0314
+.soundVar14
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0315
+.soundVar15
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0316
+.soundVar16
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0317
+.soundVar17
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0318
+.soundVar18
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0319
+.soundVar19
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L031A
+.soundVar1A
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L031B
+.soundVar1B
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L031C
+.soundVar1C
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L031D
+.soundVar1D
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L031E
+.soundVar1E
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L031F
+.soundVar1F
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0320
+.soundVar20
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0321
+.soundVar21
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0322
+.soundVar22
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0323
+.soundVar23
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0324
+.soundVar24
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0325
+.soundVar25
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0326
+.soundVar26
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0327
+.soundVar27
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0328
+.soundVar28
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0329
+.soundVar29
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L032A
+.soundVar2A
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L032B
+.soundVar2B
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L032C
+.soundVar2C
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L032D
+.soundVar2D
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L032E
+.soundVar2E
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L032F
+.soundVar2F
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0330
+.soundVar30
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0331
+.soundVar31
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0332
+.soundVar32
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0333
+.soundVar33
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0334
+.soundVar34
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0335
+.soundVar35
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0336
+.soundVar36
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0337
+.soundVar37
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0338
+.soundVar38
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0339
+.soundVar39
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L033A
+.soundVar3A
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L033B
+.soundVar3B
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L033C
+.soundVar3C
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L033D
+.soundVar3D
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L033E
+.soundVar3E
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L033F
+.soundVar3F
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0340
+.soundVar40
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0341
+.soundVar41
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0342
+.soundVar42
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0343
+.soundVar43
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0344
+.soundVar44
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0345
+.soundVar45
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0346
+.soundVar46
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0347
+.soundVar47
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0348
+.soundVar48
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0349
+.soundVar49
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L034A
+.soundVar4A
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L034B
+.soundVar4B
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L034C
+.soundVar4C
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L034D
+.soundVar4D
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L034E
+.soundVar4E
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L034F
+.soundVar4F
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0350
+.soundVar50
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0351
+.soundVar51
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0352
+.soundVar52
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0353
+.soundVar53
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0354
+.soundVar54
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0355
+.soundVar55
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0356
+.soundVar56
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0357
+.soundVar57
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0358
+.soundVar58
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0359
+.soundVar59
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L035A
+.soundVar5A
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L035B
+.soundVar5B
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L035C
+.soundVar5C
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L035D
+.soundVar5D
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L035E
+.soundVar5E
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L035F
+.soundVar5F
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0360
+.soundVar60
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0361
+.soundVar61
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0362
+.soundVar62
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0363
+.soundVar63
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0364
+.soundVar64
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0365
+.soundVar65
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0366
+.soundVar66
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0367
+.soundVar67
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0368
+.soundVar68
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0369
+.soundVar69
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
 .FRIN
 
@@ -3159,13 +3159,19 @@ ORG $0200
 
 .scannerFlags
 
- SKIP 10                ; ??? Bytes 1-8 contain flags for ships on scanner
-                        ; Bytes 0 and 9 are unused
+ SKIP 10                ; Flags for the ships on the scanner ???
+                        ;
+                        ;   * Bytes 1-8 contain flags for ships on scanner
+                        ;
+                        ;   * Bytes 0 and 9 are unused
 
 .scannerAttrs
 
- SKIP 10                ; ??? Bytes 1-8 contain attributes for ships on scanner
-                        ; Bytes 0 and 9 are unused
+ SKIP 10                ; Attributes for the ships on the scanner ???
+                        ;
+                        ;   * Bytes 1-8 contain flags for ships on scanner
+                        ;
+                        ;   * Bytes 0 and 9 are unused
 
 .auto
 
@@ -3950,273 +3956,273 @@ ORG $0200
                         ;
                         ;   * Non-zero = yes
 
-.L040A
+.cloudSize
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Used to store the explosion cloud size in PTCLS
 
-.L040B
+.soundVar6B
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L040C
+.soundVar6C
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L040D
+.soundVar6D
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L040E
+.soundVar6E
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L040F
+.soundVar6F
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0410
+.soundVar70
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0411
+.soundVar71
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0412
+.soundVar72
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0413
+.soundVar73
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0414
+.soundVar74
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0415
+.soundVar75
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0416
+.soundVar76
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0417
+.soundVar77
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0418
+.soundVar78
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0419
+.soundVar79
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L041A
+.soundVar7A
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L041B
+.soundVar7B
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L041C
+.soundVar7C
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L041D
+.soundVar7D
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L041E
+.soundVar7E
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L041F
+.soundVar7F
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0420
+.soundVar80
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0421
+.soundVar81
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0422
+.soundVar82
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0423
+.soundVar83
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0424
+.soundVar84
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0425
+.soundVar85
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0426
+.soundVar86
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0427
+.soundVar87
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0428
+.soundVar88
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0429
+.soundVar89
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L042A
+.soundVar8A
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L042B
+.soundVar8B
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L042C
+.soundVar8C
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L042D
+.soundVar8D
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L042E
+.soundVar8E
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L042F
+.soundVar8F
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0430
+.soundVar90
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0431
+.soundVar91
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0432
+.soundVar92
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0433
+.soundVar93
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0434
+.soundVar94
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0435
+.soundVar95
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0436
+.soundVar96
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0437
+.soundVar97
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0438
+.soundVar98
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0439
+.soundVar99
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L043A
+.soundVar9A
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L043B
+.soundVar9B
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L043C
+.soundVar9C
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L043D
+.soundVar9D
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L043E
+.soundVar9E
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L043F
+.soundVar9F
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0440
+.soundVarA0
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0441
+.soundVarA1
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0442
+.soundVarA2
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0443
+.soundVarA3
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0444
+.soundVarA4
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0445
+.soundVarA5
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0446
+.soundVarA6
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0447
+.soundVarA7
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0448
+.soundVarA8
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L0449
+.soundVarA9
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L044A
+.soundVarAA
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L044B
+.soundVarAB
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.L044C
+.soundVarAC
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable used by David Whittaker's sound module
 
 .QQ19
 
@@ -4344,8 +4350,8 @@ ENDIF
 
 .pointerSelection
 
- SKIP 1                 ; ??? Can be 0 or 30, iconBarChoice is only updated when
-                        ; this is non-zero
+ SKIP 1                 ; Can be 0 or 30, iconBarChoice is only updated when
+                        ; this is non-zero ???
 
 .nmiStoreA
 
@@ -4361,8 +4367,8 @@ ENDIF
 
 .pictureTile
 
- SKIP 1                 ; The number of the first tile where system pictures
-                        ; are stored ???
+ SKIP 1                 ; The number of the first free tile where commander and
+                        ; system images can be stored in the buffers
 
 .flipEveryBitplane0
 
@@ -4374,11 +4380,19 @@ ENDIF
 
 .boxEdge1
 
- SKIP 1                 ; Tile number for drawing box edge ???
+ SKIP 1                 ; The tile number for drawing the left edge of a box
+                        ;
+                        ;   * 0 = no box, for use in the Game Over screen
+                        ;
+                        ;   * 1 = standard box, for use in all other screens
 
 .boxEdge2
 
- SKIP 1                 ; Tile number for drawing box edge ???
+ SKIP 1                 ; The tile number for drawing the right edge of a box
+                        ;
+                        ;   * 0 = no box, for use in the Game Over screen
+                        ;
+                        ;   * 2 = standard box, for use in all other screens
 
 .chartToShow
 
@@ -4392,11 +4406,14 @@ ENDIF
 
 .previousCondition
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Used to store the ship's previous status condition
+                        ; (i.e. docked, green, yellow or red), so we can tell
+                        ; how the situation is changing
 
 .statusCondition
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Used to store the ship's current status condition
+                        ; (i.e. docked, green, yellow or red)
 
 .screenFadedToBlack
 
@@ -4410,10 +4427,15 @@ ENDIF
 
 .scanController2
 
- SKIP 1                 ; If non-zero, scan controller 2 ???
+ SKIP 1                 ; A flag to determine whether to scan controller 2 for
+                        ; button presses
                         ;
-                        ; Toggled between 0 and 1 by the "one or two pilots"
-                        ; configuration icon
+                        ;   * 0 = do not scan controller 2
+                        ;
+                        ;   * Non-zero = scan controller 2
+                        ;
+                        ; This value is toggled between 0 and 1 by the "one or
+                        ; two pilots" configuration icon in the pause menu
 
 .JSTX
 
@@ -4441,7 +4463,8 @@ ENDIF
 
 .channelPriority
 
- SKIP 3                 ; ???
+ SKIP 3                 ; The priority of the sound on the current channel
+                        ; (0 to 2)
 
 .LASX
 

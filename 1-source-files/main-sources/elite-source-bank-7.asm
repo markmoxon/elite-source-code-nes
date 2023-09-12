@@ -10435,7 +10435,7 @@ ENDIF
  LDA controller1Up,Y
  BPL CEAF7
 
-.loop_CEAF4
+.CEAF4
 
  JSR IncreaseX
 
@@ -10453,7 +10453,7 @@ ENDIF
 .CEB03
 
  LDA controller1Down,Y
- BMI loop_CEAF4
+ BMI CEAF4
  STX JSTY
  RTS
 
@@ -10787,7 +10787,7 @@ ENDIF
  LDX #0
  JSR FlushSoundChannel
 
-.loop_CEBB6
+.CEBB6
 
  LDX #1
  JSR FlushSoundChannel
@@ -10811,7 +10811,7 @@ ENDIF
  CPX #3
  BCC FlushSoundChannel
 
- BNE loop_CEBB6
+ BNE CEBB6
 
  LDX #0
  JSR FlushSoundChannel
@@ -10922,7 +10922,7 @@ ENDIF
 
 .CEC0A
 
- LDA L0302,X
+ LDA soundVar02,X
  BEQ CEC17
  LDA soundPriority,Y
  CMP channelPriority,X
@@ -13943,17 +13943,17 @@ ENDIF
  STA nmiBitplane
  STA drawingBitplane
 
- LDA #$FF               ; Set L0307 = $FF ???
- STA L0307
+ LDA #$FF               ; Set soundVar07 = $FF ???
+ STA soundVar07
 
- LDA #$80               ; Set L0308 = $80 ???
- STA L0308
+ LDA #$80               ; Set soundVar08 = $80 ???
+ STA soundVar08
 
- LDA #$1B               ; Set L0309 = $1B ???
- STA L0309
+ LDA #$1B               ; Set soundVar09 = $1B ???
+ STA soundVar09
 
- LDA #$34               ; Set L030A = $34 ???
- STA L030A
+ LDA #$34               ; Set soundVar0A = $34 ???
+ STA soundVar0A
 
  JSR ResetOptions       ; Reset the game options to their default values
 
@@ -17047,7 +17047,7 @@ ENDIF
 
  LDX #$80
 
-.loop_CFA15
+.CFA15
 
  RTS
 
@@ -17057,7 +17057,7 @@ ENDIF
  LDA auto
  BNE CFA22
  LDA DAMP
- BEQ loop_CFA15
+ BEQ CFA15
 
 .CFA22
 
