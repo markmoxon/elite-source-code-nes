@@ -3,7 +3,7 @@
 ; NES ELITE GAME SOURCE (BANK 1)
 ;
 ; NES Elite was written by Ian Bell and David Braben and is copyright D. Braben
-; and I. Bell 1992
+; and I. Bell 1991/1992
 ;
 ; The code on this site has been reconstructed from a disassembly of the version
 ; released on Ian Bell's personal website at http://www.elitehomepage.org/
@@ -9449,7 +9449,7 @@ ENDIF
 ;
 ; The resulting line gets clipped to the edges of the screen, if needed. If the
 ; calculation doesn't overflow, we return with the C flag clear, otherwise the C
-; flag gets set to indicate failure and the Y-th LSO entry gets set to 0.
+; flag gets set to indicate failure.
 ;
 ; Arguments:
 ;
@@ -13329,7 +13329,7 @@ ENDIF
 {
 
  LDY #0                 ; ???
- STY L03E6
+ STY burstSpriteIndex
 
  LDA L040A
  STA Q
@@ -13395,12 +13395,12 @@ ENDIF
  STY CNT                ; Set CNT to the index that points to the next vertex on
                         ; the ship line heap
 
- LDA L03E6
+ LDA burstSpriteIndex   ; ???
  CLC
  ADC #4
  CMP #$10
  BCS CBB8D
- STA L03E6
+ STA burstSpriteIndex
  TAY
  LDA XX2
  ORA XX2+2

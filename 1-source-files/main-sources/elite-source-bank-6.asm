@@ -3,7 +3,7 @@
 ; NES ELITE GAME SOURCE (BANK 6)
 ;
 ; NES Elite was written by Ian Bell and David Braben and is copyright D. Braben
-; and I. Bell 1992
+; and I. Bell 1991/1992
 ;
 ; The code on this site has been reconstructed from a disassembly of the version
 ; released on Ian Bell's personal website at http://www.elitehomepage.org/
@@ -5871,9 +5871,9 @@ ENDIF
  LDA #$28
  STA visibleColour
  LDA #0
- STA L0300
+ STA allowInSystemJump
  LDA #2
- STA L0402
+ STA scrollTextSpeed
  JSR UpdateIconBar_b3
 
  LDA #40                ; Tell the NMI handler to send nametable entries from
@@ -5907,7 +5907,7 @@ ENDIF
  DEC LASCT
  BNE loop_CA954
  LDA #0
- STA L0402
+ STA scrollTextSpeed
 
  LDA #$2C               ; Set the visible colour to cyan ($2C)
  STA visibleColour
@@ -5927,16 +5927,16 @@ ENDIF
 
  LDA controller1A
  BMI CA97F
- LDA pointerButton
+ LDA iconBarChoice
  CMP #$0C
  BNE CA984
  LDA #0
- STA pointerButton
+ STA iconBarChoice
 
 .CA97F
 
  LDA #9
- STA L0402
+ STA scrollTextSpeed
 
 .CA984
 
@@ -5949,7 +5949,7 @@ ENDIF
                         ; PPU after drawing the box edges and setting the next
                         ; free tile number
 
- LDA pointerButton
+ LDA iconBarChoice
  BEQ CA995
  JSR CheckForPause_b0
 
@@ -5957,7 +5957,7 @@ ENDIF
 
  LDA tempVar
  SEC
- SBC L0402
+ SBC scrollTextSpeed
  STA tempVar
  BCS subm_A96E
  RTS
@@ -6969,7 +6969,7 @@ ENDIF
 
 .CheckSaveLoadBar
 
- LDX pointerButton
+ LDX iconBarChoice
  BEQ CB53B
  PHA
  CPX #7
@@ -6989,9 +6989,9 @@ ENDIF
  LDA COK
  BMI CB558
  LDA #0
- STA pointerButton
+ STA iconBarChoice
  JSR ChangeCmdrName_b6
- LDA pointerButton
+ LDA iconBarChoice
  BEQ CB553
  CMP #7
  BEQ CB53D
@@ -6999,7 +6999,7 @@ ENDIF
 .CB553
 
  LDA #6
- STA pointerButton
+ STA iconBarChoice
 
 .CB558
 
@@ -8597,7 +8597,7 @@ ENDIF
  BEQ CBAAF
  CMP #$7F
  BEQ CBAB5
- CPY L0483
+ CPY inputNameSize
  BCS CBA93
  CMP #$21
  BCC CBA93
@@ -8611,7 +8611,7 @@ ENDIF
 .CBA93
 
  JSR BEEP_b7
- LDY L0483
+ LDY inputNameSize
  JMP CBA65
 
 .CBA9C
@@ -8700,7 +8700,7 @@ ENDIF
  PLA
  LDX controller1B
  BMI CBADC
- LDX pointerButton
+ LDX iconBarChoice
  BNE CBB33
  LDX controller1Leftx8
  BMI CBB26
@@ -8767,7 +8767,7 @@ ENDIF
  LDA #8
  JSR DETOK_b2
  LDY #6
- STY L0483
+ STY inputNameSize
 
 .loop_CBB46
 
@@ -8978,8 +8978,8 @@ ENDIF
  CMP #$80
  ROR KY7
  LDX #0
- LDA pointerButton
- STX pointerButton
+ LDA iconBarChoice
+ STX iconBarChoice
  STA pressedButton
  PLA
  TAY

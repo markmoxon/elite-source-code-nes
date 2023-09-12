@@ -3,7 +3,7 @@
 ; NES ELITE GAME SOURCE (COMMON VARIABLES)
 ;
 ; NES Elite was written by Ian Bell and David Braben and is copyright D. Braben
-; and I. Bell 1992
+; and I. Bell 1991/1992
 ;
 ; The code on this site has been reconstructed from a disassembly of the version
 ; released on Ian Bell's personal website at http://www.elitehomepage.org/
@@ -2697,9 +2697,16 @@ ORG $0200
 
  SKIP 0                 ; The start of the WP workspace
 
-.L0300
+.allowInSystemJump
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Bits 6 and 7 record whether it is safe to perform an
+                        ; in-system jump
+                        ;
+                        ; Bits are set if, for example, hostile ships are in the
+                        ; vicinity, or we are too near a station, the planet or
+                        ; the sun
+                        ;
+                        ; We can can only do a jump if both bits are clear
 
 .L0301
 
@@ -3622,9 +3629,10 @@ ORG $0200
                         ; which is 20 (#NOST) for normal space, and 3 for
                         ; witchspace
 
-.L03E6
+.burstSpriteIndex
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The index into the sprite buffer of the explosion
+                        ; burst sprite that is set up in PTCLS2
 
 .unusedVariable
 
@@ -3876,9 +3884,9 @@ ORG $0200
                         ;   * 1-8 = the slot number of the ship that our
                         ;           missile is locked onto
 
-.L0402                  ; ???
+.scrollTextSpeed
 
- SKIP 1
+ SKIP 1                 ; Controls the speed of the scroll text in the demo
 
 .KL
 
@@ -4308,7 +4316,7 @@ ENDIF
                         ;   * 3 = pause options
                         ;   * 4 = title screen copyright message
 
-.pointerButton
+.iconBarChoice
 
  SKIP 1                 ; The number of the icon bar button that's just been
                         ; selected
@@ -4334,9 +4342,10 @@ ENDIF
                         ; when moving the icon bar pointer, so that a double-tap
                         ; on B can be interpreted as a selection
 
-.L0468
+.pointerSelection
 
- SKIP 1                 ; ???
+ SKIP 1                 ; ??? Can be 0 or 30, iconBarChoice is only updated when
+                        ; this is non-zero
 
 .nmiStoreA
 
@@ -4355,9 +4364,13 @@ ENDIF
  SKIP 1                 ; The number of the first tile where system pictures
                         ; are stored ???
 
-.L046D
+.flipEveryBitplane0
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A flag that flips every time we run the main loop and
+                        ; the drawing bitplane is set to 0
+                        ;
+                        ; Flips between 0 or $FF after the screen has been drawn
+                        ; in the main loop, but only if drawingBitplane = 0
 
 .boxEdge1
 
@@ -4367,9 +4380,15 @@ ENDIF
 
  SKIP 1                 ; Tile number for drawing box edge ???
 
-.L0470
+.chartToShow
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Controls which chart is shown when choosing the chart
+                        ; icon on the icon bar (as the Long-range and Short-range
+                        ; Charts share the same button)
+                        ;
+                        ;   * Bit 7 clear = show Short-range Chart
+                        ;
+                        ;   * Bit 7 clear = show Long-range Chart
 
 .previousCondition
 
@@ -4473,9 +4492,10 @@ ENDIF
  SKIP 1                 ; Temporary storage, used for storing the value of the Y
                         ; register in the CHPR routine
 
-.L0483
+.inputNameSize
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The maximum size of the name to be fetched by the
+                        ; InputName routine
 
 .FSH
 
@@ -4659,9 +4679,10 @@ ENDIF
 
  SKIP 1                 ; This byte appears to be unused
 
-.L04A1
+.systemsOnChart
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A counter for the number of systems drawn on the
+                        ; Short-range Chart, so it gets limited to 24 systems
 
 .spasto
 
@@ -4949,9 +4970,13 @@ ENDIF
  SKIP 1                 ; The half-width of the sun on pixel row 7 in the tile
                         ; row that is currently being drawn
 
-.L05F2
+.shipIsAggressive
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A flag to record just how aggressive the current ship
+                        ; is in the TACTICS routine
+                        ;
+                        ; Bit 7 set indicates the ship in tactics is looking
+                        ; for a fight
 
  CLEAR BUF+32, P%       ; The following tables share space with BUF through to
  ORG BUF+32             ; K%, which we can do as the scroll text is not shown
