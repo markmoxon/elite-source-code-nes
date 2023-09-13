@@ -9582,50 +9582,101 @@ ENDIF
 ;       Name: ECBLB2
 ;       Type: Subroutine
 ;   Category: Dashboard
-;    Summary: ???
+;    Summary: Start up the E.C.M. (start the countdown and make the E.C.M.
+;             sound)
 ;
 ; ******************************************************************************
 
 .ECBLB2
 
- LDA #$20
+ LDA #32                ; Set the E.C.M. countdown timer in ECMA to 32
  STA ECMA
 
  LDY #2                 ; Call the NOISE routine with Y = 2 to make the sound
- JMP NOISE              ; of the E.C.M. being switched on, returning from the
-                        ; subroutine using a tail call
+ JMP NOISE              ; of the E.C.M., returning from the subroutine using a
+                        ; tail call
 
 ; ******************************************************************************
 ;
 ;       Name: MSBAR
 ;       Type: Subroutine
 ;   Category: Dashboard
-;    Summary: ???
+;    Summary: Draw a specific indicator in the dashboard's missile bar
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The number of the missile indicator to update (counting
+;                       from bottom-right to bottom-left, then top-left and
+;                       top-right, so indicator NOMSL is the top-right
+;                       indicator)
+;
+;   Y                   The tile pattern number for the new missile indicator:
+;
+;                         * 133 = no missile indicator
+;
+;                         * 109 = red (armed and locked)
+;
+;                         * 108 = black (disarmed)
+;
+;                       The armed missile flashes black and red, so the tile is
+;                       swapped between 108 and 109 in the main loop
+;
+; Returns:
+;
+;   X                   X is preserved
+;
+;   Y                   Y is set to 0
 ;
 ; ******************************************************************************
 
 .MSBAR
 
- TYA
- PHA
- LDY missileNames,X
- PLA
+ TYA                    ; Store the pattern number on the stack so we can
+ PHA                    ; retrieve it later
+
+ LDY missileNames,X     ; Set Y to the X-th entry from the missileNames table,
+                        ; so Y is the offset of missile X's indicator in the
+                        ; nametable buffer, from the start of row 22
+
+ PLA                    ; Set the nametable buffer entry to the pattern number
  STA nameBuffer0+22*32,Y
- LDY #0
- RTS
+
+ LDY #0                 ; Set Y = 0 to return from the subroutine (so this
+                        ; routine behaves like the same routine in the other
+                        ; versions of Elite)
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: missileNames
 ;       Type: Variable
 ;   Category: Dashboard
-;    Summary: ???
+;    Summary: Tile numbers for the four missile indicators on the dashboard, as
+;             offsets from the start of tile row 22
+;
+; ------------------------------------------------------------------------------
+;
+; The active missile (i.e. the one that is armed and fired first) is the one
+; with the highest number, so missile 4 (top-left) will be armed before missile
+; 3 (top-right), and so on.
 ;
 ; ******************************************************************************
 
 .missileNames
 
- EQUB $00, $5F, $5E, $3F, $3E
+ EQUB 0                 ; Missile numbers are from 1 to 4, so this value is
+                        ; never used
+
+ EQUB 95                ; Missile 1 (bottom-right)
+
+ EQUB 94                ; Missile 2 (bottom-left)
+
+ EQUB 63                ; Missile 3 (top-right)
+
+ EQUB 62                ; Missile 4 (top-left)
 
 ; ******************************************************************************
 ;
@@ -10750,80 +10801,137 @@ ENDIF
 ;       Name: BEEP
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Make a short, high beep
 ;
 ; ******************************************************************************
 
 .BEEP
 
- LDY #3
- BNE NOISE
+ LDY #3                 ; Call the NOISE routine with Y = 3 to make a short,
+ BNE NOISE              ; high beep, returning from the subroutine using a tail
+                        ; call (this BNE is effectively a JMP as Y will never be
+                        ; zero)
 
 ; ******************************************************************************
 ;
 ;       Name: EXNO3
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Make an explosion sound
+;
+; ------------------------------------------------------------------------------
+;
+; Make the sound of death in the cold, hard vacuum of space. Apparently, in
+; Elite space, everyone can hear you scream.
+;
+; This routine also makes the sound of a destroyed cargo canister if we don't
+; get scooping right, the sound of us colliding with another ship, and the sound
+; of us being hit with depleted shields. It is not a good sound to hear.
 ;
 ; ******************************************************************************
 
 .EXNO3
 
- LDY #13
- BNE NOISE
+ LDY #13                ; Call the NOISE routine with Y = 13 to make the sound
+ BNE NOISE              ; of an explosion, returning from the subroutine using
+                        ; a tail call (this BNE is effectively a JMP as Y will
+                        ; never be zero)
 
 ; ******************************************************************************
 ;
 ;       Name: FlushSoundChannels
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Flush sound channels 0, 1 and 2
 ;
 ; ******************************************************************************
 
 .FlushSoundChannels
 
- LDX #0
+ LDX #0                 ; Flush sound channel 0
  JSR FlushSoundChannel
 
-.CEBB6
-
- LDX #1
- JSR FlushSoundChannel
-
- LDX #2
- BNE FlushSoundChannel
+                        ; Fall through into FlushChannels1And2 to flush sound
+                        ; channels 1 and 2
 
 ; ******************************************************************************
 ;
-;       Name: ECBLB
+;       Name: FlushChannels1And2
 ;       Type: Subroutine
-;   Category: Dashboard
-;    Summary: ???
+;   Category: Sound
+;    Summary: Flush sound channels 1 and 2
 ;
 ; ******************************************************************************
 
-.ECBLB
+.FlushChannels1And2
 
- LDX soundChannel,Y
-
- CPX #3
- BCC FlushSoundChannel
-
- BNE CEBB6
-
- LDX #0
+ LDX #1                 ; Flush sound channel 1
  JSR FlushSoundChannel
 
- LDX #2
+ LDX #2                 ; Flush sound channel 2, returning from the subroutine
+ BNE FlushSoundChannel  ; using a tail call
+
+; ******************************************************************************
+;
+;       Name: FlushSpecificSound
+;       Type: Subroutine
+;   Category: Sound
+;    Summary: Flush the channels used by a specific sound
+;
+; ------------------------------------------------------------------------------
+;
+; The sound channels are flushed according to the specific sound's value in the
+; soundChannel table:
+;
+;   * If soundChannel = 0, flush sound channel 0
+;
+;   * If soundChannel = 1, flush sound channel 1
+;
+;   * If soundChannel = 2, flush sound channel 2
+;
+;   * If soundChannel = 3, flush sound channels 0 and 2
+;
+;   * If soundChannel = 4, flush sound channels 1 and 2
+;
+; Arguments:
+;
+;   Y                   The number of the sound to flush
+;
+; ******************************************************************************
+
+.FlushSpecificSound
+
+ LDX soundChannel,Y     ; Set X to the sound channel for sound Y
+
+ CPX #3                 ; If X < 3 then jump to FlushSoundChannel to flush sound
+ BCC FlushSoundChannel  ; channel X, returning from the subroutine using a tail
+                        ; call
+
+ BNE FlushChannels1And2 ; If X <> 3, i.e. X = 4, then jump to FlushChannels1And2
+                        ; to flush sound channels 1 and 2, returning from the
+                        ; subroutine using a tail call
+
+                        ; If we get here then we know X = 3, so now we flush
+                        ; sound channels 0 and 2
+
+ LDX #0                 ; Flush sound channel 0
+ JSR FlushSoundChannel
+
+ LDX #2                 ; Set X = 2 and fall through into FlushSoundChannel to
+                        ; flush sound channel 2
 
 ; ******************************************************************************
 ;
 ;       Name: FlushSoundChannel
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Flush a specific sound channel
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The sound channel to flush
 ;
 ; ******************************************************************************
 
@@ -10832,39 +10940,45 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA #0
- STA channelPriority,X
+ LDA #0                 ; Set the priority for channel X to zero to stop the
+ STA channelPriority,X  ; channel from making any more sounds
 
- LDA #26
- BNE CEC2B
+ LDA #26                ; Set A = 26 to pass to MakeNoise below ???
+
+ BNE MakeNoise_b7       ; Jump to MakeNoise with A = 26 to ??? (this BNE is
+                        ; effectively a JMP as A is never zero)
 
 ; ******************************************************************************
 ;
 ;       Name: BOOP
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Make a long, low beep
 ;
 ; ******************************************************************************
 
 .BOOP
 
- LDY #4
- BNE NOISE
+ LDY #4                 ; Call the NOISE routine with Y = 4 to make a long, low
+ BNE NOISE              ; beep, returning from the subroutine using a tail call
+                        ; (this BNE is effectively a JMP as Y will never be
+                        ; zero)
 
 ; ******************************************************************************
 ;
 ;       Name: MakeScoopSound
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Make the sound of the fuel scoops working
 ;
 ; ******************************************************************************
 
 .MakeScoopSound
 
- LDY #1
- BNE NOISE
+ LDY #1                 ; Call the NOISE routine with Y = 1 to make the sound of
+ BNE NOISE              ; the fuel scoops working, returning from the subroutine
+                        ; using a tail call (this BNE is effectively a JMP as Y
+                        ; will never be zero)
 
 ; ******************************************************************************
 ;
@@ -10877,36 +10991,47 @@ ENDIF
 
 .HyperspaceSound
 
- JSR FlushSoundChannels
+ JSR FlushSoundChannels ; Flush all the sound channels
 
- LDY #21
+ LDY #21                ; Set Y = 21 and fall through into the NOISE routine to
+                        ; make the hyperspace sound
 
 ; ******************************************************************************
 ;
 ;       Name: NOISE
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Make the sound whose number is in Y
 ;
 ; ------------------------------------------------------------------------------
 ;
-; 2 = E.C.M. starting (ECBLB2)
+; 1 = fuel scoop (MakeScoopSound)
+; 2 = E.C.M. (ECBLB2)
+; 3 = short, high beep (BEEP)
+; 4 = long, low beep (BOOP)
 ; 9 = missile launch (FRMIS, SFRMIS)
 ; 10 = us making a hit or kill (EXNO)
 ; 11 = us being hit by lasers (TACTICS 6)
 ; 12 = first launch sound (LAUN)
+; 13 = explosion sound (EXNO3)
 ; 19 = escape pod launching (ESCAPE)
+; 21 = hyperspace (HyperspaceSound)
 ; 23 = third launch sound (LAUN)
 ; 24 = second launch sound (LAUN)
+; 26 = no noise (FlushSoundChannel) ???
 ; 29 = first mis-jump sound (MJP)
 ; 30 = second mis-jump sound (MJP)
+;
+; Arguments:
+;
+;   Y                   The number of the sound to be made
 ;
 ; ******************************************************************************
 
 .NOISE
 
  LDA DNOIZ
- BPL CEC2E
+ BPL RTS8
  LDX soundChannel,Y
  CPX #3
  BCC CEC0A
@@ -10926,7 +11051,7 @@ ENDIF
  BEQ CEC17
  LDA soundPriority,Y
  CMP channelPriority,X
- BCC CEC2E
+ BCC RTS8
 
 .CEC17
 
@@ -10936,13 +11061,35 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- TYA
+ TYA                    ; Set A to the sound number in Y to pass to MakeNoise
 
-.CEC2B
+                        ; Fall through into MakeNoise_b7 to call the MakeNoise
+                        ; routine
 
- JSR MakeNoise_b6
+; ******************************************************************************
+;
+;       Name: MakeNoise_b7
+;       Type: Subroutine
+;   Category: Sound
+;    Summary: Call the MakeNoise routine
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The number of the sound to make
+;
+; Other entry points:
+;
+;   RTS8                Contains an RTS
+;
+; ******************************************************************************
 
-.CEC2E
+.MakeNoise_b7
+
+ JSR MakeNoise_b6       ; Call MakeNoise to make the noise specified in A
+
+.RTS8
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -10954,7 +11101,21 @@ ENDIF
 ;       Name: soundChannel
 ;       Type: Variable
 ;   Category: Sound
-;    Summary: ???
+;    Summary: The sound channels used by each sound effect
+;
+; ------------------------------------------------------------------------------
+;
+; The sound channels used by each sound are defined as follows:
+;
+;   * If soundChannel = 0, use sound channel 0
+;
+;   * If soundChannel = 1, use sound channel 1
+;
+;   * If soundChannel = 2, use sound channel 2
+;
+;   * If soundChannel = 3, use sound channels 0 and 2
+;
+;   * If soundChannel = 4, use sound channels 1 and 2
 ;
 ; ******************************************************************************
 
@@ -10998,7 +11159,7 @@ ENDIF
 ;       Name: soundPriority
 ;       Type: Variable
 ;   Category: Sound
-;    Summary: ???
+;    Summary: The defaulty priority for each sound effect
 ;
 ; ******************************************************************************
 
@@ -17041,41 +17202,73 @@ ENDIF
 ;   Category: Dashboard
 ;    Summary: Apply damping to the pitch or roll dashboard indicator
 ;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The amount to dampen by
+;
+;   X                   The value to dampen
+;
+; Returns:
+;
+;   X                   The dampened value
+;
 ; ******************************************************************************
 
-.CFA13
+.cntr1
 
- LDX #$80
+ LDX #128               ; Set X = 128 to return so we don't dampen past the
+                        ; middle of the indicator
 
-.CFA15
+.cntr2
 
- RTS
+ RTS                    ; Return from the subroutine
 
 .cntr
 
- STA T
- LDA auto
- BNE CFA22
- LDA DAMP
- BEQ CFA15
+ STA T                  ; Store the argument A in T
 
-.CFA22
+ LDA auto               ; If the docking computer is currently activated, jump
+ BNE cntr3              ; to cntr3 to skip the following as we always want to
+                        ; enable damping for the docking computer
 
- TXA
- BMI CFA2C
- CLC
+ LDA DAMP               ; If DAMP is zero, then damping is disabled, so jump to
+ BEQ cntr2              ; cntr2 to return from the subroutine
+
+.cntr3
+
+ TXA                    ; If X >= 128, then it's in the right-hand side of the
+ BMI cntr4              ; dashboard slider, so jump to cntr4 to decrement it by
+                        ; T to move it closer to the centre
+
+                        ; If we get here then the current value in X is in the
+                        ; left-hand side of the dasboard slider, so now we
+                        ; increment it by T to move it closer to the centre
+
+ CLC                    ; Set A = A + T
  ADC T
- BMI CFA13
- TAX
- RTS
 
-.CFA2C
+ BMI cntr1              ; If the addition pushed A to 128 or higher, jump to
+                        ; cntr1 to return a value of X = 128, so we don't dampen
+                        ; past the middle of the indicator
 
- SEC
+ TAX                    ; Set X to the newly dampened value
+
+ RTS                    ; Return from the subroutine
+
+.cntr4
+
+ SEC                    ; Set A = A - T
  SBC T
- BPL CFA13
- TAX
- RTS
+
+ BPL cntr1              ; If the subtraction reduced A to 127 or lower, jump to
+                        ; cntr1 to return a value of X = 128, so we don't dampen
+                        ; past the middle of the indicator
+
+ TAX                    ; Set X to the newly dampened value
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -17198,9 +17391,12 @@ ENDIF
 
 .djd1
 
- LDX #128               ; ???
- LDA T
- RTS
+ LDX #128               ; If we get here then keyboard auto-recentre is enabled,
+                        ; so set X to 128 (the middle of our range)
+
+ LDA T                  ; Restore the value of A that we passed to the routine
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;

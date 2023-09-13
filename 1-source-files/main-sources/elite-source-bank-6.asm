@@ -1817,6 +1817,12 @@ ENDIF
 ;   Category: Sound
 ;    Summary: ???
 ;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The number of the sound to make
+;
 ; ******************************************************************************
 
 .MakeNoise
@@ -3330,10 +3336,10 @@ ENDIF
 
  LDA #%00000000         ; Set the attributes for sprite 8 as follows:
  STA attrSprite8        ;
-                        ;     * Bits 0-1    = sprite palette 0
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 clear = do not flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+                        ;   * Bits 0-1    = sprite palette 0
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
  LDA #203               ; Set the x-coordinate for sprite 8 to 203
  STA xSprite8
@@ -3357,10 +3363,10 @@ ENDIF
 
  LDA #%00000000         ; Set the attributes for sprite 9 as follows:
  STA attrSprite9        ;
-                        ;     * Bits 0-1    = sprite palette 0
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 clear = do not flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+                        ;   * Bits 0-1    = sprite palette 0
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
  LDA #211               ; Set the x-coordinate for sprite 9 to 211
  STA xSprite9
@@ -3384,10 +3390,10 @@ ENDIF
 
  LDA #%00000000         ; Set the attributes for sprite 10 as follows:
  STA attrSprite10       ;
-                        ;     * Bits 0-1    = sprite palette 0
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 clear = do not flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+                        ;   * Bits 0-1    = sprite palette 0
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
  LDA #219               ; Set the x-coordinate for sprite 10 to 219
  STA xSprite10
@@ -3425,10 +3431,10 @@ ENDIF
 
  LDA #%00000010         ; Set the attributes for sprite 11 as follows:
  STA attrSprite11       ;
-                        ;     * Bits 0-1    = sprite palette 2
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 clear = do not flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+                        ;   * Bits 0-1    = sprite palette 2
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
  LDA #195               ; Set the x-coordinate for sprite 11 to 195
  STA xSprite11
@@ -3466,10 +3472,10 @@ ENDIF
 
  LDA #%00000010         ; Set the attributes for sprite 12 as follows:
  STA attrSprite12       ;
-                        ;     * Bits 0-1    = sprite palette 2
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 clear = do not flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+                        ;   * Bits 0-1    = sprite palette 2
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
  LDA #227               ; Set the x-coordinate for sprite 12 to 227
  STA xSprite12
@@ -3526,10 +3532,10 @@ ENDIF
  LDA #%00000010         ; Set the attributes for the sprites we create in the
                         ; DrawSpriteImage routine as follows:
                         ;
-                        ;     * Bits 0-1    = sprite palette 2
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 clear = do not flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+                        ;   * Bits 0-1    = sprite palette 2
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
  JMP DrawSpriteImage+2  ; Draw the medallion image from sprites, using pattern
                         ; #111 onwards and the sprite attributes in A
@@ -3751,10 +3757,10 @@ ENDIF
  LDA #%00000001         ; Set S to use as the attribute for each of the sprites
  STA S                  ; in the image, so each sprite is set as follows:
                         ;
-                        ;     * Bits 0-1    = sprite palette 1
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 clear = do not flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+                        ;   * Bits 0-1    = sprite palette 1
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
  LDA XC                 ; Set SC = XC * 8 + X
  ASL A                  ;        = XC * 8 + 6
@@ -3811,10 +3817,10 @@ ENDIF
  LDA S                  ; Set the attributes for sprite Y to S, which we set
  STA attrSprite0,Y      ; above as follows:
                         ;
-                        ;     * Bits 0-1    = sprite palette 1
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 clear = do not flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+                        ;   * Bits 0-1    = sprite palette 1
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
  LDA SC2                ; Set the x-coordinate for sprite Y to SC2
  STA xSprite0,Y
@@ -4013,177 +4019,339 @@ ENDIF
 ;       Name: DILX
 ;       Type: Subroutine
 ;   Category: Dashboard
-;    Summary: ???
+;    Summary: Update a bar-based indicator on the dashboard
+;
+; ------------------------------------------------------------------------------
+;
+; The range of values shown on the indicator depends on which entry point is
+; called. For the default entry point of DILX, the range is 0-255 (as the value
+; passed in A is one byte). The other entry points are shown below.
+;
+; Arguments:
+;
+;   A                   The value to be shown on the indicator (so the larger
+;                       the value, the longer the bar)
+;
+;   SC(1 0)             The address of the tile at the left end of the indicator
+;                       in nametable buffer 0
+;
+;   K                   The lower end of the safe range, so safe values are in
+;                       the range K <= A < K+1 (and other values are dangerous)
+;
+;   K+1                 The upper end of the safe range, so safe values are in
+;                       the range K <= A < K+1 (and other values are dangerous)
+;
+; Returns:
+;
+;
+;   SC(1 0)             The address of the tile at the left end of the next
+;                       indicator down
+;
+; Other entry points:
+;
+;   DILX+2              The range of the indicator is 0-64 (for the fuel and
+;                       speed indicators)
 ;
 ; ******************************************************************************
 
 .DILX
 
+ LSR A                  ; If we call DILX, we set A = A / 16, so A is 0-31
  LSR A
- LSR A
 
- LSR A
- CMP #$1F
- BCC CA22C
- LDA #$1E
+ LSR A                  ; If we call DILX+2, we set A = A / 4, so A is 0-31
 
-.CA22C
+ CMP #31                ; If A < 31 then jump to dilx1 to skip the following
+ BCC dilx1              ; instruction
 
- LDY #0
- CMP K
- BCC CA274
- CMP K+1
- BCS CA274
- STA Q
+ LDA #30                ; Set A = 30, so the maximum value of the value to show
+                        ; on the indicator in A is 30
 
-.CA238
+.dilx1
 
- LSR A
- LSR A
- LSR A
- BEQ CA246
- TAX
- LDA #$EC
+ LDY #0                 ; We are going to draw the indicator as a row of tiles,
+                        ; so set an index in Y to count the tiles as we work
+                        ; from left to right
 
-.loop_CA240
+ CMP K                  ; If A < K then this value is lower than the lower end
+ BCC dilx8              ; of the safe range, so jump to dilx8 to flash the
+                        ; indicator bar between colour 4 and colour 2, to
+                        ; indicate a dangerous value
 
- STA (SC),Y
- INY
- DEX
- BNE loop_CA240
+ CMP K+1                ; If A >= K+1 then this value is higher than the upper
+ BCS dilx8              ; end of the safe range, so jump to dilx8 to draw the
+                        ; indicator bar between colour 4 and colour 2, to
+                        ; indicate a dangerous value
 
-.CA246
+ STA Q                  ; Store the value we want to draw on the indicator in Q
 
- LDA Q
- AND #7
- CLC
- ADC #$ED
- STA (SC),Y
- INY
- LDA #$55
+.dilx2
 
-.loop_CA252
+ LSR A                  ; Set A = A / 8
+ LSR A                  ;
+ LSR A                  ; Each indicator consists of four tiles that we use to
+                        ; show a value from 0 to 30, so this gives us the number
+                        ; of sections we need to fill with a full bar (in the
+                        ; range 0 to 3, as A is in the range 0 to 30)
 
- CPY #4
- BEQ CA25B
- STA (SC),Y
- INY
- BNE loop_CA252
+ BEQ dilx4              ; If the result is 0 then the value is too low to need
+                        ; any full bars, so jump to dilx4 to draw the end cap of
+                        ; the indicator bar and any blank space to the right
 
-.CA25B
+ TAX                    ; Set X to the number of sections that we need to fill
+                        ; with a full bar, so we can use it as a loop counter to
+                        ; draw the correct number of full bars
 
- LDA SC
- CLC
- ADC #$20
+ LDA #236               ; Set A = 236, which is the tile pattern number of the
+                        ; fully filled bar in colour 4 (for a safe value)
+
+.dilx3
+
+ STA (SC),Y             ; Set the Y-th tile of the indicator to A to show a full
+                        ; bar
+
+ INY                    ; Increment the tile number in Y to move to the next
+                        ; tile in the indicator
+
+ DEX                    ; Decrement the loop counter in X
+
+ BNE dilx3              ; Loop back until we have drawn the correct number of
+                        ; full bars
+
+.dilx4
+
+                        ; We now draw the correct end cap on the right end of
+                        ; the indicator bar
+
+ LDA Q                  ; Set A to the value we want to draw on the indicator,
+                        ; which we stored in Q above
+
+ AND #7                 ; Set A = A mod 8, which gives us the remaining value
+                        ; once we've taken off any fully filled tiles (as each
+                        ; of the four tiles that make up the indicator
+                        ; represents a value of 8)
+
+ CLC                    ; Set A = A + 237
+ ADC #237               ;
+                        ; The eight tile patterns from 237 to 244 contain the
+                        ; end cap tiles in colour 4 (for a safe value), ranging
+                        ; from the smallest cap to the largest, so this sets A
+                        ; to the correct pattern number to use as the end cap
+                        ; for displaying the remainder in A
+
+ STA (SC),Y             ; Set the Y-th tile of the indicator to A to show the
+                        ; end cap
+
+ INY                    ; Increment the tile number in Y to move to the next
+                        ; tile in the indicator
+
+                        ; We now fill the rest of the four tiles with a blank
+                        ; indicator tile, if required
+
+ LDA #85                ; Set A = 85, which is the tile pattern number of an
+                        ; empty tile in an indicator
+
+.dilx5
+
+ CPY #4                 ; If Y = 4 then we have just drawn the last tile in
+ BEQ dilx6              ; the indicator, so jump to dilx6 to finish off, as we
+                        ; have now drawn the entire indicator
+
+ STA (SC),Y             ; Otherwise set the Y-th tile of the indicator to A to
+                        ; fill the space to the right of the indicator bar with
+                        ; the blank indicator pattern
+
+ INY                    ; Increment the tile number in Y to move to the next
+                        ; tile in the indicator
+
+ BNE dilx5              ; Loop back to dilx5 to draw the next tile (this BNE is
+                        ; effectively a JMP as Y won't ever wrap around to 0)
+
+.dilx6
+
+ LDA SC                 ; Set SC(1 0) = SC(1 0) + 32
+ CLC                    ;
+ ADC #32                ; Starting with the low bytes
  STA SC
- BCC CA266
- INC SC+1
 
-.CA266
+ BCC dilx7              ; And then the high bytes
+ INC SC+1               ;
+                        ; This points SC(1 0) to the nametable entry for the
+                        ; next indicator on the row below, as there are 32 tiles
+                        ; in each row
+
+.dilx7
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- RTS
+ RTS                    ; Return from the subroutine
 
-.CA274
+.dilx8
 
- STA Q
- LDA MCNT
- AND #8
- BNE CA285
- LDA Q
- JMP CA238
+ STA Q                  ; Store the value we want to draw on the indicator in Q
 
-.CA281
+ LDA MCNT               ; Fetch the main loop counter and jump to dilx10 if bit
+ AND #%00001000         ; 3 is set, which will be true half of the time, with
+ BNE dilx10             ; the bit being 0 for eight iterations around the main
+                        ; loop, and 1 for the next eight iterations
+                        ;
+                        ; If we jump to dilx10 then the indicator is shown in
+                        ; red, and if we don't jump it is shown in the normal
+                        ; colour, so this flashes the indicator bar between red
+                        ; and the normal colour, changing the colour every eight
+                        ; iterations of the main loop
 
- LDY #0
- BEQ CA29F
+ LDA Q                  ; Set A to the value we want to draw on the indicator,
+                        ; which we stored in Q above
 
-.CA285
+ JMP dilx2              ; Jump back to dilx2 to draw the indicator in the normal
+                        ; colour scheme
 
- LDA Q
- LSR A
- LSR A
- LSR A
- BEQ CA295
- TAX
- LDA #$E3
+ LDY #0                 ; These instructions are never run and have no effect
+ BEQ dilx13
 
-.loop_CA28F
+.dilx10
 
- STA (SC),Y
- INY
- DEX
- BNE loop_CA28F
+                        ; If we get here then we show the indicator in red
 
-.CA295
+ LDA Q                  ; Set A to the value we want to draw on the indicator,
+                        ; which we stored in Q above
 
- LDA Q
- AND #7
- CLC
- ADC #$E4
- STA (SC),Y
- INY
+ LSR A                  ; Set A = A / 8
+ LSR A                  ;
+ LSR A                  ; Each indicator consists of four tiles that we use to
+                        ; show a value from 0 to 30, so this gives us the number
+                        ; of sections we need to fill with a full bar (in the
+                        ; range 0 to 3, as A is in the range 0 to 30)
 
-.CA29F
+ BEQ dilx12             ; If the result is 0 then the value is too low to need
+                        ; any full bars, so jump to dilx12 to draw the end cap
+                        ; of the indicator bar and any blank space to the right
 
- LDA #$55
+ TAX                    ; Set X to the number of sections that we need to fill
+                        ; with a full bar, so we can use it as a loop counter to
+                        ; draw the correct number of full bars
 
-.loop_CA2A1
+ LDA #227               ; Set A = 237, which is the tile pattern number of the
+                        ; fully filled bar in colour 2 (for a dangerous value)
 
- CPY #4
- BEQ CA2AA
- STA (SC),Y
- INY
- BNE loop_CA2A1
+.dilx11
 
-.CA2AA
+ STA (SC),Y             ; Set the Y-th tile of the indicator to A to show a full
+                        ; bar
 
- LDA SC
- CLC
- ADC #$20
+ INY                    ; Increment the tile number in Y to move to the next
+                        ; tile in the indicator
+
+ DEX                    ; Decrement the loop counter in X
+
+ BNE dilx11             ; Loop back until we have drawn the correct number of
+                        ; full bars
+
+.dilx12
+
+                        ; We now draw the correct end cap on the right end of
+                        ; the indicator bar
+
+ LDA Q                  ; Set A to the value we want to draw on the indicator,
+                        ; which we stored in Q above
+
+ AND #7                 ; Set A = A mod 8, which gives us the remaining value
+                        ; once we've taken off any fully filled tiles (as each
+                        ; of the four tiles that make up the indicator
+                        ; represents a value of 8)
+
+ CLC                    ; Set A = A + 228
+ ADC #228               ;
+                        ; The eight tile patterns from 228 to 235 contain the
+                        ; end cap tiles in colour 2 (for a dangerous value),
+                        ; ranging from the smallest cap to the largest, so this
+                        ; sets A to the correct pattern number to use as the end
+                        ; cap for displaying the remainder in A
+
+ STA (SC),Y             ; Set the Y-th tile of the indicator to A to show the
+                        ; end cap
+
+ INY                    ; Increment the tile number in Y to move to the next
+                        ; tile in the indicator
+
+.dilx13
+
+                        ; We now fill the rest of the four tiles with a blank
+                        ; indicator tile, if required
+
+ LDA #85                ; Set A = 85, which is the tile pattern number of an
+                        ; empty tile in an indicator
+
+.dilx14
+
+ CPY #4                 ; If Y = 4 then we have just drawn the last tile in
+ BEQ dilx15             ; the indicator, so jump to dilx6 to finish off, as we
+                        ; have now drawn the entire indicator
+
+ STA (SC),Y             ; Otherwise set the Y-th tile of the indicator to A to
+                        ; fill the space to the right of the indicator bar with
+                        ; the blank indicator pattern
+
+ INY                    ; Increment the tile number in Y to move to the next
+                        ; tile in the indicator
+
+ BNE dilx14             ; Loop back to dilx14 to draw the next tile (this BNE is
+                        ; effectively a JMP as Y won't ever wrap around to 0)
+
+.dilx15
+
+ LDA SC                 ; Set SC(1 0) = SC(1 0) + 32
+ CLC                    ;
+ ADC #32                ; Starting with the low bytes
  STA SC
- BCC CA2B5
- INC SC+1
 
-.CA2B5
+ BCC dilx16             ; And then the high bytes
+ INC SC+1               ;
+                        ; This points SC(1 0) to the nametable entry for the
+                        ; next indicator on the row below, as there are 32 tiles
+                        ; in each row
+
+.dilx16
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: DIALS
 ;       Type: Subroutine
 ;   Category: Dashboard
-;    Summary: ???
+;    Summary: Update the dashboard
 ;
 ; ******************************************************************************
 
 .DIALS
 
- LDA drawingBitplane
- BNE CA331
+ LDA drawingBitplane    ; If the drawing bitplane is 1, jump to dial1 so we only
+ BNE dial1              ; update the bar indicators every other frame, to save
+                        ; time
 
- LDA #$72               ; Set SC(1 0) = $72E2
- STA SC+1
- LDA #$E2
- STA SC
+ LDA #HI(nameBuffer0+23*32+2)   ; Set SC(1 0) to the address of the third tile
+ STA SC+1                       ; on tile row 23 in nametable buffer 0, which is
+ LDA #LO(nameBuffer0+23*32+2)   ; the leftmost tile in the fuel indicator at the
+ STA SC                         ; top-left corner of the dashboard
 
- LDA #0
- STA K
- LDA #$FF
+ LDA #0                 ; Set the indicator's safe range from 0 to 255 by
+ STA K                  ; setting K to 0 and K+1 to 255, so all values are safe
+ LDA #255
  STA K+1
 
- LDA QQ14
- JSR DILX+2
+ LDA QQ14               ; Draw the fuel level indicator using a range of 0-63,
+ JSR DILX+2             ; and increment SC to point to the next indicator (the
+                        ; forward shield)
 
- LDA #8
- STA K
- LDA #$FF
+ LDA #8                 ; Set the indicator's safe range from 8 to 255 by
+ STA K                  ; setting K to 8 and K+1 to 255, so all values are safe
+ LDA #255               ; except those below 8, which are dangerous
  STA K+1
 
  LDA FSH                ; Draw the forward shield indicator using a range of
@@ -4192,14 +4360,15 @@ ENDIF
 
  LDA ASH                ; Draw the aft shield indicator using a range of 0-255,
  JSR DILX               ; and increment SC to point to the next indicator (the
-                        ; fuel level)
+                        ; energy banks)
 
- LDA ENERGY
- JSR DILX
+ LDA ENERGY             ; Draw the energy bank indicator using a range of 0-255,
+ JSR DILX               ; and increment SC to point to the next indicator (the
+                        ; cabin temperature)
 
- LDA #0
- STA K
- LDA #$18
+ LDA #0                 ; Set the indicator's safe range from 0 to 23 by
+ STA K                  ; setting K to 0 and K+1 to 24, so values from 0 to 23
+ LDA #24                ; are safe, while values of 24 or more are dangerous
  STA K+1
 
  LDA CABTMP             ; Draw the cabin temperature indicator using a range of
@@ -4207,81 +4376,132 @@ ENDIF
                         ; (the laser temperature)
 
  LDA GNTMP              ; Draw the laser temperature indicator using a range of
- JSR DILX               ; 0-255, and increment SC to point to the next indicator
-                        ; (the altitude)
+ JSR DILX               ; 0-255
 
- LDA #$73
- STA SC+1
- LDA #$7C
- STA SC
+ LDA #HI(nameBuffer0+27*32+28)  ; Set SC(1 0) to the address of the 28th tile
+ STA SC+1                       ; on tile row 27 in nametable buffer 0, which is
+ LDA #LO(nameBuffer0+27*32+28)  ; the leftmost tile in the speed indicator in
+ STA SC                         ; the bottom-right corner of the dashboard
 
- LDA #0
- STA K
- LDA #$FF
+ LDA #0                 ; Set the indicator's safe range from 0 to 255 by
+ STA K                  ; setting K to 0 and K+1 to 255, so all values are safe
+ LDA #255
  STA K+1
 
- LDA DELTA
- LSR A
- ADC DELTA
- JSR DILX+2
+ LDA DELTA              ; Fetch our ship's speed into A, in the range 0-40
 
- LDA #8
- STA K
- LDA #$FF
+ LSR A                  ; Set A = A / 2 + DELTA
+ ADC DELTA              ;       = 1.5 * DELTA
+
+ JSR DILX+2             ; Draw the speed level indicator using a range of 0-63,
+                        ; and increment SC to point to the next indicator
+                        ; (altitude)
+
+ LDA #8                 ; Set the indicator's safe range from 8 to 255 by
+ STA K                  ; setting K to 8 and K+1 to 255, so all values are safe
+ LDA #255               ; except those below 8, which are dangerous
  STA K+1
 
  LDA ALTIT              ; Draw the altitude indicator using a range of 0-255
  JSR DILX
 
-.CA331
+.dial1
 
- LDA #$BA+YPAL
+                        ; We now set up sprite 10 to use for the ship status
+                        ; indicator
+
+ LDA #186+YPAL          ; Set the y-coordinate of sprite 10 to 186
  STA ySprite10
- LDA #$CE
+
+ LDA #206               ; Set the x-coordinate of sprite 10 to 206
  STA xSprite10
 
  JSR GetStatusCondition ; Set X to our ship's status condition (0 to 3)
 
- LDA conditionAttrs,X
- STA attrSprite10
- LDA conditionTiles,X
- STA tileSprite10
- LDA QQ12
- BNE CA368
- LDA MSTG
- BPL CA371
- LDA MSAR
- BEQ CA368
- LDX NOMSL
- LDY #$6D
- LDA MCNT
- AND #8
- BNE CA36E
- LDY #$6C
- JSR MSBAR_b6
+ LDA conditionAttrs,X   ; Set the sprite's attributes to the corresponding
+ STA attrSprite10       ; entry from the conditionAttrs table, so the correct
+                        ; colour is set for the ship's status condition
 
-.CA368
+ LDA conditionTiles,X   ; Set the tile pattern to the corresponding entry from 
+ STA tileSprite10       ; the conditionTiles table, so the correct pattern is
+                        ; used for the ship's status condition
 
- LDA #$F0
- STA ySprite9
- RTS
+                        ; And finally we update the active missile indicator
+                        ; and the square targeting reticle
 
-.CA36E
+ LDA QQ12               ; If we are docked then QQ12 is non-zero, so jump to
+ BNE dial2              ; dial2 to hide the square targeting reticle in sprite 9
 
- JSR MSBAR_b6
+ LDA MSTG               ; If MSTG does not contain $FF then the active missile
+ BPL dial4              ; has a target lock (and MSTG contains a slot number),
+                        ; so jump to dial4 to show the square targeting reticle
+                        ; in the middle of the laser sights
 
-.CA371
+ LDA MSAR               ; If MSAR = 0 then the missile is not looking for a
+ BEQ dial2              ; target, so jump to dial2 to hide the square targeting
+                        ; reticle in sprite 9
 
- LDA #$F8
- STA tileSprite9
- LDA #1
- STA attrSprite9
- LDA #$7E
+                        ; We now flash the active missile indicator between
+                        ; black and red, and flash the square targeting reticle
+                        ; in sprite 9 on and off, to indicate that the missile
+                        ; is searching for a target
+
+ LDX NOMSL              ; Fetch the current number of missiles from NOMSL into X
+                        ; (which is also the number of the active missile)
+
+ LDY #109               ; Set Y = 109 to use as the tile pattern for the red
+                        ; missile indicator
+
+ LDA MCNT               ; Fetch the main loop counter and jump to dial3 if bit 3
+ AND #%00001000         ; is set, which will be true half of the time, with the
+ BNE dial3              ; bit being 0 for eight iterations around the main loop,
+                        ; and 1 for the next eight iterations
+                        ;
+                        ; If we jump to dial3 then the indicator is shown in
+                        ; red, and if we don't jump it is shown in black, so
+                        ; this flashes the missile indicator between red and
+                        ; black, changing the colour every eight iterations of
+                        ; the main loop
+
+ LDY #108               ; Set the tile pattern for the missile indicator at
+ JSR MSBAR_b6           ; position X to 108, which is a black indicator
+
+.dial2
+
+ LDA #240               ; Hide sprite 9 (the square targeting reticle) by moving
+ STA ySprite9           ; sprite 9 to y-coordinate 240, off the bottom of the
+                        ; screen
+
+ RTS                    ; Return from the subroutine
+
+.dial3
+
+ JSR MSBAR_b6           ; Set the tile pattern for the missile indicator at
+                        ; position X to pattern Y, which we set to 109 above,
+                        ; so this sets the indicator to red
+
+.dial4
+                        ; If we get here then our missile is targeted, so show
+                        ; the square targeting reticle in the middle of the
+                        ; laser sights
+
+ LDA #248               ; Set the tile pattern for sprite 9 to 248, which is a
+ STA tileSprite9        ; square outline
+
+ LDA #%00000001         ; Set the attributes for sprite 9 as follows:
+ STA attrSprite9        ;
+                        ;   * Bits 0-1    = sprite palette 1
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
+
+ LDA #126               ; Set the x-coordinate for sprite 9 to 126
  STA xSprite9
 
- LDA #$53+YPAL
+ LDA #83+YPAL           ; Set the y-coordinate for sprite 9 to 126
  STA ySprite9
- RTS
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -4295,13 +4515,33 @@ ENDIF
 
 .conditionAttrs
 
- EQUB 33                ; Docked
+ EQUB %00100001         ; Attributes for sprite when condition is docked:
+                        ;
+                        ;   * Bits 0-1    = sprite palette 1
+                        ;   * Bit 5 set   = show behind background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
- EQUB 32                ; Green
+ EQUB %00100000         ; Attributes for sprite when condition is green:
+                        ;
+                        ;   * Bits 0-1    = sprite palette 0
+                        ;   * Bit 5 set   = show behind background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
- EQUB 34                ; Yellow
+ EQUB %00100010         ; Attributes for sprite when condition is yellow
+                        ;
+                        ;   * Bits 0-1    = sprite palette 2
+                        ;   * Bit 5 set   = show behind background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
- EQUB 34                ; Red
+ EQUB %00100010         ; Attributes for sprite when condition is red
+                        ;
+                        ;   * Bits 0-1    = sprite palette 2
+                        ;   * Bit 5 set   = show behind background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
 ; ******************************************************************************
 ;
@@ -4328,32 +4568,82 @@ ENDIF
 ;       Name: MSBAR_b6
 ;       Type: Subroutine
 ;   Category: Dashboard
-;    Summary: ???
+;    Summary: Draw a specific indicator in the dashboard's missile bar
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The number of the missile indicator to update (counting
+;                       from bottom-right to bottom-left, then top-left and
+;                       top-right, so indicator NOMSL is the top-right
+;                       indicator)
+;
+;   Y                   The tile pattern number for the new missile indicator:
+;
+;                         * 133 = no missile indicator
+;
+;                         * 109 = red (armed and locked)
+;
+;                         * 108 = black (disarmed)
+;
+;                       The armed missile flashes black and red, so the tile is
+;                       swapped between 108 and 109 in the main loop
+;
+; Returns:
+;
+;   X                   X is preserved
+;
+;   Y                   Y is set to 0
 ;
 ; ******************************************************************************
 
 .MSBAR_b6
 
- TYA
- PHA
- LDY missileNames_b6,X
- PLA
- STA nameBuffer0+704,Y
- LDY #0
- RTS
+ TYA                    ; Store the pattern number on the stack so we can
+ PHA                    ; retrieve it later
+
+ LDY missileNames_b6,X  ; Set Y to the X-th entry from the missileNames table,
+                        ; so Y is the offset of missile X's indicator in the
+                        ; nametable buffer, from the start of row 22
+
+ PLA                    ; Set the nametable buffer entry to the pattern number
+ STA nameBuffer0+22*32,Y
+
+ LDY #0                 ; Set Y = 0 to return from the subroutine (so this
+                        ; routine behaves like the same routine in the other
+                        ; versions of Elite)
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: missileNames_b6
 ;       Type: Variable
 ;   Category: Dashboard
-;    Summary: ???
+;    Summary: Tile numbers for the four missile indicators on the dashboard, as
+;             offsets from the start of tile row 22
+;
+; ------------------------------------------------------------------------------
+;
+; The active missile (i.e. the one that is armed and fired first) is the one
+; with the highest number, so missile 4 (top-left) will be armed before missile
+; 3 (top-right), and so on.
 ;
 ; ******************************************************************************
 
 .missileNames_b6
 
- EQUB $00, $5F, $5E, $3F, $3E                 ; A39A: 00 5F 5E... ._^
+ EQUB 0                 ; Missile numbers are from 1 to 4, so this value is
+                        ; never used
+
+ EQUB 95                ; Missile 1 (bottom-right)
+
+ EQUB 94                ; Missile 2 (bottom-left)
+
+ EQUB 63                ; Missile 3 (top-right)
+
+ EQUB 62                ; Missile 4 (top-left)
 
 ; ******************************************************************************
 ;
@@ -4455,10 +4745,10 @@ ENDIF
 
  STA attrSprite0,X      ; Set the attributes for our sprite as follows:
                         ;
-                        ;     * Bits 0-1 = sprite palette in T
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 = bit 6 from byte #3 in equipSprites
-                        ;     * Bit 7 = bit 7 from byte #3 in equipSprites
+                        ;   * Bits 0-1 = sprite palette in T
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 = bit 6 from byte #3 in equipSprites
+                        ;   * Bit 7 = bit 7 from byte #3 in equipSprites
                         ;
                         ; So the sprite's attributes are set correctly
 
@@ -9314,10 +9604,10 @@ ENDIF
 
  LDA #%00100000         ; Set the attributes for this sprite as follows:
  STA attrSprite5,Y      ;
-                        ;     * Bits 0-1    = sprite palette 0
-                        ;     * Bit 5 set   = show behind background
-                        ;     * Bit 6 clear = do not flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+                        ;   * Bits 0-1    = sprite palette 0
+                        ;   * Bit 5 set   = show behind background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
  TXA                    ; Set the sprite's x-coordinate to X, which is the
  STA xSprite5,Y         ; x-coordinate for the current letter in the

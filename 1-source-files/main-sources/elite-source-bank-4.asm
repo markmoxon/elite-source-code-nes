@@ -2993,10 +2993,10 @@ ENDIF
  LDA #%00000001         ; Set S to use as the attribute for each of the sprites
  STA S                  ; in the logo, so each sprite is set as follows:
                         ;
-                        ;     * Bits 0-1    = sprite palette 1
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 clear = do not flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+                        ;   * Bits 0-1    = sprite palette 1
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
  LDA XC                 ; Set SC = XC * 8 + X
  ASL A                  ;        = XC * 8 + 6
@@ -3073,10 +3073,10 @@ ENDIF
  LDA S                  ; Set the attributes for sprite X to S, which we set
  STA attrSprite0,X      ; above as follows:
                         ;
-                        ;     * Bits 0-1    = sprite palette 1
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 clear = do not flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+                        ;   * Bits 0-1    = sprite palette 1
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
  LDA SC2                ; Set the x-coordinate for sprite X to SC2
  STA xSprite0,X

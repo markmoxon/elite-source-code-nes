@@ -991,10 +991,11 @@ ENDIF
                         ; the BEEP subroutine to make a short, high beep
 
  LDX XSAV               ; Call ABORT2 to store the details of this missile
- LDY #$6D               ; lock, with the targeted ship's slot number in X
+ LDY #109               ; lock, with the targeted ship's slot number in X
  JSR ABORT2             ; (which we stored in XSAV at the start of this ship's
                         ; loop at MAL1), and set the colour of the missile
-                        ; indicator to the colour in Y (red = $6D) ???
+                        ; indicator to the tile pattern number in Y (red
+                        ; indicator = pattern 109)
 
 .MA47
 
@@ -2027,8 +2028,8 @@ ENDIF
 
  BMI C858A
 
- LDA #$10
- JSR cntr
+ LDA #16                ; Apply damping to the roll rate (if enabled), so the
+ JSR cntr               ; roll rate in X creeps towards the centre by 16
 
 .C858A
 
@@ -2090,10 +2091,9 @@ ENDIF
  ORA KY5
  ORA KY6
  BMI C85C2
- LDA #$0C
 
- JSR cntr               ; Apply keyboard damping so the pitch rate in X creeps
-                        ; towards the centre by 1
+ LDA #12                ; Apply damping to the pitch rate (if enabled), so the
+ JSR cntr               ; pitch rate in X creeps towards the centre by 12
 
 .C85C2
 
@@ -2239,12 +2239,13 @@ ENDIF
 
 .MA20
 
- LDY #$6C               ; ???
- LDX NOMSL
- JSR MSBAR
+ LDY #108               ; Set the tile pattern for the active missile indicator
+ LDX NOMSL              ; to 108 (which is a black indicator), so we can flash
+ JSR MSBAR              ; it between red and black in the main loop to indicate
+                        ; that it is looking for a target
 
- LDY #3
- BNE loop_C8630
+ LDY #3                 ; Set Y = 3 and jump up to loop_C8630 (this BNE is
+ BNE loop_C8630         ; effectively a JMP as Y is never zero) ???
 
 .MA25
 
@@ -2465,9 +2466,10 @@ ENDIF
                         ; PPU after drawing the box edges and setting the next
                         ; free tile number
 
- JSR COMPAS
+ JSR COMPAS             ; Call COMPAS to update the compass
 
- JMP DrawPitchRollBars
+ JMP DrawPitchRollBars  ; Update the pitch and roll bars on the dashboard,
+                        ; returning from the subroutine using a tail call
 
 .C8733
 
@@ -2486,9 +2488,9 @@ ENDIF
                         ; This configures the NMI to send pattern data for the
                         ; drawing bitplane to the PPU during VBlank
 
- JSR COMPAS
+ JSR COMPAS             ; Call COMPAS to update the compass
 
- JSR DrawPitchRollBars
+ JSR DrawPitchRollBars  ; Update the pitch and roll bars on the dashboard
 
  JSR DIALS_b6
 
@@ -4170,54 +4172,71 @@ ENDIF
 ;       Name: DrawPitchRollBars
 ;       Type: Subroutine
 ;   Category: Dashboard
-;    Summary: ???
+;    Summary: Update the pitch and roll bars on the dashboard
 ;
 ; ------------------------------------------------------------------------------
 ;
-; Moves sprite 11 to coord (JSTX, 29)
-;              12 to coord (JSTY, 37)
+; The roll indicator uses sprite 11 and the pitch indicator uses sprite 12.
 ;
 ; ******************************************************************************
 
 .DrawPitchRollBars
 
- LDA JSTX
- EOR #$FF
- LSR A
- LSR A
- LSR A
- CLC
- ADC #$D8
- STA SC2
- LDY #$1D
- LDA #$0B
- JSR C8BB4
- LDA JSTY
- LSR A
- LSR A
- LSR A
- CLC
- ADC #$D8
- STA SC2
- LDY #$25
- LDA #$0C
+                        ; We start by drawing the roll indicator
 
-.C8BB4
+ LDA JSTX               ; Set SC2 = 216 + ~JSTX / 8
+ EOR #$FF               ;         = 216 - (JSTX + 1) / 8
+ LSR A                  ;
+ LSR A                  ; We use this as the x-coordinate of the roll indicator
+ LSR A                  ; as the centre of the indicator is at x-coordinate 232
+ CLC                    ; and JSTX / 8 is in the range 0 to 31, with a value of
+ ADC #216               ; 16 in the middle of the indicator, so SC2 is in the
+ STA SC2                ; range 216 to 247 with a middle point of 231 (this
+                        ; isn't 232 because of the + 1 in the calculation above)
 
- ASL A
- ASL A
- TAX
- LDA SC2
- SEC
- SBC #4
+ LDY #29                ; Set Y = 29 so we draw the indicator sprite on pixel
+                        ; y-coordinate 170 + 29 = 199 (which is the y-coordinate
+                        ; of the roll indicator)
+
+ LDA #11                ; Set A = 11 so we draw the indicator usinmg sprite 11
+
+ JSR piro1              ; Call piro1 below to draw the roll indicator
+
+                        ; We now draw the pitch indicator
+
+ LDA JSTY               ; Set SC2 = 216 + JSTY / 8
+ LSR A                  ;
+ LSR A                  ; We use this as the x-coordinate of the pitch indicator
+ LSR A                  ; as the centre of the indicator is at x-coordinate 232
+ CLC                    ; and JSTY / 8 is in the range 0 to 31, with a value of
+ ADC #216               ; 16 in the middle of the indicator, so SC2 is in the
+ STA SC2                ; range 216 to 247 with a middle point of 232
+
+ LDY #37                ; Set Y = 37 so we draw the indicator sprite on pixel
+                        ; y-coordinate 170 + 37 = 207 (which is the y-coordinate
+                        ; of the pitch indicator)
+
+ LDA #12                ; Set A = 11 so we draw the indicator usinmg sprite 12
+
+.piro1
+
+ ASL A                  ; Set X = A * 4
+ ASL A                  ;
+ TAX                    ; So we can use X as an index into the sprite buffer to
+                        ; update the sprite data for sprite A (as each sprite
+                        ; has four bytes in the buffer)
+
+ LDA SC2                ; Set the x-coordinate of the relevant indicator's
+ SEC                    ; sprite to SC2 - 4, so the centre of the eight-pixel
+ SBC #4                 ; wide sprite is on x-coordinate SC2
  STA xSprite0,X
- TYA
- CLC
 
+ TYA                    ; Set the y-coordinate of the relevant indicator's
+ CLC                    ; sprite to 170 + Y, so it appears on the correct row
  ADC #170+YPAL
-
  STA ySprite0,X
- RTS
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -9823,11 +9842,11 @@ ENDIF
                         ; chart
 
  LDA #%00000001         ; Set the attributes for sprite 15 as follows:
- STA attrSprite15
-                        ;     * Bits 0-1    = sprite palette 1
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 clear = do not flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+ STA attrSprite15       ;
+                        ;   * Bits 0-1    = sprite palette 1
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
  LDA QQ19               ; Set SC2 to the pixel x-coordinate of the centre of the
  STA SC2                ; crosshairs
@@ -15347,7 +15366,7 @@ ENDIF
  TXA                    ; Set the x-coordinate of sprite 13 (the compass dot) to
  CLC                    ; 220 + X, as 220 is the pixel x-coordinate of the
  ADC #220               ; centre of the compass, and X is in the range -6 to +6,
- STA xSprite13          ; so the dot is in the x-coordinate range 214 to 226 ???
+ STA xSprite13          ; so the dot is in the x-coordinate range 214 to 226
 
  LDA XX15+1             ; Set A to the y-coordinate of the planet or station to
                         ; show on the compass, which will be in the range -96 to
@@ -15358,11 +15377,9 @@ ENDIF
                         ; dot we want to draw. Returns with the C flag clear
 
                         ; We now set the y-coordinate of sprite 13 (the compass
-                        ; dot) to either 186 - X (NTSC) or 192 - X (PAL), as 186
-                        ; or 192 is the pixel y-coordinate of the centre of the
-                        ; compass, and X is in the range -6 to +6, so the dot is
-                        ; in the y-coordinate range 180 to 192 (NTSC) or 186 to
-                        ; 198 (PAL) ???
+                        ; dot) to 186, as 186 is the pixel y-coordinate of the
+                        ; centre of the compass, and X is in the range -6 to +6,
+                        ; so the dot is in the y-coordinate range 180 to 192
 
  STX T                  ; Set T = X for use in the calculation below
 
@@ -15707,44 +15724,83 @@ ENDIF
  STA XX0                ; blueprint and store it in XX0, so XX0(1 0) now
                         ; contains the address of this ship's blueprint
 
- STX SC2                ; ???
+ STX SC2                ; Store the new ship's slot number in SC2 to we can
+                        ; retrieve it below
 
- LDX T
+ LDX T                  ; Set X to the ship type that we stored in T above
 
  LDA #0                 ; Zero the ship's number on the scanner so that it
- STA INWK+33            ; doesn't appear on the scanner
+ STA INWK+33            ; doesn't appear on the scanner for now
 
- LDA scacol,X
- BMI CAB43
- TAX
- LDY #8
+ LDA scacol,X           ; Set A to the scanner colour for this ship type from
+                        ; the X-th entry in the scacol table (the colour is
+                        ; actually a sprite palette number)
 
-.loop_CAB25
+ BMI nwsh3              ; If bit 7 is set of the scanner colour then this ship
+                        ; has a cloaking device and is not visible on the
+                        ; scanner, so jump to nwsh3 to skip the following so
+                        ; the ship is not configured to appear on the scanner
 
- LDA scannerFlags,Y
- BEQ CAB2F
- DEY
- BNE loop_CAB25
- BEQ CAB43
+ TAX                    ; Set X to the scanner colour for this ship
 
-.CAB2F
+ LDY #8                 ; We now work our way through the list of scanner
+                        ; numbers to try to find a number to allocate to the
+                        ; new ship, starting from 8 and working down towards
+                        ; 1, so set a number counter in Y
 
- LDA #$FF
- STA scannerFlags,Y
- STY INWK+33
- TYA
- ASL A
- ADC INWK+33
- ASL A
- ASL A
- TAY
- TXA
- LDX INWK+33
- STA scannerAttrs,X
+.nwsh1
 
-.CAB43
+ LDA scannerNumber,Y    ; If the Y-th entry in scannerNumber is zero then this
+ BEQ nwsh2              ; number is available, so jump to nwsh2 to allocate it
+                        ; to our new ship
 
- LDX SC2
+ DEY                    ; Otherwise decrement the index in Y to point to the
+                        ; next number down
+
+ BNE nwsh1              ; Loop back to check the next entry in the table until
+                        ; we have found a free number, or we have checked all
+                        ; numbers from 8 to 1
+
+ BEQ nwsh3              ; We didn't find an available number for the new ship,
+                        ; so jump to nwsh3 to skip the following as there isn't
+                        ; room for another ship on the scanner
+
+.nwsh2
+
+ LDA #$FF               ; Set the scannerNumber entry for this ship to $FF to
+ STA scannerNumber,Y    ; indicate that this scanner number is now being used
+                        ; for our new ship
+
+ STY INWK+33            ; Set the ship's byte #33 to the scanner number for the
+                        ; new ship
+
+ TYA                    ; Set Y = (A * 2 + A) * 4
+ ASL A                  ;       = A * 3 * 4
+ ADC INWK+33            ;
+ ASL A                  ; This gives us the offset of the first scanner sprite
+ ASL A                  ; for this ship within the sprite buffer, as each
+ TAY                    ; ship has three sprites allocated to it, and there are
+                        ; four bytes per sprite in the buffer
+                        ;
+                        ; The offset is from the first scanner sprite in the
+                        ; sprite buffer, so this is the offset within the block
+                        ; of scanner sprites in the buffer
+                        ;
+                        ; That said, this value is not used here, as Y gets
+                        ; overwritten below before this value is used
+
+ TXA                    ; Set A to the scanner colour for this ship, which we
+                        ; put in X above
+
+ LDX INWK+33            ; Set X to the scanner number for the new ship
+
+ STA scannerColour,X    ; Set the X-th entry in the scannerColour table to the
+                        ; colour of this ship on the scanner
+
+.nwsh3
+
+ LDX SC2                ; Set X to the new ship's slot number that we stored in
+                        ; SC2 above
 
 .NW6
 
@@ -15795,12 +15851,13 @@ ENDIF
  STA NEWB               ; bits 0-3 and 5-6 in NEWB if they are set in the E%
                         ; byte
 
- AND #4                 ; ???
- BEQ NW8
+ AND #%00000100         ; If bit 2 of the ship's NEWB flags is clear then the
+ BEQ NW8                ; ship is not hostile, so jump to NW8 to skip the
+                        ; following
 
- LDA allowInSystemJump
- ORA #$80
- STA allowInSystemJump
+ LDA allowInSystemJump  ; We are spawning a hostile ship, so set bit 7 of
+ ORA #%10000000         ; allowInSystemJump to prevent us from being able to
+ STA allowInSystemJump  ; perform an in-system jump
 
 .NW8
 
@@ -16304,22 +16361,23 @@ ENDIF
 ;
 ; ------------------------------------------------------------------------------
 ;
-; Set the lock target for the leftmost missile and update the dashboard.
+; Set the lock target for the active missile and update the dashboard.
 ;
 ; Arguments:
 ;
 ;   X                   The slot number of the ship to lock our missile onto, or
 ;                       $FF to remove missile lock
 ;
-;   Y                   The new colour of the missile indicator:
+;   Y                   The tile pattern number for the new missile indicator:
 ;
-;                         * $85 = black (no missile) ???
+;                         * 133 = no missile indicator
 ;
-;                         * $6D = red (armed and locked) ???
+;                         * 109 = red (armed and locked)
 ;
-;                         * $6C = red flashing (armed) ???
+;                         * 108 = black (disarmed)
 ;
-;                         * $6C = black (disarmed) ???
+;                       The armed missile flashes black and red, so the tile is
+;                       swapped between 108 and 109 in the main loop
 ;
 ; ******************************************************************************
 
@@ -16330,14 +16388,17 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDX NOMSL              ; Call MSBAR to update the leftmost indicator in the
+ LDX NOMSL              ; Call MSBAR to update the active indicator in the
  JSR MSBAR              ; dashboard's missile bar, which returns with Y = 0
 
- JMP UpdateIconBar_b3   ; ???
+ JMP UpdateIconBar_b3   ; Update the icon bar so the missile button shows the
+                        ; correct available option for the active missile,
+                        ; returning from the subroutine using a tail call
 
 .msbpars
 
- EQUB 4, 0, 0, 0, 0     ; These bytes appear to be unused
+ EQUB 4, 0, 0, 0, 0     ; These bytes appear to be unused (they are left over
+                        ; from the 6502 Second Processor version of Elite)
 
 ; ******************************************************************************
 ;
@@ -16826,12 +16887,12 @@ ENDIF
 ;       Name: msblob
 ;       Type: Subroutine
 ;   Category: Dashboard
-;    Summary: Display the dashboard's missile indicators in black
+;    Summary: Display the dashboard's missile indicators in black or grey
 ;
 ; ------------------------------------------------------------------------------
 ;
 ; Display the dashboard's missile indicators, with all the missiles reset to
-; black (i.e. not armed or locked).
+; black (i.e. not armed or locked), or grey if there is no missile.
 ;
 ; ******************************************************************************
 
@@ -16847,8 +16908,9 @@ ENDIF
                         ; the rest of them are present and should be drawn in
                         ; black
 
- LDY #$85               ; Draw the missile indicator at position X as an empty
- JSR MSBAR              ; slot ???
+ LDY #133               ; Set the tile pattern for the missile indicator at
+ JSR MSBAR              ; position X to 133, which is the same grey as the
+                        ; dashboard, so this effectively hides the indicator
 
  DEX                    ; Decrement the counter to point to the next missile
 
@@ -16858,8 +16920,8 @@ ENDIF
 
 .SAL8
 
- LDY #$6C               ; Draw the missile indicator at position X in black ???
- JSR MSBAR
+ LDY #108               ; Set the tile pattern for the missile indicator at
+ JSR MSBAR              ; position X to 108, which is a black indicator
 
  DEX                    ; Decrement the counter to point to the next missile
 
@@ -18181,14 +18243,27 @@ ENDIF
  LDA #104               ; Set the screen height variables for a screen height of
  JSR SetScreenHeight    ; 208 (i.e. 2 * 104)
 
- LDY #8                 ; ???
- LDA #1
+                        ; Next we fill the scannerNumber table with non-zero
+                        ; entries so when we spawn ships for the death screen,
+                        ; they don't appear on the scanner because the scanner
+                        ; number table doesn't have any free slots
 
-.loop_CB22F
+ LDY #8                 ; Set an index in Y to work through the eight entries
+                        ; in the scannerNumber table
 
- STA scannerFlags,Y
- DEY
- BNE loop_CB22F
+ LDA #1                 ; Set A = 1 to use as the value for every ship in the
+                        ; scannerNumber table, which is non-zero so the NWSHP
+                        ; routine will skip the scanner configuration for any
+                        ; ships we spawn
+
+.deaf1
+
+ STA scannerNumber,Y    ; Set the Y-th scannerNumber entry to 1
+
+ DEY                    ; Decrement the index in Y
+
+ BNE deaf1              ; Loop back until we have set entries 1 to 8 in the
+                        ; table to 1, so nothing spawns on the scanner
 
  JSR nWq                ; Create a cloud of stardust containing the correct
                         ; number of dust particles (i.e. NOSTM of them)
@@ -19781,8 +19856,8 @@ ENDIF
  LDA K                  ; Set SC+1 = (K + K+1 + K+2 - SC) / 4
  CLC                    ;          = (x/2 + y/2 + z/2 - max(x, y, z) / 2) / 4
  ADC K+1                ;          = (x + y + z - max(x, y, z)) / 8
- ADC K+2                ;
- SEC                    ; 
+ ADC K+2
+ SEC
  SBC SC
  LSR A
  LSR A
@@ -22510,10 +22585,9 @@ ENDIF
  STA ECMA               ; currently running
  STA ECMP
 
- LDY #2                 ; ???
-
- JMP ECBLB              ; Update the E.C.M. indicator bulb on the dashboard and
-                        ; return from the subroutine using a tail call
+ LDY #2                 ; Flush the sound channels for sound Y = 2 to stop the
+ JMP FlushSpecificSound ; sound of the E.C.M. and return from the subroutine
+                        ; using a tail call
 
 ; ******************************************************************************
 ;

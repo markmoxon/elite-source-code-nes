@@ -1736,18 +1736,18 @@ ENDIF
  LDA #%00000011         ; Set the attributes for sprites 11 and 12 (the pitch
  STA attrSprite11       ; and roll indicators) as follows:
  STA attrSprite12       ;
-                        ;     * Bits 0-1    = sprite palette 3
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 clear = do not flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+                        ;   * Bits 0-1    = sprite palette 3
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
  LDA #%00000000         ; Set the attributes for sprite 13 (the compass dot) as
  STA attrSprite13       ; follows:
                         ;
-                        ;     * Bits 0-1    = sprite palette 0
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 clear = do not flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+                        ;   * Bits 0-1    = sprite palette 0
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
                         ; We now reset the 24 sprites from sprite 14 to 37,
                         ; which are the sprites used to show ships on the
@@ -1767,10 +1767,10 @@ ENDIF
  LDA #%00000000         ; Set the attributes for sprite Y / 4 as follows:
  STA attrSprite0,Y      ;
                         ;
-                        ;     * Bits 0-1    = sprite palette 0
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 clear = do not flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+                        ;   * Bits 0-1    = sprite palette 0
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
  INY                    ; Add 4 to Y so it points to the next sprite's data in
  INY                    ; the sprite buffer
@@ -2906,10 +2906,10 @@ ENDIF
 
  LDA #%00000011         ; Set the attributes for this sprite as follows:
  STA ySprite0,Y         ;
-                        ;     * Bits 0-1    = sprite palette 3
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 clear = do not flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+                        ;   * Bits 0-1    = sprite palette 3
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
  INY                    ; Increment Y to point to the fourth byte for this
                         ; sprite, i.e. xSprite0,Y
@@ -2962,31 +2962,31 @@ ENDIF
 
  LDA #%00000011         ; Set the attributes for sprite 1 as follows:
  STA attrSprite1        ;
-                        ;     * Bits 0-1    = sprite palette 3
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 clear = do not flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+                        ;   * Bits 0-1    = sprite palette 3
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
  LDA #%01000011         ; Set the attributes for sprite 2 as follows:
  STA attrSprite2        ;
-                        ;     * Bits 0-1    = sprite palette 3
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 set   = flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+                        ;   * Bits 0-1    = sprite palette 3
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 set   = flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
  LDA #%01000011         ; Set the attributes for sprite 3 as follows:
  STA attrSprite3        ;
-                        ;     * Bits 0-1    = sprite palette 3
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 set   = flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+                        ;   * Bits 0-1    = sprite palette 3
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 set   = flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
  LDA #%00000011         ; Set the attributes for sprite 4 as follows:
  STA attrSprite4        ;
-                        ;     * Bits 0-1    = sprite palette 3
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 clear = do not flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+                        ;   * Bits 0-1    = sprite palette 3
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
  JSR WaitFor3xVBlank    ; Wait for three VBlanks to pass
 
@@ -6575,26 +6575,26 @@ ENDIF
  LDA #%10000000         ; Set the attributes for sprite 8 (for the bottom sight)
  STA attrSprite8        ; as follows:
                         ;
-                        ;     * Bits 0-1    = sprite palette 0
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 clear = do not flip horizontally
-                        ;     * Bit 7 set   = flip vertically
+                        ;   * Bits 0-1    = sprite palette 0
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 set   = flip vertically
 
  LDA #%01000000         ; Set the attributes for sprite 6 (for the right sight)
  STA attrSprite6        ; as follows:
                         ;
-                        ;     * Bits 0-1    = sprite palette 0
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 set   = flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+                        ;   * Bits 0-1    = sprite palette 0
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 set   = flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
  LDA #%00000000         ; Set the attributes for sprites 5 and 7 (for the left
  STA attrSprite7        ; and top sights respectively) as follows:
  STA attrSprite5        ;
-                        ;     * Bits 0-1    = sprite palette 0
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 clear = do not flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+                        ;   * Bits 0-1    = sprite palette 0
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
  LDY #207               ; Set the tile pattern number for sprites 5 and 6 to
  STY tileSprite5        ; 207, for the left and right sights respectively
@@ -6630,34 +6630,34 @@ ENDIF
  LDA #%00000011         ; Set the attributes for sprite 5 (for the top-left
  STA attrSprite5        ; sight) as follows:
                         ;
-                        ;     * Bits 0-1    = sprite palette 3
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 clear = do not flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+                        ;   * Bits 0-1    = sprite palette 3
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
  LDA #%01000011         ; Set the attributes for sprite 6 (for the top-right
  STA attrSprite6        ; sight) as follows:
                         ;
-                        ;     * Bits 0-1    = sprite palette 3
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 set   = flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+                        ;   * Bits 0-1    = sprite palette 3
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 set   = flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
  LDA #%10000011         ; Set the attributes for sprite 7 (for the bottom-left
  STA attrSprite7        ; sight) as follows:
                         ;
-                        ;     * Bits 0-1    = sprite palette 3
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 clear = do not flip horizontally
-                        ;     * Bit 7 set   = flip vertically
+                        ;   * Bits 0-1    = sprite palette 3
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 set   = flip vertically
 
  LDA #%11000011         ; Set the attributes for sprite 8 (for the bottom-right
  STA attrSprite8        ; sight) as follows:
                         ;
-                        ;     * Bits 0-1    = sprite palette 0
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 set   = flip horizontally
-                        ;     * Bit 7 set   = flip vertically
+                        ;   * Bits 0-1    = sprite palette 0
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 set   = flip horizontally
+                        ;   * Bit 7 set   = flip vertically
 
  LDA #209               ; Set the tile pattern number for all four sprites to
  STA tileSprite5        ; 209
@@ -6688,10 +6688,10 @@ ENDIF
 
  LDA #%00000001         ; Set the attributes for all four sprites as follows:
  LDY #$CC               ;
- STA attrSprite5        ;     * Bits 0-1    = sprite palette 1
- STA attrSprite6        ;     * Bit 5 clear = show in front of background
- STA attrSprite7        ;     * Bit 6 clear = do not flip horizontally
- STA attrSprite8        ;     * Bit 7 clear = do not flip vertically
+ STA attrSprite5        ;   * Bits 0-1    = sprite palette 1
+ STA attrSprite6        ;   * Bit 5 clear = show in front of background
+ STA attrSprite7        ;   * Bit 6 clear = do not flip horizontally
+ STA attrSprite8        ;   * Bit 7 clear = do not flip vertically
 
  STY tileSprite5        ; Set the tile pattern number for sprites 5 and 6 to
  STY tileSprite6        ; 204, for the left and right sights respectively
@@ -6726,34 +6726,34 @@ ENDIF
  LDA #%00000010         ; Set the attributes for sprite 5 (for the top-left
  STA attrSprite5        ; sight) as follows:
                         ;
-                        ;     * Bits 0-1    = sprite palette 2
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 clear = do not flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+                        ;   * Bits 0-1    = sprite palette 2
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
  LDA #%01000010         ; Set the attributes for sprite 6 (for the top-right
  STA attrSprite6        ; sight) as follows:
                         ;
-                        ;     * Bits 0-1    = sprite palette 2
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 set   = flip horizontally
-                        ;     * Bit 7 clear = do not flip vertically
+                        ;   * Bits 0-1    = sprite palette 2
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 set   = flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
 
  LDA #%10000010         ; Set the attributes for sprite 7 (for the bottom-left
  STA attrSprite7        ; sight) as follows:
                         ;
-                        ;     * Bits 0-1    = sprite palette 2
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 clear = do not flip horizontally
-                        ;     * Bit 7 set   = flip vertically
+                        ;   * Bits 0-1    = sprite palette 2
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 set   = flip vertically
 
  LDA #%11000010         ; Set the attributes for sprite 8 (for the bottom-right
  STA attrSprite8        ; sight) as follows:
                         ;
-                        ;     * Bits 0-1    = sprite palette 2
-                        ;     * Bit 5 clear = show in front of background
-                        ;     * Bit 6 set   = flip horizontally
-                        ;     * Bit 7 set   = flip vertically
+                        ;   * Bits 0-1    = sprite palette 2
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 set   = flip horizontally
+                        ;   * Bit 7 set   = flip vertically
 
  LDA #206               ; Set the tile pattern number for all four sprites to
  STA tileSprite5        ; 206
