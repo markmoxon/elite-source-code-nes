@@ -761,10 +761,16 @@ ENDIF
 
  SKIP 4                 ; Temporary storage, used in a number of places
 
-.pressedButton
+.iconBarKeyPress
 
- SKIP 1                 ; The button number of the icon bar button that has been
-                        ; pressed, or 0 if nothing has been pressed
+ SKIP 1                 ; The button number of an icon bar button if an icon bar
+                        ; button has been chosen
+                        ;
+                        ; This gets set along with the key logger, copying the
+                        ; value from iconBarChoice (the latter gets set in the
+                        ; NMI handler with the icon bar button number, so
+                        ; iconBarKeyPress effectively latches the value from
+                        ; iconBarChoice)
 
 .QQ15
 
@@ -3925,65 +3931,99 @@ ORG $0200
 
 .KL
 
- SKIP 0                 ; The following bytes implement a key logger that
-                        ; enables Elite to scan for concurrent key presses on
-                        ; both controllers
+ SKIP 0                 ; The following bytes implement a key logger that gets
+                        ; updated according to the controller button presses
+                        ;
+                        ; This enables code from the BBC Micro version to be
+                        ; reused without rewriting the key press logic to work
+                        ; with the NES controllers, as it's easier just to
+                        ; populate the BBC's key logger table, so the code
+                        ; thinks that keys are being pressed when they are
+                        ; actually controller buttons
 
 .KY1
 
- SKIP 1                 ; "?" is being pressed
+ SKIP 1                 ; One pilot is configured and the down and B buttons are
+                        ; both being pressed on controller 1
+                        ;
+                        ; Or two pilots are configured and the B button is being
+                        ; pressed on controller 2
                         ;
                         ;   * 0 = no
                         ;
-                        ;   * Non-zero = yes
+                        ;   * $FF = yes
 
 .KY2
 
- SKIP 1                 ; Space is being pressed
+ SKIP 1                 ; One pilot is configured and the up and B buttons are
+                        ; both being pressed on controller 1
+                        ;
+                        ; Or two pilots are configured and the A button is being
+                        ; pressed on controller 2
                         ;
                         ;   * 0 = no
                         ;
-                        ;   * Non-zero = yes
+                        ;   * $FF = yes
 
 .KY3
 
- SKIP 1                 ; "<" is being pressed
+ SKIP 1                 ; One pilot is configured and the left button is being
+                        ; pressed on controller 1 (and the B button is not being
+                        ; pressed)
+                        ;
+                        ; Or two pilots are configured and the left button is
+                        ; being pressed on controller 2
                         ;
                         ;   * 0 = no
                         ;
-                        ;   * Non-zero = yes
+                        ;   * $FF = yes
 
 .KY4
 
- SKIP 1                 ; ">" is being pressed
+ SKIP 1                 ; One pilot is configured and the right button is being
+                        ; pressed on controller 1 (and the B button is not being
+                        ; pressed)
+                        ;
+                        ; Or two pilots are configured and the right button is
+                        ; being pressed on controller 2
                         ;
                         ;   * 0 = no
                         ;
-                        ;   * Non-zero = yes
+                        ;   * $FF = yes
 
 .KY5
 
- SKIP 1                 ; "X" is being pressed
+ SKIP 1                 ; One pilot is configured and the down button is being
+                        ; pressed on controller 1 (and the B button is not being
+                        ; pressed)
+                        ;
+                        ; Or two pilots are configured and the down button is
+                        ; being pressed on controller 2
                         ;
                         ;   * 0 = no
                         ;
-                        ;   * Non-zero = yes
+                        ;   * $FF = yes
 
 .KY6
 
- SKIP 1                 ; "S" is being pressed
+ SKIP 1                 ; One pilot is configured and he up button is being
+                        ; pressed on controller 1 (and the B button is not being
+                        ; pressed)
+                        ;
+                        ; Or two pilots are configured and the up button is
+                        ; being pressed on controller 2
                         ;
                         ;   * 0 = no
                         ;
-                        ;   * Non-zero = yes
+                        ;   * $FF = yes
 
 .KY7
 
- SKIP 1                 ; "A" is being pressed
+ SKIP 1                 ; The A button is being pressed on controller 1
                         ;
                         ;   * 0 = no
                         ;
-                        ;   * Non-zero = yes
+                        ;   * Bit 7 set = yes
 
 .cloudSize
 

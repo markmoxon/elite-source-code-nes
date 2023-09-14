@@ -10709,7 +10709,7 @@ ENDIF
 
                         ; Icon bar 1 (flight)
 
- EQUB 17                ; Docking computer
+ EQUB 17                ; Docking Computer
  EQUB  2                ; Market Price
  EQUB  3                ; Status Mode
  EQUB  4                ; Charts

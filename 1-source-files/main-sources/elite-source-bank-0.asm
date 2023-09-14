@@ -2212,7 +2212,7 @@ ENDIF
 
 .MA4
 
- LDA pressedButton      ; ???
+ LDA iconBarKeyPress    ; ???
  CMP #$18
  BNE MA25
 
@@ -7840,7 +7840,10 @@ ENDIF
                         ; free tile number
 
  LDA iconBarChoice
- JSR CheckForPause
+
+ JSR CheckForPause      ; If the Start button has been pressed then process the
+                        ; pause menu and set the C flag, otherwise clear it
+
  DEC LASCT
  BNE loop_C95E7
  RTS
@@ -16470,8 +16473,10 @@ ENDIF
 
 .yeno3
 
- LDA #0                 ; ???
- STA pressedButton
+ LDA #0                 ; Reset the key logger entry for the icon bar button
+ STA iconBarKeyPress    ; choice to clear any icon bar choices that might have
+                        ; been processed in the background (via the pause menu,
+                        ; for example)
 
  STA controller1A       ; Reset the key logger for the controller "A" button as
                         ; we have consumed the key press
@@ -16489,55 +16494,90 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: ReadDirectionalPad
+;       Name: TT17
 ;       Type: Subroutine
 ;   Category: Controllers
-;    Summary: ???
+;    Summary: Scan the key logger for the directional pad buttons
+;
+; ------------------------------------------------------------------------------
+;
+; X and Y are integers between -1 and +1 depending on which buttons are pressed.
+;
+; Returns:
+;
+;   A                   The button number, icon bar button was chosen
+;
+;   X                   Change in the x-coordinate according to the directional
+;                       keys being pressed on controller 1
+;
+;   Y                   Change in the y-coordinate according to the directional
+;                       keys being pressed on controller 1
 ;
 ; ******************************************************************************
 
-.ReadDirectionalPad
+.TT17
 
- LDA QQ11
- BNE CAD2E
+ LDA QQ11               ; If this is not the space view, jump to dpad1 to read
+ BNE dpad1              ; the directional pad on controller 1
 
- JSR DOKEY
- TXA
- RTS
+ JSR DOKEY              ; This is the space view, so populate the key logger
+                        ; and apply the docking computer manoeuvring code
 
-.CAD2E
+ TXA                    ; Transfer the value of the key pressed from X to A
 
- JSR DOKEY
- LDX #0
- LDY #0
- LDA controller1B
- BMI CAD52
- LDA controller1Left03
- BPL CAD40
- DEX
+ RTS                    ; Return from the subroutine
 
-.CAD40
+.dpad1
 
- LDA controller1Right03
- BPL CAD46
- INX
+ JSR DOKEY              ; Populate the key logger and apply the docking computer
+                        ; manoeuvring code
 
-.CAD46
+ LDX #0                 ; Set the initial values for the results, X = Y = 0,
+ LDY #0                 ; which we now increase or decrease appropriately
 
- LDA controller1Up
- BPL CAD4C
- INY
+ LDA controller1B       ; If the B button is being pressed on controller 1,
+ BMI dpad5              ; jump to dpad5 to return from the subroutine, as the
+                        ; arrow buttons act differently when B is also pressed
 
-.CAD4C
+ LDA controller1Left03  ; If the left button on controller 1 was not being held
+ BPL dpad2              ; down four VBlanks ago or for the three VBlanks before
+                        ; that, jump to dpad2 to skip the following instruction
 
- LDA controller1Down
- BPL CAD52
- DEY
+ DEX                    ; The left button has been held down for some time, so
+                        ; decrement the x-delta in X
 
-.CAD52
+.dpad2
 
- LDA pressedButton
- RTS
+ LDA controller1Right03 ; If the right button on controller 1 was not being held
+ BPL dpad3              ; down four VBlanks ago or for the three VBlanks before
+                        ; that, jump to dpad3 to skip the following instruction
+
+ INX                    ; The right button has been held down for some time, so
+                        ; increment the x-delta in X
+
+.dpad3
+
+ LDA controller1Up      ; If the up button on controller 1 is not being pressed,
+ BPL dpad4              ; jump to dpad4 to skip the following instruction
+
+ INY                    ; The up button is being pressed, so increment the
+                        ; y-delta in Y
+
+.dpad4
+
+ LDA controller1Down    ; If the down button on controller 1 is not being
+ BPL dpad5              ; pressed, jump to dpad5 to skip the following
+                        ; instruction
+
+ DEY                    ; The down button is being pressed, so decrement the
+                        ; y-delta in Y
+
+.dpad5
+
+ LDA iconBarKeyPress    ; Set A to the key logger entry for the icon bar button
+                        ; press, to return from the subroutine
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -17662,7 +17702,9 @@ ENDIF
 
 .CB070
 
- JSR ReadDirectionalPad
+ JSR TT17               ; Scan the key logger for the directional pad buttons,
+                        ; returning the cursor's delta values in X and Y and
+                        ; the button pressed in A
 
 ; ******************************************************************************
 ;
@@ -17716,13 +17758,14 @@ ENDIF
 ;
 ;       Name: TT102
 ;       Type: Subroutine
-;   Category: Controllers
+;   Category: Icon bar
 ;    Summary: Process icon bar controller choices
 ;
 ; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
+;   A                   The button number of the chosen icon from the icon bar
 ;
 ;   X                   The amount to move the crosshairs in the x-axis
 ;
@@ -17736,49 +17779,56 @@ ENDIF
 
 .TT102
 
- CMP #0                 ; ???
- BNE P%+5
+ CMP #0                 ; If no icon was chosen, jump to HME1 to skip all the
+ BNE P%+5               ; icon checks below
  JMP HME1
 
- CMP #3
- BNE P%+5
- JMP STATUS
+ CMP #3                 ; If the Status Mode icon was chosen, jump to STATUS to
+ BNE P%+5               ; show the Status Mode screen, returning from the
+ JMP STATUS             ; subroutine using a tail call
 
- CMP #4
- BEQ CB09B
- CMP #$24
- BNE CB0A6
- LDA chartToShow
- EOR #%10000000
- STA chartToShow
+ CMP #4                 ; If the Charts icon was chosen from the docked icon
+ BEQ barb1              ; bar, jump to barb1 to show the correct chart
 
-.CB09B
+ CMP #36                ; If the Switch chart range icon from the Charts icon
+ BNE barb2              ; bar was not chosen, jump to barb2 to keep checking
 
- LDA chartToShow
- BPL P%+5
- JMP TT22
+ LDA chartToShow        ; The Switch chart range icon from the Charts icon bar
+ EOR #%10000000         ; was chosen, so flip bit 7 of chartToShow to toggle
+ STA chartToShow        ; the chart between the Long-range and Short-range
+                        ; Chart
 
- JMP TT23
+.barb1
 
-.CB0A6
+ LDA chartToShow        ; If chartToShow = 0 then jump to TT23 to show the
+ BPL P%+5               ; Short-range Chart, otherwise jump to TT22 to show the
+ JMP TT22               ; Long-range Chart, in either case returning from the
+ JMP TT23               ; subroutine using a tail call
 
- CMP #$23               ; ???
- BNE TT92
- JSR SetSelectedSystem
- JMP TT25
+.barb2
+
+ CMP #35                ; If the Data on System icon was chosen, call the
+ BNE TT92               ; SetSelectedSystem routine to set the selected system
+ JSR SetSelectedSystem  ; to the nearest system, if we don't already have a
+ JMP TT25               ; selected system, and then jump to TT25 to show the
+                        ; Data on System screen, returning from the subroutine
+                        ; using a tail call
 
 .TT92
 
- CMP #8                 ; ???
- BNE P%+5
- JMP TT213
+ CMP #8                 ; If the Inventory icon was chosen, jump to TT213 to
+ BNE P%+5               ; show the Inventory screen, returning from the
+ JMP TT213              ; subroutine using a tail call
 
- CMP #2
- BNE P%+5
- JMP TT167
+ CMP #2                 ; If the Market Price icon was chosen, jump to TT167 to
+ BNE P%+5               ; show the Market Price screen, returning from the
+ JMP TT167              ; subroutine using a tail call
 
- CMP #1                 ; ???
- BNE fvw
+ CMP #1                 ; If the Launch icon was not chosen, jump to fvw to
+ BNE fvw                ; skip the following launch code
+
+                        ; The Launch icon was chosen, so we now attempt to
+                        ; launch
 
  LDX QQ12               ; If QQ12 is zero then we are not docked, so jump to fvw
  BEQ fvw                ; as we can't launch from the station if we are already
@@ -17794,19 +17844,34 @@ ENDIF
 
 .fvw
 
- CMP #$11               ; ???
- BNE CB119
- LDX QQ12
- BNE CB119
- LDA auto
- BNE CB106
- LDA SSPR
- BEQ CB119
+ CMP #17                ; If the Docking Computer icon was not chosen, jump to
+ BNE barb8              ; barb8 to move on to the next icon
+
+                        ; If we get here then the Docking Computer icon was
+                        ; chosen
+
+ LDX QQ12               ; If QQ12 is non-zero then we are docked, so jump to
+ BNE barb8              ; barb8 to move on to the next icon as we can't engage
+                        ; the docking computer if we aren't in space
+
+ LDA auto               ; If the docking computer is already activated, jump
+ BNE barb5              ; to barb5 to skip the docking fee calculations and
+                        ; disable the docking computer (so the icon bar button
+                        ; toggles it on and off)
+
+ LDA SSPR               ; If we are not inside the space station safe zone, jump
+ BEQ barb8              ; to barb8 to move on to the next icon as we can't
+                        ; engage the docking computer if we aren't in the safe
+                        ; zone
+
+                        ; We now deduct a docking fee of 5.0 credits for using
+                        ; the docking computer
 
  LDA DKCMP              ; If we have a docking computer fitted (DKCMP is
  ORA chargeDockingFee   ; non-zero) or we have already been charged a docking
- BNE CB0FA              ; fee (chargeDockingFee is non-zero), then jump to
-                        ; CB0FA to skip charging a docking fee
+ BNE barb4              ; fee (chargeDockingFee is non-zero), then jump to
+                        ; barb4 to engage the docking computer without charging
+                        ; a docking fee
 
                         ; Otherwise we do not have a docking computer fitted
                         ; or we have not yet been charged a docking fee, so
@@ -17818,48 +17883,60 @@ ENDIF
  JSR LCASH              ; Subtract (Y X) cash from the cash pot, but only if
                         ; we have enough cash
 
- BCS CB0F2              ; If the C flag is set then we did have enough cash for
-                        ; the transaction, so jump to CB0F2 to skip the
+ BCS barb3              ; If the C flag is set then we did have enough cash for
+                        ; the transaction, so jump to barb3 to skip the
                         ; following instruction
 
                         ; If we get here then we don't have enough cash for the
-                        ; docking fee, so ???
+                        ; docking fee, so make a beep and return from the
+                        ; subroutine without engaging the docking computer
 
  JMP BOOP               ; Call the BOOP routine to make a long, low beep, and
                         ; return from the subroutine using a tail call
 
-.CB0F2
+.barb3
 
  DEC chargeDockingFee   ; Set chargeDockingFee to $FF so we don't charge another
                         ; docking fee
 
  LDA #0                 ; Pring control code 0 (current amount of cash and
  JSR MESS               ; newline) as an in-flight message, to show our balance
-                        ; after the docking fee has been paind
+                        ; after the docking fee has been paid
 
-.CB0FA
+.barb4
 
- LDA #1
+ LDA #1                 ; Set A = 1 to pass to the ChooseMusic routine to play
+                        ; the docking music (The Blue Danube)
 
  JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
                         ; next VBlank)
 
- JSR ChooseMusic_b6     ; ???
- LDA #$FF
- BNE CB10B
+ JSR ChooseMusic_b6     ; Select and play the docking music (The Blue Danube)
 
-.CB106
+ LDA #$FF               ; Set A = $FF to set as the value of auto below, so the
+                        ; docking comuter is flagged as being enabled
+
+ BNE barb6              ; Jump to barb6 to store A in auto (this BNE is
+                        ; effectively a JMP as A is never zero)
+
+.barb5
+
+                        ; If we get here then we need to turn off the docking
+                        ; computer
 
  JSR ResetMusicAfterNMI ; Wait for the next NMI before resetting the current
-                        ; tune to 0 (no tune) and stopping the music
+                        ; tune to 0 (no tune) and stopping the docking music
 
- LDA #0                 ; ???
+ LDA #0                 ; Set A = 0 to set as the value of auto below, so the
+                        ; docking comuter is flagged as being disabled
 
-.CB10B
+.barb6
 
- STA auto
- LDA QQ11
- BEQ CB118
+ STA auto               ; Set auto to the value in A, to disable or enable the
+                        ; docking computer as required
+
+ LDA QQ11               ; If this is the space view, jump to barb7 to return
+ BEQ barb7              ; from the subroutine
 
  JSR CLYNS              ; Clear the bottom three text rows of the upper screen,
                         ; and move the text cursor to column 1 on row 21, i.e.
@@ -17868,67 +17945,89 @@ ENDIF
  JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen, so the
                         ; screen gets updated
 
-.CB118
+.barb7
 
- RTS
+ RTS                    ; Return from the subroutine
 
-.CB119
+.barb8
 
- JSR CheckForPause
- CMP #$15
- BNE CB137
- LDA QQ12
- BPL CB125
- RTS
+ JSR CheckForPause      ; If the Start button has been pressed then process the
+                        ; pause menu and set the C flag, otherwise clear it
 
-.CB125
+ CMP #21                ; If the "Front space view" icon was not chosen, jump to
+ BNE barb11             ; barb11 to move on to the next icon
 
- LDA #0
- LDX QQ11
- BNE CB133
- LDA VIEW
- CLC
- ADC #1
- AND #3
+                        ; If we get here then the "Front space view" icon was
+                        ; chosen
 
-.CB133
+ LDA QQ12               ; If QQ12 is zero then we are not docked and in space,
+ BPL barb9              ; so jump to barb9 to process the "Front space view"
+                        ; icon
 
- TAX
- JMP LOOK1
+ RTS                    ; Otherwise the icon does nothing, so return from the
+                        ; subroutine
 
-.CB137
+.barb9
+
+                        ; If we get here then the "Front space view" icon was
+                        ; chosen and we are in space
+
+ LDA #0                 ; Set A = 0 to use as the view number if we jump to
+                        ; barb10 to show the front space view (i.e. view 0)
+
+ LDX QQ11               ; If this is not the space view, jump to barb10 to show
+ BNE barb10             ; the front space view
+
+ LDA VIEW               ; Otherwise add 1 to the view number in VIEW and wrap it
+ CLC                    ; round using mod 4, so VIEW goes from 0 to 3 and back
+ ADC #1                 ; to 0 again (i.e. front, rear, left, right and back to
+ AND #3                 ; front again)
+
+.barb10
+
+ TAX                    ; Set X to the view number to show
+
+ JMP LOOK1              ; Jump to LOOK1 to switch to view X (front, rear, left
+                        ; or right), returning from the subroutine using a tail
+                        ; call
+
+.barb11
 
  BIT QQ12               ; If bit 7 of QQ12 is clear (i.e. we are not docked, but
  BPL LABEL_3            ; in space), jump to LABEL_3 to skip the following
                         ; checks for the save commander file key press
 
- CMP #5                 ; ???
- BNE P%+5
- JMP EQSHP
+ CMP #5                 ; If the Equip Ship icon was chosen, jump to TT219 to
+ BNE P%+5               ; show the Equip Ship screen, returning from the
+ JMP EQSHP              ; subroutine using a tail call
 
- CMP #6                 ; ???
- BNE LABEL_3
- JMP SVE_b6
+ CMP #6                 ; If the Save and Load icon was chosen, jump to SVE to
+ BNE LABEL_3            ; show the Save and Load screen, returning from the
+ JMP SVE_b6             ; subroutine using a tail call
 
 .LABEL_3
 
- CMP #22                ; ???
- BNE P%+5
- JMP hyp
+ CMP #22                ; If the Hyperspace icon was chosen, jump to hyp to do
+ BNE P%+5               ; a hyperspace jump (if we are in space), returning from
+ JMP hyp                ; the subroutine using a tail call
 
- CMP #41
- BNE P%+5
- JMP GalacticHyperdrive
+ CMP #41                ; If the Galactic Hyperspace icon was chosen, jump to
+ BNE P%+5               ; GalacticHyperdrive to dop a galactic hyperspacew jump,
+ JMP GalacticHyperdrive ; returning from the subroutine using a tail call
 
- CMP #$27               ; ???
- BNE HME1
- LDA QQ22+1
- BNE t95
+ CMP #39                ; If the "Search for system" icon was not chosen, jump
+ BNE HME1               ; to HME1 to move on to the next icon
 
- LDA QQ11
- AND #$0E
- CMP #$0C
- BNE t95
+ LDA QQ22+1             ; Fetch QQ22+1, which contains the number that's shown
+                        ; on-screen during hyperspace countdown
+
+ BNE t95                ; If it is non-zero, return from the subroutine (as t95
+                        ; contains an RTS), as there is a countdown in progress
+
+ LDA QQ11               ; If the view in QQ11 is not %0000110x (i.e. 12 or 13,
+ AND #%00001110         ; which are the Short-range Chart and Long-range Chart),
+ CMP #%00001100         ; jump to t95 to return from the subroutine (as t95
+ BNE t95                ; contains an RTS)
 
  JMP HME2               ; Jump to HME2 to let us search for a system, returning
                         ; from the subroutine using a tail call
@@ -17937,18 +18036,20 @@ ENDIF
 
  STA T1                 ; Store A (the key that's been pressed) in T1
 
- LDA QQ11               ; ???
- AND #$0E
- CMP #$0C
- BNE TT107
- LDA QQ22+1
- BNE TT107
+ LDA QQ11               ; If the view in QQ11 is not %0000110x (i.e. 12 or 13,
+ AND #%00001110         ; which are the Short-range Chart and Long-range Chart),
+ CMP #%00001100         ; jump to TT107 to skip the following and move on to
+ BNE TT107              ; updating the hyperspace
+
+ LDA QQ22+1             ; If the on-screen hyperspace counter is non-zero,
+ BNE TT107              ; then we are already counting down, so jump to TT107
+                        ; to skip the following
 
  LDA T1                 ; Restore the original value of A (the key that's been
                         ; pressed) from T1
 
- CMP #$26               ; ???
- BNE ee2
+ CMP #38                ; If the "Return pointer to current system" icon was not
+ BNE ee2                ; chosen, jump to ee2 to skip the following
 
  JSR ping               ; Set the target system to the current system (which
                         ; will move the location in (QQ9, QQ10) to the current
@@ -17972,20 +18073,42 @@ ENDIF
 
 .TT107
 
- LDA QQ22+1             ; ???
- BEQ t95
- DEC QQ22
- BNE t95
- LDA #5
+ LDA QQ22+1             ; If the on-screen hyperspace counter is zero, return
+ BEQ t95                ; from the subroutine (as t95 contains an RTS), as we
+                        ; are not currently counting down to a hyperspace jump
+
+ DEC QQ22               ; Decrement the internal hyperspace counter
+
+ BNE t95                ; If the internal hyperspace counter is still non-zero,
+                        ; then we are still counting down, so return from the
+                        ; subroutine (as t95 contains an RTS)
+
+                        ; If we get here then the internal hyperspace counter
+                        ; has just reached zero and it wasn't zero before, so
+                        ; we need to reduce the on-screen counter and update
+                        ; the screen. We do this by first printing the next
+                        ; number in the countdown sequence, and then printing
+                        ; the old number, which will erase the old number
+                        ; and display the new one because printing uses EOR
+                        ; logic
+
+ LDA #5                 ; Reset the internal hyperspace counter to 5
  STA QQ22
- DEC QQ22+1
- BEQ CB1A2
- LDA #$FA
- JMP MESS
 
-.CB1A2
+ DEC QQ22+1             ; Decrement the on-screen hyperspace countdown
 
- JMP TT18
+ BEQ barb12             ; If the countdown is zero, jump to barb12 to do the
+                        ; jump
+
+ LDA #250               ; Print in-flight token 250, which is the hyperspace
+ JMP MESS               ; countdown, and return from the subroutine using a
+                        ; tail call
+
+.barb12
+
+ JMP TT18               ; The countdown has finished, so jump to TT18 to do a
+                        ; hyperspace jump, returning from the subroutine using
+                        ; a tail call
 
 .t95
 
@@ -19005,7 +19128,8 @@ ENDIF
  LDA #0                 ; Set A to 0, as this means "key not pressed" in the
                         ; key logger at KL
 
- STA pressedButton      ; ???
+ STA iconBarKeyPress    ; Reset the key logger entry for the icon bar button
+                        ; choice
 
 .DKL3
 
@@ -20028,7 +20152,8 @@ ENDIF
 ;       Name: DOKEY
 ;       Type: Subroutine
 ;   Category: Controllers
-;    Summary: Scan for the seven primary flight controls
+;    Summary: Scan for the seven primary flight controls and apply the docking
+;             computer manoeuvring code
 ;  Deep dive: The key logger
 ;             The docking computer
 ;
@@ -20037,36 +20162,46 @@ ENDIF
 .DOKEY
 
  JSR SetKeyLogger_b6    ; Populate the key logger table with the controller
-                        ; button presses
+                        ; button presses and return the button number in X
+                        ; if an icon bar button has been chosen
 
- LDA auto               ; ???
- BNE CB6BA
+ LDA auto               ; If auto is non-zero, then the docking computer is
+ BNE doky3              ; currently activated, so jump to doky3 to apply the
+                        ; docking computer manoeuvring code below
 
-.CB6B0
+.doky1
 
- LDX pressedButton
- CPX #64
- BNE CB6B9
+ LDX iconBarKeyPress    ; If the icon bar key logger entry in iconBarKeyPress
+ CPX #64                ; is not 64, then jump to doky2 to skip the following
+ BNE doky2              ; (interestingly, iconBarKeyPress can never contain
+                        ; this value, as none of the keys in the iconBarButtons
+                        ; table have this value, and the value for the Start
+                        ; button is 80)
 
- JMP PauseGame_b6
+ JMP PauseGame_b6       ; Pause the game and process choices from the pause menu
+                        ; until the game is unpaused by another press of Start,
+                        ; returning from the subroutine using a tail call
 
-.CB6B9
+.doky2
 
- RTS
+ RTS                    ; Return from the subroutine
 
-.CB6BA
+.doky3
 
- LDA SSPR               ; ???
- BNE CB6C8
+ LDA SSPR               ; If we are inside the space station safe zone, jump to
+ BNE doky4              ; doky4 to run the docking computer manoeuvring code
 
- STA auto
+ STA auto               ; Otherwise set auto to 0 to disable the docking
+                        ; computer, so we can't engage it outside of the safe
+                        ; zone
 
  JSR ResetMusicAfterNMI ; Wait for the next NMI before resetting the current
                         ; tune to 0 (no tune) and stopping the music
 
- JMP CB6B0              ; ???
+ JMP doky1              ; Loop back to doky1 to check the icon bar key logger
+                        ; entry and return from the subroutine
 
-.CB6C8
+.doky4
 
  JSR ZINF               ; Call ZINF to reset the INWK ship workspace
 
@@ -20111,7 +20246,7 @@ ENDIF
                         ; following instruction
 
  LDX #1                 ; Set X = 1, so we "press" KY+1, i.e. KY2, with the
-                        ; next instruction (speed up) ???
+                        ; next instruction (speed up)
 
  STA KL,X               ; Store $FF in either KY1 or KY2 to "press" the relevant
                         ; key, depending on whether the updated acceleration is
@@ -20128,7 +20263,7 @@ ENDIF
                         ; stored in JSTX (i.e. the centre of the roll indicator)
 
  LDX #2                 ; Set X = 2, so we "press" KL+2, i.e. KY3 below
-                        ; ("<", increase roll) ???
+                        ; (left button, increase roll)
 
  ASL INWK+29            ; Shift ship byte #29 left, which shifts bit 7 of the
                         ; updated roll counter (i.e. the roll direction) into
@@ -20142,7 +20277,8 @@ ENDIF
 
  LDX #3                 ; The C flag is set, i.e. the direction of the updated
                         ; roll counter is negative, so set X to 3 so we
-                        ; "press" KY+3. i.e. KY4, below (">", decrease roll) ???
+                        ; "press" KY+3. i.e. KY4, below (right button, decrease
+                        ; roll)
 
  BIT INWK+29            ; We shifted the updated roll counter to the left above,
  BPL DK14               ; so this tests bit 6 of the original value, and if it
@@ -20179,7 +20315,7 @@ ENDIF
                         ; indicator)
 
  LDX #4                 ; Set X = 4, so we "press" KY+4, i.e. KY5, below
-                        ; ("X", decrease pitch) ???
+                        ; (down button, decrease pitch)
 
  ASL INWK+30            ; Shift ship byte #30 left, which shifts bit 7 of the
                         ; updated pitch counter (i.e. the pitch direction) into
@@ -20192,7 +20328,7 @@ ENDIF
  BCS P%+4               ; If the C flag is set, skip the following instruction
 
  LDX #5                 ; Set X = 5, so we "press" KY+5, i.e. KY6, with the next
-                        ; instruction ("S", increase pitch) ???
+                        ; instruction (up button, increase pitch)
 
  STA KL,X               ; Store 128 in either KY5 or KY6 to "press" the relevant
                         ; key, depending on whether the pitch direction is
@@ -20213,16 +20349,16 @@ ENDIF
  LDA #14                ; Set A to 14, which is the amount we want to alter the
                         ; roll rate by if the roll keys are being pressed
 
- LDY KY3                ; If the "<" key is not being pressed, skip the next
+ LDY KY3                ; If the left button is not being pressed, skip the next
  BEQ P%+5               ; instruction
 
- JSR BUMP2              ; The "<" key is being pressed, so call the BUMP2
+ JSR BUMP2              ; The left button is being pressed, so call the BUMP2
                         ; routine to increase the roll rate in X by A
 
- LDY KY4                ; If the ">" key is not being pressed, skip the next
- BEQ P%+5               ; instruction
+ LDY KY4                ; If the right button is not being pressed, skip the
+ BEQ P%+5               ; next instruction
 
- JSR REDU2              ; The "<" key is being pressed, so call the REDU2
+ JSR REDU2              ; The right button is being pressed, so call the REDU2
                         ; routine to decrease the roll rate in X by A, taking
                         ; the keyboard auto re-centre setting into account
 
@@ -20234,40 +20370,48 @@ ENDIF
  LDX JSTY               ; Set X = JSTY, the current pitch rate (as shown in the
                         ; DC indicator on the dashboard)
 
- LDY KY5                ; If the "X" key is not being pressed, skip the next
+ LDY KY5                ; If the down button is not being pressed, skip the next
  BEQ P%+5               ; instruction
 
- JSR REDU2              ; The "X" key is being pressed, so call the REDU2
+ JSR REDU2              ; The down button is being pressed, so call the REDU2
                         ; routine to decrease the pitch rate in X by A, taking
                         ; the keyboard auto re-centre setting into account
 
- LDY KY6                ; If the "S" key is not being pressed, skip the next
+ LDY KY6                ; If the up button is not being pressed, skip the next
  BEQ P%+5               ; instruction
 
- JSR BUMP2              ; The "S" key is being pressed, so call the BUMP2
+ JSR BUMP2              ; The up button is being pressed, so call the BUMP2
                         ; routine to increase the pitch rate in X by A
 
  STX JSTY               ; Store the updated roll rate in JSTY
 
- LDA auto               ; ???
- BNE CB777
+ LDA auto               ; If auto is non-zero, then the docking computer is
+ BNE doky6              ; currently activated, so jump up to doky1 via doky6 to
+                        ; check the icon bar key logger entry and return from
+                        ; the subroutine
 
- LDX #$80
- LDA KY3
- ORA KY4
- BNE CB76C
- STX JSTX
+ LDX #128
 
-.CB76C
+ LDA KY3                ; If either of the left or right buttons are being 
+ ORA KY4                ; pressed, jump to doky5 to skip the following
+ BNE doky5              ; instruction, so pressing buttons on the controller
+                        ; overrides the docking computer
 
- LDA KY5
- ORA KY6
- BNE CB777
- STX JSTY
+ STX JSTX               ; Store the updated roll rate in JSTX
 
-.CB777
+.doky5
 
- JMP CB6B0
+ LDA KY5                ; If either of the up or down buttons are being 
+ ORA KY6                ; pressed, jump to doky6 to skip the following
+ BNE doky6              ; instruction, so pressing buttons on the controller
+                        ; overrides the docking computer
+
+ STX JSTY               ; Store the updated roll rate in JSTY
+
+.doky6
+
+ JMP doky1              ; Loop back to doky1 to check the icon bar key logger
+                        ; entry and return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -20785,7 +20929,8 @@ ENDIF
 ;       Name: PAS1
 ;       Type: Subroutine
 ;   Category: Controllers
-;    Summary: Display a rotating ship at space coordinates (0, 100, 256)
+;    Summary: Display a rotating ship at space coordinates (0, 100, 256) and
+;             scan the controllers
 ;
 ; ******************************************************************************
 
