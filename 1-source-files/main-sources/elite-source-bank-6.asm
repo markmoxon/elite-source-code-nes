@@ -8379,7 +8379,8 @@ ENDIF
 ;
 ;   K                   Half the width of the rectangle containing the lightning
 ;
-;   K+1                 Half the height of the rectangle containing the lightning
+;   K+1                 Half the height of the rectangle containing the
+;                       lightning
 ;
 ;   K+2                 The x-coordinate of the centre of the lightning
 ;
@@ -8893,179 +8894,340 @@ ENDIF
 ;    Summary: Get a name from the keyboard for searching the galaxy or changing
 ;             commander name
 ;
+; ------------------------------------------------------------------------------
+;
+; Returns:
+;
+;   INWK+5              The entered name, terminated by ASCII 13
+;
+;   C flag              The status of the entered name:
+;
+;                         * Set = The name is empty
+;
+;                         * Clear = The name is not empty
+;
 ; ******************************************************************************
 
 .InputName
 
- LDY #0
+ LDY #0                 ; Set an index in Y to point to the letter within the
+                        ; name that we are entering, starting with the first
+                        ; leter at index 0
 
-.CBA65
+                        ; The currently entered name is at INWK+5, so we use
+                        ; that to provide the starting point for each letter
+                        ; (or we start at "A" if there is no currently entered
+                        ; name)
 
- LDA INWK+5,Y
- CMP #$41
- BCS CBA6E
- LDA #$41
+.name1
 
-.CBA6E
+ LDA INWK+5,Y           ; Fetch the Y-th character of the currently entered
+                        ; name at INWK+5
 
- PHA
+ CMP #'A'               ; If the character is ASCII "A" or greater, jump to
+ BCS name2              ; name2 to use this as the starting point for this
+                        ; letter
+
+ LDA #'A'               ; Otherwise set A to the letter "A" to use as the
+                        ; starting point
+
+.name2
+
+ PHA                    ; These instructions together have no effect
  PLA
- JSR ChangeLetter
- BCS CBA9C
- CMP #$1B
- BEQ CBAAF
- CMP #$7F
- BEQ CBAB5
- CPY inputNameSize
- BCS CBA93
- CMP #$21
- BCC CBA93
- CMP #$7B
- BCS CBA93
- STA INWK+5,Y
- INY
- INC XC
- JMP CBA65
 
-.CBA93
+ JSR ChangeLetter       ; Call ChangeLetter to allow us to move up or down
+                        ; through the alphabet, returning with the letter
+                        ; selected in A
 
- JSR BEEP_b7
- LDY inputNameSize
- JMP CBA65
+ BCS name4              ; If the C flag was set by ChangeLetter then the A
+                        ; button was pressed, so jump to name4 to finish the
+                        ; process as this means we have finished entering the
+                        ; name
 
-.CBA9C
+                        ; Otherwise we now check whether the chosen character
+                        ; is valid
 
- STA INWK+5,Y
- INY
- LDA #$0D
- STA INWK+5,Y
- LDA #$0C
+ CMP #27                ; If ChangeLetter returned an ASCII ESC character, jump 
+ BEQ name5              ; to name5 to return from the subroutine with an empty
+                        ; name and the C flag set
+
+ CMP #127               ; If ChangeLetter returned an ASCII DEL character, jump
+ BEQ name6              ; to name6 to delete the character to the left
+
+ CPY inputNameSize      ; If Y >= inputNameSize then the entered name is too
+ BCS name3              ; long, so jump to name3 to give an error beep and try
+                        ; again
+
+ CMP #'!'               ; If A < ASCII "!" then it is a control character, so
+ BCC name3              ; jump to name3 to give an error beep and try again
+
+ CMP #'{'               ; If A >= ASCII "{" then it is not a valid character, so
+ BCS name3              ; jump to name3 to give an error beep and try again
+
+                        ; If we get here then the chosen character is valid
+
+ STA INWK+5,Y           ; Store the chosen character in the Y-th position in the
+                        ; string at INWK+5
+
+ INY                    ; Increment the index in Y to point to the next letter
+
+ INC XC                 ; Move the text cursor to the right by one place
+
+ JMP name1              ; Loop back to name1 to fetch the next letter
+
+.name3
+
+                        ; If we get here then there are too many characters in
+                        ; the string, or the entered character is not a valid
+                        ; letter
+
+ JSR BEEP_b7            ; Call the BEEP subroutine to make a short, high beep to
+                        ; indicate an error
+
+ LDY inputNameSize      ; Set Y to the maximum length of the string, so when we
+                        ; loop back to name1, we ask for the last letter again
+
+ JMP name1              ; Loop back to name1 to fetch the next letter
+
+.name4
+
+                        ; If we get here then we have finished entering the name
+
+ STA INWK+5,Y           ; Store the chosen character in the Y-th position in the
+                        ; string at INWK+5
+
+ INY                    ; Increment the index in Y to point to the next letter
+
+ LDA #13                ; Store the string terminator in the next letter, so the
+ STA INWK+5,Y           ; entered string is terminated properly
+
+ LDA #12                ; Print a newline
  JSR CHPR_b2
 
  JSR DrawMessageInNMI   ; Configure the NMI to display the message that we just
                         ; printed
 
- CLC
- RTS
+ CLC                    ; Clear the C flag to indicate that a name has
+                        ; successfully been entered
 
-.CBAAF
+ RTS                    ; Return from the subroutine
 
- LDA #$0D
- STA INWK+5
- SEC
- RTS
+.name5
 
-.CBAB5
+ LDA #13                ; Store the string terminator in the first letter, so
+ STA INWK+5             ; the returned string is empty
 
- TYA
- BEQ CBAC4
- DEY
- LDA #$7F
- JSR CHPR_b2
- LDA INWK+5,Y
- JMP CBA6E
+ SEC                    ; Set the C flag to indicate that a valid name has not
+                        ; been entered
 
-.CBAC4
+ RTS                    ; Return from the subroutine
 
- JSR BEEP_b7
- LDY #0
- BEQ CBA65
+.name6
+
+                        ; If we get here then we need to delete the character to
+                        ; the left of the current letter
+
+ TYA                    ; If Y = 0 then we are still on the first letter, so
+ BEQ name7              ; jump to name7 to given an error beep, as we can't
+                        ; delete past the start of the name
+
+ DEY                    ; Decrement the length of the current name in Y, so the
+                        ; next character we enter replaces the one we are
+                        ; deleting
+
+ LDA #127               ; Print a delete character to delete the letter to the
+ JSR CHPR_b2            ; left
+
+ LDA INWK+5,Y           ; Set A to the character before the one we just deleted,
+                        ; as that's the current character now
+
+ JMP name2              ; Loop back to name2 to keep scanning for button presses
+
+.name7
+
+                        ; If we get here then we need to givew an error beep, as
+                        ; we just tried to delete past the start of the name
+
+ JSR BEEP_b7            ; Call the BEEP subroutine to make a short, high beep to
+                        ; indicate an error
+
+ LDY #0                 ; Set Y = 0 to set the current character to the start of
+                        ; the name
+
+ BEQ name1              ; Loop back to name1 to fetch the next letter (this BEQ
+                        ; is effectively a JMP, as Y is always zero)
 
 ; ******************************************************************************
 ;
 ;       Name: ChangeLetter
 ;       Type: Subroutine
 ;   Category: Controllers
-;    Summary: ???
+;    Summary: Choose a letter using the up and down buttons
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The letter to start on
+;
+; Returns:
+;
+;   A                   The chosen letter
+;
+;   C flag              The status of the A button:
+;
+;                         * Set = the A button was pressed to finish entering
+;                                 the string
+;
+;                         * Clear = the A button was not pressed
 ;
 ; ******************************************************************************
 
 .ChangeLetter
 
- TAX
- STY YSAV
- LDA fontStyle
- PHA
- LDA QQ11
- AND #$20
- BEQ CBADB
+ TAX                    ; Set X to the starting letter
+
+ STY YSAV               ; Store Y in YSAV so we can retrieve it below
+
+ LDA fontStyle          ; Store the current font style on the stack, so we can
+ PHA                    ; restore it when we return from the subroutine
+
+ LDA QQ11               ; If bit 5 of the view type in QQ11 is clear, then the
+ AND #%00100000         ; normal font is not loaded, so jump to lett1 to skip
+ BEQ lett1              ; the following instruction
 
  LDA #1                 ; Set the font style to print in the normal font
  STA fontStyle
 
-.CBADB
+.lett1
 
- TXA
+ TXA                    ; Set A to the starting letter
 
-.CBADC
+.lett2
 
- PHA
+ PHA                    ; Store the current letter in A on the stack so we can
+                        ; retrieve it below
 
  LDY #4                 ; Wait until four NMI interrupts have passed (i.e. the
  JSR DELAY              ; next four VBlanks)
 
- PLA
- PHA
- JSR CHPR_b2
- DEC XC
+ PLA                    ; Set A to the current letter, leaving a copy of it on
+ PHA                    ; the stack
+
+ JSR CHPR_b2            ; Print the character in A
+
+ DEC XC                 ; Move the text cursor left by one character, so it is
+                        ; the correct column for the letter we just printed
 
  JSR DrawMessageInNMI   ; Configure the NMI to display the message that we just
                         ; printed
 
- SEC
- LDA controller1A
- BMI CBB2A
- CLC
- PLA
- LDX controller1B
- BMI CBADC
- LDX iconBarChoice
- BNE CBB33
- LDX controller1Left03
- BMI CBB26
- LDX controller1Right03
- BMI CBB2B
- LDX controller1Up
- BPL CBB16
- CLC
+ SEC                    ; Set the C flag to return from the subroutine if the
+                        ; following check shows that the A button was pressed,
+                        ; in which case we have finished entering letters
+
+ LDA controller1A       ; If the A button on controller 1 is being pressed, jump
+ BMI lett5              ; to lett5 to return from the subroutine with the C flag
+                        ; set and the current letter as the chosen letter
+
+ CLC                    ; Clear the C flag to indicate that the A button was not
+                        ; pressed
+
+ PLA                    ; Set A to the current letter, which we stored on the
+                        ; stack above
+
+ LDX controller1B       ; If the B button on controller 1 is being pressed, loop
+ BMI lett2              ; back to lett2 to keep scanning for button presses, as
+                        ; the arrow buttons have a different meaning when the B
+                        ; button is also held down
+
+ LDX iconBarChoice      ; If an icon has been chosen from the icon bar, jump to
+ BNE lett7              ; lett7 to return from the subroutine with a value of
+                        ; 27 (ESC, or escape) and the C flag clear
+
+ LDX controller1Left03  ; If the left button on controller 1 was being held down
+ BMI lett4              ; four VBlanks ago, jump to lett4 to return from the
+                        ; subroutine with a value of 127 (DEL, or delete) and
+                        ; the C flag clear
+
+ LDX controller1Right03 ; If the right button on controller 1 was being held
+ BMI lett6              ; down four VBlanks ago, jump to lett6 to return from
+                        ; the subroutine with the C flag clear
+
+ LDX controller1Up      ; If the up button on controller 1 is not being pressed,
+ BPL lett3              ; jump to lett3 to move on to the next button
+
+                        ; If we get here then the up button is being pressed
+
+ CLC                    ; Increment the current character in A
  ADC #1
- CMP #$5B
- BNE CBB16
- LDA #$41
 
-.CBB16
+ CMP #'Z'+1             ; If A is still a letter in the range "A" to "Z", then
+ BNE lett3              ; jump to lett3 to skip the following
 
- LDX controller1Down
- BPL CBADC
- SEC
+ LDA #'A'               ; Set A to ASCII "A" so we wrap round to the start of
+                        ; the alphabet
+
+.lett3
+
+ LDX controller1Down    ; If the down button on controller 1 is not being
+ BPL lett2              ; pressed, loop back to lett2 to keep scanning for
+                        ; button presses 
+
+                        ; If we get here then the down button is being pressed
+
+ SEC                    ; Decrement the current character in A
  SBC #1
- CMP #$40
- BNE CBADC
- LDA #$5A
- BNE CBADC
 
-.CBB26
+ CMP #'A'-1             ; If A is still a letter in the range "A" to "Z", then
+ BNE lett2              ; look back to lett2 to keep scanning for button presses
 
- LDA #$7F
- BNE CBB2B
+ LDA #'Z'               ; Set A to ASCII "Z" so we wrap round to the end of
+                        ; the alphabet
 
-.CBB2A
+ BNE lett2              ; Loop back to lett2 to keep scanning for button presses
+                        ; (this BNE is effectively a JMP as A is never zero)
 
- PLA
+.lett4
 
-.CBB2B
+                        ; If we get here then the left button is being pressed
 
- TAX
- PLA
- STA fontStyle
- LDY YSAV
- TXA
- RTS
+ LDA #127               ; Set A to the ASCII code for DEL, or delete
 
-.CBB33
+ BNE lett6              ; Jump to lett6 to return from the subroutine (this BNE
+                        ; is effectively a JMP as A is never zero)
 
- LDA #$1B
- BNE CBB2B
+.lett5
+
+ PLA                    ; Set A to the current letter, which we stored on the
+                        ; stack above
+
+.lett6
+
+ TAX                    ; Store the chosen letter in X so we can retrieve it
+                        ; below
+
+ PLA                    ; Restore the font style that we stored on the stack
+ STA fontStyle          ; so it's unchanged by the routine
+
+ LDY YSAV               ; Retrieve the value of Y we stored above
+
+ TXA                    ; Restore the chosen letter from X into A so we can
+                        ; return it
+
+ RTS                    ; Return from the subroutine
+
+.lett7
+
+                        ; If we get here then an icon bar button has been
+                        ; chosen, so we need to abort the letter choosing
+                        ; process
+
+ LDA #27                ; Set A to the ASCII code for ESC, or escape
+
+ BNE lett6              ; Jump to lett6 to return from the subroutine (this BNE
+                        ; is effectively a JMP as A is never zero)
 
 ; ******************************************************************************
 ;

@@ -10664,9 +10664,9 @@ ENDIF
                         ; left-hand side of the indicator, so jump to decj3 to
                         ; return from the subroutine
 
-                        ; If we get here then the decreased value is still in the
-                        ; right-hand side of the indicator, so we return a value
-                        ; of 128, for the centre of the indicator
+                        ; If we get here then the decreased value is still in
+                        ; the right-hand side of the indicator, so we return a
+                        ; value of 128, for the centre of the indicator
 
 .decj2
 

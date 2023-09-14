@@ -4485,7 +4485,8 @@ ENDIF
  STA QQ10               ; in QQ15 is in QQ15+1 (s0_hi), so we copy this to QQ10
                         ; as the y-coordinate of the search result
 
- JMP CB181              ; ???
+ JMP ReturnFromSearch   ; Jump back into TT102 to select the found system and
+                        ; return from the subroutine using a tail call
 
 .C8CAF
 
@@ -17773,7 +17774,7 @@ ENDIF
 ;
 ; Other entry points:
 ;
-;   T95                 Print the distance to the selected system
+;   ReturnFromSearch    Re-entry point following a system search in HME2
 ;
 ; ******************************************************************************
 
@@ -18055,7 +18056,7 @@ ENDIF
                         ; will move the location in (QQ9, QQ10) to the current
                         ; home system
 
-.CB181
+.ReturnFromSearch
 
  ASL selectedSystemFlag ; Clear bit 7 of selectedSystemFlag to indicate that
  LSR selectedSystemFlag ; there is no currently selected system, so the call to
