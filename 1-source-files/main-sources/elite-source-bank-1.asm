@@ -8067,8 +8067,8 @@ ENDIF
 
 .SUN
 
- LDA frameCounter       ; Set the random number seed to a fairly random state
- STA RAND               ; that's based on the frame counter (which increments
+ LDA nmiCounter         ; Set the random number seed to a fairly random state
+ STA RAND               ; that's based on the NMI counter (which increments
                         ; every VBlank, so will be pretty random)
 
  JSR CHKON              ; Call CHKON to check whether any part of the new sun's
@@ -12298,8 +12298,8 @@ ENDIF
  LDA #$00               ; Clear the screen and and set the view type in QQ11 to
  JSR TT66_b0            ; $00 (Space view with no fonts loaded)
 
- LDA frameCounter       ; Set the random number seeds to a fairly random state
- STA RAND+1             ; that's based on the frame counter (which increments
+ LDA nmiCounter         ; Set the random number seeds to a fairly random state
+ STA RAND+1             ; that's based on the NMI counter (which increments
  LDA #$86               ; every VBlank, so will be pretty random), the current
  STA RAND+3             ; system's galactic x-coordinate (QQ0), the high byte
  LDA QQ0                ; of our combat rank (TALLY+1), and a fixed number $86

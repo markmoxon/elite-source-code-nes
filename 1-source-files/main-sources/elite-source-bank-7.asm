@@ -252,8 +252,11 @@ ENDIF
  STA setupPPUForIconBar ; Clear bit 7 of setupPPUForIconBar so we do nothing
                         ; when the PPU starts drawing the icon bar
 
- LDA #%01000000         ; ???
- STA JOY2
+ LDA #%01000000         ; Configure the APU Frame Counter as follows:
+ STA APU_FC             ;
+                        ;   * Bit 6 set = do not trigger an IRQ on the last tick
+                        ;
+                        ;   * Bit 7 clear = select the four-step sequence
 
  INC $C006              ; Reset the MMC1 mapper, which we can do by writing a
                         ; value with bit 7 set into any address in ROM space
@@ -355,7 +358,7 @@ ENDIF
  JSR SetupMMC1          ; Configure the MMC1 mapper and page ROM bank 0 into
                         ; memory at $8000
 
- JSR ResetMusic         ; ???
+ JSR ResetMusic         ; Reset the current tune to 0 and stop the music
 
  LDA #%10000000         ; Set A = 0 and set the C flag
  ASL A
@@ -3373,7 +3376,8 @@ ENDIF
                         ; registers accordinaly, and clearing the buffers if
                         ; required
 
- JSR ReadControllers    ; Read the buttons on the controllers
+ JSR ReadControllers    ; Read the buttons on the controllers and update the
+                        ; control variables
 
  LDA autoPlayDemo       ; If bit 7 of autoPlayDemo is clear then the demo is not
  BPL inmi1              ; being played automatically, so jump to inmi1 to skip
@@ -3467,7 +3471,8 @@ ENDIF
  LDA PPU_STATUS         ; Read from PPU_STATUS to clear bit 7 of PPU_STATUS and
                         ; reset the VBlank start flag
 
- INC frameCounter       ; Increment the frame counter
+ INC nmiCounter         ; Increment the NMI counter so it increments every
+                        ; VBlank
 
  LDA #0                 ; Write 0 to OAM_ADDR so we can use OAM_DMA to send
  STA OAM_ADDR           ; sprite data to the PPU
@@ -3970,30 +3975,49 @@ ENDIF
 ;       Name: ReadControllers
 ;       Type: Subroutine
 ;   Category: Controllers
-;    Summary: ???
+;    Summary: Read the buttons on the controllers and update the control
+;             variables
 ;
 ; ******************************************************************************
 
 .ReadControllers
 
- LDA #1
+ LDA #1                 ; Write 1 then 0 to the the controller port at JOY1 to
+ STA JOY1               ; tell the controllers to latch the button positions,
+ LSR A                  ; so we can then read them in the ScanButtons routine
  STA JOY1
- LSR A
- STA JOY1
- TAX
- JSR ScanButtons
 
- LDX scanController2
- BEQ RTS3
+ TAX                    ; Call ScanButtons with X = 0 to scan controller 1 and
+ JSR ScanButtons        ; update the controller variables
+
+ LDX numberOfPilots     ; Set X to numberOfPilots, which will be 0 if only one
+                        ; pilot is configured in the pause options, or 1 if two
+                        ; pilots are configured
+
+ BEQ RTS3               ; If X = 0 then only one pilot is configured, so jump to
+                        ; RTS3 to return from the subroutine, as we do not need
+                        ; to scan controller 2
+
+                        ; Otherwise X = 1 and two pilots are configured, so fall
+                        ; through into ScanButtons with X = 1 to scan controller
+                        ; 2 and update the control variables
 
 ; ******************************************************************************
 ;
 ;       Name: ScanButtons
 ;       Type: Subroutine
 ;   Category: Controllers
-;    Summary: ???
+;    Summary: Scan a specific controller and update the control variables
 ;
 ; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The controller to scan:
+;
+;                         * 0 = scan controller 1
+;
+;                         * 1 = scan controller 2
 ;
 ; Other entry points:
 ;
@@ -4003,67 +4027,67 @@ ENDIF
 
 .ScanButtons
 
- LDA JOY1,X
- AND #3
- CMP #1
+ LDA JOY1,X             ; Read the status of the A button on controller X, and
+ AND #%00000011         ; if it is being pressed, shift a 1 into bit 7 of
+ CMP #%00000001         ; controller1A (as A = 1), otherwise shift a 0
  ROR controller1A,X
 
- LDA JOY1,X
- AND #3
- CMP #1
+ LDA JOY1,X             ; Read the status of the B button on controller X, and
+ AND #%00000011         ; if it is being pressed, shift a 1 into bit 7 of
+ CMP #%00000001         ; controller1B (as A = 1), otherwise shift a 0
  ROR controller1B,X
 
- LDA JOY1,X
- AND #3
- CMP #1
+ LDA JOY1,X             ; Read the the status of the Select button on controller
+ AND #%00000011         ; X, and if it is being pressed, shift a 1 into bit 7 of
+ CMP #%00000001         ; controller1Select (as A = 1), otherwise shift a 0
  ROR controller1Select,X
 
- LDA JOY1,X
- AND #3
- CMP #1
+ LDA JOY1,X             ; Read the the status of the Start button on controller
+ AND #%00000011         ; X, and if it is being pressed, shift a 1 into bit 7 of
+ CMP #%00000001         ; controller1Start (as A = 1), otherwise shift a 0
  ROR controller1Start,X
 
- LDA JOY1,X
- AND #3
- CMP #1
+ LDA JOY1,X             ; Read the the status of the up button on controller X,
+ AND #%00000011         ; and if it is being pressed, shift a 1 into bit 7 of
+ CMP #%00000001         ; controller1Up (as A = 1), otherwise shift a 0
  ROR controller1Up,X
 
- LDA JOY1,X
- AND #3
- CMP #1
+ LDA JOY1,X             ; Read the the status of the down button on controller
+ AND #%00000011         ; X, and if it is being pressed, shift a 1 into bit 7 of
+ CMP #%00000001         ; controller1Down (as A = 1), otherwise shift a 0
  ROR controller1Down,X
 
- LDA JOY1,X
- AND #3
- CMP #1
+ LDA JOY1,X             ; Read the the status of the left button on controller
+ AND #%00000011         ; X, and if it is being pressed, shift a 1 into bit 7 of
+ CMP #%00000001         ; controller1Left (as A = 1), otherwise shift a 0
  ROR controller1Left,X
 
- LDA JOY1,X
- AND #3
- CMP #1
+ LDA JOY1,X             ; Read the the status of the right button on controller
+ AND #%00000011         ; X, and if it is being pressed, shift a 1 into bit 7 of
+ CMP #%00000001         ; controller1Right (as A = 1), otherwise shift a 0
  ROR controller1Right,X
 
 .RTS3
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: WaitForNextFrame
+;       Name: WaitForNextNMI
 ;       Type: Subroutine
 ;   Category: Utility routines
-;    Summary: Wait until the frame counter increments (i.e. the next VBlank)
+;    Summary: Wait until the NMI counter increments (i.e. the next VBlank)
 ;
 ; ******************************************************************************
 
-.WaitForNextFrame
+.WaitForNextNMI
 
- LDA frameCounter       ; Set A to the frame counter, which increments with each
+ LDA nmiCounter         ; Set A to the NMI counter, which increments with each
                         ; call to the NMI handler
 
 .wfrm1
 
- CMP frameCounter       ; Loop back to wfrm1 until the frame counter changes,
+ CMP nmiCounter         ; Loop back to wfrm1 until the NMI counter changes,
  BEQ wfrm1              ; which will happen when the NMI handler has been called
                         ; again (i.e. at the next VBlank)
 
@@ -4113,7 +4137,7 @@ ENDIF
 
  PHA                    ; Store A on the stack to preserve it
 
- LDX frameCounter       ; Set X to the frame counter, which increments with each
+ LDX nmiCounter         ; Set X to the NMI counter, which increments with each
                         ; call to the NMI handler
 
 .wnmi1
@@ -4121,7 +4145,7 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- CPX frameCounter       ; Loop back to wnmi1 until the frame counter changes,
+ CPX nmiCounter         ; Loop back to wnmi1 until the NMI counter changes,
  BEQ wnmi1              ; which will happen when the NMI handler has been called
                         ; again (i.e. at the next VBlank)
 
@@ -4246,7 +4270,7 @@ ENDIF
 
 .cdra3
 
- LDY frameCounter       ; Set Y to the frame counter, which is incremented every
+ LDY nmiCounter         ; Set Y to the NMI counter, which is incremented every
                         ; VBlank by the NMI handler
 
  LDA sendingNameTile,X  ; Set SC to sendingNameTile for this bitplane, which
@@ -4260,11 +4284,11 @@ ENDIF
                         ; contains the number of the first tile we need to
                         ; clear in the nametable buffer, divided by 8
 
- CPY frameCounter       ; If the frame counter has incremented since we fetched
- BNE cdra3              ; it above, then the tile numbers we just fetched might
+ CPY nmiCounter         ; If the NMI counter has incremented since we fetched it
+ BNE cdra3              ; above, then the tile numbers we just fetched might
                         ; already be out of date (as the NMI handler runs at
                         ; every VBlank, so it may have been run between now and
-                        ; the frameCounter fetch above), so jump back to cdra3
+                        ; the nmiCounter fetch above), so jump back to cdra3
                         ; to fetch them all again
 
  LDY SC                 ; Set Y to the number of the last tile divided by 8,
@@ -4371,7 +4395,7 @@ ENDIF
 
 .cdra6
 
- LDY frameCounter       ; Set Y to the frame counter, which is incremented every
+ LDY nmiCounter         ; Set Y to the NMI counter, which is incremented every
                         ; VBlank by the NMI handler
 
  LDA sendingPattTile,X  ; Set SC to sendingPattTile for this bitplane, which
@@ -4385,11 +4409,11 @@ ENDIF
                         ; contains the number of the first tile we need
                         ; to clear in the pattern buffer
 
- CPY frameCounter       ; If the frame counter has incremented since we fetched
- BNE cdra6              ; it above, then the tile numbers we just fetched might
+ CPY nmiCounter         ; If the NMI counter has incremented since we fetched it
+ BNE cdra6              ; above, then the tile numbers we just fetched might
                         ; already be out of date (as the NMI handler runs at
                         ; every VBlank, so it may have been run between now and
-                        ; the frameCounter fetch above), so jump back to cdra6
+                        ; the nmiCounter fetch above), so jump back to cdra6
                         ; to fetch them all again
 
  LDY SC                 ; Set Y to the number of the last tile, which we fetched
@@ -10147,7 +10171,7 @@ ENDIF
  BNE CE98D
 
  LDA controller1B
- ORA scanController2
+ ORA numberOfPilots
  BPL CE98D
 
  LDX controller1Left
@@ -10397,38 +10421,42 @@ ENDIF
 ;       Name: ScaleController
 ;       Type: Subroutine
 ;   Category: Controllers
-;    Summary: ???
+;    Summary: Set the controller history variables to the values from four
+;             VBlanks ago
 ;
 ; ******************************************************************************
 
-.ScaleController
+.SetControllerPast
 
- LDA controller1B
- BNE CEAA7
+ LDA controller1B       ; If the B button is being held down, jump to past1 to
+ BNE past1              ; zero the controller history variables, as we don't
+                        ; need the controller history for the icon bar movement
+                        ; (which is done by holding down the B button while
+                        ; using the left and right buttons)
 
- LDA controller1Left
+ LDA controller1Left    ; Set the top nibble of the left button history variable
+ ASL A                  ; to bits 0 to 3 of controller1Left, so it contains the
+ ASL A                  ; controller values from four VBlanks ago
  ASL A
  ASL A
- ASL A
- ASL A
- STA controller1Leftx8
+ STA controller1Left03
 
- LDA controller1Right
+ LDA controller1Right   ; Set the top nibble of the right button history
+ ASL A                  ; variable to bits 0 to 3 of controller1Right, so it
+ ASL A                  ; contains the controller values from four VBlanks ago
  ASL A
  ASL A
- ASL A
- ASL A
- STA controller1Rightx8
+ STA controller1Right03
 
- RTS
+ RTS                    ; Return from the subroutine
 
-.CEAA7
+.past1
 
- LDA #0
- STA controller1Leftx8
- STA controller1Rightx8
+ LDA #0                 ; Zero the controller history variables as we don't need
+ STA controller1Left03  ; them for moving the icon bar pointer
+ STA controller1Right03
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -10442,128 +10470,214 @@ ENDIF
 
 .UpdateJoystick
 
- LDA QQ11a
- BNE ScaleController
- LDX JSTX
- LDA #8
- STA addr
- LDY scanController2
- BNE CEAC5
- LDA controller1B
- BMI CEB0C
+ LDA QQ11a              ; If the old view in QQ11a is not the space view, then
+ BNE SetControllerPast  ; jump to SetControllerPast to set the controller
+                        ; history variables to the values from four VBlanks ago
 
-.CEAC5
+ LDX JSTX               ; Set X to the current roll rate in JSTX
 
- LDA controller1Right,Y
- BPL CEACD
- JSR DecreaseX
+ LDA #8                 ; Set joystickDelta = 8, to use as the amount by which
+ STA joystickDelta      ; we change the roll rate by for each button press
 
-.CEACD
+ LDY numberOfPilots     ; Set Y to numberOfPilots, which will be 0 if only one
+                        ; pilot is configured, or 1 if two pilots are configured
+                        ;
+                        ; As the rest of this routine updates the joystick based
+                        ; on the values in controller1Right + Y etc., this means
+                        ; that when the game is configured for two pilots, the
+                        ; routine updates the joystick variables based on the
+                        ; buttons being pressed on controller 2
+                        ;
+                        ; In other words, when two pilots are configured,
+                        ; controller 2 steers the ship while controller 1 looks
+                        ; after the weaponry
 
- LDA controller1Left,Y
- BPL CEAD5
- JSR IncreaseX
+ BNE joys1              ; If numberOfPilots = 1 then the game is configured for
+                        ; two pilots, so skip the following so that holding down
+                        ; the B button on controller 1 doesn't stop controller 2
+                        ; from updating the flight controls
 
-.CEAD5
+ LDA controller1B       ; If the B button is being pressed on controller 1 then
+ BMI joys10             ; the arrow should be used to control the icon bar and
+                        ; ship speed, rather than the ship's steering, so jump
+                        ; to joys10 to return from the subroutine 
 
- STX JSTX
- TYA
- BNE CEADB
+.joys1
 
-.CEADB
+ LDA controller1Right,Y ; If the right button is not being pressed, jump to
+ BPL joys2              ; joys2 to skip the following instruction
 
- LDA #4
- STA addr
- LDX JSTY
- LDA JSTGY
- BMI CEAFB
- LDA controller1Down,Y
- BPL CEAEF
- JSR DecreaseX
+ JSR DecreaseJoystick   ; The right button is being held down, so decrease the
+                        ; current roll rate in X by joystickDelta
 
-.CEAEF
+.joys2
 
- LDA controller1Up,Y
- BPL CEAF7
+ LDA controller1Left,Y  ; If the left button is not being pressed, jump to joys3
+ BPL joys3              ; to skip the following instruction
 
-.CEAF4
+ JSR IncreaseJoystick   ; The left button is being held down, so increase the
+                        ; current roll rate in X by joystickDelta
 
- JSR IncreaseX
+.joys3
 
-.CEAF7
+ STX JSTX               ; Store the updated roll rate in JSTX
 
- STX JSTY
- RTS
+ TYA                    ; If Y is non-zero then the game is configured for two
+ BNE joys4              ; pilots, so jump to joys4... though as this is the very
+                        ; next line, this has no effect
 
-.CEAFB
+.joys4
 
- LDA controller1Up,Y
- BPL CEB03
- JSR DecreaseX
+ LDA #4                 ; Set joystickDelta = 4, to use as the amount by which
+ STA joystickDelta      ; we change the pitch rate by for each button press
 
-.CEB03
+ LDX JSTY               ; Set X to the current pitch rate in JSTY
 
- LDA controller1Down,Y
- BMI CEAF4
- STX JSTY
- RTS
+ LDA JSTGY              ; If JSTGY is $FF then the game is configured to reverse
+ BMI joys8              ; the joystick Y channel, so jump to joys8 to change the
+                        ; pitch value in the opposite direction
 
-.CEB0C
+ LDA controller1Down,Y  ; If the down button is not being pressed, jump to joys5
+ BPL joys5              ; to skip the following instruction
 
- RTS
+ JSR DecreaseJoystick   ; The down button is being held down, so decrease the
+                        ; current pitch rate in X by joystickDelta
+
+.joys5
+
+ LDA controller1Up,Y    ; If the up button is not being pressed, jump to joys7
+ BPL joys7              ; to skip the following instruction
+
+.joys6
+
+ JSR IncreaseJoystick   ; The up button is being held down, so increase the
+                        ; current pitch rate in X by joystickDelta
+
+.joys7
+
+ STX JSTY               ; Store the updated pitch rate in JSTY
+
+ RTS                    ; Return from the subroutine
+
+.joys8
+
+ LDA controller1Up,Y    ; If the up button is not being pressed, jump to joys9
+ BPL joys9              ; to skip the following instruction
+
+ JSR DecreaseJoystick   ; The up button is being held down, so decrease the
+                        ; current pitch rate in X by joystickDelta (as the game
+                        ; is configured to reverse the joystick Y channel)
+
+.joys9
+
+ LDA controller1Down,Y  ; If the down button is being pressed, jump to joys6 to
+ BMI joys6              ; increase the current pitch rate in X by joystickDelta
+                        ; (as the game is configured to reverse the joystick Y
+                        ; channel)
+
+ STX JSTY               ; Store the updated pitch rate in JSTY
+
+ RTS                    ; Return from the subroutine
+
+.joys10
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: IncreaseX
+;       Name: IncreaseJoystick
 ;       Type: Subroutine
 ;   Category: Controllers
-;    Summary: ???
+;    Summary: Increase a joystick value by a specific amount, jumping straight
+;             to the indicator centre if we increase from the left-hand side
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The value (pitch or roll rate) to decrease
+;
+;   joystickDelta       The amount to decrease the value in X by
 ;
 ; ******************************************************************************
 
-.IncreaseX
+.IncreaseJoystick
 
- TXA
+ TXA                    ; Set X = X + joystickDelta
  CLC
- ADC addr
+ ADC joystickDelta
  TAX
- BCC CEB16
- LDX #$FF
 
-.CEB16
+ BCC incj1              ; If the addition didn't overflow, jump to incj1 to skip
+                        ; the following instruction
 
- BPL CEB24
- RTS
+ LDX #255               ; Set X = 255 so X doesn't get larger than 255 (so we
+                        ; can't go past the right end of the indicator)
+
+.incj1
+
+ BPL decj2              ; If X < 127 then the increased value is still in the
+                        ; left-hand side of the indicator, so jump to decj2 to
+                        ; return a value of 128, for the centre of the indicator
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: DecreaseX
+;       Name: DecreaseJoystick
 ;       Type: Subroutine
 ;   Category: Controllers
-;    Summary: ???
+;    Summary: Decrease a joystick value by a specific amount, jumping straight
+;             to the indicator centre if we decrease from the right-hand side
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   X                   The value (pitch or roll rate) to decrease
+;
+;   joystickDelta       The amount to decrease the value in X by
+;
+; Other entry points:
+;
+;   decj2               Return a value of X = 128, for the centre of the
+;                       indicator
 ;
 ; ******************************************************************************
 
-.DecreaseX
+.DecreaseJoystick
 
- TXA
+ TXA                    ; Set X = X - joystickDelta
  SEC
- SBC addr
+ SBC joystickDelta
  TAX
- BCS CEB22
- LDX #1
 
-.CEB22
+ BCS decj1              ; If the subtraction didn't underflow, jump to decj1 to
+                        ; skip the following instruction
 
- BPL CEB26
+ LDX #1                 ; Set X = 1 so X doesn't get smaller than 1 (so we can't
+                        ; go past the left end of the indicator)
 
-.CEB24
+.decj1
 
- LDX #$80
+ BPL decj3              ; If X < 127 then the decreased value is in the
+                        ; left-hand side of the indicator, so jump to decj3 to
+                        ; return from the subroutine
 
-.CEB26
+                        ; If we get here then the decreased value is still in the
+                        ; right-hand side of the indicator, so we return a value
+                        ; of 128, for the centre of the indicator
 
- RTS
+.decj2
+
+ LDX #128               ; Set X = 128 to jump to indicator to the centre of the
+                        ; indicator, so increasing or decreasing a value towards
+                        ; the centre of the indicator immediately jumps to the
+                        ; middle point of the indicator
+
+.decj3
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -14094,7 +14208,7 @@ ENDIF
  ADC #0                 ; The ADC has no effect, so presumably it was left over
                         ; from a previous version of the code
 
- STA frameCounter       ; Reset the frame counter to zero
+ STA nmiCounter         ; Reset the NMI counter to zero
 
  STA nmiTimer           ; Set the NMI timer to zero
  STA nmiTimerLo
@@ -14197,9 +14311,9 @@ ENDIF
  LDA #$FF               ; Set the old view type in QQ11a to $FF (Segue screen
  STA QQ11a              ; from Title screen to Demo)
 
- LDA #1                 ; Set scanController2 = 1 so we scan both controllers,
- STA scanController2    ; so the game can be started by pressing a key on either
-                        ; controller while the ships are rotating on-screen
+ LDA #1                 ; Set numberOfPilots = 1 to configure the game to use
+ STA numberOfPilots     ; two pilots by default (though this will probably get
+                        ; changed in the TITLE routine, or below)
 
  LDA #50                ; Set the NMI timer, which decrements each VBlank, to 50
  STA nmiTimer           ; so it counts down to zero and back up to 50 again
@@ -14216,7 +14330,7 @@ ENDIF
 
 .dtit2
 
- STY tempVar            ; Store the ship counter in tempVar so we can retrieve
+ STY titleShip          ; Store the ship counter in titleShip so we can retrieve
                         ; it below
 
  LDA titleShipType,Y    ; Set A to the ship type of the ship we want to display,
@@ -14240,7 +14354,7 @@ ENDIF
                         ; which case jump to dtit3 to stop the music and return
                         ; from the subroutine
 
- LDY tempVar            ; Restore the ship counter that we stored above
+ LDY titleShip          ; Restore the ship counter that we stored above
 
  INY                    ; Increment the ship counter in Y to point to the next
                         ; ship in the list
@@ -14264,8 +14378,8 @@ ENDIF
                         ; this means the title screen has been showing for 213
                         ; seconds, or about 3 minutes and 33 seconds
 
- LSR scanController2    ; Set scanController2 = 0 so we no longer scan both
-                        ; controllers
+ LSR numberOfPilots     ; Set numberOfPilots = 0 to configure the game for one
+                        ; pilot
 
  JSR ResetMusicAfterNMI ; Wait for the next NMI before resetting the current
                         ; tune to 0 (no tune) and stopping the music

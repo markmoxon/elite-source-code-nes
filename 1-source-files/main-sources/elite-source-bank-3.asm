@@ -3731,7 +3731,7 @@ ENDIF
 
 .CAE08
 
- LDA scanController2
+ LDA numberOfPilots
  BNE CAE12
  LDY #$0C
  JSR subm_AF9A

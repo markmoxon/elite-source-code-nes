@@ -3914,7 +3914,9 @@ ENDIF
  LDY #4                 ; Wait until four NMI interrupts have passed (i.e. the
  JSR DELAY              ; next four VBlanks)
 
- JSR SetKeyLogger_b6
+ JSR SetKeyLogger_b6    ; Populate the key logger table with the controller
+                        ; button presses
+
  TXA
  CMP #80
  BNE CA1B1
@@ -3982,9 +3984,9 @@ ENDIF
 
  CMP #$35
  BNE CA1FC
- LDA scanController2
+ LDA numberOfPilots
  EOR #1
- STA scanController2
+ STA numberOfPilots
  JMP CA21D
 
 .CA1FC
@@ -5557,8 +5559,8 @@ ENDIF
  STY NOSTM
  STY RAND+1
 
- LDA frameCounter       ; Set the random number seed to a fairly random state
- STA RAND               ; that's based on the frame counter (which increments
+ LDA nmiCounter         ; Set the random number seed to a fairly random state
+ STA RAND               ; that's based on the NMI counter (which increments
                         ; every VBlank, so will be pretty random)
 
 .CA5C5
@@ -5697,7 +5699,7 @@ ENDIF
  STA ALPHA
  STA ALP1
  STA DELTA
- LDA frameCounter
+ LDA nmiCounter
  CLC
  ADC RAND+1
  STA RAND+1
@@ -6088,11 +6090,11 @@ ENDIF
  STA S
  ASL A
  ADC #$1F
- SBC tempVar
+ SBC scrollProgress
  STA BUF+16,Y
  BPL CA8F8
  STA Q
- LDA tempVar
+ LDA scrollProgress
  LSR A
  LSR A
  ADC #$25
@@ -6129,7 +6131,7 @@ ENDIF
  ASL A
  BPL CA908
  STA Q
- LDA tempVar
+ LDA scrollProgress
  LSR A
  ADC #$49
  SBC S
@@ -6139,7 +6141,7 @@ ENDIF
 
  ASL A
  STA Q
- LDA tempVar
+ LDA scrollProgress
  ADC #$90
  SBC S
  SBC S
@@ -6171,7 +6173,7 @@ ENDIF
                         ; row 10)
 
  LDA #$A0
- STA tempVar
+ STA scrollProgress
  JSR subm_A96E
  PLA
  STA LASCT
@@ -6179,7 +6181,7 @@ ENDIF
 .loop_CA93C
 
  LDA #$17
- STA tempVar
+ STA scrollProgress
  JSR subm_A9A2
  JSR GRIDSET
  JSR subm_A96E
@@ -6191,7 +6193,7 @@ ENDIF
 .loop_CA954
 
  LDA #$17
- STA tempVar
+ STA scrollProgress
  JSR subm_A9A2
  JSR subm_A96E
  DEC LASCT
@@ -6245,10 +6247,10 @@ ENDIF
 
 .CA995
 
- LDA tempVar
+ LDA scrollProgress
  SEC
  SBC scrollTextSpeed
- STA tempVar
+ STA scrollProgress
  BCS subm_A96E
  RTS
 
@@ -6537,7 +6539,7 @@ ENDIF
  ASL A
  ASL A
  SEC
- SBC tempVar
+ SBC scrollProgress
  BCC CAAEA
  STY YP
  LDA BUF+16,X
@@ -6562,7 +6564,7 @@ ENDIF
  ASL A
  ASL A
  SEC
- SBC tempVar
+ SBC scrollProgress
  BCC CAAEA
  LDA BUF,X
  STA XX12
@@ -7208,7 +7210,7 @@ ENDIF
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDX controller1Leftx8
+ LDX controller1Left03
  BPL CB50F
  JSR PrintSaveName
  CMP #9
@@ -7226,7 +7228,7 @@ ENDIF
 
 .CB50F
 
- LDX controller1Rightx8
+ LDX controller1Right03
  BPL CB525
  JSR PrintSaveName
  CMP #9
@@ -7315,8 +7317,8 @@ ENDIF
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA controller1Leftx8
- ORA controller1Rightx8
+ LDA controller1Left03
+ ORA controller1Right03
  BMI loop_CB55C
  PLA
  RTS
@@ -7382,14 +7384,14 @@ ENDIF
 
 .CB5AD
 
- LDX controller1Leftx8
+ LDX controller1Left03
  BPL CB5B8
  JSR PrintSaveName
  JMP CB5CB
 
 .CB5B8
 
- LDX controller1Rightx8
+ LDX controller1Right03
  BPL CB5C5
  JSR PrintSaveName
  LDA #4
@@ -7436,7 +7438,7 @@ ENDIF
 
 .CB601
 
- LDX controller1Leftx8
+ LDX controller1Left03
  BPL CB618
  CMP #4
  BNE CB618
@@ -7448,7 +7450,7 @@ ENDIF
 
 .CB618
 
- LDX controller1Rightx8
+ LDX controller1Right03
  BPL CB626
  JSR ClearPositionName
  JSR SaveToSlots
@@ -8992,9 +8994,9 @@ ENDIF
  BMI CBADC
  LDX iconBarChoice
  BNE CBB33
- LDX controller1Leftx8
+ LDX controller1Left03
  BMI CBB26
- LDX controller1Rightx8
+ LDX controller1Right03
  BMI CBB2B
  LDX controller1Up
  BPL CBB16
@@ -9163,106 +9165,121 @@ ENDIF
 ;       Name: SetKeyLogger
 ;       Type: Subroutine
 ;   Category: Controllers
-;    Summary: ???
+;    Summary: Populate the key logger table with the controller button presses
+;
+; ------------------------------------------------------------------------------
+;
+; Returns:
+;
+;   Y                   Y is preserved
 ;
 ; ******************************************************************************
 
 .SetKeyLogger
 
- TYA
- PHA
- LDX #5
- LDA #0
+ TYA                    ; Store Y on the stack so we can restore it at the end
+ PHA                    ; of the subroutine
+
+                        ; We start by clearing the key logger table at KL
+
+ LDX #5                 ; We want to clear the 6 key logger locations from
+                        ; KY1 to KY6, so set a counter in X
+
+ LDA #0                 ; Set A = 0 to store in the key logger table to clear it
+
  STA pressedButton
 
-.loop_CBBE6
+.klog1
 
- STA KL,X
- DEX
- BPL loop_CBBE6
+ STA KL,X               ; Store 0 in the X-th byte of the key logger
+
+ DEX                    ; Decrement the counter
+
+ BPL klog1              ; Loop back for the next key, until we have cleared from
+                        ; KY1 through KY6
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA scanController2
- BEQ CBC32
+ LDA numberOfPilots
+ BEQ klog7
  LDX #$FF
  LDA controller2Down
- BPL CBC08
+ BPL klog2
  STX KY5
 
-.CBC08
+.klog2
 
  LDA controller2Up
- BPL CBC10
+ BPL klog3
  STX KY6
 
-.CBC10
+.klog3
 
  LDA controller2Left
- BPL CBC18
+ BPL klog4
  STX KY3
 
-.CBC18
+.klog4
 
  LDA controller2Right
- BPL CBC20
+ BPL klog5
  STX KY4
 
-.CBC20
+.klog5
 
  LDA controller2A
- BPL CBC28
+ BPL klog6
  STX KY2
 
-.CBC28
+.klog6
 
  LDA controller2B
- BPL CBC6B
- STX KL
- BMI CBC6B
+ BPL klog13
+ STX KY1
+ BMI klog13
 
-.CBC32
+.klog7
 
  LDX #$FF
  LDA controller1B
- BMI CBC5B
+ BMI klog11
  LDA controller1Down
- BPL CBC41
+ BPL klog8
  STX KY5
 
-.CBC41
+.klog8
 
  LDA controller1Up
- BPL CBC49
+ BPL klog9
  STX KY6
 
-.CBC49
+.klog9
 
  LDA controller1Left
- BPL CBC51
+ BPL klog10
  STX KY3
 
-.CBC51
+.klog10
 
  LDA controller1Right
- BPL CBC6B
+ BPL klog13
  STX KY4
- BMI CBC6B
+ BMI klog13
 
-.CBC5B
+.klog11
 
  LDA controller1Up
- BPL CBC63
+ BPL klog12
  STX KY2
 
-.CBC63
+.klog12
 
  LDA controller1Down
- BPL CBC6B
- STX KL
+ BPL klog13
+ STX KY1
 
-.CBC6B
+.klog13
 
  LDA controller1A
  CMP #$80
@@ -9271,11 +9288,14 @@ ENDIF
  LDA iconBarChoice
  STX iconBarChoice
  STA pressedButton
- PLA
- TAY
+
+ PLA                    ; Restore the value of Y that we stored on the stack, so
+ TAY                    ; that Y is preserved
+
  LDA pressedButton
  TAX
- RTS
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;

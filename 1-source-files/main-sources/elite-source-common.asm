@@ -165,7 +165,7 @@
  DMC_LEN    = $4013
  SND_CHN    = $4015
  JOY1       = $4016
- JOY2       = $4017
+ APU_FC     = $4017
 
 ; ******************************************************************************
 ;
@@ -1491,6 +1491,12 @@ ENDIF
 
  SKIP 1                 ; Bit 7 set means display the user interface (so we only
                         ; clear it for the game over screen)
+
+.joystickDelta
+
+ SKIP 0                 ; Used to store the amount to change the pitch and roll
+                        ; rates when converting controller button presses into
+                        ; joystick values
 
 .addr
 
@@ -3785,10 +3791,10 @@ ORG $0200
 
  SKIP 1                 ; Flags for bitplane 1 (see above)
 
-.frameCounter
+.nmiCounter
 
- SKIP 1                 ; The frame counter, which increments every VBlank at
-                        ; the start of the NMI handler
+ SKIP 1                 ; A counter that increments every VBlank at the start of
+                        ; the NMI handler
 
 .screenReset
 
@@ -3873,9 +3879,19 @@ ORG $0200
  SKIP 1                 ; The y-coordinate of the current character as we
                         ; construct the lines for the Star Wars scroll text
 
-.tempVar
+.titleShip
 
- SKIP 1                 ; Temporary storage, used in various places
+ SKIP 0                 ; Used to store the current ship number in the title
+                        ; screen
+
+.firstBox
+
+ SKIP 0                 ; Used to detect the first iteration of the box-drawing
+                        ; loop when drawing the launch tunnel
+
+.scrollProgress
+
+ SKIP 1                 ; ???
 
 .decimalPoint
 
@@ -4438,14 +4454,15 @@ ENDIF
 
  SKIP 1                 ; This byte appears to be unused
 
-.scanController2
+.numberOfPilots
 
- SKIP 1                 ; A flag to determine whether to scan controller 2 for
-                        ; button presses
+ SKIP 1                 ; A flag to determine whether the game is configured for
+                        ; one or two pilots
                         ;
-                        ;   * 0 = do not scan controller 2
+                        ;   * 0 = one pilot (using controller 1)
                         ;
-                        ;   * Non-zero = scan controller 2
+                        ;   * 1 = two pilots (where controller 1 controls the
+                        ;         weaponry and controller 2 steers the ship)
                         ;
                         ; This value is toggled between 0 and 1 by the "one or
                         ; two pilots" configuration icon in the pause menu
@@ -4769,75 +4786,171 @@ ENDIF
 
 .controller1Down
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A shift register for recording presses of the down
+                        ; button on controller 1
+                        ;
+                        ; The controller is scanned every NMI and the result is
+                        ; right-shifted into bit 7, with a 1 indicating a button
+                        ; press and a 0 indicating no button press
 
 .controller2Down
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A shift register for recording presses of the down
+                        ; button on controller 2
+                        ;
+                        ; The controller is scanned every NMI and the result is
+                        ; right-shifted into bit 7, with a 1 indicating a button
+                        ; press and a 0 indicating no button press
 
 .controller1Up
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A shift register for recording presses of the up
+                        ; button on controller 1
+                        ;
+                        ; The controller is scanned every NMI and the result is
+                        ; right-shifted into bit 7, with a 1 indicating a button
+                        ; press and a 0 indicating no button press
 
 .controller2Up
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A shift register for recording presses of the up
+                        ; button on controller 2
+                        ;
+                        ; The controller is scanned every NMI and the result is
+                        ; right-shifted into bit 7, with a 1 indicating a button
+                        ; press and a 0 indicating no button press
 
 .controller1Left
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A shift register for recording presses of the left
+                        ; button on controller 1
+                        ;
+                        ; The controller is scanned every NMI and the result is
+                        ; right-shifted into bit 7, with a 1 indicating a button
+                        ; press and a 0 indicating no button press
 
 .controller2Left
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A shift register for recording presses of the left
+                        ; button on controller 2
+                        ;
+                        ; The controller is scanned every NMI and the result is
+                        ; right-shifted into bit 7, with a 1 indicating a button
+                        ; press and a 0 indicating no button press
 
 .controller1Right
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A shift register for recording presses of the right
+                        ; button on controller 1
+                        ;
+                        ; The controller is scanned every NMI and the result is
+                        ; right-shifted into bit 7, with a 1 indicating a button
+                        ; press and a 0 indicating no button press
 
 .controller2Right
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A shift register for recording presses of the right
+                        ; button on controller 2
+                        ;
+                        ; The controller is scanned every NMI and the result is
+                        ; right-shifted into bit 7, with a 1 indicating a button
+                        ; press and a 0 indicating no button press
 
 .controller1A
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A shift register for recording presses of the A button
+                        ; on controller 1
+                        ;
+                        ; The controller is scanned every NMI and the result is
+                        ; right-shifted into bit 7, with a 1 indicating a button
+                        ; press and a 0 indicating no button press
 
 .controller2A
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A shift register for recording presses of the A button
+                        ; on controller 2
+                        ;
+                        ; The controller is scanned every NMI and the result is
+                        ; right-shifted into bit 7, with a 1 indicating a button
+                        ; press and a 0 indicating no button press
 
 .controller1B
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A shift register for recording presses of the B button
+                        ; on controller 1
+                        ;
+                        ; The controller is scanned every NMI and the result is
+                        ; right-shifted into bit 7, with a 1 indicating a button
+                        ; press and a 0 indicating no button press
 
 .controller2B
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A shift register for recording presses of the B button
+                        ; on controller 2
+                        ;
+                        ; The controller is scanned every NMI and the result is
+                        ; right-shifted into bit 7, with a 1 indicating a button
+                        ; press and a 0 indicating no button press
 
 .controller1Start
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A shift register for recording presses of the Start
+                        ; button on controller 1
+                        ;
+                        ; The controller is scanned every NMI and the result is
+                        ; right-shifted into bit 7, with a 1 indicating a button
+                        ; press and a 0 indicating no button press
 
 .controller2Start
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A shift register for recording presses of the Start
+                        ; button on controller 2
+                        ;
+                        ; The controller is scanned every NMI and the result is
+                        ; right-shifted into bit 7, with a 1 indicating a button
+                        ; press and a 0 indicating no button press
 
 .controller1Select
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A shift register for recording presses of the Select
+                        ; button on controller 1
+                        ;
+                        ; The controller is scanned every NMI and the result is
+                        ; right-shifted into bit 7, with a 1 indicating a button
+                        ; press and a 0 indicating no button press
 
 .controller2Select
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A shift register for recording presses of the Select
+                        ; button on controller 2
+                        ;
+                        ; The controller is scanned every NMI and the result is
+                        ; right-shifted into bit 7, with a 1 indicating a button
+                        ; press and a 0 indicating no button press
 
-.controller1Leftx8
+.controller1Left03
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Bits 0 to 3 of the left button controller variable
+                        ;
+                        ; In non-space views, this contains controller1Left but
+                        ; shifted left by four places, so the upper nibble
+                        ; contains bits 0 to 3 of controller1Left, with zeroes
+                        ; in the lower nibble
+                        ;
+                        ; So bit 7 is the left button state from four VBlanks
+                        ; ago, bit 6 is from five VBlanks ago, and so on
 
-.controller1Rightx8
+.controller1Right03
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Bits 0 to 3 of the right button controller variable
+                        ;
+                        ; In non-space views, this contains controller1Right but
+                        ; shifted left by four places, so the upper nibble
+                        ; contains bits 0 to 3 of controller1Right, with zeroes
+                        ; in the lower nibble
+                        ;
+                        ; So bit 7 is the right button state from four VBlanks
+                        ; ago, bit 6 is from five VBlanks ago, and so on
 
 .autoplayKey
 
@@ -5239,8 +5352,8 @@ MACRO SETUP_PPU_FOR_ICON_BAR
                         ; set when a non-transparent pixel in sprite 0 is drawn
                         ; over a non-transparent background pixel
                         ;
-                        ; It gets zeroed at the start of each frame and set when
-                        ; sprite 0 is drawn
+                        ; It gets zeroed at the start of each VBlank and set
+                        ; when sprite 0 is drawn
                         ;
                         ; Sprite 0 is at the bottom-right corner of the space
                         ; view, at coordinates (248, 163), so this means bit 6
