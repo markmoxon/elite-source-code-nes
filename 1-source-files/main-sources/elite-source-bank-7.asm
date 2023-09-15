@@ -10044,7 +10044,7 @@ ENDIF
 ;       Name: HideIconBarPointer
 ;       Type: Subroutine
 ;   Category: Icon bar
-;    Summary: ???
+;    Summary: Clear the icon bar choice and hide the icon bar pointer
 ;
 ; ******************************************************************************
 
@@ -10053,24 +10053,28 @@ ENDIF
  LDA controller1Start   ; If the Start button on controller 1 was being held
  AND #%11000000         ; down (bit 6 is set) but is no longer being held down
  CMP #%01000000         ; (bit 7 is clear) then keep going, otherwise jump to
- BNE CE8EE              ; CE8EE
+ BNE hipo1              ; hipo1
 
- LDA #80
- STA iconBarChoice
- BNE CE8FA
+ LDA #80                ; The Start button has been pressed and released, so
+ STA iconBarChoice      ; set iconBarChoice to 80 to record this
 
-.CE8EE
+ BNE hipo3              ; Jump to hipo3 to hide the icon bar pointer and return
+                        ; from the subroutine
 
- LDA iconBarChoice
- CMP #80
- BEQ CE8FA
+.hipo1
 
-.CE8F5
+ LDA iconBarChoice      ; If iconBarChoice = 80 then we have already recorded
+ CMP #80                ; that the Start button has been pressed but this has
+ BEQ hipo3              ; not yet been processed (as otherwise it would have
+                        ; been zeroed), so jump to hipo3 to hide the icon bar
+                        ; pointer and return from the subroutine
 
- LDA #0
- STA iconBarChoice
+.hipo2
 
-.CE8FA
+ LDA #0                 ; Set iconBarChoice = 0 to clear the icon button choice
+ STA iconBarChoice      ; so we don't process it again
+
+.hipo3
 
  LDA #240               ; Set A to the y-coordinate that's just below the bottom
                         ; of the screen, so we can hide the icon bar pointer
@@ -10153,7 +10157,7 @@ ENDIF
 .CE92D
 
  LDA screenFadedToBlack ; If bit 7 of screenFadedToBlack is set then we have
- BMI CE8F5              ; already faded the screen to black, so jump to CE8F5
+ BMI hipo2              ; already faded the screen to black, so jump to hipo2
                         ; to ???
 
  LDA showIconBarPointer ; If showIconBarPointer = 0 then the icon bar pointer
@@ -10694,7 +10698,7 @@ ENDIF
 
 .iconBarButtons
 
-                        ; Icon bar 0 (docked)
+                        ; Icon bar 0 (Docked)
 
  EQUB  1                ; Launch
  EQUB  2                ; Market Price
@@ -10711,7 +10715,7 @@ ENDIF
 
  EQUD  0
 
-                        ; Icon bar 1 (flight)
+                        ; Icon bar 1 (Flight)
 
  EQUB 17                ; Docking Computer
  EQUB  2                ; Market Price
@@ -10728,7 +10732,7 @@ ENDIF
 
  EQUD  0
 
-                        ; Icon bar 2 (charts)
+                        ; Icon bar 2 (Charts)
 
  EQUB  1                ; Launch
  EQUB  2                ; Market Price
@@ -10745,7 +10749,7 @@ ENDIF
 
  EQUD  0
 
-                        ; Icon bar 3 (pause options)
+                        ; Icon bar 3 (Pause)
 
  EQUB 49                ; Direction of y-axis
  EQUB 50                ; Damping toggle

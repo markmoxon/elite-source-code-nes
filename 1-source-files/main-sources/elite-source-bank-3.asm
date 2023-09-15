@@ -205,7 +205,7 @@ ENDIF
 ;       Name: iconBarImage0
 ;       Type: Variable
 ;   Category: Icon bar
-;    Summary: Image data for icon bar 0 (docked)
+;    Summary: Image data for icon bar 0 (Docked)
 ;
 ; ******************************************************************************
 
@@ -345,7 +345,7 @@ ENDIF
 ;       Name: iconBarImage1
 ;       Type: Variable
 ;   Category: Icon bar
-;    Summary: Image data for icon bar 1 (flight)
+;    Summary: Image data for icon bar 1 (Flight)
 ;
 ; ******************************************************************************
 
@@ -485,7 +485,7 @@ ENDIF
 ;       Name: iconBarImage2
 ;       Type: Variable
 ;   Category: Icon bar
-;    Summary: Image data for icon bar 2 (charts)
+;    Summary: Image data for icon bar 2 (Charts)
 ;
 ; ******************************************************************************
 
@@ -625,7 +625,7 @@ ENDIF
 ;       Name: iconBarImage3
 ;       Type: Variable
 ;   Category: Icon bar
-;    Summary: Image data for icon bar 3 (pause options)
+;    Summary: Image data for icon bar 3 (Pause)
 ;
 ; ******************************************************************************
 
@@ -765,7 +765,7 @@ ENDIF
 ;       Name: iconBarImage4
 ;       Type: Variable
 ;   Category: Icon bar
-;    Summary: Image data for icon bar 4 (title screen copyright message)
+;    Summary: Image data for icon bar 4 (Title screen copyright message)
 ;
 ; ******************************************************************************
 
@@ -905,7 +905,7 @@ ENDIF
 ;       Name: barNames0
 ;       Type: Variable
 ;   Category: Icon bar
-;    Summary: Nametable entries for icon bar 0 (docked)
+;    Summary: Nametable entries for icon bar 0 (Docked)
 ;
 ; ******************************************************************************
 
@@ -925,7 +925,7 @@ ENDIF
 ;       Name: barNames1
 ;       Type: Variable
 ;   Category: Icon bar
-;    Summary: Nametable entries for icon bar 1 (flight)
+;    Summary: Nametable entries for icon bar 1 (Flight)
 ;
 ; ******************************************************************************
 
@@ -945,7 +945,7 @@ ENDIF
 ;       Name: barNames2
 ;       Type: Variable
 ;   Category: Icon bar
-;    Summary: Nametable entries for icon bar 2 (charts)
+;    Summary: Nametable entries for icon bar 2 (Charts)
 ;
 ; ******************************************************************************
 
@@ -965,7 +965,7 @@ ENDIF
 ;       Name: barNames3
 ;       Type: Variable
 ;   Category: Icon bar
-;    Summary: Nametable entries for icon bar 3 (pause options)
+;    Summary: Nametable entries for icon bar 3 (Pause)
 ;
 ; ******************************************************************************
 
@@ -985,7 +985,7 @@ ENDIF
 ;       Name: barNames4
 ;       Type: Variable
 ;   Category: Icon bar
-;    Summary: Nametable entries for icon bar 4 (title screen copyright message)
+;    Summary: Nametable entries for icon bar 4 (Title screen copyright message)
 ;
 ; ******************************************************************************
 
@@ -1898,11 +1898,11 @@ ENDIF
 .svip4
 
  CMP #$BB               ; If the view type in QQ11 is not $BB (Save and load
- BNE svip5              ; with font loaded in both bitplanes), jump to svip5 to
-                        ; keep checking for view types
+ BNE svip5              ; with the normal and highlight fonts loaded), jump to
+                        ; svip5 to keep checking for view types
 
                         ; If we get here then this is the Save and load screen
-                        ; with font loaded in both bitplanes
+                        ; with the normal and highlight fonts loaded
 
  LDA #HI(16*69)         ; Set PPU_ADDR to the address of pattern 69 in pattern
  STA PPU_ADDR           ; table 0, so we load the small logo image here
@@ -1932,7 +1932,8 @@ ENDIF
                         ;   * Data on System
                         ;   * Status Mode
                         ;   * Market Price
-                        ;   * Save and load with font loaded in both bitplanes
+                        ;   * Save and load with normal and highlight fonts
+                        ;     loaded
                         ;
                         ; so now we load the dashboard image, if we haven't
                         ; already
@@ -3094,9 +3095,9 @@ ENDIF
  CMP #$BA               ; then jump to bpos2 to calculate the icon bar row
  BNE bpos2
 
- LDA iconBarType        ; If this is icon bar type 3 (Pause options), jump to
- CMP #3                 ; bpos1 to hide the Inventory icon before calculating
- BEQ bpos1              ; the icon bar row
+ LDA iconBarType        ; If this is icon bar type 3 (Pause), jump to bpos1 to
+ CMP #3                 ; hide the Inventory icon before calculating the icon
+ BEQ bpos1              ; bar row
 
                         ; If we get here then this is the Market Price screen
                         ; and the game is not paused, so we are showing the
@@ -3168,7 +3169,7 @@ ENDIF
 ;
 ;                         * 2 = Charts
 ;
-;                         * 3 = Pause options
+;                         * 3 = Pause
 ;
 ;                         * 4 = Title screen copyright message
 ;
@@ -3438,22 +3439,22 @@ ENDIF
                         ;   * SC2(1 0) is the address of the nametable entries
                         ;     for the on-screen icon bar in nametable buffer 1
 
- LDY #2                 ; Blank the first icon on the icon bar
+ LDY #2                 ; Blank the first button on the icon bar
  JSR DrawBlankButton2x2
 
- LDY #4                 ; Blank the second icon on the icon bar
+ LDY #4                 ; Blank the second button on the icon bar
  JSR DrawBlankButton3x2
 
- LDY #7                 ; Blank the third icon on the icon bar
+ LDY #7                 ; Blank the third button on the icon bar
  JSR DrawBlankButton2x2
 
- LDY #9                 ; Blank the fourth icon on the icon bar
+ LDY #9                 ; Blank the fourth button on the icon bar
  JSR DrawBlankButton3x2
 
- LDY #12                ; Blank the fifth icon on the icon bar
+ LDY #12                ; Blank the fifth button on the icon bar
  JSR DrawBlankButton2x2
 
- LDY #29                ; Blank the twelfth icon on the icon bar
+ LDY #29                ; Blank the twelfth button on the icon bar
  JSR DrawBlankButton3x2
 
 ; ******************************************************************************
@@ -3467,10 +3468,10 @@ ENDIF
 
 .BlankButtons6To11
 
- LDY #14                ; Blank the sixth icon on the icon bar
+ LDY #14                ; Blank the sixth button on the icon bar
  JSR DrawBlankButton3x2
 
- LDY #17                ; Blank the seventh icon on the icon bar
+ LDY #17                ; Blank the seventh button on the icon bar
  JSR DrawBlankButton2x2
 
 ; ******************************************************************************
@@ -3484,16 +3485,16 @@ ENDIF
 
 .BlankButtons8To11
 
- LDY #19                ; Blank the eighth icon on the icon bar
+ LDY #19                ; Blank the eighth button on the icon bar
  JSR DrawBlankButton3x2
 
- LDY #22                ; Blank the ninth icon on the icon bar
+ LDY #22                ; Blank the ninth button on the icon bar
  JSR DrawBlankButton2x2
 
- LDY #24                ; Blank the tenth icon on the icon bar
+ LDY #24                ; Blank the tenth button on the icon bar
  JSR DrawBlankButton3x2
 
- LDY #27                ; Blank the eleventh icon on the icon bar and return
+ LDY #27                ; Blank the eleventh button on the icon bar and return
  JMP DrawBlankButton2x2 ; from the subroutine using a tail call
 
 ; ******************************************************************************
@@ -3800,47 +3801,78 @@ ENDIF
 
 .SetupIconBarPause
 
- LDA JSTGY
- BEQ pbar1
- LDY #2
- JSR subm_AF9A
+                        ; By default the icon bar shows all possible icons, so
+                        ; now we work our way through the buttons, hiding any
+                        ; icons that do not apply
+
+ LDA JSTGY              ; If JSTGY is 0 then the game is not configured to
+ BEQ pbar1              ; reverse the joystick Y channel, so jump to pbar1 to
+                        ; skip the following and leave the default icon showing
+
+ LDY #2                 ; Draw four tiles over the top of the first button to
+ JSR Draw4OptionTiles   ; show that the joystick Y channel is reversed
 
 .pbar1
 
- LDA DAMP
- BEQ pbar2
- LDY #4
- JSR subm_AF96
+ LDA DAMP               ; If DAMP is 0 then controller damping is disabled, so
+ BEQ pbar2              ; jump to pbar2 to skip the following and leave the
+                        ; default icon showing
+
+ LDY #4                 ; Draw six tiles over the top of the second button to
+ JSR Draw6OptionTiles   ; shot that controller damping is enabled
 
 .pbar2
 
- LDA disableMusic
- BPL pbar3
- LDY #7
- JSR subm_AF9A
+ LDA disableMusic       ; If bit 7 of disableMusic ic clear then music is
+ BPL pbar3              ; enabled, so jump to pbar3 to skip the following and
+                        ; leave the default icon showing
+
+ LDY #7                 ; Draw four tiles over the top of the third button to
+ JSR Draw4OptionTiles   ; show that music is disabled
 
 .pbar3
 
- LDA DNOIZ
- BMI pbar4
- LDY #9
- JSR subm_AF96
+ LDA DNOIZ              ; If bit 7 of DNOIZ is set then sound is on, so jump to
+ BMI pbar4              ; pbar4 to skip the following and leave the default icon
+                        ; showing
+
+ LDY #9                 ; Draw six tiles over the top of the fourth button to
+ JSR Draw6OptionTiles   ; shot that sound is disabled
 
 .pbar4
 
- LDA numberOfPilots
- BNE pbar5
- LDY #$0C
- JSR subm_AF9A
+ LDA numberOfPilots     ; If the game is configured for two pilots, jump to
+ BNE pbar5              ; pbar5 to skip the following and leave the default icon
+                        ; showing
+
+ LDY #12                ; Draw four tiles over the top of the fifth button to
+ JSR Draw4OptionTiles   ; show that one pilot is configured
 
 .pbar5
 
  JSR BlankButtons6To11  ; Blank from the sixth to the eleventh button on the
                         ; icon bar
 
-.pbar6
+                        ; Fall through into SetIconBarButtonsS to jump to
+                        ; SetIconBarButtons to set the correct list of button
+                        ; numbers for the icon bar 
 
- JMP sbar16
+; ******************************************************************************
+;
+;       Name: SetIconBarButtonsS
+;       Type: Subroutine
+;   Category: Icon bar
+;    Summary: Set the correct list of button numbers for the icon bar (this is a
+;             jump so we can call this routine using a branch instruction)
+;
+; ******************************************************************************
+
+.SetIconBarButtonsS
+
+ JMP SetIconBarButtons  ; Jump to SetIconBarButtons to set the barButtons
+                        ; variable to point to the correct list of button
+                        ; numbers for the icon bar we are setting up, returning
+                        ; from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -3861,7 +3893,7 @@ ENDIF
 ;
 ;                         * 2 = Charts
 ;
-;                         * 3 = Pause options
+;                         * 3 = Pause
 ;
 ;                         * 4 = Title screen copyright message
 ;
@@ -3887,206 +3919,350 @@ ENDIF
  JSR DrawIconBar        ; Draw the icon bar into the nametable buffers for both
                         ; bitplanes
 
- LDA iconBarType
- BEQ sbar13
+ LDA iconBarType        ; If iconBarType = 0 then jump to SetupIconBarDocked to
+ BEQ SetupIconBarDocked ; set up the Docked icon bar, returning from the
+                        ; subroutine using a tail call
 
- CMP #1
- BEQ sbar1
- CMP #3
- BEQ SetupIconBarPause
- CMP #2
- BNE pbar6
- JMP sbar17
+ CMP #1                 ; If iconBarType = 1 then jump to SetupIconBarFlight to
+ BEQ SetupIconBarFlight ; set up the Flight icon bar, returning from the
+                        ; subroutine using a tail call
 
-.sbar1
+ CMP #3                 ; If iconBarType = 3 then jump to SetupIconBarPause to
+ BEQ SetupIconBarPause  ; set up the Pause icon bar, returning from the
+                        ; subroutine using a tail call
 
- LDA SSPR
- BNE sbar2
+ CMP #2                 ; If iconBarType <> 2 then it must be 4, so this is the
+ BNE SetIconBarButtonsS ; title screen and we need to show the title screen
+                        ; copyright message in place of the icon bar, so jump to
+                        ; SetIconBarButtons via SetIconBarButtonsS to skip
+                        ; setting up any bespoke buttons and simply display the
+                        ; copyright message patterns as they are, returning from
+                        ; the subroutine using a tail call
 
- LDY #2                 ; Blank the first icon on the icon bar
- JSR DrawBlankButton2x2
+ JMP SetupIconBarCharts ; Otherwise iconBarType must be 2, so jump to
+                        ; SetupIconBarCharts to set up the Charts icon bar,
+                        ; returning from the subroutine using a tail call
 
-.sbar2
+; ******************************************************************************
+;
+;       Name: SetupIconBarFlight
+;       Type: Subroutine
+;   Category: Icon bar
+;    Summary: Set up the Flight icon bar
+;
+; ------------------------------------------------------------------------------
+;
+; Other entry points:
+;
+;   fbar8                Process the escape pod, fast-forward and Market Price
+;                        buttons
+;
+;   fbar11               Process the fast-forward and Market Price buttons
+;
+; ******************************************************************************
 
- LDA ECM
- BNE sbar3
+.SetupIconBarFlight
 
- LDY #17                ; Blank the seventh icon on the icon bar
- JSR DrawBlankButton2x2
+                        ; By default the icon bar shows all possible icons, so
+                        ; now we work our way through the buttons, hiding any
+                        ; icons that do not apply
 
-.sbar3
+ LDA SSPR               ; If we are inside the space station safe zone then SSPR
+ BNE fbar1              ; is non-zero, so jump to fbar1 to leave the first
+                        ; button showing the docking computer icon
 
- LDA QQ22+1
- BNE sbar4
+ LDY #2                 ; Otherwise blank the first button on the icon bar to
+ JSR DrawBlankButton2x2 ; hide the docking computer icon as we can't activate
+                        ; the docking computer outside of the safe zone
 
- LDA selectedSystemFlag
- ASL A
- BMI sbar5
+.fbar1
 
-.sbar4
+ LDA ECM                ; If we have an E.C.M. fitted, jump to fbar2 to leave
+ BNE fbar2              ; the seventh button showing the E.C.M. icon
 
- LDY #14                ; Blank the sixth icon on the icon bar
- JSR DrawBlankButton3x2
+ LDY #17                ; Otherwise blank the seventh button on the icon bar to
+ JSR DrawBlankButton2x2 ; hide the E.C.M. icon we don't have an E.C.M. fitted
 
-.sbar5
+.fbar2
 
- LDA QQ11
- BEQ sbar6
+ LDA QQ22+1             ; Fetch QQ22+1, which contains the number that's shown
+                        ; on-screen during hyperspace countdown
 
- JSR BlankButtons8To11  ; Blank from the eighth to the eleventh button on the
+ BNE fbar3              ; If it is non-zero then there is a hyperspace countdown
+                        ; in progress, so jump to fbar3 to blank the sixth
+                        ; button on the icon bar, as otherwise it would show the
+                        ; hyperspace icon (which we can't choose as we are
+                        ; already counting down)
+
+ LDA selectedSystemFlag ; If bit 6 of selectedSystemFlag is set, then we can
+ ASL A                  ; hyperspace to the currently selected system, so jump
+ BMI fbar4              ; to fbar4 to leave the sixth button showing the
+                        ; hyperspace icon
+
+.fbar3
+
+ LDY #14                ; If we get here then there is either a hyperspace
+ JSR DrawBlankButton3x2 ; countdown already in progress, or we can't hyperspace
+                        ; to the selected system, so blank the sixth button on
+                        ; the icon bar to hide the hyperspace icon
+
+.fbar4
+
+ LDA QQ11               ; If this is the space view, jump to fbar5 to process
+ BEQ fbar5              ; the weapon buttons
+
+ JSR BlankButtons8To11  ; Otherwise this is not a space view and we don't want
+                        ; to show the weapon buttons, so blank from the eighth
+                        ; to the eleventh button on the icon bar
+
+ JMP fbar10             ; Jump to fbar10 to process the eleventh button on the
                         ; icon bar
 
- JMP sbar11
+.fbar5
 
-.sbar6
+ LDA NOMSL              ; If we have at least one missile fitted then NOMSL will
+ BNE fbar6              ; be non-zero, so jump to fbar6 to leave the eighth
+                        ; button showing the target missile icon
 
- LDA NOMSL
- BNE sbar7
+ LDY #19                ; Otherwise we have no missiles fitted so blank the
+ JSR DrawBlankButton3x2 ; eighth button on the icon bar to hide the target
+                        ; missile icon
 
- LDY #19                ; Blank the eighth icon on the icon bar
- JSR DrawBlankButton3x2
+.fbar6
 
-.sbar7
+ LDA MSTG               ; If MSTG is positive (i.e. it does not have bit 7 set),
+ BPL fbar7              ; then it indicates we already have a missile locked on
+                        ; a target (in which case MSTG contains the ship number
+                        ; of the target), so jump to fbar7 to leave the ninth
+                        ; button showing the fire missile icon
 
- LDA MSTG
- BPL sbar8
+ LDY #22                ; Otherwise the missile is not targeted, so blank the
+ JSR DrawBlankButton2x2 ; ninth button on the icon bar to hide the fire missile
+                        ; icon
 
- LDY #22                ; Blank the ninth icon on the icon bar
- JSR DrawBlankButton2x2
+.fbar7
 
-.sbar8
+ LDA BOMB               ; If we do have an energy bomb fitted, jump to fbar8 to
+ BNE fbar8              ; leave the tenth button showing the energy bomb icon
 
- LDA BOMB
- BNE sbar9
+ LDY #24                ; Otherwise we do not have an energy bomb fitted, so
+ JSR DrawBlankButton3x2 ; blank the tenth button on the icon bar to hide the
+                        ; energy bomb icon
 
- LDY #24                ; Blank the tenth icon on the icon bar
- JSR DrawBlankButton3x2
+.fbar8
 
-.sbar9
+ LDA MJ                 ; If we are in witchspace (i.e. MJ is non-zero), jump to
+ BNE fbar9              ; fbar9 to hide the escape pod icon, as we can't use the
+                        ; escape pod in witchspace
 
- LDA MJ
- BNE sbar10
- LDA ESCP
- BNE sbar11
+ LDA ESCP               ; If we have an escape pod fitted, jump to fbar10 to
+ BNE fbar10             ; leave the eleventh button showing the escape pod icon
 
-.sbar10
+.fbar9
 
- LDY #27                ; Blank the eleventh icon on the icon bar
- JSR DrawBlankButton2x2
+ LDY #27                ; If we get here then we are either in space or don't
+ JSR DrawBlankButton2x2 ; have an escape pod fitted, so blank the eleventh
+                        ; button on the icon bar to hide the escape pod icon
 
-.sbar11
+.fbar10
 
- LDA allowInSystemJump
- AND #$C0
- BEQ sbar15
+ LDA allowInSystemJump  ; If bits 6 and 7 of allowInSystemJump are clear then we
+ AND #%11000000         ; are allowed to do an in-system jump, so jump to dock2
+ BEQ dock2              ; in SetupIconBarDocked to leave the twelfth button
+                        ; showing the fast-forward icon and move on to
+                        ; processing the second button on the icon bar
 
-.sbar12
+.fbar11
 
- LDY #29                ; Blank the twelfth icon on the icon bar
- JSR DrawBlankButton3x2
+ LDY #29                ; Otherwise we can't do an in-system jump, so blank the
+ JSR DrawBlankButton3x2 ; twelfth button on the icon bar to hide the
+                        ; fast-forward icon
 
- JMP sbar15
+ JMP dock2              ; Jump to dock2 in SetupIconBarDocked to move on to
+                        ; processing the second button on the icon bar
 
-.sbar13
+; ******************************************************************************
+;
+;       Name: SetupIconBarDocked
+;       Type: Subroutine
+;   Category: Icon bar
+;    Summary: Set up the Docked icon bar
+;
+; ------------------------------------------------------------------------------
+;
+; Other entry points:
+;
+;   dock2                Process the second button on the Docked or Flight icon
+;                        bars
+;
+; ******************************************************************************
 
- LDA COK
- BNE sbar14
- LDA QQ11
- CMP #$BB
- BEQ sbar15
+.SetupIconBarDocked
 
-.sbar14
+                        ; By default the icon bar shows all possible icons, so
+                        ; now we work our way through the buttons, hiding any
+                        ; icons that do not apply
 
- LDY #17                ; Blank the seventh icon on the icon bar
- JSR DrawBlankButton2x2
+ LDA COK                ; If COK is non-zero then cheat mode has been applied,
+ BNE dock1              ; so jump to dock1 to hide the button to change the
+                        ; commander name (as cheats can't change their commander
+                        ; name away from "CHEATER")
 
-.sbar15
+ LDA QQ11               ; If the view type in QQ11 is $BB (Save and load with
+ CMP #$BB               ; the normal and highlight fonts loaded), jump to ifon1
+ BEQ dock2              ; to leave the seventh button showing the icon to change
+                        ; the commander name
 
- LDA QQ11
- CMP #$BA
- BNE sbar16
+.dock1
 
- LDY #4                 ; Blank the second icon on the icon bar
- JSR DrawBlankButton3x2
+ LDY #17                ; If we get here then either cheat mode has been applied
+ JSR DrawBlankButton2x2 ; or this is not the save screen, so blank the seventh
+                        ; button on the icon bar to hide the change commander
+                        ; name icon
 
-.sbar16
+.dock2
+
+ LDA QQ11               ; If the view type in QQ11 is not $BA (Market Price),
+ CMP #$BA               ; then jump to SetIconBarButtons to skip the following
+ BNE SetIconBarButtons  ; two instructions
+
+ LDY #4                 ; This is the Market Price screen, so blank the second
+ JSR DrawBlankButton3x2 ; button on the icon bar (though as we are going to draw
+                        ; the Inventory button over the top, this isn't strictly
+                        ; necessary)
+
+                        ; Fall through into SetIconBarButtons to set the correct
+                        ; list of button numbers for the icon bar 
+
+; ******************************************************************************
+;
+;       Name: SetIconBarButtons
+;       Type: Subroutine
+;   Category: Icon bar
+;    Summary: Set the correct list of button numbers for the icon bar 
+;
+; ******************************************************************************
+
+.SetIconBarButtons
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDA iconBarType        ; Set barButtons(1 0) = iconBarButtons
  ASL A                  ;                       + iconBarType * 16
- ASL A
- ASL A
- ASL A
+ ASL A                  ;
+ ASL A                  ; So barButtons(1 0) points to list of button numbers in
+ ASL A                  ; the iconBarButtons table for this icon bar type
  ADC #LO(iconBarButtons)
  STA barButtons
  LDA #HI(iconBarButtons)
  ADC #0
  STA barButtons+1
 
- RTS
+ RTS                    ; Return from the subroutine
 
-.sbar17
+; ******************************************************************************
+;
+;       Name: SetupIconBarCharts
+;       Type: Subroutine
+;   Category: Icon bar
+;    Summary: Set up the Charts icon bar
+;
+; ******************************************************************************
 
- LDX #4
- LDA QQ12
- BEQ sbar18
+.SetupIconBarCharts
 
- LDY #12                ; Blank the fifth icon on the icon bar
- JSR DrawBlankButton2x2
+                        ; By default the icon bar shows all possible icons, so
+                        ; now we work our way through the buttons, hiding any
+                        ; icons that do not apply
+
+ LDX #4                 ; Set X = 4 ???
+
+ LDA QQ12               ; If we are in space (QQ12 = 0) then jump to char1 to
+ BEQ char1              ; leave the fifth button showing the laser view icon
+                        ; and process the rest of the icon bar
+
+                        ; If we get here then we setting up the Charts icon bar
+                        ; when are docked
+
+ LDY #12                ; Blank the fifth button on the icon bar to hide the
+ JSR DrawBlankButton2x2 ; laser view button, as this doesn't apply when we are
+                        ; docked
 
  JSR BlankButtons8To11  ; Blank from the eighth to the eleventh button on the
+                        ; icon bar as none of these icons apply when we are
+                        ; docked
+
+ JMP fbar11             ; Jump to fbar11 in SetupIconBarFlight to process the
+                        ; fast-forward and Market Price buttons, returning from
+                        ; the subroutine using a tail call
+
+.char1
+
+                        ; If we get here then we setting up the Charts icon bar
+                        ; when we are in space
+
+ LDY #2                 ; Blank the first button on the icon bar to hide the
+ JSR DrawBlankButton2x2 ; docking computer icon so we can't activate it while
+                        ; looking at the charts while in space
+
+ LDA QQ22+1             ; Fetch QQ22+1, which contains the number that's shown
+                        ; on-screen during hyperspace countdown
+
+ BEQ char2              ; If the counter is zero then there is no countdown in
+                        ; progress, so jump to char2 to leave the "Return
+                        ; pointer to current system" and "Search for system"
+                        ; icons visible
+
+ LDY #14                ; Blank the sixth button on the icon bar to hide the
+ JSR DrawBlankButton3x2 ; "Return pointer to current system" icon, as this
+                        ; can't be done during a hyperspace countdown
+
+ LDY #17                ; Blank the seventh button on the icon bar to hide the
+ JSR DrawBlankButton2x2 ; "Search for system" icon, as this can't be done during
+                        ; a hyperspace countdown
+
+ JMP char3              ; Jump to char3 to move on to the eighth button on the
                         ; icon bar
 
- JMP sbar12
+.char2
 
-.sbar18
+                        ; If we get here then there is no hyperspace countdown
 
- LDY #2                 ; Blank the first icon on the icon bar
- JSR DrawBlankButton2x2
+ LDA selectedSystemFlag ; If bit 6 of selectedSystemFlag is set, then we can
+ ASL A                  ; hyperspace to the currently selected system, so jump
+ BMI char4              ; to char4 to leave the eighth button showing the
+                        ; hyperspace icon
 
- LDA QQ22+1
- BEQ sbar19
+.char3
 
- LDY #14                ; Blank the sixth icon on the icon bar
- JSR DrawBlankButton3x2
+ LDY #19                ; Blank the eighth button on the icon bar to hide the
+ JSR DrawBlankButton3x2 ; hyperspace icon, as we can't hyperspace to the
+                        ; currently selected system
 
- LDY #17                ; Blank the seventh icon on the icon bar
- JSR DrawBlankButton2x2
+.char4
 
- JMP sbar20
+ LDA GHYP               ; If we have a galactic hyperdrive fitted, jump to char5
+ BNE char5              ; to leave the ninth button showing the galactic
+                        ; hyperspace icon
 
-.sbar19
+ LDY #22                ; Blank the ninth button on the icon bar to hide the
+ JSR DrawBlankButton2x2 ; galactic hyperspace icon, as we don't have a galactic
+                        ; hyperdrive fitted
 
- LDA selectedSystemFlag
- ASL A
- BMI sbar21
+.char5
 
-.sbar20
+ LDA ECM                ; If we have an E.C.M. fitted, jump to char6 to leave
+ BNE char6              ; the seventh tenth showing the E.C.M. icon
 
- LDY #19                ; Blank the eighth icon on the icon bar
- JSR DrawBlankButton3x2
+ LDY #24                ; Otherwise blank the tenth button on the icon bar to
+ JSR DrawBlankButton3x2 ; hide the E.C.M. icon we don't have an E.C.M. fitted
 
-.sbar21
+.char6
 
- LDA GHYP
- BNE sbar22
-
- LDY #22                ; Blank the ninth icon on the icon bar
- JSR DrawBlankButton2x2
-
-.sbar22
-
- LDA ECM
- BNE sbar23
-
- LDY #24                ; Blank the tenth icon on the icon bar
- JSR DrawBlankButton3x2
-
-.sbar23
-
- JMP sbar9
+ JMP fbar8              ; Jump to fbar8 in SetupIconBarFlight to process the
+                        ; escape pod, fast-forward and Market Price buttons,
+                        ; returning from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -4244,59 +4420,136 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_AF96
+;       Name: Draw6OptionTiles
 ;       Type: Subroutine
 ;   Category: Icon bar
-;    Summary: ???
+;    Summary: Draw six tiles over the top of an icon bar button in the Pause
+;             icon bar to change an option icon to a non-default state
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   Y                   The tile column of the top-left tile in the block of six
+;                       tiles that we want to draw (three across and two high)
+;
+;   SC(1 0)             The address of the nametable entries for the on-screen
+;                       icon bar in nametable buffer 0
+;
+;   SC2(1 0)            The address of the nametable entries for the on-screen
+;                       icon bar in nametable buffer 1
+;
+; Returns:
+;
+;   Y                   Y is preserved
 ;
 ; ******************************************************************************
 
-.subm_AF96
+.Draw6OptionTiles
 
- JSR subm_AFAB
- INY
+ JSR Draw2OptionTiles   ; Call Draw2OptionTiles to draw two tiles over the top
+                        ; of the option icon specified in Y
+
+ INY                    ; Increment Y to move along to the next tile column
+
+                        ; Fall through into Draw4OptionTiles to draw four more
+                        ; tiles
 
 ; ******************************************************************************
 ;
-;       Name: subm_AF9A
+;       Name: Draw4OptionTiles
 ;       Type: Subroutine
 ;   Category: Icon bar
-;    Summary: ???
+;    Summary: Draw four tiles over the top of an icon bar button in the Pause
+;             icon bar to change an option icon to a non-default state
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   Y                   The tile column of the top-left tile in the 2x2 block of
+;                       four tiles that we want to draw
+;
+;   SC(1 0)             The address of the nametable entries for the on-screen
+;                       icon bar in nametable buffer 0
+;
+;   SC2(1 0)            The address of the nametable entries for the on-screen
+;                       icon bar in nametable buffer 1
+;
+; Returns:
+;
+;   Y                   Y is preserved
 ;
 ; ******************************************************************************
 
-.subm_AF9A
+.Draw4OptionTiles
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- JSR subm_AFAB
- INY
+ JSR Draw2OptionTiles   ; Call Draw2OptionTiles to draw two tiles over the top
+                        ; of the option icon specified in Y
+
+ INY                    ; Increment Y to move along to the next tile column
+
+                        ; Fall through into Draw4OptionTiles to draw two more
+                        ; tiles
 
 ; ******************************************************************************
 ;
-;       Name: subm_AFAB
+;       Name: Draw2OptionTiles
 ;       Type: Subroutine
 ;   Category: Icon bar
-;    Summary: ???
+;    Summary: Draw a top and bottom tile over the top of an icon bar button in
+;             the Pause icon bar to change an option icon to a non-default state
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   Y                   The tile column of the top and bottom tiles that we want
+;                       to draw
+;
+;   SC(1 0)             The address of the nametable entries for the on-screen
+;                       icon bar in nametable buffer 0
+;
+;   SC2(1 0)            The address of the nametable entries for the on-screen
+;                       icon bar in nametable buffer 1
+;
+; Returns:
+;
+;   Y                   Y is preserved
 ;
 ; ******************************************************************************
 
-.subm_AFAB
+.Draw2OptionTiles
 
- LDA barNames3+14,Y
- STA (SC),Y
- STA (SC2),Y
- STY T
- TYA
- CLC
- ADC #$20
- TAY
- LDA barNames3+14,Y
- STA (SC),Y
- STA (SC2),Y
- LDY T
- RTS
+ LDA barNames3+14,Y     ; Set A to the nametable entry for the top tile of this
+                        ; option's icon when is is not in the default state,
+                        ; which can be found in entry Y + 14 of the barNames3
+                        ; table
+
+ STA (SC),Y             ; Set the top tile of the block we want to draw to the
+ STA (SC2),Y            ; pattern in A, in both nametable buffers
+
+ STY T                  ; Store Y in T so we can rereieve it below
+
+ TYA                    ; Set Y = Y + 32
+ CLC                    ;
+ ADC #32                ; So Y now points to the next tile down in the row below
+ TAY                    ; (as there are 32 tiles in a row)
+
+ LDA barNames3+14,Y     ; Set A to the nametable entry for the bottom tile of
+                        ; this option's icon when is is not in the default
+                        ; state, which can be found in entry Y + 14 of the
+                        ; barNames3 table
+
+ STA (SC),Y             ; Set the bottom tile of the block we want to draw to
+ STA (SC2),Y            ; the pattern in A, in both nametable buffers
+
+ LDY T                  ; Restore Y from T so it is preserved
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -4555,9 +4808,9 @@ ENDIF
 ; colour 1 on a colour 0 background (typically a white or cyan font on a black
 ; background).
 ;
-; If the view type in QQ11 is $BB (Save and load with font loaded in both
-; bitplanes), then the font is in colour 1 on a colour 2 background (which is a
-; grey font on a red background in that view's palette).
+; If the view type in QQ11 is $BB (Save and load with the normal and highlight
+; fonts loaded), then the font is in colour 1 on a colour 2 background (which
+; is a grey font on a red background in that view's palette).
 ;
 ; This is always called with A = 66, so it always loads the fonts from pattern
 ; 66 to 160.
@@ -4596,8 +4849,8 @@ ENDIF
  LDX #0                 ; Set X = 0 to use in the font inversion logic below
 
  LDA QQ11               ; If the view type in QQ11 is not $BB (Save and load
- CMP #$BB               ; with font loaded in both bitplanes), jump to ifon1
- BNE ifon1              ; to skip the following instruction
+ CMP #$BB               ; with the normal and highlight fonts loaded), jump to
+ BNE ifon1              ; ifon1 to skip the following instruction
 
  DEX                    ; This is the save and load screen with font loaded in
                         ; both bitplanes, so set X = $FF to use in the font
@@ -4608,7 +4861,7 @@ ENDIF
  STX T                  ; Set T = X, so we have the following:
                         ;
                         ;   * T = $FF if QQ11 is $BB (Save and load screen with
-                        ;         font loaded in both bitplanes)
+                        ;         the normal and highlight fonts loaded)
                         ;
                         ;   * T = 0 for all other screens
                         ;
@@ -4759,8 +5012,8 @@ ENDIF
 ; colour 3 on a colour 1 background (which is typically a green font on a grey
 ; background that can be used for drawing highlighted text in menu selections).
 ;
-; If the view type in QQ11 is $BB (Save and load with font loaded in both
-; bitplanes), then only the first 70 characters of the font are loaded, into
+; If the view type in QQ11 is $BB (Save and load with the normal and highlight
+; fonts loaded), then only the first 70 characters of the font are loaded, into
 ; patterns 161 to 230.
 ;
 ; ******************************************************************************
@@ -4785,8 +5038,8 @@ ENDIF
                         ; full of random noise
 
  LDA QQ11               ; If the view type in QQ11 is not $BB (Save and load
- CMP #$BB               ; with font loaded in both bitplanes), jump to font1
- BNE font1              ; to skip the following instruction
+ CMP #$BB               ; with the normal and highlight fonts loaded), jump to
+ BNE font1              ; font1 to skip the following instruction
 
  LDX #70                ; This is the save and load screen with font loaded in
                         ; both bitplanes, so set X = 70 so that we only copy 70

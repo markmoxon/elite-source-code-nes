@@ -909,7 +909,7 @@ ENDIF
                         ; of the Title screen and the start of the demo scroll
                         ; text)
                         ;
-                        ; Also, view $BB (Save and load with normal and
+                        ; Also, view $BB (Save and load with the normal and
                         ; highlight fonts loaded) displays the normal font as
                         ; colour 1 on background colour 2 (white on red)
                         ;
@@ -3690,7 +3690,7 @@ ORG $0200
 
 .DAMP
 
- SKIP 1                 ; Keyboard damping configuration setting
+ SKIP 1                 ; Controller damping configuration setting
                         ;
                         ;   * 0 = damping is disabled
                         ;
@@ -4393,7 +4393,7 @@ ENDIF
                         ;
                         ;   * 2 = Charts
                         ;
-                        ;   * 3 = Pause options
+                        ;   * 3 = Pause
                         ;
                         ;   * 4 = Title screen copyright message
 
@@ -4472,7 +4472,7 @@ ENDIF
 .chartToShow
 
  SKIP 1                 ; Controls which chart is shown when choosing the chart
-                        ; icon on the icon bar (as the Long-range and
+                        ; button on the icon bar (as the Long-range and
                         ; Short-range Charts share the same button)
                         ;
                         ;   * Bit 7 clear = show Short-range Chart
