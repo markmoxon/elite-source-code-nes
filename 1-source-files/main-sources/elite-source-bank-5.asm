@@ -25,9 +25,9 @@
 ;
 ; ******************************************************************************
 
- INCLUDE "1-source-files/main-sources/elite-build-options.asm"
-
  _BANK = 5
+
+ INCLUDE "1-source-files/main-sources/elite-build-options.asm"
 
  INCLUDE "1-source-files/main-sources/elite-source-common.asm"
 
@@ -2554,7 +2554,7 @@ ENDIF
 ;
 ;       Name: SetDemoAutoPlay
 ;       Type: Subroutine
-;   Category: Demo
+;   Category: Combat practice
 ;    Summary: Set up the NMI handler to automatically play the demo using the
 ;             controller key presses in the autoplayKeys table
 ;
@@ -2591,7 +2591,7 @@ ENDIF
 ;
 ;       Name: autoplayKeysLo
 ;       Type: Variable
-;   Category: Demo
+;   Category: Combat practice
 ;    Summary: Low byte of the address of the auto-play key table for each
 ;             language
 ;
@@ -2612,7 +2612,7 @@ ENDIF
 ;
 ;       Name: autoplayKeysHi
 ;       Type: Variable
-;   Category: Demo
+;   Category: Combat practice
 ;    Summary: High byte of the address of the auto-play key table for each
 ;             language
 ;

@@ -52,7 +52,9 @@
 ;
 ; ******************************************************************************
 
- EQUS "NES", $1A        ; Identification string at the start of the header
+ EQUS "NES"             ; Bytes #0 to #2 = identification string for iNES file
+
+ EQUB $1A               ; Byte #3 = identification string terminator
 
  EQUB 8                 ; Byte #4 = 8 pages of 16K ROM = 128K
 

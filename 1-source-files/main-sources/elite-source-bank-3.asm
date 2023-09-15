@@ -2737,10 +2737,10 @@ ENDIF
 
  JSR WaitFor3xVBlank    ; Wait for three VBlanks to pass
 
- LDA #HI(20*32)         ; Set iconBarOffset(1 0) = 20*32
- STA iconBarOffset+1    ;
+ LDA #HI(20*32)         ; Set iconBarRow(1 0) = 20*32
+ STA iconBarRow+1       ;
  LDA #LO(20*32)         ; So the icon bar is on row 20
- STA iconBarOffset
+ STA iconBarRow
 
                         ; We now want to set all the colours in all the palettes
                         ; to black, to hide anything that's on-screen
@@ -3023,6 +3023,10 @@ ENDIF
                         ;   * Bit 7 clear = do not send data to the PPU
                         ;
                         ; Bits 0 and 1 are ignored and are always clear
+                        ;
+                        ; The NMI handler will now start sending data to the PPU
+                        ; according to the above configuration, splitting the
+                        ; process across multiple VBlanks if necessary
 
  LDA #4                 ; Set the number of the first and last tiles to send
  STA clearingPattTile   ; from the PPU to 4, which is the first tile after the
@@ -3070,50 +3074,78 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetIconBarPosition
+;       Name: SetIconBarRow
 ;       Type: Subroutine
 ;   Category: Icon bar
-;    Summary: ???
+;    Summary: Set the row on which the icon bar appears, which depends on the
+;             view type
+;
+; ------------------------------------------------------------------------------
+;
+; Other entry points:
+;
+;   RTS9                Contains an RTS
 ;
 ; ******************************************************************************
 
-.SetIconBarPosition
+.SetIconBarRow
 
- LDA QQ11
- CMP #$BA
- BNE CAC08
- LDA iconBarType
- CMP #3
- BEQ CABFA
- JSR DrawInventoryIcon
- JMP CAC08
+ LDA QQ11               ; If the view type in QQ11 is not $BA (Market Price),
+ CMP #$BA               ; then jump to bpos2 to calculate the icon bar row
+ BNE bpos2
 
-.CABFA
+ LDA iconBarType        ; If this is icon bar type 3 (Pause options), jump to
+ CMP #3                 ; bpos1 to hide the Inventory icon before calculating
+ BEQ bpos1              ; the icon bar row
 
- LDX #$F0
- STX ySprite8
+                        ; If we get here then this is the Market Price screen
+                        ; and the game is not paused, so we are showing the
+                        ; normal icon bar for this screen
+                        ;
+                        ; The Market Price screen uses the normal Docked or
+                        ; Flight icon bar, but with the second icon overwritten
+                        ; with the Inventory icon
+
+ JSR DrawInventoryIcon  ; Draw the inventory icon on top of the second button
+                        ; in the icon bar
+
+ JMP bpos2              ; Jump to bpos2 to calculate the icon bar row
+
+.bpos1
+
+                        ; If we get here then this is the Market Price screen
+                        ; and we are showing the pause options on the icon bar,
+                        ; so we need to hide the Inventory icon from the second
+                        ; button on the icon bar, so it doesn't overwrite the
+                        ; pause options
+                        ;
+                        ; The Inventory button is in sprites 8 to 11, so we now
+                        ; hide these sprites by moving them off-screen
+
+ LDX #240               ; Hide sprites 8 to 11 by setting their y-coordinates to
+ STX ySprite8           ; to 240, which is off the bottom of the screen
  STX ySprite9
  STX ySprite10
  STX ySprite11
 
-.CAC08
+.bpos2
 
- LDA #HI(20*32)         ; Set iconBarOffset(1 0) = 20*32
- STA iconBarOffset+1
+ LDA #HI(20*32)         ; Set iconBarRow(1 0) = 20*32
+ STA iconBarRow+1
  LDA #LO(20*32)
- STA iconBarOffset
+ STA iconBarRow
 
  LDA QQ11               ; If bit 7 of the view type in QQ11 is clear then there
- BPL CAC1C              ; is a dashboard, so jump to CAC1C to keep this value of
-                        ; iconBarOffset
+ BPL RTS9               ; is a dashboard, so jump to RTS9 to keep this value of
+                        ; iconBarRow and return from the subroutine
 
- LDA #HI(27*32)         ; Set iconBarOffset(1 0) = 27*32
- STA iconBarOffset+1
+ LDA #HI(27*32)         ; Set iconBarRow(1 0) = 27*32
+ STA iconBarRow+1       ;
  LDA #LO(27*32)         ; So the icon bar is on row 20 if bit 7 of the view
- STA iconBarOffset      ; number is clear (so there is a dashboard), and it's on
+ STA iconBarRow         ; number is clear (so there is a dashboard), and it's on
                         ; row 27 is bit 7 is set (so there is no dashboard)
 
-.CAC1C
+.RTS9
 
  RTS                    ; Return from the subroutine
 
@@ -3122,35 +3154,55 @@ ENDIF
 ;       Name: ShowIconBar
 ;       Type: Subroutine
 ;   Category: Icon bar
-;    Summary: ???
+;    Summary: Show a specified icon bar on-screen
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The type of icon bar to show:
+;
+;                         * 0 = Docked
+;
+;                         * 1 = Flight
+;
+;                         * 2 = Charts
+;
+;                         * 3 = Pause options
+;
+;                         * 4 = Title screen copyright message
 ;
 ; ******************************************************************************
 
 .ShowIconBar
 
- TAY
- LDA QQ11
- AND #$40
- BNE CAC1C
- STY iconBarType
- JSR subm_ACEB
+ TAY                    ; Copy the icon bar type into Y
 
- LDA #HI(20*32)         ; Set iconBarOffset(1 0) = 20*32
- STA iconBarOffset+1
+ LDA QQ11               ; If bit 6 of the view type is set, then there is no
+ AND #%01000000         ; icon bar on the screen, so jump to RTS9 to return
+ BNE RTS9               ; from the subroutine as there is nothing to show
+
+ STY iconBarType        ; Set the type of the current icon bar in iconBarType to
+                        ; to the new type in Y
+
+ JSR BlankAllButtons    ; Blank all the buttons on the icon bar
+
+ LDA #HI(20*32)         ; Set iconBarRow(1 0) = 20*32
+ STA iconBarRow+1
  LDA #LO(20*32)
- STA iconBarOffset
+ STA iconBarRow
 
  LDA QQ11               ; If bit 7 of the view type in QQ11 is clear then there
- BPL CAC3E              ; is a dashboard, so jump to CAC3E to keep this value of
-                        ; iconBarOffset
+ BPL obar1              ; is a dashboard, so jump to obar1 to keep this value of
+                        ; iconBarRow
 
- LDA #HI(27*32)         ; Set iconBarOffset(1 0) = 27*32
- STA iconBarOffset+1    ;
+ LDA #HI(27*32)         ; Set iconBarRow(1 0) = 27*32
+ STA iconBarRow+1       ;
  LDA #LO(27*32)         ; So the icon bar is on row 20 if bit 7 of the view
- STA iconBarOffset      ; number is clear (so there is a dashboard), and it's on
+ STA iconBarRow         ; number is clear (so there is a dashboard), and it's on
                         ; row 27 is bit 7 is set (so there is no dashboard)
 
-.CAC3E
+.obar1
 
  LDA iconBarType        ; Set iconBarImageHi to the high byte of the correct
  ASL A                  ; icon bar image block for the current icon bar type,
@@ -3164,13 +3216,13 @@ ENDIF
  LDX #0                 ; Set barPatternCounter = 0 so the NMI handler sends the
  STX barPatternCounter  ; icon bar's nametable and pattern data to the PPU
 
-.loop_CAC4B
+.obar2
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDA barPatternCounter  ; Loop back to keep the PPU configured in this way until
- BPL loop_CAC4B         ; barPatternCounter is set to 128
+ BPL obar2              ; barPatternCounter is set to 128
                         ;
                         ; This happens when the NMI handler has finished sending
                         ; all the icon bar's nametable and pattern data to
@@ -3178,25 +3230,29 @@ ENDIF
                         ; nametable 0 and pattern table 0 until the icon bar
                         ; nametable and pattern data have all been sent
 
+                        ; Fall througn into UpdateIconBar to update the icon bar
+
 ; ******************************************************************************
 ;
 ;       Name: UpdateIconBar
 ;       Type: Subroutine
 ;   Category: Icon bar
-;    Summary: ???
+;    Summary: Update the icon bar
 ;
 ; ******************************************************************************
 
 .UpdateIconBar
 
- LDA iconBarType
- JSR SetupIconBar
+ LDA iconBarType        ; Set A to the current icon bar type
+
+ JSR SetupIconBar       ; Set up the icon bar
 
  LDA QQ11               ; If bit 6 of the view type is set, then there is no
- AND #%01000000         ; icon bar, so jump to CAC85 to return from the
- BNE CAC85              ; subroutine ???
+ AND #%01000000         ; icon bar on the screen, so jump to ubar2 to return
+ BNE ubar2              ; from the subroutine as there is no icon bar to update
 
- JSR SetIconBarPosition
+ JSR SetIconBarRow      ; Set the row on which the icon bar appears, which
+                        ; depends on the view type
 
  LDA #%10000000         ; Set bit 7 of skipBarPatternsPPU, so the NMI handler
  STA skipBarPatternsPPU ; only sends the nametable entries and not the tile
@@ -3205,13 +3261,13 @@ ENDIF
  ASL A                  ; Set barPatternCounter = 0, so the NMI handler sends
  STA barPatternCounter  ; icon bar data to the PPU
 
-.loop_CAC72
+.ubar1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDA barPatternCounter  ; Loop back to keep the PPU configured in this way until
- BPL loop_CAC72         ; barPatternCounter is set to 128
+ BPL ubar1              ; barPatternCounter is set to 128
                         ;
                         ; This happens when the NMI handler has finished sending
                         ; all the icon bar's nametable entries to the PPU, so
@@ -3224,7 +3280,7 @@ ENDIF
                         ; patterns for the icon bar (when barPatternCounter is
                         ; non-zero)
 
-.CAC85
+.ubar2
 
  RTS                    ; Return from the subroutine
 
@@ -3361,66 +3417,84 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_ACEB
+;       Name: BlankAllButtons
 ;       Type: Subroutine
 ;   Category: Icon bar
-;    Summary: ???
+;    Summary: Blank all the buttons on the icon bar
 ;
 ; ******************************************************************************
 
-.subm_ACEB
+.BlankAllButtons
 
  JSR DrawIconBar        ; Draw the icon bar into the nametable buffers for both
                         ; bitplanes
+                        ;
+                        ; This also sets the following variables, which we pass
+                        ; to the following routines:
+                        ;
+                        ;   * SC(1 0) is the address of the nametable entries
+                        ;     for the on-screen icon bar in nametable buffer 0
+                        ;
+                        ;   * SC2(1 0) is the address of the nametable entries
+                        ;     for the on-screen icon bar in nametable buffer 1
 
- LDY #2
- JSR subm_AF2E
- LDY #4
- JSR subm_AF5B
- LDY #7
- JSR subm_AF2E
- LDY #9
- JSR subm_AF5B
- LDY #$0C
- JSR subm_AF2E
- LDY #$1D
- JSR subm_AF5B
+ LDY #2                 ; Blank the first icon on the icon bar
+ JSR DrawBlankButton2x2
+
+ LDY #4                 ; Blank the second icon on the icon bar
+ JSR DrawBlankButton3x2
+
+ LDY #7                 ; Blank the third icon on the icon bar
+ JSR DrawBlankButton2x2
+
+ LDY #9                 ; Blank the fourth icon on the icon bar
+ JSR DrawBlankButton3x2
+
+ LDY #12                ; Blank the fifth icon on the icon bar
+ JSR DrawBlankButton2x2
+
+ LDY #29                ; Blank the twelfth icon on the icon bar
+ JSR DrawBlankButton3x2
 
 ; ******************************************************************************
 ;
-;       Name: subm_AD0C
+;       Name: BlankButtons6To11
 ;       Type: Subroutine
 ;   Category: Icon bar
-;    Summary: ???
+;    Summary: Blank from the sixth to the eleventh button on the icon bar
 ;
 ; ******************************************************************************
 
-.subm_AD0C
+.BlankButtons6To11
 
- LDY #$0E
- JSR subm_AF5B
- LDY #$11
- JSR subm_AF2E
+ LDY #14                ; Blank the sixth icon on the icon bar
+ JSR DrawBlankButton3x2
+
+ LDY #17                ; Blank the seventh icon on the icon bar
+ JSR DrawBlankButton2x2
 
 ; ******************************************************************************
 ;
-;       Name: subm_AD16
+;       Name: BlankButtons8To11
 ;       Type: Subroutine
 ;   Category: Icon bar
-;    Summary: ???
+;    Summary: Blank from the eighth to the eleventh button on the icon bar
 ;
 ; ******************************************************************************
 
-.subm_AD16
+.BlankButtons8To11
 
- LDY #$13
- JSR subm_AF5B
- LDY #$16
- JSR subm_AF2E
- LDY #$18
- JSR subm_AF5B
- LDY #$1B
- JMP subm_AF2E
+ LDY #19                ; Blank the eighth icon on the icon bar
+ JSR DrawBlankButton3x2
+
+ LDY #22                ; Blank the ninth icon on the icon bar
+ JSR DrawBlankButton2x2
+
+ LDY #24                ; Blank the tenth icon on the icon bar
+ JSR DrawBlankButton3x2
+
+ LDY #27                ; Blank the eleventh icon on the icon bar and return
+ JMP DrawBlankButton2x2 ; from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -3428,6 +3502,16 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Icon bar
 ;    Summary: Draw the icon bar into the nametable buffers for both bitplanes
+;
+; ------------------------------------------------------------------------------
+;
+; Returns:
+;
+;   SC(1 0)             The address of the nametable entries for the on-screen
+;                       icon bar in nametable buffer 0
+;
+;   SC2(1 0)            The address of the nametable entries for the on-screen
+;                       icon bar in nametable buffer 1
 ;
 ; ******************************************************************************
 
@@ -3658,14 +3742,15 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetupIconBar_ADBC
+;       Name: HideIconBar
 ;       Type: Subroutine
 ;   Category: Icon bar
-;    Summary: ???
+;    Summary: Remove the icon bar from the screen by replacing it with
+;             background tiles
 ;
 ; ******************************************************************************
 
-.SetupIconBar_ADBC
+.HideIconBar
 
  LDA #HI(nameBuffer0+27*32) ; Set SC(1 0) to the address of the first tile on
  STA SC+1                   ; tile row 27 in nametable buffer 0
@@ -3677,72 +3762,85 @@ ENDIF
  LDA #LO(nameBuffer1+27*32)
  STA SC2
 
- LDY #$3F
- LDA #0
+ LDY #63                ; Set Y as an index, which will count down from 63 to 1,
+                        ; so we blank tile 1 to 63 of the icon bar in the
+                        ; following loop
 
-.loop_CADD0
+ LDA #0                 ; Set A = 0 to store in the nametable buffers, as tile 0
+                        ; is the empty background tile
 
+.hbar1
+
+ STA (SC),Y             ; Set the Y-th nametable entry for the icon bar to the
+ STA (SC2),Y            ; empty tile in A
+
+ DEY                    ; Decrement the index counter
+
+ BNE hbar1              ; Loop back until we have replaced all 63 tiles with the
+                        ; background tile
+
+ LDA #32                ; Set A = 32 as the tile pattern number to show at the
+                        ; start of row 27 ???
+
+ LDY #0                 ; Set the first nametable entry on tile row 27 to A
  STA (SC),Y
  STA (SC2),Y
- DEY
- BNE loop_CADD0
- LDA #$20
- LDY #0
- STA (SC),Y
- STA (SC2),Y
- RTS
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: SetupIconBar_ADE0
+;       Name: SetupIconBarPause
 ;       Type: Subroutine
 ;   Category: Icon bar
-;    Summary: ???
+;    Summary: Set up the game options shown on the icon bar when the game is
+;             paused
 ;
 ; ******************************************************************************
 
-.SetupIconBar_ADE0
+.SetupIconBarPause
 
  LDA JSTGY
- BEQ CADEA
+ BEQ pbar1
  LDY #2
  JSR subm_AF9A
 
-.CADEA
+.pbar1
 
  LDA DAMP
- BEQ CADF4
+ BEQ pbar2
  LDY #4
  JSR subm_AF96
 
-.CADF4
+.pbar2
 
  LDA disableMusic
- BPL CADFE
+ BPL pbar3
  LDY #7
  JSR subm_AF9A
 
-.CADFE
+.pbar3
 
  LDA DNOIZ
- BMI CAE08
+ BMI pbar4
  LDY #9
  JSR subm_AF96
 
-.CAE08
+.pbar4
 
  LDA numberOfPilots
- BNE CAE12
+ BNE pbar5
  LDY #$0C
  JSR subm_AF9A
 
-.CAE12
+.pbar5
 
- JSR subm_AD0C
+ JSR BlankButtons6To11  ; Blank from the sixth to the eleventh button on the
+                        ; icon bar
 
-.CAE15
+.pbar6
 
- JMP CAEC6
+ JMP sbar16
 
 ; ******************************************************************************
 ;
@@ -3773,9 +3871,15 @@ ENDIF
 
 .SetupIconBar
 
- TAY
- BMI SetupIconBar_ADBC
- STA iconBarType
+ TAY                    ; Copy the icon bar type into Y
+
+ BMI HideIconBar        ; If the icon bar type has bit 7 set, then this must be
+                        ; type $FF, so jump to HideIconBar to hide the icon bar
+                        ; on row 27, returning from the subroutine using a tail
+                        ; call
+
+ STA iconBarType        ; Set the type of the current icon bar in iconBarType to
+                        ; to the new type in A
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -3784,117 +3888,128 @@ ENDIF
                         ; bitplanes
 
  LDA iconBarType
- BEQ CAEAB
- CMP #1
- BEQ CAE42
- CMP #3
- BEQ SetupIconBar_ADE0
- CMP #2
- BNE CAE15
- JMP CAEE5
+ BEQ sbar13
 
-.CAE42
+ CMP #1
+ BEQ sbar1
+ CMP #3
+ BEQ SetupIconBarPause
+ CMP #2
+ BNE pbar6
+ JMP sbar17
+
+.sbar1
 
  LDA SSPR
- BNE CAE4C
- LDY #2
- JSR subm_AF2E
+ BNE sbar2
 
-.CAE4C
+ LDY #2                 ; Blank the first icon on the icon bar
+ JSR DrawBlankButton2x2
+
+.sbar2
 
  LDA ECM
- BNE CAE56
- LDY #$11
- JSR subm_AF2E
+ BNE sbar3
 
-.CAE56
+ LDY #17                ; Blank the seventh icon on the icon bar
+ JSR DrawBlankButton2x2
+
+.sbar3
 
  LDA QQ22+1
- BNE CAE60
+ BNE sbar4
 
  LDA selectedSystemFlag
  ASL A
- BMI CAE65
+ BMI sbar5
 
-.CAE60
+.sbar4
 
- LDY #$0E
- JSR subm_AF5B
+ LDY #14                ; Blank the sixth icon on the icon bar
+ JSR DrawBlankButton3x2
 
-.CAE65
+.sbar5
 
  LDA QQ11
- BEQ CAE6F
- JSR subm_AD16
- JMP CAE9C
+ BEQ sbar6
 
-.CAE6F
+ JSR BlankButtons8To11  ; Blank from the eighth to the eleventh button on the
+                        ; icon bar
+
+ JMP sbar11
+
+.sbar6
 
  LDA NOMSL
- BNE CAE79
- LDY #$13
- JSR subm_AF5B
+ BNE sbar7
 
-.CAE79
+ LDY #19                ; Blank the eighth icon on the icon bar
+ JSR DrawBlankButton3x2
+
+.sbar7
 
  LDA MSTG
- BPL CAE83
- LDY #$16
- JSR subm_AF2E
+ BPL sbar8
 
-.CAE83
+ LDY #22                ; Blank the ninth icon on the icon bar
+ JSR DrawBlankButton2x2
+
+.sbar8
 
  LDA BOMB
- BNE CAE8D
- LDY #$18
- JSR subm_AF5B
+ BNE sbar9
 
-.CAE8D
+ LDY #24                ; Blank the tenth icon on the icon bar
+ JSR DrawBlankButton3x2
+
+.sbar9
 
  LDA MJ
- BNE CAE97
+ BNE sbar10
  LDA ESCP
- BNE CAE9C
+ BNE sbar11
 
-.CAE97
+.sbar10
 
- LDY #$1B
- JSR subm_AF2E
+ LDY #27                ; Blank the eleventh icon on the icon bar
+ JSR DrawBlankButton2x2
 
-.CAE9C
+.sbar11
 
  LDA allowInSystemJump
  AND #$C0
- BEQ CAEBB
+ BEQ sbar15
 
-.CAEA3
+.sbar12
 
- LDY #$1D
- JSR subm_AF5B
- JMP CAEBB
+ LDY #29                ; Blank the twelfth icon on the icon bar
+ JSR DrawBlankButton3x2
 
-.CAEAB
+ JMP sbar15
+
+.sbar13
 
  LDA COK
- BNE CAEB6
+ BNE sbar14
  LDA QQ11
  CMP #$BB
- BEQ CAEBB
+ BEQ sbar15
 
-.CAEB6
+.sbar14
 
- LDY #$11
- JSR subm_AF2E
+ LDY #17                ; Blank the seventh icon on the icon bar
+ JSR DrawBlankButton2x2
 
-.CAEBB
+.sbar15
 
  LDA QQ11
  CMP #$BA
- BNE CAEC6
- LDY #4
- JSR subm_AF5B
+ BNE sbar16
 
-.CAEC6
+ LDY #4                 ; Blank the second icon on the icon bar
+ JSR DrawBlankButton3x2
+
+.sbar16
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -3912,132 +4027,220 @@ ENDIF
 
  RTS
 
-.CAEE5
+.sbar17
 
  LDX #4
  LDA QQ12
- BEQ CAEF6
- LDY #$0C
- JSR subm_AF2E
- JSR subm_AD16
- JMP CAEA3
+ BEQ sbar18
 
-.CAEF6
+ LDY #12                ; Blank the fifth icon on the icon bar
+ JSR DrawBlankButton2x2
 
- LDY #2
- JSR subm_AF2E
+ JSR BlankButtons8To11  ; Blank from the eighth to the eleventh button on the
+                        ; icon bar
+
+ JMP sbar12
+
+.sbar18
+
+ LDY #2                 ; Blank the first icon on the icon bar
+ JSR DrawBlankButton2x2
+
  LDA QQ22+1
- BEQ CAF0C
- LDY #$0E
- JSR subm_AF5B
- LDY #$11
- JSR subm_AF2E
- JMP CAF12
+ BEQ sbar19
 
-.CAF0C
+ LDY #14                ; Blank the sixth icon on the icon bar
+ JSR DrawBlankButton3x2
+
+ LDY #17                ; Blank the seventh icon on the icon bar
+ JSR DrawBlankButton2x2
+
+ JMP sbar20
+
+.sbar19
 
  LDA selectedSystemFlag
  ASL A
- BMI CAF17
+ BMI sbar21
 
-.CAF12
+.sbar20
 
- LDY #$13
- JSR subm_AF5B
+ LDY #19                ; Blank the eighth icon on the icon bar
+ JSR DrawBlankButton3x2
 
-.CAF17
+.sbar21
 
  LDA GHYP
- BNE CAF21
- LDY #$16
- JSR subm_AF2E
+ BNE sbar22
 
-.CAF21
+ LDY #22                ; Blank the ninth icon on the icon bar
+ JSR DrawBlankButton2x2
+
+.sbar22
 
  LDA ECM
- BNE CAF2B
- LDY #$18
- JSR subm_AF5B
+ BNE sbar23
 
-.CAF2B
+ LDY #24                ; Blank the tenth icon on the icon bar
+ JSR DrawBlankButton3x2
 
- JMP CAE8D
+.sbar23
+
+ JMP sbar9
 
 ; ******************************************************************************
 ;
-;       Name: subm_AF2E
+;       Name: DrawBlankButton2x2
 ;       Type: Subroutine
 ;   Category: Icon bar
-;    Summary: ???
+;    Summary: Draw a blank icon bar button as a 2x2 tile block
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   Y                   The number of the top-left tile of the icon bar button
+;                       we want to draw, given as a nametable offset from the
+;                       first tile in the icon bar (i.e. the tile in the
+;                       top-left corner of the icon bar)
+;
+;   SC(1 0)             The address of the nametable entries for the on-screen
+;                       icon bar in nametable buffer 0
+;
+;   SC2(1 0)            The address of the nametable entries for the on-screen
+;                       icon bar in nametable buffer 1
 ;
 ; ******************************************************************************
 
-.subm_AF2E
+.DrawBlankButton2x2
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA #4
- STA (SC),Y
- STA (SC2),Y
- INY
- LDA #5
- STA (SC),Y
- STA (SC2),Y
- TYA
- CLC
- ADC #$1F
- TAY
- LDA #$24
- STA (SC),Y
- STA (SC2),Y
- INY
- LDA #$25
- STA (SC),Y
- STA (SC2),Y
- RTS
+ LDA #4                 ; Set A = 4, which is the number of the top-left pattern
+                        ; for a blank 2x2 icon bar button
+
+ STA (SC),Y             ; Set the top-left corner of the 2x2 tile block we want
+ STA (SC2),Y            ; to draw to the pattern in A, in both nametable buffers
+
+ INY                    ; Increment Y to move right by one tile
+
+ LDA #5                 ; Set A = 5, which is the number of the top-right
+                        ; pattern for a blank 2x2 icon bar button
+
+ STA (SC),Y             ; Set the top-right corner of the 2x2 tile block we want
+ STA (SC2),Y            ; to draw to the pattern in A, in both nametable buffers
+
+ TYA                    ; Set Y = Y + 31
+ CLC                    ;
+ ADC #31                ; So Y now points to the bottom-left tile of the 2x2
+ TAY                    ; tile block that we want to draw buffers (as there are
+                        ; 32 tiles in a row and we already moved right by one)
+
+ LDA #36                ; Set A = 36, which is the number of the bottom-left
+                        ; pattern for a blank 2x2 icon bar button
+
+ STA (SC),Y             ; Set the bottom-left corner of the 2x2 tile block we
+ STA (SC2),Y            ; want to draw to the pattern in A, in both nametable
+                        ; buffers
+
+ INY                    ; Increment Y to move right by one tile
+
+ LDA #37                ; Set A = 37, which is the number of the bottom-right
+                        ; pattern for a blank 2x2 icon bar button
+
+ STA (SC),Y             ; Set the bottom-right corner of the 2x2 tile block we
+ STA (SC2),Y            ; want to draw to the pattern in A, in both nametable
+                        ; buffers
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: subm_AF5B
+;       Name: DrawBlankButton3x2
 ;       Type: Subroutine
 ;   Category: Icon bar
-;    Summary: ???
+;    Summary: Draw a blank icon bar button as a 3x2 tile block
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   Y                   The number of the top-left tile of the icon bar button
+;                       we want to draw, given as a nametable offset from the
+;                       first tile in the icon bar (i.e. the tile in the
+;                       top-left corner of the icon bar)
+;
+;   SC(1 0)             The address of the nametable entries for the on-screen
+;                       icon bar in nametable buffer 0
+;
+;   SC2(1 0)            The address of the nametable entries for the on-screen
+;                       icon bar in nametable buffer 1
 ;
 ; ******************************************************************************
 
-.subm_AF5B
+.DrawBlankButton3x2
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA #6
- STA (SC),Y
- STA (SC2),Y
- INY
- LDA #7
- STA (SC),Y
- STA (SC2),Y
- INY
- LDA #8
- STA (SC),Y
- STA (SC2),Y
- TYA
- CLC
- ADC #$1E
- TAY
- LDA #$26
- STA (SC),Y
- STA (SC2),Y
- INY
- LDA #$25
- STA (SC),Y
- STA (SC2),Y
- INY
- LDA #$27
- STA (SC),Y
- STA (SC2),Y
- RTS
+ LDA #6                 ; Set A = 6, which is the number of the top-left pattern
+                        ; for a blank 3x2 icon bar button
+
+ STA (SC),Y             ; Set the top-left corner of the 3x2 tile block we
+ STA (SC2),Y            ; want to draw to the pattern in A, in both nametable
+                        ; buffers
+
+ INY                    ; Increment Y to move right by one tile
+
+ LDA #7                 ; Set A = 7, which is the number of the top-middle
+                        ; pattern for a blank 3x2 icon bar button
+
+ STA (SC),Y             ; Set the top-middle tile of the 3x2 tile block we
+ STA (SC2),Y            ; want to draw to the pattern in A, in both nametable
+                        ; buffers
+
+ INY                    ; Increment Y to move right by one tile
+
+ LDA #8                 ; Set A = 8, which is the number of the top-right
+                        ; pattern for a blank 3x2 icon bar button
+
+ STA (SC),Y             ; Set the top-right corner of the 3x2 tile block we
+ STA (SC2),Y            ; want to draw to the pattern in A, in both nametable
+                        ; buffers
+
+ TYA                    ; Set Y = Y + 30
+ CLC                    ;
+ ADC #30                ; So Y now points to the bottom-left tile of the 3x2
+ TAY                    ; tile block that we want to draw buffers (as there are
+                        ; 32 tiles in a row and we already moved right by two)
+
+ LDA #38                ; Set A = 36, which is the number of the bottom-left
+                        ; pattern for a blank 3x2 icon bar button
+
+ STA (SC),Y             ; Set the bottom-left corner of the 3x2 tile block we
+ STA (SC2),Y            ; want to draw to the pattern in A, in both nametable
+                        ; buffers
+
+ INY                    ; Increment Y to move right by one tile
+
+ LDA #37                ; Set A = 37, which is the number of the bottom-middle
+                        ; pattern for a blank 3x2 icon bar button
+
+ STA (SC),Y             ; Set the bottom-middle tile of the 3x2 tile block we
+ STA (SC2),Y            ; want to draw to the pattern in A, in both nametable
+                        ; buffers
+
+ INY                    ; Increment Y to move right by one tile
+
+ LDA #39                ; Set A = 39, which is the number of the bottom-right
+                        ; pattern for a blank 3x2 icon bar button
+
+ STA (SC),Y             ; Set the bottom-right corner of the 3x2 tile block we
+ STA (SC2),Y            ; want to draw to the pattern in A, in both nametable
+                        ; buffers
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
