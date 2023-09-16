@@ -10046,6 +10046,13 @@ ENDIF
 ;   Category: Icon bar
 ;    Summary: Clear the icon bar choice and hide the icon bar pointer
 ;
+; ------------------------------------------------------------------------------
+;
+; Other entry points:
+;
+;   hipo2               Clear the icon button choice and hide the icon bar
+;                       pointer
+;
 ; ******************************************************************************
 
 .HideIconBarPointer
@@ -10134,31 +10141,42 @@ ENDIF
 
 .MoveIconBarPointer
 
- DEC pointerTimer
+ DEC pointerTimer       ; Decrement the pointer timer
 
 IF _PAL
 
- BNE CE928
- LSR pointerTimerOn
+ BNE mbar1              ; If the pointer timer has not reached zero, jump to
+                        ; mbar1 to skip the following instruction
 
-.CE928
+ LSR pointerTimerOn     ; Zero pointerTimerOn (this works because pointerTimerOn
+                        ; is only ever 0 or 1)
+
+.mbar1
 
 ENDIF
 
- BPL CE925
- INC pointerTimer
+ BPL mbar2              ; If pointerTimer is positive, jump to mbar2 to skip
+                        ; the following instruction
 
-.CE925
+ INC pointerTimer       ; Increment pointerTimer so it doesn't decrement past
+                        ; zero
 
- DEC pointerPosition
- BPL CE92D
- INC pointerPosition
+.mbar2
 
-.CE92D
+ DEC pointerPosition    ; Decrement the pointer position
+
+ BPL mbar3              ; If pointerPosition is positive, jump to mbar3 to skip
+                        ; the following instruction
+
+ INC pointerPosition    ; Increment pointerPosition so it doesn't decrement past
+                        ; zero
+
+.mbar3
 
  LDA screenFadedToBlack ; If bit 7 of screenFadedToBlack is set then we have
  BMI hipo2              ; already faded the screen to black, so jump to hipo2
-                        ; to ???
+                        ; to clear the icon button choice and hide the icon bar
+                        ; pointer
 
  LDA showIconBarPointer ; If showIconBarPointer = 0 then the icon bar pointer
  BEQ HideIconBarPointer ; should be hidden, so jump to HideIconBarPointer to do
@@ -10170,100 +10188,100 @@ ENDIF
  STA xIconBarPointer
 
  AND #3
- BNE CE98D
+ BNE mbar9
 
  LDA #0
  STA pointerDirection
 
  LDA pointerPosition
- BNE CE98D
+ BNE mbar9
 
  LDA controller1B
  ORA numberOfPilots
- BPL CE98D
+ BPL mbar9
 
  LDX controller1Left
- BMI CE964
+ BMI mbar4
 
  LDA #0
  STA controller1Left
- JMP CE972
+ JMP mbar6
 
-.CE964
+.mbar4
 
  LDA #$FF
 
  CPX #%10000000
- BNE CE96F
+ BNE mbar5
 
  LDX #12
  STX pointerPosition
 
-.CE96F
+.mbar5
 
  STA pointerDirection
 
-.CE972
+.mbar6
 
  LDX controller1Right
- BMI CE97F
+ BMI mbar7
 
  LDA #0
  STA controller1Right
 
- JMP CE98D
+ JMP mbar9
 
-.CE97F
+.mbar7
 
  LDA #1
 
  CPX #%10000000
- BNE CE98A
+ BNE mbar8
 
  LDX #12
  STX pointerPosition
 
-.CE98A
+.mbar8
 
  STA pointerDirection
 
-.CE98D
+.mbar9
 
  LDA xIconBarPointer
- BPL CE999
+ BPL mbar10
 
  LDA #0
  STA pointerDirection
 
- BEQ CE9A4
+ BEQ mbar11
 
-.CE999
+.mbar10
 
  CMP #45
- BCC CE9A4
+ BCC mbar11
 
  LDA #0
  STA pointerDirection
 
  LDA #44
 
-.CE9A4
+.mbar11
 
  STA xIconBarPointer
 
  LDA xIconBarPointer
  AND #3
  ORA pointerDirection
- BNE CEA04
+ BNE mbar12
 
  LDA controller1B
- BMI CEA04
+ BMI mbar12
 
  LDA controller1B
- BMI CEA04
+ BMI mbar12
 
  LDA controller1Select
- BNE CEA04
+ BNE mbar12
 
  LDA #251
  STA tileSprite1
@@ -10299,11 +10317,11 @@ ENDIF
  STA ySprite3
 
  LDA xIconBarPointer
- BNE CEA40
+ BNE mbar13
 
- JMP CEA40
+ JMP mbar13
 
-.CEA04
+.mbar12
 
  LDA #252
  STA tileSprite1
@@ -10338,64 +10356,66 @@ ENDIF
  STA ySprite4
  STA ySprite3
 
-.CEA40
+.mbar13
 
  LDA controller1Left
  ORA controller1Right
  ORA controller1Up
  ORA controller1Down
- BPL CEA53
+ BPL mbar14
 
  LDA #0
  STA pointerSelection
 
-.CEA53
+.mbar14
 
  LDA controller1Select
  AND #%11110000
  CMP #%10000000
- BEQ CEA73
+ BEQ mbar17
 
  LDA controller1B
  AND #%11000000
  CMP #%10000000
- BNE CEA6A
+ BNE mbar15
 
  LDA #30
  STA pointerSelection
 
-.CEA6A
+.mbar15
 
  CMP #%01000000
- BNE CEA7E
+ BNE mbar18
 
 IF _NTSC
 
  LDA pointerSelection
- BEQ CEA7E
-
-.CEA73
+ BEQ mbar18
 
 ELIF _PAL
 
  LDA pointerSelection
- BNE CEA80
+ BNE mbar16
 
  STA pointerTimerOn
- BEQ CEA7E
+ BEQ mbar18
 
-.CEA80
+.mbar16
 
  LDA #40
  STA pointerTimer
 
  LDA pointerTimerOn
- BNE CEA73
+ BNE mbar17
 
  INC pointerTimerOn
- BNE CEA7E
+ BNE mbar18
 
-.CEA73
+ENDIF
+
+.mbar17
+
+IF _PAL
 
  LSR pointerTimerOn
 
@@ -10410,17 +10430,17 @@ ENDIF
  STA iconBarChoice      ; table for this icon bar to indicate that this icon bar
                         ; button has been selected
 
-.CEA7E
+.mbar18
 
  LDA controller1Start   ; If the Start button on controller 1 was being held
  AND #%11000000         ; down (bit 6 is set) but is no longer being held down
  CMP #%01000000         ; (bit 7 is clear) then keep going, otherwise jump to
- BNE CEA8C              ; CEA8C
+ BNE mbar19             ; mbar19
 
  LDA #80                ; Set iconBarChoice to indicate that the Start button
  STA iconBarChoice      ; has been pressed
 
-.CEA8C
+.mbar19
 
  RTS                    ; Return from the subroutine
 
@@ -10542,7 +10562,7 @@ ENDIF
  LDX JSTY               ; Set X to the current pitch rate in JSTY
 
  LDA JSTGY              ; If JSTGY is $FF then the game is configured to reverse
- BMI joys8              ; the joystick Y channel, so jump to joys8 to change the
+ BMI joys8              ; the controller y-axis, so jump to joys8 to change the
                         ; pitch value in the opposite direction
 
  LDA controller1Down,Y  ; If the down button is not being pressed, jump to joys5
@@ -11216,7 +11236,7 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -14282,7 +14302,7 @@ ENDIF
 
 .ResetOptions
 
- LDA #0                 ; Configure the joystick Y-channel to the default
+ LDA #0                 ; Configure the controller y-axis to the default
  STA JSTGY              ; direction (i.e. not reversed) by setting JSTGY to 0
 
  STA disableMusic       ; Configure music to be enabled by default by setting

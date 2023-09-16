@@ -3698,11 +3698,11 @@ ORG $0200
 
 .JSTGY
 
- SKIP 1                 ; Reverse joystick Y-channel configuration setting
+ SKIP 1                 ; Reverse controller y-axis configuration setting
                         ;
-                        ;   * 0 = standard Y-channel (default)
+                        ;   * 0 = standard Y-axis (default)
                         ;
-                        ;   * $FF = reversed Y-channel
+                        ;   * $FF = reversed Y-axis
 
 .DNOIZ
 

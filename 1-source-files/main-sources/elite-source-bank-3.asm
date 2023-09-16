@@ -3806,11 +3806,11 @@ ENDIF
                         ; icons that do not apply
 
  LDA JSTGY              ; If JSTGY is 0 then the game is not configured to
- BEQ pbar1              ; reverse the joystick Y channel, so jump to pbar1 to
+ BEQ pbar1              ; reverse the controller y-axis, so jump to pbar1 to
                         ; skip the following and leave the default icon showing
 
  LDY #2                 ; Draw four tiles over the top of the first button to
- JSR Draw4OptionTiles   ; show that the joystick Y channel is reversed
+ JSR Draw4OptionTiles   ; show that the controller y-axis is reversed
 
 .pbar1
 
