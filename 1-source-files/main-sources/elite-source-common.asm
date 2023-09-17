@@ -3665,7 +3665,7 @@ ORG $0200
 .burstSpriteIndex
 
  SKIP 1                 ; The index into the sprite buffer of the explosion
-                        ; burst sprite that is set up in PTCLS2
+                        ; burst sprite that is set up in DrawExplosionBurst
 
 .unusedVariable
 
@@ -4332,13 +4332,24 @@ ORG $0200
 
 IF _PAL
 
-.pointerTimerOn
+.pointerTimerB
 
- SKIP 1                 ; A flag to denote whether pointerTimer is non-zero:
+ SKIP 1                 ; A timer used in the PAL version to detect the B button
+                        ; being pressed twice in quick succession (a double-tap)
                         ;
-                        ;   * 0 = pointerTimer is zero
+                        ; The MoveIconBarPointer routine sets pointerTimerB to 1
+                        ; and pointerTimer to 40 when it detects a tap on the B
+                        ; button
                         ;
-                        ;   * 1 = pointerTimer is non-zero
+                        ; In successive calls to MoveIconBarPointer, while
+                        ; pointerTimerB is non-zero, the MoveIconBarPointer
+                        ; routine keeps a look-out for a second tap of the B
+                        ; button, and if it detects one, it's a double-tap
+                        ;
+                        ; When the timer in pointerTimer runs down to zero,
+                        ; pointerTimerB is also zeroed, so if a second tap is
+                        ; detected within 40 VBlanks, it is deemed to be a
+                        ; double-tap
 
 ENDIF
 
@@ -4358,6 +4369,9 @@ ENDIF
                         ; interval of 4, so the buttons have x-coordinates of
                         ; of 0, 4, 8 and so on, up to 44 for the rightmost
                         ; button
+                        ;
+                        ; This value is multiplied by 5 to get the button's
+                        ; pixel coordinate
 
 .yIconBarPointer
 
@@ -4367,17 +4381,19 @@ ENDIF
                         ; 204 (when there is no dashboard and the icon bar is
                         ; along the bottom of the screen)
 
-.pointerDirection
+.xPointerDelta
 
- SKIP 1                 ; The direction in which the icon bar pointer is moving:
+ SKIP 1                 ; The direction in which the icon bar pointer is moving,
+                        ; expressed as a delta to add to the x-coordinate of the
+                        ; pointer sprites
                         ;
                         ;   * 0 = pointer is not moving
                         ;
                         ;   * 1 = pointer is moving to the right
                         ;
-                        ;   * $FF = pointer is moving to the left
+                        ;   * -1 = pointer is moving to the left
 
-.pointerPosition
+.pointerMoveCounter
 
  SKIP 1                 ; The position of the icon bar pointer as it moves
                         ; between icons, counting down from 12 (at the start of
@@ -4419,14 +4435,19 @@ ENDIF
 
 .pointerTimer
 
- SKIP 1                 ; A timer that starts counting down when B is released
-                        ; when moving the icon bar pointer, so that a double-tap
-                        ; on B can be interpreted as a selection
+ SKIP 1                 ; A timer that counts down by 1 on each call to the
+                        ; MoveIconBarPointer routine, so that a double-tap
+                        ; on the B button can be interpreted as such
 
-.pointerSelection
+.pointerPressedB
 
- SKIP 1                 ; Can be 0 or 30, iconBarChoice is only updated when
-                        ; this is non-zero ???
+ SKIP 1                 ; Controls whether the MoveIconBarPointer routine looks
+                        ; for a second tap of the B button when trying to detect
+                        ; a double-tap on the B button
+                        ;
+                        ;   * 0 = do not look for a second tap
+                        ;
+                        ;   * Non-zero = do look for a second tap
 
 .nmiStoreA
 
