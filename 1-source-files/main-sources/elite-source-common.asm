@@ -537,17 +537,34 @@ ENDIF
  SKIP 1                 ; A counter that gets decremented each time the NMI
                         ; interrupt is called, starting at 50 and counting down
                         ; to zero, at which point it jumps back up to 50 again
-                        ; and triggers and increment of (nmiTimerHi nmiTimerLo)
+                        ; and triggers an increment of (nmiTimerHi nmiTimerLo)
+                        ;
+                        ; On PAL system there are 50 frames per second, so this
+                        ; means nmiTimer ticks down from 50 once a second, so
+                        ; (nmiTimerHi nmiTimerLo) counts up in seconds
+                        ;
+                        ; On NTSC there are 60 frames per second, so nmiTimer
+                        ; counts down in 5/6 of a second, or 0.8333 seconds,
+                        ; so (nmiTimerHi nmiTimerLo) counts up every 0.8333
+                        ; seconds
 
 .nmiTimerLo
 
  SKIP 1                 ; Low byte of a counter that's incremented by 1 every
                         ; time nmiTimer wraps
+                        ;
+                        ; On PAL systems (nmiTimerHi nmiTimerLo) counts seconds
+                        ;
+                        ; On NTSC it increments up every 0.8333 seconds
 
 .nmiTimerHi
 
  SKIP 1                 ; High byte of a counter that's incremented by 1 every
                         ; time nmiTimer wraps
+                        ;
+                        ; On PAL systems (nmiTimerHi nmiTimerLo) counts seconds
+                        ;
+                        ; On NTSC it increments up every 0.8333 seconds
 
 .YC
 
@@ -3863,7 +3880,7 @@ ORG $0200
  SKIP 1                 ; A mask for applying the lower case part of Sentence
                         ; Case to extended text tokens
                         ;
-                        ;   * %00100000 = apply lower case to the second letter
+                        ;   * %10000000 = apply lower case to the second letter
                         ;                 of a word onwards
                         ;
                         ;   * %00000000 = do not change case to lower case
@@ -3873,7 +3890,7 @@ ORG $0200
  SKIP 1                 ; A mask for capitalising the next letter in an extended
                         ; text token
                         ;
-                        ;   * %11011111 = capitalise the next letter
+                        ;   * %00000000 = capitalise the next letter
                         ;
                         ;   * %11111111 = do not change case
 
@@ -4412,6 +4429,8 @@ ENDIF
                         ;   * 3 = Pause
                         ;
                         ;   * 4 = Title screen copyright message
+                        ;
+                        ;   * $FF = Hide the icon bar on row 27
 
 .iconBarChoice
 
@@ -5092,8 +5111,7 @@ ENDIF
                         ; of universe
                         ;
                         ; The number of ships of type X in the local bubble is
-                        ; stored at MANY+X, so the number of Sidewinders is at
-                        ; MANY+1, the number of Mambas is at MANY+2, and so on
+                        ; stored at MANY+X
                         ;
                         ; See the deep dive on "Ship blueprints" for a list of
                         ; ship types

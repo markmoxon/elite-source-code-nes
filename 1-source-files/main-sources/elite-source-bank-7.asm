@@ -377,8 +377,8 @@ ENDIF
  LDA #%11111111         ; Set DTW2 = %11111111 to denote that we are not
  STA DTW2               ; currently printing a word
 
- LDA #%11111111         ; Set DTW8 = %11111111 to denote ???
- STA DTW8
+ LDA #%11111111         ; Set DTW8 = %11111111 to denote that we do not
+ STA DTW8               ; capitalise the next character
 
                         ; Fall through into SetBank0 to page ROM bank 0 into
                         ; memory
@@ -402,8 +402,8 @@ ENDIF
 ;       Name: SetNonZeroBank
 ;       Type: Subroutine
 ;   Category: Utility routines
-;    Summary: Page a specified ROM bank into memory at $8000, but only if it is
-;             non-zero
+;    Summary: An unused routine that pages a specified ROM bank into memory at
+;             $8000, but only if it is non-zero
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -4076,7 +4076,8 @@ ENDIF
 ;       Name: WaitForNextNMI
 ;       Type: Subroutine
 ;   Category: Utility routines
-;    Summary: Wait until the NMI counter increments (i.e. the next VBlank)
+;    Summary: An unused routine that waits until the NMI counter increments
+;             (i.e. the next VBlank)
 ;
 ; ******************************************************************************
 
@@ -5566,7 +5567,7 @@ ENDIF
 ;       Name: CopySmallBlock
 ;       Type: Subroutine
 ;   Category: Utility routines
-;    Summary: Copy a small number of pages in memory
+;    Summary: An unused routine that copies a small number of pages in memory
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -5607,7 +5608,7 @@ ENDIF
 ;       Name: CopyLargeBlock
 ;       Type: Subroutine
 ;   Category: Utility routines
-;    Summary: Copy a large number of pages in memory
+;    Summary: An unused routine that copies a large number of pages in memory
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -9417,6 +9418,9 @@ ENDIF
 ;
 ; ------------------------------------------------------------------------------
 ;
+; This routine does a similar job to the routine of the same name in the BBC
+; Master version of Elite, but the code is significantly different.
+;
 ; Arguments:
 ;
 ;   X                   The screen x-coordinate of the point to draw
@@ -10445,8 +10449,9 @@ ENDIF
                         ;   * Sprite 4 in the bottom-left
                         ;
                         ; The value of yIconBarPointer contains the y-coordinate
-                        ; of the icon bar, which is 148 when there is a dashboard
-                        ; or this is the Game Over screen, or 204 otherwise
+                        ; of the icon bar, which is 148 when there is a
+                        ; dashboard or this is the Game Over screen, or 204
+                        ; otherwise
                         ;
                         ; The value of xIconBarPointer is in the range 0 to 44,
                         ; which represents the icon bar with buttons on each
@@ -10515,8 +10520,9 @@ ENDIF
                         ;   * Sprite 4 in the bottom-left
                         ;
                         ; The value of yIconBarPointer contains the y-coordinate
-                        ; of the icon bar, which is 148 when there is a dashboard
-                        ; or this is the Game Over screen, or 204 otherwise
+                        ; of the icon bar, which is 148 when there is a
+                        ; dashboard or this is the Game Over screen, or 204
+                        ; otherwise
                         ;
                         ; The value of xIconBarPointer is in the range 0 to 44,
                         ; which represents the icon bar with buttons on each
@@ -10701,7 +10707,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: ScaleController
+;       Name: SetControllerPast
 ;       Type: Subroutine
 ;   Category: Controllers
 ;    Summary: Set the controller history variables to the values from four
@@ -11406,18 +11412,35 @@ ENDIF
 ; 2 = E.C.M. (ECBLB2)
 ; 3 = short, high beep (BEEP)
 ; 4 = long, low beep (BOOP)
+; 5 = Trumbles in the hold sound 1, 75% chance (main game loop 5)
+; 6 = Trumbles in the hold sound 2, 25% chance (main game loop 5)
+; 7 = low energy beep (main flight 15)
+; 8 = energy bomb (main flight loop 3)
 ; 9 = missile launch (FRMIS, SFRMIS)
 ; 10 = us making a hit or kill (EXNO)
 ; 11 = us being hit by lasers (TACTICS 6)
 ; 12 = first launch sound (LAUN)
-; 13 = explosion sound (EXNO3)
+; 13 = explosion/collision sound (EXNO3)
+;    = Ship explosion at a distance of z_hi < 6 (EXNO2)
+; 14 = Ship explosion at a distance of z_hi >= 6 (EXNO2)
+; 15 = military laser firing (main flight loop 3)
+; 16 = mining laser firing (main flight loop 3)
+; 17 = beam laser firing (main flight loop 3)
+; 18 = pulse laser firing (main flight loop 3)
 ; 19 = escape pod launching (ESCAPE)
+; 20 = ???
 ; 21 = hyperspace (HyperspaceSound)
+; 22 = galactic hyperspace (Ghy)
 ; 23 = third launch sound (LAUN)
+;    = Ship explosion at a distance of z_hi >= 8 (EXNO2)
 ; 24 = second launch sound (LAUN)
+; 25 = ???
 ; 26 = no noise (FlushSoundChannel) ???
+; 27 = Ship explosion at a distance of z_hi >= 16 (EXNO2)
+; 28 = trill noise to indicate we have bought something (BuyAndSellCargo)
 ; 29 = first mis-jump sound (MJP)
 ; 30 = second mis-jump sound (MJP)
+; 31 = Trumbles being killed by the sun (main flight loop 15)
 ;
 ; Arguments:
 ;
@@ -15683,6 +15706,10 @@ ENDIF
 ; with the argument A, clearing the C flag if the distance is < A, or setting
 ; the C flag if the distance is >= A.
 ;
+; This routine does a similar job to the routine of the same name in the BBC
+; Master version of Elite, but the code is significantly different and the
+; results is returned with the C flag the other way around.
+;
 ; Returns:
 ;
 ;   C flag              Clear if the distance to (x, y, z) < A
@@ -16615,7 +16642,7 @@ ENDIF
 ;       Name: MUT3
 ;       Type: Subroutine
 ;   Category: Maths (Arithmetic)
-;    Summary: Unused routine that does the same as MUT2
+;    Summary: An unused routine that does the same as MUT2
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -16708,7 +16735,8 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- TXA                    ; ???
+ TXA                    ; The macro call overwrites A, so restore the value of A
+                        ; which we copied into X above
 
  AND #%01111111         ; Set P = |A| >> 1
  LSR A                  ; and C flag = bit 0 of A
@@ -17306,9 +17334,7 @@ ENDIF
  LDX Q                  ; representation of the fractional value A / Q, in R,
  SEC                    ; where 1.0 = 255, and it also clears the C flag
  SBC logL,X
-
- BMI CF94F              ; ???
-
+ BMI noddlog22
  LDX widget
  LDA log,X
  LDX Q
@@ -17319,18 +17345,18 @@ ENDIF
 
 .LLfix22
 
- STA R
+ STA R                  ; This is also part of the inline LL28+4 routine
  RTS
 
 .LL222
 
- LDA #255
+ LDA #255               ; This is also part of the inline LL28+4 routine
  STA R
  RTS
 
-.CF94F
+.noddlog22
 
- LDX widget             ; ???
+ LDX widget             ; This is also part of the inline LL28+4 routine
  LDA log,X
  LDX Q
  SBC log,X
@@ -17503,7 +17529,7 @@ ENDIF
 .LL29new
 
  SBC Q                  ; This is also part of the inline LL31 routine
- SEC                    ; calculation above
+ SEC
  ROL R
  BCS LL31new
  LDA R
@@ -17600,6 +17626,9 @@ ENDIF
 ;    Summary: Apply damping to the pitch or roll dashboard indicator
 ;
 ; ------------------------------------------------------------------------------
+;
+; This routine does a similar job to the routine of the same name in the BBC
+; Master version of Elite, but the code is significantly different.
 ;
 ; Arguments:
 ;
@@ -18154,10 +18183,8 @@ ENDIF
  STA Q                  ; First, doing the low bytes, Q = Q + P
 
  LDA T                  ; And then the high bytes, R = R + T
- ADC R
-
- BCS CFB79              ; ???
-
+ ADC R                  ;
+ BCS norm2              ; Jumping to norm2 if the addition overflows
  STA R
 
  JSR LL5                ; We now have the following:
@@ -18175,7 +18202,7 @@ ENDIF
                         ; routine TIS2. TIS2 returns the divided figure, using
                         ; 96 to represent 1 and 96 with bit 7 set for -1
 
-.CFB49
+.norm1
 
  LDA XX15               ; Call TIS2 to divide the x-coordinate in XX15 by Q,
  JSR TIS2               ; with 1 being represented by 96
@@ -18199,16 +18226,43 @@ ENDIF
 
  RTS                    ; Return from the subroutine
 
-.CFB79
+.norm2
 
- ROR A                  ; ???
+                        ; If we get here then the addition overflowed during the
+                        ; calculation of of R = R + T above, so we need to scale
+                        ; (A Q) down before we can call LL5, and then scale the
+                        ; result up afterwards
+                        ;
+                        ; As we are calculating a square root, we can do this by
+                        ; scaling the argument in (R Q) down by a factor of 2*2,
+                        ; and then scale the result in SQRT(R Q) up by a factor
+                        ; of 2, thus side-stepping the overflow
+
+ ROR A                  ; Set (A Q) = (A Q) / 4
  ROR Q
  LSR A
  ROR Q
- STA R
- JSR LL5
- ASL Q
- JMP CFB49
+
+ STA R                  ; Set (R Q) = (A Q)
+
+ JSR LL5                ; We now have the following (scaled by a factor of 4):
+                        ;
+                        ; (R Q) = x^2 + y^2 + z^2
+                        ;
+                        ; so we can call LL5 to use Pythagoras to get:
+                        ;
+                        ; Q = SQRT(R Q)
+                        ;   = SQRT(x^2 + y^2 + z^2)
+                        ;
+                        ; So Q now contains the length of the vector (x, y, z),
+                        ; and we can normalise the vector by dividing each of
+                        ; the coordinates by this value, which we do by calling
+                        ; routine TIS2. TIS2 returns the divided figure, using
+                        ; 96 to represent 1 and 96 with bit 7 set for -1
+
+ ASL Q                  ; Set Q = Q * 2, to scale the result back up
+
+ JMP norm1              ; Jump back to norm1 to continue the calculation
 
 ; ******************************************************************************
 ;

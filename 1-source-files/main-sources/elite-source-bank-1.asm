@@ -6330,8 +6330,23 @@ ENDIF
                         ; points to the end of the heap, and therefore contains
                         ; the heap size
 
- RTS                    ; Return from the subroutine (part 12 of LL9 is not
-                        ; included in the NES version)
+; ******************************************************************************
+;
+;       Name: LL9 (Part 12 of 12)
+;       Type: Subroutine
+;   Category: Drawing ships
+;    Summary: Does nothing in the NES version
+;  Deep dive: Drawing ships
+;
+; ------------------------------------------------------------------------------
+;
+; The NES version does not have a ship line heap as the screen is redrawn for
+; every frame, so this part of LL9 does nothing (in the other versions it draws
+; all the visible edges from the ship line heap).
+;
+; ******************************************************************************
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -11106,7 +11121,8 @@ ENDIF
 
  JSR DORND              ; Set A and X to random numbers
 
- AND #%00011111         ; ???
+ AND #31                ; Clear the sign bit of A and set it to a random number
+                        ; in the range 0 to 31
 
  ADC #10                ; Make sure A is at least 10 and store it in z_hi and
  STA SZ,Y               ; ZZ, so the new particle starts close to us
@@ -11127,7 +11143,7 @@ ENDIF
 
  JSR DORND              ; Set A and X to random numbers
 
- AND #$BF               ; ???
+ AND #%10111111         ; Clear bit 6 of A so A is in the range -63 to +63
 
  STA Y1                 ; Set y_hi and Y1 to random numbers, so the particle
  STA SY,Y               ; starts anywhere along either the left or right edge
@@ -11148,7 +11164,8 @@ ENDIF
 
  JSR DORND              ; Set A and X to random numbers
 
- AND #$F9               ; ???
+ AND #%11111001         ; Clear bits 1 and 2 of A so A is a random multiple of 8
+                        ; in the range -120 to +120, randomly minus or plus 1
 
  STA X1                 ; Set x_hi and X1 to random numbers, so the particle
  STA SX,Y               ; starts anywhere along the x-axis
@@ -11423,8 +11440,9 @@ ENDIF
 
  AND #%01111111         ; Set A = |x_hi|
 
- CMP #$78               ; ???
- BCS KILL2
+ CMP #120               ; If |x_hi| >= 120 then jump to KILL2 to recycle this
+ BCS KILL2              ; particle, as it's gone off the side of the screen,
+                        ; and rejoin at STC2 with the new particle
 
  EOR #%01111111         ; Set A = ~|x_hi|, which is the same as -(x_hi + 1)
                         ; using two's complement
@@ -11576,6 +11594,9 @@ ENDIF
 ; already on-screen. For the horizontal lines, when there are multiple ships in
 ; the hangar, this also means drawing lines between the ships, as well as in
 ; from each side.
+;
+; This routine does a similar job to the routine of the same name in the BBC
+; Master version of Elite, but the code is significantly different.
 ;
 ; ******************************************************************************
 
@@ -11838,6 +11859,11 @@ ENDIF
 ;    Summary: Draw a hangar background line from left to right, stopping when it
 ;             bumps into existing on-screen content
 ;
+; ------------------------------------------------------------------------------
+;
+; This routine does a similar job to the routine of the same name in the BBC
+; Master version of Elite, but the code is significantly different.
+;
 ; ******************************************************************************
 
 .HAL3
@@ -12012,6 +12038,11 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Ship hangar
 ;    Summary: Draw a hangar background line from right to left
+;
+; ------------------------------------------------------------------------------
+;
+; This routine does a similar job to the routine of the same name in the BBC
+; Master version of Elite, but the code is significantly different.
 ;
 ; ******************************************************************************
 
@@ -12982,6 +13013,9 @@ ENDIF
 ;
 ; ------------------------------------------------------------------------------
 ;
+; This routine does a similar job to the routine of the same name in the BBC
+; Master version of Elite, but the code is significantly different.
+;
 ; Arguments:
 ;
 ;   INWK                The ship's data block
@@ -13433,7 +13467,9 @@ ENDIF
  SEC                    ; Set Y1 = A - SC2+1
  SBC SC2+1              ;
  STA Y1                 ; So this leaves Y1 alone unless Y1 + SC2+1 >= 220, in
-                        ; which case Y1 is clipped so Y1 + SC2+1 = 220 ???
+                        ; which case Y1 is clipped so that Y1 + SC2+1 = 220 (so
+                        ; this moves the "top" of the stick so that the ship dot
+                        ; doesn't go off the bottom of the screen)
 
                         ; The ship is drawn on the scanner using up to three
                         ; sprites - sprites Y, Y+1 and Y+2

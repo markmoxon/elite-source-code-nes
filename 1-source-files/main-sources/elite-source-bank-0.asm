@@ -746,7 +746,7 @@ ENDIF
  ADC #208               ; which will be in the range 48 ("FOOD") to 64 ("ALIEN
  JSR MESS               ; ITEMS"), so this prints the scooped item's name
 
- JSR MakeScoopSound     ; ???
+ JSR MakeScoopSound     ; Make the sound of the fuel scoops working
 
  ASL NEWB               ; The item has now been scooped, so set bit 7 of its
  SEC                    ; NEWB flags to indicate this
@@ -1602,16 +1602,29 @@ ENDIF
 
 .MA93
 
- LDA demoInProgress     ; ???
- BEQ C8436
- LDA JUNK
- CLC
+ LDA demoInProgress     ; If the demo is not in progress, jump to C8436 to skip
+ BEQ C8436              ; the following
+
+                        ; If we get here then the demo is in progress, so now we
+                        ; check to see if we have destroyed all the demo ships
+
+ LDA JUNK               ; Set Y to the number of pieces of space junk (in JUNK)
+ CLC                    ; plus the number of missiles (in MANY+1)
  ADC MANY+1
  TAY
- LDA FRIN+2,Y
- BNE C8436
- LDA #1
- JMP ShowScrollText_b6
+
+ LDA FRIN+2,Y           ; There are Y non-ship items in the bubble, so if slot
+ BNE C8436              ; Y+2 is not empty (given that the first two slots are
+                        ; the planet and sun), then this means there is at least
+                        ; one ship in the bubble along with the junk and
+                        ; missiles, so jump to C8436 to skip the following as
+                        ; we haven't yet destroyed all the ships in the combat
+                        ; practice demo
+
+ LDA #1                 ; If we get here then we have destroyed all the ships in
+ JMP ShowScrollText_b6  ; the demo, so jump to ShowScrollText with A = 1 to show
+                        ; the results of combat practice, returning from the
+                        ; subroutine using a tail call
 
 .C8436
 
@@ -1633,8 +1646,8 @@ ENDIF
  LDA #100               ; Print recursive token 100 ("ENERGY LOW{beep}") as an
  JSR MESS               ; in-flight message
 
- LDY #7                 ; ???
- JSR NOISE
+ LDY #7                 ; Call the NOISE routine with Y = 7 to make a beep to
+ JSR NOISE              ; indicate low energy
 
 .C8453
 
@@ -1714,15 +1727,19 @@ ENDIF
  CMP #224               ; If the cabin temperature < 224 then jump to MA23 to
  BCC MA23               ; skip fuel scooping, as we aren't close enough
 
- CMP #$F0               ; ???
- BCC nokilltr
- LDA TRIBBLE+1
- ORA TRIBBLE
+ CMP #240               ; If the cabin temperature < 240 then jump to nokilltr
+ BCC nokilltr           ; as the heat isn't high enough to kill Trumbles
+
+ LDA TRIBBLE+1          ; If TRIBBLE(1 0) = 0 then there are no Trumbles in the
+ ORA TRIBBLE            ; hold, so jump to nokilltr to skip the following
  BEQ nokilltr
- LSR TRIBBLE+1
- ROR TRIBBLE
- LDY #$1F
- JSR NOISE
+
+ LSR TRIBBLE+1          ; Halve the number of Trumbles in TRIBBLE(1 0) as the
+ ROR TRIBBLE            ; cabin temperature is high enough to kill them off
+                        ; (this will eventually bring the number down to zero)
+
+ LDY #31                ; Call the NOISE routine with Y = 31 to make the sound
+ JSR NOISE              ; of Trumbles being killed off by the heat of the sun
 
 .nokilltr
 
@@ -1754,11 +1771,13 @@ ENDIF
 
  STA QQ14               ; Store the updated fuel level in QQ14
 
- BCS MA23               ; ???
+ BCS MA23               ; If A >= 70, jump to BA23 to skip fuel scooping, as the
+                        ; fuel tanks are already full
 
- JSR MakeScoopSound
+ JSR MakeScoopSound     ; Make the sound of the fuel scoops working
 
- JSR SetSelectionFlags
+ JSR SetSelectionFlags  ; Set the selected system flags for the new system and
+                        ; update the icon bar if required
 
  LDA #160               ; Set A to token 160 ("FUEL SCOOPS ON")
 
@@ -2227,15 +2246,20 @@ ENDIF
 
  LDY #$6C               ; The "disarm missiles" key is being pressed, so call
  JSR ABORT              ; ABORT to disarm the missile and update the missile
-                        ; indicators on the dashboard to green (Y = $6C) ???
+                        ; indicators on the dashboard to the tile pattern number
+                        ; in Y (black indicator = pattern 108)
 
- LDY #4                 ; ???
+ LDY #4                 ; Set Y = 4 so the call to NOISE makes a low, long beep
+                        ; to indicate the missile is now disarmed
 
 .loop_C8630
 
- JSR NOISE
+ JSR NOISE              ; Call the NOISE routine to make the sound in Y (which
+                        ; will either be a low, long beep to indicate the
+                        ; missile is now disarmed, or a short, high beep to
+                        ; indicate that it is looking for a target)
 
- JMP MA64
+ JMP MA64               ; Jump to MA64 to skip the following
 
 .MA20
 
@@ -2244,13 +2268,15 @@ ENDIF
  JSR MSBAR              ; it between red and black in the main loop to indicate
                         ; that it is looking for a target
 
- LDY #3                 ; Set Y = 3 and jump up to loop_C8630 (this BNE is
- BNE loop_C8630         ; effectively a JMP as Y is never zero) ???
+ LDY #3                 ; Set Y = 3 and jump up to loop_C8630 to make a short,
+ BNE loop_C8630         ; high beep to indicate that it is looking for a target
+                        ; (this BNE is effectively a JMP as Y is never zero)
 
 .MA25
 
- CMP #$19               ; ???
- BNE MA24
+ CMP #25                ; If the "Fire targetted missile" button was chosen on
+ BNE MA24               ; the icon bar, keep going, otherwise jump down to MA24
+                        ; to skip the following
 
  LDA MSTG               ; If MSTG = $FF then there is no target lock, so jump to
  BMI MA64S              ; MA64 via MA64S to skip the following (also skipping
@@ -2260,11 +2286,12 @@ ENDIF
                         ; a missile lock, so call the FRMIS routine to fire
                         ; the missile
 
- JSR UpdateIconBar_b3   ; ???
+ JSR UpdateIconBar_b3   ; Update the icon bar to hide the fire button as we have
+                        ; just fired a missile
 
 .MA64S
 
- JMP MA64
+ JMP MA64               ; Jump to MA64 to skip the following
 
 .MA24
 
@@ -2275,16 +2302,27 @@ ENDIF
  BMI MA64S              ; negative, so this skips to MA64 via MA64S if our
                         ; energy bomb is already going off
 
- ASL BOMB               ; ???
- BEQ MA64S
+ ASL BOMB               ; The "energy bomb" key is being pressed, so double
+                        ; the value in BOMB. If we have an energy bomb fitted,
+                        ; BOMB will contain $7F (%01111111) before this shift
+                        ; and will contain $FE (%11111110) after the shift; if
+                        ; we don't have an energy bomb fitted, BOMB will still
+                        ; contain 0. The bomb explosion is dealt with in the
+                        ; MAL1 routine below - this just registers the fact that
+                        ; we've set the bomb ticking
+
+ BEQ MA64S              ; If BOMB now contains 0, then the bomb is not going off
+                        ; any more (or it never was), so jump to MA64 via MA64S
+                        ; to skip the following
 
  LDA #$28               ; Set hiddenColour to $28, which is green-brown, so this
  STA hiddenColour       ; reveals pixels that use the (no-longer) hidden colour
                         ; in palette 0
 
- LDY #8
- JSR NOISE
- JMP MA64
+ LDY #8                 ; Call the NOISE routine with Y = 8 to make the sound of
+ JSR NOISE              ; the energy bomb going off
+
+ JMP MA64               ; Jump to MA64 to skip the following
 
 .MA76
 
@@ -2387,32 +2425,55 @@ ENDIF
  STA LAS
  STA LAS2
 
- LDY #$12
- PLA
- PHA
- BMI C86F0
- CMP #$32
- BNE C86EE
- LDY #$10
+                        ; We now set Y to the correct sound to pass to the NOISE
+                        ; routine to make the sound of the laser firing
+
+ LDY #18                ; Set Y = 18 to use as the sound number for a pulse
+                        ; laser
+
+ PLA                    ; Set A to the current view's laser power, which we
+ PHA                    ; stored on the stack above (and leave the value on
+                        ; the stack
+
+ BMI C86F0              ; If A >= 128, jump to C86F0 to check whether this is
+                        ; a beam laser or a military laser
+
+ CMP #Mlas              ; If A is not the power for a mining laser, jump to
+ BNE C86EE              ; C86EE to keep Y = 18
+
+ LDY #16                ; This is a mining laser, so set Y = 16 to use as the
+                        ; sound number
 
 .C86EE
 
- BNE C86F9
+ BNE C86F9              ; Jump to C86F9 to make the sound in Y (this BNE is
+                        ; effectively a JMP as Y is never zero)
 
 .C86F0
 
- CMP #$97
- BEQ C86F7
- LDY #$11
- EQUB $2C
+                        ; If we get here then this is either a beam laser or a
+                        ; military laser
+
+ CMP #Armlas            ; If this is a military laser, jump to C86F7 to set
+ BEQ C86F7              ; Y = 15 
+
+ LDY #17                ; This is a beam laser, so set Y = 17 to use as the
+                        ; sound number
+
+ EQUB $2C               ; Skip the next instruction by turning it into
+                        ; $2C $A0 $0F, or BIT $0FA0, which does nothing apart
+                        ; from affect the flags
 
 .C86F7
 
- LDY #$0F
+ LDY #15                ; This is a military laser, so set Y = 15 to use as the
+                        ; sound number
 
 .C86F9
 
- JSR NOISE
+ JSR NOISE              ; Call the NOISE routine to make the sound in Y, which
+                        ; will be one of 15 (military laser), 16 (mining laser),
+                        ; 17 (beam laser) or 18 (pulse laser)
 
  JSR LASLI              ; Call LASLI to draw the laser lines
 
@@ -2492,7 +2553,7 @@ ENDIF
 
  JSR DrawPitchRollBars  ; Update the pitch and roll bars on the dashboard
 
- JSR DIALS_b6
+ JSR DIALS_b6           ; ???
 
  LDX drawingBitplane
 
@@ -2687,7 +2748,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: SetAXTo15 (Unused)
+;       Name: SetAXTo15
 ;       Type: Subroutine
 ;   Category: Utility routines
 ;    Summary: An unused routine that sets A and X to 15
@@ -4373,14 +4434,19 @@ ENDIF
 
  LDY #9                 ; ???
  STY inputNameSize
+
  LDA #$41
 
 .loop_C8C3A
 
  STA INWK+5,Y
+
  DEY
+
  BPL loop_C8C3A
+
  JSR InputName_b6
+
  LDA INWK+5
  CMP #$0D
  BEQ C8CAF
@@ -6592,33 +6658,39 @@ ENDIF
 
  JSR ANGRY              ; Call ANGRY to make the target ship hostile
 
- LDY #$85               ; We have just launched a missile, so we need to remove
- JSR ABORT              ; missile lock and hide the leftmost indicator on the
-                        ; dashboard by setting it to black (Y = $85) ???
+ LDY #133               ; We have just launched a missile, so we need to remove
+ JSR ABORT              ; missile lock and hide the active indicator on the
+                        ; dashboard by setting it to the tile pattern number
+                        ; in Y (no missile indicator = pattern 133)
 
  DEC NOMSL              ; Reduce the number of missiles we have by 1
 
- LDA demoInProgress     ; ???
- BEQ C9235
+ LDA demoInProgress     ; If the demo is not in progress, jump to frmi1 to skip
+ BEQ frmi1              ; the following
+
+                        ; If we get here then the demo is in progress and we
+                        ; just fired a missile, so we get a 60-second penalty
 
  LDA #147               ; Print recursive token 146 ("60 SECOND PENALTY") in
  LDY #10                ; the middle of the screen and leave it there for 10
  JSR PrintMessage       ; ticks of the DLY counter
 
- LDA #$19               ; ???
- STA nmiTimer
- LDA nmiTimerLo
- CLC
- ADC #$3C
+ LDA #25                ; Set nmiTimer = 25 to add half a second on top of the
+ STA nmiTimer           ; penalty below (as 25 frames is half a second in PAL
+                        ; systems)
+
+ LDA nmiTimerLo         ; Add 60 to (nmiTimerHi nmiTimerLo) so the demo goes on
+ CLC                    ; for 60 seconds longer
+ ADC #60
  STA nmiTimerLo
- BCC C9235
+ BCC frmi1
  INC nmiTimerHi
 
-.C9235
+.frmi1
 
  LDY #9                 ; Call the NOISE routine with Y = 9 to make the sound
  JMP NOISE              ; of a missile launch, returning from the subroutine
-                        ; using a tail call ???
+                        ; using a tail call
 
 ; ******************************************************************************
 ;
@@ -7005,6 +7077,9 @@ ENDIF
 ; ------------------------------------------------------------------------------
 ;
 ; This is shown when launching from or docking with the space station.
+;
+; This routine does a similar job to the routine of the same name in the BBC
+; Master version of Elite, but the code is significantly different.
 ;
 ; ******************************************************************************
 
@@ -7493,7 +7568,9 @@ ENDIF
 
 .TBRIEF
 
- JSR ClearScreen_b3     ; ???
+ JSR ClearScreen_b3     ; Clear the screen by zeroing patterns 66 to 255 in
+                        ; both pattern buffer, and clearing both nametable
+                        ; buffers to the background tile
 
  LDA #$95               ; Clear the screen and and set the view type in QQ11 to
  JSR TT66               ; $95 (Text-based mission briefing)
@@ -7566,7 +7643,7 @@ ENDIF
  JSR NWSHP              ; Add a new Constrictor to the local bubble (in this
                         ; case, the briefing screen)
 
- JSR HideFromScanner_b1 ; ???
+ JSR HideFromScanner_b1 ; Hide the ship from the scanner
 
  LDA #1                 ; Move the text cursor to column 1
  STA XC
@@ -7576,8 +7653,8 @@ ENDIF
  STA INWK+7             ; Set z_hi = 1, the distance at which we show the
                         ; rotating ship
 
- LDA #$50               ; ???
- STA INWK+6
+ LDA #80                ; Set z_lo = 80 to set the low byte of the distance at
+ STA INWK+6             ; which we show the rotating ship
 
  JSR FadeAndHideSprites ; Fade the screen to black and hide all sprites, so we
                         ; can update the screen while it's blacked-out
@@ -8383,7 +8460,7 @@ ENDIF
 ; This ensures that the colon will be drawn in green when the colon's tile falls
 ; within a 2x2 attribute block that's set to draw white text (i.e. where colour
 ; 1 is white). This happens in the Status Mode screen in French, and in the Data
-; on System screen.
+; on System screen in all three languages.
 ;
 ; Arguments:
 ;
@@ -8459,9 +8536,14 @@ ENDIF
                         ; paragraph break, otherwise just move the cursor down
                         ; a line
 
- LDA languageNumber     ; ???
- AND #%00000110
- BEQ dsys1
+ LDA languageNumber     ; If both bit 1 and bit 2 of languageNumber are clear
+ AND #%00000110         ; then the chosen language is English, so jump to dsys1
+ BEQ dsys1              ; to skip the following
+
+                        ; If we get here then the chosen language is French or
+                        ; German, so we need to print the system economy using
+                        ; the PrintTokenAndColon routine to ensure the label is
+                        ; in green
 
  LDA #194               ; Print recursive token 34 ("ECONOMY") followed by
  JSR PrintTokenAndColon ; colon, ensuring that the colon is printed in green
@@ -8530,8 +8612,13 @@ ENDIF
                         ;   QQ3 bit 2 = 1 prints token 9 ("AGRICULTURAL")
 
  LDA languageNumber     ; If bit 2 of languageNumber is clear then the chosen
- AND #%00000100         ; language is not French, so ???
- BEQ dsys3
+ AND #%00000100         ; language is not French, so jump to dsys3 skip the
+ BEQ dsys3              ; following
+
+                        ; If we get here then the chosen language is French, so
+                        ; so we need to print the system government using the
+                        ; PrintTokenAndColon routine to ensure the label is in
+                        ; green
 
  LDA #162               ; Print recursive token 2 ("GOVERNMENT") followed by
  JSR PrintTokenAndColon ; colon, ensuring that the colon is printed in green
@@ -8637,9 +8724,14 @@ ENDIF
 
  JSR TTX69              ; Print a paragraph break and set Sentence Case
 
- LDA languageNumber     ; ???
- AND #%00000101
- BEQ dsys6
+ LDA languageNumber     ; If both bit 0 and bit 2 of languageNumber are clear
+ AND #%00000101         ; then the chosen language is not English or German, so
+ BEQ dsys6              ; jump to dsys6 skip the following
+
+                        ; If we get here then the chosen language is Engligh or
+                        ; German, so so we need to print the system population
+                        ; using the PrintTokenAndColon routine to ensure the
+                        ; label is in green
 
  LDA #192               ; Print recursive token 32 ("POPULATION") followed by a
  JSR PrintTokenAndColon ; colon, ensuring that the colon is printed in green
@@ -8672,9 +8764,12 @@ ENDIF
  LDA #198               ; Print recursive token 38 (" BILLION"), followed by a
  JSR TT60               ; paragraph break and Sentence Case
 
- LDA languageNumber     ; ???
- AND #%00000010
- BNE dsys8
+ LDA languageNumber     ; If bit 1 of languageNumber is set then the chosen
+ AND #%00000010         ; language is German, so jump to dsys8 skip the
+ BNE dsys8              ; following
+
+                        ; If we get here then the chosen language is French or
+                        ; English, so we print the species in brackets
 
  LDA #'('               ; Print an opening bracket
  JSR TT27_b2
@@ -8829,9 +8924,12 @@ ENDIF
 
 .TT76
 
- LDA languageNumber     ; ???
- AND #%00000010
- BNE dsys10
+ LDA languageNumber     ; If bit 1 of languageNumber is set then the chosen
+ AND #%00000010         ; language is German, so jump to dsys10 skip the
+ BNE dsys10             ; following
+
+                        ; If we get here then the chosen language is French or
+                        ; English, so we print the species in brackets
 
  LDA #')'               ; Print a closing bracket
  JSR TT27_b2
@@ -8856,14 +8954,18 @@ ENDIF
  LDA #8                 ; Move the text cursor to row 8
  STA YC
 
- LDA #1                 ; ???
- STA K+2
+ LDA #1                 ; Thess instructions have no effect as the values of K+2
+ STA K+2                ; and K+3 get overwritten by the call to DrawSystemImage
  LDA #8
  STA K+3
 
- LDX #8
- LDY #7
- JSR DrawSystemImage_b3
+ LDX #8                 ; Set X = 8 to pass to the call to DrawSystemImage as
+                        ; the number of tile columns to draw in the system image
+
+ LDY #7                 ; Set Y = 7 to pass to the call to DrawSystemImage as
+                        ; the number of tile rows to draw in the system image
+
+ JSR DrawSystemImage_b3 ; Call DrawSystemImage to draw the system image
 
  JMP UpdateView         ; Update the view, returning from the subroutine using
                         ; a tail call
@@ -9386,8 +9488,8 @@ ENDIF
                         ; return from the subroutine using a tail call
 
                         ; If we get here then we have Trumbles in the hold, so
-                        ; we print out the number (though we never get here in
-                        ; the Master version)
+                        ; we print out the number of Trumbles and a random
+                        ; adjective
 
  CLC                    ; Clear the C flag, so the call to TT11 below doesn't
                         ; include a decimal point
@@ -9402,32 +9504,31 @@ ENDIF
                         ; with no decimal point
 
  LDA languageNumber     ; If bit 2 of languageNumber is set then the chosen
- AND #%00000100         ; language is French, so ???
- BNE C9A99
+ AND #%00000100         ; language is French, so jump to C9A99 to skip printing
+ BNE C9A99              ; the Trumble adjectives
 
- JSR DORND              ; Print out a random extended token from 111 to 114, all
- AND #3                 ; of which are blank in this version of Elite
+ JSR DORND              ; Print out a random extended token from 111 to 114,
+ AND #3                 ; (" CUDDLY", " CUTE", " FURRY" or " FRIENDLY")
  CLC
  ADC #111
  JSR DETOK_b2
 
- LDA languageNumber     ; ???
- AND #%00000010
- BEQ C9A99
+ LDA languageNumber     ; If bit 1 of languageNumber is clear then the chosen
+ AND #%00000010         ; language is not German, so jump to C9A99 to skip the
+ BEQ C9A99              ; following
 
- LDA TRIBBLE
- AND #$FE
+ LDA TRIBBLE            ; If the number of Trumbles in TRIBBLE(1 0) is more than
+ AND #%11111110         ; one, jump to C9A99 to skip the following
  ORA TRIBBLE+1
  BEQ C9A99
 
- LDA #101
+ LDA #'e'               ; Print an 'e' to pluralise the adjective in German
  JSR DASC_b2
 
 .C9A99
 
- LDA #198               ; Print extended token 198, which is blank, but would
- JSR DETOK_b2           ; presumably contain the word "TRIBBLE" if they were
-                        ; enabled
+ LDA #198               ; Print extended token 198 (" LITTLE {single
+ JSR DETOK_b2           ; cap}SQUEAKY"
 
  LDA TRIBBLE+1          ; If we have more than 256 Trumbles, skip to DOANS
  BNE DOANS
@@ -9495,7 +9596,7 @@ ENDIF
 ;       Name: PrintCharacter
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Print a character and set the C flag
+;    Summary: An unused routine that prints a character and sets the C flag
 ;
 ; ******************************************************************************
 
@@ -9644,6 +9745,9 @@ ENDIF
 ;
 ; Draw a small set of crosshairs on a galactic chart at the coordinates in
 ; (QQ9, QQ10).
+;
+; This routine does a similar job to the routine of the same name in the BBC
+; Master version of Elite, but the code is significantly different.
 ;
 ; ******************************************************************************
 
@@ -9926,11 +10030,12 @@ ENDIF
 
 .TT23
 
- LDA #0                 ; ???
- STA systemsOnChart
+ LDA #0                 ; Set systemsOnChart = 0 so we can use it to count the
+ STA systemsOnChart     ; systems as we add them to the chart
 
- LDA #$C7
- STA Yx2M1
+ LDA #199               ; Set the number of pixel rows in the space view to 199,
+ STA Yx2M1              ; to cover the size of the chart part of the Short-range
+                        ; Chart view
 
  LDA #$9C               ; Clear the screen and and set the view type in QQ11 to
  JSR TT66               ; $9C (Short-range Chart)
@@ -10166,8 +10271,11 @@ ENDIF
  JMP TT182              ; Otherwise jump back up to TT182 to process the next
                         ; system
 
- LDA #$8F               ; ???
- STA Yx2M1
+ LDA #143               ; Set the number of pixel rows in the space view to 143,
+ STA Yx2M1              ; so the screen height is correctly set for the
+                        ; Long-range Chart in case we switch to it using the
+                        ; icon in the icon bar (which toggles between the two
+                        ; charts)
 
  JMP UpdateView         ; Update the view, returning from the subroutine using
                         ; a tail call
@@ -11030,8 +11138,8 @@ ENDIF
  STX QQ8                ; to 0
  STX QQ8+1
 
- LDY #$16               ; ???
- JSR NOISE
+ LDY #22                ; Call the NOISE routine with Y = 22 to make the
+ JSR NOISE              ; galactic hyperspace sound
 
                         ; Fall through into jmp to set the system to the
                         ; current system and return from the subroutine there
@@ -11845,8 +11953,8 @@ ENDIF
 
  JSR UpdateSaveCount    ; Update the save counter for the current commander
 
- LDY #$1C               ; Make a trill noise to indicate that we have bought
- JSR NOISE              ; something
+ LDY #28                ; Call the NOISE routine with Y = 28 to make a trill
+ JSR NOISE              ; noise to indicate that we have bought something
 
  LDY QQ29               ; Fetch the currently selected market item number from
                         ; QQ29 into Y
@@ -11920,8 +12028,8 @@ ENDIF
  JSR PrintCash          ; Print our cash levels in the correct place for the
                         ; chosen language
 
- LDY #3                 ; Make a beep sound to indicate that we have made a
- JSR NOISE              ; sale
+ LDY #3                 ; Call the NOISE routine with Y = 3 to make a short,
+ JSR NOISE              ; high beep to indicate that we have made a sale
 
  JMP sell9              ; Jump up to sell9 to update the highlighted item with
                         ; the new availability and go back to listening for
@@ -12177,7 +12285,8 @@ ENDIF
  LDA safehouse,X        ; Copy the X-th byte in safehouse to the X-th byte in
  STA QQ2,X              ; QQ2
 
- STA QQ15,X             ; ???
+ STA QQ15,X             ; Copy the X-th byte in safehouse to the X-th byte in
+                        ; QQ15 as well, to set the selected system
 
  DEX                    ; Decrement the counter
 
@@ -14041,6 +14150,9 @@ ENDIF
 ;
 ; ------------------------------------------------------------------------------
 ;
+; This routine does a similar job to the routine of the same name in the BBC
+; Master version of Elite, but the code is significantly different.
+;
 ; Returns:
 ;
 ;   X                   The chosen view number (0-3)
@@ -14686,7 +14798,7 @@ ENDIF
 ;       Name: Print4Spaces
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Print four spaces
+;    Summary: An unused routine that prints four spaces
 ;
 ; ******************************************************************************
 
@@ -15008,9 +15120,7 @@ ENDIF
  BEQ nobirths
 
                         ; If we get here then we have Trumbles in the hold, so
-                        ; this is where they breed (though we never get here in
-                        ; the Master version as the number of Trumbles is always
-                        ; zero)
+                        ; this is where they breed
 
  LDA #0                 ; Trumbles eat food during the hyperspace journey, so
  STA QQ20               ; zero the amount of food in the hold
@@ -15604,7 +15714,9 @@ ENDIF
  STY spasto+1           ; so we spawn the correct type of station in part 4 of
                         ; the main flight loop
 
- JMP UpdateIconBar_b3   ; ???
+ JMP UpdateIconBar_b3   ; Update the icon bar so the docking computer icon gets
+                        ; displayed to reflect that we are in the station's safe
+                        ; zone, returning from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -16022,7 +16134,9 @@ ENDIF
                         ; we just cleared out the second slot, and the first
                         ; slot is already taken by the planet
 
- JMP UpdateIconBar_b3   ; ???
+ JMP UpdateIconBar_b3   ; Update the icon bar so the docking computer icon gets
+                        ; removed to reflect that we are no longer in the safe
+                        ; zone, returning from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -16199,18 +16313,19 @@ ENDIF
 
  STX XX4                ; Store the slot number of the ship to remove in XX4
 
- JSR HideFromScanner_b1 ; ???
- LDX XX4
+ JSR HideFromScanner_b1 ; Hide the ship from the scanner
+
+ LDX XX4                ; Set X to the slot number of the ship to remove
 
  LDA MSTG               ; Check whether this slot matches the slot number in
  CMP XX4                ; MSTG, which is the target of our missile lock
 
  BNE KS5                ; If our missile is not locked on this ship, jump to KS5
 
- LDY #$6C               ; Otherwise we need to remove our missile lock, so call
+ LDY #108               ; Otherwise we need to remove our missile lock, so call
  JSR ABORT              ; ABORT to disarm the missile and update the missile
-                        ; indicators on the dashboard to green/cyan (Y = $6C)
-                        ; ???
+                        ; indicators on the dashboard to the tile pattern number
+                        ; in Y (black indicator = pattern 108)
 
  LDA #200               ; Print recursive token 40 ("TARGET LOST") as an
  JSR MESS               ; in-flight message
@@ -16417,6 +16532,9 @@ ENDIF
 ;
 ; ------------------------------------------------------------------------------
 ;
+; This routine does a similar job to the routine of the same name in the BBC
+; Master version of Elite, but the code is significantly different.
+;
 ; Returns:
 ;
 ;   A                   The result:
@@ -16507,6 +16625,9 @@ ENDIF
 ; ------------------------------------------------------------------------------
 ;
 ; X and Y are integers between -1 and +1 depending on which buttons are pressed.
+;
+; This routine does a similar job to the routine of the same name in the BBC
+; Master version of Elite, but the code is significantly different.
 ;
 ; Returns:
 ;
@@ -16696,11 +16817,11 @@ ENDIF
  BPL REL5               ; Loop back to REL5 until we have recharged both shields
                         ; and the energy bank
 
+ LDA #$FF               ; Set iconBarType to $FF so no icon bar is shown
+ STA iconBarType
+
                         ; Fall through into RES2 to reset the stardust and ship
                         ; workspace at INWK
-
- LDA #$FF               ; ???
- STA iconBarType
 
 ; ******************************************************************************
 ;
@@ -16737,7 +16858,7 @@ ENDIF
  STA lastNameTile       ; 80 * 8 = 640 (i.e. to the end of tile row 19) in both
  STA lastNameTile+1     ; bitplanes
 
- LDA BOMB
+ LDA BOMB               ; ???
  BPL CADAA
  JSR HideHiddenColour
  STA BOMB
@@ -17646,43 +17767,77 @@ ENDIF
  LDY #4                 ; Wait for 4/50 of a second (0.08 seconds), to slow the
  JSR DELAY              ; main loop down a bit
 
- LDA TRIBBLE+1          ; ???
- BEQ CB02B
- JSR DORND
- CMP #$DC
- LDA TRIBBLE
- ADC #0
+ LDA TRIBBLE+1          ; If the high byte of TRIBBLE(1 0), the number of
+ BEQ CB02B              ; Trumbles in the hold, is zero, jump to CB02B to skip
+                        ; the following
+
+                        ; We have a lot of Trumbles in the hold, so let's see if
+                        ; any of them are breeding (note that Trumbles always
+                        ; breed when we jump into a new system in the SOLAR
+                        ; routine, but when we have lots of them, they also
+                        ; breed here in the main flight loop
+
+ JSR DORND              ; Set A and X to random numbers
+
+ CMP #220               ; If A >= 220 then set the C flag (14% chance)
+
+ LDA TRIBBLE            ; Add the C flag to TRIBBLE(1 0), starting with the low
+ ADC #0                 ; bytes
  STA TRIBBLE
- BCC CB02B
- INC TRIBBLE+1
- BPL CB02B
- DEC TRIBBLE+1
+
+ BCC CB02B              ; And then the high bytes
+ INC TRIBBLE+1          ;
+                        ; So there is a 14% chance of a Trumble being born
+
+ BPL CB02B              ; If the high byte of TRIBBLE(1 0) is now $80, then
+ DEC TRIBBLE+1          ; decrement it back to $7F, so the number of Trumbles
+                        ; never goes above $7FFF (32767)
 
 .CB02B
 
- LDA TRIBBLE+1
- BEQ CB04C
- LDY CABTMP
- CPY #$E0
- BCS CB039
- LSR A
+ LDA TRIBBLE+1          ; If the high byte of TRIBBLE(1 0), the number of
+ BEQ CB04C              ; Trumbles in the hold, is zero, jump to CB04C to skip
+                        ; the following
+
+                        ; We have a lot of Trumbles in the hold, so they are
+                        ; probably making a bit of a noise
+
+ LDY CABTMP             ; If the cabin temperature is >= 224 then jump to CB039
+ CPY #224               ; to skip the following and leave the value of A as a
+ BCS CB039              ; high value, so the chances of the Trumbles making a
+                        ; noise in hot temperature is greater (specifically,
+                        ; this is the temperature at which the fuel scoop start
+                        ; working)
+
+ LSR A                  ; Set A = A / 2
  LSR A
 
 .CB039
 
- STA T
- JSR DORND
- CMP T
- BCS CB04C
- AND #3
+ STA T                  ; Set T = A, which will be higher with more Trumbles and
+                        ; higher temperatures
+
+ JSR DORND              ; Set A and X to random numbers
+
+ CMP T                  ; If A >= T then jump to CB04C to skip making any noise,
+ BCS CB04C              ; so there is a higher chance of Trumbles making noise
+                        ; when there are lots of them or the cabin temperature
+                        ; is hot enough for the fuel scoops to work
+
+ AND #3                 ; Set Y to our random number reduced to the range 0 to 3
  TAY
- LDA LB079,Y
- TAY
- JSR NOISE
+
+ LDA trumbleNoises,Y    ; Set Y to the Y-th noise number from the trumbleNoises
+ TAY                    ; table, so there's a 75% change of Y being set to 5,
+                        ; and a 25% chance of Y being set to 6
+
+ JSR NOISE              ; Call the NOISE routine to make the sound of the
+                        ; Trumbles in Y, which will be one of 5 or 6, with 5
+                        ; more likely than 6
 
 .CB04C
 
- LDA allowInSystemJump
+ LDA allowInSystemJump  ; ???
  LDX QQ22+1
  BEQ CB055
  ORA #$80
@@ -17748,16 +17903,16 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LB079
+;       Name: trumbleNoises
 ;       Type: Variable
 ;   Category: Sound
-;    Summary: ???
+;    Summary: The set of noises that the Trumbles make in the hold
 ;
 ; ******************************************************************************
 
-.LB079
+.trumbleNoises
 
- EQUB 5, 5, 5, 6                              ; B079: 05 05 05... ...
+ EQUB 5, 5, 5, 6
 
 ; ******************************************************************************
 ;
@@ -17767,6 +17922,9 @@ ENDIF
 ;    Summary: Process icon bar controller choices
 ;
 ; ------------------------------------------------------------------------------
+;
+; This routine does a similar job to the routine of the same name in the BBC
+; Master version of Elite, but the code is significantly different.
 ;
 ; Arguments:
 ;
@@ -18172,6 +18330,9 @@ ENDIF
 ; Compare x_hi, y_hi and z_hi with 224, and set the C flag if all three <= 224,
 ; otherwise clear the C flag.
 ;
+; This routine does a similar job to the routine of the same name in the BBC
+; Master version of Elite, but the code is significantly different.
+;
 ; Returns:
 ;
 ;   C flag              Set if x_hi <= 224 and y_hi <= 224 and z_hi <= 224
@@ -18555,7 +18716,7 @@ ENDIF
 ;       Name: ShowStartScreen
 ;       Type: Subroutine
 ;   Category: Start and end
-;    Summary: ???
+;    Summary: Show the start screen and start the game
 ;
 ; ******************************************************************************
 
@@ -18606,8 +18767,11 @@ ENDIF
 ;
 ; ------------------------------------------------------------------------------
 ;
-; This routine is called following death, and when the game is quit by pressing
-; ESCAPE when paused.
+; This routine is called following death, and when the game is quit via the
+; pause menu.
+;
+; This routine does a similar job to the routine of the same name in the BBC
+; Master version of Elite, but the code is significantly different.
 ;
 ; ******************************************************************************
 
@@ -18752,13 +18916,16 @@ ENDIF
 
 .BAY
 
- JSR ClearScreen_b3     ; ???
+ JSR ClearScreen_b3     ; Clear the screen by zeroing patterns 66 to 255 in
+                        ; both pattern buffer, and clearing both nametable
+                        ; buffers to the background tile
 
  LDA #$FF               ; Set QQ12 = $FF (the docked flag) to indicate that we
  STA QQ12               ; are docked
 
  LDA #3                 ; Jump into the main loop at FRCE, setting the key
- JMP FRCE               ; that's "pressed" to show the Status Mode screen ???
+ JMP FRCE               ; that's "pressed" to the Status Mode icon bar button
+                        ; so we show the Status Mode screen
 
 ; ******************************************************************************
 ;
@@ -18938,7 +19105,7 @@ ENDIF
 
 .awe
 
- JSR HideFromScanner_b1 ; ???
+ JSR HideFromScanner_b1 ; Hide the ship from the scanner
 
  LDA #12                ; Set CNT2 = 12 as the outer loop counter for the loop
  STA CNT2               ; starting at TLL2
@@ -19687,6 +19854,11 @@ ENDIF
 ;   Category: Flight
 ;    Summary: Process the fast-forward button to end the demo, dock instantly or
 ;             perform an in-system jump
+;
+; ------------------------------------------------------------------------------
+;
+; This routine does a similar job to the routine of the same name in the BBC
+; Master version of Elite, but the code is significantly different.
 ;
 ; ******************************************************************************
 
@@ -22812,38 +22984,63 @@ ENDIF
 
 .davidscockup
 
- LDA INWK+7             ; ???
- LDX #0
- CMP #$10
- BCS CBEA5
- INX
- CMP #8
- BCS CBEA5
- INX
- CMP #6
- BCS CBEA5
- INX
- CMP #3
- BCS CBEA5
- INX
+ LDA INWK+7             ; Fetch z_hi, the distance of the ship being hit in
+                        ; terms of the z-axis (in and out of the screen)
 
-.CBEA5
+ LDX #0                 ; We now set X to a number between 0 and 4 depending on
+                        ; the z-axis distance to the exploding ship, with 0
+                        ; for distant ships and 4 for close ships
 
- LDY LBEAB,X
- JMP NOISE
+ CMP #16                ; If z_hi >= 16, jump to exno1 with X = 0
+ BCS exno1
+
+ INX                    ; Increment X to 1
+
+ CMP #8                 ; If z_hi >= 8, jump to exno1 with X = 1
+ BCS exno1
+
+ INX                    ; Increment X to 2
+
+ CMP #6                 ; If z_hi >= 6, jump to exno1 with X = 2
+ BCS exno1
+
+ INX                    ; Increment X to 3
+
+ CMP #3                 ; If z_hi >= 3, jump to exno1 with X = 3
+ BCS exno1
+
+ INX                    ; Increment X to 4
+
+.exno1
+
+ LDY explosionNoises,X  ; Set Y to the X-th noise number from the table of
+                        ; explosion noise numbers
+
+ JMP NOISE              ; Call the NOISE routine to make the sound in Y, which
+                        ; will be the sound of a ship exploding at the specified
+                        ; distance, returning from the subroutine using a tail
+                        ; call
 
 ; ******************************************************************************
 ;
-;       Name: LBEAB
+;       Name: explosionNoises
 ;       Type: Variable
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Sound numbers for explosions at different distances from our ship
 ;
 ; ******************************************************************************
 
-.LBEAB
+.explosionNoises
 
- EQUB $1B, $17, $0E, $0D, $0D                 ; BEAB: 1B 17 0E... ...
+ EQUB 27                ; Ship explosion at a distance of z_hi >= 16
+
+ EQUB 23                ; Ship explosion at a distance of z_hi >=8
+
+ EQUB 14                ; Ship explosion at a distance of z_hi >= 6
+
+ EQUB 13                ; Ship explosion at a distance of z_hi >= 3
+
+ EQUB 13                ; Nearby ship explosion
 
 ; ******************************************************************************
 ;
@@ -22878,6 +23075,9 @@ ENDIF
 ;    Summary: Clear the screen and set the new view type
 ;
 ; ------------------------------------------------------------------------------
+;
+; This routine does a similar job to the routine of the same name in the BBC
+; Master version of Elite, but the code is significantly different.
 ;
 ; Arguments:
 ;
@@ -22933,7 +23133,8 @@ ENDIF
  STA DTW2               ; Set bit 7 of DTW2 to indicate we are not currently
                         ; printing a word
 
- STA DTW1               ; Set bit 7 of DTW1 to indicate ???
+ STA DTW1               ; Set bit 7 of DTW1 to indicate that we do not change
+                        ; case to lower case
 
  LDA #%00000000         ; Set DTW6 = %00000000 to disable lower case
  STA DTW6

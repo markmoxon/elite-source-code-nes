@@ -14626,8 +14626,9 @@ ENDIF
 
 .DTS
 
- BIT DTW1               ; If bit 7 of DTW1 is clear then ???, so jump to DT5 to
- BPL DT5                ; print the character in upper case
+ BIT DTW1               ; If bit 7 of DTW1 is clear then DTW1 must be %00000000,
+ BPL DT5                ; so we do not change the character to lower case, so
+                        ; jump to DT5 to print the character in upper case
 
  BIT DTW6               ; If bit 7 of DTW6 is set, then lower case has been
  BMI DT10               ; enabled by jump token 13, {lower case}, so jump to
@@ -14640,8 +14641,13 @@ ENDIF
 
 .DT10
 
- BIT DTW8               ; If bit 7 of DTW8 is clear then ???, so jump to DT5 to
- BPL DT5                ; print the character in upper case
+ BIT DTW8               ; If bit 7 of DTW8 is clear then DTW8 must be %0000000
+ BPL DT5                ; (capitalise the next letter), so jump to DT5 to print
+                        ; the character in upper case
+
+                        ; If we get here then we know DTW8 is %11111111 (do not
+                        ; change case, so we now convert the character to lower
+                        ; case
 
  STX SC                 ; Store X in SC so we can retrieve it below
 
@@ -14650,12 +14656,14 @@ ENDIF
 
  LDX SC                 ; Restore the value of X that we stored in SC
 
- AND DTW8               ; Convert the character to upper case if DTW8 is
-                        ; %11011111 (i.e. after a {single cap} token)
+ AND DTW8               ; This instruction has no effect, because we know that
+                        ; DTW8 is %11111111
+                        ;
+                        ; The code is left over from the BBC Micro version, in
+                        ; which DTW8 is used as a bitmask to convert a character
+                        ; to upper case
 
 .DT5
-
-.DT9
 
  JMP DASC               ; Jump to DASC to print the ASCII character in A,
                         ; returning from the routine using a tail call
@@ -14984,7 +14992,7 @@ ENDIF
 ;
 ; This routine sets the following:
 ;
-;   * DTW1 = %10000000 (apply ???)
+;   * DTW1 = %10000000 (apply lower case to the second letter of a word onwards)
 ;
 ;   * DTW6 = %00000000 (lower case is not enabled)
 ;
@@ -14992,7 +15000,7 @@ ENDIF
 
 .MT2
 
- LDA #%10000000         ; Set DTW1 = %10000000 ???
+ LDA #%10000000         ; Set DTW1 = %10000000
  STA DTW1
 
  LDA #00000000          ; Set DTW6 = %00000000
@@ -15558,7 +15566,7 @@ ENDIF
 ;       Name: MT23
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Move to row 9, switch to white text, and switch to lower case
+;    Summary: Move to row 9 and switch to lower case
 ;             when printing extended tokens
 ;  Deep dive: Extended text tokens
 ;
@@ -15573,15 +15581,15 @@ ENDIF
                         ; $2C $A9 $06, or BIT $06A9, which does nothing apart
                         ; from affect the flags
 
-                        ; Fall through into MT29 to move to the row in A, switch
-                        ; to white text, and switch to lower case
+                        ; Fall through into MT29 to move to the row in A and
+                        ; switch to lower case
 
 ; ******************************************************************************
 ;
 ;       Name: MT29
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Move to row 7, switch to white text, and switch to lower case when
+;    Summary: Move to row 7 and switch to lower case when
 ;             printing extended tokens
 ;  Deep dive: Extended text tokens
 ;
@@ -15607,7 +15615,7 @@ ENDIF
 ;
 ; This routine sets the following:
 ;
-;   * DTW1 = %10000000 (???)
+;   * DTW1 = %10000000 (apply lower case to the second letter of a word onwards)
 ;
 ;   * DTW6 = %10000000 (lower case is enabled)
 ;

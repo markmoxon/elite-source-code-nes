@@ -5185,7 +5185,7 @@ ENDIF
                         ; SendViewToPPU when showing the Data on System screen
 
  CLC                    ; Add 56 to firstFreeTile, as we are going to use 56
- ADC #56                ;  tilesfor the system image (7 rows of 8 tiles)
+ ADC #56                ; tiles for the system image (7 rows of 8 tiles)
  STA firstFreeTile
 
  LDA pictureTile        ; Set K+2 to the value we stored above, so K+2 is the
@@ -6836,42 +6836,84 @@ ENDIF
 ;       Name: viewAttributes_EN
 ;       Type: Variable
 ;   Category: Drawing the screen
-;    Summary: The view attributes lookup table for English
+;    Summary: The view attributes to use for each view type in English
 ;
 ; ******************************************************************************
 
 .viewAttributes_EN
 
- EQUB $00, $01, $16, $04, $05, $02, $0A, $13
- EQUB $0D, $09, $06, $10, $03, $03, $02, $17
+ EQUB  0                ; 0  = Space view
+ EQUB  1                ; 1  = Title screen
+ EQUB 22                ; 2  = Mission 1 briefing: rotating ship
+ EQUB  4                ; 3  = Mission 1 briefing: ship and text
+ EQUB  5                ; 4  = Game Over screen
+ EQUB  2                ; 5  = Text-based mission briefing
+ EQUB 10                ; 6  = Data on System
+ EQUB 19                ; 7  = Inventory
+ EQUB 13                ; 8  = Status Mode
+ EQUB  9                ; 9  = Equip Ship
+ EQUB  6                ; 10 = Market Price
+ EQUB 16                ; 11 = Save and load
+ EQUB  3                ; 12 = Short-range Chart
+ EQUB  3                ; 13 = Long-range Chart
+ EQUB  2                ; 14 = Unused
+ EQUB 23                ; 15 = Start screen
 
 ; ******************************************************************************
 ;
 ;       Name: viewAttributes_DE
 ;       Type: Variable
 ;   Category: Drawing the screen
-;    Summary: The view attributes lookup table for German
+;    Summary: The view attributes to use for each view type in German
 ;
 ; ******************************************************************************
 
 .viewAttributes_DE
 
- EQUB $00, $01, $16, $04, $05, $02, $0B, $14
- EQUB $0E, $09, $07, $11, $03, $03, $02, $02
+ EQUB  0                ; 0  = Space view
+ EQUB  1                ; 1  = Title screen
+ EQUB 22                ; 2  = Mission 1 briefing: rotating ship
+ EQUB  4                ; 3  = Mission 1 briefing: ship and text
+ EQUB  5                ; 4  = Game Over screen
+ EQUB  2                ; 5  = Text-based mission briefing
+ EQUB 11                ; 6  = Data on System
+ EQUB 20                ; 7  = Inventory
+ EQUB 14                ; 8  = Status Mode
+ EQUB  9                ; 9  = Equip Ship
+ EQUB  7                ; 10 = Market Price
+ EQUB 17                ; 11 = Save and load
+ EQUB  3                ; 12 = Short-range Chart
+ EQUB  3                ; 13 = Long-range Chart
+ EQUB  2                ; 14 = Unused
+ EQUB  2                ; 15 = Start screen
 
 ; ******************************************************************************
 ;
 ;       Name: viewAttributes_FR
 ;       Type: Variable
 ;   Category: Drawing the screen
-;    Summary: The view attributes lookup table for French
+;    Summary: The view attributes to use for each view type in French
 ;
 ; ******************************************************************************
 
 .viewAttributes_FR
 
- EQUB $00, $01, $16, $04, $05, $02, $0C, $15
- EQUB $0F, $09, $08, $12, $03, $03, $02, $17
+ EQUB  0                ; 0  = Space view
+ EQUB  1                ; 1  = Title screen
+ EQUB 22                ; 2  = Mission 1 briefing: rotating ship
+ EQUB  4                ; 3  = Mission 1 briefing: ship and text
+ EQUB  5                ; 4  = Game Over screen
+ EQUB  2                ; 5  = Text-based mission briefing
+ EQUB 12                ; 6  = Data on System
+ EQUB 21                ; 7  = Inventory
+ EQUB 15                ; 8  = Status Mode
+ EQUB  9                ; 9  = Equip Ship
+ EQUB  8                ; 10 = Market Price
+ EQUB 18                ; 11 = Save and load
+ EQUB  3                ; 12 = Short-range Chart
+ EQUB  3                ; 13 = Long-range Chart
+ EQUB  2                ; 14 = Unused
+ EQUB 23                ; 15 = Start screen
 
 ; ******************************************************************************
 ;
@@ -6928,7 +6970,7 @@ ENDIF
  LDX languageIndex      ; Set X to the index of the chosen language
 
  LDA viewAttributesLo,X ; Set V(1 0) = viewAttributes_EN, _FR or _DE, according
- STA V                  ; to the chosen labguage
+ STA V                  ; to the chosen language
  LDA viewAttributesHi,X
  STA V+1
 
