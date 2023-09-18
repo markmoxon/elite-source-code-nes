@@ -417,7 +417,7 @@ ENDIF
                         ; apply to planets and suns
 
  CMP #2                 ; ???
- BNE C80F0
+ BNE main32
 
  LDA spasto             ; Copy the address of the space station's ship blueprint
  STA XX0                ; from spasto(1 0) to XX0(1 0), which we set up in NWSPS
@@ -425,9 +425,9 @@ ENDIF
  STA XX0+1              ; Dodo)
 
  LDY #4
- BNE C80FC
+ BNE main33
 
-.C80F0
+.main32
 
  ASL A                  ; Set Y = ship type * 2
  TAY
@@ -440,37 +440,37 @@ ENDIF
  LDA XX21-1,Y           ; Fetch the high byte of this particular ship type's
  STA XX0+1              ; blueprint and store it in XX0+1
 
-.C80FC
+.main33
 
  CPY #6
- BEQ C815B
+ BEQ main36
  CPY #$3C
- BEQ C815B
+ BEQ main36
  CPY #4
- BEQ C811A
+ BEQ main35
  LDA INWK+32
- BPL C815B
+ BPL main36
  CPY #2
- BEQ C8114
+ BEQ main34
  AND #$3E
- BEQ C815B
+ BEQ main36
 
-.C8114
+.main34
 
  LDA INWK+31
  AND #$A0
- BNE C815B
+ BNE main36
 
-.C811A
+.main35
 
  LDA NEWB
  AND #4
- BEQ C815B
+ BEQ main36
  ASL allowInSystemJump
  SEC
  ROR allowInSystemJump
 
-.C815B
+.main36
 
 ; ******************************************************************************
 ;
@@ -960,24 +960,24 @@ ENDIF
                         ; match the view (front, rear, left, right)
 
  LDA LAS                ; ???
- BNE C8243
+ BNE main37
  LDA MSAR
- BEQ C8248
+ BEQ main38
  LDA MSTG
- BPL C8248
+ BPL main38
 
-.C8243
+.main37
 
  JSR HITCH              ; Call HITCH to see if this ship is in the crosshairs,
- BCS C824B              ; in which case the C flag will be set (so if there is
-                        ; no missile or laser lock, we jump to MA8 to skip the
-                        ; following)
+ BCS main39             ; in which case the C flag will be set and we jump to
+                        ; main39 (so if there is no missile or laser lock, we
+                        ; jump to MA8 to skip the following)
 
-.C8248
+.main38
 
  JMP MA8                ; Jump to MA8 to skip the following
 
-.C824B
+.main39
 
  LDA MSAR               ; We have missile lock, so check whether the leftmost
  BEQ MA47               ; missile is currently armed, and if not, jump to MA47
@@ -1016,12 +1016,12 @@ ENDIF
  BEQ MA14+2             ; following as we can't destroy a space station
 
  CMP #8                 ; ???
- BNE C827A
+ BNE main40
  LDX LAS
  CPX #$32
  BEQ MA14+2
 
-.C827A
+.main40
 
  CMP #CON               ; If the ship we hit is less than #CON - i.e. it's not
  BCC BURN               ; a Constrictor, Cougar, Dodo station or the Elite logo,
@@ -1060,25 +1060,25 @@ ENDIF
 
  LDA TYPE               ; ???
  CMP #7
- BEQ C82B5
+ BEQ main41
  CMP #6
  BNE nosp
  JSR DORND
- BPL C82CE
+ BPL main43
  LDA #1
- BNE C82BC
+ BNE main42
 
-.C82B5
+.main41
 
  JSR DORND
  ORA #1
  AND #3
 
-.C82BC
+.main42
 
  LDX #8
  JSR SPIN2
- JMP C82CE
+ JMP main43
 
 .nosp
 
@@ -1088,7 +1088,7 @@ ENDIF
  LDY #OIL               ; Randomly spawn some cargo canisters
  JSR SPIN
 
-.C82CE
+.main43
 
  LDX TYPE               ; Set X to the type of the ship that was killed so the
                         ; following call to EXNO2 can award us the correct
@@ -1229,17 +1229,17 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.main1
+.main24
 
  DEC DLY                ; Decrement the delay counter in DLY, which is used to
                         ; control how long flight messages remain on-screen
 
- BMI main4              ; If DLY is now negative, jump to main4 to set DLY to
+ BMI main27             ; If DLY is now negative, jump to main27 to set DLY to
                         ; zero and skip the following, as there is no flight
                         ; message to display
 
- BEQ main2              ; DLY is now zero so it must have been non-zero before
-                        ; we decremented it, so jump to main2 to remove the
+ BEQ main25             ; DLY is now zero so it must have been non-zero before
+                        ; we decremented it, so jump to main25 to remove the
                         ; flight message from the screen, as its timer has run
                         ; down
 
@@ -1249,16 +1249,16 @@ ENDIF
 
  JSR PrintFlightMessage ; Print the current in-flight message, if there is one
 
- JMP main3              ; Jump to main3 to display the message we just printed
+ JMP main26             ; Jump to main26 to display the message we just printed
                         ; and continue with the rest of the main loop
 
-.main2
+.main25
 
  JSR CLYNS              ; Clear the bottom three text rows of the upper screen,
                         ; and move the text cursor to column 1 on row 21, i.e.
                         ; the start of the top row of the three bottom rows
 
-.main3
+.main26
 
  JSR DrawMessageInNMI   ; Configure the NMI to display the in-flight message
                         ; that we just printed
@@ -1269,15 +1269,15 @@ ENDIF
 .FlightLoop4To16
 
  LDA QQ11               ; If this is not the space view (i.e. QQ11 is non-zero),
- BNE main1              ; jump to main1 to print the flight message for
+ BNE main24             ; jump to main24 to print the flight message for
                         ; non-space views, rejoining the main subroutine at MA16
                         ; below
 
  DEC DLY                ; Decrement the delay counter in DLY, which is used to
                         ; control how long flight messages remain on-screen
 
- BMI main4              ; If DLY is now 0 or negative, jump to main4 to set DLY
- BEQ main4              ; to zero and skip the following, as there is no flight
+ BMI main27             ; If DLY is now 0 or negative, jump to main27 to set DLY
+ BEQ main27             ; to zero and skip the following, as there is no flight
                         ; message to display
 
                         ; DLY is non-zero, so we need to redraw any flight
@@ -1289,7 +1289,7 @@ ENDIF
  JMP MA16               ; Jump to MA16 to skip the following and continue with
                         ; the rest of the main loop
 
-.main4
+.main27
 
  LDA #0                 ; Set DLY to 0 so that it doesn't decrement below zero
  STA DLY
@@ -1345,28 +1345,28 @@ ENDIF
                         ; flight loop) for each of them, so set X as a ship slot
                         ; counter
 
- LDA FRIN               ; If slot 0 is empty, jump to main5 to move on to the
- BEQ main5              ; next slot
+ LDA FRIN               ; If slot 0 is empty, jump to main28 to move on to the
+ BEQ main28             ; next slot
 
  JSR MAL1               ; Call parts 4 to 12 of the main flight loop to update
                         ; the ship in slot 0
 
-.main5
+.main28
 
  LDX #2                 ; We deal with the sun/space station in slot 1 below, so
                         ; we now skip to slot 2 by setting X accordingly
 
-.main6
+.main29
 
  LDA FRIN,X             ; If slot X is empty then we have reached the last slot,
- BEQ main7              ; so jump to main7 to stop updating the slots
+ BEQ main30             ; so jump to main30 to stop updating the slots
 
  JSR MAL1               ; Call parts 4 to 12 of the main flight loop to update
                         ; the ship in slot X
 
- JMP main6              ; Loop back until we have updated all the ship slots
+ JMP main29             ; Loop back until we have updated all the ship slots
 
-.main7
+.main30
 
  LDX #1                 ; We now process the sun/space station in slot 1, so we
                         ; set X as the slot number
@@ -1376,14 +1376,14 @@ ENDIF
                         ; part 13 of the main loop as we are done updating the
                         ; ship slots
 
- BPL main8              ; If bit 7 of the ship type is clear, then this is the
-                        ; space station rather than the sun, so jump to main8
+ BPL main31             ; If bit 7 of the ship type is clear, then this is the
+                        ; space station rather than the sun, so jump to main31
                         ; to skip the following
 
  LDY #0                 ; Set the "space station present" flag to 0, as we are
  STY SSPR               ; no longer in the space station's safe zone
 
-.main8
+.main31
 
  JSR MAL1               ; Call parts 4 to 12 of the main flight loop to update
                         ; the sun or space station in slot 2
@@ -1539,18 +1539,18 @@ ENDIF
 
  LDX #8                 ; ???
 
-.loop_C83FB
+.main44
 
  LDA K%,X
  STA INWK,X
 
  DEX
 
- BPL loop_C83FB
+ BPL main44
 
  LDX #5
 
-.loop_C8405
+.main45
 
  LDY INWK+9,X
  LDA INWK+15,X
@@ -1561,7 +1561,7 @@ ENDIF
 
  DEX
 
- BPL loop_C8405
+ BPL main45
 
  JSR SpawnSpaceStation  ; If we are close enough, add a new space station to our
                         ; local bubble of universe
@@ -1602,8 +1602,8 @@ ENDIF
 
 .MA93
 
- LDA demoInProgress     ; If the demo is not in progress, jump to C8436 to skip
- BEQ C8436              ; the following
+ LDA demoInProgress     ; If the demo is not in progress, jump to main46 to skip
+ BEQ main46             ; the following
 
                         ; If we get here then the demo is in progress, so now we
                         ; check to see if we have destroyed all the demo ships
@@ -1614,10 +1614,10 @@ ENDIF
  TAY
 
  LDA FRIN+2,Y           ; There are Y non-ship items in the bubble, so if slot
- BNE C8436              ; Y+2 is not empty (given that the first two slots are
+ BNE main46             ; Y+2 is not empty (given that the first two slots are
                         ; the planet and sun), then this means there is at least
                         ; one ship in the bubble along with the junk and
-                        ; missiles, so jump to C8436 to skip the following as
+                        ; missiles, so jump to main46 to skip the following as
                         ; we haven't yet destroyed all the ships in the combat
                         ; practice demo
 
@@ -1626,22 +1626,22 @@ ENDIF
                         ; the results of combat practice, returning from the
                         ; subroutine using a tail call
 
-.C8436
+.main46
 
  LDA MCNT               ; Fetch the main loop counter and calculate MCNT mod 32,
  AND #31                ; which tells us the position of this loop in each block
                         ; of 32 iterations
 
  CMP #10                ; If this is the tenth or twentieth iteration in this
- BEQ C8442              ; block of 32, do the following, otherwise jump to MA29
+ BEQ main47             ; block of 32, do the following, otherwise jump to MA29
  CMP #20                ; to skip the planet altitude check and move on to the
  BNE MA29               ; sun distance check
 
-.C8442
+.main47
 
  LDA #80                ; If our energy bank status in ENERGY is >= 80, skip
  CMP ENERGY             ; printing the following message (so the message is
- BCC C8453              ; only shown if our energy is low)
+ BCC main48             ; only shown if our energy is low)
 
  LDA #100               ; Print recursive token 100 ("ENERGY LOW{beep}") as an
  JSR MESS               ; in-flight message
@@ -1649,7 +1649,7 @@ ENDIF
  LDY #7                 ; Call the NOISE routine with Y = 7 to make a beep to
  JSR NOISE              ; indicate low energy
 
-.C8453
+.main48
 
  JSR CheckAltitude      ; Perform an altitude check with the planet, ending the
                         ; game if we hit the ground
@@ -1952,13 +1952,14 @@ ENDIF
 
 .M%
 
- LDA QQ11
- BNE C853A
+ LDA QQ11               ; If this is not the space view, jump to main1 to skip
+ BNE main1              ; the following, as we only need to flip the drawing
+                        ; bitplane for animating the space view
 
  JSR FlipDrawingPlane   ; Flip the drawing bitplane so we draw into the bitplane
                         ; that isn't visible on-screen
 
-.C853A
+.main1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -2005,34 +2006,34 @@ ENDIF
 ; ******************************************************************************
 
  LDA auto               ; ???
- BEQ C8556
+ BEQ main2
 
  CLC
- BCC C856E
+ BCC main5
 
-.C8556
+.main2
 
  LDA MJ
- BEQ C855E
+ BEQ main3
 
  SEC
- BCS C856E
+ BCS main5
 
-.C855E
+.main3
 
  LDA allowInSystemJump
- BPL C856B
+ BPL main4
 
  LDA #$B0
  JSR CheckJumpSafety+2
 
- JMP C856E
+ JMP main5
 
-.C856B
+.main4
 
  JSR CheckJumpSafety
 
-.C856E
+.main5
 
  ROR allowInSystemJump
 
@@ -2045,12 +2046,12 @@ ENDIF
  ORA KY3
  ORA KY4
 
- BMI C858A
+ BMI main6
 
  LDA #16                ; Apply damping to the roll rate (if enabled), so the
  JSR cntr               ; roll rate in X creeps towards the centre by 16
 
-.C858A
+.main6
 
                         ; The roll rate in JSTX increases if we press ">" (and
                         ; the RL indicator on the dashboard goes to the right).
@@ -2109,12 +2110,12 @@ ENDIF
  ORA controller1Down,Y
  ORA KY5
  ORA KY6
- BMI C85C2
+ BMI main7
 
  LDA #12                ; Apply damping to the pitch rate (if enabled), so the
  JSR cntr               ; pitch rate in X creeps towards the centre by 12
 
-.C85C2
+.main7
 
  TXA                    ; Set A and Y to the pitch rate but with the sign bit
  EOR #%10000000         ; flipped
@@ -2193,12 +2194,12 @@ ENDIF
  STA DELTA              ; we are about to do that again)
 
  CMP #40                ; If the new speed in A < 40, then this is a valid
- BCC C85F3              ; speed, so jump down to C85F3 to set DELTA to this
+ BCC main8              ; speed, so jump down to main8 to set DELTA to this
                         ; value
 
  LDA #40                ; The maximum allowed speed is 40, so set A = 40
 
-.C85F3
+.main8
 
  STA DELTA              ; Store the updated speed in DELTA
 
@@ -2214,18 +2215,18 @@ ENDIF
  SEC                    ; from the speed in DELTA
  SBC #4
 
- BEQ C8610              ; If the result is zero, jump to C8610 to set the speed
+ BEQ main9              ; If the result is zero, jump to main9 to set the speed
                         ; to the minimum value of 1
 
- BCS C8612              ; If the subtraction didn't underflow then this is a
-                        ; valid speed, so jump down to C8612 to set DELTA to
+ BCS main10             ; If the subtraction didn't underflow then this is a
+                        ; valid speed, so jump down to main10 to set DELTA to
                         ; this value
 
-.C8610
+.main9
 
  LDA #1                 ; Set A = 1 to use as the minimum speed
 
-.C8612
+.main10
 
  STA DELTA              ; Store the updated speed in DELTA
 
@@ -2252,7 +2253,7 @@ ENDIF
  LDY #4                 ; Set Y = 4 so the call to NOISE makes a low, long beep
                         ; to indicate the missile is now disarmed
 
-.loop_C8630
+.main11
 
  JSR NOISE              ; Call the NOISE routine to make the sound in Y (which
                         ; will either be a low, long beep to indicate the
@@ -2268,8 +2269,8 @@ ENDIF
  JSR MSBAR              ; it between red and black in the main loop to indicate
                         ; that it is looking for a target
 
- LDY #3                 ; Set Y = 3 and jump up to loop_C8630 to make a short,
- BNE loop_C8630         ; high beep to indicate that it is looking for a target
+ LDY #3                 ; Set Y = 3 and jump up to main11 to make a short,
+ BNE main11             ; high beep to indicate that it is looking for a target
                         ; (this BNE is effectively a JMP as Y is never zero)
 
 .MA25
@@ -2343,14 +2344,14 @@ ENDIF
 .noescp
 
  CMP #$0C               ; ???
- BNE C8690
+ BNE main12
  LDA allowInSystemJump
  AND #$C0
  BNE MA64
  JSR WARP
  JMP MA64
 
-.C8690
+.main12
 
  CMP #$17
  BNE MA64
@@ -2407,11 +2408,11 @@ ENDIF
  BEQ MA3                ; keep going, otherwise jump down to MA3 to skip the
                         ; following
 
- BMI C86D9              ; ???
+ BMI main13              ; ???
  BIT KY7
  BVS MA3
 
-.C86D9
+.main13
 
                         ; If we get here, then the "fire" button is being
                         ; pressed, our laser hasn't overheated and isn't already
@@ -2435,27 +2436,27 @@ ENDIF
  PHA                    ; stored on the stack above (and leave the value on
                         ; the stack
 
- BMI C86F0              ; If A >= 128, jump to C86F0 to check whether this is
+ BMI main15             ; If A >= 128, jump to main15 to check whether this is
                         ; a beam laser or a military laser
 
  CMP #Mlas              ; If A is not the power for a mining laser, jump to
- BNE C86EE              ; C86EE to keep Y = 18
+ BNE main14             ; main14 to keep Y = 18
 
  LDY #16                ; This is a mining laser, so set Y = 16 to use as the
                         ; sound number
 
-.C86EE
+.main14
 
- BNE C86F9              ; Jump to C86F9 to make the sound in Y (this BNE is
+ BNE main17             ; Jump to main17 to make the sound in Y (this BNE is
                         ; effectively a JMP as Y is never zero)
 
-.C86F0
+.main15
 
                         ; If we get here then this is either a beam laser or a
                         ; military laser
 
- CMP #Armlas            ; If this is a military laser, jump to C86F7 to set
- BEQ C86F7              ; Y = 15 
+ CMP #Armlas            ; If this is a military laser, jump to main16 to set
+ BEQ main16             ; Y = 15 
 
  LDY #17                ; This is a beam laser, so set Y = 17 to use as the
                         ; sound number
@@ -2464,12 +2465,12 @@ ENDIF
                         ; $2C $A0 $0F, or BIT $0FA0, which does nothing apart
                         ; from affect the flags
 
-.C86F7
+.main16
 
  LDY #15                ; This is a military laser, so set Y = 15 to use as the
                         ; sound number
 
-.C86F9
+.main17
 
  JSR NOISE              ; Call the NOISE routine to make the sound in Y, which
                         ; will be one of 15 (military laser), 16 (mining laser),
@@ -2502,26 +2503,26 @@ ENDIF
                         ; with parts 13 to 16 of the main flight loop
 
  LDA QQ11               ; ???
- BNE C874C
+ BNE main20
 
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDA drawingBitplane    ; ???
- BNE C872A
+ BNE main18
 
  LDA flipEveryBitplane0
  EOR #$FF
  STA flipEveryBitplane0
 
- BMI C8733
+ BMI main19
 
  LDA KL
  ORA KY2
  ROR A
- BNE C8733
+ BNE main19
 
-.C872A
+.main18
 
  JSR DrawBitplaneInNMI  ; Configure the NMI to send the drawing bitplane to the
                         ; PPU after drawing the box edges and setting the next
@@ -2532,7 +2533,7 @@ ENDIF
  JMP DrawPitchRollBars  ; Update the pitch and roll bars on the dashboard,
                         ; returning from the subroutine using a tail call
 
-.C8733
+.main19
 
  LDA #%10001000         ; Set the bitplane flags for the drawing bitplane to the
  JSR SetDrawPlaneFlags  ; following:
@@ -2563,30 +2564,30 @@ ENDIF
 
  RTS                    ; Return from the subroutine
 
-.C874C
+.main20
 
  CMP #$98               ; ???
- BNE C876F
+ BNE main23
 
  JSR GetStatusCondition ; Set X to our ship's status condition
 
- CPX previousCondition  ; If our condition hasn't changed, jump to C875B to skip
- BEQ C875B              ; the following instruction
+ CPX previousCondition  ; If our condition hasn't changed, jump to main21 to
+ BEQ main21             ; skip the following instruction
 
  JSR STATUS             ; Call STATUS to refresh the Status Mode screen, so our
                         ; status updates to show the new condition
 
-.C875B
+.main21
 
  LDX previousCondition  ; Set X to the previous status condition
 
  CPX #3                 ; If the previous status condition was not red, jump to
- BNE C876A              ; C876A to show the alert colour for the previous
+ BNE main22             ; main22 to show the alert colour for the previous
                         ; condition
 
  LDA nmiCounter         ; If nmiCounter div 32 is odd (which will happen half
- AND #32                ; the time, and for 32 VBlanks in a row), jump to C876A
- BNE C876A              ; to skip the following
+ AND #32                ; the time, and for 32 VBlanks in a row), jump to main22
+ BNE main22             ; to skip the following
 
                         ; We get here if the previous condition was red, but
                         ; only for every other block of 32 VBlanks, so this
@@ -2597,12 +2598,12 @@ ENDIF
                         ; the commander image flash between the top two alert
                         ; colours (i.e. light red and dark red)
 
-.C876A
+.main22
 
  LDA alertColours,X     ; Change the palette so the visible colour is set to the
  STA visibleColour      ; alert colour for our status condition
 
-.C876F
+.main23
 
  RTS                    ; Return from the subroutine
 
@@ -4437,13 +4438,13 @@ ENDIF
 
  LDA #$41
 
-.loop_C8C3A
+.C8C3A
 
  STA INWK+5,Y
 
  DEY
 
- BPL loop_C8C3A
+ BPL C8C3A
 
  JSR InputName_b6
 
@@ -7910,7 +7911,7 @@ ENDIF
 
  STA LASCT
 
-.loop_C95E7
+.C95E7
 
  JSR FlipDrawingPlane   ; Flip the drawing bitplane so we draw into the bitplane
                         ; that isn't visible on-screen
@@ -7927,7 +7928,9 @@ ENDIF
                         ; pause menu and set the C flag, otherwise clear it
 
  DEC LASCT
- BNE loop_C95E7
+
+ BNE C95E7
+
  RTS
 
 ; ******************************************************************************
@@ -17173,12 +17176,12 @@ ENDIF
                         ; Boa or Anaconda
 
  CMP #HER               ; If A is not the ship type of a rock hermit, jump to
- BNE CAE7E              ; CAE7E to skip the following instruction
+ BNE game1              ; game1 to skip the following instruction
 
  LDA #CYL               ; This is a rock hermit, so set A = #CYL so we spawn a
                         ; Cobra Mk III
 
-.CAE7E
+.game1
 
  JSR NWSHP              ; Add a new ship of type A to the local bubble and fall
                         ; through into the main game loop again
@@ -17429,7 +17432,7 @@ ENDIF
  JMP fothg              ; rarely, a Cougar
 
  CMP T                  ; If the random value in A >= our badness level, which
- BCS CAF3B              ; will be the case unless we have been really, really
+ BCS game2              ; will be the case unless we have been really, really
                         ; bad, then skip the following two instructions (so
                         ; if we are really bad, there's a higher chance of
                         ; spawning a cop, otherwise we got away with it, for
@@ -17442,7 +17445,7 @@ ENDIF
  LDA #COPS              ; Add a new police ship to the local bubble
  JSR NWSHP
 
-.CAF3B
+.game2
 
  LDA MANY+COPS          ; If we now have at least one cop in the local bubble,
  BNE MLOOPS             ; jump down to MLOOPS to stop spawning, otherwise fall
@@ -17768,7 +17771,7 @@ ENDIF
  JSR DELAY              ; main loop down a bit
 
  LDA TRIBBLE+1          ; If the high byte of TRIBBLE(1 0), the number of
- BEQ CB02B              ; Trumbles in the hold, is zero, jump to CB02B to skip
+ BEQ game4              ; Trumbles in the hold, is zero, jump to game4 to skip
                         ; the following
 
                         ; We have a lot of Trumbles in the hold, so let's see if
@@ -17785,26 +17788,26 @@ ENDIF
  ADC #0                 ; bytes
  STA TRIBBLE
 
- BCC CB02B              ; And then the high bytes
+ BCC game4              ; And then the high bytes
  INC TRIBBLE+1          ;
                         ; So there is a 14% chance of a Trumble being born
 
- BPL CB02B              ; If the high byte of TRIBBLE(1 0) is now $80, then
+ BPL game4              ; If the high byte of TRIBBLE(1 0) is now $80, then
  DEC TRIBBLE+1          ; decrement it back to $7F, so the number of Trumbles
                         ; never goes above $7FFF (32767)
 
-.CB02B
+.game4
 
  LDA TRIBBLE+1          ; If the high byte of TRIBBLE(1 0), the number of
- BEQ CB04C              ; Trumbles in the hold, is zero, jump to CB04C to skip
+ BEQ game6              ; Trumbles in the hold, is zero, jump to game6 to skip
                         ; the following
 
                         ; We have a lot of Trumbles in the hold, so they are
                         ; probably making a bit of a noise
 
- LDY CABTMP             ; If the cabin temperature is >= 224 then jump to CB039
+ LDY CABTMP             ; If the cabin temperature is >= 224 then jump to game5
  CPY #224               ; to skip the following and leave the value of A as a
- BCS CB039              ; high value, so the chances of the Trumbles making a
+ BCS game5              ; high value, so the chances of the Trumbles making a
                         ; noise in hot temperature is greater (specifically,
                         ; this is the temperature at which the fuel scoop start
                         ; working)
@@ -17812,15 +17815,15 @@ ENDIF
  LSR A                  ; Set A = A / 2
  LSR A
 
-.CB039
+.game5
 
  STA T                  ; Set T = A, which will be higher with more Trumbles and
                         ; higher temperatures
 
  JSR DORND              ; Set A and X to random numbers
 
- CMP T                  ; If A >= T then jump to CB04C to skip making any noise,
- BCS CB04C              ; so there is a higher chance of Trumbles making noise
+ CMP T                  ; If A >= T then jump to game6 to skip making any noise,
+ BCS game6              ; so there is a higher chance of Trumbles making noise
                         ; when there are lots of them or the cabin temperature
                         ; is hot enough for the fuel scoops to work
 
@@ -17835,32 +17838,32 @@ ENDIF
                         ; Trumbles in Y, which will be one of 5 or 6, with 5
                         ; more likely than 6
 
-.CB04C
+.game6
 
  LDA allowInSystemJump  ; ???
  LDX QQ22+1
- BEQ CB055
+ BEQ game7
  ORA #$80
 
-.CB055
+.game7
 
  LDX demoInProgress
- BEQ CB05C
+ BEQ game8
  AND #$7F
 
-.CB05C
+.game8
 
  STA allowInSystemJump
  AND #$C0
- BEQ CB070
+ BEQ game9
  CMP #$C0
- BEQ CB070
+ BEQ game9
  CMP #$80
  ROR A
  STA allowInSystemJump
  JSR UpdateIconBar_b3
 
-.CB070
+.game9
 
  JSR TT17               ; Scan the key logger for the directional pad buttons,
                         ; returning the cursor's delta values in X and Y and
