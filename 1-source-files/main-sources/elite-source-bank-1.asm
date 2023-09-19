@@ -3383,10 +3383,10 @@ ENDIF
  STA XX1+31
  LDX #1
  LDA XX1+6
- BPL C9FB4
+ BPL shpt1
  LDX #$FF
 
-.C9FB4
+.shpt1
 
  STX X2
  AND #$3F
@@ -3410,15 +3410,15 @@ ENDIF
  LDA XX2                ; ???
  STA X1
  ADC #3
- BCS C9FD7
+ BCS shpt2
  STA X2
 
  STY Y1                 ; Store Y in both y-coordinates, as this is a horizontal
  STY Y2                 ; dash at y-coordinate Y
 
- JMP LOIN
+ JMP LOIN               ; ???
 
-.C9FD7
+.shpt2
 
  PLA
  PLA
@@ -6252,9 +6252,9 @@ ENDIF
 
  LDA X2                 ; ???
  CMP screenHeight
- BCS CA7A8
+ BCS clip2
 
-.CA79C
+.clip1
 
  STA Y1
  LDA XX15+4
@@ -6264,10 +6264,10 @@ ENDIF
  CLC
  RTS
 
-.CA7A8
+.clip2
 
  LDA Yx2M1
- BNE CA79C
+ BNE clip1
 
 .LL137
 
@@ -6899,7 +6899,7 @@ ENDIF
  ORA #%10100000         ; the ship is exploding and has been killed
  STA INWK+31
 
-.CA8F8
+.dexp1
 
  JMP HideExplosionBurst ; Hide the four sprites that make up the explosion burst
                         ; and return from the subroutine using a tail call
@@ -6986,7 +6986,7 @@ ENDIF
  STA INWK+31
 
  AND #%00001000         ; If bit 3 of the ship's byte #31 is clear, then nothing
- BEQ CA8F8              ; is being drawn on-screen for this ship anyway, so
+ BEQ dexp1              ; is being drawn on-screen for this ship anyway, so
                         ; return from the subroutine ???
 
  LDA INWK+7
@@ -7035,13 +7035,13 @@ ENDIF
 
  LDX #3
 
-.CA98A
+.dexp2
 
  INY
  LDA XX3-7,Y
  STA XX2,X
  DEX
- BPL CA98A
+ BPL dexp2
  STY CNT
  LDY #$25
  LDA (INF),Y
@@ -7060,8 +7060,6 @@ ENDIF
  EOR CNT
  STA RAND+3
  LDY U
-
-.CA9B4
 
 .EXL4
 
@@ -11097,9 +11095,9 @@ ENDIF
  CMP #110               ; particle, as it's gone off the top or bottom of the
  BCS KILL6              ; screen, and rejoin at STC6 with the new particle
 
- LDA SZ,Y               ; If z_hi >= 160 then jump to CB41E to recycle this
+ LDA SZ,Y               ; If z_hi >= 160 then jump to star1 to recycle this
  CMP #160               ; particle, as it's so far away that it's too far to
- BCS CB41E              ; see, and rejoin at STC1 with the new particle
+ BCS star1              ; see, and rejoin at STC1 with the new particle
 
  STA ZZ                 ; Set ZZ to the z-coordinate in z_hi
 
@@ -11155,7 +11153,7 @@ ENDIF
 
  JMP STC6               ; Jump up to STC6 to draw this new particle
 
-.CB41E
+.star1
 
  JSR DORND              ; Set A and X to random numbers
 
@@ -13744,11 +13742,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-; Called by DOEXP, this is a lot like PTCLS
-
 .DrawExplosionBurst
-
-{
 
  LDY #0                 ; ???
  STY burstSpriteIndex
@@ -13756,6 +13750,9 @@ ENDIF
  LDA cloudSize
  STA Q
  LDA INWK+34
+
+                        ; The following code is avery similar to the PTCLS
+                        ; routine
 
  BPL P%+4               ; If the cloud counter < 128, then we are in the first
                         ; half of the cloud's existence, so skip the next
@@ -13788,12 +13785,12 @@ ENDIF
                         ; coordinate we stored on the ship line heap above (we
                         ; increment it below so it points to the first vertex)
 
-.EXL5
+.burs1
 
  LDX #3                 ; We are about to fetch a pair of coordinates from the
                         ; ship line heap, so set a counter in X for 4 bytes
 
-.EXL3
+.burs2
 
  INY                    ; Increment the index in Y so it points to the next byte
                         ; from the coordinate we are copying
@@ -13803,7 +13800,7 @@ ENDIF
 
  DEX                    ; Decrement the X index
 
- BPL EXL3               ; Loop back to EXL3 until we have copied all four bytes
+ BPL burs2              ; Loop back to burs2 until we have copied all four bytes
 
                         ; The above loop copies the vertex coordinates from the
                         ; ship line heap to K3, reversing them as we go, so it
@@ -13821,29 +13818,29 @@ ENDIF
  CLC
  ADC #4
  CMP #$10
- BCS CBB8D
+ BCS burs5
  STA burstSpriteIndex
  TAY
  LDA XX2
  ORA XX2+2
- BNE CBB7C
+ BNE burs3
  LDA XX2+3
  SBC #3
- BCC CBB7C
+ BCC burs3
  STA xSprite58,Y
  LDA #2
  STA attrSprite58,Y
  LDA K3+1
  CMP #$80
- BCC CBB83
+ BCC burs4
 
-.CBB7C
+.burs3
 
  LDA #$F0
  STA ySprite58,Y
- BNE CBB8D
+ BNE burs5
 
-.CBB83
+.burs4
 
  ADC #10+YPAL
 
@@ -13851,7 +13848,7 @@ ENDIF
  LDA #$F5
  STA tileSprite58,Y
 
-.CBB8D
+.burs5
 
  LDY #$25               ; See PTCLS
  LDA (INF),Y
@@ -13870,14 +13867,15 @@ ENDIF
  EOR CNT
  STA RAND+3
 
-; From DOEXP, EXL4
+                        ; The following code is avery similar to the EXL4
+                        ; section of the DOEXP routine
 
  LDY U                  ; Set Y to the number of particles in the explosion for
                         ; each vertex, which we stored in U above. We will now
                         ; use this as a loop counter to iterate through all the
                         ; particles in the explosion
 
-.EXL4
+.burs6
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -13892,13 +13890,13 @@ ENDIF
  JSR EXS1               ; Set (A X) = (A R) +/- random * cloud size
                         ;           = y +/- random * cloud size
 
- BNE EX11               ; If A is non-zero, the particle is off-screen as the
-                        ; coordinate is bigger than 255), so jump to EX11 to do
+ BNE burs8              ; If A is non-zero, the particle is off-screen as the
+                        ; coordinate is bigger than 255), so jump to burs8 to do
                         ; the next particle
 
  CPX Yx2M1              ; If X > the y-coordinate of the bottom of the screen,
- BCS EX11               ; the particle is off the bottom of the screen, so jump
-                        ; to EX11 to do the next particle ???
+ BCS burs8              ; the particle is off the bottom of the screen, so jump
+                        ; to burs8 to do the next particle ???
 
                         ; Otherwise X contains a random y-coordinate within the
                         ; cloud
@@ -13912,8 +13910,8 @@ ENDIF
  JSR EXS1               ; Set (A X) = (A R) +/- random * cloud size
                         ;           = x +/- random * cloud size
 
- BNE EX4                ; If A is non-zero, the particle is off-screen as the
-                        ; coordinate is bigger than 255), so jump to EX11 to do
+ BNE burs7              ; If A is non-zero, the particle is off-screen as the
+                        ; coordinate is bigger than 255), so jump to burs8 to do
                         ; the next particle
 
                         ; Otherwise X contains a random x-coordinate within the
@@ -13924,11 +13922,11 @@ ENDIF
  JSR PIXEL              ; Draw a point at screen coordinate (X, A) with the
                         ; point size determined by the distance in ZZ
 
-.EX4
+.burs7
 
  DEY                    ; Decrement the loop counter for the next particle
 
- BPL EXL4               ; Loop back to EXL4 until we have done all the particles
+ BPL burs6              ; Loop back to burs6 until we have done all the particles
                         ; in the cloud
 
  LDY CNT                ; Set Y to the index that points to the next vertex on
@@ -13936,7 +13934,7 @@ ENDIF
 
  CPY TGT                ; If Y < TGT, which we set to the explosion count for
  BCS P%+5               ; this ship (i.e. the number of vertices used as origins
- JMP EXL5               ; for explosion clouds), loop back to EXL5 to do a
+ JMP burs1              ; for explosion clouds), loop back to burs1 to do a
                         ; cloud for the next vertex
 
  PLA                    ; Restore the current random number seed to RAND+1 that
@@ -13947,14 +13945,12 @@ ENDIF
 
  RTS                    ; Return from the subroutine
 
-.EX11
+.burs8
 
  JSR DORND2             ; Set A and X to random numbers, making sure the C flag
                         ; doesn't affect the outcome
 
- JMP EX4                ; ???
-
-}
+ JMP burs7              ; ???
 
 ; ******************************************************************************
 ;

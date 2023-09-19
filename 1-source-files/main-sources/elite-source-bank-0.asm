@@ -1254,9 +1254,9 @@ ENDIF
 
 .main25
 
- JSR CLYNS              ; Clear the bottom three text rows of the upper screen,
+ JSR CLYNS              ; Clear the bottom two text rows of the upper screen,
                         ; and move the text cursor to column 1 on row 21, i.e.
-                        ; the start of the top row of the three bottom rows
+                        ; the start of the top row of the two bottom rows
 
 .main26
 
@@ -4426,7 +4426,9 @@ ENDIF
 
 .HME2
 
- JSR CLYNS              ; ???
+ JSR CLYNS              ; Clear the bottom two text rows of the upper screen,
+                        ; and move the text cursor to column 1 on row 21, i.e.
+                        ; the start of the top row of the two bottom rows
 
  LDA #14                ; Print extended token 14 ("{clear bottom of screen}
  JSR DETOK_b2           ; PLANET NAME?{fetch line input from keyboard}"). The
@@ -4438,19 +4440,19 @@ ENDIF
 
  LDA #$41
 
-.C8C3A
+.sear1
 
  STA INWK+5,Y
 
  DEY
 
- BPL C8C3A
+ BPL sear1
 
  JSR InputName_b6
 
  LDA INWK+5
  CMP #$0D
- BEQ C8CAF
+ BEQ sear2
 
  JSR TT81               ; Set the seeds in QQ15 (the selected system) to those
                         ; of system 0 in the current galaxy (i.e. copy the seeds
@@ -4543,7 +4545,9 @@ ENDIF
 
  JSR DisableJustifyText ; Turn off justified text
 
- JSR CLYNS              ; ???
+ JSR CLYNS              ; Clear the bottom two text rows of the upper screen,
+                        ; and move the text cursor to column 1 on row 21, i.e.
+                        ; the start of the top row of the two bottom rows
 
  LDA #%00000000         ; Set DTW8 = %00000000 (capitalise the next letter)
  STA DTW8
@@ -4559,11 +4563,11 @@ ENDIF
  JMP ReturnFromSearch   ; Jump back into TT102 to select the found system and
                         ; return from the subroutine using a tail call
 
-.C8CAF
+.sear2
 
- JSR CLYNS              ; Clear the bottom three text rows of the upper screen,
+ JSR CLYNS              ; Clear the bottom two text rows of the upper screen,
                         ; and move the text cursor to column 1 on row 21, i.e.
-                        ; the start of the top row of the three bottom rows
+                        ; the start of the top row of the two bottom rows
 
  JMP DrawScreenInNMI    ; Configure the NMI handler to draw the screen,
                         ; returning from the subroutine using a tail call
@@ -4736,14 +4740,17 @@ ENDIF
 .TA87
 
  LDA INWK+32            ; Set X to bits 1-6 of the missile's AI flag in ship
- AND #%01111111         ; byte #32, so bits 0-3 of X are the target's slot
- LSR A                  ; number, and bit 4 is set (as the missile is hostile)
- TAX                    ; so X is fairly random and in the range 16-31. This is
-                        ; used to determine the number of kill points awarded
-                        ; for the destruction of the missile
+ AND #%01111111         ; byte #32, so bits 0-4 of X are the target's slot
+ LSR A                  ; number, and bit 5 is set (as the missile is hostile)
+ TAX                    ; so X is fairly random and in the range 32-39 (as the
+                        ; maximum slot number is 7)
 
- LDA FRIN,X             ; ???
- TAX
+ LDA MJ-32,X            ; Set X to entry X-32 starting from MJ table, which will
+ TAX                    ; be even more random, as MJ is where we store data like
+                        ; the cabin and laser temperature
+                        ;
+                        ; The value of X is used to determine the number of kill
+                        ; points awarded for the destruction of the missile
 
 .TA353
 
@@ -4833,7 +4840,10 @@ ENDIF
                         ; routine, but it is set to different values by the
                         ; DOCKIT routine
 
- STA shipIsAggressive   ; ???
+ STA shipIsAggressive   ; Set shipIsAggressive = 3 so that bit 7 is clear, so
+                        ; the default position is that the ship we are
+                        ; processing tactics for is not looking for a fight
+                        ; (though this might change, of course)
 
  LDA #4                 ; Set RAT2 = 4, which is the threshold below which we
  STA RAT2               ; don't apply pitch and roll to the ship (so a lower
@@ -5375,26 +5385,26 @@ ENDIF
  BEQ TA4                ; If the enemy has no laser power, jump to TA4 to skip
                         ; the laser checks
 
- CPX #$A1               ; ???
- BCC C8EE4
+ CPX #161               ; ???
+ BCC tact1
 
  LDA INWK+31            ; Set bit 6 in byte #31 to denote that the ship is
  ORA #%01000000         ; firing its laser at us
  STA INWK+31
 
  CPX #163               ; If X >= 163, i.e. X <= -35, then we are in the enemy
- BCS C8EF3              ; ship's crosshairs, so ???
+ BCS tact2              ; ship's crosshairs, so ???
 
-.C8EE4
+.tact1
 
  JSR TAS6               ; ???
  LDA CNT
  EOR #$80
  STA CNT
  JSR TA15
- JMP C8EFF
+ JMP tact3
 
-.C8EF3
+.tact2
 
  JSR GetShipBlueprint   ; Fetch the enemy ship's byte #19 from their ship's
                         ; blueprint into A
@@ -5411,28 +5421,28 @@ ENDIF
  LDY #11                ; Call the NOISE routine with Y = 11 to make the sound
  JSR NOISE              ; of us being hit by lasers
 
-.C8EFF
+.tact3
 
  LDA INWK+7             ; ???
  CMP #3
- BCS C8F18
+ BCS tact4
  JSR DORND
  ORA #$C0
  CMP INWK+32
- BCC C8F18
+ BCC tact4
  JSR DORND
  AND #$87
  STA INWK+30
- JMP C8F6C
+ JMP tact8
 
-.C8F18
+.tact4
 
  LDA INWK+1
  ORA INWK+4
  ORA INWK+7
  AND #$E0
- BEQ C8F83
- BNE C8F6C
+ BEQ tact11
+ BNE tact8
 
 ; ******************************************************************************
 ;
@@ -5470,8 +5480,8 @@ ENDIF
  ORA INWK+4
  AND #%11111110
 
- BEQ C8F47              ; If A = 0 then the ship is pretty close to us, so jump
-                        ; to C8F47 so it heads away from us ???
+ BEQ tact5              ; If A = 0 then the ship is pretty close to us, so jump
+                        ; to tact5 so it heads away from us ???
 
 .TA5
 
@@ -5482,7 +5492,7 @@ ENDIF
  ORA #%10000000         ; Set bit 7 of A
 
  CMP INWK+32            ; If A >= byte #32 (the ship's AI flag) then jump down
- BCS C8F47              ; to C8F47 so it heads away from us ???
+ BCS tact5              ; to tact5 so it heads away from us ???
 
                         ; We get here if A < byte #32, and the chances of this
                         ; being true are greater with high values of byte #32.
@@ -5492,7 +5502,9 @@ ENDIF
                         ; byte #32 values are spoiling for a fight. Thargoids
                         ; have byte #32 set to 255, which explains an awful lot
 
- STA shipIsAggressive   ; ???
+ STA shipIsAggressive   ; Store A in shipIsAggressive, so we can check bit 7 of
+                        ; the value below to judge whether this ship is spoiling
+                        ; for a fight
 
 .TA20
 
@@ -5511,62 +5523,62 @@ ENDIF
 
  STA CNT                ; Update CNT with the new value in A
 
-.C8F47
+.tact5
 
  JSR TA15               ; ???
  LDA shipIsAggressive
- BPL C8F64
+ BPL tact7
 
  LDA INWK+1             ; ???
  ORA INWK+4
  ORA INWK+7
  AND #$F8
- BNE C8F64
+ BNE tact7
  LDA CNT
- BMI C8F61
+ BMI tact6
  CMP CNT2
- BCS C8F83
+ BCS tact11
 
-.C8F61
+.tact6
 
- JMP C8F76
+ JMP tact10
 
-.C8F64
+.tact7
 
  LDA CNT
- BMI C8F70
+ BMI tact9
  CMP CNT2
- BCC C8F76
+ BCC tact10
 
-.C8F6C
+.tact8
 
  LDA #3
- BNE C8F8C
+ BNE tact12
 
-.C8F70
+.tact9
 
  AND #$7F
  CMP #6
- BCS C8F83
+ BCS tact11
 
-.C8F76
+.tact10
 
  LDA INWK+27
  CMP #6
- BCC C8F6C
+ BCC tact8
  JSR DORND
  CMP #$C8
  BCC TA10
 
-.C8F83
+.tact11
 
  LDA #$FF
  LDX TYPE
  CPX #1
- BNE C8F8C
+ BNE tact12
  ASL A
 
-.C8F8C
+.tact12
 
  STA INWK+28
 
@@ -5579,11 +5591,11 @@ ENDIF
  LDY #$0A
  JSR TAS3
  CMP #$98
- BCC C8F9C
+ BCC tact13
  LDX #0
  STX RAT2
 
-.C8F9C
+.tact13
 
  JMP TA152
 
@@ -5629,16 +5641,16 @@ ENDIF
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDA CNT                ; ???
- BPL C8FCA
+ BPL tact14
  CMP #$9F
- BCC C8FCA
+ BCC tact14
  LDA #7
  ORA INWK+30
  STA INWK+30
  LDA #0
- BEQ C8FF5
+ BEQ tact15
 
-.C8FCA
+.tact14
 
  TXA                    ; Retrieve the original value of A from X
 
@@ -5684,7 +5696,7 @@ ENDIF
  LDA RAT                ; Set the magnitude of the ship's roll counter to RAT
  ORA INWK+29            ; (we already set the sign above)
 
-.C8FF5
+.tact15
 
  STA INWK+29            ; Store the magnitude of the ship's roll counter
 
@@ -7795,7 +7807,7 @@ ENDIF
 ;
 ;       Name: PlayDemo
 ;       Type: Subroutine
-;   Category: Combat practice
+;   Category: Combat demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -7902,7 +7914,7 @@ ENDIF
 ;
 ;       Name: RunDemoFlightLoop
 ;       Type: Subroutine
-;   Category: Combat practice
+;   Category: Combat demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -7911,7 +7923,7 @@ ENDIF
 
  STA LASCT
 
-.C95E7
+.dlop1
 
  JSR FlipDrawingPlane   ; Flip the drawing bitplane so we draw into the bitplane
                         ; that isn't visible on-screen
@@ -7929,7 +7941,7 @@ ENDIF
 
  DEC LASCT
 
- BNE C95E7
+ BNE dlop1
 
  RTS
 
@@ -7937,7 +7949,7 @@ ENDIF
 ;
 ;       Name: SetupDemoShip
 ;       Type: Subroutine
-;   Category: Combat practice
+;   Category: Combat demo
 ;    Summary: ???
 ;
 ; ******************************************************************************
@@ -9507,8 +9519,8 @@ ENDIF
                         ; with no decimal point
 
  LDA languageNumber     ; If bit 2 of languageNumber is set then the chosen
- AND #%00000100         ; language is French, so jump to C9A99 to skip printing
- BNE C9A99              ; the Trumble adjectives
+ AND #%00000100         ; language is French, so jump to carg1 to skip printing
+ BNE carg1              ; the Trumble adjectives
 
  JSR DORND              ; Print out a random extended token from 111 to 114,
  AND #3                 ; (" CUDDLY", " CUTE", " FURRY" or " FRIENDLY")
@@ -9517,18 +9529,18 @@ ENDIF
  JSR DETOK_b2
 
  LDA languageNumber     ; If bit 1 of languageNumber is clear then the chosen
- AND #%00000010         ; language is not German, so jump to C9A99 to skip the
- BEQ C9A99              ; following
+ AND #%00000010         ; language is not German, so jump to carg1 to skip the
+ BEQ carg1              ; following
 
  LDA TRIBBLE            ; If the number of Trumbles in TRIBBLE(1 0) is more than
- AND #%11111110         ; one, jump to C9A99 to skip the following
+ AND #%11111110         ; one, jump to carg1 to skip the following
  ORA TRIBBLE+1
- BEQ C9A99
+ BEQ carg1
 
  LDA #'e'               ; Print an 'e' to pluralise the adjective in German
  JSR DASC_b2
 
-.C9A99
+.carg1
 
  LDA #198               ; Print extended token 198 (" LITTLE {single
  JSR DETOK_b2           ; cap}SQUEAKY"
@@ -9566,10 +9578,8 @@ ENDIF
  LDA #164               ; Print recursive token 4 ("INVENTORY{crlf}") followed
  JSR TT60               ; by a paragraph break and Sentence Case
 
- JSR NLIN4              ; Draw a horizontal line at pixel row 19 to box in the
-                        ; title. The authors could have used a call to NLIN3
-                        ; instead and saved the above call to TT60, but you
-                        ; just can't optimise everything
+ JSR NLIN4              ; Draw a horizontal line on tile row 2 to box in the
+                        ; title
 
  JSR fwl                ; Call fwl to print the fuel and cash levels on two
                         ; separate lines
@@ -9688,8 +9698,8 @@ ENDIF
  PHA
 
  LDA QQ11               ; If the view type in QQ11 is $9C (Short-range Chart),
- CMP #$9C               ; jump up to C9B28 to ???
- BEQ C9B28
+ CMP #$9C               ; jump up to hair1 to ???
+ BEQ hair1
 
  PLA                    ; ???
  TAX
@@ -9700,7 +9710,7 @@ ENDIF
  ASL A
  PHA
 
-.C9B28
+.hair1
 
  JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
                         ; next VBlank)
@@ -10292,42 +10302,67 @@ ENDIF
 ;
 ; ------------------------------------------------------------------------------
 ;
-; Increments systemsOnChart
-; Sets sprite systemsOnChart to tile 213+K at (K3-4, K4+10)
-; K = 2 or 3 or 4 -> 215-217
+; Arguments:
+;
+;   K(1 0)              Radius of star (2, 3 or 4)
+;
+;   K3(1 0)             Pixel x-coordinate of system
+;
+;   K4(1 0)             Pixel y-coordinate of system
 ;
 ; ******************************************************************************
 
 .DrawChartSystem
 
- LDY systemsOnChart
- CPY #24
- BCS C9CF7
- INY
- STY systemsOnChart
- TYA
+ LDY systemsOnChart     ; Set Y to the number of this system on the chart
+
+ CPY #24                ; If systemsOnChart >= 24 then we have already drawn the
+ BCS csys1              ; maximum number of systems on the chart, so jump to
+                        ; csys1 to return from the subroutine
+
+ INY                    ; Otherwise increment systemsOnChart as we are about to
+ STY systemsOnChart     ; draw a system on the chart
+
+ TYA                    ; Set Y = Y * 4
  ASL A
  ASL A
  TAY
- LDA K3
- SBC #3
- STA xSprite38,Y
- LDA K4
- CLC
 
- ADC #10+YPAL
+ LDA K3                 ; Set the x-coordinate of sprite 38 + Y to K3 - 2
+ SBC #3                 ;
+ STA xSprite38,Y        ; The SBC #3 subtracts 2 because we know the C flag is
+                        ; clear at this point
+                        ;
+                        ; Y is 1 for the first system on the chart, so this sets
+                        ; the x-coordinate of sprite 39 onwards, and we subtract
+                        ; 2 because the star sprites have a margin of at least
+                        ; two pixels along the left edge, so this aligns the
+                        ; star part of the sprite to the x-coodrinate
 
- STA ySprite38,Y
- LDA #$D5
- CLC
- ADC K
- STA tileSprite38,Y
- LDA #2
- STA attrSprite38,Y
+ LDA K4                 ; Set the y-coordinate of sprite 38 + Y to K4 + 10
+ CLC                    ;
+ ADC #10+YPAL           ; This sets the y-coordinate of sprite 39 onwards, and
+ STA ySprite38,Y        ; the 10 pixels are added to push the star sprite below
+                        ; the level of the text label, so the star appears to
+                        ; the bottom-left of the text
 
-.C9CF7
+ LDA #213               ; Set the tile pattern to 213 + K
+ CLC                    ;
+ ADC K                  ; The patterns for the three star sizes on the chart are
+ STA tileSprite38,Y     ; in patterns 215 to 217, going from small to large, so
+                        ; this sets the sprite to the correct star size in K as
+                        ; K is in the range 2 to 4
 
- RTS
+ LDA #%00000010         ; Set the attributes for this sprite as follows:
+ STA attrSprite38,Y     ;
+                        ;   * Bits 0-1    = sprite palette 2
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
+
+.csys1
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -10414,9 +10449,9 @@ ENDIF
  LDA #0                 ; Set QQ17 = 0 to switch to ALL CAPS
  STA QQ17
 
- JSR CLYNS              ; Clear the bottom three text rows of the upper screen,
+ JSR CLYNS              ; Clear the bottom two text rows of the upper screen,
                         ; and move the text cursor to column 1 on row 21, i.e.
-                        ; the start of the top row of the three bottom rows
+                        ; the start of the top row of the two bottom rows
 
  JSR cpl                ; Call cpl to print out the system name for the seeds
                         ; in QQ15
@@ -10885,9 +10920,9 @@ ENDIF
 
 .dockEd
 
- JSR CLYNS              ; Clear the bottom three text rows of the upper screen,
+ JSR CLYNS              ; Clear the bottom two text rows of the upper screen,
                         ; and move the text cursor to column 1 on row 21, i.e.
-                        ; the start of the top row of the three bottom rows
+                        ; the start of the top row of the two bottom rows
 
  LDA #15                ; Move the text cursor to column 15 (the middle of the
  STA XC                 ; screen), setting A to 15 at the same time for the
@@ -11250,9 +11285,9 @@ ENDIF
 
 .TT147
 
- JSR CLYNS              ; Clear the bottom three text rows of the upper screen,
+ JSR CLYNS              ; Clear the bottom two text rows of the upper screen,
                         ; and move the text cursor to column 1 on row 21, i.e.
-                        ; the start of the top row of the three bottom rows
+                        ; the start of the top row of the two bottom rows
 
  LDA #189               ; Print token 29 ("HYPERSPACE ")
  JSR TT27_b2
@@ -16341,10 +16376,10 @@ ENDIF
                         ; ship type
 
  CPX #SST               ; If this is the space station, then jump to KS4 to
- BNE CAC4A              ; replace the space station with the sun
+ BNE kill1              ; replace the space station with the sun
  JMP KS4
 
-.CAC4A
+.kill1
 
  CPX #CON               ; Did we just kill the Constrictor from mission 1? If
  BNE lll                ; not, jump to lll
@@ -16561,9 +16596,9 @@ ENDIF
 
 .yeno1
 
- JSR CLYNS              ; Clear the bottom three text rows of the upper screen,
+ JSR CLYNS              ; Clear the bottom two text rows of the upper screen,
                         ; and move the text cursor to column 1 on row 21, i.e.
-                        ; the start of the top row of the three bottom rows
+                        ; the start of the top row of the two bottom rows
 
  LDA #15                ; Move the text cursor to column 15
  STA XC
@@ -16862,11 +16897,11 @@ ENDIF
  STA lastNameTile+1     ; bitplanes
 
  LDA BOMB               ; ???
- BPL CADAA
+ BPL rese1
  JSR HideHiddenColour
  STA BOMB
 
-.CADAA
+.rese1
 
  LDA #NOST              ; Reset NOSTM, the number of stardust particles, to the
  STA NOSTM              ; maximum allowed (20)
@@ -16928,14 +16963,14 @@ ENDIF
  JSR WPSHPS             ; Wipe all ships from the scanner
 
  LDA QQ11a              ; ???
- BMI CAE00
+ BMI rese2
 
  JSR HideExplosionBurst ; Hide the four sprites that make up the explosion burst
 
  JSR ClearScanner       ; Remove all ships from the scanner and hide the scanner
                         ; sprites
 
-.CAE00
+.rese2
 
  JSR ZERO               ; Reset the ship slots for the local bubble of universe,
                         ; and various flight and ship status variables
@@ -17517,13 +17552,13 @@ ENDIF
 
  LDY JUNK               ; ???
  LDX FRIN+2,Y
- BEQ CAF72
+ BEQ game3
 
  CMP #50                ; If the random number in A >= 50 (80% chance), jump to
  BCS MLOOPS             ; MLOOPS to stop spawning (so there's a 25% chance of
                         ; spawning pirates or bounty hunters)
 
-.CAF72
+.game3
 
  CMP #100               ; If the random number in A >= 100 (61% chance), jump to
  BCS MLOOPS             ; MLOOPS to stop spawning (so there's a 39% chance of
@@ -18104,9 +18139,9 @@ ENDIF
  LDA QQ11               ; If this is the space view, jump to barb7 to return
  BEQ barb7              ; from the subroutine
 
- JSR CLYNS              ; Clear the bottom three text rows of the upper screen,
+ JSR CLYNS              ; Clear the bottom two text rows of the upper screen,
                         ; and move the text cursor to column 1 on row 21, i.e.
-                        ; the start of the top row of the three bottom rows
+                        ; the start of the top row of the two bottom rows
 
  JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen, so the
                         ; screen gets updated
@@ -19199,28 +19234,28 @@ ENDIF
  LDA controller1A       ; ???
  ORA controller1Start
  ORA controller1Select
- BMI CB457
- BNE CB466
+ BMI tite1
+ BNE tite3
 
-.CB457
+.tite1
 
  LDA controller2A
  ORA controller2Start
  ORA controller2Select
- BMI CB464
- BNE CB469
+ BMI tite2
+ BNE tite4
 
-.CB464
+.tite2
 
  CLC
  RTS
 
-.CB466
+.tite3
 
  LSR numberOfPilots     ; Set numberOfPilots = 0 to configure the game for one
                         ; pilot
 
-.CB469
+.tite4
 
  SEC
  RTS
@@ -19802,7 +19837,7 @@ ENDIF
  ASL K3+9               ; Shift (A K3+9) to the left, so bit 7 of the high byte
  ROL A                  ; goes into the C flag
 
- BCS CB596              ; If the left shift pushed a 1 out of the end, then we
+ BCS tast1              ; If the left shift pushed a 1 out of the end, then we
                         ; know that at least one of the coordinates has a 1 in
                         ; this position, so jump to TA2 as we can't shift the
                         ; values in K3 any further to the left
@@ -19821,7 +19856,7 @@ ENDIF
                         ; 1, as otherwise bit 7 of A would have been a 1 and we
                         ; would have taken the BCS above)
 
-.CB596
+.tast1
 
  LSR K3+1              ; ???
  LSR K3+4
@@ -20886,7 +20921,9 @@ ENDIF
                         ; in-flight message on the row specified in messYC
 
  JSR CLYNS+8            ; Clear the bottom two text rows of the visible screen,
-                        ; but without resetting the in-flight message timer
+                        ; and move the text cursor to column 1 on row 21, i.e.
+                        ; the start of the top row of the two bottom rows, but
+                        ; without resetting the in-flight message timer
 
  LDA #23                ; Set A to 23, so we print the in-flight message on row
                         ; 23 for all views other than the space view
