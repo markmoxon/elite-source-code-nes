@@ -1260,8 +1260,10 @@ ENDIF
 
 .main26
 
- JSR DrawMessageInNMI   ; Configure the NMI to display the in-flight message
-                        ; that we just printed
+ JSR DrawMessageInNMI   ; Configure the NMI to update the in-flight message part
+                        ; of the screen (which is either the current in-flight
+                        ; message, or the part of the screen that the call to
+                        ; CLYNS just cleared)
 
  JMP MA16               ; Jump to MA16 to skip the following and continue with
                         ; the rest of the main loop
@@ -1431,9 +1433,12 @@ ENDIF
  BMI MA77               ; If the result has bit 7 set, skip the following
                         ; instruction as the bomb is still going off
 
- JSR HideHiddenColour   ; ???
+ JSR HideHiddenColour   ; Set the hidden colour to black, to switch off the
+                        ; energy bomb effect (as the effect works by showing
+                        ; hidden content instead of the visible content)
 
- JSR UpdateIconBar_b3
+ JSR UpdateIconBar_b3   ; Update the icon bar to remove the energy bomb icon,
+                        ; as it is a single-use weapon
 
 .MA77
 
@@ -2680,6 +2685,10 @@ ENDIF
 ;             palette 0 are invisible
 ;
 ; ------------------------------------------------------------------------------
+;
+; Returns:
+;
+;   A                   A is set to 15
 ;
 ; Other entry points:
 ;
@@ -4435,24 +4444,33 @@ ENDIF
                         ; last token calls MT26, which puts the entered search
                         ; term in INWK+5 and the term length in Y
 
- LDY #9                 ; ???
- STY inputNameSize
+ LDY #9                 ; We start by setting the default name to all A's in the
+                        ; buffer at INWK+5, which is where the InputName routine
+                        ; expects to find the default name to show, so set a
+                        ; counter in Y for ten characters
 
- LDA #$41
+ STY inputNameSize      ; Set inputNameSize = 9 so we fetch a system name with a
+                        ; maximum size of 10 characters in the call to InputName
+                        ; below
+
+ LDA #'A'               ; Set A to ASCII "A" so we can fill the name buffer with
+                        ; "A" characters
 
 .sear1
 
- STA INWK+5,Y
+ STA INWK+5,Y           ; Set the Y-th character of the name at INWK+5 with "A"
 
- DEY
+ DEY                    ; Decrement the loop counter
 
- BPL sear1
+ BPL sear1              ; Loop back until we have filled all ten characters
+                        ; of the name
 
- JSR InputName_b6
+ JSR InputName_b6       ; Get a system name from the controller into INWK+5,
+                        ; where the name will be terminated by ASCII 13
 
- LDA INWK+5
- CMP #$0D
- BEQ sear2
+ LDA INWK+5             ; If the first character of the entered name is ASCII 13
+ CMP #13                ; then no name was entered, so jump to sear2 to return
+ BEQ sear2              ; from the subroutine
 
  JSR TT81               ; Set the seeds in QQ15 (the selected system) to those
                         ; of system 0 in the current galaxy (i.e. copy the seeds
@@ -4467,10 +4485,12 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA #$80               ; ???
- STA DTW4
- ASL A
- STA DTW5
+ LDA #%10000000         ; Set the DTW4 flag to %10000000 (justify text, print
+ STA DTW4               ; the contents of the buffer whenever a carriage return
+                        ; appears in the token)
+
+ ASL A                  ; Set DTW5 = 0, which sets the size of the justified
+ STA DTW5               ; text buffer at BUF to zero
 
  JSR cpl                ; Print the selected system name into the justified text
                         ; buffer
@@ -9030,15 +9050,17 @@ ENDIF
 
  STX XSAV               ; Store the counter in XSAV
 
- LDA QQ15+3             ; ???
- LSR A
- LSR A
- STA T1
- LDA QQ15+3
- SEC
- SBC T1
- CLC
- ADC #$1F
+ LDA QQ15+3             ; Fetch the s1_hi seed into A, which gives us the
+                        ; galactic x-coordinate of this system
+
+ LSR A                  ; Set X = s1_hi - (A / 4) + 31
+ LSR A                  ;       = s1_hi - (s1_hi / 4) + 31
+ STA T1                 ;       = 31 + 0.75 * s1_hi
+ LDA QQ15+3             ;
+ SEC                    ; So this scales the x-coordinate from a range of 0 to
+ SBC T1                 ; 255 into a range from 31 to 222, so it fits nicely
+ CLC                    ; into the Long-range Chart
+ ADC #31
  TAX
 
  LDY QQ15+4             ; Fetch the s2_lo seed and set bits 4 and 6, storing the
@@ -9051,17 +9073,21 @@ ENDIF
  LDA QQ15+1             ; Fetch the s0_hi seed into A, which gives us the
                         ; galactic y-coordinate of this system
 
- LSR A                  ; ???
- LSR A
- STA T1
- LDA QQ15+1
- SEC
- SBC T1
- LSR A
+ LSR A                  ; Set A = (s0_hi - (A / 4)) / 2 + 32
+ LSR A                  ;       = (s0_hi - (s0_hi / 4)) / 2 + 32
+ STA T1                 ;       = 32 + 0.375 * s1_hi
+ LDA QQ15+1             ;
+ SEC                    ; So this scales the y-coordinate from a range of 0 to
+ SBC T1                 ; 255 into a range from 32 to 127, so it fits nicely
+ LSR A                  ; into the Long-range Chart
  CLC
- ADC #$20
- STA Y1
- JSR DrawDash
+ ADC #32
+
+ STA Y1                 ; Store the y-coordinate in Y1 (though this gets
+                        ; overwritten by the call to DrawDash, so this has no
+                        ; effect)
+
+ JSR DrawDash           ; Draw a 2-pixel dash at pixel coordinate (X, A)
 
  JSR TT20               ; We want to move on to the next system, so call TT20
                         ; to twist the three 16-bit seeds in QQ15
@@ -9073,15 +9099,20 @@ ENDIF
  BNE TT83               ; If X > 0 then we haven't done all 256 systems yet, so
                         ; loop back up to TT83
 
- LDA #3                 ; ???
- STA K+2
- LDA #4
- STA K+3
- LDA #$19
- STA K
- LDA #$0E
- STA K+1
- JSR DrawSmallBox_b3
+ LDA #3                 ; Set K+2 = 3 to pass to DrawSmallBox as the text row
+ STA K+2                ; on which to draw the top-left corner of the small box
+
+ LDA #4                 ; Set K+3 = 4 to pass to DrawSmallBox as the text column
+ STA K+3                ; on which to draw the top-left corner of the small box
+
+ LDA #25                ; Set K = 25 to pass to DrawSmallBox as the width of the
+ STA K                  ; small box
+
+ LDA #14                ; Set K+1 = 14 to pass to DrawSmallBox as the height of
+ STA K+1                ; the small box
+
+ JSR DrawSmallBox_b3    ; Draw a box around the chart, with the top-left corner
+                        ; at (3, 4), a height of 14 rows, and a width of 25 rows
 
  LDA QQ9                ; Set QQ19 to the selected system's x-coordinate
  STA QQ19
@@ -9093,13 +9124,18 @@ ENDIF
  LDA #4                 ; Set QQ19+2 to size 4 for the crosshairs size
  STA QQ19+2
 
- JSR TT103              ; ???
+ JSR TT103              ; Draw small crosshairs at coordinates (QQ9, QQ10),
+                        ; which will draw the crosshairs at our current home
+                        ; system
 
  LDA #$9D               ; Set the view type in QQ11 to $00 (Long-range Chart
  STA QQ11               ; with the normal font loaded)
 
- LDA #$8F               ; ???
- STA Yx2M1
+ LDA #143               ; Set the number of pixel rows in the space view to 143,
+ STA Yx2M1              ; so the screen height is correctly set for the
+                        ; Short-range Chart in case we switch to it using the
+                        ; icon in the icon bar (which toggles between the two
+                        ; charts)
 
  JMP UpdateView         ; Update the view, returning from the subroutine using
                         ; a tail call
@@ -9303,8 +9339,8 @@ ENDIF
  LSR A                  ;       = 0.1875 * QQ14
  LSR A                  ;
  STA K                  ; So K scales the fuel level in QQ14 to act as the
- LSR A                  ; circle's radius ???
- LSR A
+ LSR A                  ; circle's radius, scaling the fuel level from a range
+ LSR A                  ; of 0 to 70 down to a range of 0 to 13 ???
  STA T1
  LDA K
  SEC
@@ -9322,10 +9358,10 @@ ENDIF
 
  LDA QQ0                ; Set QQ19 = 31 + QQ9 - (QQ9 / 4)
  LSR A                  ;          = 31 + 0.75 * QQ9
- LSR A
- STA T1
- LDA QQ0
- SEC
+ LSR A                  ;
+ STA T1                 ; So this scales the x-coordinate from a range of 0 to
+ LDA QQ0                ; 255 into a range from 31 to 222, so it fits nicely
+ SEC                    ; into the Long-range Chart
  SBC T1
  CLC
  ADC #31
@@ -9333,10 +9369,10 @@ ENDIF
 
  LDA QQ1                ; Set QQ19+1 = 8 + (QQ10 - (QQ10 / 4)) / 2
  LSR A                  ;            = 8 + 0.375 * QQ10
- LSR A
- STA T1
- LDA QQ1
- SEC
+ LSR A                  ;
+ STA T1                 ; So this scales the y-coordinate from a range of 0 to
+ LDA QQ1                ; 255 into a range from 8 to 127, so it fits nicely
+ SEC                    ; into the Long-range Chart
  SBC T1
  LSR A
  CLC
@@ -9396,8 +9432,10 @@ ENDIF
  LDX #2                 ; Set STP = 2, the step size for the circle
  STX STP
 
- LDX #1                 ; ???
- JSR SetPatternBuffer
+ LDX #1                 ; Set the high byte of the pattern buffer address
+ JSR SetPatternBuffer   ; variables to that of pattern buffer 1, so the circle
+                        ; gets drawn into bitplane 1 only, giving a circle of
+                        ; colour %10 (2), which is green
 
  JMP CIRCLE2_b1         ; Jump to CIRCLE2 to draw a circle with the centre at
                         ; (K3(1 0), K4(1 0)) and radius K, returning from the
@@ -9640,19 +9678,24 @@ ENDIF
 ;
 ; ******************************************************************************
 
- JMP SetSelectedSystem  ; This doesn't appear to be used
+.cros1
+
+ JMP SetSelectedSystem  ; Jump to SetSelectedSystem to update the message on
+                        ; the chart that shows the current system, returning
+                        ; from the subroutine using a tail call
 
 .TT16
 
- LDA controller1B       ; ???
- BMI TT16-3
+ LDA controller1B       ; If the B button is being pressed, jump to cros1 to
+ BMI cros1              ; return from the subroutine, as the arrow buttons have
+                        ; a different meaning when the B button is held down
 
- LDA controller1Left03
- ORA controller1Right03
- ORA controller1Up
- ORA controller1Down
- AND #$F0
- BEQ TT16-3
+ LDA controller1Left03  ; If none of the directional buttons have been held down
+ ORA controller1Right03 ; in the last four VBlanks, jump to cros1 to return from
+ ORA controller1Up      ; the subroutine, as we don't need to move the
+ ORA controller1Down    ; crosshairs
+ AND #%11110000
+ BEQ cros1
 
  TXA                    ; Push the change in X onto the stack (let's call this
  PHA                    ; the x-delta)
@@ -9698,16 +9741,22 @@ ENDIF
  PHA
 
  LDA QQ11               ; If the view type in QQ11 is $9C (Short-range Chart),
- CMP #$9C               ; jump up to hair1 to ???
+ CMP #$9C               ; jump to hair1 to skip the following
  BEQ hair1
 
- PLA                    ; ???
+                        ; This is not the Short-range Chart, so it must be the
+                        ; Long-range Chart, so we double the x-delta and y-delta
+                        ; so the crosshairs move twice as fast
+
+ PLA                    ; Set X to the y-delta from the top of the stack
  TAX
- PLA
- ASL A
+
+ PLA                    ; Fetch the x-delta from the top of the stack, double it
+ ASL A                  ; and put it back
  PHA
- TXA
- ASL A
+
+ TXA                    ; Double the y-delta value in X and put it back on the
+ ASL A                  ; stack
  PHA
 
 .hair1
@@ -9783,10 +9832,10 @@ ENDIF
 
  LDA QQ9                ; Set QQ19 = 31 + QQ9 - (QQ9 / 4)
  LSR A                  ;          = 31 + 0.75 * QQ9
- LSR A
- STA T1
- LDA QQ9
- SEC
+ LSR A                  ;
+ STA T1                 ; So this scales the x-coordinate from a range of 0 to
+ LDA QQ9                ; 255 into a range from 31 to 222, so it fits nicely
+ SEC                    ; into the Long-range Chart
  SBC T1
  CLC
  ADC #31
@@ -9794,10 +9843,10 @@ ENDIF
 
  LDA QQ10               ; Set QQ19+1 = 32 + (QQ10 - (QQ10 / 4)) / 2
  LSR A                  ;            = 32 + 0.375 * QQ10
- LSR A
- STA T1                 
- LDA QQ10
- SEC
+ LSR A                  ;
+ STA T1                 ; So this scales the y-coordinate from a range of 0 to
+ LDA QQ10               ; 255 into a range from 8 to 127, so it fits nicely
+ SEC                    ; into the Long-range Chart
  SBC T1
  LSR A
  CLC
@@ -9993,7 +10042,10 @@ ENDIF
  TYA                    ; Set the pixel y-coordinate of sprite 15 to Y + 10
  CLC                    ;
  ADC #10+YPAL           ; So the reticle is drawn 10 pixels below the coordinate
- STA ySprite0,X         ; in the QQ19+1 argument ???
+ STA ySprite0,X         ; in the QQ19+1 argument (this takes the 14-pixel high
+                        ; chart title into consideration, and ensures that the
+                        ; centre of the reticle is over the correct coordinates
+                        ; as the sprite is eight pixels high)
 
  RTS                    ; Return from the subroutine
 
@@ -12965,10 +13017,10 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: StartAfterLoad
+;       Name: SetupAfterLoad
 ;       Type: Subroutine
 ;   Category: Start and end
-;    Summary: Start the game following a commander file load
+;    Summary: Configure the game following a commander file load
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -12976,7 +13028,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.StartAfterLoad
+.SetupAfterLoad
 
  JSR ping               ; Set the target system coordinates (QQ9, QQ10) to the
                         ; current system coordinates (QQ0, QQ1) we just loaded
@@ -14352,7 +14404,8 @@ ENDIF
                         ; the Start button has been pressed to pause the game
 
  LDA #0                 ; Set iconBarChoice = 0 to clear the pause button press
- STA iconBarChoice      ; so we don't simply re-enter the pause when we resume 
+ STA iconBarChoice      ; so we don't simply re-enter the pause menu when we
+                        ; resume 
 
  JSR PauseGame_b6       ; Pause the game and process choices from the pause menu
                         ; until the game is unpaused by another press of Start
@@ -15196,15 +15249,22 @@ ENDIF
 
  STA INWK+8             ; Store the result in z_sign in byte #6
 
- LDX QQ15+2             ; ???
- CPX #$80
- ROR A
- STA INWK+2
- ROL A
- LDX QQ15+3
- CPX #$80
- ROR A
- STA INWK+5
+ LDX QQ15+2             ; Set the C flag if s1_lo >= 128, otherwise clear it
+ CPX #128
+
+ ROR A                  ; Halve A and set the sign bit to the C flag, and set
+ STA INWK+2             ; x_sign to the result, so this moves the planet to the
+                        ; right or left of centre
+
+ ROL A                  ; Set A to x_sign << 1, ready for us to roll in the
+                        ; sign bit again for y_sign
+
+ LDX QQ15+3             ; Set the C flag if s1_hi >= 128, otherwise clear it
+ CPX #128
+
+ ROR A                  ; Set the sign bit to the C flag and set y_sign to the
+ STA INWK+5             ; result, so this moves the planet up or down from the
+                        ; centre
 
  JSR SOS1               ; Call SOS1 to set up the planet's data block and add it
                         ; to FRIN, where it will get put in the first slot as
@@ -15225,8 +15285,12 @@ ENDIF
  STA INWK+29
  STA INWK+30
 
- STA FRIN+1             ; ???
- STA SSPR
+ STA FRIN+1             ; Set the second slot in the FRIN table to 0, which
+                        ; sets this slot to empty, so when we call NWSHP below
+                        ; the new sun that gets created will go into FRIN+1
+
+ STA SSPR               ; Set the "space station present" flag to 0, as we are
+                        ; no longer in the space station's safe zone
 
  LDA #129               ; Set A = 129, the ship type for the sun
 
@@ -15274,9 +15338,9 @@ ENDIF
 
 .nWq
 
- LDA nmiCounter         ; ???
- CLC
- ADC RAND
+ LDA nmiCounter         ; Set the random number seeds to a fairly random state
+ CLC                    ; that's based on the NMI counter (which increments
+ ADC RAND               ; every VBlank, so will be pretty random)
  STA RAND
  LDA nmiCounter
  STA RAND+1
@@ -15300,8 +15364,9 @@ ENDIF
 
  JSR DORND              ; Set A and X to random numbers
 
- ORA #%00010000         ; ???
- AND #%11111000
+ ORA #16                ; Set A so that it's at least 16
+
+ AND #%11111000         ; Zero bits 0 to 2 of A so that it's a multiple of 8
 
  STA SX,Y               ; Store A in the Y-th particle's x_hi coordinate at
                         ; SX+Y, so the particle appears in front of us
@@ -15311,8 +15376,8 @@ ENDIF
  STA SY,Y               ; Store A in the Y-th particle's y_hi coordinate at
                         ; SY+Y, so the particle appears in front of us
 
- STA SXL,Y              ; ???
- STA SYL,Y
+ STA SXL,Y              ; Store A in the low bytes of the Y-th particle's three
+ STA SYL,Y              ; coordinates
  STA SZL,Y
 
  DEY                    ; Decrement the counter to point to the next particle of
@@ -16882,24 +16947,32 @@ ENDIF
 
 .RES2
 
- SEI                    ; ???
+ SEI                    ; Disable interrupts from any source except NMI, as we
+                        ; don't want any other interrupts to occur
 
  LDA #1                 ; Set enableBitplanes to 1 so the game starts to use
  STA enableBitplanes    ; two different bitplanes when displaying the screen
 
- LDA #1                 ; ???
- STA boxEdge1
- LDA #2
- STA boxEdge2
+ LDA #1                 ; Set the tile number for the left edge of the box to
+ STA boxEdge1           ; tile 1, which is the standard edge for the box
+
+ LDA #2                 ; Set the tile number for the right edge of the box to
+ STA boxEdge2           ; tile 2, which is the standard edge for the box
 
  LDA #80                ; Tell the PPU to send nametable entries up to tile
  STA lastNameTile       ; 80 * 8 = 640 (i.e. to the end of tile row 19) in both
  STA lastNameTile+1     ; bitplanes
 
- LDA BOMB               ; ???
- BPL rese1
- JSR HideHiddenColour
- STA BOMB
+ LDA BOMB               ; If the energy bomb has not been set off, jump to rese1
+ BPL rese1              ; to skip the following
+
+ JSR HideHiddenColour   ; Set the hidden colour to black, to switch off the
+                        ; energy bomb effect (as the effect works by showing
+                        ; hidden content instead of the visible content)
+
+ STA BOMB               ; The call to HideHiddenColour sets A = 15, which has
+                        ; bit 7 clear, so this clears bit 7 of BOMB to disable
+                        ; the energy bomb explosion
 
 .rese1
 
@@ -16909,9 +16982,9 @@ ENDIF
  LDX #$FF               ; Reset MSTG, the missile target, to $FF (no target)
  STX MSTG
 
- LDA allowInSystemJump              ; ???
- ORA #$80
- STA allowInSystemJump
+ LDA allowInSystemJump  ; Set bit 7 of allowInSystemJump to prevent us from
+ ORA #%10000000         ; being able to perform an in-system jump, as this is
+ STA allowInSystemJump  ; the default setting after launching
 
  LDA #128               ; Set the current pitch and roll rates to the mid-point,
  STA JSTX               ; 128
@@ -16962,8 +17035,9 @@ ENDIF
 
  JSR WPSHPS             ; Wipe all ships from the scanner
 
- LDA QQ11a              ; ???
- BMI rese2
+ LDA QQ11a              ; If bit 7 of the old view in QQ11a is set, then the old
+ BMI rese2              ; view does not have a dashboard, so jump to rese2 to
+                        ; skip the following, as there is no scanner to clear
 
  JSR HideExplosionBurst ; Hide the four sprites that make up the explosion burst
 
@@ -18483,7 +18557,8 @@ ENDIF
                         ; C flag clear and without pausing
 
  LDA #0                 ; Set iconBarChoice = 0 to clear the pause button press
- STA iconBarChoice      ; so we don't simply re-enter the pause when we resume 
+ STA iconBarChoice      ; so we don't simply re-enter the pause menu when we
+                        ; resume 
 
  JSR PauseGame_b6       ; Pause the game and process choices from the pause menu
                         ; until the game is unpaused by another press of Start
@@ -18774,8 +18849,9 @@ ENDIF
 
  JSR ResetMusic         ; Reset the current tune to 0 and stop the music
 
- JSR JAMESON_b6         ; Set the current position to the default "JAMESON"
-                        ; commander
+ JSR JAMESON_b6         ; Copy the default "JAMESON" commander to the buffer at
+                        ; currentSaveSlot (though this isn't actually used
+                        ; anywhere)
 
  JSR ResetOptions       ; Reset the game options to their default values
 
@@ -19858,9 +19934,9 @@ ENDIF
 
 .tast1
 
- LSR K3+1              ; ???
- LSR K3+4
- LSR K3+7
+ LSR K3+1               ; Shift all three high bytes right by one place to
+ LSR K3+4               ; reduce the chances of overflow in the normalisation
+ LSR K3+7               ; process
 
 .TA2
 

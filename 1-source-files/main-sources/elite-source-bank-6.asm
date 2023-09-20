@@ -6311,8 +6311,9 @@ ENDIF
  LDA iconBarChoice
  CMP #$0C
  BNE CA984
- LDA #0
- STA iconBarChoice
+
+ LDA #0                 ; Set iconBarChoice = 0 to clear the icon button choice
+ STA iconBarChoice      ; so we don't process it again
 
 .CA97F
 
@@ -7375,32 +7376,30 @@ ENDIF
  STY CNT                ; Set CNT to the offset in the sprite buffer of the
                         ; next free sprite (i.e. the sprite after the last
                         ; sprite in the bracket) so we can pass it to
-                        ; DrawPositionMark below
+                        ; DrawSaveSlotMark below
 
-                        ; We now draw the position marks on each of the stored
-                        ; positions on the right side of the screen (i.e. the
-                        ; dashes to the left of each save slot's name)
+                        ; We now draw dashes to the left of each of the save
+                        ; slots on the right side of the screen
 
- LDY #7                 ; We are going to draw eight position marks, so set a
+ LDY #7                 ; We are going to draw eight slot marks, so set a
                         ; counter in Y
 
 .save3
 
  TYA                    ; Move the text cursor to row 6 + Y * 2
  ASL A                  ;
- CLC                    ; So the position marks are printed on even rows from
- ADC #6                 ; row 6 to row 20 (though we print them from botton to
- STA YC                 ; top)
+ CLC                    ; So the slot marks are printed on even rows from row 6
+ ADC #6                 ; to row 20 (though we print them from bottom to top)
+ STA YC
 
  LDX #20                ; Move the text cursor to column 20, so we print the
- STX XC                 ; position markers in column 20
+ STX XC                 ; slot mark in column 20
 
- JSR DrawPositionMark   ; Draw the position mark for save slot Y
+ JSR DrawSaveSlotMark   ; Draw the slot mark for save slot Y
 
  DEY                    ; Decrement the counter in Y
 
- BPL save3              ; Lopo back until we have printed all eight position
-                        ; marks
+ BPL save3              ; Lopo back until we have printed all eight slot marks
 
  JSR DrawSmallLogo_b4   ; Set the sprite buffer entries for the small Elite logo
                         ; in the top-left corner of the screen
@@ -7426,163 +7425,270 @@ ENDIF
  ADC #1
 
  CMP #9                 ; Loop back to save4 until we have processed all nine
- BCC save4              ; slots, leaving A = 8
+ BCC save4              ; slots, leaving A = 9
 
- JSR HighlightSaveName  ; Print the name of the commander file saved in slot 8
+ JSR HighlightSaveName  ; Print the name of the commander file saved in slot 9
                         ; as a highlighted name, so this prints the current
                         ; commander name on the left of the screen, under the
-                        ; "CURRENT POSITION" header, and highlights it ???
+                        ; "CURRENT POSITION" header, in the highlight font
 
  JSR UpdateView_b0      ; Update the view to draw all the sprites and tiles
                         ; on-screen
 
  LDA #9                 ; Set A = 9, which is the slot number we use for the
-                        ; current commander position on the left of the screen,
-                        ; so this sets the initial position of the highlighted
-                        ; name to the current commander position on the left
+                        ; current commander name on the left of the screen, so
+                        ; this sets the initial position of the highlighted name
+                        ; to the current commander name on the left
 
-                        ; Fall through into MainSaveLoadLoop to start iterating
+                        ; Fall through into MoveInLeftColumn to start iterating
                         ; around the main loop for the Save and Load screen
 
 ; ******************************************************************************
 ;
-;       Name: MainSaveLoadLoop
+;       Name: MoveInLeftColumn
 ;       Type: Subroutine
 ;   Category: Save and load
-;    Summary: The main loop for the Save and Load screen
+;    Summary: Process moving the highlight when it's in the left column (the
+;             current commander)
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   Must be set to 9, as that represents the slot number of
+;                       the left column containing the current commander
 ;
 ; ******************************************************************************
 
-.MainSaveLoadLoop
+.MoveInLeftColumn
 
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDX controller1Left03  ; If the left button on controller 1 was not being held
- BPL slop3              ; down four VBlanks ago or for the three VBlanks before
-                        ; that, jump to slop3 to check the right button
+ BPL mlef3              ; down four VBlanks ago or for the three VBlanks before
+                        ; that, jump to mlef3 to check the right button
 
                         ; If we get here then the left button is being pressed,
                         ; so we need to move the highlight left from its current
-                        ; position (which is given in A)
+                        ; position (which is given in A and is always 9) to the
+                        ; right column
 
  JSR PrintSaveName      ; Print the name of the commander file in its current
                         ; position in A, to remove the highlight
 
  CMP #9                 ; If A = 9 then we have pressed the left button while
- BEQ slop1              ; highlighting the current commander position on the
-                        ; left of the screen, so we need to move the highlight
-                        ; to the right column, so jump to slop1 to process this
+ BEQ mlef1              ; highlighting the current commander name on the left
+                        ; of the screen, so we need to move the highlight to the
+                        ; right column, so jump to mlef1 to do this
+                        ;
+                        ; This will always be the case as this routine is only
+                        ; called with A = 9 (as that's the slot number we use
+                        ; to represent the current commander in the left
+                        ; column), so presumably this logic is left over from a
+                        ; time when this routine was a bit more generic
 
  LDA #0                 ; Otherwise the highlight must currently be in either
                         ; the middle or right column, so set A = 0 so the
-                        ; highlight moves left to the top of the left or middle
-                        ; column ???
+                        ; highlight moves to the top of the new column (though
+                        ; again, this will never happen)
 
- JMP slop2              ; Jump to slot2 to move the highlight to slot 0
+ JMP mlef2              ; Jump to mlef2 to move the highlight to the right
+                        ; column
 
-.slop1
+.mlef1
 
                         ; If we get here then we have pressed the left button
-                        ; while highlighting the current commander position on
-                        ; the left of the screen
+                        ; while highlighting the current commander name on the
+                        ; left of the screen
 
- LDA #4                 ; Set A = 4 so the call to MoveSaveSlotName moves the
-                        ; highlight to slot 4 in the saved slots on the right of
-                        ; the screen, which is at the same vertical position as
-                        ; the current commander position
+ LDA #4                 ; Set A = 4 so the call to MoveInRightColumn moves the
+                        ; highlight to slot 4 in the right column, which is at
+                        ; the same vertical position as the current commander
+                        ; name on the left
 
-.slop2
+.mlef2
 
- JMP MoveSaveSlotName   ; Move the highlight left to the specified slot number
+ JMP MoveInRightColumn  ; Move the highlight left to the specified slot number
+                        ; in the right column and process any further button
+                        ; presses accordingly
 
-.slop3
+.mlef3
 
  LDX controller1Right03 ; If the right button on controller 1 was not being held
- BPL slop6              ; down four VBlanks ago or for the three VBlanks before
-                        ; that, jump to slop6 to check the icon bar buttons
+ BPL mlef6              ; down four VBlanks ago or for the three VBlanks before
+                        ; that, jump to mlef6 to check the icon bar buttons
 
                         ; If we get here then the right button is being pressed,
                         ; so we need to move the highlight right from its current
-                        ; position (which is given in A)
+                        ; position (which is given in A and is always 9) to the
+                        ; middle column
 
  JSR PrintSaveName      ; Print the name of the commander file in its current
                         ; position in A, to remove the highlight
 
- CMP #9
- BEQ slop4
+ CMP #9                 ; If A = 9 then we have pressed the right button while
+ BEQ mlef4              ; highlighting the current commander name on the left of
+                        ; the screen, so we need to move the highlight to the
+                        ; middle column, so jump to mlef4 to do this
+                        ;
+                        ; This will always be the case as this routine is only
+                        ; called with A = 9 (as that's the slot number we use
+                        ; to represent the current commander in the left
+                        ; column), so presumably this logic is left over from a
+                        ; time when this routine was a bit more generic
 
- LDA #0
+ LDA #0                 ; Otherwise the highlight must currently be in either
+                        ; the middle or right column, so set A = 0 so the
+                        ; highlight moves to the top of the new column (though
+                        ; again, this will never happen)
 
- JMP slop5
+ JMP mlef5              ; Jump to mlef5 to move the highlight to the middle
+                        ; column
 
-.slop4
+.mlef4
 
- LDA #4
+                        ; If we get here then we have pressed the right button
+                        ; while highlighting the current commander name on the
+                        ; left of the screen
 
-.slop5
+ LDA #4                 ; Set A = 4 so the call to MoveInMiddleColumn moves the
+                        ; highlight to slot 4 in the middle column, which is at
+                        ; the same vertical position as the current commander
+                        ; name on the left
 
- JMP MovePositionName
+.mlef5
 
-.slop6
+ JMP MoveInMiddleColumn ; Move the highlight left to the specified slot number
+                        ; in the middle column and process any further button
+                        ; presses accordingly
 
- JSR CheckSaveLoadBar
+.mlef6
 
- BCS MainSaveLoadLoop
+                        ; If we get here then neither of the left or right
+                        ; buttons have been pressed, so we move on to checking
+                        ; the icon bar buttons
 
- RTS
+ JSR CheckSaveLoadBar   ; Check the icon bar buttons to see if any of them have
+                        ; been chosen
+
+ BCS MoveInLeftColumn   ; The C flag will be set if we are to resume what we
+                        ; were doing (so we pick up where we left off after
+                        ; processing the pause menu, for example), so loop back
+                        ; to the start of the routine to keep checking for left
+                        ; and right button presses
+
+                        ; If we get here then the C flag is clear and we need to
+                        ; return from the SVE routine and go back to the icon
+                        ; bar processing routine in TT102
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: CheckSaveLoadBar
 ;       Type: Subroutine
 ;   Category: Save and load
-;    Summary: ???
+;    Summary: Check the icon bar buttons on the Save and Load icon bar and
+;             process any choices
+;
+; ------------------------------------------------------------------------------
+;
+; Returns:
+;
+;   C flag              Determines the next step when we return from the
+;                       routine:
+;
+;                         * Clear = exit from the SVE routine when we return and
+;                                   go back to the icon bar processing routine
+;                                   in TT102, so the button choice can be
+;                                   processed there
+;
+;                         * Set = keep going as if nothing has happened (used to
+;                                 resume from the pause menu or if nothing was
+;                                 chosen, for example)
+;
+;   A                   A is preserved
 ;
 ; ******************************************************************************
 
 .CheckSaveLoadBar
 
- LDX iconBarChoice
- BEQ CB53B
- PHA
- CPX #7
- BEQ CB53D
- TXA
+ LDX iconBarChoice      ; If iconBarChoice = 0 then nothing has been chosen on
+ BEQ cbar1              ; the icon bar (if it had, iconBarChoice would contain
+                        ; the number of the chosen icon bar button), so jump to
+                        ; cbar1 to return from the subroutine with the C flag
+                        ; set, so we pick up where we left off
+
+ PHA                    ; Store the value of A on the stack so we can restore it
+                        ; at the end of the subroutine
+
+ CPX #7                 ; If the "Change commander name" button was pressed,
+ BEQ cbar2              ; jump to cbar2 to process it
+
+ TXA                    ; Otherwise set X to the button number to pass to the
+                        ; CheckForPause routine
 
  JSR CheckForPause_b0   ; If the Start button has been pressed then process the
                         ; pause menu and set the C flag, otherwise clear it
+                        ;
+                        ; We now return this value of the C flag, so if we just
+                        ; processed the pause manu then the C flag will be set,
+                        ; so we pick up where we left off when we return,
+                        ; otherwise it will be clear and we need to pass the
+                        ; button choice back to TT102 to be processed there
 
- PLA
- RTS
+ PLA                    ; Restore the value of A that we stored on the stack, so
+                        ; A is preserved
 
-.CB53B
+ RTS                    ; Return from the subroutine
 
- SEC
- RTS
+.cbar1
 
-.CB53D
+ SEC                    ; Set the C flag so that when we return from the
+                        ; routine, we pick up where we left off
 
- LDA COK
- BMI CB558
- LDA #0
- STA iconBarChoice
- JSR ChangeCmdrName_b6
- LDA iconBarChoice
- BEQ CB553
- CMP #7
- BEQ CB53D
+ RTS                    ; Return from the subroutine
 
-.CB553
+.cbar2
 
- LDA #6
- STA iconBarChoice
+ LDA COK                ; If bit 7 of COK is set, then cheat mode has been
+ BMI cbar4              ; applied, so jump to cbar4 to return from the
+                        ; subroutine with the C flag clear, as cheats can't
+                        ; change their commander name
 
-.CB558
+ LDA #0                 ; Set iconBarChoice = 0 to clear the icon button choice
+ STA iconBarChoice      ; so we don't process it again
 
- CLC
- PLA
- RTS
+ JSR ChangeCmdrName_b6  ; Process changing the commander name
+
+ LDA iconBarChoice      ; If iconBarChoice = 0 then nothing has been chosen on
+ BEQ cbar3              ; the icon bar during the renaming routine (if it had,
+                        ; iconBarChoice would contain the number of the chosen
+                        ; icon bar button), so jump to cbar3 to force a reload
+                        ; of the save and load screen
+
+ CMP #7                 ; If the "Change commander name" button was pressed
+ BEQ cbar2              ; during the renaming routine, jump to cbar2 to restart
+                        ; the renaming process
+
+.cbar3
+
+ LDA #6                 ; Set iconBarChoice to the "Save and load" button, so 
+ STA iconBarChoice      ; when we return from the routine with the C flag clear,
+                        ; the TT102 routine processes this as if we had chosen
+                        ; this button, and reloads the save and load screen
+
+.cbar4
+
+ CLC                    ; Clear the C flag so that when we return from the
+                        ; routine, the button number in iconBarChoice is passed
+                        ; to TT102 to be processed as a button choice
+
+ PLA                    ; Restore the value of A that we stored on the stack, so
+                        ; A is preserved
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -7621,17 +7727,23 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: MoveToCurrentCmdr
+;       Name: MoveToLeftColumn
 ;       Type: Subroutine
 ;   Category: Save and load
-;    Summary: ???
+;    Summary: Move the highlight to the left column (the current commander)
 ;
 ; ******************************************************************************
 
-.MoveToCurrentCmdr
+.MoveToLeftColumn
 
- LDA #9
- JSR HighlightSaveName
+ LDA #9                 ; Set A = 9 to set the position of the highlight to slot
+                        ; 9, which we use to represent the current commander in
+                        ; the left column
+
+ JSR HighlightSaveName  ; Print the name of the commander file saved in slot 9
+                        ; as a highlighted name, so this prints the current
+                        ; commander name on the left of the screen, under the
+                        ; "CURRENT POSITION" header, in the highlight font
 
  JSR UpdateSaveScreen   ; Update the screen
 
@@ -7639,105 +7751,32 @@ ENDIF
                         ; have been released and remain released for at least
                         ; four VBlanks
 
- JMP MainSaveLoadLoop
+ JMP MoveInLeftColumn   ; Move the highlight to the current commander in the
+                        ; left column and process any further button presses
+                        ; accordingly
 
 ; ******************************************************************************
 ;
-;       Name: MoveSaveSlotName
+;       Name: MoveInRightColumn
 ;       Type: Subroutine
 ;   Category: Save and load
-;    Summary: Move the highlight up and down the list of save slots on the right
-;             of the screen
-;
-; ******************************************************************************
-
-.MoveSaveSlotName
-
- JSR HighlightSaveName
-
- JSR UpdateSaveScreen   ; Update the screen
-
- JSR WaitForNoDirection ; Wait until the left and right buttons on controller 1
-                        ; have been released and remain released for at least
-                        ; four VBlanks
-
-.CB580
-
- JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
-                        ; the PPU to use nametable 0 and pattern table 0
-
- LDX controller1Up
- BPL CB598
- CMP #0
- BEQ CB598
-
- JSR PrintSaveName      ; Print the name of the commander file saved in slot A
-
- SEC
- SBC #1
- JSR HighlightSaveName
-
- JSR UpdateSaveScreen   ; Update the screen
-
-.CB598
-
- LDX controller1Down
- BPL CB5AD
- CMP #7
- BCS CB5AD
-
- JSR PrintSaveName      ; Print the name of the commander file saved in slot A
-
- CLC
- ADC #1
- JSR HighlightSaveName
-
- JSR UpdateSaveScreen   ; Update the screen
-
-.CB5AD
-
- LDX controller1Left03
- BPL CB5B8
-
- JSR PrintSaveName      ; Print the name of the commander file saved in slot A
-
- JMP MovePositionName
-
-.CB5B8
-
- LDX controller1Right03
- BPL CB5C5
-
- JSR PrintSaveName      ; Print the name of the commander file saved in slot A
-
- LDA #4
- JMP MoveToCurrentCmdr
-
-.CB5C5
-
- JSR CheckSaveLoadBar
- BCS CB580
- RTS
-
-; ******************************************************************************
-;
-;       Name: MovePositionName
-;       Type: Subroutine
-;   Category: Save and load
-;    Summary: Move the commander name up and down the list of positions in the
-;             middle of the screen
+;    Summary: Process moving the highlight when it's in the right column (the
+;             save slots)
 ;
 ; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
-;   A                   Set to 0 or 4 ???
+;   A                   The slot number in the right column containing the
+;                       highlight (0 to 7)
 ;
 ; ******************************************************************************
 
-.MovePositionName
+.MoveInRightColumn
 
- JSR PrintPositionName
+ JSR HighlightSaveName  ; Highlight the name of the save slot in A, so the
+                        ; highlight is shown in the correct slot in the right
+                        ; column
 
  JSR UpdateSaveScreen   ; Update the screen
 
@@ -7745,67 +7784,287 @@ ENDIF
                         ; have been released and remain released for at least
                         ; four VBlanks
 
-.CB5D4
+.mrig1
 
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDX controller1Up
- BPL CB5EC
- CMP #0
- BEQ CB5EC
- JSR ClearPositionName
- SEC
- SBC #1
- JSR PrintPositionName
+ LDX controller1Up      ; If the up button on controller 1 is not being pressed,
+ BPL mrig2              ; jump to mrig2 to move on to the next button
+
+                        ; If we get here then the up button is being pressed
+
+ CMP #0                 ; If A = 0 then we are already in the top slot in the
+ BEQ mrig2              ; column, so jump to mrig2 to move on to the next button
+                        ; as we can't move beyond the top of the column
+
+ JSR PrintSaveName      ; Print the name of the commander file saved in slot A
+                        ; so that it reverts to the normal font, as we are about
+                        ; to move the highlight elsewhere
+
+ SEC                    ; Set A = A - 1
+ SBC #1                 ;
+                        ; So A is now the slot number of the slot above
+
+ JSR HighlightSaveName  ; Highlight the name of the save slot in A, so the
+                        ; highlight moves to the new position
 
  JSR UpdateSaveScreen   ; Update the screen
 
-.CB5EC
+.mrig2
 
- LDX controller1Down
- BPL CB601
- CMP #7
- BCS CB601
- JSR ClearPositionName
- CLC
- ADC #1
- JSR PrintPositionName
+ LDX controller1Down    ; If the down button on controller 1 is not being
+ BPL mrig3              ; pressed, jump to mrig3 to move on to the next button
+
+                        ; If we get here then the down button is being pressed
+
+ CMP #7                 ; If A >= 7 then we are already in the bottom slot in
+ BCS mrig3              ; the column, so jump to mrig3 to move on to the next
+                        ; button as we can't move beyond the bottom of the
+                        ; column
+
+ JSR PrintSaveName      ; Print the name of the commander file saved in slot A
+                        ; so that it reverts to the normal font, as we are about
+                        ; to move the highlight elsewhere
+
+ CLC                    ; Set A = A + 1
+ ADC #1                 ;
+                        ; So A is now the slot number of the slot below
+
+ JSR HighlightSaveName  ; Highlight the name of the save slot in A, so the
+                        ; highlight moves to the new position
 
  JSR UpdateSaveScreen   ; Update the screen
 
-.CB601
+.mrig3
 
- LDX controller1Left03
- BPL CB618
- CMP #4
- BNE CB618
- JSR ClearPositionName
- LDA #9
- JSR SaveCommander
- JSR UpdateIconBar_b3
- JMP MoveToCurrentCmdr
+ LDX controller1Left03  ; If the left button on controller 1 was not being held
+ BPL mrig4              ; down four VBlanks ago, jump to mrig4 to move on to the
+                        ; next button
 
-.CB618
+                        ; If we get here then the left button is being pressed
 
- LDX controller1Right03
- BPL CB626
- JSR ClearPositionName
- JSR SaveCommander
- JMP MoveSaveSlotName
+ JSR PrintSaveName      ; Print the name of the commander file saved in slot A
+                        ; so that it reverts to the normal font, as we are about
+                        ; to move the highlight elsewhere
 
-.CB626
+ JMP MoveInMiddleColumn ; Move the highlight left to the specified slot number
+                        ; in the middle column and process any further button
+                        ; presses accordingly
 
- JSR CheckSaveLoadBar
- BCS CB5D4
- RTS
+.mrig4
+
+ LDX controller1Right03 ; If the right button on controller 1 was not being held
+ BPL mrig5              ; down four VBlanks ago, jump to mrig5 to check the icon
+                        ; bar buttons
+
+                        ; If we get here then the right button is being pressed
+
+ JSR PrintSaveName      ; Print the name of the commander file saved in slot A
+                        ; so that it reverts to the normal font, as we are about
+                        ; to move the highlight elsewhere
+
+ LDA #4                 ; This instruction has no effect as the first thing that
+                        ; MoveToLeftColumn does is to set A to 9, which is the
+                        ; slot number for the current commander
+
+ JMP MoveToLeftColumn   ; Move the highlight to the left column (the current
+                        ; commander) and process any further button presses
+                        ; accordingly
+
+.mrig5
+
+                        ; If we get here then neither of the left or right
+                        ; buttons have been pressed, so we move on to checking
+                        ; the icon bar buttons
+
+ JSR CheckSaveLoadBar   ; Check the icon bar buttons to see if any of them have
+                        ; been chosen
+
+ BCS mrig1              ; The C flag will be set if we are to resume what we
+                        ; were doing (so we pick up where we left off after
+                        ; processing the pause menu, for example, or keep going
+                        ; if no button was chosen), so loop back to mrig1 to
+                        ; keep checking for left and right button presses
+
+                        ; If we get here then the C flag is clear and we need to
+                        ; return from the SVE routine and go back to the icon
+                        ; bar processing routine in TT102, so the button choice
+                        ; can be processed there
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: DrawPositionMark
+;       Name: MoveInMiddleColumn
 ;       Type: Subroutine
 ;   Category: Save and load
-;    Summary: Draw a position mark for a saved slot
+;    Summary: Process moving the highlight when it's in the middle column
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The slot number in the middle column containing the
+;                       highlight (0 to 7)
+;
+; ******************************************************************************
+
+.MoveInMiddleColumn
+
+ JSR PrintNameInMiddle  ; Print the name of the commander file in A, so the
+                        ; highlight is shown in the correct slot in the middle
+                        ; column
+
+ JSR UpdateSaveScreen   ; Update the screen
+
+ JSR WaitForNoDirection ; Wait until the left and right buttons on controller 1
+                        ; have been released and remain released for at least
+                        ; four VBlanks
+
+.mmid1
+
+ JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
+
+ LDX controller1Up      ; If the up button on controller 1 is not being pressed,
+ BPL mmid2              ; jump to mmid2 to move on to the next button
+
+                        ; If we get here then the up button is being pressed
+
+ CMP #0                 ; If A = 0 then we are already in the top slot in the
+ BEQ mmid2              ; column, so jump to mmid2 to move on to the next button
+                        ; as we can't move beyond the top of the column
+
+ JSR ClearNameInMiddle  ; Clear the name of the commander file from slot A in
+                        ; the middle column, as we are about to move the
+                        ; highlight elsewhere
+
+ SEC                    ; Set A = A - 1
+ SBC #1                 ;
+                        ; So A is now the slot number of the slot above
+
+ JSR PrintNameInMiddle  ; Print the name of the commander file in slot A in the
+                        ; middle column, so the highlight moves to the new
+                        ; position
+
+ JSR UpdateSaveScreen   ; Update the screen
+
+.mmid2
+
+ LDX controller1Down    ; If the down button on controller 1 is not being
+ BPL mmid3              ; pressed, jump to mmid3 to move on to the next button
+
+                        ; If we get here then the down button is being pressed
+
+ CMP #7                 ; If A >= 7 then we are already in the bottom slot in
+ BCS mmid3              ; the column, so jump to mmid3 to move on to the next
+                        ; button as we can't move beyond the bottom of the
+                        ; column
+
+ JSR ClearNameInMiddle  ; Clear the name of the commander file from slot A in
+                        ; the middle column, as we are about to move the
+                        ; highlight elsewhere
+
+ CLC                    ; Set A = A + 1
+ ADC #1                 ;
+                        ; So A is now the slot number of the slot below
+
+ JSR PrintNameInMiddle  ; Print the name of the commander file in slot A in the
+                        ; middle column, so the highlight moves to the new
+                        ; position
+
+ JSR UpdateSaveScreen   ; Update the screen
+
+.mmid3
+
+ LDX controller1Left03  ; If the left button on controller 1 was not being held
+ BPL mmid4              ; down four VBlanks ago, jump to mmid4 to move on to the
+                        ; next button
+
+                        ; If we get here then the left button is being pressed
+
+ CMP #4                 ; We can only move left from the middle column if we are
+ BNE mmid4              ; at the same height as the current commander slot in
+                        ; the column to the left
+                        ;
+                        ; The current commander slot is the the left of slot 4
+                        ; in the middle column, so jump to mmid4 to move on to
+                        ; the next button if we are not currently in slot 4 in
+                        ; the middle column
+
+                        ; If we get here then we are in slot 4 in the middle
+                        ; column, so we can now move left
+
+ JSR ClearNameInMiddle  ; Clear the name of the commander file from slot A in
+                        ; the middle column, as we are about to move the
+                        ; highlight elsewhere
+
+ LDA #9                 ; Set A = 9 to set the position of the highlight to slot
+                        ; 9, which we use to represent the current commander in
+                        ; the left column
+
+ JSR SaveLoadCommander  ; Load the chosen commander file into NAME to overwrite
+                        ; the game's current commander, so this effectively
+                        ; loads the chosen commander into the game
+
+ JSR UpdateIconBar_b3   ; Update the icon bar in case we just changed the
+                        ; current commander to a cheat file, in which case we
+                        ; hide the button that lets you change the commander
+                        ; name
+
+ JMP MoveToLeftColumn   ; Move the highlight to the left column (the current
+                        ; commander) and process any further button presses
+                        ; accordingly
+
+.mmid4
+
+ LDX controller1Right03 ; If the right button on controller 1 was not being held
+ BPL mmid5              ; down four VBlanks ago, jump to mmid5 to check the icon
+                        ; bar buttons
+
+                        ; If we get here then the right button is being pressed
+
+ JSR ClearNameInMiddle  ; Clear the name of the commander file from slot A in
+                        ; the middle column, as we are about to move the
+                        ; highlight elsewhere
+
+ JSR SaveLoadCommander  ; Save the commander into the chosen save slot by
+                        ; splitting it up and saving it into three parts in
+                        ; saveSlotPart1, saveSlotPart2 and saveSlotPart3
+
+ JMP MoveInRightColumn  ; Move the highlight to the right column (the save
+                        ; slots) and process any further button presses
+                        ; accordingly
+
+.mmid5
+
+                        ; If we get here then neither of the left or right
+                        ; buttons have been pressed, so we move on to checking
+                        ; the icon bar buttons
+
+ JSR CheckSaveLoadBar   ; Check the icon bar buttons to see if any of them have
+                        ; been chosen
+
+ BCS mmid1              ; The C flag will be set if we are to resume what we
+                        ; were doing (so we pick up where we left off after
+                        ; processing the pause menu, for example, or keep going
+                        ; if no button was chosen), so loop back to mmid1 to
+                        ; keep checking for left and right button presses
+
+                        ; If we get here then the C flag is clear and we need to
+                        ; return from the SVE routine and go back to the icon
+                        ; bar processing routine in TT102, so the button choice
+                        ; can be processed there
+
+ RTS                    ; Return from the subroutine
+
+; ******************************************************************************
+;
+;       Name: DrawSaveSlotMark
+;       Type: Subroutine
+;   Category: Save and load
+;    Summary: Draw a slot mark (a dash) next to a saved slot
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -7821,7 +8080,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.DrawPositionMark
+.DrawSaveSlotMark
 
  STY YSAV2              ; Store Y in YSAV2 so we can retrieve it below
 
@@ -7829,7 +8088,7 @@ ENDIF
                         ; sprite buffer
 
  LDA #109               ; Set the tile pattern number for sprite Y to 109, which
- STA tileSprite0,Y      ; is the dash that we want to use for the position mark
+ STA tileSprite0,Y      ; is the dash that we want to use for the slot mark
 
  LDA XC                 ; Set the x-coordinate for sprite Y to XC * 8
  ASL A                  ;
@@ -7878,34 +8137,40 @@ ENDIF
 ;                         * 0 to 7 = print the name of a specific save slot on
 ;                                    the right of the screen
 ;
-;                         * 8 = print the commander name in one of the positions
-;                               in the middle column ???
+;                         * 8 = print the current commander name in the middle
+;                               column
 ;
-;                         * 9 = print the name of the current commander position
-;                               on the left of the screen
+;                         * 9 = print the current commander name in the left
+;                               column
+;
+; Returns:
+;
+;   A                   A is preserved
 ;
 ; ******************************************************************************
 
 .PrintSaveName
 
- JSR LoadCommander      ; Load the commander file from saved position A into the
-                        ; buffer at BUF
+ JSR CopyCommanderToBuf ; Copy the commander file from save slot A into the
+                        ; buffer at BUF, so we can access its name
 
  PHA                    ; Store the value of A on the stack so we can restore it
                         ; at the end of the subroutine
 
  CMP #8                 ; If A < 8 then this is one of the save slots on the
- BCC psav3              ; right of the screen, so jump to pav3 to print in the
-                        ; right column
+ BCC psav3              ; right of the screen, so jump to pav3 to print the name
+                        ; in the right column
 
  LDX #1                 ; Move the text cursor to column 1
  STX XC
 
- CMP #9                 ; If A < 9 then A = 8, so jump to psav2
- BCC psav2
+ CMP #9                 ; If A < 9 then A = 8, which represents the middle
+ BCC psav2              ; column, so jump to psav2 to print the name in the
+                        ; middle column
 
- BEQ psav1              ; If A = 9 then this is the current commander position,
-                        ; so jump to psav1 to print on the left of the screen
+ BEQ psav1              ; If A = 9 then this represents the current commander in
+                        ; the left column so jump to psav1 to print the name on
+                        ; the left of the screen
 
                         ; If we get here then A >= 10, which is never the case,
                         ; so this code might be left over from functionality
@@ -7919,8 +8184,8 @@ ENDIF
 
 .psav1
 
-                        ; If we get here then A = 9, so this is the current
-                        ; commander position on the left of the screen
+                        ; If we get here then A = 9, so we need to print the
+                        ; commander name in the left column
 
  LDA #14                ; Move the text cursor to row 14
  STA YC
@@ -7930,8 +8195,8 @@ ENDIF
 
 .psav2
 
-                        ; If we get here then A = 8, so this is a commander name
-                        ; in one of the positions in the middle column
+                        ; If we get here then A = 8, so we need to print the
+                        ; commander name in the middle column
 
  LDA #6                 ; Move the text cursor to row 6
  STA YC
@@ -7941,14 +8206,13 @@ ENDIF
 
 .psav3
 
-                        ; If we get here then A is in the range 0 to 7, so this
-                        ; is one of the saved commander slots on the right of
-                        ; the screen
+                        ; If we get here then A is in the range 0 to 7, so we
+                        ; need to print the commander name in the right column
 
  ASL A                  ; Move the text cursor to row 6 + A * 2
  CLC                    ;
- ADC #6                 ; So this is the row of the position marker for slot
- STA YC                 ; number A on the right of the screen
+ ADC #6                 ; So this is the text row for slot number A in the right
+ STA YC                 ; column of the screen
 
  LDA #21                ; Move the text cursor to column 21 for the column of
  STA XC                 ; slot names on the right of the screen
@@ -7958,16 +8222,17 @@ ENDIF
  PLA                    ; Restore the value of A that we stored on the stack, so
                         ; A is preserved
 
-                        ; Fall through into PrintBufferName to print the name of
-                        ; the commander file in BUF, followed by the save count
+                        ; Fall through into PrintCommanderName to print the name
+                        ; of the commander file in BUF, followed by the save
+                        ; count
 
 ; ******************************************************************************
 ;
-;       Name: PrintBufferName
+;       Name: PrintCommanderName
 ;       Type: Subroutine
 ;   Category: Save and load
-;    Summary: Print the commander name from the commander file in BUF, along
-;             with the save count
+;    Summary: Print the commander name from the commander file in BUF, with the
+;             save count added to the end
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -7977,7 +8242,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.PrintBufferName
+.PrintCommanderName
 
  PHA                    ; Store the value of A on the stack so we can restore it
                         ; at the end of the subroutine
@@ -7999,7 +8264,8 @@ ENDIF
  BCC pnam1              ; in the BUF buffer from BUF to BUF+6
 
                         ; Now that the name is printed, we print the save count
-                        ; after the end of the name
+                        ; after the end of the name as a one- or two-digit
+                        ; decimal value
 
  LDX #0                 ; Set X = 0 to use as a division counter in the loop
                         ; below
@@ -8120,22 +8386,26 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: PrintPositionName
+;       Name: PrintNameInMiddle
 ;       Type: Subroutine
 ;   Category: Save and load
-;    Summary: Print the commander name in the list of positions in the middle of
-;             the screen, using the highlight font
+;    Summary: Print the commander name in the middle column using the highlight
+;             font
 ;
 ; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
-;   A                   The position number in which to print the commander name
-;                       in the list in the middle of the screen (0 to 7)
+;   A                   The slot number in which to print the commander name in
+;                       the middle column (0 to 7)
+;
+; Returns:
+;
+;   A                   A is preserved
 ;
 ; ******************************************************************************
 
-.PrintPositionName
+.PrintNameInMiddle
 
  LDX #2                 ; Set the font style to print in the highlight font
  STX fontStyle
@@ -8148,12 +8418,13 @@ ENDIF
 
  ASL A                  ; Move the text cursor to row 6 + A * 2
  CLC                    ;
- ADC #6                 ; So this is the row of the position name for position
- STA YC                 ; number A in the middle column of the screen
+ ADC #6                 ; So this is the text row for slot number A in the
+ STA YC                 ; middle column of the screen
 
  PLA                    ; Restore the value of A that we stored on the stack
 
- JSR PrintBufferName    ; ???
+ JSR PrintCommanderName ; Print the commander name from the commander file in
+                        ; BUF, along with the save count
 
  LDX #1                 ; Set the font style to print in the normal font
  STX fontStyle
@@ -8162,22 +8433,24 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: ClearPositionName
+;       Name: ClearNameInMiddle
 ;       Type: Subroutine
 ;   Category: Save and load
-;    Summary: Remove a commander name from the list of positions in the middle
-;             of the screen
+;    Summary: Remove the commander name from the middle column
 ;
 ; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
-;   A                   The position number of the commander name to remove from
-;                       the list in the middle of the screen (0 to 7)
+;   A                   The slot number to clear in the middle column (0 to 7)
+;
+; Returns:
+;
+;   A                   A is preserved
 ;
 ; ******************************************************************************
 
-.ClearPositionName
+.ClearNameInMiddle
 
  LDX #11                ; Move the text cursor to column 11, so we print the
  STX XC                 ; name in the middle column of the screen
@@ -8187,8 +8460,8 @@ ENDIF
 
  ASL A                  ; Move the text cursor to row 6 + A * 2
  CLC                    ;
- ADC #6                 ; So this is the row of the position name for position
- STA YC                 ; number A in the middle column of the screen
+ ADC #6                 ; So this is the text row for slot number A in the
+ STA YC                 ; middle column of the screen
 
  JSR GetRowNameAddress  ; Get the addresses in the nametable buffers for the
                         ; start of character row YC, as follows:
@@ -8202,22 +8475,22 @@ ENDIF
  ADC XC                 ; So SC(1 0) is the address in nametable buffer 0 for
  STA SC                 ; the tile at cursor position (XC, YC)
 
- LDY #8                 ; We now want to print 8 spaces over the top of the
-                        ; position name at (XC, YC), so set Y as a loop counter
-                        ; to count down from 8
+ LDY #8                 ; We now want to print 8 spaces over the top of the slot
+                        ; at (XC, YC), so set Y as a loop counter to count down
+                        ; from 8
 
  LDA #0                 ; Set A = 0 to use as the pattern number for the blank
                         ; background tile
 
 .cpos1
 
- STA (SC),Y             ; Set the Y-th tile of the position name in nametable
-                        ; buffer 0 to the blank tile
+ STA (SC),Y             ; Set the Y-th tile of the slot in nametable buffer 0 to
+                        ; the blank tile
 
  DEY                    ; Decrement the tile counter
 
  BPL cpos1              ; Lopo back until we have blanked out every character
-                        ; of the position name
+                        ; of the slot
 
  PLA                    ; Restore the value of A that we stored on the stack, so
                         ; A is preserved
@@ -8246,63 +8519,63 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: positionAddr0
+;       Name: saveSlotAddr1
 ;       Type: Variable
 ;   Category: Save and load
-;    Summary: The address of the first saved part for each saved position
+;    Summary: The address of the first saved part for each save slot
 ;
 ; ******************************************************************************
 
-.positionAddr0
+.saveSlotAddr1
 
- EQUW savedPositions0 + 0 * 73
- EQUW savedPositions0 + 1 * 73
- EQUW savedPositions0 + 2 * 73
- EQUW savedPositions0 + 3 * 73
- EQUW savedPositions0 + 4 * 73
- EQUW savedPositions0 + 5 * 73
- EQUW savedPositions0 + 6 * 73
- EQUW savedPositions0 + 7 * 73
+ EQUW saveSlotPart1 + 0 * 73
+ EQUW saveSlotPart1 + 1 * 73
+ EQUW saveSlotPart1 + 2 * 73
+ EQUW saveSlotPart1 + 3 * 73
+ EQUW saveSlotPart1 + 4 * 73
+ EQUW saveSlotPart1 + 5 * 73
+ EQUW saveSlotPart1 + 6 * 73
+ EQUW saveSlotPart1 + 7 * 73
 
 ; ******************************************************************************
 ;
-;       Name: positionAddr1
+;       Name: saveSlotAddr2
 ;       Type: Variable
 ;   Category: Save and load
-;    Summary: The address of the second saved part for each saved position
+;    Summary: The address of the second saved part for each save slot
 ;
 ; ******************************************************************************
 
-.positionAddr1
+.saveSlotAddr2
 
- EQUW savedPositions1 + 0 * 73
- EQUW savedPositions1 + 1 * 73
- EQUW savedPositions1 + 2 * 73
- EQUW savedPositions1 + 3 * 73
- EQUW savedPositions1 + 4 * 73
- EQUW savedPositions1 + 5 * 73
- EQUW savedPositions1 + 6 * 73
- EQUW savedPositions1 + 7 * 73
+ EQUW saveSlotPart2 + 0 * 73
+ EQUW saveSlotPart2 + 1 * 73
+ EQUW saveSlotPart2 + 2 * 73
+ EQUW saveSlotPart2 + 3 * 73
+ EQUW saveSlotPart2 + 4 * 73
+ EQUW saveSlotPart2 + 5 * 73
+ EQUW saveSlotPart2 + 6 * 73
+ EQUW saveSlotPart2 + 7 * 73
 
 ; ******************************************************************************
 ;
-;       Name: positionAddr2
+;       Name: saveSlotAddr3
 ;       Type: Variable
 ;   Category: Save and load
-;    Summary: The address of the third saved part for each saved position
+;    Summary: The address of the third saved part for each save slot
 ;
 ; ******************************************************************************
 
-.positionAddr2
+.saveSlotAddr3
 
- EQUW savedPositions2 + 0 * 73
- EQUW savedPositions2 + 1 * 73
- EQUW savedPositions2 + 2 * 73
- EQUW savedPositions2 + 3 * 73
- EQUW savedPositions2 + 4 * 73
- EQUW savedPositions2 + 5 * 73
- EQUW savedPositions2 + 6 * 73
- EQUW savedPositions2 + 7 * 73
+ EQUW saveSlotPart3 + 0 * 73
+ EQUW saveSlotPart3 + 1 * 73
+ EQUW saveSlotPart3 + 2 * 73
+ EQUW saveSlotPart3 + 3 * 73
+ EQUW saveSlotPart3 + 4 * 73
+ EQUW saveSlotPart3 + 5 * 73
+ EQUW saveSlotPart3 + 6 * 73
+ EQUW saveSlotPart3 + 7 * 73
 
 ; ******************************************************************************
 ;
@@ -8313,10 +8586,15 @@ ENDIF
 ;
 ; ------------------------------------------------------------------------------
 ;
+; Returns:
+;
+;   A                   A is preserved
+;
 ; Other entry points:
 ;
 ;   ResetSaveBuffer+1   Omit the initial PHA (so we can jump here if the value
-;                       of the preserved A is already on the stack)
+;                       of the preserved A is already on the stack from another
+;                       routine)
 ;
 ; ******************************************************************************
 
@@ -8343,33 +8621,35 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LoadCommander
+;       Name: CopyCommanderToBuf
 ;       Type: Subroutine
 ;   Category: Save and load
-;    Summary: Load a commander by combining the three saved parts of a save slot
-;             into a usable commander file in the BUF buffer
+;    Summary: Copy a commander file in the BUF buffer, either from a save slot
+;             or from the currently active commander in-game
 ;
 ; ------------------------------------------------------------------------------
 ;
-; This routine loads a commander file into the buffer at BUF.
-;
 ; Arguments:
 ;
-;   A                   The number of the saved position to load:
+;   A                   The slot number to process:
 ;
-;                         * 0 to 7 = load the commander from one of the save
-;                                    slots into the buffer at BUF
+;                         * 0 to 7 = copy the commander from save slot A into
+;                                    the buffer at BUF, combining all three
+;                                    parts to do so
 ;
-;                         * 8 = one of the positions in the middle column ???
+;                         * 8 = load the default commander into BUF
 ;
-;                         * 9 = the current commander position on the left of
-;                               the screen, in which case we load the commander
-;                               from NAME to BUF without having to combine any
-;                               separate parts
+;                         * 9 = copy the current commander from in-game, in
+;                               which case we copy the commander from NAME to
+;                               BUF without having to combine separate parts
+;
+; Returns:
+;
+;   A                   A is preserved
 ;
 ; ******************************************************************************
 
-.LoadCommander
+.CopyCommanderToBuf
 
  PHA                    ; Store the value of A on the stack so we can restore it
                         ; at the end of the subroutine
@@ -8377,12 +8657,13 @@ ENDIF
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- CMP #9                 ; If A = 9 then this is the current commander position,
- BEQ upsl7              ; so jump to upsl7
+ CMP #9                 ; If A = 9 then this is the current commander in the
+ BEQ ctob7              ; left column, so jump to ctob7 to copy the in-game
+                        ; commander to BUF
 
- CMP #8                 ; If A = 8 then this is a commander name in one of the
- BEQ ResetSaveBuffer+1  ; positions in the middle column, so jump to
-                        ; ResetSaveBuffer+1 to ???
+ CMP #8                 ; If A = 8 then this is the middle column, so jump to
+ BEQ ResetSaveBuffer+1  ; ResetSaveBuffer+1 to load the default commander into
+                        ; BUF
 
                         ; If we get here then this is one of the save slots on
                         ; the right of the screen and A is in the range 0 to 7,
@@ -8392,7 +8673,7 @@ ENDIF
                         ; Each save slot is split up into three parts, so we now
                         ; need to combine them to get our commander file
 
- JSR GetSavePartAddress ; Set the following for saved position A:
+ JSR GetSaveAddresses   ; Set the following for save slot A:
                         ;
                         ;   SC(1 0) = address of the first saved part
                         ;
@@ -8403,7 +8684,7 @@ ENDIF
  LDY #72                ; We work our way through 73 bytes in each saved part,
                         ; so set an index counter in Y
 
-.upsl1
+.ctob1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -8416,53 +8697,57 @@ IF _NTSC
  EOR #$F0               ; Set SC2+1 = A with the upper nibble flipped
  STA SC2+1
 
- LDA (S),Y              ; Set SC2 to the byte from the third part in S(1 0) with
- EOR #$0F               ; the lower nibble flipped
+ LDA (S),Y              ; Set SC2 to the Y-th byte from the third part in S(1 0)
+ EOR #$0F               ; with the lower nibble flipped
  STA SC2
 
 ELIF _PAL
 
- LSR A                  ; ???
- BCC upsl2
- ORA #$80
+ LSR A                  ; Rotate A to the right, in-place
+ BCC ctob2
+ ORA #%10000000
 
-.upsl2
+.ctob2
 
- LSR A
- BCC upsl3
- ORA #$80
+ LSR A                  ; Rotate A to the right again, in-place
+ BCC ctob3
+ ORA #%10000000
 
-.upsl3
+.ctob3
 
- STA SC2+1
- LDA (S),Y
- LSR A
- BCC upsl4
- ORA #$80
+ STA SC2+1              ; Set SC2+1 to the newly rotated value of the byte from
+                        ; the second saved part
 
-.upsl4
+ LDA (S),Y              ; Set SC2 to the Y-th byte from the third part in S(1 0)
 
- STA SC2
+ LSR A                  ; Rotate A to the right, in-place
+ BCC ctob4
+ ORA #%10000000
+
+.ctob4
+
+ STA SC2                ; Set SC2 to the newly rotated value of the byte from
+                        ; the third saved part
 
 ENDIF
 
  LDA (SC),Y             ; Set A to the byte from the first part in SC(1 0)
 
- CMP SC2+1              ; If A = SC2+1 then jump to upsl5 to store A as our
- BEQ upsl5              ; commander file byte
+ CMP SC2+1              ; If A = SC2+1 then jump to ctob5 to store A as our
+ BEQ ctob5              ; commander file byte
 
- CMP SC2                ; If A = SC2 then jump to upsl5 to store A as our
- BEQ upsl5              ; commander file byte
+ CMP SC2                ; If A = SC2 then jump to ctob5 to store A as our
+ BEQ ctob5              ; commander file byte
 
  LDA SC2+1              ; Set A = SC2+1
 
  CMP SC2                ; If A <> SC2 then the copy protection has failed, so
- BNE upsl9              ; jump to upsl9 to reset the save file
+ BNE ctob9              ; jump to ctob9 to reset the save file
 
                         ; Otherwise A = SC2, so we store A as our commander file
                         ; byte
 
-.upsl5
+.ctob5
 
  STA BUF,Y              ; Store A as the Y-th byte of our commander file in BUF
 
@@ -8478,23 +8763,27 @@ IF _NTSC
 
 ELIF _PAL
 
- ASL A                  ; ???
- ADC #0
+ ASL A                  ; Set the Y-th byte of the third saved part in S(1 0) to
+ ADC #0                 ; the commander file byte, rotated left in-place
  STA (S),Y
- ASL A
- ADC #0
+
+ ASL A                  ; Set the Y-th byte of the second saved part in Q(1 0)
+ ADC #0                 ; the commander file byte, rotated left in-place
  STA (Q),Y
 
 ENDIF
 
  DEY                    ; Decrement the byte counter in Y
 
- BPL upsl1              ; Loop back to upsl1 until we have fetched all 73 bytes
+ BPL ctob1              ; Loop back to ctob1 until we have fetched all 73 bytes
                         ; of the commander file from the three separate parts
 
                         ; If we get here then we have combined all three saved
                         ; parts into one commander file in BUF, so now we need
-                        ; to set the galaxy seeds in bytes #65 to #70 ???
+                        ; to set the galaxy seeds in bytes #65 to #70, as these
+                        ; are not saved in the three parts (as they can easily
+                        ; be reconstructed from the galaxy number in GCNT, which
+                        ; is what we do now)
 
  LDA BUF+17             ; Set A to byte #9 of the commander file, which contains
                         ; the galaxy number (0 to 7)
@@ -8510,7 +8799,7 @@ ENDIF
                         ; checksum table into our commander file, so set X = 0
                         ; to act as a commander file byte index
 
-.upsl6
+.ctob6
 
  LDA galaxySeeds,Y      ; Set A to the next seed byte from batch Y
 
@@ -8521,68 +8810,70 @@ ENDIF
  INX                    ; Increment the commander file byte index
 
  CPX #6                 ; Loop back until we have copied all six seed bytes
- BNE upsl6
+ BNE ctob6
 
  PLA                    ; Restore the value of A that we stored on the stack, so
                         ; A is preserved
 
  RTS                    ; Return from the subroutine
 
-.upsl7
+.ctob7
 
-                        ; If we get here then A = 9, so we want to load the
-                        ; current commander position on the left of the screen,
-                        ; which means we load the currently active commander
-                        ; file from NAME (which is where the game stores its
-                        ; currently active commander)
+                        ; If we get here then A = 9, so this is the current
+                        ; commander on the left of the screen, so we load the
+                        ; currently active commander from NAME (which is where
+                        ; the game stores the commander we are currently
+                        ; playing)
 
- LDA SVC                ; Clear bit 7 of the save count in SVC ???
- AND #%01111111
- STA SVC
+ LDA SVC                ; Clear bit 7 of the save counter so we can increment
+ AND #%01111111         ; the save counter once again to record the next save
+ STA SVC                ; after this one
 
- LDX #78                ; We not copy the current commander file to current
-                        ; position and to the buffer in BUF, so set a counter
-                        ; in X to copy all 79 bytes of the file
+ LDX #78                ; We now copy the current commander file to the buffer
+                        ; in BUF, so set a counter in X to copy all 79 bytes of
+                        ; the file
 
-.upsl8
+.ctob8
 
  LDA NAME,X             ; Copy the X-th byte of the current commander in NAME
- STA currentPosition,X  ; to the X-th byte of both currentPosition and BUF
- STA BUF,X
+ STA currentSaveSlot,X  ; to the X-th byte of BUF
+ STA BUF,X              ;
+                        ; This also copies the file to currentSaveSlot, but this
+                        ; isn't used anywhere
 
  DEX                    ; Decrement the byte counter
 
- BPL upsl8              ; Loop back until we have copied all 79 bytes
+ BPL ctob8              ; Loop back until we have copied all 79 bytes
 
  PLA                    ; Restore the value of A that we stored on the stack, so
                         ; A is preserved
 
  RTS                    ; Return from the subroutine
 
-.upsl9
+.ctob9
 
                         ; If we get here then the three parts of the save file
-                        ; have failed the checks when being combined, so we
+                        ; have failed the checksums when being combined, so we
                         ; reset the save file and its constituent parts as it
-                        ; looks like this file has been tampered with
+                        ; looks like this file might have been tampered with
 
  JSR ResetSaveBuffer    ; Reset the commander file in BUF to the default
                         ; commander
 
  LDA #' '               ; We now fill the commander file name with spaces, so
-                        ; set A to the spac character
+                        ; set A to the space character
 
  LDY #6                 ; Set a counter in Y to fill the seven characters in the
                         ; commander file name
 
-.upsl10
+.ctob10
 
  STA BUF,Y              ; Set the Y-th byte of BUF to a space to blank out the
                         ; name (which is seven characters long and at BUF)
 
  DEY                    ; Decrement the character counter
 
- BPL upsl10             ; Loop back until we have set the whole name to spaces
+ BPL ctob10             ; Loop back until we have set the whole name to spaces
 
  LDA #0                 ; Set the save count in byte #7 of the save file to 0
  STA BUF+7
@@ -8590,9 +8881,10 @@ ENDIF
  PLA                    ; Set A to the save slot number from the stack (leaving
  PHA                    ; the value on the stack)
 
- JSR SaveCommander      ; Save the commander by splitting it up into three parts
-                        ; so the badly formed parts that we couldn't combine
-                        ; above get overwritten
+ JSR SaveLoadCommander  ; Save the commander into the chosen save slot by
+                        ; splitting it up and saving it into three parts in
+                        ; saveSlotPart1, saveSlotPart2 and saveSlotPart3, so the
+                        ; save slot gets reset to the default commander
 
  PLA                    ; Restore the value of A that we stored on the stack, so
                         ; A is preserved
@@ -8604,7 +8896,8 @@ ENDIF
 ;       Name: ResetSaveSlots
 ;       Type: Subroutine
 ;   Category: Save and load
-;    Summary: Reset the save slots for all eight saved positions
+;    Summary: Reset the save slots for all eight saved positions, so they will
+;             fail their checksums and get reset when they are next checked
 ;
 ; ******************************************************************************
 
@@ -8618,7 +8911,7 @@ ENDIF
  TXA                    ; Store the slot counter on the stack, copying the slot
  PHA                    ; number into A in the process
 
- JSR GetSavePartAddress ; Set the following for saved position A:
+ JSR GetSaveAddresses   ; Set the following for save slot A:
                         ;
                         ;   SC(1 0) = address of the first saved part
                         ;
@@ -8626,9 +8919,12 @@ ENDIF
                         ;
                         ;   S(1 0) = address of the third saved part
 
- LDY #10                ; We reset a saved position by writing to byte #10 in
-                        ; each of the three saved parts, so set Y to use as an
-                        ; index
+                        ; We reset the save slot by writing to byte #10 in each
+                        ; of the three saved parts, so that this byte fails its
+                        ; checksum, meaning the save slot will be reset the next
+                        ; time it is checked in the CheckSaveSlots routine
+
+ LDY #10                ; Set Y to use as an index to byte #10
 
  LDA #1                 ; Set byte #10 of the first saved part to 1
  STA (SC),Y
@@ -8651,7 +8947,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: GetSavePartAddress
+;       Name: GetSaveAddresses
 ;       Type: Subroutine
 ;   Category: Save and load
 ;    Summary: Fetch the addresses of the three saved parts for a specific save
@@ -8665,113 +8961,150 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.GetSavePartAddress
+.GetSaveAddresses
 
  ASL A                  ; Set X = A * 2
  TAX                    ;
                         ; So we can use X as an index into the positionAddr
                         ; tables, which contain two-byte addresses
 
- LDA positionAddr0,X    ; Set the following:
+ LDA saveSlotAddr1,X    ; Set the following:
  STA SC                 ;
- LDA positionAddr1,X    ;   SC(1 0) = X-th address from positionAddr0, i.e. the
+ LDA saveSlotAddr2,X    ;   SC(1 0) = X-th address from saveSlotAddr1, i.e. the
  STA Q                  ;             address of the first saved part for slot X
- LDA positionAddr2,X    ;
- STA S                  ;   Q(1 0) = X-th address from positionAddr1, i.e. the
- LDA positionAddr0+1,X  ;            address of the second saved part for slot X
+ LDA saveSlotAddr3,X    ;
+ STA S                  ;   Q(1 0) = X-th address from saveSlotAddr2, i.e. the
+ LDA saveSlotAddr1+1,X  ;            address of the second saved part for slot X
  STA SC+1               ;
- LDA positionAddr1+1,X  ;   S(1 0) = X-th address from positionAddr2, i.e. the
+ LDA saveSlotAddr2+1,X  ;   S(1 0) = X-th address from saveSlotAddr3, i.e. the
  STA Q+1                ;            address of the third saved part for slot X
- LDA positionAddr2+1,X
+ LDA saveSlotAddr3+1,X
  STA S+1
 
  RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: SaveCommander
+;       Name: SaveLoadCommander
 ;       Type: Subroutine
 ;   Category: Save and load
-;    Summary: ???
+;    Summary: Either save the commander from BUF into a save slot, or load the
+;             commander from BUF into the game and start the game
 ;
 ; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
-;   A                   The save slot number to process:
+;   A                   The slot number to process:
 ;
-;                         * 0 to 7 = save the current commander into save slot
-;                                    A on the right of the screen
+;                         * 0 to 7 = save the current commander from BUF into
+;                                    save slot A
 ;
-;                         * 9 = load the current commander position and start
-;                               the game
+;                         * 9 = load the current commander from BUF into the
+;                               game and start the game
+;
+; Returns:
+;
+;   A                   A is preserved
 ;
 ; ******************************************************************************
 
-.SaveCommander
+.SaveLoadCommander
 
  PHA                    ; Store the value of A on the stack so we can restore it
                         ; at the end of the subroutine
 
- CMP #9
- BEQ scom2
+ CMP #9                 ; If A = 9 then this is the current commander in the
+ BEQ scom2              ; left column, so jump to scom2 to load the commander
+                        ; in BUF into the game
 
- JSR GetSavePartAddress
+                        ; If we get here then this is one of the save slots on
+                        ; the right of the screen and A is in the range 0 to 7,
+                        ; so now we save the contents of BUF into the save slot
+                        ;
+                        ; Each save slot is split up into three parts, so we now
+                        ; need to split the commander file before saving them
 
- LDA BUF+7
- AND #$7F
- STA BUF+7
+ JSR GetSaveAddresses   ; Set the following for save slot A:
+                        ;
+                        ;   SC(1 0) = address of the first saved part
+                        ;
+                        ;   Q(1 0) = address of the second saved part
+                        ;
+                        ;   S(1 0) = address of the third saved part
 
- LDY #72
+ LDA BUF+7              ; Clear bit 7 of the save counter byte in the commander
+ AND #%01111111         ; file at BUF so we can increment the save counter once
+ STA BUF+7              ; again to record the next save after this one (the save
+                        ; counter is in the bytge just after the commander name,
+                        ; which is seven characters long, so it's at BUF+7)
+
+ LDY #72                ; We work our way through 73 bytes in each saved part,
+                        ; so set an index counter in Y
 
 .scom1
 
- LDA BUF,Y
- STA (SC),Y
+ LDA BUF,Y              ; Copy the Y-th byte of the commander file in BUF to the
+ STA (SC),Y             ; Y-th byte of the first saved part
 
 IF _NTSC
 
- EOR #$0F
- STA (S),Y
- EOR #$FF
- STA (Q),Y
+ EOR #$0F               ; Set the Y-th byte of the third saved part in S(1 0) to
+ STA (S),Y              ; the commander file byte with the lower nibble flipped
+
+ EOR #$FF               ; Set the Y-th byte of the second saved part in Q(1 0)
+ STA (Q),Y              ; to the commander file byte with both nibbles flipped
 
 ELIF _PAL
 
- ASL A
- ADC #0
+ ASL A                  ; Set the Y-th byte of the third saved part in S(1 0) to
+ ADC #0                 ; the commander file byte, rotated left in-place
  STA (S),Y
- ASL A
- ADC #0
+
+ ASL A                  ; Set the Y-th byte of the second saved part in Q(1 0)
+ ADC #0                 ; the commander file byte, rotated left in-place
  STA (Q),Y
 
 ENDIF
 
- DEY
- BPL scom1
+ DEY                    ; Decrement the byte counter in Y
+
+ BPL scom1              ; Loop back to scom1 until we have split all 73 bytes
+                        ; of the commander file into the three separate parts
 
  PLA                    ; Restore the value of A that we stored on the stack, so
                         ; A is preserved
 
  RTS                    ; Return from the subroutine
 
- PHA
+ PHA                    ; This instruction is never run, but it would allow this
+                        ; part of the subroutine to be called on its own by
+                        ; storing the value of A on the stack so we could
+                        ; restore it at the end of the subroutine
 
 .scom2
 
- LDX #$4E
+                        ; If we get here then A = 9, so this is the current
+                        ; commander on the left of the screen, so we set the
+                        ; currently active in-game commander in NAME to the
+                        ; commander in BUF
+
+ LDX #78                ; Set a counter in X to copy all 79 bytes of the file
 
 .scom3
 
- LDA BUF,X
- STA currentPosition,X
- STA NAME,X
+ LDA BUF,X              ; Copy the X-th byte of BUF to the X-th byte of the
+ STA currentSaveSlot,X  ; current commander in NAME
+ STA NAME,X             ;
+                        ; This also copies the file to currentSaveSlot, but this
+                        ; isn't used anywhere
 
- DEX
+ DEX                    ; Decrement the byte counter
 
- BPL scom3
+ BPL scom3              ; Loop back until we have copied all 79 bytes
 
- JSR StartAfterLoad_b0
+ JSR SetupAfterLoad_b0  ; Configure the game to use the newly loaded commander
+                        ; file
 
  PLA                    ; Restore the value of A that we stored on the stack, so
                         ; A is preserved
@@ -8780,17 +9113,18 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: UpdateSaveSlots
+;       Name: CheckSaveSlots
 ;       Type: Subroutine
 ;   Category: Save and load
-;    Summary: Load the commanders for all eight save slots, one after the other
+;    Summary: Load the commanders for all eight save slots, one after the other,
+;             to check their integrity and reset any that fail their checksums
 ;
 ; ******************************************************************************
 
-.UpdateSaveSlots
+.CheckSaveSlots
 
- LDA #7                 ; There are eight saved positions, so set a position
-                        ; counter in A to loop through them all
+ LDA #7                 ; There are eight save slots, so set a slot counter in
+                        ; A to loop through them all
 
 .sabf1
 
@@ -8798,10 +9132,11 @@ ENDIF
  JSR WaitForNMI         ; next VBlank), preserving the value in A via the stack
  PLA
 
- JSR LoadCommander      ; Load the commander file from save slot A into the
-                        ; buffer at BUF
+ JSR CopyCommanderToBuf ; Copy the commander file from save slot A into the
+                        ; buffer at BUF, resetting the save slot if the file
+                        ; fails its checksums
 
- SEC                    ; Decrement A to move on to the next saved position
+ SEC                    ; Decrement A to move on to the next save slot
  SBC #1
 
  BPL sabf1              ; Loop back until we have loaded all eight save slots
@@ -8918,15 +9253,17 @@ ENDIF
 
  EQUW 20000 AND Q%      ; TALLY = Number of kills, #62-63
 
- EQUB 128               ; ??? #64
+ EQUB 128               ; This byte appears to be unused, #64
 
  EQUW $5A4A             ; QQ21 = Seed s0 for system 0, galaxy 0 (Tibedied), #65
  EQUW $0248             ; QQ21 = Seed s1 for system 0, galaxy 0 (Tibedied), #67
  EQUW $B753             ; QQ21 = Seed s2 for system 0, galaxy 0 (Tibedied), #69
 
- EQUB $AA               ; ??? #71
- EQUB $27               ; ??? #72
- EQUB $03               ; ??? #73
+ EQUB $AA               ; This byte appears to be unused, #71
+
+ EQUB $27               ; This byte appears to be unused, #72
+
+ EQUB $03               ; This byte appears to be unused, #73
 
  EQUD 0                 ; These bytes appear to be unused, #74-#85
  EQUD 0
@@ -8938,24 +9275,23 @@ ENDIF
 ;       Name: ResetCommander
 ;       Type: Subroutine
 ;   Category: Save and load
-;    Summary: Reset the current commander and current position to the default
-;             "JAMESON" commander
+;    Summary: Reset the current commander to the default "JAMESON" commander
 ;
 ; ******************************************************************************
 
 .ResetCommander
 
- JSR JAMESON            ; Set the current position to the default "JAMESON"
-                        ; commander
+ JSR JAMESON            ; Copy the default "JAMESON" commander to the buffer at
+                        ; currentSaveSlot
 
  LDX #79                ; We want to copy 78 bytes from the current position at
-                        ; currentPosition to the current commander at NAME, so
+                        ; currentSaveSlot to the current commander at NAME, so
                         ; set a byte counter in X (which counts down from 79 to
                         ; 1 as we copy bytes 78 to 0)
 
 .resc1
 
- LDA currentPosition-1,X    ; Copy byte X-1 from currentPosition to byte X-1 of
+ LDA currentSaveSlot-1,X    ; Copy byte X-1 from currentSaveSlot to byte X-1 of
  STA NAME-1,X               ; NAME
 
  DEX                    ; Decrement the byte counter
@@ -8969,20 +9305,21 @@ ENDIF
 ;       Name: JAMESON
 ;       Type: Subroutine
 ;   Category: Save and load
-;    Summary: Set the current position to the default "JAMESON" commander
+;    Summary: Copy the default "JAMESON" commander to the buffer at
+;             currentSaveSlot
 ;
 ; ******************************************************************************
 
 .JAMESON
 
  LDY #94                ; We want to copy 94 bytes from the default commander
-                        ; at NA2% to the current position at currentPosition, so
+                        ; at NA2% to the current position at currentSaveSlot, so
                         ; set a byte counter in Y
 
 .jame1
 
  LDA NA2%,Y             ; Copy the Y-th byte of NA2% to the Y-th byte of
- STA currentPosition,Y  ; currentPosition
+ STA currentSaveSlot,Y  ; currentSaveSlot
 
  DEY                    ; Decrement the byte counter
 
@@ -9521,10 +9858,16 @@ ENDIF
 ;       Name: InputName
 ;       Type: Subroutine
 ;   Category: Controllers
-;    Summary: Get a name from the keyboard for searching the galaxy or changing
-;             commander name
+;    Summary: Get a name from the controller for searching the galaxy or
+;             changing commander name
 ;
 ; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   INWK+5              The current name
+;
+;   inputNameSize       The maximum size of the name to fetch - 1
 ;
 ; Returns:
 ;
@@ -9864,7 +10207,7 @@ ENDIF
 ;       Name: ChangeCmdrName
 ;       Type: Subroutine
 ;   Category: Save and load
-;    Summary: ???
+;    Summary: Process changing the commander name
 ;
 ; ******************************************************************************
 
@@ -9874,63 +10217,127 @@ ENDIF
                         ; and move the text cursor to column 1 on row 21, i.e.
                         ; the start of the top row of the two bottom rows
 
- INC YC
- LDA #8
+ INC YC                 ; Move the text cursor to row 22
+
+ LDA #8                 ; Print extended token 8 ("{single cap}NEW NAME: ")
  JSR DETOK_b2
- LDY #6
- STY inputNameSize
 
-.loop_CBB46
+ LDY #6                 ; We start by copying the current commander's name from
+                        ; NAME to the buffer at INWK+5, which is where the
+                        ; InputName routine expects to find the current name to
+                        ; edit, so set a counter in Y for seven characters
 
- LDA NAME,Y
- STA INWK+5,Y
- DEY
- BPL loop_CBB46
- JSR InputName
- LDA INWK+5
- CMP #$0D
- BEQ CBBB0
- LDY #0
+ STY inputNameSize      ; Set inputNameSize = 6 so we fetch a name with a
+                        ; maximum size of 7 characters in the call to InputName
+                        ; below
 
-.loop_CBB5A
+.cnme1
 
- LDA INWK+5,Y
- CMP #$0D
- BEQ CBBB6
- INY
- CPY #7
- BNE loop_CBB5A
- DEY
+ LDA NAME,Y             ; Copy the Y-th character from NAME to the Y-th
+ STA INWK+5,Y           ; character of the buffer at INWK+5
 
-.CBB67
+ DEY                    ; Decrement the loop counter
 
- LDA INWK+5,Y
- STA NAME,Y
- DEY
- BPL CBB67
- LDA COK
- BMI CBBB0
- INY
- LDX languageIndex
+ BPL cnme1              ; Loop back until we have copied all seven characters
+                        ; of the name
 
-.loop_CBB79
+ JSR InputName          ; Get a new commander name from the controller into
+                        ; INWK+5, where the name will be terminated by ASCII 13
 
- LDA NAME,Y
- CMP cheatCmdrName,X
- BNE CBBB0
- INX
- INX
- INX
- INX
- INY
- CPY #7
- BNE loop_CBB79
- LDA #$80
- STA COK
- LDA #$A0
- CLC
- ADC CASH+3
- STA CASH+3
+ LDA INWK+5             ; If the first character of the entered name is ASCII 13
+ CMP #13                ; then no name was entered, so jump to cnme5 to return
+ BEQ cnme5              ; from the subroutine
+
+ LDY #0                 ; Otherwise we now calculate the length of the entered
+                        ; name by working along the entered string until we find
+                        ; the ASCII 13 character, so set a length counter in Y
+                        ; to store the name length as we loop through the name
+
+.cnme2
+
+ LDA INWK+5,Y           ; If the Y-th character of the name is ASCII 13 then we
+ CMP #13                ; have found the end of the name, so jump to cnme6 to
+ BEQ cnme6              ; pad out the rest of the name with spaces before
+                        ; returning to cnme3 below
+
+ INY                    ; Otherwise increment the counter in Y to move along by
+                        ; one character
+
+ CPY #7                 ; If Y <> 7 then we haven't gone past the seventh
+ BNE cnme2              ; character yet (the commander name has a maximum length
+                        ; of 7), so loop back to check the next character
+
+ DEY                    ; Otherwise Y = 7 and we just went past the end of the
+                        ; name, so decrement Y to a value of 6 so we can use it
+                        ; as a counter in the following loop
+
+                        ; We now copy the name that was entered into the current
+                        ; commander file at NAME, to change the commander name
+
+.cnme3
+
+ LDA INWK+5,Y           ; Copy the Y-th character from INWK+5 to the Y-th
+ STA NAME,Y             ; character of NAME
+
+ DEY                    ; Decrement the loop counter
+
+ BPL cnme3              ; Loop back until we have copied all seven characters
+                        ; of the name (leaving Y with a value of -1)
+
+                        ; We now check whether the entered name matches the
+                        ; cheat commander name for the chosen language, and if
+                        ; it does, we apply cheat mode
+
+ LDA COK                ; If bit 7 of COK is set, then cheat mode has already
+ BMI cnme5              ; been applied, so jump to cnme5
+
+ INY                    ; Set Y = 0 so we can loop through the entered name,
+                        ; checking each character against the cheat name
+
+ LDX languageIndex      ; Set X to the index of the chosen language, so this is
+                        ; the index of the first character of the cheat name for
+                        ; the chosen language, as the table at cheatCmdrName
+                        ; interleaves the characters from each of the four
+                        ; languages so that the cheat name for language X starts
+                        ; at cheatCmdrName + X, with each character being four
+                        ; bytes on from the previous one
+                        ;
+                        ; Presumably this is an attempt to hide the cheat names
+                        ; from anyone casually browsing through the game binary
+
+.cnme4
+
+ LDA NAME,Y             ; Set A to the Y-th character of the new commander name
+
+ CMP cheatCmdrName,X    ; If the character in A does not match the X-th
+ BNE cnme5              ; character of the cheat name for the chosen language,
+                        ; jump to cnme5 to skip applying cheat mode
+
+ INX                    ; Set X = X + 4
+ INX                    ;
+ INX                    ; So X now points to the next character of the cheat
+ INX                    ; name for the chosen language
+
+ INY                    ; Increment Y to move on to the next character in the
+                        ; name
+
+ CPY #7                 ; Loop back to check the next character until we have
+ BNE cnme4              ; checked all seven characters
+
+                        ; If we get here then the new commander name matches the
+                        ; cheat name for the chosen language (so if this is
+                        ; English, then the new name is "CHEATER", for example),
+                        ; so now we apply cheat mode
+
+ LDA #%10000000         ; Set bit 7 of COK to record that cheat mode has been
+ STA COK                ; applied to this commander, so we can't apply it again,
+                        ; and we can't change our commander name either (so once
+                        ; you cheat, you have to own it)
+
+ LDA #$A0               ; Set CASH(0 1 2 3) = CASH(0 1 2 3) + &000186A0
+ CLC                    ;
+ ADC CASH+3             ; So this adds 100000 to our cash reserves, giving us
+ STA CASH+3             ; an extra 10,000.0 credits
  LDA #$86
  ADC CASH+2
  STA CASH+2
@@ -9941,43 +10348,60 @@ ENDIF
  ADC #0
  STA CASH
 
-.CBBB0
+.cnme5
 
  JSR CLYNS              ; Clear the bottom two text rows of the upper screen,
                         ; and move the text cursor to column 1 on row 21, i.e.
                         ; the start of the top row of the two bottom rows
 
- JMP DrawMessageInNMI   ; Configure the NMI to display the message that we just
-                        ; printed, returning from the subroutine using a tail
-                        ; call
+ JMP DrawMessageInNMI   ; Configure the NMI to update the in-flight message part
+                        ; of the screen (which is the same as the part that the
+                        ; call to CLYNS just cleared), returning from the
+                        ; subroutine using a tail call
 
-.CBBB6
+.cnme6
 
- LDA #$20
- STA INWK+5,Y
- CPY #6
- BEQ CBB67
- INY
- BNE CBBB6
+                        ; If we get here then the entered name does not use all
+                        ; seven characters, so we pad the name out with spaces
+                        ;
+                        ; We get here with Y set to the index of the ASCII 13
+                        ; string terminator, so we can simply fill from that
+                        ; position to the end of the string
+
+ LDA #' '               ; Set the Y-th character of the name at INWK+5 to a
+ STA INWK+5,Y           ; space
+
+ CPY #6                 ; If Y = 6 then we have reached the end of the string,
+ BEQ cnme3              ; so jump to cnme3 with Y = 6 to continue processing the
+                        ; new name
+
+ INY                    ; Increment Y to point to the next character along
+
+ BNE cnme6              ; Jump back to cnme6 to keep filling the name with
+                        ; spaces (this BNE is effectively a JMP as Y is never
+                        ; zero)
 
 ; ******************************************************************************
 ;
 ;       Name: cheatCmdrName
 ;       Type: Variable
 ;   Category: Save and load
-;    Summary: ???
+;    Summary: The commander name that triggers cheat mode in each language
 ;
 ; ******************************************************************************
 
 .cheatCmdrName
 
- EQUS "CBTI"
- EQUS "HERN"
- EQUS "ETIG"
- EQUS "ARCA"
- EQUS "TUHN"
- EQUS "EGEN"
- EQUS "R RO"
+ EQUS "CBTI"            ; English = "CHEATER" (column 1)
+ EQUS "HERN"            ;
+ EQUS "ETIG"            ; German = "BETRUG" (column 2)
+ EQUS "ARCA"            ;
+ EQUS "TUHN"            ; French = "TRICHER" (column 3)
+ EQUS "EGEN"            ;
+ EQUS "R RO"            ; Italian = "INGANNO" (column 4)
+                        ;
+                        ; Italian does not appear anywhere else in the game, and
+                        ; a fourth language is not supported
 
 ; ******************************************************************************
 ;
@@ -10378,12 +10802,16 @@ ENDIF
                         ; down button, Start and A, and we are not pressing any
                         ; of the other keys
 
- JSR ResetSaveSlots     ; Reset the save slots for all eight saved positions
+ JSR ResetSaveSlots     ; Reset the save slots for all eight saved positions so
+                        ; they fail their checksums, so the following call to
+                        ; CheckSaveSlots resets then all to the default
+                        ; commander
 
 .clan3
 
- JSR UpdateSaveSlots_b6 ; Load the commanders for all eight save slots, one
-                        ; after the other ???
+ JSR CheckSaveSlots_b6  ; Load the commanders for all eight save slots, one
+                        ; after the other, to check their integrity and reset
+                        ; any that fail their checksums
 
                         ; We now highlight the currently selected language name
                         ; on-screen

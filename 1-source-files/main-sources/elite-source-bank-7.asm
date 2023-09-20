@@ -12195,14 +12195,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: UpdateSaveSlots_b6
+;       Name: CheckSaveSlots_b6
 ;       Type: Subroutine
 ;   Category: Save and load
-;    Summary: Call the UpdateSaveSlots routine in ROM bank 6
+;    Summary: Call the CheckSaveSlots routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.UpdateSaveSlots_b6
+.CheckSaveSlots_b6
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -12210,7 +12210,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR UpdateSaveSlots    ; Call UpdateSaveSlots, now that it is paged into memory
+ JSR CheckSaveSlots     ; Call CheckSaveSlots, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -14028,14 +14028,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: StartAfterLoad_b0
+;       Name: SetupAfterLoad_b0
 ;       Type: Subroutine
 ;   Category: Start and end
-;    Summary: Call the StartAfterLoad routine in ROM bank 0
+;    Summary: Call the SetupAfterLoad routine in ROM bank 0
 ;
 ; ******************************************************************************
 
-.StartAfterLoad_b0
+.SetupAfterLoad_b0
 
  LDA currentBank        ; If ROM bank 0 is already paged into memory, jump to
  CMP #0                 ; bank26
@@ -14046,7 +14046,7 @@ ENDIF
  LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
 
- JSR StartAfterLoad     ; Call StartAfterLoad, now that it is paged into memory
+ JSR SetupAfterLoad     ; Call SetupAfterLoad, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -14054,7 +14054,7 @@ ENDIF
 
 .bank26
 
- JMP StartAfterLoad     ; Call StartAfterLoad, which is already paged into
+ JMP SetupAfterLoad     ; Call SetupAfterLoad, which is already paged into
                         ; memory, and return from the subroutine using a tail
                         ; call
 
