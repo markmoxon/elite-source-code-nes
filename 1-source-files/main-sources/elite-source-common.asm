@@ -108,6 +108,13 @@
  LL = 29                ; The length of lines (in characters) of justified text
                         ; in the extended tokens system
 
+ W2 = 3                 ; The horizontal character spacing in the scroll text
+                        ; (i.e. the difference in x-coordinate between the
+                        ; left edges of adjacent characters in words)
+
+ WY = 1                 ; The vertical spacing between points in the scroll text
+                        ; grid for each character
+
  YPAL = 6 AND _PAL      ; A margin of 6 pixels that is applied to a number of
                         ; y-coordinates for the PAL version only (as the PAL
                         ; version has a taller screen than NTSC)
@@ -5031,9 +5038,9 @@ ENDIF
  SKIP 1                 ; Bits 0 to 3 of the left button controller variable
                         ;
                         ; In non-space views, this contains controller1Left but
-                        ; shifted left by four places, so the upper nibble
+                        ; shifted left by four places, so the high nibble
                         ; contains bits 0 to 3 of controller1Left, with zeroes
-                        ; in the lower nibble
+                        ; in the low nibble
                         ;
                         ; So bit 7 is the left button state from four VBlanks
                         ; ago, bit 6 is from five VBlanks ago, and so on
@@ -5043,9 +5050,9 @@ ENDIF
  SKIP 1                 ; Bits 0 to 3 of the right button controller variable
                         ;
                         ; In non-space views, this contains controller1Right but
-                        ; shifted left by four places, so the upper nibble
+                        ; shifted left by four places, so the high nibble
                         ; contains bits 0 to 3 of controller1Right, with zeroes
-                        ; in the lower nibble
+                        ; in the low nibble
                         ;
                         ; So bit 7 is the right button state from four VBlanks
                         ; ago, bit 6 is from five VBlanks ago, and so on
@@ -5235,8 +5242,10 @@ ENDIF
 
 .Y1TB
 
- SKIP 240               ; The y-coordinates of the start points for character
-                        ; lines in the scroll text
+ SKIP 240               ; The y-coordinates of the start and end points for
+                        ; character lines in the scroll text, with the start
+                        ; point (Y1) in the low nibble and the end point (Y2)
+                        ; in the high nibble
 
 .X2TB
 

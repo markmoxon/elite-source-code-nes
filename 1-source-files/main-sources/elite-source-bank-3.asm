@@ -2609,7 +2609,7 @@ ENDIF
 
 .svin5
 
- LDA QQ11               ; Set X to the new view type in the lower nibble of QQ11
+ LDA QQ11               ; Set X to the new view type in the low nibble of QQ11
  AND #%00001111
  TAX
 
@@ -5939,12 +5939,12 @@ ENDIF
 ;
 ; Colours on the NES are stored as hue and value, using an HSV model but without
 ; the saturation. Specifically the hue (i.e. blue, red etc.) is stored in the
-; lower nibble, while the value (i.e. the brightness) is stored in bits 4 and 5
-; of the upper nibble. Bits 6 and 7 are unused and are always zero.
+; low nibble, while the value (i.e. the brightness) is stored in bits 4 and 5
+; of the high nibble. Bits 6 and 7 are unused and are always zero.
 ;
 ; This means that given a colour value in hexadecimal, it is in the form &vh
 ; where v is the value (brightness) and h is the hue. We can therefore alter the
-; brightness of a colour by increasing or decreasing the upper nibble between
+; brightness of a colour by increasing or decreasing the high nibble between
 ; 0 and 3, with &0h being the darkest and &3h being the brightest.
 ;
 ; The NES only supports 54 of the 64 possible colours in this scheme, with
@@ -5993,7 +5993,7 @@ ENDIF
 
 .GetViewPalettes
 
- LDA QQ11a              ; Set X to the old view type in the lower nibble of
+ LDA QQ11a              ; Set X to the old view type in the low nibble of
  AND #%00001111         ; QQ11a
  TAX
 
@@ -6974,7 +6974,7 @@ ENDIF
  LDA viewAttributesHi,X
  STA V+1
 
- LDA QQ11               ; Set Y to the lower nibble of the view type, which is
+ LDA QQ11               ; Set Y to the low nibble of the view type, which is
  AND #$0F               ; the view type with the flags stripped off (so it's
  TAY                    ; in the range 0 to 15)
 

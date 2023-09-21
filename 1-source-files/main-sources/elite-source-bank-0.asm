@@ -695,12 +695,12 @@ ENDIF
                         ; scooping checks
 
                         ; Only the Thargon, alloy plate, splinter and escape pod
-                        ; have non-zero upper nibbles in their blueprint byte #0
+                        ; have non-zero high nibbles in their blueprint byte #0
                         ; so if we get here, our ship is one of those, and the
-                        ; upper nibble gives the market item number of the item
+                        ; high nibble gives the market item number of the item
                         ; when scooped, less 1
 
- ADC #1                 ; Add 1 to the upper nibble to get the market item
+ ADC #1                 ; Add 1 to the high nibble to get the market item
                         ; number
 
  BNE slvy2              ; Skip to slvy2 so we scoop the ship as a market item
@@ -7834,10 +7834,10 @@ ENDIF
 
 .PlayDemo
 
- JSR RES2
+ JSR RES2               ; Reset a number of flight variables and workspaces
 
- JSR ResetCommander_b6  ; Reset the current commander and current position to
-                        ; the default "JAMESON" commander
+ JSR ResetCommander_b6  ; Reset the current commander to the default "JAMESON"
+                        ; commander
 
  LDA #0
  STA QQ14
@@ -11169,7 +11169,7 @@ ENDIF
  STA GCNT               ; to the starting point in galaxy 1). We also retain any
                         ; set bits in the high nibble, so if the galaxy number
                         ; is manually set to 16 or higher, it will stay high
-                        ; (though the upper nibble doesn't seem to get set by
+                        ; (though the high nibble doesn't seem to get set by
                         ; the game at any point, so it isn't clear what this is
                         ; for, though Lave in galaxy 16 does show a unique
                         ; system description override, so something is going on
@@ -16144,34 +16144,6 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: KS3
-;       Type: Subroutine
-;   Category: Universe
-;    Summary: Set the SLSP ship heap pointer after shuffling ship slots
-;
-; ------------------------------------------------------------------------------
-;
-; The final part of the KILLSHP routine, called after we have shuffled the ship
-; slots and sorted out our missiles. This simply sets SLSP to the new bottom of
-; the ship heap space.
-;
-; Arguments:
-;
-;   P(1 0)              Points to the ship line heap of the ship in the last
-;                       occupied slot (i.e. it points to the bottom of the
-;                       descending heap)
-;
-; ******************************************************************************
-
-.KS3
-
-                        ; There is no ship heap in the NES version of Elite, so
-                        ; this routine does nothing
-
- RTS                    ; Return from the subroutine
-
-; ******************************************************************************
-;
 ;       Name: KS1
 ;       Type: Subroutine
 ;   Category: Universe
@@ -16191,7 +16163,15 @@ ENDIF
 ;
 ;   INF                 The address of the data block for this ship
 ;
+; Other entry points:
+;
+;   KS3                 Contains an RTS
+;
 ; ******************************************************************************
+
+.KS3
+
+ RTS                    ; Return from the subroutine
 
 .KS1
 
@@ -16280,8 +16260,8 @@ ENDIF
  INX                    ; Increment the counter (so it starts at 0 on the first
                         ; iteration)
 
- LDA FRIN,X             ; If slot X is empty, loop round again until it isn't,
- BEQ KS3                ; at which point A contains the ship type in that slot
+ LDA FRIN,X             ; If slot X is empty then we have worked our way through
+ BEQ KS3                ; all the slots, so jump to KS3 to stop looking
 
  CMP #MSL               ; If the slot does not contain a missile, loop back to
  BNE KSL4               ; KSL4 to check the next slot
@@ -16399,8 +16379,8 @@ ENDIF
 ;
 ; When removing a ship, this creates a gap in the ship slots at FRIN, so we
 ; shuffle all the later slots down to close the gap. We also shuffle the ship
-; data blocks at K% and ship line heap at WP, to reclaim all the memory that
-; the removed ship used to occupy.
+; data blocks at K% to reclaim all the memory that the removed ship used to
+; occupy.
 ;
 ; Arguments:
 ;
@@ -19055,8 +19035,8 @@ ENDIF
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- JSR ResetCommander_b6  ; Reset the current commander and current position to
-                        ; the default "JAMESON" commander
+ JSR ResetCommander_b6  ; Reset the current commander to the default "JAMESON"
+                        ; commander
 
  JSR ResetMusicAfterNMI ; Wait for the next NMI before resetting the current
                         ; tune to 0 (no tune) and stopping the music
