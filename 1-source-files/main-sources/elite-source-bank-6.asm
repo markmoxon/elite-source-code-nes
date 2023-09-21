@@ -5614,55 +5614,83 @@ ENDIF
 ;       Name: ShowScrollText
 ;       Type: Subroutine
 ;   Category: Combat demo
-;    Summary: ???
+;    Summary: Show a scroll text and start the combat demo
 ;
 ; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
 ;   A                   If non-zero, show the scroll text but skip playing the
-;                       demo afterwards
+;                       combat demo afterwards
 ;
 ; ******************************************************************************
 
 .ShowScrollText
 
- PHA
- LDA QQ11
- BNE CA5B6
+ PHA                    ; Store the value of A on the stack so we can retrieve
+                        ; it later to check whether we should start playing the
+                        ; combat demo after showing the scroll text
 
- JSR ClearScanner       ; Remove all ships from the scanner and hide the scanner
-                        ; sprites
+ LDA QQ11               ; If this is not the space view, then jump to scro1 to
+ BNE scro1              ; set up the space view for the demo
 
- JMP CA614
+ JSR ClearScanner       ; This is already the space view, so remove all ships
+                        ; from the scanner and hide the scanner sprites
 
-.CA5B6
+ JMP scro4              ; Jump to scro4 to move on to the scroll text part, as
+                        ; the view is already set up
+
+.scro1
+
+                        ; If we get here then we need to set up the space view
+                        ; for the demo
 
  JSR FadeToBlack_b3     ; Fade the screen to black over the next four VBlanks
 
- LDY #20
- STY NOSTM
- STY RAND+1
+ LDY #NOST              ; Set Y to the number of stardust particles in NOST
+                        ; (which is 20 in the space view), so we can use it as a
+                        ; counter as we set up the stardust below
+
+ STY NOSTM              ; Set the number of stardust particles to NOST (which is
+                        ; 20 for the normal space view)
+
+ STY RAND+1             ; Set RAND+1 to NOST to seed the random number generator
 
  LDA nmiCounter         ; Set the random number seed to a fairly random state
  STA RAND               ; that's based on the NMI counter (which increments
                         ; every VBlank, so will be pretty random)
 
-.CA5C5
+.scro2
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- JSR DORND
- ORA #8
- STA SZ,Y
- STA ZZ
- JSR DORND
- STA SX,Y
- JSR DORND
- STA SY,Y
- DEY
- BNE CA5C5
+                        ; We now set up the coordinates of stardust particle Y
+
+ JSR DORND              ; Set A and X to random numbers
+
+ ORA #8                 ; Set A so that it's at least 8
+
+ STA SZ,Y               ; Store A in the Y-th particle's z_hi coordinate at
+                        ; SZ+Y, so the particle appears in front of us
+
+ STA ZZ                 ; Set ZZ to the particle's z_hi coordinate
+
+ JSR DORND              ; Set A and X to random numbers
+
+ STA SX,Y               ; Store A in the Y-th particle's x_hi coordinate at
+                        ; SX+Y, so the particle appears in front of us
+
+ JSR DORND              ; Set A and X to random numbers
+
+ STA SY,Y               ; Store A in the Y-th particle's y_hi coordinate at
+                        ; SY+Y, so the particle appears in front of us
+
+ DEY                    ; Decrement the counter to point to the next particle of
+                        ; stardust
+
+ BNE scro2              ; Loop back to scro2 until we have randomised all the
+                        ; stardust particles
 
  LDX #NOST              ; Set X to the maximum number of stardust particles, so
                         ; we loop through all the particles of stardust in the
@@ -5672,10 +5700,12 @@ ENDIF
                         ; we start configuring from sprite 152 / 4 = 38 (as each
                         ; sprite in the buffer consists of four bytes)
 
-.CA5EF
+.scro3
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
+
+                        ; We now set up the sprite for stardust particle Y
 
  LDA #210               ; Set the sprite to use pattern number 210 for the
  STA tileSprite0,Y      ; largest particle of stardust (the stardust particle
@@ -5700,15 +5730,16 @@ ENDIF
 
  DEX                    ; Decrement the loop counter in X
 
- BNE CA5EF              ; Loop back until we have configured 20 sprites
+ BNE scro3              ; Loop back until we have configured 20 sprites
 
- JSR STARS_b1
+ JSR STARS_b1           ; Call STARS1 to process the stardust for the front view
 
-.CA614
+.scro4
 
- LDA #0
- STA LASER
- STA QQ12
+ LDA #0                 ; Remove the laser from our ship, so we can't fire it
+ STA LASER              ; during the scroll text
+
+ STA QQ12               ; Set QQ12 = 0 to indicate that we are not docked
 
  LDA #$10               ; Clear the screen and and set the view type in QQ11 to
  JSR ChangeToView_b0    ; $10 (Space view with the normal font loaded)
@@ -5716,88 +5747,130 @@ ENDIF
  LDA #$FF               ; Set showIconBarPointer = $FF to indicate that we
  STA showIconBarPointer ; should show the icon bar pointer
 
- LDA #240
- STA ySprite5
- STA ySprite6
+ LDA #240               ; Set A to the y-coordinate that's just below the bottom
+                        ; of the screen, so we can hide the sight sprites by
+                        ; moving them off-screen
+
+ STA ySprite5           ; Set the y-coordinates for the five laser sight sprites
+ STA ySprite6           ; to 240, to move them off-screen
  STA ySprite7
  STA ySprite8
  STA ySprite9
- LDA #0
+
+                        ; We are going to draw the scrolltext into the pattern
+                        ; buffers, so now we calculate the addresses of the
+                        ; first available tiles in the buffers
+
+ LDA #0                 ; Set the high byte of SC(1 0) to 0
  STA SC+1
- LDA firstFreeTile
+
+ LDA firstFreeTile      ; Set SC(1 0) = firstFreeTile * 8
  ASL A
- ROL SC+1
- ASL A
+ ROL SC+1               ; We use this to calculate the address of the pattern
+ ASL A                  ; for the first free tile in the pattern buffers below
  ROL SC+1
  ASL A
  ROL SC+1
  STA SC
- STA SC2
- LDA SC+1
- ADC #$68
- STA SC2+1
- LDA SC+1
- ADC #$60
- STA SC+1
- LDX firstFreeTile
- LDY #0
 
-.CA659
+ STA SC2                ; Set SC2(1 0) = pattBuffer1 + SC(1 0)
+ LDA SC+1               ;              = pattBuffer1 + firstFreeTile * 8
+ ADC #HI(pattBuffer1)   ;
+ STA SC2+1              ; So SC2(1 0) contains the address of the pattern of the
+                        ; first free tile in pattern buffer 1, as each pattern
+                        ; in the buffer contains eight bytes
 
- LDA #0
- STA (SC),Y
- STA (SC2),Y
- INY
- STA (SC),Y
- STA (SC2),Y
- INY
- STA (SC),Y
- STA (SC2),Y
- INY
- STA (SC),Y
- STA (SC2),Y
- INY
- STA (SC),Y
- STA (SC2),Y
- INY
- STA (SC),Y
- STA (SC2),Y
- INY
- STA (SC),Y
- STA (SC2),Y
- INY
- STA (SC),Y
- STA (SC2),Y
- INY
- BNE CA689
- INC SC+1
- INC SC2+1
+ LDA SC+1               ; Set SC(1 0) = pattBuffer0 + SC(1 0)
+ ADC #HI(pattBuffer0)   ;             = pattBuffer0 + firstFreeTile * 8
+ STA SC+1               ;
+                        ; So SC2(1 0) contains the address of the pattern of the
+                        ; first free tile in pattern buffer 0
 
-.CA689
+                        ; We now clear the patterns in both pattern buffers for
+                        ; the free tile and all the other tiles to the end of
+                        ; the buffers
+
+ LDX firstFreeTile      ; Set X to the number of the first free tile so we start
+                        ; clearing patterns from this point onwards
+
+ LDY #0                 ; Set Y to use as a byte index for zeroing the pattern
+                        ; bytes in the pattern buffers
+
+.scro5
+
+ LDA #0                 ; Set A = 0 so we zero the pattern
+
+ STA (SC),Y             ; Zero the Y-th pixel row of pattern X in both of the
+ STA (SC2),Y            ; pattern buffers and increment the index in Y
+ INY
+
+ STA (SC),Y             ; Zero the Y-th pixel row of pattern X in both of the
+ STA (SC2),Y            ; pattern buffers and increment the index in Y
+ INY
+
+ STA (SC),Y             ; Zero the Y-th pixel row of pattern X in both of the
+ STA (SC2),Y            ; pattern buffers and increment the index in Y
+ INY
+
+ STA (SC),Y             ; Zero the Y-th pixel row of pattern X in both of the
+ STA (SC2),Y            ; pattern buffers and increment the index in Y
+ INY
+
+ STA (SC),Y             ; Zero the Y-th pixel row of pattern X in both of the
+ STA (SC2),Y            ; pattern buffers and increment the index in Y
+ INY
+
+ STA (SC),Y             ; Zero the Y-th pixel row of pattern X in both of the
+ STA (SC2),Y            ; pattern buffers and increment the index in Y
+ INY
+
+ STA (SC),Y             ; Zero the Y-th pixel row of pattern X in both of the
+ STA (SC2),Y            ; pattern buffers and increment the index in Y
+ INY
+
+ STA (SC),Y             ; Zero the Y-th pixel row of pattern X in both of the
+ STA (SC2),Y            ; pattern buffers and increment the index in Y
+ INY
+
+ BNE scro6              ; If Y just incremented to 0, increment the high bytes
+ INC SC+1               ; of SC(1 0) and SC2(1 0) so they point to the next page
+ INC SC2+1              ; in memory
+
+.scro6
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- INX
- BNE CA659
- LDA #0
+ INX                    ; Increment the tile number in X
+
+ BNE scro5              ; Loop back until we have cleared all tile patterns up
+                        ; to and including tile 255
+
+ LDA #0                 ; Set ALPHA and ALP1 to 0, so our roll angle is 0
  STA ALPHA
  STA ALP1
- STA DELTA
- LDA nmiCounter
- CLC
- ADC RAND+1
+
+ STA DELTA              ; Set our ship's speed to zero so the scroll text stays
+                        ; where it is
+
+ LDA nmiCounter         ; Set the random number seed to a fairly random state
+ CLC                    ; that's based on the NMI counter (which increments
+ ADC RAND+1             ; every VBlank, so will be pretty random)
  STA RAND+1
- JSR subm_A761
+
+ JSR DrawScrollInNMI    ; Configure the NMI handler to draw the scroll text
+                        ; screen, which will clear the screen as we just blanked
+                        ; out all the patterns in the pattern buffers
 
  PLA                    ; Retrieve the argument that we stored on the stack at
- BNE CA6D3              ; the start of the routine, and if it is non-zero, jump
-                        ; to CA6D3 to skip playing the demo
+ BNE scro7              ; the start of the routine, and if it is non-zero, jump
+                        ; to scro7 to skip playing the demo
 
- LDX languageIndex
+ LDX languageIndex      ; ???
  LDA scrollText1Lo,X
  LDY scrollText1Hi,X
  TAX
+
  LDA #2
  JSR DrawScrollText
 
@@ -5810,17 +5883,18 @@ ENDIF
  LDA #37                ; Tell the NMI handler to send pattern entries from
  STA firstPatternTile   ; pattern 37 in the buffer
 
- JSR subm_A761
+ JSR DrawScrollInNMI    ; Configure the NMI handler to draw the scroll text
+                        ; screen, which will draw the scroll text on-screen
 
  LDA #60                ; Tell the NMI handler to send pattern entries from
  STA firstPatternTile   ; pattern 60 in the buffer
 
  JMP PlayDemo_b0
 
-.CA6D3
+.scro7
 
  CMP #2
- BEQ CA72F
+ BEQ scro14
  LDA #$30
  STA XX18+1
  STA XX18+2
@@ -5829,20 +5903,20 @@ ENDIF
  STA nmiTimer
  SEC
 
-.loop_CA6E4
+.scro8
 
  LDA nmiTimerLo
  SBC #$58
  TAX
  LDA nmiTimerHi
  SBC #2
- BCC CA6F7
+ BCC scro9
  STA nmiTimerHi
  STX nmiTimerLo
  INC XX18+3
- BCS loop_CA6E4
+ BCS scro8
 
-.CA6F7
+.scro9
 
  SEC
  LDA nmiTimerLo
@@ -5850,25 +5924,25 @@ ENDIF
  TAX
  LDA nmiTimerHi
  SBC #0
- BCC CA70B
+ BCC scro10
  STA nmiTimerHi
  STX nmiTimerLo
  INC XX18+2
- BCS CA6F7
+ BCS scro9
 
-.CA70B
+.scro10
 
  SEC
  LDA nmiTimerLo
 
-.loop_CA70E
+.scro11
 
  SBC #$0A
- BCC CA716
+ BCC scro12
  INC XX18+1
- BCS loop_CA70E
+ BCS scro11
 
-.CA716
+.scro12
 
  ADC #$3A
  STA K5
@@ -5878,7 +5952,7 @@ ENDIF
  TAX
  LDA #6
 
-.CA726
+.scro13
 
  JSR DrawScrollText
 
@@ -5887,7 +5961,7 @@ ENDIF
  JMP StartGame_b0       ; Jump to StartGame to reset the stack and go to the
                         ; docking bay (i.e. show the Status Mode screen)
 
-.CA72F
+.scro14
 
  LDX languageIndex
  LDA creditsText1Lo,X
@@ -5914,25 +5988,25 @@ ENDIF
  LDY creditsText3Hi,X
  TAX
  LDA #3
- BNE CA726
+ BNE scro13
 
 ; ******************************************************************************
 ;
-;       Name: subm_A761
+;       Name: DrawScrollInNMI
 ;       Type: Subroutine
 ;   Category: Combat demo
-;    Summary: ???
+;    Summary: Configure the NMI handler to draw the scroll text screen
 ;
 ; ******************************************************************************
 
-.subm_A761
+.DrawScrollInNMI
 
  JSR WaitForPPUToFinish ; Wait until both bitplanes of the screen have been
                         ; sent to the PPU, so the screen is fully updated and
                         ; there is no more data waiting to be sent to the PPU
 
- LDA #254
- STA firstFreeTile
+ LDA #254               ; Tell the NMI handler to send data up to tile 254, so
+ STA firstFreeTile      ; all the tiles get updated
 
  LDA #%11001000         ; Set both bitplane flags as follows:
  STA bitplaneFlags      ;
@@ -5949,7 +6023,7 @@ ENDIF
                         ; according to the above configuration, splitting the
                         ; process across multiple VBlanks if necessary
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;

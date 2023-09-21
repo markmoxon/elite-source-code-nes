@@ -13619,8 +13619,7 @@ ENDIF
 ;       Name: SetupFullViewInNMI
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: Configure the PPU to send tiles for a full screen (no dashboard)
-;             during VBlank
+;    Summary: Configure the PPU to send tiles for the full screen during VBlank
 ;
 ; ******************************************************************************
 
@@ -14556,10 +14555,13 @@ ENDIF
 
  JSR ResetOptions       ; Reset the game options to their default values
 
- LDA #0                 ; Set K%+6 = 0 ???
- STA K%+6
+ LDA #0                 ; Set K%+6 to 0 so the random number seeding at the
+ STA K%+6               ; start of the main game loop at TT100 proceeds in a
+                        ; predictable manner
 
- STA K%                 ; Set K% = 0 ???
+ STA K%                 ; Set K% to 0 so the random number seeding at the start
+                        ; of the main flight loop at M% proceeds in a
+                        ; predictable manner
 
                         ; Fall through into FixRandomNumbers to set the random
                         ; number seeds to a known state

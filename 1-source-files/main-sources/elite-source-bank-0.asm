@@ -6703,6 +6703,7 @@ ENDIF
 
                         ; If we get here then the demo is in progress and we
                         ; just fired a missile, so we get a 60-second penalty
+                        ; added to the time taken to complete the demo
 
  LDA #147               ; Print recursive token 146 ("60 SECOND PENALTY") in
  LDY #10                ; the middle of the screen and leave it there for 10
@@ -6712,9 +6713,9 @@ ENDIF
  STA nmiTimer           ; penalty below (as 25 frames is half a second in PAL
                         ; systems)
 
- LDA nmiTimerLo         ; Add 60 to (nmiTimerHi nmiTimerLo) so the demo goes on
- CLC                    ; for 60 seconds longer
- ADC #60
+ LDA nmiTimerLo         ; Add 60 to (nmiTimerHi nmiTimerLo) so the time recorded
+ CLC                    ; to complete the combat demo is 60 seconds longer than
+ ADC #60                ; it would have been if we hadn't fired the missile
  STA nmiTimerLo
  BCC frmi1
  INC nmiTimerHi
@@ -7828,7 +7829,7 @@ ENDIF
 ;       Name: PlayDemo
 ;       Type: Subroutine
 ;   Category: Combat demo
-;    Summary: ???
+;    Summary: Play the combat demo
 ;
 ; ******************************************************************************
 
@@ -7839,27 +7840,36 @@ ENDIF
  JSR ResetCommander_b6  ; Reset the current commander to the default "JAMESON"
                         ; commander
 
- LDA #0
- STA QQ14
- STA CASH
- STA CASH+1
- LDA #$FF
+ LDA #0                 ; Set the fuel level to zero so we can't hyperspace out
+ STA QQ14               ; of the demo
+
+ STA CASH               ; Zero the two lowest bytes of the cash reserves so no
+ STA CASH+1             ; missions are triggered
+
+ LDA #$FF               ; Give our ship an E.C.M.
  STA ECM
- LDA #1
+
+ LDA #1                 ; Give our ship an energy unit
  STA ENGY
- LDA #$8F
+
+ LDA #POW+128           ; Give our ship a beam laser
  STA LASER
 
  LDA #$FF               ; Set demoInProgress = $FF to indicate that we are
  STA demoInProgress     ; playing the demo
 
- JSR SOLAR
- LDA #0
+ JSR SOLAR              ; Set up data blocks and slots for the planet and
+                        ; sun
+
+ LDA #0                 ; Set our ship's speed to zero
  STA DELTA
- STA ALPHA
+
+ STA ALPHA              ; Set ALPHA and ALP1 to 0, so our roll angle is 0
  STA ALP1
- STA QQ12
- STA VIEW
+
+ STA QQ12               ; Set QQ12 = 0 to indicate that we are not docked
+
+ STA VIEW               ; Set the space view to the front view
 
  JSR TT66               ; Clear the screen and and set the view type in QQ11 to
                         ; $00 (Space view with no fonts loaded)
@@ -7870,130 +7880,241 @@ ENDIF
                         ; buffer and tell the NMI handler to send pattern
                         ; entries up to the first free tile
 
- JSR SetupFullViewInNMI ; Configure the PPU to send tiles for a full screen
-                        ; (no dashboard) during VBlank
+ JSR SetupFullViewInNMI ; Configure the PPU to send tiles for the full screen
+                        ; during VBlank
 
- JSR SetupSpaceView
- JSR FixRandomNumbers
- JSR SetupDemoShip
- LDA #6
- STA INWK+30
- LDA #$18
- STA INWK+29
- LDA #$12
- JSR NWSHP
- LDA #$0A
- JSR RunDemoFlightLoop
- LDA #$92
- STA K%+114
- LDA #1
- STA K%+112
- JSR SetupDemoShip
- LDA #6
- STA INWK+30
- ASL INWK+2
- LDA #$C0
- STA INWK+29
- LDA #$13
- JSR NWSHP
- LDA #6
- JSR RunDemoFlightLoop
- JSR SetupDemoShip
- LDA #6
- STA INWK+30
- ASL INWK+2
- LDA #0
- STA XX1
- LDA #$46
- STA INWK+6
- LDA #$11
- JSR NWSHP
- LDA #5
- JSR RunDemoFlightLoop
- LDA #$C0
- STA K%+198
- LDA #$0B
- JSR RunDemoFlightLoop
- LDA #$32
- STA nmiTimer
- LDA #0
- STA nmiTimerLo
- STA nmiTimerHi
+ JSR SetupSpaceView     ; Set up the NMI variables for the space view
+
+ JSR FixRandomNumbers   ; Fix the random number seeds to a known value so the
+                        ; random numbers generated are always the same when we
+                        ; run the demo
+
+ JSR SetupDemoShip      ; Set up the ship workspace for a new ship that's to our
+                        ; upper left and in front of us, pointing into the
+                        ; screen
+
+ LDA #6                 ; Set the ship's pitch counter to 6 to make it pitch
+ STA INWK+30            ; slightly in a positive direction (pitch down), so it
+                        ; starts diving gently towards the middle of the screen
+
+ LDA #24                ; Set the ship's roll counter to 24 to make it roll in
+ STA INWK+29            ; a positive direction (clockwise), for just under a
+                        ; quarter roll (24 * 1/16 radians = 1.5 radians = 86
+                        ; degrees)
+
+ LDA #18                ; Call NWSHP with A = 18 to add a new Mamba ship to our
+ JSR NWSHP              ; local bubble of universe
+
+ LDA #10                ; Run ten iterations of the main flight loop so the
+ JSR RunDemoFlightLoop  ; Mamba flies into the screen for a while
+
+ LDA #$92               ; Set the ship's pitch counter to -18 to make it pitch
+ STA K%+2*NIK%+30       ; slightly in a negative direction (pull up), so it
+                        ; starts flying gently towards the top-left of the
+                        ; screen
+                        ;
+                        ; The ship will have been spawned in ship slot 2, so
+                        ; this directly updates byte #30 in the ship's data
+                        ; block in K%, where each data block is NIK% bytes long
+
+ LDA #1                 ; Set the ship's acceleration to 1 to make it accelerate
+ STA K%+2*NIK%+28       ; away from us
+                        ;
+                        ; The ship will have been spawned in ship slot 2, so
+                        ; this directly updates byte #28 in the ship's data
+                        ; block in K%, where each data block is NIK% bytes long
+
+ JSR SetupDemoShip      ; Set up the ship workspace for a new ship that's to our
+                        ; upper left and in front of us, pointing into the
+                        ; screen
+
+ LDA #6                 ; Set the ship's pitch counter to 6 to make it pitch
+ STA INWK+30            ; slightly in a positive direction (pitch down), so it
+                        ; starts diving gently towards the middle of the screen
+
+ ASL INWK+2             ; Flip the sign of x_sign so the ship is now to our
+                        ; upper right and in front of us
+
+ LDA #$C0               ; Set the ship's roll counter to -64 to make it roll in
+ STA INWK+29            ; a negative direction (anti-clockwise), for two-thirds
+                        ; of a roll (64 * 1/16 radians = 4.0 radians = 229
+                        ; degrees) ???
+
+ LDA #KRA               ; Call NWSHP to add a new Krait ship to our local bubble
+ JSR NWSHP              ; of universe
+
+ LDA #6                 ; Run six iterations of the main flight loop so the
+ JSR RunDemoFlightLoop  ; Krait flies into the screen for a while and the Mamba
+                        ; starts to pull away from the middle of the screen
+
+ JSR SetupDemoShip      ; Set up the ship workspace for a new ship that's to our
+                        ; upper left and in front of us, pointing into the
+                        ; screen
+
+ LDA #6                 ; Set the ship's pitch counter to 6 to make it pitch
+ STA INWK+30            ; slightly in a positive direction (pitch down), so it
+                        ; starts diving gently towards the middle of the screen
+
+ ASL INWK+2             ; Flip the sign of x_sign so the ship is now to our
+                        ; upper right and in front of us
+
+ LDA #0                 ; Set x_lo = 0 so the ship is directly above us
+ STA INWK
+
+ LDA #70                ; Set z_lo = 70 so the ship starts out a little further
+ STA INWK+6             ; in front than the others
+
+ LDA #SH3               ; Call NWSHP to add a new Sidewinder ship to our local
+ JSR NWSHP              ; bubble of universe
+
+ LDA #5                 ; Run five iterations of the main flight loop
+ JSR RunDemoFlightLoop  ; Sidewinder flies into the screen for a while
+
+ LDA #$C0               ; Set the ship's pitch counter to -64 to make it pitch
+ STA K%+4*NIK%+30       ; strongly in a negative direction (pull up), so it
+                        ; starts flying towards the top-middle of the screen
+                        ;
+                        ; The ship will have been spawned in ship slot 4, so
+                        ; this directly updates byte #30 in the ship's data
+                        ; block in K%, where each data block is NIK% bytes long
+
+ LDA #11                ; Run 11 iterations of the main flight loop so all three
+ JSR RunDemoFlightLoop  ; ships pull away from the centre of the screen
+
+ LDA #50                ; Set the NMI timer so it starts counting down from 50,
+ STA nmiTimer           ; so the (nmiTimerHi nmiTimerLo) will tick up to one
+                        ; second after 50 VBlanks (which is one second on PAL
+                        ; systems or 0.83 seconds on NTSC)
+
+ LDA #0                 ; Set the NMI timer in (nmiTimerHi nmiTimerLo) to zero
+ STA nmiTimerLo         ; so we can use it to count how long the combat demo
+ STA nmiTimerHi         ; runs for (i.e. how long it takes for us to eliminate
+                        ; all three ships)
 
  JSR SIGHT_b3           ; Draw the laser crosshairs
 
- LSR allowInSystemJump
- JSR UpdateIconBar_b3
- LDA soundVar06
+ LSR allowInSystemJump  ; Clear bit 7 of allowInSystemJump to allow in-system
+                        ; jumps, so the call to UpdateIconBar displays the
+                        ; fast-forward icon (though choosing this in the demo
+                        ; doesn't do an in-system jump, but skips the rest of
+                        ; the demo instead)
+
+ JSR UpdateIconBar_b3   ; Update the icon bar to show the correct buttons for
+                        ; the weapons we have given our ship (i.e. missiles and
+                        ; E.C.M.)
+
+ LDA soundVar06         ; Set soundVar05 = soundVar06 ???
  STA soundVar05
- LDA #$10
- STA DELTA
- JMP MLOOP
+
+ LDA #16                ; Set our ship's speed to 16, so we start the demo by
+ STA DELTA              ; flying forwards
+
+ JMP MLOOP              ; Jump to MLOOP to run the main game loop for the
+                        ; duration of the combat demo
+                        ;
+                        ; Part 15 of the main flight loop contains a check to
+                        ; see whether the demo is enabled (which it is) and if
+                        ; so, whether we have destroyed all three ships, in
+                        ; which case it jumps to ShowScrollText with A = 1 to
+                        ; show the scroll text with the results of combat
+                        ; practice
 
 ; ******************************************************************************
 ;
 ;       Name: RunDemoFlightLoop
 ;       Type: Subroutine
 ;   Category: Combat demo
-;    Summary: ???
+;    Summary: Run a fixed number of iterations of the main flight loop for the
+;             combat demo
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The number of iterations of the main flight loop to run
 ;
 ; ******************************************************************************
 
 .RunDemoFlightLoop
 
- STA LASCT
+ STA LASCT              ; Store the number of iterations in LASCT so we can
+                        ; access it after running the main flight loop
 
 .dlop1
 
  JSR FlipDrawingPlane   ; Flip the drawing bitplane so we draw into the bitplane
                         ; that isn't visible on-screen
 
- JSR FlightLoop4To16
+ JSR FlightLoop4To16    ; Display in-flight messages, call parts 4 to 12 of the
+                        ; main flight loop for each ship slot, and finish off
+                        ; with parts 13 to 16 of the main flight loop
 
  JSR DrawBitplaneInNMI  ; Configure the NMI to send the drawing bitplane to the
                         ; PPU after drawing the box edges and setting the next
                         ; free tile number
 
- LDA iconBarChoice
+ LDA iconBarChoice      ; Set A to the number of the icon bar button that has
+                        ; been chosen from the icon bar (if any)
 
  JSR CheckForPause      ; If the Start button has been pressed then process the
                         ; pause menu and set the C flag, otherwise clear it
 
- DEC LASCT
+ DEC LASCT              ; Decrement the iteration counter in LASCT
 
- BNE dlop1
+ BNE dlop1              ; Loop back to run the main flight loop again until we
+                        ; have run it the required number of times
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: SetupDemoShip
 ;       Type: Subroutine
 ;   Category: Combat demo
-;    Summary: ???
+;    Summary: Set up the ship workspace for a new ship in the combat demo
 ;
 ; ******************************************************************************
 
 .SetupDemoShip
 
- JSR ZINF
- LDA #$60
- STA INWK+14
- ORA #$80
- STA INWK+22
- LDA #$FE
- STA INWK+32
- LDA #$20
+ JSR ZINF               ; Call ZINF to reset the INWK ship workspace and set up
+                        ; the orientation vectors so the ship is pointing
+                        ; towards us, out of the screen
+
+ LDA #96                ; Set byte #14 = nosev_z_hi = 96 = 1
+ STA INWK+14            ;
+                        ; So the ship is pointing into the screen
+
+ ORA #%10000000         ; Flip the sign of A to represent a -1
+
+ STA INWK+22            ; Set byte #22 = sidev_x_hi = -96 = -1
+                        ;
+                        ; So the ship doesn't get reflected in the x-axis by the
+                        ; flipping of the z-coordinate, but is instead rotated
+                        ; around the y-axis to point into the screen
+
+ LDA #%11111110         ; Set the ship's byte #32 (AI flag) to %11111110, so it
+ STA INWK+32            ; has no E.C.M., is hostile, highly aggressive and has
+                        ; AI enabled
+
+ LDA #32                ; Set the ship's byte #27 (speed) to 32
  STA INWK+27
- LDA #$80
+
+                        ; We now set the ship's coordinates to (-40, 40, 60) so
+                        ; it is to our upper left and in front of us
+
+ LDA #%10000000         ; Set (x_sign x_lo) = -40
  STA INWK+2
- LDA #$28
- STA XX1
- LDA #$28
+ LDA #40
+ STA INWK
+
+ LDA #40                ; Set y_lo = 40
  STA INWK+3
- LDA #$3C
+
+ LDA #60                ; Set z_lo = 60
  STA INWK+6
- RTS
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -17093,7 +17214,7 @@ ENDIF
 
  STA INWK+22            ; Set byte #22 = sidev_x_hi = 96 = 1
 
- ORA #128               ; Flip the sign of A to represent a -1
+ ORA #%10000000         ; Flip the sign of A to represent a -1
 
  STA INWK+14            ; Set byte #14 = nosev_z_hi = -96 = -1
 
@@ -18898,7 +19019,7 @@ ENDIF
  ORA controller2Select  ; dead3 to skip the demo and start the game straight
  BNE dead3              ; away
 
-                        ; If we get here then we start the demo
+                        ; If we get here then we start the combat demo
 
  LDA #0                 ; Store 0 on the stack, so this can be retrieved below
  PHA                    ; to pass to ShowScrollText, so the demo gets run after
@@ -18910,7 +19031,7 @@ ENDIF
  STA QQ11               ; Title screen to Demo)
 
  LDA autoPlayDemo       ; If autoPlayDemo is zero then the demo is not being
- BEQ dead1              ; autplayed, so jump to dead1 to skip the following
+ BEQ dead1              ; autoplayed, so jump to dead1 to skip the following
                         ; instruction
 
  JSR SetupDemoUniverse  ; The demo is running and is being autoplayed by the
