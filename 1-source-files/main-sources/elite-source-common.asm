@@ -115,6 +115,10 @@
  WY = 1                 ; The vertical spacing between points in the scroll text
                         ; grid for each character
 
+ W2Y = 3                ; The vertical line spacing in the scroll text (i.e. the
+                        ; difference in y-coordinate between the tops of the
+                        ; characters in adjacent lines)
+
  YPAL = 6 AND _PAL      ; A margin of 6 pixels that is applied to a number of
                         ; y-coordinates for the PAL version only (as the PAL
                         ; version has a taller screen than NTSC)

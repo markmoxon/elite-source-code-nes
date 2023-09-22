@@ -5633,16 +5633,22 @@ ENDIF
 ;
 ; Arguments:
 ;
-;   A                   If non-zero, show the scroll text but skip playing the
-;                       combat demo afterwards
+;   A                   The scroll text to show:
+;
+;                         * 0 = show the first scroll text and start combat
+;                               practice
+;
+;                         * 1 = show the second scroll text, including the time
+;                               taken for combat practice
+;
+;                         * 2 = show the credits scroll text
 ;
 ; ******************************************************************************
 
 .ShowScrollText
 
  PHA                    ; Store the value of A on the stack so we can retrieve
-                        ; it later to check whether we should start playing the
-                        ; combat demo after showing the scroll text
+                        ; it later to check which scroll text to show
 
  LDA QQ11               ; If this is not the space view, then jump to scro1 to
  BNE scro1              ; set up the space view for the demo
@@ -5876,16 +5882,26 @@ ENDIF
                         ; out all the patterns in the pattern buffers
 
  PLA                    ; Retrieve the argument that we stored on the stack at
- BNE scro7              ; the start of the routine, and if it is non-zero, jump
-                        ; to scro7 to skip playing the demo
+ BNE scro7              ; the start of the routine, which contains the scroll
+                        ; text that we should be showing and if it is non-zero,
+                        ; jump to scro7 to skip playing the combat part of the
+                        ; demo, as we are either showing the results of combat
+                        ; practice, or we are showing the credits
 
- LDX languageIndex      ; ???
- LDA scrollText1Lo,X
+                        ; If we get here then A = 0 and we are show the first
+                        ; scroll text before starting the combat demo
+
+ LDX languageIndex      ; Set (Y X) to the address of the text for the first
+ LDA scrollText1Lo,X    ; scroll text for the chosen language
  LDY scrollText1Hi,X
  TAX
 
- LDA #2
- JSR DrawScrollText
+ LDA #2                 ; Draw the first scroll text at scrollText1, which has
+ JSR DrawScrollText     ; six lines (so we set A = 2, as it needs to contain
+                        ; the number of lines minus 4)
+
+                        ; We are now ready to start the combat part of the
+                        ; combat demo
 
  LDA #$00               ; Set the view type in QQ11 to $00 (Space view with
  STA QQ11               ; no fonts loaded)
@@ -5902,72 +5918,196 @@ ENDIF
  LDA #60                ; Tell the NMI handler to send pattern entries from
  STA firstPatternTile   ; pattern 60 in the buffer
 
- JMP PlayDemo_b0
+ JMP PlayDemo_b0        ; Play the combat demo, returning from the subroutine
+                        ; using a tail call
 
 .scro7
 
- CMP #2
- BEQ scro14
- LDA #$30
- STA XX18+1
- STA XX18+2
- STA XX18+3
- LDA #$64
- STA nmiTimer
- SEC
+ CMP #2                 ; If we called this routine with A = 2 then jump to
+ BEQ scro14             ; scro14 to show the credits scroll text
+
+                        ; Otherwise A = 1, so we show the second scroll text,
+                        ; including the time taken for combat practice, so we
+                        ; start by calculating the time taken and storing the
+                        ; results in K5, so the GRIDSET routine can draw the
+                        ; correct characters for the time taken
+                        ;
+                        ; Specifically, the second scroll text in scrollText2
+                        ; expects the characters to be set as follows:
+                        ;
+                        ;   * $83 is the first digit of the minutes
+                        ;
+                        ;   * $82 is the second digit of the minutes
+                        ;
+                        ;   * $81 is the first digit of the seconds
+                        ;
+                        ;   * $80 is the second digit of the seconds
+                        ;
+                        ; while GRIDSET expect to find these values at the
+                        ; following locations:
+                        ;
+                        ;   * Character $83 refers to location K5+3
+                        ;
+                        ;   * Character $82 refers to location K5+2
+                        ;
+                        ;   * Character $81 refers to location K5+1
+                        ;
+                        ;   * Character $80 refers to location K5
+                        ;
+                        ; Finally, the number of seconds that we need to display
+                        ; is in (nmiTimerHi nmiTimerLo), so we need to convert
+                        ; this into minutes and seconds, and then set the values
+                        ; in K5 to the correct ASCII characters that represent
+                        ; the digits of this time
+
+ LDA #'0'               ; Set all the digits to 0 except the second digit of the
+ STA K5+1               ; seconds (as we will set this later)
+ STA K5+2
+ STA K5+3
+
+ LDA #100               ; Set nmiTimer = 100 so (nmiTimerHi nmiTimerLo) will not
+ STA nmiTimer           ; change during the following calculation (as nmiTimer
+                        ; has to tick down to zero for that to happen, so this
+                        ; gives us 100 VBlanks to complete the calculation
+                        ; before (nmiTimerHi nmiTimerLo) changes)
+
+                        ; We start with the first digit of the minute count (the
+                        ; "tens" digit)
+
+ SEC                    ; Set the C flag for the following subtraction
 
 .scro8
 
- LDA nmiTimerLo
- SBC #$58
+ LDA nmiTimerLo         ; Set (A X) = (nmiTimerHi nmiTimerLo) - $0258
+ SBC #$58               ;           = (nmiTimerHi nmiTimerLo) - 600
  TAX
  LDA nmiTimerHi
- SBC #2
- BCC scro9
- STA nmiTimerHi
- STX nmiTimerLo
- INC XX18+3
- BCS scro8
+ SBC #$02
+
+ BCC scro9              ; If the subtraction underflowed then we know that
+                        ; (nmiTimerHi nmiTimerLo) < 600, so jump to scro9 to
+                        ; move on to the next digit
+
+                        ; If we get here then (nmiTimerHi nmiTimerLo) >= 600,
+                        ; so the time in (nmiTimerHi nmiTimerLo) is at least
+                        ; ten minutes, so we increment the first digit of the
+                        ; minute count in K5+3, update the time in
+                        ; (nmiTimerHi nmiTimerLo) to (A X), and loop back to
+                        ; try subtracting another 10 minutes
+
+ STA nmiTimerHi         ; Set (nmiTimerHi nmiTimerLo) = (A X)
+ STX nmiTimerLo         ;
+                        ; So this updates (nmiTimerHi nmiTimerLo) with the new
+                        ; value, which is ten nimutes less than the original
+                        ; value
+
+ INC K5+3               ; Increment the first digit of the minute count in K5+3
+                        ; to bump it up from, say, "0" to "1"
+
+ BCS scro8              ; Loop back to scro8 to try subtracting another ten
+                        ; minutes (this BCS is effectively a JMP as we just
+                        ; passed through a BCC)
 
 .scro9
 
- SEC
- LDA nmiTimerLo
- SBC #$3C
+                        ; Now for the second digit of the minute count (the
+                        ; "ones" digit)
+
+ SEC                    ; Set the C flag for the following subtraction
+
+ LDA nmiTimerLo         ; Set (A X) = (nmiTimerHi nmiTimerLo) - $003C
+ SBC #$3C               ;           = (nmiTimerHi nmiTimerLo) - 60
  TAX
  LDA nmiTimerHi
- SBC #0
- BCC scro10
- STA nmiTimerHi
- STX nmiTimerLo
- INC XX18+2
- BCS scro9
+ SBC #$00
+
+ BCC scro10             ; If the subtraction underflowed then we know that
+                        ; (nmiTimerHi nmiTimerLo) < 60, so jump to scro10 to
+                        ; move on to the next digit
+
+                        ; If we get here then (nmiTimerHi nmiTimerLo) >= 60,
+                        ; so the time in (nmiTimerHi nmiTimerLo) is at least
+                        ; one minute, so we increment the second digit of the
+                        ; minute count in K5+2, update the time in
+                        ; (nmiTimerHi nmiTimerLo) to (A X), and loop back to
+                        ; try subtracting another minute
+
+ STA nmiTimerHi         ; Set (nmiTimerHi nmiTimerLo) = (A X)
+ STX nmiTimerLo         ;
+                        ; So this updates (nmiTimerHi nmiTimerLo) with the new
+                        ; value, which is one nimute less than the original
+                        ; value
+
+ INC K5+2               ; Increment the second digit of the minute count in K5+2
+                        ; to bump it up from, say, "0" to "1"
+
+ BCS scro9              ; Loop back to scro8 to try subtracting another minute
+                        ; (this BCS is effectively a JMP as we just passed
+                        ; through a BCC)
 
 .scro10
 
- SEC
- LDA nmiTimerLo
+                        ; Now for the first digit of the second count (the
+                        ; "tens" digit)
+                        ;
+                        ; By this point we know that (nmiTimerHi nmiTimerLo) is
+                        ; less than 60, so we can ignore the high byte as it is
+                        ; zero by now
+
+ SEC                    ; Set the C flag for the following subtraction
+
+ LDA nmiTimerLo         ; Set A to the number of seconds we want to display
 
 .scro11
 
- SBC #$0A
- BCC scro12
- INC XX18+1
- BCS scro11
+ SBC #10                ; Set A = nmiTimerLo - 10
+
+ BCC scro12             ; If the subtraction underflowed then we know that
+                        ; nmiTimerLo < 10, so jump to scro12 to move on to the
+                        ; final digit
+
+                        ; If we get here then nmiTimerLo >= 10, so the time in
+                        ; nmiTimerLo is at least ten seconds, so we increment
+                        ; the first digit of the seconds count in K5+1 and loop
+                        ; back to try subtracting another ten seconds
+
+ INC K5+1               ; Increment the first digit of the seconds count in K5+1
+                        ; to bump it up from, say, "0" to "1"
+
+ BCS scro11             ; Loop back to scro8 to try subtracting another ten
+                        ; seconds (this BCS is effectively a JMP as we just
+                        ; passed through a BCC)
 
 .scro12
 
- ADC #$3A
- STA K5
- LDX languageIndex
- LDA scrollText2Lo,X
+                        ; By this point A contains the number of seconds left
+                        ; after subtracting the final ten seconds, so it is
+                        ; ten less than the value we want to display
+
+ ADC #'0'+10            ; Set the character for the second digit of the seconds
+ STA K5                 ; count in K5 to the value in A, plus the ten that we
+                        ; subtracted before we jumped here, plus ASCII "0" to
+                        ; convert it into a character
+
+                        ; Now that the practice time is set up, we can show the
+                        ; second scroll text to report the results
+
+ LDX languageIndex      ; Set (Y X) to the address of the text for the second
+ LDA scrollText2Lo,X    ; scroll text for the chosen language
  LDY scrollText2Hi,X
  TAX
- LDA #6
+
+ LDA #6                 ; We are now going to draw the second scroll text
+                        ; at scrollText2, which has ten lines, so we set
+                        ; A = 6 to pass to DrawScrollText, as it needs to
+                        ; contain the number of lines minus 4
 
 .scro13
 
- JSR DrawScrollText
+ JSR DrawScrollText     ; Draw the scroll text at (Y X), which will either be
+                        ; the second scroll text at scrollText2 or the third
+                        ; credits scroll text at creditsText3, depending on how
+                        ; we get here
 
  JSR FadeToBlack_b3     ; Fade the screen to black over the next four VBlanks
 
@@ -5976,32 +6116,46 @@ ENDIF
 
 .scro14
 
- LDX languageIndex
- LDA creditsText1Lo,X
+                        ; If we get here then we show the credits scroll text,
+                        ; which is in three parts
+
+ LDX languageIndex      ; Set (Y X) to the address of the text for the first
+ LDA creditsText1Lo,X   ; credits scroll text for the chosen language
  LDY creditsText1Hi,X
  TAX
- LDA #6
- JSR DrawScrollText
+
+ LDA #6                 ; Draw the first credits scroll text at creditsText1,
+ JSR DrawScrollText     ; which has ten lines (so we set A = 6, as it needs to
+                        ; contain the number of lines minus 4)
 
  JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
                         ; next VBlank)
 
- LDX languageIndex
- LDA creditsText2Lo,X
+ LDX languageIndex      ; Set (Y X) to the address of the text for the second
+ LDA creditsText2Lo,X   ; credits scroll text for the chosen language
  LDY creditsText2Hi,X
  TAX
- LDA #5
- JSR DrawScrollText
+
+ LDA #5                 ; Draw the second credits scroll text at creditsText2,
+ JSR DrawScrollText     ; which has nine lines (so we set A = 5, as it needs to
+                        ; contain the number of lines minus 4)
 
  JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
                         ; next VBlank)
 
- LDX languageIndex
- LDA creditsText3Lo,X
+ LDX languageIndex      ; Set (Y X) to the address of the text for the third
+ LDA creditsText3Lo,X   ; credits scroll text for the chosen language
  LDY creditsText3Hi,X
  TAX
- LDA #3
- BNE scro13
+
+ LDA #3                 ; We are now going to draw the third credits scroll text
+                        ; at creditsText3, which has seven lines, so we set
+                        ; A = 3 to pass to DrawScrollText, as it needs to
+                        ; contain the number of lines minus 4
+
+ BNE scro13             ; Jump to scro13 to draw the third credits scroll text
+                        ; at creditsText3 (this BNE is effectively a JMP as A is
+                        ; never zero
 
 ; ******************************************************************************
 ;
@@ -6043,8 +6197,8 @@ ENDIF
 ;       Name: GRIDSET
 ;       Type: Subroutine
 ;   Category: Combat demo
-;    Summary: Populate the line coordinate tables with the lines for the scroll
-;             text
+;    Summary: Populate the line coordinate tables with the pixel lines for one
+;             21-character line of scroll text
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -6162,7 +6316,12 @@ ENDIF
 
 .grid2
 
- TAY
+                        ; If we get here then the addition overflowed when
+                        ; calculating A, so we need to add an extra $100 to A
+                        ; to get the correct address in LTDEF
+
+ TAY                    ; Copy A to Y, so Y points to the offset of the
+                        ; definition in the LTDEF table for the character in A
 
  LDA LTDEF+$100,Y       ; Call GRS1 to put the coordinates of the character's
  JSR GRS1               ; first line into the TB tables
@@ -6311,20 +6470,25 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: ResetGridLines
+;       Name: CalculateGridLines
 ;       Type: Subroutine
 ;   Category: Combat demo
-;    Summary: ???
+;    Summary: Reset the line coordinate tables and populate them with the
+;             characters for a specified scroll text
 ;
 ; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
-;   (Y X)               The contents of the scroll text to display
+;   (Y X)               The content of the scroll text to display
 ;
+; Returns:
+;
+;   INF(1 0)            The content of the scroll text to display
+; 
 ; ******************************************************************************
 
-.ResetGridLines
+.CalculateGridLines
 
  STX INF                ; Set INF(1 0) = (Y X)
  STY INF+1
@@ -6332,33 +6496,54 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDY #$F0
- LDA #0
+                        ; We start by clearing out the buffer at Y1TB
 
-.loop_CA881
+ LDY #240               ; The buffer contains 240 bytes, so set a byte counter
+                        ; in Y
 
- STA Y1TB-1,Y
- DEY
- BNE loop_CA881
- LDX #0
- STX XP
- LDA #$0F
- STA YP
- LDY #0
- STY XC
- LDA #4
- STA LASCT
+ LDA #0                 ; Set A = 0 so we can zero the buffer
 
-.loop_CA89A
+.resg1
 
- JSR GRIDSET+5
- LDA YP
- SEC
- SBC #3
- STA YP
- DEC LASCT
- BNE loop_CA89A
- RTS
+ STA Y1TB-1,Y           ; Zero the entry Y - 1 in Y1TB
+
+ DEY                    ; Decrement the byte counter
+
+ BNE resg1              ; Loop back until we have reset the whole Y1TB buffer
+
+                        ; We now populate the grid line buffer with the lines
+                        ; for the scroll text at INF(1 0)
+
+ LDX #0                 ; Set XP = 0, so the scroll text starts at x-coordinate
+ STX XP                 ; 0, on the left of the screen
+
+ LDA #5*W2Y             ; Set YP so the scroll text starts five lines of scroll
+ STA YP                 ; text down the screen (as W2Y is the height of each
+                        ; line in scroll text coordinates)
+
+ LDY #0                 ; Set XC = 0, so we start from the first character of
+ STY XC                 ; INF(1 0)
+
+ LDA #4                 ; Set LASCT = 4, so we process four lines of text in the
+ STA LASCT              ; following loop
+
+.resg2
+
+ JSR GRIDSET+5          ; Populate the line coordinate tables with the pixel
+                        ; lines for one 21-character line of scroll text,
+                        ; drawing the line at (0, YP)
+
+ LDA YP                 ; Set YP = YP - W2Y
+ SEC                    ;
+ SBC #W2Y               ; So YP moves down the screen by one line (as W2Y is the
+ STA YP                 ; height of each line in scroll text coordinates)
+
+ DEC LASCT              ; Decrement the loop counter in LASCT
+
+ BNE resg2              ; Loop back until we have processed LASCT lines of
+                        ; scroll text
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -6448,117 +6633,224 @@ ENDIF
 ;       Name: DrawScrollText
 ;       Type: Subroutine
 ;   Category: Combat demo
-;    Summary: ???
+;    Summary: Display a Star Wars scroll text
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The number of lines in the middle part of the scroll
+;                       text, which is the total number of text lines minus 4:
+;
+;                         * 2 for scrollText1 (6 lines)
+;
+;                         * 6 for scrollText2 and creditsText1 (10 lines)
+;
+;                         * 5 for creditsText2 (9 lines)
+;
+;                         * 3 for creditsText3 (7 lines)
 ;
 ; ******************************************************************************
 
 .DrawScrollText
 
- PHA
- JSR ResetGridLines
- LDA #$28
- STA visibleColour
- LDA #0
- STA allowInSystemJump
- LDA #2
+ PHA                    ; Store the number of lines in the scroll text on the
+                        ; stack so we can retrieve it later
+
+ JSR CalculateGridLines ; Reset the line coordinate tables and populate them
+                        ; with the characters for the scroll text at (Y X),
+                        ; setting INF(1 0) to the scroll text in the process
+
+ LDA #$28               ; Set the visible colour to orange ($28) so the scroll
+ STA visibleColour      ; text appears in this colour
+
+ LDA #0                 ; Clear bit 7 of allowInSystemJump to allow in-system
+ STA allowInSystemJump  ; jumps, so the call to UpdateIconBar displays the
+                        ; fast-forward icon (though choosing this in the demo
+                        ; doesn't do an in-system jump, but skips the rest of
+                        ; the demo instead)
+
+ LDA #2                 ; Set the scroll text speed to 2 (normal speed)
  STA scrollTextSpeed
- JSR UpdateIconBar_b3
+
+ JSR UpdateIconBar_b3   ; Update the icon bar to show the correct buttons for
+                        ; the scroll text
 
  LDA #40                ; Tell the NMI handler to send nametable entries from
  STA firstNametableTile ; tile 40 * 8 = 320 onwards (i.e. from the start of tile
                         ; row 10)
 
- LDA #$A0
- STA scrollProgress
- JSR DrawScrollFrames
- PLA
+                        ; We now draw the scroll text and move it up the screen,
+                        ; which we do in three stages
+                        ;
+                        ;   * Stage 1 moves the first few lines of the scroll
+                        ;     textup the screen until the first line reaches the
+                        ;     middle of the screen (i.e. just before it will
+                        ;     start to disappear into the distance); stage 1 is
+                        ;     always 81 frames long at normal speed
+                        ;
+                        ;  *  Stage 2 then draws the rest of the scroll text
+                        ;     on-screen while moving everything up the screen,
+                        ;     reusing lines in the line coordinate tables as
+                        ;     they disappear into the distance; stage 2 is
+                        ;     longer with longer scroll texts
+                        ;
+                        ;   * Stage 3 takes over when everything has been drawn,
+                        ;     and just concentrates on moving the scroll text
+                        ;     into the distance without drawing anything new;
+                        ;     stage 3 is always 48 frames long at normal speed
+                        ;
+                        ; We start with stage 1
+
+ LDA #160               ; Set the size of the scroll text to 160 to pass to
+ STA scrollProgress     ; DrawScrollFrames
+                        ;
+                        ; Thie equates to 81 frames at normal speed, with each
+                        ; frame taking scrollTextSpeed off the value of
+                        ; scrollProgress (i.e. subtracting 2), and only
+                        ; stopping when the subtraction goes past zero
+
+ JSR DrawScrollFrames   ; Draw the frames for stage 1, so the scroll text gets
+                        ; drawn and moves up the screen
+
+                        ; We now move on to stage 2
+                        ;
+                        ; Stage 2 takes longer for longer scroll texts, and its
+                        ; length is based on the value of A passed to the
+                        ; routine (which contains the total number of text lines
+                        ; minus 4)
+                        ;
+                        ; Specifically, stage 2 loop around A times, with each
+                        ; loop taking a scrollProgress of 23 (which is 12 frames
+                        ; at normal speed)
+                        ;
+                        ; Each loop draws an extra line of text in the scroll
+                        ; text, and scrolls up by one line of text
+
+ PLA                    ; Set LASCT to the value that we stored on the stack, so
+ STA LASCT              ; LASCT contains the 
+
+.dscr1
+
+ LDA #23                ; Set the size of the scroll text to 23 to pass to
+ STA scrollProgress     ; DrawScrollFrames
+
+ JSR ScrollTextUpScreen ; Scroll the scroll text up the screen by one full line
+                        ; of text
+
+ JSR GRIDSET            ; Call GRIDSET to populate the line coordinate tables at
+                        ; X1TB, Y1TB and X2TB (the TB tables) with the lines for
+                        ; the scroll text in INF(1 0) at offset XC
+
+ JSR DrawScrollFrames   ; Draw the frames for stage 2, so the scroll text gets
+                        ; drawn and moves up the screen by one text line
+
+ DEC LASCT              ; Loop back until we have done LASCT loops around the
+ BNE dscr1              ; above
+
+                        ; We now move on to stage 3
+                        ;
+                        ; Stage 3 loops around four times, with each loop taking
+                        ; a scrollProgress of 23 (which is 12 frames at normal
+                        ; speed), so that's a grand total of 48 frames at normal
+                        ; speed
+
+ LDA #4                 ; Set LASCT = 4 so we do the following loop four times
  STA LASCT
 
-.loop_CA93C
+.dscr2
 
- LDA #$17
- STA scrollProgress
- JSR ScrollTextUpScreen
- JSR GRIDSET
- JSR DrawScrollFrames
- DEC LASCT
- BNE loop_CA93C
- LDA #4
- STA LASCT
+ LDA #23                ; Set the size of the scroll text to 23 to pass to
+ STA scrollProgress     ; DrawScrollFrames
 
-.loop_CA954
+ JSR ScrollTextUpScreen ; Scroll the scroll text up the screen by one full line
+                        ; of text
 
- LDA #$17
- STA scrollProgress
- JSR ScrollTextUpScreen
- JSR DrawScrollFrames
- DEC LASCT
- BNE loop_CA954
- LDA #0
- STA scrollTextSpeed
+ JSR DrawScrollFrames   ; Draw the frames for stage 3, so the scroll text moves
+                        ; off-screen one text line at a time
 
- LDA #$2C               ; Set the visible colour to cyan ($2C)
+ DEC LASCT              ; Loop back until we have done LASCT loops around the
+ BNE dscr2              ; above
+
+                        ; The scroll text is now done and is no longer on-screen
+
+ LDA #0                 ; Reset the scroll speed to zero (though this isn't read
+ STA scrollTextSpeed    ; again, so this has no effect)
+
+ LDA #$2C               ; Set the visible colour back to cyan ($2C)
  STA visibleColour
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: DrawScrollFrames
 ;       Type: Subroutine
 ;   Category: Combat demo
-;    Summary: ???
+;    Summary: Draw a scroll text over multiple frames
 ;
 ; ******************************************************************************
 
 .DrawScrollFrames
 
- LDA controller1A
- BMI CA97F
- LDA iconBarChoice
- CMP #$0C
- BNE CA984
+ LDA controller1A       ; If the A button is being pressed on controller 1, jump
+ BMI scfr1              ; to scfr1 to speed up the scroll text
+
+ LDA iconBarChoice      ; If the fast-forward button has not been chosen on the
+ CMP #12                ; icon bar, jump to scfr2 to leave the speed as it is
+ BNE scfr2
 
  LDA #0                 ; Set iconBarChoice = 0 to clear the icon button choice
  STA iconBarChoice      ; so we don't process it again
 
-.CA97F
+.scfr1
 
- LDA #9
+                        ; If we get here then either the A button has been
+                        ; pressed or the fast-forward button has been chosen on
+                        ; the icon bar
+
+ LDA #9                 ; Set the scroll text speed to 9 (fast)
  STA scrollTextSpeed
 
-.CA984
+.scfr2
 
  JSR FlipDrawingPlane   ; Flip the drawing bitplane so we draw into the bitplane
                         ; that isn't visible on-screen
 
- JSR DrawScrollFrame
+ JSR DrawScrollFrame    ; Draw one frame of the scroll text
 
  JSR DrawBitplaneInNMI  ; Configure the NMI to send the drawing bitplane to the
                         ; PPU after drawing the box edges and setting the next
                         ; free tile number
 
- LDA iconBarChoice
- BEQ CA995
+ LDA iconBarChoice      ; If no buttons have been pressed on the icon bar while
+ BEQ scfr3              ; drawing the frame, jump to scfr3 to skip the following
+                        ; instruction
 
  JSR CheckForPause_b0   ; If the Start button has been pressed then process the
                         ; pause menu and set the C flag, otherwise clear it
 
-.CA995
+.scfr3
 
- LDA scrollProgress
- SEC
- SBC scrollTextSpeed
+ LDA scrollProgress     ; Set scrollProgress = scrollProgress - scrollTextSpeed
+ SEC                    ;
+ SBC scrollTextSpeed    ; So we update the scroll text progress
  STA scrollProgress
- BCS DrawScrollFrames
- RTS
+
+ BCS DrawScrollFrames   ; If the subtraction didn't underflow then the value of
+                        ; scrollProgress is still positive and there is more
+                        ; scrolling to be done, so loop back to the start of
+                        ; the routine to keep going
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: ScrollTextUpScreen
 ;       Type: Subroutine
 ;   Category: Combat demo
-;    Summary: ???
+;    Summary: Go through the line y-coordinate table at Y1TB, moving each line
+;             coordinate up the screen by W2Y (i.e. by one full line of text)
 ;
 ; ******************************************************************************
 
@@ -6567,199 +6859,291 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDY #$10
+                        ; We now work our way through every y-coordinate in the
+                        ; Y1TB table (so that's the y-coordinate of each line in
+                        ; the line coordinate tables), adding 51 to each of them
+                        ; to move the scroll text up the screen, and removing
+                        ; any lines that move off the top of the scroll text
 
-.loop_CA9B1
+ LDY #16                ; Set Y as a loop counter so we work our way through
+                        ; the y-coordinates in Y1TB, from entry 239 down to
+                        ; entry 224
 
- LDA Y1TB+223,Y
- BEQ CA9C1
- CLC
- ADC #$33
- BCC CA9BE
- LDA #0
- CLC
+.sups1
 
-.CA9BE
+ LDA Y1TB+223,Y         ; Set A to the Y-th y-coordinate in this section of the
+                        ; Y1TB table
 
- STA Y1TB+223,Y
+ BEQ sups3              ; If A = 0 then this entry is already empty, so jump to
+                        ; sups3 to move on to the next entry
 
-.CA9C1
+ CLC                    ; Otherwise this is a valid y-coordinate, so add W2Y to
+ ADC #(W2Y<<4 + W2Y)    ; the top nibble and W2Y to the bottom nibble, so we add
+                        ; W2Y to both of the y-coordinates stored in this entry
 
- DEY
- BNE loop_CA9B1
+ BCC sups2              ; If the addition overflowed, set A = 0 to remove this
+ LDA #0                 ; entry from the table, as the line no longer fits
+ CLC                    ; on-screen (we also clear the C flag, though this
+                        ; doesn't appear to be necessary)
 
- SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
-                        ; the PPU to use nametable 0 and pattern table 0
+.sups2
 
- LDY #$20
+ STA Y1TB+223,Y         ; Store the updated y-coordinate back in the Y1TB table
 
-.loop_CA9D3
+.sups3
 
- LDA Y1TB+191,Y
- BEQ CA9E3
- CLC
- ADC #$33
- BCC CA9E0
- LDA #0
- CLC
+ DEY                    ; Decrement the loop counter in Y
 
-.CA9E0
-
- STA Y1TB+191,Y
-
-.CA9E3
-
- DEY
- BNE loop_CA9D3
+ BNE sups1              ; Loop back until we have processed all the entries in
+                        ; this section of the Y1TB table
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDY #$20
+ LDY #32                ; Set Y as a loop counter so we work our way through
+                        ; the y-coordinates in Y1TB, from entry 223 down to
+                        ; entry 192
 
-.loop_CA9F5
+.sups4
 
- LDA Y1TB+159,Y
- BEQ CAA05
- CLC
- ADC #$33
- BCC CAA02
- LDA #0
- CLC
+ LDA Y1TB+191,Y         ; Set A to the Y-th y-coordinate in this section of the
+                        ; Y1TB table
 
-.CAA02
+ BEQ sups6              ; If A = 0 then this entry is already empty, so jump to
+                        ; sups6 to move on to the next entry
 
- STA Y1TB+159,Y
+ CLC                    ; Otherwise this is a valid y-coordinate, so add W2Y to
+ ADC #(W2Y<<4 + W2Y)    ; the top nibble and W2Y to the bottom nibble, so we add
+                        ; W2Y to both of the y-coordinates stored in this entry
 
-.CAA05
+ BCC sups5              ; If the addition overflowed, set A = 0 to remove this
+ LDA #0                 ; entry from the table, as the line no longer fits
+ CLC                    ; on-screen (we also clear the C flag, though this
+                        ; doesn't appear to be necessary)
 
- DEY
- BNE loop_CA9F5
+.sups5
 
- SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
-                        ; the PPU to use nametable 0 and pattern table 0
+ STA Y1TB+191,Y         ; Store the updated y-coordinate back in the Y1TB table
 
- LDY #$20
+.sups6
 
-.loop_CAA17
+ DEY                    ; Decrement the loop counter in Y
 
- LDA Y1TB+127,Y
- BEQ CAA27
- CLC
- ADC #$33
- BCC CAA24
- LDA #0
- CLC
-
-.CAA24
-
- STA Y1TB+127,Y
-
-.CAA27
-
- DEY
- BNE loop_CAA17
+ BNE sups4              ; Loop back until we have processed all the entries in
+                        ; this section of the Y1TB table
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDY #$20
+ LDY #32                ; Set Y as a loop counter so we work our way through
+                        ; the y-coordinates in Y1TB, from entry 191 down to
+                        ; entry 160
 
-.loop_CAA39
+.sups7
 
- LDA Y1TB+95,Y
- BEQ CAA49
- CLC
- ADC #$33
- BCC CAA46
- LDA #0
- CLC
+ LDA Y1TB+159,Y         ; Set A to the Y-th y-coordinate in this section of the
+                        ; Y1TB table
 
-.CAA46
+ BEQ sups9              ; If A = 0 then this entry is already empty, so jump to
+                        ; sups9 to move on to the next entry
 
- STA Y1TB+95,Y
+ CLC                    ; Otherwise this is a valid y-coordinate, so add W2Y to
+ ADC #(W2Y<<4 + W2Y)    ; the top nibble and W2Y to the bottom nibble, so we add
+                        ; W2Y to both of the y-coordinates stored in this entry
 
-.CAA49
+ BCC sups8              ; If the addition overflowed, set A = 0 to remove this
+ LDA #0                 ; entry from the table, as the line no longer fits
+ CLC                    ; on-screen (we also clear the C flag, though this
+                        ; doesn't appear to be necessary)
 
- DEY
- BNE loop_CAA39
+.sups8
 
- SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
-                        ; the PPU to use nametable 0 and pattern table 0
+ STA Y1TB+159,Y         ; Store the updated y-coordinate back in the Y1TB table
 
- LDY #$20
+.sups9
 
-.loop_CAA5B
+ DEY                    ; Decrement the loop counter in Y
 
- LDA Y1TB+63,Y
- BEQ CAA6B
- CLC
- ADC #$33
- BCC CAA68
- LDA #0
- CLC
-
-.CAA68
-
- STA Y1TB+63,Y
-
-.CAA6B
-
- DEY
- BNE loop_CAA5B
+ BNE sups7              ; Loop back until we have processed all the entries in
+                        ; this section of the Y1TB table
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDY #$20
+ LDY #32                ; Set Y as a loop counter so we work our way through
+                        ; the y-coordinates in Y1TB, from entry 159 down to
+                        ; entry 128
 
-.loop_CAA7D
+.sups10
 
- LDA Y1TB+31,Y
- BEQ CAA8D
- CLC
- ADC #$33
- BCC CAA8A
- LDA #0
- CLC
+ LDA Y1TB+127,Y         ; Set A to the Y-th y-coordinate in this section of the
+                        ; Y1TB table
 
-.CAA8A
+ BEQ sups12             ; If A = 0 then this entry is already empty, so jump to
+                        ; sups12 to move on to the next entry
 
- STA Y1TB+31,Y
+ CLC                    ; Otherwise this is a valid y-coordinate, so add W2Y to
+ ADC #(W2Y<<4 + W2Y)    ; the top nibble and W2Y to the bottom nibble, so we add
+                        ; W2Y to both of the y-coordinates stored in this entry
 
-.CAA8D
+ BCC sups11             ; If the addition overflowed, set A = 0 to remove this
+ LDA #0                 ; entry from the table, as the line no longer fits
+ CLC                    ; on-screen (we also clear the C flag, though this
+                        ; doesn't appear to be necessary)
 
- DEY
- BNE loop_CAA7D
+.sups11
 
- SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
-                        ; the PPU to use nametable 0 and pattern table 0
+ STA Y1TB+127,Y         ; Store the updated y-coordinate back in the Y1TB table
 
- LDY #$20
+.sups12
 
-.loop_CAA9F
+ DEY                    ; Decrement the loop counter in Y
 
- LDA Y1TB-1,Y
- BEQ CAAAF
- CLC
- ADC #$33
- BCC CAAAC
- LDA #0
- CLC
-
-.CAAAC
-
- STA Y1TB-1,Y
-
-.CAAAF
-
- DEY
- BNE loop_CAA9F
+ BNE sups10             ; Loop back until we have processed all the entries in
+                        ; this section of the Y1TB table
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- RTS
+ LDY #32                ; Set Y as a loop counter so we work our way through
+                        ; the y-coordinates in Y1TB, from entry 127 down to
+                        ; entry 96
+
+.sups13
+
+ LDA Y1TB+95,Y          ; Set A to the Y-th y-coordinate in this section of the
+                        ; Y1TB table
+
+ BEQ sups15             ; If A = 0 then this entry is already empty, so jump to
+                        ; sups15 to move on to the next entry
+
+ CLC                    ; Otherwise this is a valid y-coordinate, so add W2Y to
+ ADC #(W2Y<<4 + W2Y)    ; the top nibble and W2Y to the bottom nibble, so we add
+                        ; W2Y to both of the y-coordinates stored in this entry
+
+ BCC sups14             ; If the addition overflowed, set A = 0 to remove this
+ LDA #0                 ; entry from the table, as the line no longer fits
+ CLC                    ; on-screen (we also clear the C flag, though this
+                        ; doesn't appear to be necessary)
+.sups14
+
+ STA Y1TB+95,Y          ; Store the updated y-coordinate back in the Y1TB table
+
+.sups15
+
+ DEY                    ; Decrement the loop counter in Y
+
+ BNE sups13             ; Loop back until we have processed all the entries in
+                        ; this section of the Y1TB table
+
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
+
+ LDY #32                ; Set Y as a loop counter so we work our way through
+                        ; the y-coordinates in Y1TB, from entry 95 down to
+                        ; entry 64
+
+.sups16
+
+ LDA Y1TB+63,Y          ; Set A to the Y-th y-coordinate in this section of the
+                        ; Y1TB table
+
+ BEQ sups18             ; If A = 0 then this entry is already empty, so jump to
+                        ; sups18 to move on to the next entry
+
+ CLC                    ; Otherwise this is a valid y-coordinate, so add W2Y to
+ ADC #(W2Y<<4 + W2Y)    ; the top nibble and W2Y to the bottom nibble, so we add
+                        ; W2Y to both of the y-coordinates stored in this entry
+
+ BCC sups17             ; If the addition overflowed, set A = 0 to remove this
+ LDA #0                 ; entry from the table, as the line no longer fits
+ CLC                    ; on-screen (we also clear the C flag, though this
+                        ; doesn't appear to be necessary)
+.sups17
+
+ STA Y1TB+63,Y          ; Store the updated y-coordinate back in the Y1TB table
+
+.sups18
+
+ DEY                    ; Decrement the loop counter in Y
+
+ BNE sups16             ; Loop back until we have processed all the entries in
+                        ; this section of the Y1TB table
+
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
+
+ LDY #32                ; Set Y as a loop counter so we work our way through
+                        ; the y-coordinates in Y1TB, from entry 63 down to
+                        ; entry 32
+
+.sups19
+
+ LDA Y1TB+31,Y          ; Set A to the Y-th y-coordinate in this section of the
+                        ; Y1TB table
+
+ BEQ sups21             ; If A = 0 then this entry is already empty, so jump to
+                        ; sups21 to move on to the next entry
+
+ CLC                    ; Otherwise this is a valid y-coordinate, so add W2Y to
+ ADC #(W2Y<<4 + W2Y)    ; the top nibble and W2Y to the bottom nibble, so we add
+                        ; W2Y to both of the y-coordinates stored in this entry
+
+ BCC sups20             ; If the addition overflowed, set A = 0 to remove this
+ LDA #0                 ; entry from the table, as the line no longer fits
+ CLC                    ; on-screen (we also clear the C flag, though this
+                        ; doesn't appear to be necessary)
+
+.sups20
+
+ STA Y1TB+31,Y          ; Store the updated y-coordinate back in the Y1TB table
+
+.sups21
+
+ DEY                    ; Decrement the loop counter in Y
+
+ BNE sups19             ; Loop back until we have processed all the entries in
+                        ; this section of the Y1TB table
+
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
+
+ LDY #32                ; Set Y as a loop counter so we work our way through
+                        ; the y-coordinates in Y1TB, from entry 31 down to
+                        ; entry 0
+
+.sups22
+
+ LDA Y1TB-1,Y           ; Set A to the Y-th y-coordinate in this section of the
+                        ; Y1TB table
+
+ BEQ sups24             ; If A = 0 then this entry is already empty, so jump to
+                        ; sups24 to move on to the next entry
+
+ CLC                    ; Otherwise this is a valid y-coordinate, so add W2Y to
+ ADC #(W2Y<<4 + W2Y)    ; the top nibble and W2Y to the bottom nibble, so we add
+                        ; W2Y to both of the y-coordinates stored in this entry
+
+ BCC sups23             ; If the addition overflowed, set A = 0 to remove this
+ LDA #0                 ; entry from the table, as the line no longer fits
+ CLC                    ; on-screen (we also clear the C flag, though this
+                        ; doesn't appear to be necessary)
+
+.sups23
+
+ STA Y1TB-1,Y           ; Store the updated y-coordinate back in the Y1TB table
+
+.sups24
+
+ DEY                    ; Decrement the loop counter in Y
+
+ BNE sups22             ; Loop back until we have processed all the entries in
+                        ; this section of the Y1TB table
+
+ SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
+                        ; the PPU to use nametable 0 and pattern table 0
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -6812,7 +7196,7 @@ ENDIF
 ;       Name: DrawScrollFrame
 ;       Type: Subroutine
 ;   Category: Combat demo
-;    Summary: ???
+;    Summary: Draw one frame of the scroll text
 ;
 ; ******************************************************************************
 
