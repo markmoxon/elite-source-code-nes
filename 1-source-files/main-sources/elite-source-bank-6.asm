@@ -6550,83 +6550,152 @@ ENDIF
 ;       Name: GetScrollDivisions
 ;       Type: Subroutine
 ;   Category: Combat demo
-;    Summary: ???
+;    Summary: Set up the division calculations for the scroll text
 ;
 ; ******************************************************************************
 
 .GetScrollDivisions
 
- LDY #$0F
+ LDY #15                ; We are going to populate 16 bytes in the buffer at BUF
+                        ; and another 16 in the buffer at BUF+16, so set a loop
+                        ; counter in Y
 
-.CA8AE
+.sdiv1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- STY T
- TYA
+ STY T                  ; Store the loop counter in T (though we don't read this
+                        ; again, so this has no effect)
+
+ TYA                    ; Set R = Y * 2
  ASL A
  STA R
- ASL A
+
+ ASL A                  ; Set S = Y * 4
  STA S
- ASL A
- ADC #$1F
- SBC scrollProgress
- STA BUF+16,Y
- BPL CA8F8
- STA Q
- LDA scrollProgress
+
+ ASL A                  ; Set the Y-th entry in BUF+16 to the following:
+ ADC #31                ;
+ SBC scrollProgress     ;   Y * 8 + 31 - scrollProgress
+ STA BUF+16,Y           ;
+                        ; We know the C flag is clear because Y is a maximum of
+                        ; 15 so the three ASL A instructions will shift zeroes
+                        ; into the C flag each time
+
+ BPL sdiv4              ; If A < 128, jump to sdiv4 to set Q and A as follows,
+                        ; but with both scaled up as far as possible to make the
+                        ; calculation more accurate
+
+ STA Q                  ; Set Q = A
+
+ LDA scrollProgress     ; Set A = 37 + scrollProgress / 4 - R
+ LSR A                  ;       = 37 + scrollProgress / 4 - Y * 2
  LSR A
- LSR A
- ADC #$25
+ ADC #37
  SBC R
 
-.CA8DA
+.sdiv2
 
- CMP Q
- BCS CA8EF
+ CMP Q                  ; If A >= Q, jump to sdiv3 to store 255 as the result
+ BCS sdiv3              ; in the Y-th byte of BUF
 
  JSR LL28               ; Call LL28 to calculate:
                         ;
                         ;   R = 256 * A / Q
+                        ;
+                        ;     = 37 - Y * 2 + scrollProgress / 4
+                        ;       -------------------------------
+                        ;         31 + Y * 8 - scrollProgress
 
- LSR R
- LDA #$48
+ LSR R                  ; Set R = R / 2
+                        ;
+                        ;     =  37 - Y * 2 + scrollProgress / 4
+                        ;       ---------------------------------
+                        ;       2 * (31 + Y * 8 - scrollProgress)
+
+ LDA #72                ; Set the Y-th entry in BUF to 72 + R
  CLC
  ADC R
  STA BUF,Y
- DEY
- BPL CA8AE
- RTS
 
-.CA8EF
+ DEY                    ; Decrement the loop counter in Y
 
- LDA #$FF
+ BPL sdiv1              ; Loop back until we have calculated all 16 values
+
+ RTS                    ; Return from the subroutine
+
+.sdiv3
+
+ LDA #255               ; Set the Y-th entry in BUF to 255
  STA BUF,Y
- DEY
- BPL CA8AE
- RTS
 
-.CA8F8
+ DEY                    ; Decrement the loop counter in Y
 
- ASL A
- BPL CA908
- STA Q
- LDA scrollProgress
+ BPL sdiv1              ; Loop back until we have calculated all 16 values
+
+ RTS                    ; Return from the subroutine
+
+.sdiv4
+
+ ASL A                  ; Set A = A * 2
+
+ BPL sdiv5              ; If A < 128, jump to sdiv5
+
+ STA Q                  ; Set Q = A * 2
+
+ LDA scrollProgress     ; Set A = 73 + scrollProgress / 2 - Y * 4
  LSR A
- ADC #$49
+ ADC #73
  SBC S
- JMP CA8DA
 
-.CA908
+                        ; So we have:
+                        ;
+                        ;   Q = A * 2
+                        ;
+                        ;   A = 73 + scrollProgress / 2 - Y * 4
+                        ;
+                        ; So when we divide them at sdiv2 above, this is the
+                        ; same as having:
+                        ;
+                        ;   Q = A
+                        ;
+                        ;   A = 37 + scrollProgress / 4 - Y * 2
+                        ;
+                        ; but with both the numerator and denominator scaled up
+                        ; by the same factor of 2
 
- ASL A
+ JMP sdiv2              ; Jump to sdiv2 to continue the calculation with these
+                        ; scaled up values of Q and A
+
+.sdiv5
+
+ ASL A                  ; Set Q = A * 4
  STA Q
- LDA scrollProgress
- ADC #$90
+
+ LDA scrollProgress     ; Set A = 144 + scrollProgress - Y * 2
+ ADC #144
  SBC S
  SBC S
- JMP CA8DA
+
+                        ; So we have:
+                        ;
+                        ;   Q = A * 4
+                        ;
+                        ;   A = 144 + scrollProgress - Y * 2
+                        ;
+                        ; So when we divide them at sdiv2 above, this is the
+                        ; same as having:
+                        ;
+                        ;   Q = A
+                        ;
+                        ;   A = 37 + scrollProgress / 4 - Y * 2
+                        ;
+                        ; but with both the numerator and denominator scaled up
+                        ; by the same factor of 4
+
+ JMP sdiv2              ; Jump to sdiv2 to continue the calculation with these
+                        ; scaled up values of Q and A
 
 ; ******************************************************************************
 ;
@@ -7150,46 +7219,68 @@ ENDIF
 ;       Name: ProjectScrollText
 ;       Type: Subroutine
 ;   Category: Combat demo
-;    Summary: ???
+;    Summary: Project a scroll text coordinate onto the screen
+;
+; ------------------------------------------------------------------------------
+;
+; Calculate the following:
+;
+;   (A X) = 128 + 256 * (A - 32) / Q
+;
+; Arguments:
+;
+;   A                   xxx
+;
+; Other entry points:
+;
+;   RTS10               Contains an RTS
 ;
 ; ******************************************************************************
 
 .ProjectScrollText
 
- SEC
- SBC #$20
- BCS CAAD7
- EOR #$FF
+ SEC                    ; Set A = A - 32
+ SBC #32
+
+ BCS proj1              ; If the subtraction didn't underflow then the result is
+                        ; positive, so jump to proj1
+
+ EOR #$FF               ; Negate A using two's complement, so A is positive
  ADC #1
 
  JSR LL28               ; Call LL28 to calculate:
                         ;
                         ;   R = 256 * A / Q
 
- LDA #$80
- SEC
- SBC R
+ LDA #128               ; Set (A X) = 128 - R
+ SEC                    ;
+ SBC R                  ; Starting with the low bytes
  TAX
- LDA #0
- SBC #0
- RTS
 
-.CAAD7
+ LDA #0                 ; And then the high bytes
+ SBC #0                 ;
+                        ; This gives us the result we want, as 128 + R is the
+                        ; same as 128 - (-R)
+
+ RTS                    ; Return from the subroutine
+
+.proj1
 
  JSR LL28               ; Call LL28 to calculate:
                         ;
                         ;   R = 256 * A / Q
 
- LDA R
- CLC
- ADC #$80
+ LDA R                  ; Set (A X) = R + 128
+ CLC                    ;
+ ADC #128               ; Starting with the low bytes
  TAX
- LDA #0
+
+ LDA #0                 ; And then the high bytes
  ADC #0
 
-.loop_CAAE4
+.RTS10
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -7202,71 +7293,109 @@ ENDIF
 
 .DrawScrollFrame
 
- JSR GetScrollDivisions
- LDY #$FF
+ JSR GetScrollDivisions ; Set up the division calculations for the scroll text
+                        ; and store then in the 16 bytes at BUF and the 16 bytes
+                        ; at BUF+16
 
-.CAAEA
+ LDY #$FF               ; We are about to loop through the 240 bytes in the line
+                        ; coordinate tables, so set an coordinate counter in Y
+                        ; to start from 0, so set Y = -1 so the INY instruction
+                        ; at the start of the loop sets Y to 0 for the first
+                        ; coordinate
+
+.drfr1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- INY
- CPY #$F0
- BEQ loop_CAAE4
+ INY                    ; Increment the coordinate counter in Y
+
+ CPY #240               ; If Y = 240 then we have worked our way through all the
+ BEQ RTS10              ; line coordinates, so jump to RTS10 to return from the
+                        ; subroutine
+
  LDA Y1TB,Y
- BEQ CAAEA
+ BEQ drfr1
+
  AND #$0F
  STA Y1
+
  TAX
+
  ASL A
  ASL A
  ASL A
  SEC
  SBC scrollProgress
- BCC CAAEA
+
+ BCC drfr1
+
  STY YP
+
  LDA BUF+16,X
  STA Q
+
  LDA X1TB,Y
- JSR ProjectScrollText
- STX XX15
+
+ JSR ProjectScrollText  ; (A X) = 128 + 256 * (A - 32) / Q
+
+ STX X1
+
  LDX Y1
  STA Y1
+
  LDA BUF,X
  STA X2
+
  LDA #0
  STA Y2
+
  LDA Y1TB,Y
  LSR A
  LSR A
  LSR A
  LSR A
  STA XX12+1
+
  TAX
+
  ASL A
  ASL A
  ASL A
  SEC
  SBC scrollProgress
- BCC CAAEA
+
+ BCC drfr1
+
  LDA BUF,X
  STA XX12
+
  LDA #0
+
  LDX XX12+1
  STA XX12+1
+
  LDA BUF+16,X
+
  STA Q
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDA X2TB,Y
- JSR ProjectScrollText
+
+ JSR ProjectScrollText  ; (A X) = 128 + 256 * (A - 32) / Q
+
  STX XX15+4
+
  STA XX15+5
- JSR LOIN_b1
+
+ JSR LOIN_b1            ; Draw a line from (X1, Y1) to (X2, Y2), clipped to fit
+                        ; on the screen
+
  LDY YP
- JMP CAAEA
+
+ JMP drfr1              ; Jump back to drfr1 to process the next coordinate
 
 ; ******************************************************************************
 ;
