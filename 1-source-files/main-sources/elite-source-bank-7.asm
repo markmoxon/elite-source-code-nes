@@ -464,7 +464,7 @@ ENDIF
  DEC runningSetBank     ; Decrement runningSetBank from 0 to $FF to denote that
                         ; we are in the process of switching ROM banks
                         ;
-                        ; This will disable the call to PlayMusic in the NMI
+                        ; This will disable the call to MakeNoises in the NMI
                         ; handler, which instead will increment runningSetBank
                         ; each time it is called
 
@@ -484,9 +484,9 @@ ENDIF
 
  BNE sban1              ; If runningSetBank is non-zero, then this means the NMI
                         ; handler was called while we were switching the ROM
-                        ; bank, in which case PlayMusic won't have been called
+                        ; bank, in which case MakeNoises won't have been called
                         ; in the NMI handler, so jump to sban1 to call the
-                        ; PlayMusic routine now instead
+                        ; MakeNoises routine now instead
 
  RTS                    ; Return from the subroutine
 
@@ -503,8 +503,8 @@ ENDIF
  TYA
  PHA
 
- JSR PlayMusic_b6       ; Call the PlayMusic routine to play the background
-                        ; music
+ JSR MakeNoises_b6      ; Call the MakeNoises routine to make the current noises
+                        ; (sound and music)
 
  PLA                    ; Retrieve X and Y from the stack
  TAY
@@ -3399,10 +3399,10 @@ ENDIF
 
  LDA runningSetBank     ; If the NMI handler was called from within the SetBank
  BNE inmi2              ; routine, then runningSetBank will be $FF, so jump to
-                        ; inmi2 to skip the call to PlayMusic
+                        ; inmi2 to skip the call to MakeNoises
 
- JSR PlayMusic_b6       ; Call the PlayMusic routine to play the background
-                        ; music
+ JSR MakeNoises_b6      ; Call the MakeNoises routine to make the current noises
+                        ; (sound and music)
 
  LDA nmiStoreA          ; Restore the values of A, X and Y that we stored at
  LDX nmiStoreX          ; the start of the NMI handler
@@ -5706,10 +5706,11 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: PlayMusicAtVBlank
+;       Name: MakeNoisesAtVBlank
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Wait for the next VBlank and play the background music
+;    Summary: Wait for the next VBlank and make the current noises (sound and
+;             music)
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -5719,15 +5720,15 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.PlayMusicAtVBlank
+.MakeNoisesAtVBlank
 
  TXA                    ; Store X on the stack, so we can retrieve it below
  PHA
 
  JSR WaitForVBlank      ; Wait for the next VBlank to pass
 
- JSR PlayMusic_b6       ; Call the PlayMusic routine to play the background
-                        ; music
+ JSR MakeNoises_b6      ; Call the MakeNoises routine to make the current noises
+                        ; (sound and music)
 
  PLA                    ; Restore X from the stack so it is preserved
  TAX
@@ -11346,9 +11347,9 @@ ENDIF
  LDA #0                 ; Set the priority for channel X to zero to stop the
  STA channelPriority,X  ; channel from making any more sounds
 
- LDA #26                ; Set A = 26 to pass to MakeNoise below ???
+ LDA #26                ; Set A = 26 to pass to FlushChannel below ???
 
- BNE MakeNoise_b7       ; Jump to MakeNoise with A = 26 to ??? (this BNE is
+ BNE FlushChannel_b7    ; Jump to FlushChannel with A = 26 to ??? (this BNE is
                         ; effectively a JMP as A is never zero)
 
 ; ******************************************************************************
@@ -11385,14 +11386,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: HyperspaceSound
+;       Name: MakeHyperSound
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Make the hyperspace sound
 ;
 ; ******************************************************************************
 
-.HyperspaceSound
+.MakeHyperSound
 
  JSR FlushSoundChannels ; Flush all the sound channels
 
@@ -11429,7 +11430,7 @@ ENDIF
 ; 18 = pulse laser firing (main flight loop 3)
 ; 19 = escape pod launching (ESCAPE)
 ; 20 = ???
-; 21 = hyperspace (HyperspaceSound)
+; 21 = hyperspace (MakeHyperSound)
 ; 22 = galactic hyperspace (Ghy)
 ; 23 = third launch sound (LAUN)
 ;    = Ship explosion at a distance of z_hi >= 8 (EXNO2)
@@ -11481,23 +11482,23 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- TYA                    ; Set A to the sound number in Y to pass to MakeNoise
+ TYA                    ; Set A to the sound number in Y to pass to FlushChannel
 
-                        ; Fall through into MakeNoise_b7 to call the MakeNoise
-                        ; routine
+                        ; Fall through into FlushChannel_b7 to call the
+                        ; FlushChannel routine
 
 ; ******************************************************************************
 ;
-;       Name: MakeNoise_b7
+;       Name: FlushChannel_b7
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Call the MakeNoise routine
+;    Summary: Call the FlushChannel routine
 ;
 ; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
-;   A                   The number of the sound to make
+;   A                   The number of the channel to flush
 ;
 ; Other entry points:
 ;
@@ -11505,9 +11506,9 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.MakeNoise_b7
+.FlushChannel_b7
 
- JSR MakeNoise_b6       ; Call MakeNoise to make the noise specified in A
+ JSR FlushChannel_b6    ; Call FlushChannel to flush the channel specified in A
 
 .RTS8
 
@@ -11927,14 +11928,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: PlayMusic_b6
+;       Name: MakeNoises_b6
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Call the PlayMusic routine in ROM bank 6
+;    Summary: Call the MakeNoises routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.PlayMusic_b6
+.MakeNoises_b6
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -11942,7 +11943,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR PlayMusic          ; Call PlayMusic, now that it is paged into memory
+ JSR MakeNoises         ; Call MakeNoises, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -12007,14 +12008,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: MakeNoise_b6
+;       Name: FlushChannel_b6
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Call the MakeNoise routine in ROM bank 6
+;    Summary: Call the FlushChannel routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.MakeNoise_b6
+.FlushChannel_b6
 
  STA ASAV               ; Store the value of A so we can retrieve it below
 
@@ -12029,7 +12030,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR MakeNoise          ; Call MakeNoise, now that it is paged into memory
+ JSR FlushChannel       ; Call FlushChannel, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -12039,7 +12040,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JMP MakeNoise          ; Call MakeNoise, which is already paged into memory,
+ JMP FlushChannel       ; Call FlushChannel, which is already paged into memory,
                         ; and return from the subroutine using a tail call
 
 ; ******************************************************************************
@@ -12065,7 +12066,7 @@ ENDIF
 ;       Name: ResetMusic
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Reset the current tune to 0 and stop the music
+;    Summary: Reset the current tune to 0 and stop all noises (music and sound)
 ;
 ; ******************************************************************************
 
@@ -12075,18 +12076,19 @@ ENDIF
  STA newTune            ; selected (as bits 0-6 are zero) and we are not in the
                         ; process of changing tunes (as bit 7 is clear)
 
-                        ; Fall through into StopMusic_b6 to stop the music
+                        ; Fall through into StopNoises_b6 to stop all noises
+                        ; (music and sound)
 
 ; ******************************************************************************
 ;
-;       Name: StopMusic_b6
+;       Name: StopNoises_b6
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Call the StopMusic routine in ROM bank 6
+;    Summary: Call the StopNoises routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.StopMusic_b6
+.StopNoises_b6
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -12094,7 +12096,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR StopMusicS         ; Call StopMusic via StopMusicS, now that it is paged
+ JSR StopNoisesS        ; Call StopNoises via StopNoisesS, now that it is paged
                         ; into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and

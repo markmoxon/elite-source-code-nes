@@ -2120,7 +2120,8 @@ ENDIF
 
  BNE svip12             ; Loop back until we have sent all 16 zeroes to the PPU
 
- JSR PlayMusicAtVBlank  ; Wait for the next VBlank and play the background music
+ JSR MakeNoisesAtVBlank ; Wait for the next VBlank and current noises (sound and
+                        ; music)
 
  LDX #0                 ; Configure bitplane 0 to be sent to the PPU in the NMI,
  JSR SendBitplaneToPPU  ; so the patterns and nametables will be sent to the PPU
@@ -2140,7 +2141,8 @@ ENDIF
 
  JSR SetDrawingBitplane ; Set the drawing bitplane to bitplane 0
 
- JSR PlayMusicAtVBlank  ; Wait for the next VBlank and play the background music
+ JSR MakeNoisesAtVBlank ; Wait for the next VBlank and current noises (sound and
+                        ; music)
 
  LDA QQ11               ; Set the old view type in QQ11a to the new view type in
  STA QQ11a              ; QQ11, to denote that we have now changed view to the
@@ -2439,7 +2441,8 @@ ENDIF
                         ; PPU, so we play the background music and repeat the
                         ; above
 
- JSR PlayMusicAtVBlank  ; Wait for the next VBlank and play the background music
+ JSR MakeNoisesAtVBlank ; Wait for the next VBlank and current noises (sound and
+                        ; music)
 
  JMP SendDataNowToPPU   ; Loop back to keep sending data to the PPU
 
@@ -2450,8 +2453,9 @@ ENDIF
 
 .sdat2
 
- JMP PlayMusicAtVBlank  ; Wait for the next VBlank and play the background
-                        ; music, returning from the subroutine using a tail call
+ JMP MakeNoisesAtVBlank ; Wait for the next VBlank and current noises (sound and
+                        ; music), returning from the subroutine using a tail
+                        ; call
 
 ; ******************************************************************************
 ;

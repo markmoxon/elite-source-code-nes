@@ -358,10 +358,10 @@ ENDIF
 
 IF NOT(_BANK = 6)
 
- StopMusicS         = $8012
+ StopNoisesS        = $8012
  ChooseMusic        = $8021
- PlayMusic          = $811E
- MakeNoise          = $89D1
+ MakeNoises         = $811E
+ FlushChannel       = $89D1
  DrawCmdrImage      = $A082
  DrawSpriteImage    = $A0F8
  PauseGame          = $A166
@@ -1613,11 +1613,11 @@ ENDIF
                         ;                ROM banks
                         ;
                         ; This is used to control whether the NMI handler calls
-                        ; the PlayMusic routine to play the background music, as
-                        ; this can only happen if we are not in the middle of
-                        ; switching ROM banks (if we are, then PlayMusic is
-                        ; called once the bank-switching is done - see the
-                        ; SetBank routine for details)
+                        ; the MakeNoises routine to make the current noises
+                        ; (sound and music), as this can only happen if we are
+                        ; not in the middle of switching ROM banks (if we are,
+                        ; then MakeNoises is called once the bank-switching is
+                        ; done - see the SetBank routine for details)
 
 .characterEnd
 
