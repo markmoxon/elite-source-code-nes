@@ -15399,7 +15399,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: LOIN_b1
+;       Name: CLIP_b1
 ;       Type: Subroutine
 ;   Category: Drawing lines
 ;    Summary: Call the CLIP routine in ROM bank 1, drawing the clipped line if
@@ -15407,7 +15407,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.LOIN_b1
+.CLIP_b1
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
