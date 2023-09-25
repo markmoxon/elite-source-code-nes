@@ -365,7 +365,7 @@ IF NOT(_BANK = 6)
  StopNoisesS        = $8012
  ChooseMusic        = $8021
  MakeNoises         = $811E
- FlushChannel       = $89D1
+ MakeNoise          = $89D1
  DrawCmdrImage      = $A082
  DrawSpriteImage    = $A0F8
  PauseGame          = $A166
@@ -3941,7 +3941,9 @@ ORG $0200
 
 .scrollProgress
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Keeps track of the progress of the demo scroll text,
+                        ; starting from zero and increasing as the text scrolls
+                        ; up the screen
 
 .decimalPoint
 

@@ -12614,10 +12614,10 @@ ENDIF
  LDA #0                 ; Set the priority for channel X to zero to stop the
  STA channelPriority,X  ; channel from making any more sounds
 
- LDA #26                ; Set A = 26 to pass to FlushChannel below ???
+ LDA #26                ; Set A = 26 to pass to MakeNoise below ???
 
- BNE FlushChannel_b7    ; Jump to FlushChannel with A = 26 to ??? (this BNE is
-                        ; effectively a JMP as A is never zero)
+ BNE MakeNoise_b7       ; Jump to MakeNoise with A = 26 to make noise 26 (this
+                        ; BNE is effectively a JMP as A is never zero)
 
 ; ******************************************************************************
 ;
@@ -12749,23 +12749,25 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- TYA                    ; Set A to the sound number in Y to pass to FlushChannel
+ TYA                    ; Set A to the sound number in Y to pass to MakeNoise
 
-                        ; Fall through into FlushChannel_b7 to call the
-                        ; FlushChannel routine
+                        ; Fall through into MakeNoise_b7 to call the MakeNoise
+                        ; routine
 
 ; ******************************************************************************
 ;
-;       Name: FlushChannel_b7
+;       Name: MakeNoise_b7
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Call the FlushChannel routine
+;    Summary: Call the MakeNoise routine
 ;
 ; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
-;   A                   The number of the channel to flush
+;   A                   The number of the channel on which to make the noise
+;
+;   X                   The number of the noise to make
 ;
 ; Other entry points:
 ;
@@ -12773,9 +12775,9 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.FlushChannel_b7
+.MakeNoise_b7
 
- JSR FlushChannel_b6    ; Call FlushChannel to flush the channel specified in A
+ JSR MakeNoise_b6       ; Call MakeNoise to make noise X on the channel A
 
 .RTS8
 
@@ -13275,14 +13277,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: FlushChannel_b6
+;       Name: MakeNoise_b6
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Call the FlushChannel routine in ROM bank 6
+;    Summary: Call the MakeNoise routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.FlushChannel_b6
+.MakeNoise_b6
 
  STA ASAV               ; Store the value of A so we can retrieve it below
 
@@ -13297,7 +13299,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR FlushChannel       ; Call FlushChannel, now that it is paged into memory
+ JSR MakeNoise          ; Call MakeNoise, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -13307,7 +13309,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JMP FlushChannel       ; Call FlushChannel, which is already paged into memory,
+ JMP MakeNoise          ; Call MakeNoise, which is already paged into memory,
                         ; and return from the subroutine using a tail call
 
 ; ******************************************************************************

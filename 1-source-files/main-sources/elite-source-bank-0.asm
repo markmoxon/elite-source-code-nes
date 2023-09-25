@@ -416,7 +416,7 @@ ENDIF
                         ; checks for energy bomb damage, and neither of these
                         ; apply to planets and suns
 
- CMP #2                 ; ???
+ CMP #SST               ; ???
  BNE main32
 
  LDA spasto             ; Copy the address of the space station's ship blueprint
@@ -442,7 +442,7 @@ ENDIF
 
 .main33
 
- CPY #6
+ CPY #6                 ; ???
  BEQ main36
  CPY #$3C
  BEQ main36
@@ -7938,7 +7938,7 @@ ENDIF
  LDA #$C0               ; Set the ship's roll counter to -64 to make it roll in
  STA INWK+29            ; a negative direction (anti-clockwise), for two-thirds
                         ; of a roll (64 * 1/16 radians = 4.0 radians = 229
-                        ; degrees) ???
+                        ; degrees)
 
  LDA #KRA               ; Call NWSHP to add a new Krait ship to our local bubble
  JSR NWSHP              ; of universe
@@ -17431,15 +17431,22 @@ ENDIF
 
 .TT100
 
- LDA nmiTimerLo         ; ???
- STA RAND
- LDA K%+6
- STA RAND+1
- LDA soundVar07
- STA RAND+3
- LDA QQ12
- BEQ P%+5
- JMP MLOOP
+ LDA nmiTimerLo         ; Store the low byte of the NMI timer (which will be
+ STA RAND               ; pretty random) in the RAND seed
+
+ LDA K%+6               ; Store the z_lo coordinate for the planet (which will
+ STA RAND+1             ; be pretty random) in the RAND+1 seed
+
+ LDA soundVar07         ; Store the soundVar07 variable (which will be pretty
+ STA RAND+3             ; random) in the RAND+3 seed
+
+ LDA QQ12               ; Fetch the docked flag from QQ12 into A
+
+ BEQ game2              ; If we are docked, jump down to MLOOP to skip all the
+ JMP MLOOP              ; the flight and spawning code in the top part of the
+                        ; main loop
+
+.game2
 
  JSR M%                 ; Call M% to iterate through the main flight loop
 
@@ -17642,20 +17649,20 @@ ENDIF
  JMP fothg              ; rarely, a Cougar
 
  CMP T                  ; If the random value in A >= our badness level, which
- BCS game2              ; will be the case unless we have been really, really
+ BCS game3              ; will be the case unless we have been really, really
                         ; bad, then skip the following two instructions (so
                         ; if we are really bad, there's a higher chance of
                         ; spawning a cop, otherwise we got away with it, for
                         ; now)
 
- LDA NEWB               ; ???
- ORA #4
- STA NEWB
+ LDA NEWB               ; We are a fugitive or a bad offender, and we are about
+ ORA #%00000100         ; to spawn a cop, so set bit 2 of the ship's NEWB flags
+ STA NEWB               ; to make it hostile
 
  LDA #COPS              ; Add a new police ship to the local bubble
  JSR NWSHP
 
-.game2
+.game3
 
  LDA MANY+COPS          ; If we now have at least one cop in the local bubble,
  BNE MLOOPS             ; jump down to MLOOPS to stop spawning, otherwise fall
@@ -17725,15 +17732,25 @@ ENDIF
  BEQ LABEL_2            ; straight to LABEL_2 to start spawning pirates or a
                         ; lone bounty hunter
 
- LDY JUNK               ; ???
- LDX FRIN+2,Y
- BEQ game3
+ LDY JUNK               ; Set Y to the number of junk items in our local bubble
+                        ; of universe (where junk is asteroids, canisters,
+                        ; escape pods and so on)
+
+ LDX FRIN+2,Y           ; The ship slots at FRIN are ordered with the first two
+                        ; slots reserved for the planet and sun/space station,
+                        ; and then any ships, so if the slot at FRIN+2+Y is not
+                        ; empty (i.e. is non-zero), then that means the number
+                        ; of non-asteroids in the vicinity is at least 1
+
+ BEQ game4              ; So if X = 0, there are no ships in the vicinity, so
+                        ; jump to game4 to skip the following and increase the
+                        ; chances of spawning
 
  CMP #50                ; If the random number in A >= 50 (80% chance), jump to
  BCS MLOOPS             ; MLOOPS to stop spawning (so there's a 25% chance of
                         ; spawning pirates or bounty hunters)
 
-.game3
+.game4
 
  CMP #100               ; If the random number in A >= 100 (61% chance), jump to
  BCS MLOOPS             ; MLOOPS to stop spawning (so there's a 39% chance of
@@ -17761,9 +17778,11 @@ ENDIF
  CMP #100               ; Set the C flag depending on whether the random number
                         ; in A >= 100, for the BCS below
 
- AND #$0F               ; ???
- ORA #$10
- STA INWK+27
+ AND #15                ; Set A to our random number but in the range 16 to 31
+ ORA #16
+
+ STA INWK+27            ; Give the ship we're about to spawn a speed of between
+                        ; 16 and 31
 
  BCS mt1                ; If the random number in A >= 100 (61% chance), jump
                         ; to mt1 to spawn pirates, otherwise keep going to
@@ -17981,7 +18000,7 @@ ENDIF
  JSR DELAY              ; main loop down a bit
 
  LDA TRIBBLE+1          ; If the high byte of TRIBBLE(1 0), the number of
- BEQ game4              ; Trumbles in the hold, is zero, jump to game4 to skip
+ BEQ game5              ; Trumbles in the hold, is zero, jump to game5 to skip
                         ; the following
 
                         ; We have a lot of Trumbles in the hold, so let's see if
@@ -17998,26 +18017,26 @@ ENDIF
  ADC #0                 ; bytes
  STA TRIBBLE
 
- BCC game4              ; And then the high bytes
+ BCC game5              ; And then the high bytes
  INC TRIBBLE+1          ;
                         ; So there is a 14% chance of a Trumble being born
 
- BPL game4              ; If the high byte of TRIBBLE(1 0) is now $80, then
+ BPL game5              ; If the high byte of TRIBBLE(1 0) is now $80, then
  DEC TRIBBLE+1          ; decrement it back to $7F, so the number of Trumbles
                         ; never goes above $7FFF (32767)
 
-.game4
+.game5
 
  LDA TRIBBLE+1          ; If the high byte of TRIBBLE(1 0), the number of
- BEQ game6              ; Trumbles in the hold, is zero, jump to game6 to skip
+ BEQ game7              ; Trumbles in the hold, is zero, jump to game7 to skip
                         ; the following
 
                         ; We have a lot of Trumbles in the hold, so they are
                         ; probably making a bit of a noise
 
- LDY CABTMP             ; If the cabin temperature is >= 224 then jump to game5
+ LDY CABTMP             ; If the cabin temperature is >= 224 then jump to game6
  CPY #224               ; to skip the following and leave the value of A as a
- BCS game5              ; high value, so the chances of the Trumbles making a
+ BCS game6              ; high value, so the chances of the Trumbles making a
                         ; noise in hot temperature is greater (specifically,
                         ; this is the temperature at which the fuel scoop start
                         ; working)
@@ -18025,15 +18044,15 @@ ENDIF
  LSR A                  ; Set A = A / 2
  LSR A
 
-.game5
+.game6
 
  STA T                  ; Set T = A, which will be higher with more Trumbles and
                         ; higher temperatures
 
  JSR DORND              ; Set A and X to random numbers
 
- CMP T                  ; If A >= T then jump to game6 to skip making any noise,
- BCS game6              ; so there is a higher chance of Trumbles making noise
+ CMP T                  ; If A >= T then jump to game7 to skip making any noise,
+ BCS game7              ; so there is a higher chance of Trumbles making noise
                         ; when there are lots of them or the cabin temperature
                         ; is hot enough for the fuel scoops to work
 
@@ -18048,32 +18067,68 @@ ENDIF
                         ; Trumbles in Y, which will be one of 5 or 6, with 5
                         ; more likely than 6
 
-.game6
-
- LDA allowInSystemJump  ; ???
- LDX QQ22+1
- BEQ game7
- ORA #$80
-
 .game7
 
- LDX demoInProgress
- BEQ game8
- AND #$7F
+ LDA allowInSystemJump  ; Set A to the value of allowInSystemJump, which
+                        ; determines whether we are allowed to perform an
+                        ; in-system jump (which is the same as saying whether
+                        ; the fast-forward button is enabled)
+
+ LDX QQ22+1             ; Fetch into X the number that's shown on-screen during
+                        ; the hyperspace countdown
+
+ BEQ game8              ; If the counter is zero then we are not counting down
+                        ; to hyperspace, so jump to game8 to skip the next
+                        ; instruction
+
+ ORA #%10000000         ; Set bit 7 of A to prevent in-system jumps, as there
+                        ; is a hyperspace countdown in progress
 
 .game8
 
- STA allowInSystemJump
- AND #$C0
- BEQ game9
- CMP #$C0
- BEQ game9
- CMP #$80
- ROR A
- STA allowInSystemJump
- JSR UpdateIconBar_b3
+ LDX demoInProgress     ; If the demo is not in progress, jump to game9 to skip
+ BEQ game9              ; the following
+
+ AND #%01111111         ; Clear bit 7 of A to enable the fast-forward button, as
+                        ; this is the combat demo and the fast-forward button
+                        ; lets us skip the rest of the demo
 
 .game9
+
+ STA allowInSystemJump  ; Store the updated value of A in allowInSystemJump
+
+ AND #%11000000         ; If bits 6 and 7 of allowInSystemJump are both clear
+ BEQ game10             ; then in-system jumps are allowed, so jump to game10
+                        ; to leave allowInSystemJump alone
+
+ CMP #%11000000         ; If bits 6 and 7 of allowInSystemJump are both set then
+ BEQ game10             ; in-system jumps are not allowed, so jump to game10 to
+                        ; leave allowInSystemJump alone
+
+ CMP #%10000000         ; If bit 7 of allowInSystemJump is set but bit 6 isn't,
+                        ; then this sets the C flag, otherwise it clears the C
+                        ; flag
+
+ ROR A                  ; This updates allowInSystemJump as follows:
+ STA allowInSystemJump  ;
+                        ;   * %10xxxxxx rotates to %11xxxxxx
+                        ;
+                        ;   * %01xxxxxx rotates to %00xxxxxx
+                        ;
+                        ; In other words, when bit 7 of the allowInSystemJump
+                        ; flag is set, then that condition will spread to both
+                        ; bit 6 and 7, but if only bit 6 is set, then the flag
+                        ; will clear at this point in the main game loop
+                        ;
+                        ; So once bit 7 is cleared, in-system jumps will be
+                        ; allowed within an iteration of the main loop, assuming
+                        ; no more preventative conditions appear
+
+ JSR UpdateIconBar_b3   ; Update the icon bar to hide or show the in-system jump
+                        ; icon bar button, according to the new value of the
+                        ; allowInSystemJump flag
+
+.game10
 
  JSR TT17               ; Scan the key logger for the directional pad buttons,
                         ; returning the cursor's delta values in X and Y and
@@ -18701,15 +18756,21 @@ ENDIF
  ASL DELTA              ; Divide our speed in DELTA by 4
  ASL DELTA
 
- LDA #0                 ; ???
- STA boxEdge1
- STA boxEdge2
- STA autoPlayDemo
+ LDA #0                 ; Set the tile number for the left edge of the box to
+ STA boxEdge1           ; the blank tile, so the box around the space view
+                        ; disappears
+
+ STA boxEdge2           ; Set the tile number for the right edge of the box to
+                        ; the blank tile, so the box around the space view
+                        ; disappears
+
+ STA autoPlayDemo       ; Disable auto-play by setting autoPlayDemo to zero, in
+                        ; case we die during the auto-play combat demo
 
  LDA #$C4               ; Clear the screen and and set the view type in QQ11 to
  JSR TT66               ; $95 (Game Over screen)
 
- JSR ClearDashEdge_b6   ; Clear the right edge of the dashboard ???
+ JSR ClearDashEdge_b6   ; Clear the right edge of the dashboard
 
  JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
                         ; buffer and tell the NMI handler to send pattern
@@ -18722,7 +18783,7 @@ ENDIF
  LDA #0                 ; Set showIconBarPointer to 0 to indicate that we should
  STA showIconBarPointer ; hide the icon bar pointer
 
- LDA #$C4
+ LDA #$C4               ; Configure the PPU for view type $C4 (Game Over screen)
  JSR SendViewToPPU_b3
 
  LDA #$00               ; Set the view type in QQ11 to $00 (Space view with no
@@ -18771,16 +18832,25 @@ ENDIF
  JSR nWq                ; Create a cloud of stardust containing the correct
                         ; number of dust particles (i.e. NOSTM of them)
 
- JSR DORND              ; ???
- AND #$87
- STA ALPHA
- AND #7
- STA ALP1
- LDA ALPHA
- AND #$80
+                        ; We now give our ship a random amount of roll by
+                        ; setting all the various alpha angle variables
+
+ JSR DORND              ; Set A and X to random numbers
+
+ AND #%10000111         ; Set the roll angle in ALPHA to the random number,
+ STA ALPHA              ; reduced to the range 0 to 7, and with a random sign
+
+ AND #7                 ; Set the magnitude of roll angle alpha in ALP1 to the
+ STA ALP1               ; same value, but with the sign bit cleared (so ALP1
+                        ; contains the magnitude of the roll)
+
+ LDA ALPHA              ; Set the sign of the roll angle alpha in ALP2 to the
+ AND #%10000000         ; sign of ALPHA (so ALP2 contains the sign of the roll)
  STA ALP2
- EOR #$80
- STA ALP2+1
+
+ EOR #%10000000         ; Set the sign of the roll angle alpha in ALP2+1 to the
+ STA ALP2+1             ; flipped sign of ALPHA (so ALP2 contains the flipped
+                        ; sign of the roll)
 
 .D1
 
@@ -18871,7 +18941,7 @@ ENDIF
  BEQ D1                 ; D1 will have reset all the ship slots at FRIN, so this
                         ; checks to see if the seventh slot is empty, and if it
                         ; is we loop back to D1 to add another canister, until
-                        ; we have added seven of them ???
+                        ; we have added seven of them
 
  LDA #8                 ; Set our speed in DELTA to 8, so the camera moves
  STA DELTA              ; forward slowly
@@ -18886,8 +18956,9 @@ ENDIF
  JSR HideMostSprites    ; Hide all sprites except for sprite 0 and the icon bar
                         ; pointer
 
- LDA #30
- STA LASCT
+ LDA #30                ; Set the laser count to 30 to act as a counter in the
+ STA LASCT              ; D2 loop below, so this setting determines how long the
+                        ; death animation lasts
 
 .D2
 
@@ -18898,7 +18969,7 @@ ENDIF
                         ; main flight loop for each ship slot, and finish off
                         ; with parts 13 to 16 of the main flight loop
 
- JSR ClearDashEdge_b6   ; Clear the right edge of the dashboard ???
+ JSR ClearDashEdge_b6   ; Clear the right edge of the dashboard
 
  LDA #%11001100         ; Set the bitplane flags for the drawing bitplane to the
  JSR SetDrawPlaneFlags  ; following:
@@ -19278,8 +19349,9 @@ ENDIF
 ;
 ; Returns:
 ;
-;   C flag              If a key is being pressed on one of the controllers,
-;                       the C flag is set
+;   C flag              If the A button, Start or Select was being pressed but
+;                       has now been released, on either one of the controllers,
+;                       then the C flag is set, otherwise it is clear
 ;
 ; ******************************************************************************
 
@@ -19328,19 +19400,19 @@ ENDIF
  LDA #5                 ; Set the main loop counter in MCNT to 5, to act as the
  STA MCNT               ; inner loop counter for the loop starting at TLL2
 
- LDY #0                 ; ???
+ LDY #0                 ; Set DELTA = 0 (i.e. ship speed = 0)
  STY DELTA
 
  LDA #$01               ; Clear the screen and and set the view type in QQ11 to
  JSR ChangeToView       ; $01 (Title screen)
 
- LDA #7
- STA YP
+ LDA #7                 ; Set YP = 7 to use as the outer loop counter for the loop
+ STA YP                 ; starting at TLL2
 
 .titl1
 
- LDA #$19
- STA XP
+ LDA #25                ; Set XP = 25 to use as the inner loop counter for the
+ STA XP                 ; loop starting at TLL2
 
 .TLL2
 
@@ -19353,47 +19425,76 @@ ENDIF
 
 .TL1
 
- JSR titl5          ; ???
+ JSR titl5              ; Call titl5 below as a subroutine to rotate and move
+                        ; the ship in space
 
- BCS titl3
- DEC XP
- BNE TLL2
- DEC YP
- BNE titl1
+ BCS titl3              ; If a button was been pressed during the ship drawing,
+                        ; then the C flag sill be set, so jump to titl3 to
+                        ; return from the subroutine with the C flag set to
+                        ; indicate a button press
+
+ DEC XP                 ; Decrement the inner loop counter in XP
+
+ BNE TLL2               ; Loop back to keep the ship rotating, until the inner
+                        ; loop counter is zero
+
+ DEC YP                 ; Decrement the outer loop counter in YP
+
+ BNE titl1              ; Loop back to keep the ship rotating, until the outer
+                        ; loop counter is zero
 
 .titl2
 
- LDA INWK+7
- CMP #$37
- BCS titl4
- INC INWK+7
+ LDA INWK+7             ; If z_hi (the ship's distance) is 55 or greater, jump
+ CMP #55                ; to titl4 to return from the subroutine with the C flag
+ BCS titl4              ; clear, as the ship has now come towards us and has
+                        ; gone away again, all without any buttons being pressed
 
- JSR titl5
+ INC INWK+7             ; Increment the ship's distance, to move the ship a bit
+                        ; further away from us
 
- BCC titl2
+ JSR titl5              ; Call titl5 below as a subroutine to rotate and move
+                        ; the ship in space
+
+ BCC titl2              ; If no button was pressed during the ship drawing, then
+                        ; the C flag will be clear, so loop back to titl2 to
+                        ; move the ship away from us
+
+                        ; If a button was pressed, then the C flag will be set,
+                        ; so we now return from the subroutine with the C flag
+                        ; set
 
 .titl3
 
- SEC
- RTS
+ SEC                    ; Set the C flag to indicate that a button has been
+                        ; pressed
+
+ RTS                    ; Return from the subroutine
 
 .titl4
 
- CLC
- RTS
+ CLC                    ; Clear the C flag to indicate that a button has not
+                        ; been pressed
+
+ RTS                    ; Return from the subroutine
 
 .titl5
 
                         ; We call this part of the code as a subroutine from
                         ; above
 
- JSR MV30               ; ???
+ JSR MV30               ; Call MV30 at the end of part 2 of MVEIT, so we move
+                        ; the ship in space but without tidying the orientation
+                        ; vectors or applying tactics (neither of which are
+                        ; necessary on the title screen)
 
  LDX distaway           ; Set z_lo to the distance value we passed to the
  STX INWK+6             ; routine, so this is the closest the ship gets to us
 
- LDA MCNT               ; ???
- AND #3
+ LDA MCNT               ; This has no effect - it is presumably left over from
+ AND #3                 ; the other versions of Elite which only scan the
+                        ; keyboard once every four loops, but that isn't the
+                        ; case here as the result is not acted upon
 
  LDA #0                 ; Set x_lo = 0, so the ship remains in the screen centre
  STA INWK
@@ -19408,24 +19509,38 @@ ENDIF
 
  INC MCNT               ; Increment the main loop counter
 
- LDA controller1A       ; ???
- ORA controller1Start
- ORA controller1Select
- BMI tite1
- BNE tite3
+ LDA controller1A       ; If any of the A button, Start or Select are being
+ ORA controller1Start   ; pressed on controller 1, jump to tite1 to check the
+ ORA controller1Select  ; same buttons on controller 2, as these don't count as
+ BMI tite1              ; a button press until they are released
+
+ BNE tite3              ; If the result is non-zero, then at least one of the
+                        ; A button, Start or Select were being pressed but have
+                        ; now been released, so jump to tite3 to set the number
+                        ; of pilots to one (as the buttons are being pressed on
+                        ; controller 1), and return from the subroutine with
+                        ; the C flag set, to indicate the button press
 
 .tite1
 
- LDA controller2A
- ORA controller2Start
- ORA controller2Select
- BMI tite2
- BNE tite4
+ LDA controller2A       ; If any of the A button, Start or Select are being
+ ORA controller2Start   ; pressed on controller 2, jump to tite2 to return from
+ ORA controller2Select  ; the subroutine with the C flag clear, as these don't
+ BMI tite2              ; count as a button press until they are released
+
+ BNE tite4              ; If the result is non-zero, then at least one of the
+                        ; A button, Start or Select were being pressed but have
+                        ; now been released, so jump to tite4 to keep the number
+                        ; of pilots to two (as the buttons are being pressed on
+                        ; controller 2) to return from the subroutine with the
+                        ; C flag set, to indicate the button press
 
 .tite2
 
- CLC
- RTS
+ CLC                    ; Clear the C flag to indicate that a button has not
+                        ; been pressed
+
+ RTS                    ; Return from the subroutine
 
 .tite3
 
@@ -19434,8 +19549,10 @@ ENDIF
 
 .tite4
 
- SEC
- RTS
+ SEC                    ; Set the C flag to indicate that a button has been
+                        ; pressed
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
