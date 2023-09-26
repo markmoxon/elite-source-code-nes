@@ -3671,9 +3671,6 @@ ENDIF
 ;   INF                 The address of the data block for this ship in workspace
 ;                       K%
 ;
-;   XX19(1 0)           XX19(1 0) shares its location with INWK(34 33), which
-;                       contains the ship line heap address pointer
-;
 ;   XX0                 The address of the blueprint for this ship
 ;
 ; Other entry points:
@@ -3728,8 +3725,10 @@ ENDIF
  LDY #30                ; Set the ship's pitch counter in byte #30 to 0, to stop
  STA (INF),Y            ; the ship from pitching
 
- JSR RemoveFromScanner  ; ???
- LDA #$12
+ JSR HideShip           ; Update the ship so it is no longer shown on the
+                        ; scanner
+
+ LDA #$12               ; ???
  STA INWK+34
  LDY #$25
  JSR DORND
@@ -3744,14 +3743,14 @@ ENDIF
 
  JSR DORND              ; Set A and X to random numbers
 
- STA (XX19),Y           ; Store A in the Y-th byte of the ship line heap
+ STA (INF),Y            ; Store A in the Y-th byte of the ship data block
 
  INY                    ; ???
  JSR DORND
- STA (XX19),Y
+ STA (INF),Y
  INY
  JSR DORND
- STA (XX19),Y
+ STA (INF),Y
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -6187,6 +6186,7 @@ ENDIF
 
  LDA XX13               ; ???
  BMI LL117
+
  PLA
  TAY
  JMP LL146
@@ -6904,7 +6904,7 @@ ENDIF
  JMP HideExplosionBurst ; Hide the four sprites that make up the explosion burst
                         ; and return from the subroutine using a tail call
 
- EQUB 0, 2              ; These bytes appear to be unused
+ EQUB $00, $02          ; These bytes appear to be unused
 
 .DOEXP
 
@@ -13644,14 +13644,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: RemoveFromScanner
+;       Name: HideShip
 ;       Type: Subroutine
 ;   Category: Dashboard
-;    Summary: Remove a ship from the scanner
+;    Summary: Update the current ship so it is no longer shown on the scanner
 ;
 ; ******************************************************************************
 
-.RemoveFromScanner
+.HideShip
 
  LDA #0                 ; Zero byte #33 in the current ship's data block at K%,
  LDY #33                ; so it is not shown on the scanner (a non-zero byte #33

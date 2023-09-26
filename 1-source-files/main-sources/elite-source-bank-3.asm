@@ -2552,7 +2552,7 @@ ENDIF
                         ; routine and which we stored on the stack above
 
  JSR SetDrawPlaneFlags  ; Set the bitplane flags to A for the current drawing
-                        ; bitplane, which must be bitplane 0 at this point ???
+                        ; bitplane, which is bitplane 0 at this point ???
 
  INC drawingBitplane    ; Increment drawingBitplane to 1
 
@@ -2886,7 +2886,9 @@ ENDIF
                         ;     below the bottom of the screen, so the sprite is
                         ;     hidden from view
                         ;
-                        ;   * Set the pattern number to 254 ???
+                        ;   * Set the pattern number to 254 (this value seems to
+                        ;     be arbitrary, but is possibly 254 so that sprite 0
+                        ;     keeps using pattern 254 throughout the reset)
                         ;
                         ;   * Set the attributes so the sprite uses palette 3,
                         ;     is shown in front of the background, and is not
@@ -4180,7 +4182,7 @@ ENDIF
                         ; now we work our way through the buttons, hiding any
                         ; icons that do not apply
 
- LDX #4                 ; Set X = 4 ???
+ LDX #4                 ; Set X = 4 (though this appears to be unused)
 
  LDA QQ12               ; If we are in space (QQ12 = 0) then jump to char1 to
  BEQ char1              ; leave the fifth button showing the laser view icon
@@ -5196,10 +5198,10 @@ ENDIF
  STA K+2                ; number of the first pattern to use for the system
                         ; image's greyscale background
 
- JSR DrawBackground_b3  ; Draw the background by writing the the nametable
-                        ; buffer entries for the greyscale part of the system
-                        ; image (this is the image that is extracted into the
-                        ; pattern buffers by the GetSystemBack routine)
+ JSR DrawBackground_b3  ; Draw the background by writing the nametable buffer
+                        ; entries for the greyscale part of the system image
+                        ; (this is the image that is extracted into the pattern
+                        ; buffers by the GetSystemBack routine)
 
                         ; Now that the background is drawn, we move on to the
                         ; sprite-based foreground
@@ -5555,7 +5557,8 @@ ENDIF
 ;       Name: DrawBackground
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: Draw the background of a system or commander image into the
+;             nametable buffer
 ;
 ; ------------------------------------------------------------------------------
 ;

@@ -12254,8 +12254,8 @@ ENDIF
  EQUB  3                ; Status Mode
  EQUB  4                ; Charts
  EQUB  5                ; Equip Ship
- EQUB  6                ; Save and load
- EQUB  7                ; Change commander name (only on save screen)
+ EQUB  6                ; Save and Load
+ EQUB  7                ; Change Commander Name (only on save screen)
  EQUB 35                ; Data on System
  EQUB  8                ; Inventory
  EQUB  0                ; (blank)
@@ -12270,13 +12270,13 @@ ENDIF
  EQUB  2                ; Market Price
  EQUB  3                ; Status Mode
  EQUB  4                ; Charts
- EQUB 21                ; Front space view (and rear, left, right)
+ EQUB 21                ; Front Space View (and rear, left, right)
  EQUB 22                ; Hyperspace (only when system is selected)
  EQUB 23                ; E.C.M. (if fitted)
- EQUB 24                ; Target missile
- EQUB 25                ; Fire targetted missile
- EQUB 26                ; Energy bomb (if fitted)
- EQUB 27                ; Escape capsule (if fitted)
+ EQUB 24                ; Target Missile
+ EQUB 25                ; Fire Targeted Missile
+ EQUB 26                ; Energy Bomb (if fitted)
+ EQUB 27                ; Escape Pod (if fitted)
  EQUB 12                ; Fast-forward
 
  EQUD  0
@@ -12285,15 +12285,15 @@ ENDIF
 
  EQUB  1                ; Launch
  EQUB  2                ; Market Price
- EQUB 36                ; Switch chart range (long, short)
+ EQUB 36                ; Switch Chart Range (long, short)
  EQUB 35                ; Data on System
- EQUB 21                ; Front space view (only in flight)
- EQUB 38                ; Return pointer to current system
- EQUB 39                ; Search for system
+ EQUB 21                ; Front Space View (only in flight)
+ EQUB 38                ; Return Pointer to Current System
+ EQUB 39                ; Search for System
  EQUB 22                ; Hyperspace (only when system is selected)
  EQUB 41                ; Galactic Hyperspace (if fitted)
  EQUB 23                ; E.C.M. (if fitted)
- EQUB 27                ; Escape capsule (if fitted)
+ EQUB 27                ; Escape Pod (if fitted)
  EQUB 12                ; Fast-forward
 
  EQUD  0
@@ -12304,7 +12304,7 @@ ENDIF
  EQUB 50                ; Damping toggle
  EQUB 51                ; Music toggle
  EQUB 52                ; Sound toggle
- EQUB 53                ; Number of pilots
+ EQUB 53                ; Number of Pilots
  EQUB  0                ; (blank)
  EQUB  0                ; (blank)
  EQUB  0                ; (blank)
@@ -12614,7 +12614,7 @@ ENDIF
  LDA #0                 ; Set the priority for channel X to zero to stop the
  STA channelPriority,X  ; channel from making any more sounds
 
- LDA #26                ; Set A = 26 to pass to MakeNoise below ???
+ LDA #26                ; Set A = 26 to pass to MakeNoise below
 
  BNE MakeNoise_b7       ; Jump to MakeNoise with A = 26 to make noise 26 (this
                         ; BNE is effectively a JMP as A is never zero)
@@ -15330,14 +15330,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: RemoveFromScanner_b1
+;       Name: HideShip_b1
 ;       Type: Subroutine
 ;   Category: Dashboard
-;    Summary: Remove a ship from the scanner
+;    Summary: Update the current ship so it is no longer shown on the scanner
 ;
 ; ******************************************************************************
 
-.RemoveFromScanner_b1
+.HideShip_b1
 
  LDA #0                 ; Zero byte #33 in the current ship's data block at K%,
  LDY #33                ; so it is not shown on the scanner (a non-zero byte #33

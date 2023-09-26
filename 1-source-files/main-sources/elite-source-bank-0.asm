@@ -416,7 +416,7 @@ ENDIF
                         ; checks for energy bomb damage, and neither of these
                         ; apply to planets and suns
 
- CMP #SST               ; ???
+ CMP #SST               ; If this is not the space station, jump to main32
  BNE main32
 
  LDA spasto             ; Copy the address of the space station's ship blueprint
@@ -424,8 +424,10 @@ ENDIF
  LDA spasto+1           ; when calculating the correct station type (Coriolis or
  STA XX0+1              ; Dodo)
 
- LDY #4
- BNE main33
+ LDY #SST * 2           ; Set Y = ship type * 2
+
+ BNE main33             ; Jump to main33 (this BNE is effectively a JMP as Y is
+                        ; never zero)
 
 .main32
 
@@ -442,32 +444,60 @@ ENDIF
 
 .main33
 
- CPY #6                 ; ???
- BEQ main36
- CPY #$3C
- BEQ main36
- CPY #4
- BEQ main35
- LDA INWK+32
- BPL main36
- CPY #2
- BEQ main34
- AND #$3E
- BEQ main36
+                        ; We now check whether this ship prevents us from
+                        ; performing an in-system jump
+
+ CPY #ESC * 2           ; If this is an escape pod, jump to main36 to skip the
+ BEQ main36             ; following, as it doesn't prevent jumping
+
+ CPY #TGL * 2           ; If this is a Thargon, jump to main36 to skip the
+ BEQ main36             ; following, as it doesn't prevent jumping
+
+ CPY #SST * 2           ; If this is the space station, jump to main35 to check
+ BEQ main35             ; whether it is hostile
+
+ LDA INWK+32            ; If bit 7 of the ship's byte #32 is clear, then AI is
+ BPL main36             ; not enabled, so jump to main36 to skip the following,
+                        ; as it doesn't prevent jumping
+
+ CPY #MSL * 2           ; If this is a missile, jump to main34 to skip the
+ BEQ main34             ; aggression level check (as this doesn't apply to
+                        ; missiles)
+
+ AND #%00111110         ; If bits 1-5 of the ship's byte #32 are clear, then the
+ BEQ main36             ; ship's aggression level is zero, so jump to main36 to
+                        ; skip the following, as it doesn't prevent jumping
 
 .main34
 
- LDA INWK+31
- AND #$A0
- BNE main36
+ LDA INWK+31            ; If either bit 5 or 7 of the ship's byte #31 are set,
+ AND #%10100000         ; then the ship is exploding or has been killed, so jump
+ BNE main36             ; to main36 to skip the following, as it doesn't prevent
+                        ; jumping
 
 .main35
 
- LDA NEWB
- AND #4
- BEQ main36
- ASL allowInSystemJump
- SEC
+ LDA NEWB               ; If bit 2 of the ship's NEWB flag is clear then the
+ AND #%00000100         ; ship is not hostile, so jump to main36 to skip the
+ BEQ main36             ; following, as it doesn't prevent jumping
+
+                        ; If we get here then this is one of the following:
+                        ;
+                        ;   * A missile
+                        ;
+                        ;   * A hostile space station
+                        ;
+                        ;   * An aggressive ship with AI enabled
+                        ;
+                        ; and it isn't an escape pod or Thargon, and it hasn't
+                        ; been killed and isn't exploding
+                        ;
+                        ; So this ship prevents us from performing an in-system
+                        ; jump, so we need to set bit 7 of allowInSystemJump
+                        ; to do just that
+
+ ASL allowInSystemJump  ; Set bit 7 of allowInSystemJump to prevent us from
+ SEC                    ; being able to perform an in-system jump
  ROR allowInSystemJump
 
 .main36
@@ -1052,7 +1082,8 @@ ENDIF
  SEC                    ; now been killed
  ROR INWK+31
 
- JSR RemoveFromScanner_b1  ; ???
+ JSR HideShip_b1        ; Update the ship so it is no longer shown on the
+                        ; scanner
 
  LDA LAS                ; Did we kill the asteroid using mining lasers? If not,
  CMP #Mlas              ; jump to nosp, otherwise keep going
@@ -1207,9 +1238,9 @@ ENDIF
 .MA27
 
  LDY #31                ; Fetch the ship's explosion/killed state from byte #31,
- LDA INWK+31            ; clear bit 6 and copy it to byte #31 in INF (so the
- AND #%10111111         ; ship's data in K% gets updated) ???
- STA (INF),Y
+ LDA INWK+31            ; clear bit 6 to denote that an explosion has not been
+ AND #%10111111         ; drawn, and copy it to byte #31 in INF (so the ship's
+ STA (INF),Y            ; data in K% gets updated)
 
  LDX XSAV               ; We're done processing this ship, so fetch the ship's
                         ; slot number, which we saved in XSAV back at the start
@@ -1514,62 +1545,70 @@ ENDIF
  BPL MAL4               ; Loop back for the next byte until we have copied the
                         ; first 28 bytes of K% to INWK
 
-                        ; We now check the distance from our ship (at the
-                        ; origin) towards the point where we will spawn the
-                        ; space station if we are close enough
-                        ;
-                        ; This point is calculated by starting at the planet's
-                        ; centre and adding 2 * nosev, which takes us to a point
-                        ; above the planet's surface, at an altitude that
-                        ; matches the planet's radius
-                        ;
-                        ; This point pitches and rolls around the planet as the
-                        ; nosev vector rotates with the planet, and if our ship
-                        ; is within a distance of (192 0) from this point in all
-                        ; three axes, then we spawn the space station at this
-                        ; point, with the station's slot facing towards the
-                        ; planet, along the nosev vector
-                        ;
-                        ; This works because in the following, we calculate the
-                        ; station's coordinates one axis at a time, and store
-                        ; the results in the INWK block, so by the time we have
-                        ; calculated and checked all three, the ship data block
-                        ; is set up with the correct spawning coordinates
-
  JSR SpawnSpaceStation  ; If we are close enough, add a new space station to our
                         ; local bubble of universe
 
  BCS MA23S              ; If we spawned the space station, jump to MA23S to skip
                         ; the following
 
- LDX #8                 ; ???
+                        ; We didn't manage to spawn the space station, so now
+                        ; we rotate the planet around the x-axis and then the
+                        ; z-axis, and then have another go
+                        ;
+                        ; We rotate the planet by swapping the orientation
+                        ; vectors as follows (in parallel):
+                        ;
+                        ;   * Set nosev = roofv
+                        ;
+                        ;   * Set roofv = sidev
+                        ;
+                        ;   * Set sidev = nosev
+                        ;
+                        ; First we need to set up a ship data block for the
+                        ; station in INWK again, which we do by copying the
+                        ; first nine bytes from the planet data block in K% to
+                        ; INWK (we only need the coordinates and the orientation
+                        ; vectors for the calculation, and we'll do the latter
+                        ; in a minute)
+
+ LDX #8                 ; Set a counter in X to copy 9 bytes from K%+0 to K%+8
 
 .main44
 
- LDA K%,X
- STA INWK,X
+ LDA K%,X               ; Load the X-th byte of K% and store in the X-th byte
+ STA INWK,X             ; of the INWK workspace
 
- DEX
+ DEX                    ; Decrement the loop counter
 
- BPL main44
+ BPL main44             ; Loop back for the next byte until we have copied the
+                        ; all 9 bytes of coordinate data from K% to INWK
 
- LDX #5
+                        ; Next we rotate the orientation vectors
+
+ LDX #5                 ; Set a counter in X to swap each of the six bytes of
+                        ; the orientation vectors (the comments below are for
+                        ; when X = 0, in which we swap the x_lo bytes)
 
 .main45
 
- LDY INWK+9,X
- LDA INWK+15,X
+ LDY INWK+9,X           ; Set Y to nosev_x_lo
+
+ LDA INWK+15,X          ; Set nosev_x_lo = roofv_x_lo
  STA INWK+9,X
- LDA INWK+21,X
+
+ LDA INWK+21,X          ; Set roofv_x_lo = sidev_x_lo
  STA INWK+15,X
- STY INWK+21,X
 
- DEX
+ STY INWK+21,X          ; Set sidev_x_lo = Y = nosev_x_lo
 
- BPL main45
+ DEX                    ; Decrement the loop counter
 
- JSR SpawnSpaceStation  ; If we are close enough, add a new space station to our
-                        ; local bubble of universe
+ BPL main45             ; Loop back until we have swapped all six bytes of each
+                        ; orientation vector
+
+ JSR SpawnSpaceStation  ; Now we check to see if we are close enough to the
+                        ; rotated planet, and if so, add a new space station to
+                        ; our local bubble of universe
 
 .MA23S
 
@@ -2044,13 +2083,15 @@ ENDIF
 
  LDX JSTX               ; Set X to the current rate of roll in JSTX
 
- LDY numberOfPilots     ; ???
+ LDY numberOfPilots     ; Set Y to the configured number of pilots, so the
+                        ; following checks controller 1 when only one pilot
+                        ; is playing, or controller 2 when two pilots are
+                        ; playing
 
- LDA controller1Left,Y
- ORA controller1Right,Y
- ORA KY3
- ORA KY4
-
+ LDA controller1Left,Y  ; If any of the left or right buttons are being pressed
+ ORA controller1Right,Y ; on the controller that's responsible for steering,
+ ORA KY3                ; jump to main6 to skip the following code so we do not
+ ORA KY4                ; apply roll damping
  BMI main6
 
  LDA #16                ; Apply damping to the roll rate (if enabled), so the
@@ -2058,8 +2099,10 @@ ENDIF
 
 .main6
 
-                        ; The roll rate in JSTX increases if we press ">" (and
-                        ; the RL indicator on the dashboard goes to the right).
+                        ; The roll rate in JSTX increases if we press the right
+                        ; button (and the RL indicator on the dashboard goes to
+                        ; the right)
+                        ;
                         ; This rolls our ship to the right (clockwise), but we
                         ; actually implement this by rolling everything else
                         ; to the left (anti-clockwise), so a positive roll rate
@@ -2110,11 +2153,15 @@ ENDIF
 
  LDX JSTY               ; Set X to the current rate of pitch in JSTY
 
- LDY numberOfPilots     ; ???
- LDA controller1Up,Y
- ORA controller1Down,Y
- ORA KY5
- ORA KY6
+ LDY numberOfPilots     ; Set Y to the configured number of pilots, so the
+                        ; following checks controller 1 when only one pilot
+                        ; is playing, or controller 2 when two pilots are
+                        ; playing
+
+ LDA controller1Up,Y    ; If any of the up or down buttons are being pressed
+ ORA controller1Down,Y  ; on the controller that's responsible for steering,
+ ORA KY5                ; jump to main6 to skip the following code so we do
+ ORA KY6                ; not apply pitch damping
  BMI main7
 
  LDA #12                ; Apply damping to the pitch rate (if enabled), so the
@@ -2190,8 +2237,9 @@ ENDIF
 
 .BS2
 
- LDA KY2                ; If Space is being pressed, keep going, otherwise jump
- BEQ MA17               ; down to MA17 to skip the following
+ LDA KY2                ; If both the B and up buttons are being pressed, keep
+ BEQ MA17               ; going, otherwise jump down to MA17 to skip the
+                        ; following
 
  LDA DELTA              ; The "go faster" key is being pressed, so first we
  CLC                    ; add 4 to the current speed in DELTA (we also store
@@ -2213,8 +2261,9 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA KY1                ; If "?" is being pressed, keep going, otherwise jump
- BEQ MA4                ; down to MA4 to skip the following
+ LDA KY1                ; If both the B and down buttons are being pressed,
+ BEQ MA4                ; keep going, otherwise jump down to MA4 to skip the
+                        ; following
 
  LDA DELTA              ; The "slow down" key is being pressed, so subtract 4
  SEC                    ; from the speed in DELTA
@@ -2237,20 +2286,25 @@ ENDIF
 
 .MA4
 
- LDA iconBarKeyPress    ; ???
- CMP #$18
- BNE MA25
+ LDA iconBarKeyPress    ; Set A to the the icon bar key logger entry in
+                        ; iconBarKeyPress, which contains the button number of
+                        ; the icon bar button (if one has been chosen)
 
- LDA NOMSL
- BEQ MA64S
+ CMP #24                ; If the Target Missile button has not been chosen,
+ BNE MA25               ; jump to MA25 to skip the following
 
- LDA MSAR
- EOR #$FF
- STA MSAR
+ LDA NOMSL              ; If the number of missiles in NOMSL is zero, jump to
+ BEQ MA64S              ; MA64 via MA64S to skip the rest of the button checks
 
- BNE MA20
+ LDA MSAR               ; The "target missile" key is being pressed and we have
+ EOR #$FF               ; at least one missile, so flip MSAR between 0 and $FF
+ STA MSAR               ; to flip the missile between being disarmed and armed
 
- LDY #$6C               ; The "disarm missiles" key is being pressed, so call
+ BNE MA20               ; If MSAR is now $FF then the missile is now armed, so
+                        ; jump to MA20 to skip the following and process the
+                        ; arming of the missile
+
+ LDY #$6C               ; Otherwise we just chose to disarm the missile, so call
  JSR ABORT              ; ABORT to disarm the missile and update the missile
                         ; indicators on the dashboard to the tile pattern number
                         ; in Y (black indicator = pattern 108)
@@ -2265,7 +2319,7 @@ ENDIF
                         ; missile is now disarmed, or a short, high beep to
                         ; indicate that it is looking for a target)
 
- JMP MA64               ; Jump to MA64 to skip the following
+ JMP MA64               ; Jump to MA64 to skip the rest of the button checks
 
 .MA20
 
@@ -2280,13 +2334,12 @@ ENDIF
 
 .MA25
 
- CMP #25                ; If the "Fire targetted missile" button was chosen on
+ CMP #25                ; If the Fire Targeted Missile button was chosen on
  BNE MA24               ; the icon bar, keep going, otherwise jump down to MA24
                         ; to skip the following
 
  LDA MSTG               ; If MSTG = $FF then there is no target lock, so jump to
- BMI MA64S              ; MA64 via MA64S to skip the following (also skipping
-                        ; the checks for the energy bomb)
+ BMI MA64S              ; MA64 via MA64S to skip the rest of the button checks
 
  JSR FRMIS              ; The "fire missile" key is being pressed and we have
                         ; a missile lock, so call the FRMIS routine to fire
@@ -2297,16 +2350,18 @@ ENDIF
 
 .MA64S
 
- JMP MA64               ; Jump to MA64 to skip the following
+ JMP MA64               ; Jump to MA64 to skip the rest of the button checks
 
 .MA24
 
- CMP #$1A               ; ???
- BNE MA76
+ CMP #26                ; If the Energy Bomb button is being pressed, keep
+ BNE MA76               ; going, otherwise jump down to MA76 to skip the
+                        ; following
 
  LDA BOMB               ; If we already set off our energy bomb, then BOMB is
- BMI MA64S              ; negative, so this skips to MA64 via MA64S if our
-                        ; energy bomb is already going off
+ BMI MA64S              ; negative, so this jumps to MA64 via MA64S to skip the
+                        ; rest of the button checks when our energy bomb is
+                        ; already going off
 
  ASL BOMB               ; The "energy bomb" key is being pressed, so double
                         ; the value in BOMB. If we have an energy bomb fitted,
@@ -2319,7 +2374,7 @@ ENDIF
 
  BEQ MA64S              ; If BOMB now contains 0, then the bomb is not going off
                         ; any more (or it never was), so jump to MA64 via MA64S
-                        ; to skip the following
+                        ; to skip the rest of the button checks
 
  LDA #$28               ; Set hiddenColour to $28, which is green-brown, so this
  STA hiddenColour       ; reveals pixels that use the (no-longer) hidden colour
@@ -2328,41 +2383,46 @@ ENDIF
  LDY #8                 ; Call the NOISE routine with Y = 8 to make the sound of
  JSR NOISE              ; the energy bomb going off
 
- JMP MA64               ; Jump to MA64 to skip the following
+ JMP MA64               ; Jump to MA64 to skip the rest of the button checks
 
 .MA76
 
- CMP #$1B               ; ???
- BNE noescp
+ CMP #27                ; If the Escape Pod button is not being pressed, jump to
+ BNE noescp             ; noescp to skip the following
 
- LDX ESCP
- BEQ MA64
+ LDX ESCP               ; If we do not have an escape pod fitted, jump to MA64
+ BEQ MA64               ; to skip the rest of the button checks
 
  LDA MJ                 ; If we are in witchspace, we can't launch our escape
- BNE MA64               ; pod, so jump down to MA64
+ BNE MA64               ; pod, so jump down to MA64 to skip the rest of the
+                        ; button checks
 
- JMP ESCAPE             ; The "launch escape pod" button is being pressed and
+ JMP ESCAPE             ; The Launch Escape Pod button is being pressed and
                         ; we have an escape pod fitted, so jump to ESCAPE to
                         ; launch it, and exit the main flight loop using a tail
                         ; call
 
 .noescp
 
- CMP #$0C               ; ???
- BNE main12
- LDA allowInSystemJump
- AND #$C0
- BNE MA64
- JSR WARP
- JMP MA64
+ CMP #12                ; If the Fast-forward button is not being pressed, jump
+ BNE main12             ; to main12 to skip the following
+
+ LDA allowInSystemJump  ; If either of bits 6 or 7 of allowInSystemJump are set
+ AND #%11000000         ; then there is something in the vicinity that is
+ BNE MA64               ; preventing in-system jumps, so jump to MA64 to skip
+                        ; the rest of the button checks
+
+ JSR WARP               ; Call WARP to process an in-system jump
+
+ JMP MA64               ; Jump to MA64 to skip the rest of the button checks
 
 .main12
 
- CMP #$17
- BNE MA64
+ CMP #23                ; If the E.C.M. button is not being pressed, jump to
+ BNE MA64               ; to MA64 to skip the following
 
- LDA ECM
- BEQ MA64
+ LDA ECM                ; If we do not have an E.C.M. fitted, jump to MA64 to
+ BEQ MA64               ; skip the following
 
  LDA ECMA               ; If ECMA is non-zero, that means an E.C.M. is already
  BNE MA64               ; operating and is counting down (this can be either
@@ -2370,7 +2430,7 @@ ENDIF
                         ; skip the following (as we can't have two E.C.M.
                         ; systems operating at the same time)
 
- DEC ECMP               ; The "E.C.M." button is being pressed and nobody else
+ DEC ECMP               ; The E.C.M. button is being pressed and nobody else
                         ; is operating their E.C.M., so decrease the value of
                         ; ECMP to make it non-zero, to denote that our E.C.M.
                         ; is now on
@@ -2397,12 +2457,13 @@ ENDIF
  ROR DELT4
  STA DELT4+1
 
- LDA LASCT              ; ???
- ORA QQ11
- BNE MA3
+ LDA LASCT              ; If LASCT is zero and this is the space view, keep
+ ORA QQ11               ; going, otherwise the laser is a pulse laser that is
+ BNE MA3                ; between pulses, or we aren't showing laser fire, so
+                        ; jump down to MA3 to skip the following
 
- LDA KY7                ; If "A" is being pressed, keep going, otherwise jump
- BPL MA3                ; down to MA3 to skip the following
+ LDA KY7                ; If the A button is being pressed, keep going,
+ BPL MA3                ; otherwise jump down to MA3 to skip the following
 
  LDA GNTMP              ; If the laser temperature >= 242 then the laser has
  CMP #242               ; overheated, so jump down to MA3 to skip the following
@@ -2413,9 +2474,15 @@ ENDIF
  BEQ MA3                ; keep going, otherwise jump down to MA3 to skip the
                         ; following
 
- BMI main13              ; ???
- BIT KY7
- BVS MA3
+ BMI main13             ; If the current laser power is 128 or greater, then
+                        ; this is a beam or military laser, so jump to main13
+                        ; to skip the following two instructions
+
+ BIT KY7                ; If bit 6 of KY7 is set, then the A button was being
+ BVS MA3                ; pressed in the previous VBlank and it is still being
+                        ; pressed now, so jump down to MA3 to skip the following
+                        ; so that lower power lasers only fire every other
+                        ; VBlank when the A button is held down
 
 .main13
 
@@ -2490,16 +2557,16 @@ ENDIF
                         ; otherwise jump down to ma1 to skip the following
                         ; instruction
 
- LDA #0                 ; This is an "always on" laser (i.e. a beam laser,
-                        ; as the cassette version of Elite doesn't have military
-                        ; lasers), so set A = 0, which will be stored in LASCT
-                        ; to denote that this is not a pulsing laser
+ LDA #0                 ; This is an "always on" laser (i.e. a beam laser or a
+                        ; military laser), so set A = 0, which will be stored in
+                        ; LASCT to denote that this is not a pulsing laser
 
 .ma1
 
  AND #%11101111         ; LASCT will be set to 0 for beam lasers, and to the
  STA LASCT              ; laser power AND %11101111 for pulse lasers, which
-                        ; comes to comes to ???
+                        ; comes to comes to 8 (as pulse lasers have a power
+                        ; of 24)
 
 .MA3
 
@@ -2507,27 +2574,61 @@ ENDIF
                         ; main flight loop for each ship slot, and finish off
                         ; with parts 13 to 16 of the main flight loop
 
- LDA QQ11               ; ???
- BNE main20
+ LDA QQ11               ; If this is not the space view, jump to main20 to skip
+ BNE main20             ; the following, as we only need to send the drawing
+                        ; bitplane to the PPU and update the dashboard in the
+                        ; space view
 
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
+                        ;
+                        ; If bit 7 of setupPPUForIconBar is set, then this also
+                        ; affects the C flag as follows:
+                        ;
+                        ;   * If bit 6 of PPU_STATUS is clear then the C flag
+                        ;     is set to bit 7 of PPU_STATUS (which is set if
+                        ;     VBlank has started, clear otherwise)
+                        ;
+                        ;   * If bit 6 of PPU_STATUS is set (sprite 0 has been
+                        ;     hit) then the C flag is cleared
 
- LDA drawingBitplane    ; ???
- BNE main18
+ LDA drawingBitplane    ; If the drawing bitplane is 1, jump to main18 to send
+ BNE main18             ; the drawing plane to the PPU
 
- LDA flipEveryBitplane0
- EOR #$FF
- STA flipEveryBitplane0
+                        ; If we get here then the drawing bitplane is 0, so now
+                        ; we do various checks to determine whether to send the
+                        ; drawing bitplane to the PPU
 
- BMI main19
+ LDA flipEveryBitplane0 ; Flip the value of flipEveryBitplane0 between 0 and $FF
+ EOR #$FF               ; so it flips every time we run the main loop with the
+ STA flipEveryBitplane0 ; drawing bitplane is set to 0
 
- LDA KL
- ORA KY2
- ROR A
+ BMI main19             ; If bit 7 of the result is set, jump to main19 to skip
+                        ; the following
+
+ LDA KY1                ; If the B button is being pressed with either the up or
+ ORA KY2                ; down button (to change our speed), or the C flag is
+ ROR A                  ; set, jump to main19 to skip the following
  BNE main19
 
 .main18
+
+                        ; If we get here then either the drawing bitplane is 1,
+                        ; or it's 0 and:
+                        ;
+                        ;   * flipEveryBitplane0 has just flipped to $FF
+                        ;
+                        ;   * The change speed buttons are not being pressed
+                        ;
+                        ;   * The C flag is clear, so either the PPU has reached
+                        ;     the icon bar in its drawing cycle, or we are not
+                        ;     in VBlank
+                        ;
+                        ; So we only send drawing bitplane 0 and its nametable
+                        ; entries to the PPU every few iterations, and when the
+                        ; screen isn't too busy, which we can do as bitplane 0
+                        ; is less changeable than bitplane 1 (which contains all
+                        ; the vector graphics)
 
  JSR DrawBitplaneInNMI  ; Configure the NMI to send the drawing bitplane to the
                         ; PPU after drawing the box edges and setting the next
@@ -2559,9 +2660,9 @@ ENDIF
 
  JSR DrawPitchRollBars  ; Update the pitch and roll bars on the dashboard
 
- JSR DIALS_b6           ; ???
+ JSR DIALS_b6           ; Call DIALS to update the dashboard
 
- LDX drawingBitplane
+ LDX drawingBitplane    ; Set X to the drawing bitplane
 
  LDA bitplaneFlags,X    ; Set bit 6 of the flags for the drawing bitplane, so
  ORA #%01000000         ; we send both nametable and pattern table data for
@@ -2571,8 +2672,13 @@ ENDIF
 
 .main20
 
- CMP #$98               ; ???
- BNE main23
+                        ; We jump here if this is not the space view, with the
+                        ; view type in A
+
+ CMP #$98               ; If this is not the Status Mode screen, jump to main23
+ BNE main23             ; to skip the following, as we can only flash the
+                        ; commander image background when it's on-screen in the
+                        ; Status Mode view
 
  JSR GetStatusCondition ; Set X to our ship's status condition
 
@@ -8407,12 +8513,12 @@ ENDIF
  BNE TT63               ; non-zero bits, and if so, jump to TT63 to print the
                         ; distance
 
- LDA MJ                 ; ???
- BNE TT63
- INC YC
+ LDA MJ                 ; If we are in witchspace (i.e. MJ is non-zero), jump to
+ BNE TT63               ; TT63 to print the distance
 
  INC YC                 ; The distance is zero, so we just move the text cursor
- RTS                    ; in YC down by one line and return from the subroutine
+ INC YC                 ; in YC down by two lines and return from the subroutine
+ RTS
 
 .TT63
 
@@ -9436,9 +9542,9 @@ ENDIF
  LDA QQ14               ; Set K = QQ14 + (QQ14 / 32)
  LSR A                  ;
  LSR A                  ; So K is the circle's radius, based on the fuel level
- LSR A                  ; in QQ14 ???
- LSR A
- LSR A
+ LSR A                  ; in QQ14 (so K is in the range 0 to 73, as the latter
+ LSR A                  ; division gets rounded up by the ADC adding in the C
+ LSR A                  ; flag, and QQ14 is in the range 0 to 70)
  ADC QQ14
  STA K
 
@@ -12696,8 +12802,8 @@ ENDIF
 ;
 ; There is a 0.78% chance that this routine is called from TT18 instead of doing
 ; a normal hyperspace, or we can manually trigger a mis-jump by holding down
-; CTRL after first enabling the "author display" configuration option ("X") when
-; paused.
+; either the up or down button at the point that the hyperspace countdown
+; reaches zero.
 ;
 ; Other entry points:
 ;
@@ -16776,8 +16882,8 @@ ENDIF
  JSR DrawMessageInNMI   ; Configure the NMI to display the YES/NO message that
                         ; we just printed
 
- LDA controller1A       ; If "A" is being pressed on the controller, jump to
- BMI yeno3              ; to record the choice
+ LDA controller1A       ; If the A button is being pressed on the controller,
+ BMI yeno3              ; jump to yeno3 to record the choice
 
  LDA controller1Up      ; If neither the up nor down arrow is being pressed on
  ORA controller1Down    ; the controller, jump to yeno2 to pause and loop back
@@ -16805,8 +16911,8 @@ ENDIF
                         ; been processed in the background (via the pause menu,
                         ; for example)
 
- STA controller1A       ; Reset the key logger for the controller "A" button as
-                        ; we have consumed the key press
+ STA controller1A       ; Reset the key logger for the A button as we have
+                        ; consumed the button press
 
  PLA                    ; Set X to the value from the top of the stack, which
  TAX                    ; will be 1 for "YES" or 2 for "NO", giving us our
@@ -19282,7 +19388,7 @@ ENDIF
 ;       Name: ChangeToView
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: ???
+;    Summary: Clear the screen and and set a new view type
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -20746,7 +20852,8 @@ ENDIF
  LDA #$FF               ; Set A = $FF, which we can insert into the key logger
                         ; to "fake" the docking computer working the keyboard
 
- LDX #0                 ; Set X = 0, so we "press" KY1 below ("?", slow down)
+ LDX #0                 ; Set X = 0, so we "press" KY1 below (the "slow down"
+                        ; key combination of the B and down buttons)
 
  LDY INWK+28            ; If the updated acceleration in byte #28 is zero, skip
  BEQ DK11               ; to DK11
@@ -20759,9 +20866,10 @@ ENDIF
 
  STA KL,X               ; Store $FF in either KY1 or KY2 to "press" the relevant
                         ; key, depending on whether the updated acceleration is
-                        ; negative (in which case we "press" KY1, "?", to slow
-                        ; down) or positive (in which case we "press" KY2,
-                        ; Space, to speed up)
+                        ; negative (in which case we "press" KY1, i.e. the B and
+                        ; down buttons, to slow down) or positive (in which case
+                        ; we "press" KY2, i.e. the B and up buttons, to speed
+                        ; up)
 
 .DK11
 
@@ -20771,8 +20879,8 @@ ENDIF
  LDA #128               ; Set A = 128, which indicates no change in roll when
                         ; stored in JSTX (i.e. the centre of the roll indicator)
 
- LDX #2                 ; Set X = 2, so we "press" KL+2, i.e. KY3 below
-                        ; (left button, increase roll)
+ LDX #2                 ; Set X = 2, so we "press" KL+2, i.e. KY3 below (left
+                        ; button, increase roll)
 
  ASL INWK+29            ; Shift ship byte #29 left, which shifts bit 7 of the
                         ; updated roll counter (i.e. the roll direction) into
@@ -20841,9 +20949,10 @@ ENDIF
 
  STA KL,X               ; Store 128 in either KY5 or KY6 to "press" the relevant
                         ; key, depending on whether the pitch direction is
-                        ; negative (in which case we "press" KY5, "X", to
-                        ; decrease the pitch) or positive (in which case we
-                        ; "press" KY6, "S", to increase the pitch)
+                        ; negative (in which case we "press" KY5, the down
+                        ; button, to decrease the pitch) or positive (in which
+                        ; case we "press" KY6, the up button, to increase the
+                        ; pitch)
 
  LDA JSTY               ; Fetch A from JSTY so the next instruction has no
                         ; effect
@@ -22960,7 +23069,9 @@ ENDIF
 
 .LQ
 
- JSR SendSpaceViewToPPU ; ???
+ JSR SendSpaceViewToPPU ; Set a new space view, clear the screen, copy the
+                        ; nametable buffers and configure the PPU for the new
+                        ; view
 
  JMP NWSTARS            ; Set up a new stardust field and return from the
                         ; subroutine using a tail call
@@ -22975,12 +23086,15 @@ ENDIF
  CPX VIEW               ; If the current view is already of type X, jump to LO2
  BEQ LO2                ; to return from the subroutine (as LO2 contains an RTS)
 
- JSR SetSpaceViewInNMI  ; ???
+ JSR SetSpaceViewInNMI  ; Change the current space view to X and configure the
+                        ; NMI to send both bitplanes to the PPU during VBlank
 
  JSR FLIP               ; Swap the x- and y-coordinates of all the stardust
                         ; particles and redraw the stardust field
 
- JMP WaitForNMI         ; ???
+ JMP WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
+                        ; next VBlank) and return from the subroutine using a
+                        ; tail call
 
 ; ******************************************************************************
 ;
@@ -23039,7 +23153,8 @@ ENDIF
 ;       Name: SendSpaceViewToPPU
 ;       Type: Subroutine
 ;   Category: PPU
-;    Summary: ???
+;    Summary: Set a new space view, clear the screen, copy the nametable buffers
+;             and configure the PPU for the new view
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -23083,7 +23198,7 @@ ENDIF
 ;       Name: SetSpaceViewInNMI
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: Set the current space view and configure the NMI to send both
+;    Summary: Change the current space view and configure the NMI to send both
 ;             bitplanes to the PPU during VBlank
 ;
 ; ------------------------------------------------------------------------------
@@ -23456,8 +23571,9 @@ ENDIF
  LDA #16                ; Set the text row for in-flight messages in the space
  STA messYC             ; view to row 16
 
- LDX #0                 ; Set flipEveryBitplane0 = 0 ???
- STX flipEveryBitplane0
+ LDX #0                 ; Set flipEveryBitplane0 = 0 to reset the logic behind
+ STX flipEveryBitplane0 ; the sending of drawing bitplane 0 to the PPU in part 3
+                        ; of the main loop
 
  JSR SetDrawingBitplane ; Set the drawing bitplane to bitplane 0
 

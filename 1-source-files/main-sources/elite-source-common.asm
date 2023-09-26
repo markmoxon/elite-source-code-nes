@@ -649,13 +649,6 @@ ENDIF
                         ; as we loop through all the nearby ships in the main
                         ; flight loop
 
-.XX19
-
- SKIP 0                 ; Instead of pointing XX19 to the ship heap address in
-                        ; INWK(34 33), like the other versions of Elite, the NES
-                        ; version points XX19 to the ship blueprint address in
-                        ; INF(1 0)
-
 .INF
 
  SKIP 2                 ; Temporary storage, typically used for storing the
@@ -4514,8 +4507,8 @@ ENDIF
 
 .flipEveryBitplane0
 
- SKIP 1                 ; A flag that flips every time we run the main loop and
-                        ; the drawing bitplane is set to 0
+ SKIP 1                 ; A flag that flips every time we run the main loop with
+                        ; drawing bitplane set to 0
                         ;
                         ; Flips between 0 or $FF after the screen has been drawn
                         ; in the main loop, but only if drawingBitplane = 0
@@ -5462,6 +5455,14 @@ ENDIF
 ; It checks whether the PPU has started drawing the icon bar (which it does
 ; using sprite 0), and if it has it switches the PPU to nametable 0 and pattern
 ; table 0, as that's where the icon bar tiles live.
+;
+; If bit 7 of setupPPUForIconBar is set, it also affects the C flag as follows:
+;
+;   * If bit 6 of PPU_STATUS is clear (sprite 0 has not been hit) then the C
+;     flag is set to bit 7 of PPU_STATUS (which is set if VBlank has started)
+;
+;   * If bit 6 of PPU_STATUS is set (sprite 0 has been hit) then the C flag is
+;     cleared
 ;
 ; There are no arguments.
 ;
