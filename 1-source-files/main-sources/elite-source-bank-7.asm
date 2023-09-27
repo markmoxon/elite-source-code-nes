@@ -6874,7 +6874,8 @@ ENDIF
 
  DEC P                  ; Decrement the x-axis counter in P
 
- BEQ loin19
+ BEQ loin19             ; If we have just reached the end of the line along the
+                        ; x-axis, jump to loin19 to return from the subroutine
 
  CLC                    ; Set S = S + Q to update the slope error
  LDA S
@@ -7669,7 +7670,7 @@ ENDIF
                         ; same calculations, but don't actually draw anything in
                         ; this character block
 
- LDX Q
+ LDX Q                  ; Set X to the value of the x-axis counter
 
 .loin42
 
@@ -9762,7 +9763,7 @@ ENDIF
 
  EQUB %00100001         ; Press the right and B buttons (%01000100) for 14
  EQUB 14                ; VBlanks to move the icon bar pointer to the right
-                        ; and onto the target missile button
+                        ; and onto the Target Missile button
 
  EQUB $83               ; Do nothing for 3 * 4 = 12 VBlanks
 
@@ -9795,7 +9796,7 @@ ENDIF
 
  EQUB %00100001         ; Press the right and B buttons (%00100001) for 2
  EQUB 2                 ; VBlanks to move the icon bar pointer to the right
-                        ; and onto the fire missile button
+                        ; and onto the Fire Missile button
 
  EQUB $83               ; Do nothing for 3 * 4 = 12 VBlanks
 
@@ -9815,7 +9816,7 @@ ENDIF
 
  EQUB %00100010         ; Press the left and B buttons (%00100010) for 22
  EQUB 22                ; VBlanks to move the icon bar pointer to the left
-                        ; and onto the front view button
+                        ; and onto the Front View button
 
  EQUB $83               ; Do nothing for 3 * 4 = 12 VBlanks
 
@@ -9827,7 +9828,7 @@ ENDIF
 
  EQUB %00100001         ; Press the right and B buttons (%00100001) for 18
  EQUB 18                ; VBlanks to move the icon bar pointer to the right
-                        ; and onto the target missile button
+                        ; and onto the Target Missile button
 
  EQUB $83               ; Do nothing for 3 * 4 = 12 VBlanks
 
@@ -9844,7 +9845,7 @@ ENDIF
 
  EQUB %00100001         ; Press the right and B buttons (%00100001) for 2
  EQUB 2                 ; VBlanks to move the icon bar pointer to the right
-                        ; and onto the fire missile button
+                        ; and onto the Fire Missile button
 
  EQUB $83               ; Do nothing for 3 * 4 = 12 VBlanks
 
@@ -9913,7 +9914,7 @@ ENDIF
 
  EQUB %00100001         ; Press the right and B buttons (%01000100) for 14
  EQUB 14                ; VBlanks to move the icon bar pointer to the right
-                        ; and onto the target missile button
+                        ; and onto the Target Missile button
 
  EQUB $83               ; Do nothing for 3 * 4 = 12 VBlanks
 
@@ -9946,7 +9947,7 @@ ENDIF
 
  EQUB %00100001         ; Press the right and B buttons (%00100001) for 2
  EQUB 2                 ; VBlanks to move the icon bar pointer to the right
-                        ; and onto the fire missile button
+                        ; and onto the Fire Missile button
 
  EQUB $83               ; Do nothing for 3 * 4 = 12 VBlanks
 
@@ -9964,7 +9965,7 @@ ENDIF
 
  EQUB %00100010         ; Press the left and B buttons (%00100010) for 22
  EQUB 22                ; VBlanks to move the icon bar pointer to the left
-                        ; and onto the front view button
+                        ; and onto the Front View button
 
  EQUB $83               ; Do nothing for 3 * 4 = 12 VBlanks
 
@@ -9976,7 +9977,7 @@ ENDIF
 
  EQUB %00100001         ; Press the right and B buttons (%00100001) for 18
  EQUB 18                ; VBlanks to move the icon bar pointer to the right
-                        ; and onto the target missile button
+                        ; and onto the Target Missile button
 
  EQUB $83               ; Do nothing for 3 * 4 = 12 VBlanks
 
@@ -9987,7 +9988,7 @@ ENDIF
 
  EQUB %00100001         ; Press the right and B buttons (%00100001) for 2
  EQUB 2                 ; VBlanks to move the icon bar pointer to the right
-                        ; and onto the fire missile button
+                        ; and onto the Fire Missile button
 
  EQUB $83               ; Do nothing for 3 * 4 = 12 VBlanks
 
@@ -10062,7 +10063,7 @@ ENDIF
 
  EQUB %00100001         ; Press the right and B buttons (%01000100) for 14
  EQUB 14                ; VBlanks to move the icon bar pointer to the right
-                        ; and onto the target missile button
+                        ; and onto the Target Missile button
 
  EQUB $83               ; Do nothing for 3 * 4 = 12 VBlanks
 
@@ -10097,7 +10098,7 @@ ENDIF
  EQUB 2                 ; VBlanks to move the icon bar pointer to the right
 
  EQUB $83               ; Do nothing for 3 * 4 = 12 VBlanks
-                        ; and onto the fire missile button
+                        ; and onto the Fire Missile button
 
  EQUB $C3               ; Press the up button (%00001000) while bit 7 of MSTG is
  EQUB %00001000         ; set (i.e. pull up until the missile has locked onto a
@@ -10115,7 +10116,7 @@ ENDIF
 
  EQUB %00100010         ; Press the left and B buttons (%00100010) for 22
  EQUB 22                ; VBlanks to move the icon bar pointer to the left
-                        ; and onto the front view button
+                        ; and onto the Front View button
 
  EQUB $83               ; Do nothing for 3 * 4 = 12 VBlanks
 
@@ -10127,7 +10128,7 @@ ENDIF
 
  EQUB %00100001         ; Press the right and B buttons (%00100001) for 18
  EQUB 18                ; VBlanks to move the icon bar pointer to the right
-                        ; and onto the target missile button
+                        ; and onto the Target Missile button
 
  EQUB $83               ; Do nothing for 3 * 4 = 12 VBlanks
 
@@ -10138,7 +10139,7 @@ ENDIF
 
  EQUB %00100001         ; Press the right and B buttons (%00100001) for 2
  EQUB 2                 ; VBlanks to move the icon bar pointer to the right
-                        ; and onto the fire missile button
+                        ; and onto the Fire Missile button
 
  EQUB $83               ; Do nothing for 3 * 4 = 12 VBlanks
 
@@ -10413,7 +10414,7 @@ ENDIF
 
  EQUB %00100001         ; Press the right and B buttons (%00100001) for 22
  EQUB 22                ; VBlanks to move the icon bar pointer to the right
-                        ; and onto the front view button
+                        ; and onto the Front View button
 
  EQUB $83               ; Do nothing for 3 * 4 = 12 VBlanks
 
@@ -10517,7 +10518,7 @@ ENDIF
 
  EQUB %00100001         ; Press the right and B buttons (%00100001) for 26
  EQUB 26                ; VBlanks to move the icon bar pointer to the right
-                        ; and onto the hyperspace button
+                        ; and onto the Hyperspace button
 
  EQUB $83               ; Do nothing for 3 * 4 = 12 VBlanks
 
@@ -10531,7 +10532,7 @@ ENDIF
 
  EQUB %00100010         ; Press the left and B buttons (%00100010) for 18
  EQUB 18                ; VBlanks to move the icon bar pointer to the left
-                        ; and onto the front view button
+                        ; and onto the Front View button
 
  EQUB $83               ; Do nothing for 3 * 4 = 12 VBlanks
 
@@ -10588,7 +10589,7 @@ ENDIF
 
  EQUB %00100010         ; Press the left and B buttons (%00100010) for 22
  EQUB 58                ; VBlanks to move the icon bar pointer to the left
-                        ; and onto the Docking computer button
+                        ; and onto the Docking Computer button
 
  EQUB $83               ; Do nothing for 3 * 4 = 12 VBlanks
 
@@ -10749,7 +10750,7 @@ ENDIF
 
  EQUB %00100001         ; Press the right and B buttons (%00100001) for 14
  EQUB 14                ; VBlanks to move the icon bar pointer to the right
-                        ; and onto the front view button
+                        ; and onto the Front View button
 
  EQUB $83               ; Do nothing for 3 * 4 = 12 VBlanks
 
@@ -10762,7 +10763,7 @@ ENDIF
 
  EQUB %00100001         ; Press the right and B buttons (%00100001) for 18
  EQUB 18                ; VBlanks to move the icon bar pointer to the right
-                        ; and onto the target missile button
+                        ; and onto the Target Missile button
 
  EQUB $83               ; Do nothing for 3 * 4 = 12 VBlanks
 
@@ -10790,7 +10791,7 @@ ENDIF
 
  EQUB %00100001         ; Press the right and B buttons (%00100001) for 2
  EQUB 2                 ; VBlanks to move the icon bar pointer to the right
-                        ; and onto the fire missile button
+                        ; and onto the Fire Missile button
 
  EQUB $83               ; Do nothing for 3 * 4 = 12 VBlanks
 

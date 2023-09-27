@@ -10593,7 +10593,7 @@ ENDIF
  JSR LOIN               ; Draw a line from (X1, Y1) to (X2, Y2) to draw the next
                         ; segment of the bolt
 
- LDA SWAP               
+ LDA SWAP               ; ???
  BNE lite3
 
  LDA X2                 ; Set (X1, Y1) to (X2, Y2), so (X1, Y1) contains the new

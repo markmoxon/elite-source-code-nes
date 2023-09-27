@@ -2153,12 +2153,17 @@ ENDIF
                         ; to denote there is a user interface
 
  LDA QQ11               ; If the view type in QQ11 is $DF (Start screen with
- CMP #$DF               ; the normal font loaded), jump to svip13 to set
- BEQ svip13             ; showUserInterface to denote there is a user interface
+ CMP #$DF               ; the normal font loaded), jump to svip13 to set bit 7
+ BEQ svip13             ; of showUserInterface so that the nametable and palette
+                        ; table get set to 0 when sprite 0 is drawn, even though
+                        ; there is no icon bar (this ensures that the part of
+                        ; the Start screen below x-coordinate 166 is always
+                        ; drawn using nametable 0, which covers the interface
+                        ; part of the screen where the language gets chosen)
 
                         ; If we get here then there is no user interface and
                         ; and this is not the Start screen with the normal font
-                        ; loaded ???
+                        ; loaded
 
  LDA #0                 ; Clear bit 7 of A so we can set showUserInterface to
  BEQ svip14             ; denote that there is no user interface, and jump
@@ -6202,9 +6207,9 @@ ENDIF
  CMP #$98               ; If the old view type in QQ11a is $98 (Status Mode),
  BEQ pale2              ; jump to pale2
 
- LDA XX3+21             ; Set the palette to entries 21 to 23 from the XX3 table
- STA visibleColour      ; ???
- LDA XX3+22
+ LDA XX3+21             ; Set the palette to entries 21 to 23 from the XX3
+ STA visibleColour      ; table, which contain the palette for the current
+ LDA XX3+22             ; system (so this caters for the Data on System view)
  STA paletteColour2
  LDA XX3+23
  STA paletteColour3
@@ -6216,8 +6221,9 @@ ENDIF
                         ; If we get here then the view either has a dashboard or
                         ; it is the Game Over screen
 
- LDA XX3+3              ; Set the visible colour to entry 3 from the XX3 table
- STA visibleColour      ; ???
+ LDA XX3+3              ; Set the visible colour to entry 3 from the XX3 table,
+ STA visibleColour      ; which is the visible colour for the space view and
+                        ; Game Over screen
 
  RTS                    ; Return from the subroutine
 
@@ -6225,9 +6231,9 @@ ENDIF
 
                         ; If we get here then the view is the Status Mode
 
- LDA XX3+1              ; Set the palette to entries 1 to 3 from the XX3 table
- STA visibleColour      ; ???
- LDA XX3+2
+ LDA XX3+1              ; Set the palette to entries 1 to 3 from the XX3 table,
+ STA visibleColour      ; which contains the palette for the commander image (so
+ LDA XX3+2              ; this caters for the Status Mode view)
  STA paletteColour2
  LDA XX3+3
  STA paletteColour3

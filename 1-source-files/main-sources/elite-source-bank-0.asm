@@ -341,7 +341,7 @@ ENDIF
                         ; so jump to BAY to go to the docking bay (i.e. show the
                         ; Status Mode screen)
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -989,12 +989,21 @@ ENDIF
  JSR PLUT               ; Call PLUT to update the geometric axes in INWK to
                         ; match the view (front, rear, left, right)
 
- LDA LAS                ; ???
- BNE main37
- LDA MSAR
- BEQ main38
- LDA MSTG
- BPL main38
+ LDA LAS                ; If we are firing our laser then LAS will contain the
+ BNE main37             ; laser power (which will be non-zero), so jump to
+                        ; main37 to check if the current ship is in the
+                        ; crosshairs, to see if we are hitting it
+
+ LDA MSAR               ; If the active missile is not looking for a target then
+ BEQ main38             ; MSAR will be zero, so jump to main38 to skip the
+                        ; following, as we can't target lock an unarmed missile
+
+ LDA MSTG               ; If MSTG is positive (i.e. it does not have bit 7 set),
+ BPL main38             ; then it indicates we already have a missile locked on
+                        ; a target (in which case MSTG contains the ship number
+                        ; of the target), so jump to main38 to skip targeting. Or
+                        ; to put it another way, if MSTG = $FF, which means
+                        ; there is no current target lock, keep going
 
 .main37
 
@@ -1014,8 +1023,11 @@ ENDIF
                         ; to process laser fire, as we can't lock an unarmed
                         ; missile
 
- LDA MSTG               ; ???
- BPL MA47
+ LDA MSTG               ; If MSTG is positive (i.e. it does not have bit 7 set),
+ BPL MA47               ; then it indicates we already have a missile locked on
+                        ; a target (in which case MSTG contains the ship number
+                        ; of the target), so jump to MA47 to skip setting the
+                        ; target and beeping
 
  JSR BEEP_b7            ; We have missile lock and an armed missile, so call
                         ; the BEEP subroutine to make a short, high beep
@@ -1045,11 +1057,15 @@ ENDIF
  CMP #SST               ; MA14+2 to make the station hostile, skipping the
  BEQ MA14+2             ; following as we can't destroy a space station
 
- CMP #8                 ; ???
- BNE main40
- LDX LAS
- CPX #$32
- BEQ MA14+2
+ CMP #SPL               ; Did we just hit a splinter? If not jump to main40 to
+ BNE main40             ; skip the following
+
+ LDX LAS                ; We just hit a splinter, so we now check whether we
+ CPX #Mlas              ; have a mining laser fitted (in which case the laser
+ BEQ MA14+2             ; power in LAS will be Mlas), and if so, jump to MA14+2
+                        ; to skip the following, so we can't destroy splinters
+                        ; with mining lasers (which is handy, as we probably
+                        ; want to scoop them up instead)
 
 .main40
 
@@ -1085,31 +1101,52 @@ ENDIF
  JSR HideShip_b1        ; Update the ship so it is no longer shown on the
                         ; scanner
 
- LDA LAS                ; Did we kill the asteroid using mining lasers? If not,
- CMP #Mlas              ; jump to nosp, otherwise keep going
+ LDA LAS                ; Are we using mining lasers? If not, jump to nosp to
+ CMP #Mlas              ; spawn canisters, otherwise keep going
  BNE nosp
 
- LDA TYPE               ; ???
- CMP #7
+                        ; If we get here then we are using mining lasers
+
+ LDA TYPE               ; Did we just kill an asteroid? If so, jump to main41
+ CMP #AST               ; to break the asteroid up into splinters
  BEQ main41
- CMP #6
- BNE nosp
- JSR DORND
- BPL main43
- LDA #1
- BNE main42
+
+ CMP #6                 ; Did we just kill a boulder? If not jump to nosp to
+ BNE nosp               ; spawn canisters, otherwise keep going
+
+                        ; If we get here then we are using mining lasers and we
+                        ; just blasted a boulder
+
+ JSR DORND              ; Set A and X to random numbers
+
+ BPL main43             ; If bit 7 of A is clear (50% chance), jump to main43 to
+                        ; skip spawning any splinters
+
+ LDA #1                 ; Otherwise set A = 1 so we spawn one splinter below
+
+ BNE main42             ; Jump to main42 to spawn one splinter (this BNE is
+                        ; effectively a JMP as A is never zero)
 
 .main41
 
- JSR DORND
- ORA #1
+                        ; If we get here then we are using mining lasers and we
+                        ; just blasted an asteroid
+
+ JSR DORND              ; Set A and X to random numbers
+
+ ORA #1                 ; Reduce the random number in A to the range 1-3
  AND #3
 
 .main42
 
- LDX #8
- JSR SPIN2
- JMP main43
+ LDX #SPL               ; Set X to the ship type for a splinter
+
+ JSR SPIN2              ; Call SPIN2 to spawn A items of type X (so we spawn
+                        ; 1-3 splinters if we just destroyed an asteroid, or we
+                        ; spawn one splinter 50% of the time if we just
+                        ; destroyed a boulder)
+
+ JMP main43             ; Jump to main43 to skip spawning canisters
 
 .nosp
 
@@ -1171,9 +1208,9 @@ ENDIF
  LDA INWK+35            ; byte #35 in INF (so the ship's data in K% gets
  STA (INF),Y            ; updated)
 
- LDA INWK+34
- LDY #34
- STA (INF),Y
+ LDA INWK+34            ; Fetch the ship's explosion cloud counter from byte #34
+ LDY #34                ; and copy it to byte #34 in INF (so the ship's data in
+ STA (INF),Y            ; K% gets updated)
 
  LDA NEWB               ; If bit 7 of the ship's NEWB flags is set, which means
  BMI KS1S               ; the ship has docked or been scooped, jump to KS1S to
@@ -2049,37 +2086,71 @@ ENDIF
 ;
 ; ******************************************************************************
 
- LDA auto               ; ???
- BEQ main2
+                        ; We now check to see if we are allowed to make an
+                        ; in-system jump, and set the allowInSystemJump flag
+                        ; accordingly
 
- CLC
- BCC main5
+ LDA auto               ; If auto is zero, then the docking computer is not
+ BEQ main2              ; activated, so jump to main2 to move on to the next
+                        ; check
+
+ CLC                    ; The docking computer is activated, so clear the C flag
+                        ; to put into bit 7 of allowInSystemJump, so the
+                        ; Fast-forward button is enabled (so we can use it to
+                        ; speed up docking)
+
+ BCC main5              ; Jump to main5 to update allowInSystemJump (this BCC is
+                        ; effectively a JMP as we know the C flag is clear)
 
 .main2
 
- LDA MJ
- BEQ main3
+ LDA MJ                 ; If MJ is zero then we are not in witchspace, so jump
+ BEQ main3              ; to main3 to move on to the next check
 
- SEC
- BCS main5
+ SEC                    ; We are in witchspace, so set the C flag to put into
+                        ; bit 7 of allowInSystemJump, so in-system jumps are not
+                        ; allowed
+
+ BCS main5              ; Jump to main5 to update allowInSystemJump (this BCS is
+                        ; effectively a JMP as we know the C flag is set)
 
 .main3
 
- LDA allowInSystemJump
- BPL main4
+                        ; If we get here then the docking computer is not
+                        ; activated and we are not in witchspace
 
- LDA #$B0
- JSR CheckJumpSafety+2
+ LDA allowInSystemJump  ; If bit 7 of allowInSystemJump is clear then jump to
+ BPL main4              ; to main4 to check whether we are too close to the
+                        ; planet or sun to make an in-system jump
 
- JMP main5
+ LDA #176               ; Set A = 176 to use as the distance to check in the
+                        ; following call to CheckJumpSafety
+                        ;
+                        ; The default distance checks use A = 128, so this makes
+                        ; the distance checks more stringent, as bit 7 of
+                        ; allowInSystemJump is set, so we are need to be further
+                        ; away from the danger to make a safe jump
+
+ JSR CheckJumpSafety+2  ; Check whether we are far enough away from the planet
+                        ; and sun to be able to do an in-system (fast-forward)
+                        ; jump, returning the result in the C flag (clear means
+                        ; we can jump, set means we can't), using the distance
+                        ; in A
+
+ JMP main5              ; Jump to main5 to update allowInSystemJump with the
+                        ; result of the distance check
 
 .main4
 
- JSR CheckJumpSafety
+ JSR CheckJumpSafety    ; Check whether we are far enough away from the planet
+                        ; and sun to be able to do an in-system (fast-forward)
+                        ; jump, returning the result in the C flag (clear means
+                        ; we can jump, set means we can't)
 
 .main5
 
- ROR allowInSystemJump
+ ROR allowInSystemJump  ; Rotate the C flag into bit 7 of allowInSystemJump, so
+                        ; in-system jumps are enabled or disabled accordingly
 
  LDX JSTX               ; Set X to the current rate of roll in JSTX
 
@@ -2397,8 +2468,8 @@ ENDIF
  BNE MA64               ; pod, so jump down to MA64 to skip the rest of the
                         ; button checks
 
- JMP ESCAPE             ; The Launch Escape Pod button is being pressed and
-                        ; we have an escape pod fitted, so jump to ESCAPE to
+ JMP ESCAPE             ; The button is being pressed to launch an escape pod
+                        ; and we have an escape pod fitted, so jump to ESCAPE to
                         ; launch it, and exit the main flight loop using a tail
                         ; call
 
@@ -5511,24 +5582,32 @@ ENDIF
  BEQ TA4                ; If the enemy has no laser power, jump to TA4 to skip
                         ; the laser checks
 
- CPX #161               ; ???
- BCC tact1
+ CPX #161               ; If X < 161, i.e. X > -31, then we are not in the enemy
+ BCC tact1              ; ship's line of fire, so jump to tact1 to skip the laser
+                        ; checks
 
  LDA INWK+31            ; Set bit 6 in byte #31 to denote that the ship is
  ORA #%01000000         ; firing its laser at us
  STA INWK+31
 
  CPX #163               ; If X >= 163, i.e. X <= -35, then we are in the enemy
- BCS tact2              ; ship's crosshairs, so ???
+ BCS tact2              ; ship's crosshairs, so jump to tact2 to skip the laser
+                        ; checks
 
 .tact1
 
- JSR TAS6               ; ???
- LDA CNT
- EOR #$80
- STA CNT
- JSR TA15
- JMP tact3
+ JSR TAS6               ; Call TAS6 to negate the vector in XX15 so it points in
+                        ; the opposite direction
+
+ LDA CNT                ; Change the sign of the dot product in CNT, so now it's
+ EOR #%10000000         ; positive if the ships are facing each other, and
+                        ; negative if they are facing the same way
+
+ STA CNT                ; Update CNT with the new value in A
+
+ JSR TA15               ; Call TA15 so the ship heads away from us
+
+ JMP tact3              ; Jump to tact3 to continue with the checks
 
 .tact2
 
@@ -5549,26 +5628,47 @@ ENDIF
 
 .tact3
 
- LDA INWK+7             ; ???
- CMP #3
+ LDA INWK+7             ; If z_hi >= 3 then the ship is quite far away, so jump
+ CMP #3                 ; down to tact4 to apply the brakes
  BCS tact4
- JSR DORND
- ORA #$C0
- CMP INWK+32
- BCC tact4
- JSR DORND
- AND #$87
- STA INWK+30
- JMP tact8
+
+ JSR DORND              ; Set A and X to random numbers
+
+ ORA #%11000000         ; Set bits 6 and 7 of A, so A is at least 192
+
+ CMP INWK+32            ; If A < byte #32 (the ship's AI flag) then jump down
+ BCC tact4              ; to tact4 to apply the brakes
+                        ;
+                        ; We jump if A < byte #32, and the chances of this
+                        ; being true are greater with high values of byte #32,
+                        ; as long as they are at least 192
+                        ;
+                        ; In other words, higher byte #32 values increase the
+                        ; chances of a ship changing direction to head towards
+                        ; us - or, to put it another way, ships with higher
+                        ; byte #32 values over 192 are spoiling for a fight
+                        ;
+                        ; Thargoids have byte #32 set to 255, which explains
+                        ; an awful lot
+
+ JSR DORND              ; Otherwise set the ship's pitch counter to a random
+ AND #%10000111         ; number in the range 0 to 7, with a random pitch
+ STA INWK+30            ; direction
+
+ JMP tact8              ; Jump to tact8 to set the ship's acceleration to 3 and
+                        ; return from the subroutine
 
 .tact4
 
- LDA INWK+1
- ORA INWK+4
- ORA INWK+7
- AND #$E0
+ LDA INWK+1             ; If none of x_hi, y_hi or z_hi has bits 5 to 7 set,
+ ORA INWK+4             ; then they are all less than 31, so jump to tact11 to
+ ORA INWK+7             ; set the ship's acceleration to -1 (or -2 if it is a
+ AND #%11100000         ; missile)
  BEQ tact11
- BNE tact8
+
+ BNE tact8              ; Otherwise jump to tact8 to set the ship's acceleration
+                        ; to 3 and return from the subroutine (this BNE is
+                        ; effectively a JMP as we just passed through a BEQ)
 
 ; ******************************************************************************
 ;
@@ -5607,7 +5707,7 @@ ENDIF
  AND #%11111110
 
  BEQ tact5              ; If A = 0 then the ship is pretty close to us, so jump
-                        ; to tact5 so it heads away from us ???
+                        ; to tact5 so it heads away from us
 
 .TA5
 
@@ -5615,18 +5715,23 @@ ENDIF
 
  JSR DORND              ; Set A and X to random numbers
 
- ORA #%10000000         ; Set bit 7 of A
+ ORA #%10000000         ; Set bit 7 of A, so A is at least 128
 
  CMP INWK+32            ; If A >= byte #32 (the ship's AI flag) then jump down
- BCS tact5              ; to tact5 so it heads away from us ???
+ BCS tact5              ; to tact5 so it heads away from us
 
                         ; We get here if A < byte #32, and the chances of this
-                        ; being true are greater with high values of byte #32.
+                        ; being true are greater with high values of byte #32,
+                        ; as long as they are at least 128
+                        ;
                         ; In other words, higher byte #32 values increase the
                         ; chances of a ship changing direction to head towards
                         ; us - or, to put it another way, ships with higher
-                        ; byte #32 values are spoiling for a fight. Thargoids
-                        ; have byte #32 set to 255, which explains an awful lot
+                        ; byte #32 values of 128 or more are spoiling for a
+                        ; fight
+                        ;
+                        ; Thargoids have byte #32 set to 255, which explains
+                        ; an awful lot
 
  STA shipIsAggressive   ; Store A in shipIsAggressive, so we can check bit 7 of
                         ; the value below to judge whether this ship is spoiling
@@ -5651,79 +5756,138 @@ ENDIF
 
 .tact5
 
- JSR TA15               ; ???
- LDA shipIsAggressive
- BPL tact7
+ JSR TA15               ; Call TA15 so the ship heads away from us
 
- LDA INWK+1             ; ???
- ORA INWK+4
- ORA INWK+7
- AND #$F8
+ LDA shipIsAggressive   ; If bit 7 of shipIsAggressive is clear then the ship is
+ BPL tact7              ; not spoiling for a fight, so jump to tact7 to skip the
+                        ; following
+
+ LDA INWK+1             ; If any of x_hi, y_hi or z_hi have bits 3 to 7 set,
+ ORA INWK+4             ; then at least one of them is greater than 7, so jump to
+ ORA INWK+7             ; tact7 to consider slowing down to make a turn
+ AND #%11111000
  BNE tact7
- LDA CNT
- BMI tact6
- CMP CNT2
- BCS tact11
+
+                        ; If we get here then x_hi, y_hi and z_hi are all 7 or
+                        ; smaller, so the ships are close together
+
+ LDA CNT                ; Fetch the dot product, and if it's negative jump to
+ BMI tact6              ; tact10 via tact6 to consider speeding up or braking,
+                        ; as the ships are facing away from each other
+
+ CMP CNT2               ; The dot product is positive, so the ships are facing
+ BCS tact11             ; each other. If A >= CNT2 then the ships are heading
+                        ; directly towards each other, so jump to tact11 to
+                        ; accelerate hard
 
 .tact6
 
- JMP tact10
+ JMP tact10             ; Jump to tact10 to consider speeding up or braking
 
 .tact7
 
- LDA CNT
- BMI tact9
- CMP CNT2
- BCC tact10
+ LDA CNT                ; Fetch the dot product, and if it's negative jump to
+ BMI tact9              ; tact9, as the ships are facing away from each other
+                        ; so we should consider slowing down to make a turn
+
+ CMP CNT2               ; The dot product is positive, so the ships are facing
+ BCC tact10             ; each other. If A < CNT2 then the ships are not heading
+                        ; directly towards each other, so jump to tact10 to
+                        ; consider speeding up or braking
 
 .tact8
 
- LDA #3
- BNE tact12
+                        ; Set the ship's acceleration to 3
+
+ LDA #3                 ; Set A = 3 so we set the acceleration in byte #28 to 3
+                        ; below
+
+ BNE tact12             ; Jump to tact12 to set the acceleration and return from
+                        ; the subroutine (this BNE is effectively a JMP as A is
+                        ; never zero)
 
 .tact9
 
- AND #$7F
- CMP #6
- BCS tact11
+ AND #%01111111         ; Clear the sign bit of the dot product in A
+
+ CMP #6                 ; If A >= 6 then the ship is not far from the XX15
+ BCS tact11             ; vector, so jump to tact11 to start slowing down
+
+                        ; Otherwise the ship is way off the XX15 vector, so we
+                        ; fall through into tact10 to consider speeding up or
+                        ; braking
 
 .tact10
 
- LDA INWK+27
- CMP #6
- BCC tact8
- JSR DORND
- CMP #$C8
- BCC TA10
+                        ; If we get here then we speed up the ship if it is
+                        ; going slowly, otherwise we apply the brakes 22% of the
+                        ; time, or do nothing 78% of the time
+
+ LDA INWK+27            ; Set A to the ship's speed in byte #27
+
+ CMP #6                 ; If A < 6 then the ship is not going fast, so jump to
+ BCC tact8              ; tact8 to set the ship's acceleration to 3
+
+ JSR DORND              ; Otherwise the ship is going fast, so set A and X to
+                        ; random numbers
+
+ CMP #200               ; If A < 200 (78% chance), jump to TA10 to return from
+ BCC TA10               ; the subroutine without accelerating
+
+                        ; If we get here the ship is not going that slowly, so
+                        ; we only apply the brakes 22% of the time
 
 .tact11
 
- LDA #$FF
- LDX TYPE
- CPX #1
+                        ; Set the ship's acceleration to -1, unless is is a
+                        ; missile, in which case set it to -2
+
+ LDA #$FF               ; Set A = -1
+
+ LDX TYPE               ; If this is not a missile then skip the ASL instruction
+ CPX #MSL
  BNE tact12
- ASL A
+
+ ASL A                  ; This is a missile, so set A = -2, as missiles are more
+                        ; nimble and can brake more quickly
 
 .tact12
 
- STA INWK+28
+ STA INWK+28            ; Set the ship's acceleration to A
 
 .TA10
 
- RTS
+ RTS                    ; Return from the subroutine
 
 .TA151
 
- LDY #$0A
- JSR TAS3
- CMP #$98
- BCC tact13
- LDX #0
- STX RAT2
+                        ; This is called from part 3 with the vector to the
+                        ; planet in XX15, when we want the ship to turn towards
+                        ; the planet. It does the same dot product calculation
+                        ; as part 3, but it can also change the value of RAT2
+                        ; so that roll and pitch is always applied
 
-.tact13
+ LDY #10                ; Set (A X) = nosev . XX15
+ JSR TAS3               ;
+                        ; The bigger the value of the dot product, the more
+                        ; aligned the two vectors are, with a maximum magnitude
+                        ; in A of 36 (96 * 96 >> 8). If A is positive, the
+                        ; vectors are facing in a similar direction, if it's
+                        ; negative they are facing in opposite directions
 
- JMP TA152
+ CMP #$98               ; If A is positive or A <= -24, jump to ttt
+ BCC ttt
+
+ LDX #0                 ; A > -24, which means the vectors are facing in
+ STX RAT2               ; opposite directions but are quite aligned, so set
+                        ; RAT2 = 0 instead of the default value of 4, so we
+                        ; always apply roll and pitch when we turn the ship
+                        ; towards the planet
+
+.ttt
+
+ JMP TA152              ; Jump to TA152 to store A in CNT and move the ship in
+                        ; the direction of XX15
 
 .TA15
 
@@ -5766,15 +5930,22 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA CNT                ; ???
- BPL tact14
- CMP #$9F
- BCC tact14
- LDA #7
- ORA INWK+30
+ LDA CNT                ; Fetch the dot product, and if it's positive jump to
+ BPL tact14             ; tact14, as the ships are facing each other and we
+                        ; don't need to pitch to make a turn
+
+ CMP #159               ; If A < 159, skip to tact14 to leave the pitch counter
+ BCC tact14             ; at zero
+
+ LDA #7                 ; Set the magnitude of the ship's pitch counter to 7
+ ORA INWK+30            ; (we already set the sign above)
  STA INWK+30
- LDA #0
- BEQ tact15
+
+ LDA #0                 ; Set A = 0 so when we jump to tact15, we set the ship's
+                        ; roll counter to zero
+
+ BEQ tact15             ; Jump to tact15 to set the roll counter (this BEQ is
+                        ; effectively a JMP as A is always zero)
 
 .tact14
 
@@ -9950,7 +10121,7 @@ ENDIF
  ASL A                  ; If bit 6 of selectedSystemFlag was previously clear,
  BPL mvcr2              ; then before the crosshairs moved we weren't locked
                         ; onto a system that we could hyperspace to, so the
-                        ; hyperspace button wouldn't have been showing on the
+                        ; Hyperspace button wouldn't have been showing on the
                         ; icon bar, so jump to mvcr2 to skip the following as
                         ; we don't need to update the icon bar
 
@@ -10841,7 +11012,7 @@ ENDIF
  JMP UpdateIconBar_b3   ; Otherwise the newly selected system has a different
                         ; "can we hyperspace here?" status to the previous
                         ; selected system, so we need to update the icon bar to
-                        ; either hide or show the hyperspace button, returning
+                        ; either hide or show the Hyperspace button, returning
                         ; from the subroutine using a tail call
 
 ; ******************************************************************************
@@ -11329,7 +11500,7 @@ ENDIF
                         ; of the hyperspace counter shorter than subsequent
                         ; ticks
 
- JMP UpdateIconBar_b3   ; Update the icon bar to remove the hyperspace button,
+ JMP UpdateIconBar_b3   ; Update the icon bar to remove the Hyperspace button,
                         ; as we are now commit to our hyperspace jump, and
                         ; return from the subroutine using a tail call
 
@@ -12621,7 +12792,7 @@ ENDIF
                         ; but we can't hyperspace to it (because it is the same
                         ; as the currently selected system)
 
- JSR UpdateIconBar_b3   ; Update the icon bar to remove the hyperspace button
+ JSR UpdateIconBar_b3   ; Update the icon bar to remove the Hyperspace button
                         ; if present
 
  JSR TT24_b6            ; Call TT24 to calculate system data from the seeds in
@@ -15651,10 +15822,10 @@ ENDIF
  JSR GINF               ; Call GINF to get the address of the data block for
                         ; ship slot X and store it in INF
 
- LDY #31                ; Clear bits 3 and 6 in the ship's byte #31, which
- LDA (INF),Y            ; stops drawing the ship on-screen (bit 3), and stops
- AND #%10110111         ; any lasers firing (bit 6)
- STA (INF),Y
+ LDY #31                ; Clear bits 3 and 6 in the ship's byte #31, which stops
+ LDA (INF),Y            ; drawing the ship on-screen (bit 3), and denotes that
+ AND #%10110111         ; the explosion has not been drawn and there are no
+ STA (INF),Y            ; lasers firing (bit 6)
 
 .WS1
 
@@ -21008,7 +21179,9 @@ ENDIF
                         ; check the icon bar key logger entry and return from
                         ; the subroutine
 
- LDX #128
+ LDX #128               ; Set X = 128, which indicates no change in pitch when
+                        ; stored in JSTX (i.e. the centre of the pitch
+                        ; indicator)
 
  LDA KY3                ; If either of the left or right buttons are being 
  ORA KY4                ; pressed, jump to doky5 to skip the following

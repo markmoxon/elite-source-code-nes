@@ -3367,32 +3367,62 @@ ENDIF
  BCS nono               ; the bottom of the screen, jump to nono as the ship's
                         ; dot is off the bottom of the space view
 
+                        ; The C flag is clear at this point as we just passed
+                        ; through a BCS, so we call Shpt with the C flag clear
+
  JSR Shpt               ; Call Shpt to draw a horizontal 4-pixel dash for the
                         ; first row of the dot (i.e. a four-pixel dash)
 
  INY                    ; Increment Y to the next row (so this is the second row
- CLC                    ; of the two-pixel-high dot)
+                        ; of the two-pixel-high dot)
+
+ CLC                    ; Cleat the C flag to pass to Shpt
 
  JSR Shpt               ; Call Shpt to draw a horizontal 4-pixel dash for the
                         ; second row of the dot (i.e. a four-pixel dash)
 
- BIT XX1+31             ; ???
- BVC nono
- LDA XX1+31
- AND #$BF
- STA XX1+31
- LDX #1
- LDA XX1+6
- BPL shpt1
- LDX #$FF
+ BIT XX1+31             ; If bit 6 of the ship's byte #31 is clear, then there
+ BVC nono               ; are no lasers firing, so jump to nono to record that
+                        ; we didn't draw anything and return from the subroutine
+
+ LDA XX1+31             ; Clear 6 in the ship's byte #31 to denote that there
+ AND #%10111111         ; are no lasers firing (bit 6), as we are about to draw
+ STA XX1+31             ; the laser line and this will ensure it flickers off in
+                        ; the next iteration
+
+                        ; We now draw the laser line, from the ship dot at
+                        ; (X1, Y1), as set in the call to Shpt, to a point on
+                        ; the edge of the screen
+
+ LDX #1                 ; Set X = 1 to use as the x-coordinate for the end of
+                        ; the laser line for when z_lo < 128 (so the ship fires
+                        ; to our left)
+
+ LDA XX1+6              ; Set A = z_lo
+
+ BPL shpt1              ; If z_lo < 128, jump to shpt1 to leave X = 1
+
+ LDX #255               ; Set X = 255 to use as the x-coordinate for the end of
+                        ; the laser line for when z_lo >= 128 (so the ship fires
+                        ; to our left)
+                        ;
+                        ; This makes the ship fire to our left and right as it
+                        ; gets closer to us, as z_lo reduces from 255 to 0 for
+                        ; each reduction in z_hi
 
 .shpt1
 
- STX X2
- AND #$3F
- ADC #$20
- STA Y2
- JSR LOIN
+ STX X2                 ; Set X2 to the x-coordinate of the end of the laser
+                        ; line
+
+ AND #63                ; Set Y2 = z_lo, reduced to the range 0 to 63, plus 32
+ ADC #32                ;
+ STA Y2                 ; So the end of the laser line moves up and down the
+                        ; edge of the screen (between y-coordinate 32 and 95) as
+                        ; the ship gets closer to us, as z_lo reduces from 255
+                        ; to 0 for each reduction in z_hi
+
+ JSR LOIN               ; Draw the laser line from (X1, Y1) to (X2, Y2)
 
 .nono
 
@@ -3406,23 +3436,36 @@ ENDIF
 
                         ; This routine draws a horizontal 4-pixel dash, for
                         ; either the top or the bottom of the ship's dot
+                        ;
+                        ; We always call this routine with the C flag clear
 
- LDA XX2                ; ???
- STA X1
- ADC #3
- BCS shpt2
- STA X2
+ LDA K3                 ; Set A = screen x-coordinate of the ship dot
+
+ STA X1                 ; Set X1 to the screen x-coordinate of the ship dot
+
+ ADC #3                 ; Set A = screen x-coordinate of the ship dot + 3
+                        ; (this works because we know the C flag is clear)
+
+ BCS shpt2              ; If the addition overflowed, jump to shpt2 to return
+                        ; from the subroutine without drawing the dash
+
+ STA X2                 ; Store the x-coordinate of the ship dot in X1, as this
+                        ; is where the dash starts
 
  STY Y1                 ; Store Y in both y-coordinates, as this is a horizontal
  STY Y2                 ; dash at y-coordinate Y
 
- JMP LOIN               ; ???
+ JMP LOIN               ; Draw the dash from (X1, Y1) to (X2, Y2), returning
+                        ; from the subroutine using a tail call
 
 .shpt2
 
- PLA
- PLA
- JMP nono
+ PLA                    ; Pull the return address from the stack, so the RTS
+ PLA                    ; below actually returns from the subroutine that called
+                        ; LL9 (as we called SHPPT from LL9 with a JMP)
+
+ JMP nono               ; Jump to nono to record that we didn't draw anything
+                        ; and return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -3700,8 +3743,8 @@ ENDIF
 
  LDA NEWB               ; If bit 7 of the ship's NEWB flags is set, then the
  BMI EE51               ; ship has been scooped or has docked, so jump down to
-                        ; EE51 to redraw its wireframe, to remove it from the
-                        ; screen
+                        ; EE51 to skip drawing the ship so it doesn't appear
+                        ; on-screen
 
  LDA #%00100000         ; If bit 5 of the ship's byte #31 is set, then the ship
  BIT XX1+31             ; is currently exploding, so jump down to EE28
@@ -3728,29 +3771,24 @@ ENDIF
  JSR HideShip           ; Update the ship so it is no longer shown on the
                         ; scanner
 
- LDA #$12               ; ???
- STA INWK+34
- LDY #$25
- JSR DORND
- STA (INF),Y
+ LDA #18                ; Set the explosion cloud counter in INWK+34 to 18 so we
+ STA INWK+34            ; can use it in DOEXP when drawing the explosion cloud
 
-                        ; The following loop sets bytes 3-6 of the of the ship
-                        ; line heap to random numbers
+ LDY #37                ; Set byte #37 of the ship's data block to a random
+ JSR DORND              ; number to use as a random number seed value for
+ STA (INF),Y            ; generating the explosion cloud
 
-.EE55
+ INY                    ; Set byte #38 of the ship's data block to a random
+ JSR DORND              ; number to use as a random number seed value for
+ STA (INF),Y            ; generating the explosion cloud
 
- INY                    ; Increment Y (so the loop starts at 3)
+ INY                    ; Set byte #39 of the ship's data block to a random
+ JSR DORND              ; number to use as a random number seed value for
+ STA (INF),Y            ; generating the explosion cloud
 
- JSR DORND              ; Set A and X to random numbers
-
- STA (INF),Y            ; Store A in the Y-th byte of the ship data block
-
- INY                    ; ???
- JSR DORND
- STA (INF),Y
- INY
- JSR DORND
- STA (INF),Y
+ INY                    ; Set byte #40 of the ship's data block to a random
+ JSR DORND              ; number to use as a random number seed value for
+ STA (INF),Y            ; generating the explosion cloud
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -3766,29 +3804,28 @@ ENDIF
 
 .LL14
 
-                        ; The following removes the ship from the screen by
-                        ; redrawing it (or, if it is exploding, by redrawing the
-                        ; explosion cloud). We call it when the ship is no
-                        ; longer on-screen, is too far away to be fully drawn,
-                        ; and so on
+                        ; If we get here then we do not draw the ship on-screen,
+                        ; for example when the ship is no longer on-screen, or
+                        ; is too far away to be fully drawn, and so on
 
  LDA XX1+31             ; If bit 5 of the ship's byte #31 is clear, then the
  AND #%00100000         ; ship is not currently exploding, so jump down to EE51
- BEQ EE51               ; to redraw its wireframe
+ BEQ EE51               ; to skip drawing the ship
 
  LDA XX1+31             ; The ship is exploding, so clear bit 3 of the ship's
  AND #%11110111         ; byte #31 to denote that the ship is no longer being
  STA XX1+31             ; drawn on-screen
 
- JMP DOEXP              ; Jump to DOEXP to display the explosion cloud, which
-                        ; will remove it from the screen, returning from the
-                        ; subroutine using a tail call
+ JMP DOEXP              ; Jump to DOEXP to remove the explosion burst sprites
+                        ; from the screen (if they are visible), returning from
+                        ; the subroutine using a tail call
 
 .EE51
 
- LDA XX1+31             ; ???
- AND #$B7
- STA XX1+31
+ LDA XX1+31             ; Clear bits 3 and 6 in the ship's byte #31, which stops
+ AND #%10110111         ; drawing the ship on-screen (bit 3), and denotes that
+ STA XX1+31             ; the explosion has not been drawn and there are no
+                        ; lasers firing (bit 6)
 
  RTS                    ; Return from the subroutine
 
@@ -4036,11 +4073,11 @@ ENDIF
 
  LDA #255               ; Set the 15th byte of XX2 to 255, so that face 15 is
  STA XX2+15             ; always visible. No ship definitions actually have this
-                        ; number of faces in the cassette version, but this
-                        ; allows us to force a vertex to always be visible by
-                        ; associating it with face 15 (see the blueprints for
-                        ; the Cobra Mk III at SHIP_COBRA_MK_3 and asteroid at
-                        ; SHIP_ASTEROID for examples)
+                        ; number of faces, but this allows us to force a vertex
+                        ; to always be visible by associating it with face 15
+                        ; (see the ship blueprints for the Cobra Mk III at
+                        ; SHIP_COBRA_MK_3 and the asteroid at SHIP_ASTEROID for
+                        ; examples of vertices that are associated with face 15)
 
  LDY #12                ; Set Y = 12 to point to the ship blueprint byte #12,
 
@@ -5778,9 +5815,9 @@ ENDIF
 ;
 ;                         * 0   = (x2, y2) on-screen
 ;
-;                         * 95  = (x1, y1) on-screen,  (x2, y2) off-screen
+;                         * 127 = (x1, y1) on-screen,  (x2, y2) off-screen
 ;
-;                         * 191 = (x1, y1) off-screen, (x2, y2) off-screen
+;                         * 255 = (x1, y1) off-screen, (x2, y2) off-screen
 ;
 ;                       So XX13 is non-zero if the end of the line was clipped,
 ;                       meaning the next line sent to BLINE can't join onto the
@@ -5833,10 +5870,10 @@ ENDIF
                         ;
                         ;   * XX13 = 0 if x2_hi = y2_hi = 0, y2_lo is on-screen
                         ;
-                        ;   * XX13 = 191 if x2_hi or y2_hi are non-zero or y2_lo
+                        ;   * XX13 = 255 if x2_hi or y2_hi are non-zero or y2_lo
                         ;            is off the bottom of the screen
                         ;
-                        ; In other words, XX13 is 191 if (x2, y2) is off-screen,
+                        ; In other words, XX13 is 255 if (x2, y2) is off-screen,
                         ; otherwise it is 0
 
  LDA XX15+1             ; If one or both of x1_hi and y1_hi are non-zero, jump
@@ -5898,7 +5935,7 @@ ENDIF
 .LL108
 
  LSR XX13               ; If we get here then (x2, y2) is off-screen and XX13 is
-                        ; 191, so shift XX13 right to halve it to 95
+                        ; 255, so shift XX13 right to halve it to 127
 
 ; ******************************************************************************
 ;
@@ -5918,12 +5955,12 @@ ENDIF
 ;
 ;   * 0   = (x1, y1) off-screen, (x2, y2) on-screen
 ;
-;   * 95  = (x1, y1) on-screen,  (x2, y2) off-screen
+;   * 127 = (x1, y1) on-screen,  (x2, y2) off-screen
 ;
-;   * 191 = (x1, y1) off-screen, (x2, y2) off-screen
+;   * 255 = (x1, y1) off-screen, (x2, y2) off-screen
 ;
 ; where "off-screen" is defined as having a non-zero high byte in one of the
-; coordinates, or in the case of y-coordinates, having a low byte > 191, the
+; coordinates, or in the case of y-coordinates, having a low byte > Yx2M1, the
 ; y-coordinate of the bottom of the space view.
 ;
 ; ******************************************************************************
@@ -6148,9 +6185,9 @@ ENDIF
 ;
 ;   * 0   = (x1, y1) off-screen, (x2, y2) on-screen
 ;
-;   * 95  = (x1, y1) on-screen,  (x2, y2) off-screen
+;   * 127 = (x1, y1) on-screen,  (x2, y2) off-screen
 ;
-;   * 191 = (x1, y1) off-screen, (x2, y2) off-screen
+;   * 255 = (x1, y1) off-screen, (x2, y2) off-screen
 ;
 ; ******************************************************************************
 
@@ -6169,7 +6206,7 @@ ENDIF
  LDA XX13               ; If XX13 = 0, skip the following instruction
  BEQ LL138
 
- BPL LLX117             ; If XX13 is positive, it must be 95. This means
+ BPL LLX117             ; If XX13 is positive, it must be 127. This means
                         ; (x1, y1) is on-screen but (x2, y2) isn't, so we jump
                         ; to LLX117 to swap the (x1, y1) and (x2, y2)
                         ; coordinates around before doing the actual clipping,
@@ -6178,22 +6215,25 @@ ENDIF
 
 .LL138
 
-                        ; If we get here, XX13 = 0 or 191, so (x1, y1) is
+                        ; If we get here, XX13 = 0 or 255, so (x1, y1) is
                         ; off-screen and needs clipping
 
  JSR LL118              ; Call LL118 to move (x1, y1) along the line onto the
                         ; screen, i.e. clip the line at the (x1, y1) end
 
- LDA XX13               ; ???
- BMI LL117
+ LDA XX13               ; If XX13 = 255, i.e. (x2, y2) is off-screen, jump down
+ BMI LL117              ; down to LL117 to skip the following
 
- PLA
- TAY
- JMP LL146
+ PLA                    ; Restore Y from the stack so it gets preserved through
+ TAY                    ; the call to this subroutine
+
+ JMP LL146              ; Jump up to LL146 to move the low bytes of (x1, y1) and
+                        ; (x2, y2) into (X1, Y1) and (X2, Y2), and return from
+                        ; the subroutine with a successfully clipped line
 
 .LL117
 
-                        ; If we get here, XX13 = 191 (both coordinates are
+                        ; If we get here, XX13 = 255 (both coordinates are
                         ; off-screen)
 
  LDA XX15+1             ; If either of x1_hi or y1_hi are non-zero, jump to
@@ -6207,7 +6247,7 @@ ENDIF
 
 .LLX117
 
-                        ; If we get here, XX13 = 95 or 191, and in both cases
+                        ; If we get here, XX13 = 127 or 255, and in both cases
                         ; (x2, y2) is off-screen, so we now need to swap the
                         ; (x1, y1) and (x2, y2) coordinates around before doing
                         ; the actual clipping, because we need to clip (x2, y2)
@@ -6236,9 +6276,9 @@ ENDIF
  JSR LL118              ; Call LL118 to move (x1, y1) along the line onto the
                         ; screen, i.e. clip the line at the (x1, y1) end
 
- LDA Y1                 ; ???
- ORA Y2
- BNE LL137
+ LDA XX15+1             ; If either of x1_hi or y1_hi are non-zero, jump to
+ ORA XX15+3             ; LL137 to return from the subroutine with the C flag
+ BNE LL137              ; set, as the line doesn't fit on-screen
 
  DEC SWAP               ; Set SWAP = $FF to indicate that we just clipped the
                         ; line at the (x2, y2) end by swapping the coordinates
@@ -6250,24 +6290,47 @@ ENDIF
  PLA                    ; Restore Y from the stack so it gets preserved through
  TAY                    ; the call to this subroutine
 
- LDA X2                 ; ???
- CMP screenHeight
- BCS clip2
+                        ; If we get here then we have clipped our line to the
+                        ; (if we had to clip it at all), so we move the low
+                        ; bytes from (x1, y1) and (x2, y2) into (X1, Y1) and
+                        ; (X2, Y2), remembering that they share locations with
+                        ; XX15:
+                        ;
+                        ;   X1 = XX15
+                        ;   Y1 = XX15+1
+                        ;   X2 = XX15+2
+                        ;   Y2 = XX15+3
+                        ;
+                        ; X1 already contains x1_lo, so now we do the rest
+
+ LDA XX15+2             ; Set A = y1_lo
+
+ CMP screenHeight       ; If A >= screenHeight then jump down to clip2 to clip
+ BCS clip2              ; the coordinate to the screen before jumping back to
+                        ; clip1
 
 .clip1
 
- STA Y1
- LDA XX15+4
- STA X2
- LDA XX12
- STA Y2
- CLC
- RTS
+ STA XX15+1             ; Set Y1 (aka XX15+1) = y1_lo
+
+ LDA XX15+4             ; Set X2 (aka XX15+2) = x2_lo
+ STA XX15+2
+
+ LDA XX12               ; Set Y2 (aka XX15+3) = y2_lo
+ STA XX15+3
+
+ CLC                    ; Clear the C flag as the clipped line fits on-screen
+
+ RTS                    ; Return from the subroutine
 
 .clip2
 
- LDA Yx2M1
- BNE clip1
+ LDA Yx2M1              ; Set A = Yx2M1, which contains the height in pixels of
+                        ; the space view
+
+ BNE clip1              ; Jump to clip1 to continue setting the clipped line's
+                        ; coordinates (this BNE is effectively a JMP as A is
+                        ; never zero)
 
 .LL137
 
@@ -6940,7 +7003,8 @@ ENDIF
 
  STA Q                  ; Store the distance to the explosion in Q
 
- LDA INWK+34            ; ???
+ LDA INWK+34            ; Set A to the cloud counter from byte #34 of the ship's
+                        ; data block
 
  ADC #4                 ; Add 4 to the cloud counter, so it ticks onwards every
                         ; we redraw it
@@ -6948,8 +7012,17 @@ ENDIF
  BCS EX2                ; If the addition overflowed, jump up to EX2 to update
                         ; the explosion flags and return from the subroutine
 
- STA INWK+34
- JSR DVID4
+ STA INWK+34            ; Store the updated cloud counter in byte #34 of the ship
+                        ; data block
+
+ JSR DVID4              ; Calculate the following:
+                        ;
+                        ;   (P R) = 256 * A / Q
+                        ;         = 256 * cloud counter / distance
+                        ;
+                        ; We are going to use this as our cloud size, so the
+                        ; further away the cloud, the smaller it is, and as the
+                        ; cloud counter ticks onward, the cloud expands
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -6987,14 +7060,26 @@ ENDIF
 
  AND #%00001000         ; If bit 3 of the ship's byte #31 is clear, then nothing
  BEQ dexp1              ; is being drawn on-screen for this ship anyway, so
-                        ; return from the subroutine ???
+                        ; return from the subroutine
 
- LDA INWK+7
- BEQ PTCLS
- LDY INWK+34
- CPY #$18
- BCS PTCLS
- JMP DrawExplosionBurst
+ LDA INWK+7             ; If z_hi = 0 then jump to PTCLS to draw the explosion
+ BEQ PTCLS              ; cloud (but not the explosion burst, as the ship is too
+                        ; close for the burst sprites to look good)
+
+ LDY INWK+34            ; Fetch byte #34 of the ship data block, which contains
+                        ; the cloud counter
+
+ CPY #24                ; If Y >= 24 then jump to PTCLS to draw the explosion
+ BCS PTCLS              ; cloud (but not the explosion burst as the explosion is
+                        ; already past that point)
+
+                        ; If we get here then the exploding ship is not too
+                        ; close and we haven't yet counted past the initial part
+                        ; of the explosion, so we can show the explosion burst
+                        ; using the explosion sprites
+
+ JMP DrawExplosionBurst ; Draw the exploding ship along with an explosion burst,
+                        ; returning from the subroutine using a tail call
 
 .PTCLS
 
@@ -7003,9 +7088,11 @@ ENDIF
 
  JSR HideExplosionBurst ; Hide the four sprites that make up the explosion burst
 
- LDA cloudSize          ; ???
- STA Q
- LDA INWK+34
+ LDA cloudSize          ; Fetch the cloud size that we stored above, and store
+ STA Q                  ; it in Q
+
+ LDA INWK+34            ; Fetch byte #34 of the ship data block, which contains
+                        ; the cloud counter
 
  BPL P%+4               ; If the cloud counter < 128, then we are in the first
                         ; half of the cloud's existence, so skip the next
@@ -7023,43 +7110,90 @@ ENDIF
  STA U                  ; give us the number of particles in the explosion for
                         ; each vertex
 
- LDY #7                 ; ???
- LDA (XX0),Y
- STA TGT
+ LDY #7                 ; Fetch byte #7 of the ship blueprint, which contains
+ LDA (XX0),Y            ; the explosion count for this ship (i.e. the number of
+ STA TGT                ; vertices used as origins for explosion clouds) and
+                        ; store it in TGT
 
- LDA RAND+1
- PHA
- LDY #6
+ LDA RAND+1             ; Fetch the current random number seed in RAND+1 and
+ PHA                    ; store it on the stack, so we can re-randomise the
+                        ; seeds when we are done
+
+ LDY #6                 ; Set Y = 6 to point to the byte before the first vertex
+                        ; coordinate we stored on the XX3 heap above (we
+                        ; increment it below so it points to the first vertex)
 
 .EXL5
 
- LDX #3
+ LDX #3                 ; We are about to fetch a pair of coordinates from the
+                        ; XX3 heap, so set a counter in X for 4 bytes
 
 .dexp2
 
- INY
- LDA XX3-7,Y
- STA XX2,X
- DEX
- BPL dexp2
- STY CNT
- LDY #$25
- LDA (INF),Y
- EOR CNT
- STA RAND
- INY
- LDA (INF),Y
- EOR CNT
- STA RAND+1
- INY
- LDA (INF),Y
- EOR CNT
- STA RAND+2
- INY
- LDA (INF),Y
- EOR CNT
- STA RAND+3
- LDY U
+ INY                    ; Increment the index in Y so it points to the next byte
+                        ; from the coordinate we are copying
+
+ LDA XX3-7,Y            ; Copy byte Y-7 from the XX3 heap to the X-th byte of K3
+ STA K3,X
+
+ DEX                    ; Decrement the loop counter
+
+ BPL dexp2              ; Keep copying vertex coordinates into K3 until we have
+                        ; copied all six coordinates
+
+                        ; The above loop copies the vertex coordinates from the
+                        ; ship line heap to K3, reversing them as we go, so it
+                        ; sets the following:
+                        ;
+                        ;   K3+3 = x_lo
+                        ;   K3+2 = x_hi
+                        ;   K3+1 = y_lo
+                        ;   K3+0 = y_hi
+
+ STY CNT                ; Set CNT to the index that points to the next vertex on
+                        ; the ship line heap
+
+                        ; This next part copies bytes #37 to #40 from the ship
+                        ; data block into the four random number seeds in RAND to
+                        ; RAND+3, EOR'ing them with the vertex index so they are
+                        ; different for every vertex. This enables us to
+                        ; generate random numbers for drawing each vertex that
+                        ; are random but repeatable, which we need when we
+                        ; redraw the cloud to remove it
+                        ;
+                        ; We set the values of bytes #37 to #40 randomly in the
+                        ; LL9 routine before calling DOEXP, so the explosion
+                        ; cloud is random but repeatable
+
+ LDY #37                ; Set Y to act as an index into the ship data block for
+                        ; byte #37
+
+ LDA (INF),Y            ; Set the seed at RAND to byte #37, EOR'd with the
+ EOR CNT                ; vertex index, so the seeds are different for each
+ STA RAND               ; vertex
+
+ INY                    ; Increment Y to point to byte #38
+
+ LDA (INF),Y            ; Set the seed at RAND+1 to byte #38, EOR'd with the
+ EOR CNT                ; vertex index, so the seeds are different for each
+ STA RAND+1             ; vertex
+
+ INY                    ; Increment Y to point to byte #39
+
+ LDA (INF),Y            ; Set the seed at RAND+2 to byte #39, EOR'd with the
+ EOR CNT                ; vertex index, so the seeds are different for each
+ STA RAND+2             ; vertex
+
+ INY                    ; Increment Y to point to byte #40
+
+ LDA (INF),Y            ; Set the seed at RAND+3 to byte #49, EOR'd with the
+ EOR CNT                ; vertex index, so the seeds are different for each
+ STA RAND+3             ; vertex
+
+ LDY U                  ; Set Y to the number of particles in the explosion for
+                        ; each vertex, which we stored in U above. We will now
+                        ; use this as a loop counter to iterate through all the
+                        ; particles in the explosion
 
 .EXL4
 
@@ -7092,9 +7226,10 @@ ENDIF
                         ; coordinate is bigger than 255), so jump to EX11 to do
                         ; the next particle
 
- CPX Yx2M1              ; If X > the y-coordinate of the bottom of the screen,
- BCS EX11               ; the particle is off the bottom of the screen, so jump
-                        ; to EX11 to do the next particle ???
+ CPX Yx2M1              ; If X > the y-coordinate of the bottom of the screen
+ BCS EX11               ; (which is in Yx2M1) then the particle is off the
+                        ; bottom of the screen, so jump to EX11 to do the next
+                        ; particle
 
                         ; Otherwise X contains a random y-coordinate within the
                         ; cloud
@@ -8609,7 +8744,7 @@ ENDIF
                         ; sun and only need to draw pixel row 7 in the current
                         ; tile row, so we zero sunWidth0 through sunWidth6
 
- LDA #0
+ LDA #0                 ; Zero sunWidth6
  STA sunWidth6
 
 .dsun22
@@ -8618,7 +8753,7 @@ ENDIF
                         ; sun and need to draw pixel rows 6 and 7 in the current
                         ; tile row, so we zero sunWidth0 through sunWidth5
 
- LDA #0
+ LDA #0                 ; Zero sunWidth5
  STA sunWidth5
 
 .dsun23
@@ -8627,7 +8762,7 @@ ENDIF
                         ; sun and need to draw pixel rows 5 to 7 in the current
                         ; tile row, so we zero sunWidth0 through sunWidth4
 
- LDA #0
+ LDA #0                 ; Zero sunWidth4
  STA sunWidth4
 
 .dsun24
@@ -8636,7 +8771,7 @@ ENDIF
                         ; sun and need to draw pixel rows 4 to 7 in the current
                         ; tile row, so we zero sunWidth0 through sunWidth3
 
- LDA #0
+ LDA #0                 ; Zero sunWidth3
  STA sunWidth3
 
 .dsun25
@@ -8645,7 +8780,7 @@ ENDIF
                         ; sun and need to draw pixel rows 3 to 7 in the current
                         ; tile row, so we zero sunWidth0 through sunWidth2
 
- LDA #0
+ LDA #0                 ; Zero sunWidth2
  STA sunWidth2
 
 .dsun26
@@ -8654,7 +8789,7 @@ ENDIF
                         ; sun and need to draw pixel rows 2 to 7 in the current
                         ; tile row, so we zero sunWidth0 through sunWidth1
 
- LDA #0
+ LDA #0                 ; Zero sunWidth1
  STA sunWidth1
 
 .dsun27
@@ -8663,7 +8798,7 @@ ENDIF
                         ; sun and need to draw pixel rows 1 to 7 in the current
                         ; tile row, so we zero sunWidth0
 
- LDA #0
+ LDA #0                 ; Zero sunWidth0
  STA sunWidth0
 
                         ; So by this point sunWidth0 through sunWidth7 are set
@@ -10681,8 +10816,8 @@ ENDIF
 
  STA XX+1               ; Store the high byte A in XX+1
 
- TXA
- STA SXL,Y              ; Store the low byte X in x_lo
+ TXA                    ; Store the low byte X in x_lo
+ STA SXL,Y
 
                         ; So (XX+1 x_lo) now contains:
                         ;
@@ -10779,10 +10914,10 @@ ENDIF
 
  JSR DORND              ; Set A and X to random numbers
 
- ORA #$10
- AND #$F0
- STA X1
- STA SX,Y
+ ORA #16                ; Make sure A is at least 16 and is a multiple of 16 and
+ AND #%11110000         ; store it in X1 and x_hi, so the new particle starts at
+ STA X1                 ; least 16 pixels either side of the centre of the
+ STA SX,Y               ; screen and on a spaced-out grid that's 16 pixels wide
 
  JSR DORND              ; Set A and X to random numbers
 
@@ -11040,8 +11175,8 @@ ENDIF
 
  STA XX+1               ; Store the high byte A in XX+1
 
- TXA
- STA SXL,Y              ; Store the low byte X in x_lo
+ TXA                    ; Store the low byte X in x_lo
+ STA SXL,Y
 
                         ; So (XX+1 x_lo) now contains:
                         ;
@@ -11385,8 +11520,8 @@ ENDIF
 
  STA XX+1               ; Store the high byte A in XX+1
 
- TXA
- STA SXL,Y              ; Store the low byte X in x_lo
+ TXA                    ; Store the low byte X in x_lo
+ STA SXL,Y
 
                         ; So (XX+1 x_lo) now contains result 5 above:
                         ;
@@ -13738,21 +13873,22 @@ ENDIF
 ;       Name: DrawExplosionBurst
 ;       Type: Subroutine
 ;   Category: Drawing ships
-;    Summary: Draw an exploding ship
+;    Summary: Draw an exploding ship along with an explosion burst made up of
+;             colourful sprites
 ;
 ; ******************************************************************************
 
 .DrawExplosionBurst
 
- LDY #0                 ; ???
- STY burstSpriteIndex
+ LDY #0                 ; Set burstSpriteIndex = 0 to use as a an index into the
+ STY burstSpriteIndex   ; sprite buffer when drawing the four explosion sprites
+                        ; below
 
- LDA cloudSize
- STA Q
- LDA INWK+34
+ LDA cloudSize          ; Fetch the cloud size that we stored above, and store
+ STA Q                  ; it in Q
 
-                        ; The following code is avery similar to the PTCLS
-                        ; routine
+ LDA INWK+34            ; Fetch byte #34 of the ship data block, which contains
+                        ; the cloud counter
 
  BPL P%+4               ; If the cloud counter < 128, then we are in the first
                         ; half of the cloud's existence, so skip the next
@@ -13770,37 +13906,36 @@ ENDIF
  STA U                  ; give us the number of particles in the explosion for
                         ; each vertex
 
- LDY #7                 ; ???
-
- LDA (XX0),Y            ; Fetch byte #2 of the ship line heap, which contains
- STA TGT                ; the explosion count for this ship (i.e. the number of
-                        ; vertices used as origins for explosion clouds) and
-                        ; store it in TGT ???
+ LDY #7                 ; Fetch byte #7 of the ship blueprint, which contains
+ LDA (XX0),Y            ; the explosion count for this ship (i.e. the number of
+ STA TGT                ; vertices used as origins for explosion clouds) and
+                        ; store it in TGT
 
  LDA RAND+1             ; Fetch the current random number seed in RAND+1 and
  PHA                    ; store it on the stack, so we can re-randomise the
                         ; seeds when we are done
 
  LDY #6                 ; Set Y = 6 to point to the byte before the first vertex
-                        ; coordinate we stored on the ship line heap above (we
+                        ; coordinate we stored on the XX3 heap above (we
                         ; increment it below so it points to the first vertex)
 
 .burs1
 
  LDX #3                 ; We are about to fetch a pair of coordinates from the
-                        ; ship line heap, so set a counter in X for 4 bytes
+                        ; XX3 heap, so set a counter in X for 4 bytes
 
 .burs2
 
  INY                    ; Increment the index in Y so it points to the next byte
                         ; from the coordinate we are copying
 
- LDA XX3-7,Y            ; Copy the Y-th byte from the ship line heap to the X-th
- STA K3,X               ; byte of K3 ???
+ LDA XX3-7,Y            ; Copy byte Y-7 from the XX3 heap to the X-th byte of K3
+ STA K3,X
 
- DEX                    ; Decrement the X index
+ DEX                    ; Decrement the loop counter
 
- BPL burs2              ; Loop back to burs2 until we have copied all four bytes
+ BPL burs2              ; Keep copying vertex coordinates into K3 until we have
+                        ; copied all six coordinates
 
                         ; The above loop copies the vertex coordinates from the
                         ; ship line heap to K3, reversing them as we go, so it
@@ -13814,61 +13949,117 @@ ENDIF
  STY CNT                ; Set CNT to the index that points to the next vertex on
                         ; the ship line heap
 
- LDA burstSpriteIndex   ; ???
- CLC
- ADC #4
- CMP #$10
- BCS burs5
- STA burstSpriteIndex
- TAY
- LDA XX2
- ORA XX2+2
- BNE burs3
- LDA XX2+3
- SBC #3
- BCC burs3
- STA xSprite58,Y
- LDA #2
- STA attrSprite58,Y
- LDA K3+1
- CMP #$80
- BCC burs4
+                        ; We now draw the explosion burst, which consists of
+                        ; four colourful sprites that appear for the first part
+                        ; of the explosion only
+                        ;
+                        ; We use sprites 59 to 62 for the explosion burst
+
+ LDA burstSpriteIndex   ; Set burstSpriteIndex = burstSpriteIndex + 4
+ CLC                    ;
+ ADC #4                 ; So it points to the next sprite in the sprite buffer
+                        ; (as each sprite takes up four bytes)
+
+ CMP #16                ; If burstSpriteIndex >= 16 then we have already
+ BCS burs5              ; processed all four sprites, so jump to burs5 to move
+                        ; on to drawing the explosion cloud
+
+ STA burstSpriteIndex   ; Update burstSpriteIndex to the new value
+
+ TAY                    ; Set Y to the burst sprite index so we can use it as an
+                        ; index into the sprite buffer
+
+ LDA K3                 ; If either of y_hi or x_hi are non-zero, jump to burs3
+ ORA K3+2               ; to hide this explosion sprite, as the explosion is off
+ BNE burs3              ; the sides of the screen
+
+ LDA K3+3               ; Set A = x_lo - 4
+ SBC #3                 ;
+                        ; As each explosion burst sprite is eight pixels wide,
+                        ; this calculates the x-coordinate of the centre of the
+                        ; sprite
+                        ;
+                        ; The SBC #3 actually subtracts 4 as we know the C flag
+                        ; is clear, as we passed through a BCS above
+
+ BCC burs3              ; If the subtraction underflowed then the centre of the
+                        ; sprite is off the top of the screen, so jump to burs3
+                        ; to hide this explosion sprite
+
+ STA xSprite58,Y        ; Set the x-coordinate for the explosion burst sprite
+                        ; to A (starting from sprite 59, as Y is a minimum of 4)
+
+ LDA #%00000010         ; Set the attributes for the sprite as follows:
+ STA attrSprite58,Y     ;
+                        ;   * Bits 0-1    = sprite palette 2
+                        ;   * Bit 5 clear = show in front of background
+                        ;   * Bit 6 clear = do not flip horizontally
+                        ;   * Bit 7 clear = do not flip vertically
+
+ LDA K3+1               ; Set A = y_lo
+
+ CMP #128               ; If A < 128 then the sprite is within the space view,
+ BCC burs4              ; so jump to burs4 to configure the rest of the sprite
+
+                        ; Otherwise the sprite is not in the space view, so fall
+                        ; through into burs3 to hide this explosion sprite
 
 .burs3
 
- LDA #$F0
- STA ySprite58,Y
- BNE burs5
+ LDA #240               ; Hide this explosion burst sprite by setting its
+ STA ySprite58,Y        ; y-coordinate to 240, which is off the bottom of the
+                        ; screen
+
+ BNE burs5              ; Jump to burs5 to move on to drawing the explosion
+                        ; cloud (this BNE is effectively a JMP as A is never
+                        ; zero)
 
 .burs4
 
- ADC #10+YPAL
+ ADC #10+YPAL           ; Set the pixel y-coordinate of the explosion sprite to
+ STA ySprite58,Y        ; A + 10
 
- STA ySprite58,Y
- LDA #$F5
- STA tileSprite58,Y
+ LDA #245               ; Set the sprite's tile pattern number to 245, which is
+ STA tileSprite58,Y     ; a fairly messy explosion pattern
 
 .burs5
 
- LDY #$25               ; See PTCLS
- LDA (INF),Y
- EOR CNT
- STA RAND
- INY
- LDA (INF),Y
- EOR CNT
- STA RAND+1
- INY
- LDA (INF),Y
- EOR CNT
- STA RAND+2
- INY
- LDA (INF),Y
- EOR CNT
- STA RAND+3
+                        ; This next part copies bytes #37 to #40 from the ship
+                        ; data block into the four random number seeds in RAND to
+                        ; RAND+3, EOR'ing them with the vertex index so they are
+                        ; different for every vertex. This enables us to
+                        ; generate random numbers for drawing each vertex that
+                        ; are random but repeatable, which we need when we
+                        ; redraw the cloud to remove it
+                        ;
+                        ; We set the values of bytes #37 to #40 randomly in the
+                        ; LL9 routine before calling DOEXP, so the explosion
+                        ; cloud is random but repeatable
 
-                        ; The following code is avery similar to the EXL4
-                        ; section of the DOEXP routine
+ LDY #37                ; Set Y to act as an index into the ship data block for
+                        ; byte #37
+
+ LDA (INF),Y            ; Set the seed at RAND to byte #37, EOR'd with the
+ EOR CNT                ; vertex index, so the seeds are different for each
+ STA RAND               ; vertex
+
+ INY                    ; Increment Y to point to byte #38
+
+ LDA (INF),Y            ; Set the seed at RAND+1 to byte #38, EOR'd with the
+ EOR CNT                ; vertex index, so the seeds are different for each
+ STA RAND+1             ; vertex
+
+ INY                    ; Increment Y to point to byte #39
+
+ LDA (INF),Y            ; Set the seed at RAND+2 to byte #39, EOR'd with the
+ EOR CNT                ; vertex index, so the seeds are different for each
+ STA RAND+2             ; vertex
+
+ INY                    ; Increment Y to point to byte #40
+
+ LDA (INF),Y            ; Set the seed at RAND+3 to byte #49, EOR'd with the
+ EOR CNT                ; vertex index, so the seeds are different for each
+ STA RAND+3             ; vertex
 
  LDY U                  ; Set Y to the number of particles in the explosion for
                         ; each vertex, which we stored in U above. We will now
@@ -13894,9 +14085,10 @@ ENDIF
                         ; coordinate is bigger than 255), so jump to burs8 to do
                         ; the next particle
 
- CPX Yx2M1              ; If X > the y-coordinate of the bottom of the screen,
- BCS burs8              ; the particle is off the bottom of the screen, so jump
-                        ; to burs8 to do the next particle ???
+ CPX Yx2M1              ; If X > the y-coordinate of the bottom of the screen
+ BCS burs8              ; (which is in Yx2M1) then the particle is off the
+                        ; bottom of the screen, so jump to burs8 to do the next
+                        ; particle
 
                         ; Otherwise X contains a random y-coordinate within the
                         ; cloud
@@ -13950,7 +14142,7 @@ ENDIF
  JSR DORND2             ; Set A and X to random numbers, making sure the C flag
                         ; doesn't affect the outcome
 
- JMP burs7              ; ???
+ JMP burs7              ; Jump up to burs7 to move on to the next particle
 
 ; ******************************************************************************
 ;
