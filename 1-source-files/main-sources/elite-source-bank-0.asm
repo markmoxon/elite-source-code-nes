@@ -9738,9 +9738,9 @@ ENDIF
  LSR A                  ;
  STA K                  ; So K scales the fuel level in QQ14 to act as the
  LSR A                  ; circle's radius, scaling the fuel level from a range
- LSR A                  ; of 0 to 70 down to a range of 0 to 13 ???
- STA T1
- LDA K
+ LSR A                  ; of 0 to 70 down to a range of 0 to 13, so the fuel
+ STA T1                 ; circle has a maximum radius of 13 pixels on the
+ LDA K                  ; Long-range Chart
  SEC
  SBC T1
  STA K

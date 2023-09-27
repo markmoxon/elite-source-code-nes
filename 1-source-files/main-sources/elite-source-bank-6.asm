@@ -10705,8 +10705,10 @@ ENDIF
  JSR LOIN               ; Draw a line from (X1, Y1) to (X2, Y2) to draw the next
                         ; segment of the bolt
 
- LDA SWAP               ; ???
- BNE lite3
+ LDA SWAP               ; If SWAP is non-zero then we already swapped the line 
+ BNE lite3              ; coordinates around during the drawing process, so we
+                        ; can jump to lite3 to skip the following coordinate
+                        ; swap
 
  LDA X2                 ; Set (X1, Y1) to (X2, Y2), so (X1, Y1) contains the new
  STA X1                 ; end coordinates of the lightning bolt, now that we
