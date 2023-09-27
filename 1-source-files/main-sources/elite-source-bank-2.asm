@@ -17684,11 +17684,11 @@ ENDIF
  EQUS " !$/$%&'()*+,"   ; These punctuation characters map to themselves apart
  EQUS "-./0123456789"   ; from the following (ASCII on left, NES on right):
  EQUS ":;%*>?`"         ;
-                        ;   " to $
-                        ;   # to /
-                        ;   < to %
-                        ;   = to *
-                        ;   @ to `
+                        ;   " to $      so that maps À to à in the game font
+                        ;   # to /      so that maps Ô to ô in the game font
+                        ;   < to %      so that maps É to é in the game font
+                        ;   = to *      so that maps È to è in the game font
+                        ;   @ to `      so that maps Ç to ç in the game font
 
  EQUS "abcdefghijklm"   ; Capital letters map to their lower case equivalents
  EQUS "nopqrstuvwxyz"
@@ -17696,11 +17696,11 @@ ENDIF
  EQUS "{|};+`"          ; These punctuation characters map to themselves apart
                         ; from the following (ASCII on left, NES on right):
                         ;
-                        ;   [ to {
-                        ;   \ to |
-                        ;   ] to }
-                        ;   ^ to ;
-                        ;   _ to +
+                        ;   [ to {      so that maps Ä to ä in the game font
+                        ;   \ to |      so that maps Ö to ö in the game font
+                        ;   ] to }      so that maps Ü to ü in the game font
+                        ;   ^ to ;      so that maps ß to ß in the game font
+                        ;   _ to +      so that maps Ê to ê in the game font
 
  EQUS "abcdefghijklm"   ; Lower case characters map to themselves
  EQUS "nopqrstuvwxyz"

@@ -302,10 +302,10 @@ ENDIF
  LDA L915F,X
  STA soundVar05
  STA soundVar06
- LDA L9160,X
+ LDA L915F+1,X
  STA soundVar10
  STA soundAddr
- LDA L9161,X
+ LDA L915F+2,X
  STA soundVar11
  STA soundAddr+1
  LDA (soundAddr),Y
@@ -313,10 +313,10 @@ ENDIF
  INY
  LDA (soundAddr),Y
  STA soundVar0F
- LDA L9162,X
+ LDA L915F+3,X
  STA soundVar23
  STA soundAddr
- LDA L9163,X
+ LDA L915F+4,X
  STA soundVar24
  STA soundAddr+1
  DEY
@@ -325,10 +325,10 @@ ENDIF
  INY
  LDA (soundAddr),Y
  STA soundVar22
- LDA L9164,X
+ LDA L915F+5,X
  STA soundVar36
  STA soundAddr
- LDA L9165,X
+ LDA L915F+6,X
  STA soundVar37
  STA soundAddr+1
  DEY
@@ -337,10 +337,10 @@ ENDIF
  INY
  LDA (soundAddr),Y
  STA soundVar35
- LDA L9166,X
+ LDA L915F+7,X
  STA soundVar49
  STA soundAddr
- LDA L9167,X
+ LDA L915F+8,X
  STA soundVar4A
  STA soundAddr+1
  DEY
@@ -2839,46 +2839,59 @@ ENDIF
 
 .L915F
 
- EQUB $2F                                     ; 915F: 2F          /
+ EQUB $2F
+ EQUW L9827
+ EQUW L984F
+ EQUW L983D
+ EQUW L9861
 
-.L9160
+ EQUB $3B
+ EQUW L918C
+ EQUW L9194
+ EQUW L9190
+ EQUW L9198
 
- EQUB $27                                     ; 9160: 27          '
+ EQUB $3C
+ EQUW L9BBB
+ EQUW L9C9B
+ EQUW L9C8B
+ EQUW L9CDF
 
-.L9161
+ EQUB $3C
+ EQUW L9E04
+ EQUW L9E14
+ EQUW L9E0C
+ EQUW L9E1C
 
- EQUB $98                                     ; 9161: 98          .
+ EQUB $3C
+ EQUW L9BB3
+ EQUW L9C93
+ EQUW L9C83
+ EQUW L9CA3
 
-.L9162
+.L918C
 
- EQUB $4F                                     ; 9162: 4F          O
+ EQUW L919C
+ EQUW 0
 
-.L9163
+.L9190
 
- EQUB $98                                     ; 9163: 98          .
+ EQUW L9435
+ EQUW 0
 
-.L9164
+.L9194
 
- EQUB $3D                                     ; 9164: 3D          =
+ EQUW L95C4
+ EQUW 0
 
-.L9165
+.L9198
 
- EQUB $98                                     ; 9165: 98          .
+ EQUW L9FCA
+ EQUW 0
 
-.L9166
+.L919C
 
- EQUB $61                                     ; 9166: 61          a
-
-.L9167
-
- EQUB $98                                     ; 9167: 98          .
- EQUB $3B, $8C, $91, $94, $91, $90, $91, $98  ; 9168: 3B 8C 91... ;..
- EQUB $91, $3C, $BB, $9B, $9B, $9C, $8B, $9C  ; 9170: 91 3C BB... .<.
- EQUB $DF, $9C, $3C, $04, $9E, $14, $9E, $0C  ; 9178: DF 9C 3C... ..<
- EQUB $9E, $1C, $9E, $3C, $B3, $9B, $93, $9C  ; 9180: 9E 1C 9E... ...
- EQUB $83, $9C, $A3, $9C, $9C, $91, $00, $00  ; 9188: 83 9C A3... ...
- EQUB $35, $94, $00, $00, $C4, $95, $00, $00  ; 9190: 35 94 00... 5..
- EQUB $CA, $9F, $00, $00, $FA, $B0, $F7, $05  ; 9198: CA 9F 00... ...
+ EQUB $FA, $B0, $F7, $05  ; 9198: CA 9F 00... ...
  EQUB $F6, $0F, $6B, $F8, $63, $F6, $02, $0E  ; 91A0: F6 0F 6B... ..k
  EQUB $F6, $07, $1E, $1E, $F6, $02, $0E, $F6  ; 91A8: F6 07 1E... ...
  EQUB $07, $1E, $1E, $F6, $02, $0E, $F6, $07  ; 91B0: 07 1E 1E... ...
@@ -2961,7 +2974,11 @@ ENDIF
  EQUB $F6, $04, $63, $1A, $19, $18, $F6, $06  ; 9418: F6 04 63... ..c
  EQUB $67, $1B, $F6, $04, $61, $1C, $F8, $F6  ; 9420: 67 1B F6... g..
  EQUB $02, $63, $09, $15, $09, $0E, $F8, $F6  ; 9428: 02 63 09... .c.
- EQUB $04, $61, $1A, $F8, $FF, $FC, $0C, $6B  ; 9430: 04 61 1A... .a.
+ EQUB $04, $61, $1A, $F8, $FF
+
+.L9435
+
+ EQUB $FC, $0C, $6B  ; 9430: 04 61 1A... .a.
  EQUB $F8, $63, $F6, $08, $F7, $03, $0E, $1A  ; 9438: F8 63 F6... .c.
  EQUB $1A, $0E, $1A, $1A, $0E, $15, $15, $0E  ; 9440: 1A 0E 1A... ...
  EQUB $15, $15, $10, $15, $15, $10, $15, $15  ; 9448: 15 15 10... ...
@@ -3011,7 +3028,11 @@ ENDIF
  EQUB $63, $2D, $15, $1C, $13, $F7, $03, $63  ; 95A8: 63 2D 15... c-.
  EQUB $1A, $1C, $1E, $67, $21, $61, $1F, $F8  ; 95B0: 1A 1C 1E... ...
  EQUB $61, $1E, $1E, $1E, $F8, $1C, $F8, $63  ; 95B8: 61 1E 1E... a..
- EQUB $1A, $F8, $F8, $FF, $FA, $B0, $F7, $01  ; 95C0: 1A F8 F8... ...
+ EQUB $1A, $F8, $F8, $FF
+
+.L95C4
+
+ EQUB $FA, $B0, $F7, $01  ; 95C0: 1A F8 F8... ...
  EQUB $F6, $04, $63, $1A, $1E, $62, $21, $60  ; 95C8: F6 04 63... ..c
  EQUB $F8, $67, $21, $FA, $F0, $62, $21, $60  ; 95D0: F8 67 21... .g!
  EQUB $F8, $67, $21, $62, $1E, $60, $F8, $67  ; 95D8: F8 67 21... .g!
@@ -3087,15 +3108,54 @@ ENDIF
  EQUB $39, $61, $26, $F8, $28, $F8, $2A, $F8  ; 9808: 39 61 26... 9a&
  EQUB $F4, $38, $67, $2D, $61, $2B, $F8, $F4  ; 9810: F4 38 67... .8g
  EQUB $37, $2A, $2A, $2A, $F4, $33, $F8, $28  ; 9818: 37 2A 2A... 7**
- EQUB $F8, $26, $69, $F8, $F4, $3B, $FF, $65  ; 9820: F8 26 69... .&i
- EQUB $98, $65, $98, $77, $98, $DD, $98, $77  ; 9828: 98 65 98... .e.
- EQUB $98, $DD, $98, $77, $98, $C1, $9F, $77  ; 9830: 98 DD 98... ...
- EQUB $98, $BE, $9F, $00, $00, $56, $99, $56  ; 9838: 98 BE 9F... ...
- EQUB $99, $6C, $99, $FD, $99, $6C, $99, $FD  ; 9840: 99 6C 99... .l.
- EQUB $99, $6C, $99, $6C, $99, $00, $00, $81  ; 9848: 99 6C 99... .l.
- EQUB $9A, $81, $9A, $99, $9A, $1D, $9B, $99  ; 9850: 9A 81 9A... ...
- EQUB $9A, $1B, $9B, $99, $9A, $99, $9A, $00  ; 9858: 9A 1B 9B... ...
- EQUB $00, $98, $9B, $00, $00, $FA, $70, $F7  ; 9860: 00 98 9B... ...
+ EQUB $F8, $26, $69, $F8, $F4, $3B, $FF
+
+.L9827
+
+ EQUW L9865
+ EQUW L9865
+ EQUW $9877
+ EQUW $98DD
+ EQUW $9877
+ EQUW $98DD
+ EQUW $9877
+ EQUW $9FC1
+ EQUW $9877
+ EQUW $9FBE
+ EQUW 0
+
+.L983D
+
+ EQUW $9956
+ EQUW $9956
+ EQUW $996C
+ EQUW $99FD
+ EQUW $996C
+ EQUW $99FD
+ EQUW $996C
+ EQUW $996C
+ EQUW 0
+
+.L984F
+
+ EQUW $9A81
+ EQUW $9A81
+ EQUW $9A99
+ EQUW $9B1D
+ EQUW $9A99
+ EQUW $9B1B
+ EQUW $9A99
+ EQUW $9A99
+ EQUW 0
+
+.L9861
+
+ EQUW $9B98
+ EQUW 0
+
+.L9865
+
+ EQUB $FA, $70, $F7  ; 9860: 00 98 9B... ...
  EQUB $05, $F6, $09, $65, $0C, $0C, $0C, $63  ; 9868: 05 F6 09... ...
  EQUB $07, $61, $07, $63, $07, $07, $FF, $FA  ; 9870: 07 61 07... .a.
  EQUB $70, $65, $0C, $0C, $63, $0C, $61, $F9  ; 9878: 70 65 0C... pe.
@@ -3201,8 +3261,16 @@ ENDIF
  EQUB $F6, $11, $65, $04, $04, $04, $63, $04  ; 9B98: F6 11 65... ..e
  EQUB $61, $04, $63, $04, $04, $65, $04, $04  ; 9BA0: 61 04 63... a.c
  EQUB $04, $63, $04, $61, $04, $63, $04, $61  ; 9BA8: 04 63 04... .c.
- EQUB $04, $04, $FF, $58, $9E, $58, $9E, $99  ; 9BB0: 04 04 FF... ...
- EQUB $9E, $B2, $9F, $C4, $9F, $E3, $9C, $EA  ; 9BB8: 9E B2 9F... ...
+ EQUB $04, $04, $FF
+
+.L9BB3
+
+ EQUB $58, $9E, $58, $9E, $99  ; 9BB0: 04 04 FF... ...
+ EQUB $9E, $B2, $9F
+
+.L9BBB
+
+ EQUB $C4, $9F, $E3, $9C, $EA  ; 9BB8: 9E B2 9F... ...
  EQUB $9C, $EA, $9C, $EA, $9C, $EA, $9C, $EA  ; 9BC0: 9C EA 9C... ...
  EQUB $9C, $FC, $9C, $FC, $9C, $EA, $9C, $EA  ; 9BC8: 9C FC 9C... ...
  EQUB $9C, $EA, $9C, $EA, $9C, $EA, $9C, $EA  ; 9BD0: 9C EA 9C... ...
@@ -3227,18 +3295,42 @@ ENDIF
  EQUB $9C, $EA, $9C, $F3, $9C, $FC, $9C, $EA  ; 9C68: 9C EA 9C... ...
  EQUB $9C, $EA, $9C, $FC, $9C, $FC, $9C, $EA  ; 9C70: 9C EA 9C... ...
  EQUB $9C, $EA, $9C, $FC, $9C, $FC, $9C, $C4  ; 9C78: 9C EA 9C... ...
- EQUB $9F, $00, $00, $AD, $9E, $AD, $9E, $0B  ; 9C80: 9F 00 00... ...
- EQUB $9F, $B5, $9F, $05, $9D, $16, $9D, $16  ; 9C88: 9F B5 9F... ...
- EQUB $9D, $00, $00, $19, $9F, $19, $9F, $57  ; 9C90: 9D 00 00... ...
- EQUB $9F, $B8, $9F, $2E, $9D, $AB, $9D, $B1  ; 9C98: 9F B8 9F... ...
- EQUB $9D, $00, $00, $6B, $9F, $78, $9F, $78  ; 9CA0: 9D 00 00... ...
+ EQUB $9F, $00, $00
+
+.L9C83
+
+ EQUB $AD, $9E, $AD, $9E, $0B  ; 9C80: 9F 00 00... ...
+ EQUB $9F, $B5, $9F
+
+.L9C8B
+
+ EQUB $05, $9D, $16, $9D, $16  ; 9C88: 9F B5 9F... ...
+ EQUB $9D, $00, $00
+
+.L9C93
+
+ EQUB $19, $9F, $19, $9F, $57  ; 9C90: 9D 00 00... ...
+ EQUB $9F, $B8, $9F
+
+.L9C9B
+
+ EQUB $2E, $9D, $AB, $9D, $B1  ; 9C98: 9F B8 9F... ...
+ EQUB $9D, $00, $00
+
+.L9CA3
+
+ EQUB $6B, $9F, $78, $9F, $78  ; 9CA0: 9D 00 00... ...
  EQUB $9F, $78, $9F, $78, $9F, $78, $9F, $78  ; 9CA8: 9F 78 9F... .x.
  EQUB $9F, $6B, $9F, $78, $9F, $78, $9F, $78  ; 9CB0: 9F 6B 9F... .k.
  EQUB $9F, $78, $9F, $78, $9F, $78, $9F, $6B  ; 9CB8: 9F 78 9F... .x.
  EQUB $9F, $78, $9F, $78, $9F, $78, $9F, $78  ; 9CC0: 9F 78 9F... .x.
  EQUB $9F, $78, $9F, $78, $9F, $6B, $9F, $78  ; 9CC8: 9F 78 9F... .x.
  EQUB $9F, $78, $9F, $78, $9F, $78, $9F, $78  ; 9CD0: 9F 78 9F... .x.
- EQUB $9F, $78, $9F, $84, $9F, $BB, $9F, $F8  ; 9CD8: 9F 78 9F... .x.
+ EQUB $9F, $78, $9F, $84, $9F, $BB, $9F
+
+.L9CDF
+
+ EQUB $F8  ; 9CD8: 9F 78 9F... .x.
  EQUB $9D, $00, $00, $FA, $B0, $F7, $05, $F6  ; 9CE0: 9D 00 00... ...
  EQUB $0B, $61, $0C, $0C, $0C, $0C, $0C, $0C  ; 9CE8: 0B 61 0C... .a.
  EQUB $0C, $07, $FF, $05, $05, $05, $05, $05  ; 9CF0: 0C 07 FF... ...
@@ -3275,10 +3367,26 @@ ENDIF
  EQUB $77, $2E, $67, $2D, $77, $28, $67, $2B  ; 9DE8: 77 2E 67... w.g
  EQUB $6F, $2E, $F6, $08, $22, $FA, $F0, $FF  ; 9DF0: 6F 2E F6... o..
  EQUB $61, $F6, $10, $08, $02, $F6, $0E, $07  ; 9DF8: 61 F6 10... a..
- EQUB $F6, $10, $02, $FF, $58, $9E, $58, $9E  ; 9E00: F6 10 02... ...
- EQUB $99, $9E, $00, $00, $AD, $9E, $AD, $9E  ; 9E08: 99 9E 00... ...
- EQUB $0B, $9F, $00, $00, $19, $9F, $19, $9F  ; 9E10: 0B 9F 00... ...
- EQUB $57, $9F, $00, $00, $6B, $9F, $78, $9F  ; 9E18: 57 9F 00... W..
+ EQUB $F6, $10, $02, $FF
+
+.L9E04
+
+ EQUB $58, $9E, $58, $9E  ; 9E00: F6 10 02... ...
+ EQUB $99, $9E, $00, $00
+
+.L9E0C
+
+ EQUB $AD, $9E, $AD, $9E  ; 9E08: 99 9E 00... ...
+ EQUB $0B, $9F, $00, $00
+
+.L9E14
+
+ EQUB $19, $9F, $19, $9F  ; 9E10: 0B 9F 00... ...
+ EQUB $57, $9F, $00, $00
+
+.L9E1C
+
+ EQUB $6B, $9F, $78, $9F  ; 9E18: 57 9F 00... W..
  EQUB $78, $9F, $78, $9F, $78, $9F, $78, $9F  ; 9E20: 78 9F 78... x.x
  EQUB $78, $9F, $6B, $9F, $78, $9F, $78, $9F  ; 9E28: 78 9F 6B... x.k
  EQUB $78, $9F, $78, $9F, $78, $9F, $78, $9F  ; 9E30: 78 9F 78... x.x
@@ -3332,7 +3440,11 @@ ENDIF
  EQUB $04, $FF, $F5, $BB, $9B, $F5, $8B, $9C  ; 9FB0: 04 FF F5... ...
  EQUB $F5, $9B, $9C, $F5, $DF, $9C, $FB, $00  ; 9FB8: F5 9B 9C... ...
  EQUB $FF, $FB, $01, $FF, $FB, $03, $FF, $FB  ; 9FC0: FF FB 01... ...
- EQUB $04, $FF, $7F, $F6, $0F, $F8, $FF, $EA  ; 9FC8: 04 FF 7F... ...
+ EQUB $04, $FF
+
+.L9FCA
+
+ EQUB $7F, $F6, $0F, $F8, $FF, $EA  ; 9FC8: 04 FF 7F... ...
 
 ; ******************************************************************************
 ;
