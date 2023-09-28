@@ -2746,9 +2746,14 @@ ORG $0200
                         ;
                         ; We can can only do a jump if both bits are clear
 
-.soundVar01
+.enableSound
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; Enables sound effects and music in David Whittaker's
+                        ; sound module
+                        ;
+                        ;   * 0 = sound is disabled
+                        ;
+                        ;   * Non-zero = sound is enabled
 
 .soundChannel0
 
@@ -2776,407 +2781,363 @@ ORG $0200
 
 .soundVar05
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar06
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar07
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
-
-.soundVar08
-
- SKIP 1                 ; A variable used by David Whittaker's sound module
-
-.soundVar09
-
- SKIP 1                 ; A variable used by David Whittaker's sound module
-
-.soundVar0A
-
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 4                 ; A variable used by David Whittaker's sound player
 
 .soundVar0B
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar0C
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar0D
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
-.soundVar0E
+.soundAddr0
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 2                 ; A variable used by David Whittaker's sound player
 
-.soundVar0F
+.soundAddr1
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
-
-.soundVar10
-
- SKIP 1                 ; A variable used by David Whittaker's sound module
-
-.soundVar11
-
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 2                 ; A variable used by David Whittaker's sound player
 
 .soundVar12
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar13
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar14
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar15
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar16
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar17
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar18
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar19
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar1A
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar1B
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar1C
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar1D
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar1E
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar1F
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar20
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
-.soundVar21
+.soundAddr2
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 2                 ; A variable used by David Whittaker's sound player
 
-.soundVar22
+.soundAddr3
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
-
-.soundVar23
-
- SKIP 1                 ; A variable used by David Whittaker's sound module
-
-.soundVar24
-
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 2                 ; A variable used by David Whittaker's sound player
 
 .soundVar25
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar26
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar27
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar28
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar29
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar2A
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar2B
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar2C
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar2D
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar2E
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar2F
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar30
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar31
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar32
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar33
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
-.soundVar34
+.soundAddr4
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 2                 ; A variable used by David Whittaker's sound player
 
-.soundVar35
+.soundAddr5
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
-
-.soundVar36
-
- SKIP 1                 ; A variable used by David Whittaker's sound module
-
-.soundVar37
-
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 2                 ; A variable used by David Whittaker's sound player
 
 .soundVar38
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar39
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar3A
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar3B
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar3C
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar3D
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar3E
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar3F
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar40
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar41
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar42
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar43
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar44
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar45
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar46
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
-.soundVar47
+.soundAddr6
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 2                 ; A variable used by David Whittaker's sound player
 
-.soundVar48
+.soundAddr7
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
-
-.soundVar49
-
- SKIP 1                 ; A variable used by David Whittaker's sound module
-
-.soundVar4A
-
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 2                 ; A variable used by David Whittaker's sound player
 
 .soundVar4B
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar4C
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar4D
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar4E
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar4F
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar50
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar51
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar52
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar53
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar54
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar55
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar56
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar57
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar58
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar59
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar5A
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar5B
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar5C
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar5D
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar5E
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar5F
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar60
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar61
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar62
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar63
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar64
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar65
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar66
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar67
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar68
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar69
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .FRIN
 
@@ -4083,267 +4044,255 @@ ORG $0200
 
 .soundVar6B
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar6C
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar6D
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar6E
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar6F
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar70
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar71
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar72
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar73
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar74
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar75
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar76
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar77
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar78
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar79
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar7A
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar7B
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar7C
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar7D
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar7E
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar7F
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar80
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar81
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar82
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar83
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar84
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar85
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar86
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar87
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar88
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar89
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar8A
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar8B
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar8C
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar8D
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar8E
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar8F
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar90
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar91
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar92
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar93
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar94
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar95
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar96
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar97
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar98
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar99
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar9A
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar9B
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar9C
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar9D
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar9E
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVar9F
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVarA0
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVarA1
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVarA2
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVarA3
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVarA4
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVarA5
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
 .soundVarA6
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; A variable used by David Whittaker's sound player
 
-.soundVarA7
+.soundAddr8
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 2                 ; A variable used by David Whittaker's sound player
 
-.soundVarA8
+.soundAddr9
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 2                 ; A variable used by David Whittaker's sound player
 
-.soundVarA9
+.soundAddr10
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
-
-.soundVarAA
-
- SKIP 1                 ; A variable used by David Whittaker's sound module
-
-.soundVarAB
-
- SKIP 1                 ; A variable used by David Whittaker's sound module
-
-.soundVarAC
-
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 2                 ; A variable used by David Whittaker's sound player
 
 .QQ19
 

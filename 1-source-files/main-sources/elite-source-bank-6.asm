@@ -5,6 +5,8 @@
 ; NES Elite was written by Ian Bell and David Braben and is copyright D. Braben
 ; and I. Bell 1991/1992
 ;
+; The sound player in this bank was written by David Whittaker
+;
 ; The code on this site has been reconstructed from a disassembly of the version
 ; released on Ian Bell's personal website at http://www.elitehomepage.org/
 ;
@@ -197,62 +199,62 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_80E5S
+;       Name: EnableSoundS
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: A jump table entry at the start of bank 6 for the subm_80E5
+;    Summary: A jump table entry at the start of bank 6 for the EnableSound
 ;             routine
 ;
 ; ******************************************************************************
 
-.subm_80E5S
+.EnableSoundS
 
- JMP subm_80E5          ; Jump to the subm_80E5 routine, returning from the
+ JMP EnableSound        ; Jump to the EnableSound routine, returning from the
                         ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: MakeSoundChannel0S
+;       Name: MakeEffectChannel0S
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: A jump table entry at the start of bank 6 for the
-;             MakeSoundChannel0 routine
+;             MakeEffectChannel0 routine
 ;
 ; ******************************************************************************
 
-.MakeSoundChannel0S
+.MakeEffectChannel0S
 
- JMP MakeSoundChannel0  ; Jump to the MakeSoundChannel0 routine, returning from
+ JMP MakeEffectChannel0 ; Jump to the MakeEffectChannel0 routine, returning from
                         ; the subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: MakeSoundChannel1S
+;       Name: MakeEffectChannel1S
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: A jump table entry at the start of bank 6 for the
-;             MakeSoundChannel1 routine
+;             MakeEffectChannel1 routine
 ;
 ; ******************************************************************************
 
-.MakeSoundChannel1S
+.MakeEffectChannel1S
 
- JMP MakeSoundChannel1  ; Jump to the MakeSoundChannel1 routine, returning from
+ JMP MakeEffectChannel1 ; Jump to the MakeEffectChannel1 routine, returning from
                         ; the subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: MakeSoundChannel2S
+;       Name: MakeEffectChannel2S
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: A jump table entry at the start of bank 6 for the
-;             MakeSoundChannel2 routine
+;             MakeEffectChannel2 routine
 ;
 ; ******************************************************************************
 
-.MakeSoundChannel2S
+.MakeEffectChannel2S
 
- JMP MakeSoundChannel2  ; Jump to the MakeSoundChannel2 routine, returning from
+ JMP MakeEffectChannel2 ; Jump to the MakeEffectChannel2 routine, returning from
                         ; the subroutine using a tail call
 
 ; ******************************************************************************
@@ -277,78 +279,78 @@ ENDIF
  LDA #0
  CLC
 
-.loop_C8028
+.cmus1
 
  DEY
- BMI C802F
+ BMI cmus2
  ADC #9
- BNE loop_C8028
+ BNE cmus1
 
-.C802F
+.cmus2
 
  TAX
  LDA #0
  LDY #$12
 
-.loop_C8034
+.cmus3
 
- STA soundVar0E,Y
- STA soundVar21,Y
- STA soundVar34,Y
- STA soundVar47,Y
+ STA soundAddr0,Y
+ STA soundAddr2,Y
+ STA soundAddr4,Y
+ STA soundAddr6,Y
  DEY
- BPL loop_C8034
+ BPL cmus3
  TAY
- LDA musicData1,X
+ LDA music3Data,X
  STA soundVar05
  STA soundVar06
- LDA musicData1+1,X
- STA soundVar10
+ LDA music3Data+1,X
+ STA soundAddr1
  STA soundAddr
- LDA musicData1+2,X
- STA soundVar11
+ LDA music3Data+2,X
+ STA soundAddr1+1
  STA soundAddr+1
  LDA (soundAddr),Y
- STA soundVar0E
+ STA soundAddr0
  INY
  LDA (soundAddr),Y
- STA soundVar0F
- LDA musicData1+3,X
- STA soundVar23
+ STA soundAddr0+1
+ LDA music3Data+3,X
+ STA soundAddr3
  STA soundAddr
- LDA musicData1+4,X
- STA soundVar24
- STA soundAddr+1
- DEY
- LDA (soundAddr),Y
- STA soundVar21
- INY
- LDA (soundAddr),Y
- STA soundVar22
- LDA musicData1+5,X
- STA soundVar36
- STA soundAddr
- LDA musicData1+6,X
- STA soundVar37
+ LDA music3Data+4,X
+ STA soundAddr3+1
  STA soundAddr+1
  DEY
  LDA (soundAddr),Y
- STA soundVar34
+ STA soundAddr2
  INY
  LDA (soundAddr),Y
- STA soundVar35
- LDA musicData1+7,X
- STA soundVar49
+ STA soundAddr2+1
+ LDA music3Data+5,X
+ STA soundAddr5
  STA soundAddr
- LDA musicData1+8,X
- STA soundVar4A
+ LDA music3Data+6,X
+ STA soundAddr5+1
  STA soundAddr+1
  DEY
  LDA (soundAddr),Y
- STA soundVar47
+ STA soundAddr4
  INY
  LDA (soundAddr),Y
- STA soundVar48
+ STA soundAddr4+1
+ LDA music3Data+7,X
+ STA soundAddr7
+ STA soundAddr
+ LDA music3Data+8,X
+ STA soundAddr7+1
+ STA soundAddr+1
+ DEY
+ LDA (soundAddr),Y
+ STA soundAddr6
+ INY
+ LDA (soundAddr),Y
+ STA soundAddr6+1
  STY soundVar16
  STY soundVar29
  STY soundVar3C
@@ -363,27 +365,27 @@ ENDIF
  DEX
  STX soundVar0B
  STX soundVar0D
- INC soundVar01
+ INC enableSound
  RTS
 
 ; ******************************************************************************
 ;
-;       Name: subm_80E5
+;       Name: EnableSound
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Enable sounds (music and sound effects)
 ;
 ; ******************************************************************************
 
-.subm_80E5
+.EnableSound
 
  LDA soundVar0D
- BEQ C80F2
- LDA soundVar01
- BNE C80F2
- INC soundVar01
+ BEQ enas1
+ LDA enableSound
+ BNE enas1
+ INC enableSound
 
-.C80F2
+.enas1
 
  RTS
 
@@ -392,25 +394,25 @@ ENDIF
 ;       Name: StopSounds
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Stop all sounds (music and sound effects)
 ;
 ; ******************************************************************************
 
 .StopSounds
 
  LDA #0
- STA soundVar01
+ STA enableSound
  STA soundChannel0
  STA soundChannel1
  STA soundChannel2
  TAX
 
-.loop_C8102
+.stop1
 
  STA soundVar5A,X
  INX
  CPX #$10
- BNE loop_C8102
+ BNE stop1
  STA TRI_LINEAR
  LDA #$30
  STA SQ1_VOL
@@ -433,44 +435,44 @@ ENDIF
 
  JSR MakeMusic
 
- JSR MakeSoundEffects
+ JSR MakeSound
 
- LDA soundVar01
- BEQ C816C
+ LDA enableSound
+ BEQ maks3
 
  LDA soundChannel0
- BNE C813F
+ BNE maks1
 
  LDA soundVar5A
  STA SQ1_VOL
 
  LDA soundVar18
- BNE C813F
+ BNE maks1
 
  LDA soundVar5C
  STA SQ1_LO
 
-.C813F
+.maks1
 
  LDA soundChannel1
- BNE C8155
+ BNE maks2
 
  LDA soundVar5E
  STA SQ2_VOL
 
  LDA soundVar2B
- BNE C8155
+ BNE maks2
 
  LDA soundVar60
  STA SQ2_LO
 
-.C8155
+.maks2
 
  LDA soundVar64
  STA TRI_LO
 
  LDA soundChannel2
- BNE C816C
+ BNE maks3
 
  LDA soundVar66
  STA NOISE_VOL
@@ -478,7 +480,7 @@ ENDIF
  LDA soundVar68
  STA NOISE_LO
 
-.C816C
+.maks3
 
  RTS
 
@@ -487,80 +489,80 @@ ENDIF
 ;       Name: MakeMusic
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Play the current music
 ;
 ; ******************************************************************************
 
 .MakeMusic
 
- LDA soundVar01
- BNE C8173
+ LDA enableSound
+ BNE makm1
  RTS
 
-.C8173
+.makm1
 
  LDA soundVar05
  CLC
  ADC soundVar0B
  STA soundVar0B
- BCC C818B
- JSR subm_8197
- JSR subm_8392
- JSR subm_858D
- JSR subm_8725
+ BCC makm2
+ JSR MakeMusic1
+ JSR MakeMusic2
+ JSR MakeMusic3
+ JSR MakeMusic4
 
-.C818B
+.makm2
 
- JSR subm_8334
- JSR subm_852F
- JSR subm_86EE
- JMP C885D
+ JSR MakeMusic5
+ JSR MakeMusic6
+ JSR MakeMusic7
+ JMP MakeMusic8
 
 ; ******************************************************************************
 ;
-;       Name: subm_8197
+;       Name: MakeMusic1
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Play the current music
 ;
 ; ******************************************************************************
 
-.subm_8197
+.MakeMusic1
 
  DEC soundVar16
- BEQ C819D
+ BEQ muso1
  RTS
 
-.C819D
+.muso1
 
- LDA soundVar0E
+ LDA soundAddr0
  STA soundAddr
- LDA soundVar0F
+ LDA soundAddr0+1
  STA soundAddr+1
  LDA #0
  STA soundVar18
  STA soundVar20
 
-.C81AF
+.muso2
 
  LDY #0
  LDA (soundAddr),Y
  TAY
  INC soundAddr
- BNE C81BA
+ BNE muso3
  INC soundAddr+1
 
-.C81BA
+.muso3
 
  TYA
- BMI C8217
+ BMI muso8
  CMP #$60
- BCC C81C9
+ BCC muso4
  ADC #$A0
  STA soundVar15
- JMP C81AF
+ JMP muso2
 
-.C81C9
+.muso4
 
  CLC
  ADC soundVar0C
@@ -568,52 +570,52 @@ ENDIF
  ADC soundVar14
  ASL A
  TAY
- LDA L88BC,Y
+ LDA noteFrequency,Y
  STA soundVar1B
  STA soundVar5C
- LDA L88BC+1,Y
+ LDA noteFrequency+1,Y
  STA soundVar5D
  LDX soundChannel0
- BNE C81F6
+ BNE muso5
  LDX soundVar18
  STX SQ1_SWEEP
  LDX soundVar5C
  STX SQ1_LO
  STA SQ1_HI
 
-.C81F6
+.muso5
 
  LDA #1
  STA soundVar1C
  LDA soundVar1D
  STA soundVar1E
 
-.C8201
+.muso6
 
  LDA #$FF
  STA soundVar20
 
-.C8206
+.muso7
 
  LDA soundAddr
- STA soundVar0E
+ STA soundAddr0
  LDA soundAddr+1
- STA soundVar0F
+ STA soundAddr0+1
  LDA soundVar15
  STA soundVar16
  RTS
 
-.C8217
+.muso8
 
  LDY #0
  CMP #$FF
- BNE C8265
+ BNE muso10
  LDA soundVar12
  CLC
- ADC soundVar10
+ ADC soundAddr1
  STA soundAddr
  LDA soundVar13
- ADC soundVar11
+ ADC soundAddr1+1
  STA soundAddr+1
  LDA soundVar12
  ADC #2
@@ -624,17 +626,17 @@ ENDIF
  LDA (soundAddr),Y
  INY
  ORA (soundAddr),Y
- BNE C8258
- LDA soundVar10
+ BNE muso9
+ LDA soundAddr1
  STA soundAddr
- LDA soundVar11
+ LDA soundAddr1+1
  STA soundAddr+1
  LDA #2
  STA soundVar12
  LDA #0
  STA soundVar13
 
-.C8258
+.muso9
 
  LDA (soundAddr),Y
  TAX
@@ -642,119 +644,119 @@ ENDIF
  LDA (soundAddr),Y
  STA soundAddr
  STX soundAddr+1
- JMP C81AF
+ JMP muso2
 
-.C8265
+.muso10
 
  CMP #$F6
- BNE C8277
+ BNE muso12
  LDA (soundAddr),Y
  INC soundAddr
- BNE C8271
+ BNE muso11
  INC soundAddr+1
 
-.C8271
+.muso11
 
  STA soundVar1F
- JMP C81AF
+ JMP muso2
 
-.C8277
+.muso12
 
  CMP #$F7
- BNE C828C
+ BNE muso14
  LDA (soundAddr),Y
  INC soundAddr
- BNE C8283
+ BNE muso13
  INC soundAddr+1
 
-.C8283
+.muso13
 
  STA soundVar1A
  STY soundVar19
- JMP C81AF
+ JMP muso2
 
-.C828C
+.muso14
 
  CMP #$FA
- BNE C829E
+ BNE muso16
  LDA (soundAddr),Y
  STA soundVar17
  INC soundAddr
- BNE C829B
+ BNE muso15
  INC soundAddr+1
 
-.C829B
+.muso15
 
- JMP C81AF
+ JMP muso2
 
-.C829E
+.muso16
 
  CMP #$F8
- BNE C82AA
+ BNE muso17
  LDA #$30
  STA soundVar5A
- JMP C8206
+ JMP muso7
 
-.C82AA
+.muso17
 
  CMP #$F9
- BNE C82B1
- JMP C8201
+ BNE muso18
+ JMP muso6
 
-.C82B1
+.muso18
 
  CMP #$FD
- BNE C82C3
+ BNE muso20
  LDA (soundAddr),Y
  INC soundAddr
- BNE C82BD
+ BNE muso19
  INC soundAddr+1
 
-.C82BD
+.muso19
 
  STA soundVar18
- JMP C81AF
+ JMP muso2
 
-.C82C3
+.muso20
 
  CMP #$FB
- BNE C82D5
+ BNE muso22
  LDA (soundAddr),Y
  INC soundAddr
- BNE C82CF
+ BNE muso21
  INC soundAddr+1
 
-.C82CF
+.muso21
 
  STA soundVar0C
- JMP C81AF
+ JMP muso2
 
-.C82D5
+.muso22
 
  CMP #$FC
- BNE C82E7
+ BNE muso24
  LDA (soundAddr),Y
  INC soundAddr
- BNE C82E1
+ BNE muso23
  INC soundAddr+1
 
-.C82E1
+.muso23
 
  STA soundVar14
- JMP C81AF
+ JMP muso2
 
-.C82E7
+.muso24
 
  CMP #$F5
- BNE C8311
+ BNE muso25
  LDA (soundAddr),Y
  TAX
- STA soundVar10
+ STA soundAddr1
  INY
  LDA (soundAddr),Y
  STX soundAddr
  STA soundAddr+1
- STA soundVar11
+ STA soundAddr1+1
  LDA #2
  STA soundVar12
  DEY
@@ -765,88 +767,88 @@ ENDIF
  LDA (soundAddr),Y
  STA soundAddr+1
  STX soundAddr
- JMP C81AF
+ JMP muso2
 
-.C8311
+.muso25
 
  CMP #$F4
- BNE C8326
+ BNE muso27
  LDA (soundAddr),Y
  INC soundAddr
- BNE C831D
+ BNE muso26
  INC soundAddr+1
 
-.C831D
+.muso26
 
  STA soundVar05
  STA soundVar06
- JMP C81AF
+ JMP muso2
 
-.C8326
+.muso27
 
  CMP #$FE
- BNE C8332
+ BNE muso28
  STY soundVar0D
  PLA
  PLA
  JMP StopSoundsS
 
-.C8332
+.muso28
 
- BEQ C8332
+ BEQ muso28
 
 ; ******************************************************************************
 ;
-;       Name: subm_8334
+;       Name: MakeMusic5
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Play the current music
 ;
 ; ******************************************************************************
 
-.subm_8334
+.MakeMusic5
 
  LDA soundVar20
- BEQ C836A
+ BEQ musv2
  LDX soundVar1F
- LDA L902C,X
+ LDA music1DataLo,X
  STA soundAddr
- LDA L9040,X
+ LDA music1DataHi,X
  STA soundAddr+1
  LDY #0
  LDA (soundAddr),Y
  STA soundVar1D
  LDY soundVar1C
  LDA (soundAddr),Y
- BMI C8362
+ BMI musv1
  DEC soundVar1E
- BPL C8362
+ BPL musv1
  LDX soundVar1D
  STX soundVar1E
  INC soundVar1C
 
-.C8362
+.musv1
 
  AND #$0F
  ORA soundVar17
  STA soundVar5A
 
-.C836A
+.musv2
 
  LDX soundVar1A
- LDA L9119,X
+ LDA music2DataLo,X
  STA soundAddr
- LDA L9121,X
+ LDA music2DataHi,X
  STA soundAddr+1
  LDY soundVar19
  LDA (soundAddr),Y
  CMP #$80
- BNE C8387
+ BNE musv3
  LDY #0
  STY soundVar19
  LDA (soundAddr),Y
 
-.C8387
+.musv3
 
  INC soundVar19
  CLC
@@ -856,49 +858,49 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_8392
+;       Name: MakeMusic2
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Play the current music
 ;
 ; ******************************************************************************
 
-.subm_8392
+.MakeMusic2
 
  DEC soundVar29
- BEQ C8398
+ BEQ must1
  RTS
 
-.C8398
+.must1
 
- LDA soundVar21
+ LDA soundAddr2
  STA soundAddr
- LDA soundVar22
+ LDA soundAddr2+1
  STA soundAddr+1
  LDA #0
  STA soundVar2B
  STA soundVar33
 
-.C83AA
+.must2
 
  LDY #0
  LDA (soundAddr),Y
  TAY
  INC soundAddr
- BNE C83B5
+ BNE must3
  INC soundAddr+1
 
-.C83B5
+.must3
 
  TYA
- BMI C8412
+ BMI must8
  CMP #$60
- BCC C83C4
+ BCC must4
  ADC #$A0
  STA soundVar28
- JMP C83AA
+ JMP must2
 
-.C83C4
+.must4
 
  CLC
  ADC soundVar0C
@@ -906,52 +908,52 @@ ENDIF
  ADC soundVar27
  ASL A
  TAY
- LDA L88BC,Y
+ LDA noteFrequency,Y
  STA soundVar2E
  STA soundVar60
- LDA L88BC+1,Y
+ LDA noteFrequency+1,Y
  STA soundVar61
  LDX soundChannel1
- BNE C83F1
+ BNE must5
  LDX soundVar2B
  STX SQ2_SWEEP
  LDX soundVar60
  STX SQ2_LO
  STA SQ2_HI
 
-.C83F1
+.must5
 
  LDA #1
  STA soundVar2F
  LDA soundVar30
  STA soundVar31
 
-.C83FC
+.must6
 
  LDA #$FF
  STA soundVar33
 
-.C8401
+.must7
 
  LDA soundAddr
- STA soundVar21
+ STA soundAddr2
  LDA soundAddr+1
- STA soundVar22
+ STA soundAddr2+1
  LDA soundVar28
  STA soundVar29
  RTS
 
-.C8412
+.must8
 
  LDY #0
  CMP #$FF
- BNE C8460
+ BNE must10
  LDA soundVar25
  CLC
- ADC soundVar23
+ ADC soundAddr3
  STA soundAddr
  LDA soundVar26
- ADC soundVar24
+ ADC soundAddr3+1
  STA soundAddr+1
  LDA soundVar25
  ADC #2
@@ -962,17 +964,17 @@ ENDIF
  LDA (soundAddr),Y
  INY
  ORA (soundAddr),Y
- BNE C8453
- LDA soundVar23
+ BNE must9
+ LDA soundAddr3
  STA soundAddr
- LDA soundVar24
+ LDA soundAddr3+1
  STA soundAddr+1
  LDA #2
  STA soundVar25
  LDA #0
  STA soundVar26
 
-.C8453
+.must9
 
  LDA (soundAddr),Y
  TAX
@@ -980,119 +982,119 @@ ENDIF
  LDA (soundAddr),Y
  STA soundAddr
  STX soundAddr+1
- JMP C83AA
+ JMP must2
 
-.C8460
+.must10
 
  CMP #$F6
- BNE C8472
+ BNE must12
  LDA (soundAddr),Y
  INC soundAddr
- BNE C846C
+ BNE must11
  INC soundAddr+1
 
-.C846C
+.must11
 
  STA soundVar32
- JMP C83AA
+ JMP must2
 
-.C8472
+.must12
 
  CMP #$F7
- BNE C8487
+ BNE must14
  LDA (soundAddr),Y
  INC soundAddr
- BNE C847E
+ BNE must13
  INC soundAddr+1
 
-.C847E
+.must13
 
  STA soundVar2D
  STY soundVar2C
- JMP C83AA
+ JMP must2
 
-.C8487
+.must14
 
  CMP #$FA
- BNE C8499
+ BNE must16
  LDA (soundAddr),Y
  STA soundVar2A
  INC soundAddr
- BNE C8496
+ BNE must15
  INC soundAddr+1
 
-.C8496
+.must15
 
- JMP C83AA
+ JMP must2
 
-.C8499
+.must16
 
  CMP #$F8
- BNE C84A5
+ BNE must17
  LDA #$30
  STA soundVar5E
- JMP C8401
+ JMP must7
 
-.C84A5
+.must17
 
  CMP #$F9
- BNE C84AC
- JMP C83FC
+ BNE must18
+ JMP must6
 
-.C84AC
+.must18
 
  CMP #$FD
- BNE C84BE
+ BNE must20
  LDA (soundAddr),Y
  INC soundAddr
- BNE C84B8
+ BNE must19
  INC soundAddr+1
 
-.C84B8
+.must19
 
  STA soundVar2B
- JMP C83AA
+ JMP must2
 
-.C84BE
+.must20
 
  CMP #$FB
- BNE C84D0
+ BNE must22
  LDA (soundAddr),Y
  INC soundAddr
- BNE C84CA
+ BNE must21
  INC soundAddr+1
 
-.C84CA
+.must21
 
  STA soundVar0C
- JMP C83AA
+ JMP must2
 
-.C84D0
+.must22
 
  CMP #$FC
- BNE C84E2
+ BNE must24
  LDA (soundAddr),Y
  INC soundAddr
- BNE C84DC
+ BNE must23
  INC soundAddr+1
 
-.C84DC
+.must23
 
  STA soundVar27
- JMP C83AA
+ JMP must2
 
-.C84E2
+.must24
 
  CMP #$F5
- BNE C850C
+ BNE must25
  LDA (soundAddr),Y
  TAX
- STA soundVar23
+ STA soundAddr3
  INY
  LDA (soundAddr),Y
  STX soundAddr
  STA soundAddr+1
- STA soundVar24
+ STA soundAddr3+1
  LDA #2
  STA soundVar25
  DEY
@@ -1103,88 +1105,88 @@ ENDIF
  LDA (soundAddr),Y
  STA soundAddr+1
  STX soundAddr
- JMP C83AA
+ JMP must2
 
-.C850C
+.must25
 
  CMP #$F4
- BNE C8521
+ BNE must27
  LDA (soundAddr),Y
  INC soundAddr
- BNE C8518
+ BNE must26
  INC soundAddr+1
 
-.C8518
+.must26
 
  STA soundVar05
  STA soundVar06
- JMP C83AA
+ JMP must2
 
-.C8521
+.must27
 
  CMP #$FE
- BNE C852D
+ BNE must28
  STY soundVar0D
  PLA
  PLA
  JMP StopSoundsS
 
-.C852D
+.must28
 
- BEQ C852D
+ BEQ must28
 
 ; ******************************************************************************
 ;
-;       Name: subm_852F
+;       Name: MakeMusic6
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Play the current music
 ;
 ; ******************************************************************************
 
-.subm_852F
+.MakeMusic6
 
  LDA soundVar33
- BEQ C8565
+ BEQ muss2
  LDX soundVar32
- LDA L902C,X
+ LDA music1DataLo,X
  STA soundAddr
- LDA L9040,X
+ LDA music1DataHi,X
  STA soundAddr+1
  LDY #0
  LDA (soundAddr),Y
  STA soundVar30
  LDY soundVar2F
  LDA (soundAddr),Y
- BMI C855D
+ BMI muss1
  DEC soundVar31
- BPL C855D
+ BPL muss1
  LDX soundVar30
  STX soundVar31
  INC soundVar2F
 
-.C855D
+.muss1
 
  AND #$0F
  ORA soundVar2A
  STA soundVar5E
 
-.C8565
+.muss2
 
  LDX soundVar2D
- LDA L9119,X
+ LDA music2DataLo,X
  STA soundAddr
- LDA L9121,X
+ LDA music2DataHi,X
  STA soundAddr+1
  LDY soundVar2C
  LDA (soundAddr),Y
  CMP #$80
- BNE C8582
+ BNE muss3
  LDY #0
  STY soundVar2C
  LDA (soundAddr),Y
 
-.C8582
+.muss3
 
  INC soundVar2C
  CLC
@@ -1194,46 +1196,46 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_858D
+;       Name: MakeMusic3
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Play the current music
 ;
 ; ******************************************************************************
 
-.subm_858D
+.MakeMusic3
 
  DEC soundVar3C
- BEQ C8593
+ BEQ musr1
  RTS
 
-.C8593
+.musr1
 
- LDA soundVar34
+ LDA soundAddr4
  STA soundAddr
- LDA soundVar35
+ LDA soundAddr4+1
  STA soundAddr+1
 
-.C859D
+.musr2
 
  LDY #0
  LDA (soundAddr),Y
  TAY
  INC soundAddr
- BNE C85A8
+ BNE musr3
  INC soundAddr+1
 
-.C85A8
+.musr3
 
  TYA
- BMI C85F5
+ BMI musr6
  CMP #$60
- BCC C85B7
+ BCC musr4
  ADC #$A0
  STA soundVar3B
- JMP C859D
+ JMP musr2
 
-.C85B7
+.musr4
 
  CLC
  ADC soundVar0C
@@ -1241,10 +1243,10 @@ ENDIF
  ADC soundVar3A
  ASL A
  TAY
- LDA L88BC,Y
+ LDA noteFrequency,Y
  STA soundVar41
  STA soundVar64
- LDA L88BC+1,Y
+ LDA noteFrequency+1,Y
  LDX soundVar64
  STX TRI_LO
  STA TRI_HI
@@ -1254,27 +1256,27 @@ ENDIF
  LDA #$81
  STA TRI_LINEAR
 
-.C85E4
+.musr5
 
  LDA soundAddr
- STA soundVar34
+ STA soundAddr4
  LDA soundAddr+1
- STA soundVar35
+ STA soundAddr4+1
  LDA soundVar3B
  STA soundVar3C
  RTS
 
-.C85F5
+.musr6
 
  LDY #0
  CMP #$FF
- BNE C8643
+ BNE musr8
  LDA soundVar38
  CLC
- ADC soundVar36
+ ADC soundAddr5
  STA soundAddr
  LDA soundVar39
- ADC soundVar37
+ ADC soundAddr5+1
  STA soundAddr+1
  LDA soundVar38
  ADC #2
@@ -1285,17 +1287,17 @@ ENDIF
  LDA (soundAddr),Y
  INY
  ORA (soundAddr),Y
- BNE C8636
- LDA soundVar36
+ BNE musr7
+ LDA soundAddr5
  STA soundAddr
- LDA soundVar37
+ LDA soundAddr5+1
  STA soundAddr+1
  LDA #2
  STA soundVar38
  LDA #0
  STA soundVar39
 
-.C8636
+.musr7
 
  LDA (soundAddr),Y
  TAX
@@ -1303,91 +1305,91 @@ ENDIF
  LDA (soundAddr),Y
  STA soundAddr
  STX soundAddr+1
- JMP C859D
+ JMP musr2
 
-.C8643
+.musr8
 
  CMP #$F6
- BNE C8655
+ BNE musr10
  LDA (soundAddr),Y
  INC soundAddr
- BNE C864F
+ BNE musr9
  INC soundAddr+1
 
-.C864F
+.musr9
 
  STA soundVar45
- JMP C859D
+ JMP musr2
 
-.C8655
+.musr10
 
  CMP #$F7
- BNE C866A
+ BNE musr12
  LDA (soundAddr),Y
  INC soundAddr
- BNE C8661
+ BNE musr11
  INC soundAddr+1
 
-.C8661
+.musr11
 
  STA soundVar40
  STY soundVar3F
- JMP C859D
+ JMP musr2
 
-.C866A
+.musr12
 
  CMP #$F8
- BNE C8676
+ BNE musr13
  LDA #1
  STA soundVar42
- JMP C85E4
+ JMP musr5
 
-.C8676
+.musr13
 
  CMP #$F9
- BNE C867D
- JMP C85E4
+ BNE musr14
+ JMP musr5
 
-.C867D
+.musr14
 
  CMP #$FB
- BNE C868F
+ BNE musr16
  LDA (soundAddr),Y
  INC soundAddr
- BNE C8689
+ BNE musr15
  INC soundAddr+1
 
-.C8689
+.musr15
 
  STA soundVar0C
- JMP C859D
+ JMP musr2
 
-.C868F
+.musr16
 
  CMP #$FC
- BNE C86A1
+ BNE musr18
  LDA (soundAddr),Y
  INC soundAddr
- BNE C869B
+ BNE musr17
  INC soundAddr+1
 
-.C869B
+.musr17
 
  STA soundVar3A
- JMP C859D
+ JMP musr2
 
-.C86A1
+.musr18
 
  CMP #$F5
- BNE C86CB
+ BNE musr19
  LDA (soundAddr),Y
  TAX
- STA soundVar36
+ STA soundAddr5
  INY
  LDA (soundAddr),Y
  STX soundAddr
  STA soundAddr+1
- STA soundVar37
+ STA soundAddr5+1
  LDA #2
  STA soundVar38
  DEY
@@ -1398,70 +1400,70 @@ ENDIF
  LDA (soundAddr),Y
  STA soundAddr+1
  STX soundAddr
- JMP C859D
+ JMP musr2
 
-.C86CB
+.musr19
 
  CMP #$F4
- BNE C86E0
+ BNE musr21
  LDA (soundAddr),Y
  INC soundAddr
- BNE C86D7
+ BNE musr20
  INC soundAddr+1
 
-.C86D7
+.musr20
 
  STA soundVar05
  STA soundVar06
- JMP C859D
+ JMP musr2
 
-.C86E0
+.musr21
 
  CMP #$FE
- BNE C86EC
+ BNE musr22
  STY soundVar0D
  PLA
  PLA
  JMP StopSoundsS
 
-.C86EC
+.musr22
 
- BEQ C86EC
+ BEQ musr22
 
 ; ******************************************************************************
 ;
-;       Name: subm_86EE
+;       Name: MakeMusic7
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Play the current music
 ;
 ; ******************************************************************************
 
-.subm_86EE
+.MakeMusic7
 
  LDA soundVar42
- BEQ C86FD
+ BEQ muse1
  DEC soundVar42
- BNE C86FD
+ BNE muse1
  LDA #0
  STA TRI_LINEAR
 
-.C86FD
+.muse1
 
  LDX soundVar40
- LDA L9119,X
+ LDA music2DataLo,X
  STA soundAddr
- LDA L9121,X
+ LDA music2DataHi,X
  STA soundAddr+1
  LDY soundVar3F
  LDA (soundAddr),Y
  CMP #$80
- BNE C871A
+ BNE muse2
  LDY #0
  STY soundVar3F
  LDA (soundAddr),Y
 
-.C871A
+.muse2
 
  INC soundVar3F
  CLC
@@ -1471,87 +1473,87 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_8725
+;       Name: MakeMusic4
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Play the current music
 ;
 ; ******************************************************************************
 
-.subm_8725
+.MakeMusic4
 
  DEC soundVar4F
- BEQ C872B
+ BEQ musf1
  RTS
 
-.C872B
+.musf1
 
- LDA soundVar47
+ LDA soundAddr6
  STA soundAddr
- LDA soundVar48
+ LDA soundAddr6+1
  STA soundAddr+1
  STA soundVar59
 
-.C8738
+.musf2
 
  LDY #0
  LDA (soundAddr),Y
  TAY
  INC soundAddr
- BNE C8743
+ BNE musf3
  INC soundAddr+1
 
-.C8743
+.musf3
 
  TYA
- BMI C8788
+ BMI musf7
  CMP #$60
- BCC C8752
+ BCC musf4
  ADC #$A0
  STA soundVar4E
- JMP C8738
+ JMP musf2
 
-.C8752
+.musf4
 
  AND #$0F
  STA soundVar54
  STA soundVar68
  LDY #0
  LDX soundChannel2
- BNE C8767
+ BNE musf5
  STA NOISE_LO
  STY NOISE_HI
 
-.C8767
+.musf5
 
  LDA #1
  STA soundVar55
  LDA soundVar56
  STA soundVar57
 
-.C8772
+.musf6
 
  LDA #$FF
  STA soundVar59
  LDA soundAddr
- STA soundVar47
+ STA soundAddr6
  LDA soundAddr+1
- STA soundVar48
+ STA soundAddr6+1
  LDA soundVar4E
  STA soundVar4F
  RTS
 
-.C8788
+.musf7
 
  LDY #0
  CMP #$FF
- BNE C87D6
+ BNE musf9
  LDA soundVar4B
  CLC
- ADC soundVar49
+ ADC soundAddr7
  STA soundAddr
  LDA soundVar4C
- ADC soundVar4A
+ ADC soundAddr7+1
  STA soundAddr+1
  LDA soundVar4B
  ADC #2
@@ -1562,17 +1564,17 @@ ENDIF
  LDA (soundAddr),Y
  INY
  ORA (soundAddr),Y
- BNE C87C9
- LDA soundVar49
+ BNE musf8
+ LDA soundAddr7
  STA soundAddr
- LDA soundVar4A
+ LDA soundAddr7+1
  STA soundAddr+1
  LDA #2
  STA soundVar4B
  LDA #0
  STA soundVar4C
 
-.C87C9
+.musf8
 
  LDA (soundAddr),Y
  TAX
@@ -1580,63 +1582,63 @@ ENDIF
  LDA (soundAddr),Y
  STA soundAddr
  STX soundAddr+1
- JMP C8738
+ JMP musf2
 
-.C87D6
+.musf9
 
  CMP #$F6
- BNE C87E8
+ BNE musf11
  LDA (soundAddr),Y
  INC soundAddr
- BNE C87E2
+ BNE musf10
  INC soundAddr+1
 
-.C87E2
+.musf10
 
  STA soundVar58
- JMP C8738
+ JMP musf2
 
-.C87E8
+.musf11
 
  CMP #$F7
- BNE C87FD
+ BNE musf13
  LDA (soundAddr),Y
  INC soundAddr
- BNE C87F4
+ BNE musf12
  INC soundAddr+1
 
-.C87F4
+.musf12
 
  STA soundVar53
  STY soundVar52
- JMP C8738
+ JMP musf2
 
-.C87FD
+.musf13
 
  CMP #$F8
- BNE C8809
+ BNE musf14
  LDA #$30
  STA soundVar66
- JMP C8772
+ JMP musf6
 
-.C8809
+.musf14
 
  CMP #$F9
- BNE C8810
- JMP C8772
+ BNE musf15
+ JMP musf6
 
-.C8810
+.musf15
 
  CMP #$F5
- BNE C883A
+ BNE musf16
  LDA (soundAddr),Y
  TAX
- STA soundVar49
+ STA soundAddr7
  INY
  LDA (soundAddr),Y
  STX soundAddr
  STA soundAddr+1
- STA soundVar4A
+ STA soundAddr7+1
  LDA #2
  STA soundVar4B
  DEY
@@ -1647,79 +1649,88 @@ ENDIF
  LDA (soundAddr),Y
  STA soundAddr+1
  STX soundAddr
- JMP C8738
+ JMP musf2
 
-.C883A
+.musf16
 
  CMP #$F4
- BNE C884F
+ BNE musf18
  LDA (soundAddr),Y
  INC soundAddr
- BNE C8846
+ BNE musf17
  INC soundAddr+1
 
-.C8846
+.musf17
 
  STA soundVar05
  STA soundVar06
- JMP C8738
+ JMP musf2
 
-.C884F
+.musf18
 
  CMP #$FE
- BNE C885B
+ BNE musf19
  STY soundVar0D
  PLA
  PLA
  JMP StopSoundsS
 
-.C885B
+.musf19
 
- BEQ C885B
+ BEQ musf19
 
-.C885D
+; ******************************************************************************
+;
+;       Name: MakeMusic8
+;       Type: Subroutine
+;   Category: Sound
+;    Summary: Play the current music
+;
+; ******************************************************************************
+
+.MakeMusic8
 
  LDA soundVar59
- BEQ C8892
+ BEQ musg2
  LDX soundVar58
- LDA L902C,X
+ LDA music1DataLo,X
  STA soundAddr
- LDA L9040,X
+ LDA music1DataHi,X
  STA soundAddr+1
  LDY #0
  LDA (soundAddr),Y
  STA soundVar56
  LDY soundVar55
  LDA (soundAddr),Y
- BMI C888B
+ BMI musg1
  DEC soundVar57
- BPL C888B
+ BPL musg1
  LDX soundVar56
  STX soundVar57
  INC soundVar55
 
-.C888B
+.musg1
 
  AND #$0F
  ORA #$30
  STA soundVar66
 
-.C8892
+.musg2
 
  LDX soundVar53
- LDA L9119,X
+ LDA music2DataLo,X
  STA soundAddr
- LDA L9121,X
+ LDA music2DataHi,X
  STA soundAddr+1
  LDY soundVar52
  LDA (soundAddr),Y
  CMP #$80
- BNE C88AF
+ BNE musg3
  LDY #0
  STY soundVar52
  LDA (soundAddr),Y
 
-.C88AF
+.musg3
 
  INC soundVar52
  CLC
@@ -1730,63 +1741,123 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: L88BC
+;       Name: noteFrequency
 ;       Type: Variable
 ;   Category: Sound
-;    Summary: ???
+;    Summary: A table of note frequencies
 ;
 ; ******************************************************************************
 
-.L88BC
+.noteFrequency
 
- EQUB $1A, $03, $EC, $02, $C2, $02, $9A, $02  ; 88BC: 1A 03 EC... ...
- EQUB $75, $02, $52, $02, $30, $02, $11, $02  ; 88C4: 75 02 52... u.R
- EQUB $E7, $03, $AF, $03, $7A, $03, $48, $03  ; 88CC: E7 03 AF... ...
- EQUB $1A, $03, $EC, $02, $C2, $02, $9A, $02  ; 88D4: 1A 03 EC... ...
- EQUB $75, $02, $52, $02, $30, $02, $11, $02  ; 88DC: 75 02 52... u.R
- EQUB $F3, $01, $D7, $01, $BD, $01, $A4, $01  ; 88E4: F3 01 D7... ...
- EQUB $8D, $01, $76, $01, $61, $01, $4D, $01  ; 88EC: 8D 01 76... ..v
- EQUB $3B, $01, $29, $01, $18, $01, $08, $01  ; 88F4: 3B 01 29... ;.)
- EQUB $F9, $00, $EB, $00, $DE, $00, $D1, $00  ; 88FC: F9 00 EB... ...
- EQUB $C5, $00, $BB, $00, $B0, $00, $A6, $00  ; 8904: C5 00 BB... ...
- EQUB $9D, $00, $94, $00, $8B, $00, $84, $00  ; 890C: 9D 00 94... ...
- EQUB $7C, $00, $75, $00, $6F, $00, $68, $00  ; 8914: 7C 00 75... |.u
- EQUB $62, $00, $5D, $00, $57, $00, $52, $00  ; 891C: 62 00 5D... b.]
- EQUB $4E, $00, $49, $00, $45, $00, $41, $00  ; 8924: 4E 00 49... N.I
- EQUB $3E, $00, $3A, $00, $37, $00, $34, $00  ; 892C: 3E 00 3A... >.:
- EQUB $31, $00, $2E, $00, $2B, $00, $29, $00  ; 8934: 31 00 2E... 1..
- EQUB $26, $00, $24, $00, $22, $00, $20, $00  ; 893C: 26 00 24... &.$
- EQUB $1E, $00, $1C, $00, $1B, $00, $19, $00  ; 8944: 1E 00 1C... ...
- EQUB $18, $00, $16, $00, $15, $00, $14, $00  ; 894C: 18 00 16... ...
- EQUB $13, $00, $12, $00, $11, $00            ; 8954: 13 00 12... ...
+ EQUW $031A             ; The frequency for C# in octave 2
+ EQUW $02EC             ; The frequency for D  in octave 2
+ EQUW $02C2             ; The frequency for D# in octave 2
+ EQUW $029A             ; The frequency for E  in octave 2
+ EQUW $0275             ; The frequency for F  in octave 2
+ EQUW $0252             ; The frequency for F# in octave 2
+ EQUW $0230             ; The frequency for G  in octave 2
+ EQUW $0211             ; The frequency for G# in octave 2
+
+ EQUW $03E7             ; The frequency for C  in octave 1
+ EQUW $03AF             ; The frequency for B  in octave 1
+ EQUW $037A             ; The frequency for A# in octave 1
+ EQUW $0348             ; The frequency for A  in octave 1
+ EQUW $031A             ; The frequency for C# in octave 2
+ EQUW $02EC             ; The frequency for D  in octave 2
+ EQUW $02C2             ; The frequency for D# in octave 2
+ EQUW $029A             ; The frequency for E  in octave 2
+ EQUW $0275             ; The frequency for F  in octave 2
+ EQUW $0252             ; The frequency for F# in octave 2
+ EQUW $0230             ; The frequency for G  in octave 2
+ EQUW $0211             ; The frequency for G# in octave 2
+ EQUW $01F3             ; The frequency for A  in octave 2
+ EQUW $01D7             ; The frequency for A# in octave 2
+ EQUW $01BD             ; The frequency for B  in octave 2
+ EQUW $01A4             ; The frequency for C  in octave 3
+ EQUW $018D             ; The frequency for C# in octave 3
+ EQUW $0176             ; The frequency for D  in octave 3
+ EQUW $0161             ; The frequency for D# in octave 3
+ EQUW $014D             ; The frequency for E  in octave 3
+ EQUW $013B             ; The frequency for F  in octave 3
+ EQUW $0129             ; The frequency for F# in octave 3
+ EQUW $0118             ; The frequency for G  in octave 3
+ EQUW $0108             ; The frequency for G# in octave 3
+ EQUW $00F9             ; The frequency for A  in octave 3
+ EQUW $00EB             ; The frequency for A# in octave 3
+ EQUW $00DE             ; The frequency for B  in octave 3
+ EQUW $00D1             ; The frequency for C  in octave 4
+ EQUW $00C5             ; The frequency for C# in octave 4
+ EQUW $00BB             ; The frequency for D  in octave 4
+ EQUW $00B0             ; The frequency for D# in octave 4
+ EQUW $00A6             ; The frequency for E  in octave 4
+ EQUW $009D             ; The frequency for F  in octave 4
+ EQUW $0094             ; The frequency for F# in octave 4
+ EQUW $008B             ; The frequency for G  in octave 4
+ EQUW $0084             ; The frequency for G# in octave 4
+ EQUW $007C             ; The frequency for A  in octave 4
+ EQUW $0075             ; The frequency for A# in octave 4
+ EQUW $006F             ; The frequency for B  in octave 4
+ EQUW $0068             ; The frequency for C  in octave 5
+ EQUW $0062             ; The frequency for C# in octave 5
+ EQUW $005D             ; The frequency for D  in octave 5
+ EQUW $0057             ; The frequency for D# in octave 5
+ EQUW $0052             ; The frequency for E  in octave 5
+ EQUW $004E             ; The frequency for F  in octave 5
+ EQUW $0049             ; The frequency for F# in octave 5
+ EQUW $0045             ; The frequency for G  in octave 5
+ EQUW $0041             ; The frequency for G# in octave 5
+ EQUW $003E             ; The frequency for A  in octave 5
+ EQUW $003A             ; The frequency for A# in octave 5
+ EQUW $0037             ; The frequency for B  in octave 5
+ EQUW $0034             ; The frequency for C  in octave 6
+ EQUW $0031             ; The frequency for C# in octave 6
+ EQUW $002E             ; The frequency for D  in octave 6
+ EQUW $002B             ; The frequency for D# in octave 6
+ EQUW $0029             ; The frequency for E  in octave 6
+ EQUW $0026             ; The frequency for F  in octave 6
+ EQUW $0024             ; The frequency for F# in octave 6
+ EQUW $0022             ; The frequency for G  in octave 6
+ EQUW $0020             ; The frequency for G# in octave 6
+ EQUW $001E             ; The frequency for A  in octave 6
+ EQUW $001C             ; The frequency for A# in octave 6
+ EQUW $001B             ; The frequency for B  in octave 6
+ EQUW $0019             ; The frequency for C  in octave 7
+ EQUW $0018             ; The frequency for C# in octave 7
+ EQUW $0016             ; The frequency for D  in octave 7
+ EQUW $0015             ; The frequency for D# in octave 7
+ EQUW $0014             ; The frequency for E  in octave 7
+ EQUW $0013             ; The frequency for F  in octave 7
+ EQUW $0012             ; The frequency for F# in octave 7
+ EQUW $0011             ; The frequency for G  in octave 7
 
 ; ******************************************************************************
 ;
-;       Name: MakeSoundChannel0
+;       Name: MakeEffectChannel0
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Make a sound effect on channel 0
 ;
 ; ******************************************************************************
 
-.MakeSoundChannel0
+.MakeEffectChannel0
 
  ASL A
  TAY
  LDA #0
  STA soundChannel0
- LDA soundData1,Y
+ LDA sound1Data,Y
  STA soundAddr
- LDA soundData1+1,Y
+ LDA sound1Data+1,Y
  STA soundAddr+1
  LDY #$0D
 
-.loop_C896D
+.mefz1
 
  LDA (soundAddr),Y
  STA soundVar6B,Y
  DEY
- BPL loop_C896D
+ BPL mefz1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -1800,11 +1871,11 @@ ENDIF
  LDA soundVar75
  ASL A
  TAY
- LDA soundData2,Y
- STA soundVarA7
+ LDA sound2Data,Y
+ STA soundAddr8
  STA soundAddr
- LDA soundData2+1,Y
- STA soundVarA8
+ LDA sound2Data+1,Y
+ STA soundAddr8+1
  STA soundAddr+1
  LDY #0
  STY soundVar7D
@@ -1827,7 +1898,7 @@ ENDIF
 ;       Name: MakeSoundEffect
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Make a sound effect
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -1843,41 +1914,41 @@ ENDIF
 .MakeSoundEffect
 
  DEX
- BMI C89D9
- BEQ MakeSoundChannel1
- JMP MakeSoundChannel2
+ BMI msef1
+ BEQ MakeEffectChannel1
+ JMP MakeEffectChannel2
 
-.C89D9
+.msef1
 
- JMP MakeSoundChannel0
+ JMP MakeEffectChannel0
 
 ; ******************************************************************************
 ;
-;       Name: MakeSoundChannel1
+;       Name: MakeEffectChannel1
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Make a sound effect on channel 1
 ;
 ; ******************************************************************************
 
-.MakeSoundChannel1
+.MakeEffectChannel1
 
  ASL A
  TAY
  LDA #0
  STA soundChannel1
- LDA soundData1,Y
+ LDA sound1Data,Y
  STA soundAddr
- LDA soundData1+1,Y
+ LDA sound1Data+1,Y
  STA soundAddr+1
  LDY #$0D
 
-.loop_C89EF
+.mefo1
 
  LDA (soundAddr),Y
  STA soundVar7F,Y
  DEY
- BPL loop_C89EF
+ BPL mefo1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -1891,11 +1962,11 @@ ENDIF
  LDA soundVar89
  ASL A
  TAY
- LDA soundData2,Y
- STA soundVarA9
+ LDA sound2Data,Y
+ STA soundAddr9
  STA soundAddr
- LDA soundData2+1,Y
- STA soundVarAA
+ LDA sound2Data+1,Y
+ STA soundAddr9+1
  STA soundAddr+1
  LDY #0
  STY soundVar91
@@ -1915,31 +1986,31 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: MakeSoundChannel2
+;       Name: MakeEffectChannel2
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Make a sound effect on channel 2
 ;
 ; ******************************************************************************
 
-.MakeSoundChannel2
+.MakeEffectChannel2
 
  ASL A
  TAY
  LDA #0
  STA soundChannel2
- LDA soundData1,Y
+ LDA sound1Data,Y
  STA soundAddr
- LDA soundData1+1,Y
+ LDA sound1Data+1,Y
  STA soundAddr+1
  LDY #$0D
 
-.loop_C8A66
+.meft1
 
  LDA (soundAddr),Y
  STA soundVar93,Y
  DEY
- BPL loop_C8A66
+ BPL meft1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -1953,11 +2024,11 @@ ENDIF
  LDA soundVar9D
  ASL A
  TAY
- LDA soundData2,Y
- STA soundVarAB
+ LDA sound2Data,Y
+ STA soundAddr10
  STA soundAddr
- LDA soundData2+1,Y
- STA soundVarAC
+ LDA sound2Data+1,Y
+ STA soundAddr10+1
  STA soundAddr+1
  LDY #0
  STY soundVarA5
@@ -1977,43 +2048,43 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: MakeSoundEffects
+;       Name: MakeSound
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Play the current sound effects on channels 0 to 2
 ;
 ; ******************************************************************************
 
-.MakeSoundEffects
+.MakeSound
 
  JSR UpdateSoundSeeds
- JSR subm_8AD4
- JSR subm_8BBB
- JMP subm_8CA2
+ JSR MakeSoundChannel0
+ JSR MakeSoundChannel1
+ JMP MakeSoundChannel2
 
 ; ******************************************************************************
 ;
-;       Name: subm_8AD4
+;       Name: MakeSoundChannel0
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Play the current sound effect on channel 0
 ;
 ; ******************************************************************************
 
-.subm_8AD4
+.MakeSoundChannel0
 
  LDA soundChannel0
- BNE C8ADA
+ BNE mscz1
  RTS
 
-.C8ADA
+.mscz1
 
  LDA soundVar6B
- BNE C8B08
+ BNE mscz3
  LDX soundVar77
- BNE C8B08
- LDA soundVar01
- BEQ C8AFF
+ BNE mscz3
+ LDA enableSound
+ BEQ mscz2
  LDA soundVar5A
  STA SQ1_VOL
  LDA soundVar5C
@@ -2023,60 +2094,60 @@ ENDIF
  STX soundChannel0
  RTS
 
-.C8AFF
+.mscz2
 
  LDA #$30
  STA SQ1_VOL
  STX soundChannel0
  RTS
 
-.C8B08
+.mscz3
 
  DEC soundVar6B
  DEC soundVar7E
- BNE C8B39
+ BNE mscz5
  LDA soundVar76
  STA soundVar7E
  LDY soundVar7D
- LDA soundVarA7
+ LDA soundAddr8
  STA soundAddr
- LDA soundVarA8
+ LDA soundAddr8+1
  STA soundAddr+1
  LDA (soundAddr),Y
- BPL C8B2F
+ BPL mscz4
  CMP #$80
- BNE C8B39
+ BNE mscz5
  LDY #0
  LDA (soundAddr),Y
 
-.C8B2F
+.mscz4
 
  ORA soundVar71
  STA SQ1_VOL
  INY
  STY soundVar7D
 
-.C8B39
+.mscz5
 
  LDA soundVar7B
- BNE C8B6C
+ BNE mscz8
  LDA soundVar77
- BNE C8B49
+ BNE mscz6
  LDA soundVar74
- BNE C8B49
+ BNE mscz6
  RTS
 
-.C8B49
+.mscz6
 
  DEC soundVar74
  LDA soundVar6C
  STA soundVar7B
  LDA soundVar6D
  LDX soundVar72
- BEQ C8B5D
+ BEQ mscz7
  ADC soundVar07
 
-.C8B5D
+.mscz7
 
  STA soundVar79
  STA SQ1_LO
@@ -2084,20 +2155,20 @@ ENDIF
  STA soundVar7A
  STA SQ1_HI
 
-.C8B6C
+.mscz8
 
  DEC soundVar7B
  LDA soundVar78
- BEQ C8B7C
+ BEQ mscz9
  DEC soundVar7C
- BNE C8BBA
+ BNE mscz11
  STA soundVar7C
 
-.C8B7C
+.mscz9
 
  LDA soundVar73
- BEQ C8BBA
- BMI C8B9F
+ BEQ mscz11
+ BMI mscz10
  LDA soundVar79
  SEC
  SBC soundVar6F
@@ -2110,7 +2181,7 @@ ENDIF
  STA SQ1_HI
  RTS
 
-.C8B9F
+.mscz10
 
  LDA soundVar79
  CLC
@@ -2123,33 +2194,33 @@ ENDIF
  STA soundVar7A
  STA SQ1_HI
 
-.C8BBA
+.mscz11
 
  RTS
 
 ; ******************************************************************************
 ;
-;       Name: subm_8BBB
+;       Name: MakeSoundChannel1
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Play the current sound effect on channel 1
 ;
 ; ******************************************************************************
 
-.subm_8BBB
+.MakeSoundChannel1
 
  LDA soundChannel1
- BNE C8BC1
+ BNE msco1
  RTS
 
-.C8BC1
+.msco1
 
  LDA soundVar7F
- BNE C8BEF
+ BNE msco3
  LDX soundVar8B
- BNE C8BEF
- LDA soundVar01
- BEQ C8BE6
+ BNE msco3
+ LDA enableSound
+ BEQ msco2
  LDA soundVar5E
  STA SQ2_VOL
  LDA soundVar60
@@ -2159,60 +2230,60 @@ ENDIF
  STX soundChannel1
  RTS
 
-.C8BE6
+.msco2
 
  LDA #$30
  STA SQ2_VOL
  STX soundChannel1
  RTS
 
-.C8BEF
+.msco3
 
  DEC soundVar7F
  DEC soundVar92
- BNE C8C20
+ BNE msco5
  LDA soundVar8A
  STA soundVar92
  LDY soundVar91
- LDA soundVarA9
+ LDA soundAddr9
  STA soundAddr
- LDA soundVarAA
+ LDA soundAddr9+1
  STA soundAddr+1
  LDA (soundAddr),Y
- BPL C8C16
+ BPL msco4
  CMP #$80
- BNE C8C20
+ BNE msco5
  LDY #0
  LDA (soundAddr),Y
 
-.C8C16
+.msco4
 
  ORA soundVar85
  STA SQ2_VOL
  INY
  STY soundVar91
 
-.C8C20
+.msco5
 
  LDA soundVar8F
- BNE C8C53
+ BNE msco8
  LDA soundVar8B
- BNE C8C30
+ BNE msco6
  LDA soundVar88
- BNE C8C30
+ BNE msco6
  RTS
 
-.C8C30
+.msco6
 
  DEC soundVar88
  LDA soundVar80
  STA soundVar8F
  LDA soundVar81
  LDX soundVar86
- BEQ C8C44
+ BEQ msco7
  ADC soundVar07
 
-.C8C44
+.msco7
 
  STA soundVar8D
  STA SQ2_LO
@@ -2220,20 +2291,20 @@ ENDIF
  STA soundVar8E
  STA SQ2_HI
 
-.C8C53
+.msco8
 
  DEC soundVar8F
  LDA soundVar8C
- BEQ C8C63
+ BEQ msco9
  DEC soundVar90
- BNE C8CA1
+ BNE msco11
  STA soundVar90
 
-.C8C63
+.msco9
 
  LDA soundVar87
- BEQ C8CA1
- BMI C8C86
+ BEQ msco11
+ BMI msco10
  LDA soundVar8D
  SEC
  SBC soundVar83
@@ -2246,7 +2317,7 @@ ENDIF
  STA SQ2_HI
  RTS
 
-.C8C86
+.msco10
 
  LDA soundVar8D
  CLC
@@ -2259,33 +2330,33 @@ ENDIF
  STA soundVar8E
  STA SQ2_HI
 
-.C8CA1
+.msco11
 
  RTS
 
 ; ******************************************************************************
 ;
-;       Name: subm_8CA2
+;       Name: MakeSoundChannel2
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Play the current sound effect on channel 2
 ;
 ; ******************************************************************************
 
-.subm_8CA2
+.MakeSoundChannel2
 
  LDA soundChannel2
- BNE C8CA8
+ BNE msct1
  RTS
 
-.C8CA8
+.msct1
 
  LDA soundVar93
- BNE C8CD0
+ BNE msct3
  LDX soundVar9F
- BNE C8CD0
- LDA soundVar01
- BEQ C8CC7
+ BNE msct3
+ LDA enableSound
+ BEQ msct2
  LDA soundVar66
  STA NOISE_VOL
  LDA soundVar68
@@ -2293,79 +2364,79 @@ ENDIF
  STX soundChannel2
  RTS
 
-.C8CC7
+.msct2
 
  LDA #$30
  STA NOISE_VOL
  STX soundChannel2
  RTS
 
-.C8CD0
+.msct3
 
  DEC soundVar93
  DEC soundVarA6
- BNE C8D01
+ BNE msct5
  LDA soundVar9E
  STA soundVarA6
  LDY soundVarA5
- LDA soundVarAB
+ LDA soundAddr10
  STA soundAddr
- LDA soundVarAC
+ LDA soundAddr10+1
  STA soundAddr+1
  LDA (soundAddr),Y
- BPL C8CF7
+ BPL msct4
  CMP #$80
- BNE C8D01
+ BNE msct5
  LDY #0
  LDA (soundAddr),Y
 
-.C8CF7
+.msct4
 
  ORA soundVar99
  STA NOISE_VOL
  INY
  STY soundVarA5
 
-.C8D01
+.msct5
 
  LDA soundVarA3
- BNE C8D2D
+ BNE msct8
  LDA soundVar9F
- BNE C8D11
+ BNE msct6
  LDA soundVar9C
- BNE C8D11
+ BNE msct6
  RTS
 
-.C8D11
+.msct6
 
  DEC soundVar9C
  LDA soundVar94
  STA soundVarA3
  LDA soundVar95
  LDX soundVar9A
- BEQ C8D27
+ BEQ msct7
  ADC soundVar07
  AND #$0F
 
-.C8D27
+.msct7
 
  STA soundVarA1
  STA NOISE_LO
 
-.C8D2D
+.msct8
 
  DEC soundVarA3
  LDA soundVarA0
- BEQ C8D3D
+ BEQ msct9
  DEC soundVarA4
- BNE C8D63
+ BNE msct11
  STA soundVarA4
 
-.C8D3D
+.msct9
 
  LDA soundVar9B
- BEQ C8D63
- BMI C8D54
+ BEQ msct11
+ BMI msct10
  LDA soundVarA1
  SEC
  SBC soundVar97
@@ -2374,7 +2445,7 @@ ENDIF
  STA NOISE_LO
  RTS
 
-.C8D54
+.msct10
 
  LDA soundVarA1
  CLC
@@ -2383,7 +2454,7 @@ ENDIF
  STA soundVarA1
  STA NOISE_LO
 
-.C8D63
+.msct11
 
  RTS
 
@@ -2392,7 +2463,7 @@ ENDIF
 ;       Name: UpdateSoundSeeds
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Update the sound seeds
 ;
 ; ******************************************************************************
 
@@ -2411,1041 +2482,1480 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: soundData1
+;       Name: sound1Data
 ;       Type: Variable
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Data for the sound effects
 ;
 ; ******************************************************************************
 
-.soundData1
+.sound1Data
 
- EQUW soundData1_1
- EQUW soundData1_2
- EQUW soundData1_3
- EQUW soundData1_4
- EQUW soundData1_5
- EQUW soundData1_6
- EQUW soundData1_7
- EQUW soundData1_8
- EQUW soundData1_9
- EQUW soundData1_10
- EQUW soundData1_11
- EQUW soundData1_12
- EQUW soundData1_13
- EQUW soundData1_14
- EQUW soundData1_15
- EQUW soundData1_16
- EQUW soundData1_17
- EQUW soundData1_18
- EQUW soundData1_19
- EQUW soundData1_20
- EQUW soundData1_21
- EQUW soundData1_22
- EQUW soundData1_23
- EQUW soundData1_24
- EQUW soundData1_25
- EQUW soundData1_26
- EQUW soundData1_27
- EQUW soundData1_28
- EQUW soundData1_29
- EQUW soundData1_30
- EQUW soundData1_31
- EQUW soundData1_32
+ EQUW sound1Data0
+ EQUW sound1Data1
+ EQUW sound1Data2
+ EQUW sound1Data3
+ EQUW sound1Data4
+ EQUW sound1Data5
+ EQUW sound1Data6
+ EQUW sound1Data7
+ EQUW sound1Data8
+ EQUW sound1Data9
+ EQUW sound1Data10
+ EQUW sound1Data11
+ EQUW sound1Data12
+ EQUW sound1Data13
+ EQUW sound1Data14
+ EQUW sound1Data15
+ EQUW sound1Data16
+ EQUW sound1Data17
+ EQUW sound1Data18
+ EQUW sound1Data19
+ EQUW sound1Data20
+ EQUW sound1Data21
+ EQUW sound1Data22
+ EQUW sound1Data23
+ EQUW sound1Data24
+ EQUW sound1Data25
+ EQUW sound1Data26
+ EQUW sound1Data27
+ EQUW sound1Data28
+ EQUW sound1Data29
+ EQUW sound1Data30
+ EQUW sound1Data31
 
-.soundData1_1
+.sound1Data0
 
  EQUB $3C, $03, $04, $00, $02, $00, $30, $00
  EQUB $01, $0A, $00, $05, $00, $63
 
-.soundData1_2
+.sound1Data1
 
- EQUB $16, $04
- EQUB $A8, $00, $04, $00, $70, $00, $FF, $63
- EQUB $0C, $02, $00, $00
+ EQUB $16, $04, $A8, $00, $04, $00, $70, $00
+ EQUB $FF, $63, $0C, $02, $00, $00
 
-.soundData1_3
+.sound1Data2
 
- EQUB $19, $19, $AC, $03
- EQUB $1C, $00, $30, $00, $01, $63, $06, $02
- EQUB $FF, $00
+ EQUB $19, $19, $AC, $03, $1C, $00, $30, $00
+ EQUB $01, $63, $06, $02, $FF, $00
 
-.soundData1_4
+.sound1Data3
 
- EQUB $05, $63, $2C, $00, $00, $00
- EQUB $70, $00, $00, $63, $0C, $01, $00, $00
+ EQUB $05, $63, $2C, $00, $00, $00, $70, $00
+ EQUB $00, $63, $0C, $01, $00, $00
 
-.soundData1_5
+.sound1Data4
 
  EQUB $09, $63, $57, $02, $02, $00, $B0, $00
  EQUB $FF, $63, $08, $01, $00, $00
 
-.soundData1_6
+.sound1Data5
 
- EQUB $0A, $02
- EQUB $18, $00, $01, $00, $30, $FF, $FF, $0A
- EQUB $0C, $01, $00, $00
+ EQUB $0A, $02, $18, $00, $01, $00, $30, $FF
+ EQUB $FF, $0A, $0C, $01, $00, $00
 
-.soundData1_7
+.sound1Data6
 
- EQUB $0D, $02, $28, $00
- EQUB $01, $00, $70, $FF, $FF, $0A, $0C, $01
- EQUB $00, $00
+ EQUB $0D, $02, $28, $00, $01, $00, $70, $FF
+ EQUB $FF, $0A, $0C, $01, $00, $00
 
-.soundData1_8
+.sound1Data7
 
- EQUB $19, $1C, $00, $01, $06, $00
- EQUB $70, $00, $01, $63, $06, $02, $00, $00
+ EQUB $19, $1C, $00, $01, $06, $00, $70, $00
+ EQUB $01, $63, $06, $02, $00, $00
 
-.soundData1_9
+.sound1Data8
 
  EQUB $5A, $09, $14, $00, $01, $00, $30, $00
  EQUB $FF, $63, $00, $0B, $00, $00
 
-.soundData1_10
+.sound1Data9
 
- EQUB $46, $28
- EQUB $02, $00, $01, $00, $30, $00, $FF, $00
- EQUB $08, $06, $00, $03
+ EQUB $46, $28, $02, $00, $01, $00, $30, $00
+ EQUB $FF, $00, $08, $06, $00, $03
 
-.soundData1_11
+.sound1Data10
 
- EQUB $0E, $03, $6C, $00
- EQUB $21, $00, $B0, $00, $FF, $63, $0C, $02
- EQUB $00, $00
+ EQUB $0E, $03, $6C, $00, $21, $00, $B0, $00
+ EQUB $FF, $63, $0C, $02, $00, $00
 
-.soundData1_12
+.sound1Data11
 
- EQUB $13, $0F, $08, $00, $01, $00
- EQUB $30, $00, $FF, $00, $0C, $03, $00, $02
+ EQUB $13, $0F, $08, $00, $01, $00, $30, $00
+ EQUB $FF, $00, $0C, $03, $00, $02
 
-.soundData1_13
+.sound1Data12
 
  EQUB $AA, $78, $1F, $00, $01, $00, $30, $00
  EQUB $01, $00, $01, $08, $00, $0A
 
-.soundData1_14
+.sound1Data13
 
- EQUB $59, $02
- EQUB $4F, $00, $29, $00, $B0, $FF, $01, $FF
- EQUB $00, $09, $00, $00
+ EQUB $59, $02, $4F, $00, $29, $00, $B0, $FF
+ EQUB $01, $FF, $00, $09, $00, $00
 
-.soundData1_15
+.sound1Data14
 
- EQUB $19, $05, $82, $01
- EQUB $29, $00, $B0, $FF, $FF, $FF, $08, $02
- EQUB $00, $00
+ EQUB $19, $05, $82, $01, $29, $00, $B0, $FF
+ EQUB $FF, $FF, $08, $02, $00, $00
 
-.soundData1_16
+.sound1Data15
 
- EQUB $22, $05, $82, $01, $29, $00
- EQUB $B0, $FF, $FF, $FF, $08, $03, $00, $00
+ EQUB $22, $05, $82, $01, $29, $00, $B0, $FF
+ EQUB $FF, $FF, $08, $03, $00, $00
 
-.soundData1_17
+.sound1Data16
 
  EQUB $0F, $63, $B0, $00, $20, $00, $70, $00
  EQUB $FF, $63, $08, $02, $00, $00
 
-.soundData1_18
+.sound1Data17
 
- EQUB $0D, $63
- EQUB $8F, $01, $31, $00, $30, $00, $FF, $63
- EQUB $10, $02, $00, $00
+ EQUB $0D, $63, $8F, $01, $31, $00, $30, $00
+ EQUB $FF, $63, $10, $02, $00, $00
 
-.soundData1_19
+.sound1Data18
 
- EQUB $18, $05, $FF, $01
- EQUB $31, $00, $30, $00, $FF, $63, $10, $03
- EQUB $00, $00
+ EQUB $18, $05, $FF, $01, $31, $00, $30, $00
+ EQUB $FF, $63, $10, $03, $00, $00
 
-.soundData1_20
+.sound1Data19
 
- EQUB $46, $03, $42, $03, $29, $00
- EQUB $B0, $00, $FF, $FF, $0C, $06, $00, $00
+ EQUB $46, $03, $42, $03, $29, $00, $B0, $00
+ EQUB $FF, $FF, $0C, $06, $00, $00
 
-.soundData1_21
+.sound1Data20
 
  EQUB $0C, $02, $57, $00, $14, $00, $B0, $00
  EQUB $FF, $63, $0C, $01, $00, $00
 
-.soundData1_22
+.sound1Data21
 
- EQUB $82, $46
- EQUB $0F, $00, $01, $00, $B0, $00, $01, $00
- EQUB $01, $07, $00, $05
+ EQUB $82, $46, $0F, $00, $01, $00, $B0, $00
+ EQUB $01, $00, $01, $07, $00, $05
 
-.soundData1_23
+.sound1Data22
 
- EQUB $82, $46, $00, $00
- EQUB $01, $00, $B0, $00, $FF, $00, $01, $07
- EQUB $00, $05
+ EQUB $82, $46, $00, $00, $01, $00, $B0, $00
+ EQUB $FF, $00, $01, $07, $00, $05
 
-.soundData1_24
+.sound1Data23
 
- EQUB $19, $05, $82, $01, $29, $00
- EQUB $B0, $FF, $FF, $FF, $0E, $02, $00, $00
+ EQUB $19, $05, $82, $01, $29, $00, $B0, $FF
+ EQUB $FF, $FF, $0E, $02, $00, $00
 
-.soundData1_25
+.sound1Data24
 
  EQUB $AA, $78, $1F, $00, $01, $00, $30, $00
  EQUB $01, $00, $01, $08, $00, $0A
 
-.soundData1_26
+.sound1Data25
 
- EQUB $14, $03
- EQUB $08, $00, $01, $00, $30, $00, $FF, $FF
- EQUB $00, $02, $00, $00
+ EQUB $14, $03, $08, $00, $01, $00, $30, $00
+ EQUB $FF, $FF, $00, $02, $00, $00
 
-.soundData1_27
+.sound1Data26
 
- EQUB $01, $00, $00, $00
- EQUB $00, $00, $30, $00, $00, $00, $0D, $00
- EQUB $00, $00
+ EQUB $01, $00, $00, $00, $00, $00, $30, $00
+ EQUB $00, $00, $0D, $00, $00, $00
 
-.soundData1_28
+.sound1Data27
 
- EQUB $19, $05, $82, $01, $29, $00
- EQUB $B0, $FF, $FF, $FF, $0F, $02, $00, $00
+ EQUB $19, $05, $82, $01, $29, $00, $B0, $FF
+ EQUB $FF, $FF, $0F, $02, $00, $00
 
-.soundData1_29
+.sound1Data28
 
  EQUB $0B, $04, $42, $00, $08, $00, $B0, $00
  EQUB $01, $63, $08, $01, $00, $02
 
-.soundData1_30
+.sound1Data29
 
- EQUB $96, $1C
- EQUB $00, $01, $06, $00, $70, $00, $01, $63
- EQUB $06, $02, $00, $00
+ EQUB $96, $1C, $00, $01, $06, $00, $70, $00
+ EQUB $01, $63, $06, $02, $00, $00
 
-.soundData1_31
+.sound1Data30
 
- EQUB $96, $1C, $00, $01
- EQUB $06, $00, $70, $00, $01, $63, $06, $02
- EQUB $00, $00
+ EQUB $96, $1C, $00, $01, $06, $00, $70, $00
+ EQUB $01, $63, $06, $02, $00, $00
 
-.soundData1_32
+.sound1Data31
 
- EQUB $14, $02, $28, $00, $01, $00
- EQUB $70, $FF, $FF, $0A, $00, $02, $00, $00
+ EQUB $14, $02, $28, $00, $01, $00, $70, $FF
+ EQUB $FF, $0A, $00, $02, $00, $00
 
 ; ******************************************************************************
 ;
-;       Name: soundData2
+;       Name: sound2Data
 ;       Type: Variable
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Data for the sound effects
 ;
 ; ******************************************************************************
 
-.soundData2
+.sound2Data
 
- EQUW soundData2_1
- EQUW soundData2_2
- EQUW soundData2_3
- EQUW soundData2_4
- EQUW soundData2_5
- EQUW soundData2_6
- EQUW soundData2_7
- EQUW soundData2_8
- EQUW soundData2_9
- EQUW soundData2_10
- EQUW soundData2_11
- EQUW soundData2_12
- EQUW soundData2_13
- EQUW soundData2_14
- EQUW soundData2_15
- EQUW soundData2_16
- EQUW soundData2_17
+ EQUW sound2Data0
+ EQUW sound2Data1
+ EQUW sound2Data2
+ EQUW sound2Data3
+ EQUW sound2Data4
+ EQUW sound2Data5
+ EQUW sound2Data6
+ EQUW sound2Data7
+ EQUW sound2Data8
+ EQUW sound2Data9
+ EQUW sound2Data10
+ EQUW sound2Data11
+ EQUW sound2Data12
+ EQUW sound2Data13
+ EQUW sound2Data14
+ EQUW sound2Data15
+ EQUW sound2Data16
 
-.soundData2_1
+.sound2Data0
 
- EQUB $0F, $0D, $0B, $09, $07, $05  ; 8F9A: 1D 90 0F... ...
- EQUB $03, $01, $00, $FF
+ EQUB $0F, $0D, $0B, $09, $07, $05, $03, $01
+ EQUB $00, $FF
 
-.soundData2_2
+.sound2Data1
 
- EQUB $03, $05, $07, $09  ; 8FA2: 03 01 00... ...
- EQUB $0A, $0C, $0E, $0E, $0E, $0C, $0C, $0A  ; 8FAA: 0A 0C 0E... ...
- EQUB $0A, $09, $09, $07, $06, $05, $04, $03  ; 8FB2: 0A 09 09... ...
- EQUB $02, $02, $01, $FF
+ EQUB $03, $05, $07, $09, $0A, $0C, $0E, $0E
+ EQUB $0E, $0C, $0C, $0A, $0A, $09, $09, $07
+ EQUB $06, $05, $04, $03, $02, $02, $01, $FF
 
-.soundData2_3
+.sound2Data2
 
- EQUB $02, $06, $08, $00  ; 8FBA: 02 02 01... ...
+ EQUB $02, $06, $08, $00, $FF
+
+.sound2Data3
+
+ EQUB $06, $08, $0A, $0B, $0C, $0B, $0A, $09
+ EQUB $08, $07, $06, $05, $04, $03, $02, $01
  EQUB $FF
 
-.soundData2_4
+.sound2Data4
 
- EQUB $06, $08, $0A, $0B, $0C, $0B, $0A  ; 8FC2: FF 06 08... ...
- EQUB $09, $08, $07, $06, $05, $04, $03, $02  ; 8FCA: 09 08 07... ...
- EQUB $01, $FF
+ EQUB $01, $03, $06, $08, $0C, $80
 
-.soundData2_5
-
- EQUB $01, $03, $06, $08, $0C, $80  ; 8FD2: 01 FF 01... ...
-
-.soundData2_6
+.sound2Data5
 
  EQUB $01, $04, $09, $0D, $80
 
-.soundData2_7
+.sound2Data6
 
- EQUB $01, $04, $07  ; 8FDA: 01 04 09... ...
- EQUB $09, $FF
+ EQUB $01, $04, $07, $09, $FF
 
-.soundData2_8
+.sound2Data7
 
  EQUB $09, $80
 
-.soundData2_9
+.sound2Data8
 
- EQUB $0E, $0C, $0B, $09  ; 8FE2: 09 FF 09... ...
- EQUB $07, $05, $04, $03, $02, $01, $FF
+ EQUB $0E, $0C, $0B, $09, $07, $05, $04, $03
+ EQUB $02, $01, $FF
 
-.soundData2_10
+.sound2Data9
 
- EQUB $0C  ; 8FEA: 07 05 04... ...
- EQUB $00, $00, $0C, $00, $00, $FF
+ EQUB $0C, $00, $00, $0C, $00, $00, $FF
 
-.soundData2_11
+.sound2Data10
 
- EQUB $0B, $80  ; 8FF2: 00 00 0C... ...
+ EQUB $0B, $80
 
-.soundData2_12
+.sound2Data11
 
  EQUB $0A, $0B, $0C, $0D, $0C, $80
 
-.soundData2_13
+.sound2Data12
 
- EQUB $0C, $0A  ; 8FFA: 0A 0B 0C... ...
- EQUB $09, $07, $05, $04, $03, $02, $01, $FF  ; 9002: 09 07 05... ...
+ EQUB $0C, $0A, $09, $07, $05, $04, $03, $02
+ EQUB $01, $FF
 
-.soundData2_14
+.sound2Data13
 
  EQUB $00, $FF
 
-.soundData2_15
+.sound2Data14
 
- EQUB $04, $05, $06, $06, $05, $04  ; 900A: 00 FF 04... ...
- EQUB $03, $02, $01, $FF
+ EQUB $04, $05, $06, $06, $05, $04, $03, $02
+ EQUB $01, $FF
 
-.soundData2_16
+.sound2Data15
 
- EQUB $06, $05, $04, $03  ; 9012: 03 02 01... ...
- EQUB $02, $01, $FF
+ EQUB $06, $05, $04, $03, $02, $01, $FF
 
-.soundData2_17
+.sound2Data16
 
- EQUB $0C, $0A, $09, $07, $05  ; 901A: 02 01 FF... ...
- EQUB $05, $04, $04, $03, $03, $02, $02, $01  ; 9022: 05 04 04... ...
- EQUB $01, $FF                                ; 902A: 01 FF       ..
+ EQUB $0C, $0A, $09, $07, $05, $05, $04, $04
+ EQUB $03, $03, $02, $02, $01, $01, $FF
 
 ; ******************************************************************************
 ;
-;       Name: L902C
+;       Name: music1Data
 ;       Type: Variable
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Data for the game music
 ;
 ; ******************************************************************************
 
-.L902C
+.music1Data
 
- EQUB $54, $59, $5F, $78, $92, $9A, $A1, $A8  ; 902C: 54 59 5F... TY_
- EQUB $AF, $BD, $CC, $DB, $E5, $F0, $FA, $FF  ; 9034: AF BD CC... ...
- EQUB $02, $06, $0D, $14                      ; 903C: 02 06 0D... ...
+.music1DataLo
+
+ EQUB LO(music1Data0)
+ EQUB LO(music1Data1)
+ EQUB LO(music1Data2)
+ EQUB LO(music1Data3)
+ EQUB LO(music1Data4)
+ EQUB LO(music1Data5)
+ EQUB LO(music1Data6)
+ EQUB LO(music1Data7)
+ EQUB LO(music1Data8)
+ EQUB LO(music1Data9)
+ EQUB LO(music1Data10)
+ EQUB LO(music1Data11)
+ EQUB LO(music1Data12)
+ EQUB LO(music1Data13)
+ EQUB LO(music1Data14)
+ EQUB LO(music1Data15)
+ EQUB LO(music1Data16)
+ EQUB LO(music1Data17)
+ EQUB LO(music1Data18)
+ EQUB LO(music1Data19)
+
+.music1DataHi
+
+ EQUB HI(music1Data0)
+ EQUB HI(music1Data1)
+ EQUB HI(music1Data2)
+ EQUB HI(music1Data3)
+ EQUB HI(music1Data4)
+ EQUB HI(music1Data5)
+ EQUB HI(music1Data6)
+ EQUB HI(music1Data7)
+ EQUB HI(music1Data8)
+ EQUB HI(music1Data9)
+ EQUB HI(music1Data10)
+ EQUB HI(music1Data11)
+ EQUB HI(music1Data12)
+ EQUB HI(music1Data13)
+ EQUB HI(music1Data14)
+ EQUB HI(music1Data15)
+ EQUB HI(music1Data16)
+ EQUB HI(music1Data17)
+ EQUB HI(music1Data18)
+ EQUB HI(music1Data19)
+
+.music1Data0
+
+ EQUB $01, $0A, $0F, $0C, $8A
+
+.music1Data1
+
+ EQUB $01, $0A, $0F, $0B, $09, $87
+
+.music1Data2
+
+ EQUB $01, $0E, $0C, $09, $07, $0B, $0A, $07
+ EQUB $05, $09, $07, $05, $04, $07, $06, $04
+ EQUB $03, $05, $04, $03, $02, $03, $02, $01
+ EQUB $80
+
+.music1Data3
+
+ EQUB $01, $0E, $0D, $0B, $09, $07, $0C, $0B
+ EQUB $09, $07, $05, $0A, $09, $07, $05, $03
+ EQUB $08, $07, $05, $03, $02, $06, $05, $03
+ EQUB $02, $80
+
+.music1Data4
+
+ EQUB $01, $0A, $0D, $0A, $09, $08, $07, $86
+
+.music1Data5
+
+ EQUB $01, $08, $0B, $09, $07, $05, $83
+
+.music1Data6
+
+ EQUB $01, $0A, $0D, $0C, $0B, $09, $87
+
+.music1Data7
+
+ EQUB $01, $06, $08, $07, $05, $03, $81
+
+.music1Data8
+
+ EQUB $0A, $0D, $0C, $0B, $0A, $09, $08, $07
+ EQUB $06, $05, $04, $03, $02, $81
+
+.music1Data9
+
+ EQUB $02, $0E, $0D, $0C, $0B, $0A, $09, $08
+ EQUB $07, $06, $05, $04, $03, $02, $81
+
+.music1Data10
+
+ EQUB $01, $0E, $0D, $0C, $0B, $0A, $09, $08
+ EQUB $07, $06, $05, $04, $03, $02, $81
+
+.music1Data11
+
+ EQUB $01, $0E, $0C, $09, $07, $05, $04, $03
+ EQUB $02, $81
+
+.music1Data12
+
+ EQUB $01, $0D, $0C, $0A, $07, $06, $05, $04
+ EQUB $03, $02, $81
+
+.music1Data13
+
+ EQUB $01, $0D, $0B, $09, $07, $05, $04, $03
+ EQUB $02, $81
+
+.music1Data14
+
+ EQUB $01, $0D, $07, $01, $80
+
+.music1Data15
+
+ EQUB $01, $00, $80
+
+.music1Data16
+
+ EQUB $01, $09, $02, $80
+
+.music1Data17
+
+ EQUB $01, $0A, $01, $05, $02, $01, $80
+
+.music1Data18
+
+ EQUB $01, $0D, $01, $07, $02, $01, $80
+
+.music1Data19
+
+ EQUB $01, $0F, $0D, $0B, $89
 
 ; ******************************************************************************
 ;
-;       Name: L9040
+;       Name: music2Data
 ;       Type: Variable
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Data for the game music
 ;
 ; ******************************************************************************
 
-.L9040
+.music2Data
 
- EQUB $90, $90, $90, $90, $90, $90, $90, $90  ; 9040: 90 90 90... ...
- EQUB $90, $90, $90, $90, $90, $90, $90, $90  ; 9048: 90 90 90... ...
- EQUB $91, $91, $91, $91, $01, $0A, $0F, $0C  ; 9050: 91 91 91... ...
- EQUB $8A, $01, $0A, $0F, $0B, $09, $87, $01  ; 9058: 8A 01 0A... ...
- EQUB $0E, $0C, $09, $07, $0B, $0A, $07, $05  ; 9060: 0E 0C 09... ...
- EQUB $09, $07, $05, $04, $07, $06, $04, $03  ; 9068: 09 07 05... ...
- EQUB $05, $04, $03, $02, $03, $02, $01, $80  ; 9070: 05 04 03... ...
- EQUB $01, $0E, $0D, $0B, $09, $07, $0C, $0B  ; 9078: 01 0E 0D... ...
- EQUB $09, $07, $05, $0A, $09, $07, $05, $03  ; 9080: 09 07 05... ...
- EQUB $08, $07, $05, $03, $02, $06, $05, $03  ; 9088: 08 07 05... ...
- EQUB $02, $80, $01, $0A, $0D, $0A, $09, $08  ; 9090: 02 80 01... ...
- EQUB $07, $86, $01, $08, $0B, $09, $07, $05  ; 9098: 07 86 01... ...
- EQUB $83, $01, $0A, $0D, $0C, $0B, $09, $87  ; 90A0: 83 01 0A... ...
- EQUB $01, $06, $08, $07, $05, $03, $81, $0A  ; 90A8: 01 06 08... ...
- EQUB $0D, $0C, $0B, $0A, $09, $08, $07, $06  ; 90B0: 0D 0C 0B... ...
- EQUB $05, $04, $03, $02, $81, $02, $0E, $0D  ; 90B8: 05 04 03... ...
- EQUB $0C, $0B, $0A, $09, $08, $07, $06, $05  ; 90C0: 0C 0B 0A... ...
- EQUB $04, $03, $02, $81, $01, $0E, $0D, $0C  ; 90C8: 04 03 02... ...
- EQUB $0B, $0A, $09, $08, $07, $06, $05, $04  ; 90D0: 0B 0A 09... ...
- EQUB $03, $02, $81, $01, $0E, $0C, $09, $07  ; 90D8: 03 02 81... ...
- EQUB $05, $04, $03, $02, $81, $01, $0D, $0C  ; 90E0: 05 04 03... ...
- EQUB $0A, $07, $06, $05, $04, $03, $02, $81  ; 90E8: 0A 07 06... ...
- EQUB $01, $0D, $0B, $09, $07, $05, $04, $03  ; 90F0: 01 0D 0B... ...
- EQUB $02, $81, $01, $0D, $07, $01, $80, $01  ; 90F8: 02 81 01... ...
- EQUB $00, $80, $01, $09, $02, $80,   1, $0A  ; 9100: 00 80 01... ...
- EQUB   1,   5,   2,   1, $80,   1, $0D,   1  ; 9108: 01 05 02... ...
- EQUB   7,   2,   1, $80,   1, $0F, $0D, $0B  ; 9110: 07 02 01... ...
- EQUB $89                                     ; 9118: 89          .
+.music2DataLo
+
+ EQUB LO(music2Data0)
+ EQUB LO(music2Data1)
+ EQUB LO(music2Data2)
+ EQUB LO(music2Data3)
+ EQUB LO(music2Data4)
+ EQUB LO(music2Data5)
+ EQUB LO(music2Data6)
+ EQUB LO(music2Data7)
+
+.music2DataHi
+
+ EQUB HI(music2Data0)
+ EQUB HI(music2Data1)
+ EQUB HI(music2Data2)
+ EQUB HI(music2Data3)
+ EQUB HI(music2Data4)
+ EQUB HI(music2Data5)
+ EQUB HI(music2Data6)
+ EQUB HI(music2Data7)
+
+.music2Data0
+
+ EQUB $00, $80
+
+.music2Data1
+
+ EQUB $00, $01, $02, $01, $00, $FF, $FE, $FF
+ EQUB $80
+
+.music2Data2
+
+ EQUB $00, $02, $00, $FE, $80
+
+.music2Data3
+
+ EQUB $00, $01, $00, $FF, $80
+
+.music2Data4
+
+ EQUB $00, $04, $00, $04, $00, $80
+
+.music2Data5
+
+ EQUB $00, $02, $04, $02, $00, $FE, $FC, $FE
+ EQUB $80
+
+.music2Data6
+
+ EQUB $00, $03, $06, $03, $00, $FD, $FA, $FD
+ EQUB $80
+
+.music2Data7
+
+ EQUB $00, $04, $08, $04, $00, $FC, $F8, $FC
+ EQUB $80
 
 ; ******************************************************************************
 ;
-;       Name: L9119
+;       Name: music3Data
 ;       Type: Variable
 ;   Category: Sound
-;    Summary: ???
+;    Summary: Data for the game music
+;
+; ------------------------------------------------------------------------------
+;
+; The music3Data table contains the largest set of data for the game music.
+;
+; There are five tunes, numbered 0 to 4. The data for each tune is stored as a
+; linked tree, with the data at level 3, so this would be the path to reach the
+; first block of music data in the first part of the first tune:
+;
+;   music3Data0 -> music3Data0_0 -> music3Data0_0_0
+;
+; Each tune has a lookup table at the start of music3Data that consists of a
+; single byte (containing the tune speed) followed by the addresses of four
+; blocks, so tune 0 has the following lookup table at music3Data0, for example:
+;
+;   EQUB 47
+;   EQUW music3Data0_0
+;   EQUW music3Data0_1
+;   EQUW music3Data0_2
+;   EQUW music3Data0_3
+;
+; These addresses each point to another block of links, so for example we have
+; the following in music3Data0_0:
+;
+;   EQUW music3Data0_0_0
+;   EQUW music3Data0_0_0
+;   EQUW music3Data0_0_1
+;   EQUW music3Data0_0_2
+;   EQUW music3Data0_0_1
+;   EQUW music3Data0_0_2
+;   EQUW music3Data0_0_1
+;   EQUW music3Data0_0_3
+;   EQUW music3Data0_0_1
+;   EQUW music3Data0_0_4
+;   EQUW 0
+;
+; These blocks are typically terminated by a null address.
+;
+; These addresses point to the actual music data, so for example music3Data0_0_0
+; points to the following:
+;
+;   EQUB $FA, $70, $F7, $05, $F6, $09, $65, $0C
+;   EQUB $0C, $0C, $63, $07, $61, $07, $63, $07
+;   EQUB $07, $FF
+;
+; These blocks are typically terminated by a $FF byte.
+;
+; Note that tunes 3 and 4 share data, and in these cases there are two labels
+; applied to the shared data (so music3Data3_0_0 and music3Data4_0_0 point to
+; the same data, for example).
 ;
 ; ******************************************************************************
 
-.L9119
+.music3Data
 
- EQUB $29, $2B, $34, $39, $3E, $44, $4D, $56  ; 9119: 29 2B 34... )+4
+.music3Data0
 
-; ******************************************************************************
-;
-;       Name: L9121
-;       Type: Variable
-;   Category: Sound
-;    Summary: ???
-;
-; ******************************************************************************
+ EQUB 47
+ EQUW music3Data0_0
+ EQUW music3Data0_1
+ EQUW music3Data0_2
+ EQUW music3Data0_3
 
-.L9121
+.music3Data1
 
- EQUB $91, $91, $91, $91, $91, $91, $91, $91  ; 9121: 91 91 91... ...
- EQUB $00, $80, $00, $01, $02, $01, $00, $FF  ; 9129: 00 80 00... ...
- EQUB $FE, $FF, $80, $00, $02, $00, $FE, $80  ; 9131: FE FF 80... ...
- EQUB $00, $01, $00, $FF, $80, $00, $04, $00  ; 9139: 00 01 00... ...
- EQUB $04, $00, $80, $00, $02, $04, $02, $00  ; 9141: 04 00 80... ...
- EQUB $FE, $FC, $FE, $80, $00, $03, $06, $03  ; 9149: FE FC FE... ...
- EQUB $00, $FD, $FA, $FD, $80, $00, $04, $08  ; 9151: 00 FD FA... ...
- EQUB $04, $00, $FC, $F8, $FC, $80            ; 9159: 04 00 FC... ...
+ EQUB 59
+ EQUW music3Data1_0
+ EQUW music3Data1_1
+ EQUW music3Data1_2
+ EQUW music3Data1_3
 
-; ******************************************************************************
-;
-;       Name: musicData1
-;       Type: Variable
-;   Category: Sound
-;    Summary: ???
-;
-; ******************************************************************************
+.music3Data2
 
-.musicData1
+ EQUB 60
+ EQUW music3Data2_0
+ EQUW music3Data2_1
+ EQUW music3Data2_2
+ EQUW music3Data2_3
 
- EQUB $2F
- EQUW L9827
- EQUW L984F
- EQUW L983D
- EQUW L9861
+.music3Data3
 
- EQUB $3B
- EQUW L918C
- EQUW L9194
- EQUW L9190
- EQUW L9198
+ EQUB 60
+ EQUW music3Data3_0
+ EQUW music3Data3_1
+ EQUW music3Data3_2
+ EQUW music3Data3_3
 
- EQUB $3C
- EQUW L9BBB
- EQUW L9C9B
- EQUW L9C8B
- EQUW L9CDF
+.music3Data4
 
- EQUB $3C
- EQUW L9E04
- EQUW L9E14
- EQUW L9E0C
- EQUW L9E1C
+ EQUB 60
+ EQUW music3Data4_0
+ EQUW music3Data4_1
+ EQUW music3Data4_2
+ EQUW music3Data4_3
 
- EQUB $3C
- EQUW L9BB3
- EQUW L9C93
- EQUW L9C83
- EQUW L9CA3
+.music3Data1_0
 
-.L918C
-
- EQUW L919C
+ EQUW music3Data1_0_0
  EQUW 0
 
-.L9190
+.music3Data1_2
 
- EQUW L9435
+ EQUW music3Data1_2_0
  EQUW 0
 
-.L9194
+.music3Data1_1
 
- EQUW L95C4
+ EQUW music3Data1_1_0
  EQUW 0
 
-.L9198
+.music3Data1_3
 
- EQUW L9FCA
+ EQUW music3Data1_3_0
  EQUW 0
 
-.L919C
+.music3Data1_0_0
 
- EQUB $FA, $B0, $F7, $05  ; 9198: CA 9F 00... ...
- EQUB $F6, $0F, $6B, $F8, $63, $F6, $02, $0E  ; 91A0: F6 0F 6B... ..k
- EQUB $F6, $07, $1E, $1E, $F6, $02, $0E, $F6  ; 91A8: F6 07 1E... ...
- EQUB $07, $1E, $1E, $F6, $02, $0E, $F6, $07  ; 91B0: 07 1E 1E... ...
- EQUB $1A, $1A, $F6, $02, $0E, $F6, $07, $1A  ; 91B8: 1A 1A F6... ...
- EQUB $1A, $F6, $02, $10, $F6, $07, $19, $19  ; 91C0: 1A F6 02... ...
- EQUB $F6, $02, $10, $F6, $07, $19, $19, $F6  ; 91C8: F6 02 10... ...
- EQUB $02, $10, $F6, $07, $19, $19, $F6, $02  ; 91D0: 02 10 F6... ...
- EQUB $10, $F6, $07, $15, $15, $F6, $02, $09  ; 91D8: 10 F6 07... ...
- EQUB $F6, $07, $1F, $1F, $F6, $02, $09, $F6  ; 91E0: F6 07 1F... ...
- EQUB $07, $19, $19, $F6, $02, $09, $F6, $07  ; 91E8: 07 19 19... ...
- EQUB $15, $15, $F6, $02, $09, $F6, $07, $15  ; 91F0: 15 15 F6... ...
- EQUB $13, $F6, $02, $0E, $F6, $07, $1E, $1E  ; 91F8: 13 F6 02... ...
- EQUB $F6, $02, $0E, $F6, $07, $1E, $1E, $F6  ; 9200: F6 02 0E... ...
- EQUB $02, $0E, $F6, $07, $1A, $1A, $F6, $02  ; 9208: 02 0E F6... ...
- EQUB $0E, $F6, $07, $1A, $1A, $F6, $02, $12  ; 9210: 0E F6 07... ...
- EQUB $F6, $07, $1E, $1E, $F6, $02, $12, $F6  ; 9218: F6 07 1E... ...
- EQUB $07, $1E, $1E, $F6, $02, $12, $F6, $07  ; 9220: 07 1E 1E... ...
- EQUB $1A, $1A, $F6, $02, $12, $F6, $07, $15  ; 9228: 1A 1A F6... ...
- EQUB $15, $F6, $02, $13, $F6, $07, $1C, $1C  ; 9230: 15 F6 02... ...
- EQUB $F6, $02, $13, $F6, $07, $1A, $1A, $F6  ; 9238: F6 02 13... ...
- EQUB $06, $67, $10, $63, $10, $10, $13, $61  ; 9240: 06 67 10... .g.
- EQUB $17, $F8, $63, $F6, $02, $10, $F6, $07  ; 9248: 17 F8 63... ..c
- EQUB $1C, $1C, $F6, $02, $09, $F6, $07, $14  ; 9250: 1C 1C F6... ...
- EQUB $15, $F6, $02, $0E, $F6, $07, $1E, $1E  ; 9258: 15 F6 02... ...
- EQUB $F6, $02, $0E, $F6, $07, $1E, $1E, $F6  ; 9260: F6 02 0E... ...
- EQUB $02, $6B, $10, $13, $62, $15, $F8, $61  ; 9268: 02 6B 10... .k.
- EQUB $15, $63, $15, $62, $0E, $60, $F8, $F6  ; 9270: 15 63 15... .c.
- EQUB $05, $63, $1E, $F8, $F6, $02, $10, $F6  ; 9278: 05 63 1E... .c.
- EQUB $07, $1A, $1A, $F6, $02, $10, $F6, $07  ; 9280: 07 1A 1A... ...
- EQUB $1A, $19, $F6, $02, $10, $F6, $07, $1A  ; 9288: 1A 19 F6... ...
- EQUB $1A, $F6, $02, $10, $F6, $07, $1A, $1A  ; 9290: 1A F6 02... ...
- EQUB $F6, $02, $09, $F6, $07, $1C, $1C, $F6  ; 9298: F6 02 09... ...
- EQUB $02, $09, $F6, $07, $19, $19, $F6, $02  ; 92A0: 02 09 F6... ...
- EQUB $09, $F6, $07, $15, $15, $F6, $02, $09  ; 92A8: 09 F6 07... ...
- EQUB $F6, $07, $19, $19, $F6, $02, $10, $F6  ; 92B0: F6 07 19... ...
- EQUB $07, $1A, $1A, $F6, $02, $10, $F6, $07  ; 92B8: 07 1A 1A... ...
- EQUB $1A, $19, $F6, $02, $10, $F6, $07, $1A  ; 92C0: 1A 19 F6... ...
- EQUB $1A, $F6, $02, $10, $F6, $07, $17, $17  ; 92C8: 1A F6 02... ...
- EQUB $F6, $06, $12, $F9, $15, $65, $17, $F8  ; 92D0: F6 06 12... ...
- EQUB $63, $10, $14, $10, $65, $09, $F8, $6B  ; 92D8: 63 10 14... c..
- EQUB $1C, $15, $1C, $63, $15, $F8, $F6, $04  ; 92E0: 1C 15 1C... ...
- EQUB $15, $F6, $02, $10, $F6, $07, $19, $19  ; 92E8: 15 F6 02... ...
- EQUB $F6, $02, $10, $F6, $07, $19, $19, $F6  ; 92F0: F6 02 10... ...
- EQUB $02, $10, $F6, $07, $19, $19, $F6, $02  ; 92F8: 02 10 F6... ...
- EQUB $10, $F6, $07, $19, $19, $F6, $02, $0E  ; 9300: 10 F6 07... ...
- EQUB $F6, $07, $1E, $1E, $F6, $02, $0E, $F6  ; 9308: F6 07 1E... ...
- EQUB $07, $1E, $1E, $F6, $02, $0E, $F6, $07  ; 9310: 07 1E 1E... ...
- EQUB $1E, $1E, $F6, $02, $0E, $F6, $07, $1E  ; 9318: 1E 1E F6... ...
- EQUB $21, $F6, $02, $10, $F6, $07, $19, $19  ; 9320: 21 F6 02... !..
- EQUB $F6, $02, $10, $F6, $07, $19, $19, $F6  ; 9328: F6 02 10... ...
- EQUB $02, $10, $F6, $07, $19, $19, $F6, $02  ; 9330: 02 10 F6... ...
- EQUB $10, $F6, $07, $19, $19, $F6, $04, $63  ; 9338: 10 F6 07... ...
- EQUB $1A, $19, $18, $F6, $06, $67, $1B, $F6  ; 9340: 1A 19 18... ...
- EQUB $04, $61, $1C, $F8, $F6, $02, $63, $09  ; 9348: 04 61 1C... .a.
- EQUB $15, $09, $0E, $F8, $F6, $04, $61, $0E  ; 9350: 15 09 0E... ...
- EQUB $F8, $63, $F6, $02, $0A, $F6, $07, $1D  ; 9358: F8 63 F6... .c.
- EQUB $1D, $F6, $02, $0A, $F6, $07, $1D, $1D  ; 9360: 1D F6 02... ...
- EQUB $F6, $02, $0F, $F6, $07, $18, $18, $F6  ; 9368: F6 02 0F... ...
- EQUB $02, $0F, $F6, $07, $18, $18, $F6, $02  ; 9370: 02 0F F6... ...
- EQUB $15, $F6, $07, $1D, $1D, $F6, $02, $11  ; 9378: 15 F6 07... ...
- EQUB $F6, $07, $1D, $1D, $F6, $02, $16, $F6  ; 9380: F6 07 1D... ...
- EQUB $07, $1D, $1D, $F6, $02, $11, $F6, $07  ; 9388: 07 1D 1D... ...
- EQUB $1D, $1D, $F6, $02, $0A, $F6, $07, $1D  ; 9390: 1D 1D F6... ...
- EQUB $1D, $F6, $02, $0A, $F6, $07, $1D, $1D  ; 9398: 1D F6 02... ...
- EQUB $F6, $02, $0F, $F6, $07, $18, $18, $F6  ; 93A0: F6 02 0F... ...
- EQUB $02, $10, $F6, $07, $19, $19, $F6, $02  ; 93A8: 02 10 F6... ...
- EQUB $0E, $F6, $07, $1A, $1A, $F6, $02, $0E  ; 93B0: 0E F6 07... ...
- EQUB $F6, $07, $16, $16, $F6, $04, $15, $15  ; 93B8: F6 07 16... ...
- EQUB $15, $15, $15, $15, $F6, $02, $10, $F6  ; 93C0: 15 15 15... ...
- EQUB $07, $19, $19, $F6, $02, $09, $F6, $07  ; 93C8: 07 19 19... ...
- EQUB $19, $19, $F6, $02, $15, $F6, $07, $19  ; 93D0: 19 19 F6... ...
- EQUB $19, $F6, $02, $09, $F6, $07, $19, $19  ; 93D8: 19 F6 02... ...
- EQUB $F6, $02, $0E, $F6, $07, $1E, $1E, $F6  ; 93E0: F6 02 0E... ...
- EQUB $02, $0E, $F6, $07, $1E, $1E, $F6, $02  ; 93E8: 02 0E F6... ...
- EQUB $0E, $F6, $07, $1E, $1E, $F6, $02, $0E  ; 93F0: 0E F6 07... ...
- EQUB $F6, $07, $1E, $21, $F6, $02, $10, $F6  ; 93F8: F6 07 1E... ...
- EQUB $07, $19, $19, $F6, $02, $09, $F6, $07  ; 9400: 07 19 19... ...
- EQUB $19, $19, $F6, $02, $15, $F6, $07, $19  ; 9408: 19 19 F6... ...
- EQUB $19, $F6, $02, $09, $F6, $07, $19, $19  ; 9410: 19 F6 02... ...
- EQUB $F6, $04, $63, $1A, $19, $18, $F6, $06  ; 9418: F6 04 63... ..c
- EQUB $67, $1B, $F6, $04, $61, $1C, $F8, $F6  ; 9420: 67 1B F6... g..
- EQUB $02, $63, $09, $15, $09, $0E, $F8, $F6  ; 9428: 02 63 09... .c.
- EQUB $04, $61, $1A, $F8, $FF
+ EQUB $FA, $B0, $F7, $05, $F6, $0F, $6B, $F8
+ EQUB $63, $F6, $02, $0E, $F6, $07, $1E, $1E
+ EQUB $F6, $02, $0E, $F6, $07, $1E, $1E, $F6
+ EQUB $02, $0E, $F6, $07, $1A, $1A, $F6, $02
+ EQUB $0E, $F6, $07, $1A, $1A, $F6, $02, $10
+ EQUB $F6, $07, $19, $19, $F6, $02, $10, $F6
+ EQUB $07, $19, $19, $F6, $02, $10, $F6, $07
+ EQUB $19, $19, $F6, $02, $10, $F6, $07, $15
+ EQUB $15, $F6, $02, $09, $F6, $07, $1F, $1F
+ EQUB $F6, $02, $09, $F6, $07, $19, $19, $F6
+ EQUB $02, $09, $F6, $07, $15, $15, $F6, $02
+ EQUB $09, $F6, $07, $15, $13, $F6, $02, $0E
+ EQUB $F6, $07, $1E, $1E, $F6, $02, $0E, $F6
+ EQUB $07, $1E, $1E, $F6, $02, $0E, $F6, $07
+ EQUB $1A, $1A, $F6, $02, $0E, $F6, $07, $1A
+ EQUB $1A, $F6, $02, $12, $F6, $07, $1E, $1E
+ EQUB $F6, $02, $12, $F6, $07, $1E, $1E, $F6
+ EQUB $02, $12, $F6, $07, $1A, $1A, $F6, $02
+ EQUB $12, $F6, $07, $15, $15, $F6, $02, $13
+ EQUB $F6, $07, $1C, $1C, $F6, $02, $13, $F6
+ EQUB $07, $1A, $1A, $F6, $06, $67, $10, $63
+ EQUB $10, $10, $13, $61, $17, $F8, $63, $F6
+ EQUB $02, $10, $F6, $07, $1C, $1C, $F6, $02
+ EQUB $09, $F6, $07, $14, $15, $F6, $02, $0E
+ EQUB $F6, $07, $1E, $1E, $F6, $02, $0E, $F6
+ EQUB $07, $1E, $1E, $F6, $02, $6B, $10, $13
+ EQUB $62, $15, $F8, $61, $15, $63, $15, $62
+ EQUB $0E, $60, $F8, $F6, $05, $63, $1E, $F8
+ EQUB $F6, $02, $10, $F6, $07, $1A, $1A, $F6
+ EQUB $02, $10, $F6, $07, $1A, $19, $F6, $02
+ EQUB $10, $F6, $07, $1A, $1A, $F6, $02, $10
+ EQUB $F6, $07, $1A, $1A, $F6, $02, $09, $F6
+ EQUB $07, $1C, $1C, $F6, $02, $09, $F6, $07
+ EQUB $19, $19, $F6, $02, $09, $F6, $07, $15
+ EQUB $15, $F6, $02, $09, $F6, $07, $19, $19
+ EQUB $F6, $02, $10, $F6, $07, $1A, $1A, $F6
+ EQUB $02, $10, $F6, $07, $1A, $19, $F6, $02
+ EQUB $10, $F6, $07, $1A, $1A, $F6, $02, $10
+ EQUB $F6, $07, $17, $17, $F6, $06, $12, $F9
+ EQUB $15, $65, $17, $F8, $63, $10, $14, $10
+ EQUB $65, $09, $F8, $6B, $1C, $15, $1C, $63
+ EQUB $15, $F8, $F6, $04, $15, $F6, $02, $10
+ EQUB $F6, $07, $19, $19, $F6, $02, $10, $F6
+ EQUB $07, $19, $19, $F6, $02, $10, $F6, $07
+ EQUB $19, $19, $F6, $02, $10, $F6, $07, $19
+ EQUB $19, $F6, $02, $0E, $F6, $07, $1E, $1E
+ EQUB $F6, $02, $0E, $F6, $07, $1E, $1E, $F6
+ EQUB $02, $0E, $F6, $07, $1E, $1E, $F6, $02
+ EQUB $0E, $F6, $07, $1E, $21, $F6, $02, $10
+ EQUB $F6, $07, $19, $19, $F6, $02, $10, $F6
+ EQUB $07, $19, $19, $F6, $02, $10, $F6, $07
+ EQUB $19, $19, $F6, $02, $10, $F6, $07, $19
+ EQUB $19, $F6, $04, $63, $1A, $19, $18, $F6
+ EQUB $06, $67, $1B, $F6, $04, $61, $1C, $F8
+ EQUB $F6, $02, $63, $09, $15, $09, $0E, $F8
+ EQUB $F6, $04, $61, $0E, $F8, $63, $F6, $02
+ EQUB $0A, $F6, $07, $1D, $1D, $F6, $02, $0A
+ EQUB $F6, $07, $1D, $1D, $F6, $02, $0F, $F6
+ EQUB $07, $18, $18, $F6, $02, $0F, $F6, $07
+ EQUB $18, $18, $F6, $02, $15, $F6, $07, $1D
+ EQUB $1D, $F6, $02, $11, $F6, $07, $1D, $1D
+ EQUB $F6, $02, $16, $F6, $07, $1D, $1D, $F6
+ EQUB $02, $11, $F6, $07, $1D, $1D, $F6, $02
+ EQUB $0A, $F6, $07, $1D, $1D, $F6, $02, $0A
+ EQUB $F6, $07, $1D, $1D, $F6, $02, $0F, $F6
+ EQUB $07, $18, $18, $F6, $02, $10, $F6, $07
+ EQUB $19, $19, $F6, $02, $0E, $F6, $07, $1A
+ EQUB $1A, $F6, $02, $0E, $F6, $07, $16, $16
+ EQUB $F6, $04, $15, $15, $15, $15, $15, $15
+ EQUB $F6, $02, $10, $F6, $07, $19, $19, $F6
+ EQUB $02, $09, $F6, $07, $19, $19, $F6, $02
+ EQUB $15, $F6, $07, $19, $19, $F6, $02, $09
+ EQUB $F6, $07, $19, $19, $F6, $02, $0E, $F6
+ EQUB $07, $1E, $1E, $F6, $02, $0E, $F6, $07
+ EQUB $1E, $1E, $F6, $02, $0E, $F6, $07, $1E
+ EQUB $1E, $F6, $02, $0E, $F6, $07, $1E, $21
+ EQUB $F6, $02, $10, $F6, $07, $19, $19, $F6
+ EQUB $02, $09, $F6, $07, $19, $19, $F6, $02
+ EQUB $15, $F6, $07, $19, $19, $F6, $02, $09
+ EQUB $F6, $07, $19, $19, $F6, $04, $63, $1A
+ EQUB $19, $18, $F6, $06, $67, $1B, $F6, $04
+ EQUB $61, $1C, $F8, $F6, $02, $63, $09, $15
+ EQUB $09, $0E, $F8, $F6, $04, $61, $1A, $F8
+ EQUB $FF
 
-.L9435
+.music3Data1_2_0
 
- EQUB $FC, $0C, $6B  ; 9430: 04 61 1A... .a.
- EQUB $F8, $63, $F6, $08, $F7, $03, $0E, $1A  ; 9438: F8 63 F6... .c.
- EQUB $1A, $0E, $1A, $1A, $0E, $15, $15, $0E  ; 9440: 1A 0E 1A... ...
- EQUB $15, $15, $10, $15, $15, $10, $15, $15  ; 9448: 15 15 10... ...
- EQUB $10, $15, $15, $10, $10, $10, $09, $19  ; 9450: 10 15 15... ...
- EQUB $19, $09, $13, $13, $09, $13, $13, $09  ; 9458: 19 09 13... ...
- EQUB $15, $0D, $0E, $1A, $1A, $0E, $1A, $1A  ; 9460: 15 0D 0E... ...
- EQUB $0E, $15, $15, $0E, $15, $1A, $12, $1A  ; 9468: 0E 15 15... ...
- EQUB $1A, $12, $1A, $1A, $12, $15, $15, $12  ; 9470: 1A 12 1A... ...
- EQUB $0E, $0E, $13, $1A, $1A, $13, $17, $17  ; 9478: 0E 0E 13... ...
- EQUB $67, $0E, $63, $10, $10, $13, $61, $17  ; 9480: 67 0E 63... g.c
- EQUB $F8, $63, $10, $19, $19, $09, $19, $19  ; 9488: F8 63 10... .c.
- EQUB $0E, $1A, $1A, $0E, $1A, $1A, $6B, $0E  ; 9490: 0E 1A 1A... ...
- EQUB $10, $62, $12, $F8, $61, $12, $63, $12  ; 9498: 10 62 12... .b.
- EQUB $62, $15, $60, $F8, $63, $F8, $F8, $10  ; 94A0: 62 15 60... b.`
- EQUB $14, $14, $10, $14, $13, $10, $1C, $1C  ; 94A8: 14 14 10... ...
- EQUB $10, $1C, $1C, $6B, $F6, $34, $10, $12  ; 94B0: 10 1C 1C... ...
- EQUB $13, $12, $F6, $08, $63, $10, $1C, $1C  ; 94B8: 13 12 F6... ...
- EQUB $10, $1C, $13, $10, $1C, $1C, $10, $1A  ; 94C0: 10 1C 13... ...
- EQUB $1A, $19, $F9, $15, $65, $1A, $F8, $61  ; 94C8: 1A 19 F9... ...
- EQUB $1A, $1A, $1A, $F8, $1A, $F8, $65, $10  ; 94D0: 1A 1A 1A... ...
- EQUB $F8, $6B, $F6, $34, $1F, $1C, $1F, $F6  ; 94D8: F8 6B F6... .k.
- EQUB $08, $63, $1C, $F8, $21, $F7, $00, $19  ; 94E0: 08 63 1C... .c.
- EQUB $61, $2A, $2B, $63, $2D, $19, $61, $2A  ; 94E8: 61 2A 2B... a*+
- EQUB $2B, $63, $2D, $1E, $61, $2A, $2B, $63  ; 94F0: 2B 63 2D... +c-
- EQUB $2D, $2D, $1C, $15, $1E, $61, $2A, $2B  ; 94F8: 2D 2D 1C... --.
- EQUB $63, $2D, $1E, $61, $2A, $2B, $63, $2D  ; 9500: 63 2D 1E... c-.
- EQUB $1C, $61, $2A, $2B, $63, $2D, $2D, $1A  ; 9508: 1C 61 2A... .a*
- EQUB $15, $1F, $61, $2A, $2B, $63, $2D, $1F  ; 9510: 15 1F 61... ..a
- EQUB $61, $2A, $2B, $63, $2D, $1E, $61, $2A  ; 9518: 61 2A 2B... a*+
- EQUB $2B, $63, $2D, $2D, $1C, $13, $F7, $03  ; 9520: 2B 63 2D... +c-
- EQUB $63, $1A, $1C, $1E, $67, $21, $63, $1F  ; 9528: 63 1A 1C... c..
- EQUB $61, $1E, $1E, $1E, $F8, $1C, $F8, $63  ; 9530: 61 1E 1E... a..
- EQUB $1A, $F8, $F8, $63, $0A, $1A, $1A, $0A  ; 9538: 1A F8 F8... ...
- EQUB $1A, $1A, $0F, $13, $13, $0F, $13, $13  ; 9540: 1A 1A 0F... ...
- EQUB $15, $1B, $1B, $11, $15, $15, $16, $1A  ; 9548: 15 1B 1B... ...
- EQUB $1A, $11, $1A, $1A, $0A, $1A, $1A, $0A  ; 9550: 1A 11 1A... ...
- EQUB $16, $16, $0F, $1B, $1B, $10, $13, $13  ; 9558: 16 16 0F... ...
- EQUB $0E, $15, $12, $0E, $13, $13, $15, $12  ; 9560: 0E 15 12... ...
- EQUB $F8, $F8, $F8, $F8, $F7, $00, $1C, $61  ; 9568: F8 F8 F8... ...
- EQUB $2A, $2B, $63, $2D, $15, $61, $2A, $2B  ; 9570: 2A 2B 63... *+c
- EQUB $63, $2D, $21, $61, $2A, $2B, $63, $2D  ; 9578: 63 2D 21... c-!
- EQUB $15, $1C, $15, $1A, $61, $2A, $2B, $63  ; 9580: 15 1C 15... ...
- EQUB $2D, $1A, $61, $2A, $2B, $63, $2D, $1A  ; 9588: 2D 1A 61... -.a
- EQUB $61, $2A, $2B, $63, $2D, $1A, $1A, $15  ; 9590: 61 2A 2B... a*+
- EQUB $1C, $61, $2A, $2B, $63, $2D, $15, $61  ; 9598: 1C 61 2A... .a*
- EQUB $2A, $2B, $63, $2D, $21, $61, $2A, $2B  ; 95A0: 2A 2B 63... *+c
- EQUB $63, $2D, $15, $1C, $13, $F7, $03, $63  ; 95A8: 63 2D 15... c-.
- EQUB $1A, $1C, $1E, $67, $21, $61, $1F, $F8  ; 95B0: 1A 1C 1E... ...
- EQUB $61, $1E, $1E, $1E, $F8, $1C, $F8, $63  ; 95B8: 61 1E 1E... a..
- EQUB $1A, $F8, $F8, $FF
+ EQUB $FC, $0C, $6B, $F8, $63, $F6, $08, $F7
+ EQUB $03, $0E, $1A, $1A, $0E, $1A, $1A, $0E
+ EQUB $15, $15, $0E, $15, $15, $10, $15, $15
+ EQUB $10, $15, $15, $10, $15, $15, $10, $10
+ EQUB $10, $09, $19, $19, $09, $13, $13, $09
+ EQUB $13, $13, $09, $15, $0D, $0E, $1A, $1A
+ EQUB $0E, $1A, $1A, $0E, $15, $15, $0E, $15
+ EQUB $1A, $12, $1A, $1A, $12, $1A, $1A, $12
+ EQUB $15, $15, $12, $0E, $0E, $13, $1A, $1A
+ EQUB $13, $17, $17, $67, $0E, $63, $10, $10
+ EQUB $13, $61, $17, $F8, $63, $10, $19, $19
+ EQUB $09, $19, $19, $0E, $1A, $1A, $0E, $1A
+ EQUB $1A, $6B, $0E, $10, $62, $12, $F8, $61
+ EQUB $12, $63, $12, $62, $15, $60, $F8, $63
+ EQUB $F8, $F8, $10, $14, $14, $10, $14, $13
+ EQUB $10, $1C, $1C, $10, $1C, $1C, $6B, $F6
+ EQUB $34, $10, $12, $13, $12, $F6, $08, $63
+ EQUB $10, $1C, $1C, $10, $1C, $13, $10, $1C
+ EQUB $1C, $10, $1A, $1A, $19, $F9, $15, $65
+ EQUB $1A, $F8, $61, $1A, $1A, $1A, $F8, $1A
+ EQUB $F8, $65, $10, $F8, $6B, $F6, $34, $1F
+ EQUB $1C, $1F, $F6, $08, $63, $1C, $F8, $21
+ EQUB $F7, $00, $19, $61, $2A, $2B, $63, $2D
+ EQUB $19, $61, $2A, $2B, $63, $2D, $1E, $61
+ EQUB $2A, $2B, $63, $2D, $2D, $1C, $15, $1E
+ EQUB $61, $2A, $2B, $63, $2D, $1E, $61, $2A
+ EQUB $2B, $63, $2D, $1C, $61, $2A, $2B, $63
+ EQUB $2D, $2D, $1A, $15, $1F, $61, $2A, $2B
+ EQUB $63, $2D, $1F, $61, $2A, $2B, $63, $2D
+ EQUB $1E, $61, $2A, $2B, $63, $2D, $2D, $1C
+ EQUB $13, $F7, $03, $63, $1A, $1C, $1E, $67
+ EQUB $21, $63, $1F, $61, $1E, $1E, $1E, $F8
+ EQUB $1C, $F8, $63, $1A, $F8, $F8, $63, $0A
+ EQUB $1A, $1A, $0A, $1A, $1A, $0F, $13, $13
+ EQUB $0F, $13, $13, $15, $1B, $1B, $11, $15
+ EQUB $15, $16, $1A, $1A, $11, $1A, $1A, $0A
+ EQUB $1A, $1A, $0A, $16, $16, $0F, $1B, $1B
+ EQUB $10, $13, $13, $0E, $15, $12, $0E, $13
+ EQUB $13, $15, $12, $F8, $F8, $F8, $F8, $F7
+ EQUB $00, $1C, $61, $2A, $2B, $63, $2D, $15
+ EQUB $61, $2A, $2B, $63, $2D, $21, $61, $2A
+ EQUB $2B, $63, $2D, $15, $1C, $15, $1A, $61
+ EQUB $2A, $2B, $63, $2D, $1A, $61, $2A, $2B
+ EQUB $63, $2D, $1A, $61, $2A, $2B, $63, $2D
+ EQUB $1A, $1A, $15, $1C, $61, $2A, $2B, $63
+ EQUB $2D, $15, $61, $2A, $2B, $63, $2D, $21
+ EQUB $61, $2A, $2B, $63, $2D, $15, $1C, $13
+ EQUB $F7, $03, $63, $1A, $1C, $1E, $67, $21
+ EQUB $61, $1F, $F8, $61, $1E, $1E, $1E, $F8
+ EQUB $1C, $F8, $63, $1A, $F8, $F8, $FF
 
-.L95C4
+.music3Data1_1_0
 
- EQUB $FA, $B0, $F7, $01  ; 95C0: 1A F8 F8... ...
- EQUB $F6, $04, $63, $1A, $1E, $62, $21, $60  ; 95C8: F6 04 63... ..c
- EQUB $F8, $67, $21, $FA, $F0, $62, $21, $60  ; 95D0: F8 67 21... .g!
- EQUB $F8, $67, $21, $62, $1E, $60, $F8, $67  ; 95D8: F8 67 21... .g!
- EQUB $1E, $FA, $B0, $62, $1A, $60, $F8, $63  ; 95E0: 1E FA B0... ...
- EQUB $1A, $1E, $62, $21, $60, $F8, $67, $21  ; 95E8: 1A 1E 62... ..b
- EQUB $FA, $F0, $62, $21, $60, $F8, $67, $21  ; 95F0: FA F0 62... ..b
- EQUB $62, $1F, $60, $F8, $67, $1F, $FA, $B0  ; 95F8: 62 1F 60... b.`
- EQUB $62, $19, $60, $F8, $63, $19, $1C, $62  ; 9600: 62 19 60... b.`
- EQUB $23, $60, $F8, $67, $23, $FA, $F0, $62  ; 9608: 23 60 F8... #`.
- EQUB $23, $60, $F8, $67, $23, $62, $1F, $60  ; 9610: 23 60 F8... #`.
- EQUB $F8, $67, $1F, $FA, $B0, $62, $19, $60  ; 9618: F8 67 1F... .g.
- EQUB $F8, $63, $19, $1C, $62, $23, $60, $F8  ; 9620: F8 63 19... .c.
- EQUB $67, $23, $FA, $F0, $62, $23, $60, $F8  ; 9628: 67 23 FA... g#.
- EQUB $67, $23, $62, $1E, $60, $F8, $67, $1E  ; 9630: 67 23 62... g#b
- EQUB $FA, $B0, $62, $1A, $60, $F8, $63, $1A  ; 9638: FA B0 62... ..b
- EQUB $1E, $21, $67, $26, $FA, $F0, $62, $26  ; 9640: 1E 21 67... .!g
- EQUB $60, $F8, $67, $26, $62, $21, $60, $F8  ; 9648: 60 F8 67... `.g
- EQUB $67, $21, $FA, $B0, $62, $1A, $60, $F8  ; 9650: 67 21 FA... g!.
- EQUB $63, $1A, $1E, $21, $67, $26, $FA, $F0  ; 9658: 63 1A 1E... c..
- EQUB $62, $26, $60, $F8, $67, $26, $62, $23  ; 9660: 62 26 60... b&`
- EQUB $60, $F8, $65, $23, $61, $F9, $FA, $B0  ; 9668: 60 F8 65... `.e
- EQUB $61, $1C, $F8, $63, $1C, $1F, $61, $23  ; 9670: 61 1C F8... a..
- EQUB $F8, $6B, $23, $63, $F9, $20, $21, $6B  ; 9678: F8 6B 23... .k#
- EQUB $2A, $63, $F9, $26, $1E, $F6, $06, $67  ; 9680: 2A 63 F9... *c.
- EQUB $1E, $61, $1C, $F8, $67, $23, $61, $21  ; 9688: 1E 61 1C... .a.
- EQUB $F8, $62, $1A, $F8, $61, $1A, $63, $1A  ; 9690: F8 62 1A... .b.
- EQUB $62, $1A, $60, $F8, $FA, $F0, $F6, $04  ; 9698: 62 1A 60... b.`
- EQUB $63, $26, $62, $25, $60, $F8, $F6, $06  ; 96A0: 63 26 62... c&b
- EQUB $63, $25, $62, $23, $60, $F8, $63, $23  ; 96A8: 63 25 62... c%b
- EQUB $F8, $23, $62, $22, $60, $F8, $63, $22  ; 96B0: F8 23 62... .#b
- EQUB $62, $23, $60, $F8, $63, $23, $F8, $1C  ; 96B8: 62 23 60... b#`
- EQUB $1C, $1E, $F9, $1C, $F8, $1C, $1C, $23  ; 96C0: 1C 1E F9... ...
- EQUB $F9, $21, $F8, $26, $62, $25, $60, $F8  ; 96C8: F9 21 F8... .!.
- EQUB $63, $25, $62, $23, $60, $F8, $63, $23  ; 96D0: 63 25 62... c%b
- EQUB $F8, $23, $25, $28, $26, $26, $F8, $20  ; 96D8: F8 23 25... .#%
- EQUB $23, $23, $F9, $21, $65, $20, $61, $1E  ; 96E0: 23 23 F9... ##.
- EQUB $1A, $17, $61, $1E, $1E, $63, $1E, $1C  ; 96E8: 1A 17 61... ..a
- EQUB $FA, $B0, $F6, $06, $65, $15, $F8, $F6  ; 96F0: FA B0 F6... ...
- EQUB $07, $F7, $03, $FA, $30, $60, $2F, $2D  ; 96F8: 07 F7 03... ...
- EQUB $2F, $2D, $2F, $2D, $2F, $2D, $2F, $2D  ; 9700: 2F 2D 2F... /-/
- EQUB $2F, $2D, $2F, $2D, $2F, $2D, $2F, $2D  ; 9708: 2F 2D 2F... /-/
- EQUB $2F, $2D, $2F, $2D, $2F, $2D, $2F, $2D  ; 9710: 2F 2D 2F... /-/
- EQUB $2F, $2D, $2F, $2D, $2F, $2D, $2F, $2D  ; 9718: 2F 2D 2F... /-/
- EQUB $2F, $2D, $F6, $06, $63, $2D, $F8, $F7  ; 9720: 2F 2D F6... /-.
- EQUB $01, $FA, $B0, $62, $21, $60, $F8, $F6  ; 9728: 01 FA B0... ...
- EQUB $04, $67, $1F, $61, $21, $F8, $67, $1F  ; 9730: 04 67 1F... .g.
- EQUB $61, $21, $F8, $6B, $2A, $63, $F8, $28  ; 9738: 61 21 F8... a!.
- EQUB $21, $67, $1E, $61, $21, $F8, $67, $1E  ; 9740: 21 67 1E... !g.
- EQUB $61, $21, $F8, $6B, $28, $63, $F8, $26  ; 9748: 61 21 F8... a!.
- EQUB $21, $67, $1F, $61, $21, $F8, $67, $1F  ; 9750: 21 67 1F... !g.
- EQUB $61, $21, $F8, $6B, $2A, $63, $F8, $28  ; 9758: 61 21 F8... a!.
- EQUB $21, $26, $28, $2A, $F6, $06, $67, $2D  ; 9760: 21 26 28... !&(
- EQUB $F6, $04, $61, $2B, $F8, $61, $2A, $2A  ; 9768: F6 04 61... ..a
- EQUB $63, $2A, $28, $F6, $06, $65, $26, $61  ; 9770: 63 2A 28... c*(
- EQUB $F8, $F6, $04, $FA, $F0, $61, $26, $F8  ; 9778: F8 F6 04... ...
- EQUB $6F, $26, $63, $27, $26, $24, $22, $21  ; 9780: 6F 26 63... o&c
- EQUB $69, $1F, $61, $F8, $65, $24, $61, $F8  ; 9788: 69 1F 61... i.a
- EQUB $65, $24, $61, $1D, $65, $1F, $61, $1D  ; 9790: 65 24 61... e$a
- EQUB $F6, $06, $FA, $30, $63, $1D, $1A, $1D  ; 9798: F6 06 FA... ...
- EQUB $1B, $1A, $18, $F6, $04, $FA, $F0, $65  ; 97A0: 1B 1A 18... ...
- EQUB $26, $61, $F8, $67, $26, $63, $27, $26  ; 97A8: 26 61 F8... &a.
- EQUB $24, $22, $21, $69, $1F, $61, $F8, $65  ; 97B0: 24 22 21... $"!
- EQUB $1E, $61, $F8, $67, $1E, $65, $1F, $61  ; 97B8: 1E 61 F8... .a.
- EQUB $22, $6F, $21, $63, $F8, $FA, $B0, $F6  ; 97C0: 22 6F 21... "o!
- EQUB $06, $61, $21, $F8, $67, $1F, $61, $21  ; 97C8: 06 61 21... .a!
- EQUB $F8, $67, $1F, $61, $21, $F8, $6F, $2A  ; 97D0: F8 67 1F... .g.
- EQUB $61, $28, $F8, $21, $F8, $F6, $04, $67  ; 97D8: 61 28 F8... a(.
- EQUB $1E, $61, $21, $F8, $67, $1E, $61, $21  ; 97E0: 1E 61 21... .a!
- EQUB $F8, $6F, $28, $61, $26, $F8, $21, $F8  ; 97E8: F8 6F 28... .o(
- EQUB $F6, $06, $67, $1F, $61, $21, $F8, $67  ; 97F0: F6 06 67... ..g
- EQUB $1F, $61, $21, $F8, $6B, $2A, $F4, $3A  ; 97F8: 1F 61 21... .a!
- EQUB $63, $F9, $61, $28, $F8, $21, $F8, $F4  ; 9800: 63 F9 61... c.a
- EQUB $39, $61, $26, $F8, $28, $F8, $2A, $F8  ; 9808: 39 61 26... 9a&
- EQUB $F4, $38, $67, $2D, $61, $2B, $F8, $F4  ; 9810: F4 38 67... .8g
- EQUB $37, $2A, $2A, $2A, $F4, $33, $F8, $28  ; 9818: 37 2A 2A... 7**
- EQUB $F8, $26, $69, $F8, $F4, $3B, $FF
+ EQUB $FA, $B0, $F7, $01, $F6, $04, $63, $1A
+ EQUB $1E, $62, $21, $60, $F8, $67, $21, $FA
+ EQUB $F0, $62, $21, $60, $F8, $67, $21, $62
+ EQUB $1E, $60, $F8, $67, $1E, $FA, $B0, $62
+ EQUB $1A, $60, $F8, $63, $1A, $1E, $62, $21
+ EQUB $60, $F8, $67, $21, $FA, $F0, $62, $21
+ EQUB $60, $F8, $67, $21, $62, $1F, $60, $F8
+ EQUB $67, $1F, $FA, $B0, $62, $19, $60, $F8
+ EQUB $63, $19, $1C, $62, $23, $60, $F8, $67
+ EQUB $23, $FA, $F0, $62, $23, $60, $F8, $67
+ EQUB $23, $62, $1F, $60, $F8, $67, $1F, $FA
+ EQUB $B0, $62, $19, $60, $F8, $63, $19, $1C
+ EQUB $62, $23, $60, $F8, $67, $23, $FA, $F0
+ EQUB $62, $23, $60, $F8, $67, $23, $62, $1E
+ EQUB $60, $F8, $67, $1E, $FA, $B0, $62, $1A
+ EQUB $60, $F8, $63, $1A, $1E, $21, $67, $26
+ EQUB $FA, $F0, $62, $26, $60, $F8, $67, $26
+ EQUB $62, $21, $60, $F8, $67, $21, $FA, $B0
+ EQUB $62, $1A, $60, $F8, $63, $1A, $1E, $21
+ EQUB $67, $26, $FA, $F0, $62, $26, $60, $F8
+ EQUB $67, $26, $62, $23, $60, $F8, $65, $23
+ EQUB $61, $F9, $FA, $B0, $61, $1C, $F8, $63
+ EQUB $1C, $1F, $61, $23, $F8, $6B, $23, $63
+ EQUB $F9, $20, $21, $6B, $2A, $63, $F9, $26
+ EQUB $1E, $F6, $06, $67, $1E, $61, $1C, $F8
+ EQUB $67, $23, $61, $21, $F8, $62, $1A, $F8
+ EQUB $61, $1A, $63, $1A, $62, $1A, $60, $F8
+ EQUB $FA, $F0, $F6, $04, $63, $26, $62, $25
+ EQUB $60, $F8, $F6, $06, $63, $25, $62, $23
+ EQUB $60, $F8, $63, $23, $F8, $23, $62, $22
+ EQUB $60, $F8, $63, $22, $62, $23, $60, $F8
+ EQUB $63, $23, $F8, $1C, $1C, $1E, $F9, $1C
+ EQUB $F8, $1C, $1C, $23, $F9, $21, $F8, $26
+ EQUB $62, $25, $60, $F8, $63, $25, $62, $23
+ EQUB $60, $F8, $63, $23, $F8, $23, $25, $28
+ EQUB $26, $26, $F8, $20, $23, $23, $F9, $21
+ EQUB $65, $20, $61, $1E, $1A, $17, $61, $1E
+ EQUB $1E, $63, $1E, $1C, $FA, $B0, $F6, $06
+ EQUB $65, $15, $F8, $F6, $07, $F7, $03, $FA
+ EQUB $30, $60, $2F, $2D, $2F, $2D, $2F, $2D
+ EQUB $2F, $2D, $2F, $2D, $2F, $2D, $2F, $2D
+ EQUB $2F, $2D, $2F, $2D, $2F, $2D, $2F, $2D
+ EQUB $2F, $2D, $2F, $2D, $2F, $2D, $2F, $2D
+ EQUB $2F, $2D, $2F, $2D, $2F, $2D, $F6, $06
+ EQUB $63, $2D, $F8, $F7, $01, $FA, $B0, $62
+ EQUB $21, $60, $F8, $F6, $04, $67, $1F, $61
+ EQUB $21, $F8, $67, $1F, $61, $21, $F8, $6B
+ EQUB $2A, $63, $F8, $28, $21, $67, $1E, $61
+ EQUB $21, $F8, $67, $1E, $61, $21, $F8, $6B
+ EQUB $28, $63, $F8, $26, $21, $67, $1F, $61
+ EQUB $21, $F8, $67, $1F, $61, $21, $F8, $6B
+ EQUB $2A, $63, $F8, $28, $21, $26, $28, $2A
+ EQUB $F6, $06, $67, $2D, $F6, $04, $61, $2B
+ EQUB $F8, $61, $2A, $2A, $63, $2A, $28, $F6
+ EQUB $06, $65, $26, $61, $F8, $F6, $04, $FA
+ EQUB $F0, $61, $26, $F8, $6F, $26, $63, $27
+ EQUB $26, $24, $22, $21, $69, $1F, $61, $F8
+ EQUB $65, $24, $61, $F8, $65, $24, $61, $1D
+ EQUB $65, $1F, $61, $1D, $F6, $06, $FA, $30
+ EQUB $63, $1D, $1A, $1D, $1B, $1A, $18, $F6
+ EQUB $04, $FA, $F0, $65, $26, $61, $F8, $67
+ EQUB $26, $63, $27, $26, $24, $22, $21, $69
+ EQUB $1F, $61, $F8, $65, $1E, $61, $F8, $67
+ EQUB $1E, $65, $1F, $61, $22, $6F, $21, $63
+ EQUB $F8, $FA, $B0, $F6, $06, $61, $21, $F8
+ EQUB $67, $1F, $61, $21, $F8, $67, $1F, $61
+ EQUB $21, $F8, $6F, $2A, $61, $28, $F8, $21
+ EQUB $F8, $F6, $04, $67, $1E, $61, $21, $F8
+ EQUB $67, $1E, $61, $21, $F8, $6F, $28, $61
+ EQUB $26, $F8, $21, $F8, $F6, $06, $67, $1F
+ EQUB $61, $21, $F8, $67, $1F, $61, $21, $F8
+ EQUB $6B, $2A, $F4, $3A, $63, $F9, $61, $28
+ EQUB $F8, $21, $F8, $F4, $39, $61, $26, $F8
+ EQUB $28, $F8, $2A, $F8, $F4, $38, $67, $2D
+ EQUB $61, $2B, $F8, $F4, $37, $2A, $2A, $2A
+ EQUB $F4, $33, $F8, $28, $F8, $26, $69, $F8
+ EQUB $F4, $3B, $FF
 
-.L9827
+.music3Data0_0
 
- EQUW L9865
- EQUW L9865
- EQUW $9877
- EQUW $98DD
- EQUW $9877
- EQUW $98DD
- EQUW $9877
- EQUW $9FC1
- EQUW $9877
- EQUW $9FBE
+ EQUW music3Data0_0_0
+ EQUW music3Data0_0_0
+ EQUW music3Data0_0_1
+ EQUW music3Data0_0_2
+ EQUW music3Data0_0_1
+ EQUW music3Data0_0_2
+ EQUW music3Data0_0_1
+ EQUW music3Data0_0_3
+ EQUW music3Data0_0_1
+ EQUW music3Data0_0_4
  EQUW 0
 
-.L983D
+.music3Data0_2
 
- EQUW $9956
- EQUW $9956
- EQUW $996C
- EQUW $99FD
- EQUW $996C
- EQUW $99FD
- EQUW $996C
- EQUW $996C
+ EQUW music3Data0_2_0
+ EQUW music3Data0_2_0
+ EQUW music3Data0_2_1
+ EQUW music3Data0_2_2
+ EQUW music3Data0_2_1
+ EQUW music3Data0_2_2
+ EQUW music3Data0_2_1
+ EQUW music3Data0_2_1
  EQUW 0
 
-.L984F
+.music3Data0_1
 
- EQUW $9A81
- EQUW $9A81
- EQUW $9A99
- EQUW $9B1D
- EQUW $9A99
- EQUW $9B1B
- EQUW $9A99
- EQUW $9A99
+ EQUW music3Data0_1_0
+ EQUW music3Data0_1_0
+ EQUW music3Data0_1_1
+ EQUW music3Data0_1_2
+ EQUW music3Data0_1_1
+ EQUW music3Data0_1_3
+ EQUW music3Data0_1_1
+ EQUW music3Data0_1_1
  EQUW 0
 
-.L9861
+.music3Data0_3
 
- EQUW $9B98
+ EQUW music3Data0_3_0
  EQUW 0
 
-.L9865
+.music3Data0_0_0
 
- EQUB $FA, $70, $F7  ; 9860: 00 98 9B... ...
- EQUB $05, $F6, $09, $65, $0C, $0C, $0C, $63  ; 9868: 05 F6 09... ...
- EQUB $07, $61, $07, $63, $07, $07, $FF, $FA  ; 9870: 07 61 07... .a.
- EQUB $70, $65, $0C, $0C, $63, $0C, $61, $F9  ; 9878: 70 65 0C... pe.
- EQUB $63, $07, $61, $07, $63, $07, $07, $65  ; 9880: 63 07 61... c.a
- EQUB $0C, $0C, $63, $0C, $65, $07, $07, $61  ; 9888: 0C 0C 63... ..c
- EQUB $07, $07, $65, $0C, $0C, $63, $0C, $61  ; 9890: 07 07 65... ..e
- EQUB $07, $63, $05, $65, $0C, $63, $04, $65  ; 9898: 07 63 05... .c.
- EQUB $02, $04, $63, $05, $07, $07, $07, $07  ; 98A0: 02 04 63... ..c
- EQUB $65, $00, $0C, $63, $0C, $65, $07, $07  ; 98A8: 65 00 0C... e..
- EQUB $63, $07, $65, $0C, $0C, $63, $0C, $65  ; 98B0: 63 07 65... c.e
- EQUB $0E, $0E, $61, $0E, $0E, $63, $0E, $10  ; 98B8: 0E 0E 61... ..a
- EQUB $11, $12, $61, $07, $60, $07, $07, $61  ; 98C0: 11 12 61... ..a
- EQUB $07, $65, $07, $63, $07, $65, $0C, $65  ; 98C8: 07 65 07... .e.
- EQUB $13, $63, $13, $63, $0C, $61, $13, $0C  ; 98D0: 13 63 13... .c.
- EQUB $F8, $0C, $0A, $09, $FF, $FA, $B0, $65  ; 98D8: F8 0C 0A... ...
- EQUB $07, $F7, $07, $09, $63, $0A, $61, $F9  ; 98E0: 07 F7 07... ...
- EQUB $65, $F7, $05, $13, $63, $F7, $07, $09  ; 98E8: 65 F7 05... e..
- EQUB $0A, $65, $09, $0B, $63, $0C, $65, $09  ; 98F0: 0A 65 09... .e.
- EQUB $09, $63, $09, $65, $F7, $05, $07, $F7  ; 98F8: 09 63 09... .c.
- EQUB $07, $09, $63, $0A, $61, $F9, $65, $F7  ; 9900: 07 09 63... ..c
- EQUB $05, $07, $F7, $07, $63, $09, $0A, $65  ; 9908: 05 07 F7... ...
- EQUB $09, $0B, $63, $0C, $65, $09, $0B, $63  ; 9910: 09 0B 63... ..c
- EQUB $0D, $65, $09, $0B, $63, $0C, $61, $F9  ; 9918: 0D 65 09... .e.
- EQUB $65, $F7, $06, $0E, $63, $10, $12, $65  ; 9920: 65 F7 06... e..
- EQUB $F7, $07, $0A, $0C, $63, $0D, $61, $F9  ; 9928: F7 07 0A... ...
- EQUB $65, $F7, $06, $0F, $63, $11, $13, $65  ; 9930: 65 F7 06... e..
- EQUB $F7, $07, $0B, $0D, $63, $0E, $61, $F9  ; 9938: F7 07 0B... ...
- EQUB $65, $F7, $06, $10, $63, $12, $14, $65  ; 9940: 65 F7 06... e..
- EQUB $14, $14, $63, $14, $61, $F9, $13, $13  ; 9948: 14 14 63... ..c
- EQUB $13, $13, $13, $13, $13, $FF, $61, $F6  ; 9950: 13 13 13... ...
- EQUB $05, $F7, $03, $28, $28, $28, $28, $28  ; 9958: 05 F7 03... ...
- EQUB $28, $28, $28, $28, $29, $29, $29, $29  ; 9960: 28 28 28... (((
- EQUB $29, $29, $29, $FF, $28, $28, $28, $28  ; 9968: 29 29 29... )))
- EQUB $28, $28, $28, $28, $28, $29, $29, $29  ; 9970: 28 28 28... (((
- EQUB $29, $29, $29, $29, $28, $28, $28, $28  ; 9978: 29 29 29... )))
- EQUB $28, $28, $28, $28, $F8, $29, $29, $29  ; 9980: 28 28 28... (((
- EQUB $29, $29, $29, $29, $28, $28, $28, $28  ; 9988: 29 29 29... )))
- EQUB $28, $28, $28, $28, $2B, $63, $F6, $10  ; 9990: 28 28 28... (((
- EQUB $29, $65, $28, $63, $28, $F6, $05, $61  ; 9998: 29 65 28... )e(
- EQUB $26, $26, $26, $26, $26, $26, $26, $26  ; 99A0: 26 26 26... &&&
- EQUB $29, $F6, $10, $63, $28, $24, $21, $61  ; 99A8: 29 F6 10... )..
- EQUB $1F, $F6, $05, $28, $28, $28, $28, $28  ; 99B0: 1F F6 05... ...
- EQUB $28, $28, $28, $28, $29, $29, $29, $29  ; 99B8: 28 28 28... (((
- EQUB $29, $29, $29, $28, $28, $28, $28, $28  ; 99C0: 29 29 29... )))
- EQUB $28, $28, $28, $26, $26, $26, $26, $26  ; 99C8: 28 28 28... (((
- EQUB $26, $26, $26, $29, $29, $29, $29, $29  ; 99D0: 26 26 26... &&&
- EQUB $29, $29, $29, $2B, $60, $F6, $03, $2B  ; 99D8: 29 29 29... )))
- EQUB $2B, $67, $F6, $20, $2B, $F6, $10, $63  ; 99E0: 2B 67 F6... +g.
- EQUB $2B, $F6, $05, $61, $28, $28, $28, $29  ; 99E8: 2B F6 05... +..
- EQUB $29, $29, $29, $29, $28, $28, $29, $28  ; 99F0: 29 29 29... )))
- EQUB $F8, $24, $22, $21, $FF, $61, $F8, $29  ; 99F8: F8 24 22... .$"
- EQUB $29, $F8, $29, $29, $F8, $29, $29, $F8  ; 9A00: 29 F8 29... ).)
- EQUB $29, $29, $F8, $29, $F8, $29, $F8, $28  ; 9A08: 29 29 F8... )).
- EQUB $28, $F8, $28, $28, $F8, $28, $28, $F8  ; 9A10: 28 F8 28... (.(
- EQUB $28, $28, $F8, $28, $F8, $28, $F8, $29  ; 9A18: 28 28 F8... ((.
- EQUB $29, $F8, $29, $29, $F8, $29, $29, $F8  ; 9A20: 29 F8 29... ).)
- EQUB $29, $29, $F8, $29, $F8, $29, $F8, $28  ; 9A28: 29 29 F8... )).
- EQUB $28, $F8, $28, $28, $F8, $28, $28, $F8  ; 9A30: 28 F8 28... (.(
- EQUB $28, $28, $F8, $28, $F8, $28, $F8, $26  ; 9A38: 28 28 F8... ((.
- EQUB $26, $F8, $26, $26, $F8, $26, $26, $F8  ; 9A40: 26 F8 26... &.&
- EQUB $26, $26, $F8, $26, $F8, $26, $F8, $27  ; 9A48: 26 26 F8... &&.
- EQUB $27, $F8, $27, $27, $F8, $27, $27, $F8  ; 9A50: 27 F8 27... '.'
- EQUB $27, $27, $F8, $27, $F8, $27, $F8, $28  ; 9A58: 27 27 F8... ''.
- EQUB $28, $F8, $28, $28, $F8, $28, $28, $F8  ; 9A60: 28 F8 28... (.(
- EQUB $28, $28, $F8, $28, $F8, $28, $29, $29  ; 9A68: 28 28 F8... ((.
- EQUB $29, $29, $29, $29, $29, $29, $2B, $2B  ; 9A70: 29 29 29... )))
- EQUB $2B, $2B, $2B, $2B, $2B, $2B, $FC, $00  ; 9A78: 2B 2B 2B... +++
- EQUB $FF, $FA, $70, $F7, $01, $F6, $07, $61  ; 9A80: FF FA 70... ..p
- EQUB $18, $18, $18, $18, $18, $18, $18, $18  ; 9A88: 18 18 18... ...
- EQUB $18, $18, $18, $18, $18, $18, $18, $18  ; 9A90: 18 18 18... ...
- EQUB $FF, $FA, $B0, $F6, $01, $F7, $01, $61  ; 9A98: FF FA B0... ...
- EQUB $F8, $60, $1F, $1F, $61, $24, $28, $67  ; 9AA0: F8 60 1F... .`.
- EQUB $2B, $61, $F9, $60, $26, $26, $61, $29  ; 9AA8: 2B 61 F9... +a.
- EQUB $2B, $2D, $2B, $28, $26, $28, $24, $1F  ; 9AB0: 2B 2D 2B... +-+
- EQUB $69, $1F, $61, $F9, $6D, $F8, $61, $F8  ; 9AB8: 69 1F 61... i.a
- EQUB $60, $1F, $1F, $61, $24, $28, $65, $2B  ; 9AC0: 60 1F 1F... `..
- EQUB $60, $2B, $2D, $61, $2E, $63, $2D, $2B  ; 9AC8: 60 2B 2D... `+-
- EQUB $61, $28, $2B, $2D, $6F, $26, $6D, $F9  ; 9AD0: 61 28 2B... a(+
- EQUB $61, $F8, $F8, $60, $1F, $1F, $61, $24  ; 9AD8: 61 F8 F8... a..
- EQUB $28, $67, $2B, $61, $F9, $60, $26, $26  ; 9AE0: 28 67 2B... (g+
- EQUB $61, $29, $2B, $2D, $2B, $28, $26, $28  ; 9AE8: 61 29 2B... a)+
- EQUB $24, $1F, $65, $2B, $63, $2D, $6B, $26  ; 9AF0: 24 1F 65... $.e
- EQUB $61, $F8, $60, $26, $28, $61, $29, $63  ; 9AF8: 61 F8 60... a.`
- EQUB $28, $61, $24, $29, $63, $28, $61, $24  ; 9B00: 28 61 24... (a$
- EQUB $61, $2B, $60, $2B, $2B, $65, $2B, $61  ; 9B08: 61 2B 60... a+`
- EQUB $F8, $63, $2B, $6F, $30, $67, $F9, $F8  ; 9B10: F8 63 2B... .c+
- EQUB $FA, $70, $FF, $FA, $30, $61, $F8, $F6  ; 9B18: FA 70 FF... .p.
- EQUB $00, $F7, $05, $60, $0C, $0C, $61, $0E  ; 9B20: 00 F7 05... ...
- EQUB $11, $67, $16, $6A, $F9, $60, $F8, $63  ; 9B28: 11 67 16... .g.
- EQUB $16, $64, $18, $60, $F8, $61, $15, $6B  ; 9B30: 16 64 18... .d.
- EQUB $18, $60, $F6, $05, $F7, $03, $39, $37  ; 9B38: 18 60 F6... .`.
- EQUB $34, $30, $2D, $2B, $28, $24, $21, $1F  ; 9B40: 34 30 2D... 40-
- EQUB $1C, $18, $61, $F8, $F6, $00, $F7, $05  ; 9B48: 1C 18 61... ..a
- EQUB $60, $0A, $0A, $61, $0E, $11, $67, $16  ; 9B50: 60 0A 0A... `..
- EQUB $66, $F9, $60, $F8, $63, $16, $18, $6F  ; 9B58: 66 F9 60... f.`
- EQUB $19, $6A, $F9, $60, $F8, $63, $19, $67  ; 9B60: 19 6A F9... .j.
- EQUB $1A, $15, $66, $F9, $60, $F8, $63, $15  ; 9B68: 1A 15 66... ..f
- EQUB $1A, $67, $1B, $16, $66, $F9, $60, $F8  ; 9B70: 1A 67 1B... .g.
- EQUB $63, $16, $1B, $67, $1C, $17, $66, $F9  ; 9B78: 63 16 1B... c..
- EQUB $60, $F8, $62, $17, $1C, $61, $17, $6A  ; 9B80: 60 F8 62... `.b
- EQUB $1D, $60, $F8, $61, $1C, $1D, $66, $1F  ; 9B88: 1D 60 F8... .`.
- EQUB $60, $F8, $65, $1F, $60, $1C, $1A, $FF  ; 9B90: 60 F8 65... `.e
- EQUB $F6, $11, $65, $04, $04, $04, $63, $04  ; 9B98: F6 11 65... ..e
- EQUB $61, $04, $63, $04, $04, $65, $04, $04  ; 9BA0: 61 04 63... a.c
- EQUB $04, $63, $04, $61, $04, $63, $04, $61  ; 9BA8: 04 63 04... .c.
+ EQUB $FA, $70, $F7, $05, $F6, $09, $65, $0C
+ EQUB $0C, $0C, $63, $07, $61, $07, $63, $07
+ EQUB $07, $FF
+
+.music3Data0_0_1
+
+ EQUB $FA, $70, $65, $0C, $0C, $63, $0C, $61
+ EQUB $F9, $63, $07, $61, $07, $63, $07, $07
+ EQUB $65, $0C, $0C, $63, $0C, $65, $07, $07
+ EQUB $61, $07, $07, $65, $0C, $0C, $63, $0C
+ EQUB $61, $07, $63, $05, $65, $0C, $63, $04
+ EQUB $65, $02, $04, $63, $05, $07, $07, $07
+ EQUB $07, $65, $00, $0C, $63, $0C, $65, $07
+ EQUB $07, $63, $07, $65, $0C, $0C, $63, $0C
+ EQUB $65, $0E, $0E, $61, $0E, $0E, $63, $0E
+ EQUB $10, $11, $12, $61, $07, $60, $07, $07
+ EQUB $61, $07, $65, $07, $63, $07, $65, $0C
+ EQUB $65, $13, $63, $13, $63, $0C, $61, $13
+ EQUB $0C, $F8, $0C, $0A, $09, $FF
+
+.music3Data0_0_2
+
+ EQUB $FA, $B0, $65, $07, $F7, $07, $09, $63
+ EQUB $0A, $61, $F9, $65, $F7, $05, $13, $63
+ EQUB $F7, $07, $09, $0A, $65, $09, $0B, $63
+ EQUB $0C, $65, $09, $09, $63, $09, $65, $F7
+ EQUB $05, $07, $F7, $07, $09, $63, $0A, $61
+ EQUB $F9, $65, $F7, $05, $07, $F7, $07, $63
+ EQUB $09, $0A, $65, $09, $0B, $63, $0C, $65
+ EQUB $09, $0B, $63, $0D, $65, $09, $0B, $63
+ EQUB $0C, $61, $F9, $65, $F7, $06, $0E, $63
+ EQUB $10, $12, $65, $F7, $07, $0A, $0C, $63
+ EQUB $0D, $61, $F9, $65, $F7, $06, $0F, $63
+ EQUB $11, $13, $65, $F7, $07, $0B, $0D, $63
+ EQUB $0E, $61, $F9, $65, $F7, $06, $10, $63
+ EQUB $12, $14, $65, $14, $14, $63, $14, $61
+ EQUB $F9, $13, $13, $13, $13, $13, $13, $13
+ EQUB $FF
+
+.music3Data0_2_0
+
+ EQUB $61, $F6, $05, $F7, $03, $28, $28, $28
+ EQUB $28, $28, $28, $28, $28, $28, $29, $29
+ EQUB $29, $29, $29, $29, $29, $FF
+
+.music3Data0_2_1
+
+ EQUB $28, $28, $28, $28, $28, $28, $28, $28
+ EQUB $28, $29, $29, $29, $29, $29, $29, $29
+ EQUB $28, $28, $28, $28, $28, $28, $28, $28
+ EQUB $F8, $29, $29, $29, $29, $29, $29, $29
+ EQUB $28, $28, $28, $28, $28, $28, $28, $28
+ EQUB $2B, $63, $F6, $10, $29, $65, $28, $63
+ EQUB $28, $F6, $05, $61, $26, $26, $26, $26
+ EQUB $26, $26, $26, $26, $29, $F6, $10, $63
+ EQUB $28, $24, $21, $61, $1F, $F6, $05, $28
+ EQUB $28, $28, $28, $28, $28, $28, $28, $28
+ EQUB $29, $29, $29, $29, $29, $29, $29, $28
+ EQUB $28, $28, $28, $28, $28, $28, $28, $26
+ EQUB $26, $26, $26, $26, $26, $26, $26, $29
+ EQUB $29, $29, $29, $29, $29, $29, $29, $2B
+ EQUB $60, $F6, $03, $2B, $2B, $67, $F6, $20
+ EQUB $2B, $F6, $10, $63, $2B, $F6, $05, $61
+ EQUB $28, $28, $28, $29, $29, $29, $29, $29
+ EQUB $28, $28, $29, $28, $F8, $24, $22, $21
+ EQUB $FF
+
+.music3Data0_2_2
+
+ EQUB $61, $F8, $29, $29, $F8, $29, $29, $F8
+ EQUB $29, $29, $F8, $29, $29, $F8, $29, $F8
+ EQUB $29, $F8, $28, $28, $F8, $28, $28, $F8
+ EQUB $28, $28, $F8, $28, $28, $F8, $28, $F8
+ EQUB $28, $F8, $29, $29, $F8, $29, $29, $F8
+ EQUB $29, $29, $F8, $29, $29, $F8, $29, $F8
+ EQUB $29, $F8, $28, $28, $F8, $28, $28, $F8
+ EQUB $28, $28, $F8, $28, $28, $F8, $28, $F8
+ EQUB $28, $F8, $26, $26, $F8, $26, $26, $F8
+ EQUB $26, $26, $F8, $26, $26, $F8, $26, $F8
+ EQUB $26, $F8, $27, $27, $F8, $27, $27, $F8
+ EQUB $27, $27, $F8, $27, $27, $F8, $27, $F8
+ EQUB $27, $F8, $28, $28, $F8, $28, $28, $F8
+ EQUB $28, $28, $F8, $28, $28, $F8, $28, $F8
+ EQUB $28, $29, $29, $29, $29, $29, $29, $29
+ EQUB $29, $2B, $2B, $2B, $2B, $2B, $2B, $2B
+ EQUB $2B, $FC, $00, $FF
+
+.music3Data0_1_0
+
+ EQUB $FA, $70, $F7, $01, $F6, $07, $61, $18
+ EQUB $18, $18, $18, $18, $18, $18, $18, $18
+ EQUB $18, $18, $18, $18, $18, $18, $18, $FF
+
+.music3Data0_1_1
+
+ EQUB $FA, $B0, $F6, $01, $F7, $01, $61, $F8
+ EQUB $60, $1F, $1F, $61, $24, $28, $67, $2B
+ EQUB $61, $F9, $60, $26, $26, $61, $29, $2B
+ EQUB $2D, $2B, $28, $26, $28, $24, $1F, $69
+ EQUB $1F, $61, $F9, $6D, $F8, $61, $F8, $60
+ EQUB $1F, $1F, $61, $24, $28, $65, $2B, $60
+ EQUB $2B, $2D, $61, $2E, $63, $2D, $2B, $61
+ EQUB $28, $2B, $2D, $6F, $26, $6D, $F9, $61
+ EQUB $F8, $F8, $60, $1F, $1F, $61, $24, $28
+ EQUB $67, $2B, $61, $F9, $60, $26, $26, $61
+ EQUB $29, $2B, $2D, $2B, $28, $26, $28, $24
+ EQUB $1F, $65, $2B, $63, $2D, $6B, $26, $61
+ EQUB $F8, $60, $26, $28, $61, $29, $63, $28
+ EQUB $61, $24, $29, $63, $28, $61, $24, $61
+ EQUB $2B, $60, $2B, $2B, $65, $2B, $61, $F8
+ EQUB $63, $2B, $6F, $30, $67, $F9, $F8, $FA
+ EQUB $70, $FF
+
+.music3Data0_1_3
+
+ EQUB $FA, $30
+
+.music3Data0_1_2
+
+ EQUB $61, $F8, $F6, $00, $F7, $05, $60, $0C
+ EQUB $0C, $61, $0E, $11, $67, $16, $6A, $F9
+ EQUB $60, $F8, $63, $16, $64, $18, $60, $F8
+ EQUB $61, $15, $6B, $18, $60, $F6, $05, $F7
+ EQUB $03, $39, $37, $34, $30, $2D, $2B, $28
+ EQUB $24, $21, $1F, $1C, $18, $61, $F8, $F6
+ EQUB $00, $F7, $05, $60, $0A, $0A, $61, $0E
+ EQUB $11, $67, $16, $66, $F9, $60, $F8, $63
+ EQUB $16, $18, $6F, $19, $6A, $F9, $60, $F8
+ EQUB $63, $19, $67, $1A, $15, $66, $F9, $60
+ EQUB $F8, $63, $15, $1A, $67, $1B, $16, $66
+ EQUB $F9, $60, $F8, $63, $16, $1B, $67, $1C
+ EQUB $17, $66, $F9, $60, $F8, $62, $17, $1C
+ EQUB $61, $17, $6A, $1D, $60, $F8, $61, $1C
+ EQUB $1D, $66, $1F, $60, $F8, $65, $1F, $60
+ EQUB $1C, $1A, $FF
+
+.music3Data0_3_0
+
+ EQUB $F6, $11, $65, $04, $04, $04, $63, $04
+ EQUB $61, $04, $63, $04, $04, $65, $04, $04
+ EQUB $04, $63, $04, $61, $04, $63, $04, $61
  EQUB $04, $04, $FF
 
-.L9BB3
+.music3Data4_0
 
- EQUB $58, $9E, $58, $9E, $99  ; 9BB0: 04 04 FF... ...
- EQUB $9E, $B2, $9F
+ EQUW music3Data4_0_0
+ EQUW music3Data4_0_0
+ EQUW music3Data4_0_1
+ EQUW music3Data4_0_2
 
-.L9BBB
+.music3Data2_0
 
- EQUB $C4, $9F, $E3, $9C, $EA  ; 9BB8: 9E B2 9F... ...
- EQUB $9C, $EA, $9C, $EA, $9C, $EA, $9C, $EA  ; 9BC0: 9C EA 9C... ...
- EQUB $9C, $FC, $9C, $FC, $9C, $EA, $9C, $EA  ; 9BC8: 9C FC 9C... ...
- EQUB $9C, $EA, $9C, $EA, $9C, $EA, $9C, $EA  ; 9BD0: 9C EA 9C... ...
- EQUB $9C, $FC, $9C, $FC, $9C, $EA, $9C, $EA  ; 9BD8: 9C FC 9C... ...
- EQUB $9C, $FC, $9C, $FC, $9C, $EA, $9C, $EA  ; 9BE0: 9C FC 9C... ...
- EQUB $9C, $F3, $9C, $FC, $9C, $EA, $9C, $EA  ; 9BE8: 9C F3 9C... ...
- EQUB $9C, $FC, $9C, $FC, $9C, $EA, $9C, $EA  ; 9BF0: 9C FC 9C... ...
- EQUB $9C, $FC, $9C, $FC, $9C, $EA, $9C, $EA  ; 9BF8: 9C FC 9C... ...
- EQUB $9C, $FC, $9C, $FC, $9C, $EA, $9C, $EA  ; 9C00: 9C FC 9C... ...
- EQUB $9C, $F3, $9C, $FC, $9C, $EA, $9C, $EA  ; 9C08: 9C F3 9C... ...
- EQUB $9C, $FC, $9C, $FC, $9C, $EA, $9C, $EA  ; 9C10: 9C FC 9C... ...
- EQUB $9C, $FC, $9C, $FC, $9C, $E3, $9C, $EA  ; 9C18: 9C FC 9C... ...
- EQUB $9C, $EA, $9C, $EA, $9C, $EA, $9C, $EA  ; 9C20: 9C EA 9C... ...
- EQUB $9C, $FC, $9C, $FC, $9C, $C7, $9F, $EA  ; 9C28: 9C FC 9C... ...
- EQUB $9C, $EA, $9C, $EA, $9C, $EA, $9C, $EA  ; 9C30: 9C EA 9C... ...
- EQUB $9C, $EA, $9C, $FC, $9C, $FC, $9C, $EA  ; 9C38: 9C EA 9C... ...
- EQUB $9C, $EA, $9C, $FC, $9C, $FC, $9C, $EA  ; 9C40: 9C EA 9C... ...
- EQUB $9C, $EA, $9C, $F3, $9C, $FC, $9C, $EA  ; 9C48: 9C EA 9C... ...
- EQUB $9C, $EA, $9C, $FC, $9C, $FC, $9C, $EA  ; 9C50: 9C EA 9C... ...
- EQUB $9C, $EA, $9C, $FC, $9C, $FC, $9C, $EA  ; 9C58: 9C EA 9C... ...
- EQUB $9C, $EA, $9C, $FC, $9C, $FC, $9C, $EA  ; 9C60: 9C EA 9C... ...
- EQUB $9C, $EA, $9C, $F3, $9C, $FC, $9C, $EA  ; 9C68: 9C EA 9C... ...
- EQUB $9C, $EA, $9C, $FC, $9C, $FC, $9C, $EA  ; 9C70: 9C EA 9C... ...
- EQUB $9C, $EA, $9C, $FC, $9C, $FC, $9C, $C4  ; 9C78: 9C EA 9C... ...
- EQUB $9F, $00, $00
+ EQUW music3Data2_0_0
+ EQUW music3Data2_0_1
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_4
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_4
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_1
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_5
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_4
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_4
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_2
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_3
+ EQUW music3Data2_0_0
+ EQUW 0
 
-.L9C83
+.music3Data4_2
 
- EQUB $AD, $9E, $AD, $9E, $0B  ; 9C80: 9F 00 00... ...
- EQUB $9F, $B5, $9F
+ EQUW music3Data4_2_0
+ EQUW music3Data4_2_0
+ EQUW music3Data4_2_1
+ EQUW music3Data4_2_2
 
-.L9C8B
+.music3Data2_2
 
- EQUB $05, $9D, $16, $9D, $16  ; 9C88: 9F B5 9F... ...
- EQUB $9D, $00, $00
+ EQUW music3Data2_2_0
+ EQUW music3Data2_2_1
+ EQUW music3Data2_2_1
+ EQUW 0
 
-.L9C93
+.music3Data4_1
 
- EQUB $19, $9F, $19, $9F, $57  ; 9C90: 9D 00 00... ...
- EQUB $9F, $B8, $9F
+ EQUW music3Data4_1_0
+ EQUW music3Data4_1_0
+ EQUW music3Data4_1_1
+ EQUW music3Data4_1_2
 
-.L9C9B
+.music3Data2_1
 
- EQUB $2E, $9D, $AB, $9D, $B1  ; 9C98: 9F B8 9F... ...
- EQUB $9D, $00, $00
+ EQUW music3Data2_1_0
+ EQUW music3Data2_1_1
+ EQUW music3Data2_1_2
+ EQUW 0
 
-.L9CA3
+.music3Data4_3
 
- EQUB $6B, $9F, $78, $9F, $78  ; 9CA0: 9D 00 00... ...
- EQUB $9F, $78, $9F, $78, $9F, $78, $9F, $78  ; 9CA8: 9F 78 9F... .x.
- EQUB $9F, $6B, $9F, $78, $9F, $78, $9F, $78  ; 9CB0: 9F 6B 9F... .k.
- EQUB $9F, $78, $9F, $78, $9F, $78, $9F, $6B  ; 9CB8: 9F 78 9F... .x.
- EQUB $9F, $78, $9F, $78, $9F, $78, $9F, $78  ; 9CC0: 9F 78 9F... .x.
- EQUB $9F, $78, $9F, $78, $9F, $6B, $9F, $78  ; 9CC8: 9F 78 9F... .x.
- EQUB $9F, $78, $9F, $78, $9F, $78, $9F, $78  ; 9CD0: 9F 78 9F... .x.
- EQUB $9F, $78, $9F, $84, $9F, $BB, $9F
+ EQUW music3Data4_3_0
+ EQUW music3Data4_3_1
+ EQUW music3Data4_3_1
+ EQUW music3Data4_3_1
+ EQUW music3Data4_3_1
+ EQUW music3Data4_3_1
+ EQUW music3Data4_3_1
+ EQUW music3Data4_3_0
+ EQUW music3Data4_3_1
+ EQUW music3Data4_3_1
+ EQUW music3Data4_3_1
+ EQUW music3Data4_3_1
+ EQUW music3Data4_3_1
+ EQUW music3Data4_3_1
+ EQUW music3Data4_3_0
+ EQUW music3Data4_3_1
+ EQUW music3Data4_3_1
+ EQUW music3Data4_3_1
+ EQUW music3Data4_3_1
+ EQUW music3Data4_3_1
+ EQUW music3Data4_3_1
+ EQUW music3Data4_3_0
+ EQUW music3Data4_3_1
+ EQUW music3Data4_3_1
+ EQUW music3Data4_3_1
+ EQUW music3Data4_3_1
+ EQUW music3Data4_3_1
+ EQUW music3Data4_3_1
+ EQUW music3Data4_3_2
+ EQUW music3Data4_3_3
 
-.L9CDF
+.music3Data2_3
 
- EQUB $F8  ; 9CD8: 9F 78 9F... .x.
- EQUB $9D, $00, $00, $FA, $B0, $F7, $05, $F6  ; 9CE0: 9D 00 00... ...
- EQUB $0B, $61, $0C, $0C, $0C, $0C, $0C, $0C  ; 9CE8: 0B 61 0C... .a.
- EQUB $0C, $07, $FF, $05, $05, $05, $05, $05  ; 9CF0: 0C 07 FF... ...
- EQUB $05, $05, $07, $FF, $07, $07, $07, $07  ; 9CF8: 05 05 07... ...
- EQUB $07, $07, $07, $13, $FF, $F6, $FF, $F7  ; 9D00: 07 07 07... ...
- EQUB $01, $7F, $24, $22, $24, $6F, $22, $1F  ; 9D08: 01 7F 24... ..$
- EQUB $7F, $24, $22, $24, $1F, $FF, $77, $1C  ; 9D10: 7F 24 22... .$"
- EQUB $67, $1F, $77, $22, $67, $1D, $6F, $1C  ; 9D18: 67 1F 77... g.w
- EQUB $24, $21, $23, $7F, $1C, $6F, $1A, $1D  ; 9D20: 24 21 23... $!#
- EQUB $7F, $1C, $6F, $1A, $26, $FF, $FA, $B0  ; 9D28: 7F 1C 6F... ..o
- EQUB $F7, $05, $F6, $0C, $FC, $F4, $63, $1C  ; 9D30: F7 05 F6... ...
- EQUB $1C, $1C, $61, $1C, $13, $63, $1C, $1C  ; 9D38: 1C 1C 61... ..a
- EQUB $1C, $61, $1C, $1F, $63, $1B, $1B, $1B  ; 9D40: 1C 61 1C... .a.
- EQUB $61, $1B, $13, $63, $1B, $1B, $1B, $61  ; 9D48: 61 1B 13... a..
- EQUB $1B, $1F, $63, $1C, $1C, $1C, $61, $1C  ; 9D50: 1B 1F 63... ..c
- EQUB $13, $63, $1C, $1C, $1C, $61, $1C, $1F  ; 9D58: 13 63 1C... .c.
- EQUB $63, $16, $16, $16, $61, $16, $15, $63  ; 9D60: 63 16 16... c..
- EQUB $16, $16, $16, $61, $16, $13, $63, $FC  ; 9D68: 16 16 16... ...
- EQUB $00, $F7, $01, $1C, $1C, $1C, $61, $1C  ; 9D70: 00 F7 01... ...
- EQUB $13, $63, $1C, $1C, $1C, $61, $1C, $1F  ; 9D78: 13 63 1C... .c.
- EQUB $63, $1B, $1B, $1B, $61, $1B, $13, $63  ; 9D80: 63 1B 1B... c..
- EQUB $1B, $1B, $1B, $61, $1B, $1F, $63, $1C  ; 9D88: 1B 1B 1B... ...
- EQUB $1C, $1C, $61, $1C, $13, $63, $1C, $1C  ; 9D90: 1C 1C 61... ..a
- EQUB $1C, $61, $1C, $1F, $63, $16, $16, $16  ; 9D98: 1C 61 1C... .a.
- EQUB $61, $16, $15, $63, $16, $16, $16, $61  ; 9DA0: 61 16 15... a..
- EQUB $16, $13, $FF, $FA, $B0, $F7, $05, $FC  ; 9DA8: 16 13 FF... ...
- EQUB $F4, $F6, $0A, $63, $24, $24, $61, $22  ; 9DB0: F4 F6 0A... ...
- EQUB $65, $21, $63, $24, $24, $61, $22, $63  ; 9DB8: 65 21 63... e!c
- EQUB $1C, $22, $22, $21, $22, $24, $22, $21  ; 9DC0: 1C 22 22... .""
- EQUB $63, $22, $61, $16, $63, $24, $24, $61  ; 9DC8: 63 22 61... c"a
- EQUB $22, $65, $21, $63, $24, $24, $61, $26  ; 9DD0: 22 65 21... "e!
- EQUB $63, $27, $F7, $01, $29, $29, $27, $29  ; 9DD8: 63 27 F7... c'.
- EQUB $F6, $08, $71, $2B, $77, $2B, $67, $2D  ; 9DE0: F6 08 71... ..q
- EQUB $77, $2E, $67, $2D, $77, $28, $67, $2B  ; 9DE8: 77 2E 67... w.g
- EQUB $6F, $2E, $F6, $08, $22, $FA, $F0, $FF  ; 9DF0: 6F 2E F6... o..
- EQUB $61, $F6, $10, $08, $02, $F6, $0E, $07  ; 9DF8: 61 F6 10... a..
+ EQUW music3Data2_3_0
+ EQUW 0
+
+.music3Data2_0_1
+
+ EQUB $FA, $B0, $F7, $05, $F6, $0B, $61
+
+.music3Data2_0_2
+
+ EQUB $0C, $0C, $0C, $0C, $0C, $0C, $0C, $07
+ EQUB $FF
+
+.music3Data2_0_4
+
+ EQUB $05, $05, $05, $05, $05, $05, $05, $07
+ EQUB $FF
+
+.music3Data2_0_3
+
+ EQUB $07, $07, $07, $07, $07, $07, $07, $13
+ EQUB $FF
+
+.music3Data2_2_0
+
+ EQUB $F6, $FF, $F7, $01, $7F, $24, $22, $24
+ EQUB $6F, $22, $1F, $7F, $24, $22, $24, $1F
+ EQUB $FF
+
+.music3Data2_2_1
+
+ EQUB $77, $1C, $67, $1F, $77, $22, $67, $1D
+ EQUB $6F, $1C, $24, $21, $23, $7F, $1C, $6F
+ EQUB $1A, $1D, $7F, $1C, $6F, $1A, $26, $FF
+
+.music3Data2_1_0
+
+ EQUB $FA, $B0, $F7, $05, $F6, $0C, $FC, $F4
+ EQUB $63, $1C, $1C, $1C, $61, $1C, $13, $63
+ EQUB $1C, $1C, $1C, $61, $1C, $1F, $63, $1B
+ EQUB $1B, $1B, $61, $1B, $13, $63, $1B, $1B
+ EQUB $1B, $61, $1B, $1F, $63, $1C, $1C, $1C
+ EQUB $61, $1C, $13, $63, $1C, $1C, $1C, $61
+ EQUB $1C, $1F, $63, $16, $16, $16, $61, $16
+ EQUB $15, $63, $16, $16, $16, $61, $16, $13
+ EQUB $63, $FC, $00, $F7, $01, $1C, $1C, $1C
+ EQUB $61, $1C, $13, $63, $1C, $1C, $1C, $61
+ EQUB $1C, $1F, $63, $1B, $1B, $1B, $61, $1B
+ EQUB $13, $63, $1B, $1B, $1B, $61, $1B, $1F
+ EQUB $63, $1C, $1C, $1C, $61, $1C, $13, $63
+ EQUB $1C, $1C, $1C, $61, $1C, $1F, $63, $16
+ EQUB $16, $16, $61, $16, $15, $63, $16, $16
+ EQUB $16, $61, $16, $13, $FF
+
+.music3Data2_1_1
+
+ EQUB $FA, $B0, $F7, $05, $FC, $F4
+
+.music3Data2_1_2
+
+ EQUB $F6, $0A, $63, $24, $24, $61, $22, $65
+ EQUB $21, $63, $24, $24, $61, $22, $63, $1C
+ EQUB $22, $22, $21, $22, $24, $22, $21, $63
+ EQUB $22, $61, $16, $63, $24, $24, $61, $22
+ EQUB $65, $21, $63, $24, $24, $61, $26, $63
+ EQUB $27, $F7, $01, $29, $29, $27, $29, $F6
+ EQUB $08, $71, $2B, $77, $2B, $67, $2D, $77
+ EQUB $2E, $67, $2D, $77, $28, $67, $2B, $6F
+ EQUB $2E, $F6, $08, $22, $FA, $F0, $FF
+
+.music3Data2_3_0
+
+ EQUB $61, $F6, $10, $08, $02, $F6, $0E, $07
  EQUB $F6, $10, $02, $FF
 
-.L9E04
+.music3Data3_0
 
- EQUB $58, $9E, $58, $9E  ; 9E00: F6 10 02... ...
- EQUB $99, $9E, $00, $00
+ EQUW music3Data3_0_0
+ EQUW music3Data3_0_0
+ EQUW music3Data3_0_1
+ EQUW 0
 
-.L9E0C
+.music3Data3_2
 
- EQUB $AD, $9E, $AD, $9E  ; 9E08: 99 9E 00... ...
- EQUB $0B, $9F, $00, $00
+ EQUW music3Data3_2_0
+ EQUW music3Data3_2_0
+ EQUW music3Data3_2_1
+ EQUW 0
 
-.L9E14
+.music3Data3_1
 
- EQUB $19, $9F, $19, $9F  ; 9E10: 0B 9F 00... ...
- EQUB $57, $9F, $00, $00
+ EQUW music3Data3_1_0
+ EQUW music3Data3_1_0
+ EQUW music3Data3_1_1
+ EQUW 0
 
-.L9E1C
+.music3Data3_3
 
- EQUB $6B, $9F, $78, $9F  ; 9E18: 57 9F 00... W..
- EQUB $78, $9F, $78, $9F, $78, $9F, $78, $9F  ; 9E20: 78 9F 78... x.x
- EQUB $78, $9F, $6B, $9F, $78, $9F, $78, $9F  ; 9E28: 78 9F 6B... x.k
- EQUB $78, $9F, $78, $9F, $78, $9F, $78, $9F  ; 9E30: 78 9F 78... x.x
- EQUB $6B, $9F, $78, $9F, $78, $9F, $78, $9F  ; 9E38: 6B 9F 78... k.x
- EQUB $78, $9F, $78, $9F, $78, $9F, $6B, $9F  ; 9E40: 78 9F 78... x.x
- EQUB $78, $9F, $78, $9F, $78, $9F, $78, $9F  ; 9E48: 78 9F 78... x.x
- EQUB $78, $9F, $78, $9F, $84, $9F, $00, $00  ; 9E50: 78 9F 78... x.x
- EQUB $FA, $B0, $F7, $05, $F6, $0F, $63, $F8  ; 9E58: FA B0 F7... ...
- EQUB $F6, $08, $67, $0D, $F6, $02, $63, $0D  ; 9E60: F6 08 67... ..g
- EQUB $65, $11, $61, $11, $67, $11, $65, $0F  ; 9E68: 65 11 61... e.a
- EQUB $61, $0F, $67, $0F, $65, $11, $61, $11  ; 9E70: 61 0F 67... a.g
- EQUB $63, $11, $61, $11, $11, $F6, $0D, $63  ; 9E78: 63 11 61... c.a
- EQUB $0D, $F6, $02, $67, $0D, $63, $0D, $65  ; 9E80: 0D F6 02... ...
- EQUB $11, $61, $11, $67, $11, $65, $0F, $61  ; 9E88: 11 61 11... .a.
- EQUB $0F, $67, $0F, $63, $11, $13, $14, $16  ; 9E90: 0F 67 0F... .g.
- EQUB $FF, $65, $0C, $69, $0C, $65, $0C, $69  ; 9E98: FF 65 0C... .e.
- EQUB $0C, $65, $0C, $69, $0C, $63, $0C, $0C  ; 9EA0: 0C 65 0C... .e.
- EQUB $0C, $0C, $6F, $0C, $FF, $F7, $05, $FC  ; 9EA8: 0C 0C 6F... ..o
- EQUB $0C, $F6, $00, $63, $F8, $F6, $28, $6A  ; 9EB0: 0C F6 00... ...
- EQUB $1B, $60, $F8, $F6, $08, $61, $1B, $F6  ; 9EB8: 1B 60 F8... .`.
- EQUB $10, $63, $18, $F6, $48, $68, $18, $60  ; 9EC0: 10 63 18... .c.
- EQUB $F8, $F6, $10, $63, $1B, $1B, $F6, $08  ; 9EC8: F8 F6 10... ...
- EQUB $61, $1B, $F6, $10, $63, $1B, $61, $1B  ; 9ED0: 61 1B F6... a..
- EQUB $F9, $F6, $08, $61, $1D, $F6, $60, $6B  ; 9ED8: F9 F6 08... ...
- EQUB $1D, $63, $F8, $F6, $28, $6A, $1B, $60  ; 9EE0: 1D 63 F8... .c.
- EQUB $F8, $F6, $08, $61, $1B, $F6, $10, $63  ; 9EE8: F8 F6 08... ...
- EQUB $18, $F6, $48, $68, $18, $60, $F8, $F6  ; 9EF0: 18 F6 48... ..H
- EQUB $10, $63, $1B, $1B, $F6, $08, $61, $1B  ; 9EF8: 10 63 1B... .c.
- EQUB $F6, $10, $63, $1B, $F6, $80, $61, $1D  ; 9F00: F6 10 63... ..c
- EQUB $6F, $F9, $FF, $6F, $F6, $80, $13, $16  ; 9F08: 6F F9 FF... o..
- EQUB $13, $10, $63, $F9, $6B, $F8, $FC, $00  ; 9F10: 13 10 63... ..c
- EQUB $FF, $FA, $B0, $F7, $05, $F6, $0F, $63  ; 9F18: FF FA B0... ...
- EQUB $F8, $F6, $13, $6A, $1D, $60, $F8, $61  ; 9F20: F8 F6 13... ...
- EQUB $1D, $63, $1D, $68, $1D, $60, $F8, $63  ; 9F28: 1D 63 1D... .c.
- EQUB $1F, $1F, $61, $1F, $63, $1F, $61, $1F  ; 9F30: 1F 1F 61... ..a
- EQUB $F9, $61, $20, $6B, $20, $63, $F8, $6A  ; 9F38: F9 61 20... .a
- EQUB $1D, $60, $F8, $61, $1D, $63, $1D, $68  ; 9F40: 1D 60 F8... .`.
- EQUB $1D, $60, $F8, $63, $1F, $1F, $61, $1F  ; 9F48: 1D 60 F8... .`.
- EQUB $63, $1F, $61, $20, $6F, $F9, $FF, $FA  ; 9F50: 63 1F 61... c.a
- EQUB $70, $6F, $F6, $05, $18, $F6, $04, $1C  ; 9F58: 70 6F F6... po.
- EQUB $F6, $06, $1F, $F6, $01, $22, $63, $F9  ; 9F60: F6 06 1F... ...
- EQUB $6B, $F8, $FF, $F6, $0F, $63, $F8, $67  ; 9F68: 6B F8 FF... k..
- EQUB $F6, $02, $07, $F6, $11, $63, $04, $FF  ; 9F70: F6 02 07... ...
- EQUB $61, $F6, $10, $08, $02, $F6, $12, $07  ; 9F78: 61 F6 10... a..
- EQUB $F6, $10, $02, $FF, $63, $F6, $11, $02  ; 9F80: F6 10 02... ...
- EQUB $F6, $12, $02, $F6, $11, $02, $F6, $12  ; 9F88: F6 12 02... ...
- EQUB $02, $F6, $11, $02, $F6, $12, $02, $F6  ; 9F90: 02 F6 11... ...
- EQUB $11, $02, $F6, $12, $02, $F6, $11, $02  ; 9F98: 11 02 F6... ...
- EQUB $F6, $12, $02, $F6, $11, $02, $F6, $12  ; 9FA0: F6 12 02... ...
- EQUB $02, $F6, $12, $02, $02, $02, $02, $6F  ; 9FA8: 02 F6 12... ...
- EQUB $04, $FF, $F5, $BB, $9B, $F5, $8B, $9C  ; 9FB0: 04 FF F5... ...
- EQUB $F5, $9B, $9C, $F5, $DF, $9C, $FB, $00  ; 9FB8: F5 9B 9C... ...
- EQUB $FF, $FB, $01, $FF, $FB, $03, $FF, $FB  ; 9FC0: FF FB 01... ...
- EQUB $04, $FF
+ EQUW music3Data3_3_0
+ EQUW music3Data3_3_1
+ EQUW music3Data3_3_1
+ EQUW music3Data3_3_1
+ EQUW music3Data3_3_1
+ EQUW music3Data3_3_1
+ EQUW music3Data3_3_1
+ EQUW music3Data3_3_0
+ EQUW music3Data3_3_1
+ EQUW music3Data3_3_1
+ EQUW music3Data3_3_1
+ EQUW music3Data3_3_1
+ EQUW music3Data3_3_1
+ EQUW music3Data3_3_1
+ EQUW music3Data3_3_0
+ EQUW music3Data3_3_1
+ EQUW music3Data3_3_1
+ EQUW music3Data3_3_1
+ EQUW music3Data3_3_1
+ EQUW music3Data3_3_1
+ EQUW music3Data3_3_1
+ EQUW music3Data3_3_0
+ EQUW music3Data3_3_1
+ EQUW music3Data3_3_1
+ EQUW music3Data3_3_1
+ EQUW music3Data3_3_1
+ EQUW music3Data3_3_1
+ EQUW music3Data3_3_1
+ EQUW music3Data3_3_2
+ EQUW 0
 
-.L9FCA
+.music3Data3_0_0
+.music3Data4_0_0
 
- EQUB $7F, $F6, $0F, $F8, $FF, $EA  ; 9FC8: 04 FF 7F... ...
+ EQUB $FA, $B0, $F7, $05, $F6, $0F, $63, $F8
+ EQUB $F6, $08, $67, $0D, $F6, $02, $63, $0D
+ EQUB $65, $11, $61, $11, $67, $11, $65, $0F
+ EQUB $61, $0F, $67, $0F, $65, $11, $61, $11
+ EQUB $63, $11, $61, $11, $11, $F6, $0D, $63
+ EQUB $0D, $F6, $02, $67, $0D, $63, $0D, $65
+ EQUB $11, $61, $11, $67, $11, $65, $0F, $61
+ EQUB $0F, $67, $0F, $63, $11, $13, $14, $16
+ EQUB $FF
+
+.music3Data3_0_1
+.music3Data4_0_1
+
+ EQUB $65, $0C, $69, $0C, $65, $0C, $69, $0C
+ EQUB $65, $0C, $69, $0C, $63, $0C, $0C, $0C
+ EQUB $0C, $6F, $0C, $FF
+
+.music3Data3_2_0
+.music3Data4_2_0
+
+ EQUB $F7, $05, $FC, $0C, $F6, $00, $63, $F8
+ EQUB $F6, $28, $6A, $1B, $60, $F8, $F6, $08
+ EQUB $61, $1B, $F6, $10, $63, $18, $F6, $48
+ EQUB $68, $18, $60, $F8, $F6, $10, $63, $1B
+ EQUB $1B, $F6, $08, $61, $1B, $F6, $10, $63
+ EQUB $1B, $61, $1B, $F9, $F6, $08, $61, $1D
+ EQUB $F6, $60, $6B, $1D, $63, $F8, $F6, $28
+ EQUB $6A, $1B, $60, $F8, $F6, $08, $61, $1B
+ EQUB $F6, $10, $63, $18, $F6, $48, $68, $18
+ EQUB $60, $F8, $F6, $10, $63, $1B, $1B, $F6
+ EQUB $08, $61, $1B, $F6, $10, $63, $1B, $F6
+ EQUB $80, $61, $1D, $6F, $F9, $FF
+
+.music3Data3_2_1
+.music3Data4_2_1
+
+ EQUB $6F, $F6, $80, $13, $16, $13, $10, $63
+ EQUB $F9, $6B, $F8, $FC, $00, $FF
+
+.music3Data3_1_0
+.music3Data4_1_0
+
+ EQUB $FA, $B0, $F7, $05, $F6, $0F, $63, $F8
+ EQUB $F6, $13, $6A, $1D, $60, $F8, $61, $1D
+ EQUB $63, $1D, $68, $1D, $60, $F8, $63, $1F
+ EQUB $1F, $61, $1F, $63, $1F, $61, $1F, $F9
+ EQUB $61, $20, $6B, $20, $63, $F8, $6A, $1D
+ EQUB $60, $F8, $61, $1D, $63, $1D, $68, $1D
+ EQUB $60, $F8, $63, $1F, $1F, $61, $1F, $63
+ EQUB $1F, $61, $20, $6F, $F9, $FF
+
+.music3Data3_1_1
+.music3Data4_1_1
+
+ EQUB $FA, $70, $6F, $F6, $05, $18, $F6, $04
+ EQUB $1C, $F6, $06, $1F, $F6, $01, $22, $63
+ EQUB $F9, $6B, $F8, $FF
+
+.music3Data3_3_0
+.music3Data4_3_0
+
+ EQUB $F6, $0F, $63, $F8, $67, $F6, $02, $07
+ EQUB $F6, $11, $63, $04, $FF
+
+.music3Data3_3_1
+.music3Data4_3_1
+
+ EQUB $61, $F6, $10, $08, $02, $F6, $12, $07
+ EQUB $F6, $10, $02, $FF
+
+.music3Data3_3_2
+.music3Data4_3_2
+
+ EQUB $63, $F6, $11, $02, $F6, $12, $02, $F6
+ EQUB $11, $02, $F6, $12, $02, $F6, $11, $02
+ EQUB $F6, $12, $02, $F6, $11, $02, $F6, $12
+ EQUB $02, $F6, $11, $02, $F6, $12, $02, $F6
+ EQUB $11, $02, $F6, $12, $02, $F6, $12, $02
+ EQUB $02, $02, $02, $6F, $04, $FF
+
+.music3Data4_0_2
+
+ EQUB $F5, $BB, $9B
+
+.music3Data4_2_2
+
+ EQUB $F5, $8B, $9C
+
+.music3Data4_1_2
+
+ EQUB $F5, $9B, $9C
+
+.music3Data4_3_3
+
+ EQUB $F5, $DF, $9C
+
+.music3Data0_0_4
+
+ EQUB $FB, $00, $FF
+
+.music3Data0_0_3
+
+ EQUB $FB, $01, $FF
+
+.music3Data2_0_0
+
+ EQUB $FB, $03, $FF
+
+.music3Data2_0_5
+
+ EQUB $FB, $04, $FF
+
+.music3Data1_3_0
+
+ EQUB $7F, $F6, $0F, $F8, $FF, $EA
 
 ; ******************************************************************************
 ;
