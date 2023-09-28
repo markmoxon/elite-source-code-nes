@@ -8280,7 +8280,7 @@ ENDIF
                         ; the weapons we have given our ship (i.e. missiles and
                         ; E.C.M.)
 
- LDA soundVar06         ; Set soundVar05 = soundVar06 ???
+ LDA soundVar06         ; Set soundVar05 = soundVar06
  STA soundVar05
 
  LDA #16                ; Set our ship's speed to 16, so we start the demo by
@@ -12442,7 +12442,7 @@ ENDIF
  JSR UpdateSaveCount    ; Update the save counter for the current commander
 
  LDY #28                ; Call the NOISE routine with Y = 28 to make a trill
- JSR NOISE              ; noise to indicate that we have bought something
+ JSR NOISE              ; sound to indicate that we have bought something
 
  LDY QQ29               ; Fetch the currently selected market item number from
                         ; QQ29 into Y
@@ -18336,7 +18336,7 @@ ENDIF
  AND #3                 ; Set Y to our random number reduced to the range 0 to 3
  TAY
 
- LDA trumbleNoises,Y    ; Set Y to the Y-th noise number from the trumbleNoises
+ LDA trumbleSounds,Y    ; Set Y to the Y-th sound effect from the trumbleSounds
  TAY                    ; table, so there's a 75% change of Y being set to 5,
                         ; and a 25% chance of Y being set to 6
 
@@ -18448,14 +18448,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: trumbleNoises
+;       Name: trumbleSounds
 ;       Type: Variable
 ;   Category: Sound
-;    Summary: The set of noises that the Trumbles make in the hold
+;    Summary: The range of sounds that the Trumbles make in the hold
 ;
 ; ******************************************************************************
 
-.trumbleNoises
+.trumbleSounds
 
  EQUB 5, 5, 5, 6
 
@@ -19284,17 +19284,14 @@ ENDIF
 
 .ShowStartScreen
 
- LDA #$FF               ; Set soundVar07 = $FF ???
- STA soundVar07
-
- LDA #$80               ; Set soundVar08 = $80 ???
- STA soundVar08
-
- LDA #$1B               ; Set soundVar09 = $1B ???
- STA soundVar09
-
- LDA #$34               ; Set soundVar0A = $34 ???
- STA soundVar0A
+ LDA #$FF               ; Set soundVar07 = $FF $80 $1B $34 to set the random
+ STA soundVar07         ; seeds for the sound system
+ LDA #$80
+ STA soundVar07+1
+ LDA #$1B
+ STA soundVar07+2
+ LDA #$34
+ STA soundVar07+3
 
  JSR ResetMusic         ; Reset the current tune to 0 and stop the music
 
@@ -19394,7 +19391,7 @@ ENDIF
  LDA #4                 ; Set the music to tune #4
  JSR ChooseMusic_b6
 
- LDA soundVar05         ; Set soundVar05 = soundVar05 + 6 ???
+ LDA soundVar05         ; Set soundVar05 = soundVar05 + 6
  CLC
  ADC #6
  STA soundVar05
@@ -23547,7 +23544,7 @@ ENDIF
 ; ------------------------------------------------------------------------------
 ;
 ; An enemy has fired a missile, so add the missile to our universe if there is
-; room, and if there is, make the appropriate warnings and noises.
+; room, and if there is, make the appropriate warnings and sound effects.
 ;
 ; ******************************************************************************
 
@@ -23635,8 +23632,8 @@ ENDIF
 
 .exno1
 
- LDY explosionNoises,X  ; Set Y to the X-th noise number from the table of
-                        ; explosion noise numbers
+ LDY explosionSounds,X  ; Set Y to the X-th sound effect from the table of
+                        ; explosion sound effect numbers
 
  JMP NOISE              ; Call the NOISE routine to make the sound in Y, which
                         ; will be the sound of a ship exploding at the specified
@@ -23645,14 +23642,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: explosionNoises
+;       Name: explosionSounds
 ;       Type: Variable
 ;   Category: Sound
 ;    Summary: Sound numbers for explosions at different distances from our ship
 ;
 ; ******************************************************************************
 
-.explosionNoises
+.explosionSounds
 
  EQUB 27                ; Ship explosion at a distance of z_hi >= 16
 

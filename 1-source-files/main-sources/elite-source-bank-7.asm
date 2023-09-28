@@ -464,7 +464,7 @@ ENDIF
  DEC runningSetBank     ; Decrement runningSetBank from 0 to $FF to denote that
                         ; we are in the process of switching ROM banks
                         ;
-                        ; This will disable the call to MakeNoises in the NMI
+                        ; This will disable the call to MakeSounds in the NMI
                         ; handler, which instead will increment runningSetBank
                         ; each time it is called
 
@@ -484,9 +484,9 @@ ENDIF
 
  BNE sban1              ; If runningSetBank is non-zero, then this means the NMI
                         ; handler was called while we were switching the ROM
-                        ; bank, in which case MakeNoises won't have been called
+                        ; bank, in which case MakeSounds won't have been called
                         ; in the NMI handler, so jump to sban1 to call the
-                        ; MakeNoises routine now instead
+                        ; MakeSounds routine now instead
 
  RTS                    ; Return from the subroutine
 
@@ -503,8 +503,8 @@ ENDIF
  TYA
  PHA
 
- JSR MakeNoises_b6      ; Call the MakeNoises routine to make the current noises
-                        ; (sound and music)
+ JSR MakeSounds_b6      ; Call the MakeSounds routine to make the current sounds
+                        ; (music and sound effects)
 
  PLA                    ; Retrieve X and Y from the stack
  TAY
@@ -1437,7 +1437,7 @@ ENDIF
 
 .next1
 
- ADD_CYCLES 65521       ; Add 65521 to the cycle count (i.e. subtract 15) ???
+ ADD_CYCLES 65521       ; Add 65521 to the cycle count (i.e. subtract 15)
 
  JMP RTS1               ; Return from the subroutine (as RTS1 contains an RTS)
 
@@ -1625,7 +1625,7 @@ ENDIF
  CMP #48                ; If A < 48, then we have fewer than 48 * 8 = 384
  BCC sbuf6              ; nametable entries to send, so jump to sbuf6 to swap
                         ; the hidden and visible bitplanes before sending the
-                        ; next batch of tiles ???
+                        ; next batch of tiles
 
  SUBTRACT_CYCLES 60     ; Subtract 60 from the cycle count
 
@@ -2606,7 +2606,7 @@ ENDIF
                         ; to the PPU (this might happen if the value of
                         ; hiddenBitplane changes while we are still sending
                         ; data to the PPU across multiple calls to the NMI
-                        ; handler) ???
+                        ; handler)
 
  TAX                    ; Set X to the newly flipped NMI bitplane
 
@@ -2627,7 +2627,7 @@ ENDIF
                         ; sending any more tile data to the PPU in this VBlank
 
                         ; If we get here then the new bitplane is not configured
-                        ; to be sent to the PPU, so we send it now ???
+                        ; to be sent to the PPU, so we send it now
 
  JMP SendTilesToPPU     ; Jump to SendTilesToPPU to set up the variables for
                         ; sending tile data to the PPU, and then send them
@@ -3399,10 +3399,10 @@ ENDIF
 
  LDA runningSetBank     ; If the NMI handler was called from within the SetBank
  BNE inmi2              ; routine, then runningSetBank will be $FF, so jump to
-                        ; inmi2 to skip the call to MakeNoises
+                        ; inmi2 to skip the call to MakeSounds
 
- JSR MakeNoises_b6      ; Call the MakeNoises routine to make the current noises
-                        ; (sound and music)
+ JSR MakeSounds_b6      ; Call the MakeSounds routine to make the current sounds
+                        ; (music and sound effects)
 
  LDA nmiStoreA          ; Restore the values of A, X and Y that we stored at
  LDX nmiStoreX          ; the start of the NMI handler
@@ -3953,7 +3953,7 @@ ENDIF
 
 .cbuf4
 
- ADD_CYCLES 65527       ; Add 65527 to the cycle count (i.e. subtract 9) ???
+ ADD_CYCLES 65527       ; Add 65527 to the cycle count (i.e. subtract 9)
 
  JMP cbuf6              ; Jump to cbuf6 to return from the subroutine
 
@@ -5179,7 +5179,7 @@ ENDIF
                         ; (I don't know why this calculation counts 16 cycles
                         ; per byte, as it only takes 8 cycles for FILL_MEMORY
                         ; to clear a byte; perhaps it's an overestimation to be
-                        ; safe and cater for all this extra logic code?) ???
+                        ; safe and cater for all this extra logic code?)
 
                         ; If we get here then we can clear the block of memory
                         ; in one go
@@ -5706,11 +5706,11 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: MakeNoisesAtVBlank
+;       Name: MakeSoundsAtVBlank
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Wait for the next VBlank and make the current noises (sound and
-;             music)
+;    Summary: Wait for the next VBlank and make the current sounds (music and
+;             sound effects)
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -5720,15 +5720,15 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.MakeNoisesAtVBlank
+.MakeSoundsAtVBlank
 
  TXA                    ; Store X on the stack, so we can retrieve it below
  PHA
 
  JSR WaitForVBlank      ; Wait for the next VBlank to pass
 
- JSR MakeNoises_b6      ; Call the MakeNoises routine to make the current noises
-                        ; (sound and music)
+ JSR MakeSounds_b6      ; Call the MakeSounds routine to make the current sounds
+                        ; (music and sound effects)
 
  PLA                    ; Restore X from the stack so it is preserved
  TAX
@@ -12615,10 +12615,11 @@ ENDIF
  LDA #0                 ; Set the priority for channel X to zero to stop the
  STA channelPriority,X  ; channel from making any more sounds
 
- LDA #26                ; Set A = 26 to pass to MakeNoise below
+ LDA #26                ; Set A = 26 to pass to MakeSoundEffect below
 
- BNE MakeNoise_b7       ; Jump to MakeNoise with A = 26 to make noise 26 (this
-                        ; BNE is effectively a JMP as A is never zero)
+ BNE MakeSoundEffect_b7 ; Jump to MakeSoundEffect to make sound effect 26 on
+                        ; channel X (this BNE is effectively a JMP as A is never
+                        ; zero)
 
 ; ******************************************************************************
 ;
@@ -12673,111 +12674,135 @@ ENDIF
 ;       Name: NOISE
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Make the sound whose number is in Y
+;    Summary: Make the sound effect whose number is in Y
 ;
 ; ------------------------------------------------------------------------------
 ;
-; 1 = fuel scoop (MakeScoopSound)
-; 2 = E.C.M. (ECBLB2)
-; 3 = short, high beep (BEEP)
-; 4 = long, low beep (BOOP)
-; 5 = Trumbles in the hold sound 1, 75% chance (main game loop 5)
-; 6 = Trumbles in the hold sound 2, 25% chance (main game loop 5)
-; 7 = low energy beep (main flight 15)
-; 8 = energy bomb (main flight loop 3)
-; 9 = missile launch (FRMIS, SFRMIS)
-; 10 = us making a hit or kill (EXNO)
-; 11 = us being hit by lasers (TACTICS 6)
-; 12 = first launch sound (LAUN)
-; 13 = explosion/collision sound (EXNO3)
-;    = Ship explosion at a distance of z_hi < 6 (EXNO2)
-; 14 = Ship explosion at a distance of z_hi >= 6 (EXNO2)
-; 15 = military laser firing (main flight loop 3)
-; 16 = mining laser firing (main flight loop 3)
-; 17 = beam laser firing (main flight loop 3)
-; 18 = pulse laser firing (main flight loop 3)
-; 19 = escape pod launching (ESCAPE)
-; 20 = ???
-; 21 = hyperspace (MakeHyperSound)
-; 22 = galactic hyperspace (Ghy)
-; 23 = third launch sound (LAUN)
-;    = Ship explosion at a distance of z_hi >= 8 (EXNO2)
-; 24 = second launch sound (LAUN)
-; 25 = ???
-; 26 = no noise (FlushSoundChannel) ???
-; 27 = Ship explosion at a distance of z_hi >= 16 (EXNO2)
-; 28 = trill noise to indicate we have bought something (BuyAndSellCargo)
-; 29 = first mis-jump sound (MJP)
-; 30 = second mis-jump sound (MJP)
-; 31 = Trumbles being killed by the sun (main flight loop 15)
+; The full list of sound effects is as follows, along with the names of the
+; routines that make them:
+;
+;    1 = Fuel scoop                                 MakeScoopSound
+;    2 = E.C.M.                                     ECBLB2
+;    3 = Short, high beep                           BEEP
+;    4 = Long, low beep                             BOOP
+;    5 = Trumbles in the hold sound 1, 75% chance   Main game loop (Part 5)
+;    6 = Trumbles in the hold sound 2, 25% chance   Main game loop (Part 5)
+;    7 = Low energy beep                            Main flight loop (Part 15)
+;    8 = Energy bomb                                Main flight loop (Part 3)
+;    9 = Missile launch                             FRMIS, SFRMIS
+;   10 = Us making a hit or kill                    EXNO
+;   11 = Us being hit by lasers                     TACTICS (Part 6)
+;   12 = First launch sound                         LAUN
+;   13 = Explosion/collision sound                  EXNO3
+;        Ship explosion at distance z_hi < 6        EXNO2
+;   14 = Ship explosion at distance z_hi >= 6       EXNO2
+;   15 = Military laser firing                      Main flight loop (Part 3)
+;   16 = Mining laser firing                        Main flight loop (Part 3)
+;   17 = Beam laser firing                          Main flight loop (Part 3)
+;   18 = Pulse laser firing                         Main flight loop (Part 3)
+;   19 = Escape pod launching                       ESCAPE
+;   20 = Unused                                     -
+;   21 = Hyperspace                                 MakeHyperSound
+;   22 = Galactic hyperspace                        Ghy
+;   23 = Third launch sound                         LAUN
+;        Ship explosion at distance z_hi >= 8       EXNO2
+;   24 = Second launch sound                        LAUN
+;   25 = Unused                                     -
+;   26 = No noise                                   FlushSoundChannel
+;   27 = Ship explosion at a distance of z_hi >= 16 EXNO2
+;   28 = Trill noise to indicate a purchase         BuyAndSellCargo
+;   29 = First mis-jump sound                       MJP
+;   30 = Second mis-jump sound                      MJP
+;   31 = Trumbles being killed by the sun           Main flight loop (Part 15)
 ;
 ; Arguments:
 ;
-;   Y                   The number of the sound to be made
+;   Y                   The number of the sound effect to be made
 ;
 ; ******************************************************************************
 
 .NOISE
 
- LDA DNOIZ
- BPL RTS8
+ LDA DNOIZ              ; If DNOIZ is zero then sound is disabled, so jump to
+ BPL RTS8               ; RTS8 to return from the subroutine without making a
+                        ; sound
 
- LDX soundChannel,Y
+ LDX soundChannel,Y     ; Set X to the channel number for sound effect Y
 
- CPX #3
- BCC nois1
+ CPX #3                 ; If X < 3 then this sound effect uses just the channel
+ BCC nois1              ; given in X, so jump to nois1 to make the sound effect
+                        ; on that channel alone
 
- TYA
- PHA
+                        ; If we get here then X = 3 or 4, so we need to make the
+                        ; sound effect on two channels:
+                        ;
+                        ;   * If X = 3, use sound channels 0 and 2
+                        ;
+                        ;   * If X = 4, use sound channels 1 and 2
 
+ TYA                    ; Store the sound effect number on the stack, so we can
+ PHA                    ; restore it after the call to nois1 below
+
+ DEX                    ; Set X = X - 3, so X is now 0 or 1, which is the number
+ DEX                    ; of the first channel we need to make the sound on
  DEX
- DEX
- DEX
 
- JSR nois1
+ JSR nois1              ; Call nois1 to make the sound effect on channel X, so
+                        ; that's channel 0 or 1
 
- PLA
+ PLA                    ; Restore the sound effect number from the stack into Y
  TAY
 
- LDX #2
+ LDX #2                 ; Set X = 2 and fall through into nois1 to make the
+                        ; sound effect on channel 2, which is the number of the
+                        ; second channel we need to make the sound on
 
 .nois1
 
- LDA soundVar02,X
- BEQ nois2
+ LDA soundChannel0,X    ; If the value of soundChannelX for channel X is zero,
+ BEQ nois2              ; then there is no sound being made on this channel at
+                        ; the moment, so jump to nois2 to make the sound
 
- LDA soundPriority,Y
+ LDA soundPriority,Y    ; Otherwise set A to the priority of the sound effect we
+                        ; want to make
 
- CMP channelPriority,X
- BCC RTS8
+ CMP channelPriority,X  ; If A is less than the priority of the sound currently
+ BCC RTS8               ; being made on channel X, then we mustn't interrupt it
+                        ; with our lower-priority sound, so return from the
+                        ; subroutine without making the new sound
 
 .nois2
 
- LDA soundPriority,Y
- STA channelPriority,X
+                        ; If we get here then we are cleared to make our new
+                        ; sound Y on channel X
+
+ LDA soundPriority,Y    ; Set the priority of the sound on channel X to that of
+ STA channelPriority,X  ; our new sound, as we are about to make it
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- TYA                    ; Set A to the sound number in Y to pass to MakeNoise
+ TYA                    ; Set A to the sound number in Y so we can pass it to
+                        ; the MakeSoundEffect routine
 
-                        ; Fall through into MakeNoise_b7 to call the MakeNoise
-                        ; routine to make noise X on channel A
+                        ; Fall through into MakeSoundEffect_b7 to make sound
+                        ; effect A on channel X
 
 ; ******************************************************************************
 ;
-;       Name: MakeNoise_b7
+;       Name: MakeSoundEffect_b7
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Call the MakeNoise routine
+;    Summary: Call the MakeSoundEffect routine
 ;
 ; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
-;   A                   The number of the channel on which to make the noise
+;   A                   The number of the sound effect to make
 ;
-;   X                   The number of the noise to make
+;   X                   The number of the channel on which to make the sound
+;                       effect
 ;
 ; Other entry points:
 ;
@@ -12785,9 +12810,10 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.MakeNoise_b7
+.MakeSoundEffect_b7
 
- JSR MakeNoise_b6       ; Call MakeNoise to make noise X on the channel A
+ JSR MakeSoundEffect_b6 ; Call MakeSoundEffect to make sound effect A on channel
+                        ; A
 
 .RTS8
 
@@ -13207,14 +13233,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: MakeNoises_b6
+;       Name: MakeSounds_b6
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Call the MakeNoises routine in ROM bank 6
+;    Summary: Call the MakeSounds routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.MakeNoises_b6
+.MakeSounds_b6
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -13222,7 +13248,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR MakeNoises         ; Call MakeNoises, now that it is paged into memory
+ JSR MakeSounds         ; Call MakeSounds, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -13287,14 +13313,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: MakeNoise_b6
+;       Name: MakeSoundEffect_b6
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Call the MakeNoise routine in ROM bank 6
+;    Summary: Call the MakeSoundEffect routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.MakeNoise_b6
+.MakeSoundEffect_b6
 
  STA ASAV               ; Store the value of A so we can retrieve it below
 
@@ -13309,7 +13335,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR MakeNoise          ; Call MakeNoise, now that it is paged into memory
+ JSR MakeSoundEffect    ; Call MakeSoundEffect, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -13319,8 +13345,9 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JMP MakeNoise          ; Call MakeNoise, which is already paged into memory,
-                        ; and return from the subroutine using a tail call
+ JMP MakeSoundEffect    ; Call MakeSoundEffect, which is already paged into
+                        ; memory, and return from the subroutine using a tail
+                        ; call
 
 ; ******************************************************************************
 ;
@@ -13345,7 +13372,8 @@ ENDIF
 ;       Name: ResetMusic
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Reset the current tune to 0 and stop all noises (music and sound)
+;    Summary: Reset the current tune to 0 and stop all sounds (music and sound
+;             effects)
 ;
 ; ******************************************************************************
 
@@ -13355,19 +13383,19 @@ ENDIF
  STA newTune            ; selected (as bits 0-6 are zero) and we are not in the
                         ; process of changing tunes (as bit 7 is clear)
 
-                        ; Fall through into StopNoises_b6 to stop all noises
-                        ; (music and sound)
+                        ; Fall through into StopSounds_b6 to stop all sounds
+                        ; (music and sound effects)
 
 ; ******************************************************************************
 ;
-;       Name: StopNoises_b6
+;       Name: StopSounds_b6
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Call the StopNoises routine in ROM bank 6
+;    Summary: Call the StopSounds routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.StopNoises_b6
+.StopSounds_b6
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -13375,7 +13403,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- JSR StopNoisesS        ; Call StopNoises via StopNoisesS, now that it is paged
+ JSR StopSoundsS        ; Call StopSounds via StopSoundsS, now that it is paged
                         ; into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
@@ -15822,17 +15850,14 @@ ENDIF
  STA nmiBitplane
  STA drawingBitplane
 
- LDA #$FF               ; Set soundVar07 = $FF ???
- STA soundVar07
-
- LDA #$80               ; Set soundVar08 = $80 ???
- STA soundVar08
-
- LDA #$1B               ; Set soundVar09 = $1B ???
- STA soundVar09
-
- LDA #$34               ; Set soundVar0A = $34 ???
- STA soundVar0A
+ LDA #$FF               ; Set soundVar07 = $FF $80 $1B $34 to set the random
+ STA soundVar07         ; seeds for the sound system
+ LDA #$80
+ STA soundVar07+1
+ LDA #$1B
+ STA soundVar07+2
+ LDA #$34
+ STA soundVar07+3
 
  JSR ResetOptions       ; Reset the game options to their default values
 

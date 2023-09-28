@@ -167,32 +167,32 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: MakeNoisesS
+;       Name: MakeSoundsS
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: A jump table entry at the start of bank 6 for the MakeNoises
+;    Summary: A jump table entry at the start of bank 6 for the MakeSounds
 ;             routine
 ;
 ; ******************************************************************************
 
-.MakeNoisesS
+.MakeSoundsS
 
- JMP MakeNoises         ; Jump to the MakeNoises routine, returning from the
+ JMP MakeSounds         ; Jump to the MakeSounds routine, returning from the
                         ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: StopNoisesS
+;       Name: StopSoundsS
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: A jump table entry at the start of bank 6 for the StopNoises
+;    Summary: A jump table entry at the start of bank 6 for the StopSounds
 ;             routine
 ;
 ; ******************************************************************************
 
-.StopNoisesS
+.StopSoundsS
 
- JMP StopNoises         ; Jump to the StopNoises routine, returning from the
+ JMP StopSounds         ; Jump to the StopSounds routine, returning from the
                         ; subroutine using a tail call
 
 ; ******************************************************************************
@@ -212,48 +212,48 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_895AS
+;       Name: MakeSoundChannel0S
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: A jump table entry at the start of bank 6 for the subm_895A
-;             routine
+;    Summary: A jump table entry at the start of bank 6 for the
+;             MakeSoundChannel0 routine
 ;
 ; ******************************************************************************
 
-.subm_895AS
+.MakeSoundChannel0S
 
- JMP subm_895A          ; Jump to the subm_895A routine, returning from the
-                        ; subroutine using a tail call
+ JMP MakeSoundChannel0  ; Jump to the MakeSoundChannel0 routine, returning from
+                        ; the subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: subm_89DCS
+;       Name: MakeSoundChannel1S
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: A jump table entry at the start of bank 6 for the subm_89DC
-;             routine
+;    Summary: A jump table entry at the start of bank 6 for the
+;             MakeSoundChannel1 routine
 ;
 ; ******************************************************************************
 
-.subm_89DCS
+.MakeSoundChannel1S
 
- JMP subm_89DC          ; Jump to the subm_89DC routine, returning from the
-                        ; subroutine using a tail call
+ JMP MakeSoundChannel1  ; Jump to the MakeSoundChannel1 routine, returning from
+                        ; the subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: subm_8A53S
+;       Name: MakeSoundChannel2S
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: A jump table entry at the start of bank 6 for the subm_8A53
-;             routine
+;    Summary: A jump table entry at the start of bank 6 for the
+;             MakeSoundChannel2 routine
 ;
 ; ******************************************************************************
 
-.subm_8A53S
+.MakeSoundChannel2S
 
- JMP subm_8A53          ; Jump to the subm_8A53 routine, returning from the
-                        ; subroutine using a tail call
+ JMP MakeSoundChannel2  ; Jump to the MakeSoundChannel2 routine, returning from
+                        ; the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -273,7 +273,7 @@ ENDIF
 .ChooseMusic
 
  TAY
- JSR StopNoisesS
+ JSR StopSoundsS
  LDA #0
  CLC
 
@@ -299,13 +299,13 @@ ENDIF
  DEY
  BPL loop_C8034
  TAY
- LDA L915F,X
+ LDA musicData1,X
  STA soundVar05
  STA soundVar06
- LDA L915F+1,X
+ LDA musicData1+1,X
  STA soundVar10
  STA soundAddr
- LDA L915F+2,X
+ LDA musicData1+2,X
  STA soundVar11
  STA soundAddr+1
  LDA (soundAddr),Y
@@ -313,10 +313,10 @@ ENDIF
  INY
  LDA (soundAddr),Y
  STA soundVar0F
- LDA L915F+3,X
+ LDA musicData1+3,X
  STA soundVar23
  STA soundAddr
- LDA L915F+4,X
+ LDA musicData1+4,X
  STA soundVar24
  STA soundAddr+1
  DEY
@@ -325,10 +325,10 @@ ENDIF
  INY
  LDA (soundAddr),Y
  STA soundVar22
- LDA L915F+5,X
+ LDA musicData1+5,X
  STA soundVar36
  STA soundAddr
- LDA L915F+6,X
+ LDA musicData1+6,X
  STA soundVar37
  STA soundAddr+1
  DEY
@@ -337,10 +337,10 @@ ENDIF
  INY
  LDA (soundAddr),Y
  STA soundVar35
- LDA L915F+7,X
+ LDA musicData1+7,X
  STA soundVar49
  STA soundAddr
- LDA L915F+8,X
+ LDA musicData1+8,X
  STA soundVar4A
  STA soundAddr+1
  DEY
@@ -389,20 +389,20 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: StopNoises
+;       Name: StopSounds
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.StopNoises
+.StopSounds
 
  LDA #0
  STA soundVar01
- STA soundVar02
- STA soundVar03
- STA soundVar04
+ STA soundChannel0
+ STA soundChannel1
+ STA soundChannel2
  TAX
 
 .loop_C8102
@@ -422,23 +422,23 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: MakeNoises
+;       Name: MakeSounds
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Make the current noises (sound and music)
+;    Summary: Make the current sounds (music and sound effects)
 ;
 ; ******************************************************************************
 
-.MakeNoises
+.MakeSounds
 
  JSR MakeMusic
 
- JSR MakeSounds
+ JSR MakeSoundEffects
 
  LDA soundVar01
  BEQ C816C
 
- LDA soundVar02
+ LDA soundChannel0
  BNE C813F
 
  LDA soundVar5A
@@ -452,7 +452,7 @@ ENDIF
 
 .C813F
 
- LDA soundVar03
+ LDA soundChannel1
  BNE C8155
 
  LDA soundVar5E
@@ -469,7 +469,7 @@ ENDIF
  LDA soundVar64
  STA TRI_LO
 
- LDA soundVar04
+ LDA soundChannel2
  BNE C816C
 
  LDA soundVar66
@@ -573,7 +573,7 @@ ENDIF
  STA soundVar5C
  LDA L88BC+1,Y
  STA soundVar5D
- LDX soundVar02
+ LDX soundChannel0
  BNE C81F6
  LDX soundVar18
  STX SQ1_SWEEP
@@ -789,7 +789,7 @@ ENDIF
  STY soundVar0D
  PLA
  PLA
- JMP StopNoisesS
+ JMP StopSoundsS
 
 .C8332
 
@@ -911,7 +911,7 @@ ENDIF
  STA soundVar60
  LDA L88BC+1,Y
  STA soundVar61
- LDX soundVar03
+ LDX soundChannel1
  BNE C83F1
  LDX soundVar2B
  STX SQ2_SWEEP
@@ -1127,7 +1127,7 @@ ENDIF
  STY soundVar0D
  PLA
  PLA
- JMP StopNoisesS
+ JMP StopSoundsS
 
 .C852D
 
@@ -1422,7 +1422,7 @@ ENDIF
  STY soundVar0D
  PLA
  PLA
- JMP StopNoisesS
+ JMP StopSoundsS
 
 .C86EC
 
@@ -1517,7 +1517,7 @@ ENDIF
  STA soundVar54
  STA soundVar68
  LDY #0
- LDX soundVar04
+ LDX soundChannel2
  BNE C8767
  STA NOISE_LO
  STY NOISE_HI
@@ -1671,7 +1671,7 @@ ENDIF
  STY soundVar0D
  PLA
  PLA
- JMP StopNoisesS
+ JMP StopSoundsS
 
 .C885B
 
@@ -1762,22 +1762,22 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_895A
+;       Name: MakeSoundChannel0
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_895A
+.MakeSoundChannel0
 
  ASL A
  TAY
  LDA #0
- STA soundVar02
- LDA L8D7A,Y
+ STA soundChannel0
+ LDA soundData1,Y
  STA soundAddr
- LDA L8D7A+1,Y
+ LDA soundData1+1,Y
  STA soundAddr+1
  LDY #$0D
 
@@ -1800,10 +1800,10 @@ ENDIF
  LDA soundVar75
  ASL A
  TAY
- LDA L8F7A,Y
+ LDA soundData2,Y
  STA soundVarA7
  STA soundAddr
- LDA L8F7A+1,Y
+ LDA soundData2+1,Y
  STA soundVarA8
  STA soundAddr+1
  LDY #0
@@ -1819,12 +1819,12 @@ ENDIF
  LDA soundVar6E
  STA soundVar7A
  STA SQ1_HI
- INC soundVar02
+ INC soundChannel0
  RTS
 
 ; ******************************************************************************
 ;
-;       Name: MakeNoise
+;       Name: MakeSoundEffect
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: ???
@@ -1833,41 +1833,42 @@ ENDIF
 ;
 ; Arguments:
 ;
-;   A                   The number of the channel on which to make the noise
+;   A                   The number of the sound effect to make
 ;
-;   X                   The number of the noise to make
+;   X                   The number of the channel on which to make the sound
+;                       effect
 ;
 ; ******************************************************************************
 
-.MakeNoise
+.MakeSoundEffect
 
  DEX
  BMI C89D9
- BEQ subm_89DC
- JMP subm_8A53
+ BEQ MakeSoundChannel1
+ JMP MakeSoundChannel2
 
 .C89D9
 
- JMP subm_895A
+ JMP MakeSoundChannel0
 
 ; ******************************************************************************
 ;
-;       Name: subm_89DC
+;       Name: MakeSoundChannel1
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_89DC
+.MakeSoundChannel1
 
  ASL A
  TAY
  LDA #0
- STA soundVar03
- LDA L8D7A,Y
+ STA soundChannel1
+ LDA soundData1,Y
  STA soundAddr
- LDA L8D7A+1,Y
+ LDA soundData1+1,Y
  STA soundAddr+1
  LDY #$0D
 
@@ -1890,10 +1891,10 @@ ENDIF
  LDA soundVar89
  ASL A
  TAY
- LDA L8F7A,Y
+ LDA soundData2,Y
  STA soundVarA9
  STA soundAddr
- LDA L8F7A+1,Y
+ LDA soundData2+1,Y
  STA soundVarAA
  STA soundAddr+1
  LDY #0
@@ -1909,27 +1910,27 @@ ENDIF
  LDA soundVar82
  STA soundVar8E
  STA SQ2_HI
- INC soundVar03
+ INC soundChannel1
  RTS
 
 ; ******************************************************************************
 ;
-;       Name: subm_8A53
+;       Name: MakeSoundChannel2
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_8A53
+.MakeSoundChannel2
 
  ASL A
  TAY
  LDA #0
- STA soundVar04
- LDA L8D7A,Y
+ STA soundChannel2
+ LDA soundData1,Y
  STA soundAddr
- LDA L8D7A+1,Y
+ LDA soundData1+1,Y
  STA soundAddr+1
  LDY #$0D
 
@@ -1952,10 +1953,10 @@ ENDIF
  LDA soundVar9D
  ASL A
  TAY
- LDA L8F7A,Y
+ LDA soundData2,Y
  STA soundVarAB
  STA soundAddr
- LDA L8F7A+1,Y
+ LDA soundData2+1,Y
  STA soundVarAC
  STA soundAddr+1
  LDY #0
@@ -1971,21 +1972,21 @@ ENDIF
  STA NOISE_LO
  LDA #0
  STA NOISE_HI
- INC soundVar04
+ INC soundChannel2
  RTS
 
 ; ******************************************************************************
 ;
-;       Name: MakeSounds
+;       Name: MakeSoundEffects
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.MakeSounds
+.MakeSoundEffects
 
- JSR subm_8D64
+ JSR UpdateSoundSeeds
  JSR subm_8AD4
  JSR subm_8BBB
  JMP subm_8CA2
@@ -2001,7 +2002,7 @@ ENDIF
 
 .subm_8AD4
 
- LDA soundVar02
+ LDA soundChannel0
  BNE C8ADA
  RTS
 
@@ -2019,14 +2020,14 @@ ENDIF
  STA SQ1_LO
  LDA soundVar5D
  STA SQ1_HI
- STX soundVar02
+ STX soundChannel0
  RTS
 
 .C8AFF
 
  LDA #$30
  STA SQ1_VOL
- STX soundVar02
+ STX soundChannel0
  RTS
 
 .C8B08
@@ -2137,7 +2138,7 @@ ENDIF
 
 .subm_8BBB
 
- LDA soundVar03
+ LDA soundChannel1
  BNE C8BC1
  RTS
 
@@ -2155,14 +2156,14 @@ ENDIF
  STA SQ2_LO
  LDA soundVar61
  STA SQ2_HI
- STX soundVar03
+ STX soundChannel1
  RTS
 
 .C8BE6
 
  LDA #$30
  STA SQ2_VOL
- STX soundVar03
+ STX soundChannel1
  RTS
 
 .C8BEF
@@ -2273,7 +2274,7 @@ ENDIF
 
 .subm_8CA2
 
- LDA soundVar04
+ LDA soundChannel2
  BNE C8CA8
  RTS
 
@@ -2289,14 +2290,14 @@ ENDIF
  STA NOISE_VOL
  LDA soundVar68
  STA NOISE_LO
- STX soundVar04
+ STX soundChannel2
  RTS
 
 .C8CC7
 
  LDA #$30
  STA NOISE_VOL
- STX soundVar04
+ STX soundChannel2
  RTS
 
 .C8CD0
@@ -2388,353 +2389,353 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: subm_8D64
+;       Name: UpdateSoundSeeds
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.subm_8D64
+.UpdateSoundSeeds
 
  LDA soundVar07
- AND #$48
- ADC #$38
+ AND #%01001000
+ ADC #%00111000
  ASL A
  ASL A
- ROL soundVar0A
- ROL soundVar09
- ROL soundVar08
+ ROL soundVar07+3
+ ROL soundVar07+2
+ ROL soundVar07+1
  ROL soundVar07
  RTS
 
 ; ******************************************************************************
 ;
-;       Name: L8D7A
+;       Name: soundData1
 ;       Type: Variable
 ;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.L8D7A
+.soundData1
 
- EQUW L8D7A_1
- EQUW L8D7A_2
- EQUW L8D7A_3
- EQUW L8D7A_4
- EQUW L8D7A_5
- EQUW L8D7A_6
- EQUW L8D7A_7
- EQUW L8D7A_8
- EQUW L8D7A_9
- EQUW L8D7A_10
- EQUW L8D7A_11
- EQUW L8D7A_12
- EQUW L8D7A_13
- EQUW L8D7A_14
- EQUW L8D7A_15
- EQUW L8D7A_16
- EQUW L8D7A_17
- EQUW L8D7A_18
- EQUW L8D7A_19
- EQUW L8D7A_20
- EQUW L8D7A_21
- EQUW L8D7A_22
- EQUW L8D7A_23
- EQUW L8D7A_24
- EQUW L8D7A_25
- EQUW L8D7A_26
- EQUW L8D7A_27
- EQUW L8D7A_28
- EQUW L8D7A_29
- EQUW L8D7A_30
- EQUW L8D7A_31
- EQUW L8D7A_32
+ EQUW soundData1_1
+ EQUW soundData1_2
+ EQUW soundData1_3
+ EQUW soundData1_4
+ EQUW soundData1_5
+ EQUW soundData1_6
+ EQUW soundData1_7
+ EQUW soundData1_8
+ EQUW soundData1_9
+ EQUW soundData1_10
+ EQUW soundData1_11
+ EQUW soundData1_12
+ EQUW soundData1_13
+ EQUW soundData1_14
+ EQUW soundData1_15
+ EQUW soundData1_16
+ EQUW soundData1_17
+ EQUW soundData1_18
+ EQUW soundData1_19
+ EQUW soundData1_20
+ EQUW soundData1_21
+ EQUW soundData1_22
+ EQUW soundData1_23
+ EQUW soundData1_24
+ EQUW soundData1_25
+ EQUW soundData1_26
+ EQUW soundData1_27
+ EQUW soundData1_28
+ EQUW soundData1_29
+ EQUW soundData1_30
+ EQUW soundData1_31
+ EQUW soundData1_32
 
-.L8D7A_1
+.soundData1_1
 
  EQUB $3C, $03, $04, $00, $02, $00, $30, $00
  EQUB $01, $0A, $00, $05, $00, $63
 
-.L8D7A_2
+.soundData1_2
 
  EQUB $16, $04
  EQUB $A8, $00, $04, $00, $70, $00, $FF, $63
  EQUB $0C, $02, $00, $00
 
-.L8D7A_3
+.soundData1_3
 
  EQUB $19, $19, $AC, $03
  EQUB $1C, $00, $30, $00, $01, $63, $06, $02
  EQUB $FF, $00
 
-.L8D7A_4
+.soundData1_4
 
  EQUB $05, $63, $2C, $00, $00, $00
  EQUB $70, $00, $00, $63, $0C, $01, $00, $00
 
-.L8D7A_5
+.soundData1_5
 
  EQUB $09, $63, $57, $02, $02, $00, $B0, $00
  EQUB $FF, $63, $08, $01, $00, $00
 
-.L8D7A_6
+.soundData1_6
 
  EQUB $0A, $02
  EQUB $18, $00, $01, $00, $30, $FF, $FF, $0A
  EQUB $0C, $01, $00, $00
 
-.L8D7A_7
+.soundData1_7
 
  EQUB $0D, $02, $28, $00
  EQUB $01, $00, $70, $FF, $FF, $0A, $0C, $01
  EQUB $00, $00
 
-.L8D7A_8
+.soundData1_8
 
  EQUB $19, $1C, $00, $01, $06, $00
  EQUB $70, $00, $01, $63, $06, $02, $00, $00
 
-.L8D7A_9
+.soundData1_9
 
  EQUB $5A, $09, $14, $00, $01, $00, $30, $00
  EQUB $FF, $63, $00, $0B, $00, $00
 
-.L8D7A_10
+.soundData1_10
 
  EQUB $46, $28
  EQUB $02, $00, $01, $00, $30, $00, $FF, $00
  EQUB $08, $06, $00, $03
 
-.L8D7A_11
+.soundData1_11
 
  EQUB $0E, $03, $6C, $00
  EQUB $21, $00, $B0, $00, $FF, $63, $0C, $02
  EQUB $00, $00
 
-.L8D7A_12
+.soundData1_12
 
  EQUB $13, $0F, $08, $00, $01, $00
  EQUB $30, $00, $FF, $00, $0C, $03, $00, $02
 
-.L8D7A_13
+.soundData1_13
 
  EQUB $AA, $78, $1F, $00, $01, $00, $30, $00
  EQUB $01, $00, $01, $08, $00, $0A
 
-.L8D7A_14
+.soundData1_14
 
  EQUB $59, $02
  EQUB $4F, $00, $29, $00, $B0, $FF, $01, $FF
  EQUB $00, $09, $00, $00
 
-.L8D7A_15
+.soundData1_15
 
  EQUB $19, $05, $82, $01
  EQUB $29, $00, $B0, $FF, $FF, $FF, $08, $02
  EQUB $00, $00
 
-.L8D7A_16
+.soundData1_16
 
  EQUB $22, $05, $82, $01, $29, $00
  EQUB $B0, $FF, $FF, $FF, $08, $03, $00, $00
 
-.L8D7A_17
+.soundData1_17
 
  EQUB $0F, $63, $B0, $00, $20, $00, $70, $00
  EQUB $FF, $63, $08, $02, $00, $00
 
-.L8D7A_18
+.soundData1_18
 
  EQUB $0D, $63
  EQUB $8F, $01, $31, $00, $30, $00, $FF, $63
  EQUB $10, $02, $00, $00
 
-.L8D7A_19
+.soundData1_19
 
  EQUB $18, $05, $FF, $01
  EQUB $31, $00, $30, $00, $FF, $63, $10, $03
  EQUB $00, $00
 
-.L8D7A_20
+.soundData1_20
 
  EQUB $46, $03, $42, $03, $29, $00
  EQUB $B0, $00, $FF, $FF, $0C, $06, $00, $00
 
-.L8D7A_21
+.soundData1_21
 
  EQUB $0C, $02, $57, $00, $14, $00, $B0, $00
  EQUB $FF, $63, $0C, $01, $00, $00
 
-.L8D7A_22
+.soundData1_22
 
  EQUB $82, $46
  EQUB $0F, $00, $01, $00, $B0, $00, $01, $00
  EQUB $01, $07, $00, $05
 
-.L8D7A_23
+.soundData1_23
 
  EQUB $82, $46, $00, $00
  EQUB $01, $00, $B0, $00, $FF, $00, $01, $07
  EQUB $00, $05
 
-.L8D7A_24
+.soundData1_24
 
  EQUB $19, $05, $82, $01, $29, $00
  EQUB $B0, $FF, $FF, $FF, $0E, $02, $00, $00
 
-.L8D7A_25
+.soundData1_25
 
  EQUB $AA, $78, $1F, $00, $01, $00, $30, $00
  EQUB $01, $00, $01, $08, $00, $0A
 
-.L8D7A_26
+.soundData1_26
 
  EQUB $14, $03
  EQUB $08, $00, $01, $00, $30, $00, $FF, $FF
  EQUB $00, $02, $00, $00
 
-.L8D7A_27
+.soundData1_27
 
  EQUB $01, $00, $00, $00
  EQUB $00, $00, $30, $00, $00, $00, $0D, $00
  EQUB $00, $00
 
-.L8D7A_28
+.soundData1_28
 
  EQUB $19, $05, $82, $01, $29, $00
  EQUB $B0, $FF, $FF, $FF, $0F, $02, $00, $00
 
-.L8D7A_29
+.soundData1_29
 
  EQUB $0B, $04, $42, $00, $08, $00, $B0, $00
  EQUB $01, $63, $08, $01, $00, $02
 
-.L8D7A_30
+.soundData1_30
 
  EQUB $96, $1C
  EQUB $00, $01, $06, $00, $70, $00, $01, $63
  EQUB $06, $02, $00, $00
 
-.L8D7A_31
+.soundData1_31
 
  EQUB $96, $1C, $00, $01
  EQUB $06, $00, $70, $00, $01, $63, $06, $02
  EQUB $00, $00
 
-.L8D7A_32
+.soundData1_32
 
  EQUB $14, $02, $28, $00, $01, $00
  EQUB $70, $FF, $FF, $0A, $00, $02, $00, $00
 
 ; ******************************************************************************
 ;
-;       Name: L8F7A
+;       Name: soundData2
 ;       Type: Variable
 ;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.L8F7A
+.soundData2
 
- EQUW L8F7A_1
- EQUW L8F7A_2
- EQUW L8F7A_3
- EQUW L8F7A_4
- EQUW L8F7A_5
- EQUW L8F7A_6
- EQUW L8F7A_7
- EQUW L8F7A_8
- EQUW L8F7A_9
- EQUW L8F7A_10
- EQUW L8F7A_11
- EQUW L8F7A_12
- EQUW L8F7A_13
- EQUW L8F7A_14
- EQUW L8F7A_15
- EQUW L8F7A_16
- EQUW L8F7A_17
+ EQUW soundData2_1
+ EQUW soundData2_2
+ EQUW soundData2_3
+ EQUW soundData2_4
+ EQUW soundData2_5
+ EQUW soundData2_6
+ EQUW soundData2_7
+ EQUW soundData2_8
+ EQUW soundData2_9
+ EQUW soundData2_10
+ EQUW soundData2_11
+ EQUW soundData2_12
+ EQUW soundData2_13
+ EQUW soundData2_14
+ EQUW soundData2_15
+ EQUW soundData2_16
+ EQUW soundData2_17
 
-.L8F7A_1
+.soundData2_1
 
  EQUB $0F, $0D, $0B, $09, $07, $05  ; 8F9A: 1D 90 0F... ...
  EQUB $03, $01, $00, $FF
 
-.L8F7A_2
+.soundData2_2
 
  EQUB $03, $05, $07, $09  ; 8FA2: 03 01 00... ...
  EQUB $0A, $0C, $0E, $0E, $0E, $0C, $0C, $0A  ; 8FAA: 0A 0C 0E... ...
  EQUB $0A, $09, $09, $07, $06, $05, $04, $03  ; 8FB2: 0A 09 09... ...
  EQUB $02, $02, $01, $FF
 
-.L8F7A_3
+.soundData2_3
 
  EQUB $02, $06, $08, $00  ; 8FBA: 02 02 01... ...
  EQUB $FF
 
-.L8F7A_4
+.soundData2_4
 
  EQUB $06, $08, $0A, $0B, $0C, $0B, $0A  ; 8FC2: FF 06 08... ...
  EQUB $09, $08, $07, $06, $05, $04, $03, $02  ; 8FCA: 09 08 07... ...
  EQUB $01, $FF
 
-.L8F7A_5
+.soundData2_5
 
  EQUB $01, $03, $06, $08, $0C, $80  ; 8FD2: 01 FF 01... ...
 
-.L8F7A_6
+.soundData2_6
 
  EQUB $01, $04, $09, $0D, $80
 
-.L8F7A_7
+.soundData2_7
 
  EQUB $01, $04, $07  ; 8FDA: 01 04 09... ...
  EQUB $09, $FF
 
-.L8F7A_8
+.soundData2_8
 
  EQUB $09, $80
 
-.L8F7A_9
+.soundData2_9
 
  EQUB $0E, $0C, $0B, $09  ; 8FE2: 09 FF 09... ...
  EQUB $07, $05, $04, $03, $02, $01, $FF
 
-.L8F7A_10
+.soundData2_10
 
  EQUB $0C  ; 8FEA: 07 05 04... ...
  EQUB $00, $00, $0C, $00, $00, $FF
 
-.L8F7A_11
+.soundData2_11
 
  EQUB $0B, $80  ; 8FF2: 00 00 0C... ...
 
-.L8F7A_12
+.soundData2_12
 
  EQUB $0A, $0B, $0C, $0D, $0C, $80
 
-.L8F7A_13
+.soundData2_13
 
  EQUB $0C, $0A  ; 8FFA: 0A 0B 0C... ...
  EQUB $09, $07, $05, $04, $03, $02, $01, $FF  ; 9002: 09 07 05... ...
 
-.L8F7A_14
+.soundData2_14
 
  EQUB $00, $FF
 
-.L8F7A_15
+.soundData2_15
 
  EQUB $04, $05, $06, $06, $05, $04  ; 900A: 00 FF 04... ...
  EQUB $03, $02, $01, $FF
 
-.L8F7A_16
+.soundData2_16
 
  EQUB $06, $05, $04, $03  ; 9012: 03 02 01... ...
  EQUB $02, $01, $FF
 
-.L8F7A_17
+.soundData2_17
 
  EQUB $0C, $0A, $09, $07, $05  ; 901A: 02 01 FF... ...
  EQUB $05, $04, $04, $03, $03, $02, $02, $01  ; 9022: 05 04 04... ...
@@ -2830,14 +2831,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: L915F
+;       Name: musicData1
 ;       Type: Variable
 ;   Category: Sound
 ;    Summary: ???
 ;
 ; ******************************************************************************
 
-.L915F
+.musicData1
 
  EQUB $2F
  EQUW L9827
@@ -4129,9 +4130,9 @@ ENDIF
                         ; so jump to paug4 to start the music playing (if a tune
                         ; is configured)
 
- JSR StopNoises_b6      ; Otherwise music has just been enabled, so call
-                        ; StopNoises to stop any noises that are being made
-                        ; (sound or music)
+ JSR StopSounds_b6      ; Otherwise music has just been enabled, so call
+                        ; StopSounds to stop any sounds that are being made
+                        ; (music or sound effects)
 
  JMP paug11             ; Jump to paug11 to update the icon bar and loop back to
                         ; keep listening for button presses

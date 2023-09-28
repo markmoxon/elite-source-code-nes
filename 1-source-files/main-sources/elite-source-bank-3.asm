@@ -2120,8 +2120,8 @@ ENDIF
 
  BNE svip12             ; Loop back until we have sent all 16 zeroes to the PPU
 
- JSR MakeNoisesAtVBlank ; Wait for the next VBlank and current noises (sound and
-                        ; music)
+ JSR MakeSoundsAtVBlank ; Wait for the next VBlank and make the current sounds
+                        ; (music and sound effects)
 
  LDX #0                 ; Configure bitplane 0 to be sent to the PPU in the NMI,
  JSR SendBitplaneToPPU  ; so the patterns and nametables will be sent to the PPU
@@ -2141,8 +2141,8 @@ ENDIF
 
  JSR SetDrawingBitplane ; Set the drawing bitplane to bitplane 0
 
- JSR MakeNoisesAtVBlank ; Wait for the next VBlank and current noises (sound and
-                        ; music)
+ JSR MakeSoundsAtVBlank ; Wait for the next VBlank and make the current sounds
+                        ; (music and sound effects)
 
  LDA QQ11               ; Set the old view type in QQ11a to the new view type in
  STA QQ11a              ; QQ11, to denote that we have now changed view to the
@@ -2446,8 +2446,8 @@ ENDIF
                         ; PPU, so we play the background music and repeat the
                         ; above
 
- JSR MakeNoisesAtVBlank ; Wait for the next VBlank and current noises (sound and
-                        ; music)
+ JSR MakeSoundsAtVBlank ; Wait for the next VBlank and make the current sounds
+                        ; (music and sound effects)
 
  JMP SendDataNowToPPU   ; Loop back to keep sending data to the PPU
 
@@ -2458,9 +2458,9 @@ ENDIF
 
 .sdat2
 
- JMP MakeNoisesAtVBlank ; Wait for the next VBlank and current noises (sound and
-                        ; music), returning from the subroutine using a tail
-                        ; call
+ JMP MakeSoundsAtVBlank ; Wait for the next VBlank and make the current sounds
+                        ; (music and sound effects), returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -2551,13 +2551,17 @@ ENDIF
 
  LDX #0                 ; This instruction has no effect as the call to
                         ; SetDrawPlaneFlags overwrites X with the value of the
-                        ; drawing bitplane
+                        ; drawing bitplane, though this could be remnants of
+                        ; code to set the drawing bitplane to 0, as the
+                        ; following code depends on this being the case
 
  PLA                    ; Retrieve the bitplane flags that were passed to this
                         ; routine and which we stored on the stack above
 
  JSR SetDrawPlaneFlags  ; Set the bitplane flags to A for the current drawing
-                        ; bitplane, which is bitplane 0 at this point ???
+                        ; bitplane, which must be bitplane 0 at this point
+                        ; (though it is not entirely obvious why this is the
+                        ; case)
 
  INC drawingBitplane    ; Increment drawingBitplane to 1
 
@@ -3792,7 +3796,9 @@ ENDIF
                         ; background tile
 
  LDA #32                ; Set A = 32 as the tile pattern number to show at the
-                        ; start of row 27 ???
+                        ; start of row 27 (though I don't know why we do this,
+                        ; as pattern 32 is part of the icon bar pattern, so this
+                        ; seems a bit strange)
 
  LDY #0                 ; Set the first nametable entry on tile row 27 to A
  STA (SC),Y

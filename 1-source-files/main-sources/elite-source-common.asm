@@ -362,10 +362,10 @@ ENDIF
 
 IF NOT(_BANK = 6)
 
- StopNoisesS        = $8012
+ StopSoundsS        = $8012
  ChooseMusic        = $8021
- MakeNoises         = $811E
- MakeNoise          = $89D1
+ MakeSounds         = $811E
+ MakeSoundEffect    = $89D1
  DrawCmdrImage      = $A082
  DrawSpriteImage    = $A0F8
  PauseGame          = $A166
@@ -1610,11 +1610,12 @@ ENDIF
                         ;                ROM banks
                         ;
                         ; This is used to control whether the NMI handler calls
-                        ; the MakeNoises routine to make the current noises
-                        ; (sound and music), as this can only happen if we are
-                        ; not in the middle of switching ROM banks (if we are,
-                        ; then MakeNoises is called once the bank-switching is
-                        ; done - see the SetBank routine for details)
+                        ; the MakeSounds routine to make the current sounds
+                        ; (music and sound effects), as this can only happen if
+                        ; we are not in the middle of switching ROM banks (if
+                        ; we are, then MakeSounds is only called once the
+                        ; bank-switching is done - see the SetBank routine for
+                        ; details)
 
 .characterEnd
 
@@ -2749,17 +2750,29 @@ ORG $0200
 
  SKIP 1                 ; A variable used by David Whittaker's sound module
 
-.soundVar02
+.soundChannel0
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; Records whether a sound is being made on channel 0
+                        ;
+                        ;   * 0 = no sound is being made on channel 0
+                        ;
+                        ;   * Non-zero = a sound is being made on channel 0
 
-.soundVar03
+.soundChannel1
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; Records whether a sound is being made on channel 1
+                        ;
+                        ;   * 0 = no sound is being made on channel 1
+                        ;
+                        ;   * Non-zero = a sound is being made on channel 1
 
-.soundVar04
+.soundChannel2
 
- SKIP 1                 ; A variable used by David Whittaker's sound module
+ SKIP 1                 ; Records whether a sound is being made on channel 2
+                        ;
+                        ;   * 0 = no sound is being made on channel 2
+                        ;
+                        ;   * Non-zero = a sound is being made on channel 2
 
 .soundVar05
 
