@@ -442,17 +442,17 @@ ENDIF
 
 .EnableSound
 
- LDA soundVar0D
- BEQ enas1
+ LDA soundVar0D         ; If soundVar0D = 0, jump to enas1 to leave enableSound
+ BEQ enas1              ; alone and return from the subroutine
 
- LDA enableSound
- BNE enas1
+ LDA enableSound        ; If enableSound is already non-zero, jump to enas1 to
+ BNE enas1              ; leave it and return from the subroutine
 
- INC enableSound
+ INC enableSound        ; Otherwise increment enableSound from 0 to 1
 
 .enas1
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -465,37 +465,50 @@ ENDIF
 
 .StopSounds
 
- LDA #0
- STA enableSound
+ LDA #0                 ; Set enableSound = 0 to disable all sounds (music and
+ STA enableSound        ; sound effects)
 
- STA soundChannel0
+ STA statusOfSQ1        ; Set statusOfSQ1 = 0 to indicate the SQ1 channel is
+                        ; clear
 
- STA soundChannel1
+ STA statusOfSQ2        ; Set statusOfSQ2 = 0 to indicate the SQ2 channel is
+                        ; clear
 
- STA soundChannel2
+ STA statusOfNOISE      ; Set statusOfNOISE = 0 to indicate the NOISE channel is
+                        ; clear
 
- TAX
+ TAX                    ; We now clear the 16 bytes at soundVar5A, so et X = 0
+                        ; to act as an index in the following loop
 
 .stop1
 
- STA soundVar5A,X
+ STA soundVar5A,X       ; Zero the X-th byte of soundVar5A
 
- INX
+ INX                    ; Increment the index counter
 
- CPX #16
+ CPX #16                ; Lopo back until we have cleared all 16 bytes
  BNE stop1
 
- STA TRI_LINEAR
+ STA TRI_LINEAR         ; Zero the linear counter for the TRI channel
 
- LDA #48
- STA SQ1_VOL
- STA SQ2_VOL
- STA NOISE_VOL
+ LDA #%00110000         ; Set the volume of the SQ1, SQ2 and NOISE channels to
+ STA SQ1_VOL            ; zero as follows:
+ STA SQ2_VOL            ;
+ STA NOISE_VOL          ;   * Bits 6-7    = duty pulse length is 3
+                        ;   * Bit 5 set   = infinite play
+                        ;   * Bit 4 set   = constant volume
+                        ;   * Bits 0-3    = volume is 0
 
- LDA #15
- STA SND_CHN
+ LDA #%00001111         ; Enable the sound channels by writing to the sound
+ STA SND_CHN            ; status register in SND_CHN as follows:
+                        ;
+                        ;   Bit 4 clear = disable the DMC channel
+                        ;   Bit 3 set   = enable the NOISE channel
+                        ;   Bit 2 set   = enable the TRI channel
+                        ;   Bit 1 set   = enable the SQ2 channel
+                        ;   Bit 0 set   = enable the SQ1 channel
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -508,14 +521,16 @@ ENDIF
 
 .MakeSounds
 
- JSR MakeMusic
+ JSR MakeMusic          ; Play the current music on the SQ1, SQ2, TRI and
+                        ;NOISE channels
 
- JSR MakeSound
+ JSR MakeSound          ; Play the current sound effects on the SQ1, SQ2 and
+                        ; NOISE channels
 
- LDA enableSound
- BEQ maks3
+ LDA enableSound        ; If enableSound = 0 then sound is disabled, so jump to
+ BEQ maks3              ; maks3 to return from the subroutine
 
- LDA soundChannel0
+ LDA statusOfSQ1
  BNE maks1
 
  LDA soundVar5A
@@ -529,7 +544,7 @@ ENDIF
 
 .maks1
 
- LDA soundChannel1
+ LDA statusOfSQ2
  BNE maks2
 
  LDA soundVar5E
@@ -546,7 +561,7 @@ ENDIF
  LDA soundVar64
  STA TRI_LO
 
- LDA soundChannel2
+ LDA statusOfNOISE
  BNE maks3
 
  LDA soundVar66
@@ -557,50 +572,57 @@ ENDIF
 
 .maks3
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: MakeMusic
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Play the current music
+;    Summary: Play the current music on the SQ1, SQ2, TRI and NOISE channels
 ;
 ; ******************************************************************************
 
 .MakeMusic
 
- LDA enableSound
- BNE makm1
+ LDA enableSound        ; If enableSound is non-zero then sound is enabled, so
+ BNE makm1              ; jump to makm1 to play the current music
 
- RTS
+ RTS                    ; Otherwise sound is disabled, so return from the
+                        ; subroutine
 
 .makm1
 
- LDA soundVar05
+ LDA soundVar05         ; Set soundVar0B = soundVar0B + soundVar05
  CLC
  ADC soundVar0B
  STA soundVar0B
 
- BCC makm2
+ BCC makm2              ; If the addition didn't overflow, jump to makm2 to skip
+                        ; playing music in this VBlank
 
- JSR MakeMusicOnSQ1
+ JSR MakeMusicOnSQ1     ; Play the current music on the SQ1 channel
 
- JSR MakeMusicOnSQ2
+ JSR MakeMusicOnSQ2     ; Play the current music on the SQ2 channel
 
- JSR MakeMusicOnTRI
+ JSR MakeMusicOnTRI     ; Play the current music on the TRI channel
 
- JSR MakeMusicOnNOISE
+ JSR MakeMusicOnNOISE   ; Play the current music on the NOISE channel
 
 .makm2
 
- JSR GetNextForSQ1
+ JSR GetNextForSQ1      ; Fetch details of the next bit of music for the SQ1
+                        ; channel
 
- JSR GetNextForSQ2
+ JSR GetNextForSQ2      ; Fetch details of the next bit of music for the SQ2
+                        ; channel
 
- JSR GetNextForTRI
+ JSR GetNextForTRI      ; Fetch details of the next bit of music for the TRI
+                        ; channel
 
- JMP GetNextForNOISE
+ JMP GetNextForNOISE    ; Fetch details of the next bit of music for the NOISE
+                        ; channel, returning from the subroutine using a tail
+                        ; call
 
 ; ******************************************************************************
 ;
@@ -677,7 +699,7 @@ ENDIF
  LDA noteFrequency+1,Y
  STA soundVar5D
 
- LDX soundChannel0
+ LDX statusOfSQ1
  BNE muso5
 
  LDX soundVar18
@@ -1100,7 +1122,7 @@ ENDIF
  LDA noteFrequency+1,Y
  STA soundVar61
 
- LDX soundChannel1
+ LDX statusOfSQ2
  BNE must5
 
  LDX soundVar2B
@@ -1863,7 +1885,7 @@ ENDIF
 
  LDY #0
 
- LDX soundChannel2
+ LDX statusOfNOISE
  BNE musf5
 
  STA NOISE_LO
@@ -2246,7 +2268,7 @@ ENDIF
  TAY
 
  LDA #0
- STA soundChannel0
+ STA statusOfSQ1
 
  LDA sound1Data,Y
  STA soundAddr
@@ -2305,7 +2327,7 @@ ENDIF
  STA soundVar7A
  STA SQ1_HI
 
- INC soundChannel0
+ INC statusOfSQ1
 
  RTS
 
@@ -2356,7 +2378,7 @@ ENDIF
  TAY
 
  LDA #0
- STA soundChannel1
+ STA statusOfSQ2
 
  LDA sound1Data,Y
  STA soundAddr
@@ -2415,7 +2437,7 @@ ENDIF
  STA soundVar8E
  STA SQ2_HI
 
- INC soundChannel1
+ INC statusOfSQ2
 
  RTS
 
@@ -2434,7 +2456,7 @@ ENDIF
  TAY
 
  LDA #0
- STA soundChannel2
+ STA statusOfNOISE
 
  LDA sound1Data,Y
  STA soundAddr
@@ -2493,7 +2515,7 @@ ENDIF
  LDA #0
  STA NOISE_HI
 
- INC soundChannel2
+ INC statusOfNOISE
 
  RTS
 
@@ -2508,13 +2530,14 @@ ENDIF
 
 .MakeSound
 
- JSR UpdateSoundSeeds
+ JSR UpdateSoundSeeds   ; Update the sound seeds
 
- JSR MakeSoundOnSQ1
+ JSR MakeSoundOnSQ1     ; Play the current sound effect on the SQ1 channel
 
- JSR MakeSoundOnSQ2
+ JSR MakeSoundOnSQ2     ; Play the current sound effect on the SQ2 channel
 
- JMP MakeSoundOnNOISE
+ JMP MakeSoundOnNOISE   ; Play the current sound effect on the NOISE channel,
+                        ; returning from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -2527,7 +2550,7 @@ ENDIF
 
 .MakeSoundOnSQ1
 
- LDA soundChannel0
+ LDA statusOfSQ1
  BNE mscz1
 
  RTS
@@ -2540,8 +2563,9 @@ ENDIF
  LDX soundVar77
  BNE mscz3
 
- LDA enableSound
- BEQ mscz2
+ LDA enableSound        ; If enableSound = 0 then sound is disabled, so jump to
+ BEQ mscz2              ; mscz2 to silence the SQ1 channel and return from the
+                        ; subroutine
 
  LDA soundVar5A
  STA SQ1_VOL
@@ -2552,18 +2576,23 @@ ENDIF
  LDA soundVar5D
  STA SQ1_HI
 
- STX soundChannel0
+ STX statusOfSQ1
 
  RTS
 
 .mscz2
 
- LDA #$30
- STA SQ1_VOL
+ LDA #%00110000         ; Set the volume of the SQ1 channel to zero as follows:
+ STA SQ1_VOL            ;
+                        ;   * Bits 6-7    = duty pulse length is 3
+                        ;   * Bit 5 set   = infinite play
+                        ;   * Bit 4 set   = constant volume
+                        ;   * Bits 0-3    = volume is 0
 
- STX soundChannel0
+ STX statusOfSQ1        ; Set statusOfSQ1 = 0 to indicate the SQ1 channel is
+                        ; clear
 
- RTS
+ RTS                    ; Return from the subroutine
 
 .mscz3
 
@@ -2708,7 +2737,7 @@ ENDIF
 
 .MakeSoundOnSQ2
 
- LDA soundChannel1
+ LDA statusOfSQ2
  BNE msco1
 
  RTS
@@ -2721,8 +2750,9 @@ ENDIF
  LDX soundVar8B
  BNE msco3
 
- LDA enableSound
- BEQ msco2
+ LDA enableSound        ; If enableSound = 0 then sound is disabled, so jump to
+ BEQ msco2              ; msco2 to silence the SQ2 channel and return from the
+                        ; subroutine
 
  LDA soundVar5E
  STA SQ2_VOL
@@ -2733,18 +2763,23 @@ ENDIF
  LDA soundVar61
  STA SQ2_HI
 
- STX soundChannel1
+ STX statusOfSQ2
 
  RTS
 
 .msco2
 
- LDA #$30
- STA SQ2_VOL
+ LDA #%00110000         ; Set the volume of the SQ2 channel to zero as follows:
+ STA SQ2_VOL            ;
+                        ;   * Bits 6-7    = duty pulse length is 3
+                        ;   * Bit 5 set   = infinite play
+                        ;   * Bit 4 set   = constant volume
+                        ;   * Bits 0-3    = volume is 0
 
- STX soundChannel1
+ STX statusOfSQ2        ; Set statusOfSQ2 = 1 to indicate the SQ2 channel is
+                        ; clear
 
- RTS
+ RTS                    ; Return from the subroutine
 
 .msco3
 
@@ -2890,7 +2925,7 @@ ENDIF
 
 .MakeSoundOnNOISE
 
- LDA soundChannel2
+ LDA statusOfNOISE
  BNE msct1
 
  RTS
@@ -2903,8 +2938,9 @@ ENDIF
  LDX soundVar9F
  BNE msct3
 
- LDA enableSound
- BEQ msct2
+ LDA enableSound        ; If enableSound = 0 then sound is disabled, so jump to
+ BEQ msct2              ; msct2 to silence the NOISE channel and return from the
+                        ; subroutine
 
  LDA soundVar66
  STA NOISE_VOL
@@ -2912,18 +2948,24 @@ ENDIF
  LDA soundVar68
  STA NOISE_LO
 
- STX soundChannel2
+ STX statusOfNOISE
 
  RTS
 
 .msct2
 
- LDA #$30
- STA NOISE_VOL
+ LDA #%00110000         ; Set the volume of the NOISE channel to zero as
+ STA NOISE_VOL          ; follows:
+                        ;
+                        ;   * Bits 6-7    = duty pulse length is 3
+                        ;   * Bit 5 set   = infinite play
+                        ;   * Bit 4 set   = constant volume
+                        ;   * Bits 0-3    = volume is 0
 
- STX soundChannel2
+ STX statusOfNOISE      ; Set statusOfNOISE = 0 to indicate the NOISE channel is
+                        ; clear
 
- RTS
+ RTS                    ; Return from the subroutine
 
 .msct3
 
@@ -3052,18 +3094,35 @@ ENDIF
 
 .UpdateSoundSeeds
 
- LDA soundVar07
- AND #%01001000
- ADC #%00111000
- ASL A
- ASL A
+ LDA soundVar07         ; Set A to soundVar07 with all bits cleared except for
+ AND #%01001000         ; bits 3 and 6
 
- ROL soundVar07+3
- ROL soundVar07+2
+ ADC #%00111000         ; Add %00111000, so if bit 3 of A is clear, we leave
+                        ; bit 6 alone, otherwise bit 6 gets flipped
+                        ;
+                        ; The C flag doesn't affect this calculation, as it
+                        ; will only affect bit 0, which we don't care about
+
+ ASL A                  ; Set the C flag to bit 6 of A
+ ASL A                  ;
+                        ; So the C flag is:
+                        ;
+                        ;   * Bit 6 of soundVar07 if bit 3 of soundVar07 is
+                        ;     clear
+                        ;
+                        ;   * Bit 6 of soundVar07 flipped if bit 3 of soundVar07
+                        ;     is set
+                        ;
+                        ; Or, to put it another way:
+                        ;
+                        ;   C = bit 6 of soundVar07 EOR bit 3 of soundVar07
+
+ ROL soundVar07+3       ; Rotate soundVar07(0 1 2 3) left, inserting the C flag
+ ROL soundVar07+2       ; into bit 0 of soundVar07+3
  ROL soundVar07+1
  ROL soundVar07
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -9872,9 +9931,9 @@ ENDIF
                         ; that, jump to mlef6 to check the icon bar buttons
 
                         ; If we get here then the right button is being pressed,
-                        ; so we need to move the highlight right from its current
-                        ; position (which is given in A and is always 9) to the
-                        ; middle column
+                        ; so we need to move the highlight right from its
+                        ; current position (which is given in A and is always 9)
+                        ; to the middle column
 
  JSR PrintSaveName      ; Print the name of the commander file in its current
                         ; position in A, to remove the highlight

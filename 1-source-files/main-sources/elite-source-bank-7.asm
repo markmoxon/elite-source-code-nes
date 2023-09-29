@@ -12514,13 +12514,13 @@ ENDIF
 ;       Name: FlushSoundChannels
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Flush sound channels 0, 1 and 2
+;    Summary: Flush the SQ1, SQ2 and NOISE sound channels
 ;
 ; ******************************************************************************
 
 .FlushSoundChannels
 
- LDX #0                 ; Flush sound channel 0
+ LDX #0                 ; Flush the SQ1 sound channel
  JSR FlushSoundChannel
 
                         ; Fall through into FlushChannels1And2 to flush sound
@@ -12537,11 +12537,11 @@ ENDIF
 
 .FlushChannels1And2
 
- LDX #1                 ; Flush sound channel 1
+ LDX #1                 ; Flush the SQ2 sound channel
  JSR FlushSoundChannel
 
- LDX #2                 ; Flush sound channel 2, returning from the subroutine
- BNE FlushSoundChannel  ; using a tail call
+ LDX #2                 ; Flush the NOISE sound channel, returning from the
+ BNE FlushSoundChannel  ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -12555,15 +12555,15 @@ ENDIF
 ; The sound channels are flushed according to the specific sound's value in the
 ; soundChannel table:
 ;
-;   * If soundChannel = 0, flush sound channel 0
+;   * If soundChannel = 0, flush the SQ1 sound channel
 ;
-;   * If soundChannel = 1, flush sound channel 1
+;   * If soundChannel = 1, flush the SQ2 sound channel
 ;
-;   * If soundChannel = 2, flush sound channel 2
+;   * If soundChannel = 2, flush the NOISE sound channel
 ;
-;   * If soundChannel = 3, flush sound channels 0 and 2
+;   * If soundChannel = 3, flush the SQ1 and NOISE sound channels
 ;
-;   * If soundChannel = 4, flush sound channels 1 and 2
+;   * If soundChannel = 4, flush the SQ2 and NOISE sound channels
 ;
 ; Arguments:
 ;
@@ -12586,11 +12586,11 @@ ENDIF
                         ; If we get here then we know X = 3, so now we flush
                         ; sound channels 0 and 2
 
- LDX #0                 ; Flush sound channel 0
+ LDX #0                 ; Flush the SQ1 sound channel
  JSR FlushSoundChannel
 
  LDX #2                 ; Set X = 2 and fall through into FlushSoundChannel to
-                        ; flush sound channel 2
+                        ; flush the NOISE sound channel
 
 ; ******************************************************************************
 ;
@@ -12604,6 +12604,12 @@ ENDIF
 ; Arguments:
 ;
 ;   X                   The sound channel to flush
+;
+;                         * 0 = flush the SQ1 sound channel
+;
+;                         * 1 = flush the SQ2 sound channel
+;
+;                         * 2 = flush the NOISE sound channel
 ;
 ; ******************************************************************************
 
@@ -12664,7 +12670,7 @@ ENDIF
 
 .MakeHyperSound
 
- JSR FlushSoundChannels ; Flush all the sound channels
+ JSR FlushSoundChannels ; Flush the SQ1, SQ2 and NOISE sound channels
 
  LDY #21                ; Set Y = 21 and fall through into the NOISE routine to
                         ; make the hyperspace sound
@@ -12745,23 +12751,23 @@ ENDIF
 
  DEX                    ; Set X = X - 3, so X is now 0 or 1, which is the number
  DEX                    ; of the first channel we need to make the sound on
- DEX
+ DEX                    ; (i.e. the SQ1 or SQ2 channel)
 
  JSR nois1              ; Call nois1 to make the sound effect on channel X, so
-                        ; that's channel 0 or 1
+                        ; that's the SQ1 or SQ2 channel
 
  PLA                    ; Restore the sound effect number from the stack into Y
  TAY
 
  LDX #2                 ; Set X = 2 and fall through into nois1 to make the
-                        ; sound effect on channel 2, which is the number of the
-                        ; second channel we need to make the sound on
+                        ; sound effect on the NOISE channel, which is the number
+                        ; of the second channel we need to make the sound on
 
 .nois1
 
- LDA soundChannel0,X    ; If the value of soundChannelX for channel X is zero,
- BEQ nois2              ; then there is no sound being made on this channel at
-                        ; the moment, so jump to nois2 to make the sound
+ LDA statusOfSQ1,X      ; If the status flag for channel X is zero, then there
+ BEQ nois2              ; is no sound being made on this channel at the moment,
+                        ; so jump to nois2 to make the sound
 
  LDA soundPriority,Y    ; Otherwise set A to the priority of the sound effect we
                         ; want to make
@@ -12833,15 +12839,15 @@ ENDIF
 ;
 ; The sound channels used by each sound are defined as follows:
 ;
-;   * If soundChannel = 0, use sound channel 0
+;   * If soundChannel = 0, use the SQ1 sound channel
 ;
-;   * If soundChannel = 1, use sound channel 1
+;   * If soundChannel = 1, use the SQ2 sound channel
 ;
-;   * If soundChannel = 2, use sound channel 2
+;   * If soundChannel = 2, use the NOISE sound channel
 ;
-;   * If soundChannel = 3, use sound channels 0 and 2
+;   * If soundChannel = 3, use the SQ1 and NOISE sound channels
 ;
-;   * If soundChannel = 4, use sound channels 1 and 2
+;   * If soundChannel = 4, use the SQ2 and NOISE sound channels
 ;
 ; ******************************************************************************
 

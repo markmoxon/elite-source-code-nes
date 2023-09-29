@@ -1001,9 +1001,10 @@ ENDIF
  LDA MSTG               ; If MSTG is positive (i.e. it does not have bit 7 set),
  BPL main38             ; then it indicates we already have a missile locked on
                         ; a target (in which case MSTG contains the ship number
-                        ; of the target), so jump to main38 to skip targeting. Or
-                        ; to put it another way, if MSTG = $FF, which means
-                        ; there is no current target lock, keep going
+                        ; of the target), so jump to main38 to skip targeting
+                        ;
+                        ; Or to put it another way, if MSTG = $FF, which means
+                        ; there is no current target lock, then keep going
 
 .main37
 
@@ -5583,8 +5584,8 @@ ENDIF
                         ; the laser checks
 
  CPX #161               ; If X < 161, i.e. X > -31, then we are not in the enemy
- BCC tact1              ; ship's line of fire, so jump to tact1 to skip the laser
-                        ; checks
+ BCC tact1              ; ship's line of fire, so jump to tact1 to skip the
+                        ; laser checks
 
  LDA INWK+31            ; Set bit 6 in byte #31 to denote that the ship is
  ORA #%01000000         ; firing its laser at us
@@ -5763,8 +5764,8 @@ ENDIF
                         ; following
 
  LDA INWK+1             ; If any of x_hi, y_hi or z_hi have bits 3 to 7 set,
- ORA INWK+4             ; then at least one of them is greater than 7, so jump to
- ORA INWK+7             ; tact7 to consider slowing down to make a turn
+ ORA INWK+4             ; then at least one of them is greater than 7, so jump
+ ORA INWK+7             ; to tact7 to consider slowing down to make a turn
  AND #%11111000
  BNE tact7
 
@@ -19680,8 +19681,8 @@ ENDIF
  LDA #$01               ; Clear the screen and and set the view type in QQ11 to
  JSR ChangeToView       ; $01 (Title screen)
 
- LDA #7                 ; Set YP = 7 to use as the outer loop counter for the loop
- STA YP                 ; starting at TLL2
+ LDA #7                 ; Set YP = 7 to use as the outer loop counter for the
+ STA YP                 ; loop starting at TLL2
 
 .titl1
 

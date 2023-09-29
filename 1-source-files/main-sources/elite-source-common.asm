@@ -2755,29 +2755,32 @@ ORG $0200
                         ;
                         ;   * Non-zero = sound is enabled
 
-.soundChannel0
+.statusOfSQ1
 
- SKIP 1                 ; Records whether a sound is being made on channel 0
+ SKIP 1                 ; Records whether a sound is being made on the SQ1
+                        ; channel
                         ;
-                        ;   * 0 = no sound is being made on channel 0
+                        ;   * 0 = no sound is being made on SQ1
                         ;
-                        ;   * Non-zero = a sound is being made on channel 0
+                        ;   * Non-zero = a sound is being made on SQ1
 
-.soundChannel1
+.statusOfSQ2
 
- SKIP 1                 ; Records whether a sound is being made on channel 1
+ SKIP 1                 ; Records whether a sound is being made on the SQ2
+                        ; channel
                         ;
-                        ;   * 0 = no sound is being made on channel 1
+                        ;   * 0 = no sound is being made on SQ2
                         ;
-                        ;   * Non-zero = a sound is being made on channel 1
+                        ;   * Non-zero = a sound is being made on SQ2
 
-.soundChannel2
+.statusOfNOISE
 
- SKIP 1                 ; Records whether a sound is being made on channel 2
+ SKIP 1                 ; Records whether a sound is being made on the NOISE
+                        ; channel
                         ;
-                        ;   * 0 = no sound is being made on channel 2
+                        ;   * 0 = no sound is being made on NOISE
                         ;
-                        ;   * Non-zero = a sound is being made on channel 2
+                        ;   * Non-zero = a sound is being made on NOISE
 
 .soundVar05
 
