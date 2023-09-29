@@ -214,47 +214,47 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: MakeEffectChannel0S
+;       Name: MakeEffectOnSQ1S
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: A jump table entry at the start of bank 6 for the
-;             MakeEffectChannel0 routine
+;    Summary: A jump table entry at the start of bank 6 for the MakeEffectOnSQ1
+;             routine
 ;
 ; ******************************************************************************
 
-.MakeEffectChannel0S
+.MakeEffectOnSQ1S
 
- JMP MakeEffectChannel0 ; Jump to the MakeEffectChannel0 routine, returning from
+ JMP MakeEffectOnSQ1    ; Jump to the MakeEffectOnSQ1 routine, returning from
                         ; the subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: MakeEffectChannel1S
+;       Name: MakeEffectOnSQ2S
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: A jump table entry at the start of bank 6 for the
-;             MakeEffectChannel1 routine
+;    Summary: A jump table entry at the start of bank 6 for the MakeEffectOnSQ2
+;             routine
 ;
 ; ******************************************************************************
 
-.MakeEffectChannel1S
+.MakeEffectOnSQ2S
 
- JMP MakeEffectChannel1 ; Jump to the MakeEffectChannel1 routine, returning from
+ JMP MakeEffectOnSQ2    ; Jump to the MakeEffectOnSQ2 routine, returning from
                         ; the subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: MakeEffectChannel2S
+;       Name: MakeEffectOnNOISES
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: A jump table entry at the start of bank 6 for the
-;             MakeEffectChannel2 routine
+;             MakeEffectOnNOISE routine
 ;
 ; ******************************************************************************
 
-.MakeEffectChannel2S
+.MakeEffectOnNOISES
 
- JMP MakeEffectChannel2 ; Jump to the MakeEffectChannel2 routine, returning from
+ JMP MakeEffectOnNOISE  ; Jump to the MakeEffectOnNOISE routine, returning from
                         ; the subroutine using a tail call
 
 ; ******************************************************************************
@@ -266,6 +266,16 @@ ENDIF
 ;
 ; ------------------------------------------------------------------------------
 ;
+; The tune numbers are as follows:
+;
+;   * 0 for the title music ("Elite Theme"), set in the in TITLE routine and as
+;       the default in the ResetMusic routine
+;
+;   * 1 for docking (Blue Danube), set in the TT102 routine
+;
+;   * 4 for the demo (Assassin's Touch = scroll text, Game Theme = combat), set
+;       in DEATH2
+;
 ; Arguments:
 ;
 ;   A                   The number of the tune to choose
@@ -275,22 +285,30 @@ ENDIF
 .ChooseMusic
 
  TAY
+
  JSR StopSoundsS
+
  LDA #0
+
  CLC
 
 .cmus1
 
  DEY
+
  BMI cmus2
+
  ADC #9
+
  BNE cmus1
 
 .cmus2
 
  TAX
+
  LDA #0
- LDY #$12
+
+ LDY #18
 
 .cmus3
 
@@ -298,74 +316,119 @@ ENDIF
  STA soundAddr2,Y
  STA soundAddr4,Y
  STA soundAddr6,Y
+
  DEY
+
  BPL cmus3
+
  TAY
+
  LDA music3Data,X
  STA soundVar05
+
  STA soundVar06
+
  LDA music3Data+1,X
  STA soundAddr1
+
  STA soundAddr
+
  LDA music3Data+2,X
+
  STA soundAddr1+1
+
  STA soundAddr+1
+
  LDA (soundAddr),Y
  STA soundAddr0
+
  INY
+
  LDA (soundAddr),Y
  STA soundAddr0+1
+
  LDA music3Data+3,X
  STA soundAddr3
+
  STA soundAddr
+
  LDA music3Data+4,X
  STA soundAddr3+1
+
  STA soundAddr+1
+
  DEY
+
  LDA (soundAddr),Y
  STA soundAddr2
+
  INY
+
  LDA (soundAddr),Y
  STA soundAddr2+1
+
  LDA music3Data+5,X
  STA soundAddr5
+
  STA soundAddr
+
  LDA music3Data+6,X
  STA soundAddr5+1
+
  STA soundAddr+1
+
  DEY
+
  LDA (soundAddr),Y
  STA soundAddr4
+
  INY
+
  LDA (soundAddr),Y
  STA soundAddr4+1
+
  LDA music3Data+7,X
  STA soundAddr7
+
  STA soundAddr
+
  LDA music3Data+8,X
  STA soundAddr7+1
+
  STA soundAddr+1
+
  DEY
+
  LDA (soundAddr),Y
  STA soundAddr6
+
  INY
+
  LDA (soundAddr),Y
  STA soundAddr6+1
+
  STY soundVar16
  STY soundVar29
  STY soundVar3C
  STY soundVar4F
+
  INY
+
  STY soundVar12
  STY soundVar25
  STY soundVar38
  STY soundVar4B
+
  LDX #0
  STX soundVar0C
+
  DEX
+
  STX soundVar0B
  STX soundVar0D
+
  INC enableSound
+
  RTS
 
 ; ******************************************************************************
@@ -381,8 +444,10 @@ ENDIF
 
  LDA soundVar0D
  BEQ enas1
+
  LDA enableSound
  BNE enas1
+
  INC enableSound
 
 .enas1
@@ -402,24 +467,34 @@ ENDIF
 
  LDA #0
  STA enableSound
+
  STA soundChannel0
+
  STA soundChannel1
+
  STA soundChannel2
+
  TAX
 
 .stop1
 
  STA soundVar5A,X
+
  INX
- CPX #$10
+
+ CPX #16
  BNE stop1
+
  STA TRI_LINEAR
- LDA #$30
+
+ LDA #48
  STA SQ1_VOL
  STA SQ2_VOL
  STA NOISE_VOL
- LDA #$0F
+
+ LDA #15
  STA SND_CHN
+
  RTS
 
 ; ******************************************************************************
@@ -497,6 +572,7 @@ ENDIF
 
  LDA enableSound
  BNE makm1
+
  RTS
 
 .makm1
@@ -505,32 +581,42 @@ ENDIF
  CLC
  ADC soundVar0B
  STA soundVar0B
+
  BCC makm2
- JSR MakeMusic1
- JSR MakeMusic2
- JSR MakeMusic3
- JSR MakeMusic4
+
+ JSR MakeMusicOnSQ1
+
+ JSR MakeMusicOnSQ2
+
+ JSR MakeMusicOnTRI
+
+ JSR MakeMusicOnNOISE
 
 .makm2
 
- JSR MakeMusic5
- JSR MakeMusic6
- JSR MakeMusic7
- JMP MakeMusic8
+ JSR GetNextForSQ1
+
+ JSR GetNextForSQ2
+
+ JSR GetNextForTRI
+
+ JMP GetNextForNOISE
 
 ; ******************************************************************************
 ;
-;       Name: MakeMusic1
+;       Name: MakeMusicOnSQ1
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Play the current music
+;    Summary: Play the current music on the SQ1 channel
 ;
 ; ******************************************************************************
 
-.MakeMusic1
+.MakeMusicOnSQ1
 
  DEC soundVar16
+
  BEQ muso1
+
  RTS
 
 .muso1
@@ -539,6 +625,7 @@ ENDIF
  STA soundAddr
  LDA soundAddr0+1
  STA soundAddr+1
+
  LDA #0
  STA soundVar18
  STA soundVar20
@@ -546,39 +633,56 @@ ENDIF
 .muso2
 
  LDY #0
+
  LDA (soundAddr),Y
  TAY
+
  INC soundAddr
+
  BNE muso3
+
  INC soundAddr+1
 
 .muso3
 
  TYA
+
  BMI muso8
+
  CMP #$60
  BCC muso4
+
  ADC #$A0
+
  STA soundVar15
+
  JMP muso2
 
 .muso4
 
  CLC
  ADC soundVar0C
+
  CLC
  ADC soundVar14
+
  ASL A
  TAY
+
  LDA noteFrequency,Y
  STA soundVar1B
+
  STA soundVar5C
+
  LDA noteFrequency+1,Y
  STA soundVar5D
+
  LDX soundChannel0
  BNE muso5
+
  LDX soundVar18
  STX SQ1_SWEEP
+
  LDX soundVar5C
  STX SQ1_LO
  STA SQ1_HI
@@ -601,38 +705,49 @@ ENDIF
  STA soundAddr0
  LDA soundAddr+1
  STA soundAddr0+1
+
  LDA soundVar15
  STA soundVar16
+
  RTS
 
 .muso8
 
  LDY #0
+
  CMP #$FF
  BNE muso10
+
  LDA soundVar12
  CLC
  ADC soundAddr1
  STA soundAddr
+
  LDA soundVar13
  ADC soundAddr1+1
  STA soundAddr+1
+
  LDA soundVar12
  ADC #2
  STA soundVar12
+
  TYA
  ADC soundVar13
  STA soundVar13
+
  LDA (soundAddr),Y
  INY
  ORA (soundAddr),Y
  BNE muso9
+
  LDA soundAddr1
  STA soundAddr
  LDA soundAddr1+1
  STA soundAddr+1
+
  LDA #2
  STA soundVar12
+
  LDA #0
  STA soundVar13
 
@@ -644,45 +759,58 @@ ENDIF
  LDA (soundAddr),Y
  STA soundAddr
  STX soundAddr+1
+
  JMP muso2
 
 .muso10
 
  CMP #$F6
  BNE muso12
+
  LDA (soundAddr),Y
  INC soundAddr
+
  BNE muso11
+
  INC soundAddr+1
 
 .muso11
 
  STA soundVar1F
+
  JMP muso2
 
 .muso12
 
  CMP #$F7
  BNE muso14
+
  LDA (soundAddr),Y
  INC soundAddr
+
  BNE muso13
+
  INC soundAddr+1
 
 .muso13
 
  STA soundVar1A
  STY soundVar19
+
  JMP muso2
 
 .muso14
 
  CMP #$FA
  BNE muso16
+
  LDA (soundAddr),Y
  STA soundVar17
+
  INC soundAddr
+
  BNE muso15
+
  INC soundAddr+1
 
 .muso15
@@ -693,62 +821,81 @@ ENDIF
 
  CMP #$F8
  BNE muso17
+
  LDA #$30
  STA soundVar5A
+
  JMP muso7
 
 .muso17
 
  CMP #$F9
  BNE muso18
+
  JMP muso6
 
 .muso18
 
  CMP #$FD
  BNE muso20
+
  LDA (soundAddr),Y
+
  INC soundAddr
+
  BNE muso19
+
  INC soundAddr+1
 
 .muso19
 
  STA soundVar18
+
  JMP muso2
 
 .muso20
 
  CMP #$FB
  BNE muso22
+
  LDA (soundAddr),Y
+
  INC soundAddr
+
  BNE muso21
+
  INC soundAddr+1
 
 .muso21
 
  STA soundVar0C
+
  JMP muso2
 
 .muso22
 
  CMP #$FC
  BNE muso24
+
  LDA (soundAddr),Y
+
  INC soundAddr
+
  BNE muso23
+
  INC soundAddr+1
 
 .muso23
 
  STA soundVar14
+
  JMP muso2
 
 .muso24
 
  CMP #$F5
  BNE muso25
+
  LDA (soundAddr),Y
  TAX
  STA soundAddr1
@@ -757,40 +904,53 @@ ENDIF
  STX soundAddr
  STA soundAddr+1
  STA soundAddr1+1
+
  LDA #2
  STA soundVar12
+
  DEY
+
  STY soundVar13
+
  LDA (soundAddr),Y
  TAX
  INY
  LDA (soundAddr),Y
  STA soundAddr+1
  STX soundAddr
+
  JMP muso2
 
 .muso25
 
  CMP #$F4
  BNE muso27
+
  LDA (soundAddr),Y
+
  INC soundAddr
+
  BNE muso26
+
  INC soundAddr+1
 
 .muso26
 
  STA soundVar05
  STA soundVar06
+
  JMP muso2
 
 .muso27
 
  CMP #$FE
  BNE muso28
+
  STY soundVar0D
+
  PLA
  PLA
+
  JMP StopSoundsS
 
 .muso28
@@ -799,32 +959,41 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: MakeMusic5
+;       Name: GetNextForSQ1
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Play the current music
+;    Summary: Fetch details of the next bit of music for the SQ1 channel
 ;
 ; ******************************************************************************
 
-.MakeMusic5
+.GetNextForSQ1
 
  LDA soundVar20
  BEQ musv2
+
  LDX soundVar1F
+
  LDA music1DataLo,X
  STA soundAddr
  LDA music1DataHi,X
  STA soundAddr+1
+
  LDY #0
  LDA (soundAddr),Y
  STA soundVar1D
+
  LDY soundVar1C
  LDA (soundAddr),Y
+
  BMI musv1
+
  DEC soundVar1E
+
  BPL musv1
+
  LDX soundVar1D
  STX soundVar1E
+
  INC soundVar1C
 
 .musv1
@@ -836,39 +1005,47 @@ ENDIF
 .musv2
 
  LDX soundVar1A
+
  LDA music2DataLo,X
  STA soundAddr
  LDA music2DataHi,X
  STA soundAddr+1
+
  LDY soundVar19
  LDA (soundAddr),Y
+
  CMP #$80
  BNE musv3
+
  LDY #0
  STY soundVar19
+
  LDA (soundAddr),Y
 
 .musv3
 
  INC soundVar19
+
  CLC
  ADC soundVar1B
  STA soundVar5C
+
  RTS
 
 ; ******************************************************************************
 ;
-;       Name: MakeMusic2
+;       Name: MakeMusicOnSQ2
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Play the current music
+;    Summary: Play the current music on the SQ2 channel
 ;
 ; ******************************************************************************
 
-.MakeMusic2
+.MakeMusicOnSQ2
 
  DEC soundVar29
  BEQ must1
+
  RTS
 
 .must1
@@ -877,6 +1054,7 @@ ENDIF
  STA soundAddr
  LDA soundAddr2+1
  STA soundAddr+1
+
  LDA #0
  STA soundVar2B
  STA soundVar33
@@ -886,18 +1064,25 @@ ENDIF
  LDY #0
  LDA (soundAddr),Y
  TAY
+
  INC soundAddr
+
  BNE must3
+
  INC soundAddr+1
 
 .must3
 
  TYA
+
  BMI must8
+
  CMP #$60
  BCC must4
+
  ADC #$A0
  STA soundVar28
+
  JMP must2
 
 .must4
@@ -908,15 +1093,19 @@ ENDIF
  ADC soundVar27
  ASL A
  TAY
+
  LDA noteFrequency,Y
  STA soundVar2E
  STA soundVar60
  LDA noteFrequency+1,Y
  STA soundVar61
+
  LDX soundChannel1
  BNE must5
+
  LDX soundVar2B
  STX SQ2_SWEEP
+
  LDX soundVar60
  STX SQ2_LO
  STA SQ2_HI
@@ -925,6 +1114,7 @@ ENDIF
 
  LDA #1
  STA soundVar2F
+
  LDA soundVar30
  STA soundVar31
 
@@ -939,15 +1129,19 @@ ENDIF
  STA soundAddr2
  LDA soundAddr+1
  STA soundAddr2+1
+
  LDA soundVar28
  STA soundVar29
+
  RTS
 
 .must8
 
  LDY #0
+
  CMP #$FF
  BNE must10
+
  LDA soundVar25
  CLC
  ADC soundAddr3
@@ -955,22 +1149,28 @@ ENDIF
  LDA soundVar26
  ADC soundAddr3+1
  STA soundAddr+1
+
  LDA soundVar25
  ADC #2
  STA soundVar25
+
  TYA
  ADC soundVar26
  STA soundVar26
+
  LDA (soundAddr),Y
  INY
  ORA (soundAddr),Y
  BNE must9
+
  LDA soundAddr3
  STA soundAddr
  LDA soundAddr3+1
  STA soundAddr+1
+
  LDA #2
  STA soundVar25
+
  LDA #0
  STA soundVar26
 
@@ -982,45 +1182,60 @@ ENDIF
  LDA (soundAddr),Y
  STA soundAddr
  STX soundAddr+1
+
  JMP must2
 
 .must10
 
  CMP #$F6
  BNE must12
+
  LDA (soundAddr),Y
+
  INC soundAddr
+
  BNE must11
+
  INC soundAddr+1
 
 .must11
 
  STA soundVar32
+
  JMP must2
 
 .must12
 
  CMP #$F7
  BNE must14
+
  LDA (soundAddr),Y
+
  INC soundAddr
+
  BNE must13
+
  INC soundAddr+1
 
 .must13
 
  STA soundVar2D
  STY soundVar2C
+
  JMP must2
 
 .must14
 
  CMP #$FA
  BNE must16
+
  LDA (soundAddr),Y
  STA soundVar2A
+
  INC soundAddr
+
  BNE must15
+
  INC soundAddr+1
 
 .must15
@@ -1031,62 +1246,81 @@ ENDIF
 
  CMP #$F8
  BNE must17
+
  LDA #$30
  STA soundVar5E
+
  JMP must7
 
 .must17
 
  CMP #$F9
  BNE must18
+
  JMP must6
 
 .must18
 
  CMP #$FD
  BNE must20
+
  LDA (soundAddr),Y
+
  INC soundAddr
+
  BNE must19
+
  INC soundAddr+1
 
 .must19
 
  STA soundVar2B
+
  JMP must2
 
 .must20
 
  CMP #$FB
  BNE must22
+
  LDA (soundAddr),Y
+
  INC soundAddr
+
  BNE must21
+
  INC soundAddr+1
 
 .must21
 
  STA soundVar0C
+
  JMP must2
 
 .must22
 
  CMP #$FC
  BNE must24
+
  LDA (soundAddr),Y
+
  INC soundAddr
+
  BNE must23
+
  INC soundAddr+1
 
 .must23
 
  STA soundVar27
+
  JMP must2
 
 .must24
 
  CMP #$F5
  BNE must25
+
  LDA (soundAddr),Y
  TAX
  STA soundAddr3
@@ -1095,40 +1329,52 @@ ENDIF
  STX soundAddr
  STA soundAddr+1
  STA soundAddr3+1
+
  LDA #2
  STA soundVar25
+
  DEY
  STY soundVar26
+
  LDA (soundAddr),Y
  TAX
  INY
  LDA (soundAddr),Y
  STA soundAddr+1
  STX soundAddr
+
  JMP must2
 
 .must25
 
  CMP #$F4
  BNE must27
+
  LDA (soundAddr),Y
+
  INC soundAddr
+
  BNE must26
+
  INC soundAddr+1
 
 .must26
 
  STA soundVar05
  STA soundVar06
+
  JMP must2
 
 .must27
 
  CMP #$FE
  BNE must28
+
  STY soundVar0D
+
  PLA
  PLA
+
  JMP StopSoundsS
 
 .must28
@@ -1137,32 +1383,40 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: MakeMusic6
+;       Name: GetNextForSQ2
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Play the current music
+;    Summary: Fetch details of the next bit of music for the SQ2 channel
 ;
 ; ******************************************************************************
 
-.MakeMusic6
+.GetNextForSQ2
 
  LDA soundVar33
  BEQ muss2
+
  LDX soundVar32
  LDA music1DataLo,X
  STA soundAddr
  LDA music1DataHi,X
  STA soundAddr+1
+
  LDY #0
  LDA (soundAddr),Y
  STA soundVar30
+
  LDY soundVar2F
  LDA (soundAddr),Y
+
  BMI muss1
+
  DEC soundVar31
+
  BPL muss1
+
  LDX soundVar30
  STX soundVar31
+
  INC soundVar2F
 
 .muss1
@@ -1178,35 +1432,44 @@ ENDIF
  STA soundAddr
  LDA music2DataHi,X
  STA soundAddr+1
+
  LDY soundVar2C
  LDA (soundAddr),Y
+
  CMP #$80
  BNE muss3
+
  LDY #0
  STY soundVar2C
+
  LDA (soundAddr),Y
 
 .muss3
 
  INC soundVar2C
+
  CLC
  ADC soundVar2E
+
  STA soundVar60
+
  RTS
 
 ; ******************************************************************************
 ;
-;       Name: MakeMusic3
+;       Name: MakeMusicOnTRI
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Play the current music
+;    Summary: Play the current music on the TRI channel
 ;
 ; ******************************************************************************
 
-.MakeMusic3
+.MakeMusicOnTRI
 
  DEC soundVar3C
+
  BEQ musr1
+
  RTS
 
 .musr1
@@ -1221,18 +1484,25 @@ ENDIF
  LDY #0
  LDA (soundAddr),Y
  TAY
+
  INC soundAddr
+
  BNE musr3
+
  INC soundAddr+1
 
 .musr3
 
  TYA
+
  BMI musr6
  CMP #$60
+
  BCC musr4
  ADC #$A0
+
  STA soundVar3B
+
  JMP musr2
 
 .musr4
@@ -1243,16 +1513,21 @@ ENDIF
  ADC soundVar3A
  ASL A
  TAY
+
  LDA noteFrequency,Y
  STA soundVar41
  STA soundVar64
  LDA noteFrequency+1,Y
  LDX soundVar64
+
  STX TRI_LO
  STA TRI_HI
+
  STA soundVar65
+
  LDA soundVar45
  STA soundVar42
+
  LDA #$81
  STA TRI_LINEAR
 
@@ -1262,15 +1537,19 @@ ENDIF
  STA soundAddr4
  LDA soundAddr+1
  STA soundAddr4+1
+
  LDA soundVar3B
  STA soundVar3C
+
  RTS
 
 .musr6
 
  LDY #0
+
  CMP #$FF
  BNE musr8
+
  LDA soundVar38
  CLC
  ADC soundAddr5
@@ -1278,22 +1557,28 @@ ENDIF
  LDA soundVar39
  ADC soundAddr5+1
  STA soundAddr+1
+
  LDA soundVar38
  ADC #2
  STA soundVar38
+
  TYA
  ADC soundVar39
  STA soundVar39
+
  LDA (soundAddr),Y
  INY
  ORA (soundAddr),Y
  BNE musr7
+
  LDA soundAddr5
  STA soundAddr
  LDA soundAddr5+1
  STA soundAddr+1
+
  LDA #2
  STA soundVar38
+
  LDA #0
  STA soundVar39
 
@@ -1305,83 +1590,108 @@ ENDIF
  LDA (soundAddr),Y
  STA soundAddr
  STX soundAddr+1
+
  JMP musr2
 
 .musr8
 
  CMP #$F6
  BNE musr10
+
  LDA (soundAddr),Y
+
  INC soundAddr
+
  BNE musr9
+
  INC soundAddr+1
 
 .musr9
 
  STA soundVar45
+
  JMP musr2
 
 .musr10
 
  CMP #$F7
  BNE musr12
+
  LDA (soundAddr),Y
+
  INC soundAddr
+
  BNE musr11
+
  INC soundAddr+1
 
 .musr11
 
  STA soundVar40
  STY soundVar3F
+
  JMP musr2
 
 .musr12
 
  CMP #$F8
  BNE musr13
+
  LDA #1
  STA soundVar42
+
  JMP musr5
 
 .musr13
 
  CMP #$F9
  BNE musr14
+
  JMP musr5
 
 .musr14
 
  CMP #$FB
  BNE musr16
+
  LDA (soundAddr),Y
+
  INC soundAddr
+
  BNE musr15
+
  INC soundAddr+1
 
 .musr15
 
  STA soundVar0C
+
  JMP musr2
 
 .musr16
 
  CMP #$FC
  BNE musr18
+
  LDA (soundAddr),Y
+
  INC soundAddr
+
  BNE musr17
+
  INC soundAddr+1
 
 .musr17
 
  STA soundVar3A
+
  JMP musr2
 
 .musr18
 
  CMP #$F5
  BNE musr19
+
  LDA (soundAddr),Y
  TAX
  STA soundAddr5
@@ -1390,40 +1700,53 @@ ENDIF
  STX soundAddr
  STA soundAddr+1
  STA soundAddr5+1
+
  LDA #2
  STA soundVar38
+
  DEY
+
  STY soundVar39
+
  LDA (soundAddr),Y
  TAX
  INY
  LDA (soundAddr),Y
  STA soundAddr+1
  STX soundAddr
+
  JMP musr2
 
 .musr19
 
  CMP #$F4
  BNE musr21
+
  LDA (soundAddr),Y
+
  INC soundAddr
+
  BNE musr20
+
  INC soundAddr+1
 
 .musr20
 
  STA soundVar05
  STA soundVar06
+
  JMP musr2
 
 .musr21
 
  CMP #$FE
  BNE musr22
+
  STY soundVar0D
+
  PLA
  PLA
+
  JMP StopSoundsS
 
 .musr22
@@ -1432,19 +1755,22 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: MakeMusic7
+;       Name: GetNextForTRI
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Play the current music
+;    Summary: Fetch details of the next bit of music for the TRI channel
 ;
 ; ******************************************************************************
 
-.MakeMusic7
+.GetNextForTRI
 
  LDA soundVar42
  BEQ muse1
+
  DEC soundVar42
+
  BNE muse1
+
  LDA #0
  STA TRI_LINEAR
 
@@ -1455,35 +1781,42 @@ ENDIF
  STA soundAddr
  LDA music2DataHi,X
  STA soundAddr+1
+
  LDY soundVar3F
  LDA (soundAddr),Y
+
  CMP #$80
  BNE muse2
+
  LDY #0
  STY soundVar3F
+
  LDA (soundAddr),Y
 
 .muse2
 
  INC soundVar3F
+
  CLC
  ADC soundVar41
  STA soundVar64
+
  RTS
 
 ; ******************************************************************************
 ;
-;       Name: MakeMusic4
+;       Name: MakeMusicOnNOISE
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Play the current music
+;    Summary: Play the current music on the NOISE channel
 ;
 ; ******************************************************************************
 
-.MakeMusic4
+.MakeMusicOnNOISE
 
  DEC soundVar4F
  BEQ musf1
+
  RTS
 
 .musf1
@@ -1492,6 +1825,7 @@ ENDIF
  STA soundAddr
  LDA soundAddr6+1
  STA soundAddr+1
+
  STA soundVar59
 
 .musf2
@@ -1499,28 +1833,39 @@ ENDIF
  LDY #0
  LDA (soundAddr),Y
  TAY
+
  INC soundAddr
+
  BNE musf3
+
  INC soundAddr+1
 
 .musf3
 
  TYA
+
  BMI musf7
+
  CMP #$60
  BCC musf4
+
  ADC #$A0
  STA soundVar4E
+
  JMP musf2
 
 .musf4
 
  AND #$0F
  STA soundVar54
+
  STA soundVar68
+
  LDY #0
+
  LDX soundChannel2
  BNE musf5
+
  STA NOISE_LO
  STY NOISE_HI
 
@@ -1528,6 +1873,7 @@ ENDIF
 
  LDA #1
  STA soundVar55
+
  LDA soundVar56
  STA soundVar57
 
@@ -1535,19 +1881,24 @@ ENDIF
 
  LDA #$FF
  STA soundVar59
+
  LDA soundAddr
  STA soundAddr6
  LDA soundAddr+1
  STA soundAddr6+1
+
  LDA soundVar4E
  STA soundVar4F
+
  RTS
 
 .musf7
 
  LDY #0
+
  CMP #$FF
  BNE musf9
+
  LDA soundVar4B
  CLC
  ADC soundAddr7
@@ -1555,22 +1906,28 @@ ENDIF
  LDA soundVar4C
  ADC soundAddr7+1
  STA soundAddr+1
+
  LDA soundVar4B
  ADC #2
  STA soundVar4B
+
  TYA
  ADC soundVar4C
  STA soundVar4C
+
  LDA (soundAddr),Y
  INY
  ORA (soundAddr),Y
  BNE musf8
+
  LDA soundAddr7
  STA soundAddr
  LDA soundAddr7+1
  STA soundAddr+1
+
  LDA #2
  STA soundVar4B
+
  LDA #0
  STA soundVar4C
 
@@ -1582,55 +1939,70 @@ ENDIF
  LDA (soundAddr),Y
  STA soundAddr
  STX soundAddr+1
+
  JMP musf2
 
 .musf9
 
  CMP #$F6
  BNE musf11
+
  LDA (soundAddr),Y
+
  INC soundAddr
+
  BNE musf10
+
  INC soundAddr+1
 
 .musf10
 
  STA soundVar58
+
  JMP musf2
 
 .musf11
 
  CMP #$F7
  BNE musf13
+
  LDA (soundAddr),Y
+
  INC soundAddr
+
  BNE musf12
+
  INC soundAddr+1
 
 .musf12
 
  STA soundVar53
  STY soundVar52
+
  JMP musf2
 
 .musf13
 
  CMP #$F8
  BNE musf14
+
  LDA #$30
  STA soundVar66
+
  JMP musf6
 
 .musf14
 
  CMP #$F9
  BNE musf15
+
  JMP musf6
 
 .musf15
 
  CMP #$F5
  BNE musf16
+
  LDA (soundAddr),Y
  TAX
  STA soundAddr7
@@ -1639,40 +2011,53 @@ ENDIF
  STX soundAddr
  STA soundAddr+1
  STA soundAddr7+1
+
  LDA #2
  STA soundVar4B
+
  DEY
+
  STY soundVar4C
+
  LDA (soundAddr),Y
  TAX
  INY
  LDA (soundAddr),Y
  STA soundAddr+1
  STX soundAddr
+
  JMP musf2
 
 .musf16
 
  CMP #$F4
  BNE musf18
+
  LDA (soundAddr),Y
+
  INC soundAddr
+
  BNE musf17
+
  INC soundAddr+1
 
 .musf17
 
  STA soundVar05
  STA soundVar06
+
  JMP musf2
 
 .musf18
 
  CMP #$FE
  BNE musf19
+
  STY soundVar0D
+
  PLA
  PLA
+
  JMP StopSoundsS
 
 .musf19
@@ -1681,32 +2066,40 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: MakeMusic8
+;       Name: GetNextForNOISE
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Play the current music
+;    Summary: Fetch details of the next bit of music for the NOISE channel
 ;
 ; ******************************************************************************
 
-.MakeMusic8
+.GetNextForNOISE
 
  LDA soundVar59
  BEQ musg2
+
  LDX soundVar58
  LDA music1DataLo,X
  STA soundAddr
  LDA music1DataHi,X
  STA soundAddr+1
+
  LDY #0
  LDA (soundAddr),Y
  STA soundVar56
+
  LDY soundVar55
  LDA (soundAddr),Y
+
  BMI musg1
+
  DEC soundVar57
+
  BPL musg1
+
  LDX soundVar56
  STX soundVar57
+
  INC soundVar55
 
 .musg1
@@ -1722,21 +2115,28 @@ ENDIF
  STA soundAddr
  LDA music2DataHi,X
  STA soundAddr+1
+
  LDY soundVar52
+
  LDA (soundAddr),Y
+
  CMP #$80
  BNE musg3
+
  LDY #0
  STY soundVar52
+
  LDA (soundAddr),Y
 
 .musg3
 
  INC soundVar52
+
  CLC
  ADC soundVar54
  AND #$0F
  STA soundVar68
+
  RTS
 
 ; ******************************************************************************
@@ -1833,30 +2233,35 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: MakeEffectChannel0
+;       Name: MakeEffectOnSQ1
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Make a sound effect on channel 0
+;    Summary: Make a sound effect on the SQ1 channel
 ;
 ; ******************************************************************************
 
-.MakeEffectChannel0
+.MakeEffectOnSQ1
 
  ASL A
  TAY
+
  LDA #0
  STA soundChannel0
+
  LDA sound1Data,Y
  STA soundAddr
  LDA sound1Data+1,Y
  STA soundAddr+1
- LDY #$0D
+
+ LDY #13
 
 .mefz1
 
  LDA (soundAddr),Y
  STA soundVar6B,Y
+
  DEY
+
  BPL mefz1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
@@ -1864,33 +2269,44 @@ ENDIF
 
  LDA soundVar76
  STA soundVar7E
+
  LDA soundVar78
  STA soundVar7C
+
  LDA soundVar6C
  STA soundVar7B
+
  LDA soundVar75
  ASL A
  TAY
+
  LDA sound2Data,Y
  STA soundAddr8
  STA soundAddr
  LDA sound2Data+1,Y
  STA soundAddr8+1
  STA soundAddr+1
+
  LDY #0
  STY soundVar7D
+
  LDA (soundAddr),Y
  ORA soundVar71
  STA SQ1_VOL
+
  LDA #0
  STA SQ1_SWEEP
+
  LDA soundVar6D
  STA soundVar79
  STA SQ1_LO
+
  LDA soundVar6E
  STA soundVar7A
  STA SQ1_HI
+
  INC soundChannel0
+
  RTS
 
 ; ******************************************************************************
@@ -1898,7 +2314,7 @@ ENDIF
 ;       Name: MakeSoundEffect
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Make a sound effect
+;    Summary: Make a sound effect on the specified channel
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -1914,40 +2330,48 @@ ENDIF
 .MakeSoundEffect
 
  DEX
+
  BMI msef1
- BEQ MakeEffectChannel1
- JMP MakeEffectChannel2
+
+ BEQ MakeEffectOnSQ2
+
+ JMP MakeEffectOnNOISE
 
 .msef1
 
- JMP MakeEffectChannel0
+ JMP MakeEffectOnSQ1
 
 ; ******************************************************************************
 ;
-;       Name: MakeEffectChannel1
+;       Name: MakeEffectOnSQ2
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Make a sound effect on channel 1
+;    Summary: Make a sound effect on the SQ2 channel
 ;
 ; ******************************************************************************
 
-.MakeEffectChannel1
+.MakeEffectOnSQ2
 
  ASL A
  TAY
+
  LDA #0
  STA soundChannel1
+
  LDA sound1Data,Y
  STA soundAddr
  LDA sound1Data+1,Y
  STA soundAddr+1
- LDY #$0D
+
+ LDY #13
 
 .mefo1
 
  LDA (soundAddr),Y
  STA soundVar7F,Y
+
  DEY
+
  BPL mefo1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
@@ -1955,61 +2379,77 @@ ENDIF
 
  LDA soundVar8A
  STA soundVar92
+
  LDA soundVar8C
  STA soundVar90
+
  LDA soundVar80
  STA soundVar8F
+
  LDA soundVar89
  ASL A
  TAY
+
  LDA sound2Data,Y
  STA soundAddr9
  STA soundAddr
  LDA sound2Data+1,Y
  STA soundAddr9+1
  STA soundAddr+1
+
  LDY #0
  STY soundVar91
+
  LDA (soundAddr),Y
  ORA soundVar85
  STA SQ2_VOL
+
  LDA #0
  STA SQ2_SWEEP
+
  LDA soundVar81
  STA soundVar8D
  STA SQ2_LO
+
  LDA soundVar82
  STA soundVar8E
  STA SQ2_HI
+
  INC soundChannel1
+
  RTS
 
 ; ******************************************************************************
 ;
-;       Name: MakeEffectChannel2
+;       Name: MakeEffectOnNOISE
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Make a sound effect on channel 2
+;    Summary: Make a sound effect on the NOISE channel
 ;
 ; ******************************************************************************
 
-.MakeEffectChannel2
+.MakeEffectOnNOISE
 
  ASL A
  TAY
+
  LDA #0
  STA soundChannel2
+
  LDA sound1Data,Y
  STA soundAddr
  LDA sound1Data+1,Y
  STA soundAddr+1
- LDY #$0D
+
+ LDY #13
 
 .meft1
 
  LDA (soundAddr),Y
  STA soundVar93,Y
+
  DEY
+
  BPL meft1
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
@@ -2017,33 +2457,44 @@ ENDIF
 
  LDA soundVar9E
  STA soundVarA6
+
  LDA soundVarA0
  STA soundVarA4
+
  LDA soundVar94
  STA soundVarA3
+
  LDA soundVar9D
  ASL A
  TAY
+
  LDA sound2Data,Y
  STA soundAddr10
  STA soundAddr
  LDA sound2Data+1,Y
  STA soundAddr10+1
  STA soundAddr+1
+
  LDY #0
  STY soundVarA5
+
  LDA (soundAddr),Y
  ORA soundVar99
  STA NOISE_VOL
+
  LDA #0
  STA NOISE_VOL+1
+
  LDA soundVar95
  AND #$0F
  STA soundVarA1
  STA NOISE_LO
+
  LDA #0
  STA NOISE_HI
+
  INC soundChannel2
+
  RTS
 
 ; ******************************************************************************
@@ -2051,134 +2502,179 @@ ENDIF
 ;       Name: MakeSound
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Play the current sound effects on channels 0 to 2
+;    Summary: Play the current sound effects on the SQ1, SQ2 and NOISE channels
 ;
 ; ******************************************************************************
 
 .MakeSound
 
  JSR UpdateSoundSeeds
- JSR MakeSoundChannel0
- JSR MakeSoundChannel1
- JMP MakeSoundChannel2
+
+ JSR MakeSoundOnSQ1
+
+ JSR MakeSoundOnSQ2
+
+ JMP MakeSoundOnNOISE
 
 ; ******************************************************************************
 ;
-;       Name: MakeSoundChannel0
+;       Name: MakeSoundOnSQ1
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Play the current sound effect on channel 0
+;    Summary: Play the current sound effect on the SQ1 channel
 ;
 ; ******************************************************************************
 
-.MakeSoundChannel0
+.MakeSoundOnSQ1
 
  LDA soundChannel0
  BNE mscz1
+
  RTS
 
 .mscz1
 
  LDA soundVar6B
  BNE mscz3
+
  LDX soundVar77
  BNE mscz3
+
  LDA enableSound
  BEQ mscz2
+
  LDA soundVar5A
  STA SQ1_VOL
+
  LDA soundVar5C
  STA SQ1_LO
+
  LDA soundVar5D
  STA SQ1_HI
+
  STX soundChannel0
+
  RTS
 
 .mscz2
 
  LDA #$30
  STA SQ1_VOL
+
  STX soundChannel0
+
  RTS
 
 .mscz3
 
  DEC soundVar6B
+
  DEC soundVar7E
+
  BNE mscz5
+
  LDA soundVar76
  STA soundVar7E
+
  LDY soundVar7D
+
  LDA soundAddr8
  STA soundAddr
  LDA soundAddr8+1
  STA soundAddr+1
+
  LDA (soundAddr),Y
+
  BPL mscz4
+
  CMP #$80
  BNE mscz5
+
  LDY #0
+
  LDA (soundAddr),Y
 
 .mscz4
 
  ORA soundVar71
  STA SQ1_VOL
+
  INY
+
  STY soundVar7D
 
 .mscz5
 
  LDA soundVar7B
  BNE mscz8
+
  LDA soundVar77
  BNE mscz6
+
  LDA soundVar74
  BNE mscz6
+
  RTS
 
 .mscz6
 
  DEC soundVar74
+
  LDA soundVar6C
  STA soundVar7B
+
  LDA soundVar6D
  LDX soundVar72
+
  BEQ mscz7
+
  ADC soundVar07
 
 .mscz7
 
  STA soundVar79
+
  STA SQ1_LO
+
  LDA soundVar6E
  STA soundVar7A
+
  STA SQ1_HI
 
 .mscz8
 
  DEC soundVar7B
+
  LDA soundVar78
  BEQ mscz9
+
  DEC soundVar7C
+
  BNE mscz11
+
  STA soundVar7C
 
 .mscz9
 
  LDA soundVar73
  BEQ mscz11
+
  BMI mscz10
+
  LDA soundVar79
  SEC
  SBC soundVar6F
  STA soundVar79
+
  STA SQ1_LO
+
  LDA soundVar7A
  SBC soundVar70
  AND #3
  STA soundVar7A
+
  STA SQ1_HI
+
  RTS
 
 .mscz10
@@ -2187,11 +2683,14 @@ ENDIF
  CLC
  ADC soundVar6F
  STA soundVar79
+
  STA SQ1_LO
+
  LDA soundVar7A
  ADC soundVar70
  AND #3
  STA soundVar7A
+
  STA SQ1_HI
 
 .mscz11
@@ -2200,121 +2699,164 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: MakeSoundChannel1
+;       Name: MakeSoundOnSQ2
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Play the current sound effect on channel 1
+;    Summary: Play the current sound effect on the SQ2 channel
 ;
 ; ******************************************************************************
 
-.MakeSoundChannel1
+.MakeSoundOnSQ2
 
  LDA soundChannel1
  BNE msco1
+
  RTS
 
 .msco1
 
  LDA soundVar7F
  BNE msco3
+
  LDX soundVar8B
  BNE msco3
+
  LDA enableSound
  BEQ msco2
+
  LDA soundVar5E
  STA SQ2_VOL
+
  LDA soundVar60
  STA SQ2_LO
+
  LDA soundVar61
  STA SQ2_HI
+
  STX soundChannel1
+
  RTS
 
 .msco2
 
  LDA #$30
  STA SQ2_VOL
+
  STX soundChannel1
+
  RTS
 
 .msco3
 
  DEC soundVar7F
+
  DEC soundVar92
+
  BNE msco5
+
  LDA soundVar8A
  STA soundVar92
+
  LDY soundVar91
+
  LDA soundAddr9
  STA soundAddr
  LDA soundAddr9+1
  STA soundAddr+1
+
  LDA (soundAddr),Y
+
  BPL msco4
+
  CMP #$80
  BNE msco5
+
  LDY #0
+
  LDA (soundAddr),Y
 
 .msco4
 
  ORA soundVar85
  STA SQ2_VOL
+
  INY
+
  STY soundVar91
 
 .msco5
 
  LDA soundVar8F
  BNE msco8
+
  LDA soundVar8B
  BNE msco6
+
  LDA soundVar88
  BNE msco6
+
  RTS
 
 .msco6
 
  DEC soundVar88
+
  LDA soundVar80
  STA soundVar8F
+
  LDA soundVar81
+
  LDX soundVar86
+
  BEQ msco7
+
  ADC soundVar07
 
 .msco7
 
  STA soundVar8D
+
  STA SQ2_LO
+
  LDA soundVar82
  STA soundVar8E
+
  STA SQ2_HI
 
 .msco8
 
  DEC soundVar8F
+
  LDA soundVar8C
  BEQ msco9
+
  DEC soundVar90
+
  BNE msco11
+
  STA soundVar90
 
 .msco9
 
  LDA soundVar87
  BEQ msco11
+
  BMI msco10
+
  LDA soundVar8D
  SEC
  SBC soundVar83
  STA soundVar8D
+
  STA SQ2_LO
+
  LDA soundVar8E
  SBC soundVar84
  AND #3
  STA soundVar8E
+
  STA SQ2_HI
+
  RTS
 
 .msco10
@@ -2323,11 +2865,14 @@ ENDIF
  CLC
  ADC soundVar83
  STA soundVar8D
+
  STA SQ2_LO
+
  LDA soundVar8E
  ADC soundVar84
  AND #3
  STA soundVar8E
+
  STA SQ2_HI
 
 .msco11
@@ -2336,113 +2881,150 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: MakeSoundChannel2
+;       Name: MakeSoundOnNOISE
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Play the current sound effect on channel 2
+;    Summary: Play the current sound effect on the NOISE channel
 ;
 ; ******************************************************************************
 
-.MakeSoundChannel2
+.MakeSoundOnNOISE
 
  LDA soundChannel2
  BNE msct1
+
  RTS
 
 .msct1
 
  LDA soundVar93
  BNE msct3
+
  LDX soundVar9F
  BNE msct3
+
  LDA enableSound
  BEQ msct2
+
  LDA soundVar66
  STA NOISE_VOL
+
  LDA soundVar68
  STA NOISE_LO
+
  STX soundChannel2
+
  RTS
 
 .msct2
 
  LDA #$30
  STA NOISE_VOL
+
  STX soundChannel2
+
  RTS
 
 .msct3
 
  DEC soundVar93
+
  DEC soundVarA6
+
  BNE msct5
+
  LDA soundVar9E
  STA soundVarA6
+
  LDY soundVarA5
+
  LDA soundAddr10
  STA soundAddr
  LDA soundAddr10+1
  STA soundAddr+1
+
  LDA (soundAddr),Y
+
  BPL msct4
+
  CMP #$80
  BNE msct5
+
  LDY #0
+
  LDA (soundAddr),Y
 
 .msct4
 
  ORA soundVar99
  STA NOISE_VOL
+
  INY
+
  STY soundVarA5
 
 .msct5
 
  LDA soundVarA3
  BNE msct8
+
  LDA soundVar9F
  BNE msct6
+
  LDA soundVar9C
  BNE msct6
+
  RTS
 
 .msct6
 
  DEC soundVar9C
+
  LDA soundVar94
  STA soundVarA3
+
  LDA soundVar95
+
  LDX soundVar9A
  BEQ msct7
+
  ADC soundVar07
  AND #$0F
 
 .msct7
 
  STA soundVarA1
+
  STA NOISE_LO
 
 .msct8
 
  DEC soundVarA3
+
  LDA soundVarA0
  BEQ msct9
+
  DEC soundVarA4
+
  BNE msct11
+
  STA soundVarA4
 
 .msct9
 
  LDA soundVar9B
  BEQ msct11
+
  BMI msct10
+
  LDA soundVarA1
  SEC
  SBC soundVar97
  AND #$0F
  STA soundVarA1
+
  STA NOISE_LO
+
  RTS
 
 .msct10
@@ -2452,6 +3034,7 @@ ENDIF
  ADC soundVar97
  AND #$0F
  STA soundVarA1
+
  STA NOISE_LO
 
 .msct11
@@ -2474,10 +3057,12 @@ ENDIF
  ADC #%00111000
  ASL A
  ASL A
+
  ROL soundVar07+3
  ROL soundVar07+2
  ROL soundVar07+1
  ROL soundVar07
+
  RTS
 
 ; ******************************************************************************
