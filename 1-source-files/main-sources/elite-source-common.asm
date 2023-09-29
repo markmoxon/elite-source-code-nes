@@ -5259,7 +5259,7 @@ ENDIF
 
 .K%
 
- SKIP 0                 ; Ship data blocks and ship line heap
+ SKIP 0                 ; Ship data blocks
 
 ; ******************************************************************************
 ;

@@ -13378,16 +13378,16 @@ ENDIF
 ;       Name: ResetMusic
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Reset the current tune to 0 and stop all sounds (music and sound
-;             effects)
+;    Summary: Reset the current tune to the default and stop all sounds (music
+;             and sound effects)
 ;
 ; ******************************************************************************
 
 .ResetMusic
 
- LDA #0                 ; Set newTune to to indicate that we have no tune
- STA newTune            ; selected (as bits 0-6 are zero) and we are not in the
-                        ; process of changing tunes (as bit 7 is clear)
+ LDA #0                 ; Set newTune to select the default tune (tune 0, the
+ STA newTune            ; "Elite Theme") and clear bit 7 to indicate we are not
+                        ; in the process of changing tunes
 
                         ; Fall through into StopSounds_b6 to stop all sounds
                         ; (music and sound effects)

@@ -1567,8 +1567,7 @@ ENDIF
                         ; can work on it, but we only need the first 29 bytes,
                         ; as we don't need to worry about bytes #29 to #35
                         ; for planets (as they don't have rotation counters,
-                        ; AI, explosions, missiles, a ship line heap or energy
-                        ; levels)
+                        ; AI, explosions, missiles or energy levels)
 
  LDX #28                ; So we set a counter in X to copy 29 bytes from K%+0
                         ; to K%+28
@@ -16229,10 +16228,9 @@ ENDIF
 ;
 ; ------------------------------------------------------------------------------
 ;
-; This creates a new block of ship data in the K% workspace, allocates a new
-; block in the ship line heap at WP, adds the new ship's type into the first
-; empty slot in FRIN, and adds a pointer to the ship data into UNIV. If there
-; isn't enough free memory for the new ship, it isn't added.
+; This creates a new block of ship data in the K% workspace, adds the new ship's
+; type into the first empty slot in FRIN, and adds a pointer to the ship data
+; into UNIV. If there isn't enough free memory for the new ship, it isn't added.
 ;
 ; Arguments:
 ;
@@ -16274,10 +16272,7 @@ ENDIF
                         ; from the first slot at 0. When ships are killed, then
                         ; the slots are shuffled down by the KILLSHP routine, so
                         ; the first empty slot will always come after the last
-                        ; filled slot. This allows us to tack the new ship's
-                        ; data block and ship line heap onto the end of the
-                        ; existing ship data and heap, as shown in the memory
-                        ; map below
+                        ; filled slot
 
 .NWL1
 
@@ -18620,7 +18615,8 @@ ENDIF
  JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
                         ; next VBlank)
 
- JSR ChooseMusic_b6     ; Select and play the docking music (The Blue Danube)
+ JSR ChooseMusic_b6     ; Select and play the docking music (tune 1, "The Blue
+                        ; Danube")
 
  LDA #$FF               ; Set A = $FF to set as the value of auto below, so the
                         ; docking comuter is flagged as being enabled
@@ -19389,8 +19385,8 @@ ENDIF
  JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
                         ; next VBlank)
 
- LDA #4                 ; Set the music to tune #4
- JSR ChooseMusic_b6
+ LDA #4                 ; Select and play the combat demo music (tune 4,
+ JSR ChooseMusic_b6     ; "Assassin's Touch" followed by "Game Theme")
 
  LDA soundVar05         ; Set soundVar05 = soundVar05 + 6
  CLC
@@ -19416,8 +19412,8 @@ ENDIF
  JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
                         ; next VBlank)
 
- LDA #4                 ; Set the music to tune #4
- JSR ChooseMusic_b6
+ LDA #4                 ; Select and play the combat demo music (tune 4,
+ JSR ChooseMusic_b6     ; "Assassin's Touch" followed by "Game Theme")
 
  LDA #2                 ; Set A = 2 to pass to ShowScrollText, so the credits
                         ; scroll text is shown instead of the demo introduction,

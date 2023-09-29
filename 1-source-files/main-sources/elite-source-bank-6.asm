@@ -268,13 +268,19 @@ ENDIF
 ;
 ; The tune numbers are as follows:
 ;
-;   * 0 for the title music ("Elite Theme"), set in the in TITLE routine and as
-;       the default in the ResetMusic routine
+;   * 0 for the title music ("Elite Theme"), which is set in the TITLE routine
+;       and as the default tune in the ResetMusic routine
 ;
-;   * 1 for docking (Blue Danube), set in the TT102 routine
+;   * 1 for docking ("The Blue Danube"), which is set in the TT102 routine
 ;
-;   * 4 for the demo (Assassin's Touch = scroll text, Game Theme = combat), set
-;       in DEATH2
+;   * 2 for the combat demo music ("Game Theme"), though this is never set
+;       directly, only via tune 4
+;
+;   * 3 for the scroll text music ("Assassin's Touch"), though this is never set
+;       directly, only via tune 4
+;
+;   * 4 for the full combat demo suite ("Assassin's Touch" followed by "Game
+;       Theme"), which is set in the DEATH2 routine
 ;
 ; Arguments:
 ;

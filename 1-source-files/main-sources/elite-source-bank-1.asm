@@ -5481,7 +5481,7 @@ ENDIF
 ; ------------------------------------------------------------------------------
 ;
 ; This part sets things up so we can loop through the edges in the next part. It
-; also adds a line to the ship line heap, if the ship is firing at us.
+; also draws a laser line if the ship is firing at us.
 ;
 ; When we get here, the heap at XX3 contains all the visible vertex screen
 ; coordinates.
@@ -5612,11 +5612,14 @@ ENDIF
                         ; end-points in (X1, Y1) and (X2, Y2)
 
  BCS LL170              ; If the C flag is set then the line is not visible on
-                        ; screen, so jump to LL170 so we don't store this line
-                        ; in the ship line heap
+                        ; screen, so jump to LL170 so we don't draw this line
 
- LDY U                  ; Fetch the ship line heap pointer, which points to the
-                        ; next free byte on the heap, into Y
+ LDY U                  ; This instruction is left over from the other versions
+                        ; of Elite and has no effect
+                        ;
+                        ; It would fetch the ship line heap pointer from U, but
+                        ; the NES version does not have a ship line heap as the
+                        ; screen is redrawn for every frame
 
  JSR LOIN               ; Draw the laser line
 
@@ -5767,8 +5770,8 @@ ENDIF
                         ; end-points in (X1, Y1) and (X2, Y2)
 
  BCS LL79-3             ; If the C flag is set then the line is not visible on
-                        ; screen, so jump to LL78 (via LL79-3) so we don't store
-                        ; this line in the ship line heap
+                        ; screen, so jump to LL78 (via LL79-3) so we don't draw
+                        ; this line
 
  JSR LOIN               ; Draw this edge
 
@@ -6349,13 +6352,6 @@ ENDIF
 ;   Category: Drawing ships
 ;  Deep dive: Drawing ships
 ;
-; ------------------------------------------------------------------------------
-;
-; Other entry points:
-;
-;   LL81+2              Draw the contents of the ship line heap, used to draw
-;                       the ship as a dot from SHPPT
-;
 ; ******************************************************************************
 
 .LL78
@@ -6385,13 +6381,12 @@ ENDIF
 
 .LL81
 
-                        ; We have finished adding lines to the ship line heap,
-                        ; so now we need to set the first byte of the heap to
-                        ; the number of bytes stored there
-
- LDA U                  ; Fetch the ship line heap pointer from U into A, which
-                        ; points to the end of the heap, and therefore contains
-                        ; the heap size
+ LDA U                  ; This instruction is left over from the other versions
+                        ; of Elite and has no effect
+                        ;
+                        ; It would fetch the ship line heap pointer from U, but
+                        ; the NES version does not have a ship line heap as the
+                        ; screen is redrawn for every frame
 
 ; ******************************************************************************
 ;
@@ -7142,8 +7137,8 @@ ENDIF
                         ; copied all six coordinates
 
                         ; The above loop copies the vertex coordinates from the
-                        ; ship line heap to K3, reversing them as we go, so it
-                        ; sets the following:
+                        ; XX3 heap to K3, reversing them as we go, so it sets
+                        ; the following:
                         ;
                         ;   K3+3 = x_lo
                         ;   K3+2 = x_hi
@@ -7151,7 +7146,7 @@ ENDIF
                         ;   K3+0 = y_hi
 
  STY CNT                ; Set CNT to the index that points to the next vertex on
-                        ; the ship line heap
+                        ; the XX3 heap
 
                         ; This next part copies bytes #37 to #40 from the ship
                         ; data block into the four random number seeds in RAND
@@ -7263,7 +7258,7 @@ ENDIF
                         ; in the cloud
 
  LDY CNT                ; Set Y to the index that points to the next vertex on
-                        ; the ship line heap
+                        ; the XX3 heap
 
  CPY TGT                ; If Y < TGT, which we set to the explosion count for
  BCC EXL5               ; this ship (i.e. the number of vertices used as origins
@@ -13938,8 +13933,8 @@ ENDIF
                         ; copied all six coordinates
 
                         ; The above loop copies the vertex coordinates from the
-                        ; ship line heap to K3, reversing them as we go, so it
-                        ; sets the following:
+                        ; XX3 heap to K3, reversing them as we go, so it sets
+                        ; the following:
                         ;
                         ;   K3+3 = x_lo
                         ;   K3+2 = x_hi
@@ -13947,7 +13942,7 @@ ENDIF
                         ;   K3+0 = y_hi
 
  STY CNT                ; Set CNT to the index that points to the next vertex on
-                        ; the ship line heap
+                        ; the XX3 heap
 
                         ; We now draw the explosion burst, which consists of
                         ; four colourful sprites that appear for the first part
@@ -14122,7 +14117,7 @@ ENDIF
                         ; particles in the cloud
 
  LDY CNT                ; Set Y to the index that points to the next vertex on
-                        ; the ship line heap
+                        ; the XX3 heap
 
  CPY TGT                ; If Y < TGT, which we set to the explosion count for
  BCS P%+5               ; this ship (i.e. the number of vertices used as origins
