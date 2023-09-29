@@ -3542,16 +3542,18 @@ ENDIF
 .RUTOK
 
  EQUB VE                ; Token 0:      ""
+                        ;
+                        ; Encoded as:   ""
 
- EJMP 19                ; Token 1:      ""
- ETWO 'T', 'H'
- ECHR 'E'
- ECHR ' '
- ECHR 'C'
- ECHR 'O'
- ECHR 'L'
- ETWO 'O', 'N'
- ECHR 'I'
+ EJMP 19                ; Token 1:      "{single cap}THE COLONISTS HERE HAVE
+ ETWO 'T', 'H'          ;                VIOLATED {single cap}INTERGALACTIC
+ ECHR 'E'               ;                {single cap}CLONING {single cap}
+ ECHR ' '               ;                PROTOCOL AND SHOULD BE AVOIDED"
+ ECHR 'C'               ;
+ ECHR 'O'               ; Encoded as:   "{19}<226>E COL<223>I<222>S HE<242> HA
+ ECHR 'L'               ;                <250> VIOL<245><252>{2}<240>T<244>G
+ ETWO 'O', 'N'          ;                <228>AC<251>C{26}CL<223><240>G{26}PROTO
+ ECHR 'I'               ;                COL <255>D SH<217>LD <247> AVOID<252>"
  ETWO 'S', 'T'
  ECHR 'S'
  ECHR ' '
@@ -3614,12 +3616,12 @@ ENDIF
  ETWO 'E', 'D'
  EQUB VE
 
- EJMP 19                ; Token 2:      ""
- ETWO 'T', 'H'
- ECHR 'E'
- EJMP 26
- ECHR 'C'
- ETWO 'O', 'N'
+ EJMP 19                ; Token 2:      "{single cap}THE {single cap}CONSTRICTOR
+ ETWO 'T', 'H'          ;                WAS LAST SEEN AT {single cap}REESDICE,
+ ECHR 'E'               ;                 {single cap}COMMANDER"
+ EJMP 26                ;
+ ECHR 'C'               ; Encoded as:   "{19}<226>E{26}C<223><222>RICT<253>
+ ETWO 'O', 'N'          ;                 [203]{19}<242><237><241><233>, [154]"
  ETWO 'S', 'T'
  ECHR 'R'
  ECHR 'I'
@@ -3638,13 +3640,13 @@ ENDIF
  ETOK 154
  EQUB VE
 
- EJMP 19                ; Token 3:      ""
- ECHR 'A'
- ECHR ' '
- ERND 23
- ECHR ' '
- ETWO 'L', 'O'
- ECHR 'O'
+ EJMP 19                ; Token 3:      "{single cap}A [130-134] LOOKING SHIP
+ ECHR 'A'               ;                LEFT HERE A WHILE BACK. {single cap}
+ ECHR ' '               ;                LOOKED BOUND FOR {single cap}AREXE"
+ ERND 23                ;
+ ECHR ' '               ; Encoded as:   "{19}A [23?] <224>OK<240>G SHIP <229>FT
+ ETWO 'L', 'O'          ;                 HE<242> A WH<220>E BACK.{26}<224>OK
+ ECHR 'O'               ;                <252> B<217>ND F<253>{26}<238>E<230>"
  ECHR 'K'
  ETWO 'I', 'N'
  ECHR 'G'
@@ -3693,15 +3695,15 @@ ENDIF
  ETWO 'X', 'E'
  EQUB VE
 
- EJMP 19                ; Token 4:      ""
- ECHR 'Y'
- ETWO 'E', 'S'
- ECHR ','
- ECHR ' '
- ECHR 'A'
- ECHR ' '
- ERND 23
- ECHR ' '
+ EJMP 19                ; Token 4:      "{single cap}YES, A [130-134] NEW SHIP
+ ECHR 'Y'               ;                HAD A {single cap}GALACTIC {single cap}
+ ETWO 'E', 'S'          ;                HYPERDRIVE FITTED HERE. {single cap}
+ ECHR ','               ;                USED IT TOO"
+ ECHR ' '               ;
+ ECHR 'A'               ; Encoded as:   "{19}Y<237>, A [23?] NEW SHIP HAD A{26}G
+ ECHR ' '               ;                <228>AC<251>C{26}HYP<244>DRI<250> F
+ ERND 23                ;                <219>T<252> HE<242>.{26}U<218>D <219>
+ ECHR ' '               ;                 TOO"
  ECHR 'N'
  ECHR 'E'
  ECHR 'W'
@@ -3754,16 +3756,16 @@ ENDIF
  ECHR 'O'
  EQUB VE
 
- EJMP 19                ; Token 5:      ""
- ETWO 'T', 'H'
- ECHR 'I'
- ECHR 'S'
- ECHR ' '
- ECHR ' '
- ERND 23
- ECHR ' '
- ECHR 'S'
- ECHR 'H'
+ EJMP 19                ; Token 5:      "{single cap}THIS  [130-134] SHIP
+ ETWO 'T', 'H'          ;                DEHYPED HERE FROM NOWHERE, {single cap}
+ ECHR 'I'               ;                SUN-{single cap}SKIMMED AND JUMPED.
+ ECHR 'S'               ;                {single cap}I HEAR IT WENT TO {single
+ ECHR ' '               ;                cap}INBIBE"
+ ECHR ' '               ;
+ ERND 23                ; Encoded as:   "{19}<226>IS  [23?] SHIP DEHYP<252> HE
+ ECHR ' '               ;                <242> FROM <227>WHE<242>,{26}SUN-{19}SK
+ ECHR 'S'               ;                IMM<252> <255>D JUMP<252>.{26}I HE<238>
+ ECHR 'H'               ;                 <219> W<246>T TO{26}<240><234><247>"
  ECHR 'I'
  ECHR 'P'
  ECHR ' '
@@ -3888,17 +3890,17 @@ ENDIF
  EQUB VE
 
  EJMP 19                ; Token 7:      ""
- ECHR 'O'
- ECHR 'H'
- ECHR ' '
- ECHR 'D'
- ECHR 'E'
- ETWO 'A', 'R'
- ECHR ' '
- ECHR 'M'
- ECHR 'E'
- ECHR ' '
- ECHR 'Y'
+ ECHR 'O'               ; Token 7:      "OH DEAR ME YES. A FRIGHTFUL ROGUE WITH
+ ECHR 'H'               ;                WHAT I BELIEVE YOU PEOPLE CALL A LEAD
+ ECHR ' '               ;                POSTERIOR SHOT UP LOTS OF THOSE BEASTLY
+ ECHR 'D'               ;                PIRATES AND WENT TO USLERI"
+ ECHR 'E'               ;
+ ETWO 'A', 'R'          ; Encoded as:   "OH DE<238> ME Y<237>.[208]FRIGHTFUL ROG
+ ECHR ' '               ;                UE WI<226> WH<245> I <247>LIE<250>
+ ECHR 'M'               ;                 [179] PEOP<229> C<228>L[208]<229>AD PO
+ ECHR 'E'               ;                <222><244>I<253> SHOT UP <224>TS OF
+ ECHR ' '               ;                 <226>O<218> <247>A<222>LY PI<248>T
+ ECHR 'Y'               ;                <237>[178]W<246>T[201]<236><229>RI"
  ETWO 'E', 'S'
  ECHR '.'
  ECHR ' '
@@ -3970,11 +3972,11 @@ ENDIF
  EJMP 19                ; Token 8:      ""
  ECHR 'Y'
  ETWO 'O', 'U'
- ECHR ' '
- ECHR 'C'
- ETWO 'A', 'N'
- ECHR ' '
- ECHR 'T'
+ ECHR ' '               ;                IF YOU LIKE. HE'S AT ORARRA"
+ ECHR 'C'               ;
+ ETWO 'A', 'N'          ; Encoded as:   "[179] C<255> TACK<229> [147][13?] [24?]
+ ECHR ' '               ;                 IF [179] LIKE. HE[39]S <245> <253>
+ ECHR 'T'               ;                <238><248>"
  ECHR 'A'
  ECHR 'C'
  ECHR 'K'
@@ -4011,44 +4013,57 @@ ENDIF
  ETWO 'R', 'A'
  EQUB VE
 
- ERND 25                ; Token 9:      ""
- EQUB VE
+ ERND 25                ; Token 9:      "[106-110]"
+ EQUB VE                ;
+                        ; Encoded as:   "[25?]"
 
- ERND 25                ; Token 10:     ""
- EQUB VE
+ ERND 25                ; Token 10:     "[106-110]"
+ EQUB VE                ;
+                        ; Encoded as:   "[25?]"
 
- ERND 25                ; Token 11:     ""
- EQUB VE
+ ERND 25                ; Token 11:     "[106-110]"
+ EQUB VE                ;
+                        ; Encoded as:   "[25?]"
 
- ERND 25                ; Token 12:     ""
- EQUB VE
+ ERND 25                ; Token 12:     "[106-110]"
+ EQUB VE                ;
+                        ; Encoded as:   "[25?]"
 
- ERND 25                ; Token 13:     ""
- EQUB VE
+ ERND 25                ; Token 13:     "[106-110]"
+ EQUB VE                ;
+                        ; Encoded as:   "[25?]"
 
- ERND 25                ; Token 14:     ""
- EQUB VE
+ ERND 25                ; Token 14:     "[106-110]"
+ EQUB VE                ;
+                        ; Encoded as:   "[25?]"
 
- ERND 25                ; Token 15:     ""
- EQUB VE
+ ERND 25                ; Token 15:     "[106-110]"
+ EQUB VE                ;
+                        ; Encoded as:   "[25?]"
 
- ERND 25                ; Token 16:     ""
- EQUB VE
+ ERND 25                ; Token 16:     "[106-110]"
+ EQUB VE                ;
+                        ; Encoded as:   "[25?]"
 
- ERND 25                ; Token 17:     ""
- EQUB VE
+ ERND 25                ; Token 17:     "[106-110]"
+ EQUB VE                ;
+                        ; Encoded as:   "[25?]"
 
- ERND 25                ; Token 18:     ""
- EQUB VE
+ ERND 25                ; Token 18:     "[106-110]"
+ EQUB VE                ;
+                        ; Encoded as:   "[25?]"
 
- ERND 25                ; Token 19:     ""
- EQUB VE
+ ERND 25                ; Token 19:     "[106-110]"
+ EQUB VE                ;
+                        ; Encoded as:   "[25?]"
 
- ERND 25                ; Token 20:     ""
- EQUB VE
+ ERND 25                ; Token 20:     "[106-110]"
+ EQUB VE                ;
+                        ; Encoded as:   "[25?]"
 
- ERND 25                ; Token 21:     ""
- EQUB VE
+ ERND 25                ; Token 21:     "[106-110]"
+ EQUB VE                ;
+                        ; Encoded as:   "[25?]"
 
  EJMP 19                ; Token 22:     ""
  ECHR 'B'
