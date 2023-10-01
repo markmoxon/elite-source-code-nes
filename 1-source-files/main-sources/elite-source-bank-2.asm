@@ -3840,7 +3840,7 @@ ENDIF
  ECHR 'H'               ;
  ECHR 'I'               ; Encoded as:   "[24?] SHIP W<246>T F<253> ME <245>{26}
  ECHR 'P'               ;                A<236><238>.{26}MY <249><218>RS <241>DN
- ECHR ' '               ;                `T EV<246> SCR<245>CH <226>E [24?]"
+ ECHR ' '               ;                'T EV<246> SCR<245>CH <226>E [24?]"
  ECHR 'W'
  ETWO 'E', 'N'
  ECHR 'T'
@@ -3974,7 +3974,7 @@ ENDIF
  ETWO 'O', 'U'          ;                cap}HE'S AT {single cap}ORARRA"
  ECHR ' '               ;                
  ECHR 'C'               ; Encoded as:   "{19}Y<217> C<255> TACK<229> <226>E
- ETWO 'A', 'N'          ;                 [13?] [24?] IF Y<217> LIKE.{26}HE`S
+ ETWO 'A', 'N'          ;                 [13?] [24?] IF Y<217> LIKE.{26}HE'S
  ECHR ' '               ;                 <245>{26}<253><238><248>"
  ECHR 'T'
  ECHR 'A'
@@ -4097,7 +4097,7 @@ ENDIF
  EJMP 19                ; Token 23:     "{single cap}THERE'S A REAL [91-95]
  ETWO 'T', 'H'          ;                 PIRATE OUT THERE"
  ECHR 'E'               ;
- ETWO 'R', 'E'          ; Encoded as:   "{19}<226>E<242>`S A <242><228> [24?] PI
+ ETWO 'R', 'E'          ; Encoded as:   "{19}<226>E<242>'S A <242><228> [24?] PI
  ECHR '`'               ;                R<245>E <217>T <226>E<242>"
  ECHR 'S'
  ECHR ' '
@@ -10498,26 +10498,27 @@ ENDIF
 ;       Type: Variable
 ;   Category: Text
 ;    Summary: The recursive token table for tokens 0-148
+;  Deep dive: Printing text tokens
 ;
 ; ******************************************************************************
 
 .QQ18
 
- RTOK 111               ; Token 0:      ""
- RTOK 131
- CONT 7
+ RTOK 111               ; Token 0:      "FUEL SCOOPS ON {beep}"
+ RTOK 131               ;
+ CONT 7                 ; Encoded as:   "[111][131]{7}"
  EQUB 0
 
- CHAR ' '               ; Token 1:      ""
- CHAR 'C'
- CHAR 'H'
+ CHAR ' '               ; Token 1:      " CHART"
+ CHAR 'C'               ;
+ CHAR 'H'               ; Encoded as:   " CH<138>T"
  TWOK 'A', 'R'
  CHAR 'T'
  EQUB 0
 
- CHAR 'G'               ; Token 2:      ""
- CHAR 'O'
- CHAR 'V'
+ CHAR 'G'               ; Token 2:      "GOVERNMENT"
+ CHAR 'O'               ;
+ CHAR 'V'               ; Encoded as:   "GOV<144>NM<146>T"
  TWOK 'E', 'R'
  CHAR 'N'
  CHAR 'M'
@@ -10525,37 +10526,37 @@ ENDIF
  CHAR 'T'
  EQUB 0
 
- CHAR 'D'               ; Token 3:      ""
- TWOK 'A', 'T'
- CHAR 'A'
+ CHAR 'D'               ; Token 3:      "DATA ON {selected system name}"
+ TWOK 'A', 'T'          ;
+ CHAR 'A'               ; Encoded as:   "D<145>A[131]{3}"
  RTOK 131
  CONT 3
  EQUB 0
 
- TWOK 'I', 'N'          ; Token 4:      ""
- CHAR 'V'
- TWOK 'E', 'N'
- CHAR 'T'
+ TWOK 'I', 'N'          ; Token 4:      "INVENTORY{cr}
+ CHAR 'V'               ;               "
+ TWOK 'E', 'N'          ;
+ CHAR 'T'               ; Encoded as:   "<140>V<146>T<153>Y{12}"
  TWOK 'O', 'R'
  CHAR 'Y'
  CONT 12
  EQUB 0
 
- CHAR 'S'               ; Token 5:      ""
- CHAR 'Y'
- CHAR 'S'
+ CHAR 'S'               ; Token 5:      "SYSTEM"
+ CHAR 'Y'               ;
+ CHAR 'S'               ; Encoded as:   "SYS<156>M"
  TWOK 'T', 'E'
  CHAR 'M'
  EQUB 0
 
- CHAR 'P'               ; Token 6:      ""
- TWOK 'R', 'I'
- TWOK 'C', 'E'
+ CHAR 'P'               ; Token 6:      "PRICE"
+ TWOK 'R', 'I'          ;
+ TWOK 'C', 'E'          ; Encoded as:   "P<158><133>"
  EQUB 0
 
- CONT 2                 ; Token 7:      ""
- CHAR ' '
- CHAR 'M'
+ CONT 2                 ; Token 7:      "{current system name} MARKET PRICES"
+ CHAR ' '               ;
+ CHAR 'M'               ; Encoded as:   "{2} M<138>RKET [6]S"
  TWOK 'A', 'R'
  CHAR 'K'
  CHAR 'E'
@@ -10565,18 +10566,18 @@ ENDIF
  CHAR 'S'
  EQUB 0
 
- TWOK 'I', 'N'          ; Token 8:      ""
- CHAR 'D'
- TWOK 'U', 'S'
+ TWOK 'I', 'N'          ; Token 8:      "INDUSTRIAL"
+ CHAR 'D'               ;
+ TWOK 'U', 'S'          ; Encoded as:   "<140>D<136>T<158>AL"
  CHAR 'T'
  TWOK 'R', 'I'
  CHAR 'A'
  CHAR 'L'
  EQUB 0
 
- CHAR 'A'               ; Token 9:      ""
- CHAR 'G'
- TWOK 'R', 'I'
+ CHAR 'A'               ; Token 9:      "AGRICULTURAL"
+ CHAR 'G'               ;
+ TWOK 'R', 'I'          ; Encoded as:   "AG<158>CULTU<148>L"
  CHAR 'C'
  CHAR 'U'
  CHAR 'L'
@@ -10586,85 +10587,87 @@ ENDIF
  CHAR 'L'
  EQUB 0
 
- TWOK 'R', 'I'          ; Token 10:     ""
- CHAR 'C'
- CHAR 'H'
+ TWOK 'R', 'I'          ; Token 10:     "RICH "
+ CHAR 'C'               ;
+ CHAR 'H'               ; Encoded as:   "<158>CH "
  CHAR ' '
  EQUB 0
 
- RTOK 139               ; Token 11:     ""
- CHAR ' '
- EQUB 0
+ RTOK 139               ; Token 11:     "AVERAGE "
+ CHAR ' '               ;
+ EQUB 0                 ; Encoded as:   "[139]"
 
- RTOK 138               ; Token 12:     ""
- CHAR ' '
- EQUB 0
+ RTOK 138               ; Token 12:     "POOR "
+ CHAR ' '               ;
+ EQUB 0                 ; Encoded as:   "[138]"
 
- TWOK 'M', 'A'          ; Token 13:     ""
- TWOK 'I', 'N'
- CHAR 'L'
+ TWOK 'M', 'A'          ; Token 13:     "MAINLY "
+ TWOK 'I', 'N'          ;
+ CHAR 'L'               ; Encoded as:   "<139><140>LY "
  CHAR 'Y'
  CHAR ' '
  EQUB 0
 
- CHAR 'U'               ; Token 14:     ""
- CHAR 'N'
- CHAR 'I'
+ CHAR 'U'               ; Token 14:     "UNIT"
+ CHAR 'N'               ;
+ CHAR 'I'               ; Encoded as:   "UNIT"
  CHAR 'T'
  EQUB 0
 
- CHAR 'V'               ; Token 15:     ""
- CHAR 'I'
- CHAR 'E'
+ CHAR 'V'               ; Token 15:     "VIEW "
+ CHAR 'I'               ;
+ CHAR 'E'               ; Encoded as:   "VIEW "
  CHAR 'W'
  CHAR ' '
  EQUB 0
 
  EQUB 0                 ; Token 16:     ""
+                        ;
+                        ; Encoded as:   ""
 
- TWOK 'A', 'N'          ; Token 17:     ""
- TWOK 'A', 'R'
- CHAR 'C'
+ TWOK 'A', 'N'          ; Token 17:     "ANARCHY"
+ TWOK 'A', 'R'          ;
+ CHAR 'C'               ; Encoded as:   "<155><138>CHY"
  CHAR 'H'
  CHAR 'Y'
  EQUB 0
 
- CHAR 'F'               ; Token 18:     ""
- CHAR 'E'
- CHAR 'U'
+ CHAR 'F'               ; Token 18:     "FEUDAL"
+ CHAR 'E'               ;
+ CHAR 'U'               ; Encoded as:   "FEUDAL"
  CHAR 'D'
  CHAR 'A'
  CHAR 'L'
  EQUB 0
 
- CHAR 'M'               ; Token 19:     ""
- CHAR 'U'
- CHAR 'L'
+ CHAR 'M'               ; Token 19:     "MULTI-{sentence case}GOVERNMENT"
+ CHAR 'U'               ;
+ CHAR 'L'               ; Encoded as:   "MUL<151>-{6}[2]"
  TWOK 'T', 'I'
  CHAR '-'
  CONT 6
  RTOK 2
  EQUB 0
 
- TWOK 'D', 'I'          ; Token 20:     ""
- CHAR 'C'
- CHAR 'T'
+ TWOK 'D', 'I'          ; Token 20:     "DICTATORSHIP"
+ CHAR 'C'               ;
+ CHAR 'T'               ; Encoded as:   "<141>CT<145><153>[25]"
  TWOK 'A', 'T'
  TWOK 'O', 'R'
  RTOK 25
  EQUB 0
 
- RTOK 91                ; Token 21:     ""
- CHAR 'M'
- CHAR 'U'
+ RTOK 91                ; Token 21:     "COMMUNIST"
+ CHAR 'M'               ;
+ CHAR 'U'               ; Encoded as:   "[91]MUN<157>T"
  CHAR 'N'
  TWOK 'I', 'S'
  CHAR 'T'
  EQUB 0
 
- CHAR 'C'               ; Token 22:     ""
- TWOK 'O', 'N'
- CHAR 'F'
+ CHAR 'C'               ; Token 22:     "CONFEDERACY"
+ TWOK 'O', 'N'          ;
+ CHAR 'F'               ; Encoded as:   "C<159>F<152><144>ACY"
  TWOK 'E', 'D'
  TWOK 'E', 'R'
  CHAR 'A'
@@ -10672,9 +10675,9 @@ ENDIF
  CHAR 'Y'
  EQUB 0
 
- CHAR 'D'               ; Token 23:     ""
- CHAR 'E'
- CHAR 'M'
+ CHAR 'D'               ; Token 23:     "DEMOCRACY"
+ CHAR 'E'               ;
+ CHAR 'M'               ; Encoded as:   "DEMOC<148>CY"
  CHAR 'O'
  CHAR 'C'
  TWOK 'R', 'A'
@@ -10682,9 +10685,9 @@ ENDIF
  CHAR 'Y'
  EQUB 0
 
- CHAR 'C'               ; Token 24:     ""
- TWOK 'O', 'R'
- CHAR 'P'
+ CHAR 'C'               ; Token 24:     "CORPORATE STATE"
+ TWOK 'O', 'R'          ;
+ CHAR 'P'               ; Encoded as:   "C<153>P<153><145>E [43]<145>E"
  TWOK 'O', 'R'
  TWOK 'A', 'T'
  CHAR 'E'
@@ -10694,29 +10697,29 @@ ENDIF
  CHAR 'E'
  EQUB 0
 
- CHAR 'S'               ; Token 25:     ""
- CHAR 'H'
- CHAR 'I'
+ CHAR 'S'               ; Token 25:     "SHIP"
+ CHAR 'H'               ;
+ CHAR 'I'               ; Encoded as:   "SHIP"
  CHAR 'P'
  EQUB 0
 
- CHAR 'P'               ; Token 26:     ""
- RTOK 94
- CHAR 'D'
+ CHAR 'P'               ; Token 26:     "PRODUCT"
+ RTOK 94                ;
+ CHAR 'D'               ; Encoded as:   "P[94]]DUCT"
  CHAR 'U'
  CHAR 'C'
  CHAR 'T'
  EQUB 0
 
- CHAR ' '               ; Token 27:     ""
- TWOK 'L', 'A'
- CHAR 'S'
+ CHAR ' '               ; Token 27:     " LASER"
+ TWOK 'L', 'A'          ;
+ CHAR 'S'               ; Encoded as:   " <149>S<144>"
  TWOK 'E', 'R'
  EQUB 0
 
- CHAR 'H'               ; Token 28:     ""
- CHAR 'U'
- TWOK 'M', 'A'
+ CHAR 'H'               ; Token 28:     "HUMAN COLONIALS"
+ CHAR 'U'               ;
+ TWOK 'M', 'A'          ; Encoded as:   "HU<139>N COL<159>IALS"
  CHAR 'N'
  CHAR ' '
  CHAR 'C'
@@ -10729,9 +10732,9 @@ ENDIF
  CHAR 'S'
  EQUB 0
 
- CHAR 'H'               ; Token 29:     ""
- CHAR 'Y'
- CHAR 'P'
+ CHAR 'H'               ; Token 29:     "HYPERSPACE "
+ CHAR 'Y'               ;
+ CHAR 'P'               ; Encoded as:   "HYP<144>SPA<133> "
  TWOK 'E', 'R'
  CHAR 'S'
  CHAR 'P'
@@ -10740,24 +10743,24 @@ ENDIF
  CHAR ' '
  EQUB 0
 
- CHAR 'S'               ; Token 30:     ""
- CHAR 'H'
- TWOK 'O', 'R'
+ CHAR 'S'               ; Token 30:     "SHORT RANGE CHART"
+ CHAR 'H'               ;
+ TWOK 'O', 'R'          ; Encoded as:   "SH<153>T [42][1]"
  CHAR 'T'
  CHAR ' '
  RTOK 42
  RTOK 1
  EQUB 0
 
- TWOK 'D', 'I'          ; Token 31:     ""
- RTOK 43
- TWOK 'A', 'N'
+ TWOK 'D', 'I'          ; Token 31:     "DISTANCE"
+ RTOK 43                ;
+ TWOK 'A', 'N'          ; Encoded as:   "<141>[43]<155><133>"
  TWOK 'C', 'E'
  EQUB 0
 
- CHAR 'P'               ; Token 32:     ""
- CHAR 'O'
- CHAR 'P'
+ CHAR 'P'               ; Token 32:     "POPULATION"
+ CHAR 'O'               ;
+ CHAR 'P'               ; Encoded as:   "POPUL<145>I<159>"
  CHAR 'U'
  CHAR 'L'
  TWOK 'A', 'T'
@@ -10765,26 +10768,26 @@ ENDIF
  TWOK 'O', 'N'
  EQUB 0
 
- CHAR 'T'               ; Token 33:     ""
- CHAR 'U'
- CHAR 'R'
+ CHAR 'T'               ; Token 33:     "TURNOVER"
+ CHAR 'U'               ;
+ CHAR 'R'               ; Encoded as:   "TUENOV<144>"
  CHAR 'N'
  CHAR 'O'
  CHAR 'V'
  TWOK 'E', 'R'
  EQUB 0
 
- CHAR 'E'               ; Token 34:     ""
- CHAR 'C'
- TWOK 'O', 'N'
+ CHAR 'E'               ; Token 34:     "ECONOMY"
+ CHAR 'C'               ;
+ TWOK 'O', 'N'          ; Encoded as:   "EC<159>OMY"
  CHAR 'O'
  CHAR 'M'
  CHAR 'Y'
  EQUB 0
 
- CHAR ' '               ; Token 35:     ""
- CHAR 'L'
- CHAR 'I'
+ CHAR ' '               ; Token 35:     " LIGHT YEARS"
+ CHAR 'L'               ;
+ CHAR 'I'               ; Encoded as:   " LIGHT YE<138>S"
  CHAR 'G'
  CHAR 'H'
  CHAR 'T'
@@ -10795,37 +10798,37 @@ ENDIF
  CHAR 'S'
  EQUB 0
 
- TWOK 'T', 'E'          ; Token 36:     ""
- CHAR 'C'
- CHAR 'H'
+ TWOK 'T', 'E'          ; Token 36:     "TECH.LEVEL"
+ CHAR 'C'               ;
+ CHAR 'H'               ; Encoded as:   "<156>CH.<129><150>L"
  CHAR '.'
  TWOK 'L', 'E'
  TWOK 'V', 'E'
  CHAR 'L'
  EQUB 0
 
- CHAR 'C'               ; Token 37:     ""
- CHAR 'A'
- CHAR 'S'
+ CHAR 'C'               ; Token 37:     "CASH"
+ CHAR 'A'               ;
+ CHAR 'S'               ; Encoded as:   "CASH"
  CHAR 'H'
  EQUB 0
 
- CHAR ' '               ; Token 38:     ""
- TWOK 'B', 'I'
- CHAR 'L'
+ CHAR ' '               ; Token 38:     " BILLION"
+ TWOK 'B', 'I'          ;
+ CHAR 'L'               ; Encoded as:   " <134>LLI<159>"
  CHAR 'L'
  CHAR 'I'
  TWOK 'O', 'N'
  EQUB 0
 
- RTOK 122               ; Token 39:     ""
- RTOK 1
- CONT 1
+ RTOK 122               ; Token 39:     "GALACTIC CHART{galaxy number}"
+ RTOK 1                 ;
+ CONT 1                 ; Encoded as:   "[122][1]{1}"
  EQUB 0
 
- CHAR 'T'               ; Token 40:     ""
- TWOK 'A', 'R'
- TWOK 'G', 'E'
+ CHAR 'T'               ; Token 40:     "TARGET LOST"
+ TWOK 'A', 'R'          ;
+ TWOK 'G', 'E'          ; Encoded as:   "T<138><131>T LO[43]"
  CHAR 'T'
  CHAR ' '
  CHAR 'L'
@@ -10833,64 +10836,66 @@ ENDIF
  RTOK 43
  EQUB 0
 
- RTOK 106               ; Token 41:     ""
- CHAR ' '
- CHAR 'J'
+ RTOK 106               ; Token 41:     "MISSILE JAMMED"
+ CHAR ' '               ;
+ CHAR 'J'               ; Encoded as:   "[106] JAMM<152>"
  CHAR 'A'
  CHAR 'M'
  CHAR 'M'
  TWOK 'E', 'D'
  EQUB 0
 
- TWOK 'R', 'A'          ; Token 42:     ""
- CHAR 'N'
- TWOK 'G', 'E'
+ TWOK 'R', 'A'          ; Token 42:     "RANGE"
+ CHAR 'N'               ;
+ TWOK 'G', 'E'          ; Encoded as:   "<148>N<131>"
  EQUB 0
 
- CHAR 'S'               ; Token 43:     ""
- CHAR 'T'
- EQUB 0
+ CHAR 'S'               ; Token 43:     "ST"
+ CHAR 'T'               ;
+ EQUB 0                 ; Encoded as:   "ST"
 
  EQUB 0                 ; Token 44:     ""
+                        ;
+                        ; Encoded as:   ""
 
- CHAR 'S'               ; Token 45:     ""
- CHAR 'E'
- CHAR 'L'
+ CHAR 'S'               ; Token 45:     "SELL"
+ CHAR 'E'               ;
+ CHAR 'L'               ; Encoded as:   "SELL"
  CHAR 'L'
  EQUB 0
 
- CHAR ' '               ; Token 46:     ""
- CHAR 'C'
- TWOK 'A', 'R'
+ CHAR ' '               ; Token 46:     " CARGO{sentence case}"
+ CHAR 'C'               ;
+ TWOK 'A', 'R'          ; Encoded as:   " C<138>GO{6}"
  CHAR 'G'
  CHAR 'O'
  CONT 6
  EQUB 0
 
- CHAR 'E'               ; Token 47:     ""
- TWOK 'Q', 'U'
- CHAR 'I'
+ CHAR 'E'               ; Token 47:     "EQUIP SHIP"
+ TWOK 'Q', 'U'          ;
+ CHAR 'I'               ; Encoded as:   "E<154>IP [25]"
  CHAR 'P'
  CHAR ' '
  RTOK 25
  EQUB 0
 
- CHAR 'F'               ; Token 48:     ""
- CHAR 'O'
- CHAR 'O'
+ CHAR 'F'               ; Token 48:     "FOOD"
+ CHAR 'O'               ;
+ CHAR 'O'               ; Encoded as:   "FOOD"
  CHAR 'D'
  EQUB 0
 
- TWOK 'T', 'E'          ; Token 49:     ""
- CHAR 'X'
- TWOK 'T', 'I'
+ TWOK 'T', 'E'          ; Token 49:     "TEXTILES"
+ CHAR 'X'               ;
+ TWOK 'T', 'I'          ; Encoded as:   "<156>X<151><129>S"
  TWOK 'L', 'E'
  CHAR 'S'
  EQUB 0
 
- TWOK 'R', 'A'          ; Token 50:     ""
- TWOK 'D', 'I'
- CHAR 'O'
+ TWOK 'R', 'A'          ; Token 50:     "RADIOACTIVES"
+ TWOK 'D', 'I'          ;
+ CHAR 'O'               ; Encoded as:   "<148><141>OAC<151>V<137>"
  CHAR 'A'
  CHAR 'C'
  TWOK 'T', 'I'
@@ -10898,9 +10903,9 @@ ENDIF
  TWOK 'E', 'S'
  EQUB 0
 
- RTOK 94                ; Token 51:     ""
- CHAR 'B'
- CHAR 'O'
+ RTOK 94                ; Token 51:     "ROBOT SLAVES"
+ CHAR 'B'               ;
+ CHAR 'O'               ; Encoded as:   "[94]BOT S<149>V<137>"
  CHAR 'T'
  CHAR ' '
  CHAR 'S'
@@ -10909,25 +10914,25 @@ ENDIF
  TWOK 'E', 'S'
  EQUB 0
 
- TWOK 'B', 'E'          ; Token 52:     ""
- CHAR 'V'
- TWOK 'E', 'R'
+ TWOK 'B', 'E'          ; Token 52:     "BEVERAGES"
+ CHAR 'V'               ;
+ TWOK 'E', 'R'          ; Encoded as:   "<147>V<144>A<131>S"
  CHAR 'A'
  TWOK 'G', 'E'
  CHAR 'S'
  EQUB 0
 
- CHAR 'L'               ; Token 53:     ""
- CHAR 'U'
- CHAR 'X'
+ CHAR 'L'               ; Token 53:     "LUXURIES"
+ CHAR 'U'               ;
+ CHAR 'X'               ; Encoded as:   "LUXU<158><137>"
  CHAR 'U'
  TWOK 'R', 'I'
  TWOK 'E', 'S'
  EQUB 0
 
- CHAR 'R'               ; Token 54:     ""
- TWOK 'A', 'R'
- CHAR 'E'
+ CHAR 'R'               ; Token 54:     "RARE SPECIES"
+ TWOK 'A', 'R'          ;
+ CHAR 'E'               ; Encoded as:   "R<138>E SPECI<137>"
  CHAR ' '
  CHAR 'S'
  CHAR 'P'
@@ -10937,74 +10942,74 @@ ENDIF
  TWOK 'E', 'S'
  EQUB 0
 
- RTOK 91                ; Token 55:     ""
- CHAR 'P'
- CHAR 'U'
+ RTOK 91                ; Token 55:     "COMPUTERS"
+ CHAR 'P'               ;
+ CHAR 'U'               ; Encoded as:   "[91]PUT<144>S"
  CHAR 'T'
  TWOK 'E', 'R'
  CHAR 'S'
  EQUB 0
 
- TWOK 'M', 'A'          ; Token 56:     ""
- CHAR 'C'
- CHAR 'H'
+ TWOK 'M', 'A'          ; Token 56:     "MACHINERY"
+ CHAR 'C'               ;
+ CHAR 'H'               ; Encoded as:   "<139>CH<140><144>Y"
  TWOK 'I', 'N'
  TWOK 'E', 'R'
  CHAR 'Y'
  EQUB 0
 
- RTOK 124               ; Token 57:     ""
- CHAR 'O'
- CHAR 'Y'
+ RTOK 124               ; Token 57:     "ALLOYS"
+ CHAR 'O'               ;
+ CHAR 'Y'               ; Encoded as:   "[124]OYS"
  CHAR 'S'
  EQUB 0
 
- CHAR 'F'               ; Token 58:     ""
- CHAR 'I'
- RTOK 97
+ CHAR 'F'               ; Token 58:     "FIREARMS"
+ CHAR 'I'               ;
+ RTOK 97                ; Encoded as:   "FI[97]MS"
  CHAR 'M'
  CHAR 'S'
  EQUB 0
 
- CHAR 'F'               ; Token 59:     ""
- CHAR 'U'
- CHAR 'R'
+ CHAR 'F'               ; Token 59:     "FURS"
+ CHAR 'U'               ;
+ CHAR 'R'               ; Encoded as:   "FURS"
  CHAR 'S'
  EQUB 0
 
- CHAR 'M'               ; Token 60:     ""
- TWOK 'I', 'N'
- TWOK 'E', 'R'
+ CHAR 'M'               ; Token 60:     "MINERALS"
+ TWOK 'I', 'N'          ;
+ TWOK 'E', 'R'          ; Encoded as:   "M<140><144>ALS"
  CHAR 'A'
  CHAR 'L'
  CHAR 'S'
  EQUB 0
 
- CHAR 'G'               ; Token 61:     ""
- CHAR 'O'
- CHAR 'L'
+ CHAR 'G'               ; Token 61:     "GOLD"
+ CHAR 'O'               ;
+ CHAR 'L'               ; Encoded as:   "GOLD"
  CHAR 'D'
  EQUB 0
 
- CHAR 'P'               ; Token 62:     ""
- CHAR 'L'
- TWOK 'A', 'T'
+ CHAR 'P'               ; Token 62:     "PLATINUM"
+ CHAR 'L'               ;
+ TWOK 'A', 'T'          ; Encoded as:   "PL<145><140>UM"
  TWOK 'I', 'N'
  CHAR 'U'
  CHAR 'M'
  EQUB 0
 
- TWOK 'G', 'E'          ; Token 63:     ""
- CHAR 'M'
- CHAR '-'
+ TWOK 'G', 'E'          ; Token 63:     "GEM-STONES"
+ CHAR 'M'               ;
+ CHAR '-'               ; Encoded as:   "<131>M-[43]<159><137>"
  RTOK 43
  TWOK 'O', 'N'
  TWOK 'E', 'S'
  EQUB 0
 
- CHAR 'A'               ; Token 64:     ""
- CHAR 'L'
- CHAR 'I'
+ CHAR 'A'               ; Token 64:     "ALIEN ITEMS"
+ CHAR 'L'               ;
+ CHAR 'I'               ; Encoded as:   "ALI<146> [127]S"
  TWOK 'E', 'N'
  CHAR ' '
  RTOK 127
@@ -11012,126 +11017,135 @@ ENDIF
  EQUB 0
 
  EQUB 0                 ; Token 65:     ""
+                        ;
+                        ; Encoded as:   ""
 
- CHAR ' '               ; Token 66:     ""
- CHAR 'C'
- CHAR 'R'
+ CHAR ' '               ; Token 66:     " CR"
+ CHAR 'C'               ;
+ CHAR 'R'               ; Encoded as:   " CR"
  EQUB 0
 
  EQUB 0                 ; Token 67:     ""
+                        ;
+                        ; Encoded as:   ""
 
  EQUB 0                 ; Token 68:     ""
+                        ;
+                        ; Encoded as:   ""
 
  EQUB 0                 ; Token 69:     ""
+                        ;
+                        ; Encoded as:   ""
 
- CHAR 'G'               ; Token 70:     ""
- TWOK 'R', 'E'
- TWOK 'E', 'N'
+ CHAR 'G'               ; Token 70:     "GREEN"
+ TWOK 'R', 'E'          ;
+ TWOK 'E', 'N'          ; Encoded as:   "G<142><146>"
  EQUB 0
 
- TWOK 'R', 'E'          ; Token 71:     ""
+ TWOK 'R', 'E'          ; Token 71:     "RED"
  CHAR 'D'
- EQUB 0
+ EQUB 0                 ; Encoded as:   "<142>D"
 
- CHAR 'Y'               ; Token 72:     ""
- CHAR 'E'
- CHAR 'L'
+ CHAR 'Y'               ; Token 72:     "YELLOW"
+ CHAR 'E'               ;
+ CHAR 'L'               ; Encoded as:   "YELLOW"
  CHAR 'L'
  CHAR 'O'
  CHAR 'W'
  EQUB 0
 
- CHAR 'B'               ; Token 73:     ""
- CHAR 'L'
- CHAR 'U'
+ CHAR 'B'               ; Token 73:     "BLUE"
+ CHAR 'L'               ;
+ CHAR 'U'               ; Encoded as:   "BLUE"
  CHAR 'E'
  EQUB 0
 
- CHAR 'B'               ; Token 74:     ""
- TWOK 'L', 'A'
- CHAR 'C'
+ CHAR 'B'               ; Token 74:     "BLACK"
+ TWOK 'L', 'A'          ;
+ CHAR 'C'               ; Encoded as:   "B<149>CK"
  CHAR 'K'
  EQUB 0
 
- RTOK 136               ; Token 75:     ""
- EQUB 0
+ RTOK 136               ; Token 75:     "HARMLESS"
+ EQUB 0                 ;
+                        ; Encoded as:   "[136]"
 
- CHAR 'S'               ; Token 76:     ""
- CHAR 'L'
- CHAR 'I'
+ CHAR 'S'               ; Token 76:     "SLIMY"
+ CHAR 'L'               ;
+ CHAR 'I'               ; Encoded as:   "SLIMY"
  CHAR 'M'
  CHAR 'Y'
  EQUB 0
 
- CHAR 'B'               ; Token 77:     ""
- CHAR 'U'
- CHAR 'G'
+ CHAR 'B'               ; Token 77:     "BUG-EYED"
+ CHAR 'U'               ;
+ CHAR 'G'               ; Encoded as:   "BUG-EY<152>"
  CHAR '-'
  CHAR 'E'
  CHAR 'Y'
  TWOK 'E', 'D'
  EQUB 0
 
- CHAR 'H'               ; Token 78:     ""
- TWOK 'O', 'R'
- CHAR 'N'
+ CHAR 'H'               ; Token 78:     "HORNED"
+ TWOK 'O', 'R'          ;
+ CHAR 'N'               ; Encoded as:   "H<153>N<152>"
  TWOK 'E', 'D'
  EQUB 0
 
- CHAR 'B'               ; Token 79:     ""
- TWOK 'O', 'N'
+ CHAR 'B'               ; Token 79:     "BONY"
+ TWOK 'O', 'N'          ;
+ CHAR 'Y'               ; Encoded as:   "B<159>Y"
+ EQUB 0
+
+ CHAR 'F'               ; Token 80:     "FAT"
+ TWOK 'A', 'T'          ;
+ EQUB 0                 ; Encoded as:   "F<145>"
+
+ CHAR 'F'               ; Token 81:     "FURRY"
+ CHAR 'U'               ;
+ CHAR 'R'               ; Encoded as:   "FURRY"
+ CHAR 'R'
  CHAR 'Y'
  EQUB 0
 
- CHAR 'F'               ; Token 80:     ""
- TWOK 'A', 'T'
- EQUB 0
-
- CHAR 'F'               ; Token 81:     ""
- CHAR 'U'
- CHAR 'R'
- CHAR 'R'
- CHAR 'Y'
- EQUB 0
-
- RTOK 94                ; Token 82:     ""
- CHAR 'D'
- TWOK 'E', 'N'
+ RTOK 94                ; Token 82:     "RODENTS"
+ CHAR 'D'               ;
+ TWOK 'E', 'N'          ; Encoded as:   "[94]D<146>TS"
  CHAR 'T'
  CHAR 'S'
  EQUB 0
 
- CHAR 'F'               ; Token 83:     ""
- RTOK 94
- CHAR 'G'
+ CHAR 'F'               ; Token 83:     "FROGS"
+ RTOK 94                ;
+ CHAR 'G'               ; Encoded as:   "F[94]GS"
  CHAR 'S'
  EQUB 0
 
- CHAR 'L'               ; Token 84:     ""
- CHAR 'I'
- TWOK 'Z', 'A'
+ CHAR 'L'               ; Token 84:     "LIZARDS"
+ CHAR 'I'               ;
+ TWOK 'Z', 'A'          ; Encoded as:   "LI<132>RDS"
  CHAR 'R'
  CHAR 'D'
  CHAR 'S'
  EQUB 0
 
- CHAR 'L'               ; Token 85:     ""
- CHAR 'O'
- CHAR 'B'
+ CHAR 'L'               ; Token 85:     "LOBSTERS"
+ CHAR 'O'               ;
+ CHAR 'B'               ; Encoded as:   "LOB[43]<144>S"
  RTOK 43
  TWOK 'E', 'R'
  CHAR 'S'
  EQUB 0
 
- TWOK 'B', 'I'          ; Token 86:     ""
- CHAR 'R'
- CHAR 'D'
+ TWOK 'B', 'I'          ; Token 86:     "BIRDS"
+ CHAR 'R'               ;
+ CHAR 'D'               ; Encoded as:   "<134>RDS"
  CHAR 'S'
  EQUB 0
 
- CHAR 'H'               ; Token 87:     ""
- CHAR 'U'
- TWOK 'M', 'A'
+ CHAR 'H'               ; Token 87:     "HUMANOIDS"
+ CHAR 'U'               ;
+ TWOK 'M', 'A'          ; Encoded as:   "HU<139>NOIDS"
  CHAR 'N'
  CHAR 'O'
  CHAR 'I'
@@ -11139,54 +11153,54 @@ ENDIF
  CHAR 'S'
  EQUB 0
 
- CHAR 'F'               ; Token 88:     ""
- CHAR 'E'
- CHAR 'L'
+ CHAR 'F'               ; Token 88:     "FELINES"
+ CHAR 'E'               ;
+ CHAR 'L'               ; Encoded as:   "FEL<140><137>"
  TWOK 'I', 'N'
  TWOK 'E', 'S'
  EQUB 0
 
- TWOK 'I', 'N'          ; Token 89:     ""
- CHAR 'S'
- CHAR 'E'
+ TWOK 'I', 'N'          ; Token 89:     "INSECTS"
+ CHAR 'S'               ;
+ CHAR 'E'               ; Encoded as:   "<140>SECTS"
  CHAR 'C'
  CHAR 'T'
  CHAR 'S'
  EQUB 0
 
- TWOK 'R', 'A'          ; Token 90:     ""
- TWOK 'D', 'I'
- TWOK 'U', 'S'
+ TWOK 'R', 'A'          ; Token 90:     "RADIUS"
+ TWOK 'D', 'I'          ;
+ TWOK 'U', 'S'          ; Encoded as:   "<148><141><136>"
  EQUB 0
 
- CHAR 'C'               ; Token 91:     ""
- CHAR 'O'
- CHAR 'M'
+ CHAR 'C'               ; Token 91:     "COM"
+ CHAR 'O'               ;
+ CHAR 'M'               ; Encoded as:   "COM"
  EQUB 0
 
- RTOK 91                ; Token 92:     ""
- TWOK 'M', 'A'
- CHAR 'N'
+ RTOK 91                ; Token 92:     "COMMANDER"
+ TWOK 'M', 'A'          ;
+ CHAR 'N'               ; Encoded as:   "[91]<139>ND<144>"
  CHAR 'D'
  TWOK 'E', 'R'
  EQUB 0
 
- CHAR ' '               ; Token 93:     ""
- CHAR 'D'
- TWOK 'E', 'S'
+ CHAR ' '               ; Token 93:     " DESTROYED"
+ CHAR 'D'               ;
+ TWOK 'E', 'S'          ; Encoded as:   " D<137>T[94]Y<152>"
  CHAR 'T'
  RTOK 94
  CHAR 'Y'
  TWOK 'E', 'D'
  EQUB 0
 
- CHAR 'R'               ; Token 94:     ""
- CHAR 'O'
- EQUB 0
+ CHAR 'R'               ; Token 94:     "RO"
+ CHAR 'O'               ;
+ EQUB 0                 ; Encoded as:   "RO"
 
- RTOK 26                ; Token 95:     ""
- CHAR ' '
- CHAR ' '
+ RTOK 26                ; Token 95:     "PRODUCT   UNIT PRICE QUANTITY"
+ CHAR ' '               ;
+ CHAR ' '               ; Encoded as:   "[26]   [14] [6] <154><155><151>TY"
  CHAR ' '
  RTOK 14
  CHAR ' '
@@ -11199,77 +11213,77 @@ ENDIF
  CHAR 'Y'
  EQUB 0
 
- CHAR 'F'               ; Token 96:     ""
- CHAR 'R'
- TWOK 'O', 'N'
+ CHAR 'F'               ; Token 96:     "FRONT"
+ CHAR 'R'               ;
+ TWOK 'O', 'N'          ; Encoded as:   "FR<159>T"
  CHAR 'T'
  EQUB 0
 
- TWOK 'R', 'E'          ; Token 97:     ""
- TWOK 'A', 'R'
+ TWOK 'R', 'E'          ; Token 97:     "REAR"
+ TWOK 'A', 'R'          ;
+ EQUB 0                 ; Encoded as:   "<142><138>"
+
+ TWOK 'L', 'E'          ; Token 98:     "LEFT"
+ CHAR 'F'               ;
+ CHAR 'T'               ; Encoded as:   "<129>FT"
  EQUB 0
 
- TWOK 'L', 'E'          ; Token 98:     ""
- CHAR 'F'
+ TWOK 'R', 'I'          ; Token 99:     "RIGHT"
+ CHAR 'G'               ;
+ CHAR 'H'               ; Encoded as:   "<158>GHT"
  CHAR 'T'
  EQUB 0
 
- TWOK 'R', 'I'          ; Token 99:     ""
- CHAR 'G'
- CHAR 'H'
- CHAR 'T'
- EQUB 0
-
- RTOK 121               ; Token 100:    ""
- CHAR 'L'
- CHAR 'O'
+ RTOK 121               ; Token 100:    "ENERGY LOW{beep}"
+ CHAR 'L'               ;
+ CHAR 'O'               ; Encoded as:   "[121]LOW{7}"
  CHAR 'W'
  CONT 7
  EQUB 0
 
- RTOK 99                ; Token 101:    ""
- RTOK 131
- RTOK 92
+ RTOK 99                ; Token 101:    "RIGHT ON COMMANDER!"
+ RTOK 131               ;
+ RTOK 92                ; Encoded as:   "[99][131][92]!"
  CHAR '!'
  EQUB 0
 
- CHAR 'E'               ; Token 102:    ""
- CHAR 'X'
- CHAR 'T'
+ CHAR 'E'               ; Token 102:    "EXTRA "
+ CHAR 'X'               ;
+ CHAR 'T'               ; Encoded as:   "EXT<148> "
  TWOK 'R', 'A'
  CHAR ' '
  EQUB 0
 
- CHAR 'P'               ; Token 103:    ""
- CHAR 'U'
- CHAR 'L'
+ CHAR 'P'               ; Token 103:    "PULSE LASER"
+ CHAR 'U'               ;
+ CHAR 'L'               ; Encoded as:   "PULSE[27]"
  CHAR 'S'
  CHAR 'E'
  RTOK 27
  EQUB 0
 
- TWOK 'B', 'E'          ; Token 104:    ""
- CHAR 'A'
- CHAR 'M'
+ TWOK 'B', 'E'          ; Token 104:    "BEAM LASER"
+ CHAR 'A'               ;
+ CHAR 'M'               ; Encoded as:   "<147>AM[27]"
  RTOK 27
  EQUB 0
 
- CHAR 'F'               ; Token 105:    ""
- CHAR 'U'
- CHAR 'E'
+ CHAR 'F'               ; Token 105:    "FUEL"
+ CHAR 'U'               ;
+ CHAR 'E'               ; Encoded as:   "FUEL"
  CHAR 'L'
  EQUB 0
 
- CHAR 'M'               ; Token 106:    ""
- TWOK 'I', 'S'
- CHAR 'S'
+ CHAR 'M'               ; Token 106:    "MISSILE"
+ TWOK 'I', 'S'          ;
+ CHAR 'S'               ; Encoded as:   "M<157>SI<129>"
  CHAR 'I'
  TWOK 'L', 'E'
  EQUB 0
 
- CHAR 'L'               ; Token 107:    ""
- TWOK 'A', 'R'
- TWOK 'G', 'E'
+ CHAR 'L'               ; Token 107:    "LARGE CARGO BAY""
+ TWOK 'A', 'R'          ;
+ TWOK 'G', 'E'          ; Encoded as:   "L<138><131> C<138>GO BAY
  CHAR ' '
  CHAR 'C'
  TWOK 'A', 'R'
@@ -11281,28 +11295,28 @@ ENDIF
  CHAR 'Y'
  EQUB 0
 
- CHAR 'E'               ; Token 108:    ""
- CHAR '.'
- CHAR 'C'
+ CHAR 'E'               ; Token 108:    "E.C.M.SYSTEM"
+ CHAR '.'               ;
+ CHAR 'C'               ; Encoded as:   "E.C.M.[5]"
  CHAR '.'
  CHAR 'M'
  CHAR '.'
  RTOK 5
  EQUB 0
 
- RTOK 102               ; Token 109:    ""
- RTOK 103
- CHAR 'S'
+ RTOK 102               ; Token 109:    "EXTRA PULSE LASERS"
+ RTOK 103               ;
+ CHAR 'S'               ; Encoded as:   "[102][103]S"
  EQUB 0
 
- RTOK 102               ; Token 110:    ""
- RTOK 104
- CHAR 'S'
+ RTOK 102               ; Token 110:    "EXTRA BEAM LASERS"
+ RTOK 104               ;
+ CHAR 'S'               ; Encoded as:   "[102][104]S"
  EQUB 0
 
- RTOK 105               ; Token 111:    ""
- CHAR ' '
- CHAR 'S'
+ RTOK 105               ; Token 111:    "FUEL SCOOPS"
+ CHAR ' '               ;
+ CHAR 'S'               ; Encoded as:   "[105] SCOOPS"
  CHAR 'C'
  CHAR 'O'
  CHAR 'O'
@@ -11310,9 +11324,9 @@ ENDIF
  CHAR 'S'
  EQUB 0
 
- TWOK 'E', 'S'          ; Token 112:    ""
- CHAR 'C'
- CHAR 'A'
+ TWOK 'E', 'S'          ; Token 112:    "ESCAPE CAPSULE"
+ CHAR 'C'               ;
+ CHAR 'A'               ; Encoded as:   "<137>CAPE CAPSULE"
  CHAR 'P'
  CHAR 'E'
  CHAR ' '
@@ -11324,20 +11338,20 @@ ENDIF
  TWOK 'L', 'E'
  EQUB 0
 
- RTOK 121               ; Token 113:    ""
- CHAR 'B'
- CHAR 'O'
+ RTOK 121               ; Token 113:    "ENERGY BOMB"
+ CHAR 'B'               ;
+ CHAR 'O'               ; Encoded as:   "[121]BOMB"
  CHAR 'M'
  CHAR 'B'
  EQUB 0
 
- RTOK 121               ; Token 114:    ""
- RTOK 14
- EQUB 0
+ RTOK 121               ; Token 114:    "ENERGY UNIT"
+ RTOK 14                ;
+ EQUB 0                 ; Encoded as:   "[121][14]"
 
- CHAR 'D'               ; Token 115:    ""
- CHAR 'O'
- CHAR 'C'
+ CHAR 'D'               ; Token 115:    "DOCKING COMPUTERS"
+ CHAR 'O'               ;
+ CHAR 'C'               ; Encoded as:   "DOCK<140>G [55]"
  CHAR 'K'
  TWOK 'I', 'N'
  CHAR 'G'
@@ -11345,9 +11359,9 @@ ENDIF
  RTOK 55
  EQUB 0
 
- RTOK 122               ; Token 116:    ""
- CHAR ' '
- CHAR 'H'
+ RTOK 122               ; Token 116:    "GALACTIC HYPERSPACE "
+ CHAR ' '               ;
+ CHAR 'H'               ; Encoded as:   "[122] HYP<144>SPA<133>"
  CHAR 'Y'
  CHAR 'P'
  TWOK 'E', 'R'
@@ -11357,9 +11371,9 @@ ENDIF
  TWOK 'C', 'E'
  EQUB 0
 
- CHAR 'M'               ; Token 117:    ""
- CHAR 'I'
- CHAR 'L'
+ CHAR 'M'               ; Token 117:    "MILITARY LASER"
+ CHAR 'I'               ;
+ CHAR 'L'               ; Encoded as:   "MILIT<138>Y[27]"
  CHAR 'I'
  CHAR 'T'
  TWOK 'A', 'R'
@@ -11367,53 +11381,53 @@ ENDIF
  RTOK 27
  EQUB 0
 
- CHAR 'M'               ; Token 118:    ""
- TWOK 'I', 'N'
- TWOK 'I', 'N'
+ CHAR 'M'               ; Token 118:    "MINING LASER"
+ TWOK 'I', 'N'          ;
+ TWOK 'I', 'N'          ; Encoded as:   "M<140><140>G[27]"
  CHAR 'G'
  RTOK 27
  EQUB 0
 
- RTOK 37                ; Token 119:    ""
- CHAR ':'
- CONT 0
- EQUB 0
+ RTOK 37                ; Token 119:    "CASH:{cash} CR{cr}
+ CHAR ':'               ;               "
+ CONT 0                 ;
+ EQUB 0                 ; Encoded as:   "[37]:{0}"
 
- TWOK 'I', 'N'          ; Token 120:    ""
- RTOK 91
- TWOK 'I', 'N'
+ TWOK 'I', 'N'          ; Token 120:    "INCOMING MISSILE"
+ RTOK 91                ;
+ TWOK 'I', 'N'          ; Encoded as:   "<140>[91]<140>G [106]"
  CHAR 'G'
  CHAR ' '
  RTOK 106
  EQUB 0
 
- TWOK 'E', 'N'          ; Token 121:    ""
- TWOK 'E', 'R'
- CHAR 'G'
+ TWOK 'E', 'N'          ; Token 121:    "ENERGY "
+ TWOK 'E', 'R'          ;
+ CHAR 'G'               ; Encoded as:   "<146><144>GY "
  CHAR 'Y'
  CHAR ' '
  EQUB 0
 
- CHAR 'G'               ; Token 122:    ""
- CHAR 'A'
- TWOK 'L', 'A'
+ CHAR 'G'               ; Token 122:    "GALACTIC"
+ CHAR 'A'               ;
+ TWOK 'L', 'A'          ; Encoded as:   "GA<149>C<151>C"
  CHAR 'C'
  TWOK 'T', 'I'
  CHAR 'C'
  EQUB 0
 
- RTOK 115               ; Token 123:    ""
- RTOK 131
+ RTOK 115               ; Token 123:    "DOCKING COMPUTERS ON "
+ RTOK 131               ;
+ EQUB 0                 ; Encoded as:   "[115][131]"
+
+ CHAR 'A'               ; Token 124:    "ALL"
+ CHAR 'L'               ;
+ CHAR 'L'               ; Encoded as:   "ALL"
  EQUB 0
 
- CHAR 'A'               ; Token 124:    ""
- CHAR 'L'
- CHAR 'L'
- EQUB 0
-
- TWOK 'L', 'E'          ; Token 125:    ""
- CHAR 'G'
- CHAR 'A'
+ TWOK 'L', 'E'          ; Token 125:    "LEGAL STATUS:"
+ CHAR 'G'               ;
+ CHAR 'A'               ; Encoded as:   "<129>GAL [43]<145><136>:"
  CHAR 'L'
  CHAR ' '
  RTOK 43
@@ -11422,18 +11436,18 @@ ENDIF
  CHAR ':'
  EQUB 0
 
- RTOK 92                ; Token 126:    ""
- CHAR ' '
- CONT 4
- CONT 12
- CONT 12
- CONT 12
- CONT 6
- CHAR 'C'
- CHAR 'U'
- CHAR 'R'
- TWOK 'R', 'E'
- CHAR 'N'
+ RTOK 92                ; Token 126:    "COMMANDER {commander name}{cr}
+ CHAR ' '               ;                {cr}
+ CONT 4                 ;                {cr}
+ CONT 12                ;                {sentence case}PRESENT SYSTEM{tab to
+ CONT 12                ;                column 21}:{current system name}{cr}
+ CONT 12                ;                HYPERSPACE SYSTEM{tab to column 22}:
+ CONT 6                 ;                {selected system name}{cr}
+ CHAR 'C'               ;                CONDITION{tab to column 22}:"
+ CHAR 'U'               ;
+ CHAR 'R'               ; Encoded as:   "[92] {4}{12}{12}{12}{6}CUR<142>NT [5]
+ TWOK 'R', 'E'          ;                {9}{2}{12}[29][5]{9}{3}{13}C<159><141>
+ CHAR 'N'               ;                <151><159>{9}"
  CHAR 'T'
  CHAR ' '
  RTOK 5
@@ -11453,31 +11467,33 @@ ENDIF
  CONT 9
  EQUB 0
 
- CHAR 'I'               ; Token 127:    ""
- TWOK 'T', 'E'
- CHAR 'M'
+ CHAR 'I'               ; Token 127:    "ITEM"
+ TWOK 'T', 'E'          ;
+ CHAR 'M'               ; Encoded as:   "I<156>M"
  EQUB 0
 
  EQUB 0                 ; Token 128:    ""
+                        ;
+                        ; Encoded as:   ""
 
- CHAR 'L'               ; Token 129:    ""
- CHAR 'L'
- EQUB 0
+ CHAR 'L'               ; Token 129:    "LL"
+ CHAR 'L'               ;
+ EQUB 0                 ; Encoded as:   "LL"
 
- CHAR 'R'               ; Token 130:    ""
- TWOK 'A', 'T'
- TWOK 'I', 'N'
+ CHAR 'R'               ; Token 130:    "RATING"
+ TWOK 'A', 'T'          ;
+ TWOK 'I', 'N'          ; Encoded as:   "R<145><140>G"
  CHAR 'G'
  EQUB 0
 
- CHAR ' '               ; Token 131:    ""
- TWOK 'O', 'N'
- CHAR ' '
+ CHAR ' '               ; Token 131:    " ON "
+ TWOK 'O', 'N'          ;
+ CHAR ' '               ; Encoded as:   " <159> "
  EQUB 0
 
- CONT 12                ; Token 132:    ""
- CHAR 'E'
- TWOK 'Q', 'U'
+ CONT 12                ; Token 132:    "{all caps}EQUIPMENT: "
+ CHAR 'E'               ;
+ TWOK 'Q', 'U'          ; Encoded as:   "{12}E<154>IPM<146>T:"
  CHAR 'I'
  CHAR 'P'
  CHAR 'M'
@@ -11486,90 +11502,90 @@ ENDIF
  CHAR ':'
  EQUB 0
 
- CHAR 'C'               ; Token 133:    ""
- TWOK 'L', 'E'
- TWOK 'A', 'N'
+ CHAR 'C'               ; Token 133:    "CLEAN"
+ TWOK 'L', 'E'          ;
+ TWOK 'A', 'N'          ; Encoded as:   "C<129><155>"
  EQUB 0
 
- CHAR 'O'               ; Token 134:    ""
- CHAR 'F'
- CHAR 'F'
+ CHAR 'O'               ; Token 134:    "OFFENDER"
+ CHAR 'F'               ;
+ CHAR 'F'               ; Encoded as:   "OFF<146>D<144>"
  TWOK 'E', 'N'
  CHAR 'D'
  TWOK 'E', 'R'
  EQUB 0
 
- CHAR 'F'               ; Token 135:    ""
- CHAR 'U'
- CHAR 'G'
+ CHAR 'F'               ; Token 135:    "FUGITIVE"
+ CHAR 'U'               ;
+ CHAR 'G'               ; Encoded as:   "FUGI<151><150>"
  CHAR 'I'
  TWOK 'T', 'I'
  TWOK 'V', 'E'
  EQUB 0
 
- CHAR 'H'               ; Token 136:    ""
- TWOK 'A', 'R'
- CHAR 'M'
+ CHAR 'H'               ; Token 136:    "HARMLESS"
+ TWOK 'A', 'R'          ;
+ CHAR 'M'               ; Encoded as:   "H<138>M<129>SS"
  TWOK 'L', 'E'
  CHAR 'S'
  CHAR 'S'
  EQUB 0
 
- CHAR 'M'               ; Token 137:    ""
- CHAR 'O'
- RTOK 43
+ CHAR 'M'               ; Token 137:    "MOSTLY HARMLESS"
+ CHAR 'O'               ;
+ RTOK 43                ; Encoded as:   "MO[43]LY [136]"
  CHAR 'L'
  CHAR 'Y'
  CHAR ' '
  RTOK 136
  EQUB 0
 
- CHAR 'P'               ; Token 138:    ""
- CHAR 'O'
- TWOK 'O', 'R'
+ CHAR 'P'               ; Token 138:     "POOR"
+ CHAR 'O'               ;
+ TWOK 'O', 'R'          ; Encoded as:   "PO<153>"
  EQUB 0
 
- CHAR 'A'               ; Token 139:    ""
- CHAR 'V'
- TWOK 'E', 'R'
- CHAR 'A'
+ CHAR 'A'               ; Token 139:    "AVERAGE"
+ CHAR 'V'               ;
+ TWOK 'E', 'R'          ;
+ CHAR 'A'               ; Encoded as:   "AV<144>A<131>"
  TWOK 'G', 'E'
  EQUB 0
 
- CHAR 'A'               ; Token 140:    ""
- CHAR 'B'
- CHAR 'O'
+ CHAR 'A'               ; Token 140:    "ABOVE AVERAGE "
+ CHAR 'B'               ;
+ CHAR 'O'               ; Encoded as:   "ABO<150> [139]"
  TWOK 'V', 'E'
  CHAR ' '
  RTOK 139
  EQUB 0
 
- RTOK 91                ; Token 141:    ""
- CHAR 'P'
- CHAR 'E'
+ RTOK 91                ; Token 141:    "COMPETENT"
+ CHAR 'P'               ;
+ CHAR 'E'               ; Encoded as:   "[91]PET<146>T"
  CHAR 'T'
  TWOK 'E', 'N'
  CHAR 'T'
  EQUB 0
 
- CHAR 'D'               ; Token 142:    ""
- TWOK 'A', 'N'
- TWOK 'G', 'E'
+ CHAR 'D'               ; Token 142:    "DANGEROUS"
+ TWOK 'A', 'N'          ;
+ TWOK 'G', 'E'          ; Encoded as:   "D<155><131>[94]<136>"
  RTOK 94
  TWOK 'U', 'S'
  EQUB 0
 
- CHAR 'D'               ; Token 143:    ""
- CHAR 'E'
- CHAR 'A'
+ CHAR 'D'               ; Token 143:    "DEADLY"
+ CHAR 'E'               ;
+ CHAR 'A'               ; Encoded as:   "DEADLY"
  CHAR 'D'
  CHAR 'L'
  CHAR 'Y'
  EQUB 0
 
- CHAR '-'               ; Token 144:    ""
- CHAR '-'
- CHAR '-'
+ CHAR '-'               ; Token 144:    "---- E L I T E ----"
+ CHAR '-'               ;
+ CHAR '-'               ; Encoded as:   "---- E L I T E ----"
  CHAR '-'
  CHAR ' '
  CHAR 'E'
@@ -11588,16 +11604,16 @@ ENDIF
  CHAR '-'
  EQUB 0
 
- CHAR 'P'               ; Token 145:    ""
- CHAR 'R'
- TWOK 'E', 'S'
+ CHAR 'P'               ; Token 145:    "PRESENT"
+ CHAR 'R'               ;
+ TWOK 'E', 'S'          ; Encoded as:   "PR<137><146>T"
  TWOK 'E', 'N'
  CHAR 'T'
  EQUB 0
 
- CONT 8                 ; Token 146:    ""
- CHAR 'G'
- CHAR 'A'
+ CONT 8                 ; Token 146:    "{all caps}GAME OVER"
+ CHAR 'G'               ;
+ CHAR 'A'               ; Encoded as:   "{8}GAME OV<144>"
  CHAR 'M'
  CHAR 'E'
  CHAR ' '
@@ -11606,9 +11622,9 @@ ENDIF
  TWOK 'E', 'R'
  EQUB 0
 
- CHAR '6'               ; Token 147:    ""
- CHAR '0'
- CHAR ' '
+ CHAR '6'               ; Token 147:    "60 SECOND PENALTY"
+ CHAR '0'               ;
+ CHAR ' '               ; Encoded as:   "60 SEC<159>D P<146>ALTY"
  CHAR 'S'
  CHAR 'E'
  CHAR 'C'
@@ -11624,6 +11640,8 @@ ENDIF
  EQUB 0
 
  EQUB 0                 ; Token 148:    ""
+                        ;
+                        ; Encoded as:   ""
 
 ; ******************************************************************************
 ;
@@ -13940,9 +13958,9 @@ ENDIF
  TWOK 'G', 'E'
  EQUB 0
 
- CHAR 'B'               ; Token 113:    "BOMBE D`ÉNERGIE"
+ CHAR 'B'               ; Token 113:    "BOMBE D'ÉNERGIE"
  CHAR 'O'               ;
- CHAR 'M'               ; Encoded as:   "BOM<147> D`<N<144>GIE"
+ CHAR 'M'               ; Encoded as:   "BOM<147> D'<N<144>GIE"
  TWOK 'B', 'E'
  CHAR ' '
  CHAR 'D'
@@ -13955,9 +13973,9 @@ ENDIF
  CHAR 'E'
  EQUB 0
 
- CHAR 'U'               ; Token 114:    "UNITÉ D`ÉNERGIE"
+ CHAR 'U'               ; Token 114:    "UNITÉ D'ÉNERGIE"
  CHAR 'N'               ;
- CHAR 'I'               ; Encoded as:   "UNIT< D`<N<144>GIE"
+ CHAR 'I'               ; Encoded as:   "UNIT< D'<N<144>GIE"
  CHAR 'T'
  CHAR '<'
  CHAR ' '
@@ -13971,9 +13989,9 @@ ENDIF
  CHAR 'E'
  EQUB 0
 
- TWOK 'O', 'R'          ; Token 115:    "ORD. D`ARRIMAGE"
+ TWOK 'O', 'R'          ; Token 115:    "ORD. D'ARRIMAGE"
  CHAR 'D'               ;
- CHAR '.'               ; Encoded as:   "<153>D. D`<138><158><139><131>"
+ CHAR '.'               ; Encoded as:   "<153>D. D'<138><158><139><131>"
  CHAR ' '
  CHAR 'D'
  CHAR '`'
@@ -14043,7 +14061,7 @@ ENDIF
  CHAR 'E'
  EQUB 0
 
- RTOK 115               ; Token 123:    "ORD. D`ARRIMAGE EN MARCHE"
+ RTOK 115               ; Token 123:    "ORD. D'ARRIMAGE EN MARCHE"
  CHAR ' '               ;
  TWOK 'E', 'N'          ; Encoded as:   "[115] <146> M<138>CHE"
  CHAR ' '
