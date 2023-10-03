@@ -288,66 +288,66 @@ ENDIF
  ECHR 'G'               ;                SPACE NAVY{lower case} AND {single
  ECHR 'S'               ;                cap}I BEG A MOMENT OF YOUR VALUABLE
  ETOK 213               ;                TIME.{cr}
- ECHR ' '               ;                 {single cap}WE WOULD LIKE YOU TO DO A
- ETWO 'A', 'N'          ;                LITTLE JOB FOR US.{cr}
- ECHR 'D'               ;                 {single cap}THE SHIP YOU SEE HERE IS A
- EJMP 26                ;                NEW MODEL, THE {single cap}CONSTRICTOR,
- ECHR 'I'               ;                EQUIPPED WITH A TOP SECRET NEW SHIELD
- ECHR ' '               ;                GENERATOR.{cr}
- ETWO 'B', 'E'          ;                 {single cap}UNFORTUNATELY IT'S BEEN
- ECHR 'G'               ;                STOLEN.{cr}
- ETOK 208               ;                {single cap}{display ship, wait for
- ECHR 'M'               ;                key press}{single cap}IT WENT MISSING
- ECHR 'O'               ;                FROM OUR SHIP YARD ON {single cap}XEER
- ECHR 'M'               ;                FIVE MONTHS AGO AND {mission 1 location
- ETWO 'E', 'N'          ;                hint}.{cr}
- ECHR 'T'               ;                 {single cap}YOUR MISSION, SHOULD YOU
- ECHR ' '               ;                DECIDE TO ACCEPT IT, IS TO SEEK AND
- ECHR 'O'               ;                DESTROY THIS SHIP.{cr}
- ECHR 'F'               ;                 {single cap}YOU ARE CAUTIONED THAT
- ECHR ' '               ;                ONLY {standard tokens, sentence case}
- ETOK 179               ;                MILITARY  LASERS{extended tokens} WILL
- ECHR 'R'               ;                GET THROUGH THE NEW SHIELDS AND THAT THE
- ECHR ' '               ;                {single cap}CONSTRICTOR IS FITTED WITH
- ECHR 'V'               ;                AN {standard tokens, sentence case}
- ETWO 'A', 'L'          ;                E.C.M.SYSTEM{extended tokens}.{cr}
- ECHR 'U'               ;                 {left align}{tab 6}{single cap}GOOD
- ETWO 'A', 'B'          ;                {single cap}LUCK, {single
- ETWO 'L', 'E'          ;                cap}COMMANDER.{cr}
- ECHR ' '               ;                 {left align}{tab 6}{all caps}  MESSAGE
- ETWO 'T', 'I'          ;                ENDS{display ship, wait for key press}"
- ECHR 'M'               ;
- ECHR 'E'               ; Encoded as:   "{23}{14}{13}{19}G<242><221><240>GS[213]
- ETOK 204               ;                 AND{26}I <247>G[208]MOM<246>T OF [179]
- ECHR 'W'               ;                R V<228>U<216><229> <251>ME[204]WE W
- ECHR 'E'               ;                <217>LD LIKE [179][201]DO[208]L<219>T
- ECHR ' '               ;                <229> JOB F<253> <236>[204][147][207]
- ECHR 'W'               ;                 [179] <218>E HE<242>[202]A[210]MODEL,
- ETWO 'O', 'U'          ;                 <226>E{26}C<223><222>RICT<253>, E<254>
- ECHR 'L'               ;                IPP[196]W<219>H[208]TOP <218>CR<221>
- ECHR 'D'               ;                [210]SHIELD <231>N<244><245><253>[204]U
- ECHR ' '               ;                NF<253>TUN<245>ELY <219>'S <247><246>
- ECHR 'L'               ;                 <222>O<229>N[204]{22}{19}<219> W<246>
- ECHR 'I'               ;                T MISS[195]FROM <217>R [207] Y<238>D
- ECHR 'K'               ;                 <223>{26}<230><244> FI<250> M<223>
- ECHR 'E'               ;                <226>S AGO[178]{28}[204][179]R MISSI
- ECHR ' '               ;                <223>, SH<217>LD [179] DECIDE[201]AC
- ETOK 179               ;                <233>PT <219>, IS[201]<218>EK[178]DE
- ETOK 201               ;                <222>ROY [148][207][204][179] <238>E CA
- ECHR 'D'               ;                U<251><223>[196]<226><245> <223>LY {6}
+ ECHR ' '               ;                {cr}
+ ETWO 'A', 'N'          ;                 {single cap}WE WOULD LIKE YOU TO DO A
+ ECHR 'D'               ;                LITTLE JOB FOR US.{cr}
+ EJMP 26                ;                {cr}
+ ECHR 'I'               ;                 {single cap}THE SHIP YOU SEE HERE IS A
+ ECHR ' '               ;                NEW MODEL, THE {single cap}CONSTRICTOR,
+ ETWO 'B', 'E'          ;                EQUIPPED WITH A TOP SECRET NEW SHIELD
+ ECHR 'G'               ;                GENERATOR.{cr}
+ ETOK 208               ;                {cr}
+ ECHR 'M'               ;                 {single cap}UNFORTUNATELY IT'S BEEN
+ ECHR 'O'               ;                STOLEN.{cr}
+ ECHR 'M'               ;                {cr}
+ ETWO 'E', 'N'          ;                {single cap}{display ship, wait for
+ ECHR 'T'               ;                key press}{single cap}IT WENT MISSING
+ ECHR ' '               ;                FROM OUR SHIP YARD ON {single cap}XEER
+ ECHR 'O'               ;                FIVE MONTHS AGO AND {mission 1 location
+ ECHR 'F'               ;                hint}.{cr}
+ ECHR ' '               ;                {cr}
+ ETOK 179               ;                 {single cap}YOUR MISSION, SHOULD YOU
+ ECHR 'R'               ;                DECIDE TO ACCEPT IT, IS TO SEEK AND
+ ECHR ' '               ;                DESTROY THIS SHIP.{cr}
+ ECHR 'V'               ;                {cr}
+ ETWO 'A', 'L'          ;                 {single cap}YOU ARE CAUTIONED THAT
+ ECHR 'U'               ;                ONLY {standard tokens, sentence case}
+ ETWO 'A', 'B'          ;                MILITARY  LASERS{extended tokens} WILL
+ ETWO 'L', 'E'          ;                GET THROUGH THE NEW SHIELDS AND THAT
+ ECHR ' '               ;                THE {single cap}CONSTRICTOR IS FITTED
+ ETWO 'T', 'I'          ;                WITH AN {standard tokens, sentence
+ ECHR 'M'               ;                case}E.C.M.SYSTEM{extended tokens}.{cr}
+ ECHR 'E'               ;                {cr}
+ ETOK 204               ;                 {left align}{cr}
+ ECHR 'W'               ;                {tab 6}{single cap}GOOD {single cap}
+ ECHR 'E'               ;                LUCK, {single cap}COMMANDER.{cr}
+ ECHR ' '               ;                 {left align}{cr}
+ ECHR 'W'               ;                {tab 6}{all caps}  MESSAGE
+ ETWO 'O', 'U'          ;                ENDS{display ship, wait for key press}"
+ ECHR 'L'               ;                
+ ECHR 'D'               ; Encoded as:   "{23}{14}{13}{19}G<242><221><240>GS[213]
+ ECHR ' '               ;                 AND{26}I <247>G[208]MOM<246>T OF [179]
+ ECHR 'L'               ;                R V<228>U<216><229> <251>ME[204]WE W
+ ECHR 'I'               ;                <217>LD LIKE [179][201]DO[208]L<219>T
+ ECHR 'K'               ;                <229> JOB F<253> <236>[204][147][207]
+ ECHR 'E'               ;                 [179] <218>E HE<242>[202]A[210]MODEL,
+ ECHR ' '               ;                 <226>E{26}C<223><222>RICT<253>, E<254>
+ ETOK 179               ;                IPP[196]W<219>H[208]TOP <218>CR<221>
+ ETOK 201               ;                [210]SHIELD <231>N<244><245><253>[204]U
+ ECHR 'D'               ;                NF<253>TUN<245>ELY <219>'S <247><246>
+ ECHR 'O'               ;                 <222>O<229>N[204]{22}{19}<219> W<246>
+ ETOK 208               ;                T MISS[195]FROM <217>R [207] Y<238>D
+ ECHR 'L'               ;                 <223>{26}<230><244> FI<250> M<223>
+ ETWO 'I', 'T'          ;                <226>S AGO[178]{28}[204][179]R MISSI
+ ECHR 'T'               ;                <223>, SH<217>LD [179] DECIDE[201]AC
+ ETWO 'L', 'E'          ;                <233>PT <219>, IS[201]<218>EK[178]DE
+ ECHR ' '               ;                <222>ROY [148][207][204][179] <238>E CA
+ ECHR 'J'               ;                U<251><223>[196]<226><245> <223>LY {6}
  ECHR 'O'               ;                [116]{5}S W<220>L G<221> <226>R<217>GH
- ETOK 208               ;                 [147]NEW SHIELDS[178]<226><245> <226>E
- ECHR 'L'               ;                {26}C<223><222>RICT<253>[202]F<219>T
- ETWO 'I', 'T'          ;                [196]W<219>H <255> {6}[108]{5}[177]{8}
- ECHR 'T'               ;                {19}GOOD LUCK,{26}[154][212]{22}"
- ETWO 'L', 'E'
- ECHR ' '
- ECHR 'J'
- ECHR 'O'
- ECHR 'B'
- ECHR ' '
- ECHR 'F'
- ETWO 'O', 'R'
+ ECHR 'B'               ;                 [147]NEW SHIELDS[178]<226><245> <226>E
+ ECHR ' '               ;                {26}C<223><222>RICT<253>[202]F<219>T
+ ECHR 'F'               ;                [196]W<219>H <255> {6}[108]{5}[177]{8}
+ ETWO 'O', 'R'          ;                {19}GOOD LUCK,{26}[154][212]{22}"
  ECHR ' '
  ETWO 'U', 'S'
  ETOK 204
@@ -647,26 +647,26 @@ ENDIF
  ETWO 'E', 'N'          ;                case} HER MAJESTY'S SPACE NAVY{lower
  ETWO 'T', 'I'          ;                case}. {single cap}WE HAVE NEED OF YOUR
  ETWO 'O', 'N'          ;                SERVICES AGAIN.{cr}
- ETOK 213               ;                 {single cap}IF YOU WOULD BE SO GOOD AS
- ECHR '.'               ;                TO GO TO {single cap}CEERDI YOU WILL BE
- EJMP 26                ;                BRIEFED.{cr}
- ECHR 'W'               ;                 {single cap}IF SUCCESSFUL, YOU WILL BE
- ECHR 'E'               ;                WELL REWARDED.{cr}
- ECHR ' '               ;                {left align}{tab 6}{all caps}  MESSAGE
- ECHR 'H'               ;                ENDS{wait for key press}"
- ECHR 'A'               ;
- ETWO 'V', 'E'          ; Encoded as:   "{25}{9}{23}{14} {26}<245>T<246><251>
- ECHR ' '               ;                <223>[213]. {19}WE HA<250> NE[196]OF
- ECHR 'N'               ;                 [179]R <218>RVI<233>S AGA<240>[204]
- ECHR 'E'               ;                 [179] W<217>LD <247> <235> GOOD AS
- ETOK 196               ;                [201]GO TO{26}<233><244><241> [179] W
- ECHR 'O'               ;                <220>L <247> BRIEF<252>[204]IF SUC<233>
- ECHR 'F'               ;                SSFUL, [179] W<220>L <247> WELL <242>W
- ECHR ' '               ;                <238>D<252>[212]{24}"
- ETOK 179
- ECHR 'R'
- ECHR ' '
- ETWO 'S', 'E'
+ ETOK 213               ;                {cr}
+ ECHR '.'               ;                 {single cap}IF YOU WOULD BE SO GOOD AS
+ EJMP 26                ;                TO GO TO {single cap}CEERDI YOU WILL BE
+ ECHR 'W'               ;                BRIEFED.{cr}
+ ECHR 'E'               ;                {cr}
+ ECHR ' '               ;                 {single cap}IF SUCCESSFUL, YOU WILL BE
+ ECHR 'H'               ;                WELL REWARDED.{cr}
+ ECHR 'A'               ;                {cr}
+ ETWO 'V', 'E'          ;                {left align}{cr}
+ ECHR ' '               ;                {tab 6}{all caps}  MESSAGE
+ ECHR 'N'               ;                ENDS{wait for key press}"
+ ECHR 'E'               ;
+ ETOK 196               ; Encoded as:   "{25}{9}{23}{14} {26}<245>T<246><251>
+ ECHR 'O'               ;                <223>[213]. {19}WE HA<250> NE[196]OF
+ ECHR 'F'               ;                 [179]R <218>RVI<233>S AGA<240>[204]
+ ECHR ' '               ;                 [179] W<217>LD <247> <235> GOOD AS
+ ETOK 179               ;                [201]GO TO{26}<233><244><241> [179] W
+ ECHR 'R'               ;                <220>L <247> BRIEF<252>[204]IF SUC<233>
+ ECHR ' '               ;                SSFUL, [179] W<220>L <247> WELL <242>W
+ ETWO 'S', 'E'          ;                <238>D<252>[212]{24}"
  ECHR 'R'
  ECHR 'V'
  ECHR 'I'
@@ -794,20 +794,20 @@ ENDIF
  ETWO 'O', 'N'          ;                {single cap}THERE WILL ALWAYS BE A
  ECHR 'G'               ;                PLACE FOR YOU IN{sentence case} HER
  ECHR 'R'               ;                MAJESTY'S SPACE NAVY{lower case}.{cr}
- ETWO 'A', 'T'          ;                 {single cap}AND MAYBE SOONER THAN YOU
- ECHR 'U'               ;                THINK...{cr}
- ECHR 'L'               ;                {left align}{tab 6}{all caps}  MESSAGE
- ETWO 'A', 'T'          ;                ENDS{wait for key press}"
- ECHR 'I'               ;
- ETWO 'O', 'N'          ; Encoded as:   "{25}{9}{23}{14}{13} {26}C<223>GR<245>UL
+ ETWO 'A', 'T'          ;                {cr}
+ ECHR 'U'               ;                 {single cap}AND MAYBE SOONER THAN YOU
+ ECHR 'L'               ;                THINK...{cr}
+ ETWO 'A', 'T'          ;                {left align}{tab 6}{cr}
+ ECHR 'I'               ;                {all caps}  MESSAGE
+ ETWO 'O', 'N'          ;                ENDS{wait for key press}"
  ECHR 'S'               ;
- ECHR ' '               ;                <245>I<223>S [154]!{12}{12}{19}<226>
- ETOK 154               ;                <244>E W<220>L <228>WAYS <247>[208]P
- ECHR '!'               ;                <249><233> F<253> [179] <240>[211][204]
+ ECHR ' '               ; Encoded as:   "{25}{9}{23}{14}{13} {26}C<223>GR<245>UL
+ ETOK 154               ;                <245>I<223>S [154]!{12}{12}{19}<226>
+ ECHR '!'               ;                <244>E W<220>L <228>WAYS <247>[208]P
+ EJMP 12                ;                <249><233> F<253> [179] <240>[211][204]
  EJMP 12                ;                <255>D <239>Y<247> <235><223><244>
- EJMP 12                ;                 <226><255> [179] <226><240>K..[212]
- EJMP 19                ;                {24}"
- ETWO 'T', 'H'
+ EJMP 19                ;                 <226><255> [179] <226><240>K..[212]
+ ETWO 'T', 'H'          ;                {24}"
  ECHR 'E'
  ETWO 'R', 'E'
  ECHR ' '
@@ -2657,37 +2657,51 @@ ENDIF
  EJMP 13                ;                {lower case}
  EJMP 19                ;                {single cap}
  ECHR 'G'               ;                GOOD DAY {single cap}COMMANDER
- ECHR 'O'               ;                {commander name}.{cr}{cr}
+ ECHR 'O'               ;                {commander name}.{cr}
+                        ;                {cr}
  ECHR 'O'               ;                 {single cap}I{lower case} AM {single
  ECHR 'D'               ;                cap}AGENT{single cap}BLAKE OF {single
  ECHR ' '               ;                cap}NAVAL {single cap}INTELLEGENCE.{cr}
+                        ;                {cr}
  ECHR 'D'               ;                 {single cap}AS YOU KNOW, THE {single
  ECHR 'A'               ;                cap}NAVY HAVE BEEN KEEPING THE {single
  ECHR 'Y'               ;                cap}THARGOIDS OFF YOUR BACK OUT IN DEEP
  ECHR ' '               ;                SPACE FOR MANY YEARS NOW. {single cap}
  ETOK 154               ;                WELL THE SITUATION HAS CHANGED.{cr}
+                        ;                {cr}
  ECHR ' '               ;                 {single cap}OUR BOYS ARE READY FOR A
  EJMP 4                 ;                PUSH RIGHT TO THE HOME SYSTEM OF THOSE
  ETOK 204               ;                MURDERERS.{cr}
+                        ;                {cr}
  EJMP 19                ;                 {single cap}{wait for key press}{clear
  ECHR 'I'               ;                screen}{tab 6, lower case in words}
  ECHR ' '               ;                I{lower case} HAVE OBTAINED THE DEFENCE
  ECHR 'A'               ;                PLANS FOR THEIR {single cap}HIVE{single
- ECHR 'M'               ;                cap}WORLDS.{cr}{wait for key press}
- EJMP 26                ;                {clear screen}{move to row 7, lower
- ECHR 'A'               ;                case}{single cap x 2}THE BEETLES KNOW
- ETWO 'G', 'E'          ;                WE'VE GOT SOMETHING BUT NOT WHAT.{cr}
+ ECHR 'M'               ;                cap}WORLDS.{cr}
+                        ;                {cr}
+                        ;                {wait for key press}
+ EJMP 26                ;                {clear screen}
+                        ;                {move to row 7, lower case}{single cap}
+ ECHR 'A'               ;                {single cap}THE BEETLES KNOW WE'VE GOT
+ ETWO 'G', 'E'          ;                SOMETHING BUT NOT WHAT.{cr}
+                        ;                {cr}
  ECHR 'N'               ;                {single cap}IF {single cap}I TRANSMIT
  ECHR 'T'               ;                THE PLANS TO OUR BASE ON {single cap}
  EJMP 26                ;                BIRERA THEY'LL INTERCEPT THE
  ECHR 'B'               ;                TRANSMISSION. {single cap}I NEED A SHIP
- ETWO 'L', 'A'          ;                 TO MAKE THE RUN.{cr} {single cap}
- ECHR 'K'               ;                YOU'RE ELECTED.{cr}{single cap}THE
- ECHR 'E'               ;                 PLANS ARE UNIPULSE CODED WITHIN THIS
- ECHR ' '               ;                 TRANSMISSION.{cr}{single cap}{tab 6}
+ ETWO 'L', 'A'          ;                 TO MAKE THE RUN.{cr}
+                        ;                {cr}
+ ECHR 'K'               ;                 {single cap}YOU'RE ELECTED.{cr}
+                        ;                {cr}
+                        ;                 {single cap}THE PLANS ARE UNIPULSE
+ ECHR 'E'               ;                CODED WITHIN THIS TRANSMISSION.{cr}
+                        ;                {cr}
+ ECHR ' '               ;                {single cap}{tab 6}
  ECHR 'O'               ;                YOU WILL BE PAID.{cr}
+                        ;                {cr}
  ECHR 'F'               ;                 {single cap}    {single cap}GOOD LUCK
  EJMP 26                ;                {single cap}COMMANDER.{cr}
+                        ;                {left align}{cr}
  ECHR 'N'               ;                {tab 6}{all caps}  MESSAGE ENDS
  ECHR 'A'               ;                {wait for key press}"
  ECHR 'V'               ;
@@ -3120,32 +3134,32 @@ ENDIF
  EJMP 13                ;                {lower case}
  EJMP 19                ;                {single cap}WELL DONE {single cap}
  ECHR 'W'               ;                COMMANDER.{cr}
- ECHR 'E'               ;                 {single cap}YOU HAVE SERVED US WELL
+ ECHR 'E'               ;                {cr}
+ ECHR 'L'               ;                 {single cap}YOU HAVE SERVED US WELL
  ECHR 'L'               ;                AND WE SHALL REMEMBER.{cr}
- ECHR 'L'               ;                 {single cap}WE DID NOT EXPECT THE
- ECHR ' '               ;                 {single cap}THARGOIDS TO FIND OUT
- ECHR 'D'               ;                ABOUT YOU.{cr}
- ETWO 'O', 'N'          ;                 {single cap}FOR THE MOMENT PLEASE
- ECHR 'E'               ;                ACCEPT THIS {single cap}NAVY {standard
- ECHR ' '               ;                tokens, sentence case}EXTRA ENERGY
- ETOK 154               ;                UNIT{extended tokens} AS PAYMENT.{cr}
- ETOK 204               ;                {left align}
- ETOK 179               ;                {tab 6}{all caps}  MESSAGE ENDS
+ ECHR ' '               ;                {cr}
+ ECHR 'D'               ;                 {single cap}WE DID NOT EXPECT THE
+ ETWO 'O', 'N'          ;                {single cap}THARGOIDS TO FIND OUT
+ ECHR 'E'               ;                ABOUT YOU.{cr}
+ ECHR ' '               ;                {cr}
+ ETOK 154               ;                 {single cap}FOR THE MOMENT PLEASE
+ ETOK 204               ;                ACCEPT THIS {single cap}NAVY {standard
+ ETOK 179               ;                tokens, sentence case}EXTRA ENERGY
+ ECHR ' '               ;                UNIT{extended tokens} AS PAYMENT.{cr}
+ ECHR 'H'               ;                {cr}
+ ECHR 'A'               ;                {left align}
+ ETWO 'V', 'E'          ;                {tab 6}{all caps}  MESSAGE ENDS
  ECHR ' '               ;                {wait for key press}"
- ECHR 'H'               ;
- ECHR 'A'               ; Encoded as:   "{25}{9}{29}{8}{14}{13}{19}WELL D
+ ETWO 'S', 'E'          ;
+ ECHR 'R'               ; Encoded as:   "{25}{9}{29}{8}{14}{13}{19}WELL D
  ETWO 'V', 'E'          ;                <223>E [154][204][179] HA<250> <218>R
- ECHR ' '               ;                <250>D <236> WELL[178]WE SH<228>L <242>
- ETWO 'S', 'E'          ;                MEMB<244>[204]WE <241>D <227>T EXPECT
- ECHR 'R'               ;                <226>E{26}<226><238>GOIDS[201]F<240>D
- ETWO 'V', 'E'          ;                 <217>T <216><217>T [179][204]{19}F
- ECHR 'D'               ;                <253> [147]MOM<246>T P<229>A<218> AC
- ECHR ' '               ;                <233>PT <226>{26}NAVY {6}[114]{5} A
- ETWO 'U', 'S'          ;                S PAYM<246>T[212]{24}"
- ECHR ' '
- ECHR 'W'
- ECHR 'E'
- ECHR 'L'
+ ECHR 'D'               ;                <250>D <236> WELL[178]WE SH<228>L <242>
+ ECHR ' '               ;                MEMB<244>[204]WE <241>D <227>T EXPECT
+ ETWO 'U', 'S'          ;                <226>E{26}<226><238>GOIDS[201]F<240>D
+ ECHR ' '               ;                 <217>T <216><217>T [179][204]{19}F
+ ECHR 'W'               ;                <253> [147]MOM<246>T P<229>A<218> AC
+ ECHR 'E'               ;                <233>PT <226>{26}NAVY {6}[114]{5} A
+ ECHR 'L'               ;                S PAYM<246>T[212]{24}"
  ECHR 'L'
  ETOK 178
  ECHR 'W'
@@ -4241,87 +4255,87 @@ ENDIF
  ETWO 'S', 'E'          ;                name}. {single cap}ICH {lower case}BIN
  ECHR 'I'               ;                {single cap}KAPITN DER {single cap}
  ECHR 'D'               ;                RAUMFAHRTMARINE UNSERER {single cap}
- ECHR ' '               ;                MAJESTT. {single cap}ICH BITTE
- ETWO 'G', 'E'          ;                ...
- ECHR 'G'               ;                ...
- ECHR 'R'
- ERND 2
- ERND 3
- ECHR 'T'
- ETOK 213
- ECHR '.'
- EJMP 26
- ETOK 186
- ECHR ' '
- ECHR 'B'
- ETWO 'I', 'T'
- ECHR 'T'
- ECHR 'E'
- ETOK 179
- ECHR ' '
- ECHR 'U'
- ECHR 'M'
- ECHR ' '
- ETOK 183
- ETWO 'E', 'N'
- EJMP 26
- ECHR 'M'
- ECHR 'O'
- ECHR 'M'
- ETWO 'E', 'N'
- ECHR 'T'
- EJMP 26
- ECHR 'I'
- ECHR 'H'
- ETWO 'R', 'E'
- ECHR 'R'
- ECHR ' '
- ECHR 'W'
- ETWO 'E', 'R'
- ECHR 'T'
- ECHR 'V'
- ECHR 'O'
- ECHR 'L'
- ETWO 'L', 'E'
- ECHR 'N'
- EJMP 26
- ECHR 'Z'
- ECHR 'E'
- ETWO 'I', 'T'
- ETOK 204
- ECHR 'W'
- ECHR 'I'
- ECHR 'R'
- ECHR ' '
- ECHR 'W'
- ERND 2
- ECHR 'R'
- ECHR 'D'
- ETWO 'E', 'N'
- ECHR ' '
- ECHR 'U'
- ECHR 'N'
- ECHR 'S'
- ECHR ' '
- ECHR 'F'
- ETWO 'R', 'E'
- ECHR 'U'
- ETWO 'E', 'N'
- ECHR ','
- ECHR ' '
- ECHR 'W'
- ETWO 'E', 'N'
- ECHR 'N'
- ETOK 179
- ECHR ' '
- ETOK 183
- ETWO 'E', 'N'
- ECHR ' '
- ECHR 'K'
- ETWO 'L', 'E'
- ETWO 'I', 'N'
- ETWO 'E', 'N'
- EJMP 26
+ ECHR ' '               ;                MAJESTT. {single cap}ICH BITTE {single
+ ETWO 'G', 'E'          ;                cap}SIE UM EINEN {single cap}MOMENT
+ ECHR 'G'               ;                {single cap}IHRER WERTVOLLEN {single
+ ECHR 'R'               ;                cap}ZEIT.{cr}
+ ERND 2                 ;                {cr}
+ ERND 3                 ;                 {single cap}WIR WRDEN UNS FREUEN, WENN
+ ECHR 'T'               ;                {single cap}SIE EINEN KLEINEN {single
+ ETOK 213               ;                cap}AUFTRAG FR UNS ERFLLEN.{cr}
+ ECHR '.'               ;                {cr}
+ EJMP 26                ;                 {single cap}{display ship, wait for
+ ETOK 186               ;                key press}{single cap}BEI DEM {single
+ ECHR ' '               ;                cap}SCHIFF, DAS {single cap}SIE HIER
+ ECHR 'B'               ;                SEHEN, HANDELT ES SICH UM EIN NEUES
+ ETWO 'I', 'T'          ;                {single cap}MODELL, {single cap}
+ ECHR 'T'               ;                CONSTRICTOR, DAS MIT EINEM  GEHEIMEN
+ ECHR 'E'               ;                NEUEN {single cap}SCHILDGENERATOR
+ ETOK 179               ;                AUSGERSTET IST.{cr}
+ ECHR ' '               ;                {cr}
+ ECHR 'U'               ;                 {single cap}{single cap}LEIDER WURDE
+ ECHR 'M'               ;                ES GESTOHLEN.{cr}
+ ECHR ' '               ;                {cr}
+ ETOK 183               ;                 {single cap}{single cap}ES VERSCHWAND
+ ETWO 'E', 'N'          ;                VOR FNF {single cap}MONATEN VON UNSERER
+ EJMP 26                ;                {single cap}WERFT AUF {single cap}XEER.
+ ECHR 'M'               ;                {single cap}ES {mission 1 location
+ ECHR 'O'               ;                hint}.{cr}
+ ECHR 'M'               ;                {cr}
+ ETWO 'E', 'N'          ;                 {single cap}{display ship, wait for
+ ECHR 'T'               ;                key press}{single cap}SOLLTEN {single
+ EJMP 26                ;                cap}SIE SICH DAZU ENTSCHLIEEN, IHN
+ ECHR 'I'               ;                ANZUNEHMEN, SO LAUTET {single cap}IHR
+ ECHR 'H'               ;                {single cap}AUFTRAG, DAS {single cap}
+ ETWO 'R', 'E'          ;                SCHIFF ZU FINDEN UND ES ZU VERNICHTEN.
+ ECHR 'R'               ;                {cr}
+ ECHR ' '               ;                {cr}
+ ECHR 'W'               ;                 {single cap}NUR VON MILITRISCHEN
+ ETWO 'E', 'R'          ;                {single cap}LASERN KNNEN DIE NEUEN
+ ECHR 'T'               ;                {single cap}SCHILDE DURCHDRUNGEN
+ ECHR 'V'               ;                WERDEN.{cr}
+ ECHR 'O'               ;                {cr}
+ ECHR 'L'               ;                 {single cap}{single cap}CONSTRICTOR
+ ETWO 'L', 'E'          ;                IST MIT AUSGESTATTET.{cr}
+ ECHR 'N'               ;                 {left align}{tab 6}{single cap}VIEL
+ EJMP 26                ;                {single cap}GLCK, {single cap}
+ ECHR 'Z'               ;                KOMMANDANT.{cr}
+ ECHR 'E'               ;                {left align}{cr}
+ ETWO 'I', 'T'          ;                {tab 6}{all caps} {single cap}ENDE DER
+ ETOK 204               ;                {single cap}NACHRICHT{display ship,
+ ECHR 'W'               ;                wait for key press}
+ ECHR 'I'               ;
+ ECHR 'R'               ; Encoded as:   "{23}{14}{13}{26}<218>ID <231>GR[2?][3?]
+ ECHR ' '               ;                T[213].{26}[186] B<219>TE[179] UM [183]
+ ECHR 'W'               ;                <246>{26}MOM<246>T{26}IH<242>R W<244>TV
+ ERND 2                 ;                OL<229>N{26}ZE<219>[204]WIR W[2?]RD
+ ECHR 'R'               ;                <246> UNS F<242>U<246>, W<246>N[179]
+ ECHR 'D'               ;                [183]<246> K<229><240><246>{26}AUFT
+ ETWO 'E', 'N'          ;                <248>G F[2?]R UNS <244>F[2?]L<229>N
+ ECHR ' '               ;                [204]{22}{19}<247>I DEM[182], DAS[179]
+ ECHR 'U'               ;                 HI<244> <218>H<246>, H<255>DELT[161]S
+ ECHR 'N'               ;                [186] UM[185]NEU<237>{26}MODELL,{26}C
+ ECHR 'S'               ;                <223><222>RICT<253>, [156]M<219> [183]
+ ECHR ' '               ;                EM  <231>HEIM<246> NEU<246>{26}[187]
+ ECHR 'F'               ;                <220>D<231>N<244><245><253> A<236><231>
+ ETWO 'R', 'E'          ;                R[2?]<222><221> I<222>[204]{19}<229>I
+ ECHR 'U'               ;                [155]WURDE[161]<231><222>OH<229>N[204]
+ ETWO 'E', 'N'          ;                {19}<237> V<244>[187]W<255>D [157] F
+ ECHR ','               ;                [2?]NF{26}M<223><245><246> V<223> UN
+ ECHR ' '               ;                <218><242>R{26}W<244>FT AUF{26}<230>
+ ECHR 'W'               ;                <244>.{26}<237> {28}[204]{22}{19}<235>L
+ ETWO 'E', 'N'          ;                LT<246>[179] S[186] DA[159] <246>T[187]
+ ECHR 'N'               ;                LIE[3?]<246>, IHN <255>[159]NEHM<246>,
+ ETOK 179               ;                 <235> <249>UT<221>{26}IHR{26}AUFT<248>
+ ECHR ' '               ;                G, DAS[182][160]F<240>D<246>[178]<237>
+ ETOK 183               ;                [160]V<244>[162]<246>[204]<225>R V<223>
+ ETWO 'E', 'N'          ;                 M<220><219>[0?]RI[187]<246>{26}<249>
+ ECHR ' '               ;                <218>RN K[1?]NN<246> [147]NEU<246>{26}
+ ECHR 'K'               ;                [187]<220>DE DURCHDRUN<231>N W<244>D
+ ETWO 'L', 'E'          ;                <246>[204]{19}C<223><222>RICT<253>[181]
+ ETWO 'I', 'N'          ;                M<219> {6}[17?]{5} A<236><231><222>
+ ETWO 'E', 'N'          ;                <245>T<221>[177]{8}{19}VIEL{26}GL[2?]CK
+ EJMP 26                ;                , [154][212]{22}"
  ECHR 'A'
  ECHR 'U'
  ECHR 'F'
@@ -5619,28 +5633,28 @@ ENDIF
                         
                         ; Encoded as:   ""
 
- EJMP 19                ; Token 145:    "
- ECHR 'P'
- ETWO 'L', 'A'
+ EJMP 19                ; Token 145:    "{single cap}PLANET"
+ ECHR 'P'               ;
+ ETWO 'L', 'A'          ; Encoded as:   "{19}P<249>N<221>"
  ECHR 'N'
  ETWO 'E', 'T'
  EQUB VE
 
- EJMP 19                ; Token 146:    "
- ECHR 'W'
- ECHR 'E'
+ EJMP 19                ; Token 146:    "{single cap}WELT"
+ ECHR 'W'               ;
+ ECHR 'E'               ; Encoded as:   "{19}WELT"
  ECHR 'L'
  ECHR 'T'
  EQUB VE
 
- ETWO 'D', 'I'          ; Token 147:    "
- ECHR 'E'
- ECHR ' '
+ ETWO 'D', 'I'          ; Token 147:    "DIE "
+ ECHR 'E'               ;
+ ECHR ' '               ; Encoded as:   "<241>E "
  EQUB VE
 
- ETWO 'D', 'I'          ; Token 148:    "
- ECHR 'E'
- ETWO 'S', 'E'
+ ETWO 'D', 'I'          ; Token 148:    "DIESE "
+ ECHR 'E'               ;
+ ETWO 'S', 'E'          ; Encoded as:   "<241>E<218> "
  ECHR ' '
  EQUB VE
 
@@ -5648,11 +5662,11 @@ ENDIF
                         
                         ; Encoded as:   ""
 
- EJMP 9                 ; Token 150:    "
- EJMP 11
- EJMP 1
- EJMP 8
- EQUB VE
+ EJMP 9                 ; Token 150:    "{clear screen}
+ EJMP 11                ;                {draw box around title}
+ EJMP 1                 ;                {all caps}{tab 6}"
+ EJMP 8                 ;
+ EQUB VE                ; Encoded as:   "{9}{11}{1}{8}"
 
  EQUB VE                ; Token 151:    ""
                         
@@ -5662,13 +5676,13 @@ ENDIF
                         
                         ; Encoded as:   ""
 
- ECHR 'I'               ; Token 153:    "
- ETWO 'A', 'N'
- EQUB VE
+ ECHR 'I'               ; Token 153:    "IAN"
+ ETWO 'A', 'N'          ;
+ EQUB VE                ; Encoded as:   "I<255>"
 
- EJMP 19                ; Token 154:    "
- ECHR 'K'
- ECHR 'O'
+ EJMP 19                ; Token 154:    "{single cap}KOMMANDANT"
+ ECHR 'K'               ;
+ ECHR 'O'               ; Encoded as:   "{19}KOM<239>ND<255>T"
  ECHR 'M'
  ETWO 'M', 'A'
  ECHR 'N'
@@ -5677,53 +5691,53 @@ ENDIF
  ECHR 'T'
  EQUB VE
 
- ECHR 'D'               ; Token 155:    "
- ETWO 'E', 'R'
+ ECHR 'D'               ; Token 155:    "DER "
+ ETWO 'E', 'R'          ;
+ ECHR ' '               ; Encoded as:   "D<244> "
+ EQUB VE
+
+ ECHR 'D'               ; Token 156:    "DAS "
+ ECHR 'A'               ;
+ ECHR 'S'               ; Encoded as:   "DAS "
  ECHR ' '
  EQUB VE
 
- ECHR 'D'               ; Token 156:    "
- ECHR 'A'
- ECHR 'S'
- ECHR ' '
+ ECHR 'V'               ; Token 157:    "VOR"
+ ETWO 'O', 'R'          ;
+ EQUB VE                ; Encoded as:   "V<253>"
+
+ ECHR 'T'               ; Token 158:    "TZ"
+ ECHR 'Z'               ;
+ EQUB VE                ; Encoded as:   "TZ"
+
+ ECHR 'Z'               ; Token 159:    "ZU"
+ ECHR 'U'               ;
+ EQUB VE                ; Encoded as:   "ZU"
+
+ ECHR ' '               ; Token 160:    " ZU "
+ ETOK 159               ;
+ ECHR ' '               ; Encoded as:   " [159] "
  EQUB VE
 
- ECHR 'V'               ; Token 157:    "
- ETWO 'O', 'R'
+ ECHR ' '               ; Token 161:    " ES "
+ ETWO 'E', 'S'          ;
+ ECHR ' '               ; Encoded as:   " <237> "
  EQUB VE
 
- ECHR 'T'               ; Token 158:    "
- ECHR 'Z'
+ ECHR 'N'               ; Token 162:    "NICHT"
+ ETOK 186               ;
+ ECHR 'T'               ; Encoded as:   "N[186]T"
  EQUB VE
 
- ECHR 'Z'               ; Token 159:    "
- ECHR 'U'
- EQUB VE
-
- ECHR ' '               ; Token 160:    "
- ETOK 159
- ECHR ' '
- EQUB VE
-
- ECHR ' '               ; Token 161:    "
- ETWO 'E', 'S'
- ECHR ' '
- EQUB VE
-
- ECHR 'N'               ; Token 162:    "
- ETOK 186
- ECHR 'T'
- EQUB VE
-
- ECHR 'M'               ; Token 163:    "
- ETWO 'A', 'R'
- ETWO 'I', 'N'
+ ECHR 'M'               ; Token 163:    "MARINE"
+ ETWO 'A', 'R'          ;
+ ETWO 'I', 'N'          ; Encoded as:   "M<238><240>E"
  ECHR 'E'
  EQUB VE
 
- ECHR 'A'               ; Token 164:    "
- ECHR 'C'
- ECHR 'H'
+ ECHR 'A'               ; Token 164:    "ACH"
+ ECHR 'C'               ;
+ ECHR 'H'               ; Encoded as:   "ACH"
  EQUB VE
 
  EQUB VE                ; Token 165:    ""
@@ -5766,83 +5780,83 @@ ENDIF
                         
                         ; Encoded as:   ""
 
- ETWO 'I', 'T'          ; Token 175:    "
- ECHR 'S'
- ECHR ' '
+ ETWO 'I', 'T'          ; Token 175:    "ITS "
+ ECHR 'S'               ;
+ ECHR ' '               ; Encoded as:   "<219>S "
  EQUB VE
 
- EJMP 13                ; Token 176:    "
- EJMP 14
- EJMP 19
+ EJMP 13                ; Token 176:    "{lower case}{justify}{single cap}"
+ EJMP 14                ;
+ EJMP 19                ; Encoded as:   "{13}{14}{19}"
  EQUB VE
 
- ECHR '.'               ; Token 177:    "
- EJMP 12
- EJMP 15
- EQUB VE
+ ECHR '.'               ; Token 177:    ".{cr}
+ EJMP 12                ;                {left align}"
+ EJMP 15                ;
+ EQUB VE                ; Encoded as:   ".{12}{15}"
 
- ECHR ' '               ; Token 178:    "
- ECHR 'U'
- ECHR 'N'
+ ECHR ' '               ; Token 178:    " UND "
+ ECHR 'U'               ;
+ ECHR 'N'               ; Encoded as:   " UND "
  ECHR 'D'
  ECHR ' '
  EQUB VE
 
- EJMP 26                ; Token 179:    "
- ECHR 'S'
- ECHR 'I'
+ EJMP 26                ; Token 179:    " {single cap}SIE"
+ ECHR 'S'               ;
+ ECHR 'I'               ; Encoded as:   "{26}SIE"
  ECHR 'E'
  EQUB VE
 
- ECHR ' '               ; Token 180:    "
- ECHR 'N'
- ETOK 164
+ ECHR ' '               ; Token 180:    " NACH "
+ ECHR 'N'               ;
+ ETOK 164               ; Encoded as:   " N[164] "
  ECHR ' '
  EQUB VE
 
- ECHR ' '               ; Token 181:    "
- ECHR 'I'
- ETWO 'S', 'T'
+ ECHR ' '               ; Token 181:    " IST "
+ ECHR 'I'               ;
+ ETWO 'S', 'T'          ; Encoded as:   " I<222> "
  ECHR ' '
  EQUB VE
 
- EJMP 26                ; Token 182:    "
- ETOK 187
- ECHR 'I'
+ EJMP 26                ; Token 182:    " {single cap}SCHIFF"
+ ETOK 187               ;
+ ECHR 'I'               ; Encoded as:   "{26}[187]IFF"
  ECHR 'F'
  ECHR 'F'
  EQUB VE
 
- ECHR 'E'               ; Token 183:    "
- ETWO 'I', 'N'
- EQUB VE
+ ECHR 'E'               ; Token 183:    "EIN"
+ ETWO 'I', 'N'          ;
+ EQUB VE                ; Encoded as:   "E<240>"
 
- ECHR ' '               ; Token 184:    "
- ECHR 'N'
- ECHR 'E'
+ ECHR ' '               ; Token 184:    " NEUES "
+ ECHR 'N'               ;
+ ECHR 'E'               ; Encoded as:   " NEU<237> "
  ECHR 'U'
  ETWO 'E', 'S'
  ECHR ' '
  EQUB VE
 
- ECHR ' '               ; Token 185:    "
- ETOK 183
- ECHR ' '
+ ECHR ' '               ; Token 185:    " EIN "
+ ETOK 183               ;
+ ECHR ' '               ; Encoded as:   " [183] "
  EQUB VE
 
- ECHR 'I'               ; Token 186:    "
- ECHR 'C'
- ECHR 'H'
+ ECHR 'I'               ; Token 186:    "ICH"
+ ECHR 'C'               ;
+ ECHR 'H'               ; Encoded as:   "ICH"
  EQUB VE
 
- ECHR 'S'               ; Token 187:    "
- ECHR 'C'
- ECHR 'H'
+ ECHR 'S'               ; Token 187:    "SCH"
+ ECHR 'C'               ;
+ ECHR 'H'               ; Encoded as:   "SCH"
  EQUB VE
 
- ECHR ' '               ; Token 188:    "
- ETWO 'I', 'N'
- ECHR ' '
+ ECHR ' '               ; Token 188:    " IN "
+ ETWO 'I', 'N'          ;
+ ECHR ' '               ; Encoded as:   " <240> "
  EQUB VE
 
  EQUB VE                ; Token 189:    ""
@@ -5869,62 +5883,62 @@ ENDIF
                         
                         ; Encoded as:   ""
 
- ETWO 'I', 'N'          ; Token 195:    "
- ECHR 'G'
- ECHR ' '
+ ETWO 'I', 'N'          ; Token 195:    "ING "
+ ECHR 'G'               ;
+ ECHR ' '               ; Encoded as:   "<240>G "
  EQUB VE
 
- ETWO 'E', 'D'          ; Token 196:    "
- ECHR ' '
- EQUB VE
+ ETWO 'E', 'D'          ; Token 196:    "ED "
+ ECHR ' '               ;
+ EQUB VE                ; Encoded as:   "<252> "
 
  EQUB VE                ; Token 197:    ""
                         
                         ; Encoded as:   ""
 
- EJMP 26                ; Token 198:    "
- ECHR 'S'
- ETWO 'Q', 'U'
+ EJMP 26                ; Token 198:    " {single cap}SQUEAKY"
+ ECHR 'S'               ;
+ ETWO 'Q', 'U'          ; Encoded as:   "{26}S<254>EAKY"
  ECHR 'E'
  ECHR 'A'
  ECHR 'K'
  ECHR 'Y'
  EQUB VE
 
- EJMP 25                ; Token 199:    "
- EJMP 9
- EJMP 29
- EJMP 14
- EJMP 13
- EJMP 26
- ECHR 'G'
- ECHR 'U'
- ECHR 'T'
- ETWO 'E', 'N'
- EJMP 26
- ECHR 'T'
- ECHR 'A'
- ECHR 'G'
- EJMP 26
- ECHR 'K'
- ECHR 'O'
- ECHR 'M'
- ETWO 'M', 'A'
- ECHR 'N'
- ECHR 'D'
- ETWO 'A', 'N'
- ECHR 'T'
- ECHR '.'
- EJMP 26
- ECHR 'D'
- ETWO 'A', 'R'
- ECHR 'F'
- ECHR ' '
- ETOK 186
- ECHR ' '
- ECHR 'M'
- ETOK 186
- ECHR ' '
+ EJMP 25                ; Token 199:    "{incoming message screen, wait 2s}
+ EJMP 9                 ;                {clear screen}
+ EJMP 29                ;                {move to row 7, lower case}{justify}
+ EJMP 14                ;                {lower case} {single cap}GUTEN {single
+ EJMP 13                ;                cap}TAG {single cap}KOMMANDANT. {single
+ EJMP 26                ;                cap}DARF ICH MICH VORSTELLEN? {single
+ ECHR 'G'               ;                cap}ICH BIN DER {single cap}PRINZ VON
+ ECHR 'U'               ;                {single cap}THRUN. {single cap}ICH SEHE
+ ECHR 'T'               ;                MICH LEIDER GEZWUNGEN, MEINEN LIEBSTEN
+ ETWO 'E', 'N'          ;                {single cap}BESITZ ZU VERUERN.{cr}
+ EJMP 26                ;                {cr}
+ ECHR 'T'               ;                 {single cap}{single cap}FR DIE {single
+ ECHR 'A'               ;                cap}KLEINIGKEIT VON 5000{single cap}CR
+ ECHR 'G'               ;                BIETE ICH {single cap}IHNEN DAS {single
+ EJMP 26                ;                cap}SELTENSTE DES {single cap}
+ ECHR 'K'               ;                UNIVERSUMS AN.{cr}
+ ECHR 'O'               ;                {cr}
+ ECHR 'M'               ;                 {single cap}{single cap}NEHMEN {single
+ ETWO 'M', 'A'          ;                cap}SIE ES?{cr}{left align}{all caps}
+ ECHR 'N'               ;                {tab 6}"
+ ECHR 'D'               ;
+ ETWO 'A', 'N'          ; Encoded as:   "{25}{9}{29}{14}{13}{26}GUT<246>{26}TAG
+ ECHR 'T'               ;                {26}KOM<239>ND<255>T.{26}D<238>F [186]
+ ECHR '.'               ;                 M[186] [157]<222>EL<229>N?{26}[186]
+ EJMP 26                ;                 <234>N D<244>{26}PR<240>Z V<223>{26}
+ ECHR 'D'               ;                <226>RUN.{26}[186] <218>HE M[186] <229>
+ ETWO 'A', 'R'          ;                I[155]<231>ZWUN<231>N, M[183]<246> LIEB
+ ECHR 'F'               ;                <222><246>{26}B<237><219>Z[160]V<244>
+ ECHR ' '               ;                [0?]U[3?]<244>N[204]{19}F[2?]R <241>E
+ ETOK 186               ;                {26}K<229><240>IGKE<219> V<223> 5000
+ ECHR ' '               ;                {19}CR <234><221>E [186]{26}IHN<246> DA
+ ECHR 'M'               ;                S{26}<218>LT<246><222>E D<237>{26}UNIV
+ ETOK 186               ;                <244>SUMS <255>[204]{19}NEHM<246>[179]
+ ECHR ' '               ;                 <237>?{12}{15}{1}{8}"
  ETOK 157
  ETWO 'S', 'T'
  ECHR 'E'
@@ -6081,9 +6095,9 @@ ENDIF
  EJMP 8
  EQUB VE
 
- EJMP 26                ; Token 200:    "
- ECHR 'N'
- ECHR 'A'
+ EJMP 26                ; Token 200:    " {single cap}NAME? "
+ ECHR 'N'               ;
+ ECHR 'A'               ; Encoded as:   "{26}NAME? "
  ECHR 'M'
  ECHR 'E'
  ECHR '?'
@@ -6098,10 +6112,10 @@ ENDIF
                         
                         ; Encoded as:   ""
 
- ECHR 'W'               ; Token 203:    "
- ECHR 'U'
- ECHR 'R'
- ECHR 'D'
+ ECHR 'W'               ; Token 203:    "WURDE ZULETZT GESEHEN IN {single cap} "
+ ECHR 'U'               ;
+ ECHR 'R'               ; Encoded as:   "WURDE [159]L<221>ZT <231><218>H<246>
+ ECHR 'D'               ;                [188]{19} "
  ECHR 'E'
  ECHR ' '
  ETOK 159
@@ -6119,16 +6133,16 @@ ENDIF
  ECHR ' '
  EQUB VE
 
- ECHR '.'               ; Token 204:    "
- EJMP 12
- EJMP 12
- ECHR ' '
- EJMP 19
+ ECHR '.'               ; Token 204:    ".{cr}
+ EJMP 12                ;                {cr}
+ EJMP 12                ;                 {single cap}"
+ ECHR ' '               ;
+ EJMP 19                ; Encoded as:   ".{12}{12} {19}"
  EQUB VE
 
- EJMP 19                ; Token 205:    "
- ETWO 'G', 'E'
- ECHR 'D'
+ EJMP 19                ; Token 205:    "{single cap}GEDOCKT"
+ ETWO 'G', 'E'          ;
+ ECHR 'D'               ; Encoded as:   "{19}<231>DOCKT"
  ECHR 'O'
  ECHR 'C'
  ECHR 'K'
@@ -6147,9 +6161,9 @@ ENDIF
                         
                         ; Encoded as:   ""
 
- EJMP 26                ; Token 209:    "
- ETWO 'E', 'R'
- ECHR 'R'
+ EJMP 26                ; Token 209:    " {single cap}ERRIUS"
+ ETWO 'E', 'R'          ;
+ ECHR 'R'               ; Encoded as:   "{26}<244>RI<236>"
  ECHR 'I'
  ETWO 'U', 'S'
  EQUB VE
@@ -6158,11 +6172,11 @@ ENDIF
                         
                         ; Encoded as:   ""
 
- EJMP 26                ; Token 211:    "
- ETWO 'R', 'A'
- ECHR 'U'
- ECHR 'M'
- ECHR 'F'
+ EJMP 26                ; Token 211:    " {single cap}RAUMFAHRTMARINE UNSERER
+ ETWO 'R', 'A'          ;                 {single cap}MAJESTT"
+ ECHR 'U'               ;
+ ECHR 'M'               ; Encoded as:   "{26}<248>UMFAHRT[163] UN<218><242>R{26}
+ ECHR 'F'               ;                <239>JE<222>[0?]T"
  ECHR 'A'
  ECHR 'H'
  ECHR 'R'
@@ -6183,13 +6197,13 @@ ENDIF
  ECHR 'T'
  EQUB VE
 
- ETOK 177               ; Token 212:    "
- EJMP 12
- EJMP 8
- EJMP 1
- EJMP 26
- ETWO 'E', 'N'
- ECHR 'D'
+ ETOK 177               ; Token 212:    ".{cr}
+ EJMP 12                ;                {left align}{cr}
+ EJMP 8                 ;                {tab 6}{all caps} {single cap}ENDE DER
+ EJMP 1                 ;                {single cap}NACHRICHT"
+ EJMP 26                ;
+ ETWO 'E', 'N'          ; Encoded as:   "[177]{12}{8}{1}{26}<246>DE D<244>{26}N
+ ECHR 'D'               ;                [164]R[186]T"
  ECHR 'E'
  ECHR ' '
  ECHR 'D'
@@ -6202,14 +6216,14 @@ ENDIF
  ECHR 'T'
  EQUB VE
 
- ECHR ' '               ; Token 213:    "
- ETOK 154
- ECHR ' '
- EJMP 4
- ECHR '.'
- EJMP 26
- ETOK 186
- ECHR ' '
+ ECHR ' '               ; Token 213:    " {single cap}KOMMANDANT {commander
+ ETOK 154               ;                name}. {single cap}ICH {lower case}BIN
+ ECHR ' '               ;                {single cap}KAPITN {mission captain's
+ EJMP 4                 ;                name} DER {single cap}RAUMFAHRTMARINE
+ ECHR '.'               ;                UNSERER {single cap}MAJESTT"
+ EJMP 26                ;
+ ETOK 186               ; Encoded as:   " [154] {4}.{26}[186] {13}<234>N{26}KAP
+ ECHR ' '               ;                <219>[0?]N {27} D<244>[211]"
  EJMP 13
  ETWO 'B', 'I'
  ECHR 'N'
@@ -6232,11 +6246,11 @@ ENDIF
                         
                         ; Encoded as:   ""
 
- EJMP 15                ; Token 215:    "
- EJMP 26
- ECHR 'U'
- ECHR 'N'
- ETWO 'B', 'E'
+ EJMP 15                ; Token 215:    "{left align} {single cap}UNBEKANNTER
+ EJMP 26                ;                {single cap}PLANET"
+ ECHR 'U'               ;
+ ECHR 'N'               ; Encoded as:   "{15}{26}UN<247>K<255>NT<244>{26}P<249>N
+ ETWO 'B', 'E'          ;                <221>"
  ECHR 'K'
  ETWO 'A', 'N'
  ECHR 'N'
@@ -6249,12 +6263,12 @@ ENDIF
  ETWO 'E', 'T'
  EQUB VE
 
- EJMP 9                 ; Token 216:    "
- EJMP 8
- EJMP 23
- EJMP 1
- ETWO 'A', 'N'
- ECHR 'K'
+ EJMP 9                 ; Token 216:    "{clear screen}
+ EJMP 8                 ;                {tab 6}{move to row 9,lower case}{all
+ EJMP 23                ;                caps}ANKOMMENDE {single cap}NACHRICHT"
+ EJMP 1                 ;
+ ETWO 'A', 'N'          ; Encoded as:   "{9}{8}{23}{1}<255>KOMM<246>DE{26}N[164]
+ ECHR 'K'               ;                R[186]T"
  ECHR 'O'
  ECHR 'M'
  ECHR 'M'
@@ -6269,18 +6283,18 @@ ENDIF
  ECHR 'T'
  EQUB VE
 
- EJMP 19                ; Token 217:    "
- ECHR 'R'
- ETOK 186
+ EJMP 19                ; Token 217:    "{single cap}RICHTOFEN"
+ ECHR 'R'               ;
+ ETOK 186               ; Encoded as:   "{19}R[186]TOF<246>"
  ECHR 'T'
  ECHR 'O'
  ECHR 'F'
  ETWO 'E', 'N'
  EQUB VE
 
- EJMP 19                ; Token 218:    "
- ECHR 'V'
- ETWO 'A', 'N'
+ EJMP 19                ; Token 218:    "{single cap}VANDERBILT"
+ ECHR 'V'               ;
+ ETWO 'A', 'N'          ; Encoded as:   "{19}V<255>D<244>B<220>T"
  ECHR 'D'
  ETWO 'E', 'R'
  ECHR 'B'
@@ -6288,9 +6302,9 @@ ENDIF
  ECHR 'T'
  EQUB VE
 
- EJMP 19                ; Token 219:    "
- ECHR 'H'
- ETWO 'A', 'B'
+ EJMP 19                ; Token 219:    "{single cap}HABSBURG"
+ ECHR 'H'               ;
+ ETWO 'A', 'B'          ; Encoded as:   "{19}H<216>SBURG"
  ECHR 'S'
  ECHR 'B'
  ECHR 'U'
@@ -6298,19 +6312,19 @@ ENDIF
  ECHR 'G'
  EQUB VE
 
- ETOK 203               ; Token 220:    "
- EJMP 19
- ETWO 'R', 'E'
- ETWO 'E', 'S'
+ ETOK 203               ; Token 220:    "WURDE ZULETZT GESEHEN IN {single cap}
+ EJMP 19                ;                {single cap}REESDICE
+ ETWO 'R', 'E'          ;
+ ETWO 'E', 'S'          ; Encoded as:   "[203]{19}<242><237><241><233>"
  ETWO 'D', 'I'
  ETWO 'C', 'E'
  EQUB VE
 
- ETWO 'S', 'O'          ; Token 221:    "
- ECHR 'L'
- ETWO 'L', 'E'
- ECHR 'N'
- ETOK 188
+ ETWO 'S', 'O'          ; Token 221:    "SOLLEN IN DIESE {single cap}GALAXIE
+ ECHR 'L'               ;                GESPRUNGEN SEIN"
+ ETWO 'L', 'E'          ;
+ ECHR 'N'               ; Encoded as:   "<235>L<229>N[188]<241>E<218>{26}G<228>A
+ ETOK 188               ;                XIE <231>SPRUN<231>N <218><240>"
  ETWO 'D', 'I'
  ECHR 'E'
  ETWO 'S', 'E'
@@ -6335,105 +6349,105 @@ ENDIF
  ETWO 'I', 'N'
  EQUB VE
 
- EJMP 25                ; Token 222:    "
- EJMP 9
- EJMP 29
- EJMP 14
- EJMP 13
- EJMP 26
- ECHR 'G'
- ECHR 'U'
- ECHR 'T'
- ETWO 'E', 'N'
- EJMP 26
- ECHR 'T'
- ECHR 'A'
- ECHR 'G'
- EJMP 26
- ECHR 'K'
- ECHR 'O'
- ECHR 'M'
- ETWO 'M', 'A'
- ECHR 'N'
- ECHR 'D'
- ETWO 'A', 'N'
- ECHR 'T'
- ETOK 204
- EJMP 19
- ETOK 186
- ECHR ' '
- ETWO 'B', 'I'
- ECHR 'N'
- EJMP 26
- ECHR 'A'
- ETWO 'G', 'E'
- ECHR 'N'
- ECHR 'T'
- EJMP 26
- ECHR 'B'
- ETWO 'L', 'A'
- ECHR 'K'
- ECHR 'E'
- ECHR ' '
- ECHR 'D'
- ETWO 'E', 'S'
- EJMP 26
- ETWO 'G', 'E'
- ECHR 'H'
- ECHR 'E'
- ECHR 'I'
- ECHR 'M'
- ETWO 'D', 'I'
- ETWO 'E', 'N'
- ETWO 'S', 'T'
- ETWO 'E', 'S'
- ECHR ' '
- ECHR 'D'
- ETWO 'E', 'R'
- EJMP 26
- ETOK 163
- ETOK 204
- EJMP 19
- ECHR 'W'
- ECHR 'I'
- ECHR 'E'
- ETOK 179
- ECHR ' '
- ECHR 'W'
- ECHR 'I'
- ECHR 'S'
- ETWO 'S', 'E'
- ECHR 'N'
- ECHR ','
- ECHR ' '
- ECHR 'H'
- ETWO 'A', 'T'
- ECHR ' '
- ETWO 'D', 'I'
- ECHR 'E'
- EJMP 26
- ETOK 163
- ECHR ' '
- ETWO 'D', 'I'
- ECHR 'E'
- EJMP 26
- ETWO 'T', 'H'
- ETWO 'A', 'R'
- ECHR 'G'
- ECHR 'O'
- ECHR 'I'
- ECHR 'D'
- ECHR 'S'
- ECHR ' '
- ETWO 'S', 'E'
- ETWO 'I', 'T'
- ECHR ' '
- ECHR 'V'
- ECHR 'I'
- ECHR 'E'
- ETWO 'L', 'E'
- ECHR 'N'
- EJMP 26
+ EJMP 25                ; Token 222:    "{incoming message screen, wait 2s}
+ EJMP 9                 ;                {clear screen}
+ EJMP 29                ;                {move to row 7, lower case}{justify}
+ EJMP 14                ;                {lower case} {single cap}GUTEN {single
+ EJMP 13                ;                cap}TAG {single cap}KOMMANDANT.{cr}
+ EJMP 26                ;                {cr}
+ ECHR 'G'               ;                 {single cap}{single cap}ICH BIN
+ ECHR 'U'               ;                {single cap}AGENT {single cap}BLAKE DES
+ ECHR 'T'               ;                {single cap}GEHEIMDIENSTES DER {single
+ ETWO 'E', 'N'          ;                cap}MARINE.{cr}
+ EJMP 26                ;                {cr}
+ ECHR 'T'               ;                 {single cap}{single cap}WIE {single
+ ECHR 'A'               ;                cap}SIE WISSEN, HAT DIE {single cap}
+ ECHR 'G'               ;                MARINE DIE {single cap}THARGOIDS SEIT
+ EJMP 26                ;                VIELEN {single cap}JAHREN WEIT WEG VON
+ ECHR 'K'               ;                {single cap}IHNEN IM TIEFSTEN {single
+ ECHR 'O'               ;                cap}WELTRAUM GEHALTEN. {single cap}
+ ECHR 'M'               ;                JETZT ABER HAT DIE {single cap}LAGE
+ ETWO 'M', 'A'          ;                SICH GENDERT.{cr}
+ ECHR 'N'               ;                {cr}
+ ECHR 'D'               ;                 {single cap}{single cap}UNSERE {single
+ ETWO 'A', 'N'          ;                cap}JUNGS SIND BEREIT, BIS INS {single
+ ECHR 'T'               ;                cap}GEHEIMSYSTEM DER {single cap}MRDER
+ ETOK 204               ;                VORZUSTOEN.{cr}
+ EJMP 19                ;                {cr}
+ ETOK 186               ;                 {single cap}{wait for key press}
+ ECHR ' '               ;                {clear screen}
+ ETWO 'B', 'I'          ;                {move to row 7, lower case}DIE {single
+ ECHR 'N'               ;                cap}VERTEIDIGUNGSPLNE DER {single cap}
+ EJMP 26                ;                HIVE {single cap}WELT HABE ICH
+ ECHR 'A'               ;                ERHALTEN.{cr}
+ ETWO 'G', 'E'          ;                {cr}
+ ECHR 'N'               ;                 {single cap}{single cap}DIE {single
+ ECHR 'T'               ;                cap}KFER WISSEN, DA WIR ETWAS HABEN,
+ EJMP 26                ;                ABER NICHT GENAU WAS.{cr}
+ ECHR 'B'               ;                {cr}
+ ETWO 'L', 'A'          ;                 {single cap}{single cap}WENN ICH DIE
+ ECHR 'K'               ;                {single cap}PLNE NACH UNSERER {single
+ ECHR 'E'               ;                cap}BASIS AUF {single cap}BIRERA SENDE,
+ ECHR ' '               ;                WERDEN DIE {single cap}KFER SIE
+ ECHR 'D'               ;                ABFANGEN. {single cap}ICH BRAUCHE EIN
+ ETWO 'E', 'S'          ;                {single cap}SCHIFF, UM DIE {single cap}
+ EJMP 26                ;                NACHRICHT ZU BERBRINGEN.{cr}
+ ETWO 'G', 'E'          ;                {cr}
+ ECHR 'H'               ;                 {single cap}{single cap}SIE WERDEN
+ ECHR 'E'               ;                DAZU AUSERWHLT.{cr}
+ ECHR 'I'               ;                {cr}
+ ECHR 'M'               ;                 {single cap}{wait for key press}
+ ETWO 'D', 'I'          ;                {clear screen}
+ ETWO 'E', 'N'          ;                {move to row 7, lower case}DIE {single
+ ETWO 'S', 'T'          ;                cap}PLNE SIND IN DIESER {single cap}
+ ETWO 'E', 'S'          ;                SENDUNG IN {single cap}UNI{single cap}
+ ECHR ' '               ;                PULSE KODIERT.{cr}
+ ECHR 'D'               ;                {cr}
+ ETWO 'E', 'R'          ;                 {single cap}{single cap}SIE WERDEN
+ EJMP 26                ;                DAFR BEZAHLT.{cr}
+ ETOK 163               ;                {cr}
+ ETOK 204               ;                 {single cap}{single cap}VIEL {single
+ EJMP 19                ;                cap}GLCK {single cap}KOMMANDANT.{cr}
+ ECHR 'W'               ;                {left align}{cr}
+ ECHR 'I'               ;                {tab 6}{all caps} {single cap}ENDE DER
+ ECHR 'E'               ;                {single cap}NACHRICHT
+ ETOK 179               ;                {wait for key press}"
+ ECHR ' '               ;
+ ECHR 'W'               ; Encoded as:   "{25}{9}{29}{14}{13}{26}GUT<246>{26}TAG
+ ECHR 'I'               ;                {26}KOM<239>ND<255>T[204]{19}[186]
+ ECHR 'S'               ;                <234>N{26}A<231>NT{26}B<249>KE D<237>
+ ETWO 'S', 'E'          ;                {26}<231>HEIM<241><246><222><237> D
+ ECHR 'N'               ;                <244>{26}[163][204]{19}WIE[179] WIS
+ ECHR ','               ;                <218>N, H<245> <241>E{26}[163] <241>E
+ ECHR ' '               ;                {26}<226><238>GOIDS <218><219> VIE<229>
+ ECHR 'H'               ;                N{26}JAH<242>N WE<219> WEG V<223>{26}IH
+ ETWO 'A', 'T'          ;                N<246> IM <251>EF<222><246>{26}WELT
+ ECHR ' '               ;                <248>UM <231>H<228>T<246>.{26}J<221>ZT
+ ETWO 'D', 'I'          ;                 <216><244> H<245> <241>E{26}<249><231>
+ ECHR 'E'               ;                 S[186] <231>[0?]ND<244>T[204]{19}UN
+ EJMP 26                ;                <218><242>{26}JUNGS S<240>D <247><242>
+ ETOK 163               ;                <219>, <234>S <240>S{26}<231>HEIMSY
+ ECHR ' '               ;                <222>EM D<244>{26}M[1?]R[155][157][159]
+ ETWO 'D', 'I'          ;                <222>O[3?]<246>[204]{24}{9}{29}<241>E
+ ECHR 'E'               ;                {26}V<244>TEI<241>GUNGSPL[0?]NE D<244>
+ EJMP 26                ;                {26}HI<250>{26}WELT H<216>E [186] <244>
+ ETWO 'T', 'H'          ;                H<228>T<246>[204]{19}<241>E{26}K[0?]F
+ ETWO 'A', 'R'          ;                <244> WIS<218>N, DA[3?] WIR <221>WAS H
+ ECHR 'G'               ;                <216><246>, <216><244> [162] <231>NAU W
+ ECHR 'O'               ;                AS[204]{19}W<246>N [186] <241>E{26}PL
+ ECHR 'I'               ;                [0?]NE[180]UN<218><242>R{26}BASIS AUF
+ ECHR 'D'               ;                {26}<234><242><248> <218>NDE, W<244>D
+ ECHR 'S'               ;                <246> <241>E{26}K[0?]F<244> SIE <216>F
+ ECHR ' '               ;                <255><231>N.{26}[186] B<248>UCHE [183]
+ ETWO 'S', 'E'          ;                [182], UM <241>E{26}N[164]R[186]T[160]
+ ETWO 'I', 'T'          ;                [2?]B<244>BR<240><231>N[204]{19}SIE W
+ ECHR ' '               ;                <244>D<246> DA[159] AU<218>RW[0?]HLT
+ ECHR 'V'               ;                [204]{24}{9}{29}<241>E{26}PL[0?]NE S
+ ECHR 'I'               ;                <240>D[188]<241>E<218>R{26}<218>NDUNG
+ ECHR 'E'               ;                 <240>{26}UNI{19}PUL<218> KO<241><244>T
+ ETWO 'L', 'E'          ;                [204]{19}SIE W<244>D<246> DAF[2?]R
+ ECHR 'N'               ;                 <247><232>HLT[204]{19}VIEL{26}GL[2?]CK
+ EJMP 26                ;                 [154][212]{24}"
  ECHR 'J'
  ECHR 'A'
  ECHR 'H'
@@ -6862,30 +6876,30 @@ ENDIF
  EJMP 24
  EQUB VE
 
- EJMP 25                ; Token 223:    "
- EJMP 9
- EJMP 29
- EJMP 14
- EJMP 13
- EJMP 26
- ECHR 'G'
- ECHR 'U'
- ECHR 'T'
- ECHR ' '
- ETWO 'G', 'E'
- ETWO 'M', 'A'
- ECHR 'C'
- ECHR 'H'
- ECHR 'T'
- ECHR ' '
- ETOK 154
- ETOK 204
- EJMP 19
- ECHR 'S'
- ECHR 'I'
- ECHR 'E'
- ECHR ' '
- ECHR 'H'
+ EJMP 25                ; Token 223:    "{incoming message screen, wait 2s}
+ EJMP 9                 ;                {clear screen}
+ EJMP 29                ;                {move to row 7, lower case}{justify}
+ EJMP 14                ;                {lower case} {single cap}GUT GEMACHT
+ EJMP 13                ;                {single cap}KOMMANDANT.{cr}
+ EJMP 26                ;                {cr}
+ ECHR 'G'               ;                 {single cap}{single cap}SIE HABEN UNS
+ ECHR 'U'               ;                FLEIIG GEDIENT, UND WIR WERDEN ES NICHT
+ ECHR 'T'               ;                VERGESSEN.{cr}
+ ECHR ' '               ;                {cr}
+ ETWO 'G', 'E'          ;                 {single cap}{single cap}WIR HABEN
+ ETWO 'M', 'A'          ;                NICHT ERWARTET, DA DIE {single cap}
+ ECHR 'C'               ;                THARGOIDS BER {single cap}SIE {single
+ ECHR 'H'               ;                cap}BESCHEID WUTEN.{cr}
+ ECHR 'T'               ;                {cr}
+ ECHR ' '               ;                 {single cap}{single cap}BITTE
+ ETOK 154               ;                AKZEPTIEREN {single cap}SIE DIESE
+ ETOK 204               ;                {single cap}ENERGIE-{single cap}EINHEIT
+ EJMP 19                ;                DER {single cap}MARINE ALS {single cap}
+ ECHR 'S'               ;                BEZAHLUNG.{cr}
+ ECHR 'I'               ;                {left align}{cr}
+ ECHR 'E'               ;                {tab 6}{all caps} {single cap}ENDE DER
+ ECHR ' '               ;                {single cap}NACHRICHT
+ ECHR 'H'               ;                {wait for key press}"
  ETWO 'A', 'B'
  ETWO 'E', 'N'
  ECHR ' '
@@ -8069,26 +8083,26 @@ ENDIF
 .TKN1_FR
 
  EQUB VE                ; Token 0:      ""
-                        
+                        ;
                         ; Encoded as:   ""
 
- EJMP 19                ; Token 1:      "
- ETWO 'O', 'U'
- ECHR 'I'
+ EJMP 19                ; Token 1:      "{single cap}OUI"
+ ETWO 'O', 'U'          ;
+ ECHR 'I'               ; Encoded as:   "{19}<217>I"
  EQUB VE
 
- EJMP 19                ; Token 2:      "
- ECHR 'N'
- ETWO 'O', 'N'
+ EJMP 19                ; Token 2:      "{single cap}NON"
+ ECHR 'N'               ;
+ ETWO 'O', 'N'          ; Encoded as:   "{19}N<223>"
  EQUB VE
 
  EQUB VE                ; Token 3:      ""
-                        
+                        ;
                         ; Encoded as:   ""
 
- EJMP 19                ; Token 4:      "
- ECHR 'F'
- ETWO 'R', 'A'
+ EJMP 19                ; Token 4:      "{single cap}FRANÇAIS"
+ ECHR 'F'               ;
+ ETWO 'R', 'A'          ; Encoded as:   "{19}F<248>N@AIS"
  ECHR 'N'
  ECHR '@'
  ECHR 'A'
@@ -8097,20 +8111,20 @@ ENDIF
  EQUB VE
 
  EQUB VE                ; Token 5:      ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 6:      ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 7:      ""
-                        
+                        ;
                         ; Encoded as:   ""
 
- EJMP 19                ; Token 8:      "
- ECHR 'N'
- ETWO 'O', 'U'
+ EJMP 19                ; Token 8:      "{single cap}NOUVEAU {single cap}NOM: "
+ ECHR 'N'               ;
+ ETWO 'O', 'U'          ; Encoded as:   "{19}N<217><250>AU{26}<227>M: "
  ETWO 'V', 'E'
  ECHR 'A'
  ECHR 'U'
@@ -8122,75 +8136,75 @@ ENDIF
  EQUB VE
 
  EQUB VE                ; Token 9:      ""
-                        
+                        ;
                         ; Encoded as:   ""
 
- EJMP 23                ; Token 10:     "
- EJMP 14
- EJMP 13
- ECHR ' '
- ETOK 213
- EJMP 26
- ETOK 181
- ETOK 190
- ECHR ' '
- ECHR 'P'
- ECHR 'R'
- ECHR 'I'
- ECHR 'E'
- ETOK 179
- ECHR 'M'
- ECHR '`'
- ECHR 'A'
- ECHR 'C'
- ECHR 'C'
- ETWO 'O', 'R'
- ECHR 'D'
- ETWO 'E', 'R'
- ECHR ' '
- ETWO 'Q', 'U'
- ECHR 'E'
- ECHR 'L'
- ETWO 'Q', 'U'
- ETWO 'E', 'S'
- ECHR ' '
- ETWO 'I', 'N'
- ETWO 'S', 'T'
- ETWO 'A', 'N'
- ECHR 'T'
- ECHR 'S'
- ETOK 204
- ECHR 'N'
- ETWO 'O', 'U'
- ECHR 'S'
- ECHR ' '
- ECHR 'A'
- ECHR 'I'
- ECHR 'M'
- ETWO 'E', 'R'
- ECHR 'I'
- ETWO 'O', 'N'
- ECHR 'S'
- ECHR ' '
- ETOK 190
- ECHR ' '
- ECHR 'C'
- ETWO 'O', 'N'
- ECHR 'F'
- ECHR 'I'
- ETWO 'E', 'R'
- ECHR ' '
- ETOK 186
- ECHR 'P'
- ETWO 'E', 'T'
- ETWO 'I', 'T'
- ECHR ' '
- ECHR 'T'
- ETWO 'R', 'A'
- ECHR 'V'
- ECHR 'A'
- ETWO 'I', 'L'
- ETOK 204
+ EJMP 23                ; Token 10:     "{move to row 9, lower case}
+ EJMP 14                ;                {justify}
+ EJMP 13                ;                {lower case}  {single cap}COMMANDANT
+ ECHR ' '               ;                {commander name}, JE {lower case}SUIS
+ ETOK 213               ;                LE CAPITAINE {mission captain's name}
+ EJMP 26                ;                DE LA {single cap}MARINE {single cap}
+ ETOK 181               ;                SPATIALE DE SA {single cap}MAJESTÉ
+ ETOK 190               ;                {single cap}JE VOUS PRIE DE M'ACCORDER
+ ECHR ' '               ;                QUELQUES INSTANTS.{cr}
+ ECHR 'P'               ;                {cr}
+ ECHR 'R'               ;                 {single cap}NOUS AIMERIONS VOUS
+ ECHR 'I'               ;                CONFIER UN PETIT TRAVAIL.{cr}
+ ECHR 'E'               ;                {cr}
+ ETOK 179               ;                 {single cap}CE NOUVEAU MODÈLE DE
+ ECHR 'M'               ;                NAVIRE LE '{single cap}CONSTRICTOR' EST
+ ECHR '`'               ;                DOTÉ D'UN GÉNÉRATEUR DE BOUCLIERS TOP
+ ECHR 'A'               ;                SECRET.{cr}
+ ECHR 'C'               ;                {cr}
+ ECHR 'C'               ;                 {single cap}{single cap}
+ ETWO 'O', 'R'          ;                MALHEUREUSEMENT IL A ÉTÉ VOLÉ.{cr}
+ ECHR 'D'               ;                {cr}
+ ETWO 'E', 'R'          ;                 {single cap}{display ship, wait for
+ ECHR ' '               ;                key press}{single cap}IL A DISPARU DU
+ ETWO 'Q', 'U'          ;                CHANTIER NAVAL À {single cap}XEER IL Y
+ ECHR 'E'               ;                A CINQ MOIS. {single cap}ON L'A
+ ECHR 'L'               ;                {mission 1 location hint}.{cr}
+ ETWO 'Q', 'U'          ;                {cr}
+ ETWO 'E', 'S'          ;                 {single cap}{single cap}VOTRE MISSION
+ ECHR ' '               ;                EST DE RETROUVER CE NAVIRE AFIN DE LE
+ ETWO 'I', 'N'          ;                DÉTRUIRE.{cr}
+ ETWO 'S', 'T'          ;                {cr}
+ ETWO 'A', 'N'          ;                 {single cap}{single cap}IL N'Y A QUE
+ ECHR 'T'               ;                LES LASERS MILITAIRES QUI SONT CAPABLES
+ ECHR 'S'               ;                DE TRANSPERCER LES BOUCLIERS. {single
+ ETOK 204               ;                cap}DE PLUS, LE CONSTRICTOR EST DOTÉ
+ ECHR 'N'               ;                D'UN {standard tokens, sentence case}
+ ETWO 'O', 'U'          ;                [81-85]{extended tokens}.{cr}
+ ECHR 'S'               ;                {left align}{tab 6}{single cap}BONNE
+ ECHR ' '               ;                CHANCE {single cap}COMMANDANT.{cr}
+ ECHR 'A'               ;                {left align}{cr}{tab 6}{all caps}
+ ECHR 'I'               ;                  {single cap}FIN DU MESSAGE{display
+ ECHR 'M'               ;                 ship, wait for key press}"
+ ETWO 'E', 'R'          ;
+ ECHR 'I'               ; Encoded as:   "{23}{14}{13} [213]{26}[181][190] PRIE
+ ETWO 'O', 'N'          ;                [179]M'ACC<253>D<244> <254>EL<254><237>
+ ECHR 'S'               ;                 <240><222><255>TS[204]N<217>S AIM<244>
+ ECHR ' '               ;                I<223>S [190] C<223>FI<244> [186]P<221>
+ ETOK 190               ;                <219> T<248>VA<220>[204][188]N<217>
+ ECHR ' '               ;                <250>AU MOD=[178]DE[173][178]'{19}C
+ ECHR 'C'               ;                <223><222>RICT<253>' [184] DOT< D'[186]
+ ETWO 'O', 'N'          ;                G<N<R<245>EUR[179]B<217>CLI<244>S TOP
+ ECHR 'F'               ;                 <218>CR<221>[204]{19}M<228>HEU<242>U
+ ECHR 'I'               ;                <218>M<246>T <220>[129]<T< VOL<[204]
+ ETWO 'E', 'R'          ;                {22}{19}<220>[129]<241>SP<238>U DU CH
+ ECHR ' '               ;                <255><251><244> NAV<228> "{26}<230>
+ ETOK 186               ;                <244> <220> Y[129]C<240>Q MOIS.{26}
+ ECHR 'P'               ;                <223> L'A {28}[204]{19}VOT<242> MISSI
+ ETWO 'E', 'T'          ;                <223> [184][179]R<221>R<217>V<244>
+ ETWO 'I', 'T'          ;                 <233>[173]AF<240>[179][178]D<TRUI<242>
+ ECHR ' '               ;                [204]{19}<220> N'Y[129][192][187]<249>
+ ECHR 'T'               ;                <218>RS M<220><219>AIR<237> <254>I S
+ ETWO 'R', 'A'          ;                <223>T CAP<216><229>S[179]T<248>NSP
+ ECHR 'V'               ;                <244><233>R [187]B<217>CLI<244>S.{26}DE
+ ECHR 'A'               ;                 [196], [178]C<223><222>RICT<253> [184]
+ ETWO 'I', 'L'          ;                 DOT< D'[186]{6}[17?]{5}[177]{8}{19}B
+ ETOK 204               ;                <223>NE CH<255>[188][154][212]{22}"
  ETOK 188
  ECHR 'N'
  ETWO 'O', 'U'
@@ -8469,35 +8483,35 @@ ENDIF
  EJMP 22
  EQUB VE
 
- EJMP 25                ; Token 11:     "
- EJMP 9
- EJMP 23
- EJMP 14
- ECHR ' '
- EJMP 26
- ETWO 'A', 'T'
- ECHR 'T'
- ETWO 'E', 'N'
- ETWO 'T', 'I'
- ETWO 'O', 'N'
- ECHR ' '
- ETOK 213
- ECHR '.'
- EJMP 26
- ECHR 'N'
- ETWO 'O', 'U'
- ECHR 'S'
- ECHR ' '
- ETOK 172
- ECHR 'S'
- ETOK 179
- ECHR 'N'
- ETWO 'O', 'U'
- ETWO 'V', 'E'
- ECHR 'A'
- ECHR 'U'
- ECHR ' '
- ETWO 'R', 'E'
+ EJMP 25                ; Token 11:     "{incoming message screen, wait 2s}
+ EJMP 9                 ;                {clear screen}
+ EJMP 23                ;                {move to row 9, lower case}{justify}
+ EJMP 14                ;                {single cap}ATTENTION  {single cap}
+ ECHR ' '               ;                COMMANDANT {commander name}, JE {lower
+ EJMP 26                ;                case}SUIS LE CAPITAINE {mission
+ ETWO 'A', 'T'          ;                captain's name} DE LA {single cap}
+ ECHR 'T'               ;                MARINE {single cap}SPATIALE DE SA
+ ETWO 'E', 'N'          ;                {single cap}MAJESTÉ. {single cap}NOUS
+ ETWO 'T', 'I'          ;                AVONS DE NOUVEAU RECOURS À VOUS.{cr}
+ ETWO 'O', 'N'          ;                {cr}
+ ECHR ' '               ;                 {single cap}{single cap}VOUS RECEVREZ
+ ETOK 213               ;                DES INSTRUCTIONS SI VOUS ALLEZ JUSQU'À
+ ECHR '.'               ;                {single cap}CEERDI.{cr}
+ EJMP 26                ;                {cr}
+ ECHR 'N'               ;                 {single cap}VOUS SEREZ RÉCOMPENSÉ SI
+ ETWO 'O', 'U'          ;                VOUS RÉUSSISSEZ.{cr}
+ ECHR 'S'               ;                {left align}{cr}{tab 6}{all caps}
+ ECHR ' '               ;                {single cap}FIN DU MESSAGE
+ ETOK 172               ;                {wait for key press}"
+ ECHR 'S'               ;
+ ETOK 179               ; Encoded as:   "{25}{9}{23}{14} {26}<245>T<246><251>
+ ECHR 'N'               ;                <223> [213].{26}N<217>S [172]S[179]N
+ ETWO 'O', 'U'          ;                <217><250>AU <242>C<217>RS[183][190]
+ ETWO 'V', 'E'          ;                [204]{19}[190] <242><233>V<242>Z [195]
+ ECHR 'A'               ;                <240><222>RUC<251><223>S SI [190] <228>
+ ECHR 'U'               ;                <229>Z J<236><254>'"{26}<233><244><241>
+ ECHR ' '               ;                [204][190] <218><242>Z R<COMP<246>S< SI
+ ETWO 'R', 'E'          ;                 [190] R<<236>SIS<218>Z[212]{24}"
  ECHR 'C'
  ETWO 'O', 'U'
  ECHR 'R'
@@ -8577,17 +8591,17 @@ ENDIF
  EQUB VE
 
  EQUB VE                ; Token 12:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 13:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
- EJMP 21                ; Token 14:     "
- EJMP 19
- ETWO 'N', 'O'
- ECHR 'M'
+ EJMP 21                ; Token 14:     "{clear bottom of screen}{single cap}NOM
+ EJMP 19                ;                {single cap}PLANÉTE? "
+ ETWO 'N', 'O'          ;
+ ECHR 'M'               ; Encoded as:   "{21}{19}<227>M{26}P<249>N<TE? "
  EJMP 26
  ECHR 'P'
  ETWO 'L', 'A'
@@ -8599,30 +8613,30 @@ ENDIF
  ECHR ' '
  EQUB VE
 
- EJMP 25                ; Token 15:     "
- EJMP 9
- EJMP 23
- EJMP 14
- EJMP 13
- ECHR ' '
- EJMP 26
- ECHR 'F'
- ECHR '<'
- ECHR 'L'
- ECHR 'I'
- ECHR 'C'
- ETWO 'I', 'T'
- ETWO 'A', 'T'
- ECHR 'I'
- ETWO 'O', 'N'
- ECHR 'S'
- ECHR ' '
- ETOK 154
- ECHR '!'
- EJMP 12
- EJMP 12
- EJMP 26
- ETOK 190
+ EJMP 25                ; Token 15:     "{incoming message screen, wait 2s}
+ EJMP 9                 ;                {clear screen}
+ EJMP 23                ;                {move to row 9, lower case}{justify}
+ EJMP 14                ;                {lower case}  {single cap}FÉLICITATIONS
+ EJMP 13                ;                {single cap}COMMANDANT!{cr}
+ ECHR ' '               ;                {cr}
+ EJMP 26                ;                 {single cap}VOUS SEREZ TOUJOURS LE
+ ECHR 'F'               ;                BIENVENU À  LA {single cap}MARINE
+ ECHR '<'               ;                {single cap}SPATIALE DE SA {single cap}
+ ECHR 'L'               ;                MAJESTÉ.{cr}
+ ECHR 'I'               ;                {cr}
+ ECHR 'C'               ;                 {single cap}ET PEUT-TRE PLUS TÔT QUE
+ ETWO 'I', 'T'          ;                PRÉVU...{cr}
+ ETWO 'A', 'T'          ;                {left align}{cr}
+ ECHR 'I'               ;                {tab 6}{all caps}  {single cap}FIN DU
+ ETWO 'O', 'N'          ;                MESSAGE
+ ECHR 'S'               ;                {wait for key press}"
+ ECHR ' '               ;
+ ETOK 154               ; Encoded as:   "{25}{9}{23}{14}{13} {26}F<LIC<219><245>
+ ECHR '!'               ;                I<223>S [154]!{12}{12}{26}[190] <218>
+ EJMP 12                ;                <242>Z T<217>J<217>RS [178]<234><246>
+ EJMP 12                ;                <250><225>[183][211][204]<221> PEUT-
+ EJMP 26                ;                [193]<242> [196] T#T [192]PR<VU..[212]
+ ETOK 190               ;                {24}"
  ECHR ' '
  ETWO 'S', 'E'
  ETWO 'R', 'E'
@@ -8672,387 +8686,387 @@ ENDIF
  EQUB VE
 
  EQUB VE                ; Token 16:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 17:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 18:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 19:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 20:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 21:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 22:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 23:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 24:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 25:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 26:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 27:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 28:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 29:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 30:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 31:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 32:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 33:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 34:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 35:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 36:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 37:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 38:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 39:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 40:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 41:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 42:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 43:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 44:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 45:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 46:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 47:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 48:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 49:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 50:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 51:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 52:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 53:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 54:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 55:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 56:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 57:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 58:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 59:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 60:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 61:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 62:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 63:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 64:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 65:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 66:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 67:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 68:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 69:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 70:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 71:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 72:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 73:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 74:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 75:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 76:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 77:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 78:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 79:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 80:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 81:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 82:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 83:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 84:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
- EJMP 2                 ; Token 85:     "
- ERND 31
- EJMP 13
+ EJMP 2                 ; Token 85:     "{sentence case}{lower case}"
+ ERND 31                ;
+ EJMP 13                ; Encoded as:   "{2}[31?]{13}"
  EQUB VE
 
  EQUB VE                ; Token 86:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 87:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 88:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 89:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 90:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
- ECHR 'C'               ; Token 91:     "
- ETWO 'R', 'A'
- ECHR 'P'
+ ECHR 'C'               ; Token 91:     "CRAPULE"
+ ETWO 'R', 'A'          ;
+ ECHR 'P'               ; Encoded as:   "C<248>PU<229>"
  ECHR 'U'
  ETWO 'L', 'E'
  EQUB VE
 
- ECHR 'V'               ; Token 92:     "
- ECHR 'A'
- ECHR 'U'
+ ECHR 'V'               ; Token 92:     "VAURIEN"
+ ECHR 'A'               ;
+ ECHR 'U'               ; Encoded as:   "VAURI<246>"
  ECHR 'R'
  ECHR 'I'
  ETWO 'E', 'N'
  EQUB VE
 
- ETWO 'E', 'S'          ; Token 93:     "
- ECHR 'C'
- ECHR 'R'
+ ETWO 'E', 'S'          ; Token 93:     "ESCROC"
+ ECHR 'C'               ;
+ ECHR 'R'               ; Encoded as:   "<237>CROC"
  ECHR 'O'
  ECHR 'C'
  EQUB VE
 
- ECHR 'G'               ; Token 94:     "
- ETWO 'R', 'E'
- ECHR 'D'
+ ECHR 'G'               ; Token 94:     "GREDIN"
+ ETWO 'R', 'E'          ;
+ ECHR 'D'               ; Encoded as:   "G<242>D<240>"
  ETWO 'I', 'N'
  EQUB VE
 
- ECHR 'B'               ; Token 95:     "
- ECHR 'R'
- ECHR 'I'
+ ECHR 'B'               ; Token 95:     "BRIGAND"
+ ECHR 'R'               ;
+ ECHR 'I'               ; Encoded as:   "BRIG<255>D"
  ECHR 'G'
  ETWO 'A', 'N'
  ECHR 'D'
  EQUB VE
 
  EQUB VE                ; Token 96:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 97:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 98:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 99:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 100:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 101:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 102:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 103:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 104:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 105:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
- EJMP 19                ; Token 106:    "
- ECHR 'U'
- ECHR 'N'
- ETOK 173
- ETWO 'R', 'E'
+ EJMP 19                ; Token 106:    "{single cap}UN NAVIRE REDOUTABLE SERAIT
+ ECHR 'U'               ;                APPARU À {single cap}ERRIUS "
+ ECHR 'N'               ;
+ ETOK 173               ; Encoded as:   "{19}UN[173]<242>D<217>T<216>[178]<218>
+ ETWO 'R', 'E'          ;                <248><219> APP<238>U "[209] "
  ECHR 'D'
  ETWO 'O', 'U'
  ECHR 'T'
@@ -9073,11 +9087,11 @@ ENDIF
  ECHR ' '
  EQUB VE
 
- EJMP 19                ; Token 107:    "
- ETWO 'O', 'U'
- ECHR 'A'
- ECHR 'I'
- ECHR 'S'
+ EJMP 19                ; Token 107:    "{single cap}OUAIS, UN NAVIRE AURAIT
+ ETWO 'O', 'U'          ;                QUITTÉ {single cap}ERRIUS"
+ ECHR 'A'               ;
+ ECHR 'I'               ; Encoded as:   "{19}<217>AIS, UN[173]AU<248><219> <254>
+ ECHR 'S'               ;                <219>T<[209]"
  ECHR ','
  ECHR ' '
  ECHR 'U'
@@ -9095,20 +9109,20 @@ ENDIF
  ETOK 209
  EQUB VE
 
- EJMP 19                ; Token 108:    "
- ETWO 'A', 'L'
- ETWO 'L', 'E'
+ EJMP 19                ; Token 108:    "{single cap}ALLEZ À {single cap}ERRIUS"
+ ETWO 'A', 'L'          ;
+ ETWO 'L', 'E'          ; Encoded as:   "{19}<228><229>Z "[209]"
  ECHR 'Z'
  ECHR ' '
  ECHR '"'
  ETOK 209
  EQUB VE
 
- EJMP 19                ; Token 109:    "
- ETWO 'O', 'N'
- ETOK 129
- ECHR 'V'
- ECHR 'U'
+ EJMP 19                ; Token 109:    "{single cap}ON A VU UN AUTRE NAVIRE À
+ ETWO 'O', 'N'          ;                {single cap}ERRIUS"
+ ETOK 129               ;
+ ECHR 'V'               ; Encoded as:   "{19}<223>[129]VU [186]AUT<242>[173]"
+ ECHR 'U'               ;                [209]"
  ECHR ' '
  ETOK 186
  ECHR 'A'
@@ -9120,9 +9134,9 @@ ENDIF
  ETOK 209
  EQUB VE
 
- EJMP 19                ; Token 110:    "
- ETWO 'E', 'S'
- ECHR 'S'
+ EJMP 19                ; Token 110:    "{single cap}ESSAYEZ {single cap}ERRIUS"
+ ETWO 'E', 'S'          ;
+ ECHR 'S'               ; Encoded as:   "{19}<237>SAYEZ[209]"
  ECHR 'A'
  ECHR 'Y'
  ECHR 'E'
@@ -9131,192 +9145,192 @@ ENDIF
  EQUB VE
 
  EQUB VE                ; Token 111:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 112:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 113:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 114:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 115:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 116:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 117:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 118:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 119:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 120:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 121:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 122:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 123:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 124:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 125:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 126:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 127:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 128:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
- ECHR ' '               ; Token 129:    "
- ECHR 'A'
- ECHR ' '
+ ECHR ' '               ; Token 129:    " A "
+ ECHR 'A'               ;
+ ECHR ' '               ; Encoded as:   " A "
  EQUB VE
 
  EQUB VE                ; Token 130:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 131:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 132:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 133:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 134:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 135:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 136:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 137:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 138:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 139:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 140:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 141:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 142:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 143:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 144:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
- ECHR 'P'               ; Token 145:    "
- ETWO 'L', 'A'
- ECHR 'N'
+ ECHR 'P'               ; Token 145:    "PLANÈTE"
+ ETWO 'L', 'A'          ;
+ ECHR 'N'               ; Encoded as:   "P<249>N=TE"
  ECHR '='
  ECHR 'T'
  ECHR 'E'
  EQUB VE
 
- ECHR 'M'               ; Token 146:    "
- ETWO 'O', 'N'
- ECHR 'D'
+ ECHR 'M'               ; Token 146:    "MONDE"
+ ETWO 'O', 'N'          ;
+ ECHR 'D'               ; Encoded as:   "M<223>DE"
  ECHR 'E'
  EQUB VE
 
- ECHR 'E'               ; Token 147:    "
- ECHR 'C'
- ECHR ' '
+ ECHR 'E'               ; Token 147:    "EC "
+ ECHR 'C'               ;
+ ECHR ' '               ; Encoded as:   "EC "
  EQUB VE
 
- ETWO 'C', 'E'          ; Token 148:    "
- ECHR 'C'
- ECHR 'I'
+ ETWO 'C', 'E'          ; Token 148:    "CECI "
+ ECHR 'C'               ;
+ ECHR 'I'               ; Encoded as:   "<233>CI "
  ECHR ' '
  EQUB VE
 
  EQUB VE                ; Token 149:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
- EJMP 9                 ; Token 150:    "
- EJMP 11
- EJMP 1
- EJMP 8
- EQUB VE
+ EJMP 9                 ; Token 150:    "{clear screen}
+ EJMP 11                ;                {draw box around title}
+ EJMP 1                 ;                {all caps}{tab 6}"
+ EJMP 8                 ;
+ EQUB VE                ; Encoded as:   "{9}{11}{1}{8}"
 
  EQUB VE                ; Token 151:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 152:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
- ECHR 'I'               ; Token 153:    "
- ETWO 'A', 'N'
- EQUB VE
+ ECHR 'I'               ; Token 153:    "IAN"
+ ETWO 'A', 'N'          ;
+ EQUB VE                ; Encoded as:   "I<255>"
 
- EJMP 19                ; Token 154:    "
- ECHR 'C'
- ECHR 'O'
+ EJMP 19                ; Token 154:    "{single cap}COMMANDANT"
+ ECHR 'C'               ;
+ ECHR 'O'               ; Encoded as:   "{19}COM<239>ND<255>T"
  ECHR 'M'
  ETWO 'M', 'A'
  ECHR 'N'
@@ -9326,247 +9340,248 @@ ENDIF
  EQUB VE
 
  EQUB VE                ; Token 155:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 156:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 157:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 158:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 159:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 160:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 161:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 162:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 163:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 164:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 165:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 166:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 167:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 168:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 169:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 170:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
- ECHR 'S'               ; Token 171:    "
- ECHR 'U'
- ECHR 'I'
+ ECHR 'S'               ; Token 171:    "SUIS "
+ ECHR 'U'               ;
+ ECHR 'I'               ; Encoded as:   "SUIS "
  ECHR 'S'
  ECHR ' '
  EQUB VE
 
- ECHR 'A'               ; Token 172:    "
- ECHR 'V'
- ETWO 'O', 'N'
+ ECHR 'A'               ; Token 172:    "AVON"
+ ECHR 'V'               ;
+ ETWO 'O', 'N'          ; Encoded as:   "AV<223>"
  EQUB VE
 
- ECHR ' '               ; Token 173:    "
- ECHR 'N'
- ECHR 'A'
+ ECHR ' '               ; Token 173:    " NAVIRE "
+ ECHR 'N'               ;
+ ECHR 'A'               ; Encoded as:   " NAVI<242> "
  ECHR 'V'
  ECHR 'I'
  ETWO 'R', 'E'
  ECHR ' '
  EQUB VE
 
- ETWO 'A', 'R'          ; Token 174:    "
- ETWO 'I', 'N'
- ECHR 'E'
+ ETWO 'A', 'R'          ; Token 174:    "ARINE"
+ ETWO 'I', 'N'          ;
+ ECHR 'E'               ; Encoded as:   "<238><240>E"
  EQUB VE
 
- ECHR 'P'               ; Token 175:    "
- ETWO 'O', 'U'
- ECHR 'R'
+ ECHR 'P'               ; Token 175:    "POUR"
+ ETWO 'O', 'U'          ;
+ ECHR 'R'               ; Encoded as:   "P<217>R"
  EQUB VE
 
- EJMP 13                ; Token 176:    "
- EJMP 14
- EJMP 19
+ EJMP 13                ; Token 176:    "{lower case}{justify}{single cap}"
+ EJMP 14                ;
+ EJMP 19                ; Encoded as:   "{13}{14}{19}"
  EQUB VE
 
- ECHR '.'               ; Token 177:    "
- EJMP 12
- EJMP 15
- EQUB VE
+ ECHR '.'               ; Token 177:    ".{cr}
+ EJMP 12                ;                {left align}"
+ EJMP 15                ;
+ EQUB VE                ; Encoded as:   ".{12}{15}"
 
- ETWO 'L', 'E'          ; Token 178:    "
+ ETWO 'L', 'E'          ; Token 178:    "LE "
+ ECHR ' '               ;
+ EQUB VE                ; Encoded as:   "<229> "
+
+ ECHR ' '               ; Token 179:    " DE "
+ ECHR 'D'               ;
+ ECHR 'E'               ; Encoded as:   " DE 
  ECHR ' '
  EQUB VE
 
- ECHR ' '               ; Token 179:    "
- ECHR 'D'
- ECHR 'E'
- ECHR ' '
+ ECHR ' '               ; Token 180:    " ET "
+ ETWO 'E', 'T'          ;
+ ECHR ' '               ; Encoded as:   " <221> "
  EQUB VE
 
- ECHR ' '               ; Token 180:    "
- ETWO 'E', 'T'
- ECHR ' '
+ ECHR 'J'               ; Token 181:    "JE "
+ ECHR 'E'               ;
+ ECHR ' '               ; Encoded as:   "JE "
  EQUB VE
 
- ECHR 'J'               ; Token 181:    "
- ECHR 'E'
- ECHR ' '
+ ETWO 'L', 'A'          ; Token 182:    "LA "
+ ECHR ' '               ;
+ EQUB VE                ; Encoded as:   "<249> "
+
+ ECHR ' '               ; Token 183:    " À "
+ ECHR '"'               ;
+ ECHR ' '               ; Encoded as:   " " "
  EQUB VE
 
- ETWO 'L', 'A'          ; Token 182:    "
- ECHR ' '
+ ECHR 'E'               ; Token 184:    "EST"
+ ETWO 'S', 'T'          ;
+ EQUB VE                ; Encoded as:   "E<222>"
+
+ ETWO 'I', 'L'          ; Token 185:    "IL"
+ EQUB VE                ;
+                        ; Encoded as:   "<220>"
+
+ ECHR 'U'               ; Token 186:    "UN "
+ ECHR 'N'               ;
+ ECHR ' '               ; Encoded as:   "UN "
  EQUB VE
 
- ECHR ' '               ; Token 183:    "
- ECHR '"'
- ECHR ' '
+ ETWO 'L', 'E'          ; Token 187:    "LES "
+ ECHR 'S'               ;
+ ECHR ' '               ; Encoded as:   "<229>S "
  EQUB VE
 
- ECHR 'E'               ; Token 184:    "
- ETWO 'S', 'T'
- EQUB VE
+ ETWO 'C', 'E'          ; Token 188:    "CE "
+ ECHR ' '               ;
+ EQUB VE                ; Encoded as:   "<233> "
 
- ETWO 'I', 'L'          ; Token 185:    "
- EQUB VE
-
- ECHR 'U'               ; Token 186:    "
- ECHR 'N'
- ECHR ' '
- EQUB VE
-
- ETWO 'L', 'E'          ; Token 187:    "
- ECHR 'S'
- ECHR ' '
- EQUB VE
-
- ETWO 'C', 'E'          ; Token 188:    "
- ECHR ' '
- EQUB VE
-
- ECHR 'D'               ; Token 189:    "
- ECHR 'E'
- ECHR ' '
+ ECHR 'D'               ; Token 189:    "DE LA "
+ ECHR 'E'               ;
+ ECHR ' '               ; Encoded as:   "DE [182]"
  ETOK 182
  EQUB VE
 
- ECHR 'V'               ; Token 190:    "
- ETWO 'O', 'U'
- ECHR 'S'
+ ECHR 'V'               ; Token 190:    "VOUS"
+ ETWO 'O', 'U'          ;
+ ECHR 'S'               ; Encoded as:   "V<217>S"
  EQUB VE
 
- EJMP 26                ; Token 191:    "
- ECHR 'B'
- ETWO 'O', 'N'
+ EJMP 26                ; Token 191:    " {single cap}BONJOUR "
+ ECHR 'B'               ;
+ ETWO 'O', 'N'          ; Encoded as:   "{26}B<223>J<217>R "
  ECHR 'J'
  ETWO 'O', 'U'
  ECHR 'R'
  ECHR ' '
  EQUB VE
 
- ETWO 'Q', 'U'          ; Token 192:    "
- ECHR 'E'
- ECHR ' '
+ ETWO 'Q', 'U'          ; Token 192:    "QUE "
+ ECHR 'E'               ;
+ ECHR ' '               ; Encoded as:   "<254>E "
  EQUB VE
 
- ERND 4                 ; Token 193:    "
- ECHR 'T'
- EQUB VE
+ ERND 4                 ; Token 193:    "T"
+ ECHR 'T'               ;
+ EQUB VE                ; Encoded as:   "[4?]T"
 
  EQUB VE                ; Token 194:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
- ECHR 'D'               ; Token 195:    "
- ETWO 'E', 'S'
- ECHR ' '
+ ECHR 'D'               ; Token 195:    "DES "
+ ETWO 'E', 'S'          ;
+ ECHR ' '               ; Encoded as:   "D<237> "
  EQUB VE
 
- ECHR 'P'               ; Token 196:    "
- ECHR 'L'
- ETWO 'U', 'S'
+ ECHR 'P'               ; Token 196:    "PLUS"
+ ECHR 'L'               ;
+ ETWO 'U', 'S'          ; Encoded as:   "PL<236>"
  EQUB VE
 
  EQUB VE                ; Token 197:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
- EJMP 26                ; Token 198:    "
- ECHR 'S'
- ETWO 'Q', 'U'
+ EJMP 26                ; Token 198:    " {single cap}SQUEAKY"
+ ECHR 'S'               ;
+ ETWO 'Q', 'U'          ; Encoded as:   "{26}S<254>EAKY"
  ECHR 'E'
  ECHR 'A'
  ECHR 'K'
  ECHR 'Y'
  EQUB VE
 
- EJMP 25                ; Token 199:    "
- EJMP 9
- EJMP 29
- EJMP 14
- EJMP 13
- ECHR ' '
- ETOK 191
- ETOK 154
- ECHR ' '
- EJMP 4
- ECHR ','
- ECHR ' '
- ETOK 181
- ECHR 'V'
- ETWO 'O', 'U'
- ECHR 'D'
- ETWO 'R', 'A'
- ECHR 'I'
- ECHR 'S'
- ECHR ' '
- ECHR 'M'
- ECHR 'E'
- ECHR ' '
- ECHR 'P'
- ECHR 'R'
- ECHR '<'
- ETWO 'S', 'E'
- ECHR 'N'
- ECHR 'T'
- ETWO 'E', 'R'
- ECHR '.'
+ EJMP 25                ; Token 199:    "{incoming message screen, wait 2s}
+ EJMP 9                 ;                {clear screen}
+ EJMP 29                ;                {move to row 7, lower case}{justify}
+ EJMP 14                ;                {lower case}  {single cap}BONJOUR
+ EJMP 13                ;                {single cap}COMMANDANT {commander
+ ECHR ' '               ;                name}, JE VOUDRAIS ME PRÉSENTER.
+ ETOK 191               ;                {single cap}JE SUIS LE {single cap}
+ ETOK 154               ;                PRINCE DE {single cap}THRUN ET JE SUIS
+ ECHR ' '               ;                OBLIGÉ DE ME SÉPARER DE LA PLUPART DE
+ EJMP 4                 ;                MES TRÉSORS.{cr}
+ ECHR ','               ;                {cr}
+ ECHR ' '               ;                 {single cap}{single cap}POUR LA JOLIE
+ ETOK 181               ;                SOMME DE 5000{single cap}C{single cap}R
+ ECHR 'V'               ;                JE VOUS OFFRE L'OBJET LE PLUS RARE DE
+ ETWO 'O', 'U'          ;                TOUT L'UNIVERS.{cr}
+ ECHR 'D'               ;                {cr}
+ ETWO 'R', 'A'          ;                 {single cap}{single cap}VOULEZ-VOUS LE
+ ECHR 'I'               ;                PRENDRE?{cr}
+ ECHR 'S'               ;                {left align}{all caps}{tab 6}"
+ ECHR ' '               ;
+ ECHR 'M'               ; Encoded as:   "{25}{9}{29}{14}{13} [191][154] {4},
+ ECHR 'E'               ;                 [181]V<217>D<248>IS ME PR<<218>NT<244>
+ ECHR ' '               ;                .{26}[181][171]<229>{26}PR<240>[188]DE
+ ECHR 'P'               ;                {26}<226>RUN[180][181][171]OBLIG<[179]M
+ ECHR 'R'               ;                E S<P<238><244>[179][182]PLUP<238>T
+ ECHR '<'               ;                [179]M<237> TR<<235>RS[204]{19}[175]
+ ETWO 'S', 'E'          ;                 [182]JOLIE <235>MME[179]5000{19}C{19}R
+ ECHR 'N'               ;                 [181][190] OFF<242> L'OBJ<221> [178]
+ ECHR 'T'               ;                [196] R<238>E[179]T<217>T L'UNIV<244>S
+ ETWO 'E', 'R'          ;                [204]{19}V<217><229>Z-[190] [178]P<242>
+ ECHR '.'               ;                ND<242>?{12}{15}{1}{8}"
  EJMP 26
  ETOK 181
  ETOK 171
@@ -9700,24 +9715,24 @@ ENDIF
  EJMP 8
  EQUB VE
 
- EJMP 26                ; Token 200:    "
- ETWO 'N', 'O'
- ECHR 'M'
+ EJMP 26                ; Token 200:    " {single cap}NOM? "
+ ETWO 'N', 'O'          ;
+ ECHR 'M'               ; Encoded as:   "{26}<227>M? "
  ECHR '?'
  ECHR ' '
  EQUB VE
 
  EQUB VE                ; Token 201:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 202:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
- ECHR 'P'               ; Token 203:    "
- ETWO 'E', 'R'
- ECHR 'D'
+ ECHR 'P'               ; Token 203:    "PERDU DE VUE À {single cap}"
+ ETWO 'E', 'R'          ;
+ ECHR 'D'               ; Encoded as:   "P<244>DU[179]VUE[183]{19}"
  ECHR 'U'
  ETOK 179
  ECHR 'V'
@@ -9727,48 +9742,48 @@ ENDIF
  EJMP 19
  EQUB VE
 
- ECHR '.'               ; Token 204:    "
- EJMP 12
- EJMP 12
- ECHR ' '
- EJMP 19
+ ECHR '.'               ; Token 204:    ".{cr}
+ EJMP 12                ;                {cr}
+ EJMP 12                ;                 {single cap}"
+ ECHR ' '               ;
+ EJMP 19                ; Encoded as:   ".{12}{12} {19}"
  EQUB VE
 
- ECHR '"'               ; Token 205:    "
- ECHR ' '
- ETWO 'Q', 'U'
+ ECHR '"'               ; Token 205:    "À QUAI"
+ ECHR ' '               ;
+ ETWO 'Q', 'U'          ; Encoded as:   "" <254>AI
  ECHR 'A'
  ECHR 'I'
  EQUB VE
 
  EQUB VE                ; Token 206:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 207:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 208:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
- EJMP 26                ; Token 209:    "
- ETWO 'E', 'R'
- ECHR 'R'
+ EJMP 26                ; Token 209:    " {single cap}ERRIUS"
+ ETWO 'E', 'R'          ;
+ ECHR 'R'               ; Encoded as:   "{26}<244>RI<236>"
  ECHR 'I'
  ETWO 'U', 'S'
  EQUB VE
 
  EQUB VE                ; Token 210:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
- ECHR ' '               ; Token 211:    "
- ETWO 'L', 'A'
- EJMP 26
- ECHR 'M'
- ETOK 174
+ ECHR ' '               ; Token 211:    " LA {single cap}MARINE {single cap}
+ ETWO 'L', 'A'          ;                SPATIALE DE SA {single cap}MAJESTÉ"
+ EJMP 26                ;
+ ECHR 'M'               ; Encoded as:   " <249>{26}M[174]{26}SP<245>I<228>E[179]
+ ETOK 174               ;                SA{26}<239>J[184]<"
  EJMP 26
  ECHR 'S'
  ECHR 'P'
@@ -9786,13 +9801,13 @@ ENDIF
  ECHR '<'
  EQUB VE
 
- ETOK 177               ; Token 212:    "
- EJMP 12
- EJMP 8
- EJMP 1
- ECHR ' '
- EJMP 26
- ECHR 'F'
+ ETOK 177               ; Token 212:    ".{cr}
+ EJMP 12                ;                {left align}{cr}
+ EJMP 8                 ;                {tab 6}{all caps}  {single cap}FIN DU
+ EJMP 1                 ;                MESSAGE"
+ ECHR ' '               ;
+ EJMP 26                ; Encoded as:   "[177]{12}{8}{1} {26}F<240> DU M<237>SA
+ ECHR 'F'               ;                <231>"
  ETWO 'I', 'N'
  ECHR ' '
  ECHR 'D'
@@ -9805,14 +9820,14 @@ ENDIF
  ETWO 'G', 'E'
  EQUB VE
 
- ECHR ' '               ; Token 213:    "
- ETOK 154
- ECHR ' '
- EJMP 4
- ECHR ','
- ECHR ' '
- ETOK 181
- EJMP 13
+ ECHR ' '               ; Token 213:    " {single cap}COMMANDANT {commander
+ ETOK 154               ;                name}, JE {lower case}SUIS LE CAPITAINE
+ ECHR ' '               ;                {mission captain's name} DE LA {single
+ EJMP 4                 ;                cap}MARINE {single cap}SPATIALE DE SA
+ ECHR ','               ;                {single cap}MAJESTÉ"
+ ECHR ' '               ;
+ ETOK 181               ; Encoded as:   " [154] {4}, [181]{13}[171][178]CAP<219>
+ EJMP 13                ;                A<240>E {27} DE[211]"
  ETOK 171
  ETOK 178
  ECHR 'C'
@@ -9831,12 +9846,12 @@ ENDIF
  EQUB VE
 
  EQUB VE                ; Token 214:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
- EJMP 15                ; Token 215:    "
- ECHR ' '
- ETOK 145
+ EJMP 15                ; Token 215:    "{left align} PLANÈTE INCONNUE "
+ ECHR ' '               ;
+ ETOK 145               ; Encoded as:   "{15} [145] <240>C<223><225>E "
  ECHR ' '
  ETWO 'I', 'N'
  ECHR 'C'
@@ -9846,12 +9861,12 @@ ENDIF
  ECHR ' '
  EQUB VE
 
- EJMP 9                 ; Token 216:    "
- EJMP 8
- EJMP 23
- EJMP 1
- ECHR ' '
- EJMP 26
+ EJMP 9                 ; Token 216:    "{clear screen}
+ EJMP 8                 ;                {tab 6}{move to row 9,lower case}{all
+ EJMP 23                ;                caps}  {single cap}MESSAGES REÇUS"
+ EJMP 1                 ;
+ ECHR ' '               ; Encoded as:   "{9}{8}{23}{1} {26}M<237>SA<231>S <242>@
+ EJMP 26                ;                <236>"
  ECHR 'M'
  ETWO 'E', 'S'
  ECHR 'S'
@@ -9864,9 +9879,9 @@ ENDIF
  ETWO 'U', 'S'
  EQUB VE
 
- ECHR 'D'               ; Token 217:    "
- ECHR 'E'
- EJMP 26
+ ECHR 'D'               ; Token 217:    "DE {single cap}REMIGNY"
+ ECHR 'E'               ;
+ EJMP 26                ; Encoded as:   "DE{26}<242>MIGNY"
  ETWO 'R', 'E'
  ECHR 'M'
  ECHR 'I'
@@ -9875,9 +9890,9 @@ ENDIF
  ECHR 'Y'
  EQUB VE
 
- ECHR 'D'               ; Token 218:    "
- ECHR 'E'
- EJMP 26
+ ECHR 'D'               ; Token 218:    "DE {single cap}SEVIGNY"
+ ECHR 'E'               ;
+ EJMP 26                ; Encoded as:   "DE{26}<218>VIGNY"
  ETWO 'S', 'E'
  ECHR 'V'
  ECHR 'I'
@@ -9886,9 +9901,9 @@ ENDIF
  ECHR 'Y'
  EQUB VE
 
- ECHR 'D'               ; Token 219:    "
- ECHR 'E'
- EJMP 26
+ ECHR 'D'               ; Token 219:    "DE {single cap}ROMANCHE"
+ ECHR 'E'               ;
+ EJMP 26                ; Encoded as:   "DE{26}RO<239>NCHE"
  ECHR 'R'
  ECHR 'O'
  ETWO 'M', 'A'
@@ -9898,19 +9913,19 @@ ENDIF
  ECHR 'E'
  EQUB VE
 
- ETOK 203               ; Token 220:    "
- EJMP 19
- ETWO 'R', 'E'
- ETWO 'E', 'S'
- ETWO 'D', 'I'
+ ETOK 203               ; Token 220:    "PERDU DE VUE À {single cap}{single cap}
+ EJMP 19                ;                REESDICE"
+ ETWO 'R', 'E'          ;
+ ETWO 'E', 'S'          ; Encoded as:   "PERDU DE VUE À {single cap}{single cap}
+ ETWO 'D', 'I'          ;                REESDICE"
  ETWO 'C', 'E'
  EQUB VE
 
- ECHR ' '               ; Token 221:    "
- ETWO 'O', 'N'
- ECHR ' '
- ECHR 'P'
- ETWO 'E', 'N'
+ ECHR ' '               ; Token 221:    " ON PENSE QUE SERAIT ALLÉ DANS CETTE
+ ETWO 'O', 'N'          ;                GALAXIE"
+ ECHR ' '               ;
+ ECHR 'P'               ; Encoded as:   " <223> P<246><218> [192]<218><248><219>
+ ETWO 'E', 'N'          ;                 <228>L< D<255>S C<221>TE G<228>AXIE"
  ETWO 'S', 'E'
  ECHR ' '
  ETOK 192
@@ -9939,89 +9954,89 @@ ENDIF
  ECHR 'E'
  EQUB VE
 
- EJMP 25                ; Token 222:    "
- EJMP 9
- EJMP 29
- EJMP 14
- EJMP 13
- ECHR ' '
- ETOK 191
- ETOK 154
- ECHR ' '
- EJMP 4
- ETOK 204
- ETOK 181
- ECHR 'S'
- ECHR 'U'
- ECHR 'I'
- ECHR 'S'
- EJMP 26
- ECHR 'A'
- ETWO 'G', 'E'
- ECHR 'N'
- ECHR 'T'
- EJMP 26
- ECHR 'B'
- ETWO 'L', 'A'
- ECHR 'K'
- ECHR 'E'
- ECHR ' '
- ETOK 195
- ETWO 'S', 'E'
- ECHR 'R'
- ECHR 'V'
- ECHR 'I'
- ETWO 'C', 'E'
- ECHR 'S'
- ECHR ' '
- ETWO 'S', 'E'
- ECHR 'C'
- ECHR 'R'
- ETWO 'E', 'T'
- ECHR 'S'
- ETOK 179
- ETWO 'L', 'A'
- EJMP 26
- ECHR 'M'
- ETOK 174
- EJMP 26
- ECHR 'S'
- ECHR 'P'
- ETWO 'A', 'T'
- ECHR 'I'
- ETWO 'A', 'L'
- ECHR 'E'
- ETOK 204
- EJMP 19
- ETWO 'L', 'A'
- EJMP 26
- ECHR 'M'
- ETOK 174
- ETOK 129
- ECHR 'G'
- ETWO 'A', 'R'
- ECHR 'D'
- ECHR '<'
- ECHR ' '
- ETWO 'L', 'E'
- ECHR 'S'
- EJMP 26
- ETWO 'T', 'H'
- ETWO 'A', 'R'
- ECHR 'G'
- ECHR 'O'
- ECHR 'I'
- ECHR 'D'
- ECHR 'S'
- ETOK 183
- ETWO 'D', 'I'
- ETWO 'S', 'T'
- ETWO 'A', 'N'
- ETOK 188
- ECHR 'P'
- ETWO 'E', 'N'
- ECHR 'D'
- ETWO 'A', 'N'
+ EJMP 25                ; Token 222:    "{incoming message screen, wait 2s}
+ EJMP 9                 ;                {clear screen}
+ EJMP 29                ;                {move to row 7, lower case}{justify}
+ EJMP 14                ;                {lower case} {single cap}BONJOUR
+ EJMP 13                ;                {single cap}COMMANDANT {commander
+ ECHR ' '               ;                name}.{cr}
+ ETOK 191               ;                {cr}
+ ETOK 154               ;                 {single cap}JE SUIS {single cap}AGENT
+ ECHR ' '               ;                {single cap}BLAKE DES SERVICES SECRETS
+ EJMP 4                 ;                DE LA {single cap}MARINE {single cap}
+ ETOK 204               ;                SPATIALE.{cr}
+ ETOK 181               ;                {cr}
+ ECHR 'S'               ;                 {single cap}{single cap}LA {single
+ ECHR 'U'               ;                cap}MARINE A GARDÉ LES {single cap}
+ ECHR 'I'               ;                THARGOIDS À DISTANCE PENDANT PLUSIEURS
+ ECHR 'S'               ;                ANNÉES. {single cap}MAIS LA SITUATION A
+ EJMP 26                ;                CHANGÉ.{cr}
+ ECHR 'A'               ;                {cr}
+ ETWO 'G', 'E'          ;                 {single cap}{single cap}NOS GARS SONT
+ ECHR 'N'               ;                PRTS À ALLER JUSQU'À LA BASE DE CES
+ ECHR 'T'               ;                ASSASSINS.{cr}
+ EJMP 26                ;                {cr}
+ ECHR 'B'               ;                 {single cap}{wait for key press}
+ ETWO 'L', 'A'          ;                {clear screen}
+ ECHR 'K'               ;                {move to row 7, lower case}{single cap}
+ ECHR 'E'               ;                NOUS {lower case}AVONS OBTENU LES PLANS
+ ECHR ' '               ;                DE DÉFENSE POUR LEURS MONDES ORIGINELS.
+ ETOK 195               ;                {cr}
+ ETWO 'S', 'E'          ;                {cr}
+ ECHR 'R'               ;                 {single cap}{single cap}LES INSECTES
+ ECHR 'V'               ;                IGNORENT QUE NOUS AVONS CES PLANS.{cr}
+ ECHR 'I'               ;                {cr}
+ ETWO 'C', 'E'          ;                 {single cap}{single cap}SI JE LES
+ ECHR 'S'               ;                ENVOIE À NOTRE BASE DE {single cap}
+ ECHR ' '               ;                BIRERA, ILS INTERCEPTERONT LE MESSAGE.
+ ETWO 'S', 'E'          ;                {single cap}IL ME FAUT UN NAVIRE
+ ECHR 'C'               ;                ÉMISSAIRE.{cr}
+ ECHR 'R'               ;                {cr}
+ ETWO 'E', 'T'          ;                 {single cap}{single cap}VOUS TES
+ ECHR 'S'               ;                CHOISI.{cr}
+ ETOK 179               ;                {cr}
+ ETWO 'L', 'A'          ;                 {single cap}{wait for key press}
+ EJMP 26                ;                {clear screen}
+ ECHR 'M'               ;                {move to row 9, lower case}{single cap}
+ ETOK 174               ;                LES PLANS SONT CODÉS POUR CETTE
+ EJMP 26                ;                TRANSMISSION.{cr}
+ ECHR 'S'               ;                {cr}
+ ECHR 'P'               ;                 {single cap}{tab 6}VOUS SEREZ PAYÉ.
+ ETWO 'A', 'T'          ;                {cr}
+ ECHR 'I'               ;                {cr}
+ ETWO 'A', 'L'          ;                 {single cap} {single cap}BONNE CHANCE
+ ECHR 'E'               ;                {single cap}COMMANDANT.{cr}
+ ETOK 204               ;                {left align}{cr}
+ EJMP 19                ;                {tab 6}{all caps}  {single cap}FIN DU
+ ETWO 'L', 'A'          ;                 MESSAGE{wait for key press}"
+ EJMP 26                ;
+ ECHR 'M'               ; Encoded as:   "{25}{9}{29}{14}{13} [191][154] {4}[204]
+ ETOK 174               ;                [181]SUIS{26}A<231>NT{26}B<249>KE [195]
+ ETOK 129               ;                <218>RVI<233>S <218>CR<221>S[179]<249>
+ ECHR 'G'               ;                {26}M[174]{26}SP<245>I<228>E[204]{19}
+ ETWO 'A', 'R'          ;                <249>{26}M[174][129]G<238>D< <229>S{26}
+ ECHR 'D'               ;                <226><238>GOIDS[183]<241><222><255>
+ ECHR '<'               ;                [188]P<246>D<255>T [196]IEURS <255>N<
+ ECHR ' '               ;                <237>.{26}<239>IS [182]S<219>U<245>I
+ ETWO 'L', 'E'          ;                <223>[129]CH<255>G<[204]{19}<227>S G
+ ECHR 'S'               ;                <238>S S<223>T PR[193]S[183]<228><229>R
+ EJMP 26                ;                 J<236><254>'" [182]BA<218>[179]<233>S
+ ETWO 'T', 'H'          ;                 ASSASS<240>S[204]{24}{9}{29}{19}N<217>
+ ETWO 'A', 'R'          ;                S {13}[172]S OBTE<225> [187]P<249>NS
+ ECHR 'G'               ;                [179]D<F<246><218> [175] <229>URS M
+ ECHR 'O'               ;                <223>[195]<253>IG<240>ELS[204]{19}[187]
+ ECHR 'I'               ;                <240><218>CT<237> IG<227><242>NT [192]N
+ ECHR 'D'               ;                <217>S [172]S <233>S P<249>NS[204]{19}S
+ ECHR 'S'               ;                I [181][187]<246>VOIE[183]<227>T<242> B
+ ETOK 183               ;                A<218> DE{26}<234><242><248>, <220>S
+ ETWO 'D', 'I'          ;                 <240>T<244><233>PT<244><223>T [178]M
+ ETWO 'S', 'T'          ;                <237>SA<231>.{26}<220> ME FAUT UN[173]<
+ ETWO 'A', 'N'          ;                MISSAI<242>[204]{19}[190] [193]<237> CH
+ ETOK 188               ;                OISI[204]{24}{9}{23}{19}[187]P<249>NS S
+ ECHR 'P'               ;                <223>T COD<S [175] C<221>TE T<248>NSMIS
+ ETWO 'E', 'N'          ;                SI<223>[204]{8}[190] <218><242>Z PAY<
+ ECHR 'D'               ;                [204]{26}B<223>NE CH<255>[188][154]
+ ETWO 'A', 'N'          ;                [212]{24}"
  ECHR 'T'
  ECHR ' '
  ETOK 196
@@ -10327,34 +10342,34 @@ ENDIF
  EJMP 24
  EQUB VE
 
- EJMP 25                ; Token 223:    "
- EJMP 9
- EJMP 29
- EJMP 8
- EJMP 14
- EJMP 13
- EJMP 26
- ECHR 'B'
- ETWO 'R', 'A'
- ECHR 'V'
- ECHR 'O'
- ECHR ' '
- ETOK 154
- ETOK 204
- ECHR 'N'
- ETWO 'O', 'U'
- ECHR 'S'
- ECHR ' '
- ECHR 'N'
- ECHR '`'
- ETWO 'O', 'U'
- ECHR 'B'
- ECHR 'L'
- ECHR 'I'
- ETWO 'E', 'R'
- ETWO 'O', 'N'
- ECHR 'S'
- ECHR ' '
+ EJMP 25                ; Token 223:    "{incoming message screen, wait 2s}
+ EJMP 9                 ;                {clear screen}
+ EJMP 29                ;                {move to row 7, lower case}{justify}
+ EJMP 8                 ;                {lower case} {single cap}BRAVO {single
+ EJMP 14                ;                cap}COMMANDANT.{cr}
+ EJMP 13                ;                {cr}
+ EJMP 26                ;                 {single cap}NOUS N'OUBLIERONS PAS CE
+ ECHR 'B'               ;                QUE VOUS AVEZ FAIT POUR NOUS.{cr}
+ ETWO 'R', 'A'          ;                {cr}
+ ECHR 'V'               ;                 {single cap}{single cap}NOUS IGNORIONS
+ ECHR 'O'               ;                QUE LES {single cap}THARGOIDS AVAIENT
+ ECHR ' '               ;                CONSCIENCE DE VOTRE EXISTENCE.{cr}
+ ETOK 154               ;                {cr}
+ ETOK 204               ;                 {single cap}ACCEPTEZ UNE UNITÉ
+ ECHR 'N'               ;                D'ÉNERGIE MARINE COMME PAIEMENT.{cr}
+ ETWO 'O', 'U'          ;                {left align}{cr}{tab 6}{all caps}
+ ECHR 'S'               ;                  {single cap}FIN DU MESSAGE
+ ECHR ' '               ;                {wait for key press}"
+ ECHR 'N'               ;
+ ECHR '`'               ; Encoded as:   "{25}{9}{29}{8}{14}{13}{26}B<248>VO
+ ETWO 'O', 'U'          ;                 [154][204]N<217>S N'<217>BLI<244>
+ ECHR 'B'               ;                <223>S PAS [188][192][190] A<250>Z FA
+ ECHR 'L'               ;                <219> [175] N<217>S[204]{19}N<217>S IG
+ ECHR 'I'               ;                <227>RI<223>S [192]<229>S{26}<226><238>
+ ETWO 'E', 'R'          ;                GOIDS AVAI<246>T C<223>SCI<246><233>
+ ETWO 'O', 'N'          ;                [179]VOT<242> EXI<222><246><233>[204]AC
+ ECHR 'S'               ;                <233>PTEZ UNE UN<219>< D'<N<244>GIE M
+ ECHR ' '               ;                [174] COMME PAIEM<246>T[212]{24}
  ECHR 'P'
  ECHR 'A'
  ECHR 'S'
@@ -10476,131 +10491,131 @@ ENDIF
  EQUB VE
 
  EQUB VE                ; Token 224:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 225:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 226:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 227:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 228:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 229:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 230:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 231:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 232:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 233:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 234:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 235:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 236:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 237:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 238:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 239:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 240:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 241:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 242:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 243:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 244:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 245:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 246:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 247:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 248:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 249:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 250:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 251:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 252:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 253:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 254:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 255:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
 ; ******************************************************************************
