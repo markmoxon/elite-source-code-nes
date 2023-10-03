@@ -8280,8 +8280,10 @@ ENDIF
                         ; the weapons we have given our ship (i.e. missiles and
                         ; E.C.M.)
 
- LDA soundVar06         ; Set soundVar05 = soundVar06
- STA soundVar05
+ LDA tuneSpeedCopy      ; Set tuneSpeed = tuneSpeedCopy, to ensure that the
+ STA tuneSpeed          ; music speed is set correctly for the current tune (so
+                        ; this resets any speed-ups that have been applied,
+                        ; such as in the combat demo)
 
  LDA #16                ; Set our ship's speed to 16, so we start the demo by
  STA DELTA              ; flying forwards
@@ -19388,10 +19390,10 @@ ENDIF
  LDA #4                 ; Select and play the combat demo music (tune 4,
  JSR ChooseMusic_b6     ; "Assassin's Touch" followed by "Game Theme")
 
- LDA soundVar05         ; Set soundVar05 = soundVar05 + 6
- CLC
- ADC #6
- STA soundVar05
+ LDA tuneSpeed          ; Set tuneSpeed = tuneSpeed + 6
+ CLC                    ;
+ ADC #6                 ; This speeds up the music in the combat demo to make
+ STA tuneSpeed          ; things a bit more exciting
 
  PLA                    ; Set A to the value of A that we put on the stack above
                         ; (i.e. set A = 0)

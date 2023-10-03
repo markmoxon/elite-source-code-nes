@@ -290,152 +290,169 @@ ENDIF
 
 .ChooseMusic
 
- TAY
+ TAY                    ; Set Y to the tune number
 
- JSR StopSoundsS
+ JSR StopSoundsS        ; Call StopSounds via StopSoundsS to stop all sounds
+                        ; (both music and sound effects)
+                        ;
+                        ; This also sets enableSound to 0
 
- LDA #0
+                        ; We now calculate the offset into the tuneData table
+                        ; for this tune\s data, which will be Y * 9 as there are
+                        ; nine bytes for each tune at the start of the table
 
- CLC
+ LDA #0                 ; Set A = 0 so we can build the results of the
+                        ; calculation by adding 9 to A, Y times
+
+ CLC                    ; Clear the C flag for the addition below
 
 .cmus1
 
- DEY
+ DEY                    ; Decrement the tune number in Y
 
- BMI cmus2
+ BMI cmus2              ; If the result is negative then A contains the result
+                        ; of Y * 9, so jump tp cmus2 
 
- ADC #9
+ ADC #9                 ; Set A = A * 9
 
- BNE cmus1
+ BNE cmus1              ; Loop back to cmus1 to add another 9 to A (this BNE is
+                        ; effectively a JMP as A is never zero)
 
 .cmus2
 
- TAX
+ TAX                    ; Copy the result into X, so X = tune number * 9, which
+                        ; we can use as the offset into the tuneData table
+                        ; below
 
- LDA #0
+                        ; We now reset four 19-byte blocks of memory, as
+                        ; follows:
+                        ;
+                        ;   noteDataSQ1   to noteDataSQ1+18
+                        ;   noteDataSQ2   to noteDataSQ2+18
+                        ;   noteDataTRI   to noteDataTRI+18
+                        ;   noteDataNOISE to noteDataNOISE+18
 
- LDY #18
+ LDA #0                 ; Set A = 0 to use when zeroing these locations
+
+ LDY #18                ; Set a counter in Y for the 19 bytes in each block
 
 .cmus3
 
- STA soundAddr0,Y
- STA soundAddr2,Y
- STA soundAddr4,Y
- STA soundAddr6,Y
+ STA noteDataSQ1,Y      ; Zero the Y-th byte of noteDataSQ1
 
- DEY
+ STA noteDataSQ2,Y      ; Zero the Y-th byte of noteDataSQ2
 
- BPL cmus3
+ STA noteDataTRI,Y      ; Zero the Y-th byte of noteDataTRI
 
- TAY
+ STA noteDataNOISE,Y    ; Zero the Y-th byte of noteDataNOISE
 
- LDA music3Data,X
- STA soundVar05
+ DEY                    ; Decrement the loop counter in Y
 
- STA soundVar06
+ BPL cmus3              ; Loop back until we have zeroed bytes 0 to 18 in all
+                        ; four blocks
 
- LDA music3Data+1,X
- STA soundAddr1
+ TAY                    ; Set Y = 0, to use as an index when fetching addresses
+                        ; from the tuneData table
 
- STA soundAddr
+ LDA tuneData,X         ; Fetch the first byte from the tune's block at
+ STA tuneSpeed          ; tuneData, which contains the tune's speed, and store
+ STA tuneSpeedCopy      ; it in tuneSpeed and tuneSpeedCopy
+                        ;
+                        ; For tune 0, this would be 47
 
- LDA music3Data+2,X
-
- STA soundAddr1+1
-
+ LDA tuneData+1,X       ; Set soundAddr(1 0) and tuneDataSQ1(1 0) to the first
+ STA tuneDataSQ1        ; address from the tune's block at tuneData
+ STA soundAddr          ;
+ LDA tuneData+2,X       ; For tune 0, this would set both variables to point to
+ STA tuneDataSQ1+1      ; tuneData0_SQ1
  STA soundAddr+1
 
- LDA (soundAddr),Y
- STA soundAddr0
+ LDA (soundAddr),Y      ; Fetch the address that the first address points to
+ STA noteDataSQ1        ; and put it in noteDataSQ1(1 0), incrementing the index
+ INY                    ; in Y in the process
+ LDA (soundAddr),Y      ; 
+ STA noteDataSQ1+1      ; For tune 0, this would set noteDataSQ1(1 0) to the
+                        ; address of tuneData0_SQ1_0
 
- INY
-
- LDA (soundAddr),Y
- STA soundAddr0+1
-
- LDA music3Data+3,X
- STA soundAddr3
-
- STA soundAddr
-
- LDA music3Data+4,X
- STA soundAddr3+1
-
+ LDA tuneData+3,X       ; Set soundAddr(1 0) and tuneDataSQ2(1 0) to the second
+ STA tuneDataSQ2        ; address from the tune's block at tuneData
+ STA soundAddr          ;
+ LDA tuneData+4,X       ; For tune 0, this would set both variables to point to
+ STA tuneDataSQ2+1      ; tuneData0_SQ2
  STA soundAddr+1
 
- DEY
+ DEY                    ; Decrement the index in Y, so it is zero once again
 
- LDA (soundAddr),Y
- STA soundAddr2
+ LDA (soundAddr),Y      ; Fetch the address that the second address points to
+ STA noteDataSQ2        ; and put it in noteDataSQ2(1 0), incrementing the index
+ INY                    ; in Y in the process
+ LDA (soundAddr),Y      ;
+ STA noteDataSQ2+1      ; For tune 0, this would set noteDataSQ2(1 0) to the
+                        ; address of tuneData0_SQ2_0
 
- INY
-
- LDA (soundAddr),Y
- STA soundAddr2+1
-
- LDA music3Data+5,X
- STA soundAddr5
-
- STA soundAddr
-
- LDA music3Data+6,X
- STA soundAddr5+1
-
+ LDA tuneData+5,X       ; Set soundAddr(1 0) and tuneDataTRI(1 0) to the third
+ STA tuneDataTRI        ; address from the tune's block at tuneData
+ STA soundAddr          ;
+ LDA tuneData+6,X       ; For tune 0, this would set both variables to point to
+ STA tuneDataTRI+1      ; tuneData0_TRI
  STA soundAddr+1
 
- DEY
+ DEY                    ; Decrement the index in Y, so it is zero once again
 
- LDA (soundAddr),Y
- STA soundAddr4
+ LDA (soundAddr),Y      ; Fetch the address that the third address points to
+ STA noteDataTRI        ; and put it in noteDataTRI(1 0), incrementing the index
+ INY                    ; in Y in the process
+ LDA (soundAddr),Y      ;
+ STA noteDataTRI+1      ; For tune 0, this would set noteDataTRI(1 0) to the
+                        ; address of tuneData0_TRI_0
 
- INY
-
- LDA (soundAddr),Y
- STA soundAddr4+1
-
- LDA music3Data+7,X
- STA soundAddr7
-
- STA soundAddr
-
- LDA music3Data+8,X
- STA soundAddr7+1
-
+ LDA tuneData+7,X       ; Set soundAddr(1 0) and tuneDataNOISE(1 0) to the fourth
+ STA tuneDataNOISE      ; address from the tune's block at tuneData
+ STA soundAddr          ;
+ LDA tuneData+8,X       ; For tune 0, this would set both variables to point to
+ STA tuneDataNOISE+1    ; tuneData0_NOISE
  STA soundAddr+1
 
- DEY
+ DEY                    ; Decrement the index in Y, so it is zero once again
 
- LDA (soundAddr),Y
- STA soundAddr6
+ LDA (soundAddr),Y      ; Fetch the address that the fourth address points to
+ STA noteDataNOISE      ; and put it in noteDataNOISE(1 0), incrementing the index
+ INY                    ; in Y in the process
+ LDA (soundAddr),Y      ;
+ STA noteDataNOISE+1    ; For tune 0, this would set noteDataNOISE(1 0) to the
+                        ; address of tuneData0_NOISE_0
 
- INY
+ STY soundCountSQ1      ; Set soundCountSQ1 = 1
 
- LDA (soundAddr),Y
- STA soundAddr6+1
+ STY soundVar29         ; Set soundVar29 = 1
 
- STY soundVar16
- STY soundVar29
- STY soundVar3C
- STY soundVar4F
+ STY soundVar3C         ; Set soundVar3C = 1
 
- INY
+ STY soundVar4F         ; Set soundVar4F = 1
 
- STY soundVar12
- STY soundVar25
- STY soundVar38
- STY soundVar4B
+ INY                    ; Increment Y to 2
 
- LDX #0
+ STY soundVar12         ; Set soundVar12 = 2
+
+ STY soundVar25         ; Set soundVar25 = 2
+
+ STY soundVar38         ; Set soundVar38 = 2
+
+ STY soundVar4B         ; Set soundVar4B = 2
+
+ LDX #0                 ; Set soundVar0C = 0
  STX soundVar0C
 
- DEX
+ DEX                    ; Decrement X to $FF
 
- STX soundVar0B
- STX soundVar0D
+ STX tuneProgress       ; Set tuneProgress = $FF
 
- INC enableSound
+ STX playMusic          ; Set playMusic = $FF to enable the new tune to be
+                        ; played
 
- RTS
+ INC enableSound        ; Increment enableSound to 1
+
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -448,8 +465,11 @@ ENDIF
 
 .EnableSound
 
- LDA soundVar0D         ; If soundVar0D = 0, jump to enas1 to leave enableSound
- BEQ enas1              ; alone and return from the subroutine
+ LDA playMusic          ; If playMusic = 0 then the music has been disabled by
+ BEQ enas1              ; note command $FE, so jump to enas1 to leave the value
+                        ; of enableSound alone and return from the subroutine
+                        ; as only a new call to ChooseMusic can enable the music
+                        ; again
 
  LDA enableSound        ; If enableSound is already non-zero, jump to enas1 to
  BNE enas1              ; leave it and return from the subroutine
@@ -483,12 +503,12 @@ ENDIF
  STA statusOfNOISE      ; Set statusOfNOISE = 0 to indicate the NOISE channel is
                         ; clear
 
- TAX                    ; We now clear the 16 bytes at soundVar5A, so et X = 0
+ TAX                    ; We now clear the 16 bytes at sq1Volume, so set X = 0
                         ; to act as an index in the following loop
 
 .stop1
 
- STA soundVar5A,X       ; Zero the X-th byte of soundVar5A
+ STA sq1Volume,X        ; Zero the X-th byte of sq1Volume
 
  INX                    ; Increment the index counter
 
@@ -527,11 +547,11 @@ ENDIF
 
 .MakeSounds
 
- JSR MakeMusic          ; Play the current music on the SQ1, SQ2, TRI and
-                        ;NOISE channels
-
- JSR MakeSound          ; Play the current sound effects on the SQ1, SQ2 and
+ JSR MakeMusic          ; Calculate the current music on the SQ1, SQ2, TRI and
                         ; NOISE channels
+
+ JSR MakeSound          ; Calculate the current sound effects on the SQ1, SQ2
+                        ; and NOISE channels
 
  LDA enableSound        ; If enableSound = 0 then sound is disabled, so jump to
  BEQ maks3              ; maks3 to return from the subroutine
@@ -539,13 +559,13 @@ ENDIF
  LDA statusOfSQ1
  BNE maks1
 
- LDA soundVar5A
+ LDA sq1Volume
  STA SQ1_VOL
 
- LDA soundVar18
+ LDA sq1Sweep
  BNE maks1
 
- LDA soundVar5C
+ LDA sq1Lo
  STA SQ1_LO
 
 .maks1
@@ -553,27 +573,27 @@ ENDIF
  LDA statusOfSQ2
  BNE maks2
 
- LDA soundVar5E
+ LDA sq2Volume
  STA SQ2_VOL
 
- LDA soundVar2B
+ LDA sq2Sweep
  BNE maks2
 
- LDA soundVar60
+ LDA sq2Lo
  STA SQ2_LO
 
 .maks2
 
- LDA soundVar64
+ LDA triLo
  STA TRI_LO
 
  LDA statusOfNOISE
  BNE maks3
 
- LDA soundVar66
+ LDA noiseVolume
  STA NOISE_VOL
 
- LDA soundVar68
+ LDA noiseLo
  STA NOISE_LO
 
 .maks3
@@ -599,10 +619,10 @@ ENDIF
 
 .makm1
 
- LDA soundVar05         ; Set soundVar0B = soundVar0B + soundVar05
- CLC
- ADC soundVar0B
- STA soundVar0B
+ LDA tuneSpeed          ; Set tuneProgress = tuneProgress + tuneSpeed
+ CLC                    ;
+ ADC tuneProgress       ; So we move the tune along by the current speed
+ STA tuneProgress
 
  BCC makm2              ; If the addition didn't overflow, jump to makm2 to skip
                         ; playing music in this VBlank
@@ -641,118 +661,132 @@ ENDIF
 
 .MakeMusicOnSQ1
 
- DEC soundVar16
+ DEC soundCountSQ1      ; Decrement the sound counter for SQ1
 
- BEQ muso1
+ BEQ muso1              ; If the counter has reached zero, jump to muso1 to make
+                        ; music on the SQ1 channel
 
- RTS
+ RTS                    ; Otherwise return from the subroutine
 
 .muso1
 
- LDA soundAddr0
- STA soundAddr
- LDA soundAddr0+1
- STA soundAddr+1
+ LDA noteDataSQ1        ; Set soundAddr(1 0) = noteDataSQ1(1 0)
+ STA soundAddr          ;
+ LDA noteDataSQ1+1      ; So soundAddr(1 0) points to the note data for this
+ STA soundAddr+1        ; part of the tune
 
- LDA #0
- STA soundVar18
- STA soundVar20
+ LDA #0                 ; Set sq1Sweep = 0
+ STA sq1Sweep
+
+ STA soundVar20         ; Set soundVar20 = 0
 
 .muso2
 
- LDY #0
-
+ LDY #0                 ; Set Y to the next entry from the note data
  LDA (soundAddr),Y
  TAY
 
- INC soundAddr
-
- BNE muso3
-
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE muso3              ; in the note data
  INC soundAddr+1
 
 .muso3
 
- TYA
+ TYA                    ; Set A to the next entry that we just fetched from the
+                        ; note data
 
- BMI muso8
+ BMI muso8              ; If bit 7 of A is set then this is a command byte, so
+                        ; jump to muso8 to process it
 
- CMP #$60
+ CMP #$60               ; If the note data in A is less than $60, jump to muso4
  BCC muso4
 
- ADC #$A0
+ ADC #$A0               ; The note data in A >= $60, so set the following:
+ STA soundVar15         ;
+                        ;    soundVar15 = A + $A1
+                        ;
+                        ; We know the C flag is set as we just passed through a
+                        ; BCC, so the ADC actually adds $A1
 
- STA soundVar15
-
- JMP muso2
+ JMP muso2              ; Jump back to muso2 to move on to the next entry from
+                        ; the note data
 
 .muso4
 
- CLC
- ADC soundVar0C
+                        ; If we get here then the note data in A is less than
+                        ; $60, which denotes a sound to send to the APU, so we
+                        ; now convert the data to a frequency and send it to the
+                        ; APU to make a sound on channel SQ1
 
+ CLC                    ; Set Y = (A + soundVar0C + soundVar14) * 2
+ ADC soundVar0C
  CLC
  ADC soundVar14
-
  ASL A
  TAY
 
- LDA noteFrequency,Y
- STA soundVar1B
-
- STA soundVar5C
-
+ LDA noteFrequency,Y    ; Set (sqlHi sq1Lo) the frequency for note Y
+ STA sq1LoCopy          ;
+ STA sq1Lo              ; Also save a copy of the low byte in sq1LoCopy
  LDA noteFrequency+1,Y
- STA soundVar5D
+ STA sql1Hi
 
- LDX statusOfSQ1
- BNE muso5
+ LDX statusOfSQ1        ; If statusOfSQ1 is non-zero then a sound is already
+ BNE muso5              ; being made on channel AQ1, so jump to muso5 to skip
+                        ; writing to the APU
 
- LDX soundVar18
+ LDX sq1Sweep           ; Send sq1Sweep to the APU via SQ1_SWEEP
  STX SQ1_SWEEP
 
- LDX soundVar5C
+ LDX sq1Lo              ; Set (sqlHi sq1Lo) to the APU via SQ1_HI and SQ1_LO
  STX SQ1_LO
  STA SQ1_HI
 
 .muso5
 
- LDA #1
+ LDA #1                 ; Set soundVar1C = 1
  STA soundVar1C
- LDA soundVar1D
+
+ LDA soundVar1D         ; Set soundVar1E = soundVar1D
  STA soundVar1E
 
 .muso6
 
- LDA #$FF
+ LDA #$FF               ; Set soundVar20 = $FF
  STA soundVar20
 
 .muso7
 
- LDA soundAddr
- STA soundAddr0
- LDA soundAddr+1
- STA soundAddr0+1
+ LDA soundAddr          ; Set noteDataSQ1(1 0) = soundAddr(1 0)
+ STA noteDataSQ1        ;
+ LDA soundAddr+1        ; This updates the pointer to the note data for the
+ STA noteDataSQ1+1      ; channel, so the next time we can pick up where we left
+                        ; off
 
- LDA soundVar15
- STA soundVar16
+ LDA soundVar15         ; Set soundCountSQ1 = soundVar15
+ STA soundCountSQ1
 
- RTS
+ RTS                    ; Return from the subroutine
 
 .muso8
 
- LDY #0
+                        ; If we get here then bit 7 of the note data in A is
+                        ; set, so this is a command byte
 
- CMP #$FF
- BNE muso10
+ LDY #0                 ; Set Y = 0, so we can use it in various commands below
+
+ CMP #$FF               ; If A is not $FF, jump to muso10 to check for the next
+ BNE muso10             ; command
+
+                        ; If we get here then the command in A is $FF
 
  LDA soundVar12
  CLC
- ADC soundAddr1
+ ADC tuneDataSQ1
  STA soundAddr
 
  LDA soundVar13
- ADC soundAddr1+1
+ ADC tuneDataSQ1+1
  STA soundAddr+1
 
  LDA soundVar12
@@ -768,9 +802,9 @@ ENDIF
  ORA (soundAddr),Y
  BNE muso9
 
- LDA soundAddr1
+ LDA tuneDataSQ1
  STA soundAddr
- LDA soundAddr1+1
+ LDA tuneDataSQ1+1
  STA soundAddr+1
 
  LDA #2
@@ -788,36 +822,39 @@ ENDIF
  STA soundAddr
  STX soundAddr+1
 
- JMP muso2
-
+ JMP muso2              ; Jump back to muso2 to move on to the next entry from
+                        ; the note data
 .muso10
 
- CMP #$F6
- BNE muso12
+ CMP #$F6               ; If A is not $F6, jump to muso12 to check for the next
+ BNE muso12             ; command
 
- LDA (soundAddr),Y
- INC soundAddr
+                        ; If we get here then the command in A is $F6
 
- BNE muso11
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A
 
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE muso11             ; in the note data
  INC soundAddr+1
 
 .muso11
 
- STA soundVar1F
+ STA soundVar1F         ; Store the entry we just fetched in soundVar1F
 
- JMP muso2
+ JMP muso2              ; Jump back to muso2 to move on to the next entry from
+                        ; the note data
 
 .muso12
 
- CMP #$F7
- BNE muso14
+ CMP #$F7               ; If A is not $F7, jump to muso14 to check for the next
+ BNE muso14             ; command
 
- LDA (soundAddr),Y
- INC soundAddr
+                        ; If we get here then the command in A is $F7
 
- BNE muso13
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A
 
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE muso13             ; in the note data
  INC soundAddr+1
 
 .muso13
@@ -825,113 +862,126 @@ ENDIF
  STA soundVar1A
  STY soundVar19
 
- JMP muso2
+ JMP muso2              ; Jump back to muso2 to move on to the next entry from
+                        ; the note data
 
 .muso14
 
- CMP #$FA
- BNE muso16
+ CMP #$FA               ; If A is not $FA, jump to muso16 to check for the next
+ BNE muso16             ; command
 
- LDA (soundAddr),Y
+                        ; If we get here then the command in A is $FA
+
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A
+
  STA soundVar17
 
- INC soundAddr
-
- BNE muso15
-
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE muso15             ; in the note data
  INC soundAddr+1
 
 .muso15
 
- JMP muso2
+ JMP muso2              ; Jump back to muso2 to move on to the next entry from
+                        ; the note data
 
 .muso16
 
- CMP #$F8
- BNE muso17
+ CMP #$F8               ; If A is not $F8, jump to muso17 to check for the next
+ BNE muso17             ; command
+
+                        ; If we get here then the command in A is $F8
 
  LDA #$30
- STA soundVar5A
+ STA sq1Volume
 
  JMP muso7
 
 .muso17
 
- CMP #$F9
- BNE muso18
+ CMP #$F9               ; If A is not $F9, jump to muso18 to check for the next
+ BNE muso18             ; command
+
+                        ; If we get here then the command in A is $F9
 
  JMP muso6
 
 .muso18
 
- CMP #$FD
- BNE muso20
+ CMP #$FD               ; If A is not $FD, jump to muso20 to check for the next
+ BNE muso20             ; command
 
- LDA (soundAddr),Y
+                        ; If we get here then the command in A is $FD
 
- INC soundAddr
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A
 
- BNE muso19
-
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE muso19             ; in the note data
  INC soundAddr+1
 
 .muso19
 
- STA soundVar18
+ STA sq1Sweep
 
- JMP muso2
+ JMP muso2              ; Jump back to muso2 to move on to the next entry from
+                        ; the note data
 
 .muso20
 
- CMP #$FB
- BNE muso22
+ CMP #$FB               ; If A is not $FB, jump to muso22 to check for the next
+ BNE muso22             ; command
 
- LDA (soundAddr),Y
+                        ; If we get here then the command in A is $FB
 
- INC soundAddr
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A
 
- BNE muso21
-
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE muso21             ; in the note data
  INC soundAddr+1
 
 .muso21
 
  STA soundVar0C
 
- JMP muso2
+ JMP muso2              ; Jump back to muso2 to move on to the next entry from
+                        ; the note data
 
 .muso22
 
- CMP #$FC
- BNE muso24
+ CMP #$FC               ; If A is not $FC, jump to muso24 to check for the next
+ BNE muso24             ; command
 
- LDA (soundAddr),Y
+                        ; If we get here then the command in A is $FC
 
- INC soundAddr
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A
 
- BNE muso23
-
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE muso23             ; in the note data
  INC soundAddr+1
 
 .muso23
 
  STA soundVar14
 
- JMP muso2
+ JMP muso2              ; Jump back to muso2 to move on to the next entry from
+                        ; the note data
 
 .muso24
 
- CMP #$F5
- BNE muso25
+ CMP #$F5               ; If A is not $F5, jump to muso25 to check for the next
+ BNE muso25             ; command
 
- LDA (soundAddr),Y
+                        ; If we get here then the command in A is $F5
+
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A
+
  TAX
- STA soundAddr1
+ STA tuneDataSQ1
  INY
  LDA (soundAddr),Y
  STX soundAddr
  STA soundAddr+1
- STA soundAddr1+1
+ STA tuneDataSQ1+1
 
  LDA #2
  STA soundVar12
@@ -947,43 +997,65 @@ ENDIF
  STA soundAddr+1
  STX soundAddr
 
- JMP muso2
+ JMP muso2              ; Jump back to muso2 to move on to the next entry from
+                        ; the note data
 
 .muso25
 
- CMP #$F4
- BNE muso27
+ CMP #$F4               ; If A is not $F4, jump to muso27 to check for the next
+ BNE muso27             ; command
 
- LDA (soundAddr),Y
+                        ; If we get here then the command in A is $F4
+                        ;
+                        ; <$F4 $xx> changes the playback speed to $xx
 
- INC soundAddr
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A, which
+                        ; contains the new speed
 
- BNE muso26
-
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE muso26             ; in the note data
  INC soundAddr+1
 
 .muso26
 
- STA soundVar05
- STA soundVar06
+ STA tuneSpeed          ; Set tuneSpeed and tuneSpeedCopy to A, to change the
+ STA tuneSpeedCopy      ; speed of the current tune to the specified speed
 
- JMP muso2
+ JMP muso2              ; Jump back to muso2 to move on to the next entry from
+                        ; the note data
 
 .muso27
 
- CMP #$FE
- BNE muso28
+ CMP #$FE               ; If A is not $FE, jump to muso28 to check for the next
+ BNE muso28             ; command
 
- STY soundVar0D
+                        ; If we get here then the command in A is $FE
+                        ;
+                        ; <$FE> stops the music and disables sound
 
- PLA
- PLA
+ STY playMusic          ; Set playMusic = 0 to stop playing the current tune, so
+                        ; only a new call to ChooseMusic will start the music
+                        ; again
 
- JMP StopSoundsS
+ PLA                    ; Pull the return address from the stack, so the RTS
+ PLA                    ; instruction at the tne of StopSounds actually returns
+                        ; from the subroutine that called MakeMusic, so we stop
+                        ; the music and return to the MakeSounds routine (which
+                        ; is the only routine that calls MakeMusic)
+
+ JMP StopSoundsS        ; Jump to StopSounds via StopSoundsS to stop the music
+                        ; and return to the MakeSounds routine
 
 .muso28
 
- BEQ muso28
+ BEQ muso28             ; If we get here then bit 7 of A was set but the value
+                        ; didn't match any of the checks above, so this
+                        ; instruction does nothing and we fall through into
+                        ; GetNextForSQ1, ignoring the data in A
+                        ;
+                        ; I'm not sure why the instruction here is an infinite
+                        ; loop, but luckily it isn't triggered as A is never
+                        ; zero at this point
 
 ; ******************************************************************************
 ;
@@ -1028,7 +1100,7 @@ ENDIF
 
  AND #$0F
  ORA soundVar17
- STA soundVar5A
+ STA sq1Volume
 
 .musv2
 
@@ -1055,8 +1127,8 @@ ENDIF
  INC soundVar19
 
  CLC
- ADC soundVar1B
- STA soundVar5C
+ ADC sq1LoCopy
+ STA sq1Lo
 
  RTS
 
@@ -1078,13 +1150,13 @@ ENDIF
 
 .must1
 
- LDA soundAddr2
+ LDA noteDataSQ2
  STA soundAddr
- LDA soundAddr2+1
+ LDA noteDataSQ2+1
  STA soundAddr+1
 
  LDA #0
- STA soundVar2B
+ STA sq2Sweep
  STA soundVar33
 
 .must2
@@ -1124,17 +1196,17 @@ ENDIF
 
  LDA noteFrequency,Y
  STA soundVar2E
- STA soundVar60
+ STA sq2Lo
  LDA noteFrequency+1,Y
  STA soundVar61
 
  LDX statusOfSQ2
  BNE must5
 
- LDX soundVar2B
+ LDX sq2Sweep
  STX SQ2_SWEEP
 
- LDX soundVar60
+ LDX sq2Lo
  STX SQ2_LO
  STA SQ2_HI
 
@@ -1154,9 +1226,9 @@ ENDIF
 .must7
 
  LDA soundAddr
- STA soundAddr2
+ STA noteDataSQ2
  LDA soundAddr+1
- STA soundAddr2+1
+ STA noteDataSQ2+1
 
  LDA soundVar28
  STA soundVar29
@@ -1172,10 +1244,10 @@ ENDIF
 
  LDA soundVar25
  CLC
- ADC soundAddr3
+ ADC tuneDataSQ2
  STA soundAddr
  LDA soundVar26
- ADC soundAddr3+1
+ ADC tuneDataSQ2+1
  STA soundAddr+1
 
  LDA soundVar25
@@ -1191,9 +1263,9 @@ ENDIF
  ORA (soundAddr),Y
  BNE must9
 
- LDA soundAddr3
+ LDA tuneDataSQ2
  STA soundAddr
- LDA soundAddr3+1
+ LDA tuneDataSQ2+1
  STA soundAddr+1
 
  LDA #2
@@ -1276,7 +1348,7 @@ ENDIF
  BNE must17
 
  LDA #$30
- STA soundVar5E
+ STA sq2Volume
 
  JMP must7
 
@@ -1302,7 +1374,7 @@ ENDIF
 
 .must19
 
- STA soundVar2B
+ STA sq2Sweep
 
  JMP must2
 
@@ -1351,12 +1423,12 @@ ENDIF
 
  LDA (soundAddr),Y
  TAX
- STA soundAddr3
+ STA tuneDataSQ2
  INY
  LDA (soundAddr),Y
  STX soundAddr
  STA soundAddr+1
- STA soundAddr3+1
+ STA tuneDataSQ2+1
 
  LDA #2
  STA soundVar25
@@ -1388,8 +1460,8 @@ ENDIF
 
 .must26
 
- STA soundVar05
- STA soundVar06
+ STA tuneSpeed
+ STA tuneSpeedCopy
 
  JMP must2
 
@@ -1398,7 +1470,7 @@ ENDIF
  CMP #$FE
  BNE must28
 
- STY soundVar0D
+ STY playMusic
 
  PLA
  PLA
@@ -1451,7 +1523,7 @@ ENDIF
 
  AND #$0F
  ORA soundVar2A
- STA soundVar5E
+ STA sq2Volume
 
 .muss2
 
@@ -1479,7 +1551,7 @@ ENDIF
  CLC
  ADC soundVar2E
 
- STA soundVar60
+ STA sq2Lo
 
  RTS
 
@@ -1502,9 +1574,9 @@ ENDIF
 
 .musr1
 
- LDA soundAddr4
+ LDA noteDataTRI
  STA soundAddr
- LDA soundAddr4+1
+ LDA noteDataTRI+1
  STA soundAddr+1
 
 .musr2
@@ -1544,9 +1616,9 @@ ENDIF
 
  LDA noteFrequency,Y
  STA soundVar41
- STA soundVar64
+ STA triLo
  LDA noteFrequency+1,Y
- LDX soundVar64
+ LDX triLo
 
  STX TRI_LO
  STA TRI_HI
@@ -1562,9 +1634,9 @@ ENDIF
 .musr5
 
  LDA soundAddr
- STA soundAddr4
+ STA noteDataTRI
  LDA soundAddr+1
- STA soundAddr4+1
+ STA noteDataTRI+1
 
  LDA soundVar3B
  STA soundVar3C
@@ -1580,10 +1652,10 @@ ENDIF
 
  LDA soundVar38
  CLC
- ADC soundAddr5
+ ADC tuneDataTRI
  STA soundAddr
  LDA soundVar39
- ADC soundAddr5+1
+ ADC tuneDataTRI+1
  STA soundAddr+1
 
  LDA soundVar38
@@ -1599,9 +1671,9 @@ ENDIF
  ORA (soundAddr),Y
  BNE musr7
 
- LDA soundAddr5
+ LDA tuneDataTRI
  STA soundAddr
- LDA soundAddr5+1
+ LDA tuneDataTRI+1
  STA soundAddr+1
 
  LDA #2
@@ -1722,12 +1794,12 @@ ENDIF
 
  LDA (soundAddr),Y
  TAX
- STA soundAddr5
+ STA tuneDataTRI
  INY
  LDA (soundAddr),Y
  STX soundAddr
  STA soundAddr+1
- STA soundAddr5+1
+ STA tuneDataTRI+1
 
  LDA #2
  STA soundVar38
@@ -1760,8 +1832,8 @@ ENDIF
 
 .musr20
 
- STA soundVar05
- STA soundVar06
+ STA tuneSpeed
+ STA tuneSpeedCopy
 
  JMP musr2
 
@@ -1770,7 +1842,7 @@ ENDIF
  CMP #$FE
  BNE musr22
 
- STY soundVar0D
+ STY playMusic
 
  PLA
  PLA
@@ -1827,7 +1899,7 @@ ENDIF
 
  CLC
  ADC soundVar41
- STA soundVar64
+ STA triLo
 
  RTS
 
@@ -1849,9 +1921,9 @@ ENDIF
 
 .musf1
 
- LDA soundAddr6
+ LDA noteDataNOISE
  STA soundAddr
- LDA soundAddr6+1
+ LDA noteDataNOISE+1
  STA soundAddr+1
 
  STA soundVar59
@@ -1887,7 +1959,7 @@ ENDIF
  AND #$0F
  STA soundVar54
 
- STA soundVar68
+ STA noiseLo
 
  LDY #0
 
@@ -1911,9 +1983,9 @@ ENDIF
  STA soundVar59
 
  LDA soundAddr
- STA soundAddr6
+ STA noteDataNOISE
  LDA soundAddr+1
- STA soundAddr6+1
+ STA noteDataNOISE+1
 
  LDA soundVar4E
  STA soundVar4F
@@ -1929,10 +2001,10 @@ ENDIF
 
  LDA soundVar4B
  CLC
- ADC soundAddr7
+ ADC tuneDataNOISE
  STA soundAddr
  LDA soundVar4C
- ADC soundAddr7+1
+ ADC tuneDataNOISE+1
  STA soundAddr+1
 
  LDA soundVar4B
@@ -1948,9 +2020,9 @@ ENDIF
  ORA (soundAddr),Y
  BNE musf8
 
- LDA soundAddr7
+ LDA tuneDataNOISE
  STA soundAddr
- LDA soundAddr7+1
+ LDA tuneDataNOISE+1
  STA soundAddr+1
 
  LDA #2
@@ -2015,7 +2087,7 @@ ENDIF
  BNE musf14
 
  LDA #$30
- STA soundVar66
+ STA noiseVolume
 
  JMP musf6
 
@@ -2033,12 +2105,12 @@ ENDIF
 
  LDA (soundAddr),Y
  TAX
- STA soundAddr7
+ STA tuneDataNOISE
  INY
  LDA (soundAddr),Y
  STX soundAddr
  STA soundAddr+1
- STA soundAddr7+1
+ STA tuneDataNOISE+1
 
  LDA #2
  STA soundVar4B
@@ -2071,8 +2143,8 @@ ENDIF
 
 .musf17
 
- STA soundVar05
- STA soundVar06
+ STA tuneSpeed
+ STA tuneSpeedCopy
 
  JMP musf2
 
@@ -2081,7 +2153,7 @@ ENDIF
  CMP #$FE
  BNE musf19
 
- STY soundVar0D
+ STY playMusic
 
  PLA
  PLA
@@ -2134,7 +2206,7 @@ ENDIF
 
  AND #$0F
  ORA #$30
- STA soundVar66
+ STA noiseVolume
 
 .musg2
 
@@ -2163,7 +2235,7 @@ ENDIF
  CLC
  ADC soundVar54
  AND #$0F
- STA soundVar68
+ STA noiseLo
 
  RTS
 
@@ -2573,13 +2645,13 @@ ENDIF
  BEQ mscz2              ; mscz2 to silence the SQ1 channel and return from the
                         ; subroutine
 
- LDA soundVar5A
+ LDA sq1Volume
  STA SQ1_VOL
 
- LDA soundVar5C
+ LDA sq1Lo
  STA SQ1_LO
 
- LDA soundVar5D
+ LDA sql1Hi
  STA SQ1_HI
 
  STX statusOfSQ1
@@ -2760,10 +2832,10 @@ ENDIF
  BEQ msco2              ; msco2 to silence the SQ2 channel and return from the
                         ; subroutine
 
- LDA soundVar5E
+ LDA sq2Volume
  STA SQ2_VOL
 
- LDA soundVar60
+ LDA sq2Lo
  STA SQ2_LO
 
  LDA soundVar61
@@ -2948,10 +3020,10 @@ ENDIF
  BEQ msct2              ; msct2 to silence the NOISE channel and return from the
                         ; subroutine
 
- LDA soundVar66
+ LDA noiseVolume
  STA NOISE_VOL
 
- LDA soundVar68
+ LDA noiseLo
  STA NOISE_LO
 
  STX statusOfNOISE
@@ -3660,49 +3732,49 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: music3Data
+;       Name: tuneData
 ;       Type: Variable
 ;   Category: Sound
-;    Summary: Data for the game music
+;    Summary: Data for the tunes played in the game
 ;
 ; ------------------------------------------------------------------------------
 ;
-; The music3Data table contains the largest set of data for the game music.
+; The tuneData table contains the largest set of data for the game music.
 ;
 ; There are five tunes, numbered 0 to 4. The data for each tune is stored as a
 ; linked tree, with the data at level 3, so this would be the path to reach the
 ; first block of music data in the first part of the first tune:
 ;
-;   music3Data0 -> music3Data0_0 -> music3Data0_0_0
+;   tuneData0 -> tuneData0_SQ1 -> tuneData0_SQ1_0
 ;
-; Each tune has a lookup table at the start of music3Data that consists of a
+; Each tune has a lookup table at the start of tuneData that consists of a
 ; single byte (containing the tune speed) followed by the addresses of four
-; blocks, so tune 0 has the following lookup table at music3Data0, for example:
+; blocks, so tune 0 has the following lookup table at tuneData0, for example:
 ;
 ;   EQUB 47
-;   EQUW music3Data0_0
-;   EQUW music3Data0_1
-;   EQUW music3Data0_2
-;   EQUW music3Data0_3
+;   EQUW tuneData0_SQ1
+;   EQUW tuneData0_SQ2
+;   EQUW tuneData0_TRI
+;   EQUW tuneData0_NOISE
 ;
 ; These addresses each point to another block of links, so for example we have
-; the following in music3Data0_0:
+; the following in tuneData0_SQ1:
 ;
-;   EQUW music3Data0_0_0
-;   EQUW music3Data0_0_0
-;   EQUW music3Data0_0_1
-;   EQUW music3Data0_0_2
-;   EQUW music3Data0_0_1
-;   EQUW music3Data0_0_2
-;   EQUW music3Data0_0_1
-;   EQUW music3Data0_0_3
-;   EQUW music3Data0_0_1
-;   EQUW music3Data0_0_4
+;   EQUW tuneData0_SQ1_0
+;   EQUW tuneData0_SQ1_0
+;   EQUW tuneData0_SQ1_1
+;   EQUW tuneData0_SQ1_2
+;   EQUW tuneData0_SQ1_1
+;   EQUW tuneData0_SQ1_2
+;   EQUW tuneData0_SQ1_1
+;   EQUW tuneData0_SQ1_3
+;   EQUW tuneData0_SQ1_1
+;   EQUW tuneData0_SQ1_4
 ;   EQUW 0
 ;
 ; These blocks are typically terminated by a null address.
 ;
-; These addresses point to the actual music data, so for example music3Data0_0_0
+; These addresses point to the actual music data, so for example tuneData0_SQ1_0
 ; points to the following:
 ;
 ;   EQUB $FA, $70, $F7, $05, $F6, $09, $65, $0C
@@ -3712,74 +3784,74 @@ ENDIF
 ; These blocks are typically terminated by a $FF byte.
 ;
 ; Note that tunes 3 and 4 share data, and in these cases there are two labels
-; applied to the shared data (so music3Data3_0_0 and music3Data4_0_0 point to
+; applied to the shared data (so tuneData3_SQ1_0 and tuneData4_SQ1_0 point to
 ; the same data, for example).
 ;
 ; ******************************************************************************
 
-.music3Data
+.tuneData
 
-.music3Data0
+.tuneData0
 
- EQUB 47
- EQUW music3Data0_0
- EQUW music3Data0_1
- EQUW music3Data0_2
- EQUW music3Data0_3
+ EQUB 47                ; tuneSpeed
+ EQUW tuneData0_SQ1     ; tuneDataSQ1(1 0)
+ EQUW tuneData0_SQ2     ; tuneDataSQ2(1 0)
+ EQUW tuneData0_TRI     ; tuneDataTRI(1 0)
+ EQUW tuneData0_NOISE   ; tuneDataNOISE(1 0)
 
-.music3Data1
+.tuneData1
 
  EQUB 59
- EQUW music3Data1_0
- EQUW music3Data1_1
- EQUW music3Data1_2
- EQUW music3Data1_3
+ EQUW tuneData1_SQ1
+ EQUW tuneData1_SQ2
+ EQUW tuneData1_TRI
+ EQUW tuneData1_NOISE
 
-.music3Data2
-
- EQUB 60
- EQUW music3Data2_0
- EQUW music3Data2_1
- EQUW music3Data2_2
- EQUW music3Data2_3
-
-.music3Data3
+.tuneData2
 
  EQUB 60
- EQUW music3Data3_0
- EQUW music3Data3_1
- EQUW music3Data3_2
- EQUW music3Data3_3
+ EQUW tuneData2_SQ1
+ EQUW tuneData2_SQ2
+ EQUW tuneData2_TRI
+ EQUW tuneData2_NOISE
 
-.music3Data4
+.tuneData3
 
  EQUB 60
- EQUW music3Data4_0
- EQUW music3Data4_1
- EQUW music3Data4_2
- EQUW music3Data4_3
+ EQUW tuneData3_SQ1
+ EQUW tuneData3_SQ2
+ EQUW tuneData3_TRI
+ EQUW tuneData3_NOISE
 
-.music3Data1_0
+.tuneData4
 
- EQUW music3Data1_0_0
+ EQUB 60
+ EQUW tuneData4_SQ1
+ EQUW tuneData4_SQ2
+ EQUW tuneData4_TRI
+ EQUW tuneData4_NOISE
+
+.tuneData1_SQ1
+
+ EQUW tuneData1_SQ1_0
  EQUW 0
 
-.music3Data1_2
+.tuneData1_TRI
 
- EQUW music3Data1_2_0
+ EQUW tuneData1_TRI_0
  EQUW 0
 
-.music3Data1_1
+.tuneData1_SQ2
 
- EQUW music3Data1_1_0
+ EQUW tuneData1_SQ2_0
  EQUW 0
 
-.music3Data1_3
+.tuneData1_NOISE
 
- EQUW music3Data1_3_0
+ EQUW tuneData1_NOISE_0
  EQUW 0
 
-.music3Data1_0_0
+.tuneData1_SQ1_0
 
  EQUB $FA, $B0, $F7, $05, $F6, $0F, $6B, $F8
  EQUB $63, $F6, $02, $0E, $F6, $07, $1E, $1E
@@ -3866,7 +3938,7 @@ ENDIF
  EQUB $09, $0E, $F8, $F6, $04, $61, $1A, $F8
  EQUB $FF
 
-.music3Data1_2_0
+.tuneData1_TRI_0
 
  EQUB $FC, $0C, $6B, $F8, $63, $F6, $08, $F7
  EQUB $03, $0E, $1A, $1A, $0E, $1A, $1A, $0E
@@ -3919,7 +3991,7 @@ ENDIF
  EQUB $61, $1F, $F8, $61, $1E, $1E, $1E, $F8
  EQUB $1C, $F8, $63, $1A, $F8, $F8, $FF
 
-.music3Data1_1_0
+.tuneData1_SQ2_0
 
  EQUB $FA, $B0, $F7, $01, $F6, $04, $63, $1A
  EQUB $1E, $62, $21, $60, $F8, $67, $21, $FA
@@ -3999,56 +4071,56 @@ ENDIF
  EQUB $F4, $33, $F8, $28, $F8, $26, $69, $F8
  EQUB $F4, $3B, $FF
 
-.music3Data0_0
+.tuneData0_SQ1
 
- EQUW music3Data0_0_0
- EQUW music3Data0_0_0
- EQUW music3Data0_0_1
- EQUW music3Data0_0_2
- EQUW music3Data0_0_1
- EQUW music3Data0_0_2
- EQUW music3Data0_0_1
- EQUW music3Data0_0_3
- EQUW music3Data0_0_1
- EQUW music3Data0_0_4
+ EQUW tuneData0_SQ1_0   ; noteDataSQ1(1 0)
+ EQUW tuneData0_SQ1_0
+ EQUW tuneData0_SQ1_1
+ EQUW tuneData0_SQ1_2
+ EQUW tuneData0_SQ1_1
+ EQUW tuneData0_SQ1_2
+ EQUW tuneData0_SQ1_1
+ EQUW tuneData0_SQ1_3
+ EQUW tuneData0_SQ1_1
+ EQUW tuneData0_SQ1_4
  EQUW 0
 
-.music3Data0_2
+.tuneData0_TRI
 
- EQUW music3Data0_2_0
- EQUW music3Data0_2_0
- EQUW music3Data0_2_1
- EQUW music3Data0_2_2
- EQUW music3Data0_2_1
- EQUW music3Data0_2_2
- EQUW music3Data0_2_1
- EQUW music3Data0_2_1
+ EQUW tuneData0_TRI_0   ; noteDataTRI(1 0)
+ EQUW tuneData0_TRI_0
+ EQUW tuneData0_TRI_1
+ EQUW tuneData0_TRI_2
+ EQUW tuneData0_TRI_1
+ EQUW tuneData0_TRI_2
+ EQUW tuneData0_TRI_1
+ EQUW tuneData0_TRI_1
  EQUW 0
 
-.music3Data0_1
+.tuneData0_SQ2
 
- EQUW music3Data0_1_0
- EQUW music3Data0_1_0
- EQUW music3Data0_1_1
- EQUW music3Data0_1_2
- EQUW music3Data0_1_1
- EQUW music3Data0_1_3
- EQUW music3Data0_1_1
- EQUW music3Data0_1_1
+ EQUW tuneData0_SQ2_0   ; noteDataSQ2(1 0)
+ EQUW tuneData0_SQ2_0
+ EQUW tuneData0_SQ2_1
+ EQUW tuneData0_SQ2_2
+ EQUW tuneData0_SQ2_1
+ EQUW tuneData0_SQ2_3
+ EQUW tuneData0_SQ2_1
+ EQUW tuneData0_SQ2_1
  EQUW 0
 
-.music3Data0_3
+.tuneData0_NOISE
 
- EQUW music3Data0_3_0
+ EQUW tuneData0_NOISE_0 ; noteDataNOISE(1 0)
  EQUW 0
 
-.music3Data0_0_0
+.tuneData0_SQ1_0
 
  EQUB $FA, $70, $F7, $05, $F6, $09, $65, $0C
  EQUB $0C, $0C, $63, $07, $61, $07, $63, $07
  EQUB $07, $FF
 
-.music3Data0_0_1
+.tuneData0_SQ1_1
 
  EQUB $FA, $70, $65, $0C, $0C, $63, $0C, $61
  EQUB $F9, $63, $07, $61, $07, $63, $07, $07
@@ -4064,7 +4136,7 @@ ENDIF
  EQUB $65, $13, $63, $13, $63, $0C, $61, $13
  EQUB $0C, $F8, $0C, $0A, $09, $FF
 
-.music3Data0_0_2
+.tuneData0_SQ1_2
 
  EQUB $FA, $B0, $65, $07, $F7, $07, $09, $63
  EQUB $0A, $61, $F9, $65, $F7, $05, $13, $63
@@ -4083,13 +4155,13 @@ ENDIF
  EQUB $F9, $13, $13, $13, $13, $13, $13, $13
  EQUB $FF
 
-.music3Data0_2_0
+.tuneData0_TRI_0
 
  EQUB $61, $F6, $05, $F7, $03, $28, $28, $28
  EQUB $28, $28, $28, $28, $28, $28, $29, $29
  EQUB $29, $29, $29, $29, $29, $FF
 
-.music3Data0_2_1
+.tuneData0_TRI_1
 
  EQUB $28, $28, $28, $28, $28, $28, $28, $28
  EQUB $28, $29, $29, $29, $29, $29, $29, $29
@@ -4111,7 +4183,7 @@ ENDIF
  EQUB $28, $28, $29, $28, $F8, $24, $22, $21
  EQUB $FF
 
-.music3Data0_2_2
+.tuneData0_TRI_2
 
  EQUB $61, $F8, $29, $29, $F8, $29, $29, $F8
  EQUB $29, $29, $F8, $29, $29, $F8, $29, $F8
@@ -4131,13 +4203,13 @@ ENDIF
  EQUB $29, $2B, $2B, $2B, $2B, $2B, $2B, $2B
  EQUB $2B, $FC, $00, $FF
 
-.music3Data0_1_0
+.tuneData0_SQ2_0
 
  EQUB $FA, $70, $F7, $01, $F6, $07, $61, $18
  EQUB $18, $18, $18, $18, $18, $18, $18, $18
  EQUB $18, $18, $18, $18, $18, $18, $18, $FF
 
-.music3Data0_1_1
+.tuneData0_SQ2_1
 
  EQUB $FA, $B0, $F6, $01, $F7, $01, $61, $F8
  EQUB $60, $1F, $1F, $61, $24, $28, $67, $2B
@@ -4157,11 +4229,11 @@ ENDIF
  EQUB $63, $2B, $6F, $30, $67, $F9, $F8, $FA
  EQUB $70, $FF
 
-.music3Data0_1_3
+.tuneData0_SQ2_3
 
  EQUB $FA, $30
 
-.music3Data0_1_2
+.tuneData0_SQ2_2
 
  EQUB $61, $F8, $F6, $00, $F7, $05, $60, $0C
  EQUB $0C, $61, $0E, $11, $67, $16, $6A, $F9
@@ -4180,221 +4252,221 @@ ENDIF
  EQUB $1D, $66, $1F, $60, $F8, $65, $1F, $60
  EQUB $1C, $1A, $FF
 
-.music3Data0_3_0
+.tuneData0_NOISE_0
 
  EQUB $F6, $11, $65, $04, $04, $04, $63, $04
  EQUB $61, $04, $63, $04, $04, $65, $04, $04
  EQUB $04, $63, $04, $61, $04, $63, $04, $61
  EQUB $04, $04, $FF
 
-.music3Data4_0
+.tuneData4_SQ1
 
- EQUW music3Data4_0_0
- EQUW music3Data4_0_0
- EQUW music3Data4_0_1
- EQUW music3Data4_0_2
+ EQUW tuneData4_SQ1_0
+ EQUW tuneData4_SQ1_0
+ EQUW tuneData4_SQ1_1
+ EQUW tuneData4_SQ1_2
 
-.music3Data2_0
+.tuneData2_SQ1
 
- EQUW music3Data2_0_0
- EQUW music3Data2_0_1
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_3
- EQUW music3Data2_0_3
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_3
- EQUW music3Data2_0_3
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_3
- EQUW music3Data2_0_3
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_4
- EQUW music3Data2_0_3
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_3
- EQUW music3Data2_0_3
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_3
- EQUW music3Data2_0_3
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_3
- EQUW music3Data2_0_3
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_4
- EQUW music3Data2_0_3
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_3
- EQUW music3Data2_0_3
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_3
- EQUW music3Data2_0_3
- EQUW music3Data2_0_1
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_3
- EQUW music3Data2_0_3
- EQUW music3Data2_0_5
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_3
- EQUW music3Data2_0_3
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_3
- EQUW music3Data2_0_3
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_4
- EQUW music3Data2_0_3
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_3
- EQUW music3Data2_0_3
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_3
- EQUW music3Data2_0_3
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_3
- EQUW music3Data2_0_3
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_4
- EQUW music3Data2_0_3
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_3
- EQUW music3Data2_0_3
- EQUW music3Data2_0_2
- EQUW music3Data2_0_2
- EQUW music3Data2_0_3
- EQUW music3Data2_0_3
- EQUW music3Data2_0_0
+ EQUW tuneData2_SQ1_0
+ EQUW tuneData2_SQ1_1
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_4
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_4
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_1
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_5
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_4
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_4
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_2
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_3
+ EQUW tuneData2_SQ1_0
  EQUW 0
 
-.music3Data4_2
+.tuneData4_TRI
 
- EQUW music3Data4_2_0
- EQUW music3Data4_2_0
- EQUW music3Data4_2_1
- EQUW music3Data4_2_2
+ EQUW tuneData4_TRI_0
+ EQUW tuneData4_TRI_0
+ EQUW tuneData4_TRI_1
+ EQUW tuneData4_TRI_2
 
-.music3Data2_2
+.tuneData2_TRI
 
- EQUW music3Data2_2_0
- EQUW music3Data2_2_1
- EQUW music3Data2_2_1
+ EQUW tuneData2_TRI_0
+ EQUW tuneData2_TRI_1
+ EQUW tuneData2_TRI_1
  EQUW 0
 
-.music3Data4_1
+.tuneData4_SQ2
 
- EQUW music3Data4_1_0
- EQUW music3Data4_1_0
- EQUW music3Data4_1_1
- EQUW music3Data4_1_2
+ EQUW tuneData4_SQ2_0
+ EQUW tuneData4_SQ2_0
+ EQUW tuneData4_SQ2_1
+ EQUW tuneData4_SQ2_2
 
-.music3Data2_1
+.tuneData2_SQ2
 
- EQUW music3Data2_1_0
- EQUW music3Data2_1_1
- EQUW music3Data2_1_2
+ EQUW tuneData2_SQ2_0
+ EQUW tuneData2_SQ2_1
+ EQUW tuneData2_SQ2_2
  EQUW 0
 
-.music3Data4_3
+.tuneData4_NOISE
 
- EQUW music3Data4_3_0
- EQUW music3Data4_3_1
- EQUW music3Data4_3_1
- EQUW music3Data4_3_1
- EQUW music3Data4_3_1
- EQUW music3Data4_3_1
- EQUW music3Data4_3_1
- EQUW music3Data4_3_0
- EQUW music3Data4_3_1
- EQUW music3Data4_3_1
- EQUW music3Data4_3_1
- EQUW music3Data4_3_1
- EQUW music3Data4_3_1
- EQUW music3Data4_3_1
- EQUW music3Data4_3_0
- EQUW music3Data4_3_1
- EQUW music3Data4_3_1
- EQUW music3Data4_3_1
- EQUW music3Data4_3_1
- EQUW music3Data4_3_1
- EQUW music3Data4_3_1
- EQUW music3Data4_3_0
- EQUW music3Data4_3_1
- EQUW music3Data4_3_1
- EQUW music3Data4_3_1
- EQUW music3Data4_3_1
- EQUW music3Data4_3_1
- EQUW music3Data4_3_1
- EQUW music3Data4_3_2
- EQUW music3Data4_3_3
+ EQUW tuneData4_NOISE_0
+ EQUW tuneData4_NOISE_1
+ EQUW tuneData4_NOISE_1
+ EQUW tuneData4_NOISE_1
+ EQUW tuneData4_NOISE_1
+ EQUW tuneData4_NOISE_1
+ EQUW tuneData4_NOISE_1
+ EQUW tuneData4_NOISE_0
+ EQUW tuneData4_NOISE_1
+ EQUW tuneData4_NOISE_1
+ EQUW tuneData4_NOISE_1
+ EQUW tuneData4_NOISE_1
+ EQUW tuneData4_NOISE_1
+ EQUW tuneData4_NOISE_1
+ EQUW tuneData4_NOISE_0
+ EQUW tuneData4_NOISE_1
+ EQUW tuneData4_NOISE_1
+ EQUW tuneData4_NOISE_1
+ EQUW tuneData4_NOISE_1
+ EQUW tuneData4_NOISE_1
+ EQUW tuneData4_NOISE_1
+ EQUW tuneData4_NOISE_0
+ EQUW tuneData4_NOISE_1
+ EQUW tuneData4_NOISE_1
+ EQUW tuneData4_NOISE_1
+ EQUW tuneData4_NOISE_1
+ EQUW tuneData4_NOISE_1
+ EQUW tuneData4_NOISE_1
+ EQUW tuneData4_NOISE_2
+ EQUW tuneData4_NOISE_3
 
-.music3Data2_3
+.tuneData2_NOISE
 
- EQUW music3Data2_3_0
+ EQUW tuneData2_NOISE_0
  EQUW 0
 
-.music3Data2_0_1
+.tuneData2_SQ1_1
 
  EQUB $FA, $B0, $F7, $05, $F6, $0B, $61
 
-.music3Data2_0_2
+.tuneData2_SQ1_2
 
  EQUB $0C, $0C, $0C, $0C, $0C, $0C, $0C, $07
  EQUB $FF
 
-.music3Data2_0_4
+.tuneData2_SQ1_4
 
  EQUB $05, $05, $05, $05, $05, $05, $05, $07
  EQUB $FF
 
-.music3Data2_0_3
+.tuneData2_SQ1_3
 
  EQUB $07, $07, $07, $07, $07, $07, $07, $13
  EQUB $FF
 
-.music3Data2_2_0
+.tuneData2_TRI_0
 
  EQUB $F6, $FF, $F7, $01, $7F, $24, $22, $24
  EQUB $6F, $22, $1F, $7F, $24, $22, $24, $1F
  EQUB $FF
 
-.music3Data2_2_1
+.tuneData2_TRI_1
 
  EQUB $77, $1C, $67, $1F, $77, $22, $67, $1D
  EQUB $6F, $1C, $24, $21, $23, $7F, $1C, $6F
  EQUB $1A, $1D, $7F, $1C, $6F, $1A, $26, $FF
 
-.music3Data2_1_0
+.tuneData2_SQ2_0
 
  EQUB $FA, $B0, $F7, $05, $F6, $0C, $FC, $F4
  EQUB $63, $1C, $1C, $1C, $61, $1C, $13, $63
@@ -4413,11 +4485,11 @@ ENDIF
  EQUB $16, $16, $61, $16, $15, $63, $16, $16
  EQUB $16, $61, $16, $13, $FF
 
-.music3Data2_1_1
+.tuneData2_SQ2_1
 
  EQUB $FA, $B0, $F7, $05, $FC, $F4
 
-.music3Data2_1_2
+.tuneData2_SQ2_2
 
  EQUB $F6, $0A, $63, $24, $24, $61, $22, $65
  EQUB $21, $63, $24, $24, $61, $22, $63, $1C
@@ -4429,67 +4501,67 @@ ENDIF
  EQUB $2E, $67, $2D, $77, $28, $67, $2B, $6F
  EQUB $2E, $F6, $08, $22, $FA, $F0, $FF
 
-.music3Data2_3_0
+.tuneData2_NOISE_0
 
  EQUB $61, $F6, $10, $08, $02, $F6, $0E, $07
  EQUB $F6, $10, $02, $FF
 
-.music3Data3_0
+.tuneData3_SQ1
 
- EQUW music3Data3_0_0
- EQUW music3Data3_0_0
- EQUW music3Data3_0_1
+ EQUW tuneData3_SQ1_0
+ EQUW tuneData3_SQ1_0
+ EQUW tuneData3_SQ1_1
  EQUW 0
 
-.music3Data3_2
+.tuneData3_TRI
 
- EQUW music3Data3_2_0
- EQUW music3Data3_2_0
- EQUW music3Data3_2_1
+ EQUW tuneData3_TRI_0
+ EQUW tuneData3_TRI_0
+ EQUW tuneData3_TRI_1
  EQUW 0
 
-.music3Data3_1
+.tuneData3_SQ2
 
- EQUW music3Data3_1_0
- EQUW music3Data3_1_0
- EQUW music3Data3_1_1
+ EQUW tuneData3_SQ2_0
+ EQUW tuneData3_SQ2_0
+ EQUW tuneData3_SQ2_1
  EQUW 0
 
-.music3Data3_3
+.tuneData3_NOISE
 
- EQUW music3Data3_3_0
- EQUW music3Data3_3_1
- EQUW music3Data3_3_1
- EQUW music3Data3_3_1
- EQUW music3Data3_3_1
- EQUW music3Data3_3_1
- EQUW music3Data3_3_1
- EQUW music3Data3_3_0
- EQUW music3Data3_3_1
- EQUW music3Data3_3_1
- EQUW music3Data3_3_1
- EQUW music3Data3_3_1
- EQUW music3Data3_3_1
- EQUW music3Data3_3_1
- EQUW music3Data3_3_0
- EQUW music3Data3_3_1
- EQUW music3Data3_3_1
- EQUW music3Data3_3_1
- EQUW music3Data3_3_1
- EQUW music3Data3_3_1
- EQUW music3Data3_3_1
- EQUW music3Data3_3_0
- EQUW music3Data3_3_1
- EQUW music3Data3_3_1
- EQUW music3Data3_3_1
- EQUW music3Data3_3_1
- EQUW music3Data3_3_1
- EQUW music3Data3_3_1
- EQUW music3Data3_3_2
+ EQUW tuneData3_NOISE_0
+ EQUW tuneData3_NOISE_1
+ EQUW tuneData3_NOISE_1
+ EQUW tuneData3_NOISE_1
+ EQUW tuneData3_NOISE_1
+ EQUW tuneData3_NOISE_1
+ EQUW tuneData3_NOISE_1
+ EQUW tuneData3_NOISE_0
+ EQUW tuneData3_NOISE_1
+ EQUW tuneData3_NOISE_1
+ EQUW tuneData3_NOISE_1
+ EQUW tuneData3_NOISE_1
+ EQUW tuneData3_NOISE_1
+ EQUW tuneData3_NOISE_1
+ EQUW tuneData3_NOISE_0
+ EQUW tuneData3_NOISE_1
+ EQUW tuneData3_NOISE_1
+ EQUW tuneData3_NOISE_1
+ EQUW tuneData3_NOISE_1
+ EQUW tuneData3_NOISE_1
+ EQUW tuneData3_NOISE_1
+ EQUW tuneData3_NOISE_0
+ EQUW tuneData3_NOISE_1
+ EQUW tuneData3_NOISE_1
+ EQUW tuneData3_NOISE_1
+ EQUW tuneData3_NOISE_1
+ EQUW tuneData3_NOISE_1
+ EQUW tuneData3_NOISE_1
+ EQUW tuneData3_NOISE_2
  EQUW 0
 
-.music3Data3_0_0
-.music3Data4_0_0
+.tuneData3_SQ1_0
+.tuneData4_SQ1_0
 
  EQUB $FA, $B0, $F7, $05, $F6, $0F, $63, $F8
  EQUB $F6, $08, $67, $0D, $F6, $02, $63, $0D
@@ -4501,15 +4573,15 @@ ENDIF
  EQUB $0F, $67, $0F, $63, $11, $13, $14, $16
  EQUB $FF
 
-.music3Data3_0_1
-.music3Data4_0_1
+.tuneData3_SQ1_1
+.tuneData4_SQ1_1
 
  EQUB $65, $0C, $69, $0C, $65, $0C, $69, $0C
  EQUB $65, $0C, $69, $0C, $63, $0C, $0C, $0C
  EQUB $0C, $6F, $0C, $FF
 
-.music3Data3_2_0
-.music3Data4_2_0
+.tuneData3_TRI_0
+.tuneData4_TRI_0
 
  EQUB $F7, $05, $FC, $0C, $F6, $00, $63, $F8
  EQUB $F6, $28, $6A, $1B, $60, $F8, $F6, $08
@@ -4524,14 +4596,14 @@ ENDIF
  EQUB $08, $61, $1B, $F6, $10, $63, $1B, $F6
  EQUB $80, $61, $1D, $6F, $F9, $FF
 
-.music3Data3_2_1
-.music3Data4_2_1
+.tuneData3_TRI_1
+.tuneData4_TRI_1
 
  EQUB $6F, $F6, $80, $13, $16, $13, $10, $63
  EQUB $F9, $6B, $F8, $FC, $00, $FF
 
-.music3Data3_1_0
-.music3Data4_1_0
+.tuneData3_SQ2_0
+.tuneData4_SQ2_0
 
  EQUB $FA, $B0, $F7, $05, $F6, $0F, $63, $F8
  EQUB $F6, $13, $6A, $1D, $60, $F8, $61, $1D
@@ -4542,27 +4614,27 @@ ENDIF
  EQUB $60, $F8, $63, $1F, $1F, $61, $1F, $63
  EQUB $1F, $61, $20, $6F, $F9, $FF
 
-.music3Data3_1_1
-.music3Data4_1_1
+.tuneData3_SQ2_1
+.tuneData4_SQ2_1
 
  EQUB $FA, $70, $6F, $F6, $05, $18, $F6, $04
  EQUB $1C, $F6, $06, $1F, $F6, $01, $22, $63
  EQUB $F9, $6B, $F8, $FF
 
-.music3Data3_3_0
-.music3Data4_3_0
+.tuneData3_NOISE_0
+.tuneData4_NOISE_0
 
  EQUB $F6, $0F, $63, $F8, $67, $F6, $02, $07
  EQUB $F6, $11, $63, $04, $FF
 
-.music3Data3_3_1
-.music3Data4_3_1
+.tuneData3_NOISE_1
+.tuneData4_NOISE_1
 
  EQUB $61, $F6, $10, $08, $02, $F6, $12, $07
  EQUB $F6, $10, $02, $FF
 
-.music3Data3_3_2
-.music3Data4_3_2
+.tuneData3_NOISE_2
+.tuneData4_NOISE_2
 
  EQUB $63, $F6, $11, $02, $F6, $12, $02, $F6
  EQUB $11, $02, $F6, $12, $02, $F6, $11, $02
@@ -4571,39 +4643,39 @@ ENDIF
  EQUB $11, $02, $F6, $12, $02, $F6, $12, $02
  EQUB $02, $02, $02, $6F, $04, $FF
 
-.music3Data4_0_2
+.tuneData4_SQ1_2
 
  EQUB $F5, $BB, $9B
 
-.music3Data4_2_2
+.tuneData4_TRI_2
 
  EQUB $F5, $8B, $9C
 
-.music3Data4_1_2
+.tuneData4_SQ2_2
 
  EQUB $F5, $9B, $9C
 
-.music3Data4_3_3
+.tuneData4_NOISE_3
 
  EQUB $F5, $DF, $9C
 
-.music3Data0_0_4
+.tuneData0_SQ1_4
 
  EQUB $FB, $00, $FF
 
-.music3Data0_0_3
+.tuneData0_SQ1_3
 
  EQUB $FB, $01, $FF
 
-.music3Data2_0_0
+.tuneData2_SQ1_0
 
  EQUB $FB, $03, $FF
 
-.music3Data2_0_5
+.tuneData2_SQ1_5
 
  EQUB $FB, $04, $FF
 
-.music3Data1_3_0
+.tuneData1_NOISE_0
 
  EQUB $7F, $F6, $0F, $F8, $FF, $EA
 
