@@ -2748,39 +2748,39 @@ ORG $0200
 
 .enableSound
 
- SKIP 1                 ; Enables sound effects and music in David Whittaker's
+ SKIP 1                 ; Controls sound effects and music in David Whittaker's
                         ; sound module
                         ;
                         ;   * 0 = sound is disabled
                         ;
                         ;   * Non-zero = sound is enabled
 
-.statusOfSQ1
+.effectOnSQ1
 
- SKIP 1                 ; Records whether a sound is being made on the SQ1
-                        ; channel
+ SKIP 1                 ; Records whether a sound effect is being made on the
+                        ; SQ1 channel
                         ;
-                        ;   * 0 = no sound is being made on SQ1
+                        ;   * 0 = no sound effect is being made on SQ1
                         ;
-                        ;   * Non-zero = a sound is being made on SQ1
+                        ;   * Non-zero = a sound effect is being made on SQ1
 
-.statusOfSQ2
+.effectOnSQ2
 
- SKIP 1                 ; Records whether a sound is being made on the SQ2
-                        ; channel
+ SKIP 1                 ; Records whether a sound effect is being made on the
+                        ; SQ2 channel
                         ;
-                        ;   * 0 = no sound is being made on SQ2
+                        ;   * 0 = no sound effect is being made on SQ2
                         ;
-                        ;   * Non-zero = a sound is being made on SQ2
+                        ;   * Non-zero = a sound effect is being made on SQ2
 
-.statusOfNOISE
+.effectOnNOISE
 
- SKIP 1                 ; Records whether a sound is being made on the NOISE
-                        ; channel
+ SKIP 1                 ; Records whether a sound effect is being made on the
+                        ; NOISE channel
                         ;
-                        ;   * 0 = no sound is being made on NOISE
+                        ;   * 0 = no sound effect is being made on NOISE
                         ;
-                        ;   * Non-zero = a sound is being made on NOISE
+                        ;   * Non-zero = a sound effect is being made on NOISE
 
 .tuneSpeed
 
@@ -2794,15 +2794,18 @@ ORG $0200
 
 .soundVar07
 
- SKIP 4                 ; A variable used by David Whittaker's sound player
+ SKIP 4                 ; ???
 
 .tuneProgress
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
-.soundVar0C
+.tuningAll
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; The tuning value for all channels
+                        ;
+                        ; Gets added to each note's pitch in the SQ1, SQ2 and
+                        ; TRI channels
 
 .playMusic
 
@@ -2819,341 +2822,383 @@ ORG $0200
                         ; A value of zero in this flag also prevents the
                         ; EnableSound routine from having any effect
 
-.noteDataSQ1
+.sectionDataSQ1
 
- SKIP 2                 ; A variable used by David Whittaker's sound player
+ SKIP 2                 ; The address of the note data for channel SQ1 of the
+                        ; the current section of the current tune
+                        ;
+                        ; So if the current tune is tune 0 and we're playing
+                        ; section 0, this would point to tune0Data_SQ1_0
 
-.tuneDataSQ1
+.sectionListSQ1
 
- SKIP 2                 ; A variable used by David Whittaker's sound player
+ SKIP 2                 ; The address of the section list for channel SQ1 of
+                        ; the current tune
+                        ;
+                        ; So if the current tune is tune 0, this would point to
+                        ; tune0Data_SQ1
 
-.soundVar12
+.nextSectionSQ1
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 2                 ; The next section for the SQ1 channel of the current
+                        ; tune
+                        ;
+                        ; This is stored as the offset of the address of the
+                        ; next section in the current tune for the SQ1 channel
+                        ; (so this would be the offset within the tuneData0_SQ1
+                        ; table for tune 0, for example)
+                        ;
+                        ; Adding 2 moves it on to the next section of the tune
 
-.soundVar13
+.tuningSQ1
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; The tuning value for the SQ1 channel
+                        ;
+                        ; Gets added to each note's pitch in the SQ1 channel
 
-.soundVar14
+.startPauseSQ1
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; Pause for this many iterations before starting to
+                        ; process each batch of note data on channel SQ1
 
-.soundVar15
+.pauseCountSQ1
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; Pause for this many iterations before continuing to
+                        ; process note data on channel SQ1, decrementing the
+                        ; value for each paused iteration
 
-.soundCountSQ1
+.dutyLoopEnvSQ1
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
-
-.soundVar17
-
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; The top nibble to use for SQ1_VOL, when setting the
+                        ; following for the SQ1 channel:
+                        ;
+                        ;   * Bits 6-7    = duty pulse length
+                        ;
+                        ;   * Bit 5 set   = infinite play
+                        ;   * Bit 5 clear = one-shot play
+                        ;
+                        ;   * Bit 4 set   = constant volume
+                        ;   * Bit 4 clear = envelope volume
 
 .sq1Sweep
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; The value that we are going to send to the APU via
+                        ; SQ1_SWEEP for the current tune
 
-.soundVar19
+.pitchIndexSQ1
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; The index of the entry within the pitch envelope to
+                        ; be applied to the current tune on channel SQ1
 
-.soundVar1A
+.pitchEnvelopeSQ1
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; The number of the pitch envelope to be applied to the
+                        ; current tune on channel SQ1
 
 .sq1LoCopy
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; A copy of the value that we are going to send to the
+                        ; APU via SQ1_LO for the current tune
 
-.soundVar1C
+.volumeIndexSQ1
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; The index into the volume envelope data of the next
+                        ; volume byte to apply to channel SQ1
 
-.soundVar1D
+.volumeRepeatSQ1
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; The number of repeats to be applied to each byte in
+                        ; the volumne envelope on channel SQ1
 
-.soundVar1E
+.volumeCounterSQ1
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; A counter for keeping track of repeated bytes from
+                        ; the volume envelope on channel SQ1
 
-.soundVar1F
+.volumeEnvelopeSQ1
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; The number of the volume envelope to be applied to the
+                        ; current tune on channel SQ1
 
-.soundVar20
+.applyVolumeSQ1
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; A flag that determines whether to apply the volume
+                        ; envelope to the SQ1 channel
+                        ;
+                        ;   * 0 = do not apply volume envelope
+                        ;
+                        ;   * $FF = apply volume envelope
 
-.noteDataSQ2
+.sectionDataSQ2
 
- SKIP 2                 ; A variable used by David Whittaker's sound player
+ SKIP 2                 ; ???
 
-.tuneDataSQ2
+.sectionListSQ2
 
- SKIP 2                 ; A variable used by David Whittaker's sound player
+ SKIP 2                 ; ???
 
 .soundVar25
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar26
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar27
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar28
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar29
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar2A
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .sq2Sweep
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar2C
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar2D
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar2E
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar2F
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar30
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar31
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar32
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar33
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
-.noteDataTRI
+.sectionDataTRI
 
- SKIP 2                 ; A variable used by David Whittaker's sound player
+ SKIP 2                 ; ???
 
-.tuneDataTRI
+.sectionListTRI
 
- SKIP 2                 ; A variable used by David Whittaker's sound player
+ SKIP 2                 ; ???
 
 .soundVar38
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar39
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar3A
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar3B
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar3C
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar3D
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar3E
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar3F
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar40
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar41
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar42
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar43
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar44
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar45
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar46
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
-.noteDataNOISE
+.sectionDataNOISE
 
- SKIP 2                 ; A variable used by David Whittaker's sound player
+ SKIP 2                 ; ???
 
-.tuneDataNOISE
+.sectionListNOISE
 
- SKIP 2                 ; A variable used by David Whittaker's sound player
+ SKIP 2                 ; ???
 
 .soundVar4B
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar4C
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar4D
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar4E
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar4F
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar50
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar51
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar52
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar53
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar54
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar55
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar56
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar57
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar58
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar59
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .sq1Volume
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; The value that we are going to send to the APU via
+                        ; SQ1_VOL for the current tune
 
 .soundVar5B
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .sq1Lo
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; The value that we are going to send to the APU via
+                        ; SQ1_LO for the current tune
 
-.sql1Hi
+.sq1Hi
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; The value that we are going to send to the APU via
+                        ; SQ1_HI for the current tune
 
 .sq2Volume
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar5F
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .sq2Lo
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar61
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar62
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar63
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .triLo
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar65
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .noiseVolume
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar67
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .noiseLo
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar69
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .FRIN
 
@@ -4060,255 +4105,255 @@ ORG $0200
 
 .soundVar6B
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar6C
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar6D
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar6E
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar6F
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar70
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar71
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar72
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar73
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar74
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar75
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar76
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar77
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar78
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar79
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar7A
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar7B
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar7C
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar7D
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar7E
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar7F
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar80
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar81
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar82
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar83
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar84
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar85
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar86
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar87
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar88
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar89
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar8A
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar8B
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar8C
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar8D
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar8E
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar8F
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar90
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar91
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar92
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar93
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar94
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar95
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar96
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar97
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar98
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar99
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar9A
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar9B
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar9C
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar9D
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar9E
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVar9F
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVarA0
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVarA1
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVarA2
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVarA3
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVarA4
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVarA5
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundVarA6
 
- SKIP 1                 ; A variable used by David Whittaker's sound player
+ SKIP 1                 ; ???
 
 .soundAddr8
 
- SKIP 2                 ; A variable used by David Whittaker's sound player
+ SKIP 2                 ; ???
 
 .soundAddr9
 
- SKIP 2                 ; A variable used by David Whittaker's sound player
+ SKIP 2                 ; ???
 
 .soundAddr10
 
- SKIP 2                 ; A variable used by David Whittaker's sound player
+ SKIP 2                 ; ???
 
 .QQ19
 

@@ -12765,7 +12765,7 @@ ENDIF
 
 .nois1
 
- LDA statusOfSQ1,X      ; If the status flag for channel X is zero, then there
+ LDA effectOnSQ1,X      ; If the status flag for channel X is zero, then there
  BEQ nois2              ; is no sound being made on this channel at the moment,
                         ; so jump to nois2 to make the sound
 
