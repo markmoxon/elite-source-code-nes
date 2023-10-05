@@ -2792,9 +2792,10 @@ ORG $0200
  SKIP 1                 ; The starting speed of the current tune, as stored in
                         ; the tune's data
 
-.soundVar07
+.soundVibrato
 
- SKIP 4                 ; ???
+ SKIP 4                 ; The four-byte seeds for adding randomised vibrato to
+                        ; the current sound effect
 
 .tuneProgress
 
@@ -4164,85 +4165,50 @@ ORG $0200
 
  SKIP 1                 ; Used to store the explosion cloud size in PTCLS
 
-.soundVar6B
+.soundByteSQ1
 
- SKIP 1                 ; ???
+ SKIP 14                ; The 14 sound bytes for the sound effect being made
+                        ; on channel SQ1
 
-.soundVar6C
+.sq1SoundLo
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The value that we are going to send to the APU via
+                        ; SQ1_LO for the current sound effect
 
-.soundVar6D
+.sq1SoundHi
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The value that we are going to send to the APU via
+                        ; SQ1_HI for the current sound effect
 
-.soundVar6E
+.soundPitCountSQ1
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Controls how often we send pitch data to the APU for
+                        ; the sound effect on channel SQ1
+                        ;
+                        ; Specifically, pitch data is sent every
+                        ; soundPitCountSQ1 iterations
 
-.soundVar6F
+.soundPitEnvelSQ1
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Controls how often we apply the pitch envelope to the
+                        ; sound effect on channel SQ1
+                        ;
+                        ; Specifically, we apply the changes in the pitch
+                        ; envelope every soundPitEnvelSQ1 iterations
 
-.soundVar70
+.soundVolIndexSQ1
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The index into the volume envelope data of the next
+                        ; volume byte to apply to the sound effect on channel
+                        ; SQ1
 
-.soundVar71
+.soundVolCountSQ1
 
- SKIP 1                 ; ???
-
-.soundVar72
-
- SKIP 1                 ; ???
-
-.soundVar73
-
- SKIP 1                 ; ???
-
-.soundVar74
-
- SKIP 1                 ; ???
-
-.soundVar75
-
- SKIP 1                 ; ???
-
-.soundVar76
-
- SKIP 1                 ; ???
-
-.soundVar77
-
- SKIP 1                 ; ???
-
-.soundVar78
-
- SKIP 1                 ; ???
-
-.soundVar79
-
- SKIP 1                 ; ???
-
-.soundVar7A
-
- SKIP 1                 ; ???
-
-.soundVar7B
-
- SKIP 1                 ; ???
-
-.soundVar7C
-
- SKIP 1                 ; ???
-
-.soundVar7D
-
- SKIP 1                 ; ???
-
-.soundVar7E
-
- SKIP 1                 ; ???
+ SKIP 1                 ; Controls how often we apply the volume envelope to the
+                        ; sound effect on channel SQ1
+                        ;
+                        ; Specifically, one entry from the volume envelope is
+                        ; applied every soundVolCountSQ1 iterations
 
 .soundVar7F
 
@@ -4404,7 +4370,7 @@ ORG $0200
 
  SKIP 1                 ; ???
 
-.soundAddr8
+.volumeSQ1
 
  SKIP 2                 ; ???
 

@@ -17712,7 +17712,7 @@ ENDIF
  LDA K%+6               ; Store the z_lo coordinate for the planet (which will
  STA RAND+1             ; be pretty random) in the RAND+1 seed
 
- LDA soundVar07         ; Store the soundVar07 variable (which will be pretty
+ LDA soundVibrato       ; Store the soundVibrato variable (which will be pretty
  STA RAND+3             ; random) in the RAND+3 seed
 
  LDA QQ12               ; Fetch the docked flag from QQ12 into A
@@ -19283,14 +19283,14 @@ ENDIF
 
 .ShowStartScreen
 
- LDA #$FF               ; Set soundVar07 = $FF $80 $1B $34 to set the random
- STA soundVar07         ; seeds for the sound system
- LDA #$80
- STA soundVar07+1
+ LDA #$FF               ; Set soundVibrato = $FF $80 $1B $34 to set the seeds
+ STA soundVibrato       ; for the randomised vibrato that's applied to sound
+ LDA #$80               ; effects
+ STA soundVibrato+1
  LDA #$1B
- STA soundVar07+2
+ STA soundVibrato+2
  LDA #$34
- STA soundVar07+3
+ STA soundVibrato+3
 
  JSR ResetMusic         ; Reset the current tune to 0 and stop the music
 

@@ -3054,76 +3054,97 @@ ENDIF
 ;   Category: Sound
 ;    Summary: Make a sound effect on the SQ1 channel
 ;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The number of the sound effect to make
+;
 ; ******************************************************************************
 
 .StartEffectOnSQ1
 
- ASL A
- TAY
+ ASL A                  ; Set Y = A * 2
+ TAY                    ;
+                        ; So we can use Y as an index into the soundData table,
+                        ; which contains addresses of two bytes each
 
- LDA #0
- STA effectOnSQ1
+ LDA #0                 ; Set effectOnSQ1 = 0 to disable sound generation on the
+ STA effectOnSQ1        ; SQ1 channel while we set up the sound effect (as a
+                        ; value of 0 denotes that a sound effect is not being
+                        ; made on this channel, so none of the sound generation
+                        ; routines will do anything)
+                        ;
+                        ; We enable sound generation below once we have finished
+                        ; setting up the sound effect
 
- LDA sound1Data,Y
- STA soundAddr
- LDA sound1Data+1,Y
- STA soundAddr+1
+ LDA soundData,Y        ; Set soundAddr(1 0) to the address for this sound
+ STA soundAddr          ; effect from the soundData table, so soundAddr(1 0)
+ LDA soundData+1,Y      ; points to soundData0 for sound effect 0, soundData1
+ STA soundAddr+1        ; for sound effect 1, and so on
 
- LDY #13
+ LDY #13                ; There are 14 bytes of sound data for each sound effect
+                        ; that we now copy to soundByteSQ1, so set a byte counter
+                        ; in Y
 
 .mefz1
 
- LDA (soundAddr),Y
- STA soundVar6B,Y
+ LDA (soundAddr),Y      ; Copy the Y-th byte of sound data for this sound effect
+ STA soundByteSQ1,Y     ; to the Y-th byte of soundByteSQ1
 
- DEY
+ DEY                    ; Decrement the loop counter
 
- BPL mefz1
+ BPL mefz1              ; Loop back until we have copied all 14 bytes
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA soundVar76
- STA soundVar7E
+ LDA soundByteSQ1+11    ; Set soundVolCountSQ1 = soundByteSQ1+11
+ STA soundVolCountSQ1
 
- LDA soundVar78
- STA soundVar7C
+ LDA soundByteSQ1+13    ; Set soundPitEnvelSQ1 = soundByteSQ1+13
+ STA soundPitEnvelSQ1
 
- LDA soundVar6C
- STA soundVar7B
+ LDA soundByteSQ1+1     ; Set soundPitCountSQ1 = soundByteSQ1+1
+ STA soundPitCountSQ1
 
- LDA soundVar75
- ASL A
- TAY
+ LDA soundByteSQ1+10    ; Set Y = soundByteSQ1+10 * 2
+ ASL A                  ;
+ TAY                    ; So we can use Y as an index into the soundVolume
+                        ; table, which contains addresses of two bytes each
 
- LDA sound2Data,Y
- STA soundAddr8
- STA soundAddr
- LDA sound2Data+1,Y
- STA soundAddr8+1
+ LDA soundVolume,Y      ; Set volumeSQ1(1 0) to the address of the volume
+ STA volumeSQ1          ; envelope for this sound effect, as specified in
+ STA soundAddr          ; byte #10 of the sound effect's data
+ LDA soundVolume+1,Y    ;
+ STA volumeSQ1+1        ; Also set soundAddr(1 0) to the same address
  STA soundAddr+1
 
- LDY #0
- STY soundVar7D
+ LDY #0                 ; Set Y = 0 to use as an index below
 
- LDA (soundAddr),Y
- ORA soundVar71
- STA SQ1_VOL
+ STY soundVolIndexSQ1   ; Set soundVolIndexSQ1 = 0, so we start processsing the
+                        ; volume envelope from the first byte
 
- LDA #0
+ LDA (soundAddr),Y      ; Take the first byte from the volume envelope for this
+ ORA soundByteSQ1+6     ; sound effect, OR it with the sound effect's byte #6,
+ STA SQ1_VOL            ; and send the result to the APU via SQ1_VOL ???
+
+ LDA #0                 ; Send 0 to the APU via SQ1_SWEEP ???
  STA SQ1_SWEEP
 
- LDA soundVar6D
- STA soundVar79
- STA SQ1_LO
-
- LDA soundVar6E
- STA soundVar7A
+ LDA soundByteSQ1+2     ; Set (sq1SoundHi sq1SoundLo) to the 16-bit value in
+ STA sq1SoundLo         ; bytes #2 and #3 of the sound data, and send it to the
+ STA SQ1_LO             ; APU via (SQ1_HI SQ1_LO)
+ LDA soundByteSQ1+2+1
+ STA sq1SoundHi
  STA SQ1_HI
 
- INC effectOnSQ1
+ INC effectOnSQ1        ; Increment effectOnSQ1 to 1 to denote that a sound
+                        ; effect is now being generated on the SQ1 channel, so
+                        ; successive calls to MakeSoundOnSQ1 will now make the
+                        ; sound effect
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -3190,9 +3211,9 @@ ENDIF
  LDA #0
  STA effectOnSQ2
 
- LDA sound1Data,Y
+ LDA soundData,Y
  STA soundAddr
- LDA sound1Data+1,Y
+ LDA soundData+1,Y
  STA soundAddr+1
 
  LDY #13
@@ -3222,10 +3243,10 @@ ENDIF
  ASL A
  TAY
 
- LDA sound2Data,Y
+ LDA soundVolume,Y
  STA soundAddr9
  STA soundAddr
- LDA sound2Data+1,Y
+ LDA soundVolume+1,Y
  STA soundAddr9+1
  STA soundAddr+1
 
@@ -3268,9 +3289,9 @@ ENDIF
  LDA #0
  STA effectOnNOISE
 
- LDA sound1Data,Y
+ LDA soundData,Y
  STA soundAddr
- LDA sound1Data+1,Y
+ LDA soundData+1,Y
  STA soundAddr+1
 
  LDY #13
@@ -3300,10 +3321,10 @@ ENDIF
  ASL A
  TAY
 
- LDA sound2Data,Y
+ LDA soundVolume,Y
  STA soundAddr10
  STA soundAddr
- LDA sound2Data+1,Y
+ LDA soundVolume+1,Y
  STA soundAddr10+1
  STA soundAddr+1
 
@@ -3334,19 +3355,20 @@ ENDIF
 ;       Name: MakeSound
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Play the current sound effects on the SQ1, SQ2 and NOISE channels
+;    Summary: Make the current sound effects on the SQ1, SQ2 and NOISE channels
 ;
 ; ******************************************************************************
 
 .MakeSound
 
- JSR UpdateSoundSeeds   ; Update the sound seeds
+ JSR UpdateVibratoSeeds ; Update the sound seeds that are used to randomise the
+                        ; vibrato effect
 
- JSR MakeSoundOnSQ1     ; Play the current sound effect on the SQ1 channel
+ JSR MakeSoundOnSQ1     ; Make the current sound effect on the SQ1 channel
 
- JSR MakeSoundOnSQ2     ; Play the current sound effect on the SQ2 channel
+ JSR MakeSoundOnSQ2     ; Make the current sound effect on the SQ2 channel
 
- JMP MakeSoundOnNOISE   ; Play the current sound effect on the NOISE channel,
+ JMP MakeSoundOnNOISE   ; Make the current sound effect on the NOISE channel,
                         ; returning from the subroutine using a tail call
 
 ; ******************************************************************************
@@ -3354,41 +3376,48 @@ ENDIF
 ;       Name: MakeSoundOnSQ1
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Play the current sound effect on the SQ1 channel
+;    Summary: Make the current sound effect on the SQ1 channel
 ;
 ; ******************************************************************************
 
 .MakeSoundOnSQ1
 
- LDA effectOnSQ1
- BNE mscz1
+ LDA effectOnSQ1        ; If effectOnSQ1 is non-zero then a sound effect is
+ BNE mscz1              ; being made on channel SQ1, so jump to mscz1 to keep
+                        ; making it
 
- RTS
+ RTS                    ; Otherwise return from the subroutine
 
 .mscz1
 
- LDA soundVar6B
- BNE mscz3
+ LDA soundByteSQ1+0     ; If the remaining number of iterations for this sound
+ BNE mscz3              ; effect in byte #0 is non-zero, jump to mscz3 to keep
+                        ; making the sound
 
- LDX soundVar77
- BNE mscz3
+ LDX soundByteSQ1+12    ; If byte #12 of the sound effect data is non-zero, then
+ BNE mscz3              ; this sound effect keeps looping, so jump to mscz3 to
+                        ; keep making the sound
 
  LDA enableSound        ; If enableSound = 0 then sound is disabled, so jump to
  BEQ mscz2              ; mscz2 to silence the SQ1 channel and return from the
                         ; subroutine
 
- LDA sq1Volume
+                        ; If we get here then we have finished making the sound
+                        ; effect, so we now send the final values to the APU and
+                        ; maek this sound channel as clear
+
+ LDA sq1Volume          ; Send sq1Volume to the APU via SQ1_VOL
  STA SQ1_VOL
 
- LDA sq1Lo
+ LDA sq1Lo              ; Send (sq1Hi sq1Lo) to the APU via (SQ1_HI SQ1_LO)
  STA SQ1_LO
-
  LDA sq1Hi
  STA SQ1_HI
 
- STX effectOnSQ1
+ STX effectOnSQ1        ; Set effectOnSQ1 = 0 to maek the SQL channel as clear
+                        ; of sound effects, so it's ready for the next one
 
- RTS
+ RTS                    ; Return from the subroutine
 
 .mscz2
 
@@ -3406,142 +3435,193 @@ ENDIF
 
 .mscz3
 
- DEC soundVar6B
+                        ; If we get here then we need to keep making the sound
+                        ; effect
 
- DEC soundVar7E
+ DEC soundByteSQ1+0     ; Decrement the remaining length of the sound in byte #0
+                        ; as we are about to make the sound for another
+                        ; iteration
 
- BNE mscz5
+ DEC soundVolCountSQ1   ; Decrement the volume envelope counter
 
- LDA soundVar76
- STA soundVar7E
+ BNE mscz5              ; If the volume envelope counter has not reached zero
+                        ; then jump to mscz5, so we don't apply the next entry
+                        ; from the volume envelope yet
 
- LDY soundVar7D
+                        ; If we get here then the counter in soundVolCountSQ1
+                        ; just reached zero, so we apply the next entry from the
+                        ; volumne envelope
 
- LDA soundAddr8
- STA soundAddr
- LDA soundAddr8+1
- STA soundAddr+1
+ LDA soundByteSQ1+11    ; Reset the volume envelope counter to byte #11 from the
+ STA soundVolCountSQ1   ; sound effect's data, which controls how often we apply
+                        ; the volume envelope to the sound effect
 
- LDA (soundAddr),Y
+ LDY soundVolIndexSQ1   ; Set Y to the index of the current byte in the volume
+                        ; envelope
 
- BPL mscz4
+ LDA volumeSQ1          ; Set soundAddr(1 0) = volumeSQ1(1 0)
+ STA soundAddr          ;
+ LDA volumeSQ1+1        ; So soundAddr(1 0) contains the address of the volume
+ STA soundAddr+1        ; envelope for this sound effect
 
- CMP #$80
- BNE mscz5
+ LDA (soundAddr),Y      ; Set A to the data byte at the current index in the
+                        ; volume envelope
 
- LDY #0
+ BPL mscz4              ; If bit 7 is clear then we just fetched a volume value
+                        ; from the envelope, so jump to mscz4 to apply it
 
- LDA (soundAddr),Y
+                        ; If we get here then A must be $80 or $FF, as those are
+                        ; the only two valid entries in the volume envelope that
+                        ; have bit 7 set
+                        ;
+                        ; $80 means we loop back to the start of the envelope,
+                        ; while $FF means the envelope ends here
+
+ CMP #$80               ; If A is not $80 then we must have just fetched $FF
+ BNE mscz5              ; from the envelope, so jump to mscz5 to exit the
+                        ; envelope
+
+                        ; If we get here then we just fetched a $80 from the
+                        ; envelope data, so we now loop around to the start of
+                        ; the envelope, so it keeps repeating
+
+ LDY #0                 ; Set Y to zero so we fetch data from the start of the
+                        ; envelope again
+
+ LDA (soundAddr),Y      ; Set A to the byte of envelope data at index 0, so we
+                        ; can fall through into mscz4 to process it
 
 .mscz4
 
- ORA soundVar71
- STA SQ1_VOL
+                        ; If we get here then A contains an entry from the
+                        ; volume envelope for this sound effect, so now we apply
+                        ; it
 
- INY
+ ORA soundByteSQ1+6     ; OR the envelope byte with the sound effect's byte #6,
+ STA SQ1_VOL            ; and send the result to the APU via SQ1_VOL ???
 
- STY soundVar7D
+ INY                    ; Increment the index of the current byte in the volume
+ STY soundVolIndexSQ1   ; envelope so on the next iteration we move on to the
+                        ; next byte in the envelope
 
 .mscz5
 
- LDA soundVar7B
- BNE mscz8
+                        ; We have applied the volume envelope, so now we move on
+                        ; to the sound itself
 
- LDA soundVar77
- BNE mscz6
+ LDA soundPitCountSQ1   ; If the byte #1 counter has not yet run down to zero,
+ BNE mscz8              ; jump to mscz8 to skip the following, so we don't send
+                        ; pitch data to the APU on this iteration
 
- LDA soundVar74
- BNE mscz6
+                        ; If we get here then the byte #1 counter in soundPitCountSQ1
+                        ; has run down to zero
 
- RTS
+ LDA soundByteSQ1+12    ; If byte #12 is non-zero then the sound effect loops
+ BNE mscz6              ; infinitely, so jump to mscz6 to send pitch data to the
+                        ; APU
+
+ LDA soundByteSQ1+9     ; Otherwise, if the counter in byte #9 has not yet run
+ BNE mscz6              ; down, jump to mscz6 to send pitch data to the APU
+
+ RTS                    ; Return from the subroutine
 
 .mscz6
 
- DEC soundVar74
+                        ; Now that we are done with the volumne envelope, it's
+                        ; tiem to move on to the pitch envelope
 
- LDA soundVar6C
- STA soundVar7B
+ DEC soundByteSQ1+9     ; Decrement the counter in byte #9, which contains the
+                        ; number of iterations for which we send pitch data to
+                        ; the APU (as we are about to do just that)
 
- LDA soundVar6D
- LDX soundVar72
+ LDA soundByteSQ1+1     ; Reset the soundPitCountSQ1 counter to the value of byte #1
+ STA soundPitCountSQ1   ; so it can start counting down again
 
- BEQ mscz7
+ LDA soundByteSQ1+2     ; Set A to the low byte of the sound effect's current
+                        ; pitch, which is in byte #2 of the sound data
 
- ADC soundVar07
+ LDX soundByteSQ1+7     ; If byte #7 is zero, jump to mscz7 to skip the
+ BEQ mscz7              ; following instruction
+
+ ADC soundVibrato       ; Byte #7 is non-zero, so add soundVibrato to the pitch
+                        ; of the sound in A to apply vibrato
 
 .mscz7
 
- STA soundVar79
+ STA sq1SoundLo         ; Store the value of A in sq1SoundLo
 
- STA SQ1_LO
+ STA SQ1_LO             ; Send the value of sq1SoundLo to the APU via SQ1_LO
 
- LDA soundVar6E
- STA soundVar7A
+ LDA soundByteSQ1+2+1   ; Set A to the high byte of the sound effect's current
+                        ; pitch, which is in byte #2 of the sound data
 
- STA SQ1_HI
+ STA sq1SoundHi         ; Store the value of A in sq1SoundHi
+
+ STA SQ1_HI             ; Send the value of sq1SoundHi to the APU via SQ1_HI
 
 .mscz8
 
- DEC soundVar7B
+ DEC soundPitCountSQ1   ; Decrement the byte #1 counter
 
- LDA soundVar78
- BEQ mscz9
+ LDA soundByteSQ1+13    ; If byte #13 of the sound data is zero then there is no
+ BEQ mscz9              ; byte #13 counter, to jump to mscz9 to skip the
+                        ; following
 
- DEC soundVar7C
+ DEC soundPitEnvelSQ1   ; Otherwise decrement the byte #13 counter
 
- BNE mscz11
+ BNE mscz11             ; If the counter is not yet zero, jump to mscz11 to
+                        ; return from the subroutine
 
- STA soundVar7C
+                        ; The byte #13 counter just ran down
+
+ STA soundPitEnvelSQ1   ; Reset the soundPitEnvelSQ1 counter to the value of
+                        ; byte #13 so it can start counting down again
 
 .mscz9
 
- LDA soundVar73
- BEQ mscz11
+ LDA soundByteSQ1+8     ; Set A to byte #8 of the sound data
 
- BMI mscz10
+ BEQ mscz11             ; If A is zero then jump to mscz11 to return from the
+                        ; subroutine
 
- LDA soundVar79
- SEC
- SBC soundVar6F
- STA soundVar79
+ BMI mscz10             ; If A is negative, jump to mscz10
 
- STA SQ1_LO
-
- LDA soundVar7A
- SBC soundVar70
- AND #3
- STA soundVar7A
-
+ LDA sq1SoundLo         ; Subtract the 16-bit value in bytes #4 and #5 of the
+ SEC                    ; sound data from (sq1SoundHi sq1SoundLo), updating
+ SBC soundByteSQ1+4     ; (sq1SoundHi sq1SoundLo) to the result, and sending
+ STA sq1SoundLo         ; it to the APU via (SQ1_HI SQ1_LO)
+ STA SQ1_LO             ;
+ LDA sq1SoundHi         ; Note that bits 2 to 7 of the high byte are cleared so
+ SBC soundByteSQ1+4+1   ; the length counter does not reload
+ AND #%00000011
+ STA sq1SoundHi
  STA SQ1_HI
 
- RTS
+ RTS                    ; Return from the subroutine
 
 .mscz10
 
- LDA soundVar79
- CLC
- ADC soundVar6F
- STA soundVar79
-
- STA SQ1_LO
-
- LDA soundVar7A
- ADC soundVar70
- AND #3
- STA soundVar7A
-
+ LDA sq1SoundLo         ; Add the 16-bit value in bytes #4 and #5 of the sound
+ CLC                    ; data to (sq1SoundHi sq1SoundLo), updating
+ ADC soundByteSQ1+4     ; (sq1SoundHi sq1SoundLo) to the result, and sending
+ STA sq1SoundLo         ; it to the APU via (SQ1_HI SQ1_LO)
+ STA SQ1_LO             ;
+ LDA sq1SoundHi         ; Note that bits 2 to 7 of the high byte are cleared so
+ ADC soundByteSQ1+4+1   ; the length counter does not reload
+ AND #%00000011
+ STA sq1SoundHi
  STA SQ1_HI
 
 .mscz11
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
 ;       Name: MakeSoundOnSQ2
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Play the current sound effect on the SQ2 channel
+;    Summary: Make the current sound effect on the SQ2 channel
 ;
 ; ******************************************************************************
 
@@ -3655,7 +3735,7 @@ ENDIF
 
  BEQ msco7
 
- ADC soundVar07
+ ADC soundVibrato
 
 .msco7
 
@@ -3729,7 +3809,7 @@ ENDIF
 ;       Name: MakeSoundOnNOISE
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Play the current sound effect on the NOISE channel
+;    Summary: Make the current sound effect on the NOISE channel
 ;
 ; ******************************************************************************
 
@@ -3840,7 +3920,7 @@ ENDIF
  LDX soundVar9A
  BEQ msct7
 
- ADC soundVar07
+ ADC soundVibrato
  AND #$0F
 
 .msct7
@@ -3895,16 +3975,17 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: UpdateSoundSeeds
+;       Name: UpdateVibratoSeeds
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Update the sound seeds
+;    Summary: Update the sound seeds that are used to randomise the vibrato
+;             effect
 ;
 ; ******************************************************************************
 
-.UpdateSoundSeeds
+.UpdateVibratoSeeds
 
- LDA soundVar07         ; Set A to soundVar07 with all bits cleared except for
+ LDA soundVibrato       ; Set A to soundVibrato with all bits cleared except for
  AND #%01001000         ; bits 3 and 6
 
  ADC #%00111000         ; Add %00111000, so if bit 3 of A is clear, we leave
@@ -3917,329 +3998,361 @@ ENDIF
  ASL A                  ;
                         ; So the C flag is:
                         ;
-                        ;   * Bit 6 of soundVar07 if bit 3 of soundVar07 is
+                        ;   * Bit 6 of soundVibrato if bit 3 of soundVibrato is
                         ;     clear
                         ;
-                        ;   * Bit 6 of soundVar07 flipped if bit 3 of soundVar07
-                        ;     is set
+                        ;   * Bit 6 of soundVibrato flipped if bit 3 of
+                        ;     soundVibrato is set
                         ;
                         ; Or, to put it another way:
                         ;
-                        ;   C = bit 6 of soundVar07 EOR bit 3 of soundVar07
+                        ;   C = bit 6 of soundVibrato EOR bit 3 of soundVibrato
 
- ROL soundVar07+3       ; Rotate soundVar07(0 1 2 3) left, inserting the C flag
- ROL soundVar07+2       ; into bit 0 of soundVar07+3
- ROL soundVar07+1
- ROL soundVar07
+ ROL soundVibrato+3     ; Rotate soundVibrato(0 1 2 3) left, inserting the C
+ ROL soundVibrato+2     ; flag into bit 0 of soundVibrato+3
+ ROL soundVibrato+1
+ ROL soundVibrato
 
  RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: sound1Data
+;       Name: soundData
 ;       Type: Variable
 ;   Category: Sound
 ;    Summary: Data for the sound effects
 ;
+; ------------------------------------------------------------------------------
+;
+; Each sound block is made up of 14 bytes, which are copied to the specified
+; offset from soundByteSQ1:
+;
+;  0 = length of sound left (in iterations)
+;      ignored if this is infinite (byte #12 <> 0)
+;  1 = how often we send send pitch data to the APU
+;      i.e. we send pitch data every x iterations
+;  2 = 16-bit storage for (sq1SoundHi sq1SoundLo) to go to (SQ1_HI SQ1_LO)
+;  4 = 16-bit value to apply to the pitch every iteration
+;      (if enabled by byte #8)
+;  6 = OR this value with the soundVolume for SQ1_VOL
+;  7 = non-zero means add vibrato to the pitch on each iteration
+;      using the randomised vibrato in soundVibrato
+;  8 = non-zero means:
+;        bit 7 clear, subtract byte #4 from the APU pitch on each iteration
+;                     (note goes up)
+;        bit 7 set, add byte #4 to the APU pitch on each iteration
+;                   (note goes down)
+;  9 = number of iterations for which we send pitch data to the APU
+;      ignored if this is infinite (byte #12 <> 0)
+; 10 = number of the volume envelope to apply
+;      i.e. the entry in soundVolume, which is put in volumeSQ1(1 0)
+; 11 = how often we apply the volumne envelope to the sound
+;      i.e. we apply the next entry every xx iterations
+; 12 = non-zero means the sound effect loops and keeps being made, even after
+;      byte #0 runs down
+; 13 = non-zero means only apply byte #4 to the pitch every x iterations
+;               (if enabled by byte #8)
+;      zero means apply it every iteration (if enabled by byte #8)
+; 
 ; ******************************************************************************
 
-.sound1Data
+.soundData
 
- EQUW sound1Data0
- EQUW sound1Data1
- EQUW sound1Data2
- EQUW sound1Data3
- EQUW sound1Data4
- EQUW sound1Data5
- EQUW sound1Data6
- EQUW sound1Data7
- EQUW sound1Data8
- EQUW sound1Data9
- EQUW sound1Data10
- EQUW sound1Data11
- EQUW sound1Data12
- EQUW sound1Data13
- EQUW sound1Data14
- EQUW sound1Data15
- EQUW sound1Data16
- EQUW sound1Data17
- EQUW sound1Data18
- EQUW sound1Data19
- EQUW sound1Data20
- EQUW sound1Data21
- EQUW sound1Data22
- EQUW sound1Data23
- EQUW sound1Data24
- EQUW sound1Data25
- EQUW sound1Data26
- EQUW sound1Data27
- EQUW sound1Data28
- EQUW sound1Data29
- EQUW sound1Data30
- EQUW sound1Data31
+ EQUW soundData0
+ EQUW soundData1
+ EQUW soundData2
+ EQUW soundData3
+ EQUW soundData4
+ EQUW soundData5
+ EQUW soundData6
+ EQUW soundData7
+ EQUW soundData8
+ EQUW soundData9
+ EQUW soundData10
+ EQUW soundData11
+ EQUW soundData12
+ EQUW soundData13
+ EQUW soundData14
+ EQUW soundData15
+ EQUW soundData16
+ EQUW soundData17
+ EQUW soundData18
+ EQUW soundData19
+ EQUW soundData20
+ EQUW soundData21
+ EQUW soundData22
+ EQUW soundData23
+ EQUW soundData24
+ EQUW soundData25
+ EQUW soundData26
+ EQUW soundData27
+ EQUW soundData28
+ EQUW soundData29
+ EQUW soundData30
+ EQUW soundData31
 
-.sound1Data0
+.soundData0
 
  EQUB $3C, $03, $04, $00, $02, $00, $30, $00
  EQUB $01, $0A, $00, $05, $00, $63
 
-.sound1Data1
+.soundData1
 
  EQUB $16, $04, $A8, $00, $04, $00, $70, $00
  EQUB $FF, $63, $0C, $02, $00, $00
 
-.sound1Data2
+.soundData2
 
  EQUB $19, $19, $AC, $03, $1C, $00, $30, $00
  EQUB $01, $63, $06, $02, $FF, $00
 
-.sound1Data3
+.soundData3
 
  EQUB $05, $63, $2C, $00, $00, $00, $70, $00
  EQUB $00, $63, $0C, $01, $00, $00
 
-.sound1Data4
+.soundData4
 
  EQUB $09, $63, $57, $02, $02, $00, $B0, $00
  EQUB $FF, $63, $08, $01, $00, $00
 
-.sound1Data5
+.soundData5
 
  EQUB $0A, $02, $18, $00, $01, $00, $30, $FF
  EQUB $FF, $0A, $0C, $01, $00, $00
 
-.sound1Data6
+.soundData6
 
  EQUB $0D, $02, $28, $00, $01, $00, $70, $FF
  EQUB $FF, $0A, $0C, $01, $00, $00
 
-.sound1Data7
+.soundData7
 
  EQUB $19, $1C, $00, $01, $06, $00, $70, $00
  EQUB $01, $63, $06, $02, $00, $00
 
-.sound1Data8
+.soundData8
 
  EQUB $5A, $09, $14, $00, $01, $00, $30, $00
  EQUB $FF, $63, $00, $0B, $00, $00
 
-.sound1Data9
+.soundData9
 
  EQUB $46, $28, $02, $00, $01, $00, $30, $00
  EQUB $FF, $00, $08, $06, $00, $03
 
-.sound1Data10
+.soundData10
 
  EQUB $0E, $03, $6C, $00, $21, $00, $B0, $00
  EQUB $FF, $63, $0C, $02, $00, $00
 
-.sound1Data11
+.soundData11
 
  EQUB $13, $0F, $08, $00, $01, $00, $30, $00
  EQUB $FF, $00, $0C, $03, $00, $02
 
-.sound1Data12
+.soundData12
 
  EQUB $AA, $78, $1F, $00, $01, $00, $30, $00
  EQUB $01, $00, $01, $08, $00, $0A
 
-.sound1Data13
+.soundData13
 
  EQUB $59, $02, $4F, $00, $29, $00, $B0, $FF
  EQUB $01, $FF, $00, $09, $00, $00
 
-.sound1Data14
+.soundData14
 
  EQUB $19, $05, $82, $01, $29, $00, $B0, $FF
  EQUB $FF, $FF, $08, $02, $00, $00
 
-.sound1Data15
+.soundData15
 
  EQUB $22, $05, $82, $01, $29, $00, $B0, $FF
  EQUB $FF, $FF, $08, $03, $00, $00
 
-.sound1Data16
+.soundData16
 
  EQUB $0F, $63, $B0, $00, $20, $00, $70, $00
  EQUB $FF, $63, $08, $02, $00, $00
 
-.sound1Data17
+.soundData17
 
  EQUB $0D, $63, $8F, $01, $31, $00, $30, $00
  EQUB $FF, $63, $10, $02, $00, $00
 
-.sound1Data18
+.soundData18
 
  EQUB $18, $05, $FF, $01, $31, $00, $30, $00
  EQUB $FF, $63, $10, $03, $00, $00
 
-.sound1Data19
+.soundData19
 
  EQUB $46, $03, $42, $03, $29, $00, $B0, $00
  EQUB $FF, $FF, $0C, $06, $00, $00
 
-.sound1Data20
+.soundData20
 
  EQUB $0C, $02, $57, $00, $14, $00, $B0, $00
  EQUB $FF, $63, $0C, $01, $00, $00
 
-.sound1Data21
+.soundData21
 
  EQUB $82, $46, $0F, $00, $01, $00, $B0, $00
  EQUB $01, $00, $01, $07, $00, $05
 
-.sound1Data22
+.soundData22
 
  EQUB $82, $46, $00, $00, $01, $00, $B0, $00
  EQUB $FF, $00, $01, $07, $00, $05
 
-.sound1Data23
+.soundData23
 
  EQUB $19, $05, $82, $01, $29, $00, $B0, $FF
  EQUB $FF, $FF, $0E, $02, $00, $00
 
-.sound1Data24
+.soundData24
 
  EQUB $AA, $78, $1F, $00, $01, $00, $30, $00
  EQUB $01, $00, $01, $08, $00, $0A
 
-.sound1Data25
+.soundData25
 
  EQUB $14, $03, $08, $00, $01, $00, $30, $00
  EQUB $FF, $FF, $00, $02, $00, $00
 
-.sound1Data26
+.soundData26
 
  EQUB $01, $00, $00, $00, $00, $00, $30, $00
  EQUB $00, $00, $0D, $00, $00, $00
 
-.sound1Data27
+.soundData27
 
  EQUB $19, $05, $82, $01, $29, $00, $B0, $FF
  EQUB $FF, $FF, $0F, $02, $00, $00
 
-.sound1Data28
+.soundData28
 
  EQUB $0B, $04, $42, $00, $08, $00, $B0, $00
  EQUB $01, $63, $08, $01, $00, $02
 
-.sound1Data29
+.soundData29
 
  EQUB $96, $1C, $00, $01, $06, $00, $70, $00
  EQUB $01, $63, $06, $02, $00, $00
 
-.sound1Data30
+.soundData30
 
  EQUB $96, $1C, $00, $01, $06, $00, $70, $00
  EQUB $01, $63, $06, $02, $00, $00
 
-.sound1Data31
+.soundData31
 
  EQUB $14, $02, $28, $00, $01, $00, $70, $FF
  EQUB $FF, $0A, $00, $02, $00, $00
 
 ; ******************************************************************************
 ;
-;       Name: sound2Data
+;       Name: soundVolume
 ;       Type: Variable
 ;   Category: Sound
 ;    Summary: Data for the sound effects
 ;
 ; ******************************************************************************
 
-.sound2Data
+.soundVolume
 
- EQUW sound2Data0
- EQUW sound2Data1
- EQUW sound2Data2
- EQUW sound2Data3
- EQUW sound2Data4
- EQUW sound2Data5
- EQUW sound2Data6
- EQUW sound2Data7
- EQUW sound2Data8
- EQUW sound2Data9
- EQUW sound2Data10
- EQUW sound2Data11
- EQUW sound2Data12
- EQUW sound2Data13
- EQUW sound2Data14
- EQUW sound2Data15
- EQUW sound2Data16
+ EQUW soundVolume0
+ EQUW soundVolume1
+ EQUW soundVolume2
+ EQUW soundVolume3
+ EQUW soundVolume4
+ EQUW soundVolume5
+ EQUW soundVolume6
+ EQUW soundVolume7
+ EQUW soundVolume8
+ EQUW soundVolume9
+ EQUW soundVolume10
+ EQUW soundVolume11
+ EQUW soundVolume12
+ EQUW soundVolume13
+ EQUW soundVolume14
+ EQUW soundVolume15
+ EQUW soundVolume16
 
-.sound2Data0
+.soundVolume0
 
  EQUB $0F, $0D, $0B, $09, $07, $05, $03, $01
  EQUB $00, $FF
 
-.sound2Data1
+.soundVolume1
 
  EQUB $03, $05, $07, $09, $0A, $0C, $0E, $0E
  EQUB $0E, $0C, $0C, $0A, $0A, $09, $09, $07
  EQUB $06, $05, $04, $03, $02, $02, $01, $FF
 
-.sound2Data2
+.soundVolume2
 
  EQUB $02, $06, $08, $00, $FF
 
-.sound2Data3
+.soundVolume3
 
  EQUB $06, $08, $0A, $0B, $0C, $0B, $0A, $09
  EQUB $08, $07, $06, $05, $04, $03, $02, $01
  EQUB $FF
 
-.sound2Data4
+.soundVolume4
 
  EQUB $01, $03, $06, $08, $0C, $80
 
-.sound2Data5
+.soundVolume5
 
  EQUB $01, $04, $09, $0D, $80
 
-.sound2Data6
+.soundVolume6
 
  EQUB $01, $04, $07, $09, $FF
 
-.sound2Data7
+.soundVolume7
 
  EQUB $09, $80
 
-.sound2Data8
+.soundVolume8
 
  EQUB $0E, $0C, $0B, $09, $07, $05, $04, $03
  EQUB $02, $01, $FF
 
-.sound2Data9
+.soundVolume9
 
  EQUB $0C, $00, $00, $0C, $00, $00, $FF
 
-.sound2Data10
+.soundVolume10
 
  EQUB $0B, $80
 
-.sound2Data11
+.soundVolume11
 
  EQUB $0A, $0B, $0C, $0D, $0C, $80
 
-.sound2Data12
+.soundVolume12
 
  EQUB $0C, $0A, $09, $07, $05, $04, $03, $02
  EQUB $01, $FF
 
-.sound2Data13
+.soundVolume13
 
  EQUB $00, $FF
 
-.sound2Data14
+.soundVolume14
 
  EQUB $04, $05, $06, $06, $05, $04, $03, $02
  EQUB $01, $FF
 
-.sound2Data15
+.soundVolume15
 
  EQUB $06, $05, $04, $03, $02, $01, $FF
 
-.sound2Data16
+.soundVolume16
 
  EQUB $0C, $0A, $09, $07, $05, $05, $04, $04
  EQUB $03, $03, $02, $02, $01, $01, $FF
