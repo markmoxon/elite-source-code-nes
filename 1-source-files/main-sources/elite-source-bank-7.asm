@@ -12621,11 +12621,11 @@ ENDIF
  LDA #0                 ; Set the priority for channel X to zero to stop the
  STA channelPriority,X  ; channel from making any more sounds
 
- LDA #26                ; Set A = 26 to pass to MakeSoundEffect below
+ LDA #26                ; Set A = 26 to pass to StartEffect below
 
- BNE MakeSoundEffect_b7 ; Jump to MakeSoundEffect to make sound effect 26 on
-                        ; channel X (this BNE is effectively a JMP as A is never
-                        ; zero)
+ BNE StartEffect_b7     ; Jump to StartEffect to start naking sound effect 26
+                        ; on channel X (this BNE is effectively a JMP as A is
+                        ; never zero)
 
 ; ******************************************************************************
 ;
@@ -12789,17 +12789,17 @@ ENDIF
                         ; the PPU to use nametable 0 and pattern table 0
 
  TYA                    ; Set A to the sound number in Y so we can pass it to
-                        ; the MakeSoundEffect routine
+                        ; the StartEffect routine
 
-                        ; Fall through into MakeSoundEffect_b7 to make sound
+                        ; Fall through into StartEffect_b7 to start making sound
                         ; effect A on channel X
 
 ; ******************************************************************************
 ;
-;       Name: MakeSoundEffect_b7
+;       Name: StartEffect_b7
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Call the MakeSoundEffect routine
+;    Summary: Call the StartEffect routine
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -12816,10 +12816,10 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.MakeSoundEffect_b7
+.StartEffect_b7
 
- JSR MakeSoundEffect_b6 ; Call MakeSoundEffect to make sound effect A on channel
-                        ; A
+ JSR StartEffect_b6     ; Call StartEffect to start making sound effect A on
+                        ; channel A
 
 .RTS8
 
@@ -13319,14 +13319,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: MakeSoundEffect_b6
+;       Name: StartEffect_b6
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Call the MakeSoundEffect routine in ROM bank 6
+;    Summary: Call the StartEffect routine in ROM bank 6
 ;
 ; ******************************************************************************
 
-.MakeSoundEffect_b6
+.StartEffect_b6
 
  STA ASAV               ; Store the value of A so we can retrieve it below
 
@@ -13341,7 +13341,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JSR MakeSoundEffect    ; Call MakeSoundEffect, now that it is paged into memory
+ JSR StartEffect        ; Call StartEffect, now that it is paged into memory
 
  JMP ResetBank          ; Fetch the previous ROM bank number from the stack and
                         ; page that bank back into memory at $8000, returning
@@ -13351,7 +13351,7 @@ ENDIF
 
  LDA ASAV               ; Restore the value of A that we stored above
 
- JMP MakeSoundEffect    ; Call MakeSoundEffect, which is already paged into
+ JMP StartEffect        ; Call StartEffect, which is already paged into
                         ; memory, and return from the subroutine using a tail
                         ; call
 

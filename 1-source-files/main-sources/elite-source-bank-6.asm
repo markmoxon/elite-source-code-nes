@@ -214,47 +214,47 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: MakeEffectOnSQ1S
+;       Name: StartEffectOnSQ1S
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: A jump table entry at the start of bank 6 for the MakeEffectOnSQ1
+;    Summary: A jump table entry at the start of bank 6 for the StartEffectOnSQ1
 ;             routine
 ;
 ; ******************************************************************************
 
-.MakeEffectOnSQ1S
+.StartEffectOnSQ1S
 
- JMP MakeEffectOnSQ1    ; Jump to the MakeEffectOnSQ1 routine, returning from
+ JMP StartEffectOnSQ1   ; Jump to the StartEffectOnSQ1 routine, returning from
                         ; the subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: MakeEffectOnSQ2S
+;       Name: StartEffectOnSQ2S
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: A jump table entry at the start of bank 6 for the MakeEffectOnSQ2
+;    Summary: A jump table entry at the start of bank 6 for the StartEffectOnSQ2
 ;             routine
 ;
 ; ******************************************************************************
 
-.MakeEffectOnSQ2S
+.StartEffectOnSQ2S
 
- JMP MakeEffectOnSQ2    ; Jump to the MakeEffectOnSQ2 routine, returning from
+ JMP StartEffectOnSQ2   ; Jump to the StartEffectOnSQ2 routine, returning from
                         ; the subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: MakeEffectOnNOISES
+;       Name: StartEffectOnNOISES
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: A jump table entry at the start of bank 6 for the
-;             MakeEffectOnNOISE routine
+;             StartEffectOnNOISE routine
 ;
 ; ******************************************************************************
 
-.MakeEffectOnNOISES
+.StartEffectOnNOISES
 
- JMP MakeEffectOnNOISE  ; Jump to the MakeEffectOnNOISE routine, returning from
+ JMP StartEffectOnNOISE ; Jump to the StartEffectOnNOISE routine, returning from
                         ; the subroutine using a tail call
 
 ; ******************************************************************************
@@ -324,13 +324,18 @@ ENDIF
                         ; we can use as the offset into the tuneData table
                         ; below
 
-                        ; We now reset four 19-byte blocks of memory, as
+                        ; We now reset the four 19-byte blocks of memory that
+                        ; are used to store the channel-specific variables, as
                         ; follows:
                         ;
-                        ;   sectionDataSQ1   to sectionDataSQ1+18
-                        ;   sectionDataSQ2   to sectionDataSQ2+18
-                        ;   sectionDataTRI   to sectionDataTRI+18
-                        ;   sectionDataNOISE to sectionDataNOISE+18
+                        ;   sectionDataSQ1   to applyVolumeSQ1
+                        ;   sectionDataSQ2   to applyVolumeSQ2
+                        ;   sectionDataTRI   to volumeEnvelopeTRI+1
+                        ;   sectionDataNOISE to applyVolumeNOISE
+                        ;
+                        ; There is no volumeEnvelopeTRI variable but the space
+                        ; is still reserved, which is why the TRI channel clears
+                        ; to volumeEnvelopeTRI+1
 
  LDA #0                 ; Set A = 0 to use when zeroing these locations
 
@@ -428,9 +433,11 @@ ENDIF
  STY pauseCountSQ2      ; Set pauseCountSQ2 = 1 so we start sending music to the
                         ; SQ2 channel straight away, without a pause
 
- STY soundVar3C         ; Set soundVar3C = 1
+ STY pauseCountTRI      ; Set pauseCountTRI = 1 so we start sending music to the
+                        ; TRI channel straight away, without a pause
 
- STY soundVar4F         ; Set soundVar4F = 1
+ STY pauseCountNOISE    ; Set pauseCountNOISE = 1 so we start sending music to
+                        ; the NOISE channel straight away, without a pause
 
  INY                    ; Increment Y to 2
 
@@ -442,9 +449,13 @@ ENDIF
                         ; zeroed above), so the next section after the first on
                         ; the SQ2 channel is the second section
 
- STY soundVar38         ; Set soundVar38 = 2
+ STY nextSectionTRI     ; Set nextSectionTRI(1 0) = 2 (the high byte was already
+                        ; zeroed above), so the next section after the first on
+                        ; the TRI channel is the second section
 
- STY soundVar4B         ; Set soundVar4B = 2
+ STY nextSectionNOISE   ; Set nextSectionNOISE = 2 (the high byte was already
+                        ; zeroed above), so the next section after the first on
+                        ; the NOISE channel is the second section
 
  LDX #0                 ; Set tuningAll = 0
  STX tuningAll
@@ -521,7 +532,14 @@ ENDIF
  CPX #16                ; Loop back until we have cleared all 16 bytes
  BNE stop1
 
- STA TRI_LINEAR         ; Zero the linear counter for the TRI channel
+ STA TRI_LINEAR         ; Zero the linear counter for the TRI channel, which
+                        ; configures it as follows:
+                        ;
+                        ;   * Bit 7 clear = do not reload the linear counter
+                        ;
+                        ;   * Bits 0-6    = counter reload value of 0
+                        ;
+                        ; So this silences the TRI channel
 
  LDA #%00110000         ; Set the volume of the SQ1, SQ2 and NOISE channels to
  STA SQ1_VOL            ; zero as follows:
@@ -653,7 +671,7 @@ ENDIF
 
  JSR ApplyEnvelopeSQ2   ; Apply volume and pitch changes to the SQ2 channel
 
- JSR ApplyEnvelopeTRI   ; Apply pitch changes to the TRI channel
+ JSR ApplyEnvelopeTRI   ; Apply volume and pitch changes to the TRI channel
 
  JMP ApplyEnvelopeNOISE ; Apply volume and pitch changes to the NOISE channel,
                         ; returning from the subroutine using a tail call
@@ -1913,342 +1931,514 @@ ENDIF
 
 .MakeMusicOnTRI
 
- DEC soundVar3C
+ DEC pauseCountTRI      ; Decrement the sound counter for TRI
 
- BEQ musr1
+ BEQ musr1              ; If the counter has reached zero, jump to musr1 to make
+                        ; music on the TRI channel
 
- RTS
+ RTS                    ; Otherwise return from the subroutine
 
 .musr1
 
- LDA sectionDataTRI
- STA soundAddr
- LDA sectionDataTRI+1
- STA soundAddr+1
+ LDA sectionDataTRI     ; Set soundAddr(1 0) = sectionDataTRI(1 0)
+ STA soundAddr          ;
+ LDA sectionDataTRI+1   ; So soundAddr(1 0) points to the note data for this
+ STA soundAddr+1        ; part of the tune
 
 .musr2
 
- LDY #0
+ LDY #0                 ; Set Y to the next entry from the note data
  LDA (soundAddr),Y
  TAY
 
- INC soundAddr
-
- BNE musr3
-
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE musr3              ; in the note data
  INC soundAddr+1
 
 .musr3
 
- TYA
+ TYA                    ; Set A to the next entry that we just fetched from the
+                        ; note data
 
- BMI musr6
- CMP #$60
+ BMI musr6              ; If bit 7 of A is set then this is a command byte, so
+                        ; jump to musr6 to process it
 
+ CMP #$60               ; If the note data in A is less than $60, jump to musr4
  BCC musr4
- ADC #$A0
 
- STA soundVar3B
+ ADC #$A0               ; The note data in A is between $60 and $7F, so set the
+ STA startPauseTRI      ; following:
+                        ;
+                        ;    startPauseTRI = A - $5F
+                        ;
+                        ; We know the C flag is set as we just passed through a
+                        ; BCC, so the ADC actually adds $A1, which is the same
+                        ; as subtracting $5F
+                        ;
+                        ; So this sets startPauseTRI to a value between 1 and
+                        ; 32, corresponding to note data values between $60 and
+                        ; $7F
 
- JMP musr2
+ JMP musr2              ; Jump back to musr2 to move on to the next entry from
+                        ; the note data
 
 .musr4
 
- CLC
+                        ; If we get here then the note data in A is less than
+                        ; $60, which denotes a sound to send to the APU, so we
+                        ; now convert the data to a frequency and send it to the
+                        ; APU to make a sound on channel TRI
+
+ CLC                    ; Set Y = (A + tuningAll + tuningTRI) * 2
  ADC tuningAll
  CLC
- ADC soundVar3A
+ ADC tuningTRI
  ASL A
  TAY
 
- LDA noteFrequency,Y
- STA soundVar41
- STA triLo
+ LDA noteFrequency,Y    ; Set (A triLo) the frequency for note Y
+ STA triLoCopy          ;
+ STA triLo              ; Also save a copy of the low byte in triLoCopy
  LDA noteFrequency+1,Y
- LDX triLo
 
+ LDX triLo              ; Send (A triLo) to the APU via TRI_HI and TRI_LO
  STX TRI_LO
  STA TRI_HI
 
- STA soundVar65
+ STA triHi              ; Set (triHi triLo) = (A triLo), though this value is
+                        ; never read again, so this has no effect
 
- LDA soundVar45
- STA soundVar42
+ LDA volumeEnvelopeTRI  ; Set the counter to the volume change to the value of
+ STA volumeCounterTRI   ; volumeEnvelopeTRI, which gets set by the $F6 command
 
- LDA #$81
- STA TRI_LINEAR
+ LDA #%10000001         ; Configure the TRI channel as follows:
+ STA TRI_LINEAR         ;
+                        ;   * Bit 7 set = reload the linear counter
+                        ;
+                        ;   * Bits 0-6  = counter reload value of 1
+                        ;
+                        ; So this enables a cycling triangle wave on the TRI
+                        ; channel (so the channel is enabled)
 
 .musr5
 
- LDA soundAddr
- STA sectionDataTRI
- LDA soundAddr+1
- STA sectionDataTRI+1
+ LDA soundAddr          ; Set sectionDataTRI(1 0) = soundAddr(1 0)
+ STA sectionDataTRI     ;
+ LDA soundAddr+1        ; This updates the pointer to the note data for the
+ STA sectionDataTRI+1   ; channel, so the next time we can pick up where we left
+                        ; off
 
- LDA soundVar3B
- STA soundVar3C
+ LDA startPauseTRI      ; Set pauseCountTRI = startPauseTRI
+ STA pauseCountTRI      ;
+                        ; So if startPauseTRI is non-zero (as set by note data
+                        ; the range $60 to $7F), the next startPauseTRI
+                        ; iterations of MakeMusicOnTRI will do nothing
 
- RTS
+ RTS                    ; Return from the subroutine
 
 .musr6
 
- LDY #0
+                        ; If we get here then bit 7 of the note data in A is
+                        ; set, so this is a command byte
 
- CMP #$FF
- BNE musr8
+ LDY #0                 ; Set Y = 0, so we can use it in various commands below
 
- LDA soundVar38
- CLC
- ADC sectionListTRI
- STA soundAddr
- LDA soundVar39
- ADC sectionListTRI+1
- STA soundAddr+1
+ CMP #$FF               ; If A is not $FF, jump to musr8 to check for the next
+ BNE musr8              ; command
 
- LDA soundVar38
- ADC #2
- STA soundVar38
+                        ; If we get here then the command in A is $FF
+                        ;
+                        ; <$FF> moves to the next section in the current tune
 
- TYA
- ADC soundVar39
- STA soundVar39
+ LDA nextSectionTRI     ; Set soundAddr(1 0) to the following:
+ CLC                    ;
+ ADC sectionListTRI     ;   sectionListTRI(1 0) + nextSectionTRI(1 0)
+ STA soundAddr          ;
+ LDA nextSectionTRI+1   ; So soundAddr(1 0) points to the address of the next
+ ADC sectionListTRI+1   ; section in the current tune
+ STA soundAddr+1        ;
+                        ; So if we are playing tune 2 and nextSectionTRI(1 0)
+                        ; points to the second section, then soundAddr(1 0)
+                        ; will now point to the second address in tune2Data_TRI,
+                        ; which itself points to the note data for the second
+                        ; section at tune2Data_TRI_1
 
- LDA (soundAddr),Y
- INY
- ORA (soundAddr),Y
- BNE musr7
+ LDA nextSectionTRI     ; Set nextSectionTRI(1 0) = nextSectionTRI(1 0) + 2
+ ADC #2                 ;
+ STA nextSectionTRI     ; So nextSectionTRI(1 0) now points to the next section,
+ TYA                    ; as each section consists of two bytes in the table at
+ ADC nextSectionTRI+1   ; sectionListTRI(1 0)
+ STA nextSectionTRI+1
 
- LDA sectionListTRI
- STA soundAddr
- LDA sectionListTRI+1
- STA soundAddr+1
+ LDA (soundAddr),Y      ; If the address at soundAddr(1 0) is non-zero then it
+ INY                    ; contains a valid address to the section's note data,
+ ORA (soundAddr),Y      ; so jump to musr7 to skip the following
+ BNE musr7              ;
+                        ; This also increments the index in Y to 1
 
- LDA #2
- STA soundVar38
+                        ; If we get here then the command is trying to move to
+                        ; the next section, but that section contains value of
+                        ; $0000 in the tuneData table, so there is no next
+                        ; section and we have reached the end of the tune, so
+                        ; instead we jump back to the start of the tune
 
- LDA #0
- STA soundVar39
+ LDA sectionListTRI     ; Set soundAddr(1 0) = sectionListTRI(1 0)
+ STA soundAddr          ;
+ LDA sectionListTRI+1   ; So we start again by pointing soundAddr(1 0) to the
+ STA soundAddr+1        ; first entry in the section list for channel TRI, which
+                        ; contains the address of the first section's note data
+
+ LDA #2                 ; Set nextSectionTRI(1 0) = 2
+ STA nextSectionTRI     ;
+ LDA #0                 ; So the next section after we play the first section
+ STA nextSectionTRI+1   ; will be the second section
 
 .musr7
 
- LDA (soundAddr),Y
- TAX
- DEY
- LDA (soundAddr),Y
- STA soundAddr
- STX soundAddr+1
+                        ; By this point, Y has been incremented to 1
 
- JMP musr2
+ LDA (soundAddr),Y      ; Set soundAddr(1 0) to the address at soundAddr(1 0)
+ TAX                    ;
+ DEY                    ; As we pointed soundAddr(1 0) to the address of the
+ LDA (soundAddr),Y      ; new section above, this fetches the first address from
+ STA soundAddr          ; the new section's address list, which points to the
+ STX soundAddr+1        ; new section's note data
+                        ;
+                        ; So soundAddr(1 0) now points to the note data for the
+                        ; new section, so we're ready to start processing notes
+                        ; and commands when we rejoin the musr2 loop
+
+ JMP musr2              ; Jump back to musr2 to start processing data from the
+                        ; new section
 
 .musr8
 
- CMP #$F6
- BNE musr10
+ CMP #$F6               ; If A is not $F6, jump to musr10 to check for the next
+ BNE musr10             ; command
 
- LDA (soundAddr),Y
+                        ; If we get here then the command in A is $F6
+                        ;
+                        ; <$F6 $xx> sets the volume envelope counter to $xx
+                        ;
+                        ; In the other channels, this command lets us choose a
+                        ; volume envelope number
+                        ;
+                        ; In the case of the TRI channel, there isn't a volume
+                        ; envelope as such, because the channel is either off or
+                        ; on and doesn't have a volume setting, so instead of
+                        ; this command choosing a volume envelope number, it
+                        ; sets a counter that determines the number of
+                        ; iterations before the channel gets silenced
+                        ;
+                        ; I've kept the variable names in the same format as the
+                        ; other channels for consistency
 
- INC soundAddr
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A
 
- BNE musr9
-
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE musr9              ; in the note data
  INC soundAddr+1
 
 .musr9
 
- STA soundVar45
+ STA volumeEnvelopeTRI  ; Set volumeEnvelopeTRI to the volume envelope number
+                        ; that we just fetched
 
- JMP musr2
+ JMP musr2              ; Jump back to musr2 to move on to the next entry from
+                        ; the note data
 
 .musr10
 
- CMP #$F7
- BNE musr12
+ CMP #$F7               ; If A is not $F7, jump to musr12 to check for the next
+ BNE musr12             ; command
 
- LDA (soundAddr),Y
+                        ; If we get here then the command in A is $F7
+                        ;
+                        ; <$F7 $xx> sets the pitch envelope number to $xx
 
- INC soundAddr
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A
 
- BNE musr11
-
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE musr11             ; in the note data
  INC soundAddr+1
 
 .musr11
 
- STA soundVar40
- STY soundVar3F
+ STA pitchEnvelopeTRI   ; Set pitchEnvelopeTRI to the pitch envelope number that
+                        ; we just fetched
 
- JMP musr2
+ STY pitchIndexTRI      ; Set pitchIndexTRI = 0 to point to the start of the
+                        ; data for pitch envelope A
+
+ JMP musr2              ; Jump back to musr2 to move on to the next entry from
+                        ; the note data
 
 .musr12
 
- CMP #$F8
- BNE musr13
+ CMP #$F8               ; If A is not $F8, jump to musr13 to check for the next
+ BNE musr13             ; command
 
- LDA #1
- STA soundVar42
+                        ; If we get here then the command in A is $F8
+                        ;
+                        ; <$F8> sets the volume of the TRI channel to zero
 
- JMP musr5
+ LDA #1                 ; Set the counter in volumeCounterTRI to 1, so when we
+ STA volumeCounterTRI   ; return from the subroutine and call ApplyEnvelopeTRI,
+                        ; the TRI channel gets silenced
+
+ JMP musr5              ; Jump to musr5 to return from the subroutine, so we
+                        ; continue on from the next entry from the note data in
+                        ; the next iteration
 
 .musr13
 
- CMP #$F9
- BNE musr14
+ CMP #$F9               ; If A is not $F9, jump to musr14 to check for the next
+ BNE musr14             ; command
 
- JMP musr5
+                        ; If we get here then the command in A is $F9
+                        ;
+                        ; <$F9> enables the volume envelope for the TRI channel
+
+ JMP musr5              ; Jump to musr5 to return from the subroutine, so we
+                        ; continue on from the next entry from the note data in
+                        ; the next iteration
 
 .musr14
 
- CMP #$FB
- BNE musr16
+ CMP #$FB               ; If A is not $FB, jump to musr16 to check for the next
+ BNE musr16             ; command
 
- LDA (soundAddr),Y
+                        ; If we get here then the command in A is $FB
+                        ;
+                        ; <$FB $xx> sets the tuning for all channels to $xx
 
- INC soundAddr
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A
 
- BNE musr15
-
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE musr15             ; in the note data
  INC soundAddr+1
 
 .musr15
 
- STA tuningAll
+ STA tuningAll          ; Store the entry we just fetched in tuningAll, which
+                        ; sets the tuning for the TRI, TRI and TRI channels (so
+                        ; this value gets added to every note on those channels)
 
- JMP musr2
+ JMP musr2              ; Jump back to musr2 to move on to the next entry from
+                        ; the note data
 
 .musr16
 
- CMP #$FC
- BNE musr18
+ CMP #$FC               ; If A is not $FC, jump to musr18 to check for the next
+ BNE musr18             ; command
 
- LDA (soundAddr),Y
+                        ; If we get here then the command in A is $FC
+                        ;
+                        ; <$FC $xx> sets the tuning for the TRI channel to $xx
 
- INC soundAddr
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A
 
- BNE musr17
-
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE musr17             ; in the note data
  INC soundAddr+1
 
 .musr17
 
- STA soundVar3A
+ STA tuningTRI          ; Store the entry we just fetched in tuningTRI, which
+                        ; sets the tuning for the TRI channel (so this value
+                        ; gets added to every note on those channels)
 
- JMP musr2
+ JMP musr2              ; Jump back to musr2 to move on to the next entry from
+                        ; the note data
 
 .musr18
 
- CMP #$F5
- BNE musr19
+ CMP #$F5               ; If A is not $F5, jump to musr19 to check for the next
+ BNE musr19             ; command
 
- LDA (soundAddr),Y
- TAX
- STA sectionListTRI
- INY
- LDA (soundAddr),Y
+                        ; If we get here then the command in A is $F5
+                        ;
+                        ; <$F5 $xx &yy> changes tune to the tune data at &yyxx
+                        ;
+                        ; It does this by setting sectionListTRI(1 0) to &yyxx
+                        ; and soundAddr(1 0) to the address stored in &yyxx
+                        ;
+                        ; To see why this works, consider switching to tune 2,
+                        ; for which we would use this command:
+                        ;
+                        ;   <$F5 LO(tune2Data_TRI) LO(tune2Data_TRI)>
+                        ;
+                        ; This sets:
+                        ;
+                        ;   sectionListTRI(1 0) = tune2Data_TRI
+                        ;
+                        ; so from now on we fetch the addresses for each section
+                        ; of the tune from the table at tune2Data_TRI
+                        ;
+                        ; It also sets soundAddr(1 0) to the address in the
+                        ; first two bytes of tune2Data_TRI, to give:
+                        ;
+                        ;   soundAddr(1 0) = tune2Data_TRI_0
+                        ;
+                        ; So from this point on, note data is fetched from the
+                        ; table at tune2Data_TRI_0, which contains notes and
+                        ; commands for the first section of tune 2
+
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A
+
+ TAX                    ; Set sectionListTRI(1 0) = &yyxx
+ STA sectionListTRI     ;
+ INY                    ; Also set soundAddr(1 0) to &yyxx and increment the
+ LDA (soundAddr),Y      ; index in Y to 1, both of which we use below
  STX soundAddr
  STA soundAddr+1
  STA sectionListTRI+1
 
- LDA #2
- STA soundVar38
+ LDA #2                 ; Set nextSectionTRI(1 0) = 2
+ STA nextSectionTRI     ;
+ DEY                    ; So the next section after we play the first section
+ STY nextSectionTRI+1   ; of the new tune will be the second section
+                        ;
+                        ; Also decrement the index in Y back to 0
 
- DEY
-
- STY soundVar39
-
- LDA (soundAddr),Y
+ LDA (soundAddr),Y      ; Set soundAddr(1 0) to the address stored at &yyxx
  TAX
  INY
  LDA (soundAddr),Y
  STA soundAddr+1
  STX soundAddr
 
- JMP musr2
+ JMP musr2              ; Jump back to musr2 to move on to the next entry from
+                        ; the note data
 
 .musr19
 
- CMP #$F4
- BNE musr21
+ CMP #$F4               ; If A is not $F4, jump to musr21 to check for the next
+ BNE musr21             ; command
 
- LDA (soundAddr),Y
+                        ; If we get here then the command in A is $F4
+                        ;
+                        ; <$F4 $xx> sets the playback speed to $xx
 
- INC soundAddr
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A, which
+                        ; contains the new speed
 
- BNE musr20
-
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE musr20             ; in the note data
  INC soundAddr+1
 
 .musr20
 
- STA tuneSpeed
- STA tuneSpeedCopy
+ STA tuneSpeed          ; Set tuneSpeed and tuneSpeedCopy to A, to change the
+ STA tuneSpeedCopy      ; speed of the current tune to the specified speed
 
- JMP musr2
+ JMP musr2              ; Jump back to musr2 to move on to the next entry from
+                        ; the note data
 
 .musr21
 
- CMP #$FE
- BNE musr22
+ CMP #$FE               ; If A is not $FE, jump to musr22 to check for the next
+ BNE musr22             ; command
 
- STY playMusic
+                        ; If we get here then the command in A is $FE
+                        ;
+                        ; <$FE> stops the music and disables sound
 
- PLA
- PLA
+ STY playMusic          ; Set playMusic = 0 to stop playing the current tune, so
+                        ; only a new call to ChooseMusic will start the music
+                        ; again
 
- JMP StopSoundsS
+ PLA                    ; Pull the return address from the stack, so the RTS
+ PLA                    ; instruction at the tne of StopSounds actually returns
+                        ; from the subroutine that called MakeMusic, so we stop
+                        ; the music and return to the MakeSounds routine (which
+                        ; is the only routine that calls MakeMusic)
+
+ JMP StopSoundsS        ; Jump to StopSounds via StopSoundsS to stop the music
+                        ; and return to the MakeSounds routine
 
 .musr22
 
- BEQ musr22
+ BEQ musr22             ; If we get here then bit 7 of A was set but the value
+                        ; didn't match any of the checks above, so this
+                        ; instruction does nothing and we fall through into
+                        ; ApplyEnvelopeTRI, ignoring the data in A
+                        ;
+                        ; I'm not sure why the instruction here is an infinite
+                        ; loop, but luckily it isn't triggered as A is never
+                        ; zero at this point
 
 ; ******************************************************************************
 ;
 ;       Name: ApplyEnvelopeTRI
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Apply pitch changes to the TRI channel
+;    Summary: Apply volume and pitch changes to the TRI channel
 ;
 ; ******************************************************************************
 
 .ApplyEnvelopeTRI
 
- LDA soundVar42
- BEQ muse1
+ LDA volumeCounterTRI   ; If volumeCounterTRI = 0 then we are not counting down
+ BEQ muse1              ; to a volume change, so jump to muse1 to move on to the
+                        ; pitch envelope
 
- DEC soundVar42
+ DEC volumeCounterTRI   ; Decrement the counter for the volume change
 
- BNE muse1
+ BNE muse1              ; If the counter is still non-zero, then we haven't yet
+                        ; done counted down to the volume change, so jump to
+                        ; muse1 to skip the following
 
- LDA #0
- STA TRI_LINEAR
+ LDA #%00000000         ; Configure the TRI channel as follows:
+ STA TRI_LINEAR         ;
+                        ;   * Bit 7 clear = do not reload the linear counter
+                        ;
+                        ;   * Bits 0-6    = counter reload value of 0
+                        ;
+                        ; So this silences the TRI channel
 
 .muse1
 
- LDX soundVar40
- LDA pitchEnvelopeLo,X
- STA soundAddr
- LDA pitchEnvelopeHi,X
+                        ; We now move on to the pitch envelope
+
+ LDX pitchEnvelopeTRI   ; Set X to the number of the pitch envelope to apply
+
+ LDA pitchEnvelopeLo,X  ; Set soundAddr(1 0) to the address of the data for
+ STA soundAddr          ; pitch envelope X from the (i.e. pitchEnvelope0 for
+ LDA pitchEnvelopeHi,X  ; envelope 0, pitchEnvelope1 for envelope 1, and so on)
  STA soundAddr+1
 
- LDY soundVar3F
- LDA (soundAddr),Y
+ LDY pitchIndexTRI      ; Set A to the byte of envelope data at the index in
+ LDA (soundAddr),Y      ; pitchIndexTRI, which we increment to move through the
+                        ; data one byte at a time
 
- CMP #$80
- BNE muse2
+ CMP #$80               ; If A is not $80 then we just fetched a valid byte of
+ BNE muse2              ; envelope data, so jump to muse2 to process it
 
- LDY #0
- STY soundVar3F
+                        ; If we get here then we just fetched a $80 from the
+                        ; pitch envelope, which indicates the end of the list of
+                        ; envelope values, so we now loop around to the start of
+                        ; the list, so it keeps repeating
 
- LDA (soundAddr),Y
+ LDY #0                 ; Set pitchIndexTRI = 0 to point to the start of the
+ STY pitchIndexTRI      ; data for pitch envelope X
+
+ LDA (soundAddr),Y      ; Set A to the byte of envelope data at index 0, so we
+                        ; can fall through into muse2 to process it
 
 .muse2
 
- INC soundVar3F
+ INC pitchIndexTRI      ; Increment the index into the pitch envelope so we
+                        ; move on to the next byte of data in the next iteration
 
- CLC
- ADC soundVar41
- STA triLo
+ CLC                    ; Set triLo = triLoCopy + A
+ ADC triLoCopy          ;
+ STA triLo              ; So this alters the low byte of the pitch that we send
+                        ; to the APU via TRI_LO, altering it by the amount in
+                        ; the byte of data we just fetched from the pitch
+                        ; envelope
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -2261,255 +2451,392 @@ ENDIF
 
 .MakeMusicOnNOISE
 
- DEC soundVar4F
- BEQ musf1
+ DEC pauseCountNOISE    ; Decrement the sound counter for NOISE
 
- RTS
+ BEQ musf1              ; If the counter has reached zero, jump to musf1 to make
+                        ; music on the NOISE channel
+
+ RTS                    ; Otherwise return from the subroutine
 
 .musf1
 
- LDA sectionDataNOISE
- STA soundAddr
- LDA sectionDataNOISE+1
- STA soundAddr+1
+ LDA sectionDataNOISE   ; Set soundAddr(1 0) = sectionDataNOISE(1 0)
+ STA soundAddr          ;
+ LDA sectionDataNOISE+1 ; So soundAddr(1 0) points to the note data for this
+ STA soundAddr+1        ; part of the tune
 
- STA soundVar59
+ STA applyVolumeNOISE   ; Set applyVolumeNOISE = 0 so we don't apply the volume
+                        ; envelope by default (this gets changed if we process
+                        ; note data below, as opposed to a command)
+                        ;
+                        ; I'm not entirely sure why A is zero here - in fact,
+                        ; it's very unlikely to be zero - so it's possible that
+                        ; there is an LDA #0 instruction missing here and that
+                        ; this is a bug that applies the volume envelope of the
+                        ; NOISE channel too early
 
 .musf2
 
- LDY #0
+ LDY #0                 ; Set Y to the next entry from the note data
  LDA (soundAddr),Y
  TAY
 
- INC soundAddr
-
- BNE musf3
-
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE musf3              ; in the note data
  INC soundAddr+1
 
 .musf3
 
- TYA
+ TYA                    ; Set A to the next entry that we just fetched from the
+                        ; note data
 
- BMI musf7
+ BMI musf7              ; If bit 7 of A is set then this is a command byte, so
+                        ; jump to musf7 to process it
 
- CMP #$60
+ CMP #$60               ; If the note data in A is less than $60, jump to musf4
  BCC musf4
 
- ADC #$A0
- STA soundVar4E
+ ADC #$A0               ; The note data in A is between $60 and $7F, so set the
+ STA startPauseNOISE    ; following:
+                        ;
+                        ;    startPauseNOISE = A - $5F
+                        ;
+                        ; We know the C flag is set as we just passed through a
+                        ; BCC, so the ADC actually adds $A1, which is the same
+                        ; as subtracting $5F
+                        ;
+                        ; So this sets startPauseNOISE to a value between 1 and
+                        ; 32, corresponding to note data values between $60 and
+                        ; $7F
 
- JMP musf2
+ JMP musf2              ; Jump back to musf2 to move on to the next entry from
+                        ; the note data
 
 .musf4
 
- AND #$0F
- STA soundVar54
+                        ; If we get here then the note data in A is less than
+                        ; $60, which denotes a sound to send to the APU, so we
+                        ; now convert the data to a noise frequency (which we do
+                        ; by simply taking the low nibble of the note data, as
+                        ; this is just noise that doesn't need a conversion
+                        ; from note to frequency like the other channels) and
+                        ; send it to the APU to make a sound on channel NOISE
 
- STA noiseLo
-
+ AND #$0F               ; Set (Y A) to the frequency for noise note Y
+ STA noiseLoCopy        ;
+ STA noiseLo            ; Also save a copy of the low byte in noiseLoCopy
  LDY #0
 
- LDX effectOnNOISE
- BNE musf5
+ LDX effectOnNOISE      ; If effectOnNOISE is non-zero then a sound effect is
+ BNE musf5              ; being made on channel NOISE, so jump to musf5 to skip
+                        ; writing the music data to the APU (so sound effects
+                        ; take precedence over music)
 
- STA NOISE_LO
+ STA NOISE_LO           ; Send (Y A) to the APU via NOISE_HI and NOISE_LO
  STY NOISE_HI
 
 .musf5
 
- LDA #1
- STA soundVar55
+ LDA #1                 ; Set volumeIndexNOISE = 1
+ STA volumeIndexNOISE
 
- LDA soundVar56
- STA soundVar57
+ LDA volumeRepeatNOISE  ; Set volumeCounterNOISE = volumeRepeatNOISE
+ STA volumeCounterNOISE
 
 .musf6
 
- LDA #$FF
- STA soundVar59
+ LDA #$FF               ; Set applyVolumeNOISE = $FF so we apply the volume
+ STA applyVolumeNOISE   ; envelope in the next iteration
 
- LDA soundAddr
- STA sectionDataNOISE
- LDA soundAddr+1
- STA sectionDataNOISE+1
+ LDA soundAddr          ; Set sectionDataNOISE(1 0) = soundAddr(1 0)
+ STA sectionDataNOISE   ;
+ LDA soundAddr+1        ; This updates the pointer to the note data for the
+ STA sectionDataNOISE+1 ; channel, so the next time we can pick up where we left
+                        ; off
 
- LDA soundVar4E
- STA soundVar4F
+ LDA startPauseNOISE    ; Set pauseCountNOISE = startPauseNOISE
+ STA pauseCountNOISE    ;
+                        ; So if startPauseNOISE is non-zero (as set by note data
+                        ; the range $60 to $7F), the next startPauseNOISE
+                        ; iterations of MakeMusicOnNOISE will do nothing
 
- RTS
+ RTS                    ; Return from the subroutine
 
 .musf7
 
- LDY #0
+                        ; If we get here then bit 7 of the note data in A is
+                        ; set, so this is a command byte
 
- CMP #$FF
- BNE musf9
+ LDY #0                 ; Set Y = 0, so we can use it in various commands below
 
- LDA soundVar4B
- CLC
- ADC sectionListNOISE
- STA soundAddr
- LDA soundVar4C
- ADC sectionListNOISE+1
- STA soundAddr+1
+ CMP #$FF               ; If A is not $FF, jump to musf9 to check for the next
+ BNE musf9             ; command
 
- LDA soundVar4B
- ADC #2
- STA soundVar4B
+                        ; If we get here then the command in A is $FF
+                        ;
+                        ; <$FF> moves to the next section in the current tune
 
- TYA
- ADC soundVar4C
- STA soundVar4C
+ LDA nextSectionNOISE   ; Set soundAddr(1 0) to the following:
+ CLC                    ;
+ ADC sectionListNOISE   ;   sectionListNOISE(1 0) + nextSectionNOISE(1 0)
+ STA soundAddr          ;
+ LDA nextSectionNOISE+1 ; So soundAddr(1 0) points to the address of the next
+ ADC sectionListNOISE+1 ; section in the current tune
+ STA soundAddr+1        ;
+                        ; So if we are playing tune 2 and nextSectionNOISE(1 0)
+                        ; points to the second section, then soundAddr(1 0)
+                        ; will now point to the second address in tune2Data_NOISE,
+                        ; which itself points to the note data for the second
+                        ; section at tune2Data_NOISE_1
 
- LDA (soundAddr),Y
- INY
- ORA (soundAddr),Y
- BNE musf8
+ LDA nextSectionNOISE   ; Set nextSectionNOISE(1 0) = nextSectionNOISE(1 0) + 2
+ ADC #2                 ;
+ STA nextSectionNOISE   ; So nextSectionNOISE(1 0) now points to the next section,
+ TYA                    ; as each section consists of two bytes in the table at
+ ADC nextSectionNOISE+1 ; sectionListNOISE(1 0)
+ STA nextSectionNOISE+1
 
- LDA sectionListNOISE
- STA soundAddr
- LDA sectionListNOISE+1
- STA soundAddr+1
+ LDA (soundAddr),Y      ; If the address at soundAddr(1 0) is non-zero then it
+ INY                    ; contains a valid address to the section's note data,
+ ORA (soundAddr),Y      ; so jump to musf8 to skip the following
+ BNE musf8              ;
+                        ; This also increments the index in Y to 1
 
- LDA #2
- STA soundVar4B
+                        ; If we get here then the command is trying to move to
+                        ; the next section, but that section contains value of
+                        ; $0000 in the tuneData table, so there is no next
+                        ; section and we have reached the end of the tune, so
+                        ; instead we jump back to the start of the tune
 
- LDA #0
- STA soundVar4C
+ LDA sectionListNOISE   ; Set soundAddr(1 0) = sectionListNOISE(1 0)
+ STA soundAddr          ;
+ LDA sectionListNOISE+1 ; So we start again by pointing soundAddr(1 0) to the
+ STA soundAddr+1        ; first entry in the section list for channel NOISE, which
+                        ; contains the address of the first section's note data
+
+ LDA #2                 ; Set nextSectionNOISE(1 0) = 2
+ STA nextSectionNOISE   ;
+ LDA #0                 ; So the next section after we play the first section
+ STA nextSectionNOISE+1 ; will be the second section
 
 .musf8
 
- LDA (soundAddr),Y
- TAX
- DEY
- LDA (soundAddr),Y
- STA soundAddr
- STX soundAddr+1
+                        ; By this point, Y has been incremented to 1
 
- JMP musf2
+ LDA (soundAddr),Y      ; Set soundAddr(1 0) to the address at soundAddr(1 0)
+ TAX                    ;
+ DEY                    ; As we pointed soundAddr(1 0) to the address of the
+ LDA (soundAddr),Y      ; new section above, this fetches the first address from
+ STA soundAddr          ; the new section's address list, which points to the
+ STX soundAddr+1        ; new section's note data
+                        ;
+                        ; So soundAddr(1 0) now points to the note data for the
+                        ; new section, so we're ready to start processing notes
+                        ; and commands when we rejoin the musf2 loop
+
+ JMP musf2              ; Jump back to musf2 to start processing data from the
+                        ; new section
 
 .musf9
 
- CMP #$F6
- BNE musf11
+ CMP #$F6               ; If A is not $F6, jump to musf11 to check for the next
+ BNE musf11             ; command
 
- LDA (soundAddr),Y
+                        ; If we get here then the command in A is $F6
+                        ;
+                        ; <$F6 $xx> sets the volume envelope number to $xx
 
- INC soundAddr
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A
 
- BNE musf10
-
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE musf10             ; in the note data
  INC soundAddr+1
 
 .musf10
 
- STA soundVar58
+ STA volumeEnvelopeNOISE    ; Set volumeEnvelopeNOISE to the volume envelope
+                            ; number that we just fetched
 
- JMP musf2
+ JMP musf2              ; Jump back to musf2 to move on to the next entry from
+                        ; the note data
 
 .musf11
 
- CMP #$F7
- BNE musf13
+ CMP #$F7               ; If A is not $F7, jump to musf13 to check for the next
+ BNE musf13             ; command
 
- LDA (soundAddr),Y
+                        ; If we get here then the command in A is $F7
+                        ;
+                        ; <$F7 $xx> sets the pitch envelope number to $xx
 
- INC soundAddr
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A
 
- BNE musf12
-
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE musf12             ; in the note data
  INC soundAddr+1
 
 .musf12
 
- STA soundVar53
- STY soundVar52
+ STA pitchEnvelopeNOISE ; Set pitchEnvelopeNOISE to the pitch envelope number that
+                        ; we just fetched
 
- JMP musf2
+ STY pitchIndexNOISE    ; Set pitchIndexNOISE = 0 to point to the start of the
+                        ; data for pitch envelope A
+
+ JMP musf2              ; Jump back to musf2 to move on to the next entry from
+                        ; the note data
 
 .musf13
 
- CMP #$F8
- BNE musf14
+ CMP #$F8               ; If A is not $F8, jump to musf14 to check for the next
+ BNE musf14             ; command
 
- LDA #$30
- STA noiseVolume
+                        ; If we get here then the command in A is $F8
+                        ;
+                        ; <$F8> sets the volume of the NOISE channel to zero
 
- JMP musf6
+ LDA #%00110000         ; Set the volume of the NOISE channel to zero as follows:
+ STA noiseVolume        ;
+                        ;   * Bits 6-7    = duty pulse length is 3
+                        ;   * Bit 5 set   = infinite play
+                        ;   * Bit 4 set   = constant volume
+                        ;   * Bits 0-3    = volume is 0
+
+ JMP musf6              ; Jump to musf6 to return from the subroutine after
+                        ; setting applyVolumeNOISE to $FF, so we apply the volume
+                        ; envelope, and then continue on from the next entry
+                        ; from the note data in the next iteration
 
 .musf14
 
- CMP #$F9
- BNE musf15
+ CMP #$F9               ; If A is not $F9, jump to musf15 to check for the next
+ BNE musf15             ; command
 
- JMP musf6
+                        ; If we get here then the command in A is $F9
+                        ;
+                        ; <$F9> enables the volume envelope for the NOISE channel
+
+ JMP musf6              ; Jump to musf6 to return from the subroutine after
+                        ; setting applyVolumeNOISE to $FF, so we apply the volume
+                        ; envelope, and then continue on from the next entry
+                        ; from the note data in the next iteration
 
 .musf15
 
- CMP #$F5
- BNE musf16
+ CMP #$F5               ; If A is not $F5, jump to musf16 to check for the next
+ BNE musf16             ; command
 
- LDA (soundAddr),Y
- TAX
- STA sectionListNOISE
- INY
- LDA (soundAddr),Y
+                        ; If we get here then the command in A is $F5
+                        ;
+                        ; <$F5 $xx &yy> changes tune to the tune data at &yyxx
+                        ;
+                        ; It does this by setting sectionListNOISE(1 0) to &yyxx
+                        ; and soundAddr(1 0) to the address stored in &yyxx
+                        ;
+                        ; To see why this works, consider switching to tune 2,
+                        ; for which we would use this command:
+                        ;
+                        ;   <$F5 LO(tune2Data_NOISE) LO(tune2Data_NOISE)>
+                        ;
+                        ; This sets:
+                        ;
+                        ;   sectionListNOISE(1 0) = tune2Data_NOISE
+                        ;
+                        ; so from now on we fetch the addresses for each section
+                        ; of the tune from the table at tune2Data_NOISE
+                        ;
+                        ; It also sets soundAddr(1 0) to the address in the
+                        ; first two bytes of tune2Data_NOISE, to give:
+                        ;
+                        ;   soundAddr(1 0) = tune2Data_NOISE_0
+                        ;
+                        ; So from this point on, note data is fetched from the
+                        ; table at tune2Data_NOISE_0, which contains notes and
+                        ; commands for the first section of tune 2
+
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A
+
+ TAX                    ; Set sectionListNOISE(1 0) = &yyxx
+ STA sectionListNOISE   ;
+ INY                    ; Also set soundAddr(1 0) to &yyxx and increment the
+ LDA (soundAddr),Y      ; index in Y to 1, both of which we use below
  STX soundAddr
  STA soundAddr+1
  STA sectionListNOISE+1
 
- LDA #2
- STA soundVar4B
+ LDA #2                 ; Set nextSectionNOISE(1 0) = 2
+ STA nextSectionNOISE   ;
+ DEY                    ; So the next section after we play the first section
+ STY nextSectionNOISE+1 ; of the new tune will be the second section
+                        ;
+                        ; Also decrement the index in Y back to 0
 
- DEY
-
- STY soundVar4C
-
- LDA (soundAddr),Y
+ LDA (soundAddr),Y      ; Set soundAddr(1 0) to the address stored at &yyxx
  TAX
  INY
  LDA (soundAddr),Y
  STA soundAddr+1
  STX soundAddr
 
- JMP musf2
+ JMP musf2              ; Jump back to musf2 to move on to the next entry from
+                        ; the note data
 
 .musf16
 
- CMP #$F4
- BNE musf18
+ CMP #$F4               ; If A is not $F4, jump to musf18 to check for the next
+ BNE musf18             ; command
 
- LDA (soundAddr),Y
+                        ; If we get here then the command in A is $F4
+                        ;
+                        ; <$F4 $xx> sets the playback speed to $xx
 
- INC soundAddr
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A, which
+                        ; contains the new speed
 
- BNE musf17
-
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE musf17             ; in the note data
  INC soundAddr+1
 
 .musf17
 
- STA tuneSpeed
- STA tuneSpeedCopy
+ STA tuneSpeed          ; Set tuneSpeed and tuneSpeedCopy to A, to change the
+ STA tuneSpeedCopy      ; speed of the current tune to the specified speed
 
- JMP musf2
+ JMP musf2              ; Jump back to musf2 to move on to the next entry from
+                        ; the note data
 
 .musf18
 
- CMP #$FE
- BNE musf19
+ CMP #$FE               ; If A is not $FE, jump to musf19 to check for the next
+ BNE musf19             ; command
 
- STY playMusic
+                        ; If we get here then the command in A is $FE
+                        ;
+                        ; <$FE> stops the music and disables sound
 
- PLA
- PLA
+ STY playMusic          ; Set playMusic = 0 to stop playing the current tune, so
+                        ; only a new call to ChooseMusic will start the music
+                        ; again
 
- JMP StopSoundsS
+ PLA                    ; Pull the return address from the stack, so the RTS
+ PLA                    ; instruction at the tne of StopSounds actually returns
+                        ; from the subroutine that called MakeMusic, so we stop
+                        ; the music and return to the MakeSounds routine (which
+                        ; is the only routine that calls MakeMusic)
+
+ JMP StopSoundsS        ; Jump to StopSounds via StopSoundsS to stop the music
+                        ; and return to the MakeSounds routine
 
 .musf19
 
- BEQ musf19
+ BEQ musf19             ; If we get here then bit 7 of A was set but the value
+                        ; didn't match any of the checks above, so this
+                        ; instruction does nothing and we fall through into
+                        ; ApplyEnvelopeNOISE, ignoring the data in A
+                        ;
+                        ; I'm not sure why the instruction here is an infinite
+                        ; loop, but luckily it isn't triggered as A is never
+                        ; zero at this point
 
 ; ******************************************************************************
 ;
@@ -2522,69 +2849,111 @@ ENDIF
 
 .ApplyEnvelopeNOISE
 
- LDA soundVar59
- BEQ musg2
+ LDA applyVolumeNOISE   ; If applyVolumeNOISE = 0 then we do not apply the
+ BEQ musg2              ; volume envelope, so jump to musg2 to move on to the
+                        ; pitch envelope
 
- LDX soundVar58
- LDA volumeEnvelopeLo,X
- STA soundAddr
- LDA volumeEnvelopeHi,X
+ LDX volumeEnvelopeNOISE    ; Set X to the number of the volume envelope to apply
+
+ LDA volumeEnvelopeLo,X ; Set soundAddr(1 0) to the address of the data for
+ STA soundAddr          ; volume envelope X from the (i.e. volumeEnvelope0 for
+ LDA volumeEnvelopeHi,X ; envelope 0, volumeEnvelope1 for envelope 1, and so on)
  STA soundAddr+1
 
- LDY #0
- LDA (soundAddr),Y
- STA soundVar56
+ LDY #0                 ; Set volumeRepeatNOISE to the first byte of envelope
+ LDA (soundAddr),Y      ; data, which contains the number of times to repeat
+ STA volumeRepeatNOISE  ; each entry in the envelope
 
- LDY soundVar55
- LDA (soundAddr),Y
+ LDY volumeIndexNOISE   ; Set A to the byte of envelope data at the index in
+ LDA (soundAddr),Y      ; volumeIndexNOISE, which we increment to move through
+                        ; the data one byte at a time
 
- BMI musg1
+ BMI musg1              ; If bit 7 of A is set then we just fetched the last
+                        ; byte of envelope data, so jump to musg1 to skip the
+                        ; following
 
- DEC soundVar57
+ DEC volumeCounterNOISE ; Decrement the counter for this envelope byte
 
- BPL musg1
+ BPL musg1              ; If the counter is still positive, then we haven't yet
+                        ; done all the repeats for this envelope byte, so jump
+                        ; to musg1 to skip the following
 
- LDX soundVar56
- STX soundVar57
+                        ; Otherwise this is the last repeat for this byte of
+                        ; envelope data, so now we reset the counter and move
+                        ; on to the next byte
 
- INC soundVar55
+ LDX volumeRepeatNOISE  ; Reset the repeat counter for this envelope to the
+ STX volumeCounterNOISE ; first byte of envelope data that we fetched above,
+                        ; which contains the number of times to repeat each
+                        ; entry in the envelope
+
+ INC volumeIndexNOISE   ; Increment the index into the volume envelope so we
+                        ; move on to the next byte of data in the next iteration
 
 .musg1
 
- AND #$0F
- ORA #$30
- STA noiseVolume
+ AND #%00001111         ; Extract the low nibble from the envelope data, which
+                        ; contains the volume level
+
+ ORA #%00110000         ; Set bits 5 and 6 to configure the NOISE channel as
+                        ; follows:
+                        ;
+                        ;   * Bit 5 set   = infinite play
+                        ;
+                        ;   * Bit 4 set   = constant volume
+                        ;
+                        ; Bits 6 and 7 are not used in the NOISE_VOL register
+
+ STA noiseVolume        ; Set noiseVolume to the resulting volume byte so it gets
+                        ; sent to the APU via NOISE_VOL
 
 .musg2
 
- LDX soundVar53
- LDA pitchEnvelopeLo,X
- STA soundAddr
- LDA pitchEnvelopeHi,X
+                        ; We now move on to the pitch envelope
+
+ LDX pitchEnvelopeNOISE ; Set X to the number of the pitch envelope to apply
+
+ LDA pitchEnvelopeLo,X  ; Set soundAddr(1 0) to the address of the data for
+ STA soundAddr          ; pitch envelope X from the (i.e. pitchEnvelope0 for
+ LDA pitchEnvelopeHi,X  ; envelope 0, pitchEnvelope1 for envelope 1, and so on)
  STA soundAddr+1
 
- LDY soundVar52
+ LDY pitchIndexNOISE    ; Set A to the byte of envelope data at the index in
+ LDA (soundAddr),Y      ; pitchIndexNOISE, which we increment to move through the
+                        ; data one byte at a time
 
- LDA (soundAddr),Y
+ CMP #$80               ; If A is not $80 then we just fetched a valid byte of
+ BNE musg3              ; envelope data, so jump to musg3 to process it
 
- CMP #$80
- BNE musg3
+                        ; If we get here then we just fetched a $80 from the
+                        ; pitch envelope, which indicates the end of the list of
+                        ; envelope values, so we now loop around to the start of
+                        ; the list, so it keeps repeating
 
- LDY #0
- STY soundVar52
+ LDY #0                 ; Set pitchIndexNOISE = 0 to point to the start of the
+ STY pitchIndexNOISE    ; data for pitch envelope X
 
- LDA (soundAddr),Y
+ LDA (soundAddr),Y      ; Set A to the byte of envelope data at index 0, so we
+                        ; can fall through into musg3 to process it
 
 .musg3
 
- INC soundVar52
+ INC pitchIndexNOISE    ; Increment the index into the pitch envelope so we
+                        ; move on to the next byte of data in the next iteration
 
- CLC
- ADC soundVar54
- AND #$0F
- STA noiseLo
+ CLC                    ; Set noiseLo = low nibble of noiseLoCopy + A
+ ADC noiseLoCopy        ;
+ AND #%00001111         ; So this alters the low byte of the pitch that we send
+ STA noiseLo            ; to the APU via NOISE_LO, altering it by the amount in
+                        ; the byte of data we just fetched from the pitch
+                        ; envelope
+                        ;
+                        ; We extract the low nibble because the top nibble is
+                        ; ignored in NOISE_LO, except for bit 7, which we want
+                        ; to clear so the period of the random noise generation
+                        ; is normal and not shortened
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -2680,14 +3049,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: MakeEffectOnSQ1
+;       Name: StartEffectOnSQ1
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Make a sound effect on the SQ1 channel
 ;
 ; ******************************************************************************
 
-.MakeEffectOnSQ1
+.StartEffectOnSQ1
 
  ASL A
  TAY
@@ -2758,10 +3127,10 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: MakeSoundEffect
+;       Name: StartEffect
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Make a sound effect on the specified channel
+;    Summary: Start making a sound effect on the specified channel
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -2769,35 +3138,51 @@ ENDIF
 ;
 ;   A                   The number of the sound effect to make
 ;
-;   X                   The number of the channel on which to make the sound
-;                       effect
+;   X                   The sound channel on which to make the sound effect:
+;
+;                         * 0 = SQ1
+;
+;                         * 1 = SQ2
+;
+;                         * 2 = NOISE
 ;
 ; ******************************************************************************
 
-.MakeSoundEffect
+.StartEffect
 
- DEX
+ DEX                    ; Decrement the channel number in X, so we can check the
+                        ; value in the following tests
 
- BMI msef1
+ BMI msef1              ; If X is now negative then the channel number must be
+                        ; 0, so jump to msef1 to make the sound effect on the
+                        ; SQ1 channel
 
- BEQ MakeEffectOnSQ2
+ BEQ StartEffectOnSQ2   ; If X is now zero then the channel number must be 1, so
+                        ; jump to StartEffectOnSQ2 to start making the sound
+                        ; effect on the SQ2 channel, returning from the
+                        ; subroutine using a tail call
 
- JMP MakeEffectOnNOISE
+ JMP StartEffectOnNOISE ; Otherwise the channel number must be 2, so jump to
+                        ; StartEffectOnNOISE to make the sound effect on the
+                        ; NOISE channel, returning from the subroutine using a
+                        ; tail call
 
 .msef1
 
- JMP MakeEffectOnSQ1
+ JMP StartEffectOnSQ1   ; Jump to StartEffectOnSQ1 to start making the sound
+                        ; effect on the SQ1 channel, returning from the
+                        ; subroutine using a tail call
 
 ; ******************************************************************************
 ;
-;       Name: MakeEffectOnSQ2
+;       Name: StartEffectOnSQ2
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Make a sound effect on the SQ2 channel
+;    Summary: Start making a sound effect on the SQ2 channel
 ;
 ; ******************************************************************************
 
-.MakeEffectOnSQ2
+.StartEffectOnSQ2
 
  ASL A
  TAY
@@ -2868,14 +3253,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: MakeEffectOnNOISE
+;       Name: StartEffectOnNOISE
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Make a sound effect on the NOISE channel
 ;
 ; ******************************************************************************
 
-.MakeEffectOnNOISE
+.StartEffectOnNOISE
 
  ASL A
  TAY

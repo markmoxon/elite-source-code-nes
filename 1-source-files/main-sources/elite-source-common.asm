@@ -365,7 +365,7 @@ IF NOT(_BANK = 6)
  StopSoundsS        = $8012
  ChooseMusic        = $8021
  MakeSounds         = $811E
- MakeSoundEffect    = $89D1
+ StartEffect        = $89D1
  DrawCmdrImage      = $A082
  DrawSpriteImage    = $A0F8
  PauseGame          = $A166
@@ -2798,7 +2798,9 @@ ORG $0200
 
 .tuneProgress
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A variable for keeping track of progress while playing
+                        ; the current tune, so we send data to the APU at the
+                        ; correct time over iterations of the MakeMusic routine
 
 .tuningAll
 
@@ -3038,139 +3040,166 @@ ORG $0200
 
 .sectionDataTRI
 
- SKIP 2                 ; ???
+ SKIP 2                 ; The address of the note data for channel TRI of the
+                        ; the current section of the current tune
+                        ;
+                        ; So if the current tune is tune 0 and we're playing
+                        ; section 0, this would point to tune0Data_TRI_0
 
 .sectionListTRI
 
- SKIP 2                 ; ???
+ SKIP 2                 ; The address of the section list for channel TRI of
+                        ; the current tune
+                        ;
+                        ; So if the current tune is tune 0, this would point to
+                        ; tune0Data_TRI
 
-.soundVar38
+.nextSectionTRI
 
- SKIP 1                 ; ???
+ SKIP 2                 ; The next section for the TRI channel of the current
+                        ; tune
+                        ;
+                        ; This is stored as the offset of the address of the
+                        ; next section in the current tune for the TRI channel
+                        ; (so this would be the offset within the tuneData0_TRI
+                        ; table for tune 0, for example)
+                        ;
+                        ; Adding 2 moves it on to the next section of the tune
 
-.soundVar39
+.tuningTRI
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The tuning value for the TRI channel
+                        ;
+                        ; Gets added to each note's pitch in the TRI channel
 
-.soundVar3A
+.startPauseTRI
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Pause for this many iterations before starting to
+                        ; process each batch of note data on channel TRI
 
-.soundVar3B
+.pauseCountTRI
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Pause for this many iterations before continuing to
+                        ; process note data on channel TRI, decrementing the
+                        ; value for each paused iteration
 
-.soundVar3C
+ SKIP 2                 ; These bytes appear to be unused
 
- SKIP 1                 ; ???
+.pitchIndexTRI
 
-.soundVar3D
+ SKIP 1                 ; The index of the entry within the pitch envelope to
+                        ; be applied to the current tune on channel TRI
 
- SKIP 1                 ; ???
+.pitchEnvelopeTRI
 
-.soundVar3E
+ SKIP 1                 ; The number of the pitch envelope to be applied to the
+                        ; current tune on channel TRI
 
- SKIP 1                 ; ???
+.triLoCopy
 
-.soundVar3F
+ SKIP 1                 ; A copy of the value that we are going to send to the
+                        ; APU via TRI_LO for the current tune
 
- SKIP 1                 ; ???
+.volumeCounterTRI
 
-.soundVar40
+ SKIP 1                 ; A counter for keeping track of repeated bytes from
+                        ; the volume envelope on channel TRI
 
- SKIP 1                 ; ???
+ SKIP 2                 ; These bytes appear to be unused
 
-.soundVar41
+.volumeEnvelopeTRI
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The number of the volume envelope to be applied to the
+                        ; current tune on channel TRI
 
-.soundVar42
-
- SKIP 1                 ; ???
-
-.soundVar43
-
- SKIP 1                 ; ???
-
-.soundVar44
-
- SKIP 1                 ; ???
-
-.soundVar45
-
- SKIP 1                 ; ???
-
-.soundVar46
-
- SKIP 1                 ; ???
+ SKIP 1                 ; This byte appears to be unused
 
 .sectionDataNOISE
 
- SKIP 2                 ; ???
+ SKIP 2                 ; The address of the note data for channel NOISE of the
+                        ; the current section of the current tune
+                        ;
+                        ; So if the current tune is tune 0 and we're playing
+                        ; section 0, this would point to tune0Data_NOISE_0
 
 .sectionListNOISE
 
- SKIP 2                 ; ???
+ SKIP 2                 ; The address of the section list for channel NOISE of
+                        ; the current tune
+                        ;
+                        ; So if the current tune is tune 0, this would point to
+                        ; tune0Data_NOISE
 
-.soundVar4B
+.nextSectionNOISE
 
- SKIP 1                 ; ???
+ SKIP 2                 ; The next section for the NOISE channel of the current
+                        ; tune
+                        ;
+                        ; This is stored as the offset of the address of the
+                        ; next section in the current tune for the NOISE channel
+                        ; (so this would be the offset within the
+                        ; tuneData0_NOISE table for tune 0, for example)
+                        ;
+                        ; Adding 2 moves it on to the next section of the tune
 
-.soundVar4C
+ SKIP 1                 ; This byte appears to be unused
 
- SKIP 1                 ; ???
+.startPauseNOISE
 
-.soundVar4D
+ SKIP 1                 ; Pause for this many iterations before starting to
+                        ; process each batch of note data on channel NOISE
 
- SKIP 1                 ; ???
+.pauseCountNOISE
 
-.soundVar4E
+ SKIP 1                 ; Pause for this many iterations before continuing to
+                        ; process note data on channel NOISE, decrementing the
+                        ; value for each paused iteration
 
- SKIP 1                 ; ???
+ SKIP 2                 ; These bytes appear to be unused
 
-.soundVar4F
+.pitchIndexNOISE
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The index of the entry within the pitch envelope to
+                        ; be applied to the current tune on channel NOISE
 
-.soundVar50
+.pitchEnvelopeNOISE
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The number of the pitch envelope to be applied to the
+                        ; current tune on channel NOISE
 
-.soundVar51
+.noiseLoCopy
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A copy of the value that we are going to send to the
+                        ; APU via NOISE_LO for the current tune
 
-.soundVar52
+.volumeIndexNOISE
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The index into the volume envelope data of the next
+                        ; volume byte to apply to channel NOISE
 
-.soundVar53
+.volumeRepeatNOISE
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The number of repeats to be applied to each byte in
+                        ; the volumne envelope on channel NOISE
 
-.soundVar54
+.volumeCounterNOISE
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A counter for keeping track of repeated bytes from
+                        ; the volume envelope on channel NOISE
 
-.soundVar55
+.volumeEnvelopeNOISE
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The number of the volume envelope to be applied to the
+                        ; current tune on channel NOISE
 
-.soundVar56
+.applyVolumeNOISE
 
- SKIP 1                 ; ???
-
-.soundVar57
-
- SKIP 1                 ; ???
-
-.soundVar58
-
- SKIP 1                 ; ???
-
-.soundVar59
-
- SKIP 1                 ; ???
+ SKIP 1                 ; A flag that determines whether to apply the volume
+                        ; envelope to the NOISE channel
+                        ;
+                        ;   * 0 = do not apply volume envelope
+                        ;
+                        ;   * $FF = apply volume envelope
 
 .sq1Volume
 
@@ -3206,37 +3235,31 @@ ORG $0200
  SKIP 1                 ; The value that we are going to send to the APU via
                         ; SQ2_HI for the current tune
 
-.soundVar62
-
- SKIP 1                 ; ???
-
-.soundVar63
-
- SKIP 1                 ; ???
+ SKIP 2                 ; These bytes appear to be unused
 
 .triLo
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The value that we are going to send to the APU via
+                        ; TRI_LO for the current tune
 
-.soundVar65
+.triHi
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The value that we are going to send to the APU via
+                        ; TRI_HI for the current tune
 
 .noiseVolume
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The value that we are going to send to the APU via
+                        ; NOISE_VOL for the current tune
 
-.soundVar67
-
- SKIP 1                 ; ???
+ SKIP 1                 ; This byte appears to be unused
 
 .noiseLo
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The value that we are going to send to the APU via
+                        ; NOISE_LO for the current tune
 
-.soundVar69
-
- SKIP 1                 ; ???
+ SKIP 1                 ; This byte appears to be unused
 
 .FRIN
 
