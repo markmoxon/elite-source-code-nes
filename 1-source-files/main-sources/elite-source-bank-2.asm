@@ -324,7 +324,7 @@ ENDIF
  ECHR ' '               ;                 {left align}{cr}
  ECHR 'W'               ;                {tab 6}{all caps}  MESSAGE
  ETWO 'O', 'U'          ;                ENDS{display ship, wait for key press}"
- ECHR 'L'               ;                
+ ECHR 'L'               ;
  ECHR 'D'               ; Encoded as:   "{23}{14}{13}{19}G<242><221><240>GS[213]
  ECHR ' '               ;                 AND{26}I <247>G[208]MOM<246>T OF [179]
  ECHR 'L'               ;                R V<228>U<216><229> <251>ME[204]WE W
@@ -780,7 +780,7 @@ ENDIF
 
  EJMP 21                ; Token 14:     "{clear bottom of screen}
  ETOK 145               ;                PLANET {single cap}NAME? "
- ETOK 200               ;                
+ ETOK 200               ;
  EQUB VE                ; Encoded as:   "{21}[145][200]"
 
  EJMP 25                ; Token 15:     "{incoming message screen, wait 2s}
@@ -1485,7 +1485,7 @@ ENDIF
 
  EJMP 19                ; Token 106:    "{single cap}I HEAR A [130-134] LOOKING
  ECHR 'I'               ;                SHIP APPEARED AT ERRIUS"
- ECHR ' '               ;                
+ ECHR ' '               ;
  ECHR 'H'               ; Encoded as:   "{19}I HE<238>[208][23?] <224>OK[195]
  ECHR 'E'               ;                [207] APPE<238>[196]<245>[209]"
  ETWO 'A', 'R'
@@ -1979,7 +1979,7 @@ ENDIF
 
  ECHR 'K'               ; Token 170:    "KILLER"
  ETWO 'I', 'L'          ;
- ETWO 'L', 'E'           ; Encoded as:   "K<220><229>R"
+ ETWO 'L', 'E'          ; Encoded as:   "K<220><229>R"
  ECHR 'R'
  EQUB VE
 
@@ -3950,7 +3950,7 @@ ENDIF
  EJMP 19                ; Token 7:      "{single cap}OH DEAR ME YES. A FRIGHTFUL
  ECHR 'O'               ;                ROGUE SHOT UP LOTS OF THOSE BEASTLY
  ECHR 'H'               ;                PIRATES AND WENT TO {single cap}USLERI"
- ECHR ' '               ;                 
+ ECHR ' '               ;
  ECHR 'D'               ; Encoded as:   "{19}OH DE<238> ME Y<237>. A FRIGHTFUL R
  ECHR 'E'               ;                OGUE SHOT UP <224>TS OF <226>O<218>
  ETWO 'A', 'R'          ;                 <247>A<222>LY PIR<245><237> <255>D W
@@ -4030,7 +4030,7 @@ ENDIF
  EJMP 19                ; Token 8:      "{single cap}YOU CAN TACKLE THE
  ECHR 'Y'               ;                [170-174] [91-95] IF YOU LIKE. {single
  ETWO 'O', 'U'          ;                cap}HE'S AT {single cap}ORARRA"
- ECHR ' '               ;                
+ ECHR ' '               ;
  ECHR 'C'               ; Encoded as:   "{19}Y<217> C<255> TACK<229> <226>E
  ETWO 'A', 'N'          ;                 [13?] [24?] IF Y<217> LIKE.{26}HE'S
  ECHR ' '               ;                 <245>{26}<253><238><248>"
@@ -17664,9 +17664,9 @@ ENDIF
 ;   fontStyle           Determines the font style:
 ;
 ;                         * 1 = normal font
-;                        
+;
 ;                         * 2 = highlight font
-;                        
+;
 ;                         * 3 = green text on a black background (colour 3 on
 ;                               background colour 0)
 ;

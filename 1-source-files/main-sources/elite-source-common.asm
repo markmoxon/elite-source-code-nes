@@ -88,7 +88,7 @@
 
  Mlas = 50              ; Mining laser power
 
- Armlas = INT(128.5+1.5*POW)  ; Military laser power
+ Armlas = INT(128.5 + 1.5*POW)  ; Military laser power
 
  NI% = 38               ; The number of bytes in each ship's data block (as
                         ; stored in INWK and K%)
@@ -2869,7 +2869,7 @@ ORG $0200
 
 .dutyLoopEnvSQ1
 
- SKIP 1                 ; The top nibble to use for SQ1_VOL, when setting the
+ SKIP 1                 ; The high nibble to use for SQ1_VOL, when setting the
                         ; following for the SQ1 channel:
                         ;
                         ;   * Bits 6-7    = duty pulse length
@@ -2931,71 +2931,110 @@ ORG $0200
 
 .sectionDataSQ2
 
- SKIP 2                 ; ???
+ SKIP 2                 ; The address of the note data for channel SQ2 of the
+                        ; the current section of the current tune
+                        ;
+                        ; So if the current tune is tune 0 and we're playing
+                        ; section 0, this would point to tune0Data_SQ2_0
 
 .sectionListSQ2
 
- SKIP 2                 ; ???
+ SKIP 2                 ; The address of the section list for channel SQ2 of
+                        ; the current tune
+                        ;
+                        ; So if the current tune is tune 0, this would point to
+                        ; tune0Data_SQ2
 
-.soundVar25
+.nextSectionSQ2
 
- SKIP 1                 ; ???
+ SKIP 2                 ; The next section for the SQ2 channel of the current
+                        ; tune
+                        ;
+                        ; This is stored as the offset of the address of the
+                        ; next section in the current tune for the SQ2 channel
+                        ; (so this would be the offset within the tuneData0_SQ2
+                        ; table for tune 0, for example)
+                        ;
+                        ; Adding 2 moves it on to the next section of the tune
 
-.soundVar26
+.tuningSQ2
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The tuning value for the SQ2 channel
+                        ;
+                        ; Gets added to each note's pitch in the SQ2 channel
 
-.soundVar27
+.startPauseSQ2
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Pause for this many iterations before starting to
+                        ; process each batch of note data on channel SQ2
 
-.soundVar28
+.pauseCountSQ2
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Pause for this many iterations before continuing to
+                        ; process note data on channel SQ2, decrementing the
+                        ; value for each paused iteration
 
-.soundVar29
+.dutyLoopEnvSQ2
 
- SKIP 1                 ; ???
-
-.soundVar2A
-
- SKIP 1                 ; ???
+ SKIP 1                 ; The high nibble to use for SQ2_VOL, when setting the
+                        ; following for the SQ2 channel:
+                        ;
+                        ;   * Bits 6-7    = duty pulse length
+                        ;
+                        ;   * Bit 5 set   = infinite play
+                        ;   * Bit 5 clear = one-shot play
+                        ;
+                        ;   * Bit 4 set   = constant volume
+                        ;   * Bit 4 clear = envelope volume
 
 .sq2Sweep
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The value that we are going to send to the APU via
+                        ; SQ2_SWEEP for the current tune
 
-.soundVar2C
+.pitchIndexSQ2
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The index of the entry within the pitch envelope to
+                        ; be applied to the current tune on channel SQ2
 
-.soundVar2D
+.pitchEnvelopeSQ2
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The number of the pitch envelope to be applied to the
+                        ; current tune on channel SQ2
 
-.soundVar2E
+.sq2LoCopy
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A copy of the value that we are going to send to the
+                        ; APU via SQ2_LO for the current tune
 
-.soundVar2F
+.volumeIndexSQ2
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The index into the volume envelope data of the next
+                        ; volume byte to apply to channel SQ2
 
-.soundVar30
+.volumeRepeatSQ2
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The number of repeats to be applied to each byte in
+                        ; the volumne envelope on channel SQ2
 
-.soundVar31
+.volumeCounterSQ2
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A counter for keeping track of repeated bytes from
+                        ; the volume envelope on channel SQ2
 
-.soundVar32
+.volumeEnvelopeSQ2
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The number of the volume envelope to be applied to the
+                        ; current tune on channel SQ2
 
-.soundVar33
+.applyVolumeSQ2
 
- SKIP 1                 ; ???
+ SKIP 1                 ; A flag that determines whether to apply the volume
+                        ; envelope to the SQ2 channel
+                        ;
+                        ;   * 0 = do not apply volume envelope
+                        ;
+                        ;   * $FF = apply volume envelope
 
 .sectionDataTRI
 
@@ -3138,9 +3177,7 @@ ORG $0200
  SKIP 1                 ; The value that we are going to send to the APU via
                         ; SQ1_VOL for the current tune
 
-.soundVar5B
-
- SKIP 1                 ; ???
+ SKIP 1                 ; This byte appears to be unused
 
 .sq1Lo
 
@@ -3154,19 +3191,20 @@ ORG $0200
 
 .sq2Volume
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The value that we are going to send to the APU via
+                        ; SQ2_VOL for the current tune
 
-.soundVar5F
-
- SKIP 1                 ; ???
+ SKIP 1                 ; This byte appears to be unused
 
 .sq2Lo
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The value that we are going to send to the APU via
+                        ; SQ2_LO for the current tune
 
-.soundVar61
+.sq2Hi
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The value that we are going to send to the APU via
+                        ; SQ2_HI for the current tune
 
 .soundVar62
 
@@ -5405,14 +5443,14 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: currentSaveSlot
+;       Name: currentSlot
 ;       Type: Variable
 ;   Category: Save and load
 ;    Summary: The save slot for the currently selected commander file
 ;
 ; ******************************************************************************
 
-.currentSaveSlot
+.currentSlot
 
  SKIP 256
 

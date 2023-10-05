@@ -4581,7 +4581,7 @@ ENDIF
 
  LDA bitplaneFlags,X    ; If both bits 4 and 5 of the current bitplane flags are
  BIT flagsForClearing   ; clear, then this means:
- BEQ pbuf1              ; 
+ BEQ pbuf1              ;
                         ;   * Bit 4 clear = we've not started sending data yet
                         ;   * Bit 5 clear = we have not yet sent all the data
                         ;
@@ -6955,7 +6955,7 @@ ENDIF
  LDX X1                 ; Set X = X1
 
  CPY Y2                 ; If Y1 = Y2, jump up to loin18 to return from the
- BEQ loin18              ; subroutine as there is no line to draw
+ BEQ loin18             ; subroutine as there is no line to draw
 
  BCS LI15               ; If Y1 > Y2, jump down to LI15, as the coordinates are
                         ; already in the order that we want
@@ -10839,74 +10839,74 @@ ENDIF
 ; set. It auto-plays the combat demo by "pressing" buttons automatically, taking
 ; those button presses from auto-play commands in the relevant autoplayKeys
 ; table.
-; 
+;
 ; Specifically, the process starts with the auto-play commands from the chosen
 ; language table (autoplayKeys_EN, autoplayKeys_DE or autoplayKeys_FR), and then
 ; moves on to the auto-play commands in the autoplayKeys2 table.
-; 
+;
 ; The AutoPlayDemo routine processes one entry from the autoplayKeys table in
 ; each VBlank. It works by fetching a byte from the autoplayKeys table (let's
 ; call it byte #1), and applying the following rules:
-; 
+;
 ;   * If byte #1 has bit 7 clear:
-;   
+;
 ;     * Fetch the next byte (let's call it byte #2)
-;   
+;
 ;     * Repeat the button presses in byte #1 for byte #2 repetitions
-;   
+;
 ;   * If byte #1 has bit 7 set:
-;   
+;
 ;     * If byte #1 = $80, terminate auto-play
-;   
+;
 ;     * If byte #1 has bit 6 clear:
-;     
+;
 ;       * Do nothing for 4 * byte #1 repetitions (ignoring bit 7 of byte #1 in
 ;         this calculation)
-;     
+;
 ;     * If byte #1 has bit 6 set:
-;     
+;
 ;       * If byte #1 = $C0:
-;       
+;
 ;         * Switch to the autoplayKeys2 table and start processing commands from
 ;           there in the next VBlank
-;       
+;
 ;       * Otherwise byte #1 is of the form $Cx where x is non-zero, so:
-;   
+;
 ;         * Fetch the next three bytes (let's call them bytes #2 to #4)
-;   
+;
 ;         * Set addr(1 0) = (byte #4 byte #3)
-;   
+;
 ;         * If byte #1 = $C1:
-;         
+;
 ;           * Repeat the button presses in byte #2 in each subsequent VBlank
 ;             while addr(1 0) <> 0, and then continue processing with the
 ;             command after byte #3
-;   
+;
 ;         * If byte #1 = $C2:
-;   
+;
 ;           * Repeat the button presses in byte #2 in each subsequent VBlank
 ;             while addr(1 0) = 0, and then continue processing with the
 ;             command after byte #3
-;   
+;
 ;         * If byte #1 = $C3:
-;         
+;
 ;           * Repeat the button presses in byte #2 in each subsequent VBlank
 ;             while bit 7 of addr(1 0) is set, and then continue processing with
 ;             the command after byte #3
-;   
+;
 ;         * If byte #1 = $C4:
-;         
+;
 ;           * Repeat the button presses in byte #2 in each subsequent VBlank
 ;             while bit 7 of addr(1 0) is clear, and then continue processing
 ;             with the command after byte #3
-;   
+;
 ;         * If byte #1 = $C5:
-;         
+;
 ;           * Press the Start button and do nothing for 22 VBlanks before
 ;             continuing with the command after byte #1
-; 
+;
 ; In summary, this is how each byte gets interpreted:
-; 
+;
 ;   $00 to $7F = press buttons in byte #1 for byte #2 VBlanks
 ;   $80 = terminate auto-play
 ;   $8x to $Bx = do nothing for 4 * byte #1 repetitions (ignoring bit 7)
@@ -10916,7 +10916,7 @@ ENDIF
 ;   $C3 = press buttons in byte #2 while bit 7 of (byte #4 byte #3) is set
 ;   $C4 = press buttons in byte #2 while bit 7 of (byte #4 byte #3) is clear
 ;   $C5 = press the Start button and do nothing for 22 VBlanks
-; 
+;
 ; The button presses to be performed in the above commands are encoded in a
 ; single byte that gets put into the autoplayKey variable. There is one bit for
 ; each button, with a set bit indicating that the button should be pressed, so
@@ -11138,7 +11138,7 @@ ENDIF
 
  PLA                    ; Set A = byte #1 << 2
                         ;
-                        ; In other words A is the bottom nibble of byte #1
+                        ; In other words A is the low nibble of byte #1
                         ; multiplied by 4, so we can check this value to
                         ; determine the command in byte #1, as follows:
                         ;
@@ -11992,14 +11992,14 @@ ENDIF
                         ; (which is done by holding down the B button while
                         ; using the left and right buttons)
 
- LDA controller1Left    ; Set the top nibble of the left button history variable
- ASL A                  ; to bits 0 to 3 of controller1Left, so it contains the
- ASL A                  ; controller values from four VBlanks ago
+ LDA controller1Left    ; Set the high nibble of the left button history
+ ASL A                  ; variable to bits 0 to 3 of controller1Left, so it
+ ASL A                  ; contains the controller values from four VBlanks ago
  ASL A
  ASL A
  STA controller1Left03
 
- LDA controller1Right   ; Set the top nibble of the right button history
+ LDA controller1Right   ; Set the high nibble of the right button history
  ASL A                  ; variable to bits 0 to 3 of controller1Right, so it
  ASL A                  ; contains the controller values from four VBlanks ago
  ASL A
@@ -15660,7 +15660,7 @@ ENDIF
  LDA #LO(nameBuffer0+23*32)
  STA SC
 
- LDA #HI(nameBuffer1+23*32)    ; Set SC(1 0) to the address of the tile in
+ LDA #HI(nameBuffer1+23*32)     ; Set SC(1 0) to the address of the tile in
  STA SC2+1                      ; column 0 on tile row 23 in nametable buffer 1
  LDA #LO(nameBuffer1+23*32)
  STA SC2
@@ -17108,7 +17108,7 @@ ENDIF
  CLC                    ;          = (x/2 + y/2 + z/2 - max(x, y, z) / 2) / 4
  ADC K+1                ;          = (x + y + z - max(x, y, z)) / 8
  ADC K+2                ;
- SEC                    ; 
+ SEC                    ;
  SBC SC
  LSR A
  LSR A

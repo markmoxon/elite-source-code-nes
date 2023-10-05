@@ -360,8 +360,8 @@ ENDIF
                         ;
                         ; For tune 0, this would be 47
 
- LDA tuneData+1,X       ; Set soundAddr(1 0) and sectionListSQ1(1 0) to the first
- STA sectionListSQ1     ; address from the tune's block at tuneData
+ LDA tuneData+1,X       ; Set soundAddr(1 0) and sectionListSQ1(1 0) to the
+ STA sectionListSQ1     ; first address from the tune's block at tuneData
  STA soundAddr          ;
  LDA tuneData+2,X       ; For tune 0, this would set both variables to point to
  STA sectionListSQ1+1   ; the list of tune sections at tune0Data_SQ1
@@ -370,12 +370,12 @@ ENDIF
  LDA (soundAddr),Y      ; Fetch the address that the first address points to
  STA sectionDataSQ1     ; and put it in sectionDataSQ1(1 0), incrementing the
  INY                    ; index in Y in the process
- LDA (soundAddr),Y      ; 
+ LDA (soundAddr),Y      ;
  STA sectionDataSQ1+1   ; For tune 0, this would set sectionDataSQ1(1 0) to the
                         ; address of tune0Data_SQ1_0
 
- LDA tuneData+3,X       ; Set soundAddr(1 0) and sectionListSQ2(1 0) to the second
- STA sectionListSQ2     ; address from the tune's block at tuneData
+ LDA tuneData+3,X       ; Set soundAddr(1 0) and sectionListSQ2(1 0) to the
+ STA sectionListSQ2     ; second address from the tune's block at tuneData
  STA soundAddr          ;
  LDA tuneData+4,X       ; For tune 0, this would set both variables to point to
  STA sectionListSQ2+1   ; the list of tune sections at tune0Data_SQ2
@@ -390,8 +390,8 @@ ENDIF
  STA sectionDataSQ2+1   ; For tune 0, this would set sectionDataSQ2(1 0) to the
                         ; address of tune0Data_SQ2_0
 
- LDA tuneData+5,X       ; Set soundAddr(1 0) and sectionListTRI(1 0) to the third
- STA sectionListTRI     ; address from the tune's block at tuneData
+ LDA tuneData+5,X       ; Set soundAddr(1 0) and sectionListTRI(1 0) to the
+ STA sectionListTRI     ; third address from the tune's block at tuneData
  STA soundAddr          ;
  LDA tuneData+6,X       ; For tune 0, this would set both variables to point to
  STA sectionListTRI+1   ; the list of tune sections at tune0Data_TRI
@@ -406,8 +406,8 @@ ENDIF
  STA sectionDataTRI+1   ; For tune 0, this would set sectionDataTRI(1 0) to the
                         ; address of tune0Data_TRI_0
 
- LDA tuneData+7,X       ; Set soundAddr(1 0) and sectionListNOISE(1 0) to the fourth
- STA sectionListNOISE   ; address from the tune's block at tuneData
+ LDA tuneData+7,X       ; Set soundAddr(1 0) and sectionListNOISE(1 0) to the
+ STA sectionListNOISE   ; fourth address from the tune's block at tuneData
  STA soundAddr          ;
  LDA tuneData+8,X       ; For tune 0, this would set both variables to point to
  STA sectionListNOISE+1 ; the list of tune sections at tune0Data_NOISE
@@ -423,9 +423,10 @@ ENDIF
                         ; the address of tune0Data_NOISE_0
 
  STY pauseCountSQ1      ; Set pauseCountSQ1 = 1 so we start sending music to the
-                        ; APU straight away, without a pause
+                        ; SQ1 channel straight away, without a pause
 
- STY soundVar29         ; Set soundVar29 = 1
+ STY pauseCountSQ2      ; Set pauseCountSQ2 = 1 so we start sending music to the
+                        ; SQ2 channel straight away, without a pause
 
  STY soundVar3C         ; Set soundVar3C = 1
 
@@ -434,10 +435,12 @@ ENDIF
  INY                    ; Increment Y to 2
 
  STY nextSectionSQ1     ; Set nextSectionSQ1(1 0) = 2 (the high byte was already
-                        ; zeroed above), so the next section after the first is
-                        ; the second section
+                        ; zeroed above), so the next section after the first on
+                        ; the SQ1 channel is the second section
 
- STY soundVar25         ; Set soundVar25 = 2
+ STY nextSectionSQ2     ; Set nextSectionSQ2(1 0) = 2 (the high byte was already
+                        ; zeroed above), so the next section after the first on
+                        ; the SQ2 channel is the second section
 
  STY soundVar38         ; Set soundVar38 = 2
 
@@ -1062,8 +1065,8 @@ ENDIF
                         ;
                         ; <$F5 $xx &yy> changes tune to the tune data at &yyxx
                         ;
-                        ; It does this by setting sectionListSQ1(1 0) to &yyxx, and
-                        ; soundAddr(1 0) to the address stored in &yyxx
+                        ; It does this by setting sectionListSQ1(1 0) to &yyxx
+                        ; and soundAddr(1 0) to the address stored in &yyxx
                         ;
                         ; To see why this works, consider switching to tune 2,
                         ; for which we would use this command:
@@ -1227,7 +1230,7 @@ ENDIF
  AND #%00001111         ; Extract the low nibble from the envelope data, which
                         ; contains the volume level
 
- ORA dutyLoopEnvSQ1     ; Set the top nibble of A to dutyLoopEnvSQ1, which gets
+ ORA dutyLoopEnvSQ1     ; Set the high nibble of A to dutyLoopEnvSQ1, which gets
                         ; set via command byte $FA and which contains the duty,
                         ; loop and NES envelope settings to send to the APU
 
@@ -1288,343 +1291,509 @@ ENDIF
 
 .MakeMusicOnSQ2
 
- DEC soundVar29
- BEQ must1
+ DEC pauseCountSQ2      ; Decrement the sound counter for SQ2
 
- RTS
+ BEQ must1              ; If the counter has reached zero, jump to must1 to make
+                        ; music on the SQ2 channel
+
+ RTS                    ; Otherwise return from the subroutine
 
 .must1
 
- LDA sectionDataSQ2
- STA soundAddr
- LDA sectionDataSQ2+1
- STA soundAddr+1
+ LDA sectionDataSQ2     ; Set soundAddr(1 0) = sectionDataSQ2(1 0)
+ STA soundAddr          ;
+ LDA sectionDataSQ2+1   ; So soundAddr(1 0) points to the note data for this
+ STA soundAddr+1        ; part of the tune
 
- LDA #0
+ LDA #0                 ; Set sq2Sweep = 0
  STA sq2Sweep
- STA soundVar33
+
+ STA applyVolumeSQ2     ; Set applyVolumeSQ2 = 0 so we don't apply the volume
+                        ; envelope by default (this gets changed if we process
+                        ; note data below, as opposed to a command)
 
 .must2
 
- LDY #0
+ LDY #0                 ; Set Y to the next entry from the note data
  LDA (soundAddr),Y
  TAY
 
- INC soundAddr
-
- BNE must3
-
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE must3              ; in the note data
  INC soundAddr+1
 
 .must3
 
- TYA
+ TYA                    ; Set A to the next entry that we just fetched from the
+                        ; note data
 
- BMI must8
+ BMI must8              ; If bit 7 of A is set then this is a command byte, so
+                        ; jump to must8 to process it
 
- CMP #$60
+ CMP #$60               ; If the note data in A is less than $60, jump to must4
  BCC must4
 
- ADC #$A0
- STA soundVar28
+ ADC #$A0               ; The note data in A is between $60 and $7F, so set the
+ STA startPauseSQ2      ; following:
+                        ;
+                        ;    startPauseSQ2 = A - $5F
+                        ;
+                        ; We know the C flag is set as we just passed through a
+                        ; BCC, so the ADC actually adds $A1, which is the same
+                        ; as subtracting $5F
+                        ;
+                        ; So this sets startPauseSQ2 to a value between 1 and
+                        ; 32, corresponding to note data values between $60 and
+                        ; $7F
 
- JMP must2
+ JMP must2              ; Jump back to must2 to move on to the next entry from
+                        ; the note data
 
 .must4
 
- CLC
+                        ; If we get here then the note data in A is less than
+                        ; $60, which denotes a sound to send to the APU, so we
+                        ; now convert the data to a frequency and send it to the
+                        ; APU to make a sound on channel SQ2
+
+ CLC                    ; Set Y = (A + tuningAll + tuningSQ2) * 2
  ADC tuningAll
  CLC
- ADC soundVar27
+ ADC tuningSQ2
  ASL A
  TAY
 
- LDA noteFrequency,Y
- STA soundVar2E
- STA sq2Lo
+ LDA noteFrequency,Y    ; Set (sq2Hi sq2Lo) the frequency for note Y
+ STA sq2LoCopy          ;
+ STA sq2Lo              ; Also save a copy of the low byte in sq2LoCopy
  LDA noteFrequency+1,Y
- STA soundVar61
+ STA sq2Hi
 
- LDX effectOnSQ2
- BNE must5
+ LDX effectOnSQ2        ; If effectOnSQ2 is non-zero then a sound effect is
+ BNE must5              ; being made on channel SQ2, so jump to must5 to skip
+                        ; writing the music data to the APU (so sound effects
+                        ; take precedence over music)
 
- LDX sq2Sweep
+ LDX sq2Sweep           ; Send sq2Sweep to the APU via SQ2_SWEEP
  STX SQ2_SWEEP
 
- LDX sq2Lo
+ LDX sq2Lo              ; Send (sq2Hi sq2Lo) to the APU via SQ2_HI and SQ2_LO
  STX SQ2_LO
  STA SQ2_HI
 
 .must5
 
- LDA #1
- STA soundVar2F
+ LDA #1                 ; Set volumeIndexSQ2 = 1
+ STA volumeIndexSQ2
 
- LDA soundVar30
- STA soundVar31
+ LDA volumeRepeatSQ2    ; Set volumeCounterSQ2 = volumeRepeatSQ2
+ STA volumeCounterSQ2
 
 .must6
 
- LDA #$FF
- STA soundVar33
+ LDA #$FF               ; Set applyVolumeSQ2 = $FF so we apply the volume
+ STA applyVolumeSQ2     ; envelope in the next iteration
 
 .must7
 
- LDA soundAddr
- STA sectionDataSQ2
- LDA soundAddr+1
- STA sectionDataSQ2+1
+ LDA soundAddr          ; Set sectionDataSQ2(1 0) = soundAddr(1 0)
+ STA sectionDataSQ2     ;
+ LDA soundAddr+1        ; This updates the pointer to the note data for the
+ STA sectionDataSQ2+1   ; channel, so the next time we can pick up where we left
+                        ; off
 
- LDA soundVar28
- STA soundVar29
+ LDA startPauseSQ2      ; Set pauseCountSQ2 = startPauseSQ2
+ STA pauseCountSQ2      ;
+                        ; So if startPauseSQ2 is non-zero (as set by note data
+                        ; the range $60 to $7F), the next startPauseSQ2
+                        ; iterations of MakeMusicOnSQ2 will do nothing
 
- RTS
+ RTS                    ; Return from the subroutine
 
 .must8
 
- LDY #0
+                        ; If we get here then bit 7 of the note data in A is
+                        ; set, so this is a command byte
 
- CMP #$FF
- BNE must10
+ LDY #0                 ; Set Y = 0, so we can use it in various commands below
 
- LDA soundVar25
- CLC
- ADC sectionListSQ2
- STA soundAddr
- LDA soundVar26
- ADC sectionListSQ2+1
- STA soundAddr+1
+ CMP #$FF               ; If A is not $FF, jump to must10 to check for the next
+ BNE must10             ; command
 
- LDA soundVar25
- ADC #2
- STA soundVar25
+                        ; If we get here then the command in A is $FF
+                        ;
+                        ; <$FF> moves to the next section in the current tune
 
- TYA
- ADC soundVar26
- STA soundVar26
+ LDA nextSectionSQ2     ; Set soundAddr(1 0) to the following:
+ CLC                    ;
+ ADC sectionListSQ2     ;   sectionListSQ2(1 0) + nextSectionSQ2(1 0)
+ STA soundAddr          ;
+ LDA nextSectionSQ2+1   ; So soundAddr(1 0) points to the address of the next
+ ADC sectionListSQ2+1   ; section in the current tune
+ STA soundAddr+1        ;
+                        ; So if we are playing tune 2 and nextSectionSQ2(1 0)
+                        ; points to the second section, then soundAddr(1 0)
+                        ; will now point to the second address in tune2Data_SQ2,
+                        ; which itself points to the note data for the second
+                        ; section at tune2Data_SQ2_1
 
- LDA (soundAddr),Y
- INY
- ORA (soundAddr),Y
- BNE must9
+ LDA nextSectionSQ2     ; Set nextSectionSQ2(1 0) = nextSectionSQ2(1 0) + 2
+ ADC #2                 ;
+ STA nextSectionSQ2     ; So nextSectionSQ2(1 0) now points to the next section,
+ TYA                    ; as each section consists of two bytes in the table at
+ ADC nextSectionSQ2+1   ; sectionListSQ2(1 0)
+ STA nextSectionSQ2+1
 
- LDA sectionListSQ2
- STA soundAddr
- LDA sectionListSQ2+1
- STA soundAddr+1
+ LDA (soundAddr),Y      ; If the address at soundAddr(1 0) is non-zero then it
+ INY                    ; contains a valid address to the section's note data,
+ ORA (soundAddr),Y      ; so jump to must9 to skip the following
+ BNE must9              ;
+                        ; This also increments the index in Y to 1
 
- LDA #2
- STA soundVar25
+                        ; If we get here then the command is trying to move to
+                        ; the next section, but that section contains value of
+                        ; $0000 in the tuneData table, so there is no next
+                        ; section and we have reached the end of the tune, so
+                        ; instead we jump back to the start of the tune
 
- LDA #0
- STA soundVar26
+ LDA sectionListSQ2     ; Set soundAddr(1 0) = sectionListSQ2(1 0)
+ STA soundAddr          ;
+ LDA sectionListSQ2+1   ; So we start again by pointing soundAddr(1 0) to the
+ STA soundAddr+1        ; first entry in the section list for channel SQ2, which
+                        ; contains the address of the first section's note data
+
+ LDA #2                 ; Set nextSectionSQ2(1 0) = 2
+ STA nextSectionSQ2     ;
+ LDA #0                 ; So the next section after we play the first section
+ STA nextSectionSQ2+1   ; will be the second section
 
 .must9
 
- LDA (soundAddr),Y
- TAX
- DEY
- LDA (soundAddr),Y
- STA soundAddr
- STX soundAddr+1
+                        ; By this point, Y has been incremented to 1
 
- JMP must2
+ LDA (soundAddr),Y      ; Set soundAddr(1 0) to the address at soundAddr(1 0)
+ TAX                    ;
+ DEY                    ; As we pointed soundAddr(1 0) to the address of the
+ LDA (soundAddr),Y      ; new section above, this fetches the first address from
+ STA soundAddr          ; the new section's address list, which points to the
+ STX soundAddr+1        ; new section's note data
+                        ;
+                        ; So soundAddr(1 0) now points to the note data for the
+                        ; new section, so we're ready to start processing notes
+                        ; and commands when we rejoin the must2 loop
+
+ JMP must2              ; Jump back to must2 to start processing data from the
+                        ; new section
 
 .must10
 
- CMP #$F6
- BNE must12
+ CMP #$F6               ; If A is not $F6, jump to must12 to check for the next
+ BNE must12             ; command
 
- LDA (soundAddr),Y
+                        ; If we get here then the command in A is $F6
+                        ;
+                        ; <$F6 $xx> sets the volume envelope number to $xx
 
- INC soundAddr
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A
 
- BNE must11
-
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE must11             ; in the note data
  INC soundAddr+1
 
 .must11
 
- STA soundVar32
+ STA volumeEnvelopeSQ2  ; Set volumeEnvelopeSQ2 to the volume envelope number
+                        ; that we just fetched
 
- JMP must2
+ JMP must2              ; Jump back to must2 to move on to the next entry from
+                        ; the note data
 
 .must12
 
- CMP #$F7
- BNE must14
+ CMP #$F7               ; If A is not $F7, jump to must14 to check for the next
+ BNE must14             ; command
 
- LDA (soundAddr),Y
+                        ; If we get here then the command in A is $F7
+                        ;
+                        ; <$F7 $xx> sets the pitch envelope number to $xx
 
- INC soundAddr
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A
 
- BNE must13
-
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE must13             ; in the note data
  INC soundAddr+1
 
 .must13
 
- STA soundVar2D
- STY soundVar2C
+ STA pitchEnvelopeSQ2   ; Set pitchEnvelopeSQ2 to the pitch envelope number that
+                        ; we just fetched
 
- JMP must2
+ STY pitchIndexSQ2      ; Set pitchIndexSQ2 = 0 to point to the start of the
+                        ; data for pitch envelope A
+
+ JMP must2              ; Jump back to must2 to move on to the next entry from
+                        ; the note data
 
 .must14
 
- CMP #$FA
- BNE must16
+ CMP #$FA               ; If A is not $FA, jump to must16 to check for the next
+ BNE must16             ; command
 
- LDA (soundAddr),Y
- STA soundVar2A
+                        ; If we get here then the command in A is $FA
+                        ;
+                        ; <$FA %ddlc0000> configures the SQ2 channel as follows:
+                        ;
+                        ;   * %dd      = duty pulse length
+                        ;
+                        ;   * %l set   = infinite play
+                        ;   * %l clear = one-shot play
+                        ;
+                        ;   * %c set   = constant volume
+                        ;   * %c clear = envelope volume
 
- INC soundAddr
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A
 
- BNE must15
+ STA dutyLoopEnvSQ2     ; Store the entry we just fetched in dutyLoopEnvSQ2, to
+                        ; configure SQ2 as follows:
+                        ;
+                        ;   * Bits 6-7    = duty pulse length
+                        ;
+                        ;   * Bit 5 set   = infinite play
+                        ;   * Bit 5 clear = one-shot play
+                        ;
+                        ;   * Bit 4 set   = constant volume
+                        ;   * Bit 4 clear = envelope volume
 
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE must15             ; in the note data
  INC soundAddr+1
 
 .must15
 
- JMP must2
+ JMP must2              ; Jump back to must2 to move on to the next entry from
+                        ; the note data
 
 .must16
 
- CMP #$F8
- BNE must17
+ CMP #$F8               ; If A is not $F8, jump to must17 to check for the next
+ BNE must17             ; command
 
- LDA #$30
- STA sq2Volume
+                        ; If we get here then the command in A is $F8
+                        ;
+                        ; <$F8> sets the volume of the SQ2 channel to zero
 
- JMP must7
+ LDA #%00110000         ; Set the volume of the SQ2 channel to zero as follows:
+ STA sq2Volume          ;
+                        ;   * Bits 6-7    = duty pulse length is 3
+                        ;   * Bit 5 set   = infinite play
+                        ;   * Bit 4 set   = constant volume
+                        ;   * Bits 0-3    = volume is 0
+
+ JMP must7              ; Jump to must7 to return from the subroutine, so we
+                        ; continue on from the next entry from the note data in
+                        ; the next iteration
 
 .must17
 
- CMP #$F9
- BNE must18
+ CMP #$F9               ; If A is not $F9, jump to must18 to check for the next
+ BNE must18             ; command
 
- JMP must6
+                        ; If we get here then the command in A is $F9
+                        ;
+                        ; <$F9> enables the volume envelope for the SQ2 channel
+
+ JMP must6              ; Jump to must6 to return from the subroutine after
+                        ; setting applyVolumeSQ2 to $FF, so we apply the volume
+                        ; envelope, and then continue on from the next entry
+                        ; from the note data in the next iteration
 
 .must18
 
- CMP #$FD
- BNE must20
+ CMP #$FD               ; If A is not $FD, jump to must20 to check for the next
+ BNE must20             ; command
 
- LDA (soundAddr),Y
+                        ; If we get here then the command in A is $FD
+                        ;
+                        ; <$F4 $xx> sets the SQ2 sweep to $xx
 
- INC soundAddr
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A
 
- BNE must19
-
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE must19             ; in the note data
  INC soundAddr+1
 
 .must19
 
- STA sq2Sweep
+ STA sq2Sweep           ; Store the entry we just fetched in sq2Sweep, which
+                        ; gets sent to the APU via SQ2_SWEEP
 
- JMP must2
+ JMP must2              ; Jump back to must2 to move on to the next entry from
+                        ; the note data
 
 .must20
 
- CMP #$FB
- BNE must22
+ CMP #$FB               ; If A is not $FB, jump to must22 to check for the next
+ BNE must22             ; command
 
- LDA (soundAddr),Y
+                        ; If we get here then the command in A is $FB
+                        ;
+                        ; <$FB $xx> sets the tuning for all channels to $xx
 
- INC soundAddr
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A
 
- BNE must21
-
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE must21             ; in the note data
  INC soundAddr+1
 
 .must21
 
- STA tuningAll
+ STA tuningAll          ; Store the entry we just fetched in tuningAll, which
+                        ; sets the tuning for the SQ2, SQ2 and TRI channels (so
+                        ; this value gets added to every note on those channels)
 
- JMP must2
+ JMP must2              ; Jump back to must2 to move on to the next entry from
+                        ; the note data
 
 .must22
 
- CMP #$FC
- BNE must24
+ CMP #$FC               ; If A is not $FC, jump to must24 to check for the next
+ BNE must24             ; command
 
- LDA (soundAddr),Y
+                        ; If we get here then the command in A is $FC
+                        ;
+                        ; <$FC $xx> sets the tuning for the SQ2 channel to $xx
 
- INC soundAddr
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A
 
- BNE must23
-
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE must23             ; in the note data
  INC soundAddr+1
 
 .must23
 
- STA soundVar27
+ STA tuningSQ2          ; Store the entry we just fetched in tuningSQ2, which
+                        ; sets the tuning for the SQ2 channel (so this value
+                        ; gets added to every note on those channels)
 
- JMP must2
+ JMP must2              ; Jump back to must2 to move on to the next entry from
+                        ; the note data
 
 .must24
 
- CMP #$F5
- BNE must25
+ CMP #$F5               ; If A is not $F5, jump to must25 to check for the next
+ BNE must25             ; command
 
- LDA (soundAddr),Y
- TAX
- STA sectionListSQ2
- INY
- LDA (soundAddr),Y
+                        ; If we get here then the command in A is $F5
+                        ;
+                        ; <$F5 $xx &yy> changes tune to the tune data at &yyxx
+                        ;
+                        ; It does this by setting sectionListSQ2(1 0) to &yyxx
+                        ; and soundAddr(1 0) to the address stored in &yyxx
+                        ;
+                        ; To see why this works, consider switching to tune 2,
+                        ; for which we would use this command:
+                        ;
+                        ;   <$F5 LO(tune2Data_SQ2) LO(tune2Data_SQ2)>
+                        ;
+                        ; This sets:
+                        ;
+                        ;   sectionListSQ2(1 0) = tune2Data_SQ2
+                        ;
+                        ; so from now on we fetch the addresses for each section
+                        ; of the tune from the table at tune2Data_SQ2
+                        ;
+                        ; It also sets soundAddr(1 0) to the address in the
+                        ; first two bytes of tune2Data_SQ2, to give:
+                        ;
+                        ;   soundAddr(1 0) = tune2Data_SQ2_0
+                        ;
+                        ; So from this point on, note data is fetched from the
+                        ; table at tune2Data_SQ2_0, which contains notes and
+                        ; commands for the first section of tune 2
+
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A
+
+ TAX                    ; Set sectionListSQ2(1 0) = &yyxx
+ STA sectionListSQ2     ;
+ INY                    ; Also set soundAddr(1 0) to &yyxx and increment the
+ LDA (soundAddr),Y      ; index in Y to 1, both of which we use below
  STX soundAddr
  STA soundAddr+1
  STA sectionListSQ2+1
 
- LDA #2
- STA soundVar25
+ LDA #2                 ; Set nextSectionSQ2(1 0) = 2
+ STA nextSectionSQ2     ;
+ DEY                    ; So the next section after we play the first section
+ STY nextSectionSQ2+1   ; of the new tune will be the second section
+                        ;
+                        ; Also decrement the index in Y back to 0
 
- DEY
- STY soundVar26
-
- LDA (soundAddr),Y
+ LDA (soundAddr),Y      ; Set soundAddr(1 0) to the address stored at &yyxx
  TAX
  INY
  LDA (soundAddr),Y
  STA soundAddr+1
  STX soundAddr
 
- JMP must2
+ JMP must2              ; Jump back to must2 to move on to the next entry from
+                        ; the note data
 
 .must25
 
- CMP #$F4
- BNE must27
+ CMP #$F4               ; If A is not $F4, jump to must27 to check for the next
+ BNE must27             ; command
 
- LDA (soundAddr),Y
+                        ; If we get here then the command in A is $F4
+                        ;
+                        ; <$F4 $xx> sets the playback speed to $xx
 
- INC soundAddr
+ LDA (soundAddr),Y      ; Fetch the next entry in the note data into A, which
+                        ; contains the new speed
 
- BNE must26
-
+ INC soundAddr          ; Increment soundAddr(1 0) to point to the next entry
+ BNE must26             ; in the note data
  INC soundAddr+1
 
 .must26
 
- STA tuneSpeed
- STA tuneSpeedCopy
+ STA tuneSpeed          ; Set tuneSpeed and tuneSpeedCopy to A, to change the
+ STA tuneSpeedCopy      ; speed of the current tune to the specified speed
 
- JMP must2
+ JMP must2              ; Jump back to must2 to move on to the next entry from
+                        ; the note data
 
 .must27
 
- CMP #$FE
- BNE must28
+ CMP #$FE               ; If A is not $FE, jump to must28 to check for the next
+ BNE must28             ; command
 
- STY playMusic
+                        ; If we get here then the command in A is $FE
+                        ;
+                        ; <$FE> stops the music and disables sound
 
- PLA
- PLA
+ STY playMusic          ; Set playMusic = 0 to stop playing the current tune, so
+                        ; only a new call to ChooseMusic will start the music
+                        ; again
 
- JMP StopSoundsS
+ PLA                    ; Pull the return address from the stack, so the RTS
+ PLA                    ; instruction at the tne of StopSounds actually returns
+                        ; from the subroutine that called MakeMusic, so we stop
+                        ; the music and return to the MakeSounds routine (which
+                        ; is the only routine that calls MakeMusic)
+
+ JMP StopSoundsS        ; Jump to StopSounds via StopSoundsS to stop the music
+                        ; and return to the MakeSounds routine
 
 .must28
 
- BEQ must28
+ BEQ must28             ; If we get here then bit 7 of A was set but the value
+                        ; didn't match any of the checks above, so this
+                        ; instruction does nothing and we fall through into
+                        ; ApplyEnvelopeSQ2, ignoring the data in A
+                        ;
+                        ; I'm not sure why the instruction here is an infinite
+                        ; loop, but luckily it isn't triggered as A is never
+                        ; zero at this point
 
 ; ******************************************************************************
 ;
@@ -1637,68 +1806,101 @@ ENDIF
 
 .ApplyEnvelopeSQ2
 
- LDA soundVar33
- BEQ muss2
+ LDA applyVolumeSQ2     ; If applyVolumeSQ2 = 0 then we do not apply the volume
+ BEQ muss2              ; envelope, so jump to muss2 to move on to the pitch
+                        ; envelope
 
- LDX soundVar32
- LDA volumeEnvelopeLo,X
- STA soundAddr
- LDA volumeEnvelopeHi,X
+ LDX volumeEnvelopeSQ2  ; Set X to the number of the volume envelope to apply
+
+ LDA volumeEnvelopeLo,X ; Set soundAddr(1 0) to the address of the data for
+ STA soundAddr          ; volume envelope X from the (i.e. volumeEnvelope0 for
+ LDA volumeEnvelopeHi,X ; envelope 0, volumeEnvelope1 for envelope 1, and so on)
  STA soundAddr+1
 
- LDY #0
- LDA (soundAddr),Y
- STA soundVar30
+ LDY #0                 ; Set volumeRepeatSQ2 to the first byte of envelope
+ LDA (soundAddr),Y      ; data, which contains the number of times to repeat
+ STA volumeRepeatSQ2    ; each entry in the envelope
 
- LDY soundVar2F
- LDA (soundAddr),Y
+ LDY volumeIndexSQ2     ; Set A to the byte of envelope data at the index in
+ LDA (soundAddr),Y      ; volumeIndexSQ2, which we increment to move through the
+                        ; data one byte at a time
 
- BMI muss1
+ BMI muss1              ; If bit 7 of A is set then we just fetched the last
+                        ; byte of envelope data, so jump to muss1 to skip the
+                        ; following
 
- DEC soundVar31
+ DEC volumeCounterSQ2   ; Decrement the counter for this envelope byte
 
- BPL muss1
+ BPL muss1              ; If the counter is still positive, then we haven't yet
+                        ; done all the repeats for this envelope byte, so jump
+                        ; to muss1 to skip the following
 
- LDX soundVar30
- STX soundVar31
+                        ; Otherwise this is the last repeat for this byte of
+                        ; envelope data, so now we reset the counter and move
+                        ; on to the next byte
 
- INC soundVar2F
+ LDX volumeRepeatSQ2    ; Reset the repeat counter for this envelope to the
+ STX volumeCounterSQ2   ; first byte of envelope data that we fetched above,
+                        ; which contains the number of times to repeat each
+                        ; entry in the envelope
+
+ INC volumeIndexSQ2     ; Increment the index into the volume envelope so we
+                        ; move on to the next byte of data in the next iteration
 
 .muss1
 
- AND #$0F
- ORA soundVar2A
- STA sq2Volume
+ AND #%00001111         ; Extract the low nibble from the envelope data, which
+                        ; contains the volume level
+
+ ORA dutyLoopEnvSQ2     ; Set the high nibble of A to dutyLoopEnvSQ2, which gets
+                        ; set via command byte $FA and which contains the duty,
+                        ; loop and NES envelope settings to send to the APU
+
+ STA sq2Volume          ; Set sq2Volume to the resulting volume byte so it gets
+                        ; sent to the APU via SQ2_VOL
 
 .muss2
 
- LDX soundVar2D
- LDA pitchEnvelopeLo,X
- STA soundAddr
- LDA pitchEnvelopeHi,X
+                        ; We now move on to the pitch envelope
+
+ LDX pitchEnvelopeSQ2   ; Set X to the number of the pitch envelope to apply
+
+ LDA pitchEnvelopeLo,X  ; Set soundAddr(1 0) to the address of the data for
+ STA soundAddr          ; pitch envelope X from the (i.e. pitchEnvelope0 for
+ LDA pitchEnvelopeHi,X  ; envelope 0, pitchEnvelope1 for envelope 1, and so on)
  STA soundAddr+1
 
- LDY soundVar2C
- LDA (soundAddr),Y
+ LDY pitchIndexSQ2      ; Set A to the byte of envelope data at the index in
+ LDA (soundAddr),Y      ; pitchIndexSQ2, which we increment to move through the
+                        ; data one byte at a time
 
- CMP #$80
- BNE muss3
+ CMP #$80               ; If A is not $80 then we just fetched a valid byte of
+ BNE muss3              ; envelope data, so jump to muss3 to process it
 
- LDY #0
- STY soundVar2C
+                        ; If we get here then we just fetched a $80 from the
+                        ; pitch envelope, which indicates the end of the list of
+                        ; envelope values, so we now loop around to the start of
+                        ; the list, so it keeps repeating
 
- LDA (soundAddr),Y
+ LDY #0                 ; Set pitchIndexSQ2 = 0 to point to the start of the
+ STY pitchIndexSQ2      ; data for pitch envelope X
+
+ LDA (soundAddr),Y      ; Set A to the byte of envelope data at index 0, so we
+                        ; can fall through into muss3 to process it
 
 .muss3
 
- INC soundVar2C
+ INC pitchIndexSQ2      ; Increment the index into the pitch envelope so we
+                        ; move on to the next byte of data in the next iteration
 
- CLC
- ADC soundVar2E
+ CLC                    ; Set sq2Lo = sq2LoCopy + A
+ ADC sq2LoCopy          ;
+ STA sq2Lo              ; So this alters the low byte of the pitch that we send
+                        ; to the APU via SQ2_LO, altering it by the amount in
+                        ; the byte of data we just fetched from the pitch
+                        ; envelope
 
- STA sq2Lo
-
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -2983,7 +3185,7 @@ ENDIF
  LDA sq2Lo
  STA SQ2_LO
 
- LDA soundVar61
+ LDA sq2Hi
  STA SQ2_HI
 
  STX effectOnSQ2
@@ -7953,7 +8155,7 @@ ENDIF
  ASL A
  ASL A
 
- ORA Y1TB,X             ; Stick the result into the top nibble of Y1TB+X, so
+ ORA Y1TB,X             ; Stick the result into the high nibble of Y1TB+X, so
  STA Y1TB,X             ; the Y1TB coordinate contains both y-coordinates, with
                         ; Y1 in the low nibble and Y2 in the high nibble
 
@@ -7984,7 +8186,7 @@ ENDIF
 ; Returns:
 ;
 ;   INF(1 0)            The content of the scroll text to display
-; 
+;
 ; ******************************************************************************
 
 .CalculateGridLines
@@ -8451,7 +8653,7 @@ ENDIF
                         ; sups3 to move on to the next entry
 
  CLC                    ; Otherwise this is a valid y-coordinate, so add W2Y to
- ADC #(W2Y<<4 + W2Y)    ; the top nibble and W2Y to the bottom nibble, so we add
+ ADC #(W2Y<<4 + W2Y)    ; the high nibble and W2Y to the low nibble, so we add
                         ; W2Y to both of the y-coordinates stored in this entry
 
  BCC sups2              ; If the addition overflowed, set A = 0 to remove this
@@ -8486,7 +8688,7 @@ ENDIF
                         ; sups6 to move on to the next entry
 
  CLC                    ; Otherwise this is a valid y-coordinate, so add W2Y to
- ADC #(W2Y<<4 + W2Y)    ; the top nibble and W2Y to the bottom nibble, so we add
+ ADC #(W2Y<<4 + W2Y)    ; the high nibble and W2Y to the low nibble, so we add
                         ; W2Y to both of the y-coordinates stored in this entry
 
  BCC sups5              ; If the addition overflowed, set A = 0 to remove this
@@ -8521,7 +8723,7 @@ ENDIF
                         ; sups9 to move on to the next entry
 
  CLC                    ; Otherwise this is a valid y-coordinate, so add W2Y to
- ADC #(W2Y<<4 + W2Y)    ; the top nibble and W2Y to the bottom nibble, so we add
+ ADC #(W2Y<<4 + W2Y)    ; the high nibble and W2Y to the low nibble, so we add
                         ; W2Y to both of the y-coordinates stored in this entry
 
  BCC sups8              ; If the addition overflowed, set A = 0 to remove this
@@ -8556,7 +8758,7 @@ ENDIF
                         ; sups12 to move on to the next entry
 
  CLC                    ; Otherwise this is a valid y-coordinate, so add W2Y to
- ADC #(W2Y<<4 + W2Y)    ; the top nibble and W2Y to the bottom nibble, so we add
+ ADC #(W2Y<<4 + W2Y)    ; the high nibble and W2Y to the low nibble, so we add
                         ; W2Y to both of the y-coordinates stored in this entry
 
  BCC sups11             ; If the addition overflowed, set A = 0 to remove this
@@ -8591,7 +8793,7 @@ ENDIF
                         ; sups15 to move on to the next entry
 
  CLC                    ; Otherwise this is a valid y-coordinate, so add W2Y to
- ADC #(W2Y<<4 + W2Y)    ; the top nibble and W2Y to the bottom nibble, so we add
+ ADC #(W2Y<<4 + W2Y)    ; the high nibble and W2Y to the low nibble, so we add
                         ; W2Y to both of the y-coordinates stored in this entry
 
  BCC sups14             ; If the addition overflowed, set A = 0 to remove this
@@ -8625,7 +8827,7 @@ ENDIF
                         ; sups18 to move on to the next entry
 
  CLC                    ; Otherwise this is a valid y-coordinate, so add W2Y to
- ADC #(W2Y<<4 + W2Y)    ; the top nibble and W2Y to the bottom nibble, so we add
+ ADC #(W2Y<<4 + W2Y)    ; the high nibble and W2Y to the low nibble, so we add
                         ; W2Y to both of the y-coordinates stored in this entry
 
  BCC sups17             ; If the addition overflowed, set A = 0 to remove this
@@ -8659,7 +8861,7 @@ ENDIF
                         ; sups21 to move on to the next entry
 
  CLC                    ; Otherwise this is a valid y-coordinate, so add W2Y to
- ADC #(W2Y<<4 + W2Y)    ; the top nibble and W2Y to the bottom nibble, so we add
+ ADC #(W2Y<<4 + W2Y)    ; the high nibble and W2Y to the low nibble, so we add
                         ; W2Y to both of the y-coordinates stored in this entry
 
  BCC sups20             ; If the addition overflowed, set A = 0 to remove this
@@ -8694,7 +8896,7 @@ ENDIF
                         ; sups24 to move on to the next entry
 
  CLC                    ; Otherwise this is a valid y-coordinate, so add W2Y to
- ADC #(W2Y<<4 + W2Y)    ; the top nibble and W2Y to the bottom nibble, so we add
+ ADC #(W2Y<<4 + W2Y)    ; the high nibble and W2Y to the low nibble, so we add
                         ; W2Y to both of the y-coordinates stored in this entry
 
  BCC sups23             ; If the addition overflowed, set A = 0 to remove this
@@ -8848,7 +9050,7 @@ ENDIF
                         ; subroutine
 
  LDA Y1TB,Y             ; Set A to the y-coordinate byte that contais the start
-                        ; and end y-coordinates in the bottom and top nibbles
+                        ; and end y-coordinates in the bottom and high nibbles
                         ; respectively
 
  BEQ drfr1              ; If both y-coordinates are zero then this entry doesn't
@@ -8871,7 +9073,7 @@ ENDIF
                         ; (where Y1TB contains the Y1 and Y2 y-coordinates, one
                         ; in each nibble)
 
- AND #$0F               ; Set Y1 to the bottom nibble of A, which contains the
+ AND #$0F               ; Set Y1 to the low nibble of A, which contains the
  STA Y1                 ; y-coordinate of the start of the line, i.e. Y1
 
  TAX                    ; Set X to the y-coordinate of the start of the line, Y1
@@ -8931,8 +9133,8 @@ ENDIF
  LDA Y1TB,Y             ; Set A to the combined y-coordinates of the start and
                         ; end of the line, Y1 and Y2, with one in each nibble
 
- LSR A                  ; Set the high byte of XX12(1 0) to the top nibble of A,
- LSR A                  ; which contains the y-coordinate of the end of the
+ LSR A                  ; Set the high byte of XX12(1 0) to the high nibble of
+ LSR A                  ; A, which contains the y-coordinate of the end of the
  LSR A                  ; line, i.e. Y2
  LSR A
  STA XX12+1
@@ -9245,13 +9447,13 @@ ENDIF
 
 .creditsText1Lo
 
- EQUB LO(creditsText1)   ; English
+ EQUB LO(creditsText1)  ; English
 
- EQUB LO(creditsText1)   ; German
+ EQUB LO(creditsText1)  ; German
 
- EQUB LO(creditsText1)   ; French
+ EQUB LO(creditsText1)  ; French
 
- EQUB LO(creditsText1)   ; There is no fourth language, so this byte is ignored
+ EQUB LO(creditsText1)  ; There is no fourth language, so this byte is ignored
 
 ; ******************************************************************************
 ;
@@ -9265,13 +9467,13 @@ ENDIF
 
 .creditsText1Hi
 
- EQUB HI(creditsText1)   ; English
+ EQUB HI(creditsText1)  ; English
 
- EQUB HI(creditsText1)   ; German
+ EQUB HI(creditsText1)  ; German
 
- EQUB HI(creditsText1)   ; French
+ EQUB HI(creditsText1)  ; French
 
- EQUB HI(creditsText1)    ; There is no fourth language, so this byte is ignored
+ EQUB HI(creditsText1)  ; There is no fourth language, so this byte is ignored
 
 ; ******************************************************************************
 ;
@@ -9285,13 +9487,13 @@ ENDIF
 
 .creditsText2Lo
 
- EQUB LO(creditsText2)   ; English
+ EQUB LO(creditsText2)  ; English
 
- EQUB LO(creditsText2)   ; German
+ EQUB LO(creditsText2)  ; German
 
- EQUB LO(creditsText2)   ; French
+ EQUB LO(creditsText2)  ; French
 
- EQUB LO(creditsText2)   ; There is no fourth language, so this byte is ignored
+ EQUB LO(creditsText2)  ; There is no fourth language, so this byte is ignored
 
 ; ******************************************************************************
 ;
@@ -9305,13 +9507,13 @@ ENDIF
 
 .creditsText2Hi
 
- EQUB HI(creditsText2)   ; English
+ EQUB HI(creditsText2)  ; English
 
- EQUB HI(creditsText2)   ; German
+ EQUB HI(creditsText2)  ; German
 
- EQUB HI(creditsText2)   ; French
+ EQUB HI(creditsText2)  ; French
 
- EQUB HI(creditsText2)    ; There is no fourth language, so this byte is ignored
+ EQUB HI(creditsText2)  ; There is no fourth language, so this byte is ignored
 
 ; ******************************************************************************
 ;
@@ -9325,13 +9527,13 @@ ENDIF
 
 .creditsText3Lo
 
- EQUB LO(creditsText3)   ; English
+ EQUB LO(creditsText3)  ; English
 
- EQUB LO(creditsText3)   ; German
+ EQUB LO(creditsText3)  ; German
 
- EQUB LO(creditsText3)   ; French
+ EQUB LO(creditsText3)  ; French
 
- EQUB LO(creditsText3)   ; There is no fourth language, so this byte is ignored
+ EQUB LO(creditsText3)  ; There is no fourth language, so this byte is ignored
 
 ; ******************************************************************************
 ;
@@ -9345,13 +9547,13 @@ ENDIF
 
 .creditsText3Hi
 
- EQUB HI(creditsText3)   ; English
+ EQUB HI(creditsText3)  ; English
 
- EQUB HI(creditsText3)   ; German
+ EQUB HI(creditsText3)  ; German
 
- EQUB HI(creditsText3)   ; French
+ EQUB HI(creditsText3)  ; French
 
- EQUB HI(creditsText3)    ; There is no fourth language, so this byte is ignored
+ EQUB HI(creditsText3)  ; There is no fourth language, so this byte is ignored
 
 ; ******************************************************************************
 ;
@@ -11475,9 +11677,9 @@ ENDIF
 .ctob8
 
  LDA NAME,X             ; Copy the X-th byte of the current commander in NAME
- STA currentSaveSlot,X  ; to the X-th byte of BUF
+ STA currentSlot,X      ; to the X-th byte of BUF
  STA BUF,X              ;
-                        ; This also copies the file to currentSaveSlot, but this
+                        ; This also copies the file to currentSlot, but this
                         ; isn't used anywhere
 
  DEX                    ; Decrement the byte counter
@@ -11733,9 +11935,9 @@ ENDIF
 .scom3
 
  LDA BUF,X              ; Copy the X-th byte of BUF to the X-th byte of the
- STA currentSaveSlot,X  ; current commander in NAME
+ STA currentSlot,X      ; current commander in NAME
  STA NAME,X             ;
-                        ; This also copies the file to currentSaveSlot, but this
+                        ; This also copies the file to currentSlot, but this
                         ; isn't used anywhere
 
  DEX                    ; Decrement the byte counter
@@ -11921,17 +12123,17 @@ ENDIF
 .ResetCommander
 
  JSR JAMESON            ; Copy the default "JAMESON" commander to the buffer at
-                        ; currentSaveSlot
+                        ; currentSlot
 
  LDX #79                ; We now want to copy 78 bytes from the buffer at
-                        ; currentSaveSlot to the current commander at NAME, so
+                        ; currentSlot to the current commander at NAME, so
                         ; set a byte counter in X (which counts down from 79 to
                         ; 1 as we copy bytes 78 to 0)
 
 .resc1
 
- LDA currentSaveSlot-1,X    ; Copy byte X-1 from currentSaveSlot to byte X-1 of
- STA NAME-1,X               ; NAME
+ LDA currentSlot-1,X    ; Copy byte X-1 from currentSlot to byte X-1 of NAME
+ STA NAME-1,X
 
  DEX                    ; Decrement the byte counter
 
@@ -11944,21 +12146,20 @@ ENDIF
 ;       Name: JAMESON
 ;       Type: Subroutine
 ;   Category: Save and load
-;    Summary: Copy the default "JAMESON" commander to the buffer at
-;             currentSaveSlot
+;    Summary: Copy the default "JAMESON" commander to the buffer at currentSlot
 ;
 ; ******************************************************************************
 
 .JAMESON
 
  LDY #94                ; We want to copy 94 bytes from the default commander
-                        ; at NA2% to the buffer at currentSaveSlot, so set a
-                        ; byte counter in Y
+                        ; at NA2% to the buffer at currentSlot, so set a byte
+                        ; counter in Y
 
 .jame1
 
  LDA NA2%,Y             ; Copy the Y-th byte of NA2% to the Y-th byte of
- STA currentSaveSlot,Y  ; currentSaveSlot
+ STA currentSlot,Y      ; currentSlot
 
  DEY                    ; Decrement the byte counter
 
