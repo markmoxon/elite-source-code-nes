@@ -311,7 +311,7 @@ ENDIF
  DEY                    ; Decrement the tune number in Y
 
  BMI cmus2              ; If the result is negative then A contains the result
-                        ; of Y * 9, so jump tp cmus2 
+                        ; of Y * 9, so jump tp cmus2
 
  ADC #9                 ; Set A = A * 9
 
@@ -2585,15 +2585,15 @@ ENDIF
  STA soundAddr+1        ;
                         ; So if we are playing tune 2 and nextSectionNOISE(1 0)
                         ; points to the second section, then soundAddr(1 0)
-                        ; will now point to the second address in tune2Data_NOISE,
-                        ; which itself points to the note data for the second
-                        ; section at tune2Data_NOISE_1
+                        ; will now point to the second address in
+                        ; tune2Data_NOISE, which itself points to the note data
+                        ; for the second section at tune2Data_NOISE_1
 
  LDA nextSectionNOISE   ; Set nextSectionNOISE(1 0) = nextSectionNOISE(1 0) + 2
  ADC #2                 ;
- STA nextSectionNOISE   ; So nextSectionNOISE(1 0) now points to the next section,
- TYA                    ; as each section consists of two bytes in the table at
- ADC nextSectionNOISE+1 ; sectionListNOISE(1 0)
+ STA nextSectionNOISE   ; So nextSectionNOISE(1 0) now points to the next
+ TYA                    ; section, as each section consists of two bytes in the
+ ADC nextSectionNOISE+1 ; table at sectionListNOISE(1 0)
  STA nextSectionNOISE+1
 
  LDA (soundAddr),Y      ; If the address at soundAddr(1 0) is non-zero then it
@@ -2611,8 +2611,9 @@ ENDIF
  LDA sectionListNOISE   ; Set soundAddr(1 0) = sectionListNOISE(1 0)
  STA soundAddr          ;
  LDA sectionListNOISE+1 ; So we start again by pointing soundAddr(1 0) to the
- STA soundAddr+1        ; first entry in the section list for channel NOISE, which
-                        ; contains the address of the first section's note data
+ STA soundAddr+1        ; first entry in the section list for channel NOISE,
+                        ; which contains the address of the first section's note
+                        ; data
 
  LDA #2                 ; Set nextSectionNOISE(1 0) = 2
  STA nextSectionNOISE   ;
@@ -2677,8 +2678,8 @@ ENDIF
 
 .musf12
 
- STA pitchEnvelopeNOISE ; Set pitchEnvelopeNOISE to the pitch envelope number that
-                        ; we just fetched
+ STA pitchEnvelopeNOISE ; Set pitchEnvelopeNOISE to the pitch envelope number
+                        ; that we just fetched
 
  STY pitchIndexNOISE    ; Set pitchIndexNOISE = 0 to point to the start of the
                         ; data for pitch envelope A
@@ -2695,17 +2696,18 @@ ENDIF
                         ;
                         ; <$F8> sets the volume of the NOISE channel to zero
 
- LDA #%00110000         ; Set the volume of the NOISE channel to zero as follows:
- STA noiseVolume        ;
+ LDA #%00110000         ; Set the volume of the NOISE channel to zero as
+ STA noiseVolume        ; follows:
+                        ;
                         ;   * Bits 6-7    = duty pulse length is 3
                         ;   * Bit 5 set   = infinite play
                         ;   * Bit 4 set   = constant volume
                         ;   * Bits 0-3    = volume is 0
 
  JMP musf6              ; Jump to musf6 to return from the subroutine after
-                        ; setting applyVolumeNOISE to $FF, so we apply the volume
-                        ; envelope, and then continue on from the next entry
-                        ; from the note data in the next iteration
+                        ; setting applyVolumeNOISE to $FF, so we apply the
+                        ; volume envelope, and then continue on from the next
+                        ; entry from the note data in the next iteration
 
 .musf14
 
@@ -2714,12 +2716,13 @@ ENDIF
 
                         ; If we get here then the command in A is $F9
                         ;
-                        ; <$F9> enables the volume envelope for the NOISE channel
+                        ; <$F9> enables the volume envelope for the NOISE
+                        ; channel
 
  JMP musf6              ; Jump to musf6 to return from the subroutine after
-                        ; setting applyVolumeNOISE to $FF, so we apply the volume
-                        ; envelope, and then continue on from the next entry
-                        ; from the note data in the next iteration
+                        ; setting applyVolumeNOISE to $FF, so we apply the
+                        ; volume envelope, and then continue on from the next
+                        ; entry from the note data in the next iteration
 
 .musf15
 
@@ -2853,7 +2856,8 @@ ENDIF
  BEQ musg2              ; volume envelope, so jump to musg2 to move on to the
                         ; pitch envelope
 
- LDX volumeEnvelopeNOISE    ; Set X to the number of the volume envelope to apply
+ LDX volumeEnvelopeNOISE    ; Set X to the number of the volume envelope to
+                            ; apply
 
  LDA volumeEnvelopeLo,X ; Set soundAddr(1 0) to the address of the data for
  STA soundAddr          ; volume envelope X from the (i.e. volumeEnvelope0 for
@@ -2904,8 +2908,8 @@ ENDIF
                         ;
                         ; Bits 6 and 7 are not used in the NOISE_VOL register
 
- STA noiseVolume        ; Set noiseVolume to the resulting volume byte so it gets
-                        ; sent to the APU via NOISE_VOL
+ STA noiseVolume        ; Set noiseVolume to the resulting volume byte so it
+                        ; gets sent to the APU via NOISE_VOL
 
 .musg2
 
@@ -2919,8 +2923,8 @@ ENDIF
  STA soundAddr+1
 
  LDY pitchIndexNOISE    ; Set A to the byte of envelope data at the index in
- LDA (soundAddr),Y      ; pitchIndexNOISE, which we increment to move through the
-                        ; data one byte at a time
+ LDA (soundAddr),Y      ; pitchIndexNOISE, which we increment to move through
+                        ; the data one byte at a time
 
  CMP #$80               ; If A is not $80 then we just fetched a valid byte of
  BNE musg3              ; envelope data, so jump to musg3 to process it
@@ -3080,12 +3084,15 @@ ENDIF
 
  LDA soundData,Y        ; Set soundAddr(1 0) to the address for this sound
  STA soundAddr          ; effect from the soundData table, so soundAddr(1 0)
- LDA soundData+1,Y      ; points to soundData0 for sound effect 0, soundData1
- STA soundAddr+1        ; for sound effect 1, and so on
+ LDA soundData+1,Y      ; points to soundData0 for the sound data for sound
+ STA soundAddr+1        ; effect 0, or to soundData1 for the sound data for
+                        ; sound effect 1, and so on
 
- LDY #13                ; There are 14 bytes of sound data for each sound effect
-                        ; that we now copy to soundByteSQ1, so set a byte counter
-                        ; in Y
+                        ; There are 14 bytes of sound data for each sound effect
+                        ; that we now copy to soundByteSQ1, so we can do things
+                        ; like update the counters as we make the sound effect
+
+ LDY #13                ; Set a byte counter in Y for copying all 14 bytes
 
 .mefz1
 
@@ -3100,44 +3107,72 @@ ENDIF
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDA soundByteSQ1+11    ; Set soundVolCountSQ1 = soundByteSQ1+11
- STA soundVolCountSQ1
+ STA soundVolCountSQ1   ;
+                        ; This initialises the counter in soundVolCountSQ1
+                        ; with the value of byte #11, so it can be used to
+                        ; control how often we apply the volume envelope to the
+                        ; sound effect on channel SQ1
 
- LDA soundByteSQ1+13    ; Set soundPitEnvelSQ1 = soundByteSQ1+13
- STA soundPitEnvelSQ1
+ LDA soundByteSQ1+13    ; Set soundPitchEnvSQ1 = soundByteSQ1+13
+ STA soundPitchEnvSQ1   ;
+                        ; This initialises the counter in soundPitchEnvSQ1
+                        ; with the value of byte #13, so it can be used to
+                        ; control how often we apply the pitch envelope to the
+                        ; sound effect on channel SQ1
 
  LDA soundByteSQ1+1     ; Set soundPitCountSQ1 = soundByteSQ1+1
- STA soundPitCountSQ1
+ STA soundPitCountSQ1   ;
+                        ; This initialises the counter in soundPitCountSQ1
+                        ; with the value of byte #1, so it can be used to
+                        ; control how often we send pitch data to the APU for
+                        ; the sound effect on channel SQ1
 
  LDA soundByteSQ1+10    ; Set Y = soundByteSQ1+10 * 2
  ASL A                  ;
  TAY                    ; So we can use Y as an index into the soundVolume
-                        ; table, which contains addresses of two bytes each
+                        ; table to fetch byte #10, as the table contains
+                        ; addresses of two bytes each
 
- LDA soundVolume,Y      ; Set volumeSQ1(1 0) to the address of the volume
- STA volumeSQ1          ; envelope for this sound effect, as specified in
+ LDA soundVolume,Y      ; Set soundVolumeSQ1(1 0) to the address of the volume
+ STA soundVolumeSQ1     ; envelope for this sound effect, as specified in
  STA soundAddr          ; byte #10 of the sound effect's data
  LDA soundVolume+1,Y    ;
- STA volumeSQ1+1        ; Also set soundAddr(1 0) to the same address
+ STA soundVolumeSQ1+1   ; This also sets soundAddr(1 0) to the same address
  STA soundAddr+1
 
- LDY #0                 ; Set Y = 0 to use as an index below
+ LDY #0                 ; Set Y = 0 so we can use indirect addressing below (we
+                        ; do not change the value of Y, this is just so we can
+                        ; implement the non-existent LDA (soundAddr) instruction
+                        ; by using LDA (soundAddr),Y instead)
 
- STY soundVolIndexSQ1   ; Set soundVolIndexSQ1 = 0, so we start processsing the
+ STY soundVolIndexSQ1   ; Set soundVolIndexSQ1 = 0, so we start processing the
                         ; volume envelope from the first byte
 
  LDA (soundAddr),Y      ; Take the first byte from the volume envelope for this
  ORA soundByteSQ1+6     ; sound effect, OR it with the sound effect's byte #6,
- STA SQ1_VOL            ; and send the result to the APU via SQ1_VOL ???
+ STA SQ1_VOL            ; and send the result to the APU via SQ1_VOL
+                        ;
+                        ; Data bytes in the volume envelope data only use the
+                        ; low nibble (the high nibble is only used to mark the
+                        ; end of the data), and the sound effect's byte #6 only
+                        ; uses the high nibble, so this sets the low nibble of
+                        ; the APU byte to the volume level from the data, and
+                        ; the high nibble of the APU byte to the configuration
+                        ; in byte #6 (which sets the duty pulse, looping and
+                        ; constant flags for the volume)
 
- LDA #0                 ; Send 0 to the APU via SQ1_SWEEP ???
- STA SQ1_SWEEP
+ LDA #0                 ; Send 0 to the APU via SQ1_SWEEP to disable the sweep
+ STA SQ1_SWEEP          ; unit and stop the pitch from changing
 
- LDA soundByteSQ1+2     ; Set (sq1SoundHi sq1SoundLo) to the 16-bit value in
- STA sq1SoundLo         ; bytes #2 and #3 of the sound data, and send it to the
- STA SQ1_LO             ; APU via (SQ1_HI SQ1_LO)
- LDA soundByteSQ1+2+1
- STA sq1SoundHi
- STA SQ1_HI
+ LDA soundByteSQ1+2     ; Set (soundHiSQ1 soundLoSQ1) to the 16-bit value in
+ STA soundLoSQ1         ; bytes #2 and #3 of the sound data, which at this point
+ STA SQ1_LO             ; contains the first pitch value to send to the APU via
+ LDA soundByteSQ1+2+1   ; (SQ1_HI SQ1_LO)
+ STA soundHiSQ1         ;
+ STA SQ1_HI             ; We will be using these bytes to store the pitch bytes
+                        ; to send to the APU as we keep making the sound effect,
+                        ; so this just kicks off the process with the initial
+                        ; pitch value
 
  INC effectOnSQ1        ; Increment effectOnSQ1 to 1 to denote that a sound
                         ; effect is now being generated on the SQ1 channel, so
@@ -3391,8 +3426,8 @@ ENDIF
 .mscz1
 
  LDA soundByteSQ1+0     ; If the remaining number of iterations for this sound
- BNE mscz3              ; effect in byte #0 is non-zero, jump to mscz3 to keep
-                        ; making the sound
+ BNE mscz3              ; effect in sound byte #0 is non-zero, jump to mscz3 to
+                        ; keep making the sound
 
  LDX soundByteSQ1+12    ; If byte #12 of the sound effect data is non-zero, then
  BNE mscz3              ; this sound effect keeps looping, so jump to mscz3 to
@@ -3403,23 +3438,30 @@ ENDIF
                         ; subroutine
 
                         ; If we get here then we have finished making the sound
-                        ; effect, so we now send the final values to the APU and
-                        ; maek this sound channel as clear
+                        ; effect, so we now send the volume and pitch values for
+                        ; the music to the APU, so if there is any music playing
+                        ; it will pick up again, and we mark this sound channel
+                        ; as clear of sound effects
 
- LDA sq1Volume          ; Send sq1Volume to the APU via SQ1_VOL
- STA SQ1_VOL
+ LDA sq1Volume          ; Send sq1Volume to the APU via SQ1_VOL, which is the
+ STA SQ1_VOL            ; volume byte of any music that was playing when the
+                        ; sound effect took precedence
 
- LDA sq1Lo              ; Send (sq1Hi sq1Lo) to the APU via (SQ1_HI SQ1_LO)
- STA SQ1_LO
- LDA sq1Hi
+ LDA sq1Lo              ; Send (sq1Hi sq1Lo) to the APU via (SQ1_HI SQ1_LO),
+ STA SQ1_LO             ; which is the pitch of any music that was playing when
+ LDA sq1Hi              ; the sound effect took precedence
  STA SQ1_HI
 
- STX effectOnSQ1        ; Set effectOnSQ1 = 0 to maek the SQL channel as clear
-                        ; of sound effects, so it's ready for the next one
+ STX effectOnSQ1        ; Set effectOnSQ1 = 0 to mark the SQL channel as clear
+                        ; of sound effects, so the channel can be used for music
+                        ; and is ready for the next sound effect
 
  RTS                    ; Return from the subroutine
 
 .mscz2
+
+                        ; If we get here then sound is disabled, so we need to
+                        ; silence the SQ1 channel
 
  LDA #%00110000         ; Set the volume of the SQ1 channel to zero as follows:
  STA SQ1_VOL            ;
@@ -3428,29 +3470,31 @@ ENDIF
                         ;   * Bit 4 set   = constant volume
                         ;   * Bits 0-3    = volume is 0
 
- STX effectOnSQ1        ; Set effectOnSQ1 = 0 to indicate the SQ1 channel is
-                        ; clear
+ STX effectOnSQ1        ; Set effectOnSQ1 = 0 to mark the SQL channel as clear
+                        ; of sound effects, so the channel can be used for music
+                        ; and is ready for the next sound effect
 
  RTS                    ; Return from the subroutine
 
 .mscz3
 
                         ; If we get here then we need to keep making the sound
-                        ; effect
+                        ; effect on channel SQ1
 
  DEC soundByteSQ1+0     ; Decrement the remaining length of the sound in byte #0
                         ; as we are about to make the sound for another
                         ; iteration
 
- DEC soundVolCountSQ1   ; Decrement the volume envelope counter
+ DEC soundVolCountSQ1   ; Decrement the volume envelope counter so we count down
+                        ; towards the point where we apply the volume envelope
 
  BNE mscz5              ; If the volume envelope counter has not reached zero
-                        ; then jump to mscz5, so we don't apply the next entry
+                        ; then jump to mscz5, as we don't apply the next entry
                         ; from the volume envelope yet
 
                         ; If we get here then the counter in soundVolCountSQ1
                         ; just reached zero, so we apply the next entry from the
-                        ; volumne envelope
+                        ; volume envelope
 
  LDA soundByteSQ1+11    ; Reset the volume envelope counter to byte #11 from the
  STA soundVolCountSQ1   ; sound effect's data, which controls how often we apply
@@ -3459,9 +3503,9 @@ ENDIF
  LDY soundVolIndexSQ1   ; Set Y to the index of the current byte in the volume
                         ; envelope
 
- LDA volumeSQ1          ; Set soundAddr(1 0) = volumeSQ1(1 0)
+ LDA soundVolumeSQ1     ; Set soundAddr(1 0) = soundVolumeSQ1(1 0)
  STA soundAddr          ;
- LDA volumeSQ1+1        ; So soundAddr(1 0) contains the address of the volume
+ LDA soundVolumeSQ1+1   ; So soundAddr(1 0) contains the address of the volume
  STA soundAddr+1        ; envelope for this sound effect
 
  LDA (soundAddr),Y      ; Set A to the data byte at the current index in the
@@ -3494,11 +3538,20 @@ ENDIF
 .mscz4
 
                         ; If we get here then A contains an entry from the
-                        ; volume envelope for this sound effect, so now we apply
-                        ; it
+                        ; volume envelope for this sound effect, so now we send
+                        ; it to the APU to change the volume
 
  ORA soundByteSQ1+6     ; OR the envelope byte with the sound effect's byte #6,
- STA SQ1_VOL            ; and send the result to the APU via SQ1_VOL ???
+ STA SQ1_VOL            ; and send the result to the APU via SQ1_VOL
+                        ;
+                        ; Data bytes in the volume envelope data only use the
+                        ; low nibble (the high nibble is only used to mark the
+                        ; end of the data), and the sound effect's byte #6 only
+                        ; uses the high nibble, so this sets the low nibble of
+                        ; the APU byte to the volume level from the data, and
+                        ; the high nibble of the APU byte to the configuration
+                        ; in byte #6 (which sets the duty pulse, looping and
+                        ; constant flags for the volume)
 
  INY                    ; Increment the index of the current byte in the volume
  STY soundVolIndexSQ1   ; envelope so on the next iteration we move on to the
@@ -3506,110 +3559,148 @@ ENDIF
 
 .mscz5
 
-                        ; We have applied the volume envelope, so now we move on
-                        ; to the sound itself
+                        ; Now that we are done with the volume envelope, it's
+                        ; time to move on to the pitch of the sound effect
 
  LDA soundPitCountSQ1   ; If the byte #1 counter has not yet run down to zero,
  BNE mscz8              ; jump to mscz8 to skip the following, so we don't send
                         ; pitch data to the APU on this iteration
 
-                        ; If we get here then the byte #1 counter in soundPitCountSQ1
-                        ; has run down to zero
+                        ; If we get here then the counter in soundPitCountSQ1
+                        ; (which counts down from the value of byte #1) has run
+                        ; down to zero, so we now send pitch data to the ALU if
+                        ; if we haven't yet sent it all
 
  LDA soundByteSQ1+12    ; If byte #12 is non-zero then the sound effect loops
  BNE mscz6              ; infinitely, so jump to mscz6 to send pitch data to the
                         ; APU
 
- LDA soundByteSQ1+9     ; Otherwise, if the counter in byte #9 has not yet run
- BNE mscz6              ; down, jump to mscz6 to send pitch data to the APU
+ LDA soundByteSQ1+9     ; Otherwise, if the counter in byte #9 has not run down
+ BNE mscz6              ; then we haven't yet sent pitch data for enough
+                        ; iterations, so jump to mscz6 to send pitch data to the
+                        ; APU
 
  RTS                    ; Return from the subroutine
 
 .mscz6
 
-                        ; Now that we are done with the volumne envelope, it's
-                        ; tiem to move on to the pitch envelope
+                        ; If we get here then we are sending pitch data to the
+                        ; APU on this iteration, so now we do just that
 
  DEC soundByteSQ1+9     ; Decrement the counter in byte #9, which contains the
                         ; number of iterations for which we send pitch data to
-                        ; the APU (as we are about to do just that)
+                        ; the APU (as that's what we are doing)
 
- LDA soundByteSQ1+1     ; Reset the soundPitCountSQ1 counter to the value of byte #1
- STA soundPitCountSQ1   ; so it can start counting down again
+ LDA soundByteSQ1+1     ; Reset the soundPitCountSQ1 counter to the value of
+ STA soundPitCountSQ1   ; byte #1 so it can start counting down again to trigger
+                        ; the next pitch change after this one
 
  LDA soundByteSQ1+2     ; Set A to the low byte of the sound effect's current
                         ; pitch, which is in byte #2 of the sound data
 
- LDX soundByteSQ1+7     ; If byte #7 is zero, jump to mscz7 to skip the
- BEQ mscz7              ; following instruction
+ LDX soundByteSQ1+7     ; If byte #7 is zero then vibrato is disabled, so jump
+ BEQ mscz7              ; to mscz7 to skip the following instruction
 
  ADC soundVibrato       ; Byte #7 is non-zero, so add soundVibrato to the pitch
-                        ; of the sound in A to apply vibrato
+                        ; of the sound in A to apply vibrato (this also adds the
+                        ; C flag, which is not in a fixed state, so this adds an
+                        ; extra level of randomness to the vibrato effect)
 
 .mscz7
 
- STA sq1SoundLo         ; Store the value of A in sq1SoundLo
+ STA soundLoSQ1         ; Store the value of A (i.e. the low byte of the sound
+                        ; effect's pitch, possibly with added vibrato) in
+                        ; soundLoSQ1
 
- STA SQ1_LO             ; Send the value of sq1SoundLo to the APU via SQ1_LO
+ STA SQ1_LO             ; Send the value of soundLoSQ1 to the APU via SQ1_LO
 
  LDA soundByteSQ1+2+1   ; Set A to the high byte of the sound effect's current
                         ; pitch, which is in byte #2 of the sound data
 
- STA sq1SoundHi         ; Store the value of A in sq1SoundHi
+ STA soundHiSQ1         ; Store the value of A (i.e. the high byte of the sound
+                        ; effect's pitch) in soundHiSQ1
 
- STA SQ1_HI             ; Send the value of sq1SoundHi to the APU via SQ1_HI
+ STA SQ1_HI             ; Send the value of soundHiSQ1 to the APU via SQ1_HI
 
 .mscz8
 
- DEC soundPitCountSQ1   ; Decrement the byte #1 counter
+ DEC soundPitCountSQ1   ; Decrement the byte #1 counter, as we have now done one
+                        ; more iteration of the sound effect
 
- LDA soundByteSQ1+13    ; If byte #13 of the sound data is zero then there is no
- BEQ mscz9              ; byte #13 counter, to jump to mscz9 to skip the
-                        ; following
+ LDA soundByteSQ1+13    ; If byte #13 of the sound data is zero then we apply
+ BEQ mscz9              ; pitch variation in every iteration (if enabled), so
+                        ; jump to mscz9 to skip the following and move straight
+                        ; to the pitch variation checks
 
- DEC soundPitEnvelSQ1   ; Otherwise decrement the byte #13 counter
+ DEC soundPitchEnvSQ1   ; Otherwise decrement the byte #13 counter to count down
+                        ; towards the point where we apply pitch variation
 
  BNE mscz11             ; If the counter is not yet zero, jump to mscz11 to
-                        ; return from the subroutine
+                        ; return from the subroutine without applying pitch
+                        ; variation, as the counter has not yet reached that
+                        ; point
 
-                        ; The byte #13 counter just ran down
+                        ; If we get here then the byte #13 counter just ran down
+                        ; to zero, so we need to apply pitch variation (if
+                        ; enabled)
 
- STA soundPitEnvelSQ1   ; Reset the soundPitEnvelSQ1 counter to the value of
-                        ; byte #13 so it can start counting down again
+ STA soundPitchEnvSQ1   ; Reset the soundPitchEnvSQ1 counter to the value of
+                        ; byte #13 so it can start counting down again, for the
+                        ; next pitch variation after this one
 
 .mscz9
 
- LDA soundByteSQ1+8     ; Set A to byte #8 of the sound data
+ LDA soundByteSQ1+8     ; Set A to byte #8 of the sound data, which determines
+                        ; whether pitch variation is enabled
 
- BEQ mscz11             ; If A is zero then jump to mscz11 to return from the
-                        ; subroutine
+ BEQ mscz11             ; If A is zero then pitch variation is not enabled, so
+                        ; jump to mscz11 to return from the subroutine without
+                        ; applying pitch variation
 
- BMI mscz10             ; If A is negative, jump to mscz10
+                        ; If we get here then pitch variation is enabled, so now
+                        ; we need to apply it
 
- LDA sq1SoundLo         ; Subtract the 16-bit value in bytes #4 and #5 of the
- SEC                    ; sound data from (sq1SoundHi sq1SoundLo), updating
- SBC soundByteSQ1+4     ; (sq1SoundHi sq1SoundLo) to the result, and sending
- STA sq1SoundLo         ; it to the APU via (SQ1_HI SQ1_LO)
+ BMI mscz10             ; If A is negative then we need to add the value to the
+                        ; pitch's period, so jump to mscz10
+
+                        ; If we get here then we need to subtract the 16-bit
+                        ; value in bytes #4 and #5 from the pitch's period in
+                        ; (soundHiSQ1 soundLoSQ1)
+                        ;
+                        ; Reducing the pitch's period increases its frequency,
+                        ; so this makes the note frequency higher
+
+ LDA soundLoSQ1         ; Subtract the 16-bit value in bytes #4 and #5 of the
+ SEC                    ; sound data from (soundHiSQ1 soundLoSQ1), updating
+ SBC soundByteSQ1+4     ; (soundHiSQ1 soundLoSQ1) to the result, and sending
+ STA soundLoSQ1         ; it to the APU via (SQ1_HI SQ1_LO)
  STA SQ1_LO             ;
- LDA sq1SoundHi         ; Note that bits 2 to 7 of the high byte are cleared so
+ LDA soundHiSQ1         ; Note that bits 2 to 7 of the high byte are cleared so
  SBC soundByteSQ1+4+1   ; the length counter does not reload
  AND #%00000011
- STA sq1SoundHi
+ STA soundHiSQ1
  STA SQ1_HI
 
  RTS                    ; Return from the subroutine
 
 .mscz10
 
- LDA sq1SoundLo         ; Add the 16-bit value in bytes #4 and #5 of the sound
- CLC                    ; data to (sq1SoundHi sq1SoundLo), updating
- ADC soundByteSQ1+4     ; (sq1SoundHi sq1SoundLo) to the result, and sending
- STA sq1SoundLo         ; it to the APU via (SQ1_HI SQ1_LO)
+                        ; If we get here then we need to add the 16-bit value
+                        ; in bytes #4 and #5 to the pitch's period in
+                        ; (soundHiSQ1 soundLoSQ1)
+                        ;
+                        ; Increasing the pitch's period reduces its frequency,
+                        ; so this makes the note frequency lower
+
+ LDA soundLoSQ1         ; Add the 16-bit value in bytes #4 and #5 of the sound
+ CLC                    ; data to (soundHiSQ1 soundLoSQ1), updating
+ ADC soundByteSQ1+4     ; (soundHiSQ1 soundLoSQ1) to the result, and sending
+ STA soundLoSQ1         ; it to the APU via (SQ1_HI SQ1_LO)
  STA SQ1_LO             ;
- LDA sq1SoundHi         ; Note that bits 2 to 7 of the high byte are cleared so
+ LDA soundHiSQ1         ; Note that bits 2 to 7 of the high byte are cleared so
  ADC soundByteSQ1+4+1   ; the length counter does not reload
  AND #%00000011
- STA sq1SoundHi
+ STA soundHiSQ1
  STA SQ1_HI
 
 .mscz11
@@ -4020,40 +4111,95 @@ ENDIF
 ;       Name: soundData
 ;       Type: Variable
 ;   Category: Sound
-;    Summary: Data for the sound effects
+;    Summary: Sound data for the sound effects
 ;
 ; ------------------------------------------------------------------------------
 ;
-; Each sound block is made up of 14 bytes, which are copied to the specified
-; offset from soundByteSQ1:
+; Each sound block is made up of 14 bytes, which are copied to the soundByteSQ1,
+; soundByteSQ2 or soundByteNOISE blocks (one for each channel) where they can be
+; manipulated (so counters can be updated, and so on).
 ;
-;  0 = length of sound left (in iterations)
-;      ignored if this is infinite (byte #12 <> 0)
-;  1 = how often we send send pitch data to the APU
-;      i.e. we send pitch data every x iterations
-;  2 = 16-bit storage for (sq1SoundHi sq1SoundLo) to go to (SQ1_HI SQ1_LO)
-;  4 = 16-bit value to apply to the pitch every iteration
-;      (if enabled by byte #8)
-;  6 = OR this value with the soundVolume for SQ1_VOL
-;  7 = non-zero means add vibrato to the pitch on each iteration
-;      using the randomised vibrato in soundVibrato
-;  8 = non-zero means:
-;        bit 7 clear, subtract byte #4 from the APU pitch on each iteration
-;                     (note goes up)
-;        bit 7 set, add byte #4 to the APU pitch on each iteration
-;                   (note goes down)
-;  9 = number of iterations for which we send pitch data to the APU
-;      ignored if this is infinite (byte #12 <> 0)
-; 10 = number of the volume envelope to apply
-;      i.e. the entry in soundVolume, which is put in volumeSQ1(1 0)
-; 11 = how often we apply the volumne envelope to the sound
-;      i.e. we apply the next entry every xx iterations
-; 12 = non-zero means the sound effect loops and keeps being made, even after
-;      byte #0 runs down
-; 13 = non-zero means only apply byte #4 to the pitch every x iterations
-;               (if enabled by byte #8)
-;      zero means apply it every iteration (if enabled by byte #8)
-; 
+; The sound data block controls the sending of data to the APU during each
+; iteration of the sound effect routine (which is typically every VBlank). The
+; following documentation talks about channel SQ1, but the same logic applies to
+; thwe SQ2 and NOISE channels.
+;
+; The list of bytes in the sound effect data block is as follows:
+;
+;   * Byte #0 = length of sound (in iterations)
+;
+;     * Ignored if the sound is an infinite loop (i.e. if byte #12 is non-zero)
+;
+;     * Gets decremented on each iteration
+;
+;   * Byte #1 = how often we send send pitch data to the APU
+;
+;     * So we send pitch data to the APU every byte #1 iterations
+;
+;   * Bytes #2, #3 = the first 16-bit pitch data to send to (SQ1_HI SQ1_LO)
+;
+;     * Used as 16-bit storage for (soundHiSQ1 soundLoSQ1), which contains the
+;       pitch data to send to the APU for this iteration
+;
+;     * This gets sent to the APU via (SQ1_HI SQ1_LO) to set the sound effect's
+;       pitch as the effect progresses
+;
+;   * Bytes #4, #5 = A 16-bit value to apply to the pitch every iteration
+;
+;     * The pitch is only varied if enabled by byte #8 being non-zero
+;
+;   * Byte #6 = top nibble of the SQ1_VOL byte
+;
+;     * This value gets OR'd with the soundVolume to send to the APU via SQ1_VOL
+;
+;     * It sets the duty, loop and NES envelope settings to send to the APU
+;
+;   * Byte #7 = add vibrato
+;
+;     * Non-zero means add vibrato to the pitch on each iteration using the
+;       randomised vibrato value in soundVibrato
+;
+;   * Byte #8 = enable/disable the pitch variation in byte #4/#5
+;
+;     * Non-zero means:
+;
+;       * Bit 7 clear = subtract byte #4/#5 from the APU pitch on each iteration
+;                      (so the note frequency goes up)
+;
+;       * Bit 7 set = add byte #4/#5 to the APU pitch on each iteration
+;                     (so the note frequency goes down)
+;
+;     * Zero disables the pitch variation in byte #4/#5 
+;
+;   * Byte #9 = number of iterations for which we send pitch data to the APU
+;
+;     * Ignored if the sound is an infinite loop (i.e. if byte #12 is non-zero)
+;
+;   * Byte #10 = number of the volume envelope to apply
+;
+;     * This is the number of the envelope as specified in the soundVolume table
+;
+;   * Byte #11 = how often we apply the volume envelope to the sound
+;
+;     * We apply the next entry from the volumne envelope every byte #11
+;       iterations
+;
+;   * Byte #12 = enable/disable infinite loop
+;
+;     * Non-zero means the sound effect loops and keeps being made, even after
+;       the counter in byte #0 runs down
+;
+;     * Zero means the sound only runs for the number of iterations in byte #0
+;
+;   * Byte #13 = how often to apply the pitch variation in byte #4/#5
+;
+;     * If pitch variation is enabled by byte #8 being non-zero, then:
+;
+;       * Non-zero means only apply the pitch variation in byte #4/#5 every
+;         byte #13 iterations
+;
+;       * Zero means apply the pitch variation every iteration
+;
 ; ******************************************************************************
 
 .soundData
@@ -4256,7 +4402,7 @@ ENDIF
 ;       Name: soundVolume
 ;       Type: Variable
 ;   Category: Sound
-;    Summary: Data for the sound effects
+;    Summary: Volume envelope data for the sound effects
 ;
 ; ******************************************************************************
 
@@ -4362,7 +4508,7 @@ ENDIF
 ;       Name: volumeEnvelope
 ;       Type: Variable
 ;   Category: Sound
-;    Summary: Data for the game music
+;    Summary: Volume envelope data for the game music
 ;
 ; ******************************************************************************
 
@@ -4511,7 +4657,7 @@ ENDIF
 ;       Name: pitchEnvelope
 ;       Type: Variable
 ;   Category: Sound
-;    Summary: Data for the game music
+;    Summary: Pitch envelope data for the game music
 ;
 ; ******************************************************************************
 
@@ -6719,7 +6865,7 @@ ENDIF
  STA attrSprite10       ; entry from the conditionAttrs table, so the correct
                         ; colour is set for the ship's status condition
 
- LDA conditionTiles,X   ; Set the tile pattern to the corresponding entry from 
+ LDA conditionTiles,X   ; Set the tile pattern to the corresponding entry from
  STA tileSprite10       ; the conditionTiles table, so the correct pattern is
                         ; used for the ship's status condition
 
@@ -7184,301 +7330,301 @@ ENDIF
  EQUB 85                ; x-coordinate = 85
  EQUB 182 + YPAL        ; y-coordinate = 182
  EQUB %00010100         ; sprite number = 5, sprite palette = 0
-                        
+
                         ; Equipment sprite 1: E.C.M. (2 of 3)
 
  EQUB %00100000         ; v = 0, h = 0, tile pattern = 32
  EQUB 156               ; x-coordinate = 156
  EQUB 156 + YPAL        ; y-coordinate = 156
  EQUB %00011000         ; sprite number = 6, sprite palette = 0
-                        
+
                         ; Equipment sprite 2: E.C.M. (3 of 3)
 
  EQUB %00100001         ; v = 0, h = 0, tile pattern = 33
  EQUB 156               ; x-coordinate = 156
  EQUB 164 + YPAL        ; y-coordinate = 164
  EQUB %00011100         ; sprite number = 7, sprite palette = 0
-                        
+
                         ; Equipment sprite 3: Front laser (1 of 2)
 
  EQUB %00000111         ; v = 0, h = 0, tile pattern = 7
  EQUB 68                ; x-coordinate = 68
  EQUB 161 + YPAL        ; y-coordinate = 161
  EQUB %00100000         ; sprite number = 8, sprite palette = 0
-                        
+
                         ; Equipment sprite 4: Front laser (2 of 2)
 
  EQUB %00001010         ; v = 0, h = 0, tile pattern = 10
  EQUB 171               ; x-coordinate = 171
  EQUB 172 + YPAL        ; y-coordinate = 172
  EQUB %00100100         ; sprite number = 9, sprite palette = 0
-                        
+
                         ; Equipment sprite 5: Left laser (1 of 2), non-military
 
  EQUB %00001001         ; v = 0, h = 0, tile pattern = 9
  EQUB 20                ; x-coordinate = 20
  EQUB 198 + YPAL        ; y-coordinate = 198
  EQUB %00101000         ; sprite number = 10, sprite palette = 0
-                        
+
                         ; Equipment sprite 6: Left laser (2 of 2), non-military
 
  EQUB %00001001         ; v = 0, h = 0, tile pattern = 9
  EQUB 124               ; x-coordinate = 124
  EQUB 170 + YPAL        ; y-coordinate = 170
  EQUB %00101100         ; sprite number = 11, sprite palette = 0
-                        
+
                         ; Equipment sprite 7: Right laser (1 of 2), non-military
 
  EQUB %01001001         ; v = 0, h = 1, tile pattern = 9
  EQUB 116               ; x-coordinate = 116
  EQUB 198 + YPAL        ; y-coordinate = 198
  EQUB %00110000         ; sprite number = 12, sprite palette = 0
-                        
+
                         ; Equipment sprite 8: Right laser (2 of 2), non-military
 
  EQUB %01001001         ; v = 0, h = 1, tile pattern = 9
  EQUB 220               ; x-coordinate = 220
  EQUB 170 + YPAL        ; y-coordinate = 170
  EQUB %00110100         ; sprite number = 13, sprite palette = 0
-                        
+
                         ; Equipment sprite 9: Rear laser (1 of 1)
 
  EQUB %10000111         ; v = 1, h = 0, tile pattern = 7
  EQUB 68                ; x-coordinate = 68
  EQUB 206 + YPAL        ; y-coordinate = 206
  EQUB %01110100         ; sprite number = 29, sprite palette = 0
-                        
+
                         ; Equipment sprite 10: Left military laser (1 of 2)
 
  EQUB %00010101         ; v = 0, h = 0, tile pattern = 21
  EQUB 16                ; x-coordinate = 16
  EQUB 198 + YPAL        ; y-coordinate = 198
  EQUB %00101000         ; sprite number = 10, sprite palette = 0
-                        
+
                         ; Equipment sprite 11: Left military laser (2 of 2)
 
  EQUB %00010101         ; v = 0, h = 0, tile pattern = 21
  EQUB 121               ; x-coordinate = 121
  EQUB 170 + YPAL        ; y-coordinate = 170
  EQUB %00101100         ; sprite number = 11, sprite palette = 0
-                        
+
                         ; Equipment sprite 12: Right military laser (1 of 2)
 
  EQUB %01010101         ; v = 0, h = 1, tile pattern = 21
  EQUB 118               ; x-coordinate = 118
  EQUB 198 + YPAL        ; y-coordinate = 198
  EQUB %00110000         ; sprite number = 12, sprite palette = 0
-                        
+
                         ; Equipment sprite 13: Right military laser (2 of 2)
 
  EQUB %01010101         ; v = 0, h = 1, tile pattern = 21
  EQUB 222               ; x-coordinate = 222
  EQUB 170 + YPAL        ; y-coordinate = 170
  EQUB %00110100         ; sprite number = 13, sprite palette = 0
-                        
+
                         ; Equipment sprite 14: Fuel scoops (1 of 2)
 
  EQUB %00011110         ; v = 0, h = 0, tile pattern = 30
  EQUB 167               ; x-coordinate = 167
  EQUB 185 + YPAL        ; y-coordinate = 185
  EQUB %00111101         ; sprite number = 15, sprite palette = 1
-                        
+
                         ; Equipment sprite 15: Fuel scoops (2 of 2)
 
  EQUB %01011110         ; v = 0, h = 1, tile pattern = 30
  EQUB 175               ; x-coordinate = 175
  EQUB 185 + YPAL        ; y-coordinate = 185
  EQUB %01000001         ; sprite number = 16, sprite palette = 1
-                        
+
                         ; Equipment sprite 16: Naval energy unit (1 of 2)
 
  EQUB %00011010         ; v = 0, h = 0, tile pattern = 26
  EQUB 79                ; x-coordinate = 79
  EQUB 196 + YPAL        ; y-coordinate = 196
  EQUB %10101100         ; sprite number = 43, sprite palette = 0
-                        
+
                         ; Equipment sprite 17: Naval energy unit (2 of 2)
 
  EQUB %00011011         ; v = 0, h = 0, tile pattern = 27
  EQUB 79                ; x-coordinate = 79
  EQUB 196 + YPAL        ; y-coordinate = 196
  EQUB %10110001         ; sprite number = 44, sprite palette = 1
-                        
+
                         ; Equipment sprite 18: Standard energy unit (1 of 2)
 
  EQUB %00011010         ; v = 0, h = 0, tile pattern = 26
  EQUB 56                ; x-coordinate = 56
  EQUB 196 + YPAL        ; y-coordinate = 196
  EQUB %01000100         ; sprite number = 17, sprite palette = 0
-                        
+
                         ; Equipment sprite 19: Standard energy unit (2 of 2)
 
  EQUB %00011011         ; v = 0, h = 0, tile pattern = 27
  EQUB 56                ; x-coordinate = 56
  EQUB 196 + YPAL        ; y-coordinate = 196
  EQUB %01001001         ; sprite number = 18, sprite palette = 1
-                        
+
                         ; Equipment sprite 20: Missile 1 (1 of 2)
 
  EQUB %00000000         ; v = 0, h = 0, tile pattern = 0
  EQUB 29                ; x-coordinate = 29
  EQUB 187 + YPAL        ; y-coordinate = 187
  EQUB %01001101         ; sprite number = 19, sprite palette = 1
-                        
+
                         ; Equipment sprite 21: Missile 1 (2 of 2)
 
  EQUB %00000001         ; v = 0, h = 0, tile pattern = 1
  EQUB 208               ; x-coordinate = 208
  EQUB 176 + YPAL        ; y-coordinate = 176
  EQUB %01010001         ; sprite number = 20, sprite palette = 1
-                        
+
                         ; Equipment sprite 22: Missile 2 (1 of 2)
 
  EQUB %01000000         ; v = 0, h = 1, tile pattern = 0
  EQUB 108               ; x-coordinate = 108
  EQUB 187 + YPAL        ; y-coordinate = 187
  EQUB %01010101         ; sprite number = 21, sprite palette = 1
-                        
+
                         ; Equipment sprite 23: Missile 2 (2 of 2)
 
  EQUB %01000001         ; v = 0, h = 1, tile pattern = 1
  EQUB 136               ; x-coordinate = 136
  EQUB 176 + YPAL        ; y-coordinate = 176
  EQUB %01011001         ; sprite number = 22, sprite palette = 1
-                        
+
                         ; Equipment sprite 24: Missile 3 (1 of 2)
 
  EQUB %00000000         ; v = 0, h = 0, tile pattern = 0
  EQUB 22                ; x-coordinate = 22
  EQUB 192 + YPAL        ; y-coordinate = 192
  EQUB %01011101         ; sprite number = 23, sprite palette = 1
-                        
+
                         ; Equipment sprite 25: Missile 3 (2 of 2)
 
  EQUB %00000001         ; v = 0, h = 0, tile pattern = 1
  EQUB 214               ; x-coordinate = 214
  EQUB 175 + YPAL        ; y-coordinate = 175
  EQUB %01100001         ; sprite number = 24, sprite palette = 1
-                        
+
                         ; Equipment sprite 26: Missile 4 (1 of 2)
 
  EQUB %01000000         ; v = 0, h = 1, tile pattern = 0
  EQUB 115               ; x-coordinate = 115
  EQUB 192 + YPAL        ; y-coordinate = 192
  EQUB %01100101         ; sprite number = 25, sprite palette = 1
-                        
+
                         ; Equipment sprite 27: Missile 4 (2 of 2)
 
  EQUB %01000001         ; v = 0, h = 1, tile pattern = 1
  EQUB 130               ; x-coordinate = 130
  EQUB 175 + YPAL        ; y-coordinate = 175
  EQUB %01101001         ; sprite number = 26, sprite palette = 1
-                        
+
                         ; Equipment sprite 28: Energy bomb (1 of 3)
 
  EQUB %00010111         ; v = 0, h = 0, tile pattern = 23
  EQUB 64                ; x-coordinate = 64
  EQUB 206 + YPAL        ; y-coordinate = 206
  EQUB %01101100         ; sprite number = 27, sprite palette = 0
-                        
+
                         ; Equipment sprite 29: Energy bomb (2 of 3)
 
  EQUB %00011000         ; v = 0, h = 0, tile pattern = 24
  EQUB 72                ; x-coordinate = 72
  EQUB 206 + YPAL        ; y-coordinate = 206
  EQUB %01110000         ; sprite number = 28, sprite palette = 0
-                        
+
                         ; Equipment sprite 30: Energy bomb (3 of 3)
 
  EQUB %00011001         ; v = 0, h = 0, tile pattern = 25
  EQUB 68                ; x-coordinate = 68
  EQUB 206 + YPAL        ; y-coordinate = 206
  EQUB %00111010         ; sprite number = 14, sprite palette = 2
-                        
+
                         ; Equipment sprite 31: Large cargo bay (1 of 2)
 
  EQUB %00000010         ; v = 0, h = 0, tile pattern = 2
  EQUB 153               ; x-coordinate = 153
  EQUB 184 + YPAL        ; y-coordinate = 184
  EQUB %01111000         ; sprite number = 30, sprite palette = 0
-                        
+
                         ; Equipment sprite 32: Large cargo bay (2 of 2)
 
  EQUB %01000010         ; v = 0, h = 1, tile pattern = 2
  EQUB 188               ; x-coordinate = 188
  EQUB 184 + YPAL        ; y-coordinate = 184
  EQUB %01111100         ; sprite number = 31, sprite palette = 0
-                        
+
                         ; Equipment sprite 33: Escape pod (1 of 1)
 
  EQUB %00011100         ; v = 0, h = 0, tile pattern = 28
  EQUB 79                ; x-coordinate = 79
  EQUB 178 + YPAL        ; y-coordinate = 178
  EQUB %10000000         ; sprite number = 32, sprite palette = 0
-                        
+
                         ; Equipment sprite 34: Docking computer (1 of 8)
 
  EQUB %00000011         ; v = 0, h = 0, tile pattern = 3
  EQUB 52                ; x-coordinate = 52
  EQUB 172 + YPAL        ; y-coordinate = 172
  EQUB %10000100         ; sprite number = 33, sprite palette = 0
-                        
+
                         ; Equipment sprite 35: Docking computer (2 of 8)
 
  EQUB %00000100         ; v = 0, h = 0, tile pattern = 4
  EQUB 60                ; x-coordinate = 60
  EQUB 172 + YPAL        ; y-coordinate = 172
  EQUB %10001000         ; sprite number = 34, sprite palette = 0
-                        
+
                         ; Equipment sprite 36: Docking computer (3 of 8)
 
  EQUB %00000101         ; v = 0, h = 0, tile pattern = 5
  EQUB 52                ; x-coordinate = 52
  EQUB 180 + YPAL        ; y-coordinate = 180
  EQUB %10001100         ; sprite number = 35, sprite palette = 0
-                        
+
                         ; Equipment sprite 37: Docking computer (4 of 8)
 
  EQUB %00000110         ; v = 0, h = 0, tile pattern = 6
  EQUB 60                ; x-coordinate = 60
  EQUB 180 + YPAL        ; y-coordinate = 180
  EQUB %10010000         ; sprite number = 36, sprite palette = 0
-                        
+
                         ; Equipment sprite 38: Docking computer (5 of 8)
 
  EQUB %01000100         ; v = 0, h = 1, tile pattern = 4
  EQUB 178               ; x-coordinate = 178
  EQUB 156 + YPAL        ; y-coordinate = 156
  EQUB %10010100         ; sprite number = 37, sprite palette = 0
-                        
+
                         ; Equipment sprite 39: Docking computer (6 of 8)
 
  EQUB %01000011         ; v = 0, h = 1, tile pattern = 3
  EQUB 186               ; x-coordinate = 186
  EQUB 156 + YPAL        ; y-coordinate = 156
  EQUB %10011000         ; sprite number = 38, sprite palette = 0
-                        
+
                         ; Equipment sprite 40: Docking computer (7 of 8)
 
  EQUB %01000110         ; v = 0, h = 1, tile pattern = 6
  EQUB 178               ; x-coordinate = 178
  EQUB 164 + YPAL        ; y-coordinate = 164
  EQUB %10011100         ; sprite number = 39, sprite palette = 0
-                        
+
                         ; Equipment sprite 41: Docking computer (8 of 8)
 
  EQUB %01000101         ; v = 0, h = 1, tile pattern = 5
  EQUB 186               ; x-coordinate = 186
  EQUB 164 + YPAL        ; y-coordinate = 164
  EQUB %10100000         ; sprite number = 40, sprite palette = 0
-                        
+
                         ; Equipment sprite 42: Galactic hyperdrive (1 of 2)
 
  EQUB %00011101         ; v = 0, h = 0, tile pattern = 29
  EQUB 64                ; x-coordinate = 64
  EQUB 190 + YPAL        ; y-coordinate = 190
  EQUB %10100110         ; sprite number = 41, sprite palette = 2
-                        
+
                         ; Equipment sprite 43: Galactic hyperdrive (1 of 2)
 
  EQUB %01011101         ; v = 0, h = 1, tile pattern = 29
@@ -9001,7 +9147,7 @@ ENDIF
                         ; text, and scrolls up by one line of text
 
  PLA                    ; Set LASCT to the value that we stored on the stack, so
- STA LASCT              ; LASCT contains the 
+ STA LASCT              ; LASCT contains the number of lines in the scroll text
 
 .dscr1
 
@@ -10582,7 +10728,7 @@ ENDIF
  LDA (V),Y              ; Fetch the Y-th charcter from V(1 0)
 
  BEQ stxt2              ; If A = 0 then we have reached the null terminator, so
-                        ; jump to 
+                        ; jump to stxt2 to return from the subroutine
 
  JSR TT27_b2            ; Print the character in A
 
@@ -11013,7 +11159,7 @@ ENDIF
 
 .cbar3
 
- LDA #6                 ; Set iconBarChoice to the Save and Load button, so 
+ LDA #6                 ; Set iconBarChoice to the Save and Load button, so
  STA iconBarChoice      ; when we return from the routine with the C flag clear,
                         ; the TT102 routine processes this as if we had chosen
                         ; this button, and reloads the save and load screen
@@ -12787,7 +12933,7 @@ ENDIF
  JSR LOIN               ; Draw a line from (X1, Y1) to (X2, Y2) to draw the next
                         ; segment of the bolt
 
- LDA SWAP               ; If SWAP is non-zero then we already swapped the line 
+ LDA SWAP               ; If SWAP is non-zero then we already swapped the line
  BNE lite3              ; coordinates around during the drawing process, so we
                         ; can jump to lite3 to skip the following coordinate
                         ; swap
@@ -13261,7 +13407,7 @@ ENDIF
                         ; Otherwise we now check whether the chosen character
                         ; is valid
 
- CMP #27                ; If ChangeLetter returned an ASCII ESC character, jump 
+ CMP #27                ; If ChangeLetter returned an ASCII ESC character, jump
  BEQ name5              ; to name5 to return from the subroutine with an empty
                         ; name and the C flag set
 
@@ -13486,7 +13632,7 @@ ENDIF
 
  LDX controller1Down    ; If the down button on controller 1 is not being
  BPL lett2              ; pressed, loop back to lett2 to keep scanning for
-                        ; button presses 
+                        ; button presses
 
                         ; If we get here then the down button is being pressed
 

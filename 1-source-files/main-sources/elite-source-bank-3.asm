@@ -1779,7 +1779,7 @@ ENDIF
 
  DEX                    ; Decrement the sprite counter in X
 
- BNE rscn2              ; Loop back until we have 
+ BNE rscn2              ; Loop back until we have reset all 24 sprites
 
  RTS                    ; Return from the subroutine
 
@@ -2793,7 +2793,7 @@ ENDIF
                         ; Each nametable/attribute table consists of 1024 bytes
                         ; (i.e. four pages of 256 bytes), and because the tables
                         ; are consecutive in PPU memory, we can zero the whole
-                        ; lot by sending eight pages of zeroes to the PPU, 
+                        ; lot by sending eight pages of zeroes to the PPU,
                         ; tarting at the start of nametable 0 at PPU_NAME_0
 
  LDA #HI(PPU_NAME_0)    ; Set PPU_ADDR to PPU_NAME_0, so it points to nametable
@@ -3872,7 +3872,7 @@ ENDIF
 
                         ; Fall through into SetIconBarButtonsS to jump to
                         ; SetIconBarButtons to set the correct list of button
-                        ; numbers for the icon bar 
+                        ; numbers for the icon bar
 
 ; ******************************************************************************
 ;
@@ -4149,14 +4149,14 @@ ENDIF
                         ; necessary)
 
                         ; Fall through into SetIconBarButtons to set the correct
-                        ; list of button numbers for the icon bar 
+                        ; list of button numbers for the icon bar
 
 ; ******************************************************************************
 ;
 ;       Name: SetIconBarButtons
 ;       Type: Subroutine
 ;   Category: Icon bar
-;    Summary: Set the correct list of button numbers for the icon bar 
+;    Summary: Set the correct list of button numbers for the icon bar
 ;
 ; ******************************************************************************
 

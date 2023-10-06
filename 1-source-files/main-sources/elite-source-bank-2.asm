@@ -221,7 +221,7 @@ ENDIF
  ECHR 'O'
  EQUB VE
 
- EJMP 19                ; Token 7:      "{single cap}LICENSED BY {single 
+ EJMP 19                ; Token 7:      "{single cap}LICENSED BY {single
  ECHR 'L'               ;                cap}NINTENDO"
  ECHR 'I'               ;
  ETWO 'C', 'E'          ; Encoded as:   "{19}LI<233>N<218>D BY{26}N<240>T<246>D
@@ -280,7 +280,7 @@ ENDIF
  EJMP 23                ; Token 10:     "{move to row 9, lower case}
  EJMP 14                ;                {justify}
  EJMP 13                ;                {lower case}
- EJMP 19                ;                {single cap}GREETINGS {single 
+ EJMP 19                ;                {single cap}GREETINGS {single
  ECHR 'G'               ;                cap}COMMANDER {commander name}, {single
  ETWO 'R', 'E'          ;                 cap}I {lower case}AM {sentence case}
  ETWO 'E', 'T'          ;                {single cap}CAPTAIN {mission captain's
@@ -4930,8 +4930,6 @@ ENDIF
  EQUB VE                ; Token 16:     ""
                         ;
                         ; Encoded as:   ""
-                        
-                        ; Encoded as:   ""
 
  EQUB VE                ; Token 17:     ""
                         ;
@@ -5014,195 +5012,195 @@ ENDIF
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 37:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 38:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 39:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 40:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 41:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 42:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 43:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 44:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 45:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 46:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 47:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 48:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 49:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 50:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 51:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 52:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 53:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 54:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 55:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 56:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 57:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 58:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 59:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 60:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 61:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 62:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 63:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 64:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 65:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 66:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 67:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 68:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 69:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 70:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 71:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 72:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 73:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 74:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 75:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 76:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 77:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 78:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 79:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 80:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 81:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 82:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 83:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 84:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EJMP 2                 ; Token 85:     "{sentence case}{lower case}"
@@ -5211,23 +5209,23 @@ ENDIF
  EQUB VE
 
  EQUB VE                ; Token 86:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 87:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 88:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 89:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 90:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EJMP 19                ; Token 91:     "{single cap}HALUNKE"
@@ -5270,43 +5268,43 @@ ENDIF
  EQUB VE
 
  EQUB VE                ; Token 96:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 97:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 98:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 99:     ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 100:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 101:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 102:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 103:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 104:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 105:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EJMP 19                ; Token 106:    "{single cap}ANSCHEINEND ERSCHIEN EIN
@@ -5514,123 +5512,123 @@ ENDIF
  EQUB VE
 
  EQUB VE                ; Token 115:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 116:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 117:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 118:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 119:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 120:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 121:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 122:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 123:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 124:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 125:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 126:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 127:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 128:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 129:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 130:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 131:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 132:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 133:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 134:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 135:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 136:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 137:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 138:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 139:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 140:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 141:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 142:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 143:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 144:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EJMP 19                ; Token 145:    "{single cap}PLANET"
@@ -5659,7 +5657,7 @@ ENDIF
  EQUB VE
 
  EQUB VE                ; Token 149:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EJMP 9                 ; Token 150:    "{clear screen}
@@ -5669,11 +5667,11 @@ ENDIF
  EQUB VE                ; Encoded as:   "{9}{11}{1}{8}"
 
  EQUB VE                ; Token 151:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 152:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  ECHR 'I'               ; Token 153:    "IAN"
@@ -5741,43 +5739,43 @@ ENDIF
  EQUB VE
 
  EQUB VE                ; Token 165:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 166:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 167:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 168:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 169:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 170:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 171:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 172:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 173:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 174:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  ETWO 'I', 'T'          ; Token 175:    "ITS "
@@ -5860,27 +5858,27 @@ ENDIF
  EQUB VE
 
  EQUB VE                ; Token 189:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 190:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 191:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 192:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 193:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 194:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  ETWO 'I', 'N'          ; Token 195:    "ING "
@@ -5893,7 +5891,7 @@ ENDIF
  EQUB VE                ; Encoded as:   "<252> "
 
  EQUB VE                ; Token 197:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EJMP 26                ; Token 198:    " {single cap}SQUEAKY"
@@ -6105,11 +6103,11 @@ ENDIF
  EQUB VE
 
  EQUB VE                ; Token 201:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 202:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  ECHR 'W'               ; Token 203:    "WURDE ZULETZT GESEHEN IN {single cap} "
@@ -6150,15 +6148,15 @@ ENDIF
  EQUB VE
 
  EQUB VE                ; Token 206:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 207:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 208:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EJMP 26                ; Token 209:    " {single cap}ERRIUS"
@@ -6169,7 +6167,7 @@ ENDIF
  EQUB VE
 
  EQUB VE                ; Token 210:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EJMP 26                ; Token 211:    " {single cap}RAUMFAHRTMARINE UNSERER
@@ -6243,7 +6241,7 @@ ENDIF
  EQUB VE
 
  EQUB VE                ; Token 214:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EJMP 15                ; Token 215:    "{left align} {single cap}UNBEKANNTER
@@ -7043,131 +7041,131 @@ ENDIF
  EQUB VE
 
  EQUB VE                ; Token 224:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 225:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 226:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 227:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 228:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 229:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 230:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 231:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 232:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 233:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 234:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 235:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 236:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 237:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 238:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 239:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 240:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 241:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 242:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 243:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 244:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 245:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 246:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 247:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 248:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 249:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 250:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 251:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 252:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 253:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 254:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
  EQUB VE                ; Token 255:    ""
-                        
+                        ;
                         ; Encoded as:   ""
 
 ; ******************************************************************************
@@ -9450,7 +9448,7 @@ ENDIF
 
  ECHR ' '               ; Token 179:    " DE "
  ECHR 'D'               ;
- ECHR 'E'               ; Encoded as:   " DE 
+ ECHR 'E'               ; Encoded as:   " DE "
  ECHR ' '
  EQUB VE
 
@@ -13339,7 +13337,7 @@ ENDIF
  EQUB 0
 
  RTOK 121               ; Token 100:    "ENERGIE NIEDRIG {beep}"
- CHAR 'N'               
+ CHAR 'N'               ;
  CHAR 'I'               ; Encoded as:   "[121]NI<152><158>G {7}"
  TWOK 'E', 'D'
  TWOK 'R', 'I'
@@ -13374,7 +13372,7 @@ ENDIF
  EQUB 0
 
  RTOK 43                ; Token 104:    "STRAHLENLASER"
- TWOK 'R', 'A'          
+ TWOK 'R', 'A'          ;
  CHAR 'H'               ; Encoded as:   "[43]<148>H<129>N<149>S<144>"
  TWOK 'L', 'E'
  CHAR 'N'
@@ -13384,7 +13382,7 @@ ENDIF
  EQUB 0
 
  CHAR 'T'               ; Token 105:    "TREIBSTOFF"
- TWOK 'R', 'E'          
+ TWOK 'R', 'E'          ;
  CHAR 'I'               ; Encoded as:   "T<142>IB[43]OFF"
  CHAR 'B'
  RTOK 43
@@ -13394,13 +13392,13 @@ ENDIF
  EQUB 0
 
  TWOK 'R', 'A'          ; Token 106:    "RAKETE"
- CHAR 'K'               
+ CHAR 'K'               ;
  CHAR 'E'               ; Encoded as:   "<148>KE<156>"
  TWOK 'T', 'E'
  EQUB 0
 
  CHAR 'G'               ; Token 107:    "GROßER KARGORAUM"
- RTOK 94                
+ RTOK 94                ;
  CHAR '^'               ; Encoded as:   "G[94]^<144> K<138>GO<148>UM"
  TWOK 'E', 'R'
  CHAR ' '
@@ -13414,7 +13412,7 @@ ENDIF
  EQUB 0
 
  CHAR 'E'               ; Token 108:    "E.C.M.SYSTEM"
- CHAR '.'               
+ CHAR '.'               ;
  CHAR 'C'               ; Encoded as:   "E.C.M.SYS<156>M"
  CHAR '.'
  CHAR 'M'
@@ -13427,7 +13425,7 @@ ENDIF
  EQUB 0
 
  RTOK 102               ; Token 109:    "EXTRA PULSLASER"
- RTOK 103               
+ RTOK 103               ;
  EQUB 0                 ; Encoded as:   "[102][103]"
 
  RTOK 102               ; Token 110:    "EXTRA STRAHLENLASER"
@@ -13435,7 +13433,7 @@ ENDIF
  EQUB 0                 ; Encoded as:   "[102][104]"
 
  RTOK 105               ; Token 111:    "TREIBSTOFFSCHAUFELN"
- CHAR 'S'               
+ CHAR 'S'               ;
  CHAR 'C'               ; Encoded as:   "[105]SCHAUFELN"
  CHAR 'H'
  CHAR 'A'
@@ -13447,7 +13445,7 @@ ENDIF
  EQUB 0
 
  CHAR 'F'               ; Token 112:    "FLUCHTKAPSEL"
- CHAR 'L'               
+ CHAR 'L'               ;
  CHAR 'U'               ; Encoded as:   "FLUCHTKAPSEL"
  CHAR 'C'
  CHAR 'H'
@@ -13964,7 +13962,7 @@ ENDIF
  EQUB 0
 
  CHAR 'U'               ; Token 14:     "UNITE"
- CHAR 'N'               
+ CHAR 'N'               ;
  CHAR 'I'               ; Encoded as:   "UNI<156>"
  TWOK 'T', 'E'
  EQUB 0
@@ -14036,7 +14034,7 @@ ENDIF
  EQUB 0
 
  CHAR 'D'               ; Token 23:     "DÉMOCRATIE"
- CHAR '<'               
+ CHAR '<'               ;
  CHAR 'M'               ; Encoded as:   "D<MOCR<145>IE"
  CHAR 'O'
  CHAR 'C'
@@ -14060,7 +14058,7 @@ ENDIF
  EQUB 0
 
  CHAR 'N'               ; Token 25:     "NAVIRE"
- CHAR 'A'               
+ CHAR 'A'               ;
  CHAR 'V'               ; Encoded as:   "NAVI<142>"
  CHAR 'I'
  TWOK 'R', 'E'
@@ -14831,7 +14829,7 @@ ENDIF
  EQUB 0
 
  RTOK 27                ; Token 117:    "LASER MILITAIRE"
- CHAR ' '               
+ CHAR ' '               ;
  CHAR 'M'               ; Encoded as:   "[27] MILITAI<142>"
  CHAR 'I'
  CHAR 'L'
@@ -18068,41 +18066,41 @@ ENDIF
  LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
  STA (SC),Y             ; byte of the pattern buffers in SC(1 0) and SC2(1 0),
  STA (SC2),Y            ; and increment the byte counter in Y
- INY                    
+ INY
 
  LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
  STA (SC),Y             ; byte of the pattern buffers in SC(1 0) and SC2(1 0),
  STA (SC2),Y            ; and increment the byte counter in Y
- INY                    
+ INY
 
  LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
  STA (SC),Y             ; byte of the pattern buffers in SC(1 0) and SC2(1 0),
  STA (SC2),Y            ; and increment the byte counter in Y
- INY                    
+ INY
 
  LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
  STA (SC),Y             ; byte of the pattern buffers in SC(1 0) and SC2(1 0),
  STA (SC2),Y            ; and increment the byte counter in Y
- INY                    
+ INY
 
  LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
  STA (SC),Y             ; byte of the pattern buffers in SC(1 0) and SC2(1 0),
  STA (SC2),Y            ; and increment the byte counter in Y
- INY                    
+ INY
 
  LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
  STA (SC),Y             ; byte of the pattern buffers in SC(1 0) and SC2(1 0),
  STA (SC2),Y            ; and increment the byte counter in Y
- INY                    
+ INY
 
  LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
  STA (SC),Y             ; byte of the pattern buffers in SC(1 0) and SC2(1 0),
  STA (SC2),Y            ; and increment the byte counter in Y
- INY                    
+ INY
 
  LDA (P+1),Y            ; Copy the Y-th pattern byte from P(2 1) to the Y-th
  STA (SC2),Y            ; byte of the pattern buffers in SC(1 0) and SC2(1 0)
- STA (SC),Y           
+ STA (SC),Y
 
 .chpr17
 

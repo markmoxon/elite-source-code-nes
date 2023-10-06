@@ -2599,7 +2599,7 @@ ENDIF
                         ; military laser
 
  CMP #Armlas            ; If this is a military laser, jump to main16 to set
- BEQ main16             ; Y = 15 
+ BEQ main16             ; Y = 15
 
  LDY #17                ; This is a beam laser, so set Y = 17 to use as the
                         ; sound number
@@ -12298,7 +12298,7 @@ ENDIF
  BEQ sell10
 
  LDA controller1Left03  ; If the left button was being held down four VBlanks
- CMP #%11110000         ; ago for at least four VBlanks, jump to sell13 via 
+ CMP #%11110000         ; ago for at least four VBlanks, jump to sell13 via
  BEQ sell2              ; sell2
 
  LDA controller1Right03 ; If the right button was being held down four VBlanks
@@ -13953,7 +13953,7 @@ ENDIF
                         ; screen gets updated
 
  JMP equi1              ; Loop back up to equi1 to keep checking for button
-                        ; presses 
+                        ; presses
 
 .equi5
 
@@ -14175,7 +14175,7 @@ ENDIF
                         ; screen gets updated
 
  JMP equi1              ; Loop back up to equi1 to keep checking for button
-                        ; presses 
+                        ; presses
 
 .equi9
 
@@ -14186,7 +14186,7 @@ ENDIF
                         ; screen gets updated
 
  JMP equi1              ; Loop back up to equi1 to keep checking for button
-                        ; presses 
+                        ; presses
 
 .ed9
 
@@ -14566,7 +14566,7 @@ ENDIF
 ;       Name: HighlightLaserView
 ;       Type: Subroutine
 ;   Category: Equipment
-;    Summary: Highlight 
+;    Summary: Highlight the laser view name in the popup menu
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -14805,7 +14805,7 @@ ENDIF
 
  LDA #0                 ; Set iconBarChoice = 0 to clear the pause button press
  STA iconBarChoice      ; so we don't simply re-enter the pause menu when we
-                        ; resume 
+                        ; resume
 
  JSR PauseGame_b6       ; Pause the game and process choices from the pause menu
                         ; until the game is unpaused by another press of Start
@@ -18990,7 +18990,7 @@ ENDIF
 
  LDA #0                 ; Set iconBarChoice = 0 to clear the pause button press
  STA iconBarChoice      ; so we don't simply re-enter the pause menu when we
-                        ; resume 
+                        ; resume
 
  JSR PauseGame_b6       ; Pause the game and process choices from the pause menu
                         ; until the game is unpaused by another press of Start
@@ -21178,7 +21178,7 @@ ENDIF
                         ; stored in JSTX (i.e. the centre of the pitch
                         ; indicator)
 
- LDA KY3                ; If either of the left or right buttons are being 
+ LDA KY3                ; If either of the left or right buttons are being
  ORA KY4                ; pressed, jump to doky5 to skip the following
  BNE doky5              ; instruction, so pressing buttons on the controller
                         ; overrides the docking computer
@@ -21187,7 +21187,7 @@ ENDIF
 
 .doky5
 
- LDA KY5                ; If either of the up or down buttons are being 
+ LDA KY5                ; If either of the up or down buttons are being
  ORA KY6                ; pressed, jump to doky6 to skip the following
  BNE doky6              ; instruction, so pressing buttons on the controller
                         ; overrides the docking computer
@@ -21311,7 +21311,7 @@ ENDIF
  JSR TT11               ; Print the hyperspace countdown with 3 digits and no
                         ; decimal point
 
- JMP mes9+3             ; Jump to mes9+3 to skip the following and not print 
+ JMP mes9+3             ; Jump to mes9+3 to skip the following and not print
                         ; the message in A, as we havealready printed it
 
 .mess1

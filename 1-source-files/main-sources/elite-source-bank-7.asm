@@ -159,7 +159,7 @@ ENDIF
                         ;   * Bit 6 clear = do not intensify blues
                         ;   * Bit 7 clear = do not intensify reds
 
-                        ; We now wait for three VBlanks to pass to ensure that 
+                        ; We now wait for three VBlanks to pass to ensure that
                         ; the PPU has stabilised after starting up
 
 .sper1
@@ -4320,7 +4320,7 @@ ENDIF
  STY clearAddress+1     ;                  = (nameBufferHiAddr 0) + first tile
  ASL A                  ;
  ROL clearAddress+1     ; So clearAddress(1 0) contains the address in this
- ASL A                  ; bitplane's nametable buffer of the first tile we sent 
+ ASL A                  ; bitplane's nametable buffer of the first tile we sent
  ROL clearAddress+1
  ASL A
  STA clearAddress
@@ -4435,7 +4435,7 @@ ENDIF
  STY clearAddress+1     ;                  = (pattBufferHiAddr 0) + first tile
  ASL A                  ;
  ROL clearAddress+1     ; So clearAddress(1 0) contains the address in this
- ASL A                  ; bitplane's pattern buffer of the first tile we sent 
+ ASL A                  ; bitplane's pattern buffer of the first tile we sent
  ROL clearAddress+1
  ASL A
  STA clearAddress
@@ -5244,7 +5244,7 @@ ENDIF
                         ; via the JMP (clearBlockSize) instruction below, so we
                         ; start clearing memory from clearAddress(1 0) onwards
 
- STY clearBlockSize+1   ; Set the high byte of clearBlockSize(1 0) = 0 
+ STY clearBlockSize+1   ; Set the high byte of clearBlockSize(1 0) = 0
 
  LDA clearBlockSize     ; Store the size of the memory block that we want to
  PHA                    ; clear on the stack, so we can retrieve it below
@@ -9409,7 +9409,7 @@ ENDIF
  BPL vlin18             ; Loop back until we have copied all eight bytes
 
  BMI vlin16             ; Jump to vlin12 via vlin16 to move down a row and draw
-                        ; the next block 
+                        ; the next block
 
 ; ******************************************************************************
 ;
@@ -9737,12 +9737,12 @@ ENDIF
  EQUW MANY+19
 
  EQUB $8A               ; Do nothing for 10 * 4 = 40 VBlanks
- 
+
  EQUB %01000000         ; Press the A button (%01000000) for 4 VBlanks to fire
  EQUB 4                 ; the laser (this kills the first ship)
 
  EQUB $83               ; Do nothing for 3 * 4 = 12 VBlanks
- 
+
  EQUB $C2               ; Do nothing (%00000000) while FRIN+4 = 0 (i.e. wait
  EQUB %00000000         ; until the third ship is spawned in ship slot 4)
  EQUW FRIN+4
@@ -10655,7 +10655,7 @@ ENDIF
                         ; left)
 
  EQUB $83               ; Do nothing for 3 * 4 = 12 VBlanks
- 
+
  EQUB %00000010         ; Press the left button (%00000010) for 4 VBlanks to
  EQUB 4                 ; sell one tonne of Food (so we now have one tonne
                         ; left)
@@ -11104,7 +11104,7 @@ ENDIF
                         ; and A contains byte #1 << 1, so byte #1 is of the form
                         ; $Cx where x is non-zero
 
- PHA                    ; Store byte #1 << 2 on the stack 
+ PHA                    ; Store byte #1 << 2 on the stack
 
  INY                    ; Set A to byte #2 of this auto-play command
  LDA (autoplayKeys),Y
@@ -11170,7 +11170,7 @@ ENDIF
                         ; If addr(1 0) = 0 then fall through into auto8 to
                         ; advance the pointer in autoplayKeys(1 0) by 4, so in
                         ; the next VBlank, we move on to the next command after
-                        ; byte #3 
+                        ; byte #3
 
 .auto8
 
@@ -12058,7 +12058,7 @@ ENDIF
  LDA controller1B       ; If the B button is being pressed on controller 1 then
  BMI joys10             ; the arrow should be used to control the icon bar and
                         ; ship speed, rather than the ship's steering, so jump
-                        ; to joys10 to return from the subroutine 
+                        ; to joys10 to return from the subroutine
 
 .joys1
 
