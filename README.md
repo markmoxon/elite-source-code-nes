@@ -327,7 +327,7 @@ You can see the differences between the variants by searching the source code fo
 
 * The first title in the combat demo scroll text is different (the PAL title is "IMAGINEER PRESENTS --- E L I T E --- (C)BRABEN & BELL 1991" while the NTSC title is "NTSC EMULATION --- E L I T E ---  (C)BELL & BRABEN 1991")
 
-* A number of pixel y-coordinate constants in the PAL version are six pixels bigger than in the PAL version, to cater for the taller screen height.
+* A number of pixel y-coordinate constants in the PAL version are six pixels bigger than in the NTSC version, to cater for the taller screen height.
 
 * The interrupt vectors in banks 0 to 6 that are used during initialisation are subtly different.
 
