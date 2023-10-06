@@ -32,15 +32,15 @@ build:
 	echo _MATCH_ORIGINAL_BINARIES=FALSE >> 1-source-files/main-sources/elite-build-options.asm
 	echo > 1-source-files/main-sources/elite-bank-options.asm
 	$(BEEBASM) -i 1-source-files/main-sources/elite-source-header.asm -v > 3-assembled-output/compile.txt
-	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-0.asm -v >> 3-assembled-output/compile.txt
-	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-1.asm -v >> 3-assembled-output/compile.txt
-	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-2.asm -v >> 3-assembled-output/compile.txt
-	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-3.asm -v >> 3-assembled-output/compile.txt
-	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-4.asm -v >> 3-assembled-output/compile.txt
-	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-5.asm -v >> 3-assembled-output/compile.txt
-	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-6.asm -v >> 3-assembled-output/compile.txt
+	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-0.asm -v > 3-assembled-output/compile0.txt
+	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-1.asm -v > 3-assembled-output/compile1.txt
+	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-2.asm -v > 3-assembled-output/compile2.txt
+	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-3.asm -v > 3-assembled-output/compile3.txt
+	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-4.asm -v > 3-assembled-output/compile4.txt
+	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-5.asm -v > 3-assembled-output/compile5.txt
+	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-6.asm -v > 3-assembled-output/compile6.txt
 	echo _BANK=7 >> 1-source-files/main-sources/elite-bank-options.asm
-	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-7.asm -v >> 3-assembled-output/compile.txt
+	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-7.asm -v > 3-assembled-output/compile7.txt
 	cat 3-assembled-output/header.bin 3-assembled-output/bank0.bin 3-assembled-output/bank1.bin 3-assembled-output/bank2.bin 3-assembled-output/bank3.bin 3-assembled-output/bank4.bin 3-assembled-output/bank5.bin 3-assembled-output/bank6.bin 3-assembled-output/bank7.bin > 3-assembled-output/elite.bin
 	cp 3-assembled-output/elite.bin 5-compiled-game-discs/ELITE$(suffix-nes).NES
 
@@ -52,15 +52,15 @@ encrypt:
 	echo _MATCH_ORIGINAL_BINARIES=TRUE >> 1-source-files/main-sources/elite-build-options.asm
 	echo > 1-source-files/main-sources/elite-bank-options.asm
 	$(BEEBASM) -i 1-source-files/main-sources/elite-source-header.asm -v > 3-assembled-output/compile.txt
-	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-0.asm -v >> 3-assembled-output/compile.txt
-	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-1.asm -v >> 3-assembled-output/compile.txt
-	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-2.asm -v >> 3-assembled-output/compile.txt
-	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-3.asm -v >> 3-assembled-output/compile.txt
-	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-4.asm -v >> 3-assembled-output/compile.txt
-	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-5.asm -v >> 3-assembled-output/compile.txt
-	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-6.asm -v >> 3-assembled-output/compile.txt
+	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-0.asm -v > 3-assembled-output/compile0.txt
+	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-1.asm -v > 3-assembled-output/compile1.txt
+	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-2.asm -v > 3-assembled-output/compile2.txt
+	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-3.asm -v > 3-assembled-output/compile3.txt
+	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-4.asm -v > 3-assembled-output/compile4.txt
+	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-5.asm -v > 3-assembled-output/compile5.txt
+	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-6.asm -v > 3-assembled-output/compile6.txt
 	echo _BANK=7 >> 1-source-files/main-sources/elite-bank-options.asm
-	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-7.asm -v >> 3-assembled-output/compile.txt
+	$(BEEBASM) -i 1-source-files/main-sources/elite-source-bank-7.asm -v > 3-assembled-output/compile7.txt
 	cat 3-assembled-output/header.bin 3-assembled-output/bank0.bin 3-assembled-output/bank1.bin 3-assembled-output/bank2.bin 3-assembled-output/bank3.bin 3-assembled-output/bank4.bin 3-assembled-output/bank5.bin 3-assembled-output/bank6.bin 3-assembled-output/bank7.bin > 3-assembled-output/elite.bin
 	cp 3-assembled-output/elite.bin 5-compiled-game-discs/ELITE$(suffix-nes).NES
 
