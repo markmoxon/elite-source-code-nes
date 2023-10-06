@@ -1722,7 +1722,7 @@ ENDIF
                         ; To see why this works, consider switching to tune 2,
                         ; for which we would use this command:
                         ;
-                        ;   <$F5 LO(tune2Data_SQ2) LO(tune2Data_SQ2)>
+                        ;   <$F5 LO(tune2Data_SQ2) HI(tune2Data_SQ2)>
                         ;
                         ; This sets:
                         ;
@@ -5135,11 +5135,41 @@ ENDIF
 ;   EQUB $0C, $0C, $63, $07, $61, $07, $63, $07
 ;   EQUB $07, $FF
 ;
-; These blocks are typically terminated by a $FF byte.
+; These blocks contain note data in the format described below.
 ;
 ; Note that tunes 3 and 4 share data, and in these cases there are two labels
 ; applied to the shared data (so tune3Data_SQ1_0 and tune4Data_SQ1_0 point to
 ; the same data, for example).
+;
+; The note data consists of notes, rests and commands. If A is a byte from the
+; note data (such as that shown above), then it is interpreted as follows.
+;
+;   * If $00 <= A <= $5F then this is a note, so send it to the APU after
+;     converting the note value (which is a frequency) into an APU period (so
+;     higher values of A are higher notes with shorter periods)
+;
+;   * If $60 <= A <= $7F then this is a rest, with the rest length given by
+;     A - $5F (so if A = $60 the rest length is one iteration, and if A = $7F
+;     the rest length is 32 iterations)
+;
+;   * If A >= $80 (i.e. bit 7 is set) then this is a command byte. The commands
+;     are between one and three bytes, and have the following effect:
+;
+;     <$F4 $xx>       Set the playback speed to $xx
+;     <$F5 $xx &yy>   Change tune to the tune data at &yyxx (e.g. tune2Data_xxx)
+;     <$F6 $xx>       Set the volume envelope number to $xx
+;     <$F7 $xx>       Set the pitch envelope number to $xx
+;     <$F8>           Set the volume of the current channel to zero
+;     <$F9>           Enable the volume envelope for the current channel
+;     <$FA %ddlc0000> Configure the current channel: duty %dd, loop %l, const %c
+;     <$FB $xx>       Set the tuning for all channels to $xx
+;     <$FC $xx>       Set the tuning for the current channel to $xx
+;     <$FD $xx>       Set the sweep for the current channel to $xx
+;     <$FE>           Stop the music and disable sound
+;     <$FF>           Move to the next section in the current tune
+;
+; If a command byte is fetched that doesn't appear in the above list, then it is
+; ignored.
 ;
 ; ******************************************************************************
 
@@ -5999,19 +6029,23 @@ ENDIF
 
 .tune4Data_SQ1_2
 
- EQUB $F5, $BB, $9B
+ EQUB $F5
+ EQUW tune2Data_SQ1
 
 .tune4Data_TRI_2
 
- EQUB $F5, $8B, $9C
+ EQUB $F5
+ EQUW tune2Data_TRI
 
 .tune4Data_SQ2_2
 
- EQUB $F5, $9B, $9C
+ EQUB $F5
+ EQUW tune2Data_SQ2
 
 .tune4Data_NOISE_3
 
- EQUB $F5, $DF, $9C
+ EQUB $F5
+ EQUW tune2Data_NOISE
 
 .tune0Data_SQ1_4
 
