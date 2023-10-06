@@ -3167,7 +3167,7 @@ ENDIF
  LDA soundByteSQ1+2     ; Set (soundHiSQ1 soundLoSQ1) to the 16-bit value in
  STA soundLoSQ1         ; bytes #2 and #3 of the sound data, which at this point
  STA SQ1_LO             ; contains the first pitch value to send to the APU via
- LDA soundByteSQ1+2+1   ; (SQ1_HI SQ1_LO)
+ LDA soundByteSQ1+3     ; (SQ1_HI SQ1_LO)
  STA soundHiSQ1         ;
  STA SQ1_HI             ; We will be using these bytes to store the pitch bytes
                         ; to send to the APU as we keep making the sound effect,
@@ -3234,78 +3234,130 @@ ENDIF
 ;       Name: StartEffectOnSQ2
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Start making a sound effect on the SQ2 channel
+;    Summary: Make a sound effect on the SQ2 channel
+;
+; ------------------------------------------------------------------------------
+;
+; Arguments:
+;
+;   A                   The number of the sound effect to make
 ;
 ; ******************************************************************************
 
 .StartEffectOnSQ2
 
- ASL A
- TAY
+ ASL A                  ; Set Y = A * 2
+ TAY                    ;
+                        ; So we can use Y as an index into the soundData table,
+                        ; which contains addresses of two bytes each
 
- LDA #0
- STA effectOnSQ2
+ LDA #0                 ; Set effectOnSQ2 = 0 to disable sound generation on the
+ STA effectOnSQ2        ; SQ2 channel while we set up the sound effect (as a
+                        ; value of 0 denotes that a sound effect is not being
+                        ; made on this channel, so none of the sound generation
+                        ; routines will do anything)
+                        ;
+                        ; We enable sound generation below once we have finished
+                        ; setting up the sound effect
 
- LDA soundData,Y
- STA soundAddr
- LDA soundData+1,Y
- STA soundAddr+1
+ LDA soundData,Y        ; Set soundAddr(1 0) to the address for this sound
+ STA soundAddr          ; effect from the soundData table, so soundAddr(1 0)
+ LDA soundData+1,Y      ; points to soundData0 for the sound data for sound
+ STA soundAddr+1        ; effect 0, or to soundData1 for the sound data for
+                        ; sound effect 1, and so on
 
- LDY #13
+                        ; There are 14 bytes of sound data for each sound effect
+                        ; that we now copy to soundByteSQ2, so we can do things
+                        ; like update the counters as we make the sound effect
+
+ LDY #13                ; Set a byte counter in Y for copying all 14 bytes
 
 .mefo1
 
- LDA (soundAddr),Y
- STA soundVar7F,Y
+ LDA (soundAddr),Y      ; Copy the Y-th byte of sound data for this sound effect
+ STA soundByteSQ2,Y     ; to the Y-th byte of soundByteSQ2
 
- DEY
+ DEY                    ; Decrement the loop counter
 
- BPL mefo1
+ BPL mefo1              ; Loop back until we have copied all 14 bytes
 
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- LDA soundVar8A
- STA soundVar92
+ LDA soundByteSQ2+11    ; Set soundVolCountSQ2 = soundByteSQ2+11
+ STA soundVolCountSQ2   ;
+                        ; This initialises the counter in soundVolCountSQ2
+                        ; with the value of byte #11, so it can be used to
+                        ; control how often we apply the volume envelope to the
+                        ; sound effect on channel SQ2
 
- LDA soundVar8C
- STA soundVar90
+ LDA soundByteSQ2+13    ; Set soundPitchEnvSQ2 = soundByteSQ2+13
+ STA soundPitchEnvSQ2   ;
+                        ; This initialises the counter in soundPitchEnvSQ2
+                        ; with the value of byte #13, so it can be used to
+                        ; control how often we apply the pitch envelope to the
+                        ; sound effect on channel SQ2
 
- LDA soundVar80
- STA soundVar8F
+ LDA soundByteSQ2+1     ; Set soundPitCountSQ2 = soundByteSQ2+1
+ STA soundPitCountSQ2   ;
+                        ; This initialises the counter in soundPitCountSQ2
+                        ; with the value of byte #1, so it can be used to
+                        ; control how often we send pitch data to the APU for
+                        ; the sound effect on channel SQ2
 
- LDA soundVar89
- ASL A
- TAY
+ LDA soundByteSQ2+10    ; Set Y = soundByteSQ2+10 * 2
+ ASL A                  ;
+ TAY                    ; So we can use Y as an index into the soundVolume
+                        ; table to fetch byte #10, as the table contains
+                        ; addresses of two bytes each
 
- LDA soundVolume,Y
- STA soundAddr9
- STA soundAddr
- LDA soundVolume+1,Y
- STA soundAddr9+1
+ LDA soundVolume,Y      ; Set soundVolumeSQ2(1 0) to the address of the volume
+ STA soundVolumeSQ2     ; envelope for this sound effect, as specified in
+ STA soundAddr          ; byte #10 of the sound effect's data
+ LDA soundVolume+1,Y    ;
+ STA soundVolumeSQ2+1   ; This also sets soundAddr(1 0) to the same address
  STA soundAddr+1
 
- LDY #0
- STY soundVar91
+ LDY #0                 ; Set Y = 0 so we can use indirect addressing below (we
+                        ; do not change the value of Y, this is just so we can
+                        ; implement the non-existent LDA (soundAddr) instruction
+                        ; by using LDA (soundAddr),Y instead)
 
- LDA (soundAddr),Y
- ORA soundVar85
- STA SQ2_VOL
+ STY soundVolIndexSQ2   ; Set soundVolIndexSQ2 = 0, so we start processing the
+                        ; volume envelope from the first byte
 
- LDA #0
- STA SQ2_SWEEP
+ LDA (soundAddr),Y      ; Take the first byte from the volume envelope for this
+ ORA soundByteSQ2+6     ; sound effect, OR it with the sound effect's byte #6,
+ STA SQ2_VOL            ; and send the result to the APU via SQ2_VOL
+                        ;
+                        ; Data bytes in the volume envelope data only use the
+                        ; low nibble (the high nibble is only used to mark the
+                        ; end of the data), and the sound effect's byte #6 only
+                        ; uses the high nibble, so this sets the low nibble of
+                        ; the APU byte to the volume level from the data, and
+                        ; the high nibble of the APU byte to the configuration
+                        ; in byte #6 (which sets the duty pulse, looping and
+                        ; constant flags for the volume)
 
- LDA soundVar81
- STA soundVar8D
- STA SQ2_LO
+ LDA #0                 ; Send 0 to the APU via SQ2_SWEEP to disable the sweep
+ STA SQ2_SWEEP          ; unit and stop the pitch from changing
 
- LDA soundVar82
- STA soundVar8E
- STA SQ2_HI
+ LDA soundByteSQ2+2     ; Set (soundHiSQ2 soundLoSQ2) to the 16-bit value in
+ STA soundLoSQ2         ; bytes #2 and #3 of the sound data, which at this point
+ STA SQ2_LO             ; contains the first pitch value to send to the APU via
+ LDA soundByteSQ2+3     ; (SQ2_HI SQ2_LO)
+ STA soundHiSQ2         ;
+ STA SQ2_HI             ; We will be using these bytes to store the pitch bytes
+                        ; to send to the APU as we keep making the sound effect,
+                        ; so this just kicks off the process with the initial
+                        ; pitch value
 
- INC effectOnSQ2
+ INC effectOnSQ2        ; Increment effectOnSQ2 to 1 to denote that a sound
+                        ; effect is now being generated on the SQ2 channel, so
+                        ; successive calls to MakeSoundOnSQ2 will now make the
+                        ; sound effect
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
@@ -3614,8 +3666,8 @@ ENDIF
 
  STA SQ1_LO             ; Send the value of soundLoSQ1 to the APU via SQ1_LO
 
- LDA soundByteSQ1+2+1   ; Set A to the high byte of the sound effect's current
-                        ; pitch, which is in byte #2 of the sound data
+ LDA soundByteSQ1+3     ; Set A to the high byte of the sound effect's current
+                        ; pitch, which is in byte #3 of the sound data
 
  STA soundHiSQ1         ; Store the value of A (i.e. the high byte of the sound
                         ; effect's pitch) in soundHiSQ1
@@ -3676,7 +3728,7 @@ ENDIF
  STA soundLoSQ1         ; it to the APU via (SQ1_HI SQ1_LO)
  STA SQ1_LO             ;
  LDA soundHiSQ1         ; Note that bits 2 to 7 of the high byte are cleared so
- SBC soundByteSQ1+4+1   ; the length counter does not reload
+ SBC soundByteSQ1+5     ; the length counter does not reload
  AND #%00000011
  STA soundHiSQ1
  STA SQ1_HI
@@ -3698,7 +3750,7 @@ ENDIF
  STA soundLoSQ1         ; it to the APU via (SQ1_HI SQ1_LO)
  STA SQ1_LO             ;
  LDA soundHiSQ1         ; Note that bits 2 to 7 of the high byte are cleared so
- ADC soundByteSQ1+4+1   ; the length counter does not reload
+ ADC soundByteSQ1+5     ; the length counter does not reload
  AND #%00000011
  STA soundHiSQ1
  STA SQ1_HI
@@ -3718,37 +3770,51 @@ ENDIF
 
 .MakeSoundOnSQ2
 
- LDA effectOnSQ2
- BNE msco1
+ LDA effectOnSQ2        ; If effectOnSQ2 is non-zero then a sound effect is
+ BNE msco1              ; being made on channel SQ2, so jump to msco1 to keep
+                        ; making it
 
- RTS
+ RTS                    ; Otherwise return from the subroutine
 
 .msco1
 
- LDA soundVar7F
- BNE msco3
+ LDA soundByteSQ2+0     ; If the remaining number of iterations for this sound
+ BNE msco3              ; effect in sound byte #0 is non-zero, jump to msco3 to
+                        ; keep making the sound
 
- LDX soundVar8B
- BNE msco3
+ LDX soundByteSQ2+12    ; If byte #12 of the sound effect data is non-zero, then
+ BNE msco3              ; this sound effect keeps looping, so jump to msco3 to
+                        ; keep making the sound
 
  LDA enableSound        ; If enableSound = 0 then sound is disabled, so jump to
  BEQ msco2              ; msco2 to silence the SQ2 channel and return from the
                         ; subroutine
 
- LDA sq2Volume
- STA SQ2_VOL
+                        ; If we get here then we have finished making the sound
+                        ; effect, so we now send the volume and pitch values for
+                        ; the music to the APU, so if there is any music playing
+                        ; it will pick up again, and we mark this sound channel
+                        ; as clear of sound effects
 
- LDA sq2Lo
- STA SQ2_LO
+ LDA sq2Volume          ; Send sq2Volume to the APU via SQ2_VOL, which is the
+ STA SQ2_VOL            ; volume byte of any music that was playing when the
+                        ; sound effect took precedence
 
- LDA sq2Hi
+ LDA sq2Lo              ; Send (sq2Hi sq2Lo) to the APU via (SQ2_HI SQ2_LO),
+ STA SQ2_LO             ; which is the pitch of any music that was playing when
+ LDA sq2Hi              ; the sound effect took precedence
  STA SQ2_HI
 
- STX effectOnSQ2
+ STX effectOnSQ2        ; Set effectOnSQ2 = 0 to mark the SQL channel as clear
+                        ; of sound effects, so the channel can be used for music
+                        ; and is ready for the next sound effect
 
- RTS
+ RTS                    ; Return from the subroutine
 
 .msco2
+
+                        ; If we get here then sound is disabled, so we need to
+                        ; silence the SQ2 channel
 
  LDA #%00110000         ; Set the volume of the SQ2 channel to zero as follows:
  STA SQ2_VOL            ;
@@ -3757,143 +3823,242 @@ ENDIF
                         ;   * Bit 4 set   = constant volume
                         ;   * Bits 0-3    = volume is 0
 
- STX effectOnSQ2        ; Set effectOnSQ2 = 1 to indicate the SQ2 channel is
-                        ; clear
+ STX effectOnSQ2        ; Set effectOnSQ2 = 0 to mark the SQL channel as clear
+                        ; of sound effects, so the channel can be used for music
+                        ; and is ready for the next sound effect
 
  RTS                    ; Return from the subroutine
 
 .msco3
 
- DEC soundVar7F
+                        ; If we get here then we need to keep making the sound
+                        ; effect on channel SQ2
 
- DEC soundVar92
+ DEC soundByteSQ2+0     ; Decrement the remaining length of the sound in byte #0
+                        ; as we are about to make the sound for another
+                        ; iteration
 
- BNE msco5
+ DEC soundVolCountSQ2   ; Decrement the volume envelope counter so we count down
+                        ; towards the point where we apply the volume envelope
 
- LDA soundVar8A
- STA soundVar92
+ BNE msco5              ; If the volume envelope counter has not reached zero
+                        ; then jump to msco5, as we don't apply the next entry
+                        ; from the volume envelope yet
 
- LDY soundVar91
+                        ; If we get here then the counter in soundVolCountSQ2
+                        ; just reached zero, so we apply the next entry from the
+                        ; volume envelope
 
- LDA soundAddr9
- STA soundAddr
- LDA soundAddr9+1
- STA soundAddr+1
+ LDA soundByteSQ2+11    ; Reset the volume envelope counter to byte #11 from the
+ STA soundVolCountSQ2   ; sound effect's data, which controls how often we apply
+                        ; the volume envelope to the sound effect
 
- LDA (soundAddr),Y
+ LDY soundVolIndexSQ2   ; Set Y to the index of the current byte in the volume
+                        ; envelope
 
- BPL msco4
+ LDA soundVolumeSQ2     ; Set soundAddr(1 0) = soundVolumeSQ2(1 0)
+ STA soundAddr          ;
+ LDA soundVolumeSQ2+1   ; So soundAddr(1 0) contains the address of the volume
+ STA soundAddr+1        ; envelope for this sound effect
 
- CMP #$80
- BNE msco5
+ LDA (soundAddr),Y      ; Set A to the data byte at the current index in the
+                        ; volume envelope
 
- LDY #0
+ BPL msco4              ; If bit 7 is clear then we just fetched a volume value
+                        ; from the envelope, so jump to msco4 to apply it
 
- LDA (soundAddr),Y
+                        ; If we get here then A must be $80 or $FF, as those are
+                        ; the only two valid entries in the volume envelope that
+                        ; have bit 7 set
+                        ;
+                        ; $80 means we loop back to the start of the envelope,
+                        ; while $FF means the envelope ends here
+
+ CMP #$80               ; If A is not $80 then we must have just fetched $FF
+ BNE msco5              ; from the envelope, so jump to msco5 to exit the
+                        ; envelope
+
+                        ; If we get here then we just fetched a $80 from the
+                        ; envelope data, so we now loop around to the start of
+                        ; the envelope, so it keeps repeating
+
+ LDY #0                 ; Set Y to zero so we fetch data from the start of the
+                        ; envelope again
+
+ LDA (soundAddr),Y      ; Set A to the byte of envelope data at index 0, so we
+                        ; can fall through into msco4 to process it
 
 .msco4
 
- ORA soundVar85
- STA SQ2_VOL
+                        ; If we get here then A contains an entry from the
+                        ; volume envelope for this sound effect, so now we send
+                        ; it to the APU to change the volume
 
- INY
+ ORA soundByteSQ2+6     ; OR the envelope byte with the sound effect's byte #6,
+ STA SQ2_VOL            ; and send the result to the APU via SQ2_VOL
+                        ;
+                        ; Data bytes in the volume envelope data only use the
+                        ; low nibble (the high nibble is only used to mark the
+                        ; end of the data), and the sound effect's byte #6 only
+                        ; uses the high nibble, so this sets the low nibble of
+                        ; the APU byte to the volume level from the data, and
+                        ; the high nibble of the APU byte to the configuration
+                        ; in byte #6 (which sets the duty pulse, looping and
+                        ; constant flags for the volume)
 
- STY soundVar91
+ INY                    ; Increment the index of the current byte in the volume
+ STY soundVolIndexSQ2   ; envelope so on the next iteration we move on to the
+                        ; next byte in the envelope
 
 .msco5
 
- LDA soundVar8F
- BNE msco8
+                        ; Now that we are done with the volume envelope, it's
+                        ; time to move on to the pitch of the sound effect
 
- LDA soundVar8B
- BNE msco6
+ LDA soundPitCountSQ2   ; If the byte #1 counter has not yet run down to zero,
+ BNE msco8              ; jump to msco8 to skip the following, so we don't send
+                        ; pitch data to the APU on this iteration
 
- LDA soundVar88
- BNE msco6
+                        ; If we get here then the counter in soundPitCountSQ2
+                        ; (which counts down from the value of byte #1) has run
+                        ; down to zero, so we now send pitch data to the ALU if
+                        ; if we haven't yet sent it all
 
- RTS
+ LDA soundByteSQ2+12    ; If byte #12 is non-zero then the sound effect loops
+ BNE msco6              ; infinitely, so jump to msco6 to send pitch data to the
+                        ; APU
+
+ LDA soundByteSQ2+9     ; Otherwise, if the counter in byte #9 has not run down
+ BNE msco6              ; then we haven't yet sent pitch data for enough
+                        ; iterations, so jump to msco6 to send pitch data to the
+                        ; APU
+
+ RTS                    ; Return from the subroutine
 
 .msco6
 
- DEC soundVar88
+                        ; If we get here then we are sending pitch data to the
+                        ; APU on this iteration, so now we do just that
 
- LDA soundVar80
- STA soundVar8F
+ DEC soundByteSQ2+9     ; Decrement the counter in byte #9, which contains the
+                        ; number of iterations for which we send pitch data to
+                        ; the APU (as that's what we are doing)
 
- LDA soundVar81
+ LDA soundByteSQ2+1     ; Reset the soundPitCountSQ2 counter to the value of
+ STA soundPitCountSQ2   ; byte #1 so it can start counting down again to trigger
+                        ; the next pitch change after this one
 
- LDX soundVar86
+ LDA soundByteSQ2+2     ; Set A to the low byte of the sound effect's current
+                        ; pitch, which is in byte #2 of the sound data
 
- BEQ msco7
+ LDX soundByteSQ2+7     ; If byte #7 is zero then vibrato is disabled, so jump
+ BEQ msco7              ; to msco7 to skip the following instruction
 
- ADC soundVibrato
+ ADC soundVibrato       ; Byte #7 is non-zero, so add soundVibrato to the pitch
+                        ; of the sound in A to apply vibrato (this also adds the
+                        ; C flag, which is not in a fixed state, so this adds an
+                        ; extra level of randomness to the vibrato effect)
 
 .msco7
 
- STA soundVar8D
+ STA soundLoSQ2         ; Store the value of A (i.e. the low byte of the sound
+                        ; effect's pitch, possibly with added vibrato) in
+                        ; soundLoSQ2
 
- STA SQ2_LO
+ STA SQ2_LO             ; Send the value of soundLoSQ2 to the APU via SQ2_LO
 
- LDA soundVar82
- STA soundVar8E
+ LDA soundByteSQ2+3     ; Set A to the high byte of the sound effect's current
+                        ; pitch, which is in byte #3 of the sound data
 
- STA SQ2_HI
+ STA soundHiSQ2         ; Store the value of A (i.e. the high byte of the sound
+                        ; effect's pitch) in soundHiSQ2
+
+ STA SQ2_HI             ; Send the value of soundHiSQ2 to the APU via SQ2_HI
 
 .msco8
 
- DEC soundVar8F
+ DEC soundPitCountSQ2   ; Decrement the byte #1 counter, as we have now done one
+                        ; more iteration of the sound effect
 
- LDA soundVar8C
- BEQ msco9
+ LDA soundByteSQ2+13    ; If byte #13 of the sound data is zero then we apply
+ BEQ msco9              ; pitch variation in every iteration (if enabled), so
+                        ; jump to msco9 to skip the following and move straight
+                        ; to the pitch variation checks
 
- DEC soundVar90
+ DEC soundPitchEnvSQ2   ; Otherwise decrement the byte #13 counter to count down
+                        ; towards the point where we apply pitch variation
 
- BNE msco11
+ BNE msco11             ; If the counter is not yet zero, jump to msco11 to
+                        ; return from the subroutine without applying pitch
+                        ; variation, as the counter has not yet reached that
+                        ; point
 
- STA soundVar90
+                        ; If we get here then the byte #13 counter just ran down
+                        ; to zero, so we need to apply pitch variation (if
+                        ; enabled)
+
+ STA soundPitchEnvSQ2   ; Reset the soundPitchEnvSQ2 counter to the value of
+                        ; byte #13 so it can start counting down again, for the
+                        ; next pitch variation after this one
 
 .msco9
 
- LDA soundVar87
- BEQ msco11
+ LDA soundByteSQ2+8     ; Set A to byte #8 of the sound data, which determines
+                        ; whether pitch variation is enabled
 
- BMI msco10
+ BEQ msco11             ; If A is zero then pitch variation is not enabled, so
+                        ; jump to msco11 to return from the subroutine without
+                        ; applying pitch variation
 
- LDA soundVar8D
- SEC
- SBC soundVar83
- STA soundVar8D
+                        ; If we get here then pitch variation is enabled, so now
+                        ; we need to apply it
 
- STA SQ2_LO
+ BMI msco10             ; If A is negative then we need to add the value to the
+                        ; pitch's period, so jump to msco10
 
- LDA soundVar8E
- SBC soundVar84
- AND #3
- STA soundVar8E
+                        ; If we get here then we need to subtract the 16-bit
+                        ; value in bytes #4 and #5 from the pitch's period in
+                        ; (soundHiSQ2 soundLoSQ2)
+                        ;
+                        ; Reducing the pitch's period increases its frequency,
+                        ; so this makes the note frequency higher
 
+ LDA soundLoSQ2         ; Subtract the 16-bit value in bytes #4 and #5 of the
+ SEC                    ; sound data from (soundHiSQ2 soundLoSQ2), updating
+ SBC soundByteSQ2+4     ; (soundHiSQ2 soundLoSQ2) to the result, and sending
+ STA soundLoSQ2         ; it to the APU via (SQ2_HI SQ2_LO)
+ STA SQ2_LO             ;
+ LDA soundHiSQ2         ; Note that bits 2 to 7 of the high byte are cleared so
+ SBC soundByteSQ2+5     ; the length counter does not reload
+ AND #%00000011
+ STA soundHiSQ2
  STA SQ2_HI
 
- RTS
+ RTS                    ; Return from the subroutine
 
 .msco10
 
- LDA soundVar8D
- CLC
- ADC soundVar83
- STA soundVar8D
+                        ; If we get here then we need to add the 16-bit value
+                        ; in bytes #4 and #5 to the pitch's period in
+                        ; (soundHiSQ2 soundLoSQ2)
+                        ;
+                        ; Increasing the pitch's period reduces its frequency,
+                        ; so this makes the note frequency lower
 
- STA SQ2_LO
-
- LDA soundVar8E
- ADC soundVar84
- AND #3
- STA soundVar8E
-
+ LDA soundLoSQ2         ; Add the 16-bit value in bytes #4 and #5 of the sound
+ CLC                    ; data to (soundHiSQ2 soundLoSQ2), updating
+ ADC soundByteSQ2+4     ; (soundHiSQ2 soundLoSQ2) to the result, and sending
+ STA soundLoSQ2         ; it to the APU via (SQ2_HI SQ2_LO)
+ STA SQ2_LO             ;
+ LDA soundHiSQ2         ; Note that bits 2 to 7 of the high byte are cleared so
+ ADC soundByteSQ2+5     ; the length counter does not reload
+ AND #%00000011
+ STA soundHiSQ2
  STA SQ2_HI
 
 .msco11
 
- RTS
+ RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;

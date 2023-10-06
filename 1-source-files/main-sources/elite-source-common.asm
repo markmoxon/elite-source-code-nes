@@ -4210,83 +4210,32 @@ ORG $0200
                         ; Specifically, one entry from the volume envelope is
                         ; applied every soundVolCountSQ1 iterations
 
-.soundVar7F
+.soundByteSQ2
+
+ SKIP 14                ; The 14 sound bytes for the sound effect being made
+                        ; on channel SQ2
+
+.soundLoSQ2
 
  SKIP 1                 ; ???
 
-.soundVar80
+.soundHiSQ2
 
  SKIP 1                 ; ???
 
-.soundVar81
+.soundPitCountSQ2
 
  SKIP 1                 ; ???
 
-.soundVar82
+.soundPitchEnvSQ2
 
  SKIP 1                 ; ???
 
-.soundVar83
+.soundVolIndexSQ2
 
  SKIP 1                 ; ???
 
-.soundVar84
-
- SKIP 1                 ; ???
-
-.soundVar85
-
- SKIP 1                 ; ???
-
-.soundVar86
-
- SKIP 1                 ; ???
-
-.soundVar87
-
- SKIP 1                 ; ???
-
-.soundVar88
-
- SKIP 1                 ; ???
-
-.soundVar89
-
- SKIP 1                 ; ???
-
-.soundVar8A
-
- SKIP 1                 ; ???
-
-.soundVar8B
-
- SKIP 1                 ; ???
-
-.soundVar8C
-
- SKIP 1                 ; ???
-
-.soundVar8D
-
- SKIP 1                 ; ???
-
-.soundVar8E
-
- SKIP 1                 ; ???
-
-.soundVar8F
-
- SKIP 1                 ; ???
-
-.soundVar90
-
- SKIP 1                 ; ???
-
-.soundVar91
-
- SKIP 1                 ; ???
-
-.soundVar92
+.soundVolCountSQ2
 
  SKIP 1                 ; ???
 
@@ -4375,7 +4324,7 @@ ORG $0200
  SKIP 2                 ; The address of the volume envelope data for the sound
                         ; effect currently being made on channel SQ1
 
-.soundAddr9
+.soundVolumeSQ2
 
  SKIP 2                 ; ???
 
