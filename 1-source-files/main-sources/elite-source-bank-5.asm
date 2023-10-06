@@ -2579,8 +2579,8 @@ ENDIF
  STA autoplayKey        ; "pressed" in the auto-play
 
  STA autoplayRepeat     ; Set autoplayRepeat = 0 to reset the number of repeats
-                        ; in the auto-play (as otherwise the the first button
-                        ; press would start repeating)
+                        ; in the auto-play (as otherwise the first button press
+                        ; would start repeating)
 
  LDX #%10000000         ; Set bit 7 of autoPlayDemo so the NMI handler will play
  STX autoPlayDemo       ; the demo automatically using the controller key

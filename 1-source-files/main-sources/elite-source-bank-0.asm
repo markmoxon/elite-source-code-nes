@@ -2357,7 +2357,7 @@ ENDIF
 
 .MA4
 
- LDA iconBarKeyPress    ; Set A to the the icon bar key logger entry in
+ LDA iconBarKeyPress    ; Set A to the icon bar key logger entry in
                         ; iconBarKeyPress, which contains the button number of
                         ; the icon bar button (if one has been chosen)
 
@@ -3142,8 +3142,8 @@ ENDIF
 
 .STATUS
 
- LDA #$98               ; Clear the screen and and set the view type in QQ11 to
- JSR SetNewViewType     ; $98 (Status Mode)
+ LDA #$98               ; Clear the screen and set the view type in QQ11 to $98
+ JSR SetNewViewType     ; (Status Mode)
 
  JSR SetSelectedSystem  ; Set the selected system to the nearest system, if we
                         ; don't already have a selected system
@@ -7396,8 +7396,8 @@ ENDIF
 
 .LAUN
 
- LDA #$00               ; Clear the screen and and set the view type in QQ11 to
- JSR ChangeToView       ; $00 (Space view with no fonts loaded)
+ LDA #$00               ; Clear the screen and set the view type in QQ11 to $00
+ JSR ChangeToView       ; (Space view with no fonts loaded)
 
  JSR HideMostSprites    ; Hide all sprites except for sprite 0 and the icon bar
                         ; pointer
@@ -7527,7 +7527,7 @@ ENDIF
                         ; We can now use A as half the height of the box to
                         ; draw, to give us an effect where the boxes are more
                         ; spread out as they get taller, and which get bigger
-                        ; as the animation progesses, with the difference in
+                        ; as the animation progresses, with the difference in
                         ; size between frames being more pronounced with the
                         ; bigger boxes
 
@@ -7883,8 +7883,8 @@ ENDIF
                         ; both pattern buffer, and clearing both nametable
                         ; buffers to the background tile
 
- LDA #$95               ; Clear the screen and and set the view type in QQ11 to
- JSR TT66               ; $95 (Text-based mission briefing)
+ LDA #$95               ; Clear the screen and set the view type in QQ11 to $95
+ JSR TT66               ; (Text-based mission briefing)
 
  LDA TP                 ; Set bit 4 of TP to indicate that mission 3 has been
  ORA #%00010000         ; triggered
@@ -7970,8 +7970,8 @@ ENDIF
  JSR FadeAndHideSprites ; Fade the screen to black and hide all sprites, so we
                         ; can update the screen while it's blacked-out
 
- LDA #$92               ; Clear the screen and and set the view type in QQ11 to
- JSR ChangeToView       ; $92 (Mission 1 briefing: rotating ship)
+ LDA #$92               ; Clear the screen and set the view type in QQ11 to $92
+ JSR ChangeToView       ; (Mission 1 briefing: rotating ship)
 
  LDA #64                ; Set the main loop counter to 64, so the ship rotates
  STA MCNT               ; for 64 iterations through MVEIT
@@ -8040,8 +8040,8 @@ ENDIF
  INC INWK+7             ; Increment z_hi, to keep the ship at the same distance
                         ; as we just incremented z_lo past 255
 
- LDA #$93               ; Clear the screen and and set the view type in QQ11 to
- JSR TT66               ; $93 (Mission 1 briefing: ship and text)
+ LDA #$93               ; Clear the screen and set the view type in QQ11 to $93
+ JSR TT66               ; (Mission 1 briefing: ship and text)
 
  LDA #10                ; Set A = 10 so the call to BRP prints extended token 10
                         ; (the briefing for mission 1 where we find out all
@@ -8148,8 +8148,8 @@ ENDIF
 
  STA VIEW               ; Set the space view to the front view
 
- JSR TT66               ; Clear the screen and and set the view type in QQ11 to
-                        ; $00 (Space view with no fonts loaded)
+ JSR TT66               ; Clear the screen and set the view type in QQ11 to $00
+                        ; (Space view with no fonts loaded)
 
  LSR demoInProgress     ; Clear bit 7 of demoInProgress
 
@@ -8951,8 +8951,8 @@ ENDIF
 
 .TT25
 
- LDA #$96               ; Clear the screen and and set the view type in QQ11 to
- JSR SetNewViewType     ; $96 (Data on System)
+ LDA #$96               ; Clear the screen and set the view type in QQ11 to $96
+ JSR SetNewViewType     ; (Data on System)
 
  JSR TT111              ; Select the system closest to galactic coordinates
                         ; (QQ9, QQ10)
@@ -9416,8 +9416,8 @@ ENDIF
 
 .TT22
 
- LDA #$8D               ; Clear the screen and and set the view type in QQ11 to
- JSR TT66               ; $8D (Long-range Chart)
+ LDA #$8D               ; Clear the screen and set the view type in QQ11 to $8D
+ JSR TT66               ; (Long-range Chart)
 
  LDA #77                ; Set the screen height variables for a screen height of
  JSR SetScreenHeight    ; 154 (i.e. 2 * 77)
@@ -10007,8 +10007,8 @@ ENDIF
 
 .TT213
 
- LDA #$97               ; Clear the screen and and set the view type in QQ11 to
- JSR SetNewViewType     ; $97 (Inventory)
+ LDA #$97               ; Clear the screen and set the view type in QQ11 to $97
+ JSR SetNewViewType     ; (Inventory)
 
  LDA #11                ; Move the text cursor to column 11 to print the screen
  STA XC                 ; title
@@ -10502,8 +10502,8 @@ ENDIF
  STA Yx2M1              ; to cover the size of the chart part of the Short-range
                         ; Chart view
 
- LDA #$9C               ; Clear the screen and and set the view type in QQ11 to
- JSR TT66               ; $9C (Short-range Chart)
+ LDA #$9C               ; Clear the screen and set the view type in QQ11 to $9C
+ JSR TT66               ; (Short-range Chart)
 
  LDX languageIndex      ; Move the text cursor to the correct column for the
  LDA xShortRange,X      ; Short-range Chart title in the chosen language
@@ -13811,8 +13811,8 @@ ENDIF
 
 .EQSHP
 
- LDA #$B9               ; Clear the screen and and set the view type in QQ11 to
- JSR SetNewViewType     ; $B9 (Equip Ship)
+ LDA #$B9               ; Clear the screen and set the view type in QQ11 to $B9
+ JSR SetNewViewType     ; (Equip Ship)
 
  LDX languageIndex      ; Move the text cursor to the correct column for the
  LDA xEquipShip,X       ; Equip Ship title in the chosen language
@@ -19043,8 +19043,8 @@ ENDIF
  STA autoPlayDemo       ; Disable auto-play by setting autoPlayDemo to zero, in
                         ; case we die during the auto-play combat demo
 
- LDA #$C4               ; Clear the screen and and set the view type in QQ11 to
- JSR TT66               ; $95 (Game Over screen)
+ LDA #$C4               ; Clear the screen and set the view type in QQ11 to $95
+ JSR TT66               ; (Game Over screen)
 
  JSR ClearDashEdge_b6   ; Clear the right edge of the dashboard
 
@@ -19354,7 +19354,7 @@ ENDIF
 
  LDA controller1Select  ; If Select, Start, A and B are all pressed at the same
  AND controller1Start   ; time on controller 1, jump to dead2 to skip the demo
- AND controller1A       ; and show the credits scrolltext instead
+ AND controller1A       ; and show the credits scroll text instead
  AND controller1B
  BNE dead2
 
@@ -19403,7 +19403,7 @@ ENDIF
 
 .dead2
 
-                        ; If we get here then we show the credits scrolltext
+                        ; If we get here then we show the credits scroll text
 
  JSR BR1                ; Reset a number of variables, ready to start a new game
 
@@ -19554,7 +19554,7 @@ ENDIF
 ;       Name: ChangeToView
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: Clear the screen and and set a new view type
+;    Summary: Clear the screen and set a new view type
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -19566,8 +19566,8 @@ ENDIF
 
 .ChangeToView
 
- JSR TT66               ; Clear the screen and and set the view type in QQ11 to
-                        ; the value of A
+ JSR TT66               ; Clear the screen and set the view type in QQ11 to the
+                        ; value of A
 
  JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
                         ; buffer and tell the NMI handler to send pattern
@@ -19675,8 +19675,8 @@ ENDIF
  LDY #0                 ; Set DELTA = 0 (i.e. ship speed = 0)
  STY DELTA
 
- LDA #$01               ; Clear the screen and and set the view type in QQ11 to
- JSR ChangeToView       ; $01 (Title screen)
+ LDA #$01               ; Clear the screen and set the view type in QQ11 to $01
+ JSR ChangeToView       ; (Title screen)
 
  LDA #7                 ; Set YP = 7 to use as the outer loop counter for the
  STA YP                 ; loop starting at TLL2
@@ -23349,8 +23349,8 @@ ENDIF
 
  STX VIEW               ; Set the current space view to X
 
- LDA #$00               ; Clear the screen and and set the view type in QQ11 to
- JSR TT66               ; $00 (Space view with no fonts loaded)
+ LDA #$00               ; Clear the screen and set the view type in QQ11 to $00
+ JSR TT66               ; (Space view with no fonts loaded)
 
  JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
                         ; buffer and tell the NMI handler to send pattern
@@ -23391,8 +23391,8 @@ ENDIF
 
  STX VIEW               ; Set the current space view to X
 
- LDA #$00               ; Clear the screen and and set the view type in QQ11 to
- JSR TT66               ; $00 (Space view with no fonts loaded)
+ LDA #$00               ; Clear the screen and set the view type in QQ11 to $00
+ JSR TT66               ; (Space view with no fonts loaded)
 
  JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
                         ; buffer and tell the NMI handler to send pattern

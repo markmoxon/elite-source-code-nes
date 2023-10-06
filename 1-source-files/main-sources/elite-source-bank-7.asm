@@ -1502,8 +1502,8 @@ ENDIF
                         ; If we get here then we are already in the process of
                         ; sending tile data to the PPU, split across multiple
                         ; calls to the NMI handler, so before we can consider
-                        ; sending data data for anything else, we need to finish
-                        ; the job that we already started
+                        ; sending data for anything else, we need to finish the
+                        ; job that we already started
 
  SUBTRACT_CYCLES 56     ; Subtract 56 from the cycle count
 
@@ -1543,7 +1543,7 @@ ENDIF
  LDA lastPatternTile,X  ; Set A to the number of the last pattern number to send
                         ; for this bitplane
 
- BNE sbuf1              ; If it it zero (i.e. we have no free tiles), then set
+ BNE sbuf1              ; If it is zero (i.e. we have no free tiles), then set
  LDA #255               ; A to 255, so we can use A as an upper limit
 
 .sbuf1
@@ -1555,7 +1555,7 @@ ENDIF
                         ; pattern data to send before we have processed all the
                         ; tiles, so jump to sbuf3
                         ;
-                        ; Ths BEQ appears to be superfluous here as BCS will
+                        ; The BEQ appears to be superfluous here as BCS will
                         ; catch an equality
 
                         ; If we get here then we have finished sending pattern
@@ -1598,7 +1598,7 @@ ENDIF
                         ; not nametable data, and to stop sending the pattern
                         ; data if the other bitplane is ready to be sent
                         ;
-                        ; This is is the case here as we only jump to sbuf3 if
+                        ; This is the case here as we only jump to sbuf3 if
                         ; the other bitplane is configured to send data to the
                         ; PPU, so we stop sending the pattern data for this
                         ; bitplane by returning from the subroutine (as RTS1
@@ -1962,7 +1962,7 @@ ENDIF
  LDA lastPatternTile,X  ; Set A to the number of the last pattern number to send
                         ; for this bitplane
 
- BNE spat5              ; If it it zero (i.e. we have no free tiles), then set
+ BNE spat5              ; If it is zero (i.e. we have no free tiles), then set
  LDA #255               ; A to 255, so we can use A as an upper limit
 
 .spat5
@@ -1976,7 +1976,7 @@ ENDIF
  STA ppuToBuffNameHi,X  ;                          - (nameBufferHiAddr 0)
                         ;
                         ; So ppuToBuffNameHi for this bitplane contains a high
-                        ; byte that we can add to a PPU nametable addredd to get
+                        ; byte that we can add to a PPU nametable address to get
                         ; the corresponding address in the nametable buffer
 
  LDY pattTileBuffLo,X   ; Set Y to the low byte of the address of the pattern
@@ -1986,7 +1986,7 @@ ENDIF
                         ; We can use this as an index when copying data from
                         ; the pattern buffer, as we know the pattern buffers
                         ; start on page boundaries, so the low byte of the
-                        ; address of the the start of each buffer is zero
+                        ; address of the start of each buffer is zero
 
  LDA pattTileBuffHi,X   ; Set the high byte of dataForPPU(1 0) to the high byte
  STA dataForPPU+1       ; of the pattern buffer for this bitplane, as we want
@@ -2747,7 +2747,7 @@ ENDIF
                         ; We can use this as an index when copying data from
                         ; the nametable buffer, as we know the nametable buffers
                         ; start on page boundaries, so the low byte of the
-                        ; address of the the start of each buffer is zero
+                        ; address of the start of each buffer is zero
 
  LDA nameTileBuffHi,X   ; Set the high byte of dataForPPU(1 0) to the high byte
  STA dataForPPU+1       ; of the nametable buffer for this bitplane, as we want
@@ -3373,7 +3373,7 @@ ENDIF
 
  JSR SendScreenToPPU    ; Update the screen by sending the nametable and pattern
                         ; data from the buffers to the PPU, configuring the PPU
-                        ; registers accordinaly, and clearing the buffers if
+                        ; registers accordingly, and clearing the buffers if
                         ; required
 
  JSR ReadControllers    ; Read the buttons on the controllers and update the
@@ -3435,7 +3435,7 @@ ENDIF
  DEC nmiTimer           ; Decrement the NMI timer counter, so that it counts
                         ; each NMI interrupt
 
- BNE nmit1              ; If it hsn't reached zero yet, jump to nmit1 to return
+ BNE nmit1              ; If it hasn't reached zero yet, jump to nmit1 to return
                         ; from the subroutine
 
  LDA #50                ; Wrap the NMI timer round to start counting down from
@@ -3982,9 +3982,9 @@ ENDIF
 
 .ReadControllers
 
- LDA #1                 ; Write 1 then 0 to the the controller port at JOY1 to
- STA JOY1               ; tell the controllers to latch the button positions,
- LSR A                  ; so we can then read them in the ScanButtons routine
+ LDA #1                 ; Write 1 then 0 to the controller port at JOY1 to tell
+ STA JOY1               ; the controllers to latch the button positions, so we
+ LSR A                  ; can then read them in the ScanButtons routine
  STA JOY1
 
  TAX                    ; Call ScanButtons with X = 0 to scan controller 1 and
@@ -4037,32 +4037,32 @@ ENDIF
  CMP #%00000001         ; controller1B (as A = 1), otherwise shift a 0
  ROR controller1B,X
 
- LDA JOY1,X             ; Read the the status of the Select button on controller
+ LDA JOY1,X             ; Read the status of the Select button on controller
  AND #%00000011         ; X, and if it is being pressed, shift a 1 into bit 7 of
  CMP #%00000001         ; controller1Select (as A = 1), otherwise shift a 0
  ROR controller1Select,X
 
- LDA JOY1,X             ; Read the the status of the Start button on controller
+ LDA JOY1,X             ; Read the status of the Start button on controller
  AND #%00000011         ; X, and if it is being pressed, shift a 1 into bit 7 of
  CMP #%00000001         ; controller1Start (as A = 1), otherwise shift a 0
  ROR controller1Start,X
 
- LDA JOY1,X             ; Read the the status of the up button on controller X,
+ LDA JOY1,X             ; Read the status of the up button on controller X,
  AND #%00000011         ; and if it is being pressed, shift a 1 into bit 7 of
  CMP #%00000001         ; controller1Up (as A = 1), otherwise shift a 0
  ROR controller1Up,X
 
- LDA JOY1,X             ; Read the the status of the down button on controller
+ LDA JOY1,X             ; Read the status of the down button on controller
  AND #%00000011         ; X, and if it is being pressed, shift a 1 into bit 7 of
  CMP #%00000001         ; controller1Down (as A = 1), otherwise shift a 0
  ROR controller1Down,X
 
- LDA JOY1,X             ; Read the the status of the left button on controller
+ LDA JOY1,X             ; Read the status of the left button on controller
  AND #%00000011         ; X, and if it is being pressed, shift a 1 into bit 7 of
  CMP #%00000001         ; controller1Left (as A = 1), otherwise shift a 0
  ROR controller1Left,X
 
- LDA JOY1,X             ; Read the the status of the right button on controller
+ LDA JOY1,X             ; Read the status of the right button on controller
  AND #%00000011         ; X, and if it is being pressed, shift a 1 into bit 7 of
  CMP #%00000001         ; controller1Right (as A = 1), otherwise shift a 0
  ROR controller1Right,X
@@ -4594,7 +4594,7 @@ ENDIF
  AND #%00001000         ; If bit 3 of the of the current bitplane flags is
  BEQ pbuf2              ; clear, then this bitplane is configured not to be
                         ; cleared after it has been sent to the PPU, so jump to
-                        ; pbuf2 to return from the subroutine withough clearing
+                        ; pbuf2 to return from the subroutine without clearing
                         ; the buffers
 
                         ; If we get here then we are either in the process of
@@ -6209,8 +6209,8 @@ ENDIF
                         ; bits 1 to 7 of SC+1 were clear before the rotation
 
  STA SC2                ; Set the low byte of SC2(1 0) to the low byte of
-                        ; SC(1 0), as the the addresses of the two nametable
-                        ; buffers only differ in the high bytes
+                        ; SC(1 0), as the addresses of the two nametable buffers
+                        ; only differ in the high bytes
 
  LDA SC+1               ; Set SC(1 0) = SC(1 0) + nameBuffer0
  ADC #HI(nameBuffer0)   ;
@@ -7535,10 +7535,9 @@ ENDIF
                         ; following
 
  LDA firstFreeTile      ; If firstFreeTile is zero then we have run out of tiles
- BEQ loin41             ; to use use for drawing lines and pixels, so jump to
-                        ; loin41 to keep going with the line-drawing
-                        ; calculations, but without drawing anything in this
-                        ; tile
+ BEQ loin41             ; to use for drawing lines and pixels, so jump to loin41
+                        ; to keep going with the line-drawing calculations, but
+                        ; without drawing anything in this tile
 
  STA (SC2,X)            ; Otherwise firstFreeTile contains the number of the
                         ; next available tile for drawing, so allocate this
@@ -8401,7 +8400,7 @@ ENDIF
  ROL SC3+1
  STA SC3
 
- LDA SC                 ; Set A to the the number of the tile that is already
+ LDA SC                 ; Set A to the number of the tile that is already
                         ; allocated to this part of the screen, which we stored
                         ; in SC above
 
@@ -8503,7 +8502,7 @@ ENDIF
                         ; nametable buffer
 
  CMP #60                ; If A >= 60, then the tile that's already allocated is
- BCS hlin21             ; oneof the tiles we have reserved for dynamic drawing,
+ BCS hlin21             ; one of the tiles we have reserved for dynamic drawing,
                         ; so jump to hlin21 to draw the right end of the line
 
  CMP #37                ; If A < 37, then the tile that's already allocated is
@@ -9363,7 +9362,7 @@ ENDIF
  ROL SC3+1
  STA SC3
 
- LDA SC                 ; Set A to the the number of the tile that is already
+ LDA SC                 ; Set A to the number of the tile that is already
                         ; allocated to this part of the screen, which we stored
                         ; in SC above
 
@@ -11767,7 +11766,7 @@ ENDIF
  STA ySprite4           ; lower down the screen than the up position)
  STA ySprite3
 
- LDA xIconBarPointer    ; If xIconBarPointer ia non-zero then jump to mbar13
+ LDA xIconBarPointer    ; If xIconBarPointer is non-zero then jump to mbar13
  BNE mbar13             ; (though this has no effect as that's what we're about
                         ; to do anyway)
 
@@ -12894,7 +12893,7 @@ ENDIF
 ;       Name: soundPriority
 ;       Type: Variable
 ;   Category: Sound
-;    Summary: The defaulty priority for each sound effect
+;    Summary: The default priority for each sound effect
 ;
 ; ******************************************************************************
 
@@ -13082,7 +13081,7 @@ ENDIF
  LDA #1                 ; Page ROM bank 1 into memory at $8000
  JSR SetBank
 
-                        ; Ihe fractional kill count is taken from the KWL%
+                        ; The fractional kill count is taken from the KWL%
                         ; table, according to the ship's type (we look up the
                         ; X-1-th value from KWL% because ship types start at 1
                         ; rather than 0)
@@ -15835,7 +15834,7 @@ ENDIF
 ;       Name: SetupDemoUniverse
 ;       Type: Subroutine
 ;   Category: Combat demo
-;    Summary: Initialise the local bubble of univers for the demo
+;    Summary: Initialise the local bubble of universe for the demo
 ;
 ; ******************************************************************************
 
@@ -19004,7 +19003,7 @@ ENDIF
                         ; T to move it closer to the centre
 
                         ; If we get here then the current value in X is in the
-                        ; left-hand side of the dasboard slider, so now we
+                        ; left-hand side of the dashboard slider, so now we
                         ; increment it by T to move it closer to the centre
 
  CLC                    ; Set A = A + T
@@ -19510,7 +19509,7 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- CLC                    ; Clear the C flag (though this isn't nedded, as the
+ CLC                    ; Clear the C flag (though this isn't needed, as the
                         ; SETUP_PPU_FOR_ICON_BAR does this for us)
 
  LDA P                  ; Set (R Q) = (R Q) + (T P) = x^2 + y^2 + z^2
@@ -19564,7 +19563,7 @@ ENDIF
 .norm2
 
                         ; If we get here then the addition overflowed during the
-                        ; calculation of of R = R + T above, so we need to scale
+                        ; calculation of R = R + T above, so we need to scale
                         ; (A Q) down before we can call LL5, and then scale the
                         ; result up afterwards
                         ;

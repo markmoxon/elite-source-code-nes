@@ -12459,8 +12459,8 @@ ENDIF
 
 .HALL
 
- LDA #$00               ; Clear the screen and and set the view type in QQ11 to
- JSR TT66_b0            ; $00 (Space view with no fonts loaded)
+ LDA #$00               ; Clear the screen and set the view type in QQ11 to $00
+ JSR TT66_b0            ; (Space view with no fonts loaded)
 
  LDA nmiCounter         ; Set the random number seeds to a fairly random state
  STA RAND+1             ; that's based on the NMI counter (which increments

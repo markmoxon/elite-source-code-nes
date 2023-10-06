@@ -15976,8 +15976,8 @@ ENDIF
  LDA #1                 ; Move the text cursor to column 1
  STA XC
 
- LDA #$95               ; Clear the screen and and set the view type in QQ11 to
- JMP TT66_b0            ; $95 (Text-based mission briefing), returning from the
+ LDA #$95               ; Clear the screen and set the view type in QQ11 to $95
+ JMP TT66_b0            ; (Text-based mission briefing), returning from the
                         ; subroutine using a tail call
 
 ; ******************************************************************************
@@ -16425,8 +16425,8 @@ ENDIF
  LDA #0                 ; Set the ship's AI flag to 0 (no AI) so it doesn't get
  STA INWK+31            ; any ideas of its own
 
- LDA #$93               ; Clear the screen and and set the view type in QQ11 to
- JSR TT66_b0            ; $93 (Mission 1 briefing: ship and text)
+ LDA #$93               ; Clear the screen and set the view type in QQ11 to $93
+ JSR TT66_b0            ; (Mission 1 briefing: ship and text)
 
                         ; Fall through into MT23 to move to row 10, switch to
                         ; white text, and switch to lower case when printing
