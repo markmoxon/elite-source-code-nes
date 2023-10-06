@@ -33,15 +33,15 @@ See the [introduction](#introduction) for more information, or jump straight int
 
 * [Building different variants of NES Elite](#building-different-variants-of-nes-elite)
 
-  * [Building the PAL release](#building-the-pal-release)
   * [Building the NTSC release](#building-the-ntsc-release)
+  * [Building the PAL release](#building-the-pal-release)
   * [Differences between the variants](#differences-between-the-variants)
 
 ## Introduction
 
 This repository contains source code for Elite on the NES, with every single line documented and (for the most part) explained.
 
-You can build the fully functioning game from this source. [Two variants](#building-different-variants-of-nes-elite) are currently supported: the Imagineer PAL release, and the NTSC version from Ian Bell's personal website.
+You can build the fully functioning game from this source. [Two variants](#building-different-variants-of-nes-elite) are currently supported: the NTSC version from Ian Bell's personal website, and the Imagineer PAL release.
 
 <!--It is a companion to the [bbcelite.com website](https://www.bbcelite.com), which contains all the code from this repository, but laid out in a much more human-friendly fashion. The links at the top of this page will take you to repositories for the other versions of Elite that are covered by this project.
 
@@ -156,7 +156,7 @@ make.bat build
 make.bat encrypt
 ```
 
-will produce a file called `elite-pal.NES` in the `5-compiled-game-discs` folder that contains the PAL release, which you can then load into an emulator, or into a real NES using a flash cart.
+will produce a file called `elite-ntsc.NES` in the `5-compiled-game-discs` folder that contains the NTSC release, which you can then load into an emulator, or into a real NES using a flash cart.
 
 ### Mac and Linux
 
@@ -172,7 +172,7 @@ make build
 make encrypt
 ```
 
-will produce a file called `elite-pal.NES` in the `5-compiled-game-discs` folder that contains the PAL release, which you can then load into an emulator, or into a real NES using a flash cart.
+will produce a file called `elite-ntsc.NES` in the `5-compiled-game-discs` folder that contains the NTSC release, which you can then load into an emulator, or into a real NES using a flash cart.
 
 ### Verifying the output
 
@@ -233,47 +233,24 @@ During compilation, details of every step are output in nine files called `compi
 
 This repository contains the source code for two different variants of NES Elite:
 
-* The Imagineer PAL release, which is the only official release of NES Elite
-
 * The NTSC version from Ian Bell's personal website
 
-By default the build process builds the PAL release, but you can build a specified variant using the `variant=` build parameter.
+* The Imagineer PAL release, which is the only official release of NES Elite
 
-### Building the PAL release
-
-You can add `variant=pal` to produce the `elite-pal.NES` file that contains the PAL release, though that's the default value so it isn't necessary.
-
-The verification checksums for this version are as follows:
-
-```
-Results for variant: pal
-[--originals--]  [---output----]
-Checksum    Size  Checksum    Size  Match  Filename
------------------------------------------------------
-6a32bd20   16384  6a32bd20   16384   Yes   bank0.bin
-1840f774   16384  1840f774   16384   Yes   bank1.bin
-e08fa78a   16384  e08fa78a   16384   Yes   bank2.bin
-e07c0f21   16384  e07c0f21   16384   Yes   bank3.bin
-731cd900   16384  731cd900   16384   Yes   bank4.bin
-fee7480c   16384  fee7480c   16384   Yes   bank5.bin
-500f28cd   16384  500f28cd   16384   Yes   bank6.bin
-8e1162f8   16384  8e1162f8   16384   Yes   bank7.bin
-4cf12d39  131088  4cf12d39  131088   Yes   elite.bin
-eb5e8763      16  eb5e8763      16   Yes   header.bin
-```
+By default the build process builds the NTSC release, but you can build a specified variant using the `variant=` build parameter.
 
 ### Building the NTSC release
 
-You can build the NTSC release by appending `variant=ntsc` to the `make` command, like this on Windows:
+You can add `variant=ntsc` to produce the `elite-ntsc.NES` file that contains the NTSC release, though that's the default value so it isn't necessary. In other words, you can build it like this:
 
 ```
-make.bat encrypt verify variant=compact
+make.bat encrypt verify variant=ntsc
 ```
 
 or this on a Mac or Linux:
 
 ```
-make encrypt verify variant=compact
+make encrypt verify variant=ntsc
 ```
 
 This will produce a file called `elite-ntsc.NES` in the `5-compiled-game-discs` folder that contains the NTSC release.
@@ -294,6 +271,41 @@ c1239b33   16384  c1239b33   16384   Yes   bank1.bin
 39255d4f   16384  39255d4f   16384   Yes   bank6.bin
 26f0c7de   16384  26f0c7de   16384   Yes   bank7.bin
 54386491  131088  54386491  131088   Yes   elite.bin
+eb5e8763      16  eb5e8763      16   Yes   header.bin
+```
+
+### Building the PAL release
+
+You can build the PAL release by appending `variant=ntsc` to the `make` command, like this on Windows:
+
+```
+make.bat encrypt verify variant=pal
+```
+
+or this on a Mac or Linux:
+
+```
+make encrypt verify variant=pal
+```
+
+This will produce a file called `elite-pal.NES` in the `5-compiled-game-discs` folder that contains the PAL release.
+
+The verification checksums for this version are as follows:
+
+```
+Results for variant: pal
+[--originals--]  [---output----]
+Checksum    Size  Checksum    Size  Match  Filename
+-----------------------------------------------------
+6a32bd20   16384  6a32bd20   16384   Yes   bank0.bin
+1840f774   16384  1840f774   16384   Yes   bank1.bin
+e08fa78a   16384  e08fa78a   16384   Yes   bank2.bin
+e07c0f21   16384  e07c0f21   16384   Yes   bank3.bin
+731cd900   16384  731cd900   16384   Yes   bank4.bin
+fee7480c   16384  fee7480c   16384   Yes   bank5.bin
+500f28cd   16384  500f28cd   16384   Yes   bank6.bin
+8e1162f8   16384  8e1162f8   16384   Yes   bank7.bin
+4cf12d39  131088  4cf12d39  131088   Yes   elite.bin
 eb5e8763      16  eb5e8763      16   Yes   header.bin
 ```
 
