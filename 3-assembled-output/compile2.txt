@@ -48991,4 +48991,4 @@ End macro SETUP_PPU_FOR_ICON_BAR
      BFFC   00 C0
      BFFE   07 C0
 S.bank2.bin &8000  &C000  &8000  &8000 
-Saving file 'versions/nes/3-assembled-output/bank2.bin'
+Saving file '3-assembled-output/bank2.bin'

@@ -11376,4 +11376,4 @@ End macro SETUP_PPU_FOR_ICON_BAR
      FFFC   00 C0
      FFFE   D4 CE
 S.bank7.bin &C000  &10000  &C000  &C000 
-Saving file 'versions/nes/3-assembled-output/bank7.bin'
+Saving file '3-assembled-output/bank7.bin'
