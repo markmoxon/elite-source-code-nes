@@ -12603,7 +12603,7 @@ ENDIF
 ;
 ; Arguments:
 ;
-;   X                   The sound channel to flush
+;   X                   The sound channel to flush:
 ;
 ;                         * 0 = flush the SQ1 sound channel
 ;
@@ -12621,9 +12621,11 @@ ENDIF
  LDA #0                 ; Set the priority for channel X to zero to stop the
  STA channelPriority,X  ; channel from making any more sounds
 
- LDA #26                ; Set A = 26 to pass to StartEffect below
+ LDA #26                ; Set A = 26 to pass to StartEffect below (sound effect
+                        ; 26 is the sound of silence, so this flushes the sound
+                        ; channel)
 
- BNE StartEffect_b7     ; Jump to StartEffect to start naking sound effect 26
+ BNE StartEffect_b7     ; Jump to StartEffect to start making sound effect 26
                         ; on channel X (this BNE is effectively a JMP as A is
                         ; never zero)
 
@@ -12687,6 +12689,7 @@ ENDIF
 ; The full list of sound effects is as follows, along with the names of the
 ; routines that make them:
 ;
+;    0 = Unused                                     -
 ;    1 = Fuel scoop                                 MakeScoopSound
 ;    2 = E.C.M.                                     ECBLB2
 ;    3 = Short, high beep                           BEEP

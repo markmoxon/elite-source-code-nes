@@ -2801,7 +2801,8 @@ ORG $0200
 
  SKIP 1                 ; A variable for keeping track of progress while playing
                         ; the current tune, so we send data to the APU at the
-                        ; correct time over iterations of the MakeMusic routine
+                        ; correct time over multiple iterations of the MakeMusic
+                        ; routine, according to the tune speed in tuneSpeed
 
 .tuningAll
 
@@ -4217,107 +4218,88 @@ ORG $0200
 
 .soundLoSQ2
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The value that we are going to send to the APU via
+                        ; SQ2_LO for the current sound effect
 
 .soundHiSQ2
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The value that we are going to send to the APU via
+                        ; SQ2_HI for the current sound effect
 
 .soundPitCountSQ2
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Controls how often we send pitch data to the APU for
+                        ; the sound effect on channel SQ2
+                        ;
+                        ; Specifically, pitch data is sent every
+                        ; soundPitCountSQ2 iterations
 
 .soundPitchEnvSQ2
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Controls how often we apply the pitch envelope to the
+                        ; sound effect on channel SQ2
+                        ;
+                        ; Specifically, we apply the changes in the pitch
+                        ; envelope every soundPitchEnvSQ2 iterations
 
 .soundVolIndexSQ2
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The index into the volume envelope data of the next
+                        ; volume byte to apply to the sound effect on channel
+                        ; SQ2
 
 .soundVolCountSQ2
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Controls how often we apply the volume envelope to the
+                        ; sound effect on channel SQ2
+                        ;
+                        ; Specifically, one entry from the volume envelope is
+                        ; applied every soundVolCountSQ2 iterations
 
-.soundVar93
+.soundByteNOISE
 
- SKIP 1                 ; ???
+ SKIP 14                ; The 14 sound bytes for the sound effect being made
+                        ; on channel NOISE
 
-.soundVar94
+.soundLoNOISE
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The value that we are going to send to the APU via
+                        ; NOISE_LO for the current sound effect
 
-.soundVar95
+.soundHiNOISE
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The value that we are going to send to the APU via
+                        ; NOISE_HI for the current sound effect
 
-.soundVar96
+.soundPitCountNOISE
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Controls how often we send pitch data to the APU for
+                        ; the sound effect on channel NOISE
+                        ;
+                        ; Specifically, pitch data is sent every
+                        ; soundPitCountNOISE iterations
 
-.soundVar97
+.soundPitchEnvNOISE
 
- SKIP 1                 ; ???
+ SKIP 1                 ; Controls how often we apply the pitch envelope to the
+                        ; sound effect on channel NOISE
+                        ;
+                        ; Specifically, we apply the changes in the pitch
+                        ; envelope every soundPitchEnvNOISE iterations
 
-.soundVar98
+.soundVolIndexNOISE
 
- SKIP 1                 ; ???
+ SKIP 1                 ; The index into the volume envelope data of the next
+                        ; volume byte to apply to the sound effect on channel
+                        ; NOISE
 
-.soundVar99
+.soundVolCountNOISE
 
- SKIP 1                 ; ???
-
-.soundVar9A
-
- SKIP 1                 ; ???
-
-.soundVar9B
-
- SKIP 1                 ; ???
-
-.soundVar9C
-
- SKIP 1                 ; ???
-
-.soundVar9D
-
- SKIP 1                 ; ???
-
-.soundVar9E
-
- SKIP 1                 ; ???
-
-.soundVar9F
-
- SKIP 1                 ; ???
-
-.soundVarA0
-
- SKIP 1                 ; ???
-
-.soundVarA1
-
- SKIP 1                 ; ???
-
-.soundVarA2
-
- SKIP 1                 ; ???
-
-.soundVarA3
-
- SKIP 1                 ; ???
-
-.soundVarA4
-
- SKIP 1                 ; ???
-
-.soundVarA5
-
- SKIP 1                 ; ???
-
-.soundVarA6
-
- SKIP 1                 ; ???
+ SKIP 1                 ; Controls how often we apply the volume envelope to the
+                        ; sound effect on channel NOISE
+                        ;
+                        ; Specifically, one entry from the volume envelope is
+                        ; applied every soundVolCountNOISE iterations
 
 .soundVolumeSQ1
 
@@ -4326,11 +4308,13 @@ ORG $0200
 
 .soundVolumeSQ2
 
- SKIP 2                 ; ???
+ SKIP 2                 ; The address of the volume envelope data for the sound
+                        ; effect currently being made on channel SQ2
 
-.soundAddr10
+.soundVolumeNOISE
 
- SKIP 2                 ; ???
+ SKIP 2                 ; The address of the volume envelope data for the sound
+                        ; effect currently being made on channel NOISE
 
 .QQ19
 
