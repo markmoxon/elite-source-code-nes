@@ -1494,15 +1494,7 @@ ENDIF
                         ; potentially overwritten by the flags
                         ;
                         ; This variable is used internally by the NMI handler,
-                        ; and is set as follows in SendNametableToPPU:
-                        ;
-                        ;   lastTile
-                        ;       = (bitplaneFlag 3 set) ? 128 : lastNameTile
-                        ;
-                        ; and like this in SendPatternsToPPU:
-                        ;
-                        ;   lastTile
-                        ;       = (bitplaneFlag 3 set) ? 128 : lastPatternTile
+                        ; and is set according to bit 3 of the bitplane flags
 
 .setupPPUForIconBar
 
@@ -1627,7 +1619,7 @@ ENDIF
  SKIP 2                 ; The address of the table containing the key presses to
                         ; apply when auto-playing the demo
                         ;
-                        ; The address is either that of the chosen languages's
+                        ; The address is either that of the chosen language's
                         ; autoplayKeys1 table (for the first part of the
                         ; auto-play demo, or the autoplayKeys2 table (for the
                         ; second part)
@@ -2744,7 +2736,7 @@ ORG $0200
                         ; vicinity, or we are too near a station, the planet or
                         ; the sun
                         ;
-                        ; We can can only do a jump if both bits are clear
+                        ; We can only do a jump if both bits are clear
 
 .enableSound
 
@@ -3473,9 +3465,9 @@ ORG $0200
                         ;   * Bit 6 is set when we can hyperspace to the
                         ;     currently selected system, clear otherwise
                         ;
-                        ;   * Bit 7 is set when when there is a currently
-                        ;     selected system, clear otherwise (such as when we
-                        ;     are moving the crosshairs between systems)
+                        ;   * Bit 7 is set when there is a currently selected
+                        ;     system, clear otherwise (such as when we are
+                        ;     moving the crosshairs between systems)
 
 .NAME
 
@@ -6145,7 +6137,7 @@ ENDMACRO
 ;       Name: ADD_CYCLES_CLC
 ;       Type: Macro
 ;   Category: Drawing the screen
-;    Summary: Add a specifed number to the cycle count
+;    Summary: Add a specified number to the cycle count
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -6179,7 +6171,7 @@ ENDMACRO
 ;       Name: ADD_CYCLES
 ;       Type: Macro
 ;   Category: Drawing the screen
-;    Summary: Add a specifed number to the cycle count
+;    Summary: Add a specified number to the cycle count
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -6214,7 +6206,7 @@ ENDMACRO
 ;       Name: SUBTRACT_CYCLES
 ;       Type: Macro
 ;   Category: Drawing the screen
-;    Summary: Subtract a specifed number from the cycle count
+;    Summary: Subtract a specified number from the cycle count
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -6256,7 +6248,7 @@ ENDMACRO
 ;   FILL_MEMORY byte_count
 ;
 ; It writes the value A into byte_count bytes, starting at the Y-th byte of the
-; memory block at addresss clearAddress(1 0). It also updates the index in Y to
+; memory block at address clearAddress(1 0). It also updates the index in Y to
 ; point to the byte after the block that is filled.
 ;
 ; Arguments:

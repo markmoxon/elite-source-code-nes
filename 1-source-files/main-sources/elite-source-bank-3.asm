@@ -2849,7 +2849,7 @@ ENDIF
                         ; the boxEdgeImages table and send its data to the PPU
 
  LDX #80                ; The boxEdgeImages table contains five patterns with 16
-                        ; bytes per pattern, so that'a a total of 80 bytes to
+                        ; bytes per pattern, so that's a total of 80 bytes to
                         ; send to the PPU, so set X as a byte counter
 
 .rscr3
@@ -2873,7 +2873,7 @@ ENDIF
                         ; the boxEdgeImages table and send its data to the PPU
 
  LDX #80                ; The boxEdgeImages table contains five patterns with 16
-                        ; bytes per pattern, so that'a a total of 80 bytes to
+                        ; bytes per pattern, so that's a total of 80 bytes to
                         ; send to the PPU, so set X as a byte counter
 
 .rscr4
@@ -3018,8 +3018,8 @@ ENDIF
  STA hiddenBitplane
 
  LDA #HI(PPU_PATT_1)    ; Set ppuPatternTableHi to the high byte of PPU pattern
- STA ppuPatternTableHi  ; table 1, which is the table we use for drawing
-                        ; dyanamic tiles
+ STA ppuPatternTableHi  ; table 1, which is the table we use for drawing dynamic
+                        ; tiles
 
  LDA #0                 ; Set nmiBitplane8 to 8 * nmiBitplane, which is 0
  STA nmiBitplane8
@@ -3246,7 +3246,7 @@ ENDIF
                         ; nametable 0 and pattern table 0 until the icon bar
                         ; nametable and pattern data have all been sent
 
-                        ; Fall througn into UpdateIconBar to update the icon bar
+                        ; Fall through into UpdateIconBar to update the icon bar
 
 ; ******************************************************************************
 ;
@@ -3339,7 +3339,7 @@ ENDIF
  BNE sets1              ; then jump to sets1 to keep checking the view type
 
  LDX #240               ; This is the Game Over screen, so jump to sets 4 with
- BNE sets4              ; X = 240 and Y = 18 (this BNE is effectivelty a JMP as
+ BNE sets4              ; X = 240 and Y = 18 (this BNE is effectively a JMP as
                         ; X is never zero)
 
 .sets1
@@ -3840,7 +3840,7 @@ ENDIF
 
 .pbar2
 
- LDA disableMusic       ; If bit 7 of disableMusic ic clear then music is
+ LDA disableMusic       ; If bit 7 of disableMusic is clear then music is
  BPL pbar3              ; enabled, so jump to pbar3 to skip the following and
                         ; leave the default icon showing
 
@@ -4542,14 +4542,14 @@ ENDIF
 .Draw2OptionTiles
 
  LDA barNames3+14,Y     ; Set A to the nametable entry for the top tile of this
-                        ; option's icon when is is not in the default state,
+                        ; option's icon when it is not in the default state,
                         ; which can be found in entry Y + 14 of the barNames3
                         ; table
 
  STA (SC),Y             ; Set the top tile of the block we want to draw to the
  STA (SC2),Y            ; pattern in A, in both nametable buffers
 
- STY T                  ; Store Y in T so we can rereieve it below
+ STY T                  ; Store Y in T so we can retrieve it below
 
  TYA                    ; Set Y = Y + 32
  CLC                    ;
@@ -4557,7 +4557,7 @@ ENDIF
  TAY                    ; (as there are 32 tiles in a row)
 
  LDA barNames3+14,Y     ; Set A to the nametable entry for the bottom tile of
-                        ; this option's icon when is is not in the default
+                        ; this option's icon when it is not in the default
                         ; state, which can be found in entry Y + 14 of the
                         ; barNames3 table
 
@@ -5448,14 +5448,14 @@ ENDIF
  ADC XC                 ; Starting with the low bytes
  STA SC                 ;
                         ; So SC(1 0) contains the address in nametable buffer 0
-                        ; of the text charater at column XC on row YC
+                        ; of the text character at column XC on row YC
 
  STA SC2                ; Set SC2(1 0) = SC2(1 0) + XC
                         ;
                         ; Starting with the low bytes
                         ;
                         ; So SC2(1 0) contains the address in nametable buffer 1
-                        ; of the text charater at column XC on row YC
+                        ; of the text character at column XC on row YC
 
  BCC nadd1              ; If the above addition overflowed, then increment the
  INC SC+1               ; high bytes of SC(1 0) and SC2(1 0) accordingly
@@ -5606,14 +5606,14 @@ ENDIF
  ADC XC                 ; Starting with the low bytes
  STA SC                 ;
                         ; So SC(1 0) contains the address in nametable buffer 0
-                        ; of the text charater at column XC on row YC
+                        ; of the text character at column XC on row YC
 
  STA SC2                ; Set SC2(1 0) = SC2(1 0) + XC
                         ;
                         ; Starting with the low bytes
                         ;
                         ; So SC2(1 0) contains the address in nametable buffer 1
-                        ; of the text charater at column XC on row YC
+                        ; of the text character at column XC on row YC
 
  BCC back1              ; If the above addition overflowed, then increment the
  INC SC+1               ; high bytes of SC(1 0) and SC2(1 0) accordingly
@@ -5829,7 +5829,7 @@ ENDIF
 
 .clsc5
 
- DEX                    ; Decrement the row countrer in X
+ DEX                    ; Decrement the row counter in X
 
  BNE clsc3              ; Loop back until we have cleared all 28 rows
 
@@ -6177,7 +6177,7 @@ ENDIF
 
  DEX                    ; Decrement the counter in X
 
- BNE fade1              ; Loop back until we haved faded all 31 colours
+ BNE fade1              ; Loop back until we have faded all 31 colours
 
                         ; Fall through into SetPaletteColours to set the view's
                         ; palette to the now-faded colours from the XX3 table

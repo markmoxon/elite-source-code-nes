@@ -3527,9 +3527,8 @@ ENDIF
 ; in the table below), or all of the time (bit 7 is set, i.e. a value of $8x in
 ; the table below).
 ;
-; In other words, Teorge, Arredi, Anreer and Lave have extended description
-; overrides that are always shown, while the rest only appear when mission 1 is
-; in progress.
+; In other words, Teorge has an extended description override that is always
+; shown, while the rest only appear when mission 1 is in progress.
 ;
 ; The three variables work as follows:
 ;
@@ -15234,7 +15233,7 @@ ENDIF
 
  LDY languageIndex      ; Set Y to the chosen language
 
- LDA RUTOK_LO,Y         ; Set V(1 0) to the address of the RUTOK table for ths
+ LDA RUTOK_LO,Y         ; Set V(1 0) to the address of the RUTOK table for the
  STA V                  ; chosen language
  LDA RUTOK_HI,Y
  STA V+1
@@ -15294,7 +15293,7 @@ ENDIF
  LDA V+1
  PHA
 
- LDA TKN1Lo             ; Set V(1 0) to the address of the TKN1 table for ths
+ LDA TKN1Lo             ; Set V(1 0) to the address of the TKN1 table for the
  STA V                  ; chosen language
  LDA TKN1Hi
  STA V+1

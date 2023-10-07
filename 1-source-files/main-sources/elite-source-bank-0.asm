@@ -2821,7 +2821,7 @@ ENDIF
  LDY #0                 ; Set Y = 0 to use as an index into the ship's blueprint
                         ; in the call to GetShipBlueprint
 
- STA CNT                ; Store the random numner in CNT
+ STA CNT                ; Store the random number in CNT
 
  JSR GetShipBlueprint   ; Fetch the first byte of the hit ship's blueprint,
                         ; which determines the maximum number of bits of
@@ -3488,12 +3488,12 @@ ENDIF
                         ; pointer)
 
  CMP #$92               ; If the view type in QQ11 is $92 (Mission 1 rotating
- BEQ upvw4              ; ship briefing), jump to upvw4 to to set
+ BEQ upvw4              ; ship briefing), jump to upvw4 to set
                         ; showIconBarPointer to 0 (i.e. hide the icon bar
                         ; pointer)
 
  CMP #$93               ; If the view type in QQ11 is $93 (Mission 1 text
- BEQ upvw4              ; briefing), jump to upvw4 to to set showIconBarPointer
+ BEQ upvw4              ; briefing), jump to upvw4 to set showIconBarPointer
                         ; to 0 (i.e. hide the icon bar pointer)
 
  ASL A                  ; If bit 6 of the view type in QQ11 is clear, then there
@@ -4450,7 +4450,7 @@ ENDIF
                         ; y-coordinate 170 + 29 = 199 (which is the y-coordinate
                         ; of the roll indicator)
 
- LDA #11                ; Set A = 11 so we draw the indicator usinmg sprite 11
+ LDA #11                ; Set A = 11 so we draw the indicator using sprite 11
 
  JSR piro1              ; Call piro1 below to draw the roll indicator
 
@@ -4468,7 +4468,7 @@ ENDIF
                         ; y-coordinate 170 + 37 = 207 (which is the y-coordinate
                         ; of the pitch indicator)
 
- LDA #12                ; Set A = 11 so we draw the indicator usinmg sprite 12
+ LDA #12                ; Set A = 11 so we draw the indicator using sprite 12
 
 .piro1
 
@@ -5839,7 +5839,7 @@ ENDIF
 
 .tact11
 
-                        ; Set the ship's acceleration to -1, unless is is a
+                        ; Set the ship's acceleration to -1, unless it is a
                         ; missile, in which case set it to -2
 
  LDA #$FF               ; Set A = -1
@@ -7480,7 +7480,7 @@ ENDIF
  SBC #16                ; And set A to the new value of STP
 
  BMI laun4              ; If STP is now negative, then jump to laun4 to move on
-                        ; to the next frame, so we dtop drawing boxes in this
+                        ; to the next frame, so we stop drawing boxes in this
                         ; frame
 
  STA STP                ; Update STP with the new value
@@ -9163,8 +9163,8 @@ ENDIF
  AND #%00000101         ; then the chosen language is not English or German, so
  BEQ dsys6              ; jump to dsys6 skip the following
 
-                        ; If we get here then the chosen language is Engligh or
-                        ; German, so so we need to print the system population
+                        ; If we get here then the chosen language is English or
+                        ; German, so we need to print the system population
                         ; using the PrintTokenAndColon routine to ensure the
                         ; label is in green
 
@@ -9389,7 +9389,7 @@ ENDIF
  LDA #8                 ; Move the text cursor to row 8
  STA YC
 
- LDA #1                 ; Thess instructions have no effect as the values of K+2
+ LDA #1                 ; These instructions have no effect as the values of K+2
  STA K+2                ; and K+3 get overwritten by the call to DrawSystemImage
  LDA #8
  STA K+3
@@ -10789,7 +10789,7 @@ ENDIF
                         ; the x-coordinate of sprite 39 onwards, and we subtract
                         ; 2 because the star sprites have a margin of at least
                         ; two pixels along the left edge, so this aligns the
-                        ; star part of the sprite to the x-coodrinate
+                        ; star part of the sprite to the x-coordinate
 
  LDA K4                 ; Set the y-coordinate of sprite 38 + Y to K4 + 10
  CLC                    ;
@@ -10925,7 +10925,7 @@ ENDIF
 
 .pchm1
 
-                        ; Falll through into SetSelectionFlags to set the
+                        ; Fall through into SetSelectionFlags to set the
                         ; selected system flags for the new system
 
 ; ******************************************************************************
@@ -11008,7 +11008,7 @@ ENDIF
  ASL A                  ; If bit 6 of the EOR result in A is clear, then the
  BPL RTS6               ; state of bit 6 did not changed in the update above, so
                         ; we don't need to update the icon bar to show or hide
-                        ; the hyperspave button, so return from the subroutine
+                        ; the hyperspace button, so return from the subroutine
                         ; (as RTS6 contains an RTS)
 
  JMP UpdateIconBar_b3   ; Otherwise the newly selected system has a different
@@ -12339,7 +12339,7 @@ ENDIF
 
  JSR PrintMarketItem    ; Print the name, price and availability of market item
                         ; item A on the correct row for the chosen language, to
-                        ; remove the highlight from the currrent item
+                        ; remove the highlight from the current item
 
  LDA QQ29               ; Set A = QQ29 - 1
  SEC                    ;
@@ -12381,7 +12381,7 @@ ENDIF
 
  JSR PrintMarketItem    ; Print the name, price and availability of market item
                         ; item A on the correct row for the chosen language, to
-                        ; remove the highlight from the currrent item
+                        ; remove the highlight from the current item
 
  LDA QQ29               ; Set A = QQ29 + 1
  CLC                    ;
@@ -12404,7 +12404,7 @@ ENDIF
                         ; If we get here then the right button is being pressed,
                         ; so we process buying an item
 
- LDA #1                 ; Call tnpr with the selecred market item in QQ29 and
+ LDA #1                 ; Call tnpr with the selected market item in QQ29 and
  JSR tnpr               ; A set to 1, to work out whether we have room in the
                         ; hold for the selected item (A is preserved by this
                         ; call, and the C flag contains the result)
@@ -12541,7 +12541,7 @@ ENDIF
 ;
 ; Arguments:
 ;
-;   A                   The item number of the market item to dsplay
+;   A                   The item number of the market item to display
 ;
 ; ******************************************************************************
 
@@ -12580,7 +12580,7 @@ ENDIF
 ;
 ; Arguments:
 ;
-;   A                   The item number of the market item to dsplay
+;   A                   The item number of the market item to display
 ;
 ; ******************************************************************************
 
@@ -15311,8 +15311,8 @@ ENDIF
 
 .Print2Spaces
 
- JSR TT162              ; Print two spaces, returning from the subroutin using a
- JMP TT162              ; tail call
+ JSR TT162              ; Print two spaces, returning from the subroutine using
+ JMP TT162              ; a tail call
 
 ; ******************************************************************************
 ;
@@ -18605,7 +18605,7 @@ ENDIF
  DEC chargeDockingFee   ; Set chargeDockingFee to $FF so we don't charge another
                         ; docking fee
 
- LDA #0                 ; Pring control code 0 (current amount of cash and
+ LDA #0                 ; Print control code 0 (current amount of cash and
  JSR MESS               ; newline) as an in-flight message, to show our balance
                         ; after the docking fee has been paid
 
@@ -18621,7 +18621,7 @@ ENDIF
                         ; Danube")
 
  LDA #$FF               ; Set A = $FF to set as the value of auto below, so the
-                        ; docking comuter is flagged as being enabled
+                        ; docking computer is flagged as being enabled
 
  BNE barb6              ; Jump to barb6 to store A in auto (this BNE is
                         ; effectively a JMP as A is never zero)
@@ -18635,7 +18635,7 @@ ENDIF
                         ; tune to 0 (no tune) and stopping the docking music
 
  LDA #0                 ; Set A = 0 to set as the value of auto below, so the
-                        ; docking comuter is flagged as being disabled
+                        ; docking computer is flagged as being disabled
 
 .barb6
 
@@ -18719,7 +18719,7 @@ ENDIF
  JMP hyp                ; the subroutine using a tail call
 
  CMP #41                ; If the Galactic Hyperspace icon was chosen, jump to
- BNE P%+5               ; GalacticHyperdrive to dop a galactic hyperspacew jump,
+ BNE P%+5               ; GalacticHyperdrive to do a galactic hyperspace jump,
  JMP GalacticHyperdrive ; returning from the subroutine using a tail call
 
  CMP #39                ; If the "Search for system" icon was not chosen, jump
@@ -18891,7 +18891,7 @@ ENDIF
  LDA INWK+2             ; If any of x_sign, y_sign or z_sign are non-zero
  ORA INWK+5             ; (ignoring the sign in bit 7), then jump to faro2 to
  ORA INWK+8             ; return the C flag clear, to indicate that one of x, y
- ASL A                  ; and z is greater that 224
+ ASL A                  ; and z is greater than 224
  BNE faro2
 
  LDA #224               ; If x_hi > 224, jump to faro1 to return the C flag
@@ -21236,7 +21236,7 @@ ENDIF
 
  JMP StoreMessage       ; Jump to StoreMessage to copy the message from the
                         ; justified text buffer in BUF into the message buffer
-                        ; at messageBuffer, returning ffom the subroutine using
+                        ; at messageBuffer, returning from the subroutine using
                         ; a tail call
 
 ; ******************************************************************************
@@ -21312,7 +21312,7 @@ ENDIF
                         ; decimal point
 
  JMP mes9+3             ; Jump to mes9+3 to skip the following and not print
-                        ; the message in A, as we havealready printed it
+                        ; the message in A, as we have already printed it
 
 .mess1
 
@@ -21382,7 +21382,7 @@ ENDIF
                         ; in the message buffer will fit on one line, so jump to
                         ; smes1 with the remaining number of characters in A
 
-                        ; The subraction underflowed, so the message will not
+                        ; The subtraction underflowed, so the message will not
                         ; fit on one line
                         ;
                         ; In this case we just print as many characters as we
@@ -23980,10 +23980,10 @@ ENDIF
  STA XC                 ; space view name in the chosen language
 
  LDA languageNumber     ; If bit 1 of languageNumber is set, then the chosen
- AND #%00000010         ; language is Geman, so jump to scrn13 to print the view
- BNE scrn13             ; name after the view noun (so we print "ANSICHT VORN"
-                        ; and "ANSICHT HINTEN" instead of "FRONT VIEW" and "REAR
-                        ; VIEW", for example)
+ AND #%00000010         ; language is German, so jump to scrn13 to print the
+ BNE scrn13             ; view name after the view noun (so we print "ANSICHT
+                        ; VORN" and "ANSICHT HINTEN" instead of "FRONT VIEW"
+                        ; and "REAR VIEW", for example)
 
  JSR PrintSpaceViewName ; Print the name of the current space view (i.e.
                         ; "FRONT", "REAR", "LEFT" or "RIGHT")

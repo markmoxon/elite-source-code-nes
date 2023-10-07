@@ -2029,7 +2029,7 @@ ENDIF
                         ;
                         ; Otherwise we have 64 or fewer tile patterns to send,
                         ; so fall through into part 2 to send them one tile at a
-                        ; time, checking each one is the last tile yo see if
+                        ; time, checking each one is the last tile to see if
                         ; it's the last tile
 
 ; ******************************************************************************

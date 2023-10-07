@@ -2648,7 +2648,7 @@ ENDIF
  STA SC+1
 
  LDA imageSentToPPU     ; The value of imageSentToPPU was set in the STATUS
- ASL A                  ; routineto %1000xxxx, where %xxxx is the headshot
+ ASL A                  ; routine to %1000xxxx, where %xxxx is the headshot
  TAX                    ; number (in the range 0 to 13), so set X to this
                         ; number * 2, so we can use it as an index into the
                         ; headOffset table, which has two bytes per entry
@@ -2699,7 +2699,7 @@ ENDIF
                         ; pictureTile
 
  LDA imageSentToPPU     ; The value of imageSentToPPU was set in the STATUS
- ASL A                  ; routineto %1000xxxx, where %xxxx is the headshot
+ ASL A                  ; routine to %1000xxxx, where %xxxx is the headshot
  TAX                    ; number (in the range 0 to 13), so set X to this
                         ; number * 2, so we can use it as an index into the
                         ; faceOffset table, which has two bytes per entry
@@ -2858,7 +2858,7 @@ ENDIF
  LDA SC                 ; Set SC(1 0) = SC(1 0) + XC
  CLC                    ;
  ADC XC                 ; So SC(1 0) contains the address in nametable buffer 0
- STA SC                 ; of the text charater at column XC on row YC, which is
+ STA SC                 ; of the text character at column XC on row YC, which is
                         ; where we want to draw the image
 
                         ; We now loop through the nametable entry table, copying
