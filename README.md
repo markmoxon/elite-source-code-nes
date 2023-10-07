@@ -33,8 +33,8 @@ See the [introduction](#introduction) for more information, or jump straight int
 
 * [Building different variants of NES Elite](#building-different-variants-of-nes-elite)
 
-  * [Building the NTSC release](#building-the-ntsc-release)
-  * [Building the PAL release](#building-the-pal-release)
+  * [Building the NTSC variant](#building-the-ntsc-variant)
+  * [Building the PAL variant](#building-the-pal-variant)
   * [Differences between the variants](#differences-between-the-variants)
 
 ## Introduction
@@ -239,9 +239,9 @@ This repository contains the source code for two different variants of NES Elite
 
 By default the build process builds the NTSC release, but you can build a specified variant using the `variant=` build parameter.
 
-### Building the NTSC release
+### Building the NTSC variant
 
-You can add `variant=ntsc` to produce the `elite-ntsc.NES` file that contains the NTSC release, though that's the default value so it isn't necessary. In other words, you can build it like this:
+You can add `variant=ntsc` to produce the `elite-ntsc.NES` file that contains the NTSC variant, though that's the default value so it isn't necessary. In other words, you can build it like this:
 
 ```
 make.bat encrypt verify variant=ntsc
@@ -253,7 +253,7 @@ or this on a Mac or Linux:
 make encrypt verify variant=ntsc
 ```
 
-This will produce a file called `elite-ntsc.NES` in the `5-compiled-game-discs` folder that contains the NTSC release.
+This will produce a file called `elite-ntsc.NES` in the `5-compiled-game-discs` folder that contains the NTSC variant.
 
 The verification checksums for this version are as follows:
 
@@ -274,9 +274,9 @@ c1239b33   16384  c1239b33   16384   Yes   bank1.bin
 eb5e8763      16  eb5e8763      16   Yes   header.bin
 ```
 
-### Building the PAL release
+### Building the PAL variant
 
-You can build the PAL release by appending `variant=ntsc` to the `make` command, like this on Windows:
+You can build the PAL variant by appending `variant=ntsc` to the `make` command, like this on Windows:
 
 ```
 make.bat encrypt verify variant=pal
@@ -288,7 +288,7 @@ or this on a Mac or Linux:
 make encrypt verify variant=pal
 ```
 
-This will produce a file called `elite-pal.NES` in the `5-compiled-game-discs` folder that contains the PAL release.
+This will produce a file called `elite-pal.NES` in the `5-compiled-game-discs` folder that contains the PAL variant.
 
 The verification checksums for this version are as follows:
 
