@@ -16357,7 +16357,7 @@ ENDIF
 ;
 ;       Name: DORND
 ;       Type: Subroutine
-;   Category: Utility routines
+;   Category: Maths (Arithmetic)
 ;    Summary: Generate random numbers
 ;  Deep dive: Generating random numbers
 ;             Fixing ship positions
