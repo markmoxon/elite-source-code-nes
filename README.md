@@ -41,7 +41,7 @@ See the [introduction](#introduction) for more information, or jump straight int
 
 This repository contains source code for Elite on the NES, with every single line documented and (for the most part) explained.
 
-You can build the fully functioning game from this source. [Two variants](#building-different-variants-of-nes-elite) are currently supported: the NTSC version from Ian Bell's personal website, and the Imagineer PAL release.
+You can build the fully functioning game from this source. [Two variants](#building-different-variants-of-nes-elite) are currently supported: the NTSC variant from Ian Bell's personal website, and the Imagineer PAL variant.
 
 <!--It is a companion to the [bbcelite.com website](https://www.bbcelite.com), which contains all the code from this repository, but laid out in a much more human-friendly fashion. The links at the top of this page will take you to repositories for the other versions of Elite that are covered by this project.
 
@@ -127,6 +127,8 @@ You will need the following to build Elite from the source:
 
 * Mac and Linux users may need to install `make` if it isn't already present (for Windows users, `make.exe` is included in this repository).
 
+You may be wondering why we're using BeebAsm - a BBC Micro assembler - to build the NES version of Elite. This is because NES Elite is a conversion of BBC Master Elite, which itself is a direct descendant of the original 1984 release for the BBC Micro and Acorn Electron (and the same is true of the Commodore 64 and Apple II versions of Elite - they are all cut from the same cloth). All of the older 6502 versions of Elite were built and assembled on a BBC Micro, including the Commodore and Apple versions, so BeebAsm is a good modern assembler to use for the NES version as well. The 1991 NES version was actually developed on the PC-based PDS development system, so the use of BeebAsm here isn't historically accurate, it's just a good fit for the source material.
+
 For details of how the build process works, see the [build documentation on bbcelite.com](https://www.bbcelite.com/about_site/building_elite.html).
 
 Let's look at how to build Elite from the source.
@@ -156,7 +158,7 @@ make.bat build
 make.bat encrypt
 ```
 
-will produce a file called `elite-ntsc.NES` in the `5-compiled-game-discs` folder that contains the NTSC release, which you can then load into an emulator, or into a real NES using a flash cart.
+will produce a file called `elite-ntsc.NES` in the `5-compiled-game-discs` folder that contains the NTSC variant, which you can then load into an emulator, or into a real NES using a flash cart.
 
 ### Mac and Linux
 
@@ -172,7 +174,7 @@ make build
 make encrypt
 ```
 
-will produce a file called `elite-ntsc.NES` in the `5-compiled-game-discs` folder that contains the NTSC release, which you can then load into an emulator, or into a real NES using a flash cart.
+will produce a file called `elite-ntsc.NES` in the `5-compiled-game-discs` folder that contains the NTSC variant, which you can then load into an emulator, or into a real NES using a flash cart.
 
 ### Verifying the output
 
@@ -223,7 +225,7 @@ fee7480c   16384  fee7480c   16384   Yes   bank5.bin
 eb5e8763      16  eb5e8763      16   Yes   header.bin
 ```
 
-All the compiled binaries match the originals, so we know we are producing the same final game as the release version.
+All the compiled binaries match the originals, so we know we are producing the same final game as the PAL variant.
 
 ### Log files
 
@@ -233,11 +235,11 @@ During compilation, details of every step are output in nine files called `compi
 
 This repository contains the source code for two different variants of NES Elite:
 
-* The NTSC version from Ian Bell's personal website
+* The NTSC variant from Ian Bell's personal website
 
-* The Imagineer PAL release, which is the only official release of NES Elite
+* The Imagineer PAL variant, which is the only official release of NES Elite
 
-By default the build process builds the NTSC release, but you can build a specified variant using the `variant=` build parameter.
+By default the build process builds the NTSC variant, but you can build a specified variant using the `variant=` build parameter.
 
 ### Building the NTSC variant
 
@@ -311,7 +313,7 @@ eb5e8763      16  eb5e8763      16   Yes   header.bin
 
 ### Differences between the variants
 
-You can see the differences between the variants by searching the source code for `_PAL` (for features in the PAL release) or `_NTSC` (for features in the NTSC release). The main differences in the NTSC release compared to the PAL release are:
+You can see the differences between the variants by searching the source code for `_PAL` (for features in the PAL variant) or `_NTSC` (for features in the NTSC variant). The main differences in the NTSC variant compared to the PAL variant are:
 
 * The two versions count a different number of cycles in the NMI handler (7433 in the PAL version, 6797 in the NTSC version).
 
