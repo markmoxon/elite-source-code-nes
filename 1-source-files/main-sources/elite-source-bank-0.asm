@@ -20183,9 +20183,9 @@ ENDIF
                         ; are too far from the planet in the z-direction to
                         ; bump into a space station
 
- LDA #100               ; Call FAROF2 to compare x, y and z with 100, which will
- JSR FAROF2             ; clear the C flag if the distance to the point is < 100
-                        ; or set the C flag if it is >= 100
+ LDA #100               ; Call FAROF2 to compare x, y and z with 100 * 2, which
+ JSR FAROF2             ; will clear the C flag if the distance to the point is
+                        ; < 200 or set the C flag if it is >= 200
 
  BCS MA23S2             ; Jump to MA23S2 if the distance to point (x, y, z) is
                         ; >= 100 (i.e. we must be near enough to the planet to
@@ -20608,6 +20608,21 @@ ENDIF
 ; distance of an in-system jump). Arbitrary distances can be checked via the
 ; entry point at CheckJumpSafety+2.
 ;
+; The algorithm actually calculates the distance as 0.5 * |x y z|, using an
+; approximation that that estimates the length within 8% of the correct value,
+; and without having to do any multiplication or take any square roots. If h is
+; the longest of x, y, z, and a and b are the other two sides, then the
+; algorithm is as follows:
+;
+;   0.5 * |(x y z)| ~= (5 * a + 5 * b + 16 * h) / 32
+;
+; which we calculate like this:
+;
+;   5/32 * a + 5/32 * b + 1/2 * h
+;
+; Calculating half the distance to the point (i.e. 0.5 * |x y z|) ensures that
+; the result fits into one byte. The distance to compare with is also halved.
+;
 ; Returns:
 ;
 ;   C flag              Results of the safety check:
@@ -20620,7 +20635,7 @@ ENDIF
 ;
 ; Other entry points:
 ;
-;   CheckJumpSafety+2    Check the distances against the value in A
+;   CheckJumpSafety+2    Check the distances against the value of 0.5 * A
 ;
 ; ******************************************************************************
 
@@ -20738,6 +20753,10 @@ ENDIF
                         ; In other words, the following checks the distance from
                         ; our ship to the planet if we were to do an in-system
                         ; jump forwards
+                        ;
+                        ; Note that it actually calculates half the distance to
+                        ; the point (i.e. 0.5 * |x y z|) as this will ensure the
+                        ; result fits into one byte
 
  CMP K                  ; If A >= K, jump to cdis3 to skip the next instruction
  BCS cdis3
@@ -20762,9 +20781,9 @@ ENDIF
  LDA K                  ; Set SC+1 = (K + K+1 + K+2 - SC) / 4
  CLC                    ;          = (x/2 + y/2 + z/2 - max(x, y, z) / 2) / 4
  ADC K+1                ;          = (x + y + z - max(x, y, z)) / 8
- ADC K+2
- SEC
- SBC SC
+ ADC K+2                ;
+ SEC                    ; There is a risk that the addition will overflow here,
+ SBC SC                 ; but presumably this isn't an issue
  LSR A
  LSR A
  STA SC+1
@@ -20787,9 +20806,11 @@ ENDIF
                         ;   A = 5 * (a + b) / (8 * 4) + h / 2
                         ;     = 5/32 * a + 5/32 * b + 1/2 * h
                         ;
-                        ; Presumably this estimates the length of the (x, y, z),
-                        ; i.e. |x y z|, in some way, though I don't understand
-                        ; how
+                        ; This estimates half the length of the (x, y, z)
+                        ; vector, i.e. 0.5 * |x y z|, using an approximation
+                        ; that estimates the length within 8% of the correct
+                        ; value, and without having to do any multiplication
+                        ; or take any square roots
 
  CMP T                  ; If A < T, C will be clear, otherwise C will be set
                         ;

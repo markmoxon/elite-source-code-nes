@@ -13232,6 +13232,10 @@ ENDIF
                         ; routine, which calculates the distance from our ship
                         ; to the point (x_hi, y_hi, z_hi) to see if the ship is
                         ; close enough to be visible on the scanner
+                        ;
+                        ; Note that it actually calculates half the distance to
+                        ; the point (i.e. 0.5 * |x y z|) as this will ensure the
+                        ; result fits into one byte
 
  LDA INWK+1             ; If x_hi >= y_hi, jump to scan3 to skip the following
  CMP INWK+4             ; instruction, leaving A containing the higher of the
@@ -13267,6 +13271,9 @@ ENDIF
  LDA INWK+1             ; Set A = x_hi + y_hi + z_hi
  ADC INWK+4             ;
  ADC INWK+7             ; Let's call this x + y + z
+                        ;
+                        ; There is a risk that the addition will overflow here,
+                        ; but presumably this isn't an issue
 
  BCS scan1              ; If the addition overflowed then A > 255, so jump to
                         ; scan1 to hide the ship's scanner sprites and return
@@ -13297,9 +13304,11 @@ ENDIF
                         ;   A = 5 * (a + b) / (8 * 4) + h / 2
                         ;     = 5/32 * a + 5/32 * b + 1/2 * h
                         ;
-                        ; Presumably this estimates the length of the (x, y, z),
-                        ; i.e. |x y z|, in some way, though I don't understand
-                        ; how
+                        ; This estimates half the length of the (x, y, z)
+                        ; vector, i.e. 0.5 * |x y z|, using an approximation
+                        ; that estimates the length within 8% of the correct
+                        ; value, and without having to do any multiplication
+                        ; or take any square roots
 
  CMP #64                ; If A >= 64 then jump to scan1 to hide the ship's
  BCS scan1              ; scanner sprites and return from the subroutine, as the

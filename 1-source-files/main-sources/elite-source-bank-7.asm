@@ -17042,13 +17042,36 @@ ENDIF
 ;
 ; This routine does a similar job to the routine of the same name in the BBC
 ; Master version of Elite, but the code is significantly different and the
-; results is returned with the C flag the other way around.
+; result is returned with the C flag the other way around.
+;
+; The algorithm actually calculates the distance as 0.5 * |x y z|, using an
+; approximation that that estimates the length within 8% of the correct value,
+; and without having to do any multiplication or take any square roots. If h is
+; the longest component of x, y, z, and a and b are the other two sides, then
+; the algorithm is as follows:
+;
+;   0.5 * |(x y z)| ~= (5 * a + 5 * b + 16 * h) / 32
+;
+; which we calculate like this:
+;
+;   5/32 * a + 5/32 * b + 1/2 * h
+;
+; Calculating half the distance to the point (i.e. 0.5 * |x y z|) ensures that
+; the result fits into one byte. The distance to check against in A is not
+; halved, so the comparison ends up being between |(x y z)| and A * 2.
+;
+; Arguments:
+;
+;   A                   The distance to check against (the distance is checked
+;                       against A * 2)
 ;
 ; Returns:
 ;
-;   C flag              Clear if the distance to (x, y, z) < A
+;   C flag              The result of comparing |x y z| with A:
 ;
-;                       Set if the distance to (x, y, z) >= A
+;                         * Clear if the distance to (x, y, z) < A * 2
+;
+;                         * Set if the distance to (x, y, z) >= A * 2
 ;
 ; ******************************************************************************
 
@@ -17110,8 +17133,8 @@ ENDIF
  CLC                    ;          = (x/2 + y/2 + z/2 - max(x, y, z) / 2) / 4
  ADC K+1                ;          = (x + y + z - max(x, y, z)) / 8
  ADC K+2                ;
- SEC                    ;
- SBC SC
+ SEC                    ; There is a risk that the addition will overflow here,
+ SBC SC                 ; but presumably this isn't an issue
  LSR A
  LSR A
  STA SC+1
@@ -17134,9 +17157,11 @@ ENDIF
                         ;   A = 5 * (a + b) / (8 * 4) + h / 2
                         ;     = 5/32 * a + 5/32 * b + 1/2 * h
                         ;
-                        ; Presumably this estimates the length of the (x, y, z),
-                        ; i.e. |x y z|, in some way, though I don't understand
-                        ; how
+                        ; This estimates half the length of the (x, y, z)
+                        ; vector, i.e. 0.5 * |x y z|, using an approximation
+                        ; that estimates the length within 8% of the correct
+                        ; value, and without having to do any multiplication
+                        ; or take any square roots
 
  CMP T                  ; If A < T, C will be clear, otherwise C will be set
                         ;
