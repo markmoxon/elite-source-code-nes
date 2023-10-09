@@ -49,7 +49,7 @@
 ; ******************************************************************************
 ;
 ;       Name: ResetMMC1
-;       Type: Variable
+;       Type: Subroutine
 ;   Category: Start and end
 ;    Summary: The MMC1 mapper reset routine at the start of the ROM bank
 ;

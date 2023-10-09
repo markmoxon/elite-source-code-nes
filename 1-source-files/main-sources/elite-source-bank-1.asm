@@ -49,7 +49,7 @@
 ; ******************************************************************************
 ;
 ;       Name: ResetMMC1
-;       Type: Variable
+;       Type: Subroutine
 ;   Category: Start and end
 ;    Summary: The MMC1 mapper reset routine at the start of the ROM bank
 ;
@@ -6350,6 +6350,7 @@ ENDIF
 ;       Name: LL9 (Part 11 of 12)
 ;       Type: Subroutine
 ;   Category: Drawing ships
+;    Summary: Draw ship: Loop back for the next edge
 ;  Deep dive: Drawing ships
 ;
 ; ******************************************************************************
@@ -13140,8 +13141,8 @@ ENDIF
 ; ******************************************************************************
 ;
 ;       Name: SCAN
+;       Type: Subroutine
 ;   Category: Dashboard
-;   Category: Drawing lines
 ;    Summary: Display the current ship on the scanner
 ;
 ; ------------------------------------------------------------------------------

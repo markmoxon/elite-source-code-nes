@@ -49,7 +49,7 @@
 ; ******************************************************************************
 ;
 ;       Name: ResetMMC1
-;       Type: Variable
+;       Type: Subroutine
 ;   Category: Start and end
 ;    Summary: The MMC1 mapper reset routine at the start of the ROM bank
 ;
@@ -17699,9 +17699,6 @@ ENDIF
 ;                       which calls the main flight loop and the moves into the
 ;                       spawning routine
 ;
-;   me3                 Used by me2 to jump back into the main game loop after
-;                       printing an in-flight message
-;
 ; ******************************************************************************
 
 .TT100
@@ -20000,6 +19997,7 @@ ENDIF
 ;       Name: MAS2
 ;       Type: Subroutine
 ;   Category: Maths (Geometry)
+;    Summary: Calculate a cap on the maximum distance to the planet or sun
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -22839,6 +22837,8 @@ ENDIF
 ;       Name: MV40
 ;       Type: Subroutine
 ;   Category: Moving
+;    Summary: Rotate the planet or sun's location in space by the amount of
+;             pitch and roll of our ship
 ;
 ; ------------------------------------------------------------------------------
 ;
