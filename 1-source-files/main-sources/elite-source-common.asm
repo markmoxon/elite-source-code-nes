@@ -131,22 +131,47 @@
 ;
 ; ******************************************************************************
 
- PPU_CTRL   = $2000
- PPU_MASK   = $2001
- PPU_STATUS = $2002
- OAM_ADDR   = $2003
- OAM_DATA   = $2004
- PPU_SCROLL = $2005
- PPU_ADDR   = $2006
- PPU_DATA   = $2007
- OAM_DMA    = $4014
+ PPU_CTRL   = $2000     ; The PPU control register, which allows us to choose
+                        ; which nametable and pattern table is being displayed,
+                        ; and to toggle the NMI interrupt at VBlank
 
- PPU_PATT_0 = $0000
- PPU_PATT_1 = $1000
- PPU_NAME_0 = $2000
- PPU_ATTR_0 = $23C0
- PPU_NAME_1 = $2400
- PPU_ATTR_1 = $27C0
+ PPU_MASK   = $2001     ; The PPU mask register, which controls how sprites and
+                        ; the tile background are displayed
+
+ PPU_STATUS = $2002     ; The PPU status register, which can be checked to see
+                        ; whether VBlank has started, and whether sprite 0 has
+                        ; been hit (so we can detect when the icon bar is being
+                        ; drawn)
+
+ OAM_ADDR   = $2003     ; The OAM address port (this is not used in Elite)
+
+ OAM_DATA   = $2004     ; The OAM data port (this is not used in Elite)
+
+ PPU_SCROLL = $2005     ; The PPU scroll position register, which is used to
+                        ; scroll the leftmost tile on each row around to the
+                        ; right
+
+ PPU_ADDR   = $2006     ; The PPU address register, which is used to set the
+                        ; destination address within the PPU when sending data
+                        ; to the PPU
+
+ PPU_DATA   = $2007     ; The PPU data register, which is used to send data to
+                        ; the PPU, to the address specified in PPU_ADDR
+
+ OAM_DMA    = $4014     ; The 2A03's OAM DMA register, which is used to initiate
+                        ; a DMA transfer of sprite data to the PPU
+
+ PPU_PATT_0 = $0000     ; The address of pattern table 0 in the PPU
+
+ PPU_PATT_1 = $1000     ; The address of pattern table 1 in the PPU
+
+ PPU_NAME_0 = $2000     ; The address of nametable 0 in the PPU
+
+ PPU_ATTR_0 = $23C0     ; The address of attribute table 0 in the PPU
+
+ PPU_NAME_1 = $2400     ; The address of nametable 1 in the PPU
+
+ PPU_ATTR_1 = $27C0     ; The address of attribute table 1 in the PPU
 
 ; ******************************************************************************
 ;
@@ -156,27 +181,68 @@
 ;
 ; ******************************************************************************
 
- SQ1_VOL    = $4000
- SQ1_SWEEP  = $4001
- SQ1_LO     = $4002
- SQ1_HI     = $4003
- SQ2_VOL    = $4004
- SQ2_SWEEP  = $4005
- SQ2_LO     = $4006
- SQ2_HI     = $4007
- TRI_LINEAR = $4008
- TRI_LO     = $400A
- TRI_HI     = $400B
- NOISE_VOL  = $400C
- NOISE_LO   = $400E
- NOISE_HI   = $400F
- DMC_FREQ   = $4010
- DMC_RAW    = $4011
- DMC_START  = $4012
- DMC_LEN    = $4013
- SND_CHN    = $4015
- JOY1       = $4016
- APU_FC     = $4017
+ SQ1_VOL    = $4000     ; The APU duty cycle and volume register for square wave
+                        ; channel 1
+
+ SQ1_SWEEP  = $4001     ; The APU sweep control register for square wave channel
+                        ; 1
+
+ SQ1_LO     = $4002     ; The APU period register (low byte) for square wave
+                        ; channel 1
+
+ SQ1_HI     = $4003     ; The APU period register (high byte) for square wave
+                        ; channel 1
+
+ SQ2_VOL    = $4004     ; The APU duty cycle and volume register for square wave
+                        ; channel 2
+
+ SQ2_SWEEP  = $4005     ; The APU sweep control register for square wave channel
+                        ; 2
+
+ SQ2_LO     = $4006     ; The APU period register (low byte) for square wave
+                        ; channel 2
+
+ SQ2_HI     = $4007     ; The APU period register (high byte) for square wave
+                        ; channel 2
+
+ TRI_LINEAR = $4008     ; The APU linear counter register for the triangle wave
+                        ; channel
+
+ TRI_LO     = $400A     ; The APU period register (low byte) for the triangle
+                        ; wave channel
+
+ TRI_HI     = $400B     ; The APU period register (high byte) for the triangle
+                        ; wave channel
+
+ NOISE_VOL  = $400C     ; The APU volume register for the noise channel
+
+ NOISE_LO   = $400E     ; The APU period register (low byte) for the noise
+                        ; channel
+
+ NOISE_HI   = $400F     ; The APU period register (high byte) for the noise
+                        ; channel
+
+ DMC_FREQ   = $4010     ; Controls the IRQ flag, loop flag and frequency of the
+                        ; DMC channel (this is not used in Elite)
+
+ DMC_RAW    = $4011     ; Controls the DAC on the DMC channel (this is not used
+                        ; in Elite)
+
+ DMC_START  = $4012     ; Controls the start adddress on the DMC channel (this
+                        ; is not used in Elite)
+
+ DMC_LEN    = $4013     ; Controls the sample length on the DMC channel (this is
+                        ; not used in Elite)
+
+ SND_CHN    = $4015     ; The APU sound channel register, which enables
+                        ; individual sound channels to be enabled or disabled
+
+ JOY1       = $4016     ; The 2A03's joystick port, with controller 1 mapped to
+                        ; JOY1 and controller 2 mapped to JOY1 + 1
+
+ APU_FC     = $4017     ; The APU frame counter control register, which controls
+                        ; the triggering of IRQ interrupts for sound generation,
+                        ; and the sequencer step mode
 
 ; ******************************************************************************
 ;
