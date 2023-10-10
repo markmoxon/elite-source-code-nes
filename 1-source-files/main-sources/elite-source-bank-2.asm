@@ -16377,7 +16377,7 @@ ENDIF
 ;
 ;       Name: PAUSE
 ;       Type: Subroutine
-;   Category: Keyboard
+;   Category: Missions
 ;    Summary: Display a rotating ship, waiting until a key is pressed, then
 ;             remove the ship from the screen
 ;

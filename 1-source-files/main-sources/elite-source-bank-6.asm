@@ -10246,7 +10246,7 @@ ENDIF
 ;
 ;       Name: LTDEF
 ;       Type: Variable
-;   Category: Demo
+;   Category: Combat demo
 ;    Summary: Line definitions for characters in the Star Wars scroll text
 ;  Deep dive: The 6502 Second Processor demo mode
 ;
@@ -10337,7 +10337,7 @@ ENDIF
 ;
 ;       Name: NOFX
 ;       Type: Variable
-;   Category: Demo
+;   Category: Combat demo
 ;    Summary: The x-coordinates of the scroll text letter grid
 ;
 ; ******************************************************************************
@@ -10364,7 +10364,7 @@ ENDIF
 ;
 ;       Name: NOFY
 ;       Type: Variable
-;   Category: Demo
+;   Category: Combat demo
 ;    Summary: The y-coordinates of the scroll text letter grid
 ;
 ; ******************************************************************************
