@@ -6419,7 +6419,7 @@ ENDIF
 ;
 ;       Name: viewAttrCount
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: The number of sets of view attributes in the viewAttrOffset table
 ;
 ; ******************************************************************************
@@ -6432,7 +6432,7 @@ ENDIF
 ;
 ;       Name: viewAttrOffset
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: Offset to the data for each of the 24 sets of view attributes
 ;
 ; ******************************************************************************
@@ -6468,7 +6468,7 @@ ENDIF
 ;
 ;       Name: viewAttributes0
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 0
 ;
 ; ******************************************************************************
@@ -6485,7 +6485,7 @@ ENDIF
 ;
 ;       Name: viewAttributes1
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 1
 ;
 ; ******************************************************************************
@@ -6502,7 +6502,7 @@ ENDIF
 ;
 ;       Name: viewAttributes2
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 2
 ;
 ; ******************************************************************************
@@ -6517,7 +6517,7 @@ ENDIF
 ;
 ;       Name: viewAttributes3
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 3
 ;
 ; ******************************************************************************
@@ -6533,7 +6533,7 @@ ENDIF
 ;
 ;       Name: viewAttributes4
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 4
 ;
 ; ******************************************************************************
@@ -6549,7 +6549,7 @@ ENDIF
 ;
 ;       Name: viewAttributes5
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 5
 ;
 ; ******************************************************************************
@@ -6565,7 +6565,7 @@ ENDIF
 ;
 ;       Name: viewAttributes6
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 6
 ;
 ; ******************************************************************************
@@ -6580,7 +6580,7 @@ ENDIF
 ;
 ;       Name: viewAttributes7
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 7
 ;
 ; ******************************************************************************
@@ -6595,7 +6595,7 @@ ENDIF
 ;
 ;       Name: viewAttributes8
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 8
 ;
 ; ******************************************************************************
@@ -6610,7 +6610,7 @@ ENDIF
 ;
 ;       Name: viewAttributes9
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 9
 ;
 ; ******************************************************************************
@@ -6625,7 +6625,7 @@ ENDIF
 ;
 ;       Name: viewAttributes10
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 10
 ;
 ; ******************************************************************************
@@ -6642,7 +6642,7 @@ ENDIF
 ;
 ;       Name: viewAttributes11
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 11
 ;
 ; ******************************************************************************
@@ -6659,7 +6659,7 @@ ENDIF
 ;
 ;       Name: viewAttributes12
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 12
 ;
 ; ******************************************************************************
@@ -6676,7 +6676,7 @@ ENDIF
 ;
 ;       Name: viewAttributes13
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 13
 ;
 ; ******************************************************************************
@@ -6692,7 +6692,7 @@ ENDIF
 ;
 ;       Name: viewAttributes14
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 14
 ;
 ; ******************************************************************************
@@ -6708,7 +6708,7 @@ ENDIF
 ;
 ;       Name: viewAttributes15
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 15
 ;
 ; ******************************************************************************
@@ -6724,7 +6724,7 @@ ENDIF
 ;
 ;       Name: viewAttributes16
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 16
 ;
 ; ******************************************************************************
@@ -6743,7 +6743,7 @@ ENDIF
 ;
 ;       Name: viewAttributes17
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 17
 ;
 ; ******************************************************************************
@@ -6762,7 +6762,7 @@ ENDIF
 ;
 ;       Name: viewAttributes18
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 18
 ;
 ; ******************************************************************************
@@ -6781,7 +6781,7 @@ ENDIF
 ;
 ;       Name: viewAttributes19
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 19
 ;
 ; ******************************************************************************
@@ -6795,7 +6795,7 @@ ENDIF
 ;
 ;       Name: viewAttributes20
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 20
 ;
 ; ******************************************************************************
@@ -6809,7 +6809,7 @@ ENDIF
 ;
 ;       Name: viewAttributes21
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 21
 ;
 ; ******************************************************************************
@@ -6823,7 +6823,7 @@ ENDIF
 ;
 ;       Name: viewAttributes22
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 22
 ;
 ; ******************************************************************************
@@ -6838,7 +6838,7 @@ ENDIF
 ;
 ;       Name: viewAttributes23
 ;       Type: Variable
-;   Category: Status
+;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 23
 ;
 ; ******************************************************************************

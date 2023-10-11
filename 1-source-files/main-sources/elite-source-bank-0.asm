@@ -21735,7 +21735,7 @@ ENDIF
 ;
 ;       Name: PAS1
 ;       Type: Subroutine
-;   Category: Controllers
+;   Category: Missions
 ;    Summary: Display a rotating ship at space coordinates (0, 100, 256) and
 ;             scan the controllers
 ;
