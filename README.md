@@ -43,13 +43,11 @@ This repository contains source code for Elite on the NES, with every single lin
 
 You can build the fully functioning game from this source. [Two variants](#building-different-variants-of-nes-elite) are currently supported: the NTSC variant from Ian Bell's personal website, and the Imagineer PAL variant.
 
-<!--It is a companion to the [bbcelite.com website](https://www.bbcelite.com), which contains all the code from this repository, but laid out in a much more human-friendly fashion. The links at the top of this page will take you to repositories for the other versions of Elite that are covered by this project.
+It is a companion to the [bbcelite.com website](https://www.bbcelite.com), which contains all the code from this repository, but laid out in a much more human-friendly fashion. The links at the top of this page will take you to repositories for the other versions of Elite that are covered by this project.
 
 * If you want to browse the source and read about how Elite works under the hood, you will probably find [the website](https://www.bbcelite.com) is a better place to start than this repository.
 
-* If you would rather explore the source code in your favourite IDE, then the [annotated source](1-source-files/main-sources) is what you're looking for. It contains the exact same content as the website, so you won't be missing out (the website is generated from the source files, so they are guaranteed to be identical). You might also like to read the section on [Browsing the source in an IDE](#browsing-the-source-in-an-ide) for some tips.-->
-
-* If you want to explore the source code, then the [annotated source](1-source-files/main-sources) is what you're looking for. You might also like to read the section on [Browsing the source in an IDE](#browsing-the-source-in-an-ide) for some tips.
+* If you would rather explore the source code in your favourite IDE, then the [annotated source](1-source-files/main-sources) is what you're looking for. It contains the exact same content as the website, so you won't be missing out (the website is generated from the source files, so they are guaranteed to be identical). You might also like to read the section on [Browsing the source in an IDE](#browsing-the-source-in-an-ide) for some tips.
 
 * If you want to build Elite from the source on a modern computer, to produce a working ROM image that can be loaded into a real NES or an emulator, then you want the section on [Building Elite from the source](#building-elite-from-the-source).
 
@@ -337,7 +335,7 @@ You can see the differences between the variants by searching the source code fo
 
 It's worth noting that the NTSC variant doesn't actually work on an NTSC machine. The NMI timings have been changed to work with some (but not all) emulators in NTSC mode, but it isn't a full NTSC conversion, it's an NTSC emulation (as per the scroll text).
 
-<!--See the [accompanying website](https://www.bbcelite.com/nes/releases.html) for a comprehensive list of differences between the variants.-->
+See the [accompanying website](https://www.bbcelite.com/nes/releases.html) for a comprehensive list of differences between the variants.
 
 ---
 
