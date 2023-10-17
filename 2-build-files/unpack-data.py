@@ -223,10 +223,12 @@ palettes = [
     [[ 72, 205, 222, 255], [146, 144, 255, 255], [  0, 124, 141, 255]],        # 7  System palette 7 for system image foreground sprite (PPU), e.g. Orerve
     [[173, 173, 173, 255], [102, 102, 102, 255], [255, 254, 255, 255]],        # 8  Grey palette for system image backgrounds (RAM)
     [[255,   0,   0, 255], [  0, 255,   0, 255], [  0,   0, 255, 255]],        # 9  RGB (useful for debugging)
-    [[188, 190,   0, 255], [173, 173, 173, 255], [255, 254, 255, 255]],        # 10 Palette for commander headshot background (RAM)
+    [[  0, 124, 141, 255], [173, 173, 173, 255], [255, 254, 255, 255]],        # 10 Palette for commander headshot background (RAM)
     [[153,  78,   0, 255], [234, 158,  34, 255], [247, 216, 165, 255]],        # 11 Palette for commander face foreground sprite (PPU)
     [[255, 255, 255, 255], [  0,   0,   0, 255], [255, 255, 255, 255]],        # 12 Only show colour 1 in the font character set
     [[0,     0,   0, 255], [255, 255, 255, 255], [255, 255, 255, 255]],        # 13 Only show colour 2 in the font character set
+    [[0,     0,   0, 255], [173, 173, 173, 255], [255, 254, 255, 255]],        # 14 Palette for dark glasses
+    [[0,     0,   0, 255], [188, 190,   0, 255], [228, 229, 148, 255]],        # 15 Palette for earrings and necklace
 ]
 
 # faceOffset entries from bank 4
