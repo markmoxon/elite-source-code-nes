@@ -6471,6 +6471,19 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 0
 ;
+; ------------------------------------------------------------------------------
+;
+; When unpacked, the PPU attributes for this view's screen are as follows:
+;
+;   3F 0F 0F 0F 0F 0F 0F 0F
+;   33 00 00 00 00 00 00 00
+;   33 00 00 00 00 00 00 00
+;   33 00 00 00 00 00 00 00
+;   33 00 00 00 00 00 00 00
+;   FF BF AF AF AF AB AB AE
+;   77 99 AA AA AA AA AA 5A
+;   07 09 0A 0A 0A 0A 0A 0F
+;
 ; ******************************************************************************
 
 .viewAttributes0
@@ -6487,6 +6500,19 @@ ENDIF
 ;       Type: Variable
 ;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 1
+;
+; ------------------------------------------------------------------------------
+;
+; When unpacked, the PPU attributes for this view's screen are as follows:
+;
+;   3F 0F 0F 0F 0F 0F 0F 0F
+;   33 00 00 00 00 00 00 00
+;   33 00 00 00 00 00 00 00
+;   33 00 00 00 00 00 00 00
+;   33 00 00 00 00 00 00 00
+;   FF FF AF AF AF AF AF AF
+;   77 DD AA AA AA AA AA 5A
+;   07 0D 0F 0F 0F 0F 0E 05
 ;
 ; ******************************************************************************
 
@@ -6505,6 +6531,19 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 2
 ;
+; ------------------------------------------------------------------------------
+;
+; When unpacked, the PPU attributes for this view's screen are as follows:
+;
+;   FF FF FF FF FF FF FF FF
+;   77 55 55 55 55 55 55 55
+;   77 55 55 55 55 55 55 55
+;   77 55 55 55 55 55 55 55
+;   77 55 55 55 55 55 55 55
+;   77 55 55 55 55 55 55 55
+;   FF FF FF FF FF FF FF FF
+;   0F 0F 0F 0F 0F 0F 0F 0F
+;
 ; ******************************************************************************
 
 .viewAttributes2
@@ -6519,6 +6558,19 @@ ENDIF
 ;       Type: Variable
 ;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 3
+;
+; ------------------------------------------------------------------------------
+;
+; When unpacked, the PPU attributes for this view's screen are as follows:
+;
+;   FF FF FF FF FF FF FF FF
+;   77 55 55 55 55 55 55 55
+;   77 55 55 55 55 55 55 55
+;   77 55 55 55 55 55 55 55
+;   77 55 55 55 55 55 55 55
+;   77 55 55 55 55 55 55 55
+;   FF FF FF FF FF BF BF EF
+;   0F 0F 0F 0F 0F 0B 0B 0E
 ;
 ; ******************************************************************************
 
@@ -6536,6 +6588,19 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 4
 ;
+; ------------------------------------------------------------------------------
+;
+; When unpacked, the PPU attributes for this view's screen are as follows:
+;
+;   3F 0F 0F 0F 0F 0F 0F 0F
+;   33 00 00 00 00 00 00 00
+;   73 50 50 50 50 50 50 50
+;   77 55 55 55 55 55 55 55
+;   77 55 55 55 55 55 55 55
+;   77 55 55 55 55 55 55 55
+;   F7 FD FF FF FF FF FE F5
+;   0F 0F 0F 0F 0F 0F 0F 0F
+;
 ; ******************************************************************************
 
 .viewAttributes4
@@ -6551,6 +6616,19 @@ ENDIF
 ;       Type: Variable
 ;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 5
+;
+; ------------------------------------------------------------------------------
+;
+; When unpacked, the PPU attributes for this view's screen are as follows:
+;
+;   3F 0F 0F 0F 0F 0F 0F 0F
+;   33 00 00 00 00 00 00 00
+;   33 00 00 00 00 00 00 00
+;   33 00 00 00 00 00 00 00
+;   33 00 00 00 00 00 00 00
+;   33 00 00 00 00 00 00 00
+;   33 00 00 00 00 00 00 00
+;   0F 0F 0F 0F 0F 0F 0F 0F
 ;
 ; ******************************************************************************
 
@@ -6568,6 +6646,19 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 6
 ;
+; ------------------------------------------------------------------------------
+;
+; When unpacked, the PPU attributes for this view's screen are as follows:
+;
+;   AF AF AF AF AF AF AF AF
+;   77 55 55 55 55 55 55 55
+;   77 55 55 55 55 55 55 55
+;   77 55 55 55 55 55 55 55
+;   77 55 55 55 55 55 55 55
+;   77 55 55 55 55 55 55 55
+;   FF FF FF FF FF FF FF FF
+;   0F 0F 0F 0F 0F 0F 0F 0F
+;
 ; ******************************************************************************
 
 .viewAttributes6
@@ -6582,6 +6673,19 @@ ENDIF
 ;       Type: Variable
 ;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 7
+;
+; ------------------------------------------------------------------------------
+;
+; When unpacked, the PPU attributes for this view's screen are as follows:
+;
+;   AF AF AF AF AF AF AF AF
+;   77 5A 5A 5A 5A 5A 5A 5A
+;   77 55 55 55 55 55 55 55
+;   77 55 55 55 55 55 55 55
+;   77 55 55 55 55 55 55 55
+;   77 55 55 55 55 55 55 55
+;   FF FF FF FF FF FF FF FF
+;   0F 0F 0F 0F 0F 0F 0F 0F
 ;
 ; ******************************************************************************
 
@@ -6598,6 +6702,19 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 8
 ;
+; ------------------------------------------------------------------------------
+;
+; When unpacked, the PPU attributes for this view's screen are as follows:
+;
+;   AF AF AF AF AF AF AF AF
+;   77 55 55 55 55 55 55 55
+;   77 55 55 55 55 55 55 55
+;   77 55 55 55 55 55 55 55
+;   77 55 55 55 55 55 55 55
+;   77 55 55 55 55 55 55 55
+;   FF FF FF FF FF FF FF FF
+;   0F 0F 0F 0F 0F 0F 0F 0F
+;
 ; ******************************************************************************
 
 .viewAttributes8
@@ -6613,6 +6730,19 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 9
 ;
+; ------------------------------------------------------------------------------
+;
+; When unpacked, the PPU attributes for this view's screen are as follows:
+;
+;   5F 5F 5F 5F 5F 5F 5F 5F
+;   77 55 55 55 55 55 55 55
+;   77 55 55 55 55 55 55 55
+;   77 55 55 55 55 55 55 55
+;   77 55 55 55 55 55 55 55
+;   BB AA AA AA AA AA AA AA
+;   FB FA FA FA FA FA FA FA
+;   FF FF FF FF FF FF FF FF
+;
 ; ******************************************************************************
 
 .viewAttributes9
@@ -6627,6 +6757,19 @@ ENDIF
 ;       Type: Variable
 ;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 10
+;
+; ------------------------------------------------------------------------------
+;
+; When unpacked, the PPU attributes for this view's screen are as follows:
+;
+;   0F 0F 0F 5F 5F 5F 5F 5F
+;   33 00 04 45 55 55 55 55
+;   33 00 00 54 55 99 AA AA
+;   33 00 04 55 55 99 AA AA
+;   F7 F5 F5 F5 F5 F5 F5 F5
+;   FF FF FF FF FF FF FF FF
+;   FF FF FF FF FF FF FF FF
+;   0F 0F 0F 0F 0F 0F 0F 0F
 ;
 ; ******************************************************************************
 
@@ -6645,6 +6788,19 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 11
 ;
+; ------------------------------------------------------------------------------
+;
+; When unpacked, the PPU attributes for this view's screen are as follows:
+;
+;   0F 0F 0F 4F 5F 5F 5F 5F
+;   33 00 00 55 55 55 55 55
+;   33 00 40 54 55 99 AA AA
+;   33 00 04 45 55 99 AA AA
+;   FF FF FF FF FF FF FF FF
+;   FF FF FF FF FF FF FF FF
+;   FF FF FF FF FF FF FF FF
+;   0F 0F 0F 0F 0F 0F 0F 0F
+;
 ; ******************************************************************************
 
 .viewAttributes11
@@ -6661,6 +6817,19 @@ ENDIF
 ;       Type: Variable
 ;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 12
+;
+; ------------------------------------------------------------------------------
+;
+; When unpacked, the PPU attributes for this view's screen are as follows:
+;
+;   0F 0F 0F 5F 5F 5F 5F 5F
+;   33 00 04 45 55 55 55 55
+;   33 00 50 50 55 99 AA AA
+;   33 00 04 55 55 99 AA AA
+;   FF FF FF FF FF FF FF FF
+;   FF FF FF FF FF FF FF FF
+;   FF FF FF FF FF FF FF FF
+;   FF FF FF FF FF FF FF FF
 ;
 ; ******************************************************************************
 
@@ -6679,6 +6848,19 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 13
 ;
+; ------------------------------------------------------------------------------
+;
+; When unpacked, the PPU attributes for this view's screen are as follows:
+;
+;   AF AF AF 5F 5F 5F 5F 5F
+;   BB AA AA 5A 5A 55 55 55
+;   BB AA A5 A5 55 55 00 00
+;   FB FA FA FA FA FF 00 00
+;   FF FF FF FF FF FF F0 F0
+;   FF FF FF FF FF FF FF FF
+;   FF FF FF FF FF FF FF FF
+;   FF FF FF FF FF FF FF FF
+;
 ; ******************************************************************************
 
 .viewAttributes13
@@ -6694,6 +6876,19 @@ ENDIF
 ;       Type: Variable
 ;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 14
+;
+; ------------------------------------------------------------------------------
+;
+; When unpacked, the PPU attributes for this view's screen are as follows:
+;
+;   AF AF AF AF AF 5F 5F 5F
+;   BB AA 6A 5A 5A 5A 55 55
+;   BB AA AA 65 55 55 00 00
+;   FB FA FA FA FA FF 00 00
+;   FF FF FF FF FF FF F0 F0
+;   FF FF FF FF FF FF FF FF
+;   FF FF FF FF FF FF FF FF
+;   0F 0F 0F 0F 0F 0F 0F 0F
 ;
 ; ******************************************************************************
 
@@ -6711,6 +6906,19 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 15
 ;
+; ------------------------------------------------------------------------------
+;
+; When unpacked, the PPU attributes for this view's screen are as follows:
+;
+;   AF AF AF 6F 5F 5F 5F 5F
+;   BB AA AA AA 5A 56 55 55
+;   BB AA 6A 56 55 55 05 05
+;   FB FA FA FA FA FF 00 00
+;   FF FF FF FF FF FF 00 00
+;   FF FF FF FF FF FF FF FF
+;   FF FF FF FF FF FF FF FF
+;   FF FF FF FF FF FF FF FF
+;
 ; ******************************************************************************
 
 .viewAttributes15
@@ -6726,6 +6934,19 @@ ENDIF
 ;       Type: Variable
 ;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 16
+;
+; ------------------------------------------------------------------------------
+;
+; When unpacked, the PPU attributes for this view's screen are as follows:
+;
+;   FF FF FF FF FF FF FF FF
+;   73 50 50 A0 A0 60 50 50
+;   77 00 99 AA AA 66 55 55
+;   73 50 50 AA AA 66 55 55
+;   77 55 99 AA AA 66 55 55
+;   37 05 09 AA AA A6 A5 A5
+;   F3 F0 F0 FA FA FA FA FF
+;   FF FF FF FF FF FF FF FF
 ;
 ; ******************************************************************************
 
@@ -6746,6 +6967,19 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 17
 ;
+; ------------------------------------------------------------------------------
+;
+; When unpacked, the PPU attributes for this view's screen are as follows:
+;
+;   FF FF FF FF FF FF FF FF
+;   73 50 50 A0 A0 60 50 50
+;   77 00 99 AA AA 66 55 55
+;   73 50 50 AA AA 66 55 55
+;   77 55 99 AA AA 66 55 55
+;   37 05 09 8A AA A6 A5 A5
+;   F3 F0 F0 F8 FA FA FA FF
+;   FF FF FF FF FF FF FF FF
+;
 ; ******************************************************************************
 
 .viewAttributes17
@@ -6764,6 +6998,19 @@ ENDIF
 ;       Type: Variable
 ;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 18
+;
+; ------------------------------------------------------------------------------
+;
+; When unpacked, the PPU attributes for this view's screen are as follows:
+;
+;   FF FF FF FF FF FF FF FF
+;   73 50 50 A0 A0 60 50 50
+;   77 00 99 AA AA 66 55 55
+;   73 50 50 AA AA 66 55 55
+;   77 55 99 AA AA 66 55 55
+;   37 05 09 8A AA A6 A5 A5
+;   F3 F0 F0 F8 FA FA FA FF
+;   FF FF FF FF FF FF FF FF
 ;
 ; ******************************************************************************
 
@@ -6784,6 +7031,19 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 19
 ;
+; ------------------------------------------------------------------------------
+;
+; When unpacked, the PPU attributes for this view's screen are as follows:
+;
+;   AF 5F 5F 5F 5F 5F 5F 5F
+;   FB FA F5 F5 F5 F5 F5 F5
+;   FF FF FF FF FF FF FF FF
+;   FF FF FF FF FF FF FF FF
+;   FF FF FF FF FF FF FF FF
+;   FF FF FF FF FF FF FF FF
+;   FF FF FF FF FF FF FF FF
+;   0F 0F 0F 0F 0F 0F 0F 0F
+;
 ; ******************************************************************************
 
 .viewAttributes19
@@ -6797,6 +7057,19 @@ ENDIF
 ;       Type: Variable
 ;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 20
+;
+; ------------------------------------------------------------------------------
+;
+; When unpacked, the PPU attributes for this view's screen are as follows:
+;
+;   AF AF AF 5F 5F 5F 5F 5F
+;   FB FA FA F5 F5 F5 F5 F5
+;   FF FF FF FF FF FF FF FF
+;   FF FF FF FF FF FF FF FF
+;   FF FF FF FF FF FF FF FF
+;   FF FF FF FF FF FF FF FF
+;   FF FF FF FF FF FF FF FF
+;   0F 0F 0F 0F 0F 0F 0F 0F
 ;
 ; ******************************************************************************
 
@@ -6812,6 +7085,19 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 21
 ;
+; ------------------------------------------------------------------------------
+;
+; When unpacked, the PPU attributes for this view's screen are as follows:
+;
+;   AF AF 6F 5F 5F 5F 5F 5F
+;   FB FA F6 F5 F5 F5 F5 F5
+;   FF FF FF FF FF FF FF FF
+;   FF FF FF FF FF FF FF FF
+;   FF FF FF FF FF FF FF FF
+;   FF FF FF FF FF FF FF FF
+;   FF FF FF FF FF FF FF FF
+;   0F 0F 0F 0F 0F 0F 0F 0F
+;
 ; ******************************************************************************
 
 .viewAttributes21
@@ -6825,6 +7111,19 @@ ENDIF
 ;       Type: Variable
 ;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 22
+;
+; ------------------------------------------------------------------------------
+;
+; When unpacked, the PPU attributes for this view's screen are as follows:
+;
+;   3F 0F 0F 0F 0F 0F 0F 0F
+;   33 00 00 00 00 00 00 00
+;   33 00 00 00 00 00 00 00
+;   33 00 00 00 00 00 00 00
+;   33 00 00 00 00 00 00 00
+;   33 00 00 00 00 00 00 00
+;   FF FF FF FF FF FF FF FF
+;   0F 0F 0F 0F 0F 0F 0F 0F
 ;
 ; ******************************************************************************
 
@@ -6840,6 +7139,19 @@ ENDIF
 ;       Type: Variable
 ;   Category: Drawing the screen
 ;    Summary: Packed view attribute data for attribute set 23
+;
+; ------------------------------------------------------------------------------
+;
+; When unpacked, the PPU attributes for this view's screen are as follows:
+;
+;   3F 0F 0F 0F 0F 0F 0F 0F
+;   33 00 00 00 00 00 00 00
+;   33 00 00 00 00 00 00 00
+;   33 00 00 00 00 00 00 00
+;   33 00 00 00 00 00 00 00
+;   F3 F0 F0 F0 F0 F0 F0 F0
+;   FB 5A 5A 5A 5A 5A 5A 5A
+;   0F 0F 0F 0F 0F 0F 0F 0F
 ;
 ; ******************************************************************************
 
