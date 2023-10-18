@@ -1751,7 +1751,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-ORG $0200
+ ORG $0200
 
 .ySprite0
 
@@ -5340,6 +5340,19 @@ ENDIF
 
 ; ******************************************************************************
 ;
+;       Name: Cartridge WRAM
+;       Type: Workspace
+;    Address: $6000 to $7FFF
+;   Category: Workspaces
+;    Summary: The 8K of battery-backed RAM in the Elite cartridge, which is used
+;             for the graphics buffers and storing saved commanders
+;
+; ******************************************************************************
+
+ ORG $6000
+
+; ******************************************************************************
+;
 ;       Name: pattBuffer0
 ;       Type: Variable
 ;   Category: Drawing the screen
@@ -5347,8 +5360,6 @@ ENDIF
 ;             the PPU during VBlank
 ;
 ; ******************************************************************************
-
- ORG $6000
 
 .pattBuffer0
 
