@@ -165,11 +165,11 @@ def create_png_from_ram_data(unpacked_data_0, unpacked_data_1, output_path_pngs,
     png.from_array(png_array, 'RGBA').save(output_path_pngs + "_ram.png")
 
 
-def extract_image(input_data, sections, output_folder, input_file, palette, pixel_width, data_is_packed, transparent):
-    print("\nExtracting image: " + input_file)
+def extract_image(input_data, sections, output_folder, output_file, palette, pixel_width, data_is_packed, transparent):
+    print("\nExtracting image: " + output_file)
 
-    output_path_pngs = output_folder + "pngs/" + input_file
-    output_path_binaries = output_folder + "binaries/" + input_file
+    output_path_pngs = output_folder + "pngs/" + output_file
+    output_path_binaries = output_folder + "binaries/" + output_file
 
     unpacked_data_0, index = unpack_data(input_data, output_path_binaries + "_pattern0.bin", 0, data_is_packed)
 
@@ -205,6 +205,22 @@ def extract_image(input_data, sections, output_folder, input_file, palette, pixe
     if sections >= 4:
         for palette in range(0, 8):
             create_png_from_ppu_data(unpacked_data_2 + unpacked_data_3, output_path_pngs + "_" + str(palette), pixel_width, palette, transparent)
+
+
+def extract_data(input_data, output_folder, output_file, data_is_packed):
+    print("\nExtracting data: " + output_file)
+
+    output_path_binaries = output_folder + output_file
+
+    unpacked_data, index = unpack_data(input_data, output_path_binaries + ".bin", 0, data_is_packed)
+
+    print("End index is " + str(index))
+    print("File size " + str(len(input_data)))
+
+    if (index == len(input_data)):
+        print("All sections extracted")
+    else:
+        print("More sections detected")
 
 
 # Main loop
@@ -405,3 +421,101 @@ extract_image(bank_data7[start: end], 0, "../1-source-files/images/other-images/
 start = 0xFCE8 - 0xC000
 end = 0xFFD8 - 0xC000
 extract_image(bank_data7[start: end], 0, "../1-source-files/images/other-images/", "fontImage", palette=12, pixel_width=64, data_is_packed=False, transparent=False)
+
+# The view attribute tables are simply packed data
+
+start = 0xB6F7 - 0x8000
+end = 0xB71B - 0x8000
+extract_data(bank_data3[start: end], "../1-source-files/view-attributes/", "viewAttributes0", data_is_packed=True)
+
+start = 0xB71B - 0x8000
+end = 0xB73C - 0x8000
+extract_data(bank_data3[start: end], "../1-source-files/view-attributes/", "viewAttributes1", data_is_packed=True)
+
+start = 0xB73C - 0x8000
+end = 0xB750 - 0x8000
+extract_data(bank_data3[start: end], "../1-source-files/view-attributes/", "viewAttributes2", data_is_packed=True)
+
+start = 0xB750 - 0x8000
+end = 0xB76B - 0x8000
+extract_data(bank_data3[start: end], "../1-source-files/view-attributes/", "viewAttributes3", data_is_packed=True)
+
+start = 0xB76B - 0x8000
+end = 0xB786 - 0x8000
+extract_data(bank_data3[start: end], "../1-source-files/view-attributes/", "viewAttributes4", data_is_packed=True)
+
+start = 0xB786 - 0x8000
+end = 0xB79F - 0x8000
+extract_data(bank_data3[start: end], "../1-source-files/view-attributes/", "viewAttributes5", data_is_packed=True)
+
+start = 0xB79F - 0x8000
+end = 0xB7B4 - 0x8000
+extract_data(bank_data3[start: end], "../1-source-files/view-attributes/", "viewAttributes6", data_is_packed=True)
+
+start = 0xB7B4 - 0x8000
+end = 0xB7C9 - 0x8000
+extract_data(bank_data3[start: end], "../1-source-files/view-attributes/", "viewAttributes7", data_is_packed=True)
+
+start = 0xB7C9 - 0x8000
+end = 0xB7DE - 0x8000
+extract_data(bank_data3[start: end], "../1-source-files/view-attributes/", "viewAttributes8", data_is_packed=True)
+
+start = 0xB7DE - 0x8000
+end = 0xB7F4 - 0x8000
+extract_data(bank_data3[start: end], "../1-source-files/view-attributes/", "viewAttributes9", data_is_packed=True)
+
+start = 0xB7F4 - 0x8000
+end = 0xB81A - 0x8000
+extract_data(bank_data3[start: end], "../1-source-files/view-attributes/", "viewAttributes10", data_is_packed=True)
+
+start = 0xB81A - 0x8000
+end = 0xB83C - 0x8000
+extract_data(bank_data3[start: end], "../1-source-files/view-attributes/", "viewAttributes11", data_is_packed=True)
+
+start = 0xB83C - 0x8000
+end = 0xB85F - 0x8000
+extract_data(bank_data3[start: end], "../1-source-files/view-attributes/", "viewAttributes12", data_is_packed=True)
+
+start = 0xB85F - 0x8000
+end = 0xB87C - 0x8000
+extract_data(bank_data3[start: end], "../1-source-files/view-attributes/", "viewAttributes13", data_is_packed=True)
+
+start = 0xB87C - 0x8000
+end = 0xB89B - 0x8000
+extract_data(bank_data3[start: end], "../1-source-files/view-attributes/", "viewAttributes14", data_is_packed=True)
+
+start = 0xB89B - 0x8000
+end = 0xB8B9 - 0x8000
+extract_data(bank_data3[start: end], "../1-source-files/view-attributes/", "viewAttributes15", data_is_packed=True)
+
+start = 0xB8B9 - 0x8000
+end = 0xB8EA - 0x8000
+extract_data(bank_data3[start: end], "../1-source-files/view-attributes/", "viewAttributes16", data_is_packed=True)
+
+start = 0xB8EA - 0x8000
+end = 0xB91C - 0x8000
+extract_data(bank_data3[start: end], "../1-source-files/view-attributes/", "viewAttributes17", data_is_packed=True)
+
+start = 0xB91C - 0x8000
+end = 0xB94E - 0x8000
+extract_data(bank_data3[start: end], "../1-source-files/view-attributes/", "viewAttributes18", data_is_packed=True)
+
+start = 0xB94E - 0x8000
+end = 0xB95B - 0x8000
+extract_data(bank_data3[start: end], "../1-source-files/view-attributes/", "viewAttributes19", data_is_packed=True)
+
+start = 0xB95B - 0x8000
+end = 0xB96A - 0x8000
+extract_data(bank_data3[start: end], "../1-source-files/view-attributes/", "viewAttributes20", data_is_packed=True)
+
+start = 0xB96A - 0x8000
+end = 0xB97A - 0x8000
+extract_data(bank_data3[start: end], "../1-source-files/view-attributes/", "viewAttributes21", data_is_packed=True)
+
+start = 0xB97A - 0x8000
+end = 0xB991 - 0x8000
+extract_data(bank_data3[start: end], "../1-source-files/view-attributes/", "viewAttributes22", data_is_packed=True)
+
+start = 0xB991 - 0x8000
+end = 0xB9AA - 0x8000
+extract_data(bank_data3[start: end], "../1-source-files/view-attributes/", "viewAttributes23", data_is_packed=True)

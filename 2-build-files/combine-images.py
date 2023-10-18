@@ -163,7 +163,6 @@ for i in range(14):
         combined_image = '../1-source-files/images/commander-images/combined/commanderImage' + str(i) + '_' + str(j) + '.png'
         combine_images(background_image, foreground_image, combined_image)
 
-
 # Gallery of system images
 
 image_width = 64
