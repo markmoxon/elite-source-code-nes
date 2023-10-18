@@ -12522,19 +12522,19 @@ ENDIF
  LDX #0                 ; Flush the SQ1 sound channel
  JSR FlushSoundChannel
 
-                        ; Fall through into FlushChannels1And2 to flush sound
-                        ; channels 1 and 2
+                        ; Fall through into FlushSQ2AndNOISE to flush the SQ2
+                        ; and NOISE channels
 
 ; ******************************************************************************
 ;
-;       Name: FlushChannels1And2
+;       Name: FlushSQ2AndNOISE
 ;       Type: Subroutine
 ;   Category: Sound
-;    Summary: Flush sound channels 1 and 2
+;    Summary: Flush the SQ2 and NOISE sound channels
 ;
 ; ******************************************************************************
 
-.FlushChannels1And2
+.FlushSQ2AndNOISE
 
  LDX #1                 ; Flush the SQ2 sound channel
  JSR FlushSoundChannel
@@ -12574,16 +12574,16 @@ ENDIF
 
  LDX soundChannel,Y     ; Set X to the sound channel for sound Y
 
- CPX #3                 ; If X < 3 then jump to FlushSoundChannel to flush sound
- BCC FlushSoundChannel  ; channel X, returning from the subroutine using a tail
-                        ; call
+ CPX #3                 ; If X < 3 then jump to FlushSoundChannel to flush the
+ BCC FlushSoundChannel  ; SQ1, SQ2 or NOISE sound channel, as specified in X,
+                        ; returning from the subroutine using a tail call
 
- BNE FlushChannels1And2 ; If X <> 3, i.e. X = 4, then jump to FlushChannels1And2
+ BNE FlushSQ2AndNOISE   ; If X <> 3, i.e. X = 4, then jump to FlushSQ2AndNOISE
                         ; to flush sound channels 1 and 2, returning from the
                         ; subroutine using a tail call
 
-                        ; If we get here then we know X = 3, so now we flush
-                        ; sound channels 0 and 2
+                        ; If we get here then we know X = 3, so now we flush the
+                        ; SQ1 and NOISE sound channels
 
  LDX #0                 ; Flush the SQ1 sound channel
  JSR FlushSoundChannel
@@ -19887,10 +19887,10 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: Vectors
+;       Name: Vectors_b7
 ;       Type: Variable
 ;   Category: Utility routines
-;    Summary: Vectors at the end of the ROM bank
+;    Summary: Vectors at the end of ROM bank 7
 ;
 ; ******************************************************************************
 

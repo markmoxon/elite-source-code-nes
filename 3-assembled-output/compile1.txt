@@ -7899,7 +7899,7 @@ End macro SETUP_PPU_FOR_ICON_BAR
 .FlushSoundChannels
      EBB1   A2 00      LDX #&00
      EBB3   20 CF EB   JSR &EBCF
-.FlushChannels1And2
+.FlushSQ2AndNOISE
      EBB6   A2 01      LDX #&01
      EBB8   20 CF EB   JSR &EBCF
      EBBB   A2 02      LDX #&02
