@@ -478,7 +478,7 @@ ENDIF
 ;
 ;       Name: ZP
 ;       Type: Workspace
-;    Address: $0000 to $00B0
+;    Address: $0000 to $00FF
 ;   Category: Workspaces
 ;    Summary: Lots of important variables are stored in the zero page workspace
 ;             as it is quicker and more space-efficient to access memory here
@@ -5351,142 +5351,67 @@ ENDIF
 
  ORG $6000
 
-; ******************************************************************************
-;
-;       Name: pattBuffer0
-;       Type: Variable
-;   Category: Drawing the screen
-;    Summary: Pattern buffer for colour 0 (1 bit per pixel) that gets sent to
-;             the PPU during VBlank
-;
-; ******************************************************************************
-
 .pattBuffer0
 
- SKIP 8 * 256           ; 256 patterns, 8 bytes per pattern (8x8 pixels)
-
-; ******************************************************************************
-;
-;       Name: pattBuffer1
-;       Type: Variable
-;   Category: Drawing the screen
-;    Summary: Pattern buffer for colour 1 (1 bit per pixel) that gets sent to
-;             the PPU during VBlank
-;
-; ******************************************************************************
+ SKIP 8 * 256           ; The pattern buffer for bitplane 0 (1 bit per pixel)
+                        ; that gets sent to the PPU during VBlank
+                        ;
+                        ; 256 patterns, 8 bytes per pattern (8x8 pixels)
 
 .pattBuffer1
 
- SKIP 8 * 256           ; 256 patterns, 8 bytes per pattern (8x8 pixels)
-
-; ******************************************************************************
-;
-;       Name: nameBuffer0
-;       Type: Variable
-;   Category: Drawing the screen
-;    Summary: Buffer for nametable 0 that gets sent to the PPU during VBlank
-;
-; ******************************************************************************
+ SKIP 8 * 256           ; The pattern buffer for bitplane 1 (1 bit per pixel)
+                        ; that gets sent to the PPU during VBlank
+                        ;
+                        ; 256 patterns, 8 bytes per pattern (8x8 pixels)
 
 .nameBuffer0
 
- SKIP 30 * 32           ; 30 rows of 32 tile numbers
-
-; ******************************************************************************
-;
-;       Name: attrBuffer0
-;       Type: Variable
-;   Category: Drawing the screen
-;    Summary: Buffer for attribute table 0 that gets sent to the PPU during
-;             VBlank
-;
-; ******************************************************************************
+ SKIP 30 * 32           ; The buffer for nametable 0 that gets sent to the PPU
+                        ; during VBlank
+                        ;
+                        ; 30 rows of 32 tile numbers
 
 .attrBuffer0
 
- SKIP 8 * 8             ; 8 rows of 8 attribute bytes (each is a 2x2 tile block)
-
-; ******************************************************************************
-;
-;       Name: nameBuffer1
-;       Type: Variable
-;   Category: Drawing the screen
-;    Summary: Buffer for nametable 1 that gets sent to the PPU during VBlank
-;
-; ******************************************************************************
+ SKIP 8 * 8             ; The buffer for attribute table 0 that gets sent to the
+                        ; PPU during VBlank
+                        ;
+                        ; 8 rows of 8 attribute bytes (each is a 4x4 tile block)
 
 .nameBuffer1
 
- SKIP 30 * 32           ; 30 rows of 32 tile numbers
-
-; ******************************************************************************
-;
-;       Name: attrBuffer1
-;       Type: Variable
-;   Category: Drawing the screen
-;    Summary: Buffer for attribute table 1 that gets sent to the PPU during
-;             VBlank
-;
-; ******************************************************************************
+ SKIP 30 * 32           ; The buffer for nametable 1 that gets sent to the PPU
+                        ; during VBlank
+                        ;
+                        ; 30 rows of 32 tile numbers
 
 .attrBuffer1
 
- SKIP 8 * 8             ; 8 rows of 8 attribute bytes (each is a 2x2 tile block)
-
-; ******************************************************************************
-;
-;       Name: currentSlot
-;       Type: Variable
-;   Category: Save and load
-;    Summary: The save slot for the currently selected commander file
-;
-; ******************************************************************************
+ SKIP 8 * 8             ; The buffer for attribute table 0 that gets sent to the
+                        ; PPU during VBlank
+                        ;
+                        ; 8 rows of 8 attribute bytes (each is a 4x4 tile block)
 
 .currentSlot
 
- SKIP 256
-
-; ******************************************************************************
-;
-;       Name: saveSlotPart1
-;       Type: Variable
-;   Category: Save and load
-;    Summary: The eight slots for saving positions, split into three for copy
-;             protection (this is the first part)
-;
-; ******************************************************************************
+ SKIP 256               ; The save slot for the currently selected commander
+                        ; file
 
 .saveSlotPart1
 
- SKIP 8 * 73
-
-; ******************************************************************************
-;
-;       Name: saveSlotPart2
-;       Type: Variable
-;   Category: Save and load
-;    Summary: The eight slots for saving positions, split into three for copy
-;             protection (this is the second part)
-;
-; ******************************************************************************
+ SKIP 8 * 73            ; The first part of each of the eight save slots, which
+                        ; are split into three for checksum purposes
 
 .saveSlotPart2
 
- SKIP 8 * 73
-
-; ******************************************************************************
-;
-;       Name: saveSlotPart3
-;       Type: Variable
-;   Category: Save and load
-;    Summary: The eight slots for saving positions, split into three for copy
-;             protection (this is the third part)
-;
-; ******************************************************************************
+ SKIP 8 * 73            ; The second part of each of the eight save slots, which
+                        ; are split into three for checksum purposes
 
 .saveSlotPart3
 
- SKIP 8 * 73
+ SKIP 8 * 73            ; The third part of each of the eight save slots, which
+                        ; are split into three for checksum purposes
 
  SKIP 40                ; These bytes appear to be unused
 

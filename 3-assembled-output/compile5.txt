@@ -1213,7 +1213,7 @@ Zero page variables from &0  to &100
      046B
 .pictureTile
      046C
-.flipEveryBitplane0
+.sendDashboardToPPU
      046D
 .boxEdge1
      046E
