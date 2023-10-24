@@ -15731,15 +15731,15 @@ ENDIF
 
 .alertColours
 
- EQUB $1C               ; Colour for condition Docked (blue-green)
+ EQUB $1C               ; Colour for condition Docked (medium cyan)
 
- EQUB $1A               ; Colour for condition Green (green)
+ EQUB $1A               ; Colour for condition Green (medium green)
 
- EQUB $28               ; Colour for condition Yellow (orange)
+ EQUB $28               ; Colour for condition Yellow (light yellow)
 
- EQUB $16               ; Colour for condition Red (light red)
+ EQUB $16               ; Colour for condition Red (medium red)
 
- EQUB $06               ; Flash with this colour (dark red) for condition Red
+ EQUB $06               ; Flash colour for condition Red (dark red)
 
 ; ******************************************************************************
 ;

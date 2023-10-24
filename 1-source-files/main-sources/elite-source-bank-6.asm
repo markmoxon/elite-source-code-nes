@@ -13578,18 +13578,18 @@ ENDIF
 
  EQUB $06               ; Dark red
  EQUB $0F               ; Black
- EQUB $38               ; Light brown
- EQUB $2A               ; Medium green
- EQUB $23               ; Medium purple
- EQUB $25               ; Medium magenta
- EQUB $22               ; Medium blue
- EQUB $11               ; Medium-dark blue
- EQUB $1A               ; Medium-dark green
+ EQUB $38               ; Pale yellow
+ EQUB $2A               ; Light green
+ EQUB $23               ; Light violet
+ EQUB $25               ; Light rose
+ EQUB $22               ; Light blue
+ EQUB $11               ; Medium azure
+ EQUB $1A               ; Medium green
  EQUB $00               ; Dark grey
- EQUB $26               ; Light orange
+ EQUB $26               ; Light red
  EQUB $2C               ; Light cyan
  EQUB $20               ; White
- EQUB $13               ; Medium-dark 
+ EQUB $13               ; Medium violet
  EQUB $0F               ; Black
  EQUB $00               ; Dark grey
 
