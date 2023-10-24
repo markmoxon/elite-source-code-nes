@@ -2662,44 +2662,63 @@ ENDIF
                         ;
                         ;   * If bit 6 of PPU_STATUS is set (sprite 0 has been
                         ;     hit) then the C flag is cleared
+                        ;
+                        ; So the C flag is set if we are in VBlank, or if we
+                        ; aren't in VBlank but the PPU has not yet reached the
+                        ; icon bar (i.e. it hasn't started drawing the
+                        ; dashboard yet)
+                        ;
+                        ; In other words, the C flag is clear if the PPU is
+                        ; currently drawing the dashboard, and set if it is not
 
  LDA drawingBitplane    ; If the drawing bitplane is 1, jump to main18 to send
- BNE main18             ; the drawing plane to the PPU
+ BNE main18             ; the drawing plane to the PPU without updating the
+                        ; whole dashboard first
 
                         ; If we get here then the drawing bitplane is 0, so now
-                        ; we do various checks to determine whether to send the
-                        ; drawing bitplane to the PPU
+                        ; we do various checks to determine whether to update
+                        ; the whole dashboard before sending to the PPU (as
+                        ; updating the whole dashboard takes time)
 
- LDA flipEveryBitplane0 ; Flip the value of flipEveryBitplane0 between 0 and $FF
+ LDA sendDashboardToPPU ; Flip the value of sendDashboardToPPU between 0 and $FF
  EOR #$FF               ; so it flips every time we run the main loop with the
- STA flipEveryBitplane0 ; drawing bitplane is set to 0
+ STA sendDashboardToPPU ; drawing bitplane set to 0 (so we only update the whole
+                        ; dashboard every other iteration that the drawing
+                        ; bitplane is set to 0)
 
- BMI main19             ; If bit 7 of the result is set, jump to main19 to skip
-                        ; the following
+ BMI main19             ; If bit 7 of the result is set (so sendDashboardToPPU
+                        ; is now $FF), jump to main19 to update the whole
+                        ; dashboard before sending it to the PPU
 
  LDA KY1                ; If the B button is being pressed with either the up or
  ORA KY2                ; down button (to change our speed), or the C flag is
- ROR A                  ; set, jump to main19 to skip the following
- BNE main19
+ ROR A                  ; set, jump to main19 to update the whole dashboard
+ BNE main19             ; before sending it to the PPU
+                        ;
+                        ; This makes the speed indicator react more quickly to
+                        ; speed changes, as it triggers an update of the whole
+                        ; dashboard when we are changing speed, and it also
+                        ; ensures we do not update the whole dashboard if the
+                        ; PPU is currently in the process of drawing it
 
 .main18
 
                         ; If we get here then either the drawing bitplane is 1,
-                        ; or it's 0 and:
+                        ; or it's 0 and the following are true:
                         ;
-                        ;   * flipEveryBitplane0 has just flipped to $FF
+                        ;   * sendDashboardToPPU has just flipped to 0
                         ;
                         ;   * The change speed buttons are not being pressed
                         ;
-                        ;   * The C flag is clear, so either the PPU has reached
-                        ;     the icon bar in its drawing cycle, or we are not
-                        ;     in VBlank
+                        ;   * The C flag is clear, so the PPU is currently
+                        ;     drawing the dashboard
                         ;
-                        ; So we only send drawing bitplane 0 and its nametable
-                        ; entries to the PPU every few iterations, and when the
-                        ; screen isn't too busy, which we can do as bitplane 0
-                        ; is less changeable than bitplane 1 (which contains all
-                        ; the vector graphics)
+                        ; So we can get away with not updating the dashboard
+                        ; for two iterations out of four (i.e. when the drawing
+                        ; bitplane is 1), plus an extra iteration (i.e. every
+                        ; other iteration with bitplane 0) but only if the speed
+                        ; buttons aren't being pressed or the PPU is currently
+                        ; drawing the dashboard
 
  JSR DrawBitplaneInNMI  ; Configure the NMI to send the drawing bitplane to the
                         ; PPU after drawing the box edges and setting the next
@@ -23760,8 +23779,8 @@ ENDIF
  LDA #16                ; Set the text row for in-flight messages in the space
  STA messYC             ; view to row 16
 
- LDX #0                 ; Set flipEveryBitplane0 = 0 to reset the logic behind
- STX flipEveryBitplane0 ; the sending of drawing bitplane 0 to the PPU in part 3
+ LDX #0                 ; Set sendDashboardToPPU = 0 to reset the logic behind
+ STX sendDashboardToPPU ; the sending of drawing bitplane 0 to the PPU in part 3
                         ; of the main loop
 
  JSR SetDrawingBitplane ; Set the drawing bitplane to bitplane 0

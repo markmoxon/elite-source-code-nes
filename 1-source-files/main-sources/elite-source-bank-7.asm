@@ -282,7 +282,7 @@ ENDIF
                         ; bank at $8000 to be switched, so this instruction
                         ; ensures that bank 7 is present
 
- LDA PPU_STATUS         ; Read the PPU_STATUS register, which clear the VBlank
+ LDA PPU_STATUS         ; Read the PPU_STATUS register, which clears the VBlank
                         ; latch in bit 7, so the following loops will wait for
                         ; three VBlanks in total
 
@@ -5670,7 +5670,7 @@ ENDIF
 
 .WaitFor3xVBlank
 
- LDA PPU_STATUS         ; Read the PPU_STATUS register, which clear the VBlank
+ LDA PPU_STATUS         ; Read the PPU_STATUS register, which clears the VBlank
                         ; latch in bit 7, so the following loops will wait for
                         ; three VBlanks in total
 
