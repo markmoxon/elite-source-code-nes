@@ -127,8 +127,6 @@
 ;
 ; NES PPU registers
 ;
-; See https://www.nesdev.org/wiki/PPU_registers
-;
 ; ******************************************************************************
 
  PPU_CTRL   = $2000     ; The PPU control register, which allows us to choose
@@ -158,8 +156,8 @@
  PPU_DATA   = $2007     ; The PPU data register, which is used to send data to
                         ; the PPU, to the address specified in PPU_ADDR
 
- OAM_DMA    = $4014     ; The 2A03's OAM DMA register, which is used to initiate
-                        ; a DMA transfer of sprite data to the PPU
+ OAM_DMA    = $4014     ; The OAM DMA register, which is used to initiate a DMA
+                        ; transfer of sprite data to the PPU
 
  PPU_PATT_0 = $0000     ; The address of pattern table 0 in the PPU
 
@@ -175,9 +173,7 @@
 
 ; ******************************************************************************
 ;
-; NES 2A03 CPU registers (I/O and sound)
-;
-; See https://www.nesdev.org/wiki/2A03
+; NES CPU registers (I/O and sound)
 ;
 ; ******************************************************************************
 
@@ -237,8 +233,8 @@
  SND_CHN    = $4015     ; The APU sound channel register, which enables
                         ; individual sound channels to be enabled or disabled
 
- JOY1       = $4016     ; The 2A03's joystick port, with controller 1 mapped to
-                        ; JOY1 and controller 2 mapped to JOY1 + 1
+ JOY1       = $4016     ; The joystick port, with controller 1 mapped to JOY1
+                        ; and controller 2 mapped to JOY1 + 1
 
  APU_FC     = $4017     ; The APU frame counter control register, which controls
                         ; the triggering of IRQ interrupts for sound generation,

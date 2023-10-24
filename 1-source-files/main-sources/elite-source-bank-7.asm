@@ -125,7 +125,7 @@ ENDIF
 
  CLD                    ; Clear the decimal flag, so we're not in decimal mode
                         ; (this has no effect on the NES, as BCD mode is
-                        ; disabled in the 2A03 CPU, but we do this to ensure
+                        ; disabled in the NES's CPU, but we do this to ensure
                         ; compatibility with 6502-based debuggers)
 
  LDX #$FF               ; Set the stack pointer to $01FF, which is the standard
