@@ -1105,8 +1105,7 @@ ENDIF
                         ; want to send to the PPU
 
  LDX #32                ; We now send 32 bytes to the PPU, which equates to four
-                        ; tile patterns (as each tile pattern contains eight
-                        ; bytes)
+                        ; patterns (as each pattern contains eight bytes)
                         ;
                         ; We send 32 pattern bytes, starting from the Y-th byte
                         ; of dataForPPU(1 0), which corresponds to pattern
@@ -1135,7 +1134,7 @@ ENDIF
  STA barPatternCounter
 
  BPL SendBarPatts2ToPPU ; If barPatternCounter < 128, loop back to the start of
-                        ; the routine to send another four pattern tiles
+                        ; the routine to send another four patterns
 
  JMP ConsiderSendTiles  ; Jump to ConsiderSendTiles to start sending tiles to
                         ; the PPU, but only if there are enough free cycles
@@ -1156,10 +1155,9 @@ ENDIF
 ;
 ; Arguments:
 ;
-;   A                   A counter for the icon bar tile patterns to send to the
-;                       PPU, which works its way from 0 to 128 as pattern data
-;                       is sent to the PPU over successive calls to the NMI
-;                       handler
+;   A                   A counter for the icon bar patterns to send to the PPU,
+;                       which works its way from 0 to 128 as pattern data is
+;                       sent to the PPU over successive calls to the NMI handler
 ;
 ; ******************************************************************************
 
@@ -1249,8 +1247,7 @@ ENDIF
                         ; want to send to the PPU
 
  LDX #32                ; We now send 32 bytes to the PPU, which equates to four
-                        ; tile patterns (as each tile pattern contains eight
-                        ; bytes)
+                        ; patterns (as each pattern contains eight bytes)
                         ;
                         ; We send 32 pattern bytes, starting from the Y-th byte
                         ; of dataForPPU(1 0), which corresponds to pattern
@@ -1330,8 +1327,7 @@ ENDIF
                         ; want to send to the PPU
 
  LDX #32                ; We now send 32 bytes to the PPU, which equates to four
-                        ; tile patterns (as each tile pattern contains eight
-                        ; bytes)
+                        ; patterns (as each pattern contains eight bytes)
                         ;
                         ; We send 32 pattern bytes, starting from the Y-th byte
                         ; of dataForPPU(1 0), which corresponds to pattern
@@ -1360,23 +1356,23 @@ ENDIF
  STA barPatternCounter
 
  JMP SendBarPattsToPPU  ; Loop back to the start of the routine to send another
-                        ; four pattern tiles to both PPU pattern tables
+                        ; four patterns to both PPU pattern tables
 
 ; ******************************************************************************
 ;
 ;       Name: SendBarPattsToPPUS
 ;       Type: Subroutine
 ;   Category: PPU
-;    Summary: Send the tile pattern data for the icon bar to the PPU (this is a
-;             jump so we can call this routine using a branch instruction)
+;    Summary: Send the pattern data for the icon bar to the PPU (this is a jump
+;             so we can call this routine using a branch instruction)
 ;
 ; ******************************************************************************
 
 .SendBarPattsToPPUS
 
- JMP SendBarPattsToPPU  ; Jump to SendBarPattsToPPU to send the tile pattern
-                        ; data for the icon bar to the PPU, returning from the
-                        ; subroutine using a tail call
+ JMP SendBarPattsToPPU  ; Jump to SendBarPattsToPPU to send the pattern data for
+                        ; the icon bar to the PPU, returning from the subroutine
+                        ; using a tail call
 
 ; ******************************************************************************
 ;
@@ -1400,7 +1396,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: PPU
 ;    Summary: If there are enough free cycles, move on to the next stage of
-;             sending tile patterns to the PPU
+;             sending patterns to the PPU
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -1433,7 +1429,7 @@ ENDIF
  JMP next2              ; The result is positive, so we have enough cycles to
                         ; keep sending PPU data in this VBlank, so jump to
                         ; SendPatternsToPPU via next2 to move on to the next
-                        ; stage of sending tile patterns to the PPU
+                        ; stage of sending patterns to the PPU
 
 .next1
 
@@ -1444,7 +1440,7 @@ ENDIF
 .next2
 
  JMP SendPatternsToPPU  ; Jump to SendPatternsToPPU to move on to the next stage
-                        ; of sending tile patterns to the PPU
+                        ; of sending patterns to the PPU
 
 .RTS1
 
@@ -1540,7 +1536,7 @@ ENDIF
                         ;   * The opposite bitplane is configured to be sent to
                         ;     the PPU
 
- LDA lastPatternTile,X  ; Set A to the number of the last pattern number to send
+ LDA lastPattern,X      ; Set A to the number of the last pattern number to send
                         ; for this bitplane
 
  BNE sbuf1              ; If it is zero (i.e. we have no free tiles), then set
@@ -1548,12 +1544,12 @@ ENDIF
 
 .sbuf1
 
- CMP sendingPattTile,X  ; If A >= sendingPattTile, then the number of the last
- BEQ sbuf3              ; tile to send is bigger than the number of the tile for
- BCS sbuf3              ; which we are currently sending pattern data to the PPU
-                        ; for this bitplane, which means there is still some
-                        ; pattern data to send before we have processed all the
-                        ; tiles, so jump to sbuf3
+ CMP sendingPattern,X   ; If A >= sendingPattern, then the number of the last
+ BEQ sbuf3              ; pattern to send is bigger than the number of the
+ BCS sbuf3              ; pattern which we are currently sending pattern data
+                        ; to the PPU for this bitplane, which means there is
+                        ; still some pattern data to send before we have
+                        ; processed all the patterns, so jump to sbuf3
                         ;
                         ; The BEQ appears to be superfluous here as BCS will
                         ; catch an equality
@@ -1838,25 +1834,26 @@ ENDIF
                         ; value, so we start to clear tiles from the same point
                         ; once they have been sent to the PPU nametable
 
- LDA firstPatternTile   ; Set sendingPattTile for this bitplane to the value of
- STA sendingPattTile,X  ; firstPatternTile, which contains the number of the
-                        ; first tile to send to the PPU pattern table
+ LDA firstPattern       ; Set sendingPattern for this bitplane to the value of
+ STA sendingPattern,X   ; firstPattern, which contains the number of the first
+                        ; pattern to send to the PPU pattern table
 
- STA clearingPattTile,X ; Set clearingPattTile for this bitplane to the same
-                        ; value, so we start to clear tiles from the same point
-                        ; once they have been sent to the PPU pattern table
+ STA clearingPattern,X  ; Set clearingPattern for this bitplane to the same
+                        ; value, so we start to clear patterns from the same
+                        ; point once they have been sent to the PPU pattern
+                        ; table
 
  LDA bitplaneFlags,X    ; Set bit 4 in the bitplane flags to indicate that we
  ORA #%00010000         ; are now sending tile data to the PPU in the NMI
  STA bitplaneFlags,X    ; handler (so we can detect this in the next VBlank if
                         ; we have to split the process across multiple VBlanks)
 
- LDA #0                 ; Set (addr A) to sendingPattTile for this bitplane,
- STA addr               ; which we just set to the number of the first tile to
- LDA sendingPattTile,X  ; send to the PPU pattern table
+ LDA #0                 ; Set (addr A) to sendingPattern for this bitplane,
+ STA addr               ; which we just set to the number of the first pattern
+ LDA sendingPattern,X   ; to send to the PPU pattern table
 
  ASL A                  ; Set (addr A) = (pattBufferHiAddr 0) + (addr A) * 8
- ROL addr               ;              = pattBufferX + sendingPattTile * 8
+ ROL addr               ;              = pattBufferX + sendingPattern * 8
  ASL A                  ;
  ROL addr               ; Starting with the low bytes
  ASL A                  ;
@@ -1864,17 +1861,18 @@ ENDIF
                         ; pattBuffer1, depending on the bitplane in X, as these
                         ; are the values stored in the pattBufferHiAddr variable
 
- STA pattTileBuffLo,X   ; Store the low byte in pattTileBuffLo for this bitplane
+ STA patternBufferLo,X  ; Store the low byte in patternBufferLo for this
+                        ; bitplane
 
  LDA addr               ; We now add the high bytes, storing the result in
- ROL A                  ; pattTileBuffHi for this bitplane
+ ROL A                  ; patternBufferHi for this bitplane
  ADC pattBufferHiAddr,X ;
- STA pattTileBuffHi,X   ; So we now have the following for this bitplane:
+ STA patternBufferHi,X  ; So we now have the following for this bitplane:
                         ;
-                        ;   (pattTileBuffHi pattTileBuffLo) =
-                        ;                      pattBufferX + sendingPattTile * 8
+                        ;   (patternBufferHi patternBufferLo) =
+                        ;                      pattBufferX + sendingPattern * 8
                         ;
-                        ; which points to the data for tile sendingPattTile in
+                        ; which points to the data for pattern sendingPattern in
                         ; the pattern buffer for bitplane X
 
  LDA #0                 ; Set (addr A) to sendingNameTile for this bitplane,
@@ -1914,15 +1912,15 @@ ENDIF
 
  JMP SendPatternsToPPU  ; Now that we have set up all the variables needed, we
                         ; can jump to SendPatternsToPPU to move on to the next
-                        ; stage of sending tile patterns to the PPU
+                        ; stage of sending patterns to the PPU
 
 ; ******************************************************************************
 ;
 ;       Name: SendPatternsToPPU (Part 1 of 6)
 ;       Type: Subroutine
 ;   Category: PPU
-;    Summary: Calculate how many tile patterns we need to send and jump to the
-;             most efficient routine for sending them
+;    Summary: Calculate how many patterns we need to send and jump to the most
+;             efficient routine for sending them
 ;
 ; ******************************************************************************
 
@@ -1949,7 +1947,7 @@ ENDIF
 
  JMP spat4              ; The result is positive, so we have enough cycles to
                         ; keep sending PPU data in this VBlank, so jump to spat4
-                        ; to start sending tile pattern data to the PPU
+                        ; to start sending pattern data to the PPU
 
 .spat3
 
@@ -1959,7 +1957,7 @@ ENDIF
 
 .spat4
 
- LDA lastPatternTile,X  ; Set A to the number of the last pattern number to send
+ LDA lastPattern,X      ; Set A to the number of the last pattern number to send
                         ; for this bitplane
 
  BNE spat5              ; If it is zero (i.e. we have no free tiles), then set
@@ -1967,8 +1965,8 @@ ENDIF
 
 .spat5
 
- STA lastTile           ; Store the result in lastTile, as we want to stop
-                        ; sending tiles once we have reached this tile
+ STA lastToSend         ; Store the result in lastToSend, as we want to stop
+                        ; sending patterns once we have reached this pattern
 
  LDA ppuNametableAddr+1 ; Set the high byte of the following calculation:
  SEC                    ;
@@ -1979,32 +1977,32 @@ ENDIF
                         ; byte that we can add to a PPU nametable address to get
                         ; the corresponding address in the nametable buffer
 
- LDY pattTileBuffLo,X   ; Set Y to the low byte of the address of the pattern
-                        ; buffer for sendingPattTile in bitplane X (i.e. the
-                        ; address of the next tile we want to send)
+ LDY patternBufferLo,X  ; Set Y to the low byte of the address of the pattern
+                        ; buffer for sendingPattern in bitplane X (i.e. the
+                        ; address of the next pattern we want to send)
                         ;
                         ; We can use this as an index when copying data from
                         ; the pattern buffer, as we know the pattern buffers
                         ; start on page boundaries, so the low byte of the
                         ; address of the start of each buffer is zero
 
- LDA pattTileBuffHi,X   ; Set the high byte of dataForPPU(1 0) to the high byte
+ LDA patternBufferHi,X  ; Set the high byte of dataForPPU(1 0) to the high byte
  STA dataForPPU+1       ; of the pattern buffer for this bitplane, as we want
                         ; to copy data from the pattern buffer to the PPU
 
- LDA sendingPattTile,X  ; Set A to the number of the next tile we want to send
-                        ; from the pattern buffer for this bitplane
+ LDA sendingPattern,X   ; Set A to the number of the next pattern we want to
+                        ; send from the pattern buffer for this bitplane
 
- STA pattTileCounter    ; Store the number in pattTileCounter, so we can keep
-                        ; track of which tile we are sending
+ STA patternCounter     ; Store the number in patternCounter, so we can keep
+                        ; track of which pattern we are sending
 
- SEC                    ; Set A = A - lastTile
- SBC lastTile           ;       = pattTileCounter - lastTile
+ SEC                    ; Set A = A - lastToSend
+ SBC lastToSend         ;       = patternCounter - lastToSend
 
- BCS spat1              ; If pattTileCounter >= lastTile then we have already
-                        ; sent all the tile patterns (right up to the last
-                        ; tile), so jump to spat1 to move on to sending the
-                        ; nametable entries
+ BCS spat1              ; If patternCounter >= lastToSend then we have already
+                        ; sent all the patterns (right up to the last one), so
+                        ; jump to spat1 to move on to sending the nametable
+                        ; entries
 
  LDX ppuCtrlCopy        ; If ppuCtrlCopy is zero then we are not worried about
  BEQ spat6              ; keeping PPU writes within VBlank, so jump to spat6 to
@@ -2018,33 +2016,32 @@ ENDIF
 
  CMP #$BF               ; If A < $BF
  BCC spat2              ;
-                        ; i.e. pattTileCounter - lastTile < -65
-                        ;      lastTile - pattTileCounter > 65
+                        ; i.e. patternCounter - lastToSend < -65
+                        ;      lastToSend - patternCounter > 65
                         ;
                         ; Then we have 65 or more patterns to sent to the PPU,
                         ; so jump to part 4 (via spat2) to send them until we
                         ; run out of cycles, without bothering to check for the
-                        ; last tile (as we have more tiles to send than we can
-                        ; fit into one VBlank)
+                        ; last tile (as we have more patterns to send than we
+                        ; can fit into one VBlank)
                         ;
-                        ; Otherwise we have 64 or fewer tile patterns to send,
-                        ; so fall through into part 2 to send them one tile at a
-                        ; time, checking each one is the last tile to see if
-                        ; it's the last tile
+                        ; Otherwise we have 64 or fewer patterns to send, so
+                        ; fall through into part 2 to send them one pattern at a
+                        ; time, checking each one to see if it's the last one
 
 ; ******************************************************************************
 ;
 ;       Name: SendPatternsToPPU (Part 2 of 6)
 ;       Type: Subroutine
 ;   Category: PPU
-;    Summary: Configure variables for sending data to the PPU one tile at a time
-;             with checks
+;    Summary: Configure variables for sending data to the PPU one pattern at a
+;             time with checks
 ;
 ; ******************************************************************************
 
 .spat6
 
- LDA pattTileCounter    ; Set (addr A) = pattTileCounter
+ LDA patternCounter     ; Set (addr A) = patternCounter
  LDX #0
  STX addr
 
@@ -2055,7 +2052,7 @@ ENDIF
                         ; bitplane
 
  ASL A                  ; Set (addr X) = (addr A) << 4
- ROL addr               ;              = pattTileCounter * 16
+ ROL addr               ;              = patternCounter * 16
  ASL A
  ROL addr
  ASL A
@@ -2064,14 +2061,14 @@ ENDIF
  TAX
 
  LDA addr               ; Set (A X) = (ppuPatternTableHi 0) + (addr X)
- ROL A                  ;         = (ppuPatternTableHi 0) + pattTileCounter * 16
+ ROL A                  ;         = (ppuPatternTableHi 0) + patternCounter * 16
  ADC ppuPatternTableHi  ;
                         ; ppuPatternTableHi contains the high byte of the
                         ; address of the PPU pattern table to which we send
-                        ; dynamic tile patterns; it contains HI(PPU_PATT_1),
-                        ; so (A X) now contains the address in PPU pattern
-                        ; table 1 for tile number pattTileCounter (as there are
-                        ; 16 bytes in the pattern table for each tile)
+                        ; patterns; it contains HI(PPU_PATT_1), so (A X) now
+                        ; contains the address in PPU pattern table 1 for
+                        ; pattern number patternCounter (as there are 16 bytes
+                        ; in the pattern table for each pattern)
 
                         ; We now set both PPU_ADDR and addr(1 0) to the
                         ; following:
@@ -2081,8 +2078,8 @@ ENDIF
                         ;   * (A X) + 8     when nmiBitplane is 1
                         ;
                         ; We add 8 in the second example to point the address to
-                        ; bitplane 1, as the PPU interleaves each tile pattern
-                        ; as 8 bytes of one bitplane followed by 8 bytes of the
+                        ; bitplane 1, as the PPU interleaves each pattern as
+                        ; 8 bytes of one bitplane followed by 8 bytes of the
                         ; other bitplane, so bitplane 1's data always appears 8
                         ; bytes after the corresponding bitplane 0 data
 
@@ -2111,8 +2108,8 @@ ENDIF
 ;       Name: SendPatternsToPPU (Part 3 of 6)
 ;       Type: Subroutine
 ;   Category: PPU
-;    Summary: Send pattern data to the PPU for one tile at a time, checking
-;             after each one to see if is the last tile
+;    Summary: Send pattern data to the PPU for one pattern at a time, checking
+;             after each one to see if is the last one
 ;
 ; ******************************************************************************
 
@@ -2135,9 +2132,9 @@ ENDIF
 
                         ; This is the entry point for part 3
 
- LDX pattTileCounter    ; We will now work our way through tiles, sending data
-                        ; each one, so set a counter in X that starts with the
-                        ; number of the next tile to send to the PPU
+ LDX patternCounter     ; We will now work our way through patterns, sending
+                        ; data for each one, so set a counter in X that starts
+                        ; with the number of the next pattern to send to the PPU
 
 .spat10
 
@@ -2186,9 +2183,9 @@ ENDIF
 
  INX                    ; Increment the tile number in X
 
- CPX lastTile           ; If we have reached the last tile, jump to spat19 (via
- BCS spat8              ; spat8 and spat17) to move on to sending the nametable
-                        ; entries
+ CPX lastToSend         ; If we have reached the last pattern, jump to spat19
+ BCS spat8              ; (via spat8 and spat17) to move on to sending the
+                        ; nametable entries
 
  SEND_DATA_TO_PPU 8     ; Send 8 bytes from dataForPPU to the PPU, starting at
                         ; index Y and updating Y to point to the byte after the
@@ -2217,8 +2214,9 @@ ENDIF
 
  INX                    ; Increment the tile number in X
 
- CPX lastTile           ; If we have reached the last tile, jump to spat19 (via
- BCS spat18             ; spat18) to move on to sending the nametable entries
+ CPX lastToSend         ; If we have reached the last pattern, jump to spat19
+ BCS spat18             ; (via spat18) to move on to sending the nametable
+                        ; entries
 
  SEND_DATA_TO_PPU 8     ; Send 8 bytes from dataForPPU to the PPU, starting at
                         ; index Y and updating Y to point to the byte after the
@@ -2247,7 +2245,7 @@ ENDIF
 
  INX                    ; Increment the tile number in X
 
- CPX lastTile           ; If we have reached the last tile, jump to spat19 to
+ CPX lastToSend         ; If we have reached the last pattern, jump to spat19 to
  BCS spat19             ; move on to sending the nametable entries
 
  JMP spat10             ; Otherwise we still have patterns to send, so jump back
@@ -2286,28 +2284,28 @@ ENDIF
                         ; the following variables, so they can be picked up by
                         ; the new routine:
                         ;
-                        ;   * (pattTileBuffHi pattTileBuffLo)
+                        ;   * (patternBufferHi patternBufferLo)
                         ;
-                        ;   * sendingPattTile
+                        ;   * sendingPattern
                         ;
                         ; Incidentally, these are the same variables that we
                         ; save when storing progress for the next VBlank, which
                         ; makes sense
 
- STX pattTileCounter    ; Store X in pattTileCounter to use below
+ STX patternCounter     ; Store X in patternCounter to use below
 
  NOP                    ; This looks like code that has been removed
 
- LDX nmiBitplane        ; Set (pattTileBuffHi pattTileBuffLo) for this bitplane
- STY pattTileBuffLo,X   ; to dataForPPU(1 0) + Y (which is the address of the
- LDA dataForPPU+1       ; next byte of data to be sent from the pattern buffer)
- STA pattTileBuffHi,X
+ LDX nmiBitplane        ; Set (patternBufferHi patternBufferLo) for this
+ STY patternBufferLo,X  ; bitplane to dataForPPU(1 0) + Y (which is the address
+ LDA dataForPPU+1       ; of the next byte of data to be sent from the pattern
+ STA patternBufferHi,X  ; buffer)
 
- LDA pattTileCounter    ; Set sendingPattTile for this bitplane to the value of
- STA sendingPattTile,X  ; X we stored above (which is the number / 8 of the next
-                        ; tile to be sent from the pattern buffer)
+ LDA patternCounter     ; Set sendingPattern for this bitplane to the value of
+ STA sendingPattern,X   ; X we stored above (which is the number / 8 of the next
+                        ; pattern to be sent from the pattern buffer)
 
- JMP SendNametableToPPU ; Jump to SendNametableToPPU to start sending the tile
+ JMP SendNametableToPPU ; Jump to SendNametableToPPU to start sending the
                         ; nametable to the PPU
 
 .spat20
@@ -2333,7 +2331,7 @@ ENDIF
 
 .spat21
 
- LDA pattTileCounter    ; Set (addr A) = pattTileCounter
+ LDA patternCounter     ; Set (addr A) = patternCounter
  LDX #0
  STX addr
 
@@ -2344,7 +2342,7 @@ ENDIF
                         ; bitplane
 
  ASL A                  ; Set (addr X) = (addr A) << 4
- ROL addr               ;              = pattTileCounter * 16
+ ROL addr               ;              = patternCounter * 16
  ASL A
  ROL addr
  ASL A
@@ -2353,14 +2351,14 @@ ENDIF
  TAX
 
  LDA addr               ; Set (A X) = (ppuPatternTableHi 0) + (addr X)
- ROL A                  ;         = (ppuPatternTableHi 0) + pattTileCounter * 16
+ ROL A                  ;         = (ppuPatternTableHi 0) + patternCounter * 16
  ADC ppuPatternTableHi  ;
                         ; ppuPatternTableHi contains the high byte of the
                         ; address of the PPU pattern table to which we send
-                        ; dynamic tile patterns; it contains HI(PPU_PATT_1),
-                        ; so (A X) now contains the address in PPU pattern
-                        ; table 1 for tile number pattTileCounter (as there are
-                        ; 16 bytes in the pattern table for each tile)
+                        ; patterns; it contains HI(PPU_PATT_1), so (A X) now
+                        ; contains the address in PPU pattern table 1 for
+                        ; pattern number patternCounter (as there are 16 bytes
+                        ; in the pattern table for each pattern)
 
                         ; We now set both PPU_ADDR and addr(1 0) to the
                         ; following:
@@ -2370,8 +2368,8 @@ ENDIF
                         ;   * (A X) + 8     when nmiBitplane is 1
                         ;
                         ; We add 8 in the second example to point the address to
-                        ; bitplane 1, as the PPU interleaves each tile pattern
-                        ; as 8 bytes of one bitplane followed by 8 bytes of the
+                        ; bitplane 1, as the PPU interleaves each pattern as
+                        ; 8 bytes of one bitplane followed by 8 bytes of the
                         ; other bitplane, so bitplane 1's data always appears 8
                         ; bytes after the corresponding bitplane 0 data
 
@@ -2400,8 +2398,8 @@ ENDIF
 ;       Name: SendPatternsToPPU (Part 5 of 6)
 ;       Type: Subroutine
 ;   Category: PPU
-;    Summary: Send pattern data to the PPU for two tiles at a time, until we run
-;             out of cycles (and without checking for the last tile)
+;    Summary: Send pattern data to the PPU for two patterns at a time, until we
+;             run out of cycles (and without checking for the last pattern)
 ;
 ; ******************************************************************************
 
@@ -2419,9 +2417,9 @@ ENDIF
 
                         ; This is the entry point for part 5
 
- LDX pattTileCounter    ; We will now work our way through tiles, sending data
-                        ; each one, so set a counter in X that starts with the
-                        ; number of the next tile to send to the PPU
+ LDX patternCounter     ; We will now work our way through patterns, sending
+                        ; data for each one, so set a counter in X that starts
+                        ; with the number of the next pattern to send to the PPU
 
 .spat24
 
@@ -2525,20 +2523,20 @@ ENDIF
                         ; We now store the following variables, so they can be
                         ; picked up when we return in the next VBlank:
                         ;
-                        ;   * (pattTileBuffHi pattTileBuffLo)
+                        ;   * (patternBufferHi patternBufferLo)
                         ;
-                        ;   * sendingPattTile
+                        ;   * sendingPattern
 
- STX pattTileCounter    ; Store X in pattTileCounter to use below
+ STX patternCounter     ; Store X in patternCounter to use below
 
- LDX nmiBitplane        ; Set (pattTileBuffHi pattTileBuffLo) for this bitplane
- STY pattTileBuffLo,X   ; to dataForPPU(1 0) + Y (which is the address of the
- LDA dataForPPU+1       ; next byte of data to be sent from the pattern buffer
- STA pattTileBuffHi,X   ; in the next VBlank)
+ LDX nmiBitplane        ; Set (patternBufferHi patternBufferLo) for this
+ STY patternBufferLo,X  ; bitplane to dataForPPU(1 0) + Y (which is the address
+ LDA dataForPPU+1       ; of the next byte of data to be sent from the pattern
+ STA patternBufferHi,X  ; buffer in the next VBlank)
 
- LDA pattTileCounter    ; Set sendingPattTile for this bitplane to the value of
- STA sendingPattTile,X  ; X we stored above (which is the number / 8 of the next
-                        ; tile to be sent from the pattern buffer in the next
+ LDA patternCounter     ; Set sendingPattern for this bitplane to the value of
+ STA sendingPattern,X   ; X we stored above (which is the number / 8 of the next
+                        ; pattern to be sent from the pattern buffer in the next
                         ; VBlank)
 
  JMP RTS1               ; Return from the subroutine (as RTS1 contains an RTS)
@@ -2719,7 +2717,7 @@ ENDIF
 
 .snam4
 
- STY lastTile           ; Store Y in lastTile, as we want to stop sending
+ STY lastToSend         ; Store Y in lastToSend, as we want to stop sending
                         ; nametable entries when we reach this tile
 
  LDA sendingNameTile,X  ; Set A to the number of the next tile we want to send
@@ -2732,10 +2730,10 @@ ENDIF
                         ; track of which tile we are sending (so nameTileCounter
                         ; contains the current tile number, divided by 8)
 
- SEC                    ; Set A = A - lastTile
- SBC lastTile           ;       = nameTileCounter - lastTile
+ SEC                    ; Set A = A - lastToSend
+ SBC lastToSend         ;       = nameTileCounter - lastToSend
 
- BCS snam2              ; If nameTileCounter >= lastTile then we have already
+ BCS snam2              ; If nameTileCounter >= lastToSend then we have already
                         ; sent all the nametable entries (right up to the last
                         ; tile), so jump to snam2 to consider sending the other
                         ; bitplane
@@ -2818,7 +2816,7 @@ ENDIF
  ADC #3                 ; nametable entries (and nameTileCounter counts the tile
  STA nameTileCounter    ; number, divided by 8)
 
- CMP lastTile           ; If nameTileCounter >= lastTile then we have reached
+ CMP lastToSend         ; If nameTileCounter >= lastToSend then we have reached
  BCS snam8              ; the last tile, so jump to snam8 to update the
                         ; variables and jump to SendOtherBitplane to consider
                         ; sending the other bitplane
@@ -2869,7 +2867,7 @@ ENDIF
  ADC #4                 ; number, divided by 8)
  STA nameTileCounter
 
- CMP lastTile           ; If nameTileCounter >= lastTile then we have reached
+ CMP lastToSend         ; If nameTileCounter >= lastToSend then we have reached
  BCS snam8              ; the last tile, so jump to snam8 to update the
                         ; variables and jump to SendOtherBitplane to consider
                         ; sending the other bitplane
@@ -2903,7 +2901,6 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Copy the contents of nametable buffer 0 to nametable buffer 1
-;             and set the next free tile number for both bitplanes
 ;
 ; ******************************************************************************
 
@@ -2946,9 +2943,9 @@ ENDIF
  BNE copy1              ; Loop back to copy1 to copy the next four bytes, until
                         ; we have copied the whole buffer
 
- LDA firstFreeTile      ; Tell the NMI handler to send pattern entries up to the
- STA lastPatternTile    ; first free tile, for both bitplanes
- STA lastPatternTile+1
+ LDA firstFreePattern   ; Tell the NMI handler to send pattern entries up to the
+ STA lastPattern        ; first free pattern, for both bitplanes
+ STA lastPattern+1
 
  RTS                    ; Return from the subroutine
 
@@ -4247,10 +4244,11 @@ ENDIF
                         ;
                         ; Bits 0 and 1 are ignored and are always clear
 
- LDA firstPatternTile   ; Set the next free tile number in firstFreeTile to the
- STA firstFreeTile      ; value of firstPatternTile, which contains the number
-                        ; of the first tile we just cleared, so it's also the
-                        ; tile we can start drawing into when we next start
+ LDA firstPattern       ; Set the next free pattern number in firstFreePattern
+ STA firstFreePattern   ; to the value of firstPattern, which contains the
+                        ; number of the first pattern for which we send pattern
+                        ; data to the PPU in the NMI handler, so it's also the
+                        ; pattern we can start drawing into when we next start
                         ; drawing into tiles
 
  JMP DrawBoxTop         ; Draw the top of the box into the new drawing bitplane,
@@ -4390,7 +4388,7 @@ ENDIF
 ;       Name: ClearDrawingPlane (Part 3 of 3)
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: Clear the nametable buffers for the newly flipped drawing plane
+;    Summary: Clear the pattern buffers for the newly flipped drawing plane
 ;
 ; ******************************************************************************
 
@@ -4399,43 +4397,43 @@ ENDIF
  LDY nmiCounter         ; Set Y to the NMI counter, which is incremented every
                         ; VBlank by the NMI handler
 
- LDA sendingPattTile,X  ; Set SC to sendingPattTile for this bitplane, which
- STA SC                 ; contains the number of the last tile that was sent to
-                        ; the PPU pattern table by the NMI handler
+ LDA sendingPattern,X   ; Set SC to sendingPattern for this bitplane, which
+ STA SC                 ; contains the number of the last pattern that was sent
+                        ; to the PPU pattern table by the NMI handler
                         ;
-                        ; So this contains the number of the last tile we need
-                        ; to clear in the pattern buffer
+                        ; So this contains the number of the last pattern we
+                        ; need to clear in the pattern buffer
 
- LDA clearingPattTile,X ; Set A to clearingPattTile for this bitplane, which
-                        ; contains the number of the first tile we need
+ LDA clearingPattern,X  ; Set A to clearingPattern for this bitplane, which
+                        ; contains the number of the first pattern we need
                         ; to clear in the pattern buffer
 
  CPY nmiCounter         ; If the NMI counter has incremented since we fetched it
- BNE cdra6              ; above, then the tile numbers we just fetched might
+ BNE cdra6              ; above, then the pattern numbers we just fetched might
                         ; already be out of date (as the NMI handler runs at
                         ; every VBlank, so it may have been run between now and
                         ; the nmiCounter fetch above), so jump back to cdra6
                         ; to fetch them all again
 
- LDY SC                 ; Set Y to the number of the last tile, which we fetched
-                        ; above
+ LDY SC                 ; Set Y to the number of the last pattern, which we
+                        ; fetched above
 
- CMP SC                 ; If A >= SC then the first tile we need to clear is
- BCS cdra8              ; after the last tile we need to clear, which means
+ CMP SC                 ; If A >= SC then the first pattern we need to clear is
+ BCS cdra8              ; after the last pattern we need to clear, which means
                         ; there are no pattern entries to clear, so jump to
                         ; to cdra8 to return from the subroutine as we are done
 
- STY clearingPattTile,X ; Set clearingPattTile to the number of the last tile
+ STY clearingPattern,X  ; Set clearingPattern to the number of the last pattern
                         ; to clear, if we don't clear the whole buffer here
                         ; (which will be the case if the buffer is still being
                         ; sent to the PPU), then we can pick it up again from
-                        ; the tile after the batch we are about to clear
+                        ; the pattern after the batch we are about to clear
 
  LDY #0                 ; Set clearAddress(1 0) = (pattBufferHiAddr 0) + A * 8
- STY clearAddress+1     ;                  = (pattBufferHiAddr 0) + first tile
+ STY clearAddress+1     ;                 = (pattBufferHiAddr 0) + first pattern
  ASL A                  ;
  ROL clearAddress+1     ; So clearAddress(1 0) contains the address in this
- ASL A                  ; bitplane's pattern buffer of the first tile we sent
+ ASL A                  ; bitplane's pattern buffer of the first pattern we sent
  ROL clearAddress+1
  ASL A
  STA clearAddress
@@ -4447,7 +4445,7 @@ ENDIF
  LDA #0                 ; Set SC(1 0) = (0 SC) * 8 + (pattBufferHiAddr 0)
  ASL SC                 ;
  ROL A                  ; So SC(1 0) contains the address in this bitplane's
- ASL SC                 ; pattern buffer of the last tile we sent
+ ASL SC                 ; pattern buffer of the last pattern we sent
  ROL A
  ASL SC
  ROL A
@@ -4461,24 +4459,25 @@ ENDIF
 
  LDA SC                 ; Set clearBlockSize(1 0) = SC(1 0) - clearAddress(1 0)
  SEC                    ;
- SBC clearAddress       ; So clearBlockSize(1 0) contains the number of tiles we
- STA clearBlockSize     ; already sent from this bitplane's pattern buffer
+ SBC clearAddress       ; So clearBlockSize(1 0) contains the number of patterns
+ STA clearBlockSize     ; we already sent from this bitplane's pattern buffer
  LDA SC+1               ;
- SBC clearAddress+1     ; If the subtraction underflows, then there are no tiles
- BCC cdra6              ; to send, so jump to cdra6 to make sure we have cleared
- STA clearBlockSize+1   ; the whole pattern buffer
+ SBC clearAddress+1     ; If the subtraction underflows, then there are no
+ BCC cdra6              ; patterns to send, so jump to cdra6 to make sure we
+ STA clearBlockSize+1   ; have cleared the whole pattern buffer
 
                         ; By this point, clearBlockSize(1 0) contains the number
-                        ; of tiles we sent from this bitplane's pattern buffer,
-                        ; so it contains the number of pattern entries we need
-                        ; to clear
+                        ; of patterns we sent from this bitplane's pattern
+                        ; buffer, so it contains the number of pattern entries
+                        ; we need to clear
                         ;
                         ; Also, clearAddress(1 0) contains the address of the
-                        ; first tile we sent from this bitplane's pattern buffer
+                        ; first pattern we sent from this bitplane's pattern
+                        ; buffer
 
  ORA clearBlockSize     ; If both the high and low bytes of clearBlockSize(1 0)
- BEQ cdra8              ; are zero, then there are no tiles to clear, so jump to
-                        ; cdra8 to return from the subroutine, as we are done
+ BEQ cdra8              ; are zero, then there are no patterns to clear, so jump
+                        ; to cdra8 to return from the subroutine, as we are done
 
  LDA #HI(790)           ; Set cycleCount = 790, so the call to ClearMemory
  STA cycleCount+1       ; doesn't run out of cycles and quit early (we are not
@@ -4613,10 +4612,10 @@ ENDIF
                         ; as we don't need to keep any data that we have sent
                         ;
                         ; The following routine clears the buffers from the
-                        ; first tile we sent, up to the tile numbers given by
-                        ; sendingNameTile and sendingPattTile, which will work
-                        ; in both cases, whether or not we have finished sending
-                        ; all the data to the PPU
+                        ; first tile we sent, up to the tile and pattern numbers
+                        ; given by sendingNameTile and sendingPattern, which will
+                        ; work in both cases, whether or not we have finished
+                        ; sending all the data to the PPU
 
  SUBTRACT_CYCLES 213    ; Subtract 213 from the cycle count
 
@@ -4802,15 +4801,16 @@ ENDIF
 
 .pbuf15
 
- LDA clearingPattTile,X ; Set A to clearingPattTile for this bitplane, which
-                        ; contains the number of the first tile we need
+ LDA clearingPattern,X  ; Set A to clearingPattern for this bitplane, which
+                        ; contains the number of the first pattern we need
                         ; to clear in the pattern buffer
 
- LDY sendingPattTile,X  ; Set Y to sendingPattTile for this bitplane, which we
+ LDY sendingPattern,X   ; Set Y to sendingPattern for this bitplane, which we
                         ; used in SendPatternsToPPU to keep track of the current
-                        ; tile number as we sent them to the PPU pattern table,
-                        ; so this contains the number of the last tile that we
-                        ; sent to the PPU pattern table for this bitplane
+                        ; pattern number as we sent them to the PPU pattern
+                        ; table, so this contains the number of the last pattern
+                        ; that we sent to the PPU pattern table for this
+                        ; bitplane
                         ;
                         ; So this contains the number of the last tile we need
                         ; to clear in the nametable buffer
@@ -4877,9 +4877,9 @@ ENDIF
                         ; byte will be zero after this many shifts, as that's
                         ; how we built the value of clearAddress(1 0) above
 
- CMP clearingPattTile,X ; If A >= clearingPattTile then we did manage to clear
+ CMP clearingPattern,X  ; If A >= clearingPattern then we did manage to clear
  BCC pbuf16             ; some pattern bytes in ClearMemory, so update the
- STA clearingPattTile,X ; value of clearingPattTile with the new first tile
+ STA clearingPattern,X  ; value of clearingPattern with the new first pattern
                         ; number so the next call to this routine will pick up
                         ; where we left off
 
@@ -5519,8 +5519,8 @@ ENDIF
 
  STX drawingBitplane    ; Set the drawing bitplane to X
 
- LDA lastPatternTile,X  ; Set the next free tile number in firstFreeTile to the
- STA firstFreeTile      ; number of the last pattern tile that was sent to the
+ LDA lastPattern,X      ; Set the next free pattern number in firstFreePattern
+ STA firstFreePattern   ; to the number of the last pattern that was sent to the
                         ; PPU for the new bitplane
 
  LDA nameBufferHiAddr,X ; Set the high byte of the nametable buffer for the new
@@ -5751,9 +5751,9 @@ ENDIF
                         ; sent to the PPU, so the screen is fully updated and
                         ; there is no more data waiting to be sent to the PPU
 
- LDA firstFreeTile      ; Tell the NMI handler to send pattern entries up to the
- STA lastPatternTile    ; first free tile, for both bitplanes
- STA lastPatternTile+1
+ LDA firstFreePattern   ; Tell the NMI handler to send pattern entries up to the
+ STA lastPattern        ; first free pattern, for both bitplanes
+ STA lastPattern+1
 
  LDA #88                ; Tell the NMI handler to send nametable entries from
  STA firstNametableTile ; tile 88 * 8 = 704 onwards (i.e. from the start of tile
@@ -5856,8 +5856,8 @@ ENDIF
 
  LDX drawingBitplane    ; Set X to the drawing bitplane
 
- LDA firstFreeTile      ; Tell the NMI handler to send pattern entries up to the
- STA lastPatternTile,X  ; first free tile, for the drawing bitplane in X
+ LDA firstFreePattern   ; Tell the NMI handler to send pattern entries up to the
+ STA lastPattern,X      ; first free pattern, for the drawing bitplane in X
 
  PLA                    ; Retrieve A from the stack and set it as the value of
  STA bitplaneFlags,X    ; the drawing bitplane flags
@@ -6532,24 +6532,24 @@ ENDIF
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDX #0                 ; If the nametable buffer entry is non-zero for the tile
- LDA (SC2,X)            ; containing the pixel that we want to draw, then a tile
- BNE loin3              ; has already been allocated to this entry, so skip the
-                        ; following
+ LDA (SC2,X)            ; containing the pixel that we want to draw, then a
+ BNE loin3              ; pattern has already been allocated to this entry, so
+                        ; skip the following
 
- LDA firstFreeTile      ; If firstFreeTile is zero then we have run out of tiles
- BEQ loin7              ; to use for drawing lines and pixels, so jump to loin7
-                        ; to move on to the next pixel in the line
+ LDA firstFreePattern   ; If firstFreePattern is zero then we have run out of
+ BEQ loin7              ; patterns to use for drawing lines and pixels, so jump
+                        ; to loin7 to move on to the next pixel in the line
 
- STA (SC2,X)            ; Otherwise firstFreeTile contains the number of the
-                        ; next available tile for drawing, so allocate this
-                        ; tile to cover the pixel that we want to draw by
-                        ; setting the nametable entry to the tile number we
+ STA (SC2,X)            ; Otherwise firstFreePattern contains the number of the
+                        ; next available pattern for drawing, so allocate this
+                        ; pattern to cover the pixel that we want to draw by
+                        ; setting the nametable entry to the pattern number we
                         ; just fetched
 
- INC firstFreeTile      ; Increment firstFreeTile to point to the next available
-                        ; tile for drawing, so it can be added to the nametable
-                        ; the next time we need to draw lines or pixels into a
-                        ; tile
+ INC firstFreePattern   ; Increment firstFreePattern to point to the next
+                        ; available pattern for drawing, so it can be added to
+                        ; the nametable the next time we need to draw lines or
+                        ; pixels into a pattern
 
 .loin3
 
@@ -6557,7 +6557,7 @@ ENDIF
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the line we are
  ROL SC+1               ; drawing
@@ -6750,24 +6750,24 @@ ENDIF
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDX #0                 ; If the nametable buffer entry is non-zero for the tile
- LDA (SC2,X)            ; containing the pixel that we want to draw, then a tile
- BNE loin12             ; has already been allocated to this entry, so skip the
-                        ; following
+ LDA (SC2,X)            ; containing the pixel that we want to draw, then a
+ BNE loin12             ; pattern has already been allocated to this entry, so
+                        ; skip the following
 
- LDA firstFreeTile      ; If firstFreeTile is zero then we have run out of tiles
- BEQ loin16             ; to use for drawing lines and pixels, so jump to loin16
-                        ; to move on to the next pixel in the line
+ LDA firstFreePattern   ; If firstFreePattern is zero then we have run out of
+ BEQ loin16             ; patterns to use for drawing lines and pixels, so jump
+                        ; to loin16 to move on to the next pixel in the line
 
- STA (SC2,X)            ; Otherwise firstFreeTile contains the number of the
-                        ; next available tile for drawing, so allocate this
-                        ; tile to cover the pixel that we want to draw by
-                        ; setting the nametable entry to the tile number we
+ STA (SC2,X)            ; Otherwise firstFreePattern contains the number of the
+                        ; next available pattern for drawing, so allocate this
+                        ; pattern to cover the pixel that we want to draw by
+                        ; setting the nametable entry to the pattern number we
                         ; just fetched
 
- INC firstFreeTile      ; Increment firstFreeTile to point to the next available
-                        ; tile for drawing, so it can be added to the nametable
-                        ; the next time we need to draw lines or pixels into a
-                        ; tile
+ INC firstFreePattern   ; Increment firstFreePattern to point to the next
+                        ; available pattern for drawing, so it can be added to
+                        ; the nametable the next time we need to draw lines or
+                        ; pixels into a pattern
 
 .loin12
 
@@ -6775,7 +6775,7 @@ ENDIF
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the line we are
  ROL SC+1               ; drawing
@@ -7131,14 +7131,13 @@ ENDIF
 .loin21
 
                         ; If we get here then we are drawing our line in a new
-                        ; tile in the nametable buffer, so it won't contain any
-                        ; pre-existing content
+                        ; pattern, so it won't contain any pre-existing content
 
  LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the line we are
  ROL SC+1               ; drawing
@@ -7221,39 +7220,39 @@ ENDIF
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDX #0                 ; If the nametable buffer entry is non-zero for the tile
- LDA (SC2,X)            ; containing the pixel that we want to draw, then a tile
- BNE loin25             ; has already been allocated to this entry, so skip the
-                        ; following
+ LDA (SC2,X)            ; containing the pixel that we want to draw, then a
+ BNE loin25             ; pattern has already been allocated to this entry, so
+                        ; skip the following
 
- LDA firstFreeTile      ; If firstFreeTile is zero then we have run out of tiles
- BEQ loin29             ; to use for drawing lines and pixels, so jump to loin29
-                        ; to move on to the next pixel in the line
+ LDA firstFreePattern   ; If firstFreePattern is zero then we have run out of
+ BEQ loin29             ; patterns to use for drawing lines and pixels, so jump
+                        ; to loin29 to move on to the next pixel in the line
 
- STA (SC2,X)            ; Otherwise firstFreeTile contains the number of the
-                        ; next available tile for drawing, so allocate this
-                        ; tile to cover the pixel that we want to draw by
-                        ; setting the nametable entry to the tile number we
+ STA (SC2,X)            ; Otherwise firstFreePattern contains the number of the
+                        ; next available pattern for drawing, so allocate this
+                        ; pattern to cover the pixel that we want to draw by
+                        ; setting the nametable entry to the pattern number we
                         ; just fetched
 
- INC firstFreeTile      ; Increment firstFreeTile to point to the next available
-                        ; tile for drawing, so it can be added to the nametable
-                        ; the next time we need to draw lines or pixels into a
-                        ; tile
+ INC firstFreePattern   ; Increment firstFreePattern to point to the next
+                        ; available pattern for drawing, so it can be added to
+                        ; the nametable the next time we need to draw lines or
+                        ; pixels into a pattern
 
  JMP loin21             ; Jump to loin21 to calculate the pattern buffer address
                         ; for the new tile and continue drawing
 
 .loin25
 
-                        ; If we get here then we are drawing our line in a tile
-                        ; that was already in the nametable buffer, so it might
+                        ; If we get here then we are drawing our line in a
+                        ; pattern that was already in the nametable, so it might
                         ; contain pre-existing content
 
  LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the line we are
  ROL SC+1               ; drawing
@@ -7447,7 +7446,7 @@ ENDIF
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the line we are
  ROL SC+1               ; drawing
@@ -7530,40 +7529,41 @@ ENDIF
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDX #0                 ; If the nametable buffer entry is non-zero for the tile
- LDA (SC2,X)            ; containing the pixel that we want to draw, then a tile
- BNE loin37             ; has already been allocated to this entry, so skip the
-                        ; following
+ LDA (SC2,X)            ; containing the pixel that we want to draw, then a
+ BNE loin37             ; pattern has already been allocated to this entry, so
+                        ; skip the following
 
- LDA firstFreeTile      ; If firstFreeTile is zero then we have run out of tiles
- BEQ loin41             ; to use for drawing lines and pixels, so jump to loin41
-                        ; to keep going with the line-drawing calculations, but
-                        ; without drawing anything in this tile
+ LDA firstFreePattern   ; If firstFreePattern is zero then we have run out of
+ BEQ loin41             ; patterns to use for drawing lines and pixels, so jump
+                        ; to loin41 to keep going with the line-drawing
+                        ; calculations, but without drawing anything in this
+                        ; pattern
 
- STA (SC2,X)            ; Otherwise firstFreeTile contains the number of the
-                        ; next available tile for drawing, so allocate this
-                        ; tile to cover the pixel that we want to draw by
-                        ; setting the nametable entry to the tile number we
+ STA (SC2,X)            ; Otherwise firstFreePattern contains the number of the
+                        ; next available pattern for drawing, so allocate this
+                        ; pattern to cover the pixel that we want to draw by
+                        ; setting the nametable entry to the pattern number we
                         ; just fetched
 
- INC firstFreeTile      ; Increment firstFreeTile to point to the next available
-                        ; tile for drawing, so it can be added to the nametable
-                        ; the next time we need to draw lines or pixels into a
-                        ; tile
+ INC firstFreePattern   ; Increment firstFreePattern to point to the next
+                        ; available pattern for drawing, so it can be added to
+                        ; the nametable the next time we need to draw lines or
+                        ; pixels into a pattern
 
  JMP loin33             ; Jump to loin33 to calculate the pattern buffer address
                         ; for the new tile and continue drawing
 
 .loin37
 
-                        ; If we get here then we are drawing our line in a tile
-                        ; that was already in the nametable buffer, so it might
+                        ; If we get here then we are drawing our line in a
+                        ; pattern that was already in the nametable, so it might
                         ; contain pre-existing content
 
  LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the line we are
  ROL SC+1               ; drawing
@@ -8000,27 +8000,29 @@ ENDIF
 
  LDX #0                 ; If the nametable buffer entry is non-zero for the tile
  LDA (SC2,X)            ; containing the pixels that we want to draw, then a
- BNE hlin5              ; tile has already been allocated to this entry, so skip
-                        ; the following
+ BNE hlin5              ; pattern has already been allocated to this entry, so
+                        ; skip the following
 
- LDA firstFreeTile      ; If firstFreeTile is zero then we have run out of tiles
- BEQ hlin4              ; to use for drawing lines and pixels, so jump to hlin9
-                        ; via hlin4 to move on to the next character block to
-                        ; the right, as we don't have enough dynamic tiles to
-                        ; draw the left end of the line
+ LDA firstFreePattern   ; If firstFreePattern is zero then we have run out of
+ BEQ hlin4              ; patterns to use for drawing lines and pixels, so jump
+                        ; to hlin9 via hlin4 to move on to the next character
+                        ; block to the right, as we don't have enough patterns
+                        ; to draw the left end of the line
 
- STA (SC2,X)            ; Otherwise firstFreeTile contains the number of the
-                        ; next available tile for drawing, so allocate this
-                        ; tile to cover the pixels that we want to draw by
-                        ; setting the nametable entry to the tile number we just
-                        ; fetched
+ STA (SC2,X)            ; Otherwise firstFreePattern contains the number of the
+                        ; next available pattern for drawing, so allocate this
+                        ; pattern to cover the pixels that we want to draw by
+                        ; setting the nametable entry to the pattern number we
+                        ; just fetched
 
- INC firstFreeTile      ; Increment firstFreeTile to point to the next available
-                        ; dynamic tile for drawing, so it can be used the next
-                        ; time we need to draw lines or pixels into a tile
+ INC firstFreePattern   ; Increment firstFreePattern to point to the next
+                        ; available pattern for drawing, so it can be used the
+                        ; next time we need to draw lines or pixels into a
+                        ; pattern
 
  JMP hlin7              ; Jump to hlin7 to draw the line, starting by drawing
-                        ; the left end into the newly allocated tile number in A
+                        ; the left end into the newly allocated pattern number
+                        ; in A
 
 .hlin4
 
@@ -8033,67 +8035,68 @@ ENDIF
                         ; already allocated to this part of the line in the
                         ; nametable buffer
 
- CMP #60                ; If A >= 60, then the tile that's already allocated is
- BCS hlin7              ; one of the tiles we have reserved for dynamic drawing,
+ CMP #60                ; If A >= 60, then the pattern that's already allocated
+ BCS hlin7              ; is one of the patterns we have reserved for drawing,
                         ; so jump to hlin7 to draw the line, starting by drawing
-                        ; the left end into the tile number in A
+                        ; the left end into the pattern number in A
 
- CMP #37                ; If A < 37, then the tile that's already allocated is
- BCC hlin4              ; one of the icon bar tiles, so jump to hlin9 via hlin4
-                        ; to move right by one character block without drawing
-                        ; anything, as we can't draw on the icon bar
+ CMP #37                ; If A < 37, then the pattern that's already allocated
+ BCC hlin4              ; is one of the icon bar tiles, so jump to hlin9 via
+                        ; hlin4 to move right by one character block without
+                        ; drawing anything, as we can't draw on the icon bar
 
-                        ; If we get here then 37 <= A <= 59, so the tile that's
-                        ; already allocated is one of the pre-rendered tiles
-                        ; containing horizontal and vertical line patterns
+                        ; If we get here then 37 <= A <= 59, so the pattern
+                        ; that's already allocated is one of the pre-rendered
+                        ; patterns containing horizontal and vertical lines
                         ;
                         ; We don't want to draw over the top of the pre-rendered
                         ; patterns as that will break them, so instead we make a
-                        ; copy of the pre-rendered tile's pattern in a newly
-                        ; allocated dynamic tile, and then draw our line into
-                        ; the dynamic tile, thus preserving what's already shown
+                        ; copy of the pre-rendered pattern into a newly
+                        ; allocated pattern, and then draw our line into the
+                        ; this new pattern, thus preserving what's already shown
                         ; on-screen while still drawing our new line
 
  LDX pattBufferHiDiv8   ; Set SC3(1 0) = (pattBufferHiDiv8 A) * 8
  STX SC3+1              ;              = (pattBufferHi A) + A * 8
  ASL A                  ;
  ROL SC3+1              ; So SC3(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC3+1              ; pattern data), which means SC3(1 0) points to the
  ASL A                  ; pattern data for the tile containing the pre-rendered
  ROL SC3+1              ; pattern that we want to copy
  STA SC3
 
- LDA firstFreeTile      ; If firstFreeTile is zero then we have run out of
- BEQ hlin4              ; dynamic tiles for drawing lines and pixels, so jump to
+ LDA firstFreePattern   ; If firstFreePattern is zero then we have run out of
+ BEQ hlin4              ; patterns for drawing lines and pixels, so jump to
                         ; hlin9 via hlin4 to move right by one character block
                         ; without drawing anything, as we don't have enough
-                        ; dynamic tiles to draw the left end of the line
+                        ; patterns to draw the left end of the line
 
- LDX #0                 ; Otherwise firstFreeTile contains the number of the
- STA (SC2,X)            ; next available tile for drawing, so allocate this
-                        ; tile to cover the pixels that we want to copy by
-                        ; setting the nametable entry to the tile number we just
-                        ; fetched
+ LDX #0                 ; Otherwise firstFreePattern contains the number of the
+ STA (SC2,X)            ; next available pattern for drawing, so allocate this
+                        ; pattern to cover the pixels that we want to copy by
+                        ; setting the nametable entry to the pattern number we
+                        ; just fetched
 
- INC firstFreeTile      ; Increment firstFreeTile to point to the next available
-                        ; dynamic tile for drawing, so it can be used the next
-                        ; time we need to draw lines or pixels into a tile
+ INC firstFreePattern   ; Increment firstFreePattern to point to the next
+                        ; available pattern for drawing, so it can be used the
+                        ; next time we need to draw lines or pixels into a
+                        ; pattern
 
  LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
- ASL A                  ; pattern data for the dynamic tile we just fetched
+ ASL A                  ; pattern data for the pattern we just fetched
  ROL SC+1
  STA SC
 
-                        ; We now have a new dynamic tile in SC(1 0) into which
-                        ; we can draw the left end of our line, so we now need
-                        ; to copy the pattern of the pre-rendered tile that we
-                        ; want to draw on top of
+                        ; We now have a new pattern in SC(1 0) into which we can
+                        ; draw the left end of our line, so we now need to copy
+                        ; the pre-rendered pattern that we want to draw on top
+                        ; of
                         ;
                         ; Each pattern is made up of eight bytes, so we simply
                         ; need to copy eight bytes from SC3(1 0) to SC(1 0)
@@ -8123,17 +8126,17 @@ ENDIF
 .hlin7
 
                         ; If we get here then we have either allocated a new
-                        ; tile number for the line, or the tile number already
-                        ; allocated to this part of the line is >= 60, which is
-                        ; a dynamic tile into which we can draw
+                        ; pattern number for the line, or the pattern number
+                        ; already allocated to this part of the line is >= 60,
+                        ; which is a pattern into which we can draw
                         ;
-                        ; In either case the tile number is in A
+                        ; In either case the pattern number is in A
 
  LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the line we are
  ROL SC+1               ; drawing
@@ -8195,30 +8198,30 @@ ENDIF
 
  LDX #0                 ; If the nametable buffer entry is zero for the tile
  LDA (SC2,X)            ; containing the pixels that we want to draw, then a
- BEQ hlin13             ; tile has not yet been allocated to this entry, so jump
-                        ; to hlin13 to allocate a new dynamic tile
+ BEQ hlin13             ; pattern has not yet been allocated to this entry, so
+                        ; jump to hlin13 to allocate a new pattern
 
                         ; If we get here then A contains the tile number that's
                         ; already allocated to this part of the line in the
                         ; nametable buffer
 
- CMP #60                ; If A < 60, then the tile that's already allocated is
- BCC hlin15             ; either an icon bar tile, or one of the pre-rendered
-                        ; tiles containing horizontal and vertical line
-                        ; patterns, so jump to hlin15 to process drawing on top
-                        ; off the pre-rendered tile
+ CMP #60                ; If A < 60, then the drawing that's already allocated
+ BCC hlin15             ; is either an icon bar drawing, or one of the
+                        ; pre-rendered patterns containing horizontal and vertical
+                        ; lines, so jump to hlin15 to process drawing on top
+                        ; off the pre-rendered pattern
 
-                        ; If we get here then the tile number already allocated
-                        ; to this part of the line is >= 60, which is a dynamic
-                        ; tile into which we can draw
+                        ; If we get here then the pattern number already
+                        ; allocated to this part of the line is >= 60, which is
+                        ; a pattern into which we can draw
                         ;
-                        ; The tile number is in A
+                        ; The pattern number is in A
 
  LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the line we are
  ROL SC+1               ; drawing
@@ -8249,10 +8252,10 @@ ENDIF
 
 .hlin13
 
-                        ; If we get here then there is no dynamic tile allocated
-                        ; to the part of the line we want to draw, so we can use
-                        ; one of the pre-rendered tiles that contains an 8-pixel
-                        ; horizontal line on the correct pixel row
+                        ; If we get here then there is no pattern allocated to
+                        ; the part of the line we want to draw, so we can use
+                        ; one of the pre-rendered patterns that contains an
+                        ; 8-pixel horizontal line on the correct pixel row
                         ;
                         ; We jump here with X = 0
 
@@ -8267,13 +8270,13 @@ ENDIF
                         ;   * Tile 43 has a horizontal line on pixel row 6
                         ;   * Tile 44 has a horizontal line on pixel row 7
                         ;
-                        ; So A contains the pre-rendered tile number that
+                        ; So A contains the pre-rendered pattern number that
                         ; contains an 8-pixel line on pixel row Y, and as Y
                         ; contains the offset of the pixel row for the line we
                         ; are drawing, this means A contains the correct tile
                         ; number for this part of the line
 
- STA (SC2,X)            ; Display the pre-rendered tile on-screen by setting
+ STA (SC2,X)            ; Display the pre-rendered pattern on-screen by setting
                         ; the nametable entry to A
 
  JMP hlin12             ; Jump up to hlin12 to move on to the next character
@@ -8282,26 +8285,27 @@ ENDIF
 .hlin14
 
                         ; If we get here then A + Y = 50, which means we can
-                        ; alter the current pre-rendered tile to draw our line
+                        ; alter the current pre-rendered pattern to draw our
+                        ; line
                         ;
-                        ; This is how it works. Tiles 44 to 51 contain
+                        ; This is how it works. Patterns 44 to 51 contain
                         ; pre-rendered patterns as follows:
                         ;
-                        ;   * Tile 44 has a horizontal line on pixel row 7
-                        ;   * Tile 45 is filled from pixel row 7 to pixel row 6
-                        ;   * Tile 46 is filled from pixel row 7 to pixel row 5
+                        ;   * Pattern 44 has a horizontal line on pixel row 7
+                        ;   * Pattern 45 is filled from pixel row 7 to row 6
+                        ;   * Pattern 46 is filled from pixel row 7 to row 5
                         ;     ...
-                        ;   * Tile 50 is filled from pixel row 7 to pixel row 1
-                        ;   * Tile 51 is filled from pixel row 7 to pixel row 0
+                        ;   * Pattern 50 is filled from pixel row 7 to row 1
+                        ;   * Pattern 51 is filled from pixel row 7 to row 0
                         ;
                         ; Y contains the number of the pixel row for the line we
                         ; are drawing, so if A + Y = 50, this means:
                         ;
-                        ;   * We want to draw pixel row 0 on top of tile 50
-                        ;   * We want to draw pixel row 1 on top of tile 49
+                        ;   * We want to draw pixel row 0 on top of pattern 50
+                        ;   * We want to draw pixel row 1 on top of pattern 49
                         ;     ...
-                        ;   * We want to draw pixel row 5 on top of tile 45
-                        ;   * We want to draw pixel row 6 on top of tile 44
+                        ;   * We want to draw pixel row 5 on top of pattern 45
+                        ;   * We want to draw pixel row 6 on top of pattern 44
                         ;
                         ; In other words, if A + Y = 50, then we want to draw
                         ; the pixel row just above the rows that are already
@@ -8318,11 +8322,11 @@ ENDIF
  EOR #$FF               ;       = 51 + (1 + ~Y)
  ADC #51                ;       = 51 - Y
                         ;
-                        ; So A contains the number of the pre-rendered tile that
-                        ; has our horizontal line drawn on pixel row Y, and all
-                        ; the lines below that filled, which is what we want
+                        ; So A contains the number of the pre-rendered pattern
+                        ; that has our horizontal line drawn on pixel row Y, and
+                        ; all the lines below that filled, which is what we want
 
- STA (SC2,X)            ; Display the pre-rendered tile on-screen by setting
+ STA (SC2,X)            ; Display the pre-rendered pattern on-screen by setting
                         ; the nametable entry to A
 
  INC SC2                ; Increment SC2(1 0) to point to the next tile number to
@@ -8341,10 +8345,10 @@ ENDIF
 
 .hlin15
 
-                        ; If we get here then A <= 59, so the tile that's
-                        ; already allocated is either an icon bar tile, or one
-                        ; of the pre-rendered tiles containing horizontal and
-                        ; vertical line patterns
+                        ; If we get here then A <= 59, so the pattern that's
+                        ; already allocated is either an icon bar pattern, or
+                        ; one of the pre-rendered patterns containing horizontal
+                        ; and vertical lines
                         ;
                         ; We jump here with the C flag clear, so the addition
                         ; below will work correctly, and with X = 0, so the
@@ -8355,52 +8359,53 @@ ENDIF
                         ; retrieve it later
 
  TYA                    ; If A + Y = 50, then we are drawing our line just
- ADC SC                 ; above the top line of a pre-rendered tile that is
+ ADC SC                 ; above the top line of a pre-rendered pattern that is
  CMP #50                ; filled from the bottom row to the row just below Y,
  BEQ hlin14             ; so jump to hlin14 to switch this tile to another
-                        ; pre-rendered tile that contains the line we want to
+                        ; pre-rendered pattern that contains the line we want to
                         ; draw (see hlin14 for a full explanation of this logic)
 
-                        ; If we get here then 37 <= A <= 59, so the tile that's
-                        ; already allocated is one of the pre-rendered tiles
-                        ; containing horizontal and vertical line patterns, but
-                        ; isn't a tile we can simply replace with another
-                        ; pre-rendered tile
+                        ; If we get here then 37 <= A <= 59, so the pattern
+                        ; that's already allocated is one of the pre-rendered
+                        ; patterns containing horizontal and vertical lines, but
+                        ; isn't one that we can simply replace with another
+                        ; pre-rendered pattern
                         ;
                         ; We don't want to draw over the top of the pre-rendered
                         ; patterns as that will break them, so instead we make a
-                        ; copy of the pre-rendered tile's pattern in a newly
-                        ; allocated dynamic tile, and then draw our line into
-                        ; the dynamic tile, thus preserving what's already shown
+                        ; copy of the pre-rendered pattern into a newly
+                        ; allocated pattern, and then draw our line into the
+                        ; this new pattern, thus preserving what's already shown
                         ; on-screen while still drawing our new line
 
- LDA firstFreeTile      ; If firstFreeTile is zero then we have run out of tiles
- BEQ hlin12             ; to use for drawing lines and pixels, so jump to hlin12
-                        ; to move right by one character block without drawing
-                        ; anything, as we don't have enough dynamic tiles to
+ LDA firstFreePattern   ; If firstFreePattern is zero then we have run out of
+ BEQ hlin12             ; patterns to use for drawing lines and pixels, so jump
+                        ; to hlin12 to move right by one character block without
+                        ; drawing anything, as we don't have enough patterns to
                         ; draw this part of the line
 
- INC firstFreeTile      ; Increment firstFreeTile to point to the next available
-                        ; dynamic tile for drawing, so it can be used the next
-                        ; time we need to draw lines or pixels into a tile
+ INC firstFreePattern   ; Increment firstFreePattern to point to the next
+                        ; available pattern for drawing, so it can be used the
+                        ; next time we need to draw lines or pixels into a
+                        ; pattern
 
- STA (SC2,X)            ; Otherwise firstFreeTile contains the number of the
-                        ; next available tile for drawing, so allocate this tile
-                        ; to contain the pre-rendered tile that we want to copy
-                        ; by setting the nametable entry to the tile number we
-                        ; just fetched
+ STA (SC2,X)            ; Otherwise firstFreePattern contains the number of the
+                        ; next available pattern for drawing, so allocate this
+                        ; tile to contain the pre-rendered pattern that we want
+                        ; to copy by setting the nametable entry to the pattern
+                        ; number we just fetched
 
  LDX pattBufferHiDiv8   ; Set SC3(1 0) = (pattBufferHiDiv8 A) * 8
  STX SC3+1              ;              = (pattBufferHi A) + A * 8
  ASL A                  ;
  ROL SC3+1              ; So SC3(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC3+1              ; pattern data), which means SC3(1 0) points to the
- ASL A                  ; pattern data for the dynamic tile we just fetched
+ ASL A                  ; pattern data for the pattern we just fetched
  ROL SC3+1
  STA SC3
 
- LDA SC                 ; Set A to the number of the tile that is already
+ LDA SC                 ; Set A to the number of the pattern that is already
                         ; allocated to this part of the screen, which we stored
                         ; in SC above
 
@@ -8408,16 +8413,16 @@ ENDIF
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the pre-rendered
  ROL SC+1               ; pattern that we want to copy
  STA SC
 
-                        ; We now have a new dynamic tile in SC3(1 0) into which
-                        ; we can draw the left end of our line, so we now need
-                        ; to copy the pattern of the pre-rendered tile that we
-                        ; want to draw on top of
+                        ; We now have a new pattern in SC3(1 0) into which we
+                        ; can draw the left end of our line, so we now need to
+                        ; copy the pre-rendered pattern that we want to draw on
+                        ; top of
                         ;
                         ; Each pattern is made up of eight bytes, so we simply
                         ; need to copy eight bytes from SC(1 0) to SC3(1 0)
@@ -8470,26 +8475,28 @@ ENDIF
 
  LDX #0                 ; If the nametable buffer entry is non-zero for the tile
  LDA (SC2,X)            ; containing the pixels that we want to draw, then a
- BNE hlin19             ; tile has already been allocated to this entry, so skip
-                        ; the following
+ BNE hlin19             ; pattern has already been allocated to this entry, so
+                        ; skip the following
 
- LDA firstFreeTile      ; If firstFreeTile is zero then we have run out of tiles
- BEQ hlin18             ; to  use for drawing lines and pixels, so jump to
-                        ; hlin30 via hlin18 to return from the subroutine, as we
-                        ; don't have enough dynamic tiles to draw the right end
+ LDA firstFreePattern   ; If firstFreePattern is zero then we have run out of
+ BEQ hlin18             ; patterns to use for drawing lines and pixels, so jump
+                        ; to hlin30 via hlin18 to return from the subroutine, as
+                        ; we don't have enough patterns to draw the right end
                         ; of the line
 
- STA (SC2,X)            ; Otherwise firstFreeTile contains the number of the
-                        ; next available tile for drawing, so allocate this tile
-                        ; to cover the pixels that we want to draw by setting
-                        ; the nametable entry to the tile number we just fetched
+ STA (SC2,X)            ; Otherwise firstFreePattern contains the number of the
+                        ; next available pattern for drawing, so allocate this
+                        ; pattern to cover the pixels that we want to draw by
+                        ; setting the nametable entry to the pattern number we
+                        ; just fetched
 
- INC firstFreeTile      ; Increment firstFreeTile to point to the next available
-                        ; dynamic tile for drawing, so it can be used the next
-                        ; time we need to draw lines or pixels into a tile
+ INC firstFreePattern   ; Increment firstFreePattern to point to the next
+                        ; available pattern for drawing, so it can be used the
+                        ; next time we need to draw lines or pixels into a
+                        ; drawing
 
  JMP hlin21             ; Jump to hlin21 to draw the right end of the line into
-                        ; the newly allocated tile number in A
+                        ; the newly allocated pattern number in A
 
 .hlin18
 
@@ -8501,66 +8508,67 @@ ENDIF
                         ; already allocated to this part of the line in the
                         ; nametable buffer
 
- CMP #60                ; If A >= 60, then the tile that's already allocated is
- BCS hlin21             ; one of the tiles we have reserved for dynamic drawing,
+ CMP #60                ; If A >= 60, then the pattern that's already allocated
+ BCS hlin21             ; is one of the patterns we have reserved for drawing,
                         ; so jump to hlin21 to draw the right end of the line
 
- CMP #37                ; If A < 37, then the tile that's already allocated is
- BCC hlin18             ; one of the icon bar tiles, so jump to hlin30 via
+ CMP #37                ; If A < 37, then the pattern that's already allocated
+ BCC hlin18             ; is one of the icon bar tiles, so jump to hlin30 via
                         ; hlin18 to return from the subroutine, as we can't draw
                         ; on the icon bar
 
-                        ; If we get here then 37 <= A <= 59, so the tile that's
-                        ; already allocated is one of the pre-rendered tiles
-                        ; containing horizontal and vertical line patterns
+                        ; If we get here then 37 <= A <= 59, so the pattern
+                        ; that's already allocated is one of the pre-rendered
+                        ; patterns containing horizontal and vertical lines
                         ;
                         ; We don't want to draw over the top of the pre-rendered
                         ; patterns as that will break them, so instead we make a
-                        ; copy of the pre-rendered tile's pattern in a newly
-                        ; allocated dynamic tile, and then draw our line into
-                        ; the dynamic tile, thus preserving what's already shown
+                        ; copy of the pre-rendered pattern into a newly
+                        ; allocated pattern, and then draw our line into the
+                        ; this new pattern, thus preserving what's already shown
                         ; on-screen while still drawing our new line
 
  LDX pattBufferHiDiv8   ; Set SC3(1 0) = (pattBufferHiDiv8 A) * 8
  STX SC3+1              ;              = (pattBufferHi A) + A * 8
  ASL A                  ;
  ROL SC3+1              ; So SC3(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC3+1              ; pattern data), which means SC3(1 0) points to the
  ASL A                  ; pattern data for the tile containing the pre-rendered
  ROL SC3+1              ; pattern that we want to copy
  STA SC3
 
- LDA firstFreeTile      ; If firstFreeTile is zero then we have run out of
- BEQ hlin18             ; dynamic tiles for drawing lines and pixels, so jump to
+ LDA firstFreePattern   ; If firstFreePattern is zero then we have run out of
+ BEQ hlin18             ; patterns for drawing lines and pixels, so jump to
                         ; hlin30 via hlin18 to return from the subroutine, as we
-                        ; don't have enough dynamic tiles to draw the right end
+                        ; don't have enough patterns to draw the right end
                         ; of the line
 
- LDX #0                 ; Otherwise firstFreeTile contains the number of the
- STA (SC2,X)            ; next available tile for drawing, so allocate this tile
-                        ; to contain the pre-rendered tile that we want to copy
-                        ; by setting the nametable entry to the tile number we
-                        ; just fetched
+ LDX #0                 ; Otherwise firstFreePattern contains the number of the
+ STA (SC2,X)            ; next available pattern for drawing, so allocate this
+                        ; tile to contain the pre-rendered pattern that we want
+                        ; to copy by setting the nametable entry to the pattern
+                        ; number we just fetched
 
- INC firstFreeTile      ; Increment firstFreeTile to point to the next available
-                        ; dynamic tile for drawing, so it can be used the next
-                        ; time we need to draw lines or pixels into a tile
+ INC firstFreePattern   ; Increment firstFreePattern to point to the next
+                        ; available pattern for drawing, so it can be used the
+                        ; next time we need to draw lines or pixels into a
+                        ; pattern
 
  LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
- ASL A                  ; pattern data for the dynamic tile we just fetched
+ ASL A                  ; pattern data for the pattern we just fetched
  ROL SC+1
  STA SC
 
-                        ; We now have a new dynamic tile in SC(1 0) into which
-                        ; we can draw the right end of our line, so we now need
-                        ; to copy the pattern of the pre-rendered tile that we
-                        ; want to draw on top of
+                        ; We now have a new pattern in SC(1 0) into which we can
+                        ; draw the right end of our line, so we now need to copy
+                        ; the pre-rendered pattern that we want to draw on top
+                        ; of
                         ;
                         ; Each pattern is made up of eight bytes, so we simply
                         ; need to copy eight bytes from SC3(1 0) to SC(1 0)
@@ -8590,17 +8598,17 @@ ENDIF
 .hlin21
 
                         ; If we get here then we have either allocated a new
-                        ; tile number for the line, or the tile number already
-                        ; allocated to this part of the line is >= 60, which is
-                        ; a dynamic tile into which we can draw
+                        ; pattern number for the line, or the pattern number
+                        ; already allocated to this part of the line is >= 60,
+                        ; which is a pattern into which we can draw
                         ;
-                        ; In either case the tile number is in A
+                        ; In either case the pattern number is in A
 
  LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the line we are
  ROL SC+1               ; drawing
@@ -8642,22 +8650,24 @@ ENDIF
 
  LDX #0                 ; If the nametable buffer entry is non-zero for the tile
  LDA (SC2,X)            ; containing the pixels that we want to draw, then a
- BNE hlin25             ; tile has already been allocated to this entry, so skip
-                        ; the following
+ BNE hlin25             ; pattern has already been allocated to this entry, so
+                        ; skip the following
 
- LDA firstFreeTile      ; If firstFreeTile is zero then we have run out of tiles
- BEQ hlin24             ; to use for drawing lines and pixels, so jump to hlin30
-                        ; via hlin24 to return from the subroutine, as we don't
-                        ; have enough dynamic tiles to draw the line
+ LDA firstFreePattern   ; If firstFreePattern is zero then we have run out of
+ BEQ hlin24             ; patterns to use for drawing lines and pixels, so jump
+                        ; to hlin30 via hlin24 to return from the subroutine, as
+                        ; we don't have enough patterns to draw the line
 
- STA (SC2,X)            ; Otherwise firstFreeTile contains the number of the
-                        ; next available tile for drawing, so allocate this tile
-                        ; to cover the pixels that we want to draw by setting
-                        ; the nametable entry to the tile number we just fetched
+ STA (SC2,X)            ; Otherwise firstFreePattern contains the number of the
+                        ; next available pattern for drawing, so allocate this
+                        ; pattern to cover the pixels that we want to draw by
+                        ; setting the nametable entry to the pattern number we
+                        ; just fetched
 
- INC firstFreeTile      ; Increment firstFreeTile to point to the next available
-                        ; dynamic tile for drawing, so it can be used the next
-                        ; time we need to draw lines or pixels into a tile
+ INC firstFreePattern   ; Increment firstFreePattern to point to the next
+                        ; available pattern for drawing, so it can be used the
+                        ; next time we need to draw lines or pixels into a
+                        ; pattern
 
  JMP hlin27             ; Jump to hlin27 to draw the line into the newly
                         ; allocated tile number in A
@@ -8672,66 +8682,67 @@ ENDIF
                         ; already allocated to this part of the line in the
                         ; nametable buffer
 
- CMP #60                ; If A >= 60, then the tile that's already allocated is
- BCS hlin27             ; one of the tiles we have reserved for dynamic drawing,
-                        ; so jump to hlin27 to draw the line into the tile
+ CMP #60                ; If A >= 60, then the pattern that's already allocated
+ BCS hlin27             ; is one of the patterns we have reserved for drawing,
+                        ; so jump to hlin27 to draw the line into the pattern
                         ; number in A
 
- CMP #37                ; If A < 37, then the tile that's already allocated is
- BCC hlin24             ; one of the icon bar tiles, so jump to hlin30 via
+ CMP #37                ; If A < 37, then the pattern that's already allocated
+ BCC hlin24             ; is one of the icon bar patterns, so jump to hlin30 via
                         ; hlin24 to return from the subroutine, as we can't draw
                         ; on the icon bar
 
-                        ; If we get here then 37 <= A <= 59, so the tile that's
-                        ; already allocated is one of the pre-rendered tiles
-                        ; containing horizontal and vertical line patterns
+                        ; If we get here then 37 <= A <= 59, so the pattern
+                        ; that's already allocated is one of the pre-rendered
+                        ; patterns containing horizontal and vertical lines
                         ;
                         ; We don't want to draw over the top of the pre-rendered
                         ; patterns as that will break them, so instead we make a
-                        ; copy of the pre-rendered tile's pattern in a newly
-                        ; allocated dynamic tile, and then draw our line into
-                        ; the dynamic tile, thus preserving what's already shown
+                        ; copy of the pre-rendered pattern into a newly
+                        ; allocated pattern, and then draw our line into the
+                        ; this new pattern, thus preserving what's already shown
                         ; on-screen while still drawing our new line
 
  LDX pattBufferHiDiv8   ; Set SC3(1 0) = (pattBufferHiDiv8 A) * 8
  STX SC3+1              ;              = (pattBufferHi A) + A * 8
  ASL A                  ;
  ROL SC3+1              ; So SC3(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC3+1              ; pattern data), which means SC3(1 0) points to the
  ASL A                  ; pattern data for the tile containing the pre-rendered
  ROL SC3+1              ; pattern that we want to copy
  STA SC3
 
- LDA firstFreeTile      ; If firstFreeTile is zero then we have run out of
- BEQ hlin24             ; dynamic tiles for drawing lines and pixels, so jump to
+ LDA firstFreePattern   ; If firstFreePattern is zero then we have run out of
+ BEQ hlin24             ; patterns for drawing lines and pixels, so jump to
                         ; hlin30 via hlin24 to return from the subroutine, as we
-                        ; don't have enough dynamic tiles to draw the line
+                        ; don't have enough patterns to draw the line
 
- LDX #0                 ; Otherwise firstFreeTile contains the number of the
- STA (SC2,X)            ; next available tile for drawing, so allocate this tile
-                        ; to contain the pre-rendered tile that we want to copy
-                        ; by setting the nametable entry to the tile number we
-                        ; just fetched
+ LDX #0                 ; Otherwise firstFreePattern contains the number of the
+ STA (SC2,X)            ; next available pattern for drawing, so allocate this
+                        ; tile to contain the pre-rendered pattern that we want
+                        ; to copy by setting the nametable entry to the pattern
+                        ; number we just fetched
 
- INC firstFreeTile      ; Increment firstFreeTile to point to the next available
-                        ; dynamic tile for drawing, so it can be used the next
-                        ; time we need to draw lines or pixels into a tile
+ INC firstFreePattern   ; Increment firstFreePattern to point to the next
+                        ; available pattern for drawing, so it can be used the
+                        ; next time we need to draw lines or pixels into a
+                        ; pattern
 
  LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
- ASL A                  ; pattern data for the dynamic tile we just fetched
+ ASL A                  ; pattern data for the pattern we just fetched
  ROL SC+1
  STA SC
 
-                        ; We now have a new dynamic tile in SC(1 0) into which
-                        ; we can draw our line, so we now need to copy the
-                        ; pattern of the pre-rendered tile that we want to draw
-                        ; on top of
+                        ; We now have a new pattern in SC(1 0) into which we can
+                        ; draw our line, so we now need to copy the pattern of
+                        ; the pre-rendered pattern that we want to draw on top
+                        ; of
                         ;
                         ; Each pattern is made up of eight bytes, so we simply
                         ; need to copy eight bytes from SC3(1 0) to SC(1 0)
@@ -8761,17 +8772,17 @@ ENDIF
 .hlin27
 
                         ; If we get here then we have either allocated a new
-                        ; tile number for the line, or the tile number already
-                        ; allocated to this part of the line is >= 60, which is
-                        ; a dynamic tile into which we can draw
+                        ; pattern number for the line, or the pattern number
+                        ; already allocated to this part of the line is >= 60,
+                        ; which is a pattern into which we can draw
                         ;
-                        ; In either case the tile number is in A
+                        ; In either case the pattern number is in A
 
  LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the line we are
  ROL SC+1               ; drawing
@@ -8975,27 +8986,29 @@ ENDIF
 
  LDX #0                 ; If the nametable buffer entry is non-zero for the tile
  LDA (SC2,X)            ; containing the pixels that we want to draw, then a
- BNE vlin6              ; tile has already been allocated to this entry, so skip
-                        ; the following
+ BNE vlin6              ; pattern has already been allocated to this entry, so
+                        ; skip the following
 
- LDA firstFreeTile      ; If firstFreeTile is zero then we have run out of tiles
- BEQ vlin5              ; to use for drawing lines and pixels, so jump to vlin2
-                        ; via vlin5 to move on to the next character block down,
-                        ; as we don't have enough dynamic tiles to draw the top
-                        ; block of the line
+ LDA firstFreePattern   ; If firstFreePattern is zero then we have run out of
+ BEQ vlin5              ; patterns to use for drawing lines and pixels, so jump
+                        ; to vlin2 via vlin5 to move on to the next character
+                        ; block down, as we don't have enough patterns to draw
+                        ; the top block of the line
 
- STA (SC2,X)            ; Otherwise firstFreeTile contains the number of the
-                        ; next available tile for drawing, so allocate this
-                        ; tile to cover the pixels that we want to draw by
-                        ; setting the nametable entry to the tile number we just
-                        ; fetched
+ STA (SC2,X)            ; Otherwise firstFreePattern contains the number of the
+                        ; next available pattern for drawing, so allocate this
+                        ; pattern to cover the pixels that we want to draw by
+                        ; setting the nametable entry to the pattern number we
+                        ; just fetched
 
- INC firstFreeTile      ; Increment firstFreeTile to point to the next available
-                        ; dynamic tile for drawing, so it can be used the next
-                        ; time we need to draw lines or pixels into a tile
+ INC firstFreePattern   ; Increment firstFreePattern to point to the next
+                        ; available pattern for drawing, so it can be used the
+                        ; next time we need to draw lines or pixels into a
+                        ; pattern
 
  JMP vlin8              ; Jump to vlin8 to draw the line, starting by drawing
-                        ; the top end into the newly allocated tile number in A
+                        ; the top end into the newly allocated pattern number
+                        ; in A
 
 .vlin5
 
@@ -9004,67 +9017,67 @@ ENDIF
 
 .vlin6
 
- CMP #60                ; If A >= 60, then the tile that's already allocated is
- BCS vlin8              ; one of the tiles we have reserved for dynamic drawing,
+ CMP #60                ; If A >= 60, then the pattern that's already allocated
+ BCS vlin8              ; is one of the patterns we have reserved for drawing,
                         ; so jump to vlin8 to draw the line, starting by drawing
-                        ; the top end into the tile number in A
+                        ; the top end into the pattern number in A
 
- CMP #37                ; If A < 37, then the tile that's already allocated is
- BCC vlin5              ; one of the icon bar tiles, so jump to vlin2 via vlin5
-                        ; to move down by one character block without drawing
-                        ; anything, as we can't draw on the icon bar
+ CMP #37                ; If A < 37, then the pattern that's already allocated
+ BCC vlin5              ; is one of the icon bar pattern, so jump to vlin2 via
+                        ; vlin5 to move down by one character block without
+                        ; drawing anything, as we can't draw on the icon bar
 
-                        ; If we get here then 37 <= A <= 59, so the tile that's
-                        ; already allocated is one of the pre-rendered tiles
-                        ; containing horizontal and vertical line patterns
+                        ; If we get here then 37 <= A <= 59, so the pattern
+                        ; that's already allocated is one of the pre-rendered
+                        ; patterns containing horizontal and vertical lines
                         ;
                         ; We don't want to draw over the top of the pre-rendered
                         ; patterns as that will break them, so instead we make a
-                        ; copy of the pre-rendered tile's pattern in a newly
-                        ; allocated dynamic tile, and then draw our line into
-                        ; the dynamic tile, thus preserving what's already shown
+                        ; copy of the pre-rendered pattern into a newly
+                        ; allocated pattern, and then draw our line into the
+                        ; this new pattern, thus preserving what's already shown
                         ; on-screen while still drawing our new line
 
  LDX pattBufferHiDiv8   ; Set SC3(1 0) = (pattBufferHiDiv8 A) * 8
  STX SC3+1              ;              = (pattBufferHi A) + A * 8
  ASL A                  ;
  ROL SC3+1              ; So SC3(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC3+1              ; pattern data), which means SC3(1 0) points to the
  ASL A                  ; pattern data for the tile containing the pre-rendered
  ROL SC3+1              ; pattern that we want to copy
  STA SC3
 
- LDA firstFreeTile      ; If firstFreeTile is zero then we have run out of
- BEQ vlin5              ; dynamic tiles for drawing lines and pixels, so jump to
+ LDA firstFreePattern   ; If firstFreePattern is zero then we have run out of
+ BEQ vlin5              ; patterns for drawing lines and pixels, so jump to
                         ; vlin2 via vlin5 to move down by one character block
                         ; without drawing anything, as we don't have enough
-                        ; dynamic tiles to draw the top end of the line
+                        ; patterns to draw the top end of the line
 
- LDX #0                 ; Otherwise firstFreeTile contains the number of the
- STA (SC2,X)            ; next available tile for drawing, so allocate this
-                        ; tile to cover the pixels that we want to copy by
-                        ; setting the nametable entry to the tile number we just
-                        ; fetched
+ LDX #0                 ; Otherwise firstFreePattern contains the number of the
+ STA (SC2,X)            ; next available pattern for drawing, so allocate this
+                        ; pattern to cover the pixels that we want to copy by
+                        ; setting the nametable entry to the pattern number we
+                        ; just fetched
 
- INC firstFreeTile      ; Increment firstFreeTile to point to the next available
-                        ; dynamic tile for drawing, so it can be used the next
-                        ; time we need to draw lines or pixels into a tile
+ INC firstFreePattern   ; Increment firstFreePattern to point to the next
+                        ; available pattern for drawing, so it can be used the
+                        ; next time we need to draw lines or pixels into a
+                        ; pattern
 
  LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
- ASL A                  ; pattern data for the dynamic tile we just fetched
+ ASL A                  ; pattern data for the pattern we just fetched
  ROL SC+1
  STA SC
 
-                        ; We now have a new dynamic tile in SC(1 0) into which
-                        ; we can draw the top end of our line, so we now need
-                        ; to copy the pattern of the pre-rendered tile that we
-                        ; want to draw on top of
+                        ; We now have a new pattern in SC(1 0) into which we can
+                        ; draw the top end of our line, so we now need to copy
+                        ; the pre-rendered pattern that we want to draw on top of
                         ;
                         ; Each pattern is made up of eight bytes, so we simply
                         ; need to copy eight bytes from SC3(1 0) to SC(1 0)
@@ -9094,17 +9107,17 @@ ENDIF
 .vlin8
 
                         ; If we get here then we have either allocated a new
-                        ; tile number for the line, or the tile number already
-                        ; allocated to this part of the line is >= 60, which is
-                        ; a dynamic tile into which we can draw
+                        ; pattern number for the line, or the pattern number
+                        ; already allocated to this part of the line is >= 60,
+                        ; which is a pattern into which we can draw
                         ;
-                        ; In either case the tile number is in A
+                        ; In either case the pattern number is in A
 
  LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the line we are
  ROL SC+1               ; drawing
@@ -9219,27 +9232,27 @@ ENDIF
 
  LDX #0                 ; If the nametable buffer entry is zero for the tile
  LDA (SC2,X)            ; containing the pixels that we want to draw, then a
- BEQ vlin15             ; tile has not yet been allocated to this entry, so jump
-                        ; to vlin15 to place a pre-rendered tile into the
-                        ; nametable entry
+ BEQ vlin15             ; pattern has not yet been allocated to this entry, so
+                        ; jump to vlin15 to place a pre-rendered pattern into
+                        ; the nametable entry
 
- CMP #60                ; If A < 60, then the tile that's already allocated is
- BCC vlin17             ; either an icon bar tile, or one of the pre-rendered
-                        ; tiles containing horizontal and vertical line
-                        ; patterns, so jump to vlin17 to process drawing on top
-                        ; off the pre-rendered tile
+ CMP #60                ; If A < 60, then the drawing that's already allocated
+ BCC vlin17             ; is either an icon bar drawing, or one of the
+                        ; pre-rendered patterns containing horizontal and
+                        ; vertical lines, so jump to vlin17 to process drawing
+                        ; on top off the pre-rendered pattern
 
-                        ; If we get here then the tile number already allocated
-                        ; to this part of the line is >= 60, which is a dynamic
-                        ; tile into which we can draw
+                        ; If we get here then the pattern number already
+                        ; allocated to this part of the line is >= 60, which is
+                        ; a pattern into which we can draw
                         ;
-                        ; The tile number is in A
+                        ; The pattern number is in A
 
  LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the line we are
  ROL SC+1               ; drawing
@@ -9310,13 +9323,13 @@ ENDIF
                         ; at which we want to draw our line, which we stored in
                         ; S in part 1
 
- CLC                    ; Patterns 52 to 59 contain pre-rendered tiles, each
+ CLC                    ; Patterns 52 to 59 contain pre-rendered patterns, each
  ADC #52                ; containing a single-pixel vertical line, with a line
  STA (SC2,X)            ; at column 0 in pattern 52, a line at column 1 in
                         ; pattern 53, and so on up to column 7 in pattern 58,
                         ; so this sets the nametable entry for the character
-                        ; block we are drawing to the correct pre-rendered tile
-                        ; for drawing a vertical line in pixel column A
+                        ; block we are drawing to the correct pre-rendered
+                        ; pattern for drawing a vertical line in pixel column A
 
 .vlin16
 
@@ -9324,45 +9337,46 @@ ENDIF
 
 .vlin17
 
-                        ; If we get here then A <= 59, so the tile that's
-                        ; already allocated is either an icon bar tile, or one
-                        ; of the pre-rendered tiles containing horizontal and
-                        ; vertical line patterns
+                        ; If we get here then A <= 59, so the pattern that's
+                        ; already allocated is either an icon bar pattern, or
+                        ; one of the pre-rendered patterns containing horizontal
+                        ; and vertical lines
                         ;
                         ; We jump here with X = 0, so the write to (SC2,X)
                         ; below will work properly
 
- STA SC                 ; Set SC to the number of the tile that is already
+ STA SC                 ; Set SC to the number of the pattern that is already
                         ; allocated to this part of the screen, so we can
                         ; retrieve it later
 
- LDA firstFreeTile      ; If firstFreeTile is zero then we have run out of tiles
- BEQ vlin16             ; to use for drawing lines and pixels, so jump to vlin16
-                        ; to move down by one character block without drawing
-                        ; anything, as we don't have enough dynamic tiles to
+ LDA firstFreePattern   ; If firstFreePattern is zero then we have run out of
+ BEQ vlin16             ; patterns to use for drawing lines and pixels, so jump
+                        ; to vlin16 to move down by one character block without
+                        ; drawing anything, as we don't have enough patterns to
                         ; draw this part of the line
 
- INC firstFreeTile      ; Increment firstFreeTile to point to the next available
-                        ; dynamic tile for drawing, so it can be used the next
-                        ; time we need to draw lines or pixels into a tile
+ INC firstFreePattern   ; Increment firstFreePattern to point to the next
+                        ; available pattern for drawing, so it can be used the
+                        ; next time we need to draw lines or pixels into a
+                        ; pattern
 
- STA (SC2,X)            ; Otherwise firstFreeTile contains the number of the
-                        ; next available tile for drawing, so allocate this tile
-                        ; to contain the pre-rendered tile that we want to copy
-                        ; by setting the nametable entry to the tile number we
-                        ; just fetched
+ STA (SC2,X)            ; Otherwise firstFreePattern contains the number of the
+                        ; next available pattern for drawing, so allocate this
+                        ; tile to contain the pre-rendered pattern that we want
+                        ; to copy by setting the nametable entry to the pattern
+                        ; number we just fetched
 
  LDX pattBufferHiDiv8   ; Set SC3(1 0) = (pattBufferHiDiv8 A) * 8
  STX SC3+1              ;              = (pattBufferHi A) + A * 8
  ASL A                  ;
  ROL SC3+1              ; So SC3(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC3+1              ; pattern data), which means SC3(1 0) points to the
- ASL A                  ; pattern data for the dynamic tile we just fetched
+ ASL A                  ; pattern data for the pattern we just fetched
  ROL SC3+1
  STA SC3
 
- LDA SC                 ; Set A to the number of the tile that is already
+ LDA SC                 ; Set A to the number of the pattern that is already
                         ; allocated to this part of the screen, which we stored
                         ; in SC above
 
@@ -9370,15 +9384,15 @@ ENDIF
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the pre-rendered
  ROL SC+1               ; pattern that we want to copy
  STA SC
 
-                        ; We now have a new dynamic tile in SC3(1 0) into which
-                        ; we can draw the middle part of our line, so we now
-                        ; need to copy the pattern of the pre-rendered tile that
+                        ; We now have a new pattern in SC3(1 0) into which we
+                        ; can draw the middle part of our line, so we now need
+                        ; to copy the pattern of the pre-rendered pattern that
                         ; we want to draw on top of
                         ;
                         ; Each pattern is made up of eight bytes, so we simply
@@ -9462,24 +9476,25 @@ ENDIF
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDX #0                 ; If the nametable buffer entry is non-zero for the tile
- LDA (SC,X)             ; containing the pixel that we want to draw, then a tile
- BNE pixl1              ; has already been allocated to this entry, so skip the
-                        ; following
+ LDA (SC,X)             ; containing the pixel that we want to draw, then a
+ BNE pixl1              ; pattern has already been allocated to this entry, so
+                        ; skip the following
 
- LDA firstFreeTile      ; If firstFreeTile is zero then we have run out of tiles
- BEQ pixl2              ; to use for drawing lines and pixels, so jump to pixl2
-                        ; to return from the subroutine, as we can't draw the
-                        ; pixel
+ LDA firstFreePattern   ; If firstFreePattern is zero then we have run out of
+ BEQ pixl2              ; patterns to use for drawing lines and pixels, so jump
+                        ; to pixl2 to return from the subroutine, as we can't
+                        ; draw the pixel
 
- STA (SC,X)             ; Otherwise firstFreeTile contains the number of the
-                        ; next available tile for drawing, so allocate this tile
-                        ; to cover the pixel that we want to draw by setting the
-                        ; nametable entry to the tile number we just fetched
+ STA (SC,X)             ; Otherwise firstFreePattern contains the number of the
+                        ; next available pattern for drawing, so allocate this
+                        ; pattern to cover the pixel that we want to draw by
+                        ; setting the nametable entry to the pattern number we
+                        ; just fetched
 
- INC firstFreeTile      ; Increment firstFreeTile to point to the next available
-                        ; tile for drawing, so it can be added to the nametable
-                        ; the next time we need to draw lines or pixels into a
-                        ; tile
+ INC firstFreePattern   ; Increment firstFreePattern to point to the next
+                        ; available pattern for drawing, so it can be added to
+                        ; the nametable the next time we need to draw lines or
+                        ; pixels into a pattern
 
 .pixl1
 
@@ -9487,7 +9502,7 @@ ENDIF
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the line we are
  ROL SC+1               ; drawing
@@ -9559,24 +9574,25 @@ ENDIF
                         ; the PPU to use nametable 0 and pattern table 0
 
  LDX #0                 ; If the nametable buffer entry is non-zero for the tile
- LDA (SC,X)             ; containing the pixel that we want to draw, then a tile
- BNE dash1              ; has already been allocated to this entry, so skip the
-                        ; following
+ LDA (SC,X)             ; containing the pixel that we want to draw, then a
+ BNE dash1              ; pattern has already been allocated to this entry, so
+                        ; skip the following
 
- LDA firstFreeTile      ; If firstFreeTile is zero then we have run out of tiles
- BEQ pixl2              ; to use for drawing lines and pixels, so jump to pixl2
-                        ; to return from the subroutine, as we can't draw the
-                        ; dash
+ LDA firstFreePattern   ; If firstFreePattern is zero then we have run out of
+ BEQ pixl2              ; patterns to use for drawing lines and pixels, so jump
+                        ; to pixl2 to return from the subroutine, as we can't
+                        ; draw the dash
 
- STA (SC,X)             ; Otherwise firstFreeTile contains the number of the
-                        ; next available tile for drawing, so allocate this tile
-                        ; to cover the dash that we want to draw by setting the
-                        ; nametable entry to the tile number we just fetched
+ STA (SC,X)             ; Otherwise firstFreePattern contains the number of the
+                        ; next available pattern for drawing, so allocate this
+                        ; pattern to cover the dash that we want to draw by setting
+                        ; the nametable entry to the pattern number we just
+                        ; fetched
 
- INC firstFreeTile      ; Increment firstFreeTile to point to the next available
-                        ; tile for drawing, so it can be added to the nametable
-                        ; the next time we need to draw lines or pixels into a
-                        ; tile
+ INC firstFreePattern   ; Increment firstFreePattern to point to the next
+                        ; available pattern for drawing, so it can be added to
+                        ; the nametable the next time we need to draw lines or
+                        ; pixels into a pattern
 
 .dash1
 
@@ -9584,7 +9600,7 @@ ENDIF
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the line we are
  ROL SC+1               ; drawing
@@ -9645,7 +9661,7 @@ ENDIF
 ;                       top-right, so indicator NOMSL is the top-right
 ;                       indicator)
 ;
-;   Y                   The tile pattern number for the new missile indicator:
+;   Y                   The pattern number for the new missile indicator:
 ;
 ;                         * 133 = no missile indicator
 ;
@@ -11725,9 +11741,9 @@ ENDIF
                         ; which represents the icon bar with buttons on each
                         ; multiple of 4
 
- LDA #251               ; Set the tile pattern number for the sprites 1 and 2 to
- STA tileSprite1        ; pattern 251, so the top part of the pointer appears to
- STA tileSprite2        ; go behind the button
+ LDA #251               ; Set the pattern number for the sprites 1 and 2 to
+ STA pattSprite1        ; pattern 251, so the top part of the pointer appears to
+ STA pattSprite2        ; go behind the button
 
  LDA yIconBarPointer    ; Set the y-coordinate of the top of the pointer in
  CLC                    ; sprites 1 and 2 to yIconBarPointer + 11, so the
@@ -11796,9 +11812,9 @@ ENDIF
                         ; which represents the icon bar with buttons on each
                         ; multiple of 4
 
- LDA #252               ; Set the tile pattern number for the sprites 1 and 2 to
- STA tileSprite1        ; pattern 252, so the top part of the pointer appears to
- STA tileSprite2        ; pop up from behind the top of the button
+ LDA #252               ; Set the pattern number for the sprites 1 and 2 to
+ STA pattSprite1        ; pattern 252, so the top part of the pointer appears to
+ STA pattSprite2        ; pop up from behind the top of the button
 
  LDA yIconBarPointer    ; Set the y-coordinate of the top of the pointer in
  CLC                    ; sprites 1 and 2 to yIconBarPointer + 8, so the
@@ -15646,12 +15662,12 @@ ENDIF
  LDA #1                 ; Move the text cursor to column 1
  STA XC
 
- LDA firstPatternTile   ; Set the next free tile number in firstFreeTile to the
- STA firstFreeTile      ; value of firstPatternTile, which contains the number
-                        ; of the first tile for which we send pattern data to
-                        ; the PPU in the NMI handler, so it's also the tile we
-                        ; can start drawing into when we next start drawing into
-                        ; tiles
+ LDA firstPattern       ; Set the next free pattern number in firstFreePattern
+ STA firstFreePattern   ; to the value of firstPattern, which contains the
+                        ; number of the first pattern for which we send pattern
+                        ; data to the PPU in the NMI handler, so it's also the
+                        ; pattern we can start drawing into when we next start
+                        ; drawing into tiles
 
  LDA QQ11               ; If bit 7 of the view type in QQ11 is clear then there
  BPL clyn2              ; is a dashboard, so jump to clyn2 to return from the

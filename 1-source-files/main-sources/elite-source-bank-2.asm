@@ -16391,9 +16391,9 @@ ENDIF
                         ; sent to the PPU, so the screen is fully updated and
                         ; there is no more data waiting to be sent to the PPU
 
- LDA firstFreeTile      ; Tell the NMI handler to send pattern entries from the
- STA firstPatternTile   ; first free tile onwards, so we don't waste time
-                        ; resending the static tiles we have already sent
+ LDA firstFreePattern   ; Tell the NMI handler to send pattern entries from the
+ STA firstPattern       ; first free pattern onwards, so we don't waste time
+                        ; resending the static patterns we have already sent
 
  LDA #40                ; Tell the NMI handler to only clear nametable entries
  STA maxNameTileToClear ; up to tile 40 * 8 = 320 (i.e. up to the end of tile
@@ -17630,9 +17630,9 @@ ENDIF
 ; or delete left (backspace).
 ;
 ; If the relevant font is already loaded into the pattern buffers, then this is
-; used as the tile pattern for the character, otherwise the pattern for the
-; character being printed is extracted from the fontImage table and into the
-; pattern buffer.
+; used as the pattern for the character, otherwise the pattern for the character
+; being printed is extracted from the fontImage table and into the pattern
+; buffer.
 ;
 ; For fontStyle = 3, the pattern is always extracted from the fontImage table,
 ; as it has different colour text (colour 3) than the normal font. This is used
@@ -17994,23 +17994,26 @@ ENDIF
 
 .chpr15
 
- LDA firstFreeTile      ; If firstFreeTile is zero then we have run out of tiles
- BEQ chpr17             ; to use for drawing characters, so jump to chpr17 to
-                        ; return from the subroutine without printing anything
+ LDA firstFreePattern   ; If firstFreePattern is zero then we have run out of
+ BEQ chpr17             ; patterns to use for drawing characters, so jump to
+                        ; chpr17 to return from the subroutine without printing
+                        ; anything
 
- CMP #255               ; If firstFreeTile = 255 then we have run out of tiles
- BEQ chpr17             ; to use for drawing characters, so jump to chpr17 to
-                        ; return from the subroutine without printing anything
+ CMP #255               ; If firstFreePattern = 255 then we have run out of
+ BEQ chpr17             ; patterns to use for drawing characters, so jump to
+                        ; chpr17 to return from the subroutine without printing
+                        ; anything
 
- STA (SC),Y             ; Otherwise firstFreeTile contains the number of the
- STA (SC2),Y            ; next available tile for drawing, so allocate this
-                        ; tile to cover the character that we want to draw by
+ STA (SC),Y             ; Otherwise firstFreePattern contains the number of the
+ STA (SC2),Y            ; next available pattern for drawing, so allocate this
+                        ; pattern to cover the character that we want to draw by
                         ; setting the nametable entry in both buffers to the
-                        ; tile number we just fetched
+                        ; pattern number we just fetched
 
- INC firstFreeTile      ; Increment firstFreeTile to point to the next available
-                        ; tile for drawing, so it can be added to the nametable
-                        ; the next time we need to draw into a tile
+ INC firstFreePattern   ; Increment firstFreePattern to point to the next
+                        ; available pattern for drawing, so it can be added to
+                        ; the nametable the next time we need to draw into a
+                        ; pattern
 
  LDY fontStyle          ; If fontStyle = 1, jump to chpr18
  DEY
@@ -18033,7 +18036,7 @@ ENDIF
  STX SC2+1              ;              = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC2+1              ; So SC2(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC2+1              ; pattern data), which means SC2(1 0) points to the
  ASL A                  ; pattern data for the tile containing the character
  ROL SC2+1              ; we are drawing in pattern buffer 0
@@ -18045,7 +18048,7 @@ ENDIF
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the character
  ROL SC+1               ; we are drawing in pattern buffer 1
@@ -18126,7 +18129,7 @@ ENDIF
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the character
  ROL SC+1               ; we are drawing in pattern buffer 0
@@ -18145,7 +18148,7 @@ ENDIF
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the character
  ROL SC+1               ; we are drawing in pattern buffer 1
@@ -18287,11 +18290,11 @@ ENDIF
  DEY
 
  STA (SC),Y             ; Set the Y-th nametable entry in nametable buffer 0
-                        ; for the Y-th character on row YC, to the tile pattern
+                        ; for the Y-th character on row YC, to the pattern
                         ; number for our character from the loaded font
 
  STA (SC2),Y            ; Set the Y-th nametable entry in nametable buffer 1
-                        ; for the Y-th character on row YC, to the tile pattern
+                        ; for the Y-th character on row YC, to the pattern
                         ; number for our character from the loaded font
 
  JMP chpr17             ; Jump to chpr17 to return from the subroutine, as we
@@ -18340,7 +18343,7 @@ ENDIF
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the character
  ROL SC+1               ; we are drawing
@@ -18442,26 +18445,27 @@ ENDIF
  BNE chpr27             ; jump up to chpr27 to draw our character into the
                         ; existing pattern for this tile
 
- LDA firstFreeTile      ; If firstFreeTile is zero then we have run out of tiles
- BEQ chpr30             ; to use for drawing characters, so jump to chpr17 via
+ LDA firstFreePattern   ; If firstFreePattern is zero then we have run out of
+ BEQ chpr30             ; patterns to use for drawing characters, so jump to
                         ; chpr30 to return from the subroutine without printing
                         ; anything
 
- STA (SC),Y             ; Otherwise firstFreeTile contains the number of the
-                        ; next available tile for drawing, so allocate this
-                        ; tile to cover the character that we want to draw by
-                        ; setting the nametable entry to the tile number we just
-                        ; fetched
+ STA (SC),Y             ; Otherwise firstFreePattern contains the number of the
+                        ; next available pattern for drawing, so allocate this
+                        ; pattern to cover the character that we want to draw by
+                        ; setting the nametable entry to the pattern number we
+                        ; just fetched
 
- INC firstFreeTile      ; Increment firstFreeTile to point to the next available
-                        ; tile for drawing, so it can be added to the nametable
-                        ; the next time we need to draw into a tile
+ INC firstFreePattern   ; Increment firstFreePattern to point to the next
+                        ; available pattern for drawing, so it can be added to
+                        ; the nametable the next time we need to draw into a
+                        ; pattern
 
  LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the character
  ROL SC+1               ; we are drawing

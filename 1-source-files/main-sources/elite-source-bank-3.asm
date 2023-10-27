@@ -1729,9 +1729,9 @@ ENDIF
 
  BNE rscn1              ; Loop back until we have cleared all three rows
 
- LDA #203               ; Set the tile pattern number for sprites 11 and 12 (the
- STA tileSprite11       ; pitch and roll indicators) to 203, which is the I-bar
- STA tileSprite12       ; pattern
+ LDA #203               ; Set the pattern number for sprites 11 and 12 (the
+ STA pattSprite11       ; pitch and roll indicators) to 203, which is the I-bar
+ STA pattSprite12       ; pattern
 
  LDA #%00000011         ; Set the attributes for sprites 11 and 12 (the pitch
  STA attrSprite11       ; and roll indicators) as follows:
@@ -1760,9 +1760,9 @@ ENDIF
 
 .rscn2
 
- LDA #218               ; Set the tile pattern number for sprite Y / 4 to 218,
- STA tileSprite0,Y      ; which is the vertical bar used for drawing a ship's
-                        ; stick on the scanner
+ LDA #218               ; Set the pattern number for sprite Y / 4 to 218, which
+ STA pattSprite0,Y      ; is the vertical bar used for drawing a ship's stick
+                        ; on the scanner
 
  LDA #%00000000         ; Set the attributes for sprite Y / 4 as follows:
  STA attrSprite0,Y      ;
@@ -2203,7 +2203,7 @@ ENDIF
 ;
 ; Arguments:
 ;
-;   X                   The number of tile patterns to send to the PPU
+;   X                   The number of patterns to send to the PPU
 ;
 ;   SC(1 0)             The address of the data in the pattern buffer to send to
 ;                       the PPU
@@ -2349,11 +2349,11 @@ ENDIF
 
 .sbit2
 
- STA firstPatternTile   ; Tell the NMI handler to send pattern entries from
+ STA firstPattern       ; Tell the NMI handler to send pattern entries from
                         ; pattern A in the buffer
 
- LDA firstFreeTile      ; Tell the NMI handler to send pattern entries up to the
- STA lastPatternTile,X  ; first free tile, for the drawing bitplane in X
+ LDA firstFreePattern   ; Tell the NMI handler to send pattern entries up to the
+ STA lastPattern,X      ; first free pattern, for the drawing bitplane in X
 
  LDA #%11000100         ; Set the bitplane flags for the drawing bitplane to the
  JSR SetDrawPlaneFlags  ; following:
@@ -2373,9 +2373,9 @@ ENDIF
  JSR SendDataNowToPPU   ; Send the drawing bitplane buffers to the PPU
                         ; immediately, without trying to squeeze it into VBlanks
 
- LDA firstFreeTile      ; Set clearingPattTile for the drawing bitplane to the
- STA clearingPattTile,X ; number of the first free tile, so the NMI handler only
-                        ; clears tiles from this point onwards
+ LDA firstFreePattern   ; Set clearingPattern for the drawing bitplane to the
+ STA clearingPattern,X  ; number of the first free pattern, so the NMI handler
+                        ; only clears patterns from this point onwards
                         ;
                         ; This ensures that the tiles that we just sent to the
                         ; PPU don't get cleared out by the NMI handler
@@ -2519,8 +2519,8 @@ ENDIF
                         ; If we get here then this is the Status Mode screen
 
  JSR GetHeadshot_b4     ; Fetch the headshot image for the commander and store
-                        ; it in the pattern buffers, starting at tile number
-                        ; pictureTile
+                        ; it in the pattern buffers, starting at pattern number
+                        ; picturePattern
 
 .svin2
 
@@ -2540,11 +2540,11 @@ ENDIF
  STA firstNametableTile ; tile 0 onwards
 
  LDA #37                ; Tell the NMI handler to send pattern entries from
- STA firstPatternTile   ; pattern 37 in the buffer
+ STA firstPattern       ; pattern 37 in the buffer
 
- LDA firstFreeTile      ; Tell the NMI handler to send pattern entries up to the
- STA lastPatternTile    ; first free tile, for both bitplanes
- STA lastPatternTile+1
+ LDA firstFreePattern   ; Tell the NMI handler to send pattern entries up to the
+ STA lastPattern        ; first free pattern, for both bitplanes
+ STA lastPattern+1
 
  LDA #%01010100         ; This instruction has no effect as we are about to pull
                         ; the value of A from the stack
@@ -2579,9 +2579,9 @@ ENDIF
  STA QQ11a              ; in QQ11, to denote that we have now changed view to
                         ; the view in QQ11
 
- LDA firstFreeTile      ; Set clearingPattTile for both bitplanes to the number
- STA clearingPattTile   ; of the first free tile, so the NMI handler only clears
- STA clearingPattTile+1 ; tiles from this point onwards
+ LDA firstFreePattern   ; Set clearingPattern for both bitplanes to the number
+ STA clearingPattern    ; of the first free pattern, so the NMI handler only
+ STA clearingPattern+1  ; clears patterns from this point onwards
                         ;
                         ; This ensures that the tiles that have already been
                         ; sent to the PPU above don't get cleared out by the NMI
@@ -2912,9 +2912,9 @@ ENDIF
  STA ySprite0,Y         ; it off the bottom of the screen
 
  INY                    ; Increment Y to point to the second byte for this
-                        ; sprite, i.e. tileSprite0,Y
+                        ; sprite, i.e. pattSprite0,Y
 
- LDA #254               ; Set the tile pattern number for this sprite to 254
+ LDA #254               ; Set the pattern number for this sprite to 254
  STA ySprite0,Y
 
  INY                    ; Increment Y to point to the third byte for this
@@ -2950,8 +2950,8 @@ ENDIF
  LDA #157+YPAL          ; Set sprite 0 as follows:
  STA ySprite0           ;
  LDA #254               ;   * Set the coordinates to (248, 157)
- STA tileSprite0        ;
- LDA #248               ;   * Set the tile pattern number to 254
+ STA pattSprite0        ;
+ LDA #248               ;   * Set the pattern number to 254
  STA xSprite0           ;
  LDA #%00100011         ;   * Set the attributes as follows:
  STA attrSprite0        ;
@@ -2968,13 +2968,13 @@ ENDIF
                         ;   * Sprite 3 = bottom-left corner
                         ;   * Sprite 4 = bottom-right corner
 
- LDA #251               ; Set sprites 1 and 2 to use tile pattern 251
- STA tileSprite1
- STA tileSprite2
+ LDA #251               ; Set sprites 1 and 2 to use pattern 251
+ STA pattSprite1
+ STA pattSprite2
 
- LDA #253               ; Set sprites 3 and 4 to use tile pattern 253
- STA tileSprite3
- STA tileSprite4
+ LDA #253               ; Set sprites 3 and 4 to use pattern 253
+ STA pattSprite3
+ STA pattSprite4
 
  LDA #%00000011         ; Set the attributes for sprite 1 as follows:
  STA attrSprite1        ;
@@ -3045,12 +3045,12 @@ ENDIF
                         ; process across multiple VBlanks if necessary
 
  LDA #4                 ; Set the number of the first and last tiles to send
- STA clearingPattTile   ; from the PPU to 4, which is the first tile after the
- STA clearingPattTile+1 ; blank tile (tile 0) and the box edges (tiles 1 to 3),
+ STA clearingPattern    ; from the PPU to 4, which is the first tile after the
+ STA clearingPattern+1  ; blank tile (tile 0) and the box edges (tiles 1 to 3),
  STA clearingNameTile   ; which are the only fixed tiles in both bitplanes
  STA clearingNameTile+1 ;
- STA sendingPattTile    ; This ensures that both buffers are almost entirely
- STA sendingPattTile+1  ; cleared out by the NMI, as we set bit 3 in the
+ STA sendingPattern     ; This ensures that both buffers are almost entirely
+ STA sendingPattern+1   ; cleared out by the NMI, as we set bit 3 in the
  STA sendingNameTile    ; bitplane flags above
  STA sendingNameTile+1
 
@@ -3795,9 +3795,9 @@ ENDIF
  BNE hbar1              ; Loop back until we have replaced all 63 tiles with the
                         ; background tile
 
- LDA #32                ; Set A = 32 as the tile pattern number to show at the
-                        ; start of row 27 (though I don't know why we do this,
-                        ; as pattern 32 is part of the icon bar pattern, so this
+ LDA #32                ; Set A = 32 as the pattern number to show at the start
+                        ; of row 27 (though I don't know why we do this, as
+                        ; pattern 32 is part of the icon bar pattern, so this
                         ; seems a bit strange)
 
  LDY #0                 ; Set the first nametable entry on tile row 27 to A
@@ -4581,7 +4581,7 @@ ENDIF
 .vpat1
 
  LDX #4                 ; This is the Start screen with no fonts loaded, so set
- STX firstFreeTile      ; firstFreeTile to 4
+ STX firstFreePattern   ; firstFreePattern to 4
 
  RTS                    ; Return from the subroutine without copying anything to
                         ; the pattern buffers
@@ -4589,7 +4589,7 @@ ENDIF
 .vpat2
 
  LDX #37                ; This is the Space view with the normal font loaded,
- STX firstFreeTile      ; so set firstFreeTile to 37
+ STX firstFreePattern   ; so set firstFreePattern to 37
 
  RTS                    ; Return from the subroutine without copying anything to
                         ; the pattern buffers
@@ -4597,30 +4597,31 @@ ENDIF
 .SetLinePatterns
 
  LDA QQ11               ; If the view type in QQ11 is $CF (Start screen with no
- CMP #$CF               ; font loaded), jump to vpat1 to set firstFreeTile to 4
- BEQ vpat1              ; and return from the subroutine
+ CMP #$CF               ; font loaded), jump to vpat1 to set firstFreePattern to
+ BEQ vpat1              ; 4 and return from the subroutine
 
  CMP #$10               ; If the view type in QQ11 is $10 (Space view with
  BEQ vpat2              ; the normal font loaded), jump to vpat2 to set
-                        ; firstFreeTile to 37 and return from the subroutine
+                        ; firstFreePattern to 37 and return from the subroutine
 
- LDX #66                ; Set X = 66 to use as the value of firstFreeTile when
-                        ; there is no dashboard
+ LDX #66                ; Set X = 66 to use as the value of firstFreePattern
+                        ; then there is no dashboard
 
  LDA QQ11               ; If bit 7 of the view type in QQ11 is set then there
  BMI vpat3              ; is no dashboard, so jump to vpat3 to keep X = 66
 
  LDX #60                ; There is a dashboard, so set X = 60 to use as the
-                        ; value of firstFreeTile
+                        ; value of firstFreePattern
 
 .vpat3
 
- STX firstFreeTile      ; Set firstFreeTile to the value we set in X, so it is
-                        ; 66 when there is no dashboard, or 60 when there is
+ STX firstFreePattern   ; Set firstFreePattern to the value we set in X, so it
+                        ; is 66 when there is no dashboard, or 60 when there is
                         ;
                         ; We now load the image data for the horizontal line,
                         ; vertical line and block images, starting at pattern 37
-                        ; and ending at the pattern in firstFreeTile (60 or 66)
+                        ; and ending at the pattern in firstFreePattern (60 or
+                        ; 66)
 
  LDA #HI(lineImage)     ; Set V(1 0) = lineImage so we copy the pattern data for
  STA V+1                ; the line images into the pattern buffers below
@@ -4708,11 +4709,11 @@ ENDIF
  SETUP_PPU_FOR_ICON_BAR ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
 
- CPX firstFreeTile      ; If the pattern counter in X matches firstFreeTile,
+ CPX firstFreePattern   ; If the pattern counter in X matches firstFreePattern,
  BEQ vpat8              ; jump to vpat8 to exit the following loop
 
                         ; Otherwise we keep copying tiles until X matches
-                        ; firstFreeTile
+                        ; firstFreePattern
 
  LDA (V),Y              ; Copy the Y-th pattern byte from the line image table
  STA (SC2),Y            ; into pattern buffer 1, zero the Y-th byte of pattern
@@ -4779,7 +4780,7 @@ ENDIF
                         ; the PPU to use nametable 0 and pattern table 0
 
                         ; Finally, we reset the next six patterns (i.e. the ones
-                        ; from firstFreeTile onwards), so we need to zero 48
+                        ; from firstFreePattern onwards), so we need to zero 48
                         ; bytes, as there are eight bytes in each pattern
                         ;
                         ; We keep using the index in Y, as it already points to
@@ -4852,12 +4853,13 @@ ENDIF
                         ; need to add to an ASCII code to get the corresponding
                         ; character pattern
 
- LDA SC                 ; Set firstFreeTile = SC + 95
+ LDA SC                 ; Set firstFreePattern = SC + 95
  CLC                    ;
  ADC #95                ; There are 95 characters in the font, and we are about
- STA firstFreeTile      ; to load them at pattern number SC in the buffers, so
-                        ; this sets the next free tile number in firstFreeTile
-                        ; to the tile after the 95 font patterns we are loading
+ STA firstFreePattern   ; to load them at pattern number SC in the buffers, so
+                        ; this sets the next free pattern number in
+                        ; firstFreePattern to the pattern after the 95 font
+                        ; patterns we are loading
                         ;
                         ; The font pattern data at fontImage actually contains
                         ; 96 characters, but we ignore the last one, which is
@@ -5064,13 +5066,13 @@ ENDIF
 
 .font1
 
- TXA                    ; Set firstFreeTile = firstFreeTile + X
+ TXA                    ; Set firstFreePattern = firstFreePattern + X
  CLC                    ;
- ADC firstFreeTile      ; We are about to copy X character patterns for the
- STA firstFreeTile      ; font, so this sets the next free tile number in
-                        ; firstFreeTile to the pattern that is X patterns after
-                        ; its current value, i.e. just after the font we are
-                        ; copying
+ ADC firstFreePattern   ; We are about to copy X character patterns for the
+ STA firstFreePattern   ; font, so this sets the next free pattern number in
+                        ; firstFreePattern to the pattern that is X patterns
+                        ; after its current value, i.e. just after the font we
+                        ; are copying
 
  LDA #HI(fontImage)     ; Set V(1 0) = fontImage, so we copy the font patterns
  STA V+1                ; to the pattern buffers in the following
@@ -5192,20 +5194,21 @@ ENDIF
  STY K+1                ; Set K+1 = Y, so we can pass the number of rows in the
                         ; image to DrawBackground and DrawSpriteImage below
 
- LDA firstFreeTile      ; Set pictureTile to the number of the next free tile in
- STA pictureTile        ; firstFreeTile
+ LDA firstFreePattern   ; Set picturePattern to the number of the next free
+ STA picturePattern     ; pattern in firstFreePattern
                         ;
                         ; We use this when setting K+2 below, so the call to
-                        ; DrawBackground displays the tiles at pictureTile, and
-                        ; it's also used to specify where to load the system
-                        ; image data when we call GetSystemImage from
-                        ; SendViewToPPU when showing the Data on System screen
+                        ; DrawBackground displays the patterns at
+                        ; picturePattern, and it's also used to specify where
+                        ; to load the system image data when we call
+                        ; GetSystemImage from SendViewToPPU when showing the
+                        ; Data on System screen
 
- CLC                    ; Add 56 to firstFreeTile, as we are going to use 56
- ADC #56                ; tiles for the system image (7 rows of 8 tiles)
- STA firstFreeTile
+ CLC                    ; Add 56 to firstFreePattern, as we are going to use 56
+ ADC #56                ; patterns for the system image (7 rows of 8 tiles)
+ STA firstFreePattern
 
- LDA pictureTile        ; Set K+2 to the value we stored above, so K+2 is the
+ LDA picturePattern     ; Set K+2 to the value we stored above, so K+2 is the
  STA K+2                ; number of the first pattern to use for the system
                         ; image's greyscale background
 
@@ -5573,9 +5576,9 @@ ENDIF
 ;
 ; ------------------------------------------------------------------------------
 ;
-; We draw an image background using tile patterns with incremental pattern
-; numbers, as the image's patterns have already been sent to the pattern buffers
-; one after the other.
+; We draw an image background using patterns with incremental pattern numbers,
+; as the image's patterns have already been sent to the pattern buffers one
+; after the other.
 ;
 ; Arguments:
 ;
@@ -5637,7 +5640,7 @@ ENDIF
 .back3
 
  STA (SC2),Y            ; Set the Y-th nametable entry in both nametable buffers
- STA (SC),Y             ; to the tile pattern number in A
+ STA (SC),Y             ; to the pattern number in A
 
  CLC                    ; Increment A so we fill the background with incremental
  ADC #1                 ; pattern numbers
@@ -7425,13 +7428,13 @@ ENDIF
                         ;   * Bit 6 clear = do not flip horizontally
                         ;   * Bit 7 clear = do not flip vertically
 
- LDY #207               ; Set the tile pattern number for sprites 5 and 6 to
- STY tileSprite5        ; 207, for the left and right sights respectively
- STY tileSprite6
+ LDY #207               ; Set the pattern number for sprites 5 and 6 to 207,
+ STY pattSprite5        ; for the left and right sights respectively
+ STY pattSprite6
 
- INY                    ; Set the tile pattern number for sprites 7 and 8 to
- STY tileSprite7        ; 208, for the top and bottom sights respectively
- STY tileSprite8
+ INY                    ; Set the pattern number for sprites 7 and 8 to 208,
+ STY pattSprite7        ; for the top and bottom sights respectively
+ STY pattSprite8
 
  LDA #118               ; Position the sprites as follows:
  STA xSprite5           ;
@@ -7488,11 +7491,11 @@ ENDIF
                         ;   * Bit 6 set   = flip horizontally
                         ;   * Bit 7 set   = flip vertically
 
- LDA #209               ; Set the tile pattern number for all four sprites to
- STA tileSprite5        ; 209
- STA tileSprite6
- STA tileSprite7
- STA tileSprite8
+ LDA #209               ; Set the pattern number for all four sprites to 209
+ STA pattSprite5
+ STA pattSprite6
+ STA pattSprite7
+ STA pattSprite8
 
  LDA #118               ; Position the sprites as follows:
  STA xSprite5           ;
@@ -7522,12 +7525,12 @@ ENDIF
  STA attrSprite7        ;   * Bit 6 clear = do not flip horizontally
  STA attrSprite8        ;   * Bit 7 clear = do not flip vertically
 
- STY tileSprite5        ; Set the tile pattern number for sprites 5 and 6 to
- STY tileSprite6        ; 204, for the left and right sights respectively
+ STY pattSprite5        ; Set the pattern number for sprites 5 and 6 to 204,
+ STY pattSprite6        ; for the left and right sights respectively
 
- INY                    ; Set the tile pattern number for sprites 7 and 8 to
- STY tileSprite7        ; 205, for the top and bottom sights respectively
- STY tileSprite8
+ INY                    ; Set the pattern number for sprites 7 and 8 to 205,
+ STY pattSprite7        ; for the top and bottom sights respectively
+ STY pattSprite8
 
  LDA #114               ; Position the sprites as follows:
  STA xSprite5           ;
@@ -7584,11 +7587,11 @@ ENDIF
                         ;   * Bit 6 set   = flip horizontally
                         ;   * Bit 7 set   = flip vertically
 
- LDA #206               ; Set the tile pattern number for all four sprites to
- STA tileSprite5        ; 206
- STA tileSprite6
- STA tileSprite7
- STA tileSprite8
+ LDA #206               ; Set the pattern number for all four sprites to 206
+ STA pattSprite5
+ STA pattSprite6
+ STA pattSprite7
+ STA pattSprite8
 
  LDA #122               ; Position the sprites as follows:
  STA xSprite5           ;

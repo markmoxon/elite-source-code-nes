@@ -1238,15 +1238,16 @@ ENDIF
                         ; register, used in the bank-switching routines in
                         ; bank 7
 
-.firstFreeTile
+.firstFreePattern
 
- SKIP 1                 ; Contains the number of the first free tile that we can
-                        ; draw into next (or 0 if there are no free tiles)
+ SKIP 1                 ; Contains the number of the first free pattern in the
+                        ; pattern buffer that we can draw into next (or 0 if
+                        ; there are no free patterns)
                         ;
-                        ; This variable is typically used to control the
-                        ; drawing process into dynamic tiles - when we need a
-                        ; new tile when drawing the space view, this is the
-                        ; number of the next tile to use
+                        ; This variable is typically used to control the drawing
+                        ; process - when we need to draw into a new tile when
+                        ; drawing the space view, this is the number of the next
+                        ; pattern to use for that tile
 
 .pattBufferHiDiv8
 
@@ -1274,7 +1275,7 @@ ENDIF
                         ; controls whether we are showing nametable/palette
                         ; buffer 0 or 1
 
-.lastPatternTile
+.lastPattern
 
  SKIP 1                 ; The number of the last pattern entry to send from
                         ; pattern buffer 0 to bitplane 0 of the PPU pattern
@@ -1284,16 +1285,16 @@ ENDIF
                         ; pattern buffer 1 to bitplane 1 of the PPU pattern
                         ; table in the NMI handler
 
-.clearingPattTile
+.clearingPattern
 
- SKIP 1                 ; The number of the first tile to clear in pattern
-                        ; buffer 0 when the NMI handler clears tiles
+ SKIP 1                 ; The number of the first pattern to clear in pattern
+                        ; buffer 0 when the NMI handler clears patterns
                         ;
                         ; This variable is saved by the NMI handler so the
                         ; buffers can be cleared across multiple VBlanks
 
- SKIP 1                 ; The number of the first tile to clear in pattern
-                        ; buffer 1 when the NMI handler clears tiles
+ SKIP 1                 ; The number of the first pattern to clear in pattern
+                        ; buffer 1 when the NMI handler clears patterns
                         ;
                         ; This variable is saved by the NMI handler so the
                         ; buffers can be cleared across multiple VBlanks
@@ -1332,27 +1333,27 @@ ENDIF
                         ; This variable is saved by the NMI handler so the
                         ; buffers can be cleared across multiple VBlanks
 
-.pattTileCounter
+.patternCounter
 
- SKIP 1                 ; Counts tiles as they are written to the PPU pattern
+ SKIP 1                 ; Counts patterns as they are written to the PPU pattern
                         ; table in the NMI handler
                         ;
                         ; This variable is used internally by the
                         ; SendPatternsToPPU routine
 
-.sendingPattTile
+.sendingPattern
 
- SKIP 1                 ; The number of the most recent tile that was sent to
+ SKIP 1                 ; The number of the most recent pattern that was sent to
                         ; the PPU pattern table by the NMI handler for bitplane
-                        ; 0 (or the number of the first tile to send if none
+                        ; 0 (or the number of the first pattern to send if none
                         ; have been sent)
                         ;
                         ; This variable is saved by the NMI handler so the
                         ; buffers can be cleared across multiple VBlanks
 
- SKIP 1                 ; The number of the most recent tile that was sent to
+ SKIP 1                 ; The number of the most recent pattern that was sent to
                         ; the PPU pattern table by the NMI handler for bitplane
-                        ; 1 (or the number of the first tile to send if none
+                        ; 1 (or the number of the first pattern to send if none
                         ; have been sent)
                         ;
                         ; This variable is saved by the NMI handler so the
@@ -1395,11 +1396,11 @@ ENDIF
  SKIP 2                 ; Counts the number of CPU cycles left in the current
                         ; VBlank in the NMI handler
 
-.firstPatternTile
+.firstPattern
 
- SKIP 1                 ; The number of the first tile for which we send pattern
-                        ; data to the PPU in the NMI handler (potentially for
-                        ; both bitplanes, if both are configured to be sent)
+ SKIP 1                 ; The number of the first pattern for which we send data
+                        ; to the PPU in the NMI handler (potentially for both
+                        ; bitplanes, if both are configured to be sent)
 
 .barPatternCounter
 
@@ -1407,14 +1408,14 @@ ENDIF
                         ; that need to be sent to the PPU in the NMI handler
                         ;
                         ;   * 0 = send the nametable entries and the first four
-                        ;         tile pattern in the next NMI call (and update
+                        ;         patterns in the next NMI call (and update
                         ;         barPatternCounter to 4 when done)
                         ;
                         ;   * 1-127 = counts the number of pattern bytes already
                         ;             sent to the PPU, which get sent in batches
                         ;             of four patterns (32 bytes), split across
                         ;             multiple NMI calls, until we have send all
-                        ;             32 tile patterns and the value is 128
+                        ;             32 patterns and the value is 128
                         ;
                         ;   * 128 = do not send any tiles
 
@@ -1442,20 +1443,20 @@ ENDIF
 
 .skipBarPatternsPPU
 
- SKIP 1                 ; A flag to control whether to send the icon bar's tile
+ SKIP 1                 ; A flag to control whether to send the icon bar's
                         ; patterns to the PPU, after sending the nametable
                         ; entries (this only applies if barPatternCounter = 0)
                         ;
-                        ;   * Bit 7 set = do not send tile patterns
+                        ;   * Bit 7 set = do not send patterns
                         ;
-                        ;   * Bit 7 clear = send tile patterns
+                        ;   * Bit 7 clear = send patterns
                         ;
                         ; This means that if barPatternCounter is set to zero
                         ; and bit 7 of skipBarPatternsPPU is set, then only the
                         ; nametable entries for the icon bar will be sent to the
                         ; PPU, but if barPatternCounter is set to zero and bit 7
                         ; of skipBarPatternsPPU is clear, both the nametable
-                        ; entries and tile patterns will be sent
+                        ; entries and patterns will be sent
 
 .maxNameTileToClear
 
@@ -1477,17 +1478,17 @@ ENDIF
                         ;
                         ;   * Non-zero = do send palette data
 
-.pattTileBuffLo
+.patternBufferLo
 
- SKIP 1                 ; (pattTileBuffHi pattTileBuffLo) contains the address
-                        ; of the pattern buffer for the tile we are sending to
-                        ; the PPU from bitplane 0 (i.e. for tile number
-                        ; sendingPattTile in bitplane 0)
+ SKIP 1                 ; (patternBufferHi patternBufferLo) contains the address
+                        ; of the pattern buffer for the pattern we are sending
+                        ; to the PPU from bitplane 0 (i.e. for pattern number
+                        ; sendingPattern in bitplane 0)
 
- SKIP 1                 ; (pattTileBuffHi pattTileBuffLo) contains the address
-                        ; of the pattern buffer for the tile we are sending to
-                        ; the PPU from bitplane 1 (i.e. for tile number
-                        ; sendingPattTile in bitplane 1)
+ SKIP 1                 ; (patternBufferHi patternBufferLo) contains the address
+                        ; of the pattern buffer for the pattern we are sending
+                        ; to the PPU from bitplane 1 (i.e. for pattern number
+                        ; sendingPattern in bitplane 1)
 
 .nameTileBuffLo
 
@@ -1512,12 +1513,12 @@ ENDIF
 .ppuPatternTableHi
 
  SKIP 1                 ; High byte of the address of the PPU pattern table to
-                        ; which we send dynamic tile patterns
+                        ; which we send patterns
                         ;
                         ; This is set to HI(PPU_PATT_1) in ResetScreen and
                         ; doesn't change again, so it always points to pattern
                         ; table 1 in the PPU, as that's the only pattern table
-                        ; we use for storing dynamic tiles
+                        ; we use for storing patterns
 
 .pattBufferAddr
 
@@ -1550,10 +1551,10 @@ ENDIF
                         ; at S%, but it is never read, so maybe this is part of
                         ; some debug code that was left behind?
 
-.lastTile
+.lastToSend
 
- SKIP 1                 ; The last tile number to send to the PPU, potentially
-                        ; potentially overwritten by the flags
+ SKIP 1                 ; The last tile or pattern number to send to the PPU,
+                        ; potentially potentially overwritten by the flags
                         ;
                         ; This variable is used internally by the NMI handler,
                         ; and is set according to bit 3 of the bitplane flags
@@ -1732,7 +1733,7 @@ ENDIF
 ;
 ;   * The sprite's screen coordinates in (x, y)
 ;
-;   * The number of the tile pattern that is drawn on-screen for this sprite
+;   * The number of the pattern that is drawn on-screen for this sprite
 ;
 ;   * The sprite's attributes, which are:
 ;
@@ -1753,9 +1754,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 0
 
-.tileSprite0
+.pattSprite0
 
- SKIP 1                 ; Tile pattern number for sprite 0
+ SKIP 1                 ; Pattern number for sprite 0
 
 .attrSprite0
 
@@ -1769,9 +1770,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 1
 
-.tileSprite1
+.pattSprite1
 
- SKIP 1                 ; Tile pattern number for sprite 1
+ SKIP 1                 ; Pattern number for sprite 1
 
 .attrSprite1
 
@@ -1785,9 +1786,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 2
 
-.tileSprite2
+.pattSprite2
 
- SKIP 1                 ; Tile pattern number for sprite 2
+ SKIP 1                 ; Pattern number for sprite 2
 
 .attrSprite2
 
@@ -1801,9 +1802,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 3
 
-.tileSprite3
+.pattSprite3
 
- SKIP 1                 ; Tile pattern number for sprite 3
+ SKIP 1                 ; Pattern number for sprite 3
 
 .attrSprite3
 
@@ -1817,9 +1818,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 4
 
-.tileSprite4
+.pattSprite4
 
- SKIP 1                 ; Tile pattern number for sprite 4
+ SKIP 1                 ; Pattern number for sprite 4
 
 .attrSprite4
 
@@ -1833,9 +1834,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 5
 
-.tileSprite5
+.pattSprite5
 
- SKIP 1                 ; Tile pattern number for sprite 5
+ SKIP 1                 ; Pattern number for sprite 5
 
 .attrSprite5
 
@@ -1849,9 +1850,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 6
 
-.tileSprite6
+.pattSprite6
 
- SKIP 1                 ; Tile pattern number for sprite 6
+ SKIP 1                 ; Pattern number for sprite 6
 
 .attrSprite6
 
@@ -1865,9 +1866,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 7
 
-.tileSprite7
+.pattSprite7
 
- SKIP 1                 ; Tile pattern number for sprite 7
+ SKIP 1                 ; Pattern number for sprite 7
 
 .attrSprite7
 
@@ -1881,9 +1882,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 8
 
-.tileSprite8
+.pattSprite8
 
- SKIP 1                 ; Tile pattern number for sprite 8
+ SKIP 1                 ; Pattern number for sprite 8
 
 .attrSprite8
 
@@ -1897,9 +1898,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 9
 
-.tileSprite9
+.pattSprite9
 
- SKIP 1                 ; Tile pattern number for sprite 9
+ SKIP 1                 ; Pattern number for sprite 9
 
 .attrSprite9
 
@@ -1913,9 +1914,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 10
 
-.tileSprite10
+.pattSprite10
 
- SKIP 1                 ; Tile pattern number for sprite 10
+ SKIP 1                 ; Pattern number for sprite 10
 
 .attrSprite10
 
@@ -1929,9 +1930,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 11
 
-.tileSprite11
+.pattSprite11
 
- SKIP 1                 ; Tile pattern number for sprite 11
+ SKIP 1                 ; Pattern number for sprite 11
 
 .attrSprite11
 
@@ -1945,9 +1946,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 12
 
-.tileSprite12
+.pattSprite12
 
- SKIP 1                 ; Tile pattern number for sprite 12
+ SKIP 1                 ; Pattern number for sprite 12
 
 .attrSprite12
 
@@ -1961,9 +1962,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 13
 
-.tileSprite13
+.pattSprite13
 
- SKIP 1                 ; Tile pattern number for sprite 13
+ SKIP 1                 ; Pattern number for sprite 13
 
 .attrSprite13
 
@@ -1977,9 +1978,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 14
 
-.tileSprite14
+.pattSprite14
 
- SKIP 1                 ; Tile pattern number for sprite 14
+ SKIP 1                 ; Pattern number for sprite 14
 
 .attrSprite14
 
@@ -1993,9 +1994,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 15
 
-.tileSprite15
+.pattSprite15
 
- SKIP 1                 ; Tile pattern number for sprite 15
+ SKIP 1                 ; Pattern number for sprite 15
 
 .attrSprite15
 
@@ -2009,9 +2010,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 16
 
-.tileSprite16
+.pattSprite16
 
- SKIP 1                 ; Tile pattern number for sprite 16
+ SKIP 1                 ; Pattern number for sprite 16
 
 .attrSprite16
 
@@ -2025,9 +2026,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 17
 
-.tileSprite17
+.pattSprite17
 
- SKIP 1                 ; Tile pattern number for sprite 17
+ SKIP 1                 ; Pattern number for sprite 17
 
 .attrSprite17
 
@@ -2041,9 +2042,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 18
 
-.tileSprite18
+.pattSprite18
 
- SKIP 1                 ; Tile pattern number for sprite 18
+ SKIP 1                 ; Pattern number for sprite 18
 
 .attrSprite18
 
@@ -2057,9 +2058,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 19
 
-.tileSprite19
+.pattSprite19
 
- SKIP 1                 ; Tile pattern number for sprite 19
+ SKIP 1                 ; Pattern number for sprite 19
 
 .attrSprite19
 
@@ -2073,9 +2074,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 20
 
-.tileSprite20
+.pattSprite20
 
- SKIP 1                 ; Tile pattern number for sprite 20
+ SKIP 1                 ; Pattern number for sprite 20
 
 .attrSprite20
 
@@ -2089,9 +2090,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 21
 
-.tileSprite21
+.pattSprite21
 
- SKIP 1                 ; Tile pattern number for sprite 21
+ SKIP 1                 ; Pattern number for sprite 21
 
 .attrSprite21
 
@@ -2105,9 +2106,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 22
 
-.tileSprite22
+.pattSprite22
 
- SKIP 1                 ; Tile pattern number for sprite 22
+ SKIP 1                 ; Pattern number for sprite 22
 
 .attrSprite22
 
@@ -2121,9 +2122,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 23
 
-.tileSprite23
+.pattSprite23
 
- SKIP 1                 ; Tile pattern number for sprite 23
+ SKIP 1                 ; Pattern number for sprite 23
 
 .attrSprite23
 
@@ -2137,9 +2138,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 24
 
-.tileSprite24
+.pattSprite24
 
- SKIP 1                 ; Tile pattern number for sprite 24
+ SKIP 1                 ; Pattern number for sprite 24
 
 .attrSprite24
 
@@ -2153,9 +2154,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 25
 
-.tileSprite25
+.pattSprite25
 
- SKIP 1                 ; Tile pattern number for sprite 25
+ SKIP 1                 ; Pattern number for sprite 25
 
 .attrSprite25
 
@@ -2169,9 +2170,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 26
 
-.tileSprite26
+.pattSprite26
 
- SKIP 1                 ; Tile pattern number for sprite 26
+ SKIP 1                 ; Pattern number for sprite 26
 
 .attrSprite26
 
@@ -2185,9 +2186,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 27
 
-.tileSprite27
+.pattSprite27
 
- SKIP 1                 ; Tile pattern number for sprite 27
+ SKIP 1                 ; Pattern number for sprite 27
 
 .attrSprite27
 
@@ -2201,9 +2202,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 28
 
-.tileSprite28
+.pattSprite28
 
- SKIP 1                 ; Tile pattern number for sprite 28
+ SKIP 1                 ; Pattern number for sprite 28
 
 .attrSprite28
 
@@ -2217,9 +2218,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 29
 
-.tileSprite29
+.pattSprite29
 
- SKIP 1                 ; Tile pattern number for sprite 29
+ SKIP 1                 ; Pattern number for sprite 29
 
 .attrSprite29
 
@@ -2233,9 +2234,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 30
 
-.tileSprite30
+.pattSprite30
 
- SKIP 1                 ; Tile pattern number for sprite 30
+ SKIP 1                 ; Pattern number for sprite 30
 
 .attrSprite30
 
@@ -2249,9 +2250,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 31
 
-.tileSprite31
+.pattSprite31
 
- SKIP 1                 ; Tile pattern number for sprite 31
+ SKIP 1                 ; Pattern number for sprite 31
 
 .attrSprite31
 
@@ -2265,9 +2266,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 32
 
-.tileSprite32
+.pattSprite32
 
- SKIP 1                 ; Tile pattern number for sprite 32
+ SKIP 1                 ; Pattern number for sprite 32
 
 .attrSprite32
 
@@ -2281,9 +2282,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 33
 
-.tileSprite33
+.pattSprite33
 
- SKIP 1                 ; Tile pattern number for sprite 33
+ SKIP 1                 ; Pattern number for sprite 33
 
 .attrSprite33
 
@@ -2297,9 +2298,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 34
 
-.tileSprite34
+.pattSprite34
 
- SKIP 1                 ; Tile pattern number for sprite 34
+ SKIP 1                 ; Pattern number for sprite 34
 
 .attrSprite34
 
@@ -2313,9 +2314,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 35
 
-.tileSprite35
+.pattSprite35
 
- SKIP 1                 ; Tile pattern number for sprite 35
+ SKIP 1                 ; Pattern number for sprite 35
 
 .attrSprite35
 
@@ -2329,9 +2330,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 36
 
-.tileSprite36
+.pattSprite36
 
- SKIP 1                 ; Tile pattern number for sprite 36
+ SKIP 1                 ; Pattern number for sprite 36
 
 .attrSprite36
 
@@ -2345,9 +2346,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 37
 
-.tileSprite37
+.pattSprite37
 
- SKIP 1                 ; Tile pattern number for sprite 37
+ SKIP 1                 ; Pattern number for sprite 37
 
 .attrSprite37
 
@@ -2361,9 +2362,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 38
 
-.tileSprite38
+.pattSprite38
 
- SKIP 1                 ; Tile pattern number for sprite 38
+ SKIP 1                 ; Pattern number for sprite 38
 
 .attrSprite38
 
@@ -2377,9 +2378,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 39
 
-.tileSprite39
+.pattSprite39
 
- SKIP 1                 ; Tile pattern number for sprite 39
+ SKIP 1                 ; Pattern number for sprite 39
 
 .attrSprite39
 
@@ -2393,9 +2394,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 40
 
-.tileSprite40
+.pattSprite40
 
- SKIP 1                 ; Tile pattern number for sprite 40
+ SKIP 1                 ; Pattern number for sprite 40
 
 .attrSprite40
 
@@ -2409,9 +2410,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 41
 
-.tileSprite41
+.pattSprite41
 
- SKIP 1                 ; Tile pattern number for sprite 41
+ SKIP 1                 ; Pattern number for sprite 41
 
 .attrSprite41
 
@@ -2425,9 +2426,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 42
 
-.tileSprite42
+.pattSprite42
 
- SKIP 1                 ; Tile pattern number for sprite 42
+ SKIP 1                 ; Pattern number for sprite 42
 
 .attrSprite42
 
@@ -2441,9 +2442,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 43
 
-.tileSprite43
+.pattSprite43
 
- SKIP 1                 ; Tile pattern number for sprite 43
+ SKIP 1                 ; Pattern number for sprite 43
 
 .attrSprite43
 
@@ -2457,9 +2458,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 44
 
-.tileSprite44
+.pattSprite44
 
- SKIP 1                 ; Tile pattern number for sprite 44
+ SKIP 1                 ; Pattern number for sprite 44
 
 .attrSprite44
 
@@ -2473,9 +2474,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 45
 
-.tileSprite45
+.pattSprite45
 
- SKIP 1                 ; Tile pattern number for sprite 45
+ SKIP 1                 ; Pattern number for sprite 45
 
 .attrSprite45
 
@@ -2489,9 +2490,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 46
 
-.tileSprite46
+.pattSprite46
 
- SKIP 1                 ; Tile pattern number for sprite 46
+ SKIP 1                 ; Pattern number for sprite 46
 
 .attrSprite46
 
@@ -2505,9 +2506,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 47
 
-.tileSprite47
+.pattSprite47
 
- SKIP 1                 ; Tile pattern number for sprite 47
+ SKIP 1                 ; Pattern number for sprite 47
 
 .attrSprite47
 
@@ -2521,9 +2522,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 48
 
-.tileSprite48
+.pattSprite48
 
- SKIP 1                 ; Tile pattern number for sprite 48
+ SKIP 1                 ; Pattern number for sprite 48
 
 .attrSprite48
 
@@ -2537,9 +2538,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 49
 
-.tileSprite49
+.pattSprite49
 
- SKIP 1                 ; Tile pattern number for sprite 49
+ SKIP 1                 ; Pattern number for sprite 49
 
 .attrSprite49
 
@@ -2553,9 +2554,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 50
 
-.tileSprite50
+.pattSprite50
 
- SKIP 1                 ; Tile pattern number for sprite 50
+ SKIP 1                 ; Pattern number for sprite 50
 
 .attrSprite50
 
@@ -2569,9 +2570,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 51
 
-.tileSprite51
+.pattSprite51
 
- SKIP 1                 ; Tile pattern number for sprite 51
+ SKIP 1                 ; Pattern number for sprite 51
 
 .attrSprite51
 
@@ -2585,9 +2586,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 52
 
-.tileSprite52
+.pattSprite52
 
- SKIP 1                 ; Tile pattern number for sprite 52
+ SKIP 1                 ; Pattern number for sprite 52
 
 .attrSprite52
 
@@ -2601,9 +2602,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 53
 
-.tileSprite53
+.pattSprite53
 
- SKIP 1                 ; Tile pattern number for sprite 53
+ SKIP 1                 ; Pattern number for sprite 53
 
 .attrSprite53
 
@@ -2617,9 +2618,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 54
 
-.tileSprite54
+.pattSprite54
 
- SKIP 1                 ; Tile pattern number for sprite 54
+ SKIP 1                 ; Pattern number for sprite 54
 
 .attrSprite54
 
@@ -2633,9 +2634,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 55
 
-.tileSprite55
+.pattSprite55
 
- SKIP 1                 ; Tile pattern number for sprite 55
+ SKIP 1                 ; Pattern number for sprite 55
 
 .attrSprite55
 
@@ -2649,9 +2650,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 56
 
-.tileSprite56
+.pattSprite56
 
- SKIP 1                 ; Tile pattern number for sprite 56
+ SKIP 1                 ; Pattern number for sprite 56
 
 .attrSprite56
 
@@ -2665,9 +2666,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 57
 
-.tileSprite57
+.pattSprite57
 
- SKIP 1                 ; Tile pattern number for sprite 57
+ SKIP 1                 ; Pattern number for sprite 57
 
 .attrSprite57
 
@@ -2681,9 +2682,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 58
 
-.tileSprite58
+.pattSprite58
 
- SKIP 1                 ; Tile pattern number for sprite 58
+ SKIP 1                 ; Pattern number for sprite 58
 
 .attrSprite58
 
@@ -2697,9 +2698,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 59
 
-.tileSprite59
+.pattSprite59
 
- SKIP 1                 ; Tile pattern number for sprite 59
+ SKIP 1                 ; Pattern number for sprite 59
 
 .attrSprite59
 
@@ -2713,9 +2714,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 60
 
-.tileSprite60
+.pattSprite60
 
- SKIP 1                 ; Tile pattern number for sprite 60
+ SKIP 1                 ; Pattern number for sprite 60
 
 .attrSprite60
 
@@ -2729,9 +2730,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 61
 
-.tileSprite61
+.pattSprite61
 
- SKIP 1                 ; Tile pattern number for sprite 61
+ SKIP 1                 ; Pattern number for sprite 61
 
 .attrSprite61
 
@@ -2745,9 +2746,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 62
 
-.tileSprite62
+.pattSprite62
 
- SKIP 1                 ; Tile pattern number for sprite 62
+ SKIP 1                 ; Pattern number for sprite 62
 
 .attrSprite62
 
@@ -2761,9 +2762,9 @@ ENDIF
 
  SKIP 1                 ; Screen y-coordinate for sprite 63
 
-.tileSprite63
+.pattSprite63
 
- SKIP 1                 ; Tile pattern number for sprite 63
+ SKIP 1                 ; Pattern number for sprite 63
 
 .attrSprite63
 
@@ -3932,9 +3933,8 @@ ENDIF
                         ;     send to the PPU nametable in SendBuffersToPPU:
                         ;
                         ;     * 0 = set the last tile number to lastNameTile or
-                        ;           lastPatternTile for this bitplane (when
-                        ;           sending nametable and pattern entries
-                        ;           respectively)
+                        ;           lastPattern for this bitplane (when sending
+                        ;           nametable and pattern entries respectively)
                         ;
                         ;     * 1 = set the last tile number to 128 (which means
                         ;           tile 8 * 128 = 1024)
@@ -4538,10 +4538,10 @@ ENDIF
 
  SKIP 1                 ; Temporary storage for the Y register during NMI
 
-.pictureTile
+.picturePattern
 
- SKIP 1                 ; The number of the first free tile where commander and
-                        ; system images can be stored in the buffers
+ SKIP 1                 ; The number of the first free pattern where commander
+                        ; and system images can be stored in the buffers
 
 .sendDashboardToPPU
 
@@ -5122,17 +5122,17 @@ ENDIF
  SKIP 1                 ; Stores the number of times a step should be repeated
                         ; during auto-play
 
-.pattTileBuffHi
+.patternBufferHi
 
- SKIP 1                 ; (pattTileBuffHi pattTileBuffLo) contains the address
-                        ; of the pattern buffer for the tile we are sending to
-                        ; the PPU from bitplane 0 (i.e. for tile number
-                        ; sendingPattTile in bitplane 0)
+ SKIP 1                 ; (patternBufferHi patternBufferLo) contains the address
+                        ; of the pattern buffer for the pattern we are sending
+                        ; to the PPU from bitplane 0 (i.e. for pattern number
+                        ; sendingPattern in bitplane 0)
 
- SKIP 1                 ; (pattTileBuffHi pattTileBuffLo) contains the address
-                        ; of the pattern buffer for the tile we are sending to
-                        ; the PPU from bitplane 1 (i.e. for tile number
-                        ; sendingPattTile in bitplane 1)
+ SKIP 1                 ; (patternBufferHi patternBufferLo) contains the address
+                        ; of the pattern buffer for the pattern we are sending
+                        ; to the PPU from bitplane 1 (i.e. for pattern number
+                        ; sendingPattern in bitplane 1)
 
 .nameTileBuffHi
 

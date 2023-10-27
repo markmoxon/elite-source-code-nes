@@ -11893,14 +11893,14 @@ ENDIF
 
  LDX #0                 ; If the nametable buffer entry is zero for the tile
  LDA (SC2,X)            ; containing the pixels that we want to draw, then a
- BEQ hanw3              ; tile has not yet been allocated to this entry, so jump
-                        ; to hanw3 to allocate a new dynamic tile
+ BEQ hanw3              ; pattern has not yet been allocated to this entry, so
+                        ; jump to hanw3 to allocate a new pattern
 
  LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the line we are
  ROL SC+1               ; drawing
@@ -11952,13 +11952,13 @@ ENDIF
                         ; at which we want to draw our line, which we stored in
                         ; T above
 
- CLC                    ; Patterns 52 to 59 contain pre-rendered tiles, each
+ CLC                    ; Patterns 52 to 59 contain pre-rendered patterns, each
  ADC #52                ; containing a single-pixel vertical line, with a line
  STA (SC2,X)            ; at column 0 in pattern 52, a line at column 1 in
                         ; pattern 53, and so on up to column 7 in pattern 58,
                         ; so this sets the nametable entry for the character
-                        ; block we are drawing to the correct pre-rendered tile
-                        ; for drawing a vertical line in pixel column A
+                        ; block we are drawing to the correct pre-rendered
+                        ; pattern for drawing a vertical line in pixel column A
 
 .hanw4
 
@@ -12033,14 +12033,14 @@ ENDIF
 
  LDX #0                 ; If the nametable buffer entry is zero for the tile
  LDA (SC2,X)            ; containing the pixels that we want to draw, then a
- BEQ hanl7              ; tile has not yet been allocated to this entry, so jump
-                        ; to hanl7 to allocate a new dynamic tile
+ BEQ hanl7              ; pattern has not yet been allocated to this entry, so
+                        ; jump to hanl7 to allocate a new pattern
 
  LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the line we are
  ROL SC+1               ; drawing
@@ -12136,10 +12136,10 @@ ENDIF
 
 .hanl7
 
-                        ; If we get here then there is no dynamic tile allocated
-                        ; to the part of the line we want to draw, so we can use
-                        ; one of the pre-rendered tiles that contains an 8-pixel
-                        ; horizontal line on the correct pixel row
+                        ; If we get here then there is no pattern allocated to
+                        ; the part of the line we want to draw, so we can use
+                        ; one of the pre-rendered patterns that contains an
+                        ; 8-pixel horizontal line on the correct pixel row
                         ;
                         ; We jump here with X = 0
 
@@ -12154,13 +12154,13 @@ ENDIF
                         ;   * Tile 43 has a horizontal line on pixel row 6
                         ;   * Tile 44 has a horizontal line on pixel row 7
                         ;
-                        ; So A contains the pre-rendered tile number that
+                        ; So A contains the pre-rendered pattern number that
                         ; contains an 8-pixel line on pixel row Y, and as Y
                         ; contains the offset of the pixel row for the line we
                         ; are drawing, this means A contains the correct tile
                         ; number for this part of the line
 
- STA (SC2,X)            ; Display the pre-rendered tile on-screen by setting
+ STA (SC2,X)            ; Display the pre-rendered pattern on-screen by setting
                         ; the nametable entry to A
 
  JMP hanl5              ; Jump up to hanl5 to move on to the next character
@@ -12213,14 +12213,14 @@ ENDIF
 
  LDX #0                 ; If the nametable buffer entry is zero for the tile
  LDA (SC2,X)            ; containing the pixels that we want to draw, then a
- BEQ hanr8              ; tile has not yet been allocated to this entry, so jump
-                        ; to hanr8 to allocate a new dynamic tile
+ BEQ hanr8              ; pattern has not yet been allocated to this entry, so
+                        ; jump to hanr8 to allocate a new pattern
 
  LDX pattBufferHiDiv8   ; Set SC(1 0) = (pattBufferHiDiv8 A) * 8
  STX SC+1               ;             = (pattBufferHi 0) + A * 8
  ASL A                  ;
  ROL SC+1               ; So SC(1 0) is the address in the pattern buffer for
- ASL A                  ; tile number A (as each tile contains 8 bytes of
+ ASL A                  ; pattern number A (as each pattern contains 8 bytes of
  ROL SC+1               ; pattern data), which means SC(1 0) points to the
  ASL A                  ; pattern data for the tile containing the line we are
  ROL SC+1               ; drawing
@@ -12315,10 +12315,10 @@ ENDIF
 
 .hanr8
 
-                        ; If we get here then there is no dynamic tile allocated
-                        ; to the part of the line we want to draw, so we can use
-                        ; one of the pre-rendered tiles that contains an 8-pixel
-                        ; horizontal line on the correct pixel row
+                        ; If we get here then there is no pattern allocated to
+                        ; the part of the line we want to draw, so we can use
+                        ; one of the pre-rendered patterns that contains an
+                        ; 8-pixel horizontal line on the correct pixel row
                         ;
                         ; We jump here with X = 0
 
@@ -12333,13 +12333,13 @@ ENDIF
                         ;   * Tile 43 has a horizontal line on pixel row 6
                         ;   * Tile 44 has a horizontal line on pixel row 7
                         ;
-                        ; So A contains the pre-rendered tile number that
+                        ; So A contains the pre-rendered pattern number that
                         ; contains an 8-pixel line on pixel row Y, and as Y
                         ; contains the offset of the pixel row for the line we
                         ; are drawing, this means A contains the correct tile
                         ; number for this part of the line
 
- STA (SC2,X)            ; Display the pre-rendered tile on-screen by setting
+ STA (SC2,X)            ; Display the pre-rendered pattern on-screen by setting
                         ; the nametable entry to A
 
  JMP hanr6              ; Jump up to hanr6 to move on to the next character
@@ -12594,7 +12594,7 @@ ENDIF
  JSR HANGER             ; Call HANGER to draw the hangar background
 
  LDA #0                 ; Tell the NMI handler to send pattern entries from
- STA firstPatternTile   ; pattern 0 in the buffer
+ STA firstPattern       ; pattern 0 in the buffer
 
  LDA #80                ; Tell the NMI handler to only clear nametable entries
  STA maxNameTileToClear ; up to tile 80 * 8 = 640 (i.e. up to the end of tile
@@ -13556,9 +13556,9 @@ ENDIF
                         ; stick, so this is the remainder after sprites Y and
                         ; Y+1 are taken away
 
- CLC                    ; Set the tile pattern number for sprite Y+2 to 219 + A
+ CLC                    ; Set the pattern number for sprite Y+2 to 219 + A
  ADC #219               ;
- STA tileSprite2,Y      ; Sprites 219 to 226 contain ship dots with trailing
+ STA pattSprite2,Y      ; Sprites 219 to 226 contain ship dots with trailing
                         ; sticks, starting with the dot at the bottom of the
                         ; pattern (in pattern 219) up to the dot at the top of
                         ; the pattern (in pattern 226), so this sets the tile
@@ -13748,9 +13748,9 @@ ENDIF
                         ; stick, so this is the remainder after sprites Y and
                         ; Y+1 are taken away
 
- CLC                    ; Set the tile pattern number for sprite Y+2 to 219 + A
+ CLC                    ; Set the pattern number for sprite Y+2 to 219 + A
  ADC #219               ;
- STA tileSprite2,Y      ; Sprites 219 to 226 contain ship dots with trailing
+ STA pattSprite2,Y      ; Sprites 219 to 226 contain ship dots with trailing
                         ; sticks, starting with the dot at the bottom of the
                         ; pattern (in pattern 219) up to the dot at the top of
                         ; the pattern (in pattern 226), so this sets the tile
@@ -14024,8 +14024,8 @@ ENDIF
  ADC #10+YPAL           ; Set the pixel y-coordinate of the explosion sprite to
  STA ySprite58,Y        ; A + 10
 
- LDA #245               ; Set the sprite's tile pattern number to 245, which is
- STA tileSprite58,Y     ; a fairly messy explosion pattern
+ LDA #245               ; Set the sprite's pattern number to 245, which is a
+ STA pattSprite58,Y     ; fairly messy explosion pattern
 
 .burs5
 
@@ -14185,7 +14185,7 @@ ENDIF
  TAY                    ; starting with sprite 38 for stardust particle 1, up to
                         ; sprite 57 for stardust particle 20
 
- LDA #210               ; Set A = 210 to use as the pattern tile number for the
+ LDA #210               ; Set A = 210 to use as the pattern number for the
                         ; largest particle of stardust (the stardust particle
                         ; patterns run from pattern 210 to 214, decreasing in
                         ; size as the number increases)
@@ -14210,7 +14210,7 @@ ENDIF
                         ; The C flag is clear at this point, which affects the
                         ; SBC #3 below
 
- STA tileSprite37,Y     ; By this point A is the correct pattern number for the
+ STA pattSprite37,Y     ; By this point A is the correct pattern number for the
                         ; distance of the stardust particle, so set the tile
                         ; pattern number for sprite 37 + Y to this pattern
 

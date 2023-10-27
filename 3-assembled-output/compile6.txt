@@ -169,7 +169,7 @@
      00B6
 .ASAV
      00B7
-.firstFreeTile
+.firstFreePattern
      00B8
 .pattBufferHiDiv8
      00B9
@@ -181,10 +181,10 @@
      00BE
 .drawingBitplane
      00C0
-.lastPatternTile
+.lastPattern
      00C1
      00C2
-.clearingPattTile
+.clearingPattern
      00C3
      00C4
 .clearingNameTile
@@ -193,9 +193,9 @@
 .sendingNameTile
      00C7
      00C8
-.pattTileCounter
+.patternCounter
      00C9
-.sendingPattTile
+.sendingPattern
      00CA
      00CB
 .firstNametableTile
@@ -207,7 +207,7 @@
      00CF
 .cycleCount
      00D0
-.firstPatternTile
+.firstPattern
      00D2
 .barPatternCounter
      00D3
@@ -223,7 +223,7 @@
      00D9
 .updatePaletteInNMI
      00DA
-.pattTileBuffLo
+.patternBufferLo
      00DB
      00DC
 .nameTileBuffLo
@@ -243,7 +243,7 @@
      00E6
 .startupDebug
      00E7
-.lastTile
+.lastToSend
      00E8
 .setupPPUForIconBar
      00E9
@@ -283,7 +283,7 @@ Zero page variables from &0  to &100
      0100
 .ySprite0
      0200
-.tileSprite0
+.pattSprite0
      0201
 .attrSprite0
      0202
@@ -291,7 +291,7 @@ Zero page variables from &0  to &100
      0203
 .ySprite1
      0204
-.tileSprite1
+.pattSprite1
      0205
 .attrSprite1
      0206
@@ -299,7 +299,7 @@ Zero page variables from &0  to &100
      0207
 .ySprite2
      0208
-.tileSprite2
+.pattSprite2
      0209
 .attrSprite2
      020A
@@ -307,7 +307,7 @@ Zero page variables from &0  to &100
      020B
 .ySprite3
      020C
-.tileSprite3
+.pattSprite3
      020D
 .attrSprite3
      020E
@@ -315,7 +315,7 @@ Zero page variables from &0  to &100
      020F
 .ySprite4
      0210
-.tileSprite4
+.pattSprite4
      0211
 .attrSprite4
      0212
@@ -323,7 +323,7 @@ Zero page variables from &0  to &100
      0213
 .ySprite5
      0214
-.tileSprite5
+.pattSprite5
      0215
 .attrSprite5
      0216
@@ -331,7 +331,7 @@ Zero page variables from &0  to &100
      0217
 .ySprite6
      0218
-.tileSprite6
+.pattSprite6
      0219
 .attrSprite6
      021A
@@ -339,7 +339,7 @@ Zero page variables from &0  to &100
      021B
 .ySprite7
      021C
-.tileSprite7
+.pattSprite7
      021D
 .attrSprite7
      021E
@@ -347,7 +347,7 @@ Zero page variables from &0  to &100
      021F
 .ySprite8
      0220
-.tileSprite8
+.pattSprite8
      0221
 .attrSprite8
      0222
@@ -355,7 +355,7 @@ Zero page variables from &0  to &100
      0223
 .ySprite9
      0224
-.tileSprite9
+.pattSprite9
      0225
 .attrSprite9
      0226
@@ -363,7 +363,7 @@ Zero page variables from &0  to &100
      0227
 .ySprite10
      0228
-.tileSprite10
+.pattSprite10
      0229
 .attrSprite10
      022A
@@ -371,7 +371,7 @@ Zero page variables from &0  to &100
      022B
 .ySprite11
      022C
-.tileSprite11
+.pattSprite11
      022D
 .attrSprite11
      022E
@@ -379,7 +379,7 @@ Zero page variables from &0  to &100
      022F
 .ySprite12
      0230
-.tileSprite12
+.pattSprite12
      0231
 .attrSprite12
      0232
@@ -387,7 +387,7 @@ Zero page variables from &0  to &100
      0233
 .ySprite13
      0234
-.tileSprite13
+.pattSprite13
      0235
 .attrSprite13
      0236
@@ -395,7 +395,7 @@ Zero page variables from &0  to &100
      0237
 .ySprite14
      0238
-.tileSprite14
+.pattSprite14
      0239
 .attrSprite14
      023A
@@ -403,7 +403,7 @@ Zero page variables from &0  to &100
      023B
 .ySprite15
      023C
-.tileSprite15
+.pattSprite15
      023D
 .attrSprite15
      023E
@@ -411,7 +411,7 @@ Zero page variables from &0  to &100
      023F
 .ySprite16
      0240
-.tileSprite16
+.pattSprite16
      0241
 .attrSprite16
      0242
@@ -419,7 +419,7 @@ Zero page variables from &0  to &100
      0243
 .ySprite17
      0244
-.tileSprite17
+.pattSprite17
      0245
 .attrSprite17
      0246
@@ -427,7 +427,7 @@ Zero page variables from &0  to &100
      0247
 .ySprite18
      0248
-.tileSprite18
+.pattSprite18
      0249
 .attrSprite18
      024A
@@ -435,7 +435,7 @@ Zero page variables from &0  to &100
      024B
 .ySprite19
      024C
-.tileSprite19
+.pattSprite19
      024D
 .attrSprite19
      024E
@@ -443,7 +443,7 @@ Zero page variables from &0  to &100
      024F
 .ySprite20
      0250
-.tileSprite20
+.pattSprite20
      0251
 .attrSprite20
      0252
@@ -451,7 +451,7 @@ Zero page variables from &0  to &100
      0253
 .ySprite21
      0254
-.tileSprite21
+.pattSprite21
      0255
 .attrSprite21
      0256
@@ -459,7 +459,7 @@ Zero page variables from &0  to &100
      0257
 .ySprite22
      0258
-.tileSprite22
+.pattSprite22
      0259
 .attrSprite22
      025A
@@ -467,7 +467,7 @@ Zero page variables from &0  to &100
      025B
 .ySprite23
      025C
-.tileSprite23
+.pattSprite23
      025D
 .attrSprite23
      025E
@@ -475,7 +475,7 @@ Zero page variables from &0  to &100
      025F
 .ySprite24
      0260
-.tileSprite24
+.pattSprite24
      0261
 .attrSprite24
      0262
@@ -483,7 +483,7 @@ Zero page variables from &0  to &100
      0263
 .ySprite25
      0264
-.tileSprite25
+.pattSprite25
      0265
 .attrSprite25
      0266
@@ -491,7 +491,7 @@ Zero page variables from &0  to &100
      0267
 .ySprite26
      0268
-.tileSprite26
+.pattSprite26
      0269
 .attrSprite26
      026A
@@ -499,7 +499,7 @@ Zero page variables from &0  to &100
      026B
 .ySprite27
      026C
-.tileSprite27
+.pattSprite27
      026D
 .attrSprite27
      026E
@@ -507,7 +507,7 @@ Zero page variables from &0  to &100
      026F
 .ySprite28
      0270
-.tileSprite28
+.pattSprite28
      0271
 .attrSprite28
      0272
@@ -515,7 +515,7 @@ Zero page variables from &0  to &100
      0273
 .ySprite29
      0274
-.tileSprite29
+.pattSprite29
      0275
 .attrSprite29
      0276
@@ -523,7 +523,7 @@ Zero page variables from &0  to &100
      0277
 .ySprite30
      0278
-.tileSprite30
+.pattSprite30
      0279
 .attrSprite30
      027A
@@ -531,7 +531,7 @@ Zero page variables from &0  to &100
      027B
 .ySprite31
      027C
-.tileSprite31
+.pattSprite31
      027D
 .attrSprite31
      027E
@@ -539,7 +539,7 @@ Zero page variables from &0  to &100
      027F
 .ySprite32
      0280
-.tileSprite32
+.pattSprite32
      0281
 .attrSprite32
      0282
@@ -547,7 +547,7 @@ Zero page variables from &0  to &100
      0283
 .ySprite33
      0284
-.tileSprite33
+.pattSprite33
      0285
 .attrSprite33
      0286
@@ -555,7 +555,7 @@ Zero page variables from &0  to &100
      0287
 .ySprite34
      0288
-.tileSprite34
+.pattSprite34
      0289
 .attrSprite34
      028A
@@ -563,7 +563,7 @@ Zero page variables from &0  to &100
      028B
 .ySprite35
      028C
-.tileSprite35
+.pattSprite35
      028D
 .attrSprite35
      028E
@@ -571,7 +571,7 @@ Zero page variables from &0  to &100
      028F
 .ySprite36
      0290
-.tileSprite36
+.pattSprite36
      0291
 .attrSprite36
      0292
@@ -579,7 +579,7 @@ Zero page variables from &0  to &100
      0293
 .ySprite37
      0294
-.tileSprite37
+.pattSprite37
      0295
 .attrSprite37
      0296
@@ -587,7 +587,7 @@ Zero page variables from &0  to &100
      0297
 .ySprite38
      0298
-.tileSprite38
+.pattSprite38
      0299
 .attrSprite38
      029A
@@ -595,7 +595,7 @@ Zero page variables from &0  to &100
      029B
 .ySprite39
      029C
-.tileSprite39
+.pattSprite39
      029D
 .attrSprite39
      029E
@@ -603,7 +603,7 @@ Zero page variables from &0  to &100
      029F
 .ySprite40
      02A0
-.tileSprite40
+.pattSprite40
      02A1
 .attrSprite40
      02A2
@@ -611,7 +611,7 @@ Zero page variables from &0  to &100
      02A3
 .ySprite41
      02A4
-.tileSprite41
+.pattSprite41
      02A5
 .attrSprite41
      02A6
@@ -619,7 +619,7 @@ Zero page variables from &0  to &100
      02A7
 .ySprite42
      02A8
-.tileSprite42
+.pattSprite42
      02A9
 .attrSprite42
      02AA
@@ -627,7 +627,7 @@ Zero page variables from &0  to &100
      02AB
 .ySprite43
      02AC
-.tileSprite43
+.pattSprite43
      02AD
 .attrSprite43
      02AE
@@ -635,7 +635,7 @@ Zero page variables from &0  to &100
      02AF
 .ySprite44
      02B0
-.tileSprite44
+.pattSprite44
      02B1
 .attrSprite44
      02B2
@@ -643,7 +643,7 @@ Zero page variables from &0  to &100
      02B3
 .ySprite45
      02B4
-.tileSprite45
+.pattSprite45
      02B5
 .attrSprite45
      02B6
@@ -651,7 +651,7 @@ Zero page variables from &0  to &100
      02B7
 .ySprite46
      02B8
-.tileSprite46
+.pattSprite46
      02B9
 .attrSprite46
      02BA
@@ -659,7 +659,7 @@ Zero page variables from &0  to &100
      02BB
 .ySprite47
      02BC
-.tileSprite47
+.pattSprite47
      02BD
 .attrSprite47
      02BE
@@ -667,7 +667,7 @@ Zero page variables from &0  to &100
      02BF
 .ySprite48
      02C0
-.tileSprite48
+.pattSprite48
      02C1
 .attrSprite48
      02C2
@@ -675,7 +675,7 @@ Zero page variables from &0  to &100
      02C3
 .ySprite49
      02C4
-.tileSprite49
+.pattSprite49
      02C5
 .attrSprite49
      02C6
@@ -683,7 +683,7 @@ Zero page variables from &0  to &100
      02C7
 .ySprite50
      02C8
-.tileSprite50
+.pattSprite50
      02C9
 .attrSprite50
      02CA
@@ -691,7 +691,7 @@ Zero page variables from &0  to &100
      02CB
 .ySprite51
      02CC
-.tileSprite51
+.pattSprite51
      02CD
 .attrSprite51
      02CE
@@ -699,7 +699,7 @@ Zero page variables from &0  to &100
      02CF
 .ySprite52
      02D0
-.tileSprite52
+.pattSprite52
      02D1
 .attrSprite52
      02D2
@@ -707,7 +707,7 @@ Zero page variables from &0  to &100
      02D3
 .ySprite53
      02D4
-.tileSprite53
+.pattSprite53
      02D5
 .attrSprite53
      02D6
@@ -715,7 +715,7 @@ Zero page variables from &0  to &100
      02D7
 .ySprite54
      02D8
-.tileSprite54
+.pattSprite54
      02D9
 .attrSprite54
      02DA
@@ -723,7 +723,7 @@ Zero page variables from &0  to &100
      02DB
 .ySprite55
      02DC
-.tileSprite55
+.pattSprite55
      02DD
 .attrSprite55
      02DE
@@ -731,7 +731,7 @@ Zero page variables from &0  to &100
      02DF
 .ySprite56
      02E0
-.tileSprite56
+.pattSprite56
      02E1
 .attrSprite56
      02E2
@@ -739,7 +739,7 @@ Zero page variables from &0  to &100
      02E3
 .ySprite57
      02E4
-.tileSprite57
+.pattSprite57
      02E5
 .attrSprite57
      02E6
@@ -747,7 +747,7 @@ Zero page variables from &0  to &100
      02E7
 .ySprite58
      02E8
-.tileSprite58
+.pattSprite58
      02E9
 .attrSprite58
      02EA
@@ -755,7 +755,7 @@ Zero page variables from &0  to &100
      02EB
 .ySprite59
      02EC
-.tileSprite59
+.pattSprite59
      02ED
 .attrSprite59
      02EE
@@ -763,7 +763,7 @@ Zero page variables from &0  to &100
      02EF
 .ySprite60
      02F0
-.tileSprite60
+.pattSprite60
      02F1
 .attrSprite60
      02F2
@@ -771,7 +771,7 @@ Zero page variables from &0  to &100
      02F3
 .ySprite61
      02F4
-.tileSprite61
+.pattSprite61
      02F5
 .attrSprite61
      02F6
@@ -779,7 +779,7 @@ Zero page variables from &0  to &100
      02F7
 .ySprite62
      02F8
-.tileSprite62
+.pattSprite62
      02F9
 .attrSprite62
      02FA
@@ -787,7 +787,7 @@ Zero page variables from &0  to &100
      02FB
 .ySprite63
      02FC
-.tileSprite63
+.pattSprite63
      02FD
 .attrSprite63
      02FE
@@ -1211,7 +1211,7 @@ Zero page variables from &0  to &100
      046A
 .nmiStoreY
      046B
-.pictureTile
+.picturePattern
      046C
 .sendDashboardToPPU
      046D
@@ -1350,7 +1350,7 @@ Zero page variables from &0  to &100
      04BC
 .autoplayRepeat
      04BD
-.pattTileBuffHi
+.patternBufferHi
      04BE
      04BF
 .nameTileBuffHi
@@ -18116,7 +18116,7 @@ End macro SETUP_PPU_FOR_ICON_BAR
      A387   20
      A388   22
      A389   22
-.conditionTiles
+.conditionPatts
      A38A   F9
      A38B   FA
      A38C   FA
@@ -19882,7 +19882,7 @@ End macro SETUP_PPU_FOR_ICON_BAR
      B439   B2
      B43A   B3
      B43B   B3
-.saveBracketTiles
+.saveBracketPatts
      B43C   68
      B43D   6A
      B43E   69

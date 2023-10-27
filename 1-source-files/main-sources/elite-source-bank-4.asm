@@ -2620,18 +2620,18 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Status
 ;    Summary: Fetch the headshot image for the commander and store it in the
-;             pattern buffers, starting at tile number pictureTile
+;             pattern buffers, starting at pattern number picturePattern
 ;
 ; ******************************************************************************
 
 .GetHeadshot
 
- LDA #0                 ; Set (SC+1 A) = (0 pictureTile)
- STA SC+1               ;              = pictureTile
- LDA pictureTile
+ LDA #0                 ; Set (SC+1 A) = (0 picturePattern)
+ STA SC+1               ;              = picturePattern
+ LDA picturePattern
 
  ASL A                  ; Set SC(1 0) = (SC+1 A) * 8
- ROL SC+1               ;             = pictureTile * 8
+ ROL SC+1               ;             = picturePattern * 8
  ASL A
  ROL SC+1
  ASL A
@@ -2639,12 +2639,12 @@ ENDIF
  STA SC
 
  STA SC2                ; Set SC2(1 0) = pattBuffer1 + SC(1 0)
- LDA SC+1               ;              = pattBuffer1 + pictureTile * 8
+ LDA SC+1               ;              = pattBuffer1 + picturePattern * 8
  ADC #HI(pattBuffer1)
  STA SC2+1
 
  LDA SC+1               ; Set SC(1 0) = pattBuffer0 + SC(1 0)
- ADC #HI(pattBuffer0)   ;             = pattBuffer0 + pictureTile * 8
+ ADC #HI(pattBuffer0)   ;             = pattBuffer0 + picturePattern * 8
  STA SC+1
 
  LDA imageSentToPPU     ; The value of imageSentToPPU was set in the STATUS
@@ -2664,21 +2664,21 @@ ENDIF
  JSR UnpackToRAM        ; Unpack the data at V(1 0) into SC(1 0), updating
                         ; V(1 0) as we go
                         ;
-                        ; SC(1 0) is pattBuffer0 + pictureTile * 8, so this
+                        ; SC(1 0) is pattBuffer0 + picturePattern * 8, so this
                         ; unpacks the headshot pattern data into pattern buffer
-                        ; 0, starting from pattern pictureTile
+                        ; 0, starting from pattern picturePattern
 
  LDA SC2                ; Set SC(1 0) = SC2(1 0)
- STA SC                 ;             = pattBuffer1 + pictureTile * 8
+ STA SC                 ;             = pattBuffer1 + picturePattern * 8
  LDA SC2+1
  STA SC+1
 
  JSR UnpackToRAM        ; Unpack the data at V(1 0) into SC(1 0), updating
                         ; V(1 0) as we go
                         ;
-                        ; SC(1 0) is pattBuffer1 + pictureTile * 8, so this
+                        ; SC(1 0) is pattBuffer1 + picturePattern * 8, so this
                         ; unpacks the headshot pattern data into pattern buffer
-                        ; 1, starting from pattern pictureTile
+                        ; 1, starting from pattern picturePattern
 
  RTS                    ; Return from the subroutine
 
@@ -2695,8 +2695,8 @@ ENDIF
 .GetCmdrImage
 
  JSR GetHeadshot        ; Fetch the headshot image for the commander and store
-                        ; it in the pattern buffers, starting at tile number
-                        ; pictureTile
+                        ; it in the pattern buffers, starting at pattern number
+                        ; picturePattern
 
  LDA imageSentToPPU     ; The value of imageSentToPPU was set in the STATUS
  ASL A                  ; routine to %1000xxxx, where %xxxx is the headshot
@@ -2745,15 +2745,15 @@ ENDIF
  LDA #LO(bigLogoImage)  ; So we can unpack the image data for the big Elite logo
  STA V                  ; into the pattern buffers
 
- LDA firstFreeTile      ; Set K+2 to the next free tile number, to send to the
- TAY                    ; DrawImageNames routine below as the pattern number of
- STY K+2                ; the start of the big logo data
+ LDA firstFreePattern   ; Set K+2 to the next free pattern number, to send to
+ TAY                    ; the DrawImageNames routine below as the pattern number
+ STY K+2                ; of the start of the big logo data
 
- ASL A                  ; Set SC(1 0) = pattBuffer0 + firstFreeTile * 8
+ ASL A                  ; Set SC(1 0) = pattBuffer0 + firstFreePattern * 8
  STA SC                 ;
  LDA #LO(pattBuffer0)   ; So this points to the pattern in pattern buffer 0 that
- ROL A                  ; corresponds to the next free file in firstFreeTile
- ASL SC
+ ROL A                  ; corresponds to the next free pattern in
+ ASL SC                 ; firstFreePattern
  ROL A
  ASL SC
  ROL A
@@ -2765,26 +2765,26 @@ ENDIF
  LDA SC                 ; Pattern buffer 0 consists of 8 pages of memory and is
  STA SC2                ; followed by pattern buffer 1, so this sets SC2(1 0) to
                         ; the pattern in pattern buffer 1 that corresponds to
-                        ; the next free file in firstFreeTile
+                        ; the next free pattern in firstFreePattern
 
  JSR UnpackToRAM        ; Unpack the data at V(1 0) into SC(1 0), updating
                         ; V(1 0) as we go
                         ;
-                        ; SC(1 0) is pattBuffer0 + firstFreeTile * 8, so this
+                        ; SC(1 0) is pattBuffer0 + firstFreePattern * 8, so this
                         ; unpacks the big logo pattern data into pattern buffer
-                        ; 0, starting from pattern firstFreeTile
+                        ; 0, starting from pattern firstFreePattern
 
  LDA SC2                ; Set SC(1 0) = SC2(1 0)
- STA SC                 ;             = pattBuffer1 + pictureTile * 8
+ STA SC                 ;             = pattBuffer1 + picturePattern * 8
  LDA SC2+1
  STA SC+1
 
  JSR UnpackToRAM        ; Unpack the data at V(1 0) into SC(1 0), updating
                         ; V(1 0) as we go
                         ;
-                        ; SC(1 0) is pattBuffer0 + firstFreeTile * 8, so this
+                        ; SC(1 0) is pattBuffer0 + firstFreePattern * 8, so this
                         ; unpacks the big logo pattern data into pattern buffer
-                        ; 0, starting from pattern firstFreeTile
+                        ; 0, starting from pattern firstFreePattern
 
  LDA #HI(bigLogoNames)  ; Set V(1 0) = bigLogoNames, so the call to
  STA V+1                ; DrawImageNames draws the big Elite logo
@@ -2804,10 +2804,10 @@ ENDIF
 
  JSR DrawImageNames     ; Draw the big Elite logo at text column 5 on row 1
 
- LDA firstFreeTile      ; The big logo takes up 208 tiles, so add 208 to the
- CLC                    ; next free tile number in firstFreeTile, as we just
- ADC #208               ; used up that many tiles
- STA firstFreeTile
+ LDA firstFreePattern   ; The big logo takes up 208 patterns, so add 208 to the
+ CLC                    ; next free pattern number in firstFreePattern, as we
+ ADC #208               ; just used up that many patterns
+ STA firstFreePattern
 
  RTS                    ; Return from the subroutine
 
@@ -3049,11 +3049,11 @@ ENDIF
 
 .drsm2
 
- LDA (V),Y              ; Fetch the tile pattern number for the Y-th tile in the
-                        ; logo from the smallLogoTile table at V(1 0), which
-                        ; gives us the pattern number for this tile from the
-                        ; patterns in the smallLogoImage table, which is loaded
-                        ; at the pattern number in K+2
+ LDA (V),Y              ; Fetch the pattern number for the Y-th tile in the logo
+                        ; from the smallLogoTile table at V(1 0), which gives us
+                        ; the pattern number for this tile from the patterns
+                        ; in the smallLogoImage table, which is loaded at the
+                        ; pattern number in K+2
 
  INY                    ; Increment the tile counter to point to the next tile
 
@@ -3063,13 +3063,13 @@ ENDIF
 
 .drsm3
 
- CMP #0                 ; If the tile pattern number is zero, then this is the
+ CMP #0                 ; If the pattern number is zero, then this is the
  BEQ drsm4              ; background, so jump to drsm4 to move on to the next
                         ; tile in the logo
 
- ADC K+2                ; Set the tile pattern for sprite X to A + K+2, which is
- STA tileSprite0,X      ; the pattern number in the PPU's pattern table to use
-                        ; for this part of the logo
+ ADC K+2                ; Set the pattern for sprite X to A + K+2, which is the
+ STA pattSprite0,X      ; pattern number in the PPU's pattern table to use for
+                        ; this part of the logo
 
  LDA S                  ; Set the attributes for sprite X to S, which we set
  STA attrSprite0,X      ; above as follows:

@@ -1037,7 +1037,7 @@ ENDIF
  LDY #109               ; lock, with the targeted ship's slot number in X
  JSR ABORT2             ; (which we stored in XSAV at the start of this ship's
                         ; loop at MAL1), and set the colour of the missile
-                        ; indicator to the tile pattern number in Y (red
+                        ; indicator to the pattern number in Y (red
                         ; indicator = pattern 109)
 
 .MA47
@@ -2377,8 +2377,8 @@ ENDIF
 
  LDY #$6C               ; Otherwise we just chose to disarm the missile, so call
  JSR ABORT              ; ABORT to disarm the missile and update the missile
-                        ; indicators on the dashboard to the tile pattern number
-                        ; in Y (black indicator = pattern 108)
+                        ; indicators on the dashboard to the pattern number in
+                        ; Y (black indicator = pattern 108)
 
  LDY #4                 ; Set Y = 4 so the call to NOISE makes a low, long beep
                         ; to indicate the missile is now disarmed
@@ -2394,8 +2394,8 @@ ENDIF
 
 .MA20
 
- LDY #108               ; Set the tile pattern for the active missile indicator
- LDX NOMSL              ; to 108 (which is a black indicator), so we can flash
+ LDY #108               ; Set the pattern for the active missile indicator to
+ LDX NOMSL              ; 108 (which is a black indicator), so we can flash
  JSR MSBAR              ; it between red and black in the main loop to indicate
                         ; that it is looking for a target
 
@@ -3361,8 +3361,8 @@ ENDIF
  LDA #118               ; This sets A = 118 if the laser in view X is a mining
                         ; laser (token 118 is "MINING  LASER")
 
- JSR TT27_b2            ; Print the text token in A (which contains our legal
-                        ; status)
+ JSR TT27_b2            ; Print the text token in A (which contains the laser
+                        ; type)
 
  LDA languageNumber     ; If bit 2 of languageNumber is clear then the chosen
  AND #%00000100         ; language is not French, so jump to stat4 to skip the
@@ -3433,13 +3433,13 @@ ENDIF
 
 .UpdateView
 
- LDA firstFreeTile      ; If firstFreeTile = 0, set firstFreeTile = 255
+ LDA firstFreePattern   ; If firstFreePattern = 0, set firstFreePattern = 255
  BNE upvw1              ;
  LDA #255               ; This ensures that the call to CopyNameBuffer0To1 below
- STA firstFreeTile      ; tells the NMI handler to send pattern entries up to
-                        ; the first free tile, or to send tiles up to the very
-                        ; end if we have run out of free tiles (which is when
-                        ; firstFreeTile is zero)
+ STA firstFreePattern   ; tells the NMI handler to send pattern entries up to
+                        ; the first free pattern, or to send patterns up to the
+                        ; very end if we have run out of free patterns (in which
+                        ; case firstFreePattern was zero)
 
 .upvw1
 
@@ -3454,19 +3454,19 @@ ENDIF
  STA lastNameTile+1     ; 108 * 8 = 864 (i.e. to the end of tile row 26) in both
                         ; bitplanes
 
- LDX #37                ; Set X = 37 to use as the first pattern tile for when
-                        ; there is an icon bar
+ LDX #37                ; Set X = 37 to use as the first pattern for when there
+                        ; is an icon bar
 
  LDA QQ11               ; If bit 6 of the view type is clear, then there is an
  AND #%01000000         ; icon bar, so jump to upvw2 to skip the following
  BEQ upvw2              ; instruction
 
- LDX #4                 ; Set X = 4 to use as the first pattern tile for when
-                        ; there is no icon bar
+ LDX #4                 ; Set X = 4 to use as the first pattern for when there
+                        ; is no icon bar
 
 .upvw2
 
- STX firstPatternTile   ; Tell the NMI handler to send pattern entries from
+ STX firstPattern       ; Tell the NMI handler to send pattern entries from
                         ; pattern X in the buffer (i.e. from pattern 4 if there
                         ; is no icon bar, or from pattern 37 if there is an
                         ; icon bar)
@@ -3476,8 +3476,7 @@ ENDIF
                         ; for the drawing bitplane
 
  JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
-                        ; buffer and tell the NMI handler to send pattern
-                        ; entries up to the first free tile
+                        ; buffer
 
  LDA QQ11               ; If the new view in QQ11 is the same as the old view in
  CMP QQ11a              ; QQ11a, then jump to upvw6 to call UpdateScreen before
@@ -3537,9 +3536,9 @@ ENDIF
                         ;   * $FF otherwise (in which case we show the icon bar
                         ;     pointer)
 
- LDA firstFreeTile      ; Tell the NMI handler to send pattern entries from the
- STA firstPatternTile   ; first free tile onwards, so we don't waste time
-                        ; resending the static tiles we have already sent
+ LDA firstFreePattern   ; Tell the NMI handler to send pattern entries from the
+ STA firstPattern       ; first free pattern onwards, so we don't waste time
+                        ; resending the static patterns we have already sent
 
  RTS                    ; Return from the subroutine
 
@@ -3593,7 +3592,7 @@ ENDIF
                         ; row 24)
 
  LDA #37                ; Tell the NMI handler to send pattern entries from
- STA firstPatternTile   ; pattern 37 in the buffer
+ STA firstPattern       ; pattern 37 in the buffer
 
  JSR SetupPPUForIconBar ; If the PPU has started drawing the icon bar, configure
                         ; the PPU to use nametable 0 and pattern table 0
@@ -3603,8 +3602,7 @@ ENDIF
                         ; for the drawing bitplane
 
  JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
-                        ; buffer and tell the NMI handler to send pattern
-                        ; entries up to the first free tile
+                        ; buffer
 
  LDA #%11000100         ; Set both bitplane flags as follows:
  STA bitplaneFlags      ;
@@ -3621,9 +3619,9 @@ ENDIF
                         ; according to the above configuration, splitting the
                         ; process across multiple VBlanks if necessary
 
- LDA firstFreeTile      ; Tell the NMI handler to send pattern entries from the
- STA firstPatternTile   ; first free tile onwards, so we don't waste time
-                        ; resending the static tiles we have already sent
+ LDA firstFreePattern   ; Tell the NMI handler to send pattern entries from the
+ STA firstPattern       ; first free pattern onwards, so we don't waste time
+                        ; resending the static patterns we have already sent
 
  RTS                    ; Return from the subroutine
 
@@ -6989,8 +6987,8 @@ ENDIF
 
  LDY #133               ; We have just launched a missile, so we need to remove
  JSR ABORT              ; missile lock and hide the active indicator on the
-                        ; dashboard by setting it to the tile pattern number
-                        ; in Y (no missile indicator = pattern 133)
+                        ; dashboard by setting it to the pattern number in Y
+                        ; (no missile indicator = pattern 133)
 
  DEC NOMSL              ; Reduce the number of missiles we have by 1
 
@@ -8173,8 +8171,7 @@ ENDIF
  LSR demoInProgress     ; Clear bit 7 of demoInProgress
 
  JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
-                        ; buffer and tell the NMI handler to send pattern
-                        ; entries up to the first free tile
+                        ; buffer
 
  JSR SetupFullViewInNMI ; Configure the PPU to send tiles for the full screen
                         ; during VBlank
@@ -10429,10 +10426,9 @@ ENDIF
 
 .DrawCrosshairs
 
- LDA #248               ; Set the tile pattern number for sprite 15 to 248,
- STA tileSprite15       ; which contains a one-tile square outline that we can
-                        ; use as a square reticle to implement crosshairs on the
-                        ; chart
+ LDA #248               ; Set the pattern number for sprite 15 to 248, which
+ STA pattSprite15       ; contains a one-tile square outline that we can use as
+                        ; a square reticle to implement crosshairs on the chart
 
  LDA #%00000001         ; Set the attributes for sprite 15 as follows:
  STA attrSprite15       ;
@@ -10817,10 +10813,10 @@ ENDIF
                         ; the level of the text label, so the star appears to
                         ; the bottom-left of the text
 
- LDA #213               ; Set the tile pattern to 213 + K
+ LDA #213               ; Set the pattern to 213 + K
  CLC                    ;
  ADC K                  ; The patterns for the three star sizes on the chart are
- STA tileSprite38,Y     ; in patterns 215 to 217, going from small to large, so
+ STA pattSprite38,Y     ; in patterns 215 to 217, going from small to large, so
                         ; this sets the sprite to the correct star size in K as
                         ; K is in the range 2 to 4
 
@@ -12969,8 +12965,8 @@ ENDIF
 
  LDA #%11111001         ; Set the AI flag in byte #32 so that the ship has AI,
  STA INWK+32            ; is hostile and pretty aggressive (though not quite as
-                        ; aggressive as the Thargoid we just added), and has
-                        ; E.C.M.
+                        ; aggressive as the Thargoid we add if we get here via
+                        ; GTHG), and has E.C.M.
 
 .gthg1
 
@@ -16041,8 +16037,8 @@ ENDIF
                         ; hollow and yellow, so set A to 246, which is the tile
                         ; number for the hollow yellow dot
 
- STA tileSprite13       ; Set the tile pattern number for sprite 13 to A, so we
-                        ; draw the compass dot using the correct pattern
+ STA pattSprite13       ; Set the pattern number for sprite 13 to A, so we draw
+                        ; the compass dot using the correct pattern
 
  RTS                    ; Return from the subroutine
 
@@ -16822,8 +16818,8 @@ ENDIF
 
  LDY #108               ; Otherwise we need to remove our missile lock, so call
  JSR ABORT              ; ABORT to disarm the missile and update the missile
-                        ; indicators on the dashboard to the tile pattern number
-                        ; in Y (black indicator = pattern 108)
+                        ; indicators on the dashboard to the pattern number in
+                        ; Y (black indicator = pattern 108)
 
  LDA #200               ; Print recursive token 40 ("TARGET LOST") as an
  JSR MESS               ; in-flight message
@@ -16989,7 +16985,7 @@ ENDIF
 ;   X                   The slot number of the ship to lock our missile onto, or
 ;                       $FF to remove missile lock
 ;
-;   Y                   The tile pattern number for the new missile indicator:
+;   Y                   The pattern number for the new missile indicator:
 ;
 ;                         * 133 = no missile indicator
 ;
@@ -17581,9 +17577,9 @@ ENDIF
                         ; the rest of them are present and should be drawn in
                         ; black
 
- LDY #133               ; Set the tile pattern for the missile indicator at
- JSR MSBAR              ; position X to 133, which is the same grey as the
-                        ; dashboard, so this effectively hides the indicator
+ LDY #133               ; Set the pattern for the missile indicator at position
+ JSR MSBAR              ; X to 133, which is the same grey as the dashboard,
+                        ; so this effectively hides the indicator
 
  DEX                    ; Decrement the counter to point to the next missile
 
@@ -17593,8 +17589,8 @@ ENDIF
 
 .SAL8
 
- LDY #108               ; Set the tile pattern for the missile indicator at
- JSR MSBAR              ; position X to 108, which is a black indicator
+ LDY #108               ; Set the pattern for the missile indicator at position
+ JSR MSBAR              ; X to 108, which is a black indicator
 
  DEX                    ; Decrement the counter to point to the next missile
 
@@ -18010,7 +18006,8 @@ ENDIF
 .fothg2
 
  JSR GTHG+15            ; Call GTHG+15 to spawn a lone Thargoid, without a
-                        ; Thargon companion
+                        ; Thargon companion and with slightly less aggression
+                        ; than normal
 
  JMP MLOOP              ; Jump down to MLOOP to do some end-of-loop tidying and
                         ; restart the main loop
@@ -19065,8 +19062,7 @@ ENDIF
  JSR ClearDashEdge_b6   ; Clear the right edge of the dashboard
 
  JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
-                        ; buffer and tell the NMI handler to send pattern
-                        ; entries up to the first free tile
+                        ; buffer
 
  JSR SetScreenForUpdate ; Get the screen ready for updating by hiding all
                         ; sprites, after fading the screen to black if we are
@@ -19084,9 +19080,9 @@ ENDIF
  STA QQ11a              ; Set the old view type in QQ11a to $00 (Space view with
                         ; no fonts loaded)
 
- LDA firstFreeTile      ; Tell the NMI handler to send pattern entries from the
- STA firstPatternTile   ; first free tile onwards, so we don't waste time
-                        ; resending the static tiles we have already sent
+ LDA firstFreePattern   ; Tell the NMI handler to send pattern entries from the
+ STA firstPattern       ; first free pattern onwards, so we don't waste time
+                        ; resending the static patterns we have already sent
 
  LDA #116               ; Tell the NMI handler to only clear nametable entries
  STA maxNameTileToClear ; up to tile 116 * 8 = 800 (i.e. up to the end of tile
@@ -19586,8 +19582,7 @@ ENDIF
                         ; value of A
 
  JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
-                        ; buffer and tell the NMI handler to send pattern
-                        ; entries up to the first free tile
+                        ; buffer
 
  JSR UpdateScreen       ; Update the screen by sending data to the PPU, either
                         ; immediately or during VBlank, depending on whether
@@ -19602,9 +19597,9 @@ ENDIF
  STA showIconBarPointer ; Set showIconBarPointer to 0 to indicate that we should
                         ; hide the icon bar pointer
 
- LDA firstFreeTile      ; Tell the NMI handler to send pattern entries from the
- STA firstPatternTile   ; first free tile onwards, so we don't waste time
-                        ; resending the static tiles we have already sent
+ LDA firstFreePattern   ; Tell the NMI handler to send pattern entries from the
+ STA firstPattern       ; first free pattern onwards, so we don't waste time
+                        ; resending the static patterns we have already sent
 
  LDA #80                ; Tell the NMI handler to only clear nametable entries
  STA maxNameTileToClear ; up to tile 80 * 8 = 640 (i.e. up to the end of tile
@@ -23393,8 +23388,7 @@ ENDIF
  JSR TT66               ; (Space view with no fonts loaded)
 
  JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
-                        ; buffer and tell the NMI handler to send pattern
-                        ; entries up to the first free tile
+                        ; buffer
 
  JSR SendViewToPPU_b3   ; Configure the PPU for the view type in QQ11
 
@@ -23435,8 +23429,7 @@ ENDIF
  JSR TT66               ; (Space view with no fonts loaded)
 
  JSR CopyNameBuffer0To1 ; Copy the contents of nametable buffer 0 to nametable
-                        ; buffer and tell the NMI handler to send pattern
-                        ; entries up to the first free tile
+                        ; buffer
 
  LDA #80                ; Tell the PPU to send nametable entries up to tile
  STA lastNameTile       ; 80 * 8 = 640 (i.e. to the end of tile row 19) in both
@@ -23481,7 +23474,7 @@ ENDIF
                         ; sprite buffer has four bytes of data)
 
  LDA #210               ; Set the sprite to use pattern number 210 for the
- STA tileSprite0,Y      ; largest particle of stardust (the stardust particle
+ STA pattSprite0,Y      ; largest particle of stardust (the stardust particle
                         ; patterns run from pattern 210 to 214, decreasing in
                         ; size as the number increases)
 
@@ -23530,9 +23523,9 @@ ENDIF
  LDA #$2C               ; Set the visible colour to cyan ($2C)
  STA visibleColour
 
- LDA firstFreeTile      ; Tell the NMI handler to send pattern entries from the
- STA firstPatternTile   ; first free tile onwards, so we don't waste time
-                        ; resending the static tiles we have already sent
+ LDA firstFreePattern   ; Tell the NMI handler to send pattern entries from the
+ STA firstPattern       ; first free pattern onwards, so we don't waste time
+                        ; resending the static patterns we have already sent
 
  LDA #80                ; Tell the NMI handler to only clear nametable entries
  STA maxNameTileToClear ; up to tile 80 * 8 = 640 (i.e. up to the end of tile
