@@ -9241,7 +9241,7 @@ ENDIF
  BCC vlin17             ; is either an icon bar pattern, or one of the
                         ; pre-rendered patterns containing horizontal and
                         ; vertical lines, so jump to vlin17 to process drawing
-                        ; on top off the pre-rendered pattern
+                        ; on top of the pre-rendered pattern
 
                         ; If we get here then the pattern number already
                         ; allocated to this part of the line is >= 60, which is
