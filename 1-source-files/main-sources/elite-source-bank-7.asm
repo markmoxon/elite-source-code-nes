@@ -4613,9 +4613,9 @@ ENDIF
                         ;
                         ; The following routine clears the buffers from the
                         ; first tile we sent, up to the tile and pattern numbers
-                        ; given by sendingNameTile and sendingPattern, which will
-                        ; work in both cases, whether or not we have finished
-                        ; sending all the data to the PPU
+                        ; given by sendingNameTile and sendingPattern, which
+                        ; will work in both cases, whether or not we have
+                        ; finished sending all the data to the PPU
 
  SUBTRACT_CYCLES 213    ; Subtract 213 from the cycle count
 
@@ -8201,15 +8201,15 @@ ENDIF
  BEQ hlin13             ; pattern has not yet been allocated to this entry, so
                         ; jump to hlin13 to allocate a new pattern
 
-                        ; If we get here then A contains the tile number that's
-                        ; already allocated to this part of the line in the
-                        ; nametable buffer
+                        ; If we get here then A contains the pattern number
+                        ; that's already allocated to this part of the line in
+                        ; the nametable buffer
 
- CMP #60                ; If A < 60, then the drawing that's already allocated
- BCC hlin15             ; is either an icon bar drawing, or one of the
-                        ; pre-rendered patterns containing horizontal and vertical
-                        ; lines, so jump to hlin15 to process drawing on top
-                        ; off the pre-rendered pattern
+ CMP #60                ; If A < 60, then the pattern that's already allocated
+ BCC hlin15             ; is either an icon bar pattern, or one of the
+                        ; pre-rendered patterns containing horizontal and
+                        ; vertical lines, so jump to hlin15 to process drawing
+                        ; on top of the pre-rendered pattern
 
                         ; If we get here then the pattern number already
                         ; allocated to this part of the line is >= 60, which is
@@ -9077,7 +9077,8 @@ ENDIF
 
                         ; We now have a new pattern in SC(1 0) into which we can
                         ; draw the top end of our line, so we now need to copy
-                        ; the pre-rendered pattern that we want to draw on top of
+                        ; the pre-rendered pattern that we want to draw on top
+                        ; of
                         ;
                         ; Each pattern is made up of eight bytes, so we simply
                         ; need to copy eight bytes from SC3(1 0) to SC(1 0)
@@ -9236,8 +9237,8 @@ ENDIF
                         ; jump to vlin15 to place a pre-rendered pattern into
                         ; the nametable entry
 
- CMP #60                ; If A < 60, then the drawing that's already allocated
- BCC vlin17             ; is either an icon bar drawing, or one of the
+ CMP #60                ; If A < 60, then the pattern that's already allocated
+ BCC vlin17             ; is either an icon bar pattern, or one of the
                         ; pre-rendered patterns containing horizontal and
                         ; vertical lines, so jump to vlin17 to process drawing
                         ; on top off the pre-rendered pattern
@@ -9585,9 +9586,9 @@ ENDIF
 
  STA (SC,X)             ; Otherwise firstFreePattern contains the number of the
                         ; next available pattern for drawing, so allocate this
-                        ; pattern to cover the dash that we want to draw by setting
-                        ; the nametable entry to the pattern number we just
-                        ; fetched
+                        ; pattern to cover the dash that we want to draw by
+                        ; setting the nametable entry to the pattern number we
+                        ; just fetched
 
  INC firstFreePattern   ; Increment firstFreePattern to point to the next
                         ; available pattern for drawing, so it can be added to
