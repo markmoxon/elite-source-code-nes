@@ -11952,13 +11952,23 @@ ENDIF
                         ; at which we want to draw our line, which we stored in
                         ; T above
 
- CLC                    ; Patterns 52 to 59 contain pre-rendered patterns, each
- ADC #52                ; containing a single-pixel vertical line, with a line
- STA (SC2,X)            ; at column 0 in pattern 52, a line at column 1 in
-                        ; pattern 53, and so on up to column 7 in pattern 58,
-                        ; so this sets the nametable entry for the character
-                        ; block we are drawing to the correct pre-rendered
-                        ; pattern for drawing a vertical line in pixel column A
+ CLC                    ; Patterns 52 to 59 contain pre-rendered patterns as
+ ADC #52                ; follows:
+                        ;
+                        ;   * Pattern 52 has a vertical line in pixel column 0
+                        ;   * Pattern 53 has a vertical line in pixel column 1
+                        ;     ...
+                        ;   * Pattern 58 has a vertical line in pixel column 6
+                        ;   * Pattern 59 has a vertical line in pixel column 7
+                        ;
+                        ; So A contains the pre-rendered pattern number that
+                        ; contains an 8-pixel line in pixel column T, and as T
+                        ; contains the offset of the pixel column for the line
+                        ; we are drawing, this means A contains the correct
+                        ; pattern number for this part of the line
+
+ STA (SC2,X)            ; Display the pre-rendered pattern on-screen by setting
+                        ; the nametable entry to A
 
 .hanw4
 
@@ -12145,19 +12155,19 @@ ENDIF
 
  TYA                    ; Set A = Y + 37
  CLC                    ;
- ADC #37                ; Tiles 37 to 44 contain pre-rendered patterns as
+ ADC #37                ; Patterns 37 to 44 contain pre-rendered patterns as
                         ; follows:
                         ;
-                        ;   * Tile 37 has a horizontal line on pixel row 0
-                        ;   * Tile 38 has a horizontal line on pixel row 1
+                        ;   * Pattern 37 has a horizontal line on pixel row 0
+                        ;   * Pattern 38 has a horizontal line on pixel row 1
                         ;     ...
-                        ;   * Tile 43 has a horizontal line on pixel row 6
-                        ;   * Tile 44 has a horizontal line on pixel row 7
+                        ;   * Pattern 43 has a horizontal line on pixel row 6
+                        ;   * Pattern 44 has a horizontal line on pixel row 7
                         ;
                         ; So A contains the pre-rendered pattern number that
                         ; contains an 8-pixel line on pixel row Y, and as Y
                         ; contains the offset of the pixel row for the line we
-                        ; are drawing, this means A contains the correct tile
+                        ; are drawing, this means A contains the correct pattern
                         ; number for this part of the line
 
  STA (SC2,X)            ; Display the pre-rendered pattern on-screen by setting
@@ -12324,19 +12334,19 @@ ENDIF
 
  TYA                    ; Set A = Y + 37
  CLC                    ;
- ADC #37                ; Tiles 37 to 44 contain pre-rendered patterns as
+ ADC #37                ; Patterns 37 to 44 contain pre-rendered patterns as
                         ; follows:
                         ;
-                        ;   * Tile 37 has a horizontal line on pixel row 0
-                        ;   * Tile 38 has a horizontal line on pixel row 1
+                        ;   * Pattern 37 has a horizontal line on pixel row 0
+                        ;   * Pattern 38 has a horizontal line on pixel row 1
                         ;     ...
-                        ;   * Tile 43 has a horizontal line on pixel row 6
-                        ;   * Tile 44 has a horizontal line on pixel row 7
+                        ;   * Pattern 43 has a horizontal line on pixel row 6
+                        ;   * Pattern 44 has a horizontal line on pixel row 7
                         ;
                         ; So A contains the pre-rendered pattern number that
                         ; contains an 8-pixel line on pixel row Y, and as Y
                         ; contains the offset of the pixel row for the line we
-                        ; are drawing, this means A contains the correct tile
+                        ; are drawing, this means A contains the correct pattern
                         ; number for this part of the line
 
  STA (SC2,X)            ; Display the pre-rendered pattern on-screen by setting
