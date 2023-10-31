@@ -198,7 +198,7 @@
 .sendingPattern
      00CA
      00CB
-.firstNametableTile
+.firstNameTile
      00CC
 .lastNameTile
      00CD

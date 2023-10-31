@@ -1822,9 +1822,9 @@ ENDIF
                         ; So ppuNametableAddr(1 0) points to the correct PPU
                         ; nametable address for this bitplane
 
- LDA firstNametableTile ; Set sendingNameTile for this bitplane to the value of
- STA sendingNameTile,X  ; firstNametableTile, which contains the number of the
-                        ; first tile to send to the PPU nametable
+ LDA firstNameTile      ; Set sendingNameTile for this bitplane to the value of
+ STA sendingNameTile,X  ; firstNameTile, which contains the number of the first
+                        ; tile to send to the PPU nametable
 
  STA clearingNameTile,X ; Set clearingNameTile for this bitplane to the same
                         ; value, so we start to clear tiles from the same point
@@ -5752,7 +5752,7 @@ ENDIF
  STA lastPattern+1
 
  LDA #88                ; Tell the NMI handler to send nametable entries from
- STA firstNametableTile ; tile 88 * 8 = 704 onwards (i.e. from the start of tile
+ STA firstNameTile      ; tile 88 * 8 = 704 onwards (i.e. from the start of tile
                         ; row 22)
 
  LDA #100               ; Tell the NMI handler to send nametable entries up to

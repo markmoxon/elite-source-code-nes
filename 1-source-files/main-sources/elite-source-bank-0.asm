@@ -3458,7 +3458,7 @@ ENDIF
 .upvw1
 
  LDA #0                 ; Tell the NMI handler to send nametable entries from
- STA firstNametableTile ; tile 0 onwards
+ STA firstNameTile      ; tile 0 onwards
 
  LDA #108               ; Tell the NMI handler to only clear nametable entries
  STA maxNameTileToClear ; up to tile 108 * 8 = 864 (i.e. up to the end of tile
@@ -3599,7 +3599,7 @@ ENDIF
                         ; there is no more data waiting to be sent to the PPU
 
  LDA #0                 ; Tell the NMI handler to send nametable entries from
- STA firstNametableTile ; tile 0 onwards
+ STA firstNameTile      ; tile 0 onwards
 
  LDA #100               ; Tell the NMI handler to only clear nametable entries
  STA maxNameTileToClear ; up to tile 100 * 8 = 800 (i.e. up to the end of tile
@@ -19103,7 +19103,7 @@ ENDIF
                         ; row 28)
 
  LDX #8                 ; Tell the NMI handler to send nametable entries from
- STX firstNametableTile ; tile 8 * 8 = 64 onwards (i.e. from the start of tile
+ STX firstNameTile      ; tile 8 * 8 = 64 onwards (i.e. from the start of tile
                         ; row 2)
 
  LDA #104               ; Set the screen height variables for a screen height of
@@ -19620,7 +19620,7 @@ ENDIF
                         ; row 19)
 
  LDX #8                 ; Tell the NMI handler to send nametable entries from
- STX firstNametableTile ; tile 8 * 8 = 64 onwards (i.e. from the start of tile
+ STX firstNameTile      ; tile 8 * 8 = 64 onwards (i.e. from the start of tile
                         ; row 2)
 
  RTS                    ; Return from the subroutine
@@ -23546,7 +23546,7 @@ ENDIF
                         ; row 19)
 
  LDX #8                 ; Tell the NMI handler to send nametable entries from
- STX firstNametableTile ; tile 8 * 8 = 64 onwards (i.e. from the start of tile
+ STX firstNameTile      ; tile 8 * 8 = 64 onwards (i.e. from the start of tile
                         ; row 2)
 
  LDA #116               ; Tell the NMI handler to send nametable entries up to
