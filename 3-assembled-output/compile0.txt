@@ -12321,6 +12321,7 @@ End macro SETUP_PPU_FOR_ICON_BAR
      8706   8D 8F 03   STA &038F
 .MA3
      8709   20 4A 83   JSR &834A
+.DrawSpaceViewInNMI
      870C   A5 9E      LDA &9E
      870E   D0 3C      BNE &874C
      8710   20 7D EC   JSR &EC7D
@@ -12334,11 +12335,11 @@ End macro SETUP_PPU_FOR_ICON_BAR
      8724   0D 04 04   ORA &0404
      8727   6A         ROR A
      8728   D0 09      BNE &8733
-.main18
+.spvw1
      872A   20 75 D9   JSR &D975
      872D   20 16 AA   JSR &AA16
      8730   4C 91 8B   JMP &8B91
-.main19
+.spvw2
      8733   A9 88      LDA #&88
      8735   20 77 D9   JSR &D977
      8738   20 16 AA   JSR &AA16
@@ -12349,14 +12350,14 @@ End macro SETUP_PPU_FOR_ICON_BAR
      8746   09 40      ORA #&40
      8748   9D EF 03   STA &03EF,X
      874B   60         RTS
-.main20
+.spvw3
      874C   C9 98      CMP #&98
      874E   D0 1F      BNE &876F
      8750   20 38 F3   JSR &F338
      8753   EC 71 04   CPX &0471
      8756   F0 03      BEQ &875B
      8758   20 37 88   JSR &8837
-.main21
+.spvw4
      875B   AE 71 04   LDX &0471
      875E   E0 03      CPX #&03
      8760   D0 08      BNE &876A
@@ -12364,10 +12365,10 @@ End macro SETUP_PPU_FOR_ICON_BAR
      8765   29 20      AND #&20
      8767   D0 01      BNE &876A
      8769   E8         INX
-.main22
+.spvw5
      876A   BD 33 F3   LDA &F333,X
      876D   85 34      STA &34
-.main23
+.spvw6
      876F   60         RTS
 .SPIN
      8770   20 AD F4   JSR &F4AD

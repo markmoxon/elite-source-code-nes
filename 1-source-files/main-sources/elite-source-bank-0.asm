@@ -1290,7 +1290,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: Main flight loop (Part 3a of 16)
+;       Name: FlightLoop4To16
 ;       Type: Subroutine
 ;   Category: Main loop
 ;    Summary: Display in-flight messages, call parts 4 to 12 of the main flight
@@ -2645,8 +2645,22 @@ ENDIF
                         ; main flight loop for each ship slot, and finish off
                         ; with parts 13 to 16 of the main flight loop
 
- LDA QQ11               ; If this is not the space view, jump to main20 to skip
- BNE main20             ; the following, as we only need to send the drawing
+                        ; Fall through into DrawSpaceViewInNMI to tell the NMI
+                        ; handler to send the updated space view to the PPU
+
+; ******************************************************************************
+;
+;       Name: DrawSpaceViewInNMI
+;       Type: Subroutine
+;   Category: Drawing the screen
+;    Summary: Configure the NMI handler to draw the space view
+;
+; ******************************************************************************
+
+.DrawSpaceViewInNMI
+
+ LDA QQ11               ; If this is not the space view, jump to spvw3 to skip
+ BNE spvw3              ; the following, as we only need to send the drawing
                         ; bitplane to the PPU and update the dashboard in the
                         ; space view
 
@@ -2671,8 +2685,8 @@ ENDIF
                         ; In other words, the C flag is clear if the PPU is
                         ; currently drawing the dashboard, and set if it is not
 
- LDA drawingBitplane    ; If the drawing bitplane is 1, jump to main18 to send
- BNE main18             ; the drawing plane to the PPU without updating the
+ LDA drawingBitplane    ; If the drawing bitplane is 1, jump to spvw1 to send
+ BNE spvw1              ; the drawing plane to the PPU without updating the
                         ; whole dashboard first
 
                         ; If we get here then the drawing bitplane is 0, so now
@@ -2686,14 +2700,14 @@ ENDIF
                         ; dashboard every other iteration that the drawing
                         ; bitplane is set to 0)
 
- BMI main19             ; If bit 7 of the result is set (so sendDashboardToPPU
-                        ; is now $FF), jump to main19 to update the whole
+ BMI spvw2              ; If bit 7 of the result is set (so sendDashboardToPPU
+                        ; is now $FF), jump to spvw2 to update the whole
                         ; dashboard before sending it to the PPU
 
  LDA KY1                ; If the B button is being pressed with either the up or
  ORA KY2                ; down button (to change our speed), or the C flag is
- ROR A                  ; set, jump to main19 to update the whole dashboard
- BNE main19             ; before sending it to the PPU
+ ROR A                  ; set, jump to spvw2 to update the whole dashboard
+ BNE spvw2              ; before sending it to the PPU
                         ;
                         ; This makes the speed indicator react more quickly to
                         ; speed changes, as it triggers an update of the whole
@@ -2701,7 +2715,7 @@ ENDIF
                         ; ensures we do not update the whole dashboard if the
                         ; PPU is currently in the process of drawing it
 
-.main18
+.spvw1
 
                         ; If we get here then either the drawing bitplane is 1,
                         ; or it's 0 and the following are true:
@@ -2729,7 +2743,7 @@ ENDIF
  JMP DrawPitchRollBars  ; Update the pitch and roll bars on the dashboard,
                         ; returning from the subroutine using a tail call
 
-.main19
+.spvw2
 
  LDA #%10001000         ; Set the bitplane flags for the drawing bitplane to the
  JSR SetDrawPlaneFlags  ; following:
@@ -2760,35 +2774,35 @@ ENDIF
 
  RTS                    ; Return from the subroutine
 
-.main20
+.spvw3
 
                         ; We jump here if this is not the space view, with the
                         ; view type in A
 
- CMP #$98               ; If this is not the Status Mode screen, jump to main23
- BNE main23             ; to skip the following, as we can only flash the
+ CMP #$98               ; If this is not the Status Mode screen, jump to spvw6
+ BNE spvw6              ; to skip the following, as we can only flash the
                         ; commander image background when it's on-screen in the
                         ; Status Mode view
 
  JSR GetStatusCondition ; Set X to our ship's status condition
 
- CPX previousCondition  ; If our condition hasn't changed, jump to main21 to
- BEQ main21             ; skip the following instruction
+ CPX previousCondition  ; If our condition hasn't changed, jump to spvw4 to
+ BEQ spvw4              ; skip the following instruction
 
  JSR STATUS             ; Call STATUS to refresh the Status Mode screen, so our
                         ; status updates to show the new condition
 
-.main21
+.spvw4
 
  LDX previousCondition  ; Set X to the previous status condition
 
  CPX #3                 ; If the previous status condition was not red, jump to
- BNE main22             ; main22 to show the alert colour for the previous
+ BNE spvw5              ; spvw5 to show the alert colour for the previous
                         ; condition
 
  LDA nmiCounter         ; If nmiCounter div 32 is odd (which will happen half
- AND #32                ; the time, and for 32 VBlanks in a row), jump to main22
- BNE main22             ; to skip the following
+ AND #32                ; the time, and for 32 VBlanks in a row), jump to spvw5
+ BNE spvw5              ; to skip the following
 
                         ; We get here if the previous condition was red, but
                         ; only for every other block of 32 VBlanks, so this
@@ -2799,12 +2813,12 @@ ENDIF
                         ; the commander image flash between the top two alert
                         ; colours (i.e. light red and dark red)
 
-.main22
+.spvw5
 
  LDA alertColours,X     ; Change the palette so the visible colour is set to the
  STA visibleColour      ; alert colour for our status condition
 
-.main23
+.spvw6
 
  RTS                    ; Return from the subroutine
 

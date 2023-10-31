@@ -1645,9 +1645,7 @@ ENDIF
                         ; aren't (so it effectively swaps the hidden and visible
                         ; bitplanes)
 
- JSR SetPaletteForView  ; Set the correct background and sprite palettes for
-                        ; the current view and (if this is the space view) the
-                        ; hidden bit plane
+ JSR SetPaletteForView  ; Send palette 0 for the current view to the PPU
 
  JMP SendPatternsToPPU  ; Jump to SendPatternsToPPU to continue sending tile
                         ; data to the PPU
@@ -1763,9 +1761,7 @@ ENDIF
                         ; hidden bitplane (we only want to update the hidden
                         ; bitplane, to avoid messing up the screen)
 
- JSR SetPaletteForView  ; Set the correct background and sprite palettes for
-                        ; the current view and (if this is the space view) the
-                        ; hidden bitplane
+ JSR SetPaletteForView  ; Send palette 0 for the current view to the PPU
 
                         ; Fall through into SendTilesToPPU to set up the
                         ; variables for sending tile data to the PPU, and then
@@ -1884,9 +1880,9 @@ ENDIF
  ASL A                  ;
  ROL addr               ; Starting with the low bytes
  ASL A                  ;
-                        ; In the above, pattBufferX is either pattBuffer0 or
-                        ; pattBuffer1, depending on the bitplane in X, as these
-                        ; are the values stored in the pattBufferHiAddr variable
+                        ; In the above, nameBufferX is either nameBuffer0 or
+                        ; nameBuffer1, depending on the bitplane in X, as these
+                        ; are the values stored in the nameBufferHiAddr variable
 
  STA nameTileBuffLo,X   ; Store the low byte in nameTileBuffLo for this bitplane
 
@@ -3386,7 +3382,8 @@ ENDIF
 
 .inmi1
 
- JSR MoveIconBarPointer ; Move the sprites that make up the icon bar pointer
+ JSR MoveIconBarPointer ; Move the sprites that make up the icon bar pointer and
+                        ; record any choices
 
  JSR UpdateJoystick     ; Update the values of JSTX and JSTY with the values
                         ; from the controller
@@ -3422,8 +3419,8 @@ ENDIF
 ;       Name: UpdateNMITimer
 ;       Type: Subroutine
 ;   Category: Utility routines
-;    Summary: Update the NMI timer, which we can use in place of hardware
-;             timers (which the NES does not support)
+;    Summary: Update the NMI timer, which we can use to keep track of time for
+;             places like the combat demo
 ;
 ; ******************************************************************************
 
@@ -3488,16 +3485,15 @@ ENDIF
                         ;   * Bit 6 clear = do not intensify blues
                         ;   * Bit 7 clear = do not intensify reds
 
-                        ; Fall through into SetPaletteForView to set the correct
-                        ; palette for the current view
+                        ; Fall through into SetPaletteForView to send palette 0
+                        ; for the current view to the PPU
 
 ; ******************************************************************************
 ;
 ;       Name: SetPaletteForView
 ;       Type: Subroutine
 ;   Category: Drawing the screen
-;    Summary: Set the correct background and sprite palettes for the current
-;             view and (if this is the space view) the hidden bit plane
+;    Summary: Send palette 0 for the current view to the PPU
 ;
 ; ******************************************************************************
 
@@ -3752,7 +3748,7 @@ ENDIF
 ;       Name: SetPPURegisters
 ;       Type: Subroutine
 ;   Category: PPU
-;    Summary: Set PPU_CTRL, PPU_ADDR and PPU_SCROLL for the current palette
+;    Summary: Set PPU_CTRL, PPU_ADDR and PPU_SCROLL for the current hidden
 ;             bitplane
 ;
 ; ******************************************************************************
@@ -11443,7 +11439,8 @@ ENDIF
 ;       Name: MoveIconBarPointer
 ;       Type: Subroutine
 ;   Category: Icon bar
-;    Summary: Move the sprites that make up the icon bar pointer
+;    Summary: Move the sprites that make up the icon bar pointer and record any
+;             choices
 ;
 ; ******************************************************************************
 
