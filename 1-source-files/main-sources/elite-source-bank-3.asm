@@ -1523,8 +1523,8 @@ ENDIF
 ;       Name: smallLogoImage
 ;       Type: Variable
 ;   Category: Save and load
-;    Summary: Packed image data for the small Elite logo shown on the save/load
-;             screen
+;    Summary: Packed image data for the small Elite logo shown on the Save and
+;             Load screen
 ;
 ; ******************************************************************************
 
@@ -1625,7 +1625,7 @@ ENDIF
 ;       Name: DrawDashNames
 ;       Type: Subroutine
 ;   Category: Dashboard
-;    Summary: Draw the dashboard into the nametable buffers for both bitplanes
+;    Summary: Draw the dashboard into both the nametable buffers
 ;
 ; ******************************************************************************
 
@@ -1901,7 +1901,7 @@ ENDIF
  BNE svip5              ; with the normal and highlight fonts loaded), jump to
                         ; svip5 to keep checking for view types
 
-                        ; If we get here then this is the Save and load screen
+                        ; If we get here then this is the Save and Load screen
                         ; with the normal and highlight fonts loaded
 
  LDA #HI(16*69)         ; Set PPU_ADDR to the address of pattern 69 in pattern
@@ -4871,7 +4871,7 @@ ENDIF
  CMP #$BB               ; with the normal and highlight fonts loaded), jump to
  BNE ifon1              ; ifon1 to skip the following instruction
 
- DEX                    ; This is the save and load screen with font loaded in
+ DEX                    ; This is the Save and Load screen with font loaded in
                         ; both bitplanes, so set X = $FF to use in the font
                         ; inversion logic below
 
@@ -4879,7 +4879,7 @@ ENDIF
 
  STX T                  ; Set T = X, so we have the following:
                         ;
-                        ;   * T = $FF if QQ11 is $BB (Save and load screen with
+                        ;   * T = $FF if QQ11 is $BB (Save and Load screen with
                         ;         the normal and highlight fonts loaded)
                         ;
                         ;   * T = 0 for all other screens
@@ -4931,7 +4931,7 @@ ENDIF
                         ;   AND T
                         ;   EOR T
                         ;
-                        ; T is 0, unless this is the save and load screen, in
+                        ; T is 0, unless this is the Save and Load screen, in
                         ; which case T is $FF
                         ;
                         ; When T = 0, we have A AND 0 EOR 0, which is 0, so
@@ -5060,7 +5060,7 @@ ENDIF
  CMP #$BB               ; with the normal and highlight fonts loaded), jump to
  BNE font1              ; font1 to skip the following instruction
 
- LDX #70                ; This is the save and load screen with font loaded in
+ LDX #70                ; This is the Save and Load screen with font loaded in
                         ; both bitplanes, so set X = 70 so that we only copy 70
                         ; characters from the font
 

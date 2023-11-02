@@ -1484,11 +1484,17 @@ ENDIF
                         ; of the pattern buffer for the pattern we are sending
                         ; to the PPU from bitplane 0 (i.e. for pattern number
                         ; sendingPattern in bitplane 0)
+                        ;
+                        ; This variable is saved by the NMI handler so the
+                        ; buffers can be cleared across multiple VBlanks
 
  SKIP 1                 ; (patternBufferHi patternBufferLo) contains the address
                         ; of the pattern buffer for the pattern we are sending
                         ; to the PPU from bitplane 1 (i.e. for pattern number
                         ; sendingPattern in bitplane 1)
+                        ;
+                        ; This variable is saved by the NMI handler so the
+                        ; buffers can be cleared across multiple VBlanks
 
 .nameTileBuffLo
 
@@ -1496,11 +1502,17 @@ ENDIF
                         ; of the nametable buffer for the tile we are sending to
                         ; the PPU from bitplane 0 (i.e. for tile number
                         ; sendingNameTile in bitplane 0)
+                        ;
+                        ; This variable is saved by the NMI handler so the
+                        ; buffers can be cleared across multiple VBlanks
 
  SKIP 1                 ; (nameTileBuffHi nameTileBuffLo) contains the address
                         ; of the nametable buffer for the tile we are sending to
                         ; the PPU from bitplane 1 (i.e. for tile number
                         ; sendingNameTile in bitplane 1)
+                        ;
+                        ; This variable is saved by the NMI handler so the
+                        ; buffers can be cleared across multiple VBlanks
 
 .nmiBitplane8
 
@@ -4768,7 +4780,7 @@ ENDIF
                         ;         for the Equip Ship screen
                         ;
                         ;   * 3 = the small Elite logo has been sent to the PPU
-                        ;         for the Save and load screen
+                        ;         for the Save and Load screen
                         ;
                         ;   * 245 = the inventory icon image has been sent to
                         ;           the PPU for the Market Price screen
@@ -5130,11 +5142,17 @@ ENDIF
                         ; of the pattern buffer for the pattern we are sending
                         ; to the PPU from bitplane 0 (i.e. for pattern number
                         ; sendingPattern in bitplane 0)
+                        ;
+                        ; This variable is saved by the NMI handler so the
+                        ; buffers can be cleared across multiple VBlanks
 
  SKIP 1                 ; (patternBufferHi patternBufferLo) contains the address
                         ; of the pattern buffer for the pattern we are sending
                         ; to the PPU from bitplane 1 (i.e. for pattern number
                         ; sendingPattern in bitplane 1)
+                        ;
+                        ; This variable is saved by the NMI handler so the
+                        ; buffers can be cleared across multiple VBlanks
 
 .nameTileBuffHi
 
@@ -5142,11 +5160,17 @@ ENDIF
                         ; of the nametable buffer for the tile we are sending to
                         ; the PPU from bitplane 0 (i.e. for tile number
                         ; sendingNameTile in bitplane 0)
+                        ;
+                        ; This variable is saved by the NMI handler so the
+                        ; buffers can be cleared across multiple VBlanks
 
  SKIP 1                 ; (nameTileBuffHi nameTileBuffLo) contains the address
                         ; of the nametable buffer for the tile we are sending to
                         ; the PPU from bitplane 1 (i.e. for tile number
                         ; sendingNameTile in bitplane 1)
+                        ;
+                        ; This variable is saved by the NMI handler so the
+                        ; buffers can be cleared across multiple VBlanks
 
  SKIP 4                 ; These bytes appear to be unused
 

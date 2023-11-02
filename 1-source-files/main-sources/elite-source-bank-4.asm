@@ -1934,7 +1934,8 @@ ENDIF
 ;       Name: glassesImage
 ;       Type: Variable
 ;   Category: Status
-;    Summary: Packed image data for the glasses that the commander can wear
+;    Summary: Packed image data for the glasses, earrings and medallion that the
+;             commander can wear
 ;
 ; ******************************************************************************
 
@@ -2397,7 +2398,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Save and load
 ;    Summary: Pattern numbers in the smallLogoImage table for the sprites that
-;             make up the small Elite logo on the save and load screen
+;             make up the small Elite logo on the Save and Load screen
 ;
 ; ******************************************************************************
 
@@ -2546,7 +2547,7 @@ ENDIF
 .rank2
 
                         ; By the time we get here, X contains our combat rank,
-                        ; from 1 for harmless to 9 for Elite
+                        ; from 1 for Harmless to 9 for Elite
 
  DEX                    ; Decrement our rank in X into the range 0 to 8
 
