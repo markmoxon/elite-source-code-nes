@@ -15154,7 +15154,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: RUTOK_LO
+;       Name: rutokLo
 ;       Type: Variable
 ;   Category: Text
 ;    Summary: Address lookup table for the RUTOK text token table in three
@@ -15162,7 +15162,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.RUTOK_LO
+.rutokLo
 
  EQUB LO(RUTOK)         ; English
 
@@ -15174,7 +15174,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: RUTOK_HI
+;       Name: rutokHi
 ;       Type: Variable
 ;   Category: Text
 ;    Summary: Address lookup table for the RUTOK text token table in three
@@ -15182,7 +15182,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.RUTOK_HI
+.rutokHi
 
  EQUB HI(RUTOK)         ; English
 
@@ -15233,9 +15233,9 @@ ENDIF
 
  LDY languageIndex      ; Set Y to the chosen language
 
- LDA RUTOK_LO,Y         ; Set V(1 0) to the address of the RUTOK table for the
+ LDA rutokLo,Y          ; Set V(1 0) to the address of the RUTOK table for the
  STA V                  ; chosen language
- LDA RUTOK_HI,Y
+ LDA rutokHi,Y
  STA V+1
 
  BNE DTEN               ; Call DTEN to print token number X from the RUTOK
@@ -16528,7 +16528,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: RUPLA_LO
+;       Name: ruplaLo
 ;       Type: Variable
 ;   Category: Text
 ;    Summary: Address lookup table for the RUPLA text token table in three
@@ -16536,7 +16536,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.RUPLA_LO
+.ruplaLo
 
  EQUB LO(RUPLA - 1)     ; English
 
@@ -16548,7 +16548,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: RUPLA_HI
+;       Name: ruplaHi
 ;       Type: Variable
 ;   Category: Text
 ;    Summary: Address lookup table for the RUPLA text token table in three
@@ -16556,7 +16556,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.RUPLA_HI
+.ruplaHi
 
  EQUB HI(RUPLA - 1)     ; English
 
@@ -16568,7 +16568,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: RUGAL_LO
+;       Name: rugalLo
 ;       Type: Variable
 ;   Category: Text
 ;    Summary: Address lookup table for the RUGAL text token table in three
@@ -16576,7 +16576,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.RUGAL_LO
+.rugalLo
 
  EQUB LO(RUGAL - 1)     ; English
 
@@ -16588,7 +16588,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: RUGAL_HI
+;       Name: rugalHi
 ;       Type: Variable
 ;   Category: Text
 ;    Summary: Address lookup table for the RUGAL text token table in three
@@ -16596,7 +16596,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.RUGAL_HI
+.rugalHi
 
  EQUB HI(RUGAL - 1)     ; English
 
@@ -16667,14 +16667,14 @@ ENDIF
 
  LDX languageIndex      ; Set X to the index of the chosen language
 
- LDA RUPLA_LO,X         ; Set SC(1 0) to the address of the RUPLA table for the
+ LDA ruplaLo,X          ; Set SC(1 0) to the address of the RUPLA table for the
  STA SC                 ; chosen language, minus 1 (i.e. RUPLA-1, RUPLA_DE-1
- LDA RUPLA_HI,X         ; or RUPLA_FR-1)
+ LDA ruplaHi,X          ; or RUPLA_FR-1)
  STA SC+1
 
- LDA RUGAL_LO,X         ; Set SC2(1 0) to the address of the RUGAL table for the
+ LDA rugalLo,X          ; Set SC2(1 0) to the address of the RUGAL table for the
  STA SC2                ; chosen language, minus 1 (i.e. RUGAL-1, RUGAL_DE-1
- LDA RUGAL_HI,X         ; or RUGAL_FR-1)
+ LDA rugalHi,X          ; or RUGAL_FR-1)
  STA SC2+1
 
  LDY NRU,X              ; Set Y as a loop counter as we work our way through the

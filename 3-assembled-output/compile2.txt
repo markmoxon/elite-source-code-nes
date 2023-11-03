@@ -45985,12 +45985,12 @@ End macro CHAR
      B0CB   00
      B0CC   00
      B0CD   00
-.RUTOK_LO
+.rutokLo
      B0CE   DF
      B0CF   60
      B0D0   CF
      B0D1   72
-.RUTOK_HI
+.rutokHi
      B0D2   8B
      B0D3   97
      B0D4   A1
@@ -46457,22 +46457,22 @@ End macro SETUP_PPU_FOR_ICON_BAR
      B3CF   C9 40      CMP #&40
      B3D1   D0 F1      BNE &B3C4
      B3D3   60         RTS
-.RUPLA_LO
+.ruplaLo
      B3D4   B0
      B3D5   31
      B3D6   A0
      B3D7   43
-.RUPLA_HI
+.ruplaHi
      B3D8   8B
      B3D9   97
      B3DA   A1
      B3DB   AB
-.RUGAL_LO
+.rugalLo
      B3DC   C7
      B3DD   48
      B3DE   B7
      B3DF   5A
-.RUGAL_HI
+.rugalHi
      B3E0   8B
      B3E1   97
      B3E2   A1
