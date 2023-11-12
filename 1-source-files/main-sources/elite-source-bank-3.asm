@@ -7187,7 +7187,7 @@ ENDIF
  EQUB 13                ; 8  = Status Mode
  EQUB  9                ; 9  = Equip Ship
  EQUB  6                ; 10 = Market Price
- EQUB 16                ; 11 = Save and load
+ EQUB 16                ; 11 = Save and Load
  EQUB  3                ; 12 = Short-range Chart
  EQUB  3                ; 13 = Long-range Chart
  EQUB  2                ; 14 = Unused
@@ -7215,7 +7215,7 @@ ENDIF
  EQUB 14                ; 8  = Status Mode
  EQUB  9                ; 9  = Equip Ship
  EQUB  7                ; 10 = Market Price
- EQUB 17                ; 11 = Save and load
+ EQUB 17                ; 11 = Save and Load
  EQUB  3                ; 12 = Short-range Chart
  EQUB  3                ; 13 = Long-range Chart
  EQUB  2                ; 14 = Unused
@@ -7243,7 +7243,7 @@ ENDIF
  EQUB 15                ; 8  = Status Mode
  EQUB  9                ; 9  = Equip Ship
  EQUB  8                ; 10 = Market Price
- EQUB 18                ; 11 = Save and load
+ EQUB 18                ; 11 = Save and Load
  EQUB  3                ; 12 = Short-range Chart
  EQUB  3                ; 13 = Long-range Chart
  EQUB  2                ; 14 = Unused

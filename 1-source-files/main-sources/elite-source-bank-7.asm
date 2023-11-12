@@ -3378,7 +3378,7 @@ ENDIF
 
  JSR AutoPlayDemo       ; Bit 7 of autoPlayDemo is set, so call AutoPlayDemo to
                         ; automatically play the demo using the controller key
-                        ; presses in the autoplayKeys tables
+                        ; presses in the autoPlayKeys tables
 
 .inmi1
 
@@ -9744,7 +9744,7 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: autoplayKeys1_EN
+;       Name: autoPlayKeys1_EN
 ;       Type: Variable
 ;   Category: Combat demo
 ;    Summary: Auto-play commands for the first part of the auto-play combat demo
@@ -9752,7 +9752,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.autoplayKeys1_EN
+.autoPlayKeys1_EN
 
                         ; At this point the we are at the title screen, which
                         ; will show the rotating Cobra Mk III before starting
@@ -9889,13 +9889,13 @@ ENDIF
  EQUB %00000000         ; (i.e. do nothing until the missile has locked onto a
  EQUW MSTG              ; target)
 
- EQUB $C0               ; Switch to the autoplayKeys2 table in the next VBlank
+ EQUB $C0               ; Switch to the autoPlayKeys2 table in the next VBlank
                         ; to move on to the second part of the auto-play demo,
                         ; which demonstrates the game itself
 
 ; ******************************************************************************
 ;
-;       Name: autoplayKeys1_DE
+;       Name: autoPlayKeys1_DE
 ;       Type: Variable
 ;   Category: Combat demo
 ;    Summary: Auto-play commands for the first part of the auto-play combat demo
@@ -9903,7 +9903,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.autoplayKeys1_DE
+.autoPlayKeys1_DE
 
                         ; At this point the we are at the title screen, which
                         ; will show the rotating Cobra Mk III before starting
@@ -10038,13 +10038,13 @@ ENDIF
  EQUB %00000000         ; (i.e. do nothing until the missile has locked onto a
  EQUW MSTG              ; target)
 
- EQUB $C0               ; Switch to the autoplayKeys2 table in the next VBlank
+ EQUB $C0               ; Switch to the autoPlayKeys2 table in the next VBlank
                         ; to move on to the second part of the auto-play demo,
                         ; which demonstrates the game itself
 
 ; ******************************************************************************
 ;
-;       Name: autoplayKeys1_FR
+;       Name: autoPlayKeys1_FR
 ;       Type: Variable
 ;   Category: Combat demo
 ;    Summary: Auto-play commands for the first part of the auto-play combat demo
@@ -10052,7 +10052,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.autoplayKeys1_FR
+.autoPlayKeys1_FR
 
                         ; At this point the we are at the title screen, which
                         ; will show the rotating Cobra Mk III before starting
@@ -10189,13 +10189,13 @@ ENDIF
  EQUB %00000000         ; (i.e. do nothing until the missile has locked onto a
  EQUW MSTG              ; target)
 
-                        ; Fall through into the autoplayKeys2 table to move on
+                        ; Fall through into the autoPlayKeys2 table to move on
                         ; to the second part of the auto-play demo, which
                         ; demonstrates the game itself
 
 ; ******************************************************************************
 ;
-;       Name: autoplayKeys2
+;       Name: autoPlayKeys2
 ;       Type: Variable
 ;   Category: Combat demo
 ;    Summary: Auto-play commands for the second part of the auto-play demo
@@ -10203,7 +10203,7 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.autoplayKeys2
+.autoPlayKeys2
 
  EQUB $89               ; Do nothing for 9 * 4 = 36 VBlanks
 
@@ -10861,21 +10861,21 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Combat demo
 ;    Summary: Automatically play the demo using the auto-play commands from the
-;             autoplayKeys tables
+;             autoPlayKeys tables
 ;
 ; ------------------------------------------------------------------------------
 ;
 ; The AutoPlayDemo routine is called every NMI while bit 7 of autoPlayDemo is
 ; set. It auto-plays the combat demo by "pressing" buttons automatically, taking
-; those button presses from auto-play commands in the relevant autoplayKeys
+; those button presses from auto-play commands in the relevant autoPlayKeys
 ; table.
 ;
 ; Specifically, the process starts with the auto-play commands from the chosen
-; language table (autoplayKeys_EN, autoplayKeys_DE or autoplayKeys_FR), and then
-; moves on to the auto-play commands in the autoplayKeys2 table.
+; language table (autoPlayKeys_EN, autoPlayKeys_DE or autoPlayKeys_FR), and then
+; moves on to the auto-play commands in the autoPlayKeys2 table.
 ;
-; The AutoPlayDemo routine processes one entry from the autoplayKeys table in
-; each VBlank. It works by fetching a byte from the autoplayKeys table (let's
+; The AutoPlayDemo routine processes one entry from the autoPlayKeys table in
+; each VBlank. It works by fetching a byte from the autoPlayKeys table (let's
 ; call it byte #1), and applying the following rules:
 ;
 ;   * If byte #1 has bit 7 clear:
@@ -10897,7 +10897,7 @@ ENDIF
 ;
 ;       * If byte #1 = $C0:
 ;
-;         * Switch to the autoplayKeys2 table and start processing commands from
+;         * Switch to the autoPlayKeys2 table and start processing commands from
 ;           there in the next VBlank
 ;
 ;       * Otherwise byte #1 is of the form $Cx where x is non-zero, so:
@@ -10948,7 +10948,7 @@ ENDIF
 ;   $C5 = press the Start button and do nothing for 22 VBlanks
 ;
 ; The button presses to be performed in the above commands are encoded in a
-; single byte that gets put into the autoplayKey variable. There is one bit for
+; single byte that gets put into the autoPlayKey variable. There is one bit for
 ; each button, with a set bit indicating that the button should be pressed, so
 ; when we say "press buttons in byte #1", then the buttons that are pressed are
 ; determined by bits 0 to 6 of byte #1.
@@ -10991,54 +10991,54 @@ ENDIF
 
 .auto1
 
- LDX autoplayRepeat     ; If autoplayRepeat is non-zero then this means a
+ LDX autoPlayRepeat     ; If autoPlayRepeat is non-zero then this means a
  BNE auto4              ; previous auto-play step has set a repeat action and
                         ; we still have some repeats to go, so jump to auto4
                         ; to decrement the repeat counter and press the buttons
-                        ; in autoplayKey for this VBlank
+                        ; in autoPlayKey for this VBlank
 
  LDY #0                 ; Set Y = 0 to use as an index when fetching auto-play
-                        ; bytes from the relevant autoplayKeys table
+                        ; bytes from the relevant autoPlayKeys table
 
- LDA (autoplayKeys),Y   ; Set A to byte #1 of this auto-play command
+ LDA (autoPlayKeys),Y   ; Set A to byte #1 of this auto-play command
 
  BMI auto5              ; If bit 7 of byte #1 is set, jump to auto5
 
                         ; If we get here then bit 7 of byte #1 is clear and A
                         ; contains byte #1
 
- STA autoplayKey        ; Set autoplayKey to byte #1 so we perform the button
+ STA autoPlayKey        ; Set autoPlayKey to byte #1 so we perform the button
                         ; presses in byte #1
 
  INY                    ; Set A to byte #2 of this auto-play command
- LDA (autoplayKeys),Y
+ LDA (autoPlayKeys),Y
 
  SEC                    ; Set the C flag so the addition below adds an extra 1,
-                        ; so autoplayKeys(1 0) gets incremented by 2 (as we have
+                        ; so autoPlayKeys(1 0) gets incremented by 2 (as we have
                         ; just processed two bytes)
 
  TAX                    ; Set X to byte #2, so this gets set as the number of
-                        ; repeats in autoplayRepeat
+                        ; repeats in autoPlayRepeat
 
 .auto2
 
  LDA #1                 ; Set A = 1 so the following adds 1 + C to the address
-                        ; in autoplayKeys(1 0), so we move the pointer to the
+                        ; in autoPlayKeys(1 0), so we move the pointer to the
                         ; byte we are processing next on by 1 + C bytes
 
 .auto3
 
- ADC autoplayKeys       ; Set autoplayKeys(1 0) = autoplayKeys(1 0) + 1 + C
- STA autoplayKeys
+ ADC autoPlayKeys       ; Set autoPlayKeys(1 0) = autoPlayKeys(1 0) + 1 + C
+ STA autoPlayKeys
  BCC auto4
- INC autoplayKeys+1
+ INC autoPlayKeys+1
 
 .auto4
 
- DEX                    ; Decrement the repeat counter in autoplayRepeat, as we
- STX autoplayRepeat     ; are about to press the buttons
+ DEX                    ; Decrement the repeat counter in autoPlayRepeat, as we
+ STX autoPlayRepeat     ; are about to press the buttons
 
- LDA autoplayKey        ; Set A to the buttons to be pressed in autoplayKey,
+ LDA autoPlayKey        ; Set A to the buttons to be pressed in autoPlayKey,
                         ; which has the following format:
                         ;
                         ;   * Bit 0 = right button
@@ -11051,31 +11051,31 @@ ENDIF
                         ;
                         ; Bit 7 is always clear
 
- ASL controller1Right   ; Set bit 7 of controller1Right to bit 0 of autoplayKey
+ ASL controller1Right   ; Set bit 7 of controller1Right to bit 0 of autoPlayKey
  LSR A                  ; to "press" the right button
  ROR controller1Right
 
- ASL controller1Left    ; Set bit 7 of controller1Left to bit 0 of autoplayKey
+ ASL controller1Left    ; Set bit 7 of controller1Left to bit 0 of autoPlayKey
  LSR A                  ; to "press" the left button
  ROR controller1Left
 
- ASL controller1Down    ; Set bit 7 of controller1Down to bit 0 of autoplayKey
+ ASL controller1Down    ; Set bit 7 of controller1Down to bit 0 of autoPlayKey
  LSR A                  ; to "press" the down button
  ROR controller1Down
 
- ASL controller1Up      ; Set bit 7 of controller1Up to bit 0 of autoplayKey
+ ASL controller1Up      ; Set bit 7 of controller1Up to bit 0 of autoPlayKey
  LSR A                  ; to "press" the up button
  ROR controller1Up
 
- ASL controller1Select  ; Set bit 7 of controller1Select to bit 0 of autoplayKey
+ ASL controller1Select  ; Set bit 7 of controller1Select to bit 0 of autoPlayKey
  LSR A                  ; to "press" the Select button
  ROR controller1Select
 
- ASL controller1B       ; Set bit 7 of controller1B to bit 0 of autoplayKey
+ ASL controller1B       ; Set bit 7 of controller1B to bit 0 of autoPlayKey
  LSR A                  ; to "press" the B button
  ROR controller1B
 
- ASL controller1A       ; Set bit 7 of controller1A to bit 0 of autoplayKey
+ ASL controller1A       ; Set bit 7 of controller1A to bit 0 of autoPlayKey
  LSR A                  ; to "press" the A button
  ROR controller1A
 
@@ -11103,15 +11103,15 @@ ENDIF
  ASL A                  ; Set A = A << 1, so A contains byte #1 << 2
 
  TAX                    ; Set X to byte #1 << 2, so this gets set as the number
-                        ; of repeats in autoplayRepeat when we jump up to auto2
+                        ; of repeats in autoPlayRepeat when we jump up to auto2
                         ; below (so this sets the number of repetitions to
                         ; byte #1 << 2, which is 4 * byte #1 (if we ignore bit 7
                         ; of byte #1)
 
 .auto6
 
- LDA #0                 ; Set autoplayKey = 0 so no buttons are pressed in the
- STA autoplayKey        ; next VBlank
+ LDA #0                 ; Set autoPlayKey = 0 so no buttons are pressed in the
+ STA autoPlayKey        ; next VBlank
 
  BEQ auto2              ; Jump to auto2 to process the button-pressing in this
                         ; VBlank (this BEQ is effectively a JMP as A is always
@@ -11127,7 +11127,7 @@ ENDIF
 
  BEQ auto13             ; If the result is zero then byte #1 must be $C0, so
                         ; jump to auto13 to switch to the auto-play commands in
-                        ; the autoplayKeys2 table, which we will start
+                        ; the autoPlayKeys2 table, which we will start
                         ; processing in the next NMI
 
                         ; If we get here then bits 6 and 7 of byte #1 are set
@@ -11137,18 +11137,18 @@ ENDIF
  PHA                    ; Store byte #1 << 2 on the stack
 
  INY                    ; Set A to byte #2 of this auto-play command
- LDA (autoplayKeys),Y
+ LDA (autoPlayKeys),Y
 
- STA autoplayKey        ; Set autoplayKey to byte #2 so we perform the button
+ STA autoPlayKey        ; Set autoPlayKey to byte #2 so we perform the button
                         ; presses in byte #2
 
  INY                    ; Set A to byte #3 of this auto-play command
- LDA (autoplayKeys),Y
+ LDA (autoPlayKeys),Y
 
  STA addr               ; Set the low byte of addr(1 0) to byte #3
 
  INY                    ; Set A to byte #4 of this auto-play command
- LDA (autoplayKeys),Y
+ LDA (autoPlayKeys),Y
 
  STA addr+1             ; Set the high byte of addr(1 0) to byte #3, so we now
                         ; have addr(1 0) = (byte #3 byte #4)
@@ -11162,7 +11162,7 @@ ENDIF
                         ; using LDA (addr),Y instead)
 
  LDX #1                 ; Set X = 1 this gets set as the number of repeats in
-                        ; autoplayRepeat when we jump up to auto2 below, so the
+                        ; autoPlayRepeat when we jump up to auto2 below, so the
                         ; command will do each button press just once before
                         ; re-checking the criteria in the next VBlank
 
@@ -11191,21 +11191,21 @@ ENDIF
  LDA (addr),Y           ; Set A = addr(1 0)
 
  BNE auto4              ; If addr(1 0) <> 0, jump to auto4 to do the button
-                        ; presses in byte #2 (which we put into autoplayKey
+                        ; presses in byte #2 (which we put into autoPlayKey
                         ; above), and because we have not updated the pointer
-                        ; in autoplayKeys(1 0), we will come back to this exact
+                        ; in autoPlayKeys(1 0), we will come back to this exact
                         ; same check in the next VBlank, and so on until the
                         ; condition changes and addr(1 0) = 0
 
                         ; If addr(1 0) = 0 then fall through into auto8 to
-                        ; advance the pointer in autoplayKeys(1 0) by 4, so in
+                        ; advance the pointer in autoPlayKeys(1 0) by 4, so in
                         ; the next VBlank, we move on to the next command after
                         ; byte #3
 
 .auto8
 
  LDA #4                 ; Set A = 4 and clear the C flag, so in the jump to
- CLC                    ; auto3, we advance the pointer in autoplayKeys(1 0) by
+ CLC                    ; auto3, we advance the pointer in autoPlayKeys(1 0) by
                         ; 4 and return from the subroutine
 
  BCC auto3              ; Jump to auto3 to advance the pointer and return from
@@ -11225,14 +11225,14 @@ ENDIF
  LDA (addr),Y           ; Set A = addr(1 0)
 
  BEQ auto4              ; If addr(1 0) = 0, jump to auto4 to do the button
-                        ; presses in byte #2 (which we put into autoplayKey
+                        ; presses in byte #2 (which we put into autoPlayKey
                         ; above), and because we have not updated the pointer
-                        ; in autoplayKeys(1 0), we will come back to this exact
+                        ; in autoPlayKeys(1 0), we will come back to this exact
                         ; same check in the next VBlank, and so on until the
                         ; condition changes and addr(1 0) <> 0
 
  BNE auto8              ; If addr(1 0) <> 0 then jump to auto8 to advance the
-                        ; pointer in autoplayKeys(1 0) by 4, so in the next
+                        ; pointer in autoPlayKeys(1 0) by 4, so in the next
                         ; VBlank, we move on to the next command after byte #3
                         ; (this BNE is effectively a JMP as we just passed
                         ; through a BEQ)
@@ -11253,14 +11253,14 @@ ENDIF
 
  BMI auto4              ; If bit 7 of addr(1 0) is set, jump to auto4 to do the
                         ; button presses in byte #2 (which we put into
-                        ; autoplayKey above), and because we have not updated
-                        ; the pointer in autoplayKeys(1 0), we will come back to
+                        ; autoPlayKey above), and because we have not updated
+                        ; the pointer in autoPlayKeys(1 0), we will come back to
                         ; this exact same check in the next VBlank, and so on
                         ; until the condition changes and bit 7 of addr(1 0) is
                         ; clear
 
  BPL auto8              ; If bit 7 of addr(1 0) is clear then jump to auto8 to
-                        ; advance the pointer in autoplayKeys(1 0) by 4, so in
+                        ; advance the pointer in autoPlayKeys(1 0) by 4, so in
                         ; the next VBlank, we move on to the next command after
                         ; byte #3 (this BPL is effectively a JMP as we just
                         ; passed through a BMI)
@@ -11279,15 +11279,15 @@ ENDIF
  LDA (addr),Y           ; Set A = addr(1 0)
 
  BMI auto8              ; If bit 7 of addr(1 0) is set then jump to auto8 to
-                        ; advance the pointer in autoplayKeys(1 0) by 4, so in
+                        ; advance the pointer in autoPlayKeys(1 0) by 4, so in
                         ; the next VBlank, we move on to the next command after
                         ; byte #3 (this BPL is effectively a JMP as we just
                         ; passed through a BMI)
 
  JMP auto4              ; Otherwise bit 7 of addr(1 0) is clear, so jump to
                         ; auto4 to do the button presses in byte #2 (which we
-                        ; put into autoplayKey above), and because we have not
-                        ; updated the pointer in autoplayKeys(1 0), we will come
+                        ; put into autoPlayKey above), and because we have not
+                        ; updated the pointer in autoPlayKeys(1 0), we will come
                         ; back to this exact same check in the next VBlank, and
                         ; so on until the condition changes and bit 7 of
                         ; addr(1 0) is set
@@ -11301,16 +11301,16 @@ ENDIF
  STA controller1Start   ; Start button being held down for two VBlanks
 
  LDX #22                ; Set X = 22, so this gets set as the number of repeats
-                        ; autoplayRepeat when we jump to auto2 via auto6 below
+                        ; autoPlayRepeat when we jump to auto2 via auto6 below
                         ; (so this ensures we do nothing for 22 VBlanks after
                         ; pressing the Start button)
 
  CLC                    ; Clear the C flag so the jump to auto2 via auto6 only
-                        ; adds one to the pointer in autoplayKeys(1 0), so we
+                        ; adds one to the pointer in autoPlayKeys(1 0), so we
                         ; move on to the command after byte #1 when we have
                         ; completed the 22 VBlanks of inactivity
 
- BCC auto6              ; Jump to auto6 to set autoplayKey = 0 so no buttons are
+ BCC auto6              ; Jump to auto6 to set autoPlayKey = 0 so no buttons are
                         ; pressed in the following VBlanks, and move on to auto2
                         ; to process the button-pressing in this VBlank (this
                         ; BCC is effectively a JMP as we just cleared the C
@@ -11319,14 +11319,14 @@ ENDIF
 .auto13
 
                         ; If we get here then byte #1 is $C0 and we need to
-                        ; switch to the auto-play commands in the autoplayKeys2
+                        ; switch to the auto-play commands in the autoPlayKeys2
                         ; table, which we will start processing in the next NMI
 
- LDA #HI(autoplayKeys2) ; Set autoplayKeys(1 0) = autoplayKeys2
- STA autoplayKeys+1     ;
- LDA #LO(autoplayKeys2) ; So the next time we call AutoPlayDemo, in the next
- STA autoplayKeys       ; call to the NMI handler at the next VBlank, we will
-                        ; start pulling auto-play commands from autoplayKeys2
+ LDA #HI(autoPlayKeys2) ; Set autoPlayKeys(1 0) = autoPlayKeys2
+ STA autoPlayKeys+1     ;
+ LDA #LO(autoPlayKeys2) ; So the next time we call AutoPlayDemo, in the next
+ STA autoPlayKeys       ; call to the NMI handler at the next VBlank, we will
+                        ; start pulling auto-play commands from autoPlayKeys2
                         ; instead of the language-specific table we've been
                         ; using up to this point
 

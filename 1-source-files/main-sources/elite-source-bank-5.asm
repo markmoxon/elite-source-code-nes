@@ -2556,7 +2556,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Combat demo
 ;    Summary: Set up the NMI handler to automatically play the demo using the
-;             controller key presses in the autoplayKeys table
+;             controller key presses in the autoPlayKeys table
 ;
 ; ******************************************************************************
 
@@ -2569,28 +2569,28 @@ ENDIF
                         ; setting the random number seeds to a known value so
                         ; the demo always runs in the same way
 
- LDX languageIndex      ; Set autoplayKeys(1 0) to the chosen language's entry
- LDA autoplayKeys1Lo,X  ; from the (autoplayKeys1Hi autoplayKeys1Lo) tables
- STA autoplayKeys
- LDA autoplayKeys1Hi,X
- STA autoplayKeys+1
+ LDX languageIndex      ; Set autoPlayKeys(1 0) to the chosen language's entry
+ LDA autoPlayKeys1Lo,X  ; from the (autoPlayKeys1Hi autoPlayKeys1Lo) tables
+ STA autoPlayKeys
+ LDA autoPlayKeys1Hi,X
+ STA autoPlayKeys+1
 
- LDA #0                 ; Set autoplayKey = 0 to reset the current key being
- STA autoplayKey        ; "pressed" in the auto-play
+ LDA #0                 ; Set autoPlayKey = 0 to reset the current key being
+ STA autoPlayKey        ; "pressed" in the auto-play
 
- STA autoplayRepeat     ; Set autoplayRepeat = 0 to reset the number of repeats
+ STA autoPlayRepeat     ; Set autoPlayRepeat = 0 to reset the number of repeats
                         ; in the auto-play (as otherwise the first button press
                         ; would start repeating)
 
  LDX #%10000000         ; Set bit 7 of autoPlayDemo so the NMI handler will play
  STX autoPlayDemo       ; the demo automatically using the controller key
-                        ; presses in the autoplayKeys tables
+                        ; presses in the autoPlayKeys tables
 
  RTS                    ; Return from the subroutine
 
 ; ******************************************************************************
 ;
-;       Name: autoplayKeys1Lo
+;       Name: autoPlayKeys1Lo
 ;       Type: Variable
 ;   Category: Combat demo
 ;    Summary: Low byte of the address of the auto-play key table for each
@@ -2598,20 +2598,20 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.autoplayKeys1Lo
+.autoPlayKeys1Lo
 
- EQUB LO(autoplayKeys1_EN)      ; English
+ EQUB LO(autoPlayKeys1_EN)      ; English
 
- EQUB LO(autoplayKeys1_DE)      ; German
+ EQUB LO(autoPlayKeys1_DE)      ; German
 
- EQUB LO(autoplayKeys1_FR)      ; French
+ EQUB LO(autoPlayKeys1_FR)      ; French
 
- EQUB LO(autoplayKeys1_EN)      ; There is no fourth language, so this byte is
+ EQUB LO(autoPlayKeys1_EN)      ; There is no fourth language, so this byte is
                                 ; ignored
 
 ; ******************************************************************************
 ;
-;       Name: autoplayKeys1Hi
+;       Name: autoPlayKeys1Hi
 ;       Type: Variable
 ;   Category: Combat demo
 ;    Summary: High byte of the address of the auto-play key table for each
@@ -2619,15 +2619,15 @@ ENDIF
 ;
 ; ******************************************************************************
 
-.autoplayKeys1Hi
+.autoPlayKeys1Hi
 
- EQUB HI(autoplayKeys1_EN)      ; English
+ EQUB HI(autoPlayKeys1_EN)      ; English
 
- EQUB HI(autoplayKeys1_DE)      ; German
+ EQUB HI(autoPlayKeys1_DE)      ; German
 
- EQUB HI(autoplayKeys1_FR)      ; French
+ EQUB HI(autoPlayKeys1_FR)      ; French
 
- EQUB HI(autoplayKeys1_EN)      ; There is no fourth language, so this byte is
+ EQUB HI(autoPlayKeys1_EN)      ; There is no fourth language, so this byte is
                                 ; ignored
 
 ; ******************************************************************************

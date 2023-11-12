@@ -14490,9 +14490,7 @@ ENDIF
 ;
 ; Arguments:
 ;
-;   K%                  The value of the second counter (we start the demo on
-;                       auto-play once all three counters have run down without
-;                       a choice being made)
+;   K%                  The number of the language to highlight
 ;
 ;   K%+1                The value of the third counter (we start the demo on
 ;                       auto-play once all three counters have run down without

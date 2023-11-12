@@ -273,7 +273,7 @@
      00F8
 .characterEnd
      00F9
-.autoplayKeys
+.autoPlayKeys
      00FA
      00FC
 .soundAddr
@@ -1346,9 +1346,9 @@ Zero page variables from &0  to &100
      04BA
 .controller1Right03
      04BB
-.autoplayKey
+.autoPlayKey
      04BC
-.autoplayRepeat
+.autoPlayRepeat
      04BD
 .patternBufferHi
      04BE
@@ -6791,7 +6791,7 @@ End macro SETUP_PPU_FOR_ICON_BAR
      E5AD   5E
      E5AE   3F
      E5AF   3E
-.autoplayKeys1_EN
+.autoPlayKeys1_EN
      E5B0   9F
      E5B1   C2
      E5B2   00
@@ -6870,7 +6870,7 @@ End macro SETUP_PPU_FOR_ICON_BAR
      E5FE   00
      E5FF   01 04
      E601   C0
-.autoplayKeys1_DE
+.autoPlayKeys1_DE
      E602   9F
      E603   C2
      E604   00
@@ -6948,7 +6948,7 @@ End macro SETUP_PPU_FOR_ICON_BAR
      E64F   00
      E650   01 04
      E652   C0
-.autoplayKeys1_FR
+.autoPlayKeys1_FR
      E653   9F
      E654   C2
      E655   00
@@ -7026,7 +7026,7 @@ End macro SETUP_PPU_FOR_ICON_BAR
      E6A0   C3
      E6A1   00
      E6A2   01 04
-.autoplayKeys2
+.autoPlayKeys2
      E6A4   89
      E6A5   10
      E6A6   03
@@ -27527,12 +27527,12 @@ End macro SETUP_PPU_FOR_ICON_BAR
      BF5E   A2 80      LDX #&80
      BF60   8E EE 03   STX &03EE
      BF63   60         RTS
-.autoplayKeys1Lo
+.autoPlayKeys1Lo
      BF64   B0
      BF65   02
      BF66   53
      BF67   B0
-.autoplayKeys1Hi
+.autoPlayKeys1Hi
      BF68   E5
      BF69   E6
      BF6A   E6

@@ -951,7 +951,7 @@ ENDIF
                         ;   8  = $x8 = Status Mode
                         ;   9  = $x9 = Equip Ship
                         ;   10 = $xA = Market Price
-                        ;   11 = $xB = Save and load
+                        ;   11 = $xB = Save and Load
                         ;   12 = $xC = Short-range Chart
                         ;   13 = $xD = Long-range Chart
                         ;   14 = $xE = Unused
@@ -1040,10 +1040,10 @@ ENDIF
                         ;         Normal and highlight fonts loaded, no
                         ;         dashboard
                         ;
-                        ;   $8B = Save and load
+                        ;   $8B = Save and Load
                         ;         No fonts loaded, no dashboard
                         ;
-                        ;   $BB = Save and load
+                        ;   $BB = Save and Load
                         ;         Normal and highlight fonts loaded, special
                         ;         colours for the normal font, no dashboard
                         ;
@@ -1689,14 +1689,14 @@ ENDIF
  SKIP 1                 ; The number of the character beyond the end of the
                         ; printable character set for the chosen language
 
-.autoplayKeys
+.autoPlayKeys
 
  SKIP 2                 ; The address of the table containing the key presses to
                         ; apply when auto-playing the demo
                         ;
                         ; The address is either that of the chosen language's
-                        ; autoplayKeys1 table (for the first part of the
-                        ; auto-play demo, or the autoplayKeys2 table (for the
+                        ; autoPlayKeys1 table (for the first part of the
+                        ; auto-play demo, or the autoPlayKeys2 table (for the
                         ; second part)
 
  SKIP 2                 ; These bytes appear to be unused
@@ -3929,7 +3929,7 @@ ENDIF
                         ;
                         ;   * Bit 7 set = play the demo automatically using
                         ;                 the controller key presses in the
-                        ;                 autoplayKeys table
+                        ;                 autoPlayKeys table
 
 .bitplaneFlags
 
@@ -5114,7 +5114,7 @@ ENDIF
                         ; So bit 7 is the right button state from four VBlanks
                         ; ago, bit 6 is from five VBlanks ago, and so on
 
-.autoplayKey
+.autoPlayKey
 
  SKIP 1                 ; Stores the buttons to be automatically pressed during
                         ; auto-play
@@ -5131,7 +5131,7 @@ ENDIF
                         ;
                         ; Bit 7 is always clear
 
-.autoplayRepeat
+.autoPlayRepeat
 
  SKIP 1                 ; Stores the number of times a step should be repeated
                         ; during auto-play
