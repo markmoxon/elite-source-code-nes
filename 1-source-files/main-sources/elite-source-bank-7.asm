@@ -6171,7 +6171,6 @@ ENDIF
 ;
 ;   YC                  The text row
 ;
-;
 ; Returns:
 ;
 ;   SC(1 0)             The address in nametable buffer 0 for the start of the
@@ -13095,7 +13094,6 @@ ENDIF
 ;
 ;   X                   The type of the ship that was killed
 ;
-;
 ; Returns:
 ;
 ;   C flag              If set, the addition overflowed
@@ -19175,9 +19173,6 @@ ENDIF
 ; reduce X down to the mid-point, 128. This is the equivalent of having a roll
 ; or pitch in the right half of the indicator, when decreasing the roll or pitch
 ; should jump us straight to the mid-point.
-;
-; Other entry points:
-;
 ;
 ; ******************************************************************************
 

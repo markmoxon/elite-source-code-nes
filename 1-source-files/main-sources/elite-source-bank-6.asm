@@ -6873,7 +6873,6 @@ ENDIF
 ;
 ; Returns:
 ;
-;
 ;   SC(1 0)             The address of the tile at the left end of the next
 ;                       indicator down
 ;

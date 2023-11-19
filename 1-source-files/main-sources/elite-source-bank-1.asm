@@ -9320,7 +9320,6 @@ ENDIF
 ;
 ;   Y                   The y-coordinate of the bottom row of the new sun
 ;
-;
 ; Returns:
 ;
 ;   A                   The half-width of the sun on the line specified in V

@@ -23628,7 +23628,6 @@ ENDIF
 ; message of encouragement if the kill total is a multiple of 256, and then
 ; make a nearby explosion sound.
 ;
-;
 ; ******************************************************************************
 
 .EXNO2
