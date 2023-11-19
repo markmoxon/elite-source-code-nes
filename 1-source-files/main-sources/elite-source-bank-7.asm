@@ -16565,6 +16565,10 @@ ENDIF
 ;
 ;   C flag              Set if the result >= 1024, clear otherwise
 ;
+; Other entry points:
+;
+;   PL21S-1             Set the C flag and return from the subroutine
+;
 ; ******************************************************************************
 
 .PL21S
@@ -16899,6 +16903,10 @@ ENDIF
 ; nametable or pattern tables.
 ;
 ; The algorithm is described in the UnpackToRAM routine.
+;
+; Other entry points:
+;
+;   UnpackToPPU+2       Unpack data from offset Y onwards
 ;
 ; ******************************************************************************
 
