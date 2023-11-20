@@ -19182,6 +19182,11 @@ ENDIF
 ; or pitch in the right half of the indicator, when decreasing the roll or pitch
 ; should jump us straight to the mid-point.
 ;
+; Other entry points:
+;
+;   djd1                Auto-recentre the value in X, if keyboard auto-recentre
+;                       is configured
+;
 ; ******************************************************************************
 
 .REDU2

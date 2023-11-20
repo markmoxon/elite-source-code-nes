@@ -1480,6 +1480,10 @@ ENDIF
 ;
 ;   * Charge shields and energy banks (every 7 iterations of the main loop)
 ;
+; Other entry points:
+;
+;   MA18                Entry point for part 13 of the main flight loop
+;
 ; ******************************************************************************
 
 .MA18
@@ -1941,6 +1945,12 @@ ENDIF
 ;   Category: Flight
 ;    Summary: Perform an altitude check with the planet, ending the game if we
 ;             hit the ground
+;
+; ------------------------------------------------------------------------------
+;
+; Other entry points:
+;
+;   MA232               Contains an RTS
 ;
 ; ******************************************************************************
 
@@ -21878,6 +21888,11 @@ ENDIF
 ;   * Apply tactics to ships with AI enabled (by calling the TACTICS routine)
 ;
 ;   * Remove the ship from the scanner, so we can move it
+;
+; Other entry points:
+;
+;   MV30                Move the ship in space but without tidying the
+;                       orientation vectors or applying tactics
 ;
 ; ******************************************************************************
 

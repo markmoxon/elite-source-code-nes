@@ -5257,6 +5257,9 @@ ENDIF
 ;   LL70+1              Contains an RTS (as the first byte of an LDA
 ;                       instruction)
 ;
+;   LL66                A re-entry point into the ship-drawing routine, used by
+;                       the LL62 routine to store 128 - (U R) on the XX3 heap
+;
 ; ******************************************************************************
 
 .LL60
@@ -6950,6 +6953,12 @@ ENDIF
 ;  Deep dive: Drawing explosion clouds
 ;             Generating random numbers
 ;
+; ------------------------------------------------------------------------------
+;
+; Other entry points:
+;
+;   EXS1                Set (A X) = (A R) +/- random * cloud size
+;
 ; ******************************************************************************
 
 .EX2
@@ -7866,6 +7875,10 @@ ENDIF
 ;                         * 64 for a full ellipse (a crater)
 ;
 ;   CNT2                The starting segment for drawing the half-ellipse
+;
+; Other entry points:
+;
+;   PL40                Contains an RTS
 ;
 ; ******************************************************************************
 
@@ -9323,6 +9336,10 @@ ENDIF
 ; Returns:
 ;
 ;   A                   The half-width of the sun on the line specified in V
+;
+; Other entry points:
+;
+;   RTS2                Contains an RTS
 ;
 ; ******************************************************************************
 
