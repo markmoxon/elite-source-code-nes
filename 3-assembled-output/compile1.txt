@@ -11530,6 +11530,7 @@ End macro SETUP_PPU_FOR_ICON_BAR
      80B6   00
      80B7   02
      80B8   00
+.SHIP_MISSILE_VERTICES
 Macro VERTEX:
      80B9   00
      80BA   00
@@ -11885,6 +11886,7 @@ End macro FACE
      81B4   00
      81B5   00
      81B6   06
+.SHIP_CORIOLIS_VERTICES
 Macro VERTEX:
      81B7   A0
      81B8   00
@@ -12286,6 +12288,7 @@ End macro FACE
      82D0   00
      82D1   04
      82D2   00
+.SHIP_ESCAPE_POD_VERTICES
 Macro VERTEX:
      82D3   07
      82D4   00
@@ -12399,6 +12402,7 @@ End macro FACE
      8324   00
      8325   03
      8326   00
+.SHIP_PLATE_VERTICES
 Macro VERTEX:
      8327   0F
      8328   16
@@ -12482,6 +12486,7 @@ End macro FACE
      8364   00
      8365   02
      8366   00
+.SHIP_CANISTER_VERTICES
 Macro VERTEX:
      8367   18
      8368   10
@@ -12715,6 +12720,7 @@ End macro FACE
      840C   00
      840D   02
      840E   00
+.SHIP_BOULDER_VERTICES
 Macro VERTEX:
      840F   12
      8410   25
@@ -12942,6 +12948,7 @@ End macro FACE
      84AE   00
      84AF   01
      84B0   00
+.SHIP_ASTEROID_VERTICES
 Macro VERTEX:
      84B1   00
      84B2   50
@@ -13245,6 +13252,7 @@ End macro FACE
      8584   00
      8585   05
      8586   00
+.SHIP_SPLINTER_VERTICES
 Macro VERTEX:
      8587   18
      8588   19
@@ -13321,6 +13329,7 @@ End macro FACE
      85C0   00
      85C1   02
      85C2   00
+.SHIP_SHUTTLE_VERTICES
 Macro VERTEX:
      85C3   00
      85C4   11
@@ -13752,6 +13761,7 @@ End macro FACE
      86F2   01
      86F3   02
      86F4   00
+.SHIP_TRANSPORTER_VERTICES
 Macro VERTEX:
      86F5   00
      86F6   0A
@@ -14429,6 +14439,7 @@ End macro FACE
      88D4   01
      88D5   01
      88D6   13
+.SHIP_COBRA_MK_3_VERTICES
 Macro VERTEX:
      88D7   20
      88D8   00
@@ -14980,6 +14991,7 @@ End macro FACE
      8A5C   00
      8A5D   00
      8A5E   1B
+.SHIP_PYTHON_VERTICES
 Macro VERTEX:
      8A5F   00
      8A60   00
@@ -15323,6 +15335,7 @@ End macro FACE
      8B4E   00
      8B4F   00
      8B50   1C
+.SHIP_BOA_VERTICES
 Macro VERTEX:
      8B51   00
      8B52   00
@@ -15670,6 +15683,7 @@ End macro FACE
      8C44   00
      8C45   01
      8C46   3F
+.SHIP_ANACONDA_VERTICES
 Macro VERTEX:
      8C47   00
      8C48   07
@@ -16033,6 +16047,7 @@ End macro FACE
      8D46   00
      8D47   01
      8D48   02
+.SHIP_ROCK_HERMIT_VERTICES
 Macro VERTEX:
      8D49   00
      8D4A   50
@@ -16336,6 +16351,7 @@ End macro FACE
      8E1C   00
      8E1D   01
      8E1E   11
+.SHIP_VIPER_VERTICES
 Macro VERTEX:
      8E1F   00
      8E20   00
@@ -16639,6 +16655,7 @@ End macro FACE
      8EF6   00
      8EF7   02
      8EF8   10
+.SHIP_SIDEWINDER_VERTICES
 Macro VERTEX:
      8EF9   20
      8EFA   00
@@ -16872,6 +16889,7 @@ End macro FACE
      8F9E   01
      8F9F   02
      8FA0   12
+.SHIP_MAMBA_VERTICES
 Macro VERTEX:
      8FA1   00
      8FA2   00
@@ -17291,6 +17309,7 @@ End macro FACE
      90CC   00
      90CD   01
      90CE   10
+.SHIP_KRAIT_VERTICES
 Macro VERTEX:
      90CF   00
      90D0   00
@@ -17610,6 +17629,7 @@ End macro FACE
      91B2   00
      91B3   02
      91B4   10
+.SHIP_ADDER_VERTICES
 Macro VERTEX:
      91B5   12
      91B6   00
@@ -18039,6 +18059,7 @@ End macro FACE
      92E2   00
      92E3   03
      92E4   10
+.SHIP_GECKO_VERTICES
 Macro VERTEX:
      92E5   0A
      92E6   04
@@ -18312,6 +18333,7 @@ End macro FACE
      93A6   00
      93A7   02
      93A8   12
+.SHIP_COBRA_MK_1_VERTICES
 Macro VERTEX:
      93A9   12
      93AA   01
@@ -18589,6 +18611,7 @@ End macro FACE
      946C   00
      946D   03
      946E   08
+.SHIP_WORM_VERTICES
 Macro VERTEX:
      946F   0A
      9470   0A
@@ -18834,6 +18857,7 @@ End macro FACE
      951C   01
      951D   01
      951E   12
+.SHIP_COBRA_MK_3_P_VERTICES
 Macro VERTEX:
      951F   20
      9520   00
@@ -19385,6 +19409,7 @@ End macro FACE
      96A4   00
      96A5   01
      96A6   29
+.SHIP_ASP_MK_2_VERTICES
 Macro VERTEX:
      96A7   00
      96A8   12
@@ -19802,6 +19827,7 @@ End macro FACE
      97CE   00
      97CF   00
      97D0   1B
+.SHIP_PYTHON_P_VERTICES
 Macro VERTEX:
      97D1   00
      97D2   00
@@ -20145,6 +20171,7 @@ End macro FACE
      98C0   00
      98C1   01
      98C2   12
+.SHIP_FER_DE_LANCE_VERTICES
 Macro VERTEX:
      98C3   00
      98C4   0E
@@ -20540,6 +20567,7 @@ End macro FACE
      99DA   00
      99DB   02
      99DC   10
+.SHIP_MORAY_VERTICES
 Macro VERTEX:
      99DD   0F
      99DE   00
@@ -20841,6 +20869,7 @@ End macro FACE
      9AB2   00
      9AB3   02
      9AB4   16
+.SHIP_THARGOID_VERTICES
 Macro VERTEX:
      9AB5   20
      9AB6   30
@@ -21238,6 +21267,7 @@ End macro FACE
      9BCE   00
      9BCF   02
      9BD0   10
+.SHIP_THARGON_VERTICES
 Macro VERTEX:
      9BD1   09
      9BD2   00
@@ -21380,6 +21410,7 @@ End macro FACE
      9C3A   00
      9C3B   02
      9C3C   34
+.SHIP_CONSTRICTOR_VERTICES
 Macro VERTEX:
      9C3D   14
      9C3E   07
@@ -21741,6 +21772,7 @@ End macro FACE
      9D3C   00
      9D3D   02
      9D3E   34
+.SHIP_COUGAR_VERTICES
 Macro VERTEX:
      9D3F   00
      9D40   05
@@ -22100,6 +22132,7 @@ End macro FACE
      9E3E   01
      9E3F   00
      9E40   00
+.SHIP_DODO_VERTICES
 Macro VERTEX:
      9E41   00
      9E42   96
