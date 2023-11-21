@@ -4581,7 +4581,7 @@ ENDIF
  STA INWK+27
 
  LDA #194               ; Set the Cobra's byte #30 (pitch counter) to 194, so it
- STA INWK+30            ; pitches as we pull away
+ STA INWK+30            ; pitches up as we pull away
 
  LDA #%00101100         ; Set the Cobra's byte #32 (AI flag) to %00101100, so it
  STA INWK+32            ; has no AI, and we can use this value as a counter to
@@ -6019,10 +6019,10 @@ ENDIF
 
  TAX                    ; Copy A into X so we can retrieve it below
 
- EOR INWK+30            ; Give the ship's roll counter a positive sign if the
- AND #%10000000         ; pitch counter and dot product have different signs,
- EOR #%10000000         ; negative if they have the same sign, with a value of 0
- STA INWK+29
+ EOR INWK+30            ; Give the ship's roll counter a positive sign
+ AND #%10000000         ; (clockwise roll) if the pitch counter and dot product
+ EOR #%10000000         ; have different signs, negative (anti-clockwise roll)
+ STA INWK+29            ; if they have the same sign, with a value of 0
 
  TXA                    ; Retrieve the original value of A from X
 
@@ -6256,8 +6256,8 @@ ENDIF
 
  INC INWK+28            ; Increment the acceleration in byte #28
 
- LDA #%01111111         ; Set the roll counter to a positive roll with no
- STA INWK+29            ; damping, to match the space station's roll
+ LDA #%01111111         ; Set the roll counter to a positive (clockwise) roll
+ STA INWK+29            ; with no damping, to match the space station's roll
 
  BNE TN13               ; Jump down to TN13 (this BNE is effectively a JMP as
                         ; A will never be zero)
@@ -7096,7 +7096,7 @@ ENDIF
  STA (INF),Y
 
  ASL A                  ; Set the ship's byte #30 (pitch counter) to 4, so it
- LDY #30                ; starts pitching
+ LDY #30                ; starts diving
  STA (INF),Y
 
  LDA TYPE               ; If the ship's type is < #CYL (i.e. a missile, Coriolis
@@ -7329,9 +7329,9 @@ ENDIF
  STA INWK+27
 
  LDA #$FF               ; Set the child's byte #29 (roll counter) to a full
- ROR A                  ; roll, so the canister tumbles through space, with
- STA INWK+29            ; damping randomly enabled or disabled, depending on the
-                        ; C flag from above
+ ROR A                  ; roll with no damping (as bits 0 to 6 are set), so the
+ STA INWK+29            ; canister tumbles through space, with the direction in
+                        ; bit 7 set randomly, depending on the C flag from above
 
  PLA                    ; Retrieve the child's ship type from the stack
 
@@ -8020,10 +8020,10 @@ ENDIF
 .BRL1
 
  LDX #%01111111         ; Set the ship's roll counter to a positive roll that
- STX INWK+29            ; doesn't dampen
+ STX INWK+29            ; doesn't dampen (a clockwise roll)
 
  STX INWK+30            ; Set the ship's pitch counter to a positive pitch that
-                        ; doesn't dampen
+                        ; doesn't dampen (a diving pitch)
 
  JSR DrawShipInBitplane ; Flip the drawing bitplane and draw the current ship in
                         ; the newly flipped bitplane
@@ -15624,9 +15624,9 @@ ENDIF
  JSR msblob             ; Reset the dashboard's missile indicators so none of
                         ; them are targeted
 
- LDA #127               ; Set the pitch and roll counters to 127 (no damping
- STA INWK+29            ; so the planet's rotation doesn't slow down)
- STA INWK+30
+ LDA #127               ; Set the pitch and roll counters to 127, so that's a
+ STA INWK+29            ; clockwise roll and a diving pitch with no damping, so
+ STA INWK+30            ; the planet's rotation doesn't slow down
 
  LDA tek                ; Set A = 128 or 130 depending on bit 1 of the system's
  AND #%00000010         ; tech level in tek
@@ -16231,8 +16231,8 @@ ENDIF
                         ; gets created will go into slot FRIN+1, as this will be
                         ; the first empty slot that the routine finds
 
- DEX                    ; Set roll counter to 255 (maximum roll with no
- STX INWK+29            ; damping)
+ DEX                    ; Set the roll counter to 255 (maximum anti-clockwise
+ STX INWK+29            ; roll with no damping)
 
  LDX #10                ; Call NwS1 to flip the sign of nosev_x_hi (byte #10)
  JSR NwS1
@@ -19692,10 +19692,11 @@ ENDIF
                         ; to 96, which is the distance at which the rotating
                         ; ship starts out before coming towards us
 
- LDX #127               ; Set roll counter = 127, so don't dampen the roll
- STX INWK+29
+ LDX #127               ; Set roll counter = 127, so don't dampen the roll and
+ STX INWK+29            ; make the roll direction clockwise
 
- STX INWK+30            ; Set pitch counter = 127, so don't dampen the pitch
+ STX INWK+30            ; Set pitch counter = 127, so don't dampen the pitch and
+                        ; set the pitch direction to dive
 
  INX                    ; Set QQ17 to 128 (so bit 7 is set) to switch to
  STX QQ17               ; Sentence Case, with the next letter printing in upper
@@ -21162,7 +21163,7 @@ ENDIF
                         ; indicator)
 
  LDX #4                 ; Set X = 4, so we "press" KY+4, i.e. KY5, below
-                        ; (down button, decrease pitch)
+                        ; (down button, decrease pitch, pulling the nose up)
 
  ASL INWK+30            ; Shift ship byte #30 left, which shifts bit 7 of the
                         ; updated pitch counter (i.e. the pitch direction) into
@@ -21175,14 +21176,15 @@ ENDIF
  BCS P%+4               ; If the C flag is set, skip the following instruction
 
  LDX #5                 ; Set X = 5, so we "press" KY+5, i.e. KY6, with the next
-                        ; instruction (up button, increase pitch)
+                        ; instruction (up button, increase pitch, so the nose
+                        ; dives)
 
  STA KL,X               ; Store 128 in either KY5 or KY6 to "press" the relevant
                         ; key, depending on whether the pitch direction is
                         ; negative (in which case we "press" KY5, the down
-                        ; button, to decrease the pitch) or positive (in which
-                        ; case we "press" KY6, the up button, to increase the
-                        ; pitch)
+                        ; button, to decrease the pitch, pulling the nose up) or
+                        ; positive (in which case we "press" KY6, the up button,
+                        ; to increase the pitch, pushing the nose down)
 
  LDA JSTY               ; Fetch A from JSTY so the next instruction has no
                         ; effect
