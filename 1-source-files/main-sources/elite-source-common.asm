@@ -1232,7 +1232,7 @@ ENDIF
  SKIP 1                 ; This is used by the STARS2 routine for storing the
                         ; stardust particle's delta_x value
 
-.ASAV
+.storeA
 
  SKIP 1                 ; Temporary storage for saving the value of the A
                         ; register, used in the bank-switching routines in
@@ -4211,7 +4211,7 @@ ENDIF
 
 .KY6
 
- SKIP 1                 ; One pilot is configured and he up button is being
+ SKIP 1                 ; One pilot is configured and the up button is being
                         ; pressed on controller 1 (and the B button is not being
                         ; pressed)
                         ;
@@ -5372,6 +5372,7 @@ ENDIF
 ;   Category: Workspaces
 ;    Summary: The 8K of battery-backed RAM in the Elite cartridge, which is used
 ;             for the graphics buffers and storing saved commanders
+;  Deep dive: The pattern and nametable buffers
 ;
 ; ******************************************************************************
 
@@ -5448,6 +5449,7 @@ ENDIF
 ;   Category: PPU
 ;    Summary: If the PPU has started drawing the icon bar, configure the PPU to
 ;             use nametable 0 and pattern table 0
+;  Deep dive: The split-screen mode in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -6166,6 +6168,7 @@ ENDMACRO
 ;       Type: Macro
 ;   Category: Drawing the screen
 ;    Summary: Add a specified number to the cycle count
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -6200,6 +6203,7 @@ ENDMACRO
 ;       Type: Macro
 ;   Category: Drawing the screen
 ;    Summary: Add a specified number to the cycle count
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -6235,6 +6239,7 @@ ENDMACRO
 ;       Type: Macro
 ;   Category: Drawing the screen
 ;    Summary: Subtract a specified number from the cycle count
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -6318,6 +6323,7 @@ ENDMACRO
 ;       Type: Macro
 ;   Category: Drawing the screen
 ;    Summary: Send a specified block of memory to the PPU
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ------------------------------------------------------------------------------
 ;

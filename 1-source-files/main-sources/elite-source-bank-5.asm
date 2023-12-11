@@ -52,6 +52,7 @@
 ;       Type: Subroutine
 ;   Category: Start and end
 ;    Summary: The MMC1 mapper reset routine at the start of the ROM bank
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -196,6 +197,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Universe
 ;    Summary: Packed image data for system image 0
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -343,6 +346,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Universe
 ;    Summary: Packed image data for system image 1
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -481,6 +486,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Universe
 ;    Summary: Packed image data for system image 2
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -678,6 +685,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Universe
 ;    Summary: Packed image data for system image 3
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -845,6 +854,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Universe
 ;    Summary: Packed image data for system image 4
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -971,6 +982,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Universe
 ;    Summary: Packed image data for system image 5
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1116,6 +1129,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Universe
 ;    Summary: Packed image data for system image 6
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1256,6 +1271,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Universe
 ;    Summary: Packed image data for system image 7
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1407,6 +1424,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Universe
 ;    Summary: Packed image data for system image 8
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1521,6 +1540,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Universe
 ;    Summary: Packed image data for system image 9
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1654,6 +1675,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Universe
 ;    Summary: Packed image data for system image 10
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1803,6 +1826,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Universe
 ;    Summary: Packed image data for system image 11
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1946,6 +1971,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Universe
 ;    Summary: Packed image data for system image 12
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -2105,6 +2132,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Universe
 ;    Summary: Packed image data for system image 13
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -2254,6 +2283,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Universe
 ;    Summary: Packed image data for system image 14
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -2595,6 +2626,8 @@ ENDIF
 ;   Category: Combat demo
 ;    Summary: Low byte of the address of the auto-play key table for each
 ;             language
+;  Deep dive: Multi-language support in NES Elite
+;             Auto-playing the combat demo
 ;
 ; ******************************************************************************
 
@@ -2616,6 +2649,8 @@ ENDIF
 ;   Category: Combat demo
 ;    Summary: High byte of the address of the auto-play key table for each
 ;             language
+;  Deep dive: Multi-language support in NES Elite
+;             Auto-playing the combat demo
 ;
 ; ******************************************************************************
 
@@ -2636,6 +2671,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Utility routines
 ;    Summary: Vectors and padding at the end of the ROM bank
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 

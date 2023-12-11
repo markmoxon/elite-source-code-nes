@@ -52,6 +52,7 @@
 ;       Type: Subroutine
 ;   Category: Start and end
 ;    Summary: The MMC1 mapper reset routine at the start of the ROM bank
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -185,6 +186,9 @@ ENDIF
 ;   Category: Flight
 ;    Summary: Dock at the space station, show the ship hangar and work out any
 ;             mission progression
+;  Deep dive: The Constrictor mission
+;             The Thargoid Plans mission
+;             The Trumbles mission
 ;
 ; ******************************************************************************
 
@@ -352,6 +356,7 @@ ENDIF
 ;             zero-page workspace at INWK
 ;  Deep dive: Program flow of the main game loop
 ;             Ship data blocks
+;             Splitting the main loop in the NES version
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -1295,6 +1300,8 @@ ENDIF
 ;   Category: Main loop
 ;    Summary: Display in-flight messages, call parts 4 to 12 of the main flight
 ;             loop for each slot, and fall through into parts 13 to 16
+;  Deep dive: Splitting the main loop in the NES version
+;             The NES combat demo
 ;
 ; ******************************************************************************
 
@@ -1665,6 +1672,8 @@ ENDIF
 ;             scooping if appropriate
 ;  Deep dive: Program flow of the main game loop
 ;             Scheduling tasks with the main loop counter
+;             The NES combat demo
+;             The Trumbles mission
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -2302,6 +2311,7 @@ ENDIF
 ;    Summary: Scan for flight keys and process the results
 ;  Deep dive: Program flow of the main game loop
 ;             The key logger
+;             Splitting the main loop in the NES version
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -2664,6 +2674,8 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Configure the NMI handler to draw the space view
+;  Deep dive: Drawing vector graphics using NES tiles
+;             Splitting the main loop in the NES version
 ;
 ; ******************************************************************************
 
@@ -3452,6 +3464,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Update the view
+;  Deep dive: Views and view types in NES Elite
 ;
 ; ******************************************************************************
 
@@ -3580,6 +3593,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: The text row for the headshot on the Status Mode page
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -3599,6 +3613,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Configure the NMI handler to draw the screen
+;  Deep dive: Views and view types in NES Elite
 ;
 ; ******************************************************************************
 
@@ -3692,6 +3707,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: The text column for the Status Mode entries for each language
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -6983,6 +6999,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Tactics
 ;    Summary: Fire a missile from our ship
+;  Deep dive: The NES combat demo
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -7772,6 +7789,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Missions
 ;    Summary: Start mission 2
+;  Deep dive: The Thargoid Plans mission
 ;
 ; ******************************************************************************
 
@@ -7824,6 +7842,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Missions
 ;    Summary: Receive the briefing and plans for mission 2
+;  Deep dive: The Thargoid Plans mission
 ;
 ; ******************************************************************************
 
@@ -7849,6 +7868,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Missions
 ;    Summary: Finish mission 2
+;  Deep dive: The Thargoid Plans mission
 ;
 ; ******************************************************************************
 
@@ -7880,6 +7900,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Missions
 ;    Summary: Finish mission 1
+;  Deep dive: The Constrictor mission
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -7915,6 +7936,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Missions
 ;    Summary: Start mission 3
+;  Deep dive: The Trumbles mission
 ;
 ; ******************************************************************************
 
@@ -7958,6 +7980,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Missions
 ;    Summary: Start mission 1 and show the mission briefing
+;  Deep dive: The Constrictor mission
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -8148,6 +8171,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Combat demo
 ;    Summary: Play the combat demo
+;  Deep dive: The NES combat demo
 ;
 ; ******************************************************************************
 
@@ -8345,6 +8369,8 @@ ENDIF
 ;   Category: Combat demo
 ;    Summary: Run a fixed number of iterations of the main flight loop for the
 ;             combat demo
+;  Deep dive: Splitting the main loop in the NES version
+;             The NES combat demo
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -8391,6 +8417,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Combat demo
 ;    Summary: Set up the ship workspace for a new ship in the combat demo
+;  Deep dive: The NES combat demo
 ;
 ; ******************************************************************************
 
@@ -8906,6 +8933,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Universe
 ;    Summary: The text column for the Data on System title for each language
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -10510,6 +10538,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Charts
 ;    Summary: The text column for the Short-range Chart title for each language
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -12176,6 +12205,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Market
 ;    Summary: The text row for the Market Price title for each language
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -12672,6 +12702,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Market
 ;    Summary: The text column for our cash levels on the Market Price page
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -12691,6 +12722,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Market
 ;    Summary: The text row for the cash levels on the Market Price page
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -13581,6 +13613,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Equipment
 ;    Summary: Print the name and price for a specified item of equipment
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -14594,6 +14627,7 @@ ENDIF
 ;   Category: Equipment
 ;    Summary: The text column of the right edge of the laser-buying popup, so
 ;             the popup gets filled with spaces and covers what's underneath it
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -14664,6 +14698,7 @@ ENDIF
 ;   Category: Equipment
 ;    Summary: The width of the popup that shows the views available for
 ;             installing lasers in the Equipment screen
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -15498,6 +15533,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Text
 ;    Summary: Print a control code (in the range 0 to 9)
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -15643,6 +15679,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Universe
 ;    Summary: Set up various aspects of arriving in a new system
+;  Deep dive: The Trumbles mission
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -15962,6 +15999,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Dashboard
 ;    Summary: Update the compass
+;  Deep dive: Sprite usage in NES Elite
 ;
 ; ******************************************************************************
 
@@ -18263,6 +18301,7 @@ ENDIF
 ;    Summary: Cool down lasers, make calls to update the dashboard
 ;  Deep dive: Program flow of the main game loop
 ;             The dashboard indicators
+;             The Trumbles mission
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -18326,7 +18365,7 @@ ENDIF
                         ; any of them are breeding (note that Trumbles always
                         ; breed when we jump into a new system in the SOLAR
                         ; routine, but when we have lots of them, they also
-                        ; breed here in the main flight loop
+                        ; breed here in the main flight loop)
 
  JSR DORND              ; Set A and X to random numbers
 
@@ -18494,6 +18533,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Sound
 ;    Summary: The range of sounds that the Trumbles make in the hold
+;  Deep dive: Sound effects in NES Elite
+;             The Trumbles mission
 ;
 ; ******************************************************************************
 
@@ -19056,6 +19097,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Start and end
 ;    Summary: Display the death screen
+;  Deep dive: Splitting the main loop in the NES version
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -23396,6 +23438,7 @@ ENDIF
 ;   Category: PPU
 ;    Summary: Set a new space view, clear the screen, copy the nametable buffers
 ;             and configure the PPU for the new view
+;  Deep dive: Views and view types in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -23714,6 +23757,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Sound
 ;    Summary: Sound numbers for explosions at different distances from our ship
+;  Deep dive: Sound effects in NES Elite
 ;
 ; ******************************************************************************
 
@@ -23760,6 +23804,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Clear the screen and set the new view type
+;  Deep dive: Views and view types in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -24121,6 +24166,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Utility routines
 ;    Summary: Vectors and padding at the end of the ROM bank
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 

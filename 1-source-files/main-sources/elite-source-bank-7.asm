@@ -54,6 +54,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Start and end
 ;    Summary: The MMC1 mapper reset routine at the start of the ROM bank
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -389,6 +390,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Utility routines
 ;    Summary: Page ROM bank 0 into memory at $8000
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -404,6 +406,7 @@ ENDIF
 ;   Category: Utility routines
 ;    Summary: An unused routine that pages a specified ROM bank into memory at
 ;             $8000, but only if it is non-zero
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -428,6 +431,7 @@ ENDIF
 ;   Category: Utility routines
 ;    Summary: Retrieve a ROM bank number from the stack and page that bank into
 ;             memory at $8000
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -450,6 +454,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Utility routines
 ;    Summary: Page a specified ROM bank into memory at $8000
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -521,6 +526,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Start and end
 ;    Summary: The text column for the title screen's title for each language
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -540,6 +546,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Flight
 ;    Summary: The text column for the space view name for each language
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -903,6 +910,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: PPU
 ;    Summary: Send the nametable entries for the icon bar to the PPU
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -996,6 +1004,7 @@ ENDIF
 ;   Category: PPU
 ;    Summary: Send pattern data for tiles 64-127 for the icon bar to the PPU,
 ;             split across multiple calls to the NMI handler if required
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -1146,6 +1155,7 @@ ENDIF
 ;   Category: PPU
 ;    Summary: Send pattern data for tiles 0-127 for the icon bar to the PPU,
 ;             split across multiple calls to the NMI handler if required
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -1365,6 +1375,7 @@ ENDIF
 ;   Category: PPU
 ;    Summary: Send the pattern data for the icon bar to the PPU (this is a jump
 ;             so we can call this routine using a branch instruction)
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ******************************************************************************
 
@@ -1381,6 +1392,7 @@ ENDIF
 ;   Category: PPU
 ;    Summary: Send the nametable entries for the icon bar to the PPU (this is a
 ;             jump so we can call this routine using a branch instruction)
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ******************************************************************************
 
@@ -1453,6 +1465,7 @@ ENDIF
 ;   Category: PPU
 ;    Summary: Send the icon bar nametable and palette data to the PPU, if it has
 ;             changed, before moving on to tile data in part 2
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ******************************************************************************
 
@@ -1481,6 +1494,7 @@ ENDIF
 ;   Category: PPU
 ;    Summary: If we are already sending tile data to the PPU, pick up where we
 ;             left off, otherwise jump to part 3 to check for new data to send
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ******************************************************************************
 
@@ -1657,6 +1671,7 @@ ENDIF
 ;   Category: PPU
 ;    Summary: If we need to send tile nametable and pattern data to the PPU for
 ;             either bitplane, start doing just that
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ******************************************************************************
 
@@ -1774,6 +1789,7 @@ ENDIF
 ;   Category: PPU
 ;    Summary: Set up the variables needed to send the tile nametable and pattern
 ;             data to the PPU, and then send them
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -1917,6 +1933,7 @@ ENDIF
 ;   Category: PPU
 ;    Summary: Calculate how many patterns we need to send and jump to the most
 ;             efficient routine for sending them
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ******************************************************************************
 
@@ -2032,6 +2049,7 @@ ENDIF
 ;   Category: PPU
 ;    Summary: Configure variables for sending data to the PPU one pattern at a
 ;             time with checks
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ******************************************************************************
 
@@ -2106,6 +2124,7 @@ ENDIF
 ;   Category: PPU
 ;    Summary: Send pattern data to the PPU for one pattern at a time, checking
 ;             after each one to see if is the last one
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ******************************************************************************
 
@@ -2322,6 +2341,7 @@ ENDIF
 ;   Category: PPU
 ;    Summary: Configure variables for sending data to the PPU until we run out
 ;             of cycles
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ******************************************************************************
 
@@ -2396,6 +2416,7 @@ ENDIF
 ;   Category: PPU
 ;    Summary: Send pattern data to the PPU for two patterns at a time, until we
 ;             run out of cycles (and without checking for the last pattern)
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ******************************************************************************
 
@@ -2511,6 +2532,7 @@ ENDIF
 ;   Category: PPU
 ;    Summary: Save progress for use in the next VBlank and return from the
 ;             subroutine
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ******************************************************************************
 
@@ -2543,6 +2565,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: PPU
 ;    Summary: Check whether we should send another bitplane to the PPU
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ******************************************************************************
 
@@ -2645,6 +2668,7 @@ ENDIF
 ;   Category: PPU
 ;    Summary: Send the tile nametable to the PPU if there are enough cycles left
 ;             in the current VBlank
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -3329,6 +3353,9 @@ ENDIF
 ;   Category: Utility routines
 ;    Summary: The NMI interrupt handler that gets called every VBlank and which
 ;             updates the screen, reads the controllers and plays music
+;  Deep dive: The split-screen mode in NES Elite
+;             Drawing vector graphics using NES tiles
+;             Auto-playing the combat demo
 ;
 ; ******************************************************************************
 
@@ -3494,6 +3521,8 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Send palette 0 for the current view to the PPU
+;  Deep dive: Bitplanes in NES Elite
+;             Drawing vector graphics using NES tiles
 ;
 ; ******************************************************************************
 
@@ -3689,6 +3718,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: PPU
 ;    Summary: Update the screen with the contents of the buffers
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -3750,6 +3780,7 @@ ENDIF
 ;   Category: PPU
 ;    Summary: Set PPU_CTRL, PPU_ADDR and PPU_SCROLL for the current hidden
 ;             bitplane
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ******************************************************************************
 
@@ -3840,6 +3871,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: PPU
 ;    Summary: Set nametable 0 and pattern table 0 for drawing the icon bar
+;  Deep dive: The split-screen mode in NES Elite
 ;
 ; ******************************************************************************
 
@@ -3873,6 +3905,7 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: If there are enough free cycles, clear down the nametable and
 ;             pattern buffers for both bitplanes
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ******************************************************************************
 
@@ -3970,6 +4003,7 @@ ENDIF
 ;   Category: Controllers
 ;    Summary: Read the buttons on the controllers and update the control
 ;             variables
+;  Deep dive: Bolting NES controllers onto the key logger
 ;
 ; ******************************************************************************
 
@@ -4001,6 +4035,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Controllers
 ;    Summary: Scan a specific controller and update the control variables
+;  Deep dive: Bolting NES controllers onto the key logger
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -4180,6 +4215,7 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: Clear the nametable and pattern buffers for the newly flipped
 ;             drawing plane
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -4260,6 +4296,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Clear the nametable buffers for the newly flipped drawing plane
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ******************************************************************************
 
@@ -4385,6 +4422,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Clear the pattern buffers for the newly flipped drawing plane
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ******************************************************************************
 
@@ -4538,6 +4576,7 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: Clear the nametable and pattern buffers of data that has already
 ;             been sent to the PPU, starting with the nametable buffer
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -4768,6 +4807,7 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: Clear the pattern buffer of data that has already been sent to the
 ;             PPU for the current bitplane
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ******************************************************************************
 
@@ -5807,6 +5847,7 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: Configure the NMI to send the drawing bitplane to the PPU after
 ;             drawing the box edges and setting the next free tile number
+;  Deep dive: Views and view types in NES Elite
 ;
 ; ******************************************************************************
 
@@ -5838,6 +5879,7 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: Set the drawing bitplane flags to the specified value, draw the
 ;             box edges and set the next free tile number
+;  Deep dive: Drawing vector graphics using NES tiles
 ;
 ; ******************************************************************************
 
@@ -5977,13 +6019,13 @@ ENDIF
 ;       Name: TWOS
 ;       Type: Variable
 ;   Category: Drawing pixels
-;    Summary: Ready-made single-pixel character row bytes for mode 4
-;  Deep dive: Drawing monochrome pixels in mode 4
+;    Summary: Ready-made single-pixel character row bytes for the space view
+;  Deep dive: Drawing pixels in the NES version
 ;
 ; ------------------------------------------------------------------------------
 ;
-; Ready-made bytes for plotting one-pixel points in mode 4 (the top part of the
-; split screen). See the PIXEL routine for details.
+; Ready-made bytes for plotting one-pixel points the space view. See the PIXEL
+; routine for details.
 ;
 ; ******************************************************************************
 
@@ -6005,13 +6047,13 @@ ENDIF
 ;       Name: TWOS2
 ;       Type: Variable
 ;   Category: Drawing pixels
-;    Summary: Ready-made double-pixel character row bytes for mode 4
-;  Deep dive: Drawing monochrome pixels in mode 4
+;    Summary: Ready-made double-pixel character row bytes for the space view
+;  Deep dive: Drawing pixels in the NES version
 ;
 ; ------------------------------------------------------------------------------
 ;
-; Ready-made bytes for plotting two-pixel dashes in mode 4 (the top part of the
-; split screen). See the PIXEL routine for details.
+; Ready-made bytes for plotting two-pixel points the space view. See the PIXEL
+; routine for details.
 ;
 ; ******************************************************************************
 
@@ -6032,13 +6074,13 @@ ENDIF
 ;       Type: Variable
 ;   Category: Drawing lines
 ;    Summary: Ready-made character rows for the left end of a horizontal line in
-;             mode 4
+;             the space view
 ;
 ; ------------------------------------------------------------------------------
 ;
-; Ready-made bytes for plotting horizontal line end caps in mode 4 (the top part
-; of the split screen). This table provides a byte with pixels at the left end,
-; which is used for the right end of the line.
+; Ready-made bytes for plotting horizontal line end caps in the space view. This
+; table provides a byte with pixels at the left end, which is used for the right
+; end of the line.
 ;
 ; See the HLOIN routine for details.
 ;
@@ -6060,13 +6102,13 @@ ENDIF
 ;       Type: Variable
 ;   Category: Drawing lines
 ;    Summary: Ready-made character rows for the right end of a horizontal line
-;             in mode 4
+;             in the space view
 ;
 ; ------------------------------------------------------------------------------
 ;
-; Ready-made bytes for plotting horizontal line end caps in mode 4 (the top part
-; of the split screen). This table provides a byte with pixels at the right end,
-; which is used for the left end of the line.
+; Ready-made bytes for plotting horizontal line end caps in the space view. This
+; table provides a byte with pixels at the right end, which is used for the left
+; end of the line.
 ;
 ; See the HLOIN routine for details.
 ;
@@ -6265,6 +6307,7 @@ ENDIF
 ;   Category: Drawing lines
 ;    Summary: Draw a line: Calculate the line gradient in the form of deltas
 ;  Deep dive: Bresenham's line algorithm
+;             Drawing lines in the NES version
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -6347,6 +6390,7 @@ ENDIF
 ;   Category: Drawing lines
 ;    Summary: Draw a line: Line has a shallow gradient, step right along x-axis
 ;  Deep dive: Bresenham's line algorithm
+;             Drawing lines in the NES version
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -6489,6 +6533,7 @@ ENDIF
 ;   Category: Drawing lines
 ;    Summary: Draw a shallow line going right and up or left and down
 ;  Deep dive: Bresenham's line algorithm
+;             Drawing lines in the NES version
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -6705,6 +6750,7 @@ ENDIF
 ;   Category: Drawing lines
 ;    Summary: Draw a shallow line going right and down or left and up
 ;  Deep dive: Bresenham's line algorithm
+;             Drawing lines in the NES version
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -6934,6 +6980,7 @@ ENDIF
 ;   Category: Drawing lines
 ;    Summary: Draw a line: Line has a steep gradient, step up along y-axis
 ;  Deep dive: Bresenham's line algorithm
+;             Drawing lines in the NES version
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -7109,6 +7156,7 @@ ENDIF
 ;   Category: Drawing lines
 ;    Summary: Draw a steep line going up and left or down and right
 ;  Deep dive: Bresenham's line algorithm
+;             Drawing lines in the NES version
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -7429,6 +7477,7 @@ ENDIF
 ;   Category: Drawing lines
 ;    Summary: Draw a steep line going up and right or down and left
 ;  Deep dive: Bresenham's line algorithm
+;             Drawing lines in the NES version
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -7875,6 +7924,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing lines
 ;    Summary: Draw a horizontal line from (X1, Y) to (X2, Y) using EOR logic
+;  Deep dive: Drawing lines in the NES version
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -7991,6 +8041,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing lines
 ;    Summary: Draw the left end of the line
+;  Deep dive: Drawing lines in the NES version
 ;
 ; ******************************************************************************
 
@@ -8188,6 +8239,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing lines
 ;    Summary: Draw the middle part of the line
+;  Deep dive: Drawing lines in the NES version
 ;
 ; ******************************************************************************
 
@@ -8465,6 +8517,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing lines
 ;    Summary: Draw the right end of the line
+;  Deep dive: Drawing lines in the NES version
 ;
 ; ******************************************************************************
 
@@ -8640,6 +8693,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing lines
 ;    Summary: Draw the line when it's all within one character block
+;  Deep dive: Drawing lines in the NES version
 ;
 ; ******************************************************************************
 
@@ -8847,6 +8901,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing lines
 ;    Summary: Draw a vertical line from (X1, Y1) to (X1, Y2)
+;  Deep dive: Drawing lines in the NES version
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -8933,6 +8988,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing lines
 ;    Summary: Draw the top end or bottom end of the line
+;  Deep dive: Drawing lines in the NES version
 ;
 ; ******************************************************************************
 
@@ -9178,6 +9234,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing lines
 ;    Summary: Draw the middle portion of the line from full-height blocks
+;  Deep dive: Drawing lines in the NES version
 ;
 ; ******************************************************************************
 
@@ -9444,6 +9501,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing pixels
 ;    Summary: Draw a 1-pixel dot
+;  Deep dive: Drawing pixels in the NES version
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -9549,6 +9607,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing pixels
 ;    Summary: Draw a 2-pixel dash
+;  Deep dive: Drawing pixels in the NES version
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -9748,6 +9807,8 @@ ENDIF
 ;   Category: Combat demo
 ;    Summary: Auto-play commands for the first part of the auto-play combat demo
 ;             (combat practice) when English is the chosen language
+;  Deep dive: Multi-language support in NES Elite
+;             Auto-playing the combat demo
 ;
 ; ******************************************************************************
 
@@ -9899,6 +9960,8 @@ ENDIF
 ;   Category: Combat demo
 ;    Summary: Auto-play commands for the first part of the auto-play combat demo
 ;             (combat practice) when German is the chosen language
+;  Deep dive: Multi-language support in NES Elite
+;             Auto-playing the combat demo
 ;
 ; ******************************************************************************
 
@@ -10048,6 +10111,8 @@ ENDIF
 ;   Category: Combat demo
 ;    Summary: Auto-play commands for the first part of the auto-play combat demo
 ;             (combat practice) when French is the chosen language
+;  Deep dive: Multi-language support in NES Elite
+;             Auto-playing the combat demo
 ;
 ; ******************************************************************************
 
@@ -10199,6 +10264,7 @@ ENDIF
 ;   Category: Combat demo
 ;    Summary: Auto-play commands for the second part of the auto-play demo
 ;             (demonstrating the game itself)
+;  Deep dive: Auto-playing the combat demo
 ;
 ; ******************************************************************************
 
@@ -10860,114 +10926,8 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Combat demo
 ;    Summary: Automatically play the demo using the auto-play commands from the
-;             autoPlayKeys tables
-;
-; ------------------------------------------------------------------------------
-;
-; The AutoPlayDemo routine is called every NMI while bit 7 of autoPlayDemo is
-; set. It auto-plays the combat demo by "pressing" buttons automatically, taking
-; those button presses from auto-play commands in the relevant autoPlayKeys
-; table.
-;
-; Specifically, the process starts with the auto-play commands from the chosen
-; language table (autoPlayKeys_EN, autoPlayKeys_DE or autoPlayKeys_FR), and then
-; moves on to the auto-play commands in the autoPlayKeys2 table.
-;
-; The AutoPlayDemo routine processes one entry from the autoPlayKeys table in
-; each VBlank. It works by fetching a byte from the autoPlayKeys table (let's
-; call it byte #1), and applying the following rules:
-;
-;   * If byte #1 has bit 7 clear:
-;
-;     * Fetch the next byte (let's call it byte #2)
-;
-;     * Repeat the button presses in byte #1 for byte #2 repetitions
-;
-;   * If byte #1 has bit 7 set:
-;
-;     * If byte #1 = $80, terminate auto-play
-;
-;     * If byte #1 has bit 6 clear:
-;
-;       * Do nothing for 4 * byte #1 repetitions (ignoring bit 7 of byte #1 in
-;         this calculation)
-;
-;     * If byte #1 has bit 6 set:
-;
-;       * If byte #1 = $C0:
-;
-;         * Switch to the autoPlayKeys2 table and start processing commands from
-;           there in the next VBlank
-;
-;       * Otherwise byte #1 is of the form $Cx where x is non-zero, so:
-;
-;         * Fetch the next three bytes (let's call them bytes #2 to #4)
-;
-;         * Set addr(1 0) = (byte #4 byte #3)
-;
-;         * If byte #1 = $C1:
-;
-;           * Repeat the button presses in byte #2 in each subsequent VBlank
-;             while addr(1 0) <> 0, and then continue processing with the
-;             command after byte #3
-;
-;         * If byte #1 = $C2:
-;
-;           * Repeat the button presses in byte #2 in each subsequent VBlank
-;             while addr(1 0) = 0, and then continue processing with the
-;             command after byte #3
-;
-;         * If byte #1 = $C3:
-;
-;           * Repeat the button presses in byte #2 in each subsequent VBlank
-;             while bit 7 of addr(1 0) is set, and then continue processing with
-;             the command after byte #3
-;
-;         * If byte #1 = $C4:
-;
-;           * Repeat the button presses in byte #2 in each subsequent VBlank
-;             while bit 7 of addr(1 0) is clear, and then continue processing
-;             with the command after byte #3
-;
-;         * If byte #1 = $C5:
-;
-;           * Press the Start button and do nothing for 22 VBlanks before
-;             continuing with the command after byte #1
-;
-; In summary, this is how each byte gets interpreted:
-;
-;   $00 to $7F = press buttons in byte #1 for byte #2 VBlanks
-;   $80 = terminate auto-play
-;   $8x to $Bx = do nothing for 4 * byte #1 repetitions (ignoring bit 7)
-;   $C0 = switch to _ALL key set and start processing it in next NMI
-;   $C1 = press buttons in byte #2 while (byte #4 byte #3) <> 0
-;   $C2 = press buttons in byte #2 while (byte #4 byte #3) = 0
-;   $C3 = press buttons in byte #2 while bit 7 of (byte #4 byte #3) is set
-;   $C4 = press buttons in byte #2 while bit 7 of (byte #4 byte #3) is clear
-;   $C5 = press the Start button and do nothing for 22 VBlanks
-;
-; The button presses to be performed in the above commands are encoded in a
-; single byte that gets put into the autoPlayKey variable. There is one bit for
-; each button, with a set bit indicating that the button should be pressed, so
-; when we say "press buttons in byte #1", then the buttons that are pressed are
-; determined by bits 0 to 6 of byte #1.
-;
-; The bits are as follows:
-;
-;   * Bit 0 = right button
-;   * Bit 1 = left button
-;   * Bit 2 = down button
-;   * Bit 3 = up button
-;   * Bit 4 = Select button
-;   * Bit 5 = B button
-;   * Bit 6 = A button
-;
-; Bit 7 is always clear in button press bytes because command bytes have bit 7
-; set.
-;
-; When expressed in binary, a button press byte is in the form %0ABSUDLR, where
-; "L" is the left button, "R" the right button, "S" is the Select button, and so
-; on.
+;             autoplayKeys tables
+;  Deep dive: Auto-playing the combat demo
 ;
 ; ******************************************************************************
 
@@ -11440,6 +11400,7 @@ ENDIF
 ;   Category: Icon bar
 ;    Summary: Move the sprites that make up the icon bar pointer and record any
 ;             choices
+;  Deep dive: Sprite usage in NES Elite
 ;
 ; ******************************************************************************
 
@@ -12011,6 +11972,7 @@ ENDIF
 ;   Category: Controllers
 ;    Summary: Set the controller history variables to the values from four
 ;             VBlanks ago
+;  Deep dive: Bolting NES controllers onto the key logger
 ;
 ; ******************************************************************************
 
@@ -12053,6 +12015,7 @@ ENDIF
 ;   Category: Controllers
 ;    Summary: Update the values of JSTX and JSTY with the values from the
 ;             controller
+;  Deep dive: Bolting NES controllers onto the key logger
 ;
 ; ******************************************************************************
 
@@ -12061,6 +12024,7 @@ ENDIF
  LDA QQ11a              ; If the old view in QQ11a is not the space view, then
  BNE SetControllerPast  ; jump to SetControllerPast to set the controller
                         ; history variables to the values from four VBlanks ago
+                        ; and return from the subroutien using a tail call
 
  LDX JSTX               ; Set X to the current roll rate in JSTX
 
@@ -12178,6 +12142,7 @@ ENDIF
 ;   Category: Controllers
 ;    Summary: Increase a joystick value by a specific amount, jumping straight
 ;             to the indicator centre if we increase from the left-hand side
+;  Deep dive: Bolting NES controllers onto the key logger
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -12217,6 +12182,7 @@ ENDIF
 ;   Category: Controllers
 ;    Summary: Decrease a joystick value by a specific amount, jumping straight
 ;             to the indicator centre if we decrease from the right-hand side
+;  Deep dive: Bolting NES controllers onto the key logger
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -12628,6 +12594,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Flush a specific sound channel
+;  Deep dive: Sound effects in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -12713,46 +12680,9 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Make the sound effect whose number is in Y
+;  Deep dive: Sound effects in NES Elite
 ;
 ; ------------------------------------------------------------------------------
-;
-; The full list of sound effects is as follows, along with the names of the
-; routines that make them:
-;
-;    0 = Unused                                     -
-;    1 = Fuel scoop                                 MakeScoopSound
-;    2 = E.C.M.                                     ECBLB2
-;    3 = Short, high beep                           BEEP
-;    4 = Long, low beep                             BOOP
-;    5 = Trumbles in the hold sound 1, 75% chance   Main game loop (Part 5)
-;    6 = Trumbles in the hold sound 2, 25% chance   Main game loop (Part 5)
-;    7 = Low energy beep                            Main flight loop (Part 15)
-;    8 = Energy bomb                                Main flight loop (Part 3)
-;    9 = Missile launch                             FRMIS, SFRMIS
-;   10 = Us making a hit or kill                    EXNO
-;   11 = Us being hit by lasers                     TACTICS (Part 6)
-;   12 = First launch sound                         LAUN
-;   13 = Explosion/collision sound                  EXNO3
-;        Ship explosion at distance z_hi < 6        EXNO2
-;   14 = Ship explosion at distance z_hi >= 6       EXNO2
-;   15 = Military laser firing                      Main flight loop (Part 3)
-;   16 = Mining laser firing                        Main flight loop (Part 3)
-;   17 = Beam laser firing                          Main flight loop (Part 3)
-;   18 = Pulse laser firing                         Main flight loop (Part 3)
-;   19 = Escape pod launching                       ESCAPE
-;   20 = Unused                                     -
-;   21 = Hyperspace                                 MakeHyperSound
-;   22 = Galactic hyperspace                        Ghy
-;   23 = Third launch sound                         LAUN
-;        Ship explosion at distance z_hi >= 8       EXNO2
-;   24 = Second launch sound                        LAUN
-;   25 = Unused                                     -
-;   26 = No noise                                   FlushSoundChannel
-;   27 = Ship explosion at a distance of z_hi >= 16 EXNO2
-;   28 = Trill noise to indicate a purchase         BuyAndSellCargo
-;   29 = First mis-jump sound                       MJP
-;   30 = Second mis-jump sound                      MJP
-;   31 = Trumbles being killed by the sun           Main flight loop (Part 15)
 ;
 ; Arguments:
 ;
@@ -12833,6 +12763,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Call the StartEffect routine
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -12867,6 +12798,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Sound
 ;    Summary: The sound channels used by each sound effect
+;  Deep dive: Sound effects in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -12925,6 +12857,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Sound
 ;    Summary: The default priority for each sound effect
+;  Deep dive: Sound effects in NES Elite
 ;
 ; ******************************************************************************
 
@@ -12971,6 +12904,7 @@ ENDIF
 ;   Category: PPU
 ;    Summary: If the PPU has started drawing the icon bar, configure the PPU to
 ;             use nametable 0 and pattern table 0, while preserving A
+;  Deep dive: The split-screen mode in NES Elite
 ;
 ; ******************************************************************************
 
@@ -13026,6 +12960,7 @@ ENDIF
 ;   Category: Utility routines
 ;    Summary: Page a specified bank into memory at $8000 while preserving the
 ;             value of A
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -13037,13 +12972,13 @@ ENDIF
 
 .ResetBankA
 
- STA ASAV               ; Store the value of A so we can retrieve it below
+ STA storeA             ; Store the value of A so we can retrieve it below
 
  PLA                    ; Fetch the ROM bank number from the stack
 
  JSR SetBank            ; Page bank A into memory at $8000
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  RTS                    ; Return from the subroutine
 
@@ -13143,6 +13078,7 @@ ENDIF
 ;   Category: Utility routines
 ;    Summary: Page a specified bank into memory at $8000 while preserving the
 ;             value of A and the processor flags
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -13197,6 +13133,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Icon bar
 ;    Summary: Call the CheckForPause routine in ROM bank 0
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -13208,7 +13145,7 @@ ENDIF
 
 .CheckForPause_b0
 
- STA ASAV               ; Store the value of A so we can retrieve it below
+ STA storeA             ; Store the value of A so we can retrieve it below
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -13216,7 +13153,7 @@ ENDIF
  LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JSR CheckForPause      ; Call CheckForPause, now that it is paged into memory
 
@@ -13275,6 +13212,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Call the MakeSounds routine in ROM bank 6
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -13298,6 +13236,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Call the ChooseMusic routine in ROM bank 6
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -13323,7 +13262,7 @@ ENDIF
  BMI RTS4               ; be set, so jump to RTS4 to return from the subroutine
                         ; as we can't choose a new tune if music is disabled
 
- STA ASAV               ; Store the value of A so we can retrieve it below
+ STA storeA             ; Store the value of A so we can retrieve it below
 
  LDA currentBank        ; If ROM bank 6 is already paged into memory, jump to
  CMP #6                 ; bank1
@@ -13334,7 +13273,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JSR ChooseMusic        ; Call ChooseMusic, now that it is paged into memory
 
@@ -13344,7 +13283,7 @@ ENDIF
 
 .bank1
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JMP ChooseMusic        ; Call ChooseMusic, which is already paged into memory,
                         ; and return from the subroutine using a tail call
@@ -13355,12 +13294,13 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Call the StartEffect routine in ROM bank 6
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
 .StartEffect_b6
 
- STA ASAV               ; Store the value of A so we can retrieve it below
+ STA storeA             ; Store the value of A so we can retrieve it below
 
  LDA currentBank        ; If ROM bank 6 is already paged into memory, jump to
  CMP #6                 ; bank2
@@ -13371,7 +13311,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JSR StartEffect        ; Call StartEffect, now that it is paged into memory
 
@@ -13381,7 +13321,7 @@ ENDIF
 
 .bank2
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JMP StartEffect        ; Call StartEffect, which is already paged into
                         ; memory, and return from the subroutine using a tail
@@ -13430,6 +13370,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Call the StopSounds routine in ROM bank 6
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -13454,6 +13395,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Combat demo
 ;    Summary: Call the SetDemoAutoPlay routine in ROM bank 5
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -13477,6 +13419,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Save and load
 ;    Summary: Call the DrawSmallLogo routine in ROM bank 4
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -13500,6 +13443,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Start and end
 ;    Summary: Call the DrawBigLogo routine in ROM bank 4
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -13523,6 +13467,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Call the FadeToBlack routine in ROM bank 3
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -13546,6 +13491,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Save and load
 ;    Summary: Call the CheckSaveSlots routine in ROM bank 6
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -13569,6 +13515,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing ships
 ;    Summary: Call the LL9 routine in ROM bank 1
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -13600,6 +13547,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Flight
 ;    Summary: Call the SIGHT routine in ROM bank 3
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -13623,6 +13571,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Maths (Geometry)
 ;    Summary: Call the TIDY routine in ROM bank 1
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -13654,6 +13603,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Start and end
 ;    Summary: Call the ChooseLanguage routine in ROM bank 6
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -13677,6 +13627,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Combat demo
 ;    Summary: Call the PlayDemo routine in ROM bank 0
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -13694,6 +13645,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Stardust
 ;    Summary: Call the STARS routine in ROM bank 1
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -13725,6 +13677,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing circles
 ;    Summary: Call the CIRCLE2 routine in ROM bank 1
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -13756,6 +13709,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing suns
 ;    Summary: Call the SUN routine in ROM bank 1
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -13787,6 +13741,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Call the DrawBackground routine in ROM bank 3
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -13810,12 +13765,13 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Universe
 ;    Summary: Call the DrawSystemImage routine in ROM bank 3
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
 .DrawSystemImage_b3
 
- STA ASAV               ; Store the value of A so we can retrieve it below
+ STA storeA             ; Store the value of A so we can retrieve it below
 
  LDA currentBank        ; If ROM bank 3 is already paged into memory, jump to
  CMP #3                 ; bank8
@@ -13826,7 +13782,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JSR DrawSystemImage    ; Call DrawSystemImage, now that it is paged into memory
 
@@ -13836,7 +13792,7 @@ ENDIF
 
 .bank8
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JMP DrawSystemImage    ; Call DrawSystemImage, which is already paged into
                         ; memory, and return from the subroutine using a tail
@@ -13848,6 +13804,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Call the DrawImageNames routine in ROM bank 4
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -13871,6 +13828,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Status
 ;    Summary: Call the DrawCmdrImage routine in ROM bank 6
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -13894,6 +13852,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing sprites
 ;    Summary: Call the DrawSpriteImage routine in ROM bank 6
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -13917,6 +13876,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Status
 ;    Summary: Call the GetHeadshotType routine in ROM bank 4
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -13940,6 +13900,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Equipment
 ;    Summary: Call the DrawEquipment routine in ROM bank 6
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -13963,6 +13924,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Start and end
 ;    Summary: Switch to ROM bank 0 and call the DEATH2 routine
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -13980,6 +13942,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Start and end
 ;    Summary: Switch to ROM bank 0 and call the StartGame routine
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -13997,6 +13960,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Call the SetViewAttrs routine in ROM bank 3
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14028,6 +13992,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Call the FadeToColour routine in ROM bank 3
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14051,6 +14016,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Call the DrawSmallBox routine in ROM bank 3
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14074,6 +14040,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Call the DrawImageFrame routine in ROM bank 3
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14097,6 +14064,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Flight
 ;    Summary: Call the DrawLaunchBox routine in ROM bank 6
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14120,6 +14088,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Call the SetLinePatterns routine in ROM bank 3
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14152,6 +14121,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Universe
 ;    Summary: Call the TT24 routine in ROM bank 6
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14175,6 +14145,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Call the ClearDashEdge routine in ROM bank 6
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14198,12 +14169,13 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Text
 ;    Summary: Call the LoadNormalFont routine in ROM bank 3
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
 .LoadNormalFont_b3
 
- STA ASAV               ; Store the value of A so we can retrieve it below
+ STA storeA             ; Store the value of A so we can retrieve it below
 
  LDA currentBank        ; If ROM bank 3 is already paged into memory, jump to
  CMP #3                 ; bank11
@@ -14214,7 +14186,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JSR LoadNormalFont     ; Call LoadNormalFont, now that it is paged into memory
 
@@ -14224,7 +14196,7 @@ ENDIF
 
 .bank11
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JMP LoadNormalFont     ; Call LoadNormalFont, which is already paged into
                         ; memory, and return from the subroutine using a tail
@@ -14236,6 +14208,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Text
 ;    Summary: Call the LoadHighFont routine in ROM bank 3
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14259,6 +14232,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Missions
 ;    Summary: Call the PAS1 routine in ROM bank 0
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14282,6 +14256,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Universe
 ;    Summary: Call the GetSystemImage routine in ROM bank 5
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14305,6 +14280,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Universe
 ;    Summary: Call the GetSystemBack routine in ROM bank 5
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14328,6 +14304,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Status
 ;    Summary: Call the GetCmdrImage routine in ROM bank 4
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14351,6 +14328,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Status
 ;    Summary: Call the GetHeadshot routine in ROM bank 4
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14374,6 +14352,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Dashboard
 ;    Summary: Call the DIALS routine in ROM bank 6
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14397,6 +14376,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Controllers
 ;    Summary: Call the InputName routine in ROM bank 6
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14420,12 +14400,13 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Call the ChangeToView routine in ROM bank 0
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
 .ChangeToView_b0
 
- STA ASAV               ; Store the value of A so we can retrieve it below
+ STA storeA             ; Store the value of A so we can retrieve it below
 
  LDA currentBank        ; If ROM bank 0 is already paged into memory, jump to
  CMP #0                 ; bank12
@@ -14436,7 +14417,7 @@ ENDIF
  LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JSR ChangeToView       ; Call ChangeToView, now that it is paged into memory
 
@@ -14446,7 +14427,7 @@ ENDIF
 
 .bank12
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JMP ChangeToView       ; Call ChangeToView, which is already paged into
                         ; memory, and return from the subroutine using a tail
@@ -14458,6 +14439,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Flight
 ;    Summary: Call the LL164 routine in ROM bank 6
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14481,6 +14463,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Flight
 ;    Summary: Call the DrawLightning routine in ROM bank 6
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14504,6 +14487,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Icon bar
 ;    Summary: Call the PauseGame routine in ROM bank 6
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14527,6 +14511,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Controllers
 ;    Summary: Call the SetKeyLogger routine in ROM bank 6
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14550,6 +14535,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Save and load
 ;    Summary: Call the ChangeCmdrName routine in ROM bank 6
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14596,6 +14582,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Save and load
 ;    Summary: Call the JAMESON routine in ROM bank 6
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14619,12 +14606,13 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Combat demo
 ;    Summary: Call the ShowScrollText routine in ROM bank 6
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
 .ShowScrollText_b6
 
- STA ASAV               ; Store the value of A so we can retrieve it below
+ STA storeA             ; Store the value of A so we can retrieve it below
 
  LDA currentBank        ; If ROM bank 6 is already paged into memory, jump to
  CMP #6                 ; bank13
@@ -14635,7 +14623,7 @@ ENDIF
  LDA #6                 ; Page ROM bank 6 into memory at $8000
  JSR SetBank
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JSR ShowScrollText     ; Call ShowScrollText, now that it is paged into memory
 
@@ -14645,7 +14633,7 @@ ENDIF
 
 .bank13
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JMP ShowScrollText     ; Call ShowScrollText, which is already paged into
                         ; memory, and return from the subroutine using a tail
@@ -14657,6 +14645,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Call the BEEP routine in ROM bank 7
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14680,12 +14669,13 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Text
 ;    Summary: Call the DETOK routine in ROM bank 2
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
 .DETOK_b2
 
- STA ASAV               ; Store the value of A so we can retrieve it below
+ STA storeA             ; Store the value of A so we can retrieve it below
 
  LDA currentBank        ; If ROM bank 2 is already paged into memory, jump to
  CMP #2                 ; bank14
@@ -14696,7 +14686,7 @@ ENDIF
  LDA #2                 ; Page ROM bank 2 into memory at $8000
  JSR SetBank
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JSR DETOK              ; Call DETOK, now that it is paged into memory
 
@@ -14706,7 +14696,7 @@ ENDIF
 
 .bank14
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JMP DETOK              ; Call DETOK, which is already paged into memory, and
                         ; return from the subroutine using a tail call
@@ -14717,12 +14707,13 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Text
 ;    Summary: Call the DTS routine in ROM bank 2
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
 .DTS_b2
 
- STA ASAV               ; Store the value of A so we can retrieve it below
+ STA storeA             ; Store the value of A so we can retrieve it below
 
  LDA currentBank        ; If ROM bank 2 is already paged into memory, jump to
  CMP #2                 ; bank15
@@ -14733,7 +14724,7 @@ ENDIF
  LDA #2                 ; Page ROM bank 2 into memory at $8000
  JSR SetBank
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JSR DTS                ; Call DTS, now that it is paged into memory
 
@@ -14743,7 +14734,7 @@ ENDIF
 
 .bank15
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JMP DTS                ; Call DTS, which is already paged into memory, and
                         ; return from the subroutine using a tail call
@@ -14754,6 +14745,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Text
 ;    Summary: Call the PDESC routine in ROM bank 2
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14777,12 +14769,13 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Icon bar
 ;    Summary: Call the SetupIconBar routine in ROM bank 3
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
 .SetupIconBar_b3
 
- STA ASAV               ; Store the value of A so we can retrieve it below
+ STA storeA             ; Store the value of A so we can retrieve it below
 
  LDA currentBank        ; If ROM bank 3 is already paged into memory, jump to
  CMP #3                 ; bank16
@@ -14793,7 +14786,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JSR SetupIconBar       ; Call SetupIconBar, now that it is paged into memory
 
@@ -14803,7 +14796,7 @@ ENDIF
 
 .bank16
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JMP SetupIconBar       ; Call SetupIconBar, which is already paged into memory,
                         ; and return from the subroutine using a tail call
@@ -14814,12 +14807,13 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Icon bar
 ;    Summary: Call the ShowIconBar routine in ROM bank 3
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
 .ShowIconBar_b3
 
- STA ASAV               ; Store the value of A so we can retrieve it below
+ STA storeA             ; Store the value of A so we can retrieve it below
 
  LDA currentBank        ; If ROM bank 3 is already paged into memory, jump to
  CMP #3                 ; bank17
@@ -14830,7 +14824,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JSR ShowIconBar        ; Call ShowIconBar, now that it is paged into memory
 
@@ -14840,7 +14834,7 @@ ENDIF
 
 .bank17
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JMP ShowIconBar        ; Call ShowIconBar, which is already paged into memory,
                         ; and return from the subroutine using a tail call
@@ -14851,6 +14845,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Dashboard
 ;    Summary: Call the DrawDashNames routine in ROM bank 3
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14874,6 +14869,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Dashboard
 ;    Summary: Call the ResetScanner routine in ROM bank 3
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14897,6 +14893,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Start and end
 ;    Summary: Call the ResetScreen routine in ROM bank 3
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14921,6 +14918,7 @@ ENDIF
 ;   Category: PPU
 ;    Summary: Update the screen by sending data to the PPU, either immediately
 ;             or during VBlank, depending on whether the screen is visible
+;  Deep dive: Views and view types in NES Elite
 ;
 ; ******************************************************************************
 
@@ -14944,6 +14942,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: PPU
 ;    Summary: Call the SendViewToPPU routine in ROM bank 3
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -14986,6 +14985,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Call the SetupViewInNMI routine in ROM bank 3
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -15003,7 +15003,7 @@ ENDIF
                         ;
                         ; Bits 0 and 1 are ignored and are always clear
 
- STA ASAV               ; Store the value of A so we can retrieve it below
+ STA storeA             ; Store the value of A so we can retrieve it below
 
  LDA currentBank        ; If ROM bank 3 is already paged into memory, jump to
  CMP #3                 ; bank18
@@ -15014,7 +15014,7 @@ ENDIF
  LDA #3                 ; Page ROM bank 3 into memory at $8000
  JSR SetBank
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JSR SetupViewInNMI     ; Call SetupViewInNMI, now that it is paged into memory
 
@@ -15024,7 +15024,7 @@ ENDIF
 
 .bank18
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JMP SetupViewInNMI     ; Call SetupViewInNMI, which is already paged into
                         ; memory, and return from the subroutine using a tail
@@ -15036,6 +15036,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: PPU
 ;    Summary: Call the SendBitplaneToPPU routine in ROM bank 3
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -15069,6 +15070,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Icon bar
 ;    Summary: Call the UpdateIconBar routine in ROM bank 3
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -15101,6 +15103,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Call the DrawScreenInNMI routine in ROM bank 0
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -15124,6 +15127,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Save and load
 ;    Summary: Call the SVE routine in ROM bank 6
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -15147,12 +15151,13 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Moving
 ;    Summary: Call the MVS5 routine in ROM bank 0
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
 .MVS5_b0
 
- STA ASAV               ; Store the value of A so we can retrieve it below
+ STA storeA             ; Store the value of A so we can retrieve it below
 
  LDA currentBank        ; If ROM bank 0 is already paged into memory, jump to
  CMP #0                 ; bank21
@@ -15163,7 +15168,7 @@ ENDIF
  LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JSR MVS5               ; Call MVS5, now that it is paged into memory
 
@@ -15173,7 +15178,7 @@ ENDIF
 
 .bank21
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JMP MVS5               ; Call MVS5, which is already paged into memory, and
                         ; return from the subroutine using a tail call
@@ -15184,6 +15189,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Ship hangar
 ;    Summary: Call the HALL routine in ROM bank 1
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -15207,12 +15213,13 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Text
 ;    Summary: Call the CHPR routine in ROM bank 2
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
 .CHPR_b2
 
- STA ASAV               ; Store the value of A so we can retrieve it below
+ STA storeA             ; Store the value of A so we can retrieve it below
 
  LDA currentBank        ; If ROM bank 2 is already paged into memory, jump to
  CMP #2                 ; bank22
@@ -15223,7 +15230,7 @@ ENDIF
  LDA #2                 ; Page ROM bank 2 into memory at $8000
  JSR SetBank
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JSR CHPR               ; Call CHPR, now that it is paged into memory
 
@@ -15233,7 +15240,7 @@ ENDIF
 
 .bank22
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JMP CHPR               ; Call CHPR, which is already paged into memory, and
                         ; return from the subroutine using a tail call
@@ -15244,12 +15251,13 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Text
 ;    Summary: Call the DASC routine in ROM bank 2
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
 .DASC_b2
 
- STA ASAV               ; Store the value of A so we can retrieve it below
+ STA storeA             ; Store the value of A so we can retrieve it below
 
  LDA currentBank        ; If ROM bank 2 is already paged into memory, jump to
  CMP #2                 ; bank23
@@ -15260,7 +15268,7 @@ ENDIF
  LDA #2                 ; Page ROM bank 2 into memory at $8000
  JSR SetBank
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JSR DASC               ; Call DASC, now that it is paged into memory
 
@@ -15270,7 +15278,7 @@ ENDIF
 
 .bank23
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JMP DASC               ; Call DASC, which is already paged into memory, and
                         ; return from the subroutine using a tail call
@@ -15281,12 +15289,13 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Text
 ;    Summary: Call the TT27 routine in ROM bank 2
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
 .TT27_b2
 
- STA ASAV               ; Store the value of A so we can retrieve it below
+ STA storeA             ; Store the value of A so we can retrieve it below
 
  LDA currentBank        ; If ROM bank 2 is already paged into memory, jump to
  CMP #2                 ; bank24
@@ -15297,7 +15306,7 @@ ENDIF
  LDA #2                 ; Page ROM bank 2 into memory at $8000
  JSR SetBank
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JSR TT27               ; Call TT27, now that it is paged into memory
 
@@ -15307,7 +15316,7 @@ ENDIF
 
 .bank24
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JMP TT27               ; Call TT27, which is already paged into memory, and
                         ; return from the subroutine using a tail call
@@ -15318,12 +15327,13 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Text
 ;    Summary: Call the ex routine in ROM bank 2
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
 .ex_b2
 
- STA ASAV               ; Store the value of A so we can retrieve it below
+ STA storeA             ; Store the value of A so we can retrieve it below
 
  LDA currentBank        ; If ROM bank 2 is already paged into memory, jump to
  CMP #2                 ; bank25
@@ -15334,7 +15344,7 @@ ENDIF
  LDA #2                 ; Page ROM bank 2 into memory at $8000
  JSR SetBank
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JSR ex                 ; Call ex, now that it is paged into memory
 
@@ -15344,7 +15354,7 @@ ENDIF
 
 .bank25
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JMP ex                 ; Call ex, which is already paged into memory, and
                         ; return from the subroutine using a tail call
@@ -15355,6 +15365,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Text
 ;    Summary: Call the PrintCtrlCode routine in ROM bank 0
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -15378,6 +15389,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Start and end
 ;    Summary: Call the SetupAfterLoad routine in ROM bank 0
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -15410,6 +15422,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Dashboard
 ;    Summary: Update the current ship so it is no longer shown on the scanner
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -15431,6 +15444,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Dashboard
 ;    Summary: Call the HideFromScanner routine in ROM bank 1
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -15454,12 +15468,13 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Call the TT66 routine in ROM bank 0
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
 .TT66_b0
 
- STA ASAV               ; Store the value of A so we can retrieve it below
+ STA storeA             ; Store the value of A so we can retrieve it below
 
  LDA currentBank        ; Fetch the number of the ROM bank that is currently
  PHA                    ; paged into memory at $8000 and store it on the stack
@@ -15467,7 +15482,7 @@ ENDIF
  LDA #0                 ; Page ROM bank 0 into memory at $8000
  JSR SetBank
 
- LDA ASAV               ; Restore the value of A that we stored above
+ LDA storeA             ; Restore the value of A that we stored above
 
  JSR TT66               ; Call TT66, now that it is paged into memory
 
@@ -15482,6 +15497,7 @@ ENDIF
 ;   Category: Drawing lines
 ;    Summary: Call the CLIP routine in ROM bank 1, drawing the clipped line if
 ;             it fits on-screen
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -15510,6 +15526,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Call the ClearScreen routine in ROM bank 3
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -15541,6 +15558,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Dashboard
 ;    Summary: Call the SCAN routine in ROM bank 1
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -15590,6 +15608,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Call the UpdateView routine in ROM bank 0
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -15614,6 +15633,7 @@ ENDIF
 ;   Category: PPU
 ;    Summary: Update the hangar view on-screen by sending the data to the PPU,
 ;             either immediately or during VBlank
+;  Deep dive: Views and view types in NES Elite
 ;
 ; ******************************************************************************
 
@@ -15865,6 +15885,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Combat demo
 ;    Summary: Initialise the local bubble of universe for the demo
+;  Deep dive: The NES combat demo
 ;
 ; ******************************************************************************
 
@@ -16635,47 +16656,14 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Utility routines
 ;    Summary: Unpack compressed image data to RAM
+;  Deep dive: Image and data compression
 ;
 ; ------------------------------------------------------------------------------
 ;
 ; This routine unpacks compressed data into RAM. The data is typically nametable
 ; or pattern data that is unpacked into the nametable or pattern buffers.
 ;
-; UnpackToRAM reads packed data from V(1 0) and writes unpacked data to SC(1 0)
-; by fetching bytes one at a time from V(1 0), incrementing V(1 0) after each
-; fetch, and unpacking and writing the data to SC(1 0) as it goes.
-;
-; If we fetch byte $xx from V(1 0), then we unpack it as follows:
-;
-;   * If $xx >= $40, output byte $xx as it is and move on to the next byte
-;
-;   * If $xx = $x0, output byte $x0 as it is and move on to the next byte
-;
-;   * If $xx = $3F, stop and return from the subroutine, as we have finished
-;
-;   * If $xx >= $20, jump to upac6 to do the following:
-;
-;     * If $xx >= $30, jump to upac7 to output the next $0x bytes from V(1 0) as
-;                      they are, incrementing V(1 0) as we go
-;
-;     * If $xx >= $20, fetch the next byte from V(1 0), increment V(1 0), and
-;                      output the fetched byte for $0x bytes
-;
-;   * If $xx >= $10, jump to upac5 to output $FF for $0x bytes
-;
-;   * If $xx < $10, output 0 for $0x bytes
-;
-; In summary, this is how each byte gets unpacked:
-;
-;   $00 = unchanged
-;   $0x = output 0 for $0x bytes
-;   $10 = unchanged
-;   $1x = output $FF for $0x bytes
-;   $20 = unchanged
-;   $2x = output the next byte for $0x bytes
-;   $30 = unchanged
-;   $3x = output the next $0x bytes unchanged
-;   $40 and above = unchanged
+; The algorithm is described in the deep dive on "Image and data compression".
 ;
 ; ******************************************************************************
 
@@ -16895,6 +16883,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Utility routines
 ;    Summary: Unpack compressed image data and send it to the PPU
+;  Deep dive: Image and data compression
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -16902,7 +16891,7 @@ ENDIF
 ; data is typically nametable or pattern data that is unpacked into the PPU's
 ; nametable or pattern tables.
 ;
-; The algorithm is described in the UnpackToRAM routine.
+; The algorithm is described in the deep dive on "Image and data compression".
 ;
 ; Other entry points:
 ;
@@ -19669,6 +19658,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Utility routines
 ;    Summary: Configure the MMC1 mapper and page ROM bank 0 into memory at $8000
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
@@ -19752,6 +19742,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Drawing lines
 ;    Summary: Image data for the horizontal line, vertical line and block images
+;  Deep dive: Drawing lines in the NES version
 ;
 ; ******************************************************************************
 
@@ -19793,6 +19784,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Text
 ;    Summary: Image data for the text font
+;  Deep dive: Multi-language support in NES Elite
+;             Fonts in NES Elite
 ;
 ; ******************************************************************************
 
@@ -19931,6 +19924,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Utility routines
 ;    Summary: Vectors at the end of ROM bank 7
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 

@@ -54,6 +54,7 @@
 ;       Type: Subroutine
 ;   Category: Start and end
 ;    Summary: The MMC1 mapper reset routine at the start of the ROM bank
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -569,6 +570,8 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Make the current sounds (music and sound effects)
+;  Deep dive: Sound effects in NES Elite
+;             Music in NES Elite
 ;
 ; ******************************************************************************
 
@@ -641,6 +644,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Play the current music on the SQ1, SQ2, TRI and NOISE channels
+;  Deep dive: Music in NES Elite
 ;
 ; ******************************************************************************
 
@@ -693,6 +697,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Play the current music on the SQ1 channel
+;  Deep dive: Music in NES Elite
 ;
 ; ******************************************************************************
 
@@ -1208,6 +1213,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Apply volume and pitch changes to the SQ1 channel
+;  Deep dive: Music in NES Elite
 ;
 ; ******************************************************************************
 
@@ -1315,6 +1321,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Play the current music on the SQ2 channel
+;  Deep dive: Music in NES Elite
 ;
 ; ******************************************************************************
 
@@ -1830,6 +1837,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Apply volume and pitch changes to the SQ2 channel
+;  Deep dive: Music in NES Elite
 ;
 ; ******************************************************************************
 
@@ -1937,6 +1945,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Play the current music on the TRI channel
+;  Deep dive: Music in NES Elite
 ;
 ; ******************************************************************************
 
@@ -2385,6 +2394,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Apply volume and pitch changes to the TRI channel
+;  Deep dive: Music in NES Elite
 ;
 ; ******************************************************************************
 
@@ -2457,6 +2467,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Play the current music on the NOISE channel
+;  Deep dive: Music in NES Elite
 ;
 ; ******************************************************************************
 
@@ -2858,6 +2869,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Apply volume and pitch changes to the NOISE channel
+;  Deep dive: Music in NES Elite
 ;
 ; ******************************************************************************
 
@@ -2963,7 +2975,7 @@ ENDIF
                         ; the byte of data we just fetched from the pitch
                         ; envelope
                         ;
-                        ; We extract the low nibble because the top nibble is
+                        ; We extract the low nibble because the high nibble is
                         ; ignored in NOISE_LO, except for bit 7, which we want
                         ; to clear so the period of the random noise generation
                         ; is normal and not shortened
@@ -2976,6 +2988,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Sound
 ;    Summary: A table of note frequencies
+;  Deep dive: Music in NES Elite
 ;
 ; ******************************************************************************
 
@@ -3068,6 +3081,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Make a sound effect on the SQ1 channel
+;  Deep dive: Sound effects in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -3199,6 +3213,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Start making a sound effect on the specified channel
+;  Deep dive: Sound effects in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -3247,6 +3262,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Make a sound effect on the SQ2 channel
+;  Deep dive: Sound effects in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -3378,6 +3394,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Make a sound effect on the NOISE channel
+;  Deep dive: Sound effects in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -3515,6 +3532,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Make the current sound effects on the SQ1, SQ2 and NOISE channels
+;  Deep dive: Sound effects in NES Elite
 ;
 ; ******************************************************************************
 
@@ -3536,6 +3554,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Make the current sound effect on the SQ1 channel
+;  Deep dive: Sound effects in NES Elite
 ;
 ; ******************************************************************************
 
@@ -3837,6 +3856,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Make the current sound effect on the SQ2 channel
+;  Deep dive: Sound effects in NES Elite
 ;
 ; ******************************************************************************
 
@@ -4138,6 +4158,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Sound
 ;    Summary: Make the current sound effect on the NOISE channel
+;  Deep dive: Sound effects in NES Elite
 ;
 ; ******************************************************************************
 
@@ -4332,7 +4353,7 @@ ENDIF
                         ; C flag, which is not in a fixed state, so this adds an
                         ; extra level of randomness to the vibrato effect)
 
- AND #%00001111         ; We extract the low nibble because the top nibble is
+ AND #%00001111         ; We extract the low nibble because the high nibble is
                         ; ignored in NOISE_LO, except for bit 7, which we want
                         ; to clear so the period of the random noise generation
                         ; is normal and not shortened
@@ -4428,6 +4449,7 @@ ENDIF
 ;   Category: Sound
 ;    Summary: Update the sound seeds that are used to randomise the vibrato
 ;             effect
+;  Deep dive: Sound effects in NES Elite
 ;
 ; ******************************************************************************
 
@@ -4469,93 +4491,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Sound
 ;    Summary: Sound data for the sound effects
-;
-; ------------------------------------------------------------------------------
-;
-; Each sound block is made up of 14 bytes, which are copied to the soundByteSQ1,
-; soundByteSQ2 or soundByteNOISE blocks (one for each channel) where they can be
-; manipulated (so counters can be updated, and so on).
-;
-; The sound data block controls the sending of data to the APU during each
-; iteration of the sound effect routine (which is typically every VBlank). The
-; following documentation talks about channel SQ1, but the same logic applies to
-; the SQ2 and NOISE channels.
-;
-; The list of bytes in the sound effect data block is as follows:
-;
-;   * Byte #0 = length of sound (in iterations)
-;
-;     * Ignored if the sound is an infinite loop (i.e. if byte #12 is non-zero)
-;
-;     * Gets decremented on each iteration
-;
-;   * Byte #1 = how often we send pitch data to the APU
-;
-;     * So we send pitch data to the APU every byte #1 iterations
-;
-;   * Bytes #2, #3 = the first 16-bit pitch data to send to (SQ1_HI SQ1_LO)
-;
-;     * Used as 16-bit storage for (soundHiSQ1 soundLoSQ1), which contains the
-;       pitch data to send to the APU for this iteration
-;
-;     * This gets sent to the APU via (SQ1_HI SQ1_LO) to set the sound effect's
-;       pitch as the effect progresses
-;
-;   * Bytes #4, #5 = A 16-bit value to apply to the pitch every iteration
-;
-;     * The pitch is only varied if enabled by byte #8 being non-zero
-;
-;   * Byte #6 = top nibble of the SQ1_VOL byte
-;
-;     * This value gets OR'd with the soundVolume to send to the APU via SQ1_VOL
-;
-;     * It sets the duty, loop and NES envelope settings to send to the APU
-;
-;   * Byte #7 = add vibrato
-;
-;     * Non-zero means add vibrato to the pitch on each iteration using the
-;       randomised vibrato value in soundVibrato
-;
-;   * Byte #8 = enable/disable the pitch variation in byte #4/#5
-;
-;     * Non-zero means:
-;
-;       * Bit 7 clear = subtract byte #4/#5 from the APU pitch on each iteration
-;                      (so the note frequency goes up)
-;
-;       * Bit 7 set = add byte #4/#5 to the APU pitch on each iteration
-;                     (so the note frequency goes down)
-;
-;     * Zero disables the pitch variation in byte #4/#5 
-;
-;   * Byte #9 = number of iterations for which we send pitch data to the APU
-;
-;     * Ignored if the sound is an infinite loop (i.e. if byte #12 is non-zero)
-;
-;   * Byte #10 = number of the volume envelope to apply
-;
-;     * This is the number of the envelope as specified in the soundVolume table
-;
-;   * Byte #11 = how often we apply the volume envelope to the sound
-;
-;     * We apply the next entry from the volume envelope every byte #11
-;       iterations
-;
-;   * Byte #12 = enable/disable infinite loop
-;
-;     * Non-zero means the sound effect loops and keeps being made, even after
-;       the counter in byte #0 runs down
-;
-;     * Zero means the sound only runs for the number of iterations in byte #0
-;
-;   * Byte #13 = how often to apply the pitch variation in byte #4/#5
-;
-;     * If pitch variation is enabled by byte #8 being non-zero, then:
-;
-;       * Non-zero means only apply the pitch variation in byte #4/#5 every
-;         byte #13 iterations
-;
-;       * Zero means apply the pitch variation every iteration
+;  Deep dive: Sound effects in NES Elite
 ;
 ; ******************************************************************************
 
@@ -4760,6 +4696,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Sound
 ;    Summary: Volume envelope data for the sound effects
+;  Deep dive: Sound effects in NES Elite
 ;
 ; ******************************************************************************
 
@@ -4866,6 +4803,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Sound
 ;    Summary: Volume envelope data for the game music
+;  Deep dive: Music in NES Elite
 ;
 ; ******************************************************************************
 
@@ -5015,6 +4953,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Sound
 ;    Summary: Pitch envelope data for the game music
+;  Deep dive: Music in NES Elite
 ;
 ; ******************************************************************************
 
@@ -5084,92 +5023,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Sound
 ;    Summary: Data for the tunes played in the game
-;
-; ------------------------------------------------------------------------------
-;
-; The tuneData table contains the largest set of data for the game music.
-;
-; There are five tunes, numbered 0 to 4. The data for each tune is stored as a
-; linked tree, with the data at level 3, so this would be the path to reach the
-; first block of music data in the first part of the first tune:
-;
-;   tune0Data -> tune0Data_SQ1 -> tune0Data_SQ1_0
-;
-; Each tune has a lookup table at the start of tuneData that consists of a
-; single byte (containing the tune speed) followed by the addresses of four
-; blocks, one for each channel. So tune 0 has the following lookup table at
-; tune0Data, for example:
-;
-;   EQUB 47
-;   EQUW tune0Data_SQ1
-;   EQUW tune0Data_SQ2
-;   EQUW tune0Data_TRI
-;   EQUW tune0Data_NOISE
-;
-; The first entry is the tune speed, and then there are four addresses, one for
-; each sound channel. These addresses each point to another list of links, which
-; contain the addresses of each section in the tune. So, for example, we have
-; the following section links for tune 0 in tune0Data_SQ1:
-;
-;   EQUW tune0Data_SQ1_0
-;   EQUW tune0Data_SQ1_0
-;   EQUW tune0Data_SQ1_1
-;   EQUW tune0Data_SQ1_2
-;   EQUW tune0Data_SQ1_1
-;   EQUW tune0Data_SQ1_2
-;   EQUW tune0Data_SQ1_1
-;   EQUW tune0Data_SQ1_3
-;   EQUW tune0Data_SQ1_1
-;   EQUW tune0Data_SQ1_4
-;   EQUW 0
-;
-; These blocks are typically terminated by a null address, at which point the
-; tune wraps around to the start again. If there is no mull terminator, then
-; the tune will keep playing the sections from the subsequent list, and will
-; keep going until a null terminator is found.
-;
-; These section addresses point to the actual note data for each section, so
-; tune0Data_SQ1_0 points to the following, for example:
-;
-;   EQUB $FA, $70, $F7, $05, $F6, $09, $65, $0C
-;   EQUB $0C, $0C, $63, $07, $61, $07, $63, $07
-;   EQUB $07, $FF
-;
-; These blocks contain note data in the format described below.
-;
-; Note that tunes 3 and 4 share data, and in these cases there are two labels
-; applied to the shared data (so tune3Data_SQ1_0 and tune4Data_SQ1_0 point to
-; the same data, for example).
-;
-; The note data consists of notes, rests and commands. If A is a byte from the
-; note data (such as that shown above), then it is interpreted as follows.
-;
-;   * If $00 <= A <= $5F then this is a note, so send it to the APU after
-;     converting the note value (which is a frequency) into an APU period (so
-;     higher values of A are higher notes with shorter periods)
-;
-;   * If $60 <= A <= $7F then this is a rest, with the rest length given by
-;     A - $5F (so if A = $60 the rest length is one iteration, and if A = $7F
-;     the rest length is 32 iterations)
-;
-;   * If A >= $80 (i.e. bit 7 is set) then this is a command byte. The commands
-;     are between one and three bytes, and have the following effect:
-;
-;     <$F4 $xx>       Set the playback speed to $xx
-;     <$F5 $xx &yy>   Change tune to the tune data at &yyxx (e.g. tune2Data_xxx)
-;     <$F6 $xx>       Set the volume envelope number to $xx
-;     <$F7 $xx>       Set the pitch envelope number to $xx
-;     <$F8>           Set the volume of the current channel to zero
-;     <$F9>           Enable the volume envelope for the current channel
-;     <$FA %ddlc0000> Configure the current channel: duty %dd, loop %l, const %c
-;     <$FB $xx>       Set the tuning for all channels to $xx
-;     <$FC $xx>       Set the tuning for the current channel to $xx
-;     <$FD $xx>       Set the sweep for the current channel to $xx
-;     <$FE>           Stop the music and disable sound
-;     <$FF>           Move to the next section in the current tune
-;
-; If a command byte is fetched that doesn't appear in the above list, then it is
-; ignored.
+;  Deep dive: Music in NES Elite
 ;
 ; ******************************************************************************
 
@@ -6467,6 +6321,7 @@ ENDIF
 ;   Category: Drawing sprites
 ;    Summary: Draw an image out of sprites using patterns in sequential tiles in
 ;             the pattern buffer
+;  Deep dive: Sprite usage in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -7155,6 +7010,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Dashboard
 ;    Summary: Update the dashboard
+;  Deep dive: Sprite usage in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -7687,6 +7543,7 @@ ENDIF
 ;   Category: Equipment
 ;    Summary: Sprite configuration data for the sprites that show the equipment
 ;             fitted to our Cobra Mk III on the Equip Ship screen
+;  Deep dive: Sprite usage in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -8362,6 +8219,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Combat demo
 ;    Summary: Show a scroll text and start the combat demo
+;  Deep dive: The NES combat demo
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -8934,6 +8792,7 @@ ENDIF
 ;    Summary: Populate the line coordinate tables with the pixel lines for one
 ;             21-character line of scroll text
 ;  Deep dive: The 6502 Second Processor demo mode
+;             The NES combat demo
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -9444,6 +9303,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Combat demo
 ;    Summary: Display a Star Wars scroll text
+;  Deep dive: The NES combat demo
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -9598,6 +9458,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Combat demo
 ;    Summary: Draw a scroll text over multiple frames
+;  Deep dive: The NES combat demo
 ;
 ; ******************************************************************************
 
@@ -10029,6 +9890,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Combat demo
 ;    Summary: Draw one frame of the scroll text
+;  Deep dive: The NES combat demo
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -10248,6 +10110,7 @@ ENDIF
 ;   Category: Combat demo
 ;    Summary: Line definitions for characters in the Star Wars scroll text
 ;  Deep dive: The 6502 Second Processor demo mode
+;             The NES combat demo
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -10393,6 +10256,7 @@ ENDIF
 ;   Category: Combat demo
 ;    Summary: Lookup table for the low byte of the address of the scrollText1
 ;             text for each language
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -10414,6 +10278,7 @@ ENDIF
 ;   Category: Combat demo
 ;    Summary: Lookup table for the high byte of the address of the scrollText1
 ;             text for each language
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -10435,6 +10300,7 @@ ENDIF
 ;   Category: Combat demo
 ;    Summary: Lookup table for the low byte of the address of the scrollText2
 ;             text for each language
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -10456,6 +10322,7 @@ ENDIF
 ;   Category: Combat demo
 ;    Summary: Lookup table for the high byte of the address of the scrollText2
 ;             text for each language
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -10596,6 +10463,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Combat demo
 ;    Summary: Text for the first scroll text in English
+;  Deep dive: Multi-language support in NES Elite
+;             The NES combat demo
 ;
 ; ******************************************************************************
 
@@ -10625,6 +10494,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Combat demo
 ;    Summary: Text for the second scroll text in English
+;  Deep dive: Multi-language support in NES Elite
+;             The NES combat demo
 ;
 ; ******************************************************************************
 
@@ -10651,6 +10522,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Combat demo
 ;    Summary: Text for the first scroll text in French
+;  Deep dive: Multi-language support in NES Elite
+;             The NES combat demo
 ;
 ; ******************************************************************************
 
@@ -10680,6 +10553,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Combat demo
 ;    Summary: Text for the second scroll text in French
+;  Deep dive: Multi-language support in NES Elite
+;             The NES combat demo
 ;
 ; ******************************************************************************
 
@@ -10706,6 +10581,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Combat demo
 ;    Summary: Text for the first scroll text in German
+;  Deep dive: Multi-language support in NES Elite
+;             The NES combat demo
 ;
 ; ******************************************************************************
 
@@ -10735,6 +10612,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Combat demo
 ;    Summary: Text for the second scroll text in German
+;  Deep dive: Multi-language support in NES Elite
+;             The NES combat demo
 ;
 ; ******************************************************************************
 
@@ -10823,6 +10702,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Save and load
 ;    Summary: The Save and Load screen title in English
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -10846,6 +10726,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Save and load
 ;    Summary: The subheaders for the Save and Load screen title in English
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -10876,6 +10757,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Save and load
 ;    Summary: The Save and Load screen title in German
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -10899,6 +10781,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Save and load
 ;    Summary: The subheaders for the Save and Load screen title in German
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -10929,6 +10812,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Save and load
 ;    Summary: The Save and Load screen title in French
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -10952,6 +10836,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Save and load
 ;    Summary: The subheaders for the Save and Load screen title in French
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -10983,6 +10868,7 @@ ENDIF
 ;   Category: Save and load
 ;    Summary: The text column for the Save and Load screen headers for each
 ;             language
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -14301,6 +14187,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Controllers
 ;    Summary: Populate the key logger table with the controller button presses
+;  Deep dive: Bolting NES controllers onto the key logger
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -15034,6 +14921,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Start and end
 ;    Summary: The text column for the language buttons on the Start screen
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -15053,6 +14941,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Start and end
 ;    Summary: The text row for the language buttons on the Start screen
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -15073,6 +14962,7 @@ ENDIF
 ;   Category: Text
 ;    Summary: The number of the character beyond the end of the printable
 ;             character set in each language
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -15092,6 +14982,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Text
 ;    Summary: The decimal point character to use for each language
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -15128,6 +15019,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Text
 ;    Summary: Low byte of the text token table for each language
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -15145,6 +15037,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Text
 ;    Summary: High byte of the text token table for each language
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -15162,6 +15055,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Text
 ;    Summary: Low byte of the extended text token table for each language
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -15179,6 +15073,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Text
 ;    Summary: High byte of the extended text token table for each language
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -15197,6 +15092,7 @@ ENDIF
 ;   Category: Text
 ;    Summary: The index of the chosen language for looking up values from
 ;             language-indexed tables
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -15217,6 +15113,7 @@ ENDIF
 ;   Category: Text
 ;    Summary: The language number for each language, as a set bit within a flag
 ;             byte
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -15390,6 +15287,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Utility routines
 ;    Summary: Vectors and padding at the end of the ROM bank
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 

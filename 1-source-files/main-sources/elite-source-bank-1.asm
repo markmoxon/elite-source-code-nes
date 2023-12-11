@@ -52,6 +52,7 @@
 ;       Type: Subroutine
 ;   Category: Start and end
 ;    Summary: The MMC1 mapper reset routine at the start of the ROM bank
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -10743,6 +10744,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Stardust
 ;    Summary: The main routine for processing the stardust
+;  Deep dive: Sprite usage in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -10780,6 +10782,7 @@ ENDIF
 ;   Category: Stardust
 ;    Summary: Process the stardust for the front view
 ;  Deep dive: Stardust in the front view
+;  Deep dive: Sprite usage in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -11150,6 +11153,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Stardust
 ;    Summary: Process the stardust for the rear view
+;  Deep dive: Sprite usage in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -11537,6 +11541,7 @@ ENDIF
 ;   Category: Stardust
 ;    Summary: Process the stardust for the left or right view
 ;  Deep dive: Stardust in the side views
+;             Sprite usage in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -13368,6 +13373,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Dashboard
 ;    Summary: Display the current ship on the scanner
+;  Deep dive: Sprite usage in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -14379,6 +14385,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing pixels
 ;    Summary: Draw a stardust particle relative to the screen centre
+;  Deep dive: Sprite usage in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -14512,6 +14519,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Utility routines
 ;    Summary: Vectors and padding at the end of the ROM bank
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 

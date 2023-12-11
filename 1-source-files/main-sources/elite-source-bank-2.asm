@@ -52,6 +52,7 @@
 ;       Type: Subroutine
 ;   Category: Start and end
 ;    Summary: The MMC1 mapper reset routine at the start of the ROM bank
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -3465,6 +3466,7 @@ ENDIF
 ;    Summary: System numbers that have extended description overrides
 ;  Deep dive: Extended system descriptions
 ;             Extended text tokens
+;             The Constrictor mission
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -3518,6 +3520,7 @@ ENDIF
 ;    Summary: The criteria for systems with extended description overrides
 ;  Deep dive: Extended system descriptions
 ;             Extended text tokens
+;             The Constrictor mission
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -3577,6 +3580,7 @@ ENDIF
 ;    Summary: The second extended token table for recursive tokens 0-26 (DETOK3)
 ;  Deep dive: Extended system descriptions
 ;             Extended text tokens
+;             The Constrictor mission
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -4187,6 +4191,7 @@ ENDIF
 ;    Summary: The first extended token table for recursive tokens 0-255 (DETOK)
 ;             (German)
 ;  Deep dive: Extended text tokens
+;             Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -7175,6 +7180,8 @@ ENDIF
 ;    Summary: System numbers that have extended description overrides (German)
 ;  Deep dive: Extended system descriptions
 ;             Extended text tokens
+;             Multi-language support in NES Elite
+;             The Constrictor mission
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -7230,6 +7237,8 @@ ENDIF
 ;             (German)
 ;  Deep dive: Extended system descriptions
 ;             Extended text tokens
+;             Multi-language support in NES Elite
+;             The Constrictor mission
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -7291,6 +7300,8 @@ ENDIF
 ;             (German)
 ;  Deep dive: Extended system descriptions
 ;             Extended text tokens
+;             Multi-language support in NES Elite
+;             The Constrictor mission
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -8074,6 +8085,7 @@ ENDIF
 ;    Summary: The first extended token table for recursive tokens 0-255 (DETOK)
 ;             (French)
 ;  Deep dive: Extended text tokens
+;             Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -10623,6 +10635,8 @@ ENDIF
 ;    Summary: System numbers that have extended description overrides (French)
 ;  Deep dive: Extended system descriptions
 ;             Extended text tokens
+;             Multi-language support in NES Elite
+;             The Constrictor mission
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -10678,6 +10692,8 @@ ENDIF
 ;             (French)
 ;  Deep dive: Extended system descriptions
 ;             Extended text tokens
+;             Multi-language support in NES Elite
+;             The Constrictor mission
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -10739,6 +10755,8 @@ ENDIF
 ;             (French)
 ;  Deep dive: Extended system descriptions
 ;             Extended text tokens
+;             Multi-language support in NES Elite
+;             The Constrictor mission
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -12470,6 +12488,7 @@ ENDIF
 ;   Category: Text
 ;    Summary: The recursive token table for tokens 0-148 (German)
 ;  Deep dive: Printing text tokens
+;             Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -13839,6 +13858,7 @@ ENDIF
 ;   Category: Text
 ;    Summary: The recursive token table for tokens 0-148 (French)
 ;  Deep dive: Printing text tokens
+;             Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -15159,6 +15179,7 @@ ENDIF
 ;   Category: Text
 ;    Summary: Address lookup table for the RUTOK text token table in three
 ;             different languages (low byte)
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -15179,6 +15200,7 @@ ENDIF
 ;   Category: Text
 ;    Summary: Address lookup table for the RUTOK text token table in three
 ;             different languages (high byte)
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -15757,6 +15779,7 @@ ENDIF
 ;   Category: Text
 ;    Summary: Print the captain's name during mission briefings
 ;  Deep dive: Extended text tokens
+;             The Constrictor mission
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -15794,6 +15817,7 @@ ENDIF
 ;   Category: Text
 ;    Summary: Print the location hint during the mission 1 briefing
 ;  Deep dive: Extended text tokens
+;             The Constrictor mission
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -16533,6 +16557,7 @@ ENDIF
 ;   Category: Text
 ;    Summary: Address lookup table for the RUPLA text token table in three
 ;             different languages (low byte)
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -16553,6 +16578,7 @@ ENDIF
 ;   Category: Text
 ;    Summary: Address lookup table for the RUPLA text token table in three
 ;             different languages (high byte)
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -16573,6 +16599,7 @@ ENDIF
 ;   Category: Text
 ;    Summary: Address lookup table for the RUGAL text token table in three
 ;             different languages (low byte)
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -16593,6 +16620,7 @@ ENDIF
 ;   Category: Text
 ;    Summary: Address lookup table for the RUGAL text token table in three
 ;             different languages (high byte)
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -16613,6 +16641,7 @@ ENDIF
 ;   Category: Text
 ;    Summary: The number of planetary systems with extended system description
 ;             overrides in the RUTOK table (NRU%) in three different languages
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -17623,6 +17652,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Text
 ;    Summary: Print a character at the text cursor by poking into screen memory
+;  Deep dive: Fonts in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -17795,6 +17825,7 @@ ENDIF
 ;   Category: Text
 ;    Summary: Jump to the right part of the routine depending on whether the
 ;             font pattern we need is already loaded
+;  Deep dive: Fonts in NES Elite
 ;
 ; ******************************************************************************
 
@@ -17879,6 +17910,7 @@ ENDIF
 ;   Category: Text
 ;    Summary: Draw a character into the pattern buffers to show the character
 ;             on-screen
+;  Deep dive: Fonts in NES Elite
 ;
 ; ******************************************************************************
 
@@ -18207,6 +18239,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Text
 ;    Summary: Process the delete character
+;  Deep dive: Fonts in NES Elite
 ;
 ; ******************************************************************************
 
@@ -18246,6 +18279,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Text
 ;    Summary: Print the character using a font that has already been loaded
+;  Deep dive: Fonts in NES Elite
 ;
 ; ******************************************************************************
 
@@ -18331,6 +18365,7 @@ ENDIF
 ;   Category: Text
 ;    Summary: Print a character in the space view when the relevant font is not
 ;             loaded, merging the text with whatever is already on-screen
+;  Deep dive: Fonts in NES Elite
 ;
 ; ******************************************************************************
 
@@ -18588,6 +18623,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Utility routines
 ;    Summary: Vectors and padding at the end of the ROM bank
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 

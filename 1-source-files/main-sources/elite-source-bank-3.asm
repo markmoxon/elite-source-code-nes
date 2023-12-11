@@ -52,6 +52,7 @@
 ;       Type: Subroutine
 ;   Category: Start and end
 ;    Summary: The MMC1 mapper reset routine at the start of the ROM bank
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -1054,6 +1055,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Dashboard
 ;    Summary: Packed image data for the dashboard
+;  Deep dive: Image and data compression
+;             Views and view types in NES Elite
 ;
 ; ******************************************************************************
 
@@ -1332,6 +1335,7 @@ ENDIF
 ;   Category: Equipment
 ;    Summary: Packed image data for the Cobra Mk III shown on the Equip Ship
 ;             screen
+;  Deep dive: Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1525,6 +1529,7 @@ ENDIF
 ;   Category: Save and load
 ;    Summary: Packed image data for the small Elite logo shown on the Save and
 ;             Load screen
+;  Deep dive: Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1611,6 +1616,7 @@ ENDIF
 ;   Category: Start and end
 ;    Summary: Packed image data for the ball at the bottom of the big Elite logo
 ;             shown on the Start screen
+;  Deep dive: Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1789,6 +1795,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: PPU
 ;    Summary: Configure the PPU for the view type in QQ11
+;  Deep dive: Views and view types in NES Elite
 ;
 ; ******************************************************************************
 
@@ -2287,6 +2294,7 @@ ENDIF
 ;   Category: PPU
 ;    Summary: Unpack the dashboard image and send it to patterns 69 to 255 in
 ;             pattern table 0 in the PPU
+;  Deep dive: Views and view types in NES Elite
 ;
 ; ******************************************************************************
 
@@ -2311,6 +2319,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: PPU
 ;    Summary: Send a bitplane to the PPU immediately
+;  Deep dive: Views and view types in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -2469,6 +2478,7 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: Setup the view and configure the NMI to send both bitplanes to the
 ;             PPU during VBlank
+;  Deep dive: Views and view types in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -3171,6 +3181,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Icon bar
 ;    Summary: Show a specified icon bar on-screen
+;  Deep dive: Views and view types in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -3254,6 +3265,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Icon bar
 ;    Summary: Update the icon bar
+;  Deep dive: Views and view types in NES Elite
 ;
 ; ******************************************************************************
 
@@ -4575,6 +4587,7 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: Copy the patterns for horizontal line, vertical line and block
 ;             images into the pattern buffers, depending on the view
+;  Deep dive: Drawing lines in the NES version
 ;
 ; ******************************************************************************
 
@@ -4819,6 +4832,7 @@ ENDIF
 ;   Category: Text
 ;    Summary: Load the normal font into the pattern buffer from pattern 66 to
 ;             160
+;  Deep dive: Fonts in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -5024,6 +5038,7 @@ ENDIF
 ;   Category: Text
 ;    Summary: Load the highlight font into the pattern buffer from pattern 161
 ;             to 255
+;  Deep dive: Fonts in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -5954,6 +5969,7 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: Lookup table that converts a NES colour to the same colour but
 ;             with a smaller brightness value
+;  Deep dive: Views and view types in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -6008,6 +6024,7 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: Get the palette for the view type in QQ11a and store it in a table
 ;             at XX3
+;  Deep dive: Bitplanes in NES Elite
 ;
 ; ******************************************************************************
 
@@ -6159,6 +6176,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Fade the screen colours towards black
+;  Deep dive: Views and view types in NES Elite
 ;
 ; ******************************************************************************
 
@@ -6254,6 +6272,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing the screen
 ;    Summary: Fade the screen to black over the next four VBlanks
+;  Deep dive: Views and view types in NES Elite
 ;
 ; ******************************************************************************
 
@@ -6326,6 +6345,7 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: Reverse-fade the screen from black to full colour over the next
 ;             four VBlanks
+;  Deep dive: Views and view types in NES Elite
 ;
 ; ******************************************************************************
 
@@ -7170,6 +7190,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Drawing the screen
 ;    Summary: The view attributes to use for each view type in English
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -7198,6 +7219,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Drawing the screen
 ;    Summary: The view attributes to use for each view type in German
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -7226,6 +7248,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Drawing the screen
 ;    Summary: The view attributes to use for each view type in French
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -7254,6 +7277,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Drawing the screen
 ;    Summary: The low byte of the view attributes lookup table for each language
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -7275,6 +7299,7 @@ ENDIF
 ;   Category: Drawing the screen
 ;    Summary: The high byte of the view attributes lookup table for each
 ;             language
+;  Deep dive: Multi-language support in NES Elite
 ;
 ; ******************************************************************************
 
@@ -7366,6 +7391,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Flight
 ;    Summary: Draw the laser crosshairs
+;  Deep dive: Sprite usage in NES Elite
 ;
 ; ******************************************************************************
 
@@ -7613,6 +7639,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Utility routines
 ;    Summary: Vectors and padding at the end of the ROM bank
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 

@@ -167,7 +167,7 @@
      00B5
 .newzp
      00B6
-.ASAV
+.storeA
      00B7
 .firstFreePattern
      00B8

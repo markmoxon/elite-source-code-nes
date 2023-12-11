@@ -52,6 +52,7 @@
 ;       Type: Subroutine
 ;   Category: Start and end
 ;    Summary: The MMC1 mapper reset routine at the start of the ROM bank
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -195,6 +196,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander face image 0
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -254,6 +257,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander face image 1
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -312,6 +317,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander face image 2
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -370,6 +377,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander face image 3
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -431,6 +440,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander face image 4
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -493,6 +504,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander face image 5
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -554,6 +567,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander face image 6
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -615,6 +630,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander face image 7
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -676,6 +693,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander face image 8
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -735,6 +754,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander face image 9
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -795,6 +816,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander face image 10
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -858,6 +881,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander face image 11
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -917,6 +942,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander face image 12
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -978,6 +1005,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander face image 13
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1078,6 +1107,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander headshot image 0
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1137,6 +1168,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander headshot image 1
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1197,6 +1230,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander headshot image 2
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1255,6 +1290,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander headshot image 3
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1318,6 +1355,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander headshot image 4
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1381,6 +1420,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander headshot image 5
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1442,6 +1483,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander headshot image 6
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1502,6 +1545,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander headshot image 7
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1562,6 +1607,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander headshot image 8
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1621,6 +1668,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander headshot image 9
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1682,6 +1731,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander headshot image 10
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1747,6 +1798,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander headshot image 11
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1806,6 +1859,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander headshot image 12
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1869,6 +1924,8 @@ ENDIF
 ;       Type: Variable
 ;   Category: Status
 ;    Summary: Packed image data for commander headshot image 13
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1936,6 +1993,8 @@ ENDIF
 ;   Category: Status
 ;    Summary: Packed image data for the glasses, earrings and medallion that the
 ;             commander can wear
+;  Deep dive: Displaying two-layer images
+;             Image and data compression
 ;
 ; ******************************************************************************
 
@@ -1964,6 +2023,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Start and end
 ;    Summary: Packed image data for the big Elite logo shown on the Start screen
+;  Deep dive: Image and data compression
 ;
 ; ******************************************************************************
 
@@ -3131,6 +3191,7 @@ ENDIF
 ;       Type: Variable
 ;   Category: Utility routines
 ;    Summary: Vectors and padding at the end of the ROM bank
+;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
 
