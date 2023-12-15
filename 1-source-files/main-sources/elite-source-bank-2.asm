@@ -15949,7 +15949,7 @@ ENDIF
 ;
 ;       Name: FILEPR
 ;       Type: Subroutine
-;   Category: Text
+;   Category: Save and load
 ;    Summary: Display the currently selected media (disc or tape)
 ;  Deep dive: Extended text tokens
 ;
@@ -15964,7 +15964,7 @@ ENDIF
 ;
 ;       Name: OTHERFILEPR
 ;       Type: Subroutine
-;   Category: Text
+;   Category: Save and load
 ;    Summary: Display the non-selected media (disc or tape)
 ;  Deep dive: Extended text tokens
 ;
@@ -16659,7 +16659,7 @@ ENDIF
 ;
 ;       Name: PDESC
 ;       Type: Subroutine
-;   Category: Text
+;   Category: Universe
 ;    Summary: Print the system's extended description or a mission 1 directive
 ;  Deep dive: Extended system descriptions
 ;             Extended text tokens
