@@ -693,15 +693,7 @@ ELSE
 
  FOR I%, 0, 255
 
-  B% = INT(2^((I% / 2 + 128) / 16) + 0.5) DIV 256
-
-  IF B% = 256
-   N% = B%+1
-  ELSE
-   N% = B%
-  ENDIF
-
-  EQUB N%
+  EQUB INT(2^((I% / 2 + 128) / 16) + 0.5) DIV 256
 
  NEXT
 
@@ -737,15 +729,7 @@ ELSE
 
  FOR I%, 0, 255
 
-  B% = INT(2^((I% / 2 + 128.25) / 16) + 0.5) DIV 256
-
-  IF B% = 256
-   N% = B%+1
-  ELSE
-   N% = B%
-  ENDIF
-
-  EQUB N%
+  EQUB INT(2^((I% / 2 + 128.25) / 16) + 0.5) DIV 256
 
  NEXT
 
