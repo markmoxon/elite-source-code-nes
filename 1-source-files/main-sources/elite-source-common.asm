@@ -93,7 +93,7 @@
  NI% = 38               ; The number of bytes in each ship's data block (as
                         ; stored in INWK and K%)
 
- NIK% = NI% + 4         ; The number of bytes in each block in K% (as each block
+ NIK% = 42              ; The number of bytes in each block in K% (as each block
                         ; contains four extra bytes)
 
  X = 128                ; The centre x-coordinate of the space view
@@ -1727,7 +1727,7 @@ ENDIF
 
 .XX3
 
- SKIP 0                 ; Temporary storage, typically used for storing tables
+ SKIP 256               ; Temporary storage, typically used for storing tables
                         ; of values such as screen coordinates or ship data
 
 ; ******************************************************************************
@@ -5362,7 +5362,12 @@ ENDIF
 
 .K%
 
- SKIP 0                 ; Ship data blocks
+ CLEAR K%, $0800        ; The ship data blocks share memory with the X1TB, Y1TB
+                        ; and X2TB variables (for use in the scroll text), so we
+                        ; need to clear this block of memory to prevent BeebAsm
+                        ; from complaining
+
+ SKIP NOSH * NIK%       ; Ship data blocks
 
 ; ******************************************************************************
 ;
