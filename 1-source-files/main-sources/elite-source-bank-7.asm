@@ -613,9 +613,9 @@ ENDIF
 
 IF _MATCH_ORIGINAL_BINARIES
 
- EQUB $6C              ; This byte appears to be unused and just contains
-                       ; random workspace noise left over from the BBC Micro
-                       ; assembly process
+ EQUB $6C               ; This byte appears to be unused and just contains
+                        ; random workspace noise left over from the assembly
+                        ; process
 
  EQUB $00, $20, $32, $40, $4A, $52, $59
  EQUB $5F, $65, $6A, $6E, $72, $76, $79, $7D
@@ -650,7 +650,6 @@ IF _MATCH_ORIGINAL_BINARIES
  EQUB $FD, $FD, $FD, $FD, $FD, $FD, $FE, $FE
  EQUB $FE, $FE, $FE, $FF, $FF, $FF, $FF, $FF
 
- 
 ELSE
 
  SKIP 1
@@ -684,9 +683,9 @@ ENDIF
 
 IF _MATCH_ORIGINAL_BINARIES
 
- EQUB $0D              ; This byte appears to be unused and just contains
-                       ; random workspace noise left over from the BBC Micro
-                       ; assembly process
+ EQUB $0D               ; This byte appears to be unused and just contains
+                        ; random workspace noise left over from the assembly
+                        ; process
 
  EQUB $00, $00, $B8, $00, $4D, $B8, $D5
  EQUB $FF, $70, $4D, $B3, $B8, $6A, $D5, $05
@@ -721,7 +720,6 @@ IF _MATCH_ORIGINAL_BINARIES
  EQUB $05, $36, $67, $98, $C8, $F8, $29, $59
  EQUB $88, $B8, $E7, $16, $45, $74, $A3, $D1
 
- 
 ELSE
 
  SKIP 1
