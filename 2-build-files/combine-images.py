@@ -72,14 +72,19 @@ def add_gallery_background(all_image_rows, all_image_width, all_image_height, im
         all_image_rows.append(row)
 
 
-def generate_gallery(image_width, image_height, margin, images_across, images_down, input_image, output_image, jewellery):
+def generate_gallery(image_width, image_height, margin, images_across, images_down, input_image, output_image, jewellery, individual_image=0):
     all_image_rows = []
     all_image_width = (image_width + margin) * images_across + margin
     all_image_height = (image_height + margin) * images_down + margin
 
     add_gallery_background(all_image_rows, all_image_width, all_image_height, image_width, image_height, margin)
 
-    for i in range(images_down):
+    if images_down == 1:
+        row_range = [individual_image]
+    else:
+        row_range = range(images_down)
+
+    for i in row_range:
         for j in range(images_across):
             if jewellery:
                 combined_image = input_image + str(i) + '_0.png'
@@ -89,7 +94,10 @@ def generate_gallery(image_width, image_height, margin, images_across, images_do
             (fg_width, fg_height, fg_rows, fg_info) = fg.asDirect()
             fg_png = list(fg_rows)
             x_pos = (image_width + margin) * j + margin
-            y_pos = (image_height + margin) * i + margin
+            if images_down == 1:
+                y_pos = margin
+            else:
+                y_pos = (image_height + margin) * i + margin
             for y in range(fg_height):
                 fg_row = fg_png[y]
                 for x in range(fg_width):
@@ -162,6 +170,20 @@ for i in range(14):
         foreground_image = '../1-source-files/images/commander-images/pngs/faceImage' + str(i) + '_ppu.png'
         combined_image = '../1-source-files/images/commander-images/combined/commanderImage' + str(i) + '_' + str(j) + '.png'
         combine_images(background_image, foreground_image, combined_image)
+
+# Galleries of individual system images
+
+image_width = 64
+image_height = 56
+margin = 10
+images_across = 8
+images_down = 1
+input_image = '../1-source-files/images/system-images/combined/systemImage'
+
+for i in range(15):
+    print("Generating gallery: allSystemImages_" + str(i))
+    output_image = '../1-source-files/images/system-images/allSystemImages_' + str(i) + '.png'
+    generate_gallery(image_width, image_height, margin, images_across, images_down, input_image, output_image, jewellery=False, individual_image=i)
 
 # Gallery of system images
 
