@@ -208,6 +208,16 @@ ENDIF
 ;   Category: Icon bar
 ;    Summary: Image data for icon bar 0 (Docked)
 ;
+; ------------------------------------------------------------------------------
+;
+; You can view the tiles that make up the Docked icon bar here:
+;
+; https://www.bbcelite.com/images/source/nes/iconBarImage0_ppu.png
+;
+; and you can see what the Docked icon bar looks like on-screen here:
+;
+; https://www.bbcelite.com/images/nes/general/data_on_lave.png
+;
 ; ******************************************************************************
 
 .iconBarImage0
@@ -347,6 +357,16 @@ ENDIF
 ;       Type: Variable
 ;   Category: Icon bar
 ;    Summary: Image data for icon bar 1 (Flight)
+;
+; ------------------------------------------------------------------------------
+;
+; You can view the tiles that make up the Flight icon bar here:
+;
+; https://www.bbcelite.com/images/source/nes/iconBarImage0_ppu.png
+;
+; and you can see what the Flight icon bar looks like on-screen here:
+;
+; https://www.bbcelite.com/images/nes/general/station.png
 ;
 ; ******************************************************************************
 
@@ -488,6 +508,16 @@ ENDIF
 ;   Category: Icon bar
 ;    Summary: Image data for icon bar 2 (Charts)
 ;
+; ------------------------------------------------------------------------------
+;
+; You can view the tiles that make up the Charts icon bar here:
+;
+; https://www.bbcelite.com/images/source/nes/iconBarImage2_ppu.png
+;
+; and you can see what the Charts icon bar looks like on-screen here:
+;
+; https://www.bbcelite.com/images/nes/general/short_range_chart.png
+;
 ; ******************************************************************************
 
 .iconBarImage2
@@ -628,6 +658,16 @@ ENDIF
 ;   Category: Icon bar
 ;    Summary: Image data for icon bar 3 (Pause)
 ;
+; ------------------------------------------------------------------------------
+;
+; You can view the tiles that make up the Pause icon bar here:
+;
+; https://www.bbcelite.com/images/source/nes/iconBarImage3_ppu.png
+;
+; and you can see what the Pause icon bar looks like on-screen here:
+;
+; https://www.bbcelite.com/images/nes/general/pause_icon_bar.png
+;
 ; ******************************************************************************
 
 .iconBarImage3
@@ -767,6 +807,16 @@ ENDIF
 ;       Type: Variable
 ;   Category: Icon bar
 ;    Summary: Image data for icon bar 4 (Title screen copyright message)
+;
+; ------------------------------------------------------------------------------
+;
+; You can view the tiles that make up the copyright message here:
+;
+; https://www.bbcelite.com/images/source/nes/iconBarImage4_ppu.png
+;
+; and you can see what the copyright message looks like on-screen here:
+;
+; https://www.bbcelite.com/images/nes/general/title.png
 ;
 ; ******************************************************************************
 
@@ -1058,6 +1108,16 @@ ENDIF
 ;  Deep dive: Image and data compression
 ;             Views and view types in NES Elite
 ;
+; ------------------------------------------------------------------------------
+;
+; You can view the tiles that make up the dashboard image here:
+;
+; https://www.bbcelite.com/images/source/nes/dashImage_ppu.png
+;
+; and you can see what the dashboard looks like on-screen here:
+;
+; https://www.bbcelite.com/images/nes/general/dashboard.png
+;
 ; ******************************************************************************
 
 .dashImage
@@ -1337,6 +1397,16 @@ ENDIF
 ;             screen
 ;  Deep dive: Image and data compression
 ;
+; ------------------------------------------------------------------------------
+;
+; You can view the tiles that make up the Cobra Mk III image here:
+;
+; https://www.bbcelite.com/images/source/nes/cobraImage_ppu.png
+;
+; and you can see what the Cobra Mk III looks like on-screen here:
+;
+; https://www.bbcelite.com/images/nes/general/equipment.png
+;
 ; ******************************************************************************
 
 .cobraImage
@@ -1509,6 +1579,12 @@ ENDIF
 ;    Summary: Image data for the inventory icon shown on the icon bar in the
 ;             Market Price screen
 ;
+; ------------------------------------------------------------------------------
+;
+; You can view the tiles that make up the inventory icon here:
+;
+; https://www.bbcelite.com/images/source/nes/inventoryIcon_ppu.png
+;
 ; ******************************************************************************
 
 .inventoryIcon
@@ -1530,6 +1606,16 @@ ENDIF
 ;    Summary: Packed image data for the small Elite logo shown on the Save and
 ;             Load screen
 ;  Deep dive: Image and data compression
+;
+; ------------------------------------------------------------------------------
+;
+; You can view the tiles that make up the small logo image here:
+;
+; https://www.bbcelite.com/images/source/nes/smallLogoImage_ppu.png
+;
+; and you can see what the small logo looks like on-screen here:
+;
+; https://www.bbcelite.com/images/nes/general/save_and_load.png
 ;
 ; ******************************************************************************
 
@@ -1617,6 +1703,17 @@ ENDIF
 ;    Summary: Packed image data for the ball at the bottom of the big Elite logo
 ;             shown on the Start screen
 ;  Deep dive: Image and data compression
+;
+; ------------------------------------------------------------------------------
+;
+; You can view the tiles that make up the big logo ball image here:
+;
+; https://www.bbcelite.com/images/source/nes/logoBallImage_ppu.png
+;
+; and you can see what the full big logo looks like on-screen here (the ball is
+; at the bottom of the logo):
+;
+; https://www.bbcelite.com/images/nes/general/start.png
 ;
 ; ******************************************************************************
 

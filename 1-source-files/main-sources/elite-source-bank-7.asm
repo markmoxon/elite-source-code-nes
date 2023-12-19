@@ -19860,6 +19860,12 @@ ENDIF
 ;    Summary: Image data for the horizontal line, vertical line and block images
 ;  Deep dive: Drawing lines in the NES version
 ;
+; ------------------------------------------------------------------------------
+;
+; You can view the tiles that make up the line images here:
+;
+; https://www.bbcelite.com/images/source/nes/lineImage_ram.png
+;
 ; ******************************************************************************
 
 .lineImage
@@ -19902,6 +19908,12 @@ ENDIF
 ;    Summary: Image data for the text font
 ;  Deep dive: Multi-language support in NES Elite
 ;             Fonts in NES Elite
+;
+; ------------------------------------------------------------------------------
+;
+; You can view the font image here:
+;
+; https://www.bbcelite.com/images/source/nes/fontImage_ram.png
 ;
 ; ******************************************************************************
 

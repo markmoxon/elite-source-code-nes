@@ -199,6 +199,13 @@ ENDIF
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
 ;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 0 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage0_0.png
+;
 ; ******************************************************************************
 
 .faceImage0
@@ -260,6 +267,13 @@ ENDIF
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
 ;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 1 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage1_1.png
+;
 ; ******************************************************************************
 
 .faceImage1
@@ -320,6 +334,13 @@ ENDIF
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
 ;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 2 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage2_2.png
+;
 ; ******************************************************************************
 
 .faceImage2
@@ -379,6 +400,13 @@ ENDIF
 ;    Summary: Packed image data for commander face image 3
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
+;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 3 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage3_3.png
 ;
 ; ******************************************************************************
 
@@ -442,6 +470,13 @@ ENDIF
 ;    Summary: Packed image data for commander face image 4
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
+;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 4 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage4_4.png
 ;
 ; ******************************************************************************
 
@@ -507,6 +542,13 @@ ENDIF
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
 ;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 5 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage5_5.png
+;
 ; ******************************************************************************
 
 .faceImage5
@@ -569,6 +611,13 @@ ENDIF
 ;    Summary: Packed image data for commander face image 6
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
+;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 6 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage6_6.png
 ;
 ; ******************************************************************************
 
@@ -633,6 +682,13 @@ ENDIF
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
 ;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 7 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage7_7.png
+;
 ; ******************************************************************************
 
 .faceImage7
@@ -696,6 +752,13 @@ ENDIF
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
 ;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 8 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage8_8.png
+;
 ; ******************************************************************************
 
 .faceImage8
@@ -756,6 +819,13 @@ ENDIF
 ;    Summary: Packed image data for commander face image 9
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
+;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 9 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage9_9.png
 ;
 ; ******************************************************************************
 
@@ -818,6 +888,13 @@ ENDIF
 ;    Summary: Packed image data for commander face image 10
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
+;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 10 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage10_10.png
 ;
 ; ******************************************************************************
 
@@ -884,6 +961,13 @@ ENDIF
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
 ;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 11 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage11_11.png
+;
 ; ******************************************************************************
 
 .faceImage11
@@ -944,6 +1028,13 @@ ENDIF
 ;    Summary: Packed image data for commander face image 12
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
+;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 12 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage12_12.png
 ;
 ; ******************************************************************************
 
@@ -1007,6 +1098,13 @@ ENDIF
 ;    Summary: Packed image data for commander face image 13
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
+;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 13 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage13_13.png
 ;
 ; ******************************************************************************
 
@@ -1110,6 +1208,13 @@ ENDIF
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
 ;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 0 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage0_0.png
+;
 ; ******************************************************************************
 
 .headImage0
@@ -1170,6 +1275,13 @@ ENDIF
 ;    Summary: Packed image data for commander headshot image 1
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
+;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 1 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage1_1.png
 ;
 ; ******************************************************************************
 
@@ -1233,6 +1345,13 @@ ENDIF
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
 ;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 2 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage2_2.png
+;
 ; ******************************************************************************
 
 .headImage2
@@ -1292,6 +1411,13 @@ ENDIF
 ;    Summary: Packed image data for commander headshot image 3
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
+;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 3 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage3_3.png
 ;
 ; ******************************************************************************
 
@@ -1358,6 +1484,13 @@ ENDIF
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
 ;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 4 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage4_4.png
+;
 ; ******************************************************************************
 
 .headImage4
@@ -1423,6 +1556,13 @@ ENDIF
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
 ;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 5 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage5_5.png
+;
 ; ******************************************************************************
 
 .headImage5
@@ -1486,6 +1626,13 @@ ENDIF
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
 ;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 6 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage6_6.png
+;
 ; ******************************************************************************
 
 .headImage6
@@ -1547,6 +1694,13 @@ ENDIF
 ;    Summary: Packed image data for commander headshot image 7
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
+;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 7 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage7_7.png
 ;
 ; ******************************************************************************
 
@@ -1610,6 +1764,13 @@ ENDIF
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
 ;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 8 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage8_8.png
+;
 ; ******************************************************************************
 
 .headImage8
@@ -1670,6 +1831,13 @@ ENDIF
 ;    Summary: Packed image data for commander headshot image 9
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
+;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 9 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage9_9.png
 ;
 ; ******************************************************************************
 
@@ -1733,6 +1901,13 @@ ENDIF
 ;    Summary: Packed image data for commander headshot image 10
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
+;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 10 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage10_10.png
 ;
 ; ******************************************************************************
 
@@ -1801,6 +1976,13 @@ ENDIF
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
 ;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 11 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage11_11.png
+;
 ; ******************************************************************************
 
 .headImage11
@@ -1861,6 +2043,13 @@ ENDIF
 ;    Summary: Packed image data for commander headshot image 12
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
+;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 12 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage12_12.png
 ;
 ; ******************************************************************************
 
@@ -1926,6 +2115,13 @@ ENDIF
 ;    Summary: Packed image data for commander headshot image 13
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
+;
+; ------------------------------------------------------------------------------
+;
+; Each commander image is composed of a face image and a headshot image. You can
+; view the combined commander image 13 here:
+;
+; https://www.bbcelite.com/images/source/nes/commanderImage13_13.png
 ;
 ; ******************************************************************************
 
@@ -1996,6 +2192,17 @@ ENDIF
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
 ;
+; ------------------------------------------------------------------------------
+;
+; You can view the tiles that make up the glasses image here:
+;
+; https://www.bbcelite.com/images/source/nes/glassesImage_ppu.png
+;
+; and you can see what the commander images look like with glasses, earrings and
+; medallion here:
+;
+; https://www.bbcelite.com/images/source/nes/allCommanderImages.png
+;
 ; ******************************************************************************
 
 .glassesImage
@@ -2024,6 +2231,19 @@ ENDIF
 ;   Category: Start and end
 ;    Summary: Packed image data for the big Elite logo shown on the Start screen
 ;  Deep dive: Image and data compression
+;
+; ------------------------------------------------------------------------------
+;
+; You can view the tiles that make up the big logo image here:
+;
+; https://www.bbcelite.com/images/source/nes/bigLogoImage_ppu.png
+;
+; and you can see what the big logo looks like on-screen here:
+;
+; https://www.bbcelite.com/images/nes/general/start.png
+;
+; Note that the ball at the bottom of the logo is stored separately, at
+; logoBallImage.
 ;
 ; ******************************************************************************
 

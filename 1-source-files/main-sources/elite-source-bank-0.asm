@@ -23927,11 +23927,11 @@ ENDIF
  BEQ scrn2
 
  LDX #1                 ; If we are not docked (QQ12 = 0), jump to scrn2 with
- LDA QQ12               ; X = 1 to show the flight icon bar
+ LDA QQ12               ; X = 1 to show the Flight icon bar
  BEQ scrn2
 
  LDX #0                 ; Otherwise fall through into scrn2 with X = 0 to show
-                        ; the docked icon bar
+                        ; the Docked icon bar
 
 .scrn2
 

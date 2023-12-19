@@ -200,6 +200,13 @@ ENDIF
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
 ;
+; ------------------------------------------------------------------------------
+;
+; System images are drawn using one of eight different palettes. You can view
+; this image in all the different palettes here:
+;
+; https://www.bbcelite.com/images/source/nes/allSystemImages_0.png
+;
 ; ******************************************************************************
 
 .systemImage0
@@ -349,6 +356,13 @@ ENDIF
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
 ;
+; ------------------------------------------------------------------------------
+;
+; System images are drawn using one of eight different palettes. You can view
+; this image in all the different palettes here:
+;
+; https://www.bbcelite.com/images/source/nes/allSystemImages_1.png
+;
 ; ******************************************************************************
 
 .systemImage1
@@ -488,6 +502,13 @@ ENDIF
 ;    Summary: Packed image data for system image 2
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
+;
+; ------------------------------------------------------------------------------
+;
+; System images are drawn using one of eight different palettes. You can view
+; this image in all the different palettes here:
+;
+; https://www.bbcelite.com/images/source/nes/allSystemImages_2.png
 ;
 ; ******************************************************************************
 
@@ -688,6 +709,13 @@ ENDIF
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
 ;
+; ------------------------------------------------------------------------------
+;
+; System images are drawn using one of eight different palettes. You can view
+; this image in all the different palettes here:
+;
+; https://www.bbcelite.com/images/source/nes/allSystemImages_3.png
+;
 ; ******************************************************************************
 
 .systemImage3
@@ -857,6 +885,13 @@ ENDIF
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
 ;
+; ------------------------------------------------------------------------------
+;
+; System images are drawn using one of eight different palettes. You can view
+; this image in all the different palettes here:
+;
+; https://www.bbcelite.com/images/source/nes/allSystemImages_4.png
+;
 ; ******************************************************************************
 
 .systemImage4
@@ -984,6 +1019,13 @@ ENDIF
 ;    Summary: Packed image data for system image 5
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
+;
+; ------------------------------------------------------------------------------
+;
+; System images are drawn using one of eight different palettes. You can view
+; this image in all the different palettes here:
+;
+; https://www.bbcelite.com/images/source/nes/allSystemImages_5.png
 ;
 ; ******************************************************************************
 
@@ -1132,6 +1174,13 @@ ENDIF
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
 ;
+; ------------------------------------------------------------------------------
+;
+; System images are drawn using one of eight different palettes. You can view
+; this image in all the different palettes here:
+;
+; https://www.bbcelite.com/images/source/nes/allSystemImages_6.png
+;
 ; ******************************************************************************
 
 .systemImage6
@@ -1273,6 +1322,13 @@ ENDIF
 ;    Summary: Packed image data for system image 7
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
+;
+; ------------------------------------------------------------------------------
+;
+; System images are drawn using one of eight different palettes. You can view
+; this image in all the different palettes here:
+;
+; https://www.bbcelite.com/images/source/nes/allSystemImages_7.png
 ;
 ; ******************************************************************************
 
@@ -1427,6 +1483,13 @@ ENDIF
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
 ;
+; ------------------------------------------------------------------------------
+;
+; System images are drawn using one of eight different palettes. You can view
+; this image in all the different palettes here:
+;
+; https://www.bbcelite.com/images/source/nes/allSystemImages_8.png
+;
 ; ******************************************************************************
 
 .systemImage8
@@ -1542,6 +1605,13 @@ ENDIF
 ;    Summary: Packed image data for system image 9
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
+;
+; ------------------------------------------------------------------------------
+;
+; System images are drawn using one of eight different palettes. You can view
+; this image in all the different palettes here:
+;
+; https://www.bbcelite.com/images/source/nes/allSystemImages_9.png
 ;
 ; ******************************************************************************
 
@@ -1677,6 +1747,13 @@ ENDIF
 ;    Summary: Packed image data for system image 10
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
+;
+; ------------------------------------------------------------------------------
+;
+; System images are drawn using one of eight different palettes. You can view
+; this image in all the different palettes here:
+;
+; https://www.bbcelite.com/images/source/nes/allSystemImages_10.png
 ;
 ; ******************************************************************************
 
@@ -1829,6 +1906,13 @@ ENDIF
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
 ;
+; ------------------------------------------------------------------------------
+;
+; System images are drawn using one of eight different palettes. You can view
+; this image in all the different palettes here:
+;
+; https://www.bbcelite.com/images/source/nes/allSystemImages_11.png
+;
 ; ******************************************************************************
 
 .systemImage11
@@ -1973,6 +2057,13 @@ ENDIF
 ;    Summary: Packed image data for system image 12
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
+;
+; ------------------------------------------------------------------------------
+;
+; System images are drawn using one of eight different palettes. You can view
+; this image in all the different palettes here:
+;
+; https://www.bbcelite.com/images/source/nes/allSystemImages_12.png
 ;
 ; ******************************************************************************
 
@@ -2135,6 +2226,13 @@ ENDIF
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
 ;
+; ------------------------------------------------------------------------------
+;
+; System images are drawn using one of eight different palettes. You can view
+; this image in all the different palettes here:
+;
+; https://www.bbcelite.com/images/source/nes/allSystemImages_13.png
+;
 ; ******************************************************************************
 
 .systemImage13
@@ -2285,6 +2383,13 @@ ENDIF
 ;    Summary: Packed image data for system image 14
 ;  Deep dive: Displaying two-layer images
 ;             Image and data compression
+;
+; ------------------------------------------------------------------------------
+;
+; System images are drawn using one of eight different palettes. You can view
+; this image in all the different palettes here:
+;
+; https://www.bbcelite.com/images/source/nes/allSystemImages_14.png
 ;
 ; ******************************************************************************
 
