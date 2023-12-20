@@ -3681,6 +3681,8 @@ ENDIF
 ;
 ; where the sign bytes only contain the sign bits, not magnitudes.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   C flag              Set if the addition overflowed, clear otherwise
@@ -3758,11 +3760,15 @@ ENDIF
 ; When called from part 6 of LL9, XX12 contains the vector [x y z] of the vertex
 ; we're analysing, and XX16 contains the transposed orientation vectors with
 ; each of them containing the x, y and z elements of the original vectors, so it
-; returns:
+; ------------------------------------------------------------------------------
+;
+; Returns:
 ;
 ;   [ x ]   [ sidev_x ]         [ x ]   [ sidev_y ]         [ x ]   [ sidev_z ]
 ;   [ y ] . [ roofv_x ]         [ y ] . [ roofv_y ]         [ y ] . [ roofv_z ]
 ;   [ z ]   [ nosev_x ]         [ z ]   [ nosev_y ]         [ z ]   [ nosev_z ]
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
@@ -3789,6 +3795,8 @@ ENDIF
 ;                         * x, y, z magnitudes in XX16+12, XX16+14, XX16+16
 ;
 ;                         * x, y, z signs in XX16+13, XX16+15, XX16+17
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -3904,6 +3912,8 @@ ENDIF
 ; In this code, XX1 is used to point to the current ship's data block at INWK
 ; (the two labels are interchangeable).
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   XX1                 XX1 shares its location with INWK, which contains the
@@ -3914,6 +3924,8 @@ ENDIF
 ;                       K%
 ;
 ;   XX0                 The address of the blueprint for this ship
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;
@@ -4040,6 +4052,8 @@ ENDIF
 ;
 ; This part checks whether the ship is in our field of view, and whether it is
 ; close enough to be fully drawn (if not, we jump to SHPPT to draw it as a dot).
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;
@@ -5310,6 +5324,8 @@ ENDIF
 ; XX3, where X points to the first free byte on the heap. Return by jumping down
 ; to LL66.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   X                   X is incremented by 1
@@ -5450,6 +5466,8 @@ ENDIF
 ;
 ; Note that U is always zero when we get to this point, as the vertex is always
 ; in front of us (so it has a positive z-coordinate, into the screen).
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;
@@ -5997,6 +6015,8 @@ ENDIF
 ; This part sets XX13 to reflect which of the two points are on-screen and
 ; off-screen.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   XX15(1 0)           x1 as a 16-bit coordinate (x1_hi x1_lo)
@@ -6006,6 +6026,8 @@ ENDIF
 ;   XX15(5 4)           x2 as a 16-bit coordinate (x2_hi x2_lo)
 ;
 ;   XX12(1 0)           y2 as a 16-bit coordinate (y2_hi y2_lo)
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -6036,6 +6058,8 @@ ENDIF
 ;                         * 0 if the coordinates are still in the same order
 ;
 ;   Y                   Y is preserved
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;
@@ -6625,6 +6649,8 @@ ENDIF
 ;
 ; See the deep dive on "Line-clipping" for more details.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   XX15(1 0)           x1 as a 16-bit coordinate (x1_hi x1_lo)
@@ -6645,11 +6671,15 @@ ENDIF
 ;
 ;                         * $FF if it's a steep slope
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   XX15                x1 as an 8-bit coordinate
 ;
 ;   XX15+2              y1 as an 8-bit coordinate
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;
@@ -6848,6 +6878,8 @@ ENDIF
 ;
 ; giving (Y X) the opposite sign to the slope direction in XX12+3.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   T                   The gradient of slope:
@@ -6855,6 +6887,8 @@ ENDIF
 ;                         * 0 if it's a shallow slope
 ;
 ;                         * $FF if it's a steep slope
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;
@@ -6960,6 +6994,8 @@ ENDIF
 ;
 ; giving (Y X) the opposite sign to the slope direction in XX12+3.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   XX12+2              The line's gradient * 256 (so 1.0 = 256)
@@ -6975,6 +7011,8 @@ ENDIF
 ;                         * 0 if it's a shallow slope
 ;
 ;                         * $FF if it's a steep slope
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;
@@ -7646,6 +7684,8 @@ ENDIF
 ; Draw the planet with radius K at pixel coordinate (K3, K4), and with either an
 ; equator and meridian, or a crater.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   K(1 0)              The planet's radius
@@ -7697,6 +7737,8 @@ ENDIF
 ; ------------------------------------------------------------------------------
 ;
 ; Draw the planet's equator and meridian.
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
@@ -7789,6 +7831,8 @@ ENDIF
 ; ------------------------------------------------------------------------------
 ;
 ; Draw the planet's crater.
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
@@ -7923,6 +7967,8 @@ ENDIF
 ; where z is the z-coordinate of the planet from INWK. The result is an 8-bit
 ; magnitude in A, with maximum value 254, and just a sign bit (bit 7) in Y.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   X                   Determines which of the INWK orientation vectors to
@@ -7935,6 +7981,8 @@ ENDIF
 ;                         * X = 21, 23, 25: divides sidev_x, sidev_y, sidev_z
 ;
 ;   INWK                The planet's ship data block
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -8047,6 +8095,8 @@ ENDIF
 ; negate the 3D space coordinates before we can combine them with the ellipse's
 ; centre coordinates.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   K(1 0)              The planet's radius
@@ -8074,6 +8124,8 @@ ENDIF
 ;                         * 64 for a full ellipse (a crater)
 ;
 ;   CNT2                The starting segment for drawing the half-ellipse
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;
@@ -8378,6 +8430,8 @@ ENDIF
 ; star systems on the Short-range Chart.
 ;
 ; The first part sets up all the variables needed to draw the new sun.
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
@@ -9501,6 +9555,8 @@ ENDIF
 ;
 ; This part calculate the sun's width on a given pixel row.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   V                   As we draw lines for the new sun, V contains the
@@ -9532,9 +9588,13 @@ ENDIF
 ;
 ;   Y                   The y-coordinate of the bottom row of the new sun
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   A                   The half-width of the sun on the line specified in V
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;
@@ -9613,6 +9673,8 @@ ENDIF
 ; Draw a circle with the centre at (K3, K4) and radius K. Used to draw the
 ; planet's main outline.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   K                   The planet's radius
@@ -9669,6 +9731,8 @@ ENDIF
 ; Draw a circle with the centre at (K3, K4) and radius K. Used to draw the
 ; planet and the chart circles.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   STP                 The step size for the circle
@@ -9678,6 +9742,8 @@ ENDIF
 ;   K3(1 0)             Pixel x-coordinate of the centre of the circle
 ;
 ;   K4(1 0)             Pixel y-coordinate of the centre of the circle
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -9815,11 +9881,15 @@ ENDIF
 ; calculation doesn't overflow, we return with the C flag clear, otherwise the C
 ; flag gets set to indicate failure.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   A                   The half-length of the line
 ;
 ;   YY(1 0)             The centre x-coordinate
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -9828,6 +9898,8 @@ ENDIF
 ;   X1, X2              The x-coordinates of the clipped line
 ;
 ;   Y                   Y is preserved
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;
@@ -9937,6 +10009,8 @@ ENDIF
 ;                       the right of the leftmost tile)
 ;
 ;   YY(1 0)             The centre x-coordinate of the sun
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;
@@ -10072,6 +10146,8 @@ ENDIF
 ;   K3(1 0)             Pixel x-coordinate of the centre of the circle
 ;
 ;   K4(1 0)             Pixel y-coordinate of the centre of the circle
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -10265,6 +10341,8 @@ ENDIF
 ; incremented to 17. So the values calculated by PLS1 use roofv_x first, then
 ; roofv_y. The comments below refer to roofv_x, for the first call.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   X                   Determines which of the INWK orientation vectors to
@@ -10273,6 +10351,8 @@ ENDIF
 ;                         * X = 15: divides roofv_x
 ;
 ;                         * X = 17: divides roofv_y
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -10407,6 +10487,8 @@ ENDIF
 ;   (XX16+2 K2+2) = roofv_x / z
 ;
 ;   (XX16+3 K2+3) = roofv_y / z
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
@@ -10594,6 +10676,8 @@ ENDIF
 ;
 ; Draw a single segment of a circle, adding the point to the ball line heap.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   CNT                 The number of this segment
@@ -10624,6 +10708,8 @@ ENDIF
 ;                       ball line heap (if this is not the first point)
 ;
 ;   SWAP                If non-zero, we swap (X1, Y1) and (X2, Y2)
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -11561,6 +11647,8 @@ ENDIF
 ;   6. y = y + alpha * y * y + alpha
 ;
 ; For more information see the deep dive on "Stardust in the side views".
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
@@ -12846,6 +12934,8 @@ ENDIF
 ; Zero-fill the INWK ship workspace and reset the orientation vectors, with
 ; nosev pointing out of the screen, towards us.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   Y                   Y is set to $FF
@@ -12920,6 +13010,8 @@ ENDIF
 ;
 ;   * The z-coordinate is positive, with both z_hi (which is 1 or 2) and z_lo
 ;     coming from the arguments
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
@@ -13255,6 +13347,8 @@ ENDIF
 ;   X = 2, Y = 4, A = 0 ->
 ;         A = -(nosev_y * roofv_y + nosev_z * roofv_z) / nosev_x
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   X                   Index 1 (0 = x, 2 = y, 4 = z)
@@ -13379,6 +13473,8 @@ ENDIF
 ;
 ; This routine does a similar job to the routine of the same name in the BBC
 ; Master version of Elite, but the code is significantly different.
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
@@ -14391,6 +14487,8 @@ ENDIF
 ;
 ; Draw a stardust particle sprite at point (X1, Y1) from the middle of the
 ; screen with a size determined by a distance value.
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;

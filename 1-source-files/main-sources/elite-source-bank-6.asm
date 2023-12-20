@@ -283,6 +283,8 @@ ENDIF
 ;   * 4 for the full combat demo suite ("Assassin's Touch" followed by "Game
 ;       Theme"), which is set in the DEATH2 routine
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   A                   The number of the tune to choose
@@ -6348,6 +6350,8 @@ ENDIF
 ;   Y                   The pixel y-coordinate of the top-left corner of the
 ;                       image within the text block at (XC, YC)
 ;
+; ------------------------------------------------------------------------------
+;
 ; Other entry points:
 ;
 ;   DrawSpriteImage+2   Set the attributes for the sprites in the image to A
@@ -6712,6 +6716,8 @@ ENDIF
 ; This routine does a similar job to the routine of the same name in the BBC
 ; Master version of Elite, but the code is significantly different.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   A                   The value to be shown on the indicator (so the larger
@@ -6726,10 +6732,14 @@ ENDIF
 ;   K+1                 The upper end of the safe range, so safe values are in
 ;                       the range K <= A < K+1 (and other values are dangerous)
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   SC(1 0)             The address of the tile at the left end of the next
 ;                       indicator down
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;
@@ -7280,6 +7290,8 @@ ENDIF
 ;                       The armed missile flashes black and red, so the tile is
 ;                       swapped between 108 and 109 in the main loop
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   X                   X is preserved
@@ -7485,6 +7497,8 @@ ENDIF
 ; Arguments:
 ;
 ;   X                   The laser power
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -8801,12 +8815,16 @@ ENDIF
 ; of scroll text that we want to display (where each line of text contains 21
 ; characters).
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   INF(1 0)            The contents of the scroll text to display
 ;
 ;   XC                  The offset within INF(1 0) of the 21-character line of
 ;                       text to display
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;
@@ -8964,6 +8982,8 @@ ENDIF
 ; tables) with the coordinates for the lines that make up the character whose
 ; definition is given in A.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   A                   The value from the LTDEF table for the character
@@ -8971,6 +8991,8 @@ ENDIF
 ;   (XP, YP)            The coordinate where we should draw this character
 ;
 ;   X                   The index of the character within the scroll text
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -9076,6 +9098,8 @@ ENDIF
 ; Arguments:
 ;
 ;   (Y X)               The content of the scroll text to display
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -9829,9 +9853,13 @@ ENDIF
 ;
 ;   (A X) = 128 + 256 * (A - 32) / Q
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   A                   xxx
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;
@@ -11837,6 +11865,8 @@ ENDIF
 ;
 ;   CNT                 The offset of the first free sprite in the sprite buffer
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   Y                   Y is preserved
@@ -11905,6 +11935,8 @@ ENDIF
 ;
 ;                         * 9 = print the current commander name in the left
 ;                               column
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -12162,6 +12194,8 @@ ENDIF
 ;   A                   The slot number in which to print the commander name in
 ;                       the middle column (0 to 7)
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   A                   A is preserved
@@ -12206,6 +12240,8 @@ ENDIF
 ; Arguments:
 ;
 ;   A                   The slot number to clear in the middle column (0 to 7)
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -12353,6 +12389,8 @@ ENDIF
 ;
 ;   A                   A is preserved
 ;
+; ------------------------------------------------------------------------------
+;
 ; Other entry points:
 ;
 ;   ResetSaveBuffer+1   Omit the initial PHA (so we can jump here if the value
@@ -12405,6 +12443,8 @@ ENDIF
 ;                         * 9 = copy the current commander from in-game, in
 ;                               which case we copy the commander from NAME to
 ;                               BUF without having to combine separate parts
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -12765,6 +12805,8 @@ ENDIF
 ;
 ;                         * 9 = load the current commander from BUF into the
 ;                               game and start the game
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -13647,6 +13689,8 @@ ENDIF
 ;
 ;   inputNameSize       The maximum size of the name to fetch - 1
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   INWK+5              The entered name, terminated by ASCII 13
@@ -13821,6 +13865,8 @@ ENDIF
 ; Arguments:
 ;
 ;   A                   The letter to start on
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;

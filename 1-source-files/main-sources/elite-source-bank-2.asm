@@ -15229,6 +15229,8 @@ ENDIF
 ;
 ;   A                   The recursive token to be printed, in the range 0-255
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   A                   A is preserved
@@ -15280,6 +15282,8 @@ ENDIF
 ;
 ;   A                   The recursive token to be printed, in the range 1-255
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   A                   A is preserved
@@ -15287,6 +15291,8 @@ ENDIF
 ;   Y                   Y is preserved
 ;
 ;   V(1 0)              V(1 0) is preserved
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;
@@ -15427,6 +15433,8 @@ ENDIF
 ;
 ;   A                   The token to be printed (1-255)
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   A                   A is preserved
@@ -15434,6 +15442,8 @@ ENDIF
 ;   Y                   Y is preserved
 ;
 ;   V(1 0)              V(1 0) is preserved
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;
@@ -16267,6 +16277,8 @@ ENDIF
 ;
 ;   A                   The character to be tested
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   C flag              The C flag is set if the character is a vowel, otherwise
@@ -16677,6 +16689,8 @@ ENDIF
 ; along the route of that mission's story will show custom mission-related
 ; directives in place of that system's normal "goat soup" phrase.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   systemNumber        The system number (0-255)
@@ -16821,6 +16835,8 @@ ENDIF
 ; Print a text token (i.e. a character, control code, two-letter token or
 ; recursive token).
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   A                   The text token to be printed
@@ -16920,6 +16936,8 @@ ENDIF
 ;                         * 32-95 (ASCII capital letters, numbers and
 ;                           punctuation)
 ;
+; ------------------------------------------------------------------------------
+;
 ; Other entry points:
 ;
 ;   TT44                Jumps to TT26 to print the character in A (used to
@@ -16954,6 +16972,8 @@ ENDIF
 ;       * If character is punctuation, just print it
 ;
 ;       * If character is a letter, set QQ17 bit 6 and print letter as a capital
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
@@ -16999,6 +17019,8 @@ ENDIF
 ; Print a recursive token where the token number is in 128-145 (so the value
 ; passed to TT27 is in the range 14-31).
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   A                   A value from 128-145, which refers to a recursive token
@@ -17028,6 +17050,8 @@ ENDIF
 ;   * If this is a letter then print in lower case
 ;
 ;   * Otherwise this is punctuation, so clear bit 6 in QQ17 and print
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
@@ -17069,6 +17093,8 @@ ENDIF
 ;
 ; Print a two-letter token, or a recursive token where the token number is in
 ; 0-95 (so the value passed to TT27 is in the range 160-255).
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
@@ -17133,9 +17159,13 @@ ENDIF
 ; right place. This approach might not be terribly speed efficient, but it is
 ; certainly memory-efficient.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   A                   The recursive token to be printed, in the range 0-148
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;
@@ -17269,11 +17299,15 @@ ENDIF
 ;
 ;   A                   The character to print
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   X                   X is preserved
 ;
 ;   C flag              The C flag is cleared
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;
@@ -17669,6 +17703,8 @@ ENDIF
 ; when printing characters into 2x2 attribute blocks where printing the normal
 ; font would result in the wrong colour text being shown.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   A                   The character to be printed. Can be one of the
@@ -17696,6 +17732,8 @@ ENDIF
 ;
 ;                         * 3 = green text on a black background (colour 3 on
 ;                               background colour 0)
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;

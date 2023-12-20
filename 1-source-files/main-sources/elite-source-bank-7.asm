@@ -1279,6 +1279,8 @@ ENDIF
 ; 1 in the PPU, while pattern data for icon bar patterns 64 to 127 is sent to
 ; pattern table 0 only (the latter is done via the SendBarPatts2ToPPU routine).
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   A                   A counter for the icon bar patterns to send to the PPU,
@@ -3285,6 +3287,8 @@ ENDIF
 ; address is fetched from the UNIV table, which stores the addresses of the 13
 ; ship data blocks in workspace K%.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   X                   The ship slot number for which we want the data block
@@ -4163,6 +4167,8 @@ ENDIF
 ;
 ;                         * 1 = scan controller 2
 ;
+; ------------------------------------------------------------------------------
+;
 ; Other entry points:
 ;
 ;   RTS3                Contains an RTS
@@ -4337,6 +4343,8 @@ ENDIF
 ;
 ; This routine is only called when we have just flipped the drawing plane
 ; between 0 and 1 in the FlipDrawingPlane routine.
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
@@ -5077,6 +5085,8 @@ ENDIF
 ; where clearBlockSize is the size of the block to clear, in bytes. See the
 ; ClearMemory routine for an example of this calculation in action.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   clearAddress(1 0)   The base address of the block of memory to fill
@@ -5084,6 +5094,8 @@ ENDIF
 ;   Y                   The index into clearAddress(1 0) from which to fill
 ;
 ;   A                   The value to fill
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -5116,6 +5128,8 @@ ENDIF
 ;
 ;   A                   The value to fill
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   Y                   The index in Y is updated to point to the byte after the
@@ -5142,12 +5156,16 @@ ENDIF
 ; the cycle count. If it runs out of cycles, it will pick up where it left off
 ; when called again.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   clearAddress        The address of the block to clear
 ;
 ;   clearBlockSize      The size of the block to clear as a 16-bit number, must
 ;                       be a multiple of 8 bytes
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -6325,9 +6343,13 @@ ENDIF
 ; tiles, column 1 is the left edge of the screen, then columns 2 to 31 form the
 ; body of the screen, and column 0 is the right edge of the screen.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   YC                  The text row
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -6429,6 +6451,8 @@ ENDIF
 ;
 ; This routine draws a line from (X1, Y1) to (X2, Y2). It has multiple stages.
 ; This stage calculates the line deltas.
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
@@ -7920,6 +7944,8 @@ ENDIF
 ; existing content into a black silhouette on the cyan sun. It effectively fills
 ; the character blocks containing the horizontal pixel line (P, Y) to (P+1, Y).
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   P                   A pixel x-coordinate in the character block from which
@@ -7929,6 +7955,8 @@ ENDIF
 ;                       finish the fill
 ;
 ;   Y                   A pixel y-coordinate on the character row to fill
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -8051,6 +8079,8 @@ ENDIF
 ;   X2                  The screen x-coordinate of the end of the line
 ;
 ;   Y                   The screen y-coordinate of the line
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -9029,6 +9059,8 @@ ENDIF
 ;
 ;   Y2                  The screen y-coordinate of the end of the line
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   Y                   Y is preserved
@@ -9624,15 +9656,21 @@ ENDIF
 ; This routine does a similar job to the routine of the same name in the BBC
 ; Master version of Elite, but the code is significantly different.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   X                   The screen x-coordinate of the point to draw
 ;
 ;   A                   The screen y-coordinate of the point to draw
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   Y                   Y is preserved
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;
@@ -9732,6 +9770,8 @@ ENDIF
 ;   X                   The screen x-coordinate of the dash to draw
 ;
 ;   A                   The screen y-coordinate of the dash to draw
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -9860,6 +9900,8 @@ ENDIF
 ;
 ;                       The armed missile flashes black and red, so the tile is
 ;                       swapped between 108 and 109 in the main loop
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -12308,6 +12350,8 @@ ENDIF
 ;
 ;   joystickDelta       The amount to decrease the value in X by
 ;
+; ------------------------------------------------------------------------------
+;
 ; Other entry points:
 ;
 ;   decj2               Return a value of X = 128, for the centre of the
@@ -12463,6 +12507,8 @@ ENDIF
 ; This routine is similar to HideSprites, except it hides X + 1 sprites rather
 ; than X sprites.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   X                   The number of sprites to hide (we hide X + 1)
@@ -12559,6 +12605,8 @@ ENDIF
 ;   Category: Utility routines
 ;    Summary: Wait until a specified number of NMI interrupts have passed (i.e.
 ;             a specified number of VBlanks)
+;
+; ------------------------------------------------------------------------------
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -12676,6 +12724,8 @@ ENDIF
 ;   * If soundChannel = 3, flush the SQ1 and NOISE sound channels
 ;
 ;   * If soundChannel = 4, flush the SQ2 and NOISE sound channels
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
@@ -12890,6 +12940,8 @@ ENDIF
 ;   X                   The number of the channel on which to make the sound
 ;                       effect
 ;
+; ------------------------------------------------------------------------------
+;
 ; Other entry points:
 ;
 ;   RTS8                Contains an RTS
@@ -13050,6 +13102,8 @@ ENDIF
 ;
 ;   Y                   The offset of the byte to return from the blueprint
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   A                   The Y-th byte of the current ship blueprint
@@ -13111,6 +13165,8 @@ ENDIF
 ;
 ;   Y                   The ship type
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   A                   The default NEWB flags for ship type Y
@@ -13144,6 +13200,8 @@ ENDIF
 ; Arguments:
 ;
 ;   X                   The type of the ship that was killed
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -13201,6 +13259,8 @@ ENDIF
 ; Arguments:
 ;
 ;   Stack               The number of the bank to page into memory at $8000
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;
@@ -16541,6 +16601,8 @@ ENDIF
 ; the value of the C flag on entry doesn't affect the outcome, as otherwise we
 ; might not get the same sequence of numbers if the C flag changes.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Other entry points:
 ;
 ;   DORND2              Make sure the C flag doesn't affect the outcome
@@ -16600,9 +16662,13 @@ ENDIF
 ; where #X and #Y are the pixel x-coordinate and y-coordinate of the centre of
 ; the screen.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   INWK                The ship data block for the ship to project on-screen
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -16694,13 +16760,19 @@ ENDIF
 ;
 ; returning an overflow in the C flag if the result is >= 1024.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   INWK                The planet or sun's ship data block
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   C flag              Set if the result >= 1024, clear otherwise
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;
@@ -17009,6 +17081,8 @@ ENDIF
 ;
 ; The algorithm is described in the deep dive on "Image and data compression".
 ;
+; ------------------------------------------------------------------------------
+;
 ; Other entry points:
 ;
 ;   UnpackToPPU+2       Unpack data from offset Y onwards
@@ -17203,10 +17277,14 @@ ENDIF
 ; the result fits into one byte. The distance to check against in A is not
 ; halved, so the comparison ends up being between |(x y z)| and A * 2.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   A                   The distance to check against (the distance is checked
 ;                       against A * 2)
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -17363,6 +17441,8 @@ ENDIF
 ;
 ; The algorithm is the same shift-and-add algorithm as in routine MULT1, but
 ; extended to cope with more bits.
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -17524,6 +17604,8 @@ ENDIF
 ; version here can skip the bit tests for bits 5-7 of P as we know P < 32, so
 ; only 5 shifts with bit tests are needed (for bits 0-4), while the other 3
 ; shifts can be done without a test (for bits 5-7).
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;
@@ -17952,6 +18034,8 @@ ENDIF
 ; multiplication process. See the deep dive on "Multiplication using logarithms"
 ; for more details.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   C flag              The C flag is clear if A = 0, or set if we return a
@@ -18079,9 +18163,13 @@ ENDIF
 ; the algorithm is still the shift-and-add approach explained in MULT1, just
 ; with more bits.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   Q                   Q is preserved
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;
@@ -18381,6 +18469,8 @@ ENDIF
 ;   (A X) = vect . XX15
 ;         = vect_x * XX15 + vect_y * XX15+1 + vect_z * XX15+2
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   Y                   The orientation vector:
@@ -18390,6 +18480,8 @@ ENDIF
 ;                         * If Y = 16, calculate roofv . XX15
 ;
 ;                         * If Y = 22, calculate sidev . XX15
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -18586,6 +18678,8 @@ ENDIF
 ; This uses the same shift-and-subtract algorithm as TIS2, just with the
 ; quotient A hard-coded to 96.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   Q                   Gets set to the value of argument X
@@ -18673,9 +18767,13 @@ ENDIF
 ; This uses the same shift-and-subtract algorithm as TIS2, but this time we
 ; keep the remainder.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   Y                   The number of the stardust particle to process
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -18713,6 +18811,8 @@ ENDIF
 ;
 ; This uses the same shift-and-subtract algorithm as TIS2, but this time we
 ; keep the remainder.
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -18753,6 +18853,8 @@ ENDIF
 ;
 ; This uses the same shift-and-subtract algorithm as TIS2, but this time we
 ; keep the remainder and the loop is unrolled.
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -18894,6 +18996,8 @@ ENDIF
 ; divides the two highest bytes with the simple 8-bit routine in LL31, and
 ; shifts the result by the difference in the number of shifts, which acts as a
 ; scale factor to get the correct result.
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -19132,11 +19236,15 @@ ENDIF
 ; This routine does a similar job to the routine of the same name in the BBC
 ; Master version of Elite, but the code is significantly different.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   A                   The amount to dampen by
 ;
 ;   X                   The value to dampen
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -19224,6 +19332,8 @@ ENDIF
 ; pitch in the left half of the indicator, when increasing the roll or pitch
 ; should jump us straight to the mid-point.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Other entry points:
 ;
 ;   RE2+2               Restore A from T and return from the subroutine
@@ -19286,6 +19396,8 @@ ENDIF
 ; reduce X down to the mid-point, 128. This is the equivalent of having a roll
 ; or pitch in the right half of the indicator, when decreasing the roll or pitch
 ; should jump us straight to the mid-point.
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;
@@ -19435,10 +19547,14 @@ ENDIF
 ; except it subtracts the logarithm values, to do a division instead of a
 ; multiplication.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   C flag              Set if the answer is too big for one byte, clear if the
 ;                       division was a success
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;
@@ -19621,6 +19737,8 @@ ENDIF
 ; represent -1. This enables us to represent fractional values of less than 1
 ; using integers.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   XX15                The vector to normalise, with:
@@ -19631,11 +19749,15 @@ ENDIF
 ;
 ;                         * The z-coordinate in XX15+2
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   XX15                The normalised vector
 ;
 ;   Q                   The length of the original XX15 vector
+;
+; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
 ;

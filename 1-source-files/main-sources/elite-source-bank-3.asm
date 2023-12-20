@@ -2502,6 +2502,8 @@ ENDIF
 ;
 ;   X                   The number of the bitplane to send
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   X                   X is preserved
@@ -2591,6 +2593,8 @@ ENDIF
 ; Bits 0 and 1 are ignored and are always clear.
 ;
 ; This routine therefore configures the NMI to send both bitplanes to the PPU.
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
@@ -4565,6 +4569,8 @@ ENDIF
 ;   SC2(1 0)            The address of the nametable entries for the on-screen
 ;                       icon bar in nametable buffer 1
 ;
+; ------------------------------------------------------------------------------
+;
 ; Returns:
 ;
 ;   Y                   Y is preserved
@@ -4601,6 +4607,8 @@ ENDIF
 ;
 ;   SC2(1 0)            The address of the nametable entries for the on-screen
 ;                       icon bar in nametable buffer 1
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -4641,6 +4649,8 @@ ENDIF
 ;
 ;   SC2(1 0)            The address of the nametable entries for the on-screen
 ;                       icon bar in nametable buffer 1
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -4943,6 +4953,8 @@ ENDIF
 ;
 ; This is always called with A = 66, so it always loads the fonts from pattern
 ; 66 to 160.
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
@@ -5495,6 +5507,8 @@ ENDIF
 ; This routine effectively draws K tiles at SC(1 0) and SC2(1 0), but omitting
 ; the first tile.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   A                   The pattern number to use for the row of tiles
@@ -5541,6 +5555,8 @@ ENDIF
 ;   XC                  The tile column
 ;
 ;   YC                  The tile row
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -5692,6 +5708,8 @@ ENDIF
 ; We draw an image background using patterns with incremental pattern numbers,
 ; as the image's patterns have already been sent to the pattern buffers one
 ; after the other.
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;

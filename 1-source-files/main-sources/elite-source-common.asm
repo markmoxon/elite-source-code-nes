@@ -5539,6 +5539,8 @@ ENDMACRO
 ; "Market item prices and availability" for more information on how the market
 ; system works.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   price               Base price
@@ -5595,6 +5597,8 @@ ENDMACRO
 ; See the deep dive on "Ship blueprints" for details of how vertices are stored
 ; in the ship blueprints, and the deep dive on "Drawing ships" for information
 ; on how vertices are used to draw 3D wireframe ships.
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
@@ -5666,6 +5670,8 @@ ENDMACRO
 ; in the ship blueprints, and the deep dive on "Drawing ships" for information
 ; on how edges are used to draw 3D wireframe ships.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   vertex1             The number of the vertex at the start of the edge
@@ -5705,6 +5711,8 @@ ENDMACRO
 ; See the deep dive on "Ship blueprints" for details of how faces are stored
 ; in the ship blueprints, and the deep dive on "Drawing ships" for information
 ; on how faces are used to draw 3D wireframe ships.
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
@@ -5765,6 +5773,8 @@ ENDMACRO
 ; See the deep dive on "Printing extended text tokens" for details on how jump
 ; tokens are stored in the extended token table.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   n                   The jump number to insert into the table
@@ -5795,6 +5805,8 @@ ENDMACRO
 ;
 ; See the deep dive on "Printing extended text tokens" for details on how
 ; characters are stored in the extended token table.
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
@@ -5829,6 +5841,8 @@ ENDMACRO
 ; See the deep dive on "Printing extended text tokens" for details on how
 ; recursive tokens are stored in the extended token table.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   n                   The number of the recursive token to insert into the
@@ -5860,6 +5874,8 @@ ENDMACRO
 ;
 ; See the deep dive on "Printing extended text tokens" for details on how
 ; two-letter tokens are stored in the extended token table.
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
@@ -5937,6 +5953,8 @@ ENDMACRO
 ; See the deep dive on "Printing extended text tokens" for details on how
 ; random tokens are stored in the extended token table.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   n                   The number of the random token to insert into the
@@ -5972,6 +5990,8 @@ ENDMACRO
 ;
 ; See the deep dive on "Printing text tokens" for details on how recursive
 ; tokens are stored in the recursive token table.
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
@@ -6013,6 +6033,8 @@ ENDMACRO
 ; See the deep dive on "Printing text tokens" for details on how characters are
 ; stored in the recursive token table.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   'x'                 The character to insert into the table
@@ -6045,6 +6067,8 @@ ENDMACRO
 ;
 ; See the deep dive on "Printing text tokens" for details on how two-letter
 ; tokens are stored in the recursive token table.
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
@@ -6110,6 +6134,8 @@ ENDMACRO
 ; See the deep dive on "Printing text tokens" for details on how characters are
 ; stored in the recursive token table.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   n                   The control code to insert into the table
@@ -6144,6 +6170,8 @@ ENDMACRO
 ;
 ; See the deep dive on "Printing text tokens" for details on how recursive
 ; tokens are stored in the recursive token table.
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
@@ -6182,6 +6210,8 @@ ENDMACRO
 ;
 ; The cycle count is stored in the variable cycleCount.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   cycles              The number of cycles to add to the cycle count
@@ -6218,6 +6248,8 @@ ENDMACRO
 ; The cycle count is stored in the variable cycleCount. This macro assumes that
 ; the C flag is clear.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   cycles              The number of cycles to add to the cycle count
@@ -6252,6 +6284,8 @@ ENDMACRO
 ;   SUBTRACT_CYCLES cycles
 ;
 ; The cycle count is stored in the variable cycleCount.
+;
+; ------------------------------------------------------------------------------
 ;
 ; Arguments:
 ;
@@ -6288,6 +6322,8 @@ ENDMACRO
 ; memory block at address clearAddress(1 0). It also updates the index in Y to
 ; point to the byte after the block that is filled.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   byte_count          The number of bytes to fill
@@ -6297,6 +6333,8 @@ ENDMACRO
 ;   Y                   The index into clearAddress(1 0) from which to fill
 ;
 ;   A                   The value to fill
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
@@ -6339,12 +6377,16 @@ ENDMACRO
 ; Y-th byte of the data block at address dataForPPU(1 0). It also updates the
 ; index in Y to point to the byte after the block that is sent.
 ;
+; ------------------------------------------------------------------------------
+;
 ; Arguments:
 ;
 ;   byte_count          The number of bytes to send to the PPU
 ;
 ;   Y                   The index into dataForPPU(1 0) from which to start
 ;                       sending data
+;
+; ------------------------------------------------------------------------------
 ;
 ; Returns:
 ;
