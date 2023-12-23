@@ -328,7 +328,7 @@ ENDIF
  BEQ EN6                ; is zero then the cash amount is less than &010000
                         ; (6553.6 credits), so jump to EN6
 
- LDA TP                 ; If bit 4 of TP is set, then the Tribbles mission has
+ LDA TP                 ; If bit 4 of TP is set, then the Trumbles mission has
  AND #%00010000         ; already been completed, so jump to EN6
  BNE EN6
 
