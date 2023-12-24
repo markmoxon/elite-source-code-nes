@@ -1861,7 +1861,7 @@ ENDIF
                         ; the faster we go, the more fuel we scoop, and because
                         ; the fuel levels are stored as 10 * the fuel in light
                         ; years, that means we just scooped between 0.1 and 0.5
-                        ; light years of free fuel !!!
+                        ; light years of free fuel
 
  ADC QQ14               ; Set A = A + the current fuel level * 10 (from QQ14)
 
