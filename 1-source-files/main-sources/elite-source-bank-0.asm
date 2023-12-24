@@ -24070,13 +24070,6 @@ ENDIF
 ; Make the two-part explosion sound of us making a laser strike, or of another
 ; ship exploding.
 ;
-; ------------------------------------------------------------------------------
-;
-; Other entry points:
-;
-;   EXNO-2              Set X = 7 and fall through into EXNO to make the sound
-;                       of a ship exploding
-;
 ; ******************************************************************************
 
 .EXNO
