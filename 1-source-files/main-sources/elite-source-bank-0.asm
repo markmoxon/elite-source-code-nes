@@ -8775,7 +8775,7 @@ ENDIF
 ;
 ; So given an existing set of seeds in s0, s1 and s2, we can get the new values
 ; s0´, s1´ and s2´ simply by doing the above sums. And if we want to do the
-; above in-place without creating three new w´ variables, then we can do the
+; above in-place without creating three new s´ variables, then we can do the
 ; following:
 ;
 ;  tmp = s0 + s1
