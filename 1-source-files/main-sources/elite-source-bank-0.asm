@@ -1843,7 +1843,7 @@ ENDIF
 
 .nokilltr
 
- LDA BST                ; If we don't have fuel scoops fitted, jump to BA23 to
+ LDA BST                ; If we don't have fuel scoops fitted, jump to MA23 to
  BEQ MA23               ; skip fuel scooping, as we can't scoop without fuel
                         ; scoops
 
@@ -20642,8 +20642,6 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Maths (Geometry)
 ;    Summary: Calculate the vector to the planet and store it in XX15
-;
-; ------------------------------------------------------------------------------
 ;
 ; ------------------------------------------------------------------------------
 ;
