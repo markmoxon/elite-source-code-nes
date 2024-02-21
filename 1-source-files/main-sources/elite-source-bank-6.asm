@@ -27,14 +27,6 @@
 ;
 ; ******************************************************************************
 
- _BANK = 6
-
- INCLUDE "1-source-files/main-sources/elite-build-options.asm"
-
- INCLUDE "1-source-files/main-sources/elite-source-common.asm"
-
- INCLUDE "1-source-files/main-sources/elite-source-bank-7.asm"
-
 ; ******************************************************************************
 ;
 ; ELITE BANK 1
@@ -43,14 +35,11 @@
 ;
 ; ******************************************************************************
 
- CODE% = $8000
- LOAD% = $8000
-
  ORG CODE%
 
 ; ******************************************************************************
 ;
-;       Name: ResetMMC1
+;       Name: ResetMMC1_b6
 ;       Type: Subroutine
 ;   Category: Start and end
 ;    Summary: The MMC1 mapper reset routine at the start of the ROM bank
@@ -77,7 +66,7 @@
 ;
 ; ******************************************************************************
 
-.ResetMMC1
+.ResetMMC1_b6
 
  SEI                    ; Disable interrupts
 
@@ -108,7 +97,7 @@
 
 ; ******************************************************************************
 ;
-;       Name: Interrupts
+;       Name: Interrupts_b6
 ;       Type: Subroutine
 ;   Category: Start and end
 ;    Summary: The IRQ and NMI handler while the MMC1 mapper reset routine is
@@ -116,7 +105,7 @@
 ;
 ; ******************************************************************************
 
-.Interrupts
+.Interrupts_b6
 
 IF _NTSC
 
@@ -136,10 +125,10 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: Version number
+;       Name: versionNumber_b6
 ;       Type: Variable
 ;   Category: Text
-;    Summary: The game's version number
+;    Summary: The game's version number in bank 6
 ;
 ; ******************************************************************************
 
@@ -15329,10 +15318,10 @@ ENDIF
 
 ; ******************************************************************************
 ;
-;       Name: Vectors
+;       Name: Vectors_b6
 ;       Type: Variable
 ;   Category: Utility routines
-;    Summary: Vectors and padding at the end of the ROM bank
+;    Summary: Vectors and padding at the end of ROM bank 6
 ;  Deep dive: Splitting NES Elite across multiple ROM banks
 ;
 ; ******************************************************************************
@@ -15345,28 +15334,31 @@ ENDIF
 
 IF _NTSC
 
- EQUW Interrupts+$4000  ; Vector to the NMI handler in case this bank is loaded
-                        ; into $C000 during start-up (the handler contains an
-                        ; RTI so the interrupt is processed but has no effect)
+ EQUW Interrupts_b6+$4000   ; Vector to the NMI handler in case this bank is
+                            ; loaded into $C000 during start-up (the handler
+                            ; contains an RTI so the interrupt is processed but
+                            ; has no effect)
 
- EQUW ResetMMC1+$4000   ; Vector to the RESET handler in case this bank is
-                        ; loaded into $C000 during start-up (the handler resets
-                        ; the MMC1 mapper to map bank 7 into $C000 instead)
+ EQUW ResetMMC1_b6+$4000    ; Vector to the RESET handler in case this bank is
+                            ; loaded into $C000 during start-up (the handler
+                            ; resets the MMC1 mapper to map bank 7 into $C000
+                            ; instead)
 
- EQUW Interrupts+$4000  ; Vector to the IRQ/BRK handler in case this bank is
-                        ; loaded into $C000 during start-up (the handler
-                        ; contains an RTI so the interrupt is processed but has
-                        ; no effect)
+ EQUW Interrupts_b6+$4000   ; Vector to the IRQ/BRK handler in case this bank is
+                            ; loaded into $C000 during start-up (the handler
+                            ; contains an RTI so the interrupt is processed but
+                            ; has no effect)
 
 ELIF _PAL
 
- EQUW NMI               ; Vector to the NMI handler
+ EQUW NMI                   ; Vector to the NMI handler
 
- EQUW ResetMMC1+$4000   ; Vector to the RESET handler in case this bank is
-                        ; loaded into $C000 during start-up (the handler resets
-                        ; the MMC1 mapper to map bank 7 into $C000 instead)
+ EQUW ResetMMC1_b6+$4000    ; Vector to the RESET handler in case this bank is
+                            ; loaded into $C000 during start-up (the handler
+                            ; resets the MMC1 mapper to map bank 7 into $C000
+                            ; instead)
 
- EQUW IRQ               ; Vector to the IRQ/BRK handler
+ EQUW IRQ                   ; Vector to the IRQ/BRK handler
 
 ENDIF
 

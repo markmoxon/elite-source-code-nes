@@ -25,16 +25,6 @@
 ;
 ; ******************************************************************************
 
- INCLUDE "1-source-files/main-sources/elite-bank-options.asm"
-
-IF _BANK = 7
-
- INCLUDE "1-source-files/main-sources/elite-build-options.asm"
-
- INCLUDE "1-source-files/main-sources/elite-source-common.asm"
-
-ENDIF
-
 ; ******************************************************************************
 ;
 ; ELITE BANK 7
@@ -20190,9 +20180,5 @@ ENDIF
 ;
 ; ******************************************************************************
 
-IF _BANK = 7
-
  PRINT "S.bank7.bin ", ~CODE_BANK_7%, " ", ~P%, " ", ~LOAD_BANK_7%, " ", ~LOAD_BANK_7%
  SAVE "3-assembled-output/bank7.bin", CODE_BANK_7%, P%, LOAD_BANK_7%
-
-ENDIF

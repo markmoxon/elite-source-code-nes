@@ -24,8 +24,13 @@
 ;
 ; ******************************************************************************
 
+ INCLUDE "1-source-files/main-sources/elite-build-options.asm"
+
  _NTSC = (_VARIANT = 1)
  _PAL  = (_VARIANT = 2)
+
+ CODE% = $8000
+ LOAD% = $8000
 
 ; ******************************************************************************
 ;
@@ -238,236 +243,6 @@
  APU_FC     = $4017     ; The APU frame counter control register, which controls
                         ; the triggering of IRQ interrupts for sound generation,
                         ; and the sequencer step mode
-
-; ******************************************************************************
-;
-; Exported addresses from bank 0
-;
-; ******************************************************************************
-
-IF NOT(_BANK = 0)
-
- UpdateView         = $8926
- DrawScreenInNMI    = $8980
- MVS5               = $8A14
- PlayDemo           = $9522
- SetupAfterLoad     = $A379
- PrintCtrlCode      = $A8D9
- ZINF               = $AE03
- MAS4               = $B1CA
- CheckForPause      = $B1D4
- ShowStartScreen    = $B2C3
- DEATH2             = $B2EF
- StartGame          = $B358
- ChangeToView       = $B39D
- TITLE              = $B3BC
- PAS1               = $B8F7
- TT66               = $BEB5
-
-ENDIF
-
-; ******************************************************************************
-;
-; Exported addresses from bank 1
-;
-; ******************************************************************************
-
-IF NOT(_BANK = 1)
-
- E%                 = $8042
- KWL%               = $8063
- KWH%               = $8084
- SHIP_MISSILE       = $80A5
- SHIP_CORIOLIS      = $81A3
- SHIP_ESCAPE_POD    = $82BF
- SHIP_PLATE         = $8313
- SHIP_CANISTER      = $8353
- SHIP_BOULDER       = $83FB
- SHIP_ASTEROID      = $849D
- SHIP_SPLINTER      = $8573
- SHIP_SHUTTLE       = $85AF
- SHIP_TRANSPORTER   = $86E1
- SHIP_COBRA_MK_3    = $88C3
- SHIP_PYTHON        = $8A4B
- SHIP_BOA           = $8B3D
- SHIP_ANACONDA      = $8C33
- SHIP_ROCK_HERMIT   = $8D35
- SHIP_VIPER         = $8E0B
- SHIP_SIDEWINDER    = $8EE5
- SHIP_MAMBA         = $8F8D
- SHIP_KRAIT         = $90BB
- SHIP_ADDER         = $91A1
- SHIP_GECKO         = $92D1
- SHIP_COBRA_MK_1    = $9395
- SHIP_WORM          = $945B
- SHIP_COBRA_MK_3_P  = $950B
- SHIP_ASP_MK_2      = $9693
- SHIP_PYTHON_P      = $97BD
- SHIP_FER_DE_LANCE  = $98AF
- SHIP_MORAY         = $99C9
- SHIP_THARGOID      = $9AA1
- SHIP_THARGON       = $9BBD
- SHIP_CONSTRICTOR   = $9C29
- SHIP_COUGAR        = $9D2B
- SHIP_DODO          = $9E2D
- LL9                = $A070
- CLIP               = $A65D
- CIRCLE2            = $AF9D
- SUN                = $AC25
- STARS              = $B1BE
- HALL               = $B738
- TIDY               = $B85C
- SCAN               = $B975
- HideFromScanner    = $BAF3
-
-ENDIF
-
-; ******************************************************************************
-;
-; Exported addresses from bank 2
-;
-; ******************************************************************************
-
-IF NOT(_BANK = 2)
-
- TKN1               = $800C
- TKN1_DE            = $8DFD
- TKN1_FR            = $9A2C
- QQ18               = $A3CF
- QQ18_DE            = $A79C
- QQ18_FR            = $AC4D
- DETOK              = $B0EF
- DTS                = $B187
- PDESC              = $B3E8
- TT27               = $B44F
- ex                 = $B4AA
- DASC               = $B4F5
- CHPR               = $B635
-
-ENDIF
-
-; ******************************************************************************
-;
-; Exported addresses from bank 3
-;
-; ******************************************************************************
-
-IF NOT(_BANK = 3)
-
- iconBarImage0      = $8100
- iconBarImage1      = $8500
- iconBarImage2      = $8900
- iconBarImage3      = $8D00
- iconBarImage4      = $9100
- DrawDashNames      = $A730
- ResetScanner       = $A775
- SendViewToPPU      = $A7B7
- SendBitplaneToPPU  = $A972
- SetupViewInNMI     = $A9D1
- ResetScreen        = $AABC
- ShowIconBar        = $AC1D
- UpdateIconBar      = $AC5C
- SetupIconBar       = $AE18
- SetLinePatterns    = $AFCD
- LoadNormalFont     = $B0E1
- LoadHighFont       = $B18E
- DrawSystemImage    = $B219
- DrawImageFrame     = $B248
- DrawSmallBox       = $B2BC
- DrawBackground     = $B2FB
- ClearScreen        = $B341
- FadeToBlack        = $B63D
- FadeToColour       = $B673
- SetViewAttrs       = $B9E2
- SIGHT              = $BA23
-
-ENDIF
-
-; ******************************************************************************
-;
-; Exported addresses from bank 4
-;
-; ******************************************************************************
-
-IF NOT(_BANK = 4)
-
- cobraNames         = $B7EC
- GetHeadshotType    = $B882
- GetHeadshot        = $B8F9
- GetCmdrImage       = $B93C
- DrawBigLogo        = $B96B
- DrawImageNames     = $B9C1
- DrawSmallLogo      = $B9F9
-
-ENDIF
-
-; ******************************************************************************
-;
-; Exported addresses from bank 5
-;
-; ******************************************************************************
-
-IF NOT(_BANK = 5)
-
- GetSystemImage     = $BED7
- GetSystemBack      = $BEEA
- SetDemoAutoPlay    = $BF41
-
-ENDIF
-
-; ******************************************************************************
-;
-; Exported addresses from bank 6
-;
-; ******************************************************************************
-
-IF NOT(_BANK = 6)
-
- StopSoundsS        = $8012
- ChooseMusic        = $8021
- MakeSounds         = $811E
- StartEffect        = $89D1
- DrawCmdrImage      = $A082
- DrawSpriteImage    = $A0F8
- PauseGame          = $A166
- DIALS              = $A2C3
- DrawEquipment      = $A4A5
- ShowScrollText     = $A5AB
- SVE                = $B459
-
- IF _NTSC
-
-  CheckSaveSlots    = $B88C
-  ResetCommander    = $B8FE
-  JAMESON           = $B90D
-  DrawLightning     = $B919
-  LL164             = $B980
-  DrawLaunchBox     = $BA17
-  InputName         = $BA63
-  ChangeCmdrName    = $BB37
-  SetKeyLogger      = $BBDE
-  ChooseLanguage    = $BC83
-  TT24              = $BE52
-  ClearDashEdge     = $BED2
-
- ELIF _PAL
-
-  CheckSaveSlots    = $B89B
-  ResetCommander    = $B90D
-  JAMESON           = $B91C
-  DrawLightning     = $B928
-  LL164             = $B98F
-  DrawLaunchBox     = $BA26
-  InputName         = $BA72
-  ChangeCmdrName    = $BB46
-  SetKeyLogger      = $BBED
-  ChooseLanguage    = $BC92
-  TT24              = $BE6D
-  ClearDashEdge     = $BEED
-
- ENDIF
-
-ENDIF
 
 ; ******************************************************************************
 ;
@@ -6412,3 +6187,31 @@ MACRO SEND_DATA_TO_PPU byte_count
 
 ENDMACRO
 
+; ******************************************************************************
+;
+; Include all ROM banks
+;
+; ******************************************************************************
+
+ INCLUDE "1-source-files/main-sources/elite-source-bank-0.asm"
+ CLEAR CODE%, P%
+
+ INCLUDE "1-source-files/main-sources/elite-source-bank-1.asm"
+ CLEAR CODE%, P%
+
+ INCLUDE "1-source-files/main-sources/elite-source-bank-2.asm"
+ CLEAR CODE%, P%
+
+ INCLUDE "1-source-files/main-sources/elite-source-bank-3.asm"
+ CLEAR CODE%, P%
+
+ INCLUDE "1-source-files/main-sources/elite-source-bank-4.asm"
+ CLEAR CODE%, P%
+
+ INCLUDE "1-source-files/main-sources/elite-source-bank-5.asm"
+ CLEAR CODE%, P%
+
+ INCLUDE "1-source-files/main-sources/elite-source-bank-6.asm"
+ CLEAR CODE%, P%
+
+ INCLUDE "1-source-files/main-sources/elite-source-bank-7.asm"
