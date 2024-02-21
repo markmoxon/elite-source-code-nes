@@ -28,8 +28,6 @@ This folder contains the annotated source code for the NES version of Elite.
 
 * Files that are generated during the build process:
 
-  * [elite-bank-options.asm](elite-bank-options.asm) stores the current bank number during the build
-
   * [elite-build-options.asm](elite-build-options.asm) stores the make options in BeebAsm format so they can be included in the assembly process
 
 ---
