@@ -59,7 +59,6 @@ endif
 all:
 	echo _VERSION=7 > 1-source-files/main-sources/elite-build-options.asm
 	echo _VARIANT=$(variant-number) >> 1-source-files/main-sources/elite-build-options.asm
-	echo _REMOVE_CHECKSUMS=$(remove-checksums) >> 1-source-files/main-sources/elite-build-options.asm
 	echo _MATCH_ORIGINAL_BINARIES=$(match-original-binaries) >> 1-source-files/main-sources/elite-build-options.asm
 	echo _MAX_COMMANDER=$(max-commander) >> 1-source-files/main-sources/elite-build-options.asm
 	$(BEEBASM) -i 1-source-files/main-sources/elite-source-header.asm -v > 3-assembled-output/compile.txt

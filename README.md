@@ -209,7 +209,7 @@ All the compiled binaries match the originals, so we know we are producing the s
 
 ### Log files
 
-During compilation, details of every step are output in nine files called `compile.txt` (for the header) or `compile0.txt` through `compile7.txt` (for banks 0 to 7) in the `3-assembled-output` folder. If you have problems, these might come in handy, and they're a great reference if you need to know the addresses of labels and variables for debugging (or just snooping around).
+During compilation, details of every step are output in a file called `compile.txt` in the `3-assembled-output` folder. If you have problems, it might come in handy, and it's a great reference if you need to know the addresses of labels and variables for debugging (or just snooping around).
 
 ## Building different variants of NES Elite
 
