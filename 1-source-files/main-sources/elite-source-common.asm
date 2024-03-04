@@ -50,27 +50,49 @@
  NTY = 33               ; The number of different ship types
 
  MSL = 1                ; Ship type for a missile
+
  SST = 2                ; Ship type for a Coriolis space station
+
  ESC = 3                ; Ship type for an escape pod
+
  PLT = 4                ; Ship type for an alloy plate
+
  OIL = 5                ; Ship type for a cargo canister
+
  AST = 7                ; Ship type for an asteroid
+
  SPL = 8                ; Ship type for a splinter
+
  SHU = 9                ; Ship type for a Shuttle
+
  CYL = 11               ; Ship type for a Cobra Mk III
+
  ANA = 14               ; Ship type for an Anaconda
+
  HER = 15               ; Ship type for a rock hermit (asteroid)
+
  COPS = 16              ; Ship type for a Viper
+
  SH3 = 17               ; Ship type for a Sidewinder
+
  KRA = 19               ; Ship type for a Krait
+
  ADA = 20               ; Ship type for an Adder
+
  WRM = 23               ; Ship type for a Worm
+
  CYL2 = 24              ; Ship type for a Cobra Mk III (pirate)
+
  ASP = 25               ; Ship type for an Asp Mk II
+
  THG = 29               ; Ship type for a Thargoid
+
  TGL = 30               ; Ship type for a Thargon
+
  CON = 31               ; Ship type for a Constrictor
+
  COU = 32               ; Ship type for a Cougar
+
  DOD = 33               ; Ship type for a Dodecahedron ("Dodo") space station
 
  JL = ESC               ; Junk is defined as starting from the escape pod
@@ -101,6 +123,7 @@
                         ; contains four extra bytes)
 
  X = 128                ; The centre x-coordinate of the space view
+
  Y = 72                 ; The centre y-coordinate of the space view
 
  RE = $3E               ; The obfuscation byte used to hide the recursive tokens
