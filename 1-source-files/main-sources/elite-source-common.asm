@@ -29,14 +29,15 @@
  _NTSC = (_VARIANT = 1)
  _PAL  = (_VARIANT = 2)
 
- CODE% = $8000
- LOAD% = $8000
-
 ; ******************************************************************************
 ;
 ; Configuration variables
 ;
 ; ******************************************************************************
+
+ CODE% = $8000          ; The address where the code will be run
+
+ LOAD% = $8000          ; The address where the code will be loaded
 
  Q% = _MAX_COMMANDER    ; Set Q% to TRUE to max out the default commander, FALSE
                         ; for the standard default commander

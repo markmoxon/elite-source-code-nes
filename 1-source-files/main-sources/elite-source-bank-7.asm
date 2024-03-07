@@ -33,8 +33,9 @@
 ;
 ; ******************************************************************************
 
- CODE_BANK_7% = $C000
- LOAD_BANK_7% = $C000
+ CODE_BANK_7% = $C000	\ The address where the code will be run
+
+ LOAD_BANK_7% = $C000	\ The address where the code will be loaded
 
  ORG CODE_BANK_7%
 
