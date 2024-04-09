@@ -38,9 +38,9 @@
 ;
 ; ******************************************************************************
 
- CODE% = $8000			\ The address where the code will be run
+ CODE% = $8000          ; The address where the code will be run
 
- LOAD% = $8000			\ The address where the code will be loaded
+ LOAD% = $8000          ; The address where the code will be loaded
 
  ORG CODE%
 
