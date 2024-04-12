@@ -9403,14 +9403,14 @@ ENDIF
 
  ADC #242               ; A = 0 to 7, so print recursive token 82 + A, so:
  JSR TT27_b2            ;
-                        ;   A = 0 prints token 76 ("RODENT")
-                        ;   A = 1 prints token 76 ("FROG")
-                        ;   A = 2 prints token 76 ("LIZARD")
-                        ;   A = 3 prints token 76 ("LOBSTER")
-                        ;   A = 4 prints token 76 ("BIRD")
-                        ;   A = 5 prints token 76 ("HUMANOID")
-                        ;   A = 6 prints token 76 ("FELINE")
-                        ;   A = 7 prints token 76 ("INSECT")
+                        ;   A = 0 prints token 82 ("RODENTS")
+                        ;   A = 1 prints token 83 ("FROGS")
+                        ;   A = 2 prints token 84 ("LIZARDS")
+                        ;   A = 3 prints token 85 ("LOBSTERS")
+                        ;   A = 4 prints token 86 ("BIRDS")
+                        ;   A = 5 prints token 87 ("HUMANOIDS")
+                        ;   A = 6 prints token 88 ("FELINES")
+                        ;   A = 7 prints token 89 ("INSECTS")
 
  LDA QQ15+5             ; Now for the second adjective, so shift s2_hi so we get
  LSR A                  ; A = bits 5-7 of s2_hi
@@ -9520,14 +9520,14 @@ ENDIF
 
  ADC #242               ; A = 0 to 7, so print recursive token 82 + A, so:
  JSR TT27_b2            ;
-                        ;   A = 0 prints token 76 ("RODENT")
-                        ;   A = 1 prints token 76 ("FROG")
-                        ;   A = 2 prints token 76 ("LIZARD")
-                        ;   A = 3 prints token 76 ("LOBSTER")
-                        ;   A = 4 prints token 76 ("BIRD")
-                        ;   A = 5 prints token 76 ("HUMANOID")
-                        ;   A = 6 prints token 76 ("FELINE")
-                        ;   A = 7 prints token 76 ("INSECT")
+                        ;   A = 0 prints token 82 ("RODENTS")
+                        ;   A = 1 prints token 83 ("FROGS")
+                        ;   A = 2 prints token 84 ("LIZARDS")
+                        ;   A = 3 prints token 85 ("LOBSTERS")
+                        ;   A = 4 prints token 86 ("BIRDS")
+                        ;   A = 5 prints token 87 ("HUMANOIDS")
+                        ;   A = 6 prints token 88 ("FELINES")
+                        ;   A = 7 prints token 89 ("INSECTS")
 
 .TT76
 
@@ -11966,6 +11966,12 @@ ENDIF
 ; Arguments:
 ;
 ;   A                   The text token to be printed
+;
+; ------------------------------------------------------------------------------
+;
+; Other entry points:
+;
+;   prq+3               Print a question mark
 ;
 ; ******************************************************************************
 
