@@ -1759,8 +1759,8 @@ ENDIF
                         ; docking computer manoeuvring
 
  LDA auto               ; If auto is zero, then the docking computer is not
- BEQ MA23               ; activated, so jump to MA33 to skip the
-                        ; docking computer manoeuvring
+ BEQ MA23               ; activated, so jump to MA23 to skip to the next
+                        ; section
 
  LDA #123               ; Set A = 123 and jump down to MA34 to print token 123
  BNE MA34               ; ("DOCKING COMPUTERS ON") as an in-flight message
