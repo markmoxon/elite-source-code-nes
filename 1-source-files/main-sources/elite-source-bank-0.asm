@@ -18397,11 +18397,13 @@ ENDIF
                         ;     Fer-de-lance and Moray
                         ;
                         ; It's hard to know what the authors' original intent
-                        ; was, but the Cobra Mk III (pirate) can already be
-                        ; spawned as part of a group of pirates (see mt1 below),
-                        ; so I suspect the first fix might be the correct one,
-                        ; as then there is no overlap between pirates and bounty
-                        ; hunters
+                        ; was, but the second approach makes the Moray and Cobra
+                        ; Mk III the rarest choices, with the Asp Mk II, Python
+                        ; and Fer-de-Lance being more likely, and as the Moray
+                        ; is described in the literature as a rare ship, and the
+                        ; Cobra can already be spawned as part of a group of
+                        ; pirates (see mt1 below), I tend to favour the LSR A
+                        ; solution over the SEC approach
 
  TAY                    ; Copy the new ship type to Y
 
