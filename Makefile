@@ -24,6 +24,26 @@ PYTHON?=python
 #
 # will build an NTSC variant with a maxed-out commander, no workspace noise
 # and no crc32 verification
+#
+# The following variables are written into elite-build-options.asm depending on
+# the above arguments, so they can be passed to BeebAsm:
+#
+# _VERSION
+#   7 = NES
+#
+# _VARIANT
+#   1 = NTSC (default)
+#   2 = PAL
+#
+# _MAX_COMMANDER
+#   TRUE  = Maxed-out commander
+#   FALSE = Standard commander
+#
+# _MATCH_ORIGINAL_BINARIES
+#   TRUE  = Match binaries to released version (i.e. fill workspaces with noise)
+#   FALSE = Zero-fill workspaces
+#
+# The verify argument is passed to the crc32.py script, rather than BeebAsm
 
 ifeq ($(commander), max)
   max-commander=TRUE
