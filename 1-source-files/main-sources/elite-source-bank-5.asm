@@ -12,10 +12,10 @@
 ; in the documentation are entirely my fault
 ;
 ; The terminology and notations used in this commentary are explained at
-; https://www.bbcelite.com/terminology
+; https://elite.bbcelite.com/terminology
 ;
 ; The deep dive articles referred to in this commentary can be found at
-; https://www.bbcelite.com/deep_dives
+; https://elite.bbcelite.com/deep_dives
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -194,7 +194,7 @@ ENDIF
 ; System images are drawn using one of eight different palettes. You can view
 ; this image in all the different palettes here:
 ;
-; https://www.bbcelite.com/images/source/nes/allSystemImages_0.png
+; https://elite.bbcelite.com/images/source/nes/allSystemImages_0.png
 ;
 ; ******************************************************************************
 
@@ -350,7 +350,7 @@ ENDIF
 ; System images are drawn using one of eight different palettes. You can view
 ; this image in all the different palettes here:
 ;
-; https://www.bbcelite.com/images/source/nes/allSystemImages_1.png
+; https://elite.bbcelite.com/images/source/nes/allSystemImages_1.png
 ;
 ; ******************************************************************************
 
@@ -497,7 +497,7 @@ ENDIF
 ; System images are drawn using one of eight different palettes. You can view
 ; this image in all the different palettes here:
 ;
-; https://www.bbcelite.com/images/source/nes/allSystemImages_2.png
+; https://elite.bbcelite.com/images/source/nes/allSystemImages_2.png
 ;
 ; ******************************************************************************
 
@@ -703,7 +703,7 @@ ENDIF
 ; System images are drawn using one of eight different palettes. You can view
 ; this image in all the different palettes here:
 ;
-; https://www.bbcelite.com/images/source/nes/allSystemImages_3.png
+; https://elite.bbcelite.com/images/source/nes/allSystemImages_3.png
 ;
 ; ******************************************************************************
 
@@ -879,7 +879,7 @@ ENDIF
 ; System images are drawn using one of eight different palettes. You can view
 ; this image in all the different palettes here:
 ;
-; https://www.bbcelite.com/images/source/nes/allSystemImages_4.png
+; https://elite.bbcelite.com/images/source/nes/allSystemImages_4.png
 ;
 ; ******************************************************************************
 
@@ -1014,7 +1014,7 @@ ENDIF
 ; System images are drawn using one of eight different palettes. You can view
 ; this image in all the different palettes here:
 ;
-; https://www.bbcelite.com/images/source/nes/allSystemImages_5.png
+; https://elite.bbcelite.com/images/source/nes/allSystemImages_5.png
 ;
 ; ******************************************************************************
 
@@ -1168,7 +1168,7 @@ ENDIF
 ; System images are drawn using one of eight different palettes. You can view
 ; this image in all the different palettes here:
 ;
-; https://www.bbcelite.com/images/source/nes/allSystemImages_6.png
+; https://elite.bbcelite.com/images/source/nes/allSystemImages_6.png
 ;
 ; ******************************************************************************
 
@@ -1317,7 +1317,7 @@ ENDIF
 ; System images are drawn using one of eight different palettes. You can view
 ; this image in all the different palettes here:
 ;
-; https://www.bbcelite.com/images/source/nes/allSystemImages_7.png
+; https://elite.bbcelite.com/images/source/nes/allSystemImages_7.png
 ;
 ; ******************************************************************************
 
@@ -1477,7 +1477,7 @@ ENDIF
 ; System images are drawn using one of eight different palettes. You can view
 ; this image in all the different palettes here:
 ;
-; https://www.bbcelite.com/images/source/nes/allSystemImages_8.png
+; https://elite.bbcelite.com/images/source/nes/allSystemImages_8.png
 ;
 ; ******************************************************************************
 
@@ -1600,7 +1600,7 @@ ENDIF
 ; System images are drawn using one of eight different palettes. You can view
 ; this image in all the different palettes here:
 ;
-; https://www.bbcelite.com/images/source/nes/allSystemImages_9.png
+; https://elite.bbcelite.com/images/source/nes/allSystemImages_9.png
 ;
 ; ******************************************************************************
 
@@ -1742,7 +1742,7 @@ ENDIF
 ; System images are drawn using one of eight different palettes. You can view
 ; this image in all the different palettes here:
 ;
-; https://www.bbcelite.com/images/source/nes/allSystemImages_10.png
+; https://elite.bbcelite.com/images/source/nes/allSystemImages_10.png
 ;
 ; ******************************************************************************
 
@@ -1900,7 +1900,7 @@ ENDIF
 ; System images are drawn using one of eight different palettes. You can view
 ; this image in all the different palettes here:
 ;
-; https://www.bbcelite.com/images/source/nes/allSystemImages_11.png
+; https://elite.bbcelite.com/images/source/nes/allSystemImages_11.png
 ;
 ; ******************************************************************************
 
@@ -2052,7 +2052,7 @@ ENDIF
 ; System images are drawn using one of eight different palettes. You can view
 ; this image in all the different palettes here:
 ;
-; https://www.bbcelite.com/images/source/nes/allSystemImages_12.png
+; https://elite.bbcelite.com/images/source/nes/allSystemImages_12.png
 ;
 ; ******************************************************************************
 
@@ -2220,7 +2220,7 @@ ENDIF
 ; System images are drawn using one of eight different palettes. You can view
 ; this image in all the different palettes here:
 ;
-; https://www.bbcelite.com/images/source/nes/allSystemImages_13.png
+; https://elite.bbcelite.com/images/source/nes/allSystemImages_13.png
 ;
 ; ******************************************************************************
 
@@ -2378,7 +2378,7 @@ ENDIF
 ; System images are drawn using one of eight different palettes. You can view
 ; this image in all the different palettes here:
 ;
-; https://www.bbcelite.com/images/source/nes/allSystemImages_14.png
+; https://elite.bbcelite.com/images/source/nes/allSystemImages_14.png
 ;
 ; ******************************************************************************
 

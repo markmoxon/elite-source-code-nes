@@ -12,10 +12,10 @@
 ; in the documentation are entirely my fault
 ;
 ; The terminology and notations used in this commentary are explained at
-; https://www.bbcelite.com/terminology
+; https://elite.bbcelite.com/terminology
 ;
 ; The deep dive articles referred to in this commentary can be found at
-; https://www.bbcelite.com/deep_dives
+; https://elite.bbcelite.com/deep_dives
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -19977,7 +19977,7 @@ ENDIF
 ;
 ; You can view the tiles that make up the line images here:
 ;
-; https://www.bbcelite.com/images/source/nes/lineImage_ram.png
+; https://elite.bbcelite.com/images/source/nes/lineImage_ram.png
 ;
 ; ******************************************************************************
 
@@ -20026,7 +20026,7 @@ ENDIF
 ;
 ; You can view the font image here:
 ;
-; https://www.bbcelite.com/images/source/nes/fontImage_ram.png
+; https://elite.bbcelite.com/images/source/nes/fontImage_ram.png
 ;
 ; ******************************************************************************
 

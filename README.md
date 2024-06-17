@@ -2,11 +2,11 @@
 
 [BBC Micro cassette Elite](https://github.com/markmoxon/cassette-elite-beebasm) | [BBC Micro disc Elite](https://github.com/markmoxon/disc-elite-beebasm) | [6502 Second Processor Elite](https://github.com/markmoxon/6502sp-elite-beebasm) | [BBC Master Elite](https://github.com/markmoxon/master-elite-beebasm) | [Acorn Electron Elite](https://github.com/markmoxon/electron-elite-beebasm) | **NES Elite** | [Elite-A](https://github.com/markmoxon/elite-a-beebasm) | [Teletext Elite](https://github.com/markmoxon/teletext-elite) | [Elite Universe Editor](https://github.com/markmoxon/elite-universe-editor) | [Elite Compendium](https://github.com/markmoxon/elite-compendium) | [Elite over Econet](https://github.com/markmoxon/elite-over-econet) | [Flicker-free Commodore 64 Elite](https://github.com/markmoxon/c64-elite-flicker-free) | [BBC Micro Aviator](https://github.com/markmoxon/aviator-beebasm) | [BBC Micro Revs](https://github.com/markmoxon/revs-beebasm) | [Archimedes Lander](https://github.com/markmoxon/archimedes-lander)
 
-![Screenshot of Elite on the NES](https://www.bbcelite.com/images/github/nes-station.png)
+![Screenshot of Elite on the NES](https://elite.bbcelite.com/images/github/nes-station.png)
 
 This repository contains source code for Elite on the Nintendo Entertainment System (NES), with every single line documented and (for the most part) explained. It has been reconstructed by hand from a disassembly of the original game binaries.
 
-It is a companion to the [bbcelite.com website](https://www.bbcelite.com).
+It is a companion to the [elite.bbcelite.com website](https://elite.bbcelite.com).
 
 See the [introduction](#introduction) for more information, or jump straight into the [documented source code](1-source-files/main-sources).
 
@@ -43,15 +43,15 @@ This repository contains source code for Elite on the NES, with every single lin
 
 You can build the fully functioning game from this source. [Two variants](#building-different-variants-of-nes-elite) are currently supported: the Imagineer PAL variant and the NTSC variant from Ian Bell's personal website.
 
-It is a companion to the [bbcelite.com website](https://www.bbcelite.com), which contains all the code from this repository, but laid out in a much more human-friendly fashion. The links at the top of this page will take you to repositories for the other versions of Elite that are covered by this project.
+It is a companion to the [elite.bbcelite.com website](https://elite.bbcelite.com), which contains all the code from this repository, but laid out in a much more human-friendly fashion. The links at the top of this page will take you to repositories for the other versions of Elite that are covered by this project.
 
-* If you want to browse the source and read about how Elite works under the hood, you will probably find [the website](https://www.bbcelite.com) is a better place to start than this repository.
+* If you want to browse the source and read about how Elite works under the hood, you will probably find [the website](https://elite.bbcelite.com) is a better place to start than this repository.
 
 * If you would rather explore the source code in your favourite IDE, then the [annotated source](1-source-files/main-sources) is what you're looking for. It contains the exact same content as the website, so you won't be missing out (the website is generated from the source files, so they are guaranteed to be identical). You might also like to read the section on [Browsing the source in an IDE](#browsing-the-source-in-an-ide) for some tips.
 
 * If you want to build Elite from the source on a modern computer, to produce a working ROM image that can be loaded into a real NES or an emulator, then you want the section on [Building Elite from the source](#building-elite-from-the-source).
 
-My hope is that this repository and the [accompanying website](https://www.bbcelite.com) will be useful for those who want to learn more about Elite and what makes it tick. It is provided on an educational and non-profit basis, with the aim of helping people appreciate one of the most iconic games of the 8-bit era.
+My hope is that this repository and the [accompanying website](https://elite.bbcelite.com) will be useful for those who want to learn more about Elite and what makes it tick. It is provided on an educational and non-profit basis, with the aim of helping people appreciate one of the most iconic games of the 8-bit era.
 
 ## Acknowledgements
 
@@ -61,7 +61,7 @@ The code on this site has been reconstructed from a disassembly of the version r
 
 The commentary is copyright &copy; Mark Moxon. Any misunderstandings or mistakes in the documentation are entirely my fault.
 
-Huge thanks are due to the original authors for not only creating such an important piece of my childhood, but also for releasing the source code for us to play with; to Paul Brink for his annotated disassembly; and to Kieran Connell for his [BeebAsm version](https://github.com/kieranhj/elite-beebasm), which I forked as the original basis for this project. You can find more information about this project in the [accompanying website's project page](https://www.bbcelite.com/about_site/about_this_project.html).
+Huge thanks are due to the original authors for not only creating such an important piece of my childhood, but also for releasing the source code for us to play with; to Paul Brink for his annotated disassembly; and to Kieran Connell for his [BeebAsm version](https://github.com/kieranhj/elite-beebasm), which I forked as the original basis for this project. You can find more information about this project in the [accompanying website's project page](https://elite.bbcelite.com/about_site/about_this_project.html).
 
 The following archive from Ian Bell's personal website forms the basis for this project:
 
@@ -85,15 +85,15 @@ If you want to browse the source in an IDE, you might find the following useful.
 
 * The main game's source code is split across eight different ROM banks, which you can find in the [main-sources](1-source-files/main-sources) folder. This is the motherlode and probably contains all the stuff you're interested in.
 
-* It's probably worth skimming through the [notes on terminology and notations](https://www.bbcelite.com/terminology/) on the accompanying website, as this explains a number of terms used in the commentary, without which it might be a bit tricky to follow at times (in particular, you should understand the terminology I use for multi-byte numbers).
+* It's probably worth skimming through the [notes on terminology and notations](https://elite.bbcelite.com/terminology/) on the accompanying website, as this explains a number of terms used in the commentary, without which it might be a bit tricky to follow at times (in particular, you should understand the terminology I use for multi-byte numbers).
 
-* The accompanying website contains [a number of "deep dive" articles](https://www.bbcelite.com/deep_dives/), each of which goes into an aspect of the game in detail. Routines that are explained further in these articles are tagged with the label `Deep dive:` and the relevant article name.
+* The accompanying website contains [a number of "deep dive" articles](https://elite.bbcelite.com/deep_dives/), each of which goes into an aspect of the game in detail. Routines that are explained further in these articles are tagged with the label `Deep dive:` and the relevant article name.
 
 * There are loads of routines and variables in Elite - literally hundreds. You can find them in the source files by searching for the following: `Type: Subroutine`, `Type: Variable`, `Type: Workspace` and `Type: Macro`.
 
 * If you know the name of a routine, you can find it by searching for `Name: <name>`, as in `Name: SCAN` (for the 3D scanner routine) or `Name: LL9` (for the ship-drawing routine).
 
-* The entry point for the main game code is the `BEGIN` routine in [bank 7](1-source-files/main-sources/elite-source-bank-7.asm), which you can find by searching for `Name: BEGIN`. If you want to follow the program flow all the way from the title screen around the main game loop, then you can find a number of [deep dives on program flow](https://www.bbcelite.com/deep_dives/) on the accompanying website.
+* The entry point for the main game code is the `BEGIN` routine in [bank 7](1-source-files/main-sources/elite-source-bank-7.asm), which you can find by searching for `Name: BEGIN`. If you want to follow the program flow all the way from the title screen around the main game loop, then you can find a number of [deep dives on program flow](https://elite.bbcelite.com/deep_dives/) on the accompanying website.
 
 * The source code is designed to be read at an 80-column width and with a monospaced font, just like in the good old days.
 
@@ -129,7 +129,7 @@ You will need the following to build Elite from the source:
 
 You may be wondering why we're using BeebAsm - a BBC Micro assembler - to build the NES version of Elite. This is because NES Elite is a conversion of BBC Master Elite, which itself is a direct descendant of the original 1984 release for the BBC Micro and Acorn Electron (and the same is true of the Commodore 64 and Apple II versions of Elite - they are all cut from the same cloth). All of the older 6502 versions of Elite were built and assembled on a BBC Micro, including the Commodore and Apple versions, so BeebAsm is a good modern assembler to use for the NES version as well. The 1991 NES version was actually developed on the PC-based PDS development system, so the use of BeebAsm here isn't historically accurate, it's just a good fit for the source material.
 
-For details of how the build process works, see the [build documentation on bbcelite.com](https://www.bbcelite.com/about_site/building_elite.html).
+For details of how the build process works, see the [build documentation on bbcelite.com](https://elite.bbcelite.com/about_site/building_elite.html).
 
 Let's look at how to build Elite from the source.
 
@@ -317,7 +317,7 @@ You can see the differences between the variants by searching the source code fo
 
 It's worth noting that the NTSC variant doesn't actually work on an NTSC machine. The NMI timings have been changed to work with some (but not all) emulators in NTSC mode, but it isn't a full NTSC conversion, it's an NTSC emulation (as per the scroll text).
 
-See the [accompanying website](https://www.bbcelite.com/nes/releases.html) for a comprehensive list of differences between the variants.
+See the [accompanying website](https://elite.bbcelite.com/nes/releases.html) for a comprehensive list of differences between the variants.
 
 ---
 

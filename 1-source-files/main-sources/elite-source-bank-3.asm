@@ -12,10 +12,10 @@
 ; in the documentation are entirely my fault
 ;
 ; The terminology and notations used in this commentary are explained at
-; https://www.bbcelite.com/terminology
+; https://elite.bbcelite.com/terminology
 ;
 ; The deep dive articles referred to in this commentary can be found at
-; https://www.bbcelite.com/deep_dives
+; https://elite.bbcelite.com/deep_dives
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -201,11 +201,11 @@ ENDIF
 ;
 ; You can view the tiles that make up the Docked icon bar here:
 ;
-; https://www.bbcelite.com/images/source/nes/iconBarImage0_ppu.png
+; https://elite.bbcelite.com/images/source/nes/iconBarImage0_ppu.png
 ;
 ; and you can see what the Docked icon bar looks like on-screen here:
 ;
-; https://www.bbcelite.com/images/nes/general/data_on_lave.png
+; https://elite.bbcelite.com/images/nes/general/data_on_lave.png
 ;
 ; ******************************************************************************
 
@@ -351,11 +351,11 @@ ENDIF
 ;
 ; You can view the tiles that make up the Flight icon bar here:
 ;
-; https://www.bbcelite.com/images/source/nes/iconBarImage0_ppu.png
+; https://elite.bbcelite.com/images/source/nes/iconBarImage0_ppu.png
 ;
 ; and you can see what the Flight icon bar looks like on-screen here:
 ;
-; https://www.bbcelite.com/images/nes/general/station.png
+; https://elite.bbcelite.com/images/nes/general/station.png
 ;
 ; ******************************************************************************
 
@@ -501,11 +501,11 @@ ENDIF
 ;
 ; You can view the tiles that make up the Charts icon bar here:
 ;
-; https://www.bbcelite.com/images/source/nes/iconBarImage2_ppu.png
+; https://elite.bbcelite.com/images/source/nes/iconBarImage2_ppu.png
 ;
 ; and you can see what the Charts icon bar looks like on-screen here:
 ;
-; https://www.bbcelite.com/images/nes/general/short_range_chart.png
+; https://elite.bbcelite.com/images/nes/general/short_range_chart.png
 ;
 ; ******************************************************************************
 
@@ -651,11 +651,11 @@ ENDIF
 ;
 ; You can view the tiles that make up the Pause icon bar here:
 ;
-; https://www.bbcelite.com/images/source/nes/iconBarImage3_ppu.png
+; https://elite.bbcelite.com/images/source/nes/iconBarImage3_ppu.png
 ;
 ; and you can see what the Pause icon bar looks like on-screen here:
 ;
-; https://www.bbcelite.com/images/nes/general/pause_icon_bar.png
+; https://elite.bbcelite.com/images/nes/general/pause_icon_bar.png
 ;
 ; ******************************************************************************
 
@@ -801,11 +801,11 @@ ENDIF
 ;
 ; You can view the tiles that make up the copyright message here:
 ;
-; https://www.bbcelite.com/images/source/nes/iconBarImage4_ppu.png
+; https://elite.bbcelite.com/images/source/nes/iconBarImage4_ppu.png
 ;
 ; and you can see what the copyright message looks like on-screen here:
 ;
-; https://www.bbcelite.com/images/nes/general/title.png
+; https://elite.bbcelite.com/images/nes/general/title.png
 ;
 ; ******************************************************************************
 
@@ -1101,11 +1101,11 @@ ENDIF
 ;
 ; You can view the tiles that make up the dashboard image here:
 ;
-; https://www.bbcelite.com/images/source/nes/dashImage_ppu.png
+; https://elite.bbcelite.com/images/source/nes/dashImage_ppu.png
 ;
 ; and you can see what the dashboard looks like on-screen here:
 ;
-; https://www.bbcelite.com/images/nes/general/dashboard.png
+; https://elite.bbcelite.com/images/nes/general/dashboard.png
 ;
 ; ******************************************************************************
 
@@ -1390,11 +1390,11 @@ ENDIF
 ;
 ; You can view the tiles that make up the Cobra Mk III image here:
 ;
-; https://www.bbcelite.com/images/source/nes/cobraImage_ppu.png
+; https://elite.bbcelite.com/images/source/nes/cobraImage_ppu.png
 ;
 ; and you can see what the Cobra Mk III looks like on-screen here:
 ;
-; https://www.bbcelite.com/images/nes/general/equipment.png
+; https://elite.bbcelite.com/images/nes/general/equipment.png
 ;
 ; ******************************************************************************
 
@@ -1572,7 +1572,7 @@ ENDIF
 ;
 ; You can view the tiles that make up the inventory icon here:
 ;
-; https://www.bbcelite.com/images/source/nes/inventoryIcon_ppu.png
+; https://elite.bbcelite.com/images/source/nes/inventoryIcon_ppu.png
 ;
 ; ******************************************************************************
 
@@ -1600,11 +1600,11 @@ ENDIF
 ;
 ; You can view the tiles that make up the small logo image here:
 ;
-; https://www.bbcelite.com/images/source/nes/smallLogoImage_ppu.png
+; https://elite.bbcelite.com/images/source/nes/smallLogoImage_ppu.png
 ;
 ; and you can see what the small logo looks like on-screen here:
 ;
-; https://www.bbcelite.com/images/nes/general/save_and_load.png
+; https://elite.bbcelite.com/images/nes/general/save_and_load.png
 ;
 ; ******************************************************************************
 
@@ -1697,12 +1697,12 @@ ENDIF
 ;
 ; You can view the tiles that make up the big logo ball image here:
 ;
-; https://www.bbcelite.com/images/source/nes/logoBallImage_ppu.png
+; https://elite.bbcelite.com/images/source/nes/logoBallImage_ppu.png
 ;
 ; and you can see what the full big logo looks like on-screen here (the ball is
 ; at the bottom of the logo):
 ;
-; https://www.bbcelite.com/images/nes/general/start.png
+; https://elite.bbcelite.com/images/nes/general/start.png
 ;
 ; ******************************************************************************
 

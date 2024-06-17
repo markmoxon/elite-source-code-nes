@@ -12,10 +12,10 @@
 ; in the documentation are entirely my fault
 ;
 ; The terminology and notations used in this commentary are explained at
-; https://www.bbcelite.com/terminology
+; https://elite.bbcelite.com/terminology
 ;
 ; The deep dive articles referred to in this commentary can be found at
-; https://www.bbcelite.com/deep_dives
+; https://elite.bbcelite.com/deep_dives
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -193,7 +193,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 0 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage0_0.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage0_0.png
 ;
 ; ******************************************************************************
 
@@ -261,7 +261,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 1 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage1_1.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage1_1.png
 ;
 ; ******************************************************************************
 
@@ -328,7 +328,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 2 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage2_2.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage2_2.png
 ;
 ; ******************************************************************************
 
@@ -395,7 +395,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 3 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage3_3.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage3_3.png
 ;
 ; ******************************************************************************
 
@@ -465,7 +465,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 4 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage4_4.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage4_4.png
 ;
 ; ******************************************************************************
 
@@ -536,7 +536,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 5 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage5_5.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage5_5.png
 ;
 ; ******************************************************************************
 
@@ -606,7 +606,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 6 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage6_6.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage6_6.png
 ;
 ; ******************************************************************************
 
@@ -676,7 +676,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 7 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage7_7.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage7_7.png
 ;
 ; ******************************************************************************
 
@@ -746,7 +746,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 8 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage8_8.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage8_8.png
 ;
 ; ******************************************************************************
 
@@ -814,7 +814,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 9 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage9_9.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage9_9.png
 ;
 ; ******************************************************************************
 
@@ -883,7 +883,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 10 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage10_10.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage10_10.png
 ;
 ; ******************************************************************************
 
@@ -955,7 +955,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 11 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage11_11.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage11_11.png
 ;
 ; ******************************************************************************
 
@@ -1023,7 +1023,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 12 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage12_12.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage12_12.png
 ;
 ; ******************************************************************************
 
@@ -1093,7 +1093,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 13 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage13_13.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage13_13.png
 ;
 ; ******************************************************************************
 
@@ -1202,7 +1202,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 0 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage0_0.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage0_0.png
 ;
 ; ******************************************************************************
 
@@ -1270,7 +1270,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 1 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage1_1.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage1_1.png
 ;
 ; ******************************************************************************
 
@@ -1339,7 +1339,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 2 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage2_2.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage2_2.png
 ;
 ; ******************************************************************************
 
@@ -1406,7 +1406,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 3 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage3_3.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage3_3.png
 ;
 ; ******************************************************************************
 
@@ -1478,7 +1478,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 4 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage4_4.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage4_4.png
 ;
 ; ******************************************************************************
 
@@ -1550,7 +1550,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 5 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage5_5.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage5_5.png
 ;
 ; ******************************************************************************
 
@@ -1620,7 +1620,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 6 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage6_6.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage6_6.png
 ;
 ; ******************************************************************************
 
@@ -1689,7 +1689,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 7 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage7_7.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage7_7.png
 ;
 ; ******************************************************************************
 
@@ -1758,7 +1758,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 8 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage8_8.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage8_8.png
 ;
 ; ******************************************************************************
 
@@ -1826,7 +1826,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 9 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage9_9.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage9_9.png
 ;
 ; ******************************************************************************
 
@@ -1896,7 +1896,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 10 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage10_10.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage10_10.png
 ;
 ; ******************************************************************************
 
@@ -1970,7 +1970,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 11 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage11_11.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage11_11.png
 ;
 ; ******************************************************************************
 
@@ -2038,7 +2038,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 12 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage12_12.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage12_12.png
 ;
 ; ******************************************************************************
 
@@ -2110,7 +2110,7 @@ ENDIF
 ; Each commander image is composed of a face image and a headshot image. You can
 ; view the combined commander image 13 here:
 ;
-; https://www.bbcelite.com/images/source/nes/commanderImage13_13.png
+; https://elite.bbcelite.com/images/source/nes/commanderImage13_13.png
 ;
 ; ******************************************************************************
 
@@ -2185,12 +2185,12 @@ ENDIF
 ;
 ; You can view the tiles that make up the glasses image here:
 ;
-; https://www.bbcelite.com/images/source/nes/glassesImage_ppu.png
+; https://elite.bbcelite.com/images/source/nes/glassesImage_ppu.png
 ;
 ; and you can see what the commander images look like with glasses, earrings and
 ; medallion here:
 ;
-; https://www.bbcelite.com/images/source/nes/allCommanderImages.png
+; https://elite.bbcelite.com/images/source/nes/allCommanderImages.png
 ;
 ; ******************************************************************************
 
@@ -2225,11 +2225,11 @@ ENDIF
 ;
 ; You can view the tiles that make up the big logo image here:
 ;
-; https://www.bbcelite.com/images/source/nes/bigLogoImage_ppu.png
+; https://elite.bbcelite.com/images/source/nes/bigLogoImage_ppu.png
 ;
 ; and you can see what the big logo looks like on-screen here:
 ;
-; https://www.bbcelite.com/images/nes/general/start.png
+; https://elite.bbcelite.com/images/nes/general/start.png
 ;
 ; Note that the ball at the bottom of the logo is stored separately, at
 ; logoBallImage.
