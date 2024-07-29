@@ -5139,7 +5139,7 @@ ENDIF
 ;
 ;       Name: K%
 ;       Type: Workspace
-;    Address: $0600 to $07FF
+;    Address: $0600 to $074F
 ;   Category: Workspaces
 ;    Summary: Ship data blocks
 ;  Deep dive: Ship data blocks
