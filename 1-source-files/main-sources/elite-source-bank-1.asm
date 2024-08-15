@@ -3564,7 +3564,7 @@ ENDIF
  INY                    ; Increment Y to the next row (so this is the second row
                         ; of the two-pixel-high dot)
 
- CLC                    ; Cleat the C flag to pass to Shpt
+ CLC                    ; Clear the C flag to pass to Shpt
 
  JSR Shpt               ; Call Shpt to draw a horizontal 4-pixel dash for the
                         ; second row of the dot (i.e. a four-pixel dash)
@@ -6118,10 +6118,10 @@ ENDIF
 .LL146
 
                         ; If we get here then we have clipped our line to the
-                        ; (if we had to clip it at all), so we move the low
-                        ; bytes from (x1, y1) and (x2, y2) into (X1, Y1) and
-                        ; (X2, Y2), remembering that they share locations with
-                        ; XX15:
+                        ; screen edge (if we had to clip it at all), so we move
+                        ; the low bytes from (x1, y1) and (x2, y2) into (X1, Y1)
+                        ; and (X2, Y2), remembering that they share locations
+                        ; with XX15:
                         ;
                         ;   X1 = XX15
                         ;   Y1 = XX15+1
@@ -6509,10 +6509,10 @@ ENDIF
  TAY                    ; the call to this subroutine
 
                         ; If we get here then we have clipped our line to the
-                        ; (if we had to clip it at all), so we move the low
-                        ; bytes from (x1, y1) and (x2, y2) into (X1, Y1) and
-                        ; (X2, Y2), remembering that they share locations with
-                        ; XX15:
+                        ; screen edge (if we had to clip it at all), so we move
+                        ; the low bytes from (x1, y1) and (x2, y2) into (X1, Y1)
+                        ; and (X2, Y2), remembering that they share locations
+                        ; with XX15:
                         ;
                         ;   X1 = XX15
                         ;   Y1 = XX15+1
