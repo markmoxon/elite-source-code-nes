@@ -2187,7 +2187,7 @@ ENDIF
  EJMP 19                ;                {single cap}GOOD DAY {single cap}
  ECHR 'G'               ;                COMMANDER {commander name}, ALLOW ME
  ECHR 'O'               ;                TO INTRODUCE MYSELF. {single cap}I AM
- ECHR 'O'               ;                 {single cap}THE {single cap}MERCHANT
+ ECHR 'O'               ;                {single cap}THE {single cap}MERCHANT
  ECHR 'D'               ;                {single cap}PRINCE OF THRUN AND I
  ECHR ' '               ;                {single cap}FIND MYSELF FORCED TO SELL
  ECHR 'D'               ;                MY MOST TREASURED POSSESSION.{cr}
@@ -2651,7 +2651,7 @@ ENDIF
                         ;                {cr}
  ECHR 'O'               ;                 {single cap}I{lower case} AM {single
  ECHR 'D'               ;                cap}AGENT{single cap}BLAKE OF {single
- ECHR ' '               ;                cap}NAVAL {single cap}INTELLEGENCE.{cr}
+ ECHR ' '               ;                cap}NAVAL {single cap}INTELLIGENCE.{cr}
                         ;                {cr}
  ECHR 'D'               ;                 {single cap}AS YOU KNOW, THE {single
  ECHR 'A'               ;                cap}NAVY HAVE BEEN KEEPING THE {single
