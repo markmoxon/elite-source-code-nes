@@ -111,7 +111,7 @@ There are five main folders in this repository, which reflect the order of the b
 
 * [4-reference-binaries](4-reference-binaries) contains the correct binaries for each variant, so we can verify that our assembled output matches the reference.
 
-* [5-compiled-game-discs](5-compiled-game-discs) contains the final output of the build process: an iNES ROM image that contains the compiled game and which can be run on real hardware or in an emulator.
+* [5-compiled-rom-images](5-compiled-rom-images) contains the final output of the build process: an iNES ROM image that contains the compiled game and which can be run on real hardware or in an emulator.
 
 ## Building NES Elite from the source
 
@@ -143,7 +143,7 @@ All being well, entering the following into a command window:
 make.bat
 ```
 
-will produce a file called `elite-pal.NES` in the `5-compiled-game-discs` folder that contains the PAL variant, which you can then load into an emulator, or into a real NES using a flash cart.
+will produce a file called `elite-pal.NES` in the `5-compiled-rom-images` folder that contains the PAL variant, which you can then load into an emulator, or into a real NES using a flash cart.
 
 ### Mac and Linux
 
@@ -155,11 +155,11 @@ All being well, entering the following into a terminal window:
 make
 ```
 
-will produce a file called `elite-pal.NES` in the `5-compiled-game-discs` folder that contains the PAL variant, which you can then load into an emulator, or into a real NES using a flash cart.
+will produce a file called `elite-pal.NES` in the `5-compiled-rom-images` folder that contains the PAL variant, which you can then load into an emulator, or into a real NES using a flash cart.
 
 ### Build options
 
-By default the build process will create a typical Elite game disc with a standard commander and verified binaries. There are various arguments you can pass to the build to change how it works. They are:
+By default the build process will create a typical Elite game ROM with a standard commander and verified binaries. There are various arguments you can pass to the build to change how it works. They are:
 
 * `variant=<name>` - Build the specified variant:
 
@@ -235,7 +235,7 @@ or this on a Mac or Linux:
 make variant=pal
 ```
 
-This will produce a file called `elite-pal.NES` in the `5-compiled-game-discs` folder that contains the PAL variant.
+This will produce a file called `elite-pal.NES` in the `5-compiled-rom-images` folder that contains the PAL variant.
 
 The verification checksums for this version are as follows:
 
@@ -270,7 +270,7 @@ or this on a Mac or Linux:
 make variant=ntsc
 ```
 
-This will produce a file called `elite-ntsc.NES` in the `5-compiled-game-discs` folder that contains the NTSC variant.
+This will produce a file called `elite-ntsc.NES` in the `5-compiled-rom-images` folder that contains the NTSC variant.
 
 The verification checksums for this version are as follows:
 
