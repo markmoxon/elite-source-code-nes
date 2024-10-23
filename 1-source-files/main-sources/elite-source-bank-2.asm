@@ -15705,8 +15705,8 @@ ENDIF
  EQUW MT27              ; Token 27: Print mission captain's name (217-219)
  EQUW MT28              ; Token 28: Print mission 1 location hint (220-221)
  EQUW MT29              ; Token 29: Column 6, white text, lower case in words
- EQUW FILEPR            ; Token 30: Display currently selected media (disc/tape)
- EQUW OTHERFILEPR       ; Token 31: Display the non-selected media (disc/tape)
+ EQUW FILEPR            ; Token 30: Display currently selected media (disk/tape)
+ EQUW OTHERFILEPR       ; Token 31: Display the non-selected media (disk/tape)
  EQUW DASC              ; Token 32: Unused
 
 ; ******************************************************************************
