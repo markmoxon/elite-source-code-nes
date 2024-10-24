@@ -59,11 +59,11 @@ endif
 
 ifeq ($(variant), ntsc)
   variant-number=1
-  folder=/ntsc
+  folder=ntsc
   suffix=-ntsc
 else
   variant-number=2
-  folder=/pal
+  folder=pal
   suffix=-pal
 endif
 
@@ -78,5 +78,5 @@ all:
 	cat 3-assembled-output/header.bin 3-assembled-output/bank0.bin 3-assembled-output/bank1.bin 3-assembled-output/bank2.bin 3-assembled-output/bank3.bin 3-assembled-output/bank4.bin 3-assembled-output/bank5.bin 3-assembled-output/bank6.bin 3-assembled-output/bank7.bin > 3-assembled-output/elite.bin
 	cp 3-assembled-output/elite.bin 5-compiled-rom-images/ELITE$(suffix).NES
 ifneq ($(verify), no)
-	@$(PYTHON) 2-build-files/crc32.py 4-reference-binaries$(folder) 3-assembled-output
+	@$(PYTHON) 2-build-files/crc32.py 4-reference-binaries/$(folder) 3-assembled-output
 endif
