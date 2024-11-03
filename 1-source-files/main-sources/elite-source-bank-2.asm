@@ -16484,8 +16484,8 @@ ENDIF
 ;       Name: MT29
 ;       Type: Subroutine
 ;   Category: Text
-;    Summary: Move to row 7 and switch to lower case when
-;             printing extended tokens
+;    Summary: Move to row 7 and switch to lower case when printing extended
+;             tokens
 ;  Deep dive: Extended text tokens
 ;
 ; ******************************************************************************

@@ -17943,9 +17943,9 @@ ENDIF
 ;
 ;   A = A * Q / 256
 ;
-; The Master and 6502 Second Processor versions use logarithms to speed up the
-; multiplication process. See the deep dive on "Multiplication using logarithms"
-; for more details.
+; The advanced versions of Elite use logarithms to speed up the multiplication
+; process. See the deep dive on "Multiplication using logarithms" for more
+; details.
 ;
 ; ------------------------------------------------------------------------------
 ;
