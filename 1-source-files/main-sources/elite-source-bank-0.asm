@@ -9766,22 +9766,8 @@ ENDIF
 
 .TT84
 
-                        ; In the following, the authors have used XX15 for
-                        ; temporary storage. XX15 shares location with X1, Y1,
-                        ; X2 and Y2, so in the following, you can consider
-                        ; the variables like this:
-                        ;
-                        ;   XX15   is the same as X1
-                        ;   XX15+1 is the same as Y1
-                        ;   XX15+2 is the same as X2
-                        ;   XX15+3 is the same as Y2
-                        ;
-                        ; Presumably this routine was written at a different
-                        ; time to the line-drawing routine, before the two
-                        ; workspaces were merged to save space
-
- STA XX15               ; Set XX15 (X1) = A (the x-coordinate of the left edge
-                        ; of the crosshairs)
+ STA X1                 ; Set X1 = A (the x-coordinate of the left edge of the
+                        ; crosshairs)
 
  LDA QQ19               ; Set A = crosshairs x-coordinate + crosshairs size
  CLC                    ; to get the x-coordinate of the right edge of the
@@ -9795,13 +9781,13 @@ ENDIF
                         ; (as 255 is the x-coordinate of the rightmost pixel
                         ; on-screen)
 
- STA XX15+2             ; Set XX15+2 (X2) = A (the x-coordinate of the right
-                        ; edge of the crosshairs)
+ STA X2                 ; Set X2 = A (the x-coordinate of the right edge of the
+                        ; crosshairs)
 
- LDA QQ19+1             ; Set XX15+1 (Y1) = crosshairs y-coordinate + indent
- CLC                    ; to get the y-coordinate of the centre of the
- ADC QQ19+5             ; crosshairs
- STA XX15+1
+ LDA QQ19+1             ; Set Y1 = crosshairs y-coordinate + indent to get the
+ CLC                    ; y-coordinate of the centre of the crosshairs
+ ADC QQ19+5
+ STA Y1
 
  STA XX15+3             ; Set XX15+3 (Y2) = crosshairs y-coordinate + indent
 
@@ -9822,9 +9808,9 @@ ENDIF
 
 .TT86
 
- CLC                    ; Set XX15+1 (Y1) = A + indent to get the y-coordinate
- ADC QQ19+5             ; of the top edge of the indented crosshairs
- STA XX15+1
+ CLC                    ; Set Y1 = A + indent to get the y-coordinate of the top
+ ADC QQ19+5             ; edge of the indented crosshairs
+ STA Y1
 
  LDA QQ19+1             ; Set A = crosshairs y-coordinate + crosshairs size
  CLC                    ; + indent to get the y-coordinate of the bottom edge
@@ -9845,14 +9831,14 @@ ENDIF
 
 .TT87
 
- STA XX15+3             ; Set XX15+3 (Y2) = A (the y-coordinate of the bottom
-                        ; edge of the crosshairs)
+ STA Y2                 ; Set Y2 = A (the y-coordinate of the bottom edge of the
+                        ; crosshairs)
 
- LDA QQ19               ; Set XX15 (X1) = the x-coordinate of the centre of the
- STA XX15               ; crosshairs
+ LDA QQ19               ; Set X1 = the x-coordinate of the centre of the
+ STA X1                 ; crosshairs
 
- STA XX15+2             ; Set XX15+2 (X2) = the x-coordinate of the centre of
-                        ; the crosshairs
+ STA X2                 ; Set X2 = the x-coordinate of the centre of the
+                        ; crosshairs
 
  JMP LOIN               ; Draw a vertical line (X1, Y1) to (X2, Y2), which will
                         ; draw from the top edge of the crosshairs to the bottom
