@@ -5621,7 +5621,7 @@ ENDIF
 ;
 ;   * If we are in the ship's crosshairs, register some damage to our ship, slow
 ;     down the attacking ship, make the noise of us being hit by laser fire, and
-;     we're done
+;     move on to the next part to manoeuvre the attacking ship
 ;
 ; ******************************************************************************
 
