@@ -13388,8 +13388,6 @@ ENDIF
 ; Launch the ship (if we are docked), or show the front space view (if we are
 ; already in space).
 ;
-; new galaxy, or after a hyperspace if the current view is a space view.
-;
 ; ******************************************************************************
 
 .TT110
