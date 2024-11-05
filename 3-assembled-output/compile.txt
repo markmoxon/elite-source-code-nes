@@ -7989,11 +7989,11 @@ End macro SETUP_PPU_FOR_ICON_BAR
      B04F   A6 6C      LDX &6C
      B051   F0 02      BEQ &B055
      B053   09 80      ORA #&80
-.game8
+.game5
      B055   AE 5D 04   LDX &045D
      B058   F0 02      BEQ &B05C
      B05A   29 7F      AND #&7F
-.game9
+.game6
      B05C   8D 00 03   STA &0300
      B05F   29 C0      AND #&C0
      B061   F0 0D      BEQ &B070
@@ -8003,7 +8003,7 @@ End macro SETUP_PPU_FOR_ICON_BAR
      B069   6A         ROR A
      B06A   8D 00 03   STA &0300
      B06D   20 90 F1   JSR &F190
-.game10
+.game7
      B070   20 25 AD   JSR &AD25
 .FRCE
      B073   20 7D B0   JSR &B07D
