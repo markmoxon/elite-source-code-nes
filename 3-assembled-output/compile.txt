@@ -7967,7 +7967,7 @@ End macro SETUP_PPU_FOR_ICON_BAR
      B023   EE C6 03   INC &03C6
      B026   10 03      BPL &B02B
      B028   CE C6 03   DEC &03C6
-.game5
+.nobabies
      B02B   AD C6 03   LDA &03C6
      B02E   F0 1C      BEQ &B04C
      B030   AC 8B 03   LDY &038B
@@ -7975,7 +7975,6 @@ End macro SETUP_PPU_FOR_ICON_BAR
      B035   B0 02      BCS &B039
      B037   4A         LSR A
      B038   4A         LSR A
-.game6
      B039   85 9A      STA &9A
      B03B   20 CC F4   JSR &F4CC
      B03E   C5 9A      CMP &9A
@@ -7985,7 +7984,7 @@ End macro SETUP_PPU_FOR_ICON_BAR
      B045   B9 79 B0   LDA &B079,Y
      B048   A8         TAY
      B049   20 11 EC   JSR &EC11
-.game7
+.NOSQUEEK
      B04C   AD 00 03   LDA &0300
      B04F   A6 6C      LDX &6C
      B051   F0 02      BEQ &B055

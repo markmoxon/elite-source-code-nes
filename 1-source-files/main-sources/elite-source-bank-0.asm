@@ -18593,7 +18593,7 @@ ENDIF
  JSR DELAY              ; main loop down a bit
 
  LDA TRIBBLE+1          ; If the high byte of TRIBBLE(1 0), the number of
- BEQ game5              ; Trumbles in the hold, is zero, jump to game5 to skip
+ BEQ nobabies           ; Trumbles in the hold, is zero, jump to nobabies to skip
                         ; the following
 
                         ; We have a lot of Trumbles in the hold, so let's see if
@@ -18610,26 +18610,26 @@ ENDIF
  ADC #0                 ; bytes
  STA TRIBBLE
 
- BCC game5              ; And then the high bytes
+ BCC nobabies           ; And then the high bytes
  INC TRIBBLE+1          ;
                         ; So there is a 14% chance of a Trumble being born
 
- BPL game5              ; If the high byte of TRIBBLE(1 0) is now $80, then
+ BPL nobabies           ; If the high byte of TRIBBLE(1 0) is now $80, then
  DEC TRIBBLE+1          ; decrement it back to $7F, so the number of Trumbles
                         ; never goes above $7FFF (32767)
 
-.game5
+.nobabies
 
  LDA TRIBBLE+1          ; If the high byte of TRIBBLE(1 0), the number of
- BEQ game7              ; Trumbles in the hold, is zero, jump to game7 to skip
-                        ; the following
+ BEQ NOSQUEEK           ; Trumbles in the hold, is zero, jump to NOSQUEEK to
+                        ; skip the following
 
                         ; We have a lot of Trumbles in the hold, so they are
                         ; probably making a bit of a noise
 
- LDY CABTMP             ; If the cabin temperature is >= 224 then jump to game6
- CPY #224               ; to skip the following and leave the value of A as a
- BCS game6              ; high value, so the chances of the Trumbles making a
+ LDY CABTMP             ; If the cabin temperature is >= 224 then skip the next
+ CPY #224               ; two LSR A instructions and leave the value of A as a
+ BCS P%+4               ; high value, so the chances of the Trumbles making a
                         ; noise in hot temperature is greater (specifically,
                         ; this is the temperature at which the fuel scoop start
                         ; working)
@@ -18637,17 +18637,15 @@ ENDIF
  LSR A                  ; Set A = A / 2
  LSR A
 
-.game6
-
  STA T                  ; Set T = A, which will be higher with more Trumbles and
                         ; higher temperatures
 
  JSR DORND              ; Set A and X to random numbers
 
- CMP T                  ; If A >= T then jump to game7 to skip making any noise,
- BCS game7              ; so there is a higher chance of Trumbles making noise
-                        ; when there are lots of them or the cabin temperature
-                        ; is hot enough for the fuel scoops to work
+ CMP T                  ; If A >= T then jump to NOSQUEEK to skip making any
+ BCS NOSQUEEK           ; noise, so there is a higher chance of Trumbles making
+                        ; noise when there are lots of them or the cabin
+                        ; temperature is hot enough for the fuel scoops to work
 
  AND #3                 ; Set Y to our random number reduced to the range 0 to 3
  TAY
@@ -18660,7 +18658,7 @@ ENDIF
                         ; Trumbles in Y, which will be one of 5 or 6, with 5
                         ; more likely than 6
 
-.game7
+.NOSQUEEK
 
  LDA allowInSystemJump  ; Set A to the value of allowInSystemJump, which
                         ; determines whether we are allowed to perform an
@@ -18670,32 +18668,32 @@ ENDIF
  LDX QQ22+1             ; Fetch into X the number that's shown on-screen during
                         ; the hyperspace countdown
 
- BEQ game8              ; If the counter is zero then we are not counting down
-                        ; to hyperspace, so jump to game8 to skip the next
+ BEQ game5              ; If the counter is zero then we are not counting down
+                        ; to hyperspace, so jump to game5 to skip the next
                         ; instruction
 
  ORA #%10000000         ; Set bit 7 of A to prevent in-system jumps, as there
                         ; is a hyperspace countdown in progress
 
-.game8
+.game5
 
- LDX demoInProgress     ; If the demo is not in progress, jump to game9 to skip
- BEQ game9              ; the following
+ LDX demoInProgress     ; If the demo is not in progress, jump to game6 to skip
+ BEQ game6              ; the following
 
  AND #%01111111         ; Clear bit 7 of A to enable the fast-forward button, as
                         ; this is the combat demo and the fast-forward button
                         ; lets us skip the rest of the demo
 
-.game9
+.game6
 
  STA allowInSystemJump  ; Store the updated value of A in allowInSystemJump
 
  AND #%11000000         ; If bits 6 and 7 of allowInSystemJump are both clear
- BEQ game10             ; then in-system jumps are allowed, so jump to game10
+ BEQ game7              ; then in-system jumps are allowed, so jump to game7
                         ; to leave allowInSystemJump alone
 
  CMP #%11000000         ; If bits 6 and 7 of allowInSystemJump are both set then
- BEQ game10             ; in-system jumps are not allowed, so jump to game10 to
+ BEQ game7              ; in-system jumps are not allowed, so jump to game7 to
                         ; leave allowInSystemJump alone
 
  CMP #%10000000         ; If bit 7 of allowInSystemJump is set but bit 6 isn't,
@@ -18721,7 +18719,7 @@ ENDIF
                         ; icon bar button, according to the new value of the
                         ; allowInSystemJump flag
 
-.game10
+.game7
 
  JSR TT17               ; Scan the key logger for the directional pad buttons,
                         ; returning the cursor's delta values in X and Y and
