@@ -18631,7 +18631,7 @@ ENDIF
  CPY #224               ; two LSR A instructions and leave the value of A as a
  BCS P%+4               ; high value, so the chances of the Trumbles making a
                         ; noise in hot temperature is greater (specifically,
-                        ; this is the temperature at which the fuel scoop start
+                        ; this is the temperature at which the fuel scoops start
                         ; working)
 
  LSR A                  ; Set A = A / 2
