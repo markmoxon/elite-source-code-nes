@@ -3501,7 +3501,7 @@ ENDIF
  LDA soundByteNOISE+2   ; Set (0 soundLoNOISE) to the 8-bit value in byte #2 of
  AND #$0F               ; the sound data, which at this point contains the first
  STA soundLoNOISE       ; pitch value to send to the APU via (NOISE_HI NOISE_LO)
- STA NOISE_LO           ; 
+ STA NOISE_LO           ;
  LDA #0                 ; We ignore byte #3 as the NOISE channel only has an
  STA NOISE_HI           ; 8-bit pitch range
                         ;
