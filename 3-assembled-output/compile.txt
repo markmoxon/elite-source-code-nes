@@ -288,7 +288,7 @@ Saving file '3-assembled-output/header.bin'
      00FC
 .soundAddr
      00FE
-Zero page variables from &0  to &100 
+ZP workspace from &0 to &FF inclusive
 .XX3
      0100
 .ySprite0
@@ -1422,9 +1422,10 @@ Zero page variables from &0  to &100
      0618
 .X2TB
      0708
-WP workspace from  &300  to &7F8 
+WP workspace from &300 to &7F7 inclusive
 .K%
      0600
+K% workspace from &600 to &74F inclusive
 .pattBuffer0
      6000
 .pattBuffer1

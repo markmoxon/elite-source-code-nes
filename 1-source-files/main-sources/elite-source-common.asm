@@ -1504,7 +1504,7 @@
  SKIP 2                 ; Temporary storage, used in a number of places in the
                         ; sound routines to hold an address
 
- PRINT "Zero page variables from ", ~ZP, " to ", ~P%
+ PRINT "ZP workspace from ", ~ZP, "to ", ~P%-1, "inclusive"
 
 ; ******************************************************************************
 ;
@@ -5133,7 +5133,7 @@ ENDIF
  SKIP 240               ; The x-coordinates of the end points for character
                         ; lines in the scroll text
 
- PRINT "WP workspace from  ", ~WP," to ", ~P%
+ PRINT "WP workspace from ", ~WP, "to ", ~P%-1, "inclusive"
 
 ; ******************************************************************************
 ;
@@ -5166,6 +5166,8 @@ ENDIF
                         ; from complaining
 
  SKIP NOSH * NIK%       ; Ship data blocks
+
+ PRINT "K% workspace from ", ~K%, "to ", ~P%-1, "inclusive"
 
 ; ******************************************************************************
 ;
