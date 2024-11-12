@@ -14573,9 +14573,9 @@ ENDIF
 
  STA T                  ; Set A = halfScreenHeight - Y1 + 10
  LDA halfScreenHeight   ;
- SBC T                  ; So if Y is positive we display the point up from the
+ SBC T                  ; So if Y1 is positive we display the point up from the
  ADC #10+YPAL           ; centre at y-coordinate halfScreenHeight, while a
-                        ; negative Y means down from the centre
+                        ; negative Y1 means down from the centre
 
  STA ySprite37,Y        ; Set the stardust particle's sprite y-coordinate to A
 

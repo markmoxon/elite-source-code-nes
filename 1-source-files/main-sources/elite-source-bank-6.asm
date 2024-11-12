@@ -12976,7 +12976,7 @@ ELSE
  EQUB POW+9             ; LASER = Front laser, #10
 ENDIF
 
- EQUB (POW+9 AND Q%)    ; LASER = Rear laser, #11
+ EQUB (POW+9 AND Q%)    ; LASER+1 = Rear laser, #11
 
  EQUB (POW+128) AND Q%  ; LASER+2 = Left laser, #12
 

@@ -2966,7 +2966,7 @@ ENDIF
 
 .scacol
 
- EQUB 0
+ EQUB 0                 ; This byte appears to be unused
 
  EQUB 3                 ; Missile
  EQUB 0                 ; Coriolis space station
@@ -3001,9 +3001,8 @@ ENDIF
  EQUB 2                 ; Constrictor
  EQUB 255               ; Cougar
 
- EQUB 0                 ; This byte appears to be unused
-
- EQUD 0                 ; These bytes appear to be unused
+ EQUB 0                 ; These bytes appear to be unused
+ EQUD 0
 
 ; ******************************************************************************
 ;
@@ -4075,7 +4074,7 @@ ENDIF
 ; so the biggest number we can print is 99,999,999,999. This maximum number
 ; plus 1 is 100,000,000,000, which in hexadecimal is:
 ;
-;   & 17 48 76 E8 00
+;   17 48 76 E8 00
 ;
 ; The TENS variable contains the lowest four bytes in this number, with the
 ; most significant byte first, i.e. 48 76 E8 00. This value is used in the
