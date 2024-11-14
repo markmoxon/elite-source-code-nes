@@ -9996,7 +9996,7 @@ End macro SETUP_PPU_FOR_ICON_BAR
      BEA0   C9 03      CMP #&03
      BEA2   B0 01      BCS &BEA5
      BEA4   E8         INX
-.exno1
+.quiet2
      BEA5   BC AB BE   LDY &BEAB,X
      BEA8   4C 11 EC   JMP &EC11
 .explosionSounds

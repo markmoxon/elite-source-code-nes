@@ -24028,27 +24028,27 @@ ENDIF
                         ; the z-axis distance to the exploding ship, with 0
                         ; for distant ships and 4 for close ships
 
- CMP #16                ; If z_hi >= 16, jump to exno1 with X = 0
- BCS exno1
+ CMP #16                ; If z_hi >= 16, jump to quiet2 with X = 0
+ BCS quiet2
 
  INX                    ; Increment X to 1
 
- CMP #8                 ; If z_hi >= 8, jump to exno1 with X = 1
- BCS exno1
+ CMP #8                 ; If z_hi >= 8, jump to quiet2 with X = 1
+ BCS quiet2
 
  INX                    ; Increment X to 2
 
- CMP #6                 ; If z_hi >= 6, jump to exno1 with X = 2
- BCS exno1
+ CMP #6                 ; If z_hi >= 6, jump to quiet2 with X = 2
+ BCS quiet2
 
  INX                    ; Increment X to 3
 
- CMP #3                 ; If z_hi >= 3, jump to exno1 with X = 3
- BCS exno1
+ CMP #3                 ; If z_hi >= 3, jump to quiet2 with X = 3
+ BCS quiet2
 
  INX                    ; Increment X to 4
 
-.exno1
+.quiet2
 
  LDY explosionSounds,X  ; Set Y to the X-th sound effect from the table of
                         ; explosion sound effect numbers
