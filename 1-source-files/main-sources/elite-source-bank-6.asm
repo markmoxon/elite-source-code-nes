@@ -13579,7 +13579,7 @@ ENDIF
                         ; off the bottom of the screen, so jump to lbox3 to skip
                         ; the following check (though this is slightly odd, as
                         ; this leaves A set to the y-coordinate of the bottom
-                        ; edge, wrapped around with a mod 256, which is unlikely
+                        ; edge, wrapped around with a MOD 256, which is unlikely
                         ; to be what we want, so should this be a jump to lbox1
                         ; to return from the subroutine instead?)
 
