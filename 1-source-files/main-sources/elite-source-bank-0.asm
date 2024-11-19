@@ -314,7 +314,7 @@ ENDIF
  BMI EN6                ; applied, so jump to EN6
 
  LDA CASH+1             ; If the second most significant byte of CASH(0 1 2 3)
- BEQ EN6                ; is zero then the cash amount is less than &010000
+ BEQ EN6                ; is zero then the cash amount is less than $010000
                         ; (6553.6 credits), so jump to EN6
 
  LDA TP                 ; If bit 4 of TP is set, then the Trumbles mission has
@@ -4085,7 +4085,7 @@ ENDIF
 
 .TENS
 
- EQUD &00E87648
+ EQUD $00E87648
 
 ; ******************************************************************************
 ;

@@ -6245,21 +6245,21 @@ ENDIF
                         ; four-byte number with the most significant byte first,
                         ; i.e. as CASH(0 1 2 3)
 
- LDA CASH               ; If CASH >= &01000000 (1,677,721.6 CR), jump to cmdr2
+ LDA CASH               ; If CASH >= $01000000 (1,677,721.6 CR), jump to cmdr2
  BNE cmdr2
 
- LDA CASH+1             ; If CASH >= &00990000 (1,002,700.8 CR), jump to cmdr2
+ LDA CASH+1             ; If CASH >= $00990000 (1,002,700.8 CR), jump to cmdr2
  CMP #$99
  BCS cmdr2
 
- CMP #0                 ; If CASH >= &00010000 (6,553.6 CR), jump to cmdr3
+ CMP #0                 ; If CASH >= $00010000 (6,553.6 CR), jump to cmdr3
  BNE cmdr3
 
- LDA CASH+2             ; If CASH >= &00004F00 (2,022.4 CR), jump to cmdr3
+ LDA CASH+2             ; If CASH >= $00004F00 (2,022.4 CR), jump to cmdr3
  CMP #$4F
  BCS cmdr3
 
- CMP #$28               ; If CASH < &00002800 (1,024.0 CR), jump to cmdr5
+ CMP #$28               ; If CASH < $00002800 (1,024.0 CR), jump to cmdr5
  BCC cmdr5
 
  BCS cmdr4              ; Jump to cmdr4 (this BCS is effectively a JMP as we
@@ -12959,9 +12959,9 @@ ENDIF
  EQUB 173               ; QQ1 = Current system Y-coordinate (Lave), #2
 
 IF Q%
- EQUD &00CA9A3B         ; CASH = Amount of cash (100,000,000 Cr), #3-6
+ EQUD $00CA9A3B         ; CASH = Amount of cash (100,000,000 Cr), #3-6
 ELSE
- EQUD &E8030000         ; CASH = Amount of cash (100 Cr), #3-6
+ EQUD $E8030000         ; CASH = Amount of cash (100 Cr), #3-6
 ENDIF
 
  EQUB 70                ; QQ14 = Fuel level, #7
@@ -14147,7 +14147,7 @@ ENDIF
                         ; and we can't change our commander name either (so once
                         ; you cheat, you have to own it)
 
- LDA #$A0               ; Set CASH(0 1 2 3) = CASH(0 1 2 3) + &000186A0
+ LDA #$A0               ; Set CASH(0 1 2 3) = CASH(0 1 2 3) + $000186A0
  CLC                    ;
  ADC CASH+3             ; So this adds 100000 to our cash reserves, giving us
  STA CASH+3             ; an extra 10,000.0 credits
