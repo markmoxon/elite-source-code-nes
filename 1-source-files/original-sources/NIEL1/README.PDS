@@ -1,0 +1,85 @@
+~ Nebulous ~	NINTENDO N.E.S.  Music/FX Info.  V.18 Sep 1990.
+
+Joystick Controller...
+
+ START		plays current tune
+ SELECT		plays next    tune
+ Button B	turns all off
+ Button A	restarts/fast-forwards (don't call any FX though)
+ Joystick DOWN	plays current  FX number (on channel A) tone
+ Joystick UP	plays current  FX number (on channel D) noise
+ Joystick LEFT	plays previous FX number (on channel B) tone
+ Joystick RIGHT	plays next     FX number (on channel B) tone
+
+
+IGNORE...
+The binary file 'NEWNEBU.BIN' is from $8000 as requested.
+...END IGNORE
+
+ To Run Music:	lda	#0 to #4 (5 tunes)
+		jsr	'IniTune'
+ Every VBL:	jsr	'Refresh' even if no Music/FX playing (see * NB)
+ On a 50Hz (UK machine) 'TVflag' should contain $00
+ On a 60Hz (UK machine) 'TVflag' should contain $FF
+ To See if a non-looping tune has ended: Peek 'Monoff' byte (0 = ended)
+ To Turn off:	jsr	'TurnOff'
+ To ReStart a stopped tune: jsr	'ReStart' (Only if YOU stopped it!)
+ To slow down music:	sub #1(or more),'Speed' (After starting)
+ To speed up  music:	add #1(or more),'Speed' (After starting)
+ To set normal speed:	lda 'Sspeed':sta 'Speed'(After starting)
+
+ To run chip Fx:	lda	#0 to #26
+			jsr	'InitFXA/B/D' (see below)
+
+ To alter Revs/pitch of Engine(s): add/sub.w to 'RevsA/B/D'
+				   (After starting it/them)
+* Alter Revs from $03ff to $0000 to vary engine sounds. ChanD is only $0 to $f.
+
+ To Turn off any Fx early :	lda #26
+				jsr InitFXA/B/D (whatever channel it's on).
+
+ To See if an Fx has ended: Peek 'FonOffA' (channelA) (0 = ended)
+			    Peek 'FonOffB' (channelB)
+			    Peek 'FonOffD' (channelD)
+
+Dec	Hex	Effect
+~~~	~~~	~~~~~~
+Music:
+#0	$00	CBM-64 Theme
+#1	$01	My Theme (Old)
+#2	$02	Enter Tower
+#3	$03	Die ???
+#4	$04	End
+FX:
+#0	$00	footstep #1	call InitFXD
+#1	$01	footstep #2	call InitFXD
+#2	$02	watery #1	call InitFXA/B
+#3	$03	watery #2	call InitFXA/B
+#4	$04	ping #1		call initFXA/B
+#5	$05	monster ?	call initFXA/B
+#6	$06	dunno #1	call InitFXA
+#7	$07	dunno #2	call InitFXA
+#8	$08	pogo jump	call InitFXA
+#9	$09	water/drown	call InitFXA/B
+#10	$0a	boing (alien)	call InitFXA/B
+#11	$0b	shoot		call InitFXD
+#12	$0c	throw		call InitFXD
+#13	$0d	dissolve shelf	call InitFXA/B
+
+#14	$0e	unspecified	call InitFXD
+    to
+#25	$19	unspecified	call InitFXA/B/D
+
+#26	$1a	(Turns an FX off early on the relevant channel.)
+
+You can call any FX on any channel with unspecified results. (It won't crash.)
+
+ All equates are shown in 'VARS.S'.
+
+
+ Any queries, ring me:	(061) 797 4287
+
+ David Whittaker
+
+	end
+

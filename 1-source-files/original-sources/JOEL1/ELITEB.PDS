@@ -1,0 +1,1935 @@
+
+;
+;REM	ELITE <B> Nin
+;
+;	Start of code for default bank
+;
+
+	IF	NES
+	FORG	BANKSTART
+	INIMAC
+	ENDIF
+
+
+
+HAPPYSHIP	; Set full energy, cool laser, zero speed(!)
+	LDA	#0
+	STA	DELTA
+	STA	QQ22+1
+	LDA	#0
+	STA	GNTMP
+	LDA	#FF
+	STA	FSH
+	STA	ASH
+	STA	ENERGY
+	RTS
+
+
+
+DOENTRY	; Enter space stn after dock
+	LDX	#FF
+	TXS
+	JSR	RES2
+	JSR	LAUNFX
+
+	JSR	HAPPYSHIP
+
+	IF	INCHALL
+	JSR	HALL
+	LDY	#44
+	JSR	DELAY
+	ENDIF
+	
+	; Consider giving a mission breifing
+
+	LDA	TP
+	AND	#3
+	BNE	EN1
+
+	; For first mission need rating>255, galaxy 0 or 1
+
+	LDA	TALLY+1
+	BEQ	EN4
+	LDA	GCNT
+	LSR	A
+	BNE	EN4
+	JMP	BRIEF
+
+EN1	CMP	#3
+	BNE	EN2
+	JMP	DEBRIEF
+
+EN2	; For second mission need first done, galaxy 2, rating>$4FF
+
+	LDA	GCNT
+	CMP	#2
+	BNE	EN4
+	LDA	TP
+	AND	#$F
+	CMP	#2
+	BNE	EN3
+	LDA	TALLY+1
+	CMP	#5
+	BCC	EN4
+	JMP	BRIEF2
+EN3	CMP	#6
+	BNE	EN5
+	LDA	QQ0
+	CMP	#215
+	BNE	EN4
+	LDA	QQ1
+	CMP	#84
+	BNE	EN4
+	JMP	BRIEF3
+EN5	CMP	#10
+	BNE	EN4
+	LDA	QQ0
+	CMP	#63
+	BNE	EN4
+	LDA	QQ1
+	CMP	#72
+	BNE	EN4
+	JMP	DEBRIEF2
+EN4
+	IF	HAVETRIBS
+
+	LDA	COK	; Disable tribble mission
+	BMI	EN6	; if cheated
+;	LDA	CASH+2
+;	CMP	#$C4
+;	BCC	EN6
+
+	LDA	CASH+1
+	BEQ	EN6
+
+
+	LDA	TP
+	AND	#$10
+	BNE	EN6
+	JMP	TBRIEF	; <<<IAN
+
+	ENDIF	;(HAVETRIBS)
+
+EN6	JMP	BAY
+BRKBK
+;	LDA	#(BRBR&255)
+;	SEI
+;	STA	BRKV
+;	LDA	#(BRBR/256)
+;	STA	BRKV+1
+	; CLI
+	RTS
+
+
+
+
+DOONESHIP	; Plot, hit check etc.
+	; for ship no.X of type A
+	; (will inc X unless destroys it)
+	STX	XSAV
+	STA	TYPE
+	POLLBIT	79
+	JSR	GINF		; Set XX0 to point to definition
+
+	LDY	#(NIdwn-1)		; Copy some of infship down
+!1	LDA	(INF),Y		; into INWK
+	STA	INWK,Y
+	DEY
+	BPL	!1
+
+	POLLBIT	80
+
+	LDA	TYPE
+	BMI	MA21
+	CMP	#SST
+	BNE	!3
+	LDA	spasto
+	STA	XX0
+	LDA	spasto+1
+	STA	XX0+1
+	LDY	#2*SST
+	BNE	!4
+!3	ASL	A
+	TAY
+	LDA	XX21-2,Y
+	STA	XX0
+	LDA	XX21-1,Y
+	STA	XX0+1
+
+!4	CPY	#2*ESC		; Ignore escape capsulea
+	BEQ	!5
+	CPY	#2*TGL		; Tharglets
+	BEQ	!5
+	CPY	#2*SST
+	BEQ	!7
+	LDA	INWK32		; passive ships,
+	BPL	!5
+	CPY	#2*MSL
+	BEQ	!6
+	AND	#$3E		; cowardly ships (not missiles),
+	BEQ	!5
+!6	LDA	INWK+31		; 
+	AND	#$A0		; non-angry ships
+	BNE	!5		; or exploding ships
+!7	LDA	NEWB
+	AND	#4
+	BEQ	!5
+
+	ASL	SKIPFLAG		; If any others exist disable 
+	SEC			; game skip
+	ROR	SKIPFLAG		; and clear gamecond
+
+!5	LDA	BOMB		; If bomb active explode ship
+	BPL	MA21		; unless space stn, Thargoid
+	CPY	#2*SST		; or Constricter
+	BEQ	MA21
+	CPY	#2*THG
+	BEQ	MA21
+	CPY	#2*CON
+	BCS	MA21
+	LDA	INWK+31
+	AND	#32
+	BNE	MA21
+	ASL	INWK+31
+	SEC
+	ROR	INWK+31
+	LDX	TYPE
+	JSR	EXNO2
+
+MA21	JSR	MVEIT		; Call MVEIT (inc. tactics)
+	POLLBIT	81
+
+	LDY	#(NIup-1)		; Copy INWK back up to infship
+!L3	LDA	INWK,Y
+	STA	(INF),Y
+	DEY
+	BPL	!L3
+
+	POLLBIT	82
+
+	LDA	INWK+31		; If not exploding
+	AND	#$A0		; check for collision with player
+	LDX	TYPE
+	BMI	MA65
+	JSR	MAS4
+	BNE	MA65
+	LDA	INWK
+	ORA	INWK+3
+	ORA	INWK+6
+	BMI	MA65
+
+	; Player has rammed object!
+
+	CPX	#SST
+	BEQ	ISDK		; could be dock if spc stn
+	AND	#$C0
+	BNE	MA65
+	CPX	#MSL
+	BEQ	MA65
+	LDA	BST		; or scoop-up
+	AND	INWK+5
+;	BPL	MA58
+	BMI	!1
+	JMP	MA58
+!1
+
+	CPX	#OIL
+	BEQ	oily
+
+	CPX	#ESC	; Stop scooping of
+	BEQ	MA58	; escape capsules
+
+	LDY	#0
+	SHIPREAD
+	LSR	A
+	LSR	A
+	LSR	A
+	LSR	A
+	BEQ	MA58
+	ADC	#1
+	BNE	slvy2
+oily	JSR	DORND
+	AND	#7
+slvy2	JSR	tnpr1
+	LDY	#78
+	BCS	MA59
+	LDY	QQ29
+	ADC	QQ20,Y
+	STA	QQ20,Y
+	TYA
+	ADC	#208
+	JSR	MESS
+	JSR	SCOOPNOISE
+	ASL	NEWB
+	SEC
+	ROR	NEWB
+MA65	JMP	MA26
+
+ISDK	; Check for possible dock
+	LDA	Kpcent+NIpcent+NEWB-INWK
+	AND	#4
+	BNE	MA62	; Not if space station angry
+	LDA	INWK+14
+	CMP	#$D6
+	BCC	MA62soft
+	JSR	SPS1
+	LDA	XX15+2
+	CMP	#89	;86
+	BCC	MA62soft
+	LDA	INWK+16
+	AND	#$7F
+	CMP	#80
+	BCC	MA62soft
+GOIN	JSR	KILLTUNE
+	JMP	DOENTRY
+
+
+MA62soft	LDA	auto
+	BNE	GOIN	; Docking computers get let off!
+
+MA62	LDA	DELTA
+	CMP	#5
+	BCC	MA67
+	JMP	DEATH
+
+MA59	JSR	EXNO3
+MA60	ASL	INWK+31
+	SEC
+	ROR	INWK+31
+	BNE	MA26
+
+MA67	LDA	#1	; Scrape on docking
+	STA	DELTA
+	LDA	#5
+	BNE	MA63
+
+
+MA58	ASL	INWK+31
+	SEC
+	ROR	INWK+31
+	LDA	INWK35
+	SEC
+	ROR	A
+MA63	JSR	OOPS
+	JSR	EXNO3
+MA26
+	LDA	MODE
+	BEQ	!1
+	JMP	MA15	; If in space view..
+!1	JSR	PLUT	; tweak coords for non-front view
+
+	LDA	LAS	; Do hit check is lasers on
+	BNE	!3	; or if missiles actively seeking
+	LDA	MSAR	; target
+	BEQ	!4
+	LDA	MSTG
+	BPL	!4
+!3	JSR	HITCH	
+	BCS	!2
+!4	JMP	MA8
+!2	LDA	MSAR
+	BEQ	MA47
+	LDA	MSTG
+	BPL	MA47
+	JSR	BEEP
+	LDX	XSAV
+	LDY	#RED2
+	JSR	ABORT2
+MA47	LDA	LAS
+	BEQ	MA8
+	LDX	#15
+	JSR	EXNO
+	LDA	TYPE
+	CMP	#SST
+	BEQ	MA14p2
+	CMP	#SPL
+	BNE	!1
+	LDX	LAS
+	CPX	#(MineLas &127)
+	BEQ	MA14p2
+!1	CMP	#CON
+	BCC	BURN
+	LDA	LAS
+	CMP	#(Armlas&127)
+	BNE	MA14p2
+	LSR	LAS
+	LSR	LAS
+BURN	LDA	INWK35
+	SEC
+	SBC	LAS
+	BCS	MA14
+	ASL	INWK+31	; Set explode me bit
+	SEC
+	ROR	INWK+31
+
+	JSR	FREESCAN2	; free scanners
+
+	LDA	LAS
+	CMP	#MineLas
+	BNE	!3
+	LDA	TYPE
+	CMP	#AST
+	BEQ	!1
+	CMP	#BOU
+	BNE	!3
+	JSR	DORND
+	BPL	!4
+	LDA	#1
+	BNE	!2
+!1	JSR	DORND
+	ORA	#1
+	AND	#3
+!2	LDX	#SPL
+	JSR	SPIN2
+	JMP	!4
+
+!3	LDY	#PLT
+	JSR	SPIN
+	LDY	#OIL
+	JSR	SPIN
+!4	LDX	TYPE
+	JSR	EXNO2
+MA14	STA	INWK35
+MA14p2	LDA	TYPE
+	JSR	ANGRY
+MA8
+	JSR	LL9		; Call plot
+
+MA15	LDY	#INWK35-INWK
+	LDA	INWK35
+	STA	(INF),Y
+	LDA	EXCN
+	LDY	#EXCN-INWK
+	STA	(INF),Y		; Copy energy and explosion
+	LDA	NEWB		; counts up from infship
+	BMI	KS1S
+	LDA	INWK+31		; If ship explosion has just
+	BPL	MAC1		; finished
+	AND	#$20
+	BEQ	MAC1		; consider effecting 
+	LDA	NEWB		; Affect police record
+	AND	#64		
+	ORA	FIST
+	STA	FIST
+
+;	LDA	DLY
+;	ORA	MJ
+
+	LDA	MJ
+	ORA	COMBFLAG
+	BNE	KS1S
+	LDY	#10
+	SHIPREAD
+	BEQ	KS1S
+	TAX
+	INY
+	SHIPREAD
+	TAY
+	JSR	MCASH		; Award bounty unless misjump
+	LDA	#0		; or practice combat
+	JSR	MESS
+KS1S	JMP	KS1
+
+MAC1	LDA	TYPE
+	BMI	!2	; Kill ship if outside
+!1	JSR	FAROF	; 2*$E000 cube centered at player
+	BCC	KS1S
+
+!2	LDY	#31	; Copy up INWK31
+	LDA	INWK+31
+	AND	#$BF	; (clearing ship is shooting bit)
+	STA	(INF),Y
+	LDX	XSAV
+	INX
+	RTS		; do next ship
+
+
+
+
+MPCN99	DEC	DLY
+	BMI	MPCN101
+	BEQ	!2
+
+	JSR	MESS2
+	JMP	!3
+
+
+!2	JSR	CLYNS
+!3	JSR	SENDINPAREA
+	JMP	MPCN100
+
+
+Mpcent2	; Enemy ships, dust ptcls, and messages
+
+
+	; Draw up messages before all other graphics
+	; to be sure of sufficient free characters
+
+	LDA	MODE
+	BNE	MPCN99
+	
+	DEC	DLY
+	BMI	MPCN101
+	BEQ	MPCN101
+	JSR	MESS2
+	JMP	MPCN100
+MPCN101	LDA	#0
+	STA	DLY
+;	STA	de
+
+MPCN100
+
+	LDA	ECMP
+	BEQ	!1
+	JSR	DENGY
+	BEQ	!3
+!1	LDA	ECMA	;ECM Zigzag effect
+	BEQ	!2
+	LDA	#128
+	STA	K+2
+	LDA	#127
+	STA	K
+	LDA	Ymem
+	STA	K+3
+	STA	K+1
+	JSR	ZIGZAG
+	DEC	ECMA
+	BNE	!2
+!3	JSR	ECMOF
+!2
+
+	; Now draw all ships
+
+	LDX	#0
+	LDA	FRIN
+	BEQ	!4
+	JSR	DOONESHIP		; Do ship 0 (Planet or Thargoid)
+!4	LDX	#2
+
+MAL1				; Then do ships from 2 up
+	LDA	FRIN,X
+	BEQ	!1
+	JSR	DOONESHIP
+	JMP	MAL1
+
+!1	LDX	#1		; Finally do ship 1 (Sun, Spc Stn
+	LDA	FRIN+1		; or Thargoid) since sun must be 
+	BEQ	!2		; drawn last
+
+	BPL	!3		; Desperation fix for dread
+	LDY	#0		; CJ bug
+	STY	SSPR
+!3
+	JSR	DOONESHIP
+
+!2
+
+	IF	AUTOSEARCH
+;	LDA	FRIN+1
+;	BPL	!5
+
+	LDA	GCNT
+	BEQ	!5
+	LDA	QQ22+1
+	BNE	!5
+	LDA	SSPR
+	BEQ	!5
+	LDA	#2
+	JSR	GOTBUG
+!5	
+	ENDIF	;(AUTOSEARCH)
+
+	POLLBIT	88
+
+	; Have now drawn all ships
+
+	LDA	BOMB
+	BPL	MA77
+	ASL	BOMB
+	BMI	MA77
+	JSR	BOMBOFF
+	JSR	UPDATESTRIP
+
+MA77
+	LDA	MCNT
+	AND	#7
+	BNE	MA22
+
+	JSR	REPLENISH
+	LDA	MJ
+	BNE	MA23S
+
+	LDA	MCNT	; Every 31 game cycles
+	AND	#31
+	BNE	MA93
+	LDA	SSPR	; if no space station
+	BNE	MA23S
+	TAY
+	JSR	MAS2	; and planet high bytes zero
+	BNE	MA23S
+	LDX	#28
+MAL4	LDA	Kpcent,X	; copy down planet 4,5
+	STA	INWK,X	; to get posn	   4
+	DEX		; for space station		   2
+	BPL	MAL4	;				   3,4
+			; 15*29=435
+
+	JSR	CONSIDSPST
+	BCS	MA23S
+	LDX	#8	; Restore planet posn	
+!1	LDA	Kpcent,X
+	STA	INWK,X
+	DEX
+	BPL	!1
+	LDX	#5
+!2	LDY	INWK+9,X	; Cycle vectors round so f becomes fxu
+	LDA	INWK+15,X
+	STA	INWK+9,X
+	LDA	INWK+21,X
+	STA	INWK+15,X
+	STY	INWK+21,X
+	DEX
+	BPL	!2
+	JSR	CONSIDSPST
+
+
+MA23S	JMP	MA23
+
+MA22	LDA	MJ
+	BNE	MA23S
+MA93
+
+	LDA	COMBFLAG
+	BEQ	!1
+	LDA	JUNK
+	CLC
+	ADC	MSLPR
+	TAY
+	LDA	FRIN+2,Y
+	BNE	!1
+	LDA	#1
+	JMP	DEMON
+
+!1	LDA	MCNT
+	AND	#31
+	CMP	#10
+	BEQ	!2
+	CMP	#20
+	BNE	MA29
+!2	LDA	#80
+	CMP	ENERGY
+	BCC	!6	;!! was P%
+	LDA	#100
+	JSR	MESS	;Energy low
+	LDY	#sfxwarn
+	JSR	NOISE
+!6	JSR	DOALTIT
+	JMP	MA23
+
+;	LDY	#FF
+;	STY	ALTIT
+;	INY
+;	JSR	mAS2M2
+;	BNE	MA23	; If planet centre high bytes non
+;	JSR	MAS3	; zero altitude=FF else
+;	BCS	MA23	; add squares of middle bytes
+;	SBC	#$24	; and if carry altitude=FF else
+;	BCC	MA28	; subtract $24 (MSB of $60 squared)	
+;	STA	R	; and altitude=SQR of result
+;	JSR	LL5
+;	LDA	Q
+;	STA	ALTIT
+;	BNE	MA23
+
+MA28	JMP	DEATH
+
+
+MA29	CMP	#15
+	BNE	MA33
+	LDA	auto
+	BEQ	MA23
+	LDA	#123	; Docking comps on
+	BNE	MA34
+MA33	AND	#15
+	CMP	#6
+	BNE	MA23
+	LDA	#30
+	STA	CABTMP
+	LDA	SSPR
+	BNE	MA23
+	LDY	#NIpcent
+	JSR	MAS2
+	BNE	MA23
+	JSR	MAS3
+	EOR	#FF
+	ADC	#30
+	STA	CABTMP
+
+ 	BCS	MA28
+	CMP	#$E0
+	BCC	MA23
+
+	IF	HAVETRIBS
+	CMP	#$F0
+	BCC	nokilltr
+;	JSR	notribs
+	LDA	TRIBBLE+1
+	ORA	TRIBBLE
+	BEQ	nokilltr
+	LSR	TRIBBLE+1	; Kill half the tribbles
+	ROR	TRIBBLE
+	LDY	#sfxtrib3	; with a sound effect
+	JSR	NOISE
+
+
+nokilltr
+	ENDIF	;(HAVETRIBS)
+
+	LDA	BST
+	BEQ	MA23
+	LDA	DELT4+1
+	BEQ	MA23	; No message if too slow
+	LSR	A
+	ADC	QQ14
+	CMP	#70
+	BCC	!4
+	LDA	#70
+!4	STA	QQ14
+	BCS	MA23
+	JSR	SCOOPNOISE
+	JSR	SETCURS2
+	LDA	#160
+MA34	JSR	MESS  	;;--BT
+
+MA23
+	IF	INCDUST
+	LDA	MODE
+	BNE	MA99
+	JMP	STARS
+	ELSE
+	RTS
+	ENDIF	; (INCDUST)
+
+
+REPLENISH	POLLBIT	111
+	LDX	ENERGY
+	BPL	!1	;was lowercase clash
+	LDX	ASH
+	JSR	SHD
+	STX	ASH
+	LDX	FSH
+	JSR	SHD
+	STX	FSH
+!1	SEC
+	LDA	ENGY
+	ADC	ENERGY
+	BCS	!5	;!! was P%
+	STA	ENERGY
+!5	RTS
+
+DOALTIT
+	LDY	#FF
+	STY	ALTIT
+	INY
+	JSR	MAS2M2
+	BNE	!2	; If planet centre high bytes non
+	JSR	MAS3	; zero altitude=FF else
+	BCS	!2	; add squares of middle bytes
+	SBC	#$24	; and if carry altitude=FF else
+	BCC	!1	; subtract $24 (MSB of $60 squared)	
+	STA	R	; and altitude=SQR of result
+
+	POLLBIT	199
+
+	JSR	LL5
+	LDA	Q
+	STA	ALTIT
+	BNE	!2
+!1	JMP	DEATH
+!2
+MA99	RTS
+
+
+
+	
+Mpcent	; includes mpcent2
+
+	LDA	MODE
+	BNE	nobankflip
+	JSR	flipbank
+nobankflip	POLLBIT	82
+
+	LDA	Kpcent
+	EOR	clok+1
+	STA	RAND
+
+
+	LDA	auto
+	BEQ	!1
+	CLC
+	BCC	!5
+
+!1	LDA	MJ
+	BEQ	!4
+	SEC
+	BCS	!5
+	
+!4	LDA	SKIPFLAG		; If skip currently disabled
+	BPL	!3		; then use stricter check to
+	LDA	#$B0		; to reenable
+	JSR	WAS1
+	JMP	!5
+!3	JSR	WAS1easy
+!5	ROR	SKIPFLAG
+
+	IF	SEETRIBS
+	LDA	TRIBCT
+	BEQ	NOMVETR
+	JMP	MVTRIBS
+	ENDIF	; (SEETRIBS)
+NOMVETR
+
+
+	; Do roll & dive/climb damping
+
+	LDX	JSTX
+
+	IF	TWOJOY
+	LDY	twoplayers
+	LDA	lftbut,Y
+	ORA	rgtbut,Y
+	ELSE
+	LDA	shfbut
+	BMI	!B
+	LDA	lftbut
+	ORA	rgtbut
+	ENDIF
+	
+	ORA	KY3
+	ORA	KY4
+	BMI	!5
+!B	LDA	#xdamp
+	JSR	cntr
+!5	TXA
+	EOR	#128
+	TAY
+	AND	#128
+	STA	ALP2
+	STX	JSTX
+	EOR	#128
+	STA	ALP2+1
+	TYA
+	BPL	!8
+	EOR	#FF
+	CLC
+	ADC	#1
+!8
+;	CMP	#100
+;	BCS	!9
+	LSR	A
+!9	LSR	A
+	STA	ALP1
+	ORA	ALP2
+	STA	ALPHA
+
+
+	LDX	JSTY
+
+	IF	TWOJOY
+	LDY	twoplayers
+	LDA	upbut,Y
+	ORA	dwnbut,Y
+	ELSE
+	LDA	shfbut
+	BMI	!A
+	LDA	upbut
+	ORA	dwnbut
+	ENDIF
+
+	ORA	KY5
+	ORA	KY6
+	BMI	!4
+!A	LDA	#ydamp
+	JSR	cntr
+!4	TXA
+	EOR	#128
+	TAY
+	AND	#128
+	STX	JSTY
+	STA	BET2+1
+	EOR	#128
+	STA	BET2
+	TYA
+	BPL	!3
+	EOR	#FF
+!3	ADC	#1	;4
+
+;	CMP	#100
+;	BCS	!2
+
+	LSR	A
+!2	LSR	A
+	LSR	A
+	STA	BET1
+	ORA	BET2
+	STA	BETA
+!1	LDA	KY2
+	BEQ	MA17
+	LDA	DELTA
+	CLC
+	ADC	#4
+	STA	DELTA
+	CMP	#40
+	BCC	!6
+	LDA	#40
+!6	STA	DELTA
+MA17
+	POLLBIT	83
+
+	LDA	KY1
+	BEQ	MA4
+	LDA	DELTA
+	SEC
+	SBC	#4
+	BEQ	!1
+	BCS	!2
+!1	LDA	#1
+!2	STA	DELTA
+MA4	LDA	thiskey
+	CMP	#tmis
+	BNE	MA25
+	LDA	NOMSL
+	BEQ	donks1
+	LDA	MSAR
+	EOR	#FF
+	STA	MSAR
+	BNE	armis
+	LDY	#GREEN2
+	JSR	ABORT
+	LDY	#sfxboop
+noisdon	JSR	NOISE
+	JMP	donkey
+armis	LDY	#YELLOW2
+	LDX	NOMSL
+	JSR	MSBAR
+	LDY	#sfxbeep
+	BNE	noisdon
+MA25	CMP	#fmis
+	BNE	MA24
+	LDA	MSTG
+	BMI	donks1
+	JSR	FRMIS
+	JSR	UPDATESTRIP
+donks1	JMP	donkey
+MA24	CMP	#bmbk
+	BNE	MA76
+	LDA	BOMB
+	BMI	donks1
+	ASL	BOMB
+	BEQ	donks1
+	LDA	#LTYELLOW
+	STA	COL0
+	LDY	#sfxbomb
+	JSR	NOISE
+	JMP	donkey
+MA76
+
+MA78
+
+	CMP	#escpk
+	BNE	noescp
+	LDX	ESCP
+	BEQ	donkey
+	LDA	MJ
+	BNE	donkey
+	JMP	ESCAPE
+noescp	CMP	#gskp
+	BNE	noskip
+	LDA	SKIPFLAG
+	AND	#$C0
+	BNE	donkey
+	JSR	WARP	; Game skip
+	JMP	donkey
+noskip	CMP	#ecmk
+	BNE	MA64
+
+	IF	0	;PROGTESTS
+	LDA	SSPR
+	AND	#1
+	EOR	#1
+	STA	SSPR	; CCCCC SSPR forcer
+	ENDIF
+
+	LDA	ECM
+	BEQ	donkey
+	LDA	ECMA	; Player ECM key
+	BNE	donkey
+	DEC	ECMP
+	JSR	ECBLB2
+;	JMP	donkey
+MA64
+donkey
+	SPOLLBIT	84	
+
+	LDA	#0
+	STA	LAS
+	STA	DELT4
+	LDA	DELTA
+	LSR	A
+	ROR	DELT4
+	LSR	A
+	ROR	DELT4
+	STA	DELT4+1
+
+	LDA	LASCT
+	ORA	MODE
+	BNE	MA3
+	LDA	KY7
+	BPL	MA3
+
+
+	;	Fire wants to fire laser
+
+	LDA	GNTMP
+	CMP	#242
+	BCS	MA3
+	LDX	VIEW
+	LDA	LASER,X
+	BEQ	MA3
+	BMI	!1
+	BIT	KY7	; Only allow pulse or mining laser
+	BVS	MA3	; on rising edge
+
+!1	PHA
+	AND	#127
+	STA	LAS
+	STA	LAS2
+	LDY	#sfxplas
+	PLA
+	PHA
+	BMI	bmorarm
+	CMP	#MineLas
+	BNE	!4	;!! was P%+4
+	LDY	#sfxmlas
+!4	BNE	custard
+bmorarm	CMP	#Armlas
+	BEQ	!5	;!! was P%+5
+	LDY	#sfxblas
+	EQUB	$2C
+!5	LDY	#sfxalas
+custard	JSR	NOISE
+	JSR	LASLI
+	PLA
+	BPL	!1
+	LDA	#0
+!1	AND	#$EF	;FA
+	STA	LASCT
+MA3
+
+	IF	DIAGNOS
+;	JSR	CHARWASTE1
+	ENDIF
+
+	JSR	Mpcent2
+
+	LDA	MODE
+	BNE	!2
+	SPOLLBIT	85
+
+	IF	DIAGNOS
+	LDA	MCNT
+	AND	#2
+;	BEQ	!2222
+	JSR	CHARWASTE1
+;	JMP	!1111
+!2222	JSR	CHARWASTE2
+!1111 
+	ENDIF
+
+	LDA	bank
+	BNE	!4
+	LDA	SNDDIALS
+	EOR	#FF
+	STA	SNDDIALS
+	BMI	!3
+	LDA	KY1
+	ORA	KY2
+	ROR	A
+	BNE	!3
+!4	JSR	STARTDLOAD
+	JSR	COMPAS
+	JMP	NEEDLES
+
+!3	LDA	#$88
+	JSR	STARTDLOAD2
+
+	JSR	COMPAS
+	JSR	NEEDLES
+
+
+	JSR	DIALS
+
+	LDX	bank
+	LDA	bankstatus,X
+	ORA	#$40	;$44
+	STA	bankstatus,X
+	RTS
+
+!2	CMP	#stamod	; If status mode
+	BNE	!1	; set background portrait
+	JSR	CONDITION	; colour as status
+	CPX	CONDPIC
+	BEQ	!8
+	JSR	STATUS
+!8	LDX	CONDPIC
+	CPX	#3
+	BNE	!9
+	LDA	vbcnt
+	AND	#$20
+	BNE	!9
+	INX
+!9	LDA	STATCOL,X
+	STA	COL1
+!1	RTS
+
+
+
+	IF	DIAGNOS
+	;JMPPBFL
+frbar
+	lda	charmin
+	STA	X1
+	LDA	#$FF
+	LDA	frchar
+	STA	X2
+	LDY	#16
+	STY	Y1
+
+	STY	Y2
+	JMP	hloin
+	ENDIF	;(DIAGNOS)
+
+
+SPIN	; Create random number of passive subships of type Y
+	JSR	DORND
+	BPL	ANRTSBMB
+	TYA
+	TAX
+	LDY	#0
+	STA	CNT
+	SHIPREAD
+	AND	CNT
+	AND	#15
+
+SPIN2	; Create A subships of type X
+	STA	CNT
+!1	DEC	CNT
+	BMI	ANRTSBMB
+	LDA	#0
+	JSR	SFS1
+
+	JMP	!1
+
+BOMBOFF
+	LDA	#BCKCOL
+	STA	COL0
+
+	IF	PROGTESTS
+	lda	#127
+	sta	bomb	;<<ian's inf energy bomb
+	ENDIF
+ANRTSBMB	RTS
+ 
+	IF	DIAGNOS
+CHARWASTE1			; Draw lines to use up flexichars
+			; (slanting down)
+	LDA	#20
+	STA	X1
+	STA	Y1
+	LDA	#120
+	STA	Y2
+	LDA	#220
+	STA	X2
+	JSR	LL30
+
+	LDA	#40
+	STA	X1
+	LSR	A
+	STA	Y1
+	LDA	#120
+	STA	Y2
+	LDA	#240
+	STA	X2
+	JMP	LL30
+
+
+CHARWASTE2			; Lines slanting up
+	LDA	#20
+	STA	X1
+	STA	Y2
+	LDA	#220
+	STA	X2
+	LDA	#120
+	STA	Y1
+	JSR	LL30
+
+	LDA	#40
+	STA	X1
+	LSR	A
+	STA	Y2
+	LDA	#240
+	STA	X2
+	LDA	#120
+	STA	Y1
+	JMP	LL30
+
+	ENDIF	; (diagnos)
+
+scacol
+	;	0 green
+	;	1 blue
+	;	2 is yellow (forced)
+	;	3 white
+
+col_MIS	equ	3
+col_PIR	equ	2
+col_NOR	equ	2
+col_DEB	equ	1
+col_SPC	equ	0
+
+	EQUB	0
+	EQUB	col_MIS	;Missile
+	EQUB	col_SPC	;Sp St
+	EQUB	col_DEB	;Esc
+	EQUB	col_DEB	;Plate
+	EQUB	col_DEB	;barrel
+	EQUB	col_DEB	;Boul
+	EQUB	col_DEB	;Ast
+	EQUB	col_DEB	;Spl
+	EQUB	col_NOR	;Shuttle
+	EQUB	col_NOR	;Transp
+	EQUB	col_PIR	;Cob
+	EQUB	col_PIR	;Pyt
+	EQUB	col_NOR	;Boa
+	EQUB	col_PIR	;Ana
+	EQUB	col_DEB	;Ast
+	EQUB	col_NOR	;Viper
+	EQUB	col_PIR	;Sd Wind
+	EQUB	col_PIR	;Mamba
+	EQUB	col_PIR	;Krait
+	EQUB	col_PIR	;Adder
+	EQUB	col_PIR	;Gecko
+	EQUB	col_PIR	;Cobra I
+	EQUB	col_PIR	;Wor
+	EQUB	col_PIR	;Cobra
+	EQUB	col_PIR	;Asp
+	EQUB	col_PIR	;Python
+	EQUB	col_PIR	;Ferdela
+	EQUB	col_PIR	;Moray
+	EQUB	col_SPC	;Tharg
+	EQUB	col_MIS	;Thglet
+	EQUB	col_PIR	;Con
+	EQUB	$FF	;Cougar
+	EQUB	col_SPC	;Dodec
+	DW	0,0
+
+
+FLKB	LDA	#15
+	TAX
+	;JMPOSBYTE
+	RTS
+
+COMBATRATING
+;	LDA	LANG2
+;	AND	#GERM
+;	BNE	!2
+;	LDA	#16
+;	JSR	spc
+;	JMP	!3
+
+!2	LDA	#16
+	JSR	TT68
+	LDA	LANG2
+	AND	#ENGL
+	BEQ	!3
+	JSR	SPACE
+
+
+
+!3	LDA	TALLY+1
+	BNE	st4_LC	;Ratings
+
+	TAX
+	LDX	TALLY
+	CPX	#0
+	ADC	#0	; 1=Harmless
+	CPX	#2
+	ADC	#0	; 2=M Harmless
+	CPX	#8
+	ADC	#0	; 3=Poor
+	CPX	#24
+	ADC	#0	; 4=Average
+	CPX	#44
+	ADC	#0	; 5=A Average
+	CPX	#130
+	ADC	#0	; 6=Competant
+	TAX
+
+st3_LC	TXA
+	pha
+
+	LDA	LANG2
+	AND	#ENGL+FREN
+	BEQ	!1
+	jsr	space
+	jsr	space
+!1	pla
+	CLC
+	ADC	#21
+	JMP	plf
+
+ 
+st4_LC	LDX	#9
+	CMP	#25
+	BCS	st3_LC
+	DEX
+	CMP	#10
+	BCS	st3_LC
+	DEX
+	CMP	#2
+	BCS	st3_LC
+	DEX
+	BNE	st3_LC
+
+
+LEGALSTATUS
+	LDA	#125
+	JSR	spc	;"Legal Status"
+	LDA	#19
+	LDY	FIST
+	BEQ	!1
+	CPY	#40
+	ADC	#1
+!1	JMP	plf
+
+
+wearedocked	LDA	#205
+	JSR	DETOK
+	JSR	TT67
+	JMP	st6p3
+
+
+STATUS	LDA	#stamod
+	JSR	TRADEMODE
+
+
+	JSR	HOMECURSOR
+	LDA	#7
+	STA	XC
+	LDA	#126	;COMMANDER JAMESON
+	JSR	NLIN3
+	JSR	CONDITION
+	STX	CONDPIC
+	LDA	#230
+	DEX
+	BMI	wearedocked
+	BEQ	st6
+	LDY	ENERGY
+	CPY	#128
+	ADC	#1
+st6	JSR	plf	;"red"/"green"/.. etc
+st6p3
+	LDA	LANG2
+	AND	#FREN
+	BEQ	!2
+
+	JSR	LEGALSTATUS
+	JSR	COMBATRATING
+	LDA	#5
+	JSR	plf
+	JMP	!3
+
+
+!2	JSR	COMBATRATING
+	LDA	#5
+	JSR	plf	;Cash & Fuel
+	JSR	LEGALSTATUS
+
+
+!3	LDA	#18
+	JSR	plf2_LC
+
+	IF	BIG
+	INC	YC
+	ENDIF
+
+	LDA	ESCP
+	BEQ	*+7	;!! was P%
+	LDA	#112
+	JSR	plf2_LC
+	LDA	BST
+	BEQ	*+7	;!! was P%
+	LDA	#111
+	JSR	plf2_LC
+	LDA	ECM
+	BEQ	*+7	;!! was P%
+	LDA	#$6C
+	JSR	plf2_LC
+	LDA	#113
+	STA	XX4
+stqv	TAY
+	LDX	BOMB-113,Y
+	BEQ	*+5	;!! was P%
+	JSR	plf2_LC
+	INC	XX4
+	LDA	XX4
+	CMP	#117
+	BCC	stqv
+	LDX	#0
+!2	STX	CNT
+	LDY	LASER,X
+	BEQ	!3
+	LDA	LANG2
+	AND	#FREN
+	BNE	!4
+	TXA
+	CLC
+	ADC	#96
+	JSR	spc	; Front
+!4	LDA	#103
+	LDX	CNT
+	LDY	LASER,X
+	CPY	#BeamLas
+	BNE	*+4	;!! was P%
+	LDA	#104
+	CPY	#Armlas
+	BNE	*+4	;!! was P%
+	LDA	#117
+	CPY	#MineLas
+	BNE	*+4	;!! was P%
+	LDA	#118
+	JSR	TT27
+	LDA	LANG2
+	AND	#FREN
+	BEQ	!5
+	LDA	CNT
+	CLC
+	ADC	#96
+	JSR	spc2
+!5	JSR	plf2_LC2
+!3	LDX	CNT
+	INX
+	CPX	#4
+	BCC	!2
+
+
+
+	IF	INCFACE
+
+	LDA	#facexc
+	STA	XC
+	LDX	LANG
+	LDA	FACEYCTB,X
+
+	STA	YC
+
+	JSR	DECIDEFACE
+
+	LDA	S
+	ORA	#128
+	CMP	DSENT
+	STA	DSENT
+	BEQ	!1
+	JSR	KILLDISP2
+!1	JSR	FACEPICTURE
+	ELSE
+	JSR	KILLDISP
+	ENDIF
+	
+
+
+ENDTMODE	; Copy bank 0 to bank 1 and
+	; send down both (inc. colour map)
+	; without zeroing. Blanking display
+
+	LDA	frchar
+	BNE	!1
+	LDA	#$FF
+	STA	frchar
+!1	LDA	#0
+	STA	cellmin
+
+
+	LDA	#4*(txli+banner)+basecell
+	STA	zermax
+	STA	cellmax
+	STA	cellmax+1
+
+
+	LDX	#stripchr
+	LDA	MODE
+	AND	#icbit
+	BEQ	!6
+	LDX	#icbase
+!6	STX	charmin
+
+	JSR	BORDER2
+	
+	JSR	COPYBANK
+
+	LDA	MODE1
+	CMP	MODE2
+	BEQ	!2
+	JSR	SENDBOTH
+!3
+
+	LDX	#FF
+	LDA	MODE
+	CMP	#mismode
+	BEQ	!5
+	CMP	#pwrmod2
+	BEQ	!5
+	CMP	#brimode1
+	BEQ	!5
+	CMP	#brimode2
+	BEQ	!5
+
+	ASL	A
+	BPL	!4
+!5	LDX	#0
+!4	STX	stripenb
+
+
+	LDA	frchar
+	STA	charmin
+	RTS
+
+!2	JSR	SENDBOTHFORS
+	JMP	!3
+
+
+FACEYCTB	DB	faceyc,faceyc,faceyc+2,faceyc
+
+
+UPDATETMODE	; Copy bank 0 to bank 1 and
+	; send down both (inc. colour map)
+	; without zeroing or blanking display
+
+
+	JSR	waitsend
+	LDA	#0
+	STA	cellmin
+	IF	DIALSONTOP
+	STA	cellminH
+;	STA	zermin
+	ENDIF
+	LDA	#4*txli+basecell
+	STA	zermax
+	LDA	#stripchr
+	STA	charmin
+
+	SPOLLBIT	87
+
+	JSR	BORDER2
+
+	JSR	COPYBANK
+
+	LDA	#$C4
+	STA	bankstatus
+	STA	bankstatus+1
+
+	LDA	frchar
+	STA	charmin
+	RTS
+
+
+plf2_LC	JSR	TT27
+plf2_LC2	JSR	TT67
+	LDX	LANG
+	LDA	ITMLSTXCTB,X
+	STA	XC
+	RTS
+
+
+ITMLSTXCTB	DB	3,3,1,3
+
+
+MVT3	;K+1=INWK,X+K+1
+	LDA	K+3
+	STA	S
+	AND	#128
+	STA	T
+	EOR	INWK+2,X
+	BMI	MV13
+	LDA	K+1
+	CLC
+	ADC	INWK,X
+	STA	K+1
+	LDA	K+2
+	ADC	INWK+1,X
+	STA	K+2
+	LDA	K+3
+	ADC	INWK+2,X
+	AND	#127
+	ORA	T
+	STA	K+3
+	RTS
+
+MV13	LDA	S
+	AND	#127
+	STA	S
+	LDA	INWK,X
+	SEC
+	SBC	K+1
+	STA	K+1
+	LDA	INWK+1,X
+	SBC	K+2
+	STA	K+2
+	LDA	INWK+2,X
+	AND	#127
+	SBC	S
+	ORA	#128
+	EOR	T
+	STA	K+3
+	BCS	MV14
+	LDA	#1
+	SBC	K+1
+	STA	K+1
+	LDA	#0
+	SBC	K+2
+	STA	K+2
+	LDA	#0
+	SBC	K+3
+	AND	#127
+	ORA	T
+	STA	K+3
+MV14	RTS
+
+MVS5	POLLBIT	88
+	LDA	INWK+1,X
+	AND	#127
+	LSR	A
+	STA	T
+	LDA	INWK,X
+	SEC
+	SBC	T
+	STA	R
+	LDA	INWK+1,X
+	SBC	#0
+	STA	S
+	LDA	INWK,Y
+	STA	P
+	LDA	INWK+1,Y
+	AND	#128
+	STA	T
+	LDA	INWK+1,Y
+	AND	#127
+	LSR	A
+	ROR	P
+	LSR	A
+	ROR	P
+	LSR	A
+	ROR	P
+	LSR	A
+	ROR	P
+	ORA	T
+	EOR	RAT2
+	STX	Q
+	JSR	ADD
+	STA	K+1
+	STX	K
+	LDX	Q
+	LDA	INWK+1,Y
+	AND	#127
+	LSR	A
+	STA	T
+	LDA	INWK,Y
+	SEC
+	SBC	T
+	STA	R
+	LDA	INWK+1,Y
+	SBC	#0
+	STA	S
+	LDA	INWK,X
+	STA	P
+	LDA	INWK+1,X
+	AND	#128
+	STA	T
+	LDA	INWK+1,X
+	AND	#127
+	LSR	A
+	ROR	P
+	LSR	A
+	ROR	P
+	LSR	A
+	ROR	P
+	LSR	A
+	ROR	P
+	ORA	T
+	EOR	#128
+	EOR	RAT2
+	STX	Q
+	JSR	ADD
+	STA	INWK+1,Y
+	STX	INWK,Y
+	LDX	Q
+	LDA	K
+	STA	INWK,X
+	LDA	K+1
+	STA	INWK+1,X
+	POLLBIT	89
+
+	RTS
+
+TENS	DW	$7648,$E8
+
+pr2	LDA	#3	;David's scrobbly number print
+pr2p2	LDY	#0
+TT11	STA	U
+	LDA	#0
+	STA	K
+	STA	K+1
+	STY	K+2
+	STX	K+3
+BPRNT	LDX	#11
+	STX	T
+	PHP		; Push status (C=1 =>Decimal point)
+	BCC	TT30
+	DEC	T
+	DEC	U
+TT30	LDA	#11
+	SEC
+	STA	XX17
+	SBC	U
+	STA	U
+	INC	U
+	LDY	#0
+	STY	S
+	JMP	TT36
+TT35	ASL	K+3
+	ROL	K+2
+	ROL	K+1
+	ROL	K
+	ROL	S
+	LDX	#3
+tt35_LC	LDA	K,X
+	STA	XX15,X
+	DEX
+	BPL	tt35_LC
+	LDA	S
+	STA	XX15+4
+	ASL	K+3
+	ROL	K+2
+	ROL	K+1
+	ROL	K
+	ROL	S
+	ASL	K+3
+	ROL	K+2
+	ROL	K+1
+	ROL	K
+	ROL	S
+	CLC
+	LDX	#3
+tt36_LC	LDA	K,X
+	ADC	XX15,X
+	STA	K,X
+	DEX
+	BPL	tt36_LC
+	LDA	XX15+4
+	ADC	S
+	STA	S
+	LDY	#0
+TT36	LDX	#3
+	SEC
+tt37_LC	PHP
+	POLLBIT	201 
+	PLP
+	LDA	K,X
+	SBC	TENS,X
+	STA	XX15,X
+	DEX
+	BPL	tt37_LC
+	LDA	S
+	SBC	#23
+	STA	XX15+4
+	BCC	TT37
+	LDX	#3
+tt38	LDA	XX15,X
+	STA	K,X
+	DEX
+	BPL	tt38
+	LDA	XX15+4
+	STA	S
+	INY
+	JMP	TT36
+TT37	TYA
+	BNE	TT32
+	LDA	T
+	BEQ	TT32
+	DEC	U
+	BPL	TT34
+	LDA	#32
+	BNE	tt34_LC
+TT32	LDY	#0
+	STY	T
+	CLC
+	ADC	#B
+tt34_LC	JSR	TT26smart
+TT34	DEC	T
+	BPL	*+4	;!! was P%
+	INC	T
+	DEC	XX17
+	BMI	rT10
+	BNE	!10	;!! was P%+10
+	PLP		; Pluck status containing decimal pt flag
+	BCC	!10	;!! was P%+7
+	LDA	DECIMAL	; (ASC .)
+	JSR	TT26smart
+!10	JMP	TT35
+rT10	RTS
+
+NEEDLES
+	LDA	JSTX
+	EOR	#FF
+;	CLC
+;	ADC	#1
+
+	LSR	A
+	LSR	A
+	LSR	A
+	CLC		; deliberately restrict range
+	ADC	#27*8
+	STA	LI
+	LDY	#3*8+5	;2*Yabs+5*8+5
+	LDA	#needbase
+
+	JSR	!1
+
+	LDA	JSTY
+	LSR	A
+	LSR	A
+	LSR	A
+	CLC
+	ADC	#27*8
+	STA	LI
+	LDY	#4*8+5	;2*Yabs+6*8+5
+	LDA	#needbase+1
+!1	SPRITEXYD
+	RTS
+
+
+ESCAPE	JSR	RES2
+	LDY	#sfxescp
+	JSR	NOISE
+	LDA	#0
+	STA	ESCP
+	JSR	UPDATESTRIP
+	LDA	MODE
+	BNE	ES2
+	LDX	#CYL
+	STX	TYPE
+	JSR	FRS1
+	BCS	ES1
+	LDX	#CYL2
+	JSR	FRS1
+ES1	LDA	#8
+	STA	INWK+27
+	LDA	#$C2
+	STA	INWK+30
+	LDA	#$2C
+	STA	INWK32
+!1	JSR	MVEIT
+	JSR	ONESHIP
+	DEC	INWK32
+	BNE	!1
+ES2	LDA	#0
+	LDX	#16
+!2	STA	QQ20,X
+	DEX
+	BPL	!2
+	STA	FIST
+
+	IF	HAVETRIBS
+	
+	LDA	TRIBBLE
+	ORA	TRIBBLE+1
+	BEQ	nosurviv
+	JSR	DORND
+	AND	#7
+	ORA	#1
+	STA	TRIBBLE
+	LDA	#0
+	STA	TRIBBLE+1
+nosurviv
+	ENDIF	;(HAVETRIBS)
+
+	LDA	#70
+	STA	QQ14
+	JMP	GOIN
+
+HME2	; Find routine
+	JSR	CLYNS
+	LDA	#14
+	JSR	DETOK
+	LDY	#9
+	STY	RLINE2
+	LDA	#"A"
+!1	STA	INSTRING,Y
+	DEY
+	BPL	!1
+	JSR	GETALINE
+	LDA	INSTRING
+	CMP	#13
+	BEQ	HME7
+;	JSR	TT103
+	JSR	TT81
+	LDA	#0
+	STA	XX20
+HME3	POLLBIT	90
+;	JSR	MT14
+	LDA	#128
+	STA	DTW4
+	ASL	A
+	STA	DTW5
+	JSR	cpl
+	LDX	DTW5
+	LDA	INSTRING,X
+	CMP	#13
+	BNE	HME6
+HME4	DEX
+	LDA	INSTRING,X
+	ORA	#32
+	CMP	BUF,X
+	BEQ	HME4
+	TXA
+	BMI	HME5
+HME6	; Not found
+	JSR	MT15here
+	JSR	TT20
+	INC	XX20
+	BNE	HME3
+;	JSR	HOMECURSOR
+	JSR	TT111
+;	JSR	TT103
+	JSR	DOBOOP
+	LDA	#215
+	JSR	DETOK
+	JMP	UPDATETMODE
+HME5	; Found
+	JSR	MT15here
+	JSR	CLYNS
+	LDA	#DFmask
+	STA	DTW8
+	LDA	QQ15+3
+	STA	QQ9
+	LDA	QQ15+1
+	STA	QQ10
+	JMP	TAKEMETHERE
+
+HME7	JSR	CLYNS
+	JMP	UPDATETMODE
+
+
+
+
+

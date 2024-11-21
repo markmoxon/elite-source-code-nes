@@ -10,7 +10,6 @@ S.header.bin &8000  &8010  &8000  &8000
 Saving file '3-assembled-output/header.bin'
 .ZP
      0000
-     0000
 .RAND
      0002
 .T1

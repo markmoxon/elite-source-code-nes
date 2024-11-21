@@ -1,0 +1,2742 @@
+
+;
+Rpcent	= *		;Rpcent=Ppcent
+;
+;REM	ELITE <D>  Joint
+;
+;	Trade modes
+;
+
+;	IF	FULL
+
+tnpr1	STA	QQ29
+	LDA	#1
+tnpr	pha
+	LDX	#12
+	CPX	QQ29
+	BCC	kg
+Tml	ADC	QQ20,X
+	DEX
+	BPL	Tml
+
+	IF	HAVETRIBS
+	ADC	TRIBBLE+1
+	ENDIF
+
+	CMP	CRGO
+	pla
+	RTS
+
+kg	LDY	QQ29
+	ADC	QQ20,Y
+	CMP	#201
+	pla
+	rts
+
+TRADEMODE
+	JSR	TT66
+	LDA	#0
+	STA	YC
+	RTS
+
+TT20	JSR	*+3	;!! was P%
+	JSR	*+3	;!! was P%
+	
+
+TT54	LDA	QQ15	; One iteration of planet seed
+	CLC
+	ADC	QQ15+2
+	TAX
+	LDA	QQ15+1
+	ADC	QQ15+3
+	TAY
+	LDA	QQ15+2
+	STA	QQ15
+	LDA	QQ15+3
+	STA	QQ15+1
+	LDA	QQ15+5
+	STA	QQ15+3
+	LDA	QQ15+4
+	STA	QQ15+2
+	CLC
+	TXA
+	ADC	QQ15+2
+	STA	QQ15+4
+	TYA
+	ADC	QQ15+3
+	STA	QQ15+5
+	RTS
+
+;	IF	FULL
+
+TT146	;Print distance to selected planet
+	LDA	QQ8
+	ORA	QQ8+1
+	BNE	TT63
+	LDA	MJ
+	BNE	TT63
+	INC	YC
+	INC	YC	;(nothing if zero)
+	RTS
+TT63	LDA	#191
+	JSR	TT68
+	LDX	QQ8
+	LDY	QQ8+1
+	SEC
+	JSR	pr5
+
+	LDA	#195
+TT60	JSR	TT27
+TTX69	INC	YC
+TT69	LDA	#128
+	STA	QQ17
+TT67	;INCYC
+	LDA	#12
+	JMP	TT27	 ;<<
+TT70	LDA	#173
+	JSR	TT27
+	JMP	TT72
+spc	JSR	TT27
+	JMP	SPACE
+
+
+spc2	PHA
+	JSR	SPACE
+	PLA
+	JMP	TT27
+
+
+
+; DATA ON SYSTEM
+; ==============
+
+DATABANXCTB	DB	9,9,7,9
+
+TT68GREEN
+	JSR	TT27
+	LDA	#tcol2
+	STA	TCOL
+	LDA	#$3A
+	JSR	TT27
+	LDA	#tcol0
+	STA	TCOL
+	RTS
+
+DATradius	DB	"RADIUS"
+;DATprod	DB	"TURNOVER"
+
+TT25
+	LDA	#datmod
+	JSR	TRADEMODE
+	JSR	TT111
+
+
+	LDX	LANG
+	LDA	DATABANXCTB,X
+	STA	XC
+	LDA	#163
+	JSR	NLIN3
+	JSR	TTX69
+;^
+	JSR	TT146	;Print distance if applicable
+
+	LDA	LANG2
+	AND	#GERM+FREN
+	BEQ	!1
+	LDA	#194
+	JSR	TT68GREEN
+	JMP	!2
+!1	LDA	#194
+	JSR	TT68	;"Economy:"
+	JSR	SPACE
+!2
+	LDA	QQ3
+	CLC
+	ADC	#1
+	LSR	A
+	CMP	#2
+	BEQ	TT70
+	LDA	QQ3
+	BCC	TT71
+	SBC	#5
+	CLC
+TT71	ADC	#170
+	JSR	TT27	;"Poor"/"Average"/"Rich"/"Mainly"
+TT72
+
+; ^
+
+	LDA	QQ3
+	LSR	A
+	LSR	A
+	CLC
+	ADC	#168
+	JSR	TT60	;"Agricultural"/"Industrial"
+	LDA	LANG2
+	AND	#FREN
+	BEQ	!8
+	LDA	#162
+	JSR	TT68GREEN
+	JMP	!1
+!8	LDA	#162
+	JSR	TT68	;"Government:"
+	JSR	SPACE
+!1	LDA	QQ4
+	CLC
+	ADC	#177
+	JSR	TT60	;"Anarchy"/"Feudal" etc
+	LDA	#196
+	JSR	TT68	;"Tech Level:"
+	LDX	QQ5
+	INX
+	CLC
+	JSR	pr2	;tech level
+	JSR	TTX69
+
+	LDA	#193
+	JSR	TT68	;"Gross Productivity:" (now "Turnover")
+
+
+; ^
+
+;	LDY	#0
+;!1	LDA	DATprod,Y
+;	JSR	TT27
+;	INY
+;	CPY	#7
+;	BCC	!1
+;	LDA	DATprod,Y
+;	JSR	TT68
+
+	LDX	QQ7
+	LDY	QQ7+1
+	CLC
+	LDA	#6
+	JSR	TT11
+;	JSR	pr6
+	JSR	TT162
+	LDA	#0
+	STA	QQ17
+	LDA	#$4D	;"M"
+	JSR	TT26smart
+	LDA	#"C"
+	JSR	TT27
+	LDA	#"R"
+	JSR	TT60	;"CR"
+
+;	LDA	#250
+;	JSR	TT68	;"Average Radius:"
+	LDY	#0
+!2	LDA	DATradius,Y
+	JSR	TT27
+	INY
+	CPY	#5
+	BCC	!2
+	LDA	DATradius,Y
+	JSR	TT68
+
+	LDA	QQ15+5
+	LDX	QQ15+3
+	AND	#15
+	CLC
+	ADC	#11
+	TAY
+	LDA	#5	;print in field of 4
+	JSR	TT11
+	JSR	TT162
+	LDA	#$6B	;"km"
+	JSR	TT26smart
+	LDA	#$6D
+	JSR	TT26smart
+	JSR	TTX69
+
+	LDA	LANG2
+	AND	#ENGL+FREN
+	BEQ	!3
+	LDA	#192
+	JSR	TT68GREEN
+	JMP	!4
+!3	LDA	#192
+	JSR	TT68
+!4	
+	;"Population:"
+	LDA	QQ6
+	LSR	A
+	LSR	A
+	LSR	A
+	TAX
+	CLC
+	LDA	#1
+	JSR	pr2p2
+	LDA	#198
+	JSR	TT60	;"Billion"
+	LDA	LANG2
+	AND	#GERM
+	BNE	!9
+	LDA	#$28	;"("
+	JSR	TT27
+!9	LDA	QQ15+4
+	BMI	TT75
+	LDA	#188	;"Human Colonial"
+	JSR	TT27
+	JMP	TT76
+
+
+FRPHRASE	; French Fat Furry Felines string
+	LDA	QQ15+5
+	AND	#3
+	CLC
+	ADC	QQ19
+	AND	#7
+	ADC	#242
+	JSR	TT27	; Noun
+
+	LDA	QQ15+5
+	LSR	A
+	LSR	A
+	LSR	A
+	LSR	A
+	LSR	A
+	CMP	#6
+	BCS	!1
+	ADC	#230
+	JSR	spc2	; Adjective
+!1	LDA	QQ19
+	CMP	#6
+	BCS	TT76
+	ADC	#236
+	JSR	spc2
+	JMP	TT76	; Adjective
+	
+
+TT75
+	LDA	QQ15+3
+	EOR	QQ15+1
+	AND	#7
+	STA	QQ19
+
+	LDA	LANG2
+	AND	#FREN
+	BNE	FRPHRASE
+	LDA	QQ15+5	;"Blue bug-eyed frog" etc
+	LSR	A
+	LSR	A
+
+;	PHA
+;	AND	#7
+;	CMP	#3
+;	BCS	TT205
+;	ADC	#227	; Loose first adjective
+;	JSR	spc
+;TT205	PLA
+
+	LSR	A
+	LSR	A
+	LSR	A
+	CMP	#6
+	BCS	TT206
+	ADC	#230
+	JSR	spc	; 	Adjective
+TT206	LDA	QQ19
+	CMP	#6
+	BCS	TT207
+	ADC	#236
+	JSR	spc
+TT207	LDA	QQ15+5
+	AND	#3
+	CLC
+	ADC	QQ19
+	AND	#7
+	ADC	#242
+	JSR	TT27
+
+TT76
+;	LDA	#$53	;"s"
+;	JSR	TT27
+	LDA	LANG2
+	AND	#GERM
+	BNE	!1
+	LDA	#$29
+	JSR	TT27	;")"
+!1	JSR	TTX69
+	; Gross Productivity etc was here
+
+	JSR	PDESC	;"...Goat Soup..." etc
+
+	DIPOLLSC
+
+	JSR	KILLDISP2
+
+	IF	INCPPIC
+	LDA	#22
+	STA	XC
+	LDA	#8
+	STA	YC
+	LDA	#1
+	STA	K+2
+	LDA	#8
+	STA	K+3
+	LDX	#8
+	LDY	#7
+	JSR	FULLPICTURE
+	ENDIF	; (INCPPIC)
+
+
+
+	JMP	ENDTMODE
+;	RTS
+
+
+
+galmx	EQU	$1C+3
+galmy	EQU	$20
+
+
+;  Long Range Chart
+;  ================
+
+TT22	LDA	#glchrt1
+	JSR	TT66
+	LDA	#Yabs+5
+	JSR	setYs
+
+
+	LDA	#7
+	STA	XC
+	JSR	TT81
+	LDA	#199
+;	JSR	TT27
+	JSR	NLIN3
+	LDA	#152
+	JSR	NLIN2
+	JSR	KILLDISP2
+	JSR	TT14	; Circle & cross
+	LDX	#0
+TT83	STX	XSAV
+	LDA	QQ15+3	;iian v
+	LSR	A
+	LSR	A
+	STA	T1
+	LDA	QQ15+3
+	SEC
+	SBC	T1
+	CLC
+	ADC	#galmx	;x=galmx+3*X/4
+
+	TAX		
+;	LDX	QQ15+3
+	LDY	QQ15+4
+	TYA
+	ORA	#$50
+	STA	ZZ
+	LDA	QQ15+1
+	LSR	A
+	LSR	A
+	STA	T1
+	LDA	QQ15+1
+	SEC
+	SBC	T1
+	LSR	A
+	CLC
+	ADC	#galmy	;24 y=galmy+3*Y/8
+	STA	XX15+1
+	JSR	BPIXEL
+	JSR	TT20
+	LDX	XSAV
+	INX
+;	bpl	tt83
+	BNE	TT83
+;
+
+
+	LDA	#3
+	STA	K+2
+	LDA	#4
+	STA	K+3
+	LDA	#25
+	STA	K
+	LDA	#14
+	STA	K+1
+	JSR	THICKBOX
+
+
+;	LDA	#galmx+$60
+;	STA	K+2
+;	LDA	#galmy+$30
+;	STA	K+3
+;	LDA	#$60
+;	STA	K
+;	LDA	#$30
+;	STA	K+1
+;	JSR	BOX
+
+
+	;;JSRPBFL
+	LDA	QQ9
+	STA	QQ19
+	LDA	QQ10
+	LSR	A
+	STA	QQ19+1
+	LDA	#4
+	STA	QQ19+2
+;	JSR	TT15	;>>DJB 10/4/90<<
+
+	JSR	TT103
+;	JSR	SPRITECROSS
+	LDA	#glchrt2
+	STA	MODE
+
+	LDA	#2*Yabs-1
+	STA	Yx2M1
+
+	JMP	ENDTMODE
+
+
+
+TT15	; Draw Cross
+	; Centre QQ19,QQ19+1
+TT15b
+
+;	rts	;<<iian >>DJB 10/4/90<<
+
+	LDA	#24
+	LDX	MODE
+	CPX	#lcchrt
+	BNE	TT178
+;	LDA	QQ11	
+;	BPL	TT178	;<<iian
+	LDA	#0
+TT178	STA	QQ19+5
+	LDA	QQ19
+	SEC
+	SBC	QQ19+2
+	BCS	TT84
+	LDA	#0
+TT84	STA	XX15
+	LDA	QQ19
+	CLC
+	ADC	QQ19+2
+	BCC	TT85
+	LDA	#255
+TT85	STA	XX15+2
+	LDA	QQ19+1
+	CLC
+	ADC	QQ19+5
+	STA	XX15+1
+	STA	XX15+3
+	JSR	LL30
+	LDA	QQ19+1
+	SEC
+	SBC	QQ19+2
+	BCS	TT86
+	LDA	#0
+TT86	CLC
+	ADC	QQ19+5
+	STA	XX15+1
+	LDA	QQ19+1
+	CLC
+	ADC	QQ19+2
+	ADC	QQ19+5
+	CMP	#152
+	BCC	TT87	;<=Ian=>
+;	LDX	QQ11
+;	BMI	TT87
+	LDX	MODE
+	CPX	#lcchrt
+	BEQ	TT87
+
+
+
+	LDA	#151
+TT87	STA	XX15+3
+	LDA	QQ19
+	STA	XX15
+	STA	XX15+2
+	JMP	LL30
+
+TT126	LDA	#104
+	STA	QQ19
+	LDA	#90
+	STA	QQ19+1
+	LDA	#16
+	STA	QQ19+2
+	JSR	TT15
+	LDA	QQ14
+	LSR	A
+	LSR	A	
+	LSR	A
+	LSR	A
+	LSR	A
+	ADC	QQ14	; Fuel circle range (fudged)
+
+	STA	K
+	JMP	TT128
+
+TT14			;Crcl/+
+;	LDA	QQ11
+;	BMI	TT126
+
+	LDA	MODE	
+	CMP	#lcchrt
+	BEQ	TT126
+
+
+	LDA	QQ14
+
+	LSR	A
+	LSR	A	; reduce radius by 3/4
+
+	STA	K
+	LSR	A	;
+	LSR	A	;
+	STA	T1	;
+	LDA	K	; reduce radius of circle by 1/4
+	SEC		;
+	SBC	T1	;
+	STA	K	;
+
+
+
+	LDA	QQ0	;iian v
+	LSR	A
+	LSR	A
+	STA	T1
+	LDA	QQ0
+	SEC
+	SBC	T1
+	CLC
+	ADC	#galmx	;x=3*X/4+galmx
+	STA	QQ19
+	LDA	QQ1
+	LSR	A
+	LSR	A
+	STA	T1
+	LDA	QQ1
+	SEC
+	SBC	T1
+	LSR	A
+	CLC
+	ADC	#galmy-24	;TT15 automatically allows for 24 offset
+	STA	QQ19+1	;iian ^
+
+;	LDA	QQ0
+;	STA	QQ19
+;	LDA	QQ1
+;	LSR	A
+;	STA	QQ19+1
+
+	LDA	#7
+	STA	QQ19+2
+	JSR	TT15
+
+	LDA	QQ19+1
+	CLC
+	ADC	#24
+	STA	QQ19+1
+
+TT128	LDA	QQ19
+	STA	K3
+	LDA	QQ19+1
+	STA	K4
+	LDX	#0
+	STX	K4+1
+	STX	K3+1
+	LDX	#2
+	STX	STP	;##
+
+	LDX	#1
+	JSR	fontbank
+
+	IF	INCPLANET
+	JMP	CIRCLE2
+	ENDIF	; (INCPLANET)
+
+;	JMP	ENDTMODE
+
+
+
+TT210			;Inventory
+	LDY	#0
+!1	POLLBIT1	93
+	STY	QQ29
+	LDX	QQ20,Y
+	BEQ	!2
+	TYA
+	ASL	A
+	ASL	A
+	TAY
+	LDA	QQ23+1,Y
+	STA	QQ19+1
+	TXA
+	PHA
+	JSR	TT69
+	CLC
+	LDA	QQ29
+	ADC	#208
+	JSR	TT27
+	LDA	#14
+	STA	XC
+	PLA
+	TAX
+	STA	QQ25
+	CLC
+	JSR	pr2
+	JSR	TT152
+			;sell cargo was here
+!2	LDY	QQ29
+	INY
+	CPY	#17
+	BCC	!1
+	JSR	TT69
+
+	IF	HAVETRIBS
+
+	LDA	TRIBBLE
+	ORA	TRIBBLE+1
+	BNE	druids	;!! was P%
+zebra
+;	RTS
+	JMP	FULLENDTMODE
+
+druids	CLC
+	LDA	#0
+	LDX	TRIBBLE
+	LDY	TRIBBLE+1
+	JSR	TT11	; Number print
+	LDA	LANG2
+	AND	#FREN
+	BNE	!2
+	JSR	DORND
+	AND	#3
+	CLC
+	ADC	#111
+	JSR	DETOK	; Ajective
+	LDA	LANG2
+	AND	#GERM
+	BEQ	!2
+	LDA	TRIBBLE
+	AND	#$FE
+	ORA	TRIBBLE+1
+	BEQ	!2
+	LDA	#"e"	; pluralise german adjective with e
+	JSR	TT26smart
+!2	LDA	#198
+	JSR	DETOK	; Squeaky
+	LDA	TRIBBLE+1
+	BNE	!1
+	LDX	TRIBBLE
+	DEX
+	BEQ	zebra
+!1	LDA	#"s"	; pluralise noun with s
+	JSR	TT26smart
+	JMP	zebra
+
+	ELSE	; (HAVETRIBS)
+
+	JMP	FULLENDTMODE
+
+	ENDIF	;(HAVETRIBS)
+
+TT213			;Inventory entry point
+	LDA	#invmod
+	JSR	TRADEMODE
+	LDA	#11
+	STA	XC
+	LDA	#164
+	JSR	TT60
+	JSR	NLIN4
+	JSR	fwl
+	LDA	CRGO
+	CMP	#26
+	BCC	!1	;*+7	;!! was P%
+
+	LDA	#12
+	JSR	TT27	;>>DJB 29/4/90<<
+
+	LDA	#$6B
+	JSR	TT27
+	JMP	TT210
+
+
+
+
+
+!1	JSR	TT67	; IB 16/8/91 space if no lg cargo bay
+	JMP	TT210
+
+	;.TT214;PHA;JSRTT162;PLA
+;TT221	JSR	TT27
+;	LDA	#206
+;	JSR	DETOK
+;	JSR	TT217
+;	ORA	#32
+;	CMP	#$79
+;	BEQ	TT218
+;	LDA	#$6E
+;	JMP	TT26
+
+TT218	JSR	TT26smart
+	SEC
+	RTS
+
+
+FORCEHOME	JMP	HOMECURSOR
+
+
+TT16	; Add X,Y to cursor cross
+	LDA	shfbut
+	BMI	FORCEHOME
+	LDA	lfttra
+	ORA	rgttra
+	ORA	upbut
+	ORA	dwnbut
+	AND	#$F0
+	BEQ	FORCEHOME
+	TXA
+	PHA
+	BNE	!1
+	TYA
+	BEQ	!2
+!1	LDX	#0
+	LDA	CURSFLAG
+	STX	CURSFLAG
+	ASL	A
+	BPL	!2
+	TYA
+	PHA
+	JSR	UPDATESTRIP
+	PLA
+	TAY
+!2	DEY
+	TYA
+	EOR	#255
+	PHA
+	LDA	MODE
+	CMP	#lcchrt
+	BEQ	!3
+	PLA
+	TAX
+	PLA
+	ASL	A
+	PHA
+	TXA
+	ASL	A
+	PHA
+!3
+	JSR	WSCAN
+;	JSR	TT103
+	PLA
+	STA	QQ19+3
+	LDA	QQ10
+	JSR	TT123
+	LDA	QQ19+4
+	STA	QQ10
+	STA	QQ19+1
+	PLA
+	STA	QQ19+3
+	LDA	QQ9
+	JSR	TT123
+	LDA	QQ19+4
+	STA	QQ9
+	STA	QQ19
+
+TT103	; Draw cursor cross
+;	LDA	QQ11
+;	BMI	TT105
+	LDA	MODE
+	CMP	#lcchrt
+	BEQ	TT105	; <<iian
+	LDA	QQ9
+	LSR	A	;
+	LSR	A	;
+	STA	T1	;reduce movement by 3/4
+	LDA	QQ9	;
+	SEC		;
+	SBC	T1	;
+	CLC
+	ADC	#galmx
+	STA	QQ19
+	LDA	QQ10
+	LSR	A	;
+	LSR	A	;
+	STA	T1	;reduce movement by 3/4
+	LDA	QQ10	;
+	SEC		;
+	SBC	T1	;
+	LSR	A
+	CLC
+	ADC	#galmy
+	STA	QQ19+1
+	LDA	#4
+	STA	QQ19+2
+	JMP	SPRITECROSS
+;	JMP	TT15	;>>DJB 10/4/90<<
+
+TT123	; Add QQ19+4=A+QQ19+3 with overflow check
+;	STA	QQ19+4
+	CLC
+	ADC	QQ19+3
+	LDX	QQ19+3
+	BMI	!124
+	BCC	!125
+	LDA	#FF
+	BNE	!125
+!124	BCS	!125
+	LDA	#1	
+!125	STA	QQ19+4
+TT180	RTS
+
+TT105	; Draw cursor cross if near player posn
+	LDA	QQ9
+	SEC
+	SBC	QQ0
+	CMP	#36
+	BCC	TT179
+	CMP	#233	;230
+	BCC	DONTDRAW
+TT179	ASL	A
+	ASL	A
+	CLC
+	ADC	#104
+	STA	QQ19
+	LDA	QQ10
+	SEC
+	SBC	QQ1
+	CMP	#38
+	BCC	!1
+	CMP	#220
+	BCC	DONTDRAW
+!1	ASL	A
+	CLC
+	ADC	#90
+	STA	QQ19+1
+	LDA	#8
+	STA	QQ19+2
+;	JMP	SPRITECROSS
+
+spritecross
+	LDA	#square
+	STA	ATTRIBUTES+15*4+1
+	LDA	#$01
+	STA	ATTRIBUTES+15*4+2
+	LDA	QQ19
+	STA	LI
+	LDY	QQ19+1
+	LDA	#15
+	SPRITEXY
+	RTS
+
+DONTDRAW	; Wipe sprite cross
+	LDA	#$F0
+	STA	ATTRIBUTES+15*4
+	RTS
+	
+
+LOCCHTTAB	DB	7,8,10,8	; LANGUAGE TABLE
+
+
+TT23			;Short Range Chart
+	LDA	#0
+	STA	suncount
+	LDA	#199
+	STA	Yx2M1
+	LDA	#lcchrt
+	JSR	TT66
+	LDX	LANG
+	LDA	LOCCHTTAB,X
+	STA	XC
+	LDA	#190
+	JSR	NLIN3
+
+
+	JSR	KILLDISP
+
+	JSR	TT14
+	JSR	TT103
+	JSR	TT81
+	;LDA#CYAN;JSRDOCOL
+	LDA	#0
+	STA	XX20
+	LDX	#24
+!1	STA	INWK,X
+	DEX
+	BPL	!1
+
+
+
+TT182	; Local chart loop
+
+	POLLBIT	182
+
+	LDA	QQ15+3
+	SEC
+	SBC	QQ0
+	BCS	!4
+	EOR	#FF
+	ADC	#1
+!4	CMP	#20
+	BCS	TT187
+	LDA	QQ15+1
+	SEC
+	SBC	QQ1
+	BCS	!6
+	EOR	#FF
+	ADC	#1
+!6	CMP	#38
+	BCS	TT187
+	LDA	QQ15+3
+	SEC
+	SBC	QQ0
+	ASL	A
+	ASL	A
+	ADC	#104
+	STA	XX12
+	LSR	A
+	LSR	A
+	LSR	A
+	CLC
+	ADC	#1
+	STA	XC
+	LDA	QQ15+1
+	SEC
+	SBC	QQ1
+	ASL	A
+	ADC	#90
+	STA	K4
+	LSR	A
+	LSR	A
+	LSR	A
+	TAY
+	LDX	INWK,Y
+	BEQ	EE4
+	INY
+	LDX	INWK,Y
+	BEQ	EE4
+	DEY
+	DEY
+	LDX	INWK,Y
+	BNE	ee1
+EE4	TYA
+	STA	YC
+	CPY	#3
+	BCC	TT187
+	LDA	#FF
+	STA	INWK,Y
+	LDA	#128
+	STA	QQ17
+	JSR	cpl
+ee1
+
+	;drawbigstars
+	LDA	#0
+	STA	K3+1
+	STA	K4+1
+	STA	K+1
+	LDA	XX12
+	STA	K3
+	LDA	QQ15+5
+	AND	#1
+	ADC	#2
+	STA	K
+	JSR	SMALLSUN
+TT187	JSR	TT20
+	INC	XX20
+	BEQ	!1
+	JMP	TT182
+!1
+;	LDA	#0
+;	STA	dont; CLIp
+
+	LDA	#2*Yabs-1
+	STA	Yx2M1
+
+	JMP	ENDTMODE		;iian
+
+SMALLSUN	; Centre K3,K4 Radius K>=2
+
+	LDY	suncount
+	CPY	#24
+	BCS	!1
+	INY
+	STY	suncount
+	TYA
+	ASL	A
+	ASL	A
+	TAY
+	LDA	K3
+	SBC	#3
+	STA	ATTRIBUTES+starbase*4+3,Y
+	LDA	K4
+	CLC
+	ADC	#spryoff
+	STA	ATTRIBUTES+starbase*4+0,Y
+	LDA	#sundef-2
+	CLC
+	ADC	K
+	STA	ATTRIBUTES+starbase*4+1,Y
+	LDA	#$02
+	STA	ATTRIBUTES+starbase*4+2 ,Y
+!1	
+;	jmp	sun
+	RTS
+	
+
+TT81	; Initialise galactic seed
+	LDX	#5
+	LDA	QQ21,X
+	STA	QQ15,X
+	DEX
+	BPL	TT81+2
+	RTS
+
+
+SETCURSFLAG
+	JSR	TT111
+	JMP	SETCURS2	
+
+
+HOMECURSOR	; Home cursor to nearest planet
+	; and print up its name and distance
+	; if CURSFLAG +ve
+	LDA	CURSFLAG
+	BMI	SETCURS7
+	JSR	TT111
+	LDA	MODE
+	AND	#chbit1
+	CMP	#chbit2
+	BNE	SETCURS2
+	JSR	TT103
+	LDA	#0
+	STA	QQ17
+	JSR	CLYNS
+	JSR	cpl
+	LDA	#128
+	STA	QQ17
+	LDA	#12
+	JSR	TT26smart
+PLANETLINE	JSR	TT146
+	JSR	SENDINPAREA
+
+SETCURS2
+ 	LDA	QQ8+1
+	BNE	!2
+	LDA	QQ8
+	BNE	!1
+	LDA	MJ
+	BEQ	!2
+	BNE	!5
+;	BEQ	!2
+
+!1	CMP	QQ14
+	BEQ	!5
+	BCS	!2
+!5	LDA	#$C0
+	BNE	!3
+!2	LDA	#$80
+!3	TAX
+	EOR	CURSFLAG
+	STX	CURSFLAG
+	ASL	A
+	BPL	SETCURS4
+	JMP	UPDATESTRIP
+
+
+SETCURS7	LDX	#5		; Fix for 'Soiscear' bug -
+!6	LDA	QQ15SAFE,X		; another little beauty by
+	STA	QQ15,X		; David 'My code works first
+	DEX			; time' Braben. QQ15 was both
+	BPL	!6		; assumed to contain the cursor
+SETCURS4	RTS			; planet seed and iterated
+				; when drawing chart modes
+
+
+TT111	;Home cursor to nearest planet
+	;and set QQ8=distance to it
+	JSR	TT81
+	LDY	#127
+	STY	T
+	LDA	#0
+	STA	U
+TT130
+	POLLBIT	93
+	LDA	QQ15+3
+	SEC
+	SBC	QQ9
+	BCS	!132
+	EOR	#FF
+	ADC	#1
+!132	LSR	A
+	STA	S
+	LDA	QQ15+1
+	SEC
+	SBC	QQ10
+	BCS	!134
+	EOR	#FF
+	ADC	#1
+!134	LSR	A
+	CLC
+	ADC	S
+	CMP	T
+	BCS	!135
+	STA	T
+	LDX	#5	; If current planet is closest
+!136	LDA	QQ15,X	; so far copy seed to QQ19
+	STA	QQ19,X
+	DEX
+	BPL	!136
+	LDA	U
+	STA	PLANETNUM
+!135
+
+	POLLBIT	94
+
+	JSR	TT20	;get next random number
+	INC	U
+	BNE	TT130
+
+	LDX	#5
+!137	LDA	QQ19,X
+	STA	QQ15SAFE,X
+	STA	QQ15,X	; Now copy closest planet's seed
+	DEX		; back into QQ15 and QQ15safe
+	BPL	!137
+	LDA	QQ15+1
+	STA	QQ10
+	LDA	QQ15+3
+	STA	QQ9	; And Move cursor to planet QQ15
+	SEC
+	SBC	QQ0
+	BCS	!139
+	EOR	#FF
+	ADC	#1
+!139
+	JSR	SQUA2
+	STA	K+1
+	LDA	P
+	STA	K
+	LDA	QQ10
+
+;	ORA	#1	; Added by Ian to try to
+
+	SEC
+	SBC	QQ1
+
+;	AND	#$FE	; fix Zadies-Xeeranre bug (failed)
+
+	BCS	!141
+	EOR	#FF
+	ADC	#1
+!141	LSR	A
+	JSR	SQUA2
+	PHA
+
+	POLLBIT	242
+
+	LDA	P
+	CLC
+	ADC	K
+	STA	Q
+	PLA
+	ADC	K+1
+	BCC	*+4	;!! was P%
+	LDA	#FF
+	STA	R
+	JSR	LL5
+	LDA	Q
+	ASL	A
+	LDX	#0
+	STX	QQ8+1
+	ROL	QQ8+1
+	ASL	A
+	ROL	QQ8+1
+	STA	QQ8
+ 
+	JMP	SETTECH
+
+dckd	JSR	CLYNS
+	LDA	#15
+	STA	XC
+	;LDA#RED;JSRDOCOL
+	LDA	#205
+	JMP	DETOK	;<=Ian=>
+
+galhyp
+	LDA	QQ12
+	BNE	dckd
+	LDA	QQ22+1
+	BEQ	Ghy
+	RTS
+hyp	LDA	QQ12
+	BNE	dckd
+	LDA	QQ22+1
+	BEQ	!1
+	RTS
+!1
+
+
+TTX111	; Start hyperspace cntdwn
+	LDA	CURSFLAG	; This check should
+	ASL	A	; not be needed but
+	BMI	!1	; makes for lesser bugs!
+	RTS
+
+!1	LDX	#5	; Squirrel away hyperspace
+sob	LDA	QQ15,X	; system to stop player
+	STA	safehouse,X	; changing it during cntdwn
+	DEX
+	BPL	sob
+
+
+	IF	0
+	LDA	#7
+	STA	XC
+	LDA	#23
+	LDY	MODE
+	BNE	!1
+	LDA	#17
+!1	STA	YC
+	LDA	#0
+	STA	QQ17
+	ENDIF
+
+
+wW
+	IF	0	;AUTOSEARCH
+	LDA	#4
+	ELSE
+	LDA	#16	;Initial countdown
+	ENDIF
+wW2
+	IF	0*AUTOSEARCH
+	LDA	IANTEMP
+	ENDIF
+	STA	QQ22+1
+	LDA	#1
+	STA	QQ22
+	JMP	UPDATESTRIP
+	
+
+Ghy	LDX	GHYP
+	BEQ	hy5
+	INX
+	STX	GHYP
+	STX	FIST	; Zero legal status on gal hyp
+	JSR	UPDATESTRIP	
+	LDA	#1
+	JSR	wW2	; Set really short countdown
+	LDX	#5
+	INC	GCNT	; Inc galaxy number
+	LDA	GCNT
+	AND	#$F7	; with wraparround at 8
+	STA	GCNT
+!2	LDA	QQ21,X	; Cycle galactic seed
+	ASL	A
+	ROL	QQ21,X
+	DEX
+	BPL	!2
+	LDA	#$60	; Entry point = nearest planet to (&60,&60) 
+	STA	QQ9	; (LDA #$60 used to be branched into to get
+	STA	QQ10	;  an RTS!!!)
+	JSR	TT110
+	JSR	TT111
+	LDX	#5
+!1	LDA	QQ15,X
+	STA	safehouse,X
+	DEX
+	BPL	!1
+	LDX	#0
+	STX	QQ8
+	STX	QQ8+1
+;	LDA	#116
+;	JSR	MESS
+	LDY	#sfxhyp2
+	JSR	NOISE
+
+
+jmp	LDA	QQ9	; Make player X,Y=cursor X,Y
+	STA	QQ0
+	LDA	QQ10
+	STA	QQ1
+hy5	RTS
+
+;	ENDIF	; (FULL)
+
+
+
+pr6	CLC
+pr5	LDA	#5	;number print in field of 5
+	JMP	TT11
+
+TT147	; Hyperspace range error
+;	LDA	#19
+;	STA	YC
+	JSR	CLYNS	;IB 27/9/91
+	LDA	#189
+	JSR	TT27
+	JSR	SPACE
+	LDA	#202
+	JSR	prq
+	JMP	UPDATETMODE	;>>DJB 28/4/90<<
+prq	JSR	TT27
+	LDA	#$3F
+	JMP	TT27
+TT151q	PLA
+	RTS		;no trade items in MJ
+
+
+; Print market prices on one item
+; ===============================
+
+TT151	PHA
+	STA	QQ19+4
+	ASL	A
+	ASL	A
+	STA	QQ19
+
+	SPOLLBIT	95
+
+	IF	PROGTESTS
+	ELSE
+	LDA	MJ
+	BNE	TT151q
+	ENDIF
+
+	LDA	#1
+	STA	XC
+	LDA	#128
+	STA	QQ17
+	PLA
+	CLC
+	ADC	#208	;print item token
+	JSR	TT27
+!1	LDA	#32	;move to character position 14
+	JSR	TT27
+	LDA	XC
+	CMP	#14
+	BNE	!1
+	LDX	QQ19
+	LDA	QQ23+1,X
+	STA	QQ19+1
+	LDA	QQ26
+	AND	QQ23+3,X
+	CLC
+	ADC	QQ23,X
+	STA	QQ24
+	JSR	TT152	;unit for item (kg etc)
+	JSR	var	;unit price variation
+	LDA	QQ19+1
+	BMI	TT155
+	LDA	QQ24
+	ADC	QQ19+3
+	JMP	TT156
+TT155	LDA	QQ24
+	SEC
+	SBC	QQ19+3
+TT156	STA	QQ24
+	STA	P
+	LDA	#0
+	JSR	GC2
+	SEC
+	JSR	pr5	;unit price (in field of 5)
+	LDY	QQ19+4
+	LDA	#3	;field for quantity (was 5)
+	LDX	AVL,Y
+	STX	QQ25
+	CLC
+	BEQ	TT172new
+	JSR	pr2p2	;print quantity
+	JSR	TT152	;print unit (kg etc)
+	JMP	DOCARGO
+
+TT172new	JSR	TT172
+	JMP	DOCARGO
+
+TT172	JSR	TT162
+	JSR	TT162
+;	LDA	#25
+;	STA	XC
+	LDA	#$2D	;"-" character for item not available
+	JSR	TT27
+	JSR	TT162
+	JMP	TT162
+
+;print weight of item (ie t/kg/g)
+
+TT152	LDA	QQ19+1
+	AND	#96
+	BEQ	TT160
+	CMP	#32
+	BEQ	TT161
+	JSR	TT16a
+	
+;	ENDIF	; (full)
+
+SPACE
+TT162	LDA	#32	;Print a space
+TT162p2	JMP	TT27
+
+;	IF	FULL
+
+TT160	LDA	#$74
+	JSR	TT26smart
+	JMP	TT162
+TT161	LDA	#$6B
+	JSR	TT26smart
+TT16a	LDA	#$67
+	JMP	TT26smart
+
+TT163	LDA	#1	;17
+	STA	XC
+	LDA	#FF
+	BNE	TT162p2
+
+
+;   Print current amount of cargo
+;   =============================
+
+DOCARGO
+	POLLBIT1	96
+
+	LDY	QQ29	;item number
+	LDA	#3	;field size for current cargo
+	LDX	QQ20,Y	;current cargo from JAMESON block
+
+	BEQ	TT172	;print "-"
+	CLC		;no decimal point
+	JSR	pr2p2	
+	JMP	TT152	;kg etc
+
+;   Wonderful new trade mode
+;   ========================
+
+
+;	IF	LANGUAGE=GERMAN
+;cargyht	equ	5
+;	ELSE
+;cargyht	equ	4
+;	ENDIF
+
+cargyhtTB	DB	4,5,4,4	;LANGUAGE TABLE
+
+CARGMOD0	JMP	TT213
+
+TT167			;TEMP CLUDGE
+
+CARGOMODE
+
+	LDA	#cargmod
+	CMP	MODE
+	BEQ	CARGMOD0
+	JSR	TRADEMODE
+	LDA	#5
+	STA	XC
+	LDA	#167
+	JSR	NLIN3	;"Market Prices" underlined
+	LDA	#2
+	STA	YC
+	JSR	TT163	;"ITEM QUANTITY" etc
+
+	LDX	LANG
+	LDA	cargyhtTB,X
+	STA	YC
+	LDA	#0
+	STA	QQ29
+
+CARGMOD1
+	SPOLLBIT	97	
+	JSR	TT151	;display item
+	INC	YC
+	INC	QQ29
+	LDA	QQ29
+	CMP	#17
+	BCC	CARGMOD1
+
+
+	LDA	QQ12	;no buying or selling if docked
+	BNE	CARGMOD2	; >>you mean flying surely IB<< 
+CARGMODSHOW
+	JSR	KILLDISP
+	JSR	INVBUTTON
+	JMP	ENDTMODE
+
+CARGSELLS	JMP	CARGSELL
+
+
+CARGMOD2	LDA	#0	;DOCKED case
+	STA	QQ29
+	JSR	CARGSHOW
+	JSR	CARGCASH
+	JSR	CARGMODSHOW
+
+CARGMOD3	SPOLLBIT	98
+
+	IF	0	;PROGTESTS
+	ldy	qq29
+	LDA	frbut1
+	AND	#$C0
+	CMP	#$40
+	BEQ	!3
+	LDA	frbut2	; Gives access to all SFX for
+	AND	#$C0	; testing purposes only
+	CMP	#$40
+	BNE	!4
+	TYA
+	CLC
+	ADC	#16
+	TAY
+
+!3	TYA
+	PHA
+	JSR	SOFLUSH
+	PLA
+	TAY
+	JSR	NOISE
+
+!4	LDA	FONOFFA
+	STA	CRGO+1
+	LDA	FONOFFB
+	STA	CRGO+2
+	LDA	FONOFFD
+	STA	CRGO+3
+
+	ENDIF
+
+
+	LDA	shfbut
+	BMI	!2
+
+	LDA	upbut	; Filter out diagonal presses
+	ORA	dwnbut
+	BEQ	!5
+	LDA	lftbut
+	ORA	rgtbut
+	BNE	!2
+!5
+	LDA	upbut	;loop of trade mode
+	AND	#$F0
+	CMP	#$F0
+	BEQ	CARGUP
+	LDA	dwnbut
+	AND	#$F0
+	CMP	#$F0
+	BEQ	CARGDWN
+	LDA	lfttra
+	CMP	#$F0
+	BEQ	CARGSELLS
+	LDA	rgttra
+	CMP	#$F0
+	BEQ	CARGBUY
+
+!2	LDA	stripop
+	BEQ	CARGMOD3
+	JSR	cleankeys0
+	BCS	CARGMOD3
+!1	RTS
+
+
+CARGUP	LDA	QQ29
+	JSR	CARGUNSHOW
+	LDA	QQ29
+	SEC
+	SBC	#1
+	BPL	!1
+	IF	TRADEWRAP
+	LDA	#16
+	ELSE
+	LDA	#0
+	ENDIF
+!1	STA	QQ29
+CARGDISP	LDA	QQ29
+	JSR	CARGSHOW
+	JSR	UPDATETMODE
+	JSR	waitsend
+	JMP	CARGMOD3
+
+
+CARGDWN	LDA	QQ29
+	JSR	CARGUNSHOW
+	LDA	QQ29
+	CLC
+	ADC	#1
+	CMP	#17
+	BNE	!1
+	IF	TRADEWRAP
+	LDA	#0
+	ELSE
+	LDA	#16
+	ENDIF
+
+!1	STA	QQ29
+	JMP	CARGDISP
+
+CARGBUY	LDA	#1	;amount to be bought for tnpr
+	JSR	tnpr
+	BCS	CARGERROR	;no cargo space left
+	LDY	QQ29
+	LDA	AVL,Y
+	BEQ	CARGERROR	;none available
+	LDA	QQ24
+	STA	P
+	LDA	#0
+	JSR	GC2
+	JSR	LCASH
+	BCC	CARGERROR	;not enough cash
+	JSR	UPDATECYCLE
+	LDY	#sfxping
+	JSR	NOISE
+	LDY	QQ29
+	LDA	AVL,Y
+	SEC
+	SBC	#1
+	STA	AVL,Y
+	LDA	QQ20,Y
+	CLC
+	ADC	#1
+	STA	QQ20,Y
+	JSR	CARGCASH
+	JMP	CARGDISP
+
+CARGSELL	LDY	QQ29
+	LDA	AVL,Y
+	CMP	#99
+	BCS	CARGERROR
+	LDA	QQ20,Y
+	BEQ	CARGERROR
+	JSR	UPDATECYCLE
+	SEC
+	SBC	#1
+	STA	QQ20,Y
+	LDA	AVL,Y
+	CLC
+	ADC	#1
+	STA	AVL,Y
+	LDA	QQ24
+	STA	P
+	LDA	#0
+	JSR	GC2
+	JSR	MCASH
+	JSR	CARGCASH
+	LDY	#sfxping2
+	JSR	NOISE
+	JMP	CARGDISP
+
+CARGERROR
+;	LDY	#sfxboop
+;	JSR	NOISE
+	JMP	CARGMOD3
+
+CARGSHOW	TAY
+	LDX	#tcol1
+	STX	TCOL
+	CLC
+	LDX	LANG
+	ADC	cargyhtTB,X
+	STA	YC	;get coordinate from item number
+	TYA	
+	JSR	TT151
+	LDX	#tcol0
+	STX	TCOL
+	RTS
+
+CARGUNSHOW	TAY
+	CLC
+	LDX	LANG
+	ADC	cargyhtTB,X
+	STA	YC	;get coordinate from item number
+	TYA	
+	JMP	TT151
+
+CARGCASH
+	LDA	#128
+	STA	QQ17
+	LDX	LANG
+	LDA	CASHYCTB,X
+	STA	YC
+	LDA	CASHXCTB,X
+	STA	XC
+	JMP	PCASH
+
+CASHXCTB	DB	5,5,3,5
+CASHYCTB	DB	22,23,22,22
+
+var	LDA	QQ19+1
+	AND	#31
+	LDY	QQ28
+	STA	QQ19+2
+	CLC
+	LDA	#0
+	STA	AVL+16
+TT153	DEY
+	BMI	TT154
+	ADC	QQ19+2
+	JMP	TT153
+TT154	STA	QQ19+3
+	RTS
+
+hyp1p3	JSR	JMP	
+	LDX	#5
+!112	LDA	safehouse,X
+	STA	QQ2,X
+	STA	QQ15,X
+	DEX
+	BPL	!112
+	INX
+	STX	ENVIRO
+	LDA	#128
+	STA	CURSFLAG
+	JSR	UPDATESTRIP
+	JSR	SETTECH
+	LDA	QQ3
+	STA	QQ28
+	LDA	QQ5
+	STA	tek
+	LDA	QQ4
+	STA	gov
+	JSR	DORND
+
+	IF	0	;AUTOSEARCH
+	LDA	IANTEMP
+	ENDIF
+
+	STA	QQ26
+	LDX	#0
+	STX	XX4
+hy9	LDA	QQ23+1,X
+	STA	QQ19+1
+	JSR	var
+	LDA	QQ23+3,X
+	AND	QQ26
+	CLC
+	ADC	QQ23+2,X
+	LDY	QQ19+1
+	BMI	!157
+	SEC
+	SBC	QQ19+3
+	JMP	!158
+!157	CLC
+	ADC	QQ19+3
+!158	BPL	!159
+	LDA	#0
+!159	LDY	XX4
+	AND	#63
+	STA	AVL,Y
+	INY
+	TYA
+	STA	XX4
+	ASL	A
+	ASL	A
+	TAX
+	CMP	#63
+	BCC	hy9
+hyR	RTS
+
+GTHG	JSR	Ze
+
+;	LDA	#$24
+;	STA	INWK+27
+
+	LDA	#$FF
+	STA	INWK32
+	LDA	#TGL
+	JSR	NWSHP
+	JMP	GTHG3
+
+GTHG2	JSR	Ze
+	LDA	#$F9
+	STA	INWK32
+GTHG3	LDA	#THG
+	JMP	NWSHP
+
+;ptg	LSR	COK
+;	SEC
+;	ROL	COK
+
+
+MJP	; Misjump!!!
+	
+;	LDX	#0
+;	JSR	LOOK1
+;	LDA	MODE
+;	BNE	!1
+;	JSR	LL164	;!! more here (eg set mode?)
+!1	LDY	#sfxwarn3
+	JSR	NOISE
+	JSR	RES2
+	STY	MJ
+
+	LDA	QQ1
+	EOR	#31
+	STA	QQ1
+
+!2	
+	IF	0
+	JSR	GTHG	; Used to have 4 thargoids & 4 dust ptcls
+	LDA	#3
+	CMP	MANY+THG
+	BCS	!2
+	ELSE	;(0)
+	JSR	GTHG	; Reduced to 3 thargoids for NES
+	JSR	GTHG
+	JSR	GTHG
+	LDA	#3
+	ENDIF	;(0)
+
+
+
+	STA	NOSTM
+	JSR	SETCURSFLAG
+	JSR	UPDATESTRIP
+	LDY	#sfxwarn2
+	JSR	NOISE
+	JMP	AFTERHYP
+
+
+TT18	; Do hyperspace jump
+	JSR	KILLTUNE
+	IF	PROGTESTS
+	LDA	lftbut
+	BMI	!5
+	ENDIF
+	LDA	QQ14	; Fuel=Fuel-Jump Distance
+	SEC
+	SBC	QQ8
+	BCS	!4
+	LDA	#0
+!4	STA	QQ14
+
+!5	LDA	MODE
+	BNE	!6
+	JSR	ZONKSCANNERS
+	JSR	LL164
+	JMP	!7
+!6	JSR	HYPNOISE
+!7
+
+	IF	1	;PROGTESTS
+	LDA	upbut
+	ORA	dwnbut
+	BMI	MJP	; Force misjump
+	ENDIF
+
+	JSR	DORND
+	CMP	#253
+	BCS	MJP	; Slight chance of mis jump
+	;JSRTT111
+	JSR	hyp1p3
+
+
+	IF	AUTOSEARCH
+	ELSE
+
+	JSR	WSCAN	; Resynch with screen to try to fix CJ Bug
+			; CCCCCC
+	ENDIF	
+
+	JSR	RES2
+	JSR	SOLAR
+
+AFTERHYP
+	IF	AUTOSEARCH
+	LDA	SSPR
+	BEQ	!1
+	LDA	#1
+	JSR	GOTBUG
+!1
+	ENDIF	;(AUTOSEARCH)
+	LDA	MODE
+	BEQ	NEWVIEW
+
+REFRESHTMODE
+	LDA	MODE
+	AND	#chbit1
+	CMP	#chbit2
+	BNE	!1	; Check for chart modes
+	LDA	MODE
+	CMP	#lcchrt
+	BNE	!2
+	JMP	TT23
+!2	JMP	TT22
+!1	LDA	MODE
+	CMP	#invmod	; inventory
+	BNE	!3
+	JMP	TT213
+!3	CMP	#cargmod	; and mkt prices
+	BNE	!4
+	LDA	#invmod
+	STA	MODE
+	JMP	CARGOMODE
+!4	JMP	STATUS	; else enter status mode
+
+;	RTS
+;!1
+;	JMP
+;	JSR	FUDGECLEAR
+;	JSR	CLYNS
+;
+;!2	JSR	TTX66
+;	LDA	MODE
+;	BNE	TT114
+
+
+NEWVIEW	LDX	#4
+	STX	VIEW
+
+TT110	; Launch from spc stn if QQ12 nonzero
+	; else just force front view
+
+	LDX	QQ12
+	BEQ	NLUNCH
+	LDA	#0
+	STA	VIEW
+	STA	QQ12
+;	JSR	RES2
+	LDA	SKIPFLAG
+	ORA	#128
+	STA	SKIPFLAG
+
+	JSR	HAPPYSHIP
+
+	
+	JSR	NWSTARS
+	JSR	LAUNFX
+	JSR	RES2
+
+	JSR	UPDATECYCLE
+
+	IF	NEEDPOLL
+	JSR	WSCAN
+	ENDIF
+
+	INC	INWK+8
+	JSR	SOS1
+	LDA	#128
+	STA	INWK+8
+	INC	INWK+7
+	JSR	NWSPS
+	LDA	#12
+	STA	DELTA
+	JSR	BAD
+
+	ORA	FIST
+	STA	FIST
+	JSR	NWSTARS
+	JSR	WSCAN
+
+	LDX	#4
+	STX	VIEW
+
+NLUNCH	LDX	#0
+	STX	QQ12
+	JMP	LOOK1
+ 
+TT114
+;	BMI	TT115
+	CMP	#lcchrt
+	BEQ	!1	;<<iian
+	JMP	TT22
+!1	JMP	TT23
+
+LCASH	STX	T1
+	LDA	CASH+3
+	SEC
+	SBC	T1
+	STA	CASH+3
+	STY	T1
+	LDA	CASH+2
+	SBC	T1
+	STA	CASH+2
+	LDA	CASH+1
+	SBC	#0
+	STA	CASH+1
+	LDA	CASH
+	SBC	#0
+	STA	CASH
+	BCS	TT113
+
+MCASH	POLLBIT	111
+	TXA		;CASH(4)=CASH(4)+YX
+	CLC
+	ADC	CASH+3
+	STA	CASH+3
+	TYA
+	ADC	CASH+2
+	STA	CASH+2
+	LDA	CASH+1
+	ADC	#0
+	STA	CASH+1
+	LDA	CASH
+	ADC	#0
+	STA	CASH
+	CLC
+TT113	RTS
+
+;GCASH	JSR	MULTU	;YX=P*Q (ready for MCASH)
+GC2	ASL	P
+	ROL	A
+	ASL	P	;no longer used
+	ROL	A
+	TAY
+	LDX	P
+	RTS
+
+;RDLI	DB	"R.D.CODE"
+;	EQUB	13
+;bay_LC	JMP	BAY
+
+
+; Reset Current Position (for Load and Save) - must be in this bank
+; =================================================================
+
+
+RESCOMMtrue
+;	JSR	stopat
+	JSR	ping
+	JSR	TT111
+	JSR	JMP	
+	LDX	#5
+!1	LDA	QQ15,X
+	STA	QQ2,X
+	DEX
+	BPL	!1
+	INX
+	STX	ENVIRO
+	LDA	QQ3
+	STA	QQ28
+	LDA	QQ5
+	STA	tek
+	LDA	QQ4
+	STA	gov
+	RTS
+
+
+
+; Equip Ship
+; ==========
+
+eqplft	equ	2	;Initial XC for messages
+
+equipyht	equ	2
+eqymess	equ	16+BIG
+
+	IF	INCEPIC
+EQpiccy
+	LDA	#18+2*BIG
+	STA	YC
+	LDA	#2
+	STA	XC
+	LDA	#26
+	STA	K
+	LDA	#5
+	STA	K+1
+;	LDA	#dialbase
+	SET2B	V,EQUIPMAP
+	LDA	#0
+	STA	K+2
+	JSR	MAPPICTURE
+
+;	LDA	#0		; Patch to get rid
+;	STA	VIDM1+18*ncl+2	; of mystery blob
+
+
+	JMP	PAINTITEMS
+	ENDIF	; (INCEPIC)
+
+
+EQshow	LDX	#tcol1
+	STX	TCOL
+	LDX	XX13
+	JSR	EQoneitem
+	LDX	#tcol0
+	STX	TCOL
+	RTS
+
+EQunshow	LDX	XX13
+;	JMP	EQoneitem
+
+EQoneitem
+
+	SPOLLBIT	99
+
+	STX	XX13
+	TXA
+	CLC
+	ADC	#equipyht
+	LDX	Q
+	CPX	#12
+	BCC	!2
+	SEC
+	SBC	#1	;start one line higher if high tech
+!2	STA	YC
+	LDA	#1
+	STA	XC
+	LDA	LANG2
+	AND	#GERM
+	BNE	!3
+	JSR	SPACE	;two spaces
+!3	JSR	SPACE	
+
+
+
+	LDA	XX13
+	CLC
+	ADC	#$68
+	JSR	TT27	;print item
+
+	IF	NEEDPOLL
+	JSR	WINTR
+	ENDIF
+
+	LDA	XX13
+	CMP	#1
+	BNE	!1
+
+	LDA	#32
+	JSR	TT27
+	LDA	#"("
+	JSR	TT27
+
+	LDX	QQ14	;print current fuel
+	SEC
+	LDA	#0
+	JSR	pr2p2
+	LDA	#195
+	JSR	TT27
+	LDA	#")"
+	JSR	TT27
+	
+	LDA	LANG2
+	AND	#(FREN)
+	BNE	!1
+
+
+	LDA	XX13
+	JSR	prxm3
+	SEC
+	LDA	#5	;crude fix for fuel
+	JSR	TT11
+
+	LDA	#32
+	JMP	TT27
+	
+!1	LDA	#32
+	JSR	TT27
+	LDA	XC	;move to position x=24
+	CMP	#24
+	BNE	!1
+
+	LDA	XX13
+	JSR	prxm3
+	SEC
+	LDA	#6
+	JSR	TT11
+	JMP	SPACE
+
+
+EQup	JSR	EQunshow
+	LDA	XX13
+	SEC
+	SBC	#1
+	BNE	!1
+
+	IF	TRADEWRAP
+	LDA	Q	;max no of items in Q
+;	SEC
+	SBC	#1
+	ELSE
+	LDA	#1
+	ENDIF
+
+!1	STA	XX13
+
+EQdisp
+	JSR	EQshow
+	IF	INCEPIC
+	JSR	PAINTITEMS
+	ENDIF
+	JSR	UPDATETMODE
+	JSR	waitsend
+	JMP	EQmod
+
+EQdwn	JSR	EQunshow
+	LDA	XX13
+	CLC
+	ADC	#1
+	CMP	Q
+	BNE	!1
+	IF	TRADEWRAP
+	LDA	#1
+	ELSE
+	LDA	Q
+	SBC	#1
+	ENDIF
+!1	STA	XX13
+	JMP	EQdisp
+
+
+EQTITXC	DB	12,8,10
+
+
+EQSHP	LDA	#eqpmod
+	JSR	TRADEMODE
+
+
+	LDX	LANG
+	LDA	EQTITXC,X
+	STA	XC
+	LDA	#207
+;	JSR	spc
+;	LDA	#185
+	JSR	NLIN3
+
+	LDA	#128
+	STA	QQ17
+
+	LDA	tek
+	CLC
+	ADC	#3
+	CMP	#12
+	BCC	!1	;!! was P%
+	LDA	#14
+!1	STA	Q
+	STA	QQ25
+	INC	Q
+	LDA	#70
+	SEC
+	SBC	QQ14
+;	ASL	A
+;	STA	FUELPRICE	;!!>>DJB 10/4/90<<
+	LDX	#1
+
+EQL1	JSR	EQoneitem	; Print all items
+	LDX	XX13
+	INX
+	CPX	Q
+	BCC	EQL1
+
+	LDX	#1
+	STX	XX13	;Select first item
+	JSR	EQshow
+	JSR	EQcash
+
+	JSR	KILLDISP
+
+	IF	INCEPIC
+	JSR	EQpiccy
+	ENDIF
+
+	JSR	ENDTMODE
+
+EQmod	POLLBIT	100
+	LDA	upbut	;loop of equip ship
+	BPL	!2
+	JMP	EQup
+!2	LDA	dwnbut
+	BPL	!1
+	JMP	EQdwn
+!1	LDA	frbut1
+;	ORA	lfttra
+;	ORA	rgttra
+	BMI	EQbuy
+
+	LDA	stripop
+	BEQ	EQmod
+	JSR	cleankeys
+	BCS	EQmod
+	RTS
+
+
+EQbuy	JSR	UPDATECYCLE
+	LDA	XX13	;buy (one of) selected item
+	SEC
+	SBC	#1
+	PHA
+	JSR	eq
+	BCS	!10
+	PLA
+	JSR	UPDATETMODE
+	JMP	EQmod
+!10	PLA
+	BNE	et0	;Fuel
+	PHA
+
+;V
+	LDA	QQ14
+	CLC
+	ADC	#1
+	CMP	#71
+	BCC	!1
+	LDY	#105
+;	SBC	#1
+	PLA
+	JMP	pres
+!1	STA	QQ14
+
+	PLA
+et0	CMP	#1
+	BNE	et1	;Missile
+	LDX	NOMSL
+	INX
+	LDY	#124
+	CPX	#5
+	BCS	pres
+	STX	NOMSL
+;	JSR	msblob
+	LDA	#1
+et1	LDY	#$6B
+	CMP	#2
+	BNE	et2	;Large Cargo Bay
+	LDX	#37
+	CPX	CRGO
+	BEQ	pres
+	STX	CRGO
+et2	CMP	#3
+	BNE	et3	;ECM
+	INY
+	LDX	ECM
+	BNE	pres
+	DEC	ECM
+et3	CMP	#4
+	BNE	et4	;Pulse Laser
+	JSR	qv
+	LDA	#PulseLas
+	JMP	refund
+	LDA	#4
+et4	CMP	#5
+	BNE	et5	;Beam Laser
+	JSR	qv
+	LDA	#BeamLas
+	JMP	refund
+et5	LDY	#$6F
+	CMP	#6
+	BNE	et6	;Fuel Scoops
+	LDX	BST
+	BEQ	ed9
+pres	STY	K
+	PHA	
+	JSR	WSCAN
+	PLA
+	JSR	prx
+	JSR	MCASH
+	LDA	#eqplft	;5
+	STA	XC
+	LDA	#eqymess
+	STA	YC
+	LDA	K
+	JSR	spc	;item k present
+	LDA	#31
+	JSR	TT27
+!1	JSR	TT162	;space
+	LDA	XC
+	CMP	#31	;  30 erase previous message
+	BNE	!1
+;	JSR	TT162
+
+	JSR	DOBOOP
+	JSR	UPDATETMODE	
+	LDY	#40
+	JSR	DELAY
+	LDA	#6
+	STA	XC
+	LDA	#eqymess
+	STA	YC
+!2	JSR	TT162
+	LDA	XC
+	CMP	#31	;  30
+	BNE	!2
+	JSR	EQcash
+	IF	INCEPIC
+	JSR	PAINTITEMS
+	ENDIF
+	JSR	UPDATETMODE
+	JMP	EQmod	
+
+presstep	JMP	pres
+err
+;	JSR	dn2
+	JSR	UPDATETMODE
+	JMP	EQmod
+ed9	DEC	BST
+et6	INY		;Escape Capsule
+	CMP	#7
+	BNE	et7
+	LDX	ESCP
+	BNE	pres
+	DEC	ESCP 
+et7	INY
+	CMP	#8
+	BNE	et8	;Energy Bomb
+	LDX	BOMB
+	BNE	pres
+	LDX	#$7F
+	STX	BOMB
+et8	INY
+	CMP	#9
+	BNE	etA	;Extra Energy Unit
+	LDX	ENGY
+	BNE	presstep
+	INC	ENGY
+etA	INY
+	CMP	#10
+	BNE	etB	;Docking Computer
+	LDX	DKCMP
+	BNE	presstep
+	DEC	DKCMP
+etB
+	INY
+	CMP	#11
+	BNE	et9	;Galactic Hyperspace
+	LDX	GHYP
+	BNE	presstep
+	DEC	GHYP
+et9	INY
+	CMP	#12
+	BNE	et10	;Military Laser
+	JSR	qv
+	LDA	#Armlas
+	JMP	refund
+et10	INY
+	CMP	#13	;Mining Laser
+	BNE	et11
+	JSR	qv
+	LDA	#MineLas
+	JMP	refund
+et11
+
+	JSR	done
+	JMP	EQdisp
+;	JMP	EQmod
+
+
+done	POLLBIT	112
+	JSR	EQcash
+	JMP	BEEP
+
+;dn2	RTS
+;	JMP	BEEP
+;	LDY	#50
+;	JMP	DELAY
+
+EQcash	LDA	#eqymess
+	STA	YC
+	LDA	#eqplft
+	STA	XC
+	JMP	PCASH
+
+eq	JSR	prx
+	JSR	LCASH
+	BCS	c
+	LDA	#eqymess
+	STA	YC
+	LDA	#eqplft
+	STA	XC
+	LDA	#197
+	JSR	prq
+	JSR	DOBOOP
+
+;	LDA	#32
+	LDY	#20
+!1	JSR	SPACE
+	DEY
+	BPL	!1
+;	JSR	dn2
+	JSR	UPDATETMODE
+	LDY	#40
+	JSR	DELAY
+	JSR	EQcash		;>>DJB 4/5/90<<
+	CLC
+	RTS
+
+prxm3	SEC
+	SBC	#1
+prx	ASL	A
+	TAY
+;	BEQ	prxian
+	LDX	PRXS,Y
+	LDA	PRXS+1,Y
+	TAY
+c	RTS
+
+prxian	LDX	FUELPRICE
+	LDA	#0
+	TAY
+	RTS
+		
+
+EQview	;print view no in Y
+	LDA	#12
+	STA	XC
+	TYA
+	PHA
+	CLC
+	ADC	#8
+	STA	YC
+	JSR	SPACE
+	LDA	LANG2
+	AND	#(FREN+GERM)
+	BNE	!2
+	JSR	SPACE
+!2
+	PLA
+	PHA
+	CLC
+	ADC	#$60
+	JSR	TT27
+!1	JSR	SPACE
+	LDA	XC
+	LDX	LANG
+	CMP	BOXMAXTB,X
+	BNE	!1
+	PLA
+	TAY
+	RTS
+
+BOXMAXTB	DB	21,21,22,21
+
+
+EQshowview	LDA	#tcol1
+	STA	TCOL
+	JSR	EQview
+	LDA	#tcol0
+	STA	TCOL
+	TYA
+	PHA
+	JSR	UPDATETMODE
+	JSR	waitsend
+	PLA
+	TAY
+	RTS
+
+VIEWBOXWTB	DB	10,10,11,10
+
+qv
+;	JSR	BEEP
+
+!1	SPOLLBIT	170
+	LDA	lfttra	;key de-bounce
+	ORA	rgttra
+	ORA	frbut1
+	BMI	!1
+
+	LDY	#3
+qv1	JSR	EQview
+	DEY
+	BNE	qv1
+	LDA	#tcol1
+	STA	TCOL
+	JSR	EQview
+	LDA	#tcol0
+	STA	TCOL
+	
+	LDA	#11	;draw Ian's box
+	STA	XC
+	STA	K+2
+	LDA	#7
+	STA	YC
+	STA	K+3
+	LDX	LANG
+	LDA	VIEWBOXWTB,X
+	STA	K
+	LDA	#6
+	STA	K+1
+	JSR	THICKBOX
+	JSR	UPDATETMODE
+
+	LDY	#0
+EQqv1	SPOLLBIT	218
+	LDA	upbut	;loop of buying lasers
+	BPL	!2
+	JSR	EQview
+	DEY
+	BPL	!3
+	LDY	#3
+!3	JSR	EQshowview
+!2	LDA	dwnbut
+	BPL	!4
+	JSR	EQview
+	INY
+	CPY	#4
+	BNE	!5
+	LDY	#0
+!5	JSR	EQshowview
+!4	LDA	frbut1
+;	ORA	frbut2
+	BMI	EQqv3
+	
+
+	LDA	stripop
+	BEQ	EQqv1
+	CMP	#frz
+	BNE	EQqv3
+	LDA	#0
+	STA	stripop
+	JSR	FREEZE
+	JMP	EQqv1
+
+;!1	LDX	#FF
+;	TXS
+;	JMP	FRCE
+
+
+
+EQqv3	TYA
+	TAX
+	RTS
+
+;hm	;JSR	TT103
+;	JSR	TT111
+;	JSR	TT103
+;	JMP	CLYNS
+;ref2	LDY	#187;JMPpres;Belgium
+
+refund	STA	T1		;refund for laser no. X
+	LDA	LASER,X
+	BEQ	ref3	;CMPT1;BEQref2
+	LDY	#4
+	CMP	#PulseLas
+	BEQ	ref1
+	LDY	#5
+	CMP	#BeamLas
+	BEQ	ref1
+	LDY	#12;11
+	CMP	#Armlas
+	BEQ	ref1
+	;MineLas
+	LDY	#13;12
+ref1	STX	ZZ
+	TYA
+	JSR	prx
+	JSR	MCASH
+	LDX	ZZ
+ref3	LDA	T1
+	STA	LASER,X
+	JSR	BEEP
+	JMP	EQSHP
+
+
+	RTS
+
+PRXS	DW	2
+	DW	300
+	DW	4000
+	DW	6000
+	DW	4000
+	DW	10000
+	DW	5250
+	DW	10000
+	DW	9000
+	DW	15000
+	DW	 2000	;10000
+	DW	50000
+	DW	60000
+	DW	8000
+
+;	ELSE
+;TT67	;INCYC
+;	LDA	#12
+;	JMP	TT27	 ;<<
+;	ENDIF	; (FULL)
+
+
+
+
+

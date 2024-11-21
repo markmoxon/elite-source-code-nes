@@ -1,0 +1,945 @@
+
+;	REM	ELITE <1> <Joint>
+;
+;	Variables and Game constants
+
+  
+FNZT	MACRO
+@1	equ	ZP
+ZP	= ZP+@2
+	ENDM
+
+FNZ	MACRO
+	FNZT	@1,1
+	ENDM
+
+FNZ2	MACRO
+	FNZT	@1,2
+	ENDM
+
+FNWT	MACRO
+@1	equ	WP
+WP	= WP+@2
+	ENDM
+
+FNW	MACRO
+	FNWT	@1,1
+	ENDM
+
+FNW2	MACRO
+	FNWT	@1,2
+	ENDM
+
+
+FNUT	MACRO
+@1	equ	UP
+UP	= UP+@2
+	ENDM
+
+FNU	MACRO
+	FNUT	@1,1
+	ENDM
+
+FNU2	MACRO
+	FNUT	@1,2
+	ENDM
+
+
+
+	
+BMESSAGE	MACRO
+	IF	0	;ROMCODE & (*<$BF80)
+	DB	@1
+	ENDIF
+	ENDM
+
+
+PADMESS	MACRO
+	IF	PADMESSAGES
+	DB	"@1"
+	IF	@2
+	DO	@2
+	DB	0	
+	LOOP
+	ENDIF
+	ENDIF
+	ENDM
+
+GREYON	MACRO
+	PHA
+	LDA	#VID1GRY
+	STA	VIDEO1
+	PLA
+	ENDM
+
+GREYOFF	MACRO
+	PHA
+	LDA	#VID1VAL
+	STA	VIDEO1
+	PLA
+	ENDM
+
+
+weeeb2	MACRO
+	CLC
+	LDA	RAND
+	ROL	A
+	TAX
+	ADC	RAND+2
+	STA	RAND
+	STX	RAND+2
+	LDA	RAND+1
+	TAX
+	ADC	RAND+3
+	STA	RAND+1
+	STX	RAND+3
+	ENDM
+
+weeeb	MACRO
+	CLC
+	LDA	RAND
+	ROL	A
+	TAX
+	ADC	RAND+2
+	STA	RAND
+	STX	RAND+2
+	LDA	RAND+1
+	TAX
+	ADC	RAND+3
+	STA	RAND+1
+	STX	RAND+3
+	ENDM
+
+
+BYTES	MACRO	; @1 bytes of value @2
+	DO	@1
+	DB	@2
+	LOOP
+	ENDM
+
+
+FNdornd2	MACRO
+	CLC
+	LDA	RAND
+	ROL	A
+	TAX
+	ADC	RAND+2
+	STA	RAND
+	STX	RAND+2
+	LDA	RAND+1
+	TAX
+	ADC	RAND+3
+	STA	RAND+1
+	STX	RAND+3
+	ENDM
+
+
+
+BYTE8	MACRO
+	DB	@1
+	DB	@2
+	DB	@3
+	DB	@4
+	DB	@5
+	DB	@6
+	DB	@7
+	DB	@8
+	ENDM
+
+
+SHIPREAD	MACRO
+	JSR	RDSHIP
+	ENDM
+
+
+CHK2	EQU	Napcent+$52
+CHK3	EQU	CHK2+1
+CHK	EQU	CHK3+1
+
+WP	=	WPS
+UP	=	UPS
+
+
+BRKV	equ	$FFFE
+
+;	Ship nos.
+;	---------
+
+MSL	equ	1
+SST	equ	2
+ESC	equ	3
+PLT	equ	4
+OIL	equ	5
+BOU	equ	6
+AST	equ	7
+SPL	equ	8
+SHU	equ	9
+TRA	equ	10
+CYL	equ	11
+PYT	equ	12
+BOA	equ	13
+ANA	equ	14
+HER	equ	15
+COPS	equ	16
+SH3	equ	17
+MAM	equ	18
+KRA	equ	19
+ADA	equ	20
+GEK	EQU	21
+CB1	EQU	22
+WRM	equ	23
+CYL2	equ	24
+ASP	equ	25
+PYT2	equ	26
+FER	equ	27
+MOR	equ	28
+THG	equ	29
+TGL	equ	30
+CON	equ	31
+COU	equ	32
+DOD	equ	33
+
+
+JL	equ	ESC
+JH	equ	SHU+2
+PACK	equ	SH3
+B	equ	$30	; ASCII for 0
+
+PulseLas	equ	$18	;15
+BeamLas	equ	$80+$0F
+
+	IF	PROGTESTS
+Armlas	equ	$80+$17
+	ELSE
+Armlas	equ	$80+$17
+	ENDIF
+MineLas	equ	$32
+
+VE	equ	$57
+
+;	New MODE values
+;	---------------
+;	Bits:  0-3: ID bits (bits 2&3=>chart mode)
+;	         4: 1=>Want tcol0 font
+;		 5: 1=>Want tcol1 font;		 
+;		 6: 0=>Want icon strip
+;		 7: 0=>Want dialsC
+
+;	FF=>Faded display
+
+spamod	equ	 $00
+titmode	equ	 $01
+brimode1	equ	 $92
+let3d	equ	 $10
+brimode2	equ	 $93
+detmode	equ	 $C4
+
+mismode	equ	 $95
+datmod	equ	 $96
+invmod	equ	 $97
+stamod	equ	 $98
+eqpmod	equ	 $B9
+cargmod	equ	 $BA
+lcchrt	equ	 $9C
+glchrt1	equ	 $8D
+glchrt2	equ	 $9D
+lodmod	equ	 $BB
+nammod	equ	 $9E
+
+pwrmod1	equ	 $CF
+pwrmod2	equ	 $DF
+
+chbit1	equ	 $0E
+chbit2	equ	 $0C	; Used to recognize chart modes
+icbit	equ	 $40
+
+
+sfxphurt	equ	25	; player's energy hit
+sfxscoop	equ	1	; fuel scoop
+sfxecm	equ	2	; ecm
+sfxbeep	equ	3	; happy beep
+sfxboop	equ	4	; error beep
+sfxtrib	equ	5	; happy squeakey
+sfxtrib2	equ	6	; unhappy sq
+sfxtrib3	equ	31	; death wail
+sfxwarn	equ	7	; single siren
+sfxbomb	equ	8	; smartbomb
+sfxfmis	equ	9	; launch missile
+sfxhit	equ	10	; player laser hits enemy
+sfxelas	equ	11	; enemy laser
+sfxlaun	equ	12	; launch from/to spc stn
+sfxexpl	equ	13	; big explosion
+sfxexpl2	equ	14	; small explosion
+sfxalas	equ	15	; army laser
+sfxmlas	equ	16	; mining laser
+sfxblas	equ	17	; beam laser
+sfxplas	equ	18	; pulse laser
+sfxescp	equ	19	; escape capsule
+sfxphit	equ	20	; player's shields hit
+sfxhyp1	equ	21	; hyperspace
+sfxhyp2	equ	22	; gal hyperspace
+
+sfxexpl3	equ	23	; tiny explosion
+sfxexpl4	equ	27	; v tiny explosion
+
+sfxlaun3	equ	24	; second launch effect for echo
+sfxping	equ	28
+sfxping2	equ	sfxbeep
+sfxping3	equ	sfxbeep
+sfxwarn2	equ	30	; 3 second siren
+sfxwarn3	equ	29	; 3 second siren on other chanel
+
+sfxlaun2	equ	sfxexpl3
+
+stripchr	equ	33+icbase
+
+
+FF	equ	$FF
+FFmask	equ	$FF	; Used for lower case (must be FF)
+DFmask	equ	$00	; Used for upper case
+
+
+ZP	=	2
+	FNZT	RAND,4
+	FNZ	 T1
+	FNZ2	SC
+SCH	equ	SC+1
+	FNZT	INWK,NIdwn
+INWK32	EQU	INWK+32
+INWK35	EQU	INWK+35	;Energy
+NEWB	equ	INWK+36
+NINB	equ	INWK+33	;37
+EXCN	EQU	INWK+34	;38
+EXSDoff	EQU	37
+
+
+FADEBUFFER	equ	$100	; Pallette store for fades (32 bytes)=XX3
+
+
+XX1	equ	INWK
+	FNZT	P,3
+	FNZ	XC
+	FNZ	COL0
+	FNZ	COL1
+	FNZ	COL2	; Values dynamically assigned
+	FNZ	COL3	; BCK Pallette 0
+
+	
+	FNZ	TCOL
+
+	FNZT	clok,3
+
+
+
+	FNZ	YC
+	FNZ	QQ17	; Upper case flag
+	FNZT	XX2,16
+K3	equ	XX2
+K4	equ	XX2+14
+	FNZT	XX16,18
+	FNZ2	XX0
+	FNZ2	INF
+	FNZ2	V
+	FNZ2	XX
+	FNZ2	YY
+;	FNZ2	SUNX
+	FNZ	BETA
+	FNZ	BET1
+	FNZ2	QQ22	;Hyperspace countdown
+	FNZ	ECMA
+	FNZ	ALP1	;=|spin|
+	FNZ2	ALP2	;+0=SGN(spin),+1=SGN(-spin)
+	FNZT	XX15,6
+	FNZT	XX12,6
+X1	equ	XX15
+Y1	equ	X1+1
+X2	equ	Y1+1
+Y2	equ	X2+1
+	FNZT	K,4
+	FNW	LAS
+	FNW	MSTG
+
+	FNW	SLIDERATE
+	FNZ	thiskey
+
+nokeys	equ	6
+	FNWT	KLO,nokeys+1
+
+	FNW	EXSC	;Explosion scale factor
+
+	FNU	SKIPFLAG
+		
+
+	IF	INCMUSIC
+	FNUT	SFXPRES,$69		; Whitticker's provate wkspace
+	FNWT	SFXCORR,$42		; 2Whitticker's scratchpad
+
+	IF	NTSC
+	FNW	HZ_counter
+	ENDIF
+
+	ENDIF
+
+
+	IF	USEDMA
+	FNW	SOEnable
+	ENDIF
+
+	IF	SFX
+	FNWT	SOFLG,4
+	FNW	SOdma	;used by DMA channel for sound number
+	FNWT	SOCNT,5
+	FNWT	SOFRCH,4
+	FNWT	SOFRQ,4
+	FNWT	SOCR,4	;initial volume
+	FNWT	SOVCH,4
+	FNWT	SOLOCK,4	;locks data if >0 while processing
+	FNWT	SOSWP,4
+	FNWT	SOPR,5
+	FNWT	SONEXT,4
+
+	ENDIF	; (SFX)
+
+
+KY1	equ	KLO+0
+KY2	equ	KLO+1
+KY3	equ	KLO+2
+KY4	equ	KLO+3
+KY5	equ	KLO+4
+KY6	equ	KLO+5
+KY7	equ	KLO+6	; Fire command
+
+;	FNZ	LSP
+	FNZT	QQ15,6	; Supposed to be seed for cursor planet
+	FNZT	XX18,9
+	FNWT	QQ19,6	; General wkspace
+	FNWT	QQ15SAFE,6
+K5	equ	XX18
+K6	equ	K5+4
+	FNZ2	BET2
+	FNZ	DELTA
+	FNZ2	DELT4
+	FNZ	U
+	FNZ	Q
+	FNZ	R
+	FNZ	S
+	FNZ	T
+	FNZ	XSAV
+	FNZ	YSAV
+	FNZ	XX17
+	FNZ	MODE	; Game mode
+MODE1	EQU	MODE
+
+	FNZ	MODE2	; Late copy of mode
+	FNZ	ZZ
+	FNZ	XX13
+	FNZ	MCNT
+;	FNZ	DL
+	FNZ	TYPE
+	FNZ	ALPHA	;=ALP1 or ALP2
+;REM PBUP=FNZ:HBUP=FNZ:LBUP=FNZ
+	FNZ	QQ12	; 0=>In space
+	FNZ	TGT
+	FNZ	FLAG
+	FNZ	CNT
+	FNZ	CNT2
+	FNZ	STP
+	FNZ	XX4
+	FNZ	XX20
+	FNZ	XX14
+	FNZ	RAT
+
+	FNZ	RAT2
+	FNWT	K2,4	; WAS ZP!!! 
+	FNZ	widget
+	FNZ	Ymem
+	FNZ	Yx2
+	FNZ	Yx2M1
+	FNZ	messXC
+	FNZ	messYC
+	FNZ	newzp
+	FNZ	newerzp
+	FNZ	frchar
+	FNZ	ffnt8
+	FNZ2	LI
+	FNZ2	LI2
+	FNZ2	strip
+
+	FNZ	bank		; Bank to draw to
+	FNZ2	frchst		; frchar store
+	FNZ2	charzer		; Char clearing counts
+	FNZ2	cellzer
+	FNZ2	celltrn	;	No 8-cell blocks sent
+	FNZ	charsent	;	Temp store for chartrn value
+	FNZ2	chartrn	;	No chars sent in each bank
+
+
+	IF	DIALSONTOP
+	FNZ2	cellmin	;	First 8-cell block to send
+	FNZ	cellmax
+cellminH	equ	cellmin+1
+	ELSE
+	FNZ	cellmin	;	First 8-cell block to send
+	FNZ2	cellmax
+	ENDIF
+
+	FNZ	cellsent	;	Temp store for celltrn value
+	FNZ2	remain	;	NMI routine self-timer
+	FNZ	charmin	;	First char to send
+	FNZ	striptrn	;	Strip char to send
+	FNZ2	stripas	;	Ascii map offset
+	FNZ	stripzH	;	Strip defn (ptr to page)
+	FNZ	maponly	;	+VE=>send strip font too
+	IF	DIALSONTOP
+	FNZ	zermin
+	ENDIF
+	FNZ	zermax 	;	Last cell to zero
+	FNZ	typebase	;	ASCII to char converter
+
+	FNZ	fade	;	Doing a fade?
+
+	FNW	COMBFLAG
+	FNW	MUSICFLAG	;	128+Tune playing
+
+	IF	ONEPRESS
+	ELSE
+	FNW	prescnt
+	ENDIF
+
+	FNW	stripenb	;	0=>Diasable slider
+	FNW	stripx
+	FNW	stripy
+	FNW	stripv
+	FNW	stripd
+	FNW	stripno
+	FNW	stripop
+	FNW	stripmv
+	FNW	stripcnt2
+;	FNW	stripflg	;	0=>Slider settled
+	FNW	stripcnt	;	Countdown from left/right butt 
+	FNWT	nmistore,3
+
+	FNW	picstart	;	First ASCII for picture
+	FNW	SNDDIALS
+	FNW	LBORD
+	FNW	RBORD   
+	FNW	OLDCHART	;	128=>Galactic
+	FNW	CONDPIC	;	Condition displayed on face pic
+	FNW	OLDCOND	;	Condition used for light 
+;	FNW	GAMECOND	;	Condition based on current ships
+
+
+
+	FNW	faded	;	Flag for faded pallete
+;	FNW	COLPERM	;	Permutation byte for colour cycles
+	FNW	LASTFLICK	;	vbcnt when last change done
+	IF	POLLSCAN
+	FNU	DOCRWT
+	ENDIF
+
+
+launk	equ	$01
+dcomk	equ	$11
+
+eqpk	equ	$05	;09
+ochk	equ	$04	;Reenter chart
+nchk	equ	$24	;Change chart
+datk	equ	$23	;05
+cark	equ	$02
+stak	equ	$03
+invk	equ	$08
+
+;f12	equ	$99
+;f22	equ	$99
+;f32	equ	$99
+chvk	equ	$15	;0D
+
+
+tmis	equ	$18	;1B
+fmis	equ	$19	;1A
+bmbk	equ	$1A	;18
+escpk	equ	$1B	;19
+ecmk	equ	$17	;1C
+ffwdk	equ	$0C
+gskp	equ	ffwdk	;0E
+frz	equ	$50	;0F
+hypk	equ	$16	;17
+ghypk	equ	$29	;28
+
+	IF	PROGTESTS
+magk	equ	$0A	;55	; Magic key
+	ELSE
+magk	equ	0
+	ENDIF
+homek	equ	$26	;2A
+
+
+ytog	equ	$31
+;jtog	equ	$36
+;plat	equ	$39
+
+;djdt	equ	$31
+damt	equ	$32
+must	equ	$33
+sfxt	equ	$34
+twop	equ	$35
+rstt	equ	$3C
+unfr	equ	frz
+
+Fkey	equ	$27	;2A
+;DINT	equ	$28	;29
+delk	equ	$99	;09	;0A
+savk	equ	$99	;08	;0C
+lodk	equ	$06	;0B
+namk	equ	$07
+pask	equ	$09
+
+Ppcent	= Bpcent
+
+
+
+FORG	MACRO
+;	IF	ROMCODE
+;	DS	@1-*,255
+;	ELSE
+	ORG	@1
+;	ENDIF
+	ENDM
+
+
+;	Zeroed from here...
+
+
+	FNUT	FRIN,NOSH+1
+	FNU	JUNK
+	FNUT	SCSP,scanno+2	;Sprite use flags 4 scanners
+	FNUT	SCAT,scanno+2	;Scan sprite attribute store
+	FNU	auto
+	FNU	ECMP
+	FNU	MJ
+
+	FNU	CABTMP
+	FNU	LAS2
+	FNU	MSAR
+	FNU	VIEW
+	FNU	LASCT
+	FNU	GNTMP
+	FNU	HFX
+	FNU	ENVIRO	; Weird flag to delay Thargoid appearences
+	FNU	DLY	; Message up counter
+
+	FNU	de	; Flag to print destroyed after message
+
+;	... to here by ZERO
+	FNU	CURSFLAG	;Bit 7=>Homed,Bit 6=>In range
+
+	IF	TWOJOY
+	FNW	twoplayers		;MUST be 0 or 1 (1=>two player)
+	ENDIF
+
+	FNW	JSTX	; IRQ driven joystick variables
+	FNW	JSTY
+
+	FNWT	PRIORS,3
+
+
+
+
+	FNW	LASX
+	FNW	LASY
+	FNW	XX24
+	FNW	ALTIT
+	FNW	SWAP
+;	FNW	boxsize
+	FNW	distaway
+	FNW	XSAV2
+	FNW	YSAV2
+
+
+	FNUT	NAME,8
+	FNU	TP
+	FNU	QQ0	; Player x,y
+	FNU	QQ1	; galaxy posn
+	FNUT	CASH,4
+	FNU	QQ14	; fuel
+	FNU	COK	; cheater flag
+	FNU	GCNT
+	FNUT	LASER,4	;>>DJB 7/5/90<< - now only four missiles
+	FNU	CRGO
+	FNUT	QQ20,17
+	FNU	ECM
+	FNU	BST
+	FNU	BOMB
+	FNU	ENGY
+	FNU	DKCMP
+	FNU	GHYP
+	FNU	ESCP
+	FNUT	TRIBBLE,2
+	FNU	TALLYL
+	FNU	NOMSL
+	FNU	FIST
+	FNUT	AVL,17
+	FNU	QQ26	; Random byte for prices
+	FNU2	TALLY
+	FNU	SVC
+	FNUT	QQ21,6	;Galactic seed - must now be last in file
+;	FNUT	wastevar,3	;>>DJB 7/5/90<<
+;was MCH=FNU:MCH=FNU:MCH=FNU:NT%=MCH-TP:MCH=FNU
+NTpcent	equ	UP-TP
+
+	FNW	RLINE2	;	startup=9
+	FNW	FSH
+	FNW	ASH
+	FNW	ENERGY
+;REMFF
+	FNW	QQ24
+	FNW	QQ25
+	FNW	QQ28
+	FNW	QQ29
+	FNW	DSENT	;obj font currently in PPU
+			;0=>Dials; 1=>Typeface; 2=>Equippic
+			;3=>Little logo
+			;$80+N=Face pic N
+			;$C0+N=>Planet pic
+			;F5=>Inv icon
+
+	FNW	gov
+	FNW	tek
+	FNWT	QQ2,6	;current planet name
+	FNW	QQ3
+	FNW	QQ4
+	FNW	QQ5
+	FNW2	QQ6
+	FNW2	QQ7
+	FNW2	QQ8	; Distance to planet
+	FNW	QQ9	; Cursor cross
+	FNW	QQ10	; galaxy posn
+
+	FNW	PLANETNUM
+
+
+	FNW	IANTEMP
+
+	FNU	NOSTM
+	FNU	NOEXM
+;	FNU	sprx
+;	FNU	spry
+	IF	HAVETRIBS
+	FNU	TRIBCT
+	ENDIF
+	FNU	FEEPAID	; Docking fee paid?
+	FNU	FUELPRICE	
+
+	IF	SEETRIBS
+	FNWT	TRIBVX,8
+	FNWT	TRIBVXH,8
+	FNWT	TRIBVY,8
+	FNWT	TRIBXL,8
+	FNWT	TRIBXH,8
+	FNWT	TRIBY,8
+	ENDIF	
+	
+	FNW	suncount
+
+	FNW2	spasto
+
+	IF	MULTILANG
+	FNW2	QQ18V
+	FNW2	TKN1V
+	ENDIF
+
+	FNW	LANG	; Language number to use
+	FNW	LANG2	; 2^LANG
+
+
+	IF	TWOJOY
+	FNW2	dwnbut
+	FNW2	upbut
+	FNW2	lftbut
+	FNW2	rgtbut
+	FNW2	frbut1
+	FNW2	frbut2
+	FNW2	stabut
+	FNW2	selbut
+	
+dwnbut2	equ	dwnbut+1
+upbut2	equ	upbut+1
+lftbut2	equ	lftbut+1
+rgtbut2	equ	rgtbut+1
+frbut12	equ	frbut1+1
+frbut22	equ	frbut2+1
+stabut2	equ	stabut+1
+selbut2	equ	selbut+1
+
+	ELSE
+	FNW	dwnbut
+	FNW	upbut
+	FNW	lftbut
+	FNW	rgtbut
+	FNW	frbut1
+	FNW	frbut2
+	FNW	stabut
+	FNW	selbut
+	ENDIF
+
+
+	FNW	lfttra	; Faked Left and right buttons used 
+	FNW	rgttra	; by trade modes
+
+	FNW	autowk1	; Private workspace
+	FNW	autowk2	; for autoplay NMI code
+
+shfbut	equ	frbut2	; Button to enable slider control
+slilft	equ	lftbut	; Slider left button
+slirgt	equ	rgtbut	; Slider right button
+iconselbut	equ	selbut	; Icon selct button
+paubut	equ	stabut	; Game pause button
+
+
+;	FNU	djd
+	FNU	damp
+	FNU	JSTGY
+;	FNU	JSTE
+	FNU	dnoiz
+	FNU	mutok
+	FNU	autoflag
+
+
+;REM	Music vector
+
+Pa	equ	P
+;	FNZ	P_eltj
+;	FNZ	Q_eltj
+;	FNZ	R_eltj
+;	FNZ	S_eltj
+;	FNZ	T_eltj
+;	FNZ	U_eltj
+;	FNZ	T1_eltj
+
+P_eltj	EQU	P
+Q_eltj	EQU	Q
+R_eltj	EQU	R
+S_eltj	EQU	S
+T_eltj	EQU	T
+U_eltj	EQU	U
+T1_eltj	EQU	T1
+
+
+	FNZ2	fotraL
+	FNW2	fotraH
+	FNZ2	vitraL
+	FNW2	vitraH
+
+	FNW2	fotgtL
+	FNW2	fotgtH
+	FNW2	vitgtH
+
+	
+	FNWT	SX,NOST+1
+	FNWT	SY,NOST+1
+	FNWT	SZ,NOST+1
+
+	FNWT	BUF,90
+	FNW	HANG
+	FNWT	MANY,NTY+1
+SSPR	equ	MANY+SST
+MSLPR	equ	MANY+MSL
+	FNW	messle
+	FNWT	messbuf,32
+	FNWT	SXL,NOST+1
+	FNWT	SYL,NOST+1
+	FNWT	SZL,NOST+1
+
+	FNWT	safehouse,6
+	FNWT	sunbuff,8
+	FNW	NEWTAC
+
+BIGWKSP	EQU	BUF
+;	No more FNWs allowed!!
+;	SZL assumed to fall into Kpcent
+
+
+
+protlen	equ	0
+BULBCOL	equ	$E0
+
+
+	FNZ2	font	;	PPU font address
+	FNZ2	ffnt	;	Draw bank char defns
+	FNZ2	vdm	;	PPU char map address
+	FNZ2	fvdm	;	Draw bank video map
+
+	FNU2	bankstatus	; Top bit=>chars fully defined
+			;   bit 6=>char map finished
+			;   bit 5=>transmitted by VBI routine
+			;   bit 4=>begun transfer
+			;   bit 3=>zero as sent
+			;   bit 2=>send whole ascii map
+
+	FNU	vbcnt	;	Incremented each VBI
+	FNZ	trflag	;	Set while in transfer
+
+	FNZ	vbtgt	;	VBI wksp
+
+	FNZ	DUNNIT	;	POLLIT's flag (0=>done interrupt)
+;	FNZ	NODIALS1	;	0 if dials shown on draw bank
+	FNZ	DOINTRPT	;	128=>Wait for sprite coll enable
+	FNU	PALSENT	;	Pallete number	
+
+
+	FNZ2	nmiz1
+	FNZ2	nmiz2
+	FNZ2	kilz1
+	FNZ2	kilz2
+
+	FNZ	vbank	;	Bank NOT displayed
+	FNZ	sbank	;	Bank VBI routine both reads
+			;	from and sends to
+	FNZ	CVIDEO0	;	Copy of low 7 bits of VIDEO0
+
+	FNZ	vbeor	;	Bank toggler (0=>no switching)
+	FNZ	BANKNUM	;	CPU Bank switched in
+	FNZ	BANKFLAG
+
+	IF	TRABOT
+	FNZ2	NMIVECZP
+	ENDIF
+
+	IF	POLLSCAN
+	FNZ2	POLLTEMP
+	ENDIF
+
+	FNZ	MAXASC	;	Highest DETOK2 Ascii
+
+	FNZ2	autoptr	;	Pointer into joystick record
+
+
+;	FNU	MUTOKOLD
+;	FNU	MUPLA	;
+;	FNU	PATG	;	X
+;	FNU	FLH	;	F
+;	FNU	JSTK	;	K
+;	FNU	DISK	;	D
+;	FNU	MUFOR	;	C
+;	FNU	THETOG	;	E
+;	FNU	MUSILLY 	;	B
+;	FNU	MULIE	;
+
+	FNU	DTW1	;	128=>All char lower case
+	FNU	DTW2	;	128=>Last char was SPACE,comma etc
+	FNU	DTW3	;	FF=>Use David's tokens	
+	FNU	DTW4	;	   Buffered text flag	
+	FNU	DTW5	;	   Buffer pointer
+	FNU	DTW6	;	0=>All char upper case	
+	FNU	DTW8	;	FF    ANDing mask
+
+
+	FNU	TEMPX
+	FNU	TEMPY
+	FNU	TEMPZ	; Title sequence counts
+	FNU	DECIMAL	
+
+
+
+
+

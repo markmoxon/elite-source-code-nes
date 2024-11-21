@@ -1,0 +1,451 @@
+
+;	REM    ELITE <2> Nin
+;
+;	Macros
+
+
+JUSTRTI	equ	$C007
+
+
+INIMAC	MACRO
+	SEI		; 1 C000
+	INC	PROM	; 3 C001
+	JMP	Spcent	; 3 C004
+	RTI		; 1 C007
+
+	IF	NTSC
+;	DB	" 3.4"
+	DB	" 5.2"	; 4=12   Romname ****
+	ELSE
+;	DB	" 2.8"	; 4=12   Romname ****
+	DB	" 5.0"	; 4=12   Romname ****
+	ENDIF
+	ENDM
+
+
+VECMAC	MACRO
+	ORG	$BFFA
+	DW	JUSTRTI	; was NMIROUTINE in 2.8
+	DW	INITMMC1
+	DW	JUSTRTI	; was IRQROUTINE in 2.8
+	ENDM
+
+
+
+
+CHARDEF	MACRO		; Write 8 bytes
+
+	DB	@1
+	DB	@2
+	DB	@3
+	DB	@4
+	DB	@5
+	DB	@6
+	DB	@7
+	DB	@8
+	
+	ENDM
+
+FNset1b	MACRO		;5,6
+	LDA	#@2	;2
+	STA	@1	;3,4
+	ENDM
+
+FNset2b	MACRO	;put @2 into @1   10,12
+	LDA	#<(@2)	;2
+	STA	@1+1	;3,4
+	LDA	#>(@2)	;2
+	STA	@1	;3,4
+	ENDM
+
+SET2B	MACRO	;put @2 into @1 (MCB last)
+	LDA	#<(@2)	;2
+	STA	@1+1	;3,4
+	LDA	#>(@2)	;2
+	STA	@1	;3,4
+	ENDM
+
+COPY2B	MACRO	;copy @2 into @1 (MSB last)
+	LDA	@2
+	STA	@1
+	LDA	@2+1
+	STA	@1+1
+	ENDM
+
+
+BOUNDCHECK	MACRO	; Generate error if following branch round
+		; jump would cross page boundary
+	IF	(>*)>$FA
+	ERROR	"Dodgy branch at "@1
+	ENDIF
+	ENDM
+
+BOUNDCHECK2	MACRO
+	IF	(<(*+2)) <> (<@2)
+	ERROR	"Dodgy branch at "@1
+	ENDIF
+	ENDM
+
+
+
+
+ENPOLLSC	MACRO
+	IF	POLLSCAN
+	LDA	#0
+	STA	POLLTEMP
+	LDA	#FF
+	STA	DOCRWT
+	ENDIF
+	ENDM
+
+DIPOLLSC	MACRO
+	IF	POLLSCAN
+	LDA	#0
+	STA	DOCRWT
+	ENDIF
+	ENDM
+
+
+POLLBIT	MACRO	; Check if raster has hit MOB 0
+		;Must have >=60 cycles between repeated
+		;POLLBITs (if using DMA timer? I am breaking this
+		;rule all over the place! ICGB 27/10/91)
+
+		; POLLBIT is allowed to corrupt C but will actually
+		;always clear it (if not using DMA and IRQ clean)
+		;do not rely on this however!!! It corrupts A too.
+
+
+	IF	NEEDPOLL
+	POLLBITCORE	@1
+	ENDIF
+	ENDM
+
+POLLBIT0	MACRO
+	POLLBIT	@1	; Needed to catch 50Hz
+	ENDM
+
+
+
+POLLBIT1	MACRO	; Needed to catch DMA timer
+	POLLBIT	@1
+	ENDM
+
+
+POLLBIT2	MACRO
+	IF	NEEDPOLL2
+	POLLBIT	@1
+	ENDIF
+	ENDM
+
+
+POLLBIT3	MACRO
+	ENDM
+
+
+SPOLLBIT	MACRO
+	IF	NEEDPOLL
+	IF	POLLSCAN
+	PHA
+	POLLBIT	@1
+	PLA
+	ELSE
+	JSR	SLOWPOLL
+	ENDIF
+
+	ENDIF
+
+	ENDM
+
+
+
+POLLBITCORE	MACRO
+	IF	USEDMA
+	
+
+	LDA	DUNNIT
+	AND	WRST
+	BPL	!1
+	JSR	BUSYWAIT
+
+	ELSE	; (USEDMA)
+
+	IF	POLLSCAN
+
+	LDA	DUNNIT
+	BPL	!1
+	LDA	#@1
+	JSR	POLLSCANSUB
+
+	ELSE	;(POLLSCAN)
+
+	LDA	DUNNIT
+	BPL	!1
+	LDA	VSTAT
+	ASL	A
+	BPL	!1
+
+	JSR	SPRITEINT
+
+	ENDIF	;(POLLSCAN)
+
+	ENDIF	;(USEDMA)
+
+!1
+;	LDA	#128
+;	SEC
+
+	ENDM
+
+
+
+SPRITE	MACRO	;Place sprite @1 at (@2,@3) with attribute @4
+		;using OBJ slot @5
+	IF	@5>63
+	ERROR	"Too many sprites"
+	ELSE
+	LDA	#@1
+	STA	ATTRIBUTES+(4*(@5))+1
+	LDA	#@4
+	STA	ATTRIBUTES+(4*(@5))+2
+	LDA	#(@2-sprxoff)
+	STA	ATTRIBUTES+(4*(@5))+3
+	LDA	#(@3+spryoff+16*BIG)
+	STA	ATTRIBUTES+(4*(@5))+0
+	ENDIF
+	ENDM
+
+
+SPRITE2	MACRO	;Place sprite @1 at (@2,@3) with attribute @4
+		;using OBJ slot @5
+	IF	@5>63
+	ERROR	"Too many sprites"
+	ELSE
+	LDA	#@1
+	STA	ATTRIBUTES+(4*(@5))+1
+	LDA	#@4
+	STA	ATTRIBUTES+(4*(@5))+2
+	LDA	#(@2-sprxoff)
+	STA	ATTRIBUTES+(4*(@5))+3
+	LDA	LANG2
+	AND	#FREN
+	BEQ	!1
+	LDA	#16
+!1	CLC
+	ADC	#(@3+spryoff)
+	STA	ATTRIBUTES+(4*(@5))+0
+	ENDIF
+
+
+
+
+	ENDM
+
+SPRITEXY	MACRO	;Set sprite A (centre)  coord to (LI,Y)
+	ASL	A
+	ASL	A
+	TAX
+	LDA	LI
+	SEC
+	SBC	#sprxoff
+	STA	ATTRIBUTES+3,X
+	TYA
+	CLC
+	ADC	#spryoff
+	STA	ATTRIBUTES,X
+	ENDM
+
+
+SPRITEXYD	MACRO	;Set sprite A (centre)  coord to (LI,Y)
+		;wrt top of dials
+	ASL	A
+	ASL	A
+	TAX
+	LDA	LI
+	SEC
+	SBC	#sprxoff
+	STA	ATTRIBUTES+3,X
+	TYA
+	CLC
+	ADC	#toprow-6+8*ditp
+	STA	ATTRIBUTES,X
+	ENDM
+
+
+
+
+PRIMELATCH	MACRO
+	LDA	#<@1	;2
+	STA	VRAM_ADR	;4
+	LDA	#>@1	;2	
+	STA	VRAM_ADR	;4 =12
+	ENDM
+
+WRITELATCH	MACRO
+	LDA	#@1
+	STA	VRAM_DAT
+	ENDM
+
+
+WRITEPPU	MACRO
+	LDA	#<@1
+	STA	VRAM_ADR
+	LDA	#>@1	
+	STA	VRAM_ADR
+	LDA	#@2
+	STA	VRAM_DAT	
+	ENDM
+
+WRITEPPUA	MACRO
+	LDX	#<@1
+	STX	VRAM_ADR
+	LDX	#>@1	
+	STX	VRAM_ADR
+	STA	VRAM_DAT
+	ENDM
+		
+FNcelladd	MACRO		;@1=ptr to cell containing (A,Y)
+	LSR	A
+	LSR	A	; Add 64 for two rows	
+	LSR	A
+	CLC
+	ADC	YLOOKUPL,Y
+	STA	@1
+	LDA	fvdm+1
+	ADC	YLOOKUPH,Y
+	STA	@1+1
+
+	ENDM
+
+FNfoentry	MACRO		;@1 font entry for char A
+	LDX	ffnt8
+	STX	@1+1
+	ASL	A
+	ROL	@1+1
+	ASL	A
+	ROL	@1+1
+	ASL	A
+	ROL	@1+1
+	STA	@1
+	ENDM
+
+FNfoentryX	MACRO		;@1 font entry for char A
+	LDY	ffnt8	;3
+	STY	@1+1	;3
+	ASL	A	;2
+	ROL	@1+1	;5
+	ASL	A	;2
+	ROL	@1+1	;5
+	ASL	A	;2
+	ROL	@1+1	;5
+	STA	@1	;3=30
+	ENDM
+
+FNfoentry0	MACRO		;@1= bank 0 font entry for char A
+	LDX	#<(FONT1/8)
+	STX	@1+1
+	ASL	A
+	ROL	@1+1
+	ASL	A
+	ROL	@1+1
+	ASL	A
+	ROL	@1+1
+	STA	@1
+	ENDM
+
+FNfoentry1	MACRO		;@1= bank 1 font entry for char A
+	LDX	#<(FONT2/8)
+	STX	@1+1
+	ASL	A
+	ROL	@1+1
+	ASL	A
+	ROL	@1+1
+	ASL	A
+	ROL	@1+1
+	STA	@1
+	ENDM
+
+
+
+
+FNenterc	MACRO		;Enter char cell @1(if run out goto @2)
+
+	IF	segment
+	ELSE
+	POLLBIT	1
+	ENDIF
+
+	LDX	#0
+	LDA	(@1,X)
+	BNE	!1
+	LDA	frchar
+	BEQ	@2
+	STA	(@1,X)
+	INC	frchar
+!1
+	ENDM
+
+FNenterc2	MACRO		;Enter char cell @1(if run out goto @3)
+			; if virgin goto @2
+
+	IF	segment
+	ELSE
+	POLLBIT	2
+	ENDIF
+	LDX	#0
+	LDA	(@1,X)
+	BNE	!1
+	LDA	frchar
+	BEQ	@3
+	STA	(@1,X)
+	INC	frchar
+	JMP	@2
+!1
+	ENDM
+
+
+
+
+FNentc3	MACRO		;Enter char cell @1 use @2 for address
+			;Allowing for preserved characters
+			;Goto @3 if no frchar
+			; NB. Corrupts T
+	POLLBIT	3
+	LDX	#0
+	LDA	(@1,X)
+	BNE	!1
+	LDA	frchar
+	BEQ	!5
+	STA	(@1,X)
+	INC	frchar
+	JMP	!2
+
+!5	JMP	@3
+
+!1	CMP	#preserve
+	BCS	!2
+	CMP	#stripchr
+	BCC	!5
+
+
+	FNfoentry	LI2
+	LDA	frchar
+	BEQ	!5
+	LDX	#0
+	STA	(@1,X)
+	INC	frchar
+	FNfoentry	@2
+	STY	T_eltj
+	LDY	#7
+!3	LDA	(LI2),Y
+	STA	(@2),Y
+	DEY
+	BPL	!3
+	LDY	T_eltj
+	JMP	!4
+
+!2	FNfoentry	@2
+!4
+	ENDM
+
+

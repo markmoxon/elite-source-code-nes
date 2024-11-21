@@ -1,0 +1,203 @@
+
+;	REM	ELITE <G2>	Nin
+;
+;	Spritey Explosions, Plotting Dust Ptcls, Scanners
+
+
+PTCLS2	; As PTCLS but with sprites
+	LDY	#0
+	STY	NOEXM
+	LDA	EXSC
+	STA	Q	;Q=scaling factor
+	LDA	EXCN
+
+	BPL	!1
+	EOR	#FF
+!1	LSR	A
+	LSR	A
+	LSR	A
+	LSR	A
+	ORA	#1
+	STA	U	;U=no ptcls
+	LDY	#7
+	LDA	(XX0),Y
+	STA	TGT	;TGT=4*nodes+6
+	LDA	RAND+1
+	PHA
+	LDY	#6	; Y=6
+EXL52	LDX	#3
+!2	INY
+	LDA	XX3-7,Y	;K3=Node at Y in format YH,YL,XH,XL
+	STA	K3,X
+	DEX
+	BPL	!2
+	STY	CNT
+	LDA	NOEXM
+	CLC
+	ADC	#4
+	CMP	#noexp*4
+	BCS	!3
+	STA	NOEXM
+	TAY
+	LDA	K3
+	ORA	K3+2
+	BNE	!5	; offscreen?
+	LDA	K3+3
+	SBC	#3
+	BCC	!5
+	STA	ATTRIBUTES+4*expbase-4+3,Y
+	LDA	#2
+	STA	ATTRIBUTES+4*expbase-4+2,Y
+	LDA	K3+1
+	CMP	#2*Yabs-16
+	BCC	!4
+!5	LDA	#$F0
+	STA	ATTRIBUTES+4*expbase-4+0,Y
+	BNE	!3
+
+!4	ADC	#spryoff
+	STA	ATTRIBUTES+4*expbase-4+0,Y
+;	LDA	K3+3
+;	LSR	A
+;	AND	#1
+;	ADC	#expdef
+	LDA	#expdef
+	STA	ATTRIBUTES+4*expbase-4+1,Y
+
+!3
+;	LDY	#3
+
+!1
+	LDY	#EXSDoff
+	LDA	(INF),Y	; Initialise seed
+	EOR	CNT
+	STA	RAND
+	INY
+	LDA	(INF),Y
+	EOR	CNT
+	STA	RAND+1
+	INY
+	LDA	(INF),Y
+	EOR	CNT
+	STA	RAND+2
+	INY
+	LDA	(INF),Y
+	EOR	CNT
+	STA	RAND+3
+
+	LDY	U
+EXL42
+	POLLBIT	44
+
+	JSR	DORND2
+	STA	ZZ
+	LDA	K3+1
+	STA	R
+	LDA	K3
+	JSR	EXS1
+	BNE	EX112
+	CPX	Yx2M1
+	BCS	EX112
+	STX	Y1
+	LDA	K3+3
+	STA	R
+	LDA	K3+2
+	JSR	EXS1
+	BNE	EX42
+	LDA	Y1
+	JSR	PIXEL
+EX42	DEY
+	BPL	EXL42
+	LDY	CNT
+	CPY	TGT
+	BCS	!1	;!! was P%
+	JMP	EXL52
+!1	PLA
+	STA	RAND+1
+	LDA	Kpcent+6
+	STA	RAND+3
+	RTS
+
+EX112	JSR	DORND2
+	JMP	EX42
+
+
+
+SPIXEL2	; Pixel plot routine used for dust ptcls
+	; Plot Yth ptcl at X1,Y1 - 'size' in ZZ
+	STY	T1
+	TYA
+	ASL	A
+	ASL	A
+	TAY
+	LDA	#stardef
+	LDX	ZZ
+	CPX	#$18
+	ADC	#0
+	CPX	#$30
+	ADC	#0
+	CPX	#$70
+	ADC	#0
+	CPX	#$90
+	ADC	#0
+;	CPX	#$B0
+;	ADC	#0
+	STA	ATTRIBUTES+4*starbase-4+1,Y
+	LDA	X1
+	BPL	PX1
+	EOR	#$7F
+	CLC
+	ADC	#1
+PX1	EOR	#128
+	SBC	#sprxoff-1
+	CMP	#$F4
+	BCS	PX0
+	STA	ATTRIBUTES+4*starbase-4+3,Y
+	LDA	Y1
+	AND	#127
+	CMP	Ymem
+  	BCS	PX0
+	LDA	Y1
+	BPL	PX2
+	EOR	#$7F
+	ADC	#1
+PX2	STA	T
+	LDA	Ymem
+	SBC	T
+	ADC	#spryoff
+	STA	ATTRIBUTES+4*starbase-4+0,Y
+	LDY	T1
+	RTS
+
+PX0	LDA	#$F0
+	STA	ATTRIBUTES+4*starbase-4+0,Y
+	LDY	T1
+	RTS
+
+
+lowfree0	equ	$BFFA-*
+
+
+
+	
+
+	IF	NES
+	IF	*>$BFF9
+	ERROR	Plot bank code too long!
+	ENDIF
+
+
+
+	ORG	BANKSTART
+
+	INIMAC
+	; Safe to overwrite Dpcent pointers since
+	; we use copy at XX21	
+
+	VECMAC
+
+
+	BANK	plotbank
+	ENDIF
+
+

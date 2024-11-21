@@ -1,0 +1,152 @@
+;
+;
+;"ELITEZ"
+;	REM	ELITE <Z> Nin
+;
+;	End off code
+	IF	ROMCODE
+	ELSE
+	EXEC	INITMMC1
+	ENDIF 
+
+
+;	DB	"End of Resident Bank"
+
+
+Fpcent
+
+	IF	*>DATASTART
+	ERROR	"Resident bank code too long"
+	ENDIF
+
+	FORG	DATASTART
+
+
+lftbord	equ	1
+rgtbord	equ	2
+topbar	equ	3
+
+TYPEFACE
+
+horiz	equ	stripchr    
+
+	CHARDEF	$FF,$00,$00,$00,$00,$00,$00,$00
+	CHARDEF	$00,$FF,$00,$00,$00,$00,$00,$00
+	CHARDEF	$00,$00,$FF,$00,$00,$00,$00,$00
+	CHARDEF	$00,$00,$00,$FF,$00,$00,$00,$00
+	CHARDEF	$00,$00,$00,$00,$FF,$00,$00,$00
+	CHARDEF	$00,$00,$00,$00,$00,$FF,$00,$00
+	CHARDEF	$00,$00,$00,$00,$00,$00,$FF,$00
+filldwn	equ	horiz+7
+	CHARDEF	$00,$00,$00,$00,$00,$00,$00,$FF
+	CHARDEF	$00,$00,$00,$00,$00,$00,$FF,$FF
+	CHARDEF	$00,$00,$00,$00,$00,$FF,$FF,$FF
+	CHARDEF	$00,$00,$00,$00,$FF,$FF,$FF,$FF
+	CHARDEF	$00,$00,$00,$FF,$FF,$FF,$FF,$FF
+	CHARDEF	$00,$00,$FF,$FF,$FF,$FF,$FF,$FF
+	CHARDEF	$00,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+	CHARDEF	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+
+filled	equ	filldwn+7
+
+vrtline	equ	filled+1
+	CHARDEF	$80,$80,$80,$80,$80,$80,$80,$80
+	CHARDEF	$40,$40,$40,$40,$40,$40,$40,$40
+	CHARDEF	$20,$20,$20,$20,$20,$20,$20,$20
+	CHARDEF	$10,$10,$10,$10,$10,$10,$10,$10
+	CHARDEF	$08,$08,$08,$08,$08,$08,$08,$08
+	CHARDEF	$04,$04,$04,$04,$04,$04,$04,$04
+	CHARDEF	$02,$02,$02,$02,$02,$02,$02,$02
+	CHARDEF	$01,$01,$01,$01,$01,$01,$01,$01
+
+topbar2	equ	vrtline+8
+	CHARDEF	$00,$00,$00,$00,$00,$FF,$FF,$FF
+topbar3	equ	topbar2+1
+	CHARDEF	$FF,$FF,$FF,$00,$00,$00,$00,$00
+corner2	equ	topbar3+1
+	CHARDEF	$00,$00,$00,$00,$00,$C0,$C0,$C0
+corner3	equ	corner2+1
+	CHARDEF	$C0,$C0,$C0,$00,$00,$00,$00,$00
+corner4	equ	corner3+1
+	CHARDEF	$00,$00,$00,$00,$00,$03,$03,$03
+corner5	equ	corner4+1
+	CHARDEF	$03,$03,$03,$00,$00,$00,$00,$00
+
+lastcore	equ	corner5+1
+
+firstasci	equ	lastcore
+
+nonasci	equ	lastcore-stripchr
+rsvch	equ	stripchr+nonasci	; Char preserved by FUDGECLEAR
+preserve	equ	topbar2	;rsvch
+
+
+	INCBIN	\PDS\JOEL1\ZFONT.DAT
+
+datastop	equ	*
+
+	ORG	$FFDD
+	JMP	INITMMC1
+
+	IF	TOUGHCOM ! NTSC
+	DB	"DO NOT USE THIS IMAGE!!!!!"
+	ELSE
+	DB	"EL  "
+	DB	"    "
+	DB	"    "
+	DB	"    "
+	HEX	00 00 00 00 38 04 01 07
+	DB	$9C,$2A
+	ENDIF	;(TOUGHCOM)
+
+;	ORG	$FFFA
+
+	DW	NMIROUTINE
+	IF	ROMCODE
+	DW	INITMMC1
+	ELSE
+	DW	PDS
+	ENDIF
+	DW	IRQROUTINE
+
+
+
+	LIST	ON
+ZP	=	ZP
+FreeWP	=	Kpcent-WP
+FreeUP	=	WPS-UP
+topcode	=	Fpcent
+hfreeRES	=	datastart-Fpcent
+lfreePLOT	=	lowfree0
+lfreeDFLT	=	lowfree1
+lfreeTOK	=	lowfree2
+lfreePIC	=	lowfree3
+lfreePIC2	=	lowfree4
+lfreePIC3	=	lowfree5
+lfreeMUS	=	lowfree6
+abovedata2	=	$FFDD-datastop
+entrypt	=	Spcent
+sl1val	=	sl1
+sl2val	=	sl2
+tgiv	=	timegiven
+noexpl	=	noexp
+LCORE	=	lastcore
+RSV	=	rsvch
+firstsp2	=	firstsp
+freespr	=	256-lastsp
+fas	=	firstasci
+lastas	=	firstasci+2*fontsize
+commandlen	=	NTpcent
+bardef1111	=	bardef1
+TOTALWKSP1	=	X2TB+maxlines
+TOTALWKSP2	=	Kpcent+NOSH*NIpcent
+TOTALFREEB	=	lowfree0+lowfree1+lowfree3+lowfree4+lowfree5+lowfree6
+TOTALFREE	=	TOTALFREEB+hfreeRES+abovedata2
+PRELOGGAP	=	log-belowlog
+PROMVAL	=	PROM
+	LIST	OFF
+
+	END
+
+
+

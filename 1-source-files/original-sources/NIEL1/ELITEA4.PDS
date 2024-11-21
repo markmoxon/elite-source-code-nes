@@ -1,0 +1,291 @@
+
+;	ELITE <A4>	Nin
+
+;            Code for picture bank 3
+;
+
+	FORG	BANKSTART
+
+
+	INIMAC
+
+
+	IF	INCPPIC
+PLANPICDEF	INCBIN	CPLAPIC3.DAT
+
+	DW	"C"
+	DW	"c"
+	DW	"p"
+	DW	"y"
+	DW	"r"
+	DW	"i"
+	DW	"g"
+	DW	"h"
+	DW	"t"
+	DW	" "
+	DW	"("
+	DW	"C"
+	DW	")"
+	DW	" "
+	DW	"D"
+	DW	"."
+	DW	"B"
+	DW	"r"
+	DW	"a"
+	DW	"b"
+	DW	"e"
+	DW	"n"
+	DW	","
+	DW	" "
+	DW	"I"
+	DW	"."
+	DW	"B"
+	DW	"e"
+	DW	"l"
+	DW	"l"
+	DW	" "
+	DW	"1"
+	DW	"9"
+	DW	"9"
+	DW	"1"
+	DW	"."
+	
+
+
+
+GETPICtrue	; Get planet picture from ROM
+	JSR	GETPIC2true
+	PRIMELATCH	picdef*16
+	JSR	UNPACKTOLATCH3
+	JMP	UNPCKTL32
+
+GETPIC2true
+	LDA	#0
+	STA	SC+1
+	LDA	picstart
+	ASL	A
+	ROL	SC+1
+	ASL	A
+	ROL	SC+1
+	ASL	A
+	ROL	SC+1
+	STA	SC
+	STA	LI
+	LDA	SC+1
+	ADC	#<FONT2
+	STA	LI+1
+	LDA	SC+1
+	ADC	#<FONT1
+	STA	SC+1
+	; Decide which picture to use
+	LDA	QQ15+1
+	EOR	QQ15+4
+	EOR	QQ15+3
+
+	IF	0	;PROGTESTS
+	INC	IANTEMP
+	LDA	IANTEMP
+	ENDIF
+
+	AND	#15
+;	EOR	#4
+	TAX
+
+	CPX	PLANPICDEF
+	BCC	!1
+	LDX	PLANPICDEF
+	DEX
+
+!1	TXA	
+	ORA	#$C0
+	STA	DSENT
+
+;	LDA	PERMTAB,X
+;	LDA	#0
+;	LDA	#c12
+;	STA	COLPERM
+
+	TXA
+	ASL	A		; clears C
+	TAX
+	LDA	PLANPICDEF+2,X
+	ADC	#>PLANPICDEF
+	STA	V
+	LDA	PLANPICDEF+3,X
+	ADC	#<PLANPICDEF
+	STA	V+1	
+	
+	JSR	UNPCKTOSC3
+
+	COPY2B	SC,LI
+
+	JMP	UNPCKTOSC3
+
+	IF	AUTOPLAY
+STARTAUTOtrue
+	LDA	#5
+	JSR	PLUNKSLIDER
+	JSR	KNOWNSTATE
+	LDX	LANG
+	LDA	STPTTABL,X
+	STA	autoptr
+	LDA	STPTTABH,X
+	STA	autoptr+1
+	LDA	#0
+	STA	autowk1
+	STA	autowk2
+	LDX	#128
+	STX	autoflag
+	RTS
+
+
+STPTTABL	DL	STARTPOINTE,STARTPOINTG,STARTPOINTF,STARTPOINTI
+STPTTABH	DH	STARTPOINTE,STARTPOINTG,STARTPOINTF,STARTPOINTI
+
+
+
+	ENDIF	;(AUTOPLAY)
+
+;PERMTAB	; Permutation bytes for each image
+
+;c231	equ	%01111000
+;c13	equ	%01101100
+;c12	equ	%11011000
+;c23	equ	%10110100
+;
+;	DB	0	; saturn
+;	DB	c12	; dome
+;	DB	0	; earth
+;	DB	0	; city
+;	DB	0	; volcano
+;	DB	c231	; space stn
+;	DB	0	; saturn+rocks
+;
+;	HEX	00 00 00 00 00 00 00 00 00
+
+	ENDIF	; (INCPPIC)
+
+	IF	0
+
+UNPCKTOSC3	; Unpack compressed data at V to SC
+	LDY	#0
+!1	LDX	#0
+	LDA	(V,X)
+	INC	V
+	BNE	!5
+	INC	V+1
+!5	CMP	#$40
+	BCS	!2
+	TAX
+	AND	#$F
+	BEQ	!3
+	CPX	#$3F
+	BEQ	!4
+	TXA
+	CMP	#$20
+	BCS	!6
+	CMP	#$10
+	AND	#$F
+	TAX
+	BCS	!7
+
+	; Repeated 0s
+	LDA	#0
+!8	STA	(SC),Y
+	INY
+	BNE	!A
+	INC	SC+1
+!A	DEX
+	BNE	!8
+	JMP	!1
+
+!7	; Repeated FFs
+	LDA	#FF
+	BNE	!8
+
+
+!6	; Repeated byte
+	AND	#$1F	; Allows for big repeat
+	STA	T
+	LDX	#0
+	LDA	(V,X)
+	LDX	T
+	INC	V
+	BNE	!8
+	INC	V+1
+	JMP	!8
+
+!3	; Take as is
+	TXA
+!2	STA	(SC),Y
+	INY
+	BNE	!1
+	INC	SC+1
+	JMP	!1
+!4	RTS
+
+UNPACKTOLATCH3	; Unpack compressed data at V to PPU latch
+		; Picbank1 incarnation
+	LDY	#0
+UNPCKTL32
+!1	LDA	(V),Y
+	INY
+	BNE	!5
+	INC	V+1
+!5	CMP	#$40
+	BCS	!2
+	TAX
+	AND	#$F
+	BEQ	!3
+	CPX	#$3F
+	BEQ	!4
+	TXA
+	CMP	#$20
+	BCS	!6
+	CMP	#$10
+	AND	#$F
+	TAX
+	BCS	!7
+
+	; Repeated 0s
+	LDA	#0
+!8	STA	VRAM_DAT
+	DEX
+	BNE	!8
+	JMP	!1
+
+!7	; Repeated FFs
+	LDA	#FF
+	BNE	!8
+
+
+!6	; Repeated byte
+	AND	#$1F	; Allows for big repeat
+	TAX
+	LDA	(V),Y
+	INY
+	BNE	!8
+	INC	V+1
+	JMP	!8
+
+!3	; Take as is
+	TXA
+!2	STA	VRAM_DAT
+	JMP	!1
+!4	RTS
+ 
+	ENDIF
+
+	BMESSAGE "End of pic3 bank"
+
+	IF	*>$BFF9
+	ERROR	Picture3 bank code too long!
+	ENDIF
+
+lowfree5	equ	$BFFA-*
+
+	VECMAC
+
+	BANK	pic3bank
+
+

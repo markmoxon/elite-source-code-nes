@@ -1,0 +1,504 @@
+;
+;REM	ELITE <3>  Nin
+;
+;            Code for pic2bank
+
+
+	FORG	BANKSTART
+
+	INIMAC
+
+	IF	INCFACE
+
+faceobj	INCBIN	CFAC6OBJ.DAT
+
+facebck	INCBIN	CFAC6BCK.DAT
+
+jewellery	INCBIN	CFACEMIS.DAT
+
+;facemaps	INCBIN	FAC4MAPS.DAT
+
+;face0def	INCBIN	CFACE0DE.DAT
+
+
+LOGODEF	INCBIN	CLOGOEDD.DAT	;CLOGO2DE.DAT
+
+LOGOMAP	INCBIN	LOGOEDMA.DAT	;LOGO1MAP.DAT
+
+LITTLELOGMAP	INCBIN	LOGOE52M.DAT
+
+EQUIPMAP	INCBIN	EEQUIPMA.DAT
+
+
+DECDFCtrue	; Set S=Number of face to use
+	LDA	TALLY+1	;Copy of ratings code 
+	BNE	!4	;from status mode
+
+	LDX	TALLY
+	CPX	#0
+	ADC	#0	; 1=Harmless
+	CPX	#2
+	ADC	#0	; 2=M Harmless
+	CPX	#8
+	ADC	#0	; 3=Poor
+	CPX	#24
+	ADC	#0	; 4=Average
+	CPX	#44
+	ADC	#0	; 5=A Average
+	CPX	#130
+	ADC	#0	; 6=Competant
+	TAX
+	JMP	!3
+
+
+;	LDA	TALLY
+;	LSR	A
+;	LSR	A
+;!2	INX
+;	LSR	A
+;	BNE	!2
+;	BEQ	!3
+ 
+!4	LDX	#9	; 9=Elite
+	CMP	#25
+	BCS	!3
+	DEX		; 8=Deadly
+	CMP	#10
+	BCS	!3
+	DEX		; 7=Dangerous
+	CMP	#2
+	BCS	!3
+	DEX		; 6=Competant
+
+!3	; X=1 for mostly harmless
+	DEX
+	TXA
+	STA	S
+	ASL	A
+	ADC	S
+	STA	S
+
+	LDX	CONDPIC
+	BEQ	!1
+	DEX
+!1	TXA
+	CLC
+	ADC	S	; A=3*Rating+Status(0-2)
+	TAX
+	LDA	FACELUT,X
+
+	IF	PROGTESTS
+	LDX	CRGO+12	; use furs if nonzero
+	BEQ	!8
+	TXA
+!8
+	ENDIF
+
+	CMP	facebck	; Make sure picture exists
+	BCC	!5	; (assumes <256 pictures!)
+	LDA	facebck
+	SBC	#1
+!5	STA	S
+	RTS
+
+FACELUT	DB	0,1,2
+	DB	3,4,5
+	DB	6,6,7
+	DB	8,8,8
+	DB	9,9,9
+	DB	10,10,10
+	DB	11,11,11
+	DB	12,12,12
+	DB	13,13,13
+	DB	14,14,14
+
+
+
+GETFACE2true
+	LDA	#0
+	STA	SC+1
+	LDA	picstart
+	ASL	A
+	ROL	SC+1
+	ASL	A
+	ROL	SC+1
+	ASL	A
+	ROL	SC+1
+	STA	SC
+	STA	LI
+	LDA	SC+1
+	ADC	#<FONT2
+	STA	LI+1
+	LDA	SC+1
+	ADC	#<FONT1
+	STA	SC+1
+
+	LDA	DSENT
+	ASL	A
+	TAX
+	LDA	facebck+2,X
+	CLC
+	ADC	#>facebck
+	STA	V
+	LDA	facebck+3,X
+	ADC	#<facebck
+	STA	V+1
+
+	JSR	UNPACKTOSC2
+	LDA	LI
+	STA	SC
+	LDA	LI+1
+	STA	SC+1
+	JSR	UNPACKTOSC2
+	RTS
+
+GETFACtrue	
+	JSR	GETFACE2true; Get BCK image in other bank
+	LDA	DSENT
+	ASL	A	; Sets C
+	TAX	
+	CLC
+	LDA	faceobj+2,X	; Then do OBJ image
+	ADC	#>faceobj
+	STA	V
+	LDA	faceobj+3,X
+	ADC	#(<faceobj)
+	STA	V+1
+	PRIMELATCH	picdef*16
+	JSR	UNPACKTOLATCH2
+	FNset2b	V,jewellery
+	JMP	UNPACKTOLATCH2
+	ENDIF	; (INCFACE)
+
+
+
+picdef	equ	dialbase
+picbase	equ	8
+jewldef	equ	picdef+5*7
+jewlbase	equ	picbase
+fpicbase	equ	jewlbase+$C
+
+
+
+DOBIGLOGOtrue
+	SET2B	V,LOGODEF
+	LDA	frchar		; is 21
+	TAY
+	STY	K+2
+	ASL	A
+	STA	SC
+	LDA	#0
+	ROL	A
+	ASL	SC
+	ROL	A
+	ASL	SC
+	ROL	A
+	ADC	#<FONT1
+	STA	SC+1
+	ADC	#<(FONT2-FONT1)
+	STA	LI+1
+	LDA	SC
+	STA	LI
+	JSR	UNPACKTOSC2
+	COPY2B	SC,LI
+	JSR	UNPACKTOSC2
+
+	SET2B	V,LOGOMAP
+	LDA	#24
+	STA	K
+	LDA	#20
+	STA	K+1
+	LDA	#1
+	STA	YC
+	LDA	#5
+	STA	XC
+
+	JSR	PICMAPtrue
+
+	LDA	frchar
+	CLC
+	ADC	#208
+	STA	frchar
+
+	RTS	
+	
+
+
+PICMAPtrue	; Create K x K+1 picture at XC,YC 
+	; using map at V and adding K+2 to map values
+
+	LDA	#ncl
+	SEC
+	SBC	K
+	STA	ZZ
+	
+	JSR	RRS1
+
+
+	LDA	SC
+	CLC
+	ADC	XC
+	STA	SC
+	LDY	#0
+!1	LDX	K
+!2	LDA	(V),Y
+	BEQ	!6
+	CLC
+	ADC	K+2
+!6	STA	(SC),Y
+	INY
+	BNE	!5
+	INC	V+1
+	INC	SC+1
+!5	DEX
+	BNE	!2
+	LDA	SC
+	CLC
+	ADC	ZZ
+	STA	SC
+	BCC	!3
+	INC	SC+1
+!3	DEC	K+1
+	BNE	!1
+	RTS
+
+
+
+DOLITLOGtrue
+
+	LDA	#1
+	STA	XC
+	ASL	A
+	STA	YC
+	LDX	#8
+	STX	K
+	STX	K+1
+	LDX	#6
+	LDY	#6
+	LDA	#picdef-2
+	STA	K+2
+	LDA	CNT
+	LSR	A
+	LSR	A
+	STA	K+3
+	SET2B	V,LITTLELOGMAP
+
+
+SPPICTMAP	; Set up K x (K+1) OBJ picture top left corner
+	; at cell XC,YC
+	; with offsett X,Y
+	; using map at V adding (K+2)-1 to it, first sprite slot=K+3
+	; use OBJ pallete 1
+	LDA	#1
+	STA	S
+	LDA	XC
+	ASL	A
+	ASL	A
+	ASL	A
+	ADC	#(4-sprxoff)
+	STA	SC
+	TXA
+	ADC	SC
+	STA	SC
+	LDA	YC
+	ASL	A
+	ASL	A
+	ASL	A
+	ADC	#(spryoff-4)
+	STA	SC+1
+	TYA
+	ADC	SC+1
+	STA	SC+1
+	LDA	K+3
+	ASL	A
+	ASL	A
+	TAX
+	LDA	K+1
+	STA	T
+	LDY	#0
+
+!1	POLLBIT	213
+	LDA	SC
+	STA	LI
+	LDA	K
+	STA	ZZ
+!2	LDA	(V),Y
+	INY
+	BNE	!6
+	INC	V+1
+!6	CMP	#0
+	BEQ	!7
+	ADC	K+2
+	STA	ATTRIBUTES+1,X
+	LDA	S
+	STA	ATTRIBUTES+2,X
+	LDA	LI
+	STA	ATTRIBUTES+3,X
+	LDA	SC+1
+	STA	ATTRIBUTES+0,X
+	TXA
+	CLC
+	ADC	#4
+	BCS	!3
+	TAX
+!7	LDA	LI
+	CLC
+	ADC	#8
+	STA	LI
+	DEC	ZZ
+	BNE	!2
+	LDA	SC+1
+	ADC	#8
+	STA	SC+1
+	DEC	T
+	BNE	!1
+!3	RTS
+
+
+	
+	; Compression format
+
+	; 0000rrrr => rrrr zeroes
+	; 0001rrrr => rrrr FFs
+	; 0010rrrr => rrrr following bytes
+	; 0011rrrr => 16+rrrr following bytes
+
+	; (rrrr=0 => normal byte)
+
+	; 00111111 => End of Chunk
+
+
+	IF	0
+
+
+UNPACKTOSC2	; Unpack compressed data at V to SC
+	LDY	#0
+!1	POLLBIT	237
+	LDX	#0
+	LDA	(V,X)
+	INC	V
+	BNE	!5
+	INC	V+1
+
+!5	CMP	#$40
+	BCS	!2
+	TAX
+	AND	#$F
+	BEQ	!3
+	CPX	#$3F
+	BEQ	!4
+	TXA
+	CMP	#$20
+	BCS	!6
+	CMP	#$10
+	AND	#$F
+	TAX
+	BCS	!7
+
+	; Repeated 0s
+	LDA	#0
+!8	STA	(SC),Y
+	INY
+	BNE	!A
+	INC	SC+1
+!A	DEX
+	BNE	!8
+	JMP	!1
+
+!7	; Repeated FFs
+	LDA	#FF
+	BNE	!8
+
+
+!6	; Repeated byte
+	AND	#$1F	; Allows for big repeat
+	STA	T
+	LDX	#0
+	LDA	(V,X)
+	LDX	T
+	INC	V
+	BNE	!8
+	INC	V+1
+	JMP	!8
+
+!3	; Take as is
+	TXA
+!2	STA	(SC),Y
+	INY
+	BNE	!1
+	INC	SC+1
+	JMP	!1
+!4	RTS
+
+
+UNPACKTOLATCH2	; Unpack compressed data at V to PPU latch
+		; Picbank2 incarnation
+	LDY	#0
+!1	LDA	(V),Y
+	INY
+	BNE	!5
+	INC	V+1
+!5	CMP	#$40
+	BCS	!2
+	TAX
+	AND	#$F
+	BEQ	!3
+	CPX	#$3F
+	BEQ	!4
+	TXA
+	CMP	#$20
+	BCS	!6
+	CMP	#$10
+	AND	#$F
+	TAX
+	BCS	!7
+
+	; Repeated 0s
+	LDA	#0
+!8	STA	VRAM_DAT
+	DEX
+	BNE	!8
+	JMP	!1
+
+!7	; Repeated FFs
+	LDA	#FF
+	BNE	!8
+
+
+!6	; Repeated byte
+	AND	#$1F	; Allows for big repeat
+	TAX
+	LDA	(V),Y
+	INY
+	BNE	!8
+	INC	V+1
+	JMP	!8
+
+!3	; Take as is
+	TXA
+!2	STA	VRAM_DAT
+	JMP	!1
+!4	RTS
+
+	ENDIF
+
+
+
+
+
+	BMESSAGE	"End of Pic2 bank"
+	
+
+	IF	NES
+	IF	*>$BFF9
+	ERROR	Pic2 bank code too long!
+	ENDIF
+
+lowfree4	equ	$BFFA-*
+
+	VECMAC
+ 
+	BANK	pic2bank
+	ENDIF	; (NES)
+
+

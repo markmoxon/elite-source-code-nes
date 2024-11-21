@@ -1,0 +1,586 @@
+f;     
+;	Nintendo Elite
+;  
+;
+;	REM	ELITE <0>	Nin
+;
+
+
+;  Hello David!
+
+; If you have to burn a new rom then proceed as follows:
+
+; (1) Make whatever change is required for the new ROM.
+;     If you alter the code synch or timing then god help you cos
+;    the autoplay will probably fail.
+
+;     I have made a change since the version last sent (2.8) which
+;    is that the IRQ and NMI security vectors in the other banks
+;    now all point to an RTI at the start of the bank. In the sent
+;    version they pointed to random code (but hopefully whenever the
+;    wrong bank is paged in the RESET line is high)
+
+; (2) Find (CTRL-F, CTRL-T for next match) Romname. Change all the
+;    2.8's to 2.9's, the date in the ROM version string, and the
+;    file name to ELITE29.ROM.
+
+
+; (3) Assemble with ROMCODE=1.
+;    Check all the highfree, lowfree, abovedata etc.on the assembly
+;    screen for healthy numbers (ie. not FFxx)
+
+
+; (4) Enter monitor (f4) and type U< ELITEROM.29,8000,4000,0,1,8
+;    hopefully the NES screen will flash. Then type G FFDD. Hoepfully
+;    the game will start. Press RESET a few times to check vector OK.
+;     If download fails curse PDS, wobble card, try again (and again
+;    and again) It will work eventually.
+
+; (5) When happy with image exit PDS. Type CD ..\IEPROM. Then IEPROM.
+;    Configure burner for any 128K EPROM (5 then 5 then 14 I think)
+;    then Load File form Disk (8?) to get ELITE29.ROM into buffer.
+;    Press C to get the checksum.
+
+; (6) Go back to PDS directory and type P3 NOTES29.TXT. Edit this
+;    appropriately putting in checksum etc..
+
+; (7) Type PKZIP EL29 ELITE29.ROM NOTES29.TXT to create a file to modem
+;    to Japan. Get them to call you. You will need local echo on (ALT-E)
+;    and line feeds (SHIFT-TAB) but don't invoke these till you have
+;    established contact. Then Z-modem file to them (ALT-S) which takes
+;    about 6 minutes.
+
+; (8) Have a drink. 
+
+
+
+;	  Remaining bugs
+;	  ==============
+
+;	Worms unafraid of space station?
+
+;	Freeze while entering planet name aborts text entry
+;	but does freeze. Freeze while entering cmdr name aborts
+;	text entry and doesn't freeze.
+
+
+;	Still some unused ROM to fill!
+
+;	planet <-> system
+
+;	V high digits of cash are green in German.
+
+
+;	TO PRODUCE AN IMAGE ASSEMBLE WITH NO EXEC STATEMENT
+;	THEN ENTER MONITOR (F4) AND U >FILENAME,8000,4000,0,1,8
+;	             OR
+;	ASSEMBLE TO ROMFILE,<filename>,128
+
+
+;	Assumes CPU RAM from 0- $7FF and $6000-$7FFF (CMOS)
+;		PPU RAM from 0-$1FFF and $2000-$27FF
+;		7 16k pageable ROM banks at $8000-$BFFF
+;		1 16k ROM at $C000-$FFFF
+;	
+
+
+FIXBUG	EQU	1	;	1=>Fix FFs in CMOS RAM bug
+
+
+PROGTESTS	EQU	0	;	1=>Test features (Must be 0 finally)
+REVIEW	EQU	0	;	1=>Omit key features
+STAGFREEZE	EQU	0	;	1=>2 step game freeze for photos
+QUICKAUTO	EQU	0	;	1=>Short title page time
+TOUGHCOM	EQU	0	;	1=>Tough Jameson
+
+EMULATION	EQU	1
+NTSC	EQU	0	;	0=>PAL
+NTSCEV	EQU	0 	;	1=>Evaluation copy
+ROMCODE	EQU	1 	;	1=>Assemble a ROM image
+DOINCR3	EQU	0	;	1=>Foo's dodgy ROM paging
+RETURNPDS	EQU	0	;	1=>Return to PDS on game death
+BIG	EQU	1-NTSC	;	1=>18 line space view
+TRABOT	EQU	0*NTSC  	;	1=>Transfer below dials
+SEESPRITE	EQU	0	;	1=>Display collision sprite
+SFX	EQU	0	;	1=>David's old Sound FX
+INCMUSIC	EQU	1	;	1=>Music and new SFX
+TOPLINE	EQU	0	;	1=>Line below banner
+FASTLAUN	EQU	NTSC
+SEETRIBS	EQU	0	;	1=>Have visible squeekeys
+HAVETRIBS	EQU	1	;	1=>Have squeekeys at all
+VIRGIN	EQU	1	;	1=>New Y step line draw
+DIAGNOS	EQU	0	;	1=>Assemble various testing code
+SLOWFADE	EQU	1	;	1=>8 VSYNC fade
+TWOJOY	EQU	1	;	1=>Two player control
+SHOWDMAIRQ	EQU	0	;	1=>Grey band on DMA IRQ line 
+PADMESSAGES	EQU	0	;	1=>Messages flagging data 
+SLIDERWRAP	EQU	0	;	1=>Slider wraps around
+
+ONEPRESS	EQU	EMULATION	;	1=>Only need one press on B
+
+GAMECREDS	EQU	1	;	1=>include credits demo
+TRADEWRAP	EQU	0	;	1=>Wrapparound on trade modes
+SMARTSUN	EQU	1
+AUTOPLAY	EQU	1-NTSC	;	1=>Auto play demo sequence
+
+
+FULL	EQU	1	;	0=>Compact code
+DIALSONTOP	EQU	0	;	1=>Dials at top of screen
+SPLITSCREEN	EQU	1	;	1=>Do dial interrupt
+MULTILANG	EQU	1	;	1=>Bilingual code
+HOPPITYSQ	EQU	1	;	1=>Slanted slider square
+JORDAN	EQU	1	;	1=>Robust slider code
+
+
+AUTOSEARCH	EQU	0
+
+
+USEDMA	EQU	0	;	1=>Use DMA timer
+USEIRQ	EQU	0 & USEDMA	;	1=>Use IRQs as well
+RELYIRQ	EQU	USEIRQ	;	1=>Use DMA and assume IRQ works
+
+SEMIDMA	EQU	USEDMA & (RELYIRQ=0)
+
+
+NEEDPOLL	EQU	(RELYIRQ=0) & (SPLITSCREEN=1)
+
+NEEDPOLL2	EQU	(USEDMA=0)	& 1	;1=>Reliant on catching OBJ coll	
+
+
+POLLSCAN	EQU	0
+
+	IF	NEEDPOLL
+	IF	USEDMA
+segment	EQU	$20	; Line length drawn between
+			; POLLBITs
+	ELSE
+segment	EQU	0
+	ENDIF	;(USEDMA)
+			; 0=> every new cell
+	ELSE
+segment	EQU	0
+	ENDIF	;(NEEDPOLL)
+
+
+NES	EQU	1
+C64	EQU	0
+C65	EQU	0
+
+
+
+INCPLANET	EQU	FULL
+INCDUST	EQU	FULL
+
+INCHALL	EQU	FULL
+INCFACE	EQU	1
+INCPPIC	EQU	1
+INCEPIC	EQU	FULL
+
+
+ANYPIC	EQU	INCFACE ! INCPPIC ! INCEPIC
+
+
+
+ENGLISH	EQU	0
+GERMAN	EQU	1
+FRENCH	EQU	2
+ITALIAN	EQU	3
+
+AMERICAN	EQU	ENGLISH	; But may have to use alchohol refs
+
+
+ENGL	equ	1
+GERM	equ	2
+FREN	equ	4
+ITAL	equ	8
+
+
+GOATSOUP	equ	1
+
+SUPPORTED	equ	ENGL+GERM+FREN	; Languages to incorporate
+
+
+EURODIALS	EQU	1
+COMPDIALS	EQU	1 & EURODIALS
+COMPCOLMAP	EQU	1
+
+
+	IF	BIG
+SMALLDIALS	EQU	(DIALSONTOP=0) & 0
+	ELSE
+SMALLDIALS	EQU	0
+	ENDIF
+
+titletune	EQU	0
+docktune	EQU	1
+credtune	EQU	4
+combtune	EQU	4
+
+
+TWOREDS	EQU	0
+
+STBANK	EQU	0	;8 if need top 1mbit of 2mbit address space
+
+default	EQU	0+STBANK
+plotbank	EQU	1+STBANK
+tokbank	EQU	2+STBANK
+picbank	EQU	3+STBANK
+pic2bank	EQU	4+STBANK                                                                                                                                                                                                                                        
+pic3bank	EQU	5+STBANK
+musbank	EQU	6+STBANK                                                                              
+
+NOST	equ	20
+NOSH	equ	8	;<<IAN
+scanno	equ	8		; No. scaner bars
+
+
+;	Joystick values
+
+	IF	NTSC
+xstep	equ	8	;8
+ystep	equ	2	;4
+kbumpx	equ	14
+kbumpy	equ	14
+xdamp	equ	16
+ydamp	equ	12
+	ELSE
+xstep	equ	8	;8
+ystep	equ	2	;4
+kbumpx	equ	14
+kbumpy	equ	14
+xdamp	equ	16
+ydamp	equ	12
+	ENDIF
+
+	IF	ROMCODE
+
+	IF	TOUGHCOM
+	SEND	ROMFILE,ELITE01.ROM,128
+	ELSE
+
+; Romname ***
+
+	SEND	ROMFILE,ELTPAL52.ROM,128
+	ENDIF	;(TOUGHCOM)
+	ELSE
+	SEND	COMPUTER0
+	ENDIF	;(ROMCODE)
+
+
+timepership	EQU	7 	;	Time each ship up for
+
+
+BANKSTART	EQU	$8000	
+SCBASE	EQU	$6000	;font1 must divide 8 !!!!!!
+
+VDARK	EQU	$00
+DARK	EQU	$10
+BRIGHT	EQU	$20
+VBRIGHT	EQU	$30
+
+;	Colours used for PAL & NTSC
+	
+BLACK	EQU	$0F
+YELLOW	EQU	$08
+CYAN	EQU	BRIGHT+$0C	;2B
+DKCYAN	EQU	DARK+$0C
+WHITE	EQU	BRIGHT+$00
+BTWHITE	EQU	$30
+NAVY	EQU	$1C
+VIOLET	EQU	$23
+DKPINK	EQU	$15
+PINK	EQU	$25
+BTPINK	EQU	$35
+SALMON	EQU	$37
+RED	EQU	$06
+BTGREEN	EQU	$2A
+DKGREEN	EQU	$1A
+BLUE1	EQU	$22
+BLUE2	EQU	$11
+MAG	EQU	$13
+GREY	EQU	$00	
+GREY2	EQU	$0C
+ORANGE	EQU	$27
+DKRED	EQU	$06
+LTRED	EQU	$16
+SCARLET	EQU	$26
+DKYELLOW	EQU	DARK+YELLOW
+LTYELLOW	EQU	BRIGHT+YELLOW
+BTYELLOW	EQU	VBRIGHT+YELLOW
+DKGREY	EQU	$00
+LTGREY	EQU	$10
+BTGREY	EQU	$20
+
+
+BCKCOL	EQU	BLACK	;	Background colour
+FRGCOL	EQU	CYAN	;	Ship colour
+
+BOXCOL	EQU	GREY	;	Border and banner colour
+ELLCOL2	EQU	RED+$10	;	Ellipse colour
+
+ICBAR1	EQU	LTGREY
+ICBAR2	EQU	$1C	;BLUE1
+ICBAR3	EQU	ELLCOL2	;	Extra icon colour on chart strip
+
+DLTCOL	EQU	GREY	;	Dial letters colour
+BARCOL	EQU	DKGREEN	;	Dial bar colour
+BARCOL2	EQU	LTYELLOW
+
+DUSTCOL1	EQU	BTYELLOW
+DUSTCOL2	EQU	DKCYAN	;GREY2
+
+SCANCOL0	EQU	BTGREEN	; Colours for scanner bars
+SCANCOL1	EQU	BLUE1
+			; 3rd scan colour=YELLOW
+SCANCOL3	EQU	WHITE	; from explosion pallete
+
+
+NEEDCOL	EQU	PINK
+
+	IF	HOPPITYSQ
+SLIDCOL	EQU	$15	;PINK	;DARK+YELLOW
+SLIDCOL2	EQU	DKPINK
+	ELSE
+SLIDCOL	EQU	PINK
+	ENDIF
+
+
+SGTCOL	EQU	LTYELLOW
+
+DOCKED	EQU	DKCYAN	; Status page background colour if docked
+
+
+	IF	SEESPRITE
+hitcol	equ	PINK
+	ELSE
+hitcol	equ	$00
+	ENDIF
+
+lowholy	equ	5
+icbase	equ	4	; Base ASCII to use for icon strip
+dialbase	equ	65+icbase
+
+
+allgrey0	equ	4
+allgrey1	equ	4	; Solid char on combat strip
+allgrey	equ	4	; Solid char on chart strip
+
+allltgrey	equ	80+icbase
+
+
+XX3	EQU	$100	; Normal table ($70 bytes)
+ATTRIBUTES	EQU	$200	; CPU side MOB attributes
+WKSP	EQU	$300	; WP and UP block
+WPS	EQU	WKSP+$100	;
+UPS	EQU	WKSP
+Kpcent	equ	$600	;$5D0	; Infships store
+
+
+SAFESLOT	equ	Kpcent
+
+
+NIpcent	equ	42 	; must allow for explosion seed
+NIdwn	equ	38	; No of bytes copied from store
+NIup	equ	38	; No of bytes copied back
+
+
+	IF	Kpcent+NOSH*NIpcent>$7FF
+	ERROR	"NOSH too big for ship store"
+	ENDIF
+
+crosspx	equ	ATTRIBUTES+5*4+3
+crosspY	equ	ATTRIBUTES+5*4+0
+
+Dpcent	equ	$8000		; Address where Ship defns reside
+Shipadd	equ	$8000		; Address assumed when file created
+				; (both need LSB=0)
+ 
+DATASTART	equ	$FC00		; Start of after-code data 
+
+
+FONT1	equ	SCBASE
+VIDM1	equ	SCBASE+$1000
+FONT2	equ	SCBASE+$800
+VIDM2	equ	SCBASE+$1400
+TOPFAKE	equ	SCBASE+$1800
+NApcent	EQU	TOPFAKE
+FILERAM	equ	TOPFAKE+$100
+
+
+
+VID1VAL	EQU	%00011110	; Value for CTRL1
+VID1VAL0	EQU	%00000000
+;VID1VAL2	EQU	%11111010
+
+
+VID1GRY 	EQU	%00011011
+
+hscroll	EQU	$8
+
+
+messup	equ	10	; Time Messages displayed
+
+
+SAFE	EQU	$5000
+
+
+Bpcent	equ	$1D00
+Cpcent	equ	$6400
+Wpcent	equ	$A700
+Lpcent	equ	$2000
+NTY	equ	33	; No ship types
+Epcent	equ	Dpcent+2*NTY
+KWLpcent	equ	Epcent+NTY
+KWHpcent	equ	Epcent+2*NTY
+
+
+slidbase	equ	1		; First slider sprite
+sightbase	equ	slidbase+4		; First gun sight sprite
+lightbase	equ	sightbase+5		; (sightbase includes tgt square)
+needbase	equ	lightbase+1
+compbase	equ	needbase+2
+scanbase	equ	compbase+1
+starbase	equ	scanbase+scanno*3	; First dust ptcl sprite
+expbase	equ	starbase+NOST+1
+
+noexp	equ	63-expbase
+
+ncl	equ	32	; No char cells/row
+nby	equ	8	; No bytes/cell
+nca	equ	31	; No text cells/line
+LL	equ	29	; No usable text chars per line
+			; for right justified text 
+	IF	EMULATION
+toprow	equ	0
+	ELSE
+
+	IF	NTSC
+toprow	equ	2*8+7	; No lines scrolled down
+	ELSE
+toprow	equ	6
+	ENDIF
+
+	ENDIF
+
+banner	equ	2		; No lines reserved at top
+dili	equ	7-SMALLDIALS	; No lines for dials
+stripw	equ	2	; No text lines for icon bar
+
+basecell	equ	DIALSONTOP*4*(dili+stripw-1)
+
+	IF	BIG
+nli	equ	18	; No text lines
+	ELSE
+nli	equ	16	; No text lines
+	ENDIF
+deli	equ	nli+dili+1	; No lines for death effect
+txli	equ	nli+dili	; No text lines in trade mode	
+
+X	equ	128
+Yabs	equ	4*nli
+
+	IF	DIALSONTOP
+
+ditp	equ	1
+windowtop	equ	banner+dili+stripw-1
+sprxoff	EQU	4
+spryoff	EQU	toprow+banner*8-6
+spryoffD	EQU	toprow+2*8-6
+
+spr0x	equ	4
+spr0y	equ	2*Yabs+3+spryoff+1	; Y coord of OBJ 0
+spr0x2	equ	$F5
+spr0y2	equ	8*(nli+dili)+3+spryoff
+
+
+	IF	BIG
+inps	equ	txli-3		; Bottom input area
+	ELSE
+inps	equ	txli-2
+	ENDIF
+
+sl1	equ	dili+1
+sl2	equ	1
+
+
+	ELSE	;(DIALSONTOP)
+
+	IF	POLLSCAN
+ditp	equ	nli+banner+stripw+2
+	ELSE
+ditp	equ	nli+banner+stripw
+	ENDIF
+
+windowtop	equ	banner
+sprxoff	EQU	4
+spryoff	EQU	toprow+banner*8-6
+
+	IF	POLLSCAN
+spr0x	equ	21+8*8	;90	
+spr0y	equ	2*Yabs+3+spryoff+1+  8*8+4
+spr0y2	equ	8*(nli+dili)+spryoff+8*2-2-4
+	ELSE
+spr0x	equ	248	;4
+spr0y	equ	2*Yabs+3+spryoff	;+1
+spr0y2	equ	8*(nli+dili)+3+spryoff
+	ENDIF
+
+
+spr0x2	equ	248	;$F5
+
+
+
+	IF	POLLSCAN
+sl1	equ	nli+banner
+sl2	equ	nli+dili+banner+2-1
+	ELSE
+sl1	equ	nli+banner		;=20
+sl2	equ	nli+dili+banner	;=27
+	ENDIF
+
+	IF	BIG
+inps	equ	txli-3		; Bottom input area
+	ELSE
+inps	equ	txli-2
+	ENDIF
+
+
+	ENDIF	;(DIALSONTOP)
+	
+ticl	equ	nli+1	; No lines to clear on title page
+
+	IF	SUPPORTED & GERM
+fontsize	equ	95	; Can't be higher else not room for two
+	ELSE
+fontsize	equ	91
+	ENDIF
+
+
+ 
+	; system constants
+	;---------------------------------------------
+
+VRAM:		EQU	$0000	; address of video ram
+
+PALETTE:		EQU	VRAM+$3F00
+VCR:		EQU	$2000	; video control registers
+VIDEO0:		EQU	VCR+000	; video multi purpose register 0
+VIDEO1:		EQU	VCR+001	; video multi purpose register 1
+VSTAT:		EQU	VCR+002	; video general status register
+OAM_ADR:		EQU	VCR+003 ; sprite attribute address register
+SCROLL:		EQU	VCR+005 ; scroll h/v registers appear here
+VRAM_ADR:		EQU	VCR+006	; video address register
+VRAM_DAT:		EQU	VCR+007	; video data register
+
+SPRITE_DMA_ADR	EQU	$4014
+
+
+CONTROLLER1:	EQU	$4016
+CONTROLLER2:	EQU	$4017
+
+
+DOWNLOAD:		EQU	$FC7D	; development machine downloader
+
+
+
+

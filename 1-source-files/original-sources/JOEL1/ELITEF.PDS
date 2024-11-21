@@ -1,0 +1,2094 @@
+;
+;REM	ELITE <F> Joint
+;
+;	Reset, Death, Title page, Dokey, Warp, Mess, Mloop
+
+
+THERE	; Check not at crucial planet for 1st mission
+	LDX	GCNT
+	DEX
+	BNE	THEX
+	LDA	QQ0
+	CMP	#144
+	BNE	THEX
+	LDA	QQ1
+	CMP	#33
+	BEQ	THEX+1
+THEX	CLC
+	RTS
+RESET	JSR	ZERO
+	LDA	#0
+	STA	CURSFLAG
+
+	LDX	#6
+SAL3	STA	BETA,X
+	DEX
+	BPL	SAL3
+	TXA
+	STA	QQ12
+	LDX	#2
+REL5	STA	FSH,X
+	DEX
+	BPL	REL5
+	LDA	#FF
+	STA	stripno
+;	JSR	SOFLUSH	;>>>>DAVID 30/3/90<<<<
+
+
+;	LDA	#BCKCOL
+;	STA	COL0
+;	LDA	#FRGCOL
+;	STA	COL1
+
+
+RES2	; General game state clearing
+	; Wipe all ships, end any effects (bomb, ecm, lasers etc)
+	; Must exit with Y=$FF
+
+	IF	USEIRQ
+	CLI
+	ELSE
+	SEI
+	ENDIF 
+
+	LDA	#1
+	STA	vbeor
+
+	LDA	#lftbord
+	STA	LBORD
+	LDA	#rgtbord
+	STA	RBORD
+	IF	DIALSONTOP
+	LDA	#(4*(nli+banner))+basecell
+	STA	cellmax
+	ELSE
+	LDA	#(4*(nli+banner))+basecell
+	STA	cellmax
+	STA	cellmax+1
+	ENDIF
+
+	LDA	BOMB
+	BPL	!1
+	JSR	BOMBOFF
+	STA	BOMB
+!1	LDA	#NOST
+	STA	NOSTM
+	LDX	#FF
+	STX	MSTG
+	LDA	SKIPFLAG
+	ORA	#128
+	STA	SKIPFLAG
+	LDA	#128
+	STA	JSTX
+	STA	JSTY
+	STA	ALP2
+	STA	BET2
+	ASL	A
+	STA	COMBFLAG
+	STA	BETA
+	STA	BET1
+	STA	ALP2+1
+	STA	BET2+1
+	STA	MCNT
+	STA	LAS
+
+	IF	HAVETRIBS
+	STA	TRIBCT
+	ENDIF
+
+	STA	FEEPAID
+;	STA	OLDCHART
+	LDA	#3
+	STA	DELTA
+	STA	ALPHA
+	STA	ALP1
+
+	LDA	#Yabs
+	JSR	setYs
+	LDA	ECMA
+	BEQ	yu
+	JSR	ECMOF
+yu	JSR	WPSHPS
+	LDA	MODE2
+	BMI	!1
+	JSR	WPEXPL
+	JSR	ZONKSCANNERS
+!1	JSR	ZERO
+ 
+
+ZINF	; Zero infship workspace in preparation for NWSHP
+	POLLBIT	107
+
+	LDY	#NIdwn-1
+	LDA	#0
+ZI1	STA	INWK,Y
+	DEY
+	BPL	ZI1
+
+	POLLBIT	108
+
+	LDA	#96
+	STA	INWK+18
+	STA	INWK+22
+	ORA	#128
+	STA	INWK+14
+	RTS
+
+setYs	; Set height of view area =2*A
+	STA	Ymem
+	ASL	A
+	STA	Yx2
+	SBC	#0
+	STA	Yx2M1
+	RTS
+
+
+
+;	IF	FULL
+
+msblob	; Missile status blob
+	LDX	#4
+!1	CPX	NOMSL
+	BEQ	SAL8
+	LDY	#BLACK2
+	JSR	MSBAR
+	DEX
+	BNE	!1
+	RTS
+
+SAL8	LDY	#GREEN2
+	JSR	MSBAR
+	DEX
+	BNE	SAL8
+	RTS
+
+
+;	ELSE
+;msblob 	RTS
+;	ENDIF	; (full)
+
+
+;	IF	FULL
+
+MTT4	; Create trader
+
+	JSR	DORND
+	LSR	A
+	STA	INWK+32	; Passive
+	STA	INWK+29
+	ROL	INWK+31	; May have one missile
+	AND	#15
+	ADC	#10
+	STA	INWK+27
+	JSR	DORND
+	BMI	nodo
+	LDA	INWK+32	; Head towards planet
+	ORA	#$C0
+	STA	INWK+32
+	LDX	#16
+	STX	NEWB
+nodo	AND	#2
+	ADC	#CYL
+	CMP	#HER
+	BNE	!1
+	LDA	#CYL	;Create
+!1	JSR	NWSHP	;trader
+	JMP	MLOOP
+
+
+TT100	; Main game loop
+
+	LDA	clok+1
+	STA	RAND
+	LDA	Kpcent+6
+	STA	RAND+1
+	LDA	rnd	;Whitticker's random no
+	STA	RAND+3
+
+	LDA	QQ12
+	BEQ	!3	;!! was P%
+	JMP	MLOOP
+!3	
+	JSR	Mpcent
+	DEC	MCNT
+	BEQ	!2
+!1	JMP	MLOOP
+
+!2	; Ship creation time
+	
+	LDA	MJ
+	ORA	COMBFLAG
+	BNE	!1
+	JSR	DORND
+	CMP	#40
+	BCS	MTT1
+	LDA	JUNK	; Consider
+	CMP	#3	; creating
+	BCS	MTT1	; space junk
+	JSR	ZINF
+	LDA	#38
+	STA	INWK+7	; at Z=002600
+	JSR	DORND
+	STA	INWK
+	STX	INWK+3
+	AND	#128
+	STA	INWK+2
+	TXA
+	AND	#128
+	STA	INWK+5	; Y=+/-0000RR
+	ROL	INWK+1	; X=+/-000(2)RR	
+	ROL	INWK+1
+	JSR	DORND	; (C always seems low after)
+	AND	#$30
+	BNE	!4
+	JMP	MTT4	; either do trader		
+!4	ORA	#$6F
+	STA	INWK+29
+	LDA	SSPR
+	BNE	MLOOPS
+	TXA
+	BCS	MTT2
+	AND	#31
+	ORA	#16
+	STA	INWK+27
+	BCC	MTT3
+MTT2	ORA	#127
+	STA	INWK+30
+MTT3	JSR	DORND
+	CMP	#252
+	BCC	!1
+	LDA	#HER
+	STA	INWK+32
+	BNE	!2
+!1	CMP	#10
+	AND	#1
+	ADC	#OIL	
+!2	JSR	NWSHP 	; or asteroid/boulder (possibly barrel)
+MLOOPS	JMP	MLOOP
+
+MTT1			; Consider new ship
+	LDA	SSPR
+	BNE	MLOOPS
+	JSR	BAD
+	ASL	A
+	LDX	MANY+COPS
+	BEQ	!1
+	ORA	FIST 
+!1	STA	T	;T nonzero=>some degree of
+	JSR	Ze	;naughtiness
+	CMP	#136
+	BNE	!3
+
+;	cmp	#230
+;	bcc	!3	;iiiiiiiiiiiiiii
+
+	JMP	fothg	; 1/256 chance of Thargoid
+!3	CMP	T
+	BCS	!2
+	LDA	NEWB	;so can create angry cops
+	ORA	#4
+	STA	NEWB
+	LDA	#COPS
+	JSR	NWSHP
+!2	LDA	MANY+COPS
+	BNE	MLOOPS
+	DEC	ENVIRO
+	BPL	MLOOPS	; Decrement ENVIRO until zero
+	INC	ENVIRO	; if no cops about
+	LDA	TP
+	AND	#$C	; and when zero consider creating
+	CMP	#8	; Thargoid if on Mission Two
+	BNE	nopl
+	JSR	DORND
+	CMP	#200
+	BCC	nopl
+fothg2	JSR	GTHG2
+	JMP	MLOOP
+nopl	
+	JSR	DORND
+	LDY	gov	; Use gov't type
+	BEQ	!1	; for baddy likelihood
+	LDY	JUNK	; and (unless anarchy)
+	LDX	FRIN+2,Y	; reduce likelihood if
+	BEQ	!2	; already condn yellow
+	CMP	#50	; (has nice side effect of
+	BCS	MLOOPS	; safer if with other trader)
+!2	CMP	#100
+	BCS	MLOOPS
+	AND	#7
+	CMP	gov
+	BCC	MLOOPS
+!1
+	JSR	Ze	; If randome>100 create
+	CMP	#100	; a pack else single ship
+	
+	AND	#$0F
+	ORA	#$10
+	STA	INWK+27	; added to cure frozen ships
+
+
+	BCS	DOPACK	; (either CYL2,ASP,PYT2, or FER)
+	INC	ENVIRO	; Create a friendly ship
+	AND	#3	; and...
+	ADC	#CYL2
+	TAY
+	JSR	THERE	; Consider creating
+	BCC	NOCON	; constrictor
+	LDA	#$F9
+	STA	INWK+32
+	LDA	TP
+	AND	#3
+	LSR	A
+	BCC	NOCON
+	ORA	MANY+CON
+	BEQ	YESCON
+NOCON
+;	LDA	#4	; ...rely on NWSHP to make angry
+;	STA	NEWB
+	JSR	DORND
+	CMP	#200	; give ecm if rand>200
+	ROL	A
+	ORA	#$C0
+	STA	INWK32
+	TYA
+	EQUB	$2C
+YESCON	LDA	#CON
+focoug	JSR	NWSHP
+mj1	JMP	MLOOP
+
+
+fothg	LDA	Kpcent+6
+	AND	#$3E
+	BNE	fothg2
+	LDA	#18	; Very small chance of replacing
+	STA	INWK+27	; Thargoid with Cougar
+	LDA	#$79
+	STA	INWK32
+	LDA	#COU
+	BNE	focoug
+
+DOPACK	AND	#3
+	STA	ENVIRO
+	STA	XX13
+!1	LDA	#4	; Reset NEWB to angry non-sluggish
+	STA	NEWB
+	JSR	DORND
+	STA	T
+	JSR	DORND
+	AND	T
+	AND	#7
+	ADC	#PACK
+	JSR	NWSHP	;pack
+	DEC	XX13
+	BPL	!1
+
+MLOOP	; Main Game loop if docked
+	LDX	#FF
+	TXS
+;	JSR	COLOURCYCLES
+	LDX	GNTMP	; Cool laser
+	BEQ	EE20
+	DEC	GNTMP
+EE20	LDX	LASCT
+	BEQ	NOLASCT
+	DEX
+	BEQ	*+3	;!! was P%
+	DEX
+	STX	LASCT
+NOLASCT	LDA	MODE
+	BEQ	plus13
+
+
+
+	
+;	AND	PATG	; Slow game if
+;	LSR	A	; trade mode unless
+;	BCS	plus13	; PATG set and LSB of QQ11=0
+
+	
+	LDY	#4
+	JSR	DELAY
+
+
+plus13
+
+	IF	HAVETRIBS
+
+tribscrm	EQU	$E0
+
+
+	LDA	TRIBBLE+1	; Breed tribbles!
+	BEQ	nobabies
+	JSR	DORND
+	CMP	#220
+	LDA	TRIBBLE
+	ADC	#0
+	STA	TRIBBLE
+	BCC	nobabies
+	INC	TRIBBLE+1
+	BPL	nobabies
+	DEC	TRIBBLE+1
+nobabies	;--BT
+	LDA	TRIBBLE+1
+	BEQ	NOSQUEEK
+
+	LDY	CABTMP	; Check for cooking
+	CPY	#tribscrm
+	BCS	!1
+	LSR	A
+	LSR	A
+	
+!1	; Make them scream!
+	STA	T
+	JSR	DORND
+	CMP	T
+	BCS	NOSQUEEK
+	AND	#3
+	TAY
+	LDA	TRIBNOILUT,Y
+	TAY
+	JSR	NOISE
+NOSQUEEK
+	ENDIF	; (HAVETRIBS)
+
+	LDA	SKIPFLAG
+	LDX	QQ22+1
+	BEQ	!4
+	ORA	#128
+!4	LDX	COMBFLAG
+	BEQ	!6
+	AND	#127
+!6	STA	SKIPFLAG
+	AND	#$C0
+	BEQ	!5
+	CMP	#$C0
+	BEQ	!5
+	CMP	#$80
+	ROR	A
+	STA	SKIPFLAG
+	JSR	UPDATESTRIP
+!5	
+
+
+
+
+	JSR	TT17
+
+FRCE	; Obey key command A (X,Y=cursor move if trade mode)
+	JSR	TT102
+	JMP	TT100
+
+TRIBNOILUT	DB	sfxtrib,sfxtrib,sfxtrib,sfxtrib2
+
+
+
+TT102
+	CMP	#0
+	BNE	!2
+	JMP	HME1
+!2	CMP	#stak
+	BNE	!5
+	JMP	STATUS
+!5
+;	CMP	#f4
+;	BNE	*+5	;!! was P%
+;	JMP	TT22
+
+;	LDX	QQ22+1	;>>DJB 28/4/90<<
+;	BNE	!1	;Hyperspace check
+
+	CMP	#ochk
+	BEQ	!4
+	CMP	#nchk
+	BNE	!1
+	LDA	OLDCHART
+	EOR	#128
+	STA	OLDCHART
+!4
+	LDA	OLDCHART
+	BPL	!3
+	JMP	TT22
+!3	JMP	TT23
+!1	CMP	#datk
+	BNE	TT92
+	JSR	HOMECURSOR
+;	JSR	TT111
+	JMP	TT25
+TT92	CMP	#invk
+	BNE	!5	;!! was P%
+	JMP	TT213
+!5	CMP	#cark
+	BNE	!7	;!! was P%+5
+
+
+	IF	POLLSCAN
+	DIPOLLSC
+	JSR	TT167
+	ENPOLLSC
+	RTS
+	ELSE
+	JMP	TT167
+	ENDIF
+
+!7	CMP	#launk
+	BNE	!4
+	LDX	QQ12
+	BEQ	!4
+	JSR	SETCURSFLAG
+	JMP	TT110
+!4	CMP	#dcomk
+	BNE	fvw
+	LDX	QQ12
+	BNE	fvw
+
+	LDA	auto
+	BNE	!1
+	; Want to turn docking computers on
+	LDA	SSPR
+	BEQ	fvw
+	LDA	DKCMP	; If not fitted
+	ORA	FEEPAID	; or already paid
+	BNE	!2	; then try to take
+	LDY	#0	; 5CR cash
+	LDX	#50
+	JSR	LCASH
+	BCS	!8
+	JMP	DOBOOP
+
+!8	DEC	FEEPAID	; and set FEEPAID if succeed
+	LDA	#0
+	JSR	MESS
+!2	LDA	#docktune
+	JSR	WSCAN
+	JSR	INITUNEsmart
+	LDA	#FF
+	BNE	!3	
+!1	; Want to turn docking computers off
+	JSR	KILLTUNE
+	LDA	#0
+!3	STA	auto
+	LDA	MODE
+	BEQ	!9
+	JSR	CLYNS
+	JSR	UPDATETMODE
+!9	RTS
+
+fvw
+	JSR	cleankeys
+
+	CMP	#chvk
+	BNE	!2
+	LDA	QQ12
+	BPL	!4
+
+
+	RTS
+
+;	IF	INCHALL
+;	LDA	MODE
+;	BNE 	!5
+;	LDA	VIEW
+;	CLC
+;	ADC	#1
+;	AND	#3
+;	STA	VIEW
+;!5	JMP	HALL
+;	ELSE	; (INCHALL)
+;	RTS
+;	ENDIF	; (inchall)
+
+!4	LDA	#0	; Always return to front view
+	LDX	MODE
+	BNE	!3
+	LDA	VIEW
+	CLC
+	ADC	#1
+	AND	#3
+!3	TAX
+	JMP	LOOK1
+
+!2	BIT	QQ12
+	BPL	INSP
+
+	IF	PROGTESTS
+	CMP	#magk	; Routine test key <<<<
+
+	BNE	!1
+	JSR	DOMAGICKEY
+	LDA	#magk
+	ENDIF
+
+!1
+	CMP	#eqpk
+	BNE	!5	;!! was P%+5
+	JMP	EQSHP
+!5	CMP	#lodk
+	BNE	!6
+	JMP	NEWLOAD	;SVE
+!6	
+
+INSP
+INSP2	CMP	#hypk
+	BNE	!5	;!! was P%+5
+	JMP	hyp
+!5	CMP	#ghypk
+	BNE	NWDAV5	;!! was P%
+	JMP	galhyp
+
+;T95S	JMP	T95
+
+NWDAV5
+;	CMP	#DINT
+;	BEQ	T95S
+	CMP	#Fkey	;Find
+	BNE	HME1
+;	LDA	QQ12
+;	BEQ	t95_LC
+	LDA	QQ22+1
+	BNE	ANRTST95
+	LDA	MODE
+	AND	#chbit1
+	CMP	#chbit2
+	BNE	ANRTST95	;<<iian
+	JMP	HME2
+HME1	STA	T1
+	LDA	MODE
+	AND	#chbit1
+	CMP	#chbit2
+	BNE	TT107	;<<iian
+	LDA	QQ22+1
+	BNE	TT107
+	LDA	T1
+	CMP	#homek
+	BNE	ee2
+	JSR	ping
+
+TAKEMETHERE
+	ASL	CURSFLAG
+	LSR	CURSFLAG
+	JMP	HOMECURSOR
+	
+
+ee2	JSR	TT16 
+TT107
+	LDA	QQ22+1
+	BEQ	ANRTST95
+	DEC	QQ22
+	BNE	ANRTST95
+
+
+	LDA	#5
+	STA	QQ22
+
+	DEC	QQ22+1
+	BEQ	!1
+	LDA	#250
+	JMP	MESS	;Hyperspace cntdwn message
+
+
+!1	JMP	TT18
+
+
+;COLOURCYCLES	LDA	MODE
+;!1	CMP	#datmod
+;	BNE	!5
+;	LDA	vbcnt
+;	TAX
+;	SEC
+;	SBC	LASTFLICK
+;	CMP	#8
+;	BCC	!5
+;	STX	LASTFLICK	
+;	LDX	#3
+;!7	LDA	COL0,X
+;	STA	XX3,X
+;	DEX
+;	BPL	!7
+;	LDA	COLPERM
+;	BEQ	!5	
+;	LDY	#0
+;	JSR	!B
+;!B	JSR	!A
+;
+;!A	PHA
+;	AND	#3
+;	TAX
+;	LDA	XX3,X
+;	STA	COL0,Y
+;	PLA
+;	LSR	A
+;	LSR	A
+;	INY
+;!5	
+
+ANRTST95	RTS
+
+
+BAD	; A=Naughtiness due to current cargo
+	LDA	QQ20+3
+	CLC
+	ADC	QQ20+6
+	ASL	A
+	ADC	QQ20+10
+	RTS
+
+FAROF
+	LDA	INWK+2
+	ORA	INWK+5
+	ORA	INWK+8
+	ASL	A
+	BNE	!1
+
+	LDA	#$E0
+	CMP	INWK+1
+	BCC	!2
+	CMP	INWK+4
+	BCC	!2
+	CMP	INWK+7
+!2	RTS
+
+!1	CLC
+	RTS
+
+
+;	ENDIF	; (full)
+
+MAS4	ORA	INWK+1
+	ORA	INWK+4
+	ORA	INWK+7
+	RTS
+
+;	FNU	brkd
+
+;	IF	FULL
+
+
+cleankeys0	LDA	stripop
+cleankeys	; Check for keys that do not change mode
+	; set C if recognised
+	; and alter stripop if necessary
+	CMP	#frz
+	BNE	!1
+	LDA	#0
+	STA	stripop
+	JSR	FREEZE
+!3	SEC
+	RTS
+!1	CLC
+	RTS
+
+DEATH
+	JSR	KILLTUNE
+	JSR	EXNO3
+	JSR	RES2
+	ASL	DELTA
+	ASL	DELTA
+	LDA	#0
+	STA	LBORD
+	STA	RBORD
+
+	IF	AUTOPLAY
+	STA	autoflag
+	ENDIF
+
+
+	LDA	#detmode
+;	JSR	TITS2true
+
+	JSR	TT66
+	JSR	DEATHSUB	;Gets rid of flashing rectangle
+
+	JSR	COPYBANK
+	JSR	KILLDISP
+
+	LDA	#0
+	STA	stripenb
+	LDA	#$C4
+	JSR	SENDboth	;SLOW2
+	LDA	#0
+	STA	MODE
+
+	STA	MODE2
+
+	LDA	frchar
+	STA	charmin
+	LDA	#(nli+banner+dili+2)*4
+	STA	zermax
+	LDX	#4*banner
+	STX	cellmin
+	IF	DIALSONTOP
+	STA	cellminH
+	STA	zermin
+	ENDIF
+	LDA	#4*deli
+	JSR	setYs
+
+	LDY	#scanno
+	LDA	#1
+!1	STA	SCSP,Y
+	DEY
+	BNE	!1
+
+	JSR	nWq
+	JSR	DORND
+	AND	#$87
+	STA	ALPHA
+	AND	#$7
+	STA	ALP1
+	LDA	ALPHA
+	AND	#128
+	STA	ALP2
+	EOR	#128
+	STA	ALP2+1
+
+!D1	JSR	Ze
+	LSR	A
+	LSR	A
+	STA	INWK
+	LDY	#0
+	STY	MODE
+	STY	INWK+1
+	STY	INWK+4
+	STY	INWK+7
+	STY	INWK+32
+	DEY
+	STY	MCNT
+	EOR	#42
+	STA	INWK+3
+	ORA	#80
+	STA	INWK+6
+	TXA
+	AND	#$8F
+	STA	INWK+29
+	LDY	#$40
+	STY	LASCT
+	SEC
+	ROR	A
+	AND	#$87
+	STA	INWK+30
+	LDX	#OIL
+	LDA	XX21-1+2*PLT
+	BEQ	!3
+	BCC	!3
+	DEX
+!3	JSR	fq1
+	JSR	DORND
+	AND	#128
+	LDY	#31
+	STA	(INF),Y
+	LDA	FRIN+6	;4
+	BEQ	!D1
+	LDA	#8
+	STA	DELTA
+
+	LDA	#12
+	STA	messYC
+	LDA	#146
+	LDY	#120
+	JSR	MESSex
+	JSR	NOSPRITES
+
+	LDA	#30
+	STA	LASCT
+
+!D2
+	JSR	flipbank
+	JSR	Mpcent2
+	JSR	DEATHSUB
+
+	LDA	#$CC
+	JSR	STARTDLOAD2
+
+;	LDY	#50
+;	JSR	DELAY
+
+	DEC	LASCT
+	BNE	!D2
+	JMP	DEATH2
+
+
+
+;	ENDIF	; (full)
+
+BEGIN	; Display is live but faded down
+
+	IF	POLLSCAN
+	LDA	#0
+	STA	POLLTEMP
+	STA	POLLTEMP+1
+	DIPOLLSC
+	ENDIF
+
+	; Music driver initialise
+	IF	INCMUSIC
+
+	lda	#255	;Do this
+	sta	rnd	;to initialise
+	lda	#128	;the Random
+	sta	rnd+1	;number seed
+	lda	#27	;for the FX
+	sta	rnd+2	;which need
+	lda	#52	;it.
+	sta	rnd+3
+
+;On a 50Hz machine (UK)  TVflag should contain $00.
+;On a 60Hz machine (USA) TVflag should contain $ff.
+
+;	lda	#$00 ;UK 50Hz
+;	sta	TVflag
+
+	JSR	MUSOFFsmart
+
+
+	ENDIF	;(incmusic)
+
+;	LDX	#(MUSILLY-MUTOKOLD)
+;	LDA	#0
+
+;BEL1	STA	MUTOKOLD,X
+;	DEX
+;	BPL	BEL1
+
+;	LDA	XX21+SST*2-2
+;	STA	spasto
+;	LDA	XX21+SST*2-1
+;	STA	spasto+1
+
+	JSR	JAMESON
+	JSR	deftog
+	LDA	#tcol0
+	STA	TCOL
+	LDX	#FF
+	STX	MODE2
+	TXS
+	JSR	RESET
+
+	JSR	POWERUPMODE
+
+	IF	POLLSCAN
+	JSR	DFAULT
+	ENDIF
+
+DEATH2	
+	LDX	#FF
+	TXS
+	INX
+	STX	OLDCHART
+	
+	JSR	RES2
+
+	IF	AUTOSEARCH
+	INC	IANTEMP
+	ENDIF
+
+	LDA	#5
+	JSR	PLUNKSLIDER
+
+	JSR	ZEKTRAN
+
+	JSR	TITLESEQ
+
+	IF	GAMECREDS
+	LDA	selbut
+	AND	stabut
+	AND	frbut1
+	AND	frbut2
+	BNE	DOCREDS
+	ENDIF
+
+	LDA	selbut
+	IF	TWOJOY
+	ORA	selbut+1
+	ENDIF
+	BNE	DOGAME
+
+DOCOMBSEQ	LDA	#0
+!5	PHA
+	JSR	DEATHS1
+	LDA	#FF
+	STA	MODE
+	IF	AUTOPLAY
+	LDA	autoflag
+	BEQ	!1	
+	JSR	KNOWNSTATE
+!1
+	ENDIF
+	
+
+
+	JSR	WSCAN
+	LDA	#combtune
+	JSR	INITUNEsmart
+
+	
+	IF	NTSC
+	ELSE
+	LDA	Speed
+	CLC
+	ADC	#6
+	STA	Speed
+	ENDIF
+	PLA
+	JMP	DEMON
+
+	IF	GAMECREDS
+DOCREDS	JSR	DEATHS1
+	LDA	#FF
+	STA	MODE
+	JSR	WSCAN
+	LDA	#credtune
+	JSR	INITUNEsmart
+	LDA	#2
+	JMP	DEMON	
+	ENDIF
+
+
+DOGAME	JSR	FADEDOWN
+
+
+DEATH3
+	LDX	#FF
+	TXS
+	JSR	DEATHS1
+
+BAY
+	JSR	FUDGECLEAR
+	LDA	#FF
+	STA	QQ12
+
+
+	LDA	#stak
+	JMP	FRCE
+
+DEATHS1	SPOLLBIT	196
+
+	IF	POLLSCAN
+	ELSE
+	JSR	DFAULT
+	ENDIF
+
+	JSR	KILLTUNE
+	JSR	ping
+
+	JSR	TT111
+
+	JSR	JMP	
+	LDX	#5
+!1	LDA	QQ15,X
+	STA	QQ2,X
+	DEX
+	BPL	!1
+	INX
+	STX	ENVIRO
+	LDA	QQ3
+	STA	QQ28
+	LDA	QQ5
+	STA	tek
+	LDA	QQ4
+	STA	gov
+	RTS
+
+
+TITS2true	; Like space view but don't set dials
+	JSR	TT66
+	JSR	COPYBANK
+	JSR	SENDBOTHFORS
+
+
+	LDA	#0
+	STA	MODE
+	STA	MODE2
+	STA	stripenb
+	LDA	frchar
+	STA	charmin
+	LDA	#(nli+banner)*4+basecell
+	STA	zermax
+	LDX	#4*banner+basecell
+	STX	cellmin
+
+	IF	DIALSONTOP
+
+	LDX	#4*banner+basecell
+	STX	cellmin
+	STX	cellminH
+	STX	zermin
+
+	LDA	#(nli+banner)*4+basecell
+	STA	zermax
+
+	ENDIF
+
+	RTS
+
+
+
+TITLE	STY	distaway
+;	PHA
+	STX	TYPE
+
+	JSR	RESET
+
+	JSR	ZEKTRAN
+	SPOLLBIT	110
+	LDA	#96
+	STA	INWK+14
+	LDA	#55
+	STA	INWK+7
+	LDX	#127
+	STX	INWK+29
+	STX	INWK+30
+	INX
+	STX	QQ17
+	LDA	TYPE
+	JSR	NWSHP
+	JSR	FREESCAN
+	LDA	#12
+	STA	CNT2
+	LDA	#5
+	STA	MCNT
+	LDY	#0
+	STY	DELTA
+
+	LDA	#titmode 
+	JSR	TITS2true
+	
+
+	LDA	#timepership
+	STA	TEMPY
+
+TLL20	LDA	#25
+	STA	TEMPX
+
+	ENPOLLSC
+
+
+TLL2
+
+	LDA	INWK+7
+	CMP	#1
+	BEQ	!5
+	DEC	INWK+7
+
+!5	JSR	TLSUB1
+	BCS	!4
+
+	DEC	TEMPX
+	BNE	TLL2
+	DEC	TEMPY
+	BNE	TLL20
+
+!7	LDA	INWK+7
+	CMP	#55
+	BCS	!6
+	INC	INWK+7
+	JSR	TLSUB1
+	BCC	!7
+!4	SEC
+	RTS
+
+!6	CLC
+	RTS
+
+
+TLSUB1	; Move and draw ship and check fire buttons
+	; Set C if exitting
+	JSR	MV30	; MVEIT without tidy or tactics
+
+	LDX	distaway
+	STX	INWK+6
+	LDA	MCNT
+	AND	#3
+	LDA	#0
+	STA	INWK
+	STA	INWK+3
+
+	POLLBIT	111
+
+	JSR	ONESHIP
+	INC	MCNT
+
+	LDA	frbut1
+	ORA	stabut
+	ORA	selbut
+	BMI	!1
+	BNE	!3
+
+!1
+	LDA	frbut12	; Using pad two to start game
+	ORA	stabut2	; selects two player control 
+	ORA	selbut2
+	BMI	!2
+	BNE	!4
+
+
+!2	CLC
+	RTS
+
+!3	LSR	twoplayers
+!4	SEC
+	RTS
+
+
+ZERO	SPOLLBIT	211
+	LDX	#(de-FRIN)+1
+	LDA	#0
+!1	STA	FRIN-1,X
+	DEX
+	BNE	!1
+	LDX	#NTY
+!2	STA	MANY,X
+	DEX
+	BPL	!2
+	SPOLLBIT	216
+	RTS
+
+;ZEBC	RTS
+;	LDX	#$C
+;	JSR	ZES1
+;	DEX	;<<
+;ZES1	LDY	#0
+;	STY	SC
+;ZES2	LDA	#0
+;	STX	SC+1
+;ZEL1	STA	(SC),Y
+;	INY
+;	BNE	ZEL1
+;	RTS
+
+;	IF	FULL
+
+
+;SVE	LDA	#1
+;	JSR	DETOK
+;	JSR	t_LC
+;	CMP	#$31
+;	BEQ	loading
+;	CMP	#$32
+;	BEQ	SV1
+;	CMP	#$33
+;	BEQ	feb10
+;	CMP	#$34
+;	BNE	feb13
+;	LDA	#224
+;	JSR	DETOK
+;	JSR	YESNO
+;	BCC	feb13
+;	JSR	JAMESON
+;	JMP	DFAULT
+;feb13	CLC
+;	RTS
+;feb10	LDA	DISK
+;	EOR	#FF
+;	STA	DISK
+;	JMP	SVE
+;loading	JSR	GTNMEW
+;	JSR	LOD
+;	JSR	TRNME
+;	SEC
+;	RTS
+;SV1	JSR	GTNMEW
+;	JSR	TRNME
+;	LSR	SVC
+;	LDA	#4	;C64
+;	JSR	DETOK
+;	LDX	#NTpcent
+;!1	LDA	TP,X
+;	STA	NApcent+8,X
+;	DEX
+;	BPL	!1
+;	JSR	CHECK2
+;	STA	CHK3
+;	JSR	CHECK
+;	STA	CHK
+;	PHA
+;	ORA	#128
+;	STA	K
+;	EOR	COK
+;	STA	K+2
+;	EOR	CASH+2
+;	STA	K+1
+;	EOR	#$5A
+;	EOR	TALLY+1
+;	STA	K+3
+;	CLC
+;	JSR	BPRNT
+;	JSR	TT67
+;	JSR	TT67
+;	PLA
+;	EOR	#$A9
+;	STA	CHK2
+;	JSR	KERNALSETUP
+;	LDA	#((NApcent+8)&255)
+;	STA	$FD		;SC
+;	LDA	#((NApcent+8)/256)
+;	STA	$FE		;SC+1
+;	LDA	#$FD		;SC
+;	LDX	#((CHK+1)&255)
+;	LDY	#((CHK+1)/256)
+;;	JSR	KERNALSVE
+;	PHP
+;	SEI
+;	BIT	CIA+$D
+;	LDA	#1
+;	STA	CIA+$D	;disable timer
+;	LDX	#0
+;	STX	RASTCT
+;	INX
+;	STX	VIC+$1A ;enable Raster int
+;	LDA	VIC+$11
+;	AND	#$7F
+;	STA	VIC+$11
+;	LDA	#40
+;	STA	VIC+$12 ;set first Raster int
+;	LDA	#4
+;	JSR	SETL1
+;	; CLI
+;	JSR	SWAPPZERO
+;	PLP
+;	; CLI
+;	BCS	saveerror
+;	JSR	DFAULT
+;	;SC	over BASIC
+;	JSR	t_LC
+;SVEX	CLC
+;	RTS
+;saveerror	JMP	tapeerror
+;KERNALSETUP
+;	RTS
+;	JSR	SWAPPZERO
+;	LDA	#6
+;	SEI
+;	JSR	SETL1
+;	LDA	#0
+;	STA	VIC+$1A
+;	; CLI	;tell Ian to go away
+;	LDA	#$81
+;	STA	CIA+$D;turn	on IRQ
+;	LDA	#$C0
+;	JSR	KERNALSETMSG	;enable tape messages
+;	LDX	DISK
+;	INX
+;	LDA	filesys,X
+;	TAX
+;	LDA	#1;<<
+;	LDY	#0;FF
+;	JSR	KERNALSETLFS	;file system
+;	LDA	thislong
+;	LDX	#(INWK+5)
+;	LDY	#0
+;	JMP	KERNALSETNAM
+;filesys EQUB	8
+;	EQUB	1
+;LOD
+;	RTS
+;	JSR	KERNALSETUP
+;	LDA	#0
+;	LDX	#(TAPpcent&255)
+;	LDY	#(TAPpcent/256)
+;;	JSR	KERNALLOAD
+;	PHP
+;	LDA	#1
+;	STA	CIA+$D
+;	SEI
+;	LDX	#0
+;	STX	RASTCT
+;	INX
+;	STX	VIC+$1A;enable	Raster int
+;	LDA	VIC+$11
+;	AND	#$7F
+;	STA	VIC+$11
+;	LDA	#40
+;	STA	VIC+$12
+;	LDA	#4
+;	JSR	SETL1
+;	; CLI
+;	JSR	SWAPPZERO
+;	PLP
+;	; CLI
+;	BCS	tapeerror
+;	LDA	TAPpcent
+;	BMI	ELT2F
+;	LDY	#NTpcent
+;copyme	LDA	TAPpcent,Y
+;	STA	NApcent+8,Y
+;	DEY
+;	BPL	copyme
+;LOR	SEC
+;	RTS
+;ELT2F	LDA	#9
+;	JSR	DETOK
+;	JSR	t_LC
+;	JMP	SVE
+;backtonormal	RTS
+	;VIAE,DODOSVN
+;tapeerror
+;	LDA	#255
+;	JSR	DETOK
+;	JSR	t_LC
+;	JMP	SVE
+
+;	ELSE
+;SVE
+;LOD	RTS
+;	ENDIF	; (full)
+
+;thislong	EQUB	7
+;oldlong	EQUB	7
+
+
+ZEKTRAN ; Zero keys pressed area
+	LDX	#nokeys
+	LDA	#0
+	STA	thiskey
+ZEKLOOP	STA	KLO,X
+	DEX
+	BPL	ZEKLOOP
+	RTS
+
+
+MAS1	;INWK,X=INWK,X+2*INWK,Y
+	LDA	INWK,Y
+	ASL	A
+	STA	K+1
+	LDA	INWK+1,Y
+	ROL	A
+	STA	K+2
+	LDA	#0
+	ROR	A
+	STA	K+3
+	JSR	MVT3
+	STA	INWK+2,X
+	LDY	K+1
+	STY	INWK,X
+	LDY	K+2
+	STY	INWK+1,X
+	AND	#127
+MA9	RTS
+
+MAS2M2	LDA	#0
+MAS2	ORA	Kpcent+2,Y
+	ORA	Kpcent+5,Y
+	ORA	Kpcent+8,Y
+	AND	#127
+	RTS
+
+MAS3	LDA	Kpcent+1,Y
+	JSR	SQUA2	;%%%%%%%%%%%
+	STA	R
+	LDA	Kpcent+4,Y
+	JSR	SQUA2
+	ADC	R
+	BCS	!1
+	STA	R
+
+	POLLBIT	86
+
+	LDA	Kpcent+7,Y
+	JSR	SQUA2
+	ADC	R
+	BCC	!2	;!! was P%+4
+!1	LDA	#FF
+!2	RTS
+
+
+CONSIDSPST
+	POLLBIT	114					
+	LDX	#0	; Add 2*facing vector to planet center
+	LDY	#9
+	JSR	MAS1
+	BNE	!1
+	LDX	#3
+	LDY	#11
+	JSR	MAS1
+	BNE	!1
+	LDX	#6
+	LDY	#13
+	JSR	MAS1
+	BNE	!1	; and if inside $C8 radius sphere 
+	LDA	#$64	; centred on player (was 2*$c0 cube)
+	JSR	FAROF2	; then create new space station
+	BCS	!1
+	;JSRWPLS	##
+	JSR	NWSPS
+	SEC
+	RTS
+!1	POLLBIT	115
+	CLC
+	RTS
+
+
+SPS2	;X = A/20 (2comp)
+	TAY
+	AND	#127
+	LSR	A
+	LSR	A
+	LSR	A
+	LSR	A
+	ADC	#0
+	CPY	#128
+	BCC	!2
+	EOR	#FF
+	ADC	#0
+!2	TAX
+	RTS
+
+SPS3
+	LDA	Kpcent+1,X
+	STA	K3,X
+	LDA	Kpcent+2,X
+	TAY
+	AND	#127
+	STA	K3+1,X
+	TYA
+	AND	#128
+	STA	K3+2,X
+	RTS
+
+
+SPS1	LDX	#0
+	JSR	SPS3
+	LDX	#3
+	JSR	SPS3
+	LDX	#6
+	JSR	SPS3
+
+TAS2	;XX15=One byte vector parallel to K3 (three byte)
+	;normalised (K3+2,5,8=sign only)
+	POLLBIT	112
+
+	LDA	K3
+	ORA	K3+3
+	ORA	K3+6
+	ORA	#1
+	STA	K3+9
+	LDA	K3+1
+	ORA	K3+4
+	ORA	K3+7	; A,K3+9=ORed components ORed with 1
+!1	ASL	K3+9
+	ROL	A
+	BCS	!2	
+	ASL	K3
+	ROL	K3+1
+
+	ASL	K3+3
+	ROL	K3+4
+
+	ASL	K3+6
+	ROL	K3+7	; ASL components till A,K3+9 overflows
+	BCC	!1
+!2
+	LSR	K3+1
+	LSR	K3+4
+	LSR	K3+7
+
+TA2
+	LDA	K3+1
+	LSR	A
+	ORA	K3+2
+	STA	XX15
+
+	LDA	K3+4
+	LSR	A
+	ORA	K3+5
+	STA	XX15+1
+
+	LDA	K3+7
+	LSR	A
+	ORA	K3+8
+	STA	XX15+2	;XX15=K3/2
+
+	JMP	NORM
+
+	;..............
+
+
+WARP
+
+!2	LDA	COMBFLAG		; If combat sequence
+	BEQ	!3
+	JSR	HAPPYSHIP
+	JMP	DEATH3
+!3	LDA	auto		; If docking computers
+	AND	SSPR		; active & Space station
+	BEQ	!4		; present dock now
+	JMP	GOIN
+	
+!4
+	JSR	WAS1AND2
+	BCS	!1
+	JSR	WAS1AND2
+	BCS	!1
+	JSR	WAS1AND2
+	BCS	!1
+	JSR	WSCAN
+	JSR	WAS2
+
+!1	LDA	#1
+	STA	MCNT
+	LSR	A
+	STA	ENVIRO
+	JSR	DOALTIT
+	LDA	MODE
+	BNE	!5
+	
+
+	LDX	VIEW
+	DEC	VIEW
+	JMP	LOOK1
+
+!5	RTS
+
+
+WAS1AND2	JSR	WSCAN
+	JSR	WAS2
+WAS1easy	LDA	#$80
+WAS1	; Set C if within A *256 of planet or sun
+	LSR	A
+	STA	T
+	LDY	#0
+	JSR	WAS3
+	BCS	ANRTSWAS3
+	LDA	SSPR
+	BNE	ANRTSWAS3
+	LDY	#NIpcent
+
+WAS3	; Set C if object Y within 2*T*256 of player
+	; if player moves forward by $4000
+	LDA	Kpcent+2,Y
+	ORA	Kpcent+5,Y
+	ASL	A
+	BNE	!3
+	LDA	Kpcent+8,Y
+	LSR	A
+	BNE	!3
+	LDA	Kpcent+7,Y
+	ROR	A
+	SEC
+	SBC	#$20
+	BCS	!5
+	EOR	#FF	
+	ADC	#1
+!5	STA	K+2
+	LDA	Kpcent+1,Y
+	LSR	A
+	STA	K
+	LDA	Kpcent+4,Y
+	LSR	A
+	STA	K+1
+	CMP	K
+	BCS	!2
+	LDA	K
+!2	CMP	K+2
+	BCS	!4
+	LDA	K+2
+!4	STA	SC
+	LDA	K
+	CLC
+	ADC	K+1
+	ADC	K+2
+	SEC
+	SBC	SC
+	LSR	A
+	LSR	A
+	STA	SC+1
+	LSR	A
+	LSR	A
+	ADC	SC+1
+	ADC	SC
+	CMP	T
+	BCC	!1
+!3	CLC
+	RTS
+!1	SEC
+ANRTSWAS3	RTS
+
+
+
+WAS2
+	LDY	#32
+!5	JSR	REPLENISH	
+	DEY
+	BNE	!5
+
+	LDX	#0
+	STX	GNTMP
+
+!4	STX	XSAV
+	LDA	FRIN,X
+	BEQ	!2
+	BMI	!1
+	JSR	GINF
+
+	JSR	CLEANKILL
+	LDX	XSAV
+	JMP	!4
+
+
+;	LDY	#(NEWB-INWK)	; Clean kill all
+;	LDA	(INF),Y		; ships (not planet or sun)
+;	ORA	#128
+;	STA	(INF),Y
+;	BMI	!3
+
+!1	JSR	GINF
+	LDA	#$80		; Move planet and sun
+	STA	S		; by (0,0,-$40)
+	LSR	A
+	STA	R
+	LDY	#7
+	LDA	(INF),Y
+	STA	P
+	INY
+	LDA	(INF),Y
+	JSR	ADD
+	STA	(INF),Y
+	DEY
+	TXA
+	STA	(INF),Y
+!3	LDX	XSAV
+	INX
+	BNE	!4
+!2	RTS
+
+
+DOKEY	JSR	RDKEY
+	LDA	auto
+	BNE	auton
+ant	LDX	thiskey
+	CPX	#$40
+	BNE	!1
+	JMP	FREEZE
+!1	RTS
+
+auton	LDA	SSPR
+	BNE	!1
+	STA	auto
+	JSR	KILLTUNE
+	JMP	ant
+!1	JSR	ZINF
+	LDA	#96
+	STA	INWK+14
+	ORA	#128
+	STA	INWK+22
+	STA	TYPE
+	LDA	DELTA
+	STA	INWK+27
+	JSR	DOCKIT
+	LDA	INWK+27
+	CMP	#22
+	BCC	*+4	;!! was P%
+	LDA	#22
+	STA	DELTA
+	LDA	#FF
+	LDX	#(KY1-KLO)
+	LDY	INWK+28
+	BEQ	DK11
+	BMI	*+4	;!! was P%
+	LDX	#(KY2-KLO)
+	STA	KLO,X
+DK11	LDA	#128
+	LDX	#(KY3-KLO)
+	ASL	INWK+29
+	BEQ	DK12
+	BCC	*+4	;!! was P%
+	LDX	#(KY4-KLO)
+	BIT	INWK+29
+	BPL	DK14
+	LDA	#64
+	STA	JSTX
+	LDA	#0
+DK14	STA	KLO,X
+	LDA	JSTX
+DK12	STA	JSTX
+	LDA	#128
+	LDX	#(KY5-KLO)
+	ASL	INWK+30
+	BEQ	DK13
+	BCS	*+4	;!! was P%
+	LDX	#(KY6-KLO)
+	STA	KLO,X
+	LDA	JSTY
+DK13	STA	JSTY
+
+DK15	LDX	JSTX
+	LDA	#kbumpx
+	LDY	KY3
+	BEQ	*+5	;!! was P%
+	JSR	BUMP2
+	LDY	KY4
+	BEQ	*+5	;!! was P%
+	JSR	REDU2
+	STX	JSTX
+	LDA	#kbumpy
+	LDX	JSTY
+	LDY	KY5
+	BEQ	*+5	;!! was P%
+	JSR	REDU2
+	LDY	KY6
+	BEQ	*+5	;!! was P%
+	JSR	BUMP2
+	STX	JSTY
+
+;	LDA	JSTK
+;	BEQ	antS
+
+	LDA	auto
+	BNE	antS
+	LDX	#128
+	LDA	KY3
+	ORA	KY4
+	BNE	termite
+	STX	JSTX
+termite
+	LDA	KY5
+	ORA	KY6
+	BNE	antS
+	STX	JSTY
+antS	JMP	ant
+
+
+MESSex	; Do a mess with a foreground token
+	; for a time Y
+	PHA
+;	LDY	#120	; <<IAN
+	STY	DLY
+!1	LDA	#$C0
+	STA	DTW4
+	LDA	#0
+	STA	DTW5
+	PLA
+	JSR	ex
+	JMP	MESSend
+
+MESS	; Initiate message A
+	PHA
+	POLLBIT	116
+	LDY	#messup	; <<IAN
+	STY	DLY
+!1	LDA	#$C0
+	STA	DTW4
+	LDA	#0
+	STA	DTW5
+	PLA
+
+	CMP	#250	;was AVERAGE RADIUS token
+	BNE	!4	;>>DJB 28/4/90<<
+	LDA	#0
+	STA	QQ17	;UPPER CASE
+	LDA	#189
+	JSR	TT27	;"Hyperspace"
+	LDA	#$2D
+	JSR	TT27	;"-"
+	JSR	SPACE
+
+	POLLBIT	117
+
+	JSR	hyppl	;"Diso" etc
+;	JSR	SPACE
+	LDA	#3
+	CLC
+
+	IF	0	;AUTOSEARCH
+	LDX	IANTEMP
+	ELSE
+	LDX	QQ22+1
+	ENDIF
+
+;	DEX
+	LDY	#0
+	JSR	TT11	;count
+	JMP	!5
+;dddd
+
+!4	PHA
+	LDA	#0
+	STA	QQ17	;upper case only
+	PLA
+	JSR	TT27
+!5	LDA	de
+	BEQ	!2
+	LDA	#253
+	JSR	TT27	; Add "destroyed" if de non zero
+!2
+
+MESSend
+	LDA	#ncl
+	SEC
+	SBC	DTW5
+	BCS	!1
+	LDA	#ncl-1
+	STA	DTW5
+	LDA	#2
+!1	LSR	A
+	STA	messXC
+
+	POLLBIT	114
+
+	LDX	DTW5
+	STX	messle
+	INX
+!3
+	LDA	BUF-1,X
+	STA	messbuf-1,X
+	DEX
+	BNE	!3
+	
+	STX	de	; Zero de flag
+
+	
+	POLLBIT	115
+
+MT15here	LDA	#0
+	STA	DTW4
+	STA	DTW5
+ANRTSMT15	RTS
+
+
+MESS2	; Rewrite message in buffer
+
+	LDA	messYC
+	LDX	MODE
+	BEQ	!2
+
+	JSR	CLYNS2
+
+
+	LDA	#inps+1
+!2	STA	YC
+	LDX	#0
+	STX	QQ17
+
+	POLLBIT	119
+
+	LDA	messXC
+	STA	XC
+
+	LDA	messXC
+	STA	XC
+	LDY	#0
+!1
+
+	LDA	messbuf,Y
+	JSR	CHPRsmart
+	INY
+	CPY	messle
+	BNE	!1
+
+	LDA	MODE
+	BEQ	ANRTSMT15
+	JMP	SENDINPAREA
+
+
+
+OUCH	JSR	DORND
+	BMI	out
+	CPX	#22
+	BCS	out
+	LDA	QQ20,X
+	BEQ	out
+	LDA	DLY
+	BNE	out
+	LDY	#3
+	STY	de
+	STA	QQ20,X
+	CPX	#17
+	BCS	ou1
+	TXA
+	ADC	#208
+	JMP	MESS	;cargo item destroyed
+
+ou1	BEQ	ou2
+	CPX	#18
+	BEQ	ou3
+	TXA
+	ADC	#113-20
+ou4	JSR	MESS
+	JMP	UPDATESTRIP
+out	RTS
+ou2	LDA	#108
+	BNE	ou4	; ECM destroyed
+ou3	LDA	#111
+	JMP	MESS	; Fuel scoops destroyed
+
+
+
+QQ23	; Prices table for trade goods
+	DW	$8213,$106
+	DW	$8114,$30A
+	DW	$8341,$702	;Food
+	DW	$8528,$1FE2
+	DW	$8553,$FFB
+	DW	$8C4,$336
+	DW	$1DEB,$7808	;slvs..
+	DW	$E9A,$338
+	DW	$675,$728
+	DW	$14E,$1F11
+	DW	$D7C,$71D	;comps
+	DW	$89B0,$3FDC
+	DW	$8120,$335
+	;DW	$A118,$360
+	DW	$A161,$742
+	DW	$A2AB,$1F37	;platnm
+	DW	$C12D,$FFA
+	DW	$F35,$7C0	;Gms.
+
+
+	;...........
+
+	IF	0
+itsoff	RTS
+
+startat
+	LDA	#(aidanth&255)
+	LDX	#(aidanth/256)
+	BNE	june2
+startbd
+	BIT	THETOG
+	BMI	startat
+	LDA	#(musicstart&255)
+	LDX	#(musicstart/256)
+june2	STA	BDPASS
+	STX	BDPASS+1
+	BIT	MUPLA
+	BMI	itsoff
+	BIT	MUFOR
+	BMI	april16
+	BIT	mutok
+	BPL	itsoff
+april16	LDA	#5
+;	JSR	SETL1
+	JSR	BDENTRY
+	LDA	#FF
+	STA	MUPLA
+	BNE	coffeeex
+MUTOKCH	STA	MUTOKOLD
+	AND	auto
+	BMI	april16
+stopbd	BIT	MULIE
+	BMI	itsoff
+	BIT	MUFOR
+	BMI	startbd
+stopat	BIT	MUPLA
+	BPL	itsoff
+	JSR	SOFLUSH
+;	LDA	#5
+;	JSR	SETL1
+	LDA	#0
+	STA	MUPLA
+;	LDX	#$18
+;	SEI
+;coffeeloop	STA	SID,X
+;	DEX
+;	BPL	coffeeloop
+;	LDA	#$F
+;	STA	SID+$18
+	; CLI
+coffeeex
+	RTS
+	ENDIF
+
+
+	;..............
+
+;
+

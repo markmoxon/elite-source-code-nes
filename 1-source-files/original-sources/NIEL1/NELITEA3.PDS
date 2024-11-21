@@ -1,0 +1,2974 @@
+
+;	ELITE <A3>	Nin
+
+;            Code for picture bank 1
+;
+;	Pallettes and strip sending
+
+	FORG	BANKSTART
+
+	IF	ROMCODE
+	
+	INIMAC
+
+	IF	TOUGHCOM
+
+	DB	"  NES ELITE TEST VERSION "
+	DB	" (C) D.Braben & I.Bell 1991/92  "
+
+	ELSE	;(TOUGHCOM)
+
+	IF	NTSCEV
+	DB	"  NES ELITE NTSC EVALUATION  - (TriMark) "
+	DB	" (C) D.Braben & I.Bell 1991/92  "
+	ELSE	;(NTSC)
+
+	; Romname ****
+
+	DB	"  NES ELITE IMAGE 5.2  -   24 APR 1992 "
+	DB	" (C) D.Braben & I.Bell 1991/92  "
+	ENDIF	;(NTSC)
+
+	ENDIF	;(TOUGHCOM)
+
+	ENDIF	;(ROMCODE)
+	
+	ORG	BANKSTART+$100
+
+ 
+STRIPDEF	INCBIN	IC6CHRS.DAT
+
+
+STRIPMAPS	INCBIN	IC6MAPS.DAT
+FREEZEMAP	equ	STRIPMAPS+3*2*ncl
+
+
+dockstrip	equ	0
+combstrip	equ	1
+chrtstrip	equ	2
+frzstrip	equ	3
+titstrip	equ	4
+
+
+dialmap
+
+	IF	EURODIALS
+	INCBIN	PANV8MAP.DAT
+	ORG	DIALMAP+$E0
+	BYTES	ncl,0
+	BYTES	ncl,0
+
+	ELSE
+
+	IF	SMALLDIALS
+	INCBIN	DIALASCN.DAT
+	ELSE
+	INCBIN	DIALASCi.DAT
+	ENDIF
+
+	BYTES	ncl,0
+	BYTES	ncl,0
+
+	ENDIF	;(EURODIALS)
+
+
+dialfont
+	IF	EURODIALS
+
+	INCBIN	CDIAACHR.DAT
+
+
+dialsize	equ	$86	;$85	;$87	;$83
+
+ 
+
+firstsp	EQU	dialbase+dialsize
+
+
+	ELSE	; (EURODIALS)
+
+	IF	SMALLDIALS
+	INCBIN	DIALCHRN.DAT
+	ELSE
+	INCBIN	DIALCHRi.DAT
+	ENDIF
+
+firstsp	EQU	dialbase+((*-dialfont)/16)
+
+
+	ENDIF	;(EURODIALS)
+
+
+
+	IF	COMPDIALS
+	ELSE
+
+;needle	EQU	firstsp
+	BYTE8	$00,$38,$10,$10,$38,$00,$00,$00
+	BYTE8	$00,$38,$10,$10,$38,$00,$00,$00
+
+;horline	EQU	needle+1
+	BYTE8	$00,$00,$00,$FF,$00,$00,$00,$00	;Horiz line
+	BYTE8	$00,$00,$00,$FF,$00,$00,$00,$00	;for sight
+
+;verline	EQU	horline+1
+	BYTE8	$18,$18,$18,$18,$18,$18,$18,$18	;Vert line
+	BYTE8	$18,$18,$18,$18,$18,$18,$18,$18	;for sight
+
+;sigsp1	EQU	verline+1
+	BYTE8	$01,$01,$01,$FF,$C0,$C0,$C0,$C0
+	BYTE8	$01,$01,$01,$FF,$C0,$C0,$C0,$C0
+
+;sigsp2	EQU	sigsp1+1
+	BYTES	8,0
+	BYTE8	$E0,$98,$86,$81,$86,$98,$E0,$00
+	BYTES	8,0
+	BYTE8	$FF,$81,$42,$24,$18,$00,$00,$00
+
+;slant	EQU	sigsp2+2
+	BYTE8	$C0,$60,$30,$18,$0C,$06,$02,$00
+	BYTE8	$C0,$60,$30,$18,$0C,$06,$02,$00
+
+;stardef	equ	slant+1
+	BYTE8	$00,$18,$3C,$3C,$3C,$3C,$18,$00	;Big dust ptcl
+	BYTE8	$00,$00,$00,$00,$00,$00,$00,$00
+
+	BYTE8	$00,$00,$18,$3C,$3C,$18,$00,$00	;Med dust ptcl
+	BYTE8	$00,$00,$00,$00,$00,$00,$00,$00
+
+	BYTE8	$00,$00,$00,$18,$18,$00,$00,$00	;Ltl dust ptcl
+	BYTE8	$00,$00,$00,$00,$00,$00,$00,$00
+
+	BYTE8	$00,$00,$00,$18,$00,$00,$00,$00	;Ltl dust ptcl
+	BYTE8	$00,$00,$00,$00,$00,$00,$00,$00
+
+	BYTE8	$00,$00,$00,$10,$00,$00,$00,$00	;Tiny dust ptcl
+	BYTE8	$00,$00,$00,$00,$00,$00,$00,$00	;(single pixel)
+
+;sundef	equ	stardef+5	;221
+
+;	1=red 2=yellow 3=orange
+
+	BYTE8	$00,$00,$00,$18,$18,$00,$00,$00	;Small sun
+	BYTE8	$00,$00,$00,$18,$18,$00,$00,$00
+
+	BYTE8	$00,$00,$08,$1C,$18,$08,$00,$00
+	BYTE8	$00,$00,$18,$2C,$24,$18,$00,$00	;Med sun
+
+	BYTE8	$00,$10,$34,$28,$28,$1C,$10,$00
+	BYTE8	$00,$18,$38,$2C,$18,$3C,$18,$00	;Big sun
+
+;scanbars	equ	sundef+3	;224
+	BYTE8	$00,$00,$00,$00,$00,$00,$00,$00
+	BYTE8	$18,$18,$18,$18,$18,$18,$18,$18
+
+	BYTE8	$00,$00,$00,$00,$00,$00,$00,$00
+	BYTE8	$00,$00,$00,$00,$00,$00,$00,$78
+
+	BYTE8	$00,$00,$00,$00,$00,$00,$00,$00
+	BYTE8	$00,$00,$00,$00,$00,$00,$78,$18
+
+	BYTE8	$00,$00,$00,$00,$00,$00,$00,$00
+	BYTE8	$00,$00,$00,$00,$00,$78,$18,$18
+
+	BYTE8	$00,$00,$00,$00,$00,$00,$00,$00
+	BYTE8	$00,$00,$00,$00,$78,$18,$18,$18
+
+	BYTE8	$00,$00,$00,$00,$00,$00,$00,$00
+	BYTE8	$00,$00,$00,$78,$18,$18,$18,$18
+
+	BYTE8	$00,$00,$00,$00,$00,$00,$00,$00
+	BYTE8	$00,$00,$78,$18,$18,$18,$18,$18
+
+	BYTE8	$00,$00,$00,$00,$00,$00,$00,$00
+	BYTE8	$00,$78,$18,$18,$18,$18,$18,$18
+
+	BYTE8	$00,$00,$00,$00,$00,$00,$00,$00
+	BYTE8	$78,$18,$18,$18,$18,$18,$18,$18
+
+	IF	EURODIALS
+TP1	equ	$FF
+TP2	equ	0
+BT1	equ	$FF
+BT2	equ	$FF
+
+TP3 	equ	$00
+TP4	equ	$00
+BT3	equ	$00
+BT4	equ	$00
+	ELSE
+TP1	equ	$FF
+TP2	equ	$FF
+BT1	equ	$FF
+BT2	equ	$FF
+TP3	equ	$00
+TP4	equ	$00
+BT3	equ	$00
+BT4	equ	$00
+	ENDIF
+
+;bardef1	equ	scanbars+9	;233 scanbars in colour 2
+
+;
+;	BYTE8	TP1,TP2,$00,$00,$00,$00,BT1,BT2
+;	BYTE8	TP3,TP4,$FF,$FF,$FF,$FF,BT3,BT4
+;
+;	BYTE8	TP1,TP2,$00,$00,$00,$00,BT1,BT2
+;	BYTE8	TP3,TP4,$00,$00,$00,$00,BT3,BT4
+;
+;	BYTE8	TP1,TP2,$00,$00,$00,$00,BT1,BT2
+;	BYTE8	TP3,TP4,$00,$80,$80,$00,BT3,BT4
+;
+;	BYTE8	TP1,TP2,$00,$00,$00,$00,BT1,BT2
+;	BYTE8	TP3,TP4,$80,$C0,$C0,$80,BT3,BT4
+; 
+;	BYTE8	TP1,TP2,$00,$00,$00,$00,BT1,BT2
+;	BYTE8	TP3,TP4,$C0,$E0,$E0,$C0,BT3,BT4
+;
+;	BYTE8	TP1,TP2,$00,$00,$00,$00,BT1,BT2
+;	BYTE8	TP3,TP4,$E0,$F0,$F0,$E0,BT3,BT4
+;
+;	BYTE8	TP1,TP2,$00,$00,$00,$00,BT1,BT2
+;	BYTE8	TP3,TP4,$F0,$F8,$F8,$F0,BT3,BT4
+;
+;	BYTE8	TP1,TP2,$00,$00,$00,$00,BT1,BT2
+;	BYTE8	TP3,TP4,$F8,$FC,$FC,$F8,BT3,BT4
+;
+;	BYTE8	TP1,TP2,$00,$00,$00,$00,BT1,BT2
+;	BYTE8	TP3,TP4,$FC,$FE,$FE,$FC,BT3,BT4
+;
+;	BYTE8	TP1,TP2,$00,$00,$00,$00,BT1,BT2
+;	BYTE8	TP3,TP4,$FE,$FF,$FF,$FE,BT3,BT4
+;
+;
+;;bardef2	equ	bardef1+10	;243 scanbars in colour 3
+;
+;
+;	BYTE8	TP1,TP2,$FF,$FF,$FF,$FF,BT1,BT2
+;	BYTE8	TP3,TP4,$FF,$FF,$FF,$FF,BT3,BT4
+;
+;	BYTE8	TP1,TP2,$00,$00,$00,$00,BT1,BT2
+;	BYTE8	TP3,TP4,$00,$00,$00,$00,BT3,BT4
+;
+;	BYTE8	TP1,TP2,$00,$00,$FF,$00,BT1,BT2
+;	BYTE8	TP3,TP4,$00,$FF,$00,$00,BT3,BT4
+;
+;	BYTE8	TP1,TP2,$80,$C0,$C0,$80,BT1,BT2
+;	BYTE8	TP3,TP4,$80,$C0,$C0,$80,BT3,BT4
+;
+;	BYTE8	TP1,TP2,$C0,$E0,$E0,$C0,BT1,BT2
+;	BYTE8	TP3,TP4,$C0,$E0,$E0,$C0,BT3,BT4
+;
+;	BYTE8	TP1,TP2,$E0,$F0,$F0,$E0,BT1,BT2
+;	BYTE8	TP3,TP4,$E0,$F0,$F0,$E0,BT3,BT4
+;
+;	BYTE8	TP1,TP2,$F0,$F8,$F8,$F0,BT1,BT2
+;	BYTE8	TP3,TP4,$F0,$F8,$F8,$F0,BT3,BT4
+;
+;	BYTE8	TP1,TP2,$F8,$FC,$FC,$F8,BT1,BT2
+;	BYTE8	TP3,TP4,$F8,$FC,$FC,$F8,BT3,BT4
+;
+;	BYTE8	TP1,TP2,$FC,$FE,$FE,$FC,BT1,BT2
+;	BYTE8	TP3,TP4,$FC,$FE,$FE,$FC,BT3,BT4
+;
+;	BYTE8	TP1,TP2,$FE,$FF,$FF,$FE,BT1,BT2
+;	BYTE8	TP3,TP4,$FE,$FF,$FF,$FE,BT3,BT4
+;
+
+	BYTE8	TP1,TP2,$00,$00,$00,$00,BT1,BT2
+	BYTE8	TP3,TP4,$00,$FF,$FF,$FF,BT3,BT4
+
+	BYTE8	TP1,TP2,$00,$00,$00,$00,BT1,BT2
+	BYTE8	TP3,TP4,$00,$00,$00,$00,BT3,BT4
+
+	BYTE8	TP1,TP2,$00,$00,$00,$00,BT1,BT2
+	BYTE8	TP3,TP4,$00,$00,$80,$00,BT3,BT4
+
+	BYTE8	TP1,TP2,$00,$00,$00,$00,BT1,BT2
+	BYTE8	TP3,TP4,$00,$80,$C0,$80,BT3,BT4
+ 
+	BYTE8	TP1,TP2,$00,$00,$00,$00,BT1,BT2
+	BYTE8	TP3,TP4,$00,$C0,$E0,$C0,BT3,BT4
+
+	BYTE8	TP1,TP2,$00,$00,$00,$00,BT1,BT2
+	BYTE8	TP3,TP4,$00,$E0,$F0,$E0,BT3,BT4
+
+	BYTE8	TP1,TP2,$00,$00,$00,$00,BT1,BT2
+	BYTE8	TP3,TP4,$00,$F0,$F8,$F0,BT3,BT4
+
+	BYTE8	TP1,TP2,$00,$00,$00,$00,BT1,BT2
+	BYTE8	TP3,TP4,$00,$F8,$FC,$F8,BT3,BT4
+
+	BYTE8	TP1,TP2,$00,$00,$00,$00,BT1,BT2
+	BYTE8	TP3,TP4,$00,$FC,$FE,$FC,BT3,BT4
+
+	BYTE8	TP1,TP2,$00,$00,$00,$00,BT1,BT2
+	BYTE8	TP3,TP4,$00,$FE,$FF,$FE,BT3,BT4
+
+
+;bardef2	equ	bardef1+10	;243 scanbars in colour 3
+
+
+	BYTE8	TP1,TP2,$00,$FF,$FF,$FF,BT1,BT2
+	BYTE8	TP3,TP4,$00,$FF,$FF,$FF,BT3,BT4
+
+	BYTE8	TP1,TP2,$00,$00,$00,$00,BT1,BT2
+	BYTE8	TP3,TP4,$00,$00,$00,$00,BT3,BT4
+
+	BYTE8	TP1,TP2,$00,$00,$80,$00,BT1,BT2
+	BYTE8	TP3,TP4,$00,$00,$80,$00,BT3,BT4
+
+	BYTE8	TP1,TP2,$00,$80,$C0,$80,BT1,BT2
+	BYTE8	TP3,TP4,$00,$80,$C0,$80,BT3,BT4
+
+	BYTE8	TP1,TP2,$00,$C0,$E0,$C0,BT1,BT2
+	BYTE8	TP3,TP4,$00,$C0,$E0,$C0,BT3,BT4
+
+	BYTE8	TP1,TP2,$00,$E0,$F0,$E0,BT1,BT2
+	BYTE8	TP3,TP4,$00,$E0,$F0,$E0,BT3,BT4
+
+	BYTE8	TP1,TP2,$00,$F0,$F8,$F0,BT1,BT2
+	BYTE8	TP3,TP4,$00,$F0,$F8,$F0,BT3,BT4
+
+	BYTE8	TP1,TP2,$00,$F8,$FC,$F8,BT1,BT2
+	BYTE8	TP3,TP4,$00,$F8,$FC,$F8,BT3,BT4
+
+	BYTE8	TP1,TP2,$00,$FC,$FE,$FC,BT1,BT2
+	BYTE8	TP3,TP4,$00,$FC,$FE,$FC,BT3,BT4
+
+	BYTE8	TP1,TP2,$00,$FE,$FF,$FE,BT1,BT2
+	BYTE8	TP3,TP4,$00,$FE,$FF,$FE,BT3,BT4
+
+
+
+;expdef	equ	bardef2+10	;253
+	BYTE8	$10,$0C,$3A,$2B,$87,$E3,$A4,$08
+	BYTE8	$04,$34,$27,$3A,$BB,$48,$90,$18
+
+;comdef1	equ	expdef+1
+	BYTE8	$00,$00,$18,$24,$18,$00,$00,$00
+	BYTE8	$00,$00,$00,$00,$00,$00,$00,$00
+;comdef2	equ	comdef1+1
+	BYTE8	$00,$00,$00,$00,$00,$00,$00,$00
+	BYTE8	$00,$00,$18,$3C,$18,$00,$00,$00
+
+;square	EQU	comdef2+1
+	BYTE8	$FF,$81,$81,$81,$81,$81,$81,$FF	;Provisional
+	BYTE8	$FF,$81,$81,$81,$81,$81,$81,$FF	;cursor "cross"
+
+;light1	EQU	square+1
+;	BYTE8	$00,$00,$3C,$7E,$7E,$3C,$00,$00
+;	BYTE8	$00,$00,$00,$00,$00,$00,$00,$00
+;light2	EQU	light1+1
+	BYTE8	$00,$00,$00,$00,$00,$00,$00,$00
+	BYTE8	$00,$00,$3C,$7E,$7E,$3C,$00,$00
+
+
+;corner	EQU	light2+1				
+	BYTE8	$FF,$C0,$C0,$C0,$C0,$C0,$C0,$C0	;Slider corner
+	BYTE8	$FF,$C0,$C0,$C0,$C0,$C0,$C0,$C0
+
+	BYTE8	$FF,$C0,$C0,$C0,$C0,$C0,$C0,$C0	;Slider corner
+	BYTE8	$FF,$C0,$C0,$C0,$C0,$C0,$C0,$C0
+
+
+
+
+;redcross	equ	corner+2
+;	BYTE8	$FF,$E7,$E7,$81,$81,$E7,$00,$00	;Test sprite
+	BYTE8	$FF,$FF,$FF,$00,$00,$00,$00,$00	;Test sprite
+	BYTE8	$00,$00,$00,$00,$00,$00,$00,$00
+
+
+;lastsp	EQU	redcross+1
+
+;	============
+
+	ENDIF	;(COMPDIALS)
+
+
+needle	EQU	firstsp
+horline	EQU	needle+1
+verline	EQU	horline+1
+sigsp1	EQU	verline+1
+sigsp2	EQU	sigsp1+1
+slant	EQU	sigsp2+2
+stardef	equ	slant+1
+sundef	equ	stardef+5	;221
+;	1=red 2=yellow 3=orange
+scanbars	equ	sundef+3	;224
+bardef1	equ	scanbars+9	;233 scanbars in colour 2
+bardef2	equ	bardef1+9	;243 scanbars in colour 3
+expdef	equ	bardef2+9	;253
+comdef1	equ	expdef+1
+comdef2	equ	comdef1+1
+square	EQU	comdef2+1
+light1	EQU	square+1
+light2	EQU	square+2
+corner	EQU	light2+1				
+redcross	equ	corner+1+2*HOPPITYSQ
+filledup	equ	redcross+1
+lastsp	EQU	redcross+1
+
+
+	IF	EURODIALS
+
+BLACK2	equ	$85	;$6B	
+GREEN2	equ	$6C		
+YELLOW2	equ	GREEN2
+RED2	equ	$6D
+
+	ELSE	; (EURODIALS)
+
+	IF	SMALLDIALS
+BLACK2	equ	allltgrey	;Colours for Missile Blobs
+GREEN2	equ	84
+	ELSE
+BLACK2	equ	dialbase+14	;allltgrey	;Colours for Missile Blobs
+GREEN2	equ	dialbase+18	
+	ENDIF
+YELLOW2	equ	GREEN2+1
+RED2	equ	GREEN2+2
+
+	ENDIF	;(EURODIALS)
+
+
+
+
+	IF	INCEPIC
+equipfont
+	INCBIN	CEQUPIC2.DAT
+;endequ
+	ENDIF	; (INCEPIC)
+
+
+
+invicondef	INCBIN	INVICON.DAT
+	ORG	invicondef+$40
+
+
+LITTLELOGDEF	INCBIN	CLOG52DE.DAT
+
+
+
+
+POWERFONT2
+;	DB	$0F,$0F,$02,$3F ; Compressed 32*00
+	DB	$35,$51,$38,$3F,$11,$0B
+	DB	$03,$21,$0C,$02,$21,$0E,$04
+	DB	$20,$40,$00,$80,$0C
+POWERFONT	DB	$0D,$13,$3F	; Compressed 13*00,3*FF 
+
+
+
+
+
+dmpditrue	; Copy DIAL char map to fake screen RAM
+
+	LDY	#((dili)*ncl)	;+1
+
+!1	POLLBIT	248
+	LDA	dialmap-1,Y		;4,5
+
+;	IF	EURODIALS
+;	ELSE
+;	beq	!4
+;	CLC
+;	ADC	#2	;1
+;!4
+;	ENDIF	; (EURODIALS)
+
+	IF	POLLSCAN
+;	TYA
+;	AND	#31
+;	CLC	
+;	ADC	#icbase
+	lda	#lftbord
+
+	ENDIF
+
+	STA	VIDM1+ditp*ncl,Y	;5
+	STA	VIDM2+ditp*ncl,Y	;5
+	DEY
+	BNE	!1
+
+	; fix to allow for scrolling of screen
+
+	IF	EURODIALS
+	LDA	VIDM1+(ditp+1)*ncl	;-1
+	STA	VIDM1+(ditp+0)*ncl
+
+	LDA	VIDM1+(ditp+2)*ncl
+	STA	VIDM1+(ditp+1)*ncl
+
+	LDA	VIDM1+(ditp+3)*ncl
+	STA	VIDM1+(ditp+2)*ncl
+
+	LDA	VIDM1+(ditp+4)*ncl
+	STA	VIDM1+(ditp+3)*ncl
+
+	LDA	VIDM1+(ditp+6)*ncl
+	STA	VIDM1+(ditp+5)*ncl
+
+	LDA	VIDM1+(ditp+7)*ncl
+	STA	VIDM1+(ditp+6)*ncl
+	
+	LDA	#0
+	STA	VIDM1+(ditp+7)*ncl
+
+	ELSE
+
+	lda	VIDM1+ditp*ncl+ncl
+	STA	VIDM1+ditp*ncl
+	CLC
+	ADC	#1
+
+	STA	VIDM1+ditp*ncl+ncl
+	STA	VIDM1+ditp*ncl+2*ncl
+	STA	VIDM1+ditp*ncl+3*ncl
+	STA	VIDM1+ditp*ncl+4*ncl
+	STA	VIDM1+ditp*ncl+5*ncl
+
+	IF	SMALLDIALS
+	LDA	#0
+	STA	VIDM1+ditp*ncl+6*ncl
+	ELSE
+	STA	VIDM1+ditp*ncl+6*ncl
+	LDA	#0
+	STA	VIDM1+ditp*ncl+7*ncl
+	ENDIF
+
+	ENDIF
+
+	RTS
+
+
+dialsptrue	;  prepare dial sprites
+
+	POLLBIT2	68
+
+;	LDA	#32+icbase
+;	STA	VIDM1+ditp*ncl-2*ncl
+	LDY	#3*ncl	;+2
+;	LDA	#64+icbase
+;	STA	VIDM1+ditp*ncl-1*ncl
+
+	LDA	#0
+!2	STA	VIDM1+(ditp+dili)*ncl-1,Y
+	DEY
+	BNE	!2
+
+	LDA	#needle
+	STA	ATTRIBUTES+needbase*4+1
+	STA	ATTRIBUTES+needbase*4+4+1
+	LDA	#3
+	STA	ATTRIBUTES+needbase*4+2
+	STA	ATTRIBUTES+needbase*4+4+2
+
+	LDA	#0
+	STA	ATTRIBUTES+compbase*4+2
+
+	LDX	#8*3
+	LDY	#4*scanbase
+!3	LDA	#scanbars
+	STA	ATTRIBUTES+1,Y
+	LDA	#0
+	STA	ATTRIBUTES+2,Y
+	INY
+	INY
+	INY
+	INY
+	DEX
+	BNE	!3
+	RTS
+
+
+SENDBOTHtrue	; Send down both source banks using SENDBANK
+
+	JSR	WSCAN		; Do a WSCAN to ensure
+				; a music refresh call
+	LDA	CVIDEO0
+	PHA
+	LDA	#0		; Disable NMI
+	STA	CVIDEO0		; and blank
+	STA	VIDEO0
+	STA	DUNNIT
+
+	IF	POLLSCAN
+	STA	POLLTEMP
+	ENDIF
+
+	LDA	#VID1VAL0
+	STA	VIDEO1
+
+	LDA	MODE
+	IF	INCEPIC
+	CMP	#eqpmod
+	BNE	!E
+	JMP	!1
+!E
+	ENDIF	; (INCEPIC)
+
+	CMP	#glchrt2
+	BEQ	!8
+	CMP	#pwrmod2
+	BEQ	!8
+
+
+!14	IF	INCPPIC
+	CMP	#datmod
+ 	BNE	!7
+
+	JSR	GETPIC
+	JMP	!6
+	ENDIF	; (INCPPIC)
+
+!7
+	IF	INCFACE
+	CMP	#stamod
+	BNE	!B
+	JSR	GETFACE
+	JMP	!6	
+	ENDIF	; (incface)
+
+!B	CMP	#cargmod
+	BNE	!C
+	PRIMELATCH	picdef*16
+	FNset2b	SC,invicondef
+	LDA	#$F5
+	STA	DSENT
+	LDX	#2*2
+	JMP	!D
+
+!C
+	CMP	#lodmod
+	BNE	!10
+	PRIMELATCH	picdef*16
+	SET2B	V,LITTLELOGDEF
+	LDA	#3
+	BNE	!11
+
+
+!10	LDA	#0
+	CMP	DSENT
+	BEQ	!6
+	STA	DSENT
+
+	JSR	SENDDIALFONT
+	JMP	!6
+
+!8	; For galactic chart send text font to OBJ defns
+	; and power up mode
+	LDA	#$44-32
+	STA	typebase
+	LDA	#1
+	CMP	DSENT
+	BEQ	!6
+	STA	DSENT
+	PRIMELATCH	$44*16
+	LDX	#fontsize
+	FNset2b	SC,TYPEFACE+nonasci*8
+	JSR	SENDDFONT3
+	LDA	MODE
+	CMP	#pwrmod2
+	BNE	!6
+;	SET2B	V,POWERFONT
+;	JSR	UNPACKTOLATCH1
+	PRIMELATCH	$E3*16
+	SET2B	V,POWERFONT2
+	JSR	UNPACKTOLATCH1
+	JMP	!6
+
+	IF	INCEPIC
+!1
+
+ 	PRIMELATCH	dialbase*16	;(65+icbase)
+	SET2B	V,equipfont
+	LDA	#2
+
+!11	CMP	DSENT
+	BEQ	!6
+	STA	DSENT
+	JSR	UNPACKTOLATCH1
+	JMP	!6
+
+
+
+	ENDIF	; (INCEPIC)
+
+!D	JSR	SENDDFONT2
+	
+!6	JSR	PREPSTRIP
+
+!F	PRIMELATCH	$1000
+	LDY	#0
+	LDX	#16*lowholy
+!9	LDA	invtb,Y
+	STA	VRAM_DAT
+	INY
+	DEX
+	BNE	!9
+
+	PRIMELATCH	$1FF0
+	LDA	#$0
+	LDX	#16
+!A	STA	VRAM_DAT
+	DEX
+	BNE	!A
+
+	JSR	FUDGEREFRESH
+
+	LDX	#0
+	JSR	SENDBANKtrue
+	LDX	#1
+	JSR	SENDBANKtrue
+	LDX	#0
+	STX	vbank
+	STX	sbank
+	JSR	writebank
+
+	JSR	FUDGEREFRESH
+
+	LDA	MODE
+	STA	MODE2
+	AND	#icbit
+	BEQ	!2
+	LDA	MODE
+	CMP	#pwrmod2
+	BEQ	!2
+	LDA	#0
+	BEQ	!3
+!2	LDA	#128
+!3	STA	DOINTRPT
+	PLA
+	STA	CVIDEO0
+	STA	VIDEO0
+	JMP	FADEUP
+
+;	RTS
+
+SENDDFONT3
+
+	LDY	#0
+sdfl1	DO	8
+	LDA	(SC),Y
+	STA	VRAM_DAT
+	INY
+	LOOP
+	BNE	!1
+	INC	SC+1
+!1	LDA	#0
+	DO	8
+	STA	VRAM_DAT
+	LOOP
+	DEX
+	BNE	sdfl1
+	RTS
+
+
+SENDDIALFONT
+	PRIMELATCH	dialbase*16
+	
+	IF	COMPDIALS
+	FNset2b	V,dialfont
+	JMP	UNPACKTOLATCH1
+
+	ELSE
+	LDX	#256-dialbase
+	FNset2b	SC,dialfont
+	JMP	SENDDFONT2
+
+	ENDIF
+
+
+SENDBANKtrue	; Send Source bank X to target bank X
+	; (Send ALL cells including colour map
+	; and characters 0-frchar)
+	; Assume screen blanked
+
+	STX	bank
+	STX	sbank
+	STX	vbank
+	LDA	#0
+	STA	cellmin
+	IF	DIALSONTOP
+	STA	cellminH
+	ENDIF
+
+
+	LDA	MODE1
+	CMP	#pwrmod2
+	BNE	!1
+	LDA	#icbase
+	BNE	!2
+!1	LDA	#stripchr
+!2	STA	charmin
+	LDA	frchar
+	STA	frchst,X
+
+	LDA	#$C4
+
+	JSR	STARTDLOAD2
+	JSR	quicksend
+	LDA	frchar
+	STA	charzer,X
+	RTS
+
+quicksend	; of bank X (assume screen blank & NMI disabled)
+	; must preserve X
+!1	TXA
+	PHA
+	FNset2b	remain,$3FFF
+	JSR	transfer
+	PLA
+	PHA
+	TAX
+	LDA	bankstatus,X
+	AND	#$20		; Wait till bank is
+	BNE	!2		; fully sent to PPU 
+	FNset2b	remain,$1000	; but keep refreshing music
+	JSR	transfer		; (total screen time ia approx
+	PLA
+	TAX
+	LDA	bankstatus,X	; $6360 cycles)
+	AND	#$20
+	BNE	!3
+	JSR	FUDGEREFRESH
+	JMP	!1
+
+!2	PLA
+	TAX
+!3	JMP	FUDGEREFRESH
+
+SNDSLWtrue2	; Send down both source banks w/o blanking display
+	PHA
+	JSR	waitsend
+
+	LDA	MODE
+	IF	INCPPIC
+	CMP	#datmod
+	BNE	!7
+	JSR	GETPIC2
+	JMP	!6
+	ENDIF	; (incppic)
+!7	
+	IF	INCFACE
+	CMP	#stamod
+	BNE	!6
+	JSR	GETFACE2
+	ENDIF	; (INCFACE)
+!6
+	LDA	MODE
+	AND	#icbit
+	BEQ	!1
+	LDA	#0
+	STA	DOINTRPT
+;	BEQ	!4
+
+!1
+	JSR	PREPSTRIP
+
+!4	LDA	#0
+	STA	cellmin
+	IF	DIALSONTOP
+	STA	cellminH
+	LDA	#4*banner+basecell
+	STA	zermin
+	ENDIF
+
+	LDA	#stripchr
+	STA	charmin
+	LDA	frchar
+	STA	frchst
+	STA	frchst+1
+
+	IF	DIALSONTOP
+	LDA	#4*(banner+nli+1)+basecell
+	STA	cellmax
+	ELSE
+	ENDIF
+	LDA	#4*(banner+nli+1)+basecell
+;	STA	cellmax
+;	STA	cellmax+1
+
+
+	LDX	#0
+	PLA
+	JSR	STARTDLOAD2
+	INC	bank
+	JSR	STARTDLOAD2
+
+	JSR	waitsend
+	IF	DIALSONTOP
+	LDA	#4*(banner+nli)+basecell
+	STA	cellmax
+	ELSE
+	LDA	#4*(banner+nli)+basecell
+	STA	cellmax
+	STA	cellmax+1
+	ENDIF
+
+	LDA	MODE1
+	STA	MODE2
+
+	LDA	frchar
+	STA	charzer
+	STA	charzer+1
+	LDA	#0
+
+	LDX	#0
+	STX	vbank
+	STX	sbank
+	JSR	writebank
+	LDA	MODE
+	AND	#icbit
+	BNE	!3
+	JSR	WSCAN		; Make sure sprite up
+	LDA	#128		; B4 setting DOINTRPT true
+	STA	DOINTRPT
+!3
+	LDA	faded
+	BPL	!2
+	JMP	FADEUP
+!2	;JMP	XFERPALtrue
+
+XFERPALtrue	; Transfer pallete across if necessary
+	LDA	MODE
+	AND	#$F
+	TAX
+	LDA	MODPAL,X
+	CMP	PALSENT
+;	BEQ	!1
+	STA	PALSENT
+	JSR	GETPALLETEtrue
+	DEC	fade
+	JSR	WSCAN
+	INC	fade
+!1	RTS
+
+	
+MODPAL	; Table of Pallettes for each trade mode
+	DB	0	; Space
+	DB	2	; Title
+	DB	10	; Brief1
+	DB	10	; Brief2
+	DB	0	; Death
+	DB	10	; Mission
+	DB	6	; Data
+	DB	8	; Inventory
+	DB	8	; Status
+	DB	5	; Equip
+	DB	1	; Cargomode	cargmod
+	DB	7	; Load
+	DB	3	; Local
+	DB	4	; Galac
+	DB	0	; Name
+	DB	9	; power up
+
+
+;SENDDFONT	; Send X sprite defns (numbered from A) from SC to PPU.
+;	ASL	A
+;	STA	T
+;	LDA	#0
+;	ROL	A
+;
+;	ASL	T
+;	ROL	A
+;
+;	ASL	T
+;	ROL	A
+;
+;	ASL	T
+;	ROL	A
+;
+;	ASL	T
+;	ROL	A
+;
+;	STA	VRAM_ADR
+;	LDA	T
+;	STA	VRAM_ADR
+;	JMP	SENDDFONT2
+;
+
+
+invtb	; Defns for border ('low and holy') characters
+	HEX	00 00 00 00 00 00 00 00
+	HEX	00 00 00 00 00 00 00 00
+
+	HEX	00 00 00 00 00 00 00 00
+	HEX	03 03 03 03 03 03 03 03
+
+	HEX	00 00 00 00 00 00 00 00
+	HEX	C0 C0 C0 C0 C0 C0 C0 C0
+
+	HEX	00 00 00 00 00 00 00 00
+	HEX	00 00 00 FF FF FF 00 00
+
+	HEX	00 00 00 00 00 00 00 00
+	HEX	0F 1F 1F DF DF BF BF BF
+
+
+
+INITVIDEOtrue
+				; Assume display etc disabled
+
+	JSR	WAITVBL		; Synch with VBL
+
+
+	FNset2b	stripas,sl1*ncl
+
+	PRIMELATCH	$3F00	; Set all colours black
+	LDA	#BLACK
+	LDX	#31
+!5	STA	VRAM_DAT
+	DEX
+	BPL	!5
+
+
+	PRIMELATCH	$2000	; Zero PPU ASCII maps 1 & 2
+	LDA	#0
+	LDX	#$8
+	LDY	#0
+!1	STA	VRAM_DAT
+	DEY
+	BNE	!1
+	JSR	WAITVBL
+	LDA	#0
+	DEX
+	BNE	!1
+
+	LDA	#$F5
+	STA	PALSENT	
+	STA	DSENT
+
+	PRIMELATCH	$0
+	LDY	#0
+	LDX	#16*lowholy
+!2	LDA	invtb,Y
+	STA	VRAM_DAT
+	INY
+	DEX
+	BNE	!2
+
+	PRIMELATCH	$1000
+	LDY	#0
+	LDX	#16*lowholy
+!3	LDA	invtb,Y
+	STA	VRAM_DAT
+	INY
+	DEX
+	BNE	!3
+
+
+	LDY	#0
+invl1	LDA	#$F0		; Set all sprites 
+	STA	ATTRIBUTES,Y	; to redcross
+	INY			; sprites
+	LDA	#redcross		; off screen area
+	STA	ATTRIBUTES,Y	; attribute $33
+	INY
+	LDA	#$03
+	STA	ATTRIBUTES,Y
+	INY
+	LDA	#0
+	STA	ATTRIBUTES,Y
+	INY
+	BNE	invl1
+
+	JSR	SENDDIALFONT
+
+	IF	SPLITSCREEN
+	LDA	#spr0y		; Sprite 0 = Dial Raster
+	STA	ATTRIBUTES+0	; Flager
+	LDA	#redcross
+	STA	ATTRIBUTES+1
+	LDA	#spr0x
+	STA	ATTRIBUTES+3
+
+	IF	SEESPRITE
+	LDA	#$03
+	ELSE
+	LDA	#$23
+	ENDIF
+
+	STA	ATTRIBUTES+2
+	ENDIF
+
+;	LDA	#5+toprow
+;	STA	ATTRIBUTES+4	; Sprite 1 = Judder monitor
+;	LDA	#redcross
+;	STA	ATTRIBUTES+5
+;	LDA	#123
+;	STA	ATTRIBUTES+7
+;	LDA	#$33
+;	STA	ATTRIBUTES+6
+
+
+	LDA	#corner		; Slider sprites
+	STA	ATTRIBUTES+slidbase*4+1
+	STA	ATTRIBUTES+slidbase*4+4+1
+	LDA	#corner+2
+	STA	ATTRIBUTES+slidbase*4+8+1
+	STA	ATTRIBUTES+slidbase*4+12+1
+	LDA	#3
+	STA	ATTRIBUTES+slidbase*4+2
+	LDA	#$43
+	STA	ATTRIBUTES+slidbase*4+4+2
+	LDA	#$43	;C0
+	STA	ATTRIBUTES+slidbase*4+8+2
+	LDA	#$03	;80
+	STA	ATTRIBUTES+slidbase*4+12+2
+
+	JSR	WAITVBL
+	LDA	#<0		; reset OAM address
+	STA	OAM_ADR
+	LDA	#<ATTRIBUTES	; set DMA channel to high byte
+	STA	SPRITE_DMA_ADR	; of sprite attribute area
+
+	LDA	#0
+	STA	sbank
+	STA	bank
+	STA	vbank
+	FNset2b	font,$1000
+	FNset2b vdm,$2000
+		
+	LDA	#$28		; Pretend both banks 
+	STA	bankstatus		; have just been sent
+	STA	bankstatus+1	; to PPU
+	LDA	#$4
+	STA	charzer
+	STA	charzer+1
+	STA	cellzer
+	STA	cellzer+1
+	STA	chartrn
+	STA	chartrn+1
+	STA	celltrn
+	STA	celltrn+1
+;	LDA	#FF
+;	STA	striptrn
+
+
+
+	LDA	#BLACK
+	STA	COL0
+	STA	COL1
+	STA	COL2
+	STA	COL3
+
+
+	LDA	#0
+	STA	fade
+
+
+	STA	MODE2
+	LDA	#FF
+	STA	faded
+
+	JSR	WAITVBL		; Wait for vsynch
+
+	LDA	#%10010000		; Enable VBL NMI 
+	STA	CVIDEO0		; which should turn on
+	IF	DIALSONTOP		; display having set all
+	LDA	#%10000000		; colours to black
+	ENDIF
+	STA	VIDEO0
+
+;	LDA	#VID1VAL
+;	STA	VIDEO1
+
+	RTS
+
+
+INVICOETC	LDA	MODE1
+	CMP	#cargmod
+	BNE	!1
+	; Fix for inv icon on freeze strip
+
+	LDA	stripno
+	CMP	#frzstrip
+	BEQ	!4
+	JSR	INVBUTTON
+	JMP	!1
+!4	LDX	#$F0
+	STX	ATTRIBUTES+(4*picbase)+0
+	STX	ATTRIBUTES+(4*picbase)+4+0
+	STX	ATTRIBUTES+(4*picbase)+8+0
+	STX	ATTRIBUTES+(4*picbase)+12+0
+
+
+!1	FNset2b	stripas,sl1*ncl
+	LDA	MODE1
+	BPL	!2
+	FNset2b	stripas,sl2*ncl	; stripas=posn to put strip
+!2
+ANRTSIVI	RTS
+
+
+
+DOSTRIPtrue	; Prepare and send wholly new strip without
+	; blanking display (strip no in A)
+	TAY
+	LDA	MODE1
+	AND	#icbit
+	BNE	ANRTSIVI
+	STY	stripno
+	JSR	BLANKstrip
+	FNset2b	stripas,sl1*ncl
+	LDA	MODE1
+	BPL	!2
+	FNset2b	stripas,sl2*ncl	; stripas=posn to put strip
+!2	LDA	stripno
+	ASL	A
+	ASL	A
+	ADC	#<STRIPDEF
+	STA	stripzH			; stripz=ptr to char defns
+	LDX	#0
+	STX	striptrn
+!3	POLLBIT0	69		; Send new font with blank
+	LDA	striptrn			; map (transfer done on NMI
+	BPL	!3			; so wait till done)
+;	JMP	UPDTSTtrue
+
+UPDTSTtrue	;Redo and send strip ASCII map but not chars
+	LDA	stripno
+	JSR	WANTSTRIPtrue
+
+	LDA	MODE1
+	AND	#icbit
+	BNE	!5
+	JSR	INVICOETC
+
+	LDA	#128
+	STA	maponly			; Send map only
+	ASL	A
+	STA	striptrn
+!3	POLLBIT0	69
+	LDA	striptrn			; transfer done on NMI so
+	BPL	!3			; wait till done
+
+	ASL	maponly
+!5	RTS
+
+
+PREPSTRIP
+	POLLBIT	207
+	LDA	#spr0x
+	STA	ATTRIBUTES+3
+	LDY	#sl1-banner
+	LDX	#spr0y
+	LDA	MODE1	;NODIALS1
+	BPL	!3
+	CMP	#detmode
+	BNE	!4
+	LDX	#$F0
+	BNE	!3
+!4
+	LDY	#sl2-banner
+	LDX	#spr0y2
+	CMP	#eqpmod
+	BNE	!1
+
+	IF	BIG
+	LDX	#spr0y-7
+	ELSE
+	LDX	#spr0y+1
+	ENDIF	
+	LDA	#spr0x2
+	STA	ATTRIBUTES+3
+!1	LDA	MODE1
+	AND	#$F
+	CMP	#(pwrmod1&$F)
+	BNE	!2
+	LDX	#8*21-12+spryoff
+;	LDA	#128
+;	BNE	!5
+!2	CMP	#(glchrt1&$F)
+	BNE	!3
+	LDX	#8*inps-16+3+spryoff
+	LDA	#spr0x2
+!5	STA	ATTRIBUTES+3
+!3	STX	ATTRIBUTES+0
+	TYA
+	SEC
+	ROL	A
+	ASL	A
+	ASL	A
+	STA	stripy
+
+PREPSTRIP2
+	LDA	stripno
+	ASL	A
+	ASL	A
+	ADC	#<STRIPDEF
+	STA	stripzH
+	LDA	MODE
+	AND	#icbit
+	BNE	!5
+	LDX	#0
+	STX	striptrn
+!5	RTS
+
+
+
+BLANKstrip
+	JSR	VIRGINstrip
+	LDY	#but0
+	JSR	blockeven
+	LDY	#but1
+	JSR	blockodd
+	LDY	#but2
+	JSR	blockeven
+	LDY	#but3
+	JSR	blockodd
+	LDY	#but4
+	JSR	blockeven
+	LDY	#butB
+	JSR	blockodd	
+
+BLOCKFROM5	
+	LDY	#but5
+	JSR	blockodd
+	LDY	#but6
+	JSR	blockeven
+
+BLOCKFROM7
+	LDY	#but7
+	JSR	blockodd
+	LDY	#but8
+	JSR	blockeven
+	LDY	#but9
+	JSR	blockodd
+	LDY	#butA
+	JMP	blockeven
+
+VIRGINstrip
+
+	LDA	stripno
+	ASL	A
+	ASL	A
+	ASL	A
+	ASL	A
+	ASL	A
+	ASL	A
+	TAY
+	BNE	!4
+	LDA	#<(STRIPMAPS-1)
+	BNE	!5	
+!4	LDA	#<STRIPMAPS	
+!5	DEY
+	STY	V
+	ADC	#0
+	STA	V+1
+
+	LDA	MODE1	;NODIALS1	;  First set up correct
+	BMI	!1			; correct ASCIIs in both
+	FNset2b	SC,VIDM1+sl1*ncl	; fake video maps.
+	FNset2b	LI,VIDM2+sl1*ncl	;  Character codes are:
+	JMP	!2			;
+!1	FNset2b	SC,VIDM1+sl2*ncl	;  4, 5, 6,......,34
+	FNset2b	LI,VIDM2+sl2*ncl	; 35,36,37,......,66
+	
+
+
+	IF	POLLSCAN
+
+!2	LDY	#2*ncl-1
+!3	LDA	#lftbord
+	STA	(SC),Y
+	STA	(LI),Y
+	DEY
+	BNE	!3
+
+
+	ELSE	;(POLLSCAN)
+
+
+	POLLBIT	70
+
+!2	LDY	#2*ncl-1
+!3	LDA	(V),Y		;5,6
+	STA	(SC),Y		;6
+	STA	(LI),Y		;6
+	DEY			;2
+	CPY	#ncl+1		;2
+	BNE	!3		;3,4=26 26*31=806
+	
+	POLLBIT	71
+
+!6	LDA	(V),Y		;5,6
+	STA	(SC),Y		;6
+	STA	(LI),Y		;6
+	DEY			;2
+	BNE	!6		;3,4=24 24*33=792
+
+	ENDIF	;(POLLSCAN)
+
+	;  Now faff around a little
+	; to accomodate for one-char
+	; scrolling of the screen.
+
+	
+	POLLBIT	221
+
+	LDY	#ncl
+	LDA	(V),Y
+	LDY	#0
+	STA	(SC),Y
+	STA	(LI),Y
+	LDY	#2*ncl
+	LDA	(V),Y
+	LDY	#ncl
+	STA	(SC),Y	;VIDM1+(nli+banner+1)*ncl
+	STA	(LI),Y
+
+	RTS
+
+
+nostrip
+	FNset2b	SC,VIDM1+sl2*ncl
+	FNset2b	LI,VIDM2+sl2*ncl
+	LDY	#2*ncl-1
+	LDA	#0
+!1	STA	(SC),Y
+	STA	(LI),Y
+	DEY
+	BNE	!1
+	LDA	#ncl
+	LDY	#0
+	STA	(SC),Y
+	STA	(LI),Y
+	RTS
+
+but0	equ	2
+but1	equ	4
+but2	equ	7
+but3	equ	9
+but4	equ	12
+but5	equ	15-1
+but6	equ	17
+but7	equ	20-1
+but8	equ	22
+but9	equ	25-1
+butA	equ	27
+butB	equ	30-1
+
+frzstrp	; Freeze strip
+	LDA	JSTGY
+	BEQ	!1
+	LDY	#but0
+	JSR	moveeven
+!1	LDA	damp
+	BEQ	!2
+	LDY	#but1
+	JSR	moveodd
+!2	LDA	mutok
+	BPL	!3
+	LDY	#but2
+	JSR	moveeven
+!3	LDA	dnoiz
+	BMI	!4
+	LDY	#but3
+	JSR	moveodd
+!4	
+	IF	0	;
+	LDA	autoflag
+	BEQ	!6
+	LDY	#but4
+	JSR	blockeven
+	JMP	!5
+!6
+	ENDIF	;(AUTOPLAY)	
+
+
+	LDA	twoplayers
+	BNE	!5
+	LDY	#but4
+	JSR	moveeven
+!5	JSR	BLOCKFROM5
+dunstrpS	JMP	dunstrp
+
+
+WANTSTRIPtrue	; Set up fake video map and keycode ptr for strip A
+	TAY
+	BMI	nostrip
+	STA	stripno
+
+	POLLBIT	70
+
+
+	JSR	VIRGINstrip
+
+	LDA	stripno			;  Video map the same for
+	BEQ	trastrp
+	CMP	#combstrip			; each strip initially.
+	BEQ	comstrp			;  Now differenet routines
+	CMP	#frzstrip
+	BEQ	frzstrp
+	CMP	#chrtstrip			; for each strip blackout
+	BNE	dunstrpS
+	JMP	chastrp
+	
+	; Combat strip
+
+comstrp	;LDX	#allgrey1			; writing filled character
+	LDA	SSPR			; codes into video maps
+	BNE	!4
+	LDY	#but0
+	JSR	blockeven	; blat dock icon
+!4	LDA	ECM
+	BNE	!5
+	LDY	#but6
+	JSR	blockeven	; blat ecm icon	
+!5	LDA	QQ22+1
+	BNE	!9
+	LDA	CURSFLAG
+	ASL	A
+	BMI	!8
+!9	LDY	#but5
+	JSR	blockodd	; blat hyp icon
+!8	LDA	MODE
+	BEQ	!3
+	JSR	BLOCKFROM7
+	JMP	combatA
+!3	LDA	NOMSL
+	BNE	!6
+	LDY	#but7
+	JSR	blockodd	; blat tgt msl
+!6	LDA	MSTG
+	BPL	!7
+	LDY	#but8
+	JSR	blockeven	; blat fire msl
+!7	LDA	BOMB
+	BNE	combat9
+	LDY	#but9
+	JSR	blockodd	; blat bomb icon
+
+combat9
+
+	LDA	MJ
+	BNE	!2
+	LDA	ESCP
+	BNE	!1
+!2	LDY	#butA
+	JSR	blockeven	; blat escape
+!1
+combatA	LDA	SKIPFLAG
+	AND	#$C0
+	BEQ	trastrp2
+combatB	LDY	#butB
+	JSR	blockodd	; blat ffwd arrows
+	JMP	trastrp2
+
+trastrp	;LDX	#allgrey0
+	LDA	COK
+	BNE	!1			; If cheated file or
+	LDA	MODE1			; not in load mode
+	CMP	#lodmod			; blat label icon
+	BEQ	trastrp2
+!1	LDY	#but6
+	JSR	blockeven
+
+trastrp2
+	LDA	MODE1
+	CMP	#cargmod
+	BNE	dunstrp
+	LDY	#but1			; blat mkt prices icon
+	JSR	blockodd			; if trade mode
+	
+
+dunstrp	POLLBIT	222
+	LDA	stripno			;  Finally set up strip
+	ASL	A			; to point to keycode
+	ASL	A			; table
+	ASL	A
+	ASL	A	      		; (16 codes per strip but
+	ADC	#(strips&255)		; only first 12 used)
+	STA	strip
+	LDA	#(strips/256)
+	ADC	#0
+	STA	strip+1
+	RTS
+
+
+	; Chart strip
+
+chastrp
+	LDX	#allgrey
+!3	LDA	QQ12		; If docked
+	BEQ	!1
+	LDY	#but4
+	JSR	blockeven		; blat view icon
+
+	JSR	BLOCKFROM7		; and entire RHS
+	JMP	combatB
+
+!1	LDY	#2		; Else
+	JSR	blockeven		; blat launch icon
+
+	LDA	QQ22+1
+	BEQ	!8
+	LDY	#but5
+	JSR	blockodd		; blat Home
+	LDY	#but6
+	JSR	blockeven		; and Find icons
+	JMP	!9
+!8	LDA	CURSFLAG
+	ASL	A
+	BMI	!5
+!9	LDY	#but7
+	JSR	blockodd		; blat HYP icon (chrt)
+
+!5	LDA	GHYP
+	BNE	!2
+	LDY	#but8
+	JSR	blockeven		; blat GHYP icon
+!2	LDA	ECM
+	BNE	!4
+	LDY	#but9
+	JSR	blockodd
+!4	JMP	combat9	
+
+	IF	POLLSCAN
+
+moveeven
+moveodd
+blockeven
+blockodd	RTS
+
+	ELSE
+
+
+blockeven	POLLBIT	150
+	LDA	#4
+	STA	(SC),Y
+	STA	(LI),Y
+	INY
+	LDA	#5
+	STA	(SC),Y
+	STA	(LI),Y
+	TYA
+	CLC
+	ADC	#ncl-1
+	TAY
+	LDA	#$24
+	STA	(SC),Y
+	STA	(LI),Y
+	INY
+	LDA	#$25
+	STA	(SC),Y
+	STA	(LI),Y
+	RTS
+
+blockodd	POLLBIT	151
+	LDA	#6
+	STA	(SC),Y
+	STA	(LI),Y
+	INY
+	LDA	#7
+	STA	(SC),Y
+	STA	(LI),Y
+	INY
+	LDA	#8
+	STA	(SC),Y
+	STA	(LI),Y
+	TYA
+	CLC
+	ADC	#ncl-2
+	TAY
+	LDA	#$26
+	STA	(SC),Y
+	STA	(LI),Y
+	INY
+	LDA	#$25
+	STA	(SC),Y
+	STA	(LI),Y
+	INY
+	LDA	#$27
+	STA	(SC),Y
+	STA	(LI),Y
+	RTS
+
+moveodd	JSR	moveevs
+ 	INY
+
+moveeven	POLLBIT	152	
+	JSR	moveevs
+	INY
+moveevs	LDA	FREEZEMAP+14,Y
+	STA	(SC),Y
+	STA	(LI),Y
+	STY	T
+	TYA
+	CLC
+	ADC	#ncl
+	TAY
+	LDA	FREEZEMAP+14,Y
+	STA	(SC),Y
+	STA	(LI),Y
+	LDY	T
+	RTS
+	
+	ENDIF	;(POLLSCAN)
+
+crf01	LDX	#icbase
+	STX	frchar
+	RTS
+
+crf0	LDX	#stripchr
+	STX	frchar
+	RTS
+
+corefonttrue
+	LDA	MODE
+;	CMP	#glchrt1
+;	BEQ	crf0
+	CMP	#pwrmod1
+	BEQ	crf01
+	CMP	#let3d
+	BEQ	crf0
+	LDX	#lastcore
+	LDA	MODE
+	BMI	!1
+	LDX	#topbar2
+
+!1	STX	frchar
+	FNset2b	V,TYPEFACE
+	FNset2b	SC,FONT1+8*stripchr
+	FNset2b	LI,FONT2+8*stripchr
+	LDY	#$0
+	LDX	#stripchr
+
+
+crfl1	POLLBIT1	71
+
+	DO	8	
+	LDA	(V),Y
+	STA	(SC),Y
+	STA	(LI),Y
+	INY
+	LOOP
+	BNE	!1
+	INC	V+1
+	INC	SC+1
+	INC	LI+1
+!1	INX
+
+
+	CPX	#topbar2
+	BNE	crfl1
+
+
+crfl2	POLLBIT1	72
+	CPX	frchar
+	BEQ	crf1
+	DO	8	
+	LDA	(V),Y
+	STA	(LI),Y
+	lda	#0
+	STA	(SC),Y
+	INY
+	LOOP
+	BNE	!1	;!! was P%
+	INC	V+1
+	INC	SC+1
+	INC	LI+1
+!1	INX
+	JMP	crfl2
+
+crf1	POLLBIT	73
+	LDA	#0			; Bodge fix to clear
+	LDX	#8*(lastcore-topbar2)	; the thickbox characters
+!2	STA	(LI),Y			; in front view
+	STA	(SC),Y
+	INY
+	BNE	!3
+	INC	LI+1
+	INC	SC+1
+!3	DEX
+	BNE	!2
+	
+	POLLBIT	202
+	RTS
+
+
+typefonttrue			; Download ASCII font starting at A
+			; Normally colour 2 on colour 0
+			; but if load mode then colour 2 on 1
+
+	STA	SC
+	SEC
+	SBC	#32
+	STA	typebase
+	LDA	SC
+	CLC
+	ADC	#fontsize
+	STA	frchar
+	LDX	#0
+	LDA	MODE
+	CMP	#lodmod
+	BNE	!1
+	DEX
+!1	STX	T
+	LDA	#0
+	ASL	SC
+	ROL	A
+	ASL	SC
+	ROL	A
+	ASL	SC
+	ROL	A
+	ADC	#<FONT1
+	STA	LI+1
+	ADC	#<(FONT2-FONT1)
+	STA	SC+1
+	LDA	SC
+	STA	LI
+	FNset2b	V,TYPEFACE+nonasci*8
+	LDX	#fontsize
+	LDY	#$0
+tyfl1
+	POLLBIT	74
+	DO	8	
+	LDA	(V),Y
+	STA	(LI),Y
+	AND	T
+	EOR	T
+	STA	(SC),Y
+	INY
+	LOOP
+	BNE	!2
+	INC	V+1
+	INC	LI+1
+	INC	SC+1
+!2	DEX
+	BNE	tyfl1
+	RTS
+
+typfont2true			; Download highlighted ASCII font
+			; ie. colour 3 on colour 1
+
+	FNset2b	LI,FONT1+8*(firstasci+fontsize)
+	FNset2b	SC,FONT2+8*(firstasci+fontsize)
+	LDX	#fontsize
+	LDA	MODE
+	CMP	#lodmod
+	BNE	!1
+	LDX	#70
+!1	TXA
+	CLC
+	ADC	frchar
+	STA	frchar
+	FNset2b	V,TYPEFACE+nonasci*8
+	LDY	#$0
+tyfl2
+	POLLBIT1	75
+	DO	8	
+	LDA	(V),Y
+	STA	(SC),Y
+	LDA	#FF
+	STA	(LI),Y
+	INY
+	LOOP
+	BNE	!2
+	INC	V+1
+	INC	SC+1
+	INC	LI+1
+!2	DEX
+	BNE	tyfl2
+	RTS
+
+
+
+	IF	ANYPIC
+FULLPICTtrue	; Set up X x Y cell 7 colour picture top left corner at XC,YC
+	STX	K
+	STY	K+1
+	LDA	frchar
+	STA	picstart
+	CLC
+	ADC	#7*8
+	STA	frchar
+	LDA	picstart
+	STA	K+2
+	JSR	PICTURE
+	LDA	#picdef
+	STA	K+2
+	LDA	#picbase
+	STA	K+3
+	LDX	#0
+	LDY	#0
+	JSR	SPPICT
+	DEC	XC
+	DEC	YC
+	INC	K
+	INC	K+1
+	INC	K+1
+;	JSR	THICKBOX2
+THICKBOX2true
+	JSR	THICKS2
+	LDY	#0
+	LDA	#corner4
+	STA	(SC),Y
+	STA	(LI),Y
+	LDA	#topbar2
+	JSR	THICKS1
+	LDA	#corner2
+	STA	(SC),Y
+	STA	(LI),Y
+	DEC	K+1
+	JMP	!1
+
+!3	SPOLLBIT	240
+	LDA	#lftbord
+	LDY	#0
+	STA	(SC),Y
+	STA	(LI),Y
+
+
+	LDA	#rgtbord
+	LDY	K
+	STA	(SC),Y
+	STA	(LI),Y
+!1	LDA	SC
+	CLC
+	ADC	#ncl
+	STA	SC
+	STA	LI
+	BCC	!4
+	INC	SC+1
+	INC	LI+1
+!4
+
+	DEC	K+1
+	BNE	!3
+
+!6
+	LDY	#0
+	LDA	#corner5
+	STA	(SC),Y
+	STA	(LI),Y
+	LDA	#topbar3
+	JSR	THICKS1
+	LDA	#corner3
+	STA	(SC),Y
+	STA	(LI),Y
+	RTS
+
+
+THICKS1
+	LDY	#1
+!2	STA	(SC),Y
+	STA	(LI),Y
+	INY
+	CPY	K
+	BNE	!2
+	RTS
+
+THICKS2
+	JSR	RRS1
+	LDA	SC
+	CLC
+	ADC	XC
+	STA	SC
+	STA	LI
+	BCC	!1
+	INC	SC+1
+	INC	LI+1
+!1	RTS
+
+
+THICKBOXtrue	; Draw K x (K+1) character box top left corner at K+2,K+3
+	LDA	K+2
+	STA	XC
+	LDA	K+3
+	STA	YC
+	JSR	THICKS2
+	LDA	#topbar3
+	JSR	THICKS1
+
+	LDX	K+1
+	JMP	!4
+!3	SPOLLBIT	239
+
+	LDA	SC
+	CLC
+	ADC	#ncl
+	STA	SC
+	STA	LI
+	BCC	!4
+	INC	SC+1
+	INC	LI+1
+!4
+
+	LDA	#lftbord
+	LDY	#0
+	STA	(SC),Y
+	STA	(LI),Y
+	LDA	#rgtbord
+	LDY	K
+	STA	(SC),Y
+	STA	(LI),Y
+	DEX
+	BNE	!3
+
+!6	LDA	#topbar2
+	JMP	THICKS1
+
+	ENDIF	; (ANYPIC)
+
+
+
+
+	IF	ANYPIC
+
+PICTUREtrue	; Set up K x (K+1) BCG picture top left corner at cell XC,YC
+	; assuming first ASCII to use =K+2
+
+
+	JSR	RRS1
+	LDA	SC
+	CLC
+	ADC	XC
+	STA	SC
+	STA	LI
+	BCC	!5
+	INC	SC+1
+	INC	LI+1
+!5	LDX	K+1	
+!1	POLLBIT	212
+	LDY	#0
+	LDA	K+2
+!3	STA	(LI),Y
+	STA	(SC),Y
+	CLC
+	ADC	#1
+	INY
+	CPY	K
+	BNE	!3
+	STA	K+2
+	LDA	SC
+	CLC
+	ADC	#ncl
+	STA	SC
+	STA	LI
+	BCC	!4
+	INC	SC+1
+	INC	LI+1
+!4	DEX
+	BNE	!1
+	RTS
+
+
+	ENDIF	; (ANYPIC)
+
+
+
+
+FUDGECLEARtrue	; Clear fake screen RAM
+	LDA	#0
+	STA	SC+1
+	LDA	#rsvch
+	ASL	A
+	ROL	SC+1
+	ASL	A
+	ROL	SC+1
+	ASL	A
+	ROL	SC+1
+	STA	SC
+	STA	LI
+	LDA	SC+1
+	ADC	#<FONT2
+	STA	LI+1
+	LDA	SC+1
+	ADC	#<FONT1
+	STA	SC+1
+	LDX	#rsvch
+	LDY	#0
+fudcl1	LDA	#0
+	DO	8
+	STA	(SC),Y
+	STA	(LI),Y
+	INY
+	LOOP
+	BNE	!1
+	INC	SC+1
+	INC	LI+1
+!1	POLLBIT	76
+	INX
+	BNE	fudcl1
+	LDA	#0
+	STA	SC
+	STA	LI
+	LDA	#<VIDM1
+	STA	SC+1
+	LDA	#<VIDM2
+	STA	LI+1
+
+
+	IF	DIALSONTOP
+	LDX	#nli+dili+2+banner
+	ELSE
+	LDX	#nli+dili+3	;txli
+	ENDIF
+
+
+
+
+
+fudcl2	LDY	#ncl
+	LDA	#0
+!2	STA	(SC),Y
+	STA	(LI),Y
+	DEY
+	BPL	!2
+	POLLBIT	77
+	LDA	SC
+	CLC
+	ADC	#ncl
+	STA	SC
+	STA	LI
+	BCC	!1
+	INC	SC+1
+	INC	LI+1
+!1	DEX
+	BNE	fudcl2
+	RTS		
+
+
+	; tcol0 text is colour 1 on colour 0
+	;       (colour 2 on colour 1 in load mode)
+	; tcol1 text is colour 3 on colour 1
+
+PALTBL0	; Front view
+	DB	BCKCOL,FRGCOL,BCKCOL,FRGCOL		; view area
+	DB	BCKCOL,BARCOL2,DKGREY,BARCOL	; dial bars
+	DB	BCKCOL,ICBAR1,DKGREY,ELLCOL2	; scaner
+	DB	BCKCOL,ICBAR1,DKGREY,ICBAR2		; icons & box
+
+;	DB	BCKCOL,$20,$10,ELLCOL2		; scanner
+;	DB	BCKCOL,$30,$10,ICBAR2		; icons & box
+
+	DB	BCKCOL,DUSTCOL1,SCANCOL0,SLIDCOL	; dust and compass
+	DB	BCKCOL,DUSTCOL2,SCANCOL1,SGTCOL	; dust 
+	DB	BCKCOL,LTRED,LTYELLOW,ORANGE		; explsns & suns
+	DB	BCKCOL,SLIDCOL2,SCANCOL3,NEEDCOL	; collision sprite
+
+PALTBL1	; Unified trade mode	
+	DB	BCKCOL,BTYELLOW,BTYELLOW,BTYELLOW
+	DB	BCKCOL,LTGREY,red,DKGREEN		; text
+	DB	BCKCOL,BLUE1,DKGREY,LTYELLOW	; table heading 
+	DB	BCKCOL,ICBAR1,DKGREY,ICBAR2		; icons & box
+
+	DB	BCKCOL,DUSTCOL1,LTGREY,SLIDCOL	; 
+	DB	BCKCOL,ICBAR1,BLACK,ICBAR2		; picture=inv icon 
+	DB	BCKCOL,RED,LTYELLOW,PINK		; 
+	DB	BCKCOL,SLIDCOL2,SCANCOL3,NEEDCOL	; col sprite
+
+PALTBL2	;Title page
+	DB	BCKCOL,FRGCOL,BCKCOL,FRGCOL		; view area
+	DB	BCKCOL,BARCOL2,DKGREY,BARCOL
+	DB	BCKCOL,ICBAR1,DKGREY,ELLCOL2
+	DB	BCKCOL,ICBAR1,DKGREY,$3A		; icons & box
+
+	DB	BCKCOL,DUSTCOL1,LTGREY,SLIDCOL	; scanner
+	DB	BCKCOL,DUSTCOL2,LTGREY,SGTCOL	; scanner 
+	DB	BCKCOL,     RED,LTGREY,ORANGE	; scanner
+	DB	BCKCOL,HITCOL,LTGREY,NEEDCOL	; col spr
+
+
+PALTBL3	; Short range
+	DB	BCKCOL,FRGCOL,BCKCOL,FRGCOL		; view area
+	DB	BCKCOL,LTGREY,BARCOL,BARCOL2	; dial bars
+	DB	BCKCOL,ICBAR1,DKGREY,ICBAR3
+	DB	BCKCOL,ICBAR1,DKGREY,ICBAR2		; icons & box
+
+	DB	BCKCOL,DUSTCOL1,SCANCOL0,SLIDCOL	; 
+	DB	BCKCOL,DUSTCOL2,SCANCOL1,SGTCOL	;  
+	DB	BCKCOL,RED,LTYELLOW,ORANGE		; suns blobs
+	DB	BCKCOL,SLIDCOL2,SCANCOL3,NEEDCOL	; col spr
+
+PALTBL4
+	; Long range
+	DB	BCKCOL,FRGCOL,BCKCOL,FRGCOL		; 
+	DB	BCKCOL,BTGREY,LTYELLOW,pink		; 
+	DB	BCKCOL,ICBAR1,DKGREY,ICBAR3
+	DB	BCKCOL,ICBAR1,DKGREY,ICBAR2		; icons & box
+
+	DB	BCKCOL,DUSTCOL1,SCANCOL0,SLIDCOL
+	DB	BCKCOL,DUSTCOL2,SCANCOL1,SGTCOL
+	DB	BCKCOL,RED,LTYELLOW,ORANGE		; 
+	DB	BCKCOL,SLIDCOL2,SCANCOL3,NEEDCOL	; col spr
+
+PALTBL5	; Equip ship
+	DB	BCKCOL,LTYELLOW,LTGREY,RED		; unused
+	DB	BCKCOL,LTGREY,DKGREY,DKGREEN	; text
+	DB	BCKCOL,$0C,$1C,$2C			; ship piccy
+;	DB	BCKCOL,$00,$10,$30
+	DB	BCKCOL,ICBAR1,DKGREY,ICBAR2		; icons & box
+
+
+	DB	BCKCOL,$0C,$1C,$2C			; items A
+	DB	BCKCOL,DKYELLOW,LTYELLOW,BTYELLOW	; items B
+	DB	BCKCOL,PINK,BTPINK,PINK		; items C
+	DB	BCKCOL,SLIDCOL2,white,NEEDCOL	; col spr & slider
+
+PALTBL6	; Data on sys
+	DB	BCKCOL,BTGREEN,DKGREY,RED		; text
+	DB	BCKCOL,BTGREY,DKGREY,BTGREEN	; text
+	DB	BCKCOL,LTGREY,DKGREY,BTGREY		; picture
+	DB	BCKCOL,ICBAR1,DKGREY,ICBAR2		; icons & box
+
+	DB	BCKCOL,DUSTCOL1,SCANCOL0,SLIDCOL	; 
+	DB	BCKCOL,ORANGE,LTYELLOW,$17		; picture  
+	DB	BCKCOL,RED,LTYELLOW,ORANGE		; 
+	DB	BCKCOL,SLIDCOL2,SCANCOL3,NEEDCOL	; col sprite
+	
+
+PALTBL7	; Load/Saver	
+	DB	BCKCOL,LTYELLOW,BCKCOL,PINK		; text
+	DB	BCKCOL,LTGREY,RED,DKGREEN		; text
+	DB	BCKCOL,LTGREY,BCKCOL,DKGREEN	; text 
+	DB	BCKCOL,ICBAR1,DKGREY,ICBAR2		; icons & box
+
+	DB	BCKCOL,DUSTCOL1,SCANCOL0,SLIDCOL 
+	DB	BCKCOL,$18,$28,$38			; logo 
+	DB	BCKCOL,RED,CYAN,CYAN		; piping
+	DB	BCKCOL,SLIDCOL2,SCANCOL3,NEEDCOL	; col sprite
+
+
+PALTBL8	; Status
+	DB	BCKCOL,DOCKED,LTGREY,BTWHITE	; picture
+	DB	BCKCOL,BTGREY,DKGREY,BTGREEN	; text
+	DB	BCKCOL,BTGREEN,DKGREY,RED		; text
+	DB	BCKCOL,ICBAR1,DKGREY,ICBAR2		; icons & box
+
+	DB	BCKCOL,BLACK,$10,$30		; sunglasses
+	DB	BCKCOL,$17,$27,$37			; face -ian
+;	DB	BCKCOL,$18,$28,$37			; face -euro  
+	DB	BCKCOL,BLACK,$28,$38		; medallion
+	DB	BCKCOL,SLIDCOL2,PINK,NEEDCOL	; slider
+
+
+
+PALTBL9	; Power up
+	DB	BCKCOL,$1C,$2C,$3C			; cyan logo
+;	DB	BCKCOL,$18,$28,$38			; gold logo
+	DB	BCKCOL,BTYELLOW,BLUE2,BLUE2		; Lic by Nin 
+	DB	BCKCOL,DARK+RED,DKGREY,BTGREY	; lang names		; 
+	DB	BCKCOL,$2B,DKGREY,PINK		; Imagineer text
+
+	DB	BCKCOL,LTGREY,DKGREEN,PINK		; name highlight 
+	DB	BCKCOL,$08,$18,$27			; (face)  
+	DB	BCKCOL,BLACK,$28,$38		; 
+	DB	BCKCOL,HITCOL,$10,$30		; 
+
+PALTBLA	; Mission
+	DB	BCKCOL,FRGCOL,BCKCOL,FRGCOL		; view area
+	DB	BCKCOL,LTGREY,BARCOL2,BARCOL	; text
+	DB	BCKCOL,$10,DKGREY,ELLCOL2
+ 	DB	BCKCOL,$10,DKGREY,ICBAR2		; icons & box
+
+
+	DB	BCKCOL,DUSTCOL1,SCANCOL0,SLIDCOL	; dust and compass
+	DB	BCKCOL,DUSTCOL2,SCANCOL1,SGTCOL	; dust 
+	DB	BCKCOL,RED,LTYELLOW,ORANGE		; explsns & suns
+	DB	BCKCOL,SLIDCOL2,SCANCOL3,NEEDCOL	; collision sprite
+
+
+
+TWEAKTABLE	; Table for fade outs
+	HEX	0F 0F 0F 0F 0F 0F 0F 0F
+	HEX	0F 0F 0F 0F 0F 0F 0F 0F
+
+	HEX	00 01 02 03 04 05 06 07
+	HEX	08 09 0A 0B 0C 0F 0F 0F
+
+	HEX	10 11 12 13 14 15 16 17
+	HEX	18 19 1A 1B 1C 0F 0F 0F
+
+	HEX	20 21 22 23 24 25 26 27
+	HEX	28 29 2A 2B 2C 0F 0F 0F
+
+
+
+
+
+GETPALLETEtrue
+	; First get pallete adress
+
+	LDA	MODE2
+	AND	#$F
+	TAX
+	LDA	#0
+	STA	SC+1
+
+	LDA	MODPAL,X
+
+	LDY	#0
+	STY	SC+1
+
+	ASL	A
+	ASL	A
+	ASL	A
+	ASL	A
+	ASL	A
+	ROL	SC+1
+	ADC	#>PALTBL0
+	STA	SC
+	LDA	#<PALTBL0
+	ADC	SC+1
+	STA	SC+1
+
+	; then copy to FADEBUFFER
+	LDY	#2*16
+!1	LDA	(SC),Y
+	STA	FADEBUFFER,Y
+	DEY
+	BPL	!1
+	LDA	MODE2
+
+	BEQ	!4
+
+	CMP	#stamod
+	BEQ	TWDWN1
+;	BEQ	!3
+	CMP	#datmod
+	BNE	!2
+	LDA	QQ15
+	EOR	QQ15+5
+	EOR	QQ15+2
+	LSR	A
+	LSR	A
+	EOR	#$0C
+	AND	#$1C
+	TAX
+	LDA	COLTAB,X
+	STA	FADEBUFFER+$14
+	LDA	COLTAB+1,X
+	STA	FADEBUFFER+$15
+	LDA	COLTAB+2,X
+	STA	FADEBUFFER+$16
+	LDA	COLTAB+3,X
+	STA	FADEBUFFER+$17
+!2	JMP	TWDWN1
+
+
+!3
+;	LDX	#0
+;	LDA	FACECOLTAB+1,X
+;	STA	FADEBUFFER+$01
+;	LDA	FACECOLTAB+2,X
+;	STA	FADEBUFFER+$16
+;	LDA	FACECOLTAB+3,X
+;	STA	FADEBUFFER+$17
+;	JMP	!2
+
+
+
+!4	LDA	FADEBUFFER
+	LDY	FADEBUFFER+3
+	LDA	vbank
+	BNE	!5
+	STA	FADEBUFFER+1
+	STY	FADEBUFFER+2
+;	STY	FADEBUFFER+3
+	RTS
+!5	STY	FADEBUFFER+1
+	STA	FADEBUFFER+2
+;	STY	FADEBUFFER+3
+	RTS
+
+
+
+
+
+
+TWOTWEAKDOWN	JSR	TWEAKDOWN
+TWEAKDOWN
+	LDX	#31
+!1	LDY	FADEBUFFER,X
+	LDA	TWEAKTABLE,Y
+	STA	FADEBUFFER,X
+;	AND	#$30
+;	BNE	!2
+;	LDA	#BLACK
+;	BNE	!3
+;!2	LDA	FADEBUFFER,X
+;	SEC
+;	SBC	#$10
+;	
+;!3	STA	FADEBUFFER,X
+
+	DEX
+	BNE	!1
+
+TWDWN1
+	LDA	#BLACK
+	STA	COL0
+
+	LDA	MODE2
+	BPL	!1
+	CMP	#detmode
+	BEQ	!1
+
+	CMP	#stamod
+	BEQ	!2
+;	CMP	#let3D
+;	BEQ	!1
+;	CMP	#
+
+	LDA	FADEBUFFER+16+5
+	STA	COL1
+	LDA	FADEBUFFER+16+6
+	STA	COL2
+	LDA	FADEBUFFER+16+7
+	STA	COL3
+	RTS
+
+!1	LDA	FADEBUFFER+3
+	STA	COL1
+	RTS
+
+!2	LDA	FADEBUFFER+1
+	STA	COL1
+	LDA	FADEBUFFER+2
+	STA	COL2
+	LDA	FADEBUFFER+3
+	STA	COL3
+	RTS
+
+
+FADEDOWNtrue
+	LDA	MODE2
+	CMP	#FF
+	BEQ	!1
+	LDA	faded
+	BMI	!1
+	JSR	waitsend
+	JSR	WSCAN
+	JSR	GETPALLETEtrue
+	DEC	fade
+	JSR	TWEAKDOWN
+	JSR	TWOWSCAN
+	JSR	TWEAKDOWN
+	JSR	TWOWSCAN
+	JSR	TWEAKDOWN
+	JSR	TWOWSCAN
+	JSR	TWEAKDOWN
+	JSR	TWOWSCAN
+	INC	fade
+!1	LDA	#FF
+	STA	faded
+	RTS
+
+
+
+FADEUPtrue
+	JSR	WSCAN
+	JSR	GETPALLETEtrue
+	JSR	TWOTWEAKDOWN
+	JSR	TWEAKDOWN
+	DEC	fade
+	JSR	TWOWSCAN
+	JSR	GETPALLETEtrue
+	JSR	TWOTWEAKDOWN
+	JSR	TWOWSCAN
+	JSR	GETPALLETEtrue
+	JSR	TWEAKDOWN
+	JSR	TWOWSCAN
+
+
+	JSR	GETPALLETEtrue
+	JSR	TWDWN1
+	JSR	WSCAN
+	INC	fade
+	LSR	faded
+	RTS
+
+
+
+	
+
+COLTAB
+	DB	BCKCOL,$25,LTRED,$15
+	DB	BCKCOL,$35,LTRED,$25
+	DB	BCKCOL,$34,$04,$14
+	DB	BCKCOL,$27,LTYELLOW,$17	;Random colours for pictures
+
+	DB	BCKCOL,$29,CYAN,$19
+	DB	BCKCOL,$2A,$1B,$0A
+	DB	BCKCOL,$32,$21,$02
+	DB	BCKCOL,$2C,$22,$1C
+
+
+	IF	COMPCOLMAP
+
+CMM0	equ	0
+CMM1	equ	CMM0+1
+CMM2	equ	CMM1+1
+CMM3	equ	CMM2+1
+CMM4	equ	CMM3+1
+CMM5	equ	CMM4+1
+
+CMM6E	equ	CMM5+1
+CMM6G	equ	CMM6E+1
+CMM6F	equ	CMM6G+1
+
+CMM7	equ	CMM6F+1
+
+CMM8E	equ	CMM7+1
+CMM8G	equ	CMM8E+1
+CMM8F	equ	CMM8G+1
+
+CMM9E	equ	CMM8F+1
+CMM9G	equ	CMM9E+1
+CMM9F	equ	CMM9G+1
+
+CMMAE	equ	CMM9F+1
+CMMAG	equ	CMMAE+1
+CMMAF	equ	CMMAG+1
+
+CMMBE	equ	CMMAF+1
+CMMBG	equ	CMMBE+1
+CMMBF	equ	CMMBG+1
+
+CMMC	equ	CMMBF+1
+CMMD	equ	CMMC+1
+
+
+
+
+colmaps
+	IF	BIG
+	INCBIN	CCOLMAPS.DAT
+	ELSE
+	INCBIN	CSMALMAP.DAT
+	ENDIF	;(BIG)
+
+
+	IF	SUPPORTED & ENGL
+COLMODNUME
+
+	DB	CMM0
+	DB	CMM1	; title
+	DB	CMMC	; bri 1
+	DB	CMM4	; bri 2
+
+	DB	CMM5	; death
+	DB	CMM2	; mission
+	DB	CMM8E	; data
+	DB	CMMBE	; inv
+
+	DB	CMM9E	; status
+	DB	CMM7	; equip
+	DB	CMM6E	; cargo
+	DB	CMMAE	; load/save
+
+
+	DB	CMM3	; local
+	DB	CMM3	; galctic
+	DB	CMM2	; name  
+	DB	CMMD	; power up
+	ENDIF
+
+
+	IF	SUPPORTED & GERM
+COLMODNUMG
+
+	DB	CMM0
+	DB	CMM1	; title
+	DB	CMMC	; bri 1
+	DB	CMM4	; bri 2
+
+	DB	CMM5	; death
+	DB	CMM2	; mission
+	DB	CMM8G	; data
+	DB	CMMBG	; inv
+
+	DB	CMM9G	; status
+	DB	CMM7	; equip
+	DB	CMM6G	; cargo
+	DB	CMMAG	; load/save
+
+
+	DB	CMM3	; local
+	DB	CMM3	; galctic
+	DB	CMM2	; name  
+	DB	CMM2	; 
+	ENDIF
+
+
+	IF	SUPPORTED & FREN
+COLMODNUMF
+
+	DB	CMM0
+	DB	CMM1	; title
+	DB	CMMC	; bri 1
+	DB	CMM4	; bri 2
+
+	DB	CMM5	; death
+	DB	CMM2	; mission
+	DB	CMM8F	; data
+	DB	CMMBF	; inv
+
+	DB	CMM9F	; status
+	DB	CMM7	; equip
+	DB	CMM6F	; cargo
+	DB	CMMAF	; load/save
+
+	DB	CMM3	; local
+	DB	CMM3	; galctic
+	DB	CMM2	; name  
+	DB	CMMD	; power up
+	ENDIF
+
+
+COLMODNUMTBL	DL	COLMODNUME,COLMODNUMG,COLMODNUMF,COLMODNUME
+COLMODNUMTBH	DH	COLMODNUME,COLMODNUMG,COLMODNUMF,COLMODNUME
+	; LANGUAGE TABLES	
+
+SETCOLMEMtrue
+	LDX	LANG
+	LDA	COLMODNUMTBL,X
+	STA	V
+	LDA	COLMODNUMTBH,X
+	STA	V+1
+	LDA	MODE
+	AND	#$F
+	TAY
+	LDA	(V),Y
+	ASL	A
+	TAX
+	LDA	colmaps+2,X
+	ADC	#>colmaps
+	STA	V
+	LDA	colmaps+3,X
+	ADC	#<colmaps
+	STA	V+1
+	SET2B	SC,VIDM1+$3C0
+	JMP	UNPACKTOSC1
+
+	ELSE	; (COMPCOLMAPS)
+
+
+
+
+COLMOD
+	DW	colmemmap
+	DW	colmemmap1	; title
+	DW	colmemmapC	; bri 1
+	DW	colmemmap4	; bri 2
+
+	DW	colmemmap5	; death
+	DW	colmemmap2	; mission
+	DW	colmemmap8E	; data
+	DW	colmemmapBE	; inv
+
+	DW	colmemmap9E	; status
+	DW	colmemmap7	; equip
+	DW	colmemmap6E	; cargo
+	DW	colmemmapAE	; load/save
+
+
+	DW	colmemmap3	; local
+	DW	colmemmap3	; galctic
+	DW	colmemmap2	; name  
+	DW	colmemmap2	; pwrup
+ 
+
+
+
+
+SETCOLMEMtrue
+	LDA	MODE
+	AND	#$F
+	ASL	A
+	TAX	
+	LDA	COLMOD,X
+	STA	SC
+	LDA	COLMOD+1,X
+	STA	SC+1
+
+	IF	BIG
+	LDY	#63
+	ELSE
+	LDY	#55
+	ENDIF
+!1	POLLBIT2	78
+	LDA	(SC),Y		;5,6
+	STA	VIDM1+$3C0,Y	;5
+	DEY			;2
+	BPL	!1		;3,4 =15,17 *63=
+	RTS
+
+	ENDIF	; (COMPCOLMAPS)
+
+
+
+NOSIGHT	; Kill sight and tgt square
+	LDA	#$F0
+	STA	ATTRIBUTES+sightbase*4+0
+	STA	ATTRIBUTES+sightbase*4+4
+	STA	ATTRIBUTES+sightbase*4+8
+	STA	ATTRIBUTES+sightbase*4+12
+	STA	ATTRIBUTES+sightbase*4+16
+	RTS
+
+SightY	equ	Yabs+1+spryoff
+
+
+SIGHTtrue
+	LDY	VIEW
+	LDA	LASER,Y
+	BEQ	NOSIGHT
+	CMP	#PulseLas
+	BNE	!2
+	JMP	sig1
+!2	CMP	#BeamLas
+	BNE	!1
+	JMP	sig2
+!1	CMP	#Armlas
+	BNE	sig4
+
+	LDA	#$80
+	STA	ATTRIBUTES+sightbase*4+12+2
+	LDA	#$40
+	STA	ATTRIBUTES+sightbase*4+4+2
+	LDA	#$00
+	STA	ATTRIBUTES+sightbase*4+8+2
+;	LDA	#$00
+	STA	ATTRIBUTES+sightbase*4+0+2
+	LDY	#sigsp2
+	STY	ATTRIBUTES+sightbase*4+1
+	STY	ATTRIBUTES+sightbase*4+4+1
+	INY
+	STY	ATTRIBUTES+sightbase*4+8+1
+	STY	ATTRIBUTES+sightbase*4+12+1
+	LDA	#128-6-sprxoff
+	STA	ATTRIBUTES+sightbase*4+3
+	LDA	#128+10-sprxoff
+	STA	ATTRIBUTES+sightbase*4+4+3
+	LDA	#128+2-sprxoff
+	STA	ATTRIBUTES+sightbase*4+8+3
+	STA	ATTRIBUTES+sightbase*4+12+3
+	LDA	#SightY
+	STA	ATTRIBUTES+sightbase*4+0
+	STA	ATTRIBUTES+sightbase*4+4+0
+	LDA	#SightY-8
+	STA	ATTRIBUTES+sightbase*4+8+0
+	LDA	#Sighty+8
+	STA	ATTRIBUTES+sightbase*4+12+0
+	RTS
+
+
+sig4	; Mining
+	LDA	#$03
+	STA	ATTRIBUTES+sightbase*4+2
+	LDA	#$43
+	STA	ATTRIBUTES+sightbase*4+4+2
+	LDA	#$83
+	STA	ATTRIBUTES+sightbase*4+8+2
+	LDA	#$C3
+	STA	ATTRIBUTES+sightbase*4+12+2
+	LDA	#slant
+	STA	ATTRIBUTES+sightbase*4+1
+	STA	ATTRIBUTES+sightbase*4+4+1
+	STA	ATTRIBUTES+sightbase*4+8+1
+	STA	ATTRIBUTES+sightbase*4+12+1
+	LDA	#128-6-sprxoff
+	STA	ATTRIBUTES+sightbase*4+3
+	STA	ATTRIBUTES+sightbase*4+8+3
+	LDA	#128+10-sprxoff
+	STA	ATTRIBUTES+sightbase*4+4+3
+	STA	ATTRIBUTES+sightbase*4+12+3
+	LDA	#Sighty-8
+	STA	ATTRIBUTES+sightbase*4+0
+	STA	ATTRIBUTES+sightbase*4+4+0
+	LDA	#Sighty+8
+	STA	ATTRIBUTES+sightbase*4+8+0
+	STA	ATTRIBUTES+sightbase*4+12+0
+	RTS
+
+
+sig1	LDA	#$01
+	LDY	#horline
+	STA	ATTRIBUTES+sightbase*4+2
+	STA	ATTRIBUTES+sightbase*4+4+2
+	STA	ATTRIBUTES+sightbase*4+8+2
+	STA	ATTRIBUTES+sightbase*4+12+2
+sig3	STY	ATTRIBUTES+sightbase*4+1
+	STY	ATTRIBUTES+sightbase*4+4+1
+	INY
+	STY	ATTRIBUTES+sightbase*4+8+1
+	STY	ATTRIBUTES+sightbase*4+12+1
+	LDA	#128-10-sprxoff
+	STA	ATTRIBUTES+sightbase*4+3
+	LDA	#128+14-sprxoff
+	STA	ATTRIBUTES+sightbase*4+4+3
+	LDA	#128+2-sprxoff
+	STA	ATTRIBUTES+sightbase*4+8+3
+	STA	ATTRIBUTES+sightbase*4+12+3
+	LDA	#SightY
+	STA	ATTRIBUTES+sightbase*4+0
+	STA	ATTRIBUTES+sightbase*4+4+0
+	LDA	#SightY-12
+	STA	ATTRIBUTES+sightbase*4+8+0
+	LDA	#SightY+12
+	STA	ATTRIBUTES+sightbase*4+12+0
+	RTS
+
+
+sig2	LDA	#$02
+	STA	ATTRIBUTES+sightbase*4+2
+	LDA	#$42
+	STA	ATTRIBUTES+sightbase*4+4+2
+	LDA	#$82
+	STA	ATTRIBUTES+sightbase*4+8+2
+	LDA	#$C2
+	STA	ATTRIBUTES+sightbase*4+12+2
+	LDA	#sigsp1
+	STA	ATTRIBUTES+sightbase*4+1
+	STA	ATTRIBUTES+sightbase*4+4+1
+	STA	ATTRIBUTES+sightbase*4+8+1
+	STA	ATTRIBUTES+sightbase*4+12+1
+	LDA	#128-2-sprxoff
+	STA	ATTRIBUTES+sightbase*4+3
+	STA	ATTRIBUTES+sightbase*4+8+3
+	LDA	#128+6-sprxoff
+	STA	ATTRIBUTES+sightbase*4+4+3
+	STA	ATTRIBUTES+sightbase*4+12+3
+	LDA	#Sighty-8
+	STA	ATTRIBUTES+sightbase*4+0
+	STA	ATTRIBUTES+sightbase*4+4+0
+	LDA	#Sighty+8
+	STA	ATTRIBUTES+sightbase*4+8+0
+	STA	ATTRIBUTES+sightbase*4+12+0
+	RTS
+
+
+
+
+
+
+	IF	0
+UNPACKTOLATCH1	; Unpack compressed data at V to PPU latch
+		; Picbank1 incarnation
+	LDY	#0
+!1	LDA	(V),Y
+	INY
+	BNE	!5
+	INC	V+1
+!5	CMP	#$40
+	BCS	!2
+	TAX
+	AND	#$F
+	BEQ	!3
+	CPX	#$3F
+	BEQ	!4
+	TXA
+	CMP	#$20
+	BCS	!6
+	CMP	#$10
+	AND	#$F
+	TAX
+	BCS	!7
+
+	; Repeated 0s
+	LDA	#0
+!8	STA	VRAM_DAT
+	DEX
+	BNE	!8
+	JMP	!1
+
+!7	; Repeated FFs
+	LDA	#FF
+	BNE	!8
+
+
+!6	; Repeated byte
+	AND	#$1F	; Allows for big repeat
+	TAX
+	LDA	(V),Y
+	INY
+	BNE	!8
+	INC	V+1
+	JMP	!8
+
+!3	; Take as is
+	TXA
+!2	STA	VRAM_DAT
+	JMP	!1
+!4	RTS
+ 
+
+UNPACKTOSC1	; Unpack compressed data at V to SC
+	LDY	#0
+!1	POLLBIT	237
+	LDX	#0
+	LDA	(V,X)
+	INC	V
+	BNE	!5
+	INC	V+1
+
+!5	CMP	#$40
+	BCS	!2
+	TAX
+	AND	#$F
+	BEQ	!3
+	CPX	#$3F
+	BEQ	!4
+	TXA
+	CMP	#$20
+	BCS	!6
+	CMP	#$10
+	AND	#$F
+	TAX
+	BCS	!7
+
+	; Repeated 0s
+	LDA	#0
+!8	STA	(SC),Y
+	INY
+	BNE	!A
+	INC	SC+1
+!A	DEX
+	BNE	!8
+	JMP	!1
+
+!7	; Repeated FFs
+	LDA	#FF
+	BNE	!8
+
+
+!6	; Repeated byte
+	AND	#$1F	; Allows for big repeat
+	STA	T
+	LDX	#0
+	LDA	(V,X)
+	LDX	T
+	INC	V
+	BNE	!8
+	INC	V+1
+	JMP	!8
+
+!3	; Take as is
+	TXA
+!2	STA	(SC),Y
+	INY
+	BNE	!1
+	INC	SC+1
+	JMP	!1
+!4	RTS
+
+	ENDIF
+
+	BMESSAGE	"End of pic1 bank"
+
+	IF	*>$BFF9
+	ERROR	Picture bank code too long!
+	ENDIF
+lowfree3	equ	$BFFA-*
+	VECMAC
+
+	BANK	picbank
+
+

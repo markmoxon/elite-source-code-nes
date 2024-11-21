@@ -1,0 +1,843 @@
+
+;REM	ELITE <E>  Joint
+;
+;	Misc routines inc. Solar
+
+
+hyppl	LDX	#5
+!1	LDA	safehouse,X
+	STA	QQ15,X
+	DEX
+	BPL	!1
+
+cpl	LDX	#5
+TT53	LDA	QQ15,X
+	STA	QQ19,X
+	DEX
+	BPL	TT53
+
+	LDY	#3
+	BIT	QQ15
+	BVS	!1	;!! was P%+3
+	DEY
+!1	STY	T
+TT55	POLLBIT	144
+	LDA	QQ15+5
+	AND	#31
+	BEQ	!7	;!! was P%+7
+	ORA	#128
+	JSR	TT27
+!7	JSR	TT54
+	DEC	T
+	BPL	TT55
+	LDX	#5
+TT56	LDA	QQ19,X
+	STA	QQ15,X
+	DEX
+	BPL	TT56
+	RTS
+
+cmn	LDY	#0
+QUL4	LDA	NAME,Y
+	CMP	#32
+	BEQ	yplm1
+	JSR	TT26smart
+	INY
+	CPY	#7	;>>DJB 4/5/90<<
+	BNE	QUL4
+yplm1	RTS
+
+ypl	BIT	MJ
+	BMI	ypl16
+	JSR	TT62
+	JSR	cpl
+TT62	LDX	#5
+TT78	LDA	QQ15,X
+	LDY	QQ2,X
+	STA	QQ2,X
+	STY	QQ15,X
+	DEX
+	BPL	TT78
+ypl16	RTS
+
+tal	CLC
+	LDX	GCNT
+	INX
+	JMP	pr2
+
+fwl	; Print fuel and cash for trade mode
+	LDA	LANG2
+	AND	#GERM
+	BNE	!1
+
+
+	LDA	#105
+	JSR	TT68
+	JSR	TWOSPACE
+	LDA	LANG2
+	AND	#FREN
+	BEQ	!2
+	JSR	TWOSPACE
+!2	LDX	QQ14
+	SEC
+	JSR	pr2
+	LDA	#195
+	JSR	plf	;>>DJB 26/4/90<< was JSR
+	LDA	#197
+	JSR	TT68
+
+	LDA	LANG2
+	AND	#FREN
+	BNE	!3
+	JSR	TWOSPACE
+	JSR	SPACE
+!3	LDA	#0
+	BEQ	PCASHP1
+
+!1	LDA	#105
+	JSR	TT68GREEN
+	JSR	SPACE
+	LDX	QQ14
+	SEC
+	JSR	pr2
+	LDA	#195
+	JSR	plf	;>>DJB 26/4/90<< was JSR
+	LDA	#197	; (cash)
+	JSR	TT68
+;	JSR	TWOSPACE
+	LDA	#0
+	BEQ	PCASHP1
+
+
+
+PCASH	LDA	#119
+PCASHP1	JMP	spc	;now prints space after cash
+
+FOURSPACE	JSR	TWOSPACE
+TWOSPACE	JSR	SPACE
+	JMP	SPACE
+
+yplstep	JMP	ypl
+
+csh	LDX	#3
+pc1	LDA	CASH,X
+	STA	K,X
+	DEX
+	BPL	pc1
+;	LDA	#9
+	LDA	#11	;<<<ib 18/9/91
+	STA	U
+	SEC
+	JSR	BPRNT
+	LDA	#226
+	JSR	TT27	;Print token with line feed
+	JSR	SPACE
+	JMP	SPACE
+plf	JSR	TT27
+	JMP	TT67
+TT68	JSR	TT27	;Print token with colon
+TT73	LDA	#$3A
+	JMP	TT27
+
+talSTEP	JMP	tal
+
+
+TT27lowtrue	; Davids token routine
+	TXA
+	BEQ	csh	;token 0=CASH
+;	BMI	!43
+	DEX
+	BEQ	talSTEP
+	DEX 
+	BEQ	yplstep	;token 2=current planet
+	dex
+	BNE	!5	;!! was P%+5
+	JMP	cpl	;3=cursor planet
+!5	dex
+	BNE	!1
+	JMP	cmn	;4="JAMESON"
+!1	dex
+	BEQ	fwlSTEP	;5="Fuel x.x light years Cash xx.x CR"
+	dex
+	BNE	!2	;!! was P%+7
+	LDA	#128
+	STA	QQ17	;6=Upper case first letter?
+!3	RTS
+!2	DEX		;7=null
+ 	BEQ	!3
+	DEX
+	BNE	!6	;!! was P%+5
+	STX	QQ17	;8=Upper case
+	RTS
+!6	JSR	TT73
+	LDA	LANG2
+	AND	#GERM
+	BNE	!7
+	LDA	#22	;>>DJB 28/4/90<<
+	STA	XC
+	RTS		;9=CR LF
+
+!7	LDA	#23
+	STA	XC
+	RTS
+
+fwlSTEP	JMP	fwl
+
+
+
+
+;SWAPPZERO
+;	LDX	#K3+1
+;SWPZL
+;	LDA	0,X
+;	LDY	$CE00,X
+;	STA	$CE00,X
+;	STY	0,X
+;	INX
+;	BNE	SWPZL
+;	RTS
+
+SOS1	;Create planet
+	JSR	msblob
+	LDA	#127
+	STA	INWK+29
+	STA	INWK+30
+	LDA	tek
+	AND	#2
+	ORA	#128
+	JMP	NWSHP
+
+SOLAR
+	IF	HAVETRIBS
+	LDA	TRIBBLE
+	BEQ	nobirths
+	LDA	#0
+	STA	QQ20
+;	STA	QQ20+6	;Eat food but not Narcotics anymore
+	JSR	DORND
+	AND	#15
+	ADC	TRIBBLE
+	ORA	#4
+	ROL	A
+	STA	TRIBBLE
+	ROL	TRIBBLE+1
+	BPL	nobirths
+	ROR	TRIBBLE+1
+nobirths
+	ENDIF	;(HAVETRIBS)
+
+	LSR	FIST
+	JSR	ZINF
+	LDA	QQ15+1
+	AND	#3
+	ADC	#3
+	STA	INWK+8
+	LDX	QQ15+2
+	CPX	#128
+	ROR	A
+	STA	INWK+2
+	ROL	A
+	LDX	QQ15+3
+	CPX	#128
+	ROR	A
+	STA	INWK+5
+	JSR	SOS1	; Create planet
+	LDA	QQ15+3
+	AND	#7
+	ORA	#129
+	STA	INWK+8
+	LDA	QQ15+5
+	AND	#3
+	STA	INWK+2
+	STA	INWK+1
+	LDA	#0
+	STA	INWK+29
+	STA	INWK+30
+
+	STA	FRIN+1	; Extra to try to fix CJ's dread
+	STA	SSPR	; bug.
+
+	LDA	#$81	; Create Sun
+	JSR	NWSHP
+
+
+NWSTARS	LDA	MODE
+	ORA	COMBFLAG
+	;ORAMJ
+	BNE	WPSHPS
+nWq	LDA	vbcnt
+	CLC
+	ADC	RAND
+	STA	RAND
+	lda	vbcnt
+	sta	rand+1
+
+	LDY	NOSTM
+SAL4
+	POLLBIT	101
+	JSR	DORND
+	ORA	#$8
+	STA	SZ,Y
+	STA	ZZ
+	JSR	DORND
+	ORA	#$10
+	AND	#$F8
+	STA	SX,Y
+	JSR	DORND
+	STA	SY,Y
+	STA	SXL,Y
+	STA	SYL,Y	; for code repeatability
+	STA	SZL,Y
+	DEY
+	BNE	SAL4
+	;;JSRPBFL
+WPSHPS
+	LDX	#0
+WSL1	POLLBIT	215
+	LDA	FRIN,X
+	BEQ	WS2
+	BMI	WS1
+	STA	TYPE
+	JSR	GINF
+	LDY	#31
+	LDA	(INF),Y
+	AND	#$B7	;A7
+	STA	(INF),Y
+WS1	INX
+	BNE	WSL1
+WS2	LDX	#0
+DET1	RTS		;X is input-undraw dials
+
+SHDm2	DEX
+	RTS
+SHD	INX
+	BEQ	SHDm2
+DENGY	DEC	ENERGY
+	PHP
+	BNE	!1	;!! was P%
+	INC	ENERGY
+!1	PLP
+	RTS
+
+
+NOCOMPAS
+	LDA	#$F0
+	STA	ATTRIBUTES+compbase*4
+	RTS
+
+
+
+COMPAS
+	LDA	MJ
+	BNE	NOCOMPAS
+	LDA	SSPR
+	BNE	SP1
+	JSR	SPS1
+	JMP	SP2
+
+
+SP1	JSR	SPS4
+SP2	LDA	XX15
+	JSR	SPS2
+	TXA
+	CLC
+	ADC	#218-sprxoff+6
+	STA	ATTRIBUTES+compbase*4+3
+	LDA	XX15+1
+	JSR	SPS2
+	STX	T
+	LDA	#toprow-6+8*ditp+2*8	;154+7+16*BIG+spryoff
+	SEC
+	SBC	T
+	STA	ATTRIBUTES+compbase*4+0
+
+	LDA	#comdef2
+	LDX	XX15+2
+	BPL	!1	;!! was P%
+	LDA	#comdef1
+!1	STA	ATTRIBUTES+compbase*4+1
+	RTS
+
+
+
+
+SPS4	LDX	#8
+!1	LDA	Kpcent+NIpcent,X
+	STA	K3,X
+	DEX
+	BPL	!1
+	JMP	TAS2
+
+;	IF	FULL
+
+OOPS	STA	T
+	LDX	#0
+	LDY	#8
+	LDA	(INF),Y
+	BMI	OO1
+	LDA	FSH
+	SBC	T
+	BCC	OO2
+	STA	FSH
+	RTS
+OO2	LDX	#0
+	STX	FSH
+	BCC	OO3
+OO1	LDA	ASH
+	SBC	T
+	BCC	OO5
+	STA	ASH
+	RTS
+OO5	LDX	#0
+	STX	ASH
+OO3	ADC	ENERGY
+	STA	ENERGY
+	BEQ	*+4	;!! was P%
+	BCS	*+5	;!! was P%
+	JMP	DEATH
+	JSR	EXNO3
+	JMP	OUCH
+
+;	ELSE
+;OOPS	RTS
+;	ENDIF	; (full)
+
+
+NWSPS
+;	JSR	SPBLB
+	LDX	#$81
+	STX	INWK+32
+	LDX	#0
+	STX	INWK+30
+	STX	NEWB
+	;STXINWK+31
+	STX	FRIN+1	; Kill the sun
+	DEX
+	STX	INWK+29
+	LDX	#10
+	JSR	NwS1	; Negate f vector 
+	JSR	NwS1
+	JSR	NwS1
+	LDA	#SST	; prior to creating space stn
+	JSR	NWSHPSST
+	LDX	XX21+2*SST-2
+	LDY	XX21+2*SST-1
+	LDA	tek
+	CMP	#10
+	BCC	!1
+	LDX	XX21+2*DOD-2
+	LDY	XX21+2*DOD-1
+!1	STX	spasto
+	STY	spasto+1
+	JMP	UPDATESTRIP
+
+
+;	LDA	spasto
+;	STA	XX21+2*SST-2
+;	LDA	spasto+1
+;	STA	XX21+2*SST-1
+;	LDA	tek
+;	CMP	#10
+;	BCC	notadodo
+;	LDA	XX21+2*DOD-2
+;	STA	XX21+2*SST-2
+;	LDA	XX21+2*DOD-1
+;	STA	XX21+2*SST-1
+;notadodo
+;	;LDA#(LSO	MOD256)
+;	;STAINWK+33
+;	;LDA#(LSO	DIV256)
+;	;STAINWK+34
+;	LDA	#SST	;##
+;	JSR	NWSHP
+;	JMP	UPDATESTRIP
+
+NW2	; Creating planet or sun
+	STA	FRIN,X
+	TAX
+	LDA	#0
+	STA	NINB
+	JMP	NW8
+
+NWSHP	; Create new ship of type A, C=0 if fail
+
+NWSHPSST	STA	T
+	POLLBIT	224
+	LDX	#0
+NWL1	LDA	FRIN,X	; Loop to find free FRIN slot
+	BEQ	NW1
+	INX
+	CPX	#NOSH
+	BCC	NWL1
+NW3	CLC		; If none exit with C=0
+NW3p1	RTS
+
+NW1	JSR	GINF
+	LDA	T
+	BMI	NW2
+	ASL	A	; If type +ve then set
+	TAY		; XX0=ptr to defn		
+	LDA	XX21-1,Y
+	BEQ	NW3
+	STA	XX0+1
+	LDA	XX21-2,Y
+	STA	XX0
+
+NW4	STX	LI
+	LDX	T
+	LDA	#0	; Zero scanner byte
+	STA	NINB
+	LDA	SCACOL,X
+	BMI	NW6
+	TAX
+
+	LDY	#scanno
+!1	LDA	SCSP,Y	; Allocate sprite for scanner
+	BEQ	!2	; if wanted and available
+	DEY
+	BNE	!1
+	BEQ	NW6
+!2	LDA	#FF
+	STA	SCSP,Y
+	STY	NINB
+	TYA
+	ASL	A
+	ADC	NINB
+
+	ASL	A
+	ASL	A
+	TAY
+	TXA
+	LDX	NINB
+	STA	SCAT,X
+
+;	STA	ATTRIBUTES+4*scanbase-12+0+2,Y
+;	STA	ATTRIBUTES+4*scanbase-12+4+2,Y
+;	STA	ATTRIBUTES+4*scanbase-12+8+2,Y
+	
+NW6 	LDX	LI
+	LDY	#14
+	SHIPREAD	; Give maximum energy
+	STA	INWK35
+	LDY	#19
+	SHIPREAD
+	AND	#7
+	STA	INWK+31	; and fitted missiles
+	LDA	T
+	STA	FRIN,X	; Write type to FRIN
+	TAX
+	BMI	NW8
+	CPX	#HER
+	BEQ	gangbang
+	CPX	#JL
+	BCC	NW7
+	CPX	#JH
+	BCS	NW7	; Increment junk count if junk object
+gangbang	INC	JUNK
+NW7	INC	MANY,X	; Increment MANY+TYPE
+	LDY	T
+	JSR	RDEPCENT
+	AND	#$6F	; ORR bits 0,1,2,3,5,6
+	ORA	NEWB	; from Epcent table into NEWB
+	STA	NEWB
+	AND	#4
+	BEQ	!1	; If creating angry ship then
+	LDA	SKIPFLAG	; disable game skip
+	ORA	#128
+	STA	SKIPFLAG
+!1
+NW8	POLLBIT	102
+
+	LDY	#NIdwn-1	; Copy INWK block up to store
+NWL3	LDA	INWK,Y
+	STA	(INF),Y
+	DEY
+	BPL	NWL3
+
+	POLLBIT	103
+
+	SEC
+	RTS
+
+
+NwS1	LDA	INWK,X
+	EOR	#128
+	STA	INWK,X
+	INX
+	INX
+	RTS
+
+;	IF	FULL
+
+KS3	RTS
+KS1	LDX	XSAV
+	JSR	KILLSHP
+	LDX	XSAV
+	RTS
+
+KS4	; Kill space station
+	JSR	ZINF
+	LDA	#0
+	STA	FRIN+1	; Zap space stations slot
+	STA	SSPR	
+;	JSR	SPBLB
+	LDA	#6
+	STA	INWK+5
+	LDA	#$81	; then create sun
+	JSR	NWSHP
+	JMP	UPDATESTRIP
+
+KS2	LDX	#FF
+KSL4
+	POLLBIT	115
+	INX
+	LDA	FRIN,X	; Rearrange missile targets
+	BEQ	KS3
+	CMP	#MSL
+	BNE	KSL4
+	TXA
+	ASL	A
+	TAY
+	LDA	UNIV,Y
+	STA	SC
+	LDA	UNIV+1,Y
+	STA	SC+1
+	LDY	#32
+	LDA	(SC),Y
+	BPL	KSL4
+	AND	#$7F
+	LSR	A
+	CMP	XX4
+	BCC	KSL4
+	BEQ	KS6
+	SBC	#1
+	ASL	A
+	ORA	#128
+	STA	(SC),Y
+	BNE	KSL4
+KS6	LDA	#0
+	STA	(SC),Y
+	BEQ	KSL4
+
+
+CLEANKILL	; Download ship and then fall into killship
+	SPOLLBIT	211
+	LDY	#(NIdwn-1)
+!1	LDA	(INF),Y
+	STA	INWK,Y
+	DEY
+	BPL	!1
+
+KILLSHP
+	STX	XX4
+	JSR	FREESCAN	; Free scanner sprites
+	LDX	XX4
+
+	LDA	MSTG
+	CMP	XX4
+	BNE	KS5
+	LDY	#GREEN2
+	JSR	ABORT	; Target lost message?
+	LDA	#200
+	JSR	MESS
+KS5	LDY	XX4
+	LDX	FRIN,Y
+	CPX	#SST
+	BNE	!1
+	JMP	KS4
+
+!1	; Not space station
+	CPX	#CON
+	BNE	lll	; Killed the cougar?
+	LDA	TP
+	ORA	#2
+	STA	TP
+	INC	TALLY+1  ; --BT 
+lll	CPX	#HER
+	BEQ	!2
+	CPX	#JL
+	BCC	KS7
+	CPX	#JH
+	BCS	KS7
+!2	DEC	JUNK
+KS7	DEC	MANY,X
+	LDX	XX4
+KSL1
+	POLLBIT	104
+
+	INX		; Shuffle down FRIN table
+	LDA	FRIN,X
+	STA	FRIN-1,X
+	BNE	!1
+	JMP	KS2
+!1	TXA
+	ASL	A
+	TAY
+	LDA	UNIV,Y
+	STA	SC
+	LDA	UNIV+1,Y
+	STA	SC+1
+	POLLBIT	105
+
+	LDY	#NIpcent-1
+!2
+	LDA	(SC),Y
+	STA	(INF),Y
+	DEY
+	BPL	!2	; and move whole object
+
+	LDA	SC
+	STA	INF
+	LDA	SC+1
+	STA	INF+1
+
+	POLLBIT	106
+
+	JMP	KSL1 
+
+;	ENDIF	; (full)
+
+
+ABORT
+	LDX	#0
+	STX	MSAR
+	DEX	
+
+ABORT2	STX	MSTG
+	POLLBIT	36
+
+	LDX	NOMSL
+	JSR	MSBAR
+	JMP	UPDATESTRIP
+;	RTS
+
+msbpars	EQUB	4
+	DW	0,0
+
+
+
+YESNO			; Set A=1 iff yes
+	LDA	TCOL
+	PHA
+	LDA	#tcol1
+	STA	TCOL
+	LDA	#1
+	PHA
+yenl1
+	JSR	CLYNS
+	LDA	#15
+	STA	XC
+	PLA
+	PHA
+	JSR	DETOK
+	JSR	SENDINPAREA
+	LDA	frbut1
+	BMI	yeno1
+	LDA	upbut
+	ORA	dwnbut
+	BPL	yeno2
+	PLA
+	EOR	#3
+	PHA
+yeno2	LDY	#8
+	JSR	DELAY
+	JMP	yenl1
+
+yeno1	LDA	#0
+	STA	thiskey
+	STA	frbut1
+	PLA
+	TAX
+	PLA
+	STA	TCOL
+	TXA
+	RTS
+
+;gnum
+;
+;	LDA	TCOL
+;	PHA
+;	LDA	#tcol1
+;	STA	TCOL
+;	LDA	XC
+;	PHA
+;	LDX	#0
+;gnl1	STX	R
+;	PLA
+;	PHA
+;	STA	XC
+;	CLC
+;	JSR	pr2
+;
+;	JSR	SENDINPAREA
+;
+;	LDY	#6
+;	JSR	DELAY
+;
+;	JSR	readjoystick
+;	LDX	R
+;	LDA	frbut1
+;	ORA	frbut2
+;	BMI	gnum1
+;	LDA	upbut
+;	BPL	gnum2
+;	INX
+;	CPX	QQ25
+;	BCC	gnl1
+;	LDX	QQ25
+;gnum2	LDA	dwnbut
+;	BPL	gnl1
+;	DEX
+;	CPX	#FF
+;	BNE	gnl1
+;	LDX	#0
+;	BEQ	gnl1
+;gnum1	LDA	#0
+;	STA	thiskey
+;	STA	frbut1
+;	STA	frbut2
+;	LDY	#8
+;	JSR	DELAY
+;	PLA
+;	TXA
+;	STA	R
+;		     PLA
+;	STA	TCOL
+;	TXA
+;	CLC
+;;	RTS
+
+TT17	;	Simple DOKEY if space view
+	;	If Trade mode also set A=Key, X,Y=cursor move
+	LDA	MODE
+	BNE	TT17afterall
+	JSR	DOKEY
+	TXA
+	RTS
+
+TT17afterall	; A=Key, X,Y=Cursor control
+	JSR	DOKEY
+
+	LDX	#0
+	LDY	#0
+	LDA	shfbut
+	BMI	!4
+	LDA	lfttra
+	BPL	!1
+	DEX
+!1	LDA	rgttra
+	BPL	!2
+	INX
+!2	LDA	upbut
+	BPL	!3
+	INY
+!3	LDA	dwnbut
+	BPL	!4
+	DEY
+!4
+	LDA	thiskey
+	RTS
+
+	
+
+

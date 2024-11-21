@@ -1,0 +1,878 @@
+;
+;
+;"ELITEM"
+;	REM	ELITE <M> Nin
+;
+;	Mathematical Rotines
+
+
+FAROF2	; Set C if |INWK|>2*A*256 (uses U+5/16(V+W) giving 9.3% error)
+
+	STA	T
+	POLLBIT	110
+	LDA	INWK+2
+	ORA	INWK+5
+	ORA	INWK+8
+	ASL	A
+	BNE	!1
+	LDA	INWK+7
+	LSR	A
+	STA	K+2
+	LDA	INWK+1
+	LSR	A
+	STA	K
+	LDA	INWK+4
+	LSR	A
+	STA	K+1	; K,K+1,K+2=X/2,Y/2,Z/2
+	CMP	K
+	BCS	!2
+	LDA	K
+!2	CMP	K+2
+	BCS	!4
+	LDA	K+2
+!4	STA	SC	;SC=U/2
+	LDA	K
+	CLC
+	ADC	K+1
+	ADC	K+2
+	SEC
+	SBC	SC	;A=(V+W)/2
+	LSR	A
+	LSR	A
+	STA	SC+1
+	LSR	A
+	LSR	A
+	ADC	SC+1
+	ADC	SC
+	CMP	T
+	RTS
+!1	SEC
+	RTS
+
+
+MU5	STA	K
+	STA	K+1
+	STA	K+2
+	STA	K+3
+	CLC
+	RTS
+MULT3			;K(4)=AP(2)*Q
+	STA	R
+	AND	#127
+	STA	K+2
+	LDA	Q
+	AND	#127
+	BEQ	MU5
+	SEC
+	SBC	#1
+	STA	T
+	LDA	P+1
+	LSR	K+2
+	ROR	A
+	STA	K+1
+	LDA	P
+	ROR	A
+	STA	K
+
+	POLLBIT	153
+
+	LDA	#0
+	LDX	#24
+MUL2	BCC	*+4	;!! was P%
+	ADC	T
+	ROR	A
+	ROR	K+2
+	ROR	K+1
+	ROR	K
+	DEX
+	BNE	MUL2
+	STA	T
+
+	POLLBIT	154
+
+	LDA	R
+	EOR	Q
+	AND	#128
+	ORA	T
+	STA	K+3
+	RTS
+
+MLS2	LDX	XX
+	STX	R
+	LDX	XX+1
+	STX	S
+MLS1	LDX	ALP1
+	STX	P
+MULTS			;AP=A*P(P+<32)
+	TAX
+	AND	#128
+	STA	T
+	TXA
+	AND	#127
+	BEQ	MU6
+	TAX
+	DEX
+	STX	T1
+	LDA	#0
+	LSR	P
+	BCC	*+4	;!! was P%
+	ADC	T1
+	ROR	A
+	ROR	P
+	BCC	*+4	;!! was P%
+	ADC	T1
+	ROR	A
+	ROR	P
+	BCC	*+4	;!! was P%
+	ADC	T1
+	ROR	A
+	ROR	P
+	BCC	*+4	;!! was P%
+	ADC	T1
+	ROR	A
+	ROR	P
+	BCC	*+4	;!! was P%
+	ADC	T1
+	ROR	A
+	ROR	P
+	LSR	A
+	ROR	P
+	LSR	A
+	ROR	P
+	LSR	A
+	ROR	P
+	ORA	T
+	RTS
+MU6	STA	P+1
+	;MU10
+	STA	P
+	RTS
+
+SQUA	;AP=A*A       pres Q
+	AND	#127
+SQUA2	STA	P
+	TAX
+	BNE	MU11
+MU1	CLC
+	STX	P
+	TXA
+	RTS
+
+MLU1	LDA	SY,Y
+	STA	Y1
+MLU2	AND	#127
+	STA	P
+MULTU	;AP=P*Qunsg
+	LDX	Q
+	BEQ	MU1
+MU11	DEX
+	STX	T
+	LDA	#0
+	TAX		;just in case
+	LSR	P
+	BCC	*+4	;!! was P%
+	ADC	T
+	ROR	A
+	ROR	P	;7
+	BCC	*+4	;!! was P%
+	ADC	T
+	ROR	A
+	ROR	P	;6
+	BCC	*+4	;!! was P%
+	ADC	T
+	ROR	A
+	ROR	P	;5
+	BCC	*+4	;!! was P%
+	ADC	T
+	ROR	A
+	ROR	P	;4
+	BCC	*+4	;!! was P%
+	ADC	T
+	ROR	A
+	ROR	P	;3
+	BCC	*+4	;!! was P%
+	ADC	T
+	ROR	A
+	ROR	P	;2
+	BCC	*+4	;!! was P%
+	ADC	T
+	ROR	A
+	ROR	P	;1
+	BCC	*+4	;!! was P%
+	ADC	T
+	ROR	A
+	ROR	P
+	RTS
+FMLTU2	;	A=K*sin(A AND 31)
+	AND	#31
+	TAX
+	LDA	SNE,X
+	STA	Q
+	LDA	K
+FMLTU	;A=A*Q/256unsg
+	STX	P	;3
+	STA	widget	;3
+	TAX		;2
+	BEQ	MU3
+	LDA	logL,X
+	LDX	Q
+	BEQ	MU3again
+	CLC
+	ADC	logL,X
+	BMI	oddlog
+	LDA	log,X
+	LDX	widget
+	ADC	log,X
+	BCC	MU3again
+	TAX
+	LDA	antilog,X
+	LDX	P
+	RTS
+
+oddlog	LDA	log,X
+	LDX	widget
+	ADC	log,X
+	BCC	MU3again
+	TAX
+	LDA	antilogODD,X
+MU3	LDX	P
+	RTS
+MU3again	LDA	#0
+	LDX	P
+	RTS
+
+MLTU2M2	STX	Q
+MLTU2	;AP(2)=AP*Qunsg(EORP)	NB MLUT2-2 used!
+	EOR	#FF
+	LSR	A
+	STA	P+1
+	LDA	#0
+	LDX	#16
+	ROR	P
+MUL7	BCS	MU21
+	ADC	Q
+	ROR	A
+	ROR	P+1
+	ROR	P
+	DEX
+	BNE	MUL7
+	RTS
+MU21	LSR	A
+	ROR	P+1
+	ROR	P
+	DEX
+	BNE	MUL7
+	RTS
+
+;MUT3
+	LDX	ALP1
+	STX	P
+MUT2
+	LDX	XX+1
+	STX	S
+MUT1
+	LDX	XX
+	STX	R
+
+MULT1	;AP=Q*A
+	TAX
+	POLLBIT	215
+	TXA
+	AND	#127
+	LSR	A	;7
+	STA	P
+	TXA
+	EOR	Q
+	AND	#128
+	STA	T
+	LDA	Q
+	AND	#127
+	BEQ	mu10
+	TAX
+	DEX
+	STX	T1
+	LDA	#0
+	TAX	;just in case
+	BCC	*+4	;!! was P%
+	ADC	T1
+	ROR	A
+	ROR	P	;6
+	BCC	*+4	;!! was P%
+	ADC	T1
+	ROR	A
+	ROR	P	;5
+	BCC	*+4	;!! was P%
+	ADC	T1
+	ROR	A
+	ROR	P	;4
+	BCC	*+4	;!! was P%
+	ADC	T1
+	ROR	A
+	ROR	P	;3
+	BCC	*+4	;!! was P%
+	ADC	T1
+	ROR	A
+	ROR	P	;2
+	BCC	*+4	;!! was P%
+	ADC	T1
+	ROR	A
+	ROR	P	;1
+	BCC	*+4	;!! was P%
+	ADC	T1
+	ROR	A
+	ROR	P
+	LSR	A
+	ROR	P
+	ORA	T
+	RTS
+mu10	STA	P
+	RTS
+
+MULT12	JSR	MULT1
+	STA	S
+	
+	POLLBIT	155
+
+	LDA	P
+	STA	R
+	RTS
+
+
+
+TAS3	; AX=(INWK,Y).XX15
+	LDX	INWK,Y
+	STX	Q
+	LDA	XX15
+	JSR	MULT12
+	LDX	INWK+2,Y
+	STX	Q
+	LDA	XX15+1
+	JSR	MAD
+	STA	S
+	STX	R
+	LDX	INWK+4,Y
+	STX	Q
+	LDA	XX15+2
+
+MAD	JSR	MULT1
+
+ADD	;AX=AP+SR
+	STA	T1
+	AND	#128
+	STA	T
+	EOR	S
+	BMI	MU8
+	LDA	R
+	CLC
+	ADC	P
+	TAX
+	LDA	S
+	ADC	T1
+	ORA	T
+	RTS
+
+MU8	LDA	S
+	AND	#127
+	STA	U
+	LDA	P
+	SEC
+	SBC	R
+	TAX
+	LDA	T1
+	AND	#127
+	SBC	U
+	BCS	MU9
+	STA	U
+	TXA
+	EOR	#FF
+	ADC	#1
+	TAX
+	LDA	#0
+	SBC	U
+	ORA	#128
+MU9	EOR	T
+	RTS
+			;DVIDT(A=AP/Q)inF
+TIS1	STX	Q
+	EOR	#128
+	JSR	MAD
+;DVID96			;A=A/96
+	TAX
+	AND	#128
+	STA	T
+	TXA
+	AND	#127
+	LDX	#254
+	STX	T1
+DVL3	ASL	A
+	CMP	#96
+	BCC	DV4
+	SBC	#96
+DV4	ROL	T1
+	BCS	DVL3
+	LDA	T1
+	ORA	T
+	RTS
+DV42	LDA	SZ,Y
+DV41	STA	Q
+	LDA	DELTA
+DVID4			;P-R=A/Qunsg
+	;LDX#8
+	ASL	A
+	STA	P
+	LDA	#0
+	;.DVL4
+	ROL	A
+	CMP	Q
+	BCC	*+4	;!! was P%
+	SBC	Q
+	ROL	P
+	;7
+	ROL	A
+	CMP	Q
+	BCC	*+4	;!! was P%
+	SBC	Q
+	ROL	P
+	;6
+	ROL	A
+	CMP	Q
+	BCC	*+4	;!! was P%
+	SBC	Q
+	ROL	P
+	;5
+	ROL	A
+	CMP	Q
+	BCC	*+4	;!! was P%
+	SBC	Q
+	ROL	P
+	;4
+	ROL	A
+	CMP	Q
+	BCC	*+4	;!! was P%
+	SBC	Q
+	ROL	P
+	;3
+	ROL	A
+	CMP	Q
+	BCC	*+4	;!! was P%
+	SBC	Q
+	ROL	P
+	;2
+	ROL	A
+	CMP	Q
+	BCC	*+4	;!! was P%
+	SBC	Q
+	ROL	P
+	;1
+	ROL	A
+	CMP	Q
+	BCC	*+4	;!! was P%
+	SBC	Q
+	ROL	P
+	LDX	#0
+	STA	widget
+	TAX
+	BEQ	LLfix22
+	LDA	logL,X
+	LDX	Q
+	SEC
+	SBC	logL,X
+	BMI	noddlog22
+	LDX	widget
+	LDA	log,X
+	LDX	Q
+	SBC	log,X
+	BCS	LL222
+	TAX
+	LDA	antilog,X
+LLfix22	STA	R
+	RTS
+
+LL222	LDA	#FF
+	STA	R
+	RTS
+noddlog22	LDX	widget
+	LDA	log,X
+	LDX	Q
+	SBC	log,X
+	BCS	LL222
+	TAX
+	LDA	antilogODD,X
+	STA	R
+	RTS		;<<--9Mar
+
+
+
+
+DVID3B2	STA	P+2
+	LDA	INWK+6
+	ORA	#1
+	STA	Q
+	LDA	INWK+7
+	STA	R
+	LDA	INWK+8
+	STA	S
+			;K+1(3)-K=P(3)/SRQaprx
+	POLLBIT	156
+
+	LDA	P
+	ORA	#1
+	STA	P
+	LDA	P+2
+	EOR	S
+	AND	#128
+	STA	T
+	LDY	#0
+	LDA	P+2
+	AND	#127
+!9	CMP	#$40
+	BCS	!14
+	ASL	P
+	ROL	P+1
+	ROL	A
+	INY
+	BNE	!9
+!14	STA	P+2
+
+
+	LDA	S
+	AND	#127
+	;BMIDV9
+!6	DEY
+	ASL	Q
+	ROL	R
+	ROL	A
+	BPL	!6
+;DV9
+
+	STA	Q
+
+	POLLBIT	157
+
+	LDA	#254
+	STA	R
+	LDA	P+2
+LL31new	ASL	A
+	BCS	LL29new
+	
+	CMP	Q
+	BCC	!4	;!! was P%+4
+	SBC	Q
+!4	ROL	R
+	BCS	LL31new
+	JMP	LL312new
+LL29new	SBC	Q
+	SEC
+	ROL	R
+	BCS	LL31new
+	LDA	R
+LL312new	;was JSRLL31
+	LDA	#0
+	STA	K+1
+	STA	K+2
+	STA	K+3
+	TYA
+	BPL	DV12
+	LDA	R
+!8	ASL	A
+	ROL	K+1
+	ROL	K+2
+	ROL	K+3
+	INY
+	BNE	!8
+	STA	K
+	LDA	K+3
+	ORA	T
+	STA	K+3
+	RTS
+
+DV13	LDA	R
+	STA	K
+	LDA	T
+	STA	K+3
+	RTS
+
+DV12	BEQ	DV13
+	LDA	R
+DVL10	LSR	A
+	DEY
+	BNE	DVL10
+	STA	K
+	LDA	T
+	STA	K+3
+	RTS
+BMP12	LDX	#128
+RE1	RTS
+
+
+
+cntr
+	STA	T
+	LDA	auto
+	BNE	!4
+	LDA	damp
+	BEQ	RE1
+
+!4	TXA
+	BMI	!1
+	CLC
+	ADC	T
+	BMI	BMP12
+!3	TAX
+	RTS
+
+!1	SEC
+	SBC	T
+	BPL	BMP12
+	TAX
+	RTS
+
+
+BUMP2	STA	T
+	TXA
+	CLC
+	ADC	T
+	TAX
+	BCC	RE2
+	LDX	#FF
+RE2	BPL	djd1
+RE2p2	LDA	T
+	RTS
+
+
+REDU2	STA	T
+	TXA
+	SEC
+	SBC	T
+	TAX
+	BCS	RE3
+	LDX	#1
+RE3	BPL	RE2p2
+
+djd1
+;	LDA	djd
+;	BEQ	RE2p2
+	LDX	#128
+	LDA	T
+	RTS
+
+
+LL5	;2BSQRT Q=SQR(RQ)
+	LDY	R
+	LDA	Q
+	STA	S
+	LDX	#0
+	STX	Q
+	LDA	#8
+	STA	T
+LL6	CPX	Q
+	BCC	LL7
+	BNE	*+6	;!! was P%
+	CPY	#$40
+	BCC	LL7
+	TYA
+	SBC	#$40
+	TAY
+	TXA
+	SBC	Q
+	TAX
+LL7	ROL	Q
+	ASL	S
+	TYA
+	ROL	A
+	TAY
+	TXA
+	ROL	A
+	TAX
+	ASL	S
+	TYA
+	ROL	A
+	TAY
+	TXA
+	ROL	A
+	TAX
+	DEC	T
+	BNE	LL6
+	RTS
+
+LL2	LDA	#FF
+	STA	R
+	RTS
+
+
+LL28	;BFRDIV R=A*256/Q
+	; Pres Y
+	CMP	Q
+	BCS	LL2
+	STA	widget
+	TAX
+	BEQ	LLfix
+	LDA	logL,X
+	LDX	Q
+	SEC
+	SBC	logL,X
+	BMI	noddlog
+	LDX	widget
+	LDA	log,X
+	LDX	Q
+	SBC	log,X
+	BCS	LL2
+	TAX
+	LDA	antilog,X
+LLfix	STA	R
+	RTS
+noddlog	LDX	widget
+	LDA	log,X
+	LDX	Q
+	SBC	log,X
+	BCS	LL2
+	TAX
+	LDA	antilogODD,X
+	STA	R
+	RTS
+
+
+
+TIS2	TAY
+	AND	#127
+	CMP	Q
+	BCS	TI4
+	LDX	#254
+	STX	T
+TIL2	ASL	A
+	CMP	Q
+	BCC	*+4	;!! was P%
+	SBC	Q
+	ROL	T
+	BCS	TIL2
+	LDA	T
+	LSR	A
+	LSR	A
+	STA	T
+	LSR	A
+	ADC	T
+	STA	T
+	TYA
+	AND	#128
+	ORA	T
+	RTS
+TI4	TYA
+	AND	#128
+	ORA	#96
+	RTS
+
+
+NORM	; Normalise XX15
+	POLLBIT	158
+	LDA	XX15
+	JSR	SQUA
+	STA	R
+	LDA	P
+	STA	Q
+	LDA	XX15+1
+	JSR	SQUA
+	STA	T
+	LDA	P
+	ADC	Q
+	STA	Q
+	LDA	T
+	ADC	R
+	STA	R
+	LDA	XX15+2
+	JSR	SQUA
+	STA	T
+	POLLBIT	159 
+	CLC
+	LDA	P
+	ADC	Q
+	STA	Q
+	LDA	T
+	ADC	R
+	BCS	!1
+	STA	R
+
+	JSR	LL5
+!2	LDA	XX15
+	JSR	TIS2
+	STA	XX15	;*96/Q
+	POLLBIT	202
+	
+	LDA	XX15+1
+	JSR	TIS2
+	STA	XX15+1
+	LDA	XX15+2
+	JSR	TIS2
+	STA	XX15+2
+	POLLBIT	160
+	RTS
+
+
+!1	ROR	A		; Added for NES Elite
+	ROR	Q		; to try and cure compass
+	LSR	A		; jiggle
+	ROR	Q
+	STA	R
+	JSR	LL5
+	ASL	Q
+	JMP	!2
+
+
+	IF	ROMCODE
+
+	ELSE
+
+;	 RESTART PDS
+;	-------------
+
+PDS:	LDA	#0
+	STA	VIDEO0	;	PDS routine
+	STA	$FC20
+	JMP	($FFFC)
+
+	ENDIF	;(ROMCODE)
+
+
+PRIMEMMC1	; perform chip configuration
+
+	lda	#%00001110		;set up 4K character banks
+	
+	sta	R0		;	16K program banks
+	lsr	a		;	resident bank at $c000
+	sta	R0		;	4 screen mode
+	lsr	a		;	horizontal scroling
+	sta	R0
+	lsr	a
+	sta	R0
+	lsr	a
+	sta	R0		;perform chip configuration
+
+	lda	#%00000000		;zero R1
+	
+	sta	R1	
+	lsr	a	
+	sta	R1	
+	lsr	a	
+	sta	R1
+	lsr	a
+	sta	R1
+	lsr	a
+	sta	R1
+
+
+	lda	#%00000000		;and R2 though should be irrelevant
+	
+	sta	R2	
+	lsr	a	
+	sta	R2	
+	lsr	a	
+	sta	R2
+	lsr	a
+	sta	R2
+	lsr	a
+	sta	R2
+
+
+	JMP	PAGEDEFAULT		; R3 is the ROM pager register
+
+
+

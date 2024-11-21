@@ -1,0 +1,2604 @@
+;
+;REM	ELITE <K>	Nin
+;
+;	Lines, Pixels, Characters
+;
+
+DIVIDE	MACRO	; A=@1/@2
+	LDX	@1
+	BEQ	!1
+	LDA	logL,X
+	LDX	@2
+	SEC
+	SBC	logL,X
+	BMI	!2
+	LDX	@1
+	LDA	log,X
+	LDX	@2
+	SBC	log,X
+	BCS	!3
+	TAX
+	LDA	antilog,X
+	JMP	!4
+!3	LDA	#FF
+	BNE	!4
+!1	LDA	#0
+	BEQ	!4
+!2	LDX	@1
+	LDA	log,X
+	LDX	@2
+	SBC	log,X
+	BCS	!3
+	TAX
+	LDA	antilogODD,X
+!4
+	ENDM
+
+
+
+
+
+;.............	Line Draw ..............
+
+
+TWOS	DW	$4080,$1020
+	DW	$408,$102
+	DW	$4080
+TWOS2	DW	$C0C0,$3060
+	DW	$C18,$306
+;CTWOS	DW	$30C0,$30C
+;	EQUB	$C0
+;
+;CTWOS2	DW	$C0C0,$3030
+;	DW	$C0C,$303
+;	DW	$C0C0
+
+TWFL	DW	$C080,$F0E0
+	DW	$FCF8
+	EQUB	$FE
+TWFR	DW	$7FFF,$1F3F
+	DW	$70F,$103
+
+
+YLOOKUPL
+lp1	=	windowtop
+	DO	28
+
+	DB	>(lp1*ncl+1)
+	DB	>(lp1*ncl+1)
+	DB	>(lp1*ncl+1)
+	DB	>(lp1*ncl+1)
+
+	DB	>(lp1*ncl+1)
+	DB	>(lp1*ncl+1)
+	DB	>(lp1*ncl+1)
+	DB	>(lp1*ncl+1)
+lp1	=	lp1+1
+	LOOP
+
+
+
+YLOOKUPH
+lp1	=	windowtop
+	DO	28
+	DB	<(lp1*ncl+1)
+	DB	<(lp1*ncl+1)
+	DB	<(lp1*ncl+1)
+	DB	<(lp1*ncl+1)
+
+	DB	<(lp1*ncl+1)
+	DB	<(lp1*ncl+1)
+	DB	<(lp1*ncl+1)
+	DB	<(lp1*ncl+1)
+lp1	=	lp1+1
+	LOOP
+
+
+
+	IF	DIALSONTOP
+
+RRS1 			; SC,LI=Addresses of char row YC
+ 	LDA	#0
+	STA	SC+1
+	LDA	YC
+	BEQ	!1
+	LDA	YC
+	CLC
+	ADC	#banner+stripw-1
+	ASL	A
+	ASL	A
+	ASL	A
+	ASL	A
+	ROL	SC+1
+	SEC
+	ROL	A
+	ROL	SC+1
+	STA	SC
+	STA	LI
+	LDA	SC+1
+	ADC	#<VIDM1
+	STA	SC+1
+	ADC	#<(VIDM2-VIDM1)	
+	STA	LI+1
+	RTS
+!1	; Use top banner
+	FNset2b	SC,VIDM1+ncl*(banner+stripw-1)+1
+	FNset2b	LI,VIDM2+ncl*(banner+stripw-1)+1
+	RTS
+
+
+	ELSE
+
+RRS1 			; SC,LI=Addresses of char row YC
+ 	LDA	#0
+	STA	SC+1
+	LDA	YC
+	BEQ	!1
+	LDA	YC
+	CLC
+	ADC	#banner-1
+	ASL	A
+	ASL	A
+	ASL	A
+	ASL	A
+	ROL	SC+1
+	SEC
+	ROL	A
+	ROL	SC+1
+	STA	SC
+	STA	LI
+	LDA	SC+1
+	ADC	#<VIDM1
+	STA	SC+1
+	ADC	#<(VIDM2-VIDM1)	
+	STA	LI+1
+	RTS
+!1	; Use top banner
+	FNset2b	SC,VIDM1+ncl*banner-ncl+1
+	FNset2b	LI,VIDM2+ncl*banner-ncl+1
+	RTS
+
+	ENDIF	;(DIALSONTOP)
+
+
+LL30
+LOIN	STY	YSAV
+	POLLBIT	140
+	LDA	#128
+	STA	S_eltj
+	ASL	A
+	STA	SWAP
+	LDA	X2
+	SBC	X1
+	BCS	LI1
+	EOR	#FF
+	ADC	#1
+LI1	STA	P_eltj
+	SEC
+	LDA	Y2
+	SBC	Y1
+	BCS	!1
+	EOR	#FF
+	ADC	#1
+!1	STA 	Q_eltj
+	CMP	P_eltj
+	BCC	STPX
+	JMP	STPY
+
+STPX	LDX	X1
+	CPX	X2
+	BCC	LI3
+	DEC	SWAP
+	LDA	X2
+	STA	X1
+	STX	X2
+	TAX
+	LDA	Y2
+	LDY	Y1
+	STA	Y1
+	STY	Y2
+LI3	DIVIDE	Q_eltj,P_eltj
+	STA	Q_eltj
+
+	LDA	P_eltj
+
+	IF	segment
+	STA	U_eltj
+	AND	#(segment-1)
+	ENDIF
+	CLC
+	ADC	#1
+	STA	P_eltj
+	LDY	Y1
+	CPY	Y2
+
+	BCS	!1
+	JMP	DOWN
+!1
+	LDA	X1
+	FNcelladd LI
+	TYA
+	AND	#7
+	TAY
+	LDA	X1
+	AND	#7
+	TAX
+	LDA	TWOS,X
+li86	STA	R_eltj
+li80	; Enter cell LI with byte R in offset Y
+	FNenterc LI,li8a
+li81	FNfoentry SC
+	CLC
+lil1	LDA	R_eltj
+	ORA	(SC),Y
+	STA	(SC),Y
+	DEC	P_eltj
+
+	IF	segment
+	BNE	!1
+	JSR	LIES
+!1
+	ELSE
+	BEQ	LIEX
+	ENDIF	; (segment)
+
+	LDA	S_eltj
+	ADC	Q_eltj
+	STA	S_eltj
+	BCC	li83
+	DEY
+	BMI	li84
+li83	LSR	R_eltj
+	BNE	lil1
+	LDA	#$80
+	INC	LI
+	BNE	li86
+	INC	LI+1
+	BNE	li86
+li84	LDA	LI
+	SBC	#ncl
+	STA	LI
+	BCS	li88
+	DEC	LI+1
+li88	LDY	#(nby-1)
+	LSR	R_eltj
+	BNE	li80
+	LDA	#$80
+	INC	LI
+	BNE	li86
+	INC	LI+1
+	BNE	li86
+li8a	DEC	P_eltj
+
+	IF	segment
+	BNE	!1
+	JSR	LIES
+!1
+	ELSE
+	BEQ	LIEX
+	ENDIF
+
+	CLC
+	LDA	S_eltj
+	ADC	Q_eltj
+	STA	S_eltj
+	BCC	li8b
+	DEY
+	BMI	li84
+li8b	LSR	R_eltj
+	BNE	li8a
+	LDA	#$80
+
+	IF	NEEDPOLL
+
+	INC	LI
+	BNE	!1
+	INC	LI+1
+!1	JMP	li86
+
+	ELSE
+	INC	LI
+	BNE	li86
+	INC	LI+1
+	JMP	li86
+	ENDIF	;(NEEDPOLL)
+
+	IF	segment
+
+LIES
+	LDA	U_eltj
+	SEC
+	SBC	#segment
+	BCC	LIEX
+	STA	U_eltj
+	POLLBIT	141
+	LDA	#segment
+	STA	P_eltj
+	RTS
+
+LIES2	LDA	U_eltj
+	SEC
+	SBC	#segment
+	BCC	LIEX
+	STA	U_eltj
+	LDX	#segment
+	POLLBIT	142
+	RTS
+
+	ENDIF	; (segment)
+
+LIEX
+	IF	segment
+	PLA
+	PLA
+	ENDIF
+	LDY	YSAV
+	POLLBIT	143
+	CLC
+	RTS
+	;.....
+DOWN
+	LDA	X1
+	FNcelladd LI
+	TYA
+	AND	#7
+	TAY
+	LDA	X1
+	AND	#7
+	TAX
+	LDA	TWOS,X
+li96	STA	R_eltj
+li90	; Enter cell LI with byte R in offset Y
+	FNenterc LI,li9a
+li91	FNfoentry SC
+	CLC
+lil2	LDA	R_eltj
+	ORA	(SC),Y
+	STA	(SC),Y
+	DEC	P_eltj
+
+	IF	segment
+	BNE	!1
+	JSR	LIES
+!1
+	ELSE
+	BEQ	LIEX
+	ENDIF	; (segment)
+
+	LDA	S_eltj
+	ADC	Q_eltj
+	STA	S_eltj
+	BCC	li93
+	INY
+	CPY	#nby
+	BEQ	li94
+li93	LSR	R_eltj
+	BNE	lil2
+	LDA	#$80
+	INC	LI
+	BNE	li96
+	INC	LI+1
+	JMP	li96
+
+li94	LDA	LI
+	ADC	#(ncl-1)
+	STA	LI
+	BCC	li98
+	INC	LI+1
+li98	LDY	#0
+	LSR	R_eltj
+	BNE	li90
+	LDA	#$80
+	INC	LI
+	BNE	li96
+	INC	LI+1
+	JMP	li96
+li9a	DEC	P_eltj
+	
+	IF	segment
+	BNE	!1
+	JSR	LIES
+!1
+	ELSE
+	BEQ	LIEX2
+	ENDIF
+
+	CLC
+	LDA	S_eltj
+	ADC	Q_eltj
+	STA	S_eltj
+	BCC	li9b
+	INY
+	CPY	#nby
+	BEQ	li94
+li9b	LSR	R_eltj
+	BNE	li9a
+	LDA	#$80
+
+	IF	NEEDPOLL
+	INC	LI
+	BNE	!1
+	INC	LI+1
+!1	JMP	li96
+	ELSE
+	INC	LI
+	BNE	li96
+	INC	LI+1
+	JMP	li96
+	ENDIF	;(NEEDPOLL)
+
+
+LIEXNOLINE	; Exit if null length line
+	IF	NEEDPOLL & (segment=0)
+	POLLBIT	223	
+	ENDIF
+
+LIEX2
+	IF	segment
+	JSR	LIEX
+	ELSE
+	LDY	YSAV
+	CLC
+	RTS
+	ENDIF
+		
+	;....
+
+
+
+		
+STPY
+	LDY	Y1
+	TYA
+	LDX	X1
+	CPY	Y2
+	BEQ	LIEXNOLINE
+	BCS	LI15
+	DEC	SWAP
+	LDA	X2
+	STA	X1
+	STX	X2
+	TAX
+	LDA	Y2
+	STA	Y1
+	STY	Y2
+	TAY
+LI15	DIVIDE	P_eltj,Q_eltj
+	STA	P_eltj
+
+	LDA	X1
+	FNcelladd LI
+	TYA
+	AND	#7
+	TAY
+	SEC
+	LDA	X2
+	SBC	X1
+	LDA	X1
+	AND	#7
+	TAX
+	LDA	TWOS,X
+	STA	R_eltj
+
+	IF	segment
+	LDA	Q_eltj
+	STA	U_eltj
+	AND	#(segment-1)
+	TAX
+	ELSE
+	LDX	Q_eltj
+	ENDIF
+
+	INX
+	BCS	lil3
+	JMP	lil5
+
+LIEX3
+	LDY	YSAV
+	CLC
+	RTS
+
+
+	IF	VIRGIN	
+
+
+liv1	FNfoentry SC
+	CLC
+	LDX	Q_eltj
+livl4	LDA	R_eltj
+	STA	(SC),Y
+	DEX
+	IF	segment
+	BNE	!1
+	JSR	LIES2
+!1
+	ELSE
+
+	BEQ	LIEX3
+
+	ENDIF	;(segment)
+
+;	BEQ	LIEX3
+	LDA	S_eltj
+	ADC	P_eltj
+	STA	S_eltj
+	BCC	!2
+	LSR	R_eltj
+	BCS	li23
+!2	DEY
+	BPL	livl4
+	LDY	#(nby-1)
+	LDA	LI
+	SBC	#(ncl-1)
+	STA	LI
+	BCS	lil3
+	DEC	LI+1
+
+
+
+lil3	STX	Q_eltj
+	FNenterc2 LI,liv1,li2a
+	FNfoentry SC
+	CLC
+	LDX	Q_eltj
+lil4	LDA	R_eltj
+	ORA	(SC),Y
+	STA	(SC),Y
+	DEX
+	IF	segment
+	BNE	!1
+	JSR	LIES2
+!1
+	ELSE
+
+	BEQ	LIEX3
+
+	ENDIF	;(segment)
+;	BEQ	LIEX3
+	LDA	S_eltj
+	ADC	P_eltj
+	STA	S_eltj
+	BCC	li28
+	LSR	R_eltj
+	BCS	li23
+li28	DEY
+	BPL	lil4
+	LDY	#(nby-1)
+	LDA	LI
+	SBC	#(ncl-1)
+	STA	LI
+	BCS	lil3
+	DEC	LI+1
+	BNE	lil3
+li23	ROR	R_eltj
+	INC	LI
+	BNE	!1
+	INC	LI+1
+!1	DEY
+	BPL	lil3
+	LDY	#(nby-1)
+	LDA	LI
+	SBC	#(ncl-1)
+	STA	LI
+	BCS	lil3
+	DEC	LI+1
+	JMP	lil3
+li2a	LDX	Q_eltj
+li2c	DEX
+	IF	segment
+	BNE	!1
+	JSR	LIES2
+!1
+	ELSE
+
+	BEQ	LIEX7
+
+	ENDIF	;(segment)
+;	BEQ	LIEX7
+	LDA	S_eltj
+	ADC	P_eltj
+	STA	S_eltj
+	BCC	li2b
+	LSR	R_eltj
+	BCS	li23
+li2b	DEY
+	BPL	li2c
+	LDY	#(nby-1)
+	LDA	LI
+	SBC	#(ncl-1)
+	STA	LI
+	BCS	!1
+	DEC	LI+1
+!1	JMP	lil3
+
+LIEX7	LDY	YSAV
+	CLC
+	RTS
+
+
+	ELSE	; (virgin)
+
+
+
+lil3	STX	Q_eltj
+	FNenterc LI,li2a
+	FNfoentry SC
+	CLC
+	LDX	Q_eltj
+lil4	LDA	R_eltj
+	ORA	(SC),Y
+	STA	(SC),Y
+	DEX
+
+	IF	segment
+	BNE	!1
+	JSR	LIES2
+!1
+	ELSE
+
+	BEQ	LIEX3
+
+	ENDIF	;(segment)
+
+	LDA	S_eltj
+	ADC	P_eltj
+	STA	S_eltj
+	BCC	li28
+	LSR	R_eltj
+	BCS	li23
+li28	DEY
+	BPL	lil4
+	LDY	#(nby-1)
+	LDA	LI
+	SBC	#(ncl-1)
+	STA	LI
+	BCS	lil3
+	DEC	LI+1
+	BNE	lil3
+li23	ROR	R_eltj
+	INC	LI
+	BNE	!1
+	INC	LI+1
+!1	DEY
+	BPL	lil3
+	LDY	#(nby-1)
+	LDA	LI
+	SBC	#(ncl-1)
+	STA	LI
+	BCS	lil3
+	DEC	LI+1
+	JMP	lil3
+
+li2a	LDX	Q_eltj
+li2c	DEX
+
+	IF	segment
+	BNE	!1
+	JSR	LIES2
+!1
+	ELSE
+
+	BEQ	LIEX5
+
+	ENDIF	;(segment)
+
+	LDA	S_eltj
+	ADC	P_eltj
+	STA	S_eltj
+	BCC	li2b
+	LSR	R_eltj
+	BCS	li23
+li2b	DEY
+	BPL	li2c
+	LDY	#(nby-1)
+	LDA	LI
+	SBC	#(ncl-1)
+	STA	LI
+
+
+	IF	NEEDPOLL
+	BCS	!1	;*+4	;!! was P%
+	DEC	LI+1
+!1	JMP	lil3
+	ELSE
+
+	BCS	lil3
+	DEC	LI+1
+	JMP	lil3
+
+	ENDIF	;(NEEDPOLL)
+;
+
+;	IF	segment
+;	JMP	LIEX
+;	ELSE
+;
+;	ENDIF
+
+
+	ENDIF	; (virgin)
+
+
+	IF	VIRGIN
+
+
+liv2	FNfoentry SC
+	CLC
+	LDX	Q_eltj
+livl6	LDA	R_eltj
+	STA	(SC),Y
+	DEX
+	IF	segment
+	BNE	!1
+	JSR	LIES2
+!1
+	ELSE
+
+	BEQ	LIEX7
+
+	ENDIF	;(segment)
+;	BEQ	LIEX7
+
+
+	LDA	S_eltj
+	ADC	P_eltj
+	STA	S_eltj
+	BCC	!2
+	ASL	R_eltj
+	BCS	li33
+!2	DEY
+	BPL	livl6
+	LDY	#(nby-1)
+	LDA	LI
+	SBC	#(ncl-1)
+	STA	LI
+	BCS	lil5
+	DEC	LI+1
+
+
+lil5	STX	Q_eltj
+	FNenterc2 LI,liv2,li3a
+	FNfoentry SC
+	CLC
+	LDX	Q_eltj
+lil6	LDA	R_eltj
+	ORA	(SC),Y
+	STA	(SC),Y
+	DEX
+
+	IF	segment
+	BNE	!1
+	JSR	LIES2
+!1
+	ELSE
+
+	BEQ	LIEX5
+
+	ENDIF	;(segment)
+;	BEQ	LIEX5
+
+
+	LDA	S_eltj
+	ADC	P_eltj
+	STA	S_eltj
+	BCC	li38
+	ASL	R_eltj
+	BCS	li33
+li38	DEY
+	BPL	lil6
+livv1	LDY	#(nby-1)
+	LDA	LI
+	SBC	#(ncl-1)
+	STA	LI
+	BCS	lil5
+	DEC	LI+1
+	JMP	lil5
+
+li33	ROL	R_eltj
+	LDA	LI
+	BNE	!1	; *+4	;!! was P%
+	DEC	LI+1
+!1	DEC	LI
+	DEY
+	BPL	lil5
+	LDY	#7
+	LDA	LI
+	SBC	#(ncl-1)
+	STA	LI
+	BCS	lil5
+	DEC	LI+1
+	JMP	lil5
+
+li3a	LDX	Q_eltj
+li3c	DEX
+
+	IF	segment
+	BNE	!1
+	JSR	LIES2
+!1
+	ELSE
+
+	BEQ	LIEX4
+
+	ENDIF	;(segment)
+
+	LDA	S_eltj
+	ADC	P_eltj
+	STA	S_eltj
+	BCC	li3b
+	ASL	R_eltj
+	BCS	li33
+li3b	DEY
+	BPL	li3c
+	LDY	#(nby-1)
+	LDA	LI
+	SBC	#(ncl-1)
+	STA	LI
+
+	BCS	!1
+	DEC	LI+1
+!1	JMP	lil5
+
+	IF	segment
+	JMP	LIEX
+	ELSE
+LIEX4	LDY	YSAV
+	CLC
+	RTS
+	ENDIF	; (segment)
+
+LIEX5	LDY	YSAV
+	CLC
+	RTS
+
+
+
+
+	ELSE	; (VIRGIN)
+
+LIEX5	LDY	YSAV
+	CLC
+	RTS
+
+
+lil5	STX	Q_eltj
+	FNenterc LI,li3a
+	FNfoentry SC
+
+	CLC
+	LDX	Q_eltj
+lil6	LDA	R_eltj
+	ORA	(SC),Y
+	STA	(SC),Y
+	DEX
+	
+	IF	segment
+	BNE	!1
+	JSR	LIES2
+!1
+	ELSE
+
+	BEQ	LIEX5
+
+	ENDIF	;(segment)
+
+	LDA	S_eltj
+	ADC	P_eltj
+	STA	S_eltj
+	BCC	li38
+	ASL	R_eltj
+	BCS	li33
+li38	DEY
+	BPL	lil6
+	LDY	#(nby-1)
+	LDA	LI
+	SBC	#(ncl-1)
+	STA	LI
+	BCS	lil5
+	DEC	LI+1
+	JMP	lil5
+li33	ROL	R_eltj
+	LDA	LI
+	BNE	!1	;*+4	;!! was P%
+	DEC	LI+1
+!1	DEC	LI
+	DEY
+	BPL	lil5
+	LDY	#7
+	LDA	LI
+	SBC	#(ncl-1)
+	STA	LI
+	BCS	lil5
+	DEC	LI+1
+	JMP	lil5
+
+li3a	LDX	Q_eltj
+li3c	DEX
+
+	IF	segment
+	BNE	!1
+	JSR	LIES2
+!1
+	ELSE
+
+	BEQ	LIEX4
+
+	ENDIF	;(segment)
+
+	LDA	S_eltj
+	ADC	P_eltj
+	STA	S_eltj
+	BCC	li3b
+	ASL	R_eltj
+	BCS	li33
+li3b	DEY
+	BPL	li3c
+	LDY	#(nby-1)
+	LDA	LI
+	SBC	#(ncl-1)
+	STA	LI
+
+	BCS	!1
+	DEC	LI+1
+!1	JMP	lil5
+
+	IF	segment
+	JMP	LIEX
+	ELSE
+LIEX4	LDY	YSAV
+	CLC
+	RTS
+	ENDIF	;(segment)
+
+	ENDIF	; (virgin)
+
+
+	;	........BLOCKIN.........
+BLOCKIN	; Fill character cells from P,Y to P+1,Y
+	POLLBIT	98
+	STY	YSAV
+	LDA	P
+	FNcelladd	LI
+	LDA	P+1
+	SEC
+	SBC	P
+	LSR	A
+	LSR	A
+	LSR	A
+	TAY
+	DEY
+!2	LDA	(LI),Y
+	BNE	!1
+	LDA	#filled
+	STA	(LI),Y
+	DEY
+	BPL	!2
+	LDY	YSAV
+	RTS
+
+!1	STY	T_eltj
+	FNfoentryX	SC	;30 If a non-zero character
+
+	POLLBIT	99
+
+	LDY	#7		;2 then EOR FF into each row of it
+!3	LDA	#FF		;2
+	EOR	(SC),Y		;6
+	STA	(SC),Y		;6
+	DEY			;2
+	BPL	!3		;4=20*8=160
+	LDY	T_eltj
+	DEY
+	BPL	!2
+	LDY	YSAV
+	RTS
+
+
+	;	............HLOIN..........
+
+HL2S	JMP	HL2
+	LDY	YSAV
+HL6	RTS
+
+HLOIN	; Draw Horiz line from (X1,Y) to (X2,Y)
+
+	POLLBIT	144
+
+;	lda	x1
+;	cmp	x2
+; 	bcs	hl6
+;	lda	x2
+;	cmp	#$f9
+;	bcs	hl6
+
+
+	STY	YSAV
+	LDX	X1
+	CPX	X2
+	BEQ	HL6	; Exit if X1=X2
+	BCC	HL5
+	LDA	X2
+	STA	X1
+	STX	X2	; Swap if X1>X2
+	TAX
+HL5
+	DEC	X2	; X2=X2-1
+	TXA
+	FNcelladd LI
+	TYA
+	AND	#7
+	TAY		; Y=Y1 AND 7
+HL1	TXA
+	AND	#$F8
+	STA	T_eltj
+	LDA	X2
+	AND	#$F8
+	SEC
+	SBC	T_eltj
+	BEQ	HL2S
+	LSR	A
+	LSR	A
+	LSR	A
+	STA	R_eltj
+	FNentc3	LI,SC,hl10
+	LDA	X1
+	AND	#7
+	TAX
+	LDA	TWFR,X
+	EOR	(SC),Y
+	STA	(SC),Y
+hl10	INC	LI
+	BNE	!1
+	INC	LI+1
+!1	LDX	R_eltj
+	DEX
+	BNE	!2
+	JMP	HL3
+!2	STX	R_eltj		; do leftmost char cell
+
+HLL1
+	POLLBIT	145
+	LDX	#0		; 2 Enter char cell (LI)
+	LDA	(LI,X)		; 6
+	BEQ	HL51		;3,4=12
+	CMP	#preserve
+	BCC	HL52
+	FNfoentry	SC	; If a non-preserved character
+	LDA	#FF		; then EOR FF into row Y of it
+	EOR	(SC),Y
+	STA	(SC),Y
+hl11	INC	LI		;5
+	BNE	!1		;3
+	INC	LI+1		;5
+!1	DEC	R_eltj		;5
+	BNE	HLL1		;4=22 =49
+	JMP	HL3
+
+HL51	TYA			; 2
+	CLC			; 2
+	ADC	#horiz		; 2
+	STA	(LI,X)		; 6
+	JMP	hl11		; 3=15 =27
+
+HL54	TYA
+	EOR	#FF
+	ADC	#filldwn+7	; (C set)
+	STA	(LI,X)
+	INC	LI
+	BNE	!1
+	INC	LI+1
+!1	DEC	R_eltj
+	BNE	HLL1
+	JMP	HL3
+
+HL52	;(Need C clear)
+	STA	SC		; If a preserved char
+	TYA			; then if equal to filldwn+6-Y
+	ADC	SC		; then replace with filldwn+7-Y
+	CMP	#filldwn+6
+	BEQ	HL54
+	LDA	frchar		; other wise replace with frchar
+	BEQ	hl11
+
+	INC	frchar
+	STA	(LI,X)
+	FNfoentry	LI2
+	LDA	SC
+	FNfoentry	SC
+	STY	T_eltj
+	LDY	#7
+!1	LDA	(SC),Y
+	STA	(LI2),Y
+	DEY
+	BPL	!1
+	LDY	T_eltj
+	LDA	#FF
+	EOR	(LI2),Y
+	STA	(LI2),Y
+	JMP	hl11
+
+
+HL3	FNentc3	LI,SC,hl12
+	LDA	X2
+	AND	#7
+	TAX
+	LDA	TWFL,X
+	JMP	HL7
+
+HL2	FNentc3	LI,SC,hl12
+	LDA	X1
+	AND	#7
+	TAX
+	LDA	TWFR,X
+	STA	T_eltj
+	LDA	X2
+	AND	#7
+	TAX
+	LDA	TWFL,X
+	AND	T_eltj
+HL7	EOR	(SC),Y
+	STA	(SC),Y
+
+hl12	POLLBIT	146
+	LDY	YSAV
+	RTS
+
+
+
+VLOIN	; Draw Vert line from (X1,Y1) to (X1,Y2)
+
+	POLLBIT	147
+	STY	YSAV
+	LDY	Y1
+	CPY	Y2
+	BEQ	VL6
+	BCC	VL5
+	LDA	Y2
+	STA	Y1
+	STY	Y2
+	TAY
+VL5	LDA	X1
+	FNcelladd LI
+	LDA	X1
+	AND	#7
+	STA	S
+	LDA	Y2
+	SEC
+	SBC	Y1
+	STA	R
+	TYA
+	AND	#7
+	TAY
+
+	BNE	VL54
+
+	JMP	VL53
+
+VL2
+
+	STY	T
+	LDA	R
+	ADC	T
+	SBC	#7
+	BCC	VL6
+	JMP	VLL1	
+
+VL6	LDY	YSAV
+	RTS
+
+
+VL54
+	STY	Q
+	FNentc3	LI,SC,VL2
+	LDX	S
+	LDY	Q
+	LDA	R
+	BEQ	VLEX
+
+!1	LDA	(SC),Y
+	ORA	TWOS,X
+	STA	(SC),Y
+	DEC	R
+	BEQ	VLEX
+	INY
+	CPY	#8
+	BCC	!1
+	BCS	VLL1
+
+
+VLEX	LDY	YSAV
+	RTS
+
+
+
+VLL1
+	POLLBIT	148
+
+	LDY	#0
+	LDA	LI
+	CLC
+	ADC	#ncl
+	STA	LI
+	BCC	VL53
+	INC	LI+1
+VL53	LDA	R
+	BEQ	VLEX
+	SEC
+	SBC	#8
+	BCS	!1
+	JMP	VL54
+!1	STA	R
+	LDX	#0
+	LDA	(LI,X)
+	BEQ	VL51
+	CMP	#preserve
+	BCC	VL52
+	FNfoentry	SC
+	LDX	S
+	LDY	#0
+	DO	7
+	LDA	(SC),Y
+	ORA	TWOS,X
+	STA	(SC),Y
+	INY
+	LOOP
+	LDA	(SC),Y
+	ORA	TWOS,X
+	STA	(SC),Y
+	JMP	VLL1
+
+VL51	LDA	S
+	CLC
+	ADC	#vrtline
+	STA	(LI,X)
+VLL1S	JMP	VLL1
+
+VL52	STA	SC
+	LDA	frchar
+	BEQ	VLL1S
+	INC	frchar
+	STA	(LI,X)
+	FNfoentry	LI2
+	LDA	SC
+	FNfoentry	SC
+	STY	T_eltj
+	LDY	#7
+	LDX	S
+!1	LDA	(SC),Y
+	ORA	TWOS,X
+	STA	(LI2),Y
+	DEY
+	BPL	!1
+	BMI	VLL1S
+
+
+
+	;	Pixels
+
+
+PIXEL	; Plot pixel at X,A
+
+	STX	LI
+	STY	T1
+	TAY
+	TXA
+	FNcelladd SC
+	FNenterc SC,PX13
+	FNfoentry SC
+	TYA
+	AND	#7
+	TAY
+	LDA	LI
+	AND	#7
+	TAX
+	LDA	TWOS,X
+	ORA	(SC),Y
+	STA	(SC),Y
+PX13	LDY	T1
+	RTS
+
+
+BPIXEL	; Plot pixel at X,A
+
+	STX	LI
+	STY	T1
+	TAY
+	TXA
+	FNcelladd SC
+	FNenterc SC,PX13
+	FNfoentry0 SC
+	TYA
+	AND	#7
+	TAY
+	LDA	LI
+	AND	#7
+	TAX
+	LDA	TWOS2,X
+	ORA	(SC),Y
+	STA	(SC),Y
+	LDY	T1
+	RTS
+
+
+ECBLB2	LDA	#32
+	STA	ECMA
+	LDY	#sfxecm
+	JMP	NOISE
+;ECBLB
+;	LDA	ECELL
+;	EOR	#BULBCOL
+;	STA	ECELL
+;	LDA	ECELL+40
+;	EOR	#BULBCOL
+;	STAECELL+40
+;	RTS
+;SPBLB
+;	LDA	SCELL
+;	EOR	#BULBCOL
+;	STASCELL
+;	LDA	SCELL+40
+;	EOR	#BULBCOL
+;	STA	SCELL+40
+;	RTS
+
+
+
+MSBAR	; X=msl no.,Y=colour
+	; pres X, zero Y,A=Y in
+	TYA
+	PHA	
+	LDY	!1,X
+	PLA
+	STA	VIDM1+ditp*ncl,Y
+	LDY	#0
+	RTS
+
+!1	DB	0,31+2*ncl,30+2*ncl,31+ncl,30+ncl
+ 
+
+ZR	equ	$00
+RT	equ	$01
+LF	equ	$02
+DN	equ	$04
+UPB	equ	$08
+SE	equ	$10
+FB	equ	$20
+FA	equ	$40
+
+
+
+PRESS	MACRO
+	DB	@1,@2
+	ENDM
+
+STILL	MACRO
+	DB	$80+((@1)&31)
+	ENDM
+
+
+
+SELICON	MACRO
+	PRESS	SE,3
+	STILL	8
+	ENDM
+
+
+STAB	MACRO
+	PRESS	@1,4
+	STILL	3
+	ENDM
+
+
+
+MVLEFT	MACRO
+	PRESS	LF+FB,2
+	STILL	3
+	ENDM
+
+
+MVRIGHT	MACRO
+	PRESS	RT+FB,2
+	STILL	3
+	ENDM
+
+SLIDLFT	MACRO
+	PRESS	LF+FB,6+4*@1
+	STILL	3
+	ENDM
+
+SLIDRGT	MACRO
+	PRESS	RT+FB,6+4*@1
+	STILL	3
+	ENDM
+
+
+	;    Fake press table:-
+	;  Format is byte, repeat
+	; unless byte -ve when
+	;  128=>Turn off
+	;  $80+N=>4N zeroes
+	;  $C0=>Repeat
+	;  $C1=>Wait for variable zero
+	;  $C2=>Wait for variable nonzero
+	;  $C4=>Wait for variable positive
+	;  $C3=>Wait for variable negative
+  	;  Other=>Start button
+
+
+	IF	AUTOPLAY
+STARTPOINTE
+STARTPOINTI
+
+	STILL	31
+
+	DB	$C2,0
+	DW	MANY+KRA
+
+	STILL	10
+
+	STAB	FA
+
+	DB	$C2,0
+	DW	FRIN+4
+
+	STILL	28
+	PRESS	DN,20
+	PRESS	FA+DN,6
+	PRESS	FA,31
+	PRESS	FA,31	; shoot side winder
+
+;	SLIDRGT	12	; locate slider
+;	SLIDLFT	4
+
+	SLIDRGT	2
+
+	SELICON		; tgt missile
+
+	STILL	13
+
+
+	PRESS	RT,31
+	PRESS	RT,21	; rotate a bit
+
+	PRESS	UPB,20
+	STILL	14
+
+	PRESS	UPB,31
+	PRESS	UPB,20	;31
+	PRESS	UPB,20	; then pull krait up into sight
+
+	MVRIGHT
+
+	DB	$C3,UPB	; keep climbing untill targeted
+	DW	MSTG	; incase miss this time
+
+	SELICON		; fire missile once targetted
+
+
+	STILL	31	; wait to watch it
+	STILL	31
+
+	SLIDLFT	4
+	SELICON		; rear view
+
+	SLIDRGT	3
+
+	PRESS	RT,8
+
+	PRESS	DN,31
+
+ 
+
+;	DB	$C1,0
+;	DW	FRIN+3	; wait till only one ship left
+
+	SELICON		; tgt missile
+
+	MVRIGHT
+
+
+	PRESS	DN,19	; get vaguely into sight 22 18
+
+	PRESS	FB+DN,17
+	
+	DB	$C3,0*RT
+	DW	MSTG
+
+	DB	$C0
+
+
+	; end of English bit
+
+
+STARTPOINTG
+	STILL	31
+
+	DB	$C2,0
+	DW	MANY+KRA
+
+	STILL	10
+
+	STAB	FA
+
+	DB	$C2,0
+	DW	FRIN+4
+
+	STILL	28
+	PRESS	DN,20
+	PRESS	FA+DN,6
+	PRESS	FA,31
+	PRESS	FA,31	; shoot side winder
+
+
+	SLIDRGT	2
+
+	SELICON		; tgt missile
+
+	STILL	13
+
+
+	PRESS	RT,31
+	PRESS	RT,19	; rotate a bit
+
+	PRESS	UPB,20
+	STILL	14
+
+	PRESS	UPB,31
+	PRESS	UPB,31
+	PRESS	UPB,22	; then pull krait up into sight
+;	STILL	31
+	MVRIGHT
+
+
+	DB	$C3,UPB	; keep climbing untill targeted
+	DW	MSTG	; incase miss this time
+
+	SELICON		; fire missile once targetted
+
+
+	STILL	31	; wait to watch it 31
+	SLIDLFT	4
+	SELICON		; rear view
+
+	SLIDRGT	3
+
+	SELICON		; tgt missile
+
+	MVRIGHT
+
+
+	PRESS	RT,12	; 24
+	PRESS	DN,31
+	PRESS	DN,30
+
+	PRESS	FB+DN,22
+
+	
+	DB	$C3,0*RT
+	DW	MSTG
+
+	DB	$C0	; end of german bit
+
+STARTPOINTF			; French autocombat
+	STILL	31
+
+	DB	$C2,0
+	DW	MANY+KRA
+
+	STILL	10
+
+	STAB	FA
+
+	DB	$C2,0
+	DW	FRIN+4
+
+	STILL	28
+	PRESS	DN,20
+	PRESS	FA+DN,6
+	PRESS	FA,31
+	PRESS	FA,31	; shoot side winder
+
+
+	SLIDRGT	2
+
+	SELICON		; tgt missile
+
+	STILL	13
+
+
+	PRESS	RT,31
+	PRESS	RT,21	; rotate a bit
+
+	PRESS	UPB,20
+	STILL	14
+
+	PRESS	UPB,31
+	PRESS	UPB,31
+	PRESS	UPB,20	; then pull krait up into sight
+	MVRIGHT
+
+
+	DB	$C3,UPB	; keep climbing untill targeted
+	DW	MSTG	; incase miss this time
+
+	SELICON		; fire missile once targetted
+
+
+	STILL	31	; wait to watch it
+	STILL	24
+
+	SLIDLFT	4
+	SELICON		; rear view
+
+
+	SLIDRGT	3
+
+;	DB	$C1,0
+;	DW	FRIN+3	; wait till only one ship left
+
+	SELICON		; tgt missile
+
+	MVRIGHT
+
+;	PRESS	LF,31
+	PRESS	RT,14	;15
+
+	PRESS	DN,31   	; get vaguely into sight
+
+	PRESS	FB+DN,17	;18
+
+	PRESS	DN,28
+
+	DB	$C3,0*RT
+	DW	MSTG	; end of french bit
+
+
+REPEATPOINT			; Final missile now targetted
+	STILL	9	;10
+
+	SELICON		; fire missile
+
+
+	PRESS	FB+UPB,25	;25 (DN 5)
+
+	DB	$C2,0
+	DW	QQ12	; wait till docked
+
+	STILL	31
+	STILL	31
+
+
+	SLIDLFT	4	; goto equip icon
+
+	SELICON
+	STILL	31
+	STAB	DN
+	STAB	FA
+	STILL	31
+
+
+
+	SLIDLFT	3
+	SELICON		; mkt prices
+	STILL	31
+
+	STAB	RT
+	STAB	RT
+	STAB	RT
+	STAB	RT
+	STAB	RT
+	STAB	RT
+	STAB	RT
+	STAB	RT
+
+	STAB	DN
+	
+	STAB	RT
+
+	STAB	DN
+	STAB	DN
+	STAB	DN
+ 	STAB	DN
+	STAB	DN
+	STAB	DN
+	STAB	DN
+	STAB	DN
+ 	STAB	DN
+	STAB	DN
+
+	STAB	DN
+	STAB	DN
+	STAB	DN
+	STAB	DN
+
+	STAB	RT
+
+	STILL	31
+
+
+	SELICON		; inv
+	STILL	31
+	STILL	31
+
+	MVLEFT
+	SELICON		; launch
+	STILL	31
+	STILL	31
+	STILL	31
+	STILL	31
+	
+	SLIDRGT	4
+	SELICON		; rear view
+
+	STILL	31
+	PRESS	UPB,30
+	STILL	31
+
+
+	MVLEFT
+	SELICON		; chart
+	STILL	31
+
+	SELICON		; data
+	STILL	31
+	STILL	31
+	STILL	31
+	
+
+	SELICON		; chart
+	STILL	31
+
+
+	PRESS	RT,31
+	PRESS	RT+DN,31
+	PRESS	RT,5	; move to Zaonce
+
+	STILL	31
+
+	SELICON		; data
+	STILL	31
+	STILL	31
+	STILL	31
+
+	SELICON		;chart
+	MVLEFT
+	STILL	31
+	
+	SELICON		;galaxy
+	STILL	31
+	STILL	31
+
+	SELICON		;chart	
+	STILL	31
+
+	SLIDRGT	5
+	SELICON
+	STILL	22	;31 25
+
+
+	SLIDLFT	3
+	SELICON		;view
+
+
+
+	DB	$C4,0
+	DW	FRIN+1	;wait till sun present
+
+
+	PRESS	LF,22
+	PRESS	DN,30
+
+
+	SLIDRGT	7
+	SELICON
+	SELICON
+	SELICON
+	SELICON
+
+
+	DB	$C2,0
+	DW	SSPR	; wait till space station here
+
+	SLIDLFT	13
+	SELICON		; dock comp
+
+	DB	$C2,0
+	DW	QQ12	; wait till docked
+
+	STILL	31
+
+	MVRIGHT
+	SELICON
+	STILL	31
+	STAB	LF
+	STAB	LF
+	STAB	LF
+	STAB	LF
+	STAB	LF
+	STAB	LF
+	STAB	LF
+	STAB	LF
+
+	STAB	DN
+	STAB	LF
+
+
+	
+	SLIDRGT	3
+	SELICON
+	STILL	31
+	PRESS	FA,31
+	PRESS	FA,31
+	PRESS	FA,31
+	PRESS	FA,31
+
+
+	SLIDLFT	12
+	SELICON		; launch
+	STILL	31
+	STILL	31
+
+	PRESS	UPB,31
+	PRESS	UPB,31
+	PRESS	FB+UPB,10
+	STILL	3
+	SLIDRGT	2
+	SELICON
+	STILL	31
+	STILL	31
+	SLIDRGT	2
+	SELICON
+	STILL	31
+
+	SLIDRGT	3
+	PRESS	FB+DN,31
+
+
+	PRESS	UPB,31
+	PRESS	UPB,31
+	STILL	3
+
+	SELICON
+
+	
+	DB	$C3,UPB
+	DW	MSTG
+
+	STILL	31
+	MVRIGHT
+	SELICON		; fire missile
+	SLIDLFT	6
+
+	PRESS	FB+UPB,10
+
+	DB	$C3,0
+	DW	ENERGY	; wait till energy low
+
+ 	SELICON		; status page
+
+	DB	$80	; 
+
+
+
+
+fakejoy	; Simulate player pressing of buttons
+	; on entry autowk1 contains current byte
+	;          autowk2 contains number to repeat
+	;          autoptr points into table
+
+
+	LDA	frbut1	; Turn off if any button
+	ORA	frbut2	; is really pressed
+	ORA	lftbut
+	ORA	rgtbut
+	ORA	upbut
+	ORA	dwnbut
+	ORA	stabut
+	ORA	selbut
+	BPL	!F
+	LDA	#0
+	STA	autoflag
+	RTS
+
+
+!F	LDX	autowk2
+	BNE	!1
+
+	LDY	#0
+	LDA	(autoptr),Y
+	BMI	!2
+	STA	autowk1
+	INY
+	LDA	(autoptr),Y
+	SEC
+	TAX
+!5	LDA	#1
+!C	ADC	autoptr
+	STA	autoptr
+	BCC	!1
+	INC	autoptr+1
+!1	DEX
+	STX	autowk2
+	LDA	autowk1
+	ASL	rgtbut
+	LSR	A
+	ROR	rgtbut
+
+	ASL	lftbut
+	LSR	A
+	ROR	lftbut
+
+	ASL	dwnbut
+	LSR	A
+	ROR	dwnbut
+
+	ASL	upbut
+	LSR	A
+	ROR	upbut
+
+	ASL	selbut
+	LSR	A
+	ROR	selbut
+
+	ASL	frbut2
+	LSR	A
+	ROR	frbut2
+
+	ASL	frbut1
+	LSR	A
+	ROR	frbut1
+	RTS
+
+!2	ASL	A
+	BEQ	!3
+	BMI	!4
+	ASL	A
+	TAX
+!7	LDA	#0
+	STA	autowk1
+	BEQ	!5
+
+!4	ASL	A
+	BEQ	!6
+	PHA
+	INY
+	LDA	(autoptr),Y
+	STA	autowk1
+	INY
+	LDA	(autoptr),Y
+	STA	nmiz1
+	INY
+	LDA	(autoptr),Y
+	STA	nmiz1+1
+	LDY	#0
+	LDX	#1
+	PLA
+	CMP	#8
+	BCS	!8
+	LDA	(nmiz1),Y
+	BNE	!1
+!A	LDA	#4
+	CLC
+	BCC	!C
+	
+!8	BNE	!9
+	LDA	(nmiz1),Y
+	BEQ	!1
+	BNE	!A
+
+!9	CMP	#16
+	BCS	!D
+	LDA	(nmiz1),Y
+	BMI	!1	
+	BPL	!A
+
+!D	BNE	!E
+	LDA	(nmiz1),Y
+	BMI	!A
+	JMP	!1
+
+!E	; Unknown code
+
+	LDA	#$C0
+	STA	stabut
+	LDX	#22
+	CLC
+	BCC	!7
+
+!6	SET2B	autoptr,REPEATPOINT
+	RTS
+
+!3	STA	autoflag
+	RTS
+
+	ENDIF	;(AUTOPLAY)
+
+	
+justfreeze	LDA	paubut
+	AND	#$C0
+	CMP	#$40
+	BNE	!1
+	LDA	#frz
+	STA	stripop
+	BNE	noslid2
+!1	LDA	stripop
+	CMP	#frz
+	BEQ	noslid2
+
+
+
+noslider	LDA	#0
+	STA	stripop
+noslid2	LDA	#$F0
+	STA	ATTRIBUTES+slidbase*4+0
+	STA	ATTRIBUTES+slidbase*4+4+0
+	STA	ATTRIBUTES+slidbase*4+8+0
+	STA	ATTRIBUTES+slidbase*4+12+0
+	RTS
+
+
+	IF	JORDAN
+deadtime	equ	30
+livetime	equ	40
+	ELSE
+deadtime	equ	15	; Dbl B disable time after joystick
+deadtime2	equ	25	; Dbl B disable time after Dbl B
+	ENDIF
+
+PLUNKSLIDER	; Plunk slider over icon A
+	ASL	A
+	ASL	A
+	STA	stripx
+	LDX	#0
+	STX	stripd
+	STX	stripv
+	STX	stripcnt
+	STX	stripcnt2
+	IF	ONEPRESS
+	ELSE
+	STX	prescnt
+	ENDIF	
+	RTS
+
+
+slider
+	DEC	stripcnt2
+	IF	ONEPRESS
+	ELSE
+	BNE	!A
+	LSR	prescnt
+!A
+	ENDIF
+	BPL	!9
+	INC	stripcnt2
+
+!9	DEC	stripd
+	BPL	!5
+	INC	stripd
+!5
+	LDA	faded
+	BMI	noslider
+	LDA	stripenb
+	BEQ	justfreeze
+
+
+	LDA	stripv
+;	BEQ	!1
+!1	CLC
+	ADC	stripx
+	STA	stripx
+	AND	#3
+	BNE	dunmove
+	LDA	#0
+	STA	stripv
+
+	LDA	stripd
+	BNE	dunmove
+	LDA	shfbut
+	ORA	twoplayers
+	BPL	dunmove
+
+
+	LDX	slilft
+	BMI	!2
+	LDA	#0
+	STA	slilft
+	jmp	dunlft
+
+
+!2
+	IF	JORDAN
+	ELSE
+	LDA	#deadtime
+	STA	stripcnt
+	ENDIF
+	LDA	#FF
+	CPX	#$80
+	BNE	!3
+	LDX	#12
+	STX	stripd
+
+
+
+!3	STA	stripv
+
+
+dunlft
+
+	LDX	slirgt
+	BMI	!2
+	LDA	#0
+	STA	slirgt
+	JMP	!1
+
+
+!2	IF	JORDAN
+	ELSE
+	LDA	#deadtime
+	STA	stripcnt
+	ENDIF
+	LDA	#1
+	CPX	#$80
+	BNE	!3
+	LDX	#12
+	STX	stripd
+!3	STA	stripv
+
+!1	
+
+dunmove
+;	LDA	shfbut
+;	BPL	!3
+;	LDA	#0
+;	STA	slilft
+;	STA	slirgt
+;!3
+
+	IF	SLIDERWRAP
+
+!1	LDA	stripx
+	BPL	!5
+	CMP	#$FD
+	BCS	!5
+	LDA	#44	;29
+!5	CMP	#48	;30
+	BNE	!6
+	LDA	#0
+
+!6	STA	stripx
+
+
+	ELSE
+
+	LDA	stripx
+	BPL	!2
+	LDA	#0
+	STA	stripv
+	BEQ	!6
+
+!2	CMP	#45	;30
+	BCC	!6
+	LDA	#0
+	STA	stripv
+	LDA	#44
+
+
+!6	STA	stripx
+	ENDIF	; (SLIDERWRAP)
+
+sli1
+
+	IF	HOPPITYSQ
+
+	LDA	stripx		; If in halfway posn
+	AND	#3
+	ORA	stripv
+	BNE	!4
+
+	LDA	shfbut
+	BMI	!4
+
+;	LDA	lftbut		; or mover buttons set
+;	ORA	rgtbut
+;	AND	frbut2
+;	BMI	!4		; then force slider high
+
+
+;	LDA	upbut		; If up or down buttons
+;	ORA	dwnbut		; then force slider low
+;	BNE	!6
+;
+
+;	LDA	stripflg		; If slider currently high
+;	BEQ	!6		; then only drop if shifter
+	LDA	shfbut		; button released
+	BMI	!4
+	LDA	iconselbut
+	BNE	!4
+
+	; Draw slider resting on button
+!6
+;	LDA	#0
+;	STA	stripflg
+	LDA	#corner+0
+	STA	ATTRIBUTES+slidbase*4+0+1
+	STA	ATTRIBUTES+slidbase*4+4+1
+	
+	LDA	stripy
+	CLC
+	ADC	#spryoff+1
+	STA	ATTRIBUTES+slidbase*4+0
+	STA	ATTRIBUTES+slidbase*4+4+0
+	LDA	stripx
+	ASL	A
+	ASL	A
+	ADC	stripx
+	ADC	#10-sprxoff
+	STA	ATTRIBUTES+slidbase*4+3*4+3
+
+	ADC	#1
+
+	STA	ATTRIBUTES+slidbase*4+3
+	ADC	#13
+	STA	ATTRIBUTES+slidbase*4+1*4+3
+	
+	ADC	#1
+
+	STA	ATTRIBUTES+slidbase*4+2*4+3
+
+
+	LDA	stripy
+	CLC
+	ADC	#spryoff+9
+	STA	ATTRIBUTES+slidbase*4+3*4+0
+	STA	ATTRIBUTES+slidbase*4+2*4+0
+
+
+	LDA	stripx
+;	AND	#$FC
+	BNE	!5
+
+;	LDA	#8
+;	STA	ATTRIBUTES+slidbase*4+3*4+3
+	JMP	!5
+
+
+
+!4	; Draw slider travelling over button
+	LDA	#corner+1
+;	STA	stripflg
+	STA	ATTRIBUTES+slidbase*4+0+1
+	STA	ATTRIBUTES+slidbase*4+4+1
+	LDA	stripy
+	CLC
+	ADC	#spryoff+1-3
+	STA	ATTRIBUTES+slidbase*4+0
+	STA	ATTRIBUTES+slidbase*4+4+0
+	LDA	stripx
+	ASL	A
+	ASL	A
+	ADC	stripx
+	ADC	#10-sprxoff
+	STA	ATTRIBUTES+slidbase*4+3*4+3
+
+	ADC	#1
+
+	STA	ATTRIBUTES+slidbase*4+3
+	ADC	#13
+	STA	ATTRIBUTES+slidbase*4+1*4+3
+	
+	ADC	#1
+
+	STA	ATTRIBUTES+slidbase*4+2*4+3
+
+
+	LDA	stripy
+	CLC
+	ADC	#spryoff+9-3
+	STA	ATTRIBUTES+slidbase*4+3*4+0
+	STA	ATTRIBUTES+slidbase*4+2*4+0
+
+	ELSE	; (HOPPITYSQ)
+
+	LDA	stripy
+	CLC
+	ADC	#spryoff-4
+	STA	ATTRIBUTES+slidbase*4+0
+	STA	ATTRIBUTES+slidbase*4+4+0
+	LDA	stripx
+	ASL	A
+	ASL	A
+	ADC	stripx
+	ADC	#11-sprxoff
+	STA	ATTRIBUTES+slidbase*4+3*4+3
+	STA	ATTRIBUTES+slidbase*4+3
+	ADC	#15
+	STA	ATTRIBUTES+slidbase*4+1*4+3
+	STA	ATTRIBUTES+slidbase*4+2*4+3
+	LDA	stripy
+	CLC
+	ADC	#spryoff+11
+	STA	ATTRIBUTES+slidbase*4+3*4+0
+	STA	ATTRIBUTES+slidbase*4+2*4+0
+	
+	ENDIF	;(HOPPITYSQ)
+
+
+!5
+
+	IF	JORDAN
+	LDA	lftbut
+	ORA	rgtbut
+	ORA	upbut
+	ORA	dwnbut
+	BPL	!8
+	LDA	#0
+	STA	stripcnt
+	
+!8
+	LDA	iconselbut	; Check for icon select button
+	AND	#$F0	; (leading edge debounced)
+	CMP	#$80
+	BEQ	!2
+
+	LDA	shfbut
+	AND	#$C0
+	CMP	#$80
+	BNE	!7	; On leading edge of shift button...
+
+	IF	ONEPRESS
+
+	LDA	#deadtime	; set stripcnt flag
+	STA	stripcnt	; and forced branch out
+!7	CMP	#$40	; On trailing edge select button
+	BNE	!1	; if stripcnt set
+	LDA	stripcnt
+	BEQ	!1
+
+
+	ELSE	; (ONEPRESS)
+
+	LDA	#deadtime	; set stripcnt flag
+	STA	stripcnt	; and forced branch out
+!7	CMP	#$40	; On trailing edge..
+	BNE	!1
+	LDA	stripcnt	; if stripcnt zero
+	BNE	!9
+	STA	prescnt	; zero press count
+	BEQ	!1	; and exit
+!9	LDA	#livetime	; else
+	STA	stripcnt2	; start timer
+	LDA	prescnt	; and either inc
+	BNE	!2	; press count or zero it and
+	INC	prescnt
+	BNE	!1
+
+
+	ENDIF	;(ONEPRESS)
+
+
+	ELSE	;(JORDAN)
+
+	LDA	iconselbut	; Check for icon select button
+	AND	#$F0	; (leading edge)
+	CMP	#$80
+	BEQ	!2
+
+	LDA	stripcnt	; If no joystcik left/right history
+	BNE	!1
+	LDA	shfbut	; then allow dbl click on shift button
+	AND	#$C0
+	CMP	#$80
+	BNE	!1
+	LDA	shfbut
+	CMP	#$80
+	BEQ	!1
+
+	LDA	#deadtime2
+	STA	stripcnt
+
+	ENDIF	;(JORDAN)
+
+
+
+!2	IF	ONEPRESS
+	ELSE
+	LSR	prescnt
+	ENDIF
+
+	LDA	stripx	; to grab key code from icon bar 
+	LSR	A
+	LSR	A
+	TAY
+	LDA	(strip),Y
+	STA	stripop
+
+!1	LDA	paubut
+	AND	#$C0
+	CMP	#$40
+	BNE	!3
+	LDA	#frz
+	STA	stripop
+
+
+!3	RTS
+
+
+
+faketra	; fudge up lfttra and rgttra
+	LDA	shfbut
+;	AND	#$F0
+	BNE	!1
+
+	LDA	lftbut	; If shfbut well up then they
+	ASL	A	; are correct values behind
+	ASL	A	; by 4 vsyncs 
+	ASL	A
+	ASL	A
+	STA	lfttra
+	LDA	rgtbut
+	ASL	A
+	ASL	A
+	ASL	A
+	ASL	A
+	STA	rgttra
+	RTS
+!1	LDA	#0	; otherwise they are zero
+	STA	lfttra
+	STA	rgttra
+	RTS
+
+
+fakeanag	; mimic analogue joysticks
+
+
+	LDA	MODE2	; Disable if not in space
+	BNE	faketra
+
+	IF	TWOJOY
+
+	LDX	JSTX
+	LDA	#xstep
+	STA	nmiz1
+	LDY	twoplayers
+	BNE	!8
+	LDA	shfbut	; Ignore x & y channels
+	BMI	!5	; if shift down and and one player
+!8	LDA	rgtbut,Y
+	BPL	!1
+	JSR	REDU2nmi
+!1	LDA	lftbut,Y
+	BPL	!2
+	JSR	BUMP2nmi
+!2	STX	JSTX
+	TYA
+	BNE	!6
+
+
+
+!6	LDA	#4
+	STA	nmiz1
+
+	LDX	JSTY
+
+	LDA	JSTGY
+	BMI	!7
+
+	
+	LDA	dwnbut,Y
+	BPL	!3
+	JSR	REDU2nmi
+!3	LDA	upbut,Y
+	BPL	!4
+!A	JSR	BUMP2nmi
+!4	STX	JSTY
+	RTS
+
+!7	LDA	upbut,Y
+	BPL	!9
+	JSR	REDU2nmi
+!9	LDA	dwnbut,Y
+	BMI	!A
+	STX	JSTY
+	RTS
+	ELSE
+
+
+	LDA	shfbut	; Ignore y channel
+	BMI	!5	; if velocity control
+
+
+	LDX	JSTX
+	LDA	#xstep
+	STA	nmiz1
+	LDY	rgtbut
+	BPL	!1
+	JSR	REDU2nmi
+!1	LDY	lftbut
+	BPL	!2
+	JSR	BUMP2nmi
+!2	STX	JSTX
+
+	LDA	#4
+	STA	nmiz1
+
+	LDX	JSTY
+	LDY	dwnbut
+	BPL	!3
+	JSR	REDU2nmi
+!3	LDY	upbut
+	BPL	!4
+	JSR	BUMP2nmi
+!4	STX	JSTY
+	ENDIF	; (TWOJOY)
+
+!5	RTS
+
+
+BUMP2nmi	TXA
+	CLC
+	ADC	nmiz1
+	TAX
+	BCC	!1
+	LDX	#FF
+!1	BPL	djd1nmi
+	RTS
+
+REDU2nmi	TXA
+	SEC
+	SBC	nmiz1
+	TAX
+	BCS	!1
+	LDX	#1
+!1	BPL	djd2nmi
+
+djd1nmi
+;	LDA	djd
+;	BEQ	djd2nmi
+	LDX	#128
+djd2nmi	RTS
+
+
+
+strips	;       dck mkt sta cht viw hyp ecm tgt fir bmb esc ffw
+	DB	$01,$02,$03,$04,$05,$06,$07,$23,$08,magk,$00,$0C
+	DB	0,0,0,0
+	DB	$11,$02,$03,$04,$15,$16,$17,$18,$19,$1A,$1B,$0C,0,0,0,0
+	DB	$01,$02,$24,$23,$15,$26,$27,$16,$29,$17,$1B,$0C,0,0,0,0
+	DB	$31,$32,$33,$34,$35,$00,$00,$00,$00,$00,$00,$3C,0,0,0,0
+
+
+
+NOSTARS	POLLBIT	149
+	LDX	NOSTM
+	LDY	#4*starbase
+NOSTRS1	LDA	#$F0
+!1	STA	ATTRIBUTES,Y
+	INY
+	INY
+	INY
+	INY
+	DEX
+	BPL	!1
+	RTS
+
+
+KILLDISP	LDA	MODE2
+	CMP	MODE
+	BEQ	NOSPRITES
+KILLDISP2
+	JSR	FADEDOWN
+NOSPRITES
+	POLLBIT	150
+	LDX	#63-slidbase-4
+	LDY	#4*slidbase+16
+	BNE	NOSTRS1
+
+
+DELAY	JSR	WSCAN
+	DEY
+	BNE	DELAY
+	RTS
+
+
+

@@ -846,10 +846,10 @@ ENDIF
 
 .GOIN
 
+                        ; If we arrive here, we just docked successfully
+
  JSR ResetMusicAfterNMI ; Wait for the next NMI before resetting the current
                         ; tune to 0 (no tune) and stopping the music
-
-                        ; If we arrive here, we just docked successfully
 
  JMP DOENTRY            ; Go to the docking bay (i.e. show the ship hangar)
 

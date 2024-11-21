@@ -1,0 +1,3680 @@
+;
+;REM	ELITE <S>  Nin
+;
+;            Code for musbank
+
+	FORG	BANKSTART
+
+	INIMAC
+
+	IF	INCMUSIC
+
+;	Ian has:
+;	Changed ZP to MUSICZP
+;	slide to musicslide
+;	v to vm
+;	p to pm
+;	tra to tram
+;	tra3 to tra3mus
+;	tra4 to tra4mus
+;	s to sm
+;	x to xm
+;	MonOff becomes SFXPRES
+;	fvartab becomes SFXCORR
+
+;	inserted lables REFRESHtrue and INITUNEtrue
+;	RESMUStrue and TURNOFFtrue
+;	added small code INITFXtrue above _InitFXB
+;	killed TVFlag and Hz_counter and associated code
+
+CODE_ORG	equ	*	;For now...
+
+IniTune	equ	CODE_ORG
+Refresh	equ	IniTune+3
+TurnOff	equ	Refresh+3
+ReStart	equ	TurnOff+3
+InitFXA	equ	reStart+3
+InitFXB	equ	InitFXA+3
+InitFXD	equ	InitFXB+3
+
+MUSICZP	equ	$FE  ;and $FF (As requested)
+
+
+
+;;;VARS	equ	$0100	;As requested.
+
+;My DECLARED RAM Variables...
+
+MonOff	equ	SFXPRES	;0=music not playing
+FonOffA	equ	MonOff+1	;0=FX(A) not playing
+FonOffB	equ	FonOffA+1	;0=FX(B) not playing
+FonOffD	equ	FonOffB+1	;0=FX(C) not playing
+Speed	equ	FonOffD+1	;correct music speed
+SSpeed	equ	Speed+1	;current music speed
+;;;TVflag	equ	SSpeed+1 ;($00 = UK = 50Hz) ($FF = USA = 60Hz)
+rnd	equ	SSpeed+1 ;(0,0,0,0)
+
+;Other driver variables
+;;;HZ_counter	equ	rnd+4	;counter for 50/60Hz
+no_tt	equ	rnd+4	;HZ_counter+1
+Tran	equ	no_tt+1	;global channel transpose (except noise)
+dunIT	equ	Tran+1
+
+mem	equ	0	;current channel ptr
+ph_b	equ	2	;phrase beg
+ph_p	equ	4	;phrase pos
+ct	equ	6	;channel transpose
+nlen	equ	7	;current note length
+notelen	equ	8	;counter
+wave	equ	9	;waveform (duty) on A+B only
+musicslide	equ	10	;
+vibptr	equ	11	;vibrato pointer
+vibnum	equ	12	;vibrato number
+pitch	equ	13	;low byte only
+envptr	equ	14	;envelope pointer
+ev_d	equ	15	;envelope delay
+ev_t	equ	16	;envelope delay counter
+envnum	equ	17	;envelope number
+ev_f	equ	18	;envelope flag
+chlen	equ	19
+
+chanA	equ	dunIT+1
+chanB	equ	chanA+chlen
+chanC	equ	chanB+chlen
+chanD	equ	chanC+chlen
+
+Regs	equ	chanD+chlen
+CHANS	equ	4	;number of audio channels used
+SRegs	equ	CHANS*4
+
+SFXPRESTOP	equ	Regs+SRegs
+
+	LIST	ON
+coresfx	=	SFXPRESTOP-SFXPRES
+	LIST	OFF
+
+
+;FX VARS... Only needed whwn FX playing (on respective Channels)
+
+fvartabA	equ	SFXCORR
+lcountA	equ	fvartabA+0
+sfcountA	equ	lcountA+1
+RevsA	equ	sfcountA+1
+svpA	equ	RevsA	;.w
+fqtyA	equ	svpA+2	;.w
+fxwfA	equ	fqtyA+2
+frndA	equ	fxwfA+1
+fudA	equ	frndA+1
+frptA	equ	fudA+1
+fenvA	equ	frptA+1
+fenvsspA	equ	fenvA+1
+fcontA	equ	fenvsspA+1
+fdelA	equ	fcontA+1
+
+vpA	equ	fdelA+1	;.w
+fcountA	equ	vpA+2
+delA	equ	fcountA+1
+fenvptrA	equ	delA+1
+fenvspA	equ	fenvptrA+1
+
+
+fvartabB	equ	fenvspA+1
+lcountB	equ	fvartabB+0
+sfcountB	equ	lcountB+1
+RevsB	equ	sfcountB+1
+svpB	equ	RevsB	;.w
+fqtyB	equ	svpB+2	;.w
+fxwfB	equ	fqtyB+2
+frndB	equ	fxwfB+1
+fudB	equ	frndB+1
+frptB	equ	fudB+1
+fenvB	equ	frptB+1
+fenvsspB	equ	fenvB+1
+fcontB	equ	fenvsspB+1
+fdelB	equ	fcontB+1
+
+vpB	equ	fdelB+1	;.w
+fcountB	equ	vpB+2
+delB	equ	fcountB+1
+fenvptrB	equ	delB+1
+fenvspB	equ	fenvptrB+1
+
+
+fvartabD	equ	fenvspB+1
+lcountD	equ	fvartabD+0
+sfcountD	equ	lcountD+1
+RevsD	equ	sfcountD+1
+svpD	equ	RevsD	;.w
+fqtyD	equ	svpD+2	;.w
+fxwfD	equ	fqtyD+2
+frndD	equ	fxwfD+1
+fudD	equ	frndD+1
+frptD	equ	fudD+1
+fenvD	equ	frptD+1
+fenvsspD	equ	fenvD+1
+fcontD	equ	fenvsspD+1
+fdelD	equ	fcontD+1
+
+vpD	equ	fdelD+1	;.w
+fcountD	equ	vpD+2
+delD	equ	fcountD+1
+fenvptrD	equ	delD+1
+fenvspD	equ	fenvptrD+1
+
+
+tempA	equ	fenvspD+1	;.w
+tempB	equ	tempA+2	;.w
+tempD	equ	tempB+2	;.w
+
+EndOfMyRAMVars	equ	tempD+2
+
+	LIST	ON
+sfxwksp	=	EndOfMyRAMVars-SFXCORR
+	LIST	OFF
+
+; End of my RAM variables.
+
+
+;-----------------------------------
+
+
+;sound chip equates
+
+WRA0	EQU	$4000
+WRA1	EQU	$4001
+WRA2	EQU	$4002
+WRA3	EQU	$4003	;REGISTERS FOR CHANNEL A (SQUARE WAVE)
+
+WRB0	EQU	$4004
+WRB1	EQU	$4005
+WRB2	EQU	$4006
+WRB3	EQU	$4007	;REGISTERS FOR CHANNEL B (SQUARE WAVE)
+
+WRC0	EQU	$4008
+WRC2	EQU	$400A
+WRC3	EQU	$400B	;REGISTERS FOR CHANNEL C (TRIANGLE)
+
+WRD0	EQU	$400C
+WRD2	EQU	$400E
+WRD3	EQU	$400F	;REGISTERS FOR CHANNEL D (NOISE)
+
+WRE0	EQU	$4010
+WRE1	EQU	$4011
+WRE2	EQU	$4012
+WRE3	EQU	$4013	;REGISTERS FOR CHANNEL E (DMA)
+
+;;;WRST	EQU	$4015	;Status Write/Read
+
+
+;;;	org	CODE_ORG
+
+; Relevant calls, flags etc...
+;IniTune
+;Refresh
+;TurnOff
+;ReStart
+;InitFxA
+;InitFxB
+;InitFxD
+;MonOff
+;Speed
+;SSpeed
+;TVflag
+;FonOffA
+;FonOffB
+;FonOffD
+;RevsA
+;RevsB
+;RevsD
+;rnd
+
+
+
+
+w0	equ	%00110000	;chanA/B possible waveforms
+w1	equ	%01110000
+w2	equ	%10110000
+w3	equ	%11110000
+
+	jmp	_IniTune
+	jmp	_Refresh
+TURNOFFtrue
+	jmp	_TurnOff
+
+RESMUStrue
+	jmp	_ReStart
+	jmp	_InitFXA
+	jmp	_InitFXB
+	jmp	_InitFXD
+
+INITUNEtrue
+_IniTune	tay
+
+	jsr	TurnOff
+
+	lda	#0
+	clc
+!v	dey
+	bmi	in2
+	adc	#1+8	;#1+10 if samples too
+	bne	!v
+
+in2	tax
+
+	lda	#0
+	ldy	#chlen-1
+iniclr
+	sta	chanA,y
+	sta	chanB,y
+	sta	chanC,y
+	sta	chanD,y
+	dey
+	bpl	iniclr
+
+	tay	;0
+
+	lda	stads+0,x
+	sta	Speed
+	sta	SSpeed
+
+	lda	stads+1,x
+	sta	chanA+ph_b
+	sta	MUSICZP
+	lda	stads+2,x
+	sta	chanA+ph_b+1
+	sta	MUSICZP+1
+	lda	(MUSICZP),y
+	sta	chanA+mem
+	iny
+	lda	(MUSICZP),y
+	sta	chanA+mem+1
+
+	lda	stads+3,x
+	sta	chanB+ph_b
+	sta	MUSICZP
+	lda	stads+4,x
+	sta	chanB+ph_b+1
+	sta	MUSICZP+1
+	dey
+	lda	(MUSICZP),y
+	sta	chanB+mem
+	iny
+	lda	(MUSICZP),y
+	sta	chanB+mem+1
+
+	lda	stads+5,x
+	sta	chanC+ph_b
+	sta	MUSICZP
+	lda	stads+6,x
+	sta	chanC+ph_b+1
+	sta	MUSICZP+1
+	dey
+	lda	(MUSICZP),y
+	sta	chanC+mem
+	iny	;1
+	lda	(MUSICZP),y
+	sta	chanC+mem+1
+
+	lda	stads+7,x
+	sta	chanD+ph_b
+	sta	MUSICZP
+	lda	stads+8,x
+	sta	chanD+ph_b+1
+	sta	MUSICZP+1
+	dey
+	lda	(MUSICZP),y
+	sta	chanD+mem
+	iny	;1
+	lda	(MUSICZP),y
+	sta	chanD+mem+1
+
+	sty	chanA+notelen
+	sty	chanB+notelen
+	sty	chanC+notelen
+	sty	chanD+notelen
+
+	iny	;2
+	sty	chanA+ph_p
+	sty	chanB+ph_p
+	sty	chanC+ph_p
+	sty	chanD+ph_p
+
+	ldx	#0
+	IF	NTSC
+	stx	HZ_counter
+	ENDIF
+	stx	Tran
+	dex
+	stx	no_tt
+	stx	dunIT
+	inc	MonOff
+	rts
+
+
+_ReStart	lda	dunIT
+	beq	no_restart
+	lda	MonOff
+	bne	no_restart
+	inc	MonOff
+no_restart	rts
+
+
+_TurnOff	lda	#0
+	sta	MonOff
+	sta	FonOffA
+	sta	FonOffB
+	sta	FonOffD
+
+	tax
+!lp	sta	Regs,x
+	inx
+	cpx	#SRegs
+	bne	!lp
+
+	sta	WRC0
+	lda	#w0
+	sta	WRA0
+	sta	WRB0
+	sta	WRD0
+
+	lda	#%00001111
+	sta	WRST ;enable 4 sound channel(s)
+	rts
+
+REFRESHtrue
+
+_Refresh
+;;;	lda	TVflag
+;;;	beq	do_it
+	IF	NTSC
+	inc	HZ_counter
+	ldx	HZ_counter
+	cpx	#6
+	bne	do_it
+	ldx	#0
+	stx	HZ_counter
+	jmp	done_refresh
+do_it
+	ENDIF	;(NTSC)
+	jsr	Music
+	jsr	Effects
+
+	lda	MonOff
+	beq	done_refresh
+
+	lda	FonOffA
+	bne	noA
+	lda	Regs+0
+	sta	WRA0+0
+	lda	chanA+musicslide
+	bne	noA
+	lda	Regs+2
+	sta	WRA0+2
+noA
+	lda	FonOffB
+	bne	noB
+	lda	Regs+4
+	sta	WRB0+0
+	lda	chanB+musicslide
+	bne	noB
+	lda	Regs+6
+	sta	WRB0+2
+noB
+	lda	Regs+10
+	sta	WRC0+2
+noC
+	lda	FonOffD
+	bne	noD
+	lda	Regs+12
+	sta	WRD0+0
+	lda	Regs+14
+	sta	WRD0+2
+noD
+done_refresh	
+	rts
+
+Music
+	lda	MonOff
+	bne	DoMusic
+	rts
+DoMusic
+	lda	Speed
+	clc
+	adc	no_tt
+	sta	no_tt
+	bcc	warble
+
+	jsr	mz_chA
+	jsr	mz_chB
+	jsr	mz_chC
+	jsr	mz_chD
+warble
+	jsr	mz_50A
+	jsr	mz_50B
+	jsr	mz_50C
+	jmp	mz_50D
+
+
+mz_chA	dec	chanA+notelen
+	beq	!v
+	rts
+!v	lda	chanA+mem
+	sta	MUSICZP
+	lda	chanA+mem+1
+	sta	MUSICZP+1
+	lda	#0
+	sta	chanA+musicslide
+	sta	chanA+ev_f
+readA
+	ldy	#0
+	lda	(MUSICZP),y
+	tay
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	tya
+	bmi	controlA
+
+	cmp	#l1
+	bcc	its_a_noteA
+	adc	#$a0
+	sta	chanA+nlen
+	jmp	readA
+
+its_a_noteA
+	clc
+	adc	Tran
+	clc
+	adc	chanA+ct
+	asl
+	tay
+	lda	NoteTab,y
+	sta	chanA+pitch
+	sta	Regs+2
+	lda	NoteTab+1,y
+	sta	Regs+3
+	ldx	FonOffA
+	bne	valuedA
+	ldx	chanA+musicslide
+	stx	WRA0+1
+	ldx	Regs+2
+	stx	WRA0+2
+	sta	WRA0+3
+valuedA
+	lda	#1
+	sta	chanA+envptr
+	lda	chanA+ev_d
+	sta	chanA+ev_t
+tiedA	lda	#255
+	sta	chanA+ev_f
+restA	lda	MUSICZP
+	sta	chanA+mem
+	lda	MUSICZP+1
+	sta	chanA+mem+1
+
+	lda	chanA+nlen
+	sta	chanA+notelen
+	rts
+
+controlA
+	ldy	#0	;for later
+	cmp	#xm
+	bne	no_end_phraseA
+;end_phraseA
+	lda	chanA+ph_p
+	clc
+	adc	chanA+ph_b
+	sta	MUSICZP
+	lda	chanA+ph_p+1
+	adc	chanA+ph_b+1
+	sta	MUSICZP+1
+	lda	chanA+ph_p
+	adc	#2
+	sta	chanA+ph_p
+	tya		;y should be #0
+	adc	chanA+ph_p+1
+	sta	chanA+ph_p+1
+	lda	(MUSICZP),y
+	iny
+	ora	(MUSICZP),y
+	bne	set_memA
+	lda	chanA+ph_b
+	sta	MUSICZP
+	lda	chanA+ph_b+1
+	sta	MUSICZP+1
+	lda	#2
+	sta	chanA+ph_p
+	lda	#0
+	sta	chanA+ph_p+1
+set_memA	lda	(MUSICZP),y
+	tax
+	dey
+	lda	(MUSICZP),y
+	sta	MUSICZP
+	stx	MUSICZP+1
+	jmp	readA
+no_end_phraseA
+
+	cmp	#ev
+	bne	no_envA
+	lda	(MUSICZP),y	;y should be #0
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	sta	chanA+envnum
+	jmp	readA
+no_envA
+	cmp	#vm
+	bne	no_vibA
+	lda	(MUSICZP),y	;y should be #0
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	sta	chanA+vibnum
+	sty	chanA+vibptr	;0
+	jmp	readA
+no_vibA
+	cmp	#w
+	bne	no_waveA
+	lda	(MUSICZP),y	;y should be #0
+	sta	chanA+wave
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	jmp	readA
+no_waveA
+	cmp	#pm
+	bne	no_restA
+	lda	#%00110000
+	sta	Regs+0
+	jmp	restA
+no_restA
+	cmp	#ti
+	bne	no_tiedA
+	jmp	tiedA
+no_tiedA
+	cmp	#sm
+	bne	no_slideA
+	lda	(MUSICZP),y	;y should be #0
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	sta	chanA+musicslide
+	jmp	readA
+no_slideA
+	cmp	#tram
+	bne	no_traA
+	lda	(MUSICZP),y	;y should be #0
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	sta	Tran
+	jmp	readA
+no_traA
+	cmp	#ctra
+	bne	no_ctraA
+	lda	(MUSICZP),y	;y should be #0
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	sta	chanA+ct
+	jmp	readA
+no_ctraA
+	cmp	#lp
+	bne	no_loopA
+	lda	(MUSICZP),y
+	tax
+	sta	chanA+ph_b
+	iny
+	lda	(MUSICZP),y
+	stx	MUSICZP
+	sta	MUSICZP+1
+	sta	chanA+ph_b+1
+	lda	#2
+	sta	chanA+ph_p
+	dey	;0
+	sty	chanA+ph_p+1
+	lda	(MUSICZP),y
+	tax
+	iny
+	lda	(MUSICZP),y
+	sta	MUSICZP+1
+	stx	MUSICZP
+	jmp	readA
+no_loopA
+	cmp	#te
+	bne	no_tempoA
+	lda	(MUSICZP),y	;y should be #0
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	sta	Speed
+	sta	SSpeed
+	jmp	readA
+no_tempoA
+	cmp	#cut
+	bne	no_cutA
+	sty	dunIT
+	pla		;correct
+	pla		;stack
+	jmp	TurnOff
+no_cutA
+
+hangA	beq	hangA	;should never get here
+
+
+mz_50A	lda	chanA+ev_f
+	beq	formA
+	ldx	chanA+envnum
+	lda	envL,x
+	sta	MUSICZP
+	lda	envH,x
+	sta	MUSICZP+1
+	ldy	#0
+	lda	(MUSICZP),y
+	sta	chanA+ev_d
+	ldy	chanA+envptr
+	lda	(MUSICZP),y
+	bmi	endEnvA
+	dec	chanA+ev_t
+	bpl	endEnvA
+	ldx	chanA+ev_d
+	stx	chanA+ev_t
+	inc	chanA+envptr
+endEnvA	and	#$0f
+	ora	chanA+wave
+	sta	Regs+0		;volume+waveform
+formA
+	ldx	chanA+vibnum
+	lda	vibL,x
+	sta	MUSICZP
+	lda	vibH,x
+	sta	MUSICZP+1
+	ldy	chanA+vibptr
+	lda	(MUSICZP),y
+	cmp	#z
+	bne	noVendA
+	ldy	#0
+	sty	chanA+vibptr
+	lda	(MUSICZP),y
+noVendA	inc	chanA+vibptr
+	clc
+	adc	chanA+pitch
+	sta	Regs+2
+	rts
+
+
+mz_chB	dec	chanB+notelen
+	beq	!v
+	rts
+!v	lda	chanB+mem
+	sta	MUSICZP
+	lda	chanB+mem+1
+	sta	MUSICZP+1
+	lda	#0
+	sta	chanB+musicslide
+	sta	chanB+ev_f
+readB
+	ldy	#0
+	lda	(MUSICZP),y
+	tay
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	tya
+	bmi	controlB
+
+	cmp	#l1
+	bcc	its_a_noteB
+	adc	#$a0
+	sta	chanB+nlen
+	jmp	readB
+
+its_a_noteB
+	clc
+	adc	Tran
+	clc
+	adc	chanB+ct
+	asl
+	tay
+	lda	NoteTab,y
+	sta	chanB+pitch
+	sta	Regs+6
+	lda	NoteTab+1,y
+	sta	Regs+7
+	ldx	FonOffB
+	bne	valuedB
+	ldx	chanB+musicslide
+	stx	WRB0+1
+	ldx	Regs+6
+	stx	WRB0+2
+	sta	WRB0+3
+valuedB
+	lda	#1
+	sta	chanB+envptr
+	lda	chanB+ev_d
+	sta	chanB+ev_t
+tiedB	lda	#255
+	sta	chanB+ev_f
+restB	lda	MUSICZP
+	sta	chanB+mem
+	lda	MUSICZP+1
+	sta	chanB+mem+1
+
+	lda	chanB+nlen
+	sta	chanB+notelen
+	rts
+
+controlB
+	ldy	#0	;for later
+	cmp	#xm
+	bne	no_end_phraseB
+;end_phraseB
+	lda	chanB+ph_p
+	clc
+	adc	chanB+ph_b
+	sta	MUSICZP
+	lda	chanB+ph_p+1
+	adc	chanB+ph_b+1
+	sta	MUSICZP+1
+	lda	chanB+ph_p
+	adc	#2
+	sta	chanB+ph_p
+	tya		;y should be #0
+	adc	chanB+ph_p+1
+	sta	chanB+ph_p+1
+	lda	(MUSICZP),y
+	iny
+	ora	(MUSICZP),y
+	bne	set_memB
+	lda	chanB+ph_b
+	sta	MUSICZP
+	lda	chanB+ph_b+1
+	sta	MUSICZP+1
+	lda	#2
+	sta	chanB+ph_p
+	lda	#0
+	sta	chanB+ph_p+1
+set_memB	lda	(MUSICZP),y
+	tax
+	dey
+	lda	(MUSICZP),y
+	sta	MUSICZP
+	stx	MUSICZP+1
+	jmp	readB
+no_end_phraseB
+
+	cmp	#ev
+	bne	no_envB
+	lda	(MUSICZP),y	;y should be #0
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	sta	chanB+envnum
+	jmp	readB
+no_envB
+	cmp	#vm
+	bne	no_vibB
+	lda	(MUSICZP),y	;y should be #0
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	sta	chanB+vibnum
+	sty	chanB+vibptr	;0
+	jmp	readB
+no_vibB
+	cmp	#w
+	bne	no_waveB
+	lda	(MUSICZP),y	;y should be #0
+	sta	chanB+wave
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	jmp	readB
+no_waveB
+	cmp	#pm
+	bne	no_restB
+	lda	#%00110000
+	sta	Regs+4
+	jmp	restB
+no_restB
+	cmp	#ti
+	bne	no_tiedB
+	jmp	tiedB
+no_tiedB
+	cmp	#sm
+	bne	no_slideB
+	lda	(MUSICZP),y	;y should be #0
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	sta	chanB+musicslide
+	jmp	readB
+no_slideB
+	cmp	#tram
+	bne	no_traB
+	lda	(MUSICZP),y	;y should be #0
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	sta	Tran
+	jmp	readB
+no_traB
+	cmp	#ctra
+	bne	no_ctraB
+	lda	(MUSICZP),y	;y should be #0
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	sta	chanB+ct
+	jmp	readB
+no_ctraB
+	cmp	#lp
+	bne	no_loopB
+	lda	(MUSICZP),y
+	tax
+	sta	chanB+ph_b
+	iny
+	lda	(MUSICZP),y
+	stx	MUSICZP
+	sta	MUSICZP+1
+	sta	chanB+ph_b+1
+	lda	#2
+	sta	chanB+ph_p
+	dey	;0
+	sty	chanB+ph_p+1
+	lda	(MUSICZP),y
+	tax
+	iny
+	lda	(MUSICZP),y
+	sta	MUSICZP+1
+	stx	MUSICZP
+	jmp	readB
+no_loopB
+	cmp	#te
+	bne	no_tempoB
+	lda	(MUSICZP),y	;y should be #0
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	sta	Speed
+	sta	SSpeed
+	jmp	readB
+no_tempoB
+	cmp	#cut
+	bne	no_cutB
+	sty	dunIT
+	pla		;correct
+	pla		;stack
+	jmp	TurnOff
+no_cutB
+
+hangB	beq	hangB	;should never get here
+
+
+mz_50B	lda	chanB+ev_f
+	beq	formB
+	ldx	chanB+envnum
+	lda	envL,x
+	sta	MUSICZP
+	lda	envH,x
+	sta	MUSICZP+1
+	ldy	#0
+	lda	(MUSICZP),y
+	sta	chanB+ev_d
+	ldy	chanB+envptr
+	lda	(MUSICZP),y
+	bmi	endEnvB
+	dec	chanB+ev_t
+	bpl	endEnvB
+	ldx	chanB+ev_d
+	stx	chanB+ev_t
+	inc	chanB+envptr
+endEnvB	and	#$0f
+	ora	chanB+wave
+	sta	Regs+4		;volume+waveform
+formB
+	ldx	chanB+vibnum
+	lda	vibL,x
+	sta	MUSICZP
+	lda	vibH,x
+	sta	MUSICZP+1
+	ldy	chanB+vibptr
+	lda	(MUSICZP),y
+	cmp	#z
+	bne	noVendB
+	ldy	#0
+	sty	chanB+vibptr
+	lda	(MUSICZP),y
+noVendB	inc	chanB+vibptr
+	clc
+	adc	chanB+pitch
+	sta	Regs+6
+	rts
+
+
+mz_chC	dec	chanC+notelen
+	beq	!v
+	rts
+!v	lda	chanC+mem
+	sta	MUSICZP
+	lda	chanC+mem+1
+	sta	MUSICZP+1
+readC
+	ldy	#0
+	lda	(MUSICZP),y
+	tay
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	tya
+	bmi	controlC
+
+	cmp	#l1
+	bcc	its_a_noteC
+	adc	#$a0
+	sta	chanC+nlen
+	jmp	readC
+
+its_a_noteC
+	clc
+	adc	Tran
+	clc
+	adc	chanC+ct
+	asl
+	tay
+	lda	NoteTab,y
+	sta	chanC+pitch
+	sta	Regs+10
+	lda	NoteTab+1,y
+	ldx	Regs+10
+	stx	WRC0+2
+	sta	WRC0+3
+	sta	Regs+11
+valuedC
+	lda	chanC+envnum
+	sta	chanC+envptr
+	lda	#$81	;continuous + any length bit
+	sta	WRC0+0
+tiedC
+	lda	MUSICZP
+	sta	chanC+mem
+	lda	MUSICZP+1
+	sta	chanC+mem+1
+
+	lda	chanC+nlen
+	sta	chanC+notelen
+	rts
+
+controlC
+	ldy	#0	;for later
+	cmp	#xm
+	bne	no_end_phraseC
+;end_phraseC
+	lda	chanC+ph_p
+	clc
+	adc	chanC+ph_b
+	sta	MUSICZP
+	lda	chanC+ph_p+1
+	adc	chanC+ph_b+1
+	sta	MUSICZP+1
+	lda	chanC+ph_p
+	adc	#2
+	sta	chanC+ph_p
+	tya		;y should be #0
+	adc	chanC+ph_p+1
+	sta	chanC+ph_p+1
+	lda	(MUSICZP),y
+	iny
+	ora	(MUSICZP),y
+	bne	set_memC
+	lda	chanC+ph_b
+	sta	MUSICZP
+	lda	chanC+ph_b+1
+	sta	MUSICZP+1
+	lda	#2
+	sta	chanC+ph_p
+	lda	#0
+	sta	chanC+ph_p+1
+set_memC	lda	(MUSICZP),y
+	tax
+	dey
+	lda	(MUSICZP),y
+	sta	MUSICZP
+	stx	MUSICZP+1
+	jmp	readC
+no_end_phraseC
+
+	cmp	#ev
+	bne	no_envC
+	lda	(MUSICZP),y	;y should be #0
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	sta	chanC+envnum
+	jmp	readC
+no_envC
+	cmp	#vm
+	bne	no_vibC
+	lda	(MUSICZP),y	;y should be #0
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	sta	chanC+vibnum
+	sty	chanC+vibptr	;0
+	jmp	readC
+no_vibC
+	cmp	#pm
+	bne	no_restC
+	lda	#$01
+	sta	chanC+envptr
+	jmp	tiedC
+no_restC
+	cmp	#ti
+	bne	no_tiedC
+	jmp	tiedC
+no_tiedC
+	cmp	#tram
+	bne	no_traC
+	lda	(MUSICZP),y	;y should be #0
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	sta	Tran
+	jmp	readC
+no_traC
+	cmp	#ctra
+	bne	no_ctraC
+	lda	(MUSICZP),y	;y should be #0
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	sta	chanC+ct
+	jmp	readC
+no_ctraC
+	cmp	#lp
+	bne	no_loopC
+	lda	(MUSICZP),y
+	tax
+	sta	chanC+ph_b
+	iny
+	lda	(MUSICZP),y
+	stx	MUSICZP
+	sta	MUSICZP+1
+	sta	chanC+ph_b+1
+	lda	#2
+	sta	chanC+ph_p
+	dey	;0
+	sty	chanC+ph_p+1
+	lda	(MUSICZP),y
+	tax
+	iny
+	lda	(MUSICZP),y
+	sta	MUSICZP+1
+	stx	MUSICZP
+	jmp	readC
+no_loopC
+	cmp	#te
+	bne	no_tempoC
+	lda	(MUSICZP),y	;y should be #0
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	sta	Speed
+	sta	SSpeed
+	jmp	readC
+no_tempoC
+	cmp	#cut
+	bne	no_cutC
+	sty	dunIT
+	pla		;correct
+	pla		;stack
+	jmp	TurnOff
+no_cutC
+
+hangC	beq	hangC	;should never get here
+
+
+mz_50C	lda	chanC+envptr
+	beq	endEnvC
+	dec	chanC+envptr
+	bne	endEnvC
+	lda	#$00
+	sta	WRC0+0
+endEnvC
+	ldx	chanC+vibnum
+	lda	vibL,x
+	sta	MUSICZP
+	lda	vibH,x
+	sta	MUSICZP+1
+	ldy	chanC+vibptr
+	lda	(MUSICZP),y
+	cmp	#z
+	bne	noVendC
+	ldy	#0
+	sty	chanC+vibptr
+	lda	(MUSICZP),y
+noVendC	inc	chanC+vibptr
+	clc
+	adc	chanC+pitch
+	sta	Regs+10
+	rts
+
+
+mz_chD	dec	chanD+notelen
+	beq	!v
+	rts
+!v	lda	chanD+mem
+	sta	MUSICZP
+	lda	chanD+mem+1
+	sta	MUSICZP+1
+	sta	chanD+ev_f
+readD
+	ldy	#0
+	lda	(MUSICZP),y
+	tay
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	tya
+	bmi	controlD
+
+	cmp	#l1
+	bcc	its_a_noteD
+	adc	#$a0
+	sta	chanD+nlen
+	jmp	readD
+
+its_a_noteD
+	and	#$0f
+	sta	chanD+pitch
+	sta	Regs+14
+	ldy	#0
+	ldx	FonOffD
+	bne	valuedD
+	sta	WRD0+2
+	sty	WRD0+3
+valuedD
+	lda	#1
+	sta	chanD+envptr
+	lda	chanD+ev_d
+	sta	chanD+ev_t
+tiedD	lda	#255
+	sta	chanD+ev_f
+restD	lda	MUSICZP
+	sta	chanD+mem
+	lda	MUSICZP+1
+	sta	chanD+mem+1
+
+	lda	chanD+nlen
+	sta	chanD+notelen
+	rts
+
+controlD
+	ldy	#0	;for later
+	cmp	#xm
+	bne	no_end_phraseD
+;end_phraseD
+	lda	chanD+ph_p
+	clc
+	adc	chanD+ph_b
+	sta	MUSICZP
+	lda	chanD+ph_p+1
+	adc	chanD+ph_b+1
+	sta	MUSICZP+1
+	lda	chanD+ph_p
+	adc	#2
+	sta	chanD+ph_p
+	tya		;y should be #0
+	adc	chanD+ph_p+1
+	sta	chanD+ph_p+1
+	lda	(MUSICZP),y
+	iny
+	ora	(MUSICZP),y
+	bne	set_memD
+	lda	chanD+ph_b
+	sta	MUSICZP
+	lda	chanD+ph_b+1
+	sta	MUSICZP+1
+	lda	#2
+	sta	chanD+ph_p
+	lda	#0
+	sta	chanD+ph_p+1
+set_memD	lda	(MUSICZP),y
+	tax
+	dey
+	lda	(MUSICZP),y
+	sta	MUSICZP
+	stx	MUSICZP+1
+	jmp	readD
+no_end_phraseD
+
+	cmp	#ev
+	bne	no_envD
+	lda	(MUSICZP),y	;y should be #0
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	sta	chanD+envnum
+	jmp	readD
+no_envD
+	cmp	#vm
+	bne	no_vibD
+	lda	(MUSICZP),y	;y should be #0
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	sta	chanD+vibnum
+	sty	chanD+vibptr	;0
+	jmp	readD
+no_vibD
+	cmp	#pm
+	bne	no_restD
+	lda	#%00110000
+	sta	Regs+12
+	jmp	tiedD
+no_restD
+	cmp	#ti
+	bne	no_tiedD
+	jmp	tiedD
+no_tiedD
+	cmp	#lp
+	bne	no_loopD
+	lda	(MUSICZP),y
+	tax
+	sta	chanD+ph_b
+	iny
+	lda	(MUSICZP),y
+	stx	MUSICZP
+	sta	MUSICZP+1
+	sta	chanD+ph_b+1
+	lda	#2
+	sta	chanD+ph_p
+	dey	;0
+	sty	chanD+ph_p+1
+	lda	(MUSICZP),y
+	tax
+	iny
+	lda	(MUSICZP),y
+	sta	MUSICZP+1
+	stx	MUSICZP
+	jmp	readD
+no_loopD
+	cmp	#te
+	bne	no_tempoD
+	lda	(MUSICZP),y	;y should be #0
+	inc	MUSICZP
+	bne	*+4
+	inc	MUSICZP+1
+	sta	Speed
+	sta	SSpeed
+	jmp	readD
+no_tempoD
+	cmp	#cut
+	bne	no_cutD
+	sty	dunIT
+	pla		;correct
+	pla		;stack
+	jmp	TurnOff
+no_cutD
+
+hangD	beq	hangD	;should never get here
+
+
+mz_50D	lda	chanD+ev_f
+	beq	formD
+	ldx	chanD+envnum
+	lda	envL,x
+	sta	MUSICZP
+	lda	envH,x
+	sta	MUSICZP+1
+	ldy	#0
+	lda	(MUSICZP),y
+	sta	chanD+ev_d
+	ldy	chanD+envptr
+	lda	(MUSICZP),y
+	bmi	endEnvD
+	dec	chanD+ev_t
+	bpl	endEnvD
+	ldx	chanD+ev_d
+	stx	chanD+ev_t
+	inc	chanD+envptr
+endEnvD	and	#$0f
+	ora	#%00110000
+	sta	Regs+12		;volume+ampbits
+formD
+	ldx	chanD+vibnum
+	lda	vibL,x
+	sta	MUSICZP
+	lda	vibH,x
+	sta	MUSICZP+1
+	ldy	chanD+vibptr
+	lda	(MUSICZP),y
+	cmp	#z
+	bne	noVendD
+	ldy	#0
+	sty	chanD+vibptr
+	lda	(MUSICZP),y
+noVendD	inc	chanD+vibptr
+	clc
+	adc	chanD+pitch
+	and	#$0f
+	sta	Regs+14
+	rts
+
+
+NoteTab	dw	$031a,$02ec,$02c2,$029a,$0275,$0252	;Octave 0
+	dw	$0230,$0211 ,$03e7,$03af,$037a,$0348
+
+	dw	$031a,$02ec,$02c2,$029a,$0275,$0252	;Octave 1
+	dw	$0230,$0211,$01f3,$01d7,$01bd,$01a4
+
+	dw	$018d,$0176,$0161,$014d,$013b,$0129	;Octave 2
+	dw	$0118,$0108,$00f9,$00eb,$00de,$00d1
+
+	dW	$00c5,$00bb,$00b0,$00a6,$009d,$0094	;Octave 3
+	dw	$008b,$0084,$007c,$0075,$006f,$0068
+
+	dw	$0062,$005d,$0057,$0052,$004e,$0049	;Octave 4
+	dw	$0045,$0041,$003e,$003a,$0037,$0034
+
+	dw	$0031,$002e,$002b,$0029,$0026,$0024	;Octave 5
+	dw	$0022,$0020,$001e,$001c,$001b,$0019
+
+	dw	$0018,$0016,$0015,$0014,$0013,$0012	;Octave 6
+	dw	$0011 ;F#6
+
+
+_InitFXA	asl
+	tay
+	lda	#0
+	sta	FonOffA
+	lda	sefxads,y
+	sta	MUSICZP
+	lda	sefxads+1,y
+	sta	MUSICZP+1
+	ldy	#fxdat-1
+!lp	lda	(MUSICZP),y
+	sta	fvartabA,y
+	dey
+	bpl	!lp
+
+	POLLBIT	100
+
+
+	lda	fenvsspA
+	sta	fenvspA
+	lda	fdelA
+	sta	delA
+	lda	sfcountA
+	sta	fcountA
+	lda	fenvA
+	asl
+	tay
+	lda	fxevtab,y
+	sta	tempA
+	sta	MUSICZP
+	lda	fxevtab+1,y
+	sta	tempA+1
+	sta	MUSICZP+1
+	ldy	#0
+	sty	fenvptrA
+	lda	(MUSICZP),y
+	ora	fxwfA
+	sta	WRA0+0
+
+	lda	#0
+	sta	WRA0+1
+
+	lda	svpA
+	sta	vpA
+	sta	WRA0+2
+	lda	svpA+1
+	sta	vpA+1
+	sta	WRA0+3
+	inc	FonOffA
+	rts
+
+INITFXtrue
+	DEX
+	BMI	!1
+	BEQ	!2
+	JMP	_InitFXD
+!1	JMP	_InitFXA
+!2	;JMP	_InitFXB	
+
+
+_InitFXB	asl
+	tay
+	lda	#0
+	sta	FonOffB
+	lda	sefxads,y
+	sta	MUSICZP
+	lda	sefxads+1,y
+	sta	MUSICZP+1
+	ldy	#fxdat-1
+!lp	lda	(MUSICZP),y
+	sta	fvartabB,y
+	dey
+	bpl	!lp
+
+
+	POLLBIT	101
+
+
+	lda	fenvsspB
+	sta	fenvspB
+	lda	fdelB
+	sta	delB
+	lda	sfcountB
+	sta	fcountB
+	lda	fenvB
+	asl
+	tay
+	lda	fxevtab,y
+	sta	tempB
+	sta	MUSICZP
+	lda	fxevtab+1,y
+	sta	tempB+1
+	sta	MUSICZP+1
+	ldy	#0
+	sty	fenvptrB
+	lda	(MUSICZP),y
+	ora	fxwfB
+	sta	WRB0+0
+
+	lda	#0
+	sta	WRB0+1
+
+	lda	svpB
+	sta	vpB
+	sta	WRB0+2
+	lda	svpB+1
+	sta	vpB+1
+	sta	WRB0+3
+	inc	FonOffB
+	rts
+
+
+_InitFXD	asl
+	tay
+	lda	#0
+	sta	FonOffD
+	lda	sefxads,y
+	sta	MUSICZP
+	lda	sefxads+1,y
+	sta	MUSICZP+1
+	ldy	#fxdat-1
+!lp	lda	(MUSICZP),y
+	sta	fvartabD,y
+	dey
+	bpl	!lp
+
+	POLLBIT	102
+
+
+	lda	fenvsspD
+	sta	fenvspD
+	lda	fdelD
+	sta	delD
+	lda	sfcountD
+	sta	fcountD
+	lda	fenvD
+	asl
+	tay
+	lda	fxevtab,y
+	sta	tempD
+	sta	MUSICZP
+	lda	fxevtab+1,y
+	sta	tempD+1
+	sta	MUSICZP+1
+	ldy	#0
+	sty	fenvptrD
+	lda	(MUSICZP),y
+	ora	fxwfD
+	sta	WRD0+0
+
+	lda	#0
+	sta	WRD0+1
+
+	lda	svpD
+	and	#$0f
+	sta	vpD
+	sta	WRD0+2
+	lda	#0
+	sta	WRD0+3
+	inc	FonOffD
+	rts
+
+
+Effects
+	jsr	Random
+	jsr	DoFXA
+	jsr	DoFXB
+	jmp	DoFXD
+
+
+DoFXA	lda	FonOffA
+	bne	vAa
+	rts
+vAa
+	lda	lcountA
+	bne	vAb
+	ldx	fcontA
+	bne	vAb
+	lda	MonOff
+	beq	no_mA
+	lda	Regs+0
+	sta	WRA0+0
+	lda	Regs+2
+	sta	WRA0+2
+	lda	Regs+3
+	sta	WRA0+3
+	stx	FonOffA
+	rts
+no_mA	lda	#w0
+	sta	WRA0+0
+	stx	FonOffA
+	rts
+vAb
+	dec	lcountA
+
+	dec	fenvspA
+	bne	dunVolA
+	lda	fenvsspA
+	sta	fenvspA
+	ldy	fenvptrA
+	lda	tempA
+	sta	MUSICZP
+	lda	tempA+1
+	sta	MUSICZP+1
+	lda	(MUSICZP),y
+	bpl	!v
+	cmp	#128
+	bne	dunVoLA
+	ldy	#0
+	lda	(MUSICZP),y
+!v	ora	fxwfA
+	sta	WRA0+0
+	iny
+	sty	fenvptrA
+dunVolA
+	lda	fcountA
+	bne	vAc
+	lda	fcontA
+	bne	vAd
+	lda	frptA
+	bne	vAd
+	rts
+vAd
+	dec	frptA
+	lda	sfcountA
+	sta	fcountA
+
+	lda	svpA
+	ldx	frndA
+	beq	norA
+	adc	rnd
+norA	sta	vpA
+	sta	WRA0+2
+	lda	svpA+1
+	sta	vpA+1
+	sta	WRA0+3
+vAc
+	dec	fcountA
+	lda	fdelA
+	beq	no_delA
+	dec	delA
+	bne	vAg
+	sta	delA
+no_delA
+	lda	fudA
+	beq	vAg
+	bmi	vAf
+
+	lda	vpA
+	sec
+	sbc	fqtyA
+	sta	vpA
+	sta	WRA2
+	lda	vpA+1
+	sbc	fqtyA+1
+	and	#$03
+	sta	vpA+1
+	sta	WRA3
+wAd	rts
+vAf
+	lda	vpA
+	clc
+	adc	fqtyA
+	sta	vpA
+	sta	WRA2
+
+	lda	vpA+1
+	adc	fqtyA+1
+	and	#$03
+	sta	vpA+1
+	sta	WRA3
+vAg
+	rts
+
+
+DoFXB	lda	FonOffB
+	bne	vBa
+	rts
+vBa
+	lda	lcountB
+	bne	vBb
+	ldx	fcontB
+	bne	vBb
+	lda	MonOff
+	beq	no_mB
+	lda	Regs+4
+	sta	WRA0+4
+	lda	Regs+6
+	sta	WRA0+6
+	lda	Regs+7
+	sta	WRA0+7
+	stx	FonOffB
+	rts
+no_mB	lda	#w0
+	sta	WRB0+0
+	stx	FonOffB
+	rts
+vBb
+	dec	lcountB
+
+	dec	fenvspB
+	bne	dunVolB
+	lda	fenvsspB
+	sta	fenvspB
+	ldy	fenvptrB
+	lda	tempB
+	sta	MUSICZP
+	lda	tempB+1
+	sta	MUSICZP+1
+	lda	(MUSICZP),y
+	bpl	!v
+	cmp	#128
+	bne	dunVoLB
+	ldy	#0
+	lda	(MUSICZP),y
+!v	ora	fxwfB
+	sta	WRB0+0
+	iny
+	sty	fenvptrB
+dunVolB
+	lda	fcountB
+	bne	vBc
+	lda	fcontB
+	bne	vBd
+	lda	frptB
+	bne	vBd
+	rts
+vBd
+	dec	frptB
+	lda	sfcountB
+	sta	fcountB
+
+	lda	svpB
+	ldx	frndB
+	beq	norB
+	adc	rnd
+norB	sta	vpB
+	sta	WRB0+2
+	lda	svpB+1
+	sta	vpB+1
+	sta	WRB0+3
+vBc
+	dec	fcountB
+	lda	fdelB
+	beq	no_delB
+	dec	delB
+	bne	vBg
+	sta	delB
+no_delB
+	lda	fudB
+	beq	vBg
+	bmi	vBf
+
+	lda	vpB
+	sec
+	sbc	fqtyB
+	sta	vpB
+	sta	WRB2
+	lda	vpB+1
+	sbc	fqtyB+1
+	and	#$03
+	sta	vpB+1
+	sta	WRB3
+wBd	rts
+vBf
+	lda	vpB
+	clc
+	adc	fqtyB
+	sta	vpB
+	sta	WRB2
+	lda	vpB+1
+	adc	fqtyB+1
+	and	#$03
+	sta	vpB+1
+	sta	WRB3
+vBg
+	rts
+
+
+DoFXD	lda	FonOffD
+	bne	vDa
+	rts
+vDa
+	lda	lcountD
+	bne	vDb
+	ldx	fcontD
+	bne	vDb
+	lda	MonOff
+	beq	no_mD
+	lda	Regs+12
+	sta	WRD0+0
+	lda	Regs+14
+	sta	WRD0+2
+	stx	FonOffD
+	rts
+no_mD	lda	#w0
+	sta	WRD0+0
+	stx	FonOffD
+	rts
+vDb
+	dec	lcountD
+
+	dec	fenvspD
+	bne	dunVolD
+	lda	fenvsspD
+	sta	fenvspD
+	ldy	fenvptrD
+	lda	tempD
+	sta	MUSICZP
+	lda	tempD+1
+	sta	MUSICZP+1
+	lda	(MUSICZP),y
+	bpl	!v
+	cmp	#128
+	bne	dunVoLD
+	ldy	#0
+	lda	(MUSICZP),y
+!v	ora	fxwfD
+	sta	WRD0+0
+	iny
+	sty	fenvptrD
+dunVolD
+	lda	fcountD
+	bne	vDc
+	lda	fcontD
+	bne	vDd
+	lda	frptD
+	bne	vDd
+	rts
+vDd
+	dec	frptD
+	lda	sfcountD
+	sta	fcountD
+
+	lda	svpD
+	ldx	frndD
+	beq	norD
+	adc	rnd
+	and	#$0f
+norD	sta	vpD
+	sta	WRD0+2
+vDc
+	dec	fcountD
+	lda	fdelD
+	beq	no_delD
+	dec	delD
+	bne	vDg
+	sta	delD
+no_delD
+	lda	fudD
+	beq	vDg
+	bmi	vDf
+
+	lda	vpD
+	sec
+	sbc	fqtyD
+	and	#$0f
+	sta	vpD
+	sta	WRD2
+	rts
+vDf
+	lda	vpD
+	clc
+	adc	fqtyD
+	and	#$0f
+	sta	vpD
+	sta	WRD2
+vDg
+	rts
+
+
+Random	lda	rnd
+	and	#$48
+	adc	#$38
+	asl
+	asl
+	rol	rnd+3
+	rol	rnd+2
+	rol	rnd+1
+	rol	rnd
+	rts
+
+sefxads	; table into sfx
+	dw	fx0
+	dw	fx1
+	dw	fx2
+	dw	fx3
+	dw	fx4
+	dw	fx5
+	dw	fx6
+	dw	fx7
+	dw	fx8
+	dw	fx9
+	dw	fx10
+	dw	fx11
+	dw	fx12
+	dw	fx13
+	dw	fx14
+	dw	fx15
+	dw	fx16
+	dw	fx17
+	dw	fx18
+	dw	fx19
+	dw	fx20
+	dw	fx21
+	dw	fx22
+	dw	fx23
+	dw	fx24
+	dw	fx25
+
+	dw	fx26
+
+	dw	fx27
+	dw	fx28
+	dw	fx29
+	dw	fx30
+	
+	dw	fx31
+
+
+;LENGTH,RPT RATE
+;INIT PITCH
+;ADD/SUB_QTY
+;WAVE,RND
+;U/D,RPTS
+;ENV,ENV_RATE
+;CONT,DELAY
+
+y	equ	$ff
+n	equ	$00
+nz	equ	w0
+
+fxx
+
+fx0	; Hit (with no shields)	call InitFXD
+	db	60,3
+	dw	$0004
+	dw	$0002
+	db	nz,n
+	db	1,10
+	db	0,5
+	db	n,99
+fxdat	equ	*-fx0
+
+fx1	; Fuel scoop	call InitFXA/B
+	db	22,4
+	dw	$00a8
+	dw	$0004
+	db	w1,n
+	db	-1,99
+	db	12,2
+	db	n,0
+
+fx2	; ECM (cont.)	call InitFXA/B
+	db	25,25
+	dw	$03ac
+	dw	$001c
+	db	w0,n
+	db	1,99
+	db	6,2
+	db	y,0
+
+fx3	; Beep (key click)	call InitFXA/B
+	db	5,99
+	dw	$002c
+	dw	$0000
+	db	w1,n
+	db	0,99
+	db	12,1
+	db	n,0
+
+fx4	; Boop (error)	call InitFXA/B
+	db	9,99
+	dw	$0257
+	dw	$0002
+	db	w2,n
+	db	-1,99
+	db	8,1
+	db	n,0
+
+fx5	; Tribble(s) #1 (happy ?)	call InitFXA/B
+	db	10,2
+	dw	$0018
+	dw	$0001
+	db	w0,y
+	db	-1,10
+	db	12,1
+	db	n,0
+
+fx6	; Tribble(s) #2 (unhappy ?)	call InitFXA/B
+	db	13,2
+	dw	$0028
+	dw	$0001
+	db	w1,y
+	db	-1,10
+	db	12,1
+	db	n,0
+
+fx7	; Warning! (cont.)	call InitFXA/B
+	db	25,28
+	dw	$0100
+	dw	$0006
+	db	w1,n
+	db	1,99
+	db	6,2
+	db	n,0	; to terminate change y to n
+
+fx8	; Energy bomb	call InitFXD
+	db	90,9
+	dw	$0014
+	dw	$0001
+	db	nz,n
+	db	-1,99
+	db	0,11
+	db	n,0
+
+fx9	; Missile launch	call InitFXD
+	db	70,40
+	dw	$0002
+	dw	$0001
+	db	nz,n
+	db	-1,0
+	db	8,6
+	db	n,3
+
+fx10	; Hit alien	call InitFXD
+	db	14,3
+	dw	$006c
+	dw	$0021
+	db	w2,n
+	db	-1,99
+	db	12,2
+	db	n,0
+
+fx11	; Alien laser	call InitFXD
+	db	19,15
+	dw	$0008
+	dw	$0001
+	db	nz,n
+	db	-1,0
+	db	12,3	;12,3
+	db	n,2
+
+fx12	; Launch from SS	call InitFX A or B  AND D !!!
+	db	170,120
+	dw	$001F
+	dw	$0001
+	db	nz,0
+	db	1,0
+	db	1,8
+	db	0,10
+
+fx13	; Explosion big	call InitFXD
+	db	89,2	; 89=length 2=sweep repeat
+	dw	$004f	; init freq (low nybble on D)
+	dw	$0029	; freq step
+	db	w2,y	; w2=square wave (irrel on D),random add
+	db	1,255	; 1=additive direction,255=no repeats
+	db	0,9	; 0=envelope no(ramp), 9=decay rate
+	db	n,0	; n=>not continuous; delay addition
+
+fx14	; Explosion small	call InitFXD
+	db	25,5
+	dw	$0182
+	dw	$0029
+	db	w2,y
+	db	-1,255
+	db	8,2
+	db	n,0
+
+fx15	; Laser #4 (army)	call InitFXA/B
+	db	34,5	;25,5
+	dw	$0182
+	dw	$0029
+	db	w2,y
+	db	-1,255
+	db	8,3	;2
+	db	n,0
+
+fx16	; Laser #3 (mining)	call InitFXA/B
+	db	15,99	;15,99
+	dw	$00b0
+	dw	$0020
+	db	w1,n
+	db	-1,99
+	db	8,2
+	db	n,0
+
+fx17	; Laser #2 (beam)	call InitFXA/B
+	db	13,99
+	dw	$018f
+	dw	$0031
+	db	w0,n
+	db	-1,99
+	db	16,2	;8,2
+	db	n,0
+
+fx18	; Laser #1 (pulse)	call InitFXA/B
+	db	24,5	;12,5
+	dw	$01ff
+	dw	$0031
+	db	w0,n
+	db	-1,99
+	db	16,3	;12,2
+	db	n,0
+
+fx19	; Escape capsule	call initFXA/B
+	db	70,3
+	dw	$0342
+	dw	$0029
+	db	w2,n
+	db	-1,255
+	db	12,6
+	db	n,0
+
+fx20	; Hit (with shields)	call InitFXD
+	db	12,2
+	dw	$0057
+	dw	$0014
+	db	w2,n
+	db	-1,99
+	db	12,1
+	db	n,0
+
+fx21	; HyperSpace	call InitFX A or B  AND D !!!
+	db	130,70
+	dw	$000F
+	dw	$0001
+	db	w2,0
+	db	1,0
+	db	1,7
+	db	0,5
+
+fx22	; Gal. HyperSpace	call InitFX A or B  AND D !!!
+	db	130,70
+	dw	$0000
+	dw	$0001
+	db	w2,0
+	db	-1,0
+	db	1,7
+	db	0,5
+
+fx23	; Explosion tiny (ian) call InitFXD
+	db	25,5
+	dw	$0182
+	dw	$0029
+	db	w2,y
+	db	-1,255
+	db	14,2
+	db	n,0
+
+;	db	20,255
+;	dw	$0014
+;	dw	$0007
+;	db	w3,n
+;	db	-1,10
+;	db	8,2
+;	db	n,0
+
+fx24	;copy of fx12	call InitFXA/B
+	db	170,120
+	dw	$001F
+	dw	$0001
+	db	nz,0
+	db	1,0
+	db	1,8
+	db	0,10
+
+
+;	ping #1 call A/b
+;	db	11,4
+;	dw	$0042
+;	dw	$0008
+;	db	w2,n
+;	db	1,99
+;	db	8,1
+;	db	n,2
+;
+
+fx25	;another hit	call InitFXD
+	db	20,3
+	dw	$0008
+	dw	$0001
+	db	nz,n
+	db	-1,255
+	db	0,2
+	db	n,0
+
+
+fx26	;Turns off any FX  (on relevant channel)
+	db	1,0
+	dw	$0000
+	dw	$0000
+	db	w0,0
+	db	0,0
+	db	13,0
+	db	n,0
+
+
+fx27	;	very small explosion
+	db	25,5
+	dw	$0182
+	dw	$0029
+	db	w2,y
+	db	-1,255
+	db	15,2
+	db	n,0
+
+
+;	db	30,255
+;	dw	$0000
+;	dw	$0001
+;	db	nz,n
+;	db	-1,0
+;	db	1,1
+;	db	n,2
+
+fx28	; ping#1	call InitFXA/B
+	db	11,4
+	dw	$0042
+	dw	$0008
+	db	w2,n
+	db	1,99
+	db	8,1
+	db	n,2
+
+	; warble chan D
+;	db	12,255
+;	dw	$000c
+;	dw	$0001
+;	db	nz,n
+;	db	1,99
+;	db	1,1
+;	db	n,2
+
+fx29
+	db	150,28	; chanlut
+	dw	$0100
+	dw	$0006
+	db	w1,n
+	db	1,99
+	db	6,2
+	db	n,0	; to terminate change y to n
+
+	;	ping #1 call A/b   chanlut
+;	db	4,5
+;	dw	$0008
+;	dw	$0000
+;	db	nz,n
+;	db	0,99
+;	db	8,1
+;	db	n,0
+
+
+	; swarm of bees? any chan
+;	db	50,5
+;	dw	$0182
+;	dw	$0029
+;	db	w0,y
+;	db	-1,255
+;	db	1,2
+;	db	n,0
+
+fx30	; copy of fx7
+	db	150,28
+	dw	$0100
+	dw	$0006
+	db	w1,n
+	db	1,99
+	db	6,2
+	db	n,0	; to terminate change y to n
+
+
+	;ping#2 (reload magazine click call) InitFXD
+;	db	4,5
+;	dw	$0008
+;	dw	$0000
+;	db	nz,n
+;	db	0,99
+;	db	9,1
+;	db	n,0
+
+fx31	;tribble squeak 3m
+	db	20,2	;20
+	dw	$0028
+	dw	$0001
+	db	w1,y
+	db	-1,10
+	db	0,2	;12,1
+	db	n,0
+
+
+
+fxevtab	dw	fev0,fev1,fev2,fev3
+	dw	fev4,fev5,fev6,fev7
+	dw	fev8,fev9,fev10,fev11
+	dw	fev12,fev13
+	dw	fev14,fev15
+	dw	fev16
+;fxx
+
+
+	; envelopes 0=loudest, 8 next, 12 next,14 quietest
+
+fev0	db	15,13,11,9
+	db	7,5,3,1,0
+	db	255 ;retain last value
+
+fev1	db	3,5,7,9,10,12,14,14
+	db	14,12,12,10,10,9,9
+	db	7,6,5,4,3,2,2,1
+	db	255 ;retain last value
+
+fev2	db	2,6,8,0
+	db	255 ;retain last value
+
+fev3	db	6,8,10,11,12,11,10,9
+	db	8,7,6,5,4,3,2,1
+	db	255 ;retain last value
+
+fev4	db	1,3,6,8,12
+	db	128 ;loop
+
+fev5	db	1,4,9,13
+	db	128
+
+fev6	db	1,4,7,9
+	db	255
+
+fev7	db	9
+	db	128 ;loop
+
+fev8	db	14,12,11
+	db	9,7,5,4,3,2,1
+	db	255 ;retain last value
+
+fev9	db	12,0,0,12,0,0
+	db	255 ;retain last value
+
+fev10	db	11
+	db	128
+
+fev11	db	10,11,12,13,12
+	db	128
+
+fev12	db	12,10
+	db	9,7,5,4,3,2,1
+	db	255 ;retain last value
+
+fev13	db	0
+	db	255
+
+
+fev14	; ian one
+	db	4,5,6,6,5,4,3,2,1
+	db	255 ;retain last value
+
+fev15	; ian one
+	db	6,5,4,3,2,1
+	db	255 ;retain last value
+
+
+fev16	; ians decaying ramp
+	db	12,10
+	db	9,7,5,5,4,4,3,3,2,2,1,1
+	db	255 ;retain last value
+
+
+
+
+envL	db	>ev_0,>ev_1,>ev_2,>ev_3
+	db	>ev_4,>ev_5,>ev_6,>ev_7
+	db	>ev_8,>ev_9,>ev_10,>ev_11
+	db	>ev_12,>ev_13,>ev_14,>ev_15
+	db	>ev_16,>ev_17,>ev_18,>ev_19
+envH	db	<ev_0,<ev_1,<ev_2,<ev_3
+	db	<ev_4,<ev_5,<ev_6,<ev_7
+	db	<ev_8,<ev_9,<ev_10,<ev_11
+	db	<ev_12,<ev_13,<ev_14,<ev_15
+	db	<ev_16,<ev_17,<ev_18,<ev_19
+
+eee
+
+ev_0	db	1
+	db	10,15,12
+	db	10+z
+
+ev_1	db	1
+	db	10,15,11
+	db	9,7+z
+
+ev_2	db	1
+	db	14,12,9,7
+	db	11,10,7,5
+	db	9,7,5,4
+	db	7,6,4,3
+	db	5,4,3,2
+	db	3,2,1,0+z
+
+ev_3	db	1
+	db	14,13,11,9,7
+	db	12,11,9,7,5
+	db	10,9,7,5,3
+	db	8,7,5,3,2
+	db	6,5,3,2,0+z
+
+ev_4	db	1
+	db	10,13,10,9,8,7,6+z
+
+ev_5	db	1
+	db	8,11,9,7,5,3+z
+
+ev_6	db	1
+	db	10,13,12,11,9,7+z
+
+ev_7	db	1
+	db	6,8,7,5,3,1+z
+
+ev_8	db	10
+	db	13,12,11,10
+	db	9,8,7,6,5,4,3,2,1+z
+
+ev_9	db	2
+	db	14,13,12,11,10
+	db	9,8,7,6,5,4,3,2,1+z
+
+ev_10	db	1
+	db	14,13,12,11,10
+	db	9,8,7,6,5,4,3,2,1+z
+
+ev_11	db	1
+	db	14,12,9,7,5,4,3,2,1+z
+
+ev_12	db	1
+	db	13,12,10
+	db	7,6,5,4,3,2,1+z
+
+ev_13	db	1
+	db	13,11,9
+	db	7,5,4,3,2,1+z
+
+ev_14	db	1
+	db	13,7,1,0+z
+
+ev_15	db	1
+	db	0,0+z
+
+ev_16	db	1
+	db	9,2,0+z
+
+ev_17	db	1
+	db	10,1
+	db	5,2,1,0+z
+
+ev_18	db	1
+	db	13,1
+	db	7,2,1,0+z
+
+ev_19	db	1
+	db	15,13,11,9+z
+
+
+VibL	db	>vib0,>vib1,>vib2,>vib3,>vib4,>vib5,>vib6,>vib7
+VibH	db	<vib0,<vib1,<vib2,<vib3,<vib4,<vib5,<vib6,<vib7
+
+vib0	db	0
+	db	z
+vib1	db	0,1,2,1,0,-1,-2,-1
+	db	z
+vib2	db	0,2,0,-2
+	db	z
+vib3	db	0,1,0,-1
+	db	z
+vib4	db	0,4,0,4,0
+	db	z
+vib5	db	0,2,4,2,0,-2,-4,-2
+	db	z
+vib6	db	0,3,6,3,0,-3,-6,-3
+	db	z
+vib7	db	0,4,8,4,0,-4,-8,-4
+	db	z
+
+
+z	equ	$80	;for pos/neg
+
+te	equ	$F4
+lp	equ	$F5
+ev	equ	$F6
+vm	equ	$F7
+pm	equ	$F8
+ti	equ	$F9
+w	equ	$FA
+tram	equ	$FB
+ctra	equ	$FC
+sm	equ	$FD
+cut	equ	$FE
+xm	equ	$FF
+
+
+c0	equ	0
+cs0	equ	1
+d0	equ	2
+ds0	equ	3
+e0	equ	4
+f0	equ	5
+fs0	equ	6
+g0	equ	7
+gs0	equ	8
+a0	equ	9
+as0	equ	10
+b0	equ	11
+c1	equ	12
+cs1	equ	13
+d1	equ	14
+ds1	equ	15
+e1	equ	16
+f1	equ	17
+fs1	equ	18
+g1	equ	19
+gs1	equ	20
+a1	equ	21
+as1	equ	22
+b1	equ	23
+c2	equ	24
+cs2	equ	25
+d2	equ	26
+ds2	equ	27
+e2	equ	28
+f2	equ	29
+fs2	equ	30
+g2	equ	31
+gs2	equ	32
+a2	equ	33
+as2	equ	34
+b2	equ	35
+c3	equ	36
+cs3	equ	37
+d3	equ	38
+ds3	equ	39
+e3	equ	40
+f3	equ	41
+fs3	equ	42
+g3	equ	43
+gs3	equ	44
+a3	equ	45
+as3	equ	46
+b3	equ	47
+c4	equ	48
+cs4	equ	49
+d4	equ	50
+ds4	equ	51
+e4	equ	52
+f4	equ	53
+fs4	equ	54
+g4	equ	55
+gs4	equ	56
+a4	equ	57
+as4	equ	58
+b4	equ	59
+c5	equ	60
+cs5	equ	61
+d5	equ	62
+ds5	equ	63
+e5	equ	64
+f5	equ	65
+fs5	equ	66
+g5	equ	67
+gs5	equ	68
+a5	equ	69
+as5	equ	70
+b5	equ	71
+c6	equ	72
+cs6	equ	73
+d6	equ	74
+ds6	equ	75
+e6	equ	76
+f6	equ	77
+fs6	equ	78
+g6	equ	79
+gs6	equ	80
+a6	equ	81
+as6	equ	82
+b6	equ	83
+
+
+l1	equ	$5F+1
+l2	equ	$5F+2
+l3	equ	$5F+3
+l4	equ	$5F+4
+l5	equ	$5F+5
+l6	equ	$5F+6
+l7	equ	$5F+7
+l8	equ	$5F+8
+l9	equ	$5F+9
+l10	equ	$5F+10
+l11	equ	$5F+11
+l12	equ	$5F+12
+l13	equ	$5F+13
+l14	equ	$5F+14
+l15	equ	$5F+15
+l16	equ	$5F+16
+l18	equ	$5F+18
+l20	equ	$5F+20
+l22	equ	$5F+22
+l24	equ	$5F+24
+l26	equ	$5F+26
+l28	equ	$5F+28
+l30	equ	$5F+30
+l32	equ	$5F+32
+
+
+hi	equ	2
+sn	equ	4
+ssn	equ	7
+bd	equ	8
+
+
+;Channel  A=SQ B=SQ C=TR D=NZ
+
+;zzz
+stads	db	47	; Elite
+	dw	tuneb1,tuneb3,tuneb2,tuneb4
+	db	59	; Blue Danube
+	dw	tunea1,tunea3,tunea2,tunea4
+	db	60	; Vetch-ish
+	dw	tunec1,tunec3,tunec2,tunec4
+	db	60	; Assassin-ish
+	dw	tuned1,tuned3,tuned2,tuned4
+	db	60	; Assassin/Vetch-ish
+	dw	tunee1,tunee3,tunee2,tunee4
+
+
+tunea1	dw	a1p1
+	dw	0
+
+tunea2	dw	a2p1
+	dw	0
+
+tunea3	dw	a3p1
+	dw	0
+
+tunea4	dw	rest
+	dw	0
+
+
+a1p1	db	w,w2,vm,5
+	db	ev,15
+
+	db	l12,pm
+	db	l4
+
+	db	ev,2,d1,ev,7,fs2,fs2
+	db	ev,2,d1,ev,7,fs2,fs2
+	db	ev,2,d1,ev,7,d2,d2
+	db	ev,2,d1,ev,7,d2,d2
+
+	db	ev,2,e1,ev,7,cs2,cs2
+	db	ev,2,e1,ev,7,cs2,cs2
+	db	ev,2,e1,ev,7,cs2,cs2
+	db	ev,2,e1,ev,7,a1,a1
+
+	db	ev,2,a0,ev,7,g2,g2
+	db	ev,2,a0,ev,7,cs2,cs2
+	db	ev,2,a0,ev,7,a1,a1
+	db	ev,2,a0,ev,7,a1,g1
+
+	db	ev,2,d1,ev,7,fs2,fs2
+	db	ev,2,d1,ev,7,fs2,fs2
+	db	ev,2,d1,ev,7,d2,d2
+	db	ev,2,d1,ev,7,d2,d2
+;Bar 18
+	db	ev,2,fs1,ev,7,fs2,fs2
+	db	ev,2,fs1,ev,7,fs2,fs2
+	db	ev,2,fs1,ev,7,d2,d2
+	db	ev,2,fs1,ev,7,a1,a1
+
+	db	ev,2,g1,ev,7,e2,e2
+	db	ev,2,g1,ev,7,d2,d2
+	db	ev,6,l8,e1,l4,e1
+	db	e1,g1,l2,b1,pm,l4
+;Bar 26
+	db	ev,2,e1,ev,7,e2,e2
+	db	ev,2,a0,ev,7,gs1,a1
+	db	ev,2,d1,ev,7,fs2,fs2
+	db	ev,2,d1,ev,7,fs2,fs2
+
+	db	ev,2,l12,e1
+	db	g1
+	db	l3,a1,pm,l2,a1,l4,a1
+	db	l3,d1,l1,pm
+	db	ev,5,l4,fs2,pm
+;Bar 34
+	db	ev,2,e1,ev,7,d2,d2
+	db	ev,2,e1,ev,7,d2,cs2
+	db	ev,2,e1,ev,7,d2,d2
+	db	ev,2,e1,ev,7,d2,d2
+
+	db	ev,2,a0,ev,7,e2,e2
+	db	ev,2,a0,ev,7,cs2,cs2
+	db	ev,2,a0,ev,7,a1,a1
+	db	ev,2,a0,ev,7,cs2,cs2
+;Bar 42
+	db	ev,2,e1,ev,7,d2,d2
+	db	ev,2,e1,ev,7,d2,cs2
+	db	ev,2,e1,ev,7,d2,d2
+	db	ev,2,e1,ev,7,b1,b1
+;Bar 46
+	db	ev,6
+	db	fs1,ti,a1
+	db	l6,b1,pm
+	db	l4,e1,gs1,e1
+	db	l6,a0,pm
+;Bar 50
+	db	l12,e2
+	db	a1
+	db	e2
+	db	l4,a1,pm,ev,4,a1
+;Bar 54
+	db	ev,2,e1,ev,7,cs2,cs2
+	db	ev,2,e1,ev,7,cs2,cs2
+	db	ev,2,e1,ev,7,cs2,cs2
+	db	ev,2,e1,ev,7,cs2,cs2
+
+	db	ev,2,d1,ev,7,fs2,fs2
+	db	ev,2,d1,ev,7,fs2,fs2
+	db	ev,2,d1,ev,7,fs2,fs2
+	db	ev,2,d1,ev,7,fs2,a2
+;Bar 62
+	db	ev,2,e1,ev,7,cs2,cs2
+	db	ev,2,e1,ev,7,cs2,cs2
+	db	ev,2,e1,ev,7,cs2,cs2
+	db	ev,2,e1,ev,7,cs2,cs2
+;Bar 66
+	db	ev,4
+	db	l4,d2,cs2,c2
+	db	ev,6
+	db	l8,ds2,ev,4,l2,e2,pm
+	db	ev,2,l4
+	db	a0,a1,a0
+	db	d1,pm,ev,4,l2,d1,pm
+;Bar 70
+	db	l4
+	db	ev,2,as0,ev,7,f2,f2
+	db	ev,2,as0,ev,7,f2,f2
+	db	ev,2,ds1,ev,7,c2,c2
+	db	ev,2,ds1,ev,7,c2,c2
+;Bar 74
+	db	ev,2,a1,ev,7,f2,f2
+	db	ev,2,f1,ev,7,f2,f2
+	db	ev,2,as1,ev,7,f2,f2
+	db	ev,2,f1,ev,7,f2,f2
+;Bar 78
+	db	ev,2,as0,ev,7,f2,f2
+	db	ev,2,as0,ev,7,f2,f2
+	db	ev,2,ds1,ev,7,c2,c2
+	db	ev,2,e1,ev,7,cs2,cs2
+;Bar 82
+	db	ev,2,d1,ev,7,d2,d2
+	db	ev,2,d1,ev,7,as1,as1
+	db	ev,4,a1,a1,a1
+	db	a1,a1,a1
+
+;Bar 86
+	db	ev,2,e1,ev,7,cs2,cs2
+	db	ev,2,a0,ev,7,cs2,cs2
+	db	ev,2,a1,ev,7,cs2,cs2
+	db	ev,2,a0,ev,7,cs2,cs2
+;Bar 90
+	db	ev,2,d1,ev,7,fs2,fs2
+	db	ev,2,d1,ev,7,fs2,fs2
+	db	ev,2,d1,ev,7,fs2,fs2
+	db	ev,2,d1,ev,7,fs2,a2
+;Bar 94
+	db	ev,2,e1,ev,7,cs2,cs2
+	db	ev,2,a0,ev,7,cs2,cs2
+	db	ev,2,a1,ev,7,cs2,cs2
+	db	ev,2,a0,ev,7,cs2,cs2
+;Bar 98
+	db	ev,4
+	db	l4,d2,cs2,c2
+	db	ev,6
+	db	l8,ds2,ev,4,l2,e2,pm
+	db	ev,2,l4
+	db	a0,a1,a0
+	db	d1,pm,ev,4,l2,d2,pm
+	db	xm
+
+
+a2p1	db	ctra,12
+
+	db	l12,pm
+	db	l4
+	db	ev,8,vm,3
+
+	db	d1,d2,d2
+	db	d1,d2,d2
+	db	d1,a1,a1
+	db	d1,a1,a1
+
+	db	e1,a1,a1
+	db	e1,a1,a1
+	db	e1,a1,a1
+	db	e1,e1,e1	;ok
+;Bar 10
+	db	a0,cs2,cs2
+	db	a0,g1,g1
+	db	a0,g1,g1
+	db	a0,a1,cs1	;ok
+;Bar 14
+	db	d1,d2,d2
+	db	d1,d2,d2
+	db	d1,a1,a1
+	db	d1,a1,d2	;ok
+;Bar 18
+	db	fs1,d2,d2
+	db	fs1,d2,d2
+	db	fs1,a1,a1
+	db	fs1,d1,d1	;ok
+;Bar 22
+	db	g1,d2,d2
+	db	g1,b1,b1
+	db	l8,d1,l4,e1
+	db	e1,g1,l2,b1,pm,l4 ;ok
+;Bar 26
+	db	e1,cs2,cs2
+	db	a0,cs2,cs2
+	db	d1,d2,d2
+	db	d1,d2,d2 ;ok
+;Bar 30
+	db	l12,d1
+	db	e1
+	db	l3,fs1,pm,l2,fs1,l4,fs1
+	db	l3,a1,l1,pm
+	db	l4,pm,pm	;ok
+;Bar 34
+	db	e1,gs1,gs1
+	db	e1,gs1,g1
+	db	e1,e2,e2
+	db	e1,e2,e2	;ok
+
+	db	l12,ev,52
+	db	e1
+	db	fs1
+	db	g1
+	db	fs1	;ok
+;Bar 42
+	db	ev,8,l4
+	db	e1,e2,e2
+	db	e1,e2,g1
+	db	e1,e2,e2
+	db	e1,d2,d2	;ok
+;Bar 46
+	db	cs2,ti,a1
+	db	l6,d2,pm
+	db	l2,d2,d2,d2,pm,d2,pm
+	db	l6,e1,pm	;ok
+;Bar 50
+	db	l12,ev,52
+	db	g2
+	db	e2
+	db	g2
+	db	ev,8
+	db	l4,e2,pm,a2	;ok
+;Bar 54
+	db	vm,0
+	db	cs2,l2,fs3,g3,l4,a3
+	db	cs2,l2,fs3,g3,l4,a3
+	db	fs2,l2,fs3,g3,l4,a3
+	db	a3,e2,a1
+
+	db	fs2,l2,fs3,g3,l4,a3
+	db	fs2,l2,fs3,g3,l4,a3
+	db	e2,l2,fs3,g3,l4,a3
+	db	a3,d2,a1
+;Bar 62
+	db	g2,l2,fs3,g3,l4,a3
+	db	g2,l2,fs3,g3,l4,a3
+	db	fs2,l2,fs3,g3,l4,a3
+	db	a3,e2,g1	;ok
+;Bar 66
+	db	vm,3
+	db	l4,d2,e2,fs2
+	db	l8,a2,l4,g2
+	db	l2,fs2,fs2,fs2,pm,e2,pm
+	db	l4
+	db	d2,pm,pm	;ok
+
+;Bar 70
+	db	l4
+	db	as0,d2,d2
+	db	as0,d2,d2
+	db	ds1,g1,g1
+	db	ds1,g1,g1	;ok
+;Bar 74
+	db	a1,ds2,ds2
+	db	f1,a1,a1
+	db	as1,d2,d2
+	db	f1,d2,d2	;ok
+;Bar 78
+	db	as0,d2,d2
+	db	as0,as1,as1
+	db	ds1,ds2,ds2
+	db	e1,g1,g1	;ok
+;Bar 82
+	db	d1,a1,fs1
+	db	d1,g1,g1
+	db	a1,fs1,pm
+	db	pm,pm,pm	;ok
+
+;Bar 86
+	db	vm,0
+	db	e2,l2,fs3,g3,l4,a3
+	db	a1,l2,fs3,g3,l4,a3
+	db	a2,l2,fs3,g3,l4,a3
+	db	a1,e2,a1
+;Bar 90
+	db	d2,l2,fs3,g3,l4,a3
+	db	d2,l2,fs3,g3,l4,a3
+	db	d2,l2,fs3,g3,l4,a3
+	db	d2,d2,a1
+;Bar 94
+	db	e2,l2,fs3,g3,l4,a3
+	db	a1,l2,fs3,g3,l4,a3
+	db	a2,l2,fs3,g3,l4,a3
+	db	a1,e2,g1	;ok
+;Bar 98
+	db	vm,3
+	db	l4,d2,e2,fs2
+	db	l8,a2,l2,g2,pm
+
+	db	l2,fs2,fs2,fs2,pm,e2,pm
+	db	l4
+	db	d2,pm,pm	;ok
+	db	xm
+
+
+a3p1	db	w,w2,vm,1
+	db	ev,4
+
+	db	l4
+	db	d2,fs2,l3,a2,l1,pm
+
+	db	l8,a2,w,w3,l3,a2,l1,pm
+	db	l8,a2,l3,fs2,l1,pm
+	db	l8,fs2,w,w2,l3,d2,l1,pm
+	db	l4
+	db	d2,fs2,l3,a2,l1,pm
+
+	db	l8,a2,w,w3,l3,a2,l1,pm
+	db	l8,a2,l3,g2,l1,pm
+	db	l8,g2,w,w2,l3,cs2,l1,pm
+	db	l4
+	db	cs2,e2,l3,b2,l1,pm
+
+	db	l8,b2,w,w3,l3,b2,l1,pm
+	db	l8,b2,l3,g2,l1,pm
+	db	l8,g2,w,w2,l3,cs2,l1,pm
+	db	l4
+	db	cs2,e2,l3,b2,l1,pm
+
+	db	l8,b2,w,w3,l3,b2,l1,pm
+	db	l8,b2,l3,fs2,l1,pm
+	db	l8,fs2,w,w2,l3,d2,l1,pm
+	db	l4
+	db	d2,fs2,a2
+
+	db	l8,d3,w,w3,l3,d3,l1,pm
+	db	l8,d3,l3,a2,l1,pm
+	db	l8,a2,w,w2,l3,d2,l1,pm
+	db	l4
+	db	d2,fs2,a2
+
+	db	l8,d3,w,w3,l3,d3,l1,pm
+	db	l8,d3,l3,b2 ,l1,pm
+	db	l6,b2,l2,ti,w,w2,l2,e2,pm
+	db	l4
+	db	e2,g2,l2,b2,pm
+
+	db	l12,b2
+	db	l4,ti,gs2,a2
+	db	l12,fs3
+	db	l4,ti,d3,fs2
+
+	db	ev,6
+	db	l8,fs2,l2,e2,pm
+	db	l8,b2,l2,a2,pm
+	db	l3,d2,pm,l2,d2,l4,d2
+	db	l3,d2,l1,pm
+
+
+	db	w,w3,ev,4
+	db	l4,d3,l3,cs3,l1,pm
+	db	ev,6
+	db	l4,cs3,l3,b2,l1,pm,l4,b2
+	db	pm,b2,l3,as2,l1,pm,l4
+	db	as2,l3,b2,l1,pm,l4,b2
+
+	db	pm,e2,e2
+	db	fs2,ti,e2
+	db	pm,e2,e2
+	db	b2,ti,a2
+
+	db	pm
+	db	d3,l3,cs3,l1,pm,l4
+	db	cs3,l3,b2,l1,pm,l4,b2
+	db	pm,b2,cs3
+	db	e3,d3,d3
+
+	db	pm,gs2,b2
+	db	b2,ti,a2
+	db	l6,gs2,l2,fs2,d2,b1
+	db	l2,fs2,fs2,l4,fs2,e2
+	db	w,w2,ev,6,l6,a1,pm
+
+;Bar 50
+
+	db	ev,7,vm,3,w,w0
+	db	l1
+	db	b3,a3,b3,a3,b3,a3,b3,a3,b3,a3,b3,a3
+	db	b3,a3,b3,a3,b3,a3,b3,a3,b3,a3,b3,a3
+	db	b3,a3,b3,a3,b3,a3,b3,a3,b3,a3,b3,a3
+	db	ev,6
+	db	l4,a3,pm,vm,1,w,w2,l3,a2,l1,pm
+
+;Bar 54
+
+	db	ev,4
+	db	l8,g2,l2,a2,pm
+	db	l8,g2,l2,a2,pm
+	db	l12,fs3
+	db	l4,pm,e3,a2
+
+	db	l8,fs2,l2,a2,pm
+	db	l8,fs2,l2,a2,pm
+	db	l12,e3
+	db	l4,pm,d3,a2
+
+	db	l8,g2,l2,a2,pm
+	db	l8,g2,l2,a2,pm
+	db	l12,fs3
+	db	l4,pm,e3,a2
+
+;Bar 66
+	db	d3,e3,fs3
+	db	ev,6,l8,a3,ev,4,l2,g3,pm
+	db	l2,fs3,fs3,l4,fs3,e3
+	db	ev,6,l6,d3,l2,pm
+;Bar 70
+	db	ev,4,w,w3
+
+	db	l2,d3,pm
+	db	l16,d3
+	db	l4,ds3,d3
+	db	c3,as2,a2
+	db	l10,g2,l2,pm
+	db	l6,c3,l2,pm,l6,c3
+	db	l2,f2,l6,g2,l2,f2
+	db	ev,6,w,w0,l4,f2,d2,f2
+	db	ds2,d2,c2,ev,4,w,w3
+;Bar 78
+	db	l6,d3,l2,pm,l8,d3
+	db	l4,ds3,d3
+	db	c3,as2,a2
+	db	l10,g2,l2,pm
+	db	l6,fs2,l2,pm,l8,fs2
+	db	l6,g2,l2,as2
+	db	l16,a2
+	db	l4,pm
+
+	db	w,w2,ev,6,l2,a2,pm
+;Bar 86
+	db	l8,g2,l2,a2,pm
+	db	l8,g2,l2,a2,pm
+	db	l16,fs3
+	db	l2,e3,pm,a2,pm
+
+	db	ev,4
+	db	l8,fs2,l2,a2,pm
+	db	l8,fs2,l2,a2,pm
+	db	l16,e3
+	db	l2,d3,pm,a2,pm
+
+	db	ev,6
+	db	l8,g2,l2,a2,pm
+	db	l8,g2,l2,a2,pm
+	db	l12,fs3
+	db	te,58,l4,ti,l2,e3,pm,a2,pm
+;Bar 98
+	db	te,57,l2,d3,pm,e3,pm,fs3,pm
+	db	te,56,l8,a3,l2,g3,pm
+	db	te,55,fs3,fs3,fs3,te,51,pm,e3,pm,d3,l10,pm
+	db	te,59
+	db	xm
+
+
+tuneb1	dw	b1p1,b1p1
+	dw	b1p2
+	dw	b1p3
+
+	dw	b1p2
+	dw	b1p3
+
+	dw	b1p2
+	dw	tra1
+	dw	b1p2
+	dw	tra0
+	dw	0
+
+tuneb2	dw	b2p1,b2p1
+	dw	b2p2
+	dw	b2p3
+
+	dw	b2p2
+	dw	b2p3
+
+	dw	b2p2
+	dw	b2p2
+	dw	0
+
+tuneb3	dw	b3p1,b3p1
+	dw	b3p2
+	dw	b3p3
+
+	dw	b3p2
+	dw	b3p33
+
+	dw	b3p2
+	dw	b3p2
+	dw	0
+
+tuneb4	dw	b4p1
+	dw	0
+
+
+b1p1	db	w,w1,vm,5
+	db	ev,9
+	db	l6,c1,c1,c1,l4,g0,l2,g0,l4,g0,g0
+	db	xm
+
+b1p2	db	w,w1,l6,c1,c1,l4,c1
+	db	l2,ti,l4,g0,l2,g0,l4,g0,g0
+	db	l6,c1,c1,l4,c1
+	db	l6,g0,g0,l2,g0,g0
+
+	db	l6,c1,c1,l4,c1
+	db	l2,g0,l4,f0,l6,c1,l4,e0
+	db	l6,d0,e0,l4,f0
+
+	db	g0,g0,g0,g0
+	db	l6,c0,c1,l4,c1
+	db	l6,g0,g0,l4,g0
+	db	l6,c1,c1,l4,c1
+
+
+	db	l6,d1,d1,l2,d1,d1
+	db	l4,d1,e1,f1,fs1
+	db	l2,g0,l1,g0,g0,l2,g0,l6,g0,l4,g0
+	db	l6,c1,l6,g1,l4,g1
+
+	db	l4,c1,l2,g1,c1,pm,c1,as0,a0
+	db	xm
+
+b1p3	db	w,w2
+	db	l6,g0,vm,7,a0,l4,as0
+	db	l2,ti,l6,vm,5,g1,l4,vm,7,a0,as0
+	db	l6,a0,b0,l4,c1
+
+	db	l6,a0,a0,l4,a0
+	db	l6,vm,5,g0,vm,7,a0,l4,as0
+	db	l2,ti,l6,vm,5,g0,vm,7,l4,a0,as0
+	db	l6,a0,b0,l4,c1
+
+	db	l6,a0,b0,l4,cs1
+	db	l6,a0,b0,l4,c1
+	db	l2,ti,l6,vm,6,d1,l4,e1,fs1
+	db	l6,vm,7,as0,c1,l4,cs1
+	db	l2,ti,l6,vm,6,ds1,l4,f1,g1
+
+
+	db	l6,vm,7,b0,cs1,l4,d1
+	db	l2,ti,l6,vm,6,e1,l4,fs1,gs1
+	db	l6,gs1,gs1,l4,gs1
+	db	l2,ti,g1,g1,g1,g1,g1,g1,g1
+	db	xm
+
+
+b2p1	db	l2
+	db	ev,5,vm,3
+
+	db	e3,e3,e3,e3,e3,e3,e3,e3
+	db	e3,f3,f3,f3,f3,f3,f3,f3
+	db	xm
+
+b2p2	db	e3,e3,e3,e3,e3,e3,e3,e3
+	db	e3,f3,f3,f3,f3,f3,f3,f3
+	db	e3,e3,e3,e3,e3,e3,e3,e3
+	db	pm,f3,f3,f3,f3,f3,f3,f3
+
+	db	e3,e3,e3,e3,e3,e3,e3,e3
+	db	g3,l4,ev,16,f3,l6,e3,l4,e3,ev,5,l2
+	db	d3,d3,d3,d3,d3,d3,d3,d3
+
+	db	f3,ev,16,l4,e3,c3,a2,l2,g2,ev,5
+	db	e3,e3,e3,e3,e3,e3,e3,e3
+	db	e3,f3,f3,f3,f3,f3,f3,f3
+	db	e3,e3,e3,e3,e3,e3,e3,e3
+
+
+	db	d3,d3,d3,d3,d3,d3,d3,d3
+	db	f3,f3,f3,f3,f3,f3,f3,f3
+	db	g3,l1,ev,3,g3,g3,l8,ev,32,g3,ev,16,l4,g3
+	db	ev,5,l2,e3,e3,e3,f3,f3,f3,f3,f3
+
+	db	e3,e3,f3,e3,pm,c3,as2,a2
+	db	xm
+
+b2p3	db	l2
+	db	pm,f3,f3,pm,f3,f3,pm,f3
+	db	f3,pm,f3,f3,pm,f3,pm,f3
+	db	pm,e3,e3,pm,e3,e3,pm,e3
+
+	db	e3,pm,e3,e3,pm,e3,pm,e3
+	db	pm,f3,f3,pm,f3,f3,pm,f3
+	db	f3,pm,f3,f3,pm,f3,pm,f3
+	db	pm,e3,e3,pm,e3,e3,pm,e3
+
+	db	e3,pm,e3,e3,pm,e3,pm,e3
+	db	pm,d3,d3,pm,d3,d3,pm,d3
+	db	d3,pm,d3,d3,pm,d3,pm,d3
+	db	pm,ds3,ds3,pm,ds3,ds3,pm,ds3
+	db	ds3,pm,ds3,ds3,pm,ds3,pm,ds3
+
+
+	db	pm,e3,e3,pm,e3,e3,pm,e3
+	db	e3,pm,e3,e3,pm,e3,pm,e3
+	db	f3,f3,f3,f3,f3,f3,f3,f3
+	db	g3,g3,g3,g3,g3,g3,g3,g3,ctra,0
+	db	xm
+
+
+b3p1	db	w,w1,vm,1
+	db	ev,7,l2
+	db	c2,c2,c2,c2,c2,c2,c2,c2
+	db	c2,c2,c2,c2,c2,c2,c2,c2
+	db	xm
+
+b3p2	db	w,w2,ev,1,vm,1
+
+	db	l2,pm,l1,g2,g2,l2,c3,e3,l8,g3
+	db	l2,ti,l1,d3,d3,l2,f3,g3,a3,g3,e3,d3
+	db	e3,c3,g2,l10,g2
+	db	l2,ti,l14,pm
+
+	db	l2,pm,l1,g2,g2,l2,c3,e3,l6,g3,l1,g3,a3
+	db	l2,as3,l4,a3,g3,l2,e3,g3,a3
+	db	l16,d3
+
+	db	l14,ti,l2,pm
+	db	pm,l1,g2,g2,l2,c3,e3,l8,g3
+	db	l2,ti,l1,d3,d3,l2,f3,g3,a3,g3,e3,d3
+	db	e3,c3,g2,l6,g3,l4,a3
+
+
+	db	l12,d3,l2,pm,l1,d3,e3
+	db	l2,f3,l4,e3,l2,c3,f3,l4,e3,l2,c3
+	db	l2,g3,l1,g3,g3,l6,g3,l2,pm,l4,g3
+	db	l16,c4
+
+	db	l8,ti,pm
+	db	w,w1
+	db	xm
+
+b3p33	db	w,w0
+b3p3	db	l2,pm,ev,0,vm,5,l1,c1,c1,l2,d1,f1,l8,as1
+	db	l11,ti,l1,pm,l4,as1
+	db	l5,c2,l1,pm,l2,a1,l8+4,c2
+
+	db	l1,ev,5,vm,3,a4,g4,e4,c4,a3,g3,e3,c3,a2,g2,e2,c2
+	db	l2,pm,ev,0,vm,5,l1,as0,as0,l2,d1,f1,l8,as1
+	db	l7,ti,l1,pm,l4,as1,c2
+	db	l16,cs2
+
+	db	l11,ti,l1,pm,l4,cs2
+	db	l8,d2,a1
+	db	l7,ti,l1,pm,l4,a1,d2
+	db	l8,ds2,as1
+	db	l7,ti,l1,pm,l4,as1,ds2
+
+
+	db	l8,e2,b1
+	db	l7,ti,l1,pm,l3,b1,e2,l2,b1
+	db	l11,f2,l1,pm,l2,e2,f2
+	db	l7,g2,l1,pm,l6,g2,l1,e2,d2
+	db	xm
+
+
+b4p1	db	ev,17
+	db	l6,sn,sn,sn,l4,sn,l2,sn,l4,sn,sn
+	db	l6,sn,sn,sn,l4,sn,l2,sn,l4,sn,l2,sn,sn
+	db	xm
+
+
+tunee1	dw	d1p1,d1p1,d1p2
+	dw	e1lp
+tunec1	dw	tra3mus
+	dw	c1pb,c1p1,c1p1,c1p1
+	dw	c1p1,c1p1,c1p3,c1p3
+	dw	c1p1,c1p1,c1p1,c1p1
+	dw	c1p1,c1p1,c1p3,c1p3
+
+	dw	c1p1,c1p1,c1p3,c1p3
+	dw	c1p1,c1p1,c1p2,c1p3
+	dw	c1p1,c1p1,c1p3,c1p3
+	dw	c1p1,c1p1,c1p3,c1p3
+
+	dw	c1p1,c1p1,c1p3,c1p3
+	dw	c1p1,c1p1,c1p2,c1p3
+	dw	c1p1,c1p1,c1p3,c1p3
+	dw	c1p1,c1p1,c1p3,c1p3
+
+
+	dw	c1pb,c1p1,c1p1,c1p1
+	dw	c1p1,c1p1,c1p3,c1p3
+	dw	tra4mus
+	dw	c1p1,c1p1,c1p1,c1p1
+	dw	c1p1,c1p1,c1p3,c1p3
+
+	dw	c1p1,c1p1,c1p3,c1p3
+	dw	c1p1,c1p1,c1p2,c1p3
+	dw	c1p1,c1p1,c1p3,c1p3
+	dw	c1p1,c1p1,c1p3,c1p3
+
+	dw	c1p1,c1p1,c1p3,c1p3
+	dw	c1p1,c1p1,c1p2,c1p3
+	dw	c1p1,c1p1,c1p3,c1p3
+	dw	c1p1,c1p1,c1p3,c1p3
+	dw	tra3mus
+	dw	0
+
+tunee2	dw	d2p1,d2p1,d2p2
+	dw	e2lp
+tunec2	dw	c2p1
+	dw	c2p2
+	dw	c2p2
+	dw	0
+
+tunee3	dw	d3p1,d3p1,d3p2
+	dw	e3lp
+tunec3	dw	c3p1
+	dw	c3p2
+	dw	c3p22
+	dw	0
+
+tunee4	dw	d4p1,d4p2,d4p2
+	dw	d4p2,d4p2,d4p2,d4p2
+	dw	d4p1,d4p2,d4p2
+	dw	d4p2,d4p2,d4p2,d4p2
+	dw	d4p1,d4p2,d4p2
+	dw	d4p2,d4p2,d4p2,d4p2
+	dw	d4p1,d4p2,d4p2
+	dw	d4p2,d4p2,d4p2,d4p2
+	dw	d4p3
+	dw	e4lp
+tunec4	dw	c4p1
+	dw	0
+
+
+c1pb	db	w,w2,vm,5
+	db	ev,11
+	db	l2
+
+c1p1	db	c1,c1,c1,c1,c1,c1,c1,g0
+	db	xm
+
+c1p2	db	f0,f0,f0,f0,f0,f0,f0,g0
+	db	xm
+
+c1p3	db	g0,g0,g0,g0,g0,g0,g0,g1
+	db	xm
+
+
+c2p1	db	ev,255,vm,1
+	db	l32
+	db	c3,as2,c3,l16,as2,g2,l32
+	db	c3,as2,c3,g2
+	db	xm
+
+c2p2	db	l24,e2,l8,g2
+	db	l24,as2,l8,f2
+	db	l16,e2,c3
+	db	a2,b2
+
+	db	l32,e2,l16,d2,f2
+	db	l32,e2,l16,d2,d3
+	db	xm
+
+
+c3p1	db	w,w2,vm,5
+	db	ev,12
+	db	ctra,-12
+	db	l4
+	db	e2,e2,e2,l2,e2,g1,l4,e2,e2,e2,l2,e2,g2,l4
+	db	ds2,ds2,ds2,l2,ds2,g1,l4,ds2,ds2,ds2,l2,ds2,g2,l4
+	db	e2,e2,e2,l2,e2,g1,l4,e2,e2,e2,l2,e2,g2,l4
+	db	as1,as1,as1,l2,as1,a1,l4,as1,as1,as1,l2,as1,g1,l4
+	db	ctra,0,vm,1
+	db	e2,e2,e2,l2,e2,g1,l4,e2,e2,e2,l2,e2,g2,l4
+
+	db	ds2,ds2,ds2,l2,ds2,g1,l4,ds2,ds2,ds2,l2,ds2,g2,l4
+	db	e2,e2,e2,l2,e2,g1,l4,e2,e2,e2,l2,e2,g2,l4
+	db	as1,as1,as1,l2,as1,a1,l4,as1,as1,as1,l2,as1,g1
+	db	xm
+
+c3p2	db	w,w2,vm,5,ctra,-12
+c3p22	db	ev,10
+	db	l4,c3,c3,l2,as2,l6,a2
+	db	l4,c3,c3,l2,as2,l4,e2
+	db	as2,as2,a2,as2,c3,as2,a2,l4,as2,l2,as1
+
+	db	l4,c3,c3,l2,as2,l6,a2
+	db	l4,c3,c3,l2,d3,l4,ds3
+	db	vm,1,f3,f3,ds3,f3,ev,8,l18,g3
+
+	db	l24,g3,l8,a3
+	db	l24,as3,l8,a3
+	db	l24,e3,l8,g3
+	db	l16,as3,ev,8,as2
+
+	db	w,w3
+	db	xm
+
+
+c4p1	db	l2
+	db	ev,16,bd,hi
+	db	ev,14,ssn,ev,16,hi
+	db	xm
+
+
+tuned1	dw	d1p1,d1p1,d1p2
+	dw	0
+
+tuned2	dw	d2p1,d2p1,d2p2
+	dw	0
+
+tuned3	dw	d3p1,d3p1,d3p2
+	dw	0
+
+tuned4	dw	d4p1,d4p2,d4p2
+	dw	d4p2,d4p2,d4p2,d4p2
+	dw	d4p1,d4p2,d4p2
+	dw	d4p2,d4p2,d4p2,d4p2
+	dw	d4p1,d4p2,d4p2
+	dw	d4p2,d4p2,d4p2,d4p2
+	dw	d4p1,d4p2,d4p2
+	dw	d4p2,d4p2,d4p2,d4p2
+	dw	d4p3
+	dw	0
+
+
+d1p1	db	w,w2,vm,5
+	db	ev,15
+
+	db	l4,pm,ev,8,l8,cs1,ev,2,l4,cs1
+	db	l6,f1,l2,f1,l8,f1
+	db	l6,ds1,l2,ds1,l8,ds1
+	db	l6,f1,l2,f1,l4,f1,l2,f1,f1
+
+	db	ev,13,l4,cs1,ev,2,l8,cs1,l4,cs1
+	db	l6,f1,l2,f1,l8,f1
+	db	l6,ds1,l2,ds1,l8,ds1
+	db	l4,f1,g1,gs1,as1
+	db	xm
+
+d1p2	db	l6,c1,l10,c1
+	db	l6,c1,l10,c1
+	db	l6,c1,l10,c1
+	db	l4,c1,c1,c1,c1
+	db	l16,c1
+	db	xm	; change to cut for end of tune
+
+
+d2p1	db	vm,5,ctra,12
+	db	ev,0
+
+	db	l4,pm,ev,40,l11,ds2,l1,pm
+	db	ev,8,l2,ds2,ev,16,l4,c2,ev,72,l9,c2,l1,pm
+	db	ev,16,l4,ds2,ds2,ev,8,l2,ds2,ev,16,l4,ds2,l2,ds2
+	db	ti,ev,8,l2,f2,ev,96,l12,f2
+
+	db	l4,pm,ev,40,l11,ds2,l1,pm
+	db	ev,8,l2,ds2,ev,16,l4,c2,ev,72,l9,c2,l1,pm
+	db	ev,16,l4,ds2,ds2,ev,8,l2,ds2,ev,16,l4,ds2,ev,128,l2,f2
+	db	l16,ti
+	db	xm
+
+d2p2	db	l16
+	db	ev,128,g1
+	db	as1
+	db	g1
+	db	e1
+	db	l4,ti,l12,pm,ctra,0
+	db	xm
+
+
+d3p1	db	w,w2,vm,5
+	db	ev,15
+
+	db	l4,pm,ev,19,l11,f2,l1,pm
+	db	l2,f2,l4,f2,l9,f2,l1,pm
+	db	l4,g2,g2,l2,g2,l4,g2,l2,g2
+	db	ti,l2,gs2,l12,gs2
+
+	db	l4,pm,l11,f2,l1,pm
+	db	l2,f2,l4,f2,l9,f2,l1,pm
+	db	l4,g2,g2,l2,g2,l4,g2,l2,gs2
+	db	l16,ti
+	db	xm
+
+d3p2	db	w,w1,l16
+	db	ev,5,c2
+	db	ev,4,e2
+	db	ev,6,g2
+	db	ev,1,as2
+	db	l4,ti,l12,pm
+	db	xm
+
+
+d4p1	db	ev,15,l4,pm,l8,ev,2,ssn,ev,17,l4,sn
+	db	xm
+
+d4p2	db	l2
+	db	ev,16,bd,hi
+	db	ev,18,ssn,ev,16,hi
+	db	xm
+
+d4p3	db	l4
+	db	ev,17,hi,ev,18,hi
+	db	ev,17,hi,ev,18,hi
+	db	ev,17,hi,ev,18,hi
+	db	ev,17,hi,ev,18,hi
+	db	ev,17,hi,ev,18,hi
+	db	ev,17,hi,ev,18,hi
+	db	ev,18,hi,hi
+	db	hi,hi
+	db	l16,sn
+	db	xm
+
+
+e1lp	db	lp
+	dw	tunec1
+
+e2lp	db	lp
+	dw	tunec2
+
+e3lp	db	lp
+	dw	tunec3
+
+e4lp	db	lp
+	dw	tunec4
+
+
+tra0	db	tram,0,xm
+tra1	db	tram,1,xm
+tra3mus	db	tram,3,xm
+tra4mus	db	tram,4,xm
+
+rest	db	l32,ev,15,pm,xm
+
+;sd	db	sm,%10110111
+;su	db	sm,%10111111
+
+;	db	lp
+;	dw	loopa1
+
+plop	nop
+
+
+	ENDIF	;(INCMUSIC)
+
+;End of Music/FX Driver
+
+
+;
+;
+;~ Elite ~  (Ian Bell)  N.E.S.  Music/FX Info.  V.02 Oct 1991.
+;
+;Joystick Controller...
+;
+; START		plays current tune
+; SELECT		plays next    tune
+; Button B	turns all off
+; Button A	restarts/fast-forwards (don't call any FX though)
+; Joystick DOWN	plays current  FX number (on channel A) tone
+; Joystick UP	plays current  FX number (on channel D) noiz
+; Joystick LEFT	plays previous FX number (on channel D) noiz
+; Joystick RIGHT	plays next     FX number (on channel D) noiz
+;
+;
+;IGNORE...
+;The binary file '????.BIN' is from $8000 as requested.
+;...END IGNORE
+;
+; To Run Music:	lda	#0 to #4 (5 tunes)
+;		jsr	'IniTune'
+; Every VBL:	jsr	'Refresh' even if no Music/FX playing (see * NB)
+; On a 50Hz (UK machine) 'TVflag' should contain $00
+; On a 60Hz (UK machine) 'TVflag' should contain $FF
+; To See if a non-looping tune has ended: Peek 'Monoff' byte (0 = ended)
+; To Turn off:	jsr	'TurnOff'
+; To ReStart a stopped tune: jsr	'ReStart' (Only if YOU stopped it!)
+; To slow down music:	sub #1(or more),'Speed' (After starting)
+; To speed up  music:	add #1(or more),'Speed' (After starting)
+; To set normal speed:	lda 'Sspeed':sta 'Speed'(After starting)
+;
+; To run chip FX:	lda	#0 to #30
+;			jsr	'InitFXA/B/D' (see below)
+;
+; To alter Revs/pitch of Engine(s): add/sub.w to 'RevsA/B/D'
+;				   (After starting it/them)
+;* Alter Revs from $03ff to $0000 to vary engine sounds. ChanD is only $0 to $f.
+;
+; To Turn off any FX early :	lda #26
+;				jsr InitFXA/B/D (whatever channel it's on).
+;
+; To See if an FX has ended: Peek 'FonOffA' (channelA) (0 = ended)
+;			    Peek 'FonOffB' (channelB)
+;			    Peek 'FonOffD' (channelD)
+;
+
+
+;-----------------------------------------------------------------------
+; IT SEEMS THAT FX 26 DOES NOT CLEAR FONOFFA UNTIL THE NEXT REFRESH CALL
+;			ICGB 5/10/90
+;-----------------------------------------------------------------------
+
+
+
+;Dec	Hex	Effect
+;~~~	~~~	~~~~~~
+;Music:
+;0	00	Title
+;1	01	Blue Danube
+;2	02	Vetch-ish
+;3	03	Assassin-ish (intro)
+;4	04	Assassin-ish (intro) BEFORE Vetch-ish
+;
+;FX: *  ALL FX ARE AS PER 'AdLib' VERSION  *
+;0	00	Hit (with no shields)	call InitFXD
+;1	01	FuelScoop		call InitFXD
+;2	02	ECM (cont.)		call InitFXA/B
+;3	03	Beep (key click)	call InitFXA/B
+;4	04	Boop (eror)		call initFXA/B
+;5	05	Tribble #1 (happy ?)	call initFXA/B
+;6	06	Tribble #2 (unhappy?)	call InitFXA/B
+;7	07	Warning (cont.)		call InitFXA/B
+;8	08	Energy bomb		call InitFXD
+;9	09	Missile launch		call InitFXD
+;10	0a	Hit alien		call InitFXD
+;11	0b	Alien laser		call InitFXD
+;12	0c LOOK Launch from SStation	call InitFXAorB AND InitFXD !*!*!*!*!
+;13	0d	Explosion big		call InitFXD
+;14	0e	Explosion small		call InitFXD
+;15	0f	Laser #4		call InitFXA/B
+;16	10	Laser #3		call InitFXA/B
+;17	11	Laser #2		call InitFXA/B
+;18	12	Laser #1		call InitFXA/B
+;19	13	Escape capsule		call InitFXA/B
+;20	14	Hit (with shields)	call InitFXD
+;21	15	HyperSpace #1		call InitFXAorB AND InitFXD !*!*!*!*!
+;22	16	HyperSpace #2		call InitFXAorB AND InitFXD !*!*!*!*!
+;23	17	unspecified		call InitFXA/B/D
+;24	18	unspecified		call InitFXA/B/D
+;25	19	unspecified		call InitFXA/B/D
+;
+;26	1a	(Turns an FX off early on the relevant channel.)
+;
+;27	1b	unspecified		call InitFXA/B/D
+;28	1c	unspecified		call InitFXA/B/D
+;29	1d	unspecified		call InitFXA/B/D
+;30	1e	unspecified		call InitFXA/B/D
+;
+;You can call any FX on any channel with unspecified results. (It won't crash.)
+;
+;
+; All equates are shown in 'VARS.S'.
+;
+;
+; Any queries, ring me:	(+61) 797 4287
+;
+; David Whittaker
+;
+; end
+;
+

@@ -1,0 +1,4002 @@
+;
+;REM	ELITE <S2>  Nin
+;
+;            Code for musbank continued
+
+
+	IF	INCFACE
+facexc	equ	24
+faceyc	equ	8
+faceorgx	equ	8*facexc+4+3
+faceorgy	equ	8*faceyc+8
+
+SUNGLASSES
+
+	SPRITE2	jewldef+0,faceorgx+ 8,faceorgy+8,$00,jewlbase+0	
+	SPRITE2	jewldef+1,faceorgx+16,faceorgy+8,$00,jewlbase+1	
+	SPRITE2	jewldef+2,faceorgx+24,faceorgy+8,$00,jewlbase+2	
+	RTS
+
+LEARRING
+	SPRITE2	jewldef+3,faceorgx+0,faceorgy+16,$02,jewlbase+3
+	RTS
+
+
+REARRING	
+	SPRITE2	jewldef+4,faceorgx+4*8,faceorgy+16,$02,jewlbase+4
+	RTS
+
+MEDALLION
+;	SPRITE2	jewldef+5,faceorgx+1*8,faceorgy+24,$02,jewlbase+5
+;	SPRITE2	jewldef+6,faceorgx+3*8,faceorgy+24,$02,jewlbase+6
+	LDA	#3
+	STA	K
+	LDA	#2
+	STA	K+1
+	LDA	#jewldef+7
+	STA	K+2
+	LDA	#jewlbase+7
+	STA	K+3
+	LDX	#4+8-1
+	LDY	#3+8*5+6
+	LDA	#2
+	JMP	SPPICT2
+
+
+
+FACEPICTtrue	; Set face picture top left corner at XC,YC
+
+	LDX	#6
+	LDY	#8
+	STX	K
+	STY	K+1
+	LDA	frchar
+	STA	picstart
+	CLC
+	ADC	#6*8
+	STA	frchar
+	LDX	picstart
+;	DEX
+	STX	K+2
+;	SET2B	V,FACEMAPS
+;	LDA	DSENT
+;	ASL	A
+;	STA	T
+;	ASL	A
+;	ADC	T	;*6
+;	ASL	A
+;	ASL	A	;*4
+;	BCC	!6
+;	INC	V+1
+;	INC	V+1
+;!6	ASL	A	;*2  =*48
+;	BCC	!7
+;	INC	V+1
+;	CLC
+;!7	ADC	V
+;	STA	V
+;	BCC	!8
+;	INC	V+1
+;!8	JSR	MAPPICTURE
+
+	JSR	PICTURE
+	LDA	#5
+	STA	K
+	LDA	#7
+	STA	K+1
+	LDA	#picdef
+	STA	K+2
+	LDA	#fpicbase
+	STA	K+3
+	LDX	#4
+	LDY	#0
+	JSR	SPPICT
+
+	LDA	FIST		; Sunglasses if
+	CMP	#40		; fugitive
+	BCC	!1
+	JSR	SUNGLASSES
+!1	LDA	CASH+0
+	BNE	!3
+	LDA	CASH+1
+	CMP	#$99
+	BCS	!3		; Approx 1,000,000CR
+	CMP	#0
+	BNE	!4
+	LDA	CASH+2
+	CMP	#$4F		; Approx 2000CR
+	BCS	!4
+	CMP	#$28		; Approx 1000CR
+	BCC	!2
+	BCS	!5
+
+
+!3	JSR	MEDALLION
+!4	JSR	LEARRING
+!5	JSR	REARRING
+
+
+!2	LDX	XC
+	DEX
+	STX	XC
+	LDX	YC
+	DEX
+	STX	YC
+	LDA	#7
+	STA	K
+	LDA	#10
+	STA	K+1
+	JMP	THICKBOX2
+	ENDIF	;(INCFACE)
+
+
+
+
+SPPICTtrue	; Set up K x (K+1) OBJ picture top left corner at cell XC,YC
+	; with offsett X,Y
+	; assuming first ASCII to use =K+2, first sprite slot=K+3
+	; use OBJ pallete 1
+	LDA	#1
+SPPICT2	STA	S
+	LDA	XC
+	ASL	A
+	ASL	A
+	ASL	A
+	ADC	#(4-sprxoff)
+	STA	SC
+	TXA
+	ADC	SC
+	STA	SC
+	LDA	YC
+	ASL	A
+	ASL	A
+	ASL	A
+	ADC	#(spryoff-4)
+	STA	SC+1
+	TYA
+	ADC	SC+1
+	STA	SC+1
+	LDA	K+3
+	ASL	A
+	ASL	A
+	TAY
+	LDA	K+2
+	LDX	K+1
+	STX	T
+
+!1	POLLBIT	213
+	LDX	SC
+	STX	LI
+	LDX	K
+!2	LDA	K+2
+	STA	ATTRIBUTES+1,Y
+	LDA	S
+	STA	ATTRIBUTES+2,Y
+	LDA	LI
+	STA	ATTRIBUTES+3,Y
+	CLC
+	ADC	#8
+	STA	LI
+	LDA	SC+1
+	STA	ATTRIBUTES+0,Y
+	TYA
+	CLC
+	ADC	#4
+	BCS	!3
+	TAY
+	INC	K+2
+	DEX
+	BNE	!2
+	LDA	SC+1
+	ADC	#8
+	STA	SC+1
+	DEC	T
+	BNE	!1
+!3	RTS
+
+
+
+;	==========================
+
+FREEZEtrue
+	TYA
+	PHA
+	TXA
+	PHA
+
+	JSR	WSCAN
+	LDA	clok
+	PHA
+	LDA	clok+1
+	PHA
+	LDA	clok+2
+	PHA	
+
+	JSR	waitsend
+
+	IF	STAGFREEZE
+!1	POLLBIT	44
+	LDA	frbut1
+	BPL	!1
+	ENDIF
+
+	LDA	stripenb
+	PHA
+	LDA	stripno
+	PHA
+	LDA	#FF
+	STA	stripenb
+
+
+frzl0
+	LDA	#frzstrip
+	JSR	DOSTRIP
+
+frzl1	LDY	#4
+	JSR	DELAY
+	JSR	RDKEY
+	TXA
+	CMP	#unfr
+	BNE	frz1
+	PLA
+	JSR	DOSTRIP
+	PLA
+	STA	stripenb
+
+	JSR	WSCAN
+	PLA
+	STA	clok+2
+	PLA
+	STA	clok+1
+	PLA
+	STA	clok
+
+	PLA
+	TAX
+	PLA
+	TAY
+	RTS
+
+
+
+frz1
+	CMP	#sfxt
+	BNE	frz2
+	LDA	dnoiz
+	EOR	#FF
+	STA	dnoiz
+	JMP	dunone
+frz2	CMP	#must
+	BNE	frz3
+	LDA	mutok
+	EOR	#FF
+	STA	mutok
+	BPL	!1
+	JSR	MUSOFFsmart2
+	JMP	dunone
+
+!1	; Turn on musio toggle
+	LDA	MUSICFLAG
+	BEQ	!4
+	AND	#127
+	JSR	INITUNEsmart
+!4	JMP	dunone
+
+
+frz3	CMP	#rstt
+	BNE	frz4
+	PLA
+	PLA
+	STA	stripenb
+	JMP	DEATH2smart
+
+frz4	CMP	#twop
+	BNE	!1
+
+	LDA	twoplayers
+	EOR	#1
+	STA	twoplayers
+	JMP	dunone
+!1
+
+	CMP	#ytog
+	BNE	frz6
+	LDA	JSTGY
+	EOR	#FF
+	STA	JSTGY
+	JMP	dunone
+frz6	CMP	#damt
+	BNE	frz7
+	LDA	damp
+	EOR	#FF
+	STA	damp
+	JMP	dunone
+frz7	JMP	frzl1
+
+
+dunone	JSR	UPDATESTRIP
+	JMP	frzl1
+
+
+
+
+;	............... DIALS ..........................
+
+barblank	equ	$55
+
+DILX	LSR	A
+DILm2	LSR	A
+DILm1	LSR	A
+DIL	; Dial bar of length A at SC
+	; If A<K or >=K+1 use colour 1 else colour 3
+	CMP	#31
+	BCC	!1
+	LDA	#30
+!1	LDY	#0
+	CMP	K
+	BCC	DIL2
+	CMP	K+1
+	BCS	DIL2
+	STA	Q
+DIL3	LSR	A
+	LSR	A
+	LSR	A
+ 	BEQ	!1
+	TAX
+	LDA	#bardef2+0
+!2	STA	(SC),Y
+	INY
+	DEX
+	BNE	!2
+!1	LDA	Q
+	AND	#7
+	CLC
+	ADC	#bardef2+1
+	STA	(SC),Y
+	INY
+	LDA	#barblank
+!3	CPY	#4
+	BEQ	!4
+	STA	(SC),Y
+	INY
+	BNE	!3
+!4	LDA	SC
+	CLC
+	ADC	#ncl
+	STA	SC
+	BCC	!5
+	INC	SC+1
+!5	POLLBIT	55
+	RTS	
+
+DIL2	STA	Q
+	LDA	MCNT
+	AND	#8
+	BNE	!6
+	LDA	Q
+	JMP	DIL3
+
+	LDY	#0
+	BEQ	!7
+!6	LDA	Q
+	LSR	A
+	LSR	A
+	LSR	A
+	BEQ	!1
+	TAX
+	LDA	#bardef1+0
+!2	STA	(SC),Y
+	INY
+	DEX
+	BNE	!2
+!1	LDA	Q
+	AND	#7
+	CLC
+	ADC	#bardef1+1
+	STA	(SC),Y
+	INY
+!7	LDA	#barblank
+!3	CPY	#4
+	BEQ	!4
+	STA	(SC),Y
+	INY
+	BNE	!3
+!4	LDA	SC
+	CLC
+	ADC	#ncl
+	STA	SC
+	BCC	!5
+	INC	SC+1
+!5	POLLBIT	56
+	RTS	
+
+
+
+
+DIALStrue
+
+
+	IF	SMALLDIALS
+
+	LDA	bank
+	BNE	!8
+
+	FNset2b	SC,VIDM1+(ditp*ncl+ncl+2)
+
+
+	LDA	#0
+	STA	K
+	LDA	#FF
+	STA	K+1
+
+	LDA	DELTA
+	LSR	A
+	ADC	DELTA
+	JSR	DILm1
+
+
+	LDA	#8
+	STA	K
+	LDA	#FF
+	STA	K+1
+
+	LDA	FSH
+	JSR	DILX
+
+	LDA	ASH
+	JSR	DILX
+
+	LDA	#0
+	STA	K
+	LDA	#24
+	STA	K+1
+
+	LDA	CABTMP
+	JSR	DILX
+
+	LDA	GNTMP
+	JSR	DILX
+
+	
+	FNset2b	SC,VIDM1+(ditp*ncl+5*ncl+28)
+
+	LDA	#8
+	STA	K
+	LDA	#FF
+	STA	K+1	
+
+	LDA	ENERGY
+	JSR	DILX
+
+
+!8	LDY	QQ12
+	BNE	!1
+
+!6
+
+	LDA	MSTG
+	BPL	!3
+	LDA	MSAR	; If missile armed but not
+	BEQ	!1	; targeted then flash icon and
+	LDX	NOMSL	; square every 8 game cycles
+	LDY	#RED2
+	LDA	MCNT
+	AND	#$08
+	BNE	!2
+	LDY	#YELLOW2
+	JSR	MSBARcopy	; Flash Missile Icon
+!1	LDA	#$F0	; Clear Missile targetting square
+	STA	ATTRIBUTES+(sightbase+4)*4+0
+	RTS
+
+
+!2
+	JSR	MSBARcopy
+!3	LDA	#square	; Missile Targetting square
+	STA	ATTRIBUTES+(sightbase+4)*4+1
+	LDA	#1
+	STA	ATTRIBUTES+(sightbase+4)*4+2
+	LDA	#128-sprxoff+2
+	STA	ATTRIBUTES+(sightbase+4)*4+3
+	LDA	#Yabs+spryoff
+	STA	ATTRIBUTES+(sightbase+4)*4+0
+	RTS
+
+	ELSE	; (SMALLDIALS)
+
+	LDA	bank
+	BNE	!8
+
+
+	FNset2b	SC,VIDM1+(ditp*ncl+ncl+2)
+
+
+	LDA	#0
+	STA	K
+	LDA	#FF
+	STA	K+1
+
+	LDA	QQ14
+	JSR	DILm1	; Fuel 
+
+	LDA	#8
+	STA	K
+	LDA	#FF
+	STA	K+1
+
+	LDA	FSH
+	JSR	DILX
+
+	LDA	ASH
+	JSR	DILX
+
+	LDA	ENERGY
+	JSR	DILX
+
+	LDA	#0
+	STA	K
+	LDA	#24
+	STA	K+1
+
+	LDA	CABTMP
+	JSR	DILX
+
+	LDA	GNTMP
+	JSR	DILX
+
+	
+	FNset2b	SC,VIDM1+(ditp*ncl+5*ncl+28)
+	LDA	#0
+	STA	K
+	LDA	#FF
+	STA	K+1
+
+	LDA	DELTA
+	LSR	A
+	ADC	DELTA
+	JSR	DILm1
+
+
+	LDA	#8
+	STA	K
+	LDA	#FF
+	STA	K+1
+
+	LDA	ALTIT
+	JSR	DILX
+
+!8
+
+!4	LDA	#8*(ditp)+spryoff
+	STA	ATTRIBUTES+4*lightbase
+	LDA	#210-sprxoff	;112-sprxoff
+	STA	ATTRIBUTES+4*lightbase+3
+
+	JSR	CONDITION
+	LDA	LIGHTPALTB,X
+	STA	ATTRIBUTES+lightbase*4+2
+	LDA	LIGHTCHATB,X
+	STA	ATTRIBUTES+lightbase*4+1
+
+!6
+	LDA	QQ12
+	BNE	!1
+
+	LDA	MSTG
+	BPL	!3
+	LDA	MSAR
+	BEQ	!1
+	LDX	NOMSL
+	LDY	#RED2
+	LDA	MCNT
+	AND	#$08
+	BNE	!2
+	LDY	#YELLOW2
+	JSR	MSBARcopy	; Flash Missile Icon
+!1	LDA	#$F0	; Clear Missile targetting square
+	STA	ATTRIBUTES+(sightbase+4)*4+0
+	RTS
+
+
+!2
+	JSR	MSBARcopy
+!3	LDA	#square	; Missile Targetting square
+	STA	ATTRIBUTES+(sightbase+4)*4+1
+	LDA	#1
+	STA	ATTRIBUTES+(sightbase+4)*4+2
+	LDA	#128-sprxoff+2
+	STA	ATTRIBUTES+(sightbase+4)*4+3
+	LDA	#Yabs+spryoff+1
+	STA	ATTRIBUTES+(sightbase+4)*4+0
+	RTS
+
+
+	; filledup1 is col 1, BLACK2 is colour 2
+
+LIGHTPALTB	DB	$21, $20, $22, $22
+LIGHTCHATB	DB	light1,light2,light2,light1
+
+
+	ENDIF	; (SMALLDIALS)
+
+MSBARcopy	; X=msl no.,Y=ascii to use
+	; pres X, zero Y,A=Y in
+	TYA
+	PHA	
+	LDY	!1,X
+	PLA
+	STA	VIDM1+ditp*ncl,Y
+	LDY	#0
+	RTS
+
+!1	DB	0,31+2*ncl,30+2*ncl,31+ncl,30+ncl
+
+
+;	===============================
+
+ESPRITE	MACRO
+
+	DB	(@1)+(@4 & $C0)		; Char num and flips
+	DB	@2-sprxoff			; X
+	IF	BIG
+	DB	128+@3+spryoff		; Y
+	ELSE
+	DB	128-16+@3+spryoff
+	ENDIF
+	DB	4*(@5+eqbase) + (@4 & 3)	; Slot and pallette
+
+	ENDM
+	
+
+
+	IF	INCEPIC
+eqbase	EQU	sightbase
+itmdef	EQU	dialbase+$47	;dialbase+120	;185+icbase
+frv	equ	128	;16
+upv	equ	17	;136
+
+
+PTITS2	LDA	#0
+
+PTITS1	STA	V
+	STX	V+1
+!1	LDA	EQSPTBL+3,Y
+	AND	#$FC
+	TAX
+	LDA	EQSPTBL+3,Y
+	AND	#3
+	STA	T
+	LDA	EQSPTBL+0,Y
+	AND	#$C0
+	ORA	T
+	STA	ATTRIBUTES+2,X
+	LDA	EQSPTBL+0,Y
+	AND	#$3F
+	CLC
+	ADC	#itmdef
+	ADC	V
+	STA	ATTRIBUTES+1,X
+	LDA	EQSPTBL+1,Y
+	STA	ATTRIBUTES+3,X
+	LDA	EQSPTBL+2,Y
+	STA	ATTRIBUTES+0,X
+	INY
+	INY
+	INY
+	INY
+	DEC	V+1
+	BNE	!1
+	RTS
+
+SPRITESET	MACRO
+	LDY	#(@1-EQSPTBL)
+	LDX	#@2
+	JSR	PTITS2
+	ENDM
+
+SPRITESETA	MACRO
+	LDY	#(@1-EQSPTBL)
+	LDX	#@2
+	JSR	PTITS1
+	ENDM
+
+DECIDELASER	LDA	#0
+	CPX	#ArmLas
+	BEQ	!3
+	CPX	#BeamLas
+	BEQ	!1
+	CPX	#MineLas
+	BNE	!2
+	LDA	#8
+!2	RTS
+
+!1	LDA	#4
+	RTS
+
+!3	LDA	#12
+	RTS
+
+
+
+EQSPTBL
+;		Defn      x       y   atr slot
+;                    ==============================
+eqtecm	ESPRITE	$1F  ,upv+72 ,   44,  $00, 0
+	ESPRITE	$20  ,frv+32,    18,  $00, 1
+	ESPRITE	$21  ,frv+32,  18+8,  $00, 2
+
+
+eqtflas	ESPRITE	$07  ,upv+ 55,   23,  $00, 3
+	ESPRITE	$0A  ,frv+ 47,   34,  $00, 4
+
+eqtllas 	ESPRITE	$09  ,upv+ 7,    60,  $00, 5
+	ESPRITE	$09  ,frv,       32,  $00, 6
+
+eqtrlas	ESPRITE	$09  ,upv+103,   60,  $40, 7
+	ESPRITE	$09  ,frv+ 96,   32,  $40, 8
+
+eqtalas	ESPRITE	$07  ,upv+ 55,   68,  $80,24
+
+eqtlAlas	ESPRITE	$15  ,upv+ 3,    60,  $00, 5
+	ESPRITE	$15  ,frv- 3,    32,  $00, 6
+
+eqtrAlas	ESPRITE	$15  ,upv+105,   60,  $40, 7
+	ESPRITE	$15  ,frv+ 98,   32,  $40, 8
+
+
+eqtscoop	ESPRITE	$1E  ,frv+43,    47,  $01,10
+	ESPRITE	$1E  ,frv+43+8,  47,  $41,11
+
+eqtengy2	ESPRITE	$1A  ,upv+ 66,   58,  $00,38
+	ESPRITE	$1B  ,upv+ 66,   58,  $01,39
+eqtengy1	ESPRITE	$1A  ,upv+ 43,   58,  $00,12
+	ESPRITE $1B  ,upv+ 43,   58,  $01,13
+
+eqtmsl1	ESPRITE	$00  ,upv+ 16,   49,  $01,14	; inner lft
+	ESPRITE $01  ,frv+ 84,   38,  $01,15	; inner rgt
+       
+eqtmsl2	ESPRITE	$00  ,upv+ 95,   49,  $41,16	; inner rgt
+	ESPRITE $01  ,frv+ 12,   38,  $41,17	; inner lft
+       
+eqtmsl3	ESPRITE	$00  ,upv+  9,   54,  $01,18	; outter lft
+	ESPRITE $01  ,frv+ 90,   37,  $01,19	; outter rgt
+       
+eqtmsl4	ESPRITE	$00  ,upv+102,   54,  $41,20	; outter rgt
+	ESPRITE $01  ,frv+  6,   37,  $41,21	; outter lft  
+ 
+eqtbomb	ESPRITE $17  ,upv+51,    68,    $00,22
+	ESPRITE	$18  ,upv+51+8,  68,    $00,23
+	ESPRITE	$19  ,upv+51+4,  68,    $02, 9
+
+eqtcargo	ESPRITE	$02  ,frv+29,    46,    $00,25
+	ESPRITE	$02  ,frv+64,    46,    $40,26
+
+eqtescap	ESPRITE	$1C  ,upv+66,    40,    $00,27
+
+eqtdockc
+	ESPRITE	$03  ,upv+39,     34,    $00,28
+	ESPRITE	$04  ,upv+39+8,   34,    $00,29
+	ESPRITE	$05  ,upv+39,   34+8,    $00,30
+	ESPRITE	$06  ,upv+39+8, 34+8,    $00,31
+
+	ESPRITE	$04  ,frv+54,     18,    $40,32
+	ESPRITE	$03  ,frv+54+8,   18,    $40,33
+	ESPRITE	$06  ,frv+54,   18+8,    $40,34
+	ESPRITE	$05  ,frv+54+8, 18+8,    $40,35
+
+eqtghyp	ESPRITE	$1D  ,upv+51,     52,    $02,36
+	ESPRITE	$1D  ,upv+61,     52,    $42,37
+
+	;TRABOT PALTBL5 NOTES qpcent
+
+
+
+PTITMStrue
+	IF	NEEDPOLL
+	JSR	WSCAN
+	ENDIF
+
+
+
+	LDA	ECM				;ECM
+	BEQ	!1
+	SPRITESET	eqtecm,3,0	
+!1
+	LDX	LASER
+	BEQ	!2
+	JSR	DECIDELASER
+	SPRITESETA	eqtflas,2
+	JMP	!2
+
+!2	LDX	LASER+1
+	BEQ	!4
+	JSR	DECIDELASER
+	SPRITESETA	eqtalas,1
+	JMP	!4
+
+
+!4	LDX	LASER+2
+	BEQ	!5
+	CPX	#ArmLas
+	BEQ	!42
+	JSR	DECIDELASER
+	SPRITESETA	eqtllas,2
+	JMP	!5
+!42	SPRITESET	eqtlAlas,2,0
+
+
+
+!5	LDX	LASER+3
+	BEQ	!6
+	CPX	#ArmLas
+	BEQ	!52
+	JSR	DECIDELASER
+	SPRITESETA	eqtrlas,2
+	JMP	!6
+!52	SPRITESET	eqtrAlas,2,0
+
+
+!6	LDA	BST
+	BEQ	!7
+	SPRITESET	eqtscoop,2,0
+
+!7
+	LDA	ENGY
+	BEQ	!8
+	LSR	A
+	BNE	!72
+	SPRITESET	eqtengy1,2,0
+	JMP	!8
+!72	SPRITESET	eqtengy2,4,0
+
+!8	
+	LDA	NOMSL
+	BEQ	!9
+	SPRITESET	eqtmsl1,2,0
+	LDA	NOMSL
+	LSR	A
+	BEQ	!9
+	SPRITESET	eqtmsl2,2,0
+	LDA	NOMSL
+	CMP	#2
+	BEQ	!9
+	SPRITESET	eqtmsl3,2,0
+	LDA	NOMSL
+	CMP	#4
+	BNE	!9
+	SPRITESET	eqtmsl4,2,0
+
+!9	LDA	BOMB
+	BEQ	!A
+	SPRITESET	eqtbomb,3,0
+!A	LDA	CRGO
+	CMP	#37
+	BNE	!B
+	SPRITESET	eqtcargo,2,0
+
+!B	LDA	ESCP
+	BEQ	!C
+	SPRITESET	eqtescap,1,0
+
+!C	LDA	DKCMP
+	BEQ	!D
+	SPRITESET	eqtdockc,8,0
+
+!D	LDA	GHYP
+	BEQ	!E
+	SPRITESET	eqtghyp,2,0
+!E	RTS
+
+
+	ENDIF	; (INCEPIC)
+
+
+;================================
+
+;	Demo mode
+;          =============
+
+
+W2tok	equ	3
+WY	equ	1	;12
+W2Y	equ	3	;$18	;5*WY/2
+D	equ	$F0
+ydrop	equ	$12
+
+nochar	equ	21
+norow	equ	4	
+maxlines	equ	240
+
+YTB	equ	BIGWKSP
+YTB2	equ	YTB+norow*4
+X1TB	equ	YTB2+norow*4
+Y1TB	equ	X1TB+maxlines
+X2TB	equ	Y1TB+maxlines
+
+	IF	X2TB+maxlines>$7FF
+	ERROR	"Too many letter lines"
+	ENDIF
+
+
+
+XP	equ	TEMPX
+YP	equ	TEMPY
+YS	equ	TEMPY
+BALI	equ	TEMPZ
+GSZP	equ	INF
+
+
+
+DEMONtrue
+	PHA
+
+	ENPOLLSC
+
+	LDA	MODE
+	BNE	!12
+
+	JSR	ZONKSCANNERS	
+	JMP	!1
+
+!12	JSR	FADEDOWN
+
+	LDY	#NOST
+	STY	NOSTM
+	STY	RAND+1
+	LDA	vbcnt
+	STA	RAND
+
+!4
+	POLLBIT	60
+	JSR	DORND
+	ORA	#8
+	STA	SZ,Y
+	STA	ZZ
+	JSR	DORND
+	STA	SX,Y
+	JSR	DORND
+	STA	SY,Y
+	DEY
+	BNE	!4
+
+	LDX	#NOST
+	LDY	#4*starbase
+!3	POLLBIT	61
+	LDA	#stardef
+	STA	ATTRIBUTES+1,Y
+	TXA
+	LSR	A
+	ROR	A
+	ROR	A
+	AND	#$E1
+	STA	ATTRIBUTES+2,Y
+	INY
+	INY
+	INY
+	INY
+	DEX
+	BNE	!3
+
+	IF	INCDUST
+	JSR	STARS
+	ENDIF
+
+
+
+!1	LDA	#0
+	STA	LASER+0
+	STA	QQ12
+
+	LDA	#let3d
+	JSR	TITS2
+	LDA	#FF	
+	STA	stripenb
+	LDA	#$F0
+	STA	ATTRIBUTES+sightbase*4+0
+	STA	ATTRIBUTES+sightbase*4+4
+	STA	ATTRIBUTES+sightbase*4+8
+	STA	ATTRIBUTES+sightbase*4+12
+	STA	ATTRIBUTES+sightbase*4+16	; tgt square
+
+!2	LDA	#0
+	STA	SC+1
+	LDA	frchar
+	ASL	A
+	ROL	SC+1
+	ASL	A
+	ROL	SC+1
+	ASL	A
+	ROL	SC+1
+	STA	SC
+	STA	LI
+	LDA	SC+1
+	ADC	#<FONT2
+	STA	LI+1
+	LDA	SC+1
+	ADC	#<FONT1
+	STA	SC+1
+	LDX	frchar
+	LDY	#0
+deml1	LDA	#0
+	DO	8
+	STA	(SC),Y
+	STA	(LI),Y
+	INY
+	LOOP
+	BNE	!2
+	INC	SC+1
+	INC	LI+1
+!2	POLLBIT	59
+	INX
+	BNE	deml1
+
+
+;	JSR	FUDGECLEAR
+;	LDA	#LTYELLOW
+;	STA	COL1
+;	JSR	RESET
+
+	LDA	#0
+	STA	ALPHA
+	STA	ALP1
+	STA	DELTA
+	LDA	vbcnt
+	CLC
+	ADC	RAND+1
+	STA	RAND+1
+	JSR	DEMS1
+
+	PLA
+	BNE	!3
+
+
+	LDX	LANG
+	LDA	slmess1TBL,X
+	LDY	slmess1TBH,x
+	TAX
+	LDA	#2
+	JSR	SLIDE
+	LDA	#0
+	STA	MODE
+	JSR	corefont
+	LDA	#stripchr
+	STA	charmin
+	JSR	DEMS1
+	LDA	#topbar2
+	STA	charmin
+	JMP	COMBAT
+
+!3
+	IF	GAMECREDS
+	CMP	#2
+	BEQ	!A
+	ENDIF	
+	
+	LDA	#"0"
+	STA	XX18+1
+	STA	XX18+2
+	STA	XX18+3
+	LDA	#100
+	STA	clok
+	SEC
+!5	LDA	clok+1
+	SBC	#>(60*10)
+	TAX
+	LDA	clok+2
+	SBC	#<(60*10)
+	BCC	!6
+	STA	clok+2
+	STX	clok+1
+	INC	XX18+3
+	BCS	!5
+
+!6	SEC
+	LDA	clok+1
+	SBC	#60
+	TAX
+	LDA	clok+2
+	SBC	#0
+	BCC	!7
+	STA	clok+2
+	STX	clok+1
+	INC	XX18+2
+	BCS	!6
+
+!7	SEC
+	LDA	clok+1
+!8	SBC	#10
+	BCC	!9
+	INC	XX18+1
+	BCS	!8
+!9	ADC	#10+"0"
+	STA	XX18
+
+
+
+	LDX	LANG
+	LDA	slmess2TBL,X
+	LDY	slmess2TBH,x
+	TAX
+	LDA	#6
+!B	JSR	SLIDE
+
+	JSR	FADEDOWN
+
+	JMP	DEATH3smart
+	
+	IF	GAMECREDS
+!A	
+	LDX	LANG
+	LDA	slmess3TBL,X
+	LDY	slmess3TBH,x
+	TAX
+
+	LDA	#6
+	JSR	SLIDE
+
+	JSR	WSCAN
+
+	LDX	LANG
+	LDA	slmess4TBL,X
+	LDY	slmess4TBH,x
+	TAX
+
+	LDA	#5
+	JSR	SLIDE
+
+	JSR	WSCAN
+
+	LDX	LANG
+	LDA	slmess5TBL,X
+	LDY	slmess5TBH,x
+	TAX
+	
+	LDA	#3
+	BNE	!B
+	ENDIF
+	
+
+DEMS1
+	JSR	waitsend
+	LDA	#$FE
+	STA	frchar
+	LDA	#$C8
+	STA	bankstatus+0
+	STA	bankstatus+1
+	RTS
+
+
+
+
+
+
+GRIDROW
+	LDX	#6
+	STX	YP
+
+
+GRIDROW2
+	POLLBIT	235
+	LDX	#nochar
+	STX	CNT
+	LDX	#0
+	STX	XP
+	LDY	XC	
+!1	LDA	(GSZP),Y 
+	BPL	!3
+	TAX
+	LDA	XX18-128,X
+!3	SEC
+	SBC	#32
+	STA	S
+	ASL	A
+	ASL	A
+	ADC	S
+	BCS	!2
+	TAY		; Y=(ascii-32)*5
+	LDA	LTDEF,Y
+	JSR	GRS2
+	LDA	LTDEF+1,Y
+	JSR	GRS2
+	LDA	LTDEF+2,Y
+	JSR	GRS2
+	LDA	LTDEF+3,Y
+	JSR	GRS2
+	LDA	LTDEF+4,Y
+	JSR	GRS2
+	INC	XC
+	LDY	XC
+	LDA	XP
+	CLC
+	ADC	#W2tok	; P=P+(W2,0)
+	STA	XP
+	DEC	CNT
+	BNE	!1
+	RTS
+
+!2
+	TAY		; Y=(ascii-32)*5
+	LDA	LTDEF+$100,Y
+	JSR	GRS2
+	LDA	LTDEF+$101,Y
+	JSR	GRS2
+	LDA	LTDEF+$102,Y
+	JSR	GRS2
+	LDA	LTDEF+$103,Y
+	JSR	GRS2
+	LDA	LTDEF+$104,Y
+	JSR	GRS2
+	INC	XC
+	LDY	XC
+	LDA	XP
+	CLC
+	ADC	#W2tok	; P=P+(W2,0)
+	STA	XP
+	DEC	CNT
+	BNE	!1
+	RTS
+
+
+
+GRS2	; Set line at first free slot after X as LTDEF byte A
+	BEQ	!1
+	STA	R
+	STY	P
+	POLLBIT	234
+
+!3	LDA	Y1TB,X
+	BEQ	!2
+	INX
+	CPX	#maxlines
+	BNE	!3
+	LDX	#0
+;	BEQ	!3
+!2	LDA	R
+	AND	#15
+	TAY
+	LDA	NOFX,Y
+	CLC
+	ADC	XP
+	STA	X1TB,X
+	LDA	YP
+	SEC
+	SBC	NOFY,Y
+	STA	Y1TB,X
+	LDA	R
+	LSR	A
+	LSR	A
+	LSR	A
+	LSR	A
+	TAY
+	LDA	NOFX,Y
+	CLC
+	ADC	XP
+	STA	X2TB,X
+	LDA	YP
+	SEC
+	SBC	NOFY,Y
+	ASL	A
+	ASL	A
+	ASL	A
+	ASL	A
+	ORA	Y1TB,X
+	STA	Y1TB,X
+	LDY	P
+!1	POLLBIT	62
+	RTS
+
+	
+GRIDSET
+	STX	GSZP
+	STY	GSZP+1
+	POLLBIT	63
+
+	LDY	#maxlines
+	LDA	#0
+!4	STA	Y1TB-1,Y
+	DEY
+	BNE	!4
+
+	LDX	#0
+	STX	XP
+	LDA	#4*norow-1
+	STA	YP	; P=(0,254)
+	LDY	#0
+	STY	XC
+
+	LDA	#norow
+	STA	LASCT	
+
+!1	JSR	GRIDROW2
+	LDA	YP
+	SEC
+	SBC	#W2Y	; P=P+(0,-W2Y)
+	STA	YP
+	DEC	LASCT
+	BNE	!1
+	RTS
+
+
+
+
+SETYTB	LDY	#4*norow-1
+!1	POLLBIT	64
+	STY	T
+	TYA
+	ASL	A
+	STA	R
+	ASL	A
+	STA	S
+	ASL	A
+	ADC	#D/8+1
+	SBC	BALI
+	STA	YTB2,Y
+	BPL	!3
+	STA	Q
+	LDA	BALI
+	LSR	A
+	LSR	A
+;	LSR	A
+	ADC	#2*ydrop+1
+	SBC	R
+
+!4	CMP	Q
+	BCS	!2
+	JSR	LL28
+	LSR	R
+
+;	LSR	R
+
+;	LSR	A
+;	LSR	A
+	
+	LDA	#Yabs
+	CLC
+	ADC	R
+	STA	YTB,Y
+	DEY
+	BPL	!1
+	RTS
+
+!2
+	LDA	#FF
+	STA	YTB,Y
+	DEY
+	BPL	!1
+	RTS
+
+!3	ASL	A
+	BPL	!5
+	STA	Q
+	LDA	BALI
+	LSR	A
+;	LSR	A
+;	LSR	A
+	ADC	#4*ydrop+1
+	SBC	S
+	JMP	!4
+
+
+!5	ASL	A
+	STA	Q
+	LDA	BALI
+	ADC	#8*ydrop
+	SBC	S
+	SBC	S
+	JMP	!4
+
+
+
+SLIDE	; Slide some 3D text past screen
+
+
+	PHA
+	JSR	GRIDSET
+	LDA	#LTYELLOW
+	STA	COL1
+	LDA	#0
+	STA	SKIPFLAG
+	LDA	#2
+	STA	SLIDERATE
+	JSR	UPDATESTRIP
+	LDA	#4*10+basecell
+	STA	cellmin
+	IF	DIALSONTOP
+	STA	cellminH
+	STA	zermin
+	ENDIF
+	LDA	#$A0
+	STA	BALI
+	JSR	SLIDS1
+
+
+	PLA
+	STA	LASCT
+
+!1	LDA	#23
+	STA	BALI
+	JSR	SCROLLUP
+	JSR	GRIDROW
+	JSR	SLIDS1
+	DEC	LASCT
+	BNE	!1
+
+
+	LDA	#4
+	STA	LASCT
+
+!2	LDA	#23
+	STA	BALI
+	JSR	SCROLLUP
+	JSR	SLIDS1
+	DEC	LASCT
+	BNE	!2
+
+	LDA	#0
+	STA	SLIDERATE
+	LDA	#FRGCOL
+	STA	COL1
+	RTS
+
+SLIDS1	LDA	frbut1
+	BMI	!3
+	LDA	stripop
+	CMP	#ffwdk
+	BNE	!1
+	LDA	#0
+	STA	stripop
+!3	LDA	#9
+	STA	SLIDERATE
+
+!1
+;	POLLBIT	65
+	JSR	FLIPBANK
+	JSR	GRID
+	JSR	STARTDLOAD
+	LDA	stripop
+	BEQ	!2
+	JSR	cleankeysSMART
+
+!2	LDA	BALI
+	SEC
+	SBC	SLIDERATE
+	STA	BALI
+	BCS	SLIDS1
+	RTS
+
+
+
+
+
+SCROLLUP	; Scroll all lines up by 4 
+	IF	NEEDPOLL
+
+SCROLLUPSOME	MACRO
+!14	LDA	Y1TB-1+@1,Y	;4,5
+	BEQ	!24	;2
+	CLC
+	ADC	#$33	;2
+	BCC	!34	;2
+	LDA	#0	;2
+	CLC		;2
+!34	STA	Y1TB-1+@1,Y	;5
+!24	DEY		;3
+	BNE	!14	;3,4 =25,27
+	POLLBIT	168
+	ENDM
+
+
+	POLLBIT	167
+	LDY	#maxlines-$E0	; Assumes maxlines>$E0
+	SCROLLUPSOME	$E0
+	LDY	#$20
+	SCROLLUPSOME	$C0
+	LDY	#$20
+	SCROLLUPSOME	$A0
+	LDY	#$20
+	SCROLLUPSOME	$80
+	LDY	#$20
+	SCROLLUPSOME	$60
+	LDY	#$20
+	SCROLLUPSOME	$40
+	LDY	#$20
+	SCROLLUPSOME	$20
+	LDY	#$20
+	SCROLLUPSOME	$00
+	RTS
+
+	ELSE
+
+
+	LDY	#maxlines
+	LDA	#0
+	CLC
+!1	LDA	Y1TB-1,Y
+	BEQ	!2
+	ADC	#$33
+	BCC	!3
+	LDA	#0
+	CLC
+!3	STA	Y1TB-1,Y
+!2	DEY
+	BNE	!1
+	RTS
+
+	ENDIF
+
+
+GRIDS1
+	SEC
+	SBC	#(3*nochar+1)/2
+	BCS	!1
+	EOR	#FF
+	ADC	#1
+	JSR	LL28
+	LDA	#128
+	SEC
+	SBC	R
+	TAX
+	LDA	#0
+	SBC	#0
+	RTS
+!1	JSR	LL28
+	LDA	R
+	CLC
+	ADC	#128
+	TAX
+	LDA	#0
+	ADC	#0
+GREX	RTS 
+
+
+GRID
+
+	JSR	SETYTB
+
+
+	LDY	#FF
+GRIDL
+	POLLBIT	67
+	INY
+	CPY	#maxlines
+	BEQ	GREX
+	LDA	Y1TB,Y
+	BEQ	GRIDL
+	AND	#15
+	STA	XX15+1
+	TAX
+	ASL	A
+	ASL	A
+	ASL	A
+	SEC
+	SBC	BALI
+	BCC	GRIDL
+	STY	YS
+
+	LDA	YTB2,X
+	STA	Q
+	LDA	X1TB,Y
+	JSR	GRIDS1
+	STX	XX15
+	LDX	XX15+1
+	STA	XX15+1
+	LDA	YTB,X
+	STA	XX15+2
+	LDA	#0
+	STA	XX15+3
+
+	LDA	Y1TB,Y
+	LSR	A
+	LSR	A
+	LSR	A
+	LSR	A
+	STA	XX12+1
+	TAX
+	ASL	A
+	ASL	A
+	ASL	A
+	SEC
+	SBC	BALI
+	BCC	GRIDL
+
+	LDA	YTB,X
+	STA	XX12
+	LDA	#0
+	LDX	XX12+1
+	STA	XX12+1
+	LDA	YTB2,X
+	STA	Q
+
+	POLLBIT	33
+
+	LDA	X2TB,Y
+	JSR	GRIDS1
+	STX	XX15+4
+	STA	XX15+5
+	JSR	clipndraw
+	LDY	YS
+GR6	JMP	GRIDL
+
+
+LTDEF	; ASCII font drawn with straight lines
+	; See NOFX below for node numbers
+	HEX	00 00 00 00 00	; Space
+	HEX	14 25 12 45 78	; !
+	HEX	24 00 00 00 00	; '
+	HEX	02 17 68 00 00	; #=I in E L I T E
+	HEX	35 36 47 58 00	; $=m
+	HEX	47 11 00 00 00	; %=i
+	HEX	17 35 00 00 00	; &
+	HEX	36 47 34 00 00	; '=n
+	HEX	12 13 37 78 00	; (
+	HEX	01 15 57 67 00	; )
+	HEX	17 35 08 26 00	; *
+	HEX	17 35 00 00 00	; +
+	HEX	36 34 47 67 79	; ,
+	HEX	35 00 00 00 00	; -
+	HEX	36 34 47 67 00	; .
+	HEX	16 00 00 00 00	; /
+	HEX	37 13 15 57 00	; 0
+	HEX	13 17 00 00 00
+	HEX	02 25 35 36 68
+	HEX	02 28 68 35 00
+	HEX	28 23 35 00 00
+	HEX	02 03 35 58 68
+	HEX	02 06 68 58 35
+	HEX	02 28 00 00 00
+	HEX	06 02 28 68 35
+	HEX	28 02 03 35 00	; 9
+	HEX	13 34 46 00 00	; :=s
+	HEX	01 06 34 67 00	; :=e
+	HEX	13 37 00 00 00	; <=c
+	HEX	45 78 00 00 00	; =
+	HEX	00 00 00 00 00
+	HEX	00 00 00 00 00
+	HEX	00 00 00 00 00
+	HEX	06 02 28 35 00	;A
+	HEX	06 02 28 68 35
+	HEX	68 06 02 00 00
+	HEX	06 05 56 00 00
+	HEX	68 06 02 35 00	;E
+	HEX	06 02 35 00 00
+	HEX	45 58 68 60 02
+	HEX	06 28 35 00 00
+	HEX	17 00 00 00 00
+	HEX	28 68 36 00 00
+	HEX	06 23 38 00 00
+	HEX	68 06 00 00 00
+	HEX	06 04 24 28 00
+	HEX	06 08 28 00 00
+	HEX	06 02 28 68 00
+	HEX	06 02 25 35 00
+	HEX	06 02 28 68 48
+	HEX	06 02 25 35 48
+	HEX	02 03 35 58 68	;S
+	HEX	02 17 00 00 00
+	HEX	28 68 06 00 00
+	HEX	27 07 00 00 00
+	HEX	28 48 46 06 00
+	HEX	26 08 00 00 00
+	HEX	47 04 24 00 00
+	HEX	02 26 68 00 00	;Z
+
+
+
+NOFX	EQUB	1	; 0 1 2
+	EQUB	2	; 3 4 5
+	EQUB	3	; 6 7 8
+	EQUB	1	; 9 A B
+	EQUB	2
+	EQUB	3
+	EQUB	1
+	EQUB	2
+	EQUB	3 
+	EQUB	1
+	EQUB	2
+	EQUB	3
+
+NOFY	EQUB	0
+	EQUB	0
+	EQUB	0
+	EQUB	WY
+	EQUB	WY
+	EQUB	WY
+	EQUB	2*WY
+	EQUB	2*WY
+	EQUB	2*WY
+	EQUB	3
+	EQUB	3
+	EQUB	3
+
+
+
+;	EQUB	5*WY/2
+;	EQUB	5*WY/2
+;	EQUB	5*WY/2
+
+
+slmess1TBL	DL	slmess1E,slmess1G,slmess1F,slmess1I
+slmess1TBH	DH	slmess1E,slmess1G,slmess1F,slmess1I
+
+slmess2TBL	DL	slmess2E,slmess2G,slmess2F,slmess2I
+slmess2TBH	DH	slmess2E,slmess2G,slmess2F,slmess2I
+
+slmess3TBL	DL	slmess3E,slmess3G,slmess3F,slmess3I
+slmess3TBH	DH	slmess3E,slmess3G,slmess3F,slmess3I	;LANGUAGE TABLES
+
+slmess4TBL	DL	slmess4E,slmess4G,slmess4F,slmess4I
+slmess4TBH	DH	slmess4E,slmess4G,slmess4F,slmess4I	;LANGUAGE TABLES
+
+slmess5TBL	DL	slmess5E,slmess5G,slmess5F,slmess5I
+slmess5TBH	DH	slmess5E,slmess5G,slmess5F,slmess5I	;LANGUAGE TABLES
+
+
+slmess1E
+slmess1I
+
+	IF	EMULATION
+
+	DB	"   NTSC EMULATION    "
+	DB	"  --- E L # T E ---  "
+	DB	"(C)BELL & BRABEN 1991"
+	DB	"                     "
+	DB	"PREPARE FOR PRACTICE "
+	DB	"COMBAT SEQUENCE......"
+
+
+	ELSE
+
+
+	IF	NTSCEV
+	DB	"  --- E L # T E ---  "
+	DB	"(C)BRABEN & BELL 1991"
+	DB	"                     "
+	DB	" COPY FOR TRIMARK.   "
+	DB	"CHANGE CMMDR NAME TO "
+	DB	"CHEATER FOR EXTRA CR."
+	ELSE
+	DB	" IMAGINEER PRESENTS  "
+	DB	"  --- E L # T E ---  "
+	DB	"(C)BRABEN & BELL 1991"
+	DB	"                     "
+	DB	"PREPARE FOR PRACTICE "
+	DB	"COMBAT SEQUENCE......"
+	ENDIF
+
+	ENDIF
+
+slmess2E
+slmess2I
+
+	DB	" CONGRATULATIONS! YOU"
+	DB	"COMPLETED  THE COMBAT"
+	DB	" IN ",131,130,"  MIN  ",129,128," SEC. "
+	DB      "                     "
+	DB	"YOU BEGIN YOUR CAREER"
+	DB	"DOCKED AT  THE PLANET"
+	DB	"LAVE WITH 100 CREDITS"
+	DB	"3 MISSILES AND A FULL"
+	DB	"TANK OF FUEL.        "
+	DB	"GOOD LUCK, COMMANDER!"
+
+
+
+slmess1F
+
+	IF	EMULATION
+
+	DB	"   NTSC EMULATION    "
+	DB	"  --- E L # T E ---  "
+	DB	"(C)BELL & BRABEN 1991"
+	DB	"                     "
+	DB	" PREPAREZ-VOUS  A  LA"
+	DB	"SIMULATION DU COMBAT!"
+
+
+	ELSE
+
+
+	IF	NTSCEV
+	DB	"   NTSC EVALUATION   "
+	DB	"  --- E L # T E ---  "
+	DB	"(C)BRABEN & BELL 1991"
+	DB	"                     "
+	DB	"RUNNING AT SUBOPTIMAL"
+	DB	"SPEED.               "
+	ELSE
+	DB	" IMAGINEER PRESENTE  "
+	DB	"  --- E L # T E ---  "
+	DB	"(C)BRABEN & BELL 1991"
+	DB	"                     "
+	DB	" PREPAREZ-VOUS  A  LA"
+	DB	"SIMULATION DU COMBAT!"
+	ENDIF
+
+	ENDIF	
+
+slmess2F
+	DB	" FELICITATIONS! VOTRE"
+	DB	"COMBAT EST TERMINE EN"
+	DB	"   ",131,130,"  MIN  ",129,128," SEC.  "
+	DB      "                     "
+	DB	" VOUS COMMENCEZ VOTRE"
+	DB	"COURS  SUR LA PLANETE"
+	DB	"LAVE AVEC 100 CREDITS"
+	DB	"ET TROIS MISSILES.   "
+	DB	"     BONNE CHANCE    "
+	DB	"     COMMANDANT!     "
+
+
+
+slmess1G
+
+
+	IF	EMULATION
+
+	DB	"   NTSC EMULATION    "
+	DB	"  --- E L # T E ---  "
+	DB	"(C)BELL & BRABEN 1991"
+	DB	"                     "
+	DB	"RUSTEN  SIE  SICH ZUM"
+	DB	"PROBEKAMPF..........."
+
+
+	ELSE
+
+
+	IF	NTSCEV
+	DB	"   NTSC EVALUATION   "
+	DB	"  --- E L # T E ---  "
+	DB	"(C)BRABEN & BELL 1991"
+	DB	"                     "
+	DB	"RUNNING AT SUBOPTIMAL"
+	DB	"SPEED.               "
+	ELSE
+	DB	"   IMAGINEER ZEIGT   "
+	DB	"  --- E L # T E ---  "
+	DB	"(C)BRABEN & BELL 1991"
+	DB	"                     "
+	DB	"RUSTEN  SIE  SICH ZUM"
+	DB	"PROBEKAMPF..........."
+	ENDIF
+
+	ENDIF
+
+slmess2G	DB	" BRAVO! SIE HABEN DEN"
+	DB	"KAMPF  GEWONNEN  ZEIT"
+	DB	"  ",131,130,"  MIN  ",129,128,"  SEK.  "
+	DB      "                     "
+	DB	"  SIE  BEGINNEN  IHRE"
+	DB	"KARRIERE  IM DOCK DES"
+	DB	"PLANETS LAVE MIT DREI"
+	DB	"RAKETEN, 100 CR,  UND"
+	DB	"EINEM VOLLEN TANK.   "
+	DB	"VIEL GLUCK,COMMANDER!"
+
+slmess3E
+slmess3G
+slmess3F
+slmess3I
+
+;	DB	"      ",91,92,"    ",93,94,"      "
+;	DB	"      ",95,96,"abcdef      "
+;	DB	"      ghijklmn      "
+;	DB	"      opqrstuv      "
+;	DB	"        wxyz        "
+
+
+	DB	"ORIGINAL GAME AND NES"
+	DB      "CONVERSION  BY  DAVID"
+	DB      "BRABEN  AND #AN BELL." 
+	DB	"                     "
+	DB	"DEVELOPED USING  PDS."
+	DB	"HANDLED BY MARJACQ.  "
+	DB	"                     "
+	DB	"ARTWORK   BY  EUROCOM"
+	DB	"DEVELOPMENTS LTD.    "
+	DB      "                     "
+
+
+slmess4E
+slmess4G
+slmess4F
+slmess4I
+	DB	"MUSIC & SOUNDS  CODED"
+	DB      "BY  DAVID  WHITTAKER."
+	DB	"                     "
+	DB	"MUSIC BY  AIDAN  BELL"
+	DB      "AND  JOHANN  STRAUSS."
+	DB	"                     "
+	DB      "TESTERS=CHRIS JORDAN,"
+	DB      "SAM AND JADE BRIANT, " 
+	DB	"R AND M CHADWICK.    "
+
+slmess5E
+slmess5G
+slmess5F
+slmess5I
+	DB	"ELITE LOGO DESIGN BY "
+	DB	"PHILIP CASTLE.       "
+	DB	"                     "
+	DB	"GAME TEXT TRANSLATERS"
+	DB	"UBI SOFT,            "
+	DB      "SUSANNE DIECK,       "
+	DB	"IMOGEN  RIDLER.      "
+
+
+;	===================================
+
+;		LOAD & SAVE mode
+;		================
+
+; slot numbers used are:
+
+; 0-7  slots in RAM
+; 8    default JAMESON
+; 9    current commander
+; 10   rubbish
+
+LOADTEXTE	DB	"STORED COMMANDERS",12,12,12,6,0
+LOADTEXT2E
+	DB	"                    STORED",12
+	DB	"                    POSITIONS",12
+	DB	12,12,12,12,12,12,"CURRENT",12,"POSITION",0
+
+
+LOADTEXTG	DB	"GESPEICHERTE KOMMANDANTEN",12,12,12,6,0
+LOADTEXT2G
+	DB	"                    GESP.",12
+	DB	"                   POSITIONEN",12
+	DB	12,12,12,12,12,12,"GEGENW.",12,"POSITION",0
+
+
+LOADTEXTF	DB	"COMMANDANTS SAUVEGARDES",12,12,12,6,0
+LOADTEXT2F
+	DB	"                    POSITIONS",12
+	DB	"                  SAUVEGARD",$3C,"ES",12
+	DB	12,12,12,12,12,12,"POSITION",12,"ACTUELLE",0
+
+
+LOAD_XCTB	DB	8,4,4,5
+
+
+LOAD_TXTTBL	DL	LOADTEXTE,LOADTEXTG,LOADTEXTF
+LOAD_TXTTBH	DH	LOADTEXTE,LOADTEXTG,LOADTEXTF
+
+LOAD_TXT2TBL	DL	LOADTEXT2E,LOADTEXT2G,LOADTEXT2F
+LOAD_TXT2TBH	DH	LOADTEXT2E,LOADTEXT2G,LOADTEXT2F
+
+
+topbend	equ	picdef+35
+
+PIPETB	DB	topbend,topbend+2,topbend+1,topbend+2
+	DB	topbend+1,topbend+2,topbend+1,topbend+2
+	DB	topbend+3,topbend+2,topbend+1,topbend+2
+	DB	topbend+1,topbend+2,topbend+4
+	DB	0
+
+
+TEXTFROMV	LDY	#0	
+!2	LDA	(V),Y
+	BEQ	!1
+	JSR	TT27
+	INY
+	BNE	!2
+!1	RTS
+
+
+NEWLOADtrue	LDA	#lodmod
+	JSR	TT66smart
+
+	LDA	#(lodmod&$CF)
+	STA	MODE
+
+	LDY	#0
+
+	IF	AUTOPLAY
+	STY	autoflag		;Don't want rogue autoplay here!
+	ENDIF
+
+
+	STY	QQ17		;Upper case
+	STY	YC
+	LDX	LANG
+	LDA	LOAD_XCTB,X
+	STA	XC
+	LDA	LOAD_TXTTBL,X
+	STA	V
+	LDA	LOAD_TXTTBH,X
+	STA	V+1
+	JSR	TEXTFROMV
+	LDA	#lodmod
+	STA	MODE
+
+	LDX	LANG
+	LDA	LOAD_TXT2TBL,X
+	STA	V
+	LDA	LOAD_TXT2TBH,X
+	STA	V+1
+	JSR	TEXTFROMV
+
+	JSR	NLIN4copy
+
+
+	JSR	KILLDISP
+
+;	LDA	#$4F
+;	STA	X1
+;	LDA	#36
+;	STA	Y1
+;	LDA	#158
+;	STA	Y2
+;	JSR	VLOIN
+
+	LDY	#4*sightbase
+	LDA	#47+spryoff
+	STA	T
+
+	LDX	#0
+
+!5	LDA	#$22
+	STA	ATTRIBUTES+2,Y	; Left hand piping uses 
+	LDA	PIPETB,X		; OBJ slots 5 to 19
+	BEQ	!7
+	STA	ATTRIBUTES+1,Y
+	LDA	#$4F-sprxoff+8
+	STA	ATTRIBUTES+3,Y
+	LDA	T
+	STA	ATTRIBUTES+0,Y
+	CLC
+	ADC	#8
+	STA	T
+	INY
+	INY
+	INY
+	INY
+	INX
+	JMP	!5
+!7	STY	CNT
+
+	LDY	#7		; Right hand piping
+!4	TYA			; uses 20 to 27
+	ASL	A
+	CLC
+	ADC	#6
+	STA	YC
+	LDX	#20
+	STX	XC
+	JSR	DASH2
+	DEY
+	BPL	!4
+
+	JSR	DOLITTLELOGO	; Leaving 28 to 63
+				; (ie. 36) for logo
+
+
+;	LDA	#1
+;	JSR	DETOK
+
+	LDA	#0		;Display names
+!3	CMP	#8	;NEW BIT TO GET RID
+	BEQ	!6	;OF DEFAULT COMMANDER
+	JSR	SHOWLNAMEOFF
+!6	CLC
+	ADC	#1
+	CMP	#9
+	BCC	!3
+	JSR	SHOWLNAMEON
+
+; ** display rest of mode (eg picture)
+
+
+	JSR	ENDTMODEsmart
+	LDA	#9
+
+LSTATE3	SPOLLBIT	45
+;	LDX	upbut		;up
+;	BPL	!1
+;	CMP	#8
+;	BEQ	!1
+;	JSR	SHOWLNAMEOFF
+;	SEC
+;	SBC	#1
+;	JSR	SHOWLNAMEON
+;	JSR	UPDATELMODE
+;!1	LDX	dwnbut		;down
+;	BPL	!2
+;	CMP	#9
+;	BEQ	!2		;** allow for trashcan **
+;	JSR	SHOWLNAMEOFF
+;	CLC
+;	ADC	#1
+;	JSR	SHOWLNAMEON
+;	JSR	UPDATELMODE
+!2	LDX	lfttra		;left -> state 1
+	BPL	!3
+	JSR	SHOWLNAMEOFF
+	CMP	#9
+	BEQ	!10
+	LDA	#0
+	JMP	!11
+!10	LDA	#4
+!11	JMP	LSTATE1start
+!3	LDX	rgttra		;right -> state 2
+	BPL	!4
+	JSR	SHOWLNAMEOFF
+	CMP	#9
+	BEQ	!12
+	LDA	#0
+	JMP	!13
+!12	LDA	#4
+!13	JMP	LSTATE2start
+!4
+	JSR	ianbit
+	BCS	LSTATE3
+	RTS
+
+ianbit	LDX	stripop
+	BEQ	!1
+	PHA
+	CPX	#namk
+	BEQ	!2
+	TXA
+	JSR	cleankeysSMART
+	PLA
+	RTS
+
+
+!1	SEC
+	RTS
+
+
+!2	LDA	COK
+	BMI	!4
+	LDA	#0
+	STA	stripop
+	JSR	GTNME
+	LDA	stripop		; Check for termination
+	BEQ	!3		; of name input by
+	CMP	#namk		; button pressing
+	BEQ	!2
+!3	LDA	#lodk
+	STA	stripop
+!4	CLC
+	PLA
+	RTS
+
+
+
+
+
+
+;	CPX	#frz
+;	BNE	!9
+;	PHA
+;	JSR	FREEZE
+;	PLA
+;	JMP	LSTATE3
+;!9	RTS
+
+WAITLORR
+	PHA
+!1	SPOLLBIT	46
+	LDA	lfttra		;wait for key up
+	ORA	rgttra
+	BMI	!1
+	PLA
+	RTS
+
+
+LSTATE3start	LDA	#9
+	JSR	SHOWLNAMEON
+	JSR	UPDATELMODE
+	JSR	WAITLORR
+	JMP	LSTATE3
+
+LSTATE1start	JSR	SHOWLNAMEON
+	JSR	UPDATELMODE
+	JSR	WAITLORR
+
+LSTATE1	SPOLLBIT	47
+	LDX	upbut		;up
+	BPL	!1
+	CMP	#0
+	BEQ	!1
+	JSR	SHOWLNAMEOFF
+	SEC
+	SBC	#1
+	JSR	SHOWLNAMEON
+	JSR	UPDATELMODE
+!1	LDX	dwnbut		;down
+	BPL	!2
+	CMP	#7
+	BCS	!2
+	JSR	SHOWLNAMEOFF
+	CLC
+	ADC	#1
+	JSR	SHOWLNAMEON
+	JSR	UPDATELMODE
+!2	LDX	lfttra		;left
+	BPL	!3
+	JSR	SHOWLNAMEOFF
+	JMP	LSTATE2start
+
+!3	LDX	rgttra		;right
+	BPL	!4
+	JSR	SHOWLNAMEOFF
+	LDA	#4
+	JMP	LSTATE3start
+!4
+	JSR	ianbit
+	BCS	LSTATE1
+	RTS
+
+
+;	LDX	stripop
+;	BEQ	LSTATE1
+;	CPX	#frz
+;	BNE	!9
+;	PHA
+;	JSR	FREEZE
+;	PLA
+;	JMP	LSTATE1
+;!9	RTS
+
+
+LSTATE2start	JSR	SHOWLIMBO
+	JSR	UPDATELMODE
+	JSR	WAITLORR
+
+LSTATE2	SPOLLBIT	48
+	LDX	upbut		;up
+	BPL	!1
+	CMP	#0
+	BEQ	!1
+	JSR	CLEARLIMBO
+	SEC
+	SBC	#1
+	JSR	SHOWLIMBO
+	JSR	UPDATELMODE
+!1	LDX	dwnbut		;down
+	BPL	!2
+	CMP	#7
+	BCS	!2
+	JSR	CLEARLIMBO
+	CLC
+	ADC	#1
+	JSR	SHOWLIMBO
+	JSR	UPDATELMODE
+!2	LDX	lfttra		;left
+	BPL	!3
+	CMP	#4
+	BNE	!3		;not allow move unless aligned
+	JSR	CLEARLIMBO
+	LDA	#9		;** allow for trashcan **
+	JSR	PUTCOMM		;LOAD COMMANDER
+
+	JSR	UPDATEstrip		;May effect name change button
+
+	JMP	LSTATE3start
+!3	LDX	rgttra
+	BPL	!4
+	JSR	CLEARLIMBO		;** allow for trashcan **
+	JSR	PUTCOMM		;SAVE COMMANDER
+	JMP	LSTATE1start
+!4
+	JSR	ianbit
+	BCS	LSTATE2
+	RTS
+
+
+
+DASH2	; Draw a horiz line char at XC,YC
+	STY	YSAV2
+	LDY	CNT
+	LDA	#topbend+5
+	STA	ATTRIBUTES+1,Y
+	LDA	XC
+	ASL	A
+	ASL	A
+	ASL	A
+	ADC	#2-sprxoff+2
+	STA	ATTRIBUTES+3,Y
+	LDA	#$22
+	STA	ATTRIBUTES+2,Y
+	LDA	YC
+	ASL	A
+	ASL	A
+	ASL	A
+	ADC	#spryoff-4
+	STA	ATTRIBUTES+0,Y
+	TYA
+	CLC
+	ADC	#4
+	STA	CNT
+	LDY	YSAV2
+	RTS
+
+
+; Display name of commander in RAM slot A
+; ========================================
+
+; 0-7  slots in RAM
+; 8    default JAMESON
+; 9    current commander
+; 10   rubbish bin
+
+SHOWLNAMEOFF	JSR	GETCOMM	;get commander A to BUF
+	PHA
+	CMP	#8
+	BCC	!1
+	LDX	#1
+	STX	XC
+	CMP	#9
+	BCC	!2
+	BEQ	!3
+	LDA	#18	;rubbish
+	STA	YC
+	JMP	!4
+!3	LDA	#14	;current commander
+	STA	YC
+	JMP	!4
+!2	LDA	#6	;default JAMESON
+
+	STA	YC
+	JMP	!4
+!1	ASL	A	;commander in slots 0-7
+	CLC
+	ADC	#6
+	STA	YC
+	LDA	#21
+	STA	XC
+!4	PLA
+
+SHOWLNAME2	PHA
+	LDY	#0	;display name of commander in BUF
+!1	LDA	BUF,Y
+	JSR	TT26smart
+	INY
+	CPY	#7
+	BCC	!1
+	LDX	#0
+	LDA	BUF+7
+	AND	#$7F	;and out top bit (saved flag)
+	SEC
+!2	SBC	#10	;divide by 10
+	INX
+	BCS	!2
+	TAY
+	LDA	#32	
+	DEX
+	BEQ	!3
+	TXA
+	ADC	#"0"
+!3	JSR	TT26smart	;print cycle number
+	TYA
+	CLC
+	ADC	#"0"+10
+	JSR	TT26smart
+	PLA
+	RTS
+
+
+
+SHOWLNAMEON	LDX	#tcol1
+	STX	TCOL
+	JSR	SHOWLNAMEOFF
+	LDX	#tcol0
+	STX	TCOL
+	RTS
+
+UPDATELMODE	PHA
+	JSR	UPDATETMODEsmart
+	JSR	waitsend
+	PLA
+	RTS
+
+; Display name of commander in "limbo" position A (pres A)
+; ===============================================
+
+SHOWLIMBO	LDX	#tcol1
+	STX	TCOL
+	LDX	#11
+	STX	XC
+	PHA
+	ASL	A
+	CLC
+	ADC	#6
+	STA	YC
+	PLA
+	JSR	SHOWLNAME2
+	LDX	#tcol0
+	STX	TCOL
+	RTS
+
+; Print spaces over previous commander in limbo position A (pres A)
+; ========================================================
+
+CLEARLIMBO	LDX	#11
+	STX	XC
+	PHA
+	ASL	A
+	CLC
+	ADC	#6
+	STA	YC
+
+
+	IF	1
+
+	JSR	RRS1
+	LDA	SC
+	CLC
+	ADC	XC
+	STA	SC
+	LDY	#8
+	LDA	#0
+!2	STA	(SC),Y
+	DEY
+	BPL	!2
+	PLA
+	RTS
+
+
+	ELSE	;(1)
+
+
+	LDY	#8
+!1	LDA	#32
+	JSR	TT26smart
+	DEY
+	BPL	!1
+	PLA
+	RTS
+
+	ENDIF	;(1)
+
+
+
+; Get commander in slot A to BUF (pres A)
+; ==============================
+
+
+GALSEEDS	DW	$5A4A,$0248,$B753,$0000	;gal 1 QQ21 - base seed
+	DW	$B494,$0490,$6FA6,$0000	;gal 2
+	DW	$6929,$0821,$DE4D,$0000	;gal 3
+	DW	$D252,$1042,$BD9A,$0000	;gal 4
+	DW	$A5A4,$2084,$7B35,$0000	;gal 5
+	DW	$4B49,$4009,$F66A,$0000	;gal 6
+	DW	$9692,$8012,$EDD4,$0000	;gal 7
+	DW	$2D25,$0124,$DBA9,$0000	;gal 8
+
+
+COMM	equ	FILERAM
+COML	equ	NTpcent+8-6	;galactic seed no longer saved
+COMLuse	equ	NTpcent+8
+
+
+
+	
+COMMlookup1	; This lot pointed to by SC - not shifted up
+	DW	COMM+ 0*COML,COMM+ 1*COML,COMM+ 2*COML,COMM+ 3*COML
+	DW	COMM+ 4*COML,COMM+ 5*COML,COMM+ 6*COML,COMM+ 7*COML
+
+COMMlookup2	; This lot pointed to by Q - shifted up two times
+	DW	COMM+ 8*COML,COMM+ 9*COML,COMM+10*COML,COMM+11*COML
+	DW	COMM+12*COML,COMM+13*COML,COMM+14*COML,COMM+15*COML
+
+COMMlookup3	; This lot pointed to by S - shifted up once 
+	DW	COMM+16*COML,COMM+17*COML,COMM+18*COML,COMM+19*COML
+	DW	COMM+20*COML,COMM+21*COML,COMM+22*COML,COMM+23*COML
+
+GETCOMMdflt2	PHA
+GETCOMMdflt	LDX	#COMLuse-1
+!2	LDA	NA2pcent,X
+	STA	BUF,X
+	DEX
+	BPL	!2
+	PLA
+	RTS
+
+GETCOMM
+	PHA
+	SPOLLBIT	144
+	CMP	#9
+	BEQ	GETCOMMcurr
+	CMP	#8
+	BEQ	GETCOMMdflt		;** allow for trashcan **
+
+	JSR	GETSLOTS
+
+
+	LDY	#COML-1		;copy commander and name
+!1	POLLBIT	145
+	LDA	(Q),Y
+	IF	FIXBUG
+	EOR	#$F0
+	ELSE
+	LSR	A
+	BCC	*+4
+	ORA	#128
+	LSR	A
+	BCC	*+4
+	ORA	#128
+	ENDIF
+	STA	LI+1
+
+	LDA	(S),Y
+
+	IF	FIXBUG
+	EOR	#$F
+	ELSE
+	LSR	A
+	BCC	*+4
+	ORA	#128
+	ENDIF
+	STA	LI
+
+	LDA	(SC),Y
+	CMP	LI+1
+	BEQ	!3
+	CMP	LI
+	BEQ	!3
+	LDA	LI+1
+	CMP	LI
+	BNE	KILLCOMM	;All three copies different
+
+!3	STA	BUF,Y	;Rewrite bytes here to stop accumulation
+	STA	(SC),Y	;of errors
+
+	IF	FIXBUG
+	EOR	#$0F
+	ELSE
+	ASL	A
+	ADC	#0
+	ENDIF
+	STA	(S),Y
+	IF	FIXBUG
+	EOR	#$FF
+	ELSE
+	ASL	A
+	ADC	#0
+	ENDIF
+	STA	(Q),Y
+	DEY
+	BPL	!1
+
+	LDA	BUF+GCNT-TP+8	;get galactic seed to BUF
+	ASL	A
+	ASL	A
+	ASL	A
+	TAY
+	LDX	#0
+!10	LDA	GALSEEDS,Y
+
+	STA	BUF+QQ21-TP+8,X
+	INY
+	INX
+	CPX	#6
+	BNE	!10
+
+	PLA
+	RTS
+
+OHMYGOD	EQU	QQ21-TP+8+6
+
+
+GETCOMMcurr	LDA	NAME+7		;flag SAVEd in cycle number
+	AND	#$7F
+	STA	NAME+7
+	LDX	#COMLuse-1
+!2	LDA	TP-8,X		;updates "death" copy too
+	STA	NApcent,X
+	STA	BUF,X
+	DEX
+	BPL	!2
+	PLA
+	RTS
+
+KILLCOMM	JSR	GETCOMMdflt2
+	LDA	#32
+	LDY	#6
+!1	STA	BUF,Y		;clear name
+	DEY
+	BPL	!1
+	LDA	#0
+	STA	BUF+7
+	PLA
+	PHA
+	JSR	PUTCOMM
+	PLA
+	RTS
+
+RESETCMOS	; Total reset of all save positions
+	LDX	#7
+!1	TXA
+	PHA
+	JSR	GETSLOTS
+	LDY	#10
+	LDA	#1
+	STA	(SC),Y
+	LDA	#3
+	STA	(Q),Y
+	LDA	#7
+	STA	(S),Y
+	PLA
+	TAX
+	DEX
+	BPL	!1
+	RTS
+
+
+GETSLOTS	
+	ASL	A		;set (SC) (Q) & (S) to point
+	TAX			; to each incarnation of data
+	LDA	COMMlookup1,X
+	STA	SC
+	LDA	COMMlookup2,X
+	STA	Q
+	LDA	COMMlookup3,X
+	STA	S
+	LDA	COMMlookup1+1,X
+	STA	SC+1
+	LDA	COMMlookup2+1,X
+	STA	Q+1
+	LDA	COMMlookup3+1,X
+	STA	S+1
+	RTS
+
+
+
+; Put commander in BUF to slot A (pres A)
+; ==============================
+
+PUTCOMM	PHA
+	CMP	#9
+	BEQ	PUTCOMMcurr		;** allow for trashcan **
+	JSR	GETSLOTS
+	LDA	BUF+7		;tag cycle number as saved
+	AND	#$7F
+	STA	BUF+7
+	LDY	#COML-1		;copy commander and name
+!1	LDA	BUF,Y
+	STA	(SC),Y
+
+	IF	FIXBUG
+	EOR	#$0F
+	ELSE
+	ASL	A
+	ADC	#0
+	ENDIF
+	STA	(S),Y
+	
+	IF	FIXBUG
+	EOR	#$FF
+	ELSE
+	ASL	A
+	ADC	#0
+	ENDIF
+	STA	(Q),Y
+	DEY
+	BPL	!1		;throw away gal seed
+	PLA
+	RTS
+
+PUTCOMMcurr2	PHA
+PUTCOMMcurr	LDX	#COMLuse-1		;update current commander
+!2	LDA	BUF,X
+	STA	NApcent,X
+	STA	TP-8,X
+	DEX
+	BPL	!2
+
+
+*** THIS BIT TO CURE BUG IN ALL OTHER ELITES !!! ****
+
+	JSR	RESCOMMsmart
+
+*****************************************************
+
+	PLA
+	RTS
+
+
+; Reset all saved positions
+; =========================
+
+
+SAFESIDEtrue	; Try to correct any errors in commanders
+	LDA	#7
+!1	PHA
+	JSR	WSCAN
+	PLA
+	JSR	GETCOMM	; Getcomm corrects if has to	
+;	JSR	PUTCOMM
+	SEC
+	SBC	#1
+	BPL	!1
+	RTS
+
+
+TRUE	EQU	-1
+FALSE	EQU	0
+
+	
+Qpcent	equ	-PROGTESTS
+RICH	EQU	TOUGHCOM
+RATING	EQU	TOUGHCOM*&2345
+LEGRAT	EQU	0
+
+;S1pcent	DB	":0.E."
+
+NA2pcent	; Incode copy of default Commander
+
+	IF	TOUGHCOM
+	DB	"TESTING"
+	ELSE
+	DB	"JAMESON"
+	ENDIF
+	EQUB	1		;Cycle number
+	EQUB	0
+	EQUB	20		;QQ0
+	EQUB	173		;QQ1
+	IF	RICH
+;	DW	$9A3B,$00CA		;100000000
+;	DW	$CD1D,$0065		; 50000000
+;	DB	0,$98,$9A,$68	;  1000100
+	DB	0,$0F,$46,$28	;   100100
+;	DB	0,0,$E4,$00
+	ELSE
+	DB	0,0,$03,$E8		;      100
+	ENDIF
+
+	IF	0	;PROGTESTS
+	EQUB	250
+	ELSE
+	EQUB	70		;fuel
+	ENDIF
+	EQUB	0		;Qpcent&128 COK-UP
+	EQUB	0		;GALACTIC COUNT
+	EQUB	(Armlas&Qpcent)+(PulseLas&(Qpcent~-1))
+	EQUB	(PulseLas)&Qpcent
+	EQUB	BeamLas&Qpcent
+	EQUB	MineLas&Qpcent
+;	DW	0	;LASER	>>DJB 7/5/90<< - only four lasers
+	EQUB	22+(15&Qpcent)	;;37 CARGO
+
+	IF	Qpcent
+CARG0	equ	0
+	ELSE
+CARG0	equ	0
+	ENDIF
+
+	DW	CARG0,CARG0
+	DW	CARG0,CARG0
+	DW	CARG0,CARG0
+	DW	CARG0,CARG0
+	EQUB	>CARG0	;crgo
+	EQUB	Qpcent	;ECM
+	EQUB	Qpcent	;BST(=fuel scoop)
+	EQUB	Qpcent&127	;BOMB
+	EQUB	Qpcent&7	;ENGY++
+	EQUB	Qpcent	;DCK COMP
+	EQUB	Qpcent	;GHYP
+	EQUB	Qpcent	;ESCP
+	DW	0	;Tribbles
+	EQUB	>RATING	;TALLYL (was EXPAND)
+	EQUB	3+(Qpcent&1)	;MISSILES
+	EQUB	LEGRAT	;FIST
+	EQUB	16	;AVAILABILITIES
+	EQUB	15
+	EQUB	17
+	EQUB	0
+	EQUB	3
+	EQUB	28
+	EQUB	14
+	DW	0
+	EQUB	10
+	EQUB	0
+	EQUB	17
+	EQUB	58
+	EQUB	7
+	EQUB	9
+	EQUB	8
+	EQUB	0
+	EQUB	0	;QQ26
+	DW	RATING	;;(20000ANDQpcent)	;TALLY
+AFTRAT	EQUB	128	;SVC
+	DW	$5A4A,$0248,$B753	;QQ21 - base seed
+
+
+	;	Used to have three byte checksum
+	;	here to stop people tampering with code
+	;	but little point on cartridge game
+
+	IF	Qpcent
+	EQUB	($D5~$A9)
+	EQUB	$75
+	EQUB	$D5
+
+	ELSE
+	EQUB	($3~$A9)
+	EQUB	$27
+	EQUB	$3
+	ENDIF
+
+	DW	0,0
+	DW	0,0
+	DW	0,0
+NAENDpcent	DW	0,0
+
+
+
+NAmove	EQU	NAENDPCENT-NA2PCENT	
+
+
+DFAULTtrue	; Copy default cmmdr (now ROM JAMESON)
+	; to working commander
+	JSR	JAMESONtrue
+	LDX	#NTpcent+8
+!1	LDA	NApcent-1,X	; was NApcent
+	STA	NAME-1,X
+	DEX
+	BNE	!1
+	RTS
+
+JAMESONtrue	LDY	#NAmove	; Download ROM Jameson
+!1	LDA	NA2pcent,Y
+	STA	NApcent,Y
+	DEY
+	BPL	!1
+;	LDY	#7
+;	STY	oldlong
+	RTS
+
+
+;	============================
+		
+ZIGZAGtrue	; Fill box K with zig zag lines
+	LDA	K+1
+	LSR	A
+	STA	K3+1	
+	LDA	K+3
+	SEC
+	SBC	K3+1
+
+	CLC
+	ADC	#1
+
+	STA	K3
+	JSR	!ZIZGS
+	LDA	K+3
+	CLC
+	ADC	K3+1
+	STA	K3
+
+
+!ZIZGS	LDA	K
+	LSR	A
+	LSR	A
+	STA	STP
+	LDA	K+2
+	SEC
+	SBC	K
+	STA	X1
+	LDA	K3
+	STA	Y1
+	LDY	#7
+!1	JSR	DORND
+	STA	Q
+	LDA	K+1
+	JSR	FMLTU
+	CLC
+	ADC	K3
+	SEC
+	SBC	K3+1
+	STA	Y2
+	LDA	X1
+	CLC
+	ADC	STP
+	STA	X2
+	JSR	LOIN
+	LDA	SWAP
+	BNE	!2
+	LDA	X2
+	STA	X1
+	LDA	Y2
+	STA	Y1
+!2	DEY
+	BNE	!1
+	LDA	K+2
+	CLC
+ 	ADC	K
+	STA	X2
+	LDA	K3
+	STA	Y2
+	JSR	LOIN
+	RTS
+
+
+HYPFXtrue
+	JSR	waitsend
+	JSR	NOSTARS
+	JSR	WPEXPL
+	JSR	HYPNOISE
+
+	LDA	#128
+	STA	K+2
+	LDA	#Yabs
+	STA	K+3
+	LDA	#64
+	STA	TEMPX
+
+!3	JSR	ALLOWFREEZE
+	JSR	DORND
+	AND	#15
+	TAX
+	LDA	HYCLTB,X
+	STA	COL1
+
+	JSR	flipbank
+
+	LDA	TEMPX
+	AND	#31	;15
+	STA	STP
+	LDA	#8
+	STA	X1
+	LDA	#$F8
+	STA	X2
+
+!2	POLLBIT	57
+
+	LDA	STP
+	CLC
+	ADC	#16
+	STA	STP
+	CMP	#90
+	BCS	!1
+	STA	Q
+	LDA	#8
+	JSR	LL28
+	LDA	R
+	SEC
+	SBC	#20
+	STA	K+1
+	LDA	Ymem
+	SBC	K+1
+	BCC	!2
+	BEQ	!2
+	TAY
+	JSR	HLOIN
+	INC	X2
+	LDA	K+1
+	CLC
+	ADC	Ymem
+	TAY
+	JSR	HLOIN
+	INC	X2
+	JMP	!2
+
+!1	JSR	STARTDLOAD
+	DEC	TEMPX
+	BNE	!3
+	JMP	waitsend
+
+
+
+HYCLTB	DB	DKRED
+	DB	BLACK
+	DB	BTYELLOW
+	DB	BTGREEN
+
+	DB	VIOLET
+	DB	PINK
+	DB	BLUE1
+	DB	BLUE2
+
+	DB	DKGREEN
+	DB	DKGREY
+	DB	SCARLET
+	DB	CYAN
+
+	DB	WHITE
+	DB	MAG
+	DB	BLACK
+	DB	DKGREY
+
+;	===========
+
+BOXEX	RTS
+
+
+BOXtrue	; Draw 2K x 2(K+1) box centre K+2,K+3
+
+	LDA	K+2
+	CLC
+	ADC	K
+	BCS	BOXEX
+	STA	X2	
+	STA	X1
+	LDA	K+3
+	SEC
+	SBC	K+1
+	BCS	!1
+	LDA	#0
+!1	STA	Y1
+	LDA	K+3
+	CLC
+	ADC	K+1
+	BCS	!3
+	CMP	Yx2M1
+	BCC	!3
+	LDA	Yx2M1
+!3	STA	Y2
+
+	JSR	VLOIN
+	LDA	K+2
+	SEC
+	SBC	K
+	BCC	BOXEX
+	STA	X1
+	JSR	VLOIN
+	INC	X1
+	LDY	Y1
+	BEQ	!5
+	JSR	HLOIN	
+	INC	X2
+!5	DEC	X1
+	INC	X2
+	LDY	Y2
+	CPY	Yx2M1
+	BCS	BOXEX
+	JMP	HLOIN
+
+;	================
+
+
+INSTRING	EQU	INWK+5 
+
+
+
+GETALINEtrue	; Get an uppercase letter only sequence from player
+	; into INWK+5 - Terminate with 13
+	; Max length in RLINE2
+	; Set C if error but this will not survive a bank switch
+
+	LDY	#0
+OSW0L
+;	LDA	#"A"
+	LDA	INSTRING,Y
+	CMP	#"A"
+	BCS	OSW0L2
+	LDA	#"A"
+OSW0L2	PHA
+	PLA
+	JSR	UPLETTER
+	BCS	!2
+	CMP	#27
+	BEQ	!3
+	CMP	#delchar
+	BEQ	!5
+	CPY	RLINE2
+	BCS	!1
+	CMP	#$21
+	BCC	!1
+	CMP	#$7B
+	BCS	!1
+	STA	INSTRING,Y
+	INY
+	INC	XC
+
+	JMP	OSW0L
+
+!1	JSR	BEEP
+	LDY	RLINE2
+	JMP	OSW0L
+
+!2	; Last one
+	STA	INSTRING,Y
+	INY
+	LDA	#13
+	STA	INSTRING,Y
+	LDA	#12
+	JSR	CHPRsmart
+!6
+	JSR	SENDINPAREA
+	CLC
+	RTS
+
+
+!3	; Escape key
+	LDA	#13		; return a null string
+	STA	INSTRING
+	SEC
+	RTS
+
+!5	; Delete key
+	TYA
+	BEQ	!4
+	DEY
+	LDA	#delchar
+	JSR	CHPRsmart
+	LDA	INSTRING,Y
+	JMP	OSW0L2
+
+!4	JSR	BEEP
+	LDY	#0
+	BEQ	OSW0L
+
+
+UPLETTER	; A=X=ASCII upper-case letter from kybrd
+	; set C iff frbut1 down
+	TAX
+	STY	YSAV
+	LDA	TCOL
+	PHA
+	LDA	MODE
+	AND	#32
+	BEQ	!1
+;	LDA	#tcol1
+	LDA	#tcol0
+	STA	TCOL
+!1 	TXA
+rdkl1
+	PHA
+	IF	NTSC
+	LDY	#6
+	ELSE
+	LDY	#4
+	ENDIF
+	JSR	DELAY
+	PLA
+	PHA
+	JSR	CHPRsmart
+	DEC	XC
+	JSR	SENDINPAREA
+	SEC
+	LDA	frbut1
+	BMI	rdky1
+	CLC
+	PLA
+	LDX	shfbut
+	BMI	rdkl1
+	LDX	stripop
+	BNE	rdky5
+	LDX	lfttra
+	BMI	rdky4
+	LDX	rgttra
+	BMI	rdky3
+	LDX	upbut
+	BPL	rdky2
+	CLC
+	ADC	#1
+	CMP	#"Z"+1
+	BNE	rdky2
+	LDA	#"A"
+rdky2	LDX	dwnbut
+	BPL	rdkl1
+	SEC
+	SBC	#1
+	CMP	#"A"-1
+	BNE	rdkl1
+	LDA	#"Z"
+	BNE	rdkl1
+
+rdky4	LDA	#delchar
+	BNE	rdky3
+rdky1	PLA
+rdky3	TAX
+	PLA
+	STA	TCOL
+	LDY	YSAV
+	TXA
+	RTS
+
+rdky5	
+	LDA	#27		; Simulate escape key
+	BNE	rdky3		; with any icon selction
+
+
+GTNMEtrue	; Get 7 char name (space padded) into NAME
+	JSR	CLYNS
+	INC	YC
+	LDA	#8
+	JSR	DETOK
+	LDY	#6
+	STY	RLINE2
+
+!6	LDA	NAME,Y		; Copy old name into
+	STA	INSTRING,Y		; buffer
+	DEY
+	BPL	!6
+
+	JSR	GETALINEtrue
+	LDA	INSTRING
+	CMP	#13
+	BEQ	!4
+
+	
+	LDY	#0
+!1	LDA	INSTRING,Y
+	CMP	#13
+	BEQ	!2
+	INY
+	CPY	#7
+	BNE	!1
+
+	DEY
+!3	LDA	INSTRING,Y
+	STA	NAME,Y		
+	DEY
+	BPL	!3
+
+
+	LDA	COK
+	BMI	!4
+
+	INY
+	LDX	LANG
+!5	LDA	NAME,Y
+	CMP	CHEATERNAME,X
+	BNE	!4
+	INX
+	INX
+	INX
+	INX
+	INY
+	CPY	#7
+	BNE	!5
+
+	LDA	#128
+	STA	COK
+
+	LDA	#$A0		;186A0=10,000CR
+	CLC
+	ADC	CASH+3
+	STA	CASH+3
+	LDA	#$86
+	ADC	CASH+2
+	STA	CASH+2
+	LDA	CASH+1
+	ADC	#1
+	STA	CASH+1
+	LDA	CASH
+	ADC	#0
+	STA	CASH
+
+
+!4	JSR	CLYNS
+	JMP	SENDINPAREA
+
+!2	LDA	#32
+	STA	INSTRING,Y
+	CPY	#6
+	BEQ	!3
+	INY
+	BNE	!2
+
+
+CHEATERNAME
+
+	IF	NTSCEV
+
+	DB	"CBTT"
+	DB	"HERR"
+	DB	"ETII"
+	DB	"ARMM"
+	DB	"TUAA"
+	DB	"EGRR"
+	DB	"R KK"	; LANGUAGE TABLE
+
+	ELSE
+
+	DB	"CBTI"
+	DB	"HERN"
+	DB	"ETIG"
+	DB	"ARCA"
+	DB	"TUHN"
+	DB	"EGEN"
+	DB	"R RO"	; LANGUAGE TABLE
+	ENDIF
+
+;..............
+
+RDKEYtrue			;A=X=thiskey=current keypress
+	TYA
+	PHA
+
+	LDX	#nokeys-1	; (don't zero KY7)
+	LDA	#0
+	STA	thiskey	; copy of ZEKTRAN code
+!7	STA	KLO,X	; for this bank
+	DEX
+	BPL	!7
+
+	POLLBIT	58
+
+	IF	TWOJOY
+	LDA	twoplayers
+	BEQ	oneplay
+	LDX	#FF
+	LDA	dwnbut2
+	BPL	!1
+	STX	KY5
+!1	LDA	upbut2
+	BPL	!2
+	STX	KY6
+!2	LDA	lftbut2
+	BPL	!3
+	STX	KY3
+!3	LDA	rgtbut2
+	BPL	!5
+	STX	KY4
+!5
+	; Velocity control for second player=two fire buttons
+	LDA	frbut12
+	BPL	!6
+	STX	KY2
+!6	LDA	frbut22
+	BPL	firecont
+	STX	KY1
+	BMI	firecont
+
+	ENDIF	;(TWOJOY)
+oneplay
+
+	LDX	#FF
+	LDA	shfbut
+	BMI	velcont
+	LDA	dwnbut
+	BPL	!1
+	STX	KY5
+!1	LDA	upbut
+	BPL	!2
+	STX	KY6
+!2	LDA	lftbut
+	BPL	!3
+	STX	KY3
+!3	LDA	rgtbut
+	BPL	firecont
+	STX	KY4
+	BMI	firecont	
+
+velcont	; Velocity control
+	LDA	upbut
+	BPL	!6
+	STX	KY2
+!6	LDA	dwnbut
+	BPL	!7
+	STX	KY1
+!7
+
+firecont	LDA	frbut1
+	CMP	#128
+	ROR	KY7
+
+	LDX	#0
+	LDA	stripop	; Get NMI buffered strip input
+	STX	stripop	; character
+	STA	thiskey
+
+;	LDX	#$FF
+;	LDA	JSTGY
+;	BEQ	noswapys
+;
+;
+;	LDA	KY5
+;	LDX	KY6
+;	STA	KY6
+;	STX	KY5
+;noswapys
+
+	PLA
+	TAY
+	LDA	thiskey
+	TAX
+	RTS
+
+
+
+
+;
+;
+;	LDA	JSTE
+;	BEQ	noswapxs
+;	LDA	KY5
+;	LDX	KY6
+;	STA	KY6
+;	STX	KY5
+;	LDA	KY3
+;	LDX	KY4
+;	STA	KY4
+;	STX	KY3
+;noswapxs
+
+
+	;================
+
+langbase	equ	sightbase
+
+
+PWRUPMDtrue
+
+	LDA	#<STRIPDEF
+	STA	stripzH
+ 
+	LDY	#0	; Choose primary internal language
+	STY	autoflag
+
+	JSR	SETUPLANG	; for power up text tokens
+		
+
+	LDA	#pwrmod1
+	JSR	TT66smart
+	LDA	#<(STRIPDEF+3*$400)
+	STA	stripzH
+
+
+	IF	NTSCEV
+	LDA	#10
+	ELSE
+	LDA	#0
+	ENDIF
+	STA	YC
+	LDA	#7
+	STA	XC
+
+	LDA	#3
+;	JSR	DETOK
+
+	LDA	#pwrmod2
+	STA	MODE
+
+	JSR	DOBIGLOGO
+
+	LDA	#$44-32
+	STA	typebase
+
+
+	IF	BIG
+
+	LDA	#21
+	STA	YC
+	LDA	#10
+	STA	XC
+	LDA	#6
+;	JSR	DETOK			; Licensed to Im
+
+	INC	YC
+	LDA	#3
+	STA	XC
+	LDA	#9
+;	JSR	DETOK			; Japan	
+
+
+	LDA	#25
+	STA	YC
+	LDA	#3
+	STA	XC
+	LDA	#12
+	JSR	DETOK
+
+
+	LDA	#26
+	STA	YC
+	LDA	#6
+	STA	XC
+	LDA	#7
+;	JSR	DETOK			; Licensed by Nint
+
+	
+	LDY	#2
+	LDA	#$E5	;44+fontsize			; bottom bar
+!2	STA	VIDM1+28*ncl,Y	
+	INY
+	CPY	#ncl
+	BNE	!2
+
+
+	ELSE	;(BIG)
+
+	LDA	#21
+	STA	YC
+	LDA	#3
+	STA	XC
+	LDA	#12
+	JSR	DETOK			; Licensed to Im
+
+
+	LDY	#2
+	LDA	#$E5	;44+fontsize			; bottom bar
+!2	STA	VIDM1+26*ncl,Y	
+	INY
+	CPY	#ncl
+	BNE	!2
+
+	ENDIF	;(BIG)
+
+	IF	pwrmod1 & icbit
+	LDA	#rgtbord			; Extend side borders
+	STA	VIDM1+sl2*ncl		; into icon strip area
+	STA	VIDM1+sl2*ncl+ncl
+	LDA	#lftbord
+	STA	VIDM1+sl2*ncl+1
+	STA	VIDM1+sl2*ncl+ncl+1
+	ENDIF
+
+
+	LDY	#0			; Loop through all
+
+!1	JSR	SETUPLANG			; supported languages
+	LDA	LANGXCTB,Y			; printing token 4
+	STA	XC			; at tabled posn
+	LDA	LANGYCTB,Y
+	STA	YC
+
+	LDA	#DFmask
+	STA	DTW8
+
+	LDA	#4
+	JSR	DETOK
+	INC	XC
+	INC	XC
+	INY
+	LDA	LANGTB,Y			
+	BPL	!1			; PLANETNUM=Number available
+	STY	PLANETNUM		
+
+
+	LDA	#<(STRIPDEF+3*$400)
+	STA	stripzH
+
+
+	JSR	ENDTMODEsmart
+
+
+	LDA	lftbut
+	AND	upbut
+	AND	selbut
+	AND	frbut2
+	BPL	!5
+	LDA	rgtbut
+	ORA	dwnbut
+	ORA	stabut
+	ORA	frbut1
+	BMI	!5
+	JSR	RESETCMOS	
+
+!5	JSR	SAFESIDE
+
+	LDA	#128
+	STA	S
+
+	IF	ROMCODE
+
+	IF	EMULATION
+	LDA	#25
+	ELSE
+	LDA	#250
+	ENDIF
+
+	ELSE
+	LDA	#25
+	ENDIF
+	STA	T
+
+	LDA	SAFESLOT+1
+	STA	V+1		; Mega timer=30sec
+
+	LDA	#0
+	STA	V
+	STA	Q
+	LDA	SAFESLOT		; Begin in language in
+	STA	LASCT		; safe slot
+
+	IF	0
+	LDA	SAFESLOT+2
+	STA	DEMOMODE
+	ENDIF
+
+!6	JSR	WSCAN
+
+	LDY	LASCT
+	LDA	LANGXCTB,Y
+	ASL	A
+	ASL	A
+	ASL	A
+	ADC	#4-sprxoff
+	TAX
+	CLC
+	LDY	#0
+	
+!3
+	LDA	#$F0
+	STA	ATTRIBUTES+4*langbase+0,Y
+	LDA	#filledup
+	STA	ATTRIBUTES+4*langbase+1,Y
+	LDA	#$20
+	STA	ATTRIBUTES+4*langbase+2,Y
+	TXA
+	STA	ATTRIBUTES+4*langbase+3,Y
+	ADC	#8
+	TAX
+	INY
+	INY
+	INY
+	INY
+	CPY	#4*8
+	BNE	!3
+
+	LDX	LASCT
+	LDA	NAMELENTB,X
+	ASL	A
+	ASL	A
+	TAY
+	LDA	LANGYCTB,X
+	ASL	A
+	ASL	A
+	ASL	A
+	ADC	#spryoff-4
+!8	STA	ATTRIBUTES+4*langbase+0,Y
+	DEY
+	DEY
+	DEY
+	DEY
+	BPL	!8
+
+	LDA	stabut	; Clear top bit of S if		
+	AND	#$C0	; start button pressed
+	CMP	#$40
+	BNE	!A
+	LSR	S
+
+!A
+	LDX	LASCT
+
+	LDA	lftbut
+	AND	#$C0
+	cmp	#$40
+	BNE	!4
+	DEX
+	LDA	SAFESLOT+1	
+	STA	V+1
+
+
+!4	LDA	rgtbut
+	AND	#$C0
+	CMP	#$40
+	BNE	!7
+	INX
+	LDA	SAFESLOT+1
+	STA	V+1
+
+
+!7
+;	LDA	dwnbut
+;	AND	#$C0
+;	cmp	#$40
+;	BNE	!E
+;	INX
+;	INX
+
+
+;!E	LDA	upbut
+;	AND	#$C0
+;	CMP	#$40
+;	BNE	!F
+;	DEX
+;	DEX
+
+!F	TXA
+	BPL	!D
+	LDA	#0
+!D	CMP	#3
+	BCC	!C
+	LDA	#2
+!C	STA	LASCT	
+
+
+	DEC	T		; Keep mode up for minimum
+	BEQ	!9		; time
+!B	JMP	!6
+
+
+!9	INC	T
+	LDA	S		; then consult start button
+	BPL	!10		; flag
+
+	DEC	V		; finally consult megatimer
+	BNE	!B
+	DEC	V+1
+	BNE	!B
+
+;!10
+	IF	AUTOPLAY
+	JSR	!11
+	JMP	STARTAUTO
+!11
+	ENDIF
+!10
+	LDY	LASCT	; <<<   Y=0=>FORCE ENGLISH
+
+
+SETUPLANG	; Set up for language with internal number Y
+	; Set up David token pointer
+	LDA	QQ18TBL,Y
+	STA	QQ18V
+	LDA	QQ18TBH,Y
+	STA	QQ18V+1
+	; Set up Ian token pointer
+	LDA	TKN1TBL,Y
+	STA	TKN1V
+	LDA	TKN1TBH,Y
+	STA	TKN1V+1
+
+	LDA	LANGTB,Y
+	STA	LANG
+
+	LDA	LANG2TB,Y
+	STA	LANG2
+
+
+	LDA	MAXASCTB,Y
+	STA	MAXASC
+
+
+	LDA	DECIMALTAB,Y
+	STA	DECIMAL
+
+	RTS
+
+
+
+LANGXCTB	DB	 2,12,22,17
+LANGYCTB	DB	23,24,23,24	
+MAXASCTB	DB	91,96,96,96
+DECIMALTAB	DB	"..,."
+
+
+NAMELENTB	
+	IF	SUPPORTED & ENGL
+	DB	6
+	ENDIF
+	IF	SUPPORTED & GERM
+	DB	6
+	ENDIF
+	IF	SUPPORTED & FREN
+	DB	7
+	ENDIF
+	IF	SUPPORTED & ITAL
+	DB	7
+	ENDIF
+
+
+QQ18TBL	IF	SUPPORTED & ENGL
+	DL	QQ18E
+	ENDIF
+	IF	SUPPORTED & GERM
+	DL	QQ18G
+	ENDIF
+	IF	SUPPORTED & FREN
+	DL	QQ18F
+	ENDIF
+	IF	SUPPORTED & ITAL
+	DL	QQ18I
+	ENDIF
+
+
+QQ18TBH	IF	SUPPORTED & ENGL
+	DH	QQ18E
+	ENDIF
+	IF	SUPPORTED & GERM
+	DH	QQ18G
+	ENDIF
+	IF	SUPPORTED & FREN
+	DH	QQ18F
+	ENDIF
+	IF	SUPPORTED & ITAL
+	DH	QQ18I
+	ENDIF
+
+TKN1TBL
+	IF	SUPPORTED & ENGL
+	DL	TKN1E
+	ENDIF
+	IF	SUPPORTED & GERM
+	DL	TKN1G
+	ENDIF
+	IF	SUPPORTED & FREN
+	DL	TKN1F
+	ENDIF
+	IF	SUPPORTED & ITAL
+	DL	TKN1I
+	ENDIF
+
+TKN1TBH	IF	SUPPORTED & ENGL
+	DH	TKN1E
+	ENDIF
+	IF	SUPPORTED & GERM
+	DH	TKN1G
+	ENDIF
+	IF	SUPPORTED & FREN
+	DH	TKN1F
+	ENDIF
+	IF	SUPPORTED & ITAL
+	DH	TKN1I
+	ENDIF
+
+
+LANGTB	IF	SUPPORTED & ENGL
+	DB	ENGLISH
+	ENDIF
+	IF	SUPPORTED & GERM
+	DB	GERMAN
+	ENDIF
+	IF	SUPPORTED & FREN
+	DB	FRENCH
+	ENDIF
+	IF	SUPPORTED & ITAL
+	DB	ITALIAN
+	ENDIF
+	DB	255
+
+
+LANG2TB	IF	SUPPORTED & ENGL
+	DB	ENGL
+	ENDIF
+	IF	SUPPORTED & GERM
+	DB	GERM
+	ENDIF
+	IF	SUPPORTED & FREN
+	DB	FREN
+	ENDIF
+	IF	SUPPORTED & ITAL
+	DB	ITAL
+	ENDIF
+
+
+
+	IF	AUTOSEARCH
+GOTBUGtrue
+	STA	CRGO+1
+	LDA	IANTEMP
+	STA	CRGO+2
+	LDA	SSPR
+	STA	CRGO+3
+	LDA	QQ26
+	STA	CRGO+4
+
+	LDA	DTW5
+	STA	CRGO+5
+
+	LDA	FRIN
+	STA	CRGO+6
+	LDA	FRIN+1
+	STA	CRGO+7
+	LDA	FRIN+2
+	STA	CRGO+8
+	LDA	FRIN+3
+	STA	CRGO+9
+
+	LDA	MANY+1
+	STA	CRGO+10
+	LDA	MANY+3
+	STA	CRGO+11
+
+	LDA	MCNT
+	STA	CRGO+12
+
+
+	JSR	WSCAN
+	LDA	#0
+	STA	autoflag
+	STA	frbut1
+	JSR	SOFLUSH
+	LDY	#sfxecm
+	JSR	NOISE
+!2	POLLBIT	111
+	LDA	frbut1
+	BPL	!2
+	RTS
+	ENDIF	;(AUTOSEARCH)
+
+
+SETTECHtrue	; Set up tech level etc. for planet
+	; with seed in QQ15
+	LDA	QQ15+1
+	AND	#7
+	STA	QQ3
+	LDA	QQ15+2
+	LSR	A
+	LSR	A
+	LSR	A
+	AND	#7
+	STA	QQ4
+	LSR	A
+	BNE	!77
+	LDA	QQ3
+	ORA	#2
+	STA	QQ3
+!77	LDA	QQ3
+	EOR	#7
+	CLC
+	STA	QQ5
+	LDA	QQ15+3
+	AND	#3
+	ADC	QQ5
+	STA	QQ5
+
+	POLLBIT	241
+
+	LDA	QQ4
+	LSR	A
+	ADC	QQ5
+	STA	QQ5
+	ASL	A
+	ASL	A
+	ADC	QQ3
+	ADC	QQ4
+	ADC	#1
+	STA	QQ6
+	LDA	QQ3
+	EOR	#7
+	ADC	#3
+	STA	P
+	LDA	QQ4
+	ADC	#4
+	STA	Q
+	JSR	MULTU
+
+
+	LDA	QQ6
+	STA	Q
+	JSR	MULTU
+	ASL	P
+	ROL	A
+	ASL	P
+	ROL	A
+	ASL	P
+	ROL	A
+	STA	QQ7+1
+	LDA	P
+	STA	QQ7
+	RTS
+
+
+DEATHSUBtrue
+	SPOLLBIT	109
+	LDA	#0
+	STA	VIDM1+ditp*ncl-2*ncl
+	STA	VIDM1+ditp*ncl-ncl
+	STA	VIDM1+ditp*ncl
+	STA	VIDM1+ditp*ncl+ncl
+	STA	VIDM1+ditp*ncl+2*ncl
+	STA	VIDM1+ditp*ncl+3*ncl
+	STA	VIDM1+ditp*ncl+4*ncl
+	STA	VIDM1+ditp*ncl+5*ncl
+
+	STA	VIDM2+ditp*ncl-2*ncl
+	STA	VIDM2+ditp*ncl-ncl
+	STA	VIDM2+ditp*ncl
+	STA	VIDM2+ditp*ncl+ncl
+	STA	VIDM2+ditp*ncl+2*ncl
+	STA	VIDM2+ditp*ncl+3*ncl 
+	STA	VIDM2+ditp*ncl+4*ncl
+	STA	VIDM2+ditp*ncl+5*ncl
+	RTS
+
+	BMESSAGE	"End of music bank"
+	
+	IF	NES
+	IF	*>$BFF9
+	ERROR	Music bank code too long!
+	ENDIF
+lowfree6	equ	$BFFA-*
+
+	VECMAC 
+
+	BANK	musbank
+	ENDIF	; (NES)
+
+
+
+

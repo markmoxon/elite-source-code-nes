@@ -1,0 +1,310 @@
+;
+;REM	ELITE <I>  Joint
+;
+;	Sound high level, TT66
+
+
+
+
+ECMOF	LDA	#0
+	STA	ECMA
+	STA	ECMP
+	LDY	#sfxecm
+	JMP	NOISEOFF
+
+SFRMIS	LDX	#MSL
+	JSR	SFS1m2
+	BCC	!1
+	LDA	#$78
+	JSR	MESS
+	LDY	#sfxfmis
+	JMP	NOISE
+!1	RTS
+
+
+EXNO2
+	JSR	UPTALLY
+	BCC	!1
+	INC	TALLY+1
+
+	LDA	#101
+	JSR	MESS	; Right on cmdr
+!1
+
+;	JSR	FREESCAN
+
+	LDA	INWK+7
+	LDX	#0
+	CMP	#16
+	BCS	quiet2
+	INX		;1
+	CMP	#8
+	BCS	quiet2
+	INX		;2
+	CMP	#6
+	BCS	quiet2
+	INX		;3
+	CMP	#3
+	BCS	quiet2
+	INX		;4
+quiet2	LDY	expltab,X
+	JMP	NOISE
+
+
+expltab	DB	sfxexpl4,sfxexpl3,sfxexpl2,sfxexpl,sfxexpl
+
+
+EXNO
+	LDY	#sfxhit
+	JMP	NOISE
+
+;	LDA	INWK+7
+;	LDX	#$B
+;	CMP	#8
+;	BCS	quiet
+;	INX
+;	CMP	#4
+;	BCS	quiet
+;	INX
+;	CMP	#3
+;	BCS	quiet
+;	INX
+;	CMP	#2
+;	BCS	quiet
+;	INX
+;quiet	TXA
+;	ASL	A
+;	ASL	A
+;	ASL	A
+;	ASL	A
+;	ORA	#3
+;	LDY	#sfxhit
+;	LDX	#$D0
+;	JMP	NOISE2true
+
+
+	;...................
+
+
+TT66	STA	MODE
+
+TTX66
+	LDA	MODE2
+	ORA	MODE1
+	BMI	!4
+	LDA	MODE
+	BPL	!4
+	JSR	ZONKSCANNERS
+!4	JSR	waitsend
+
+	JSR	FUDGECLEAR
+
+
+	LDA	#nli-2
+	STA	messYC
+	LDX	#0
+	STX	SNDDIALS
+
+	JSR	writebank
+;	JSR	MT2
+
+	LDA	#128
+	STA	QQ17
+	STA	DTW2	; All char lower case
+	STA	DTW6	; except first in word
+	LDA	#0
+	STA	DTW1	; and next one
+	STA	LAS2
+	STA	DLY
+	STA	de	;,,
+	LDA	#1
+	STA	XC
+	STA	YC
+
+	JSR	corefont
+
+	LDA	MODE
+	LDX	#FF
+	AND	#icbit
+	BNE	!2
+	LDX	#titstrip
+	LDA	MODE
+	CMP	#titmode
+	BEQ	!2
+	IF	pwrmod1 & icbit
+	ELSE
+	CMP	#pwrmod1
+	BEQ	!2
+	ENDIF
+	LDX	#chrtstrip
+	LDA	MODE
+	AND	#chbit1
+	CMP	#chbit2
+	BEQ	!2
+	LDX	#combstrip
+	LDA	QQ12
+	BEQ	!2
+	LDX	#dockstrip
+
+!2
+	LDA	MODE
+	BMI	withoutdials
+
+withdials
+	TXA
+;	PHA
+;	LDA	#0
+;	STA	NODIALS1
+;	PLA
+	JSR	wantstrip
+
+
+
+	LDA	MODE2
+	BPL	!1
+
+	JSR	KILLDISP
+	JSR	dialsprites
+
+!1	JSR	dumpdials
+
+	JSR	msblob
+	JMP	endtt66	
+
+ugbuttocks
+	JMP	SETCOLMEM
+
+
+;	JMP	NOSPRITES
+
+withoutdials
+
+	;OK UP TO HERE
+
+	TXA
+	JSR	wantstrip
+
+	LDA	MODE
+	CMP	#detmode
+	BEQ	ugbuttocks
+
+	LDA	MODE
+	CMP	#glchrt1
+	BEQ	!1
+	CMP	#pwrmod1
+	BEQ	!1
+
+;	BNE	!2
+;	LDA	#icbase
+;	BNE	!4
+
+;!2
+	AND	#$10
+	BEQ	!1
+	LDA	#firstasci
+!4	JSR	typefontA
+
+!1	LDA	MODE
+	AND	#32	;<<ianntm
+	BEQ	!5
+	JSR	typfont2
+!5
+
+	; Bottom halves of side borders
+
+	LDA	#lftbord
+loopc	=	nli+banner
+	DO	dili
+	STA	VIDM1+loopc*ncl+1
+loopc	=	loopc+1
+	LOOP
+
+	LDA	#rgtbord
+loopc	=	nli+banner
+	DO	dili
+	STA	VIDM1+loopc*ncl
+loopc	=	loopc+1
+	LOOP
+
+	LDA	MODE
+	AND	#icbit
+	BNE	endtt66
+
+endtt66	JSR	SETCOLMEM
+	LDA	COMBFLAG
+	BMI	!1
+	LDA	MODE1
+	BPL	!2
+	CMP	MODE2
+	BEQ	!1
+!2	;JSR	NOSPRITES
+!1	JSR	BORDER1
+
+HEADING	; Message in banner
+ 
+!3
+	LDX	LANG
+	LDA	MODE
+	BEQ	!1
+	CMP	#titmode
+	BNE	!4
+	LDA	#0
+	STA	YC
+
+	LDX	LANG
+	LDA	HEADTAB,X
+;	LDA	#6
+	STA	XC
+	LDA	#30
+	BNE	!2
+!1	STA	YC
+	LDA	HEAD0TAB,X
+	STA	XC
+	LDA	LANG2
+	AND	#GERM
+	BNE	!5
+	JSR	PRINTVIEW	; Print 'Front View' for English 
+	JSR	SPACE
+	LDA	#175
+!2	JSR	TT27
+
+
+!4	LDX	#1
+	STX	XC
+	STX	YC
+	DEX
+	STX	QQ17
+	RTS
+
+
+!5	LDA	#175	; For german print 'View Front'
+	JSR	spc
+	JSR	PRINTVIEW
+	JMP	!4
+
+PRINTVIEW	
+	LDA	VIEW
+	ORA	#$60
+	JMP	TT27
+
+
+
+	IF	NES
+	BMESSAGE	"End of default bank"
+
+	IF	*>$BFF9
+	ERROR	Default bank code too LONG!!!
+	ENDIF
+
+lowfree1	equ	$BFFA-*
+
+
+	VECMAC
+
+	BANK	default
+
+	ENDIF	;(NES)	
+
+;*****************************************************
+
+

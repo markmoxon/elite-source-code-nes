@@ -1,0 +1,1223 @@
+;
+;REM	ELITE <A1>  Joint
+;
+;            Code for tokbank
+;
+;	Tokens, Words and Chpr
+
+;	IF	ROMCODE
+;	ORG	$0005
+;	ENDIF
+
+	IF	NES
+	FORG	BANKSTART
+	INIMAC
+	ENDIF	; (nes)
+
+
+;TKN1
+TKN1E
+	IF	SUPPORTED & ENGL
+
+	IF	BIG=0
+
+	INCBIN	C:\PDS\JOEL1\NTSCTOK.dat
+
+RUTOKOFFE	equ	$BBC
+RUPLAOFFE	equ	$B8E
+RUGALOFFE	equ	$BA5
+
+NRUpcentE	equ	23	;26
+
+	ELSE	;(NTSC)
+
+	IF	GOATSOUP
+
+	INCBIN	C:\PDS\JOEL1\FIANTOK4.dat
+
+RUTOKOFFE	equ	$BD3
+RUPLAOFFE	equ	$BA5
+RUGALOFFE	equ	$BBC
+
+NRUpcentE	equ	23	;26
+
+	ELSE
+
+	INCBIN	C:\PDS\JOEL1\RIANTOK.dat
+
+RUTOKOFFE	equ	$85D
+RUPLAOFFE	equ	$82F
+RUGALOFFE	equ	$846
+
+NRUpcentE	equ	23
+
+	ENDIF	;(GOATSOUP)
+
+	ENDIF	;(NTSC)
+
+RUTOKE	equ	TKN1E+RUTOKOFFE
+RUPLAE	equ	TKN1E+RUPLAOFFE
+RUGALE	equ	TKN1E+RUGALOFFE
+
+
+	ENDIF	;(ENGL)
+
+TKN1G	IF	SUPPORTED & GERM
+	INCBIN	C:\PDS\JOEL1\GEIANTOK.DAT
+	ENDIF
+
+RUTOKOFFG	equ	$963
+RUPLAOFFG	equ	$935
+RUGALOFFG	equ	$94C
+NRUpcentG	equ	23
+
+RUTOKG	equ	TKN1G+RUTOKOFFG
+RUPLAG	equ	TKN1G+RUPLAOFFG
+RUGALG	equ	TKN1G+RUGALOFFG
+
+
+
+TKN1F	IF	SUPPORTED & FREN
+
+	INCBIN	C:\PDS\JOEL1\FRIANTOK.dat
+
+	ENDIF
+
+RUTOKOFFF	equ	$7A3
+RUPLAOFFF	equ	$775
+RUGALOFFF	equ	$78C
+
+NRUpcentF	equ	23
+
+RUTOKF	equ	TKN1F+RUTOKOFFF
+RUPLAF	equ	TKN1F+RUPLAOFFF
+RUGALF	equ	TKN1F+RUGALOFFF
+
+
+
+TKN1I
+	IF	SUPPORTED & ITAL
+	INCBIN	C:\PDS\JOEL1\FRIANTOK.dat
+	ENDIF
+RUTOKOFFI	equ	RUTOKOFFF
+RUPLAOFFI	equ	RUPLAOFFF
+RUGALOFFI	equ	RUGALOFFF
+
+NRUpcentI	equ	NRUpcentF
+
+RUTOKI	equ	TKN1I+RUTOKOFFI
+RUPLAI	equ	TKN1I+RUPLAOFFI
+RUGALI	equ	TKN1I+RUGALOFFI
+
+
+
+
+QQ18	; David's tokens
+
+QQ18E	IF	SUPPORTED & ENGL
+	INCBIN	\PDS\JOEL1\WORDSD.DAT
+	ENDIF
+
+QQ18G	IF	SUPPORTED & GERM
+	INCBIN	\PDS\JOEL1\GWORDS.DAT
+	ENDIF
+
+QQ18F	IF	SUPPORTED & FREN
+	INCBIN	\PDS\JOEL1\FWORDS.DAT
+
+	DB	0,0,0,0,0,0,0	; Padding to preserve alignment
+
+
+	ENDIF
+
+QQ18I	IF	SUPPORTED & ITAL
+	INCBIN	\PDS\JOEL1\FWORDS.DAT
+	ENDIF
+
+
+	; TOKEN printing code for file IANTOK
+
+
+RUTOKTBL	DL	RUTOKE,RUTOKG,RUTOKF,RUTOKI
+RUTOKTBH	DH	RUTOKE,RUTOKG,RUTOKF,RUTOKI	;LANGUAGE TABLE
+
+
+DETOK3true	PHA	; Entry for rumours
+	TAX
+	TYA
+	PHA
+	LDA	V
+	PHA
+	LDA	V+1
+	PHA
+	LDY	LANG
+	LDA	RUTOKTBL,Y
+	STA	V
+	LDA	RUTOKTBH,Y
+	STA	V+1
+	BNE	DTEN
+	;.....................
+DETOKtrue		; Normal (top level) entry
+DETOKtrue2
+	IF	NEEDPOLL
+	TAX
+	POLLBIT	49
+	TXA
+	PHA
+	ELSE
+	PHA
+	TAX
+	ENDIF
+
+	TYA
+	PHA
+	LDA	V
+	PHA
+	LDA	V+1
+	PHA
+
+	IF	MULTILANG
+	COPY2B	V,TKN1V
+	ELSE
+	SET2B	V,TKN1
+	ENDIF
+
+DTEN	LDY	#0
+
+DTL1	POLLBIT	50
+	LDA	(V),Y
+	EOR	#VE
+	BNE	!1
+	DEX
+	BEQ	DTL2
+!1	INY
+	BNE	DTL1
+;	POLLBIT	50
+
+	INC	V+1
+	BNE	DTL1
+
+DTL2	
+	INY
+	BNE	!1
+	INC	V+1
+!1	LDA	(V),Y
+	EOR	#VE
+	BEQ	DTEX
+	JSR	DETOK2true
+	JMP	DTL2
+DTEX	PLA
+	STA	V+1
+	PLA
+	STA	V
+	PLA
+	TAY
+	PLA
+	RTS
+	;.............
+DETOK2true		; Recursive entry
+;	PHA
+;	POLLBIT	254
+;	PLA
+
+
+	CMP	#32
+	BCC	DT3
+	BIT	DTW3
+	BPL	DT8
+	TAX
+	TYA
+	PHA
+	LDA	V
+	PHA
+	LDA	V+1
+	PHA
+	TXA
+	JSR	TT27true
+	JMP	DT7	;TT27
+DT8	CMP	MAXASC	;#91
+	BCC	DTStrue
+	CMP	#129
+	BCC	DT6
+	CMP	#215
+	BCS	!1
+	JMP	DETOKtrue2
+!1	SBC	#215
+	ASL	A
+	PHA
+	TAX
+	LDA	TKN2,X
+	JSR	DTStrue
+	PLA
+	TAX
+	LDA	TKN2+1,X	;letter pair
+	CMP	#63
+	BEQ	ANRTS11
+DTStrue
+	BIT	DTW6	; check for All char upper case 
+	BPL	DT9
+	BIT	DTW1	; then all char lower case
+	BMI	DT10
+
+	BIT	DTW2	; then for one-off uppercasing
+	BMI	DT9
+
+
+DT10	BIT	DTW8	;FFMASK
+	BPL	DT9
+	STX	SC
+	TAX
+	LDA	CASINGTABLE,X	; Tweak into lower case
+	LDX	SC	
+	AND	DTW8
+DT9	JMP	DASC	;ascii
+
+DT3	; Magic token
+	TAX
+	TYA
+	PHA
+	LDA	V
+	PHA
+	LDA	V+1
+	PHA	;Magic
+	TXA
+	ASL	A
+	TAX
+	LDA	JMTB-2,X
+	STA	V
+	LDA	JMTB-1,X
+	STA	V+1
+	TXA
+	LSR	A
+	JSR	DTM
+DT7	PLA
+	STA	V+1
+	PLA
+	STA	V
+	PLA
+	TAY
+ANRTS11	RTS
+
+DTM	JMP	(V)
+
+DT6	STA	SC
+	POLLBIT	248
+	TYA
+	PHA
+	LDA	V
+	PHA
+	LDA	V+1
+	PHA
+	JSR	DORND
+	TAX
+	LDA	#0
+	CPX	#51
+	ADC	#0
+	CPX	#102
+	ADC	#0
+	CPX	#153
+	ADC	#0
+	CPX	#204
+	LDX	SC
+	ADC	MTIN-91,X
+	JSR	DETOKtrue2
+	JMP	DT7	;Multitoken
+
+
+
+JMTB	DW	MT1
+	DW	MT2
+	DW	TT27true
+	DW	TT27true
+	DW	MT5
+	DW	MT6
+	DW	DASC
+	DW	MT8
+	DW	MT9
+	DW	DASC
+	DW	MTNLIN4
+	DW	DASC
+	DW	MT13
+	DW	MT14
+	DW	MT15
+	DW	NULLMT	;MT16
+	DW	MT17
+	DW	MT18
+	DW	MT19
+	DW	DASC	;20
+	DW	CLYNS	;21
+	DW	PAUSE	;22
+	DW	MT23
+	DW	PAUSE2	;24
+	DW	MTBRIS	;25
+	DW	MT26
+	DW	MT27
+	DW	MT28
+	DW	MT29
+	DW	NULLMT	;FILEPR
+	DW	NULLMT	;OTHERFILEPR
+	DW	DASC
+
+
+MTIN	EQUB	16	; Multi-token lookup
+	EQUB	21
+	EQUB	26
+	EQUB	31
+	EQUB	155
+	EQUB	160
+	EQUB	46
+	EQUB	165
+	EQUB	36
+	EQUB	41
+	EQUB	61
+	EQUB	51
+	EQUB	56
+	EQUB	170
+	EQUB	66
+	EQUB	71
+	EQUB	76
+	EQUB	81
+	EQUB	86
+	EQUB	140
+	EQUB	96
+	EQUB	101
+	EQUB	135
+	EQUB	130
+	EQUB	91
+	EQUB	106
+	EQUB	180
+	EQUB	185
+	EQUB	190
+	EQUB	225
+	EQUB	230
+	EQUB	235
+	EQUB	240
+	EQUB	245
+	EQUB	250
+	EQUB	115
+	EQUB	120
+	EQUB	125
+
+
+MT27	LDA	#217
+	BNE	*+4	;!! was P%
+MT28	LDA	#220
+	CLC
+	ADC	GCNT
+	JMP	DETOK
+
+
+	;....................
+MT1	LDA	#0
+	EQUB	$2C
+MT2
+	LDA	#128
+	STA	DTW6
+	LDA	#0
+	STA	DTW1
+	RTS
+MT8	LDA	#6
+	STA	XC
+	LDA	#FF
+	STA	DTW2
+	RTS
+NULLMT
+	RTS
+MT9	LDA	#1
+	STA	XC
+	LDA	#mismode
+	JMP	TT66smart
+
+MT6	LDA	#128
+	STA	QQ17
+	LDA	#FF
+	EQUB	$2C
+MT5	LDA	#0
+	STA	DTW3
+	RTS
+
+MT14	LDA	#128
+	EQUB	$2C
+MT15	LDA	#0
+	STA	DTW4
+	ASL	A
+	STA	DTW5
+	RTS
+
+MT17	LDA	QQ17
+	AND	#$BF
+	STA	QQ17
+	LDA	#3
+	JSR	TT27true
+	LDX	DTW5
+	LDA	BUF-1,X
+	JSR	VOWEL
+	BCC	MT171
+	DEC	DTW5
+MT171	LDA	#153
+	JMP	DETOK
+MT18	JSR	MT19
+	JSR	DORND
+	AND	#3
+	TAY
+MT18L	JSR	DORND
+	AND	#62
+	TAX
+	LDA	TKN2+2,X
+	JSR	DTS
+	LDA	TKN2+3,X
+	CMP	#"?"
+	BEQ	!1
+	JSR	DTS
+!1	DEY
+	BPL	MT18L
+	RTS
+
+MT26	LDA	#32
+	JSR	DASC
+;	JMP	MT19; Was read line but "German space"
+
+MT19	LDA	#DFmask
+	STA	DTW8
+	RTS
+
+VOWEL	ORA	#32
+	CMP	#"a"
+	BEQ	VRTS
+	CMP	#"e"
+	BEQ	VRTS
+	CMP	#"i"
+	BEQ	VRTS
+	CMP	#"o"
+	BEQ	VRTS
+	CMP	#"u"
+	BEQ	VRTS
+	CLC
+VRTS	RTS
+	;............
+
+
+TKN2	EQUB	12
+	EQUB	10
+	DB	"ABOUSEITILETSTONLONUTHNO"
+QQ16	DB	"ALLEXEGEZACEBISOUSESARMAINDIRE"
+	DB	"A?ERATENBERALAVETIEDORQUANTEISRION"
+
+	;...........
+
+
+MTBRIS	; Incoming message
+	LDA	#216
+	JSR	DETOKtrue2
+	JSR	FULLENDTMODE
+	LDY	#100
+	JMP	DELAY
+
+	;.........
+
+PAUSE
+	JSR	UPDATETMODESMART
+	JSR	waitsend
+	LDA	frchar
+	STA	charmin
+	LDA	#(8+banner)*4+basecell
+	STA	zermax
+	LDX	#4*banner+basecell
+	IF	DIALSONTOP
+	STX	cellminH
+	STX	zermin
+	ENDIF
+	STX	cellmin
+!1	JSR	PAS1
+	LDA	frbut1
+	ORA	frbut2
+	BPL	!1
+!2	JSR	PAS1
+	LDA	frbut1
+	ORA	frbut2
+	BMI	!2
+	LDA	#0
+	STA	INWK+31
+	LDA	#brimode2
+	JSR	TT66smart
+
+MT23
+	LDA	#9	;10
+	EQUB	$2C
+MT29
+	IF	BIG
+	LDA	#7
+	ELSE
+	LDA	#6
+	ENDIF
+	STA	YC
+MT13	LDA	#128
+	STA	DTW6
+	STA	DTW1
+	RTS
+
+PAUSE2
+	JSR	UPDATETMODESMART
+
+!1	SPOLLBIT	51
+	LDA	frbut1
+	ORA	frbut2
+	AND	#$C0
+	CMP	#$40
+	BNE	!1
+	RTS
+
+
+RUPLATBL	DL	(RUPLAE-1),(RUPLAG-1),(RUPLAF-1),(RUPLAI-1)
+RUPLATBH	DH	(RUPLAE-1),(RUPLAG-1),(RUPLAF-1),(RUPLAI-1)
+
+RUGALTBL	DL	(RUGALE-1),(RUGALG-1),(RUGALF-1),(RUGALI-1)
+RUGALTBH	DH	(RUGALE-1),(RUGALG-1),(RUGALF-1),(RUGALI-1)
+
+NRUpcentTB	DB	NRUpcentE,NRUpcentG
+	DB	NRUpcentF,NRUpcentI		; LANGUAGE TABLES
+
+
+PDESCtrue	;Planet description ("pink volcanoes") string
+
+	LDA	QQ8
+	ORA	QQ8+1
+	BNE	PD1	; If actually docked at planet
+	LDA	QQ12
+	BPL	PD1	; Check for rumours
+
+	LDX	LANG
+	LDA	RUPLATBL,X
+	STA	SC
+	LDA	RUPLATBH,X
+	STA	SC+1
+	LDA	RUGALTBL,X
+	STA	LI
+	LDA	RUGALTBH,X
+	STA	LI+1
+
+	LDY	NRUpcentTB,X	;#NRUpcent
+PDL1	LDA	(SC),Y		;RUPLA-1,Y
+	CMP	PLANETNUM
+	BNE	PD2
+	LDA	(LI),Y		;RUGAL-1,Y
+	AND	#127
+	CMP	GCNT
+	BNE	PD2
+	LDA	(LI),Y	;RUGAL-1,Y; Top bit of galaxy number +ve 
+	BMI	PD3	; => need to be on first mission
+	LDA	TP	; to get rumour
+	LSR	A
+	BCC	PD1
+	JSR	MT14
+	LDA	#1
+	EQUB	$2C
+PD3	LDA	#176
+	JSR	DETOK2true
+	TYA
+	JSR	DETOK3true
+	LDA	#177
+	BNE	PD4
+PD2	DEY
+	BNE	PDL1
+
+
+
+PD1
+	IF	GOATSOUP
+
+	LDX	#3
+!1	LDA	QQ15+2,X	;duplicate label!!!
+	STA	RAND,X
+	DEX
+	BPL	!1	;set DORND seed
+	LDA	#5
+	
+	ELSE	;(GOATSOUP)
+
+	RTS
+
+	ENDIF	;(GOATSOUP)
+
+
+PD4	JMP	DETOKtrue
+
+
+
+GoDoLow	JMP	TT27low
+
+TT27true	; Davids token routine
+	IF	NEEDPOLL
+	PHA
+	POLLBIT	52	
+	PLA
+	ENDIF
+;TT27true2
+
+	TAX
+	BMI	!43
+	CMP	#10
+	BCC	GoDoLow	; <10=>Magic
+	
+	CMP	#$60
+	BCS	extrue	; >$5F=>Unpack
+	CMP	#14
+	BCC	!6	;!! was P%+6
+	CMP	#32
+	BCC	!qw
+!6	LDX	QQ17	;QQ17=0=>Print as is (uppercase)
+	BEQ	!74	;QQ17=$80=>lower case except after spacer
+	BMI	!41	;    =255=>disable print
+	BIT	QQ17	; (bit 6=0=>last char was spacer)
+	BVS	!46	;    =$40=>Force upper case
+!42
+	TAX
+	LDA	CASINGTABLE,X
+!46
+!74	JMP	TT26
+
+!41
+	BIT	QQ17
+	BVS	!45
+	JMP	TT26
+
+
+!qw	ADC	#114	;If 14<A<32 then unpack A+114
+	BNE	extrue
+
+!45	CPX	#FF
+	BNE	!42
+	RTS
+
+
+!43	CMP	#160
+	BCS	!47
+	AND	#127
+	ASL	A
+	TAY
+	LDA	QQ16,Y
+	JSR	TT27true
+	LDA	QQ16+1,Y
+	CMP	#63
+	BNE	TT27true
+!ANRTS	RTS
+
+!47	SBC	#160
+
+extrue	; Unpack Ath word
+	TAX
+	IF	MULTILANG
+	COPY2B	V,QQ18V
+	ELSE
+	FNset2b	V,QQ18
+	ENDIF
+
+	LDY	#0
+	TXA
+	BEQ	!50
+!51	LDA	(V),Y
+	BEQ	!49
+	INY
+	BNE	!51
+	INC	V+1
+	BNE	!51
+!49	POLLBIT	53
+	INY
+	BNE	!59
+	INC	V+1
+!59	DEX
+	BNE	!51
+!50
+	TYA
+	PHA
+	LDA	V+1
+	PHA
+	LDA	(V),Y
+
+	EOR	#$3E
+
+	JSR	TT27true
+	PLA
+	STA	V+1
+	PLA
+	TAY
+	INY
+	BNE	*+4	;!! was P%
+	INC	V+1
+	LDA	(V),Y
+	BNE	!50
+	RTS
+
+
+;	New TT26 entry for right justified text
+
+DASC
+
+TT26
+	STA	SC+1
+	POLLBIT	253
+	LDA	SC+1
+	STX	SC
+	LDX	#FFmask
+	STX	DTW8
+;	LDX	#FF
+	CMP	#32
+	BEQ	DA8
+	CMP	#"."
+	BEQ	DA8
+	CMP	#":"
+	BEQ	DA8
+	CMP	#"'"
+	BEQ	DA8
+	CMP	#"("
+	BEQ	DA8
+	CMP	#10
+	BEQ	DA8
+	CMP	#12
+	BEQ	DA8	; Check for uppercasing
+	CMP	#"-"	; characters
+	BEQ	DA8
+	LDA	QQ17
+	ORA	#$40
+	STA	QQ17
+	INX
+	BEQ	DA9
+
+DA8	LDA	QQ17
+	AND	#$BF
+	STA	QQ17
+;	LDX	#FF
+
+DA9	STX	DTW2
+	LDX	SC
+
+;	POLLBIT	254
+
+	LDA	SC+1
+	BIT	DTW4
+	BMI	!1
+	JMP	CHPR
+!1	BIT	DTW4
+	BVS	!2
+	CMP	#12	; Keep putting into buffer
+	BEQ	DA1	; until get character 12
+!2	LDX	DTW5
+	STA	BUF,X
+	LDX	SC
+	INC	DTW5
+	POLLBIT	252
+	CLC
+	RTS
+
+
+DA6p3S	JMP	DA6p3
+DA6S	JMP	DA6
+
+DA1	TXA
+	PHA
+	TYA
+	PHA
+DA5	LDX	DTW5	; If less than full line
+	BEQ	DA6p3S	; just print it out
+	CPX	#(LL+1)	; otherwise set SC+1=64
+	BCC	DA6S
+	LSR	SC+1
+DA11	LDA	SC+1
+	BMI	!6	;!! was P%+6
+	LDA	#64
+	STA	SC+1
+!6	LDY	#(LL-1)
+DAL1	LDA	BUF+LL	; If line does not
+	CMP	#32	; end with space
+	BEQ	DA2
+!L2	POLLBIT	238
+	DEY		; look for space
+	BMI	DA11	; but reject first one found
+	BEQ	DA11	; unless its the only one
+	LDA	BUF,Y
+	CMP	#32
+	BNE	!L2
+	ASL	SC+1
+	BMI	!L2
+	STY	SC
+	LDY	DTW5	; shuffle text up one
+!L6	POLLBIT	239
+	LDA	BUF,Y	; character to expand
+	STA	BUF+1,Y	; the space
+	DEY
+	CPY	SC
+	BCS	!L6
+	INC	DTW5
+	LDA	#32
+!L3	CMP	BUF,Y	; and if this hasn't moved a space
+	BNE	DAL1	; to the end repeat but if it
+	DEY		; has then 
+	BPL	!L3
+	BMI	DA11
+DA2	LDX	#LL	; print first LL characters
+	JSR	DAS1	; in buffer
+	LDA	#12
+	JSR	CHPR
+	LDA	DTW5
+	;CLC
+	SBC	#LL
+	STA	DTW5
+	TAX
+	BEQ	DA6p3
+	LDY	#0
+	INX
+	SPOLLBIT	177
+DAL4	LDA	BUF+LL+1,Y	; then move remaining buffer down
+	STA	BUF,Y	; by LL characters
+	INY
+	DEX
+	BNE	DAL4
+	JMP	DA5
+
+
+DAS1	; Print X charaters in buffer
+	LDY	#0
+DAL5	LDA	BUF,Y
+	JSR	CHPR
+	INY
+	DEX
+	BNE	DAL5
+dec27	RTS
+DA6	JSR	DAS1
+DA6p3	STX	DTW5
+	PLA
+	TAY
+	PLA
+	TAX
+	LDA	#12
+DA7	EQUB	$2C
+	LDA	#7
+	JMP	CHPR
+
+
+	;	............. Character Print ..............
+
+
+		
+R5	;JSR	BEEP
+	JMP	RR4
+clss		lda	#2
+		sta	yc
+
+	LDA	K3
+	JMP	RRafter
+RR4S	JMP	RR4
+;TT67			;you cant just redefine TT67!!!
+	LDA	#12
+
+
+delchar	equ	$7F	; Delete character
+
+
+CHPR	; Char A at cell XC,YC (YC=0 => top banner) in colour COL
+	; MUST CLEAR C
+
+	STA	K3
+
+	IF	NEEDPOLL
+	POLLBIT	54
+	LDA	K3
+	ENDIF
+
+	STY	YSAV2
+	STX	XSAV2
+	LDY	QQ17
+	CPY	#FF
+	BEQ	RR4S
+RRafter	CMP	#7
+	BEQ	R5
+	CMP	#32
+	BCS	RR1
+	CMP	#10
+	BEQ	RRX1
+RRX2	LDX	#1
+	STX	XC
+RRX1	CMP	#13
+	BEQ	RR4S
+	INC	YC
+	BNE	RR4S
+
+RR1	LDX	XC		; Check XC OK
+	CPX	#nca		; with possible
+	BCC	RR5		; resultant line feed
+	LDX	#1
+	STX	XC
+	INC	YC
+RR5	LDX	YC		; Check YC OK
+	CPX	#txli+2		; with possible
+	BCC	RR3		; resultant clear screen
+	JMP	clss
+RR3	CMP	#delchar
+	BNE	!3		; Check for delete char
+	JMP	RR2
+!3	INC	XC
+
+	LDA	MODE		; Is font resident?
+	AND	#$30
+	BEQ	!2
+	LDY	TCOL
+	CPY	#tcol0
+	BEQ	!5
+	AND	#$20
+	BEQ	!2
+	CPY	#tcol1
+	BNE	!2
+
+
+	LDA	K3
+	CLC
+	ADC	#fontsize
+	JMP	RRn2
+!5	LDA	K3
+	JMP	RRn2
+!2	; Have to add char defn to font
+	LDA	K3
+	CMP	#32		; Don't waste memory
+	BNE	!8		; on space definitions
+	JMP	RR4
+!8
+	TAY
+	CLC
+	ADC	#>(nonasci-32)
+	LDX	#0
+	STX	Pa+2
+	ASL	A
+	ROL	Pa+2
+	ASL	A
+	ROL	Pa+2
+	ASL	A
+	ROL	Pa+2
+	ADC	#>TYPEFACE
+	STA	Pa+1
+	LDA	Pa+2
+	ADC	#<TYPEFACE
+	STA	Pa+2	; Pa+1=pointer to char defn
+
+	LDA	#0
+	STA	SC+1
+	LDA	YC
+	BNE	!1
+	JMP	RRn4
+!1	LDA	MODE
+	BNE	!4
+	JMP	RRn9
+!4	JSR	RRS1
+
+	LDY	XC
+	DEY
+	LDA	(SC),Y
+	BEQ	RRn5
+;	JMP	RRn1
+RRn5	;	Need to allocate new char
+	;	in col TCOL
+	; tcol0 is colour 1 on colour 0
+	; tcol1 is colour 2 on colour 0
+	; tcol2 is colour 3 on colour 0
+
+	LDA	frchar
+	BEQ	RR4
+	CMP	#FF
+	BEQ	RR4
+
+
+	STA	(SC),Y
+	STA	(LI),Y
+	INC	frchar
+	LDY	TCOL
+	DEY
+	BEQ	RRn51
+	DEY
+	BNE	!1
+	JMP	RRn52
+!1
+ 	TAY
+	FNfoentry0	LI
+	TYA
+	FNfoentry1	SC
+	LDY	#0
+	DO	7
+	LDA	(Pa+1),Y
+	STA	(SC),Y
+	STA	(LI),Y
+	INY
+	LOOP
+	LDA	(Pa+1),Y
+	STA	(LI),Y
+	STA	(SC),Y
+RR4	LDY	YSAV2
+	LDX	XSAV2
+	POLLBIT	250
+
+	LDA	K3
+	CLC
+	RTS	;must exit CHPR with C=0
+
+
+RRn51	FNfoentry0	SC
+	JMP	RRn53
+
+RRn52	FNfoentry1	SC
+RRn53	LDY	#0
+	DO	7
+	LDA	(Pa+1),Y
+	STA	(SC),Y
+	INY
+	LOOP
+	LDA	(Pa+1),Y
+	STA	(SC),Y
+	JMP	RR4
+
+
+RR2	;       Delete character
+	JSR	RRS1
+	LDY	XC
+	DEC	XC
+	LDA	#0
+	STA	(SC),Y
+	STA	(LI),Y
+	JMP	RR4
+
+RRn2	; Got whole typeface in font already
+	PHA
+	JSR	RRS1
+	PLA
+	CMP	#32
+	BEQ	!1
+!3	CLC
+	ADC	typebase	;(firstasci-32)
+!2	LDY	XC
+	DEY
+	STA	(SC),Y
+	STA	(LI),Y
+	JMP	RR4
+
+!1	LDY	MODE
+	CPY	#glchrt2
+	BEQ	!4
+	CPY	#pwrmod2
+	BNE	!3
+!4	LDA	#0
+	BEQ	!2
+
+RRn1	; Character already present
+	; so OR with it
+	FNfoentry	SC
+!4	LDY	#0
+	DO	7
+	LDA	(Pa+1),Y
+	ORA	(SC),Y
+	STA	(SC),Y
+	INY
+	LOOP
+	LDA	(Pa+1),Y
+	ORA	(SC),Y
+	STA	(SC),Y
+	JMP	RR4
+
+
+RRn9	; Print over front view
+	LDA	#0
+	STA	SC+1
+	LDA	YC
+	BNE	!1
+	LDA	#FF
+!1	CLC
+	ADC	#banner-1
+	ASL	A
+	ASL	A
+	ASL	A
+	ASL	A
+	ROL	SC+1
+	SEC
+	ROL	A
+	STA	SC
+	LDA	SC+1
+	ROL	A
+	ADC	fvdm+1
+	STA	SC+1
+
+	LDY	XC
+	DEY
+
+	LDA	(SC),Y	; This check only needed
+	BNE	RRn1	; cos of laser lines
+
+	LDA	frchar
+	BEQ	RRn94
+	STA	(SC),Y
+	INC	frchar
+
+	FNfoentry	SC
+	LDY	#0
+	DO	7
+	LDA	(Pa+1),Y
+	STA	(SC),Y
+	INY
+	LOOP
+	LDA	(Pa+1),Y
+	STA	(SC),Y
+RRn94	JMP	RR4
+
+
+
+	IF	DIALSONTOP
+
+RRn4	; Banner print in nonTrade mode
+	LDA	#>((banner+dili+nli+1)*ncl+1)
+	STA	SC
+	LDA	fvdm+1
+	CLC
+	ADC	#<((banner+dili+nli+1)*ncl+1)
+	STA	SC+1
+	LDY	XC
+	DEY
+	JMP	RRn5
+
+	ELSE
+
+RRn4	; Banner print in nonTrade mode
+	LDA	#banner*ncl-ncl+1
+	STA	SC
+	LDA	fvdm+1
+	STA	SC+1
+	LDY	XC
+	DEY
+	JMP	RRn5
+
+	ENDIF	;(DIALSONTOP)
+
+CASINGTABLE	; Upper to Lower Case Tweaking table (yes I know this
+	; is the wrong way to do it - its historical okay?)
+	HEX	00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 
+	HEX	10 11 12 13 14 15 16 17 18 19 1A 1B 1C 1D 1E 1F
+	HEX	20 21 24 2F 24 25 26 27 28 29 2A 2B 2C 2D 2E 2F	;!-/
+	HEX	30 31 32 33 34 35 36 37 38 39 3A 3B 25 2A 3E 3F	;0-?
+	HEX	60 61 62 63 64 65 66 67 68 69 6A 6B 6C 6D 6E 6F	;@,A-O
+	HEX	70 71 72 73 74 75 76 77 78 79 7A 7B 7C 7D 3B 2B	;P-Z,_
+	HEX	60 61 62 63 64 65 66 67 68 69 6A 6B 6C 6D 6E 6F	;#,a-o
+	HEX	70 71 72 73 74 75 76 77 78 79 7A 7B 7C 7D 7E 7F	;p-z,7F
+
+
+
+	BMESSAGE	"End of token bank"
+
+	IF	*>$BFF9
+	ERROR	Token bank code too long!
+	ENDIF
+
+lowfree2	equ	$BFFA-*
+	VECMAC
+
+
+	BANK	tokbank
+
+;
+;	**************************************
+;
+
+

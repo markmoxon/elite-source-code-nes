@@ -1,0 +1,1326 @@
+;
+;REM	ELITE <C> Joint
+;
+;	Tactics, Launch/Dock, Hyperspace, Missions
+;
+conhieght	equ	80+20
+
+;	IF	FULL
+
+TA352	LDA	INWK
+	ORA	INWK+3
+	ORA	INWK+6
+	BNE	TA872
+	LDA	#80
+	JSR	OOPS	; Hit player
+TA872	LDX	#PLT
+	BNE	TA353
+TA34	LDA	#0
+	JSR	MAS4
+	BEQ	*+5	;!! was P%
+	JMP	TN4	;fix
+	JSR	TA873
+	JSR	EXNO3
+	LDA	#250
+	JMP	OOPS
+TA18	; Missile tactics
+	LDA	ECMA	; Blow up missile
+	BNE	TA352	; if ECM active
+	LDA	INWK32
+	ASL	A
+	BMI	TA34
+	LSR	A
+	TAX
+	LDA	UNIV,X
+	STA	V
+	LDA	UNIV+1,X
+	JSR	VCSUB	; K3=INWK-Ship X's posn
+	LDA	K3+2
+	ORA	K3+5
+	ORA	K3+8
+	AND	#127
+	ORA	K3+1
+	ORA	K3+4
+	ORA	K3+7
+	BNE	TA64	; Proximity check to tgt
+	LDA	INWK32
+	CMP	#$82
+	BEQ	TA352
+	LDY	#31
+	LDA	(V),Y
+	BIT	M32+1	; some sort of fix to prevent
+	BNE	TA35	; player hitting his own missiles
+	ORA	#128
+	STA	(V),Y
+TA35	LDA	INWK	; Check for collision with player
+	ORA	INWK+3
+	ORA	INWK+6
+	BNE	TA87
+	LDA	#80
+	JSR	OOPS
+TA87	LDA	INWK+32
+	AND	#127
+	LSR	A
+	TAX
+	LDA	FRIN,X
+	TAX
+TA353	JSR	EXNO2
+TA873	ASL	INWK+31
+	SEC
+	ROR	INWK+31
+TA1	RTS
+
+
+TA64	JSR	DORND
+	CMP	#16
+	BCS	TA19S
+M32	LDY	#32
+	LDA	(V),Y
+	LSR	A
+	BCS	samuel	;Enemy ship uses ECM
+TA19S	JMP	TA19
+samuel	JMP	ECBLB2
+
+TACTICS
+	LDA	#3
+	STA	RAT
+	STA	NEWTAC
+	LDA	#4
+	STA	RAT2
+	LDA	#22	; CNT2=22= value for f.r not to
+	STA	CNT2	;          decelerate 
+	CPX	#MSL
+	BEQ	TA18
+	CPX	#SST
+	BNE	TA13
+	; Space station considers launching ships
+	LDA	NEWB
+	AND	#4
+	BNE	TN5	; If angry launch cops
+
+	LDA	MANY+TRA	; Dont create any shuttles if
+	ORA	auto	; a transporter about or docking
+	BNE	TA1	; computers on or random<254
+	JSR	DORND
+	CMP	#253
+	BCC	TA1
+
+	AND	#1
+	ADC	#SHU-1
+	TAX
+	BNE	TN6
+TN5	; Consider launching cops
+	JSR	DORND
+	CMP	#240
+	BCC	TA1
+	LDA	MANY+COPS
+	CMP	#4	;<<
+	BCS	TA22
+	LDX	#COPS
+TN6	LDA	#$F1
+	JMP	SFS1
+
+TA13	CPX	#HER	; If rock hermit consider creating
+	BNE	TA17	; ship inside it
+	JSR	DORND
+	CMP	#200
+	BCC	TA22
+	LDX	#0
+	STX	INWK+32
+	LDX	#$24
+	STX	NEWB
+	AND	#3
+	ADC	#SH3
+	TAX
+	JSR	TN6
+	LDA	#0
+	STA	INWK32
+ANRTS9	RTS
+TA17
+	LDY	#14	; Recharge energy up to
+	SHIPREAD	; limit in defship block
+	CMP	INWK35
+	BCC	TA21
+	BEQ	TA21
+	INC	INWK35
+
+TA21	CPX	#TGL	; Temporarily pacify any lone tharglets
+	BNE	TA14
+	LDA	MANY+THG
+	BNE	TA14
+	LSR	INWK32	; but clear ecm
+	ASL	INWK32	; bit and half velocity
+	LSR	INWK+27
+TA22	RTS
+
+
+TA14	; Tactics for standard enemy ship
+	JSR	DORND	; Consider exiting early
+	LDA	NEWB	; if sluggish mover
+	LSR	A
+	BCC	TN1
+	CPX	#50
+	BCS	TA22
+TN1	LSR	A
+	BCC	TN2	; Attack if police record high
+	LDX	FIST
+	CPX	#40
+	BCC	TN2
+	LDA	NEWB
+	ORA	#4
+	STA	NEWB
+	LSR	A
+	LSR	A
+TN2	LSR	A
+	BCS	TN3
+	LSR	A
+	LSR	A
+	BCC	GOPL
+	JMP	DOCKIT
+
+GOPL	JSR	SPS1
+	JMP	TA151
+
+
+TN3	; Know ship is angry with player
+	LSR	A
+	BCC	TN4
+	LDA	SSPR	; If space station around
+	BEQ	TN4	; and scared of it then set
+	LDA	INWK32	; bravery=0
+	AND	#129
+	STA	INWK32
+TN4
+	LDX	#8
+TAL1	LDA	INWK,X
+	STA	K3,X
+	DEX		;K3=INWK
+	BPL	TAL1
+TA19	JSR	TAS2	;XX15=r~96=-target vector
+	LDY	#10
+	JSR	TAS3	
+	STA	CNT	;CNT=f.r
+
+	POLLBIT	190
+
+	LDA	TYPE
+	CMP	#MSL
+	BNE	!5	;!! was P%
+	JMP	TA20
+!5	CMP	#ANA
+	BNE	TN7
+	JSR	DORND
+	CMP	#200
+	BCC	TN7
+	JSR	DORND
+	LDX	#WRM
+	CMP	#100
+	BCS	*+4	;!! was P%
+	LDX	#SH3
+	JMP	TN6
+
+TN7	JSR	DORND	; Slight chances of
+	CMP	#250	; gratuitous "victory roll"
+	BCC	TA7
+	JSR	DORND
+	ORA	#$68
+	STA	INWK+29
+
+TA7	LDY	#14
+	SHIPREAD
+	LSR	A
+	CMP	INWK35	; If less than half energy...
+	BCC	TA3
+	LSR	A
+	LSR	A
+	CMP	INWK35
+	BCC	ta3_LC
+	JSR	DORND	; If less than eighth energy
+	CMP	#230
+	BCC	ta3_LC
+!2	LDX	TYPE
+	LDY	TYPE
+	JSR	RDEPCENT
+	BPL	ta3_LC
+	LDA	NEWB
+	AND	#$F0
+	STA	NEWB
+	LDY	#(NEWB-INWK); (needed because SFS1 copies
+	STA	(INF),Y	;  down from store copy)
+	LDA	#0
+	STA	INWK32	; then launch escape capsule
+	JMP	SESCP
+ta3_LC	LDA	INWK+31
+	AND	#7
+	BEQ	TA3
+	STA	T
+	JSR	DORND
+	AND	#31
+	CMP	T
+	BCS	TA3
+	LDA	ECMA	; Don't fire missile if ECM active
+	BNE	TA3
+	DEC	INWK+31
+	LDA	TYPE
+	CMP	#THG
+	BNE	TA16
+	LDX	#TGL
+	LDA	INWK+32
+	JMP	SFS1
+TA16	JMP	SFRMIS
+
+TA3	POLLBIT	214
+	LDA	#0	; If not too far away
+	JSR	MAS4
+	AND	#$E0
+	BNE	TA4
+	LDX	CNT	; and f.r< -30
+	CPX	#128+30
+	BCC	TA4
+	LDY	#19
+	SHIPREAD
+	AND	#$F8	; and has laser
+	BEQ	TA4
+
+	CPX	#128+33
+	BCC	!2
+	LDA	INWK+31	; Then  fire laser if f.r<-33r
+	ORA	#64
+	STA	INWK+31
+	CPX	#163	; and hit if f.r<-35
+	BCS	!1
+
+!2	JSR	TAS6	; Align onto -r unless hitting
+	LDA	CNT	; 
+	EOR	#128
+	STA	CNT
+;	LSR	CNT2
+	JSR	SETSPINS
+	JMP	!3
+!1	SHIPREAD
+	LSR	A
+	JSR	OOPS
+	LDY	#sfxelas
+	JSR	NOISE	
+!3			;
+	LDA	INWK+7	; If player is pointing at
+	CMP	#3	; me and random<bravery 
+	BCS	!4
+
+	JSR	DORND
+	ORA	#$C0
+	CMP	INWK32	; then peel off
+	BCC	!4
+	JSR	DORND
+	AND	#$87
+	STA	INWK+30
+	JMP	TA98
+
+!4	LDA	INWK+1	; otherwise decel unless far away
+	ORA	INWK+4
+	ORA	INWK+7
+	AND	#$E0
+	BEQ	TA92
+	BNE	TA98
+
+
+TA4	LDA	INWK+7	; If player is pointing at
+	CMP	#3	; me and random<bravery 
+	BCS	TA5
+	LDA	INWK+1
+	ORA	INWK+4
+	AND	#$FE	; or very close
+	BEQ	TA15
+
+TA5	JSR	DORND
+	ORA	#128
+	CMP	INWK32	; then skip negation of r
+	BCS	TA15
+
+	STA	NEWTAC
+
+TA20	; (missiles always negate r)
+
+;	LDA	#123
+;	STA	CRGO+3
+
+	JSR	TAS6	; then negate r
+	LDA	CNT	; and CNT to give r=tgt vector
+	EOR	#128
+TA152	STA	CNT
+
+TA15	; Try to align along r=XX15
+	; assume CNT=f.r
+	; Don't get too close if NEWTAC -ve
+
+	JSR	SETSPINS
+TA6
+	LDA	NEWTAC	; Worried about getting too close
+	BPL	!1
+	LDA	INWK+1
+	ORA	INWK+4
+	ORA	INWK+7
+	AND	#$F8
+	BNE	!1
+	LDA	CNT
+	BMI	!2
+	CMP	CNT2	; so decell if happy
+	BCS	TA92
+!2	JMP	TA93	; coast else
+
+!1	LDA	CNT	; If not worried about geting close
+	BMI	TA9
+	CMP	CNT2
+	BCC	TA93	; then if CNT>CNT2 then 
+TA98	LDA	#3	; accel since happy
+	BNE	TA99	; If 0=<CNT<CNT2 coast
+
+TA9	AND	#127	; If CNT>-18 then coast
+;	CMP	#18	; 
+	CMP	#6
+	BCS	TA92	; 
+
+TA93
+	LDA	INWK+27	; Maintain speed
+	CMP	#6	; unless <8
+	BCC	TA98	; but random chance of
+	JSR	DORND	; decell
+	CMP	#200
+	BCC	TA10
+
+TA92	LDA	#FF	; If CNT<-18 then deccel since facing
+	LDX	TYPE	; wrong way (at -2 if missile)
+	CPX	#MSL
+	BNE	TA99	;!! was P%+3
+	ASL	A
+TA99	STA	INWK+28
+TA10	RTS
+
+TA151	LDY	#10
+	JSR	TAS3
+	CMP	#$98
+	BCC	!1
+	LDX	#0
+	STX	RAT2
+!1	JMP	TA152
+
+
+SETSPINS	; Set spins to align to r=XX15 (assume CNT=f.r)
+	LDY	#16
+	JSR	TAS3
+
+;	STA	CRGO+7
+
+	TAX
+	EOR	#128
+	AND	#128
+	STA	INWK+30	; Dive/Climb=-u.r
+
+	POLLBIT	191
+
+	LDA	CNT	; Added by Ian for NES -
+	BPL	!1	; If heading directly away
+	CMP	#128+31	; from desired direction then force
+	BCC	!1	; max dive/climb and decel
+	LDA	#7
+	ORA	INWK+30
+	STA	INWK+30
+	LDA	#0
+	BEQ	!4
+
+!1	TXA
+	ASL	A
+	CMP	RAT2
+	BCC	!2
+	LDA	RAT
+
+	ORA	INWK+30
+	STA	INWK+30
+!2
+	LDA	INWK+29	; Unless doing roll then
+	ASL	A
+	CMP	#32
+	BCS	!3
+	LDY	#22
+	JSR	TAS3
+	TAX
+	EOR	INWK+30
+	AND	#128
+	EOR	#128
+	STA	INWK+29	; Spin=-fxu.r
+
+	TXA
+	ASL	A
+	CMP	RAT2
+	BCC	!3
+	LDA	RAT
+	ORA	INWK+29
+!4	STA	INWK+29
+!3	RTS
+
+
+
+
+
+DOCKIT	LDA	#6
+	STA	RAT2
+	LSR	A
+	STA	RAT
+	LDA	#$1D
+	STA	CNT2
+	LDA	SSPR
+	BNE	*+5	;!! was P%
+GOPLS	JMP	GOPL
+	JSR	VCSU1	;K3=ship-spc.stn
+	LDA	K3+2
+	ORA	K3+5
+	ORA	K3+8
+	AND	#127
+	BNE	GOPLS
+	JSR	TA2
+	LDA	Q
+	STA	K
+	JSR	TAS2
+	LDY	#10
+	JSR	TAS4
+	BMI	PH1
+	CMP	#$23
+	BCC	PH1	;fss.r
+	LDY	#10
+	JSR	TAS3
+	CMP	#$A2	;fpl.r
+	BCS	PH3
+	LDA	K
+	;BEQPH10
+	CMP	#$9D
+	BCC	PH2
+	LDA	TYPE
+	BMI	PH3
+PH2	JSR	TAS6
+	JSR	TA151
+PH22	LDX	#0
+	STX	INWK+28
+	INX
+	STX	INWK+27
+	RTS
+PH1	JSR	VCSU1
+	JSR	DCS1
+	JSR	DCS1
+	JSR	TAS2
+	JSR	TAS6
+	JMP	TA151	;head for sp+
+TN11	INC	INWK+28
+	LDA	#127
+	STA	INWK+29
+	BNE	TN13
+
+PH3	POLLBIT	194
+
+	LDX	#0
+	STX	RAT2
+	STX	INWK+30
+	LDA	TYPE
+	BPL	PH32
+	EOR	XX15
+	EOR	XX15+1
+	ASL	A
+	LDA	#2
+	ROR	A
+	STA	INWK+29
+	LDA	XX15
+	ASL	A
+	CMP	#12
+	BCS	PH22
+	LDA	XX15+1
+	ASL	A
+	LDA	#2
+	ROR	A
+	STA	INWK+30
+	LDA	XX15+1
+	ASL	A
+	CMP	#12
+	BCS	PH22
+PH32	STX	INWK+29
+	LDA	INWK+22
+	STA	XX15
+	LDA	INWK+24
+	STA	XX15+1
+	LDA	INWK+26
+	STA	XX15+2
+	LDY	#16
+	JSR	TAS4
+	ASL	A
+	CMP	#$42
+	BCS	TN11
+	JSR	PH22
+TN13	LDA	K3+10
+	BNE	TNRTS
+	ASL	NEWB
+	SEC
+	ROR	NEWB
+TNRTS	RTS		;Docked
+VCSU1	LDA	#((Kpcent+NIpcent)&255)
+	STA	V
+	LDA	#((Kpcent+NIpcent)/256)
+
+VCSUB	; K3=INWK-(V)
+	STA	V+1
+	LDY	#2
+	JSR	TAS1
+	LDY	#5
+	JSR	TAS1
+	LDY	#8
+
+TAS1	;K3,Y-2= INWK,Y-2 - (V),Y-2
+
+	POLLBIT	91
+	LDA	(V),Y
+	EOR	#128
+	STA	K+3
+	DEY
+	LDA	(V),Y
+	STA	K+2
+	DEY
+	LDA	(V),Y
+	STA	K+1
+	STY	U
+	LDX	U
+	JSR	MVT3
+	LDY	U
+	STA	K3+2,X
+	LDA	K+2
+	STA	K3+1,X
+	LDA	K+1
+	STA	K3,X
+	RTS
+
+TAS4	LDX	Kpcent+NIpcent,Y
+	STX	Q
+	LDA	XX15
+	JSR	MULT12
+	LDX	Kpcent+NIpcent+2,Y
+	STX	Q
+	LDA	XX15+1
+	JSR	MAD
+	STA	S
+	STX	R
+	LDX	Kpcent+NIpcent+4,Y
+	STX	Q
+	LDA	XX15+2
+	JMP	MAD
+
+TAS6	;Negate XX15
+
+	LDA	XX15
+	EOR	#128
+	STA	XX15
+	LDA	XX15+1
+	EOR	#128
+	STA	XX15+1
+	LDA	XX15+2
+	EOR	#128
+	STA	XX15+2
+	RTS
+
+;	ELSE
+;TACTICS	RTS
+;	ENDIF	; (FULL)
+
+DCS1	JSR	*+3	;!! was P%
+	LDA	Kpcent+NIpcent+10
+	LDX	#0
+	JSR	TAS7
+	LDA	Kpcent+NIpcent+12
+	LDX	#3
+	JSR	TAS7
+	LDA	Kpcent+NIpcent+14
+	LDX	#6
+TAS7	ASL	A
+	STA	R
+	LDA	#0
+	ROR	A
+	EOR	#128
+	EOR	K3+2,X
+	BMI	TS71
+	LDA	R
+	ADC	K3,X
+	STA	K3,X
+	BCC	TS72
+	INC	K3+1,X
+TS72	RTS
+TS71	LDA	K3,X
+	SEC
+	SBC	R
+	STA	K3,X
+	LDA	K3+1,X
+	SBC	#0
+	STA	K3+1,X
+	BCS	TS72
+	LDA	K3,X
+	EOR	#FF
+	ADC	#1
+	STA	K3,X
+	LDA	K3+1,X
+	EOR	#FF
+	ADC	#0
+	STA	K3+1,X
+	LDA	K3+2,X
+	EOR	#128
+	STA	K3+2,X
+	JMP	TS72
+
+HITCH	CLC
+	LDA	INWK+8
+	BNE	HI1
+	LDA	TYPE
+	BMI	HI1
+	LDA	INWK+31
+	AND	#32
+	ORA	INWK+1
+	ORA	INWK+4
+	BNE	HI1
+	LDA	INWK
+	JSR	SQUA2
+	STA	S
+	LDA	P
+	STA	R
+	LDA	INWK+3
+	JSR	SQUA2
+	TAX
+	LDA	P
+	ADC	R
+	STA	R
+	TXA
+	ADC	S
+	BCS	TN10
+	STA	S
+	LDY	#2
+	SHIPREAD
+	CMP	S
+	BNE	HI1
+	DEY
+	SHIPREAD
+	CMP	R
+HI1	RTS
+
+TN10	CLC
+	RTS
+
+FRS1	; Fire out ship of type X
+	JSR	ZINF
+	LDA	#28
+	STA	INWK+3
+	LSR	A
+	STA	INWK+6
+	LDA	#128
+	STA	INWK+5
+	LDA	MSTG
+	ASL	A
+	ORA	#128
+	STA	INWK+32
+fq1	LDA	#96
+	STA	INWK+14
+	ORA	#128
+	STA	INWK+22
+	LDA	DELTA
+	ROL	A
+	STA	INWK+27
+	TXA
+	JMP	NWSHP
+
+
+;	IF	FULL
+
+FRMIS	LDX	#MSL
+	JSR	FRS1
+	BCC	FR1
+	LDX	MSTG
+	JSR	GINF
+	LDA	FRIN,X
+	JSR	ANGRY
+	LDY	#BLACK2
+	JSR	ABORT
+	DEC	NOMSL
+	LDA	COMBFLAG	; If in combat mode
+	BEQ	!1	; print penalty message 
+	LDA	#147	; and
+	LDY	#messup
+	JSR	MESSex
+	LDA	#25	; Add 60 to clock
+	STA	clok	; (this allows for NMI hit)
+	LDA	clok+1
+	CLC
+	ADC	#60
+	STA	clok+1
+	BCC	!2
+	INC	clok+2
+!2
+!1	LDY	#sfxfmis
+	JMP	NOISE
+
+ANGRY	; Player pisses of ship (type in A)
+	CMP	#SST
+	BEQ	AN2
+	LDY	#(NEWB-INWK)
+	LDA	(INF),Y
+	AND	#32
+	BEQ	!5	;!! was P%+5
+	JSR	AN2
+!5	LDY	#INWK32-INWK
+	LDA	(INF),Y
+	BEQ	HI1
+	ORA	#128
+	STA	(INF),Y	; Set in combat bit unless inert 
+	LDY	#28
+	LDA	#2
+	STA	(INF),Y	; Accelerate
+	ASL	A
+	LDY	#30
+	STA	(INF),Y	; and turn
+	LDA	TYPE
+	CMP	#CYL
+	BCC	AN3
+	LDY	#(NEWB-INWK)
+	LDA	(INF),Y	; Set angry-with-player bit
+	ORA	#4
+	STA	(INF),Y
+AN3	RTS
+
+AN2	; Piss off space stn
+	LDA	Kpcent+NIpcent+NEWB-INWK
+	ORA	#4
+	STA	Kpcent+NIpcent+NEWB-INWK
+	RTS
+
+;	ENDIF	; (FULL)
+
+FR1	LDA	#201
+	JMP	MESS	; Missile Jammed message
+
+SESCP	LDX	#ESC
+SFS1m2	LDA	#$FE	;SFS1- in EliteI
+
+
+SFS1	; Create ship of type X having tactics byte=A
+	STA	T1
+
+	POLLBIT	213
+	TXA
+	PHA
+	LDA	XX0
+	PHA
+	LDA	XX0+1
+	PHA
+	LDA	INF
+	PHA
+	LDA	INF+1
+	PHA
+	LDY	#NIdwn-1
+	
+FRL2	LDA	INWK,Y
+	STA	XX3,Y
+	LDA	(INF),Y
+	STA	INWK,Y
+	DEY
+	BPL	FRL2
+	LDA	TYPE
+	CMP	#SST
+	BNE	rx
+	TXA
+	PHA
+	LDA	#32
+	STA	INWK+27
+	LDX	#0
+	LDA	INWK+10
+	JSR	SFS2
+	LDX	#3
+	LDA	INWK+12
+	JSR	SFS2
+	LDX	#6
+	LDA	INWK+14
+	JSR	SFS2
+	PLA
+	TAX
+rx
+	LDA	T1
+	STA	INWK+32
+	LSR	INWK+29
+	ASL	INWK+29
+	TXA
+	CMP	#SPL+1
+	BCS	NOIL
+	CMP	#PLT
+	BCC	NOIL
+	PHA
+	JSR	DORND
+	ASL	A
+	STA	INWK+30
+	TXA
+	AND	#15
+	STA	INWK+27
+	LDA	#FF
+	ROR	A
+	STA	INWK+29
+	PLA
+NOIL	JSR	NWSHP
+	PLA
+	STA	INF+1
+	PLA
+	STA	INF
+	PHP			; Must preserve carry
+	SPOLLBIT	111	; from NWSHIP
+	PLP
+	LDX	#NIdwn-1
+FRL3	LDA	XX3,X
+	STA	INWK,X
+	DEX
+	BPL	FRL3 
+	PLA
+	STA	XX0+1
+	PLA
+	STA	XX0
+	PLA
+	TAX
+	RTS
+
+
+SFS2	ASL	A
+	STA	R
+	LDA	#0
+	ROR	A
+	JMP	MVT1
+
+;	IF	FULL
+
+
+LAUNFX
+	LDA	#0
+	JSR	TITS2true	
+	JSR	NOSPRITES
+	LDY	#sfxlaun
+	JSR	NOISE
+
+	LDA	#128
+	STA	K+2
+	LDA	Ymem
+	STA	K+3
+	LDA	#$50	;24
+	STA	TEMPX
+	LDA	#112
+	STA	TEMPY
+
+
+	LDY	#4
+	JSR	DELAY
+
+	LDY	#sfxlaun3
+	JSR	NOISE
+
+
+DKFL1	JSR	CLEANKEYS0
+
+	JSR	flipbank
+	LDA	TEMPX
+	AND	#15
+	ORA	#$60
+	STA	STP
+	LDA	#$80
+	STA	TEMPZ
+
+
+DKFL2
+	POLLBIT	92
+
+	LDA	STP
+	SEC
+	SBC	#16
+	BMI	!2
+	STA	STP
+	CMP	TEMPY
+	BCS	DKFL2
+	STA	Q
+	LDA	#8
+	JSR	LL28
+	LDA	R
+	SEC
+	SBC	#20
+	CMP	#Yabs+20-8*BIG
+	BCS	!2	;DKFL2	
+	STA	K+1
+;	LSR	A
+	LSR	A
+	ADC	K+1
+	STA	K
+
+	ASL	TEMPZ
+	BCC	!4
+
+	LDA	TEMPY
+	CMP	#$64	;94
+	BCS	!4
+
+
+	LDA	K+1
+	CMP	#Yabs
+	BCS	!3
+	LDA	STP
+	PHA
+	JSR	ZIGZAG
+	PLA
+	STA	STP
+
+!4	JSR	BOX
+	JMP	DKFL2
+
+!2	JSR	STARTDLOAD
+
+	IF	FASTLAUN
+	DEC	TEMPX
+	DEC	TEMPY
+	ENDIF
+	DEC	TEMPY
+	DEC	TEMPX
+	BNE	DKFL1
+
+	LDY	#sfxlaun2
+	JMP	NOISE
+
+
+!3	LDA	#Yabs
+	STA	K+1
+	LDA	STP
+	PHA
+	JSR	ZIGZAG
+	PLA
+	STA	STP
+	JMP	DKFL2
+
+
+
+
+LASLIm1	RTS
+LASLI	JSR	DORND
+	AND	#7
+	ADC	Ymem
+	SBC	#2	;3
+	STA	LASY
+	JSR	DORND
+	AND	#7
+	ADC	#X-4
+	STA	LASX
+	LDA	GNTMP
+	ADC	#6	; Was 8 on C64
+	STA	GNTMP	; Add 6 to laser temp every LASLI
+	JSR	DENGY
+	;LASLI2
+	LDA	MODE
+	BNE	LASLIm1
+	;LDA#RED;JSRDOCOL
+	LDA	#32
+	LDY	#224
+	JSR	las_LC
+	LDA	#48
+	LDY	#208
+las_LC	STA	X2
+	LDA	LASX
+	STA	X1
+	LDA	LASY
+	STA	Y1
+	LDA	Yx2M1
+	STA	Y2
+	JSR	LL30
+	LDA	LASX
+	STA	X1
+	LDA	LASY
+	STA	Y1
+	STY	X2
+	LDA	Yx2M1
+	STA	Y2
+	JMP	LL30
+
+;	IF	FULL
+
+BRIEF2
+	LDA	TP
+	ORA	#4
+	STA	TP
+	LDA	#11
+	JSR	DETOK
+	JSR	ENDTMODE
+	JMP	BAY
+
+
+
+BRP	JSR	DETOK
+	JSR	FADEDOWN
+BAYSTEP	JMP	BAY
+BRIEF3	LDA	TP
+	AND	#$F0
+	ORA	#10
+	STA	TP
+	LDA	#222
+	BNE	BRP
+DEBRIEF2	LDA	TP
+	ORA	#4
+	STA	TP
+	LDA	#2
+	STA	ENGY
+	INC	TALLY+1
+	LDA	#223
+	BNE	BRP
+
+DEBRIEF	LSR	TP
+	ASL	TP
+;	INC	TALLY+1	;done in killship
+	LDX	#(50000&255)
+	LDY	#(50000/256)
+	JSR	MCASH
+	LDA	#15
+BRPS	BNE	BRP
+
+
+	IF	HAVETRIBS
+TBRIEF
+	jsr	fudgeclear
+
+	LDA	#mismode
+	JSR	TT66
+	LDA	TP
+	ORA	#$10
+	STA	TP
+	LDA	#199
+	JSR	DETOK
+	JSR	ENDTMODE
+	JSR	YESNO
+	CMP	#1
+	BNE	BAYSTEP
+	LDY	#(50000/256)
+	LDX	#(50000&255)
+	JSR	LCASH
+	INC	TRIBBLE
+	JMP	BAY
+	ENDIF	;(HAVETRIBS)
+
+	;..................
+BRIEF	LSR	TP
+	SEC
+	ROL	TP
+	JSR	BRIS
+	JSR	ZINF
+	LDA	#CON
+	STA	TYPE
+	JSR	NWSHP
+	JSR	FREESCAN
+	LDA	#1
+	STA	XC
+	LDA	#1
+	STA	INWK+7
+	LDA	#80
+	STA	INWK+6
+
+	JSR	KILLDISP2
+
+
+	LDA	#brimode1
+	JSR	TITS2true
+
+	LDA	#64
+	STA	MCNT
+BRL1	LDX	#127
+	STX	INWK+29
+	STX	INWK+30
+	JSR	ONESHIP
+	JSR	MVEIT
+	DEC	MCNT
+	BNE	BRL1
+BRL2	LSR	INWK
+	INC	INWK+6
+	BEQ	BR2
+	INC	INWK+6
+	BEQ	BR2
+	LDX	INWK+3
+	INX
+	CPX	#conhieght
+	BCC	*+4	;!! was P%
+	LDX	#conhieght
+	STX	INWK+3
+	JSR	ONESHIP
+	JSR	MVEIT
+	DEC	MCNT
+	JMP	BRL2
+BR2	INC	INWK+7
+	LDA	#brimode2
+	JSR	TT66
+	LDA	#10
+	JMP	BRP
+
+BRIS	; Incoming message
+	LDA	#216
+	JSR	DETOK
+	JSR	FULLENDTMODE
+	LDY	#100
+	JMP	DELAY
+
+
+;	ENDIF	; (FULL)
+
+	;..............
+
+ping	LDX	#1		; Probably done this way
+!1	LDA	QQ0,X		; to get a free X=FF!
+	STA	QQ9,X
+	DEX
+	BPL	!1
+	RTS
+
+
+COMBATtrue
+	JSR	RES2
+	JSR	DFAULT
+	LDA	#0		; give player no fuel
+	STA	QQ14		; or cash
+	STA	CASH
+	STA	CASH+1
+	
+	LDA	#FF
+	STA	ECM		; ECM
+	LDA	#1	
+	STA	ENGY		; Energy boosters
+
+	LDA	#BeamLas
+	STA	LASER+0		; and a beam laser
+
+	IF	PROGTESTS
+	LDA	#127
+	STA	BOMB
+	ENDIF
+
+	LDA	#FF
+	STA	COMBFLAG
+	
+
+	JSR	SOLAR
+	LDA	#0
+	STA	DELTA		; Zero delta
+	STA	ALPHA		; and spin since these
+	STA	ALP1		; set nonzero by RES2
+	STA	QQ12		; flag not docked
+	STA	VIEW
+
+	JSR	TT66
+	LSR	COMBFLAG
+	JSR	COPYBANK
+	JSR	SENDSLOW0
+	JSR	NWLOOKS4
+
+	JSR	SETRAND
+
+	JSR	COMBS2
+	LDA	#6
+	STA	INWK+30
+	LDA	#$18
+	STA	INWK+29
+	LDA	#MAM
+	JSR	NWSHP
+
+	LDA	#10
+	JSR	COMBS1
+
+	LDA	#$92
+	STA	Kpcent+2*NIpcent+30
+	LDA	#1
+	STA	Kpcent+2*NIpcent+28
+	
+	JSR	COMBS2
+	LDA	#6
+	STA	INWK+30
+	ASL	INWK+2
+	LDA	#$C0
+	STA	INWK+29
+	LDA	#KRA
+	JSR	NWSHP
+
+	LDA	#6	;10
+	JSR	COMBS1
+
+
+	JSR	COMBS2
+	LDA	#6
+	STA	INWK+30
+
+
+	ASL	INWK+2
+	LDA	#0
+	STA	INWK
+	LDA	#70
+	STA	INWK+6
+
+
+	LDA	#SH3
+	JSR	NWSHP
+
+	LDA	#5	;6
+	JSR	COMBS1
+
+	LDA	#$C0
+	STA	Kpcent+4*NIpcent+30
+
+	LDA	#11
+	JSR	COMBS1
+
+
+	LDA	#50	; Start clock
+	STA	clok
+	LDA	#0
+	STA	clok+1
+	STA	clok+2	
+
+	JSR	SIGHT
+
+	LSR	SKIPFLAG
+	JSR	UPDATESTRIP
+
+	LDA	Sspeed
+	STA	Speed
+
+	LDA	#16
+	STA	DELTA
+	JMP	MLOOP
+
+
+COMBS1
+	STA	LASCT
+!1	JSR	FLIPBANK
+	JSR	MPCENT2
+	JSR	STARTDLOAD
+	LDA	stripop	
+	JSR	cleankeys
+	DEC	LASCT
+	BNE	!1
+	RTS
+
+
+COMBS2
+	JSR	ZINF
+	LDA	#96
+	STA	INWK+14
+	ORA	#128
+	STA	INWK+22	; Face forward
+	LDA	#$FE
+	STA	INWK+32	; Very brave
+
+	LDA	#$20
+	STA	INWK+27	; Speed=$8
+
+	LDA	#128
+	STA	INWK+2
+	LDA	#40
+	STA	INWK+0
+	LDA	#40
+	STA	INWK+3
+	LDA	#60
+	STA	INWK+6	; at (-40,40,60)
+	RTS
+
+
+

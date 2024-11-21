@@ -6,6 +6,8 @@ This folder contains the source files for the NES version of Elite.
 
 * [images](images) contains images and associated binaries that have been extracted from the game binary by the [unpack-data.py](../2-build-files/unpack-data.py) and [combine-images.py](../2-build-files/combine-images.py) scripts
 
+* [original-sources](original-sources) contains the original source code from Ian Bell's personal website
+
 * [view-attributes](view-attributes) contains view attribute binaries that have been extracted from the game binary by the [unpack-data.py](../2-build-files/unpack-data.py) script
 
 ---

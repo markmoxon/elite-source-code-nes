@@ -1,0 +1,478 @@
+;
+;	REM ELITE <L2>	Joint
+;
+;	Random,Project
+
+
+	IF	AUTOPLAY 
+KNOWNSTATE	LDY	#12
+	JSR	DELAY
+	LDA	#0
+	CLC
+	ADC	#0
+	STA	vbcnt
+	STA	clok
+	STA	clok+1
+	STA	clok+2
+	STA	vbank
+	STA	sbank
+	STA	bank
+
+	lda	#255	;Do this
+	sta	rnd	;to initialise
+	lda	#128	;the Random
+	sta	rnd+1	;number seed
+	lda	#27	;for the FX
+	sta	rnd+2	;which need
+	lda	#52	;it.
+	sta	rnd+3
+
+	JSR	deftog
+	LDA	#0
+	STA	Kpcent+6
+	STA	Kpcent
+	ENDIF
+
+SETRAND	LDA	#$75
+	STA	RAND
+	LDA	#$0A
+	STA	RAND+1
+	LDA	#$2A
+	STA	RAND+2
+	LDX	#$E6
+	STX	RAND+3
+	RTS
+
+
+deftog	; Default toggles
+	LDA	#0
+	STA	JSTGY
+	STA	mutok
+	LDA	#FF
+	STA	damp
+	STA	dnoiz
+	RTS
+
+
+
+TITLESEQ
+
+	JSR	FADEDOWN
+
+	IF	INCMUSIC	
+	LDA	#titletune
+	JSR	INITUNEsmart
+	ENDIF
+
+
+;	LDX	#0
+;	STX	stripenb
+
+	JSR	NOSPRITES
+	LDA	#FF
+	STA	MODE2
+
+
+	IF	TWOJOY
+	LDA	#1
+	STA	twoplayers	; Force two player mode
+	ENDIF
+
+	IF	AUTOSEARCH
+	ELSE
+	LDA	#50	; Zero clock
+	STA	clok
+	LDA	#0
+	STA	clok+1
+	STA	clok+2
+	ENDIF
+
+
+!3	LDY	#0
+!2	STY	TEMPZ
+	LDA	TSHIP,Y
+	BEQ	!3
+	TAX
+	LDA	TRANTAB,Y
+	TAY
+	LDA	#6
+
+	JSR	TITLE
+	BCS	!1
+	LDY	TEMPZ
+	INY
+	IF	AUTOSEARCH
+	JMP	!2
+	ENDIF	
+
+
+	IF	QUICKAUTO
+	LDA	clok+1
+	CMP	#$1C
+	BCC	!2
+	ELSE
+	LDA	clok+2
+	CMP	#1
+	BCC	!2
+	ENDIF
+
+
+	; Exit on 8.5 minute timeout
+	LSR	twoplayers	; Set one player mode	
+	
+	IF	INCMUSIC
+	JSR	KILLTUNE
+	ENDIF
+	JSR	FADEDOWN
+
+	LDA	LANG
+	STA	SAFESLOT
+	LDA	#5
+	STA	SAFESLOT+1
+
+	JMP	WARMSTART		; total restart
+
+!1	; Exit if button pressed (player mode set by detection)	
+	IF	INCMUSIC
+	JSR	KILLTUNE
+	ENDIF
+	RTS
+
+TSHIP
+
+	DB	CYL
+	DB	KRA
+ 	DB	ADA
+	DB	ASP
+
+	DB	THG
+	DB	GEK
+	DB	MAM
+	DB	FER
+
+	DB	TRA
+	DB	MSL
+	DB	SH3	
+	DB	COPS
+
+	DB	0
+
+TRANTAB
+	DB	100
+	DB	10
+	DB	10
+ 	DB	30
+
+	DB	180
+	DB	10
+	DB	40
+	DB	90
+
+	DB	10
+	DB	70
+	DB	40
+	DB	10
+
+
+Ze	JSR	ZINF
+	JSR	DORND
+	STA	T1
+	AND	#128
+	STA	INWK+2
+	JSR	DORND
+	AND	#128
+	STA	INWK+5
+	LDA	#25
+	STA	INWK+1
+	STA	INWK+4
+	STA	INWK+7
+	TXA
+	CMP	#245
+	ROL	A
+	ORA	#$C0
+	STA	INWK32
+	JMP	DORND2
+
+
+
+UPDATECYCLE	PHA		;increment cycle number if has been a save
+	LDA	NAME+7
+	BMI	!1	;no save
+	CLC
+	ADC	#1
+	CMP	#100
+	BCC	!1
+	LDA	#0
+!1	ORA	#128
+	STA	NAME+7
+	PLA
+	RTS
+
+
+
+NLIN3	PHA
+	LDA	#0
+	STA	YC
+	PLA
+	JSR	TT27
+NLIN4copy
+MTNLIN4
+NLIN4	LDA	#4	;19 iian
+	BNE	NLIN2
+NLIN	LDA	#1
+	STA	YC
+	LDA	#4	;iian
+
+NLIN2	SPOLLBIT	201
+	LDY	#1
+	LDA	#topbar
+!1	STA	VIDM1+(2+DIALSONTOP*stripw)*ncl,Y	
+	INY
+	CPY	#ncl
+	BNE	!1
+	RTS
+
+
+PREPFAKE
+	LDX	#0
+	JSR	writebank
+	RTS		
+
+CLEARFAKE
+	FNset2b	LI,SCBASE
+	LDY	#0
+	LDX	#<(TOPFAKE-SCBASE)
+	LDA	#0
+!1	STA	(LI),Y
+	INY
+	BNE	!1
+	INC	LI+1
+	DEX
+	BNE	!1
+	RTS
+
+
+
+DORND2	CLC
+DORND
+	LDA	RAND
+	ROL	A
+	TAX
+	ADC	RAND+2
+	STA	RAND
+	STX	RAND+2
+	LDA	RAND+1
+	TAX
+	ADC	RAND+3
+	STA	RAND+1
+	STX	RAND+3
+	RTS
+
+
+PROJ	LDA	INWK
+	STA	P
+	LDA	INWK+1
+	STA	P+1
+	LDA	INWK+2
+	JSR	PLS6
+	BCS	!1
+	LDA	K
+	ADC	#X
+	STA	K3
+	TXA
+	ADC	#0
+	STA	K3+1
+	LDA	INWK+3
+	STA	P
+	LDA	INWK+4
+	STA	P+1
+	LDA	INWK+5
+	EOR	#128
+	JSR	PLS6
+	BCS	!1
+	LDA	K
+	ADC	Ymem
+	STA	K4
+	TXA
+	ADC	#0
+	STA	K4+1
+	CLC
+!1	RTS
+
+PL212	SEC
+	RTS
+
+
+PLS6	JSR	DVID3B2
+	POLLBIT	152
+
+	LDA	K+3
+	AND	#127
+	ORA	K+2
+	BNE	PL212
+	LDX	K+1
+	CPX	#4
+	BCS	PL6
+	LDA	K+3
+	;CLC
+	BPL	PL6
+	LDA	K
+	EOR	#FF
+	ADC	#1
+	STA	K
+	TXA
+	EOR	#FF
+	ADC	#0
+	TAX
+	CLC
+PL6	RTS
+
+
+UNPACKTOSC1
+UNPACKTOSC2
+UNPCKTOSC3	; Unpack compressed data at V to SC
+	LDY	#0
+
+!1	POLLBIT	237
+	LDX	#0
+	LDA	(V,X)
+	INC	V
+	BNE	!5
+	INC	V+1
+
+!5	CMP	#$40
+	BCS	!2
+	TAX
+	AND	#$F
+	BEQ	!3
+	CPX	#$3F
+	BEQ	!4
+	TXA
+	CMP	#$20
+	BCS	!6
+	CMP	#$10
+	AND	#$F
+	TAX
+	BCS	!7
+
+	; Repeated 0s
+	LDA	#0
+!8	STA	(SC),Y
+	INY
+	BNE	!A
+	INC	SC+1
+!A	DEX
+	BNE	!8
+	JMP	!1
+
+!7	; Repeated FFs
+	LDA	#FF
+	BNE	!8
+
+
+!6	; Repeated byte
+	LDX	#0
+	CMP	#$30
+	BCS	!9
+	AND	#$0F
+	STA	T
+	LDA	(V,X)
+	LDX	T
+	INC	V
+	BNE	!8
+	INC	V+1
+	JMP	!8
+
+!9	; awkward sequence
+	AND	#$0F
+	STA	T
+!B	LDA	(V,X)
+	INC	V
+	BNE	!C
+	INC	V+1
+!C	STA	(SC),Y
+	INY
+	BNE	!D
+	INC	SC+1
+!D	DEC	T
+	BNE	!B
+	JMP	!1
+
+
+!3	; Take as is
+	TXA
+!2	STA	(SC),Y
+	INY
+	BNE	!1
+	INC	SC+1
+	JMP	!1
+!4	RTS
+
+UNPACKTOLATCH1
+UNPACKTOLATCH2	; Unpack compressed data at V to PPU latch
+UNPACKTOLATCH3	; Picbank2 incarnation
+	LDY	#0
+UNPCKTL32
+!1	LDA	(V),Y
+	INY
+	BNE	!5
+	INC	V+1
+!5	CMP	#$40
+	BCS	!2
+	TAX
+	AND	#$F
+	BEQ	!3
+	CPX	#$3F
+	BEQ	!4
+	TXA
+	CMP	#$20
+	BCS	!6
+	CMP	#$10
+	AND	#$F
+	TAX
+	BCS	!7
+
+	; Repeated 0s
+	LDA	#0
+!8	STA	VRAM_DAT
+	DEX
+	BNE	!8
+	JMP	!1
+
+!7	; Repeated FFs
+	LDA	#FF
+	BNE	!8
+
+
+!6	; Repeated byte
+	CMP	#$30
+	BCS	!9
+	AND	#$0F
+	TAX
+	LDA	(V),Y
+	INY
+	BNE	!8
+	INC	V+1
+	JMP	!8
+
+!9	; Awkward sequence
+	AND	#$0F
+	TAX
+!A	LDA	(V),Y
+	INY
+	BNE	!B
+	INC	V+1
+!B	STA	VRAM_DAT
+	DEX
+	BNE	!A
+	JMP	!1
+
+
+
+!3	; Take as is
+	TXA
+!2	STA	VRAM_DAT
+	JMP	!1
+!4	RTS
+
+

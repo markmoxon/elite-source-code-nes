@@ -283,8 +283,6 @@
 
 .ZP
 
- SKIP 0                 ; The start of the zero page workspace
-
  SKIP 2                 ; These bytes appear to be unused
 
 .RAND

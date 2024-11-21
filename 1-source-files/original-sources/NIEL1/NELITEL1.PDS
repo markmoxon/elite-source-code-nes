@@ -1,0 +1,786 @@
+;
+;	REM	ELITE <L1> Nin
+;
+;	Sound primitives, Paging, Game Start
+;
+aidanth	equ	SAFE	;$8888	;shuts assembler up
+musicstart	equ	SAFE	;$8888
+
+
+
+	IF	INCMUSIC
+
+;	  .....Sounds......
+
+WRST	equ	$4015 
+
+BEEPtrue	LDY	#sfxbeep
+	BNE	NOISEtrue
+EXNO3	LDY	#sfxexpl
+	BNE	NOISEtrue
+
+
+	IF	INCMUSIC
+
+SOFLUSH	; Kill all SFX
+	LDX	#0
+	JSR	KILLCHANNEL
+KILLBD	LDX	#1
+	JSR	KILLCHANNEL
+	LDX	#2
+	BNE	KILLCHANNEL
+
+
+NOISEOFF	; Kill noise Y
+	LDX	CHANLUT,Y
+	CPX	#3
+	BCC	KILLCHANNEL
+	BNE	KILLBD
+	LDX	#0
+	JSR	KILLCHANNEL
+	LDX	#2
+
+KILLCHANNEL	POLLBIT	100
+	LDA	#0
+	STA	PRIORS,X
+	LDA	#26
+	BNE	DOANINITFX
+
+
+DOBOOP	LDY	#sfxboop
+	BNE	NOISE
+
+
+SCOOPNOISE	LDY	#sfxscoop
+	BNE	NOISE
+
+HYPNOISE	JSR	SOFLUSH
+	LDY	#sfxhyp1
+
+NOISE
+NOISEtrue
+	LDA	dnoiz	; Check for sound enable toggle
+	BPL	SKIPINITFX
+
+	LDX	CHANLUT,Y
+	CPX	#3	; If channel=3 then use both D and A
+	BCC	!3	; if =4 then use both D and B
+	TYA
+	PHA
+	DEX
+	DEX
+	DEX
+	JSR	!3
+	PLA
+	TAY
+	LDX	#2
+!3	LDA	FonOffA,X
+	BEQ	!1
+
+	LDA	PRIOLUT,Y	;  If channel currently being used
+	CMP	PRIORS,X	; check priority of prior noise
+	BCC	SKIPINITFX	; and if less
+
+
+!1	LDA	PRIOLUT,Y
+	STA	PRIORS,X
+	POLLBIT	101
+	TYA
+DOANINITFX	JSR	INITFXsmart
+SKIPINITFX	POLLBIT	102
+	RTS
+
+	ELSE	;(INCMUSIC)
+
+SOFLUSH
+NOISEOFF
+NOISE
+NOISEtrue	RTS
+
+
+	ENDIF	;(INCMUSIC)
+
+
+
+
+
+;	PlasElasHit ExplWhshBeepBoopHyp1ECM BombTribPls2    Hyp2
+;	 0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
+;CHANLUT  DB   2,  2,  0,  1,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0    	
+;FXIDLUT  DB  11, 11,  9,  5,  2,  4,  4,  6,  7,  4,  4,  4,  4,  4,  4,  4
+;PRIOLUT  DB	$10,$08,$08,$20,$7F,$05,$18,$80,$FF,$10,$0F,$01,$FF,$80,$01
+
+
+
+CHANLUT	; Channel LUT. 0=>A, 1=>B, 2=>D, 3=>A&D, 4=>B&D
+
+
+;		ht fu ec be bo t1 t2 wa bo ms ht en la bg sm
+;		sh sc m  ep op       rn mb sl en la un ex ex
+
+	HEX	02 01 01 01 01 00 00 01 02 02 02 02 03 02 02	
+
+;		ar mi be pu es ht hy hy ti la mi
+;		ls ls ls ls cp en p1 p2 ex u3 ex 26 27 28 29		
+
+	HEX	00 00 00 00 00 02 03 03 02 01 02 00 02 00 01
+
+
+;                    30 31
+	HEX	00 00
+
+
+
+PRIOLUT	; PRIORITY LUT. FF=>Always playsD
+
+
+;		ht fu ec be bo t1 t2 wa bo ms ht en la bg sm
+;		sh sc m  ep op       rn mb sl en la un ex ex
+
+	HEX	80 82 C0 21 21 10 10 41 82 32 84 20 C0 60 40	
+
+;		ar mi be pu es ht hy hy ti la mi
+;		ls ls ls ls cp en p1 p2 ex u3 ex 26 27 28 29 30	t3	
+
+	HEX	80 80 80 80 90 84 33 33 20 C0 18 10 10 10 10 10 60
+
+
+
+
+	ENDIF	;(INCMUSIC)
+
+	IF	SFX
+
+CHANADDR	DB	0,4,8,12
+CHANBITS	DB	1,2,4,8
+
+;	                                                ECM2    Hyp3
+;	PlasElasHit ExplWhshBeepBoopHyp1ECM BombTribPls2    Hyp2
+;	 0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
+
+SFXCNT  DB	$19,$12,$08,$20,$C0,$05,$18,$80,$FF,$40,$0F,$18,$FF,$80,$70
+SFXFQ   DB	$60,$65,$D0,$80,$E0,$10,$01,$80,$50,$55,$80,$F0,$00,$40,$00
+SFXCR   DB	$BC,$B8,$BB,$BC,$BC,$BF,$BF,$BF,$B0,$B8,$B8,$BB,$02,$BF,$03
+SFXFRCH DB	$03,$02,$04,$04,$00,$01,$00,$23,$53,$77,$7B,$FE,$00,$E5,$00
+SFXVCH  DB	$01,$01,$00,$07,$0F,$FF,$FF,$1F,$FF,$FF,$FF,$01,$00,$1F,$00
+SFXCHAN DB	$00,$01,$03,$03,$03,$01,$02,$01,$02,$00,$01,$01,$04,$00,$04
+SFXSWP  DB	$A4,$A4,$00,$00,$00,$00,$00,$A2,$00,$00,$00,$00,$00,$00,$00
+SFXPR   DB	$10,$08,$08,$20,$7F,$05,$18,$80,$FF,$10,$0F,$01,$FF,$80,$01
+SFXNEXT DB	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+SFXSO2  DB	$0B,$00,$00,$00,$00,$00,$00,$0D,$0C,$00,$00,$00,$00,$00,$00
+
+SOUL3b	DEY
+	BPL	SOUL8
+
+;	LDA	l1
+;	AND	#$F8
+;	ORA	L1M
+;	STA	l1
+	RTS
+
+
+SOINT	LDY	#3
+SOUL8	LDA	SOLOCK,Y	;Channel Y being updated by foreground
+	BNE	SOUL3b
+	LDA	SOFLG,Y	;Channel Y empty
+	BEQ	SOUL3b
+	BMI	SOUL4	;First cycle of sound
+	LDX	CHANADDR,Y
+	LDA	SOFRCH,Y
+	BEQ	SOUL5
+	BNE	SOUX2	;EQUB$2C
+
+
+;processing for  first cycle of sound
+
+SOUL4	LDX	CHANADDR,Y	;used to zero SID chip here
+	LDA	SOCR,Y
+	STA	WRA0,X	;set duty,continuous,amplitude
+	LDA	SOenable
+	ORA	CHANBITS,Y
+	STA	SOenable	;RAM copy of register
+	STA	WRST
+	LDA	SOSWP,Y	;no frequency change on first cycle
+	STA	WRA1,X	;sweep function
+	LDA	#2
+	STA	WRA3,X	;fixes frequency range
+	LDA	SOFRQ,Y
+	CPY	#3
+	BNE	!1
+	LSR	A
+	LSR	A
+	LSR	A
+	LSR	A
+!1	STA	WRA2,X
+	JMP	SOUL5
+
+;processing every sound cycle
+
+SOUX2	CLC
+	ADC	SOFRQ,Y
+	STA	SOFRQ,Y
+	CPY	#3
+	BNE	!2	;frequency for white noise only 4 bit
+	LSR	A
+	LSR	A
+	LSR	A
+	LSR	A
+!2	STA	WRA2,X	;lower 8 bits of freq
+SOUL5	LDA	SOFLG,Y
+	BMI	SOUL6
+	TYA
+	TAX
+	DEC	SOPR,X
+	BNE	*+5	;!! was P%
+	INC	SOPR,X
+	DEC	SOCNT,X
+	BEQ	SOKILL
+	LDA	SOCNT,Y
+	AND	SOVCH,Y
+	BNE	SOUL3
+	LDA	SOCR,Y	;decrease volume
+	SEC
+	SBC	#1
+	AND	#$0F
+	ORA	#$B0
+	STA	SOCR,Y
+	LDX	CHANADDR,Y
+	STA	WRA0,X
+	JMP	SOUL3
+
+SOKILL	LDX	CHANADDR,Y
+	LDA	#$B0	;zero volume level
+	STA	WRA0,X
+	LDA	CHANBITS,Y
+	EOR	#$FF
+	AND	SOenable
+	STA	SOenable	;RAM copy of register
+	STA	WRST	;turn off sound
+	LDA	#0
+	STA	SOFLG,Y
+	STA	SOPR,Y
+	BEQ	SOUL3
+
+SOUL6	AND	#127
+	STA	SOFLG,Y
+SOUL3	DEY
+	BMI	*+5	;!! was P%
+	JMP	SOUL8	;LOOP
+
+coffee
+;	LDA	l1
+;	AND	#$F8
+;	ORA	L1M
+;	STA	l1
+	RTS
+
+	ENDIF	;SFX
+
+
+
+
+
+BDENTRY RTS
+
+;	eugpcent=((PpcentAND$FF00)+256)-Ppcent
+;	Ppcent=(PpcentAND$FF00)+256
+;	Opcent=Opcent+eugpcent
+
+FNst8	MACRO
+	STA	@1
+	STA	@1+1
+	STA	@1+2
+	STA	@1+3
+	STA	@1+4
+	STA	@1+5
+	STA	@1+6
+	STA	@1+7
+	ENDM
+
+
+SMARTJMP	MACRO	; 	Smart JMP to @1 checking current bank
+	LDA	BANKNUM
+	CMP	#|@1
+	BEQ	!1
+
+	PHA
+	LDA	#|@1
+	JSR	SWITCHBANK2
+	JSR	@1
+	JMP	SWITCHBANK0
+
+!1	JMP	@1
+	ENDM
+
+
+SMARTJMP2	MACRO	; 	As SMARTJMP but pass A
+	STA	newerzp
+	LDA	BANKNUM
+	CMP	#|@1
+	BEQ	!1
+
+	PHA
+	LDA	#|@1
+	JSR	SWITCHBANK2
+	LDA	newerzp
+	JSR	@1
+	JMP	SWITCHBANK0
+
+!1	LDA	newerzp
+	JMP	@1
+	ENDM
+
+
+SMARTJMP3	MACRO	; 	Smart JMP to @1 (don't check current bank)
+	LDA	BANKNUM
+	PHA
+	LDA	#|@1
+	JSR	SWITCHBANK2
+	JSR	@1
+	JMP	SWITCHBANK0
+	ENDM
+
+SMARTJMP4	MACRO	;	Smart JMP to @1 and won't come back
+	LDA	#|@1
+	JSR	SWITCHBANK2
+	JMP	@1
+	ENDM
+
+	IF	NEEDPOLL
+SLOWPOLL	PHA
+	POLLBIT	151
+	PLA
+	RTS
+	ENDIF	;(NEEDPOLL)
+
+	IF	POLLSCAN
+POLLSCANSUB	
+	STA	POLLTEMP
+	AND	POLLTEMP+1
+	BEQ	!2
+	STA	CRGO+8
+	LDA	#0
+	STA	POLLTEMP+1
+!2
+	LDA	VSTAT
+	AND	#$40
+	BEQ	!1
+	JMP	SPRITEINT
+!1	RTS
+	ENDIF	;(POLLSCAN)
+
+
+
+RDSHIP
+	LDA	BANKNUM
+	PHA
+	LDA	#plotbank
+	JSR	SWITCHBANK2
+
+	LDA	(XX0),Y
+RDEP2	STA	newerzp
+	PLA
+	JSR	SWITCHBANK2
+	LDA	newerzp
+	RTS
+
+RDEPCENT
+	LDA	BANKNUM
+	PHA
+	LDA	#plotbank
+	JSR	SWITCHBANK2
+
+	LDA	EPCENT-1,Y
+	JMP	RDEP2
+
+UPTALLY	POLLBIT	108
+
+	LDA	BANKNUM
+	PHA
+	LDA	#plotbank
+	JSR	SWITCHBANK2
+	LDA	KWLpcent-1,X
+	ASL	A
+	PHA
+	LDA	KWHpcent-1,X
+	ROL	A
+	TAY
+	PLA
+	ADC	TALLYL
+	STA	TALLYL
+	TYA
+	ADC	TALLY
+	STA	TALLY
+
+UPTALLYEND	PLA
+	PHP
+	JSR	SWITCHBANK2
+	PLP
+ANRTSUPTA	RTS
+
+
+ALLOWFREEZE	LDA	stripop
+	BEQ	ANRTSUPTA
+
+cleankeysSMART
+	STA	newerzp
+	LDA	BANKNUM
+	PHA
+	LDA	#default
+	JSR	SWITCHBANK2
+	LDA	newerzp
+	JSR	cleankeys
+	JMP	UPTALLYEND
+
+INVBUTTON
+	LDA	#2
+	STA	K
+	STA	K+1
+	LDA	#picdef
+	STA	K+2
+	LDA	#picbase
+	STA	K+3
+	LDA	#3
+	STA	XC
+	LDA	#sl2-banner
+	STA	YC
+	LDX	#7
+	LDY	#7
+	JMP	SPPICT
+
+	IF	INCMUSIC
+REFRESHsmart	SMARTJMP3	REFRESHtrue
+
+INITUNEsmart	
+	PHA
+	JSR	WSCAN
+	PLA
+	ORA	#128
+	STA	MUSICFLAG
+	AND	#127
+	LDX	mutok
+	BMI	ANRTSUPTA
+	SMARTJMP2	INITUNEtrue
+
+INITFXsmart	SMARTJMP2	INITFXtrue
+
+KILLTUNE	JSR	WSCAN
+
+MUSOFFsmart
+	LDA	#0
+	STA	MUSICFLAG
+MUSOFFsmart2
+
+	SMARTJMP3	TURNOFFtrue
+	ELSE
+REFRESHsmart	
+INITUNEsmart	
+INITFXsmart	
+MUSONsmart	
+MUSOFFsmart	RTS
+	ENDIF
+
+	IF	AUTOPLAY
+STARTAUTO	SMARTJMP3	STARTAUTOtrue
+	ENDIF
+
+DOLITTLELOGO	SMARTJMP3	DOLITLOGtrue
+
+DOBIGLOGO	SMARTJMP3	DOBIGLOGOtrue
+
+FADEDOWN	SMARTJMP3	FADEDOWNtrue
+
+SAFESIDE	SMARTJMP3	SAFESIDEtrue
+
+LL9	SMARTJMP	LL9true
+
+SIGHT	SMARTJMP3	SIGHTtrue
+
+
+TIDY	SMARTJMP	TIDYTRUE
+
+
+POWERUPMODE	SMARTJMP3	PWRUPMDtrue
+
+COMBAT	LDA	#default
+	JSR	SWITCHBANK2
+	JMP	COMBATtrue
+
+
+	IF	INCDUST
+STARS	SMARTJMP	STARStrue
+	ENDIF
+	IF	INCPLANET
+CIRCLE2	SMARTJMP	CIRCLE2true
+	ENDIF
+
+sun	smartjmp	suntrue
+	IF	ANYPIC
+PICTURE	SMARTJMP3	PICTUREtrue
+FULLPICTURE	SMARTJMP2	FULLPICTtrue
+MAPPICTURE	SMARTJMP3	PICMAPtrue
+	IF	INCFACE
+FACEPICTURE	SMARTJMP3	FACEPICTtrue
+	ENDIF
+SPPICT	SMARTJMP3	SPPICTtrue
+DECIDEFACE	SMARTJMP3	DECDFCtrue
+	ENDIF
+	IF	INCEPIC
+PAINTITEMS	SMARTJMP3	PTITMStrue
+	ENDIF
+
+DEATH2smart	SMARTJMP4	DEATH2
+DEATH3smart	SMARTJMP4	DEATH3
+SETCOLMEM	SMARTJMP	SETCOLMEMtrue
+;SENDPALLETE	SMARTJMP	SENDPALLETEtrue	
+FADEUP	SMARTJMP3	FADEUPtrue
+THICKBOX	SMARTJMP3	THICKBOXtrue
+THICKBOX2	SMARTJMP3	THICKBOX2true
+BOX	SMARTJMP3	BOXtrue
+corefont	SMARTJMP	corefonttrue
+SETTECH	SMARTJMP3	SETTECHtrue
+DEATHSUB	SMARTJMP3	DEATHSUBtrue
+typefontA	SMARTJMP2	typefonttrue
+typfont2	SMARTJMP3	typfont2true
+
+	IF	AUTOSEARCH
+GOTBUG	SMARTJMP3	GOTBUGtrue
+	ENDIF
+
+
+
+
+PAS1	SMARTJMP3	PAS1true
+
+	IF	INCPPIC
+GETPIC	SMARTJMP3	GETPICtrue
+GETPIC2	SMARTJMP3	GETPIC2true
+	ENDIF	; (INCPPIC)	
+	IF	INCFACE
+;GETPWRFACE	SMARTJMP3	GETPWRFACEtrue
+GETFACE	SMARTJMP3	GETFACtrue
+GETFACE2	SMARTJMP3	GETFACE2true
+	ENDIF	; (incface)
+
+DIALS	SMARTJMP3	DIALStrue
+GETALINE	SMARTJMP3	GETALINEtrue
+TITS2	SMARTJMP2	TITS2true
+
+
+LL164
+HYPFX	SMARTJMP3	HYPFXtrue
+ZIGZAG	SMARTJMP3	ZIGZAGtrue
+;NOISE	SMARTJMP3	NOISEtrue
+FREEZE	SMARTJMP3	FREEZEtrue
+RDKEY	SMARTJMP3	RDKEYtrue
+
+
+	IF	0
+BOXINPUT	SMARTJMP2	BOXINPUTtrue
+	ENDIF
+GTNME	SMARTJMP3	GTNMEtrue
+DFAULT	SMARTJMP3	DFAULTtrue
+JAMESON	SMARTJMP3	JAMESONtrue
+DEMON	SMARTJMP2	DEMONtrue
+
+BEEP	SMARTJMP3	BEEPtrue
+DETOK	SMARTJMP2	DETOKtrue
+DTS	SMARTJMP2	DTStrue
+PDESC	SMARTJMP3	PDESCtrue
+wantstrip	SMARTJMP2	wantstriptrue
+DOSTRIP	SMARTJMP2	DOSTRIPtrue
+dumpdials	SMARTJMP3	dmpditrue
+dialsprites	SMARTJMP3	dialsptrue
+INITVIDEO	SMARTJMP3	INITVIDEOtrue
+
+SENDBOTHFORS	LDA	faded
+	BPL	SENDSLOW0
+
+SENDBOTH	SMARTJMP3	SENDBOTHtrue
+
+SENDSLOW0	LDA	#4*(banner+txli+2)+basecell
+	STA	cellmax
+	STA	cellmax+1
+
+SENDSLOW	LDA	#$C0	; Send semi-map without zeroing 	
+;SENDSLOW2
+	SMARTJMP2	SNDSLWtrue2
+
+SENDBANK	SMARTJMP	SENDBANKtrue
+
+UPDATESTRIP	SMARTJMP	UPDTSTtrue
+
+
+UPDATETMODEsmart	SMARTJMP3	UPDATETMODE
+NEWLOAD	SMARTJMP3	NEWLOADtrue
+
+MVS5smart	SMARTJMP2	MVS5
+
+	IF	INCHALL
+HALL	SMARTJMP3	HALLtrue
+	ENDIF
+
+CHPRsmart	SMARTJMP2	CHPR
+TT26smart	SMARTJMP2	TT26
+
+TT27
+TT27smart	SMARTJMP2	TT27true
+ex	SMARTJMP2	extrue
+TT27low	SMARTJMP3	TT27lowtrue
+
+RESCOMMsmart	SMARTJMP	RESCOMMtrue	;>>DJB 7/5/90<<
+
+FREESCAN2	LDA	#0
+	LDY	#(NINB-INWK)
+	STA	(INF),Y
+
+FREESCAN	SMARTJMP3	FREESCANtrue
+
+TT66smart	STA	newerzp
+	LDA	BANKNUM
+
+	PHA
+	LDA	#|TT66
+	JSR	SWITCHBANK2
+	LDA	newerzp
+	JSR	TT66
+	JMP	SWITCHBANK0
+	
+clipndraw	
+	LDA	BANKNUM
+	PHA
+	LDA	#|LL145
+	JSR	SWITCHBANK2
+	JSR	LL145
+	BCS	!1
+	JSR	LOIN
+!1	JMP	SWITCHBANK0
+
+
+
+
+FUDGECLEAR	SMARTJMP	FUDGECLEARtrue
+
+SCAN	SMARTJMP	SCANtrue
+
+
+FULLENDTMODE	JSR	KILLDISP
+ENDTMODEsmart	SMARTJMP3	ENDTMODE
+
+	IF	INCHALL
+ENDHALL	LDA	#default
+	JSR	SWITCHBANK2
+	JSR	COPYBANK
+	JSR	SENDBOTHfors
+	LDX	#1
+	STX	vbank
+	RTS
+	ENDIF	; (INCHALL)
+
+
+;***************************************************************************
+
+		
+CLYNS
+	LDA	#0
+	STA	DLY
+	STA	de
+CLYNS2	LDA	#FF
+	STA	DTW2
+	LDA	#128
+	STA	QQ17
+	LDA	#inps
+	STA	YC
+	LDA	#1
+	STA	XC
+
+	LDA	charmin
+	STA	frchar
+
+
+	LDA	MODE
+	BPL	exitclyn
+
+
+	FNset2b	SC,VIDM1+((inps+banner-1)*ncl)
+	FNset2b	LI,VIDM2+((inps+banner-1)*ncl)
+
+	LDX	#2
+clnl1	
+	IF	NEEDPOLL
+	JSR	SLOWPOLL
+	ENDIF
+
+
+	LDY	#2
+	LDA	#0
+clnl2	STA	(SC),Y	;6
+	STA	(LI),Y	;6
+	INY		;2
+	CPY	#ncl-1	;2
+	BNE	clnl2	;4=20
+	LDA	SC
+	ADC	#ncl-1
+	STA	SC
+	STA	LI
+	BCC	!1
+	INC	SC+1
+	INC	LI+1
+!1	DEX
+	BNE	clnl1
+exitclyn	RTS
+
+
+
+STATCOL	DB	DOCKED,DKGREEN,LTYELLOW,DARK+RED,VDARK+RED
+
+CONDITION	; 0=>docked,1=>green,2=>yellow,3=>red
+	LDX	#0
+	LDY	QQ12
+	BNE	!7
+	INX
+
+	LDY	JUNK
+	LDA	FRIN+2,Y
+	BEQ	!7
+	INX
+	LDY	OLDCOND
+	CPY	#3
+	BEQ	!1
+	LDA	ENERGY		; Go to red when energy <$80
+	BMI	!7
+!2	INX
+!7	STX	OLDCOND
+	RTS
+
+
+!1	LDA	ENERGY		; but leave when energt >$9F
+	CMP	#$A0
+	BCC	!2
+	BCS	!7
+
+	IF	PROGTESTS
+	IF	AUTOSEARCH
+DOMAGICKEY	JMP	STARTAUTO
+	ELSE
+MAGICJMPTB	DW	BRIEF,DEBRIEF,BRIEF2,BRIEF3
+	DW	DEBRIEF2,TBRIEF,NOMAGIC,NOMAGIC	
+
+DOMAGICKEY
+	LDA	IANTEMP
+	INC	IANTEMP
+	AND	#7
+
+	ASL
+	TAX
+	LDA	MAGICJMPTB,X
+	STA	V
+	LDA	MAGICJMPTB+1,X
+	STA	V+1
+	JMP	(V)
+	
+NOMAGIC	RTS
+
+	ENDIF	;(AUTOSEARCH)
+	ENDIF	;(PROGTESTS)
+

@@ -1,0 +1,1010 @@
+
+
+CHK2	EQU	Napcent+$52
+CHK3	EQU	CHK2+1
+CHK	EQU	CHK3+1
+
+WP	=	WPS
+UP	=	UPS
+
+;	FNUT	QQ16_other,65	;QQ16 fefined twice for no reason?
+
+BRKV	equ	$FFFE
+
+;	Ship nos.
+;	---------
+
+MSL	equ	1
+SST	equ	2
+ESC	equ	3
+PLT	equ	4
+OIL	equ	5
+AST	equ	7
+SPL	equ	8
+SHU	equ	9
+TRA	equ	10
+CYL	equ	11
+PYT	equ	12
+BOA	equ	13
+ANA	equ	14
+HER	equ	15
+COPS	equ	16
+SH3	equ	17
+MAM	equ	18
+KRA	equ	19
+ADA	equ	20
+GEK	EQU	21
+CB1	EQU	22
+WRM	equ	23
+CYL2	equ	24
+ASP	equ	25
+PYT2	equ	26
+FER	equ	27
+MOR	equ	28
+THG	equ	29
+TGL	equ	30
+CON	equ	31
+COU	equ	32
+DOD	equ	33
+
+
+
+slidbase	equ	1		; First slider sprite
+sightbase	equ	slidbase+4		; First gun sight sprite
+lightbase	equ	sightbase+5
+needbase	equ	lightbase+2
+compbase	equ	needbase+2
+scanbase	equ	compbase+1
+starbase	equ	scanbase+scanno*3	; First dust ptcl sprite
+expbase	equ	starbase+NOST+1
+
+noexp	equ	63-expbase
+
+
+JL	equ	ESC
+JH	equ	SHU+2
+PACK	equ	SH3
+POW	equ	15
+B	equ	$30
+Armlas	equ	128+23
+Mlas	equ	50
+;NRUpcent	equ	0
+VE	equ	$57
+
+
+	IF	1
+
+;	New MODE values
+;	---------------
+;	Bits:  0-3: ID bits (bits 2&3=>chart mode)
+;	         4: 1=>Want tcol0 font
+;		 5: 1=>Want tcol1 font;		 
+;		 6: 0=>Want icon strip
+;		 7: 0=>Want dialsC
+
+spamod	equ	 $00
+titmode	equ	 $01
+brimode1	equ	 $02
+let3d	equ	 $10
+brimode2	equ	 $13
+detmode	equ	 $C4
+
+mismode	equ	 $95
+datmod	equ	 $96
+invmod	equ	 $97
+stamod	equ	 $98
+eqpmod	equ	 $B9
+cargmod	equ	 $BA
+lcchrt	equ	 $9C
+glchrt1	equ	 $8D
+glchrt2	equ	 $9D
+lodmod	equ	 $BB
+nammod	equ	 $9E
+
+buymod	equ	 $BB
+sellmod	equ	 $BB
+mktp	equ	 $BB
+
+chbit1	equ	 $0E
+chbit2	equ	 $0C
+icbit	equ	 $40
+
+	ELSE
+
+
+;	Old MODE values
+;	---------------
+
+datmod	equ	  1
+buymod	equ	  2
+sellmod	equ	  4
+invmod	equ	  8
+stamod	equ	  8
+eqpmod	equ	 32
+cargmod	equ	 33
+lcchrt	equ	128
+glchrt	equ	 64
+mktp	equ 	 16
+mismode	equ	 13
+titmode	equ	 14
+brimode1	equ	 15
+brimode2	equ	 19
+detmode	equ	 20
+
+
+
+	ENDIF
+
+
+sfxplas	equ	0
+sfxelas	equ	1
+sfxhit	equ	2
+sfxexpl	equ	3
+sfxwhosh	equ	4
+sfxbeep	equ	5
+sfxboop	equ	6
+sfxhyp1	equ	7
+sfxecm	equ	8
+sfxblas	equ	0
+sfxalas	equ	0
+sfxmlas	equ	0
+sfxbomb	equ	9
+sfxtrib	equ	10
+
+stripchr	equ	33+icbase
+
+
+FF	equ	$FF
+
+ZP	=	2
+	FNZT	RAND,4
+	FNZ	 T1
+	FNZ2	SC
+SCH	equ	SC+1
+	FNZT	INWK,NIpcent
+NEWB	equ	INWK+36
+NINB	equ	INWK+33	;37
+EXCN	EQU	INWK+34	;38
+EXSD	EQU	INWK+37
+
+
+;XX19	equ	INWK+33
+XX1	equ	INWK
+	FNZT	P,3
+	FNZ	XC
+	FNZ	COL0
+	FNZ	COL1
+	FNZ	COL2	; Values dynamically assigned
+	FNZ	COL3	; BCK Pallette 0
+
+	
+	FNZ	TCOL
+
+	FNZT	clok,3
+
+
+	FNZ	YC
+	FNZ	QQ17
+	FNZT	XX2,16
+K3	equ	XX2
+K4	equ	XX2+14
+	FNZT	XX16,18
+	FNZ2	XX0
+	FNZ2	INF
+	FNZ2	V
+	FNZ2	XX
+	FNZ2	YY
+	FNZ2	SUNX
+	FNZ	BETA
+	FNZ	BET1
+	FNZ2	QQ22
+	FNZ	ECMA
+	FNZ	ALP1	;=|spin|
+	FNZ2	ALP2	;+0=SGN(spin),+1=SGN(-spin)
+	FNZT	XX15,6
+	FNZT	XX12,6
+X1	equ	XX15
+Y1	equ	X1+1
+X2	equ	Y1+1
+Y2	equ	X2+1
+	FNZT	K,4
+	FNZ	LAS
+	FNW	MSTG
+	FNZ	thiskey
+	FNWT	KLO,17
+
+	FNW	EXSC	;Explosion scale factor
+
+
+	IF	SFX
+		
+	FNW	SOEnable
+	FNWT	SOFLG,4
+	FNW	SOdma	;used by DMA channel for sound number
+	FNWT	SOCNT,5
+	FNWT	SOFRCH,4
+	FNWT	SOFRQ,4
+	FNWT	SOCR,4	;initial volume
+	FNWT	SOVCH,4
+	FNWT	SOLOCK,4	;locks data if >0 while processing
+	FNWT	SOSWP,4
+	FNWT	SOPR,5
+	FNWT	SONEXT,4
+
+	ENDIF	; (SFX)
+
+
+
+
+KY1	equ	KLO+1
+KY2	equ	KLO+2
+KY3	equ	KLO+3
+KY4	equ	KLO+4
+KY5	equ	KLO+5
+KY6	equ	KLO+6
+KY7	equ	KLO+7
+;	FNZ	LSP
+	FNZT	QQ15,6
+	FNZT	XX18,9
+	FNWT	QQ19,6	;WAS ZP!!!
+K5	equ	XX18
+K6	equ	K5+4
+	FNZ2	BET2
+	FNZ	DELTA
+	FNZ2	DELT4
+	FNZ	U
+	FNZ	Q
+	FNZ	R
+	FNZ	S
+	FNZ	T
+	FNZ	XSAV
+	FNZ	YSAV
+	FNZ	XX17
+	FNZ	MODE	; Game mode
+MODE1	EQU	MODE
+
+	FNZ	MODE2	; Late copy of mode
+	FNZ	ZZ
+	FNZ	XX13
+	FNZ	MCNT
+;	FNZ	DL
+	FNZ	TYPE
+	FNZ	ALPHA	;=ALP1 or ALP2
+;REM PBUP=FNZ:HBUP=FNZ:LBUP=FNZ
+	FNZ	QQ12	; 0=>In space
+	FNZ	TGT
+	FNZ	FLAG
+	FNZ	CNT
+	FNZ	CNT2
+	FNZ	STP
+	FNZ	XX4
+	FNZ	XX20
+	FNZ	XX14
+	FNZ	RAT
+	FNZ	RAT2
+	FNWT	K2,4	; WAS ZP!!! 
+	FNZ	widget
+	FNZ	Ymem
+	FNZ	Yx2
+	FNZ	Yx2M1
+	FNZ	messXC
+	FNZ	messYC
+	FNZ	newzp
+	FNZ	newerzp
+	FNZ	frchar
+	FNZ	ffnt8
+	FNZ2	LI
+	FNZ2	LI2
+	FNZ2	strip
+
+	FNZ	bank		; Bank to draw to
+	FNZ2	frchst
+	FNZ2	charzer		; Char clearing counts
+	FNZ2	cellzer
+	FNZ2	celltrn	;	No 8-cell blocks sent
+	FNZ	charsent	;	Temp store for chartrn value
+	FNZ2	chartrn	;	No chars sent in each bank
+	FNZ	cellmin	;	First 8-cell block to send
+	FNZ	cellmax
+	FNZ	cellsent	;	Temp store for celltrn value
+	FNZ2	remain	;	NMI routine self-timer
+	FNZ	charmin	;	First char to send
+	FNZ	striptrn	;	Strip char to send
+	FNZ2	stripas	;	Ascii map offset
+	FNZ2	stripz	;	Strip defn
+	FNZ	zermax 	;	Last cell to zero
+	FNZ	typebase	;	ASCII to char converter
+
+	FNU	COMBFLAG
+
+	FNU	stripenb	;	Enable slider
+	FNU	stripx
+	FNU	stripy
+	FNU	stripv
+	FNU	stripd
+	FNU	stripno
+	FNU	stripop
+	FNU	stripmv
+	FNU	gapcnt	;	Dbl press count
+	FNUT	nmistore,3
+
+	FNU	picstart	;	First ASCII for picture
+	FNU	SNDDIALS
+	FNU	LBORD
+	FNU	RBORD   
+	FNW	OLDCHART
+	FNW	OLDSTAT
+
+launk	equ	$01
+dcomk	equ	$11
+
+f3	equ	$06	;09
+ochk	equ	$04	;Reenter chart
+nchk	equ	$24	;Change chart
+f6	equ	$23	;05
+f7	equ	$02
+f8	equ	$03
+invk	equ	$99	;04
+
+;f12	equ	$99
+;f22	equ	$99
+;f32	equ	$99
+chvk	equ	$05	;0D
+
+
+tmis	equ	$17	;1B
+fmis	equ	$18	;1A
+bmb	equ	$19	;18
+escp_LC	equ	$1A	;19
+ecmk	equ	$16	;1C
+gskp	equ	$0B	;0E
+frz	equ	$0C	;0F
+hypk	equ	$26	;17
+ghypk	equ	$27	;28
+
+magk	equ	$0A	;55	; Magic key
+OINT	equ	$2A
+
+
+djdt	equ	$33
+damt	equ	$34
+ytog	equ	$35
+jtog	equ	$36
+sfxt	equ	$37
+must	equ	$38
+plat	equ	$39
+unfr	equ	$3C
+rstt	equ	$3B
+
+Fkey	equ	$29	;2A
+DINT	equ	$28	;29
+delk	equ	$99	;09	;0A
+savk	equ	$99	;08	;0C
+lodk	equ	$07	;0B
+namk	equ	$08
+pask	equ	$09
+
+Ppcent	= Bpcent
+
+
+
+FORG	MACRO
+;	IF	ROMCODE
+;	DS	@1-*,255
+;	ELSE
+	ORG	@1
+;	ENDIF
+	ENDM
+
+
+;	Zeroed from here...
+
+
+	FNUT	FRIN,NOSH+1
+	FNUT	MANY,NTY+1
+SSPR	equ	MANY+SST
+	FNU	JUNK
+	FNUT	SCSP,scanno+2	;Sprite use flags 4 scanners
+	FNUT	SCAT,scanno+2	;Scan sprite attribute store
+	FNU	auto
+	FNU	ECMP
+	FNU	MJ
+	FNU	CABTMP
+	FNU	LAS2
+	FNU	MSAR
+	FNU	VIEW
+	FNU	LASCT
+	FNU	GNTMP
+	FNU	HFX
+	FNU	EV
+	FNU	DLY
+	FNU	de
+
+;	... to here by ZERO
+
+	FNW	JSTX
+	FNW	JSTY
+
+;REMLSO equ	FNWT(200):LSX=LSO	##
+	FNW	LASX
+	FNW	LASY
+	FNW	XX24
+	FNW	ALTIT
+	FNW	SWAP
+;	FNW	XP
+;	FNW	YP
+;	FNW	YS
+;	FNW	BALI
+;	FNW	UPO
+	FNW	boxsize
+	FNW	distaway
+	FNW	XSAV2
+	FNW	YSAV2
+
+
+	FNUT	NAME,8
+	FNU	TP
+	FNU	QQ0	; Player x,y
+	FNU	QQ1	; galaxy posn
+	FNUT	CASH,4
+	FNU	QQ14
+	FNU	COK
+	FNU	GCNT
+	FNUT	LASER,4	;>>DJB 7/5/90<< - now only four missiles
+	FNU	CRGO
+	FNUT	QQ20,17
+	FNU	ECM
+	FNU	BST
+	FNU	BOMB
+	FNU	ENGY
+	FNU	DKCMP
+	FNU	GHYP
+	FNU	ESCP
+	FNUT	TRIBBLE,2
+	FNU	TALLYL
+	FNU	NOMSL
+	FNU	FIST
+	FNUT	AVL,17
+	FNU	QQ26
+	FNU2	TALLY
+	FNU	SVC
+	FNUT	QQ21,6	;Galactic seed - must now be last in file
+	FNW	RLINE2	;	startup=9
+;	FNUT	wastevar,3	;>>DJB 7/5/90<<
+;was MCH=FNU:MCH=FNU:MCH=FNU:NT%=MCH-TP:MCH=FNU
+NTpcent	equ	UP-TP
+
+	FNU	FSH
+	FNU	ASH
+	FNU	ENERGY
+;REMFF
+	FNU	QQ24
+	FNU	QQ25
+	FNU	QQ28
+	FNU	QQ29
+	FNU	DSENT
+	FNU	gov
+	FNU	tek
+	FNUT	QQ2,6	;current planet name
+	FNUT	safehouse,6
+	FNU	QQ3
+	FNU	QQ4
+	FNU	QQ5
+	FNU2	QQ6
+	FNU2	QQ7
+	FNU2	QQ8
+	FNU	QQ9	; Cursor cross
+	FNU	QQ10	; galaxy posn
+	FNU	NOSTM
+	FNU	NOEXM
+	FNU	sprx
+	FNU	spry
+	FNU	TRIBCT
+	FNW	FEEPAID	; Docking fee
+	FNW	FUELPRICE	
+
+	IF	SEETRIBS
+	FNWT	TRIBVX,8
+	FNWT	TRIBVXH,8
+	FNWT	TRIBVY,8
+	FNWT	TRIBXL,8
+	FNWT	TRIBXH,8
+	FNWT	TRIBY,8
+	ENDIF	
+	
+	FNW	suncount
+
+	FNW2	spasto
+
+	FNU2	dwnbut
+	FNU2	upbut
+	FNU2	lftbut
+	FNU2	rgtbut
+	FNU2	frbut1
+	FNU2	frbut2
+	FNU2	stabut
+	FNU2	selbut
+	FNUT	XX21,2*NTY	;	Defship ptr table
+
+slilft	equ	selbut
+slirgt	equ	stabut
+
+
+
+	FNU	djd
+	FNU	damp
+	FNU	JSTGY
+	FNU	JSTE
+	FNU	dnoiz
+	FNU	mutok
+	FNU	pltog
+wraptog	equ	pltog
+	FNU2	BDPASS
+	FNU	L1M
+
+
+;REM	Music vector
+
+Pa	equ	P
+;	FNZ	P_eltj
+;	FNZ	Q_eltj
+;	FNZ	R_eltj
+;	FNZ	S_eltj
+;	FNZ	T_eltj
+;	FNZ	U_eltj
+;	FNZ	T1_eltj
+
+P_eltj	EQU	P
+Q_eltj	EQU	Q
+R_eltj	EQU	R
+S_eltj	EQU	S
+T_eltj	EQU	T
+U_eltj	EQU	U
+T1_eltj	EQU	T1
+
+
+	FNZ2	fotraL
+	FNW2	fotraH
+	FNZ2	vitraL
+	FNW2	vitraH
+
+	FNW2	fotgtL
+	FNW2	fotgtH
+	FNW2	vitgtH
+
+	FNWT	SX,NOST+1
+	FNWT	SY,NOST+1
+	FNWT	SZ,NOST+1
+
+
+
+
+	FNWT	BUF,90
+	FNWT	messbuf,32
+	FNW	messle
+	FNWT	HANG,3
+
+	FNWT	SXL,NOST+1
+	FNWT	SYL,NOST+1
+	FNWT	SZL,NOST+1
+
+BIGWKSP	EQU	BUF
+;	No more FNWs allowed!!
+;	SZL assumed to fall into Kpcent
+
+protlen	equ	0
+BULBCOL	equ	$E0
+
+ncl	equ	32	; No char cells/row
+nby	equ	8	; No bytes/cell
+nca	equ	31	; No text cells/line
+LL	equ	29	; No usable text chars per line
+			; for right justified text 
+
+
+	IF	NTSC
+toprow	equ	2*8+7	; No lines scrolled down
+	ELSE
+toprow	equ	6
+	ENDIF
+
+banner	equ	2		; No lines reserved at top
+dili	equ	7-SMALLDIALS	; No lines for dials
+
+	IF	BIG
+nli	equ	18	; No text lines
+	ELSE
+nli	equ	16	; No text lines
+	ENDIF
+deli	equ	nli+dili+1	; No lines for death effect
+txli	equ	nli+dili	; No text lines in trade mode	
+ditp	equ	nli+banner+2
+ictp	equ	nli+dili
+
+
+stripline	equ	ditp-1
+X	equ	128
+Yabs	equ	4*nli
+
+sprxoff	EQU	4
+spryoff	EQU	toprow+banner*8-6
+
+spr0x	equ	4
+spr0y	equ	2*Yabs+3+spryoff+1	; Y coord of OBJ 0
+spr0x2	equ	$F5
+spr0y2	equ	8*ictp+3+spryoff
+
+inps	equ	txli-3		; Bottom input area
+
+
+
+
+
+sl1	equ	nli
+sl2	equ	nli+dili
+ticl	equ	nli+1	; No lines to clear on title page
+
+
+
+		
+
+ 
+	; system constants
+	;---------------------------------------------------------------
+
+VRAM:		EQU	$0000	; address of video ram
+
+PALETTE:		EQU	VRAM+$3F00
+VCR:		EQU	$2000	; video control registers
+VIDEO0:		EQU	VCR+000	; video multi purpose register 0
+VIDEO1:		EQU	VCR+001	; video multi purpose register 1
+VSTAT:		EQU	VCR+002	; video general status register
+OAM_ADR:		EQU	VCR+003 ; sprite attribute address register
+SCROLL:		EQU	VCR+005 ; scroll h/v registers appear here
+VRAM_ADR:		EQU	VCR+006	; video address register
+VRAM_DAT:		EQU	VCR+007	; video data register
+
+SPRITE_DMA_ADR	EQU	$4014
+
+
+CONTROLLER1:	EQU	$4016
+CONTROLLER2:	EQU	$4017
+
+
+
+DOWNLOAD:		EQU	$FC7D	; development machine downloader
+
+
+
+
+
+
+	FNZ2	font	;	PPU font address
+	FNZ2	ffnt	;	Draw bank char defns
+	FNZ2	vdm	;	PPU char map address
+	FNZ2	fvdm	;	Draw bank video map
+
+	FNU2	bankstatus	; Top bit=>chars fully defined
+			;   bit 6=>char map finished
+			;   bit 5=>transmitted by VBI routine
+			;   bit 4=>begun transfer
+			;   bit 3=>zero as sent
+			;   bit 2=>send whole ascii map
+
+	FNU	vbcnt	;	Incremented each VBI
+	FNZ	trflag	;	Set while in transfer
+
+	FNZ	vbtgt	;	VBI wksp
+
+	FNZ	DUNNIT	;	POLLIT's flag
+;	FNZ	NODIALS1	;	0 if dials shown on draw bank
+	FNZ	DOINTRPT	;	Wait for sprite coll enable
+	FNU	PALSENT	;	Pallete number	
+
+
+	FNZ2	nmiz1
+	FNZ2	nmiz2
+	FNZ2	kilz1
+	FNZ2	kilz2
+
+	FNZ	vbank	;	Bank NOT displayed
+	FNZ	sbank	;	Bank VBI routine both reads
+			;	from and sends to
+	FNZ	CVIDEO0	;	Copy of VIDEO0
+
+	FNZ	vbeor
+	FNZ	BANKNUM	;	Bank switched in
+
+
+	FNU	MUTOKOLD
+	FNU	MUPLA	;
+	FNU	PATG	;	X
+	FNU	FLH	;	F
+	FNU	JSTK	;	K
+	FNU	DISK	;	D
+	FNU	MUFOR	;	C
+	FNU	THETOG	;	E
+	FNU	MUSILLY 	;	B
+	FNU	MULIE	;
+	FNU	DTW1	;	32
+	FNU	DTW2	;	FF
+	FNU	DTW3	
+	FNU	DTW4	
+	FNU	DTW5	
+	FNU	DTW6	
+	FNU	DTW8	;	FF
+
+
+	FNU	TEMPX
+	FNU	TEMPY
+	FNU	TEMPZ	; Title sequence counts
+
+	FNU	HIMCNT
+
+CHARDEF	MACRO
+
+	DB	@1
+	DB	@2
+	DB	@3
+	DB	@4
+	DB	@5
+	DB	@6
+	DB	@7
+	DB	@8
+	
+	ENDM
+
+FNset1b	MACRO		;5,6
+	LDA	#@2	;2
+	STA	@1	;3,4
+	ENDM
+
+FNset2b	MACRO	;put @2 into @1   10,12
+	LDA	#<(@2)	;2
+	STA	@1+1	;3,4
+	LDA	#>(@2)	;2
+	STA	@1	;3,4
+	ENDM
+
+COPY2B	MACRO	;copy @2 into @1 (MSB last)
+	LDA	@2
+	STA	@1
+	LDA	@2+1
+	STA	@1+1
+	ENDM
+
+POLLBIT	MACRO	;Check if raster has hit MOB 0
+		;Must have >=60 cycles between repeated
+		;POLLBITs
+
+	IF	NEEDPOLL
+	LDA	DUNNIT
+	ORA	NODIALS2
+	BNE	!1
+	LDA	VSTAT
+	AND	#$40
+	BEQ	!1
+	JSR	SPRITEINT
+!1
+	ENDIF
+	ENDM
+
+
+
+SPRITE	MACRO	;Place sprite @1 at (@2,@3) with attribute @4
+		;using OBJ slot @5
+	IF	@5>63
+	ERROR	"Too many sprites"
+	ELSE
+	LDA	#@1
+	STA	ATTRIBUTES+(4*(@5))+1
+	LDA	#@4
+	STA	ATTRIBUTES+(4*(@5))+2
+	LDA	#(@2-sprxoff)
+	STA	ATTRIBUTES+(4*(@5))+3
+	LDA	#(@3+spryoff+16*BIG)
+	STA	ATTRIBUTES+(4*(@5))+0
+	ENDIF
+
+	ENDM
+
+SPRITEXY	MACRO	;Set sprite A (centre)  coord to (LI,Y)
+	ASL	A
+	ASL	A
+	TAX
+	LDA	LI
+	SEC
+	SBC	#sprxoff
+	STA	ATTRIBUTES+3,X
+	TYA
+	CLC
+	ADC	#spryoff
+	STA	ATTRIBUTES,X
+	ENDM
+
+PRIMELATCH	MACRO
+	LDA	#<@1	;2
+	STA	VRAM_ADR	;4
+	LDA	#>@1	;2	
+	STA	VRAM_ADR	;4 =12
+	ENDM
+
+WRITELATCH	MACRO
+	LDA	#@1
+	STA	VRAM_DAT
+	ENDM
+
+
+WRITEPPU	MACRO
+	LDA	#<@1
+	STA	VRAM_ADR
+	LDA	#>@1	
+	STA	VRAM_ADR
+	LDA	#@2
+	STA	VRAM_DAT	
+	ENDM
+
+WRITEPPUA	MACRO
+	LDX	#<@1
+	STX	VRAM_ADR
+	LDX	#>@1	
+	STX	VRAM_ADR
+	STA	VRAM_DAT
+	ENDM
+		
+FNcelladd	MACRO		;@1=ptr to cell containing (A,Y)
+	LSR	A
+	LSR	A	; Add 64 for two rows	
+	LSR	A
+	CLC
+	ADC	YLOOKUPL,Y
+	STA	@1
+	LDA	fvdm+1
+	ADC	YLOOKUPH,Y
+	STA	@1+1
+
+
+;	LSR	A
+;	SEC
+;	ROR	A	; Add 64 for two rows	
+;	LSR	A
+;	STA	@1
+;	LDA	fvdm+1
+;	STA	@1+1
+;	TYA
+;	AND	#$F8
+;	ASL	A
+;	BCC	!1
+;	INC	@1+1
+;	INC	@1+1
+;!1	ASL	A
+;	BCC	!2
+;	INC	@1+1
+;!2	SEC
+;	ADC	@1
+;	STA	@1
+;	BCC	!3
+;	INC	@1+1
+;!3
+
+
+
+	ENDM
+
+FNfoentry	MACRO		;@1 font entry for char A
+	LDX	ffnt8
+	STX	@1+1
+	ASL	A
+	ROL	@1+1
+	ASL	A
+	ROL	@1+1
+	ASL	A
+	ROL	@1+1
+	STA	@1
+	ENDM
+
+FNfoentry0	MACRO		;@1= bank 0 font entry for char A
+	LDX	#<(FONT1/8)
+	STX	@1+1
+	ASL	A
+	ROL	@1+1
+	ASL	A
+	ROL	@1+1
+	ASL	A
+	ROL	@1+1
+	STA	@1
+	ENDM
+
+FNfoentry1	MACRO		;@1= bank 1 font entry for char A
+	LDX	#<(FONT2/8)
+	STX	@1+1
+	ASL	A
+	ROL	@1+1
+	ASL	A
+	ROL	@1+1
+	ASL	A
+	ROL	@1+1
+	STA	@1
+	ENDM
+
+
+
+
+FNenterc	MACRO		;Enter char cell @1(if run out goto @2)
+	IF	SEGMENT
+	ELSE
+	POLLBIT
+	ENDIF
+
+	LDX	#0
+	LDA	(@1,X)
+	BNE	!1
+	LDA	frchar
+	BEQ	@2
+	STA	(@1,X)
+	INC	frchar
+!1
+	ENDM
+
+FNenterc2	MACRO		;Enter char cell @1(if run out goto @3)
+			; if virgin goto @2
+
+	LDX	#0
+	LDA	(@1,X)
+	BNE	!1
+	LDA	frchar
+	BEQ	@3
+	STA	(@1,X)
+	INC	frchar
+	JMP	@2
+!1
+	ENDM
+
+
+
+
+FNentc3	MACRO		;Enter char cell @1 use @2 for address
+			;Allowing for preserved characters
+			;Goto @3 if no frchar
+			; NB. Corrupts T
+
+	POLLBIT
+	LDX	#0
+	LDA	(@1,X)
+	BNE	!1
+	LDA	frchar
+	BEQ	!5
+	STA	(@1,X)
+	INC	frchar
+	JMP	!2
+
+!5	JMP	@3
+
+!1	CMP	#preserve
+	BCS	!2
+	CMP	#stripchr
+	BCC	!5
+
+
+	FNfoentry	LI2
+	LDA	frchar
+	BEQ	!5
+	LDX	#0
+	STA	(@1,X)
+	INC	frchar
+	FNfoentry	@2
+	STY	T_eltj
+	LDY	#7
+!3	LDA	(LI2),Y
+	STA	(@2),Y
+	DEY
+	BPL	!3
+	LDY	T_eltj
+	JMP	!4
+
+!2	FNfoentry	@2
+!4
+	ENDM
+
+
+

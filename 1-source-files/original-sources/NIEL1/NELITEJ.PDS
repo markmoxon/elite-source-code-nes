@@ -1,0 +1,3451 @@
+;
+;REM	ELITE <J>	Nin
+;
+;	Transfer,NMI/IRQ Routines,Cleartran
+;	Readjoystick, Log tables
+;
+scanline	equ	106	;	Cycles per scan line	
+
+	IF	NTSC
+flyback	equ	2114+50	;2750-6*scanline
+	ELSE
+flyback	equ	7094+50	;	Cycles per V blank 
+	ENDIF
+blanktime	equ	flyback+toprow*scanline
+
+
+
+	IF	NEEDPOLL
+;timeslice	equ	7*scanline	;	Safe inter-POLLBIT period
+timeslice	equ	790	;	Safe inter-POLLBIT period
+	ENDIF
+
+safety	equ	100	;	Safety margin for transfer
+
+
+
+KNCK	MACRO	; Done @1 cycles, want to do @2
+		; Goto @3 if can't
+	SEC			;2
+	LDA	remain		;3
+	SBC	#>(@1+@2+23)	;2
+	STA	remain		;3
+	LDA	remain+1		;3
+	SBC	#<(@1+@2+23)	;2		
+	STA	remain+1		;3
+	BMI	!2		;2 3,4 ^=21/22
+	JMP	!1		;3 =23
+
+!2	LDA	remain	;3
+	ADC	#>(@2-19+1)	;2
+	STA	remain	;3
+	LDA	remain+1	;3
+	ADC	#<(@2-19+1)	;2
+	STA	remain+1	;3
+	JMP	@3	;3=19
+!1
+	ENDM
+
+
+KNCK2	MACRO	; Knock @1 off count
+	SEC			;2
+	LDA	remain		;3
+	SBC	#>(@1+18)		;2
+	STA	remain		;3
+	LDA	remain+1		;3
+	SBC	#<(@1+18)		;2		
+	STA	remain+1		;3=18
+	ENDM
+
+
+BUMP	MACRO	; Add @1 to count
+
+
+;	IF	@1>18
+	CLC			;2
+	LDA	remain		;3
+	ADC	#>(@1-18)		;2
+	STA	remain		;3
+	LDA	remain+1		;3
+	ADC	#<(@1-18)		;2		
+	STA	remain+1		;3=18
+;	ENDIF
+
+;	IF	@1<19
+;	DO	@1/2
+;	NOP
+;	LOOP
+;	ENDIF
+
+	ENDM
+
+
+
+	; b0=RIGHT      b4=START
+	; b1=LEFT       b5=SELECT
+	; b2=DOWN       b6=B
+	; b3=UP	        b7=A
+
+
+
+	IF	TWOJOY
+
+IOBIT	MACRO	;	Ror I/O bit into @1,X
+	LDA	CONTROLLER1,X
+	AND	#3
+	CMP	#1
+	ROR	@1,X
+	ENDM
+
+	ELSE
+
+IOBIT	MACRO	;	Ror I/O bit into @1,X
+	LDA	CONTROLLER1
+	AND	#3
+	CMP	#1
+	ROR	@1
+	ENDM
+
+	ENDIF	; (TWOJOY)
+
+
+
+;*****************************************************
+;
+;               Start of common code (resident bank)
+;
+;*****************************************************
+
+	IF	NES
+	FORG	$C000
+
+	ELSE
+	ORG	(*&$FF00)+$100
+	ENDIF	; (NES)
+
+
+
+INITMMC1	SEI
+	INC	PROM
+	JMP	Spcent
+
+PROM	equ	*-1
+
+
+Spcent	SEI			; intialise 6502 processor
+	CLD
+	LDX	#$FF		; stack pointer to maximum
+	TXS
+ 	LDX	#0
+	STX	trflag
+	LDA	#$10		; Kill display and
+	STA	VIDEO0		; disable VBL NMI
+	STA	CVIDEO0
+	LDA	#0
+	STA	VIDEO1
+
+;	LDA	VSTAT		; NB (must have NMIs disabled)
+!1	LDA	VSTAT		; three times for safety
+	BPL	!1
+!2	LDA	VSTAT
+	BPL	!2
+!3	LDA	VSTAT
+	BPL	!3
+
+
+	LDA	#0
+	STA	SAFESLOT		; english
+;	STA	SAFESLOT+2		; not demo
+	LDA	#60		; 5 minute pause
+	STA	SAFESLOT+1
+
+WARMSTART
+	LDX	#$FF
+	TXS
+
+	JSR	COLD2
+	IF	RETURNPDS
+	JSR	BEGIN
+	JMP	PDS
+	ELSE	
+	JMP	BEGIN
+	ENDIF
+
+
+R0	equ	$9fff
+R1	equ	$bfff
+R2	equ	$dfff
+R3	equ	$ffff		;MMC1 register equates
+
+;code for MMC1
+
+	;switch out the monitor EPROM
+
+
+COLD2
+	LDA	#$0		; Kill display and
+	STA	VIDEO0		; disable VBL NMI
+	STA	CVIDEO0
+	STA	VIDEO1
+
+	STA	DUNNIT
+
+	LDA	#64
+	STA	CONTROLLER2
+
+
+	INC	PROM		; Reset MMC1 again
+
+
+	LDA	VSTAT		; NB (must have NMIs disabled)
+!1	LDA	VSTAT		; three times for safety
+	BPL	!1
+!2	LDA	VSTAT
+	BPL	!2
+!3	LDA	VSTAT
+	BPL	!3
+
+
+	LDA	#0
+	TAX
+!4	STA	$0,X		; Zero zero page
+	INX
+	BNE	!4
+
+	FNset2b	SC,WKSP
+	TXA
+	LDX	#3
+	TAY
+!5	STA	(SC),Y		; Zero WP & UP wksp
+	INY
+	BNE	!5
+	INC	SC+1
+	DEX
+	BNE	!5
+
+	IF	TRABOT
+	FNset2b	NMIVECZP,NMIROU1
+	ENDIF
+
+	IF	NES
+
+;FOOENTRY
+;	inc	r0
+;	inc	r1
+;	inc	r2		; suspect MMC1 init provided 
+;	inc	r3		;by Foo
+
+;	lda	#%00001110		;set up 4K character banks
+;	
+;	sta	R0		;	16K program banks
+;	lsr	a		;	resident bank at $c000
+;	sta	R0		;	4 screen mode
+;	lsr	a		;	horizontal scroling
+;	sta	R0
+;	lsr	a
+;	sta	R0
+;	lsr	a
+;	sta	R0		;perform chip configuration
+;
+;	rts
+;	JSR	FOOENTRY
+
+	JSR	PRIMEMMC1
+
+;	JSR	PAGEDEFAULT
+
+	ENDIF	; (NES)
+
+	JSR	MUSOFFsmart
+
+
+	LDA	#128
+	ASL	A
+	JSR	INITVIDEO		; Prepare and turn on video
+	JSR	PREPFAKE		; (faded down)
+	JSR	CLEARFAKE
+
+	 			;Background & brdr  Cols=Black
+				; Dial colours 1 and 2
+				; Disable Sprites
+				; MOB1 in yellow (slider)
+				; MOB3 in brown
+				; MOB4 in grey
+				; MOB5 in blue
+				; MOB6 in white
+				; MOB7 in green
+				; MOB7 in green
+				; MOB7 in green
+				; MOB common col1=orange
+				; MOB common col2=yellow
+				; Sprites Hires & expanded
+			   	; Sprites X Coord high bits
+
+	;...Screen	Mems....
+
+
+	FNset1b	DTW1,0
+	FNset1b	DTW2,FF
+	FNset1b	DTW8,FFmask
+
+
+PAGEDEFAULT	LDA	#default
+	JMP	SWITCHBANK2
+
+
+SWITCHBANK1	;	Page ROM bank A to $8000
+	;	if not there already
+	CMP	BANKNUM
+	BNE	SWITCHBANK2
+	RTS
+SWITCHBANK0	; PLA then SWITCHBANK2
+	PLA
+SWITCHBANK2	;	Page ROM bank A regardless
+
+	IF	USEIRQ		; If using IRQs then diasble
+	SEI			; during bankswitch so that
+	ENDIF
+
+	IF	INCMUSIC
+	DEC	BANKFLAG		; Set BANKFLAG=FF
+	ENDIF	;(INCMUSIC)
+	
+	STA	BANKNUM		; IRQ routine can switch banks
+
+	IF	DOINCR3
+	INC	R3		; (but not using this routine!)
+	ENDIF
+
+	sta	R3
+	lsr	a
+	sta	R3
+	lsr	a
+	sta	R3
+	lsr	a
+	sta	R3
+	lsr	a
+	sta	R3
+
+	IF	USEIRQ
+	CLI
+	ENDIF
+
+	IF	INCMUSIC		;  If NMI interupted switching then
+	INC	BANKFLAG		; it zeroed BANKFLAG and didn't
+	BNE	!1		; call music refresh code
+	RTS			;  Will always eventually exit
+				; thus so C etc consistent
+
+!1	LDA	#0
+	STA	BANKFLAG
+	LDA	BANKNUM		; so we must preserve registers
+	PHA			; and BANKNUM and do it here
+	TXA
+	PHA
+	TYA
+	PHA
+	JSR	REFRESHsmart
+	PLA
+	TAY
+	PLA
+	TAX
+	JMP	SWITCHBANK0
+
+	ELSE	;(INCMUSIC)
+	
+	RTS
+
+
+	ENDIF	;(INCMUSIC)
+
+
+
+
+HEADTAB	DB	6,6,7,7	;LANGUAGE TABLE		
+HEAD0TAB	DB	11,9,13,10
+
+
+
+
+belowlog
+
+	ORG	$C100
+
+
+;   	 Log and antilog tables
+;	========================
+
+
+;  BBC Elite used standard bit bashing multiply and divide
+; routines. Logs were introduced for C64 Elite to get the
+; speed up. These DW strings were clawed back from data
+; generated by the BBC BASIC generated table in the C64 source
+
+
+;  The log table is two bytes wide (two 256-byte tables)
+; so when two are added/subtracted 17 bits are generated
+;  However if the top bit (the carry) is zero then the result
+; of the operation is so small as to be negligible, the
+; presence of the carry implies a multiplier of 2^16 (er...
+; I think...) to the result for the remaining 16 bits.
+;  Only the top 9 bits are used:- indexing using the top 8
+; bits into one of two possible 256-byte antilog tables, the
+; table used being determined by the 9th bit (the sign bit of
+; the LSB of the two byte result).
+;  Thus we have 4 256-byte tables =1K.
+
+log
+		DW	$6C,$3220
+		DW	$4A40,$5952
+		DW	$655F,$6E6A
+		DW	$7672,$7D79
+		DW	$8280,$8785
+		DW	$8C8A,$908E
+		DW	$9492,$9896
+		DW	$9B99,$9E9D
+		DW	$A1A0,$A4A2
+		DW	$A6A5,$A9A7
+		DW	$ABAA,$ADAC
+		DW	$AFAE,$B1B0
+		DW	$B3B2,$B5B4
+		DW	$B7B6,$B9B8
+		DW	$BAB9,$BCBB
+		DW	$BDBD,$BFBE
+		DW	$C0BF,$C2C1
+		DW	$C3C2,$C4C4
+		DW	$C6C5,$C7C6
+		DW	$C8C7,$C9C9
+		DW	$CACA,$CCCB
+		DW	$CDCC,$CECD
+		DW	$CFCE,$D0CF
+		DW	$D1D0,$D2D1
+		DW	$D3D2,$D4D3
+		DW	$D5D4,$D5D5
+		DW	$D6D6,$D7D7
+		DW	$D8D8,$D9D9
+		DW	$DAD9,$DBDA
+		DW	$DBDB,$DCDC
+		DW	$DDDD,$DEDD
+		DW	$DEDE,$DFDF
+		DW	$E0E0,$E1E0
+		DW	$E1E1,$E2E2
+		DW	$E3E2,$E3E3
+		DW	$E4E4,$E5E4
+		DW	$E5E5,$E6E6
+		DW	$E7E6,$E7E7
+		DW	$E8E7,$E8E8
+		DW	$E9E9,$EAE9
+		DW	$EAEA,$EBEA
+		DW	$EBEB,$ECEC
+		DW	$ECEC,$EDED
+		DW	$EDED,$EEEE
+		DW	$EEEE,$EFEF
+		DW	$EFEF,$F0F0
+		DW	$F1F0,$F1F1
+		DW	$F1F1,$F2F2
+		DW	$F2F2,$F3F3
+		DW	$F3F3,$F4F4
+		DW	$F4F4,$F5F5
+		DW	$F5F5,$F6F5
+		DW	$F6F6,$F7F6
+		DW	$F7F7,$F7F7
+		DW	$F8F8,$F8F8
+		DW	$F9F9,$F9F9
+		DW	$FAF9,$FAFA
+		DW	$FAFA,$FBFB
+		DW	$FBFB,$FCFB
+		DW	$FCFC,$FCFC
+		DW	$FDFD,$FDFD
+		DW	$FDFD,$FEFE
+		DW	$FEFE,$FFFE
+		DW	$FFFF,$FFFF
+logL
+		DW	$D,$B800
+		DW	$4D00,$D5B8
+		DW	$70FF,$B34D
+		DW	$6AB8,$5D5
+		DW	$CC00,$EF70
+		DW	$8D4D,$C1B3
+		DW	$9AB8,$286A
+		DW	$74D5,$8805
+		DW	$6B00,$23CC
+		DW	$B370,$22EF
+		DW	$714D,$A38D
+		DW	$BDB3,$BFC1
+		DW	$ABB8,$849A
+		DW	$4B6A,$28
+		DW	$A7D5,$3E74
+		DW	$C805,$4588
+		DW	$B7FF,$1D6B
+		DW	$79CC,$CA23
+		DW	$1370,$52B3
+		DW	$89EF,$B822
+		DW	$E04D,$71
+		DW	$198D,$2CA3
+		DW	$39B3,$3FBD
+		DW	$40C1,$3CBF
+		DW	$32B8,$23AB
+		DW	$109A,$F784
+		DW	$DB6A,$BA4B
+		DW	$9428,$6B00
+		DW	$3ED5,$EA7
+		DW	$DA74,$A23E
+		DW	$6705,$29C8
+		DW	$E788,$A345
+		DW	$5B00,$11B7
+		DW	$C46B,$751D
+		DW	$23CC,$CE79
+		DW	$7723,$1DCA
+		DW	$C170,$6313
+		DW	$3B3,$A152
+		DW	$3CEF,$D689
+		DW	$6D22,$3B8
+		DW	$964D,$28E0
+		DW	$B871,$4700
+		DW	$D48D,$5F19
+		DW	$E8A3,$702C
+		DW	$F6B3,$7B39
+		DW	$FEBD,$803F
+		DW	$1C1,$8040
+		DW	$FDBF,$7A3C
+		DW	$F5B8,$6F32
+		DW	$E7AB,$5F23
+		DW	$D59A,$4A10
+		DW	$BE84,$31F7
+		DW	$A26A,$13DB
+		DW	$824B,$F1BA
+		DW	$5E28,$CB94
+		DW	$3600,$A06B
+		DW	$AD5,$733E
+		DW	$DAA7,$410E
+		DW	$A774,$CDA
+		DW	$703E,$D3A2
+		DW	$3605,$9867
+		DW	$F8C8,$5929
+		DW	$B888,$16E7
+		DW	$7445,$D1A3
+antilog
+		DW	$101,$101
+		DW	$101,$101
+		DW	$101,$101
+		DW	$101,$101
+		DW	$101,$101
+		DW	$101,$101
+		DW	$101,$101
+		DW	$101,$101
+		DW	$202,$202
+		DW	$202,$202
+		DW	$202,$202
+		DW	$202,$202
+		DW	$202,$302
+		DW	$303,$303
+		DW	$303,$303
+		DW	$303,$303
+		DW	$404,$404
+		DW	$404,$404
+		DW	$404,$504
+		DW	$505,$505
+		DW	$505,$605
+		DW	$606,$606
+		DW	$606,$707
+		DW	$707,$707
+		DW	$808,$808
+		DW	$808,$909
+		DW	$909,$A09
+		DW	$A0A,$B0A
+		DW	$B0B,$C0B
+		DW	$C0C,$D0C
+		DW	$D0D,$E0E
+		DW	$E0E,$F0F
+		DW	$1010,$1110
+		DW	$1111,$1212
+		DW	$1313,$1413
+		DW	$1514,$1615
+		DW	$1716,$1817
+		DW	$1918,$1A19
+		DW	$1B1A,$1C1C
+		DW	$1D1D,$1F1E
+		DW	$2020,$2221
+		DW	$2322,$2524
+		DW	$2626,$2827
+		DW	$2A29,$2C2B
+		DW	$2E2D,$302F
+		DW	$3231,$3433
+		DW	$3635,$3938
+		DW	$3B3A,$3E3D
+		DW	$4140,$4442
+		DW	$4745,$4A48
+		DW	$4D4C,$514F
+		DW	$5452,$5856
+		DW	$5C5A,$605E
+		DW	$6462,$6967
+		DW	$6D6B,$7270
+		DW	$7775,$7D7A
+		DW	$8280,$8885
+		DW	$8E8B,$9491
+		DW	$9B98,$A29E
+		DW	$A9A5,$B1AD
+		DW	$B8B5,$C1BD
+		DW	$C9C5,$D2CE
+		DW	$DBD7,$E5E0
+		DW	$EFEA,$FAF5
+antilogODD
+		DW	$101,$101
+		DW	$101,$101
+		DW	$101,$101
+		DW	$101,$101
+		DW	$101,$101
+		DW	$101,$101
+		DW	$101,$101
+		DW	$101,$101
+		DW	$202,$202
+		DW	$202,$202
+		DW	$202,$202
+		DW	$202,$202
+		DW	$202,$302
+		DW	$303,$303
+		DW	$303,$303
+		DW	$303,$303
+		DW	$404,$404
+		DW	$404,$404
+		DW	$404,$505
+		DW	$505,$505
+		DW	$505,$605
+		DW	$606,$606
+		DW	$606,$707
+		DW	$707,$707
+		DW	$808,$808
+		DW	$908,$909
+		DW	$909,$A0A
+		DW	$A0A,$B0A
+		DW	$B0B,$C0B
+		DW	$C0C,$D0D
+		DW	$D0D,$E0E
+		DW	$F0E,$F0F
+		DW	$1010,$1110
+		DW	$1211,$1212
+		DW	$1313,$1414
+		DW	$1514,$1615
+		DW	$1716,$1817
+		DW	$1918,$1A1A
+		DW	$1B1B,$1D1C
+		DW	$1E1D,$1F1E
+		DW	$2120,$2221
+		DW	$2423,$2524
+		DW	$2726,$2928
+		DW	$2A29,$2C2B
+		DW	$2E2D,$302F
+		DW	$3231,$3534
+		DW	$3736,$3A38
+		DW	$3C3B,$3F3D
+		DW	$4240,$4543
+		DW	$4846,$4B49
+		DW	$4E4C,$5250
+		DW	$5553,$5957
+		DW	$5D5B,$615F
+		DW	$6563,$6A68
+		DW	$6F6C,$7471
+		DW	$7976,$7E7B
+		DW	$8481,$8A87
+		DW	$908D,$9693
+		DW	$9D99,$A4A0
+		DW	$ABA7,$B3AF
+		DW	$BAB6,$C3BF
+		DW	$CBC7,$D4D0
+		DW	$DED9,$E8E3
+		DW	$F2ED,$FDF7
+
+
+;*****************************************************
+
+		
+	IF	>*
+	ORG	(*&$FF00)+&100
+	ENDIF
+
+SNE	INCBIN	\PDS\JOEL1\SINATN.DAT	; Should be 64 bytes long
+	; 32-entry sine table
+
+ACT	equ	SNE+$20
+	; 32-entry arctan table
+
+	IF	USEDMA
+
+ZERTBL	BYTES	64,0	;must be aligned to 64 byte boundary
+
+SODMAecm	DB	$FF,$FF,$00,$00,$FF,$FF,$00,$00
+	DB	$FF,$FF,$00,$00,$FF,$FF,$00,$00
+	DB	$FF,$FF,$00,$00,$FF,$FF,$00,$00
+	DB	$FF,$FF,$00,$00,$FF,$FF,$00,$00
+
+	DB	$FF,$FF,$00,$00,$FF,$FF,$00,$00
+	DB	$FF,$FF,$00,$00,$FF,$FF,$00,$00
+	DB	$FF,$FF,$00,$00,$FF,$FF,$00,$00
+	DB	$FF,$FF,$00,$00,$FF,$FF,$00,$00
+
+
+SODMAlas	DB	$00,$FF,$00,$FF,$00,$FF,$00,$FF
+	DB	$00,$FF,$00,$FF,$00,$FF,$00,$FF
+	DB	$00,$FF,$00,$FF,$00,$FF,$00,$FF
+	DB	$00,$FF,$00,$FF,$00,$FF,$00,$FF
+
+	DB	$00,$FF,$00,$FF,$00,$FF,$00,$FF
+	DB	$00,$FF,$00,$FF,$00,$FF,$00,$FF
+	DB	$00,$FF,$00,$FF,$00,$FF,$00,$FF
+	DB	$00,$FF,$00,$FF,$00,$FF,$00,$FF
+
+
+SODMAbmb	DB	$12,$34,$CB,$74,$19,$A4,$7B,$D6
+	DB	$F5,$80,$0E,$D8,$E0,$65,$3A,$07
+	DB	$84,$F3,$96,$D1,$AA,$B6,$59,$62
+	DB	$27,$B3,$5A,$E4,$78,$1F,$09,$57
+
+	DB	$12,$34,$CB,$74,$19,$A4,$7B,$D6
+	DB	$F5,$80,$0E,$D8,$E0,$65,$3A,$07
+	DB	$84,$F3,$96,$D1,$AA,$B6,$59,$62
+	DB	$27,$B3,$5A,$E4,$78,$1F,$09,$57
+
+
+DMAtab	DB	<(((ZERTBL  )&$3FFF)*4),<(((SODMAecm)&$3FFF)*4)
+	DB	<(((SODMAlas)&$3FFF)*4),<(((SODMAbmb)&$3FFF)*4)
+	ENDIF	;(USEDMA)
+	
+XX21	; Pointers to ship definitions
+
+	INCBIN	ALLSHIPS.DAT	
+	ORG	XX21+2*NTY
+
+;		FORG	(*&$FF00)+$100
+
+sttr5	; Send two lines of ascii map based at stripas
+	; 8 or 9 to get here
+	KNCK2	31+15+2*1024+16 +3
+	LDX	stripas	;3
+	STX	nmiz2	;3
+	LDA	stripas+1	;3
+	CLC		;2
+	ADC	#<VIDM1	;2
+	STA	nmiz2+1	;3
+	LDA	stripas+1	;3
+	ADC	#$20	;2
+	STA	VRAM_ADR	;4
+	STX	VRAM_ADR	;4
+	LDY	#0	;2=31
+
+sttr51	LDA	(nmiz2),Y	;5
+	STA	VRAM_DAT	;4
+	INY		;2
+	CPY	#2*ncl	;2
+
+	BOUNDCHECK2	4,sttr51
+	BNE	sttr51	;3=16 16*64 =1024
+
+
+	LDA	stripas+1	;3
+	ADC	#$23	;2
+	STA	VRAM_ADR	;4
+	STX	VRAM_ADR	;4
+	LDY	#0	;2=15
+
+sttr52	LDA	(nmiz2),Y	;5
+	STA	VRAM_DAT	;4
+	INY		;2
+	CPY	#2*ncl	;2
+
+	BOUNDCHECK2	5,sttr52
+	BNE	sttr52	;3=16 16*64 =1024
+
+
+	; If maponly zero now do strip chars else
+	; goto transfer2
+
+	LDA	maponly	;2+1
+	BMI	!1	;+2
+	JMP	sttr1	;3
+	
+!1	STA	striptrn	
+	JMP	transfer2
+
+
+
+sttr3	; Only transfer bottom of strip to dial font
+
+	KNCK	0+2,641,exittran	;+2 seems to fix judder
+	LDA	#0	;2
+	STA	nmiz2	;3
+	LDA	striptrn	;3=7
+
+ 	ASL	A	;2
+	ASL	A	;2
+	ASL	A	;2
+	TAY		;2
+	LDA	#1	;2
+	ROL	A	;2
+	STA	nmiz1	;3=15 =22
+
+	TYA		;2
+	ADC	#$10*(icbase+1)	;2
+	TAX		;2
+	LDA	nmiz1	;3
+	ADC	#0	;2
+	STA	VRAM_ADR	;4
+	STX	VRAM_ADR	;4=19 =41
+
+	LDA	stripzH	;3
+	ADC	nmiz1	;3
+	STA	nmiz2+1	;3=9  =50
+
+	LDX	#32	;2 =52
+!1	LDA	(nmiz2),Y	;5
+	STA	VRAM_DAT	;4
+	INY		;2
+	DEX		;2
+	BOUNDCHECK	1
+	BEQ	!2	;2 
+	JMP	!1	;3 ^=18*32=576 =628
+
+
+!2	LDA	striptrn	;3
+	CLC		;2
+	ADC	#4	;2
+	STA	striptrn	;3=10 =638
+	BPL	sttr3	;^=641
+	JMP	transfer2	;v =643
+
+
+sttr1	; Need to transfer top of strip to both fonts
+	; (assume A cont. striptrn)
+	; enter with 9
+	ASL	A	;2
+	BMI	sttr3	;^=5	
+	KNCK	5,1269,exittran
+	LDA	#0	;2
+	STA	nmiz2	;3
+	LDA	striptrn	;3=7
+
+ 	ASL	A	;2
+	ASL	A	;2
+	ASL	A	;2
+	TAY		;2
+	LDA	#0	;2
+	ROL	A	;2
+	STA	nmiz1	;3=15 =22
+	TYA		;2
+	ADC	#$10*(icbase+1)	;2
+	TAX		;2
+	LDA	nmiz1	;3
+	ADC	#0	;2
+	STA	VRAM_ADR	;4
+	STX	VRAM_ADR	;4
+	LDA	stripzH	;3
+	ADC	nmiz1	;3
+	STA	nmiz2+1	;3=28  =50
+
+	LDX	#32	;2 =52
+!1	LDA	(nmiz2),Y	;5
+	STA	VRAM_DAT	;4
+	INY		;2
+	DEX		;2
+	BOUNDCHECK	2
+	BEQ	sttr2	;2 
+	JMP	!1	;3 ^=18*32=576 =628
+
+sttr2
+	LDA	#0	;2
+	STA	nmiz2	;2
+	LDA	striptrn	;3=7
+
+
+	ASL	A	;2
+	ASL	A	;2
+	ASL	A	;2
+	TAY		;2
+	LDA	#0	;2
+	ROL	A	;2
+	STA	nmiz1	;3=15 =22
+
+	TYA		;2
+	ADC	#$10*(icbase+1)	;2
+	TAX		;2
+	LDA	nmiz1	;3
+	ADC	#$10	;2
+	STA	VRAM_ADR	;4
+	STX	VRAM_ADR	;4=19 =41
+
+	LDA	stripzH	;3
+	ADC	nmiz1	;3
+	STA	nmiz2+1	;3=9 =50
+
+	LDX	#32	;2=52
+
+!1	LDA	(nmiz2),Y	;5
+	STA	VRAM_DAT	;4
+	INY		;2
+	DEX		;2
+	BOUNDCHECK	3
+	BEQ	!2	;2 
+	JMP	!1	;3 ^=18*32=576 =628= 1256
+
+
+!2	LDA	striptrn	;3
+	CLC		;2
+	ADC	#4	;2
+	STA	striptrn	;3=10 =1266
+	JMP	sttr1	;^=1269
+
+sttr1S	jmp	sttr1	;
+sttr5S	jmp	sttr5	;5+3
+
+transfer2	; Can't assume vblank
+	LDX	sbank		;3
+	LDA	bankstatus,X	;4
+	AND	#$10		;2
+	BEQ	exittran		;^=16/17 v=16
+	KNCK	16,3,exittran
+	JMP	tra7
+
+exittran	RTS
+
+transfer	; Transfer any ready bank
+	; sending cells from cellmin
+	; and char defns from charmin to charmax 
+	; assume still in VBLANK
+	LDA	striptrn		;3
+	BEQ	sttr5S
+	BPL	sttr1S		;^=6/7 v=5
+	LDX	sbank		;3
+	LDA	bankstatus,X	;4
+	AND	#$10		;2
+	BEQ	nwba2		;^=17/18 v=16
+
+	KNCK2	16+22		; -22
+
+	TXA			;2    If other bank ready
+	EOR	#1		;2    to send...
+	TAY			;2
+	LDA	bankstatus,Y	;4
+	AND	#$A0		;2    ...and vbeor set...
+	ORA	vbeor		;2
+	CMP	#$81		;2
+	BNE	!2		;^=-3/-2 v=-4
+
+
+	LDA	frchst,X		;4    ...and this bank's
+	BNE	!1		;3    char defns all sent...
+	LDA	#FF
+!1	CMP	chartrn,X		;4
+	BEQ	!3		;^ =10/11
+	BCS	!3		;v=15
+	KNCK2	15-1		;
+!2	JMP	tra7		;3=0
+
+!3	LDA	bankstatus,X	;4 =14/15
+	ASL	A		;2
+	BPL 	exittran		;^=19/20 v=18/19
+
+	IF	DIALSONTOP
+	LDY	cellmax
+	ELSE
+
+	LDY	cellmax,X		;3+1   ...and only a few
+	ENDIF
+	AND	#$8		;2    cells left to send...
+	BEQ	!4		;2
+	LDY	#128		;2
+!4	TYA			;2
+
+	SEC			;2
+	SBC	celltrn,X		;4=17 =35
+	IF	NTSC
+	CMP	#24
+	ELSE
+;	CMP	#4
+
+	CMP	#48	;anco
+
+
+
+
+	ENDIF
+	BCC	!5		;v= 39 ^=40/41
+	KNCK2	42
+!7S	JMP	tra7		;3 =42
+
+!5	LDA	CVIDEO0
+	BEQ	!7S		;6	and display active
+
+;	KNCK2	40+108+6
+	KNCK2	40+76
+
+	LDA	vbeor		;3
+	EOR	vbank		;3    ...then flip vbank. 
+	STA	vbank		;3
+	JSR	updatepal		;64=73
+	JMP	tra7		;3=76 (=109???)
+
+
+nwba2	KNCK2	13+5+237+25
+
+	; Check if any data available
+	; enter with 0
+	; assume in vblank
+
+	LDA	bankstatus		;4
+	AND	#$A0		;2
+	CMP	#$80		;2
+	BNE	!2		;^=11/12 v=10
+	; Send bank 1
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP			;10
+	LDX	#0		;2
+	JMP	tra6		;3=15 =25
+
+!2	LDA	bankstatus+1	;4 
+	AND	#$A0		;2
+	CMP	#$80		;2=8 =19/20 
+	BEQ	tra60		;^ =22/23 v=21/22
+
+!4	BUMP	237+25-21
+	RTS
+
+
+tra63	BUMP	64-1
+	JMP	tra62
+
+
+tra60	; Send bank 2
+	LDX	#1		;2 =24/25
+
+tra6	; Start sending bank X
+	; Enter with -237
+	; assume in vblank
+	STX	sbank		;3
+
+	LDA	vbeor
+	BEQ	tra63
+	
+	STX	vbank		;3=6
+
+
+	JSR	updatepal		;64 =70
+
+tra62	; Start sending bank X
+	; assuming vbank & pallette set already
+	; enter with -167
+
+	TXA			;2
+	ASL	A		;2
+	ASL	A		;2
+	ASL	A		;2=8 =78		
+
+	STA	font		;3
+	LSR	A		;2
+	ORA	#$20		;2
+	STA	vdm+1		;3
+	LDA	#$10		;2
+	STA	font+1		;3
+	LDA	#0		;2
+	STA	vdm		;3=20 =98
+
+	IF	DIALSONTOP
+	LDA	cellminH
+	LDA	zermin
+	STA	cellzer,X
+	LDA	cellmin,X
+	STA	celltrn,X
+	ELSE
+	
+
+	LDA	cellmin		;3
+	STA	celltrn,X		;4
+	STA	cellzer,X		;4=11 =109
+
+	ENDIF
+
+	LDA	charmin		;3
+	STA	chartrn,X		;4
+	STA	charzer,X		;4=11 =120
+
+	LDA	bankstatus,X	;4
+	ORA	#$10		;2
+	STA	bankstatus,X	;5=11 =131
+
+	LDA	#0		;2
+	STA	nmiz1		;3
+	LDA	chartrn,X		;4
+	ASL	A		;2=11
+	ROL	nmiz1		;5
+	ASL	A		;2
+	ROL	nmiz1		;5
+	ASL	A		;2=14=25
+	STA	fotraL,X		;4
+	LDA	nmiz1		;3
+	ROL	A		;2
+	ADC	CHRDEF,X		;4
+	STA	fotraH,X		;5=18=43 =174
+
+	LDA	#0		;2
+	STA	nmiz1		;3
+	LDA	celltrn,X		;4
+	ASL	A		;2=11
+	ROL	nmiz1		;5
+	ASL	A		;2
+	ROL	nmiz1		;5
+	ASL	A		;2=14=25
+	STA	vitraL,X		;4
+	ROL	nmiz1		;5
+	LDA	nmiz1		;3
+	ADC	VIDMAP,X		;4
+	STA	vitraH,X		;5=20=46
+	LDA	vdm+1		;3
+	SEC			;2
+	SBC	VIDMAP,X		;4
+	STA	vitgtH,X		;5=14=60 =234
+	JMP	tra7		;3 =237
+
+tra3s	BUMP	122+27+4-45-(54+12+20)
+	JMP	tra32
+
+traBs	JMP	traB
+
+
+tra7	; Continue sending bank sbank 
+	KNCK	0,128+27+4,exittran
+
+	LDA	frchst,X		;4
+	BNE	!1		;3
+	LDA	#FF
+!1	STA	vbtgt		;3=10
+
+	LDA	vdm+1		;3
+	SEC			;2
+	SBC	VIDMAP,X		;4
+	STA	vitgtH,X		;5=14 =24
+
+	LDY	fotraL,X		;4
+	LDA	fotraH,X		;4
+	STA	nmiz2+1		;3=11 =35
+
+	LDA	chartrn,X		;4
+	STA	charsent		;4
+	SEC			;2
+	SBC	vbtgt		;3=13 =48
+	BCS	tra3s		;^=51/52 v=50
+
+
+	IF	NTSC
+	LDX	CVIDEO0		;3
+	BEQ	!2		;2
+	CMP	#$E0		;2
+	BCC	traBs		;v=9 =59 6 ^=10/11 =60/61
+	ELSE
+	LDX	CVIDEO0
+	BEQ	!2
+;	CMP	#$C0
+	CMP	#$BF	;anco
+	BCC	traBs
+	ENDIF
+
+!2	LDA	charsent		;3
+	LDX	#0		;2
+	STX	nmiz1		;3
+	STX	nmiz2		;3
+	ASL	A		;2
+	ROL	nmiz1		;5
+	ASL	A		;2
+	ROL	nmiz1		;5
+	ASL	A		;2=27 =86
+
+	ROL	nmiz1		;5
+	ASL	A		;2
+	TAX			;2
+	LDA	nmiz1		;3
+	ROL	A		;2
+	ADC	font+1		;3
+	STA	VRAM_ADR		;4=21 =107
+
+	STA	nmiz1+1
+
+	TXA			;2
+	ADC	font		;3
+	STA	VRAM_ADR		;4
+
+	STA	nmiz1		;3+3=6
+
+	JMP	traL1		;3=12 =119 =125
+
+
+tra11	INC	nmiz2+1		;5 =97/98
+	KNCK2	9		;-9
+	JMP	tra12		;3 =91/92
+
+
+tradunS	JMP	tradun
+
+traL1
+	LDX	charsent		;3 =122=128
+traL12	KNCK	0,126+124+124+3,tra9
+	DO	8
+	LDA	(nmiz2),Y
+	STA	VRAM_DAT	
+	INY			;8*11 =88
+	LOOP
+	BEQ	tra11		;^=91/92
+tra12			        ;=90
+	LDA	nmiz1
+	CLC
+	ADC	#16
+	STA	nmiz1
+	LDA	nmiz1+1
+	ADC	#0
+	STA	nmiz1+1
+	STA	VRAM_ADR
+	LDA	nmiz1
+	STA	VRAM_ADR		;29 =119
+
+;	DO	8
+;	LDA	VRAM_DAT		;8*4 =122
+;	LOOP
+
+	INX			;2
+	CPX	vbtgt		;3
+	BCS	tradunS		;2 =126
+
+	DO	8
+	LDA	(nmiz2),Y
+	STA	VRAM_DAT	
+	INY			;8*11 =88
+	LOOP
+	BEQ	tra112		;^=91/92
+tra122			        ;=90
+	LDA	nmiz1
+;	CLC
+	ADC	#16
+	STA	nmiz1
+	LDA	nmiz1+1
+	ADC	#0
+	STA	nmiz1+1
+	STA	VRAM_ADR
+	LDA	nmiz1
+	STA	VRAM_ADR		;27
+
+;	DO	8
+;	LDA	VRAM_DAT		;8*4 =122
+;	LOOP
+
+	INX			;2
+	CPX	vbtgt		;3
+	BCS	tradun2		;2 =124
+
+
+	DO	8
+	LDA	(nmiz2),Y
+	STA	VRAM_DAT	
+	INY			;8*11 =88
+	LOOP
+	BEQ	tra113		;^=91/92
+tra123			        ;=90
+	LDA	nmiz1
+;	CLC
+	ADC	#16
+	STA	nmiz1
+	LDA	nmiz1+1
+	ADC	#0
+	STA	nmiz1+1
+	STA	VRAM_ADR
+	LDA	nmiz1
+	STA	VRAM_ADR		;27
+
+;	DO	8
+;	LDA	VRAM_DAT		;8*4 =122
+;	LOOP
+
+	INX			;2
+	CPX	vbtgt		;3
+	BCS	tradun3		;2 =124
+	JMP	traL12
+
+
+tra112	INC	nmiz2+1
+	KNCK2	11
+	CLC
+	JMP	tra122
+
+tradun	BUMP	124+124-3-3
+	JMP	tradun3
+tradun2	BUMP	124+3
+tradun3
+	STX	charsent		;136/137=-2/-1
+	NOP			;2
+	LDX	sbank		;3		
+	STY	fotraL,X		;4
+	LDA	nmiz2+1		;3
+	STA	fotraH,X		;4
+	LDA	charsent		;3
+	STA	chartrn,X		;4
+	JMP	tra3		;3=26 =24/25
+
+tra113	INC	nmiz2+1
+	KNCK2	11
+	CLC
+	JMP	tra123
+
+traB	; Have many chars to send so rely on timeout
+	LDA	charsent		;3
+	LDX	#0		;2
+	STX	nmiz1		;3
+	STX	nmiz2		;3
+	ASL	A		;2
+	ROL	nmiz1		;5
+	ASL	A		;2
+	ROL	nmiz1		;5
+	ASL	A		;2=27 =87/88
+
+	ROL	nmiz1		;5
+	ASL	A		;2
+	TAX			;2
+	LDA	nmiz1		;3
+	ROL	A		;2
+	ADC	font+1		;3
+	STA	VRAM_ADR		;4=21 =108/109
+
+	STA	nmiz1+1
+
+	TXA			;2
+	ADC	font		;3
+	STA	VRAM_ADR		;4
+
+	STA	nmiz1		;3+3=6
+
+	JMP	traBl1		;3=12 =120 =126
+
+traB11	INC	nmiz2+1		;5
+	KNCK2	9		;-9
+	JMP	traB12		;3
+
+traBl1	LDX	charsent
+traBl12	KNCK	0,119+117+13-6,tra9
+	DO	8
+	LDA	(nmiz2),Y
+	STA	VRAM_DAT	
+	INY			;8*11 =88
+	LOOP
+	BEQ	traB11		;^=91/92
+traB12			        ;=90
+
+	LDA	nmiz1
+	CLC
+	ADC	#16
+	STA	nmiz1
+	LDA	nmiz1+1
+	ADC	#0
+	STA	nmiz1+1
+	STA	VRAM_ADR
+	LDA	nmiz1
+	STA	VRAM_ADR		;29=119
+
+;	DO	8
+;	LDA	VRAM_DAT		;8*4=32  =122
+;	LOOP
+
+	DO	8
+	LDA	(nmiz2),Y
+	STA	VRAM_DAT	
+	INY			;8*11=88
+	LOOP
+	BEQ	traB13		;^=91/92
+traB14			        ;=90
+	LDA	nmiz1
+;	CLC
+	ADC	#16
+	STA	nmiz1
+	LDA	nmiz1+1
+	ADC	#0
+	STA	nmiz1+1
+	STA	VRAM_ADR
+	LDA	nmiz1
+	STA	VRAM_ADR		;27=117
+
+
+	INX
+	INX
+
+
+	JMP	traBl12		;^=2*119+13
+
+traB13	INC	nmiz2+1		;5 =97/98
+	KNCK2	11		;-9
+	CLC
+	JMP	traB14		;3 =91/92
+
+
+;traB15	INC	nmiz2+1		;5 =97/98
+;	KNCK2	9		;-9
+;	JMP	traB16		;3 =91/92
+
+tra9	STX	charsent		;3
+	LDX	sbank		;3		
+	STY	fotraL,X		;4
+	LDA	nmiz2+1		;3
+	STA	fotraH,X		;4
+	LDA	charsent		;3
+	STA	chartrn,X		;4
+	JMP	exittran		;3=27
+
+
+tra4	;	Downloading of sbank finished
+	;	call with 0
+
+	LDX	sbank			; Flag bank
+	LDA	#$20			; as sent
+	STA	bankstatus,X	;10
+
+	KNCK	10,167+27,exittran
+
+	TXA			;2	  Switch sbank
+	EOR	#1		;2		
+	STA	sbank		;3	  and if vbank
+	CMP	vbank		;3=10	  has been changed
+	BNE	!1		;v =12    already
+
+	TAX			;2        consider sending
+	LDA	bankstatus,X	;4        it
+	AND	#$A0		;2
+	CMP	#$80		;2
+	BEQ	!2		;2
+	JMP	tra62		;3=27
+
+!2	BUMP	167+2
+	RTS
+
+!1	BUMP	167+27-13
+	RTS
+
+
+tra13	BUMP	54+12+27-14-3
+	JMP	exittran		;16/17
+
+tra14	BUMP	54+12+27-19-3
+	JMP	tra4		;20/21
+
+chwidth	equ	4
+
+tra3	; Send char map in chwidth eight-byte chunks
+	; call with 0
+
+	KNCK	0,54+12+20,exittran
+tra32
+
+	LDX	sbank		;3
+	LDA	bankstatus,X	;5
+	ASL	A		;2 =10
+	BPL 	tra13		;^=13/14 v=12
+
+	IF	DIALSONTOP
+	LDY	cellmax
+	ELSE
+	LDY	cellmax,X		;3+1	
+	ENDIF
+	AND	#$8		;2
+	BEQ	!1		;2
+	LDY	#128		;2
+!1
+	STY	vbtgt		;3=12
+
+	LDA	celltrn,X		;4
+	STA	cellsent		;3
+	SEC			;2
+	SBC	vbtgt		;3 =24
+	BCS	tra14		;^ =27/28 v=26
+
+	LDY	vitraL,X		;4
+	LDA	vitraH,X		;4
+	STA	nmiz2+1		;3=11	
+	CLC			;2
+	ADC	vitgtH,X		;4
+	STA	VRAM_ADR		;4
+	STY 	VRAM_ADR		;4=14=25
+	LDA	#0		;2
+	STA	nmiz2		;3=5=30  =54
+
+
+tral2	KNCK	3,15+8*chwidth*11,tra8
+	DO	8*chwidth
+	LDA	(nmiz2),Y
+	STA	VRAM_DAT
+	INY
+	LOOP			;8*chwidth*11 =352
+	BEQ	!2		;^=3/4
+
+	LDA	cellsent		; assume C set by KNCK
+	ADC	#chwidth-1
+	STA	cellsent		;8 =10
+
+	CMP	vbtgt		;3 =13
+	BCS	!3		;^=16/17 v=15
+	JMP	tral2		;3	
+!3
+!1	
+	STA	celltrn,X		;4
+	STY	vitraL,X		;4
+	LDA	nmiz2+1		;3
+	STA	vitraH,X		;5
+	JMP	tra4		;3=19
+
+
+!2	INC	nmiz2+1		;5
+	KNCK2	8		;-8 =0/1
+	LDA	cellsent
+	CLC
+	ADC	#chwidth
+	STA	cellsent		;10 =10/11
+
+	CMP	vbtgt		;3 =13/14
+	BCS	!1		;^=16/18 v=15/16 
+	JMP	tral2		;3
+
+tra8	LDA	cellsent		;3=3
+	STA	celltrn,X		;4	
+	STY	vitraL,X		;4
+	LDA	nmiz2+1		;3
+	STA	vitraH,X		;5
+	JMP	exittran		;3=19
+
+
+
+	IF	TRABOT
+
+
+ftrs1	; Set fotra and vitra from chartrn and celltrn
+	; 85 cycles
+	LDA	#0		;2
+	STA	nmiz1		;3
+	LDA	chartrn,X		;4
+	ASL	A		;2=11
+	ROL	nmiz1		;5
+	ASL	A		;2
+	ROL	nmiz1		;5
+	ASL	A		;2=14=25
+	STA	fotraL,X		;4
+	LDA	nmiz1		;3
+	ROL	A		;2
+	ADC	CHRDEF,X		;4
+	STA	fotraH,X		;5=18=43
+
+	LDA	#0		;2
+	STA	nmiz1		;3
+	LDA	celltrn,X		;4
+	ASL	A		;2=11
+	ROL	nmiz1		;5
+	ASL	A		;2
+	ROL	nmiz1		;5
+	ASL	A		;2=14=25
+	STA	vitraL,X		;4
+	LDA	nmiz1		;3
+	ROL	A		;2
+	ADC	VIDMAP,X		;4
+	STA	vitraH,X		;5=17=42=85
+	RTS
+
+
+ftr8
+	TXA
+	EOR	#1
+	TAX
+
+ftrnsfer	; ftrnsfer ready bank X
+	; sending cells from cellmin
+	; and char defns from charmin to charmax 
+	; will not recall if NMIed
+
+
+
+	LDA	#>NMIROU2
+	STA	NMIVECZP
+
+
+;!2	NOP
+;	JMP	!2
+
+	LDA	bankstatus,X	;4
+	ASL	A
+	BPL	!1		; Exit if map undefined
+	ASL	A
+	BMI	ftr8		; flip bank if sent
+	ASL	A
+	BPL	ftr6
+
+	JMP	ftr7
+
+!1	JMP	exitftran
+
+ftr6	; Start sending bank X
+	; (assume some time before NMI)
+
+;	LDA	sbank		;3
+	TXA			;2
+	ASL	A		;2
+	ASL	A		;2
+	ASL	A		;2=9		
+
+	STA	font		;3
+	LSR	A		;2
+	ORA	#$20		;2
+	STA	vdm+1		;3
+	LDA	#$10		;2
+	STA	font+1		;3
+	LDA	#0		;2
+	STA	vdm		;3=20=29
+
+	STX	sbank		;3
+	LDA	cellmin 		;3
+	STA	celltrn,X		;4
+	STA	cellzer,X		;4
+
+	LDA	charmin		;3
+	STA	chartrn,X		;4
+	STA	charzer,X		;4=25 =54
+
+	LDA	vbeor
+	BEQ	!1
+	STX	vbank		;?
+!1
+	LDA	bankstatus,X	;4
+	ORA	#$10		;2
+	STA	bankstatus,X	;5=11 =65
+
+	JSR	ftrs1		;152+12
+				; OK 2 JSR since NMI-safe
+
+	LDA	vdm+1		;3
+	SEC			;2
+	SBC	VIDMAP,X		;4
+	STA	vitgtH,X		;5=14=60 =170
+	JMP	ftr7		;3 =173
+
+ftr3s	JMP	ftr3
+
+
+
+ftr7	; Continue sending bank sbank 
+	; (Assume a little time before NMI)
+
+
+	LDA	vdm+1		;3
+	SEC			;2
+	SBC	VIDMAP,X		;4
+	STA	vitgtH,X		;5=14
+
+	LDY	fotraL,X		;4
+	LDA	fotraH,X		;4
+	STA	nmiz2+1		;3
+	LDA	frchst,X		;4
+	BNE	!1		;3
+	LDA	#FF
+!1	STA	vbtgt		;3=21 =35
+
+	LDA	chartrn,X		;4
+	CMP	vbtgt		;3
+	BCS	ftr3s		;^=45/46 v=44
+
+
+	LDX	#0		;2
+	STX	nmiz1		;3
+	STX	nmiz2		;3
+	ASL	A		;2
+	ROL	nmiz1		;5
+	ASL	A		;2
+	ROL	nmiz1		;5
+	ASL	A		;2=24 =72
+
+	ROL	nmiz1		;5
+	ASL	A		;2
+	TAX			;2
+	LDA	nmiz1		;3
+	ROL	A		;2
+	ADC	font+1		;3
+	STA	VRAM_ADR		;4=21 =93
+
+;	sta	nmiz1+1
+
+	TXA			;2
+	ADC	font		;3
+	STA	VRAM_ADR		;4
+	LDX	sbank
+	jmp	ftrl1		;3=12 =105
+
+
+ftr11	INC	nmiz2+1		;5 =97/98
+	JMP	ftr12		;3 =91/92
+
+ftrl1	; NMI could now occur at any time
+
+	DO	8
+	LDA	(nmiz2),Y
+	STA	VRAM_DAT	
+	INY			;8*11 =88
+	LOOP
+	BEQ	ftr11		;^=91/92
+ftr12			        ;=90
+	DO	8
+	LDA	VRAM_DAT		;8*4 =122
+	LOOP
+	LDA	chartrn,X
+	ADC	#1
+	STA	chartrn,X
+	CMP	vbtgt		;3=11 =133
+	BCS	exitftran
+	JMP	ftrl1		;^=138
+
+
+ftr4	;	Downloading of sbank finished
+	;	(NMI unsafe so exit)
+
+
+exitftran2
+
+	; shit what if nmi hits in this bit???
+
+	LDA	#0		;2
+	STA	nmiz1		;3
+	LDA	chartrn,X		;4
+	ASL	A		;2=11
+	ROL	nmiz1		;5
+	ASL	A		;2
+	ROL	nmiz1		;5
+	ASL	A		;2=14=25
+	STA	fotraL,X		;4
+	LDA	nmiz1		;3
+	ROL	A		;2
+	ADC	CHRDEF,X		;4
+	STA	fotraH,X		;5=18=43 =110
+
+	LDA	#0		;2
+	STA	nmiz1		;3
+	LDA	celltrn,X		;4
+	ASL	A		;2=11
+	ROL	nmiz1		;5
+	ASL	A		;2
+	ROL	nmiz1		;5
+	ASL	A		;2=14=25
+	STA	vitraL,X		;4
+	ROL	nmiz1		;5
+	LDA	nmiz1		;3
+	ADC	VIDMAP,X		;4
+	STA	vitraH,X		;5=20=45=155
+
+exitftran	LDA	#>NMIROU1		; After this store
+	STA	NMIVECZP		; NMI will return to
+	RTS			; whereever interrupted
+
+
+ftr3	; Send char map in chwidth eight-byte chunks
+	; (Assume no NMI for a while)
+
+	LDA	bankstatus,X	;5
+	ASL	A		;2 =10
+	BPL 	exitftran		;^=13/14 v=12
+
+	LDA	celltrn,X		;4
+	CMP	cellmax,X		;3 =19
+	BCS	ftr4		;^ =18/19
+
+	LDY	vitraL,X		;4
+	LDA	vitraH,X		;4
+	STA	nmiz2+1		;3=11	
+	CLC			;2
+	ADC	vitgtH,X		;4
+	STA	VRAM_ADR		;4
+	STY	VRAM_ADR		;4=14=25
+	LDA	#0		;2
+	STA	nmiz2		;3=5=30  =54
+
+
+ftrl2	; NMI could now occur at anytime
+	DO	8*chwidth
+	LDA	(nmiz2),Y
+	STA	VRAM_DAT
+	INY
+	LOOP			;8*chwidth*11 =352
+	BEQ	!2		;^=3/4
+
+	BEQ	!2		;^=91/92
+!4	LDA	celltrn,X
+	CLC
+	ADC	#chwidth
+	STA	celltrn,X
+	CMP	cellmax,X		;3 =101
+	BCS	!3		;^=104/105
+	JMP	ftrl2		;3 =106	
+
+!3	JMP	exitftran2
+
+!2	INC	nmiz2+1
+	JMP	!4
+
+	ENDIF		
+
+
+tcol0	equ	1	; Colour of resident typeface
+tcol1	equ	2	; Colour of secondary typeface
+tcol2	equ	3	; Colour of always-requested typeface
+
+
+	;
+	;.....TTX66......
+	;
+
+
+
+COPYBANK	; Copy bank 0 to bank 1
+	; (Copy ALL cells including colour map
+	; and characters 0-frchar)
+	
+	
+	LDY	#0
+	LDX	#16
+!1
+	LDA	VIDM1,Y
+	STA	VIDM2,Y
+	LDA	VIDM1+$100,Y
+	STA	VIDM2+$100,Y
+	LDA	VIDM1+$200,Y
+	STA	VIDM2+$200,Y
+	LDA	VIDM1+$300,Y
+	STA	VIDM2+$300,Y
+	SPOLLBIT	131 ; <<<<
+
+	DEX
+	BNE	!2
+	LDX	#16
+!2	DEY
+	BNE	!1
+
+	LDA	frchar
+	STA	frchst
+	STA	frchst+1
+	RTS
+
+
+
+
+BORDER1	; Top bar
+	
+	LDY	#1
+	LDA	#topbar
+!1	STA	VIDM1,Y	
+	INY
+	CPY	#ncl
+	BNE	!1
+	IF	TOPLINE
+	LDA	MODE
+	BNE	!3
+	LDY	#1
+	LDA	#horiz+7
+!2	STA	VIDM1+ncl,Y	
+	INY
+	CPY	#ncl
+	BNE	!2
+!3
+	ENDIF
+	RTS		
+
+
+
+
+
+
+BORDER2	; Side bars
+
+	LDX	bank
+	BNE	brd1
+	LDA	LBORD
+loopc	=	0
+	DO	nli+banner
+	STA	VIDM1+loopc*ncl+1
+loopc	=	loopc+1
+	LOOP
+ 
+	LDA	RBORD
+loopc	=	0
+	DO	nli+banner
+	STA	VIDM1+loopc*ncl
+loopc	=	loopc+1
+	LOOP
+	RTS
+
+brd1
+	LDA	LBORD
+loopc	=	0
+	DO	nli+banner
+	STA	VIDM2+loopc*ncl+1
+loopc	=	loopc+1
+	LOOP
+	LDA	RBORD
+loopc	=	0
+	DO	nli+banner
+	STA	VIDM2+loopc*ncl
+loopc	=	loopc+1
+	LOOP
+
+	POLLBIT	219
+	RTS
+
+
+UNIV
+Ipcent	= 0
+	DO	NOSH+1
+	DW	Kpcent+Ipcent*NIpcent	
+Ipcent	= Ipcent+1
+	LOOP
+
+
+
+GINF	TXA
+	ASL	A
+	TAY
+	LDA	UNIV,Y
+	STA	INF
+	LDA	UNIV+1,Y
+	STA	INF+1
+	RTS
+
+
+WPEXPL
+	LDX	#noexp
+	LDY	#expbase*4
+	JMP	zonks
+
+zonkscanners
+;	POLLBIT	132
+	LDX	#0
+zonkL	LDA	FRIN,X
+	BEQ	zonk1
+	BMI	zonk2
+	JSR	GINF
+	LDY	#31
+	LDA	(INF),Y
+	AND	#$EF
+	STA	(INF),Y
+zonk2	INX
+	BNE	zonkL
+zonk1	LDY	#(needbase)*4
+	LDX	#3*scanno+scanbase-needbase
+zonks	LDA	#$F0
+!1	STA	ATTRIBUTES+0,Y
+	INY
+	INY
+	INY
+	INY
+	DEX
+	BNE	!1
+	RTS
+	;....
+
+
+	ORG	(*&$FFF0) +16
+
+VIDMAP	DB	<VIDM1
+	DB	<VIDM2
+
+CHRDEF	DB	<FONT1
+	DB	<FONT2
+
+
+
+
+
+IRQROUTINE
+
+	IF	USEIRQ
+
+	PHA
+
+	IF	RELYIRQ
+
+	LDA	WRST	; Filter out bogus
+	BPL	!1	; IRQs
+
+	LDA	SOenable
+	AND	#$EF
+	STA	SOenable
+	STA	WRST
+
+	LDA	DOINTRPT
+	AND	CVIDEO0
+	BEQ	!1
+
+	IF	SHOWDMAIRQ
+	LDA	#VID1GRY
+	STA	VIDEO1	;B&W effect
+	ENDIF	; (SHOWDMAIRQ)
+
+	IF	1
+
+	ELSE	;(1)
+
+	TYA
+	PHA
+	TXA
+	PHA
+	FNset2b	remain,2*scanline
+	JSR	KILLTIME
+	PLA
+	TAX
+	PLA
+	TAY
+	ENDIF	; (1)
+!2
+	LDA	VSTAT
+	AND	#$40
+	BEQ	!2
+
+	JSR	SPRITEINT
+!1
+	ELSE	; (RELYIRQ)
+
+	POLLBITCORE	134
+
+
+	ENDIF	; (RELYIRQ)
+
+	PLA
+ 
+	ENDIF	; (USEIRQ)
+
+	RTI
+
+
+
+NMIROUTINE	; Since code never uses decimal mode don't need
+	; to clear it here
+	IF	TRABOT
+
+	JMP	(NMIVECZP)
+	ORG	(*&$FFFC)+4		; Ensure both NMI routine
+				; addresses same high byte
+NMIROU2	JMP	NMIROU22
+NMIROU1
+	ENDIF	; (TRABOT)
+
+timegiven	equ	blanktime-safety-242-5
+
+	JSR	nmisub1		;109
+	
+	LDA	DOINTRPT		;3
+	STA	DUNNIT		;3=6 =115
+
+	FNset2b	remain,timegiven	;10 =125
+
+	JSR	nmisub2		;117 =242
+NMIROU3
+
+	IF	POLLSCAN
+	LDA	DOCRWT
+	BEQ	!IANISSILLY
+
+	LDA	DOINTRPT
+	AND	CVIDEO0
+	BEQ	!IANISSILLY
+	
+	lda	fade
+	bne	!IANISSILLY
+
+
+	lda	polltemp
+	BEQ	!IANISSILLY
+
+	LDY	CRGO+2
+	STA	CRGO+2
+	LDA	CRGO+3
+	STY	CRGO+3
+	LDY	CRGO+4
+	STA	CRGO+4
+	STY	CRGO+5
+
+	LDY	CRGO+8
+	LDA	CRGO+9
+	STY	CRGO+9
+	LDY	CRGO+10
+	STA	CRGO+10
+	STY	CRGO+11
+
+	LDA	#FF
+	STA	POLLTEMP+1
+
+
+!IANISSILLY	LDA	#0
+	STA	polltemp
+
+	ENDIF	;POLLSCAN
+
+	JSR	readjoy2
+
+
+;	*********Stuff below not used*********
+
+	IF	USEDMA
+
+	LDA	#1		;DMA 17 bytes (n*16+1)
+	STA	$4013
+
+	IF	SFX
+	LDY	SOdma		;each sound has own DMA data
+	LDA	DMAtab,Y
+	ELSE
+	LDA	#<(((ZERTBL)&$3FFF)*4)
+	ENDIF
+
+	STA	$4012
+
+	IF	USEIRQ
+	IF	BIG
+	LDA	#$8A
+	ELSE
+	LDA	#$8B		;bottom 4 bits DMA frequency
+	ENDIF
+
+	ELSE	; (USEIRQ)
+
+	IF	BIG
+	LDA	#$0B		; If not using IRQ then
+	ELSE			; disable d7 of 4010 as
+	LDA	#$0C		; recommended in manual
+	ENDIF
+	ENDIF	; (USEIRQ)
+	
+
+	STA	$4010
+	LDA	SOenable
+	ORA	#16		;turn on DMA channel
+	STA	SOenable		; and write to RAM copy of latch
+	STA	WRST
+
+	ENDIF	;(USEDMA)
+
+	IF	SFX
+	DEC	SOCNT+4
+	BNE	!1
+	LDA	#0
+	STA	SOdma
+	STA	SOPR+4
+!1	JSR	SOINT
+	ENDIF
+
+;	*******************
+
+	IF	AUTOPLAY
+	LDA	autoflag
+	BPL	!5
+	JSR	fakejoy
+!5
+	ENDIF
+
+	JSR	slider
+	JSR	fakeanag
+
+!4	JSR	CLOCK
+
+	IF	INCMUSIC
+	LDA	BANKFLAG
+	BNE	!2
+	JSR	REFRESHsmart
+	LDA	nmistore
+	LDX	nmistore+1
+	LDY	nmistore+2
+	RTI
+
+!2
+	INC	BANKFLAG	
+	ENDIF	;(INCMUSIC)
+
+	LDA	nmistore
+	LDX	nmistore+1
+	LDY	nmistore+2
+	RTI
+
+	IF	TRABOT
+NMIROU22
+	JSR	nmisub1		;109
+	
+	LDA	DOINTRPT		;3
+	STA	DUNNIT		;3=6 =115
+
+
+
+	LDX	sbank		;3
+	JSR	ftrs1		;85+12=97 =215
+timegiven2	equ	blanktime-safety-342-5-20
+	FNset2b	remain,timegiven2	;10 =225
+	JSR	nmisub2		;117 =342
+	LDA	#>NMIROU1		;2
+	STA	NMIVECZP		;4
+
+	PLA			; Pluck return address & P
+	PLA			; since don't want to
+	PLA			; return to ftransfer
+	
+	JSR	readjoy2
+	JSR	slider
+	JSR	fakeanag
+	JSR	CLOCK
+
+	IF	INCMUSIC
+	LDA	BANKFLAG
+	BNE	!2
+	JMP	REFRESHsmart	; also don't need
+!2	INC	BANKFLAG
+	ENDIF	;(INCMUSIC)
+
+	RTS			; to preserve registers!
+
+
+	ENDIF	; (TRABOT)
+
+
+
+CLOCK	;12+30=42
+	DEC	clok	;5
+	BNE	!1	;2 ^=7
+	IF	NTSC
+	LDA	#60
+	ELSE
+	LDA	#50	;2
+	ENDIF
+	STA	clok	;3
+	LDA	clok+1	;3
+	CLC		;2
+	ADC	#1	;2
+	STA	clok+1	;3
+	LDA	clok+2	;3
+	ADC	#0	;2
+	STA	clok+2	;3=30
+	
+!1	RTS
+
+
+nmisub1	;=12+45+42+52=109;+42  (72)
+	
+	STA	nmistore
+	STX	nmistore+1
+	STY	nmistore+2		;12
+
+	LDA	VSTAT		;4	Acknowledge NMI
+
+	INC	vbcnt		;6+21 =27
+
+	LDA	#<0		;2 Send Sprites
+	STA	OAM_ADR		;4
+	LDA	#<ATTRIBUTES	;2
+	STA	SPRITE_DMA_ADR	;12 =39
+
+	LDA	#VID1VAL0		;2  Blank display
+	STA	VIDEO1		;4=6 =45
+
+
+updatepal	; Pres X		12+52=64
+	LDA	MODE2
+	BNE	!2		;5
+				;vbank= 0    1
+
+	; Set pallette now while raster off screen
+
+	LDY	COL1		;3
+	LDA	vbank		;3
+	BNE	!1		;^=14/15 v=13
+
+	PRIMELATCH	$3F01	;12
+	LDA	COL0		;3
+	STA	VRAM_DAT		;4
+	STY	VRAM_DAT		;4
+	STY	VRAM_DAT		;4
+	PRIMELATCH	0	;12=39 =52
+
+	RTS
+
+!1	PRIMELATCH	$3F01	;12
+	LDA	COL0		;3
+	STY	VRAM_DAT		;4
+	STA	VRAM_DAT		;4
+	STY	VRAM_DAT		;4
+	PRIMELATCH	0	;12=39 =53/54
+	RTS
+
+!2	CMP	#stamod
+	BEQ	!3
+	PRIMELATCH	$3F15	;12
+	LDA	COL1		;3
+	STA	VRAM_DAT		;4
+	LDA	COL2		;3
+	STA	VRAM_DAT		;4
+	LDA	COL3		;3
+	STA	VRAM_DAT		;4=21
+	PRIMELATCH	0	;12 =45
+	RTS
+
+!3	PRIMELATCH	$3F01	;12
+	LDA	COL1		;3
+	STA	VRAM_DAT		;4
+	LDA	COL2		;3
+	STA	VRAM_DAT		;4
+	LDA	COL3		;3
+	STA	VRAM_DAT		;4=21
+	PRIMELATCH	0	;12 =45
+	RTS
+
+
+
+
+
+
+sendfadebuff	
+	PRIMELATCH	$3F01	;12
+	LDX	#1		;2
+!1	LDA	FADEBUFFER,X	;4
+	AND	#$3F		;2
+	STA	VRAM_DAT		;4
+	INX			;2
+
+	CPX	#32 		;2
+	BNE	!1		;3,4 17x31=527
+	KNCK2	527+2+12
+
+	JMP	nmisub3
+
+
+
+nmisub2	;111+6=117 till display on
+	; still in vblank so can alter pallette
+
+
+	LDA	fade
+	BNE	sendfadebuff
+nmisub3
+	JSR	transfer		;12+x
+
+	JSR	updatevid		;73 =85 (=100)
+
+	LDA	remain		;3
+	CLC			;2
+	ADC	#>safety		;2
+	STA	remain		;3
+	LDA	remain+1		;3
+	ADC	#<safety		;2
+	STA	remain+1		;3
+	BMI	!2		;2=20 =105
+	JSR	KILLTIME
+!2
+
+	lda	#VID1VAL
+;	LDA	#VID1GRY
+	sta	VIDEO1		;6=111
+	
+	IF	DIALSONTOP
+	LDA	MODE2
+	BPL	!3
+	FNset2b	remain,16*scanline
+	BNE	!4
+!3	FNset2b	remain,(dili+2)*8*scanline-2*scanline
+!4	JSR	KILLTIME
+	LDA	CVIDEO0
+	STA	VIDEO0
+	ENDIF
+
+
+
+	RTS
+
+
+updatevid	; Set up video to view PPU bank (vbank EOR 1)
+	; 61+12=73
+
+	; If latch points at colour generator
+	; the colour in that byte is displayed
+	; whatever VIDEO1 is, so always have it
+	; pointing at a zero!!!
+	; Pallette has been zeroed by NMIROUTINE
+
+
+	IF	DIALSONTOP
+
+
+	LDX	#%10010000		;2
+	LDA	vbank		;3
+	BNE	!2		;^=8/9 v=7
+
+	LDX	#%10010001		;2
+				;       9    8
+!2
+				;4
+	STX	CVIDEO0		;3=7   16   17
+	LDX	#%10000000
+	STX	VIDEO0
+
+	ELSE	;(DIALSONTOP)
+
+	LDX	#%10010000		;2
+	LDA	vbank		;3
+	BNE	!2		;^=8/9 v=7
+
+	LDX	#%10010001		;2
+				;       9    8
+
+!2
+	STX	VIDEO0		;4
+	STX	CVIDEO0		;3=7   16   17
+
+	ENDIF	;(DIALSONTOP)
+
+
+	LDA	#$20		;2
+	LDX	vbank		;3
+	BNE	!3		;^=24/25 v=23
+	LDA	#$24
+				;      23    24
+
+!3	STA	VRAM_ADR		;4
+	LDA	#0		;2
+	STA	VRAM_ADR		;4=10  33    34
+
+
+	IF	NTSC
+	ELSE
+	LDA	VRAM_DAT		;4   Magic foo fix
+	LDA	VRAM_DAT		;4
+	LDA	VRAM_DAT		;4   Magic foo fix
+	LDA	VRAM_DAT		;4
+	ENDIF
+
+
+
+
+	LDA	VRAM_DAT		;4   Magic foo fix
+	LDA	VRAM_DAT		;4
+	LDA	VRAM_DAT		;4   Magic foo fix
+	LDA	VRAM_DAT		;4=16  49    50
+
+
+	LDA	#hscroll		;2
+	STA	SCROLL		;4
+	lda	#0		;2
+	STA	SCROLL		;4=12 =61/62
+ANRTS13	RTS			;
+
+
+	IF	SPLITSCREEN
+	IF	SEMIDMA
+
+BUSYWAIT	; Twiddle thumbs till sprite collision
+
+	ASL	DUNNIT	; Zero DUNNIT here and check for
+	BCC	ANRTS13	; a sneaky IRQ nipping in since
+			; the POLLBIT that brung us here
+
+	LDA	SOenable
+	AND	#$EF
+	STA	SOenable
+	STA	WRST
+
+	LDA	DOINTRPT
+	AND	CVIDEO0
+	BEQ	ANRTS13
+
+	IF	SHOWDMAIRQ
+	LDA	#VID1GRY
+	STA	VIDEO1	;B&W effect
+	ENDIF
+
+	IF	1
+
+	ELSE
+
+	TYA
+	PHA
+	TXA
+	PHA
+	FNset2b	remain,2*scanline
+	JSR	KILLTIME
+	PLA
+	TAX
+	PLA
+	TAY
+	ENDIF	; (NTSC)
+!2
+	LDA	VSTAT
+	AND	#$40
+	BEQ	!2
+
+
+	; ...fall into SPRITEINT...
+
+	ENDIF	; (SEMIDMA)
+
+
+
+
+SPRITEINT
+
+	IF	POLLSCAN
+	LDA	#0
+	STA	POLLTEMP
+	ENDIF
+
+
+	IF	SEMIDMA
+	ELSE
+
+	LDA	#0
+	STA	DUNNIT		; Zero DUNNIT 
+	ENDIF
+
+	LDA	CVIDEO0
+	AND	#$EE
+	STA	VIDEO0
+	STA	CVIDEO0
+
+
+	IF	TRABOT
+
+	LDA	MODE2
+	BNE	!3
+	LDA	vbeor
+	BEQ	!3
+
+	TXA
+	PHA
+	TYA
+	PHA
+;	LDX	bank
+;	LDA	bankstatus,X
+
+	LDA	bankstatus
+	AND	bankstatus+1
+
+	AND	#$40
+ 	BEQ	!1
+
+	FNset2b	remain,((dili+2)*8+2)*scanline
+	JSR	KILLTIME	
+	LDA	#VID1VAL0
+	STA	VIDEO1
+	LDX	sbank
+	JSR	ftrnsfer	
+
+;	NMI routine will return direct to here if
+;	it interrupts ftrnsfer
+
+
+!1	PLA
+	TAY
+	PLA
+	TAX
+!3
+	ENDIF	; (TRABOT)
+
+
+!2	
+	CLC	;(gives POLLBIT semi-consistent side effects)
+	RTS
+	ENDIF	;(SPLITSCREEN)
+
+
+KILLTIME	;	Do something productive for remain cycles
+	LDA	remain+1	;2
+	BEQ	KILLTIME2	;^=5/6
+
+	KNCK	4,80+$100,killt1
+	LDA	kilz1	;3
+	PHA		;3
+	LDA	kilz1+1	;3
+	PHA		;3
+	LDA	kilz2	;3
+	PHA		;3
+	LDA	kilz2+1	;3	
+	PHA		;3=24
+	LDX	#0	;2
+	JSR	killclview	;12 =38
+	LDX	#1	;2
+	JSR	killclview	;12 =52
+	PLA		;4
+	STA	kilz2+1	;3
+	PLA		;4
+	STA	kilz2	;3
+	PLA		;4
+	STA	kilz1+1	;3
+	PLA		;4
+	STA	kilz1	;3=28 =80
+	BUMP	$100
+
+KILLTIME2	;	Sit on your ass for remain cycles
+killt1	KNCK	0,9,kil3
+	NOP
+	NOP
+	NOP
+
+	JMP	killt1
+kil3	RTS
+
+
+
+readjoy2
+	IF	TWOJOY
+	LDA	#1
+	STA	CONTROLLER1
+	LSR	A
+	STA	CONTROLLER1
+	TAX
+	JSR	!1
+	LDX	twoplayers
+	BEQ	!2
+!1
+	IOBIT	frbut1
+	IOBIT	frbut2
+	IOBIT	selbut
+	IOBIT	stabut
+	IOBIT	upbut
+	IOBIT	dwnbut
+	IOBIT	lftbut
+	IOBIT	rgtbut
+
+!2	RTS
+
+	ELSE
+
+	LDA	#1
+	STA	CONTROLLER1
+	LSR	A
+	STA	CONTROLLER1
+	LDX	#0
+
+	IOBIT	frbut1
+	IOBIT	frbut2
+	IOBIT	selbut
+	IOBIT	stabut
+	IOBIT	upbut
+	IOBIT	dwnbut
+	IOBIT	lftbut
+	IOBIT	rgtbut
+	RTS
+
+	ENDIF	;(TWOJOY)
+
+WAITVBL0	LDA	vbcnt
+!1	CMP	vbcnt
+	BEQ	!1
+	RTS	
+	
+
+
+TWOWSCAN
+	IF	SLOWFADE
+	JSR	WSCAN
+	ENDIF		
+
+WSCAN	PHA		; Wait for VBI assuming
+
+	IF	POLLSCAN
+	POLLBIT	254
+	ENDIF
+
+	LDX	vbcnt	; NMIs enabled 
+!1	POLLBIT0	0
+	CPX	vbcnt
+	BEQ	!1
+
+	IF	POLLSCAN
+	POLLBIT	255 
+	ENDIF
+
+	PLA
+	RTS
+
+
+WINTR	; Wait till pollbit just sprite coll just done
+	LDA	DUNNIT
+	BEQ	WINTR
+!1	POLLBIT	77
+	LDA	DUNNIT
+	BNE	!1
+	RTS
+
+
+waitclear	; Wait for both banks to be sent and cleared
+	LDX	#0
+	JSR	clearview		
+	LDX	#1
+
+
+
+clearview	; Simultaneously wait for bank X to be
+	; transmitted and clear it
+!1	POLLBIT	136
+	LDA	bankstatus,X
+	BEQ	!3
+	AND	#$20
+	BNE	!2
+	JSR	cleartran
+	JMP	!1
+!2
+	JSR	cleartran
+	LDA	#0
+	STA	bankstatus,X
+	LDA	charmin
+	STA	frchar
+	JMP	BORDER1
+!3
+clrtrRTS	RTS
+
+
+	IF	NEEDPOLL
+
+cleartran	; Clear transmitted part of bank X
+
+!6	LDY	vbcnt
+	LDA	celltrn,X
+	STA	SC
+	LDA	cellzer,X
+	CPY	vbcnt
+	BNE	!6
+	LDY	SC
+
+	IF	DIALSONTOP
+	CPY	zermin
+	BCC	!2
+	ENDIF
+
+	CPY	zermax
+	BCC	!5
+	LDY	zermax
+!5
+	STY	SC
+	CMP	SC
+	BCS	!2
+	STY	cellzer,X
+	LDY	#0
+	STY	kilz2+1
+	ASL	A
+	ROL	kilz2+1	
+	ASL	A
+	ROL	kilz2+1	
+	ASL	A
+	STA	kilz2
+	LDA	kilz2+1	
+	ROL	A
+	ADC	VIDMAP,X
+	STA	kilz2+1
+	LDA	#0
+	ASL	SC
+	ROL	A
+	ASL	SC
+	ROL	A
+	ASL	SC
+	ROL	A
+	ADC	VIDMAP,X
+	STA	SC+1
+
+!1	POLLBIT	137
+	LDA	SC
+	SEC
+	SBC	kilz2
+	STA	kilz1	
+	LDA	SC+1
+	SBC	kilz2+1
+	BCC	!2
+	STA	kilz1+1
+	ORA	kilz1
+	BEQ	!2
+	FNset2b	remain,timeslice
+	JSR	tizerblock		
+	JMP	!1
+
+!2	; Now do char defns
+
+!7	LDY	vbcnt
+	LDA	chartrn,X
+	STA	SC
+	LDA	charzer,X
+	CPY	vbcnt
+	BNE	!7
+	LDY	SC
+	CMP	SC
+	BCS	!4
+	STY	charzer,X
+	LDY	#0
+	STY	kilz2+1
+	ASL	A
+	ROL	kilz2+1	
+	ASL	A
+	ROL	kilz2+1	
+	ASL	A
+	STA	kilz2
+	LDA	kilz2+1	
+	ROL	A
+	ADC	CHRDEF,X
+	STA	kilz2+1
+
+	LDA	#0
+	ASL	SC
+	ROL	A
+	ASL	SC
+	ROL	A
+	ASL	SC
+	ROL	A
+	ADC	CHRDEF,X
+	STA	SC+1
+
+!3	POLLBIT	138
+	LDA	SC
+	SEC
+	SBC	kilz2
+	STA	kilz1	
+	LDA	SC+1
+	SBC	kilz2+1
+	BCC	!2
+	STA	kilz1+1
+	ORA	kilz1
+	BEQ	!4
+
+	FNset2b	remain,timeslice
+	JSR	tizerblock		
+	JMP	!3
+!4	RTS
+
+	ELSE	;(NEEDPOLL)
+
+
+cleartran	; Clear transmitted part of bank X
+
+
+	; NEEDS MODIFICATION LIKE ABOVE VERSION 
+
+	LDA	cellzer,X
+	LDY	celltrn,X
+
+	IF	DIALSONTOP
+	CPY	zermin
+	BCC	!2
+	ENDIF
+
+	CPY	zermax
+	BCC	!5
+	LDY	zermax
+!5
+	STY	SC
+	CMP	SC
+	BCS	!2
+	STY	cellzer,X
+	LDY	#0
+	STY	kilz2+1
+	ASL	A
+	ROL	kilz2+1	
+	ASL	A
+	ROL	kilz2+1	
+	ASL	A
+	STA	kilz2
+	LDA	kilz2+1	
+	ROL	A
+	ADC	VIDMAP,X
+	STA	kilz2+1	; kilz2=Base address
+
+	LDA	#0
+	ASL	SC
+	ROL	A
+	ASL	SC
+	ROL	A
+	ASL	SC
+	ROL	A
+	ADC	VIDMAP,X
+	STA	SC+1	; SC=Top address
+
+	JSR	zerblock
+
+!2	; Now do char defns
+
+	LDA	charzer,X
+	LDY	chartrn,X
+	STY	SC
+	CMP	SC
+	BCS	clrtrRTS
+	STY	charzer,X
+	LDY	#0
+	STY	kilz2+1
+	ASL	A
+	ROL	kilz2+1	
+	ASL	A
+	ROL	kilz2+1	
+	ASL	A
+	STA	kilz2
+	LDA	kilz2+1	
+	ROL	A
+	ADC	CHRDEF,X
+	STA	kilz2+1
+
+	LDA	#0
+	ASL	SC
+	ROL	A
+	ASL	SC
+	ROL	A
+	ASL	SC
+	ROL	A
+	ADC	CHRDEF,X
+	STA	SC+1
+
+
+zerblock	; Zero memory from kilz2 to SC
+	LDA	SC
+	SEC
+	SBC	kilz2
+	STA	SC	
+	LDA	SC+1
+	SBC	kilz2+1
+	BCC	!2
+	BEQ	!3
+	STA	SC+1
+	LDA	#0
+	TAY
+!1	JSR	sequence
+	INC	kilz2+1
+	DEC	SC+1
+	BNE	!1		
+
+!3	LDY	#0
+	STY	kilz1+1		;3
+	LDA	SC		;3
+	ASL	A		;2
+	ROL	kilz1+1		;5
+	ADC	SC		;3
+	STA	kilz1		;3
+	LDA	kilz1+1		;3
+	ADC	#0
+	STA	kilz1+1		;kilz1=SC*8
+	LDA	#>(sequence+1)	;2
+	SBC	kilz1		;3
+	STA	kilz1		;3
+	LDA	#<(sequence+$300)	;2
+	SBC	kilz1+1		;3
+	STA	kilz1+1		;kilz1=sequence+$300-kilz1
+	LDA	#0
+	JMP	(kilz1)
+!2	RTS
+
+
+	ENDIF	;(NEEDPOLL)
+
+
+klcv30	DB	$30
+
+klcv8	NOP
+	NOP
+klcv82	KNCK2	21
+klcv0	RTS
+
+
+
+klcv1	BUMP	163-16-3
+	JMP	klcv2
+
+
+killclview	; Attempt timed clear of bank X
+
+	LDA	remain+1		;3
+ 	BEQ	klcv0		;v=5
+
+	LDA	bankstatus,X	;4
+	BIT	klcv30		;4
+	BEQ	klcv8		;^=16/17 v=15
+	AND	#$08		;2
+	BEQ	klcv82		;^=21/22 v=19
+
+
+killclview2
+	KNCK	19,163+8,klcv0
+
+	LDA	cellzer,X		;4
+	LDY	celltrn,X		;4
+
+	IF	DIALSONTOP
+	CPY	zermin
+	BCC	klcv1
+	ENDIF
+
+
+
+	CPY	zermax		;3
+	BCC	!1		;^=6,7
+	LDY	zermax		;3
+!1				;8 6,7
+
+;		dey
+	STY	kilz1		;3
+	CMP	kilz1		;3=14
+	BCS	klcv1		;^=16/17 v=15
+
+	LDY	#0		;2
+	STY	kilz2+1		;3
+	ASL	A		;2
+	ROL	kilz2+1		;5
+	ASL	A		;2
+	ROL	kilz2+1		;5
+	ASL	A		;2
+	STA	kilz2		;3
+	LDA	kilz2+1		;3
+	ROL	A		;2
+	ADC	VIDMAP,X		;4
+	STA	kilz2+1		;3=36 =51
+
+	LDA	#0		;2
+	ASL	kilz1		;5
+	ROL	A		;2
+	ASL	kilz1		;5
+	ROL	A		;2
+	ASL	kilz1		;5
+	ROL	A		;2
+	ADC	VIDMAP,X		;4
+	STA	kilz1+1		;3=30 =81
+
+	LDA	kilz1		;3
+	SEC			;2
+	SBC	kilz2		;3
+	STA	kilz1		;3
+	LDA	kilz1+1		;3
+	SBC	kilz2+1		;3=17
+	BCC	!2		;^=20/21 v=19
+	STA	kilz1+1		;3
+	ORA	kilz1		;3
+	BEQ	!3		;^=28/29 v=27 =108
+	JSR	tizerblock		;12	      =120		
+;	jsr	frog
+	LDA	kilz2+1		;3
+	SEC			;2
+	SBC	VIDMAP,X		;4
+	LSR	A		;2
+	ROR	kilz2		;5
+	LSR	A		;2
+	ROR	kilz2		;5
+	LSR	A		;2
+	LDA	kilz2		;3
+	ROR	A		;2
+	CMP	cellzer,X		;4=34
+	BCC	klcv6		;^=47/48 v=36 =156
+	STA	cellzer ,X		;4
+	JMP	klcv2		;3 =163
+
+
+
+!2	NOP
+	NOP
+	NOP
+	NOP			;8=28/29 =113/114
+!3	BUMP	163-114-3
+	JMP	klcv2
+
+
+klcv4	BUMP	164-17-3
+klcv3	RTS
+
+
+klcv6	NOP
+	NOP
+	NOP
+
+klcv2
+
+
+	KNCK	0,164,klcv3
+	LDA	charzer,X		;4
+	LDY	chartrn,X		;4
+	STY	kilz1		;3
+	CMP	kilz1		;3=14
+	BCS	klcv4		;^=17/18
+	NOP
+	LDY	#0		;2
+	STY	kilz2+1		;3
+	ASL	A		;2
+	ROL	kilz2+1		;5
+	ASL	A		;2
+	ROL	kilz2+1		;5
+	ASL	A		;2
+	STA	kilz2		;3
+	LDA	kilz2+1		;3
+	ROL	A		;2
+	ADC	CHRDEF,X		;4
+	STA	kilz2+1		;3=36 =55
+
+
+	LDA	#0		;2
+	ASL	kilz1		;5
+	ROL	A		;2
+	ASL	kilz1		;5
+	ROL	A		;2
+	ASL	kilz1		;5
+	ROL	A		;2
+	ADC	CHRDEF,X		;4
+	STA	kilz1+1		;3=30 =85
+
+
+	LDA	kilz1		;3
+	SEC			;2
+	SBC	kilz2		;3
+	STA	kilz1		;3
+	LDA	kilz1+1		;3
+	SBC	kilz2+1		;3=17
+	BCC	!2		;^=20/21 v=19
+	STA	kilz1+1		;3
+	ORA	kilz1		;3
+	BEQ	!3		;^=28/29 v=27 =112
+	JSR	tizerblock		;12	      =124
+;	jsr	frog
+
+
+	LDA	kilz2+1		;3
+	SEC			;2
+	SBC	CHRDEF,X		;4
+	LSR	A		;2
+	ROR	kilz2		;5
+	LSR	A		;2
+	ROR	kilz2		;5
+	LSR	A		;2
+	LDA	kilz2		;3
+	ROR	A		;2
+	CMP	charzer,X		;4=34
+	BCC	!2		;^=37/38 v=36
+	STA	charzer,X		;4=40 =164
+	RTS
+
+
+
+!2	NOP
+	NOP
+	NOP
+	NOP			;8=28/29 =113/114
+	RTS
+
+
+!3	BUMP	164-111
+	RTS
+
+
+
+sequence	DO	256
+	STA	(kilz2),Y	;6
+	INY		;2=8
+	LOOP
+	RTS
+
+
+
+tizerblock	; Timed zeroing of kilz1 locations from kilz2
+	; exit with kilz2 pointing to last zeroed byte
+	; Preserves X
+	LDA	kilz1+1	;3
+	BEQ	tiz1	;^=6/7
+
+!1	KNCK	5,29+8*256,tiz2
+	LDA	#0	;2
+	LDY	#0	;2
+	JSR	sequence	;12+x
+	DEC	kilz1+1	;5
+	INC	kilz2+1	;5
+	JMP	tizerblock	;3 =29+x
+
+tiz2	; Can't do whole page
+	KNCK	0,39+$100,tiz3
+	LDA	#0		;2
+	LDY	#0		;2
+	JSR	sequence+224*3	;12+x
+	LDA	kilz2		;3
+	CLC			;2
+	ADC	#32		;2
+	STA	kilz2		;3
+	LDA	kilz2+1		;3
+	ADC	#0		;2
+	STA	kilz2+1		;5
+	JMP	tiz2		;3=39
+
+
+tiz5	BUMP	156-6
+tiz3	RTS
+
+tiz1	; Less than one page to zero
+
+	KNCK	7,156,tiz3
+	LDA	kilz1		;3
+	BEQ	tiz5		; all done?
+	LSR	A		;2
+	LSR	A		;2
+	LSR	A		;2 
+	LSR	A		;2
+	CMP	remain+1		;3
+	BCS	tiz4		;^=19/20
+
+
+	; Time to do all		; =18
+
+	LDA	#0		;2
+	STA	kilz1+1		;3
+	LDA	kilz1		;3
+	ASL	A		;2
+	ROL	kilz1+1		;5
+	ASL	A		;2
+	ROL	kilz1+1		;5
+	ASL	A		;2
+	ROL	kilz1+1		;5=29 =47
+	EOR	#FF		;2
+	SEC			;2
+	ADC	remain		;3
+	STA	remain		;3
+	LDA	kilz1+1		;3
+	EOR	#FF		;2
+	ADC	remain+1		;3
+	STA	remain+1		;3=21
+
+	LDY	#0		;2
+	STY	kilz1+1		;3
+	LDA	kilz1		;3
+	PHA			;3
+	ASL	A		;2
+	ROL	kilz1+1		;5
+	ADC	kilz1		;3
+	STA	kilz1		;3
+	LDA	kilz1+1		;3
+	ADC	#0		;2=29=50  =97
+	STA	kilz1+1		;3
+	LDA	#>(sequence+1)	;2
+	SBC	kilz1		;3
+	STA	kilz1		;3
+	LDA	#<(sequence+$300)	;2
+	SBC	kilz1+1		;3
+	STA	kilz1+1		;3
+	LDA	#0		;2=21 =118
+	JSR	!3		;12+6+x =136+x
+	PLA			;4
+	CLC			;2
+	ADC	kilz2		;3
+	STA	kilz2		;3
+	LDA	kilz2+1		;3
+	ADC	#0		;2
+	STA	kilz2+1		;3=20 =156+x
+	RTS
+
+!3	JMP	(kilz1)
+
+
+ 
+tiz4	BUMP	156-20
+tizl1	KNCK	0,42+$100,tiz6
+	LDA	kilz1		;3
+	SEC			;2
+	SBC	#32		;2
+	BCC	tiz7		;^=10/11
+	STA	kilz1		;3=12
+	LDA	#0		;2
+	LDY	#0		;2
+	JSR	sequence+224*3	;12+x =28+x
+	LDA	kilz2		;3
+	CLC			;2
+	ADC	#32		;2
+	STA	kilz2		;3 =38
+	BCC	tizl1		;^=41/42
+	INC	kilz2+1
+	JMP	tizl1
+
+tiz6	RTS
+
+tiz7	BUMP	42+$100-11
+
+tiz7l	KNCK	0,96,tiz6
+	LDA	kilz1		;3
+	SEC			;2
+	SBC	#8		;2
+	BCC	tiz72		;^=10/11
+	STA	kilz1		;3
+	LDA	#0		;2
+	LDY	#0		;2=16
+	DO	8
+	STA	(kilz2),Y
+	INY			;8*8=64 =80
+	LOOP
+	LDA	kilz2		;3
+	CLC			;2
+	ADC	#8		;2
+	STA	kilz2		;3=10 =90
+	BCC	!1		;^=93/94
+	INC	kilz2+1
+!1	JMP	tiz7l		;3=96/97
+
+tiz72	BUMP	94-10
+	RTS
+
+
+waitsend	; Wait for both banks to be transmitted
+	; (but not cleared)
+	POLLBIT	139
+	LDA	bankstatus
+	AND	#$40
+	BNE	waitsend
+	LDA	bankstatus+1
+	AND	#$40
+	BNE	waitsend
+	RTS
+
+
+flipbank	; Change banks and clear new bank
+	LDA	bank
+	EOR	#1
+	TAX
+	JSR	writebank
+	JMP	clearview
+
+
+writebank
+	STX	bank
+	LDA	frchst,X
+	STA	frchar
+	LDA	VIDMAP,X
+	STA	fvdm+1
+	LDA	#0
+	STA	ffnt
+	STA	fvdm
+fontbank
+	LDA	CHRDEF,X
+	STA	ffnt+1
+	LSR	A
+	LSR	A
+	LSR	A
+	STA	ffnt8
+	RTS
+
+
+
+
+mvblockK	LDY	#0
+mvbllop	LDA	(V),Y
+	STA	(SC),Y
+	DEY
+	BNE	mvbllop
+	INC	V+1
+	INC	SC+1
+	DEX
+	BNE	mvbllop
+	RTS	;remember ELITEK has different SC!
+
+; oh no it doesn't - does it?
+
+copyblock	; copy V bytes from LI to SC
+	LDY	#0
+	INC	V	
+	INC	V+1
+!1	LDA	(LI),Y
+	STA	(SC),Y
+	INY
+	BNE	!2
+	INC	SC+1
+	INC	LI+1
+!2	DEC	V
+	BNE	!1
+	DEC	V+1
+	BNE	!1
+	RTS	
+
+WAITVBL:	; Wait for VBLANK assuming NMI disabled
+
+	LDA	VSTAT		; (MUST have NMIs disabled)
+!1	LDA	VSTAT		; Do three times for safety
+	BPL	!1
+
+!2	LDA	VSTAT
+	BPL	!2
+
+WAITVBL2
+!3	LDA	VSTAT
+	BPL	!3
+	RTS
+
+
+FUDGEREFRESH	TXA
+	PHA
+	JSR	WAITVBL2
+	JSR	REFRESHsmart
+	PLA
+	TAX
+	RTS
+
+
+
+SENDINPAREA
+
+	; Copy bank 0 to bank 1 and
+	; send down both (inc. colour map)
+	; without zeroing or blanking display
+
+
+	JSR	waitsend
+
+	LDA	frchar
+	STA	frchst
+	STA	frchst+1
+	LDA	#4*inps+basecell
+	STA	cellmin
+	IF	DIALSONTOP
+	STA	cellminH
+	STA	zermin
+	ENDIF
+
+
+	LDA	#4*txli+basecell
+	STA	cellmax
+	IF	DIALSONTOP
+	ELSE
+	STA	cellmax+1
+	ENDIF
+
+
+	LDA	#$C4
+	STA	bankstatus
+	STA	bankstatus+1
+	JMP	waitsend
+
+
+ONESHIP	JSR	flipbank
+	JSR	LL9
+
+STARTDLOAD	;	Start to send fake screen no. bank
+	;	(Char and ascii map)
+	LDA	#$C8	; Char and some of map with zeroing
+STARTDLOAD2
+	PHA
+	JSR	BORDER2
+	LDX	bank
+	LDA	frchar
+	STA	frchst,X
+	PLA			; Char map &
+	STA	bankstatus,X	; defns done
+	RTS
+
+
+
+SENDDFONT2	; Write X*16 bytes from SC to PPU latch 
+
+	LDY	#0
+	DO	16
+	LDA	(SC),Y
+	STA	VRAM_DAT
+	INY
+	LOOP
+	LDA	SC
+	CLC
+	ADC	#16
+	STA	SC
+	BCC	!2
+	INC	SC+1
+!2	DEX
+	BNE	SENDDFONT2
+	RTS
+
+
+;
+
+
