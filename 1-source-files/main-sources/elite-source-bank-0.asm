@@ -2610,7 +2610,7 @@ ENDIF
 
  PLA                    ; Set A to the current view's laser power, which we
  PHA                    ; stored on the stack above (and leave the value on
-                        ; the stack
+                        ; the stack)
 
  BMI main15             ; If A >= 128, jump to main15 to check whether this is
                         ; a beam laser or a military laser
