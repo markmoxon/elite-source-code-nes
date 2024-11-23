@@ -12652,11 +12652,11 @@ ENDIF
  JSR ResetSaveBuffer    ; Reset the commander file in BUF to the default
                         ; commander
 
- LDA #' '               ; We now fill the commander file name with spaces, so
+ LDA #' '               ; We now fill the commander filename with spaces, so
                         ; set A to the space character
 
  LDY #6                 ; Set a counter in Y to fill the seven characters in the
-                        ; commander file name
+                        ; commander filename
 
 .ctob10
 

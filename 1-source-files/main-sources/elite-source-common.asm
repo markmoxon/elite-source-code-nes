@@ -4020,7 +4020,8 @@
 
 .KY7
 
- SKIP 1                 ; The A button is being pressed on controller 1
+ SKIP 1                 ; The A button is being pressed on controller 1 (fire
+                        ; lasers)
                         ;
                         ;   * 0 = no
                         ;

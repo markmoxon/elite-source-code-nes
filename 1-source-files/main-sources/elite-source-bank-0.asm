@@ -18627,7 +18627,7 @@ ENDIF
  LDY CABTMP             ; If the cabin temperature is >= 224 then skip the next
  CPY #224               ; two LSR A instructions and leave the value of A as a
  BCS P%+4               ; high value, so the chances of the Trumbles making a
-                        ; noise in hot temperature is greater (specifically,
+                        ; noise in hot temperatures is greater (specifically,
                         ; this is the temperature at which the fuel scoops start
                         ; working)
 
