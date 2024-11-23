@@ -1077,9 +1077,7 @@ ENDIF
 
  CMP #(Armlas AND 127)  ; If the laser is not a military laser, jump to MA14+2
  BNE MA14+2             ; to skip the following, as only military lasers have
-                        ; any effect on the Constrictor or Cougar (or the Elite
-                        ; logo, should you ever bump into one of those out there
-                        ; in the black...)
+                        ; any effect on the Constrictor or Cougar
 
  LSR LAS                ; Divide the laser power of the current view by 4, so
  LSR LAS                ; the damage inflicted on the super-ship is a quarter of
