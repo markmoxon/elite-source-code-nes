@@ -18590,8 +18590,8 @@ ENDIF
  JSR DELAY              ; main loop down a bit
 
  LDA TRIBBLE+1          ; If the high byte of TRIBBLE(1 0), the number of
- BEQ nobabies           ; Trumbles in the hold, is zero, jump to nobabies to skip
-                        ; the following
+ BEQ nobabies           ; Trumbles in the hold, is zero, jump to nobabies to
+                        ; skip the following
 
                         ; We have a lot of Trumbles in the hold, so let's see if
                         ; any of them are breeding (note that Trumbles always
