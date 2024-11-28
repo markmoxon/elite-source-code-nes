@@ -1515,7 +1515,7 @@ ENDIF
 
 .MA77
 
- LDA MCNT               ; Fetch the main loop counter and calculate MCNT mod 7,
+ LDA MCNT               ; Fetch the main loop counter and calculate MCNT mod 8,
  AND #7                 ; jumping to MA22 if it is non-zero (so the following
  BNE MA22               ; code only runs every 8 iterations of the main loop)
 
