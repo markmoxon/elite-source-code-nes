@@ -1322,8 +1322,7 @@ ENDIF
 .main25
 
  JSR CLYNS              ; Clear the bottom two text rows of the upper screen,
-                        ; and move the text cursor to column 1 on row 21, i.e.
-                        ; the start of the top row of the two bottom rows
+                        ; and move the text cursor to the first cleared row
 
 .main26
 
@@ -4698,8 +4697,7 @@ ENDIF
 .HME2
 
  JSR CLYNS              ; Clear the bottom two text rows of the upper screen,
-                        ; and move the text cursor to column 1 on row 21, i.e.
-                        ; the start of the top row of the two bottom rows
+                        ; and move the text cursor to the first cleared row
 
  LDA #14                ; Print extended token 14 ("{clear bottom of screen}
  JSR DETOK_b2           ; PLANET NAME?{fetch line input from keyboard}"). The
@@ -4828,8 +4826,7 @@ ENDIF
  JSR DisableJustifyText ; Turn off justified text
 
  JSR CLYNS              ; Clear the bottom two text rows of the upper screen,
-                        ; and move the text cursor to column 1 on row 21, i.e.
-                        ; the start of the top row of the two bottom rows
+                        ; and move the text cursor to the first cleared row
 
  LDA #%00000000         ; Set DTW8 = %00000000 (capitalise the next letter)
  STA DTW8
@@ -4848,8 +4845,7 @@ ENDIF
 .sear2
 
  JSR CLYNS              ; Clear the bottom two text rows of the upper screen,
-                        ; and move the text cursor to column 1 on row 21, i.e.
-                        ; the start of the top row of the two bottom rows
+                        ; and move the text cursor to the first cleared row
 
  JMP DrawScreenInNMI    ; Configure the NMI handler to draw the screen,
                         ; returning from the subroutine using a tail call
@@ -11071,8 +11067,7 @@ ENDIF
  STA QQ17
 
  JSR CLYNS              ; Clear the bottom two text rows of the upper screen,
-                        ; and move the text cursor to column 1 on row 21, i.e.
-                        ; the start of the top row of the two bottom rows
+                        ; and move the text cursor to the first cleared row
 
  JSR cpl                ; Call cpl to print out the system name for the seeds
                         ; in QQ15
@@ -11548,8 +11543,7 @@ ENDIF
 .dockEd
 
  JSR CLYNS              ; Clear the bottom two text rows of the upper screen,
-                        ; and move the text cursor to column 1 on row 21, i.e.
-                        ; the start of the top row of the two bottom rows
+                        ; and move the text cursor to the first cleared row
 
  LDA #15                ; Move the text cursor to column 15 (the middle of the
  STA XC                 ; screen), setting A to 15 at the same time for the
@@ -11923,8 +11917,7 @@ ENDIF
 .TT147
 
  JSR CLYNS              ; Clear the bottom two text rows of the upper screen,
-                        ; and move the text cursor to column 1 on row 21, i.e.
-                        ; the start of the top row of the two bottom rows
+                        ; and move the text cursor to the first cleared row
 
  LDA #189               ; Print token 29 ("HYPERSPACE ")
  JSR TT27_b2
@@ -17311,8 +17304,7 @@ ENDIF
 .yeno1
 
  JSR CLYNS              ; Clear the bottom two text rows of the upper screen,
-                        ; and move the text cursor to column 1 on row 21, i.e.
-                        ; the start of the top row of the two bottom rows
+                        ; and move the text cursor to the first cleared row
 
  LDA #15                ; Move the text cursor to column 15
  STA XC
@@ -18967,8 +18959,7 @@ ENDIF
  BEQ barb7              ; from the subroutine
 
  JSR CLYNS              ; Clear the bottom two text rows of the upper screen,
-                        ; and move the text cursor to column 1 on row 21, i.e.
-                        ; the start of the top row of the two bottom rows
+                        ; and move the text cursor to the first cleared row
 
  JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen, so the
                         ; screen gets updated
@@ -21882,8 +21873,7 @@ ENDIF
                         ; in-flight message on the row specified in messYC
 
  JSR CLYNS+8            ; Clear the bottom two text rows of the visible screen,
-                        ; and move the text cursor to column 1 on row 21, i.e.
-                        ; the start of the top row of the two bottom rows, but
+                        ; and move the text cursor to the first cleared row, but
                         ; without resetting the in-flight message timer
 
  LDA #23                ; Set A to 23, so we print the in-flight message on row

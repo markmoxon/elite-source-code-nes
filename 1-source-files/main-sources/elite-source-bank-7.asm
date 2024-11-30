@@ -15752,6 +15752,11 @@ ENDIF
 ;
 ; ------------------------------------------------------------------------------
 ;
+; This routine clears some space at the bottom of the screen and moves the text
+; cursor to column 1, row 22.
+;
+; ------------------------------------------------------------------------------
+;
 ; Other entry points:
 ;
 ;   CLYNS+8             Don't zero DLY and de

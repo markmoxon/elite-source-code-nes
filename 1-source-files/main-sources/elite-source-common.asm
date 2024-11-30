@@ -354,7 +354,7 @@
                         ;
                         ; A value of 0 denotes the leftmost column and 32 the
                         ; rightmost column, but because the top part of the
-                        ; screen (the space view) has a white border that
+                        ; screen (the space view) has a border box that
                         ; clashes with columns 0 and 32, text is only shown
                         ; in columns 1-31
 
@@ -447,7 +447,7 @@
                         ; just before the screen splits
                         ;
                         ; A value of 0 denotes the top row, but because the
-                        ; top part of the screen has a white border that clashes
+                        ; top part of the screen has a border box that clashes
                         ; with row 0, text is always shown at row 1 or greater
 
 .QQ17
@@ -5148,6 +5148,10 @@ ENDIF
 ;
 ; Contains ship data for all the ships, planets, suns and space stations in our
 ; local bubble of universe.
+;
+; The blocks are pointed to by the lookup table at location UNIV. The first 336
+; bytes of the K% workspace hold ship data on up to 8 ships, with 42 (NIK%)
+; bytes per ship.
 ;
 ; See the deep dive on "Ship data blocks" for details on ship data blocks, and
 ; the deep dive on "The local bubble of universe" for details of how Elite

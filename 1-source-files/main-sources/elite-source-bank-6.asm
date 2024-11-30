@@ -14027,8 +14027,7 @@ ENDIF
 .ChangeCmdrName
 
  JSR CLYNS              ; Clear the bottom two text rows of the upper screen,
-                        ; and move the text cursor to column 1 on row 21, i.e.
-                        ; the start of the top row of the two bottom rows
+                        ; and move the text cursor to the first cleared row
 
  INC YC                 ; Move the text cursor to row 22
 
@@ -14164,8 +14163,7 @@ ENDIF
 .cnme5
 
  JSR CLYNS              ; Clear the bottom two text rows of the upper screen,
-                        ; and move the text cursor to column 1 on row 21, i.e.
-                        ; the start of the top row of the two bottom rows
+                        ; and move the text cursor to the first cleared row
 
  JMP DrawMessageInNMI   ; Configure the NMI to update the in-flight message part
                         ; of the screen (which is the same as the part that the
