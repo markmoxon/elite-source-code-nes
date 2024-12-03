@@ -17829,7 +17829,8 @@ ENDIF
                         ; done with a loop, but it is marginally faster to
                         ; unroll the loop and have eight copies of the code,
                         ; though it does take up a bit more memory (though that
-                        ; isn't a concern when you have a 6502 Second Processor)
+                        ; isn't a big concern when you have a 6502 Second
+                        ; Processor)
 
  BCC P%+4               ; If C (i.e. bit 0 of P) is set, do the
  ADC T                  ; addition for this bit of P:
