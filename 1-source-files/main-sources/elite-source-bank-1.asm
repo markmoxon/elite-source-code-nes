@@ -455,15 +455,15 @@ ENDIF
 .SHIP_MISSILE_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE      -64,        0,       16,         31    ; Face 0
- FACE        0,      -64,       16,         31    ; Face 1
- FACE       64,        0,       16,         31    ; Face 2
- FACE        0,       64,       16,         31    ; Face 3
- FACE       32,        0,        0,         31    ; Face 4
- FACE        0,      -32,        0,         31    ; Face 5
- FACE      -32,        0,        0,         31    ; Face 6
- FACE        0,       32,        0,         31    ; Face 7
- FACE        0,        0,     -176,         31    ; Face 8
+ FACE      -64,        0,       16,         31      ; Face 0
+ FACE        0,      -64,       16,         31      ; Face 1
+ FACE       64,        0,       16,         31      ; Face 2
+ FACE        0,       64,       16,         31      ; Face 3
+ FACE       32,        0,        0,         31      ; Face 4
+ FACE        0,      -32,        0,         31      ; Face 5
+ FACE      -32,        0,        0,         31      ; Face 6
+ FACE        0,       32,        0,         31      ; Face 7
+ FACE        0,        0,     -176,         31      ; Face 8
 
 ; ******************************************************************************
 ;
@@ -556,20 +556,20 @@ ENDIF
 .SHIP_CORIOLIS_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE        0,        0,      160,         31    ; Face 0
- FACE      107,     -107,      107,         31    ; Face 1
- FACE      107,      107,      107,         31    ; Face 2
- FACE     -107,      107,      107,         31    ; Face 3
- FACE     -107,     -107,      107,         31    ; Face 4
- FACE        0,     -160,        0,         31    ; Face 5
- FACE      160,        0,        0,         31    ; Face 6
- FACE     -160,        0,        0,         31    ; Face 7
- FACE        0,      160,        0,         31    ; Face 8
- FACE     -107,     -107,     -107,         31    ; Face 9
- FACE      107,     -107,     -107,         31    ; Face 10
- FACE      107,      107,     -107,         31    ; Face 11
- FACE     -107,      107,     -107,         31    ; Face 12
- FACE        0,        0,     -160,         31    ; Face 13
+ FACE        0,        0,      160,         31      ; Face 0
+ FACE      107,     -107,      107,         31      ; Face 1
+ FACE      107,      107,      107,         31      ; Face 2
+ FACE     -107,      107,      107,         31      ; Face 3
+ FACE     -107,     -107,      107,         31      ; Face 4
+ FACE        0,     -160,        0,         31      ; Face 5
+ FACE      160,        0,        0,         31      ; Face 6
+ FACE     -160,        0,        0,         31      ; Face 7
+ FACE        0,      160,        0,         31      ; Face 8
+ FACE     -107,     -107,     -107,         31      ; Face 9
+ FACE      107,     -107,     -107,         31      ; Face 10
+ FACE      107,      107,     -107,         31      ; Face 11
+ FACE     -107,      107,     -107,         31      ; Face 12
+ FACE        0,        0,     -160,         31      ; Face 13
 
 ; ******************************************************************************
 ;
@@ -629,10 +629,10 @@ ENDIF
 .SHIP_ESCAPE_POD_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE       52,        0,     -122,         31    ; Face 0
- FACE       39,      103,       30,         31    ; Face 1
- FACE       39,     -103,       30,         31    ; Face 2
- FACE     -112,        0,        0,         31    ; Face 3
+ FACE       52,        0,     -122,         31      ; Face 0
+ FACE       39,      103,       30,         31      ; Face 1
+ FACE       39,     -103,       30,         31      ; Face 2
+ FACE     -112,        0,        0,         31      ; Face 3
 
 ; ******************************************************************************
 ;
@@ -690,7 +690,7 @@ ENDIF
 .SHIP_PLATE_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE        0,        0,        0,          0    ; Face 0
+ FACE        0,        0,        0,          0      ; Face 0
 
 ; ******************************************************************************
 ;
@@ -764,13 +764,13 @@ ENDIF
 .SHIP_CANISTER_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE       96,        0,        0,         31    ; Face 0
- FACE        0,       41,       30,         31    ; Face 1
- FACE        0,      -18,       48,         31    ; Face 2
- FACE        0,      -51,        0,         31    ; Face 3
- FACE        0,      -18,      -48,         31    ; Face 4
- FACE        0,       41,      -30,         31    ; Face 5
- FACE      -96,        0,        0,         31    ; Face 6
+ FACE       96,        0,        0,         31      ; Face 0
+ FACE        0,       41,       30,         31      ; Face 1
+ FACE        0,      -18,       48,         31      ; Face 2
+ FACE        0,      -51,        0,         31      ; Face 3
+ FACE        0,      -18,      -48,         31      ; Face 4
+ FACE        0,       41,      -30,         31      ; Face 5
+ FACE      -96,        0,        0,         31      ; Face 6
 
 ; ******************************************************************************
 ;
@@ -841,16 +841,16 @@ ENDIF
 .SHIP_BOULDER_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE      -15,       -3,        8,         31    ; Face 0
- FACE       -7,       12,       30,         31    ; Face 1
- FACE       32,      -47,       24,         31    ; Face 2
- FACE       -3,      -39,       -7,         31    ; Face 3
- FACE       -5,       -4,       -1,         31    ; Face 4
- FACE       49,       84,        8,         31    ; Face 5
- FACE      112,       21,      -21,         31    ; Face 6
- FACE       76,      -35,      -82,         31    ; Face 7
- FACE       22,       56,     -137,         31    ; Face 8
- FACE       40,      110,      -38,         31    ; Face 9
+ FACE      -15,       -3,        8,         31      ; Face 0
+ FACE       -7,       12,       30,         31      ; Face 1
+ FACE       32,      -47,       24,         31      ; Face 2
+ FACE       -3,      -39,       -7,         31      ; Face 3
+ FACE       -5,       -4,       -1,         31      ; Face 4
+ FACE       49,       84,        8,         31      ; Face 5
+ FACE      112,       21,      -21,         31      ; Face 6
+ FACE       76,      -35,      -82,         31      ; Face 7
+ FACE       22,       56,     -137,         31      ; Face 8
+ FACE       40,      110,      -38,         31      ; Face 9
 
 ; ******************************************************************************
 ;
@@ -929,20 +929,20 @@ ENDIF
 .SHIP_ASTEROID_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE        9,       66,       81,         31    ; Face 0
- FACE        9,      -66,       81,         31    ; Face 1
- FACE      -72,       64,       31,         31    ; Face 2
- FACE      -64,      -73,       47,         31    ; Face 3
- FACE       45,      -79,       65,         31    ; Face 4
- FACE      135,       15,       35,         31    ; Face 5
- FACE       38,       76,       70,         31    ; Face 6
- FACE      -66,       59,      -39,         31    ; Face 7
- FACE      -67,      -15,      -80,         31    ; Face 8
- FACE       66,      -14,      -75,         31    ; Face 9
- FACE      -70,      -80,      -40,         31    ; Face 10
- FACE       58,     -102,      -51,         31    ; Face 11
- FACE       81,        9,      -67,         31    ; Face 12
- FACE       47,       94,      -63,         31    ; Face 13
+ FACE        9,       66,       81,         31      ; Face 0
+ FACE        9,      -66,       81,         31      ; Face 1
+ FACE      -72,       64,       31,         31      ; Face 2
+ FACE      -64,      -73,       47,         31      ; Face 3
+ FACE       45,      -79,       65,         31      ; Face 4
+ FACE      135,       15,       35,         31      ; Face 5
+ FACE       38,       76,       70,         31      ; Face 6
+ FACE      -66,       59,      -39,         31      ; Face 7
+ FACE      -67,      -15,      -80,         31      ; Face 8
+ FACE       66,      -14,      -75,         31      ; Face 9
+ FACE      -70,      -80,      -40,         31      ; Face 10
+ FACE       58,     -102,      -51,         31      ; Face 11
+ FACE       81,        9,      -67,         31      ; Face 12
+ FACE       47,       94,      -63,         31      ; Face 13
 
 ; ******************************************************************************
 ;
@@ -997,10 +997,10 @@ ENDIF
 .SHIP_SPLINTER_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE       35,        0,        4,         31    ; Face 0
- FACE        3,        4,        8,         31    ; Face 1
- FACE        1,        8,       12,         31    ; Face 2
- FACE       18,       12,        0,         31    ; Face 3
+ FACE       35,        0,        4,         31      ; Face 0
+ FACE        3,        4,        8,         31      ; Face 1
+ FACE        1,        8,       12,         31      ; Face 2
+ FACE       18,       12,        0,         31      ; Face 3
 
 ; ******************************************************************************
 ;
@@ -1098,19 +1098,19 @@ ENDIF
 .SHIP_SHUTTLE_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE      -55,      -55,       40,         31    ; Face 0
- FACE        0,      -74,        4,         31    ; Face 1
- FACE      -51,      -51,       23,         31    ; Face 2
- FACE      -74,        0,        4,         31    ; Face 3
- FACE      -51,       51,       23,         31    ; Face 4
- FACE        0,       74,        4,         31    ; Face 5
- FACE       51,       51,       23,         31    ; Face 6
- FACE       74,        0,        4,         31    ; Face 7
- FACE       51,      -51,       23,         31    ; Face 8
- FACE        0,        0,     -107,         31    ; Face 9
- FACE      -41,       41,       90,         31    ; Face 10
- FACE       41,       41,       90,         31    ; Face 11
- FACE       55,      -55,       40,         31    ; Face 12
+ FACE      -55,      -55,       40,         31      ; Face 0
+ FACE        0,      -74,        4,         31      ; Face 1
+ FACE      -51,      -51,       23,         31      ; Face 2
+ FACE      -74,        0,        4,         31      ; Face 3
+ FACE      -51,       51,       23,         31      ; Face 4
+ FACE        0,       74,        4,         31      ; Face 5
+ FACE       51,       51,       23,         31      ; Face 6
+ FACE       74,        0,        4,         31      ; Face 7
+ FACE       51,      -51,       23,         31      ; Face 8
+ FACE        0,        0,     -107,         31      ; Face 9
+ FACE      -41,       41,       90,         31      ; Face 10
+ FACE       41,       41,       90,         31      ; Face 11
+ FACE       55,      -55,       40,         31      ; Face 12
 
 ; ******************************************************************************
 ;
@@ -1242,20 +1242,20 @@ ENDIF
 .SHIP_TRANSPORTER_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE        0,        0,     -103,         31    ; Face 0
- FACE     -111,       48,       -7,         31    ; Face 1
- FACE     -105,      -63,      -21,         31    ; Face 2
- FACE        0,      -34,        0,         31    ; Face 3
- FACE      105,      -63,      -21,         31    ; Face 4
- FACE      111,       48,       -7,         31    ; Face 5
- FACE        8,       32,        3,         31    ; Face 6
- FACE       -8,       32,        3,         31    ; Face 7
- FACE       -8,       34,       11,         19    ; Face 8
- FACE      -75,       32,       79,         31    ; Face 9
- FACE       75,       32,       79,         31    ; Face 10
- FACE        8,       34,       11,         19    ; Face 11
- FACE        0,       38,       17,         31    ; Face 12
- FACE        0,        0,      121,         31    ; Face 13
+ FACE        0,        0,     -103,         31      ; Face 0
+ FACE     -111,       48,       -7,         31      ; Face 1
+ FACE     -105,      -63,      -21,         31      ; Face 2
+ FACE        0,      -34,        0,         31      ; Face 3
+ FACE      105,      -63,      -21,         31      ; Face 4
+ FACE      111,       48,       -7,         31      ; Face 5
+ FACE        8,       32,        3,         31      ; Face 6
+ FACE       -8,       32,        3,         31      ; Face 7
+ FACE       -8,       34,       11,         19      ; Face 8
+ FACE      -75,       32,       79,         31      ; Face 9
+ FACE       75,       32,       79,         31      ; Face 10
+ FACE        8,       34,       11,         19      ; Face 11
+ FACE        0,       38,       17,         31      ; Face 12
+ FACE        0,        0,      121,         31      ; Face 13
 
 ; ******************************************************************************
 ;
@@ -1370,19 +1370,19 @@ ENDIF
 .SHIP_COBRA_MK_3_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE        0,       62,       31,         31    ; Face 0
- FACE      -18,       55,       16,         31    ; Face 1
- FACE       18,       55,       16,         31    ; Face 2
- FACE      -16,       52,       14,         31    ; Face 3
- FACE       16,       52,       14,         31    ; Face 4
- FACE      -14,       47,        0,         31    ; Face 5
- FACE       14,       47,        0,         31    ; Face 6
- FACE      -61,      102,        0,         31    ; Face 7
- FACE       61,      102,        0,         31    ; Face 8
- FACE        0,        0,      -80,         31    ; Face 9
- FACE       -7,      -42,        9,         31    ; Face 10
- FACE        0,      -30,        6,         31    ; Face 11
- FACE        7,      -42,        9,         31    ; Face 12
+ FACE        0,       62,       31,         31      ; Face 0
+ FACE      -18,       55,       16,         31      ; Face 1
+ FACE       18,       55,       16,         31      ; Face 2
+ FACE      -16,       52,       14,         31      ; Face 3
+ FACE       16,       52,       14,         31      ; Face 4
+ FACE      -14,       47,        0,         31      ; Face 5
+ FACE       14,       47,        0,         31      ; Face 6
+ FACE      -61,      102,        0,         31      ; Face 7
+ FACE       61,      102,        0,         31      ; Face 8
+ FACE        0,        0,      -80,         31      ; Face 9
+ FACE       -7,      -42,        9,         31      ; Face 10
+ FACE        0,      -30,        6,         31      ; Face 11
+ FACE        7,      -42,        9,         31      ; Face 12
 
 ; ******************************************************************************
 ;
@@ -1566,19 +1566,19 @@ ENDIF
 .SHIP_BOA_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE       43,       37,      -60,         31    ; Face 0
- FACE        0,      -45,      -89,         31    ; Face 1
- FACE      -43,       37,      -60,         31    ; Face 2
- FACE        0,       40,        0,         31    ; Face 3
- FACE       62,      -32,      -20,         31    ; Face 4
- FACE      -62,      -32,      -20,         31    ; Face 5
- FACE        0,       23,        6,         31    ; Face 6
- FACE      -23,      -15,        9,         31    ; Face 7
- FACE       23,      -15,        9,         31    ; Face 8
- FACE      -26,       13,       10,         31    ; Face 9
- FACE        0,      -31,       12,         31    ; Face 10
- FACE       26,       13,       10,         31    ; Face 11
- FACE        0,        0,     -107,         14    ; Face 12
+ FACE       43,       37,      -60,         31      ; Face 0
+ FACE        0,      -45,      -89,         31      ; Face 1
+ FACE      -43,       37,      -60,         31      ; Face 2
+ FACE        0,       40,        0,         31      ; Face 3
+ FACE       62,      -32,      -20,         31      ; Face 4
+ FACE      -62,      -32,      -20,         31      ; Face 5
+ FACE        0,       23,        6,         31      ; Face 6
+ FACE      -23,      -15,        9,         31      ; Face 7
+ FACE       23,      -15,        9,         31      ; Face 8
+ FACE      -26,       13,       10,         31      ; Face 9
+ FACE        0,      -31,       12,         31      ; Face 10
+ FACE       26,       13,       10,         31      ; Face 11
+ FACE        0,        0,     -107,         14      ; Face 12
 
 ; ******************************************************************************
 ;
@@ -1667,18 +1667,18 @@ ENDIF
 .SHIP_ANACONDA_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE        0,      -51,      -49,         30    ; Face 0
- FACE      -51,       18,      -87,         30    ; Face 1
- FACE      -77,      -57,      -19,         30    ; Face 2
- FACE        0,      -90,       16,         31    ; Face 3
- FACE       77,      -57,      -19,         30    ; Face 4
- FACE       51,       18,      -87,         30    ; Face 5
- FACE        0,      111,      -20,         30    ; Face 6
- FACE      -97,       72,       24,         31    ; Face 7
- FACE     -108,      -68,       34,         31    ; Face 8
- FACE      108,      -68,       34,         31    ; Face 9
- FACE       97,       72,       24,         31    ; Face 10
- FACE        0,       94,       18,         31    ; Face 11
+ FACE        0,      -51,      -49,         30      ; Face 0
+ FACE      -51,       18,      -87,         30      ; Face 1
+ FACE      -77,      -57,      -19,         30      ; Face 2
+ FACE        0,      -90,       16,         31      ; Face 3
+ FACE       77,      -57,      -19,         30      ; Face 4
+ FACE       51,       18,      -87,         30      ; Face 5
+ FACE        0,      111,      -20,         30      ; Face 6
+ FACE      -97,       72,       24,         31      ; Face 7
+ FACE     -108,      -68,       34,         31      ; Face 8
+ FACE      108,      -68,       34,         31      ; Face 9
+ FACE       97,       72,       24,         31      ; Face 10
+ FACE        0,       94,       18,         31      ; Face 11
 
 ; ******************************************************************************
 ;
@@ -1762,20 +1762,20 @@ ENDIF
 .SHIP_ROCK_HERMIT_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE        9,       66,       81,         31    ; Face 0
- FACE        9,      -66,       81,         31    ; Face 1
- FACE      -72,       64,       31,         31    ; Face 2
- FACE      -64,      -73,       47,         31    ; Face 3
- FACE       45,      -79,       65,         31    ; Face 4
- FACE      135,       15,       35,         31    ; Face 5
- FACE       38,       76,       70,         31    ; Face 6
- FACE      -66,       59,      -39,         31    ; Face 7
- FACE      -67,      -15,      -80,         31    ; Face 8
- FACE       66,      -14,      -75,         31    ; Face 9
- FACE      -70,      -80,      -40,         31    ; Face 10
- FACE       58,     -102,      -51,         31    ; Face 11
- FACE       81,        9,      -67,         31    ; Face 12
- FACE       47,       94,      -63,         31    ; Face 13
+ FACE        9,       66,       81,         31      ; Face 0
+ FACE        9,      -66,       81,         31      ; Face 1
+ FACE      -72,       64,       31,         31      ; Face 2
+ FACE      -64,      -73,       47,         31      ; Face 3
+ FACE       45,      -79,       65,         31      ; Face 4
+ FACE      135,       15,       35,         31      ; Face 5
+ FACE       38,       76,       70,         31      ; Face 6
+ FACE      -66,       59,      -39,         31      ; Face 7
+ FACE      -67,      -15,      -80,         31      ; Face 8
+ FACE       66,      -14,      -75,         31      ; Face 9
+ FACE      -70,      -80,      -40,         31      ; Face 10
+ FACE       58,     -102,      -51,         31      ; Face 11
+ FACE       81,        9,      -67,         31      ; Face 12
+ FACE       47,       94,      -63,         31      ; Face 13
 
 ; ******************************************************************************
 ;
@@ -1859,13 +1859,13 @@ ENDIF
 .SHIP_VIPER_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE        0,       32,        0,         31    ; Face 0
- FACE      -22,       33,       11,         31    ; Face 1
- FACE       22,       33,       11,         31    ; Face 2
- FACE      -22,      -33,       11,         31    ; Face 3
- FACE       22,      -33,       11,         31    ; Face 4
- FACE        0,      -32,        0,         31    ; Face 5
- FACE        0,        0,      -48,         31    ; Face 6
+ FACE        0,       32,        0,         31      ; Face 0
+ FACE      -22,       33,       11,         31      ; Face 1
+ FACE       22,       33,       11,         31      ; Face 2
+ FACE      -22,      -33,       11,         31      ; Face 3
+ FACE       22,      -33,       11,         31      ; Face 4
+ FACE        0,      -32,        0,         31      ; Face 5
+ FACE        0,        0,      -48,         31      ; Face 6
 
 ; ******************************************************************************
 ;
@@ -1939,13 +1939,13 @@ ENDIF
 .SHIP_SIDEWINDER_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE        0,       32,        8,         31    ; Face 0
- FACE      -12,       47,        6,         31    ; Face 1
- FACE       12,       47,        6,         31    ; Face 2
- FACE        0,        0,     -112,         31    ; Face 3
- FACE      -12,      -47,        6,         31    ; Face 4
- FACE        0,      -32,        8,         31    ; Face 5
- FACE       12,      -47,        6,         31    ; Face 6
+ FACE        0,       32,        8,         31      ; Face 0
+ FACE      -12,       47,        6,         31      ; Face 1
+ FACE       12,       47,        6,         31      ; Face 2
+ FACE        0,        0,     -112,         31      ; Face 3
+ FACE      -12,      -47,        6,         31      ; Face 4
+ FACE        0,      -32,        8,         31      ; Face 5
+ FACE       12,      -47,        6,         31      ; Face 6
 
 ; ******************************************************************************
 ;
@@ -2047,11 +2047,11 @@ ENDIF
 .SHIP_MAMBA_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE        0,      -24,        2,         30    ; Face 0
- FACE        0,       24,        2,         30    ; Face 1
- FACE      -32,       64,       16,         30    ; Face 2
- FACE       32,       64,       16,         30    ; Face 3
- FACE        0,        0,     -127,         30    ; Face 4
+ FACE        0,      -24,        2,         30      ; Face 0
+ FACE        0,       24,        2,         30      ; Face 1
+ FACE      -32,       64,       16,         30      ; Face 2
+ FACE       32,       64,       16,         30      ; Face 3
+ FACE        0,        0,     -127,         30      ; Face 4
 
 ; ******************************************************************************
 ;
@@ -2138,12 +2138,12 @@ ENDIF
 .SHIP_KRAIT_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE        3,       24,        3,         31    ; Face 0
- FACE        3,      -24,        3,         31    ; Face 1
- FACE       -3,      -24,        3,         31    ; Face 2
- FACE       -3,       24,        3,         31    ; Face 3
- FACE       38,        0,      -77,         31    ; Face 4
- FACE      -38,        0,      -77,         31    ; Face 5
+ FACE        3,       24,        3,         31      ; Face 0
+ FACE        3,      -24,        3,         31      ; Face 1
+ FACE       -3,      -24,        3,         31      ; Face 2
+ FACE       -3,       24,        3,         31      ; Face 3
+ FACE       38,        0,      -77,         31      ; Face 4
+ FACE      -38,        0,      -77,         31      ; Face 5
 
 ; ******************************************************************************
 ;
@@ -2239,21 +2239,21 @@ ENDIF
 .SHIP_ADDER_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE        0,       39,       10,         31    ; Face 0
- FACE        0,      -39,       10,         31    ; Face 1
- FACE       69,       50,       13,         31    ; Face 2
- FACE       69,      -50,       13,         31    ; Face 3
- FACE       30,       52,        0,         31    ; Face 4
- FACE       30,      -52,        0,         31    ; Face 5
- FACE        0,        0,     -160,         31    ; Face 6
- FACE        0,        0,     -160,         31    ; Face 7
- FACE        0,        0,     -160,         31    ; Face 8
- FACE      -30,       52,        0,         31    ; Face 9
- FACE      -30,      -52,        0,         31    ; Face 10
- FACE      -69,       50,       13,         31    ; Face 11
- FACE      -69,      -50,       13,         31    ; Face 12
- FACE        0,       28,        0,         31    ; Face 13
- FACE        0,      -28,        0,         31    ; Face 14
+ FACE        0,       39,       10,         31      ; Face 0
+ FACE        0,      -39,       10,         31      ; Face 1
+ FACE       69,       50,       13,         31      ; Face 2
+ FACE       69,      -50,       13,         31      ; Face 3
+ FACE       30,       52,        0,         31      ; Face 4
+ FACE       30,      -52,        0,         31      ; Face 5
+ FACE        0,        0,     -160,         31      ; Face 6
+ FACE        0,        0,     -160,         31      ; Face 7
+ FACE        0,        0,     -160,         31      ; Face 8
+ FACE      -30,       52,        0,         31      ; Face 9
+ FACE      -30,      -52,        0,         31      ; Face 10
+ FACE      -69,       50,       13,         31      ; Face 11
+ FACE      -69,      -50,       13,         31      ; Face 12
+ FACE        0,       28,        0,         31      ; Face 13
+ FACE        0,      -28,        0,         31      ; Face 14
 
 ; ******************************************************************************
 ;
@@ -2331,15 +2331,15 @@ ENDIF
 .SHIP_GECKO_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE        0,       31,        5,         31    ; Face 0
- FACE        4,       45,        8,         31    ; Face 1
- FACE       25,     -108,       19,         31    ; Face 2
- FACE        0,      -84,       12,         31    ; Face 3
- FACE      -25,     -108,       19,         31    ; Face 4
- FACE       -4,       45,        8,         31    ; Face 5
- FACE      -88,       16,     -214,         31    ; Face 6
- FACE        0,        0,     -187,         31    ; Face 7
- FACE       88,       16,     -214,         31    ; Face 8
+ FACE        0,       31,        5,         31      ; Face 0
+ FACE        4,       45,        8,         31      ; Face 1
+ FACE       25,     -108,       19,         31      ; Face 2
+ FACE        0,      -84,       12,         31      ; Face 3
+ FACE      -25,     -108,       19,         31      ; Face 4
+ FACE       -4,       45,        8,         31      ; Face 5
+ FACE      -88,       16,     -214,         31      ; Face 6
+ FACE        0,        0,     -187,         31      ; Face 7
+ FACE       88,       16,     -214,         31      ; Face 8
 
 ; ******************************************************************************
 ;
@@ -2417,16 +2417,16 @@ ENDIF
 .SHIP_COBRA_MK_1_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE        0,       41,       10,         31    ; Face 0
- FACE        0,      -27,        3,         31    ; Face 1
- FACE       -8,       46,        8,         31    ; Face 2
- FACE      -12,      -57,       12,         31    ; Face 3
- FACE        8,       46,        8,         31    ; Face 4
- FACE       12,      -57,       12,         31    ; Face 5
- FACE        0,       49,        0,         31    ; Face 6
- FACE        0,        0,     -154,         31    ; Face 7
- FACE     -121,      111,      -62,         31    ; Face 8
- FACE      121,      111,      -62,         31    ; Face 9
+ FACE        0,       41,       10,         31      ; Face 0
+ FACE        0,      -27,        3,         31      ; Face 1
+ FACE       -8,       46,        8,         31      ; Face 2
+ FACE      -12,      -57,       12,         31      ; Face 3
+ FACE        8,       46,        8,         31      ; Face 4
+ FACE       12,      -57,       12,         31      ; Face 5
+ FACE        0,       49,        0,         31      ; Face 6
+ FACE        0,        0,     -154,         31      ; Face 7
+ FACE     -121,      111,      -62,         31      ; Face 8
+ FACE      121,      111,      -62,         31      ; Face 9
 
 ; ******************************************************************************
 ;
@@ -2501,14 +2501,14 @@ ENDIF
 .SHIP_WORM_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE        0,       88,       70,         31    ; Face 0
- FACE        0,       69,       14,         31    ; Face 1
- FACE       70,       66,       35,         31    ; Face 2
- FACE      -70,       66,       35,         31    ; Face 3
- FACE       64,       49,       14,         31    ; Face 4
- FACE      -64,       49,       14,         31    ; Face 5
- FACE        0,        0,     -200,         31    ; Face 6
- FACE        0,      -80,        0,         31    ; Face 7
+ FACE        0,       88,       70,         31      ; Face 0
+ FACE        0,       69,       14,         31      ; Face 1
+ FACE       70,       66,       35,         31      ; Face 2
+ FACE      -70,       66,       35,         31      ; Face 3
+ FACE       64,       49,       14,         31      ; Face 4
+ FACE      -64,       49,       14,         31      ; Face 5
+ FACE        0,        0,     -200,         31      ; Face 6
+ FACE        0,      -80,        0,         31      ; Face 7
 
 ; ******************************************************************************
 ;
@@ -2623,19 +2623,19 @@ ENDIF
 .SHIP_COBRA_MK_3_P_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE        0,       62,       31,         31    ; Face 0
- FACE      -18,       55,       16,         31    ; Face 1
- FACE       18,       55,       16,         31    ; Face 2
- FACE      -16,       52,       14,         31    ; Face 3
- FACE       16,       52,       14,         31    ; Face 4
- FACE      -14,       47,        0,         31    ; Face 5
- FACE       14,       47,        0,         31    ; Face 6
- FACE      -61,      102,        0,         31    ; Face 7
- FACE       61,      102,        0,         31    ; Face 8
- FACE        0,        0,      -80,         31    ; Face 9
- FACE       -7,      -42,        9,         31    ; Face 10
- FACE        0,      -30,        6,         31    ; Face 11
- FACE        7,      -42,        9,         31    ; Face 12
+ FACE        0,       62,       31,         31      ; Face 0
+ FACE      -18,       55,       16,         31      ; Face 1
+ FACE       18,       55,       16,         31      ; Face 2
+ FACE      -16,       52,       14,         31      ; Face 3
+ FACE       16,       52,       14,         31      ; Face 4
+ FACE      -14,       47,        0,         31      ; Face 5
+ FACE       14,       47,        0,         31      ; Face 6
+ FACE      -61,      102,        0,         31      ; Face 7
+ FACE       61,      102,        0,         31      ; Face 8
+ FACE        0,        0,      -80,         31      ; Face 9
+ FACE       -7,      -42,        9,         31      ; Face 10
+ FACE        0,      -30,        6,         31      ; Face 11
+ FACE        7,      -42,        9,         31      ; Face 12
 
 ; ******************************************************************************
 ;
@@ -2731,18 +2731,18 @@ ENDIF
 .SHIP_ASP_MK_2_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE        0,      -35,        5,         31    ; Face 0
- FACE        8,      -38,       -7,         31    ; Face 1
- FACE       -8,      -38,       -7,         31    ; Face 2
- FACE        0,       24,       -1,         22    ; Face 3
- FACE        0,       43,       19,         31    ; Face 4
- FACE       -6,       28,       -2,         31    ; Face 5
- FACE        6,       28,       -2,         31    ; Face 6
- FACE       59,      -64,       31,         31    ; Face 7
- FACE      -59,      -64,       31,         31    ; Face 8
- FACE       80,       46,       50,         31    ; Face 9
- FACE      -80,       46,       50,         31    ; Face 10
- FACE        0,        0,      -90,         31    ; Face 11
+ FACE        0,      -35,        5,         31      ; Face 0
+ FACE        8,      -38,       -7,         31      ; Face 1
+ FACE       -8,      -38,       -7,         31      ; Face 2
+ FACE        0,       24,       -1,         22      ; Face 3
+ FACE        0,       43,       19,         31      ; Face 4
+ FACE       -6,       28,       -2,         31      ; Face 5
+ FACE        6,       28,       -2,         31      ; Face 6
+ FACE       59,      -64,       31,         31      ; Face 7
+ FACE      -59,      -64,       31,         31      ; Face 8
+ FACE       80,       46,       50,         31      ; Face 9
+ FACE      -80,       46,       50,         31      ; Face 10
+ FACE        0,        0,      -90,         31      ; Face 11
 
  EQUB $00, $FF          ; These bytes appear to be unused
  EQUB $FF, $00
@@ -2831,19 +2831,19 @@ ENDIF
 .SHIP_PYTHON_P_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE      -27,       40,       11,         31    ; Face 0
- FACE       27,       40,       11,         31    ; Face 1
- FACE      -27,      -40,       11,         31    ; Face 2
- FACE       27,      -40,       11,         31    ; Face 3
- FACE      -19,       38,        0,         31    ; Face 4
- FACE       19,       38,        0,         31    ; Face 5
- FACE      -19,      -38,        0,         31    ; Face 6
- FACE       19,      -38,        0,         31    ; Face 7
- FACE      -25,       37,      -11,         31    ; Face 8
- FACE       25,       37,      -11,         31    ; Face 9
- FACE       25,      -37,      -11,         31    ; Face 10
- FACE      -25,      -37,      -11,         31    ; Face 11
- FACE        0,        0,     -112,         31    ; Face 12
+ FACE      -27,       40,       11,         31      ; Face 0
+ FACE       27,       40,       11,         31      ; Face 1
+ FACE      -27,      -40,       11,         31      ; Face 2
+ FACE       27,      -40,       11,         31      ; Face 3
+ FACE      -19,       38,        0,         31      ; Face 4
+ FACE       19,       38,        0,         31      ; Face 5
+ FACE      -19,      -38,        0,         31      ; Face 6
+ FACE       19,      -38,        0,         31      ; Face 7
+ FACE      -25,       37,      -11,         31      ; Face 8
+ FACE       25,       37,      -11,         31      ; Face 9
+ FACE       25,      -37,      -11,         31      ; Face 10
+ FACE      -25,      -37,      -11,         31      ; Face 11
+ FACE        0,        0,     -112,         31      ; Face 12
 
 ; ******************************************************************************
 ;
@@ -2938,16 +2938,16 @@ ENDIF
 .SHIP_FER_DE_LANCE_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE        0,       24,        6,         28    ; Face 0
- FACE      -68,        0,       24,         31    ; Face 1
- FACE      -63,        0,      -37,         31    ; Face 2
- FACE        0,        0,     -104,         31    ; Face 3
- FACE       63,        0,      -37,         31    ; Face 4
- FACE       68,        0,       24,         31    ; Face 5
- FACE      -12,       46,      -19,         28    ; Face 6
- FACE        0,       45,      -22,         28    ; Face 7
- FACE       12,       46,      -19,         28    ; Face 8
- FACE        0,      -28,        0,         31    ; Face 9
+ FACE        0,       24,        6,         28      ; Face 0
+ FACE      -68,        0,       24,         31      ; Face 1
+ FACE      -63,        0,      -37,         31      ; Face 2
+ FACE        0,        0,     -104,         31      ; Face 3
+ FACE       63,        0,      -37,         31      ; Face 4
+ FACE       68,        0,       24,         31      ; Face 5
+ FACE      -12,       46,      -19,         28      ; Face 6
+ FACE        0,       45,      -22,         28      ; Face 7
+ FACE       12,       46,      -19,         28      ; Face 8
+ FACE        0,      -28,        0,         31      ; Face 9
 
 ; ******************************************************************************
 ;
@@ -3029,15 +3029,15 @@ ENDIF
 .SHIP_MORAY_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE        0,       43,        7,         31    ; Face 0
- FACE      -10,       49,        7,         31    ; Face 1
- FACE       10,       49,        7,         31    ; Face 2
- FACE      -59,      -28,     -101,         24    ; Face 3
- FACE        0,      -52,      -78,         24    ; Face 4
- FACE       59,      -28,     -101,         24    ; Face 5
- FACE      -72,      -99,       50,         31    ; Face 6
- FACE        0,      -83,       30,         31    ; Face 7
- FACE       72,      -99,       50,         31    ; Face 8
+ FACE        0,       43,        7,         31      ; Face 0
+ FACE      -10,       49,        7,         31      ; Face 1
+ FACE       10,       49,        7,         31      ; Face 2
+ FACE      -59,      -28,     -101,         24      ; Face 3
+ FACE        0,      -52,      -78,         24      ; Face 4
+ FACE       59,      -28,     -101,         24      ; Face 5
+ FACE      -72,      -99,       50,         31      ; Face 6
+ FACE        0,      -83,       30,         31      ; Face 7
+ FACE       72,      -99,       50,         31      ; Face 8
 
 ; ******************************************************************************
 ;
@@ -3132,16 +3132,16 @@ ENDIF
 .SHIP_THARGOID_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE      103,      -60,       25,         31    ; Face 0
- FACE      103,      -60,      -25,         31    ; Face 1
- FACE      103,      -25,      -60,         31    ; Face 2
- FACE      103,       25,      -60,         31    ; Face 3
- FACE       64,        0,        0,         31    ; Face 4
- FACE      103,       60,      -25,         31    ; Face 5
- FACE      103,       60,       25,         31    ; Face 6
- FACE      103,       25,       60,         31    ; Face 7
- FACE      103,      -25,       60,         31    ; Face 8
- FACE      -48,        0,        0,         31    ; Face 9
+ FACE      103,      -60,       25,         31      ; Face 0
+ FACE      103,      -60,      -25,         31      ; Face 1
+ FACE      103,      -25,      -60,         31      ; Face 2
+ FACE      103,       25,      -60,         31      ; Face 3
+ FACE       64,        0,        0,         31      ; Face 4
+ FACE      103,       60,      -25,         31      ; Face 5
+ FACE      103,       60,       25,         31      ; Face 6
+ FACE      103,       25,       60,         31      ; Face 7
+ FACE      103,      -25,       60,         31      ; Face 8
+ FACE      -48,        0,        0,         31      ; Face 9
 
 ; ******************************************************************************
 ;
@@ -3202,13 +3202,13 @@ ENDIF
 .SHIP_THARGON_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE      -36,        0,        0,         31    ; Face 0
- FACE       20,       -5,        7,         31    ; Face 1
- FACE       46,      -42,      -14,         31    ; Face 2
- FACE       36,        0,     -104,         31    ; Face 3
- FACE       46,       42,      -14,         31    ; Face 4
- FACE       20,        5,        7,         31    ; Face 5
- FACE       36,        0,        0,         31    ; Face 6
+ FACE      -36,        0,        0,         31      ; Face 0
+ FACE       20,       -5,        7,         31      ; Face 1
+ FACE       46,      -42,      -14,         31      ; Face 2
+ FACE       36,        0,     -104,         31      ; Face 3
+ FACE       46,       42,      -14,         31      ; Face 4
+ FACE       20,        5,        7,         31      ; Face 5
+ FACE       36,        0,        0,         31      ; Face 6
 
 ; ******************************************************************************
 ;
@@ -3298,16 +3298,16 @@ ENDIF
 .SHIP_CONSTRICTOR_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE        0,       55,       15,         31    ; Face 0
- FACE      -24,       75,       20,         31    ; Face 1
- FACE       24,       75,       20,         31    ; Face 2
- FACE       44,       75,        0,         31    ; Face 3
- FACE      -44,       75,        0,         31    ; Face 4
- FACE      -44,       75,        0,         31    ; Face 5
- FACE        0,       53,        0,         31    ; Face 6
- FACE       44,       75,        0,         31    ; Face 7
- FACE        0,        0,     -160,         31    ; Face 8
- FACE        0,      -27,        0,         31    ; Face 9
+ FACE        0,       55,       15,         31      ; Face 0
+ FACE      -24,       75,       20,         31      ; Face 1
+ FACE       24,       75,       20,         31      ; Face 2
+ FACE       44,       75,        0,         31      ; Face 3
+ FACE      -44,       75,        0,         31      ; Face 4
+ FACE      -44,       75,        0,         31      ; Face 5
+ FACE        0,       53,        0,         31      ; Face 6
+ FACE       44,       75,        0,         31      ; Face 7
+ FACE        0,        0,     -160,         31      ; Face 8
+ FACE        0,      -27,        0,         31      ; Face 9
 
 ; ******************************************************************************
 ;
@@ -3401,12 +3401,12 @@ ENDIF
 .SHIP_COUGAR_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE      -16,       46,        4,         31    ; Face 0
- FACE      -16,      -46,        4,         31    ; Face 1
- FACE        0,      -27,        5,         31    ; Face 2
- FACE       16,      -46,        4,         31    ; Face 3
- FACE       16,       46,        4,         31    ; Face 4
- FACE        0,        0,     -160,         30    ; Face 5
+ FACE      -16,       46,        4,         31      ; Face 0
+ FACE      -16,      -46,        4,         31      ; Face 1
+ FACE        0,      -27,        5,         31      ; Face 2
+ FACE       16,      -46,        4,         31      ; Face 3
+ FACE       16,       46,        4,         31      ; Face 4
+ FACE        0,        0,     -160,         30      ; Face 5
 
 ; ******************************************************************************
 ;
@@ -3513,18 +3513,18 @@ ENDIF
 .SHIP_DODO_FACES
 
     ; normal_x, normal_y, normal_z, visibility
- FACE        0,        0,      196,         31    ; Face 0
- FACE      103,      142,       88,         31    ; Face 1
- FACE      169,      -55,       89,         31    ; Face 2
- FACE        0,     -176,       88,         31    ; Face 3
- FACE     -169,      -55,       89,         31    ; Face 4
- FACE     -103,      142,       88,         31    ; Face 5
- FACE        0,      176,      -88,         31    ; Face 6
- FACE      169,       55,      -89,         31    ; Face 7
- FACE      103,     -142,      -88,         31    ; Face 8
- FACE     -103,     -142,      -88,         31    ; Face 9
- FACE     -169,       55,      -89,         31    ; Face 10
- FACE        0,        0,     -196,         31    ; Face 11
+ FACE        0,        0,      196,         31      ; Face 0
+ FACE      103,      142,       88,         31      ; Face 1
+ FACE      169,      -55,       89,         31      ; Face 2
+ FACE        0,     -176,       88,         31      ; Face 3
+ FACE     -169,      -55,       89,         31      ; Face 4
+ FACE     -103,      142,       88,         31      ; Face 5
+ FACE        0,      176,      -88,         31      ; Face 6
+ FACE      169,       55,      -89,         31      ; Face 7
+ FACE      103,     -142,      -88,         31      ; Face 8
+ FACE     -103,     -142,      -88,         31      ; Face 9
+ FACE     -169,       55,      -89,         31      ; Face 10
+ FACE        0,        0,     -196,         31      ; Face 11
 
  EQUB $00, $FF          ; These bytes appear to be unused
  EQUB $FF, $00
