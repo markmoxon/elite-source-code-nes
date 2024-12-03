@@ -8198,8 +8198,8 @@ ENDIF
  JSR UpdateViewWithFade ; Update the view, fading the screen to black first if
                         ; required
 
- LDY #100               ; Delay for 100 vertical syncs (100/50 = 2 seconds) and
- JMP DELAY              ; return from the subroutine using a tail call
+ LDY #100               ; Wait for 100/50 of a second (2 seconds) and return
+ JMP DELAY              ; from the subroutine using a tail call
 
 ; ******************************************************************************
 ;
@@ -14630,7 +14630,7 @@ ENDIF
  JSR DrawScreenInNMI    ; Configure the NMI handler to draw the screen, so the
                         ; screen gets updated
 
- LDY #40                ; Delay for 40 vertical syncs (40/50 = 0.8 seconds)
+ LDY #40                ; Wait for 40/50 of a second (0.8 seconds)
  JSR DELAY
 
  JSR dn                 ; Print the amount of money we have left in the cash pot
