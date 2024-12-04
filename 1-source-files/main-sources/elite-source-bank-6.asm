@@ -21,6 +21,10 @@
 ;
 ; ------------------------------------------------------------------------------
 ;
+; This source file contains the game code for ROM bank 6 of NES Elite.
+;
+; ------------------------------------------------------------------------------
+;
 ; This source file produces the following binary file:
 ;
 ;   * bank6.bin
@@ -29,7 +33,7 @@
 
 ; ******************************************************************************
 ;
-; ELITE BANK 1
+; ELITE BANK 6
 ;
 ; Produces the binary file bank1.bin.
 ;

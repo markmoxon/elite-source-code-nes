@@ -19,6 +19,10 @@
 ;
 ; ------------------------------------------------------------------------------
 ;
+; This source file contains the game code for ROM bank 3 of NES Elite.
+;
+; ------------------------------------------------------------------------------
+;
 ; This source file produces the following binary file:
 ;
 ;   * bank3.bin
@@ -27,7 +31,7 @@
 
 ; ******************************************************************************
 ;
-; ELITE BANK 1
+; ELITE BANK 3
 ;
 ; Produces the binary file bank1.bin.
 ;

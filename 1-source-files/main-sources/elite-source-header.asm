@@ -19,6 +19,10 @@
 ;
 ; ------------------------------------------------------------------------------
 ;
+; This source file contains the iNES header for NES Elite.
+;
+; ------------------------------------------------------------------------------
+;
 ; This source file produces the following binary file:
 ;
 ;   * header.bin

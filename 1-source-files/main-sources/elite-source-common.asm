@@ -20,7 +20,7 @@
 ; ------------------------------------------------------------------------------
 ;
 ; This source file contains variables, macros and addresses that are shared by
-; all eight banks.
+; all eight ROM banks in NES Elite.
 ;
 ; ******************************************************************************
 

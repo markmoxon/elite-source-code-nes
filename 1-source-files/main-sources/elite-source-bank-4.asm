@@ -19,6 +19,10 @@
 ;
 ; ------------------------------------------------------------------------------
 ;
+; This source file contains the game code for ROM bank 4 of NES Elite.
+;
+; ------------------------------------------------------------------------------
+;
 ; This source file produces the following binary file:
 ;
 ;   * bank4.bin
