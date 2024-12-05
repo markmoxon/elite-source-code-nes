@@ -7,7 +7,7 @@
 ;
 ; The sound player in this bank was written by David Whittaker
 ;
-; The code on this site has been reconstructed from a disassembly of the version
+; The code in this file has been reconstructed from a disassembly of the version
 ; released on Ian Bell's personal website at http://www.elitehomepage.org/
 ;
 ; The commentary is copyright Mark Moxon, and any misunderstandings or mistakes
