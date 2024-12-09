@@ -1531,7 +1531,7 @@
 ;       Name: Sprite buffer
 ;       Type: Workspace
 ;    Address: $0200 to $02FF
-;   Category: Workspaces
+;   Category: Drawing sprites
 ;    Summary: Configuration data for sprites 0 to 63, which gets copied to the
 ;             PPU to update the screen
 ;
