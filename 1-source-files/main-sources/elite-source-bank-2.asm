@@ -15984,7 +15984,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Text
 ;    Summary: Clear the screen and set the view type for a text-based mission
-;    briefing
+;             briefing
 ;  Deep dive: Extended text tokens
 ;
 ; ------------------------------------------------------------------------------
