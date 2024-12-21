@@ -10150,8 +10150,6 @@ ENDIF
 ; "draw a line from point 8 to point 2". This table contains definitions for all
 ; the characters we can use in the scroll text, as lines on the above grid.
 ;
-; See the deep dive on "the 6502 Second Processor demo mode" for details.
-;
 ; ******************************************************************************
 
 .LTDEF

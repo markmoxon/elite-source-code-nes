@@ -301,6 +301,7 @@
                         ; Elite draws on-screen by poking bytes directly into
                         ; screen memory, and SC(1 0) is typically set to the
                         ; address of the character block containing the pixel
+                        ; we want to draw
 
 .SCH
 
@@ -323,10 +324,7 @@
                         ; access and manipulate ship data, so to make this an
                         ; efficient exercise, the ship data is first copied from
                         ; the ship data blocks at K% into INWK (or, when new
-                        ; ships are spawned, from the blueprints at XX21). See
-                        ; the deep dive on "Ship data blocks" for details of
-                        ; what each of the bytes in the INWK data block
-                        ; represents
+                        ; ships are spawned, from the blueprints at XX21)
 
 .NEWB
 
@@ -337,9 +335,7 @@
                         ; hunter, a pirate, currently hostile, in the process of
                         ; docking, inside the hold having been scooped, and so
                         ; on. The default values for each ship type are taken
-                        ; from the table at E%, and you can find out more detail
-                        ; in the deep dive on "Advanced tactics with the NEWB
-                        ; flags"
+                        ; from the table at E%
 
  SKIP 1                 ; This byte appears to be unused
 
@@ -655,9 +651,6 @@
 
  SKIP 6                 ; The three 16-bit seeds for the selected system, i.e.
                         ; the one in the crosshairs in the Short-range Chart
-                        ;
-                        ; See the deep dives on "Galaxy and system seeds" and
-                        ; "Twisting the system seeds" for more details
 
 .K5
 
@@ -895,9 +888,7 @@
  SKIP 1                 ; The main loop counter
                         ;
                         ; This counter determines how often certain actions are
-                        ; performed within the main loop. See the deep dive on
-                        ; "Scheduling tasks with the main loop counter" for more
-                        ; details
+                        ; performed within the main loop
 
 .TYPE
 
@@ -3136,10 +3127,6 @@
                         ; (the last slot is effectively used as a null
                         ; terminator when shuffling the slots down in the
                         ; KILLSHP routine)
-                        ;
-                        ; See the deep dive on "The local bubble of universe"
-                        ; for details of how Elite stores the local universe in
-                        ; FRIN, UNIV and K%
 
 .JUNK
 
@@ -3592,9 +3579,7 @@
                         ;   * AVL+7 contains the amount of computers (item 7)
                         ;
                         ; See QQ23 for a list of market item numbers and their
-                        ; storage units, and the deep dive on "Market item
-                        ; prices and availability" for details of the algorithm
-                        ; used for calculating each item's availability
+                        ; storage units
 
 .QQ26
 
@@ -3602,8 +3587,7 @@
                         ;
                         ; This value is set to a new random number for each
                         ; change of system, so we can add a random factor into
-                        ; the calculations for market prices (for details of how
-                        ; this is used, see the deep dive on "Market prices")
+                        ; the calculations for market prices
 
 .TALLY
 
@@ -3648,9 +3632,6 @@
                         ; left (rolling each byte within itself) to get the
                         ; seeds for the next galaxy, so after eight galactic
                         ; jumps, the seeds roll around to the first galaxy again
-                        ;
-                        ; See the deep dives on "Galaxy and system seeds" and
-                        ; "Twisting the system seeds" for more details
 
 .NOSTM
 
@@ -4555,9 +4536,6 @@ ENDIF
                         ;   * 5 = Rich Agricultural
                         ;   * 6 = Average Agricultural
                         ;   * 7 = Poor Agricultural
-                        ;
-                        ; See the deep dive on "Generating system data" for more
-                        ; information on economies
 
 .QQ29
 
@@ -4595,24 +4573,15 @@ ENDIF
 .gov
 
  SKIP 1                 ; The current system's government type (0-7)
-                        ;
-                        ; See the deep dive on "Generating system data" for
-                        ; details of the various government types
 
 .tek
 
  SKIP 1                 ; The current system's tech level (0-14)
-                        ;
-                        ; See the deep dive on "Generating system data" for more
-                        ; information on tech levels
 
 .QQ2
 
  SKIP 6                 ; The three 16-bit seeds for the current system, i.e.
                         ; the one we are currently in
-                        ;
-                        ; See the deep dives on "Galaxy and system seeds" and
-                        ; "Twisting the system seeds" for more details
 
 .QQ3
 
@@ -4626,38 +4595,23 @@ ENDIF
                         ;   * 5 = Rich Agricultural
                         ;   * 6 = Average Agricultural
                         ;   * 7 = Poor Agricultural
-                        ;
-                        ; See the deep dive on "Generating system data" for more
-                        ; information on economies
 
 .QQ4
 
  SKIP 1                 ; The selected system's government (0-7)
-                        ;
-                        ; See the deep dive on "Generating system data" for more
-                        ; details of the various government types
 
 .QQ5
 
  SKIP 1                 ; The selected system's tech level (0-14)
-                        ;
-                        ; See the deep dive on "Generating system data" for more
-                        ; information on tech levels
 
 .QQ6
 
  SKIP 2                 ; The selected system's population in billions * 10
                         ; (1-71), so the maximum population is 7.1 billion
-                        ;
-                        ; See the deep dive on "Generating system data" for more
-                        ; details on population levels
 
 .QQ7
 
  SKIP 2                 ; The selected system's productivity in M CR (96-62480)
-                        ;
-                        ; See the deep dive on "Generating system data" for more
-                        ; details about productivity levels
 
 .QQ8
 
@@ -5011,9 +4965,6 @@ ENDIF
                         ;
                         ; The number of ships of type X in the local bubble is
                         ; stored at MANY+X
-                        ;
-                        ; See the deep dive on "Ship blueprints" for a list of
-                        ; ship types
 
 .SSPR
 
@@ -5152,10 +5103,6 @@ ENDIF
 ; The blocks are pointed to by the lookup table at location UNIV. The first 336
 ; bytes of the K% workspace hold ship data on up to 8 ships, with 42 (NIK%)
 ; bytes per ship.
-;
-; See the deep dive on "Ship data blocks" for details on ship data blocks, and
-; the deep dive on "The local bubble of universe" for details of how Elite
-; stores the local universe in K%, FRIN and UNIV.
 ;
 ; ******************************************************************************
 
@@ -5339,9 +5286,7 @@ ENDMACRO
 ;
 ;   ITEM price, factor, units, quantity, mask
 ;
-; It inserts an item into the market prices table at QQ23. See the deep dive on
-; "Market item prices and availability" for more information on how the market
-; system works.
+; It inserts an item into the market prices table at QQ23.
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -5391,16 +5336,13 @@ ENDMACRO
 ;   Category: Drawing ships
 ;    Summary: Macro definition for adding vertices to ship blueprints
 ;  Deep dive: Ship blueprints
+;             Drawing ships
 ;
 ; ------------------------------------------------------------------------------
 ;
 ; The following macro is used to build the ship blueprints:
 ;
 ;   VERTEX x, y, z, face1, face2, face3, face4, visibility
-;
-; See the deep dive on "Ship blueprints" for details of how vertices are stored
-; in the ship blueprints, and the deep dive on "Drawing ships" for information
-; on how vertices are used to draw 3D wireframe ships.
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -5463,16 +5405,13 @@ ENDMACRO
 ;   Category: Drawing ships
 ;    Summary: Macro definition for adding edges to ship blueprints
 ;  Deep dive: Ship blueprints
+;             Drawing ships
 ;
 ; ------------------------------------------------------------------------------
 ;
 ; The following macro is used to build the ship blueprints:
 ;
 ;   EDGE vertex1, vertex2, face1, face2, visibility
-;
-; See the deep dive on "Ship blueprints" for details of how edges are stored
-; in the ship blueprints, and the deep dive on "Drawing ships" for information
-; on how edges are used to draw 3D wireframe ships.
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -5505,16 +5444,13 @@ ENDMACRO
 ;   Category: Drawing ships
 ;    Summary: Macro definition for adding faces to ship blueprints
 ;  Deep dive: Ship blueprints
+;             Drawing ships
 ;
 ; ------------------------------------------------------------------------------
 ;
 ; The following macro is used to build the ship blueprints:
 ;
 ;   FACE normal_x, normal_y, normal_z, visibility
-;
-; See the deep dive on "Ship blueprints" for details of how faces are stored
-; in the ship blueprints, and the deep dive on "Drawing ships" for information
-; on how faces are used to draw 3D wireframe ships.
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -5574,9 +5510,6 @@ ENDMACRO
 ;
 ;   EJMP n              Insert a jump to address n in the JMTB table
 ;
-; See the deep dive on "Printing extended text tokens" for details on how jump
-; tokens are stored in the extended token table.
-;
 ; ------------------------------------------------------------------------------
 ;
 ; Arguments:
@@ -5606,9 +5539,6 @@ ENDMACRO
 ;   ECHR 'x'            Insert ASCII character "x"
 ;
 ; To include an apostrophe, use a backtick character, as in ECHR '`'.
-;
-; See the deep dive on "Printing extended text tokens" for details on how
-; characters are stored in the extended token table.
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -5642,9 +5572,6 @@ ENDMACRO
 ;
 ;   ETOK n              Insert extended recursive token [n]
 ;
-; See the deep dive on "Printing extended text tokens" for details on how
-; recursive tokens are stored in the extended token table.
-;
 ; ------------------------------------------------------------------------------
 ;
 ; Arguments:
@@ -5675,9 +5602,6 @@ ENDMACRO
 ;   ETWO 'x', 'y'       Insert two-letter token "xy"
 ;
 ; The newline token can be entered using ETWO '-', '-'.
-;
-; See the deep dive on "Printing extended text tokens" for details on how
-; two-letter tokens are stored in the extended token table.
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -5875,9 +5799,6 @@ ENDMACRO
 ;
 ;                         * Tokens 0-123 get stored as n + 91
 ;
-; See the deep dive on "Printing extended text tokens" for details on how
-; random tokens are stored in the extended token table.
-;
 ; ------------------------------------------------------------------------------
 ;
 ; Arguments:
@@ -5912,9 +5833,6 @@ ENDMACRO
 ;                         * Tokens 128-145 get stored as n - 114
 ;
 ;                         * Tokens 96-127 get stored as n
-;
-; See the deep dive on "Printing text tokens" for details on how recursive
-; tokens are stored in the recursive token table.
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -5955,9 +5873,6 @@ ENDMACRO
 ;
 ; To include an apostrophe, use a backtick character, as in CHAR '`'.
 ;
-; See the deep dive on "Printing text tokens" for details on how characters are
-; stored in the recursive token table.
-;
 ; ------------------------------------------------------------------------------
 ;
 ; Arguments:
@@ -5989,9 +5904,6 @@ ENDMACRO
 ; The following macro is used when building the recursive token table:
 ;
 ;   TWOK 'x', 'y'       Insert two-letter token "xy"
-;
-; See the deep dive on "Printing text tokens" for details on how two-letter
-; tokens are stored in the recursive token table.
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -6151,9 +6063,6 @@ ENDMACRO
 ;
 ;   CONT n              Insert control code token {n}
 ;
-; See the deep dive on "Printing text tokens" for details on how characters are
-; stored in the recursive token table.
-;
 ; ------------------------------------------------------------------------------
 ;
 ; Arguments:
@@ -6187,9 +6096,6 @@ ENDMACRO
 ;                         * Tokens 128-145 get stored as n - 114
 ;
 ;                         * Tokens 96-127 get stored as n
-;
-; See the deep dive on "Printing text tokens" for details on how recursive
-; tokens are stored in the recursive token table.
 ;
 ; ------------------------------------------------------------------------------
 ;

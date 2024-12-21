@@ -3164,12 +3164,9 @@ ENDIF
 ;   Category: Universe
 ;    Summary: Table of pointers to the local universe's ship data blocks
 ;  Deep dive: The local bubble of universe
+;             Ship data blocks
 ;
 ; ------------------------------------------------------------------------------
-;
-; See the deep dive on "Ship data blocks" for details on ship data blocks, and
-; the deep dive on "The local bubble of universe" for details of how Elite
-; stores the local universe in K%, FRIN and UNIV.
 ;
 ; Note that in the NES version, there are four extra bytes at the end of each K%
 ; block that don't form part of the core ship block, so each ship in K% contains
@@ -16263,8 +16260,7 @@ ENDIF
 ;
 ; Note that because this routine uses the value of X returned by DORND, and X
 ; contains the value of A returned by the previous call to DORND, this routine
-; does not necessarily set the new ship to a totally random location. See the
-; deep dive on "Fixing ship positions" for details.
+; does not necessarily set the new ship to a totally random location.
 ;
 ; ******************************************************************************
 
@@ -16767,8 +16763,6 @@ ENDIF
 ; This routine unpacks compressed data into RAM. The data is typically nametable
 ; or pattern data that is unpacked into the nametable or pattern buffers.
 ;
-; The algorithm is described in the deep dive on "Image and data compression".
-;
 ; ******************************************************************************
 
 .UnpackToRAM
@@ -16994,8 +16988,6 @@ ENDIF
 ; This routine unpacks compressed data and sends it straight to the PPU. The
 ; data is typically nametable or pattern data that is unpacked into the PPU's
 ; nametable or pattern tables.
-;
-; The algorithm is described in the deep dive on "Image and data compression".
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -17796,8 +17788,7 @@ ENDIF
 ;   (A P) = P * X
 ;
 ; This uses the same shift-and-add approach as MULT1, but it's simpler as we
-; are dealing with unsigned numbers in P and X. See the deep dive on
-; "Shift-and-add multiplication" for a discussion of how this algorithm works.
+; are dealing with unsigned numbers in P and X.
 ;
 ; ******************************************************************************
 
@@ -17950,8 +17941,7 @@ ENDIF
 ;   A = A * Q / 256
 ;
 ; The advanced versions of Elite use logarithms to speed up the multiplication
-; process. See the deep dive on "Multiplication using logarithms" for more
-; details.
+; process.
 ;
 ; ------------------------------------------------------------------------------
 ;

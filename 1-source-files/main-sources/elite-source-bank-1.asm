@@ -211,9 +211,6 @@ ENDIF
 ;   * Bit 7: For spawned ships: ship been scooped or has docked
 ;             For blueprints: this ship type has an escape pod fitted
 ;
-; See the deep dive on "Advanced tactics with the NEWB flags" for details of
-; how this works.
-;
 ; ******************************************************************************
 
 .E%
@@ -6640,8 +6637,6 @@ ENDIF
 ; along the line until it is on-screen, so this effectively clips the (x1, y1)
 ; end of a line to be on the screen.
 ;
-; See the deep dive on "Line-clipping" for more details.
-;
 ; ------------------------------------------------------------------------------
 ;
 ; Arguments:
@@ -9557,8 +9552,7 @@ ENDIF
 ;                       vertical distance between the line we're drawing and the
 ;                       centre of the new sun. As we draw lines and move up the
 ;                       screen, we either decrement (bottom half) or increment
-;                       (top half) this value. See the deep dive on "Drawing the
-;                       sun" to see a diagram that shows V in action
+;                       (top half) this value
 ;
 ;   V+1                 This determines which half of the new sun we are drawing
 ;                       as we work our way up the screen, line by line:
@@ -10857,7 +10851,7 @@ ENDIF
 ;   Category: Stardust
 ;    Summary: Process the stardust for the front view
 ;  Deep dive: Stardust in the front view
-;  Deep dive: Sprite usage in NES Elite
+;             Sprite usage in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -10881,7 +10875,7 @@ ENDIF
 ;   7. x = x + 2 * (beta * y / 256) ^ 2
 ;   8. y = y - beta * 256
 ;
-; For more information see the deep dive on "Stardust in the front view".
+; For more information see the associated deep dive.
 ;
 ; ******************************************************************************
 
@@ -11228,7 +11222,8 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Stardust
 ;    Summary: Process the stardust for the rear view
-;  Deep dive: Sprite usage in NES Elite
+;  Deep dive: Stardust in the front view
+;             Sprite usage in NES Elite
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -11254,7 +11249,7 @@ ENDIF
 ;   7. x = x + 2 * (beta * y / 256) ^ 2
 ;   8. y = y - beta * 256
 ;
-; For more information see the deep dive on "Stardust in the front view".
+; For more information see the associated deep dive.
 ;
 ; ******************************************************************************
 
@@ -11635,7 +11630,7 @@ ENDIF
 ;   5. x = x - alpha * x * y
 ;   6. y = y + alpha * y * y + alpha
 ;
-; For more information see the deep dive on "Stardust in the side views".
+; For more information see the associated deep dive.
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -13631,9 +13626,7 @@ ENDIF
                         ; ship is too far away to appear on the scanner
 
                         ; We now calculate the position of the ship on the
-                        ; scanner, starting with the x-coordinate (see the deep
-                        ; dive on "The 3D scanner" for an explanation of the
-                        ; following)
+                        ; scanner, starting with the x-coordinate
 
  LDA INWK+1             ; Set A = x_hi
 

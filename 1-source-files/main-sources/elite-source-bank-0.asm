@@ -806,9 +806,6 @@ ENDIF
 ;
 ;   * Process docking with a space station
 ;
-; For details on the various docking checks in this routine, see the deep dive
-; on "Docking checks".
-;
 ; ------------------------------------------------------------------------------
 ;
 ; Other entry points:
@@ -2335,8 +2332,7 @@ ENDIF
 ;   * Scan for flight keys and process the results
 ;
 ; Flight keys are logged in the key logger at location KY1 onwards, with a
-; non-zero value in the relevant location indicating a key press. See the deep
-; dive on "The key logger" for more details.
+; non-zero value in the relevant location indicating a key press.
 ;
 ; ******************************************************************************
 
@@ -4185,9 +4181,6 @@ ENDIF
 ; Print the 32-bit number stored in K(0 1 2 3) to a specific number of digits,
 ; left-padding with spaces for numbers with fewer digits (so lower numbers are
 ; right-aligned). Optionally include a decimal point.
-;
-; See the deep dive on "Printing decimal numbers" for details of the algorithm
-; used in this routine.
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -13141,8 +13134,7 @@ ENDIF
                         ; Note that because Ze uses the value of X returned by
                         ; DORND, and X contains the value of A returned by the
                         ; previous call to DORND, this does not set the new ship
-                        ; to a totally random location. See the deep dive on
-                        ; "Fixing ship positions" for details
+                        ; to a totally random location
 
  LDA #%11111111         ; Set the AI flag in byte #32 so that the ship has AI,
  STA INWK+32            ; is extremely and aggressively hostile, and has E.C.M.
@@ -18057,8 +18049,7 @@ ENDIF
                         ; Note that because we use the value of X returned by
                         ; DORND, and X contains the value of A returned by the
                         ; previous call to DORND, this does not set the new ship
-                        ; to a totally random location. See the deep dive on
-                        ; "Fixing ship positions" for details
+                        ; to a totally random location
 
  AND #%10000000         ; Set x_sign = bit 7 of x_lo
  STA INWK+2
@@ -18194,8 +18185,7 @@ ENDIF
                         ; Note that because Ze uses the value of X returned by
                         ; DORND, and X contains the value of A returned by the
                         ; previous call to DORND, this does not set the new ship
-                        ; to a totally random location. See the deep dive on
-                        ; "Fixing ship positions" for details
+                        ; to a totally random location
 
  CMP #136               ; If the random number in A = 136 (0.4% chance), jump
  BNE P%+5               ; to fothg in part 4 to spawn either a Thargoid or, very
@@ -18326,8 +18316,7 @@ ENDIF
                         ; Note that because Ze uses the value of X returned by
                         ; DORND, and X contains the value of A returned by the
                         ; previous call to DORND, this does not set the new ship
-                        ; to a totally random location. See the deep dive on
-                        ; "Fixing ship positions" for details
+                        ; to a totally random location
 
  CMP #100               ; Set the C flag depending on whether the random number
                         ; in A >= 100, for the BCS below
@@ -23001,8 +22990,7 @@ ENDIF
 ; rotation more stable (though more elliptic).
 ;
 ; If that paragraph makes sense to you, then you should probably be writing
-; this commentary! For the rest of us, there's a detailed explanation of all
-; this in the deep dive on "Pitching and rolling".
+; this commentary! For the rest of us, see the associated deep dives.
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -23241,8 +23229,6 @@ ENDIF
 ;   2. z = z + beta * K2
 ;   3. y = K2 - beta * z
 ;   4. x = x + alpha * y
-;
-; See the deep dive on "Rotating the universe" for more details on the above.
 ;
 ; ******************************************************************************
 
