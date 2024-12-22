@@ -3563,7 +3563,7 @@ ENDIF
                         ; first row of the dot (i.e. a four-pixel dash)
 
  INY                    ; Increment Y to the next row (so this is the second row
-                        ; of the two-pixel-high dot)
+                        ; of the two-pixel high dot)
 
  CLC                    ; Clear the C flag to pass to Shpt
 
@@ -12401,9 +12401,9 @@ ENDIF
 
 .hanl4
 
-                        ; If we get here then we can draw a full 8-pixel wide
-                        ; horizontal line into the pattern data for the current
-                        ; tile, as there is nothing there already
+                        ; If we get here then we can draw a full eight-pixel
+                        ; wide horizontal line into the pattern data for the
+                        ; current tile, as there is nothing there already
 
  LDA #%11111111         ; Set A to a pixel byte containing eight pixels in a row
 
@@ -12583,9 +12583,9 @@ ENDIF
 
 .hanr5
 
-                        ; If we get here then we can draw a full 8-pixel wide
-                        ; horizontal line into the pattern data for the current
-                        ; tile, as there is nothing there already
+                        ; If we get here then we can draw a full eight-pixel
+                        ; wide horizontal line into the pattern data for the
+                        ; current tile, as there is nothing there already
 
  LDA #%11111111         ; Set A to a pixel byte containing eight pixels in a row
 
