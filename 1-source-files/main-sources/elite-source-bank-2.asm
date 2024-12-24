@@ -152,6 +152,15 @@ ENDIF
 ;    Summary: The first extended token table for recursive tokens 0-255 (DETOK)
 ;  Deep dive: Extended text tokens
 ;
+; ------------------------------------------------------------------------------
+;
+; The encodings shown for each extended text token use the following notation:
+;
+;   {n}           Jump token                n = 1 to 31
+;   [n?]          Random token              n = 91 to 128
+;   [n]           Recursive token           n = 129 to 215
+;   <n>           Two-letter token          n = 215 to 255
+;
 ; ******************************************************************************
 
 .TKN1
@@ -2652,95 +2661,81 @@ ENDIF
  EJMP 19                ;                {single cap}
  ECHR 'G'               ;                GOOD DAY {single cap}COMMANDER
  ECHR 'O'               ;                {commander name}.{cr}
-                        ;                {cr}
- ECHR 'O'               ;                 {single cap}I{lower case} AM {single
- ECHR 'D'               ;                cap}AGENT{single cap}BLAKE OF {single
- ECHR ' '               ;                cap}NAVAL {single cap}INTELLIGENCE.{cr}
-                        ;                {cr}
- ECHR 'D'               ;                 {single cap}AS YOU KNOW, THE {single
- ECHR 'A'               ;                cap}NAVY HAVE BEEN KEEPING THE {single
- ECHR 'Y'               ;                cap}THARGOIDS OFF YOUR BACK OUT IN DEEP
+ ECHR 'O'               ;                {cr}
+ ECHR 'D'               ;                 {single cap}I{lower case} AM {single
+ ECHR ' '               ;                cap}AGENT{single cap}BLAKE OF {single
+ ECHR 'D'               ;                cap}NAVAL {single cap}INTELLIGENCE.{cr}
+ ECHR 'A'               ;                {cr}
+ ECHR 'Y'               ;                 {single cap}AS YOU KNOW, THE {single
+ ECHR ' '               ;                cap}NAVY HAVE BEEN KEEPING THE {single
+ ETOK 154               ;                cap}THARGOIDS OFF YOUR BACK OUT IN DEEP
  ECHR ' '               ;                SPACE FOR MANY YEARS NOW. {single cap}
- ETOK 154               ;                WELL THE SITUATION HAS CHANGED.{cr}
-                        ;                {cr}
- ECHR ' '               ;                 {single cap}OUR BOYS ARE READY FOR A
- EJMP 4                 ;                PUSH RIGHT TO THE HOME SYSTEM OF THOSE
- ETOK 204               ;                MURDERERS.{cr}
-                        ;                {cr}
- EJMP 19                ;                 {single cap}{wait for key press}{clear
- ECHR 'I'               ;                screen}{tab 6, lower case in words}
- ECHR ' '               ;                I{lower case} HAVE OBTAINED THE DEFENCE
- ECHR 'A'               ;                PLANS FOR THEIR {single cap}HIVE{single
- ECHR 'M'               ;                cap}WORLDS.{cr}
-                        ;                {cr}
-                        ;                {wait for key press}
- EJMP 26                ;                {clear screen}
-                        ;                {move to row 7, lower case}{single cap}
- ECHR 'A'               ;                {single cap}THE BEETLES KNOW WE'VE GOT
- ETWO 'G', 'E'          ;                SOMETHING BUT NOT WHAT.{cr}
-                        ;                {cr}
- ECHR 'N'               ;                {single cap}IF {single cap}I TRANSMIT
- ECHR 'T'               ;                THE PLANS TO OUR BASE ON {single cap}
+ EJMP 4                 ;                WELL THE SITUATION HAS CHANGED.{cr}
+ ETOK 204               ;                {cr}
+ EJMP 19                ;                 {single cap}OUR BOYS ARE READY FOR A
+ ECHR 'I'               ;                PUSH RIGHT TO THE HOME SYSTEM OF THOSE
+ ECHR ' '               ;                MURDERERS.{cr}
+ ECHR 'A'               ;                {cr}
+ ECHR 'M'               ;                 {single cap}{wait for key press}{clear
+ EJMP 26                ;                screen}{tab 6, lower case in words}
+ ECHR 'A'               ;                I{lower case} HAVE OBTAINED THE DEFENCE
+ ETWO 'G', 'E'          ;                PLANS FOR THEIR {single cap}HIVE{single
+ ECHR 'N'               ;                cap}WORLDS.{cr}
+ ECHR 'T'               ;                {cr}
+ EJMP 26                ;                {wait for key press}
+ ECHR 'B'               ;                {clear screen}
+ ETWO 'L', 'A'          ;                {move to row 7, lower case}{single cap}
+ ECHR 'K'               ;                {single cap}THE BEETLES KNOW WE'VE GOT
+ ECHR 'E'               ;                SOMETHING BUT NOT WHAT.{cr}
+ ECHR ' '               ;                {cr}
+ ECHR 'O'               ;                {single cap}IF {single cap}I TRANSMIT
+ ECHR 'F'               ;                THE PLANS TO OUR BASE ON {single cap}
  EJMP 26                ;                BIRERA THEY'LL INTERCEPT THE
- ECHR 'B'               ;                TRANSMISSION. {single cap}I NEED A SHIP
- ETWO 'L', 'A'          ;                 TO MAKE THE RUN.{cr}
-                        ;                {cr}
- ECHR 'K'               ;                 {single cap}YOU'RE ELECTED.{cr}
-                        ;                {cr}
-                        ;                 {single cap}THE PLANS ARE UNIPULSE
- ECHR 'E'               ;                CODED WITHIN THIS TRANSMISSION.{cr}
-                        ;                {cr}
- ECHR ' '               ;                {single cap}{tab 6}
- ECHR 'O'               ;                YOU WILL BE PAID.{cr}
-                        ;                {cr}
- ECHR 'F'               ;                 {single cap}    {single cap}GOOD LUCK
- EJMP 26                ;                {single cap}COMMANDER.{cr}
-                        ;                {left align}{cr}
- ECHR 'N'               ;                {tab 6}{all caps}  MESSAGE ENDS
- ECHR 'A'               ;                {wait for key press}"
- ECHR 'V'               ;
- ETWO 'A', 'L'          ; Encoded as:   "{25}{9}{29}{14}{13}{19}GOOD DAY [154]
- EJMP 26                ;                 {4}[204]{19}I AM{26}A<231>NT{26}B<249>
- ETWO 'I', 'N'          ;                KE OF{26}NAV<228>{26}<240>TELLI<231>N
- ECHR 'T'               ;                <233>[204]{19}AS [179] K<227>W, <226>E
- ECHR 'E'               ;                {26}NAVY HA<250> <247><246> KEEP[195]
- ECHR 'L'               ;                <226>E{26}<226><238>GOIDS OFF [179]R BA
- ECHR 'L'               ;                CK <217>T <240>{26}DEEP{26}SPA<233> F
- ECHR 'I'               ;                <253> <239>NY YE<238>S <227>W.{26}WELL
- ETWO 'G', 'E'          ;                 [147]S<219>U<245>I<223> HAS CH<255>
- ECHR 'N'               ;                <231>D[204]{19}<217>R BOYS <238>E <242>
- ETWO 'C', 'E'          ;                ADY F<253>[208]P<236>H RIGHT[201]<226>E
- ETOK 204               ;                {26}HOME{26}SY<222>EM OF <226>O<218> MU
- EJMP 19                ;                RDE<242>RS[204]{19}I{13} HA<250> OBTA
+ ECHR 'N'               ;                TRANSMISSION. {single cap}I NEED A SHIP
+ ECHR 'A'               ;                 TO MAKE THE RUN.{cr}
+ ECHR 'V'               ;                {cr}
+ ETWO 'A', 'L'          ;                 {single cap}YOU'RE ELECTED.{cr}
+ EJMP 26                ;                {cr}
+ ETWO 'I', 'N'          ;                 {single cap}THE PLANS ARE UNIPULSE
+ ECHR 'T'               ;                CODED WITHIN THIS TRANSMISSION.{cr}
+ ECHR 'E'               ;                {cr}
+ ECHR 'L'               ;                {single cap}{tab 6}
+ ECHR 'L'               ;                YOU WILL BE PAID.{cr}
+ ECHR 'I'               ;                {cr}
+ ETWO 'G', 'E'          ;                 {single cap}    {single cap}GOOD LUCK
+ ECHR 'N'               ;                {single cap}COMMANDER.{cr}
+ ETWO 'C', 'E'          ;                {left align}{cr}
+ ETOK 204               ;                {tab 6}{all caps}  MESSAGE ENDS
+ EJMP 19                ;                {wait for key press}"
+ ECHR 'A'               ;
+ ECHR 'S'               ; Encoded as:   "{25}{9}{29}{14}{13}{19}GOOD DAY [154]
+ ECHR ' '               ;                 {4}[204]{19}I AM{26}A<231>NT{26}B<249>
+ ETOK 179               ;                KE OF{26}NAV<228>{26}<240>TELLI<231>N
+ ECHR ' '               ;                <233>[204]{19}AS [179] K<227>W, <226>E
+ ECHR 'K'               ;                {26}NAVY HA<250> <247><246> KEEP[195]
+ ETWO 'N', 'O'          ;                <226>E{26}<226><238>GOIDS OFF [179]R BA
+ ECHR 'W'               ;                CK <217>T <240>{26}DEEP{26}SPA<233> F
+ ECHR ','               ;                <253> <239>NY YE<238>S <227>W.{26}WELL
+ ECHR ' '               ;                 [147]S<219>U<245>I<223> HAS CH<255>
+ ETWO 'T', 'H'          ;                <231>D[204]{19}<217>R BOYS <238>E <242>
+ ECHR 'E'               ;                ADY F<253>[208]P<236>H RIGHT[201]<226>E
+ EJMP 26                ;                {26}HOME{26}SY<222>EM OF <226>O<218> MU
+ ECHR 'N'               ;                RDE<242>RS[204]{19}I{13} HA<250> OBTA
  ECHR 'A'               ;                <240>[196][147]DEF<246><233> P<249>NS F
- ECHR 'S'               ;                <253> <226>EIR{26}HI<250>{26}[146]S
- ECHR ' '               ;                [204]{24}{9}{29}{19}[147]<247><221>
- ETOK 179               ;                <229>S K<227>W WE'<250> GOT <235>M<221>
- ECHR ' '               ;                H[195]BUT <227>T WH<245>[204]{19}IF{26}
- ECHR 'K'               ;                I T<248>NSM<219> <226>E{26}P<249>NS
- ETWO 'N', 'O'          ;                [201]<217>R BA<218> <223>{26}<234><242>
- ECHR 'W'               ;                <248> <226>EY'LL <240>T<244><233>PT
- ECHR ','               ;                 [147]T<248>NSMISSI<223>.{26}I NE[196]
- ECHR ' '               ;                A [207][201]<239>KE [147]RUN[204][179]'
- ETWO 'T', 'H'          ;                <242> E<229>CT<252>[204][147]P<249>NS
- ECHR 'E'               ;                <238>E{26}UNIPUL<218> COD[196]W<219>H
- EJMP 26                ;                <240> [148]T<248>NSMISSI<223>.{26}[179]
- ECHR 'N'               ;                 W<220>L <247> PAID[204]   {26}GOOD LUC
- ECHR 'A'               ;                K [154][212]{24}"
- ECHR 'V'
- ECHR 'Y'
- ECHR ' '
- ECHR 'H'
- ECHR 'A'
- ETWO 'V', 'E'
- ECHR ' '
- ETWO 'B', 'E'
- ETWO 'E', 'N'
- ECHR ' '
- ECHR 'K'
- ECHR 'E'
- ECHR 'E'
- ECHR 'P'
+ ECHR 'V'               ;                <253> <226>EIR{26}HI<250>{26}[146]S
+ ECHR 'Y'               ;                [204]{24}{9}{29}{19}[147]<247><221>
+ ECHR ' '               ;                <229>S K<227>W WE'<250> GOT <235>M<221>
+ ECHR 'H'               ;                H[195]BUT <227>T WH<245>[204]{19}IF{26}
+ ECHR 'A'               ;                I T<248>NSM<219> <226>E{26}P<249>NS
+ ETWO 'V', 'E'          ;                [201]<217>R BA<218> <223>{26}<234><242>
+ ECHR ' '               ;                <248> <226>EY'LL <240>T<244><233>PT
+ ETWO 'B', 'E'          ;                 [147]T<248>NSMISSI<223>.{26}I NE[196]
+ ETWO 'E', 'N'          ;                A [207][201]<239>KE [147]RUN[204][179]'
+ ECHR ' '               ;                <242> E<229>CT<252>[204][147]P<249>NS
+ ECHR 'K'               ;                <238>E{26}UNIPUL<218> COD[196]W<219>H
+ ECHR 'E'               ;                <240> [148]T<248>NSMISSI<223>.{26}[179]
+ ECHR 'E'               ;                 W<220>L <247> PAID[204]   {26}GOOD LUC
+ ECHR 'P'               ;                K [154][212]{24}"
  ETOK 195
  ETWO 'T', 'H'
  ECHR 'E'
@@ -3591,6 +3586,13 @@ ENDIF
 ;
 ; See the PDESC routine for details of how extended system descriptions work.
 ;
+; The encodings shown for each extended text token use the following notation:
+;
+;   {n}           Jump token                n = 1 to 31
+;   [n?]          Random token              n = 91 to 128
+;   [n]           Recursive token           n = 129 to 215
+;   <n>           Two-letter token          n = 215 to 255
+;
 ; ******************************************************************************
 
 .RUTOK
@@ -4185,6 +4187,15 @@ ENDIF
 ;             (German)
 ;  Deep dive: Extended text tokens
 ;             Multi-language support in NES Elite
+;
+; ------------------------------------------------------------------------------
+;
+; The encodings shown for each extended text token use the following notation:
+;
+;   {n}           Jump token                n = 1 to 31
+;   [n?]          Random token              n = 91 to 128
+;   [n]           Recursive token           n = 129 to 215
+;   <n>           Two-letter token          n = 215 to 255
 ;
 ; ******************************************************************************
 
@@ -7313,6 +7324,13 @@ ENDIF
 ;
 ; See the PDESC routine for details of how extended system descriptions work.
 ;
+; The encodings shown for each extended text token use the following notation:
+;
+;   {n}           Jump token                n = 1 to 31
+;   [n?]          Random token              n = 91 to 128
+;   [n]           Recursive token           n = 129 to 215
+;   <n>           Two-letter token          n = 215 to 255
+;
 ; ******************************************************************************
 
 .RUTOK_DE
@@ -8079,6 +8097,15 @@ ENDIF
 ;             (French)
 ;  Deep dive: Extended text tokens
 ;             Multi-language support in NES Elite
+;
+; ------------------------------------------------------------------------------
+;
+; The encodings shown for each extended text token use the following notation:
+;
+;   {n}           Jump token                n = 1 to 31
+;   [n?]          Random token              n = 91 to 128
+;   [n]           Recursive token           n = 129 to 215
+;   <n>           Two-letter token          n = 215 to 255
 ;
 ; ******************************************************************************
 
@@ -10768,6 +10795,13 @@ ENDIF
 ;
 ; See the PDESC routine for details of how extended system descriptions work.
 ;
+; The encodings shown for each extended text token use the following notation:
+;
+;   {n}           Jump token                n = 1 to 31
+;   [n?]          Random token              n = 91 to 128
+;   [n]           Recursive token           n = 129 to 215
+;   <n>           Two-letter token          n = 215 to 255
+;
 ; ******************************************************************************
 
 .RUTOK_FR
@@ -11330,6 +11364,14 @@ ENDIF
 ;   Category: Text
 ;    Summary: The recursive token table for tokens 0-148
 ;  Deep dive: Printing text tokens
+;
+; ------------------------------------------------------------------------------
+;
+; The encodings shown for each recursive text token use the following notation:
+;
+;   {n}           Control code              n = 0 to 13
+;   <n>           Two-letter token          n = 128 to 159
+;   [n]           Recursive token           n = 0 to 148
 ;
 ; ******************************************************************************
 
@@ -12482,6 +12524,14 @@ ENDIF
 ;    Summary: The recursive token table for tokens 0-148 (German)
 ;  Deep dive: Printing text tokens
 ;             Multi-language support in NES Elite
+;
+; ------------------------------------------------------------------------------
+;
+; The encodings shown for each recursive text token use the following notation:
+;
+;   {n}           Control code              n = 0 to 13
+;   <n>           Two-letter token          n = 128 to 159
+;   [n]           Recursive token           n = 0 to 148
 ;
 ; ******************************************************************************
 
@@ -13852,6 +13902,14 @@ ENDIF
 ;    Summary: The recursive token table for tokens 0-148 (French)
 ;  Deep dive: Printing text tokens
 ;             Multi-language support in NES Elite
+;
+; ------------------------------------------------------------------------------
+;
+; The encodings shown for each recursive text token use the following notation:
+;
+;   {n}           Control code              n = 0 to 13
+;   <n>           Two-letter token          n = 128 to 159
+;   [n]           Recursive token           n = 0 to 148
 ;
 ; ******************************************************************************
 
