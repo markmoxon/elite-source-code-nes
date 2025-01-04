@@ -17158,6 +17158,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Maths (Geometry)
 ;    Summary: Compare x_hi, y_hi and z_hi with A
+;  Deep dive: A sense of scale
 ;
 ; ------------------------------------------------------------------------------
 ;
