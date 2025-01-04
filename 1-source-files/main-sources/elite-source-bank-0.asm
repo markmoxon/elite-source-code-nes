@@ -15834,7 +15834,8 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Universe
 ;    Summary: Set up various aspects of arriving in a new system
-;  Deep dive: The Trumbles mission
+;  Deep dive: A sense of scale
+;             The Trumbles mission
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -22618,6 +22619,7 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Moving
 ;    Summary: Move current ship: Move the ship in space according to our speed
+;  Deep dive: A sense of scale
 ;
 ; ------------------------------------------------------------------------------
 ;
