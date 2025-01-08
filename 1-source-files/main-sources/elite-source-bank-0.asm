@@ -9255,9 +9255,9 @@ ENDIF
  INX                    ; is stored in the range 0-14 but the displayed range
                         ; should be 1-15
 
- CLC                    ; Call pr2 to print the technology level as a 3-digit
- JSR pr2                ; number without a decimal point (by clearing the C
-                        ; flag)
+ CLC                    ; Call pr2 to print the technology level as a
+ JSR pr2                ; three-digit number without a decimal point (by
+                        ; clearing the C flag)
 
  JSR TTX69              ; Print a paragraph break and set Sentence Case
 
@@ -9355,7 +9355,7 @@ ENDIF
 
  LDA #1                 ; Set the number of digits to 1 for the call to pr2+2
 
- JSR pr2+2              ; Print the population as a 1-digit number without a
+ JSR pr2+2              ; Print the population as a one-digit number without a
                         ; decimal point
 
  LDA #198               ; Print recursive token 38 (" BILLION"), followed by a
@@ -9650,7 +9650,7 @@ ENDIF
                         ; overwritten by the call to DrawDash, so this has no
                         ; effect)
 
- JSR DrawDash           ; Draw a 2-pixel dash at pixel coordinate (X, A)
+ JSR DrawDash           ; Draw a two-pixel dash at pixel coordinate (X, A)
 
  JSR TT20               ; We want to move on to the next system, so call TT20
                         ; to twist the three 16-bit seeds in QQ15
@@ -9900,8 +9900,9 @@ ENDIF
 
                         ; We now set the pixel coordinates of the crosshairs in
                         ; QQ9 and QQ9+1 so they fit into the chart, with a
-                        ; 31-pixel margin on the left and an 8-pixel margin at
-                        ; the top (to which we will add another 24 pixels below)
+                        ; 31-pixel margin on the left and an eight-pixel margin
+                        ; at the top (to which we will add another 24 pixels
+                        ; below)
                         ;
                         ; The Long-range Chart is twice as wide as it is high,
                         ; so we need to scale the y-coordinate in QQ19+1 by an
@@ -16289,8 +16290,8 @@ ENDIF
 
  LDX #8                 ; First we need to copy the space station's coordinates
                         ; into K3, so set a counter to copy the first 9 bytes
-                        ; (the 3-byte x, y and z coordinates) from the station's
-                        ; data block at K% + NI% into K3
+                        ; (the three-byte x, y and z coordinates) from the
+                        ; station's data block at K% + NI% into K3
 
 .SPL1
 

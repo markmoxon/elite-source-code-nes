@@ -3592,7 +3592,7 @@ ENDIF
                         ; The C flag is clear at this point as we just passed
                         ; through a BCS, so we call Shpt with the C flag clear
 
- JSR Shpt               ; Call Shpt to draw a horizontal 4-pixel dash for the
+ JSR Shpt               ; Call Shpt to draw a horizontal four-pixel dash for the
                         ; first row of the dot (i.e. a four-pixel dash)
 
  INY                    ; Increment Y to the next row (so this is the second row
@@ -3600,7 +3600,7 @@ ENDIF
 
  CLC                    ; Clear the C flag to pass to Shpt
 
- JSR Shpt               ; Call Shpt to draw a horizontal 4-pixel dash for the
+ JSR Shpt               ; Call Shpt to draw a horizontal four-pixel dash for the
                         ; second row of the dot (i.e. a four-pixel dash)
 
  BIT XX1+31             ; If bit 6 of the ship's byte #31 is clear, then there
@@ -3656,7 +3656,7 @@ ENDIF
 
 .Shpt
 
-                        ; This routine draws a horizontal 4-pixel dash, for
+                        ; This routine draws a horizontal four-pixel dash, for
                         ; either the top or the bottom of the ship's dot
                         ;
                         ; We always call this routine with the C flag clear
@@ -12296,8 +12296,8 @@ ENDIF
                         ;   * Pattern 59 has a vertical line in pixel column 7
                         ;
                         ; So A contains the pre-rendered pattern number that
-                        ; contains an 8-pixel line in pixel column T, and as T
-                        ; contains the offset of the pixel column for the line
+                        ; contains an eight-pixel line in pixel column T, and as
+                        ; T contains the offset of the pixel column for the line
                         ; we are drawing, this means A contains the correct
                         ; pattern number for this part of the line
 
@@ -12392,8 +12392,8 @@ ENDIF
 
  LDA (SC),Y             ; If the pattern data where we want to draw the line is
  BEQ hanl4              ; zero, then there is nothing currently on-screen at
-                        ; this point, so jump to hanl4 to draw a full 8-pixel
-                        ; line into the pattern data for this tile
+                        ; this point, so jump to hanl4 to draw a full
+                        ; eight-pixel line into the pattern data for this tile
 
                         ; There is something on-screen where we want to draw our
                         ; line, so we now draw the line until it bumps into
@@ -12401,8 +12401,8 @@ ENDIF
                         ; up to the edge of the ship in the hangar
 
  LDA #%10000000         ; Set A to a pixel byte containing one set pixel at the
-                        ; left end of the 8-pixel row, which we can extend to
-                        ; the right by one pixel each time until it meets the
+                        ; left end of the eight-pixel row, which we can extend
+                        ; to the right by one pixel each time until it meets the
                         ; edge of the on-screen ship
 
 .hanl2
@@ -12450,7 +12450,7 @@ ENDIF
 
  LDA #%11111111         ; Set A to a pixel byte containing eight pixels in a row
 
- STA (SC),Y             ; Store the 8-pixel line in the Y-th entry in the
+ STA (SC),Y             ; Store the eight-pixel line in the Y-th entry in the
                         ; pattern buffer
 
 .hanl5
@@ -12483,7 +12483,7 @@ ENDIF
                         ; If we get here then there is no pattern allocated to
                         ; the part of the line we want to draw, so we can use
                         ; one of the pre-rendered patterns that contains an
-                        ; 8-pixel horizontal line on the correct pixel row
+                        ; eight-pixel horizontal line on the correct pixel row
                         ;
                         ; We jump here with X = 0
 
@@ -12499,7 +12499,7 @@ ENDIF
                         ;   * Pattern 44 has a horizontal line on pixel row 7
                         ;
                         ; So A contains the pre-rendered pattern number that
-                        ; contains an 8-pixel line on pixel row Y, and as Y
+                        ; contains an eight-pixel line on pixel row Y, and as Y
                         ; contains the offset of the pixel row for the line we
                         ; are drawing, this means A contains the correct pattern
                         ; number for this part of the line
@@ -12572,8 +12572,8 @@ ENDIF
 
  LDA (SC),Y             ; If the pattern data where we want to draw the line is
  BEQ hanr5              ; zero, then there is nothing currently on-screen at
-                        ; this point, so jump to hanr5 to draw a full 8-pixel
-                        ; line into the pattern data for this tile
+                        ; this point, so jump to hanr5 to draw a full
+                        ; eight-pixel line into the pattern data for this tile
 
                         ; There is something on-screen where we want to draw our
                         ; line, so we now draw the line until it bumps into
@@ -12581,8 +12581,8 @@ ENDIF
                         ; up to the edge of the ship in the hangar
 
  LDA #%00000001         ; Set A to a pixel byte containing one set pixel at the
-                        ; right end of the 8-pixel row, which we can extend to
-                        ; the left by one pixel each time until it meets the
+                        ; right end of the eight-pixel row, which we can extend
+                        ; to the left by one pixel each time until it meets the
                         ; edge of the on-screen ship
 
 .hanr2
@@ -12632,7 +12632,7 @@ ENDIF
 
  LDA #%11111111         ; Set A to a pixel byte containing eight pixels in a row
 
- STA (SC),Y             ; Store the 8-pixel line in the Y-th entry in the
+ STA (SC),Y             ; Store the eight-pixel line in the Y-th entry in the
                         ; pattern buffer
 
 .hanr6
@@ -12662,7 +12662,7 @@ ENDIF
                         ; If we get here then there is no pattern allocated to
                         ; the part of the line we want to draw, so we can use
                         ; one of the pre-rendered patterns that contains an
-                        ; 8-pixel horizontal line on the correct pixel row
+                        ; eight-pixel horizontal line on the correct pixel row
                         ;
                         ; We jump here with X = 0
 
@@ -12678,7 +12678,7 @@ ENDIF
                         ;   * Pattern 44 has a horizontal line on pixel row 7
                         ;
                         ; So A contains the pre-rendered pattern number that
-                        ; contains an 8-pixel line on pixel row Y, and as Y
+                        ; contains an eight-pixel line on pixel row Y, and as Y
                         ; contains the offset of the pixel row for the line we
                         ; are drawing, this means A contains the correct pattern
                         ; number for this part of the line
@@ -14522,7 +14522,14 @@ ENDIF
 ;   Y1                  The y-coordinate offset (positive means up the screen
 ;                       from the centre, negative means down the screen)
 ;
-;   ZZ                  The distance of the point (further away = smaller point)
+;   ZZ                  The distance of the point, with bigger distances drawing
+;                       smaller points:
+;
+;                         * ZZ < 80           Double-height four-pixel square
+;
+;                         * 80 <= ZZ <= 143   Single-height two-pixel dash
+;
+;                         * ZZ > 143          Single-height one-pixel dot
 ;
 ;   Y                   The number of the stardust particle (1 to 20)
 ;
