@@ -10804,10 +10804,11 @@ ENDIF
                         ; so this sets K4 to the centre 90 +/- 74, the pixel
                         ; y-coordinate of this system
 
- LSR A                  ; Set Y = K4 / 8, so Y contains the number of the text
- LSR A                  ; row that contains this system
- LSR A
- TAY
+ LSR A                  ; Set Y = A >> 3
+ LSR A                  ;       = K4 div 8
+ LSR A                  ;
+ TAY                    ; So Y now contains the number of the character row
+                        ; that contains this system
 
                         ; Now to see if there is room for this system's label.
                         ; Ideally we would print the system name on the same
