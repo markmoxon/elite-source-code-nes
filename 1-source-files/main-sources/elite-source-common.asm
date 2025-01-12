@@ -608,7 +608,7 @@
 .X1
 
  SKIP 1                 ; Temporary storage, typically used for x-coordinates in
-                        ; line-drawing routines
+                        ; the line-drawing routines
 
 .Y1
 
@@ -618,7 +618,7 @@
 .X2
 
  SKIP 1                 ; Temporary storage, typically used for x-coordinates in
-                        ; line-drawing routines
+                        ; the line-drawing routines
 
 .Y2
 

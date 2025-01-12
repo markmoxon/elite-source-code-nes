@@ -14525,11 +14525,15 @@ ENDIF
 ;   ZZ                  The distance of the point, with bigger distances drawing
 ;                       smaller points:
 ;
-;                         * ZZ < 80           Double-height four-pixel square
+;                         * ZZ < 24           Big particle (sprite 210)
 ;
-;                         * 80 <= ZZ <= 143   Single-height two-pixel dash
+;                         * 24 <= ZZ <= 48    Large particle (sprite 211)
 ;
-;                         * ZZ > 143          Single-height one-pixel dot
+;                         * 49 <= ZZ <= 113   Medium particle (sprite 212)
+;
+;                         * 114 <= ZZ <= 143  Small particle (sprite 213)
+;
+;                         * ZZ > 143          Tiny particle (sprite 214)
 ;
 ;   Y                   The number of the stardust particle (1 to 20)
 ;
