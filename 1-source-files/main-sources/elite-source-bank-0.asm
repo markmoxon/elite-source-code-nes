@@ -23997,8 +23997,9 @@ ENDIF
                         ; and low bytes of our tally, setting the C flag if the
                         ; addition overflowed
 
- BCC davidscockup       ; If there is no carry, jump straight to EXNO3 to skip
-                        ; the following three instructions
+ BCC davidscockup       ; If there is no carry, jump to davidscockup to skip the
+                        ; following three instructions, as we have not earned
+                        ; a "RIGHT ON COMMANDER!" message
 
  INC TALLY+1            ; Increment the high byte of the kill count in TALLY
 
