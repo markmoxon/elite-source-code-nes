@@ -17203,7 +17203,16 @@ ENDIF
 ;
 ; Arguments:
 ;
-;   Y                   The new status of the leftmost missile indicator
+;   Y                   The pattern number for the new missile indicator:
+;
+;                         * 133 = no missile indicator
+;
+;                         * 109 = red (armed and locked)
+;
+;                         * 108 = black (disarmed)
+;
+;                       The armed missile flashes black and red, so the tile is
+;                       swapped between 108 and 109 in the main loop
 ;
 ; ******************************************************************************
 

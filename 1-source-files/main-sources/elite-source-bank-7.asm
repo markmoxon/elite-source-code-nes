@@ -9831,9 +9831,7 @@ ENDIF
  PLA                    ; Set the nametable buffer entry to the pattern number
  STA nameBuffer0+22*32,Y
 
- LDY #0                 ; Set Y = 0 to return from the subroutine (so this
-                        ; routine behaves like the same routine in the other
-                        ; versions of Elite)
+ LDY #0                 ; Set Y = 0, so we can return it from the subroutine
 
  RTS                    ; Return from the subroutine
 
