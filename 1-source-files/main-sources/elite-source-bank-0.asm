@@ -209,9 +209,9 @@ ENDIF
 
  LDA TALLY+1            ; If the high byte of TALLY is zero (so we have a combat
  BEQ EN4                ; rank below Competent, or we are Competent but have not
-                        ; yet earned a further 128 kill points while at that
-                        ; rank), jump to EN4 as we are not yet good enough to
-                        ; qualify for a mission
+                        ; yet earned a grand total of at least 256 kill points),
+                        ; jump to EN4 as we are not yet good enough to qualify
+                        ; for a mission
 
  LDA GCNT               ; Fetch the galaxy number into A, and if any of bits 1-7
  LSR A                  ; are set (i.e. A > 1), jump to EN4 as mission 1 can
