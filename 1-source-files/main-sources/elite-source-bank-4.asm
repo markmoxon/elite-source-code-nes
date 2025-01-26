@@ -2795,10 +2795,10 @@ ENDIF
                         ; The high bytes of the top tier ratings are as follows,
                         ; so this a relatively simple calculation:
                         ;
-                        ;   Competent       = 1 to 2
-                        ;   Dangerous       = 2 to 9
-                        ;   Deadly          = 10 to 24
-                        ;   Elite           = 25 and up
+                        ;   Competent = 1
+                        ;   Dangerous = 2 to 9
+                        ;   Deadly    = 10 to 24
+                        ;   Elite     = 25 and up
 
  LDX #9                 ; Set X to 9 for an Elite rating
 
