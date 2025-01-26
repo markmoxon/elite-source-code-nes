@@ -208,17 +208,20 @@ ENDIF
  BNE EN1                ; completed), skip to EN1
 
  LDA TALLY+1            ; If the high byte of TALLY is zero (so we have a combat
- BEQ EN4                ; rank below Competent), jump to EN4 as we are not yet
-                        ; good enough to qualify for a mission
+ BEQ EN4                ; rank below Competent, or we are Competent but have not
+                        ; yet earned a further 128 kill points while at that
+                        ; rank), jump to EN4 as we are not yet good enough to
+                        ; qualify for a mission
 
  LDA GCNT               ; Fetch the galaxy number into A, and if any of bits 1-7
  LSR A                  ; are set (i.e. A > 1), jump to EN4 as mission 1 can
  BNE EN4                ; only be triggered in the first two galaxies
 
- JMP BRIEF              ; If we get here, mission 1 hasn't started, we have
-                        ; reached a combat rank of Competent, and we are in
-                        ; galaxy 0 or 1 (shown in-game as galaxy 1 or 2), so
-                        ; it's time to start mission 1 by calling BRIEF
+ JMP BRIEF              ; If we get here then mission 1 hasn't started, we have
+                        ; reached a combat rank of at least Competent plus 128
+                        ; kill points, and we are in galaxy 0 or 1 (shown
+                        ; in-game as galaxy 1 or 2), so it's time to start
+                        ; mission 1 by calling BRIEF
 
 .EN1
 
