@@ -5018,17 +5018,14 @@ ENDIF
 .TA87
 
  LDA INWK+32            ; Set X to bits 1-6 of the missile's AI flag in ship
- AND #%01111111         ; byte #32, so bits 0-4 of X are the target's slot
- LSR A                  ; number, and bit 5 is set (as the missile is hostile)
- TAX                    ; so X is fairly random and in the range 32-39 (as the
-                        ; maximum slot number is 7)
+ AND #%01111111         ; byte #32, so that bits 0-4 of X are the target's slot
+ LSR A                  ; number, and bit 5 is clear (as the missile is ours)
+ TAX
 
- LDA MJ-32,X            ; Set X to entry X-32 starting from MJ table, which will
- TAX                    ; be even more random, as MJ is where we store data like
-                        ; the cabin and laser temperature
-                        ;
-                        ; The value of X is used to determine the number of kill
-                        ; points awarded for the destruction of the missile
+ LDA FRIN,X             ; Set X to the ship type of the target in slot X from
+ TAX                    ; the X-th entry in FRIN, so we can pass it to EXNO2 to
+                        ; add the correct number of kill points to award for
+                        ; this type of ship
 
 .TA353
 
