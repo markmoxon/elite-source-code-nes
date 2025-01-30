@@ -61647,7 +61647,7 @@ End macro SETUP_PPU_FOR_ICON_BAR
      B43C   D0 D0      BNE &B40E
 .PD1
      B43E   A2 03      LDX #&03
-.PDL1
+.PDL1K
      B440   B5 84      LDA &84,X
      B442   95 02      STA &02,X
      B444   CA         DEX
