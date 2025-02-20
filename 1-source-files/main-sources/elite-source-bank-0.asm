@@ -5362,7 +5362,7 @@ ENDIF
 
 .TN3
 
- LSR A                  ; Extract bit 2 of the ship's NEWB flags into the C flag
+ LSR A                  ; Extract bit 3 of the ship's NEWB flags into the C flag
  BCC TN4                ; and jump to TN4 if it is clear (i.e. if this ship is
                         ; not a pirate)
 
