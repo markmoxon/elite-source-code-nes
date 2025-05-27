@@ -17953,7 +17953,7 @@ ENDIF
 .FMLTU
 
  STX P                  ; Store X in P so we can preserve it through the call to
-                        ; FMULTU
+                        ; FMLTU
 
  STA widget             ; Store A in widget, so now widget = argument A
 
