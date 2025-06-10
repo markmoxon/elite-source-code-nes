@@ -8652,13 +8652,13 @@ ENDIF
 ;       Type: Subroutine
 ;   Category: Drawing suns
 ;    Summary: Draw the sun: Starting from the bottom of the sun, draw the new
-;             sun line by line
+;             sun line by line into each tile row
 ;  Deep dive: Drawing the sun
 ;
 ; ------------------------------------------------------------------------------
 ;
-; This part erases the old sun, starting at the bottom of the screen and working
-; upwards until we reach the bottom of the new sun.
+; This part draws the new sun, starting at the bottom of the sun and working
+; upwards, one tile row at a time, until we reach the top of the sun.
 ;
 ; ******************************************************************************
 
