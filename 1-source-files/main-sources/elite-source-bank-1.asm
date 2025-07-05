@@ -7180,7 +7180,7 @@ ENDIF
 ;   (S R) = |S R|
 ;
 ; This sets up the variables required above to calculate (S R) / XX12+2 and give
-; the result the opposite sign to XX13+3.
+; the result the opposite sign to XX12+3.
 ;
 ; ******************************************************************************
 
@@ -10873,8 +10873,8 @@ ENDIF
                         ;   2 = left
                         ;   3 = right
 
- BEQ STARS1             ; If this 0, jump to STARS1 to process the stardust for
-                        ; the front view
+ BEQ STARS1             ; If this is view 0, jump to STARS1 to process the
+                        ; stardust for the front view
 
  DEX                    ; If this is view 2 or 3, jump to STARS2 (via ST11) to
  BNE ST11               ; process the stardust for the left or right views

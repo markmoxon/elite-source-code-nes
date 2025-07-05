@@ -16831,7 +16831,7 @@ ENDIF
 
 .KS1
 
- LDX XSAV               ; Store the current ship's slot number in XSAV
+ LDX XSAV               ; Fetch the current ship's slot number from XSAV
 
  JSR KILLSHP            ; Call KILLSHP to remove the ship in slot X from our
                         ; local bubble of universe
