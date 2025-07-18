@@ -41,7 +41,7 @@
 
  LOAD_BANK_7% = $C000   ; The address where the code will be loaded
 
- ORG CODE_BANK_7%
+ ORG CODE_BANK_7%       ; Set the assembly address to CODE_BANK_7%
 
 ; ******************************************************************************
 ;
