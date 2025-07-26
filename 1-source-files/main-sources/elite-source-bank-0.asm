@@ -18155,7 +18155,7 @@ ENDIF
 
  ADC #OIL               ; Set A = #OIL + A + C, so there's a 2% chance of us
                         ; spawning a cargo canister (#OIL), a 50% chance of
-                        ; us spawning a boulder (#OIL + 1), and a 48% chance of
+                        ; us spawning a boulder (#OIL + 1), and a 46% chance of
                         ; us spawning an asteroid (#OIL + 2)
 
 .whips
