@@ -18049,9 +18049,9 @@ ENDIF
                         ; hunters)
                         ;
                         ; If we are in that 13%, then 50% of the time this will
-                        ; be a Cobra Mk III trader, and the other 50% of the
-                        ; time it will either be an asteroid (98.5% chance) or,
-                        ; very rarely, a cargo canister (1.5% chance)
+                        ; be a trader, and the other 50% of the time it will
+                        ; either be an asteroid (98.5% chance) or, very rarely,
+                        ; a cargo canister (1.5% chance)
 
  LDA MJ                 ; If we are in witchspace (in which case MJ > 0) or
  ORA demoInProgress     ; demoInProgress > 0 (in which case we are playing the
@@ -18153,10 +18153,10 @@ ENDIF
 
  AND #1                 ; Reduce A to a random number that's 0 or 1
 
- ADC #OIL               ; Set A = #OIL + A + C, so there's a tiny chance of us
-                        ; spawning a cargo canister (#OIL) and an even chance of
-                        ; us spawning either a boulder (#OIL + 1) or an asteroid
-                        ; (#OIL + 2)
+ ADC #OIL               ; Set A = #OIL + A + C, so there's a 2% chance of us
+                        ; spawning a cargo canister (#OIL), a 50% chance of
+                        ; us spawning a boulder (#OIL + 1), and a 48% chance of
+                        ; us spawning an asteroid (#OIL + 2)
 
 .whips
 
