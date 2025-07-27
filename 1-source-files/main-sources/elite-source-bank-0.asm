@@ -5391,8 +5391,8 @@ ENDIF
                         ; If we get here then this is a pirate and we are inside
                         ; the space station safe zone
 
- LDA INWK+32            ; Set bits 0 and 7 of the AI flag in byte #32 (has AI
- AND #%10000001         ; enabled and has an E.C.M.)
+ LDA INWK+32            ; Clear bits 1 to 6 of the AI flag in byte #32 (to set
+ AND #%10000001         ; the aggression level to zero)
  STA INWK+32
 
 .TN4
@@ -18155,7 +18155,7 @@ ENDIF
 
  ADC #OIL               ; Set A = #OIL + A + C, so there's a 2% chance of us
                         ; spawning a cargo canister (#OIL), a 50% chance of
-                        ; us spawning a boulder (#OIL + 1), and a 46% chance of
+                        ; us spawning a boulder (#OIL + 1), and a 48% chance of
                         ; us spawning an asteroid (#OIL + 2)
 
 .whips
