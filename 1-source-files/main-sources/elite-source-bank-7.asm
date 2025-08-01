@@ -16238,7 +16238,7 @@ ENDIF
 ;       Name: Ze
 ;       Type: Subroutine
 ;   Category: Universe
-;    Summary: Initialise the INWK workspace to a hostile ship
+;    Summary: Initialise the INWK workspace to a fairly aggressive ship
 ;  Deep dive: Fixing ship positions
 ;
 ; ------------------------------------------------------------------------------
@@ -16252,7 +16252,7 @@ ENDIF
 ;
 ;   * Give the ship a 4% chance of having E.C.M.
 ;
-;   * Set the ship to hostile, with AI enabled
+;   * Set the ship's aggression level to at least 32 out of 63, with AI enabled
 ;
 ; This routine also sets A, X, T1 and the C flag to random values.
 ;
@@ -16289,8 +16289,8 @@ ENDIF
  ROL A                  ; Set bit 0 of A to the C flag (i.e. there's a 4%
                         ; chance of this ship having E.C.M.)
 
- ORA #%11000000         ; Set bits 6 and 7 of A, so the ship is hostile (bit 6
-                        ; and has AI (bit 7)
+ ORA #%11000000         ; Set bits 6 and 7 of A, so the ship has AI (bit 7) and
+                        ; an aggression level of at least 32 out of 63
 
  STA INWK+32            ; Store A in the AI flag of this ship
 
