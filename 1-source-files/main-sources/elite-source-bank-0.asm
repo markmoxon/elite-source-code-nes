@@ -2689,8 +2689,9 @@ ENDIF
 
  AND #%11101111         ; LASCT will be set to 0 for beam lasers, and to the
  STA LASCT              ; laser power AND %11101111 for pulse lasers, which
-                        ; comes to comes to 8 (as pulse lasers have a power
-                        ; of 24)
+                        ; comes to comes to 8 for pulse lasers (as pulse lasers
+                        ; have a power of 24) or 34 for mining lasers (as mining
+                        ; lasers have a power of 50)
 
 .MA3
 
@@ -17983,6 +17984,16 @@ ENDIF
                         ; missiles from the ship blueprint, and the value of the
                         ; C flag is not used, so this instruction actually has
                         ; no effect
+                        ;
+                        ; Interestingly,the original source code for the NWSPS
+                        ; routine also has an instruction that sets INWK+31 and
+                        ; which gets overwritten when it falls through into
+                        ; NWSHP, but in this casethe instruction is commented
+                        ; out in the source. Perhaps the original version of
+                        ; NWSHP didn't set the missile count and instead relied
+                        ; on the calling code to set it, and when the authors
+                        ; changed it, they commented out the INWK+31 instruction
+                        ; in NWSPS but and forgot this one. Who knows?
 
  AND #15                ; Set the ship speed to our random number, set to a
  ADC #10                ; minimum of 10 and a maximum of 26 (as the C flag is
