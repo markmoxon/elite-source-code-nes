@@ -169,7 +169,8 @@
                         ; been hit (so we can detect when the icon bar is being
                         ; drawn)
 
- OAM_ADDR   = $2003     ; The OAM address port (this is not used in Elite)
+ OAM_ADDR   = $2003     ; The OAM address port, which gets set to 0 so we can
+                        ; use OAM_DMA to send sprite data to the PPU
 
  OAM_DATA   = $2004     ; The OAM data port (this is not used in Elite)
 
