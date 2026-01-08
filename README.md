@@ -16,7 +16,7 @@ See [my profile](https://github.com/markmoxon) for more repositories to explore.
 
 ![Screenshot of Elite on the NES](https://elite.bbcelite.com/images/github/nes-station.png)
 
-This repository contains source code for Elite on the Nintendo Entertainment System (NES), with every single line documented and (for the most part) explained. It has been reconstructed by hand from a disassembly of the original game binaries.
+This repository contains source code for Ian Bell and David Braben's classic game Elite on the Nintendo Entertainment System (NES), with every single line documented and (for the most part) explained. It has been reconstructed by hand from a disassembly of the original game binaries.
 
 It is a companion to the [elite.bbcelite.com website](https://elite.bbcelite.com).
 
