@@ -14111,9 +14111,9 @@ ENDIF
  LDA #14
 
  STA Q                  ; Set QQ25 = A (so QQ25 is in the range 3-14 and
- STA QQ25               ; represents number of the most advanced item available
- INC Q                  ; in this system, which we can pass to gnum below when
-                        ; asking which item we want to buy)
+ STA QQ25               ; represents the number of the most advanced item
+ INC Q                  ; available in this system, which we can pass to gnum
+                        ; below when asking which item we want to buy)
                         ;
                         ; Set Q = A + 1 (so Q is in the range 4-15 and contains
                         ; QQ25 + 1, i.e. the highest item number on sale + 1)
