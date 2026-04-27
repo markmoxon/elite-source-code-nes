@@ -3383,7 +3383,7 @@ ENDIF
 ;             updates the screen, reads the controllers and plays music
 ;  Deep dive: The split-screen mode in NES Elite
 ;             Drawing vector graphics using NES tiles
-;             Auto-playing the combat demo
+;             Auto-playing the NES combat demo
 ;
 ; ******************************************************************************
 
@@ -9872,7 +9872,7 @@ ENDIF
 ;    Summary: Auto-play commands for the first part of the auto-play combat demo
 ;             (combat practice) when English is the chosen language
 ;  Deep dive: Multi-language support in NES Elite
-;             Auto-playing the combat demo
+;             Auto-playing the NES combat demo
 ;
 ; ******************************************************************************
 
@@ -10025,7 +10025,7 @@ ENDIF
 ;    Summary: Auto-play commands for the first part of the auto-play combat demo
 ;             (combat practice) when German is the chosen language
 ;  Deep dive: Multi-language support in NES Elite
-;             Auto-playing the combat demo
+;             Auto-playing the NES combat demo
 ;
 ; ******************************************************************************
 
@@ -10176,7 +10176,7 @@ ENDIF
 ;    Summary: Auto-play commands for the first part of the auto-play combat demo
 ;             (combat practice) when French is the chosen language
 ;  Deep dive: Multi-language support in NES Elite
-;             Auto-playing the combat demo
+;             Auto-playing the NES combat demo
 ;
 ; ******************************************************************************
 
@@ -10328,7 +10328,7 @@ ENDIF
 ;   Category: Combat demo
 ;    Summary: Auto-play commands for the second part of the auto-play demo
 ;             (demonstrating the game itself)
-;  Deep dive: Auto-playing the combat demo
+;  Deep dive: Auto-playing the NES combat demo
 ;
 ; ******************************************************************************
 
@@ -10991,7 +10991,7 @@ ENDIF
 ;   Category: Combat demo
 ;    Summary: Automatically play the demo using the auto-play commands from the
 ;             autoplayKeys tables
-;  Deep dive: Auto-playing the combat demo
+;  Deep dive: Auto-playing the NES combat demo
 ;
 ; ******************************************************************************
 

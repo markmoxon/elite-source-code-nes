@@ -2725,7 +2725,7 @@ ENDIF
 ;    Summary: Low byte of the address of the auto-play key table for each
 ;             language
 ;  Deep dive: Multi-language support in NES Elite
-;             Auto-playing the combat demo
+;             Auto-playing the NES combat demo
 ;
 ; ******************************************************************************
 
@@ -2748,7 +2748,7 @@ ENDIF
 ;    Summary: High byte of the address of the auto-play key table for each
 ;             language
 ;  Deep dive: Multi-language support in NES Elite
-;             Auto-playing the combat demo
+;             Auto-playing the NES combat demo
 ;
 ; ******************************************************************************
 
