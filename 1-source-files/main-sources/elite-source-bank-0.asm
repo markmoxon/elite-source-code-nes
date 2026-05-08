@@ -6682,7 +6682,7 @@ ENDIF
  STA S                  ; Set (S R) = (A X)
  STX R
 
- LDX K%+NIK%+4,Y        ; Set Q = the Y+2-th byte of K%+NIK%, i.e. vect_z
+ LDX K%+NIK%+4,Y        ; Set Q = the Y+4-th byte of K%+NIK%, i.e. vect_z
  STX Q
 
  LDA XX15+2             ; Set A = XX15+2
