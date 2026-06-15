@@ -5672,7 +5672,7 @@ ENDIF
                         ;
                         ;   X = -35 to -36, we are bang in the middle of the
                         ;       enemy ship's crosshairs, so they can not only
-                        ;       shoot us, they can hit us
+                        ;       shoot at us, they can hit us
 
  CPX #158               ; If X < 158, i.e. X > -30, then we are not in the enemy
  BCC TA4                ; ship's line of fire, so jump to TA4 to skip the laser
