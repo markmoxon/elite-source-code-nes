@@ -2413,33 +2413,33 @@ ENDIF
                         ; iconBarKeyPress, which contains the button number of
                         ; the icon bar button (if one has been chosen)
 
- CMP #24                ; If the Target Missile button has not been chosen,
- BNE MA25               ; jump to MA25 to skip the following
+ CMP #24                ; If the Target Missile button has not been chosen, jump
+ BNE MA25               ; to MA25 to skip the following
 
  LDA NOMSL              ; If the number of missiles in NOMSL is zero, jump to
  BEQ MA64S              ; MA64 via MA64S to skip the rest of the button checks
 
- LDA MSAR               ; The "target missile" key is being pressed and we have
+ LDA MSAR               ; The Target Missile button is being pressed and we have
  EOR #$FF               ; at least one missile, so flip MSAR between 0 and $FF
- STA MSAR               ; to flip the missile between being disarmed and armed
+ STA MSAR               ; to flip the missile between being unarmed and armed
 
  BNE MA20               ; If MSAR is now $FF then the missile is now armed, so
                         ; jump to MA20 to skip the following and process the
                         ; arming of the missile
 
- LDY #$6C               ; Otherwise we just chose to disarm the missile, so call
- JSR ABORT              ; ABORT to disarm the missile and update the missile
+ LDY #$6C               ; Otherwise we just chose to unarm the missile, so call
+ JSR ABORT              ; ABORT to unarm the missile and update the missile
                         ; indicators on the dashboard to the pattern number in
                         ; Y (black indicator = pattern 108)
 
  LDY #4                 ; Set Y = 4 so the call to NOISE makes a low, long beep
-                        ; to indicate the missile is now disarmed
+                        ; to indicate the missile is now unarmed
 
 .main11
 
  JSR NOISE              ; Call the NOISE routine to make the sound in Y (which
                         ; will either be a low, long beep to indicate the
-                        ; missile is now disarmed, or a short, high beep to
+                        ; missile is now unarmed, or a short, high beep to
                         ; indicate that it is looking for a target)
 
  JMP MA64               ; Jump to MA64 to skip the rest of the button checks
@@ -17132,7 +17132,7 @@ ENDIF
  BNE KS5                ; If our missile is not locked on this ship, jump to KS5
 
  LDY #108               ; Otherwise we need to remove our missile lock, so call
- JSR ABORT              ; ABORT to disarm the missile and update the missile
+ JSR ABORT              ; ABORT to unarm the missile and update the missile
                         ; indicators on the dashboard to the pattern number in
                         ; Y (black indicator = pattern 108)
 
@@ -17263,7 +17263,7 @@ ENDIF
 ;       Name: ABORT
 ;       Type: Subroutine
 ;   Category: Dashboard
-;    Summary: Disarm missiles and update the dashboard indicators
+;    Summary: Unarm missiles and update the dashboard indicators
 ;
 ; ------------------------------------------------------------------------------
 ;
@@ -17275,7 +17275,7 @@ ENDIF
 ;
 ;                         * 109 = red (armed and locked)
 ;
-;                         * 108 = black (disarmed)
+;                         * 108 = black (unarmed)
 ;
 ;                       The armed missile flashes black and red, so the tile is
 ;                       swapped between 108 and 109 in the main loop
@@ -17291,7 +17291,7 @@ ENDIF
                         ; no target lock for our missile
 
                         ; Fall through into ABORT2 to set the missile lock to
-                        ; the value in X, which effectively disarms the missile
+                        ; the value in X, which effectively unarms the missile
 
 ; ******************************************************************************
 ;
@@ -17317,7 +17317,7 @@ ENDIF
 ;
 ;                         * 109 = red (armed and locked)
 ;
-;                         * 108 = black (disarmed)
+;                         * 108 = black (unarmed)
 ;
 ;                       The armed missile flashes black and red, so the tile is
 ;                       swapped between 108 and 109 in the main loop

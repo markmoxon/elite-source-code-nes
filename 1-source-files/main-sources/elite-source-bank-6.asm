@@ -7278,7 +7278,7 @@ ENDIF
 ;
 ;                         * 109 = red (armed and locked)
 ;
-;                         * 108 = black (disarmed)
+;                         * 108 = black (unarmed)
 ;
 ;                       The armed missile flashes black and red, so the tile is
 ;                       swapped between 108 and 109 in the main loop
