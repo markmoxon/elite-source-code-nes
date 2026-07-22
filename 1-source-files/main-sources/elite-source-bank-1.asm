@@ -7494,8 +7494,8 @@ ENDIF
                         ;           = y +/- random * cloud size
 
  BNE EX11               ; If A is non-zero, the particle is off-screen as the
-                        ; coordinate is bigger than 255), so jump to EX11 to do
-                        ; the next particle
+                        ; coordinate is either negative or bigger than 255, so
+                        ; jump to EX11 to do the next particle
 
  CPX Yx2M1              ; If X > the y-coordinate of the bottom of the screen
  BCS EX11               ; (which is in Yx2M1) then the particle is off the

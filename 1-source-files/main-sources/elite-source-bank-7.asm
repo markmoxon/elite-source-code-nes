@@ -17536,7 +17536,7 @@ ENDIF
  STA T
 
  TXA                    ; Set A = |A|
- AND #127
+ AND #%01111111
 
  BEQ MU6                ; If A = 0, jump to MU6 to set P(1 0) = 0 and return
                         ; from the subroutine using a tail call
