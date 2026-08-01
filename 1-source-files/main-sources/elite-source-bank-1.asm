@@ -12200,9 +12200,9 @@ ENDIF
 
  LSR A                  ; Set SC2(1 0) = (nameBufferHi 0) + yLookup(Y) + A / 8
  LSR A                  ;
- LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
- CLC                    ; to convert the pixel y-coordinate in Y into the number
- ADC yLookupLo,Y        ; of the first tile on the row containing the pixel
+ LSR A                  ; where yLookup(Y) uses the yLookup(Hi Lo) table to
+ CLC                    ; convert the pixel y-coordinate in Y into the number of
+ ADC yLookupLo,Y        ; the first tile on the row containing the pixel
  STA SC2                ;
  LDA nameBufferHi       ; Adding nameBufferHi and A / 8 therefore sets SC2(1 0)
  ADC yLookupHi,Y        ; to the address of the entry in the nametable buffer
@@ -12350,9 +12350,9 @@ ENDIF
 
  LSR A                  ; Set SC2(1 0) = (nameBufferHi 0) + yLookup(Y) + A / 8
  LSR A                  ;
- LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
- CLC                    ; to convert the pixel y-coordinate in Y into the number
- ADC yLookupLo,Y        ; of the first tile on the row containing the pixel
+ LSR A                  ; where yLookup(Y) uses the yLookup(Hi Lo) table to
+ CLC                    ; convert the pixel y-coordinate in Y into the number of
+ ADC yLookupLo,Y        ; the first tile on the row containing the pixel
  STA SC2                ;
  LDA nameBufferHi       ; Adding nameBufferHi and A / 8 therefore sets SC2(1 0)
  ADC yLookupHi,Y        ; to the address of the entry in the nametable buffer
@@ -12530,9 +12530,9 @@ ENDIF
 
  LSR A                  ; Set SC2(1 0) = (nameBufferHi 0) + yLookup(Y) + A / 8
  LSR A                  ;
- LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
- CLC                    ; to convert the pixel y-coordinate in Y into the number
- ADC yLookupLo,Y        ; of the first tile on the row containing the pixel
+ LSR A                  ; where yLookup(Y) uses the yLookup(Hi Lo) table to
+ CLC                    ; convert the pixel y-coordinate in Y into the number of
+ ADC yLookupLo,Y        ; the first tile on the row containing the pixel
  STA SC2                ;
  LDA nameBufferHi       ; Adding nameBufferHi and A / 8 therefore sets SC2(1 0)
  ADC yLookupHi,Y        ; to the address of the entry in the nametable buffer

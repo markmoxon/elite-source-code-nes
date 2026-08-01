@@ -2699,7 +2699,7 @@ ENDIF
                         ; the demo always runs in the same way
 
  LDX languageIndex      ; Set autoPlayKeys(1 0) to the chosen language's entry
- LDA autoPlayKeys1Lo,X  ; from the (autoPlayKeys1Hi autoPlayKeys1Lo) tables
+ LDA autoPlayKeys1Lo,X  ; from the autoPlayKeys1(Hi Lo) tables
  STA autoPlayKeys
  LDA autoPlayKeys1Hi,X
  STA autoPlayKeys+1

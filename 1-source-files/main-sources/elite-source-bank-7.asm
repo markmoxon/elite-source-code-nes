@@ -1910,7 +1910,7 @@ ENDIF
  ADC pattBufferHiAddr,X ;
  STA patternBufferHi,X  ; So we now have the following for this bitplane:
                         ;
-                        ;   (patternBufferHi patternBufferLo) =
+                        ;   patternBuffer(Hi Lo) =
                         ;                      pattBufferX + sendingPattern * 8
                         ;
                         ; which points to the data for pattern sendingPattern in
@@ -1936,7 +1936,7 @@ ENDIF
  ADC nameBufferHiAddr,X ;
  STA nameTileBuffHi,X   ; So we now have the following for this bitplane:
                         ;
-                        ;   (nameTileBuffHi nameTileBuffLo) =
+                        ;   nameTileBuff(Hi Lo) =
                         ;                      nameBufferX + sendingNameTile * 8
                         ;
                         ; which points to the data for tile sendingNameTile in
@@ -2328,7 +2328,7 @@ ENDIF
                         ; the following variables, so they can be picked up by
                         ; the new routine:
                         ;
-                        ;   * (patternBufferHi patternBufferLo)
+                        ;   * patternBuffer(Hi Lo)
                         ;
                         ;   * sendingPattern
                         ;
@@ -2340,10 +2340,10 @@ ENDIF
 
  NOP                    ; This looks like code that has been removed
 
- LDX nmiBitplane        ; Set (patternBufferHi patternBufferLo) for this
- STY patternBufferLo,X  ; bitplane to dataForPPU(1 0) + Y (which is the address
- LDA dataForPPU+1       ; of the next byte of data to be sent from the pattern
- STA patternBufferHi,X  ; buffer)
+ LDX nmiBitplane        ; Set patternBuffer(Hi Lo) for this bitplane to
+ STY patternBufferLo,X  ; dataForPPU(1 0) + Y (which is the address of the next
+ LDA dataForPPU+1       ; byte of data to be sent from the pattern buffer)
+ STA patternBufferHi,X
 
  LDA patternCounter     ; Set sendingPattern for this bitplane to the value of
  STA sendingPattern,X   ; X we stored above (which is the number / 8 of the next
@@ -2570,16 +2570,16 @@ ENDIF
                         ; We now store the following variables, so they can be
                         ; picked up when we return in the next VBlank:
                         ;
-                        ;   * (patternBufferHi patternBufferLo)
+                        ;   * patternBuffer(Hi Lo)
                         ;
                         ;   * sendingPattern
 
  STX patternCounter     ; Store X in patternCounter to use below
 
- LDX nmiBitplane        ; Set (patternBufferHi patternBufferLo) for this
- STY patternBufferLo,X  ; bitplane to dataForPPU(1 0) + Y (which is the address
- LDA dataForPPU+1       ; of the next byte of data to be sent from the pattern
- STA patternBufferHi,X  ; buffer in the next VBlank)
+ LDX nmiBitplane        ; Set patternBuffer(Hi Lo) for this bitplane to 
+ STY patternBufferLo,X  ; dataForPPU(1 0) + Y (which is the address of the next
+ LDA dataForPPU+1       ; byte of data to be sent from the pattern buffer in the
+ STA patternBufferHi,X  ; next VBlank)
 
  LDA patternCounter     ; Set sendingPattern for this bitplane to the value of
  STA sendingPattern,X   ; X we stored above (which is the number / 8 of the next
@@ -2884,7 +2884,7 @@ ENDIF
                         ; the following variables, so they can be picked up by
                         ; the new routine:
                         ;
-                        ;   * (nameTileBuffHi nameTileBuffLo)
+                        ;   * nameTileBuff(Hi Lo)
                         ;
                         ;   * sendingNameTile
                         ;
@@ -2896,10 +2896,9 @@ ENDIF
                         ; nameTileCounter, which we stored in A before jumping
                         ; here
 
- STY nameTileBuffLo,X   ; Set (nameTileBuffHi nameTileBuffLo) for this bitplane
- LDA dataForPPU+1       ; to dataForPPU(1 0) + Y (which is the address of the
- STA nameTileBuffHi,X   ; next byte of data to be sent from the nametable
-                        ; buffer)
+ STY nameTileBuffLo,X   ; Set nameTileBuff(Hi Lo) for this bitplane to
+ LDA dataForPPU+1       ; dataForPPU(1 0) + Y (which is the address of the next
+ STA nameTileBuffHi,X   ; byte of data to be sent from the nametable buffer)
 
  JMP SendOtherBitplane  ; Jump to SendOtherBitplane to consider sending the
                         ; other bitplane to the PPU, if required
@@ -2930,17 +2929,16 @@ ENDIF
                         ; We now store the following variables, so they can be
                         ; picked up when we return in the next VBlank:
                         ;
-                        ;   * (nameTileBuffHi nameTileBuffLo)
+                        ;   * nameTileBuff(Hi Lo)
                         ;
                         ;   * sendingNameTile
 
  LDA nameTileCounter    ; Set sendingNameTile for this bitplane to the number
  STA sendingNameTile,X  ; of the tile to send next, in nameTileCounter
 
- STY nameTileBuffLo,X   ; Set (nameTileBuffHi nameTileBuffLo) for this bitplane
- LDA dataForPPU+1       ; to dataForPPU(1 0) + Y (which is the address of the
- STA nameTileBuffHi,X   ; next byte of data to be sent from the nametable
-                        ; buffer)
+ STY nameTileBuffLo,X   ; Set nameTileBuff(Hi Lo) for this bitplane to
+ LDA dataForPPU+1       ; dataForPPU(1 0) + Y (which is the address of the next
+ STA nameTileBuffHi,X   ; byte of data to be sent from the nametable buffer)
 
  JMP RTS1               ; Return from the subroutine (as RTS1 contains an RTS)
 
@@ -3490,7 +3488,7 @@ ENDIF
  LDA #50                ; Wrap the NMI timer round to start counting down from
  STA nmiTimer           ; 50 once again, as it just reached zero
 
- LDA nmiTimerLo         ; Increment (nmiTimerHi nmiTimerLo)
+ LDA nmiTimerLo         ; Increment nmiTimer(Hi Lo)
  CLC
  ADC #1
  STA nmiTimerLo
@@ -6598,9 +6596,9 @@ ENDIF
 
  LDA X1                 ; Set SC2(1 0) = (nameBufferHi 0) + yLookup(Y) + X1 / 8
  LSR A                  ;
- LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
- LSR A                  ; to convert the pixel y-coordinate in Y into the number
- CLC                    ; of the first tile on the row containing the pixel
+ LSR A                  ; where yLookup(Y) uses the yLookup(Hi Lo) table to
+ LSR A                  ; convert the pixel y-coordinate in Y into the number of
+ CLC                    ; the first tile on the row containing the pixel
  ADC yLookupLo,Y        ;
  STA SC2                ; Adding nameBufferHi and X1 / 8 therefore sets SC2(1 0)
  LDA nameBufferHi       ; to the address of the entry in the nametable buffer
@@ -6817,9 +6815,9 @@ ENDIF
 
  LDA X1                 ; Set SC2(1 0) = (nameBufferHi 0) + yLookup(Y) + X1 / 8
  LSR A                  ;
- LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
- LSR A                  ; to convert the pixel y-coordinate in Y into the number
- CLC                    ; of the first tile on the row containing the pixel
+ LSR A                  ; where yLookup(Y) uses the yLookup(Hi Lo) table to
+ LSR A                  ; convert the pixel y-coordinate in Y into the number of
+ CLC                    ; the first tile on the row containing the pixel
  ADC yLookupLo,Y        ;
  STA SC2                ; Adding nameBufferHi and X1 / 8 therefore sets SC2(1 0)
  LDA nameBufferHi       ; to the address of the entry in the nametable buffer
@@ -7159,9 +7157,9 @@ ENDIF
 
  LDA X1                 ; Set SC2(1 0) = (nameBufferHi 0) + yLookup(Y) + X1 / 8
  LSR A                  ;
- LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
- LSR A                  ; to convert the pixel y-coordinate in Y into the number
- CLC                    ; of the first tile on the row containing the pixel
+ LSR A                  ; where yLookup(Y) uses the yLookup(Hi Lo) table to
+ LSR A                  ; convert the pixel y-coordinate in Y into the number of
+ CLC                    ; the first tile on the row containing the pixel
  ADC yLookupLo,Y        ;
  STA SC2                ; Adding nameBufferHi and X1 / 8 therefore sets SC2(1 0)
  LDA nameBufferHi       ; to the address of the entry in the nametable buffer
@@ -7881,9 +7879,9 @@ ENDIF
 
  LDA P                  ; Set SC2(1 0) = (nameBufferHi 0) + yLookup(Y) + P * 8
  LSR A                  ;
- LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
- LSR A                  ; to convert the pixel y-coordinate in Y into the number
- CLC                    ; of the first tile on the row containing the pixel
+ LSR A                  ; where yLookup(Y) uses the yLookup(Hi Lo) table to
+ LSR A                  ; convert the pixel y-coordinate in Y into the number of
+ CLC                    ; the first tile on the row containing the pixel
  ADC yLookupLo,Y        ;
  STA SC2                ; Adding nameBufferHi and P * 8 therefore sets SC2(1 0)
  LDA nameBufferHi       ; to the address of the entry in the nametable buffer
@@ -8039,9 +8037,9 @@ ENDIF
 
  TXA                    ; Set SC2(1 0) = (nameBufferHi 0) + yLookup(Y) + X1 / 8
  LSR A                  ;
- LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
- LSR A                  ; to convert the pixel y-coordinate in Y into the number
- CLC                    ; of the first tile on the row containing the pixel
+ LSR A                  ; where yLookup(Y) uses the yLookup(Hi Lo) table to
+ LSR A                  ; convert the pixel y-coordinate in Y into the number of
+ CLC                    ; the first tile on the row containing the pixel
  ADC yLookupLo,Y        ;
  STA SC2                ; Adding nameBufferHi and X1 / 8 therefore sets SC2(1 0)
  LDA nameBufferHi       ; to the address of the entry in the nametable buffer
@@ -9002,9 +9000,9 @@ ENDIF
 
  LDA X1                 ; Set SC2(1 0) = (nameBufferHi 0) + yLookup(Y) + X1 / 8
  LSR A                  ;
- LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
- LSR A                  ; to convert the pixel y-coordinate in Y into the number
- CLC                    ; of the first tile on the row containing the pixel
+ LSR A                  ; where yLookup(Y) uses the yLookup(Hi Lo) table to
+ LSR A                  ; convert the pixel y-coordinate in Y into the number of
+ CLC                    ; the first tile on the row containing the pixel
  ADC yLookupLo,Y        ;
  STA SC2                ; Adding nameBufferHi and X1 / 8 therefore sets SC2(1 0)
  LDA nameBufferHi       ; to the address of the entry in the nametable buffer
@@ -9597,9 +9595,9 @@ ENDIF
 
  TXA                    ; Set SC(1 0) = (nameBufferHi 0) + yLookup(Y) + X / 8
  LSR A                  ;
- LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
- LSR A                  ; to convert the pixel y-coordinate in Y into the number
- CLC                    ; of the first tile on the row containing the pixel
+ LSR A                  ; where yLookup(Y) uses the yLookup(Hi Lo) table to
+ LSR A                  ; convert the pixel y-coordinate in Y into the number of
+ CLC                    ; the first tile on the row containing the pixel
  ADC yLookupLo,Y        ;
  STA SC                 ; Adding nameBufferHi and X / 8 therefore sets SC(1 0)
  LDA nameBufferHi       ; to the address of the entry in the nametable buffer
@@ -9698,9 +9696,9 @@ ENDIF
 
  TXA                    ; Set SC(1 0) = (nameBufferHi 0) + yLookup(Y) + X / 8
  LSR A                  ;
- LSR A                  ; where yLookup(Y) uses the (yLookupHi yLookupLo) table
- LSR A                  ; to convert the pixel y-coordinate in Y into the number
- CLC                    ; of the first tile on the row containing the pixel
+ LSR A                  ; where yLookup(Y) uses the yLookup(Hi Lo) table to
+ LSR A                  ; convert the pixel y-coordinate in Y into the number of
+ CLC                    ; the first tile on the row containing the pixel
  ADC yLookupLo,Y        ;
  STA SC                 ; Adding nameBufferHi and X / 8 therefore sets SC(1 0)
  LDA nameBufferHi       ; to the address of the entry in the nametable buffer
@@ -16096,9 +16094,9 @@ ENDIF
  LDA #50                ; Set the NMI timer, which decrements each VBlank, to 50
  STA nmiTimer           ; so it counts down to zero and back up to 50 again
 
- LDA #0                 ; Set (nmiTimerHi nmiTimerLo) = 0 so we can time how
- STA nmiTimerLo         ; long to show the rotating ships before switching back
- STA nmiTimerHi         ; to the Start screen
+ LDA #0                 ; Set nmiTimer(Hi Lo) = 0 so we can time how long to
+ STA nmiTimerLo         ; show the rotating ships before switching back to the
+ STA nmiTimerHi         ; Start screen
 
 .dtit1
 
@@ -16137,16 +16135,16 @@ ENDIF
  INY                    ; Increment the ship counter in Y to point to the next
                         ; ship in the list
 
- LDA nmiTimerHi         ; If the high byte of (nmiTimerHi nmiTimerLo) is still 0
- CMP #1                 ; then jump back to dtit2 to show the next ship
+ LDA nmiTimerHi         ; If the high byte of nmiTimer(Hi Lo) is still 0 then
+ CMP #1                 ; jump back to dtit2 to show the next ship
  BCC dtit2
 
                         ; If we get here then the NMI timer has run down to the
-                        ; point where (nmiTimerHi nmiTimerLo) is >= 256, which
-                        ; means we have shown the title screen for at least
-                        ; 50 * 256 VBlanks, as each tick of nmiTimerLo happens
-                        ; when the nmiTimer has counted down from 50 VBlanks,
-                        ; and each tick happens once every VBlank
+                        ; point where nmiTimer(Hi Lo) is >= 256, which means we
+                        ; have shown the title screen for at least 50 * 256
+                        ; VBlanks, as each tick of nmiTimerLo happens when the
+                        ; nmiTimer has counted down from 50 VBlanks, and each
+                        ; tick happens once every VBlank
                         ;
                         ; On the PAL NES, VBlank happens 50 times a second, so
                         ; this means the title screen has been showing for 256

@@ -770,7 +770,7 @@ ENDIF
  ASL A
  TAY
 
- LDA noteFrequency,Y    ; Set (sq1Hi sq1Lo) the frequency for note Y
+ LDA noteFrequency,Y    ; Set sq1(Hi Lo) the frequency for note Y
  STA sq1LoCopy          ;
  STA sq1Lo              ; Also save a copy of the low byte in sq1LoCopy
  LDA noteFrequency+1,Y
@@ -784,7 +784,7 @@ ENDIF
  LDX sq1Sweep           ; Send sq1Sweep to the APU via SQ1_SWEEP
  STX SQ1_SWEEP
 
- LDX sq1Lo              ; Send (sq1Hi sq1Lo) to the APU via SQ1_HI and SQ1_LO
+ LDX sq1Lo              ; Send sq1(Hi Lo) to the APU via SQ1_HI and SQ1_LO
  STX SQ1_LO
  STA SQ1_HI
 
@@ -1394,7 +1394,7 @@ ENDIF
  ASL A
  TAY
 
- LDA noteFrequency,Y    ; Set (sq2Hi sq2Lo) the frequency for note Y
+ LDA noteFrequency,Y    ; Set sq2(Hi Lo) the frequency for note Y
  STA sq2LoCopy          ;
  STA sq2Lo              ; Also save a copy of the low byte in sq2LoCopy
  LDA noteFrequency+1,Y
@@ -1408,7 +1408,7 @@ ENDIF
  LDX sq2Sweep           ; Send sq2Sweep to the APU via SQ2_SWEEP
  STX SQ2_SWEEP
 
- LDX sq2Lo              ; Send (sq2Hi sq2Lo) to the APU via SQ2_HI and SQ2_LO
+ LDX sq2Lo              ; Send sq2(Hi Lo) to the APU via SQ2_HI and SQ2_LO
  STX SQ2_LO
  STA SQ2_HI
 
@@ -2020,8 +2020,8 @@ ENDIF
  STX TRI_LO
  STA TRI_HI
 
- STA triHi              ; Set (triHi triLo) = (A triLo), though this value is
-                        ; never read again, so this has no effect
+ STA triHi              ; Set tri(Hi Lo) = (A triLo), though this value is never
+                        ; read again, so this has no effect
 
  LDA volumeEnvelopeTRI  ; Set the counter to the volume change to the value of
  STA volumeCounterTRI   ; volumeEnvelopeTRI, which gets set by the $F6 command
@@ -3585,9 +3585,9 @@ ENDIF
  STA SQ1_VOL            ; volume byte of any music that was playing when the
                         ; sound effect took precedence
 
- LDA sq1Lo              ; Send (sq1Hi sq1Lo) to the APU via (SQ1_HI SQ1_LO),
- STA SQ1_LO             ; which is the pitch of any music that was playing when
- LDA sq1Hi              ; the sound effect took precedence
+ LDA sq1Lo              ; Send sq1(Hi Lo) to the APU via (SQ1_HI SQ1_LO), which
+ STA SQ1_LO             ; is the pitch of any music that was playing when the
+ LDA sq1Hi              ; sound effect took precedence
  STA SQ1_HI
 
  STX effectOnSQ1        ; Set effectOnSQ1 = 0 to mark the SQL channel as clear
@@ -3887,9 +3887,9 @@ ENDIF
  STA SQ2_VOL            ; volume byte of any music that was playing when the
                         ; sound effect took precedence
 
- LDA sq2Lo              ; Send (sq2Hi sq2Lo) to the APU via (SQ2_HI SQ2_LO),
- STA SQ2_LO             ; which is the pitch of any music that was playing when
- LDA sq2Hi              ; the sound effect took precedence
+ LDA sq2Lo              ; Send sq2(Hi Lo) to the APU via (SQ2_HI SQ2_LO), which
+ STA SQ2_LO             ; is the pitch of any music that was playing when the
+ LDA sq2Hi              ; sound effect took precedence
  STA SQ2_HI
 
  STX effectOnSQ2        ; Set effectOnSQ2 = 0 to mark the SQL channel as clear
@@ -4189,9 +4189,9 @@ ENDIF
  STA NOISE_VOL          ; the volume byte of any music that was playing when the
                         ; sound effect took precedence
 
- LDA noiseLo            ; Send (noiseHi noiseLo) to the APU via NOISE_LO, which
- STA NOISE_LO           ; is the pitch of any music that was playing when the
-                        ; sound effect took precedence
+ LDA noiseLo            ; Send noise(Hi Lo) to the APU via NOISE_LO, which is
+ STA NOISE_LO           ; the pitch of any music that was playing when the sound
+                        ; effect took precedence
 
  STX effectOnNOISE      ; Set effectOnNOISE = 0 to mark the SQL channel as clear
                         ; of sound effects, so the channel can be used for music
@@ -6505,8 +6505,8 @@ ENDIF
  JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
                         ; next VBlank)
 
- LDA nmiTimer           ; Store nmiTimer and (nmiTimerHi nmiTimerLo) on the
- PHA                    ; stack so we can retrieve them below
+ LDA nmiTimer           ; Store nmiTimer and nmiTimer(Hi Lo) on the stack so we
+ PHA                    ; can retrieve them below
  LDA nmiTimerLo
  PHA
  LDA nmiTimerHi
@@ -6560,8 +6560,8 @@ ENDIF
  JSR WaitForNMI         ; Wait until the next NMI interrupt has passed (i.e. the
                         ; next VBlank)
 
- PLA                    ; Set nmiTimer and (nmiTimerHi nmiTimerLo) to the values
- STA nmiTimerHi         ; we stored on the stack above, so they are preserved
+ PLA                    ; Set nmiTimer and nmiTimer(Hi Lo) to the values we
+ STA nmiTimerHi         ; stored on the stack above, so they are preserved
  PLA
  STA nmiTimerLo
  PLA
@@ -8552,21 +8552,21 @@ ENDIF
                         ;   * Character $80 refers to location K5
                         ;
                         ; Finally, the number of seconds that we need to display
-                        ; is in (nmiTimerHi nmiTimerLo), so we need to convert
-                        ; this into minutes and seconds, and then set the values
-                        ; in K5 to the correct ASCII characters that represent
-                        ; the digits of this time
+                        ; is in nmiTimer(Hi Lo), so we need to convert this into
+                        ; minutes and seconds, and then set the values in K5 to
+                        ; the correct ASCII characters that represent the digits
+                        ; of this time
 
  LDA #'0'               ; Set all the digits to 0 except the second digit of the
  STA K5+1               ; seconds (as we will set this later)
  STA K5+2
  STA K5+3
 
- LDA #100               ; Set nmiTimer = 100 so (nmiTimerHi nmiTimerLo) will not
- STA nmiTimer           ; change during the following calculation (as nmiTimer
-                        ; has to tick down to zero for that to happen, so this
-                        ; gives us 100 VBlanks to complete the calculation
-                        ; before (nmiTimerHi nmiTimerLo) changes)
+ LDA #100               ; Set nmiTimer = 100 so nmiTimer(Hi Lo) will not change
+ STA nmiTimer           ; during the following calculation (as nmiTimer has to
+                        ; tick down to zero for that to happen, so this gives us
+                        ; 100 VBlanks to complete the calculation before
+                        ; nmiTimer(Hi Lo) changes)
 
                         ; We start with the first digit of the minute count (the
                         ; "tens" digit)
@@ -8575,28 +8575,26 @@ ENDIF
 
 .scro8
 
- LDA nmiTimerLo         ; Set (A X) = (nmiTimerHi nmiTimerLo) - $0258
- SBC #$58               ;           = (nmiTimerHi nmiTimerLo) - 600
+ LDA nmiTimerLo         ; Set (A X) = nmiTimer(Hi Lo) - $0258
+ SBC #$58               ;           = nmiTimer(Hi Lo) - 600
  TAX
  LDA nmiTimerHi
  SBC #$02
 
  BCC scro9              ; If the subtraction underflowed then we know that
-                        ; (nmiTimerHi nmiTimerLo) < 600, so jump to scro9 to
-                        ; move on to the next digit
+                        ; nmiTimer(Hi Lo) < 600, so jump to scro9 to move on to
+                        ; the next digit
 
-                        ; If we get here then (nmiTimerHi nmiTimerLo) >= 600,
-                        ; so the time in (nmiTimerHi nmiTimerLo) is at least
-                        ; ten minutes, so we increment the first digit of the
-                        ; minute count in K5+3, update the time in
-                        ; (nmiTimerHi nmiTimerLo) to (A X), and loop back to
-                        ; try subtracting another 10 minutes
+                        ; If we get here then nmiTimer(Hi Lo) >= 600, so the
+                        ; time in nmiTimer(Hi Lo) is at least ten minutes, so we
+                        ; increment the first digit of the minute count in K5+3,
+                        ; update the time in nmiTimer(Hi Lo) to (A X), and loop
+                        ; back to try subtracting another 10 minutes
 
- STA nmiTimerHi         ; Set (nmiTimerHi nmiTimerLo) = (A X)
+ STA nmiTimerHi         ; Set nmiTimer(Hi Lo) = (A X)
  STX nmiTimerLo         ;
-                        ; So this updates (nmiTimerHi nmiTimerLo) with the new
-                        ; value, which is ten minutes less than the original
-                        ; value
+                        ; So this updates nmiTimer(Hi Lo) with the new value,
+                        ; which is ten minutes less than the original value
 
  INC K5+3               ; Increment the first digit of the minute count in K5+3
                         ; to bump it up from, say, "0" to "1"
@@ -8612,28 +8610,26 @@ ENDIF
 
  SEC                    ; Set the C flag for the following subtraction
 
- LDA nmiTimerLo         ; Set (A X) = (nmiTimerHi nmiTimerLo) - $003C
- SBC #$3C               ;           = (nmiTimerHi nmiTimerLo) - 60
+ LDA nmiTimerLo         ; Set (A X) = nmiTimer(Hi Lo) - $003C
+ SBC #$3C               ;           = nmiTimer(Hi Lo) - 60
  TAX
  LDA nmiTimerHi
  SBC #$00
 
  BCC scro10             ; If the subtraction underflowed then we know that
-                        ; (nmiTimerHi nmiTimerLo) < 60, so jump to scro10 to
-                        ; move on to the next digit
+                        ; nmiTimer(Hi Lo) < 60, so jump to scro10 to move on to
+                        ; the next digit
 
-                        ; If we get here then (nmiTimerHi nmiTimerLo) >= 60,
-                        ; so the time in (nmiTimerHi nmiTimerLo) is at least
-                        ; one minute, so we increment the second digit of the
-                        ; minute count in K5+2, update the time in
-                        ; (nmiTimerHi nmiTimerLo) to (A X), and loop back to
-                        ; try subtracting another minute
+                        ; If we get here then nmiTimer(Hi Lo) >= 60, so the time
+                        ; in nmiTimer(Hi Lo) is at least one minute, so we
+                        ; increment the second digit of the minute count in
+                        ; K5+2, update the time in nmiTimer(Hi Lo) to (A X), and
+                        ; loop back to try subtracting another minute
 
- STA nmiTimerHi         ; Set (nmiTimerHi nmiTimerLo) = (A X)
+ STA nmiTimerHi         ; Set nmiTimer(Hi Lo) = (A X)
  STX nmiTimerLo         ;
-                        ; So this updates (nmiTimerHi nmiTimerLo) with the new
-                        ; value, which is one minute less than the original
-                        ; value
+                        ; So this updates nmiTimer(Hi Lo) with the new value,
+                        ; which is one minute less than the original value
 
  INC K5+2               ; Increment the second digit of the minute count in K5+2
                         ; to bump it up from, say, "0" to "1"
@@ -8647,9 +8643,9 @@ ENDIF
                         ; Now for the first digit of the second count (the
                         ; "tens" digit)
                         ;
-                        ; By this point we know that (nmiTimerHi nmiTimerLo) is
-                        ; less than 60, so we can ignore the high byte as it is
-                        ; zero by now
+                        ; By this point we know that nmiTimer(Hi Lo) is less
+                        ; than 60, so we can ignore the high byte as it is zero
+                        ; by now
 
  SEC                    ; Set the C flag for the following subtraction
 
@@ -14924,13 +14920,13 @@ ENDIF
 
 .SetLanguage
 
- LDA tokensLo,Y         ; Set (QQ18Hi QQ18Lo) to the language's entry from the
- STA QQ18Lo             ; (tokensHi tokensLo) table
+ LDA tokensLo,Y         ; Set QQ18(Hi Lo) to the language's entry from the
+ STA QQ18Lo             ; tokens(Hi Lo) table
  LDA tokensHi,Y
  STA QQ18Hi
 
- LDA extendedTokensLo,Y ; Set (TKN1Hi TKN1Lo) to the language's entry from the
- STA TKN1Lo             ; the (extendedTokensHi extendedTokensLo) table
+ LDA extendedTokensLo,Y ; Set TKN1(Hi Lo) to the language's entry from the
+ STA TKN1Lo             ; extendedTokens(Hi Lo) table
  LDA extendedTokensHi,Y
  STA TKN1Hi
 

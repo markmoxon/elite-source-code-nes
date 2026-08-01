@@ -403,23 +403,22 @@
  SKIP 1                 ; A counter that gets decremented each time the NMI
                         ; interrupt is called, starting at 50 and counting down
                         ; to zero, at which point it jumps back up to 50 again
-                        ; and triggers an increment of (nmiTimerHi nmiTimerLo)
+                        ; and triggers an increment of nmiTimer(Hi Lo)
                         ;
                         ; On PAL system there are 50 frames per second, so this
                         ; means nmiTimer ticks down from 50 once a second, so
-                        ; (nmiTimerHi nmiTimerLo) counts up in seconds
+                        ; nmiTimer(Hi Lo) counts up in seconds
                         ;
                         ; On NTSC there are 60 frames per second, so nmiTimer
                         ; counts down in 5/6 of a second, or 0.8333 seconds,
-                        ; so (nmiTimerHi nmiTimerLo) counts up every 0.8333
-                        ; seconds
+                        ; so nmiTimer(Hi Lo) counts up every 0.8333 seconds
 
 .nmiTimerLo
 
  SKIP 1                 ; Low byte of a counter that's incremented by 1 every
                         ; time nmiTimer wraps
                         ;
-                        ; On PAL systems (nmiTimerHi nmiTimerLo) counts seconds
+                        ; On PAL systems nmiTimer(Hi Lo) counts seconds
                         ;
                         ; On NTSC it increments up every 0.8333 seconds
 
@@ -428,7 +427,7 @@
  SKIP 1                 ; High byte of a counter that's incremented by 1 every
                         ; time nmiTimer wraps
                         ;
-                        ; On PAL systems (nmiTimerHi nmiTimerLo) counts seconds
+                        ; On PAL systems nmiTimer(Hi Lo) counts seconds
                         ;
                         ; On NTSC it increments up every 0.8333 seconds
 
@@ -1270,17 +1269,17 @@
 
 .patternBufferLo
 
- SKIP 1                 ; (patternBufferHi patternBufferLo) contains the address
-                        ; of the pattern buffer for the pattern we are sending
-                        ; to the PPU from bitplane 0 (i.e. for pattern number
+ SKIP 1                 ; patternBuffer(Hi Lo) contains the address of the
+                        ; pattern buffer for the pattern we are sending to
+                        ; the PPU from bitplane 0 (i.e. for pattern number
                         ; sendingPattern in bitplane 0)
                         ;
                         ; This variable is saved by the NMI handler so the
                         ; buffers can be cleared across multiple VBlanks
 
- SKIP 1                 ; (patternBufferHi patternBufferLo) contains the address
-                        ; of the pattern buffer for the pattern we are sending
-                        ; to the PPU from bitplane 1 (i.e. for pattern number
+ SKIP 1                 ; patternBuffer(Hi Lo) contains the address of the
+                        ; pattern buffer for the pattern we are sending to
+                        ; the PPU from bitplane 1 (i.e. for pattern number
                         ; sendingPattern in bitplane 1)
                         ;
                         ; This variable is saved by the NMI handler so the
@@ -1288,16 +1287,16 @@
 
 .nameTileBuffLo
 
- SKIP 1                 ; (nameTileBuffHi nameTileBuffLo) contains the address
-                        ; of the nametable buffer for the tile we are sending to
+ SKIP 1                 ; nameTileBuff(Hi Lo) contains the address of the
+                        ; nametable buffer for the tile we are sending to
                         ; the PPU from bitplane 0 (i.e. for tile number
                         ; sendingNameTile in bitplane 0)
                         ;
                         ; This variable is saved by the NMI handler so the
                         ; buffers can be cleared across multiple VBlanks
 
- SKIP 1                 ; (nameTileBuffHi nameTileBuffLo) contains the address
-                        ; of the nametable buffer for the tile we are sending to
+ SKIP 1                 ; nameTileBuff(Hi Lo) contains the address of the
+                        ; nametable buffer for the tile we are sending to
                         ; the PPU from bitplane 1 (i.e. for tile number
                         ; sendingNameTile in bitplane 1)
                         ;
@@ -4895,17 +4894,17 @@ ENDIF
 
 .patternBufferHi
 
- SKIP 1                 ; (patternBufferHi patternBufferLo) contains the address
-                        ; of the pattern buffer for the pattern we are sending
-                        ; to the PPU from bitplane 0 (i.e. for pattern number
+ SKIP 1                 ; patternBuffer(Hi Lo) contains the address of the
+                        ; pattern buffer for the pattern we are sending to
+                        ; the PPU from bitplane 0 (i.e. for pattern number
                         ; sendingPattern in bitplane 0)
                         ;
                         ; This variable is saved by the NMI handler so the
                         ; buffers can be cleared across multiple VBlanks
 
- SKIP 1                 ; (patternBufferHi patternBufferLo) contains the address
-                        ; of the pattern buffer for the pattern we are sending
-                        ; to the PPU from bitplane 1 (i.e. for pattern number
+ SKIP 1                 ; patternBuffer(Hi Lo) contains the address of the
+                        ; pattern buffer for the pattern we are sending to
+                        ; the PPU from bitplane 1 (i.e. for pattern number
                         ; sendingPattern in bitplane 1)
                         ;
                         ; This variable is saved by the NMI handler so the
@@ -4913,16 +4912,16 @@ ENDIF
 
 .nameTileBuffHi
 
- SKIP 1                 ; (nameTileBuffHi nameTileBuffLo) contains the address
-                        ; of the nametable buffer for the tile we are sending to
+ SKIP 1                 ; nameTileBuff(Hi Lo) contains the address of the
+                        ; nametable buffer for the tile we are sending to
                         ; the PPU from bitplane 0 (i.e. for tile number
                         ; sendingNameTile in bitplane 0)
                         ;
                         ; This variable is saved by the NMI handler so the
                         ; buffers can be cleared across multiple VBlanks
 
- SKIP 1                 ; (nameTileBuffHi nameTileBuffLo) contains the address
-                        ; of the nametable buffer for the tile we are sending to
+ SKIP 1                 ; nameTileBuff(Hi Lo) contains the address of the
+                        ; nametable buffer for the tile we are sending to
                         ; the PPU from bitplane 1 (i.e. for tile number
                         ; sendingNameTile in bitplane 1)
                         ;
