@@ -81,6 +81,7 @@ ifeq ($(OS), Windows_NT)
 else
 	cat 3-assembled-output/header.bin 3-assembled-output/bank0.bin 3-assembled-output/bank1.bin 3-assembled-output/bank2.bin 3-assembled-output/bank3.bin 3-assembled-output/bank4.bin 3-assembled-output/bank5.bin 3-assembled-output/bank6.bin 3-assembled-output/bank7.bin > 3-assembled-output/elite.bin
 	cp 3-assembled-output/elite.bin 5-compiled-rom-images/ELITE$(suffix).NES
-endififneq ($(verify), no)
+endif
+ifneq ($(verify), no)
 	@$(PYTHON) 2-build-files/crc32.py 4-reference-binaries/$(folder) 3-assembled-output
 endif
